@@ -2731,8 +2731,7 @@ int mj2_read_struct(FILE *file, mj2_movie_t * movie) {
     mj2_read_boxhdr(&box);
   }
 
-
-  fseek(file,-8,SEEK_CUR);
+  fseek(file,foffset,SEEK_SET);
   src = realloc(src,box.length);
   fsresult = fread(src,box.length,1,file);
   if (fsresult != 1) {
