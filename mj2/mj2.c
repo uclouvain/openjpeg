@@ -155,11 +155,9 @@ int mj2_init_stdmovie(mj2_movie_t * movie)
   time_t ltime;
   movie->brand = MJ2_MJ2;
   movie->minversion = 0;
-  if (!((movie->num_cl<100) && (movie->num_cl>-1))) {
-    movie->num_cl = 2;
-    movie->cl =
-      (unsigned int *) malloc(movie->num_cl * sizeof(unsigned int));
-  }
+  movie->num_cl = 2;
+  movie->cl =
+    (unsigned int *) malloc(movie->num_cl * sizeof(unsigned int));
 
   movie->cl[0] = MJ2_MJ2;
   movie->cl[1] = MJ2_MJ2S;
