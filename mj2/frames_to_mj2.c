@@ -634,7 +634,7 @@ int main(int argc, char **argv)
 
   /* if no rate entered, lossless by default */
   if (tcp_init->numlayers == 0) {
-    tcp_init->rates[tcp_init->numlayers] = 1;
+    tcp_init->rates[tcp_init->numlayers] = 0;   //MOD antonin : losslessbug
     tcp_init->numlayers++;
     cp.disto_alloc = 1;
   }
