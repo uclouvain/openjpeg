@@ -615,7 +615,7 @@ int pgxtoimage(char *filename, j2k_image_t * img, int tdy,
 
     else {
 
-      fprintf(stderr, "Bad pgx header, please check input file\n", str);
+      fprintf(stderr, "Bad pgx header, please check input file\n");
 
       return 0;
 
