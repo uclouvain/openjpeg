@@ -581,7 +581,7 @@ int main(int argc, char **argv)
     return 1;
   }
 
-  if (!(cp.disto_alloc ^ cp.fixed_alloc ^ cp.fixed_quality)) {
+  if ((cp.disto_alloc || cp.fixed_alloc || cp.fixed_quality)&&(!(cp.disto_alloc ^ cp.fixed_alloc ^ cp.fixed_quality))) {
     fprintf(stderr,
 	    "Error: options -r -q and -f can not be used together !!\n");
     return 1;
