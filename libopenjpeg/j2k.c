@@ -1,30 +1,30 @@
 /*
- * Copyright (c) 2001-2002, David Janssens
- * Copyright (c) 2002-2004, Yannick Verschueren
- * Copyright (c) 2002-2004, Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS `AS IS'
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- */
+* Copyright (c) 2001-2002, David Janssens
+* Copyright (c) 2002-2004, Yannick Verschueren
+* Copyright (c) 2002-2004, Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
+* All rights reserved.
+*
+* Redistribution and use in source and binary forms, with or without
+* modification, are permitted provided that the following conditions
+* are met:
+* 1. Redistributions of source code must retain the above copyright
+*    notice, this list of conditions and the following disclaimer.
+* 2. Redistributions in binary form must reproduce the above copyright
+*    notice, this list of conditions and the following disclaimer in the
+*    documentation and/or other materials provided with the distribution.
+*
+* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS `AS IS'
+* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+* ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+* LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+* POSSIBILITY OF SUCH DAMAGE.
+*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -91,7 +91,7 @@ void j2k_clean()
 {
   int tileno = 0;
   tcd_free_encode(j2k_img, j2k_cp, j2k_curtileno);
-
+  
   if (info_IM.index_on) {
     for (tileno = 0; tileno < j2k_cp->tw * j2k_cp->th; tileno++) {
       free(info_IM.tile[tileno].packet);
@@ -107,7 +107,7 @@ void j2k_dump_image(j2k_image_t * img)
   int compno;
   fprintf(stdout, "image {\n");
   fprintf(stdout, "  x0=%d, y0=%d, x1=%d, y1=%d\n", img->x0, img->y0,
-	  img->x1, img->y1);
+    img->x1, img->y1);
   fprintf(stdout, "  numcomps=%d\n", img->numcomps);
   for (compno = 0; compno < img->numcomps; compno++) {
     j2k_comp_t *comp = &img->comps[compno];
@@ -157,10 +157,10 @@ void j2k_dump_cp(j2k_image_t * img, j2k_cp_t * cp)
 	J2K_CCP_QNTSTY_SIQNT ? 1 : tccp->numresolutions * 3 - 2;
       for (bandno = 0; bandno < numbands; bandno++) {
 	fprintf(stdout, "(%d,%d) ", tccp->stepsizes[bandno].mant,
-		tccp->stepsizes[bandno].expn);
+	  tccp->stepsizes[bandno].expn);
       }
       fprintf(stdout, "\n");
-
+      
       if (tccp->csty & J2K_CCP_CSTY_PRT) {
 	fprintf(stdout, "      prcw=");
 	for (resno = 0; resno < tccp->numresolutions; resno++) {
@@ -194,7 +194,7 @@ void j2k_write_siz()
 {
   int i;
   int lenp, len;
-
+  
   cio_write(J2K_MS_SIZ, 2);	/* SIZ                 */
   lenp = cio_tell();
   cio_skip(2);
@@ -217,13 +217,13 @@ void j2k_write_siz()
   cio_seek(lenp);
   cio_write(len, 2);		/* Lsiz                */
   cio_seek(lenp + len);
-
+  
 }
 
 void j2k_read_siz()
 {
   int len, i;
-
+  
   len = cio_read(2);		/* Lsiz                */
   cio_read(2);			/* Rsiz (capabilities) */
   j2k_img->x1 = cio_read(4);	/* Xsiz                */
@@ -234,7 +234,7 @@ void j2k_read_siz()
   j2k_cp->tdy = cio_read(4);	/* YTsiz               */
   j2k_cp->tx0 = cio_read(4);	/* XT0siz              */
   j2k_cp->ty0 = cio_read(4);	/* YT0siz              */
-
+  
   j2k_img->numcomps = cio_read(2);	/* Csiz                */
   j2k_img->comps =
     (j2k_comp_t *) malloc(j2k_img->numcomps * sizeof(j2k_comp_t));
@@ -250,26 +250,26 @@ void j2k_read_siz()
     j2k_img->comps[i].resno_decoded = 0;	/* number of resolution decoded */
     j2k_img->comps[i].factor = 0;	/* reducing factor by component */
   }
-
+  
   j2k_cp->tw = int_ceildiv(j2k_img->x1 - j2k_cp->tx0, j2k_cp->tdx);
   j2k_cp->th = int_ceildiv(j2k_img->y1 - j2k_cp->ty0, j2k_cp->tdy);
   j2k_cp->tcps =
     (j2k_tcp_t *) calloc(j2k_cp->tw * j2k_cp->th, sizeof(j2k_tcp_t));
   j2k_cp->tileno = (int *) calloc(j2k_cp->tw * j2k_cp->th, sizeof(int));
   j2k_cp->tileno_size = 0;
-
+  
   for (i = 0; i < j2k_cp->tw * j2k_cp->th; i++) {
     j2k_cp->tcps[i].POC = 0;
     j2k_cp->tcps[i].numpocs = 0;
     j2k_cp->tcps[i].first = 1;
   }
-
+  
   /* Initialization for PPM marker */
   j2k_cp->ppm = 0;
   j2k_cp->ppm_data = NULL;
   j2k_cp->ppm_previous = 0;
   j2k_cp->ppm_store = 0;
-
+  
   j2k_default_tcp.tccps =
     (j2k_tccp_t *) calloc(sizeof(j2k_tccp_t), j2k_img->numcomps);
   for (i = 0; i < j2k_cp->tw * j2k_cp->th; i++) {
@@ -280,8 +280,8 @@ void j2k_read_siz()
     (unsigned char **) calloc(j2k_cp->tw * j2k_cp->th, sizeof(char *));
   j2k_tile_len = (int *) calloc(j2k_cp->tw * j2k_cp->th, sizeof(int));
   j2k_state = J2K_STATE_MH;
-
-
+  
+  
 }
 
 void j2k_write_com()
@@ -290,7 +290,7 @@ void j2k_write_com()
   int lenp, len;
   char str[256];
   sprintf(str, "%s", j2k_cp->comment);
-
+  
   cio_write(J2K_MS_COM, 2);
   lenp = cio_tell();
   cio_skip(2);
@@ -302,16 +302,16 @@ void j2k_write_com()
   cio_seek(lenp);
   cio_write(len, 2);
   cio_seek(lenp + len);
-
+  
 }
 
 void j2k_read_com()
 {
   int len;
-
+  
   len = cio_read(2);
   cio_skip(len - 2);
-
+  
 }
 
 void j2k_write_cox(int compno)
@@ -321,13 +321,13 @@ void j2k_write_cox(int compno)
   j2k_tccp_t *tccp;
   tcp = &j2k_cp->tcps[j2k_curtileno];
   tccp = &tcp->tccps[compno];
-
+  
   cio_write(tccp->numresolutions - 1, 1);	/* SPcox (D) */
   cio_write(tccp->cblkw - 2, 1);	/* SPcox (E) */
   cio_write(tccp->cblkh - 2, 1);	/* SPcox (F) */
   cio_write(tccp->cblksty, 1);	/* SPcox (G) */
   cio_write(tccp->qmfbid, 1);	/* SPcox (H) */
-
+  
   if (tccp->csty & J2K_CCP_CSTY_PRT) {
     for (i = 0; i < tccp->numresolutions; i++) {
       cio_write(tccp->prcw[i] + (tccp->prch[i] << 4), 1);	/* SPcox (I_i) */
@@ -362,18 +362,18 @@ void j2k_write_cod()
 {
   j2k_tcp_t *tcp;
   int lenp, len;
-
+  
   cio_write(J2K_MS_COD, 2);	/* COD */
-
+  
   lenp = cio_tell();
   cio_skip(2);
-
+  
   tcp = &j2k_cp->tcps[j2k_curtileno];
   cio_write(tcp->csty, 1);	/* Scod */
   cio_write(tcp->prg, 1);	/* SGcod (A) */
   cio_write(tcp->numlayers, 2);	/* SGcod (B) */
   cio_write(tcp->mct, 1);	/* SGcod (C) */
-
+  
   j2k_write_cox(0);
   len = cio_tell() - lenp;
   cio_seek(lenp);
@@ -385,7 +385,7 @@ void j2k_read_cod()
 {
   int len, i, pos;
   j2k_tcp_t *tcp;
-
+  
   tcp =
     j2k_state ==
     J2K_STATE_TPH ? &j2k_cp->tcps[j2k_curtileno] : &j2k_default_tcp;
@@ -394,7 +394,7 @@ void j2k_read_cod()
   tcp->prg = cio_read(1);	/* SGcod (A) */
   tcp->numlayers = cio_read(2);	/* SGcod (B) */
   tcp->mct = cio_read(1);	/* SGcod (C) */
-
+  
   pos = cio_tell();
   for (i = 0; i < j2k_img->numcomps; i++) {
     tcp->tccps[i].csty = tcp->csty & J2K_CP_CSTY_PRT;
@@ -407,7 +407,7 @@ void j2k_write_coc(int compno)
 {
   j2k_tcp_t *tcp;
   int lenp, len;
-
+  
   cio_write(J2K_MS_COC, 2);	/* COC */
   lenp = cio_tell();
   cio_skip(2);
@@ -425,7 +425,7 @@ void j2k_read_coc()
 {
   int len, compno;
   j2k_tcp_t *tcp;
-
+  
   tcp =
     j2k_state ==
     J2K_STATE_TPH ? &j2k_cp->tcps[j2k_curtileno] : &j2k_default_tcp;
@@ -441,26 +441,26 @@ void j2k_write_qcx(int compno)
   j2k_tccp_t *tccp;
   int bandno, numbands;
   int expn, mant;
-
+  
   tcp = &j2k_cp->tcps[j2k_curtileno];
   tccp = &tcp->tccps[compno];
-
+  
   cio_write(tccp->qntsty + (tccp->numgbits << 5), 1);	/* Sqcx */
   numbands =
     tccp->qntsty ==
     J2K_CCP_QNTSTY_SIQNT ? 1 : tccp->numresolutions * 3 - 2;
-
+  
   for (bandno = 0; bandno < numbands; bandno++) {
     expn = tccp->stepsizes[bandno].expn;
     mant = tccp->stepsizes[bandno].mant;
-
+    
     if (tccp->qntsty == J2K_CCP_QNTSTY_NOQNT) {
       cio_write(expn << 3, 1);	/* SPqcx_i */
     } else {
       cio_write((expn << 11) + mant, 2);	/* SPqcx_i */
     }
   }
-
+  
 }
 
 void j2k_read_qcx(int compno, int len)
@@ -469,7 +469,7 @@ void j2k_read_qcx(int compno, int len)
   j2k_tcp_t *tcp;
   j2k_tccp_t *tccp;
   int bandno, numbands;
-
+  
   tcp =
     j2k_state ==
     J2K_STATE_TPH ? &j2k_cp->tcps[j2k_curtileno] : &j2k_default_tcp;
@@ -479,8 +479,8 @@ void j2k_read_qcx(int compno, int len)
   tccp->numgbits = tmp >> 5;
   numbands =
     tccp->qntsty == J2K_CCP_QNTSTY_SIQNT ? 1 : (tccp->qntsty ==
-						J2K_CCP_QNTSTY_NOQNT ?
-						len - 1 : (len - 1) / 2);
+    J2K_CCP_QNTSTY_NOQNT ?
+    len - 1 : (len - 1) / 2);
   for (bandno = 0; bandno < numbands; bandno++) {
     int expn, mant;
     if (tccp->qntsty == J2K_CCP_QNTSTY_NOQNT) {
@@ -494,36 +494,36 @@ void j2k_read_qcx(int compno, int len)
     tccp->stepsizes[bandno].expn = expn;
     tccp->stepsizes[bandno].mant = mant;
   }
-
-
-
+  
+  
+  
   /* Add Antonin : if scalar_derived -> compute other stepsizes */
-
-
-
+  
+  
+  
   if (tccp->qntsty == J2K_CCP_QNTSTY_SIQNT) {
-
+    
     for (bandno = 1; bandno < J2K_MAXBANDS; bandno++) {
-
+      
       tccp->stepsizes[bandno].expn =
 	((tccp->stepsizes[0].expn) - ((bandno - 1) / 3) >
-	 0) ? (tccp->stepsizes[0].expn) - ((bandno - 1) / 3) : 0;
-
+	0) ? (tccp->stepsizes[0].expn) - ((bandno - 1) / 3) : 0;
+      
       tccp->stepsizes[bandno].mant = tccp->stepsizes[0].mant;
-
+      
     }
-
+    
   }
-
-
-
+  
+  
+  
   /* ddA */
 }
 
 void j2k_write_qcd()
 {
   int lenp, len;
-
+  
   cio_write(J2K_MS_QCD, 2);	/* QCD */
   lenp = cio_tell();
   cio_skip(2);
@@ -537,7 +537,7 @@ void j2k_write_qcd()
 void j2k_read_qcd()
 {
   int len, i, pos;
-
+  
   len = cio_read(2);		/* Lqcd */
   pos = cio_tell();
   for (i = 0; i < j2k_img->numcomps; i++) {
@@ -549,7 +549,7 @@ void j2k_read_qcd()
 void j2k_write_qcc(int compno)
 {
   int lenp, len;
-
+  
   cio_write(J2K_MS_QCC, 2);	/* QCC */
   lenp = cio_tell();
   cio_skip(2);
@@ -564,7 +564,7 @@ void j2k_write_qcc(int compno)
 void j2k_read_qcc()
 {
   int len, compno;
-
+  
   len = cio_read(2);		/* Lqcc */
   compno = cio_read(j2k_img->numcomps <= 256 ? 1 : 2);	/* Cqcc */
   j2k_read_qcx(compno, len - 2 - (j2k_img->numcomps <= 256 ? 1 : 2));
@@ -575,7 +575,7 @@ void j2k_write_poc()
   int len, numpchgs, i;
   j2k_tcp_t *tcp;
   j2k_tccp_t *tccp;
-
+  
   tcp = &j2k_cp->tcps[j2k_curtileno];
   tccp = &tcp->tccps[0];
   numpchgs = tcp->numpocs;
@@ -603,17 +603,17 @@ void j2k_read_poc()
   int len, numpchgs, i, old_poc;
   j2k_tcp_t *tcp;
   j2k_tccp_t *tccp;
-
+  
   tcp =
     j2k_state ==
     J2K_STATE_TPH ? &j2k_cp->tcps[j2k_curtileno] : &j2k_default_tcp;
-
+  
   old_poc = tcp->POC ? tcp->numpocs + 1 : 0;
   tcp->POC = 1;
   tccp = &tcp->tccps[0];
   len = cio_read(2);		/* Lpoc */
   numpchgs = (len - 2) / (5 + 2 * (j2k_img->numcomps <= 256 ? 1 : 2));
-
+  
   for (i = old_poc; i < numpchgs + old_poc; i++) {
     j2k_poc_t *poc;
     poc = &tcp->pocs[i];
@@ -624,14 +624,14 @@ void j2k_read_poc()
     poc->compno1 = int_min(cio_read(j2k_img->numcomps <= 256 ? 1 : 2), j2k_img->numcomps);	/* CEpoc_i */
     poc->prg = cio_read(1);	/* Ppoc_i */
   }
-
+  
   tcp->numpocs = numpchgs + old_poc - 1;
 }
 
 void j2k_read_crg()
 {
   int len, i, Xcrg_i, Ycrg_i;
-
+  
   len = cio_read(2);		/* Lcrg */
   for (i = 0; i < j2k_img->numcomps; i++) {
     Xcrg_i = cio_read(2);	/* Xcrg_i */
@@ -643,7 +643,7 @@ void j2k_read_tlm()
 {
   int len, Ztlm, Stlm, ST, SP, tile_tlm, i;
   long int Ttlm_i, Ptlm_i;
-
+  
   len = cio_read(2);		/* Ltlm */
   Ztlm = cio_read(1);		/* Ztlm */
   Stlm = cio_read(1);		/* Stlm */
@@ -659,7 +659,7 @@ void j2k_read_tlm()
 void j2k_read_plm()
 {
   int len, i, Zplm, Nplm, add, packet_len = 0;
-
+  
   len = cio_read(2);		/* Lplm */
   Zplm = cio_read(1);		/* Zplm */
   len -= 3;
@@ -683,7 +683,7 @@ void j2k_read_plm()
 void j2k_read_plt()
 {
   int len, i, Zplt, packet_len = 0, add;
-
+  
   len = cio_read(2);		/* Lplt */
   Zplt = cio_read(1);		/* Zplt */
   for (i = len - 3; i > 0; i--) {
@@ -700,10 +700,10 @@ void j2k_read_ppm()
 {
   int len, Z_ppm, i, j;
   int N_ppm;
-
+  
   len = cio_read(2);
   j2k_cp->ppm = 1;
-
+  
   Z_ppm = cio_read(1);		/* Z_ppm */
   len -= 3;
   while (len > 0) {
@@ -713,25 +713,25 @@ void j2k_read_ppm()
     } else {
       N_ppm = j2k_cp->ppm_previous;
     }
-
+    
     j = j2k_cp->ppm_store;
     if (Z_ppm == 0) {		/* First PPM marker */
       j2k_cp->ppm_data =
 	(unsigned char *) calloc(N_ppm, sizeof(unsigned char));
-
+      
       j2k_cp->ppm_len = N_ppm;	//Add antonin : ppmbug1
-
+      
     } else {			/* NON-first PPM marker */
       j2k_cp->ppm_data =
 	(unsigned char *) realloc(j2k_cp->ppm_data,
-				  (N_ppm +
-				   j2k_cp->ppm_store) *
-				  sizeof(unsigned char));
-
+	(N_ppm +
+	j2k_cp->ppm_store) *
+	sizeof(unsigned char));
+      
       j2k_cp->ppm_len = N_ppm + j2k_cp->ppm_store;	//Add antonin : ppmbug1
-
+      
     }
-
+    
     for (i = N_ppm; i > 0; i--) {	/* Read packet header */
       j2k_cp->ppm_data[j] = cio_read(1);
       j++;
@@ -739,7 +739,7 @@ void j2k_read_ppm()
       if (len == 0)
 	break;			/* Case of non-finished packet header in present marker but finished in next one */
     }
-
+    
     j2k_cp->ppm_previous = i - 1;
     j2k_cp->ppm_store = j;
   }
@@ -749,7 +749,7 @@ void j2k_read_ppt()
 {
   int len, Z_ppt, i, j = 0;
   j2k_tcp_t *tcp;
-
+  
   len = cio_read(2);
   Z_ppt = cio_read(1);
   tcp = &j2k_cp->tcps[j2k_curtileno];
@@ -758,18 +758,18 @@ void j2k_read_ppt()
     tcp->ppt_data =
       (unsigned char *) calloc(len - 3, sizeof(unsigned char));
     tcp->ppt_store = 0;
-
+    
     tcp->ppt_len = len - 3;	//Add antonin : ppmbug1
   } else {			/* NON-first PPT marker */
     tcp->ppt_data =
       (unsigned char *) realloc(tcp->ppt_data,
-				(len - 3 +
-				 tcp->ppt_store) * sizeof(unsigned char));
-
+      (len - 3 +
+      tcp->ppt_store) * sizeof(unsigned char));
+    
     tcp->ppt_len = len - 3 + tcp->ppt_store;	//Add antonin : ppmbug1
-
+    
   }
-
+  
   j = tcp->ppt_store;
   for (i = len - 3; i > 0; i--) {
     tcp->ppt_data[j] = cio_read(1);
@@ -781,7 +781,7 @@ void j2k_read_ppt()
 void j2k_write_sot()
 {
   int lenp, len;
-
+  
   j2k_sot_start = cio_tell();
   cio_write(J2K_MS_SOT, 2);	/* SOT */
   lenp = cio_tell();
@@ -802,10 +802,10 @@ void j2k_read_sot()
   j2k_tcp_t *tcp;
   j2k_tccp_t *tmp;
   char status = 0;
-
+  
   len = cio_read(2);
   tileno = cio_read(2);
-
+  
   if (j2k_cp->tileno_size == 0) {
     j2k_cp->tileno[j2k_cp->tileno_size] = tileno;
     j2k_cp->tileno_size++;
@@ -820,27 +820,27 @@ void j2k_read_sot()
       j2k_cp->tileno_size++;
     }
   }
-
+  
   totlen = cio_read(4);
   if (!totlen)
     totlen = cio_numbytesleft() + 8;
-
+  
   partno = cio_read(1);
   numparts = cio_read(1);
-
+  
   j2k_curtileno = tileno;
   j2k_eot = cio_getbp() - 12 + totlen;
   j2k_state = J2K_STATE_TPH;
   tcp = &j2k_cp->tcps[j2k_curtileno];
-
+  
   if (tcp->first == 1) {
     tmp = tcp->tccps;
     *tcp = j2k_default_tcp;
-
+    
     /* Initialization PPT */
     tcp->ppt = 0;
     tcp->ppt_data = NULL;
-
+    
     tcp->tccps = tmp;
     for (i = 0; i < j2k_img->numcomps; i++) {
       tcp->tccps[i] = j2k_default_tcp.tccps[i];
@@ -855,36 +855,36 @@ void j2k_write_sod()
   int totlen;
   j2k_tcp_t *tcp;
   static int j2k_sod_start;
-
+  
   cio_write(J2K_MS_SOD, 2);
   if (j2k_curtileno == 0) {
     j2k_sod_start = cio_tell() + pos_correction;
   }
-
+  
   /* INDEX >> */
   if (info_IM.index_on) {
     info_IM.tile[j2k_curtileno].end_header =
       cio_tell() + pos_correction - 1;
     info_IM.tile[j2k_curtileno].packet =
       (info_packet *) calloc(info_IM.Comp * info_IM.Layer *
-			     (info_IM.Decomposition + 1) * 100,
-			     sizeof(info_packet));
+      (info_IM.Decomposition + 1) * 100,
+      sizeof(info_packet));
   }
   /* << INDEX */
-
+  
   tcp = &j2k_cp->tcps[j2k_curtileno];
   for (layno = 0; layno < tcp->numlayers; layno++) {
     tcp->rates[layno] -= tcp->rates[layno] ? (j2k_sod_start / (j2k_cp->th * j2k_cp->tw)) : 0;	//Mod antonin losslessbug
   }
-
+  
   info_IM.num = 0;
   if (j2k_cp->image_type)
     l = tcd_encode_tile_pxm(j2k_curtileno, cio_getbp(),
-			    cio_numbytesleft() - 2, &info_IM);
+    cio_numbytesleft() - 2, &info_IM);
   else
     l = tcd_encode_tile_pgx(j2k_curtileno, cio_getbp(),
-			    cio_numbytesleft() - 2, &info_IM);
-
+    cio_numbytesleft() - 2, &info_IM);
+  
   /* Writing Psot in SOT marker */
   totlen = cio_tell() + l - j2k_sot_start;
   cio_seek(j2k_sot_start + 6);
@@ -896,24 +896,24 @@ void j2k_read_sod()
 {
   int len, truncate = 0, i;
   unsigned char *data;
-
+  
   len = int_min(j2k_eot - cio_getbp(), cio_numbytesleft() + 1);
   if (len == cio_numbytesleft() + 1)
     truncate = 1;		/* Case of a truncate codestream */
-
+  
   data =
     (unsigned char *) malloc((j2k_tile_len[j2k_curtileno] + len) *
-			     sizeof(unsigned char));
+    sizeof(unsigned char));
   for (i = 0; i < j2k_tile_len[j2k_curtileno]; i++)
     data[i] = j2k_tile_data[j2k_curtileno][i];
   for (i = 0; i < len; i++)
     data[i + j2k_tile_len[j2k_curtileno]] = cio_read(1);
-
+  
   j2k_tile_len[j2k_curtileno] += len;
   free(j2k_tile_data[j2k_curtileno]);
   j2k_tile_data[j2k_curtileno] = data;
   data = NULL;
-
+  
   if (!truncate)
     j2k_state = J2K_STATE_TPHSOT;
   else
@@ -923,7 +923,7 @@ void j2k_read_sod()
 void j2k_write_rgn(int compno, int tileno)
 {
   j2k_tcp_t *tcp = &j2k_cp->tcps[tileno];
-
+  
   cio_write(J2K_MS_RGN, 2);	/* RGN  */
   cio_write(j2k_img->numcomps <= 256 ? 5 : 6, 2);	/* Lrgn */
   cio_write(compno, j2k_img->numcomps <= 256 ? 1 : 2);	/* Crgn */
@@ -935,7 +935,7 @@ void j2k_read_rgn()
 {
   int len, compno, roisty;
   j2k_tcp_t *tcp;
-
+  
   tcp =
     j2k_state ==
     J2K_STATE_TPH ? &j2k_cp->tcps[j2k_curtileno] : &j2k_default_tcp;
@@ -954,15 +954,15 @@ void j2k_write_eoc()
 void j2k_read_eoc()
 {
   int i, tileno;
-
+  
   tcd_init(j2k_img, j2k_cp);
-
+  
   for (i = 0; i < j2k_cp->tileno_size; i++) {
     tileno = j2k_cp->tileno[i];
     tcd_decode_tile(j2k_tile_data[tileno], j2k_tile_len[tileno], tileno);
     free(j2k_tile_data[tileno]);
   }
-
+  
   j2k_state = J2K_STATE_MT;
   longjmp(j2k_error, 1);
 }
@@ -976,15 +976,15 @@ LIBJ2K_API int
 j2k_encode(j2k_image_t * img, j2k_cp_t * cp, char *output,
 	   int len, char *index)
 {
-  int tileno, compno, layno, resno, precno, pack_nb;
+  int tileno, compno, layno, resno, precno, pack_nb, x, y;
   char *dest = NULL;
   FILE *INDEX = NULL;
   FILE *f = NULL;
-
+  
   if (setjmp(j2k_error)) {
     return 0;
   }
-
+  
   if (cp->intermed_file == 1) {
     f = fopen(output, "wb");
     if (!f) {
@@ -994,11 +994,11 @@ j2k_encode(j2k_image_t * img, j2k_cp_t * cp, char *output,
     dest = (char *) malloc(len);
     cio_init(dest, len);
   }
-
+  
   j2k_img = img;
   j2k_cp = cp;
   /* j2k_dump_cp(j2k_img, j2k_cp); */
-
+  
   /* INDEX >> */
   info_IM.index_on = j2k_cp->index_on;
   if (info_IM.index_on) {
@@ -1011,13 +1011,15 @@ j2k_encode(j2k_image_t * img, j2k_cp_t * cp, char *output,
     info_IM.th = j2k_cp->th;
     info_IM.Tile_x = j2k_cp->tdx;	/* new version parser */
     info_IM.Tile_y = j2k_cp->tdy;	/* new version parser */
+    info_IM.Tile_Ox = j2k_cp->tx0;	/* new version parser */
+    info_IM.Tile_Oy = j2k_cp->ty0;	/* new version parser */
     info_IM.Comp = j2k_img->numcomps;
     info_IM.Layer = (&j2k_cp->tcps[0])->numlayers;
     info_IM.Decomposition = (&j2k_cp->tcps[0])->tccps->numresolutions - 1;
     info_IM.D_max = 0;		/* ADD Marcela */
   }
   /* << INDEX */
-
+  
   j2k_write_soc();
   j2k_write_siz();
   j2k_write_cod();
@@ -1029,23 +1031,23 @@ j2k_encode(j2k_image_t * img, j2k_cp_t * cp, char *output,
   }
   if (j2k_cp->comment != NULL)
     j2k_write_com();
-
+  
   if (cp->intermed_file == 1) {
     /* Writing the main header */
     pos_correction = cio_tell();
     fwrite(dest, 1, cio_tell(), f);
   }
-
+  
   /* INDEX >> */
   if (info_IM.index_on) {
     info_IM.Main_head_end = cio_tell() - 1;
   }
   /* << INDEX */
-
-
+  
+  
   for (tileno = 0; tileno < cp->tw * cp->th; tileno++) {
     fprintf(stdout, "Tile number %d / %d ", tileno + 1, cp->tw * cp->th);
-
+    
     if (cp->intermed_file == 1) {
       /* new dest for each tile  */
       free(dest);
@@ -1054,13 +1056,13 @@ j2k_encode(j2k_image_t * img, j2k_cp_t * cp, char *output,
     }
     j2k_curtileno = tileno;
     /* initialisation before tile encoding  */
-
+    
     if (tileno == 0) {
       tcd_malloc_encode(j2k_img, j2k_cp, j2k_curtileno);
     } else {
       tcd_init_encode(j2k_img, j2k_cp, j2k_curtileno);
     }
-
+    
     /* INDEX >> */
     if (info_IM.index_on) {
       info_IM.tile[j2k_curtileno].num_tile = j2k_curtileno;
@@ -1068,84 +1070,82 @@ j2k_encode(j2k_image_t * img, j2k_cp_t * cp, char *output,
     }
     /* << INDEX */
     j2k_write_sot();
-
+    
     for (compno = 1; compno < img->numcomps; compno++) {
       j2k_write_coc(compno);
       j2k_write_qcc(compno);
     }
-
+    
     if (cp->tcps[tileno].numpocs)
       j2k_write_poc();
     j2k_write_sod();
-
+    
     /* INDEX >> */
     if (info_IM.index_on) {
       info_IM.tile[j2k_curtileno].end_pos =
 	cio_tell() + pos_correction - 1;
     }
     /* << INDEX */
-
+    
     /*
-       if (tile->PPT)  BAD PPT !!!
-       {
-       FILE *PPT_file;
-
-       int i;
-       PPT_file=fopen("PPT","rb");
-       fprintf(stderr,"%c%c%c%c",255,97,tile->len_ppt/256,tile->len_ppt%256);
-       for (i=0;i<tile->len_ppt;i++)
-       {
-       unsigned char elmt;
-       fread(&elmt, 1, 1, PPT_file);
-       fwrite(&elmt,1,1,f);
-       }
-       fclose(PPT_file);
-       unlink("PPT");
-       }
-     */
+    if (tile->PPT)  BAD PPT !!!
+    {
+    FILE *PPT_file;
+    
+     int i;
+     PPT_file=fopen("PPT","rb");
+     fprintf(stderr,"%c%c%c%c",255,97,tile->len_ppt/256,tile->len_ppt%256);
+     for (i=0;i<tile->len_ppt;i++)
+     {
+     unsigned char elmt;
+     fread(&elmt, 1, 1, PPT_file);
+     fwrite(&elmt,1,1,f);
+     }
+     fclose(PPT_file);
+     unlink("PPT");
+     }
+    */
     if (cp->intermed_file == 1) {
       fwrite(dest, 1, cio_tell(), f);
       pos_correction = cio_tell() + pos_correction;
     }
   }
-
+  
   if (cp->intermed_file == 1) {
     free(dest);
     dest = (char *) malloc(len);
     cio_init(dest, len);
   }
-
+  
   j2k_write_eoc();
-
+  
   if (cp->intermed_file == 1) {
     fwrite(dest, 1, 2, f);
     free(dest);
     /* closing file *.j2k */
     fclose(f);
   }
-
+  
   /* Creation of the index file     */
-
+  
   if (info_IM.index_on) {
-
+    
     double DistoTotal = 0;
-
+    
     info_IM.codestream_size = cio_tell() + pos_correction;	/* Correction 14/4/03 suite rmq de Patrick */
-
+    
     INDEX = fopen(index, "w");
-
-
-
+    
+    
+    
     if (!INDEX) {
-
+      
       fprintf(stderr, "failed to open %s for writing\n", index);
-
+      
       return 1;
-
+      
     }
-
-
-
+    
     fprintf(INDEX, "%d %d\n", info_IM.Im_w, info_IM.Im_h);
 
     fprintf(INDEX, "%d\n", info_IM.Prog);
@@ -1195,203 +1195,170 @@ j2k_encode(j2k_image_t * img, j2k_cp_t * cp, char *output,
       /* fprintf(INDEX,
 
          "pkno tileno layerno resno compno precno start_pos   end_pos       deltaSE        \n"); */
-
+      
       if (info_IM.Prog == 0) {	/* LRCP */
-
+	//fprintf(INDEX, "pack_nb tileno layno resno compno precno start_pos  end_pos   disto");
 	for (layno = 0; layno < info_IM.Layer; layno++) {
-
 	  for (resno = 0; resno < info_IM.Decomposition + 1; resno++) {
-
 	    for (compno = 0; compno < info_IM.Comp; compno++) {
-
 	      for (precno = 0;
-		   precno <
-		   info_IM.tile[tileno].pw[resno] *
-		   info_IM.tile[tileno].ph[resno]; precno++) {
-
+	      precno <
+		info_IM.tile[tileno].pw[resno] * info_IM.tile[tileno].ph[resno];
+	      precno++) {
 		start_pos = info_IM.tile[tileno].packet[pack_nb].start_pos;
-
 		end_pos = info_IM.tile[tileno].packet[pack_nb].end_pos;
-
 		disto = info_IM.tile[tileno].packet[pack_nb].disto;
-
-		fprintf(INDEX,
-			"%4d %6d %7d %5d %6d %6d %9d %9d %8e\n",
-			pack_nb, tileno, layno, resno, compno,
-			precno, start_pos, end_pos, disto);
-
+		fprintf(INDEX, "%4d %6d %7d %5d %6d %6d %9d %9d %8e\n",
+		  pack_nb, tileno, layno, resno, compno, precno,
+		  start_pos, end_pos, disto);
 		DistoTotal += disto;
-
 		pack_nb++;
-
 	      }
-
 	    }
-
 	  }
-
 	}
-
       } else if (info_IM.Prog == 1) {	/* RLCP */
-
+	//fprintf(INDEX, "pack_nb tileno resno layno compno precno start_pos  end_pos   disto");
 	for (resno = 0; resno < info_IM.Decomposition + 1; resno++) {
-
 	  for (layno = 0; layno < info_IM.Layer; layno++) {
-
 	    for (compno = 0; compno < info_IM.Comp; compno++) {
-
-	      for (precno = 0;
-		   precno <
-		   info_IM.tile[tileno].pw[resno] *
-		   info_IM.tile[tileno].ph[resno]; precno++) {
-
+	      for (precno = 0; precno < info_IM.tile[tileno].pw[resno] * info_IM.tile[tileno].ph[resno]; precno++) {
 		start_pos = info_IM.tile[tileno].packet[pack_nb].start_pos;
-
 		end_pos = info_IM.tile[tileno].packet[pack_nb].end_pos;
-
 		disto = info_IM.tile[tileno].packet[pack_nb].disto;
-
-		fprintf(INDEX,
-			"%4d %6d %7d %5d %6d %6d %9d %9d %8e\n",
-			pack_nb, tileno, layno, resno, compno,
-			precno, start_pos, end_pos, disto);
-
+		fprintf(INDEX, "%4d %6d %5d %7d %6d %6d %9d %9d %8e\n",
+		  pack_nb, tileno, resno, layno, compno, precno,
+		  start_pos, end_pos, disto);
 		DistoTotal += disto;
-
 		pack_nb++;
-
 	      }
-
 	    }
-
 	  }
-
 	}
-
       } else if (info_IM.Prog == 2) {	/* RPCL */
-
+	//fprintf(INDEX, "\npack_nb tileno resno precno compno layno start_pos  end_pos   disto\n"); 
 	for (resno = 0; resno < info_IM.Decomposition + 1; resno++) {
-
-	  for (precno = 0;
-	       precno <
-	       info_IM.tile[tileno].pw[resno] *
-	       info_IM.tile[tileno].ph[resno]; precno++) {
-
-	    for (compno = 0; compno < info_IM.Comp; compno++) {
-
-	      for (layno = 0; layno < info_IM.Layer; layno++) {
-
-		start_pos = info_IM.tile[tileno].packet[pack_nb].start_pos;
-
-		end_pos = info_IM.tile[tileno].packet[pack_nb].end_pos;
-
-		disto = info_IM.tile[tileno].packet[pack_nb].disto;
-
-		fprintf(INDEX,
-			"%4d %6d %7d %5d %6d %6d %9d %9d %8e\n",
-			pack_nb, tileno, layno, resno, compno,
-			precno, start_pos, end_pos, disto);
-
-		DistoTotal += disto;
-
-		pack_nb++;
-
+	  /* I suppose components have same XRsiz, YRsiz */
+	  int x0 = info_IM.Tile_Ox + tileno - (int)floor( tileno/info_IM.tw ) * info_IM.tw * info_IM.Tile_x;
+	  int y0 = info_IM.Tile_Ox + (int)floor( tileno/info_IM.tw ) * info_IM.Tile_y;
+	  int x1 = x0 + info_IM.Tile_x;
+	  int y1 = y0 + info_IM.Tile_y;
+	  for (y=y0; y<y1; y++) {
+	    for (x=x0; x<x1; x++) {
+	      for (compno = 0; compno < info_IM.Comp; compno++) {
+		int prec_max = info_IM.tile[tileno].pw[resno] * info_IM.tile[tileno].ph[resno];
+		for (precno = 0; precno < prec_max; precno++) {
+		  int pcnx = info_IM.tile[tileno].pw[resno];
+		  int pcx = (int) pow( 2, info_IM.tile[tileno].pdx[resno] + info_IM.Decomposition - resno );
+		  int pcy = (int) pow( 2, info_IM.tile[tileno].pdy[resno] + info_IM.Decomposition - resno );
+		  int precno_x = precno - (int) floor( precno/pcnx ) * pcnx;
+		  int precno_y = (int) floor( precno/pcnx );							
+		  if (precno_y*pcy == y ) {
+		    if (precno_x*pcx == x ) {
+		      for (layno = 0; layno < info_IM.Layer; layno++) {
+			start_pos = info_IM.tile[tileno].packet[pack_nb].start_pos;
+			end_pos = info_IM.tile[tileno].packet[pack_nb].end_pos;
+			disto = info_IM.tile[tileno].packet[pack_nb].disto;
+			fprintf(INDEX, "%4d %6d %5d %6d %6d %7d %9d %9d %8e\n",
+			  pack_nb, tileno, resno, precno, compno, layno,
+			  start_pos, end_pos, disto); 
+			DistoTotal += disto;
+			pack_nb++; 
+		      }
+		    }
+		  }
+		}
 	      }
-
 	    }
-
 	  }
-
 	}
-
       } else if (info_IM.Prog == 3) {	/* PCRL */
-
-	for (precno = 0;
-	     precno <
-	     info_IM.tile[tileno].pw[resno] *
-	     info_IM.tile[tileno].ph[resno]; precno++) {
-
-	  for (compno = 0; compno < info_IM.Comp; compno++) {
-
-	    for (resno = 0; resno < info_IM.Decomposition + 1; resno++) {
-
-	      for (layno = 0; layno < info_IM.Layer; layno++) {
-
-		start_pos = info_IM.tile[tileno].packet[pack_nb].start_pos;
-
-		end_pos = info_IM.tile[tileno].packet[pack_nb].end_pos;
-
-		disto = info_IM.tile[tileno].packet[pack_nb].disto;
-
-		fprintf(INDEX,
-			"%4d %6d %7d %5d %6d %6d %9d %9d %8e\n",
-			pack_nb, tileno, layno, resno, compno,
-			precno, start_pos, end_pos, disto);
-
-		DistoTotal += disto;
-
-		pack_nb++;
-
+	// I suppose components have same XRsiz, YRsiz 
+	int x0 = info_IM.Tile_Ox + tileno - (int)floor( tileno/info_IM.tw ) * info_IM.tw * info_IM.Tile_x;
+	int y0 = info_IM.Tile_Ox + (int)floor( tileno/info_IM.tw ) * info_IM.Tile_y;
+	int x1 = x0 + info_IM.Tile_x;
+	int y1 = y0 + info_IM.Tile_y;
+	
+	//fprintf(INDEX, "\npack_nb tileno precno compno resno layno start_pos  end_pos   disto\n"); 
+	for (y=y0; y<y1; y++) {
+	  for (x=x0; x<x1; x++) {
+	    for (compno = 0; compno < info_IM.Comp; compno++) {
+	      for (resno = 0; resno < info_IM.Decomposition + 1; resno++) {
+		int prec_max = info_IM.tile[tileno].pw[resno] * info_IM.tile[tileno].ph[resno];
+		for (precno = 0; precno < prec_max; precno++) {
+		  int pcnx = info_IM.tile[tileno].pw[resno];
+		  int pcx = (int) pow( 2, info_IM.tile[tileno].pdx[resno] + info_IM.Decomposition - resno );
+		  int pcy = (int) pow( 2, info_IM.tile[tileno].pdy[resno] + info_IM.Decomposition - resno );
+		  int precno_x = precno - (int) floor( precno/pcnx ) * pcnx;
+		  int precno_y = (int) floor( precno/pcnx );							
+		  if (precno_y*pcy == y ) {
+		    if (precno_x*pcx == x ) {
+		      for (layno = 0; layno < info_IM.Layer; layno++) {
+			start_pos = info_IM.tile[tileno].packet[pack_nb].start_pos;
+			end_pos = info_IM.tile[tileno].packet[pack_nb].end_pos;
+			disto = info_IM.tile[tileno].packet[pack_nb].disto;
+			fprintf(INDEX, "%4d %6d %6d %6d %5d %7d %9d %9d %8e\n",
+			  pack_nb, tileno, precno, compno, resno, layno,
+			  start_pos, end_pos, disto); 
+			DistoTotal += disto;
+			pack_nb++; 
+		      }
+		    }
+		  }
+		}
 	      }
-
 	    }
-
 	  }
-
 	}
-
       } else {			/* CPRL */
-
-
-
+	//fprintf(INDEX, "\npack_nb tileno compno precno resno layno start_pos  end_pos   disto\n"); 
 	for (compno = 0; compno < info_IM.Comp; compno++) {
-
-	  for (precno = 0;
-	       precno <
-	       info_IM.tile[tileno].pw[resno] *
-	       info_IM.tile[tileno].ph[resno]; precno++) {
-
-	    for (resno = 0; resno < info_IM.Decomposition + 1; resno++) {
-
-	      for (layno = 0; layno < info_IM.Layer; layno++) {
-
-		start_pos = info_IM.tile[tileno].packet[pack_nb].start_pos;
-
-		end_pos = info_IM.tile[tileno].packet[pack_nb].end_pos;
-
-		disto = info_IM.tile[tileno].packet[pack_nb].disto;
-
-		fprintf(INDEX,
-			"%4d %6d %7d %5d %6d %6d %9d %9d %8e\n",
-			pack_nb, tileno, layno, resno, compno,
-			precno, start_pos, end_pos, disto);
-
-		DistoTotal += disto;
-
-		pack_nb++;
-
+	  /* I suppose components have same XRsiz, YRsiz */
+	  int x0 = info_IM.Tile_Ox + tileno - (int)floor( tileno/info_IM.tw ) * info_IM.tw * info_IM.Tile_x;
+	  int y0 = info_IM.Tile_Ox + (int)floor( tileno/info_IM.tw ) * info_IM.Tile_y;
+	  int x1 = x0 + info_IM.Tile_x;
+	  int y1 = y0 + info_IM.Tile_y;
+	  for (y=y0; y<y1; y++) {
+	    for (x=x0; x<x1; x++) {
+	      for (resno = 0; resno < info_IM.Decomposition + 1; resno++) {
+		int prec_max = info_IM.tile[tileno].pw[resno] * info_IM.tile[tileno].ph[resno];
+		for (precno = 0; precno < prec_max; precno++) {
+		  int pcnx = info_IM.tile[tileno].pw[resno];
+		  int pcx = (int) pow( 2, info_IM.tile[tileno].pdx[resno] + info_IM.Decomposition - resno );
+		  int pcy = (int) pow( 2, info_IM.tile[tileno].pdy[resno] + info_IM.Decomposition - resno );
+		  int precno_x = precno - (int) floor( precno/pcnx ) * pcnx;
+		  int precno_y = (int) floor( precno/pcnx );							
+		  if (precno_y*pcy == y ) {
+		    if (precno_x*pcx == x ) {
+		      for (layno = 0; layno < info_IM.Layer; layno++) {
+			start_pos = info_IM.tile[tileno].packet[pack_nb].start_pos;
+			end_pos = info_IM.tile[tileno].packet[pack_nb].end_pos;
+			disto = info_IM.tile[tileno].packet[pack_nb].disto;
+			fprintf(INDEX, "%4d %6d %6d %6d %5d %7d %9d %9d %8e\n",
+			  pack_nb, tileno, compno, precno, resno, layno, start_pos, end_pos, disto); 
+			DistoTotal += disto;
+			pack_nb++; 
+		      }
+		    }
+		  }
+		}
 	      }
-
 	    }
-
 	  }
-
 	}
-
-      }
-
+      }   
     }
-
-    fprintf(INDEX, "SE max : %8e\n", info_IM.D_max);
-
-    fprintf(INDEX, "SE total : %.8e\n", DistoTotal);
-
+    
+    fprintf(INDEX, "%8e\n", info_IM.D_max); //SE max
+    
+    fprintf(INDEX, "%.8e\n", DistoTotal); // SE totale
+    
     fclose(INDEX);
-
+    
   }
-
+  
   j2k_clean();
-
+  
   return cio_tell();
 }
 
@@ -1440,7 +1407,7 @@ j2k_dec_mstabent_t *j2k_dec_mstab_lookup(int id)
 LIBJ2K_API int
 j2k_decode(unsigned char *src, int len, j2k_image_t * img, j2k_cp_t * cp)
 {
-
+  
   if (setjmp(j2k_error)) {
     if (j2k_state != J2K_STATE_MT) {
       fprintf(stderr, "WARNING: incomplete bitstream\n");
@@ -1449,22 +1416,22 @@ j2k_decode(unsigned char *src, int len, j2k_image_t * img, j2k_cp_t * cp)
     j2k_clean();
     return cio_numbytes();	/* Correct way of ending j2k_decode */
   }
-
+  
   j2k_img = img;
-
+  
   j2k_cp = cp;
-
+  
   j2k_state = J2K_STATE_MHSOC;
   cio_init(src, len);
-
+  
   for (;;) {
-
-
+    
+    
     j2k_dec_mstabent_t *e;
     int id = cio_read(2);
     if (id >> 8 != 0xff) {
       fprintf(stderr, "%.8x: expected a marker instead of %x\n",
-	      cio_tell() - 2, id);
+	cio_tell() - 2, id);
       return 0;
     }
     e = j2k_dec_mstab_lookup(id);
@@ -1475,28 +1442,28 @@ j2k_decode(unsigned char *src, int len, j2k_image_t * img, j2k_cp_t * cp)
     if (e->handler) {
       (*e->handler) ();
     }
-
-
+    
+    
     if (j2k_state == J2K_STATE_NEOC)
       break;			/* RAJOUTE */
   }
   if (j2k_state == J2K_STATE_NEOC)
     j2k_read_eoc();		/* RAJOUTE */
-
+  
   return 0;
 }
 
 /*
- * Read a JPT-stream and decode file
- *
- */
+* Read a JPT-stream and decode file
+*
+*/
 int
 j2k_decode_jpt_stream(unsigned char *src, int len, j2k_image_t * img,
 		      j2k_cp_t * cp)
 {
   jpt_msg_header_struct_t header;
   int position;
-
+  
   if (setjmp(j2k_error)) {
     if (j2k_state != J2K_STATE_MT) {
       fprintf(stderr, "WARNING: incomplete bitstream\n");
@@ -1504,31 +1471,31 @@ j2k_decode_jpt_stream(unsigned char *src, int len, j2k_image_t * img,
     }
     return cio_numbytes();
   }
-
+  
   j2k_img = img;
-
+  
   j2k_cp = cp;
-
+  
   j2k_state = J2K_STATE_MHSOC;
   cio_init(src, len);
-
+  
   /* Initialize the header */
   jpt_init_Msg_Header(&header);
   /* Read the first header of the message */
   jpt_read_Msg_Header(&header);
-
+  
   position = cio_tell();
   if (header.Class_Id != 6) {	/* 6 : Main header data-bin message */
     fprintf(stderr,
-	    "[JPT-stream] : Expecting Main header first [class_Id %d] !\n",
-	    header.Class_Id);
+      "[JPT-stream] : Expecting Main header first [class_Id %d] !\n",
+      header.Class_Id);
     return 0;
   }
-
+  
   for (;;) {
     j2k_dec_mstabent_t *e;
     int id;
-
+    
     if (!cio_numbytesleft()) {
       j2k_read_eoc();
       return 0;
@@ -1542,11 +1509,11 @@ j2k_decode_jpt_stream(unsigned char *src, int len, j2k_image_t * img,
 	return 0;
       }
     }
-
+    
     id = cio_read(2);
     if (id >> 8 != 0xff) {
       fprintf(stderr, "%.8x: expected a marker instead of %x\n",
-	      cio_tell() - 2, id);
+	cio_tell() - 2, id);
       return 0;
     }
     e = j2k_dec_mstab_lookup(id);
@@ -1562,7 +1529,7 @@ j2k_decode_jpt_stream(unsigned char *src, int len, j2k_image_t * img,
   }
   if (j2k_state == J2K_STATE_NEOC)
     j2k_read_eoc();		/* RAJOUTE */
-
+  
   return 0;
 }
 
@@ -1571,39 +1538,39 @@ j2k_decode_jpt_stream(unsigned char *src, int len, j2k_image_t * img,
 void j2k_dec_release()
 
 {
-
+  
   int i=0;
-
-
-
+  
+  
+  
   //tcd_dec_release();
-
-
-
+  
+  
+  
   if (j2k_tile_len!=NULL) free(j2k_tile_len);
-
+  
   if (j2k_tile_data!=NULL) free(j2k_tile_data);
-
+  
   if (j2k_default_tcp.ppt_data!=NULL) free(j2k_default_tcp.ppt_data);
-
+  
   if (j2k_default_tcp.tccps!=NULL) free(j2k_default_tcp.tccps);
-
+  
   for (i=0;i<j2k_cp->tw*j2k_cp->th;i++) {
-
+    
     if (j2k_cp->tcps[i].ppt_data!=NULL) free(j2k_cp->tcps[i].ppt_data);
-
+    
     if (j2k_cp->tcps[i].tccps!=NULL) free(j2k_cp->tcps[i].tccps);
-
+    
   }
-
+  
   if (j2k_cp->ppm_data!=NULL) free(j2k_cp->ppm_data);
-
+  
   if (j2k_cp->tcps!=NULL) free(j2k_cp->tcps);
-
+  
   if (j2k_img->comps!=NULL) free(j2k_img->comps);
-
+  
   if (j2k_cp->tileno!=NULL) free(j2k_cp->tileno);
-
+  
 }
 
 #ifdef WIN32

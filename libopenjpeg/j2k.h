@@ -176,6 +176,7 @@ typedef struct {
   int Im_w, Im_h;		/* Image width and Height                                */
   int Prog;			/* progression order                                     */
   int Tile_x, Tile_y;		/* Tile size in x and y                                  */
+  int Tile_Ox, Tile_Oy;
   int tw, th;			/* Number of Tile in X and Y                             */
   int Comp;			/* Component numbers                                     */
   int Layer;			/* number of layer                                       */
