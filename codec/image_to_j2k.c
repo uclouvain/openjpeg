@@ -536,7 +536,7 @@ int main(int argc, char **argv)
 	/* Error messages */
 	/* -------------- */
 	if (!infile || !outfile) {
-		fprintf(stderr,	"usage: pnmtoj2k -i pnm-file -o j2k-file\n");
+		fprintf(stderr,	"usage: image_to_j2k -i image-file -o j2k-file (+ options)\n");
 		return 1;
 	}
 
