@@ -581,15 +581,13 @@ int mj2_read_mdat(mj2_movie_t * movie, unsigned char *src, char *outfile)
   fclose(f);
 
   for (track_nb = 0; track_nb < movie->next_tk_id - 1; track_nb++) {
-    if ((movie->tk->imagefile != (char *) 0xcdcdcdcd)
-	&& (movie->tk->imagefile != NULL)) {
+    if (movie->tk[track_nb].imagefile != NULL) {
       fprintf(stderr, "%s", movie->tk[track_nb].imagefile);
 
-      f = fopen(movie->tk->imagefile, "w");	/* Erase content of file if it already exists */
+      f = fopen(movie->tk[track_nb].imagefile, "w");	// Erase content of file if it already exists 
       fclose(f);
     }
   }
-
 
   for (track_nb = 0;
        track_nb < movie->num_htk + movie->num_stk + movie->num_vtk;
@@ -602,10 +600,11 @@ int mj2_read_mdat(mj2_movie_t * movie, unsigned char *src, char *outfile)
       fprintf(stderr, "Track %d: Width=%d Height=%d\n", track_nb,
 	      tk->w, tk->h);
       fprintf(stderr, "%d Samples\n", tk->num_samples);
-      if ((tk->imagefile == (char *) 0xcdcdcdcd)
-	  || (movie->tk->imagefile == NULL)) {
+
+      if (tk->imagefile == NULL) {
 	tk->imagefile = outfile;
       }
+
       for (i = 0; i < tk->num_samples; i++) {
 
 	mj2_sample_t *sample = &tk->sample[i];
@@ -613,7 +612,7 @@ int mj2_read_mdat(mj2_movie_t * movie, unsigned char *src, char *outfile)
 	j2k_cp_t cp;
 	unsigned char *pos;
 
-	fprintf(stderr, "Frame %d: \n", i);
+	fprintf(stderr, "Frame %d / %d: \n", i+1, tk->num_samples);
 
 	cio_init(src + sample->offset, 8);
 
@@ -2812,6 +2811,9 @@ int mj2_read_moov(mj2_movie_t * movie, j2k_image_t * img)
 
   movie->tk =
     (mj2_tk_t *) malloc((movie->next_tk_id - 1) * sizeof(mj2_tk_t));
+
+  for (i=0; i < (unsigned int)movie->next_tk_id - 1; i++)
+    movie->tk[i].imagefile = NULL;
 
   for (i = 0; cio_tell() - box.init_pos < box.length; i++) {
     mj2_read_boxhdr(&box2);
