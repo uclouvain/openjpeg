@@ -850,6 +850,7 @@ int main(int argc, char **argv)
     }
     fwrite(outbuf, 1, len, f);
     free(outbuf);
+    free(jp2_struct->comps);
     fclose(f);
   }
 
@@ -873,6 +874,13 @@ int main(int argc, char **argv)
       }
     }
   }
+
+  /* Free memory */
+  free(cp_init.tcps);
+  if (tcp_init->numlayers > 9) free(cp.matrice);
+  for (tileno = 0; tileno < cp.tw * cp.th; tileno++)
+    free(cp.tcps[tileno].tccps);
+  free(cp.tcps);
 
   system("pause");
   return 0;
