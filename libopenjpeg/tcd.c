@@ -61,61 +61,61 @@ extern jmp_buf j2k_error;
 void tcd_dump(tcd_image_t * img, int curtileno)
 {
   int tileno, compno, resno, bandno, precno, cblkno;
-  fprintf(stderr, "image {\n");
-  fprintf(stderr, "  tw=%d, th=%d x0=%d x1=%d y0=%d y1=%d\n", img->tw,
+  fprintf(stdout, "image {\n");
+  fprintf(stdout, "  tw=%d, th=%d x0=%d x1=%d y0=%d y1=%d\n", img->tw,
 	  img->th, tcd_img->x0, tcd_img->x1, tcd_img->y0, tcd_img->y1);
   for (tileno = 0; tileno < img->th * img->tw; tileno++) {
     tcd_tile_t *tile = &tcd_image.tiles[tileno];
-    fprintf(stderr, "  tile {\n");
-    fprintf(stderr, "    x0=%d, y0=%d, x1=%d, y1=%d, numcomps=%d\n",
+    fprintf(stdout, "  tile {\n");
+    fprintf(stdout, "    x0=%d, y0=%d, x1=%d, y1=%d, numcomps=%d\n",
 	    tile->x0, tile->y0, tile->x1, tile->y1, tile->numcomps);
     for (compno = 0; compno < tile->numcomps; compno++) {
       tcd_tilecomp_t *tilec = &tile->comps[compno];
-      fprintf(stderr, "    tilec {\n");
-      fprintf(stderr,
+      fprintf(stdout, "    tilec {\n");
+      fprintf(stdout,
 	      "      x0=%d, y0=%d, x1=%d, y1=%d, numresolutions=%d\n",
 	      tilec->x0, tilec->y0, tilec->x1, tilec->y1,
 	      tilec->numresolutions);
       for (resno = 0; resno < tilec->numresolutions; resno++) {
 	tcd_resolution_t *res = &tilec->resolutions[resno];
-	fprintf(stderr, "\n   res {\n");
-	fprintf(stderr,
+	fprintf(stdout, "\n   res {\n");
+	fprintf(stdout,
 		"          x0=%d, y0=%d, x1=%d, y1=%d, pw=%d, ph=%d, numbands=%d\n",
 		res->x0, res->y0, res->x1, res->y1, res->pw, res->ph,
 		res->numbands);
 	for (bandno = 0; bandno < res->numbands; bandno++) {
 	  tcd_band_t *band = &res->bands[bandno];
-	  fprintf(stderr, "        band {\n");
-	  fprintf(stderr,
+	  fprintf(stdout, "        band {\n");
+	  fprintf(stdout,
 		  "          x0=%d, y0=%d, x1=%d, y1=%d, stepsize=%d, numbps=%d\n",
 		  band->x0, band->y0, band->x1, band->y1,
 		  band->stepsize, band->numbps);
 	  for (precno = 0; precno < res->pw * res->ph; precno++) {
 	    tcd_precinct_t *prec = &band->precincts[precno];
-	    fprintf(stderr, "          prec {\n");
-	    fprintf(stderr,
+	    fprintf(stdout, "          prec {\n");
+	    fprintf(stdout,
 		    "            x0=%d, y0=%d, x1=%d, y1=%d, cw=%d, ch=%d\n",
 		    prec->x0, prec->y0, prec->x1, prec->y1,
 		    prec->cw, prec->ch);
 	    for (cblkno = 0; cblkno < prec->cw * prec->ch; cblkno++) {
 	      tcd_cblk_t *cblk = &prec->cblks[cblkno];
-	      fprintf(stderr, "            cblk {\n");
-	      fprintf(stderr,
+	      fprintf(stdout, "            cblk {\n");
+	      fprintf(stdout,
 		      "              x0=%d, y0=%d, x1=%d, y1=%d\n",
 		      cblk->x0, cblk->y0, cblk->x1, cblk->y1);
-	      fprintf(stderr, "            }\n");
+	      fprintf(stdout, "            }\n");
 	    }
-	    fprintf(stderr, "          }\n");
+	    fprintf(stdout, "          }\n");
 	  }
-	  fprintf(stderr, "        }\n");
+	  fprintf(stdout, "        }\n");
 	}
-	fprintf(stderr, "      }\n");
+	fprintf(stdout, "      }\n");
       }
-      fprintf(stderr, "    }\n");
+      fprintf(stdout, "    }\n");
     }
-    fprintf(stderr, "  }\n");
+    fprintf(stdout, "  }\n");
   }
-  fprintf(stderr, "}\n");
+  fprintf(stdout, "}\n");
 }
 
 void tcd_malloc_encode(j2k_image_t * img, j2k_cp_t * cp, int curtileno)
@@ -1294,7 +1294,7 @@ tcd_encode_tile_pxm(int tileno, unsigned char *dest, int len,
 /*---------------CLEAN-------------------*/
 
   time7 = clock() - time7;
-  printf("total:     %ld.%.3ld s\n", time7 / CLOCKS_PER_SEC,
+  fprintf(stdout,"total:     %ld.%.3ld s\n", time7 / CLOCKS_PER_SEC,
 	 (time7 % CLOCKS_PER_SEC) * 1000 / CLOCKS_PER_SEC);
 
   /* cleaning memory */
@@ -1461,7 +1461,7 @@ tcd_encode_tile_pgx(int tileno, unsigned char *dest, int len,
 
  /*---------------CLEAN-------------------*/
   time = clock() - time;
-  printf("total:     %ld.%.3ld s\n", time / CLOCKS_PER_SEC,
+  fprintf(stdout,"total:     %ld.%.3ld s\n", time / CLOCKS_PER_SEC,
 	 (time % CLOCKS_PER_SEC) * 1000 / CLOCKS_PER_SEC);
 
   for (compno = 0; compno < tile->numcomps; compno++) {
@@ -1488,7 +1488,7 @@ int tcd_decode_tile(unsigned char *src, int len, int tileno)
 
   time = clock();
 
-  fprintf(stderr, "tile decoding time %d/%d: ", tileno + 1,
+  fprintf(stdout, "tile decoding time %d/%d: ", tileno + 1,
 	  tcd_cp->tw * tcd_cp->th);
 
 	/*--------------TIER2------------------*/
@@ -1611,8 +1611,9 @@ int tcd_decode_tile(unsigned char *src, int len, int tileno)
   }
 
   time = clock() - time;
-  fprintf(stderr, "total:     %ld.%.3ld s\n", time / CLOCKS_PER_SEC,
+  fprintf(stdout, "total:     %ld.%.3ld s\n", time / CLOCKS_PER_SEC,
 	  (time % CLOCKS_PER_SEC) * 1000 / CLOCKS_PER_SEC);
+
 
 
   for (compno = 0; compno < tile->numcomps; compno++) {
@@ -1626,29 +1627,56 @@ int tcd_decode_tile(unsigned char *src, int len, int tileno)
   return l;
 }
 
+
+
 void tcd_dec_release()
+
 {
+
   int tileno,compno,resno,bandno,precno;
+
   for (tileno=0;tileno<tcd_image.tw*tcd_image.th;tileno++) {
+
     tcd_tile_t tile=tcd_image.tiles[tileno];
+
     for (compno=0;compno<tile.numcomps;compno++) {
+
       tcd_tilecomp_t tilec=tile.comps[compno];
+
       for (resno=0;resno<tilec.numresolutions;resno++) {
+
 	tcd_resolution_t res=tilec.resolutions[resno];
+
 	for (bandno=0;bandno<res.numbands;bandno++) {
+
 	  tcd_band_t band=res.bands[bandno];
+
 	  for (precno=0;precno<res.ph*res.pw;precno++) {
+
 	    tcd_precinct_t prec=band.precincts[precno];
+
 	    if (prec.cblks!=NULL) free(prec.cblks);
+
 	    if (prec.imsbtree!=NULL) free(prec.imsbtree);
+
 	    if (prec.incltree!=NULL) free(prec.incltree);
+
 	  }
+
 	  if (band.precincts!=NULL) free(band.precincts);
+
 	}
+
       }
+
       if (tilec.resolutions!=NULL) free(tilec.resolutions);
+
     }
+
     if (tile.comps!=NULL) free(tile.comps);
+
   }
+
   if (tcd_image.tiles!=NULL) free(tcd_image.tiles);
+
 }

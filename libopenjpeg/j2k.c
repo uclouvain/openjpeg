@@ -105,79 +105,79 @@ void j2k_clean()
 void j2k_dump_image(j2k_image_t * img)
 {
   int compno;
-  fprintf(stderr, "image {\n");
-  fprintf(stderr, "  x0=%d, y0=%d, x1=%d, y1=%d\n", img->x0, img->y0,
+  fprintf(stdout, "image {\n");
+  fprintf(stdout, "  x0=%d, y0=%d, x1=%d, y1=%d\n", img->x0, img->y0,
 	  img->x1, img->y1);
-  fprintf(stderr, "  numcomps=%d\n", img->numcomps);
+  fprintf(stdout, "  numcomps=%d\n", img->numcomps);
   for (compno = 0; compno < img->numcomps; compno++) {
     j2k_comp_t *comp = &img->comps[compno];
-    fprintf(stderr, "  comp %d {\n", compno);
-    fprintf(stderr, "    dx=%d, dy=%d\n", comp->dx, comp->dy);
-    fprintf(stderr, "    prec=%d\n", comp->prec);
-    fprintf(stderr, "    sgnd=%d\n", comp->sgnd);
-    fprintf(stderr, "  }\n");
+    fprintf(stdout, "  comp %d {\n", compno);
+    fprintf(stdout, "    dx=%d, dy=%d\n", comp->dx, comp->dy);
+    fprintf(stdout, "    prec=%d\n", comp->prec);
+    fprintf(stdout, "    sgnd=%d\n", comp->sgnd);
+    fprintf(stdout, "  }\n");
   }
-  fprintf(stderr, "}\n");
+  fprintf(stdout, "}\n");
 }
 
 void j2k_dump_cp(j2k_image_t * img, j2k_cp_t * cp)
 {
   int tileno, compno, layno, bandno, resno, numbands;
-  fprintf(stderr, "coding parameters {\n");
-  fprintf(stderr, "  tx0=%d, ty0=%d\n", cp->tx0, cp->ty0);
-  fprintf(stderr, "  tdx=%d, tdy=%d\n", cp->tdx, cp->tdy);
-  fprintf(stderr, "  tw=%d, th=%d\n", cp->tw, cp->th);
+  fprintf(stdout, "coding parameters {\n");
+  fprintf(stdout, "  tx0=%d, ty0=%d\n", cp->tx0, cp->ty0);
+  fprintf(stdout, "  tdx=%d, tdy=%d\n", cp->tdx, cp->tdy);
+  fprintf(stdout, "  tw=%d, th=%d\n", cp->tw, cp->th);
   for (tileno = 0; tileno < cp->tw * cp->th; tileno++) {
     j2k_tcp_t *tcp = &cp->tcps[tileno];
-    fprintf(stderr, "  tile %d {\n", tileno);
-    fprintf(stderr, "    csty=%x\n", tcp->csty);
-    fprintf(stderr, "    prg=%d\n", tcp->prg);
-    fprintf(stderr, "    numlayers=%d\n", tcp->numlayers);
-    fprintf(stderr, "    mct=%d\n", tcp->mct);
-    fprintf(stderr, "    rates=");
+    fprintf(stdout, "  tile %d {\n", tileno);
+    fprintf(stdout, "    csty=%x\n", tcp->csty);
+    fprintf(stdout, "    prg=%d\n", tcp->prg);
+    fprintf(stdout, "    numlayers=%d\n", tcp->numlayers);
+    fprintf(stdout, "    mct=%d\n", tcp->mct);
+    fprintf(stdout, "    rates=");
     for (layno = 0; layno < tcp->numlayers; layno++) {
-      fprintf(stderr, "%d ", tcp->rates[layno]);
+      fprintf(stdout, "%d ", tcp->rates[layno]);
     }
-    fprintf(stderr, "\n");
+    fprintf(stdout, "\n");
     for (compno = 0; compno < img->numcomps; compno++) {
       j2k_tccp_t *tccp = &tcp->tccps[compno];
-      fprintf(stderr, "    comp %d {\n", compno);
-      fprintf(stderr, "      csty=%x\n", tccp->csty);
-      fprintf(stderr, "      numresolutions=%d\n", tccp->numresolutions);
-      fprintf(stderr, "      cblkw=%d\n", tccp->cblkw);
-      fprintf(stderr, "      cblkh=%d\n", tccp->cblkh);
-      fprintf(stderr, "      cblksty=%x\n", tccp->cblksty);
-      fprintf(stderr, "      qmfbid=%d\n", tccp->qmfbid);
-      fprintf(stderr, "      qntsty=%d\n", tccp->qntsty);
-      fprintf(stderr, "      numgbits=%d\n", tccp->numgbits);
-      fprintf(stderr, "      roishift=%d\n", tccp->roishift);
-      fprintf(stderr, "      stepsizes=");
+      fprintf(stdout, "    comp %d {\n", compno);
+      fprintf(stdout, "      csty=%x\n", tccp->csty);
+      fprintf(stdout, "      numresolutions=%d\n", tccp->numresolutions);
+      fprintf(stdout, "      cblkw=%d\n", tccp->cblkw);
+      fprintf(stdout, "      cblkh=%d\n", tccp->cblkh);
+      fprintf(stdout, "      cblksty=%x\n", tccp->cblksty);
+      fprintf(stdout, "      qmfbid=%d\n", tccp->qmfbid);
+      fprintf(stdout, "      qntsty=%d\n", tccp->qntsty);
+      fprintf(stdout, "      numgbits=%d\n", tccp->numgbits);
+      fprintf(stdout, "      roishift=%d\n", tccp->roishift);
+      fprintf(stdout, "      stepsizes=");
       numbands =
 	tccp->qntsty ==
 	J2K_CCP_QNTSTY_SIQNT ? 1 : tccp->numresolutions * 3 - 2;
       for (bandno = 0; bandno < numbands; bandno++) {
-	fprintf(stderr, "(%d,%d) ", tccp->stepsizes[bandno].mant,
+	fprintf(stdout, "(%d,%d) ", tccp->stepsizes[bandno].mant,
 		tccp->stepsizes[bandno].expn);
       }
-      fprintf(stderr, "\n");
+      fprintf(stdout, "\n");
 
       if (tccp->csty & J2K_CCP_CSTY_PRT) {
-	fprintf(stderr, "      prcw=");
+	fprintf(stdout, "      prcw=");
 	for (resno = 0; resno < tccp->numresolutions; resno++) {
-	  fprintf(stderr, "%d ", tccp->prcw[resno]);
+	  fprintf(stdout, "%d ", tccp->prcw[resno]);
 	}
-	fprintf(stderr, "\n");
-	fprintf(stderr, "      prch=");
+	fprintf(stdout, "\n");
+	fprintf(stdout, "      prch=");
 	for (resno = 0; resno < tccp->numresolutions; resno++) {
-	  fprintf(stderr, "%d ", tccp->prch[resno]);
+	  fprintf(stdout, "%d ", tccp->prch[resno]);
 	}
-	fprintf(stderr, "\n");
+	fprintf(stdout, "\n");
       }
-      fprintf(stderr, "    }\n");
+      fprintf(stdout, "    }\n");
     }
-    fprintf(stderr, "  }\n");
+    fprintf(stdout, "  }\n");
   }
-  fprintf(stderr, "}\n");
+  fprintf(stdout, "}\n");
 }
 
 void j2k_write_soc()
@@ -1044,7 +1044,7 @@ j2k_encode(j2k_image_t * img, j2k_cp_t * cp, char *output,
 
 
   for (tileno = 0; tileno < cp->tw * cp->th; tileno++) {
-    fprintf(stderr, "Tile number %d / %d ", tileno + 1, cp->tw * cp->th);
+    fprintf(stdout, "Tile number %d / %d ", tileno + 1, cp->tw * cp->th);
 
     if (cp->intermed_file == 1) {
       /* new dest for each tile  */
@@ -1459,6 +1459,7 @@ j2k_decode(unsigned char *src, int len, j2k_image_t * img, j2k_cp_t * cp)
 
   for (;;) {
 
+
     j2k_dec_mstabent_t *e;
     int id = cio_read(2);
     if (id >> 8 != 0xff) {
@@ -1474,6 +1475,7 @@ j2k_decode(unsigned char *src, int len, j2k_image_t * img, j2k_cp_t * cp)
     if (e->handler) {
       (*e->handler) ();
     }
+
 
     if (j2k_state == J2K_STATE_NEOC)
       break;			/* RAJOUTE */
@@ -1564,24 +1566,44 @@ j2k_decode_jpt_stream(unsigned char *src, int len, j2k_image_t * img,
   return 0;
 }
 
+
+
 void j2k_dec_release()
+
 {
+
   int i=0;
+
+
 
   //tcd_dec_release();
 
+
+
   if (j2k_tile_len!=NULL) free(j2k_tile_len);
+
   if (j2k_tile_data!=NULL) free(j2k_tile_data);
+
   if (j2k_default_tcp.ppt_data!=NULL) free(j2k_default_tcp.ppt_data);
+
   if (j2k_default_tcp.tccps!=NULL) free(j2k_default_tcp.tccps);
+
   for (i=0;i<j2k_cp->tw*j2k_cp->th;i++) {
+
     if (j2k_cp->tcps[i].ppt_data!=NULL) free(j2k_cp->tcps[i].ppt_data);
+
     if (j2k_cp->tcps[i].tccps!=NULL) free(j2k_cp->tcps[i].tccps);
+
   }
+
   if (j2k_cp->ppm_data!=NULL) free(j2k_cp->ppm_data);
+
   if (j2k_cp->tcps!=NULL) free(j2k_cp->tcps);
+
   if (j2k_img->comps!=NULL) free(j2k_img->comps);
+
   if (j2k_cp->tileno!=NULL) free(j2k_cp->tileno);
+
 }
 
 #ifdef WIN32

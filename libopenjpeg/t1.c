@@ -188,6 +188,7 @@ void t1_enc_sigpass_step(int *fp, int *dp, int orient, int bpno, int one,
 }
 
 
+
 void t1_dec_sigpass_step(int *fp, int *dp, int orient, int oneplushalf,
 			 char type, int vsc)
 {
@@ -249,7 +250,9 @@ void t1_dec_sigpass(int w, int h, int bpno, int orient, char type,
 	       && (j == k + 3 || j == h - 1)) ? 1 : 0;
 	t1_dec_sigpass_step(&t1_flags[1 + j][1 + i],
 			    &t1_data[j][i], 
+
 			    orient, 
+
 			    oneplushalf,
 			    type, vsc);
       }
@@ -277,6 +280,7 @@ void t1_enc_refpass_step(int *fp, int *dp, int bpno, int one, int *nmsedec,
     *fp |= T1_REFINE;
   }
 }
+
 
 
 void t1_dec_refpass_step(int *fp, int *dp, int poshalf, int neghalf,
@@ -331,8 +335,11 @@ void t1_dec_refpass(int w, int h, int bpno, char type, int cblksty)
 	       && (j == k + 3 || j == h - 1)) ? 1 : 0;
 	t1_dec_refpass_step(&t1_flags[1 + j][1 + i],
 			    &t1_data[j][i], 
+
 			    poshalf, 
+
 			    neghalf, 
+
 			    type, vsc);
       }
     }
@@ -364,6 +371,8 @@ void t1_enc_clnpass_step(int *fp, int *dp, int orient, int bpno, int one,
   }
   *fp &= ~T1_VISIT;
 }
+
+
 
 
 void t1_dec_clnpass_step(int *fp, int *dp, int orient, int oneplushalf,
@@ -504,7 +513,9 @@ void t1_dec_clnpass(int w, int h, int bpno, int orient, int cblksty)
 	       && (j == k + 3 || j == h - 1)) ? 1 : 0;
 	t1_dec_clnpass_step(&t1_flags[1 + j][1 + i],
 			    &t1_data[j][i], 
+
 			    orient, 
+
 			    oneplushalf,
 			    agg && (j == k + runlen), vsc);
       }
@@ -699,7 +710,9 @@ void t1_decode_cblk(tcd_cblk_t * cblk, int orient, int roishift,
     else
       mqc_init_dec(seg->data, seg->len);
     // ddA
+
     
+
     if (bpno==0) cblk->lastbp=1;  // Add Antonin : quantizbug1
     
     for (passno = 0; passno < seg->numpasses; passno++) {
@@ -717,9 +730,13 @@ void t1_decode_cblk(tcd_cblk_t * cblk, int orient, int roishift,
       
       if ((cblksty & J2K_CCP_CBLKSTY_RESET) && type == T1_TYPE_MQ) {
 	mqc_resetstates();
+
 	mqc_setstate(T1_CTXNO_UNI, 0, 46);
+
 	mqc_setstate(T1_CTXNO_AGG, 0, 3);
+
 	mqc_setstate(T1_CTXNO_ZC, 0, 4);
+
       }
       
       if (++passtype == 3) {
@@ -881,10 +898,15 @@ void t1_decode_cblks(tcd_tile_t * tile, j2k_tcp_t * tcp)
 		    tilec->data[x + i +
 		      (y + j) * (tilec->x1 - tilec->x0)] = 0;
 		  } else {
+
 		    // Add antonin : quantizbug1
+
 		    t1_data[j][i]<<=1;
+
 		    //if (cblk->lastbp) 
+
 		    t1_data[j][i]+=t1_data[j][i]>0?1:-1;
+
 		    // ddA
 		    tilec->data[x + i +
 				(y + j) * (tilec->x1 -
@@ -1061,7 +1083,7 @@ void t1_init_luts()
     t1_lut_spb[i] = t1_init_spb(i << 4);
   }
   /* FIXME FIXME FIXME */
-  /* printf("nmsedec luts:\n"); */
+  /* fprintf(stdout,"nmsedec luts:\n"); */
   for (i = 0; i < (1 << T1_NMSEDEC_BITS); i++) {
     t = i / pow(2, T1_NMSEDEC_FRACBITS);
     u = t;

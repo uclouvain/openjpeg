@@ -96,7 +96,7 @@ int bmptoimage(char *filename, j2k_image_t * img, int subsampling_dx,
   File_h.bfType = (getc(IN) << 8) + File_h.bfType;
 
   if (File_h.bfType != 19778) {
-    printf("Error, not a BMP file!\n");
+    fprintf(stderr,"Error, not a BMP file!\n");
     return 0;
   } else {
     /* FILE HEADER */
@@ -458,7 +458,7 @@ int bmptoimage(char *filename, j2k_image_t * img, int subsampling_dx,
 	    not_end_file = 0;
 	    break;
 	  case 2:
-	    printf("No Delta supported\n");
+	    fprintf(stderr,"No Delta supported\n");
 	    return 1;
 	    break;
 	  default:
@@ -557,8 +557,10 @@ int pgxtoimage(char *filename, j2k_image_t * img, int tdy,
   int w, h, prec;
   int i, compno, bandno;
   char str[256]; 
+
   char endian1,endian2,sign;
   char signtmp[32];
+
   char temp[32];
   int bigendian;
   j2k_comp_t *comp;
@@ -572,34 +574,53 @@ int pgxtoimage(char *filename, j2k_image_t * img, int tdy,
     int max = 0;
     int Y1;
 
+
     comp = &img->comps[compno];
     sprintf(str, "%s", filename);
     
+
     f = fopen(str, "rb");
     if (!f) {
       fprintf(stderr, "Failed to open %s for reading !\n", str);
       return 0;
     }
 
+
+
     fseek(f, 0, SEEK_SET);
+
     fscanf(f, "PG%[ \t]%c%c%[ \t+-]%d%[ \t]%d%[ \t]%d",temp,&endian1,&endian2,signtmp,&prec,temp,&w,temp,&h);
+
     
+
     i=0;
+
     sign='+';
+
     while (signtmp[i]!='\0') {
+
       if (signtmp[i]=='-') sign='-';
+
       i++;
+
     }
+
     
+
     fgetc(f);
     if (endian1=='M' && endian2=='L')
       bigendian = 1;
     else if (endian2=='M' && endian1=='L')
       bigendian = 0;
+
     else {
+
       fprintf(stderr, "Bad pgx header, please check input file\n", str);
+
       return 0;
+
     }
+
 
     if (compno == 0) {
       img->x0 = Dim[0];

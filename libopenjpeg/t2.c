@@ -303,6 +303,7 @@ int t2_decode_packet(unsigned char *src, int len, tcd_tile_t * tile,
   tcd_tilecomp_t *tilec = &tile->comps[compno];
   tcd_resolution_t *res = &tilec->resolutions[resno];
   unsigned char *c = src;
+
   unsigned char *hd = NULL;
   int present;
 
@@ -310,10 +311,15 @@ int t2_decode_packet(unsigned char *src, int len, tcd_tile_t * tile,
     for (bandno = 0; bandno < res->numbands; bandno++) {
       tcd_band_t *band = &res->bands[bandno];
       tcd_precinct_t *prc = &band->precincts[precno];
+
       
+
       //Add Antonin : sizebug1
+
       if ((band->x1-band->x0 == 0)||(band->y1-band->y0 == 0)) continue;
+
       //ddA
+
       
       tgt_reset(prc->incltree);
       tgt_reset(prc->imsbtree);
@@ -323,21 +329,32 @@ int t2_decode_packet(unsigned char *src, int len, tcd_tile_t * tile,
       }
     }
   }
+
   
+
   // SOP markers
+
   if (tcp->csty & J2K_CP_CSTY_SOP) {
+
     if ((*c) != 0xff || (*(c + 1) != 0x91)) {
-      printf("Warning : expected SOP marker\n");
+
+      fprintf(stderr,"Warning : expected SOP marker\n");
+
     } else {
+
       c += 6;
+
     }
+
     //TODO : check the Nsop value
+
   }
 
   /* When the marker PPT/PPM is used the packet header are store in PPT/PPM marker
   This part deal with this caracteristic
   step 1: Read packet header in the saved structure
   step 2: Return to codestream for decoding */
+
 
   if (cp->ppm == 1) {		/* PPM */
     hd = cp->ppm_data;
@@ -346,46 +363,68 @@ int t2_decode_packet(unsigned char *src, int len, tcd_tile_t * tile,
     hd = tcp->ppt_data;
     bio_init_dec(hd, tcp->ppt_len);  //Mod Antonin : ppmbug1
   } else {			/* Normal Case */
+
     hd = c;
+
     bio_init_dec(hd, src+len-hd);
+
   }
   
   present = bio_read(1);
 
   if (!present) {
     bio_inalign();
+
     hd += bio_numbytes();
 
+
+
     // EPH markers
+
     if (tcp->csty & J2K_CP_CSTY_EPH) {
+
       if ((*hd) != 0xff || (*(hd + 1) != 0x92)) {
+
 	printf("Error : expected EPH marker\n");
+
       } else {
+
 	hd += 2;
+
       }
+
     }
 
     if (cp->ppm == 1) {		/* PPM case */
+
       cp->ppm_len+=cp->ppm_data-hd;
       cp->ppm_data = hd;
       return c - src;
     }
     if (tcp->ppt == 1) {	/* PPT case */
+
       tcp->ppt_len+=tcp->ppt_data-hd;
       tcp->ppt_data = hd;
       return c - src;
     }
 
+
     return hd - src;
   }
+
 
   for (bandno = 0; bandno < res->numbands; bandno++) {
     tcd_band_t *band = &res->bands[bandno];
     tcd_precinct_t *prc = &band->precincts[precno];
 
+
+
     //Add Antonin : sizebug1
+
     if ((band->x1-band->x0 == 0)||(band->y1-band->y0 == 0)) continue;
+
     //ddA
+
 
     for (cblkno = 0; cblkno < prc->cw * prc->ch; cblkno++) {
       int included, increment, n;
@@ -444,32 +483,49 @@ int t2_decode_packet(unsigned char *src, int len, tcd_tile_t * tile,
 
   hd += bio_numbytes();
 
+
   // EPH markers
   if (tcp->csty & J2K_CP_CSTY_EPH) {
     if ((*hd) != 0xff || (*(hd + 1) != 0x92)) {
-      printf("Error : expected EPH marker\n");
+      fprintf(stderr,"Error : expected EPH marker\n");
     } else {
       hd += 2;
+
     }
   }
 
+
+
   if (cp->ppm==1) {
+
     cp->ppm_len+=cp->ppm_data-hd;
+
     cp->ppm_data = hd;
+
   } else if (tcp->ppt == 1) {
+
     tcp->ppt_len+=tcp->ppt_data-hd;
+
     tcp->ppt_data = hd;
+
   } else {
+
     c=hd;
+
   }
 
   for (bandno = 0; bandno < res->numbands; bandno++) {
     tcd_band_t *band = &res->bands[bandno];
     tcd_precinct_t *prc = &band->precincts[precno];
 
+
+
     //Add Antonin : sizebug1
+
     if ((band->x1-band->x0 == 0)||(band->y1-band->y0 == 0)) continue;
+
     //ddA
+
 
     for (cblkno = 0; cblkno < prc->cw * prc->ch; cblkno++) {
       tcd_cblk_t *cblk = &prc->cblks[cblkno];
@@ -478,6 +534,7 @@ int t2_decode_packet(unsigned char *src, int len, tcd_tile_t * tile,
 	continue;
       if (!cblk->numsegs) {
 	seg = &cblk->segs[0];
+
 	cblk->numsegs++;
 	cblk->len = 0;
       } else {
