@@ -32,8 +32,6 @@
 #include "j2k.h"
 #include "jp2.h"
 #include "cio.h"
-#include "tcd.h"
-#include "int.h"
 
 #define JPIP_JPIP 0x6a706970
 
@@ -79,60 +77,24 @@ int jp2_read_boxhdr(jp2_box_t * box)
 * Initialisation of a Standard JP2 structure
 */
 
-int jp2_init_stdjp2(jp2_struct_t * jp2_struct, j2k_image_t * img)
+int jp2_init_stdjp2(jp2_struct_t * jp2_struct)
 {
-  int depth_0, sign, depth, i;
 
-  jp2_struct->h = img->y1 - img->y0;	// HEIGHT
-  jp2_struct->w = img->x1 - img->x0;	// WIDTH
-  jp2_struct->numcomps = img->numcomps;	// NC
   jp2_struct->comps = (jp2_comps_t *) malloc(jp2_struct->numcomps * sizeof(jp2_comps_t));
-
-  depth_0 = img->comps[0].prec - 1;
-  sign = img->comps[0].sgnd;
-  jp2_struct->bpc = depth_0 + (sign << 7);
-
-  for (i = 1; i < img->numcomps; i++) {
-    depth = img->comps[i].prec - 1;
-    sign = img->comps[i].sgnd;
-    if (depth_0 != depth)
-      jp2_struct->bpc = 255;
-  }
-
-
-
-  jp2_struct->C = 7;		// C : Always 7
-  jp2_struct->UnkC = 0;		// UnkC, colorspace specified in colr box
-  jp2_struct->IPR = 0;		// IPR, no intellectual property
-
-  for (i = 0; i < img->numcomps; i++)
-    jp2_struct->comps[i].bpcc =
-      img->comps[i].prec - 1 + (img->comps[i].sgnd << 7);
 
   jp2_struct->precedence = 0;	// PRECEDENCE
   jp2_struct->approx = 0;	// APPROX
-
-  if ((img->numcomps == 1 || img->numcomps == 3)
-      && (jp2_struct->bpc != 255))
-    jp2_struct->meth = 1;
-  else
-    jp2_struct->meth = 2;
-
-  if (jp2_struct->meth == 1) {
-    if (img->color_space == 1)
-      jp2_struct->enumcs = 16;
-    else if (img->color_space == 2)
-      jp2_struct->enumcs = 17;
-    else if (img->color_space == 3)
-      jp2_struct->enumcs = 18;	// YUV                          
-  } else
-    jp2_struct->enumcs = 0;	// PROFILE (??)
 
   jp2_struct->brand = JP2_JP2;	/* BR         */
   jp2_struct->minversion = 0;	/* MinV       */
   jp2_struct->numcl = 1;
   jp2_struct->cl = (int *) malloc(jp2_struct->numcl * sizeof(int));
   jp2_struct->cl[0] = JP2_JP2;	/* CL0 : JP2  */
+
+  jp2_struct->C = 7;		// C : Always 7
+  jp2_struct->UnkC = 0;		// UnkC, colorspace specified in colr box
+  jp2_struct->IPR = 0;		// IPR, no intellectual property
+
   return 0;
 }
 
@@ -429,7 +391,7 @@ int jp2_read_ftyp(jp2_struct_t * jp2_struct)
   return 0;
 }
 
-int jp2_write_jp2c(jp2_struct_t * jp2_struct, char *j2k_codestream)
+int jp2_write_jp2c(int j2k_codestream_len, int *j2k_codestream_offset, char *j2k_codestream)
 {
   jp2_box_t box;
 
@@ -437,10 +399,10 @@ int jp2_write_jp2c(jp2_struct_t * jp2_struct, char *j2k_codestream)
   cio_skip(4);
   cio_write(JP2_JP2C, 4);	// JP2C
 
-  jp2_struct->j2k_codestream_offset = cio_tell();
-  memcpy(cio_getbp(),j2k_codestream, jp2_struct->j2k_codestream_len);
+  *j2k_codestream_offset = cio_tell();
+  memcpy(cio_getbp(),j2k_codestream, j2k_codestream_len);
 
-  box.length = 8 + jp2_struct->j2k_codestream_len;
+  box.length = 8 + j2k_codestream_len;
   cio_seek(box.init_pos);
   cio_write(box.length, 4);	/*    L       */
   cio_seek(box.init_pos + box.length);
@@ -449,7 +411,7 @@ int jp2_write_jp2c(jp2_struct_t * jp2_struct, char *j2k_codestream)
 }
 
 
-int jp2_read_jp2c(unsigned char *src, jp2_struct_t * jp2_struct)
+int jp2_read_jp2c(unsigned int *j2k_codestream_len, unsigned int *j2k_codestream_offset)
 {
   jp2_box_t box;
 
@@ -459,8 +421,8 @@ int jp2_read_jp2c(unsigned char *src, jp2_struct_t * jp2_struct)
     return 1;
   }
 
-  jp2_struct->j2k_codestream_offset = cio_tell();
-  jp2_struct->j2k_codestream_len = box.length - 8;
+  *j2k_codestream_offset = cio_tell();
+  *j2k_codestream_len = box.length - 8;
 
   return 0;
 }
@@ -519,7 +481,7 @@ int jp2_read_struct(unsigned char *src, jp2_struct_t * jp2_struct, int len)
     return 1;
   if (jp2_read_jp2h(jp2_struct))
     return 1;
-  if (jp2_read_jp2c(src, jp2_struct))
+  if (jp2_read_jp2c(&jp2_struct->j2k_codestream_len, &jp2_struct->j2k_codestream_offset))
     return 1;
   return 0;
 }
@@ -529,7 +491,8 @@ int jp2_wrap_j2k(jp2_struct_t * jp2_struct, char *j2k_codestream, char *output)
   jp2_write_jp();
   jp2_write_ftyp(jp2_struct);
   jp2_write_jp2h(jp2_struct);
-  jp2_write_jp2c(jp2_struct, j2k_codestream);
+
+  jp2_write_jp2c(jp2_struct->j2k_codestream_len, &jp2_struct->j2k_codestream_offset, j2k_codestream);
 
   return cio_tell();
 }

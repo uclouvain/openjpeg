@@ -69,15 +69,16 @@ typedef struct {
  * jp2_struct: the structure you are creating
  * img: a j2k_image_t wich will help you to create the jp2_structure
  */
-int jp2_init_stdjp2(jp2_struct_t * jp2_struct, j2k_image_t * img);
+int jp2_init_stdjp2(jp2_struct_t * jp2_struct);
 
-/* int jp2_write_jp2c(char *j2k_codestream, int j2k_len);
+/* int jp2_write_jp2c(int j2k_len, int *j2k_codestream_offset, char *j2k_codestream)
  *
  * Write the jp2c codestream box 
- * jp2_struct: the jp2 structure you are working with
+ * j2k_len: the j2k codestream length
+ * j2k_codestream_offset: the function will return the j2k codestream offset
  * j2k_codestream: the j2k codestream to include in jp2 file
  */
-int jp2_write_jp2c(jp2_struct_t * jp2_struct, char *j2k_codestream);
+int jp2_write_jp2c(int j2k_len, int *j2k_codestream_offset, char *j2k_codestream);
 
 /* int jp2_write_jp2h(jp2_struct_t * jp2_struct);
  *
