@@ -90,8 +90,11 @@ int main(int argc, char **argv)
   if (!((S1 == 'y' && S2 == 'u' && S3 == 'v')
 	|| (S1 == 'Y' && S2 == 'U' && S3 == 'V'))) {
     fprintf(stderr,
-	    "!! Unrecognized format for infile : %c%c%c [accept only *.yuv] !!\n\n",
+	    "!! Unrecognized format for outfile : %c%c%c [accept only *.yuv] !!\n",
 	    S1, S2, S3);
+    fprintf(stderr,
+	    "usage: j2k-file image-file -reduce n (<- optional)\n\n");
+
     return 1;
   }
 
@@ -129,6 +132,9 @@ int main(int argc, char **argv)
     fprintf(stderr,
 	    "mj2_to_frames : Unknown format image *.%c%c%c [only *.mj2]!! \n",
 	    S1, S2, S3);
+    fprintf(stderr,
+	    "usage: j2k-file image-file -reduce n (<- optional)\n\n");
+
     return 1;
   }
 
