@@ -43,6 +43,13 @@
 
 #define J2K_MAXRLVLS 33		/* Number of maximum resolution level authorized                   */
 #define J2K_MAXBANDS (3*J2K_MAXRLVLS-2)	/* Number of maximum sub-band linked to number of resolution level */
+#define J2K_CFMT 0
+#define JP2_CFMT 1
+#define JPT_CFMT 2
+#define MJ2_CFMT 3
+#define PXM_DFMT 0
+#define PGX_DFMT 1
+#define BMP_DFMT 2
 
 #define J2K_CP_CSTY_PRT 0x01
 #define J2K_CP_CSTY_SOP 0x02
@@ -125,14 +132,14 @@ typedef struct {
 } j2k_tcp_t;
 
 typedef struct {
-  int JPEG2000_format;		/* 0: J2K   1:JP2 */
   int intermed_file;		/* 1: Store each encoded tile one by one in the output file (for mega-Images)*/
-  int image_type;		/* 0: PNM, PGM, PPM 1: PGX           */
+  int decod_format;		/* 0: PGX, 1: PxM, 2: BMP */
+  int cod_format;		/* 0: J2K, 1: JP2, 2: JPT */
   int disto_alloc;		/* Allocation by rate/distortion     */
   int fixed_alloc;		/* Allocation by fixed layer         */
   int fixed_quality;		/* add fixed_quality */
-  int reduce_on;		/* option reduce is used if reduce = 1 */
-  int reduce_value;		/* if option reduce is used -> original dimension divided by 2^value */
+  int reduce;			/* if != 0, then original dimension divided by 2^(reduce); if == 0 or not used, image is decoded to the full resolution */
+  int layer;			/* if != 0, then only the first "layer" layers are decoded; if == 0 or not used, all the quality layers are decoded */
   int index_on;			/* 0 = no index || 1 = index */
   int tx0, ty0;			/* XTOsiz, YTOsiz                    */
   int tdx, tdy;			/* XTsiz, YTsiz                      */

@@ -378,7 +378,7 @@ int main(int argc, char **argv)
 
       if ((S1 == 'p' && S2 == 'g' && S3 == 'x')
 	  || (S1 == 'P' && S2 == 'G' && S3 == 'X')) {
-	cp.image_type = 0;
+	cp.decod_format = PGX_DFMT;
 	break;
       }
 
@@ -390,13 +390,13 @@ int main(int argc, char **argv)
 	  || (S1 == 'P' && S2 == 'P' && S3 == 'M') || (S1 == 'p'
 						       && S2 == 'p'
 						       && S3 == 'm')) {
-	cp.image_type = 1;
+	cp.decod_format = PXM_DFMT;
 	break;
       }
 
       if ((S1 == 'b' && S2 == 'm' && S3 == 'p')
 	  || (S1 == 'B' && S2 == 'M' && S3 == 'P')) {
-	cp.image_type = 2;
+	cp.decod_format = BMP_DFMT;
 	break;
       }
       fprintf(stderr,
@@ -421,10 +421,10 @@ int main(int argc, char **argv)
 
       if ((S1 == 'j' && S2 == '2' && S3 == 'k')
 	  || (S1 == 'J' && S2 == '2' && S3 == 'K'))
-	cp.JPEG2000_format = 0;
+	cp.cod_format = J2K_CFMT;
       else if ((S1 == 'j' && S2 == 'p' && S3 == '2')
 	       || (S1 == 'J' && S2 == 'P' && S3 == '2'))
-	cp.JPEG2000_format = 1;
+	cp.cod_format = JP2_CFMT;
       else {
 	fprintf(stderr,
 		"Unknown output format image *.%c%c%c [only *.j2k, *.jp2]!! \n",
@@ -685,7 +685,7 @@ int main(int argc, char **argv)
     }
   }
 
-  switch (cp.image_type) {
+  switch (cp.decod_format) {
   case 0:
     if (Tile_arg) {
       if (!pgxtoimage
@@ -841,7 +841,7 @@ int main(int argc, char **argv)
 
 
 
-  if (cp.JPEG2000_format == 0) {	/* J2K format output */
+  if (cp.cod_format == J2K_CFMT) {	/* J2K format output */
     if (cp.intermed_file == 1) {	/* After the encoding of each tile, j2k_encode 
 					   stores the data in the file */
       len = j2k_encode(&img, &cp, outfile, cp.tdx * cp.tdy * 2, index);
@@ -955,7 +955,7 @@ int main(int argc, char **argv)
 
   /* Remove the temporary files */
   /* -------------------------- */
-  if (cp.image_type) {		/* PNM PGM PPM */
+  if (cp.decod_format != PGX_CFMT) {		/* PNM PGM PPM or BMP */
     for (i = 0; i < img.numcomps; i++) {
       char tmp;
       sprintf(&tmp, "Compo%d", i);

@@ -345,6 +345,8 @@ void j2k_read_cox(int compno)
     J2K_STATE_TPH ? &j2k_cp->tcps[j2k_curtileno] : &j2k_default_tcp;
   tccp = &tcp->tccps[compno];
   tccp->numresolutions = cio_read(1) + 1;	/* SPcox (D) */
+  //Check the reduce value
+  j2k_cp->reduce=int_min((tccp->numresolutions)-1,j2k_cp->reduce);
   tccp->cblkw = cio_read(1) + 2;	/* SPcox (E) */
   tccp->cblkh = cio_read(1) + 2;	/* SPcox (F) */
   tccp->cblksty = cio_read(1);	/* SPcox (G) */
@@ -878,7 +880,7 @@ void j2k_write_sod()
   }
   
   info_IM.num = 0;
-  if (j2k_cp->image_type)
+  if (j2k_cp->decod_format != PGX_DFMT)
     l = tcd_encode_tile_pxm(j2k_curtileno, cio_getbp(),
     cio_numbytesleft() - 2, &info_IM);
   else

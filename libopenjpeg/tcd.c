@@ -1488,7 +1488,7 @@ int tcd_decode_tile(unsigned char *src, int len, int tileno)
 
   time = clock();
 
-  fprintf(stdout, "tile decoding time %d/%d: ", tileno + 1,
+  fprintf(stdout, "Tile %d of %d decoded in ", tileno + 1,
 	  tcd_cp->tw * tcd_cp->th);
 
 	/*--------------TIER2------------------*/
@@ -1508,9 +1508,9 @@ int tcd_decode_tile(unsigned char *src, int len, int tileno)
 
   for (compno = 0; compno < tile->numcomps; compno++) {
     tcd_tilecomp_t *tilec = &tile->comps[compno];
-    if (tcd_cp->reduce_on == 1) {
+    if (tcd_cp->reduce != 0) {
       tcd_img->comps[compno].resno_decoded =
-	tile->comps[compno].numresolutions - tcd_cp->reduce_value - 1;
+	tile->comps[compno].numresolutions - tcd_cp->reduce - 1;
     }
 
 
@@ -1611,7 +1611,7 @@ int tcd_decode_tile(unsigned char *src, int len, int tileno)
   }
 
   time = clock() - time;
-  fprintf(stdout, "total:     %ld.%.3ld s\n", time / CLOCKS_PER_SEC,
+  fprintf(stdout, "%ld.%.3ld s\n", time / CLOCKS_PER_SEC,
 	  (time % CLOCKS_PER_SEC) * 1000 / CLOCKS_PER_SEC);
 
 

@@ -304,7 +304,6 @@ int main(int argc, char **argv)
   int h;			/*   Height of YUV file                                       */
   int CbCr_subsampling_dx;	/*   Sample rate of YUV 4:4:4 4:2:2 or 4:2:0                  */
   int CbCr_subsampling_dy;	/*   Sample rate of YUV 4:4:4 4:2:2 or 4:2:0                  */
-  int output_image_type = -1;
   int frame_rate;		/*   Video Frame Rate                                         */
   int numcomps;			/*   In YUV files, numcomps always considered as 3            */
   int prec;			/*   In YUV files, precision always considered as 8           */
@@ -373,7 +372,7 @@ int main(int argc, char **argv)
       
       if ((S1 == 'y' && S2 == 'u' && S3 == 'v')
 	|| (S1 == 'Y' && S2 == 'U' && S3 == 'V')) {
-	cp.image_type = 3;
+	cp.decod_format = YUV_DFMT;
 	break;
       }
       fprintf(stderr,
@@ -398,7 +397,7 @@ int main(int argc, char **argv)
       
       if ((S1 == 'm' && S2 == 'j' && S3 == '2')
 	|| (S1 == 'M' && S2 == 'J' && S3 == '2'))
-	cp.JPEG2000_format = 2;
+	cp.cod_format = MJ2_CFMT;
       else {
 	fprintf(stderr,
 	  "Unknown output format image *.%c%c%c [only *.mj2]!! \n",
