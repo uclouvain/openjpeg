@@ -955,7 +955,7 @@ int main(int argc, char **argv)
 
   /* Remove the temporary files */
   /* -------------------------- */
-  if (cp.decod_format != PGX_CFMT) {		/* PNM PGM PPM or BMP */
+  if (cp.decod_format != PGX_DFMT) {		/* PNM PGM PPM or BMP */
     for (i = 0; i < img.numcomps; i++) {
       char tmp;
       sprintf(&tmp, "Compo%d", i);
