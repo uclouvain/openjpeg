@@ -50,6 +50,7 @@
 #define PXM_DFMT 0
 #define PGX_DFMT 1
 #define BMP_DFMT 2
+#define YUV_DFMT 3
 
 #define J2K_CP_CSTY_PRT 0x01
 #define J2K_CP_CSTY_SOP 0x02
