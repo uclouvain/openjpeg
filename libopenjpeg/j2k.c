@@ -1347,7 +1347,7 @@ int j2k_decode_jpt_stream(unsigned char *src, int len, j2k_image_t ** img,
       return 0;
     }
     /* data-bin read -> need to read a new header */
-    if ((cio_tell() - position) == header.Msg_length) {
+    if ((unsigned int)(cio_tell() - position) == header.Msg_length) {
       jpt_read_Msg_Header(&header);
       position = cio_tell();
       if (header.Class_Id != 4) {	/* 4 : Tile data-bin message */

@@ -75,8 +75,10 @@ int bmptoimage(char *filename, j2k_image_t * img, int subsampling_dx,
   BITMAPINFOHEADER_t Info_h;
   unsigned char *RGB;
   unsigned char *table_R, *table_G, *table_B;
-  int i, w, h, PAD, type = 0;
-  int gray_scale = 1, not_end_file = 1, line = 0, col = 0;
+  unsigned int j, w, h, PAD, type = 0;
+  int i;
+  int gray_scale = 1, not_end_file = 1; 
+  unsigned int line = 0, col = 0;
   unsigned char v, v2;
   UINT4 W, H;
 
@@ -226,12 +228,12 @@ int bmptoimage(char *filename, j2k_image_t * img, int subsampling_dx,
 
       fread(RGB, sizeof(unsigned char), (3 * W + PAD) * H, IN);
 
-      for (i = 0; i < (3 * W + PAD) * H; i++) {
+      for (j = 0; j < (3 * W + PAD) * H; j++) {
 	unsigned char elmt;
 	int Wp = 3 * W + PAD;
 
-	elmt = RGB[(H - (i / Wp + 1)) * Wp + i % Wp];
-	if ((i % Wp) < (3 * W)) {
+	elmt = RGB[(H - (j / Wp + 1)) * Wp + j % Wp];
+	if ((j % Wp) < (3 * W)) {
 	  switch (type) {
 	  case 0:
 	    fprintf(Compo2, "%c", elmt);
@@ -269,13 +271,13 @@ int bmptoimage(char *filename, j2k_image_t * img, int subsampling_dx,
       table_G = (unsigned char *) malloc(256 * sizeof(unsigned char));
       table_B = (unsigned char *) malloc(256 * sizeof(unsigned char));
 
-      for (i = 0; i < Info_h.biClrUsed; i++) {
-	table_B[i] = getc(IN);
-	table_G[i] = getc(IN);
-	table_R[i] = getc(IN);
+      for (j = 0; j < Info_h.biClrUsed; j++) {
+	table_B[j] = getc(IN);
+	table_G[j] = getc(IN);
+	table_R[j] = getc(IN);
 	getc(IN);
-	if (table_R[i] != table_G[i] && table_R[i] != table_B[i]
-	    && table_G[i] != table_B[i])
+	if (table_R[j] != table_G[j] && table_R[j] != table_B[j]
+	    && table_G[j] != table_B[j])
 	  gray_scale = 0;
       }
 
@@ -305,11 +307,11 @@ int bmptoimage(char *filename, j2k_image_t * img, int subsampling_dx,
 	  fprintf(stderr,
 		  "\033[0;33mFailed to open Compo0 for writing !\033[0;39m\n");
 	}
-	for (i = 0; i < W * H; i++) {
-	  if ((i % W < W - 1 && Info_h.biWidth % 2)
+	for (j = 0; j < W * H; j++) {
+	  if ((j % W < W - 1 && Info_h.biWidth % 2)
 	      || !(Info_h.biWidth % 2))
 	    fprintf(Compo0, "%c",
-		    table_R[RGB[W * H - ((i) / (W) + 1) * W + (i) % (W)]]);
+		    table_R[RGB[W * H - ((j) / (W) + 1) * W + (j) % (W)]]);
 	}
 	fclose(Compo0);
       } else {
@@ -340,15 +342,15 @@ int bmptoimage(char *filename, j2k_image_t * img, int subsampling_dx,
 		  "\033[0;33mFailed to open Compo2 for writing !\033[0;39m\n");
 	}
 
-	for (i = 0; i < W * H; i++) {
-	  if ((i % W < W - 1 && Info_h.biWidth % 2)
+	for (j = 0; j < W * H; j++) {
+	  if ((j % W < W - 1 && Info_h.biWidth % 2)
 	      || !(Info_h.biWidth % 2)) {
 	    fprintf(Compo0, "%c",
-		    table_R[RGB[W * H - ((i) / (W) + 1) * W + (i) % (W)]]);
+		    table_R[RGB[W * H - ((j) / (W) + 1) * W + (j) % (W)]]);
 	    fprintf(Compo1, "%c",
-		    table_G[RGB[W * H - ((i) / (W) + 1) * W + (i) % (W)]]);
+		    table_G[RGB[W * H - ((j) / (W) + 1) * W + (j) % (W)]]);
 	    fprintf(Compo2, "%c",
-		    table_B[RGB[W * H - ((i) / (W) + 1) * W + (i) % (W)]]);
+		    table_B[RGB[W * H - ((j) / (W) + 1) * W + (j) % (W)]]);
 	  }
 
 	}
@@ -374,13 +376,13 @@ int bmptoimage(char *filename, j2k_image_t * img, int subsampling_dx,
       table_G = (unsigned char *) malloc(256 * sizeof(unsigned char));
       table_B = (unsigned char *) malloc(256 * sizeof(unsigned char));
 
-      for (i = 0; i < Info_h.biClrUsed; i++) {
-	table_B[i] = getc(IN);
-	table_G[i] = getc(IN);
-	table_R[i] = getc(IN);
+      for (j = 0; j < Info_h.biClrUsed; j++) {
+	table_B[j] = getc(IN);
+	table_G[j] = getc(IN);
+	table_R[j] = getc(IN);
 	getc(IN);
-	if (table_R[i] != table_G[i] && table_R[i] != table_B[i]
-	    && table_G[i] != table_B[i])
+	if (table_R[j] != table_G[j] && table_R[j] != table_B[j]
+	    && table_G[j] != table_B[j])
 	  gray_scale = 0;
       }
 

@@ -124,7 +124,7 @@ void help_display()
     ("-x             : Create an index file *.Idx (-x index_name.Idx) optional\n");
   printf("\n");
   printf
-    ("-ROI:c=%%d,U=%%d : quantization indices upshifted for component c=%%d [\%%d = 0,1,2]\n");
+    ("-ROI:c=%%d,U=%%d : quantization indices upshifted for component c=%%d [%%d = 0,1,2]\n");
   printf
     ("                 with a value of U=%%d [0 <= %%d <= 37] (i.e. -ROI:c=0,U=25) optional\n");
   printf("\n");

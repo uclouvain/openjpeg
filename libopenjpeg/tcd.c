@@ -130,9 +130,9 @@ void tcd_malloc_encode(j2k_image_t * img, j2k_cp_t * cp, int curtileno)
     /* Modification of the RATE >> */
     for (j = 0; j < tcp->numlayers; j++) {
       tcp->rates[j] =
-	ceil(tile->numcomps * (tile->x1 - tile->x0) *
+	int_ceildiv(tile->numcomps * (tile->x1 - tile->x0) *
 	     (tile->y1 -
-	      tile->y0) * img->comps[0].prec / (tcp->rates[j] * 8 *
+	      tile->y0) * img->comps[0].prec , (tcp->rates[j] * 8 *
 						img->comps[0].dx *
 						img->comps[0].dy));
       if (j && tcp->rates[j] < tcp->rates[j - 1] + 10) {
@@ -389,9 +389,9 @@ void tcd_init_encode(j2k_image_t * img, j2k_cp_t * cp, int curtileno)
     /* Modification of the RATE >> */
     for (j = 0; j < tcp->numlayers; j++) {
       tcp->rates[j] =
-	ceil(tile->numcomps * (tile->x1 - tile->x0) *
+	int_ceildiv(tile->numcomps * (tile->x1 - tile->x0) *
 	     (tile->y1 -
-	      tile->y0) * img->comps[0].prec / (tcp->rates[j] * 8 *
+	      tile->y0) * img->comps[0].prec , (tcp->rates[j] * 8 *
 						img->comps[0].dx *
 						img->comps[0].dy));
       if (j && tcp->rates[j] < tcp->rates[j - 1] + 10) {
@@ -580,8 +580,8 @@ void tcd_init_encode(j2k_image_t * img, j2k_cp_t * cp, int curtileno)
 
 void tcd_init(j2k_image_t * img, j2k_cp_t * cp)
 {
-  int tileno, compno, resno, bandno, precno, cblkno, i;
-  unsigned int x0 = 0, y0 = 0, x1 = 0, y1 = 0, w, h, j, p, q;
+  int tileno, compno, resno, bandno, precno, cblkno, i, j;
+  unsigned int x0 = 0, y0 = 0, x1 = 0, y1 = 0, w, h, p, q;
   tcd_img = img;
   tcd_cp = cp;
   tcd_image.tw = cp->tw;
