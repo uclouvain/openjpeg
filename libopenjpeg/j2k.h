@@ -59,11 +59,6 @@
 #define J2K_CCP_QNTSTY_SEQNT 2
 
 typedef struct {
-  int reduce_on;		/* option reduce is used if reduce = 1 */
-  int reduce_value;		/* if option reduce is used -> original dimension divided by 2^value */
-} j2k_option_t;
-
-typedef struct {
   int dx, dy;			/* XRsiz, YRsiz              */
   int w, h;			/* width and height of data  */
   int x0, y0;			/* offset of the component compare to the whole image  */
@@ -207,8 +202,9 @@ LIBJ2K_API int j2k_encode(j2k_image_t * i, j2k_cp_t * cp, char *output,
  * i: decode image
  * cp: coding parameters that were used to encode the image
  */
-LIBJ2K_API int j2k_decode(unsigned char *src, int len, j2k_image_t ** img,
-			  j2k_cp_t ** cp, j2k_option_t option);
+
+LIBJ2K_API int j2k_decode(unsigned char *src, int len, j2k_image_t * img,
+			  j2k_cp_t * cp);
 
 
 /*
@@ -219,7 +215,7 @@ LIBJ2K_API int j2k_decode(unsigned char *src, int len, j2k_image_t ** img,
  * cp: coding parameters that were used to encode the image
  *
  */
-int j2k_decode_jpt_stream(unsigned char *src, int len, j2k_image_t ** img,
-			  j2k_cp_t ** cp);
+int j2k_decode_jpt_stream(unsigned char *src, int len, j2k_image_t * img,
+			  j2k_cp_t * cp);
 
 #endif

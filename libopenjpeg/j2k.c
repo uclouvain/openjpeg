@@ -1408,8 +1408,9 @@ j2k_dec_mstabent_t *j2k_dec_mstab_lookup(int id)
   return e;
 }
 
-LIBJ2K_API int j2k_decode(unsigned char *src, int len, j2k_image_t ** img,
-			  j2k_cp_t ** cp, j2k_option_t option)
+
+LIBJ2K_API int j2k_decode(unsigned char *src, int len, j2k_image_t * img,
+			  j2k_cp_t * cp)
 {
 
   if (setjmp(j2k_error)) {
@@ -1420,13 +1421,8 @@ LIBJ2K_API int j2k_decode(unsigned char *src, int len, j2k_image_t ** img,
     return cio_numbytes();
   }
 
-  j2k_img = (j2k_image_t *) malloc(sizeof(j2k_image_t));
-  j2k_cp = (j2k_cp_t *) malloc(sizeof(j2k_cp_t));
-  *img = j2k_img;
-  *cp = j2k_cp;
-  /* Option */
-  j2k_cp->reduce_on = option.reduce_on;
-  j2k_cp->reduce_value = option.reduce_value;
+  j2k_img = img;
+  j2k_cp = cp;
 
   j2k_state = J2K_STATE_MHSOC;
   cio_init(src, len);
@@ -1460,8 +1456,8 @@ LIBJ2K_API int j2k_decode(unsigned char *src, int len, j2k_image_t ** img,
  * Read a JPT-stream and decode file
  *
  */
-int j2k_decode_jpt_stream(unsigned char *src, int len, j2k_image_t ** img,
-			  j2k_cp_t ** cp)
+int j2k_decode_jpt_stream(unsigned char *src, int len, j2k_image_t * img,
+			  j2k_cp_t * cp)
 {
   jpt_msg_header_struct_t header;
   int position;
@@ -1474,10 +1470,8 @@ int j2k_decode_jpt_stream(unsigned char *src, int len, j2k_image_t ** img,
     return cio_numbytes();
   }
 
-  j2k_img = (j2k_image_t *) malloc(sizeof(j2k_image_t));
-  j2k_cp = (j2k_cp_t *) malloc(sizeof(j2k_cp_t));
-  *img = j2k_img;
-  *cp = j2k_cp;
+  j2k_img = img;
+  j2k_cp = cp;
 
   j2k_state = J2K_STATE_MHSOC;
   cio_init(src, len);

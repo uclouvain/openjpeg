@@ -74,6 +74,6 @@ int jp2_encode(jp2_struct_t * jp2_struct, j2k_cp_t * cp, char *output,
 	       char *index);
 
 int jp2_decode(unsigned char *src, int len, jp2_struct_t * jp2_struct,
-	       j2k_cp_t ** cp, j2k_option_t option);
+	       j2k_cp_t * cp);
 
 #endif

@@ -445,7 +445,7 @@ int jp2_write_jp2c(j2k_image_t * img, j2k_cp_t * cp, char *jp2_buffer,
 }
 
 int jp2_read_jp2c(unsigned char *src, int len, jp2_struct_t * jp2_struct,
-		  j2k_cp_t ** cp, j2k_option_t option)
+		  j2k_cp_t * cp)
 {
   jp2_box_t box;
 
@@ -457,7 +457,7 @@ int jp2_read_jp2c(unsigned char *src, int len, jp2_struct_t * jp2_struct,
 
   src += cio_tell();
 
-  if (j2k_decode(src, len, &jp2_struct->image, cp, option) == 0) {
+  if (j2k_decode(src, len, jp2_struct->image, cp) == 0) {
     fprintf(stderr, "JP2F box: failed to decode J2K bitstream image!\n");
     return 1;
   }
@@ -509,7 +509,7 @@ int jp2_read_jp()
 }
 
 int jp2_decode(unsigned char *src, int len, jp2_struct_t * jp2_struct,
-	       j2k_cp_t ** cp, j2k_option_t option)
+	       j2k_cp_t * cp)
 {
   cio_init(src, len);
 
@@ -519,7 +519,7 @@ int jp2_decode(unsigned char *src, int len, jp2_struct_t * jp2_struct,
     return 1;
   if (jp2_read_jp2h(jp2_struct))
     return 1;
-  if (jp2_read_jp2c(src, len, jp2_struct, cp, option))
+  if (jp2_read_jp2c(src, len, jp2_struct, cp))
     return 1;
   return 0;
 }
