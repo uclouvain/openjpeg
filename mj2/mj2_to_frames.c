@@ -29,6 +29,9 @@ int main(int argc, char *argv[]) {
   j2k_cp_t cp;
   int i;
 
+  cp.layer=0;
+  cp.reduce=0;
+
   if (argc != 3) {
     printf("Bad syntax: Usage: MJ2_decoder inputfile.mj2 outputfile.yuv\n"); 
     printf("Example: MJ2_decoder foreman.mj2 foreman.yuv\n");
