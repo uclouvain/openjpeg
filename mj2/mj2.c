@@ -229,8 +229,8 @@ int mj2_init_stdmovie(mj2_movie_t * movie)
       tk->opcolor[0] = 0;	/* OpColor                                                    */
       tk->opcolor[1] = 0;	/* OpColor                                                    */
       tk->opcolor[2] = 0;	/* OpColor                                                    */
-      tk->creation_time = movie->creation_time;	/* Seconds between 1/1/04 and 1/1/70                          */
-      tk->language = 0;		/* Language (undefined)                                       */
+      tk->creation_time = movie->creation_time;	/* Seconds between 1/1/04 and 1/1/70          */
+      tk->language = 0;		/* Language (undefined)					      */
       tk->layer = 0;
       tk->volume = 1 << 8;		/* Movie volume (default = 0x0100) */
       tk->trans_matrix[0] = 0x00010000;	/* Transformation matrix for track */
@@ -1808,12 +1808,12 @@ int mj2_read_smhd(mj2_tk_t * tk)
   }
 
   if (0 != cio_read(1)) {	/* Version = 0 */
-    fprintf(stderr, "Error: Only Version 0 handled in VMHD box\n");
+    fprintf(stderr, "Error: Only Version 0 handled in SMHD box\n");
     return 1;
   }
 
   if (0 != cio_read(3)) {	/* Flags = 0  */
-    fprintf(stderr, "Error with flag in VMHD box. Expected flag 0\n");
+    fprintf(stderr, "Error with flag in SMHD box. Expected flag 0\n");
     return 1;
   }
 
@@ -1874,12 +1874,12 @@ int mj2_read_hmhd(mj2_tk_t * tk)
   }
 
   if (0 != cio_read(1)) {	/* Version = 0 */
-    fprintf(stderr, "Error: Only Version 0 handled in VMHD box\n");
+    fprintf(stderr, "Error: Only Version 0 handled in HMHD box\n");
     return 1;
   }
 
   if (0 != cio_read(3)) {	/* Flags = 0  */
-    fprintf(stderr, "Error with flag in VMHD box. Expected flag 0\n");
+    fprintf(stderr, "Error with flag in HMHD box. Expected flag 0\n");
     return 1;
   }
 
@@ -2057,12 +2057,12 @@ int mj2_read_hdlr(mj2_tk_t * tk)
 
 
   if (0 != cio_read(1)) {	/* Version = 0 */
-    fprintf(stderr, "Error: Only Version 0 handled in VMHD box\n");
+    fprintf(stderr, "Error: Only Version 0 handled in HDLR box\n");
     return 1;
   }
 
   if (0 != cio_read(3)) {	/* Flags = 0  */
-    fprintf(stderr, "Error with flag in VMHD box. Expected flag 0\n");
+    fprintf(stderr, "Error with flag in HDLR box. Expected flag 0\n");
     return 1;
   }
 
@@ -2521,7 +2521,7 @@ int mj2_read_mvhd(mj2_movie_t * movie)
 
 
   if (0 != cio_read(4)) {	/* Version = 0, flags = 0 */
-    fprintf(stderr, "Error: Only Version 0 handled\n");
+    fprintf(stderr, "Error: Only Version 0 handled in MVHD box\n");
   }
 
   movie->creation_time = cio_read(4);	/* Creation Time */
