@@ -220,4 +220,6 @@ LIBJ2K_API int j2k_decode(unsigned char *src, int len, j2k_image_t * img,
 int j2k_decode_jpt_stream(unsigned char *src, int len, j2k_image_t * img,
 			  j2k_cp_t * cp);
 
+void j2k_dec_release();//antonin
+
 #endif

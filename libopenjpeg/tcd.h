@@ -179,4 +179,6 @@ int tcd_encode_tile_pgx(int tileno, unsigned char *dest, int len,
  */
 int tcd_decode_tile(unsigned char *src, int len, int tileno);
 
+void tcd_dec_release();
+
 #endif

@@ -1614,6 +1614,7 @@ int tcd_decode_tile(unsigned char *src, int len, int tileno)
   fprintf(stderr, "total:     %ld.%.3ld s\n", time / CLOCKS_PER_SEC,
 	  (time % CLOCKS_PER_SEC) * 1000 / CLOCKS_PER_SEC);
 
+
   for (compno = 0; compno < tile->numcomps; compno++) {
     free(tcd_image.tiles[tileno].comps[compno].data);
   }
@@ -1623,4 +1624,31 @@ int tcd_decode_tile(unsigned char *src, int len, int tileno)
   }
 
   return l;
+}
+
+void tcd_dec_release()
+{
+  int tileno,compno,resno,bandno,precno;
+  for (tileno=0;tileno<tcd_image.tw*tcd_image.th;tileno++) {
+    tcd_tile_t tile=tcd_image.tiles[tileno];
+    for (compno=0;compno<tile.numcomps;compno++) {
+      tcd_tilecomp_t tilec=tile.comps[compno];
+      for (resno=0;resno<tilec.numresolutions;resno++) {
+	tcd_resolution_t res=tilec.resolutions[resno];
+	for (bandno=0;bandno<res.numbands;bandno++) {
+	  tcd_band_t band=res.bands[bandno];
+	  for (precno=0;precno<res.ph*res.pw;precno++) {
+	    tcd_precinct_t prec=band.precincts[precno];
+	    if (prec.cblks!=NULL) free(prec.cblks);
+	    if (prec.imsbtree!=NULL) free(prec.imsbtree);
+	    if (prec.incltree!=NULL) free(prec.incltree);
+	  }
+	  if (band.precincts!=NULL) free(band.precincts);
+	}
+      }
+      if (tilec.resolutions!=NULL) free(tilec.resolutions);
+    }
+    if (tile.comps!=NULL) free(tile.comps);
+  }
+  if (tcd_image.tiles!=NULL) free(tcd_image.tiles);
 }

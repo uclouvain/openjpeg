@@ -26,6 +26,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+//MEMORY LEAK
+#ifdef _DEBUG
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>  // Must be included first
+#include <crtdbg.h>
+#endif
+//MEM
+
 #include <openjpeg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -894,6 +902,13 @@ int main(int argc, char **argv)
   for (tileno = 0; tileno < cp.tw * cp.th; tileno++)
     free(cp.tcps[tileno].tccps);
   free(cp.tcps);
+
+
+  //MEMORY LEAK
+  #ifdef _DEBUG
+    _CrtDumpMemoryLeaks();
+  #endif
+  //MEM
 
   return 0;
 }

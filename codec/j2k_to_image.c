@@ -25,6 +25,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+//MEMORY LEAK
+#ifdef _DEBUG
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>  // Must be included first
+#include <crtdbg.h>
+#endif
+//MEM
+
 
 
 #include <openjpeg.h>
@@ -39,9 +47,9 @@ int ceildiv(int a, int b)
 
 int main(int argc, char **argv)
 {
-  FILE *f;
-  char *src, *src_name;
-  char *dest, S1, S2, S3;
+  FILE *f=NULL;
+  char *src=NULL, *src_name=NULL;
+  char *dest=NULL, S1, S2, S3;
   int len;
 
   j2k_image_t img;
@@ -50,7 +58,7 @@ int main(int argc, char **argv)
   int w, wr, wrr, h, hr, hrr, max;
   int i, image_type = -1, compno, pad, j;
   int adjust;
-  jp2_struct_t *jp2_struct;
+  jp2_struct_t *jp2_struct=NULL;
 
   if (argc < 3) {
     fprintf(stderr,
@@ -552,6 +560,14 @@ int main(int argc, char **argv)
   default:
     break;
   }
+
+  j2k_dec_release();
+
+  //MEMORY LEAK
+  #ifdef _DEBUG
+    _CrtDumpMemoryLeaks();
+  #endif
+  //MEM
 
   return 0;
 }

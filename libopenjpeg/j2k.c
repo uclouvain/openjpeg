@@ -1458,6 +1458,7 @@ j2k_decode(unsigned char *src, int len, j2k_image_t * img, j2k_cp_t * cp)
   cio_init(src, len);
 
   for (;;) {
+
     j2k_dec_mstabent_t *e;
     int id = cio_read(2);
     if (id >> 8 != 0xff) {
@@ -1473,6 +1474,7 @@ j2k_decode(unsigned char *src, int len, j2k_image_t * img, j2k_cp_t * cp)
     if (e->handler) {
       (*e->handler) ();
     }
+
     if (j2k_state == J2K_STATE_NEOC)
       break;			/* RAJOUTE */
   }
@@ -1560,6 +1562,26 @@ j2k_decode_jpt_stream(unsigned char *src, int len, j2k_image_t * img,
     j2k_read_eoc();		/* RAJOUTE */
 
   return 0;
+}
+
+void j2k_dec_release()
+{
+  int i=0;
+
+  //tcd_dec_release();
+
+  if (j2k_tile_len!=NULL) free(j2k_tile_len);
+  if (j2k_tile_data!=NULL) free(j2k_tile_data);
+  if (j2k_default_tcp.ppt_data!=NULL) free(j2k_default_tcp.ppt_data);
+  if (j2k_default_tcp.tccps!=NULL) free(j2k_default_tcp.tccps);
+  for (i=0;i<j2k_cp->tw*j2k_cp->th;i++) {
+    if (j2k_cp->tcps[i].ppt_data!=NULL) free(j2k_cp->tcps[i].ppt_data);
+    if (j2k_cp->tcps[i].tccps!=NULL) free(j2k_cp->tcps[i].tccps);
+  }
+  if (j2k_cp->ppm_data!=NULL) free(j2k_cp->ppm_data);
+  if (j2k_cp->tcps!=NULL) free(j2k_cp->tcps);
+  if (j2k_img->comps!=NULL) free(j2k_img->comps);
+  if (j2k_cp->tileno!=NULL) free(j2k_cp->tileno);
 }
 
 #ifdef WIN32
