@@ -167,8 +167,8 @@ int mj2_init_stdmovie(mj2_movie_t * movie)
   movie->creation_time = (unsigned int) ltime + 2082844800;	/* Seconds between 1/1/04 and 1/1/70 */
   movie->timescale = 1000;
 
-  movie->rate = 1;		/* Rate to play presentation  (default = 0x00010000)          */
-  movie->volume = 1;		/* Movie volume (default = 0x0100)                            */
+  movie->rate = 1 << 16;		/* Rate to play presentation  (default = 0x00010000)          */
+  movie->volume = 1 << 8;		/* Movie volume (default = 0x0100)                            */
   movie->trans_matrix[0] = 0x00010000;	/* Transformation matrix for video                            */
   movie->trans_matrix[1] = 0;	/* Unity is { 0x00010000,0,0,0,0x00010000,0,0,0,0x40000000 }  */
   movie->trans_matrix[2] = 0;
@@ -232,7 +232,7 @@ int mj2_init_stdmovie(mj2_movie_t * movie)
       tk->creation_time = movie->creation_time;	/* Seconds between 1/1/04 and 1/1/70                          */
       tk->language = 0;		/* Language (undefined)                                       */
       tk->layer = 0;
-      tk->volume = 1;
+      tk->volume = 1 << 8;		/* Movie volume (default = 0x0100) */
       tk->trans_matrix[0] = 0x00010000;	/* Transformation matrix for track */
       tk->trans_matrix[1] = 0;	/* Unity is { 0x00010000,0,0,0,0x00010000,0,0,0,0x40000000 }  */
       tk->trans_matrix[2] = 0;
@@ -1779,7 +1779,7 @@ void mj2_write_smhd(mj2_tk_t * tk)
 
   cio_write(0, 4);		/* Version = 0, flags = 0 */
 
-  cio_write(tk->balance << 8, 2);
+  cio_write(tk->balance, 2);
 
   cio_write(0, 2);		/* Reserved */
 
@@ -1816,7 +1816,7 @@ int mj2_read_smhd(mj2_tk_t * tk)
   }
 
   tk->track_type = 1;
-  tk->balance = cio_read(2) >> 8;
+  tk->balance = cio_read(2);
 
   cio_skip(2);			/* Reserved */
 
@@ -2272,7 +2272,7 @@ void mj2_write_tkhd(mj2_tk_t * tk)
 
   cio_write(0, 2);		/* Predefined */
 
-  cio_write(tk->volume << 8, 2);	/* Volume       */
+  cio_write(tk->volume, 2);	/* Volume       */
 
   cio_write(0, 2);		/* Reserved */
 
@@ -2344,7 +2344,7 @@ int mj2_read_tkhd(mj2_tk_t * tk)
 
   cio_read(2);			/* Predefined */
 
-  tk->volume = cio_read(2) >> 8;	/* Volume       */
+  tk->volume = cio_read(2);	/* Volume       */
 
   cio_skip(2);			/* Reserved */
 
@@ -2460,9 +2460,9 @@ void mj2_write_mvhd(mj2_movie_t * movie)
 
   cio_write(movie->duration, 4);
 
-  cio_write(movie->rate << 16, 4);	/* Rate to play presentation    */
+  cio_write(movie->rate, 4);	/* Rate to play presentation    */
 
-  cio_write(movie->volume << 8, 2);	/* Volume       */
+  cio_write(movie->volume, 2);	/* Volume       */
 
   cio_write(0, 2);		/* Reserved */
   cio_write(0, 4);		/* Reserved */
@@ -2530,11 +2530,11 @@ int mj2_read_mvhd(mj2_movie_t * movie)
 
   movie->duration = cio_read(4);	/* Duration */
 
-  movie->rate = cio_read(4) >> 16;	/* Rate to play presentation    */
+  movie->rate = cio_read(4);		/* Rate to play presentation    */
 
-  movie->volume = cio_read(2) >> 8;	/* Volume       */
+  movie->volume = cio_read(2);		/* Volume       */
 
-  cio_skip(10);			/* Reserved */
+  cio_skip(10);				/* Reserved */
 
   movie->trans_matrix[0] = cio_read(4);	/* Transformation matrix for video */
   movie->trans_matrix[1] = cio_read(4);
