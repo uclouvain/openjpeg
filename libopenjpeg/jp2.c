@@ -435,7 +435,7 @@ int jp2_write_jp2c(j2k_image_t * img, j2k_cp_t * cp, char *jp2_buffer,
   cio_skip(4);
   cio_write(JP2_JP2C, 4);	// JP2C
 
-  len = j2k_encode(img, cp, jp2_buffer, cp->tdx * cp->tdy * 2, index);
+  len = j2k_encode(img, cp, jp2_buffer, cp->tdx * cp->tdy * cp->th * cp->tw * 2, index);
 
   box.length = cio_tell() - box.init_pos;
   cio_seek(box.init_pos);
@@ -443,6 +443,7 @@ int jp2_write_jp2c(j2k_image_t * img, j2k_cp_t * cp, char *jp2_buffer,
   cio_seek(box.init_pos + box.length);
   return box.length;
 }
+
 
 int jp2_read_jp2c(unsigned char *src, int len, jp2_struct_t * jp2_struct,
 		  j2k_cp_t * cp)
