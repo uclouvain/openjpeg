@@ -31,25 +31,28 @@
 #include <stdio.h>
 #include <setjmp.h>
 
-static unsigned char *bio_start, *bio_end, *bio_bp;
-static unsigned int bio_buf;
-static int bio_ct;
+static unsigned char *bio_start; /* pointer to the start of the buffer */
+static unsigned char *bio_end;   /* pointer to the end of the buffer */
+static unsigned char *bio_bp;    /* pointer to the present position in the buffer */
+static unsigned int bio_buf;     /* temporary place where each byte is read or written */
+static int bio_ct;               /* coder : number of bits free to write // decoder : number of bits read */
 
 extern jmp_buf j2k_error;
 
-/* <summary> */
-/* Number of bytes written. */
-/* </summary> */
+/*
+ * Number of bytes written.
+ */
 int bio_numbytes()
 {
 	return bio_bp - bio_start;
 }
 
-/* <summary> */
-/* Init encoder. */
-/* </summary> */
-/* <param name="bp">Output buffer</param> */
-/* <param name="len">Output buffer length</param> */
+/*
+ * Init encoder.
+ *
+ * bp  : Output buffer
+ * len : Output buffer length 
+ */
 void bio_init_enc(unsigned char *bp, int len)
 {
 	bio_start = bp;
@@ -59,11 +62,12 @@ void bio_init_enc(unsigned char *bp, int len)
 	bio_ct = 8;
 }
 
-/* <summary> */
-/* Init decoder. */
-/* </summary> */
-/* <param name="bp">Input buffer</param> */
-/* <param name="len">Input buffer length</param> */
+/*
+ * Init decoder.
+ * 
+ * bp  : Input buffer
+ * len : Input buffer length 
+ */
 void bio_init_dec(unsigned char *bp, int len)
 {
 	bio_start = bp;
@@ -73,9 +77,10 @@ void bio_init_dec(unsigned char *bp, int len)
 	bio_ct = 0;
 }
 
-/* <summary> */
-/* Write byte. --> function modified to eliminate longjmp !!! */
-/* </summary> */
+/*
+ * Write byte. --> function modified to eliminate longjmp !!! 
+ *
+ */
 int bio_byteout()
 {
 	bio_buf = (bio_buf << 8) & 0xffff;
@@ -86,9 +91,10 @@ int bio_byteout()
 	return 0;
 }
 
-/* <summary> */
-/* Read byte. --> function modified to eliminate longjmp !!  */
-/* </summary> */
+/*
+ * Read byte. --> function modified to eliminate longjmp !!
+ *
+ */
 int bio_bytein()
 {
 	bio_buf = (bio_buf << 8) & 0xffff;
@@ -99,10 +105,11 @@ int bio_bytein()
 	return 0;
 }
 
-/* <summary> */
-/* Write bit. */
-/* </summary> */
-/* <param name="b">Bit to write (0 or 1)</param> */
+/*
+ * Write bit.
+ *
+ * b : Bit to write (0 or 1)
+ */
 void bio_putbit(int b)
 {
 	if (bio_ct == 0) {
@@ -112,9 +119,10 @@ void bio_putbit(int b)
 	bio_buf |= b << bio_ct;
 }
 
-/* <summary> */
-/* Read bit. */
-/* </summary> */
+/*
+ * Read bit.
+ *
+ */
 int bio_getbit()
 {
 	if (bio_ct == 0) {
@@ -124,11 +132,12 @@ int bio_getbit()
 	return (bio_buf >> bio_ct) & 1;
 }
 
-/* <summary> */
-/* Write bits. */
-/* </summary> */
-/* <param name="v">Value of bits</param> */
-/* <param name="n">Number of bits to write</param> */
+/*
+ * Write bits.
+ *
+ * v : Value of bits
+ * n : Number of bits to write 
+ */
 void bio_write(int v, int n)
 {
 	int i;
@@ -137,10 +146,11 @@ void bio_write(int v, int n)
 	}
 }
 
-/* <summary> */
-/* Read bits. */
-/* </summary> */
-/* <param name="n">Number of bits to read</param> */
+/*
+ * Read bits.
+ * 
+ * n : Number of bits to read
+ */
 int bio_read(int n)
 {
 	int i, v;
@@ -151,9 +161,10 @@ int bio_read(int n)
 	return v;
 }
 
-/* <summary> */
-/* Flush bits. MOdified to eliminate longjmp !! */
-/* </summary> */
+/*
+ * Flush bits. Modified to eliminate longjmp !!
+ *
+ */
 int bio_flush()
 {
 	bio_ct = 0;
@@ -168,8 +179,9 @@ int bio_flush()
 	return 0;
 }
 
-/* <summary> */
-/* </summary> */
+/*
+ * Passes the ending bits (coming from flushing)
+ */
 int bio_inalign()
 {
 	bio_ct = 0;
