@@ -80,6 +80,7 @@ typedef struct {
   int x1, y1;			/* Xsiz, Ysiz                */
   int numcomps;			/* number of components      */
   int index_on;			/* 0 = no index || 1 = index */
+  int color_space;		/* sRGB, Greyscale or YUV */
   j2k_comp_t *comps;		/* image-components          */
 } j2k_image_t;
 
@@ -129,6 +130,8 @@ typedef struct {
 } j2k_tcp_t;
 
 typedef struct {
+  int JPEG2000_format;		/* 0: J2K   1:JP2 */
+  int intermed_file;		/* 1: Store each encoded tile one by one in the output file (for mega-Images)*/
   int image_type;		/* 0: PNM, PGM, PPM 1: PGX           */
   int disto_alloc;		/* Allocation by rate/distortion     */
   int fixed_alloc;		/* Allocation by fixed layer         */
@@ -161,6 +164,7 @@ typedef struct {
   int end_header;		/* End position of the header                            */
   int end_pos;			/* End position                                          */
   int pw[33], ph[33];		/* precinct number for each resolution level             */
+
   int pdx[33], pdy[33];		/* precinct size (in power of 2), in X and Y for each resolution level */
   info_packet *packet;		/* information concerning packets inside tile            */
   int nbpix;			/* add fixed_quality                                     */
@@ -188,11 +192,11 @@ typedef struct {
  * Encode an image into a JPEG-2000 codestream
  * i: image to encode
  * cp: coding parameters
- * dest: destination buffer
+ * output: destination buffer or name of the output file when cp->intermed_file==1
  * len: length of destination buffer
  * index : index file name
  */
-LIBJ2K_API int j2k_encode(j2k_image_t * i, j2k_cp_t * cp, char *outfile,
+LIBJ2K_API int j2k_encode(j2k_image_t * i, j2k_cp_t * cp, char *output,
 			  int len, char *index);
 
 /* LIBJ2K_API int j2k_encode(j2k_image_t *i, j2k_cp_t *cp,unsigned char *dest, int len); */
