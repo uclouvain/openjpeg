@@ -82,7 +82,7 @@ int jp2_init_stdjp2(jp2_struct_t * jp2_struct, j2k_image_t * img)
   jp2_struct->h = img->y1 - img->y0;	// HEIGHT
   jp2_struct->w = img->x1 - img->x0;	// WIDTH
   jp2_struct->numcomps = img->numcomps;	// NC
-  jp2_struct->comps = (jp2_comps_t *) malloc(sizeof(jp2_comps_t));
+  jp2_struct->comps = (jp2_comps_t *) malloc(jp2_struct->numcomps * sizeof(jp2_comps_t));
 
   depth_0 = img->comps[0].prec - 1;
   sign = img->comps[0].sgnd;
