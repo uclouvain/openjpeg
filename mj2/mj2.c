@@ -287,38 +287,41 @@ void mj2_stsc_decompact(mj2_tk_t * tk)
 {
   int j, i;
   unsigned int k;
-
+  int sampleno=0;
+  
   if (tk->num_samplestochunk == 1) {
     tk->num_chunks =
       (unsigned int) ceil((double) tk->num_samples /
-			  (double) tk->sampletochunk[0].samples_per_chunk);
+      (double) tk->sampletochunk[0].samples_per_chunk);
     tk->chunk =
       (mj2_chunk_t *) malloc(tk->num_chunks * sizeof(mj2_chunk_t));
     for (k = 0; k < tk->num_chunks; k++) {
       tk->chunk[k].num_samples = tk->sampletochunk[0].samples_per_chunk;
     }
-
+    
   } else {
     tk->chunk =
       (mj2_chunk_t *) malloc(tk->num_samples * sizeof(mj2_chunk_t));
     tk->num_chunks = 0;
-    for (i = 0; i < tk->num_samplestochunk - 1; i++) {
+    for (i = 0; i < tk->num_samplestochunk -1 ; i++) {
       for (j = tk->sampletochunk[i].first_chunk - 1;
-	   j < tk->sampletochunk[i + 1].first_chunk - 1; j++) {
+      j < tk->sampletochunk[i + 1].first_chunk - 1; j++) {
 	tk->chunk[j].num_samples = tk->sampletochunk[i].samples_per_chunk;
 	tk->num_chunks++;
+	sampleno += tk->chunk[j].num_samples;
       }
     }
-    tk->num_chunks++;
-    for (k = tk->sampletochunk[tk->num_samplestochunk].first_chunk - 1;
-	 k < tk->num_chunks; k++) {
+    tk->num_chunks += (int)(tk->num_samples  - sampleno) / tk->sampletochunk[tk->num_samplestochunk - 1].samples_per_chunk;
+    for (k = tk->sampletochunk[tk->num_samplestochunk - 1].first_chunk - 1;
+    k < tk->num_chunks; k++) {
       tk->chunk[k].num_samples =
-	tk->sampletochunk[tk->num_samplestochunk].samples_per_chunk;
+	tk->sampletochunk[tk->num_samplestochunk - 1].samples_per_chunk;
     }
     tk->chunk = realloc(tk->chunk, tk->num_chunks * sizeof(mj2_chunk_t));
   }
-
+  
 }
+
 
 /*
 * Chunk offset box Decompact
