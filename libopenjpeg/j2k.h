@@ -59,11 +59,20 @@
 #define J2K_CCP_QNTSTY_SEQNT 2
 
 typedef struct {
+        int reduce_on;                          /* option reduce is used if reduce = 1 */
+        int reduce_value;                       /* if option reduce is used -> original dimension divided by 2^value */
+} j2k_option_t;
+
+typedef struct {
 	int dx, dy;				/* XRsiz, YRsiz              */
+        int w, h;                               /* width and height of data  */   
+        int x0, y0;                             /* offset of the component compare to the whole image  */
 	int prec;				/* precision                 */
 	int bpp;				/* deapth of image in bits   */
 	int sgnd;				/* signed                    */
-	int *data;				/* image-component data      */
+        int resno_decoded;                      /* number of decoded resolution */
+        int factor;                             /* number of division by 2 of the out image  compare to the original size of image */
+        int *data;				/* image-component data      */
 } j2k_comp_t;
 
 typedef struct {
@@ -71,7 +80,7 @@ typedef struct {
 	int x1, y1;				/* Xsiz, Ysiz                */
 	int numcomps;				/* number of components      */
 	int index_on;				/* 0 = no index || 1 = index */
-	j2k_comp_t *comps;			/* image-components          */
+ 	j2k_comp_t *comps;			/* image-components          */
 } j2k_image_t;
 
 typedef struct {
@@ -122,10 +131,14 @@ typedef struct {
 	int image_type;			/* 0: PNM, PGM, PPM 1: PGX           */
 	int disto_alloc;		/* Allocation by rate/distortion     */
 	int fixed_alloc;		/* Allocation by fixed layer         */
+        int reduce_on;                  /* option reduce is used if reduce = 1 */
+        int reduce_value;               /* if option reduce is used -> original dimension divided by 2^value */
 	int tx0, ty0;			/* XTOsiz, YTOsiz                    */
 	int tdx, tdy;			/* XTsiz, YTsiz                      */
 	char *comment;			/* comment for coding                */
-	int tw, th;
+        int tw, th;                     /* number of tiles in width and heigth */
+        int *tileno;                    /* ID number of the tiles present in the codestream */
+        int tileno_size;                /* size of the vector tileno */
         unsigned char *ppm_data;        /* packet header store there for futur use in t2_decode_packet             */
         int ppm;                        /* If ppm == 1 --> there was a PPM marker for the present tile             */
         int ppm_store;                  /* Use in case of multiple marker PPM (number of info already store)       */
@@ -186,7 +199,7 @@ LIBJ2K_API int j2k_encode(j2k_image_t * i, j2k_cp_t * cp, char *outfile, int len
  * i: decode image
  * cp: coding parameters that were used to encode the image
  */
-LIBJ2K_API int j2k_decode(unsigned char *src, int len, j2k_image_t ** img, j2k_cp_t ** cp);
+LIBJ2K_API int j2k_decode(unsigned char *src, int len, j2k_image_t ** img, j2k_cp_t ** cp, j2k_option_t option);
 
 
 /*

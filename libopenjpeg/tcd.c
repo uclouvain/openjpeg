@@ -151,7 +151,7 @@ void tcd_malloc_encode(j2k_image_t * img, j2k_cp_t * cp, int curtileno)
 			tilec->x1 = int_ceildiv(tile->x1, img->comps[compno].dx);
 			tilec->y1 = int_ceildiv(tile->y1, img->comps[compno].dy);
 
-			tilec->data = (int *) malloc(sizeof(int) * (tilec->x1 - tilec->x0) * (tilec->y1 - tilec->y0));
+			tilec->data = (int *) malloc((tilec->x1 - tilec->x0) * (tilec->y1 - tilec->y0) * sizeof(int));
 			tilec->numresolutions = tccp->numresolutions;
 
 			tilec->resolutions = (tcd_resolution_t *) malloc(tilec->numresolutions * sizeof(tcd_resolution_t));
@@ -375,7 +375,7 @@ void tcd_init_encode(j2k_image_t * img, j2k_cp_t * cp, int curtileno)
 			tilec->x1 = int_ceildiv(tile->x1, img->comps[compno].dx);
 			tilec->y1 = int_ceildiv(tile->y1, img->comps[compno].dy);
 
-			tilec->data = (int *) malloc(sizeof(int) * (tilec->x1 - tilec->x0) * (tilec->y1 - tilec->y0));
+			tilec->data = (int *) malloc((tilec->x1 - tilec->x0) * (tilec->y1 - tilec->y0) * sizeof(int));
 			tilec->numresolutions = tccp->numresolutions;
 			/* tilec->resolutions=(tcd_resolution_t*)realloc(tilec->resolutions,tilec->numresolutions*sizeof(tcd_resolution_t)); */
 			for (resno = 0; resno < tilec->numresolutions; resno++) {
@@ -516,15 +516,24 @@ void tcd_init_encode(j2k_image_t * img, j2k_cp_t * cp, int curtileno)
 
 void tcd_init(j2k_image_t * img, j2k_cp_t * cp)
 {
-	int tileno, compno, resno, bandno, precno, cblkno;
+	int tileno, compno, resno, bandno, precno, cblkno, i;
+	unsigned int x0=0 , y0=0, x1 = 0, y1 = 0, w, h, j;  
 	tcd_img = img;
 	tcd_cp = cp;
 	tcd_image.tw = cp->tw;
 	tcd_image.th = cp->th;
 	tcd_image.tiles = (tcd_tile_t *) malloc(cp->tw * cp->th * sizeof(tcd_tile_t));
-	for (tileno = 0; tileno < cp->tw * cp->th; tileno++) {
+
+	/*for (tileno = 0; tileno < cp->tw * cp->th; tileno++) {
 		j2k_tcp_t *tcp = &cp->tcps[tileno];
-		tcd_tile_t *tile = &tcd_image.tiles[tileno];
+		tcd_tile_t *tile = &tcd_image.tiles[tileno];*/
+	
+	for (i = 0 ; i < cp->tileno_size ; i++){
+	  j2k_tcp_t *tcp = &cp->tcps[cp->tileno[i]];
+	  tcd_tile_t *tile = &tcd_image.tiles[cp->tileno[i]];
+	  tileno = cp->tileno[i];
+
+
 		//		int previous_x0, previous_x1, previous_y0, previous_y1;
 		/* cfr p59 ISO/IEC FDIS15444-1 : 2000 (18 august 2000) */
 		int p = tileno % cp->tw;		/* si numerotation matricielle .. */
@@ -547,7 +556,7 @@ void tcd_init(j2k_image_t * img, j2k_cp_t * cp)
 			tilec->x1 = int_ceildiv(tile->x1, img->comps[compno].dx);
 			tilec->y1 = int_ceildiv(tile->y1, img->comps[compno].dy);
 
-			tilec->data = (int *) malloc(sizeof(int) * (tilec->x1 - tilec->x0) * (tilec->y1 - tilec->y0));
+			tilec->data = (int *) malloc((tilec->x1 - tilec->x0) * (tilec->y1 - tilec->y0) * sizeof(int));
 			tilec->numresolutions = tccp->numresolutions;
 			tilec->resolutions = (tcd_resolution_t *) malloc(tilec->numresolutions * sizeof(tcd_resolution_t));
 			for (resno = 0; resno < tilec->numresolutions; resno++) {
@@ -675,6 +684,27 @@ void tcd_init(j2k_image_t * img, j2k_cp_t * cp)
 		}
 	}
 	/* tcd_dump(&tcd_image,0); */
+	
+
+	/* Allocate place to store the date decoded = fianl image */
+	/* Place limited by the tile really present in the codestream */
+	for (i = 0; i < img->numcomps; i++) {
+	  for (j = 0; j < cp->tileno_size; j++) {
+	    tileno = cp->tileno[j];
+	    x0 = j == 0 ? tcd_image.tiles[tileno].x0 : int_min(x0 , tcd_image.tiles[tileno].x0);
+	    y0 = j == 0 ? tcd_image.tiles[tileno].y0 : int_min(y0 , tcd_image.tiles[tileno].y0);
+	    x1 = j == 0 ? tcd_image.tiles[tileno].x1 : int_max(x1 , tcd_image.tiles[tileno].x1);
+	    y1 = j == 0 ? tcd_image.tiles[tileno].y1 : int_max(y1 , tcd_image.tiles[tileno].y1);
+	  }
+	  w = int_ceildiv(x1 - x0, img->comps[i].dx);
+	  h = int_ceildiv(y1 - y0, img->comps[i].dy);
+	  img->comps[i].data = (int *) calloc(w * h,sizeof(int));
+	  img->comps[i].w = w;
+	  img->comps[i].h = h;
+	  img->comps[i].x0 = x0;
+	  img->comps[i].y0 = y0;
+	}
+	
 }
 
 void tcd_makelayer_fixed(int layno, int final) {
@@ -1053,7 +1083,7 @@ int tcd_encode_tile_pgx(int tileno, unsigned char *dest, int len, info_image * i
 {
 	int compno;
 	int l;
-	clock_t time7;
+	clock_t time;
 	tcd_tile_t *tile;
 	j2k_tcp_t *tcp = &tcd_cp->tcps[0];
 	j2k_tccp_t *tccp = &tcp->tccps[0];
@@ -1075,7 +1105,7 @@ int tcd_encode_tile_pgx(int tileno, unsigned char *dest, int len, info_image * i
 	}
 	/* << INDEX */
 /*---------------TILE-------------------*/
-	time7 = clock();
+	time = clock();
 
 	for (compno = 0; compno < tile->numcomps; compno++) {
 		FILE *src;
@@ -1171,8 +1201,8 @@ int tcd_encode_tile_pgx(int tileno, unsigned char *dest, int len, info_image * i
 	l = t2_encode_packets(tcd_img, tcd_cp, tileno, tile, tcd_tcp->numlayers, dest, len, info_IM);
 
  /*---------------CLEAN-------------------*/
-	time7 = clock() - time7;
-	printf("total:     %ld.%.3ld s\n", time7 / CLOCKS_PER_SEC, (time7 % CLOCKS_PER_SEC) * 1000 / CLOCKS_PER_SEC);
+	time = clock() - time;
+	printf("total:     %ld.%.3ld s\n", time / CLOCKS_PER_SEC, (time % CLOCKS_PER_SEC) * 1000 / CLOCKS_PER_SEC);
 
 	for (compno = 0; compno < tile->numcomps; compno++) {
 		tilec = &tile->comps[compno];
@@ -1188,7 +1218,7 @@ int tcd_decode_tile(unsigned char *src, int len, int tileno)
 	int l;
 	int compno;
 	int eof = 0;
-	clock_t time1, time2, time3, time4, time5, time6;
+	clock_t time;
 	tcd_tile_t *tile;
 
 	tcd_tileno = tileno;
@@ -1196,10 +1226,11 @@ int tcd_decode_tile(unsigned char *src, int len, int tileno)
 	tcd_tcp = &tcd_cp->tcps[tileno];
 	tile = tcd_tile;
 
-	time6 = clock();
+	time = clock();
 
-	time1 = clock();
-	printf("tile decoding time %d/%d:\n", tileno + 1, tcd_cp->tw * tcd_cp->th);
+	fprintf(stderr,"tile decoding time %d/%d: ", tileno + 1, tcd_cp->tw * tcd_cp->th);
+
+	/*--------------TIER2------------------*/
 
 	l = t2_decode_packets(src, len, tcd_img, tcd_cp, tileno, tile);
 
@@ -1207,77 +1238,81 @@ int tcd_decode_tile(unsigned char *src, int len, int tileno)
 		eof = 1;
 		fprintf(stderr, "tcd_decode: incomplete bistream\n");
 	}
-	time1 = clock() - time1;
-	
-	/* printf("tier 2:    %ld.%.3ld s\n", time1/CLOCKS_PER_SEC, (time1%CLOCKS_PER_SEC)*1000/CLOCKS_PER_SEC);    */
 
-	time2 = clock();
+	/*------------------TIER1-----------------*/
 	t1_init_luts();
 	t1_decode_cblks(tile, tcd_tcp);
-	time2 = clock() - time2;
-	/* printf("tier 1:    %ld.%.3ld s\n", time2/CLOCKS_PER_SEC, (time2%CLOCKS_PER_SEC)*1000/CLOCKS_PER_SEC); */
 
-	time3 = clock();
+	/*----------------DWT---------------------*/
+
 	for (compno = 0; compno < tile->numcomps; compno++) 
 	  {
 	    tcd_tilecomp_t *tilec = &tile->comps[compno];
+	    if (tcd_cp->reduce_on == 1)
+	      {
+		tcd_img->comps[compno].resno_decoded = tile->comps[compno].numresolutions - tcd_cp->reduce_value - 1;
+	      }
+
+
 	    if (tcd_tcp->tccps[compno].qmfbid == 1) 
 	      {
-		dwt_decode(tilec->data, tilec->x1 - tilec->x0,tilec->y1 - tilec->y0, tilec, tilec->numresolutions - 1);
-	      }  else 
-		{ /*if (tcd_tcp->tccps[compno].qmfbid == 0) {*/
-		  dwt_decode_real(tilec->data, tilec->x1 - tilec->x0, tilec->y1 - tilec->y0, tilec, tilec->numresolutions - 1);
+		dwt_decode(tilec->data, tilec->x1 - tilec->x0, tilec->y1 - tilec->y0, tilec, tilec->numresolutions - 1, 
+			   tilec->numresolutions - 1 - tcd_img->comps[compno].resno_decoded);
+	      }  else {
+		  dwt_decode_real(tilec->data, tilec->x1 - tilec->x0, tilec->y1 - tilec->y0, tilec, tilec->numresolutions - 1, 
+				  tilec->numresolutions - 1 - tcd_img->comps[compno].resno_decoded);
 		} 
+
+	    if (tile->comps[compno].numresolutions > 0)
+	      tcd_img->comps[compno].factor = tile->comps[compno].numresolutions - (tcd_img->comps[compno].resno_decoded + 1);
 	  }
+	
+	/*----------------MCT-------------------*/
 
-	time3 = clock() - time3;
-	/* printf("dwt:       %ld.%.3ld s\n", time3/CLOCKS_PER_SEC, (time3%CLOCKS_PER_SEC)*1000/CLOCKS_PER_SEC); */
-
-	time4 = clock();
 	if (tcd_tcp->mct) {
-		if (tcd_tcp->tccps[0].qmfbid == 0) {
-			mct_decode_real(tile->comps[0].data, tile->comps[1].data, tile->comps[2].data, 
-					(tile->comps[0].x1 - tile->comps[0].x0) * (tile->comps[0].y1 - tile->comps[0].y0));
+		if (tcd_tcp->tccps[0].qmfbid == 1) {
+		  mct_decode(tile->comps[0].data, tile->comps[1].data, tile->comps[2].data, 
+			     (tile->comps[0].x1 - tile->comps[0].x0) * (tile->comps[0].y1 - tile->comps[0].y0));
 		} else {
-			mct_decode(tile->comps[0].data, tile->comps[1].data, tile->comps[2].data, 
-				   (tile->comps[0].x1 - tile->comps[0].x0) * (tile->comps[0].y1 - tile->comps[0].y0));
+		  mct_decode_real(tile->comps[0].data, tile->comps[1].data, tile->comps[2].data, 
+				  (tile->comps[0].x1 - tile->comps[0].x0) * (tile->comps[0].y1 - tile->comps[0].y0));
 		}
 	}
-	time4 = clock() - time4;
-	/* printf("mct:       %ld.%.3ld s\n", time4/CLOCKS_PER_SEC, (time4%CLOCKS_PER_SEC)*1000/CLOCKS_PER_SEC); */
 
-	time5 = clock();
+	/*---------------TILE-------------------*/
+
 	for (compno = 0; compno < tile->numcomps; compno++) {
-		tcd_tilecomp_t *tilec = &tile->comps[compno];
-		int adjust = tcd_img->comps[compno].sgnd ? 0 : 1 << (tcd_img->comps[compno].prec - 1);
-		int min = tcd_img->comps[compno].sgnd ? -(1 << (tcd_img->comps[compno].prec - 1)) : 0;
-		int max = tcd_img->comps[compno].sgnd ? (1 << (tcd_img->comps[compno].prec - 1)) - 1 : (1 << tcd_img->comps[compno].prec) - 1;
-		int tw = tilec->x1 - tilec->x0;
-		int w =	int_ceildiv(tcd_img->x1 - tcd_img->x0, tcd_img->comps[compno].dx);
-		int i, j;
-		int offset_x = int_ceildiv(tcd_img->x0, tcd_img->comps[compno].dx);
-		int offset_y = int_ceildiv(tcd_img->y0, tcd_img->comps[compno].dy);
+	  tcd_tilecomp_t *tilec = &tile->comps[compno];
+	  tcd_resolution_t *res = &tilec->resolutions[tcd_img->comps[compno].resno_decoded];
+	  int adjust = tcd_img->comps[compno].sgnd ? 0 : 1 << (tcd_img->comps[compno].prec - 1);
+	  int min = tcd_img->comps[compno].sgnd ? - (1 << (tcd_img->comps[compno].prec - 1)) : 0;
+	  int max = tcd_img->comps[compno].sgnd ? (1 << (tcd_img->comps[compno].prec - 1)) - 1 : (1 << tcd_img->comps[compno].prec) - 1;
+	  
+	  int tw = tilec->x1 - tilec->x0;
+	  int w = tcd_img->comps[compno].w;
 
-		for (j = tilec->y0; j < tilec->y1; j++) {
-			for (i = tilec->x0; i < tilec->x1; i++) {
-				int v;
-				if (tcd_tcp->tccps[compno].qmfbid == 1) {
-					v = tilec->data[i - tilec->x0 + (j - tilec->y0) * tw];
-				} else {  /* if (tcd_tcp->tccps[compno].qmfbid == 0) */
-					v = tilec->data[i - tilec->x0 + (j - tilec->y0) * tw] >> 13;
-				}
-				v += adjust;
-				
-				/* tcd_img->comps[compno].data[i+j*w]=int_clamp(v, min, max); */
-				tcd_img->comps[compno].data[(i - offset_x) + (j - offset_y) * w] = int_clamp(v, min, max);	/* change ! */
-			}
-		}
+	  int i, j;
+	  int offset_x = int_ceildivpow2(tcd_img->comps[compno].x0, tcd_img->comps[compno].factor);
+	  int offset_y = int_ceildivpow2(tcd_img->comps[compno].y0, tcd_img->comps[compno].factor);
+	  
+	  for (j = res->y0; j < res->y1; j++) {
+	    for (i = res->x0; i < res->x1; i++) {
+
+	      int v;
+	      if (tcd_tcp->tccps[compno].qmfbid == 1) {
+		v = tilec->data[i - res->x0 + (j - res->y0) * tw];
+	      } else {
+		v = tilec->data[i - res->x0 + (j - res->y0) * tw] >> 13;
+	      }
+	      v += adjust;
+	      
+	      tcd_img->comps[compno].data[(i - offset_x) + (j - offset_y) * w] = int_clamp(v, min, max);
+	    }
+	  }
 	}
-	time5 = clock() - time5;
-	/* printf("tile->img: %ld.%.3ld s\n", time5/CLOCKS_PER_SEC, (time5%CLOCKS_PER_SEC)*1000/CLOCKS_PER_SEC); */
 
-	time6 = clock() - time6;
-	printf("total:     %ld.%.3ld s\n\n", time6 / CLOCKS_PER_SEC, (time6 % CLOCKS_PER_SEC) * 1000 / CLOCKS_PER_SEC);
+	time = clock() - time;
+	fprintf(stderr,"total:     %ld.%.3ld s\n", time / CLOCKS_PER_SEC, (time % CLOCKS_PER_SEC) * 1000 / CLOCKS_PER_SEC);
 
 	if (eof) {
 		longjmp(j2k_error, 1);

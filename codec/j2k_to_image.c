@@ -30,6 +30,7 @@
 #include <openjpeg.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 //#include <unistd.h>
 
 int ceildiv(int a, int b)
@@ -45,12 +46,13 @@ int main(int argc, char **argv)
 	int len;
 	j2k_image_t *img;
 	j2k_cp_t *cp;
-	int w, h, max;
+	j2k_option_t option;
+	int w, wr, wrr, h, hr, hrr, max;
 	int i, image_type = -1, compno, pad;
 	int adjust;
 
 	if (argc < 3) {
-		fprintf(stderr, "usage: %s j2k-file pnm-file\n", argv[0]);
+		fprintf(stderr, "usage: %s j2k-file image-file -reduce n (<- optional)\n", argv[0]);
 		return 1;
 	}
 
@@ -61,6 +63,21 @@ int main(int argc, char **argv)
 	}
 
 	dest = argv[2];
+
+	option.reduce_on = 0;
+	option.reduce_value = 0;
+
+	/* OPTION REDUCE IS ACTIVE */
+	if (argc == 5)
+	  {
+	    if (strcmp(argv[3],"-reduce"))
+	      { 
+		fprintf(stderr, "usage: options ""-reduce n"" where n is the factor of reduction [%s]\n",argv[3]);
+		return 1;
+	      }
+	    option.reduce_on = 1;
+	    sscanf(argv[4],"%d",&option.reduce_value);
+	  }
 
 	while (*dest) {
 		dest++;
@@ -111,7 +128,7 @@ int main(int argc, char **argv)
 
 	if (S1 == 'j' && S2 == '2' && S3 == 'k')
 	  {
-	    if (!j2k_decode(src, len, &img, &cp)) {
+	    if (!j2k_decode(src, len, &img, &cp, option)) {
 	      fprintf(stderr, "j2k_to_image: failed to decode image!\n");
 	      return 1;
 	    }
@@ -140,7 +157,7 @@ int main(int argc, char **argv)
 	/* /  FORMAT : PNM, PGM or PPM  / */
 	/* /                            / */
 	/* ---------------------------- / */
-	
+
 	switch (image_type)
 	  {	
 	  case 1: /* PNM PGM PPM*/
@@ -153,25 +170,37 @@ int main(int argc, char **argv)
 	      {
 		f = fopen(argv[2], "wb");
 		w = ceildiv(img->x1 - img->x0, img->comps[0].dx);
+		// wr = ceildiv(int_ceildivpow2(img->x1 - img->x0,img->factor),img->comps[0].dx);
+		wr = img->comps[0].w;
+		wrr = int_ceildivpow2(img->comps[0].w ,img->comps[0].factor);
+		
 		h = ceildiv(img->y1 - img->y0, img->comps[0].dy);
-		//max = (1 << img->comps[0].prec) - 1;
-		max =img->comps[0].prec>8? 255:(1 << img->comps[0].prec) - 1;
-		fprintf(f, "P6\n%d %d\n%d\n", w, h, max);
-		adjust=img->comps[0].prec>8?img->comps[0].prec-8:0;
-		for (i = 0; i < w * h; i++) 
+		// hr = ceildiv(int_ceildivpow2(img->y1 - img->y0,img->factor), img->comps[0].dy);
+		hr = img->comps[0].h;
+		hrr = int_ceildivpow2(img->comps[0].h ,img->comps[0].factor);
+
+		max = img->comps[0].prec > 8 ? 255 : (1 << img->comps[0].prec) - 1;
+
+		img->comps[0].x0 = int_ceildivpow2(img->comps[0].x0 - int_ceildiv(img->x0, img->comps[0].dx),img->comps[0].factor);
+		img->comps[0].y0 = int_ceildivpow2(img->comps[0].y0 - int_ceildiv(img->y0, img->comps[0].dy),img->comps[0].factor);
+
+
+		fprintf(f, "P6\n# %d %d %d %d %d\n%d %d\n%d\n",cp->tcps[cp->tileno[0]].tccps[0].numresolutions, w, h,img->comps[0].x0, img->comps[0].y0, wrr, hrr, max);
+		adjust = img->comps[0].prec > 8 ? img->comps[0].prec - 8 : 0;
+		for (i = 0; i < wrr * hrr; i++) 
 		  {
 		    char r, g, b;
-		    r = img->comps[0].data[i];
-		    r+=(img->comps[0].sgnd? 1 << (img->comps[0].prec-1):0);
-		    r=r>>adjust;			 
+		    r = img->comps[0].data[i / wrr * wr + i % wrr];
+		    r += (img->comps[0].sgnd ? 1 << (img->comps[0].prec-1):0);
+		    r = r >> adjust;			 
 		    
-		    g = img->comps[1].data[i];
-		    g+=(img->comps[1].sgnd? 1 << (img->comps[1].prec-1):0);
-		    g=g>>adjust;
+		    g = img->comps[1].data[i / wrr * wr + i % wrr];
+		    g += (img->comps[1].sgnd ? 1 << (img->comps[1].prec-1):0);
+		    g = g >> adjust;
 		    
-		    b = img->comps[2].data[i];
-		    b+=(img->comps[2].sgnd? 1 << (img->comps[2].prec-1):0);
-		    b=b>>adjust;
+		    b = img->comps[2].data[i / wrr * wr + i % wrr];
+		    b += (img->comps[2].sgnd ? 1 << (img->comps[2].prec-1):0);
+		    b = b >> adjust;
 		    
 		    fprintf(f, "%c%c%c", r, g, b);
 		  }
@@ -189,18 +218,31 @@ int main(int argc, char **argv)
 			}
 		      f = fopen(name, "wb");
 		      w = ceildiv(img->x1 - img->x0, img->comps[compno].dx);
-		      // w = ceildiv(int_ceildivpow2(img->x1 - img->x0,img->factor),img->comps[compno].dx);
+		      // wr = ceildiv(int_ceildivpow2(img->x1 - img->x0,img->factor),img->comps[compno].dx);
+		      wr = img->comps[compno].w;
+		      wrr = int_ceildivpow2(img->comps[compno].w ,img->comps[compno].factor);
+
 		      h = ceildiv(img->y1 - img->y0, img->comps[compno].dy);
-		      // h = ceildiv(int_ceildivpow2(img->y1 - img->y0,img->factor), img->comps[compno].dy);
-		      max =img->comps[compno].prec>8? 255:(1 << img->comps[compno].prec) - 1;
-		      fprintf(f, "P5\n%d %d\n%d\n", w, h, max);
-		      adjust=img->comps[compno].prec>8?img->comps[compno].prec-8:0;
-		      for (i = 0; i < w * h; i++) 
+		      // hr = ceildiv(int_ceildivpow2(img->y1 - img->y0,img->factor), img->comps[compno].dy);
+		      hr = img->comps[compno].h;
+		      hrr = int_ceildivpow2(img->comps[compno].h ,img->comps[compno].factor);
+
+		      max = img->comps[compno].prec > 8 ? 255 : (1 << img->comps[compno].prec) - 1;
+		      
+		      img->comps[compno].x0 = int_ceildivpow2(img->comps[compno].x0 - int_ceildiv(img->x0, img->comps[compno].dx),
+							      img->comps[compno].factor);
+		      img->comps[compno].y0 = int_ceildivpow2(img->comps[compno].y0 - int_ceildiv(img->y0, img->comps[compno].dy),
+							      img->comps[compno].factor);
+
+		      fprintf(f, "P5\n# %d %d %d %d %d\n%d %d\n%d\n", cp->tcps[cp->tileno[0]].tccps[compno].numresolutions, w, 
+			      h, img->comps[compno].x0, img->comps[compno].y0,wrr, hrr, max);
+		      adjust = img->comps[compno].prec > 8 ? img->comps[compno].prec - 8 : 0;
+		      for (i = 0; i < wrr * hrr; i++) 
 			{
 			  char l;
-			  l = img->comps[compno].data[i];
-			  l+=(img->comps[compno].sgnd? 1 << (img->comps[compno].prec-1):0);
-			  l=l>>adjust;
+			  l = img->comps[compno].data[i / wrr * wr + i % wrr];
+			  l += (img->comps[compno].sgnd ? 1 << (img->comps[compno].prec - 1) : 0);
+			  l = l >> adjust;
 			  fprintf(f, "%c", l);
 			}
 		      fclose(f);
@@ -222,13 +264,22 @@ int main(int argc, char **argv)
 		  sprintf(name, "%d_%s", compno, argv[2]);
 		else
 		  sprintf(name, "%s", argv[2]);
+
 		f = fopen(name, "wb");
-		w = ceildiv(img->x1 - img->x0, comp->dx);
-		h = ceildiv(img->y1 - img->y0, comp->dy);
-		fprintf(f, "PG LM %c %d %d %d\n", comp->sgnd ? '-' : '+', comp->prec, w, h);
-		for (i = 0; i < w * h; i++) 
+		// w = ceildiv(img->x1 - img->x0, comp->dx);
+		// wr = ceildiv(int_ceildivpow2(img->x1 - img->x0,img->factor), comp->dx);
+		w = img->comps[compno].w;
+		wr = int_ceildivpow2(img->comps[compno].w ,img->comps[compno].factor);
+
+		// h = ceildiv(img->y1 - img->y0, comp->dy);
+		// hr = ceildiv(int_ceildivpow2(img->y1 - img->y0,img->factor), comp->dy);
+		h = img->comps[compno].h;
+		hr = int_ceildivpow2(img->comps[compno].h ,img->comps[compno].factor);
+
+		fprintf(f, "PG LM %c %d %d %d\n", comp->sgnd ? '-' : '+', comp->prec, wr, hr);
+		for (i = 0; i < wr * hr; i++) 
 		  {
-		    int v = img->comps[compno].data[i];
+		    int v = img->comps[compno].data[i / wr * w + i % wr];
 		    if (comp->prec <= 8) 
 		      {
 			char c = (char) v;
@@ -267,52 +318,62 @@ int main(int argc, char **argv)
 		   <<-- <<-- <<-- <<-- */
 		
 		f = fopen(argv[2], "wb");
-		w = ceildiv(img->x1 - img->x0, img->comps[0].dx);
-		h = ceildiv(img->y1 - img->y0, img->comps[0].dy);
+		// w = ceildiv(img->x1 - img->x0, img->comps[0].dx);
+		// wr = ceildiv(int_ceildivpow2(img->x1 - img->x0,img->factor), img->comps[0].dx);
+		w = img->comps[0].w;
+		wr = int_ceildivpow2(img->comps[0].w ,img->comps[0].factor);
 		
+		// h = ceildiv(img->y1 - img->y0, img->comps[0].dy);
+		// hr = ceildiv(int_ceildivpow2(img->y1 - img->y0,img->factor), img->comps[0].dy);
+		h = img->comps[0].h;
+		hr = int_ceildivpow2(img->comps[0].h ,img->comps[0].factor);
+
 		fprintf(f, "BM");
 		
 		/* FILE HEADER */
 		/* ------------- */
 		fprintf(f, "%c%c%c%c",
-			(unsigned char) (h * w * 3 + 3 * h * (w % 2) + 54) & 0xff,
-			(unsigned char) ((h * w * 3 + 3 * h * (w % 2) + 54) >> 8) & 0xff,
-			(unsigned char) ((h * w * 3 + 3 * h * (w % 2) + 54) >> 16) & 0xff,
-			(unsigned char) ((h * w * 3 + 3 * h * (w % 2) + 54) >> 24) & 0xff);
+			(unsigned char) (hr * wr * 3 + 3 * hr * (wr % 2) + 54) & 0xff,
+			(unsigned char) ((hr * wr * 3 + 3 * hr * (wr % 2) + 54) >> 8) & 0xff,
+			(unsigned char) ((hr * wr * 3 + 3 * hr * (wr % 2) + 54) >> 16) & 0xff,
+			(unsigned char) ((hr * wr * 3 + 3 * hr * (wr % 2) + 54) >> 24) & 0xff);
 		fprintf(f, "%c%c%c%c", (0) & 0xff, ((0) >> 8) & 0xff, ((0) >> 16) & 0xff, ((0) >> 24) & 0xff);
 		fprintf(f, "%c%c%c%c", (54) & 0xff, ((54) >> 8) & 0xff, ((54) >> 16) & 0xff, ((54) >> 24) & 0xff);
 		
 		/* INFO HEADER   */
 		/* ------------- */
 		fprintf(f, "%c%c%c%c", (40) & 0xff, ((40) >> 8) & 0xff, ((40) >> 16) & 0xff, ((40) >> 24) & 0xff);
-		fprintf(f, "%c%c%c%c", (unsigned char) ((w) & 0xff),(unsigned char) ((w) >> 8) & 0xff,
-			(unsigned char) ((w) >> 16) & 0xff, (unsigned char) ((w) >> 24) & 0xff);
-		fprintf(f, "%c%c%c%c", (unsigned char) ((h) & 0xff), (unsigned char) ((h) >> 8) & 0xff,
-			(unsigned char) ((h) >> 16) & 0xff, (unsigned char) ((h) >> 24) & 0xff);
+		fprintf(f, "%c%c%c%c", (unsigned char) ((wr) & 0xff),(unsigned char) ((wr) >> 8) & 0xff,
+			(unsigned char) ((wr) >> 16) & 0xff, (unsigned char) ((wr) >> 24) & 0xff);
+		fprintf(f, "%c%c%c%c", (unsigned char) ((hr) & 0xff), (unsigned char) ((hr) >> 8) & 0xff,
+			(unsigned char) ((hr) >> 16) & 0xff, (unsigned char) ((hr) >> 24) & 0xff);
 		fprintf(f, "%c%c", (1) & 0xff, ((1) >> 8) & 0xff);
 		fprintf(f, "%c%c", (24) & 0xff, ((24) >> 8) & 0xff);
 		fprintf(f, "%c%c%c%c", (0) & 0xff, ((0) >> 8) & 0xff, ((0) >> 16) & 0xff, ((0) >> 24) & 0xff);
-		fprintf(f, "%c%c%c%c", (unsigned char) (3 * h * w + 3 * h * (w % 2)) & 0xff,
-			(unsigned char) ((h * w * 3 + 3 * h * (w % 2)) >> 8) & 0xff,
-			(unsigned char) ((h * w * 3 + 3 * h * (w % 2)) >> 16) & 0xff,
-			(unsigned char) ((h * w * 3 + 3 * h * (w % 2)) >> 24) & 0xff);
+		fprintf(f, "%c%c%c%c", (unsigned char) (3 * hr * wr + 3 * hr * (wr % 2)) & 0xff,
+			(unsigned char) ((hr * wr * 3 + 3 * hr * (wr % 2)) >> 8) & 0xff,
+			(unsigned char) ((hr * wr * 3 + 3 * hr * (wr % 2)) >> 16) & 0xff,
+			(unsigned char) ((hr * wr * 3 + 3 * hr * (wr % 2)) >> 24) & 0xff);
 		fprintf(f, "%c%c%c%c", (7834) & 0xff, ((7834) >> 8) & 0xff, ((7834) >> 16) & 0xff, ((7834) >> 24) & 0xff);
 		fprintf(f, "%c%c%c%c", (7834) & 0xff, ((7834) >> 8) & 0xff, ((7834) >> 16) & 0xff, ((7834) >> 24) & 0xff);
 		fprintf(f, "%c%c%c%c", (0) & 0xff, ((0) >> 8) & 0xff, ((0) >> 16) & 0xff, ((0) >> 24) & 0xff);
 		fprintf(f, "%c%c%c%c", (0) & 0xff, ((0) >> 8) & 0xff, ((0) >> 16) & 0xff, ((0) >> 24) & 0xff);
 		
-		for (i = 0; i < w * h; i++) 
+		for (i = 0; i < wr * hr; i++) 
 		  {
 		    unsigned char R, G, B;
-		    
-		    R = img->comps[0].data[w * h - ((i) / (w) + 1) * w + (i) % (w)];
-		    G = img->comps[1].data[w * h - ((i) / (w) + 1) * w + (i) % (w)];
-		    B = img->comps[2].data[w * h - ((i) / (w) + 1) * w + (i) % (w)];
+		    /* a modifier */
+		    // R = img->comps[0].data[w * h - ((i) / (w) + 1) * w + (i) % (w)];
+		    R = img->comps[0].data[w * hr - ((i) / (wr) + 1) * w + (i) % (wr)];
+		    // G = img->comps[1].data[w * h - ((i) / (w) + 1) * w + (i) % (w)];
+		    G = img->comps[1].data[w * hr - ((i) / (wr) + 1) * w + (i) % (wr)];
+		    // B = img->comps[2].data[w * h - ((i) / (w) + 1) * w + (i) % (w)];
+		    B = img->comps[2].data[w * hr - ((i) / (wr) + 1) * w + (i) % (wr)];
 		    fprintf(f, "%c%c%c", B, G, R);
 
-		    if ((i + 1) % w == 0)
+		    if ((i + 1) % wr == 0)
 		      {
-		      for (pad = (3*w)%4?4-(3*w)%4:0 ; pad > 0 ; pad--) /* ADD */
+		      for (pad = (3 * wr) % 4 ? 4 - (3 * wr) % 4 : 0 ; pad > 0 ; pad--) /* ADD */
 			fprintf(f, "%c", 0);
 		      }
 		  }
@@ -326,18 +387,25 @@ int main(int argc, char **argv)
 		     
 		     <<-- <<-- <<-- <<-- */
 		  f = fopen(argv[2], "wb");
-		  w = ceildiv(img->x1 - img->x0, img->comps[0].dx);
-		  h = ceildiv(img->y1 - img->y0, img->comps[0].dy);
+		  // w = ceildiv(img->x1 - img->x0, img->comps[0].dx);
+		  // wr = ceildiv(int_ceildivpow2(img->x1 - img->x0,img->factor), img->comps[0].dx);
+		  w = img->comps[0].w;
+		  wr = int_ceildivpow2(img->comps[0].w ,img->comps[0].factor);
+		  
+		  // h = ceildiv(img->y1 - img->y0, img->comps[0].dy);
+		  // hr = ceildiv(int_ceildivpow2(img->y1 - img->y0,img->factor), img->comps[0].dy);
+		  h = img->comps[0].h;
+		  hr = int_ceildivpow2(img->comps[0].h ,img->comps[0].factor);
 		  
 		  fprintf(f, "BM");
 		  
 		  /* FILE HEADER */
 		  /* ------------- */
 		  fprintf(f, "%c%c%c%c",
-			  (unsigned char) (h * w + 54 + 1024 + h * (w % 2)) & 0xff,
-			  (unsigned char) ((h * w + 54 + 1024 + h * (w % 2)) >> 8) & 0xff,
-			  (unsigned char) ((h * w + 54 + 1024 + h * (w % 2)) >> 16) & 0xff,
-			  (unsigned char) ((h * w + 54 + 1024 + w * (w % 2)) >> 24) & 0xff);
+			  (unsigned char) (hr * wr + 54 + 1024 + hr * (wr % 2)) & 0xff,
+			  (unsigned char) ((hr * wr + 54 + 1024 + hr * (wr % 2)) >> 8) & 0xff,
+			  (unsigned char) ((hr * wr + 54 + 1024 + hr * (wr % 2)) >> 16) & 0xff,
+			  (unsigned char) ((hr * wr + 54 + 1024 + wr * (wr % 2)) >> 24) & 0xff);
 		  fprintf(f, "%c%c%c%c", (0) & 0xff, ((0) >> 8) & 0xff, ((0) >> 16) & 0xff, ((0) >> 24) & 0xff);
 		  fprintf(f, "%c%c%c%c", (54 + 1024) & 0xff, ((54 + 1024) >> 8) & 0xff,
 			  ((54 + 1024) >> 16) & 0xff, ((54 + 1024) >> 24) & 0xff);
@@ -345,17 +413,17 @@ int main(int argc, char **argv)
 		  /* INFO HEADER */
 		  /* ------------- */
 		  fprintf(f, "%c%c%c%c", (40) & 0xff, ((40) >> 8) & 0xff, ((40) >> 16) & 0xff, ((40) >> 24) & 0xff);
-		  fprintf(f, "%c%c%c%c", (unsigned char) ((w) & 0xff), (unsigned char) ((w) >> 8) & 0xff,
-			  (unsigned char) ((w) >> 16) & 0xff, (unsigned char) ((w) >> 24) & 0xff);
-		  fprintf(f, "%c%c%c%c", (unsigned char) ((h) & 0xff), (unsigned char) ((h) >> 8) & 0xff,
-			  (unsigned char) ((h) >> 16) & 0xff, (unsigned char) ((h) >> 24) & 0xff);
+		  fprintf(f, "%c%c%c%c", (unsigned char) ((wr) & 0xff), (unsigned char) ((wr) >> 8) & 0xff,
+			  (unsigned char) ((wr) >> 16) & 0xff, (unsigned char) ((wr) >> 24) & 0xff);
+		  fprintf(f, "%c%c%c%c", (unsigned char) ((hr) & 0xff), (unsigned char) ((hr) >> 8) & 0xff,
+			  (unsigned char) ((hr) >> 16) & 0xff, (unsigned char) ((hr) >> 24) & 0xff);
 		  fprintf(f, "%c%c", (1) & 0xff, ((1) >> 8) & 0xff);
 		  fprintf(f, "%c%c", (8) & 0xff, ((8) >> 8) & 0xff);
 		  fprintf(f, "%c%c%c%c", (0) & 0xff, ((0) >> 8) & 0xff, ((0) >> 16) & 0xff, ((0) >> 24) & 0xff);
-		  fprintf(f, "%c%c%c%c", (unsigned char) (h * w + h * (w % 2)) & 0xff,
-			  (unsigned char) ((h * w + h * (w % 2)) >> 8) & 0xff,
-			  (unsigned char) ((h * w + h * (w % 2)) >> 16) & 0xff,
-			  (unsigned char) ((h * w + h * (w % 2)) >> 24) & 0xff);
+		  fprintf(f, "%c%c%c%c", (unsigned char) (hr * wr + hr * (wr % 2)) & 0xff,
+			  (unsigned char) ((hr * wr + hr * (wr % 2)) >> 8) & 0xff,
+			  (unsigned char) ((hr * wr + hr * (wr % 2)) >> 16) & 0xff,
+			  (unsigned char) ((hr * wr + hr * (wr % 2)) >> 24) & 0xff);
 		  fprintf(f, "%c%c%c%c", (7834) & 0xff, ((7834) >> 8) & 0xff, ((7834) >> 16) & 0xff, ((7834) >> 24) & 0xff);
 		  fprintf(f, "%c%c%c%c", (7834) & 0xff, ((7834) >> 8) & 0xff, ((7834) >> 16) & 0xff, ((7834) >> 24) & 0xff);
 		  fprintf(f, "%c%c%c%c", (256) & 0xff, ((256) >> 8) & 0xff, ((256) >> 16) & 0xff, ((256) >> 24) & 0xff);
@@ -367,11 +435,18 @@ int main(int argc, char **argv)
 		fprintf(f, "%c%c%c%c", i, i, i, 0);
 	      }
 	    
-	    for (i = 0; i < w * h; i++) 
+	    for (i = 0; i < wr * hr; i++) 
 	      {
-		fprintf(f, "%c", img->comps[0].data[w * h - ((i) / (w) + 1) * w + (i) % (w)]);
-		if (((i + 1) % w == 0 && w % 2))
-		  fprintf(f, "%c", 0);
+		/* a modifier !! */
+		// fprintf(f, "%c", img->comps[0].data[w * h - ((i) / (w) + 1) * w + (i) % (w)]);
+		fprintf(f, "%c", img->comps[0].data[w * hr - ((i) / (wr) + 1) * w + (i) % (wr)]);
+		/*if (((i + 1) % w == 0 && w % 2))
+		  fprintf(f, "%c", 0);*/
+		if ((i + 1) % wr == 0)
+		  {
+		    for (pad = wr % 4 ? 4 - wr % 4 : 0 ; pad > 0 ; pad--) /* ADD */
+		      fprintf(f, "%c", 0);
+		  }
 	      }
 	    break;
 	  default :

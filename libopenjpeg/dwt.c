@@ -234,7 +234,7 @@ void dwt_encode(int *a, int w, int h, tcd_tilecomp_t * tilec, int l)
 /* <summary>                            */
 /* Inverse 5-3 wavelet tranform in 2-D. */
 /* </summary>                           */
-void dwt_decode(int *a, int w, int h, tcd_tilecomp_t * tilec, int l)//, tcd_tilecomp_t * row_tilec, tcd_tilecomp_t * col_tilec)
+void dwt_decode(int *a, int w, int h, tcd_tilecomp_t * tilec, int l, int stop)
 {
 	int i, j;
 	int rw;            /* width of the resolution level computed                                                           */
@@ -242,7 +242,7 @@ void dwt_decode(int *a, int w, int h, tcd_tilecomp_t * tilec, int l)//, tcd_tile
 	int rw1;           /* width of the resolution level once lower than computed one                                       */
 	int rh1;           /* height of the resolution level once lower than computed one                                      */
 
-	for (i = l - 1; i >= 0; i--) {
+	for (i = l - 1; i >= stop; i--) {
 	  int cas_col = 0; /* 0 = non inversion on horizontal filtering 1 = inversion between low-pass and high-pass filtering */
 	  int cas_row = 0; /* 0 = non inversion on vertical filtering 1 = inversion between low-pass and high-pass filtering   */
 
@@ -400,7 +400,7 @@ void dwt_encode_real(int *a, int w, int h, tcd_tilecomp_t * tilec, int l)
 /* <summary>                             */
 /* Inverse 9-7 wavelet transform in 2-D. */
 /* </summary>                            */
-void dwt_decode_real(int *a, int w, int h, tcd_tilecomp_t * tilec, int l)//, tcd_tilecomp_t * row_tilec, tcd_tilecomp_t * col_tilec)
+void dwt_decode_real(int *a, int w, int h, tcd_tilecomp_t * tilec, int l, int stop)
 {
         int i, j;
 	int rw;            /* width of the resolution level computed                                                           */
@@ -408,7 +408,7 @@ void dwt_decode_real(int *a, int w, int h, tcd_tilecomp_t * tilec, int l)//, tcd
 	int rw1;           /* width of the resolution level once lower than computed one                                       */
 	int rh1;           /* height of the resolution level once lower than computed one                                      */
 
-	for (i = l - 1; i >= 0; i--) {
+	for (i = l - 1; i >= stop; i--) {
 	  int cas_col = 0; /* 0 = non inversion on horizontal filtering 1 = inversion between low-pass and high-pass filtering */
 	  int cas_row = 0; /* 0 = non inversion on vertical filtering 1 = inversion between low-pass and high-pass filtering   */
 

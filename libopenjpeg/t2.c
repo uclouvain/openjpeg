@@ -241,7 +241,7 @@ int t2_encode_packet(tcd_tile_t * tile, j2k_tcp_t * tcp, int compno, int resno, 
 				if (info_IM->index_write && info_IM->index_on) {
 					info_tile *info_TL = &info_IM->tile[tileno];
 					info_packet *info_PK = &info_TL->packet[info_IM->num];
-					info_PK->disto = layer->disto;
+					info_PK->disto += layer->disto;
 					if (info_IM->D_max < info_PK->disto)
 						info_IM->D_max = info_PK->disto;
 				}			/* </ADD> */
@@ -258,7 +258,7 @@ int t2_encode_packet(tcd_tile_t * tile, j2k_tcp_t * tcp, int compno, int resno, 
 			if (info_IM->index_write && info_IM->index_on) {
 				info_tile *info_TL = &info_IM->tile[tileno];
 				info_packet *info_PK = &info_TL->packet[info_IM->num];
-				info_PK->disto = layer->disto;
+				info_PK->disto += layer->disto;
 				if (info_IM->D_max < info_PK->disto)
 					info_IM->D_max = info_PK->disto;
 			}		/* </ADD> */
@@ -297,98 +297,105 @@ void t2_init_seg(tcd_seg_t * seg, int cblksty, int first)
  */
 int t2_decode_packet(unsigned char *src, int len, tcd_tile_t * tile, j2k_cp_t * cp, j2k_tcp_t * tcp, int compno, int resno, int precno, int layno)
 {
-	int bandno, cblkno;
-	tcd_tilecomp_t *tilec = &tile->comps[compno];
-	tcd_resolution_t *res = &tilec->resolutions[resno];
-	unsigned char *c = src;
-	int present;
-
-	if (layno == 0) {
-		for (bandno = 0; bandno < res->numbands; bandno++) {
-			tcd_band_t *band = &res->bands[bandno];
-			tcd_precinct_t *prc = &band->precincts[precno];
-			tgt_reset(prc->incltree);
-			tgt_reset(prc->imsbtree);
-			for (cblkno = 0; cblkno < prc->cw * prc->ch; cblkno++) {
-				tcd_cblk_t *cblk = &prc->cblks[cblkno];
-				cblk->numsegs = 0;
-			}
-		}
-	}
-
-	/* When the marker PPT/PPM is used the packet header are store in PPT/PPM marker
-	   This part deal with this caracteristic
-	   step 1: Read packet header in the saved structure
-	   step 2: (futher) return to codestream for decoding */
-	if (cp->ppm == 1) /* PPM */
-	  {	    
-	    c=cp->ppm_data;
-	    bio_init_dec(c,1000);
-	  } else 
-	    {
-	      if (tcp->ppt==1) /* PPT */
-		{
-		  c=tcp->ppt_data;
-		  bio_init_dec(c,1000);
-		} else /* Normal Case */
-		  {
-		    if (tcp->csty & J2K_CP_CSTY_SOP) 
-		      {
-			if ((*c)!=255 || (*(c+1)!=145)) {printf("Error : expected SOP marker [1]!!!\n");}
-			/*printf(" %d %d %d %d %d %d %d\n",*c,*(c+1),*(c+6),*(c+7),*(c+8),*(c+9),*(c+10));*/
-			c += 6;
-		      }
-		    bio_init_dec(c, src + len - c);
-		  }
-	    }
-
-	present = bio_read(1);
-
-	if (!present) 
-	  {
-	    bio_inalign();
-	    /* Normal case */
-	    c += bio_numbytes();
-	    if (tcp->csty & J2K_CP_CSTY_EPH) 
-	      {
-		if ((*c)!=255 || (*(c+1)!=146)) {printf("Error : expected EPH marker [1]!!!\n");}
-		c += 2;
-	      }
-	    
-	    /* PPT and PPM dealing */
-	    if (cp->ppm == 1) /* PPM */
-	      {	
-		cp->ppm_data=c;
-		return 0;
-	      }
-	    if (tcp->ppt==1) /* PPT */
-	      {
-		tcp->ppt_data=c;
-		return 0;
-	      }
-	    return c - src;
-	  }
-	for (bandno = 0; bandno < res->numbands; bandno++) {
+  int bandno, cblkno;
+  tcd_tilecomp_t *tilec = &tile->comps[compno];
+  tcd_resolution_t *res = &tilec->resolutions[resno];
+  unsigned char *c = src;
+  int present;
+  
+  if (layno == 0) 
+    {
+      for (bandno = 0; bandno < res->numbands; bandno++) 
+	{
 	  tcd_band_t *band = &res->bands[bandno];
 	  tcd_precinct_t *prc = &band->precincts[precno];
-	  for (cblkno = 0; cblkno < prc->cw * prc->ch; cblkno++) {
-	    int included, increment, n;
-	    tcd_cblk_t *cblk = &prc->cblks[cblkno];
-	    tcd_seg_t *seg;
-	    /* if cblk not yet included before --> inclusion tagtree */
-	    if (!cblk->numsegs) {
+	  tgt_reset(prc->incltree);
+	  tgt_reset(prc->imsbtree);
+	  for (cblkno = 0; cblkno < prc->cw * prc->ch; cblkno++) 
+	    {
+	      tcd_cblk_t *cblk = &prc->cblks[cblkno];
+	      cblk->numsegs = 0;
+	    }
+	}
+    }
+  
+  /* When the marker PPT/PPM is used the packet header are store in PPT/PPM marker
+     This part deal with this caracteristic
+     step 1: Read packet header in the saved structure
+     step 2: (futher) return to codestream for decoding */
+  if (cp->ppm == 1) /* PPM */
+    {	    
+      c=cp->ppm_data;
+      bio_init_dec(c,1000);
+    } else 
+      {
+	if (tcp->ppt==1) /* PPT */
+	  {
+	    c=tcp->ppt_data;
+	    bio_init_dec(c,1000);
+	  } else /* Normal Case */
+	    {
+	      if (tcp->csty & J2K_CP_CSTY_SOP) 
+		{
+		  if ((*c)!=255 || (*(c+1)!=145)) {printf("Error : expected SOP marker [1]!!!\n");}
+		  c += 6;
+		}
+	      bio_init_dec(c, src + len - c);
+	    }
+      }
+  
+  present = bio_read(1);
+  
+  if (!present) 
+    {
+      bio_inalign();
+      /* Normal case */
+      c += bio_numbytes();
+      if (tcp->csty & J2K_CP_CSTY_EPH) 
+	{
+	  if ((*c)!=255 || (*(c+1)!=146)) {printf("Error : expected EPH marker [1]!!!\n");}
+	  c += 2;
+	}
+      
+      /* PPT and PPM dealing */
+      if (cp->ppm == 1) /* PPM */
+	{	
+	  cp->ppm_data=c;
+	  return 0;
+	}
+      if (tcp->ppt==1) /* PPT */
+	{
+	  tcp->ppt_data=c;
+	  return 0;
+	}
+      return c - src;
+    }
+  for (bandno = 0; bandno < res->numbands; bandno++) 
+    {
+      tcd_band_t *band = &res->bands[bandno];
+      tcd_precinct_t *prc = &band->precincts[precno];
+      for (cblkno = 0; cblkno < prc->cw * prc->ch; cblkno++) 
+	{
+	  int included, increment, n;
+	  tcd_cblk_t *cblk = &prc->cblks[cblkno];
+	  tcd_seg_t *seg;
+	  /* if cblk not yet included before --> inclusion tagtree */
+	  if (!cblk->numsegs) 
+	    {
 	      included = tgt_decode(prc->incltree, cblkno, layno + 1);
 				/* else one bit */
 	    } else {
 	      included = bio_read(1);
 	    }
-	    /* if cblk not included */
-	    if (!included) {
+	  /* if cblk not included */
+	  if (!included) 
+	    {
 	      cblk->numnewpasses = 0;
 	      continue;
 	    }
-	    /* if cblk not yet included --> zero-bitplane tagtree */
-	    if (!cblk->numsegs) {
+	  /* if cblk not yet included --> zero-bitplane tagtree */
+	  if (!cblk->numsegs) 
+	    {
 	      int i, numimsbs;
 	      for (i = 0; !tgt_decode(prc->imsbtree, cblkno, i); i++) {
 	      }
@@ -428,9 +435,9 @@ int t2_decode_packet(unsigned char *src, int len, tcd_tile_t * tile, j2k_cp_t * 
 	c += bio_numbytes();
 
 	if (tcp->csty & J2K_CP_CSTY_EPH) { /* EPH marker */
-	  if ((*c)!=255 || (*(c+1)!=146)) { printf("Error : expected EPH marker [2]!!!\n"); 
-	  printf(" %d %d %d %d %d %d %d\n",*c,*(c+1),*(c+2),*(c+3),*(c+4),*(c+5),*(c+6));}
-	  c += 2;
+	  if ((*c)!=255 || (*(c+1)!=146)) { 
+	    printf("Error : expected EPH marker [2]!!!\n"); }
+	    c += 2;
 	}
 	
 	/* PPT Step 2 : see above for details */
@@ -587,39 +594,40 @@ int t2_encode_packets(j2k_image_t * img, j2k_cp_t * cp, int tileno, tcd_tile_t *
  */
 int t2_decode_packets(unsigned char *src, int len, j2k_image_t * img, j2k_cp_t * cp, int tileno, tcd_tile_t * tile)
 {
-	unsigned char *c = src;
-	pi_iterator_t *pi;
-	int pino, compno, e = 0;
-	int n=0;
-
-	pi = pi_create(img, cp, tileno);
+  unsigned char *c = src;
+  pi_iterator_t *pi;
+  int pino, compno, e = 0;
+  int n=0;
+  
+  pi = pi_create(img, cp, tileno);
+  
+  for (pino = 0; pino <= cp->tcps[tileno].numpocs; pino++) {
+    while (pi_next(&pi[pino])) 
+      { 
+	e = t2_decode_packet(c, src + len - c, tile, cp, &cp->tcps[tileno], pi[pino].compno, 
+			     pi[pino].resno, pi[pino].precno, pi[pino].layno); 
 	
-	for (pino = 0; pino <= cp->tcps[tileno].numpocs; pino++) {
-	  while (pi_next(&pi[pino])) 
-	    { 
-	      //   fprintf(stderr,"codeblock %d [%d %d %d %d] pino %d/%d\n",n,pi[pino].layno,pi[pino].resno,pi[pino].compno,pi[pino].precno,pino,cp->tcps[tileno].numpocs);
-	      e = t2_decode_packet(c, src + len - c, tile, cp, &cp->tcps[tileno], pi[pino].compno, 
-				   pi[pino].resno, pi[pino].precno, pi[pino].layno); 
-	      n++;
-	 
-	      if (e == -999) {		/* ADD */
-		break;
-	      } else
-		c += e;
-	      /*  printf("next\n"); */
-	    }
-
-	  /* FREE space memory taken by pi */
-	  for (compno = 0; compno < pi[pino].numcomps; compno++) {
-	    free(pi[pino].comps[compno].resolutions);
-	  }
-	  free(pi[pino].comps);
-	}
-	free(pi[0].include);
-	free(pi);
+	/* progression in resolution */
+	img->comps[pi[pino].compno].resno_decoded = e > 0 ? int_max(pi[pino].resno, img->comps[pi[pino].compno].resno_decoded) : img->comps[pi[pino].compno].resno_decoded;
+	n++;
 	
-	if (e == -999)
-	  return e;
-	else
-	  return c - src;
+	if (e == -999) {		/* ADD */
+	  break;
+	} else
+	  c += e;
+      }
+    
+    /* FREE space memory taken by pi */
+    for (compno = 0; compno < pi[pino].numcomps; compno++) {
+      free(pi[pino].comps[compno].resolutions);
+    }
+    free(pi[pino].comps);
+  }
+  free(pi[0].include);
+  free(pi);
+
+  if (e == -999)
+    return e;
+  else
+    return c - src;
 }
