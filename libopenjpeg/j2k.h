@@ -59,126 +59,126 @@
 #define J2K_CCP_QNTSTY_SEQNT 2
 
 typedef struct {
-    int reduce_on;		/* option reduce is used if reduce = 1 */
-    int reduce_value;		/* if option reduce is used -> original dimension divided by 2^value */
+  int reduce_on;		/* option reduce is used if reduce = 1 */
+  int reduce_value;		/* if option reduce is used -> original dimension divided by 2^value */
 } j2k_option_t;
 
 typedef struct {
-    int dx, dy;			/* XRsiz, YRsiz              */
-    int w, h;			/* width and height of data  */
-    int x0, y0;			/* offset of the component compare to the whole image  */
-    int prec;			/* precision                 */
-    int bpp;			/* deapth of image in bits   */
-    int sgnd;			/* signed                    */
-    int resno_decoded;		/* number of decoded resolution */
-    int factor;			/* number of division by 2 of the out image  compare to the original size of image */
-    int *data;			/* image-component data      */
+  int dx, dy;			/* XRsiz, YRsiz              */
+  int w, h;			/* width and height of data  */
+  int x0, y0;			/* offset of the component compare to the whole image  */
+  int prec;			/* precision                 */
+  int bpp;			/* deapth of image in bits   */
+  int sgnd;			/* signed                    */
+  int resno_decoded;		/* number of decoded resolution */
+  int factor;			/* number of division by 2 of the out image  compare to the original size of image */
+  int *data;			/* image-component data      */
 } j2k_comp_t;
 
 typedef struct {
-    int x0, y0;			/* XOsiz, YOsiz              */
-    int x1, y1;			/* Xsiz, Ysiz                */
-    int numcomps;		/* number of components      */
-    int index_on;		/* 0 = no index || 1 = index */
-    j2k_comp_t *comps;		/* image-components          */
+  int x0, y0;			/* XOsiz, YOsiz              */
+  int x1, y1;			/* Xsiz, Ysiz                */
+  int numcomps;			/* number of components      */
+  int index_on;			/* 0 = no index || 1 = index */
+  j2k_comp_t *comps;		/* image-components          */
 } j2k_image_t;
 
 typedef struct {
-    int expn;			/* exponent                  */
-    int mant;			/* mantissa                  */
+  int expn;			/* exponent                  */
+  int mant;			/* mantissa                  */
 } j2k_stepsize_t;
 
 typedef struct {
-    int csty;			/* coding style                          */
-    int numresolutions;		/* number of resolutions                 */
-    int cblkw;			/* width of code-blocks                  */
-    int cblkh;			/* height of code-blocks                 */
-    int cblksty;		/* code-block coding style               */
-    int qmfbid;			/* discrete wavelet transform identifier */
-    int qntsty;			/* quantisation style                    */
-    j2k_stepsize_t stepsizes[J2K_MAXBANDS];	/* stepsizes used for quantisation       */
-    int numgbits;		/* number of guard bits                  */
-    int roishift;		/* Region Of Interest shift              */
-    int prcw[J2K_MAXRLVLS];	/* Precinct width                        */
-    int prch[J2K_MAXRLVLS];	/* Precinct height                       */
+  int csty;			/* coding style                          */
+  int numresolutions;		/* number of resolutions                 */
+  int cblkw;			/* width of code-blocks                  */
+  int cblkh;			/* height of code-blocks                 */
+  int cblksty;			/* code-block coding style               */
+  int qmfbid;			/* discrete wavelet transform identifier */
+  int qntsty;			/* quantisation style                    */
+  j2k_stepsize_t stepsizes[J2K_MAXBANDS];	/* stepsizes used for quantisation       */
+  int numgbits;			/* number of guard bits                  */
+  int roishift;			/* Region Of Interest shift              */
+  int prcw[J2K_MAXRLVLS];	/* Precinct width                        */
+  int prch[J2K_MAXRLVLS];	/* Precinct height                       */
 } j2k_tccp_t;
 
 typedef struct {
-    int resno0, compno0;
-    int layno1, resno1, compno1;
-    int prg;
-    int tile;
-    char progorder[4];
+  int resno0, compno0;
+  int layno1, resno1, compno1;
+  int prg;
+  int tile;
+  char progorder[4];
 } j2k_poc_t;
 
 typedef struct {
-    int first;			/* 1 : first part-tile of a tile                                     */
-    int csty;			/* coding style                                                      */
-    int prg;			/* progression order                                                 */
-    int numlayers;		/* number of layers                                                  */
-    int mct;			/* multi-component transform identifier                              */
-    int rates[100];		/* rates of layers                                                   */
-    int numpocs;		/* number of progression order changes                               */
-    int POC;			/* Precise if a POC marker has been used O:NO, 1:YES                 */
-    j2k_poc_t pocs[32];		/* progression order changes                                         */
-    unsigned char *ppt_data;	/* packet header store there for futur use in t2_decode_packet       */
-    int ppt;			/* If ppt == 1 --> there was a PPT marker for the present tile       */
-    int ppt_store;		/* Use in case of multiple marker PPT (number of info already store) */
-    j2k_tccp_t *tccps;		/* tile-component coding parameters                                  */
+  int first;			/* 1 : first part-tile of a tile                                     */
+  int csty;			/* coding style                                                      */
+  int prg;			/* progression order                                                 */
+  int numlayers;		/* number of layers                                                  */
+  int mct;			/* multi-component transform identifier                              */
+  int rates[100];		/* rates of layers                                                   */
+  int numpocs;			/* number of progression order changes                               */
+  int POC;			/* Precise if a POC marker has been used O:NO, 1:YES                 */
+  j2k_poc_t pocs[32];		/* progression order changes                                         */
+  unsigned char *ppt_data;	/* packet header store there for futur use in t2_decode_packet       */
+  int ppt;			/* If ppt == 1 --> there was a PPT marker for the present tile       */
+  int ppt_store;		/* Use in case of multiple marker PPT (number of info already store) */
+  j2k_tccp_t *tccps;		/* tile-component coding parameters                                  */
 } j2k_tcp_t;
 
 typedef struct {
-    int image_type;		/* 0: PNM, PGM, PPM 1: PGX           */
-    int disto_alloc;		/* Allocation by rate/distortion     */
-    int fixed_alloc;		/* Allocation by fixed layer         */
-    int reduce_on;		/* option reduce is used if reduce = 1 */
-    int reduce_value;		/* if option reduce is used -> original dimension divided by 2^value */
-    int tx0, ty0;		/* XTOsiz, YTOsiz                    */
-    int tdx, tdy;		/* XTsiz, YTsiz                      */
-    char *comment;		/* comment for coding                */
-    int tw, th;			/* number of tiles in width and heigth */
-    int *tileno;		/* ID number of the tiles present in the codestream */
-    int tileno_size;		/* size of the vector tileno */
-    unsigned char *ppm_data;	/* packet header store there for futur use in t2_decode_packet             */
-    int ppm;			/* If ppm == 1 --> there was a PPM marker for the present tile             */
-    int ppm_store;		/* Use in case of multiple marker PPM (number of info already store)       */
-    int ppm_previous;		/* Use in case of multiple marker PPM (case on non-finished previous info) */
-    j2k_tcp_t *tcps;		/* tile coding parameters                                                  */
-    int *matrice;		/* Fixed layer                                                             */
+  int image_type;		/* 0: PNM, PGM, PPM 1: PGX           */
+  int disto_alloc;		/* Allocation by rate/distortion     */
+  int fixed_alloc;		/* Allocation by fixed layer         */
+  int reduce_on;		/* option reduce is used if reduce = 1 */
+  int reduce_value;		/* if option reduce is used -> original dimension divided by 2^value */
+  int tx0, ty0;			/* XTOsiz, YTOsiz                    */
+  int tdx, tdy;			/* XTsiz, YTsiz                      */
+  char *comment;		/* comment for coding                */
+  int tw, th;			/* number of tiles in width and heigth */
+  int *tileno;			/* ID number of the tiles present in the codestream */
+  int tileno_size;		/* size of the vector tileno */
+  unsigned char *ppm_data;	/* packet header store there for futur use in t2_decode_packet             */
+  int ppm;			/* If ppm == 1 --> there was a PPM marker for the present tile             */
+  int ppm_store;		/* Use in case of multiple marker PPM (number of info already store)       */
+  int ppm_previous;		/* Use in case of multiple marker PPM (case on non-finished previous info) */
+  j2k_tcp_t *tcps;		/* tile coding parameters                                                  */
+  int *matrice;			/* Fixed layer                                                             */
 } j2k_cp_t;
 
 typedef struct {
-    int start_pos, end_pos;	/* start and end position            */
-    double disto;		/* ADD for Marcela                   */
+  int start_pos, end_pos;	/* start and end position            */
+  double disto;			/* ADD for Marcela                   */
 } info_packet;			/* Index struct                      */
 
 typedef struct {
-    double *thresh;		/* value of thresh for each layer by tile cfr. Marcela   */
-    int num_tile;		/* Number of Tile                                        */
-    int start_pos;		/* Start position                                        */
-    int end_header;		/* End position of the header                            */
-    int end_pos;		/* End position                                          */
-    int pw, ph;			/* number of precinct by tile                            */
-    info_packet *packet;	/* information concerning packets inside tile            */
+  double *thresh;		/* value of thresh for each layer by tile cfr. Marcela   */
+  int num_tile;			/* Number of Tile                                        */
+  int start_pos;		/* Start position                                        */
+  int end_header;		/* End position of the header                            */
+  int end_pos;			/* End position                                          */
+  int pw, ph;			/* number of precinct by tile                            */
+  info_packet *packet;		/* information concerning packets inside tile            */
 } info_tile;			/* index struct                                          */
 
 typedef struct {
-    int index_on;
-    double D_max;		/* ADD for Marcela                                       */
-    int num;			/* numero of packet                                      */
-    int index_write;		/* writing the packet inthe index with t2_encode_packets */
-    int Im_w, Im_h;		/* Image width and Height                                */
-    int Prog;			/* progression order                                     */
-    int Tile_x, Tile_y;		/* Number of Tile in X and Y                             */
-    int tw, th;
-    int Comp;			/* Component numbers                                     */
-    int Layer;			/* number of layer                                       */
-    int Decomposition;		/* number of decomposition                               */
-    int pw, ph;			/* nombre precinct in X and Y                            */
-    int pdx, pdy;		/* size of precinct in X and Y                           */
-    int Main_head_end;		/* Main header position                                  */
-    int codestream_size;	/* codestream's size                                     */
-    info_tile *tile;		/* information concerning tiles inside image             */
+  int index_on;
+  double D_max;			/* ADD for Marcela                                       */
+  int num;			/* numero of packet                                      */
+  int index_write;		/* writing the packet inthe index with t2_encode_packets */
+  int Im_w, Im_h;		/* Image width and Height                                */
+  int Prog;			/* progression order                                     */
+  int Tile_x, Tile_y;		/* Number of Tile in X and Y                             */
+  int tw, th;
+  int Comp;			/* Component numbers                                     */
+  int Layer;			/* number of layer                                       */
+  int Decomposition;		/* number of decomposition                               */
+  int pw, ph;			/* nombre precinct in X and Y                            */
+  int pdx, pdy;			/* size of precinct in X and Y                           */
+  int Main_head_end;		/* Main header position                                  */
+  int codestream_size;		/* codestream's size                                     */
+  info_tile *tile;		/* information concerning tiles inside image             */
 } info_image;			/* index struct                                          */
 
 /* 

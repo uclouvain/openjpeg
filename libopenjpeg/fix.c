@@ -37,5 +37,5 @@
  */
 int fix_mul(int a, int b)
 {
-    return (int) ((int64) a * (int64) b >> 13);
+  return (int) ((int64) a * (int64) b >> 13);
 }

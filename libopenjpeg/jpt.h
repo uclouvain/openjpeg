@@ -30,13 +30,13 @@
  *
  */
 typedef struct {
-    unsigned int Id;		/* In-class Identifier    */
-    unsigned int last_byte;	/* Last byte information  */
-    unsigned int Class_Id;	/* Class Identifier       */
-    unsigned int CSn_Id;	/* CSn : index identifier */
-    unsigned int Msg_offset;	/* Message offset         */
-    unsigned int Msg_length;	/* Message length         */
-    unsigned int Layer_nb;	/* Auxiliary for JPP case */
+  unsigned int Id;		/* In-class Identifier    */
+  unsigned int last_byte;	/* Last byte information  */
+  unsigned int Class_Id;	/* Class Identifier       */
+  unsigned int CSn_Id;		/* CSn : index identifier */
+  unsigned int Msg_offset;	/* Message offset         */
+  unsigned int Msg_length;	/* Message length         */
+  unsigned int Layer_nb;	/* Auxiliary for JPP case */
 } jpt_msg_header_struct_t;
 
 /*

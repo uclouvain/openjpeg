@@ -44,7 +44,7 @@ extern jmp_buf j2k_error;
  */
 int bio_numbytes()
 {
-    return bio_bp - bio_start;
+  return bio_bp - bio_start;
 }
 
 /*
@@ -55,11 +55,11 @@ int bio_numbytes()
  */
 void bio_init_enc(unsigned char *bp, int len)
 {
-    bio_start = bp;
-    bio_end = bp + len;
-    bio_bp = bp;
-    bio_buf = 0;
-    bio_ct = 8;
+  bio_start = bp;
+  bio_end = bp + len;
+  bio_bp = bp;
+  bio_buf = 0;
+  bio_ct = 8;
 }
 
 /*
@@ -70,11 +70,11 @@ void bio_init_enc(unsigned char *bp, int len)
  */
 void bio_init_dec(unsigned char *bp, int len)
 {
-    bio_start = bp;
-    bio_end = bp + len;
-    bio_bp = bp;
-    bio_buf = 0;
-    bio_ct = 0;
+  bio_start = bp;
+  bio_end = bp + len;
+  bio_bp = bp;
+  bio_buf = 0;
+  bio_ct = 0;
 }
 
 /*
@@ -83,12 +83,12 @@ void bio_init_dec(unsigned char *bp, int len)
  */
 int bio_byteout()
 {
-    bio_buf = (bio_buf << 8) & 0xffff;
-    bio_ct = bio_buf == 0xff00 ? 7 : 8;
-    if (bio_bp >= bio_end)
-	return 1;
-    *bio_bp++ = bio_buf >> 8;
-    return 0;
+  bio_buf = (bio_buf << 8) & 0xffff;
+  bio_ct = bio_buf == 0xff00 ? 7 : 8;
+  if (bio_bp >= bio_end)
+    return 1;
+  *bio_bp++ = bio_buf >> 8;
+  return 0;
 }
 
 /*
@@ -97,12 +97,12 @@ int bio_byteout()
  */
 int bio_bytein()
 {
-    bio_buf = (bio_buf << 8) & 0xffff;
-    bio_ct = bio_buf == 0xff00 ? 7 : 8;
-    if (bio_bp >= bio_end)
-	return 1;
-    bio_buf |= *bio_bp++;
-    return 0;
+  bio_buf = (bio_buf << 8) & 0xffff;
+  bio_ct = bio_buf == 0xff00 ? 7 : 8;
+  if (bio_bp >= bio_end)
+    return 1;
+  bio_buf |= *bio_bp++;
+  return 0;
 }
 
 /*
@@ -112,11 +112,11 @@ int bio_bytein()
  */
 void bio_putbit(int b)
 {
-    if (bio_ct == 0) {
-	bio_byteout();
-    }
-    bio_ct--;
-    bio_buf |= b << bio_ct;
+  if (bio_ct == 0) {
+    bio_byteout();
+  }
+  bio_ct--;
+  bio_buf |= b << bio_ct;
 }
 
 /*
@@ -125,11 +125,11 @@ void bio_putbit(int b)
  */
 int bio_getbit()
 {
-    if (bio_ct == 0) {
-	bio_bytein();
-    }
-    bio_ct--;
-    return (bio_buf >> bio_ct) & 1;
+  if (bio_ct == 0) {
+    bio_bytein();
+  }
+  bio_ct--;
+  return (bio_buf >> bio_ct) & 1;
 }
 
 /*
@@ -140,10 +140,10 @@ int bio_getbit()
  */
 void bio_write(int v, int n)
 {
-    int i;
-    for (i = n - 1; i >= 0; i--) {
-	bio_putbit((v >> i) & 1);
-    }
+  int i;
+  for (i = n - 1; i >= 0; i--) {
+    bio_putbit((v >> i) & 1);
+  }
 }
 
 /*
@@ -153,12 +153,12 @@ void bio_write(int v, int n)
  */
 int bio_read(int n)
 {
-    int i, v;
-    v = 0;
-    for (i = n - 1; i >= 0; i--) {
-	v += bio_getbit() << i;
-    }
-    return v;
+  int i, v;
+  v = 0;
+  for (i = n - 1; i >= 0; i--) {
+    v += bio_getbit() << i;
+  }
+  return v;
 }
 
 /*
@@ -167,16 +167,16 @@ int bio_read(int n)
  */
 int bio_flush()
 {
+  bio_ct = 0;
+  if (bio_byteout())
+    return 1;
+  if (bio_ct == 7) {
     bio_ct = 0;
-    if (bio_byteout())
-	return 1;
-    if (bio_ct == 7) {
-	bio_ct = 0;
 
-	if (bio_byteout())
-	    return 1;
-    }
-    return 0;
+    if (bio_byteout())
+      return 1;
+  }
+  return 0;
 }
 
 /*
@@ -184,11 +184,11 @@ int bio_flush()
  */
 int bio_inalign()
 {
+  bio_ct = 0;
+  if ((bio_buf & 0xff) == 0xff) {
+    if (bio_bytein())
+      return 1;
     bio_ct = 0;
-    if ((bio_buf & 0xff) == 0xff) {
-	if (bio_bytein())
-	    return 1;
-	bio_ct = 0;
-    }
-    return 0;
+  }
+  return 0;
 }

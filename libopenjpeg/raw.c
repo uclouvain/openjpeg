@@ -40,7 +40,7 @@ unsigned char *raw_end;		/* pointer to the end of the buffer */
  */
 int raw_numbytes()
 {
-    return raw_bp - raw_start;
+  return raw_bp - raw_start;
 }
 
 /*
@@ -51,11 +51,11 @@ int raw_numbytes()
  */
 void raw_init_dec(unsigned char *bp, int len)
 {
-    raw_start = bp;
-    raw_lenmax = len;
-    raw_len = 0;
-    raw_c = 0;
-    raw_ct = 0;
+  raw_start = bp;
+  raw_lenmax = len;
+  raw_len = 0;
+  raw_c = 0;
+  raw_ct = 0;
 }
 
 /*
@@ -63,19 +63,19 @@ void raw_init_dec(unsigned char *bp, int len)
  */
 int raw_decode()
 {
-    int d;
-    if (raw_ct == 0) {
-	raw_ct = 8;
-	if (raw_len == raw_lenmax)
-	    raw_c = 0xff;
-	else {
-	    if (raw_c == 0xff)
-		raw_ct = 7;
-	    raw_c = *(raw_start + raw_len);
-	    raw_len++;
-	}
+  int d;
+  if (raw_ct == 0) {
+    raw_ct = 8;
+    if (raw_len == raw_lenmax)
+      raw_c = 0xff;
+    else {
+      if (raw_c == 0xff)
+	raw_ct = 7;
+      raw_c = *(raw_start + raw_len);
+      raw_len++;
     }
-    raw_ct--;
-    d = (raw_c >> raw_ct) & 0x01;
-    return d;
+  }
+  raw_ct--;
+  d = (raw_c >> raw_ct) & 0x01;
+  return d;
 }

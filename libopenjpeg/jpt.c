@@ -40,18 +40,18 @@
  */
 unsigned int jpt_read_VBAS_info(unsigned int value)
 {
-    unsigned char elmt;
+  unsigned char elmt;
 
-    elmt = cio_read(1);
-    while ((elmt >> 7) == 1) {
-	value = (value << 7);
-	value |= (elmt & 0x7f);
-	elmt = cio_read(1);
-    }
+  elmt = cio_read(1);
+  while ((elmt >> 7) == 1) {
     value = (value << 7);
     value |= (elmt & 0x7f);
+    elmt = cio_read(1);
+  }
+  value = (value << 7);
+  value |= (elmt & 0x7f);
 
-    return value;
+  return value;
 }
 
 /*
@@ -60,13 +60,13 @@ unsigned int jpt_read_VBAS_info(unsigned int value)
  */
 void jpt_init_Msg_Header(jpt_msg_header_struct_t * header)
 {
-    header->Id = 0;		/* In-class Identifier    */
-    header->last_byte = 0;	/* Last byte information  */
-    header->Class_Id = 0;	/* Class Identifier       */
-    header->CSn_Id = 0;		/* CSn : index identifier */
-    header->Msg_offset = 0;	/* Message offset         */
-    header->Msg_length = 0;	/* Message length         */
-    header->Layer_nb = 0;	/* Auxiliary for JPP case */
+  header->Id = 0;		/* In-class Identifier    */
+  header->last_byte = 0;	/* Last byte information  */
+  header->Class_Id = 0;		/* Class Identifier       */
+  header->CSn_Id = 0;		/* CSn : index identifier */
+  header->Msg_offset = 0;	/* Message offset         */
+  header->Msg_length = 0;	/* Message length         */
+  header->Layer_nb = 0;		/* Auxiliary for JPP case */
 }
 
 /*
@@ -77,10 +77,10 @@ void jpt_init_Msg_Header(jpt_msg_header_struct_t * header)
  */
 void jpt_reinit_Msg_Header(jpt_msg_header_struct_t * header)
 {
-    header->Id = 0;		/* In-class Identifier    */
-    header->last_byte = 0;	/* Last byte information  */
-    header->Msg_offset = 0;	/* Message offset         */
-    header->Msg_length = 0;	/* Message length         */
+  header->Id = 0;		/* In-class Identifier    */
+  header->last_byte = 0;	/* Last byte information  */
+  header->Msg_offset = 0;	/* Message offset         */
+  header->Msg_length = 0;	/* Message length         */
 }
 
 /*
@@ -89,76 +89,75 @@ void jpt_reinit_Msg_Header(jpt_msg_header_struct_t * header)
  */
 void jpt_read_Msg_Header(jpt_msg_header_struct_t * header)
 {
-    unsigned char elmt, Class = 0, CSn = 0;
-    jpt_reinit_Msg_Header(header);
+  unsigned char elmt, Class = 0, CSn = 0;
+  jpt_reinit_Msg_Header(header);
 
-    /* ------------- */
-    /* VBAS : Bin-ID */
-    /* ------------- */
-    elmt = cio_read(1);
+  /* ------------- */
+  /* VBAS : Bin-ID */
+  /* ------------- */
+  elmt = cio_read(1);
 
-    /* See for Class and CSn */
-    switch ((elmt >> 5) & 0x03) {
-    case 0:
-	fprintf(stderr,
-		"Forbidden value encounter in message header !!\n");
-	break;
-    case 1:
-	Class = 0;
-	CSn = 0;
-	break;
-    case 2:
-	Class = 1;
-	CSn = 0;
-	break;
-    case 3:
-	Class = 1;
-	CSn = 1;
-	break;
-    default:
-	break;
-    }
+  /* See for Class and CSn */
+  switch ((elmt >> 5) & 0x03) {
+  case 0:
+    fprintf(stderr, "Forbidden value encounter in message header !!\n");
+    break;
+  case 1:
+    Class = 0;
+    CSn = 0;
+    break;
+  case 2:
+    Class = 1;
+    CSn = 0;
+    break;
+  case 3:
+    Class = 1;
+    CSn = 1;
+    break;
+  default:
+    break;
+  }
 
-    /* see information on bits 'c' [p 10 : A.2.1 general, ISO/IEC FCD 15444-9] */
-    if (((elmt >> 3) & 0x01) == 1)
-	header->last_byte = 1;
+  /* see information on bits 'c' [p 10 : A.2.1 general, ISO/IEC FCD 15444-9] */
+  if (((elmt >> 3) & 0x01) == 1)
+    header->last_byte = 1;
 
-    /* In-class identifier */
-    header->Id |= (elmt & 0x0f);
-    if ((elmt >> 7) == 1)
-	header->Id = jpt_read_VBAS_info(header->Id);
+  /* In-class identifier */
+  header->Id |= (elmt & 0x0f);
+  if ((elmt >> 7) == 1)
+    header->Id = jpt_read_VBAS_info(header->Id);
 
-    /* ------------ */
-    /* VBAS : Class */
-    /* ------------ */
-    if (Class == 1) {
-	header->Class_Id = 0;
-	header->Class_Id = jpt_read_VBAS_info(header->Class_Id);
-    }
+  /* ------------ */
+  /* VBAS : Class */
+  /* ------------ */
+  if (Class == 1) {
+    header->Class_Id = 0;
+    header->Class_Id = jpt_read_VBAS_info(header->Class_Id);
+  }
 
-    /* ---------- */
-    /* VBAS : CSn */
-    /* ---------- */
-    if (CSn == 1) {
-	header->CSn_Id = 0;
-	header->CSn_Id = jpt_read_VBAS_info(header->CSn_Id);
-    }
+  /* ---------- */
+  /* VBAS : CSn */
+  /* ---------- */
+  if (CSn == 1) {
+    header->CSn_Id = 0;
+    header->CSn_Id = jpt_read_VBAS_info(header->CSn_Id);
+  }
 
-    /* ----------------- */
-    /* VBAS : Msg_offset */
-    /* ----------------- */
-    header->Msg_offset = jpt_read_VBAS_info(header->Msg_offset);
+  /* ----------------- */
+  /* VBAS : Msg_offset */
+  /* ----------------- */
+  header->Msg_offset = jpt_read_VBAS_info(header->Msg_offset);
 
-    /* ----------------- */
-    /* VBAS : Msg_length */
-    /* ----------------- */
-    header->Msg_length = jpt_read_VBAS_info(header->Msg_length);
+  /* ----------------- */
+  /* VBAS : Msg_length */
+  /* ----------------- */
+  header->Msg_length = jpt_read_VBAS_info(header->Msg_length);
 
-    /* ---------- */
-    /* VBAS : Aux */
-    /* ---------- */
-    if (header->CSn_Id == 1) {
-	header->Layer_nb = 0;
-	header->Layer_nb = jpt_read_VBAS_info(header->Layer_nb);
-    }
+  /* ---------- */
+  /* VBAS : Aux */
+  /* ---------- */
+  if (header->CSn_Id == 1) {
+    header->Layer_nb = 0;
+    header->Layer_nb = jpt_read_VBAS_info(header->Layer_nb);
+  }
 }

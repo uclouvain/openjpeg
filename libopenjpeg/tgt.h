@@ -28,17 +28,17 @@
 #define __TGT_H
 
 typedef struct tgt_node {
-    struct tgt_node *parent;
-    int value;
-    int low;
-    int known;
+  struct tgt_node *parent;
+  int value;
+  int low;
+  int known;
 } tgt_node_t;
 
 typedef struct {
-    int numleafsh;
-    int numleafsv;
-    int numnodes;
-    tgt_node_t *nodes;
+  int numleafsh;
+  int numleafsv;
+  int numnodes;
+  tgt_node_t *nodes;
 } tgt_tree_t;
 
 

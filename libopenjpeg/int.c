@@ -31,7 +31,7 @@
  */
 int int_min(int a, int b)
 {
-    return a < b ? a : b;
+  return a < b ? a : b;
 }
 
 /*
@@ -41,7 +41,7 @@ int int_min(int a, int b)
  */
 int int_max(int a, int b)
 {
-    return a > b ? a : b;
+  return a > b ? a : b;
 }
 
 /*
@@ -53,11 +53,11 @@ int int_max(int a, int b)
  */
 int int_clamp(int a, int min, int max)
 {
-    if (a < min)
-	return min;
-    if (a > max)
-	return max;
-    return a;
+  if (a < min)
+    return min;
+  if (a > max)
+    return max;
+  return a;
 }
 
 /*
@@ -65,7 +65,7 @@ int int_clamp(int a, int min, int max)
  */
 int int_abs(int a)
 {
-    return a < 0 ? -a : a;
+  return a < 0 ? -a : a;
 }
 
 /*
@@ -75,7 +75,7 @@ int int_abs(int a)
  */
 int int_ceildiv(int a, int b)
 {
-    return (a + b - 1) / b;
+  return (a + b - 1) / b;
 }
 
 /*
@@ -85,7 +85,7 @@ int int_ceildiv(int a, int b)
  */
 int int_ceildivpow2(int a, int b)
 {
-    return (a + (1 << b) - 1) >> b;
+  return (a + (1 << b) - 1) >> b;
 }
 
 /*
@@ -95,7 +95,7 @@ int int_ceildivpow2(int a, int b)
  */
 int int_floordivpow2(int a, int b)
 {
-    return a >> b;
+  return a >> b;
 }
 
 /*
@@ -105,9 +105,9 @@ int int_floordivpow2(int a, int b)
  */
 int int_floorlog2(int a)
 {
-    int l;
-    for (l = 0; a > 1; l++) {
-	a >>= 1;
-    }
-    return l;
+  int l;
+  for (l = 0; a > 1; l++) {
+    a >>= 1;
+  }
+  return l;
 }
