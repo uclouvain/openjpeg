@@ -882,6 +882,5 @@ int main(int argc, char **argv)
     free(cp.tcps[tileno].tccps);
   free(cp.tcps);
 
-  system("pause");
   return 0;
 }
