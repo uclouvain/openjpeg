@@ -464,97 +464,92 @@ int mj2_write_mdat(FILE * outfile, mj2_movie_t * movie, j2k_image_t * img,
   unsigned int j;
   int pos_correction = 0;
   int tileno;
-
+  
   box.init_pos = cio_tell();
   cio_skip(4);
   cio_write(MJ2_MDAT, 4);	/* MDAT       */
-
-
-  for (i = 0; i < movie->num_stk; i++) {
-    fprintf(stderr, "Unable to write sound tracks\n");
-  }
-
-  for (i = 0; i < movie->num_htk; i++) {
-    fprintf(stderr, "Unable to write hint tracks\n");
-  }
-
-  for (i = 0; i < movie->num_vtk; i++) {
-    j2k_cp_t cp_init;
-    mj2_tk_t *tk;
-
-    tk = &movie->tk[i];
-
-    fprintf(stderr, "Video Track number %d\n", i + 1);
-
-    len = cio_tell();
-    fwrite(outbuf, 1, len, outfile);
-    pos_correction = cio_tell() + pos_correction;
-    free(outbuf);
-
-    /* Copy the first tile coding parameters (tcp) to cp_init */
-
-    cp_init.tcps =
-      (j2k_tcp_t *) malloc(cp->tw * cp->th * sizeof(j2k_tcp_t));
-    for (tileno = 0; tileno < cp->tw * cp->th; tileno++) {
-      for (l = 0; l < cp->tcps[tileno].numlayers; l++) {
-	cp_init.tcps[tileno].rates[l] = cp->tcps[tileno].rates[l];
-	//tileno = cp->tcps[tileno].rates[l];
-      }
-    }
-
-
-    for (j = 0; j < tk->num_samples; j++) {
-      outbuf = (char *) malloc(cp->tdx * cp->tdy * cp->th * cp->tw * 2);
-      cio_init(outbuf, cp->tdx * cp->tdy * cp->th * cp->tw * 2);
-
-      fprintf(stderr, "Frame number %d/%d: \n", j + 1, tk->num_samples);
-
-
-      if (!yuvtoimage(tk, img, j)) {
-	fprintf(stderr, "Error with frame number %d in YUV file\n", j);
-	return 1;
-      }
-
-      len = jp2_write_jp2c(img, cp, outbuf, index);
-
-      for (m = 0; m < img->numcomps; m++) {
-	free(img->comps[m].data);
-      }
-
-      tk->sample[j].sample_size = len;
-
-      tk->sample[j].offset = pos_correction;
-      tk->chunk[j].offset = pos_correction;	/* There is one sample per chunk */
-
+  
+  for (i = 0; i < movie->num_stk + movie->num_htk + movie->num_vtk; i++) {
+    if (movie->tk[i].track_type != 0) {
+      fprintf(stderr, "Unable to write sound or hint tracks\n");
+    } else {
+      j2k_cp_t cp_init;
+      mj2_tk_t *tk;
+      
+      tk = &movie->tk[i];
+      
+      fprintf(stderr, "Video Track number %d\n", i + 1);
+      
+      len = cio_tell();
       fwrite(outbuf, 1, len, outfile);
-
       pos_correction = cio_tell() + pos_correction;
-
       free(outbuf);
-
-      /* Copy the cp_init parameters to cp->tcps */
-
+      
+      /* Copy the first tile coding parameters (tcp) to cp_init */
+      
+      cp_init.tcps =
+	(j2k_tcp_t *) malloc(cp->tw * cp->th * sizeof(j2k_tcp_t));
       for (tileno = 0; tileno < cp->tw * cp->th; tileno++) {
-	for (k = 0; k < cp->tcps[tileno].numlayers; k++) {
-	  cp->tcps[tileno].rates[k] = cp_init.tcps[tileno].rates[k];
+	for (l = 0; l < cp->tcps[tileno].numlayers; l++) {
+	  cp_init.tcps[tileno].rates[l] = cp->tcps[tileno].rates[l];
+	  //tileno = cp->tcps[tileno].rates[l];
+	}
+      }
+      
+      
+      for (j = 0; j < tk->num_samples; j++) {
+	outbuf = (char *) malloc(cp->tdx * cp->tdy * cp->th * cp->tw * 2);
+	cio_init(outbuf, cp->tdx * cp->tdy * cp->th * cp->tw * 2);
+	
+	fprintf(stderr, "Frame number %d/%d: \n", j + 1, tk->num_samples);
+	
+	
+	if (!yuvtoimage(tk, img, j)) {
+	  fprintf(stderr, "Error with frame number %d in YUV file\n", j);
+	  return 1;
+	}
+	
+	len = jp2_write_jp2c(img, cp, outbuf, index);
+	
+	for (m = 0; m < img->numcomps; m++) {
+	  free(img->comps[m].data);
+	}
+	
+	tk->sample[j].sample_size = len;
+	
+	tk->sample[j].offset = pos_correction;
+	tk->chunk[j].offset = pos_correction;	/* There is one sample per chunk */
+	
+	fwrite(outbuf, 1, len, outfile);
+	
+	pos_correction = cio_tell() + pos_correction;
+	
+	free(outbuf);
+	
+	/* Copy the cp_init parameters to cp->tcps */
+	
+	for (tileno = 0; tileno < cp->tw * cp->th; tileno++) {
+	  for (k = 0; k < cp->tcps[tileno].numlayers; k++) {
+	    cp->tcps[tileno].rates[k] = cp_init.tcps[tileno].rates[k];
+	  }
 	}
       }
     }
+    
+    box.length = pos_correction - box.init_pos;
+    
+    fseek(outfile, box.init_pos, SEEK_SET);
+    
+    cio_init(&box_len_ptr, 4);	/* Init a cio to write box length variable in a little endian way */
+    cio_write(box.length, 4);
+    
+    fwrite(&box_len_ptr, 4, 1, outfile);
+    
+    fseek(outfile, box.init_pos + box.length, SEEK_SET);
   }
-
-  box.length = pos_correction - box.init_pos;
-
-  fseek(outfile, box.init_pos, SEEK_SET);
-
-  cio_init(&box_len_ptr, 4);	/* Init a cio to write box length variable in a little endian way */
-  cio_write(box.length, 4);
-
-  fwrite(&box_len_ptr, 4, 1, outfile);
-
-  fseek(outfile, box.init_pos + box.length, SEEK_SET);
-
   return 0;
 }
+
 
 /*
 * Read the MDAT box
