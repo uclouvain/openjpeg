@@ -1041,7 +1041,7 @@ LIBJ2K_API int j2k_encode(j2k_image_t * img, j2k_cp_t * cp, char *output,
 
 
   for (tileno = 0; tileno < cp->tw * cp->th; tileno++) {
-    fprintf(stderr, "\nTile number %d / %d \n", tileno + 1,
+    fprintf(stderr, "Tile number %d / %d ", tileno + 1,
       cp->tw * cp->th);
     
     if (cp->intermed_file==1) {
