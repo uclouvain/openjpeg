@@ -92,7 +92,11 @@ void help_display()
   printf("\n");
   printf("-help          : Display the help information optional\n ");
   printf("\n");
-  printf("-r             : different rates (-r 20,10,5) optional\n ");
+  printf("-r             : different compression ratios for successive layers (-r 20,10,5) optional\n ");
+  printf("                 (options -r and -q cannot be used together)\n ");
+  printf("\n");
+  printf("-q             : different psnr for successive layers (-q 30,40,50) optional\n ");
+  printf("                 (options -r and -q cannot be used together)\n ");
   printf("\n");
   printf("-n             : Number of resolution (-n 3) optional\n");
   printf("\n");
@@ -151,16 +155,18 @@ void help_display()
   printf("Components_nb\n");
   printf("Layers_nb\n");
   printf("decomposition_levels\n");
-  printf("Precincts_size_X Precincts_size_Y\n");
+  printf("[Precincts_size_X_res_Nr Precincts_size_Y_res_Nr]...[Precincts_size_X_res_0 Precincts_size_Y_res_0]\n");
   printf("Main_header_end_position\n");
   printf("Codestream_size\n");
-  printf("Tile0 start_pos end_Theader end_pos\n");
-  printf("Tile1  ''           ''        ''\n");
+  printf("Tile_0 start_pos end_Theader end_pos TotalDisto NumPix MaxMSE\n");
+  printf("Tile_1   ''           ''        ''        ''       ''    ''\n");
   printf("...\n");
-  printf("TileN  ''           ''        ''\n");
-  printf("Tpacket_0 Tile layer res. comp. prec. start_pos end_pos\n");
+  printf("Tile_Nt   ''           ''        ''        ''       ''    ''\n");
+  printf("Tpacket_0 Tile layer res. comp. prec. start_pos end_pos disto\n");
   printf("...\n");
-  printf("Tpacket_M  ''    ''   ''   ''    ''       ''       ''\n");
+  printf("Tpacket_Np ''   ''    ''   ''    ''       ''       ''     ''\n");
+  printf("MaxDisto\n");
+  printf("TotalDisto\n");
 }
 
 int give_progression(char progression[4])
