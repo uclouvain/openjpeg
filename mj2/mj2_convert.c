@@ -205,9 +205,16 @@ int imagetoyuv(j2k_image_t * img, j2k_cp_t * cp, char *outfile)
   FILE *f;
   int i;
 
-  if (img->numcomps != 3 || img->comps[0].dx != img->comps[1].dx / 2
-      || img->comps[1].dx != img->comps[2].dx) {
-    fprintf(stderr, "Error with image components sizes\n");
+  if (img->numcomps == 3) {
+    if (img->comps[0].dx != img->comps[1].dx / 2
+	|| img->comps[1].dx != img->comps[2].dx) {
+      fprintf(stderr,
+	      "Error with the input image components size: cannot create yuv file)\n");
+      return 1;
+    }
+  } else if (!(img->numcomps == 1)) {
+    fprintf(stderr,
+	    "Error with the number of image components(must be one or three)\n");
     return 1;
   }
 
@@ -225,7 +232,7 @@ int imagetoyuv(j2k_image_t * img, j2k_cp_t * cp, char *outfile)
   }
 
 
-  if (img->numcomps > 2) {
+  if (img->numcomps == 3) {
     for (i = 0; i < (img->comps[1].w * img->comps[1].h); i++) {
       unsigned char cb;
       cb = img->comps[1].data[i];
@@ -240,13 +247,13 @@ int imagetoyuv(j2k_image_t * img, j2k_cp_t * cp, char *outfile)
     }
   } else if (img->numcomps == 1) {
     for (i = 0; i < (img->comps[0].w * img->comps[0].h * 0.25); i++) {
-      unsigned char cb = 0;
+      unsigned char cb = 125;
       fwrite(&cb, 1, 1, f);
     }
 
 
     for (i = 0; i < (img->comps[0].w * img->comps[0].h * 0.25); i++) {
-      unsigned char cr = 0;
+      unsigned char cr = 125;
       fwrite(&cr, 1, 1, f);
     }
   }
