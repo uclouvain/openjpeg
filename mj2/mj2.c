@@ -2885,10 +2885,10 @@ int mj2_encode(mj2_movie_t * movie, j2k_cp_t * cp, char *index)
   fclose(outfile);
 
   for (i = 0; i < movie->tk[0].jp2_struct.numcomps; i++) {
-    char tmp;
-    sprintf(&tmp, "Compo%d", i);
-    if (remove(&tmp) == -1) {
-      fprintf(stderr, "failed to kill %s file !\n", &tmp);
+    char tmp[20];
+    sprintf(tmp, "Compo%d", i);
+    if (remove(tmp) == -1) {
+      fprintf(stderr, "failed to kill %s file !\n", tmp);
     }
   }
 
