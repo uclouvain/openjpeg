@@ -499,7 +499,7 @@ void j2k_read_qcx(int compno, int len)
 
   if (tccp->qntsty==J2K_CCP_QNTSTY_SIQNT) {
     for (bandno=1 ; bandno<J2K_MAXBANDS ; bandno++) {
-      tccp->stepsizes[bandno].expn = ((tccp->stepsizes[0].expn)-((bandno-1)/3+1)>0)?(tccp->stepsizes[0].expn)-((bandno-1)/3+1):0;
+      tccp->stepsizes[bandno].expn = ((tccp->stepsizes[0].expn)-((bandno-1)/3)>0)?(tccp->stepsizes[0].expn)-((bandno-1)/3):0;
       tccp->stepsizes[bandno].mant = tccp->stepsizes[0].mant;
     }
   }
