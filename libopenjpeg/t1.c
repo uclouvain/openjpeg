@@ -92,7 +92,7 @@ static int t1_lut_nmsedec_sig0[1 << T1_NMSEDEC_BITS];
 static int t1_lut_nmsedec_ref[1 << T1_NMSEDEC_BITS];
 static int t1_lut_nmsedec_ref0[1 << T1_NMSEDEC_BITS];
 
-static int t1_data[T1_MAXCBLKH][T1_MAXCBLKH];
+static int t1_data[T1_MAXCBLKH][T1_MAXCBLKW];
 static int t1_flags[T1_MAXCBLKH + 2][T1_MAXCBLKH + 2];
 
 int t1_getctxno_zc(int f, int orient)
@@ -187,6 +187,7 @@ void t1_enc_sigpass_step(int *fp, int *dp, int orient, int bpno, int one,
   }
 }
 
+
 void t1_dec_sigpass_step(int *fp, int *dp, int orient, int oneplushalf,
 			 char type, int vsc)
 {
@@ -247,7 +248,9 @@ void t1_dec_sigpass(int w, int h, int bpno, int orient, char type,
 	vsc = ((cblksty & J2K_CCP_CBLKSTY_VSC)
 	       && (j == k + 3 || j == h - 1)) ? 1 : 0;
 	t1_dec_sigpass_step(&t1_flags[1 + j][1 + i],
-			    &t1_data[j][i], orient, oneplushalf,
+			    &t1_data[j][i], 
+			    orient, 
+			    oneplushalf,
 			    type, vsc);
       }
     }
@@ -274,6 +277,7 @@ void t1_enc_refpass_step(int *fp, int *dp, int bpno, int one, int *nmsedec,
     *fp |= T1_REFINE;
   }
 }
+
 
 void t1_dec_refpass_step(int *fp, int *dp, int poshalf, int neghalf,
 			 char type, int vsc)
@@ -326,7 +330,10 @@ void t1_dec_refpass(int w, int h, int bpno, char type, int cblksty)
 	vsc = ((cblksty & J2K_CCP_CBLKSTY_VSC)
 	       && (j == k + 3 || j == h - 1)) ? 1 : 0;
 	t1_dec_refpass_step(&t1_flags[1 + j][1 + i],
-			    &t1_data[j][i], poshalf, neghalf, type, vsc);
+			    &t1_data[j][i], 
+			    poshalf, 
+			    neghalf, 
+			    type, vsc);
       }
     }
   }
@@ -357,6 +364,7 @@ void t1_enc_clnpass_step(int *fp, int *dp, int orient, int bpno, int one,
   }
   *fp &= ~T1_VISIT;
 }
+
 
 void t1_dec_clnpass_step(int *fp, int *dp, int orient, int oneplushalf,
 			 int partial, int vsc)
@@ -495,7 +503,9 @@ void t1_dec_clnpass(int w, int h, int bpno, int orient, int cblksty)
 	vsc = ((cblksty & J2K_CCP_CBLKSTY_VSC)
 	       && (j == k + 3 || j == h - 1)) ? 1 : 0;
 	t1_dec_clnpass_step(&t1_flags[1 + j][1 + i],
-			    &t1_data[j][i], orient, oneplushalf,
+			    &t1_data[j][i], 
+			    orient, 
+			    oneplushalf,
 			    agg && (j == k + runlen), vsc);
       }
     }
@@ -692,6 +702,8 @@ void t1_decode_cblk(tcd_cblk_t * cblk, int orient, int roishift,
       mqc_init_dec(seg->data, seg->len);
     /* dda */
 
+    if (bpno==0) cblk->lastbp=1;  // Add Antonin : quantizbug1
+
     for (passno = 0; passno < seg->numpasses; passno++) {
       switch (passtype) {
       case 0:
@@ -865,13 +877,18 @@ void t1_decode_cblks(tcd_tile_t * tile, j2k_tcp_t * tcp)
 		for (i = 0; i < cblk->x1 - cblk->x0; i++) {
 		  if (t1_data[j][i] == 0) {
 		    tilec->data[x + i +
-				(y + j) * (tilec->x1 - tilec->x0)] = 0;
+		      (y + j) * (tilec->x1 - tilec->x0)] = 0;
 		  } else {
+		    // Add antonin : quantizbug1
+		    t1_data[j][i]<<=1;
+		    //if (cblk->lastbp) 
+		    t1_data[j][i]+=t1_data[j][i]>0?1:-1;
+		    // ddA
 		    tilec->data[x + i +
 				(y + j) * (tilec->x1 -
 					   tilec->
 					   x0)] =
-		      fix_mul(t1_data[j][i] << 13, band->stepsize);
+		      fix_mul(t1_data[j][i] << 12, band->stepsize); //Mod Antonin : quantizbug1 (before : << 13)
 		  }
 		}
 	      }

@@ -67,7 +67,7 @@ static int *b = NULL;
 static int lastSizeOfB = 0;
 
 /* <summary>       */
-/* Claning memory. */
+/* Cleaning memory. */
 /* </summary>      */
 
 void dwt_clean()

@@ -774,6 +774,8 @@ void tcd_init(j2k_image_t * img, j2k_cp_t * cp)
 	      cblk->y0 = int_max(cblkystart, prc->y0);
 	      cblk->x1 = int_min(cblkxend, prc->x1);
 	      cblk->y1 = int_min(cblkyend, prc->y1);
+
+	      cblk->lastbp = 0; // Add Antonin : quantizbug1
 	    }
 	  }
 	}
@@ -1523,10 +1525,15 @@ int tcd_decode_tile(unsigned char *src, int len, int tileno)
       for (i = res->x0; i < res->x1; i++) {
 
 	int v;
+	double tmp= (double) tilec->data[i - res->x0 + (j - res->y0) * tw];
 	if (tcd_tcp->tccps[compno].qmfbid == 1) {
-	  v = tilec->data[i - res->x0 + (j - res->y0) * tw];
+	  v = (int) tmp;
 	} else {
-	  v = tilec->data[i - res->x0 + (j - res->y0) * tw] >> 13;
+	  //v = (int) tmp >> 13;
+	  //Mod antonin : multbug1
+	  v = (int) ((fabs(tmp/8192.0)>=floor(fabs(tmp/8192.0))+0.5)?fabs(tmp/8192.0)+1.0:fabs(tmp/8192.0));
+	  v = (tmp<0)?-v:v;
+	  //doM
 	}
 	v += adjust;
 

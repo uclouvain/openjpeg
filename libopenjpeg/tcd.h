@@ -57,6 +57,7 @@ typedef struct {
 typedef struct {
   int x0, y0, x1, y1;		/* dimension of the code-blocks : left upper corner (x0, y0) right low corner (x1,y1) */
   int numbps;
+  int lastbp;			/* Add antonin : quantizbug1 */
   int numlenbits;
   int len;			/* length */
   int numpasses;		/* number of pass already done for the code-blocks */
