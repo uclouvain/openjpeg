@@ -415,7 +415,7 @@ int jp2_read_ftyp(jp2_struct_t * jp2_struct)
   jp2_struct->cl =
     (unsigned int *) malloc(jp2_struct->numcl * sizeof(unsigned int));
 
-  for (i = jp2_struct->numcl; i > 0; i--)
+  for (i = 0; i < jp2_struct->numcl; i++)
     jp2_struct->cl[i] = cio_read(4);	/* CLi */
 
   if (cio_tell() - box.init_pos != box.length) {
