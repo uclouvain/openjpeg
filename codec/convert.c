@@ -76,8 +76,10 @@ int bmptoimage(char *filename, j2k_image_t * img, int subsampling_dx,
   unsigned char *RGB;
   unsigned char *table_R, *table_G, *table_B;
   unsigned int j, w, h, PAD, type = 0;
+
   int i;
   int gray_scale = 1, not_end_file = 1; 
+
   unsigned int line = 0, col = 0;
   unsigned char v, v2;
   UINT4 W, H;
@@ -185,6 +187,7 @@ int bmptoimage(char *filename, j2k_image_t * img, int subsampling_dx,
 							   1) *
 	subsampling_dy + 1;
       img->numcomps = 3;
+      img->color_space = 1;
       img->comps =
 	(j2k_comp_t *) malloc(img->numcomps * sizeof(j2k_comp_t));
       for (i = 0; i < img->numcomps; i++) {
@@ -559,6 +562,7 @@ int pgxtoimage(char *filename, j2k_image_t * img, int tdy,
   j2k_comp_t *comp;
 
   img->numcomps = 1;
+  img->color_space = 2;
   img->comps = (j2k_comp_t *) malloc(img->numcomps * sizeof(j2k_comp_t));
   for (compno = 0; compno < img->numcomps; compno++) {
     FILE *src;
@@ -713,6 +717,7 @@ int pnmtoimage(char *filename, j2k_image_t * img, int subsampling_dx,
       subsampling_dy + 1;
 
     img->numcomps = 1;
+    img->color_space = 2;
     img->comps = (j2k_comp_t *) malloc(sizeof(j2k_comp_t));
     img->comps[0].prec = 8;
     img->comps[0].bpp = 8;
@@ -756,6 +761,7 @@ int pnmtoimage(char *filename, j2k_image_t * img, int subsampling_dx,
       subsampling_dy + 1;
 
     img->numcomps = 1;
+    img->color_space = 2;
     img->comps = (j2k_comp_t *) malloc(sizeof(j2k_comp_t));
     img->comps[0].prec = 8;
     img->comps[0].bpp = 8;
@@ -797,6 +803,7 @@ int pnmtoimage(char *filename, j2k_image_t * img, int subsampling_dx,
 							 1) *
       subsampling_dy + 1;
     img->numcomps = 3;
+    img->color_space = 1;
     img->comps = (j2k_comp_t *) malloc(img->numcomps * sizeof(j2k_comp_t));
     for (i = 0; i < img->numcomps; i++) {
       img->comps[i].prec = 8;
@@ -859,6 +866,7 @@ int pnmtoimage(char *filename, j2k_image_t * img, int subsampling_dx,
 							 1) *
       subsampling_dy + 1;
     img->numcomps = 3;
+    img->color_space = 1;
     img->comps = (j2k_comp_t *) malloc(img->numcomps * sizeof(j2k_comp_t));
     for (i = 0; i < img->numcomps; i++) {
       img->comps[i].prec = 8;
