@@ -1156,7 +1156,7 @@ int main(int argc, char **argv)
 
   if (argc != 4)
     {
-      fprintf(stderr,"\nERROR in entry : index_create J2K-file Idx-file version\n\nVersion : 0, 1, 2 or 3\n\n");
+      fprintf(stderr,"\nUSAGE : ./index_create J2K-file JP2-file version\n\nVersion : 0, 1, 2 or 3\n  0 : [faix] 4-byte and no AUX fields\n  1 : [faix] 8-byte and no AUX fields\n  2 : [faix] 4-byte and AUX fields\n  3 : [faix] 8-byte and AUX fields\n\nReference Document : annex I from JPIP-FCD-version 2 (SC 29 N5727)\n\n");
       return 1;
     }
 
