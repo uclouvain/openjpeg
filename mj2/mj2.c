@@ -585,7 +585,7 @@ int mj2_read_mdat(mj2_movie_t * movie, unsigned char *src, char *outfile)
   for (track_nb = 0; track_nb < movie->next_tk_id - 1; track_nb++) {
     if ((movie->tk->imagefile != (char *) 0xcdcdcdcd)
 	&& (movie->tk->imagefile != NULL)) {
-      fprintf(stderr, "%s", movie->tk->imagefile);
+      fprintf(stderr, "%s", movie->tk[track_nb].imagefile);
 
       f = fopen(movie->tk->imagefile, "w");	/* Erase content of file if it already exists */
       fclose(f);
@@ -604,7 +604,7 @@ int mj2_read_mdat(mj2_movie_t * movie, unsigned char *src, char *outfile)
       fprintf(stderr, "Track %d: Width=%d Height=%d\n", track_nb,
 	      tk->w, tk->h);
       fprintf(stderr, "%d Samples\n", tk->num_samples);
-      if ((movie->tk->imagefile = (char *) 0xcdcdcdcd)
+      if ((tk->imagefile == (char *) 0xcdcdcdcd)
 	  || (movie->tk->imagefile == NULL)) {
 	tk->imagefile = outfile;
       }
@@ -799,14 +799,14 @@ int mj2_read_stsz(mj2_tk_t * tk)
 
   sample_size = cio_read(4);
 
-  if (sample_size != 0) {	/* Samples do not have the same size */
-    tk->same_sample_size = 0;
+  if (sample_size != 0) {	/* Samples do have the same size */
+    tk->same_sample_size = 1;
     for (i = 0; i < tk->num_samples; i++) {
       tk->sample[i].sample_size = sample_size;
     }
     cio_skip(4);		/* Sample count = 1 */
   } else {
-    tk->same_sample_size = 1;
+    tk->same_sample_size = 0;
     if (tk->num_samples != cio_read(4)) {	/* Sample count */
       fprintf(stderr,
 	      "Error in STSZ box. Expected that sample-count is number of samples in track\n");
@@ -1798,7 +1798,7 @@ int mj2_read_dref(mj2_tk_t * tk)
 {
 
   int i;
-  int entry_count;
+  int entry_count, marker;
   mj2_box_t box;
 
   mj2_read_boxhdr(&box);
@@ -1823,12 +1823,13 @@ int mj2_read_dref(mj2_tk_t * tk)
 
   for (i = 0; i < entry_count; i++) {
     cio_skip(4);
-    if (cio_read(4) == MJ2_URL) {
+    marker = cio_read(4);
+    if (marker == MJ2_URL) {
       cio_skip(-8);
       tk->num_url++;
       if (mj2_read_url(tk, tk->num_url))
 	return 1;
-    } else if (cio_read(4) == MJ2_URN) {
+    } else if (marker == MJ2_URN) {
       cio_skip(-8);
       tk->num_urn++;
       if (mj2_read_urn(tk, tk->num_urn))
@@ -1945,7 +1946,7 @@ int mj2_read_vmhd(mj2_tk_t * tk)
   }
 
   if (1 != cio_read(3)) {	/* Flags = 1  */
-    fprintf(stderr, "Error with flag in VMHD box. Expected flag 0\n");
+    fprintf(stderr, "Error with flag in VMHD box. Expected flag 1\n");
     return 1;
   }
 
@@ -2153,7 +2154,7 @@ int mj2_read_minf(mj2_tk_t * tk, j2k_image_t * img)
   } else if (box_type == MJ2_SMHD) {
     if (mj2_read_smhd(tk))
       return 1;
-  } else if (box_type == MJ2_VMHD) {
+  } else if (box_type == MJ2_HMHD) {
     if (mj2_read_hmhd(tk))
       return 1;
   } else {
