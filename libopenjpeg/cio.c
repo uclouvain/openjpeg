@@ -27,53 +27,60 @@
 #include "cio.h"
 #include <setjmp.h>
 
-static unsigned char *cio_start, *cio_end, *cio_bp;
+static unsigned char *cio_start;  /* pointer to the start of the stream */
+static unsigned char *cio_end;    /* pointer to the end of the stream */
+static unsigned char *cio_bp;     /* pointer to the present position */
 
 extern jmp_buf j2k_error;
 
-/* <summary> */
-/* Number of bytes written. */
-/* </summary> */
+/* 
+ * Number of bytes written.
+ */
 int cio_numbytes()
 {
 	return cio_bp - cio_start;
 }
 
-/* <summary> */
-/* Get position in byte stream. */
-/* </summary> */
+/*
+ * Get position in byte stream.
+ */
 int cio_tell()
 {
 	return cio_bp - cio_start;
 }
 
-/* <summary> */
-/* Set position in byte stream. */
-/* </summary> */
+/*
+ * Set position in byte stream.
+ *
+ * pos : position, in number of bytes, from the beginning of the stream
+ */
 void cio_seek(int pos)
 {
 	cio_bp = cio_start + pos;
 }
 
-/* <summary> */
-/* Number of bytes left before the end of the stream. */
-/* </summary> */
+/*
+ * Number of bytes left before the end of the stream.
+ */
 int cio_numbytesleft()
 {
 	return cio_end - cio_bp;
 }
 
-/* <summary> */
-/* Get pointer to the current position in the stream. */
-/* </summary> */
+/*
+ * Get pointer to the current position in the stream.
+ */
 unsigned char *cio_getbp()
 {
 	return cio_bp;
 }
 
-/* <summary> */
-/* Initialize byte IO. */
-/* </summary> */
+/* 
+ * Initialize byte IO
+ *
+ * bp  : destination/source stream
+ * len : length of the stream
+ */
 void cio_init(unsigned char *bp, int len)
 {
 	cio_start = bp;
@@ -81,9 +88,9 @@ void cio_init(unsigned char *bp, int len)
 	cio_bp = bp;
 }
 
-/* <summary> */
-/* Write a byte. */
-/* </summary> */
+/*
+ * Write a byte.
+ */
 void cio_byteout(unsigned char v)
 {
 	if (cio_bp >= cio_end)
@@ -92,9 +99,9 @@ void cio_byteout(unsigned char v)
 
 }
 
-/* <summary> */
-/* Read a byte. */
-/* </summary> */
+/*
+ * Read a byte.
+ */
 unsigned char cio_bytein()
 {
 	if (cio_bp >= cio_end)
@@ -102,9 +109,12 @@ unsigned char cio_bytein()
 	return *cio_bp++;
 }
 
-/* <summary> */
-/* Write a byte. */
-/* </summary> */
+/*
+ * Write some bytes.
+ *
+ * v : value to write
+ * n : number of bytes to write
+ */
 void cio_write(unsigned int v, int n)
 {
 	int i;
@@ -113,9 +123,13 @@ void cio_write(unsigned int v, int n)
 	}
 }
 
-/* <summary> */
-/* Read some bytes. */
-/* </summary> */
+/*
+ * Read some bytes.
+ *
+ * n : number of bytes to read
+ *
+ * return : value of the n bytes read
+ */
 unsigned int cio_read(int n)
 {
 	int i;
@@ -127,9 +141,11 @@ unsigned int cio_read(int n)
 	return v;
 }
 
-/* <summary> */
-/* Write some bytes. */
-/* </summary> */
+/* 
+ * Skip some bytes.
+ *
+ * n : number of bytes to skip
+ */
 void cio_skip(int n)
 {
 	cio_bp += n;

@@ -23,50 +23,26 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */  
-	
+ */
+
 #ifndef __RAW_H
 #define __RAW_H
-	
+
 /*
  * Return the number of bytes written/read since initialisation
- */ 
+ */
 int raw_numbytes();
-
-
-/*
- * Initialize the encoder
- * bp: pointer to the start of the buffer where the bytes will be written
- */ 
-void raw_init_enc(unsigned char *bp);
-
-
-/*
- * Encode a bit
- * d: bit to encode (0 or 1)
- */ 
-void raw_encode(int d);
-
-
-/*
- * Flush the encoder, so that all remaining data is written
- */ 
-void raw_flush();
-
 
 /*
  * Initialize the decoder
  * bp: pointer to the start of the buffer from which the bytes will be read
  * len: length of the input buffer
- */ 
+ */
 void raw_init_dec(unsigned char *bp, int len);
-
 
 /*
  * Decode a bit (returns 0 or 1)
- */ 
+ */
 int raw_decode();
 
-
-#endif	/* 
- */
+#endif

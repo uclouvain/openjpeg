@@ -30,7 +30,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include <unistd.h>
 #include <string.h>
 #ifndef DONT_HAVE_GETOPT
 #include <getopt.h>
@@ -176,32 +175,37 @@ void help_display()
 
 int give_progression(char progression[4])
 {
-	if (progression[0] == 'L' && progression[1] == 'R'
-			&& progression[2] == 'C' && progression[3] == 'P') {
-		return 0;
-	} else {
-		if (progression[0] == 'R' && progression[1] == 'L'
-				&& progression[2] == 'C' && progression[3] == 'P') {
-			return 1;
-		} else {
-			if (progression[0] == 'R' && progression[1] == 'P'
-					&& progression[2] == 'C' && progression[3] == 'L') {
-				return 2;
-			} else {
-				if (progression[0] == 'P' && progression[1] == 'C'
-						&& progression[2] == 'R' && progression[3] == 'L') {
-					return 3;
-				} else {
-					if (progression[0] == 'C' && progression[1] == 'P'
-							&& progression[2] == 'R' && progression[3] == 'L') {
-						return 4;
-					} else {
-						return -1;
-					}
-				}
+  if (progression[0] == 'L' && progression[1] == 'R' && progression[2] == 'C' && progression[3] == 'P') 
+    {
+      return 0;
+    } else 
+      {
+	if (progression[0] == 'R' && progression[1] == 'L' && progression[2] == 'C' && progression[3] == 'P') 
+	  {
+	    return 1;
+	  } else 
+	    {
+	      if (progression[0] == 'R' && progression[1] == 'P' && progression[2] == 'C' && progression[3] == 'L') 
+		{
+		  return 2;
+		} else 
+		  {
+		    if (progression[0] == 'P' && progression[1] == 'C' && progression[2] == 'R' && progression[3] == 'L') 
+		      {
+			return 3;
+		      } else 
+			{
+			  if (progression[0] == 'C' && progression[1] == 'P' && progression[2] == 'R' && progression[3] == 'L') 
+			    {
+			      return 4;
+			    } else 
+			      {
+				return -1;
+			      }
 			}
-		}
-	}
+		  }
+	    }
+      }
 }
 
 double dwt_norms_97[4][10] = {
@@ -240,42 +244,38 @@ void calc_explicit_stepsizes(j2k_tccp_t * tccp, int prec)
 		resno = bandno == 0 ? 0 : (bandno - 1) / 3 + 1;
 		orient = bandno == 0 ? 0 : (bandno - 1) % 3 + 1;
 		level = tccp->numresolutions - 1 - resno;
-		gain =
-			tccp->qmfbid == 0 ? 0 : (orient ==
-															 0 ? 0 : (orient == 1
-																				|| orient == 2 ? 1 : 2));
+		gain = tccp->qmfbid == 0 ? 0 : (orient == 0 ? 0 : (orient == 1 || orient == 2 ? 1 : 2));
 		if (tccp->qntsty == J2K_CCP_QNTSTY_NOQNT) {
 			stepsize = 1.0;
 		} else {
 			double norm = dwt_norms_97[orient][level];
 			stepsize = (1 << (gain + 1)) / norm;
 		}
-		encode_stepsize((int) floor(stepsize * 8192.0), prec + gain,
-										&tccp->stepsizes[bandno].expn,
-										&tccp->stepsizes[bandno].mant);
+		encode_stepsize((int) floor(stepsize * 8192.0), prec + gain, &tccp->stepsizes[bandno].expn,
+				&tccp->stepsizes[bandno].mant);
 	}
 }
 
 int main(int argc, char **argv)
 {
 	int len;
-	int NumResolution, numD_min;	/* NumResolution : number of resolution */
-	int Tile_arg;									/* Tile_arg = 0 (pas en argument ou = 1 (entre en argument) */
-	int CSty;											/* CSty : coding style */
-	int Prog_order;								/* progression order (default LRCP) */
+	int NumResolution, numD_min;	/*   NumResolution : number of resolution                     */
+	int Tile_arg;			/*   Tile_arg = 0 (not in argument) ou = 1 (in argument)      */
+	int CSty;			/*   CSty : coding style                                      */
+	int Prog_order;			/*   progression order (default LRCP)                         */
 	char progression[4];
-	int numpocs, numpocs_tile;		/* Number of progression order change (POC) default 0 */
-	int prcw_init, prch_init;			/* Initialisation precincts' size */
-	int cblockw_init, cblockh_init;	/* Initialisation codeblocks' size */
-	int mode, value;							/* mode switch (cblk_style) */
-	int subsampling_dx, subsampling_dy;	/* subsampling value for dx and dy          */
-	int ROI_compno, ROI_shift;		/* region of interrest */
-	int Dim[2];										/* portion of the image coded */
-	int TX0, TY0;									/* tile off-set */
+	int numpocs, numpocs_tile;	/*   Number of progression order change (POC) default 0       */
+	int prcw_init, prch_init;	/*   Initialisation precincts' size                           */
+	int cblockw_init, cblockh_init;	/*   Initialisation codeblocks' size                          */
+	int mode, value;		/*   Mode switch (cblk_style)                                 */
+	int subsampling_dx, subsampling_dy;	/* subsampling value for dx and dy                    */
+	int ROI_compno, ROI_shift;	/*   region of interrest                                      */
+	int Dim[2];			/*   portion of the image coded                               */
+	int TX0, TY0;			/*   tile off-set                                             */
 	j2k_image_t img;
-	j2k_cp_t cp, cp_init;					/* cp_init is used to initialise in multiple tiles  */
-	j2k_tcp_t *tcp, *tcp_init;		/* tcp_init is used to initialise in multiple tile */
-	j2k_poc_t POC[32];						/* POC : used in case of Progression order change */
+	j2k_cp_t cp, cp_init;		/*   cp_init is used to initialise in multiple tiles          */
+	j2k_tcp_t *tcp, *tcp_init;	/*   tcp_init is used to initialise in multiple tile          */
+	j2k_poc_t POC[32];		/*   POC : used in case of Progression order change           */
 	j2k_poc_t *tcp_poc;
 	j2k_tccp_t *tccp;
 	int i, tileno, j;
@@ -299,7 +299,7 @@ int main(int argc, char **argv)
 	mode = 0;
 	subsampling_dx = 1;
 	subsampling_dy = 1;
-	ROI_compno = -1;							/* no ROI */
+	ROI_compno = -1;	/* no ROI */
 	ROI_shift = 0;
 	Dim[0] = 0;
 	Dim[1] = 0;
@@ -321,52 +321,44 @@ int main(int argc, char **argv)
 		if (c == -1)
 			break;
 		switch (c) {
-		case 'i':									/* IN fill */
+		case 'i':	/* IN fill */
 			infile = optarg;
 			s = optarg;
-			while (*s && *s != '.') {
+			while (*s) {
 				s++;
 			}
-			s++;
-			S1 = *s;
-			s++;
-			S2 = *s;
-			s++;
+			s--;
 			S3 = *s;
+			s--;
+			S2 = *s;
+			s--;
+			S1 = *s;
 
-			if ((S1 == 'p' && S2 == 'g' && S3 == 'x')
-					|| (S1 == 'P' && S2 == 'G' && S3 == 'X')) {
+			if ((S1 == 'p' && S2 == 'g' && S3 == 'x') || (S1 == 'P' && S2 == 'G' && S3 == 'X')) {
 				cp.image_type = 0;
 				break;
 			}
 
-			if ((S1 == 'p' && S2 == 'n' && S3 == 'm')
-					|| (S1 == 'P' && S2 == 'N' && S3 == 'M') || (S1 == 'p'
-																											 && S2 == 'g'
-																											 && S3 == 'm')
-					|| (S1 == 'P' && S2 == 'G' && S3 == 'M') || (S1 == 'P'
-																											 && S2 == 'P'
-																											 && S3 == 'M')
-					|| (S1 == 'p' && S2 == 'p' && S3 == 'm')) {
+			if ((S1 == 'p' && S2 == 'n' && S3 == 'm')|| (S1 == 'P' && S2 == 'N' && S3 == 'M') 
+			    || (S1 == 'p' && S2 == 'g' && S3 == 'm') || (S1 == 'P' && S2 == 'G' && S3 == 'M') 
+			    || (S1 == 'P' && S2 == 'P' && S3 == 'M') || (S1 == 'p' && S2 == 'p' && S3 == 'm')) {
 				cp.image_type = 1;
 				break;
 			}
 
-			if ((S1 == 'b' && S2 == 'm' && S3 == 'p')
-					|| (S1 == 'B' && S2 == 'M' && S3 == 'P')) {
+			if ((S1 == 'b' && S2 == 'm' && S3 == 'p') || (S1 == 'B' && S2 == 'M' && S3 == 'P')) {
 				cp.image_type = 2;
 				break;
 			}
-			fprintf(stderr,
-							"!! Unrecognized format for infile [accept only *.pnm, *.pgm, *.ppm, *.pgx or *.bmp] !!\n\n");
+			fprintf(stderr, "!! Unrecognized format for infile : %c%c%c [accept only *.pnm, *.pgm, *.ppm, *.pgx or *.bmp] !!\n\n",S1,S2,S3);
 			return 1;
 			break;
 			/* ----------------------------------------------------- */
-		case 'o':									/* OUT fill */
+		case 'o':	/* OUT fill */
 			outfile = optarg;
 			break;
 			/* ----------------------------------------------------- */
-		case 'r':									/* rates */
+		case 'r':	/* rates rates/distorsion*/
 			s = optarg;
 			while (sscanf(s, "%d", &tcp_init->rates[tcp_init->numlayers]) == 1) {
 				tcp_init->numlayers++;
@@ -378,88 +370,109 @@ int main(int argc, char **argv)
 				s++;
 			}
 			cp.disto_alloc = 1;
+			cp.matrice = NULL;
 			break;
 			/* ----------------------------------------------------- */
-		case 'q':									/* rates */
-			s = optarg;
-			sscanf(s, "%d", &tcp_init->numlayers);
-			for (i = 0; i < tcp_init->numlayers; i++) {
-				tcp_init->rates[i] = 1;
+		case 'q':	/* rates fixed */
+		  s=optarg;
+		  sscanf(s, "%d",&tcp_init->numlayers);
+		  s++;
+		  if (tcp_init->numlayers>9) s++;
+		  cp.matrice=(int*)malloc(tcp_init->numlayers*NumResolution*3*sizeof(int));
+		  s=s+2;
+		  for(i=0;i<tcp_init->numlayers;i++)
+		    {
+		      tcp_init->rates[i]=1;
+		      sscanf(s, "%d,", &cp.matrice[i*NumResolution*3]);
+		      s+=2;
+		      if (cp.matrice[i*NumResolution*3]>9) s++;
+		      cp.matrice[i*NumResolution*3+1]=0;
+		      cp.matrice[i*NumResolution*3+2]=0;
+		      for (j=1;j<NumResolution;j++)
+			{
+			  sscanf(s, "%d,%d,%d", &cp.matrice[i*NumResolution*3+j*3+0],&cp.matrice[i*NumResolution*3+j*3+1],&cp.matrice[i*NumResolution*3+j*3+2]);
+			  s+=6;
+			  if (cp.matrice[i*NumResolution*3+j*3]>9) s++;
+			  if (cp.matrice[i*NumResolution*3+j*3+1]>9) s++;
+			  if (cp.matrice[i*NumResolution*3+j*3+2]>9) s++;  
 			}
-			cp.fixed_alloc = 1;
-			break;
-			/* ----------------------------------------------------- */
-		case 't':									/* tiles */
+		      if (i<tcp_init->numlayers-1) s++;
+		    }
+		  cp.fixed_alloc=1;
+		  break;
+		        /* ----------------------------------------------------- */
+		case 't':	/* tiles */
 			sscanf(optarg, "%d,%d", &cp.tdx, &cp.tdy);
 			Tile_arg = 1;
 			break;
 			/* ----------------------------------------------------- */
-		case 'n':									/* resolution */
+		case 'n':	/* resolution */
 			sscanf(optarg, "%d", &NumResolution);
 			break;
 			/* ----------------------------------------------------- */
-		case 'c':									/* precinct dimension */
+		case 'c':	/* precinct dimension */
 			sscanf(optarg, "%d,%d", &prcw_init, &prch_init);
 			CSty |= 0x01;
 			break;
 			/* ----------------------------------------------------- */
-		case 'b':									/* code-block dimension */
+		case 'b':	/* code-block dimension */
 			sscanf(optarg, "%d,%d", &cblockw_init, &cblockh_init);
 			if (cblockw_init * cblockh_init > 4096 || cblockw_init > 1024
 					|| cblockw_init < 4 || cblockh_init > 1024 || cblockh_init < 4) {
-				fprintf(stderr,
-								"!! Size of code_block error (option -b) !!\n\nRestriction :\n    * width*height<=4096\n    * 4<=width,height<= 1024\n\n");
+				fprintf(stderr,"!! Size of code_block error (option -b) !!\n\nRestriction :\n    * width*height<=4096\n    * 4<=width,height<= 1024\n\n");
 				return 1;
 			}
 			break;
 			/* ----------------------------------------------------- */
-		case 'x':									/* creation of index file */
-			index = optarg;
+		case 'x':	/* creation of index file */
+		        index = optarg;
 			img.index_on = 1;
 			break;
 			/* ----------------------------------------------------- */
-		case 'p':									/* progression order */
-			sscanf(optarg, "%s", progression);
+		case 'p':	/* progression order */
+		        s = optarg;
+		        for (i=0; i<4; i++)
+			  {
+			    progression[i] = *s;
+			    s++;
+			  }
 			Prog_order = give_progression(progression);
-			if (Prog_order == -1) {
-				fprintf(stderr,
-								"Unrecognized progression order [LRCP, RLCP, RPCL, PCRL, CPRL] !!\n");
-				return 1;
+			
+		        if (Prog_order == -1) {
+		          fprintf(stderr,"Unrecognized progression order [LRCP, RLCP, RPCL, PCRL, CPRL] !!\n");
+		          return 1;
 			}
 			break;
 			/* ----------------------------------------------------- */
-		case 's':									/* subsampling factor */
+		case 's':	/* subsampling factor */
 			if (sscanf(optarg, "%d,%d", &subsampling_dx, &subsampling_dy) != 2) {
-				fprintf(stderr,
-								"'-s' sub-sampling argument error !  [-s dx,dy]\n");
+				fprintf(stderr,"'-s' sub-sampling argument error !  [-s dx,dy]\n");
 				return 1;
 			}
 			break;
 			/* ----------------------------------------------------- */
-		case 'd':									/* coordonnate of the reference grid */
+		case 'd':	/* coordonnate of the reference grid */
 			if (sscanf(optarg, "%d,%d", &Dim[0], &Dim[1]) != 2) {
-				fprintf(stderr,
-								"-d 'coordonnate of the reference grid' argument error !! [-d x0,y0]\n");
+				fprintf(stderr,"-d 'coordonnate of the reference grid' argument error !! [-d x0,y0]\n");
 				return 1;
 			}
 			break;
 			/* ----------------------------------------------------- */
-		case 'h':									/* Display an help description */
+		case 'h':	/* Display an help description */
 			help_display();
 			return 0;
 			break;
 			/* ----------------------------------------------------- */
-		case 'P':									/* POC */
+		case 'P':	/* POC */
 			fprintf(stderr, "/----------------------------------\\\n");
 			fprintf(stderr, "|  POC option not fully tested !!  |\n");
 			fprintf(stderr, "\\----------------------------------/\n");
 
 			s = optarg;
-			while (sscanf
-						 (s, "T%d=%d,%d,%d,%d,%d,%s", &POC[numpocs].tile,
-							&POC[numpocs].resno0, &POC[numpocs].compno0,
-							&POC[numpocs].layno1, &POC[numpocs].resno1,
-							&POC[numpocs].compno1, POC[numpocs].progorder) == 7) {
+			while (sscanf(s, "T%d=%d,%d,%d,%d,%d,%s", &POC[numpocs].tile,
+				      &POC[numpocs].resno0, &POC[numpocs].compno0,
+				      &POC[numpocs].layno1, &POC[numpocs].resno1,
+				      &POC[numpocs].compno1, POC[numpocs].progorder) == 7) {
 				POC[numpocs].prg = give_progression(POC[numpocs].progorder);
 				/* POC[numpocs].tile; */
 				numpocs++;
@@ -472,15 +485,15 @@ int main(int argc, char **argv)
 			}
 			break;
 			/* ------------------------------------------------------ */
-		case 'S':									/* SOP marker */
+		case 'S':	/* SOP marker */
 			CSty |= 0x02;
 			break;
 			/* ------------------------------------------------------ */
-		case 'E':									/* EPH marker */
+		case 'E':	/* EPH marker */
 			CSty |= 0x04;
 			break;
 			/* ------------------------------------------------------ */
-		case 'M':									/* Mode switch pas tous au point !! */
+		case 'M':	/* Mode switch pas tous au point !! */
 			if (sscanf(optarg, "%d", &value) == 1) {
 				for (i = 0; i <= 5; i++) {
 					int cache = value & (1 << i);
@@ -490,27 +503,25 @@ int main(int argc, char **argv)
 			}
 			break;
 			/* ------------------------------------------------------ */
-		case 'R':									/* ROI */
+		case 'R':	/* ROI */
 			if (sscanf(optarg, "OI:c=%d,U=%d", &ROI_compno, &ROI_shift) != 2) {
-				fprintf(stderr,
-								"ROI error !! [-ROI:c='compno',U='shift']\n");
+				fprintf(stderr,"ROI error !! [-ROI:c='compno',U='shift']\n");
 				return 1;
 			}
 			break;
 			/* ------------------------------------------------------ */
-		case 'T':									/* Tile offset */
+		case 'T':	/* Tile offset */
 			if (sscanf(optarg, "%d,%d", &TX0, &TY0) != 2) {
-				fprintf(stderr,
-								"-T 'tile offset' argument error !! [-T X0,Y0]");
+				fprintf(stderr,"-T 'tile offset' argument error !! [-T X0,Y0]");
 				return 1;
 			}
 			break;
 			/* ------------------------------------------------------ */
-		case 'C':									/* Add a comment */
+		case 'C':	/* Add a comment */
 			cp.comment = optarg;
 			break;
 			/* ------------------------------------------------------ */
-		case 'I':									/* reversible or not */
+		case 'I':	/* reversible or not */
 			ir = 1;
 			break;
 			/* ------------------------------------------------------ */
@@ -525,14 +536,12 @@ int main(int argc, char **argv)
 	/* Error messages */
 	/* -------------- */
 	if (!infile || !outfile) {
-		fprintf(stderr,
-						"usage: pnmtoj2k -i pnm-file -o j2k-file\n");
+		fprintf(stderr,	"usage: pnmtoj2k -i pnm-file -o j2k-file\n");
 		return 1;
 	}
 
 	if (cp.disto_alloc & cp.fixed_alloc) {
-		fprintf(stderr,
-						"Error: option -r and -q can not be used together !!\n");
+		fprintf(stderr,	"Error: option -r and -q can not be used together !!\n");
 		return 1;
 	}
 
@@ -544,32 +553,27 @@ int main(int argc, char **argv)
 	}
 
 	if (TX0 > Dim[0] || TY0 > Dim[1]) {
-		fprintf(stderr,
-						"Error: Tile offset dimension is unnappropriate --> TX0(%d)<=IMG_X0(%d) TYO(%d)<=IMG_Y0(%d) \n",
-						TX0, Dim[0], TY0, Dim[1]);
+		fprintf(stderr,	"Error: Tile offset dimension is unnappropriate --> TX0(%d)<=IMG_X0(%d) TYO(%d)<=IMG_Y0(%d) \n",
+			TX0, Dim[0], TY0, Dim[1]);
 		return 1;
 	}
 
 	for (i = 0; i < numpocs; i++) {
 		if (POC[i].prg == -1) {
-			fprintf(stderr,
-							"Unrecognized progression order in option -P (POC n %d) [LRCP, RLCP, RPCL, PCRL, CPRL] !!\n",
-							i + 1);
+			fprintf(stderr,	"Unrecognized progression order in option -P (POC n %d) [LRCP, RLCP, RPCL, PCRL, CPRL] !!\n",
+				i + 1);
 		}
 	}
 
 	switch (cp.image_type) {
 	case 0:
 		if (Tile_arg) {
-			if (!pgxtoimage
-					(infile, &img, cp.tdy, subsampling_dx, subsampling_dy, Dim,
-					 cp)) {
+			if (!pgxtoimage(infile, &img, cp.tdy, subsampling_dx, subsampling_dy, Dim, cp)) {
 				fprintf(stderr, "not a pgx file\n");
 				return 1;
 			}
 		} else {
-			if (!pgxtoimage
-					(infile, &img, -1, subsampling_dx, subsampling_dy, Dim, cp)) {
+			if (!pgxtoimage(infile, &img, -1, subsampling_dx, subsampling_dy, Dim, cp)) {
 				fprintf(stderr, " not a pgx file\n");
 				return 1;
 			}
@@ -610,6 +614,12 @@ int main(int argc, char **argv)
 		cp.tdy = img.y1 - cp.ty0;
 	}
 
+	/* Initialization for PPM marker */
+	cp.ppm=0;
+	cp.ppm_data=NULL;
+	cp.ppm_previous=0;
+	cp.ppm_store=0;
+
 	/* Init the mutiple tiles */
 	/* ---------------------- */
 	cp.tcps = (j2k_tcp_t *) malloc(cp.tw * cp.th * sizeof(j2k_tcp_t));
@@ -623,9 +633,16 @@ int main(int argc, char **argv)
 		tcp->csty = CSty;
 		tcp->prg = Prog_order;
 		tcp->mct = img.numcomps == 3 ? 1 : 0;
+		tcp->ppt = 0;
+		tcp->ppt_data=NULL; 
+		tcp->ppt_store=0;
+
 		numpocs_tile = 0;
-		if (numpocs) {							/* intialisation of POC */
-			for (i = 0; i < numpocs; i++) {
+		tcp->POC=0;
+		if (numpocs) {
+		  /* intialisation of POC */
+		  tcp->POC=1;
+		  for (i = 0; i < numpocs; i++) {
 				if (tileno == POC[i].tile - 1 || POC[i].tile == -1) {
 					tcp_poc = &tcp->pocs[numpocs_tile];
 					tcp_poc->resno0 = POC[numpocs_tile].resno0;
@@ -691,27 +708,23 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	if (cp.image_type) {					/* PNM PGM PPM */
-		/* Remove the temporary file Compo */
-		/* ------------------------------- */
+	/* Remove the temporary files */
+	/* -------------------------- */
+	if (cp.image_type) { /* PNM PGM PPM */
 		for (i = 0; i < img.numcomps; i++) {
-			char tmp[256];
-			sprintf(tmp, "Compo%d", i);
-			if (unlink(tmp) == -1) {
-				fprintf(stderr, "failed to kill %s file !\n",
-								tmp);
+			char tmp;
+			sprintf(&tmp, "Compo%d", i);
+			if (remove(&tmp) == -1) {
+				fprintf(stderr, "failed to kill %s file !\n", &tmp);
 			}
 		}
-	} else {											/* PGX */
-
-		/* Kill temporary bandtile file for cleaning the memory space on user's disk */
+	} else { /* PGX */
 		for (i = 0; i < cp.th; i++) {
 			char tmp;
 			sprintf(&tmp, "bandtile%d", i + 1);
 
-			if (unlink(&tmp) == -1) {
-				fprintf(stderr, "failed to kill %s file !\n",
-								&tmp);
+			if (remove(&tmp) == -1) {
+				fprintf(stderr, "failed to kill %s file !\n", &tmp);
 			}
 		}
 	}

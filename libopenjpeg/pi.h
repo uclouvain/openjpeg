@@ -42,15 +42,16 @@ typedef struct {
 } pi_comp_t;
 
 typedef struct {
-	int include[10][10][3][99];
+        short int *include;                     /* precise if the packet has been already used (usefull for progression order change) */
+        int step_l, step_r, step_c, step_p;     /* different steps (layer, resolution, component, precinct) to localize the packet in the include vector */ 
 	int compno, resno, precno, layno;	/* component, resolution, precinct and layer that indentify the packet */
-	int first;
+        int first;                              /* 0 if the first packet */
 	j2k_poc_t poc;
 	int numcomps;
 	pi_comp_t *comps;
 	int tx0, ty0, tx1, ty1;
 	int x, y, dx, dy;
-} pi_iterator_t;								/* packet iterator */
+} pi_iterator_t;				/* packet iterator */
 
 /*
  * Create a packet iterator

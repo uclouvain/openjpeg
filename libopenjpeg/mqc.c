@@ -33,10 +33,10 @@
 /* This struct defines the state of a context. */
 /* </summary> */
 typedef struct mqc_state_s {
-	unsigned int qeval;						/* the probability of the Least Probable Symbol (0.75->0x8000, 1.5->0xffff) */
-	int mps;											/* the Most Probable Symbol (0 or 1) */
-	struct mqc_state_s *nmps;			/* next state if the next encoded symbol is the MPS */
-	struct mqc_state_s *nlps;			/* next state if the next encoded symbol is the LPS */
+	unsigned int qeval;	        /* the probability of the Least Probable Symbol (0.75->0x8000, 1.5->0xffff) */
+	int mps;		        /* the Most Probable Symbol (0 or 1) */
+	struct mqc_state_s *nmps;	/* next state if the next encoded symbol is the MPS */
+	struct mqc_state_s *nlps;	/* next state if the next encoded symbol is the LPS */
 } mqc_state_t;
 
 /* <summary> */
@@ -318,9 +318,9 @@ void mqc_bypass_init_enc()
 {
 	mqc_c = 0;
 	mqc_ct = 8;
-	if (*mqc_bp == 0xff) {
-		mqc_ct = 7;
-	}
+	/*if (*mqc_bp == 0xff) {
+	  mqc_ct = 7;
+	  }*/
 }
 
 /* <summary> */
@@ -332,15 +332,16 @@ void mqc_bypass_enc(int d)
 {
 	mqc_ct--;
 	mqc_c = mqc_c + (d << mqc_ct);
-	if (mqc_ct == 0) {
-		mqc_bp++;
-		*mqc_bp = mqc_c;
-		mqc_ct = 8;
-		if (*mqc_bp == 0xff) {
-			mqc_ct = 7;
-		}
-		mqc_c = 0;
-	}
+	if (mqc_ct == 0)
+	  {
+	    mqc_bp++;
+	    *mqc_bp = mqc_c;
+	    mqc_ct = 8;
+	    if (*mqc_bp == 0xff) {
+	      mqc_ct = 7;
+	    }
+	    mqc_c = 0;
+	  }
 }
 
 /* <summary> */
@@ -405,6 +406,7 @@ int mqc_restart_enc()
 void mqc_restart_init_enc()
 {
 	/* <Re-init part> */
+        mqc_setcurctx(0);
 	mqc_a = 0x8000;
 	mqc_c = 0;
 	mqc_ct = 12;
@@ -412,7 +414,6 @@ void mqc_restart_init_enc()
 	if (*mqc_bp == 0xff) {
 		mqc_ct = 13;
 	}
-
 }
 
 

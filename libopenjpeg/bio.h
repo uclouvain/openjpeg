@@ -29,12 +29,47 @@
 #ifndef __BIO_H
 #define __BIO_H
 
+/*
+ * Number of bytes written.
+ */ 
 int bio_numbytes();
+
+/*
+ * Init encoder.
+ *
+ * bp  : Output buffer
+ * len : Output buffer length 
+ */
 void bio_init_enc(unsigned char *bp, int len);
+
+/*
+ * Init decoder.
+ *
+ * bp  : Input buffer
+ * len : Input buffer length
+ */
 void bio_init_dec(unsigned char *bp, int len);
+
+/*
+ * Write bits.
+ *
+ * v  : Value of bits
+ * n  : Number of bits to write
+ */
 void bio_write(int v, int n);
+
+/*
+ * Read bits. 
+ *
+ * n : Number of bits to read 
+ */
 int bio_read(int n);
-int bio_flush();								/* modified to eliminated longjmp !! */
-int bio_inalign();							/* modified to eliminated longjmp !! */
+
+/*
+ * Flush bits. Modified to eliminate longjmp !!
+ */
+int bio_flush();
+
+int bio_inalign();  /* modified to eliminated longjmp !! */
 
 #endif

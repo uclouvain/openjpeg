@@ -107,8 +107,7 @@ int t1_getctxno_sc(int f)
 
 int t1_getctxno_mag(int f)
 {
-	return t1_lut_ctxno_mag[(f & T1_SIG_OTH) |
-													(((f & T1_REFINE) != 0) << 11)];
+	return t1_lut_ctxno_mag[(f & T1_SIG_OTH) | (((f & T1_REFINE) != 0) << 11)];
 }
 
 int t1_getspb(int f)
@@ -119,8 +118,7 @@ int t1_getspb(int f)
 int t1_getnmsedec_sig(int x, int bitpos)
 {
 	if (bitpos > T1_NMSEDEC_FRACBITS)
-		return t1_lut_nmsedec_sig[(x >> (bitpos - T1_NMSEDEC_FRACBITS)) &
-															((1 << T1_NMSEDEC_BITS) - 1)];
+		return t1_lut_nmsedec_sig[(x >> (bitpos - T1_NMSEDEC_FRACBITS)) & ((1 << T1_NMSEDEC_BITS) - 1)];
 	else
 		return t1_lut_nmsedec_sig0[x & ((1 << T1_NMSEDEC_BITS) - 1)];
 }
@@ -128,8 +126,7 @@ int t1_getnmsedec_sig(int x, int bitpos)
 int t1_getnmsedec_ref(int x, int bitpos)
 {
 	if (bitpos > T1_NMSEDEC_FRACBITS)
-		return t1_lut_nmsedec_ref[(x >> (bitpos - T1_NMSEDEC_FRACBITS)) &
-															((1 << T1_NMSEDEC_BITS) - 1)];
+		return t1_lut_nmsedec_ref[(x >> (bitpos - T1_NMSEDEC_FRACBITS)) & ((1 << T1_NMSEDEC_BITS) - 1)];
 	else
 		return t1_lut_nmsedec_ref0[x & ((1 << T1_NMSEDEC_BITS) - 1)];
 }
@@ -154,17 +151,14 @@ void t1_updateflags(int *fp, int s)
 	}
 }
 
-void t1_enc_sigpass_step(int *fp, int *dp, int orient, int bpno, int one,
-												 int *nmsedec, char type, int vsc)
+void t1_enc_sigpass_step(int *fp, int *dp, int orient, int bpno, int one, int *nmsedec, char type, int vsc)
 {
 	int v, flag;
-	flag =
-		vsc ? ((*fp) & (~(T1_SIG_S | T1_SIG_SE | T1_SIG_SW | T1_SGN_S)))
-		: (*fp);
+	flag = vsc ? ((*fp) & (~(T1_SIG_S | T1_SIG_SE | T1_SIG_SW | T1_SGN_S))) : (*fp);
 	if ((flag & T1_SIG_OTH) && !(flag & (T1_SIG | T1_VISIT))) {
 		v = int_abs(*dp) & one ? 1 : 0;
 		if (type == T1_TYPE_RAW) {	/* BYPASS/LAZY MODE */
-			mqc_setcurctx(t1_getctxno_zc(flag, orient));	/* ESSAI */
+		        mqc_setcurctx(t1_getctxno_zc(flag, orient));	/* ESSAI */
 			mqc_bypass_enc(v);
 		} else {
 			mqc_setcurctx(t1_getctxno_zc(flag, orient));
@@ -172,8 +166,7 @@ void t1_enc_sigpass_step(int *fp, int *dp, int orient, int bpno, int one,
 		}
 		if (v) {
 			v = *dp < 0 ? 1 : 0;
-			*nmsedec +=
-				t1_getnmsedec_sig(int_abs(*dp), bpno + T1_NMSEDEC_FRACBITS);
+			*nmsedec += t1_getnmsedec_sig(int_abs(*dp), bpno + T1_NMSEDEC_FRACBITS);
 			if (type == T1_TYPE_RAW) {	/* BYPASS/LAZY MODE */
 				mqc_setcurctx(t1_getctxno_sc(flag));	/* ESSAI */
 				mqc_bypass_enc(v);
@@ -188,8 +181,7 @@ void t1_enc_sigpass_step(int *fp, int *dp, int orient, int bpno, int one,
 	}
 }
 
-void t1_dec_sigpass_step(int *fp, int *dp, int orient, int oneplushalf,
-												 char type, int vsc)
+void t1_dec_sigpass_step(int *fp, int *dp, int orient, int oneplushalf, char type, int vsc)
 {
 	int v, flag;
 	flag =
@@ -215,10 +207,9 @@ void t1_dec_sigpass_step(int *fp, int *dp, int orient, int oneplushalf,
 		}
 		*fp |= T1_VISIT;
 	}
-}																/* VSC and  BYPASS by Antonin */
+}		/* VSC and  BYPASS by Antonin */
 
-void t1_enc_sigpass(int w, int h, int bpno, int orient, int *nmsedec,
-										char type, int cblksty)
+void t1_enc_sigpass(int w, int h, int bpno, int orient, int *nmsedec, char type, int cblksty)
 {
 	int i, j, k, one, vsc;
 	*nmsedec = 0;
@@ -226,47 +217,39 @@ void t1_enc_sigpass(int w, int h, int bpno, int orient, int *nmsedec,
 	for (k = 0; k < h; k += 4) {
 		for (i = 0; i < w; i++) {
 			for (j = k; j < k + 4 && j < h; j++) {
-				vsc = ((cblksty & J2K_CCP_CBLKSTY_VSC)
-							 && (j == k + 3 || j == h - 1)) ? 1 : 0;
-				t1_enc_sigpass_step(&t1_flags[1 + j][1 + i], &t1_data[j][i],
-														orient, bpno, one, nmsedec, type, vsc);
+				vsc = ((cblksty & J2K_CCP_CBLKSTY_VSC) && (j == k + 3 || j == h - 1)) ? 1 : 0;
+				t1_enc_sigpass_step(&t1_flags[1 + j][1 + i], &t1_data[j][i], orient, bpno, one, nmsedec, type, vsc);
 			}
 		}
 	}
 }
 
-void t1_dec_sigpass(int w, int h, int bpno, int orient, char type,
-										int cblksty)
+void t1_dec_sigpass(int w, int h, int bpno, int orient, char type, int cblksty)
 {
 	int i, j, k, one, half, oneplushalf, vsc;
 	one = 1 << bpno;
 	half = one >> 1;
 	oneplushalf = one | half;
 	for (k = 0; k < h; k += 4) {
-		for (i = 0; i < w; i++) {
-			for (j = k; j < k + 4 && j < h; j++) {
-				vsc = ((cblksty & J2K_CCP_CBLKSTY_VSC)
-							 && (j == k + 3 || j == h - 1)) ? 1 : 0;
-				t1_dec_sigpass_step(&t1_flags[1 + j][1 + i], &t1_data[j][i],
-														orient, oneplushalf, type, vsc);
-			}
-		}
+	  for (i = 0; i < w; i++) {
+	    for (j = k; j < k + 4 && j < h; j++) {
+	      vsc = ((cblksty & J2K_CCP_CBLKSTY_VSC)
+		     && (j == k + 3 || j == h - 1)) ? 1 : 0;
+	      t1_dec_sigpass_step(&t1_flags[1 + j][1 + i], &t1_data[j][i], orient, oneplushalf, type, vsc);
+	    }
+	  }
 	}
-}																/* VSC and  BYPASS by Antonin */
+}		/* VSC and  BYPASS by Antonin */
 
-void t1_enc_refpass_step(int *fp, int *dp, int bpno, int one, int *nmsedec,
-												 char type, int vsc)
+void t1_enc_refpass_step(int *fp, int *dp, int bpno, int one, int *nmsedec, char type, int vsc)
 {
 	int v, flag;
-	flag =
-		vsc ? ((*fp) & (~(T1_SIG_S | T1_SIG_SE | T1_SIG_SW | T1_SGN_S)))
-		: (*fp);
+	flag = vsc ? ((*fp) & (~(T1_SIG_S | T1_SIG_SE | T1_SIG_SW | T1_SGN_S)))	: (*fp);
 	if ((flag & (T1_SIG | T1_VISIT)) == T1_SIG) {
-		*nmsedec +=
-			t1_getnmsedec_ref(int_abs(*dp), bpno + T1_NMSEDEC_FRACBITS);
+		*nmsedec += t1_getnmsedec_ref(int_abs(*dp), bpno + T1_NMSEDEC_FRACBITS);
 		v = int_abs(*dp) & one ? 1 : 0;
 		if (type == T1_TYPE_RAW) {	/* BYPASS/LAZY MODE */
-			mqc_setcurctx(t1_getctxno_mag(flag));	/* ESSAI */
+		        mqc_setcurctx(t1_getctxno_mag(flag));  	/* ESSAI */
 			mqc_bypass_enc(v);
 		} else {
 			mqc_setcurctx(t1_getctxno_mag(flag));
@@ -276,13 +259,10 @@ void t1_enc_refpass_step(int *fp, int *dp, int bpno, int one, int *nmsedec,
 	}
 }
 
-void t1_dec_refpass_step(int *fp, int *dp, int poshalf, int neghalf,
-												 char type, int vsc)
+void t1_dec_refpass_step(int *fp, int *dp, int poshalf, int neghalf, char type, int vsc)
 {
 	int v, t, flag;
-	flag =
-		vsc ? ((*fp) & (~(T1_SIG_S | T1_SIG_SE | T1_SIG_SW | T1_SGN_S)))
-		: (*fp);
+	flag = vsc ? ((*fp) & (~(T1_SIG_S | T1_SIG_SE | T1_SIG_SW | T1_SGN_S))) : (*fp);
 	if ((flag & (T1_SIG | T1_VISIT)) == T1_SIG) {
 		if (type == T1_TYPE_RAW) {
 			mqc_setcurctx(t1_getctxno_mag(flag));	/* ESSAI */
@@ -295,10 +275,9 @@ void t1_dec_refpass_step(int *fp, int *dp, int poshalf, int neghalf,
 		*dp += *dp < 0 ? -t : t;
 		*fp |= T1_REFINE;
 	}
-}																/* VSC and  BYPASS by Antonin  */
+}	/* VSC and  BYPASS by Antonin  */
 
-void t1_enc_refpass(int w, int h, int bpno, int *nmsedec, char type,
-										int cblksty)
+void t1_enc_refpass(int w, int h, int bpno, int *nmsedec, char type, int cblksty)
 {
 	int i, j, k, one, vsc;
 	*nmsedec = 0;
@@ -306,10 +285,8 @@ void t1_enc_refpass(int w, int h, int bpno, int *nmsedec, char type,
 	for (k = 0; k < h; k += 4) {
 		for (i = 0; i < w; i++) {
 			for (j = k; j < k + 4 && j < h; j++) {
-				vsc = ((cblksty & J2K_CCP_CBLKSTY_VSC)
-							 && (j == k + 3 || j == h - 1)) ? 1 : 0;
-				t1_enc_refpass_step(&t1_flags[1 + j][1 + i], &t1_data[j][i], bpno,
-														one, nmsedec, type, vsc);
+				vsc = ((cblksty & J2K_CCP_CBLKSTY_VSC) && (j == k + 3 || j == h - 1)) ? 1 : 0;
+				t1_enc_refpass_step(&t1_flags[1 + j][1 + i], &t1_data[j][i], bpno, one, nmsedec, type, vsc);
 			}
 		}
 	}
@@ -325,22 +302,17 @@ void t1_dec_refpass(int w, int h, int bpno, char type, int cblksty)
 	for (k = 0; k < h; k += 4) {
 		for (i = 0; i < w; i++) {
 			for (j = k; j < k + 4 && j < h; j++) {
-				vsc = ((cblksty & J2K_CCP_CBLKSTY_VSC)
-							 && (j == k + 3 || j == h - 1)) ? 1 : 0;
-				t1_dec_refpass_step(&t1_flags[1 + j][1 + i], &t1_data[j][i],
-														poshalf, neghalf, type, vsc);
+				vsc = ((cblksty & J2K_CCP_CBLKSTY_VSC)  && (j == k + 3 || j == h - 1)) ? 1 : 0;
+				t1_dec_refpass_step(&t1_flags[1 + j][1 + i], &t1_data[j][i], poshalf, neghalf, type, vsc);
 			}
 		}
 	}
-}																/* VSC and  BYPASS by Antonin */
+}	/* VSC and  BYPASS by Antonin */
 
-void t1_enc_clnpass_step(int *fp, int *dp, int orient, int bpno, int one,
-												 int *nmsedec, int partial, int vsc)
+void t1_enc_clnpass_step(int *fp, int *dp, int orient, int bpno, int one, int *nmsedec, int partial, int vsc)
 {
 	int v, flag;
-	flag =
-		vsc ? ((*fp) & (~(T1_SIG_S | T1_SIG_SE | T1_SIG_SW | T1_SGN_S)))
-		: (*fp);
+	flag = vsc ? ((*fp) & (~(T1_SIG_S | T1_SIG_SE | T1_SIG_SW | T1_SGN_S))) : (*fp);
 	if (partial)
 		goto label_partial;
 	if (!(*fp & (T1_SIG | T1_VISIT))) {
@@ -349,8 +321,7 @@ void t1_enc_clnpass_step(int *fp, int *dp, int orient, int bpno, int one,
 		mqc_encode(v);
 		if (v) {
 		label_partial:
-			*nmsedec +=
-				t1_getnmsedec_sig(int_abs(*dp), bpno + T1_NMSEDEC_FRACBITS);
+			*nmsedec += t1_getnmsedec_sig(int_abs(*dp), bpno + T1_NMSEDEC_FRACBITS);
 			mqc_setcurctx(t1_getctxno_sc(flag));
 			v = *dp < 0 ? 1 : 0;
 			mqc_encode(v ^ t1_getspb(flag));
@@ -361,13 +332,10 @@ void t1_enc_clnpass_step(int *fp, int *dp, int orient, int bpno, int one,
 	*fp &= ~T1_VISIT;
 }
 
-void t1_dec_clnpass_step(int *fp, int *dp, int orient, int oneplushalf,
-												 int partial, int vsc)
+void t1_dec_clnpass_step(int *fp, int *dp, int orient, int oneplushalf, int partial, int vsc)
 {
 	int v, flag;
-	flag =
-		vsc ? ((*fp) & (~(T1_SIG_S | T1_SIG_SE | T1_SIG_SW | T1_SGN_S)))
-		: (*fp);
+	flag = vsc ? ((*fp) & (~(T1_SIG_S | T1_SIG_SE | T1_SIG_SW | T1_SGN_S))) : (*fp);
 	if (partial)
 		goto label_partial;
 	if (!(flag & (T1_SIG | T1_VISIT))) {
@@ -382,10 +350,9 @@ void t1_dec_clnpass_step(int *fp, int *dp, int orient, int oneplushalf,
 		}
 	}
 	*fp &= ~T1_VISIT;
-}																/* VSC and  BYPASS by Antonin */
+}	/* VSC and  BYPASS by Antonin */
 
-void t1_enc_clnpass(int w, int h, int bpno, int orient, int *nmsedec,
-										int cblksty)
+void t1_enc_clnpass(int w, int h, int bpno, int orient, int *nmsedec, int cblksty)
 {
 	int i, j, k, one, agg, runlen, vsc;
 	*nmsedec = 0;
@@ -395,26 +362,15 @@ void t1_enc_clnpass(int w, int h, int bpno, int orient, int *nmsedec,
 			if (k + 3 < h) {
 				if (cblksty & J2K_CCP_CBLKSTY_VSC) {
 					agg = !(t1_flags[1 + k][1 + i] & (T1_SIG | T1_VISIT | T1_SIG_OTH)
-									|| t1_flags[1 + k + 1][1 +
-																				 i] & (T1_SIG | T1_VISIT |
-																							 T1_SIG_OTH)
-									|| t1_flags[1 + k + 2][1 +
-																				 i] & (T1_SIG | T1_VISIT |
-																							 T1_SIG_OTH)
-									|| (t1_flags[1 + k + 3][1 + i] &
-											(~(T1_SIG_S | T1_SIG_SE | T1_SIG_SW | T1_SGN_S)))
-									& (T1_SIG | T1_VISIT | T1_SIG_OTH));
+						|| t1_flags[1 + k + 1][1 + i] & (T1_SIG | T1_VISIT |
+						T1_SIG_OTH) || t1_flags[1 + k + 2][1 + i] & (T1_SIG | T1_VISIT |
+						T1_SIG_OTH) || (t1_flags[1 + k + 3][1 + i] & (~(T1_SIG_S | T1_SIG_SE 
+						| T1_SIG_SW | T1_SGN_S))) & (T1_SIG | T1_VISIT | T1_SIG_OTH));
 				} else {
 					agg = !(t1_flags[1 + k][1 + i] & (T1_SIG | T1_VISIT | T1_SIG_OTH)
-									|| t1_flags[1 + k + 1][1 +
-																				 i] & (T1_SIG | T1_VISIT |
-																							 T1_SIG_OTH)
-									|| t1_flags[1 + k + 2][1 +
-																				 i] & (T1_SIG | T1_VISIT |
-																							 T1_SIG_OTH)
-									|| t1_flags[1 + k + 3][1 +
-																				 i] & (T1_SIG | T1_VISIT |
-																							 T1_SIG_OTH));
+						|| t1_flags[1 + k + 1][1 + i] & (T1_SIG | T1_VISIT | T1_SIG_OTH)
+						|| t1_flags[1 + k + 2][1 + i] & (T1_SIG | T1_VISIT | T1_SIG_OTH)
+						|| t1_flags[1 + k + 3][1 + i] & (T1_SIG | T1_VISIT | T1_SIG_OTH));
 				}
 			} else {
 				agg = 0;
@@ -436,11 +392,9 @@ void t1_enc_clnpass(int w, int h, int bpno, int orient, int *nmsedec,
 				runlen = 0;
 			}
 			for (j = k + runlen; j < k + 4 && j < h; j++) {
-				vsc = ((cblksty & J2K_CCP_CBLKSTY_VSC)
-							 && (j == k + 3 || j == h - 1)) ? 1 : 0;
-				t1_enc_clnpass_step(&t1_flags[1 + j][1 + i], &t1_data[j][i],
-														orient, bpno, one, nmsedec, agg
-														&& (j == k + runlen), vsc);
+				vsc = ((cblksty & J2K_CCP_CBLKSTY_VSC) && (j == k + 3 || j == h - 1)) ? 1 : 0;
+				t1_enc_clnpass_step(&t1_flags[1 + j][1 + i], &t1_data[j][i], orient, bpno, one, nmsedec, agg
+						    && (j == k + runlen), vsc);
 			}
 		}
 	}
@@ -458,26 +412,16 @@ void t1_dec_clnpass(int w, int h, int bpno, int orient, int cblksty)
 			if (k + 3 < h) {
 				if (cblksty & J2K_CCP_CBLKSTY_VSC) {
 					agg = !(t1_flags[1 + k][1 + i] & (T1_SIG | T1_VISIT | T1_SIG_OTH)
-									|| t1_flags[1 + k + 1][1 +
-																				 i] & (T1_SIG | T1_VISIT |
-																							 T1_SIG_OTH)
-									|| t1_flags[1 + k + 2][1 +
-																				 i] & (T1_SIG | T1_VISIT |
-																							 T1_SIG_OTH)
-									|| (t1_flags[1 + k + 3][1 + i] &
-											(~(T1_SIG_S | T1_SIG_SE | T1_SIG_SW | T1_SGN_S)))
-									& (T1_SIG | T1_VISIT | T1_SIG_OTH));
+						|| t1_flags[1 + k + 1][1 + i] & (T1_SIG | T1_VISIT |
+						T1_SIG_OTH) || t1_flags[1 + k + 2][1 + i] & (T1_SIG | T1_VISIT |
+						T1_SIG_OTH) || (t1_flags[1 + k + 3][1 + i] & (~(T1_SIG_S | T1_SIG_SE | 
+						T1_SIG_SW | T1_SGN_S)))	& (T1_SIG | T1_VISIT | T1_SIG_OTH));
 				} else {
 					agg = !(t1_flags[1 + k][1 + i] & (T1_SIG | T1_VISIT | T1_SIG_OTH)
-									|| t1_flags[1 + k + 1][1 +
-																				 i] & (T1_SIG | T1_VISIT |
-																							 T1_SIG_OTH)
-									|| t1_flags[1 + k + 2][1 +
-																				 i] & (T1_SIG | T1_VISIT |
-																							 T1_SIG_OTH)
-									|| t1_flags[1 + k + 3][1 +
-																				 i] & (T1_SIG | T1_VISIT |
-																							 T1_SIG_OTH));
+						|| t1_flags[1 + k + 1][1 + i] & (T1_SIG | T1_VISIT |
+						T1_SIG_OTH) || t1_flags[1 + k + 2][1 + i] & (T1_SIG | T1_VISIT |
+						T1_SIG_OTH) || t1_flags[1 + k + 3][1 + i] & (T1_SIG | T1_VISIT |
+						T1_SIG_OTH));
 				}
 			} else {
 				agg = 0;
@@ -494,11 +438,9 @@ void t1_dec_clnpass(int w, int h, int bpno, int orient, int cblksty)
 				runlen = 0;
 			}
 			for (j = k + runlen; j < k + 4 && j < h; j++) {
-				vsc = ((cblksty & J2K_CCP_CBLKSTY_VSC)
-							 && (j == k + 3 || j == h - 1)) ? 1 : 0;
-				t1_dec_clnpass_step(&t1_flags[1 + j][1 + i], &t1_data[j][i],
-														orient, oneplushalf, agg
-														&& (j == k + runlen), vsc);
+				vsc = ((cblksty & J2K_CCP_CBLKSTY_VSC) && (j == k + 3 || j == h - 1)) ? 1 : 0;
+				t1_dec_clnpass_step(&t1_flags[1 + j][1 + i], &t1_data[j][i], orient, oneplushalf, 
+						    agg && (j == k + runlen), vsc);
 			}
 		}
 	}
@@ -514,10 +456,9 @@ void t1_dec_clnpass(int w, int h, int bpno, int orient, int cblksty)
 		   fprintf(stderr, "warning: bad segmentation symbol %x\n",v);
 		   } */
 	}
-}																/* VSC and  BYPASS by Antonin */
+}	/* VSC and  BYPASS by Antonin */
 
-double t1_getwmsedec(int nmsedec, int compno, int level, int orient,
-										 int bpno, int qmfbid, double stepsize)
+double t1_getwmsedec(int nmsedec, int compno, int level, int orient, int bpno, int qmfbid, double stepsize)
 {
 	double w1, w2, wmsedec;
 	if (qmfbid == 1) {
@@ -532,8 +473,7 @@ double t1_getwmsedec(int nmsedec, int compno, int level, int orient,
 	return wmsedec;
 }
 
-void t1_encode_cblk(tcd_cblk_t * cblk, int orient, int compno, int level,
-										int qmfbid, double stepsize, int cblksty)
+void t1_encode_cblk(tcd_cblk_t * cblk, int orient, int compno, int level, int qmfbid, double stepsize, int cblksty)
 {
 	int i, j;
 	int w, h;
@@ -549,9 +489,9 @@ void t1_encode_cblk(tcd_cblk_t * cblk, int orient, int compno, int level,
 
 	max = 0;
 	for (j = 0; j < h; j++) {
-		for (i = 0; i < w; i++) {
-			max = int_max(max, int_abs(t1_data[j][i]));
-		}
+	  for (i = 0; i < w; i++) {
+	    max = int_max(max, int_abs(t1_data[j][i]));
+	  }
 	}
 
 	cblk->numbps = max ? (int_floorlog2(max) + 1) - T1_NMSEDEC_FRACBITS : 0;
@@ -571,8 +511,7 @@ void t1_encode_cblk(tcd_cblk_t * cblk, int orient, int compno, int level,
 		tcd_pass_t *pass = &cblk->passes[passno];
 		int correction = 3;
 		type = ((bpno < (cblk->numbps - 4)) && (passtype < 2)
-						&& (cblksty & J2K_CCP_CBLKSTY_LAZY)) ? T1_TYPE_RAW :
-			T1_TYPE_MQ;
+			&& (cblksty & J2K_CCP_CBLKSTY_LAZY)) ? T1_TYPE_RAW : T1_TYPE_MQ;
 
 		switch (passtype) {
 		case 0:
@@ -589,43 +528,55 @@ void t1_encode_cblk(tcd_cblk_t * cblk, int orient, int compno, int level,
 			break;
 		}
 
-		cumwmsedec +=
-			t1_getwmsedec(nmsedec, compno, level, orient, bpno, qmfbid,
-										stepsize);
+		cumwmsedec += t1_getwmsedec(nmsedec, compno, level, orient, bpno, qmfbid, stepsize);
 
 		/* Code switch "RESTART" (i.e. TERMALL) */
-		if ((cblksty & J2K_CCP_CBLKSTY_TERMALL)
-				&& !((passtype == 2) && (bpno - 1 < 0))) {
-			if (type == T1_TYPE_RAW)
-				correction = mqc_bypass_flush_enc();
-			else
-				correction = mqc_restart_enc();
-
-			pass->term = 1;
-		} else {
-			if (((bpno < (cblk->numbps - 4) && (passtype > 0))
-					 || ((bpno == (cblk->numbps - 4)) && (passtype == 2)))
-					&& (cblksty & J2K_CCP_CBLKSTY_LAZY)) {
-				if (type == T1_TYPE_RAW)
-					correction = mqc_bypass_flush_enc();
-				else
-					correction = mqc_restart_enc();
-
-				pass->term = 1;
-			} else {
-				pass->term = 0;
-			}
-		}
-
-		if (++passtype == 3) {
-			passtype = 0;
-			bpno--;
-		}
+		if ((cblksty & J2K_CCP_CBLKSTY_TERMALL)	&& !((passtype == 2) && (bpno - 1 < 0))) 
+		  {
+		    if (type == T1_TYPE_RAW)
+		      {
+			mqc_flush();
+			correction=1;
+			/* correction = mqc_bypass_flush_enc();*/
+		      }
+		    else
+		      {		/* correction = mqc_restart_enc(); */
+			mqc_flush();
+			correction = 1;
+		      }
+		    pass->term = 1;
+		  } else 
+		    {
+		      if (((bpno < (cblk->numbps - 4) && (passtype > 0)) || ((bpno == (cblk->numbps - 4)) && (passtype == 2)))
+			  && (cblksty & J2K_CCP_CBLKSTY_LAZY)) 
+			{
+			  if (type == T1_TYPE_RAW)
+			    {
+			      mqc_flush();
+			      correction=1;
+			      /* correction = mqc_bypass_flush_enc();*/
+			    }
+			  else
+			    {  /* correction = mqc_restart_enc();*/
+			      mqc_flush();
+			      correction=1;
+			    }
+			  pass->term = 1;
+			} else 
+			  {
+			    pass->term = 0;
+			  }
+		    }
+		
+		if (++passtype == 3) 
+		  {
+		    passtype = 0;
+		    bpno--;
+		  }
 
 		if (pass->term && bpno > 0) {
 			type = ((bpno < (cblk->numbps - 4)) && (passtype < 2)
-							&& (cblksty & J2K_CCP_CBLKSTY_LAZY)) ? T1_TYPE_RAW :
-				T1_TYPE_MQ;
+				&& (cblksty & J2K_CCP_CBLKSTY_LAZY)) ? T1_TYPE_RAW : T1_TYPE_MQ;
 			if (type == T1_TYPE_RAW)
 				mqc_bypass_init_enc();
 			else
@@ -634,8 +585,7 @@ void t1_encode_cblk(tcd_cblk_t * cblk, int orient, int compno, int level,
 
 		pass->distortiondec = cumwmsedec;
 		pass->rate = mqc_numbytes() + correction;	/* FIXME */
-		pass->len =
-			pass->rate - (passno == 0 ? 0 : cblk->passes[passno - 1].rate);
+		pass->len = pass->rate - (passno == 0 ? 0 : cblk->passes[passno - 1].rate);
 
 		/* Code-switch "RESET" */
 		if (cblksty & J2K_CCP_CBLKSTY_RESET)
@@ -651,8 +601,7 @@ void t1_encode_cblk(tcd_cblk_t * cblk, int orient, int compno, int level,
 	cblk->totalpasses = passno;
 }
 
-void t1_decode_cblk(tcd_cblk_t * cblk, int orient, int roishift,
-										int cblksty)
+void t1_decode_cblk(tcd_cblk_t * cblk, int orient, int roishift, int cblksty)
 {
 	int i;
 	int w, h;
@@ -682,8 +631,7 @@ void t1_decode_cblk(tcd_cblk_t * cblk, int orient, int roishift,
 
 		/* add TONY */
 		type = ((bpno <= (cblk->numbps - 1) - 4) && (passtype < 2)
-						&& (cblksty & J2K_CCP_CBLKSTY_LAZY)) ? T1_TYPE_RAW :
-			T1_TYPE_MQ;
+			&& (cblksty & J2K_CCP_CBLKSTY_LAZY)) ? T1_TYPE_RAW : T1_TYPE_MQ;
 		if (type == T1_TYPE_RAW)
 			raw_init_dec(seg->data, seg->len);
 		else
@@ -716,166 +664,156 @@ void t1_decode_cblk(tcd_cblk_t * cblk, int orient, int roishift,
 
 void t1_encode_cblks(tcd_tile_t * tile, j2k_tcp_t * tcp)
 {
-	int compno, resno, bandno, precno, cblkno;
-	int x, y, i, j, orient;
-	tcd_tilecomp_t *tilec;
-	tcd_resolution_t *res;
-	tcd_band_t *band;
-	tcd_precinct_t *prc;
-	tcd_cblk_t *cblk;
-
-	for (compno = 0; compno < tile->numcomps; compno++) {
-		tilec = &tile->comps[compno];
-		for (resno = 0; resno < tilec->numresolutions; resno++) {
-			res = &tilec->resolutions[resno];
-			for (bandno = 0; bandno < res->numbands; bandno++) {
-				band = &res->bands[bandno];
-				for (precno = 0; precno < res->pw * res->ph; precno++) {
-					prc = &band->precincts[precno];
-					for (cblkno = 0; cblkno < prc->cw * prc->ch; cblkno++) {
-						cblk = &prc->cblks[cblkno];
-
-						if (band->bandno == 0) {
-							x = cblk->x0 - band->x0;
-							y = cblk->y0 - band->y0;
-						} else if (band->bandno == 1) {
-							tcd_resolution_t *pres = &tilec->resolutions[resno - 1];
-							x = pres->x1 - pres->x0 + cblk->x0 - band->x0;
-							y = cblk->y0 - band->y0;
-						} else if (band->bandno == 2) {
-							tcd_resolution_t *pres = &tilec->resolutions[resno - 1];
-							x = cblk->x0 - band->x0;
-							y = pres->y1 - pres->y0 + cblk->y0 - band->y0;
-						} else {  /* if (band->bandno == 3) */
-							tcd_resolution_t *pres = &tilec->resolutions[resno - 1];
-							x = pres->x1 - pres->x0 + cblk->x0 - band->x0;
-							y = pres->y1 - pres->y0 + cblk->y0 - band->y0;
-						}
-
-						if (tcp->tccps[compno].qmfbid == 1) {
-
-							for (j = 0; j < cblk->y1 - cblk->y0; j++) {
-								for (i = 0; i < cblk->x1 - cblk->x0; i++) {
-									t1_data[j][i] =
-										tilec->data[(x + i) +
-																(y + j) * (tilec->x1 -
-																					 tilec->
-																					 x0)] << T1_NMSEDEC_FRACBITS;
-								}
-							}
-						} else if (tcp->tccps[compno].qmfbid == 0) {
-							for (j = 0; j < cblk->y1 - cblk->y0; j++) {
-								for (i = 0; i < cblk->x1 - cblk->x0; i++) {
-									t1_data[j][i] =
-										fix_mul(tilec->
-														data[x + i +
-																 (y + j) * (tilec->x1 - tilec->x0)],
-														8192 * 8192 / band->stepsize) >> (13 -
-																															T1_NMSEDEC_FRACBITS);
-								}
-							}
-						}
-						orient = band->bandno;	/* FIXME */
-						if (orient == 2) {
-							orient = 1;
-						} else if (orient == 1) {
-							orient = 2;
-						}
-						t1_encode_cblk(cblk, orient, compno,
-													 tilec->numresolutions - 1 - resno,
-													 tcp->tccps[compno].qmfbid, band->stepsize,
-													 tcp->tccps[compno].cblksty);
-					}											/* cblkno */
-
-				}												/* precno */
-			}													/* bandno */
-
-		}														/* resno */
-
-	}															/* compo */
-
+  int compno, resno, bandno, precno, cblkno;
+  int x, y, i, j, orient;
+  tcd_tilecomp_t *tilec;
+  tcd_resolution_t *res;
+  tcd_band_t *band;
+  tcd_precinct_t *prc;
+  tcd_cblk_t *cblk;
+  
+  for (compno = 0; compno < tile->numcomps; compno++) {
+    tilec = &tile->comps[compno];
+    for (resno = 0; resno < tilec->numresolutions; resno++) {
+      res = &tilec->resolutions[resno];
+      for (bandno = 0; bandno < res->numbands; bandno++) {
+	band = &res->bands[bandno];
+	for (precno = 0; precno < res->pw * res->ph; precno++) {
+	  prc = &band->precincts[precno];
+	  for (cblkno = 0; cblkno < prc->cw * prc->ch; cblkno++) {
+	    cblk = &prc->cblks[cblkno];
+	    
+	    if (band->bandno == 0) {
+	      x = cblk->x0 - band->x0;
+	      y = cblk->y0 - band->y0;
+	    } else if (band->bandno == 1) {
+	      tcd_resolution_t *pres = &tilec->resolutions[resno - 1];
+	      x = pres->x1 - pres->x0 + cblk->x0 - band->x0;
+	      y = cblk->y0 - band->y0;
+	    } else if (band->bandno == 2) {
+	      tcd_resolution_t *pres = &tilec->resolutions[resno - 1];
+	      x = cblk->x0 - band->x0;
+	      y = pres->y1 - pres->y0 + cblk->y0 - band->y0;
+	    } else {  /* if (band->bandno == 3) */
+	      tcd_resolution_t *pres = &tilec->resolutions[resno - 1];
+	      x = pres->x1 - pres->x0 + cblk->x0 - band->x0;
+	      y = pres->y1 - pres->y0 + cblk->y0 - band->y0;
+	    }
+	    
+	    if (tcp->tccps[compno].qmfbid == 1) {
+	      
+	      for (j = 0; j < cblk->y1 - cblk->y0; j++) {
+		for (i = 0; i < cblk->x1 - cblk->x0; i++) {
+		  t1_data[j][i] = tilec->data[(x + i) + (y + j) * (tilec->x1 - tilec->x0)] << T1_NMSEDEC_FRACBITS;
+		}
+	      }
+	    } else if (tcp->tccps[compno].qmfbid == 0) {
+	      for (j = 0; j < cblk->y1 - cblk->y0; j++) {
+		for (i = 0; i < cblk->x1 - cblk->x0; i++) {
+		  t1_data[j][i] = fix_mul(tilec->data[x + i + (y + j) * (tilec->x1 - tilec->x0)],
+					  8192 * 8192 / band->stepsize) >> (13 - T1_NMSEDEC_FRACBITS);
+		}
+	      }
+	    }
+	    orient = band->bandno;	/* FIXME */
+	    if (orient == 2) {
+	      orient = 1;
+	    } else if (orient == 1) {
+	      orient = 2;
+	    }
+	    t1_encode_cblk(cblk, orient, compno,
+			   tilec->numresolutions - 1 - resno,
+			   tcp->tccps[compno].qmfbid, band->stepsize,
+			   tcp->tccps[compno].cblksty);
+	  }	/* cblkno */	  
+	}	/* precno */
+      }		/* bandno */
+    }		/* resno  */ 
+  }		/* compo  */
 }
 
 
 void t1_decode_cblks(tcd_tile_t * tile, j2k_tcp_t * tcp)
 {
-	int compno, resno, bandno, precno, cblkno;
-
-	for (compno = 0; compno < tile->numcomps; compno++) {
-		tcd_tilecomp_t *tilec = &tile->comps[compno];
-		for (resno = 0; resno < tilec->numresolutions; resno++) {
-			tcd_resolution_t *res = &tilec->resolutions[resno];
-			for (bandno = 0; bandno < res->numbands; bandno++) {
-				tcd_band_t *band = &res->bands[bandno];
-				for (precno = 0; precno < res->pw * res->ph; precno++) {
-					tcd_precinct_t *prc = &band->precincts[precno];
-					for (cblkno = 0; cblkno < prc->cw * prc->ch; cblkno++) {
-						int x, y, i, j, orient;
-						tcd_cblk_t *cblk = &prc->cblks[cblkno];
-						orient = band->bandno;	/* FIXME */
-						if (orient == 2)
-							orient = 1;
-						else if (orient == 1)
-							orient = 2;
-						t1_decode_cblk(cblk, orient, tcp->tccps[compno].roishift,
-													 tcp->tccps[compno].cblksty);
-						if (band->bandno == 0) {
-							x = cblk->x0 - band->x0;
-							y = cblk->y0 - band->y0;
-						} else if (band->bandno == 1) {
-							tcd_resolution_t *pres = &tilec->resolutions[resno - 1];
-							x = pres->x1 - pres->x0 + cblk->x0 - band->x0;
-							y = cblk->y0 - band->y0;
-						} else if (band->bandno == 2) {
-							tcd_resolution_t *pres = &tilec->resolutions[resno - 1];
-							x = cblk->x0 - band->x0;
-							y = pres->y1 - pres->y0 + cblk->y0 - band->y0;
-						} else {  /* if (band->bandno == 3) */
-							tcd_resolution_t *pres = &tilec->resolutions[resno - 1];
-							x = pres->x1 - pres->x0 + cblk->x0 - band->x0;
-							y = pres->y1 - pres->y0 + cblk->y0 - band->y0;
-						}
-						if (tcp->tccps[compno].roishift) {
-							int thresh, val, mag;
-							thresh = 1 << tcp->tccps[compno].roishift;
-							for (j = 0; j < cblk->y1 - cblk->y0; j++) {
-								for (i = 0; i < cblk->x1 - cblk->x0; i++) {
-									val = t1_data[j][i];
-									mag = int_abs(val);
-									if (mag >= thresh) {
-										mag >>= tcp->tccps[compno].roishift;
-										t1_data[j][i] = val < 0 ? -mag : mag;
-									}
-								}
-							}
-						}
-
-						if (tcp->tccps[compno].qmfbid == 1) {
-							for (j = 0; j < cblk->y1 - cblk->y0; j++) {
-								for (i = 0; i < cblk->x1 - cblk->x0; i++) {
-									tilec->data[x + i + (y + j) * (tilec->x1 - tilec->x0)] =
-										t1_data[j][i];
-								}
-							}
-						} else if (tcp->tccps[compno].qmfbid == 0) {
-							for (j = 0; j < cblk->y1 - cblk->y0; j++) {
-								for (i = 0; i < cblk->x1 - cblk->x0; i++) {
-									if (t1_data[j][i] == 0) {
-										tilec->data[x + i +
-																(y + j) * (tilec->x1 - tilec->x0)] = 0;
-									} else {
-										tilec->data[x + i +
-																(y + j) * (tilec->x1 - tilec->x0)] =
-											fix_mul(t1_data[j][i] << 13, band->stepsize);
-									}
-								}
-							}
-						}
-					}
-				}
+  int compno, resno, bandno, precno, cblkno;
+  
+  for (compno = 0; compno < tile->numcomps; compno++) 
+    {
+      tcd_tilecomp_t *tilec = &tile->comps[compno];
+      for (resno = 0; resno < tilec->numresolutions; resno++) 
+	{
+	  tcd_resolution_t *res = &tilec->resolutions[resno];
+	  for (bandno = 0; bandno < res->numbands; bandno++) 
+	    {
+	      tcd_band_t *band = &res->bands[bandno];
+	      for (precno = 0; precno < res->pw * res->ph; precno++) 
+		{
+		  tcd_precinct_t *prc = &band->precincts[precno];
+		  for (cblkno = 0; cblkno < prc->cw * prc->ch; cblkno++) 
+		    {
+		      int x, y, i, j, orient;
+		      tcd_cblk_t *cblk = &prc->cblks[cblkno];
+		      orient = band->bandno;	/* FIXME */
+		      if (orient == 2)
+			orient = 1;
+		      else if (orient == 1)
+			orient = 2;
+		      t1_decode_cblk(cblk, orient, tcp->tccps[compno].roishift, tcp->tccps[compno].cblksty);
+		      if (band->bandno == 0) {
+			x = cblk->x0 - band->x0;
+			y = cblk->y0 - band->y0;
+		      } else if (band->bandno == 1) {
+			tcd_resolution_t *pres = &tilec->resolutions[resno - 1];
+			x = pres->x1 - pres->x0 + cblk->x0 - band->x0;
+			y = cblk->y0 - band->y0;
+		      } else if (band->bandno == 2) {
+			tcd_resolution_t *pres = &tilec->resolutions[resno - 1];
+			x = cblk->x0 - band->x0;
+			y = pres->y1 - pres->y0 + cblk->y0 - band->y0;
+		      } else {  /* if (band->bandno == 3) */
+			tcd_resolution_t *pres = &tilec->resolutions[resno - 1];
+			x = pres->x1 - pres->x0 + cblk->x0 - band->x0;
+			y = pres->y1 - pres->y0 + cblk->y0 - band->y0;
+		      }
+		      
+		      if (tcp->tccps[compno].roishift) 
+			{
+			  int thresh, val, mag;
+			  thresh = 1 << tcp->tccps[compno].roishift;
+			  for (j = 0; j < cblk->y1 - cblk->y0; j++) {
+			    for (i = 0; i < cblk->x1 - cblk->x0; i++) {
+			      val = t1_data[j][i];
+			      mag = int_abs(val);
+			      if (mag >= thresh) {
+				mag >>= tcp->tccps[compno].roishift;
+				t1_data[j][i] = val < 0 ? -mag : mag;
+			      }
+			    }
+			  }
 			}
+		      
+		      if (tcp->tccps[compno].qmfbid == 1) {
+			for (j = 0; j < cblk->y1 - cblk->y0; j++) {
+			  for (i = 0; i < cblk->x1 - cblk->x0; i++) {
+			    tilec->data[x + i + (y + j) * (tilec->x1 - tilec->x0)] = t1_data[j][i];
+			  }
+			}
+		      } else /* if (tcp->tccps[compno].qmfbid == 0)*/ {
+			for (j = 0; j < cblk->y1 - cblk->y0; j++) {
+			  for (i = 0; i < cblk->x1 - cblk->x0; i++) {
+			    if (t1_data[j][i] == 0) {
+			      tilec->data[x + i + (y + j) * (tilec->x1 - tilec->x0)] = 0;
+			    } else {
+			      tilec->data[x + i + (y + j) * (tilec->x1 - tilec->x0)] = fix_mul(t1_data[j][i] << 13, band->stepsize);
+			    }
+			  }
+			}
+		      }
+		    }
 		}
+	    }
 	}
+    }
 }
 
 int t1_init_ctxno_zc(int f, int orient)
@@ -884,10 +822,7 @@ int t1_init_ctxno_zc(int f, int orient)
 	n = 0;
 	h = ((f & T1_SIG_W) != 0) + ((f & T1_SIG_E) != 0);
 	v = ((f & T1_SIG_N) != 0) + ((f & T1_SIG_S) != 0);
-	d =
-		((f & T1_SIG_NW) != 0) + ((f & T1_SIG_NE) != 0) + ((f & T1_SIG_SE) !=
-																											 0) +
-		((f & T1_SIG_SW) != 0);
+	d = ((f & T1_SIG_NW) != 0) + ((f & T1_SIG_NE) != 0) + ((f & T1_SIG_SE) != 0) + ((f & T1_SIG_SW) != 0);
 	switch (orient) {
 	case 2:
 		t = h;
@@ -950,20 +885,12 @@ int t1_init_ctxno_sc(int f)
 {
 	int hc, vc, n;
 	n = 0;
-	hc =
-		int_min(((f & (T1_SIG_E | T1_SGN_E)) ==
-						 T1_SIG_E) + ((f & (T1_SIG_W | T1_SGN_W)) == T1_SIG_W),
-						1) - int_min(((f & (T1_SIG_E | T1_SGN_E)) ==
-													(T1_SIG_E | T1_SGN_E)) +
-												 ((f & (T1_SIG_W | T1_SGN_W)) ==
-													(T1_SIG_W | T1_SGN_W)), 1);
-	vc =
-		int_min(((f & (T1_SIG_N | T1_SGN_N)) ==
-						 T1_SIG_N) + ((f & (T1_SIG_S | T1_SGN_S)) == T1_SIG_S),
-						1) - int_min(((f & (T1_SIG_N | T1_SGN_N)) ==
-													(T1_SIG_N | T1_SGN_N)) +
-												 ((f & (T1_SIG_S | T1_SGN_S)) ==
-													(T1_SIG_S | T1_SGN_S)), 1);
+	hc = int_min(((f & (T1_SIG_E | T1_SGN_E)) == T1_SIG_E) + ((f & (T1_SIG_W | T1_SGN_W)) == T1_SIG_W),
+			1) - int_min(((f & (T1_SIG_E | T1_SGN_E)) == (T1_SIG_E | T1_SGN_E)) + ((f & (T1_SIG_W | T1_SGN_W)) ==
+			(T1_SIG_W | T1_SGN_W)), 1);
+	vc = int_min(((f & (T1_SIG_N | T1_SGN_N)) == T1_SIG_N) + ((f & (T1_SIG_S | T1_SGN_S)) == T1_SIG_S),
+			1) - int_min(((f & (T1_SIG_N | T1_SGN_N)) == (T1_SIG_N | T1_SGN_N)) + ((f & (T1_SIG_S | T1_SGN_S)) ==
+			(T1_SIG_S | T1_SGN_S)), 1);
 	if (hc < 0) {
 		hc = -hc;
 		vc = -vc;
@@ -999,20 +926,12 @@ int t1_init_ctxno_mag(int f)
 int t1_init_spb(int f)
 {
 	int hc, vc, n;
-	hc =
-		int_min(((f & (T1_SIG_E | T1_SGN_E)) ==
-						 T1_SIG_E) + ((f & (T1_SIG_W | T1_SGN_W)) == T1_SIG_W),
-						1) - int_min(((f & (T1_SIG_E | T1_SGN_E)) ==
-													(T1_SIG_E | T1_SGN_E)) +
-												 ((f & (T1_SIG_W | T1_SGN_W)) ==
-													(T1_SIG_W | T1_SGN_W)), 1);
-	vc =
-		int_min(((f & (T1_SIG_N | T1_SGN_N)) ==
-						 T1_SIG_N) + ((f & (T1_SIG_S | T1_SGN_S)) == T1_SIG_S),
-						1) - int_min(((f & (T1_SIG_N | T1_SGN_N)) ==
-													(T1_SIG_N | T1_SGN_N)) +
-												 ((f & (T1_SIG_S | T1_SGN_S)) ==
-													(T1_SIG_S | T1_SGN_S)), 1);
+	hc = int_min(((f & (T1_SIG_E | T1_SGN_E)) == T1_SIG_E) + ((f & (T1_SIG_W | T1_SGN_W)) == T1_SIG_W),
+			1) - int_min(((f & (T1_SIG_E | T1_SGN_E)) == (T1_SIG_E | T1_SGN_E)) + ((f & (T1_SIG_W | T1_SGN_W)) ==
+			(T1_SIG_W | T1_SGN_W)), 1);
+	vc = int_min(((f & (T1_SIG_N | T1_SGN_N)) == T1_SIG_N) + ((f & (T1_SIG_S | T1_SGN_S)) == T1_SIG_S),
+			1) - int_min(((f & (T1_SIG_N | T1_SGN_N)) == (T1_SIG_N | T1_SGN_N)) + ((f & (T1_SIG_S | T1_SGN_S)) ==
+			(T1_SIG_S | T1_SGN_S)), 1);
 	if (!hc && !vc)
 		n = 0;
 	else
@@ -1047,31 +966,19 @@ void t1_init_luts()
 		t = i / pow(2, T1_NMSEDEC_FRACBITS);
 		u = t;
 		v = t - 1.5;
-		t1_lut_nmsedec_sig[i] =
-			int_max(0,
-							(int) (floor
-										 ((u * u - v * v) * pow(2,
-																						T1_NMSEDEC_FRACBITS) +
-											0.5) / pow(2, T1_NMSEDEC_FRACBITS) * 8192.0));
-		t1_lut_nmsedec_sig0[i] =
-			int_max(0,
-							(int) (floor((u * u) * pow(2, T1_NMSEDEC_FRACBITS) + 0.5) /
-										 pow(2, T1_NMSEDEC_FRACBITS) * 8192.0));
+		t1_lut_nmsedec_sig[i] = int_max(0, (int) (floor((u * u - v * v) * pow(2,T1_NMSEDEC_FRACBITS) +
+						0.5) / pow(2, T1_NMSEDEC_FRACBITS) * 8192.0));
+		t1_lut_nmsedec_sig0[i] = int_max(0, (int) (floor((u * u) * pow(2, T1_NMSEDEC_FRACBITS) + 0.5) /
+						pow(2, T1_NMSEDEC_FRACBITS) * 8192.0));
 		u = t - 1.0;
 		if (i & (1 << (T1_NMSEDEC_BITS - 1))) {
 			v = t - 1.5;
 		} else {
 			v = t - 0.5;
 		}
-		t1_lut_nmsedec_ref[i] =
-			int_max(0,
-							(int) (floor
-										 ((u * u - v * v) * pow(2,
-																						T1_NMSEDEC_FRACBITS) +
-											0.5) / pow(2, T1_NMSEDEC_FRACBITS) * 8192.0));
-		t1_lut_nmsedec_ref0[i] =
-			int_max(0,
-							(int) (floor((u * u) * pow(2, T1_NMSEDEC_FRACBITS) + 0.5) /
-										 pow(2, T1_NMSEDEC_FRACBITS) * 8192.0));
+		t1_lut_nmsedec_ref[i] =	int_max(0, (int) (floor((u * u - v * v) * pow(2,T1_NMSEDEC_FRACBITS) +
+						0.5) / pow(2, T1_NMSEDEC_FRACBITS) * 8192.0));
+		t1_lut_nmsedec_ref0[i] = int_max(0, (int) (floor((u * u) * pow(2, T1_NMSEDEC_FRACBITS) + 0.5) /
+						 pow(2, T1_NMSEDEC_FRACBITS) * 8192.0));
 	}
 }
