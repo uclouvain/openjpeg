@@ -47,13 +47,13 @@ int main(int argc, char **argv)
   j2k_cp_t *cp;
   j2k_option_t option;
   int w, wr, wrr, h, hr, hrr, max;
-  int i, image_type = -1, compno, pad;
+  int i, image_type = -1, compno, pad,j;
   int adjust;
   jp2_struct_t * jp2_struct;
 
   if (argc < 3) {
     fprintf(stderr,
-	    "usage: %s j2k-file image-file -reduce n (<- optional)\n",
+	    "usage: %s j2k-file image-file [-reduce n]\n",
 	    argv[0]);
     return 1;
   }
@@ -94,6 +94,8 @@ int main(int argc, char **argv)
   if ((S1 == 'p' && S2 == 'g' && S3 == 'x')
       || (S1 == 'P' && S2 == 'G' && S3 == 'X')) {
     image_type = 0;
+    dest--;
+    *dest = '\0';
   }
 
   if ((S1 == 'p' && S2 == 'n' && S3 == 'm')
@@ -290,10 +292,11 @@ int main(int argc, char **argv)
     for (compno = 0; compno < img->numcomps; compno++) {
       j2k_comp_t *comp = &img->comps[compno];
       char name[256];
-      if (img->numcomps > 1)
-	sprintf(name, "%d_%s", compno, argv[2]);
-      else
-	sprintf(name, "%s", argv[2]);
+      int nbytes=0;
+      //if (img->numcomps > 1)
+	sprintf(name, "%s-%d.pgx", argv[2], compno);
+      //else
+	//sprintf(name, "%s.pgx", argv[2]);
 
       f = fopen(name, "wb");
       // w = ceildiv(img->x1 - img->x0, comp->dx);
@@ -308,18 +311,16 @@ int main(int argc, char **argv)
       hr = int_ceildivpow2(img->comps[compno].h,
 			   img->comps[compno].factor);
 
-      fprintf(f, "PG LM %c %d %d %d\n", comp->sgnd ? '-' : '+',
+      fprintf(f, "PG ML %c %d %d %d\n", comp->sgnd ? '-' : '+',
 	      comp->prec, wr, hr);
+      if (comp->prec <= 8) nbytes=1;
+      else if (comp->prec <= 16) nbytes=2;
+      else nbytes=4;
       for (i = 0; i < wr * hr; i++) {
 	int v = img->comps[compno].data[i / wr * w + i % wr];
-	if (comp->prec <= 8) {
-	  char c = (char) v;
-	  fwrite(&c, 1, 1, f);
-	} else if (comp->prec <= 16) {
-	  short s = (short) v;
-	  fwrite(&s, 2, 1, f);
-	} else {
-	  fwrite(&v, 4, 1, f);
+	for (j=nbytes-1 ; j>=0 ; j--) {
+          char byte=(char)(v>>(j*8));
+          fwrite(&byte, 1, 1, f);
 	}
       }
       fclose(f);
