@@ -39,9 +39,9 @@ int ceildiv(int a, int b)
 
 int main(int argc, char **argv)
 {
-  FILE *f;
-  char *src, *src_name;
-  char *dest, S1, S2, S3;
+  FILE *f=NULL;
+  char *src=NULL, *src_name=NULL;
+  char *dest=NULL, S1, S2, S3;
   int len;
   j2k_cp_t cp;
   mj2_movie_t mj2_movie;

@@ -83,7 +83,7 @@
 void mj2_memory_free(mj2_movie_t * movie)
 {
   int i;
-  mj2_tk_t *tk;
+  mj2_tk_t *tk=NULL;
 
   if (movie->num_cl != 0)
     free(movie->cl);
@@ -567,7 +567,7 @@ int mj2_read_mdat(mj2_movie_t * movie, unsigned char *src, char *outfile)
   int track_nb;
   unsigned int i;
   int jp2c_cio_len, jp2c_len, pos_correction = 0;
-  FILE *f;
+  FILE *f=NULL;
 
   mj2_box_t box;
 
@@ -637,6 +637,8 @@ int mj2_read_mdat(mj2_movie_t * movie, unsigned char *src, char *outfile)
 
 	if (imagetoyuv(&img, &cp, tk->imagefile))
 	  return 1;
+
+	j2k_dec_release();
 
 	if (cio_tell() + 8 != jp2c_len) {
 	  fprintf(stderr, "Error with JP2C Box Size\n");
@@ -2843,8 +2845,8 @@ int mj2_read_moov(mj2_movie_t * movie, j2k_image_t * img)
 int mj2_encode(mj2_movie_t * movie, j2k_cp_t * cp, char *index)
 {
 
-  char *outbuf;
-  FILE *outfile;
+  char *outbuf=NULL;
+  FILE *outfile=NULL;
   int len;
   unsigned int i;
 
