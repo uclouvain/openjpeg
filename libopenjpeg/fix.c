@@ -26,7 +26,7 @@
 
 #include "fix.h"
 
-#ifdef DAVID_WIN32
+#ifdef WIN32
 #define int64 __int64
 #else
 #define int64 long long
