@@ -321,6 +321,7 @@ int main(int argc, char **argv)
   char *j2k_codestream;
   char *jp2_codestream;
   FILE *f;
+  int depth_0, sign, depth;
 
 
   /* default value */
@@ -869,18 +870,7 @@ int main(int argc, char **argv)
       fclose(f);
     }
   } else {			/* JP2 format output */
-
     jp2_struct_t *jp2_struct;
-    jp2_struct = (jp2_struct_t *) malloc(sizeof(jp2_struct_t));
-    jp2_struct->image = &img;
-
-    /* Initialising the standard JP2 box content */
-    /* If you wish to modify those boxes, you have to modify 
-    the jp2_struct content */
-    if (jp2_init_stdjp2(jp2_struct, &img)) {
-      fprintf(stderr, "Error with jp2 initialization");
-      return 1;
-    };
 
     if (cp.intermed_file == 1) {
       /*For the moment, JP2 format does not use intermediary 
@@ -897,7 +887,55 @@ int main(int argc, char **argv)
       fprintf(stderr, "failed to encode image\n");
       return 1;
     }
+
+    jp2_struct = (jp2_struct_t *) malloc(sizeof(jp2_struct_t));
+    jp2_struct->image = &img;
     jp2_struct->j2k_codestream_len = len;
+
+    /* Initialising the standard JP2 box content */
+    /* If you wish to modify those boxes, you have to modify 
+    the jp2_struct content */
+
+    jp2_struct->numcomps = img.numcomps;	// NC
+
+    if (jp2_init_stdjp2(jp2_struct)) {
+      fprintf(stderr, "Error with jp2 initialization");
+      return 1;
+    };
+
+    jp2_struct->h = img.y1 - img.y0;	// HEIGHT
+    jp2_struct->w = img.x1 - img.x0;	// WIDTH
+
+    depth_0 = img.comps[0].prec - 1;
+    sign = img.comps[0].sgnd;
+    jp2_struct->bpc = depth_0 + (sign << 7);
+
+    for (i = 1; i < img.numcomps; i++) {
+      depth = img.comps[i].prec - 1;
+      sign = img.comps[i].sgnd;
+      if (depth_0 != depth)
+	jp2_struct->bpc = 255;
+    }
+
+    for (i = 0; i < img.numcomps; i++)
+      jp2_struct->comps[i].bpcc =
+      img.comps[i].prec - 1 + (img.comps[i].sgnd << 7);
+    
+    if ((img.numcomps == 1 || img.numcomps == 3)
+      && (jp2_struct->bpc != 255))
+      jp2_struct->meth = 1;
+    else
+      jp2_struct->meth = 2;
+    
+    if (jp2_struct->meth == 1) {
+      if (img.color_space == 1)
+	jp2_struct->enumcs = 16;
+      else if (img.color_space == 2)
+	jp2_struct->enumcs = 17;
+      else if (img.color_space == 3)
+	jp2_struct->enumcs = 18;	// YUV                          
+    } else
+      jp2_struct->enumcs = 0;	// PROFILE (??)
 
     cio_init(jp2_codestream, cp.tdx * cp.tdy * cp.tw * cp.th * 2);
     len = jp2_wrap_j2k(jp2_struct, j2k_codestream, jp2_codestream);
@@ -909,6 +947,9 @@ int main(int argc, char **argv)
     fwrite(jp2_codestream, 1, len, f);
     free(jp2_codestream);
     free(j2k_codestream);
+    free(jp2_struct->comps);
+    free(jp2_struct->cl);
+    free(jp2_struct);
     fclose(f);
   }
 
