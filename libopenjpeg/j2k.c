@@ -73,7 +73,7 @@ jmp_buf j2k_error;
 
 static int j2k_state;
 static int j2k_curtileno;
-static j2k_tcp_t j2k_default_tcp;
+j2k_tcp_t j2k_default_tcp;
 static unsigned char *j2k_eot;
 static int j2k_sot_start;
 static int pos_correction;
@@ -90,7 +90,9 @@ static info_image info_IM;
 void j2k_clean()
 {
   int tileno = 0;
+#ifndef NO_PACKETS_DECODING
   tcd_free_encode(j2k_img, j2k_cp, j2k_curtileno);
+#endif;
   
   if (info_IM.index_on) {
     for (tileno = 0; tileno < j2k_cp->tw * j2k_cp->th; tileno++) {
@@ -900,6 +902,7 @@ void j2k_read_sod()
   unsigned char *data;
   
   len = int_min(j2k_eot - cio_getbp(), cio_numbytesleft() + 1);
+  
   if (len == cio_numbytesleft() + 1)
     truncate = 1;		/* Case of a truncate codestream */
   
@@ -956,12 +959,16 @@ void j2k_write_eoc()
 void j2k_read_eoc()
 {
   int i, tileno;
-  
+
+#ifndef NO_PACKETS_DECODING  
   tcd_init(j2k_img, j2k_cp);
+#endif
   
   for (i = 0; i < j2k_cp->tileno_size; i++) {
     tileno = j2k_cp->tileno[i];
+#ifndef NO_PACKETS_DECODING  
     tcd_decode_tile(j2k_tile_data[tileno], j2k_tile_len[tileno], tileno);
+#endif
     free(j2k_tile_data[tileno]);
   }
   
