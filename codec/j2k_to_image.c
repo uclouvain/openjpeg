@@ -43,7 +43,9 @@ int main(int argc, char **argv)
   char *src, *src_name;
   char *dest, S1, S2, S3;
   int len;
+
   j2k_image_t img;
+
   j2k_cp_t cp;
   int w, wr, wrr, h, hr, hrr, max;
   int i, image_type = -1, compno, pad,j;
@@ -93,7 +95,9 @@ int main(int argc, char **argv)
   if ((S1 == 'p' && S2 == 'g' && S3 == 'x')
       || (S1 == 'P' && S2 == 'G' && S3 == 'X')) {
     image_type = 0;
+
     dest--;
+
     *dest = '\0';
   }
 
@@ -138,6 +142,7 @@ int main(int argc, char **argv)
 
   /* J2K format */
   if ((S1 == 'j' && S2 == '2' && S3 == 'k') || (S1 == 'J' && S2 == '2' && S3 == 'K')) {
+
     if (!j2k_decode(src, len, &img, &cp)) {
       fprintf(stderr, "j2k_to_image: failed to decode image!\n");
       return 1;
@@ -146,11 +151,15 @@ int main(int argc, char **argv)
   /* JP2 format */
   else if ((S1 == 'j' && S2 == 'p' && S3 == '2') || (S1 == 'J' && S2 == 'P' && S3 == '2')) {
     jp2_struct = (jp2_struct_t *) malloc(sizeof(jp2_struct_t));
+
     jp2_struct->image=&img;
+
     if (jp2_decode(src,len,jp2_struct,&cp)) {
       fprintf(stderr, "j2k_to_image: failed to decode image!\n");
       return 1;
     }
+    /* Insert code here if you want to create actions on jp2_struct before deleting it */
+    free(jp2_struct);
   }
   /* JPT format */
   else if ((S1 == 'j' && S2 == 'p' && S3 == 't') || (S1 == 'J' && S2 == 'P' && S3 == 'T')){
@@ -226,6 +235,9 @@ int main(int argc, char **argv)
 
 	fprintf(f, "%c%c%c", r, g, b);
       }
+      free(img.comps[0].data);
+      free(img.comps[1].data);
+      free(img.comps[2].data);
       fclose(f);
     } else {
       for (compno = 0; compno < img.numcomps; compno++) {
@@ -278,6 +290,7 @@ int main(int argc, char **argv)
 	  fprintf(f, "%c", l);
 	}
 	fclose(f);
+	free(img.comps[compno].data);
       }
     }
     break;
@@ -291,10 +304,13 @@ int main(int argc, char **argv)
     for (compno = 0; compno < img.numcomps; compno++) {
       j2k_comp_t *comp = &img.comps[compno];
       char name[256];
+
       int nbytes=0;
       //if (img.numcomps > 1)
 	sprintf(name, "%s-%d.pgx", argv[2], compno);
+
       //else
+
 	//sprintf(name, "%s.pgx", argv[2]);
 
       f = fopen(name, "wb");
@@ -312,16 +328,24 @@ int main(int argc, char **argv)
 
       fprintf(f, "PG ML %c %d %d %d\n", comp->sgnd ? '-' : '+',
 	      comp->prec, wr, hr);
+
       if (comp->prec <= 8) nbytes=1;
+
       else if (comp->prec <= 16) nbytes=2;
+
       else nbytes=4;
       for (i = 0; i < wr * hr; i++) {
 	int v = img.comps[compno].data[i / wr * w + i % wr];
+
 	for (j=nbytes-1 ; j>=0 ; j--) {
+
           char byte=(char)(v>>(j*8));
+
           fwrite(&byte, 1, 1, f);
+
 	}
       }
+      free(img.comps[compno].data);
       fclose(f);
     }
     break;
@@ -425,6 +449,8 @@ int main(int argc, char **argv)
 	}
       }
       fclose(f);
+      free(img.comps[1].data);
+      free(img.comps[2].data);
     } else {			/* Gray-scale */
 
       /* -->> -->> -->> -->>
@@ -512,6 +538,8 @@ int main(int argc, char **argv)
 	  fprintf(f, "%c", 0);
       }
     }
+    fclose(f);
+    free(img.comps[0].data);
     break;
   default:
     break;
