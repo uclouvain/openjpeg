@@ -981,9 +981,9 @@ int main(int argc, char **argv)
   free(cp.tcps);  
   fclose(mj2file);
   free(buf);
-  unlink("Compo0");
-  unlink("Compo1");
-  unlink("Compo2");
+  remove("Compo0");
+  remove("Compo1");
+  remove("Compo2");
 
   //MEMORY LEAK
   #ifdef _DEBUG
