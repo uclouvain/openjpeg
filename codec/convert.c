@@ -556,8 +556,10 @@ int pgxtoimage(char *filename, j2k_image_t * img, int tdy,
   FILE *f;
   int w, h, prec;
   int i, compno, bandno;
-  char str[256], endian[16];
-  char sign;
+  char str[256]; 
+  char endian1,endian2,sign;
+  char signtmp[32];
+  char temp[32];
   int bigendian;
   j2k_comp_t *comp;
 
@@ -569,93 +571,107 @@ int pgxtoimage(char *filename, j2k_image_t * img, int tdy,
     char tmp[16];
     int max = 0;
     int Y1;
+
     comp = &img->comps[compno];
     sprintf(str, "%s", filename);
+    
     f = fopen(str, "rb");
     if (!f) {
       fprintf(stderr, "Failed to open %s for reading !\n", str);
       return 0;
     }
-    if (fscanf(f, "PG %s %c %d %d %d", endian, &sign, &prec, &w, &h) == 5) {
-      fgetc(f);
-      if (!strcmp(endian, "ML"))
-	bigendian = 1;
-      else
-	bigendian = 0;
-      if (compno == 0) {
-	img->x0 = Dim[0];
-	img->y0 = Dim[1];
-	img->x1 =
-	  !Dim[0] ? (w - 1) * subsampling_dx + 1 : Dim[0] + (w -
-							     1) *
-	  subsampling_dx + 1;
-	img->y1 =
-	  !Dim[1] ? (h - 1) * subsampling_dy + 1 : Dim[1] + (h -
-							     1) *
-	  subsampling_dy + 1;
-      } else {
-	if (w != img->x1 || h != img->y1)
-	  return 0;
-      }
 
-      if (sign == '-') {
-	comp->sgnd = 1;
-      } else {
-	comp->sgnd = 0;
-      }
-      comp->prec = prec;
-      comp->dx = subsampling_dx;
-      comp->dy = subsampling_dy;
-      bandno = 1;
-
-      Y1 = cp.ty0 + bandno * cp.tdy <
-	img->y1 ? cp.ty0 + bandno * cp.tdy : img->y1;
-      Y1 -= img->y0;
-
-      sprintf(tmp, "bandtile%d", bandno);	/* bandtile file */
-      src = fopen(tmp, "wb");
-      if (!src) {
-	fprintf(stderr, "failed to open %s for writing !\n", tmp);
-      }
-      for (i = 0; i < w * h; i++) {
-	int v;
-	if (i == Y1 * w / subsampling_dy && tdy != -1) {	/* bandtile is full */
-	  fclose(src);
-	  bandno++;
-	  sprintf(tmp, "bandtile%d", bandno);
-	  src = fopen(tmp, "wb");
-	  if (!src) {
-	    fprintf(stderr, "failed to open %s for writing !\n", tmp);
-	  }
-	  Y1 = cp.ty0 + bandno * cp.tdy <
-	    img->y1 ? cp.ty0 + bandno * cp.tdy : img->y1;
-	  Y1 -= img->y0;
-	}
-	if (comp->prec <= 8) {
-	  if (!comp->sgnd) {
-	    v = readuchar(f);
-	  } else {
-	    v = (char) readuchar(f);
-	  }
-	} else if (comp->prec <= 16) {
-	  if (!comp->sgnd) {
-	    v = readushort(f, bigendian);
-	  } else {
-	    v = (short) readushort(f, bigendian);
-	  }
-	} else {
-	  if (!comp->sgnd) {
-	    v = readuint(f, bigendian);
-	  } else {
-	    v = (int) readuint(f, bigendian);
-	  }
-	}
-	if (v > max)
-	  max = v;
-	fprintf(src, "%d ", v);
-      }
-    } else {
+    fseek(f, 0, SEEK_SET);
+    fscanf(f, "PG%[ \t]%c%c%[ \t+-]%d%[ \t]%d%[ \t]%d",temp,&endian1,&endian2,signtmp,&prec,temp,&w,temp,&h);
+    
+    i=0;
+    sign='+';
+    while (signtmp[i]!='\0') {
+      if (signtmp[i]=='-') sign='-';
+      i++;
+    }
+    
+    fgetc(f);
+    if (endian1=='M' && endian2=='L')
+      bigendian = 1;
+    else if (endian2=='M' && endian1=='L')
+      bigendian = 0;
+    else {
+      fprintf(stderr, "Bad pgx header, please check input file\n", str);
       return 0;
+    }
+
+    if (compno == 0) {
+      img->x0 = Dim[0];
+      img->y0 = Dim[1];
+      img->x1 =
+	!Dim[0] ? (w - 1) * subsampling_dx + 1 : Dim[0] + (w -
+	1) *
+	subsampling_dx + 1;
+      img->y1 =
+	!Dim[1] ? (h - 1) * subsampling_dy + 1 : Dim[1] + (h -
+	1) *
+	subsampling_dy + 1;
+    } else {
+      if (w != img->x1 || h != img->y1)
+	return 0;
+    }
+    
+    if (sign == '-') {
+      comp->sgnd = 1;
+    } else {
+      comp->sgnd = 0;
+    }
+    comp->prec = prec;
+    comp->dx = subsampling_dx;
+    comp->dy = subsampling_dy;
+    bandno = 1;
+    
+    Y1 = cp.ty0 + bandno * cp.tdy <
+      img->y1 ? cp.ty0 + bandno * cp.tdy : img->y1;
+    Y1 -= img->y0;
+    
+    sprintf(tmp, "bandtile%d", bandno);	/* bandtile file */
+    src = fopen(tmp, "wb");
+    if (!src) {
+      fprintf(stderr, "failed to open %s for writing !\n", tmp);
+    }
+    for (i = 0; i < w * h; i++) {
+      int v;
+      if (i == Y1 * w / subsampling_dy && tdy != -1) {	/* bandtile is full */
+	fclose(src);
+	bandno++;
+	sprintf(tmp, "bandtile%d", bandno);
+	src = fopen(tmp, "wb");
+	if (!src) {
+	  fprintf(stderr, "failed to open %s for writing !\n", tmp);
+	}
+	Y1 = cp.ty0 + bandno * cp.tdy <
+	  img->y1 ? cp.ty0 + bandno * cp.tdy : img->y1;
+	Y1 -= img->y0;
+      }
+      if (comp->prec <= 8) {
+	if (!comp->sgnd) {
+	  v = readuchar(f);
+	} else {
+	  v = (char) readuchar(f);
+	}
+      } else if (comp->prec <= 16) {
+	if (!comp->sgnd) {
+	  v = readushort(f, bigendian);
+	} else {
+	  v = (short) readushort(f, bigendian);
+	}
+      } else {
+	if (!comp->sgnd) {
+	  v = readuint(f, bigendian);
+	} else {
+	  v = (int) readuint(f, bigendian);
+	}
+      }
+      if (v > max)
+	max = v;
+      fprintf(src, "%d ", v);
     }
     fclose(f);
     fclose(src);
