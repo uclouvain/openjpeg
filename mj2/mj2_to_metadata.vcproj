@@ -116,7 +116,7 @@
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG"
 				Culture="2057"
-				AdditionalIncludeDirectories="&quot;C:\OpenJPEG 2000 dot net\openjpeg v 0.96 with glenn metadata\openjpeg\libopenjpeg&quot;"/>
+				AdditionalIncludeDirectories="../libopenjpeg;$(NoInherit)"
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
