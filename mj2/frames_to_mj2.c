@@ -86,10 +86,10 @@ void help_display()
     ("Required Parameters (except with -h):\n");
   printf("\n");
   printf
-    ("-i           : source file  (-i source.pnm also *.pgm, *.ppm) \n");
+    ("-i           : source file  (-i source.yuv) \n");
   printf("\n");
   printf
-    ("-o           : destination file (-o dest.j2k or .jp2) \n");
+    ("-o           : destination file (-o dest.mj2) \n");
   printf("\n");
   printf
     ("Optional Parameters:\n");
