@@ -92,7 +92,7 @@ void j2k_clean()
   int tileno = 0;
 #ifndef NO_PACKETS_DECODING
   tcd_free_encode(j2k_img, j2k_cp, j2k_curtileno);
-#endif;
+#endif
   
   if (info_IM.index_on) {
     for (tileno = 0; tileno < j2k_cp->tw * j2k_cp->th; tileno++) {
