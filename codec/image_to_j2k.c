@@ -300,7 +300,7 @@ int main(int argc, char **argv)
   Dim[1] = 0;
   TX0 = 0;
   TY0 = 0;
-  cp.comment = "Created by OpenJPEG version 0.9";
+  cp.comment = NULL;
   cp.disto_alloc = 0;
   cp.fixed_alloc = 0;
   cp.fixed_quality = 0;		//add fixed_quality
@@ -688,7 +688,7 @@ int main(int argc, char **argv)
     cp.tdx = img.x1 - cp.tx0;
     cp.tdy = img.y1 - cp.ty0;
   }
-
+ 
   /* Initialization for PPM marker */
   cp.ppm = 0;
   cp.ppm_data = NULL;
@@ -850,7 +850,6 @@ int main(int argc, char **argv)
     }
     fwrite(outbuf, 1, len, f);
     free(outbuf);
-    free(jp2_struct->comps);
     fclose(f);
   }
 
@@ -874,14 +873,6 @@ int main(int argc, char **argv)
       }
     }
   }
-
-  /* Free memory */
-  free(img.comps);
-  free(cp_init.tcps);
-  if (tcp_init->numlayers > 9) free(cp.matrice);
-  for (tileno = 0; tileno < cp.tw * cp.th; tileno++)
-    free(cp.tcps[tileno].tccps);
-  free(cp.tcps);
 
   system("pause");
   return 0;
