@@ -517,7 +517,7 @@ void tcd_init_encode(j2k_image_t * img, j2k_cp_t * cp, int curtileno)
 void tcd_init(j2k_image_t * img, j2k_cp_t * cp)
 {
 	int tileno, compno, resno, bandno, precno, cblkno, i;
-	unsigned int x0=0 , y0=0, x1 = 0, y1 = 0, w, h, j;  
+	unsigned int x0=0 , y0=0, x1 = 0, y1 = 0, w, h, j, p, q;  
 	tcd_img = img;
 	tcd_cp = cp;
 	tcd_image.tw = cp->tw;
@@ -536,8 +536,8 @@ void tcd_init(j2k_image_t * img, j2k_cp_t * cp)
 
 		//		int previous_x0, previous_x1, previous_y0, previous_y1;
 		/* cfr p59 ISO/IEC FDIS15444-1 : 2000 (18 august 2000) */
-		int p = tileno % cp->tw;		/* si numerotation matricielle .. */
-		int q = tileno / cp->tw;		/* .. coordonnees de la tile (q,p) q pour ligne et p pour colonne */
+		p = tileno % cp->tw;		/* si numerotation matricielle .. */
+		q = tileno / cp->tw;		/* .. coordonnees de la tile (q,p) q pour ligne et p pour colonne */
 
 		/* 4 borders of the tile rescale on the image if necessary */
 		tile->x0 = int_max(cp->tx0 + p * cp->tdx, img->x0);
