@@ -332,7 +332,7 @@ int main(int argc, char **argv)
 
   while (1) {
     int c = getopt(argc, argv,
-		   "i:o:r:q:f:t:n:c:b:x:p:s:d:h:P:S:E:M:R:T:C:I:W:F");
+		   "i:o:r:q:f:t:n:c:b:x:p:s:d:h:P:S:E:M:R:T:C:I:W:F:");
     if (c == -1)
       break;
     switch (c) {
@@ -604,7 +604,7 @@ int main(int argc, char **argv)
       /* ------------------------------------------------------ */
     case 'F':			/* Video frame rate */
       if (sscanf(optarg, "%d", &frame_rate) != 1) {
-	fprintf(stderr, "-f argument error");
+	fprintf(stderr, "-F argument error");
 	return 1;
       }
       break;
