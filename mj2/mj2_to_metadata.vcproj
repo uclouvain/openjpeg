@@ -116,7 +116,8 @@
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG"
 				Culture="2057"
-				AdditionalIncludeDirectories="../libopenjpeg;$(NoInherit)"
+				AdditionalIncludeDirectories=""
+				ResourceOutputFileName=""/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
@@ -313,6 +314,9 @@
 				</File>
 			</Filter>
 		</Filter>
+		<File
+			RelativePath="mj2_to_metadata.rc">
+		</File>
 		<File
 			RelativePath="resource.h">
 		</File>
