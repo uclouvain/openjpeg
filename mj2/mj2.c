@@ -25,7 +25,6 @@
 * POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include <openjpeg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -33,7 +32,7 @@
 #include <math.h>
 
 #include "mj2.h"
-#include "mj2_convert.h"
+#include <cio.h>
 
 #define MJ2_JP    0x6a502020
 #define MJ2_FTYP  0x66747970
@@ -92,6 +91,10 @@ void mj2_memory_free(mj2_movie_t * movie)
     tk = &movie->tk[i];
     if (tk->name_size != 0)
       free(tk->name);
+    if (tk->jp2_struct.comps != 0)
+      free(tk->jp2_struct.comps);
+    if (tk->jp2_struct.cl != 0)
+      free(tk->jp2_struct.cl);
     if (tk->num_url != 0)
       free(tk->url);
     if (tk->num_urn != 0)
@@ -130,6 +133,11 @@ int mj2_read_boxhdr(mj2_box_t * box)
       return 1;
     };
     box->length = cio_read(4);
+    if (box->length == 0) 
+      box->length = cio_numbytesleft() + 12;
+  }
+  else if (box->length == 0) {
+    box->length = cio_numbytesleft() + 8;
   }
   return 0;
 }
@@ -147,9 +155,11 @@ int mj2_init_stdmovie(mj2_movie_t * movie)
   time_t ltime;
   movie->brand = MJ2_MJ2;
   movie->minversion = 0;
-  movie->num_cl = 2;
-  movie->cl =
-    (unsigned int *) malloc(movie->num_cl * sizeof(unsigned int));
+  if (!((movie->num_cl<100) && (movie->num_cl>-1))) {
+    movie->num_cl = 2;
+    movie->cl =
+      (unsigned int *) malloc(movie->num_cl * sizeof(unsigned int));
+  }
 
   movie->cl[0] = MJ2_MJ2;
   movie->cl[1] = MJ2_MJ2S;
@@ -168,14 +178,12 @@ int mj2_init_stdmovie(mj2_movie_t * movie)
   movie->trans_matrix[6] = 0;
   movie->trans_matrix[7] = 0;
   movie->trans_matrix[8] = 0x40000000;
-
-
+  movie->next_tk_id = 1;
 
   for (i = 0; i < movie->num_htk + movie->num_stk + movie->num_vtk; i++) {
     mj2_tk_t *tk = &movie->tk[i];
+    movie->next_tk_id++;
     if (tk->track_type == 0) {
-      tk->num_samples = yuv_num_frames(tk);
-
       if (tk->num_samples == 0)
 	return 1;
 
@@ -184,11 +192,6 @@ int mj2_init_stdmovie(mj2_movie_t * movie)
 
       tk->timescale = 1000;	/* Timescale = 1 ms                                          */
 
-      tk->sample =
-	(mj2_sample_t *) malloc(tk->num_samples * sizeof(mj2_sample_t));
-      tk->num_chunks = tk->num_samples;
-      tk->chunk =
-	(mj2_chunk_t *) malloc(tk->num_chunks * sizeof(mj2_chunk_t));
       tk->chunk[0].num_samples = 1;
       tk->chunk[0].sample_descr_idx = 1;
 
@@ -451,211 +454,6 @@ int mj2_read_ftyp(mj2_movie_t * movie)
   return 0;
 }
 
-/*
-* Write the MDAT box
-*
-* Media Data box
-*
-*/
-int mj2_write_mdat(FILE * outfile, mj2_movie_t * movie, j2k_image_t * img,
-		   j2k_cp_t * cp, char *outbuf, char *index)
-{
-  unsigned char box_len_ptr;
-  mj2_box_t box;
-  int len, l, k;
-  int i, m;
-  unsigned int j;
-  int pos_correction = 0;
-  int tileno;
-  
-  box.init_pos = cio_tell();
-  cio_skip(4);
-  cio_write(MJ2_MDAT, 4);	/* MDAT       */
-  
-  for (i = 0; i < movie->num_stk + movie->num_htk + movie->num_vtk; i++) {
-    if (movie->tk[i].track_type != 0) {
-      fprintf(stderr, "Unable to write sound or hint tracks\n");
-    } else {
-      j2k_cp_t cp_init;
-      mj2_tk_t *tk;
-      
-      tk = &movie->tk[i];
-      
-      fprintf(stderr, "Video Track number %d\n", i + 1);
-      
-      len = cio_tell();
-      fwrite(outbuf, 1, len, outfile);
-      pos_correction = cio_tell() + pos_correction;
-      free(outbuf);
-      
-      /* Copy the first tile coding parameters (tcp) to cp_init */
-      
-      cp_init.tcps =
-	(j2k_tcp_t *) malloc(cp->tw * cp->th * sizeof(j2k_tcp_t));
-      for (tileno = 0; tileno < cp->tw * cp->th; tileno++) {
-	for (l = 0; l < cp->tcps[tileno].numlayers; l++) {
-	  cp_init.tcps[tileno].rates[l] = cp->tcps[tileno].rates[l];
-	  //tileno = cp->tcps[tileno].rates[l];
-	}
-      }
-      
-      
-      for (j = 0; j < tk->num_samples; j++) {
-	outbuf = (char *) malloc(cp->tdx * cp->tdy * cp->th * cp->tw * 2);
-	cio_init(outbuf, cp->tdx * cp->tdy * cp->th * cp->tw * 2);
-	
-	fprintf(stderr, "Frame number %d/%d: \n", j + 1, tk->num_samples);
-	
-	
-	if (!yuvtoimage(tk, img, j)) {
-	  fprintf(stderr, "Error with frame number %d in YUV file\n", j);
-	  return 1;
-	}
-	
-	len = jp2_write_jp2c(img, cp, outbuf, index);
-	
-	for (m = 0; m < img->numcomps; m++) {
-	  free(img->comps[m].data);
-	}
-	
-	tk->sample[j].sample_size = len;
-	
-	tk->sample[j].offset = pos_correction;
-	tk->chunk[j].offset = pos_correction;	/* There is one sample per chunk */
-	
-	fwrite(outbuf, 1, len, outfile);
-	
-	pos_correction = cio_tell() + pos_correction;
-	
-	free(outbuf);
-	
-	/* Copy the cp_init parameters to cp->tcps */
-	
-	for (tileno = 0; tileno < cp->tw * cp->th; tileno++) {
-	  for (k = 0; k < cp->tcps[tileno].numlayers; k++) {
-	    cp->tcps[tileno].rates[k] = cp_init.tcps[tileno].rates[k];
-	  }
-	}
-      }
-    }
-    
-    box.length = pos_correction - box.init_pos;
-    
-    fseek(outfile, box.init_pos, SEEK_SET);
-    
-    cio_init(&box_len_ptr, 4);	/* Init a cio to write box length variable in a little endian way */
-    cio_write(box.length, 4);
-    
-    fwrite(&box_len_ptr, 4, 1, outfile);
-    
-    fseek(outfile, box.init_pos + box.length, SEEK_SET);
-  }
-  return 0;
-}
-
-
-/*
-* Read the MDAT box
-*
-* Media Data box
-*
-*/
-int mj2_read_mdat(mj2_movie_t * movie, unsigned char *src, char *outfile)
-{
-  int track_nb;
-  unsigned int i;
-  int jp2c_cio_len, jp2c_len, pos_correction = 0;
-  FILE *f=NULL;
-  int compno;
-
-  mj2_box_t box;
-
-  mj2_read_boxhdr(&box);
-  if (MJ2_MDAT != box.type) {
-    fprintf(stderr, "Error: Expected MDAT Marker\n");
-    return 1;
-  }
-
-  pos_correction = cio_tell() - box.init_pos;
-
-  f = fopen(outfile, "w");	/* Erase content of file if it already exists */
-  fclose(f);
-
-  for (track_nb = 0; track_nb < movie->next_tk_id - 1; track_nb++) {
-    if (movie->tk[track_nb].imagefile != NULL) {
-      fprintf(stderr, "%s", movie->tk[track_nb].imagefile);
-
-      f = fopen(movie->tk[track_nb].imagefile, "w");	// Erase content of file if it already exists 
-      fclose(f);
-    }
-  }
-
-  for (track_nb = 0;
-       track_nb < movie->num_htk + movie->num_stk + movie->num_vtk;
-       track_nb++) {
-    mj2_tk_t *tk = &movie->tk[track_nb];
-    if (tk->track_type != 0) {
-      cio_seek(box.init_pos);
-      cio_skip(box.length);
-    } else {
-      fprintf(stderr, "Track %d: Width=%d Height=%d\n", track_nb,
-	      tk->w, tk->h);
-      fprintf(stderr, "%d Samples\n", tk->num_samples);
-
-      if (tk->imagefile == NULL) {
-	tk->imagefile = outfile;
-      }
-
-      for (i = 0; i < tk->num_samples; i++) {
-
-	mj2_sample_t *sample = &tk->sample[i];
-	j2k_image_t img;
-	j2k_cp_t cp;
-	unsigned char *pos;
-
-	fprintf(stderr, "Frame %d / %d: \n", i+1, tk->num_samples);
-
-	cio_init(src + sample->offset, 8);
-
-	jp2c_cio_len = cio_tell();
-	jp2c_len = cio_read(4);
-
-
-	if (MJ2_JP2C != cio_read(4)) {
-	  fprintf(stderr, "Error: Expected JP2C Marker\n");
-	  return 1;
-	}
-
-	pos = src + sample->offset + 8;
-
-	cio_seek(sample->offset + 8);
-
-	if (!j2k_decode(pos, sample->sample_size, &img, &cp))
-	  return 1;
-
-	if (imagetoyuv(&img, &cp, tk->imagefile))
-	  return 1;
-
-	j2k_dec_release();
-
-	for (compno=0; compno < img.numcomps; compno++)
-	  free(img.comps[compno].data);
-
-
-	if (cio_tell() + 8 != jp2c_len) {
-	  fprintf(stderr, "Error with JP2C Box Size\n");
-	  return 1;
-	}
-
-      }
-    }
-  }
-
-  cio_seek(box.init_pos);
-  cio_skip(box.length);		/* Go back to box end */
-
-  return 0;
-}
 
 /*
 * Write the STCO box
@@ -1285,9 +1083,8 @@ int mj2_read_jsub(mj2_tk_t * tk)
 * Visual Sample Entry Description
 *
 */
-void mj2_write_smj2(j2k_image_t * img, mj2_tk_t * tk)
+void mj2_write_smj2(mj2_tk_t * tk)
 {
-  int i;
   mj2_box_t box;
 
   box.init_pos = cio_tell();
@@ -1325,16 +1122,9 @@ void mj2_write_smj2(j2k_image_t * img, mj2_tk_t * tk)
   cio_write(tk->compressorname[6], 4);
   cio_write(tk->compressorname[7], 4);
 
-  tk->depth = 0;
-
-  for (i = 0; i < img->numcomps; i++)
-    tk->depth += img->comps[i].bpp;
-
   cio_write(tk->depth, 2);	/* Depth */
 
   cio_write(0xffff, 2);		/* Pre-defined = -1 */
-
-  jp2_init_stdjp2(&tk->jp2_struct, img);
 
   jp2_write_jp2h(&tk->jp2_struct);
 
@@ -1427,6 +1217,12 @@ int mj2_read_smj2(j2k_image_t * img, mj2_tk_t * tk)
     fprintf(stderr, "Error with JP2H Box\n");
     return 1;
   }
+  
+  tk->jp2_struct.comps = (jp2_comps_t *) malloc(tk->jp2_struct.numcomps * sizeof(jp2_comps_t));
+  tk->jp2_struct.cl = (int *) malloc(sizeof(int));
+
+  tk->num_br = 0;
+  tk->num_jp2x = 0;
 
   for (i = 0; cio_tell() - box.init_pos < box.length; i++) {
     mj2_read_boxhdr(&box2);
@@ -1474,7 +1270,7 @@ int mj2_read_smj2(j2k_image_t * img, mj2_tk_t * tk)
 * Sample Description
 *
 */
-void mj2_write_stsd(mj2_tk_t * tk, j2k_image_t * img)
+void mj2_write_stsd(mj2_tk_t * tk)
 {
   mj2_box_t box;
 
@@ -1487,7 +1283,7 @@ void mj2_write_stsd(mj2_tk_t * tk, j2k_image_t * img)
   cio_write(1, 4);		/* entry_count = 1 (considering same JP2 headerboxes) */
 
   if (tk->track_type == 0) {
-    mj2_write_smj2(img, tk);
+    mj2_write_smj2(tk);
   } else if (tk->track_type == 1) {
     // Not implemented
   }
@@ -1561,7 +1357,7 @@ int mj2_read_stsd(mj2_tk_t * tk, j2k_image_t * img)
 * Sample table box box
 *
 */
-void mj2_write_stbl(mj2_tk_t * tk, j2k_image_t * img)
+void mj2_write_stbl(mj2_tk_t * tk)
 {
   mj2_box_t box;
 
@@ -1569,7 +1365,7 @@ void mj2_write_stbl(mj2_tk_t * tk, j2k_image_t * img)
   cio_skip(4);
   cio_write(MJ2_STBL, 4);	/* STBL       */
 
-  mj2_write_stsd(tk, img);
+  mj2_write_stsd(tk);
   mj2_write_stts(tk);
   mj2_write_stsc(tk);
   mj2_write_stsz(tk);
@@ -2105,7 +1901,7 @@ int mj2_read_hmhd(mj2_tk_t * tk)
 * Media information box
 *
 */
-void mj2_write_minf(mj2_tk_t * tk, j2k_image_t * img)
+void mj2_write_minf(mj2_tk_t * tk)
 {
   mj2_box_t box;
 
@@ -2122,7 +1918,7 @@ void mj2_write_minf(mj2_tk_t * tk, j2k_image_t * img)
   }
 
   mj2_write_dinf(tk);
-  mj2_write_stbl(tk, img);
+  mj2_write_stbl(tk);
 
   box.length = cio_tell() - box.init_pos;
   cio_seek(box.init_pos);
@@ -2384,7 +2180,7 @@ int mj2_read_mdhd(mj2_tk_t * tk)
 * Media box
 *
 */
-void mj2_write_mdia(mj2_tk_t * tk, j2k_image_t * img)
+void mj2_write_mdia(mj2_tk_t * tk)
 {
   mj2_box_t box;
 
@@ -2394,7 +2190,7 @@ void mj2_write_mdia(mj2_tk_t * tk, j2k_image_t * img)
 
   mj2_write_mdhd(tk);
   mj2_write_hdlr(tk);
-  mj2_write_minf(tk, img);
+  mj2_write_minf(tk);
 
   box.length = cio_tell() - box.init_pos;
   cio_seek(box.init_pos);
@@ -2579,7 +2375,7 @@ int mj2_read_tkhd(mj2_tk_t * tk)
 * Track box
 *
 */
-void mj2_write_trak(mj2_tk_t * tk, j2k_image_t * img)
+void mj2_write_trak(mj2_tk_t * tk)
 {
   mj2_box_t box;
 
@@ -2589,7 +2385,7 @@ void mj2_write_trak(mj2_tk_t * tk, j2k_image_t * img)
   cio_write(MJ2_TRAK, 4);	/* TRAK       */
 
   mj2_write_tkhd(tk);
-  mj2_write_mdia(tk, img);
+  mj2_write_mdia(tk);
 
   box.length = cio_tell() - box.init_pos;
   cio_seek(box.init_pos);
@@ -2768,7 +2564,7 @@ int mj2_read_mvhd(mj2_movie_t * movie)
 * Movie Box
 *
 */
-void mj2_write_moov(mj2_movie_t * movie, j2k_image_t * img)
+void mj2_write_moov(mj2_movie_t * movie)
 {
   int i;
   mj2_box_t box;
@@ -2780,7 +2576,7 @@ void mj2_write_moov(mj2_movie_t * movie, j2k_image_t * img)
   mj2_write_mvhd(movie);
 
   for (i = 0; i < (movie->num_stk + movie->num_htk + movie->num_vtk); i++) {
-    mj2_write_trak(&movie->tk[i], img);
+    mj2_write_trak(&movie->tk[i]);
   }
 
   box.length = cio_tell() - box.init_pos;
@@ -2817,9 +2613,6 @@ int mj2_read_moov(mj2_movie_t * movie, j2k_image_t * img)
   movie->tk =
     (mj2_tk_t *) malloc((movie->next_tk_id - 1) * sizeof(mj2_tk_t));
 
-  for (i=0; i < (unsigned int)movie->next_tk_id - 1; i++)
-    movie->tk[i].imagefile = NULL;
-
   for (i = 0; cio_tell() - box.init_pos < box.length; i++) {
     mj2_read_boxhdr(&box2);
     if (box2.type == MJ2_TRAK) {
@@ -2846,121 +2639,112 @@ int mj2_read_moov(mj2_movie_t * movie, j2k_image_t * img)
   return 0;
 }
 
-
-int mj2_encode(mj2_movie_t * movie, j2k_cp_t * cp, char *index)
-{
-
-  char *outbuf=NULL;
-  FILE *outfile=NULL;
-  int len;
-  unsigned int i;
-
-  j2k_image_t img;
-
-  outbuf = (char *) malloc(cp->tdx * cp->tdy * 2);
-  cio_init(outbuf, cp->tdx * cp->tdy * 2);
-
-  outfile = fopen(movie->mj2file, "wb");
-  if (!outfile) {
-    fprintf(stderr, "failed to open %s for writing\n", movie->mj2file);
-    return 1;
-  }
-
-  mj2_write_jp();
-  mj2_write_ftyp(movie);
-
-  if (mj2_write_mdat(outfile, movie, &img, cp, outbuf, index)) {
-    fprintf(stderr, "Error writing tracks\n\n");
-    return 1;
-  }
-
-  outbuf = (char *) malloc(cp->tdx * cp->tdy * 2);
-  cio_init(outbuf, cp->tdx * cp->tdy * 2);
-
-  mj2_write_moov(movie, &img);
-
-  len = cio_tell();
-  fwrite(outbuf, 1, len, outfile);
-
-  fclose(outfile);
-
-  for (i = 0; i < movie->tk[0].jp2_struct.numcomps; i++) {
-    char tmp[20];
-    sprintf(tmp, "Compo%d", i);
-    if (remove(tmp) == -1) {
-      fprintf(stderr, "failed to kill %s file !\n", tmp);
-    }
-  }
-
-  free(img.comps);
-  free(outbuf);
-
-  return 0;
-
-}
-
-int mj2_decode(unsigned char *src, int len, mj2_movie_t * movie,
-	       j2k_cp_t * cp, char *outfile)
-{
-  unsigned int MDATbox_pos = 0;
-  unsigned int MOOVboxend_pos = 0;
+int mj2_read_struct(FILE *file, mj2_movie_t * movie) {
   mj2_box_t box;
   j2k_image_t img;
+  char * src;
+  int fsresult;
+  int foffset;
 
-  cio_init(src, len);
-
+  movie->num_vtk=0;
+  movie->num_stk=0;
+  movie->num_htk=0;
+    
+  src = (char*) malloc (300 * sizeof(char));
+  fread(src,300,1, file);  // Assuming that jp and ftyp markers size do
+  // not exceed 300 bytes
+  
+  cio_init(src, 300);
+  
   if (mj2_read_jp())
     return 1;
   if (mj2_read_ftyp(movie))
     return 1;
 
-
-  for (; cio_numbytesleft() > 0;) {
-    mj2_read_boxhdr(&box);
-    switch (box.type) {
-    case MJ2_MDAT:
-      cio_seek(box.init_pos);
-      if (MOOVboxend_pos == 0) {
-	MDATbox_pos = box.init_pos;
-	cio_skip(box.length);	/* The MDAT box is only read while the MOOV box is decoded */
-      } else {
-	if (mj2_read_mdat(movie, src, outfile))
-	  return 1;
-      }
-      break;
-
-    case MJ2_MOOV:
-      cio_seek(box.init_pos);
-      if (mj2_read_moov(movie, &img))
-	return 1;
-      MOOVboxend_pos = cio_tell();
-      if (MDATbox_pos != 0) {
-	cio_seek(MDATbox_pos);	/* After MOOV box, read the MDAT box */
-
-	if (mj2_read_mdat(movie, src, outfile))
-	  return 1;
-
-	cio_seek(MOOVboxend_pos);
-      }
-      break;
-
-    case MJ2_MOOF:
-      cio_seek(box.init_pos);
-      cio_skip(box.length);
-      break;
-    case MJ2_FREE:
-      cio_seek(box.init_pos);
-      cio_skip(box.length);
-      break;
-    case MJ2_SKIP:
-      cio_seek(box.init_pos);
-      cio_skip(box.length);
-      break;
-    default:
-      fprintf(stderr, "Unknown box\n");
-      return 1;
-    }
+  fsresult = fseek(file,cio_tell(),SEEK_SET);
+  if( fsresult ) {
+    fprintf(stderr, "End of file reached while trying to read data after FTYP box\n" );
+    return 1;
   }
 
+  foffset = cio_tell();
+  
+  box.type = 0;
+  
+  fread(src,30,1,file);
+  cio_init(src, 30);
+  mj2_read_boxhdr(&box);
+  
+  while(box.type != MJ2_MOOV) {
+    
+    switch(box.type)
+    {
+    case MJ2_MDAT:
+      fsresult = fseek(file,foffset+box.length,SEEK_SET);
+      if( fsresult ) {
+	fprintf(stderr, "End of file reached while trying to read MDAT box\n" );
+	return 1;
+      }
+      foffset += box.length;
+      break;
+      
+    case MJ2_MOOF:
+      fsresult = fseek(file,foffset+box.length,SEEK_SET);
+      if( fsresult ) {
+	fprintf(stderr, "End of file reached while trying to read MOOF box\n" );
+	return 1;
+      }
+      foffset += box.length;
+      break;      
+    case MJ2_FREE:
+      fsresult = fseek(file,foffset+box.length,SEEK_SET);
+      if( fsresult ) {
+	fprintf(stderr, "End of file reached while trying to read FREE box\n" );
+	return 1;
+      }
+      foffset += box.length;
+      break;      
+    case MJ2_SKIP:
+      fsresult = fseek(file,foffset+box.length,SEEK_SET);
+      if( fsresult ) {
+	fprintf(stderr, "End of file reached while trying to read SKIP bo\nx" );
+	return 1;
+      }
+      foffset += box.length;
+      break;      
+    default:
+      fprintf(stderr, "Unknown box in MJ2 stream\n");
+      fsresult = fseek(file,foffset+box.length,SEEK_SET);
+      if( fsresult ) {
+	fprintf(stderr, "End of file reached while trying to read %s box\n", box.type ); 
+	return 1;
+      }      
+      foffset += box.length;
+      break;
+    }
+    fsresult = fread(src,8,1,file);
+    if (fsresult != 1) {
+      fprintf(stderr, "MOOV box not found in file\n"); 
+      return 1;
+    }
+    cio_init(src, 8);
+    mj2_read_boxhdr(&box);
+  }
+
+
+  fseek(file,-8,SEEK_CUR);
+  src = realloc(src,box.length);
+  fsresult = fread(src,box.length,1,file);
+  if (fsresult != 1) {
+    fprintf(stderr, "End of file reached while trying to read MOOV box\n"); 
+    return 1;
+  }
+
+  cio_init(src, box.length);
+  
+  if (mj2_read_moov(movie, &img))
+    return 1;
+  
+  free(src);
   return 0;
 }

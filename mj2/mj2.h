@@ -25,8 +25,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-#include "j2k.h"
+#include <j2k.h>
+#include <jp2.h>
 
 #ifndef __MJ2_H
 #define __MJ2_H
@@ -66,7 +66,6 @@ typedef struct {		/* URN       */
 typedef struct {		/* Video Track Parameters    */
   int track_ID;
   int track_type;
-  char *imagefile;
   unsigned int creation_time;
   unsigned int modification_time;
   int duration;
@@ -91,8 +90,8 @@ typedef struct {		/* Video Track Parameters    */
   int h;
   int CbCr_subsampling_dx;
   int CbCr_subsampling_dy;
-  int subsampling_dx;
-  int subsampling_dy;
+ // int subsampling_dx;
+ // int subsampling_dy;
   int sample_rate;
   int sample_description;
   int horizresolution;
@@ -133,7 +132,6 @@ typedef struct {		/* Movie */
   unsigned int minversion;
   int num_cl;
   unsigned int *cl;
-  char *mj2file;
   unsigned int creation_time;
   unsigned int modification_time;
   int timescale;
@@ -153,6 +151,10 @@ typedef struct {
   int type;
   int init_pos;
 } mj2_box_t;
+
+void mj2_write_jp();
+
+void mj2_write_ftyp(mj2_movie_t * movie);
 
 /*
  * Use this function to initialize a standard movie with standard values
@@ -189,5 +191,9 @@ int mj2_decode(unsigned char *src, int len, mj2_movie_t * movie,
  * 
  */
 void mj2_memory_free(mj2_movie_t * movie);
+
+int mj2_read_struct(FILE *file, mj2_movie_t * movie);
+
+void mj2_write_moov(mj2_movie_t * movie);
 
 #endif

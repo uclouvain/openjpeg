@@ -1,144 +1,127 @@
-/* Copyright (c) 2003-2004, François-Olivier Devaux
-* Copyright (c) 2003-2004,  Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
-* All rights reserved.
-*
-* All rights reserved. 
-* Redistribution and use in source and binary forms, with or without
-* modification, are permitted provided that the following conditions
-* are met:
-* 1. Redistributions of source code must retain the above copyright
-*    notice, this list of conditions and the following disclaimer.
-* 2. Redistributions in binary form must reproduce the above copyright
-*    notice, this list of conditions and the following disclaimer in the
-*    documentation and/or other materials provided with the distribution.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS `AS IS'
-* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-* LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-* POSSIBILITY OF SUCH DAMAGE.
-*/
-
-#include <openjpeg.h>
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <malloc.h>
+#include <setjmp.h>
+
 #include "mj2.h"
 #include "mj2_convert.h"
+#include <openjpeg.h>
 
-int ceildiv(int a, int b)
-{
-  return (a + b - 1) / b;
-}
+//MEMORY LEAK
+#ifdef _DEBUG
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>  // Must be included first
+#include <crtdbg.h>
+#endif
+//MEM
 
-int main(int argc, char **argv)
-{
-  FILE *f=NULL;
-  char *src=NULL, *src_name=NULL;
-  char *dest=NULL, S1, S2, S3;
-  int len;
+jmp_buf j2k_error;
+
+int main(int argc, char *argv[]) {
+
+  unsigned int tnum, snum;
+  mj2_movie_t movie;
+  mj2_tk_t *track;
+  mj2_sample_t *sample;
+  unsigned char* frame_codestream;
+  FILE *file, *outfile;
+  char outfilename[50];
+  j2k_image_t img;
   j2k_cp_t cp;
-  mj2_movie_t mj2_movie;
+  int i;
 
-
-  if (argc < 3) {
-    fprintf(stderr,
-	    "usage: %s mj2-file raw_yuv-file -reduce n (<- optional)\n",
-	    argv[0]);
+  if (argc != 3) {
+    printf("Bad syntax: Usage: MJ2_decoder inputfile.mj2 outputfile.yuv\n"); 
+    printf("Example: MJ2_decoder foreman.mj2 foreman.yuv\n");
     return 1;
   }
-
-  f = fopen(argv[1], "rb");
-  if (!f) {
+  
+  file = fopen(argv[1], "rb");
+  
+  if (!file) {
     fprintf(stderr, "failed to open %s for reading\n", argv[1]);
     return 1;
   }
 
-  dest = argv[2];
-
-  cp.reduce_on = 0;
-  cp.reduce_value = 0;
-
-  /* OPTION REDUCE IS ACTIVE */
-  if (argc == 5) {
-    if (strcmp(argv[3], "-reduce")) {
-      fprintf(stderr,
-	      "usage: options " "-reduce n"
-	      " where n is the factor of reduction [%s]\n", argv[3]);
-      return 1;
-    }
-    cp.reduce_on = 1;
-    sscanf(argv[4], "%d", &cp.reduce_value);
-  }
-
-  while (*dest) {
-    dest++;
-  }
-  dest--;
-  S3 = *dest;
-  dest--;
-  S2 = *dest;
-  dest--;
-  S1 = *dest;
-
-  if (!((S1 == 'y' && S2 == 'u' && S3 == 'v')
-	|| (S1 == 'Y' && S2 == 'U' && S3 == 'V'))) {
-    fprintf(stderr,
-	    "!! Unrecognized format for outfile : %c%c%c [accept only *.yuv] !!\n",
-	    S1, S2, S3);
-    fprintf(stderr,
-	    "usage: mj2-file raw_yuv-file -reduce n (<- optional)\n\n");
-
+  // Checking output file
+  outfile = fopen(argv[2], "w");
+  if (!file) {
+    fprintf(stderr, "failed to open %s for writing\n", argv[2]);
     return 1;
   }
+  fclose(outfile);
 
-  fseek(f, 0, SEEK_END);
-  len = ftell(f);
-  fseek(f, 0, SEEK_SET);
-  src = (char *) malloc(len);
-  fread(src, 1, len, f);
-  fclose(f);
-
-  src_name = argv[1];
-  while (*src_name) {
-    src_name++;
-  }
-  src_name--;
-  S3 = *src_name;
-  src_name--;
-  S2 = *src_name;
-  src_name--;
-  S1 = *src_name;
-
-  /* MJ2 format */
-  if ((S1 == 'm' && S2 == 'j' && S3 == '2')
-      || (S1 == 'M' && S2 == 'J' && S3 == '2')) {
-    mj2_movie.num_stk = 0;
-    mj2_movie.num_htk = 0;
-    mj2_movie.num_vtk = 0;
-    mj2_movie.mj2file = argv[1];
-    if (mj2_decode(src, len, &mj2_movie, &cp, argv[2])) {
-      fprintf(stderr, "mj2_to_frames: failed to decode image!\n");
-      return 1;
-    }
-    mj2_memory_free(&mj2_movie);
-  } else {
-    fprintf(stderr,
-	    "mj2_to_frames : Unknown format image *.%c%c%c [only *.mj2]!! \n",
-	    S1, S2, S3);
-    fprintf(stderr,
-	    "usage: mj2-file raw_yuv-file -reduce n (<- optional)\n\n");
-
+  if (mj2_read_struct(file, &movie)) // Creating the movie structure
     return 1;
+
+
+  // Decode first video track 
+  tnum = 0;
+  while (movie.tk[tnum].track_type != 0)
+    tnum ++;
+
+  track = &movie.tk[tnum];
+
+  // Output info on first video tracl
+  fprintf(stdout,"The first video track contains %d frames.\nWidth: %d, Height: %d \n\n",
+    track->num_samples, track->w, track->h);
+
+  for (snum=0; snum < track->num_samples; snum++)
+  {
+    fprintf(stdout,"Frame %d: ",snum+1);
+    sample = &track->sample[snum];
+    frame_codestream = (unsigned char*) malloc (sample->sample_size-8); // Skipping JP2C marker
+    fseek(file,sample->offset+8,SEEK_SET);
+    fread(frame_codestream,sample->sample_size-8,1, file);  // Assuming that jp and ftyp markers size do
+
+    if (!j2k_decode(frame_codestream, sample->sample_size-8, &img, &cp)) // Decode J2K to image
+      return 1;
+
+    if (((img.numcomps == 3) && (img.comps[0].dx == img.comps[1].dx / 2) 
+      && (img.comps[0].dx == img.comps[2].dx / 2 ) && (img.comps[0].dx == 1)) 
+      || (img.numcomps == 1)) {
+      
+      if (imagetoyuv(&img, &cp, argv[2]))	// Convert image to YUV
+	return 1;
+    }
+    else if ((img.numcomps == 3) && 
+      (img.comps[0].dx == 1) && (img.comps[1].dx == 1)&&
+      (img.comps[2].dx == 1))// If YUV 4:4:4 input --> to bmp
+    {
+      fprintf(stdout,"The frames will be output in a bmp format (output_1.bmp, ...)\n");
+      sprintf(outfilename,"output_%d.bmp",snum);
+      if (imagetobmp(&img, &cp, outfilename))	// Convert image to YUV
+	return 1;
+      
+    }
+    else {
+      fprintf(stdout,"Image component dimensions are unknown. Unable to output image\n");
+      fprintf(stdout,"The frames will be output in a j2k file (output_1.j2k, ...)\n");
+
+      sprintf(outfilename,"output_%d.j2k",snum);
+      outfile = fopen(outfilename, "wb");
+      if (!outfile) {
+	fprintf(stderr, "failed to open %s for writing\n",outfilename);
+	return 1;
+      }
+      fwrite(frame_codestream,sample->sample_size-8,1,outfile);
+      fclose(outfile);
+    }
+    for (i=0; i<img.numcomps; i++)
+      free(img.comps[i].data);
+    j2k_dec_release();
+    free(frame_codestream);
   }
 
-  free(src);
+  fclose(file);
+  fprintf(stdout, "%d frame(s) correctly extracted\n", snum);
+  mj2_memory_free(&movie);
+
+
+  //MEMORY LEAK
+  #ifdef _DEBUG
+    _CrtDumpMemoryLeaks();
+  #endif
+  //MEM
 
   return 0;
 }

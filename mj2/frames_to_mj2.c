@@ -30,20 +30,35 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#include <setjmp.h>
 #ifndef DONT_HAVE_GETOPT
 #include <getopt.h>
 #else
 #include "compat/getopt.h"
 #endif
+
 #include "mj2_convert.h"
+
+#define MJ2_MDAT  0x6d646174
+#define JP2_JP2C 0x6a703263
+
+//MEMORY LEAK
+#ifdef _DEBUG
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>  // Must be included first
+#include <crtdbg.h>
+#endif
+//MEM
+
+jmp_buf j2k_error;
 
 void help_display()
 {
   fprintf(stdout,"HELP\n----\n\n");
   fprintf(stdout,"- the -h option displays this help information on screen\n\n");
-
-
-  fprintf(stdout,"List of parameters for the coder JPEG 2000:\n");
+  
+  
+  fprintf(stdout,"List of parameters for the MJ2 encoder:\n");
   fprintf(stdout,"\n");
   fprintf(stdout,"REMARKS:\n");
   fprintf(stdout,"---------\n");
@@ -84,53 +99,37 @@ void help_display()
   fprintf(stdout,"\n");
   fprintf
     (stdout,"Required Parameters (except with -h):\n");
-  fprintf(stdout,"\n");
   fprintf
     (stdout,"-i           : source file  (-i source.yuv) \n");
-  fprintf(stdout,"\n");
   fprintf
     (stdout,"-o           : destination file (-o dest.mj2) \n");
-  fprintf(stdout,"\n");
   fprintf
     (stdout,"Optional Parameters:\n");
-  fprintf(stdout,"\n");
-  fprintf(stdout,"-h           : display the help information \n ");
-  fprintf(stdout,"\n");
+  fprintf(stdout,"-h           : display the help information \n");
   fprintf(stdout,"-r           : different compression ratios for successive layers (-r 20,10,5)\n ");
   fprintf(stdout,"	         - The rate specified for each quality level is the desired \n");
   fprintf(stdout,"	           compression factor.\n");
   fprintf(stdout,"		   Example: -r 20,10,1 means quality 1: compress 20x, \n");
   fprintf(stdout,"		     quality 2: compress 10x and quality 3: compress lossless\n");
-  fprintf(stdout,"\n");
   fprintf(stdout,"               (options -r and -q cannot be used together)\n ");
-  fprintf(stdout,"\n");
-
+  
   fprintf(stdout,"-q           : different psnr for successive layers (-q 30,40,50) \n ");
-
+  
   fprintf(stdout,"               (options -r and -q cannot be used together)\n ");
-
-  fprintf(stdout,"\n");
+  
   fprintf(stdout,"-n           : number of resolutions (-n 3) \n");
-  fprintf(stdout,"\n");
   fprintf(stdout,"-b           : size of code block (-b 32,32) \n");
-  fprintf(stdout,"\n");
   fprintf(stdout,"-c           : size of precinct (-c 128,128) \n");
-  fprintf(stdout,"\n");
   fprintf(stdout,"-t           : size of tile (-t 512,512) \n");
-  fprintf(stdout,"\n");
   fprintf
     (stdout,"-p           : progression order (-p LRCP) [LRCP, RLCP, RPCL, PCRL, CPRL] \n");
-  fprintf(stdout,"\n");
   fprintf
     (stdout,"-s           : subsampling factor (-s 2,2) [-s X,Y] \n");
   fprintf(stdout,"	     Remark: subsampling bigger than 2 can produce error\n");
-  fprintf(stdout,"\n");
   fprintf
     (stdout,"-SOP         : write SOP marker before each packet \n");
-  fprintf(stdout,"\n");
   fprintf
     (stdout,"-EPH         : write EPH marker after each header packet \n");
-  fprintf(stdout,"\n");
   fprintf
     (stdout,"-M           : mode switch (-M 3) [1=BYPASS(LAZY) 2=RESET 4=RESTART(TERMALL)\n");
   fprintf
@@ -139,31 +138,24 @@ void help_display()
     (stdout,"                 Indicate multiple modes by adding their values. \n");
   fprintf
     (stdout,"                 ex: RESTART(4) + RESET(2) + SEGMARK(32) = -M 38\n");
-  fprintf(stdout,"\n");
   fprintf
     (stdout,"-x           : create an index file *.Idx (-x index_name.Idx) \n");
-  fprintf(stdout,"\n");
   fprintf
     (stdout,"-ROI         : c=%%d,U=%%d : quantization indices upshifted \n");
   fprintf
     (stdout,"               for component c=%%d [%%d = 0,1,2]\n");
   fprintf
     (stdout,"               with a value of U=%%d [0 <= %%d <= 37] (i.e. -ROI:c=0,U=25) \n");
-  fprintf(stdout,"\n");
   fprintf
     (stdout,"-d           : offset of the origin of the image (-d 150,300) \n");
-  fprintf(stdout,"\n");
   fprintf
     (stdout,"-T           : offset of the origin of the tiles (-T 100,75) \n");
-  fprintf(stdout,"\n");
   fprintf(stdout,"-I           : use the irreversible DWT 9-7 (-I) \n");
-  fprintf(stdout,"\n");
   fprintf(stdout,"-W           : image width, height and the dx and dy subsampling \n");
   fprintf(stdout,"               of the Cb and Cr components for YUV files \n");
   fprintf(stdout,"               (default is '352,288,2,2' for CIF format's 352x288 and 4:2:0)\n");
-  fprintf(stdout,"\n");
   fprintf(stdout,"-F           : video frame rate (set to 25 by default)\n");
-
+  
   fprintf(stdout,"\n");
   fprintf(stdout,"IMPORTANT:\n");
   fprintf(stdout,"-----------\n");
@@ -188,32 +180,32 @@ void help_display()
   fprintf(stdout,"Tpacket_0 Tile layer res. comp. prec. start_pos end_pos disto\n");
   fprintf(stdout,"...\n");
   fprintf(stdout,"Tpacket_Np ''   ''    ''   ''    ''       ''       ''     ''\n");
-
+  
   fprintf(stdout,"MaxDisto\n");
-
+  
   fprintf(stdout,"TotalDisto\n\n");
 }
 
 int give_progression(char progression[4])
 {
   if (progression[0] == 'L' && progression[1] == 'R'
-      && progression[2] == 'C' && progression[3] == 'P') {
+    && progression[2] == 'C' && progression[3] == 'P') {
     return 0;
   } else {
     if (progression[0] == 'R' && progression[1] == 'L'
-	&& progression[2] == 'C' && progression[3] == 'P') {
+      && progression[2] == 'C' && progression[3] == 'P') {
       return 1;
     } else {
       if (progression[0] == 'R' && progression[1] == 'P'
-	  && progression[2] == 'C' && progression[3] == 'L') {
+	&& progression[2] == 'C' && progression[3] == 'L') {
 	return 2;
       } else {
 	if (progression[0] == 'P' && progression[1] == 'C'
-	    && progression[2] == 'R' && progression[3] == 'L') {
+	  && progression[2] == 'R' && progression[3] == 'L') {
 	  return 3;
 	} else {
 	  if (progression[0] == 'C' && progression[1] == 'P'
-	      && progression[2] == 'R' && progression[3] == 'L') {
+	    && progression[2] == 'R' && progression[3] == 'L') {
 	    return 4;
 	  } else {
 	    return -1;
@@ -255,15 +247,15 @@ void calc_explicit_stepsizes(j2k_tccp_t * tccp, int prec)
   numbands = 3 * tccp->numresolutions - 2;
   for (bandno = 0; bandno < numbands; bandno++) {
     double stepsize;
-
+    
     int resno, level, orient, gain;
     resno = bandno == 0 ? 0 : (bandno - 1) / 3 + 1;
     orient = bandno == 0 ? 0 : (bandno - 1) % 3 + 1;
     level = tccp->numresolutions - 1 - resno;
     gain =
       tccp->qmfbid == 0 ? 0 : (orient ==
-			       0 ? 0 : (orient == 1
-					|| orient == 2 ? 1 : 2));
+      0 ? 0 : (orient == 1
+      || orient == 2 ? 1 : 2));
     if (tccp->qntsty == J2K_CCP_QNTSTY_NOQNT) {
       stepsize = 1.0;
     } else {
@@ -299,11 +291,12 @@ int main(int argc, char **argv)
   j2k_poc_t POC[32];		/*   POC : used in case of Progression order change           */
   j2k_poc_t *tcp_poc;
   j2k_tccp_t *tccp;
-  int i, tileno, j;
+  int i, tileno, l, j;
   char *infile = 0;
   char *outfile = 0;
   char *index = 0;
   char *s, S1, S2, S3;
+  char *buf;
   int ir = 0;
   int res_spec = 0;		/*   For various precinct sizes specification                 */
   char sep;
@@ -315,9 +308,12 @@ int main(int argc, char **argv)
   int frame_rate;		/*   Video Frame Rate                                         */
   int numcomps;			/*   In YUV files, numcomps always considered as 3            */
   int prec;			/*   In YUV files, precision always considered as 8           */
-  int x1, y1;
-
-
+  int x1, y1,  len, jp2c_initpos, m, k, pos;
+  long mdat_initpos, offset;
+  FILE *mj2file, *yuvfile;
+  unsigned int sampleno;
+  j2k_image_t img;
+  
   /* default value */
   /* ------------- */
   NumResolution = 6;
@@ -347,18 +343,18 @@ int main(int argc, char **argv)
   CbCr_subsampling_dx = 2;	// CIF default value
   CbCr_subsampling_dy = 2;	// CIF default value
   frame_rate = 25;
-
-
+  
+  
   Tile_arg = 0;
   cp_init.tcps = (j2k_tcp_t *) malloc(sizeof(j2k_tcp_t));	/* initialisation if only one tile */
   tcp_init = &cp_init.tcps[0];
   tcp_init->numlayers = 0;
-
+  
   cp.intermed_file = 0;		// Don't store each tile in a file during processing 
-
+  
   while (1) {
     int c = getopt(argc, argv,
-		   "i:o:r:q:f:t:n:c:b:x:p:s:d:h:P:S:E:M:R:T:C:I:W:F:");
+      "i:o:r:q:f:t:n:c:b:x:p:s:d:h:P:S:E:M:R:T:C:I:W:F:");
     if (c == -1)
       break;
     switch (c) {
@@ -374,15 +370,15 @@ int main(int argc, char **argv)
       S2 = *s;
       s--;
       S1 = *s;
-
+      
       if ((S1 == 'y' && S2 == 'u' && S3 == 'v')
-	  || (S1 == 'Y' && S2 == 'U' && S3 == 'V')) {
+	|| (S1 == 'Y' && S2 == 'U' && S3 == 'V')) {
 	cp.image_type = 3;
 	break;
       }
       fprintf(stderr,
-	      "!! Unrecognized format for infile : %c%c%c [accept only *.yuv] !!\n\n",
-	      S1, S2, S3);
+	"!! Unrecognized format for infile : %c%c%c [accept only *.yuv] !!\n\n",
+	S1, S2, S3);
       return 1;
       break;
       /* ----------------------------------------------------- */
@@ -397,27 +393,27 @@ int main(int argc, char **argv)
       S2 = *outfile;
       outfile--;
       S1 = *outfile;
-
+      
       outfile = optarg;
-
+      
       if ((S1 == 'm' && S2 == 'j' && S3 == '2')
-	  || (S1 == 'M' && S2 == 'J' && S3 == '2'))
+	|| (S1 == 'M' && S2 == 'J' && S3 == '2'))
 	cp.JPEG2000_format = 2;
       else {
 	fprintf(stderr,
-		"Unknown output format image *.%c%c%c [only *.mj2]!! \n",
-		S1, S2, S3);
+	  "Unknown output format image *.%c%c%c [only *.mj2]!! \n",
+	  S1, S2, S3);
 	return 1;
       }
-
-
-
+      
+      
+      
       break;
       /* ----------------------------------------------------- */
     case 'r':			/* rates rates/distorsion */
       s = optarg;
       while (sscanf(s, "%d", &tcp_init->rates[tcp_init->numlayers])
-	     == 1) {
+	== 1) {
 	tcp_init->numlayers++;
 	while (*s && *s != ',') {
 	  s++;
@@ -433,7 +429,7 @@ int main(int argc, char **argv)
     case 'q':			/* add fixed_quality */
       s = optarg;
       while (sscanf
-	     (s, "%f", &tcp_init->distoratio[tcp_init->numlayers]) == 1) {
+	(s, "%f", &tcp_init->distoratio[tcp_init->numlayers]) == 1) {
 	tcp_init->numlayers++;
 	while (*s && *s != ',') {
 	  s++;
@@ -455,7 +451,7 @@ int main(int argc, char **argv)
 	s++;
       cp.matrice =
 	(int *) malloc(tcp_init->numlayers * NumResolution * 3 *
-		       sizeof(int));
+	sizeof(int));
       s = s + 2;
       for (i = 0; i < tcp_init->numlayers; i++) {
 	tcp_init->rates[i] = 1;
@@ -467,9 +463,9 @@ int main(int argc, char **argv)
 	cp.matrice[i * NumResolution * 3 + 2] = 0;
 	for (j = 1; j < NumResolution; j++) {
 	  sscanf(s, "%d,%d,%d",
-		 &cp.matrice[i * NumResolution * 3 + j * 3 + 0],
-		 &cp.matrice[i * NumResolution * 3 + j * 3 + 1],
-		 &cp.matrice[i * NumResolution * 3 + j * 3 + 2]);
+	    &cp.matrice[i * NumResolution * 3 + j * 3 + 0],
+	    &cp.matrice[i * NumResolution * 3 + j * 3 + 1],
+	    &cp.matrice[i * NumResolution * 3 + j * 3 + 2]);
 	  s += 6;
 	  if (cp.matrice[i * NumResolution * 3 + j * 3] > 9)
 	    s++;
@@ -498,7 +494,7 @@ int main(int argc, char **argv)
       do {
 	sep = 0;
 	sscanf(s, "[%d,%d]%c", &prcw_init[res_spec],
-	       &prch_init[res_spec], &sep);
+	  &prch_init[res_spec], &sep);
 	CSty |= 0x01;
 	res_spec++;
 	s = strpbrk(s, "]") + 2;
@@ -508,9 +504,9 @@ int main(int argc, char **argv)
     case 'b':			/* code-block dimension */
       sscanf(optarg, "%d,%d", &cblockw_init, &cblockh_init);
       if (cblockw_init * cblockh_init > 4096 || cblockw_init > 1024
-	  || cblockw_init < 4 || cblockh_init > 1024 || cblockh_init < 4) {
+	|| cblockw_init < 4 || cblockh_init > 1024 || cblockh_init < 4) {
 	fprintf(stderr,
-		"!! Size of code_block error (option -b) !!\n\nRestriction :\n    * width*height<=4096\n    * 4<=width,height<= 1024\n\n");
+	  "!! Size of code_block error (option -b) !!\n\nRestriction :\n    * width*height<=4096\n    * 4<=width,height<= 1024\n\n");
 	return 1;
       }
       break;
@@ -527,19 +523,19 @@ int main(int argc, char **argv)
 	s++;
       }
       Prog_order = give_progression(progression);
-
+      
       if (Prog_order == -1) {
 	fprintf(stderr,
-		"Unrecognized progression order [LRCP, RLCP, RPCL, PCRL, CPRL] !!\n");
+	  "Unrecognized progression order [LRCP, RLCP, RPCL, PCRL, CPRL] !!\n");
 	return 1;
       }
       break;
       /* ----------------------------------------------------- */
     case 's':			/* subsampling factor */
       if (sscanf(optarg, "%d,%d", &subsampling_dx, &subsampling_dy)
-	  != 2) {
+	!= 2) {
 	fprintf(stderr,
-		"'-s' sub-sampling argument error !  [-s dx,dy]\n");
+	  "'-s' sub-sampling argument error !  [-s dx,dy]\n");
 	return 1;
       }
       break;
@@ -547,7 +543,7 @@ int main(int argc, char **argv)
     case 'd':			/* coordonnate of the reference grid */
       if (sscanf(optarg, "%d,%d", &Dim[0], &Dim[1]) != 2) {
 	fprintf(stderr,
-		"-d 'coordonnate of the reference grid' argument error !! [-d x0,y0]\n");
+	  "-d 'coordonnate of the reference grid' argument error !! [-d x0,y0]\n");
 	return 1;
       }
       break;
@@ -561,12 +557,12 @@ int main(int argc, char **argv)
       fprintf(stderr, "/----------------------------------\\\n");
       fprintf(stderr, "|  POC option not fully tested !!  |\n");
       fprintf(stderr, "\\----------------------------------/\n");
-
+      
       s = optarg;
       while (sscanf(s, "T%d=%d,%d,%d,%d,%d,%s", &POC[numpocs].tile,
-		    &POC[numpocs].resno0, &POC[numpocs].compno0,
-		    &POC[numpocs].layno1, &POC[numpocs].resno1,
-		    &POC[numpocs].compno1, POC[numpocs].progorder) == 7) {
+	&POC[numpocs].resno0, &POC[numpocs].compno0,
+	&POC[numpocs].layno1, &POC[numpocs].resno1,
+	&POC[numpocs].compno1, POC[numpocs].progorder) == 7) {
 	POC[numpocs].prg = give_progression(POC[numpocs].progorder);
 	/* POC[numpocs].tile; */
 	numpocs++;
@@ -621,8 +617,8 @@ int main(int argc, char **argv)
       /* ------------------------------------------------------ */
     case 'W':			/* Width and Height and Cb and Cr subsampling in case of YUV format files */
       if (sscanf
-	  (optarg, "%d,%d,%d,%d", &w, &h, &CbCr_subsampling_dx,
-	   &CbCr_subsampling_dy) != 4) {
+	(optarg, "%d,%d,%d,%d", &w, &h, &CbCr_subsampling_dx,
+	&CbCr_subsampling_dy) != 4) {
 	fprintf(stderr, "-W argument error");
 	return 1;
       }
@@ -639,58 +635,58 @@ int main(int argc, char **argv)
       return 1;
     }
   }
-
+  
   cp.tx0 = TX0;
   cp.ty0 = TY0;
-
+  
   /* Error messages */
   /* -------------- */
   if (!infile || !outfile) {
     fprintf(stderr,
-	    "usage: frames_to_mj2 -i yuv-file -o mj2-file (+ options)\n");
+      "Correct usage: mj2_encoder -i yuv-file -o mj2-file (+ options)\n");
     return 1;
   }
-
+  
   if ((cp.disto_alloc || cp.fixed_alloc || cp.fixed_quality)
-      && (!(cp.disto_alloc ^ cp.fixed_alloc ^ cp.fixed_quality))) {
+    && (!(cp.disto_alloc ^ cp.fixed_alloc ^ cp.fixed_quality))) {
     fprintf(stderr,
-	    "Error: options -r -q and -f can not be used together !!\n");
+      "Error: options -r -q and -f can not be used together !!\n");
     return 1;
   }				// mod fixed_quality
-
+  
   /* if no rate entered, lossless by default */
   if (tcp_init->numlayers == 0) {
     tcp_init->rates[tcp_init->numlayers] = 0;   //MOD antonin : losslessbug
     tcp_init->numlayers++;
     cp.disto_alloc = 1;
   }
-
+  
   if (TX0 > Dim[0] || TY0 > Dim[1]) {
     fprintf(stderr,
-	    "Error: Tile offset dimension is unnappropriate --> TX0(%d)<=IMG_X0(%d) TYO(%d)<=IMG_Y0(%d) \n",
-	    TX0, Dim[0], TY0, Dim[1]);
+      "Error: Tile offset dimension is unnappropriate --> TX0(%d)<=IMG_X0(%d) TYO(%d)<=IMG_Y0(%d) \n",
+      TX0, Dim[0], TY0, Dim[1]);
     return 1;
   }
-
+  
   for (i = 0; i < numpocs; i++) {
     if (POC[i].prg == -1) {
       fprintf(stderr,
-	      "Unrecognized progression order in option -P (POC n %d) [LRCP, RLCP, RPCL, PCRL, CPRL] !!\n",
-	      i + 1);
+	"Unrecognized progression order in option -P (POC n %d) [LRCP, RLCP, RPCL, PCRL, CPRL] !!\n",
+	i + 1);
     }
   }
-
+  
   /* to respect profile - 0 */
   /* ---------------------- */
   numD_min = 0;
-
+  
   x1 = !Dim[0] ? (w - 1) * subsampling_dx + 1 : Dim[0] + (w -
-							  1) *
+    1) *
     subsampling_dx + 1;
   y1 = !Dim[1] ? (h - 1) * subsampling_dy + 1 : Dim[1] + (h -
-							  1) *
+    1) *
     subsampling_dy + 1;
-
+  
   if (Tile_arg == 1) {
     cp.tw = int_ceildiv(x1 - cp.tx0, cp.tdx);
     cp.th = int_ceildiv(y1 - cp.ty0, cp.tdy);
@@ -698,24 +694,24 @@ int main(int argc, char **argv)
     cp.tdx = x1 - cp.tx0;
     cp.tdy = y1 - cp.ty0;
   }
-
-
+  
+  
   /* Initialization for PPM marker */
   cp.ppm = 0;
   cp.ppm_data = NULL;
   cp.ppm_previous = 0;
   cp.ppm_store = 0;
-
+  
   numcomps = 3;			/* Because YUV files only have 3 components */
-
+  
   tcp_init->mct = 0;		/* No component transform needed */
-
+  
   prec = 8;			/* Because in YUV files, components have 8-bit depth */
-
+  
   /* Init the mutiple tiles */
   /* ---------------------- */
   cp.tcps = (j2k_tcp_t *) malloc(cp.tw * cp.th * sizeof(j2k_tcp_t));
-
+  
   for (tileno = 0; tileno < cp.tw * cp.th; tileno++) {
     tcp = &cp.tcps[tileno];
     tcp->numlayers = tcp_init->numlayers;
@@ -731,7 +727,7 @@ int main(int argc, char **argv)
     tcp->ppt = 0;
     tcp->ppt_data = NULL;
     tcp->ppt_store = 0;
-
+    
     numpocs_tile = 0;
     tcp->POC = 0;
     if (numpocs) {
@@ -753,7 +749,7 @@ int main(int argc, char **argv)
     }
     tcp->numpocs = numpocs_tile;
     tcp->tccps = (j2k_tccp_t *) malloc(numcomps * sizeof(j2k_tccp_t));
-
+    
     for (i = 0; i < numcomps; i++) {
       tccp = &tcp->tccps[i];
       tccp->csty = CSty & 0x01;	/* 0 => one precinct || 1 => custom precinct  */
@@ -776,7 +772,7 @@ int main(int argc, char **argv)
 	      tccp->prcw[j] = 1;
 	    else
 	      tccp->prcw[j] = int_floorlog2(prcw_init[p]);
-
+	    
 	    if (prch_init[p] < 1)
 	      tccp->prch[j] = 1;
 	    else
@@ -796,7 +792,7 @@ int main(int argc, char **argv)
 	  }
 	  p++;
 	  /*printf("\nsize precinct pour level %d : %d,%d\n", j,
-	     tccp->prcw[j], tccp->prch[j]); */
+	  tccp->prcw[j], tccp->prch[j]); */
 	}
       } else {
 	for (j = 0; j < tccp->numresolutions; j++) {
@@ -807,18 +803,21 @@ int main(int argc, char **argv)
       calc_explicit_stepsizes(tccp, prec);
     }
   }
-
+  
+  mj2file = fopen(outfile, "wb");
+  
+  if (!mj2file) {
+    fprintf(stderr, "failed to open %s for writing\n", argv[2]);
+    return 1;
+  }
+  
   movie.tk = (mj2_tk_t *) malloc(sizeof(mj2_tk_t));
   movie.num_vtk = 1;
   movie.num_stk = 0;
   movie.num_htk = 0;
-
-  movie.tk[0].imagefile = infile;
+  
   movie.tk[0].track_type = 0;	// Video Track
   movie.tk[0].track_ID = 1;
-  movie.mj2file = outfile;
-  movie.tk[0].subsampling_dx = subsampling_dx;
-  movie.tk[0].subsampling_dy = subsampling_dy;
   movie.tk[0].Dim[0] = Dim[0];
   movie.tk[0].Dim[1] = Dim[1];
   movie.tk[0].w = w;
@@ -826,24 +825,174 @@ int main(int argc, char **argv)
   movie.tk[0].CbCr_subsampling_dx = CbCr_subsampling_dx;
   movie.tk[0].CbCr_subsampling_dy = CbCr_subsampling_dy;
   movie.tk[0].sample_rate = frame_rate;
-
+  movie.tk[0].jp2_struct.numcomps = 3;	// NC  
+  jp2_init_stdjp2(&movie.tk[0].jp2_struct);
+  
+  movie.tk[0].jp2_struct.w = w;
+  movie.tk[0].jp2_struct.h = h;
+  movie.tk[0].jp2_struct.bpc = 7;  
+  movie.tk[0].jp2_struct.meth = 1;
+  movie.tk[0].jp2_struct.enumcs = 18;  // YUV
+  
+  
+  yuvfile = fopen(infile,"rb");
+  if (!yuvfile) {  
+    fprintf(stderr, "failed to open %s for reading\n",infile);
+    return 1;
+  }
+  
+  movie.tk[0].num_samples = yuv_num_frames(&movie.tk[0],yuvfile); 
+  if (!movie.tk[0].num_samples) {
+    fprintf(stderr,"Unable to count the number of frames in YUV input file\n");
+  }
+  
+  // One sample per chunk
+  movie.tk[0].chunk = (mj2_chunk_t*) malloc(movie.tk[0].num_samples * sizeof(mj2_chunk_t));     
+  movie.tk[0].sample = (mj2_sample_t*) malloc(movie.tk[0].num_samples * sizeof(mj2_sample_t));
+  
   if (mj2_init_stdmovie(&movie)) {
     fprintf(stderr, "Error with movie initialization");
     return 1;
-  };
-  if (mj2_encode(&movie, &cp, index)) {
-    fprintf(stderr, "Error encoding movie");
-    return 1;
-  };
-  mj2_memory_free(&movie);
+  };    
+  
+  // Writing JP, FTYP and MDAT boxes 
+  buf = (char*) malloc (300 * sizeof(char)); // Assuming that the JP and FTYP
+  // boxes won't be longer than 300 bytes
+  cio_init(buf , 300);
+  mj2_write_jp();
+  mj2_write_ftyp(&movie);
+  mdat_initpos = cio_tell();
+  cio_skip(4);
+  cio_write(MJ2_MDAT, 4);	
+  fwrite(buf,cio_tell(),1,mj2file);
+  offset = cio_tell();
+  free(buf);
+  
+  for (i = 0; i < movie.num_stk + movie.num_htk + movie.num_vtk; i++) {
+    if (movie.tk[i].track_type != 0) {
+      fprintf(stderr, "Unable to write sound or hint tracks\n");
+    } else {
+      //j2k_cp_t cp_init;
+      mj2_tk_t *tk;
+      
+      tk = &movie.tk[i];
+      
+      //tk->sample =
+	//(mj2_sample_t *) malloc(tk->num_samples * sizeof(mj2_sample_t));
+      tk->num_chunks = tk->num_samples;
+      //tk->chunk =
+	//(mj2_chunk_t *) malloc(tk->num_chunks * sizeof(mj2_chunk_t));
+            
+      fprintf(stderr, "Video Track number %d\n", i + 1);
+      
+      // Copy the first tile coding parameters (tcp) to cp_init 
+      
+      //cp_init.tcps =
+	//(j2k_tcp_t *) malloc(cp.tw * cp.th * sizeof(j2k_tcp_t));
+      for (tileno = 0; tileno < cp.tw * cp.th; tileno++) {
+	for (l = 0; l < cp.tcps[tileno].numlayers; l++) {
+	  cp_init.tcps[tileno].rates[l] = cp.tcps[tileno].rates[l];
+	  //tileno = cp.tcps[tileno].rates[l];
+	}
+      }
+      
+      for (sampleno = 0; sampleno < tk->num_samples; sampleno++) {
+	buf = (char *) malloc(cp.tdx * cp.tdy * cp.th * cp.tw * 2);
+	cio_init(buf, cp.tdx * cp.tdy * cp.th * cp.tw * 2);
+	
+	fprintf(stderr, "Frame number %d/%d: ", sampleno + 1, tk->num_samples);
+	
+	
+	if (!yuvtoimage(yuvfile, tk, &img, sampleno, subsampling_dx, subsampling_dy)) {
+	  fprintf(stderr, "Error with frame number %d in YUV file\n", sampleno);
+	  return 1;
+	}
+	
+	jp2c_initpos = cio_tell();
+	cio_skip(4);
+	cio_write(JP2_JP2C, 4);	// JP2C
+	
+	len = j2k_encode(&img, &cp, buf, cp.tdx * cp.tdy * 2, index); 
+	if (len ==0) {
+	  fprintf(stderr,"Unable to encode image");
+	  return 1;
+	}
+	
+	cio_seek(jp2c_initpos);
+	cio_write(len+8,4);
+	
+	for (m = 0; m < img.numcomps; m++) {
+	  free(img.comps[m].data);	  
+	}
+	free(img.comps);
+	
+	tk->sample[sampleno].sample_size = len+8;
+	
+	tk->sample[sampleno].offset = offset;
+	tk->chunk[sampleno].offset = offset;	// There is one sample per chunk 
+	
+	fwrite(buf, 1, len+8, mj2file);
+	
+	offset += len+8;
+	
+	free(buf);
+	
+	// Copy the cp_init parameters to cp.tcps 
+	
+	for (tileno = 0; tileno < cp.tw * cp.th; tileno++) {
+	  for (k = 0; k < cp.tcps[tileno].numlayers; k++) {
+	    cp.tcps[tileno].rates[k] = cp_init.tcps[tileno].rates[k];
+	  }
+	}
+      }
+    }
+  }
+  
+  fseek(mj2file, mdat_initpos, SEEK_SET);
 
-  /* Free cp memory */
+  buf = (char*) malloc(4*sizeof(char));
+  
+  cio_init(buf, 4);	// Init a cio to write box length variable in a little endian way 
+  cio_write(offset - mdat_initpos, 4);
+  fwrite(buf, 4, 1, mj2file);
+  fseek(mj2file,0,SEEK_END);
+  free(buf);
+  
+  // Writing MOOV box 
+  i=1;
+  buf = (char*) malloc (10000 * sizeof(char));
+  cio_init(buf , i*10000);
+  if (setjmp(j2k_error)) {
+    i++;
+    realloc(buf,i*10000* sizeof(char));
+    pos = cio_tell();
+    cio_init(buf , i*10000);
+    cio_seek(pos);
+  }
+  mj2_write_moov(&movie);
+  fwrite(buf,cio_tell(),1,mj2file);
+  
+  // Ending program 
+  mj2_memory_free(&movie);
   free(cp_init.tcps);
   if (tcp_init->numlayers > 9)
     free(cp.matrice);
   for (tileno = 0; tileno < cp.tw * cp.th; tileno++)
     free(cp.tcps[tileno].tccps);
-  free(cp.tcps);
+  free(cp.tcps);  
+  fclose(mj2file);
+  free(buf);
+  unlink("Compo0");
+  unlink("Compo1");
+  unlink("Compo2");
 
+  //MEMORY LEAK
+  #ifdef _DEBUG
+    _CrtDumpMemoryLeaks();
+  #endif
+  //MEM
+    
   return 0;
 }
+
+

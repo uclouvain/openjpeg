@@ -32,48 +32,47 @@ RSC=rc.exe
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 0
-# PROP BASE Output_Dir "Release"
-# PROP BASE Intermediate_Dir "Release"
+# PROP BASE Output_Dir "frames_to_mj2___Win32_Release"
+# PROP BASE Intermediate_Dir "frames_to_mj2___Win32_Release"
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 0
-# PROP Output_Dir "Release"
-# PROP Intermediate_Dir "Release"
+# PROP Output_Dir "frames_to_mj2___Win32_Release"
+# PROP Intermediate_Dir "frames_to_mj2___Win32_Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I "../libopenjpeg" /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "_MBCS" /D "DONT_HAVE_GETOPT" /YX /FD /c
-# ADD BASE RSC /l 0x80c /d "NDEBUG"
-# ADD RSC /l 0x80c /i "../libopenjpeg" /d "NDEBUG"
+# ADD CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
+# ADD BASE RSC /l 0x809 /d "NDEBUG"
+# ADD RSC /l 0x809 /d "NDEBUG"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
 LINK32=link.exe
-# ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /machine:I386
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /machine:I386
+# ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib  kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /machine:I386
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib  kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /machine:I386
 
 !ELSEIF  "$(CFG)" == "frames_to_mj2 - Win32 Debug"
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 1
-# PROP BASE Output_Dir "Debug"
-# PROP BASE Intermediate_Dir "Debug"
+# PROP BASE Output_Dir "frames_to_mj2___Win32_Debug"
+# PROP BASE Intermediate_Dir "frames_to_mj2___Win32_Debug"
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 1
-# PROP Output_Dir "Debug"
-# PROP Intermediate_Dir "Debug"
-# PROP Ignore_Export_Lib 0
+# PROP Output_Dir "frames_to_mj2___Win32_Debug"
+# PROP Intermediate_Dir "frames_to_mj2___Win32_Debug"
 # PROP Target_Dir ""
-# ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /GZ /c
-# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "../libopenjpeg" /D "_DEBUG" /D "DONT_HAVE_GETOPT" /D "WIN32" /D "_CONSOLE" /D "_MBCS" /FR /YX /FD /GZ /c
-# ADD BASE RSC /l 0x80c /d "_DEBUG"
-# ADD RSC /l 0x80c /d "_DEBUG"
+# ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /GZ  /c
+# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "../libopenjpeg" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D "DONT_HAVE_GETOPT" /YX /FD /GZ  /c
+# ADD BASE RSC /l 0x809 /d "_DEBUG"
+# ADD RSC /l 0x809 /d "_DEBUG"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
 LINK32=link.exe
-# ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept
+# ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib  kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib  kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept
 
 !ENDIF 
 
@@ -81,25 +80,28 @@ LINK32=link.exe
 
 # Name "frames_to_mj2 - Win32 Release"
 # Name "frames_to_mj2 - Win32 Debug"
-# Begin Group "Source Files"
+# Begin Group "MJ2"
 
-# PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
+# PROP Default_Filter ""
+# Begin Group "MJ2 Header Files"
+
+# PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=..\libopenjpeg\bio.c
+SOURCE=.\compat\getopt.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\libopenjpeg\cio.c
+SOURCE=.\mj2.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\libopenjpeg\dwt.c
+SOURCE=.\mj2_convert.h
 # End Source File
-# Begin Source File
+# End Group
+# Begin Group "MJ2 Source Files"
 
-SOURCE=..\libopenjpeg\fix.c
-# End Source File
+# PROP Default_Filter ""
 # Begin Source File
 
 SOURCE=.\frames_to_mj2.c
@@ -110,64 +112,20 @@ SOURCE=.\compat\getopt.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\libopenjpeg\int.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\libopenjpeg\j2k.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\libopenjpeg\jp2.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\libopenjpeg\jpt.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\libopenjpeg\mct.c
-# End Source File
-# Begin Source File
-
 SOURCE=.\mj2.c
 # End Source File
 # Begin Source File
 
 SOURCE=.\mj2_convert.c
 # End Source File
-# Begin Source File
-
-SOURCE=..\libopenjpeg\mqc.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\libopenjpeg\pi.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\libopenjpeg\raw.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\libopenjpeg\t1.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\libopenjpeg\t2.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\libopenjpeg\tcd.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\libopenjpeg\tgt.c
-# End Source File
 # End Group
-# Begin Group "Header Files"
+# End Group
+# Begin Group "OpenJPEG"
 
-# PROP Default_Filter "h;hpp;hxx;hm;inl"
+# PROP Default_Filter ""
+# Begin Group "OpenJPEG Header Files"
+
+# PROP Default_Filter ""
 # Begin Source File
 
 SOURCE=..\libopenjpeg\bio.h
@@ -178,15 +136,15 @@ SOURCE=..\libopenjpeg\cio.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\libopenjpeg\dwt.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\libopenjpeg\dwt.h
 # End Source File
 # Begin Source File
 
 SOURCE=..\libopenjpeg\fix.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\compat\getopt.h
 # End Source File
 # Begin Source File
 
@@ -207,14 +165,6 @@ SOURCE=..\libopenjpeg\jpt.h
 # Begin Source File
 
 SOURCE=..\libopenjpeg\mct.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\mj2.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\mj2_convert.h
 # End Source File
 # Begin Source File
 
@@ -249,9 +199,70 @@ SOURCE=..\libopenjpeg\tcd.h
 SOURCE=..\libopenjpeg\tgt.h
 # End Source File
 # End Group
-# Begin Group "Resource Files"
+# Begin Group "OpenJPEG Source Files"
 
-# PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\libopenjpeg\bio.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\libopenjpeg\cio.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\libopenjpeg\fix.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\libopenjpeg\int.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\libopenjpeg\j2k.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\libopenjpeg\jp2.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\libopenjpeg\jpt.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\libopenjpeg\mct.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\libopenjpeg\mqc.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\libopenjpeg\pi.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\libopenjpeg\raw.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\libopenjpeg\t1.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\libopenjpeg\t2.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\libopenjpeg\tcd.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\libopenjpeg\tgt.c
+# End Source File
+# End Group
 # End Group
 # End Target
 # End Project
