@@ -32,9 +32,9 @@
 #define int64 long long
 #endif
 
-/* <summary> */
-/* Multiply two fixed-precision rational numbers. */
-/* </summary> */
+/*
+ * Multiply two fixed-precision rational numbers.
+ */
 int fix_mul(int a, int b)
 {
 	return (int) ((int64) a * (int64) b >> 13);
