@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding = "Windows-1252"?>
+<?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="7.00"
+	Version="7.10"
 	Name="mj2_to_metadata"
 	ProjectGUID="{338C1241-ACB9-469F-98DF-3B9D79ADD1A0}"
 	SccProjectName=""
@@ -60,7 +60,13 @@
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
 				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
@@ -73,6 +79,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories="../libopenjpeg"
 				PreprocessorDefinitions="WIN32,_DEBUG,_CONSOLE,DONT_HAVE_GETOPT,NO_PACKETS_DECODING"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="5"
@@ -113,9 +120,17 @@
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
 				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 	</Configurations>
+	<References>
+	</References>
 	<Files>
 		<Filter
 			Name="MJ2"
@@ -299,12 +314,10 @@
 			</Filter>
 		</Filter>
 		<File
-			RelativePath="mj2_to_metadata.rc">
-		</File>
-		<File
 			RelativePath="resource.h">
 		</File>
 	</Files>
 	<Globals>
 	</Globals>
 </VisualStudioProject>
+
