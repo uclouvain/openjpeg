@@ -32,7 +32,6 @@
 #include <string.h>
 #include <setjmp.h>
 #include <math.h>
-#include <unistd.h>
 
 #include "j2k.h"
 #include "cio.h"
