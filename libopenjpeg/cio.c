@@ -27,9 +27,9 @@
 #include "cio.h"
 #include <setjmp.h>
 
-static unsigned char *cio_start;  /* pointer to the start of the stream */
-static unsigned char *cio_end;    /* pointer to the end of the stream */
-static unsigned char *cio_bp;     /* pointer to the present position */
+static unsigned char *cio_start;	/* pointer to the start of the stream */
+static unsigned char *cio_end;	/* pointer to the end of the stream */
+static unsigned char *cio_bp;	/* pointer to the present position */
 
 extern jmp_buf j2k_error;
 
@@ -38,7 +38,7 @@ extern jmp_buf j2k_error;
  */
 int cio_numbytes()
 {
-	return cio_bp - cio_start;
+    return cio_bp - cio_start;
 }
 
 /*
@@ -46,7 +46,7 @@ int cio_numbytes()
  */
 int cio_tell()
 {
-	return cio_bp - cio_start;
+    return cio_bp - cio_start;
 }
 
 /*
@@ -56,7 +56,7 @@ int cio_tell()
  */
 void cio_seek(int pos)
 {
-	cio_bp = cio_start + pos;
+    cio_bp = cio_start + pos;
 }
 
 /*
@@ -64,7 +64,7 @@ void cio_seek(int pos)
  */
 int cio_numbytesleft()
 {
-	return cio_end - cio_bp;
+    return cio_end - cio_bp;
 }
 
 /*
@@ -72,7 +72,7 @@ int cio_numbytesleft()
  */
 unsigned char *cio_getbp()
 {
-	return cio_bp;
+    return cio_bp;
 }
 
 /* 
@@ -83,9 +83,9 @@ unsigned char *cio_getbp()
  */
 void cio_init(unsigned char *bp, int len)
 {
-	cio_start = bp;
-	cio_end = bp + len;
-	cio_bp = bp;
+    cio_start = bp;
+    cio_end = bp + len;
+    cio_bp = bp;
 }
 
 /*
@@ -93,9 +93,9 @@ void cio_init(unsigned char *bp, int len)
  */
 void cio_byteout(unsigned char v)
 {
-	if (cio_bp >= cio_end)
-		longjmp(j2k_error, 1);
-	*cio_bp++ = v;
+    if (cio_bp >= cio_end)
+	longjmp(j2k_error, 1);
+    *cio_bp++ = v;
 
 }
 
@@ -104,9 +104,9 @@ void cio_byteout(unsigned char v)
  */
 unsigned char cio_bytein()
 {
-	if (cio_bp >= cio_end)
-		longjmp(j2k_error, 1);
-	return *cio_bp++;
+    if (cio_bp >= cio_end)
+	longjmp(j2k_error, 1);
+    return *cio_bp++;
 }
 
 /*
@@ -117,10 +117,10 @@ unsigned char cio_bytein()
  */
 void cio_write(unsigned int v, int n)
 {
-	int i;
-	for (i = n - 1; i >= 0; i--) {
-		cio_byteout((unsigned char) ((v >> (i << 3)) & 0xff));
-	}
+    int i;
+    for (i = n - 1; i >= 0; i--) {
+	cio_byteout((unsigned char) ((v >> (i << 3)) & 0xff));
+    }
 }
 
 /*
@@ -132,13 +132,13 @@ void cio_write(unsigned int v, int n)
  */
 unsigned int cio_read(int n)
 {
-	int i;
-	unsigned int v;
-	v = 0;
-	for (i = n - 1; i >= 0; i--) {
-		v += cio_bytein() << (i << 3);
-	}
-	return v;
+    int i;
+    unsigned int v;
+    v = 0;
+    for (i = n - 1; i >= 0; i--) {
+	v += cio_bytein() << (i << 3);
+    }
+    return v;
 }
 
 /* 
@@ -148,5 +148,5 @@ unsigned int cio_read(int n)
  */
 void cio_skip(int n)
 {
-	cio_bp += n;
+    cio_bp += n;
 }

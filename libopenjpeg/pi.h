@@ -31,27 +31,27 @@
 #include "tcd.h"
 
 typedef struct {
-	int pdx, pdy;
-	int pw, ph;
+    int pdx, pdy;
+    int pw, ph;
 } pi_resolution_t;
 
 typedef struct {
-	int dx, dy;
-	int numresolutions;
-	pi_resolution_t *resolutions;
+    int dx, dy;
+    int numresolutions;
+    pi_resolution_t *resolutions;
 } pi_comp_t;
 
 typedef struct {
-        short int *include;                     /* precise if the packet has been already used (usefull for progression order change) */
-        int step_l, step_r, step_c, step_p;     /* different steps (layer, resolution, component, precinct) to localize the packet in the include vector */ 
-	int compno, resno, precno, layno;	/* component, resolution, precinct and layer that indentify the packet */
-        int first;                              /* 0 if the first packet */
-	j2k_poc_t poc;
-	int numcomps;
-	pi_comp_t *comps;
-	int tx0, ty0, tx1, ty1;
-	int x, y, dx, dy;
-} pi_iterator_t;				/* packet iterator */
+    short int *include;		/* precise if the packet has been already used (usefull for progression order change) */
+    int step_l, step_r, step_c, step_p;	/* different steps (layer, resolution, component, precinct) to localize the packet in the include vector */
+    int compno, resno, precno, layno;	/* component, resolution, precinct and layer that indentify the packet */
+    int first;			/* 0 if the first packet */
+    j2k_poc_t poc;
+    int numcomps;
+    pi_comp_t *comps;
+    int tx0, ty0, tx1, ty1;
+    int x, y, dx, dy;
+} pi_iterator_t;		/* packet iterator */
 
 /*
  * Create a packet iterator

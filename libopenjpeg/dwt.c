@@ -46,20 +46,20 @@
 /* This table contains the norms of the 5-3 wavelets for different bands. */
 /* </summary>                                                             */
 double dwt_norms[4][10] = {
-	{1.000, 1.500, 2.750, 5.375, 10.68, 21.34, 42.67, 85.33, 170.7, 341.3},
-	{1.038, 1.592, 2.919, 5.703, 11.33, 22.64, 45.25, 90.48, 180.9},
-	{1.038, 1.592, 2.919, 5.703, 11.33, 22.64, 45.25, 90.48, 180.9},
-	{.7186, .9218, 1.586, 3.043, 6.019, 12.01, 24.00, 47.97, 95.93}
+    {1.000, 1.500, 2.750, 5.375, 10.68, 21.34, 42.67, 85.33, 170.7, 341.3},
+    {1.038, 1.592, 2.919, 5.703, 11.33, 22.64, 45.25, 90.48, 180.9},
+    {1.038, 1.592, 2.919, 5.703, 11.33, 22.64, 45.25, 90.48, 180.9},
+    {.7186, .9218, 1.586, 3.043, 6.019, 12.01, 24.00, 47.97, 95.93}
 };
 
 /* <summary>                                                              */
 /* This table contains the norms of the 9-7 wavelets for different bands. */
 /* </summary>                                                             */
 double dwt_norms_real[4][10] = {
-	{1.000, 1.965, 4.177, 8.403, 16.90, 33.84, 67.69, 135.3, 270.6, 540.9},
-	{2.022, 3.989, 8.355, 17.04, 34.27, 68.63, 137.3, 274.6, 549.0},
-	{2.022, 3.989, 8.355, 17.04, 34.27, 68.63, 137.3, 274.6, 549.0},
-	{2.080, 3.865, 8.307, 17.18, 34.71, 69.59, 139.3, 278.6, 557.2}
+    {1.000, 1.965, 4.177, 8.403, 16.90, 33.84, 67.69, 135.3, 270.6, 540.9},
+    {2.022, 3.989, 8.355, 17.04, 34.27, 68.63, 137.3, 274.6, 549.0},
+    {2.022, 3.989, 8.355, 17.04, 34.27, 68.63, 137.3, 274.6, 549.0},
+    {2.080, 3.865, 8.307, 17.18, 34.71, 69.59, 139.3, 278.6, 557.2}
 };
 
 /* Add Patrick */
@@ -72,11 +72,11 @@ static int lastSizeOfB = 0;
 
 void dwt_clean()
 {
-	if (b != NULL) {
-		free(b);
-	}
-	b = NULL;
-	lastSizeOfB = 0;
+    if (b != NULL) {
+	free(b);
+    }
+    b = NULL;
+    lastSizeOfB = 0;
 }
 
 /* \ Add Patrick */
@@ -86,29 +86,29 @@ void dwt_clean()
 /* </summary>              */
 void dwt_deinterleave(int *a, int n, int x, int res, int cas)
 {
-	int dn, sn, i;
-	sn = res;
-	dn = n - res;
-	if (lastSizeOfB != n) {
-		if (b != NULL)
-			free(b);
-		b = (int *) malloc(n * sizeof(int));
-		lastSizeOfB = n;
-	}
+    int dn, sn, i;
+    sn = res;
+    dn = n - res;
+    if (lastSizeOfB != n) {
+	if (b != NULL)
+	    free(b);
+	b = (int *) malloc(n * sizeof(int));
+	lastSizeOfB = n;
+    }
 
-	if (cas) {
-		for (i = 0; i < sn; i++)
-			b[i] = a[(2 * i + 1) * x];
-		for (i = 0; i < dn; i++)
-			b[sn + i] = a[2 * i * x];
-	} else {
-		for (i = 0; i < sn; i++)
-			b[i] = a[2 * i * x];
-		for (i = 0; i < dn; i++)
-			b[sn + i] = a[(2 * i + 1) * x];
-	}
-	for (i = 0; i < n; i++)
-		a[i * x] = b[i];
+    if (cas) {
+	for (i = 0; i < sn; i++)
+	    b[i] = a[(2 * i + 1) * x];
+	for (i = 0; i < dn; i++)
+	    b[sn + i] = a[2 * i * x];
+    } else {
+	for (i = 0; i < sn; i++)
+	    b[i] = a[2 * i * x];
+	for (i = 0; i < dn; i++)
+	    b[sn + i] = a[(2 * i + 1) * x];
+    }
+    for (i = 0; i < n; i++)
+	a[i * x] = b[i];
 }
 
 /* <summary>               */
@@ -116,30 +116,30 @@ void dwt_deinterleave(int *a, int n, int x, int res, int cas)
 /* </summary>              */
 void dwt_interleave(int *a, int n, int x, int res, int cas)
 {
-	int dn, sn, i;
-	sn = res;
-	dn = n - res;
+    int dn, sn, i;
+    sn = res;
+    dn = n - res;
 
-	if (lastSizeOfB != n) {
-		if (b != NULL)
-			free(b);
-		b = (int *) malloc(n * sizeof(int));
-		lastSizeOfB = n;
-	}
+    if (lastSizeOfB != n) {
+	if (b != NULL)
+	    free(b);
+	b = (int *) malloc(n * sizeof(int));
+	lastSizeOfB = n;
+    }
 
-	if (cas) {
-		for (i = 0; i < sn; i++)
-			b[2 * i + 1] = a[i * x];
-		for (i = 0; i < dn; i++)
-			b[2 * i] = a[(sn + i) * x];
-	} else {
-		for (i = 0; i < sn; i++)
-			b[2 * i] = a[i * x];
-		for (i = 0; i < dn; i++)
-			b[2 * i + 1] = a[(sn + i) * x];
-	}
-	for (i = 0; i < n; i++)
-		a[i * x] = b[i];
+    if (cas) {
+	for (i = 0; i < sn; i++)
+	    b[2 * i + 1] = a[i * x];
+	for (i = 0; i < dn; i++)
+	    b[2 * i] = a[(sn + i) * x];
+    } else {
+	for (i = 0; i < sn; i++)
+	    b[2 * i] = a[i * x];
+	for (i = 0; i < dn; i++)
+	    b[2 * i + 1] = a[(sn + i) * x];
+    }
+    for (i = 0; i < n; i++)
+	a[i * x] = b[i];
 }
 
 /* <summary>                            */
@@ -147,28 +147,28 @@ void dwt_interleave(int *a, int n, int x, int res, int cas)
 /* </summary>                           */
 void dwt_encode_1(int *a, int n, int x, int res, int cas)
 {
-	int dn, sn, i = 0;
-	sn = res;
-	dn = n - res;
+    int dn, sn, i = 0;
+    sn = res;
+    dn = n - res;
 
-	if (cas) {
-		if (!sn && dn == 1) 	/* NEW :  CASE ONE ELEMENT */
-			S(i) *= 2;
-		else {
-			for (i = 0; i < dn; i++)
-				S(i) -= (DD_(i) + DD_(i - 1)) >> 1;
-			for (i = 0; i < sn; i++)
-				D(i) += (SS_(i) + SS_(i + 1) + 2) >> 2;
-		}
-	} else {
-		if ((dn > 0) || (sn > 1)) {  /* NEW :  CASE ONE ELEMENT */
-			for (i = 0; i < dn; i++)
-				D(i) -= (S_(i) + S_(i + 1)) >> 1;
-			for (i = 0; i < sn; i++)
-				S(i) += (D_(i - 1) + D_(i) + 2) >> 2;
-		}
+    if (cas) {
+	if (!sn && dn == 1)	/* NEW :  CASE ONE ELEMENT */
+	    S(i) *= 2;
+	else {
+	    for (i = 0; i < dn; i++)
+		S(i) -= (DD_(i) + DD_(i - 1)) >> 1;
+	    for (i = 0; i < sn; i++)
+		D(i) += (SS_(i) + SS_(i + 1) + 2) >> 2;
 	}
-	dwt_deinterleave(a, n, x, res, cas);
+    } else {
+	if ((dn > 0) || (sn > 1)) {	/* NEW :  CASE ONE ELEMENT */
+	    for (i = 0; i < dn; i++)
+		D(i) -= (S_(i) + S_(i + 1)) >> 1;
+	    for (i = 0; i < sn; i++)
+		S(i) += (D_(i - 1) + D_(i) + 2) >> 2;
+	}
+    }
+    dwt_deinterleave(a, n, x, res, cas);
 }
 
 /* <summary>                            */
@@ -176,28 +176,28 @@ void dwt_encode_1(int *a, int n, int x, int res, int cas)
 /* </summary>                           */
 void dwt_decode_1(int *a, int n, int x, int res, int cas)
 {
-	int dn, sn, i = 0;
-	sn = res;
-	dn = n - res;
+    int dn, sn, i = 0;
+    sn = res;
+    dn = n - res;
 
-	dwt_interleave(a, n, x, res, cas);
-	if (cas) {
-		if (!sn && dn == 1)	/* NEW :  CASE ONE ELEMENT */
-			S(i) /= 2;
-		else {
-			for (i = 0; i < sn; i++)
-				D(i) -= (SS_(i) + SS_(i + 1) + 2) >> 2;
-			for (i = 0; i < dn; i++)
-				S(i) += (DD_(i) + DD_(i - 1)) >> 1;
-		}
-	} else {
-		if ((dn > 0) || (sn > 1)) { /* NEW :  CASE ONE ELEMENT */
-			for (i = 0; i < sn; i++)
-				S(i) -= (D_(i - 1) + D_(i) + 2) >> 2;
-			for (i = 0; i < dn; i++)
-				D(i) += (S_(i) + S_(i + 1)) >> 1;
-		}
+    dwt_interleave(a, n, x, res, cas);
+    if (cas) {
+	if (!sn && dn == 1)	/* NEW :  CASE ONE ELEMENT */
+	    S(i) /= 2;
+	else {
+	    for (i = 0; i < sn; i++)
+		D(i) -= (SS_(i) + SS_(i + 1) + 2) >> 2;
+	    for (i = 0; i < dn; i++)
+		S(i) += (DD_(i) + DD_(i - 1)) >> 1;
 	}
+    } else {
+	if ((dn > 0) || (sn > 1)) {	/* NEW :  CASE ONE ELEMENT */
+	    for (i = 0; i < sn; i++)
+		S(i) -= (D_(i - 1) + D_(i) + 2) >> 2;
+	    for (i = 0; i < dn; i++)
+		D(i) += (S_(i) + S_(i + 1)) >> 1;
+	}
+    }
 }
 
 /* <summary>                            */
@@ -205,61 +205,70 @@ void dwt_decode_1(int *a, int n, int x, int res, int cas)
 /* </summary>                           */
 void dwt_encode(int *a, int w, int h, tcd_tilecomp_t * tilec, int l)
 {
-	int i, j;
-	int rw;            /* width of the resolution level computed                                                           */
-	int rh;            /* heigth of the resolution level computed                                                          */
-	int rw1;           /* width of the resolution level once lower than computed one                                       */
-	int rh1;           /* height of the resolution level once lower than computed one                                      */
+    int i, j;
+    int rw;			/* width of the resolution level computed                                                           */
+    int rh;			/* heigth of the resolution level computed                                                          */
+    int rw1;			/* width of the resolution level once lower than computed one                                       */
+    int rh1;			/* height of the resolution level once lower than computed one                                      */
 
-	for (i = 0; i < l; i++) {
-	  int cas_col = 0; /* 0 = non inversion on horizontal filtering 1 = inversion between low-pass and high-pass filtering */
-	  int cas_row = 0; /* 0 = non inversion on vertical filtering 1 = inversion between low-pass and high-pass filtering   */
-		rw = tilec->resolutions[l - i].x1 - tilec->resolutions[l - i].x0;
-		rh = tilec->resolutions[l - i].y1 - tilec->resolutions[l - i].y0;
-		rw1 = tilec->resolutions[l - i - 1].x1 - tilec->resolutions[l - i - 1].x0;
-		rh1 = tilec->resolutions[l - i - 1].y1 - tilec->resolutions[l - i - 1].y0;
+    for (i = 0; i < l; i++) {
+	int cas_col = 0;	/* 0 = non inversion on horizontal filtering 1 = inversion between low-pass and high-pass filtering */
+	int cas_row = 0;	/* 0 = non inversion on vertical filtering 1 = inversion between low-pass and high-pass filtering   */
+	rw = tilec->resolutions[l - i].x1 - tilec->resolutions[l - i].x0;
+	rh = tilec->resolutions[l - i].y1 - tilec->resolutions[l - i].y0;
+	rw1 =
+	    tilec->resolutions[l - i - 1].x1 - tilec->resolutions[l - i -
+								  1].x0;
+	rh1 =
+	    tilec->resolutions[l - i - 1].y1 - tilec->resolutions[l - i -
+								  1].y0;
 
-		cas_row = tilec->resolutions[l - i].x0 % 2;
-		cas_col = tilec->resolutions[l - i].y0 % 2;
+	cas_row = tilec->resolutions[l - i].x0 % 2;
+	cas_col = tilec->resolutions[l - i].y0 % 2;
 
-		for (j = 0; j < rw; j++)
-			dwt_encode_1(a + j, rh, w, rh1, cas_col);
-		for (j = 0; j < rh; j++)
-			dwt_encode_1(a + j * w, rw, 1, rw1, cas_row);
-	}
+	for (j = 0; j < rw; j++)
+	    dwt_encode_1(a + j, rh, w, rh1, cas_col);
+	for (j = 0; j < rh; j++)
+	    dwt_encode_1(a + j * w, rw, 1, rw1, cas_row);
+    }
 
-	dwt_clean();
+    dwt_clean();
 }
 
 /* <summary>                            */
 /* Inverse 5-3 wavelet tranform in 2-D. */
 /* </summary>                           */
-void dwt_decode(int *a, int w, int h, tcd_tilecomp_t * tilec, int l, int stop)
+void dwt_decode(int *a, int w, int h, tcd_tilecomp_t * tilec, int l,
+		int stop)
 {
-	int i, j;
-	int rw;            /* width of the resolution level computed                                                           */
-	int rh;            /* heigth of the resolution level computed                                                          */
-	int rw1;           /* width of the resolution level once lower than computed one                                       */
-	int rh1;           /* height of the resolution level once lower than computed one                                      */
+    int i, j;
+    int rw;			/* width of the resolution level computed                                                           */
+    int rh;			/* heigth of the resolution level computed                                                          */
+    int rw1;			/* width of the resolution level once lower than computed one                                       */
+    int rh1;			/* height of the resolution level once lower than computed one                                      */
 
-	for (i = l - 1; i >= stop; i--) {
-	  int cas_col = 0; /* 0 = non inversion on horizontal filtering 1 = inversion between low-pass and high-pass filtering */
-	  int cas_row = 0; /* 0 = non inversion on vertical filtering 1 = inversion between low-pass and high-pass filtering   */
+    for (i = l - 1; i >= stop; i--) {
+	int cas_col = 0;	/* 0 = non inversion on horizontal filtering 1 = inversion between low-pass and high-pass filtering */
+	int cas_row = 0;	/* 0 = non inversion on vertical filtering 1 = inversion between low-pass and high-pass filtering   */
 
-	  	rw = tilec->resolutions[l - i].x1 - tilec->resolutions[l - i].x0;
-		rh = tilec->resolutions[l - i].y1 - tilec->resolutions[l - i].y0;
-		rw1 = tilec->resolutions[l - i - 1].x1 - tilec->resolutions[l - i - 1].x0;
-		rh1 = tilec->resolutions[l - i - 1].y1 - tilec->resolutions[l - i - 1].y0;
-		
-		cas_row = tilec->resolutions[l - i].x0 % 2;
-		cas_col = tilec->resolutions[l - i].y0 % 2;
+	rw = tilec->resolutions[l - i].x1 - tilec->resolutions[l - i].x0;
+	rh = tilec->resolutions[l - i].y1 - tilec->resolutions[l - i].y0;
+	rw1 =
+	    tilec->resolutions[l - i - 1].x1 - tilec->resolutions[l - i -
+								  1].x0;
+	rh1 =
+	    tilec->resolutions[l - i - 1].y1 - tilec->resolutions[l - i -
+								  1].y0;
 
-		for (j = 0; j < rh; j++)
-			dwt_decode_1(a + j * w, rw, 1, rw1, cas_row);
-		for (j = 0; j < rw; j++)
-			dwt_decode_1(a + j, rh, w, rh1, cas_col);
-	}
-	dwt_clean();
+	cas_row = tilec->resolutions[l - i].x0 % 2;
+	cas_col = tilec->resolutions[l - i].y0 % 2;
+
+	for (j = 0; j < rh; j++)
+	    dwt_decode_1(a + j * w, rw, 1, rw1, cas_row);
+	for (j = 0; j < rw; j++)
+	    dwt_decode_1(a + j, rh, w, rh1, cas_col);
+    }
+    dwt_clean();
 }
 
 /* <summary>                          */
@@ -267,11 +276,11 @@ void dwt_decode(int *a, int w, int h, tcd_tilecomp_t * tilec, int l, int stop)
 /* </summary>                         */
 int dwt_getgain(int orient)
 {
-	if (orient == 0)
-		return 0;
-	if (orient == 1 || orient == 2)
-		return 1;
-	return 2;
+    if (orient == 0)
+	return 0;
+    if (orient == 1 || orient == 2)
+	return 1;
+    return 2;
 }
 
 /* <summary>                */
@@ -279,7 +288,7 @@ int dwt_getgain(int orient)
 /* </summary>               */
 double dwt_getnorm(int level, int orient)
 {
-	return dwt_norms[orient][level];
+    return dwt_norms[orient][level];
 }
 
 /* <summary>                             */
@@ -287,42 +296,42 @@ double dwt_getnorm(int level, int orient)
 /* </summary>                            */
 void dwt_encode_1_real(int *a, int n, int x, int res, int cas)
 {
-	int dn, sn, i = 0;
-	dn = n - res;
-	sn = res;
+    int dn, sn, i = 0;
+    dn = n - res;
+    sn = res;
 
-	if (cas) {
-		if ((sn > 0) || (dn > 1)) {  /* NEW :  CASE ONE ELEMENT */
-			for (i = 0; i < dn; i++)
-				S(i) -= fix_mul(DD_(i) + DD_(i - 1), 12993);
-			for (i = 0; i < sn; i++)
-				D(i) -= fix_mul(SS_(i) + SS_(i + 1), 434);
-			for (i = 0; i < dn; i++)
-				S(i) += fix_mul(DD_(i) + DD_(i - 1), 7233);
-			for (i = 0; i < sn; i++)
-				D(i) += fix_mul(SS_(i) + SS_(i + 1), 3633);
-			for (i = 0; i < dn; i++)
-			  S(i) = fix_mul(S(i), 5038); /*5038*/
-			for (i = 0; i < sn; i++)
-			  D(i) = fix_mul(D(i), 6659); /*6660*/
-		}
-	} else {
-	  if ((dn > 0) || (sn > 1)) {  /* NEW :  CASE ONE ELEMENT */
-			for (i = 0; i < dn; i++)
-				D(i) -= fix_mul(S_(i) + S_(i + 1), 12993);
-			for (i = 0; i < sn; i++)
-				S(i) -= fix_mul(D_(i - 1) + D_(i), 434);
-			for (i = 0; i < dn; i++)
-				D(i) += fix_mul(S_(i) + S_(i + 1), 7233);
-			for (i = 0; i < sn; i++)
-				S(i) += fix_mul(D_(i - 1) + D_(i), 3633);
-			for (i = 0; i < dn; i++)
-				D(i) = fix_mul(D(i), 5038); /*5038*/
-			for (i = 0; i < sn; i++)
-				S(i) = fix_mul(S(i), 6659); /*6660*/
-		}
+    if (cas) {
+	if ((sn > 0) || (dn > 1)) {	/* NEW :  CASE ONE ELEMENT */
+	    for (i = 0; i < dn; i++)
+		S(i) -= fix_mul(DD_(i) + DD_(i - 1), 12993);
+	    for (i = 0; i < sn; i++)
+		D(i) -= fix_mul(SS_(i) + SS_(i + 1), 434);
+	    for (i = 0; i < dn; i++)
+		S(i) += fix_mul(DD_(i) + DD_(i - 1), 7233);
+	    for (i = 0; i < sn; i++)
+		D(i) += fix_mul(SS_(i) + SS_(i + 1), 3633);
+	    for (i = 0; i < dn; i++)
+		S(i) = fix_mul(S(i), 5038);	/*5038 */
+	    for (i = 0; i < sn; i++)
+		D(i) = fix_mul(D(i), 6659);	/*6660 */
 	}
-	dwt_deinterleave(a, n, x, res, cas);
+    } else {
+	if ((dn > 0) || (sn > 1)) {	/* NEW :  CASE ONE ELEMENT */
+	    for (i = 0; i < dn; i++)
+		D(i) -= fix_mul(S_(i) + S_(i + 1), 12993);
+	    for (i = 0; i < sn; i++)
+		S(i) -= fix_mul(D_(i - 1) + D_(i), 434);
+	    for (i = 0; i < dn; i++)
+		D(i) += fix_mul(S_(i) + S_(i + 1), 7233);
+	    for (i = 0; i < sn; i++)
+		S(i) += fix_mul(D_(i - 1) + D_(i), 3633);
+	    for (i = 0; i < dn; i++)
+		D(i) = fix_mul(D(i), 5038);	/*5038 */
+	    for (i = 0; i < sn; i++)
+		S(i) = fix_mul(S(i), 6659);	/*6660 */
+	}
+    }
+    dwt_deinterleave(a, n, x, res, cas);
 }
 
 /* <summary>                             */
@@ -330,41 +339,41 @@ void dwt_encode_1_real(int *a, int n, int x, int res, int cas)
 /* </summary>                            */
 void dwt_decode_1_real(int *a, int n, int x, int res, int cas)
 {
-	int dn, sn, i = 0;
-	dn = n - res;
-	sn = res;
-	dwt_interleave(a, n, x, res, cas);
-	if (cas) {
-		if ((sn > 0) || (dn > 1)) {  /* NEW :  CASE ONE ELEMENT */
-			for (i = 0; i < sn; i++)
-			  D(i) = fix_mul(D(i), 10078); /* 10076 */
-			for (i = 0; i < dn; i++)
-				S(i) = fix_mul(S(i), 13318); /* 13320*/
-			for (i = 0; i < sn; i++)
-				D(i) -= fix_mul(SS_(i) + SS_(i + 1), 3633);
-			for (i = 0; i < dn; i++)
-				S(i) -= fix_mul(DD_(i) + DD_(i - 1), 7233);
-			for (i = 0; i < sn; i++)
-				D(i) += fix_mul(SS_(i) + SS_(i + 1), 434);
-			for (i = 0; i < dn; i++)
-				S(i) += fix_mul(DD_(i) + DD_(i - 1), 12993);
-		}
-	} else {
-		if ((dn > 0) || (sn > 1)) {  /* NEW :  CASE ONE ELEMENT */
-			for (i = 0; i < sn; i++)
-				S(i) = fix_mul(S(i), 10078); /* 10076 */
-			for (i = 0; i < dn; i++)
-			  D(i) = fix_mul(D(i), 13318); /* 13320*/
-			for (i = 0; i < sn; i++)
-				S(i) -= fix_mul(D_(i - 1) + D_(i), 3633);
-			for (i = 0; i < dn; i++)
-				D(i) -= fix_mul(S_(i) + S_(i + 1), 7233);
-			for (i = 0; i < sn; i++)
-				S(i) += fix_mul(D_(i - 1) + D_(i), 434);
-			for (i = 0; i < dn; i++)
-				D(i) += fix_mul(S_(i) + S_(i + 1), 12993);
-		}
+    int dn, sn, i = 0;
+    dn = n - res;
+    sn = res;
+    dwt_interleave(a, n, x, res, cas);
+    if (cas) {
+	if ((sn > 0) || (dn > 1)) {	/* NEW :  CASE ONE ELEMENT */
+	    for (i = 0; i < sn; i++)
+		D(i) = fix_mul(D(i), 10078);	/* 10076 */
+	    for (i = 0; i < dn; i++)
+		S(i) = fix_mul(S(i), 13318);	/* 13320 */
+	    for (i = 0; i < sn; i++)
+		D(i) -= fix_mul(SS_(i) + SS_(i + 1), 3633);
+	    for (i = 0; i < dn; i++)
+		S(i) -= fix_mul(DD_(i) + DD_(i - 1), 7233);
+	    for (i = 0; i < sn; i++)
+		D(i) += fix_mul(SS_(i) + SS_(i + 1), 434);
+	    for (i = 0; i < dn; i++)
+		S(i) += fix_mul(DD_(i) + DD_(i - 1), 12993);
 	}
+    } else {
+	if ((dn > 0) || (sn > 1)) {	/* NEW :  CASE ONE ELEMENT */
+	    for (i = 0; i < sn; i++)
+		S(i) = fix_mul(S(i), 10078);	/* 10076 */
+	    for (i = 0; i < dn; i++)
+		D(i) = fix_mul(D(i), 13318);	/* 13320 */
+	    for (i = 0; i < sn; i++)
+		S(i) -= fix_mul(D_(i - 1) + D_(i), 3633);
+	    for (i = 0; i < dn; i++)
+		D(i) -= fix_mul(S_(i) + S_(i + 1), 7233);
+	    for (i = 0; i < sn; i++)
+		S(i) += fix_mul(D_(i - 1) + D_(i), 434);
+	    for (i = 0; i < dn; i++)
+		D(i) += fix_mul(S_(i) + S_(i + 1), 12993);
+	}
+    }
 }
 
 /* <summary>                             */
@@ -373,58 +382,67 @@ void dwt_decode_1_real(int *a, int n, int x, int res, int cas)
 
 void dwt_encode_real(int *a, int w, int h, tcd_tilecomp_t * tilec, int l)
 {
-        int i, j;
-	int rw;            /* width of the resolution level computed                                                     */
-	int rh;            /* heigth of the resolution level computed                                                    */
-	int rw1;           /* width of the resolution level once lower than computed one                                 */
-	int rh1;           /* height of the resolution level once lower than computed one                                */
+    int i, j;
+    int rw;			/* width of the resolution level computed                                                     */
+    int rh;			/* heigth of the resolution level computed                                                    */
+    int rw1;			/* width of the resolution level once lower than computed one                                 */
+    int rh1;			/* height of the resolution level once lower than computed one                                */
 
-	for (i = 0; i < l; i++) {
-		int cas_col = 0;  /* 0 = non inversion on horizontal filtering 1 = inversion between low-pass and high-pass filtering */
-		int cas_row = 0;  /* 0 = non inversion on vertical filtering 1 = inversion between low-pass and high-pass filtering   */
-		rw = tilec->resolutions[l - i].x1 - tilec->resolutions[l - i].x0;
-		rh = tilec->resolutions[l - i].y1 - tilec->resolutions[l - i].y0;
-		rw1 = tilec->resolutions[l - i - 1].x1 - tilec->resolutions[l - i - 1].x0;
-		rh1 = tilec->resolutions[l - i - 1].y1 - tilec->resolutions[l - i - 1].y0;
-		
-		cas_row = tilec->resolutions[l - i].x0 % 2;
-		cas_col = tilec->resolutions[l - i].y0 % 2;
+    for (i = 0; i < l; i++) {
+	int cas_col = 0;	/* 0 = non inversion on horizontal filtering 1 = inversion between low-pass and high-pass filtering */
+	int cas_row = 0;	/* 0 = non inversion on vertical filtering 1 = inversion between low-pass and high-pass filtering   */
+	rw = tilec->resolutions[l - i].x1 - tilec->resolutions[l - i].x0;
+	rh = tilec->resolutions[l - i].y1 - tilec->resolutions[l - i].y0;
+	rw1 =
+	    tilec->resolutions[l - i - 1].x1 - tilec->resolutions[l - i -
+								  1].x0;
+	rh1 =
+	    tilec->resolutions[l - i - 1].y1 - tilec->resolutions[l - i -
+								  1].y0;
 
-		for (j = 0; j < rw; j++)
-			dwt_encode_1_real(a + j, rh, w, rh1, cas_col);
-		for (j = 0; j < rh; j++)
-			dwt_encode_1_real(a + j * w, rw, 1, rw1, cas_row);
-	}
+	cas_row = tilec->resolutions[l - i].x0 % 2;
+	cas_col = tilec->resolutions[l - i].y0 % 2;
+
+	for (j = 0; j < rw; j++)
+	    dwt_encode_1_real(a + j, rh, w, rh1, cas_col);
+	for (j = 0; j < rh; j++)
+	    dwt_encode_1_real(a + j * w, rw, 1, rw1, cas_row);
+    }
 }
 
 /* <summary>                             */
 /* Inverse 9-7 wavelet transform in 2-D. */
 /* </summary>                            */
-void dwt_decode_real(int *a, int w, int h, tcd_tilecomp_t * tilec, int l, int stop)
+void dwt_decode_real(int *a, int w, int h, tcd_tilecomp_t * tilec, int l,
+		     int stop)
 {
-        int i, j;
-	int rw;            /* width of the resolution level computed                                                           */
-	int rh;            /* heigth of the resolution level computed                                                          */
-	int rw1;           /* width of the resolution level once lower than computed one                                       */
-	int rh1;           /* height of the resolution level once lower than computed one                                      */
+    int i, j;
+    int rw;			/* width of the resolution level computed                                                           */
+    int rh;			/* heigth of the resolution level computed                                                          */
+    int rw1;			/* width of the resolution level once lower than computed one                                       */
+    int rh1;			/* height of the resolution level once lower than computed one                                      */
 
-	for (i = l - 1; i >= stop; i--) {
-	  int cas_col = 0; /* 0 = non inversion on horizontal filtering 1 = inversion between low-pass and high-pass filtering */
-	  int cas_row = 0; /* 0 = non inversion on vertical filtering 1 = inversion between low-pass and high-pass filtering   */
+    for (i = l - 1; i >= stop; i--) {
+	int cas_col = 0;	/* 0 = non inversion on horizontal filtering 1 = inversion between low-pass and high-pass filtering */
+	int cas_row = 0;	/* 0 = non inversion on vertical filtering 1 = inversion between low-pass and high-pass filtering   */
 
-		rw = tilec->resolutions[l - i].x1 - tilec->resolutions[l - i].x0;
-		rh = tilec->resolutions[l - i].y1 - tilec->resolutions[l - i].y0;
-		rw1 = tilec->resolutions[l - i - 1].x1 - tilec->resolutions[l - i - 1].x0;
-		rh1 = tilec->resolutions[l - i - 1].y1 - tilec->resolutions[l - i - 1].y0;
+	rw = tilec->resolutions[l - i].x1 - tilec->resolutions[l - i].x0;
+	rh = tilec->resolutions[l - i].y1 - tilec->resolutions[l - i].y0;
+	rw1 =
+	    tilec->resolutions[l - i - 1].x1 - tilec->resolutions[l - i -
+								  1].x0;
+	rh1 =
+	    tilec->resolutions[l - i - 1].y1 - tilec->resolutions[l - i -
+								  1].y0;
 
-		cas_row = tilec->resolutions[l - i].x0 % 2;
-		cas_col = tilec->resolutions[l - i].y0 % 2;		
+	cas_row = tilec->resolutions[l - i].x0 % 2;
+	cas_col = tilec->resolutions[l - i].y0 % 2;
 
-		for (j = 0; j < rh; j++)
-			dwt_decode_1_real(a + j * w, rw, 1, rw1, cas_row);
-		for (j = 0; j < rw; j++)
-			dwt_decode_1_real(a + j, rh, w, rh1, cas_col);
-	}
+	for (j = 0; j < rh; j++)
+	    dwt_decode_1_real(a + j * w, rw, 1, rw1, cas_row);
+	for (j = 0; j < rw; j++)
+	    dwt_decode_1_real(a + j, rh, w, rh1, cas_col);
+    }
 }
 
 /* <summary>                          */
@@ -432,7 +450,7 @@ void dwt_decode_real(int *a, int w, int h, tcd_tilecomp_t * tilec, int l, int st
 /* </summary>                         */
 int dwt_getgain_real(int orient)
 {
-	return 0;
+    return 0;
 }
 
 /* <summary>                */
@@ -440,5 +458,5 @@ int dwt_getgain_real(int orient)
 /* </summary>               */
 double dwt_getnorm_real(int level, int orient)
 {
-	return dwt_norms_real[orient][level];
+    return dwt_norms_real[orient][level];
 }

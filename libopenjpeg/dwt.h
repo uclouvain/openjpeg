@@ -51,7 +51,8 @@ void dwt_encode(int *a, int w, int h, tcd_tilecomp_t * tilec, int l);
  * row_tilec : tile component information (previous tile on the same row)
  * col_tilec : tile component information (previous tile on the same column)
  */
-void dwt_decode(int *a, int w, int h, tcd_tilecomp_t * tilec, int l, int stop);
+void dwt_decode(int *a, int w, int h, tcd_tilecomp_t * tilec, int l,
+		int stop);
 
 /*
  * Get the gain of a subband for the reversible DWT
@@ -82,7 +83,8 @@ void dwt_encode_real(int *a, int w, int h, tcd_tilecomp_t * tilec, int l);
  * h: height of the component
  * l: number of decomposition levels in the DWT
  */
-void dwt_decode_real(int *a, int w, int h, tcd_tilecomp_t * tilec, int l, int stop);
+void dwt_decode_real(int *a, int w, int h, tcd_tilecomp_t * tilec, int l,
+		     int stop);
 /*
  * Get the gain of a subband for the irreversible DWT
  * orient: number that identifies the subband (0->LL, 1->HL, 2->LH, 3->HH)

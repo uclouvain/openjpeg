@@ -31,7 +31,7 @@
 
 /*
  * Number of bytes written.
- */ 
+ */
 int bio_numbytes();
 
 /*
@@ -70,6 +70,6 @@ int bio_read(int n);
  */
 int bio_flush();
 
-int bio_inalign();  /* modified to eliminated longjmp !! */
+int bio_inalign();		/* modified to eliminated longjmp !! */
 
 #endif

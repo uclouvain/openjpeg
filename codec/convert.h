@@ -29,11 +29,11 @@
 #include "j2k.h"
 
 int bmptoimage(char *filename, j2k_image_t * img, int subsampling_dx,
-							 int subsampling_dy, int Dim[2]);
+	       int subsampling_dy, int Dim[2]);
 
 int pgxtoimage(char *filename, j2k_image_t * img, int tdy,
-							 int subsampling_dx, int subsampling_dy, int Dim[2],
-							 j2k_cp_t cp);
+	       int subsampling_dx, int subsampling_dy, int Dim[2],
+	       j2k_cp_t cp);
 
 int pnmtoimage(char *filename, j2k_image_t * img, int subsampling_dx,
-							 int subsampling_dy, int Dim[2]);
+	       int subsampling_dy, int Dim[2]);

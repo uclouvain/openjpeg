@@ -44,7 +44,9 @@
  * len        : the length of the destination buffer
  * info_IM    : structure to create an index file
  */
-int t2_encode_packets(j2k_image_t * img, j2k_cp_t * cp, int tileno, tcd_tile_t * tile, int maxlayers, unsigned char *dest, int len, info_image * info_IM);
+int t2_encode_packets(j2k_image_t * img, j2k_cp_t * cp, int tileno,
+		      tcd_tile_t * tile, int maxlayers,
+		      unsigned char *dest, int len, info_image * info_IM);
 
 /*
  * Decode the packets of a tile from a source buffer
@@ -56,6 +58,7 @@ int t2_encode_packets(j2k_image_t * img, j2k_cp_t * cp, int tileno, tcd_tile_t *
  * tileno: number that identifies the tile for which to decode the packets
  * tile: tile for which to decode the packets
  */
-int t2_decode_packets(unsigned char *src, int len, j2k_image_t * img, j2k_cp_t * cp, int tileno, tcd_tile_t * tile);
+int t2_decode_packets(unsigned char *src, int len, j2k_image_t * img,
+		      j2k_cp_t * cp, int tileno, tcd_tile_t * tile);
 
 #endif

@@ -33,82 +33,82 @@
 #include "tgt.h"
 
 typedef struct {
-  int numpasses;
-  int len;
-  unsigned char *data;
-  int maxpasses;
-  int numnewpasses;
-  int newlen;
+    int numpasses;
+    int len;
+    unsigned char *data;
+    int maxpasses;
+    int numnewpasses;
+    int newlen;
 } tcd_seg_t;
 
 typedef struct {
-  int rate;                         
-  double distortiondec;             
-  int term, len;
+    int rate;
+    double distortiondec;
+    int term, len;
 } tcd_pass_t;
 
 typedef struct {
-  int numpasses;                    /* Number of passes in the layer */
-  int len;                          /* len of information */
-  double disto;		            /* add for index (Cfr. Marcela) */
-  unsigned char *data;              /* data */
+    int numpasses;		/* Number of passes in the layer */
+    int len;			/* len of information */
+    double disto;		/* add for index (Cfr. Marcela) */
+    unsigned char *data;	/* data */
 } tcd_layer_t;
 
 typedef struct {
-  int x0, y0, x1, y1;               /* dimension of the code-blocks : left upper corner (x0, y0) right low corner (x1,y1) */
-  int numbps;
-  int numlenbits;
-  int len;                          /* length */
-  int numpasses;                    /* number of pass already done for the code-blocks */
-  int numnewpasses;                 /* number of pass added to the code-blocks */
-  int numsegs;                      /* number of segments */
-  tcd_seg_t segs[100];              /* segments informations */
-  unsigned char data[8192];         /* Data */
-  int numpassesinlayers;            /* number of passes in the layer */
-  tcd_layer_t layers[100];          /* layer information */
-  int totalpasses;                  /* total number of passes */
-  tcd_pass_t passes[100];           /* information about the passes */
+    int x0, y0, x1, y1;		/* dimension of the code-blocks : left upper corner (x0, y0) right low corner (x1,y1) */
+    int numbps;
+    int numlenbits;
+    int len;			/* length */
+    int numpasses;		/* number of pass already done for the code-blocks */
+    int numnewpasses;		/* number of pass added to the code-blocks */
+    int numsegs;		/* number of segments */
+    tcd_seg_t segs[100];	/* segments informations */
+    unsigned char data[8192];	/* Data */
+    int numpassesinlayers;	/* number of passes in the layer */
+    tcd_layer_t layers[100];	/* layer information */
+    int totalpasses;		/* total number of passes */
+    tcd_pass_t passes[100];	/* information about the passes */
 } tcd_cblk_t;
 
 typedef struct {
-  int x0, y0, x1, y1;               /* dimension of the precinct : left upper corner (x0, y0) right low corner (x1,y1) */
-  int cw, ch;                       /* number of precinct in width and heigth */
-  tcd_cblk_t *cblks;                /* code-blocks informations */
-  tgt_tree_t *incltree;             /* inclusion tree */
-  tgt_tree_t *imsbtree;             /* IMSB tree */
+    int x0, y0, x1, y1;		/* dimension of the precinct : left upper corner (x0, y0) right low corner (x1,y1) */
+    int cw, ch;			/* number of precinct in width and heigth */
+    tcd_cblk_t *cblks;		/* code-blocks informations */
+    tgt_tree_t *incltree;	/* inclusion tree */
+    tgt_tree_t *imsbtree;	/* IMSB tree */
 } tcd_precinct_t;
 
 typedef struct {
-  int x0, y0, x1, y1;               /* dimension of the subband : left upper corner (x0, y0) right low corner (x1,y1) */
-  int bandno;
-  tcd_precinct_t *precincts;        /* precinct information */
-  int numbps;
-  int stepsize;
+    int x0, y0, x1, y1;		/* dimension of the subband : left upper corner (x0, y0) right low corner (x1,y1) */
+    int bandno;
+    tcd_precinct_t *precincts;	/* precinct information */
+    int numbps;
+    int stepsize;
 } tcd_band_t;
 
 typedef struct {
-  int x0, y0, x1, y1;               /* dimension of the resolution level : left upper corner (x0, y0) right low corner (x1,y1) */
-  int pw, ph;			    
-  int numbands;                     /* number sub-band for the resolution level */
-  tcd_band_t bands[3];              /* subband information */
+    int x0, y0, x1, y1;		/* dimension of the resolution level : left upper corner (x0, y0) right low corner (x1,y1) */
+    int pw, ph;
+    int numbands;		/* number sub-band for the resolution level */
+    tcd_band_t bands[3];	/* subband information */
 } tcd_resolution_t;
 
 typedef struct {
-  int x0, y0, x1, y1;               /* dimension of component : left upper corner (x0, y0) right low corner (x1,y1) */
-  int numresolutions;               /* number of resolutions level */
-  tcd_resolution_t *resolutions;    /* resolutions information */
-  int *data;                        /* data of the component */
+    int x0, y0, x1, y1;		/* dimension of component : left upper corner (x0, y0) right low corner (x1,y1) */
+    int numresolutions;		/* number of resolutions level */
+    tcd_resolution_t *resolutions;	/* resolutions information */
+    int *data;			/* data of the component */
 } tcd_tilecomp_t;
 
 typedef struct {
-  int x0, y0, x1, y1;               /* dimension of the tile : left upper corner (x0, y0) right low corner (x1,y1) */
-  int numcomps;                     /* number of components in tile */
-  tcd_tilecomp_t *comps;            /* Components information */
+    int x0, y0, x1, y1;		/* dimension of the tile : left upper corner (x0, y0) right low corner (x1,y1) */
+    int numcomps;		/* number of components in tile */
+    tcd_tilecomp_t *comps;	/* Components information */
 } tcd_tile_t;
 
 typedef struct {
-  int tw, th;                       /* number of tiles in width and heigth */
-  tcd_tile_t *tiles;                /* Tiles information */
+    int tw, th;			/* number of tiles in width and heigth */
+    tcd_tile_t *tiles;		/* Tiles information */
 } tcd_image_t;
 
 /*
@@ -152,7 +152,8 @@ void tcd_free_encode(j2k_image_t * img, j2k_cp_t * cp, int curtileno);
  * len: length of destination buffer
  * info_IM: creation of index file
  */
-int tcd_encode_tile_pxm(int tileno, unsigned char *dest, int len, info_image * info_IM);
+int tcd_encode_tile_pxm(int tileno, unsigned char *dest, int len,
+			info_image * info_IM);
 
 
 /*
@@ -162,7 +163,8 @@ int tcd_encode_tile_pxm(int tileno, unsigned char *dest, int len, info_image * i
  * len: length of destination buffer
  * info_IM: creation of index file
  */
-int tcd_encode_tile_pgx(int tileno, unsigned char *dest, int len, info_image * info_IM);
+int tcd_encode_tile_pgx(int tileno, unsigned char *dest, int len,
+			info_image * info_IM);
 
 /*
  * Decode a tile from a buffer into a raw image

@@ -34,16 +34,16 @@
 /* </summary> */
 void tgt_reset(tgt_tree_t * tree)
 {
-	int i;
-	/* new */
-	if (!tree || tree == NULL)
-		return;
+    int i;
+    /* new */
+    if (!tree || tree == NULL)
+	return;
 
-	for (i = 0; i < tree->numnodes; i++) {
-		tree->nodes[i].value = 999;
-		tree->nodes[i].low = 0;
-		tree->nodes[i].known = 0;
-	}
+    for (i = 0; i < tree->numnodes; i++) {
+	tree->nodes[i].value = 999;
+	tree->nodes[i].low = 0;
+	tree->nodes[i].known = 0;
+    }
 }
 
 /* <summary> */
@@ -51,69 +51,70 @@ void tgt_reset(tgt_tree_t * tree)
 /* </summary> */
 tgt_tree_t *tgt_create(int numleafsh, int numleafsv)
 {
-	int nplh[32];
-	int nplv[32];
-	tgt_node_t *node;
-	tgt_node_t *parentnode;
-	tgt_node_t *parentnode0;
-	tgt_tree_t *tree;
-	int i, j, k;
-	int numlvls;
-	int n;
+    int nplh[32];
+    int nplv[32];
+    tgt_node_t *node;
+    tgt_node_t *parentnode;
+    tgt_node_t *parentnode0;
+    tgt_tree_t *tree;
+    int i, j, k;
+    int numlvls;
+    int n;
 
-	tree = (tgt_tree_t *) malloc(sizeof(tgt_tree_t));
-	tree->numleafsh = numleafsh;
-	tree->numleafsv = numleafsv;
+    tree = (tgt_tree_t *) malloc(sizeof(tgt_tree_t));
+    tree->numleafsh = numleafsh;
+    tree->numleafsv = numleafsv;
 
-	numlvls = 0;
-	nplh[0] = numleafsh;
-	nplv[0] = numleafsv;
-	tree->numnodes = 0;
-	do {
-		n = nplh[numlvls] * nplv[numlvls];
-		nplh[numlvls + 1] = (nplh[numlvls] + 1) / 2;
-		nplv[numlvls + 1] = (nplv[numlvls] + 1) / 2;
-		tree->numnodes += n;
-		++numlvls;
-	} while (n > 1);
+    numlvls = 0;
+    nplh[0] = numleafsh;
+    nplv[0] = numleafsv;
+    tree->numnodes = 0;
+    do {
+	n = nplh[numlvls] * nplv[numlvls];
+	nplh[numlvls + 1] = (nplh[numlvls] + 1) / 2;
+	nplv[numlvls + 1] = (nplv[numlvls] + 1) / 2;
+	tree->numnodes += n;
+	++numlvls;
+    } while (n > 1);
 
-	/* ADD */
-	if (tree->numnodes == 0) {
-		free(tree);
-		return NULL;
-	}
+    /* ADD */
+    if (tree->numnodes == 0) {
+	free(tree);
+	return NULL;
+    }
 
-	tree->nodes = (tgt_node_t *) malloc(tree->numnodes * sizeof(tgt_node_t));
+    tree->nodes =
+	(tgt_node_t *) malloc(tree->numnodes * sizeof(tgt_node_t));
 
-	node = tree->nodes;
-	parentnode = &tree->nodes[tree->numleafsh * tree->numleafsv];
-	parentnode0 = parentnode;
+    node = tree->nodes;
+    parentnode = &tree->nodes[tree->numleafsh * tree->numleafsv];
+    parentnode0 = parentnode;
 
-	for (i = 0; i < numlvls - 1; ++i) {
-		for (j = 0; j < nplv[i]; ++j) {
-			k = nplh[i];
-			while (--k >= 0) {
-				node->parent = parentnode;
-				++node;
-				if (--k >= 0) {
-					node->parent = parentnode;
-					++node;
-				}
-				++parentnode;
-			}
-			if ((j & 1) || j == nplv[i] - 1) {
-				parentnode0 = parentnode;
-			} else {
-				parentnode = parentnode0;
-				parentnode0 += nplh[i];
-			}
+    for (i = 0; i < numlvls - 1; ++i) {
+	for (j = 0; j < nplv[i]; ++j) {
+	    k = nplh[i];
+	    while (--k >= 0) {
+		node->parent = parentnode;
+		++node;
+		if (--k >= 0) {
+		    node->parent = parentnode;
+		    ++node;
 		}
+		++parentnode;
+	    }
+	    if ((j & 1) || j == nplv[i] - 1) {
+		parentnode0 = parentnode;
+	    } else {
+		parentnode = parentnode0;
+		parentnode0 += nplh[i];
+	    }
 	}
-	node->parent = 0;
+    }
+    node->parent = 0;
 
-	tgt_reset(tree);
+    tgt_reset(tree);
 
-	return tree;
+    return tree;
 }
 
 /* <summary> */
@@ -121,8 +122,8 @@ tgt_tree_t *tgt_create(int numleafsh, int numleafsv)
 /* </summary> */
 void tgt_destroy(tgt_tree_t * t)
 {
-	free(t->nodes);
-	free(t);
+    free(t->nodes);
+    free(t);
 }
 
 /* <summary> */
@@ -130,12 +131,12 @@ void tgt_destroy(tgt_tree_t * t)
 /* </summary> */
 void tgt_setvalue(tgt_tree_t * tree, int leafno, int value)
 {
-	tgt_node_t *node;
-	node = &tree->nodes[leafno];
-	while (node && node->value > value) {
-		node->value = value;
-		node = node->parent;
-	}
+    tgt_node_t *node;
+    node = &tree->nodes[leafno];
+    while (node && node->value > value) {
+	node->value = value;
+	node = node->parent;
+    }
 }
 
 /* <summary> */
@@ -143,43 +144,43 @@ void tgt_setvalue(tgt_tree_t * tree, int leafno, int value)
 /* </summary> */
 void tgt_encode(tgt_tree_t * tree, int leafno, int threshold)
 {
-	tgt_node_t *stk[31];
-	tgt_node_t **stkptr;
-	tgt_node_t *node;
-	int low;
+    tgt_node_t *stk[31];
+    tgt_node_t **stkptr;
+    tgt_node_t *node;
+    int low;
 
-	stkptr = stk;
-	node = &tree->nodes[leafno];
-	while (node->parent) {
-		*stkptr++ = node;
-		node = node->parent;
+    stkptr = stk;
+    node = &tree->nodes[leafno];
+    while (node->parent) {
+	*stkptr++ = node;
+	node = node->parent;
+    }
+
+    low = 0;
+    for (;;) {
+	if (low > node->low) {
+	    node->low = low;
+	} else {
+	    low = node->low;
 	}
 
-	low = 0;
-	for (;;) {
-		if (low > node->low) {
-			node->low = low;
-		} else {
-			low = node->low;
+	while (low < threshold) {
+	    if (low >= node->value) {
+		if (!node->known) {
+		    bio_write(1, 1);
+		    node->known = 1;
 		}
-
-		while (low < threshold) {
-			if (low >= node->value) {
-				if (!node->known) {
-					bio_write(1, 1);
-					node->known = 1;
-				}
-				break;
-			}
-			bio_write(0, 1);
-			++low;
-		}
-
-		node->low = low;
-		if (stkptr == stk)
-			break;
-		node = *--stkptr;
+		break;
+	    }
+	    bio_write(0, 1);
+	    ++low;
 	}
+
+	node->low = low;
+	if (stkptr == stk)
+	    break;
+	node = *--stkptr;
+    }
 
 }
 
@@ -188,38 +189,38 @@ void tgt_encode(tgt_tree_t * tree, int leafno, int threshold)
 /* </summary> */
 int tgt_decode(tgt_tree_t * tree, int leafno, int threshold)
 {
-	tgt_node_t *stk[31];
-	tgt_node_t **stkptr;
-	tgt_node_t *node;
-	int low;
+    tgt_node_t *stk[31];
+    tgt_node_t **stkptr;
+    tgt_node_t *node;
+    int low;
 
-	stkptr = stk;
-	node = &tree->nodes[leafno];
-	while (node->parent) {
-		*stkptr++ = node;
-		node = node->parent;
+    stkptr = stk;
+    node = &tree->nodes[leafno];
+    while (node->parent) {
+	*stkptr++ = node;
+	node = node->parent;
+    }
+
+    low = 0;
+    for (;;) {
+	if (low > node->low) {
+	    node->low = low;
+	} else {
+	    low = node->low;
 	}
-
-	low = 0;
-	for (;;) {
-		if (low > node->low) {
-			node->low = low;
-		} else {
-			low = node->low;
-		}
-		while (low < threshold && low < node->value) {
-			if (bio_read(1)) {
-				node->value = low;
-			} else {
-				++low;
-			}
-		}
-		node->low = low;
-		if (stkptr == stk) {
-			break;
-		}
-		node = *--stkptr;
+	while (low < threshold && low < node->value) {
+	    if (bio_read(1)) {
+		node->value = low;
+	    } else {
+		++low;
+	    }
 	}
+	node->low = low;
+	if (stkptr == stk) {
+	    break;
+	}
+	node = *--stkptr;
+    }
 
-	return (node->value < threshold) ? 1 : 0;
+    return (node->value < threshold) ? 1 : 0;
 }
