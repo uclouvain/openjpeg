@@ -32,13 +32,13 @@ RSC=rc.exe
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 0
-# PROP BASE Output_Dir "frames_to_mj2___Win32_Release"
-# PROP BASE Intermediate_Dir "frames_to_mj2___Win32_Release"
+# PROP BASE Output_Dir "Release"
+# PROP BASE Intermediate_Dir "Release"
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 0
-# PROP Output_Dir "frames_to_mj2___Win32_Release"
-# PROP Intermediate_Dir "frames_to_mj2___Win32_Release"
+# PROP Output_Dir "Release"
+# PROP Intermediate_Dir "Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
 # ADD CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
@@ -55,13 +55,13 @@ LINK32=link.exe
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 1
-# PROP BASE Output_Dir "frames_to_mj2___Win32_Debug"
-# PROP BASE Intermediate_Dir "frames_to_mj2___Win32_Debug"
+# PROP BASE Output_Dir "frames_to_mj2___Win32_Debug0"
+# PROP BASE Intermediate_Dir "frames_to_mj2___Win32_Debug0"
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 1
-# PROP Output_Dir "frames_to_mj2___Win32_Debug"
-# PROP Intermediate_Dir "frames_to_mj2___Win32_Debug"
+# PROP Output_Dir "frames_to_mj2___Win32_Debug0"
+# PROP Intermediate_Dir "frames_to_mj2___Win32_Debug0"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /GZ  /c
 # ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "../libopenjpeg" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D "DONT_HAVE_GETOPT" /YX /FD /GZ  /c
@@ -136,10 +136,6 @@ SOURCE=..\libopenjpeg\cio.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\libopenjpeg\dwt.c
-# End Source File
-# Begin Source File
-
 SOURCE=..\libopenjpeg\dwt.h
 # End Source File
 # Begin Source File
@@ -209,6 +205,10 @@ SOURCE=..\libopenjpeg\bio.c
 # Begin Source File
 
 SOURCE=..\libopenjpeg\cio.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\libopenjpeg\dwt.c
 # End Source File
 # Begin Source File
 

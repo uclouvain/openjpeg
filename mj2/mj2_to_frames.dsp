@@ -32,13 +32,13 @@ RSC=rc.exe
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 0
-# PROP BASE Output_Dir "mj2_to_frames___Win32_Release"
-# PROP BASE Intermediate_Dir "mj2_to_frames___Win32_Release"
+# PROP BASE Output_Dir "Release"
+# PROP BASE Intermediate_Dir "Release"
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 0
-# PROP Output_Dir "mj2_to_frames___Win32_Release"
-# PROP Intermediate_Dir "mj2_to_frames___Win32_Release"
+# PROP Output_Dir "Release"
+# PROP Intermediate_Dir "Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
 # ADD CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
@@ -48,31 +48,31 @@ BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
 LINK32=link.exe
-# ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib  kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /machine:I386
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib  kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /machine:I386
+# ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /machine:I386
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /machine:I386
 
 !ELSEIF  "$(CFG)" == "mj2_to_frames - Win32 Debug"
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 1
-# PROP BASE Output_Dir "mj2_to_frames___Win32_Debug"
-# PROP BASE Intermediate_Dir "mj2_to_frames___Win32_Debug"
+# PROP BASE Output_Dir "mj2_to_frames___Win32_Debug0"
+# PROP BASE Intermediate_Dir "mj2_to_frames___Win32_Debug0"
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 1
-# PROP Output_Dir "mj2_to_frames___Win32_Debug"
-# PROP Intermediate_Dir "mj2_to_frames___Win32_Debug"
+# PROP Output_Dir "mj2_to_frames___Win32_Debug0"
+# PROP Intermediate_Dir "mj2_to_frames___Win32_Debug0"
 # PROP Target_Dir ""
-# ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /GZ  /c
-# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "../libopenjpeg" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /GZ  /c
+# ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /GZ /c
+# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /GZ /c
 # ADD BASE RSC /l 0x809 /d "_DEBUG"
 # ADD RSC /l 0x809 /d "_DEBUG"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
 LINK32=link.exe
-# ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib  kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib  kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept
+# ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept
 
 !ENDIF 
 
@@ -83,26 +83,6 @@ LINK32=link.exe
 # Begin Group "MJ2"
 
 # PROP Default_Filter ""
-# Begin Group "MJ2 Source Files"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\compat\getopt.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\mj2.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\mj2_convert.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\mj2_to_frames.c
-# End Source File
-# End Group
 # Begin Group "MJ2 Header Files"
 
 # PROP Default_Filter ""
@@ -119,13 +99,69 @@ SOURCE=.\mj2.h
 SOURCE=.\mj2_convert.h
 # End Source File
 # End Group
+# Begin Group "MJ2 Source Files"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\compat\getopt.c
+
+!IF  "$(CFG)" == "mj2_to_frames - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "mj2_to_frames - Win32 Debug"
+
+# ADD CPP /I "../libopenjpeg"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\mj2.c
+
+!IF  "$(CFG)" == "mj2_to_frames - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "mj2_to_frames - Win32 Debug"
+
+# ADD CPP /I "../libopenjpeg"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\mj2_convert.c
+
+!IF  "$(CFG)" == "mj2_to_frames - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "mj2_to_frames - Win32 Debug"
+
+# ADD CPP /I "../libopenjpeg"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\mj2_to_frames.c
+
+!IF  "$(CFG)" == "mj2_to_frames - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "mj2_to_frames - Win32 Debug"
+
+# ADD CPP /I "../libopenjpeg"
+
+!ENDIF 
+
+# End Source File
+# End Group
 # End Group
 # Begin Group "OpenJPEG"
 
 # PROP Default_Filter ""
 # Begin Group "OpenJPEG Header Files"
 
-# PROP Default_Filter ""
+# PROP Default_Filter ".h"
 # Begin Source File
 
 SOURCE=..\libopenjpeg\bio.h
@@ -197,7 +233,7 @@ SOURCE=..\libopenjpeg\tgt.h
 # End Group
 # Begin Group "OpenJPEG Source Files"
 
-# PROP Default_Filter ""
+# PROP Default_Filter ".c"
 # Begin Source File
 
 SOURCE=..\libopenjpeg\bio.c
