@@ -941,13 +941,11 @@ int xml_out_frame(FILE* file, FILE* xmlout, mj2_sample_t *sample, unsigned int s
   /* Decode J2K to image: */
   if (!j2k_decode(frame_codestream, sample->sample_size-8, &img, &cp)) {
     free(frame_codestream);
-    /* Do this?
 #ifndef NO_PACKETS_DECODING
-	for (i=0; i<img.numcomps; i++)
+    for (i=0; i<img.numcomps; i++)
       free(img.comps[i].data);
 #endif
     j2k_dec_release();
-	*/
     return 1;
   }
 
