@@ -122,6 +122,10 @@ SOURCE=..\libopenjpeg\j2k.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\libopenjpeg\jp2.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\libopenjpeg\jpt.c
 # End Source File
 # Begin Source File
@@ -191,6 +195,10 @@ SOURCE=..\libopenjpeg\int.h
 # Begin Source File
 
 SOURCE=..\libopenjpeg\j2k.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\libopenjpeg\jp2.h
 # End Source File
 # Begin Source File
 
