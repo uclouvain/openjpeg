@@ -968,8 +968,8 @@ LIBJ2K_API int j2k_encode(j2k_image_t * img, j2k_cp_t * cp, char *outfile,
     info_IM.Im_w = j2k_img->x1 - j2k_img->x0;
     info_IM.Im_h = j2k_img->y1 - j2k_img->y0;
     info_IM.Prog = (&j2k_cp->tcps[0])->prg;
-    /* info_IM.Tile_x=j2k_cp->tw; old version parser */
-    /* info_IM.Tile_y=j2k_cp->th; old version parser */
+    info_IM.tw=j2k_cp->tw; 
+    info_IM.th=j2k_cp->th; 
     info_IM.Tile_x = j2k_cp->tdx;	/* new version parser */
     info_IM.Tile_y = j2k_cp->tdy;	/* new version parser */
     info_IM.Comp = j2k_img->numcomps;
@@ -1091,7 +1091,7 @@ LIBJ2K_API int j2k_encode(j2k_image_t * img, j2k_cp_t * cp, char *outfile,
     fprintf(INDEX, "%d %d\n", info_IM.Im_w, info_IM.Im_h);
     fprintf(INDEX, "%d\n", info_IM.Prog);
     fprintf(INDEX, "%d %d\n", info_IM.Tile_x, info_IM.Tile_y);
-    fprintf(INDEX, "%d %d\n", j2k_cp->tw, j2k_cp->th);
+    fprintf(INDEX, "%d %d\n", info_IM.tw, info_IM.th);
     fprintf(INDEX, "%d\n", info_IM.Comp);
     fprintf(INDEX, "%d\n", info_IM.Layer);
     fprintf(INDEX, "%d\n", info_IM.Decomposition);
@@ -1101,7 +1101,7 @@ LIBJ2K_API int j2k_encode(j2k_image_t * img, j2k_cp_t * cp, char *outfile,
     fprintf(INDEX,"\n");
     fprintf(INDEX, "%d\n", info_IM.Main_head_end);
     fprintf(INDEX, "%d\n", info_IM.codestream_size);
-    for (tileno = 0; tileno < j2k_cp->tw * j2k_cp->th; tileno++) {
+    for (tileno = 0; tileno < info_IM.tw * info_IM.th; tileno++) {
       fprintf(INDEX, "%4d %9d %9d %9d %9e %9d %9e\n",
 	      info_IM.tile[tileno].num_tile,
 	      info_IM.tile[tileno].start_pos,
@@ -1109,7 +1109,7 @@ LIBJ2K_API int j2k_encode(j2k_image_t * img, j2k_cp_t * cp, char *outfile,
 	      info_IM.tile[tileno].end_pos, info_IM.tile[tileno].distotile, info_IM.tile[tileno].nbpix,
 	      info_IM.tile[tileno].distotile / info_IM.tile[tileno].nbpix);
     }
-    for (tileno = 0; tileno < j2k_cp->tw * j2k_cp->th; tileno++) {
+    for (tileno = 0; tileno < info_IM.tw * info_IM.th; tileno++) {
       int start_pos, end_pos;
       double disto = 0;
       pack_nb = 0;

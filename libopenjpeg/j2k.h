@@ -174,13 +174,11 @@ typedef struct {
   int index_write;		/* writing the packet inthe index with t2_encode_packets */
   int Im_w, Im_h;		/* Image width and Height                                */
   int Prog;			/* progression order                                     */
-  int Tile_x, Tile_y;		/* Number of Tile in X and Y                             */
-  int tw, th;
+  int Tile_x, Tile_y;		/* Tile size in x and y                                  */
+  int tw, th;			/* Number of Tile in X and Y                             */
   int Comp;			/* Component numbers                                     */
   int Layer;			/* number of layer                                       */
   int Decomposition;		/* number of decomposition                               */
-  //int pw, ph;			/* nombre precinct in X and Y                            */
-  //int pdx, pdy;			/* size of precinct in X and Y                           */
   int Main_head_end;		/* Main header position                                  */
   int codestream_size;		/* codestream's size                                     */
   info_tile *tile;		/* information concerning tiles inside image             */
