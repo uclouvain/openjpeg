@@ -61,46 +61,46 @@ extern jmp_buf j2k_error;
 void tcd_dump(tcd_image_t * img, int curtileno)
 {
   int tileno, compno, resno, bandno, precno, cblkno;
-  /* fprintf(stderr, "image {\n"); */
-  fprintf(stderr, "  tw=%d, th=%d x0 %d x1 %d\n", img->tw, img->th,
-	  tcd_img->x0, tcd_img->x1);
+  fprintf(stderr, "image {\n"); 
+  fprintf(stderr, "  tw=%d, th=%d x0=%d x1=%d y0=%d y1=%d\n", img->tw, img->th,
+	  tcd_img->x0, tcd_img->x1, tcd_img->y0, tcd_img->y1);
   for (tileno = 0; tileno < 1; tileno++) {
     tcd_tile_t *tile = &tcd_image.tiles[curtileno];
-    /* fprintf(stderr, "  tile {\n"); */
-    /* fprintf(stderr, "    x0=%d, y0=%d, x1=%d, y1=%d, numcomps=%d\n", tile->x0, tile->y0, tile->x1, tile->y1, tile->numcomps); */
+     fprintf(stderr, "  tile {\n"); 
+     fprintf(stderr, "    x0=%d, y0=%d, x1=%d, y1=%d, numcomps=%d\n", tile->x0, tile->y0, tile->x1, tile->y1, tile->numcomps); 
     for (compno = 0; compno < tile->numcomps; compno++) {
       tcd_tilecomp_t *tilec = &tile->comps[compno];
-      /* fprintf(stderr, "    tilec {\n"); */
-      /* fprintf(stderr, "      x0=%d, y0=%d, x1=%d, y1=%d, numresolutions=%d\n", tilec->x0, tilec->y0, tilec->x1, tilec->y1, tilec->numresolutions); */
+       fprintf(stderr, "    tilec {\n"); 
+       fprintf(stderr, "      x0=%d, y0=%d, x1=%d, y1=%d, numresolutions=%d\n", tilec->x0, tilec->y0, tilec->x1, tilec->y1, tilec->numresolutions); 
       for (resno = 0; resno < tilec->numresolutions; resno++) {
 	tcd_resolution_t *res = &tilec->resolutions[resno];
-	/* fprintf(stderr, "\n   res {\n"); */
-	/* fprintf(stderr, "          x0=%d, y0=%d, x1=%d, y1=%d, pw=%d, ph=%d, numbands=%d\n", res->x0, res->y0, res->x1, res->y1, res->pw, res->ph, res->numbands); */
+	 fprintf(stderr, "\n   res {\n"); 
+	 fprintf(stderr, "          x0=%d, y0=%d, x1=%d, y1=%d, pw=%d, ph=%d, numbands=%d\n", res->x0, res->y0, res->x1, res->y1, res->pw, res->ph, res->numbands); 
 	for (bandno = 0; bandno < res->numbands; bandno++) {
 	  tcd_band_t *band = &res->bands[bandno];
-	  /* fprintf(stderr, "        band {\n"); */
-	  /* fprintf(stderr, "          x0=%d, y0=%d, x1=%d, y1=%d, stepsize=%d, numbps=%d\n", band->x0, band->y0, band->x1, band->y1, band->stepsize, band->numbps); */
+	   fprintf(stderr, "        band {\n"); 
+	   fprintf(stderr, "          x0=%d, y0=%d, x1=%d, y1=%d, stepsize=%d, numbps=%d\n", band->x0, band->y0, band->x1, band->y1, band->stepsize, band->numbps); 
 	  for (precno = 0; precno < res->pw * res->ph; precno++) {
 	    tcd_precinct_t *prec = &band->precincts[precno];
-	    /* fprintf(stderr, "          prec {\n"); */
-	    /* fprintf(stderr, "            x0=%d, y0=%d, x1=%d, y1=%d, cw=%d, ch=%d\n", prec->x0, prec->y0, prec->x1, prec->y1, prec->cw, prec->ch); */
+	     fprintf(stderr, "          prec {\n"); 
+	     fprintf(stderr, "            x0=%d, y0=%d, x1=%d, y1=%d, cw=%d, ch=%d\n", prec->x0, prec->y0, prec->x1, prec->y1, prec->cw, prec->ch); 
 	    for (cblkno = 0; cblkno < prec->cw * prec->ch; cblkno++) {
-	      /* tcd_cblk_t *cblk=&prec->cblks[cblkno]; */
-	      /* fprintf(stderr, "            cblk {\n"); */
-	      /* fprintf(stderr, "              x0=%d, y0=%d, x1=%d, y1=%d\n", cblk->x0, cblk->y0, cblk->x1, cblk->y1); */
-	      /* fprintf(stderr, "            }\n"); */
+	       tcd_cblk_t *cblk=&prec->cblks[cblkno]; 
+	       fprintf(stderr, "            cblk {\n"); 
+	       fprintf(stderr, "              x0=%d, y0=%d, x1=%d, y1=%d\n", cblk->x0, cblk->y0, cblk->x1, cblk->y1); 
+	       fprintf(stderr, "            }\n"); 
 	    }
-	    /* fprintf(stderr, "          }\n"); */
+	     fprintf(stderr, "          }\n"); 
 	  }
-	  /* fprintf(stderr, "        }\n"); */
+	   fprintf(stderr, "        }\n"); 
 	}
-	/* fprintf(stderr, "      }\n"); */
+	 fprintf(stderr, "      }\n"); 
       }
-      /* fprintf(stderr, "    }\n"); */
+       fprintf(stderr, "    }\n"); 
     }
-    /* fprintf(stderr, "  }\n"); */
+     fprintf(stderr, "  }\n"); 
   }
-  /* fprintf(stderr, "}\n"); */
+   fprintf(stderr, "}\n"); 
 }
 
 void tcd_malloc_encode(j2k_image_t * img, j2k_cp_t * cp, int curtileno)
@@ -782,36 +782,38 @@ void tcd_init(j2k_image_t * img, j2k_cp_t * cp)
       }
     }
   }
-  /* tcd_dump(&tcd_image,0); */
+  //tcd_dump(&tcd_image,0);
 
 
-  /* Allocate place to store the date decoded = fianl image */
+  /* Allocate place to store the data decoded = final image */
   /* Place limited by the tile really present in the codestream */
+  
   for (i = 0; i < img->numcomps; i++) {
     for (j = 0; j < cp->tileno_size; j++) {
       tileno = cp->tileno[j];
-      x0 = j == 0 ? tcd_image.tiles[tileno].x0 : int_min(x0,
+      x0 = j == 0 ? tcd_image.tiles[tileno].comps[i].x0 : int_min(x0,
 							 tcd_image.
-							 tiles[tileno].x0);
-      y0 = j == 0 ? tcd_image.tiles[tileno].y0 : int_min(y0,
+							 tiles[tileno].comps[i].x0);
+      y0 = j == 0 ? tcd_image.tiles[tileno].comps[i].y0 : int_min(y0,
 							 tcd_image.
-							 tiles[tileno].y0);
-      x1 = j == 0 ? tcd_image.tiles[tileno].x1 : int_max(x1,
+							 tiles[tileno].comps[i].y0);
+      x1 = j == 0 ? tcd_image.tiles[tileno].comps[i].x1 : int_max(x1,
 							 tcd_image.
-							 tiles[tileno].x1);
-      y1 = j == 0 ? tcd_image.tiles[tileno].y1 : int_max(y1,
+							 tiles[tileno].comps[i].x1);
+      y1 = j == 0 ? tcd_image.tiles[tileno].comps[i].y1 : int_max(y1,
 							 tcd_image.
-							 tiles[tileno].y1);
+							 tiles[tileno].comps[i].y1);
     }
-    w = int_ceildiv(x1 - x0, img->comps[i].dx);
-    h = int_ceildiv(y1 - y0, img->comps[i].dy);
+    //w = int_ceildiv(x1 - x0, img->comps[i].dx);
+    //h = int_ceildiv(y1 - y0, img->comps[i].dy);
+    w = x1 - x0;
+    h = y1 - y0;
     img->comps[i].data = (int *) calloc(w * h, sizeof(int));
     img->comps[i].w = w;
     img->comps[i].h = h;
     img->comps[i].x0 = x0;
     img->comps[i].y0 = y0;
   }
-
 }
 
 void tcd_makelayer_fixed(int layno, int final)
