@@ -1087,16 +1087,16 @@ j2k_dec_mstabent_t j2k_dec_mstab[]={
 };
 
 j2k_dec_mstabent_t *j2k_dec_mstab_lookup(int id) {
-    j2k_dec_mstabent_t *e;
-    for (e = j2k_dec_mstab; e->id != 0; e++) {
-        if (e->id == id) {
-            break;
-        }
+  j2k_dec_mstabent_t *e;
+  for (e = j2k_dec_mstab; e->id != 0; e++) {
+    if (e->id == id) {
+      break;
     }
-    return e;
+  }
+  return e;
 }
 
-int j2k_decode(unsigned char *src, int len, j2k_image_t *image, j2k_cp_t *cp) {
+int j2k_decode(unsigned char *src, int len, j2k_image_t **image, j2k_cp_t **cp) {
     if (setjmp(j2k_error)) {
         if (j2k_state != J2K_STATE_MT) {
             fprintf(stderr, "WARNING: incomplete bitstream\n");
@@ -1104,8 +1104,10 @@ int j2k_decode(unsigned char *src, int len, j2k_image_t *image, j2k_cp_t *cp) {
         }
         return cio_numbytes();
     }
-    j2k_img = image;
-    j2k_cp = cp;
+    j2k_img = (j2k_image_t*)calloc(1, sizeof(j2k_image_t));
+    j2k_cp = (j2k_cp_t*)calloc(1, sizeof(j2k_cp_t));
+    *image = j2k_img;
+    *cp = j2k_cp;
     j2k_state = J2K_STATE_MHSOC;
     cio_init(src, len);
     for (;;) {
@@ -1193,7 +1195,7 @@ int main(int argc, char **argv)
 
   /* decode */ 
 
-  if (!j2k_decode(j2kfile, totlen, imgg, cp)) {
+  if (!j2k_decode(j2kfile, totlen, &imgg, &cp)) {
     fprintf(stderr, "Index_creator: failed to decode image!\n");
     return 1;
   }
