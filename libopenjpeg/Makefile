@@ -18,14 +18,22 @@ ifdef MINGW32
   AR = i386-mingw32-ar
   OBJ_DIR = $(OBJ_DIR_W32)
   LIB_DIR = $(LIB_DIR_W32)
-  all: $(LIB_DIR)/libopenjpeg.a $(LIB_DIR)/libopenjpeg.dll
+  all:	$(OBJ_DIR) $(LIB_DIR) \
+  	$(LIB_DIR)/libopenjpeg.a $(LIB_DIR)/libopenjpeg.dll
 else
   CC = gcc
   AR = ar
   OBJ_DIR = obj
   LIB_DIR = lib
-  all: $(LIB_DIR)/libopenjpeg.a $(LIB_DIR)/libopenjpeg.so
+  all:	$(OBJ_DIR) $(LIB_DIR) \
+  	$(LIB_DIR)/libopenjpeg.a $(LIB_DIR)/libopenjpeg.so
 endif
+
+$(OBJ_DIR):
+	mkdir $(OBJ_DIR)
+
+$(LIB_DIR):	
+	mkdir $(LIB_DIR)
 
 $(OBJ_DIR)/%.o:
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) -o $@ $<

@@ -22,13 +22,15 @@ ifdef MINGW32
   OBJ_DIR = $(OBJ_DIR_W32)
   BIN_DIR = $(BIN_DIR_W32)
   LIB_DIR = lib.w32
-  all: $(addprefix $(BIN_DIR)/,j2k_to_image.exe image_to_j2k.exe)
+  all:	$(BIN_DIR) $(OBJ_DIR) $(LIB_DIR) \
+	$(addprefix $(BIN_DIR)/,j2k_to_image.exe image_to_j2k.exe)
 else
   CC = gcc
   OBJ_DIR = obj
   BIN_DIR = bin
   LIB_DIR = lib
-  all: $(addprefix $(BIN_DIR)/,j2k_to_image image_to_j2k)
+  all:	$(BIN_DIR) $(OBJ_DIR) $(LIB_DIR) \
+  	$(addprefix $(BIN_DIR)/,j2k_to_image image_to_j2k)
 endif
 
 ifdef DYNAMIC
@@ -44,14 +46,26 @@ else
   LDFLAGS += $(LIB_OPENJPEG)
 endif
 
+$(BIN_DIR):
+	mkdir $(BIN_DIR)
+
+$(OBJ_DIR):
+	mkdir $(OBJ_DIR)
+
+$(LIB_DIR):	
+	mkdir $(LIB_DIR)
+
 $(LIB_DIR)/libopenjpeg.dll: $(OPENJPEG_DIR)/$(LIB_DIR)/libopenjpeg.dll
 	ln -sf ../$< $@
 $(OPENJPEG_DIR)/$(LIB_DIR)/libopenjpeg.dll:
-	cd $(OPENJPEG_DIR) && $(MAKE) $(LIB_DIR)/libopenjpeg.dll
+	cd $(OPENJPEG_DIR) && \
+	$(MAKE) $(OBJ_DIR) $(LIB_DIR) $(LIB_DIR)/libopenjpeg.dll
 $(OPENJPEG_DIR)/$(LIB_DIR)/libopenjpeg.a:
-	cd $(OPENJPEG_DIR) && $(MAKE) $(LIB_DIR)/libopenjpeg.a
+	cd $(OPENJPEG_DIR) && \
+	$(MAKE) $(OBJ_DIR) $(LIB_DIR) $(LIB_DIR)/libopenjpeg.a
 $(OPENJPEG_DIR)/$(LIB_DIR)/libopenjpeg.so:
-	cd $(OPENJPEG_DIR) && $(MAKE) $(LIB_DIR)/libopenjpeg.so
+	cd $(OPENJPEG_DIR) && \
+	$(MAKE) $(LIB_DIR) $(LIB_DIR)/libopenjpeg.so
 
 $(OBJ_DIR)/%.o:
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) -o $@ $<
