@@ -255,6 +255,8 @@ int mj2_init_stdmovie(mj2_movie_t * movie)
       tk->vsub = 2;		/* 4:2:0                                                      */
       tk->hoff = 0;
       tk->voff = 0;
+      tk->visual_w = tk->w << 16;
+      tk->visual_h = tk->h << 16;
     }
   }
   return 0;
@@ -2286,9 +2288,9 @@ void mj2_write_tkhd(mj2_tk_t * tk)
   cio_write(tk->trans_matrix[7], 4);
   cio_write(tk->trans_matrix[8], 4);
 
-  cio_write(tk->w << 16, 4);	/* Video Width  */
+  cio_write(tk->visual_w, 4);	/* Video Visual Width  */
 
-  cio_write(tk->h << 16, 4);	/* Video Height */
+  cio_write(tk->visual_h, 4);	/* Video Visual Height */
 
   box.length = cio_tell() - box.init_pos;
   cio_seek(box.init_pos);
@@ -2358,9 +2360,9 @@ int mj2_read_tkhd(mj2_tk_t * tk)
   tk->trans_matrix[7] = cio_read(4);
   tk->trans_matrix[8] = cio_read(4);
 
-  tk->w = cio_read(4) >> 16;	/* Video Width  */
+  tk->visual_w = cio_read(4);	/* Video Visual Width  */
 
-  tk->h = cio_read(4) >> 16;	/* Video Height */
+  tk->visual_h = cio_read(4);	/* Video Visual Height */
 
   if (cio_tell() - box.init_pos != box.length) {
     fprintf(stderr, "Error with TKHD Box size\n");

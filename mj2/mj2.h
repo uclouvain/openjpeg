@@ -88,6 +88,8 @@ typedef struct {		/* Video Track Parameters    */
   int Dim[2];
   int w;
   int h;
+  int visual_w;
+  int visual_h;
   int CbCr_subsampling_dx;
   int CbCr_subsampling_dy;
  // int subsampling_dx;
