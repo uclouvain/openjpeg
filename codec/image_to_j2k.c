@@ -300,7 +300,7 @@ int main(int argc, char **argv)
   Dim[1] = 0;
   TX0 = 0;
   TY0 = 0;
-  cp.comment = NULL;
+  cp.comment = "Created by OpenJPEG version 0.9";
   cp.disto_alloc = 0;
   cp.fixed_alloc = 0;
   cp.fixed_quality = 0;		//add fixed_quality
@@ -876,6 +876,7 @@ int main(int argc, char **argv)
   }
 
   /* Free memory */
+  free(img.comps);
   free(cp_init.tcps);
   if (tcp_init->numlayers > 9) free(cp.matrice);
   for (tileno = 0; tileno < cp.tw * cp.th; tileno++)
