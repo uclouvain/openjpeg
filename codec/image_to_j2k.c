@@ -87,7 +87,7 @@ void help_display()
   printf
     ("-i             : source file  (-i source.pnm also *.pgm, *.ppm) required\n");
   printf("\n");
-  printf("-o             : destination file (-o dest.j2k) required\n");
+  printf("-o             : destination file (-o dest.j2k or .jp2) required\n");
   printf("\n");
   printf("-help          : Display the help information optional\n ");
   printf("\n");
@@ -276,6 +276,9 @@ int main(int argc, char **argv)
   int ir = 0;
   int res_spec = 0;		/*   For various precinct sizes specification                 */
   char sep;
+  char *outbuf;
+  FILE *f;
+
 
   /* default value */
   /* ------------- */
@@ -307,6 +310,8 @@ int main(int argc, char **argv)
   cp_init.tcps = (j2k_tcp_t *) malloc(sizeof(j2k_tcp_t));	/* initialisation if only one tile */
   tcp_init = &cp_init.tcps[0];
   tcp_init->numlayers = 0;
+
+  cp.intermed_file=1;
 
   while (1) {
     int c = getopt(argc, argv,
@@ -358,6 +363,29 @@ int main(int argc, char **argv)
       /* ----------------------------------------------------- */
     case 'o':			/* OUT fill */
       outfile = optarg;
+      while (*outfile) {
+	outfile++;
+      }
+      outfile--;
+      S3 = *outfile;
+      outfile--;
+      S2 = *outfile;
+      outfile--;
+      S1 = *outfile;
+      
+      outfile = optarg;
+      
+      if ((S1 == 'j' && S2 == '2' && S3 == 'k') || (S1 == 'J' && S2 == '2' && S3 == 'K'))
+	cp.JPEG2000_format=0;
+      else if ((S1 == 'j' && S2 == 'p' && S3 == '2') || (S1 == 'J' && S2 == 'P' && S3 == '2'))
+	cp.JPEG2000_format=1;
+      else    {
+	fprintf(stderr,"Unknown output format image *.%c%c%c [only *.j2k, *.jp2]!! \n",S1,S2,S3);
+	return 1;
+      }
+      
+      
+      
       break;
       /* ----------------------------------------------------- */
     case 'r':			/* rates rates/distorsion */
@@ -577,7 +605,7 @@ int main(int argc, char **argv)
   /* -------------- */
   if (!infile || !outfile) {
     fprintf(stderr,
-	    "usage: image_to_j2k -i image-file -o j2k-file (+ options)\n");
+	    "usage: image_to_j2k -i image-file -o j2k/jp2-file (+ options)\n");
     return 1;
   }
 
@@ -763,10 +791,66 @@ int main(int argc, char **argv)
     }
   }
 
-  len = j2k_encode(&img, &cp, outfile, cp.tdx * cp.tdy * 2, index);
-  if (len == 0) {
-    fprintf(stderr, "failed to encode image\n");
-    return 1;
+  if (cp.JPEG2000_format==0) {	      /* J2K format output */
+    if (cp.intermed_file==1) {	      /* After the encoding of each tile, j2k_encode 
+					 stores the data in the file*/
+      len = j2k_encode(&img, &cp, outfile, cp.tdx * cp.tdy * 2, index);
+      if (len == 0) {
+	fprintf(stderr, "failed to encode image\n");
+	return 1;
+      }
+    }
+    else {
+      outbuf = (char *) malloc( cp.tdx * cp.tdy * 2);
+      cio_init(outbuf, cp.tdx * cp.tdy * 2);							 
+      len = j2k_encode(&img, &cp, outbuf, cp.tdx * cp.tdy * 2, index); 
+      if (len == 0) {
+	fprintf(stderr, "failed to encode image\n");
+	return 1;
+      }
+      f = fopen(outfile, "wb");	
+      if (!f) {					
+	fprintf(stderr, "failed to open %s for writing\n", outfile);	
+	return 1;				
+      }   
+      fwrite(outbuf, 1, len, f);
+      free(outbuf);
+      fclose(f);
+    }
+  }
+  else			       /* JP2 format output */
+  {
+    jp2_struct_t * jp2_struct;
+    jp2_struct = (jp2_struct_t *) malloc(sizeof(jp2_struct_t));
+    jp2_struct->image = &img;
+        
+    /* Initialising the standard JP2 box content*/
+    /* If you wish to modify those boxes, you have to modify the jp2_struct content*/ 
+    if (jp2_init_stdjp2(jp2_struct, &img))
+    {
+      fprintf(stderr,"Error with jp2 initialization");
+      return 1;
+    };
+
+    if (cp.intermed_file==1) {	      
+      /*For the moment, JP2 format does not use intermediary files for each tile*/
+      cp.intermed_file=0;
+    }
+    outbuf = (char *) malloc( cp.tdx * cp.tdy * 2);
+    cio_init(outbuf, cp.tdx * cp.tdy * 2);    
+    len = jp2_encode(jp2_struct, &cp, outbuf, index);
+    if (len == 0) {
+      fprintf(stderr, "failed to encode image\n");
+      return 1;
+    }
+    f = fopen(outfile, "wb");	
+    if (!f) {					
+      fprintf(stderr, "failed to open %s for writing\n", outfile);	
+      return 1;				
+    }
+    fwrite(outbuf, 1, len, f);
+    free(outbuf);
+    fclose(f);
   }
 
   /* Remove the temporary files */
