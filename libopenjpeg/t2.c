@@ -237,14 +237,7 @@ int t2_encode_packet(tcd_tile_t * tile, j2k_tcp_t * tcp, int compno, int resno, 
 		for (cblkno = 0; cblkno < prc->cw * prc->ch; cblkno++) {
 			tcd_cblk_t *cblk = &prc->cblks[cblkno];
 			tcd_layer_t *layer = &cblk->layers[layno];
-			if (!layer->numpasses) {	/* ADD for index Cfr. Marcela --> delta disto by packet */
-				if (info_IM->index_write && info_IM->index_on) {
-					info_tile *info_TL = &info_IM->tile[tileno];
-					info_packet *info_PK = &info_TL->packet[info_IM->num];
-					info_PK->disto += layer->disto;
-					if (info_IM->D_max < info_PK->disto)
-						info_IM->D_max = info_PK->disto;
-				}			/* </ADD> */
+			if (!layer->numpasses) {
 				continue;
 			}
 			if (c + layer->len > dest + len) {
