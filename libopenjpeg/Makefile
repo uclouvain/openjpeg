@@ -54,9 +54,10 @@ $(OBJ_DIR)/t2.o:	t2.c t2.h tcd.h bio.h j2k.h pi.h tgt.h int.h cio.h
 $(OBJ_DIR)/tcd.o:	tcd.c tcd.h int.h t1.h t2.h dwt.h mct.h
 $(OBJ_DIR)/tgt.o:	tgt.c tgt.h bio.h
 $(OBJ_DIR)/jpt.o:       jpt.c jpt.h cio.h
+$(OBJ_DIR)/jp2.o:	jp2.c jp2.h
 
 COM_OBJS = $(addprefix $(OBJ_DIR)/, j2k.o bio.o cio.o dwt.o fix.o int.o mct.o \
-	   mqc.o pi.o t1.o t2.o  tgt.o tcd.o raw.o jpt.o)
+	   mqc.o pi.o t1.o t2.o  tgt.o tcd.o raw.o jpt.o jp2.o)
 
 $(LIB_DIR)/libopenjpeg.a: ${COM_OBJS}
 	$(AR) -sr $@ $^
