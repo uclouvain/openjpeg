@@ -269,6 +269,7 @@ int pi_next_rpcl(pi_iterator_t * pi)
 	     pi->compno < pi->poc.compno1; pi->compno++) {
 	  int levelno;
 	  int trx0, try0;
+	  int trx1, try1;// Add antonin pcrl
 	  int rpx, rpy;
 	  int prci, prcj;
 	  comp = &pi->comps[pi->compno];
@@ -279,6 +280,8 @@ int pi_next_rpcl(pi_iterator_t * pi)
 	  levelno = comp->numresolutions - 1 - pi->resno;
 	  trx0 = int_ceildiv(pi->tx0, comp->dx << levelno);
 	  try0 = int_ceildiv(pi->ty0, comp->dy << levelno);
+	  trx1 = int_ceildiv(pi->tx1, comp->dx << levelno);// Add antonin pcrl
+	  try1 = int_ceildiv(pi->ty1, comp->dy << levelno);// Add antonin pcrl
 	  rpx = res->pdx + levelno;
 	  rpy = res->pdy + levelno;
 	  if (!
@@ -294,6 +297,10 @@ int pi_next_rpcl(pi_iterator_t * pi)
 
 	  //Add Antonin : sizebug1
 	  if ((res->pw==0)||(res->pw==0)) continue;
+	  //ddA
+
+	  //Add Antonin : pcrl
+	  if ((trx0==trx1)||(try0==try1)) continue;
 	  //ddA
 
 	  prci =
@@ -358,62 +365,69 @@ int pi_next_pcrl(pi_iterator_t * pi)
     }
   }
   for (pi->y = pi->ty0; pi->y < pi->ty1;
-       pi->y += pi->dy - (pi->y % pi->dy)) {
+  pi->y += pi->dy - (pi->y % pi->dy)) {
     for (pi->x = pi->tx0; pi->x < pi->tx1;
-	 pi->x += pi->dx - (pi->x % pi->dx)) {
+    pi->x += pi->dx - (pi->x % pi->dx)) {
       for (pi->compno = pi->poc.compno0;
-	   pi->compno < pi->poc.compno1; pi->compno++) {
+      pi->compno < pi->poc.compno1; pi->compno++) {
 	comp = &pi->comps[pi->compno];
 	for (pi->resno = pi->poc.resno0;
-	     pi->resno < int_min(pi->poc.resno1,
-				 comp->numresolutions); pi->resno++) {
+	pi->resno < int_min(pi->poc.resno1,
+	  comp->numresolutions); pi->resno++) {
 	  int levelno;
 	  int trx0, try0;
+	  int trx1, try1;// Add antonin pcrl
 	  int rpx, rpy;
 	  int prci, prcj;
 	  res = &comp->resolutions[pi->resno];
 	  levelno = comp->numresolutions - 1 - pi->resno;
 	  trx0 = int_ceildiv(pi->tx0, comp->dx << levelno);
 	  try0 = int_ceildiv(pi->ty0, comp->dy << levelno);
+	  trx1 = int_ceildiv(pi->tx1, comp->dx << levelno);// Add antonin pcrl
+	  try1 = int_ceildiv(pi->ty1, comp->dy << levelno);// Add antonin pcrl
 	  rpx = res->pdx + levelno;
 	  rpy = res->pdy + levelno;
 	  if (!
-	      (pi->x % (comp->dx << rpx) == 0
-	       || (pi->x == pi->tx0 && (trx0 << levelno) % (1 << rpx)))) {
+	    (pi->x % (comp->dx << rpx) == 0
+	    || (pi->x == pi->tx0 && (trx0 << levelno) % (1 << rpx)))) {
 	    continue;
 	  }
 	  if (!
-	      (pi->y % (comp->dy << rpy) == 0
-	       || (pi->y == pi->ty0 && (try0 << levelno) % (1 << rpx)))) {
+	    (pi->y % (comp->dy << rpy) == 0
+	    || (pi->y == pi->ty0 && (try0 << levelno) % (1 << rpx)))) {
 	    continue;
 	  }
-
+	  
 	  //Add Antonin : sizebug1
 	  if ((res->pw==0)||(res->pw==0)) continue;
 	  //ddA
 
+	  //Add Antonin : pcrl
+	  if ((trx0==trx1)||(try0==try1)) continue;
+	  //ddA
+	  
 	  prci =
 	    int_floordivpow2(int_ceildiv
-			     (pi->x, comp->dx << levelno),
-			     res->pdx) - int_floordivpow2(trx0, res->pdx);
+	    (pi->x, comp->dx << levelno),
+	    res->pdx) - int_floordivpow2(trx0, res->pdx);
 	  prcj =
 	    int_floordivpow2(int_ceildiv
-			     (pi->y, comp->dy << levelno),
-			     res->pdy) - int_floordivpow2(try0, res->pdy);
+	    (pi->y, comp->dy << levelno),
+	    res->pdy) - int_floordivpow2(try0, res->pdy);
 	  pi->precno = prci + prcj * res->pw;
 	  for (pi->layno = 0; pi->layno < pi->poc.layno1; pi->layno++) {
 	    if (!pi->
-		include[pi->layno * pi->step_l +
-			pi->resno * pi->step_r +
-			pi->compno * pi->step_c +
-			pi->precno * pi->step_p]) {
+	      include[pi->layno * pi->step_l +
+	      pi->resno * pi->step_r +
+	      pi->compno * pi->step_c +
+	      pi->precno * pi->step_p]) {
 	      pi->include[pi->layno * pi->step_l +
-			  pi->resno * pi->step_r +
-			  pi->compno * pi->step_c +
-			  pi->precno * pi->step_p] = 1;
+		pi->resno * pi->step_r +
+		pi->compno * pi->step_c +
+		pi->precno * pi->step_p] = 1;
 	      return 1;
 	    }
-	  skip:;
+skip:;
 	  }
 	}
       }
@@ -460,12 +474,15 @@ int pi_next_cprl(pi_iterator_t * pi)
 				 comp->numresolutions); pi->resno++) {
 	  int levelno;
 	  int trx0, try0;
+	  int trx1, try1;// Add antonin pcrl
 	  int rpx, rpy;
 	  int prci, prcj;
 	  res = &comp->resolutions[pi->resno];
 	  levelno = comp->numresolutions - 1 - pi->resno;
 	  trx0 = int_ceildiv(pi->tx0, comp->dx << levelno);
 	  try0 = int_ceildiv(pi->ty0, comp->dy << levelno);
+	  trx1 = int_ceildiv(pi->tx1, comp->dx << levelno);// Add antonin pcrl
+	  try1 = int_ceildiv(pi->ty1, comp->dy << levelno);// Add antonin pcrl
 	  rpx = res->pdx + levelno;
 	  rpy = res->pdy + levelno;
 	  if (!
@@ -481,6 +498,10 @@ int pi_next_cprl(pi_iterator_t * pi)
 
 	  //Add Antonin : sizebug1
 	  if ((res->pw==0)||(res->pw==0)) continue;
+	  //ddA
+
+	  //Add Antonin : pcrl
+	  if ((trx0==trx1)||(try0==try1)) continue;
 	  //ddA
 
 	  prci =

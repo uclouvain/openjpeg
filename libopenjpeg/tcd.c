@@ -64,8 +64,8 @@ void tcd_dump(tcd_image_t * img, int curtileno)
   fprintf(stderr, "image {\n"); 
   fprintf(stderr, "  tw=%d, th=%d x0=%d x1=%d y0=%d y1=%d\n", img->tw, img->th,
 	  tcd_img->x0, tcd_img->x1, tcd_img->y0, tcd_img->y1);
-  for (tileno = 0; tileno < 1; tileno++) {
-    tcd_tile_t *tile = &tcd_image.tiles[curtileno];
+  for (tileno = 0; tileno < img->th*img->tw; tileno++) {
+    tcd_tile_t *tile = &tcd_image.tiles[tileno];
      fprintf(stderr, "  tile {\n"); 
      fprintf(stderr, "    x0=%d, y0=%d, x1=%d, y1=%d, numcomps=%d\n", tile->x0, tile->y0, tile->x1, tile->y1, tile->numcomps); 
     for (compno = 0; compno < tile->numcomps; compno++) {

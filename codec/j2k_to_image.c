@@ -48,14 +48,13 @@ int main(int argc, char **argv)
 
   j2k_cp_t cp;
   int w, wr, wrr, h, hr, hrr, max;
-  int i, image_type = -1, compno, pad,j;
+  int i, image_type = -1, compno, pad, j;
   int adjust;
-  jp2_struct_t * jp2_struct;
+  jp2_struct_t *jp2_struct;
 
   if (argc < 3) {
     fprintf(stderr,
-	    "usage: %s j2k-file image-file [-reduce n]\n",
-	    argv[0]);
+	    "usage: %s j2k-file image-file [-reduce n]\n", argv[0]);
     return 1;
   }
 
@@ -141,38 +140,46 @@ int main(int argc, char **argv)
   S1 = *src_name;
 
   /* J2K format */
-  if ((S1 == 'j' && S2 == '2' && S3 == 'k') || (S1 == 'J' && S2 == '2' && S3 == 'K')) {
-
+  if ((S1 == 'j' && S2 == '2' && S3 == 'k')
+      || (S1 == 'J' && S2 == '2' && S3 == 'K') || (S1 == 'j' && S2 == '2'
+						   && S3 == 'c')
+      || (S1 == 'J' && S2 == '2' && S3 == 'C')) {
     if (!j2k_decode(src, len, &img, &cp)) {
       fprintf(stderr, "j2k_to_image: failed to decode image!\n");
       return 1;
     }
   }
+
   /* JP2 format */
-  else if ((S1 == 'j' && S2 == 'p' && S3 == '2') || (S1 == 'J' && S2 == 'P' && S3 == '2')) {
+  else if ((S1 == 'j' && S2 == 'p' && S3 == '2')
+	   || (S1 == 'J' && S2 == 'P' && S3 == '2')) {
     jp2_struct = (jp2_struct_t *) malloc(sizeof(jp2_struct_t));
 
-    jp2_struct->image=&img;
+    jp2_struct->image = &img;
 
-    if (jp2_decode(src,len,jp2_struct,&cp)) {
+    if (jp2_decode(src, len, jp2_struct, &cp)) {
       fprintf(stderr, "j2k_to_image: failed to decode image!\n");
       return 1;
     }
     /* Insert code here if you want to create actions on jp2_struct before deleting it */
     free(jp2_struct);
   }
+
   /* JPT format */
-  else if ((S1 == 'j' && S2 == 'p' && S3 == 't') || (S1 == 'J' && S2 == 'P' && S3 == 'T')){
-      if (!j2k_decode_jpt_stream(src, len, &img, &cp)) {
-	fprintf(stderr, "j2k_to_image: failed to decode image!\n");
-	return 1;
-      }
-    else {
-      fprintf(stderr,
-	      "j2k_to_image : Unknown format image *.%c%c%c [only *.j2k, *.jp2 or *.jpt]!! \n",
-	      S1, S2, S3);
+  else if ((S1 == 'j' && S2 == 'p' && S3 == 't')
+	   || (S1 == 'J' && S2 == 'P' && S3 == 'T')) {
+    if (!j2k_decode_jpt_stream(src, len, &img, &cp)) {
+      fprintf(stderr, "j2k_to_image: failed to decode image!\n");
       return 1;
     }
+  }
+
+  /* otherwise : error */
+  else {
+    fprintf(stderr,
+	    "j2k_to_image : Unknown format image *.%c%c%c [only *.j2k, *.jp2, *.jpc or *.jpt]!! \n",
+	    S1, S2, S3);
+    return 1;
   }
 
   free(src);
@@ -305,43 +312,44 @@ int main(int argc, char **argv)
       j2k_comp_t *comp = &img.comps[compno];
       char name[256];
 
-      int nbytes=0;
+      int nbytes = 0;
       //if (img.numcomps > 1)
-	sprintf(name, "%s-%d.pgx", argv[2], compno);
+      sprintf(name, "%s-%d.pgx", argv[2], compno);
 
       //else
 
-	//sprintf(name, "%s.pgx", argv[2]);
+      //sprintf(name, "%s.pgx", argv[2]);
 
       f = fopen(name, "wb");
       // w = ceildiv(img.x1 - img.x0, comp->dx);
       // wr = ceildiv(int_ceildivpow2(img.x1 - img.x0,img.factor), comp->dx);
       w = img.comps[compno].w;
-      wr = int_ceildivpow2(img.comps[compno].w,
-			   img.comps[compno].factor);
+      wr = int_ceildivpow2(img.comps[compno].w, img.comps[compno].factor);
 
       // h = ceildiv(img.y1 - img.y0, comp->dy);
       // hr = ceildiv(int_ceildivpow2(img.y1 - img.y0,img.factor), comp->dy);
       h = img.comps[compno].h;
-      hr = int_ceildivpow2(img.comps[compno].h,
-			   img.comps[compno].factor);
+      hr = int_ceildivpow2(img.comps[compno].h, img.comps[compno].factor);
 
       fprintf(f, "PG ML %c %d %d %d\n", comp->sgnd ? '-' : '+',
 	      comp->prec, wr, hr);
 
-      if (comp->prec <= 8) nbytes=1;
+      if (comp->prec <= 8)
+	nbytes = 1;
 
-      else if (comp->prec <= 16) nbytes=2;
+      else if (comp->prec <= 16)
+	nbytes = 2;
 
-      else nbytes=4;
+      else
+	nbytes = 4;
       for (i = 0; i < wr * hr; i++) {
 	int v = img.comps[compno].data[i / wr * w + i % wr];
 
-	for (j=nbytes-1 ; j>=0 ; j--) {
+	for (j = nbytes - 1; j >= 0; j--) {
 
-          char byte=(char)(v>>(j*8));
+	  char byte = (char) (v >> (j * 8));
 
-          fwrite(&byte, 1, 1, f);
+	  fwrite(&byte, 1, 1, f);
 
 	}
       }
@@ -530,7 +538,7 @@ int main(int argc, char **argv)
       // fprintf(f, "%c", img.comps[0].data[w * h - ((i) / (w) + 1) * w + (i) % (w)]);
       fprintf(f, "%c",
 	      img.comps[0].data[w * hr - ((i) / (wr) + 1) * w +
-				 (i) % (wr)]);
+				(i) % (wr)]);
       /*if (((i + 1) % w == 0 && w % 2))
          fprintf(f, "%c", 0); */
       if ((i + 1) % wr == 0) {
