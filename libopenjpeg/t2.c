@@ -666,23 +666,29 @@ int t2_decode_packets(unsigned char *src, int len, j2k_image_t * img,
 
   for (pino = 0; pino <= cp->tcps[tileno].numpocs; pino++) {
     while (pi_next(&pi[pino])) {
-      e = t2_decode_packet(c, src + len - c, tile, cp,
-			   &cp->tcps[tileno], pi[pino].compno,
-			   pi[pino].resno, pi[pino].precno,
-			   pi[pino].layno);
-
+      
+      if ((cp->layer==0) || (cp->layer>=((pi[pino].layno)+1))) {
+	e = t2_decode_packet(c, src + len - c, tile, cp,
+	  &cp->tcps[tileno], pi[pino].compno,
+	  pi[pino].resno, pi[pino].precno,
+	  pi[pino].layno);
+      } else {
+	e = 0;
+      }
+      
       /* progression in resolution */
       img->comps[pi[pino].compno].resno_decoded =
 	e > 0 ? int_max(pi[pino].resno,
-			img->comps[pi[pino].compno].
-			resno_decoded) : img->comps[pi[pino].
-						    compno].resno_decoded;
+	img->comps[pi[pino].compno].
+	resno_decoded) : img->comps[pi[pino].
+	compno].resno_decoded;
       n++;
-
+      
       if (e == -999) {		/* ADD */
 	break;
-      } else
+      } else {
 	c += e;
+      }
     }
 
     /* FREE space memory taken by pi */

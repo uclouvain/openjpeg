@@ -75,10 +75,10 @@ void usage_display(char *prgm)
   fprintf(stdout,"    image resolution is effectively divided by 2 to the power of the\n");
   fprintf(stdout,"    number of discarded levels. The reduce factor is limited by the\n");
   fprintf(stdout,"    smallest total number of decomposition levels among tiles.\n");
-  //fprintf(stdout,"  -l <number of quality layers to decode>\n");
-  //fprintf(stdout,"    Set the maximum number of quality layers to decode. If there are\n");
-  //fprintf(stdout,"    less quality layers than the specified number, all the quality layers\n");
-  //fprintf(stdout,"    are decoded.\n");
+  fprintf(stdout,"  -l <number of quality layers to decode>\n");
+  fprintf(stdout,"    Set the maximum number of quality layers to decode. If there are\n");
+  fprintf(stdout,"    less quality layers than the specified number, all the quality layers\n");
+  fprintf(stdout,"    are decoded.\n");
   fprintf(stdout,"  -u\n");
   fprintf(stdout,"    print an usage statement\n");
   fprintf(stdout,"\n");
