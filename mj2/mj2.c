@@ -566,6 +566,7 @@ int mj2_read_mdat(mj2_movie_t * movie, unsigned char *src, char *outfile)
   unsigned int i;
   int jp2c_cio_len, jp2c_len, pos_correction = 0;
   FILE *f=NULL;
+  int compno;
 
   mj2_box_t box;
 
@@ -636,6 +637,10 @@ int mj2_read_mdat(mj2_movie_t * movie, unsigned char *src, char *outfile)
 	  return 1;
 
 	j2k_dec_release();
+
+	for (compno=0; compno < img.numcomps; compno++)
+	  free(img.comps[compno].data);
+
 
 	if (cio_tell() + 8 != jp2c_len) {
 	  fprintf(stderr, "Error with JP2C Box Size\n");
