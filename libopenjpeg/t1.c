@@ -670,9 +670,7 @@ void t1_decode_cblk(tcd_cblk_t * cblk, int orient, int roishift,
   int w, h;
   int bpno, passtype;
   int segno, passno;
-  /* add TONY */
-  char type = T1_TYPE_MQ;
-  /* dda */
+  char type = T1_TYPE_MQ; //BYPASS mode
 
   for (i = 0; i < sizeof(t1_data) / sizeof(int); i++)
     ((int *) t1_data)[i] = 0;
@@ -691,19 +689,19 @@ void t1_decode_cblk(tcd_cblk_t * cblk, int orient, int roishift,
 
   for (segno = 0; segno < cblk->numsegs; segno++) {
     tcd_seg_t *seg = &cblk->segs[segno];
-
-    /* add TONY */
+    
+    // Add BYPASS mode 
     type = ((bpno <= (cblk->numbps - 1) - 4) && (passtype < 2)
-	    && (cblksty & J2K_CCP_CBLKSTY_LAZY)) ? T1_TYPE_RAW :
-      T1_TYPE_MQ;
-    if (type == T1_TYPE_RAW)
+      && (cblksty & J2K_CCP_CBLKSTY_LAZY)) ? T1_TYPE_RAW :
+    T1_TYPE_MQ;
+    if (type == T1_TYPE_RAW) 
       raw_init_dec(seg->data, seg->len);
     else
       mqc_init_dec(seg->data, seg->len);
-    /* dda */
-
+    // ddA
+    
     if (bpno==0) cblk->lastbp=1;  // Add Antonin : quantizbug1
-
+    
     for (passno = 0; passno < seg->numpasses; passno++) {
       switch (passtype) {
       case 0:
@@ -716,10 +714,14 @@ void t1_decode_cblk(tcd_cblk_t * cblk, int orient, int roishift,
 	t1_dec_clnpass(w, h, bpno, orient, cblksty);
 	break;
       }
-
-      if ((cblksty & J2K_CCP_CBLKSTY_RESET) && type == T1_TYPE_MQ)
-	mqc_reset_enc();
-
+      
+      if ((cblksty & J2K_CCP_CBLKSTY_RESET) && type == T1_TYPE_MQ) {
+	mqc_resetstates();
+	mqc_setstate(T1_CTXNO_UNI, 0, 46);
+	mqc_setstate(T1_CTXNO_AGG, 0, 3);
+	mqc_setstate(T1_CTXNO_ZC, 0, 4);
+      }
+      
       if (++passtype == 3) {
 	passtype = 0;
 	bpno--;

@@ -463,8 +463,6 @@ int t2_decode_packet(unsigned char *src, int len, tcd_tile_t * tile,
     c=hd;
   }
 
-  //bio_init_dec(c, src + len - c);
-
   for (bandno = 0; bandno < res->numbands; bandno++) {
     tcd_band_t *band = &res->bands[bandno];
     tcd_precinct_t *prc = &band->precincts[precno];
@@ -479,7 +477,8 @@ int t2_decode_packet(unsigned char *src, int len, tcd_tile_t * tile,
       if (!cblk->numnewpasses)
 	continue;
       if (!cblk->numsegs) {
-	seg = &cblk->segs[cblk->numsegs++];
+	seg = &cblk->segs[0];
+	cblk->numsegs++;
 	cblk->len = 0;
       } else {
 	seg = &cblk->segs[cblk->numsegs - 1];
