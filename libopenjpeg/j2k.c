@@ -495,14 +495,25 @@ void j2k_read_qcx(int compno, int len)
     tccp->stepsizes[bandno].mant = mant;
   }
 
+
+
   /* Add Antonin : if scalar_derived -> compute other stepsizes */
 
+
+
   if (tccp->qntsty==J2K_CCP_QNTSTY_SIQNT) {
+
     for (bandno=1 ; bandno<J2K_MAXBANDS ; bandno++) {
+
       tccp->stepsizes[bandno].expn = ((tccp->stepsizes[0].expn)-((bandno-1)/3)>0)?(tccp->stepsizes[0].expn)-((bandno-1)/3):0;
+
       tccp->stepsizes[bandno].mant = tccp->stepsizes[0].mant;
+
     }
+
   }
+
+
 
   /* ddA */
 }
@@ -705,14 +716,18 @@ void j2k_read_ppm()
     if (Z_ppm == 0) {		/* First PPM marker */
       j2k_cp->ppm_data =
 	(unsigned char *) calloc(N_ppm, sizeof(unsigned char));
+
       j2k_cp->ppm_len = N_ppm;	      //Add antonin : ppmbug1
+
     } else {			/* NON-first PPM marker */
       j2k_cp->ppm_data =
 	(unsigned char *) realloc(j2k_cp->ppm_data,
 				  (N_ppm +
 				   j2k_cp->ppm_store) *
 				  sizeof(unsigned char));
+
       j2k_cp->ppm_len = N_ppm + j2k_cp->ppm_store; //Add antonin : ppmbug1
+
     }
 
     for (i = N_ppm; i > 0; i--) {	/* Read packet header */
@@ -741,13 +756,16 @@ void j2k_read_ppt()
     tcp->ppt_data =
       (unsigned char *) calloc(len - 3, sizeof(unsigned char));
     tcp->ppt_store = 0;
+
     tcp->ppt_len = len-3;	//Add antonin : ppmbug1
   } else {			/* NON-first PPT marker */
     tcp->ppt_data =
       (unsigned char *) realloc(tcp->ppt_data,
 				(len - 3 +
 				 tcp->ppt_store) * sizeof(unsigned char));
+
     tcp->ppt_len=len - 3 + tcp->ppt_store;    //Add antonin : ppmbug1
+
   }
 
   j = tcp->ppt_store;
@@ -940,6 +958,7 @@ void j2k_read_eoc()
   for (i = 0; i < j2k_cp->tileno_size; i++) {
     tileno = j2k_cp->tileno[i];
     tcd_decode_tile(j2k_tile_data[tileno], j2k_tile_len[tileno], tileno);
+    free(j2k_tile_data[tileno]);
   }
 
   j2k_state = J2K_STATE_MT;
@@ -955,9 +974,9 @@ LIBJ2K_API int j2k_encode(j2k_image_t * img, j2k_cp_t * cp, char *output,
 			  int len, char *index)
 {
   int tileno, compno, layno, resno, precno, pack_nb;
-  char *dest;
-  FILE *INDEX;
-  FILE *f;
+  char *dest = NULL;
+  FILE *INDEX = NULL;
+  FILE *f = NULL;
 
   if (setjmp(j2k_error)) {
     return 0;
@@ -1415,7 +1434,9 @@ j2k_dec_mstabent_t *j2k_dec_mstab_lookup(int id)
 }
 
 
+
 LIBJ2K_API int j2k_decode(unsigned char *src, int len, j2k_image_t * img,
+
 			  j2k_cp_t * cp)
 {
 
@@ -1424,10 +1445,12 @@ LIBJ2K_API int j2k_decode(unsigned char *src, int len, j2k_image_t * img,
       fprintf(stderr, "WARNING: incomplete bitstream\n");
       return 0;
     }
-    return cio_numbytes();
+    j2k_clean();
+    return cio_numbytes();    /* Correct way of ending j2k_decode */
   }
 
   j2k_img = img;
+
   j2k_cp = cp;
 
   j2k_state = J2K_STATE_MHSOC;
@@ -1477,6 +1500,7 @@ int j2k_decode_jpt_stream(unsigned char *src, int len, j2k_image_t * img,
   }
 
   j2k_img = img;
+
   j2k_cp = cp;
 
   j2k_state = J2K_STATE_MHSOC;
