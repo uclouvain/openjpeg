@@ -31,7 +31,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-//#include <unistd.h>
 
 int ceildiv(int a, int b)
 {
@@ -50,6 +49,7 @@ int main(int argc, char **argv)
   int w, wr, wrr, h, hr, hrr, max;
   int i, image_type = -1, compno, pad;
   int adjust;
+  jp2_struct_t * jp2_struct;
 
   if (argc < 3) {
     fprintf(stderr,
@@ -135,20 +135,31 @@ int main(int argc, char **argv)
   src_name--;
   S1 = *src_name;
 
-  if (S1 == 'j' && S2 == '2' && S3 == 'k') {
+  /* J2K format */
+  if ((S1 == 'j' && S2 == '2' && S3 == 'k') || (S1 == 'J' && S2 == '2' && S3 == 'K')) {
     if (!j2k_decode(src, len, &img, &cp, option)) {
       fprintf(stderr, "j2k_to_image: failed to decode image!\n");
       return 1;
     }
-  } else {
-    if (S1 == 'j' && S2 == 'p' && S3 == 't') {
+  }
+  /* JP2 format */
+  else if ((S1 == 'j' && S2 == 'p' && S3 == '2') || (S1 == 'J' && S2 == 'P' && S3 == '2')) {
+    jp2_struct = (jp2_struct_t *) malloc(sizeof(jp2_struct_t));
+    if (jp2_decode(src,len,jp2_struct,&cp, option)) {
+      fprintf(stderr, "j2k_to_image: failed to decode image!\n");
+      return 1;
+    }
+    img = jp2_struct->image;
+  }
+  /* JPT format */
+  else if ((S1 == 'j' && S2 == 'p' && S3 == 't') || (S1 == 'J' && S2 == 'P' && S3 == 'T')){
       if (!j2k_decode_jpt_stream(src, len, &img, &cp)) {
 	fprintf(stderr, "j2k_to_image: failed to decode image!\n");
 	return 1;
       }
-    } else {
+    else {
       fprintf(stderr,
-	      "j2k_to_image : Unknown format image *.%c%c%c [only *.j2k or *.jpt]!! \n",
+	      "j2k_to_image : Unknown format image *.%c%c%c [only *.j2k, *.jp2 or *.jpt]!! \n",
 	      S1, S2, S3);
       return 1;
     }
