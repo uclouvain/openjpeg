@@ -78,7 +78,6 @@ int jp2_init_stdjp2(jp2_struct_t * jp2_struct, j2k_image_t * img)
 {
   int depth_0, sign, depth, i;
 
-
   jp2_struct->h = img->y1 - img->y0;	// HEIGHT
   jp2_struct->w = img->x1 - img->x0;	// WIDTH
   jp2_struct->numcomps = img->numcomps;	// NC
@@ -415,7 +414,7 @@ int jp2_read_ftyp(jp2_struct_t * jp2_struct)
   jp2_struct->cl =
     (unsigned int *) malloc(jp2_struct->numcl * sizeof(unsigned int));
 
-  for (i = 0; i < jp2_struct->numcl; i++)
+  for (i = 0; i < (int)jp2_struct->numcl; i++)
     jp2_struct->cl[i] = cio_read(4);	/* CLi */
 
   if (cio_tell() - box.init_pos != box.length) {
