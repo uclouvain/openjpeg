@@ -40,115 +40,136 @@
 void help_display()
 {
   printf("HELP\n----\n\n");
-  printf("- the option -help displays the readme.txt file on screen\n\n");
+  printf("- the -h option displays this help information on screen\n\n");
 
 
-  printf("List of parameters for the MJ2 coder :\n");
+  printf("List of parameters for the coder JPEG 2000:\n");
   printf("\n");
-  printf
-    ("- The markers COD and QCD are writed both of two in the main_header and never appear in the tile_header.  The markers in the main header are : SOC SIZ COD QCD COM.\n");
-  printf("\n");
-  printf
-    ("- This coder can encode mega image, a test was made on a 24000x24000 pixels color image.  You need enough disk space memory (twice the original) to encode the image. (i.e. for a 1.5 Gb image you need a minimum of 3Gb of disk memory)\n");
-  printf("\n");
-  printf("REMARKS :\n");
+  printf("REMARKS:\n");
   printf("---------\n");
   printf("\n");
   printf
-    ("* the value of rate enter in the code line is the compression factor !\n");
-  printf("exemple :\n");
+    ("The markers written to the main_header are : SOC SIZ COD QCD COM.\n");
+  printf
+    ("COD and QCD never appear in the tile_header.\n");
   printf("\n");
   printf
-    ("-r 20,10,1 means quality 1 : compress 20x, quality 2 : compress 10x and quality 3 : compress 1x = lossless\n");
+    ("- This coder can encode a mega image, a test was made on a 24000x24000 pixels \n");
+  printf
+    ("color image.  You need enough disk space memory (twice the original) to encode \n");
+  printf
+    ("the image,i.e. for a 1.5 GB image you need a minimum of 3GB of disk memory)\n");
   printf("\n");
-  printf("By default :\n");
+  printf("By default:\n");
   printf("------------\n");
   printf("\n");
-  printf(" * lossless\n");
+  printf(" * Lossless\n");
   printf(" * 1 tile\n");
-  printf(" * size of precinct 2^15 x 2^15 (means 1 precinct)\n");
-  printf(" * size of code-block 64 x 64\n");
-  printf(" * Number of resolution : 6\n");
+  printf(" * Size of precinct : 2^15 x 2^15 (means 1 precinct)\n");
+  printf(" * Size of code-block : 64 x 64\n");
+  printf(" * Number of resolutions: 6\n");
   printf(" * No SOP marker in the codestream\n");
   printf(" * No EPH marker in the codestream\n");
-  printf(" * No sub-sampling in x and y direction\n");
+  printf(" * No sub-sampling in x or y direction\n");
   printf(" * No mode switch activated\n");
-  printf(" * progression order : LRCP\n");
+  printf(" * Progression order: LRCP\n");
   printf(" * No index file\n");
   printf(" * No ROI upshifted\n");
   printf(" * No offset of the origin of the image\n");
   printf(" * No offset of the origin of the tiles\n");
   printf(" * Reversible DWT 5-3\n");
   printf("\n");
-  printf("Parameters :\n");
+  printf("Parameters:\n");
   printf("------------\n");
   printf("\n");
   printf
-    ("-i             : source file  (-i source.pnm also *.pgm, *.ppm) required\n");
+    ("Required Parameters (except with -h):\n");
   printf("\n");
   printf
-    ("-o             : destination file (-o dest.j2k or .jp2) required\n");
-  printf("\n");
-  printf("-help          : Display the help information optional\n ");
-  printf("\n");
-  printf("-r             : different rates (-r 20,10,5) optional\n ");
-  printf("\n");
-  printf("-n             : Number of resolution (-n 3) optional\n");
-  printf("\n");
-  printf("-b             : size of code block (-b 32,32) optional\n");
-  printf("\n");
-  printf("-c             : size of precinct (-c 128,128) optional\n");
-  printf("\n");
-  printf("-t             : size of tile (-t 512,512) optional\n");
+    ("-i           : source file  (-i source.pnm also *.pgm, *.ppm) \n");
   printf("\n");
   printf
-    ("-p             : progression order (-p LRCP) [LRCP, RLCP, RPCL, PCRL, CPRL] optional\n");
+    ("-o           : destination file (-o dest.j2k or .jp2) \n");
   printf("\n");
   printf
-    ("-s             : subsampling factor (-s 2,2) [-s X,Y] optional\n");
+    ("Optional Parameters:\n");
+  printf("\n");
+  printf("-h           : display the help information \n ");
+  printf("\n");
+  printf("-r           : different compression ratios for successive layers (-r 20,10,5)\n ");
+  printf("	         - The rate specified for each quality level is the desired \n");
+  printf("	           compression factor.\n");
+  printf("		   Example: -r 20,10,1 means quality 1: compress 20x, \n");
+  printf("		     quality 2: compress 10x and quality 3: compress lossless\n");
+  printf("\n");
+  printf("               (options -r and -q cannot be used together)\n ");
+  printf("\n");
+
+  printf("-q           : different psnr for successive layers (-q 30,40,50) \n ");
+
+  printf("               (options -r and -q cannot be used together)\n ");
+
+  printf("\n");
+  printf("-n           : number of resolutions (-n 3) \n");
+  printf("\n");
+  printf("-b           : size of code block (-b 32,32) \n");
+  printf("\n");
+  printf("-c           : size of precinct (-c 128,128) \n");
+  printf("\n");
+  printf("-t           : size of tile (-t 512,512) \n");
   printf("\n");
   printf
-    ("-SOP           : write SOP marker before each packet optional\n");
+    ("-p           : progression order (-p LRCP) [LRCP, RLCP, RPCL, PCRL, CPRL] \n");
   printf("\n");
   printf
-    ("-EPH           : write EPH marker after each header packet optional\n");
+    ("-s           : subsampling factor (-s 2,2) [-s X,Y] \n");
+  printf("	     Remark: subsampling bigger than 2 can produce error\n");
   printf("\n");
   printf
-    ("-M             : mode switch (-M 3) [1=BYPASS(LAZY) 2=RESET 4=RESTART(TERMALL) 8=VSC 16=ERTERM(SEGTERM) 32=SEGMARK(SEGSYM)] optional\n");
-  printf
-    ("                    for several mode switch you have to add the value of each mode you want\n");
-  printf
-    ("                    ex : RESTART(4) + RESET(2) + SEGMARK(32) = -M 38\n");
+    ("-SOP         : write SOP marker before each packet \n");
   printf("\n");
   printf
-    ("-x             : Create an index file *.Idx (-x index_name.Idx) optional\n");
+    ("-EPH         : write EPH marker after each header packet \n");
   printf("\n");
   printf
-    ("-ROI:c=%%d,U=%%d : quantization indices upshifted for component c=%%d [%%d = 0,1,2]\n");
+    ("-M           : mode switch (-M 3) [1=BYPASS(LAZY) 2=RESET 4=RESTART(TERMALL)\n");
   printf
-    ("                 with a value of U=%%d [0 <= %%d <= 37] (i.e. -ROI:c=0,U=25) optional\n");
-  printf("\n");
+    ("                 8=VSC 16=ERTERM(SEGTERM) 32=SEGMARK(SEGSYM)] \n");
   printf
-    ("-d             : offset of the origin of the image (-d 150,300) optional\n");
-  printf("\n");
+    ("                 Indicate multiple modes by adding their values. \n");
   printf
-    ("-T             : offset of the origin of the tiles (-T 100,75) optional\n");
-  printf("\n");
-  printf("-I             : Use the irreversible DWT 9-7 (-I) optional\n");
+    ("                 ex: RESTART(4) + RESET(2) + SEGMARK(32) = -M 38\n");
   printf("\n");
   printf
-    ("-W             : Specify image width, height and the dx and dy subsampling of the Cb and Cr components for YUV files (default 352x288 and 420 Cif format)\n");
+    ("-x           : create an index file *.Idx (-x index_name.Idx) \n");
   printf("\n");
   printf
-    ("-F             : Specify video frame rate (set to 25 by default)\n");
+    ("-ROI         : c=%%d,U=%%d : quantization indices upshifted \n");
+  printf
+    ("               for component c=%%d [%%d = 0,1,2]\n");
+  printf
+    ("               with a value of U=%%d [0 <= %%d <= 37] (i.e. -ROI:c=0,U=25) \n");
   printf("\n");
-  printf("IMPORTANT :\n");
+  printf
+    ("-d           : offset of the origin of the image (-d 150,300) \n");
+  printf("\n");
+  printf
+    ("-T           : offset of the origin of the tiles (-T 100,75) \n");
+  printf("\n");
+  printf("-I           : use the irreversible DWT 9-7 (-I) \n");
+  printf("\n");
+  printf("-W           : image width, height and the dx and dy subsampling \n");
+  printf("               of the Cb and Cr components for YUV files \n");
+  printf("               (default is '352,288,2,2' for CIF format's 352x288 and 4:2:0)\n");
+  printf("\n");
+  printf("-F           : video frame rate (set to 25 by default)\n");
+
+  printf("\n");
+  printf("IMPORTANT:\n");
   printf("-----------\n");
   printf("\n");
-  printf("* subsampling bigger than 2 can produce error\n");
-  printf("\n");
-  printf("The index file respect the structure below :\n");
-  printf("---------------------------------------------\n");
+  printf("The index file has the structure below:\n");
+  printf("---------------------------------------\n");
   printf("\n");
   printf("Image_height Image_width\n");
   printf("progression order\n");
@@ -156,16 +177,21 @@ void help_display()
   printf("Components_nb\n");
   printf("Layers_nb\n");
   printf("decomposition_levels\n");
-  printf("Precincts_size_X Precincts_size_Y\n");
+  printf("[Precincts_size_X_res_Nr Precincts_size_Y_res_Nr]...\n");
+  printf("   [Precincts_size_X_res_0 Precincts_size_Y_res_0]\n");
   printf("Main_header_end_position\n");
   printf("Codestream_size\n");
-  printf("Tile0 start_pos end_Theader end_pos\n");
-  printf("Tile1  ''           ''        ''\n");
+  printf("Tile_0 start_pos end_Theader end_pos TotalDisto NumPix MaxMSE\n");
+  printf("Tile_1   ''           ''        ''        ''       ''    ''\n");
   printf("...\n");
-  printf("TileN  ''           ''        ''\n");
-  printf("Tpacket_0 Tile layer res. comp. prec. start_pos end_pos\n");
+  printf("Tile_Nt   ''           ''        ''        ''       ''    ''\n");
+  printf("Tpacket_0 Tile layer res. comp. prec. start_pos end_pos disto\n");
   printf("...\n");
-  printf("Tpacket_M  ''    ''   ''   ''    ''       ''       ''\n");
+  printf("Tpacket_Np ''   ''    ''   ''    ''       ''       ''     ''\n");
+
+  printf("MaxDisto\n");
+
+  printf("TotalDisto\n\n");
 }
 
 int give_progression(char progression[4])
