@@ -43,6 +43,7 @@
 //}
 
 //Mod Antonin : multbug1
+/*
 int fix_mul(int a, int b)
 {
   double tmp= (double) ((int64) a * (int64) b);
@@ -50,5 +51,12 @@ int fix_mul(int a, int b)
   v = (tmp<0)?-v:v;
   return (int) v;
 }
+*/
 //doM
+
+int fix_mul(int a, int b)   // Luke Lee optimized : 11/16/2004
+{
+    int64 temp = (int64) a * (int64) b >> 12;
+    return (int) ((temp >> 1) + (temp & 1)) ;
+}
 
