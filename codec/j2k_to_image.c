@@ -46,7 +46,7 @@ int main(int argc, char **argv)
 	j2k_image_t *img;
 	j2k_cp_t *cp;
 	int w, h, max;
-	int i, image_type = -1, compno;
+	int i, image_type = -1, compno, pad;
 	int adjust;
 
 	if (argc < 3) {
@@ -189,7 +189,9 @@ int main(int argc, char **argv)
 			}
 		      f = fopen(name, "wb");
 		      w = ceildiv(img->x1 - img->x0, img->comps[compno].dx);
+		      // w = ceildiv(int_ceildivpow2(img->x1 - img->x0,img->factor),img->comps[compno].dx);
 		      h = ceildiv(img->y1 - img->y0, img->comps[compno].dy);
+		      // h = ceildiv(int_ceildivpow2(img->y1 - img->y0,img->factor), img->comps[compno].dy);
 		      max =img->comps[compno].prec>8? 255:(1 << img->comps[compno].prec) - 1;
 		      fprintf(f, "P5\n%d %d\n%d\n", w, h, max);
 		      adjust=img->comps[compno].prec>8?img->comps[compno].prec-8:0;
@@ -307,8 +309,12 @@ int main(int argc, char **argv)
 		    G = img->comps[1].data[w * h - ((i) / (w) + 1) * w + (i) % (w)];
 		    B = img->comps[2].data[w * h - ((i) / (w) + 1) * w + (i) % (w)];
 		    fprintf(f, "%c%c%c", B, G, R);
-		    if (((i + 1) % w == 0 && w % 2))
-		      fprintf(f, "%c%c%c", (0) & 0xff, ((0) >> 8) & 0xff, ((0) >> 16) & 0xff);
+
+		    if ((i + 1) % w == 0)
+		      {
+		      for (pad = (3*w)%4?4-(3*w)%4:0 ; pad > 0 ; pad--) /* ADD */
+			fprintf(f, "%c", 0);
+		      }
 		  }
 		fclose(f);
 	      } else 	
