@@ -97,8 +97,8 @@ pi_iterator_t *pi_create(j2k_image_t * img, j2k_cp_t * cp, int tileno)
 	py0 = int_floordivpow2(ry0, res->pdy) << res->pdy;
 	px1 = int_ceildivpow2(rx1, res->pdx) << res->pdx;
 	py1 = int_ceildivpow2(ry1, res->pdy) << res->pdy;
-	res->pw = (px1 - px0) >> res->pdx;
-	res->ph = (py1 - py0) >> res->pdy;
+	res->pw = (rx0==rx1)?0:((px1 - px0) >> res->pdx); //Mod Antonin : sizebug1
+	res->ph = (ry0==ry1)?0:((py1 - py0) >> res->pdy); //Mod Antonin : sizebug1
       }
     }
 
@@ -291,6 +291,11 @@ int pi_next_rpcl(pi_iterator_t * pi)
 	       || (pi->y == pi->ty0 && (try0 << levelno) % (1 << rpx)))) {
 	    continue;
 	  }
+
+	  //Add Antonin : sizebug1
+	  if ((res->pw==0)||(res->pw==0)) continue;
+	  //ddA
+
 	  prci =
 	    int_floordivpow2(int_ceildiv
 			     (pi->x, comp->dx << levelno),
@@ -382,6 +387,11 @@ int pi_next_pcrl(pi_iterator_t * pi)
 	       || (pi->y == pi->ty0 && (try0 << levelno) % (1 << rpx)))) {
 	    continue;
 	  }
+
+	  //Add Antonin : sizebug1
+	  if ((res->pw==0)||(res->pw==0)) continue;
+	  //ddA
+
 	  prci =
 	    int_floordivpow2(int_ceildiv
 			     (pi->x, comp->dx << levelno),
@@ -468,6 +478,11 @@ int pi_next_cprl(pi_iterator_t * pi)
 	       || (pi->y == pi->ty0 && (try0 << levelno) % (1 << rpx)))) {
 	    continue;
 	  }
+
+	  //Add Antonin : sizebug1
+	  if ((res->pw==0)||(res->pw==0)) continue;
+	  //ddA
+
 	  prci =
 	    int_floordivpow2(int_ceildiv
 			     (pi->x, comp->dx << levelno),

@@ -702,15 +702,18 @@ void j2k_read_ppm()
     }
 
     j = j2k_cp->ppm_store;
-    if (Z_ppm == 0)		/* First PPM marker */
+    if (Z_ppm == 0) {		/* First PPM marker */
       j2k_cp->ppm_data =
 	(unsigned char *) calloc(N_ppm, sizeof(unsigned char));
-    else			/* NON-first PPM marker */
+      j2k_cp->ppm_len = N_ppm;	      //Add antonin : ppmbug1
+    } else {			/* NON-first PPM marker */
       j2k_cp->ppm_data =
 	(unsigned char *) realloc(j2k_cp->ppm_data,
 				  (N_ppm +
 				   j2k_cp->ppm_store) *
 				  sizeof(unsigned char));
+      j2k_cp->ppm_len = N_ppm + j2k_cp->ppm_store; //Add antonin : ppmbug1
+    }
 
     for (i = N_ppm; i > 0; i--) {	/* Read packet header */
       j2k_cp->ppm_data[j] = cio_read(1);
@@ -738,11 +741,14 @@ void j2k_read_ppt()
     tcp->ppt_data =
       (unsigned char *) calloc(len - 3, sizeof(unsigned char));
     tcp->ppt_store = 0;
-  } else			/* NON-first PPT marker */
+    tcp->ppt_len = len-3;	//Add antonin : ppmbug1
+  } else {			/* NON-first PPT marker */
     tcp->ppt_data =
       (unsigned char *) realloc(tcp->ppt_data,
 				(len - 3 +
 				 tcp->ppt_store) * sizeof(unsigned char));
+    tcp->ppt_len=len - 3 + tcp->ppt_store;    //Add antonin : ppmbug1
+  }
 
   j = tcp->ppt_store;
   for (i = len - 3; i > 0; i--) {
@@ -972,7 +978,7 @@ LIBJ2K_API int j2k_encode(j2k_image_t * img, j2k_cp_t * cp, char *output,
   /* j2k_dump_cp(j2k_img, j2k_cp); */
 
   /* INDEX >> */
-  info_IM.index_on = j2k_img->index_on;
+  info_IM.index_on = j2k_cp->index_on;
   if (info_IM.index_on) {
     info_IM.tile =
       (info_tile *) malloc(j2k_cp->tw * j2k_cp->th * sizeof(info_tile));

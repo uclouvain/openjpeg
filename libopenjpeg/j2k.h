@@ -74,7 +74,6 @@ typedef struct {
   int x0, y0;			/* XOsiz, YOsiz              */
   int x1, y1;			/* Xsiz, Ysiz                */
   int numcomps;			/* number of components      */
-  int index_on;			/* 0 = no index || 1 = index */
   int color_space;		/* sRGB, Greyscale or YUV */
   j2k_comp_t *comps;		/* image-components          */
 } j2k_image_t;
@@ -120,6 +119,7 @@ typedef struct {
   unsigned char *ppt_data;	/* packet header store there for futur use in t2_decode_packet       */
   int ppt;			/* If ppt == 1 --> there was a PPT marker for the present tile       */
   int ppt_store;		/* Use in case of multiple marker PPT (number of info already store) */
+  int ppt_len;			/* ppmbug1 */
   float distoratio[100];	/* add fixed_quality */
   j2k_tccp_t *tccps;		/* tile-component coding parameters                                  */
 } j2k_tcp_t;
@@ -133,6 +133,7 @@ typedef struct {
   int fixed_quality;		/* add fixed_quality */
   int reduce_on;		/* option reduce is used if reduce = 1 */
   int reduce_value;		/* if option reduce is used -> original dimension divided by 2^value */
+  int index_on;			/* 0 = no index || 1 = index */
   int tx0, ty0;			/* XTOsiz, YTOsiz                    */
   int tdx, tdy;			/* XTsiz, YTsiz                      */
   char *comment;		/* comment for coding                */
@@ -143,6 +144,7 @@ typedef struct {
   int ppm;			/* If ppm == 1 --> there was a PPM marker for the present tile             */
   int ppm_store;		/* Use in case of multiple marker PPM (number of info already store)       */
   int ppm_previous;		/* Use in case of multiple marker PPM (case on non-finished previous info) */
+  int ppm_len;			/* ppmbug1 */
   j2k_tcp_t *tcps;		/* tile coding parameters                                                  */
   int *matrice;			/* Fixed layer                                                             */
 } j2k_cp_t;

@@ -288,7 +288,7 @@ int main(int argc, char **argv)
   cblockh_init = 64;
   cp.tw = 1;
   cp.th = 1;
-  img.index_on = 0;
+  cp.index_on = 0;
   Prog_order = 0;
   numpocs = 0;
   mode = 0;
@@ -491,7 +491,7 @@ int main(int argc, char **argv)
       /* ----------------------------------------------------- */
     case 'x':			/* creation of index file */
       index = optarg;
-      img.index_on = 1;
+      cp.index_on = 1;
       break;
       /* ----------------------------------------------------- */
     case 'p':			/* progression order */

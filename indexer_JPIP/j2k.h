@@ -72,7 +72,6 @@ typedef struct {
   int x0, y0;          /* XOsiz, YOsiz              */
   int x1, y1;          /* Xsiz, Ysiz                */ 
   int numcomps;        /* number of components      */
-  int index_on;        /* 0 = no index || 1 = index */
   j2k_comp_t *comps;   /* image-components          */
 } j2k_image_t;
 
@@ -128,6 +127,7 @@ typedef struct {
   int ppm;                   /* If ppm == 1 --> there was a PPM marker for the present tile             */
   int ppm_store;             /* Use in case of multiple marker PPM (number of info already store)       */
   int ppm_previous;          /* Use in case of multiple marker PPM (case on non-finished previous info) */
+  int index_on;		     /* 0 = no index || 1 = index */
   j2k_tcp_t *tcps;           /* tile coding parameters                                                  */
 } j2k_cp_t;
 

@@ -658,8 +658,8 @@ void tcd_init(j2k_image_t * img, j2k_cp_t * cp)
 	tlprcystart = int_floordivpow2(res->y0, pdy) << pdy;
 	brprcxend = int_ceildivpow2(res->x1, pdx) << pdx;
 	brprcyend = int_ceildivpow2(res->y1, pdy) << pdy;
-	res->pw = (brprcxend - tlprcxstart) >> pdx;
-	res->ph = (brprcyend - tlprcystart) >> pdy;
+	res->pw = (res->x0==res->x1)?0:((brprcxend - tlprcxstart) >> pdx); // Mod Antonin : sizebug1
+	res->ph = (res->y0==res->y1)?0:((brprcyend - tlprcystart) >> pdy); // Mod Antonin : sizebug1
 
 	if (resno == 0) {
 	  tlcbgxstart = tlprcxstart;
