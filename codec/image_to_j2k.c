@@ -686,7 +686,7 @@ int main(int argc, char **argv)
   }
 
   switch (cp.decod_format) {
-  case 0:
+  case PGX_DFMT:
     if (Tile_arg) {
       if (!pgxtoimage
 	  (infile, &img, cp.tdy, subsampling_dx, subsampling_dy, Dim, cp))
@@ -703,14 +703,14 @@ int main(int argc, char **argv)
     }
     break;
 
-  case 1:
+  case PXM_DFMT:
     if (!pnmtoimage(infile, &img, subsampling_dx, subsampling_dy, Dim)) {
       fprintf(stderr, " not a pnm file\n");
       return 1;
     }
     break;
 
-  case 2:
+  case BMP_DFMT:
     if (!bmptoimage(infile, &img, subsampling_dx, subsampling_dy, Dim)) {
       fprintf(stderr, " not a bmp file\n");
       return 1;
