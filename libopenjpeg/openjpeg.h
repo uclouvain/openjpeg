@@ -31,6 +31,7 @@
 
 #include <j2k.h>
 #include <tcd.h>
+#include <jp2.h>
 
 #include <bio.h>
 #include <cio.h>
