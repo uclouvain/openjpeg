@@ -2707,7 +2707,7 @@ int mj2_read_struct(FILE *file, mj2_movie_t * movie) {
     case MJ2_SKIP:
       fsresult = fseek(file,foffset+box.length,SEEK_SET);
       if( fsresult ) {
-	fprintf(stderr, "End of file reached while trying to read SKIP bo\nx" );
+	fprintf(stderr, "End of file reached while trying to read SKIP box\n" );
 	return 1;
       }
       foffset += box.length;
@@ -2716,7 +2716,7 @@ int mj2_read_struct(FILE *file, mj2_movie_t * movie) {
       fprintf(stderr, "Unknown box in MJ2 stream\n");
       fsresult = fseek(file,foffset+box.length,SEEK_SET);
       if( fsresult ) {
-	fprintf(stderr, "End of file reached while trying to read %s box\n", box.type ); 
+	fprintf(stderr, "End of file reached while trying to read end of unknown box\n"); 
 	return 1;
       }      
       foffset += box.length;
