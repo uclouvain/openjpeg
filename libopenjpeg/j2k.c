@@ -934,7 +934,7 @@ void j2k_read_unk()
   fprintf(stderr, "warning: unknown marker\n");
 }
 
-LIBJ2K_API int j2k_encode(j2k_image_t * img, j2k_cp_t * cp, char *outfile,
+LIBJ2K_API int j2k_encode(j2k_image_t * img, j2k_cp_t * cp, char *output,
 			  int len, char *index)
 {
   int tileno, compno, layno, resno, precno, pack_nb;
@@ -946,15 +946,15 @@ LIBJ2K_API int j2k_encode(j2k_image_t * img, j2k_cp_t * cp, char *outfile,
     return 0;
   }
 
-  f = fopen(outfile, "wb");
-
-  if (!f) {
-    fprintf(stderr, "failed to open %s for writing\n", outfile);
-    return 1;
+  if (cp->intermed_file==1) {
+    f = fopen(output, "wb");
+    if (!f) {
+      fprintf(stderr, "failed to open %s for writing\n", output);
+      return 1;
+    }
+    dest = (char *) malloc(len);
+    cio_init(dest, len);
   }
-
-  dest = (char *) malloc(len);
-  cio_init(dest, len);
 
   j2k_img = img;
   j2k_cp = cp;
@@ -991,9 +991,11 @@ LIBJ2K_API int j2k_encode(j2k_image_t * img, j2k_cp_t * cp, char *outfile,
   if (j2k_cp->comment != NULL)
     j2k_write_com();
 
-  /* Writing the main header */
-  pos_correction = cio_tell();
-  fwrite(dest, 1, cio_tell(), f);
+  if (cp->intermed_file==1) {
+    /* Writing the main header */
+    pos_correction = cio_tell();
+    fwrite(dest, 1, cio_tell(), f);
+  }
 
   /* INDEX >> */
   if (info_IM.index_on) {
@@ -1004,12 +1006,14 @@ LIBJ2K_API int j2k_encode(j2k_image_t * img, j2k_cp_t * cp, char *outfile,
 
   for (tileno = 0; tileno < cp->tw * cp->th; tileno++) {
     fprintf(stderr, "\nTile number %d / %d \n", tileno + 1,
-	    cp->tw * cp->th);
-
-    /* new dest for each tile  */
-    free(dest);
-    dest = (char *) malloc(len);
-    cio_init(dest, len);
+      cp->tw * cp->th);
+    
+    if (cp->intermed_file==1) {
+      /* new dest for each tile  */
+      free(dest);
+      dest = (char *) malloc(len);
+      cio_init(dest, len);
+    }
     j2k_curtileno = tileno;
     /* initialisation before tile encoding  */
 
@@ -1061,154 +1065,291 @@ LIBJ2K_API int j2k_encode(j2k_image_t * img, j2k_cp_t * cp, char *outfile,
        unlink("PPT");
        }
      */
-
-    fwrite(dest, 1, cio_tell(), f);
-    pos_correction = cio_tell() + pos_correction;
+    if (cp->intermed_file==1) {
+      fwrite(dest, 1, cio_tell(), f);
+      pos_correction = cio_tell() + pos_correction;
+    }
   }
 
-  free(dest);
-  dest = (char *) malloc(len);
-  cio_init(dest, len);
+  if (cp->intermed_file==1) {
+    free(dest);
+    dest = (char *) malloc(len);
+    cio_init(dest, len);
+  }
 
   j2k_write_eoc();
 
-  fwrite(dest, 1, 2, f);
-  free(dest);
-  /* closing file *.j2k */
-  fclose(f);
+  if (cp->intermed_file==1) {
+    fwrite(dest, 1, 2, f);
+    free(dest);
+    /* closing file *.j2k */
+    fclose(f);
+  }
 
   /* Creation of the index file     */
+
   if (info_IM.index_on) {
+
     double DistoTotal = 0;
+
     info_IM.codestream_size = cio_tell() + pos_correction;	/* Correction 14/4/03 suite rmq de Patrick */
+
     INDEX = fopen(index, "w");
 
+
+
     if (!INDEX) {
+
       fprintf(stderr, "failed to open %s for writing\n", index);
+
       return 1;
+
     }
+
+
 
     fprintf(INDEX, "%d %d\n", info_IM.Im_w, info_IM.Im_h);
+
     fprintf(INDEX, "%d\n", info_IM.Prog);
+
     fprintf(INDEX, "%d %d\n", info_IM.Tile_x, info_IM.Tile_y);
+
     fprintf(INDEX, "%d %d\n", info_IM.tw, info_IM.th);
+
     fprintf(INDEX, "%d\n", info_IM.Comp);
+
     fprintf(INDEX, "%d\n", info_IM.Layer);
+
     fprintf(INDEX, "%d\n", info_IM.Decomposition);
+
     for (resno=info_IM.Decomposition;resno>=0;resno--) {
+
       fprintf(INDEX, "[%d,%d] ", (1<<info_IM.tile[0].pdx[resno]), (1<<info_IM.tile[0].pdx[resno])); //based on tile 0
+
     }
+
     fprintf(INDEX,"\n");
+
     fprintf(INDEX, "%d\n", info_IM.Main_head_end);
+
     fprintf(INDEX, "%d\n", info_IM.codestream_size);
+
     for (tileno = 0; tileno < info_IM.tw * info_IM.th; tileno++) {
+
       fprintf(INDEX, "%4d %9d %9d %9d %9e %9d %9e\n",
+
 	      info_IM.tile[tileno].num_tile,
+
 	      info_IM.tile[tileno].start_pos,
+
 	      info_IM.tile[tileno].end_header,
+
 	      info_IM.tile[tileno].end_pos, info_IM.tile[tileno].distotile, info_IM.tile[tileno].nbpix,
+
 	      info_IM.tile[tileno].distotile / info_IM.tile[tileno].nbpix);
+
     }
+
     for (tileno = 0; tileno < info_IM.tw * info_IM.th; tileno++) {
+
       int start_pos, end_pos;
+
       double disto = 0;
+
       pack_nb = 0;
+
       /* fprintf(INDEX,
+
 	      "pkno tileno layerno resno compno precno start_pos   end_pos       deltaSE        \n");*/
+
       if (info_IM.Prog == 0) {	/* LRCP */
+
 	for (layno = 0; layno < info_IM.Layer; layno++) {
+
 	  for (resno = 0; resno < info_IM.Decomposition + 1; resno++) {
+
 	    for (compno = 0; compno < info_IM.Comp; compno++) {
+
 	      for (precno = 0;
+
 		   precno <
+
 		   info_IM.tile[tileno].pw[resno] * info_IM.tile[tileno].ph[resno];
+
 		   precno++) {
+
 		start_pos = info_IM.tile[tileno].packet[pack_nb].start_pos;
+
 		end_pos = info_IM.tile[tileno].packet[pack_nb].end_pos;
+
 		disto = info_IM.tile[tileno].packet[pack_nb].disto;
+
 		fprintf(INDEX, "%4d %6d %7d %5d %6d %6d %9d %9d %8e\n",
+
 			pack_nb, tileno, layno, resno, compno, precno,
+
 			start_pos, end_pos, disto);
+
 		DistoTotal += disto;
+
 		pack_nb++;
+
 	      }
+
 	    }
+
 	  }
+
 	}
+
       } else if (info_IM.Prog == 1) {	/* RLCP */
+
 	for (resno = 0; resno < info_IM.Decomposition + 1; resno++) {
+
 	  for (layno = 0; layno < info_IM.Layer; layno++) {
+
 	    for (compno = 0; compno < info_IM.Comp; compno++) {
+
 	      for (precno = 0; precno < info_IM.tile[tileno].pw[resno] * info_IM.tile[tileno].ph[resno]; precno++) {
+
 		start_pos = info_IM.tile[tileno].packet[pack_nb].start_pos;
+
 		end_pos = info_IM.tile[tileno].packet[pack_nb].end_pos;
+
 		disto = info_IM.tile[tileno].packet[pack_nb].disto;
+
 		fprintf(INDEX, "%4d %6d %7d %5d %6d %6d %9d %9d %8e\n",
+
 			pack_nb, tileno, layno, resno, compno, precno,
+
 			start_pos, end_pos, disto);
+
 		DistoTotal += disto;
+
 		pack_nb++;
+
 	      }
+
 	    }
+
 	  }
+
 	}
+
       } else if (info_IM.Prog == 2) {	/* RPCL */
+
 	for (resno = 0; resno < info_IM.Decomposition + 1; resno++) {
+
 	  for (precno = 0; precno < info_IM.tile[tileno].pw[resno] * info_IM.tile[tileno].ph[resno]; precno++) {
+
 	    for (compno = 0; compno < info_IM.Comp; compno++) {
+
 	      for (layno = 0; layno < info_IM.Layer; layno++) {
+
 		start_pos = info_IM.tile[tileno].packet[pack_nb].start_pos;
+
 		end_pos = info_IM.tile[tileno].packet[pack_nb].end_pos;
+
 		disto = info_IM.tile[tileno].packet[pack_nb].disto;
+
 		fprintf(INDEX, "%4d %6d %7d %5d %6d %6d %9d %9d %8e\n",
+
 			pack_nb, tileno, layno, resno, compno, precno,
+
 			start_pos, end_pos, disto);
+
 		DistoTotal += disto;
+
 		pack_nb++;
+
 	      }
+
 	    }
+
 	  }
+
 	}
+
       } else if (info_IM.Prog == 3) {	/* PCRL */
+
 	for (precno = 0; precno < info_IM.tile[tileno].pw[resno] * info_IM.tile[tileno].ph[resno]; precno++) {
+
 	  for (compno = 0; compno < info_IM.Comp; compno++) {
+
 	    for (resno = 0; resno < info_IM.Decomposition + 1; resno++) {
+
 	      for (layno = 0; layno < info_IM.Layer; layno++) {
+
 		start_pos = info_IM.tile[tileno].packet[pack_nb].start_pos;
+
 		end_pos = info_IM.tile[tileno].packet[pack_nb].end_pos;
+
 		disto = info_IM.tile[tileno].packet[pack_nb].disto;
+
 		fprintf(INDEX, "%4d %6d %7d %5d %6d %6d %9d %9d %8e\n",
+
 			pack_nb, tileno, layno, resno, compno, precno,
+
 			start_pos, end_pos, disto);
+
 		DistoTotal += disto;
+
 		pack_nb++;
+
 	      }
+
 	    }
+
 	  }
+
 	}
+
       } else {			/* CPRL */
 
+
+
 	for (compno = 0; compno < info_IM.Comp; compno++) {
+
 	  for (precno = 0; precno < info_IM.tile[tileno].pw[resno] * info_IM.tile[tileno].ph[resno]; precno++) {
+
 	    for (resno = 0; resno < info_IM.Decomposition + 1; resno++) {
+
 	      for (layno = 0; layno < info_IM.Layer; layno++) {
+
 		start_pos = info_IM.tile[tileno].packet[pack_nb].start_pos;
+
 		end_pos = info_IM.tile[tileno].packet[pack_nb].end_pos;
+
 		disto = info_IM.tile[tileno].packet[pack_nb].disto;
+
 		fprintf(INDEX, "%4d %6d %7d %5d %6d %6d %9d %9d %8e\n",
+
 			pack_nb, tileno, layno, resno, compno, precno,
+
 			start_pos, end_pos, disto);
+
 		DistoTotal += disto;
+
 		pack_nb++;
+
 	      }
+
 	    }
+
 	  }
+
 	}
+
       }
+
     }
+
     fprintf(INDEX, "SE max : %8e\n", info_IM.D_max);
+
     fprintf(INDEX, "SE total : %.8e\n", DistoTotal);
+
     fclose(INDEX);
+
   }
 
   j2k_clean();
