@@ -112,8 +112,7 @@ int main(int argc, char *argv[]) {
   BOOL derived = TRUE;
 
 #ifndef NO_PACKETS_DECODING
-  fprintf(stdout,"NO_PACKETS_DECODING should be defined in preprocessing. Exiting...\n");
-  return 1;
+  fprintf(stdout,"WARNING:  For best performance, define NO_PACKETS_DECODING in preprocessing.\n");
 #endif
 
   while (TRUE) {
