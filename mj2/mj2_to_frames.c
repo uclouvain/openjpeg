@@ -49,7 +49,7 @@ int main(int argc, char **argv)
 
   if (argc < 3) {
     fprintf(stderr,
-	    "usage: %s j2k-file image-file -reduce n (<- optional)\n",
+	    "usage: %s mj2-file raw_yuv-file -reduce n (<- optional)\n",
 	    argv[0]);
     return 1;
   }
@@ -93,7 +93,7 @@ int main(int argc, char **argv)
 	    "!! Unrecognized format for outfile : %c%c%c [accept only *.yuv] !!\n",
 	    S1, S2, S3);
     fprintf(stderr,
-	    "usage: j2k-file image-file -reduce n (<- optional)\n\n");
+	    "usage: mj2-file raw_yuv-file -reduce n (<- optional)\n\n");
 
     return 1;
   }
@@ -133,7 +133,7 @@ int main(int argc, char **argv)
 	    "mj2_to_frames : Unknown format image *.%c%c%c [only *.mj2]!! \n",
 	    S1, S2, S3);
     fprintf(stderr,
-	    "usage: j2k-file image-file -reduce n (<- optional)\n\n");
+	    "usage: mj2-file raw_yuv-file -reduce n (<- optional)\n\n");
 
     return 1;
   }
