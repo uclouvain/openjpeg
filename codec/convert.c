@@ -203,7 +203,10 @@ int bmptoimage(char *filename, j2k_image_t * img, int subsampling_dx, int subsam
 			W = Info_h.biWidth;
 			H = Info_h.biHeight;
 
-			PAD = 4 - (3 * W) % 4;
+			// PAD = 4 - (3 * W) % 4;
+			// PAD = (PAD == 4) ? 0 : PAD;
+			PAD = (3 * W) % 4 ? 4 - (3 * W) % 4 : 0;
+
 			
 			RGB = (unsigned char *) malloc((3 * W + PAD) * H * sizeof(unsigned char));
 
