@@ -300,7 +300,7 @@ int main(int argc, char **argv)
   Dim[1] = 0;
   TX0 = 0;
   TY0 = 0;
-  cp.comment = NULL;
+  cp.comment = "Created by OpenJPEG version 0.9";
   cp.disto_alloc = 0;
   cp.fixed_alloc = 0;
   cp.fixed_quality = 0;		//add fixed_quality
@@ -801,9 +801,9 @@ int main(int argc, char **argv)
       }
     }
     else {
-      outbuf = (char *) malloc( cp.tdx * cp.tdy * 2);
-      cio_init(outbuf, cp.tdx * cp.tdy * 2);							 
-      len = j2k_encode(&img, &cp, outbuf, cp.tdx * cp.tdy * 2, index); 
+      outbuf = (char *) malloc( cp.tdx * cp.tdy * cp.tw * cp.th * 2); /* Allocate memory for all tiles */
+      cio_init(outbuf, cp.tdx * cp.tdy * cp.tw * cp.th * 2);							 
+      len = j2k_encode(&img, &cp, outbuf, cp.tdx * cp.tdy * cp.tw * cp.th * 2, index); 
       if (len == 0) {
 	fprintf(stderr, "failed to encode image\n");
 	return 1;
@@ -836,8 +836,8 @@ int main(int argc, char **argv)
       /*For the moment, JP2 format does not use intermediary files for each tile*/
       cp.intermed_file=0;
     }
-    outbuf = (char *) malloc( cp.tdx * cp.tdy * 2);
-    cio_init(outbuf, cp.tdx * cp.tdy * 2);    
+    outbuf = (char *) malloc( cp.tdx * cp.tdy * cp.tw * cp.th * 2);
+    cio_init(outbuf, cp.tdx * cp.tdy * cp.tw * cp.th * 2);    
     len = jp2_encode(jp2_struct, &cp, outbuf, index);
     if (len == 0) {
       fprintf(stderr, "failed to encode image\n");
@@ -873,6 +873,14 @@ int main(int argc, char **argv)
       }
     }
   }
+
+  /* Free memory */
+  free(img.comps);
+  free(cp_init.tcps);
+  if (tcp_init->numlayers > 9) free(cp.matrice);
+  for (tileno = 0; tileno < cp.tw * cp.th; tileno++)
+    free(cp.tcps[tileno].tccps);
+  free(cp.tcps);
 
   system("pause");
   return 0;
