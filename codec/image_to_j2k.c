@@ -253,7 +253,9 @@ int main(int argc, char **argv)
   int Prog_order;		/*   progression order (default LRCP)                         */
   char progression[4];
   int numpocs, numpocs_tile;	/*   Number of progression order change (POC) default 0       */
-  int prcw_init, prch_init;	/*   Initialisation precincts' size                           */
+  int prcw_init[J2K_MAXRLVLS];	/*   Initialisation Precinct width                            */
+  int prch_init[J2K_MAXRLVLS];	/*   Initialisation Precinct height                           */
+  //int prcw_init, prch_init;                     /*   Initialisation precincts' size                           */
   int cblockw_init, cblockh_init;	/*   Initialisation codeblocks' size                          */
   int mode, value;		/*   Mode switch (cblk_style)                                 */
   int subsampling_dx, subsampling_dy;	/* subsampling value for dx and dy                    */
@@ -272,6 +274,8 @@ int main(int argc, char **argv)
   char *index = 0;
   char *s, S1, S2, S3;
   int ir = 0;
+  int res_spec = 0;		/*   For various precinct sizes specification                 */
+  char sep;
 
   /* default value */
   /* ------------- */
@@ -418,8 +422,15 @@ int main(int argc, char **argv)
       break;
       /* ----------------------------------------------------- */
     case 'c':			/* precinct dimension */
-      sscanf(optarg, "%d,%d", &prcw_init, &prch_init);
-      CSty |= 0x01;
+      s = optarg;
+      do {
+	sep = 0;
+	sscanf(s, "[%d,%d]%c", &prcw_init[res_spec],
+	       &prch_init[res_spec], &sep);
+	CSty |= 0x01;
+	res_spec++;
+	s = strpbrk(s, "]") + 2;
+      } while (sep == ',');
       break;
       /* ----------------------------------------------------- */
     case 'b':			/* code-block dimension */
@@ -692,23 +703,34 @@ int main(int argc, char **argv)
       else
 	tccp->roishift = 0;
       if (CSty & J2K_CCP_CSTY_PRT) {
+	int p = 0;
+	for (j = tccp->numresolutions - 1; j >= 0; j--) {
+	  if (p < res_spec) {
+	    if (prcw_init[p] < 1)
+	      tccp->prcw[j] = 1;
+	    else
+	      tccp->prcw[j] = int_floorlog2(prcw_init[p]);
 
-	for (j = 0; j < tccp->numresolutions; j++) {
-	  int size_prcw, size_prch;
-	  size_prcw = prcw_init >> (tccp->numresolutions - j - 1);
-	  size_prch = prch_init >> (tccp->numresolutions - j - 1);
-	  if (size_prcw < 1) {
-	    tccp->prcw[j] = 1;
+	    if (prch_init[p] < 1)
+	      tccp->prch[j] = 1;
+	    else
+	      tccp->prch[j] = int_floorlog2(prch_init[p]);
 	  } else {
-	    tccp->prcw[j] =
-	      int_floorlog2(prcw_init >> (tccp->numresolutions - j - 1));
+	    int size_prcw, size_prch;
+	    size_prcw = prcw_init[res_spec - 1] >> (p - (res_spec - 1));
+	    size_prch = prch_init[res_spec - 1] >> (p - (res_spec - 1));
+	    if (size_prcw < 1)
+	      tccp->prcw[j] = 1;
+	    else
+	      tccp->prcw[j] = int_floorlog2(size_prcw);
+	    if (size_prch < 1)
+	      tccp->prch[j] = 1;
+	    else
+	      tccp->prch[j] = int_floorlog2(size_prch);
 	  }
-	  if (size_prch < 1) {
-	    tccp->prch[j] = 1;
-	  } else {
-	    tccp->prch[j] =
-	      int_floorlog2(prch_init >> (tccp->numresolutions - j - 1));
-	  }
+	  p++;
+	  /*printf("\nsize precinct pour level %d : %d,%d\n", j,
+		 tccp->prcw[j], tccp->prch[j]);*/
 	}
       } else {
 	for (j = 0; j < tccp->numresolutions; j++) {
