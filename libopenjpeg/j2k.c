@@ -1079,6 +1079,7 @@ LIBJ2K_API int j2k_encode(j2k_image_t * img, j2k_cp_t * cp, char *outfile,
 
   /* Creation of the index file     */
   if (info_IM.index_on) {
+    double DistoTotal = 0;
     info_IM.codestream_size = cio_tell() + pos_correction;	/* Correction 14/4/03 suite rmq de Patrick */
     INDEX = fopen(index, "w");
 
@@ -1090,43 +1091,45 @@ LIBJ2K_API int j2k_encode(j2k_image_t * img, j2k_cp_t * cp, char *outfile,
     fprintf(INDEX, "%d %d\n", info_IM.Im_w, info_IM.Im_h);
     fprintf(INDEX, "%d\n", info_IM.Prog);
     fprintf(INDEX, "%d %d\n", info_IM.Tile_x, info_IM.Tile_y);
+    fprintf(INDEX, "%d %d\n", j2k_cp->tw, j2k_cp->th);
     fprintf(INDEX, "%d\n", info_IM.Comp);
     fprintf(INDEX, "%d\n", info_IM.Layer);
     fprintf(INDEX, "%d\n", info_IM.Decomposition);
-    fprintf(INDEX, "%d %d\n", info_IM.pdx, info_IM.pdy);
+    for (resno=info_IM.Decomposition;resno>=0;resno--) {
+      fprintf(INDEX, "[%d,%d] ", (1<<info_IM.tile[0].pdx[resno]), (1<<info_IM.tile[0].pdx[resno])); //based on tile 0
+    }
+    fprintf(INDEX,"\n");
     fprintf(INDEX, "%d\n", info_IM.Main_head_end);
     fprintf(INDEX, "%d\n", info_IM.codestream_size);
-    fprintf(INDEX, "%f\n", info_IM.D_max);
     for (tileno = 0; tileno < j2k_cp->tw * j2k_cp->th; tileno++) {
-      fprintf(INDEX, "%d %d %d %d", info_IM.tile[tileno].num_tile,
+      fprintf(INDEX, "%4d %9d %9d %9d %9e %9d %9e\n",
+	      info_IM.tile[tileno].num_tile,
 	      info_IM.tile[tileno].start_pos,
 	      info_IM.tile[tileno].end_header,
-	      info_IM.tile[tileno].end_pos);
-      /*for (layno=0;layno<info_IM.Layer;layno++)
-         fprintf(INDEX, " %f",info_IM.tile[tileno].thresh[layno]);
-       */ fprintf(INDEX, "\n");
+	      info_IM.tile[tileno].end_pos, info_IM.tile[tileno].distotile, info_IM.tile[tileno].nbpix,
+	      info_IM.tile[tileno].distotile / info_IM.tile[tileno].nbpix);
     }
     for (tileno = 0; tileno < j2k_cp->tw * j2k_cp->th; tileno++) {
+      int start_pos, end_pos;
+      double disto = 0;
       pack_nb = 0;
+      /* fprintf(INDEX,
+	      "pkno tileno layerno resno compno precno start_pos   end_pos       deltaSE        \n");*/
       if (info_IM.Prog == 0) {	/* LRCP */
 	for (layno = 0; layno < info_IM.Layer; layno++) {
 	  for (resno = 0; resno < info_IM.Decomposition + 1; resno++) {
 	    for (compno = 0; compno < info_IM.Comp; compno++) {
 	      for (precno = 0;
 		   precno <
-		   info_IM.tile[tileno].pw *
-		   info_IM.tile[tileno].ph; precno++) {
-		fprintf(INDEX,
-			"%d %d %d %d %d %d %d %d %.08f\n",
-			pack_nb, tileno, layno, resno,
-			compno, precno,
-			info_IM.tile[tileno].
-			packet[pack_nb].start_pos,
-			info_IM.tile[tileno].
-			packet[pack_nb].end_pos,
-			info_IM.tile[tileno].
-			packet[pack_nb].disto / info_IM.D_max);
-		/*fprintf(INDEX, "%d %d %d %d %d %d %d %d\n", pack_nb, tileno, layno, resno, compno, precno, info_IM.tile[tileno].packet[pack_nb].start_pos, info_IM.tile[tileno].packet[pack_nb].end_pos); */
+		   info_IM.tile[tileno].pw[resno] * info_IM.tile[tileno].ph[resno];
+		   precno++) {
+		start_pos = info_IM.tile[tileno].packet[pack_nb].start_pos;
+		end_pos = info_IM.tile[tileno].packet[pack_nb].end_pos;
+		disto = info_IM.tile[tileno].packet[pack_nb].disto;
+		fprintf(INDEX, "%4d %6d %7d %5d %6d %6d %9d %9d %8e\n",
+			pack_nb, tileno, layno, resno, compno, precno,
+			start_pos, end_pos, disto);
+		DistoTotal += disto;
 		pack_nb++;
 	      }
 	    }
@@ -1136,14 +1139,14 @@ LIBJ2K_API int j2k_encode(j2k_image_t * img, j2k_cp_t * cp, char *outfile,
 	for (resno = 0; resno < info_IM.Decomposition + 1; resno++) {
 	  for (layno = 0; layno < info_IM.Layer; layno++) {
 	    for (compno = 0; compno < info_IM.Comp; compno++) {
-	      for (precno = 0; precno < info_IM.pw * info_IM.ph; precno++) {
-		/* fprintf(INDEX,"%d %d %d %d %d %d %d %d %.04f\n",pack_nb,tileno,layno,resno,compno,precno,info_IM.tile[tileno].packet[pack_nb].start_pos,info_IM.tile[tileno].packet[pack_nb].end_pos,info_IM.tile[tileno].packet[pack_nb].disto/info_IM.D_max); */
-		fprintf(INDEX, "%d %d %d %d %d %d %d %d\n",
-			pack_nb, tileno, layno, resno,
-			compno, precno,
-			info_IM.tile[tileno].
-			packet[pack_nb].start_pos,
-			info_IM.tile[tileno].packet[pack_nb].end_pos);
+	      for (precno = 0; precno < info_IM.tile[tileno].pw[resno] * info_IM.tile[tileno].ph[resno]; precno++) {
+		start_pos = info_IM.tile[tileno].packet[pack_nb].start_pos;
+		end_pos = info_IM.tile[tileno].packet[pack_nb].end_pos;
+		disto = info_IM.tile[tileno].packet[pack_nb].disto;
+		fprintf(INDEX, "%4d %6d %7d %5d %6d %6d %9d %9d %8e\n",
+			pack_nb, tileno, layno, resno, compno, precno,
+			start_pos, end_pos, disto);
+		DistoTotal += disto;
 		pack_nb++;
 	      }
 	    }
@@ -1151,33 +1154,33 @@ LIBJ2K_API int j2k_encode(j2k_image_t * img, j2k_cp_t * cp, char *outfile,
 	}
       } else if (info_IM.Prog == 2) {	/* RPCL */
 	for (resno = 0; resno < info_IM.Decomposition + 1; resno++) {
-	  for (precno = 0; precno < info_IM.pw * info_IM.ph; precno++) {
+	  for (precno = 0; precno < info_IM.tile[tileno].pw[resno] * info_IM.tile[tileno].ph[resno]; precno++) {
 	    for (compno = 0; compno < info_IM.Comp; compno++) {
 	      for (layno = 0; layno < info_IM.Layer; layno++) {
-		/* fprintf(INDEX,"%d %d %d %d %d %d %d %d %.04f\n",pack_nb,tileno,layno,resno,compno,precno,info_IM.tile[tileno].packet[pack_nb].start_pos,info_IM.tile[tileno].packet[pack_nb].end_pos,info_IM.tile[tileno].packet[pack_nb].disto/info_IM.D_max); */
-		fprintf(INDEX, "%d %d %d %d %d %d %d %d\n",
-			pack_nb, tileno, layno, resno,
-			compno, precno,
-			info_IM.tile[tileno].
-			packet[pack_nb].start_pos,
-			info_IM.tile[tileno].packet[pack_nb].end_pos);
+		start_pos = info_IM.tile[tileno].packet[pack_nb].start_pos;
+		end_pos = info_IM.tile[tileno].packet[pack_nb].end_pos;
+		disto = info_IM.tile[tileno].packet[pack_nb].disto;
+		fprintf(INDEX, "%4d %6d %7d %5d %6d %6d %9d %9d %8e\n",
+			pack_nb, tileno, layno, resno, compno, precno,
+			start_pos, end_pos, disto);
+		DistoTotal += disto;
 		pack_nb++;
 	      }
 	    }
 	  }
 	}
       } else if (info_IM.Prog == 3) {	/* PCRL */
-	for (precno = 0; precno < info_IM.pw * info_IM.ph; precno++) {
+	for (precno = 0; precno < info_IM.tile[tileno].pw[resno] * info_IM.tile[tileno].ph[resno]; precno++) {
 	  for (compno = 0; compno < info_IM.Comp; compno++) {
 	    for (resno = 0; resno < info_IM.Decomposition + 1; resno++) {
 	      for (layno = 0; layno < info_IM.Layer; layno++) {
-		/* fprintf(INDEX,"%d %d %d %d %d %d %d %d %.04f\n",pack_nb,tileno,layno,resno,compno,precno,info_IM.tile[tileno].packet[pack_nb].start_pos,info_IM.tile[tileno].packet[pack_nb].end_pos,info_IM.tile[tileno].packet[pack_nb].disto/info_IM.D_max); */
-		fprintf(INDEX, "%d %d %d %d %d %d %d %d\n",
-			pack_nb, tileno, layno, resno,
-			compno, precno,
-			info_IM.tile[tileno].
-			packet[pack_nb].start_pos,
-			info_IM.tile[tileno].packet[pack_nb].end_pos);
+		start_pos = info_IM.tile[tileno].packet[pack_nb].start_pos;
+		end_pos = info_IM.tile[tileno].packet[pack_nb].end_pos;
+		disto = info_IM.tile[tileno].packet[pack_nb].disto;
+		fprintf(INDEX, "%4d %6d %7d %5d %6d %6d %9d %9d %8e\n",
+			pack_nb, tileno, layno, resno, compno, precno,
+			start_pos, end_pos, disto);
+		DistoTotal += disto;
 		pack_nb++;
 	      }
 	    }
@@ -1186,16 +1189,16 @@ LIBJ2K_API int j2k_encode(j2k_image_t * img, j2k_cp_t * cp, char *outfile,
       } else {			/* CPRL */
 
 	for (compno = 0; compno < info_IM.Comp; compno++) {
-	  for (precno = 0; precno < info_IM.pw * info_IM.ph; precno++) {
+	  for (precno = 0; precno < info_IM.tile[tileno].pw[resno] * info_IM.tile[tileno].ph[resno]; precno++) {
 	    for (resno = 0; resno < info_IM.Decomposition + 1; resno++) {
 	      for (layno = 0; layno < info_IM.Layer; layno++) {
-		/*fprintf(INDEX,"%d %d %d %d %d %d %d %d %.04f\n",pack_nb,tileno,layno,resno,compno,precno,info_IM.tile[tileno].packet[pack_nb].start_pos,info_IM.tile[tileno].packet[pack_nb].end_pos,info_IM.tile[tileno].packet[pack_nb].disto/info_IM.D_max); */
-		fprintf(INDEX, "%d %d %d %d %d %d %d %d\n",
-			pack_nb, tileno, layno, resno,
-			compno, precno,
-			info_IM.tile[tileno].
-			packet[pack_nb].start_pos,
-			info_IM.tile[tileno].packet[pack_nb].end_pos);
+		start_pos = info_IM.tile[tileno].packet[pack_nb].start_pos;
+		end_pos = info_IM.tile[tileno].packet[pack_nb].end_pos;
+		disto = info_IM.tile[tileno].packet[pack_nb].disto;
+		fprintf(INDEX, "%4d %6d %7d %5d %6d %6d %9d %9d %8e\n",
+			pack_nb, tileno, layno, resno, compno, precno,
+			start_pos, end_pos, disto);
+		DistoTotal += disto;
 		pack_nb++;
 	      }
 	    }
@@ -1203,6 +1206,8 @@ LIBJ2K_API int j2k_encode(j2k_image_t * img, j2k_cp_t * cp, char *outfile,
 	}
       }
     }
+    fprintf(INDEX, "SE max : %8e\n", info_IM.D_max);
+    fprintf(INDEX, "SE total : %.8e\n", DistoTotal);
     fclose(INDEX);
   }
 
@@ -1347,7 +1352,7 @@ int j2k_decode_jpt_stream(unsigned char *src, int len, j2k_image_t ** img,
       return 0;
     }
     /* data-bin read -> need to read a new header */
-    if ((unsigned int)(cio_tell() - position) == header.Msg_length) {
+    if ((unsigned int) (cio_tell() - position) == header.Msg_length) {
       jpt_read_Msg_Header(&header);
       position = cio_tell();
       if (header.Class_Id != 4) {	/* 4 : Tile data-bin message */

@@ -300,6 +300,7 @@ int main(int argc, char **argv)
   cp.comment = NULL;
   cp.disto_alloc = 0;
   cp.fixed_alloc = 0;
+  cp.fixed_quality = 0;		//add fixed_quality
   /* img.PPT=0; */
 
   Tile_arg = 0;
@@ -309,7 +310,7 @@ int main(int argc, char **argv)
 
   while (1) {
     int c = getopt(argc, argv,
-		   "i:o:r:q:t:n:c:b:x:p:s:d:h:P:S:E:M:R:T:C:I");
+		   "i:o:r:q:f:t:n:c:b:x:p:s:d:h:P:S:E:M:R:T:C:I");
     if (c == -1)
       break;
     switch (c) {
@@ -375,7 +376,24 @@ int main(int argc, char **argv)
       cp.matrice = NULL;
       break;
       /* ----------------------------------------------------- */
-    case 'q':			/* rates fixed */
+    case 'q':			/* add fixed_quality */
+      s = optarg;
+      while (sscanf(s, "%f", &tcp_init->distoratio[tcp_init->numlayers]) ==
+	     1) {
+	tcp_init->numlayers++;
+	while (*s && *s != ',') {
+	  s++;
+	}
+	if (!*s)
+	  break;
+	s++;
+      }
+      cp.fixed_quality = 1;
+      cp.matrice = NULL;
+      break;
+      /* dda */
+      /* ----------------------------------------------------- */
+    case 'f':			/* mod fixed_quality (before : -q) */
       s = optarg;
       sscanf(s, "%d", &tcp_init->numlayers);
       s++;
@@ -563,11 +581,11 @@ int main(int argc, char **argv)
     return 1;
   }
 
-  if (cp.disto_alloc & cp.fixed_alloc) {
+  if (!(cp.disto_alloc ^ cp.fixed_alloc ^ cp.fixed_quality)) {
     fprintf(stderr,
-	    "Error: option -r and -q can not be used together !!\n");
+	    "Error: options -r -q and -f can not be used together !!\n");
     return 1;
-  }
+  } // mod fixed_quality
 
   /* if no rate entered, lossless by default */
   if (tcp_init->numlayers == 0) {
@@ -657,7 +675,10 @@ int main(int argc, char **argv)
     tcp = &cp.tcps[tileno];
     tcp->numlayers = tcp_init->numlayers;
     for (j = 0; j < tcp->numlayers; j++) {
-      tcp->rates[j] = tcp_init->rates[j];
+      if (cp.fixed_quality)   // add fixed_quality
+	tcp->distoratio[j] = tcp_init->distoratio[j];
+      else
+	tcp->rates[j] = tcp_init->rates[j];
     }
     tcp->csty = CSty;
     tcp->prg = Prog_order;
@@ -769,5 +790,6 @@ int main(int argc, char **argv)
     }
   }
 
+  system("pause");
   return 0;
 }

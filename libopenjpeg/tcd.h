@@ -98,12 +98,16 @@ typedef struct {
   int numresolutions;		/* number of resolutions level */
   tcd_resolution_t *resolutions;	/* resolutions information */
   int *data;			/* data of the component */
+  int nbpix;			/* add fixed_quality */
 } tcd_tilecomp_t;
 
 typedef struct {
   int x0, y0, x1, y1;		/* dimension of the tile : left upper corner (x0, y0) right low corner (x1,y1) */
   int numcomps;			/* number of components in tile */
   tcd_tilecomp_t *comps;	/* Components information */
+  int nbpix;			/* add fixed_quality */
+  double distotile;		/* add fixed_quality */
+  double distolayer[100];	/* add fixed_quality */
 } tcd_tile_t;
 
 typedef struct {

@@ -124,6 +124,7 @@ typedef struct {
   unsigned char *ppt_data;	/* packet header store there for futur use in t2_decode_packet       */
   int ppt;			/* If ppt == 1 --> there was a PPT marker for the present tile       */
   int ppt_store;		/* Use in case of multiple marker PPT (number of info already store) */
+  float distoratio[100];	/* add fixed_quality */
   j2k_tccp_t *tccps;		/* tile-component coding parameters                                  */
 } j2k_tcp_t;
 
@@ -131,6 +132,7 @@ typedef struct {
   int image_type;		/* 0: PNM, PGM, PPM 1: PGX           */
   int disto_alloc;		/* Allocation by rate/distortion     */
   int fixed_alloc;		/* Allocation by fixed layer         */
+  int fixed_quality;		/* add fixed_quality */
   int reduce_on;		/* option reduce is used if reduce = 1 */
   int reduce_value;		/* if option reduce is used -> original dimension divided by 2^value */
   int tx0, ty0;			/* XTOsiz, YTOsiz                    */
@@ -158,8 +160,11 @@ typedef struct {
   int start_pos;		/* Start position                                        */
   int end_header;		/* End position of the header                            */
   int end_pos;			/* End position                                          */
-  int pw, ph;			/* number of precinct by tile                            */
+  int pw[33], ph[33];		/* precinct number for each resolution level             */
+  int pdx[33], pdy[33];		/* precinct size (in power of 2), in X and Y for each resolution level */
   info_packet *packet;		/* information concerning packets inside tile            */
+  int nbpix;			/* add fixed_quality                                     */
+  double distotile;		/* add fixed_quality                                     */
 } info_tile;			/* index struct                                          */
 
 typedef struct {
@@ -174,8 +179,8 @@ typedef struct {
   int Comp;			/* Component numbers                                     */
   int Layer;			/* number of layer                                       */
   int Decomposition;		/* number of decomposition                               */
-  int pw, ph;			/* nombre precinct in X and Y                            */
-  int pdx, pdy;			/* size of precinct in X and Y                           */
+  //int pw, ph;			/* nombre precinct in X and Y                            */
+  //int pdx, pdy;			/* size of precinct in X and Y                           */
   int Main_head_end;		/* Main header position                                  */
   int codestream_size;		/* codestream's size                                     */
   info_tile *tile;		/* information concerning tiles inside image             */

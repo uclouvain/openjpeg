@@ -514,24 +514,22 @@ void t1_dec_clnpass(int w, int h, int bpno, int orient, int cblksty)
   }
 }				/* VSC and  BYPASS by Antonin */
 
-double t1_getwmsedec(int nmsedec, int compno, int level, int orient,
-		     int bpno, int qmfbid, double stepsize)
+double t1_getwmsedec(int nmsedec, int compno, int level, int orient, int bpno, int qmfbid, double stepsize, int numcomps)	//mod fixed_quality
 {
   double w1, w2, wmsedec;
   if (qmfbid == 1) {
-    w1 = mct_getnorm(compno);
+    w1 = (numcomps > 1) ? mct_getnorm(compno) : 1;
     w2 = dwt_getnorm(level, orient);
   } else {			/* if (qmfbid == 0) */
-    w1 = mct_getnorm_real(compno);
+    w1 = (numcomps > 1) ? mct_getnorm_real(compno) : 1;
     w2 = dwt_getnorm_real(level, orient);
   }
-  wmsedec = w1 * w2 * stepsize * (1 << bpno);
+  wmsedec = w1 * w2 * (stepsize / 8192.0) * (1 << bpno);
   wmsedec *= wmsedec * nmsedec / 8192.0;
   return wmsedec;
 }
 
-void t1_encode_cblk(tcd_cblk_t * cblk, int orient, int compno, int level,
-		    int qmfbid, double stepsize, int cblksty)
+void t1_encode_cblk(tcd_cblk_t * cblk, int orient, int compno, int level, int qmfbid, double stepsize, int cblksty, int numcomps, tcd_tile_t * tile)	//mod fixed_quality
 {
   int i, j;
   int w, h;
@@ -587,9 +585,9 @@ void t1_encode_cblk(tcd_cblk_t * cblk, int orient, int compno, int level,
       break;
     }
 
-    cumwmsedec +=
-      t1_getwmsedec(nmsedec, compno, level, orient, bpno, qmfbid,
-		    stepsize);
+    cumwmsedec += t1_getwmsedec(nmsedec, compno, level, orient, bpno, qmfbid, stepsize, numcomps);	//mod fixed_quality
+    tile->distotile += t1_getwmsedec(nmsedec, compno, level, orient, bpno, qmfbid, stepsize, numcomps);	//add antonin quality
+
 
     /* Code switch "RESTART" (i.e. TERMALL) */
     if ((cblksty & J2K_CCP_CBLKSTY_TERMALL)
@@ -728,6 +726,8 @@ void t1_encode_cblks(tcd_tile_t * tile, j2k_tcp_t * tcp)
   tcd_precinct_t *prc;
   tcd_cblk_t *cblk;
 
+  tile->distotile = 0;		//add fixed_quality
+
   for (compno = 0; compno < tile->numcomps; compno++) {
     tilec = &tile->comps[compno];
     for (resno = 0; resno < tilec->numresolutions; resno++) {
@@ -787,10 +787,7 @@ void t1_encode_cblks(tcd_tile_t * tile, j2k_tcp_t * tcp)
 	    } else if (orient == 1) {
 	      orient = 2;
 	    }
-	    t1_encode_cblk(cblk, orient, compno,
-			   tilec->numresolutions - 1 - resno,
-			   tcp->tccps[compno].qmfbid,
-			   band->stepsize, tcp->tccps[compno].cblksty);
+	    t1_encode_cblk(cblk, orient, compno, tilec->numresolutions - 1 - resno, tcp->tccps[compno].qmfbid, band->stepsize, tcp->tccps[compno].cblksty, tile->numcomps, tile);	//mod fixed_quality
 	  }			/* cblkno */
 	}			/* precno */
       }				/* bandno */
