@@ -94,7 +94,6 @@ int main(int argc, char **argv)
   char S1, S2, S3;
   
   char *src=NULL; 
-  char *dest=NULL;
   
   int len;
   
