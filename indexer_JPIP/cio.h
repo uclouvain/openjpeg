@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2001-2002, David Janssens
- * Copyright (c) 2003, Yannick Verschueren
- * Copyright (c) 2003,  Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
+ * Copyright (c) 2003-2004, Yannick Verschueren
+ * Copyright (c) 2003-2004, Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,9 +35,10 @@ int cio_numbytes();
 int cio_numbytesleft();
 unsigned char *cio_getbp();
 void cio_init(unsigned char *bp, int len);
-//void cio_write(unsigned int v, int n);
+/* void cio_write(unsigned int v, int n); */
 void cio_write(long long v, int n);
-unsigned int cio_read(int n);
+/* unsigned int cio_read(int n); */
+long long cio_read(int n);
 void cio_skip(int n);
 
 #endif

@@ -43,19 +43,6 @@ int bio_numbytes() {
 }
 
 /// <summary>
-/// Init encoder.
-/// </summary>
-/// <param name="bp">Output buffer</param>
-/// <param name="len">Output buffer length</param>
-void bio_init_enc(unsigned char *bp, int len) {
-    bio_start=bp;
-    bio_end=bp+len;
-    bio_bp=bp;
-    bio_buf=0;
-    bio_ct=8;
-}
-
-/// <summary>
 /// Init decoder.
 /// </summary>
 /// <param name="bp">Input buffer</param>
@@ -68,15 +55,14 @@ void bio_init_dec(unsigned char *bp, int len) {
     bio_ct=0;
 }
 
-/// <summary>
-/// Write byte.
-/// </summary>
-int bio_byteout() {
-    bio_buf=(bio_buf<<8)&0xffff;
-    bio_ct=bio_buf==0xff00?7:8;
-    if (bio_bp>=bio_end) return 1; //longjmp(j2k_error, 1);
-    *bio_bp++=bio_buf>>8;
-    return 0;
+int bio_byteout()
+{
+	bio_buf = (bio_buf << 8) & 0xffff;
+	bio_ct = bio_buf == 0xff00 ? 7 : 8;
+	if (bio_bp >= bio_end)
+		return 1;
+	*bio_bp++ = bio_buf >> 8;
+	return 0;
 }
 
 /// <summary>
@@ -91,18 +77,6 @@ int bio_bytein() {
 }
 
 /// <summary>
-/// Write bit.
-/// </summary>
-/// <param name="b">Bit to write (0 or 1)</param>
-void bio_putbit(int b) {
-    if (bio_ct==0) {
-        bio_byteout();
-    }
-    bio_ct--;
-    bio_buf|=b<<bio_ct;
-}
-
-/// <summary>
 /// Read bit.
 /// </summary>
 int bio_getbit() {
@@ -111,18 +85,6 @@ int bio_getbit() {
     }
     bio_ct--;
     return (bio_buf>>bio_ct)&1;
-}
-
-/// <summary>
-/// Write bits.
-/// </summary>
-/// <param name="v">Value of bits</param>
-/// <param name="n">Number of bits to write</param>
-void bio_write(int v, int n) {
-    int i;
-    for (i=n-1; i>=0; i--) {
-        bio_putbit((v>>i)&1);
-    }
 }
 
 /// <summary>

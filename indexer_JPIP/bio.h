@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2001-2002, David Janssens
- * Copyright (c) 2003, Yannick Verschueren
- * Copyright (c) 2003,  Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
+ * Copyright (c) 2003-2004, Yannick Verschueren
+ * Copyright (c) 2003-2004, Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,9 +30,7 @@
 #define __BIO_H
 
 int bio_numbytes();
-void bio_init_enc(unsigned char *bp, int len);
 void bio_init_dec(unsigned char *bp, int len);
-void bio_write(int v, int n);
 int bio_read(int n);
 int bio_flush();
 int bio_inalign();

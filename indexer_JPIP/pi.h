@@ -1,7 +1,5 @@
 /*
  * Copyright (c) 2001-2002, David Janssens
- * Copyright (c) 2003, Yannick Verschueren
- * Copyright (c) 2003,  Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,26 +31,27 @@
 #include "tcd.h"
 
 typedef struct {
-    int pdx, pdy;
-    int pw, ph;
+	int pdx, pdy;
+	int pw, ph;
 } pi_resolution_t;
 
 typedef struct {
-    int dx, dy;
-    int numresolutions;
-    pi_resolution_t *resolutions;
+	int dx, dy;
+	int numresolutions;
+	pi_resolution_t *resolutions;
 } pi_comp_t;
 
 typedef struct {
-  int include[10][10][3][99];  
-  int compno, resno, precno, layno; // component, resolution, precinct and layer that indentify the packet
-    int first;
-    j2k_poc_t poc;
-    int numcomps;
-    pi_comp_t *comps;
-    int tx0, ty0, tx1, ty1;
-    int x, y, dx, dy;
-} pi_iterator_t; // packet iterator
+	short int *include;
+  int step_l, step_r, step_c, step_p; 
+	int compno, resno, precno, layno;	/* component, resolution, precinct and layer that indentify the packet */
+	int first;
+	j2k_poc_t poc;
+	int numcomps;
+	pi_comp_t *comps;
+	int tx0, ty0, tx1, ty1;
+	int x, y, dx, dy;
+} pi_iterator_t;								/* packet iterator */
 
 /*
  * Create a packet iterator
@@ -61,13 +60,13 @@ typedef struct {
  * tileno: number that identifies the tile for which to list the packets
  * return value: returns a packet iterator that points to the first packet of the tile
  */
-pi_iterator_t *pi_create(j2k_image_t *img, j2k_cp_t *cp, int tileno);
+pi_iterator_t *pi_create(j2k_image_t * img, j2k_cp_t * cp, int tileno);
 
 /* 
  * Modify the packet iterator to point to the next packet
  * pi: packet iterator to modify
  * return value: returns 0 if pi pointed to the last packet or else returns 1 
  */
-int pi_next(pi_iterator_t *pi);
+int pi_next(pi_iterator_t * pi);
 
 #endif

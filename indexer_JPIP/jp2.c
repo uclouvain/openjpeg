@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2003, Yannick Verschueren
- * Copyright (c) 2003,  Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
+ * Copyright (c) 2003-2004, Yannick Verschueren
+ * Copyright (c) 2003-2004,  Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,9 +28,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <setjmp.h>
-#include <math.h>
-#include <unistd.h>
 
 #include "j2k.h"
 #include "cio.h"
@@ -176,13 +173,19 @@ void jp2_write_colr(int BPC_ok, j2k_image_t *j2k_img)
   cio_seek(lenp+len);
 }
 
+/*
+ * Write the JP2H box
+ *
+ * JP2 Header box
+ *
+ */
 void jp2_write_jp2h(j2k_image_t *j2k_img)
 {
   int len, lenp, BPC_ok;
   
   lenp=cio_tell();
   cio_skip(4);
-  cio_write(JP2_JP2H, 4);  // JP2H
+  cio_write(JP2_JP2H, 4);           /* JP2H */
 
   BPC_ok=jp2_write_ihdr(j2k_img);
 
@@ -192,27 +195,51 @@ void jp2_write_jp2h(j2k_image_t *j2k_img)
 
   len=cio_tell()-lenp;
   cio_seek(lenp);
-  cio_write(len,4);         // L
+  cio_write(len,4);         /* L */
   cio_seek(lenp+len);
 }
 
+/*
+ * Write the FTYP box
+ *
+ * File type box
+ *
+ */
 void jp2_write_ftyp()
 {
   int len, lenp;
   
   lenp=cio_tell();
   cio_skip(4);
-  cio_write(JP2_FTYP, 4);  // FTYP
+  cio_write(JP2_FTYP, 4);   /* FTYP       */
 
-  cio_write(JP2,4);         // BR
-  cio_write(0,4);           // MinV
-  cio_write(JP2,4);         // CL0 : JP2
-  cio_write(JPIP_JPIP,4);   // CL1 : JPIP
+  cio_write(JP2,4);         /* BR         */
+  cio_write(0,4);           /* MinV       */
+  cio_write(JP2,4);         /* CL0 : JP2  */
+  cio_write(JPIP_JPIP,4);   /* CL1 : JPIP */
 
   len=cio_tell()-lenp;
   cio_seek(lenp);
-  cio_write(len,4);         // L
+  cio_write(len,4);         /* L          */
   cio_seek(lenp+len);
+}
+
+/*
+ * Read the FTYP box
+ *
+ * File type box
+ *
+ */
+void jp2_read_ftyp(int length)
+{
+  int BR, MinV, type, i;
+
+  BR = cio_read(4);         /* BR              */
+  MinV = cio_read(4);       /* MinV            */
+  length-=8;
+  
+  for (i=length/4;i>0;i--)
+    type = cio_read(4);     /* CLi : JP2, JPIP */
 }
 
 int jp2_write_jp2c(char *J2K_file)
@@ -256,4 +283,19 @@ void jp2_write_jp()
   cio_seek(lenp);
   cio_write(len,4);         // L
   cio_seek(lenp+len);
+}
+
+/*
+ * Read the JP box
+ *
+ * JPEG 2000 signature
+ *
+ * return 1 if error else 0
+ */
+int jp2_read_jp()
+{
+  if (0x0d0a870a!=cio_read(4))
+    return 1;
+  else
+    return 0;
 }

@@ -42,10 +42,6 @@ static tcd_image_t tcd_image;
 static j2k_image_t *tcd_img;
 static j2k_cp_t *tcd_cp;
 
-static tcd_tile_t *tcd_tile;
-static j2k_tcp_t *tcd_tcp;
-static int tcd_tileno;
-
 extern jmp_buf j2k_error;
 
 void tcd_init(j2k_image_t *img, j2k_cp_t *cp, info_image_t *imgg) {
@@ -268,14 +264,11 @@ void tcd_free(j2k_image_t *img, j2k_cp_t *cp) {
 int tcd_decode_tile(unsigned char *src, int len, int tileno, info_image_t *imgg) {
     int l;
     int eof=0;
-
     tcd_tile_t *tile;
-    tcd_tileno=tileno;
-    tcd_tile=&tcd_image.tiles[tileno];
-    tcd_tcp=&tcd_cp->tcps[tileno];
-    tile=tcd_tile;
 
-    l=t2_decode_packets(src, len, tcd_img, tcd_cp, tileno, tile, imgg);
+    tile = &tcd_image.tiles[tileno];
+
+    l = t2_decode_packets(src, len, tcd_img, tcd_cp, tileno, tile, imgg);
 
     if (l==-999)
       {

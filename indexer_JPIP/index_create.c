@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2001-2002, David Janssens
- * Copyright (c) 2003, Yannick Verschueren
- * Copyright (c) 2003,  Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
+ * Copyright (c) 2003-2004, Yannick Verschueren
+ * Copyright (c) 2003-2004, Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -69,6 +69,9 @@
 #define J2K_STATE_TPH 0x0010
 #define J2K_STATE_MT 0x0020
 
+#define START_NB 5
+#define INCREMENT 5
+
 jmp_buf j2k_error;
 
 static int j2k_state;
@@ -84,23 +87,22 @@ static int *j2k_tile_len;
 
 static info_image_t img;
 
+
 void j2k_clean() {
   int tileno = 0;
-  int compno, resno, precno;
-  
-  tcd_free(j2k_img,j2k_cp);
-  
-  for (tileno=0;tileno<j2k_cp->tw*j2k_cp->th;tileno++) {
+  int compno=0, resno=0, precno=0;
+
+  tcd_free(j2k_img, j2k_cp);
+  for (tileno = 0; tileno < j2k_cp->tw * j2k_cp->th; tileno++) {
     info_tile_t *tile_Idx = &img.tile[tileno];
     
-    for (compno=0;compno<img.Comp;compno++)
+    for (compno = 0; compno < img.Comp; compno++)
       {
 	info_compo_t *compo_Idx = &tile_Idx->compo[compno];
-	
-	for(resno=0;resno<img.Decomposition+1;resno++)
+	for(resno = 0; resno < img.Decomposition + 1; resno++)
 	  {
 	    info_reso_t *reso_Idx = &compo_Idx->reso[resno];
-	    for (precno=0;precno<img.tile[tileno].pw*img.tile[tileno].ph;precno++)
+	    for (precno = 0; precno < img.tile[tileno].pw * img.tile[tileno].ph; precno++)
 	      {
 		info_prec_t *prec_Idx = &reso_Idx->prec[precno];
 		free(prec_Idx->layer);
@@ -110,463 +112,902 @@ void j2k_clean() {
 	free(compo_Idx->reso);
       }
     free(tile_Idx->compo);
-  }
+    free(tile_Idx->marker);
+    free(tile_Idx->tile_parts);
+    free(tile_Idx->marker_mul.COC);
+    free(tile_Idx->marker_mul.RGN);
+    free(tile_Idx->marker_mul.QCC);
+    free(tile_Idx->marker_mul.PLT);
+    free(tile_Idx->marker_mul.PPT);
+    free(tile_Idx->marker_mul.COM);
+}
   free(img.tile);
   free(img.marker);
+  free(img.marker_mul.COC);
+  free(img.marker_mul.RGN);
+  free(img.marker_mul.QCC);
+  free(img.marker_mul.PLM);
+  free(img.marker_mul.PPM);
+  free(img.marker_mul.COM);
 }
 
+
+
 void j2k_read_soc() {
-    j2k_state=J2K_STATE_MHSIZ;
+  j2k_state=J2K_STATE_MHSIZ;
 }
+
+
 
 void j2k_read_siz() {
     int len, i;
-    len=cio_read(2);
+    info_tile_t *tile;
 
-    // <INDEX>
-    img.marker[img.num_marker].type=J2K_MS_SIZ;
-    img.marker[img.num_marker].start_pos=cio_tell()-2;
-    img.marker[img.num_marker].len=len;
+    len = cio_read(2);
+
+    /* <INDEX> [MHIX BOX] */
+    img.marker[img.num_marker].type = J2K_MS_SIZ;
+    img.marker[img.num_marker].start_pos = cio_tell()-2;
+    img.marker[img.num_marker].len = len;
     img.num_marker++;
-    // </INDEX>
-
+    /* </INDEX> [MHIX BOX] */
     
-    cio_read(2);              // Rsiz (capabilities)
-    j2k_img->x1=cio_read(4);  // Xsiz
-    j2k_img->y1=cio_read(4);  // Ysiz
-    j2k_img->x0=cio_read(4);  // X0siz
-    j2k_img->y0=cio_read(4);  // Y0siz
-    j2k_cp->tdx=cio_read(4);  // XTsiz
-    j2k_cp->tdy=cio_read(4);  // YTsiz
-    j2k_cp->tx0=cio_read(4);  // XT0siz
-    j2k_cp->ty0=cio_read(4);  // YTOsiz
-    j2k_img->numcomps=cio_read(2);  // Csiz
-    j2k_img->comps=(j2k_comp_t*)malloc(j2k_img->numcomps*sizeof(j2k_comp_t));
-    for (i=0; i<j2k_img->numcomps; i++) {
+    cio_read(2);                      /* Rsiz (capabilities) */
+    j2k_img->x1 = cio_read(4);        /* Xsiz                */
+    j2k_img->y1 = cio_read(4);        /* Ysiz                */
+    j2k_img->x0 = cio_read(4);        /* X0siz               */
+    j2k_img->y0 = cio_read(4);        /* Y0siz               */
+    j2k_cp->tdx = cio_read(4);        /* XTsiz               */
+    j2k_cp->tdy = cio_read(4);        /* YTsiz               */
+    j2k_cp->tx0 = cio_read(4);        /* XT0siz              */
+    j2k_cp->ty0 = cio_read(4);        /* YTOsiz              */
+
+    j2k_img->numcomps = cio_read(2);  /* Csiz                */
+    j2k_img->comps = (j2k_comp_t*)malloc(j2k_img->numcomps * sizeof(j2k_comp_t));
+    for (i = 0; i < j2k_img->numcomps; i++) {
         int tmp, w, h;
-        tmp=cio_read(1);
-        j2k_img->comps[i].prec=(tmp&0x7f)+1;
-        j2k_img->comps[i].sgnd=tmp>>7;
-        j2k_img->comps[i].dx=cio_read(1);
-        j2k_img->comps[i].dy=cio_read(1);
-        w=int_ceildiv(j2k_img->x1-j2k_img->x0, j2k_img->comps[i].dx);
-        h=int_ceildiv(j2k_img->y1-j2k_img->y0, j2k_img->comps[i].dy);
-        j2k_img->comps[i].data=(int*)malloc(sizeof(int)*w*h);
+        tmp = cio_read(1);
+        j2k_img->comps[i].prec = (tmp & 0x7f) + 1;
+        j2k_img->comps[i].sgnd = tmp >> 7;
+        j2k_img->comps[i].dx = cio_read(1);
+        j2k_img->comps[i].dy = cio_read(1);
+        w = int_ceildiv(j2k_img->x1-j2k_img->x0, j2k_img->comps[i].dx);
+        h = int_ceildiv(j2k_img->y1-j2k_img->y0, j2k_img->comps[i].dy);
+        j2k_img->comps[i].data = (int*)malloc(sizeof(int) * w * h);
     }
-    j2k_cp->tw=int_ceildiv(j2k_img->x1-j2k_img->x0, j2k_cp->tdx);
-    j2k_cp->th=int_ceildiv(j2k_img->y1-j2k_img->y0, j2k_cp->tdy);
+    j2k_cp->tw = int_ceildiv(j2k_img->x1 - j2k_cp->tx0, j2k_cp->tdx);
+    j2k_cp->th = int_ceildiv(j2k_img->y1 - j2k_cp->ty0, j2k_cp->tdy);
 
-    j2k_cp->tcps=(j2k_tcp_t*)calloc(sizeof(j2k_tcp_t), j2k_cp->tw*j2k_cp->th);
-    j2k_default_tcp.tccps=(j2k_tccp_t*)calloc(sizeof(j2k_tccp_t), j2k_img->numcomps);
-    for (i=0; i<j2k_cp->tw*j2k_cp->th; i++) {
-        j2k_cp->tcps[i].tccps=(j2k_tccp_t*)calloc(sizeof(j2k_tccp_t), j2k_img->numcomps);
+    j2k_cp->tcps = (j2k_tcp_t*)calloc((j2k_cp->tw * j2k_cp->th), sizeof(j2k_tcp_t));
+
+    for (i = 0; i < j2k_cp->tw * j2k_cp->th; i++)
+      {
+	j2k_cp->tcps[i].POC = 0;
+	j2k_cp->tcps[i].numpocs = 0;
+	// j2k_cp->tcps[i].first=1;
+      }
+
+    /* Initialization for PPM marker */
+    j2k_cp->ppm = 0;
+    j2k_cp->ppm_data = NULL;
+    j2k_cp->ppm_previous = 0;
+    j2k_cp->ppm_store = 0;
+
+    j2k_default_tcp.tccps = (j2k_tccp_t*)malloc(j2k_img->numcomps * sizeof(j2k_tccp_t));
+    for (i = 0; i < j2k_cp->tw * j2k_cp->th; i++) {
+	j2k_cp->tcps[i].tccps = (j2k_tccp_t*)malloc(j2k_img->numcomps * sizeof(j2k_tccp_t));
     }
-    j2k_tile_data=(unsigned char**)calloc(j2k_cp->tw*j2k_cp->th, sizeof(char*));
-    j2k_tile_len=(int*)calloc(j2k_cp->tw*j2k_cp->th, sizeof(int));
-    j2k_state=J2K_STATE_MH;
+    j2k_tile_data = (unsigned char**)calloc(j2k_cp->tw * j2k_cp->th, sizeof(char*));
+    j2k_tile_len = (int*)calloc(j2k_cp->tw * j2k_cp->th, sizeof(int));
+    j2k_state = J2K_STATE_MH;
 
-    // <INDEX>
-    img.Im_w=j2k_img->x1-j2k_img->x0;
-    img.Im_h=j2k_img->y1-j2k_img->y0;
-    img.Tile_x=j2k_cp->tdx;
-    img.Tile_y=j2k_cp->tdy;
-    img.Comp=j2k_img->numcomps;
-    img.tw=j2k_cp->tw;
-    img.th=j2k_cp->th;
-    img.tile=(info_tile_t*)malloc((img.tw*img.th)*sizeof(info_tile_t));
-    //</INDEX>
+    /* <INDEX> */
+    img.Im_w = j2k_img->x1 - j2k_img->x0;
+    img.Im_h = j2k_img->y1 - j2k_img->y0;
+    img.Tile_x = j2k_cp->tdx;
+    img.Tile_y = j2k_cp->tdy;
+    img.Comp = j2k_img->numcomps;
+    img.tw = j2k_cp->tw;
+    img.th = j2k_cp->th;
+    img.tile = (info_tile_t*)malloc(img.tw * img.th * sizeof(info_tile_t));
+
+    for (i = 0; i < img.tw * img.th; i++)
+      {
+	tile = &img.tile[i];
+	tile->marker = (info_marker_t*)malloc(32 * sizeof(info_marker_t));
+	tile->num_marker = 0;
+	tile->marker_mul.num_COC = 0;
+	tile->marker_mul.CzCOC = START_NB;
+	tile->marker_mul.num_RGN = 0;
+	tile->marker_mul.CzRGN = START_NB;
+	tile->marker_mul.num_QCC = 0;
+	tile->marker_mul.CzQCC = START_NB;
+	tile->marker_mul.num_PLT = 0;
+	tile->marker_mul.CzPLT = START_NB;
+	tile->marker_mul.num_PPT = 0;
+	tile->marker_mul.CzPPT = START_NB;
+	tile->marker_mul.num_COM = 0;
+	tile->marker_mul.CzCOM = START_NB;
+      }
+    /* </INDEX> */
 
 
  }
 
 void j2k_read_com() {
     int len;
-    len=cio_read(2);
+    info_tile_t *tile;
+    info_marker_t *tmp;
 
-    // <INDEX>
-    if (j2k_state==J2K_STATE_MH)
+    len = cio_read(2);
+
+    /* <INDEX> [MHIX BOX] */
+    if (j2k_state == J2K_STATE_MH)
       {
-	if (!img.marker_mul.num_COM)
-	  img.marker_mul.COM=(info_marker_t*)malloc(sizeof(info_marker_t));
-	else
-	  img.marker_mul.COM=realloc(img.marker_mul.COM,(1+img.marker_mul.num_COM)*sizeof(info_marker_t));
-	img.marker_mul.COM[img.marker_mul.num_COM].type=J2K_MS_COM;
-	img.marker_mul.COM[img.marker_mul.num_COM].start_pos=cio_tell()-2;
-	img.marker_mul.COM[img.marker_mul.num_COM].len=len;
-	img.marker_mul.num_COM++;
-      }
-    // </INDEX>
+	if (!img.marker_mul.num_COM) 
+	  img.marker_mul.COM = (info_marker_t*)malloc(img.marker_mul.CzCOM * sizeof(info_marker_t));
+	if (img.marker_mul.num_COM >= img.marker_mul.CzCOM)
+	  {
+	    tmp = (info_marker_t*)malloc(2 * img.marker_mul.CzCOM * sizeof(info_marker_t));
+	    memcpy(tmp,img.marker_mul.COM,img.marker_mul.CzCOM);
+	    img.marker_mul.CzCOM *= 2;
+	    free(img.marker_mul.COM);
+	    img.marker_mul.COM = tmp;
+	  }
 
-    cio_skip(len-2);
+	img.marker_mul.COM[img.marker_mul.num_COM].type = J2K_MS_COM;
+	img.marker_mul.COM[img.marker_mul.num_COM].start_pos = cio_tell()-2;
+	img.marker_mul.COM[img.marker_mul.num_COM].len = len;
+	img.marker_mul.num_COM++;
+      } else
+	{
+	  tile = &img.tile[j2k_curtileno];
+	  if (!tile->marker_mul.num_COM)
+	    tile->marker_mul.COM = (info_marker_t*)calloc(START_NB, sizeof(info_marker_t));
+	  if (tile->marker_mul.num_COM >= tile->marker_mul.CzCOM)
+	    {
+	      tmp = (info_marker_t*)malloc(2 * tile->marker_mul.CzCOM * sizeof(info_marker_t));
+	      memcpy(tmp,tile->marker_mul.COM,tile->marker_mul.CzCOM);
+	      tile->marker_mul.CzCOM *= 2;
+	      free(tile->marker_mul.COM);
+	      tile->marker_mul.COM = tmp;
+	    }
+	  tile->marker_mul.COM[tile->marker_mul.num_COM].type = J2K_MS_COM;
+	  tile->marker_mul.COM[tile->marker_mul.num_COM].start_pos = cio_tell()-2;
+	  tile->marker_mul.COM[tile->marker_mul.num_COM].len = len;
+	  tile->marker_mul.num_COM++;
+	}
+    /* </INDEX> [MHIX BOX] */
+
+    cio_skip(len - 2);
 }
+
+
+
 
 void j2k_read_cox(int compno) {
     int i;
     j2k_tcp_t *tcp;
     j2k_tccp_t *tccp;
-    tcp=j2k_state==J2K_STATE_TPH?&j2k_cp->tcps[j2k_curtileno]:&j2k_default_tcp;
-    tccp=&tcp->tccps[compno];
-    tccp->numresolutions=cio_read(1)+1;
 
-    img.Decomposition=tccp->numresolutions-1; // <INDEX>
+    tcp = j2k_state == J2K_STATE_TPH ? &j2k_cp->tcps[j2k_curtileno] : &j2k_default_tcp;
+    tccp = &tcp->tccps[compno];
+    tccp->numresolutions = cio_read(1) + 1;
 
-    tccp->cblkw=cio_read(1)+2;
-    tccp->cblkh=cio_read(1)+2;
-    tccp->cblksty=cio_read(1);
-    tccp->qmfbid=cio_read(1);
+    img.Decomposition = tccp->numresolutions - 1; /* <INDEX> */
+
+    tccp->cblkw = cio_read(1) + 2;
+    tccp->cblkh = cio_read(1) + 2;
+    tccp->cblksty = cio_read(1);
+    tccp->qmfbid = cio_read(1);
     if (tccp->csty&J2K_CP_CSTY_PRT) {
-        for (i=0; i<tccp->numresolutions; i++) {
-            int tmp=cio_read(1);
-            tccp->prcw[i]=tmp&0xf;
-            tccp->prch[i]=tmp>>4; 
+        for (i = 0; i < tccp->numresolutions; i++) {
+            int tmp = cio_read(1);
+            tccp->prcw[i] = tmp&0xf;
+            tccp->prch[i] = tmp>>4; 
         }
     }
 }
 
+
+
+
 void j2k_read_cod() {
     int len, i, pos;
     j2k_tcp_t *tcp;
-    tcp=j2k_state==J2K_STATE_TPH?&j2k_cp->tcps[j2k_curtileno]:&j2k_default_tcp;
-    len=cio_read(2);
+    info_tile_t *tile;
 
-    // <INDEX>
-    if (j2k_state==J2K_STATE_MH)
+    tcp = j2k_state == J2K_STATE_TPH ? &j2k_cp->tcps[j2k_curtileno] : &j2k_default_tcp;
+    len = cio_read(2);
+
+    /* <INDEX> [MHIX BOX] */
+    if (j2k_state == J2K_STATE_MH)
       {
-	if (!img.marker_mul.num_COD)
-	  img.marker_mul.COD=(info_marker_t*)malloc(sizeof(info_marker_t));
-	else
-	  img.marker_mul.COD=realloc(img.marker_mul.COD,(1+img.marker_mul.num_COD)*sizeof(info_marker_t));
-	img.marker_mul.COD[img.marker_mul.num_COD].type=J2K_MS_COD;
-	img.marker_mul.COD[img.marker_mul.num_COD].start_pos=cio_tell()-2;
-	img.marker_mul.COD[img.marker_mul.num_COD].len=len;
-	img.marker_mul.num_COD++;
+	img.marker[img.num_marker].type = J2K_MS_SIZ;
+	img.marker[img.num_marker].start_pos = cio_tell()-2;
+	img.marker[img.num_marker].len = len;
+	img.num_marker++;
       }
-    // </INDEX>
+    else
+      {
+	tile = &img.tile[j2k_curtileno];
+	tile->marker[tile->num_marker].type = J2K_MS_SIZ;
+	tile->marker[tile->num_marker].start_pos = cio_tell()-2;
+	tile->marker[tile->num_marker].len = len;
+	tile->num_marker++;
+  }
+    /* </INDEX> [MHIX BOX] */
     
-    
-    tcp->csty=cio_read(1);
-    tcp->prg=cio_read(1);
-    tcp->numlayers=cio_read(2);
-    tcp->mct=cio_read(1);
-    pos=cio_tell();
-    for (i=0; i<j2k_img->numcomps; i++) {
-        tcp->tccps[i].csty=tcp->csty&J2K_CP_CSTY_PRT;
+    tcp->csty = cio_read(1);
+    tcp->prg = cio_read(1);
+    tcp->numlayers = cio_read(2);
+    tcp->mct = cio_read(1);
+
+    pos = cio_tell();
+    for (i = 0; i < j2k_img->numcomps; i++) {
+        tcp->tccps[i].csty = tcp->csty&J2K_CP_CSTY_PRT;
         cio_seek(pos);
         j2k_read_cox(i);
     }
-    //<INDEX>
-    img.Prog=tcp->prg;
-    img.Layer=tcp->numlayers;
-    //</INDEX>
+    
+    /* <INDEX> */
+    img.Prog = tcp->prg;
+    img.Layer = tcp->numlayers;
+    /* </INDEX> */
 }
+
+
+
 
 void j2k_read_coc() {
     int len, compno;
     j2k_tcp_t *tcp;
-    tcp=j2k_state==J2K_STATE_TPH?&j2k_cp->tcps[j2k_curtileno]:&j2k_default_tcp;
-    len=cio_read(2);
-    // <INDEX>
-    if (j2k_state==J2K_STATE_MH)
+    info_tile_t *tile;
+    info_marker_t *tmp;
+
+    tcp = j2k_state == J2K_STATE_TPH ? &j2k_cp->tcps[j2k_curtileno] : &j2k_default_tcp;
+    len = cio_read(2);
+    
+    /* <INDEX> [MHIX BOX] */
+    if (j2k_state == J2K_STATE_MH)
       {
 	if (!img.marker_mul.num_COC)
-	  img.marker_mul.COC=(info_marker_t*)malloc(sizeof(info_marker_t));
-	else
-	  img.marker_mul.COC=realloc(img.marker_mul.COC,(1+img.marker_mul.num_COC)*sizeof(info_marker_t));
-	img.marker_mul.COC[img.marker_mul.num_COC].type=J2K_MS_COC;
-	img.marker_mul.COC[img.marker_mul.num_COC].start_pos=cio_tell()-2;
-	img.marker_mul.COC[img.marker_mul.num_COC].len=len;
+	  img.marker_mul.COC = (info_marker_t*)malloc(img.marker_mul.CzCOC * sizeof(info_marker_t));
+	if (img.marker_mul.num_COC >= img.marker_mul.CzCOC)
+	  {
+	    tmp = (info_marker_t*)malloc((INCREMENT + img.marker_mul.CzCOC) * sizeof(info_marker_t));
+	    memcpy(tmp,img.marker_mul.COC,img.marker_mul.CzCOC);
+	    img.marker_mul.CzCOC += INCREMENT;
+	    free(img.marker_mul.COC);
+	    img.marker_mul.COC = tmp;
+	  }
+	img.marker_mul.COC[img.marker_mul.num_COC].type = J2K_MS_COC;
+	img.marker_mul.COC[img.marker_mul.num_COC].start_pos = cio_tell()-2;
+	img.marker_mul.COC[img.marker_mul.num_COC].len = len;
 	img.marker_mul.num_COC++;
-      }
-    // </INDEX>
-
+      } else
+	{
+	  tile = &img.tile[j2k_curtileno];
+	  if (!tile->marker_mul.num_COC)
+	    tile->marker_mul.COC = (info_marker_t*)malloc(tile->marker_mul.CzCOC * sizeof(info_marker_t));
+	  if (tile->marker_mul.num_COC >= tile->marker_mul.CzCOC)
+	    {
+	      tmp = (info_marker_t*)malloc((INCREMENT + tile->marker_mul.CzCOC) * sizeof(info_marker_t));
+	      memcpy(tmp,tile->marker_mul.COC,tile->marker_mul.CzCOC);
+	      tile->marker_mul.CzCOC += INCREMENT;
+	      free(tile->marker_mul.COC);
+	      tile->marker_mul.COC = tmp;
+	    }
+	  tile->marker_mul.COC[tile->marker_mul.num_COC].type = J2K_MS_COC;
+	  tile->marker_mul.COC[tile->marker_mul.num_COC].start_pos = cio_tell() - 2;
+	  tile->marker_mul.COC[tile->marker_mul.num_COC].len = len;
+	  tile->marker_mul.num_COC++;
+	}
+    /* </INDEX> [MHIX BOX] */
     
-    compno=cio_read(j2k_img->numcomps<=256?1:2);
-    tcp->tccps[compno].csty=cio_read(1);
+    compno =cio_read(j2k_img->numcomps <= 256 ? 1 : 2);
+
+    tcp->tccps[compno].csty = cio_read(1);
     j2k_read_cox(compno);
 }
+
+
+
 
 void j2k_read_qcx(int compno, int len) {
     int tmp;
     j2k_tcp_t *tcp;
     j2k_tccp_t *tccp;
     int bandno, numbands;
-    tcp=j2k_state==J2K_STATE_TPH?&j2k_cp->tcps[j2k_curtileno]:&j2k_default_tcp;
-    tccp=&tcp->tccps[compno];
-    tmp=cio_read(1);
-    tccp->qntsty=tmp&0x1f;
-    tccp->numgbits=tmp>>5;
-    numbands=tccp->qntsty==J2K_CCP_QNTSTY_SIQNT?1:(tccp->qntsty==J2K_CCP_QNTSTY_NOQNT?len-1:(len-1)/2);
-    for (bandno=0; bandno<numbands; bandno++) {
+
+    tcp = j2k_state == J2K_STATE_TPH ? &j2k_cp->tcps[j2k_curtileno] : &j2k_default_tcp;
+    tccp = &tcp->tccps[compno];
+    tmp = cio_read(1);
+    tccp->qntsty = tmp & 0x1f;
+    tccp->numgbits = tmp >> 5;
+    numbands = tccp->qntsty == J2K_CCP_QNTSTY_SIQNT ? 1 : (tccp->qntsty == J2K_CCP_QNTSTY_NOQNT ? len - 1 : (len - 1) / 2);
+    for (bandno = 0; bandno < numbands; bandno++) {
         int expn, mant;
-        if (tccp->qntsty==J2K_CCP_QNTSTY_NOQNT) { // WHY STEPSIZES WHEN NOQNT ?
-            expn=cio_read(1)>>3;
-            mant=0;
+        if (tccp->qntsty == J2K_CCP_QNTSTY_NOQNT) { /* WHY STEPSIZES WHEN NOQNT ? */
+            expn = cio_read(1) >> 3;
+            mant = 0;
         } else {
-            tmp=cio_read(2);
-            expn=tmp>>11;
-            mant=tmp&0x7ff;
+            tmp = cio_read(2);
+            expn = tmp >> 11;
+            mant = tmp & 0x7ff;
         }
-        tccp->stepsizes[bandno].expn=expn;
-        tccp->stepsizes[bandno].mant=mant;
+        tccp->stepsizes[bandno].expn = expn;
+        tccp->stepsizes[bandno].mant = mant;
     }
 }
+
+
+
 
 void j2k_read_qcd() {
     int len, i, pos;
-    len=cio_read(2);    
+    info_tile_t *tile;
 
-    // <INDEX>
-    if (j2k_state==J2K_STATE_MH)
+    len = cio_read(2);    
+
+    /* <INDEX> [MHIX BOX] */
+    if (j2k_state == J2K_STATE_MH)
       {
-	img.marker[img.num_marker].type=J2K_MS_QCD;
-	img.marker[img.num_marker].start_pos=cio_tell()-2;
-	img.marker[img.num_marker].len=len;
+	img.marker[img.num_marker].type = J2K_MS_QCD;
+	img.marker[img.num_marker].start_pos = cio_tell()-2;
+	img.marker[img.num_marker].len = len;
 	img.num_marker++;
-      }
-    // </INDEX>
+      }	 else
+	{
+	  tile = &img.tile[j2k_curtileno];
+	  tile->marker[tile->num_marker].type = J2K_MS_QCD;
+	  tile->marker[tile->num_marker].start_pos = cio_tell()-2;
+	  tile->marker[tile->num_marker].len = len;
+	  tile->num_marker++;
+	}
+    /* </INDEX> [MHIX BOX] */
     
     
     pos=cio_tell();
-    for (i=0; i<j2k_img->numcomps; i++) {
+    for (i = 0; i < j2k_img->numcomps; i++) {
         cio_seek(pos);
-        j2k_read_qcx(i, len-2);
+        j2k_read_qcx(i, len - 2);
     }
 }
+
+
+
 
 void j2k_read_qcc() {
   int len, compno;
-  len=cio_read(2);  
+  info_tile_t *tile;
+  info_marker_t *tmp;
 
-  // <INDEX>
-  if (j2k_state==J2K_STATE_MH)
+  len = cio_read(2);  
+  /* <INDEX> [MHIX BOX] */
+  if (j2k_state == J2K_STATE_MH)
     {
       if (!img.marker_mul.num_QCC)
-	img.marker_mul.QCC=(info_marker_t*)malloc(sizeof(info_marker_t));
-      else
-	img.marker_mul.QCC=realloc(img.marker_mul.QCC,(1+img.marker_mul.num_QCC)*sizeof(info_marker_t));
-      img.marker_mul.QCC[img.marker_mul.num_QCC].type=J2K_MS_QCC;
-      img.marker_mul.QCC[img.marker_mul.num_QCC].start_pos=cio_tell()-2;
-      img.marker_mul.QCC[img.marker_mul.num_QCC].len=len;
+	img.marker_mul.QCC = (info_marker_t*)malloc(img.marker_mul.CzQCC * sizeof(info_marker_t));
+	if (img.marker_mul.num_QCC >= img.marker_mul.CzQCC)
+	  {
+	    tmp = (info_marker_t*)malloc((INCREMENT + img.marker_mul.CzQCC) * sizeof(info_marker_t));
+	    memcpy(tmp,img.marker_mul.QCC,img.marker_mul.CzQCC);
+	    img.marker_mul.CzQCC += INCREMENT;
+	    free(img.marker_mul.QCC);
+	    img.marker_mul.QCC = tmp;
+	  }
+      img.marker_mul.QCC[img.marker_mul.num_QCC].type = J2K_MS_QCC;
+      img.marker_mul.QCC[img.marker_mul.num_QCC].start_pos = cio_tell() - 2;
+      img.marker_mul.QCC[img.marker_mul.num_QCC].len = len;
       img.marker_mul.num_QCC++;
-    }
-  // </INDEX>
-  
-  
-  compno=cio_read(j2k_img->numcomps<=256?1:2);
-  j2k_read_qcx(compno, len-2-(j2k_img->numcomps<=256?1:2));
+    } else
+      {
+	tile = &img.tile[j2k_curtileno];
+	if (!tile->marker_mul.num_QCC)
+	  tile->marker_mul.QCC = (info_marker_t*)malloc(tile->marker_mul.CzQCC * sizeof(info_marker_t));
+	if (tile->marker_mul.num_QCC >= tile->marker_mul.CzQCC)
+	  {
+	    tmp = (info_marker_t*)malloc((INCREMENT + tile->marker_mul.CzQCC) * sizeof(info_marker_t));
+	    memcpy(tmp,tile->marker_mul.QCC,tile->marker_mul.CzQCC);
+	    tile->marker_mul.CzQCC += INCREMENT;
+	    free(tile->marker_mul.QCC);
+	    tile->marker_mul.QCC = tmp;
+	  }
+	tile->marker_mul.QCC[tile->marker_mul.num_QCC].type = J2K_MS_QCC;
+	tile->marker_mul.QCC[tile->marker_mul.num_QCC].start_pos = cio_tell()-2;
+	tile->marker_mul.QCC[tile->marker_mul.num_QCC].len = len;
+	tile->marker_mul.num_QCC++;
+      }
+  /* </INDEX> [MHIX BOX] */
+ 
+  compno = cio_read(j2k_img->numcomps <= 256 ? 1 : 2);
+  j2k_read_qcx(compno, len - 2 - (j2k_img->numcomps <= 256 ? 1 : 2));
 }
+
+
+
 
 void j2k_read_poc() {
-  int len, numpchgs, i;
+  int len, numpchgs, i, old_poc;
   j2k_tcp_t *tcp;
-  fprintf(stderr, "WARNING: POC marker segment processing not fully implemented\n");
-  tcp=j2k_state==J2K_STATE_TPH?&j2k_cp->tcps[j2k_curtileno]:&j2k_default_tcp;
-  len=cio_read(2);
-  
-  // <INDEX>
-  if (j2k_state==J2K_STATE_MH)
-    {
-      img.marker[img.num_marker].type=J2K_MS_POC;
-      img.marker[img.num_marker].start_pos=cio_tell()-2;
-      img.marker[img.num_marker].len=len;
-      img.num_marker++;
-    }
-  // </INDEX>
-  
+  j2k_tccp_t *tccp;
+  info_tile_t *tile;
 
-  numpchgs=(len-2)/(5+2*(j2k_img->numcomps<=256?1:2));
-  for (i=0; i<numpchgs; i++) {
-    j2k_poc_t *poc;
-    poc=&tcp->pocs[i];
-    poc->resno0=cio_read(1);
-    poc->compno0=cio_read(j2k_img->numcomps<=256?1:2);
-    poc->layno1=cio_read(2);
-    poc->resno1=cio_read(1);
-    poc->compno1=cio_read(j2k_img->numcomps<=256?1:2);
-    poc->prg=cio_read(1);
-  }
+  tcp = j2k_state == J2K_STATE_TPH ? &j2k_cp->tcps[j2k_curtileno] : &j2k_default_tcp;
+  old_poc = tcp->POC ? tcp->numpocs+1 : 0;
+  tcp->POC = 1;
+  tccp = &tcp->tccps[0];
+  len = cio_read(2);
+  
+  /* <INDEX> [MHIX BOX] */
+  if (j2k_state == J2K_STATE_MH)
+    {
+      img.marker[img.num_marker].type = J2K_MS_POC;
+      img.marker[img.num_marker].start_pos = cio_tell()-2;
+      img.marker[img.num_marker].len = len;
+      img.num_marker++;
+    } else
+      {
+	tile = &img.tile[j2k_curtileno];
+	tile->marker[tile->num_marker].type = J2K_MS_POC;
+	tile->marker[tile->num_marker].start_pos = cio_tell()-2;
+	tile->marker[tile->num_marker].len = len;
+	tile->num_marker++;
+      }
+  /* </INDEX> [MHIX BOX] */
+
+    numpchgs = (len - 2) / (5 + 2 * (j2k_img->numcomps <= 256 ? 1 : 2));
+    for (i = 0; i < numpchgs; i++) {
+      j2k_poc_t *poc;
+      poc = &tcp->pocs[i];
+      poc->resno0 = cio_read(1);
+      poc->compno0 = cio_read(j2k_img->numcomps <= 256 ? 1 : 2);
+      poc->layno1 = int_min(cio_read(2), tcp->numlayers);
+      poc->resno1 = int_min(cio_read(1), tccp->numresolutions);
+      poc->compno1 = int_min(cio_read(j2k_img->numcomps <= 256 ? 1 : 2), j2k_img->numcomps);
+      poc->prg = cio_read(1);
+    }
+
+    tcp->numpocs = numpchgs + old_poc - 1;
 }
+
+
+
 
 void j2k_read_crg() {
-    int len;
-    len=cio_read(2);
+    int len, i, Xcrg_i, Ycrg_i;
 
-    // <INDEX>
-    if (j2k_state==J2K_STATE_MH)
-      {
-	img.marker[img.num_marker].type=J2K_MS_CRG;
-	img.marker[img.num_marker].start_pos=cio_tell()-2;
-	img.marker[img.num_marker].len=len;
-	img.num_marker++;
+    len = cio_read(2);
+
+    /* <INDEX> [MHIX BOX] */
+    img.marker[img.num_marker].type = J2K_MS_CRG;
+    img.marker[img.num_marker].start_pos = cio_tell()-2;
+    img.marker[img.num_marker].len = len;
+    img.num_marker++;
+    /* </INDEX> [MHIX BOX] */
+
+    for (i = 0; i < j2k_img->numcomps; i++)
+      {  
+	Xcrg_i = cio_read(2);
+	Ycrg_i = cio_read(2);
       }
-    // </INDEX>
-
-    fprintf(stderr, "WARNING: CRG marker segment processing not implemented\n");
-    cio_skip(len-2);
 }
+
+
+
 
 void j2k_read_tlm() {
-    int len;
-    len=cio_read(2);
+    int len, Ztlm, Stlm, ST, SP, tile_tlm, i;
+    long int Ttlm_i, Ptlm_i;
+    info_marker_t *tmp;
 
-    // <INDEX>
-    if (j2k_state==J2K_STATE_MH)
+    len = cio_read(2);
+
+    /* <INDEX> [MHIX BOX] */
+    if (!img.marker_mul.num_TLM)
+      img.marker_mul.TLM = (info_marker_t*)malloc(img.marker_mul.CzTLM * sizeof(info_marker_t));
+    if (img.marker_mul.num_TLM >= img.marker_mul.CzTLM)
       {
-	if (!img.marker_mul.num_TLM)
-	  img.marker_mul.TLM=(info_marker_t*)malloc(sizeof(info_marker_t));
-	else
-	  img.marker_mul.TLM=realloc(img.marker_mul.TLM,(1+img.marker_mul.num_TLM)*sizeof(info_marker_t));
-	img.marker_mul.TLM[img.marker_mul.num_TLM].type=J2K_MS_TLM;
-	img.marker_mul.TLM[img.marker_mul.num_TLM].start_pos=cio_tell()-2;
-	img.marker_mul.TLM[img.marker_mul.num_TLM].len=len;
-	img.marker_mul.num_TLM++;
+	tmp = (info_marker_t*)malloc((INCREMENT + img.marker_mul.CzTLM) * sizeof(info_marker_t));
+	memcpy(tmp,img.marker_mul.TLM,img.marker_mul.CzTLM);
+	img.marker_mul.CzTLM += INCREMENT;
+	free(img.marker_mul.TLM);
+	img.marker_mul.TLM = tmp;
       }
-    // </INDEX>
+    img.marker_mul.TLM[img.marker_mul.num_TLM].type = J2K_MS_TLM;
+    img.marker_mul.TLM[img.marker_mul.num_TLM].start_pos = cio_tell()-2;
+    img.marker_mul.TLM[img.marker_mul.num_TLM].len = len;
+    img.marker_mul.num_TLM++;
+    /* </INDEX> [MHIX BOX] */
     
-    fprintf(stderr, "WARNING: TLM marker segment processing not implemented\n");
-    cio_skip(len-2);
+    Ztlm = cio_read(1);
+    Stlm = cio_read(1);
+    ST = ((Stlm >> 4) & 0x01) + ((Stlm >> 4) & 0x02);
+    SP = (Stlm >> 6) & 0x01;
+    tile_tlm = (len - 4) / ((SP + 1) * 2 + ST);
+    for (i = 0; i < tile_tlm; i++)
+      {
+	Ttlm_i = cio_read(ST);
+	Ptlm_i = cio_read(SP ? 4 : 2);
+      }
 }
+
+
+
 
 void j2k_read_plm() {
-    int len;
+    int len, i, Z_plm, N_plm, add, packet_len=0;
+    info_marker_t *tmp;
+
     len=cio_read(2);
 
-    // <INDEX>
-    if (j2k_state==J2K_STATE_MH)
+    /* <INDEX> [MHIX BOX] */
+    if (!img.marker_mul.num_PLM)
+      img.marker_mul.PLM = (info_marker_t*)malloc(img.marker_mul.CzPLM * sizeof(info_marker_t));
+    if (img.marker_mul.num_PLM >= img.marker_mul.CzPLM)
       {
-	if (!img.marker_mul.num_PLM)
-	  img.marker_mul.PLM=(info_marker_t*)malloc(sizeof(info_marker_t));
-	else
-	  img.marker_mul.PLM=realloc(img.marker_mul.PLM,(1+img.marker_mul.num_PLM)*sizeof(info_marker_t));
-	img.marker_mul.PLM[img.marker_mul.num_PLM].type=J2K_MS_PLM;
-	img.marker_mul.PLM[img.marker_mul.num_PLM].start_pos=cio_tell()-2;
-	img.marker_mul.PLM[img.marker_mul.num_PLM].len=len;
-	img.marker_mul.num_PLM++;
+	tmp = (info_marker_t*)malloc((INCREMENT + img.marker_mul.CzPLM) * sizeof(info_marker_t));
+	memcpy(tmp,img.marker_mul.PLM,img.marker_mul.CzPLM);
+	img.marker_mul.CzPLM += INCREMENT;
+	free(img.marker_mul.PLM);
+	img.marker_mul.PLM = tmp;
       }
-    // </INDEX>
-    
-    fprintf(stderr, "WARNING: PLM marker segment processing not implemented\n");
-    cio_skip(len-2);
+    img.marker_mul.PLM[img.marker_mul.num_PLM].type = J2K_MS_PLM;
+    img.marker_mul.PLM[img.marker_mul.num_PLM].start_pos = cio_tell()-2;
+    img.marker_mul.PLM[img.marker_mul.num_PLM].len = len;
+    img.marker_mul.num_PLM++;
+    /* </INDEX> [MHIX BOX] */
+
+    Z_plm = cio_read(1);
+    len -= 3;
+    while (len > 0)
+      {
+	N_plm = cio_read(4);
+	len -= 4;
+	for (i = N_plm ; i > 0 ; i--)
+	  {
+	    add = cio_read(1);
+	    len--;
+	    packet_len = (packet_len << 7) + add;
+	    if ((add & 0x80) == 0)
+	      {
+		/* New packet */
+		packet_len = 0;
+	      }
+	    if (len <= 0) break;
+	  } 
+      }
 }
+
+
+
 
 void j2k_read_plt() {
-    int len;
-    len=cio_read(2);
-    fprintf(stderr, "WARNING: PLT marker segment processing not implemented\n");
-    cio_skip(len-2);
+    int len, i, Zplt, packet_len=0, add;
+    info_tile_t *tile;
+    info_marker_t *tmp;
+;
+    len = cio_read(2);
+ 
+    /* <INDEX> [MHIX BOX] */
+    tile = &img.tile[j2k_curtileno];
+    if (!tile->marker_mul.num_PLT)
+      tile->marker_mul.PLT = (info_marker_t*)malloc(tile->marker_mul.CzPLT * sizeof(info_marker_t));
+    if (tile->marker_mul.num_PLT >= tile->marker_mul.CzPLT)
+      {
+	tmp = (info_marker_t*)malloc((INCREMENT + tile->marker_mul.CzPLT) * sizeof(info_marker_t));
+	memcpy(tmp,tile->marker_mul.PLT,tile->marker_mul.CzPLT);
+	tile->marker_mul.CzPLT += INCREMENT;
+	free(tile->marker_mul.PLT);
+	tile->marker_mul.PLT = tmp;
+      }
+
+    tile->marker_mul.PLT[tile->marker_mul.num_PLT].type = J2K_MS_PLT;
+    tile->marker_mul.PLT[tile->marker_mul.num_PLT].start_pos = cio_tell()-2;
+    tile->marker_mul.PLT[tile->marker_mul.num_PLT].len = len;
+    tile->marker_mul.num_PLT++;
+    /* </INDEX> [MHIX BOX] */
+    
+    Zplt = cio_read(1);
+    for (i = len-3; i > 0; i--)
+      {
+	add = cio_read(1);
+	packet_len = (packet_len << 7) + add;
+	if ((add & 0x80) == 0)
+	  {
+	    /* New packet */
+	    packet_len = 0;
+	  }
+      }
 }
+
+
+
 
 void j2k_read_ppm() {
-    int len;
-    len=cio_read(2);
-    // <INDEX>
-    if (j2k_state==J2K_STATE_MH)
-      {
-	img.marker[img.num_marker].type=J2K_MS_PPM;
-	img.marker[img.num_marker].start_pos=cio_tell()-2;
-	img.marker[img.num_marker].len=len;
-	img.num_marker++;
-      }
-    // </INDEX>
+    int len, Z_ppm, i, j;
+    int N_ppm;
+    info_marker_t *tmp;
+
+    len = cio_read(2);
     
-    fprintf(stderr, "WARNING: PPM marker segment processing not implemented\n");
-    cio_skip(len-2);
+    /* <INDEX> [MHIX BOX] */
+    if (!img.marker_mul.num_PPM)
+      img.marker_mul.PPM = (info_marker_t*)malloc(img.marker_mul.CzPPM * sizeof(info_marker_t));
+    if (img.marker_mul.num_PPM >= img.marker_mul.CzPPM)
+      {
+	tmp = (info_marker_t*)malloc((INCREMENT + img.marker_mul.CzPPM) * sizeof(info_marker_t));
+	memcpy(tmp,img.marker_mul.PPM,img.marker_mul.CzPPM);
+	img.marker_mul.CzPPM += INCREMENT;
+	free(img.marker_mul.PPM);
+	img.marker_mul.PPM = tmp;
+      }
+    img.marker_mul.PLM[img.marker_mul.num_PPM].type = J2K_MS_PPM;
+    img.marker_mul.PLM[img.marker_mul.num_PPM].start_pos = cio_tell()-2;
+    img.marker_mul.PLM[img.marker_mul.num_PPM].len = len;
+    img.marker_mul.num_PPM++;
+    /* </INDEX> [MHIX BOX] */
+    
+    j2k_cp->ppm = 1;
+    
+    Z_ppm = cio_read(1); /* Z_ppm */
+    len -= 3;
+    while (len > 0)
+      {
+	if (j2k_cp->ppm_previous == 0)
+	  {
+	    N_ppm = cio_read(4); /* N_ppm */
+	    len -= 4;
+	  } else
+	    {
+	      N_ppm = j2k_cp->ppm_previous;
+	    }
+	
+	j = j2k_cp->ppm_store;
+	if (Z_ppm == 0) /* First PPM marker */
+	  j2k_cp->ppm_data = (unsigned char*)calloc(N_ppm, sizeof(unsigned char));
+	else      /* NON-first PPM marker */
+	  j2k_cp->ppm_data = (unsigned char*)realloc(j2k_cp->ppm_data, (N_ppm + j2k_cp->ppm_store) * sizeof(unsigned char));
+	
+	for (i = N_ppm ; i > 0 ; i--) /* Read packet header */
+	  {
+	    j2k_cp->ppm_data[j] = cio_read(1);
+	    j++;
+	    len--;
+	    if (len == 0) break; /* Case of non-finished packet header in present marker but finished in next one */
+	  }
+	
+	j2k_cp->ppm_previous = i - 1;
+	j2k_cp->ppm_store = j;
+      }
 }
 
+
+
+
 void j2k_read_ppt() {
-    int len;
+    int len, Z_ppt, i, j = 0;
+    j2k_tcp_t *tcp;
+    info_tile_t *tile;
     len=cio_read(2);
-    fprintf(stderr, "WARNING: PPT marker segment processing not implemented\n");
-    cio_skip(len-2);
+
+    /* <INDEX> [MHIX BOX] */
+    tile = & img.tile[j2k_curtileno];
+    tile->marker[tile->num_marker].type = J2K_MS_PPT;
+    tile->marker[tile->num_marker].start_pos = cio_tell()-2;
+    tile->marker[tile->num_marker].len = len;
+    tile->num_marker++;
+    /* </INDEX> [MHIX BOX] */
+
+    Z_ppt = cio_read(1);
+    tcp = &j2k_cp->tcps[j2k_curtileno];
+    tcp->ppt = 1;
+    if (Z_ppt == 0) /* First PPT marker */
+      {
+	tcp->ppt_data = (unsigned char*)calloc(len - 3, sizeof(unsigned char));
+	tcp->ppt_store = 0;
+      }
+    else      /* NON-first PPT marker */
+      tcp->ppt_data = (unsigned char*)realloc(tcp->ppt_data, (len - 3 + tcp->ppt_store) * sizeof(unsigned char));
+    
+    j = tcp->ppt_store;
+    for (i = len - 3 ; i > 0 ; i--)
+      {
+	tcp->ppt_data[j] = cio_read(1);
+	j++;
+      }
+    tcp->ppt_store = j;
 }
+
+
+
 
 void j2k_read_sot() {
     int len, tileno, totlen, partno, numparts, i;
     j2k_tcp_t *tcp;
     j2k_tccp_t *tmp;
-    len=cio_read(2);
-    tileno=cio_read(2);
-    //<INDEX>
-    if (!tileno) img.Main_head_end=cio_tell()-6;  // Correction End = First byte of first SOT
-    img.tile[tileno].start_pos=cio_tell()-6;
-    img.tile[tileno].num_tile=tileno;
-    // </INDEX>
-    totlen=cio_read(4); 
+    info_tile_t *tile;
+    info_tile_part_t *tilepart_tmp;
+    
+ 
+    //fprintf(stderr,"SOT\n");
+    len = cio_read(2);
+    tileno = cio_read(2);
+    /* <INDEX> [MHIX BOX] */
+    tile = & img.tile[tileno];
+    tile->marker[tile->num_marker].type = J2K_MS_SOT;
+    tile->marker[tile->num_marker].start_pos = cio_tell() - 4;
+    tile->marker[tile->num_marker].len = len;
+    tile->num_marker++;
+    /* </INDEX> [MHIX BOX] */
+ 
+    totlen = cio_read(4);
     if (!totlen) totlen = cio_numbytesleft() + 8;
+    partno = cio_read(1);
+    numparts = cio_read(1);
 
-    img.tile[tileno].end_pos=totlen+img.tile[tileno].start_pos; // <INDEX>
+    /* <INDEX> */
+    if (tileno == 0 && partno == 0 ) 
+      img.Main_head_end = cio_tell() - 7;  /* Correction End = First byte of first SOT */
+    
+    img.tile[tileno].num_tile = tileno;
+    /* </INDEX> */
+  
+    tile->numparts = partno + 1;                                               /* INDEX : Number of tile_parts for the tile */ 
+    img.num_max_tile_parts = int_max(tile->numparts, img.num_max_tile_parts);  /* INDEX : Maximum number of tile_part per tile */
 
-    partno=cio_read(1);
-    numparts=cio_read(1);
-    j2k_curtileno=tileno;
-    j2k_eot=cio_getbp()-12+totlen;
-    j2k_state=J2K_STATE_TPH;
-    tcp=&j2k_cp->tcps[j2k_curtileno];
-    tmp=tcp->tccps;
-    *tcp=j2k_default_tcp;
-    tcp->tccps=tmp;
-    for (i=0; i<j2k_img->numcomps; i++) {
-        tcp->tccps[i]=j2k_default_tcp.tccps[i];
+    if (partno == 0)
+    {
+      tile->tile_parts = (info_tile_part_t*)malloc(START_NB * sizeof(info_tile_part_t*));
+      tile->Cztile_parts = START_NB;
     }
+    if (partno >= tile->Cztile_parts)
+      {
+	tilepart_tmp = (info_tile_part_t*)malloc((INCREMENT + tile->Cztile_parts) * sizeof(info_tile_part_t));
+	memcpy(tmp, tile->tile_parts, tile->Cztile_parts);
+	tile->Cztile_parts += INCREMENT;
+	free(tile->tile_parts);
+	tile->tile_parts = tilepart_tmp;
+      }
+
+    tile->tile_parts[partno].start_pos = cio_tell() - 12;        /* INDEX : start_pos of the tile_part       */
+    tile->tile_parts[partno].length = totlen;                    /* INDEX : length of the tile_part          */  
+    tile->tile_parts[partno].end_pos = totlen + cio_tell() - 12; /* INDEX : end position of the tile_part    */
+
+
+    j2k_curtileno = tileno;
+    j2k_eot = cio_getbp() - 12 + totlen;
+    j2k_state = J2K_STATE_TPH;
+    tcp = &j2k_cp->tcps[j2k_curtileno];
+    
+    tile->tile_parts[numparts].num_reso_AUX = tcp->tccps[0].numresolutions; /* INDEX : AUX value for TPIX       */
+
+     if (partno == 0)
+       //  if (tcp->first == 1) 
+      {
+	tmp = tcp->tccps;
+	*tcp = j2k_default_tcp;
+	/* Initialization PPT */
+	tcp->ppt = 0; 
+	tcp->ppt_data = NULL;
+	
+	tcp->tccps = tmp;
+	for (i = 0; i < j2k_img->numcomps; i++) {
+	  tcp->tccps[i] = j2k_default_tcp.tccps[i];
+	}
+	//j2k_cp->tcps[j2k_curtileno].first=0;
+      }
 }
 
-void j2k_read_sod() {
-    int len;
-    unsigned char *data;
-    img.tile[j2k_curtileno].end_header=cio_tell()-1;  //<INDEX>
-    len=int_min(j2k_eot-cio_getbp(), cio_numbytesleft());
-    j2k_tile_len[j2k_curtileno]+=len;
-    data=(unsigned char*)realloc(j2k_tile_data[j2k_curtileno], j2k_tile_len[j2k_curtileno]);
-    memcpy(data, cio_getbp(), len);
-    j2k_tile_data[j2k_curtileno]=data;
-    cio_skip(len);
-    j2k_state=J2K_STATE_TPHSOT;
-   
-}
+
 
 void j2k_read_rgn() {
     int len, compno, roisty;
     j2k_tcp_t *tcp;
-    tcp=j2k_state==J2K_STATE_TPH?&j2k_cp->tcps[j2k_curtileno]:&j2k_default_tcp;
-    len=cio_read(2);
-
-    // <INDEX>
-    if (j2k_state==J2K_STATE_MH)
+    info_tile_t *tile;
+    info_marker_t *tmp;
+    // fprintf(stderr,"RGN\n");
+    tcp = j2k_state == J2K_STATE_TPH ? &j2k_cp->tcps[j2k_curtileno] : &j2k_default_tcp;
+    len = cio_read(2);
+    
+    /* <INDEX> [MHIX BOX]*/
+    if (j2k_state == J2K_STATE_MH)
       {
 	if (!img.marker_mul.num_RGN)
-	  img.marker_mul.RGN=(info_marker_t*)malloc(sizeof(info_marker_t));
-	else
-	  img.marker_mul.RGN=realloc(img.marker_mul.RGN,(1+img.marker_mul.num_RGN)*sizeof(info_marker_t));
-	img.marker_mul.RGN[img.marker_mul.num_RGN].type=J2K_MS_RGN;
-	img.marker_mul.RGN[img.marker_mul.num_RGN].start_pos=cio_tell()-2;
-	img.marker_mul.RGN[img.marker_mul.num_RGN].len=len;
+	  img.marker_mul.RGN = (info_marker_t*)malloc(img.marker_mul.CzRGN * sizeof(info_marker_t));
+	if (img.marker_mul.num_RGN >= img.marker_mul.CzRGN)
+	  {
+	    tmp = (info_marker_t*)malloc((INCREMENT + img.marker_mul.CzRGN) * sizeof(info_marker_t));
+	    memcpy(tmp,img.marker_mul.RGN, img.marker_mul.CzRGN);
+	    img.marker_mul.CzRGN += INCREMENT;
+	    free(img.marker_mul.RGN);
+	    img.marker_mul.RGN = tmp;
+	  }
+	img.marker_mul.RGN[img.marker_mul.num_RGN].type = J2K_MS_RGN;
+	img.marker_mul.RGN[img.marker_mul.num_RGN].start_pos = cio_tell() - 2;
+	img.marker_mul.RGN[img.marker_mul.num_RGN].len = len;
 	img.marker_mul.num_RGN++;
-      }
-    // </INDEX>
+      } else
+      {
+	tile = &img.tile[j2k_curtileno];
+	if (!tile->marker_mul.num_RGN)
+	  tile->marker_mul.RGN = (info_marker_t*)malloc(tile->marker_mul.CzRGN * sizeof(info_marker_t));
+	if (tile->marker_mul.num_RGN >= tile->marker_mul.CzRGN)
+	  {
+	    tmp = (info_marker_t*)malloc((INCREMENT + tile->marker_mul.CzRGN) * sizeof(info_marker_t));
+	    memcpy(tmp,tile->marker_mul.RGN,tile->marker_mul.CzRGN);
+	    tile->marker_mul.CzRGN += INCREMENT;
+	    free(tile->marker_mul.RGN);
+	    tile->marker_mul.RGN = tmp;
+	  }
 
+	tile->marker_mul.RGN[tile->marker_mul.num_RGN].type = J2K_MS_RGN;
+	tile->marker_mul.RGN[tile->marker_mul.num_RGN].start_pos = cio_tell() - 2;
+        tile->marker_mul.RGN[tile->marker_mul.num_RGN].len = len;
+	tile->marker_mul.num_RGN++;
+      }
+    /* </INDEX> [MHIX BOX] */
     
-    compno=cio_read(j2k_img->numcomps<=256?1:2);
-    roisty=cio_read(1);
-    tcp->tccps[compno].roishift=cio_read(1);
+    compno = cio_read(j2k_img->numcomps <= 256 ? 1 : 2);
+    roisty = cio_read(1);
+    tcp->tccps[compno].roishift = cio_read(1);
+}
+
+
+
+
+
+void j2k_read_sod() {
+    int len;
+    unsigned char *data;
+    info_tile_t *tile;
+    info_tile_part_t *tile_part;
+    // fprintf(stderr,"SOD\n");
+    /* <INDEX> [MHIX BOX] */
+    tile = &img.tile[j2k_curtileno];
+    tile->marker[tile->num_marker].type = J2K_MS_SOD;
+    tile->marker[tile->num_marker].start_pos = cio_tell();
+    tile->marker[tile->num_marker].len = 0;
+    tile->num_marker++;
+    /* </INDEX> [MHIX BOX] */
+
+    tile_part = &tile->tile_parts[tile->numparts - 1];                   /* INDEX : Current tilepart of a tile                  */
+    tile_part->length_header = cio_tell() - 1 - tile_part->start_pos;    /* INDEX : length of the tile-part header              */
+    tile_part->end_header = cio_tell() - 1;                              /* INDEX : end header position of the tile-part header */
+
+    len = int_min(j2k_eot - cio_getbp(), cio_numbytesleft());
+    
+    j2k_tile_len[j2k_curtileno] += len;
+    data = (unsigned char*)realloc(j2k_tile_data[j2k_curtileno], j2k_tile_len[j2k_curtileno]);   
+    memcpy(data, cio_getbp(), len);
+    j2k_tile_data[j2k_curtileno] = data;
+    cio_skip(len);
+    j2k_state = J2K_STATE_TPHSOT;
 }
 
 void j2k_read_eoc() {
     int tileno;
     tcd_init(j2k_img, j2k_cp, &img);
-    for (tileno=0; tileno<j2k_cp->tw*j2k_cp->th; tileno++) {
+    for (tileno = 0; tileno<j2k_cp->tw * j2k_cp->th; tileno++) {
         tcd_decode_tile(j2k_tile_data[tileno], j2k_tile_len[tileno], tileno, &img);
     }
 
-    j2k_state=J2K_STATE_MT;
+    j2k_state = J2K_STATE_MT;
      longjmp(j2k_error, 1);
-
 }
+
+
+
 
 void j2k_read_unk() {
     fprintf(stderr, "warning: unknown marker\n");
 }
 
-int j2k_index_JPIP(char *Idx_file, char *J2K_file, int len){
+
+
+
+int j2k_index_JPIP(char *Idx_file, char *J2K_file, int len, int version){
   FILE *dest;
   char *index;
   int pos_iptr, end_pos;
@@ -576,12 +1017,12 @@ int j2k_index_JPIP(char *Idx_file, char *J2K_file, int len){
 
   dest=fopen(Idx_file, "wb");
   if (!dest) {
-    fprintf(stderr,"Failed to open %s for reading !!\n",Idx_file);
+    fprintf(stderr, "Failed to open %s for reading !!\n", Idx_file);
     return 0;
   }
 
- // INDEX MODE JPIP
- index=(char*)malloc(len); 
+  /* INDEX MODE JPIP */
+ index = (char*)malloc(len); 
  cio_init(index, len);
  jp2_write_jp();
  jp2_write_ftyp();
@@ -590,22 +1031,24 @@ int j2k_index_JPIP(char *Idx_file, char *J2K_file, int len){
  jp2_write_dbtl(Idx_file);
 
  pos_iptr=cio_tell();
- cio_skip(24); // IPTR further !
+ cio_skip(24); /* IPTR further ! */
  
- pos_jp2c=cio_tell();
- len_jp2c=jp2_write_jp2c(J2K_file);
-  
- pos_cidx=cio_tell();
- len_cidx=jpip_write_cidx(pos_jp2c+8,img, j2k_cp); // Correction len_jp2C --> pos_jp2c+8  
+ pos_jp2c = cio_tell();
+ len_jp2c = jp2_write_jp2c(J2K_file);
+
+ pos_cidx = cio_tell();
+ len_cidx = jpip_write_cidx(pos_jp2c + 8,img, j2k_cp, version); /* Correction len_jp2C --> pos_jp2c + 8 */  
+
  
- pos_fidx=cio_tell();
- len_fidx=jpip_write_fidx(pos_jp2c, len_jp2c, pos_cidx, len_cidx);
- 
- end_pos=cio_tell();
+ pos_fidx = cio_tell();
+ len_fidx = jpip_write_fidx(pos_jp2c, len_jp2c, pos_cidx, len_cidx);
+
+end_pos = cio_tell();
+
  cio_seek(pos_iptr);
  jpip_write_iptr(pos_fidx,len_fidx);
  cio_seek(end_pos);
-
+ 
  fwrite(index, 1, cio_tell(), dest);
  free(index);
 
@@ -646,38 +1089,38 @@ j2k_dec_mstabent_t j2k_dec_mstab[]={
 
 j2k_dec_mstabent_t *j2k_dec_mstab_lookup(int id) {
     j2k_dec_mstabent_t *e;
-    for (e=j2k_dec_mstab; e->id!=0; e++) {
-        if (e->id==id) {
+    for (e = j2k_dec_mstab; e->id != 0; e++) {
+        if (e->id == id) {
             break;
         }
     }
     return e;
 }
 
-LIBJ2K_API int j2k_decode(unsigned char *src, int len, j2k_image_t **image, j2k_cp_t **cp) {
+int j2k_decode(unsigned char *src, int len, j2k_image_t **image, j2k_cp_t **cp) {
     if (setjmp(j2k_error)) {
-        if (j2k_state!=J2K_STATE_MT) {
+        if (j2k_state != J2K_STATE_MT) {
             fprintf(stderr, "WARNING: incomplete bitstream\n");
             return 0;
         }
         return cio_numbytes();
     }
-    j2k_img=(j2k_image_t*)malloc(sizeof(j2k_image_t));
-    j2k_cp=(j2k_cp_t*)malloc(sizeof(j2k_cp_t));
-    *image=j2k_img;
-    *cp=j2k_cp;
-    j2k_state=J2K_STATE_MHSOC;
+    j2k_img = (j2k_image_t*)calloc(1, sizeof(j2k_image_t));
+    j2k_cp = (j2k_cp_t*)calloc(1, sizeof(j2k_cp_t));
+    *image = j2k_img;
+    *cp = j2k_cp;
+    j2k_state = J2K_STATE_MHSOC;
     cio_init(src, len);
     for (;;) {
         j2k_dec_mstabent_t *e;
-        int id=cio_read(2);
-        if (id>>8!=0xff) {
-            fprintf(stderr, "%.8x: expected a marker instead of %x\n", cio_tell()-2, id);
+        int id = cio_read(2);
+        if (id >> 8 != 0xff) {
+            fprintf(stderr, "%.8x: expected a marker instead of %x\n", cio_tell() - 2, id);
             return 0;
         }
-        e=j2k_dec_mstab_lookup(id);
+        e = j2k_dec_mstab_lookup(id);
         if (!(j2k_state & e->states)) {
-            fprintf(stderr, "%.8x: unexpected marker %x\n", cio_tell()-2, id);
+            fprintf(stderr, "%.8x: unexpected marker %x\n", cio_tell() - 2, id);
             return 0;
         }
         if (e->handler) {
@@ -686,6 +1129,7 @@ LIBJ2K_API int j2k_decode(unsigned char *src, int len, j2k_image_t **image, j2k_
     }
 
 }
+
 
 #ifdef WIN32
 #include <windows.h>
@@ -702,10 +1146,6 @@ BOOL APIENTRY DllMain(HANDLE hModule, DWORD ul_reason_for_call, LPVOID lpReserve
 }
 #endif
 
-
-extern info_image_t img;
-
-
 int main(int argc, char **argv)
 {  
   FILE *src;
@@ -713,53 +1153,67 @@ int main(int argc, char **argv)
   char *j2kfile;
   j2k_image_t *imgg;
   j2k_cp_t *cp;
+  int version;
 
-  if (argc!=3)
+  if (argc != 4)
     {
-      fprintf(stderr,"\nERROR in entry : index_create J2K-file Idx-file\n\n");
-      return 0;
+      fprintf(stderr,"\nERROR in entry : index_create J2K-file Idx-file version\n\nVersion : 0, 1, 2 or 3\n\n");
+      return 1;
     }
 
   src=fopen(argv[1], "rb");
   if (!src) {
-    fprintf(stderr,"Failed to open %s for reading !!\n",argv[1]);
-    return 0;
+    fprintf(stderr, "Failed to open %s for reading !!\n", argv[1]);
+    return 1;
   }
 
-  // length of the codestream
+  /* length of the codestream */
   fseek(src, 0, SEEK_END);
-  totlen=ftell(src);
+  totlen = ftell(src);
   fseek(src, 0, SEEK_SET);
   
-  j2kfile=(char*)malloc(totlen);
+  j2kfile = (char*)malloc(totlen);
   fread(j2kfile, 1, totlen, src);
-  
-  img.marker=(info_marker_t*)malloc(32*sizeof(info_marker_t));
-  img.num_marker=0;
-  img.marker_mul.num_COD=0;
-  img.marker_mul.num_COC=0;
-  img.marker_mul.num_RGN=0;
-  img.marker_mul.num_QCC=0;
-  img.marker_mul.num_TLM=0;
-  img.marker_mul.num_PLM=0;
-  img.marker_mul.num_COM=0;
+  fclose(src);
 
-  // decode  
+  img.marker = (info_marker_t*)malloc(32 * sizeof(info_marker_t));
+  img.num_marker = 0;
+  img.num_max_tile_parts = 0;
+  img.marker_mul.num_COC = 0;
+  img.marker_mul.CzCOC = START_NB;
+  img.marker_mul.num_RGN = 0;
+  img.marker_mul.CzRGN = START_NB;
+  img.marker_mul.num_QCC = 0;
+  img.marker_mul.CzQCC = START_NB;
+  img.marker_mul.num_TLM = 0;
+  img.marker_mul.CzTLM = START_NB;
+  img.marker_mul.num_PLM = 0;
+  img.marker_mul.CzPLM = START_NB;
+  img.marker_mul.num_PPM = 0;
+  img.marker_mul.CzPPM = START_NB;
+  img.marker_mul.num_COM = 0;
+  img.marker_mul.CzCOM = START_NB;
+
+  /* decode */ 
 
   if (!j2k_decode(j2kfile, totlen, &imgg, &cp)) {
     fprintf(stderr, "Index_creator: failed to decode image!\n");
     return 1;
   }
-
   free(j2kfile);
+  
+  // fseek(src, 0, SEEK_SET);
+  img.codestream_size = totlen;
+  sscanf(argv[3], "%d", &version);
+  if (version > 3)
+    {
+      fprintf(stderr,"Error : value of version unauthorized !!  Value accepted : 0, 1, 2 or 3 !!\n");
+      return 0;
+    }
 
-  fseek(src, 0, SEEK_SET);
-  img.codestream_size=totlen;
-
-  j2k_index_JPIP(argv[2],argv[1],totlen*2>30000?totlen*2:30000);
-
-  fclose(src);
-
+  j2k_index_JPIP(argv[2], argv[1], totlen * 2 > 60000 ? totlen * 2 : 60000, version);
+  
   j2k_clean();
-  return 1;
+  return 0;
 }
+ 
