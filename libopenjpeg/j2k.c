@@ -483,7 +483,7 @@ void j2k_read_qcx(int compno, int len)
 						len - 1 : (len - 1) / 2);
   for (bandno = 0; bandno < numbands; bandno++) {
     int expn, mant;
-    if (tccp->qntsty == J2K_CCP_QNTSTY_NOQNT) {	/* WHY STEPSIZES WHEN NOQNT ? */
+    if (tccp->qntsty == J2K_CCP_QNTSTY_NOQNT) {
       expn = cio_read(1) >> 3;	/* SPqcx_i */
       mant = 0;
     } else {
@@ -494,6 +494,17 @@ void j2k_read_qcx(int compno, int len)
     tccp->stepsizes[bandno].expn = expn;
     tccp->stepsizes[bandno].mant = mant;
   }
+
+  /* Add Antonin : if scalar_derived -> compute other stepsizes */
+
+  if (tccp->qntsty==J2K_CCP_QNTSTY_SIQNT) {
+    for (bandno=1 ; bandno<J2K_MAXBANDS ; bandno++) {
+      tccp->stepsizes[bandno].expn = ((tccp->stepsizes[0].expn)-((bandno-1)/3+1)>0)?(tccp->stepsizes[0].expn)-((bandno-1)/3+1):0;
+      tccp->stepsizes[bandno].mant = tccp->stepsizes[0].mant;
+    }
+  }
+
+  /* ddA */
 }
 
 void j2k_write_qcd()

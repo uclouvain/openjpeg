@@ -42,7 +42,7 @@
 #define __J2K_H
 
 #define J2K_MAXRLVLS 33		/* Number of maximum resolution level authorized                   */
-#define J2K_MAXBANDS (3*J2K_MAXRLVLS+1)	/* Number of maximum sub-band linked to number of resolution level */
+#define J2K_MAXBANDS (3*J2K_MAXRLVLS-2)	/* Number of maximum sub-band linked to number of resolution level */
 
 #define J2K_CP_CSTY_PRT 0x01
 #define J2K_CP_CSTY_SOP 0x02
@@ -97,7 +97,7 @@ typedef struct {
   int cblksty;			/* code-block coding style               */
   int qmfbid;			/* discrete wavelet transform identifier */
   int qntsty;			/* quantisation style                    */
-  j2k_stepsize_t stepsizes[J2K_MAXBANDS];	/* stepsizes used for quantisation       */
+  j2k_stepsize_t stepsizes[J2K_MAXBANDS];	/* stepsizes used for quantization       */
   int numgbits;			/* number of guard bits                  */
   int roishift;			/* Region Of Interest shift              */
   int prcw[J2K_MAXRLVLS];	/* Precinct width                        */
