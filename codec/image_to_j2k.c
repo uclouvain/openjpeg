@@ -318,7 +318,8 @@ int main(int argc, char **argv)
   int ir = 0;
   int res_spec = 0;		/*   For various precinct sizes specification                 */
   char sep;
-  char *outbuf;
+  char *j2k_codestream;
+  char *jp2_codestream;
   FILE *f;
 
 
@@ -848,10 +849,11 @@ int main(int argc, char **argv)
 	return 1;
       }
     } else {
-      outbuf = (char *) malloc(cp.tdx * cp.tdy * cp.tw * cp.th * 2);	/* Allocate memory for all tiles */
-      cio_init(outbuf, cp.tdx * cp.tdy * cp.tw * cp.th * 2);
+      j2k_codestream = (char *) malloc(cp.tdx * cp.tdy * cp.tw * cp.th * 2);
+      /* Allocate memory for all tiles */
+      cio_init(j2k_codestream, cp.tdx * cp.tdy * cp.tw * cp.th * 2);
       len =
-	j2k_encode(&img, &cp, outbuf,
+	j2k_encode(&img, &cp, j2k_codestream,
 		   cp.tdx * cp.tdy * cp.tw * cp.th * 2, index);
       if (len == 0) {
 	fprintf(stderr, "failed to encode image\n");
@@ -862,8 +864,8 @@ int main(int argc, char **argv)
 	fprintf(stderr, "failed to open %s for writing\n", outfile);
 	return 1;
       }
-      fwrite(outbuf, 1, len, f);
-      free(outbuf);
+      fwrite(j2k_codestream, 1, len, f);
+      free(j2k_codestream);
       fclose(f);
     }
   } else {			/* JP2 format output */
@@ -873,30 +875,40 @@ int main(int argc, char **argv)
     jp2_struct->image = &img;
 
     /* Initialising the standard JP2 box content */
-    /* If you wish to modify those boxes, you have to modify the jp2_struct content */
+    /* If you wish to modify those boxes, you have to modify 
+    the jp2_struct content */
     if (jp2_init_stdjp2(jp2_struct, &img)) {
       fprintf(stderr, "Error with jp2 initialization");
       return 1;
     };
 
     if (cp.intermed_file == 1) {
-      /*For the moment, JP2 format does not use intermediary files for each tile */
+      /*For the moment, JP2 format does not use intermediary 
+      files for each tile */
       cp.intermed_file = 0;
     }
-    outbuf = (char *) malloc(cp.tdx * cp.tdy * cp.tw * cp.th * 2);
-    cio_init(outbuf, cp.tdx * cp.tdy * cp.tw * cp.th * 2);
-    len = jp2_encode(jp2_struct, &cp, outbuf, index);
+    j2k_codestream = (char *) malloc(cp.tdx * cp.tdy * cp.tw * cp.th * 2);
+    jp2_codestream = (char *) malloc(cp.tdx * cp.tdy * cp.tw * cp.th * 2);
+
+    cio_init(j2k_codestream, cp.tdx * cp.tdy * cp.tw * cp.th * 2);
+    len = j2k_encode(&img, &cp, j2k_codestream,
+      cp.tdx * cp.tdy * cp.tw * cp.th * 2, index);
     if (len == 0) {
       fprintf(stderr, "failed to encode image\n");
       return 1;
     }
+    jp2_struct->j2k_codestream_len = len;
+
+    cio_init(jp2_codestream, cp.tdx * cp.tdy * cp.tw * cp.th * 2);
+    len = jp2_wrap_j2k(jp2_struct, j2k_codestream, jp2_codestream);
     f = fopen(outfile, "wb");
     if (!f) {
       fprintf(stderr, "failed to open %s for writing\n", outfile);
       return 1;
     }
-    fwrite(outbuf, 1, len, f);
-    free(outbuf);
+    fwrite(jp2_codestream, 1, len, f);
+    free(jp2_codestream);
+    free(j2k_codestream);
     fclose(f);
   }
 

@@ -53,6 +53,8 @@ typedef struct {
   unsigned int *cl;
   jp2_comps_t *comps;
   j2k_image_t *image;
+  unsigned int j2k_codestream_offset;
+  unsigned int j2k_codestream_len;
 } jp2_struct_t;
 
 typedef struct {
@@ -69,17 +71,13 @@ typedef struct {
  */
 int jp2_init_stdjp2(jp2_struct_t * jp2_struct, j2k_image_t * img);
 
-/* int jp2_write_jp2c(j2k_image_t * img, j2k_cp_t * cp, char *jp2_buffer,
- *		   char *index);
+/* int jp2_write_jp2c(char *j2k_codestream, int j2k_len);
  *
  * Write the jp2c codestream box 
- * img: the j2k_image that will be compressed
- * jp2_buffer: the buffer that will recieve the compressed data
- * index: the name of the index file 
+ * jp2_struct: the jp2 structure you are working with
+ * j2k_codestream: the j2k codestream to include in jp2 file
  */
-int jp2_write_jp2c(j2k_image_t * img, j2k_cp_t * cp, char *jp2_buffer,
-		   char *index);
-
+int jp2_write_jp2c(jp2_struct_t * jp2_struct, char *j2k_codestream);
 
 /* int jp2_write_jp2h(jp2_struct_t * jp2_struct);
  *
@@ -95,28 +93,25 @@ void jp2_write_jp2h(jp2_struct_t * jp2_struct);
  */
 int jp2_read_jp2h(jp2_struct_t * jp2_struct);
 
-/* int jp2_encode(jp2_struct_t * jp2_struct, j2k_cp_t * cp, char *output,
- *       char *index);
+/* int jp2_wrap_j2k(jp2_struct_t * jp2_struct, char *j2k_codestream, 
+	  int j2k_len, char *output)
  *
- * Encode a JP2 file
- * jp2_buffer: the buffer containing the pointer to the image to encode
- * cp: coding parameters of the image
- * outbuf: pointer to memory where compressed data will be written
- * index: the name of the index file 
+ * Wrap a J2K codestream in a JP2 file
+ * jp2_struct: the jp2 structure used to create jp2 boxes
+ * j2k_codestream: the j2k codestream to include in jp2 file
+ * output: pointer to jp2 codestream that will be created
  */
-int jp2_encode(jp2_struct_t * jp2_struct, j2k_cp_t * cp, char *output,
-	       char *index);
+int jp2_wrap_j2k(jp2_struct_t * jp2_struct, char *j2k_codestream, 
+		  char *output);
 
-/* int jp2_decode(unsigned char *src, int len, jp2_struct_t * jp2_struct,
- *	       j2k_cp_t * cp);
+
+/* int jp2_read_struct(unsigned char *src, jp2_struct_t * jp2_struct);
  *
- * Decode a JP2 file
+ * Decode the structure of a JP2 file
  * src: pointer to memory where compressed data is stored
- * len: length of src buffer
  * jp2_struct: the jp2 structure that will be created 
- * cp: coding parameters of the image
+ * len: length of jp2 codestream
  */
-int jp2_decode(unsigned char *src, int len, jp2_struct_t * jp2_struct,
-	       j2k_cp_t * cp);
+int jp2_read_struct(unsigned char *src, jp2_struct_t * jp2_struct, int len);
 
 #endif

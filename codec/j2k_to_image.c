@@ -25,12 +25,20 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+
+
 //MEMORY LEAK
+
 #ifdef _DEBUG
+
 #define _CRTDBG_MAP_ALLOC
+
 #include <stdlib.h>  // Must be included first
+
 #include <crtdbg.h>
+
 #endif
+
 //MEM
 
 
@@ -147,6 +155,7 @@ int main(int argc, char **argv)
   src_name--;
   S1 = *src_name;
 
+
   /* J2K format */
   if ((S1 == 'j' && S2 == '2' && S3 == 'k')
       || (S1 == 'J' && S2 == '2' && S3 == 'K') || (S1 == 'j' && S2 == '2'
@@ -165,7 +174,12 @@ int main(int argc, char **argv)
 
     jp2_struct->image = &img;
 
-    if (jp2_decode(src, len, jp2_struct, &cp)) {
+    if (jp2_read_struct(src, jp2_struct, len)) {
+      fprintf(stderr, "j2k_to_image: failed to decode jp2 structure!\n");
+      return 1;
+    }
+
+    if (!j2k_decode(src + jp2_struct->j2k_codestream_offset, jp2_struct->j2k_codestream_len, &img, &cp)) {
       fprintf(stderr, "j2k_to_image: failed to decode image!\n");
       return 1;
     }
@@ -561,12 +575,20 @@ int main(int argc, char **argv)
     break;
   }
 
+
+
   j2k_dec_release();
 
+
+
   //MEMORY LEAK
+
   #ifdef _DEBUG
+
     _CrtDumpMemoryLeaks();
+
   #endif
+
   //MEM
 
   return 0;

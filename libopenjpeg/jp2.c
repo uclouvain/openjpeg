@@ -65,6 +65,11 @@ int jp2_read_boxhdr(jp2_box_t * box)
       return 1;
     };
     box->length = cio_read(4);
+    if (box->length == 0) 
+      box->length = cio_numbytesleft() + 12;
+  }
+  else if (box->length == 0) {
+    box->length = cio_numbytesleft() + 8;
   }
   return 0;
 }
@@ -418,34 +423,33 @@ int jp2_read_ftyp(jp2_struct_t * jp2_struct)
     jp2_struct->cl[i] = cio_read(4);	/* CLi */
 
   if (cio_tell() - box.init_pos != box.length) {
-    fprintf(stderr, "Error with FTYP Box\n");
+    fprintf(stderr, "Error with FTYP Box\n"); 
     return 1;
   }
   return 0;
 }
 
-int jp2_write_jp2c(j2k_image_t * img, j2k_cp_t * cp, char *jp2_buffer,
-		   char *index)
+int jp2_write_jp2c(jp2_struct_t * jp2_struct, char *j2k_codestream)
 {
-  int len;
   jp2_box_t box;
 
   box.init_pos = cio_tell();
   cio_skip(4);
   cio_write(JP2_JP2C, 4);	// JP2C
 
-  len = j2k_encode(img, cp, jp2_buffer, cp->tdx * cp->tdy * cp->th * cp->tw * 2, index);
+  jp2_struct->j2k_codestream_offset = cio_tell();
+  memcpy(cio_getbp(),j2k_codestream, jp2_struct->j2k_codestream_len);
 
-  box.length = cio_tell() - box.init_pos;
+  box.length = 8 + jp2_struct->j2k_codestream_len;
   cio_seek(box.init_pos);
   cio_write(box.length, 4);	/*    L       */
   cio_seek(box.init_pos + box.length);
+
   return box.length;
 }
 
 
-int jp2_read_jp2c(unsigned char *src, int len, jp2_struct_t * jp2_struct,
-		  j2k_cp_t * cp)
+int jp2_read_jp2c(unsigned char *src, jp2_struct_t * jp2_struct)
 {
   jp2_box_t box;
 
@@ -455,12 +459,8 @@ int jp2_read_jp2c(unsigned char *src, int len, jp2_struct_t * jp2_struct,
     return 1;
   }
 
-  src += cio_tell();
-
-  if (j2k_decode(src, len, jp2_struct->image, cp) == 0) {
-    fprintf(stderr, "JP2F box: failed to decode J2K bitstream image!\n");
-    return 1;
-  }
+  jp2_struct->j2k_codestream_offset = cio_tell();
+  jp2_struct->j2k_codestream_len = box.length - 8;
 
   return 0;
 }
@@ -508,8 +508,8 @@ int jp2_read_jp()
 
 }
 
-int jp2_decode(unsigned char *src, int len, jp2_struct_t * jp2_struct,
-	       j2k_cp_t * cp)
+
+int jp2_read_struct(unsigned char *src, jp2_struct_t * jp2_struct, int len)
 {
   cio_init(src, len);
 
@@ -519,20 +519,17 @@ int jp2_decode(unsigned char *src, int len, jp2_struct_t * jp2_struct,
     return 1;
   if (jp2_read_jp2h(jp2_struct))
     return 1;
-  if (jp2_read_jp2c(src, len, jp2_struct, cp))
+  if (jp2_read_jp2c(src, jp2_struct))
     return 1;
   return 0;
 }
 
-int jp2_encode(jp2_struct_t * jp2_struct, j2k_cp_t * cp, char *output,
-	       char *index)
+int jp2_wrap_j2k(jp2_struct_t * jp2_struct, char *j2k_codestream, char *output)
 {
-  int len;
-
   jp2_write_jp();
   jp2_write_ftyp(jp2_struct);
   jp2_write_jp2h(jp2_struct);
-  len = jp2_write_jp2c(jp2_struct->image, cp, output, index);
+  jp2_write_jp2c(jp2_struct, j2k_codestream);
 
   return cio_tell();
 }
