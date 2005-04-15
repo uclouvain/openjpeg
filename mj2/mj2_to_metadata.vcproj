@@ -22,7 +22,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				InlineFunctionExpansion="1"
-				PreprocessorDefinitions="WIN32,NDEBUG,_CONSOLE,NO_PACKETS_DECODING"
+				AdditionalIncludeDirectories="../libopenjpeg"
+				PreprocessorDefinitions="WIN32,NDEBUG,_CONSOLE,DONT_HAVE_GETOPT,NO_PACKETS_DECODING"
 				StringPooling="TRUE"
 				RuntimeLibrary="4"
 				EnableFunctionLevelLinking="TRUE"
@@ -314,9 +315,6 @@
 				</File>
 			</Filter>
 		</Filter>
-		<File
-			RelativePath="mj2_to_metadata.rc">
-		</File>
 		<File
 			RelativePath="resource.h">
 		</File>
