@@ -181,6 +181,9 @@ int mj2_init_stdmovie(mj2_movie_t * movie)
   for (i = 0; i < movie->num_htk + movie->num_stk + movie->num_vtk; i++) {
     mj2_tk_t *tk = &movie->tk[i];
     movie->next_tk_id++;
+    tk->jp2_struct.comps = NULL;
+    tk->jp2_struct.cl = NULL;
+    
     if (tk->track_type == 0) {
       if (tk->num_samples == 0)
 	return 1;
@@ -255,6 +258,10 @@ int mj2_init_stdmovie(mj2_movie_t * movie)
       tk->voff = 0;
       tk->visual_w = tk->w << 16;
       tk->visual_h = tk->h << 16;
+    }
+    else {
+      tk->num_br = 0;
+      tk->jp2xdata = NULL;
     }
   }
   return 0;
