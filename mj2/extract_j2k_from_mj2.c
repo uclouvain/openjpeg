@@ -16,7 +16,8 @@ jmp_buf j2k_error;
 
 int main(int argc, char *argv[]) {
 
-  unsigned int tnum, snum;
+  int tnum;
+  unsigned int snum;
   mj2_movie_t movie;
   mj2_tk_t *track;
   mj2_sample_t *sample;
@@ -39,6 +40,8 @@ int main(int argc, char *argv[]) {
 
   if (mj2_read_struct(file, &movie)) // Creating the movie structure
     return 1;
+
+  mj2_init_stdmovie(&movie);
 
   // Decode first video track 
   tnum = 0;
