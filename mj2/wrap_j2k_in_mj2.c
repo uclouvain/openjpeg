@@ -149,7 +149,7 @@ int main(int argc, char *argv[]) {
   char *buf;
   int offset, mdat_initpos;
   j2k_image_t img;
-  int pos, i;
+  int i;
   
   if (argc != 3) {
     printf("Bad syntax: Usage: MJ2_Wrapper source_location mj2_filename\n");
@@ -264,10 +264,8 @@ int main(int argc, char *argv[]) {
   cio_init(buf , i*10000);
   if (setjmp(j2k_error)) {
     i++;
-    realloc(buf,i*10000* sizeof(char));
-    pos = cio_tell();
+    buf = realloc(buf,i*10000* sizeof(char));
     cio_init(buf , i*10000);
-    cio_seek(pos);
   }
   mj2_write_moov(&movie);
   fwrite(buf,cio_tell(),1,mj2file);
