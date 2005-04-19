@@ -1,6 +1,6 @@
 # 
 # Valentin Mesaros (Octalis | DICE/UCL Belgium)
-# 21 March 2005
+# 19 April 2005
 # 
 # Makefile for mj2 source files (frames_to_mj2, mj2_to_frames, extract_j2k_from_mj2, wrap_j2k_in_mj2)
 # 
@@ -8,7 +8,7 @@
 INCLUDES = -Imj2 \
            -I../libopenjpeg
 
-C_OPT = -Wall -O -fno-strength-reduce -fomit-frame-pointer 
+C_OPT = -Wall
 CFLAGS = $(INCLUDES) $(C_OPT)
 
 CC = gcc
