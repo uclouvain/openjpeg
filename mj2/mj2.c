@@ -206,8 +206,11 @@ int mj2_init_stdmovie(mj2_movie_t * movie)
       tk->sampletochunk[0].samples_per_chunk = 1;
       tk->sampletochunk[0].sample_descr_idx = 1;
 
-      for (j = 0; j < tk->num_samples; j++)
+      for (j = 0; j < tk->num_samples; j++) {
+	if (tk->sample_rate == 0)
+	  tk->sample_rate = 25;
 	tk->sample[j].sample_delta = tk->timescale / tk->sample_rate;
+      }
 
       tk->num_tts = 1;
       tk->tts = (mj2_tts_t *) malloc(tk->num_tts * sizeof(mj2_tts_t));
