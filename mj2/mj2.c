@@ -91,18 +91,21 @@ void mj2_memory_free(mj2_movie_t * movie)
     tk = &movie->tk[i];
     if (tk->name_size != 0)
       free(tk->name);
-    if (tk->jp2_struct.comps != 0)
-      free(tk->jp2_struct.comps);
-    if (tk->jp2_struct.cl != 0)
-      free(tk->jp2_struct.cl);
+    if (tk->track_type == 0)  {// Video track
+      if (tk->jp2_struct.comps != 0)
+	free(tk->jp2_struct.comps);
+      if (tk->jp2_struct.cl != 0)
+	free(tk->jp2_struct.cl);
+      if (tk->num_jp2x != 0)
+      free(tk->jp2xdata);
+
+    }
     if (tk->num_url != 0)
       free(tk->url);
     if (tk->num_urn != 0)
       free(tk->urn);
     if (tk->num_br != 0)
       free(tk->br);
-    if (tk->num_jp2x != 0)
-      free(tk->jp2xdata);
     if (tk->num_tts != 0)
       free(tk->tts);
     if (tk->num_chunks != 0)
@@ -144,8 +147,19 @@ int mj2_read_boxhdr(mj2_box_t * box)
 
 /*
 * 
-* Initialisation of a Standard Video Track
-* with one sample per chunk
+* Initialisation of a Standard Movie, given a simple movie structure defined by the user 
+* The movie will have one sample per chunk
+* 
+* Arguments: mj2_movie_t * movie
+* Several variables of "movie" must be defined in order to enable a correct execution of 
+* this function:
+*   - The number of tracks of each type (movie->num_vtk, movie->num_stk, movie->num_htk)
+*   - The memory for each must be allocated (movie->tk)
+*   - For each track:
+*	  The track type (tk->track_type)
+*	  The number of sample (tk->num_samples)
+*	  The sample rate (tk->sample_rate)
+*
 */
 
 int mj2_init_stdmovie(mj2_movie_t * movie)
@@ -153,6 +167,7 @@ int mj2_init_stdmovie(mj2_movie_t * movie)
   int i;
   unsigned int j;
   time_t ltime;
+
   movie->brand = MJ2_MJ2;
   movie->minversion = 0;
   movie->num_cl = 2;
@@ -205,10 +220,13 @@ int mj2_init_stdmovie(mj2_movie_t * movie)
       tk->sampletochunk[0].first_chunk = 1;
       tk->sampletochunk[0].samples_per_chunk = 1;
       tk->sampletochunk[0].sample_descr_idx = 1;
+      
+      if (tk->sample_rate == 0) {
+	fprintf(stderr,"Error while initializing MJ2 movie: Sample rate of track %d must be different from zero\n",tk->track_ID);
+	return 1;
+      }
 
       for (j = 0; j < tk->num_samples; j++) {
-	if (tk->sample_rate == 0)
-	  tk->sample_rate = 25;
 	tk->sample[j].sample_delta = tk->timescale / tk->sample_rate;
       }
 
@@ -1828,6 +1846,16 @@ int mj2_read_smhd(mj2_tk_t * tk)
   tk->track_type = 1;
   tk->balance = cio_read(2);
 
+  /* Init variables to zero to avoid problems when freeeing memory
+  The values will possibly be overidded when decoding the track structure */
+  tk->num_br = 0;
+  tk->num_url = 0;
+  tk->num_urn = 0;
+  tk->num_chunks = 0;
+  tk->num_tts = 0;
+  tk->num_samplestochunk = 0;
+  tk->num_samples = 0;
+
   cio_skip(2);			/* Reserved */
 
   if (cio_tell() - box.init_pos != box.length) {
@@ -1897,6 +1925,17 @@ int mj2_read_hmhd(mj2_tk_t * tk)
   tk->maxbitrate = cio_read(4);
   tk->avgbitrate = cio_read(4);
   tk->slidingavgbitrate = cio_read(4);
+
+  /* Init variables to zero to avoid problems when freeeing memory
+  The values will possibly be overidded when decoding the track structure */
+  tk->num_br = 0;
+  tk->num_url = 0;
+  tk->num_urn = 0;
+  tk->num_chunks = 0;
+  tk->num_tts = 0;
+  tk->num_samplestochunk = 0;
+  tk->num_samples = 0;
+
 
   if (cio_tell() - box.init_pos != box.length) {
     fprintf(stderr, "Error with HMHD Box size\n");
