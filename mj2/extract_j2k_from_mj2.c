@@ -41,8 +41,6 @@ int main(int argc, char *argv[]) {
   if (mj2_read_struct(file, &movie)) // Creating the movie structure
     return 1;
 
-  mj2_init_stdmovie(&movie);
-
   // Decode first video track 
   tnum = 0;
   while (movie.tk[tnum].track_type != 0)
