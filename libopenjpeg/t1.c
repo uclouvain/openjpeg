@@ -37,6 +37,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
+#include <memory.h>
 
 #define T1_MAXCBLKW 1024
 #define T1_MAXCBLKH 1024
@@ -573,8 +574,8 @@ void t1_encode_cblk(tcd_cblk_t * cblk, int orient, int compno, int level, int qm
 
   cblk->numbps = max ? (int_floorlog2(max) + 1) - T1_NMSEDEC_FRACBITS : 0;
 
-  for (i = 0; i < sizeof(t1_flags) / sizeof(int); i++)
-    ((int *) t1_flags)[i] = 0;
+  memset(t1_flags,0,sizeof(t1_flags));
+
   bpno = cblk->numbps - 1;
   passtype = 2;
 
@@ -677,16 +678,13 @@ void t1_encode_cblk(tcd_cblk_t * cblk, int orient, int compno, int level, int qm
 void t1_decode_cblk(tcd_cblk_t * cblk, int orient, int roishift,
 		    int cblksty)
 {
-  int i;
   int w, h;
   int bpno, passtype;
   int segno, passno;
   char type = T1_TYPE_MQ; //BYPASS mode
-
-  for (i = 0; i < sizeof(t1_data) / sizeof(int); i++)
-    ((int *) t1_data)[i] = 0;
-  for (i = 0; i < sizeof(t1_flags) / sizeof(int); i++)
-    ((int *) t1_flags)[i] = 0;
+  
+  memset(t1_data,0,sizeof(t1_data));
+  memset(t1_flags,0,sizeof(t1_flags));
 
   w = cblk->x1 - cblk->x0;
   h = cblk->y1 - cblk->y0;
