@@ -639,7 +639,7 @@ int main(int argc, char **argv)
 				 8 bits non code (Gray scale)
 				 
 	<<-- <<-- <<-- <<-- */
-      fdest = fopen(argv[2], "wb");
+      fdest = fopen(outfile, "wb");
       // w = int_ceildiv(img.x1 - img.x0, img.comps[0].dx);
       // wr = int_ceildiv(int_ceildivpow2(img.x1 - img.x0,img.factor), img.comps[0].dx);
       w = img.comps[0].w;
