@@ -97,11 +97,11 @@ void cio_skip(int n);
 /*
  * Read n bytes, copy to buffer
  */
-void cio_read_to_buf(unsigned char* buf, int n);/* Glenn Pearson adds */
+void cio_read_to_buf(unsigned char* src_buf, int n);/* Glenn Pearson adds */
 
 /*
  * Write n bytes, copy from buffer
  */
-void cio_write_from_buf(unsigned char* buf, int n);/* Glenn Pearson adds */
+void cio_write_from_buf(unsigned char* dest_buf, int n);/* Glenn Pearson adds */
 
 #endif

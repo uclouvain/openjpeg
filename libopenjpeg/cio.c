@@ -157,11 +157,11 @@ void cio_skip(int n)
  *
  * n : number of bytes to transfer
  */
-void cio_read_to_buf(unsigned char* dest_buf, int n)/* Glenn adds */
+void cio_read_to_buf(unsigned char* src_buf, int n)/* Glenn adds */
 {
   if (cio_bp + n > cio_end)
     longjmp(j2k_error, 1);
-  memcpy(cio_bp, dest_buf, n);
+  memcpy(cio_bp, src_buf, n);
   cio_bp += n;
 }
 
@@ -170,10 +170,10 @@ void cio_read_to_buf(unsigned char* dest_buf, int n)/* Glenn adds */
  *
  * n : number of bytes to transfer
  */
-void cio_write_from_buf(unsigned char* src_buf, int n)/* Glenn adds */
+void cio_write_from_buf(unsigned char* dest_buf, int n)/* Glenn adds */
 {
   if (cio_bp + n > cio_end)
     longjmp(j2k_error, 1);
-  memcpy(src_buf, cio_bp, n);
+  memcpy(dest_buf, cio_bp, n);
   cio_bp += n;
 }
