@@ -37,7 +37,6 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
-#include <memory.h>
 
 #define T1_MAXCBLKW 1024
 #define T1_MAXCBLKH 1024
@@ -574,7 +573,11 @@ void t1_encode_cblk(tcd_cblk_t * cblk, int orient, int compno, int level, int qm
 
   cblk->numbps = max ? (int_floorlog2(max) + 1) - T1_NMSEDEC_FRACBITS : 0;
 
-  memset(t1_flags,0,sizeof(t1_flags));
+  /* Changed by Dmitry Kolyadin */
+  for (i = 0; i <= w; i++)
+    for (j = 0; j <= h; j++){
+      t1_flags[j][i] = 0;
+    }
 
   bpno = cblk->numbps - 1;
   passtype = 2;
@@ -678,16 +681,28 @@ void t1_encode_cblk(tcd_cblk_t * cblk, int orient, int compno, int level, int qm
 void t1_decode_cblk(tcd_cblk_t * cblk, int orient, int roishift,
 		    int cblksty)
 {
-  int w, h;
+  int i, j, w, h;
   int bpno, passtype;
   int segno, passno;
   char type = T1_TYPE_MQ; //BYPASS mode
   
-  memset(t1_data,0,sizeof(t1_data));
-  memset(t1_flags,0,sizeof(t1_flags));
-
   w = cblk->x1 - cblk->x0;
   h = cblk->y1 - cblk->y0;
+  
+  /* Changed by Dmitry Kolyadin */
+  for (j = 0; j <= h; j++){
+    for (i = 0; i <= w; i++) {
+      t1_flags[j][i] = 0;
+  }
+  }
+    
+  /* Changed by Dmitry Kolyadin */
+  for (i = 0; i < w; i++) {
+      for (j = 0; j < h; j++){
+	t1_data[j][i] = 0;
+      }
+  }
+      
   bpno = roishift + cblk->numbps - 1;
   passtype = 2;
 
@@ -708,8 +723,6 @@ void t1_decode_cblk(tcd_cblk_t * cblk, int orient, int roishift,
     else
       mqc_init_dec(seg->data, seg->len);
     // ddA
-
-    
 
     if (bpno==0) cblk->lastbp=1;  // Add Antonin : quantizbug1
     
