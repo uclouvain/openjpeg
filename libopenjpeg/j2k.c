@@ -623,9 +623,9 @@ void j2k_read_poc()
     poc = &tcp->pocs[i];
     poc->resno0 = cio_read(1);	/* RSpoc_i */
     poc->compno0 = cio_read(j2k_img->numcomps <= 256 ? 1 : 2);	/* CSpoc_i */
-    poc->layno1 = int_min(cio_read(2), tcp->numlayers);	/* LYEpoc_i */
-    poc->resno1 = int_min(cio_read(1), tccp->numresolutions);	/* REpoc_i */
-    poc->compno1 = int_min(cio_read(j2k_img->numcomps <= 256 ? 1 : 2), j2k_img->numcomps);	/* CEpoc_i */
+    poc->layno1 = int_min(cio_read(2), (unsigned int) tcp->numlayers);	/* LYEpoc_i */
+    poc->resno1 = int_min(cio_read(1), (unsigned int) tccp->numresolutions);	/* REpoc_i */
+    poc->compno1 = int_min(cio_read(j2k_img->numcomps <= 256 ? 1 : 2), (unsigned int) j2k_img->numcomps);	/* CEpoc_i */
     poc->prg = cio_read(1);	/* Ppoc_i */
   }
   
