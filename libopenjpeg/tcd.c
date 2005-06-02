@@ -585,8 +585,8 @@ void tcd_init_encode(j2k_image_t * img, j2k_cp_t * cp, int curtileno)
 
 void tcd_init(j2k_image_t * img, j2k_cp_t * cp)
 {
-  int tileno, compno, resno, bandno, precno, cblkno, i, j;
-  unsigned int x0 = 0, y0 = 0, x1 = 0, y1 = 0, w, h, p, q;
+  int tileno, compno, resno, bandno, precno, cblkno, i, j, p, q;
+  unsigned int x0 = 0, y0 = 0, x1 = 0, y1 = 0, w, h;
   tcd_img = img;
   tcd_cp = cp;
   tcd_image.tw = cp->tw;
@@ -798,6 +798,7 @@ void tcd_init(j2k_image_t * img, j2k_cp_t * cp)
     for (j = 0; j < cp->tileno_size; j++) {
       tileno = cp->tileno[j];
       x0 = j == 0 ? tcd_image.tiles[tileno].comps[i].x0 : int_min(x0,
+								  (unsigned int) 
 								  tcd_image.
 								  tiles
 								  [tileno].
@@ -805,6 +806,7 @@ void tcd_init(j2k_image_t * img, j2k_cp_t * cp)
 								  [i].x0);
       y0 =
 	j == 0 ? tcd_image.tiles[tileno].comps[i].y0 : int_min(y0,
+							       (unsigned int) 
 							       tcd_image.
 							       tiles
 							       [tileno].
@@ -812,6 +814,7 @@ void tcd_init(j2k_image_t * img, j2k_cp_t * cp)
 							       y0);
       x1 =
 	j == 0 ? tcd_image.tiles[tileno].comps[i].x1 : int_max(x1,
+							       (unsigned int) 
 							       tcd_image.
 							       tiles
 							       [tileno].
@@ -819,14 +822,13 @@ void tcd_init(j2k_image_t * img, j2k_cp_t * cp)
 							       x1);
       y1 =
 	j == 0 ? tcd_image.tiles[tileno].comps[i].y1 : int_max(y1,
+							       (unsigned int) 
 							       tcd_image.
 							       tiles
 							       [tileno].
 							       comps[i].
 							       y1);
     }
-    //w = int_ceildiv(x1 - x0, img->comps[i].dx);
-    //h = int_ceildiv(y1 - y0, img->comps[i].dy);
 
     w = x1 - x0;
 
