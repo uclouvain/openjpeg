@@ -659,13 +659,13 @@ int main(int argc, char **argv)
   if ((cp.disto_alloc || cp.fixed_alloc || cp.fixed_quality)
       && (!(cp.disto_alloc ^ cp.fixed_alloc ^ cp.fixed_quality))) {
     fprintf(stderr,
-	    "Error: options -r -q and -f can not be used together !!\n");
+	    "Error: options -r -q and -f cannot be used together !!\n");
     return 1;
   }				// mod fixed_quality
 
   /* if no rate entered, lossless by default */
   if (tcp_init->numlayers == 0) {
-    tcp_init->rates[tcp_init->numlayers] = 0;	//MOD antonin : losslessbug
+    tcp_init->rates[0] = 0;	//MOD antonin : losslessbug
     tcp_init->numlayers++;
     cp.disto_alloc = 1;
   }

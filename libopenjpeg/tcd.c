@@ -1076,11 +1076,7 @@ void tcd_rateallocate(unsigned char *dest, int len, info_image * info_IM)
 	}			/* precno */
       }				/* bandno */
     }				/* resno */
-
-    maxSE +=
-      (double) (((1 << tcd_img->comps[compno].prec) -
-		 1) * ((1 << tcd_img->comps[compno].prec) -
-		       1)) * (tilec->nbpix);
+    maxSE += (((double)(1 << tcd_img->comps[compno].prec) - 1.0) * ((double)(1 << tcd_img->comps[compno].prec) -1.0)) * ((double)(tilec->nbpix));
   }				/* compno */
 
   /* add antonin index */
@@ -1103,8 +1099,8 @@ void tcd_rateallocate(unsigned char *dest, int len, info_image * info_IM)
     double distotarget;		//add fixed_quality
 
     distotarget = tcd_tile->distotile - ((K * maxSE) / pow(10, tcd_tcp->distoratio[layno] / 10));	// add fixed_quality
-
-    if (tcd_tcp->rates[layno]) {
+    
+    if ((tcd_tcp->rates[layno]) || (tcd_cp->disto_alloc==0)) {
       for (i = 0; i < 32; i++) {
 	volatile double thresh = (lo + hi) / 2;
 	int l = 0;

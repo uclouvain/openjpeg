@@ -366,25 +366,24 @@ int main(int argc, char **argv)
 	img.comps[0].factor);
       
       
-      fprintf(fdest, "P6\n# %d %d %d %d %d\n%d %d\n%d\n",
-	cp.tcps[cp.tileno[0]].tccps[0].numresolutions, w, h,
-	img.comps[0].x0, img.comps[0].y0, wrr, hrr, max);
+      fprintf(fdest, "P6\n%d %d\n%d\n", wrr, hrr, max);
       adjust = img.comps[0].prec > 8 ? img.comps[0].prec - 8 : 0;
       for (i = 0; i < wrr * hrr; i++) {
-	char r, g, b;
+	int r, g, b;
+        unsigned char rc,gc,bc;
 	r = img.comps[0].data[i / wrr * wr + i % wrr];
 	r += (img.comps[0].sgnd ? 1 << (img.comps[0].prec - 1) : 0);
-	r = r >> adjust;
+	rc = (unsigned char) ((r >> adjust)+((r >> (adjust-1))%2));
 	
 	g = img.comps[1].data[i / wrr * wr + i % wrr];
 	g += (img.comps[1].sgnd ? 1 << (img.comps[1].prec - 1) : 0);
-	g = g >> adjust;
+	gc = (unsigned char) ((g >> adjust)+((g >> (adjust-1))%2));
 	
 	b = img.comps[2].data[i / wrr * wr + i % wrr];
 	b += (img.comps[2].sgnd ? 1 << (img.comps[2].prec - 1) : 0);
-	b = b >> adjust;
+	bc = (unsigned char) ((b >> adjust)+((b >> (adjust-1))%2));
 	
-	fprintf(fdest, "%c%c%c", r, g, b);
+	fprintf(fdest, "%c%c%c", rc, gc, bc);
       }
       free(img.comps[0].data);
       free(img.comps[1].data);
@@ -438,19 +437,17 @@ int main(int argc, char **argv)
 				      img.comps[compno].dy),
 				      img.comps[compno].factor);
 	
-	fprintf(fdest, "P5\n# %d %d %d %d %d\n%d %d\n%d\n",
-	  cp.tcps[cp.tileno[0]].tccps[compno].
-	  numresolutions, w, h, img.comps[compno].x0,
-	  img.comps[compno].y0, wrr, hrr, max);
+	fprintf(fdest, "P5\n%d %d\n%d\n", wrr, hrr, max);
 	adjust =
 	  img.comps[compno].prec > 8 ? img.comps[compno].prec - 8 : 0;
 	for (i = 0; i < wrr * hrr; i++) {
-	  char l;
+	  int l;
+          unsigned char lc;
 	  l = img.comps[compno].data[i / wrr * wr + i % wrr];
 	  l += (img.comps[compno].
 	    sgnd ? 1 << (img.comps[compno].prec - 1) : 0);
-	  l = l >> adjust;
-	  fprintf(fdest, "%c", l);
+	  lc = (unsigned char) ((l >> adjust)+((l >> (adjust-1))%2));
+	  fprintf(fdest, "%c", lc);
 	}
 	fclose(fdest);
 	free(img.comps[compno].data);
@@ -476,12 +473,11 @@ int main(int argc, char **argv)
 	tmp--;
       }
       *tmp='\0';
-      //if (img.numcomps > 1)
-      sprintf(name, "%s-%d.pgx", outfile, compno);
       
-      //else
-      
-      //sprintf(name, "%s.pgx", outfile);
+      if (img.numcomps > 1)
+        sprintf(name, "%s-%d.pgx", outfile, compno);
+      else
+        sprintf(name, "%s.pgx", outfile);
       
       fdest = fopen(name, "wb");
       if (!fdest) {
