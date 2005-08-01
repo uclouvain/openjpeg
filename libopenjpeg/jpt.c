@@ -119,7 +119,7 @@ void jpt_read_Msg_Header(jpt_msg_header_struct_t * header)
   }
 
   /* see information on bits 'c' [p 10 : A.2.1 general, ISO/IEC FCD 15444-9] */
-  if (((elmt >> 3) & 0x01) == 1)
+  if (((elmt >> 4) & 0x01) == 1)
     header->last_byte = 1;
 
   /* In-class identifier */
@@ -156,7 +156,7 @@ void jpt_read_Msg_Header(jpt_msg_header_struct_t * header)
   /* ---------- */
   /* VBAS : Aux */
   /* ---------- */
-  if (header->CSn_Id == 1) {
+  if ((header->Class_Id & 0x01) == 1) {
     header->Layer_nb = 0;
     header->Layer_nb = jpt_read_VBAS_info(header->Layer_nb);
   }
