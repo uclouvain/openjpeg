@@ -125,6 +125,7 @@ typedef struct {
   int POC;			/* Precise if a POC marker has been used O:NO, 1:YES                 */
   j2k_poc_t pocs[32];		/* progression order changes                                         */
   unsigned char *ppt_data;	/* packet header store there for futur use in t2_decode_packet       */
+  unsigned char *ppt_data_first;	/* pointer remaining on the first byte of the first header if ppt is used */
   int ppt;			/* If ppt == 1 --> there was a PPT marker for the present tile       */
   int ppt_store;		/* Use in case of multiple marker PPT (number of info already store) */
   int ppt_len;			/* ppmbug1 */
@@ -149,6 +150,7 @@ typedef struct {
   int *tileno;			/* ID number of the tiles present in the codestream */
   int tileno_size;		/* size of the vector tileno */
   unsigned char *ppm_data;	/* packet header store there for futur use in t2_decode_packet             */
+  unsigned char *ppm_data_first;	/* pointer remaining on the first byte of the first header if ppm is used */
   int ppm;			/* If ppm == 1 --> there was a PPM marker for the present tile             */
   int ppm_store;		/* Use in case of multiple marker PPM (number of info already store)       */
   int ppm_previous;		/* Use in case of multiple marker PPM (case on non-finished previous info) */

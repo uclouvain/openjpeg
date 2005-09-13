@@ -740,6 +740,7 @@ int main(int argc, char **argv)
   /* Initialization for PPM marker */
   cp.ppm = 0;
   cp.ppm_data = NULL;
+  cp.ppm_data_first = NULL;
   cp.ppm_previous = 0;
   cp.ppm_store = 0;
 
@@ -761,6 +762,7 @@ int main(int argc, char **argv)
     tcp->mct = img.numcomps == 3 ? 1 : 0;
     tcp->ppt = 0;
     tcp->ppt_data = NULL;
+    tcp->ppt_data_first = NULL;
     tcp->ppt_store = 0;
 
     numpocs_tile = 0;
