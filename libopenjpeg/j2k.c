@@ -269,6 +269,7 @@ void j2k_read_siz()
   /* Initialization for PPM marker */
   j2k_cp->ppm = 0;
   j2k_cp->ppm_data = NULL;
+  j2k_cp->ppm_data_first = NULL;
   j2k_cp->ppm_previous = 0;
   j2k_cp->ppm_store = 0;
   
@@ -722,6 +723,7 @@ void j2k_read_ppm()
     if (Z_ppm == 0) {		/* First PPM marker */
       j2k_cp->ppm_data =
 	(unsigned char *) calloc(N_ppm, sizeof(unsigned char));
+      j2k_cp->ppm_data_first = j2k_cp->ppm_data;
       
       j2k_cp->ppm_len = N_ppm;	//Add antonin : ppmbug1
       
@@ -731,6 +733,7 @@ void j2k_read_ppm()
 	(N_ppm +
 	j2k_cp->ppm_store) *
 	sizeof(unsigned char));
+      j2k_cp->ppm_data_first = j2k_cp->ppm_data;
       
       j2k_cp->ppm_len = N_ppm + j2k_cp->ppm_store;	//Add antonin : ppmbug1
       
@@ -761,6 +764,7 @@ void j2k_read_ppt()
   if (Z_ppt == 0) {		/* First PPT marker */
     tcp->ppt_data =
       (unsigned char *) calloc(len - 3, sizeof(unsigned char));
+    tcp->ppt_data_first = tcp->ppt_data;
     tcp->ppt_store = 0;
     
     tcp->ppt_len = len - 3;	//Add antonin : ppmbug1
@@ -769,6 +773,7 @@ void j2k_read_ppt()
       (unsigned char *) realloc(tcp->ppt_data,
       (len - 3 +
       tcp->ppt_store) * sizeof(unsigned char));
+    tcp->ppt_data_first = tcp->ppt_data;
     
     tcp->ppt_len = len - 3 + tcp->ppt_store;	//Add antonin : ppmbug1
     
@@ -844,6 +849,7 @@ void j2k_read_sot()
     /* Initialization PPT */
     tcp->ppt = 0;
     tcp->ppt_data = NULL;
+    tcp->ppt_data_first = NULL;
     
     tcp->tccps = tmp;
     for (i = 0; i < j2k_img->numcomps; i++) {
@@ -1560,19 +1566,19 @@ void j2k_dec_release()
   
   if (j2k_tile_data!=NULL) free(j2k_tile_data);
   
-  if (j2k_default_tcp.ppt_data!=NULL) free(j2k_default_tcp.ppt_data);
+  if (j2k_default_tcp.ppt_data_first!=NULL) free(j2k_default_tcp.ppt_data_first);
   
   if (j2k_default_tcp.tccps!=NULL) free(j2k_default_tcp.tccps);
   
   for (i=0;i<j2k_cp->tw*j2k_cp->th;i++) {
     
-    if (j2k_cp->tcps[i].ppt_data!=NULL) free(j2k_cp->tcps[i].ppt_data);
+    if (j2k_cp->tcps[i].ppt_data_first!=NULL) free(j2k_cp->tcps[i].ppt_data_first);
     
     if (j2k_cp->tcps[i].tccps!=NULL) free(j2k_cp->tcps[i].tccps);
     
   }
   
-  if (j2k_cp->ppm_data!=NULL) free(j2k_cp->ppm_data);
+  if (j2k_cp->ppm_data_first!=NULL) free(j2k_cp->ppm_data_first);
   
   if (j2k_cp->tcps!=NULL) free(j2k_cp->tcps);
   
