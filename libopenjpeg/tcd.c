@@ -1156,7 +1156,7 @@ tcd_encode_tile_pxm(int tileno, unsigned char *dest, int len,
 		    info_image * info_IM)
 {
   int compno;
-  int l, i;
+  int l, i, npck=0;
   clock_t time7;
   tcd_tile_t *tile;
   j2k_tcp_t *tcp = &tcd_cp->tcps[0];
@@ -1176,11 +1176,14 @@ tcd_encode_tile_pxm(int tileno, unsigned char *dest, int len,
 
       info_IM->tile[tileno].pw[i] = res_idx->pw;
       info_IM->tile[tileno].ph[i] = res_idx->ph;
+      
+      npck+=res_idx->pw * res_idx->ph;
 
       info_IM->tile[tileno].pdx[i] = tccp->prcw[i];
       info_IM->tile[tileno].pdy[i] = tccp->prch[i];
 
     }
+    info_IM->tile[tileno].packet = (info_packet *) calloc(info_IM->Comp * info_IM->Layer * npck, sizeof(info_packet));
   }
   /* << INDEX */
 

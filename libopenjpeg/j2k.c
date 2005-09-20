@@ -875,10 +875,6 @@ void j2k_write_sod()
   if (info_IM.index_on) {
     info_IM.tile[j2k_curtileno].end_header =
       cio_tell() + pos_correction - 1;
-    info_IM.tile[j2k_curtileno].packet =
-      (info_packet *) calloc(info_IM.Comp * info_IM.Layer *
-      (info_IM.Decomposition + 1) * 100,
-      sizeof(info_packet));
   }
   /* << INDEX */
   
