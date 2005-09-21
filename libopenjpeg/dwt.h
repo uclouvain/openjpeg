@@ -33,26 +33,15 @@
 
 /*
  * Apply a reversible DWT transform to a component of an image  
- * a: samples of the component
- * w: width of the component
- * h: height of the component
  * tilec : tile component information (present tile)
- * l: number of decomposition levels in the DWT
  */
 /* void dwt_encode(int* a, int w, int h, int l); */
-void dwt_encode(int *a, int w, int h, tcd_tilecomp_t * tilec, int l);
+void dwt_encode(tcd_tilecomp_t * tilec);
 /*
  * Apply a reversible inverse DWT transform to a component of an image  
- * a: samples of the component
- * w: width of the component
- * h: height of the component
  * tilec : tile component information (present tile)
- * l: number of decomposition levels in the DWT
- * row_tilec : tile component information (previous tile on the same row)
- * col_tilec : tile component information (previous tile on the same column)
  */
-void dwt_decode(int *a, int w, int h, tcd_tilecomp_t * tilec, int l,
-		int stop);
+void dwt_decode(tcd_tilecomp_t * tilec, int stop);
 
 /*
  * Get the gain of a subband for the reversible DWT
@@ -69,22 +58,13 @@ double dwt_getnorm(int level, int orient);
 
 /*
  * Apply an irreversible DWT transform to a component of an image  
- * a: samples of the component
- * w: width of the component
- * h: height of the component
- * l: number of decomposition levels in the DWT
  */
-void dwt_encode_real(int *a, int w, int h, tcd_tilecomp_t * tilec, int l);
+void dwt_encode_real(tcd_tilecomp_t * tilec);
 
 /*
  * Apply an irreversible inverse DWT transform to a component of an image  
- * a: samples of the component
- * w: width of the component
- * h: height of the component
- * l: number of decomposition levels in the DWT
  */
-void dwt_decode_real(int *a, int w, int h, tcd_tilecomp_t * tilec, int l,
-		     int stop);
+void dwt_decode_real(tcd_tilecomp_t * tilec, int stop);
 /*
  * Get the gain of a subband for the irreversible DWT
  * orient: number that identifies the subband (0->LL, 1->HL, 2->LH, 3->HH)

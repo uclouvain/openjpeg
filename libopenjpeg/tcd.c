@@ -1161,7 +1161,7 @@ tcd_encode_tile_pxm(int tileno, unsigned char *dest, int len,
   tcd_tile_t *tile;
   j2k_tcp_t *tcp = &tcd_cp->tcps[0];
   j2k_tccp_t *tccp = &tcp->tccps[0];
-
+  
   tcd_tileno = tileno;
   tcd_tile = tcd_image.tiles;
   tcd_tcp = &tcd_cp->tcps[tileno];
@@ -1169,19 +1169,19 @@ tcd_encode_tile_pxm(int tileno, unsigned char *dest, int len,
   /* INDEX >> "Precinct_nb_X et Precinct_nb_Y" */
   if (info_IM->index_on) {
     tcd_tilecomp_t *tilec_idx = &tile->comps[0];	//Based on Component 0
-
+    
     for (i = 0; i < tilec_idx->numresolutions; i++) {
-
+      
       tcd_resolution_t *res_idx = &tilec_idx->resolutions[i];
-
+      
       info_IM->tile[tileno].pw[i] = res_idx->pw;
       info_IM->tile[tileno].ph[i] = res_idx->ph;
       
       npck+=res_idx->pw * res_idx->ph;
-
+      
       info_IM->tile[tileno].pdx[i] = tccp->prcw[i];
       info_IM->tile[tileno].pdy[i] = tccp->prch[i];
-
+      
     }
     info_IM->tile[tileno].packet = (info_packet *) calloc(info_IM->Comp * info_IM->Layer * npck, sizeof(info_packet));
   }
@@ -1261,18 +1261,16 @@ tcd_encode_tile_pxm(int tileno, unsigned char *dest, int len,
   }
 /*----------------DWT---------------------*/
 
-  /* time3=clock(); */
-  for (compno = 0; compno < tile->numcomps; compno++) {
-    tcd_tilecomp_t *tilec = &tile->comps[compno];
-    if (tcd_tcp->tccps[compno].qmfbid == 1) {
-      dwt_encode(tilec->data, tilec->x1 - tilec->x0,
-		 tilec->y1 - tilec->y0, tilec, tilec->numresolutions - 1);
-    } else if (tcd_tcp->tccps[compno].qmfbid == 0) {
-      dwt_encode_real(tilec->data, tilec->x1 - tilec->x0,
-		      tilec->y1 - tilec->y0, tilec,
-		      tilec->numresolutions - 1);
-    }
+// mod Ive
+for (compno = 0; compno < tile->numcomps; compno++) {
+  tcd_tilecomp_t *tilec = &tile->comps[compno];
+  if (tcd_tcp->tccps[compno].qmfbid == 1) {
+    dwt_encode(tilec);
+  } else if (tcd_tcp->tccps[compno].qmfbid == 0) {
+    dwt_encode_real(tilec);
   }
+}
+// /mod Ive
 /*------------------TIER1-----------------*/
 
   t1_init_luts();
@@ -1317,7 +1315,7 @@ tcd_encode_tile_pgx(int tileno, unsigned char *dest, int len,
   tcd_tile_t *tile;
   j2k_tcp_t *tcp = &tcd_cp->tcps[0];
   j2k_tccp_t *tccp = &tcp->tccps[0];
-
+  
   tcd_tileno = tileno;
   tcd_tile = tcd_image.tiles;
   tcd_tcp = &tcd_cp->tcps[tileno];
@@ -1415,17 +1413,16 @@ tcd_encode_tile_pgx(int tileno, unsigned char *dest, int len,
 
 /*----------------DWT---------------------*/
 
-  for (compno = 0; compno < tile->numcomps; compno++) {
-    tcd_tilecomp_t *tilec = &tile->comps[compno];
-    if (tcd_tcp->tccps[compno].qmfbid == 1) {
-      dwt_encode(tilec->data, tilec->x1 - tilec->x0,
-		 tilec->y1 - tilec->y0, tilec, tilec->numresolutions - 1);
-    } else if (tcd_tcp->tccps[compno].qmfbid == 0) {
-      dwt_encode_real(tilec->data, tilec->x1 - tilec->x0,
-		      tilec->y1 - tilec->y0, tilec,
-		      tilec->numresolutions - 1);
-    }
+// mod Ive
+for (compno = 0; compno < tile->numcomps; compno++) {
+  tcd_tilecomp_t *tilec = &tile->comps[compno];
+  if (tcd_tcp->tccps[compno].qmfbid == 1) {
+    dwt_encode(tilec);
+  } else if (tcd_tcp->tccps[compno].qmfbid == 0) {
+    dwt_encode_real(tilec);
   }
+}
+// /mod Ive
 
 /*------------------TIER1-----------------*/
 
@@ -1508,20 +1505,18 @@ int tcd_decode_tile(unsigned char *src, int len, int tileno)
     }
 
 
+    // mod Ive  
     if (tcd_tcp->tccps[compno].qmfbid == 1) {
-      dwt_decode(tilec->data, tilec->x1 - tilec->x0,
-		 tilec->y1 - tilec->y0, tilec,
-		 tilec->numresolutions - 1,
-		 tilec->numresolutions - 1 -
-		 tcd_img->comps[compno].resno_decoded);
+      dwt_decode(tilec, 
+                 tilec->numresolutions - 1 - 
+                 tcd_img->comps[compno].resno_decoded);
     } else {
-      dwt_decode_real(tilec->data, tilec->x1 - tilec->x0,
-		      tilec->y1 - tilec->y0, tilec,
-		      tilec->numresolutions - 1,
+      dwt_decode_real(tilec,
 		      tilec->numresolutions - 1 -
 		      tcd_img->comps[compno].resno_decoded);
     }
-
+    // /mod Ive
+    
     if (tile->comps[compno].numresolutions > 0)
       tcd_img->comps[compno].factor =
 	tile->comps[compno].numresolutions -
