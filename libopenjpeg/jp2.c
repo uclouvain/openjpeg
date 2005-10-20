@@ -61,12 +61,11 @@ int jp2_read_boxhdr(jp2_box_t * box)
     if (cio_read(4) != 0) {
       fprintf(stderr, "Error: Cannot handle box sizes higher than 2^32\n");
       return 1;
-    };
+    }
     box->length = cio_read(4);
-    if (box->length == 0) 
+    if (box->length == 0)
       box->length = cio_numbytesleft() + 12;
-  }
-  else if (box->length == 0) {
+  } else if (box->length == 0) {
     box->length = cio_numbytesleft() + 8;
   }
   return 0;
@@ -80,7 +79,8 @@ int jp2_read_boxhdr(jp2_box_t * box)
 int jp2_init_stdjp2(jp2_struct_t * jp2_struct)
 {
 
-  jp2_struct->comps = (jp2_comps_t *) malloc(jp2_struct->numcomps * sizeof(jp2_comps_t));
+  jp2_struct->comps =
+    (jp2_comps_t *) malloc(jp2_struct->numcomps * sizeof(jp2_comps_t));
 
   jp2_struct->precedence = 0;	// PRECEDENCE
   jp2_struct->approx = 0;	// APPROX
@@ -248,12 +248,15 @@ void jp2_write_colr(jp2_struct_t * jp2_struct)
 int jp2_read_colr(jp2_struct_t * jp2_struct)
 {
   jp2_box_t box;
+  int skip_len;
 
   jp2_read_boxhdr(&box);
-  if (JP2_COLR != box.type) {
-    fprintf(stderr, "Error: Expected COLR Marker\n");
-    return 1;
-  }
+  do {
+    if (JP2_COLR != box.type) {
+      cio_skip(box.length - 8);
+      jp2_read_boxhdr(&box);
+    }
+  } while (JP2_COLR != box.type);
 
   jp2_struct->meth = cio_read(1);	// METH
   jp2_struct->precedence = cio_read(1);	// PRECEDENCE
@@ -261,8 +264,15 @@ int jp2_read_colr(jp2_struct_t * jp2_struct)
 
   if (jp2_struct->meth == 1)
     jp2_struct->enumcs = cio_read(4);	// EnumCS
-  else
-    cio_read(1);		// PROFILE 
+  else {
+    // SKIP PROFILE     
+    skip_len = box.init_pos + box.length - cio_tell();
+    if (skip_len < 0) {
+      fprintf(stderr, "Error with JP2H box size\n");
+      return 1;
+    }
+    cio_skip(box.init_pos + box.length - cio_tell());
+  }
 
   if (cio_tell() - box.init_pos != box.length) {
     fprintf(stderr, "Error with BPCC Box\n");
@@ -307,26 +317,38 @@ void jp2_write_jp2h(jp2_struct_t * jp2_struct)
 int jp2_read_jp2h(jp2_struct_t * jp2_struct)
 {
   jp2_box_t box;
+  int skip_len;
 
   jp2_read_boxhdr(&box);
-  if (JP2_JP2H != box.type) {
-    fprintf(stderr, "Error: Expected JP2H Marker\n");
-    return 1;
-  }
+  do {
+    if (JP2_JP2H != box.type) {
+      if (box.type == JP2_JP2C) {
+	fprintf(stderr, "Error: Expected JP2H Marker\n");
+	return 1;
+      }
+      cio_skip(box.length - 8);
+      jp2_read_boxhdr(&box);
+    }
+  } while (JP2_JP2H != box.type);
 
   if (jp2_read_ihdr(jp2_struct))
     return 1;
 
-  if (jp2_struct->bpc == 255)
+  if (jp2_struct->bpc == 255) {
     if (jp2_read_bpcc(jp2_struct))
       return 1;
+  }
+
   if (jp2_read_colr(jp2_struct))
     return 1;
 
-  if (cio_tell() - box.init_pos != box.length) {
-    fprintf(stderr, "Error with JP2H Box\n");
+  skip_len = box.init_pos + box.length - cio_tell();
+  if (skip_len < 0) {
+    fprintf(stderr, "Error with JP2H box size\n");
     return 1;
   }
+  cio_skip(box.init_pos + box.length - cio_tell());
+
   return 0;
 }
 
@@ -381,17 +403,18 @@ int jp2_read_ftyp(jp2_struct_t * jp2_struct)
   jp2_struct->cl =
     (unsigned int *) malloc(jp2_struct->numcl * sizeof(unsigned int));
 
-  for (i = 0; i < (int)jp2_struct->numcl; i++)
+  for (i = 0; i < (int) jp2_struct->numcl; i++)
     jp2_struct->cl[i] = cio_read(4);	/* CLi */
 
   if (cio_tell() - box.init_pos != box.length) {
-    fprintf(stderr, "Error with FTYP Box\n"); 
+    fprintf(stderr, "Error with FTYP Box\n");
     return 1;
   }
   return 0;
 }
 
-int jp2_write_jp2c(int j2k_codestream_len, int *j2k_codestream_offset, char *j2k_codestream)
+int jp2_write_jp2c(int j2k_codestream_len, int *j2k_codestream_offset,
+		   char *j2k_codestream)
 {
   jp2_box_t box;
 
@@ -400,7 +423,7 @@ int jp2_write_jp2c(int j2k_codestream_len, int *j2k_codestream_offset, char *j2k
   cio_write(JP2_JP2C, 4);	// JP2C
 
   *j2k_codestream_offset = cio_tell();
-  memcpy(cio_getbp(),j2k_codestream, j2k_codestream_len);
+  memcpy(cio_getbp(), j2k_codestream, j2k_codestream_len);
 
   box.length = 8 + j2k_codestream_len;
   cio_seek(box.init_pos);
@@ -411,15 +434,18 @@ int jp2_write_jp2c(int j2k_codestream_len, int *j2k_codestream_offset, char *j2k
 }
 
 
-int jp2_read_jp2c(unsigned int *j2k_codestream_len, unsigned int *j2k_codestream_offset)
+int jp2_read_jp2c(unsigned int *j2k_codestream_len,
+		  unsigned int *j2k_codestream_offset)
 {
   jp2_box_t box;
 
   jp2_read_boxhdr(&box);
-  if (JP2_JP2C != box.type) {
-    fprintf(stderr, "Error: Expected JP2C Marker\n");
-    return 1;
-  }
+  do {
+    if (JP2_JP2C != box.type) {
+      cio_skip(box.length - 8);
+      jp2_read_boxhdr(&box);
+    }
+  } while (JP2_JP2C != box.type);
 
   *j2k_codestream_offset = cio_tell();
   *j2k_codestream_len = box.length - 8;
@@ -481,18 +507,22 @@ int jp2_read_struct(unsigned char *src, jp2_struct_t * jp2_struct, int len)
     return 1;
   if (jp2_read_jp2h(jp2_struct))
     return 1;
-  if (jp2_read_jp2c(&jp2_struct->j2k_codestream_len, &jp2_struct->j2k_codestream_offset))
+  if (jp2_read_jp2c
+      (&jp2_struct->j2k_codestream_len,
+       &jp2_struct->j2k_codestream_offset))
     return 1;
   return 0;
 }
 
-int jp2_wrap_j2k(jp2_struct_t * jp2_struct, char *j2k_codestream, char *output)
+int jp2_wrap_j2k(jp2_struct_t * jp2_struct, char *j2k_codestream,
+		 char *output)
 {
   jp2_write_jp();
   jp2_write_ftyp(jp2_struct);
   jp2_write_jp2h(jp2_struct);
 
-  jp2_write_jp2c(jp2_struct->j2k_codestream_len, &jp2_struct->j2k_codestream_offset, j2k_codestream);
+  jp2_write_jp2c(jp2_struct->j2k_codestream_len,
+		 &jp2_struct->j2k_codestream_offset, j2k_codestream);
 
   return cio_tell();
 }
