@@ -388,7 +388,7 @@ void dwt_decode_1_real(int *a, int dn, int sn, int cas)
       for (i = 0; i < sn; i++)
 	    S(i) += fix_mul(D_(i - 1) + D_(i), 434);
       for (i = 0; i < dn; i++)
-	    D(i) += fix_mul(S_(i) + S_(i + 1), 12993);
+	    D(i) += fix_mul(S_(i) + S_(i + 1), 12994); /* 12993 */
     }
   } else {
     if ((sn > 0) || (dn > 1)) {	/* NEW :  CASE ONE ELEMENT */
@@ -403,7 +403,7 @@ void dwt_decode_1_real(int *a, int dn, int sn, int cas)
       for (i = 0; i < sn; i++)
 	    D(i) += fix_mul(SS_(i) + SS_(i + 1), 434);
       for (i = 0; i < dn; i++)
-    	S(i) += fix_mul(DD_(i) + DD_(i - 1), 12993);
+    	S(i) += fix_mul(DD_(i) + DD_(i - 1), 12994); /* 12993 */
     }
   }
 }
