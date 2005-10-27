@@ -250,12 +250,13 @@ int floorlog2(int a)
   return l;
 }
 
-void encode_stepsize(int stepsize, int numbps, int *expn, int *mant)
+void encode_stepsize(float stepsize, int numbps, int *expn, int *mant)
 {
-  int p, n;
-  p = floorlog2(stepsize) - 13;
-  n = 11 - floorlog2(stepsize);
-  *mant = (n < 0 ? stepsize >> -n : stepsize << n) & 0x7ff;
+  int p, n, stepsizeTMP;
+  stepsizeTMP=(int) floor(stepsize * 8192.0);
+  p = floorlog2(stepsizeTMP) - 13;
+  n = 11 - floorlog2(stepsizeTMP);
+  *mant = (n < 0 ? stepsizeTMP >> -n : stepsizeTMP << n) & 0x7ff;
   *expn = numbps - p;
 }
 
@@ -264,7 +265,7 @@ void calc_explicit_stepsizes(j2k_tccp_t * tccp, int prec)
   int numbands, bandno;
   numbands = 3 * tccp->numresolutions - 2;
   for (bandno = 0; bandno < numbands; bandno++) {
-    double stepsize;
+    float stepsize;
 
     int resno, level, orient, gain;
     resno = bandno == 0 ? 0 : (bandno - 1) / 3 + 1;
@@ -280,7 +281,7 @@ void calc_explicit_stepsizes(j2k_tccp_t * tccp, int prec)
       double norm = dwt_norms_97[orient][level];
       stepsize = (1 << (gain + 1)) / norm;
     }
-    encode_stepsize((int) floor(stepsize * 8192.0), prec + gain,
+    encode_stepsize(stepsize, prec + gain,
 		    &tccp->stepsizes[bandno].expn,
 		    &tccp->stepsizes[bandno].mant);
   }

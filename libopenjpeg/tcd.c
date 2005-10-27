@@ -87,7 +87,7 @@ void tcd_dump(tcd_image_t * img, int curtileno)
 	  tcd_band_t *band = &res->bands[bandno];
 	  fprintf(stdout, "        band {\n");
 	  fprintf(stdout,
-		  "          x0=%d, y0=%d, x1=%d, y1=%d, stepsize=%d, numbps=%d\n",
+		  "          x0=%d, y0=%d, x1=%d, y1=%d, stepsize=%f, numbps=%d\n",
 		  band->x0, band->y0, band->x1, band->y1,
 		  band->stepsize, band->numbps);
 	  for (precno = 0; precno < res->pw * res->ph; precno++) {
@@ -270,9 +270,7 @@ void tcd_malloc_encode(j2k_image_t * img, j2k_cp_t * cp, int curtileno)
 	    tccp->qmfbid ==
 	    0 ? dwt_getgain_real(band->bandno) : dwt_getgain(band->bandno);
 	  numbps = img->comps[compno].prec + gain;
-	  band->stepsize =
-	    (int) floor((1.0 + ss->mant / 2048.0) *
-			pow(2.0, numbps - ss->expn) * 8192.0);
+	  band->stepsize = (1.0 + ss->mant / 2048.0) * pow(2.0, numbps - ss->expn);
 	  band->numbps = ss->expn + tccp->numgbits - 1;	/* WHY -1 ? */
 
 	  band->precincts =
@@ -514,9 +512,7 @@ void tcd_init_encode(j2k_image_t * img, j2k_cp_t * cp, int curtileno)
 	    tccp->qmfbid ==
 	    0 ? dwt_getgain_real(band->bandno) : dwt_getgain(band->bandno);
 	  numbps = img->comps[compno].prec + gain;
-	  band->stepsize =
-	    (int) floor((1.0 + ss->mant / 2048.0) *
-			pow(2.0, numbps - ss->expn) * 8192.0);
+          band->stepsize = (1.0 + ss->mant / 2048.0) * pow(2.0, numbps - ss->expn);
 	  band->numbps = ss->expn + tccp->numgbits - 1;	/* WHY -1 ? */
 
 	  for (precno = 0; precno < res->pw * res->ph; precno++) {
@@ -718,13 +714,11 @@ void tcd_init(j2k_image_t * img, j2k_cp_t * cp)
 
 	  ss = &tccp->stepsizes[resno ==
 				0 ? 0 : 3 * (resno - 1) + bandno + 1];
-	  gain =
+          gain =
 	    tccp->qmfbid ==
 	    0 ? dwt_getgain_real(band->bandno) : dwt_getgain(band->bandno);
 	  numbps = img->comps[compno].prec + gain;
-	  band->stepsize =
-	    (int) floor((1.0 + ss->mant / 2048.0) *
-			pow(2.0, numbps - ss->expn) * 8192.0);
+          band->stepsize = (1.0 + ss->mant / 2048.0) * pow(2.0, numbps - ss->expn);
 	  band->numbps = ss->expn + tccp->numgbits - 1;	/* WHY -1 ? */
 
 	  band->precincts =
@@ -777,10 +771,6 @@ void tcd_init(j2k_image_t * img, j2k_cp_t * cp)
 	      cblk->y0 = int_max(cblkystart, prc->y0);
 	      cblk->x1 = int_min(cblkxend, prc->x1);
 	      cblk->y1 = int_min(cblkyend, prc->y1);
-
-
-
-	      cblk->lastbp = 0;	// Add Antonin : quantizbug1
 	    }
 	  }
 	}
@@ -1571,25 +1561,16 @@ int tcd_decode_tile(unsigned char *src, int len, int tileno)
       for (i = res->x0; i < res->x1; i++) {
 
 	int v;
-
-	double tmp =
-	  (double) tilec->data[i - res->x0 + (j - res->y0) * tw];
+	float tmp = (tilec->data[i - res->x0 + (j - res->y0) * tw])/8192.0;
+        int tmp2;
+        
 	if (tcd_tcp->tccps[compno].qmfbid == 1) {
-	  v = (int) tmp;
+	  v = tilec->data[i - res->x0 + (j - res->y0) * tw];
 	} else {
-
-	  //v = (int) tmp >> 13;
-
-	  //Mod antonin : multbug1
-	  v =
-	    (int) ((fabs(tmp / 8192.0) >=
-		    floor(fabs(tmp / 8192.0)) +
-		    0.5) ? fabs(tmp / 8192.0) + 1.0 : fabs(tmp / 8192.0));
-
-	  v = (tmp < 0) ? -v : v;
-
-	  //doM
-	}
+          tmp2=((int) (floor(fabs(tmp)))) + ((int) floor(fabs(tmp*2))%2);
+          v = ((tmp<0)?-tmp2:tmp2);
+        }
+        
 	v += adjust;
 
 	tcd_img->comps[compno].data[(i - offset_x) +

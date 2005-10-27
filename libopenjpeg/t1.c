@@ -535,7 +535,7 @@ void t1_dec_clnpass(int w, int h, int bpno, int orient, int cblksty)
   }
 }				/* VSC and  BYPASS by Antonin */
 
-double t1_getwmsedec(int nmsedec, int compno, int level, int orient, int bpno, int qmfbid, double stepsize, int numcomps)	//mod fixed_quality
+double t1_getwmsedec(int nmsedec, int compno, int level, int orient, int bpno, int qmfbid, float stepsize, int numcomps)	//mod fixed_quality
 {
   double w1, w2, wmsedec;
   if (qmfbid == 1) {
@@ -550,7 +550,7 @@ double t1_getwmsedec(int nmsedec, int compno, int level, int orient, int bpno, i
   return wmsedec;
 }
 
-void t1_encode_cblk(tcd_cblk_t * cblk, int orient, int compno, int level, int qmfbid, double stepsize, int cblksty, int numcomps, tcd_tile_t * tile)	//mod fixed_quality
+void t1_encode_cblk(tcd_cblk_t * cblk, int orient, int compno, int level, int qmfbid, float stepsize, int cblksty, int numcomps, tcd_tile_t * tile)	//mod fixed_quality
 {
   int i, j;
   int w, h;
@@ -723,19 +723,17 @@ void t1_decode_cblk(tcd_cblk_t * cblk, int orient, int roishift,
     else
       mqc_init_dec(seg->data, seg->len);
     // ddA
-
-    if (bpno==0) cblk->lastbp=1;  // Add Antonin : quantizbug1
     
     for (passno = 0; passno < seg->numpasses; passno++) {
       switch (passtype) {
       case 0:
-	t1_dec_sigpass(w, h, bpno, orient, type, cblksty);
+	t1_dec_sigpass(w, h, bpno+1, orient, type, cblksty);
 	break;
       case 1:
-	t1_dec_refpass(w, h, bpno, type, cblksty);
+	t1_dec_refpass(w, h, bpno+1, type, cblksty);
 	break;
       case 2:
-	t1_dec_clnpass(w, h, bpno, orient, cblksty);
+	t1_dec_clnpass(w, h, bpno+1, orient, cblksty);
 	break;
       }
       
@@ -819,7 +817,7 @@ void t1_encode_cblks(tcd_tile_t * tile, j2k_tcp_t * tcp)
 					    tilec->
 					    x0)],
 			    8192 * 8192 /
-			    band->stepsize) >> (13 - T1_NMSEDEC_FRACBITS);
+			    ((int) floor(band->stepsize * 8192))) >> (13 - T1_NMSEDEC_FRACBITS);
 		}
 	      }
 	    }
@@ -896,34 +894,22 @@ void t1_decode_cblks(tcd_tile_t * tile, j2k_tcp_t * tcp)
 	    if (tcp->tccps[compno].qmfbid == 1) {
 	      for (j = 0; j < cblk->y1 - cblk->y0; j++) {
 		for (i = 0; i < cblk->x1 - cblk->x0; i++) {
-		  tilec->data[x + i +
-			      (y + j) * (tilec->x1 -
-					 tilec->x0)] = t1_data[j][i];
+                  int tmp=t1_data[j][i];
+                  if (tmp>>1==0) tilec->data[x + i + (y + j) * (tilec->x1 - tilec->x0)] = 0;
+		  else tilec->data[x + i + (y + j) * (tilec->x1 - tilec->x0)] = tmp<0?((tmp>>1) | 0x80000000)+1:(tmp>>1);
 		}
 	      }
 	    } else {		/* if (tcp->tccps[compno].qmfbid == 0) */
 
 	      for (j = 0; j < cblk->y1 - cblk->y0; j++) {
 		for (i = 0; i < cblk->x1 - cblk->x0; i++) {
-		  if (t1_data[j][i] == 0) {
-		    tilec->data[x + i +
-		      (y + j) * (tilec->x1 - tilec->x0)] = 0;
+                  float tmp=t1_data[j][i] * band->stepsize * 4096.0;
+                  int tmp2;
+		  if (t1_data[j][i]>>1 == 0) {
+		    tilec->data[x + i + (y + j) * (tilec->x1 - tilec->x0)] = 0;
 		  } else {
-
-		    // Add antonin : quantizbug1
-
-		    t1_data[j][i]<<=1;
-
-		    //if (cblk->lastbp) 
-
-		    t1_data[j][i]+=t1_data[j][i]>0?1:-1;
-
-		    // ddA
-		    tilec->data[x + i +
-				(y + j) * (tilec->x1 -
-					   tilec->
-					   x0)] =
-		      fix_mul(t1_data[j][i] << 12, band->stepsize); //Mod Antonin : quantizbug1 (before : << 13)
+                    tmp2=((int) (floor(fabs(tmp)))) + ((int) floor(fabs(tmp*2))%2);
+		    tilec->data[x + i + (y + j) * (tilec->x1 - tilec->x0)] = ((tmp<0)?-tmp2:tmp2);  
 		  }
 		}
 	      }
