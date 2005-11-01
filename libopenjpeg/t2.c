@@ -314,11 +314,11 @@ int t2_decode_packet(unsigned char *src, int len, tcd_tile_t * tile,
 
       
 
-      //Add Antonin : sizebug1
+      /*Add Antonin : sizebug1*/
 
       if ((band->x1-band->x0 == 0)||(band->y1-band->y0 == 0)) continue;
 
-      //ddA
+      /*ddA*/
 
       
       tgt_reset(prc->incltree);
@@ -332,7 +332,7 @@ int t2_decode_packet(unsigned char *src, int len, tcd_tile_t * tile,
 
   
 
-  // SOP markers
+  /* SOP markers*/
 
   if (tcp->csty & J2K_CP_CSTY_SOP) {
 
@@ -346,7 +346,7 @@ int t2_decode_packet(unsigned char *src, int len, tcd_tile_t * tile,
 
     }
 
-    //TODO : check the Nsop value
+    /*TODO : check the Nsop value*/
 
   }
 
@@ -358,10 +358,10 @@ int t2_decode_packet(unsigned char *src, int len, tcd_tile_t * tile,
 
   if (cp->ppm == 1) {		/* PPM */
     hd = cp->ppm_data;
-    bio_init_dec(hd, cp->ppm_len); //Mod Antonin : ppmbug1
+    bio_init_dec(hd, cp->ppm_len); /*Mod Antonin : ppmbug1*/
   } else if (tcp->ppt == 1) {	/* PPT */
     hd = tcp->ppt_data;
-    bio_init_dec(hd, tcp->ppt_len);  //Mod Antonin : ppmbug1
+    bio_init_dec(hd, tcp->ppt_len);  /*Mod Antonin : ppmbug1*/
   } else {			/* Normal Case */
 
     hd = c;
@@ -379,7 +379,7 @@ int t2_decode_packet(unsigned char *src, int len, tcd_tile_t * tile,
 
 
 
-    // EPH markers
+    /* EPH markers*/
 
     if (tcp->csty & J2K_CP_CSTY_EPH) {
 
@@ -419,11 +419,11 @@ int t2_decode_packet(unsigned char *src, int len, tcd_tile_t * tile,
 
 
 
-    //Add Antonin : sizebug1
+    /*Add Antonin : sizebug1*/
 
     if ((band->x1-band->x0 == 0)||(band->y1-band->y0 == 0)) continue;
 
-    //ddA
+    /*ddA*/
 
 
     for (cblkno = 0; cblkno < prc->cw * prc->ch; cblkno++) {
@@ -484,7 +484,7 @@ int t2_decode_packet(unsigned char *src, int len, tcd_tile_t * tile,
   hd += bio_numbytes();
 
 
-  // EPH markers
+  /* EPH markers*/
   if (tcp->csty & J2K_CP_CSTY_EPH) {
     if ((*hd) != 0xff || (*(hd + 1) != 0x92)) {
       fprintf(stderr,"Error : expected EPH marker\n");
@@ -520,11 +520,11 @@ int t2_decode_packet(unsigned char *src, int len, tcd_tile_t * tile,
 
 
 
-    //Add Antonin : sizebug1
+    /*Add Antonin : sizebug1*/
 
     if ((band->x1-band->x0 == 0)||(band->y1-band->y0 == 0)) continue;
 
-    //ddA
+    /*ddA*/
 
 
     for (cblkno = 0; cblkno < prc->cw * prc->ch; cblkno++) {

@@ -536,10 +536,10 @@ void mqc_init_dec(unsigned char *bp, int len)
   mqc_start = bp;
   mqc_end = bp + len;
   mqc_bp = bp;
-  //add antonin initbug1
+  /*add antonin initbug1*/
   if (len==0) mqc_c = 0xff << 16;
   else mqc_c = *mqc_bp << 16;
-  //dda
+  /*dda*/
   mqc_bytein();
   mqc_c <<= 7;
   mqc_ct -= 7;

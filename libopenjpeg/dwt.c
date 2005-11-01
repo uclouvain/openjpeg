@@ -55,8 +55,6 @@
 #include "fix.h"
 #include "tcd.h"
 #include <stdlib.h>
-//#include <stdio.h>
-//#include <math.h>
 
 #define S(i) a[(i)*2]
 #define D(i) a[(1+(i)*2)]
@@ -110,8 +108,8 @@ void dwt_deinterleave_v(int *a, int *b, int dn, int sn, int x, int cas) {
 /* </summary>                            */
 void dwt_interleave_h(int *a, int *b, int dn, int sn, int cas) {
     int i;
-//    for (i=0; i<sn; i++) b[2*i+cas]=a[i];
-//    for (i=0; i<dn; i++) b[2*i+1-cas]=a[(sn+i)];
+/*    for (i=0; i<sn; i++) b[2*i+cas]=a[i];*/
+/*    for (i=0; i<dn; i++) b[2*i+1-cas]=a[(sn+i)];*/
     int* ai;
     int* bi;
     ai=a;
@@ -131,8 +129,8 @@ void dwt_interleave_h(int *a, int *b, int dn, int sn, int cas) {
 /* </summary>                            */ 
 void dwt_interleave_v(int *a, int *b, int dn, int sn, int x, int cas) {
     int i;
-//    for (i=0; i<sn; i++) b[2*i+cas]=a[i*x];
-//    for (i=0; i<dn; i++) b[2*i+1-cas]=a[(sn+i)*x];
+/*    for (i=0; i<sn; i++) b[2*i+cas]=a[i*x];*/
+/*    for (i=0; i<dn; i++) b[2*i+1-cas]=a[(sn+i)*x];*/
     int* ai;
     int* bi;
     ai=a;
@@ -529,6 +527,7 @@ void dwt_decode_real(tcd_tilecomp_t * tilec, int stop)
 /* </summary>                         */
 int dwt_getgain_real(int orient)
 {
+  (void)orient;
   return 0;
 }
 

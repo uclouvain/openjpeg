@@ -348,7 +348,7 @@ void j2k_read_cox(int compno)
     J2K_STATE_TPH ? &j2k_cp->tcps[j2k_curtileno] : &j2k_default_tcp;
   tccp = &tcp->tccps[compno];
   tccp->numresolutions = cio_read(1) + 1;	/* SPcox (D) */
-  //Check the reduce value
+  /*Check the reduce value*/
   j2k_cp->reduce=int_min((tccp->numresolutions)-1,j2k_cp->reduce);
   tccp->cblkw = cio_read(1) + 2;	/* SPcox (E) */
   tccp->cblkh = cio_read(1) + 2;	/* SPcox (F) */
@@ -588,7 +588,7 @@ void j2k_write_poc()
   len = 2 + (5 + 2 * (j2k_img->numcomps <= 256 ? 1 : 2)) * numpchgs;
   cio_write(len, 2);		/* Lpoc */
   for (i = 0; i < numpchgs; i++) {
-    // MODIF
+    /* MODIF*/
     j2k_poc_t *poc;
     poc = &tcp->pocs[i];
     cio_write(poc->resno0, 1);	/* RSpoc_i */
@@ -725,7 +725,7 @@ void j2k_read_ppm()
 	(unsigned char *) calloc(N_ppm, sizeof(unsigned char));
       j2k_cp->ppm_data_first = j2k_cp->ppm_data;
       
-      j2k_cp->ppm_len = N_ppm;	//Add antonin : ppmbug1
+      j2k_cp->ppm_len = N_ppm;   /*Add antonin : ppmbug1*/
       
     } else {			/* NON-first PPM marker */
       j2k_cp->ppm_data =
@@ -735,7 +735,7 @@ void j2k_read_ppm()
 	sizeof(unsigned char));
       j2k_cp->ppm_data_first = j2k_cp->ppm_data;
       
-      j2k_cp->ppm_len = N_ppm + j2k_cp->ppm_store;	//Add antonin : ppmbug1
+      j2k_cp->ppm_len = N_ppm + j2k_cp->ppm_store;   /*Add antonin : ppmbug1*/
       
     }
     
@@ -767,7 +767,7 @@ void j2k_read_ppt()
     tcp->ppt_data_first = tcp->ppt_data;
     tcp->ppt_store = 0;
     
-    tcp->ppt_len = len - 3;	//Add antonin : ppmbug1
+    tcp->ppt_len = len - 3;   /*Add antonin : ppmbug1*/
   } else {			/* NON-first PPT marker */
     tcp->ppt_data =
       (unsigned char *) realloc(tcp->ppt_data,
@@ -775,7 +775,7 @@ void j2k_read_ppt()
       tcp->ppt_store) * sizeof(unsigned char));
     tcp->ppt_data_first = tcp->ppt_data;
     
-    tcp->ppt_len = len - 3 + tcp->ppt_store;	//Add antonin : ppmbug1
+    tcp->ppt_len = len - 3 + tcp->ppt_store;   /*Add antonin : ppmbug1*/
     
   }
   
@@ -880,7 +880,7 @@ void j2k_write_sod()
   
   tcp = &j2k_cp->tcps[j2k_curtileno];
   for (layno = 0; layno < tcp->numlayers; layno++) {
-    tcp->rates[layno] -= tcp->rates[layno] ? (j2k_sod_start / (j2k_cp->th * j2k_cp->tw)) : 0;	//Mod antonin losslessbug
+    tcp->rates[layno] -= tcp->rates[layno] ? (j2k_sod_start / (j2k_cp->th * j2k_cp->tw)) : 0;   /*Mod antonin losslessbug*/
   }
   
   info_IM.num = 0;
@@ -1173,7 +1173,7 @@ j2k_encode(j2k_image_t * img, j2k_cp_t * cp, char *output,
 
     for (resno = info_IM.Decomposition; resno >= 0; resno--) {
 
-      fprintf(INDEX, "[%d,%d] ", (1 << info_IM.tile[0].pdx[resno]), (1 << info_IM.tile[0].pdx[resno]));	//based on tile 0
+      fprintf(INDEX, "[%d,%d] ", (1 << info_IM.tile[0].pdx[resno]), (1 << info_IM.tile[0].pdx[resno]));   /*based on tile 0*/
 
     }
 
@@ -1208,7 +1208,7 @@ j2k_encode(j2k_image_t * img, j2k_cp_t * cp, char *output,
          "pkno tileno layerno resno compno precno start_pos   end_pos       deltaSE        \n"); */
       
       if (info_IM.Prog == 0) {	/* LRCP */
-	//fprintf(INDEX, "pack_nb tileno layno resno compno precno start_pos  end_pos   disto");
+   /*fprintf(INDEX, "pack_nb tileno layno resno compno precno start_pos  end_pos   disto");*/
 	for (layno = 0; layno < info_IM.Layer; layno++) {
 	  for (resno = 0; resno < info_IM.Decomposition + 1; resno++) {
 	    for (compno = 0; compno < info_IM.Comp; compno++) {
@@ -1229,7 +1229,7 @@ j2k_encode(j2k_image_t * img, j2k_cp_t * cp, char *output,
 	  }
 	}
       } else if (info_IM.Prog == 1) {	/* RLCP */
-	//fprintf(INDEX, "pack_nb tileno resno layno compno precno start_pos  end_pos   disto");
+ /*fprintf(INDEX, "pack_nb tileno resno layno compno precno start_pos  end_pos   disto");*/
 	for (resno = 0; resno < info_IM.Decomposition + 1; resno++) {
 	  for (layno = 0; layno < info_IM.Layer; layno++) {
 	    for (compno = 0; compno < info_IM.Comp; compno++) {
@@ -1247,7 +1247,7 @@ j2k_encode(j2k_image_t * img, j2k_cp_t * cp, char *output,
 	  }
 	}
       } else if (info_IM.Prog == 2) {	/* RPCL */
-	//fprintf(INDEX, "\npack_nb tileno resno precno compno layno start_pos  end_pos   disto\n"); 
+ /*fprintf(INDEX, "\npack_nb tileno resno precno compno layno start_pos  end_pos   disto\n"); */
 	for (resno = 0; resno < info_IM.Decomposition + 1; resno++) {
 	  /* I suppose components have same XRsiz, YRsiz */
 	  int x0 = info_IM.Tile_Ox + tileno - (int)floor( tileno/info_IM.tw ) * info_IM.tw * info_IM.Tile_x;
@@ -1284,13 +1284,13 @@ j2k_encode(j2k_image_t * img, j2k_cp_t * cp, char *output,
 	  }
 	}
       } else if (info_IM.Prog == 3) {	/* PCRL */
-	// I suppose components have same XRsiz, YRsiz 
+ /* I suppose components have same XRsiz, YRsiz*/ 
 	int x0 = info_IM.Tile_Ox + tileno - (int)floor( tileno/info_IM.tw ) * info_IM.tw * info_IM.Tile_x;
 	int y0 = info_IM.Tile_Ox + (int)floor( tileno/info_IM.tw ) * info_IM.Tile_y;
 	int x1 = x0 + info_IM.Tile_x;
 	int y1 = y0 + info_IM.Tile_y;
 	
-	//fprintf(INDEX, "\npack_nb tileno precno compno resno layno start_pos  end_pos   disto\n"); 
+ /*fprintf(INDEX, "\npack_nb tileno precno compno resno layno start_pos  end_pos   disto\n"); */
 	for (y=y0; y<y1; y++) {
 	  for (x=x0; x<x1; x++) {
 	    for (compno = 0; compno < info_IM.Comp; compno++) {
@@ -1322,7 +1322,7 @@ j2k_encode(j2k_image_t * img, j2k_cp_t * cp, char *output,
 	  }
 	}
       } else {			/* CPRL */
-	//fprintf(INDEX, "\npack_nb tileno compno precno resno layno start_pos  end_pos   disto\n"); 
+ /*fprintf(INDEX, "\npack_nb tileno compno precno resno layno start_pos  end_pos   disto\n"); */
 	for (compno = 0; compno < info_IM.Comp; compno++) {
 	  /* I suppose components have same XRsiz, YRsiz */
 	  int x0 = info_IM.Tile_Ox + tileno - (int)floor( tileno/info_IM.tw ) * info_IM.tw * info_IM.Tile_x;
@@ -1360,9 +1360,9 @@ j2k_encode(j2k_image_t * img, j2k_cp_t * cp, char *output,
       }   
     }
     
-    fprintf(INDEX, "%8e\n", info_IM.D_max); //SE max
+    fprintf(INDEX, "%8e\n", info_IM.D_max); /*SE max*/
     
-    fprintf(INDEX, "%.8e\n", DistoTotal); // SE totale
+    fprintf(INDEX, "%.8e\n", DistoTotal); /* SE totale*/
     
     fclose(INDEX);
     
@@ -1554,7 +1554,7 @@ void j2k_dec_release()
   
   
   
-  //tcd_dec_release();
+  /*tcd_dec_release();*/
   
   
   

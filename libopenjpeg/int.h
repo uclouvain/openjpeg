@@ -24,6 +24,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "j2k.h"
+
 #ifndef __INT_H
 #define __INT_H
 
@@ -67,14 +69,14 @@ int int_ceildiv(int a, int b);
  *
  * a divided by 2^b
  */
-int int_ceildivpow2(int a, int b);
+LIBJ2K_API int int_ceildivpow2(int a, int b);
 
 /*
  * Divide an integer by a power of 2 and round downwards.
  *
  * a divided by 2^b
  */
-int int_floordivpow2(int a, int b);
+LIBJ2K_API int int_floordivpow2(int a, int b);
 
 /*
  * Get logarithm of an integer and round downwards.

@@ -97,8 +97,8 @@ pi_iterator_t *pi_create(j2k_image_t * img, j2k_cp_t * cp, int tileno)
 	py0 = int_floordivpow2(ry0, res->pdy) << res->pdy;
 	px1 = int_ceildivpow2(rx1, res->pdx) << res->pdx;
 	py1 = int_ceildivpow2(ry1, res->pdy) << res->pdy;
-	res->pw = (rx0==rx1)?0:((px1 - px0) >> res->pdx); //Mod Antonin : sizebug1
-	res->ph = (ry0==ry1)?0:((py1 - py0) >> res->pdy); //Mod Antonin : sizebug1
+ res->pw = (rx0==rx1)?0:((px1 - px0) >> res->pdx); /*Mod Antonin : sizebug1*/
+ res->ph = (ry0==ry1)?0:((py1 - py0) >> res->pdy); /*Mod Antonin : sizebug1*/
       }
     }
 
@@ -269,7 +269,7 @@ int pi_next_rpcl(pi_iterator_t * pi)
 	     pi->compno < pi->poc.compno1; pi->compno++) {
 	  int levelno;
 	  int trx0, try0;
-	  int trx1, try1;// Add antonin pcrl
+   int trx1, try1;/* Add antonin pcrl*/
 	  int rpx, rpy;
 	  int prci, prcj;
 	  comp = &pi->comps[pi->compno];
@@ -280,8 +280,8 @@ int pi_next_rpcl(pi_iterator_t * pi)
 	  levelno = comp->numresolutions - 1 - pi->resno;
 	  trx0 = int_ceildiv(pi->tx0, comp->dx << levelno);
 	  try0 = int_ceildiv(pi->ty0, comp->dy << levelno);
-	  trx1 = int_ceildiv(pi->tx1, comp->dx << levelno);// Add antonin pcrl
-	  try1 = int_ceildiv(pi->ty1, comp->dy << levelno);// Add antonin pcrl
+   trx1 = int_ceildiv(pi->tx1, comp->dx << levelno);/* Add antonin pcrl*/
+   try1 = int_ceildiv(pi->ty1, comp->dy << levelno);/* Add antonin pcrl*/
 	  rpx = res->pdx + levelno;
 	  rpy = res->pdy + levelno;
 	  if (!
@@ -295,13 +295,13 @@ int pi_next_rpcl(pi_iterator_t * pi)
 	    continue;
 	  }
 
-	  //Add Antonin : sizebug1
+   /*Add Antonin : sizebug1*/
 	  if ((res->pw==0)||(res->pw==0)) continue;
-	  //ddA
+   /*ddA*/
 
-	  //Add Antonin : pcrl
+   /*Add Antonin : pcrl*/
 	  if ((trx0==trx1)||(try0==try1)) continue;
-	  //ddA
+   /*ddA*/
 
 	  prci =
 	    int_floordivpow2(int_ceildiv
@@ -376,15 +376,15 @@ int pi_next_pcrl(pi_iterator_t * pi)
 	  comp->numresolutions); pi->resno++) {
 	  int levelno;
 	  int trx0, try0;
-	  int trx1, try1;// Add antonin pcrl
+   int trx1, try1;/* Add antonin pcrl*/
 	  int rpx, rpy;
 	  int prci, prcj;
 	  res = &comp->resolutions[pi->resno];
 	  levelno = comp->numresolutions - 1 - pi->resno;
 	  trx0 = int_ceildiv(pi->tx0, comp->dx << levelno);
 	  try0 = int_ceildiv(pi->ty0, comp->dy << levelno);
-	  trx1 = int_ceildiv(pi->tx1, comp->dx << levelno);// Add antonin pcrl
-	  try1 = int_ceildiv(pi->ty1, comp->dy << levelno);// Add antonin pcrl
+   trx1 = int_ceildiv(pi->tx1, comp->dx << levelno);/* Add antonin pcrl*/
+   try1 = int_ceildiv(pi->ty1, comp->dy << levelno);/* Add antonin pcrl*/
 	  rpx = res->pdx + levelno;
 	  rpy = res->pdy + levelno;
 	  if (!
@@ -398,13 +398,13 @@ int pi_next_pcrl(pi_iterator_t * pi)
 	    continue;
 	  }
 	  
-	  //Add Antonin : sizebug1
+   /*Add Antonin : sizebug1*/
 	  if ((res->pw==0)||(res->pw==0)) continue;
-	  //ddA
+   /*ddA*/
 
-	  //Add Antonin : pcrl
+   /*Add Antonin : pcrl*/
 	  if ((trx0==trx1)||(try0==try1)) continue;
-	  //ddA
+   /*ddA*/
 	  
 	  prci =
 	    int_floordivpow2(int_ceildiv
@@ -474,15 +474,15 @@ int pi_next_cprl(pi_iterator_t * pi)
 				 comp->numresolutions); pi->resno++) {
 	  int levelno;
 	  int trx0, try0;
-	  int trx1, try1;// Add antonin pcrl
+   int trx1, try1;/* Add antonin pcrl*/
 	  int rpx, rpy;
 	  int prci, prcj;
 	  res = &comp->resolutions[pi->resno];
 	  levelno = comp->numresolutions - 1 - pi->resno;
 	  trx0 = int_ceildiv(pi->tx0, comp->dx << levelno);
 	  try0 = int_ceildiv(pi->ty0, comp->dy << levelno);
-	  trx1 = int_ceildiv(pi->tx1, comp->dx << levelno);// Add antonin pcrl
-	  try1 = int_ceildiv(pi->ty1, comp->dy << levelno);// Add antonin pcrl
+   trx1 = int_ceildiv(pi->tx1, comp->dx << levelno);/* Add antonin pcrl*/
+   try1 = int_ceildiv(pi->ty1, comp->dy << levelno);/* Add antonin pcrl*/
 	  rpx = res->pdx + levelno;
 	  rpy = res->pdy + levelno;
 	  if (!
@@ -496,13 +496,13 @@ int pi_next_cprl(pi_iterator_t * pi)
 	    continue;
 	  }
 
-	  //Add Antonin : sizebug1
+   /*Add Antonin : sizebug1*/
 	  if ((res->pw==0)||(res->pw==0)) continue;
-	  //ddA
+   /*ddA*/
 
-	  //Add Antonin : pcrl
+   /*Add Antonin : pcrl*/
 	  if ((trx0==trx1)||(try0==try1)) continue;
-	  //ddA
+   /*ddA*/
 
 	  prci =
 	    int_floordivpow2(int_ceildiv

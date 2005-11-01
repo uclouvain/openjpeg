@@ -82,8 +82,8 @@ int jp2_init_stdjp2(jp2_struct_t * jp2_struct)
   jp2_struct->comps =
     (jp2_comps_t *) malloc(jp2_struct->numcomps * sizeof(jp2_comps_t));
 
-  jp2_struct->precedence = 0;	// PRECEDENCE
-  jp2_struct->approx = 0;	// APPROX
+  jp2_struct->precedence = 0;   /* PRECEDENCE*/
+  jp2_struct->approx = 0;   /* APPROX*/
 
   jp2_struct->brand = JP2_JP2;	/* BR         */
   jp2_struct->minversion = 0;	/* MinV       */
@@ -91,9 +91,9 @@ int jp2_init_stdjp2(jp2_struct_t * jp2_struct)
   jp2_struct->cl = (int *) malloc(jp2_struct->numcl * sizeof(int));
   jp2_struct->cl[0] = JP2_JP2;	/* CL0 : JP2  */
 
-  jp2_struct->C = 7;		// C : Always 7
-  jp2_struct->UnkC = 0;		// UnkC, colorspace specified in colr box
-  jp2_struct->IPR = 0;		// IPR, no intellectual property
+  jp2_struct->C = 7;      /* C : Always 7*/
+  jp2_struct->UnkC = 0;      /* UnkC, colorspace specified in colr box*/
+  jp2_struct->IPR = 0;      /* IPR, no intellectual property*/
 
   return 0;
 }
@@ -110,9 +110,9 @@ void jp2_write_url(char *Idx_file)
 
   box.init_pos = cio_tell();
   cio_skip(4);
-  cio_write(JP2_URL, 4);	// DBTL
-  cio_write(0, 1);		// VERS
-  cio_write(0, 3);		// FLAG
+  cio_write(JP2_URL, 4);   /* DBTL*/
+  cio_write(0, 1);      /* VERS*/
+  cio_write(0, 3);      /* FLAG*/
 
   for (i = 0; i < strlen(str); i++) {
     cio_write(str[i], 1);
@@ -140,15 +140,15 @@ int jp2_read_ihdr(jp2_struct_t * jp2_struct)
     return 1;
   }
 
-  jp2_struct->h = cio_read(4);	// HEIGHT
-  jp2_struct->w = cio_read(4);	// WIDTH
-  jp2_struct->numcomps = cio_read(2);	// NC
+  jp2_struct->h = cio_read(4);   /* HEIGHT*/
+  jp2_struct->w = cio_read(4);   /* WIDTH*/
+  jp2_struct->numcomps = cio_read(2);   /* NC*/
 
-  jp2_struct->bpc = cio_read(1);	// BPC
+  jp2_struct->bpc = cio_read(1);   /* BPC*/
 
-  jp2_struct->C = cio_read(1);	// C 
-  jp2_struct->UnkC = cio_read(1);	// UnkC
-  jp2_struct->IPR = cio_read(1);	// IPR
+  jp2_struct->C = cio_read(1);   /* C */
+  jp2_struct->UnkC = cio_read(1);   /* UnkC*/
+  jp2_struct->IPR = cio_read(1);   /* IPR*/
 
   if (cio_tell() - box.init_pos != box.length) {
     fprintf(stderr, "Error with IHDR Box\n");
@@ -163,17 +163,17 @@ void jp2_write_ihdr(jp2_struct_t * jp2_struct)
 
   box.init_pos = cio_tell();
   cio_skip(4);
-  cio_write(JP2_IHDR, 4);	// IHDR
+  cio_write(JP2_IHDR, 4);   /* IHDR*/
 
-  cio_write(jp2_struct->h, 4);	// HEIGHT
-  cio_write(jp2_struct->w, 4);	// WIDTH
-  cio_write(jp2_struct->numcomps, 2);	// NC
+  cio_write(jp2_struct->h, 4);   /* HEIGHT*/
+  cio_write(jp2_struct->w, 4);   /* WIDTH*/
+  cio_write(jp2_struct->numcomps, 2);   /* NC*/
 
-  cio_write(jp2_struct->bpc, 1);	// BPC  
+  cio_write(jp2_struct->bpc, 1);   /* BPC  */
 
-  cio_write(jp2_struct->C, 1);	// C : Always 7
-  cio_write(jp2_struct->UnkC, 1);	// UnkC, colorspace unknow
-  cio_write(jp2_struct->IPR, 1);	// IPR, no intellectual property
+  cio_write(jp2_struct->C, 1);   /* C : Always 7*/
+  cio_write(jp2_struct->UnkC, 1);   /* UnkC, colorspace unknow*/
+  cio_write(jp2_struct->IPR, 1);   /* IPR, no intellectual property*/
 
   box.length = cio_tell() - box.init_pos;
   cio_seek(box.init_pos);
@@ -189,7 +189,7 @@ void jp2_write_bpcc(jp2_struct_t * jp2_struct)
 
   box.init_pos = cio_tell();
   cio_skip(4);
-  cio_write(JP2_BPCC, 4);	// BPCC
+  cio_write(JP2_BPCC, 4);   /* BPCC*/
 
   for (i = 0; i < jp2_struct->numcomps; i++)
     cio_write(jp2_struct->comps[i].bpcc, 1);
@@ -228,16 +228,16 @@ void jp2_write_colr(jp2_struct_t * jp2_struct)
 
   box.init_pos = cio_tell();
   cio_skip(4);
-  cio_write(JP2_COLR, 4);	// COLR
+  cio_write(JP2_COLR, 4);   /* COLR*/
 
-  cio_write(jp2_struct->meth, 1);	// METH
-  cio_write(jp2_struct->precedence, 1);	// PRECEDENCE
-  cio_write(jp2_struct->approx, 1);	// APPROX
+  cio_write(jp2_struct->meth, 1);   /* METH*/
+  cio_write(jp2_struct->precedence, 1);   /* PRECEDENCE*/
+  cio_write(jp2_struct->approx, 1);   /* APPROX*/
 
   if (jp2_struct->meth == 1)
-    cio_write(jp2_struct->enumcs, 4);	// EnumCS
+    cio_write(jp2_struct->enumcs, 4);   /* EnumCS*/
   else
-    cio_write(0, 1);		// PROFILE (??)
+    cio_write(0, 1);      /* PROFILE (??)*/
 
   box.length = cio_tell() - box.init_pos;
   cio_seek(box.init_pos);
@@ -258,14 +258,14 @@ int jp2_read_colr(jp2_struct_t * jp2_struct)
     }
   } while (JP2_COLR != box.type);
 
-  jp2_struct->meth = cio_read(1);	// METH
-  jp2_struct->precedence = cio_read(1);	// PRECEDENCE
-  jp2_struct->approx = cio_read(1);	// APPROX
+  jp2_struct->meth = cio_read(1);   /* METH*/
+  jp2_struct->precedence = cio_read(1);   /* PRECEDENCE*/
+  jp2_struct->approx = cio_read(1);   /* APPROX*/
 
   if (jp2_struct->meth == 1)
-    jp2_struct->enumcs = cio_read(4);	// EnumCS
+    jp2_struct->enumcs = cio_read(4);   /* EnumCS*/
   else {
-    // SKIP PROFILE     
+    /* SKIP PROFILE     */
     skip_len = box.init_pos + box.length - cio_tell();
     if (skip_len < 0) {
       fprintf(stderr, "Error with JP2H box size\n");
@@ -420,7 +420,7 @@ int jp2_write_jp2c(int j2k_codestream_len, int *j2k_codestream_offset,
 
   box.init_pos = cio_tell();
   cio_skip(4);
-  cio_write(JP2_JP2C, 4);	// JP2C
+  cio_write(JP2_JP2C, 4);   /* JP2C*/
 
   *j2k_codestream_offset = cio_tell();
   memcpy(cio_getbp(), j2k_codestream, j2k_codestream_len);
@@ -459,7 +459,7 @@ void jp2_write_jp()
 
   box.init_pos = cio_tell();
   cio_skip(4);
-  cio_write(JP2_JP, 4);		// JP
+  cio_write(JP2_JP, 4);      /* JP*/
   cio_write(0x0d0a870a, 4);
 
   box.length = cio_tell() - box.init_pos;
@@ -517,6 +517,7 @@ int jp2_read_struct(unsigned char *src, jp2_struct_t * jp2_struct, int len)
 int jp2_wrap_j2k(jp2_struct_t * jp2_struct, char *j2k_codestream,
 		 char *output)
 {
+  (void)output;
   jp2_write_jp();
   jp2_write_ftyp(jp2_struct);
   jp2_write_jp2h(jp2_struct);

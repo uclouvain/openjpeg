@@ -28,15 +28,20 @@
 
 #define VERSION "0.0.8"
 
-#ifdef DAVID_WIN32
-#ifdef LIBJ2K_EXPORTS
+#if defined(_WIN32) && defined (OPENJPEGDLL)
+#ifdef gdcmopenjpeg_EXPORTS /*LIBJ2K_EXPORTS*/
 #define LIBJ2K_API __declspec(dllexport)
 #else
 #define LIBJ2K_API __declspec(dllimport)
 #endif
 #else
+#ifdef OPENJPEGSTATIC
+#define LIBJ2K_API extern
+#else
 #define LIBJ2K_API
 #endif
+#endif
+
 
 #ifndef __J2K_H
 #define __J2K_H
@@ -231,6 +236,6 @@ LIBJ2K_API int j2k_decode(unsigned char *src, int len, j2k_image_t * img,
 int j2k_decode_jpt_stream(unsigned char *src, int len, j2k_image_t * img,
 			  j2k_cp_t * cp);
 
-void j2k_dec_release();//antonin
+LIBJ2K_API void j2k_dec_release();/*antonin*/
 
 #endif

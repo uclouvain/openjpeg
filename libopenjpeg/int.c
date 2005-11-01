@@ -24,6 +24,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "int.h"
+
 /*
  * Get the minimum of two integers.
  *

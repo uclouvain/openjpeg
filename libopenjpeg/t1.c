@@ -535,7 +535,7 @@ void t1_dec_clnpass(int w, int h, int bpno, int orient, int cblksty)
   }
 }				/* VSC and  BYPASS by Antonin */
 
-double t1_getwmsedec(int nmsedec, int compno, int level, int orient, int bpno, int qmfbid, float stepsize, int numcomps)	//mod fixed_quality
+double t1_getwmsedec(int nmsedec, int compno, int level, int orient, int bpno, int qmfbid, float stepsize, int numcomps)   /*mod fixed_quality*/
 {
   double w1, w2, wmsedec;
   if (qmfbid == 1) {
@@ -550,7 +550,7 @@ double t1_getwmsedec(int nmsedec, int compno, int level, int orient, int bpno, i
   return wmsedec;
 }
 
-void t1_encode_cblk(tcd_cblk_t * cblk, int orient, int compno, int level, int qmfbid, float stepsize, int cblksty, int numcomps, tcd_tile_t * tile)	//mod fixed_quality
+void t1_encode_cblk(tcd_cblk_t * cblk, int orient, int compno, int level, int qmfbid, float stepsize, int cblksty, int numcomps, tcd_tile_t * tile)   /*mod fixed_quality*/
 {
   int i, j;
   int w, h;
@@ -610,8 +610,8 @@ void t1_encode_cblk(tcd_cblk_t * cblk, int orient, int compno, int level, int qm
       break;
     }
 
-    cumwmsedec += t1_getwmsedec(nmsedec, compno, level, orient, bpno, qmfbid, stepsize, numcomps);	//mod fixed_quality
-    tile->distotile += t1_getwmsedec(nmsedec, compno, level, orient, bpno, qmfbid, stepsize, numcomps);	//add antonin quality
+    cumwmsedec += t1_getwmsedec(nmsedec, compno, level, orient, bpno, qmfbid, stepsize, numcomps);   /*mod fixed_quality*/
+    tile->distotile += t1_getwmsedec(nmsedec, compno, level, orient, bpno, qmfbid, stepsize, numcomps);   /*add antonin quality*/
 
 
     /* Code switch "RESTART" (i.e. TERMALL) */
@@ -684,7 +684,7 @@ void t1_decode_cblk(tcd_cblk_t * cblk, int orient, int roishift,
   int i, j, w, h;
   int bpno, passtype;
   int segno, passno;
-  char type = T1_TYPE_MQ; //BYPASS mode
+  char type = T1_TYPE_MQ; /*BYPASS mode*/
   
   w = cblk->x1 - cblk->x0;
   h = cblk->y1 - cblk->y0;
@@ -714,7 +714,7 @@ void t1_decode_cblk(tcd_cblk_t * cblk, int orient, int roishift,
   for (segno = 0; segno < cblk->numsegs; segno++) {
     tcd_seg_t *seg = &cblk->segs[segno];
     
-    // Add BYPASS mode 
+    /* Add BYPASS mode */
     type = ((bpno <= (cblk->numbps - 1) - 4) && (passtype < 2)
       && (cblksty & J2K_CCP_CBLKSTY_LAZY)) ? T1_TYPE_RAW :
     T1_TYPE_MQ;
@@ -722,7 +722,7 @@ void t1_decode_cblk(tcd_cblk_t * cblk, int orient, int roishift,
       raw_init_dec(seg->data, seg->len);
     else
       mqc_init_dec(seg->data, seg->len);
-    // ddA
+    /* ddA */
     
     for (passno = 0; passno < seg->numpasses; passno++) {
       switch (passtype) {
@@ -766,7 +766,7 @@ void t1_encode_cblks(tcd_tile_t * tile, j2k_tcp_t * tcp)
   tcd_precinct_t *prc;
   tcd_cblk_t *cblk;
 
-  tile->distotile = 0;		//add fixed_quality
+  tile->distotile = 0;      /*add fixed_quality*/
 
   for (compno = 0; compno < tile->numcomps; compno++) {
     tilec = &tile->comps[compno];
@@ -827,7 +827,7 @@ void t1_encode_cblks(tcd_tile_t * tile, j2k_tcp_t * tcp)
 	    } else if (orient == 1) {
 	      orient = 2;
 	    }
-	    t1_encode_cblk(cblk, orient, compno, tilec->numresolutions - 1 - resno, tcp->tccps[compno].qmfbid, band->stepsize, tcp->tccps[compno].cblksty, tile->numcomps, tile);	//mod fixed_quality
+     t1_encode_cblk(cblk, orient, compno, tilec->numresolutions - 1 - resno, tcp->tccps[compno].qmfbid, band->stepsize, tcp->tccps[compno].cblksty, tile->numcomps, tile);   /*mod fixed_quality*/
 	  }			/* cblkno */
 	}			/* precno */
       }				/* bandno */
@@ -903,7 +903,7 @@ void t1_decode_cblks(tcd_tile_t * tile, j2k_tcp_t * tcp)
 
 	      for (j = 0; j < cblk->y1 - cblk->y0; j++) {
 		for (i = 0; i < cblk->x1 - cblk->x0; i++) {
-                  float tmp=t1_data[j][i] * band->stepsize * 4096.0;
+                  double tmp=t1_data[j][i] * band->stepsize * 4096.0;
                   int tmp2;
 		  if (t1_data[j][i]>>1 == 0) {
 		    tilec->data[x + i + (y + j) * (tilec->x1 - tilec->x0)] = 0;
