@@ -896,7 +896,7 @@ void t1_decode_cblks(tcd_tile_t * tile, j2k_tcp_t * tcp)
 		for (i = 0; i < cblk->x1 - cblk->x0; i++) {
                   int tmp=t1_data[j][i];
                   if (tmp>>1==0) tilec->data[x + i + (y + j) * (tilec->x1 - tilec->x0)] = 0;
-		  else tilec->data[x + i + (y + j) * (tilec->x1 - tilec->x0)] = tmp<0?((tmp>>1) | 0x80000000)+1:(tmp>>1);
+		  else tilec->data[x + i + (y + j) * (tilec->x1 - tilec->x0)] = tmp<0?(tmp>>1)+1:(tmp>>1);
 		}
 	      }
 	    } else {		/* if (tcp->tccps[compno].qmfbid == 0) */
