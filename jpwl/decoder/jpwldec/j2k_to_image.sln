@@ -1,0 +1,21 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "j2k_to_image", "j2k_to_image.vcproj", "{3C09E691-8555-47D1-B1E6-D411A6314AC8}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{3C09E691-8555-47D1-B1E6-D411A6314AC8}.Debug.ActiveCfg = Debug|Win32
+		{3C09E691-8555-47D1-B1E6-D411A6314AC8}.Debug.Build.0 = Debug|Win32
+		{3C09E691-8555-47D1-B1E6-D411A6314AC8}.Release.ActiveCfg = Release|Win32
+		{3C09E691-8555-47D1-B1E6-D411A6314AC8}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
