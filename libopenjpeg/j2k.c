@@ -988,7 +988,7 @@ j2k_encode(j2k_image_t * img, j2k_cp_t * cp, char *output,
 	   int len, char *index)
 {
   int tileno, compno, layno, resno, precno, pack_nb, x, y;
-  char *dest = NULL;
+  unsigned char *dest = NULL;
   FILE *INDEX = NULL;
   FILE *f = NULL;
   
@@ -1002,7 +1002,7 @@ j2k_encode(j2k_image_t * img, j2k_cp_t * cp, char *output,
       fprintf(stderr, "failed to open %s for writing\n", output);
       return 1;
     }
-    dest = (char *) malloc(len);
+    dest = (unsigned char *) malloc(len);
     cio_init(dest, len);
   }
   
@@ -1062,7 +1062,7 @@ j2k_encode(j2k_image_t * img, j2k_cp_t * cp, char *output,
     if (cp->intermed_file == 1) {
       /* new dest for each tile  */
       free(dest);
-      dest = (char *) malloc(len);
+      dest = (unsigned char *) malloc(len);
       cio_init(dest, len);
     }
     j2k_curtileno = tileno;
@@ -1124,7 +1124,7 @@ j2k_encode(j2k_image_t * img, j2k_cp_t * cp, char *output,
   
   if (cp->intermed_file == 1) {
     free(dest);
-    dest = (char *) malloc(len);
+    dest = (unsigned char *) malloc(len);
     cio_init(dest, len);
   }
   
