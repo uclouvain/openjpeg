@@ -853,7 +853,9 @@ void tcd_makelayer_fixed(int layno, int final)
 			   j * 3 +
 			   k] *
 		   (float) (tcd_img->comps[compno].prec / 16.0));
-    }}}
+        }
+      }
+    }
 
     for (resno = 0; resno < tilec->numresolutions; resno++) {
       tcd_resolution_t *res = &tilec->resolutions[resno];
