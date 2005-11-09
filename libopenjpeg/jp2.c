@@ -88,7 +88,7 @@ int jp2_init_stdjp2(jp2_struct_t * jp2_struct)
   jp2_struct->brand = JP2_JP2;	/* BR         */
   jp2_struct->minversion = 0;	/* MinV       */
   jp2_struct->numcl = 1;
-  jp2_struct->cl = (int *) malloc(jp2_struct->numcl * sizeof(int));
+  jp2_struct->cl = (unsigned int *) malloc(jp2_struct->numcl * sizeof(int));
   jp2_struct->cl[0] = JP2_JP2;	/* CL0 : JP2  */
 
   jp2_struct->C = 7;      /* C : Always 7*/
