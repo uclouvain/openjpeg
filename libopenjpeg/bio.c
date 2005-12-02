@@ -1,8 +1,9 @@
 /*
- * Copyright (c) 2001-2002, David Janssens
- * Copyright (c) 2003, Yannick Verschueren
- * Copyright (c) 2003,  Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
- *
+ * Copyright (c) 2001-2003, David Janssens
+ * Copyright (c) 2002-2003, Yannick Verschueren
+ * Copyright (c) 2003-2005, Francois Devaux and Antonin Descampe
+ * Copyright (c) 2005, Hervé Drolon, FreeImage Team
+ * Copyright (c) 2002-2005, Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,170 +26,127 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- ***/ 
-
-#include "bio.h"
-#include <stdio.h>
-#include <setjmp.h>
-
-static unsigned char *bio_start;	/* pointer to the start of the buffer */
-static unsigned char *bio_end;	/* pointer to the end of the buffer */
-static unsigned char *bio_bp;	/* pointer to the present position in the buffer */
-static unsigned int bio_buf;	/* temporary place where each byte is read or written */
-static int bio_ct;		/* coder : number of bits free to write // decoder : number of bits read */
-
-extern jmp_buf j2k_error;
-
-/*
- * Number of bytes written.
  */
-int bio_numbytes()
-{
-  return bio_bp - bio_start;
-}
 
-/*
- * Init encoder.
- *
- * bp  : Output buffer
- * len : Output buffer length 
- */
-void bio_init_enc(unsigned char *bp, int len)
-{
-  bio_start = bp;
-  bio_end = bp + len;
-  bio_bp = bp;
-  bio_buf = 0;
-  bio_ct = 8;
-}
 
-/*
- * Init decoder.
- * 
- * bp  : Input buffer
- * len : Input buffer length 
- */
-void bio_init_dec(unsigned char *bp, int len)
-{
-  bio_start = bp;
-  bio_end = bp + len;
-  bio_bp = bp;
-  bio_buf = 0;
-  bio_ct = 0;
-}
+#include "opj_includes.h"
 
-/*
- * Write byte. --> function modified to eliminate longjmp !!! 
- *
- */
-int bio_byteout()
-{
-  bio_buf = (bio_buf << 8) & 0xffff;
-  bio_ct = bio_buf == 0xff00 ? 7 : 8;
-  if (bio_bp >= bio_end)
+/* 
+==========================================================
+   local functions
+==========================================================
+*/
+
+static int bio_byteout(opj_bio_t *bio) {
+  bio->buf = (bio->buf << 8) & 0xffff;
+  bio->ct = bio->buf == 0xff00 ? 7 : 8;
+  if (bio->bp >= bio->end) {
     return 1;
-  *bio_bp++ = bio_buf >> 8;
+  }
+  *bio->bp++ = bio->buf >> 8;
   return 0;
 }
 
-/*
- * Read byte. --> function modified to eliminate longjmp !!
- *
- */
-int bio_bytein()
-{
-  bio_buf = (bio_buf << 8) & 0xffff;
-  bio_ct = bio_buf == 0xff00 ? 7 : 8;
-  if (bio_bp >= bio_end)
+static int bio_bytein(opj_bio_t *bio) {
+  bio->buf = (bio->buf << 8) & 0xffff;
+  bio->ct = bio->buf == 0xff00 ? 7 : 8;
+  if (bio->bp >= bio->end) {
     return 1;
-  bio_buf |= *bio_bp++;
+  }
+  bio->buf |= *bio->bp++;
   return 0;
 }
 
-/*
- * Write bit.
- *
- * b : Bit to write (0 or 1)
- */
-void bio_putbit(int b)
-{
-  if (bio_ct == 0) {
-    bio_byteout();
+static void bio_putbit(opj_bio_t *bio, int b) {
+  if (bio->ct == 0) {
+    bio_byteout(bio);
   }
-  bio_ct--;
-  bio_buf |= b << bio_ct;
+  bio->ct--;
+  bio->buf |= b << bio->ct;
 }
 
-/*
- * Read bit.
- *
- */
-int bio_getbit()
-{
-  if (bio_ct == 0) {
-    bio_bytein();
+static int bio_getbit(opj_bio_t *bio) {
+  if (bio->ct == 0) {
+    bio_bytein(bio);
   }
-  bio_ct--;
-  return (bio_buf >> bio_ct) & 1;
+  bio->ct--;
+  return (bio->buf >> bio->ct) & 1;
 }
 
-/*
- * Write bits.
- *
- * v : Value of bits
- * n : Number of bits to write 
- */
-void bio_write(int v, int n)
-{
+/* 
+==========================================================
+   Bit Input/Output interface
+==========================================================
+*/
+
+opj_bio_t* bio_create() {
+  opj_bio_t *bio = (opj_bio_t*)opj_malloc(sizeof(opj_bio_t));
+  return bio;
+}
+
+void bio_destroy(opj_bio_t *bio) {
+  if(bio) {
+    opj_free(bio);
+  }
+}
+
+int bio_numbytes(opj_bio_t *bio) {
+  return (bio->bp - bio->start);
+}
+
+void bio_init_enc(opj_bio_t *bio, unsigned char *bp, int len) {
+  bio->start = bp;
+  bio->end = bp + len;
+  bio->bp = bp;
+  bio->buf = 0;
+  bio->ct = 8;
+}
+
+void bio_init_dec(opj_bio_t *bio, unsigned char *bp, int len) {
+  bio->start = bp;
+  bio->end = bp + len;
+  bio->bp = bp;
+  bio->buf = 0;
+  bio->ct = 0;
+}
+
+void bio_write(opj_bio_t *bio, int v, int n) {
   int i;
   for (i = n - 1; i >= 0; i--) {
-    bio_putbit((v >> i) & 1);
+    bio_putbit(bio, (v >> i) & 1);
   }
 }
 
-/*
- * Read bits.
- * 
- * n : Number of bits to read
- */
-int bio_read(int n)
-{
+int bio_read(opj_bio_t *bio, int n) {
   int i, v;
   v = 0;
   for (i = n - 1; i >= 0; i--) {
-    v += bio_getbit() << i;
+    v += bio_getbit(bio) << i;
   }
   return v;
 }
 
-/*
- * Flush bits. Modified to eliminate longjmp !!
- *
- */
-int bio_flush()
-{
-  bio_ct = 0;
-  if (bio_byteout())
+int bio_flush(opj_bio_t *bio) {
+  bio->ct = 0;
+  if (bio_byteout(bio)) {
     return 1;
-  if (bio_ct == 7) {
-    bio_ct = 0;
-
-    if (bio_byteout())
+  }
+  if (bio->ct == 7) {
+    bio->ct = 0;
+    if (bio_byteout(bio)) {
       return 1;
+    }
   }
   return 0;
 }
 
-/*
- * Passes the ending bits (coming from flushing)
- */
-int bio_inalign()
-{
-  bio_ct = 0;
-  if ((bio_buf & 0xff) == 0xff) {
-    if (bio_bytein())
+int bio_inalign(opj_bio_t *bio) {
+  bio->ct = 0;
+  if ((bio->buf & 0xff) == 0xff) {
+    if (bio_bytein(bio)) {
       return 1;
-    bio_ct = 0;
+    }
+    bio->ct = 0;
   }
   return 0;
 }

@@ -1,5 +1,9 @@
 /*
- * Copyright (c) 2001-2002, David Janssens
+ * Copyright (c) 2001-2003, David Janssens
+ * Copyright (c) 2002-2003, Yannick Verschueren
+ * Copyright (c) 2003-2005, Francois Devaux and Antonin Descampe
+ * Copyright (c) 2005, HervŽ Drolon, FreeImage Team
+ * Copyright (c) 2002-2005, Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,51 +28,71 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+
 #ifndef __MCT_H
 #define __MCT_H
+/**
+@file mct.h
+@brief Implementation of a multi-component transforms (MCT)
 
-/*
- * Apply a reversible multi-component transform to an image
- * R: samples for red component
- * G: samples for green component
- * B: samples blue component
- * n: number of samples for each component
- */
-void mct_encode(int *R, int *G, int *B, int n);
-/*
- * Apply a reversible multi-component inverse transform to an image
- * Y: samples for luminance component
- * U: samples for red chrominance component
- * V: samples for blue chrominance component
- * n: number of samples for each component
- */
-void mct_decode(int *V, int *U, int *Y, int n);
-/*
- * Get norm of the basis function used for the reversible multi-component transform
- * compno: number of the component (0->Y, 1->U, 2->V)
- */
+The functions in MCT.C have for goal to realize reversible and irreversible multicomponent
+transform. The functions in MCT.C are used by some function in TCD.C.
+*/
+
+/** @defgroup MCT MCT - Implementation of a multi-component transform */
+/*@{*/
+
+/** @name Exported functions */
+/*@{*/
+/* ----------------------------------------------------------------------- */
+/**
+Apply a reversible multi-component transform to an image
+@param c0 Samples for red component
+@param c1 Samples for green component
+@param c2 Samples blue component
+@param n Number of samples for each component
+*/
+void mct_encode(int *c0, int *c1, int *c2, int n);
+/**
+Apply a reversible multi-component inverse transform to an image
+@param c0 Samples for luminance component
+@param c1 Samples for red chrominance component
+@param c2 Samples for blue chrominance component
+@param n Number of samples for each component
+*/
+void mct_decode(int *c0, int *c1, int *c2, int n);
+/**
+Get norm of the basis function used for the reversible multi-component transform
+@param compno Number of the component (0->Y, 1->U, 2->V)
+@return 
+*/
 double mct_getnorm(int compno);
 
-/*
- * Apply an irreversible multi-component transform to an image
- * R: samples for red component
- * G: samples for green component
- * B: samples blue component
- * n: number of samples for each component
- */
+/**
+Apply an irreversible multi-component transform to an image
+@param c0 Samples for red component
+@param c1 Samples for green component
+@param c2 Samples blue component
+@param n Number of samples for each component
+*/
 void mct_encode_real(int *c0, int *c1, int *c2, int n);
-/*
- * Apply an irreversible multi-component inverse transform to an image
- * Y: samples for luminance component
- * U: samples for red chrominance component
- * V: samples for blue chrominance component
- * n: number of samples for each component
- */
+/**
+Apply an irreversible multi-component inverse transform to an image
+@param c0 Samples for luminance component
+@param c1 Samples for red chrominance component
+@param c2 Samples for blue chrominance component
+@param n Number of samples for each component
+*/
 void mct_decode_real(int *c0, int *c1, int *c2, int n);
-/*
- * Get norm of the basis function used for the irreversible multi-component transform
- * compno: number of the component (0->Y, 1->U, 2->V)
- */
+/**
+Get norm of the basis function used for the irreversible multi-component transform
+@param compno Number of the component (0->Y, 1->U, 2->V)
+@return 
+*/
 double mct_getnorm_real(int compno);
+/* ----------------------------------------------------------------------- */
+/*@}*/
 
-#endif
+/*@}*/
+
+#endif /* __MCT_H */

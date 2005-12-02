@@ -1,7 +1,9 @@
 /*
- * Copyright (c) 2001-2002, David Janssens
+ * Copyright (c) 2001-2003, David Janssens
  * Copyright (c) 2002-2003, Yannick Verschueren
- * Copyright (c) 2002-2003,  Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
+ * Copyright (c) 2003-2005, Francois Devaux and Antonin Descampe
+ * Copyright (c) 2005, HervŽ Drolon, FreeImage Team
+ * Copyright (c) 2002-2005, Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,100 +30,221 @@
 
 #ifndef __MQC_H
 #define __MQC_H
+/**
+@file mqc.h
+@brief Implementation of an MQ-Coder (MQC)
 
-/*
- * Return the number of bytes written/read since initialisation
- */
-int mqc_numbytes();
+The functions in MQC.C have for goal to realize the MQ-coder operations. The functions
+in MQC.C are used by some function in T1.C.
+*/
 
-/*
- * Reset the states of all the context of the coder/decoder
- * (each context is set to a state where 0 and 1 are more or less equiprobable)
- */
-void mqc_resetstates();
+/** @defgroup MQC MQC - Implementation of an MQ-Coder */
+/*@{*/
 
-/*
- * Set the state of a particular context
- * ctxno: number that identifies the context
- * msb: the MSB of the new state of the context
- * prob: number that identifies the probability of the symbols for the new state of the context
- */
-void mqc_setstate(int ctxno, int msb, int prob);
+/**
+This struct defines the state of a context.
+*/
+typedef struct opj_mqc_state {
+  /** the probability of the Least Probable Symbol (0.75->0x8000, 1.5->0xffff) */
+  unsigned int qeval;
+  /** the Most Probable Symbol (0 or 1) */
+  int mps;
+  /** next state if the next encoded symbol is the MPS */
+  struct opj_mqc_state *nmps;
+  /** next state if the next encoded symbol is the LPS */
+  struct opj_mqc_state *nlps;
+} opj_mqc_state_t;
 
-/*
- * Initialize the encoder
- * bp: pointer to the start of the buffer where the bytes will be written
- */
-void mqc_init_enc(unsigned char *bp);
+#define MQC_NUMCTXS 32
 
-/*
- * Set the current context used for coding/decoding
- * ctxno: number that identifies the context
- */
-void mqc_setcurctx(int ctxno);
+/**
+MQ coder
+*/
+typedef struct opj_mqc {
+  unsigned int c;
+  unsigned int a;
+  unsigned int ct;
+  unsigned char *bp;
+  unsigned char *start;
+  unsigned char *end;
+  opj_mqc_state_t *ctxs[MQC_NUMCTXS];
+  opj_mqc_state_t **curctx;
+} opj_mqc_t;
 
-/*
- * Encode a bit
- * d: bit to encode (0 or 1)
- */
-void mqc_encode(int d);
+/** @name Local static functions */
+/*@{*/
+/* ----------------------------------------------------------------------- */
+/**
+Output a byte, doing bit-stuffing if necessary.
+After a 0xff byte, the next byte must be smaller than 0x90.
+@param mqc MQC handle
+*/
+static void mqc_byteout(opj_mqc_t *mqc);
+/**
+Renormalize mqc->a and mqc->c while encoding, so that mqc->a stays between 0x8000 and 0x10000
+@param mqc MQC handle
+*/
+static void mqc_renorme(opj_mqc_t *mqc);
+/**
+Encode the most probable symbol
+@param mqc MQC handle
+*/
+static void mqc_codemps(opj_mqc_t *mqc);
+/**
+Encode the most least symbol
+@param mqc MQC handle
+*/
+static void mqc_codelps(opj_mqc_t *mqc);
+/**
+Fill mqc->c with 1's for flushing
+@param mqc MQC handle
+*/
+static void mqc_setbits(opj_mqc_t *mqc);
+/**
+FIXME: documentation ???
+@param mqc MQC handle
+@return 
+*/
+static int mqc_mpsexchange(opj_mqc_t *mqc);
+/**
+FIXME: documentation ???
+@param mqc MQC handle
+@return 
+*/
+static int mqc_lpsexchange(opj_mqc_t *mqc);
+/**
+Input a byte
+@param mqc MQC handle
+*/
+static void mqc_bytein(opj_mqc_t *mqc);
+/**
+Renormalize mqc->a and mqc->c while decoding
+@param mqc MQC handle
+*/
+static void mqc_renormd(opj_mqc_t *mqc);
+/* ----------------------------------------------------------------------- */
+/*@}*/
 
-/*
- * Flush the encoder, so that all remaining data is written
- */
-void mqc_flush();
+/** @name Exported functions */
+/*@{*/
+/* ----------------------------------------------------------------------- */
+/**
+Create a new MQC handle 
+@return Returns a new MQC handle if successful, returns NULL otherwise
+*/
+opj_mqc_t* mqc_create();
+/**
+Destroy a previously created MQC handle
+@param mqc MQC handle to destroy
+*/
+void mqc_destroy(opj_mqc_t *mqc);
+/**
+Return the number of bytes written/read since initialisation
+@param mqc MQC handle
+@return Returns the number of bytes already encoded
+*/
+int mqc_numbytes(opj_mqc_t *mqc);
+/**
+Reset the states of all the context of the coder/decoder 
+(each context is set to a state where 0 and 1 are more or less equiprobable)
+@param mqc MQC handle
+*/
+void mqc_resetstates(opj_mqc_t *mqc);
+/**
+Set the state of a particular context
+@param mqc MQC handle
+@param ctxno Number that identifies the context
+@param msb The MSB of the new state of the context
+@param prob Number that identifies the probability of the symbols for the new state of the context
+*/
+void mqc_setstate(opj_mqc_t *mqc, int ctxno, int msb, int prob);
+/**
+Initialize the encoder
+@param mqc MQC handle
+@param bp Pointer to the start of the buffer where the bytes will be written
+*/
+void mqc_init_enc(opj_mqc_t *mqc, unsigned char *bp);
+/**
+Set the current context used for coding/decoding
+@param mqc MQC handle
+@param ctxno Number that identifies the context
+*/
+void mqc_setcurctx(opj_mqc_t *mqc, int ctxno);
+/**
+Encode a symbol using the MQ-coder
+@param mqc MQC handle
+@param d The symbol to be encoded (0 or 1)
+*/
+void mqc_encode(opj_mqc_t *mqc, int d);
+/**
+Flush the encoder, so that all remaining data is written
+@param mqc MQC handle
+*/
+void mqc_flush(opj_mqc_t *mqc);
+/**
+BYPASS mode switch, initialization operation. 
+JPEG 2000 p 505. 
+<h2>Not fully implemented and tested !!</h2>
+@param mqc MQC handle
+*/
+void mqc_bypass_init_enc(opj_mqc_t *mqc);
+/**
+BYPASS mode switch, coding operation. 
+JPEG 2000 p 505. 
+<h2>Not fully implemented and tested !!</h2>
+@param mqc MQC handle
+@param d The symbol to be encoded (0 or 1)
+*/
+void mqc_bypass_enc(opj_mqc_t *mqc, int d);
+/**
+BYPASS mode switch, flush operation
+<h2>Not fully implemented and tested !!</h2>
+@param mqc MQC handle
+@return Returns 1 (always)
+*/
+int mqc_bypass_flush_enc(opj_mqc_t *mqc);
+/**
+RESET mode switch
+@param mqc MQC handle
+*/
+void mqc_reset_enc(opj_mqc_t *mqc);
+/**
+RESTART mode switch (TERMALL)
+@param mqc MQC handle
+@return Returns 1 (always)
+*/
+int mqc_restart_enc(opj_mqc_t *mqc);
+/**
+RESTART mode switch (TERMALL) reinitialisation
+@param mqc MQC handle
+*/
+void mqc_restart_init_enc(opj_mqc_t *mqc);
+/**
+ERTERM mode switch (PTERM)
+@param mqc MQC handle
+*/
+void mqc_erterm_enc(opj_mqc_t *mqc);
+/**
+SEGMARK mode switch (SEGSYM)
+@param mqc MQC handle
+*/
+void mqc_segmark_enc(opj_mqc_t *mqc);
+/**
+Initialize the decoder
+@param mqc MQC handle
+@param bp Pointer to the start of the buffer from which the bytes will be read
+@param len Length of the input buffer
+*/
+void mqc_init_dec(opj_mqc_t *mqc, unsigned char *bp, int len);
+/**
+Decode a symbol
+@param mqc MQC handle
+@return Returns the decoded symbol (0 or 1)
+*/
+int mqc_decode(opj_mqc_t *mqc);
+/* ----------------------------------------------------------------------- */
+/*@}*/
 
-/*
- * BYPASS mode switch
- */
-void mqc_bypass_init_enc();
+/*@}*/
 
-/*
- * BYPASS mode switch
- */
-void mqc_bypass_enc(int d);
-
-/*
- * BYPASS mode switch
- */
-int mqc_bypass_flush_enc();
-
-/*
- * RESET mode switch
- */
-void mqc_reset_enc();
-
-/*
- * RESTART mode switch (TERMALL)
- */
-int mqc_restart_enc();
-
-/*
- * RESTART mode switch (TERMALL)
- */
-void mqc_restart_init_enc();
-
-/*
- * ERTERM mode switch (PTERM)
- */
-void mqc_erterm_enc();
-
-/*
- * SEGMARK mode switch (SEGSYM)
- */
-void mqc_segmark_enc();
-
-
-/*
- * Initialize the decoder
- * bp: pointer to the start of the buffer from which the bytes will be read
- * len: length of the input buffer
- */
-void mqc_init_dec(unsigned char *bp, int len);
-
-/*
- * Decode a bit (returns 0 or 1)
- */
-int mqc_decode();
-
-#endif
+#endif /* __MQC_H */

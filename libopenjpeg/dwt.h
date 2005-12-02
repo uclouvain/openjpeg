@@ -1,7 +1,9 @@
 /*
- * Copyright (c) 2001-2002, David Janssens
+ * Copyright (c) 2001-2003, David Janssens
  * Copyright (c) 2002-2003, Yannick Verschueren
- * Copyright (c) 2002-2003,  Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
+ * Copyright (c) 2003-2005, Francois Devaux and Antonin Descampe
+ * Copyright (c) 2005, HervŽ Drolon, FreeImage Team
+ * Copyright (c) 2002-2005, Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,56 +28,126 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "tcd.h"
-
 #ifndef __DWT_H
 #define __DWT_H
+/**
+@file dwt.h
+@brief Implementation of a discrete wavelet transform (DWT)
 
-/*
- * Apply a reversible DWT transform to a component of an image  
- * tilec : tile component information (present tile)
- */
-/* void dwt_encode(int* a, int w, int h, int l); */
-void dwt_encode(tcd_tilecomp_t * tilec);
-/*
- * Apply a reversible inverse DWT transform to a component of an image  
- * tilec : tile component information (present tile)
- */
-void dwt_decode(tcd_tilecomp_t * tilec, int stop);
+The functions in DWT.C have for goal to realize forward and inverse discret wavelet
+transform with filter 5-3 (reversible) and filter 9-7 (irreversible). The functions in
+DWT.C are used by some function in TCD.C.
+*/
 
-/*
- * Get the gain of a subband for the reversible DWT
- * orient: number that identifies the subband (0->LL, 1->HL, 2->LH, 3->HH)
- */
+/** @defgroup DWT DWT - Implementation of a discrete wavelet transform */
+/*@{*/
+
+/** @name Local static functions */
+/*@{*/
+/* ----------------------------------------------------------------------- */
+/**
+Forward lazy transform (horizontal)
+*/
+static void dwt_deinterleave_h(int *a, int *b, int dn, int sn, int cas);
+/**
+Forward lazy transform (vertical)
+*/
+static void dwt_deinterleave_v(int *a, int *b, int dn, int sn, int x, int cas);
+/**
+Inverse lazy transform (horizontal)
+*/
+static void dwt_interleave_h(int *a, int *b, int dn, int sn, int cas);
+/**
+Inverse lazy transform (vertical)
+*/
+static void dwt_interleave_v(int *a, int *b, int dn, int sn, int x, int cas);
+/**
+Forward 5-3 wavelet tranform in 1-D
+*/
+static void dwt_encode_1(int *a, int dn, int sn, int cas);
+/**
+Inverse 5-3 wavelet tranform in 1-D
+*/
+static void dwt_decode_1(int *a, int dn, int sn, int cas);
+/**
+Forward 9-7 wavelet transform in 1-D
+*/
+static void dwt_encode_1_real(int *a, int dn, int sn, int cas);
+/**
+Inverse 9-7 wavelet transform in 1-D
+*/
+static void dwt_decode_1_real(int *a, int dn, int sn, int cas);
+/**
+FIXME : comment ???
+*/
+static void dwt_encode_stepsize(int stepsize, int numbps, opj_stepsize_t *bandno_stepsize);
+/* ----------------------------------------------------------------------- */
+/*@}*/
+
+/** @name Exported functions */
+/*@{*/
+/* ----------------------------------------------------------------------- */
+/**
+Forward 5-3 wavelet tranform in 2-D. 
+Apply a reversible DWT transform to a component of an image.
+@param tilec Tile component information (current tile)
+*/
+void dwt_encode(opj_tcd_tilecomp_t * tilec);
+/**
+Inverse 5-3 wavelet tranform in 2-D.
+Apply a reversible inverse DWT transform to a component of an image.
+@param tilec Tile component information (current tile)
+@param stop FIXME Number of decoded resolution levels ?
+*/
+void dwt_decode(opj_tcd_tilecomp_t * tilec, int stop);
+/**
+Get the gain of a subband for the reversible 5-3 DWT.
+@param orient Number that identifies the subband (0->LL, 1->HL, 2->LH, 3->HH)
+@return Returns 0 if orient = 0, returns 1 if orient = 1 or 2, returns 2 otherwise
+*/
 int dwt_getgain(int orient);
-
-/*
- * Get the norm of a wavelet function of a subband at a specified level for the reversible DWT
- * level: level of the wavelet function
- * orient: band of the wavelet function
- */
+/**
+Get the norm of a wavelet function of a subband at a specified level for the reversible 5-3 DWT.
+@param level Level of the wavelet function
+@param orient Band of the wavelet function
+@return Returns the norm of the wavelet function
+*/
 double dwt_getnorm(int level, int orient);
-
-/*
- * Apply an irreversible DWT transform to a component of an image  
- */
-void dwt_encode_real(tcd_tilecomp_t * tilec);
-
-/*
- * Apply an irreversible inverse DWT transform to a component of an image  
- */
-void dwt_decode_real(tcd_tilecomp_t * tilec, int stop);
-/*
- * Get the gain of a subband for the irreversible DWT
- * orient: number that identifies the subband (0->LL, 1->HL, 2->LH, 3->HH)
- */
+/**
+Forward 9-7 wavelet transform in 2-D. 
+Apply an irreversible DWT transform to a component of an image.
+@param tilec Tile component information (current tile)
+*/
+void dwt_encode_real(opj_tcd_tilecomp_t * tilec);
+/**
+Inverse 9-7 wavelet transform in 2-D. 
+Apply an irreversible inverse DWT transform to a component of an image.
+@param tilec Tile component information (current tile)
+@param stop FIXME Number of decoded resolution levels ?
+*/
+void dwt_decode_real(opj_tcd_tilecomp_t * tilec, int stop);
+/**
+Get the gain of a subband for the irreversible 9-7 DWT.
+@param orient Number that identifies the subband (0->LL, 1->HL, 2->LH, 3->HH)
+@return Returns the gain of the 9-7 wavelet transform
+*/
 int dwt_getgain_real(int orient);
-
-/*
- * Get the norm of a wavelet function of a subband at a specified level for the irreversible DWT
- * level: level of the wavelet function
- * orient: band of the wavelet function
- */
+/**
+Get the norm of a wavelet function of a subband at a specified level for the irreversible 9-7 DWT
+@param level Level of the wavelet function
+@param orient Band of the wavelet function
+@return Returns the norm of the 9-7 wavelet
+*/
 double dwt_getnorm_real(int level, int orient);
+/**
+FIXME : comment ???
+@param tccp
+@param prec
+*/
+void dwt_calc_explicit_stepsizes(opj_tccp_t * tccp, int prec);
+/* ----------------------------------------------------------------------- */
+/*@}*/
 
-#endif
+/*@}*/
+
+#endif /* __DWT_H */

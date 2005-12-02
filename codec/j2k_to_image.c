@@ -1,62 +1,57 @@
-/* Copyright (c) 2001 David Janssens
-* Copyright (c) 2002-2003 Yannick Verschueren
-* Copyright (c) 2002-2003 Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
-* 
-* All rights reserved. 
-* Redistribution and use in source and binary forms, with or without
-* modification, are permitted provided that the following conditions
-* are met:
-* 1. Redistributions of source code must retain the above copyright
-*    notice, this list of conditions and the following disclaimer.
-* 2. Redistributions in binary form must reproduce the above copyright
-*    notice, this list of conditions and the following disclaimer in the
-*    documentation and/or other materials provided with the distribution.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS `AS IS'
-* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-* LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-* POSSIBILITY OF SUCH DAMAGE.
-*/
-
-
-
-//MEMORY LEAK
-
-#ifdef _DEBUG
-
-#define _CRTDBG_MAP_ALLOC
-
-#include <stdlib.h>  // Must be included first
-
-#include <crtdbg.h>
-
-#endif
-
-//MEM
-
-
-
-#include <openjpeg.h>
+/*
+ * Copyright (c) 2001-2003, David Janssens
+ * Copyright (c) 2002-2003, Yannick Verschueren
+ * Copyright (c) 2003-2005, Francois Devaux and Antonin Descampe
+ * Copyright (c) 2005, Hervé Drolon, FreeImage Team
+ * Copyright (c) 2002-2005, Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS `AS IS'
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#ifndef DONT_HAVE_GETOPT
-#include <getopt.h>
-#else
-#include "compat/getopt.h"
-#endif
+#include <stdlib.h>
 
-void usage_display(char *prgm)
-{
-  fprintf(stdout,"Usage:\n");
-  fprintf(stdout,"  %s...\n",prgm);
+#include "openjpeg.h"
+#include "compat/getopt.h"
+#include "convert.h"
+
+#define J2K_CFMT 0
+#define JP2_CFMT 1
+#define JPT_CFMT 2
+#define MJ2_CFMT 3
+#define PXM_DFMT 0
+#define PGX_DFMT 1
+#define BMP_DFMT 2
+#define YUV_DFMT 3
+
+/* ----------------------------------------------------------------------- */
+
+void decode_help_display() {
+  fprintf(stdout,"HELP\n----\n\n");
+  fprintf(stdout,"- the -h option displays this help information on screen\n\n");
+
+  fprintf(stdout,"List of parameters for the JPEG 2000 encoder:\n");
+  fprintf(stdout,"\n");
   fprintf(stdout,"  -i <compressed file>\n");
   fprintf(stdout,"    REQUIRED\n");
   fprintf(stdout,"    Currently accepts J2K-files, JP2-files and JPT-files. The file type\n");
@@ -79,668 +74,316 @@ void usage_display(char *prgm)
   fprintf(stdout,"    Set the maximum number of quality layers to decode. If there are\n");
   fprintf(stdout,"    less quality layers than the specified number, all the quality layers\n");
   fprintf(stdout,"    are decoded.\n");
-  fprintf(stdout,"  -u\n");
-  fprintf(stdout,"    print an usage statement\n");
   fprintf(stdout,"\n");
 }
 
-int main(int argc, char **argv)
-{
-  FILE *fsrc=NULL;
-  FILE *fdest=NULL;
-  char *infile=NULL;
-  char *outfile=NULL;
-  char *tmp=NULL;
-  char S1, S2, S3;
-  
-  char *src=NULL; 
-  
-  int len;
-  
-  j2k_image_t img;
-  j2k_cp_t cp;
-  jp2_struct_t *jp2_struct=NULL;
-  
-  int w, wr, wrr, h, hr, hrr, max;
-  int i, compno, pad, j;
-  int adjust;
-  
-  cp.layer=0;
-  cp.reduce=0;
-  cp.decod_format=-1;
-  cp.cod_format=-1;
-  
+/* -------------------------------------------------------------------------- */
+
+int get_file_format(char *filename) {
+  int i;
+  static const char *extension[] = {"pgx", "pnm", "pgm", "ppm", "bmp", "j2k", "jp2", "jpt" };
+  static const int format[] = { PGX_DFMT, PXM_DFMT, PXM_DFMT, PXM_DFMT, BMP_DFMT, J2K_CFMT, JP2_CFMT, JPT_CFMT };
+  char * ext = strrchr(filename, '.') + 1;
+  if(ext) {
+    for(i = 0; i < sizeof(format); i++) {
+      if(strnicmp(ext, extension[i], 3) == 0) {
+        return format[i];
+      }
+    }
+  }
+
+  return -1;
+}
+
+/* -------------------------------------------------------------------------- */
+
+int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters) {
+  /* parse the command line */
+
   while (1) {
-    int c = getopt(argc, argv,"i:o:r:l:u");
+    int c = getopt(argc, argv, "i:o:r:q:f:t:n:c:b:x:p:s:d:h:P:S:E:M:R:T:C:I");
     if (c == -1)
       break;
     switch (c) {
-      
-      //Input file
-    case 'i':
-      infile = optarg;
-      tmp = optarg;
-      while (*tmp) {
-	tmp++;
+      case 'i':     /* input file */
+      {
+        char *infile = optarg;
+        parameters->decod_format = get_file_format(infile);
+        switch(parameters->decod_format) {
+          case J2K_CFMT:
+          case JP2_CFMT:
+          case JPT_CFMT:
+            break;
+          default:
+            fprintf(stderr, 
+              "!! Unrecognized format for infile : %s [accept only *.j2k, *.jp2, *.jpc or *.jpt] !!\n\n", 
+              infile);
+            return 1;
+            break;
+        }
+        strncpy(parameters->infile, infile, MAX_PATH);
       }
-      tmp--;
-      S3 = *tmp;
-      tmp--;
-      S2 = *tmp;
-      tmp--;
-      S1 = *tmp;
-      
-      /* J2K format */
-      if ((S1 == 'j' && S2 == '2' && S3 == 'k')
-	|| (S1 == 'J' && S2 == '2' && S3 == 'K') 
-	|| (S1 == 'j' && S2 == '2' && S3 == 'c')
-	|| (S1 == 'J' && S2 == '2' && S3 == 'C')) {
-	cp.cod_format=J2K_CFMT;
-	break;
-      }
-      
-      /* JP2 format */
-      if ((S1 == 'j' && S2 == 'p' && S3 == '2')
-	|| (S1 == 'J' && S2 == 'P' && S3 == '2')) {
-	cp.cod_format=JP2_CFMT;
-	break;
-      }
-      
-      /* JPT format */
-      if ((S1 == 'j' && S2 == 'p' && S3 == 't')
-	|| (S1 == 'J' && S2 == 'P' && S3 == 'T')) {
-	cp.cod_format=JPT_CFMT;
-	break;
-      }
-      
-      fprintf(stderr,
-	"j2k_to_image : Unknown input image format *.%c%c%c [only *.j2k, *.jp2, *.jpc or *.jpt]!! \n",
-	S1, S2, S3);
-      return 1;
       break;
-      
-      /* ----------------------------------------------------- */
-      
-      //Output file
-    case 'o':
-      outfile = optarg;
-      tmp = optarg;
-      while (*tmp) {
-	tmp++;
-      }
-      tmp--;
-      S3 = *tmp;
-      tmp--;
-      S2 = *tmp;
-      tmp--;
-      S1 = *tmp;
-      
-      // PGX format      
-      if ((S1 == 'p' && S2 == 'g' && S3 == 'x')
-	|| (S1 == 'P' && S2 == 'G' && S3 == 'X')) {
-	cp.decod_format = PGX_DFMT;
-	break;
-      }
-      
-      // PxM format 
-      if ((S1 == 'p' && S2 == 'n' && S3 == 'm')
-	|| (S1 == 'P' && S2 == 'N' && S3 == 'M') 
-	|| (S1 == 'p' && S2 == 'g' && S3 == 'm')
-	|| (S1 == 'P' && S2 == 'G' && S3 == 'M') 
-	|| (S1 == 'P' && S2 == 'P' && S3 == 'M')
-	|| (S1 == 'p' && S2 == 'p' && S3 == 'm')) {
-	cp.decod_format = PXM_DFMT;
-	break;
-      }
-      
-      // BMP format 
-      if ((S1 == 'b' && S2 == 'm' && S3 == 'p')
-	|| (S1 == 'B' && S2 == 'M' && S3 == 'P')) {
-	cp.decod_format = BMP_DFMT;
-	break;
-      }
-      
-      // otherwise : error
-      fprintf(stderr,
-	"!! Unrecognized output image format *.%c%c%c [only *.pnm, *.pgm, *.ppm, *.pgx or *.bmp] !!\n",
-	S1, S2, S3);
-      
-      return 1;
-      break;
-      
-      /* ----------------------------------------------------- */
-      
-      //Reduce option
-    case 'r':
-      tmp=optarg;
-      sscanf(tmp, "%d", &cp.reduce);
-      break;
-      
-      /* ----------------------------------------------------- */
-      
-      //Layering option
-    case 'l':
-      tmp=optarg;
-      sscanf(tmp, "%d", &cp.layer);
-      break;
-      
-      /* ----------------------------------------------------- */
-      
-    case 'u':			
-      usage_display(argv[0]);
-      return 0;
-      break;
-      /* ----------------------------------------------------- */
-      
-    default:
-      fprintf(stderr,"WARNING -> this option is not valid \"-%c %s\"\n",c,optarg);
-      break;
-      
-    }
-  }
-  
-  //Check required arguments
-  //------------------------
-  if (!infile || !outfile) {
-    fprintf(stderr,"ERROR -> At least one required argument is missing\nCheck j2k_to_image -u for usage information\n");
-    return 1;
-  }
-  
-  //Read the input file and put it in memory
-  //----------------------------------------
-  fsrc = fopen(infile, "rb");
-  if (!fsrc) {
-    fprintf(stderr, "ERROR -> failed to open %s for reading\n", infile);
-    return 1;
-  }
-  fseek(fsrc, 0, SEEK_END);
-  len = ftell(fsrc);
-  fseek(fsrc, 0, SEEK_SET);
-  src = (char *) malloc(len);
-  fread(src, 1, len, fsrc);
-  fclose(fsrc);
-  
-  //Decode the code-stream
-  //----------------------
-  switch(cp.cod_format) {
-    
-  case J2K_CFMT:
-    if (!j2k_decode(src, len, &img, &cp)) {
-      fprintf(stderr, "ERROR -> j2k_to_image: failed to decode image!\n");
-      return 1;
-    }
-    break;
-    
-  case JP2_CFMT:
-    jp2_struct = (jp2_struct_t *) malloc(sizeof(jp2_struct_t));
-    jp2_struct->image = &img;
-    
-    if (jp2_read_struct(src, jp2_struct, len)) {
-      fprintf(stderr, "ERROR -> j2k_to_image: failed to decode jp2 structure!\n");
-      return 1;
-    }
-    
-    if (!j2k_decode(src + jp2_struct->j2k_codestream_offset, jp2_struct->j2k_codestream_len, &img, &cp)) {
-      fprintf(stderr, "ERROR -> j2k_to_image: failed to decode image!\n");
-      return 1;
-    }
-    
-    /* Insert code here if you want to create actions on jp2_struct before deleting it */
-    
-    free(jp2_struct);
-    break;
-    
-  case JPT_CFMT:
-    if (!j2k_decode_jpt_stream(src, len, &img, &cp)) {
-      fprintf(stderr, "ERROR -> j2k_to_image: failed to decode JPT-file!\n");
-      return 1;
-    }
-    break;
-    
-  default:
-    fprintf(stderr,
-      "ERROR -> j2k_to_image : Unknown input image format\n");
-    return 1;
-    break;
-  }
-  
-  //Free the memory containing the code-stream
-  //------------------------------------------
-  
-  free(src);
-  
-  
-  //Create output image
-  //-------------------
-  
-  /* ---------------------------- / */
-  /* /                            / */
-  /* /  FORMAT : PNM, PGM or PPM  / */
-  /* /                            / */
-  /* ---------------------------- / */
-  
-  switch (cp.decod_format) {
-  case PXM_DFMT:			/* PNM PGM PPM */
-    
-    tmp=outfile;
-    while (*tmp) {
-      tmp++;
-    }
-    tmp--;
-    tmp--;
-    S2 = *tmp;
-    
-    if (img.numcomps == 3 && img.comps[0].dx == img.comps[1].dx
-      && img.comps[1].dx == img.comps[2].dx
-      && img.comps[0].dy == img.comps[1].dy
-      && img.comps[1].dy == img.comps[2].dy
-      && img.comps[0].prec == img.comps[1].prec
-      && img.comps[1].prec == img.comps[2].prec
-      && S2 !='g' && S2 !='G') {
-      
-      fdest = fopen(outfile, "wb");
-      if (!fdest) {
-	fprintf(stderr, "ERROR -> failed to open %s for writing\n", outfile);
-	return 1;
-      }
-      
-      w = int_ceildiv(img.x1 - img.x0, img.comps[0].dx);
-      // wr = int_ceildiv(int_ceildivpow2(img.x1 - img.x0,img.factor),img.comps[0].dx);
-      wr = img.comps[0].w;
-      wrr = int_ceildivpow2(img.comps[0].w, img.comps[0].factor);
-      
-      h = int_ceildiv(img.y1 - img.y0, img.comps[0].dy);
-      // hr = int_ceildiv(int_ceildivpow2(img.y1 - img.y0,img.factor), img.comps[0].dy);
-      hr = img.comps[0].h;
-      hrr = int_ceildivpow2(img.comps[0].h, img.comps[0].factor);
-      
-      max = img.comps[0].prec > 8 ? 255 : (1 << img.comps[0].prec) - 1;
-      
-      img.comps[0].x0 =
-	int_ceildivpow2(img.comps[0].x0 -
-	int_ceildiv(img.x0, img.comps[0].dx),
-	img.comps[0].factor);
-      img.comps[0].y0 =
-	int_ceildivpow2(img.comps[0].y0 -
-	int_ceildiv(img.y0, img.comps[0].dy),
-	img.comps[0].factor);
-      
-      
-      fprintf(fdest, "P6\n%d %d\n%d\n", wrr, hrr, max);
-      adjust = img.comps[0].prec > 8 ? img.comps[0].prec - 8 : 0;
-      for (i = 0; i < wrr * hrr; i++) {
-	int r, g, b;
-        unsigned char rc,gc,bc;
-	r = img.comps[0].data[i / wrr * wr + i % wrr];
-	r += (img.comps[0].sgnd ? 1 << (img.comps[0].prec - 1) : 0);
-	rc = (unsigned char) ((r >> adjust)+((r >> (adjust-1))%2));
-	
-	g = img.comps[1].data[i / wrr * wr + i % wrr];
-	g += (img.comps[1].sgnd ? 1 << (img.comps[1].prec - 1) : 0);
-	gc = (unsigned char) ((g >> adjust)+((g >> (adjust-1))%2));
-	
-	b = img.comps[2].data[i / wrr * wr + i % wrr];
-	b += (img.comps[2].sgnd ? 1 << (img.comps[2].prec - 1) : 0);
-	bc = (unsigned char) ((b >> adjust)+((b >> (adjust-1))%2));
-	
-	fprintf(fdest, "%c%c%c", rc, gc, bc);
-      }
-      free(img.comps[0].data);
-      free(img.comps[1].data);
-      free(img.comps[2].data);
-      fclose(fdest);
-      
-    } else {
-      int ncomp=(S2=='g' || S2=='G')?1:img.numcomps;
-      if (img.numcomps>ncomp) {
-	fprintf(stderr,"WARNING -> [PGM files] Only the first component\n");
-	fprintf(stderr,"           is written to the file\n");
-      }
-      for (compno = 0; compno < ncomp; compno++) {
-	char name[256];
-	if (ncomp > 1) {
-	  sprintf(name, "%d.%s", compno, outfile);
-	} else {
-	  sprintf(name, "%s", outfile);
-	}
-	
-	fdest = fopen(name, "wb");
-	if (!fdest) {
-	  fprintf(stderr, "ERROR -> failed to open %s for writing\n", name);
-	  return 1;
-	}
-	
-	w = int_ceildiv(img.x1 - img.x0, img.comps[compno].dx);
-	// wr = int_ceildiv(int_ceildivpow2(img.x1 - img.x0,img.factor),img.comps[compno].dx);
-	wr = img.comps[compno].w;
-	wrr =
-	  int_ceildivpow2(img.comps[compno].w, img.comps[compno].factor);
-	
-	h = int_ceildiv(img.y1 - img.y0, img.comps[compno].dy);
-	// hr = int_ceildiv(int_ceildivpow2(img.y1 - img.y0,img.factor), img.comps[compno].dy);
-	hr = img.comps[compno].h;
-	hrr =
-	  int_ceildivpow2(img.comps[compno].h, img.comps[compno].factor);
-	
-	max =
-	  img.comps[compno].prec >
-	  8 ? 255 : (1 << img.comps[compno].prec) - 1;
-	
-	img.comps[compno].x0 =
-	  int_ceildivpow2(img.comps[compno].x0 -
-	  int_ceildiv(img.x0,
-				      img.comps[compno].dx),
-				      img.comps[compno].factor);
-	img.comps[compno].y0 =
-	  int_ceildivpow2(img.comps[compno].y0 -
-	  int_ceildiv(img.y0,
-				      img.comps[compno].dy),
-				      img.comps[compno].factor);
-	
-	fprintf(fdest, "P5\n%d %d\n%d\n", wrr, hrr, max);
-	adjust =
-	  img.comps[compno].prec > 8 ? img.comps[compno].prec - 8 : 0;
-	for (i = 0; i < wrr * hrr; i++) {
-	  int l;
-          unsigned char lc;
-	  l = img.comps[compno].data[i / wrr * wr + i % wrr];
-	  l += (img.comps[compno].
-	    sgnd ? 1 << (img.comps[compno].prec - 1) : 0);
-	  lc = (unsigned char) ((l >> adjust)+((l >> (adjust-1))%2));
-	  fprintf(fdest, "%c", lc);
-	}
-	fclose(fdest);
-	free(img.comps[compno].data);
-      }
-    }
-    break;
-    
-    /* ------------------------ / */
-    /* /                        / */
-    /* /     FORMAT : PGX       / */
-    /* /                        / */
-    /* /----------------------- / */
-  case PGX_DFMT:			/* PGX */
-    for (compno = 0; compno < img.numcomps; compno++) {
-      j2k_comp_t *comp = &img.comps[compno];
-      char name[256];
-      int nbytes = 0;
-      tmp = outfile;
-      while (*tmp) {
-	tmp++;
-      }
-      while (*tmp!='.') {
-	tmp--;
-      }
-      *tmp='\0';
-      
-      if (img.numcomps > 1)
-        sprintf(name, "%s-%d.pgx", outfile, compno);
-      else
-        sprintf(name, "%s.pgx", outfile);
-      
-      fdest = fopen(name, "wb");
-      if (!fdest) {
-	fprintf(stderr, "ERROR -> failed to open %s for writing\n", name);
-	return 1;
-      }
-      
-      // w = int_ceildiv(img.x1 - img.x0, comp->dx);
-      // wr = int_ceildiv(int_ceildivpow2(img.x1 - img.x0,img.factor), comp->dx);
-      w = img.comps[compno].w;
-      wr = int_ceildivpow2(img.comps[compno].w, img.comps[compno].factor);
-      
-      // h = int_ceildiv(img.y1 - img.y0, comp->dy);
-      // hr = int_ceildiv(int_ceildivpow2(img.y1 - img.y0,img.factor), comp->dy);
-      h = img.comps[compno].h;
-      hr = int_ceildivpow2(img.comps[compno].h, img.comps[compno].factor);
-      
-      fprintf(fdest, "PG ML %c %d %d %d\n", comp->sgnd ? '-' : '+',
-	comp->prec, wr, hr);
-      
-      if (comp->prec <= 8)
-	nbytes = 1;
-      
-      else if (comp->prec <= 16)
-	nbytes = 2;
-      
-      else
-	nbytes = 4;
-      for (i = 0; i < wr * hr; i++) {
-	int v = img.comps[compno].data[i / wr * w + i % wr];
-	
-	for (j = nbytes - 1; j >= 0; j--) {
-	  
-	  char byte = (char) (v >> (j * 8));
-	  
-	  fwrite(&byte, 1, 1, fdest);
-	  
-	}
-      }
-      free(img.comps[compno].data);
-      fclose(fdest);
-    }
-    break;
-    
-    /* ------------------------ / */
-    /* /                        / */
-    /* /     FORMAT : BMP       / */
-    /* /                        / */
-    /* /----------------------- / */
-    
-  case BMP_DFMT:			/* BMP */
-    if (img.numcomps == 3 && img.comps[0].dx == img.comps[1].dx
-      && img.comps[1].dx == img.comps[2].dx
-      && img.comps[0].dy == img.comps[1].dy
-      && img.comps[1].dy == img.comps[2].dy
-      && img.comps[0].prec == img.comps[1].prec
-      && img.comps[1].prec == img.comps[2].prec) {
-      /* -->> -->> -->> -->>
-      
-       24 bits color
-       
-      <<-- <<-- <<-- <<-- */
-      
-      fdest = fopen(outfile, "wb");
-      if (!fdest) {
-	fprintf(stderr, "ERROR -> failed to open %s for writing\n", outfile);
-	return 1;
-      }
-      
-      // w = int_ceildiv(img.x1 - img.x0, img.comps[0].dx);
-      // wr = int_ceildiv(int_ceildivpow2(img.x1 - img.x0,img.factor), img.comps[0].dx);
-      w = img.comps[0].w;
-      wr = int_ceildivpow2(img.comps[0].w, img.comps[0].factor);
-      
-      // h = int_ceildiv(img.y1 - img.y0, img.comps[0].dy);
-      // hr = int_ceildiv(int_ceildivpow2(img.y1 - img.y0,img.factor), img.comps[0].dy);
-      h = img.comps[0].h;
-      hr = int_ceildivpow2(img.comps[0].h, img.comps[0].factor);
-      
-      fprintf(fdest, "BM");
-      
-      /* FILE HEADER */
-      /* ------------- */
-      fprintf(fdest, "%c%c%c%c",
-	(unsigned char) (hr * wr * 3 + 3 * hr * (wr % 2) +
-	54) & 0xff,
-	(unsigned char) ((hr * wr * 3 + 3 * hr * (wr % 2) + 54)
-	>> 8) & 0xff,
-	(unsigned char) ((hr * wr * 3 + 3 * hr * (wr % 2) + 54)
-	>> 16) & 0xff,
-	(unsigned char) ((hr * wr * 3 + 3 * hr * (wr % 2) + 54)
-	>> 24) & 0xff);
-      fprintf(fdest, "%c%c%c%c", (0) & 0xff, ((0) >> 8) & 0xff,
-	((0) >> 16) & 0xff, ((0) >> 24) & 0xff);
-      fprintf(fdest, "%c%c%c%c", (54) & 0xff, ((54) >> 8) & 0xff,
-	((54) >> 16) & 0xff, ((54) >> 24) & 0xff);
-      
-      /* INFO HEADER   */
-      /* ------------- */
-      fprintf(fdest, "%c%c%c%c", (40) & 0xff, ((40) >> 8) & 0xff,
-	((40) >> 16) & 0xff, ((40) >> 24) & 0xff);
-      fprintf(fdest, "%c%c%c%c", (unsigned char) ((wr) & 0xff),
-	(unsigned char) ((wr) >> 8) & 0xff,
-	(unsigned char) ((wr) >> 16) & 0xff,
-	(unsigned char) ((wr) >> 24) & 0xff);
-      fprintf(fdest, "%c%c%c%c", (unsigned char) ((hr) & 0xff),
-	(unsigned char) ((hr) >> 8) & 0xff,
-	(unsigned char) ((hr) >> 16) & 0xff,
-	(unsigned char) ((hr) >> 24) & 0xff);
-      fprintf(fdest, "%c%c", (1) & 0xff, ((1) >> 8) & 0xff);
-      fprintf(fdest, "%c%c", (24) & 0xff, ((24) >> 8) & 0xff);
-      fprintf(fdest, "%c%c%c%c", (0) & 0xff, ((0) >> 8) & 0xff,
-	((0) >> 16) & 0xff, ((0) >> 24) & 0xff);
-      fprintf(fdest, "%c%c%c%c",
-	(unsigned char) (3 * hr * wr +
-	3 * hr * (wr % 2)) & 0xff,
-	(unsigned char) ((hr * wr * 3 + 3 * hr * (wr % 2)) >>
-	8) & 0xff,
-	(unsigned char) ((hr * wr * 3 + 3 * hr * (wr % 2)) >>
-	16) & 0xff,
-	(unsigned char) ((hr * wr * 3 + 3 * hr * (wr % 2)) >>
-	24) & 0xff);
-      fprintf(fdest, "%c%c%c%c", (7834) & 0xff, ((7834) >> 8) & 0xff,
-	((7834) >> 16) & 0xff, ((7834) >> 24) & 0xff);
-      fprintf(fdest, "%c%c%c%c", (7834) & 0xff, ((7834) >> 8) & 0xff,
-	((7834) >> 16) & 0xff, ((7834) >> 24) & 0xff);
-      fprintf(fdest, "%c%c%c%c", (0) & 0xff, ((0) >> 8) & 0xff,
-	((0) >> 16) & 0xff, ((0) >> 24) & 0xff);
-      fprintf(fdest, "%c%c%c%c", (0) & 0xff, ((0) >> 8) & 0xff,
-	((0) >> 16) & 0xff, ((0) >> 24) & 0xff);
-      
-      for (i = 0; i < wr * hr; i++) {
-	unsigned char R, G, B;
-	/* a modifier */
-	// R = img.comps[0].data[w * h - ((i) / (w) + 1) * w + (i) % (w)];
-	R = img.comps[0].data[w * hr - ((i) / (wr) + 1) * w + (i) % (wr)];
-	// G = img.comps[1].data[w * h - ((i) / (w) + 1) * w + (i) % (w)];
-	G = img.comps[1].data[w * hr - ((i) / (wr) + 1) * w + (i) % (wr)];
-	// B = img.comps[2].data[w * h - ((i) / (w) + 1) * w + (i) % (w)];
-	B = img.comps[2].data[w * hr - ((i) / (wr) + 1) * w + (i) % (wr)];
-	fprintf(fdest, "%c%c%c", B, G, R);
-	
-	if ((i + 1) % wr == 0) {
-	  for (pad = (3 * wr) % 4 ? 4 - (3 * wr) % 4 : 0; pad > 0; pad--)	/* ADD */
-	    fprintf(fdest, "%c", 0);
-	}
-      }
-      fclose(fdest);
-      free(img.comps[1].data);
-      free(img.comps[2].data);
-    } else {			/* Gray-scale */
-      
-				/* -->> -->> -->> -->>
-				
-				 8 bits non code (Gray scale)
-				 
-	<<-- <<-- <<-- <<-- */
-      fdest = fopen(outfile, "wb");
-      // w = int_ceildiv(img.x1 - img.x0, img.comps[0].dx);
-      // wr = int_ceildiv(int_ceildivpow2(img.x1 - img.x0,img.factor), img.comps[0].dx);
-      w = img.comps[0].w;
-      wr = int_ceildivpow2(img.comps[0].w, img.comps[0].factor);
-      
-      // h = int_ceildiv(img.y1 - img.y0, img.comps[0].dy);
-      // hr = int_ceildiv(int_ceildivpow2(img.y1 - img.y0,img.factor), img.comps[0].dy);
-      h = img.comps[0].h;
-      hr = int_ceildivpow2(img.comps[0].h, img.comps[0].factor);
-      
-      fprintf(fdest, "BM");
-      
-      /* FILE HEADER */
-      /* ------------- */
-      fprintf(fdest, "%c%c%c%c",
-	(unsigned char) (hr * wr + 54 + 1024 +
-	hr * (wr % 2)) & 0xff,
-	(unsigned char) ((hr * wr + 54 + 1024 + hr * (wr % 2))
-	>> 8) & 0xff,
-	(unsigned char) ((hr * wr + 54 + 1024 + hr * (wr % 2))
-	>> 16) & 0xff,
-	(unsigned char) ((hr * wr + 54 + 1024 + wr * (wr % 2))
-	>> 24) & 0xff);
-      fprintf(fdest, "%c%c%c%c", (0) & 0xff, ((0) >> 8) & 0xff,
-	((0) >> 16) & 0xff, ((0) >> 24) & 0xff);
-      fprintf(fdest, "%c%c%c%c", (54 + 1024) & 0xff,
-	((54 + 1024) >> 8) & 0xff, ((54 + 1024) >> 16) & 0xff,
-	((54 + 1024) >> 24) & 0xff);
-      
-      /* INFO HEADER */
-      /* ------------- */
-      fprintf(fdest, "%c%c%c%c", (40) & 0xff, ((40) >> 8) & 0xff,
-	((40) >> 16) & 0xff, ((40) >> 24) & 0xff);
-      fprintf(fdest, "%c%c%c%c", (unsigned char) ((wr) & 0xff),
-	(unsigned char) ((wr) >> 8) & 0xff,
-	(unsigned char) ((wr) >> 16) & 0xff,
-	(unsigned char) ((wr) >> 24) & 0xff);
-      fprintf(fdest, "%c%c%c%c", (unsigned char) ((hr) & 0xff),
-	(unsigned char) ((hr) >> 8) & 0xff,
-	(unsigned char) ((hr) >> 16) & 0xff,
-	(unsigned char) ((hr) >> 24) & 0xff);
-      fprintf(fdest, "%c%c", (1) & 0xff, ((1) >> 8) & 0xff);
-      fprintf(fdest, "%c%c", (8) & 0xff, ((8) >> 8) & 0xff);
-      fprintf(fdest, "%c%c%c%c", (0) & 0xff, ((0) >> 8) & 0xff,
-	((0) >> 16) & 0xff, ((0) >> 24) & 0xff);
-      fprintf(fdest, "%c%c%c%c",
-	(unsigned char) (hr * wr + hr * (wr % 2)) & 0xff,
-	(unsigned char) ((hr * wr + hr * (wr % 2)) >> 8) &
-	0xff,
-	(unsigned char) ((hr * wr + hr * (wr % 2)) >> 16) &
-	0xff,
-	(unsigned char) ((hr * wr + hr * (wr % 2)) >> 24) & 0xff);
-      fprintf(fdest, "%c%c%c%c", (7834) & 0xff, ((7834) >> 8) & 0xff,
-	((7834) >> 16) & 0xff, ((7834) >> 24) & 0xff);
-      fprintf(fdest, "%c%c%c%c", (7834) & 0xff, ((7834) >> 8) & 0xff,
-	((7834) >> 16) & 0xff, ((7834) >> 24) & 0xff);
-      fprintf(fdest, "%c%c%c%c", (256) & 0xff, ((256) >> 8) & 0xff,
-	((256) >> 16) & 0xff, ((256) >> 24) & 0xff);
-      fprintf(fdest, "%c%c%c%c", (256) & 0xff, ((256) >> 8) & 0xff,
-	((256) >> 16) & 0xff, ((256) >> 24) & 0xff);
-    }
-    
-    for (i = 0; i < 256; i++) {
-      fprintf(fdest, "%c%c%c%c", i, i, i, 0);
-    }
-    
-    for (i = 0; i < wr * hr; i++) {
-      /* a modifier !! */
-      // fprintf(fdest, "%c", img.comps[0].data[w * h - ((i) / (w) + 1) * w + (i) % (w)]);
-      fprintf(fdest, "%c",
-	img.comps[0].data[w * hr - ((i) / (wr) + 1) * w +
-	(i) % (wr)]);
-	/*if (((i + 1) % w == 0 && w % 2))
-      fprintf(fdest, "%c", 0); */
-      if ((i + 1) % wr == 0) {
-	for (pad = wr % 4 ? 4 - wr % 4 : 0; pad > 0; pad--)	/* ADD */
-	  fprintf(fdest, "%c", 0);
-      }
-    }
-    fclose(fdest);
-    free(img.comps[0].data);
-    break;
+        
+        /* ----------------------------------------------------- */
 
-  default:
-    fprintf(stderr,
-      "ERROR -> j2k_to_image : Unknown output image format\n");
-    return 1;
-    break;
+      case 'o':     /* output file */
+      {
+        char *outfile = optarg;
+        parameters->cod_format = get_file_format(outfile);
+        switch(parameters->cod_format) {
+          case PGX_DFMT:
+          case PXM_DFMT:
+          case BMP_DFMT:
+            break;
+          default:
+            fprintf(stderr, "Unknown output format image %s [only *.pnm, *.pgm, *.ppm, *.pgx or *.bmp]!! \n", outfile);
+            return 1;
+            break;
+        }
+        strncpy(parameters->outfile, outfile, MAX_PATH);
+      }
+      break;
+      
+        /* ----------------------------------------------------- */
+      
+    
+      case 'r':   /* reduce option */
+      {
+        sscanf(optarg, "%d", &parameters->cp_reduce);
+      }
+      break;
+      
+        /* ----------------------------------------------------- */
+      
+
+      case 'l':   /* layering option */
+      {
+        sscanf(optarg, "%d", &parameters->cp_layer);
+      }
+      break;
+      
+        /* ----------------------------------------------------- */
+      
+      case 'h':       /* display an help description */
+      {
+        decode_help_display();
+        return 1;
+      }
+      break;
+            
+        /* ----------------------------------------------------- */
+      
+      default:
+        fprintf(stderr,"WARNING -> this option is not valid \"-%c %s\"\n",c, optarg);
+        break;
+    }
   }
-  
-  
-  // Free remaining structures
-  //--------------------------
-  j2k_dec_release();
-  
-  
-  
-  // Check memory leaks if debug mode
-  //---------------------------------
-  
-#ifdef _DEBUG
-  
-  _CrtDumpMemoryLeaks();
-  
-#endif
-  
+
+  /* check for possible errors */
+
+  if((parameters->infile[0] == 0) || (parameters->outfile[0] == 0)) {
+    fprintf(stderr,"ERROR -> At least one required argument is missing\nCheck j2k_to_image -h for usage information\n");
+    return 1;
+  }
+
   return 0;
 }
+
+/* -------------------------------------------------------------------------- */
+
+/**
+sample error callback expecting a FILE* client object
+*/
+void error_callback(const char *msg, void *client_data) {
+  FILE *stream = (FILE*)client_data;
+  fprintf(stream, "[ERROR] %s", msg);
+}
+/**
+sample warning callback expecting a FILE* client object
+*/
+void warning_callback(const char *msg, void *client_data) {
+  FILE *stream = (FILE*)client_data;
+  fprintf(stream, "[WARNING] %s", msg);
+}
+/**
+sample debug callback expecting no client object
+*/
+void info_callback(const char *msg, void *client_data) {
+  fprintf(stdout, "[INFO] %s", msg);
+}
+
+/* -------------------------------------------------------------------------- */
+
+int main(int argc, char **argv) {
+  opj_dparameters_t parameters; /* decompression parameters */
+  opj_event_mgr_t event_mgr;    /* event manager */
+  opj_image_t *image = NULL;
+  FILE *fsrc = NULL;
+  unsigned char *src = NULL; 
+  int file_length;
+
+  opj_dinfo_t* dinfo = NULL;  /* handle to a decompressor */
+  opj_cio_t *cio = NULL;
+
+  /* configure the event callbacks (not required) */
+  memset(&event_mgr, 0, sizeof(opj_event_mgr_t));
+  event_mgr.error_handler = error_callback;
+  event_mgr.warning_handler = warning_callback;
+  event_mgr.info_handler = info_callback;
+
+  /* set decoding parameters to default values */
+  opj_set_default_decoder_parameters(&parameters);
+
+  /* parse input and get user decoding parameters */
+  if(parse_cmdline_decoder(argc, argv, &parameters) == 1) {
+    return 0;
+  }
+  
+  /* read the input file and put it in memory */
+  /* ---------------------------------------- */
+  fsrc = fopen(parameters.infile, "rb");
+  if (!fsrc) {
+    fprintf(stderr, "ERROR -> failed to open %s for reading\n", parameters.infile);
+    return 1;
+  }  
+  fseek(fsrc, 0, SEEK_END);
+  file_length = ftell(fsrc);
+  fseek(fsrc, 0, SEEK_SET);
+  src = (unsigned char *) malloc(file_length);
+  fread(src, 1, file_length, fsrc);
+  fclose(fsrc);
+  
+  /* decode the code-stream */
+  /* ---------------------- */
+
+    switch(parameters.decod_format) {
+    case J2K_CFMT:
+    {
+      /* JPEG-2000 codestream */
+
+      /* get a decoder handle */
+      dinfo = opj_create_decompress(CODEC_J2K);
+      
+      /* catch events using our callbacks and give a local context */
+      opj_set_event_mgr((opj_common_ptr)dinfo, &event_mgr, stderr);     
+
+      /* setup the decoder decoding parameters using user parameters */
+      opj_setup_decoder(dinfo, &parameters);
+
+      /* open a byte stream */
+      cio = opj_cio_open((opj_common_ptr)dinfo, src, file_length);
+
+      /* decode the stream and fill the image structure */
+      image = opj_decode(dinfo, cio);
+      if(!image) {
+        fprintf(stderr, "ERROR -> j2k_to_image: failed to decode image!\n");
+        opj_destroy_decompress(dinfo);
+        opj_cio_close(cio);
+        return 1;
+      }
+      
+      /* close the byte stream */
+      opj_cio_close(cio);
+    }
+    break;
+
+    case JP2_CFMT:
+    {
+      /* JPEG 2000 compressed image data */
+
+      /* get a decoder handle */
+      dinfo = opj_create_decompress(CODEC_JP2);
+      
+      /* catch events using our callbacks and give a local context */
+      opj_set_event_mgr((opj_common_ptr)dinfo, &event_mgr, stderr);     
+
+      /* setup the decoder decoding parameters using the current image and using user parameters */
+      opj_setup_decoder(dinfo, &parameters);
+
+      /* open a byte stream */
+      cio = opj_cio_open((opj_common_ptr)dinfo, src, file_length);
+
+      /* decode the stream and fill the image structure */
+      image = opj_decode(dinfo, cio);
+      if(!image) {
+        fprintf(stderr, "ERROR -> j2k_to_image: failed to decode image!\n");
+        opj_destroy_decompress(dinfo);
+        opj_cio_close(cio);
+        return 1;
+      }
+
+      /* close the byte stream */
+      opj_cio_close(cio);
+
+    }
+    break;
+
+    case JPT_CFMT:
+    {
+      /* JPEG 2000, JPIP */
+
+      /* get a decoder handle */
+      dinfo = opj_create_decompress(CODEC_JPT);
+      
+      /* catch events using our callbacks and give a local context */
+      opj_set_event_mgr((opj_common_ptr)dinfo, &event_mgr, stderr);     
+
+      /* setup the decoder decoding parameters using user parameters */
+      opj_setup_decoder(dinfo, &parameters);
+
+      /* open a byte stream */
+      cio = opj_cio_open((opj_common_ptr)dinfo, src, file_length);
+
+      /* decode the stream and fill the image structure */
+      image = opj_decode(dinfo, cio);
+      if(!image) {
+        fprintf(stderr, "ERROR -> j2k_to_image: failed to decode image!\n");        
+        opj_destroy_decompress(dinfo);
+        opj_cio_close(cio);
+        return 1;
+      } 
+
+      /* close the byte stream */
+      opj_cio_close(cio);
+    }
+    break;
+
+    default:
+      fprintf(stderr, "ERROR -> j2k_to_image : Unknown input image format\n");
+      return 1;
+      break;
+  }
+  
+  /* free the memory containing the code-stream */
+  free(src);
+  src = NULL;
+
+  /* create output image */
+  /* ------------------- */
+
+  switch (parameters.cod_format) {
+    case PXM_DFMT:      /* PNM PGM PPM */
+      imagetopnm(image, parameters.outfile);
+      break;
+            
+    case PGX_DFMT:      /* PGX */
+      imagetopgx(image, parameters.outfile);
+      break;
+    
+    case BMP_DFMT:      /* BMP */
+      imagetobmp(image, parameters.outfile);
+      break;
+  }
+
+  /* free remaining structures */
+  if(dinfo) {
+    opj_destroy_decompress(dinfo);
+  }
+
+  /* free image data structure */
+  opj_image_destroy(image);
+   
+  return 0;
+}
+

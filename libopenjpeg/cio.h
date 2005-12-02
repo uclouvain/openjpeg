@@ -1,5 +1,9 @@
 /*
- * Copyright (c) 2001-2002, David Janssens
+ * Copyright (c) 2001-2003, David Janssens
+ * Copyright (c) 2002-2003, Yannick Verschueren
+ * Copyright (c) 2003-2005, Francois Devaux and Antonin Descampe
+ * Copyright (c) 2005, Hervé Drolon, FreeImage Team
+ * Copyright (c) 2002-2005, Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,84 +28,59 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+
 #ifndef __CIO_H
 #define __CIO_H
+/**
+@file cio.h
+@brief Implementation of a byte input-output process (CIO)
 
-/* 
- * Number of bytes written.
- *
- * returns number of bytes written
- */
-int cio_numbytes();
+The functions in CIO.C have for goal to realize a byte input / output process.
+*/
 
-/*
- * Get position in byte stream.
- *
- * return position in bytes
- */
-int cio_tell();
+/** @defgroup CIO CIO - byte input-output stream */
+/*@{*/
 
-/*
- * Set position in byte stream.
- *
- * pos : position, in number of bytes, from the beginning of the stream
- */
-void cio_seek(int pos);
+/** @name Exported functions (see also openjpeg.h) */
+/*@{*/
+/* ----------------------------------------------------------------------- */
+/**
+Number of bytes left before the end of the stream
+@param cio CIO handle
+@return Returns the number of bytes before the end of the stream
+*/
+int cio_numbytesleft(opj_cio_t *cio);
+/**
+Get pointer to the current position in the stream
+@param cio CIO handle
+@return Returns a pointer to the current position
+*/
+unsigned char *cio_getbp(opj_cio_t *cio);
+/**
+Write some bytes
+@param cio CIO handle
+@param v Value to write
+@param n Number of bytes to write
+@return Returns the number of bytes written or 0 if an error occured
+*/
+unsigned int cio_write(opj_cio_t *cio, unsigned int v, int n);
+/**
+Read some bytes
+@param cio CIO handle
+@param n Number of bytes to read
+@return Returns the value of the n bytes read
+*/
+unsigned int cio_read(opj_cio_t *cio, int n);
+/**
+Skip some bytes
+@param cio CIO handle
+@param n Number of bytes to skip
+*/
+void cio_skip(opj_cio_t *cio, int n);
+/* ----------------------------------------------------------------------- */
+/*@}*/
 
-/*
- * Number of bytes left before the end of the stream.
- *
- * Returns the number of bytes before the end of the stream 
- */
-int cio_numbytesleft();
+/*@}*/
 
-/*
- * Get pointer to the current position in the stream.
- *
- * return : pointer to the position
- */
-unsigned char *cio_getbp();
+#endif /* __CIO_H */
 
-/* 
- * Initialize byte IO
- *
- * bp  : destination/source stream
- * len : length of the stream
- */
-void cio_init(unsigned char *bp, int len);
-
-/*
- * Write some bytes.
- *
- * v : value to write
- * n : number of bytes to write
- */
-void cio_write(unsigned int v, int n);
-
-/*
- * Read some bytes.
- *
- * n : number of bytes to read
- *
- * return : value of the n bytes read
- */
-unsigned int cio_read(int n);
-
-/* 
- * Skip some bytes.
- *
- * n : number of bytes to skip
- */
-void cio_skip(int n);
-
-/*
- * Read n bytes, copy to buffer
- */
-void cio_read_to_buf(unsigned char* src_buf, int n);/* Glenn Pearson adds */
-
-/*
- * Write n bytes, copy from buffer
- */
-void cio_write_from_buf(unsigned char* dest_buf, int n);/* Glenn Pearson adds */
-
-#endif

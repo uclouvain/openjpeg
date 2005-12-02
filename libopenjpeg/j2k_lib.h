@@ -1,9 +1,5 @@
 /*
- * Copyright (c) 2001-2003, David Janssens
- * Copyright (c) 2002-2003, Yannick Verschueren
- * Copyright (c) 2003-2005, Francois Devaux and Antonin Descampe
- * Copyright (c) 2005, HervŽ Drolon, FreeImage Team
- * Copyright (c) 2002-2005, Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
+ * Copyright (c) 2005, Hervé Drolon, FreeImage Team
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,45 +24,54 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "opj_includes.h"
 
-int int_min(int a, int b) {
-  return a < b ? a : b;
-}
+#ifndef __J2K_LIB_H
+#define __J2K_LIB_H
+/**
+@file j2k_lib.h
+@brief Internal functions
 
-int int_max(int a, int b) {
-  return (a > b) ? a : b;
-}
+The functions in J2K_LIB.C are internal utilities mainly used for memory management.
+*/
 
-int int_clamp(int a, int min, int max) {
-  if (a < min)
-    return min;
-  if (a > max)
-    return max;
-  return a;
-}
+/** @defgroup MISC MISC - Miscellaneous internal functions */
+/*@{*/
 
-int int_abs(int a) {
-  return a < 0 ? -a : a;
-}
+/** @name Exported functions */
+/*@{*/
+/* ----------------------------------------------------------------------- */
 
-int int_ceildiv(int a, int b) {
-  return (a + b - 1) / b;
-}
+/**
+Difference in successive opj_clock() calls tells you the elapsed time
+@return Returns time in seconds
+*/
+double opj_clock();
 
-int int_ceildivpow2(int a, int b) {
-  return (a + (1 << b) - 1) >> b;
-}
+/**
+Allocate a memory block with elements initialized to 0
+@param size Bytes to allocate
+@return Returns a void pointer to the allocated space, or NULL if there is insufficient memory available
+*/
+void* opj_malloc( size_t size );
 
-int int_floordivpow2(int a, int b) {
-  return a >> b;
-}
+/**
+Reallocate memory blocks.
+@param memblock Pointer to previously allocated memory block
+@param size New size in bytes
+@return Returns a void pointer to the reallocated (and possibly moved) memory block
+*/
+void* j2k_realloc( void *memblock, size_t size );
 
-int int_floorlog2(int a) {
-  int l;
-  for (l = 0; a > 1; l++) {
-    a >>= 1;
-  }
-  return l;
-}
+/**
+Deallocates or frees a memory block.
+@param memblock Previously allocated memory block to be freed
+*/
+void opj_free( void *memblock );
+
+/* ----------------------------------------------------------------------- */
+/*@}*/
+
+/*@}*/
+
+#endif /* __J2K_LIB_H */
 

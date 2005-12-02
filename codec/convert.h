@@ -1,7 +1,9 @@
 /*
  * Copyright (c) 2001-2003, David Janssens
  * Copyright (c) 2002-2003, Yannick Verschueren
- * Copyright (c) 2002-2003,  Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
+ * Copyright (c) 2003-2005, Francois Devaux and Antonin Descampe
+ * Copyright (c) 2005, Hervé Drolon, FreeImage Team
+ * Copyright (c) 2002-2005, Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,14 +28,27 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "j2k.h"
 
-int bmptoimage(char *filename, j2k_image_t * img, int subsampling_dx,
-	       int subsampling_dy, int Dim[2]);
+#ifndef __J2K_CONVERT_H
+#define __J2K_CONVERT_H
 
-int pgxtoimage(char *filename, j2k_image_t * img, int tdy,
-	       int subsampling_dx, int subsampling_dy, int Dim[2],
-	       j2k_cp_t cp);
+opj_image_t* bmptoimage(char *filename, opj_cparameters_t *parameters);
 
-int pnmtoimage(char *filename, j2k_image_t * img, int subsampling_dx,
-	       int subsampling_dy, int Dim[2]);
+int imagetobmp(opj_image_t *image, char *outfile);
+
+/**
+Load a single image component encoded in PGX file format
+@param filename Name of the PGX file to load
+@param parameters *List ?*
+@return Returns a greyscale image if successful, returns NULL otherwise
+*/
+opj_image_t* pgxtoimage(char *filename, opj_cparameters_t *parameters);
+
+int imagetopgx(opj_image_t *image, char *outfile);
+
+opj_image_t* pnmtoimage(char *filename, opj_cparameters_t *parameters);
+
+int imagetopnm(opj_image_t *image, char *outfile);
+
+#endif /* __J2K_CONVERT_H */
+

@@ -1,5 +1,9 @@
 /*
- * Copyright (c) 2001-2002, David Janssens
+ * Copyright (c) 2001-2003, David Janssens
+ * Copyright (c) 2002-2003, Yannick Verschueren
+ * Copyright (c) 2003-2005, Francois Devaux and Antonin Descampe
+ * Copyright (c) 2005, Hervé Drolon, FreeImage Team
+ * Copyright (c) 2002-2005, Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,62 +30,84 @@
 
 #ifndef __TGT_H
 #define __TGT_H
+/**
+@file tgt.h
+@brief Implementation of a tag-tree coder (TGT)
 
-typedef struct tgt_node {
-  struct tgt_node *parent;
+The functions in TGT.C have for goal to realize a tag-tree coder. The functions in TGT.C
+are used by some function in T2.C.
+*/
+
+/** @defgroup TGT TGT - Implementation of a tag-tree coder */
+/*@{*/
+
+/**
+Tag node
+*/
+typedef struct opj_tgt_node {
+  struct opj_tgt_node *parent;
   int value;
   int low;
   int known;
-} tgt_node_t;
+} opj_tgt_node_t;
 
-typedef struct {
+/**
+Tag tree
+*/
+typedef struct opj_tgt_tree {
   int numleafsh;
   int numleafsv;
   int numnodes;
-  tgt_node_t *nodes;
-} tgt_tree_t;
+  opj_tgt_node_t *nodes;
+} opj_tgt_tree_t;
 
+/** @name Exported functions */
+/*@{*/
+/* ----------------------------------------------------------------------- */
+/**
+Create a tag-tree
+@param numleafsh Width of the array of leafs of the tree
+@param numleafsv Height of the array of leafs of the tree
+@return Returns a new tag-tree if successful, returns NULL otherwise
+*/
+opj_tgt_tree_t *tgt_create(int numleafsh, int numleafsv);
+/**
+Destroy a tag-tree, liberating memory
+@param tree Tag-tree to destroy
+*/
+void tgt_destroy(opj_tgt_tree_t *tree);
+/**
+Reset a tag-tree (set all leaves to 0)
+@param tree Tag-tree to reset
+*/
+void tgt_reset(opj_tgt_tree_t *tree);
+/**
+Set the value of a leaf of a tag-tree
+@param tree Tag-tree to modify
+@param leafno Number that identifies the leaf to modify
+@param value New value of the leaf
+*/
+void tgt_setvalue(opj_tgt_tree_t *tree, int leafno, int value);
+/**
+Encode the value of a leaf of the tag-tree up to a given threshold
+@param bio Pointer to a BIO handle
+@param tree Tag-tree to modify
+@param leafno Number that identifies the leaf to encode
+@param threshold Threshold to use when encoding value of the leaf
+*/
+void tgt_encode(opj_bio_t *bio, opj_tgt_tree_t *tree, int leafno, int threshold);
+/**
+Decode the value of a leaf of the tag-tree up to a given threshold
+@param bio Pointer to a BIO handle
+@param tree Tag-tree to decode
+@param leafno Number that identifies the leaf to decode
+@param threshold Threshold to use when decoding value of the leaf
+@return Returns 1 if the node's value < threshold, returns 0 otherwise
+*/
+int tgt_decode(opj_bio_t *bio, opj_tgt_tree_t *tree, int leafno, int threshold);
+/* ----------------------------------------------------------------------- */
+/*@}*/
 
+/*@}*/
 
-/*
- * Reset a tag-tree (set all leaves to 0)
- * tree: tag-tree to reset
- */
-void tgt_reset(tgt_tree_t * tree);
-
-/*
- * Create a tag-tree
- * numleafsh: width of the array of leafs of the tree
- * numleafsv: height of the array of leafs of the tree
- */
-tgt_tree_t *tgt_create(int numleafsh, int numleafsv);
-
-/*
- * Destroy a tag-tree, liberating memory
- * tree: tag-tree to destroy
- */
-void tgt_destroy(tgt_tree_t * tree);
-
-/*
- * Set the value of a leaf of a tag-tree
- * tree: tag-tree to modify
- * leafno: number that identifies the leaf to modify
- * value: new value of the leaf
- */
-void tgt_setvalue(tgt_tree_t * tree, int leafno, int value);
-
-/*
- * Encode the value of a leaf of the tag-tree up to a given threshold
- * leafno: number that identifies the leaf to encode
- * threshold: threshold to use when encoding value of the leaf
- */
-void tgt_encode(tgt_tree_t * tree, int leafno, int threshold);
-
-/*
- * Decode the value of a leaf of the tag-tree up to a given threshold
- * leafno: number that identifies the leaf to decode
- * threshold: threshold to use when decoding value of the leaf
- */
-int tgt_decode(tgt_tree_t * tree, int leafno, int threshold);
-
-#endif
+#endif /* __TGT_H */

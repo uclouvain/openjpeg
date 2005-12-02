@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2002-2003, Antonin Descampe
+ * Copyright (c) 2003-2005, Francois Devaux and Antonin Descampe
+ * Copyright (c) 2005, Herv Drolon, FreeImage Team
+ * Copyright (c) 2002-2005, Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,58 +26,61 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "raw.h"
+#include "opj_includes.h"
+
+/* 
+==========================================================
+   local functions
+==========================================================
+*/
 
 
-unsigned char raw_c;		/* temporary buffer where bits are coded or decoded */
-unsigned int raw_ct;		/* number of bits already read or free to write */
-unsigned int raw_lenmax;	/* maximum length to decode */
-unsigned int raw_len;		/* length decoded */
-unsigned char *raw_bp;		/* pointer to the current position in the buffer */
-unsigned char *raw_start;	/* pointer to the start of the buffer */
-unsigned char *raw_end;		/* pointer to the end of the buffer */
+/* 
+==========================================================
+   RAW encoding interface
+==========================================================
+*/
 
-/*
- * Return the number of bytes already encoded.
- */
-int raw_numbytes()
-{
-  return raw_bp - raw_start;
+opj_raw_t* raw_create() {
+  opj_raw_t *raw = (opj_raw_t*)opj_malloc(sizeof(opj_raw_t));
+  return raw;
 }
 
-/*
- * Initialize raw-decoder.
- *
- * bp  : pointer to the start of the buffer from which the bytes will be read
- * len : length of the input buffer
- */
-void raw_init_dec(unsigned char *bp, int len)
-{
-  raw_start = bp;
-  raw_lenmax = len;
-  raw_len = 0;
-  raw_c = 0;
-  raw_ct = 0;
+void raw_destroy(opj_raw_t *raw) {
+  if(raw) {
+    opj_free(raw);
+  }
 }
 
-/*
- * Decode a symbol using raw-decoder. Cfr p.506 TAUBMAN
- */
-int raw_decode()
-{
+int raw_numbytes(opj_raw_t *raw) {
+  return raw->bp - raw->start;
+}
+
+void raw_init_dec(opj_raw_t *raw, unsigned char *bp, int len) {
+  raw->start = bp;
+  raw->lenmax = len;
+  raw->len = 0;
+  raw->c = 0;
+  raw->ct = 0;
+}
+
+int raw_decode(opj_raw_t *raw) {
   int d;
-  if (raw_ct == 0) {
-    raw_ct = 8;
-    if (raw_len == raw_lenmax)
-      raw_c = 0xff;
-    else {
-      if (raw_c == 0xff)
-	raw_ct = 7;
-      raw_c = *(raw_start + raw_len);
-      raw_len++;
+  if (raw->ct == 0) {
+    raw->ct = 8;
+    if (raw->len == raw->lenmax) {
+      raw->c = 0xff;
+    } else {
+      if (raw->c == 0xff) {
+        raw->ct = 7;
+      }
+      raw->c = *(raw->start + raw->len);
+      raw->len++;
     }
   }
-  raw_ct--;
-  d = (raw_c >> raw_ct) & 0x01;
+  raw->ct--;
+  d = (raw->c >> raw->ct) & 0x01;
+  
   return d;
 }
+

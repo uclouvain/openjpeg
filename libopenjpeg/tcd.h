@@ -1,7 +1,9 @@
 /*
- * Copyright (c) 2001-2002, David Janssens 
+ * Copyright (c) 2001-2003, David Janssens
  * Copyright (c) 2002-2003, Yannick Verschueren
- * Copyright (c) 2002-2003,  Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
+ * Copyright (c) 2003-2005, Francois Devaux and Antonin Descampe
+ * Copyright (c) 2005, Hervé Drolon, FreeImage Team
+ * Copyright (c) 2002-2005, Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,156 +30,238 @@
 
 #ifndef __TCD_H
 #define __TCD_H
+/**
+@file tcd.h
+@brief Implementation of a tile coder/decoder (TCD)
 
-#include "j2k.h"
-#include "tgt.h"
+The functions in TCD.C have for goal to encode or decode each tile independently from
+each other. The functions in TCD.C are used by some function in J2K.C.
+*/
 
-typedef struct {
+/** @defgroup TCD TCD - Implementation of a tile coder/decoder */
+/*@{*/
+
+/**
+FIXME: documentation
+*/
+typedef struct opj_tcd_seg {
   int numpasses;
   int len;
   unsigned char *data;
   int maxpasses;
   int numnewpasses;
   int newlen;
-} tcd_seg_t;
+} opj_tcd_seg_t;
 
-typedef struct {
+/**
+FIXME: documentation
+*/
+typedef struct opj_tcd_pass {
   int rate;
   double distortiondec;
   int term, len;
-} tcd_pass_t;
+} opj_tcd_pass_t;
 
-typedef struct {
-  int numpasses;		/* Number of passes in the layer */
-  int len;			/* len of information */
-  double disto;			/* add for index (Cfr. Marcela) */
-  unsigned char *data;		/* data */
-} tcd_layer_t;
+/**
+FIXME: documentation
+*/
+typedef struct opj_tcd_layer {
+  int numpasses;    /* Number of passes in the layer */
+  int len;      /* len of information */
+  double disto;     /* add for index (Cfr. Marcela) */
+  unsigned char *data;    /* data */
+} opj_tcd_layer_t;
 
-typedef struct {
-  int x0, y0, x1, y1;		/* dimension of the code-blocks : left upper corner (x0, y0) right low corner (x1,y1) */
+/**
+FIXME: documentation
+*/
+typedef struct opj_tcd_cblk {
+  int x0, y0, x1, y1;   /* dimension of the code-blocks : left upper corner (x0, y0) right low corner (x1,y1) */
   int numbps;
   int numlenbits;
-  int len;			/* length */
-  int numpasses;		/* number of pass already done for the code-blocks */
-  int numnewpasses;		/* number of pass added to the code-blocks */
-  int numsegs;			/* number of segments */
-  tcd_seg_t segs[100];		/* segments informations */
-  unsigned char data[8192];	/* Data */
-  int numpassesinlayers;	/* number of passes in the layer */
-  tcd_layer_t layers[100];	/* layer information */
-  int totalpasses;		/* total number of passes */
-  tcd_pass_t passes[100];	/* information about the passes */
-} tcd_cblk_t;
+  int len;      /* length */
+  int numpasses;    /* number of pass already done for the code-blocks */
+  int numnewpasses;   /* number of pass added to the code-blocks */
+  int numsegs;      /* number of segments */
+  opj_tcd_seg_t segs[100];    /* segments informations */
+  unsigned char data[8192]; /* Data */
+  int numpassesinlayers;  /* number of passes in the layer */
+  opj_tcd_layer_t layers[100];  /* layer information */
+  int totalpasses;    /* total number of passes */
+  opj_tcd_pass_t passes[100]; /* information about the passes */
+} opj_tcd_cblk_t;
 
-typedef struct {
-  int x0, y0, x1, y1;		/* dimension of the precinct : left upper corner (x0, y0) right low corner (x1,y1) */
-  int cw, ch;			/* number of precinct in width and heigth */
-  tcd_cblk_t *cblks;		/* code-blocks informations */
-  tgt_tree_t *incltree;		/* inclusion tree */
-  tgt_tree_t *imsbtree;		/* IMSB tree */
-} tcd_precinct_t;
+/**
+FIXME: documentation
+*/
+typedef struct opj_tcd_precinct {
+  int x0, y0, x1, y1;   /* dimension of the precinct : left upper corner (x0, y0) right low corner (x1,y1) */
+  int cw, ch;     /* number of precinct in width and heigth */
+  opj_tcd_cblk_t *cblks;    /* code-blocks informations */
+  opj_tgt_tree_t *incltree;   /* inclusion tree */
+  opj_tgt_tree_t *imsbtree;   /* IMSB tree */
+} opj_tcd_precinct_t;
 
-typedef struct {
-  int x0, y0, x1, y1;		/* dimension of the subband : left upper corner (x0, y0) right low corner (x1,y1) */
+/**
+FIXME: documentation
+*/
+typedef struct opj_tcd_band {
+  int x0, y0, x1, y1;   /* dimension of the subband : left upper corner (x0, y0) right low corner (x1,y1) */
   int bandno;
-  tcd_precinct_t *precincts;	/* precinct information */
+  opj_tcd_precinct_t *precincts;  /* precinct information */
   int numbps;
   float stepsize;
-} tcd_band_t;
+} opj_tcd_band_t;
 
-typedef struct {
-  int x0, y0, x1, y1;		/* dimension of the resolution level : left upper corner (x0, y0) right low corner (x1,y1) */
+/**
+FIXME: documentation
+*/
+typedef struct opj_tcd_resolution {
+  int x0, y0, x1, y1;   /* dimension of the resolution level : left upper corner (x0, y0) right low corner (x1,y1) */
   int pw, ph;
-  int numbands;			/* number sub-band for the resolution level */
-  tcd_band_t bands[3];		/* subband information */
-} tcd_resolution_t;
+  int numbands;     /* number sub-band for the resolution level */
+  opj_tcd_band_t bands[3];    /* subband information */
+} opj_tcd_resolution_t;
 
-typedef struct {
-  int x0, y0, x1, y1;		/* dimension of component : left upper corner (x0, y0) right low corner (x1,y1) */
-  int numresolutions;		/* number of resolutions level */
-  tcd_resolution_t *resolutions;	/* resolutions information */
-  int *data;			/* data of the component */
-  int nbpix;			/* add fixed_quality */
-} tcd_tilecomp_t;
+/**
+FIXME: documentation
+*/
+typedef struct opj_tcd_tilecomp {
+  int x0, y0, x1, y1;   /* dimension of component : left upper corner (x0, y0) right low corner (x1,y1) */
+  int numresolutions;   /* number of resolutions level */
+  opj_tcd_resolution_t *resolutions;  /* resolutions information */
+  int *data;      /* data of the component */
+  int nbpix;      /* add fixed_quality */
+} opj_tcd_tilecomp_t;
 
-typedef struct {
-  int x0, y0, x1, y1;		/* dimension of the tile : left upper corner (x0, y0) right low corner (x1,y1) */
-  int numcomps;			/* number of components in tile */
-  tcd_tilecomp_t *comps;	/* Components information */
-  int nbpix;			/* add fixed_quality */
-  double distotile;		/* add fixed_quality */
-  double distolayer[100];	/* add fixed_quality */
-} tcd_tile_t;
+/**
+FIXME: documentation
+*/
+typedef struct opj_tcd_tile {
+  int x0, y0, x1, y1;   /* dimension of the tile : left upper corner (x0, y0) right low corner (x1,y1) */
+  int numcomps;     /* number of components in tile */
+  opj_tcd_tilecomp_t *comps;  /* Components information */
+  int nbpix;      /* add fixed_quality */
+  double distotile;   /* add fixed_quality */
+  double distolayer[100]; /* add fixed_quality */
+} opj_tcd_tile_t;
 
-typedef struct {
-  int tw, th;			/* number of tiles in width and heigth */
-  tcd_tile_t *tiles;		/* Tiles information */
-} tcd_image_t;
+/**
+FIXME: documentation
+*/
+typedef struct opj_tcd_image {
+  int tw, th;     /* number of tiles in width and heigth */
+  opj_tcd_tile_t *tiles;    /* Tiles information */
+} opj_tcd_image_t;
 
-/*
- * Initialize the tile coder (reuses the memory allocated by tcd_malloc_encode)
- * img: raw image
- * cp: coding parameters
- * curtileno : number that identifies the tile that will be encoded
- */
-void tcd_init_encode(j2k_image_t * img, j2k_cp_t * cp, int curtileno);
+/**
+Tile coder/decoder
+*/
+typedef struct opj_tcd {
+  /** codec context */
+  opj_common_ptr cinfo;
 
+  /** info on each image tile */
+  opj_tcd_image_t *tcd_image;
+  /** image */
+  opj_image_t *image;
+  /** coding parameters */
+  opj_cp_t *cp;
+  /** pointer to the current encoded/decoded tile */
+  opj_tcd_tile_t *tcd_tile;
+  /** coding/decoding parameters common to all tiles */
+  opj_tcp_t *tcp;
+  /** current encoded/decoded tile */
+  int tcd_tileno;
+  /**@name working variables */
+  /*@{*/
+  opj_tcd_tile_t *tile;
+  opj_tcd_tilecomp_t *tilec;
+  opj_tcd_resolution_t *res;
+  opj_tcd_band_t *band;
+  opj_tcd_precinct_t *prc;
+  opj_tcd_cblk_t *cblk;
+  /*@}*/
+} opj_tcd_t;
 
-/*
- * Initialize the tile coder (allocate the memory)
- * img: raw image
- * cp: coding parameters
- * curtileno : number that identifies the tile that will be encoded
- */
-void tcd_malloc_encode(j2k_image_t * img, j2k_cp_t * cp, int curtileno);
+/** @name Exported functions */
+/*@{*/
+/* ----------------------------------------------------------------------- */
 
+/**
+Dump the content of a tcd structure
+*/
+void tcd_dump(FILE *fd, opj_tcd_t *tcd, opj_tcd_image_t * img, int curtileno);
+/**
+Create a new TCD handle
+@param cinfo Codec context info
+@return Returns a new TCD handle if successful returns NULL otherwise
+*/
+opj_tcd_t* tcd_create(opj_common_ptr cinfo);
+/**
+Destroy a previously created TCD handle
+@param tcd TCD handle to destroy
+*/
+void tcd_destroy(opj_tcd_t *tcd);
+/**
+Initialize the tile coder (allocate the memory)
+@param tcd TCD handle
+@param image Raw image
+@param cp Coding parameters
+@param curtileno Number that identifies the tile that will be encoded
+*/
+void tcd_malloc_encode(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp, int curtileno);
+/**
+Free the memory allocated for encoding
+@param tcd TCD handle
+*/
+void tcd_free_encode(opj_tcd_t *tcd);
+/**
+Initialize the tile coder (reuses the memory allocated by tcd_malloc_encode)
+@param tcd TCD handle
+@param image Raw image
+@param cp Coding parameters
+@param curtileno Number that identifies the tile that will be encoded
+*/
+void tcd_init_encode(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp, int curtileno);
+/**
+Initialize the tile decoder
+@param tcd TCD handle
+@param image Raw image
+@param cp Coding parameters
+*/
+void tcd_malloc_decode(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp);
+void tcd_makelayer_fixed(opj_tcd_t *tcd, int layno, int final);
+void tcd_rateallocate_fixed(opj_tcd_t *tcd);
+void tcd_makelayer(opj_tcd_t *tcd, int layno, double thresh, int final);
+bool tcd_rateallocate(opj_tcd_t *tcd, unsigned char *dest, int len, opj_image_info_t * image_info);
+/**
+Encode a tile from the raw image into a buffer
+@param tcd TCD handle
+@param tileno Number that identifies one of the tiles to be encoded
+@param dest Destination buffer
+@param len Length of destination buffer
+@param image_info Creation of index file
+@return 
+*/
+int tcd_encode_tile(opj_tcd_t *tcd, int tileno, unsigned char *dest, int len, opj_image_info_t * image_info);
+/**
+Decode a tile from a buffer into a raw image
+@param tcd TCD handle
+@param src Source buffer
+@param len Length of source buffer
+@param tileno Number that identifies one of the tiles to be decoded
+*/
+bool tcd_decode_tile(opj_tcd_t *tcd, unsigned char *src, int len, int tileno);
+/**
+Free the memory allocated for decoding
+@param tcd TCD handle
+*/
+void tcd_free_decode(opj_tcd_t *tcd);
 
-/*
- * Initialize the tile decoder
- * img: raw image
- * cp: coding parameters
- */
-void tcd_init(j2k_image_t * img, j2k_cp_t * cp);
+/* ----------------------------------------------------------------------- */
+/*@}*/
 
+/*@}*/
 
-/*
- * Free the memory allocated for encoding
- * img: raw image
- * cp: coding parameters
- * curtileno : number that identifies the tile that will be encoded
- */
-void tcd_free_encode(j2k_image_t * img, j2k_cp_t * cp, int curtileno);
-
-/*
- * Encode a tile from the raw image into a buffer, format pnm, pgm or ppm
- * tileno: number that identifies one of the tiles to be encoded
- * dest: destination buffer
- * len: length of destination buffer
- * info_IM: creation of index file
- */
-int tcd_encode_tile_pxm(int tileno, unsigned char *dest, int len,
-			info_image * info_IM);
-
-
-/*
- * Encode a tile from the raw image into a buffer, format pgx
- * tileno: number that identifies one of the tiles to be encoded
- * dest: destination buffer
- * len: length of destination buffer
- * info_IM: creation of index file
- */
-int tcd_encode_tile_pgx(int tileno, unsigned char *dest, int len,
-			info_image * info_IM);
-
-/*
- * Decode a tile from a buffer into a raw image
- * src: source buffer
- * len: length of the source buffer
- * tileno: number that identifies the tile that will be decoded
- */
-int tcd_decode_tile(unsigned char *src, int len, int tileno);
-
-void tcd_dec_release();
-
-#endif
+#endif /* __TCD_H */

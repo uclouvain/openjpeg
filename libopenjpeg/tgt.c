@@ -1,5 +1,9 @@
 /*
- * Copyright (c) 2001-2002, David Janssens
+ * Copyright (c) 2001-2003, David Janssens
+ * Copyright (c) 2002-2003, Yannick Verschueren
+ * Copyright (c) 2003-2005, Francois Devaux and Antonin Descampe
+ * Copyright (c) 2005, Hervé Drolon, FreeImage Team
+ * Copyright (c) 2002-2005, Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,44 +28,27 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "tgt.h"
-#include "bio.h"
-#include <stdlib.h>
-#include <stdio.h>
+#include "opj_includes.h"
 
-/* <summary> */
-/* Reset tag-tree. */
-/* </summary> */
-void tgt_reset(tgt_tree_t * tree)
-{
-  int i;
-  /* new */
-  if (!tree || tree == NULL)
-    return;
+/* 
+==========================================================
+   Tag-tree coder interface
+==========================================================
+*/
 
-  for (i = 0; i < tree->numnodes; i++) {
-    tree->nodes[i].value = 999;
-    tree->nodes[i].low = 0;
-    tree->nodes[i].known = 0;
-  }
-}
-
-/* <summary> */
-/* Create tag-tree. */
-/* </summary> */
-tgt_tree_t *tgt_create(int numleafsh, int numleafsv)
-{
+opj_tgt_tree_t *tgt_create(int numleafsh, int numleafsv) {
   int nplh[32];
   int nplv[32];
-  tgt_node_t *node;
-  tgt_node_t *parentnode;
-  tgt_node_t *parentnode0;
-  tgt_tree_t *tree;
+  opj_tgt_node_t *node = NULL;
+  opj_tgt_node_t *parentnode = NULL;
+  opj_tgt_node_t *parentnode0 = NULL;
+  opj_tgt_tree_t *tree = NULL;
   int i, j, k;
   int numlvls;
   int n;
 
-  tree = (tgt_tree_t *) malloc(sizeof(tgt_tree_t));
+  tree = (opj_tgt_tree_t *) opj_malloc(sizeof(opj_tgt_tree_t));
+  if(!tree) return NULL;
   tree->numleafsh = numleafsh;
   tree->numleafsv = numleafsv;
 
@@ -76,61 +63,70 @@ tgt_tree_t *tgt_create(int numleafsh, int numleafsv)
     tree->numnodes += n;
     ++numlvls;
   } while (n > 1);
-
+  
   /* ADD */
   if (tree->numnodes == 0) {
-    free(tree);
+    opj_free(tree);
     return NULL;
   }
 
-  tree->nodes = (tgt_node_t *) malloc(tree->numnodes * sizeof(tgt_node_t));
+  tree->nodes = (opj_tgt_node_t *) opj_malloc(tree->numnodes * sizeof(opj_tgt_node_t));
+  if(!tree->nodes) {
+    opj_free(tree);
+    return NULL;
+  }
 
   node = tree->nodes;
   parentnode = &tree->nodes[tree->numleafsh * tree->numleafsv];
   parentnode0 = parentnode;
-
+  
   for (i = 0; i < numlvls - 1; ++i) {
     for (j = 0; j < nplv[i]; ++j) {
       k = nplh[i];
       while (--k >= 0) {
-	node->parent = parentnode;
-	++node;
-	if (--k >= 0) {
-	  node->parent = parentnode;
-	  ++node;
-	}
-	++parentnode;
+        node->parent = parentnode;
+        ++node;
+        if (--k >= 0) {
+          node->parent = parentnode;
+          ++node;
+        }
+        ++parentnode;
       }
       if ((j & 1) || j == nplv[i] - 1) {
-	parentnode0 = parentnode;
+        parentnode0 = parentnode;
       } else {
-	parentnode = parentnode0;
-	parentnode0 += nplh[i];
+        parentnode = parentnode0;
+        parentnode0 += nplh[i];
       }
     }
   }
   node->parent = 0;
-
+  
   tgt_reset(tree);
-
+  
   return tree;
 }
 
-/* <summary> */
-/* Destroy tag-tree. */
-/* </summary> */
-void tgt_destroy(tgt_tree_t * t)
-{
-  free(t->nodes);
-  free(t);
+void tgt_destroy(opj_tgt_tree_t *tree) {
+  opj_free(tree->nodes);
+  opj_free(tree);
 }
 
-/* <summary> */
-/* Set the value of a leaf of the tag-tree. */
-/* </summary> */
-void tgt_setvalue(tgt_tree_t * tree, int leafno, int value)
-{
-  tgt_node_t *node;
+void tgt_reset(opj_tgt_tree_t *tree) {
+  int i;
+
+  if (NULL == tree)
+    return;
+  
+  for (i = 0; i < tree->numnodes; i++) {
+    tree->nodes[i].value = 999;
+    tree->nodes[i].low = 0;
+    tree->nodes[i].known = 0;
+  }
+}
+
+void tgt_setvalue(opj_tgt_tree_t *tree, int leafno, int value) {
+  opj_tgt_node_t *node;
   node = &tree->nodes[leafno];
   while (node && node->value > value) {
     node->value = value;
@@ -138,14 +134,10 @@ void tgt_setvalue(tgt_tree_t * tree, int leafno, int value)
   }
 }
 
-/* <summary> */
-/* Encode the value of a leaf of the tag-tree. */
-/* </summary> */
-void tgt_encode(tgt_tree_t * tree, int leafno, int threshold)
-{
-  tgt_node_t *stk[31];
-  tgt_node_t **stkptr;
-  tgt_node_t *node;
+void tgt_encode(opj_bio_t *bio, opj_tgt_tree_t *tree, int leafno, int threshold) {
+  opj_tgt_node_t *stk[31];
+  opj_tgt_node_t **stkptr;
+  opj_tgt_node_t *node;
   int low;
 
   stkptr = stk;
@@ -154,7 +146,7 @@ void tgt_encode(tgt_tree_t * tree, int leafno, int threshold)
     *stkptr++ = node;
     node = node->parent;
   }
-
+  
   low = 0;
   for (;;) {
     if (low > node->low) {
@@ -162,35 +154,30 @@ void tgt_encode(tgt_tree_t * tree, int leafno, int threshold)
     } else {
       low = node->low;
     }
-
+    
     while (low < threshold) {
       if (low >= node->value) {
-	if (!node->known) {
-	  bio_write(1, 1);
-	  node->known = 1;
-	}
-	break;
+        if (!node->known) {
+          bio_write(bio, 1, 1);
+          node->known = 1;
+        }
+        break;
       }
-      bio_write(0, 1);
+      bio_write(bio, 0, 1);
       ++low;
     }
-
+    
     node->low = low;
     if (stkptr == stk)
       break;
     node = *--stkptr;
   }
-
 }
 
-/* <summary> */
-/* Decode the value of a leaf of the tag-tree. */
-/* </summary> */
-int tgt_decode(tgt_tree_t * tree, int leafno, int threshold)
-{
-  tgt_node_t *stk[31];
-  tgt_node_t **stkptr;
-  tgt_node_t *node;
+int tgt_decode(opj_bio_t *bio, opj_tgt_tree_t *tree, int leafno, int threshold) {
+  opj_tgt_node_t *stk[31];
+  opj_tgt_node_t **stkptr;
+  opj_tgt_node_t *node;
   int low;
 
   stkptr = stk;
@@ -199,7 +186,7 @@ int tgt_decode(tgt_tree_t * tree, int leafno, int threshold)
     *stkptr++ = node;
     node = node->parent;
   }
-
+  
   low = 0;
   for (;;) {
     if (low > node->low) {
@@ -208,10 +195,10 @@ int tgt_decode(tgt_tree_t * tree, int leafno, int threshold)
       low = node->low;
     }
     while (low < threshold && low < node->value) {
-      if (bio_read(1)) {
-	node->value = low;
+      if (bio_read(bio, 1)) {
+        node->value = low;
       } else {
-	++low;
+        ++low;
       }
     }
     node->low = low;
@@ -220,6 +207,6 @@ int tgt_decode(tgt_tree_t * tree, int leafno, int threshold)
     }
     node = *--stkptr;
   }
-
+  
   return (node->value < threshold) ? 1 : 0;
 }

@@ -1,9 +1,5 @@
 /*
- * Copyright (c) 2001-2003, David Janssens
- * Copyright (c) 2002-2003, Yannick Verschueren
- * Copyright (c) 2003-2005, Francois Devaux and Antonin Descampe
- * Copyright (c) 2005, HervŽ Drolon, FreeImage Team
- * Copyright (c) 2002-2005, Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
+ * Copyright (c) 2005, Hervé Drolon, FreeImage Team
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,45 +24,59 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "opj_includes.h"
 
-int int_min(int a, int b) {
-  return a < b ? a : b;
-}
+#ifndef OPJ_INCLUDES_H
+#define OPJ_INCLUDES_H
 
-int int_max(int a, int b) {
-  return (a > b) ? a : b;
-}
+/*
+ ==========================================================
+   Standard includes used by the library
+ ==========================================================
+*/
+#include <setjmp.h>
+#include <memory.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+#include <float.h>
+#include <time.h>
+#include <stdio.h>
+#include <stdarg.h>
 
-int int_clamp(int a, int min, int max) {
-  if (a < min)
-    return min;
-  if (a > max)
-    return max;
-  return a;
-}
+/*
+ ==========================================================
+   OpenJPEG interface
+ ==========================================================
+ */
+#include "openjpeg.h"
 
-int int_abs(int a) {
-  return a < 0 ? -a : a;
-}
+/*
+ ==========================================================
+   OpenJPEG modules
+ ==========================================================
+*/
 
-int int_ceildiv(int a, int b) {
-  return (a + b - 1) / b;
-}
+#include "j2k_lib.h"
+#include "event.h"
+#include "cio.h"
 
-int int_ceildivpow2(int a, int b) {
-  return (a + (1 << b) - 1) >> b;
-}
+#include "image.h"
+#include "j2k.h"
+#include "jp2.h"
+#include "jpt.h"
 
-int int_floordivpow2(int a, int b) {
-  return a >> b;
-}
+#include "mqc.h"
+#include "raw.h"
+#include "bio.h"
+#include "tgt.h"
+#include "tcd.h"
+#include "t1.h"
+#include "dwt.h"
+#include "pi.h"
+#include "t2.h"
+#include "mct.h"
+#include "int.h"
+#include "fix.h"
 
-int int_floorlog2(int a) {
-  int l;
-  for (l = 0; a > 1; l++) {
-    a >>= 1;
-  }
-  return l;
-}
 
+#endif /* OPJ_INCLUDES_H */

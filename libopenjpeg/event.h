@@ -1,9 +1,6 @@
+
 /*
- * Copyright (c) 2001-2003, David Janssens
- * Copyright (c) 2002-2003, Yannick Verschueren
- * Copyright (c) 2003-2005, Francois Devaux and Antonin Descampe
- * Copyright (c) 2005, HervŽ Drolon, FreeImage Team
- * Copyright (c) 2002-2005, Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
+ * Copyright (c) 2005, Hervé Drolon, FreeImage Team
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,45 +25,37 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "opj_includes.h"
 
-int int_min(int a, int b) {
-  return a < b ? a : b;
-}
+#ifndef __EVENT_H
+#define __EVENT_H
+/**
+@file event.h
+@brief Implementation of a event callback system
 
-int int_max(int a, int b) {
-  return (a > b) ? a : b;
-}
+The functions in EVENT.C have for goal to send output messages (errors, warnings, debug) to the user.
+*/
 
-int int_clamp(int a, int min, int max) {
-  if (a < min)
-    return min;
-  if (a > max)
-    return max;
-  return a;
-}
+#define EVT_ERROR 1 /**< Error event type */
+#define EVT_WARNING 2 /**< Warning event type */
+#define EVT_INFO  4 /**< Debug event type */
 
-int int_abs(int a) {
-  return a < 0 ? -a : a;
-}
+/** @defgroup EVENT EVENT - Implementation of a event callback system */
+/*@{*/
 
-int int_ceildiv(int a, int b) {
-  return (a + b - 1) / b;
-}
+/** @name Exported functions (see also openjpeg.h) */
+/*@{*/
+/* ----------------------------------------------------------------------- */
+/**
+Write formatted data to a string and send the string to a user callback. 
+@param cinfo Codec context info
+@param event_type Event type or callback to use to send the message
+@param fmt Format-control string (plus optionnal arguments)
+@return Returns true if successful, returns false otherwise
+*/
+bool opg_event_msg(opj_common_ptr cinfo, int event_type, const char *fmt, ...);
+/* ----------------------------------------------------------------------- */
+/*@}*/
 
-int int_ceildivpow2(int a, int b) {
-  return (a + (1 << b) - 1) >> b;
-}
+/*@}*/
 
-int int_floordivpow2(int a, int b) {
-  return a >> b;
-}
-
-int int_floorlog2(int a) {
-  int l;
-  for (l = 0; a > 1; l++) {
-    a >>= 1;
-  }
-  return l;
-}
-
+#endif /* __EVENT_H */

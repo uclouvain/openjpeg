@@ -1,7 +1,9 @@
 /*
- * Copyright (c) 2001-2002, David Janssens
+ * Copyright (c) 2001-2003, David Janssens
  * Copyright (c) 2002-2003, Yannick Verschueren
- * Copyright (c) 2002-2003,  Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
+ * Copyright (c) 2003-2005, Francois Devaux and Antonin Descampe
+ * Copyright (c) 2005, Hervé Drolon, FreeImage Team
+ * Copyright (c) 2002-2005, Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,37 +30,118 @@
 
 #ifndef __T2_H
 #define __T2_H
+/**
+@file t2.h
+@brief Implementation of a tier-2 coding (packetization of code-block data) (T2)
 
-#include "tcd.h"
-#include "j2k.h"
+*/
 
-/*
- * Encode the packets of a tile to a destination buffer
- *
- * img        : the source image
- * cp         : the image coding parameters
- * tileno     : number of the tile encoded
- * tile       : the tile for which to write the packets
- * maxlayers  : maximum number of layers
- * dest       : the destination buffer
- * len        : the length of the destination buffer
- * info_IM    : structure to create an index file
+/** @defgroup T2 T2 - Implementation of a tier-2 coding */
+/*@{*/
+
+/**
+Tier-2 coding
+*/
+typedef struct opj_t2 {
+  /** codec context */
+  opj_common_ptr cinfo;
+
+  /** Encoding: pointer to the src image. Decoding: pointer to the dst image. */
+  opj_image_t *image;
+  /** pointer to the image coding parameters */
+  opj_cp_t *cp;
+} opj_t2_t;
+
+/** @name Local static functions */
+/*@{*/
+/* ----------------------------------------------------------------------- */
+
+static void t2_putcommacode(opj_bio_t *bio, int n);
+static int t2_getcommacode(opj_bio_t *bio);
+/**
+Variable length code for signalling delta Zil (truncation point)
+@param bio Bit Input/Output component
+@param n delta Zil
+*/
+static void t2_putnumpasses(opj_bio_t *bio, int n);
+static int t2_getnumpasses(opj_bio_t *bio);
+/**
+Encode a packet of a tile to a destination buffer
+@param t2 T2 handle
+@param tile Tile for which to write the packets
+@param tcp Tile coding parameters
+@param pi Packet identity
+@param dest Destination buffer
+@param len Length of the destination buffer
+@param image_info Structure to create an index file
+@param tileno Number of the tile encoded
+@return 
+*/
+static int t2_encode_packet(opj_t2_t* t2, opj_tcd_tile_t *tile, opj_tcp_t *tcp, opj_pi_iterator_t *pi, unsigned char *dest, int len, opj_image_info_t *image_info, int tileno);
+/**
+@param seg
+@param cblksty
+@param first
+*/
+static void t2_init_seg(opj_tcd_seg_t *seg, int cblksty, int first);
+/**
+Decode a packet of a tile from a source buffer
+@param t2 T2 handle
+@param src Source buffer
+@param len Length of the source buffer
+@param tile Tile for which to write the packets
+@param tcp Tile coding parameters
+@param pi Packet identity
+@return 
+*/
+int t2_decode_packet(opj_t2_t* t2, unsigned char *src, int len, opj_tcd_tile_t *tile, opj_tcp_t *tcp, opj_pi_iterator_t *pi);
+
+/* ----------------------------------------------------------------------- */
+/*@}*/
+
+/** @name Exported functions */
+/*@{*/
+/* ----------------------------------------------------------------------- */
+
+/**
+Encode the packets of a tile to a destination buffer
+@param t2 T2 handle
+@param tileno number of the tile encoded
+@param tile the tile for which to write the packets
+@param maxlayers maximum number of layers
+@param dest the destination buffer
+@param len the length of the destination buffer
+@param image_info structure to create an index file
+*/
+int t2_encode_packets(opj_t2_t* t2, int tileno, opj_tcd_tile_t *tile, int maxlayers, unsigned char *dest, int len, opj_image_info_t *image_info);
+
+/**
+Decode the packets of a tile from a source buffer
+@param t2 T2 handle
+@param src the source buffer
+@param len length of the source buffer
+@param tileno number that identifies the tile for which to decode the packets
+@param tile tile for which to decode the packets
  */
-int t2_encode_packets(j2k_image_t * img, j2k_cp_t * cp, int tileno,
-		      tcd_tile_t * tile, int maxlayers,
-		      unsigned char *dest, int len, info_image * info_IM);
+int t2_decode_packets(opj_t2_t *t2, unsigned char *src, int len, int tileno, opj_tcd_tile_t *tile);
 
-/*
- * Decode the packets of a tile from a source buffer
- *
- * src: the source buffer
- * len: length of the source buffer
- * img: destination image
- * cp: image coding parameters
- * tileno: number that identifies the tile for which to decode the packets
- * tile: tile for which to decode the packets
- */
-int t2_decode_packets(unsigned char *src, int len, j2k_image_t * img,
-		      j2k_cp_t * cp, int tileno, tcd_tile_t * tile);
+/**
+Create a T2 handle
+@param cinfo Codec context info
+@param image Source or destination image
+@param cp Image coding parameters
+@return Returns a new T2 handle if successful, returns NULL otherwise
+*/
+opj_t2_t* t2_create(opj_common_ptr cinfo, opj_image_t *image, opj_cp_t *cp);
+/**
+Destroy a T2 handle
+@param t2 T2 handle to destroy
+*/
+void t2_destroy(opj_t2_t *t2);
 
-#endif
+/* ----------------------------------------------------------------------- */
+/*@}*/
+
+/*@}*/
+
+#endif /* __T2_H */

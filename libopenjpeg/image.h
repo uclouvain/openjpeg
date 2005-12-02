@@ -1,9 +1,5 @@
 /*
- * Copyright (c) 2001-2003, David Janssens
- * Copyright (c) 2002-2003, Yannick Verschueren
- * Copyright (c) 2003-2005, Francois Devaux and Antonin Descampe
- * Copyright (c) 2005, HervŽ Drolon, FreeImage Team
- * Copyright (c) 2002-2005, Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
+ * Copyright (c) 2005, Hervé Drolon, FreeImage Team
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,45 +24,27 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "opj_includes.h"
 
-int int_min(int a, int b) {
-  return a < b ? a : b;
-}
+#ifndef __IMAGE_H
+#define __IMAGE_H
+/**
+@file image.h
+@brief Implementation of operations on images (IMAGE)
 
-int int_max(int a, int b) {
-  return (a > b) ? a : b;
-}
+The functions in IMAGE.C have for goal to realize operations on images.
+*/
 
-int int_clamp(int a, int min, int max) {
-  if (a < min)
-    return min;
-  if (a > max)
-    return max;
-  return a;
-}
+/** @defgroup IMAGE IMAGE - Implementation of operations on images */
+/*@{*/
 
-int int_abs(int a) {
-  return a < 0 ? -a : a;
-}
+/**
+Create an empty image
+@todo this function should be removed
+@return returns an empty image if successful, returns NULL otherwise
+*/
+opj_image_t* opj_image_create0();
 
-int int_ceildiv(int a, int b) {
-  return (a + b - 1) / b;
-}
+/*@}*/
 
-int int_ceildivpow2(int a, int b) {
-  return (a + (1 << b) - 1) >> b;
-}
-
-int int_floordivpow2(int a, int b) {
-  return a >> b;
-}
-
-int int_floorlog2(int a) {
-  int l;
-  for (l = 0; a > 1; l++) {
-    a >>= 1;
-  }
-  return l;
-}
+#endif /* __IMAGE_H */
 

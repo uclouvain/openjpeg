@@ -1,9 +1,5 @@
 /*
- * Copyright (c) 2001-2003, David Janssens
- * Copyright (c) 2002-2003, Yannick Verschueren
- * Copyright (c) 2003-2005, Francois Devaux and Antonin Descampe
- * Copyright (c) 2005, HervŽ Drolon, FreeImage Team
- * Copyright (c) 2002-2005, Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
+ * Copyright (c) 2005, Hervé Drolon, FreeImage Team
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,18 +24,53 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "fix.h"
 
 #ifdef WIN32
-#define int64 __int64
+#include <windows.h>
 #else
-#define int64 long long
-#endif
+#include <sys/resource.h>
+#include <sys/times.h>
+#endif /* WIN32 */
+#include "opj_includes.h"
 
-int fix_mul(int a, int b) {
-    int64 temp = (int64) a * (int64) b >> 12;
-    return (int) ((temp >> 1) + (temp & 1)) ;
+double opj_clock() {
+#ifdef WIN32
+  /* WIN32: use QueryPerformance (very accurate) */
+    LARGE_INTEGER freq , t ;
+    /* freq is the clock speed of the CPU */
+    QueryPerformanceFrequency(&freq) ;
+  /* cout << "freq = " << ((double) freq.QuadPart) << endl; */
+    /* t is the high resolution performance counter (see MSDN) */
+    QueryPerformanceCounter ( & t ) ;
+    return ( t.QuadPart /(double) freq.QuadPart ) ;
+#else
+  /* Unix or Linux: use resource usage */
+    struct rusage t;
+    double procTime;
+    /* (1) Get the rusage data structure at this moment (man getrusage) */
+    getrusage(0,&t);
+    /* (2) What is the elapsed time ? - CPU time = User time + System time */
+  /* (2a) Get the seconds */
+    procTime = t.ru_utime.tv_sec + t.ru_stime.tv_sec;
+    /* (2b) More precisely! Get the microseconds part ! */
+    return ( procTime + (t.ru_utime.tv_usec + t.ru_stime.tv_usec) * 1e-6 ) ;
+#endif
 }
 
+void* opj_malloc( size_t size ) {
+  void *memblock = malloc(size);
+  if(memblock) {
+    memset(memblock, 0, size);
+  }
+  return memblock;
+}
+
+void* j2k_realloc( void *memblock, size_t size ) {
+  return realloc(memblock, size);
+}
+
+void opj_free( void *memblock ) {
+  free(memblock);
+}
 
 

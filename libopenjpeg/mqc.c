@@ -1,7 +1,9 @@
 /*
- * Copyright (c) 2001-2002, David Janssens
+ * Copyright (c) 2001-2003, David Janssens
  * Copyright (c) 2002-2003, Yannick Verschueren
- * Copyright (c) 2002-2003,  Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
+ * Copyright (c) 2003-2005, Francois Devaux and Antonin Descampe
+ * Copyright (c) 2005, Hervé Drolon, FreeImage Team
+ * Copyright (c) 2002-2005, Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,23 +28,12 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "mqc.h"
-#include <stdio.h>
-
-/* <summary> */
-/* This struct defines the state of a context. */
-/* </summary> */
-typedef struct mqc_state_s {
-  unsigned int qeval;		/* the probability of the Least Probable Symbol (0.75->0x8000, 1.5->0xffff) */
-  int mps;			/* the Most Probable Symbol (0 or 1) */
-  struct mqc_state_s *nmps;	/* next state if the next encoded symbol is the MPS */
-  struct mqc_state_s *nlps;	/* next state if the next encoded symbol is the LPS */
-} mqc_state_t;
+#include "opj_includes.h"
 
 /* <summary> */
 /* This array defines all the possible states for a context. */
 /* </summary> */
-mqc_state_t mqc_states[47 * 2] = {
+static opj_mqc_state_t mqc_states[47 * 2] = {
   {0x5601, 0, &mqc_states[2], &mqc_states[3]},
   {0x5601, 1, &mqc_states[3], &mqc_states[2]},
   {0x3401, 0, &mqc_states[4], &mqc_states[12]},
@@ -139,453 +130,353 @@ mqc_state_t mqc_states[47 * 2] = {
   {0x5601, 1, &mqc_states[93], &mqc_states[93]},
 };
 
-#define MQC_NUMCTXS 32
+/* 
+==========================================================
+   local functions
+==========================================================
+*/
 
-unsigned int mqc_c;
-unsigned int mqc_a;
-unsigned int mqc_ct;
-unsigned char *mqc_bp;
-unsigned char *mqc_start;
-unsigned char *mqc_end;
-mqc_state_t *mqc_ctxs[MQC_NUMCTXS];
-mqc_state_t **mqc_curctx;
-
-/* <summary> */
-/* Return the number of bytes already encoded. */
-/* </summary> */
-int mqc_numbytes()
-{
-  return mqc_bp - mqc_start;
-}
-
-/* <summary> */
-/* Output a byte, doing bit-stuffing if necessary. */
-/* After a 0xff byte, the next byte must be smaller than 0x90 */
-/* </summary> */
-void mqc_byteout()
-{
-  if (*mqc_bp == 0xff) {
-    mqc_bp++;
-    *mqc_bp = mqc_c >> 20;
-    mqc_c &= 0xfffff;
-    mqc_ct = 7;
+static void mqc_byteout(opj_mqc_t *mqc) {
+  if (*mqc->bp == 0xff) {
+    mqc->bp++;
+    *mqc->bp = mqc->c >> 20;
+    mqc->c &= 0xfffff;
+    mqc->ct = 7;
   } else {
-    if ((mqc_c & 0x8000000) == 0) {	/* ((mqc_c&0x8000000)==0) CHANGE */
-      mqc_bp++;
-      *mqc_bp = mqc_c >> 19;
-      mqc_c &= 0x7ffff;
-      mqc_ct = 8;
+    if ((mqc->c & 0x8000000) == 0) {  /* ((mqc->c&0x8000000)==0) CHANGE */
+      mqc->bp++;
+      *mqc->bp = mqc->c >> 19;
+      mqc->c &= 0x7ffff;
+      mqc->ct = 8;
     } else {
-      (*mqc_bp)++;
-      if (*mqc_bp == 0xff) {
-	mqc_c &= 0x7ffffff;
-	mqc_bp++;
-	*mqc_bp = mqc_c >> 20;
-	mqc_c &= 0xfffff;
-	mqc_ct = 7;
+      (*mqc->bp)++;
+      if (*mqc->bp == 0xff) {
+        mqc->c &= 0x7ffffff;
+        mqc->bp++;
+        *mqc->bp = mqc->c >> 20;
+        mqc->c &= 0xfffff;
+        mqc->ct = 7;
       } else {
-	mqc_bp++;
-	*mqc_bp = mqc_c >> 19;
-	mqc_c &= 0x7ffff;
-	mqc_ct = 8;
+        mqc->bp++;
+        *mqc->bp = mqc->c >> 19;
+        mqc->c &= 0x7ffff;
+        mqc->ct = 8;
       }
     }
   }
 }
 
-/* <summary> */
-/* Renormalize mqc_a and mqc_c while encoding, so that mqc_a stays between 0x8000 and 0x10000 */
-/* </summary> */
-void mqc_renorme()
-{
+static void mqc_renorme(opj_mqc_t *mqc) {
   do {
-    mqc_a <<= 1;
-    mqc_c <<= 1;
-    mqc_ct--;
-    if (mqc_ct == 0) {
-      mqc_byteout();
+    mqc->a <<= 1;
+    mqc->c <<= 1;
+    mqc->ct--;
+    if (mqc->ct == 0) {
+      mqc_byteout(mqc);
     }
-  } while ((mqc_a & 0x8000) == 0);
+  } while ((mqc->a & 0x8000) == 0);
 }
 
-/* <summary> */
-/* Encode the most probable symbol. */
-/* </summary> */
-void mqc_codemps()
-{
-  mqc_a -= (*mqc_curctx)->qeval;
-  if ((mqc_a & 0x8000) == 0) {
-    if (mqc_a < (*mqc_curctx)->qeval) {
-      mqc_a = (*mqc_curctx)->qeval;
+static void mqc_codemps(opj_mqc_t *mqc) {
+  mqc->a -= (*mqc->curctx)->qeval;
+  if ((mqc->a & 0x8000) == 0) {
+    if (mqc->a < (*mqc->curctx)->qeval) {
+      mqc->a = (*mqc->curctx)->qeval;
     } else {
-      mqc_c += (*mqc_curctx)->qeval;
+      mqc->c += (*mqc->curctx)->qeval;
     }
-    *mqc_curctx = (*mqc_curctx)->nmps;
-    mqc_renorme();
+    *mqc->curctx = (*mqc->curctx)->nmps;
+    mqc_renorme(mqc);
   } else {
-    mqc_c += (*mqc_curctx)->qeval;
+    mqc->c += (*mqc->curctx)->qeval;
   }
 }
 
-/* <summary> */
-/* Encode the most least symbol. */
-/* </summary> */
-void mqc_codelps()
-{
-  mqc_a -= (*mqc_curctx)->qeval;
-  if (mqc_a < (*mqc_curctx)->qeval) {
-    mqc_c += (*mqc_curctx)->qeval;
+static void mqc_codelps(opj_mqc_t *mqc) {
+  mqc->a -= (*mqc->curctx)->qeval;
+  if (mqc->a < (*mqc->curctx)->qeval) {
+    mqc->c += (*mqc->curctx)->qeval;
   } else {
-    mqc_a = (*mqc_curctx)->qeval;
+    mqc->a = (*mqc->curctx)->qeval;
   }
-  *mqc_curctx = (*mqc_curctx)->nlps;
-  mqc_renorme();
+  *mqc->curctx = (*mqc->curctx)->nlps;
+  mqc_renorme(mqc);
 }
 
-/* <summary> */
-/* Initialize encoder. */
-/* </summary> */
-/* <param name="bp">Output buffer.</param> */
-void mqc_init_enc(unsigned char *bp)
-{
-  mqc_setcurctx(0);
-  mqc_a = 0x8000;
-  mqc_c = 0;
-  mqc_bp = bp - 1;
-  mqc_ct = 12;
-  if (*mqc_bp == 0xff) {
-    mqc_ct = 13;
-  }
-  mqc_start = bp;
-}
-
-/* <summary> */
-/* Set current context. */
-/* </summary> */
-/* <param name="ctxno">Context number.</param> */
-void mqc_setcurctx(int ctxno)
-{
-  mqc_curctx = &mqc_ctxs[ctxno];
-}
-
-/* <summary> */
-/* Encode a symbol using the MQ-coder. */
-/* </summary> */
-/* <param name="d"> The symbol to be encoded (0 or 1).</param> */
-void mqc_encode(int d)
-{
-  if ((*mqc_curctx)->mps == d) {
-    mqc_codemps();
-  } else {
-    mqc_codelps();
+static void mqc_setbits(opj_mqc_t *mqc) {
+  unsigned int tempc = mqc->c + mqc->a;
+  mqc->c |= 0xffff;
+  if (mqc->c >= tempc) {
+    mqc->c -= 0x8000;
   }
 }
 
-/* <summary> */
-/* Fill mqc_c with 1's for flushing */
-/* </summary> */
-void mqc_setbits()
-{
-  unsigned int tempc = mqc_c + mqc_a;
-  mqc_c |= 0xffff;
-  if (mqc_c >= tempc) {
-    mqc_c -= 0x8000;
-  }
-}
-
-/* <summary> */
-/* Flush encoded data. */
-/* </summary> */
-void mqc_flush()
-{
-  mqc_setbits();
-  mqc_c <<= mqc_ct;
-  mqc_byteout();
-  mqc_c <<= mqc_ct;
-  mqc_byteout();
-
-  if (*mqc_bp != 0xff) {
-    mqc_bp++;
-  }
-}
-
-/* <summary> */
-/* not fully implemented and tested !! */
-/* BYPASS mode switch, initialization operation */
-/* JPEG 2000 p 505 */
-/* </summary> */
-void mqc_bypass_init_enc()
-{
-  mqc_c = 0;
-  mqc_ct = 8;
-  /*if (*mqc_bp == 0xff) {
-     mqc_ct = 7;
-     } */
-}
-
-/* <summary> */
-/* not fully implemented and tested !! */
-/* BYPASS mode switch, coding operation */
-/* JPEG 2000 p 505 */
-/* </summary> */
-void mqc_bypass_enc(int d)
-{
-  mqc_ct--;
-  mqc_c = mqc_c + (d << mqc_ct);
-  if (mqc_ct == 0) {
-    mqc_bp++;
-    *mqc_bp = mqc_c;
-    mqc_ct = 8;
-    if (*mqc_bp == 0xff) {
-      mqc_ct = 7;
-    }
-    mqc_c = 0;
-  }
-}
-
-/* <summary> */
-/* not fully implemented and tested !! */
-/* BYPASS mode switch, flush operation */
-/* </summary> */
-int mqc_bypass_flush_enc()
-{
-  unsigned char bit_padding;
-
-  bit_padding = 0;
-
-  if (mqc_ct != 0) {
-    while (mqc_ct > 0) {
-      mqc_ct--;
-      mqc_c += bit_padding << mqc_ct;
-      bit_padding = (bit_padding + 1) & 0x01;
-    }
-    mqc_bp++;
-    *mqc_bp = mqc_c;
-    mqc_ct = 8;
-    mqc_c = 0;
-  }
-
-  return 1;
-}
-
-/* <summary> */
-/* RESET mode switch */
-/* </summary> */
-void mqc_reset_enc()
-{
-  mqc_resetstates();
-  mqc_setstate(18, 0, 46);
-  mqc_setstate(0, 0, 3);
-  mqc_setstate(1, 0, 4);
-}
-
-/* <summary> */
-/* mode switch RESTART (TERMALL) */
-/* </summary> */
-int mqc_restart_enc()
-{
-  int correction = 1;
-
-  /* <flush part> */
-  int n = 27 - 15 - mqc_ct;
-  mqc_c <<= mqc_ct;
-  while (n > 0) {
-    mqc_byteout();
-    n -= mqc_ct;
-    mqc_c <<= mqc_ct;
-  }
-  mqc_byteout();
-
-  return correction;
-}
-
-/* <summary> */
-/* mode switch RESTART (TERMALL) reinitialisation */
-/* </summary> */
-void mqc_restart_init_enc()
-{
-  /* <Re-init part> */
-  mqc_setcurctx(0);
-  mqc_a = 0x8000;
-  mqc_c = 0;
-  mqc_ct = 12;
-  mqc_bp--;
-  if (*mqc_bp == 0xff) {
-    mqc_ct = 13;
-  }
-}
-
-
-/* <summary> */
-/* ERTERM mode switch  */
-/* </summary> */
-void mqc_erterm_enc()
-{
-  int k = 11 - mqc_ct + 1;
-
-  while (k > 0) {
-    mqc_c <<= mqc_ct;
-    mqc_ct = 0;
-    mqc_byteout();
-    k -= mqc_ct;
-  }
-
-  if (*mqc_bp != 0xff) {
-    mqc_byteout();
-  }
-}
-
-/* <summary> */
-/* SEGMARK mode switch (SEGSYM) */
-/* </summary> */
-void mqc_segmark_enc()
-{
-  int i;
-  mqc_setcurctx(18);
-
-  for (i = 1; i < 5; i++) {
-    mqc_encode(i % 2);
-  }
-}
-
-/* <summary> */
-/* </summary> */
-int mqc_mpsexchange()
-{
+static int mqc_mpsexchange(opj_mqc_t *mqc) {
   int d;
-  if (mqc_a < (*mqc_curctx)->qeval) {
-    d = 1 - (*mqc_curctx)->mps;
-    *mqc_curctx = (*mqc_curctx)->nlps;
+  if (mqc->a < (*mqc->curctx)->qeval) {
+    d = 1 - (*mqc->curctx)->mps;
+    *mqc->curctx = (*mqc->curctx)->nlps;
   } else {
-    d = (*mqc_curctx)->mps;
-    *mqc_curctx = (*mqc_curctx)->nmps;
+    d = (*mqc->curctx)->mps;
+    *mqc->curctx = (*mqc->curctx)->nmps;
   }
+  
   return d;
 }
 
-/* <summary> */
-/* </summary> */
-int mqc_lpsexchange()
-{
+static int mqc_lpsexchange(opj_mqc_t *mqc) {
   int d;
-  if (mqc_a < (*mqc_curctx)->qeval) {
-    mqc_a = (*mqc_curctx)->qeval;
-    d = (*mqc_curctx)->mps;
-    *mqc_curctx = (*mqc_curctx)->nmps;
+  if (mqc->a < (*mqc->curctx)->qeval) {
+    mqc->a = (*mqc->curctx)->qeval;
+    d = (*mqc->curctx)->mps;
+    *mqc->curctx = (*mqc->curctx)->nmps;
   } else {
-    mqc_a = (*mqc_curctx)->qeval;
-    d = 1 - (*mqc_curctx)->mps;
-    *mqc_curctx = (*mqc_curctx)->nlps;
+    mqc->a = (*mqc->curctx)->qeval;
+    d = 1 - (*mqc->curctx)->mps;
+    *mqc->curctx = (*mqc->curctx)->nlps;
   }
+  
   return d;
 }
 
-/* <summary> */
-/* Input a byte. */
-/* </summary> */
-void mqc_bytein()
-{
-  if (mqc_bp != mqc_end) {
+static void mqc_bytein(opj_mqc_t *mqc) {
+  if (mqc->bp != mqc->end) {
     unsigned int c;
-    if (mqc_bp + 1 != mqc_end) {
-      c = *(mqc_bp + 1);
+    if (mqc->bp + 1 != mqc->end) {
+      c = *(mqc->bp + 1);
     } else {
       c = 0xff;
     }
-    if (*mqc_bp == 0xff) {
+    if (*mqc->bp == 0xff) {
       if (c > 0x8f) {
-	mqc_c += 0xff00;
-	mqc_ct = 8;
+        mqc->c += 0xff00;
+        mqc->ct = 8;
       } else {
-	mqc_bp++;
-	mqc_c += c << 9;
-	mqc_ct = 7;
+        mqc->bp++;
+        mqc->c += c << 9;
+        mqc->ct = 7;
       }
     } else {
-      mqc_bp++;
-      mqc_c += c << 8;
-      mqc_ct = 8;
+      mqc->bp++;
+      mqc->c += c << 8;
+      mqc->ct = 8;
     }
   } else {
-    mqc_c += 0xff00;
-    mqc_ct = 8;
+    mqc->c += 0xff00;
+    mqc->ct = 8;
   }
 }
 
-/* <summary> */
-/* Renormalize mqc_a and mqc_c while decoding. */
-/* </summary> */
-void mqc_renormd()
-{
+static void mqc_renormd(opj_mqc_t *mqc) {
   do {
-    if (mqc_ct == 0) {
-      mqc_bytein();
+    if (mqc->ct == 0) {
+      mqc_bytein(mqc);
     }
-    mqc_a <<= 1;
-    mqc_c <<= 1;
-    mqc_ct--;
-  } while (mqc_a < 0x8000);
+    mqc->a <<= 1;
+    mqc->c <<= 1;
+    mqc->ct--;
+  } while (mqc->a < 0x8000);
 }
 
-/* <summary> */
-/* Initialize decoder. */
-/* </summary> */
-void mqc_init_dec(unsigned char *bp, int len)
-{
-  mqc_setcurctx(0);
-  mqc_start = bp;
-  mqc_end = bp + len;
-  mqc_bp = bp;
-  /*add antonin initbug1*/
-  if (len==0) mqc_c = 0xff << 16;
-  else mqc_c = *mqc_bp << 16;
-  /*dda*/
-  mqc_bytein();
-  mqc_c <<= 7;
-  mqc_ct -= 7;
-  mqc_a = 0x8000;
+/* 
+==========================================================
+   MQ-Coder interface
+==========================================================
+*/
+
+opj_mqc_t* mqc_create() {
+  opj_mqc_t *mqc = (opj_mqc_t*)opj_malloc(sizeof(opj_mqc_t));
+  return mqc;
 }
 
-/* <summary> */
-/* Decode a symbol. */
-/* </summary> */
-int mqc_decode()
-{
-  int d;
-  mqc_a -= (*mqc_curctx)->qeval;
-  if ((mqc_c >> 16) < (*mqc_curctx)->qeval) {
-    d = mqc_lpsexchange();
-    mqc_renormd();
+void mqc_destroy(opj_mqc_t *mqc) {
+  if(mqc) {
+    opj_free(mqc);
+  }
+}
+
+int mqc_numbytes(opj_mqc_t *mqc) {
+  return mqc->bp - mqc->start;
+}
+
+void mqc_init_enc(opj_mqc_t *mqc, unsigned char *bp) {
+  mqc_setcurctx(mqc, 0);
+  mqc->a = 0x8000;
+  mqc->c = 0;
+  mqc->bp = bp - 1;
+  mqc->ct = 12;
+  if (*mqc->bp == 0xff) {
+    mqc->ct = 13;
+  }
+  mqc->start = bp;
+}
+
+void mqc_setcurctx(opj_mqc_t *mqc, int ctxno) {
+  mqc->curctx = &mqc->ctxs[ctxno];
+}
+
+void mqc_encode(opj_mqc_t *mqc, int d) {
+  if ((*mqc->curctx)->mps == d) {
+    mqc_codemps(mqc);
   } else {
-    mqc_c -= (*mqc_curctx)->qeval << 16;
-    if ((mqc_a & 0x8000) == 0) {
-      d = mqc_mpsexchange();
-      mqc_renormd();
+    mqc_codelps(mqc);
+  }
+}
+
+void mqc_flush(opj_mqc_t *mqc) {
+  mqc_setbits(mqc);
+  mqc->c <<= mqc->ct;
+  mqc_byteout(mqc);
+  mqc->c <<= mqc->ct;
+  mqc_byteout(mqc);
+  
+  if (*mqc->bp != 0xff) {
+    mqc->bp++;
+  }
+}
+
+void mqc_bypass_init_enc(opj_mqc_t *mqc) {
+  mqc->c = 0;
+  mqc->ct = 8;
+  /*if (*mqc->bp == 0xff) {
+  mqc->ct = 7;
+     } */
+}
+
+void mqc_bypass_enc(opj_mqc_t *mqc, int d) {
+  mqc->ct--;
+  mqc->c = mqc->c + (d << mqc->ct);
+  if (mqc->ct == 0) {
+    mqc->bp++;
+    *mqc->bp = mqc->c;
+    mqc->ct = 8;
+    if (*mqc->bp == 0xff) {
+      mqc->ct = 7;
+    }
+    mqc->c = 0;
+  }
+}
+
+int mqc_bypass_flush_enc(opj_mqc_t *mqc) {
+  unsigned char bit_padding;
+  
+  bit_padding = 0;
+  
+  if (mqc->ct != 0) {
+    while (mqc->ct > 0) {
+      mqc->ct--;
+      mqc->c += bit_padding << mqc->ct;
+      bit_padding = (bit_padding + 1) & 0x01;
+    }
+    mqc->bp++;
+    *mqc->bp = mqc->c;
+    mqc->ct = 8;
+    mqc->c = 0;
+  }
+  
+  return 1;
+}
+
+void mqc_reset_enc(opj_mqc_t *mqc) {
+  mqc_resetstates(mqc);
+  mqc_setstate(mqc, 18, 0, 46);
+  mqc_setstate(mqc, 0, 0, 3);
+  mqc_setstate(mqc, 1, 0, 4);
+}
+
+int mqc_restart_enc(opj_mqc_t *mqc) {
+  int correction = 1;
+  
+  /* <flush part> */
+  int n = 27 - 15 - mqc->ct;
+  mqc->c <<= mqc->ct;
+  while (n > 0) {
+    mqc_byteout(mqc);
+    n -= mqc->ct;
+    mqc->c <<= mqc->ct;
+  }
+  mqc_byteout(mqc);
+  
+  return correction;
+}
+
+void mqc_restart_init_enc(opj_mqc_t *mqc) {
+  /* <Re-init part> */
+  mqc_setcurctx(mqc, 0);
+  mqc->a = 0x8000;
+  mqc->c = 0;
+  mqc->ct = 12;
+  mqc->bp--;
+  if (*mqc->bp == 0xff) {
+    mqc->ct = 13;
+  }
+}
+
+void mqc_erterm_enc(opj_mqc_t *mqc) {
+  int k = 11 - mqc->ct + 1;
+  
+  while (k > 0) {
+    mqc->c <<= mqc->ct;
+    mqc->ct = 0;
+    mqc_byteout(mqc);
+    k -= mqc->ct;
+  }
+  
+  if (*mqc->bp != 0xff) {
+    mqc_byteout(mqc);
+  }
+}
+
+void mqc_segmark_enc(opj_mqc_t *mqc) {
+  int i;
+  mqc_setcurctx(mqc, 18);
+  
+  for (i = 1; i < 5; i++) {
+    mqc_encode(mqc, i % 2);
+  }
+}
+
+void mqc_init_dec(opj_mqc_t *mqc, unsigned char *bp, int len) {
+  mqc_setcurctx(mqc, 0);
+  mqc->start = bp;
+  mqc->end = bp + len;
+  mqc->bp = bp;
+  if (len==0) mqc->c = 0xff << 16;
+  else mqc->c = *mqc->bp << 16;
+  mqc_bytein(mqc);
+  mqc->c <<= 7;
+  mqc->ct -= 7;
+  mqc->a = 0x8000;
+}
+
+int mqc_decode(opj_mqc_t *mqc) {
+  int d;
+  mqc->a -= (*mqc->curctx)->qeval;
+  if ((mqc->c >> 16) < (*mqc->curctx)->qeval) {
+    d = mqc_lpsexchange(mqc);
+    mqc_renormd(mqc);
+  } else {
+    mqc->c -= (*mqc->curctx)->qeval << 16;
+    if ((mqc->a & 0x8000) == 0) {
+      d = mqc_mpsexchange(mqc);
+      mqc_renormd(mqc);
     } else {
-      d = (*mqc_curctx)->mps;
+      d = (*mqc->curctx)->mps;
     }
   }
+
   return d;
 }
 
-/* <summary> */
-/* Reset states of all contexts. */
-/* </summary> */
-void mqc_resetstates()
-{
+void mqc_resetstates(opj_mqc_t *mqc) {
   int i;
   for (i = 0; i < MQC_NUMCTXS; i++) {
-    mqc_ctxs[i] = mqc_states;
+    mqc->ctxs[i] = mqc_states;
   }
 }
 
-/* <summary> */
-/* Set the state for a context. */
-/* </summary> */
-/* <param name="ctxno">Context number</param> */
-/* <param name="msb">Most significant bit</param> */
-/* <param name="prob">Index to the probability of symbols</param> */
-void mqc_setstate(int ctxno, int msb, int prob)
-{
-  mqc_ctxs[ctxno] = &mqc_states[msb + (prob << 1)];
+void mqc_setstate(opj_mqc_t *mqc, int ctxno, int msb, int prob) {
+  mqc->ctxs[ctxno] = &mqc_states[msb + (prob << 1)];
 }
+
+

@@ -1,7 +1,9 @@
 /*
- * Copyright (c) 2001-2002, David Janssens
- * Copyright (c) 2003, Yannick Verschueren
- * Copyright (c) 2003,  Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
+ * Copyright (c) 2001-2003, David Janssens
+ * Copyright (c) 2002-2003, Yannick Verschueren
+ * Copyright (c) 2003-2005, Francois Devaux and Antonin Descampe
+ * Copyright (c) 2005, Hervé Drolon, FreeImage Team
+ * Copyright (c) 2002-2005, Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,50 +28,128 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+
 #ifndef __BIO_H
 #define __BIO_H
+/** 
+@file bio.h
+@brief Implementation of an individual bit input-output (BIO)
 
-/*
- * Number of bytes written.
- */
-int bio_numbytes();
+The functions in BIO.C have for goal to realize an individual bit input - output.
+*/
 
-/*
- * Init encoder.
- *
- * bp  : Output buffer
- * len : Output buffer length 
- */
-void bio_init_enc(unsigned char *bp, int len);
+/** @defgroup BIO BIO - Individual bit input-output stream */
+/*@{*/
 
-/*
- * Init decoder.
- *
- * bp  : Input buffer
- * len : Input buffer length
- */
-void bio_init_dec(unsigned char *bp, int len);
+/**
+Individual bit input-output stream (BIO)
+*/
+typedef struct opj_bio {
+  /** pointer to the start of the buffer */
+  unsigned char *start;
+  /** pointer to the end of the buffer */
+  unsigned char *end;
+  /** pointer to the present position in the buffer */
+  unsigned char *bp;
+  /** temporary place where each byte is read or written */
+  unsigned int buf;
+  /** coder : number of bits free to write. decoder : number of bits read */
+  int ct;
+} opj_bio_t;
 
-/*
- * Write bits.
- *
- * v  : Value of bits
- * n  : Number of bits to write
- */
-void bio_write(int v, int n);
+/** @name Local static functions */
+/*@{*/
+/* ----------------------------------------------------------------------- */
+/**
+Write a bit
+@param bio BIO handle
+@param b Bit to write (0 or 1)
+*/
+static void bio_putbit(opj_bio_t *bio, int b);
+/**
+Read a bit
+@param bio BIO handle
+@return Returns the read bit
+*/
+static int bio_getbit(opj_bio_t *bio);
+/**
+Write a byte
+@param bio BIO handle
+@return Returns 0 if successful, returns 1 otherwise
+*/
+static int bio_byteout(opj_bio_t *bio);
+/**
+Read a byte
+@param bio BIO handle
+@return Returns 0 if successful, returns 1 otherwise
+*/
+static int bio_bytein(opj_bio_t *bio);
+/* ----------------------------------------------------------------------- */
+/*@}*/
 
-/*
- * Read bits. 
- *
- * n : Number of bits to read 
- */
-int bio_read(int n);
+/** @name Exported functions */
+/*@{*/
+/* ----------------------------------------------------------------------- */
+/**
+Create a new BIO handle 
+@return Returns a new BIO handle if successful, returns NULL otherwise
+*/
+opj_bio_t* bio_create();
+/**
+Destroy a previously created BIO handle
+@param bio BIO handle to destroy
+*/
+void bio_destroy(opj_bio_t *bio);
+/**
+Number of bytes written.
+@param bio BIO handle
+@return Returns the number of bytes written
+*/
+int bio_numbytes(opj_bio_t *bio);
+/**
+Init encoder
+@param bio BIO handle
+@param bp Output buffer
+@param len Output buffer length 
+*/
+void bio_init_enc(opj_bio_t *bio, unsigned char *bp, int len);
+/**
+Init decoder
+@param bio BIO handle
+@param bp Input buffer
+@param len Input buffer length 
+*/
+void bio_init_dec(opj_bio_t *bio, unsigned char *bp, int len);
+/**
+Write bits
+@param bio BIO handle
+@param v Value of bits
+@param n Number of bits to write
+*/
+void bio_write(opj_bio_t *bio, int v, int n);
+/**
+Read bits
+@param bio BIO handle
+@param n Number of bits to read 
+@return Returns the corresponding read number
+*/
+int bio_read(opj_bio_t *bio, int n);
+/**
+Flush bits
+@param bio BIO handle
+@return Returns 1 if successful, returns 0 otherwise
+*/
+int bio_flush(opj_bio_t *bio);
+/**
+Passes the ending bits (coming from flushing)
+@param bio BIO handle
+@return Returns 1 if successful, returns 0 otherwise
+*/
+int bio_inalign(opj_bio_t *bio);
+/* ----------------------------------------------------------------------- */
+/*@}*/
 
-/*
- * Flush bits. Modified to eliminate longjmp !!
- */
-int bio_flush();
+/*@}*/
 
-int bio_inalign();		/* modified to eliminated longjmp !! */
+#endif /* __BIO_H */
 
-#endif

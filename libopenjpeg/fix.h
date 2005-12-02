@@ -1,5 +1,9 @@
 /*
- * Copyright (c) 2001-2002, David Janssens
+ * Copyright (c) 2001-2003, David Janssens
+ * Copyright (c) 2002-2003, Yannick Verschueren
+ * Copyright (c) 2003-2005, Francois Devaux and Antonin Descampe
+ * Copyright (c) 2005, Hervé Drolon, FreeImage Team
+ * Copyright (c) 2002-2005, Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,7 +31,24 @@
 
 #ifndef __FIX_H
 #define __FIX_H
+/**
+@file fix.h
+@brief Implementation of operations of specific multiplication (FIX)
 
+The functions in FIX.C have for goal to realize specific multiplication.
+*/
+
+/** @defgroup FIX FIX - Implementation of operations of specific multiplication */
+/*@{*/
+
+/**
+Multiply two fixed-precision rational numbers.
+@param a
+@param b
+@return Returns a * b
+*/
 int fix_mul(int a, int b);
 
-#endif
+/*@}*/
+
+#endif /* __FIX_H */

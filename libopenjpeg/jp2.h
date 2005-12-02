@@ -1,6 +1,7 @@
 /*
- * Copyright (c) 2003, Yannick Verschueren
- * Copyright (c) 2003,  Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
+ * Copyright (c) 2004, Yannick Verschueren
+ * Copyright (c) 2005, Hervé Drolon, FreeImage Team
+ * Copyright (c) 2002-2005, Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,16 +27,47 @@
  */
 #ifndef __JP2_H
 #define __JP2_H
+/**
+@file jp2.h
+@brief The JPEG-2000 file format Reader/Writer (JP2)
 
-#include "j2k.h"
+*/
 
-typedef struct {
-  int depth;		  
-  int sgnd;		   
+/** @defgroup JP2 JP2 - JPEG-2000 file format reader/writer */
+/*@{*/
+
+#define JPIP_JPIP 0x6a706970
+
+#define JP2_JP   0x6a502020   /**< JPEG 2000 signature box */
+#define JP2_FTYP 0x66747970   /**< File type box */
+#define JP2_JP2H 0x6a703268   /**< JP2 header box */
+#define JP2_IHDR 0x69686472   /**< Image header box */
+#define JP2_COLR 0x636f6c72   /**< Colour specification box */
+#define JP2_JP2C 0x6a703263   /**< Contiguous codestream box */
+#define JP2_URL  0x75726c20   /**< URL box */
+#define JP2_DBTL 0x6474626c   /**< ??? */
+#define JP2_BPCC 0x62706363   /**< Bits per component box */
+#define JP2_JP2  0x6a703220   /**< File type fields */
+
+/* ----------------------------------------------------------------------- */
+
+/** 
+JP2 component
+*/
+typedef struct opj_jp2_comps {
+  int depth;      
+  int sgnd;      
   int bpcc;
-} jp2_comps_t;
+} opj_jp2_comps_t;
 
-typedef struct {
+/**
+JPEG-2000 file format reader/writer
+*/
+typedef struct opj_jp2 {
+  /** codec context */
+  opj_common_ptr cinfo;
+  /** handle to the J2K codec  */
+  opj_j2k_t *j2k;
   unsigned int w;
   unsigned int h;
   unsigned int numcomps;
@@ -51,68 +83,151 @@ typedef struct {
   unsigned int minversion;
   unsigned int numcl;
   unsigned int *cl;
-  jp2_comps_t *comps;
-  j2k_image_t *image;
+  opj_jp2_comps_t *comps;
+  opj_image_t *image;
   unsigned int j2k_codestream_offset;
-  unsigned int j2k_codestream_len;
-} jp2_struct_t;
+  unsigned int j2k_codestream_length;
+} opj_jp2_t;
 
-typedef struct {
+/**
+JP2 Box
+*/
+typedef struct opj_jp2_box {
   int length;
   int type;
   int init_pos;
-} jp2_box_t;
+} opj_jp2_box_t;
 
-/* int jp2_init_stdjp2(jp2_struct_t * jp2_struct, j2k_image_t * img); 
- *
- * Create a standard jp2_structure
- * jp2_struct: the structure you are creating
- * img: a j2k_image_t wich will help you to create the jp2_structure
- */
-int jp2_init_stdjp2(jp2_struct_t * jp2_struct);
+/** @name Local static functions */
+/*@{*/
+/* ----------------------------------------------------------------------- */
+/**
+Read box headers
+@param cinfo Codec context info
+@param cio Input stream
+@param box
+@return Returns true if successful, returns false otherwise
+*/
+static bool jp2_read_boxhdr(opj_common_ptr cinfo, opj_cio_t *cio, opj_jp2_box_t *box);
+static void jp2_write_url(opj_cio_t *cio, char *Idx_file);
+/**
+Read the IHDR box - Image Header box
+@param jp2 JP2 handle
+@param cio Input buffer stream
+@return Returns true if successful, returns false otherwise
+*/
+static bool jp2_read_ihdr(opj_jp2_t *jp2, opj_cio_t *cio);
+static void jp2_write_ihdr(opj_jp2_t *jp2, opj_cio_t *cio);
+static void jp2_write_bpcc(opj_jp2_t *jp2, opj_cio_t *cio);
+static bool jp2_read_bpcc(opj_jp2_t *jp2, opj_cio_t *cio);
+static void jp2_write_colr(opj_jp2_t *jp2, opj_cio_t *cio);
+static bool jp2_read_colr(opj_jp2_t *jp2, opj_cio_t *cio);
+/**
+Write the JP2H box - JP2 Header box
+@param jp2 JP2 handle
+@param cio Output buffer stream
+*/
+static void jp2_write_jp2h(opj_jp2_t *jp2, opj_cio_t *cio);
+/**
+Read the JP2H box - JP2 Header box
+@param jp2 JP2 handle
+@param cio Input buffer stream
+@return Returns true if successful, returns false otherwise
+*/
+static bool jp2_read_jp2h(opj_jp2_t *jp2, opj_cio_t *cio);
+/**
+Write the FTYP box - File type box
+@param jp2 JP2 handle
+@param cio Output buffer stream
+*/
+static void jp2_write_ftyp(opj_jp2_t *jp2, opj_cio_t *cio);
+/**
+Read the FTYP box - File type box
+@param jp2 JP2 handle
+@param cio Input buffer stream
+@return Returns true if successful, returns false otherwise
+*/
+static bool jp2_read_ftyp(opj_jp2_t *jp2, opj_cio_t *cio);
+static int jp2_write_jp2c(opj_jp2_t *jp2, opj_cio_t *cio, char *index);
+static bool jp2_read_jp2c(opj_jp2_t *jp2, opj_cio_t *cio, unsigned int *j2k_codestream_length, unsigned int *j2k_codestream_offset);
+static void jp2_write_jp(opj_cio_t *cio);
+/**
+Read the JP box - JPEG 2000 signature
+@param jp2 JP2 handle
+@param cio Input buffer stream
+@return Returns true if successful, returns false otherwise
+*/
+static bool jp2_read_jp(opj_jp2_t *jp2, opj_cio_t *cio);
+/**
+Decode the structure of a JP2 file
+@param jp2 JP2 handle
+@param cio Input buffer stream
+@return Returns true if successful, returns false otherwise
+*/
+static bool jp2_read_struct(opj_jp2_t *jp2, opj_cio_t *cio);
+/* ----------------------------------------------------------------------- */
+/*@}*/
 
-/* int jp2_write_jp2c(int j2k_len, int *j2k_codestream_offset, char *j2k_codestream)
- *
- * Write the jp2c codestream box 
- * j2k_len: the j2k codestream length
- * j2k_codestream_offset: the function will return the j2k codestream offset
- * j2k_codestream: the j2k codestream to include in jp2 file
- */
-int jp2_write_jp2c(int j2k_len, int *j2k_codestream_offset, char *j2k_codestream);
+/** @name Exported functions */
+/*@{*/
+/* ----------------------------------------------------------------------- */
+/**
+Creates a JP2 decompression structure
+@param cinfo Codec context info
+@return Returns a handle to a JP2 decompressor if successful, returns NULL otherwise
+*/
+opj_jp2_t* jp2_create_decompress(opj_common_ptr cinfo);
+/**
+Destroy a JP2 decompressor handle
+@param jp2 JP2 decompressor handle to destroy
+*/
+void jp2_destroy_decompress(opj_jp2_t *jp2);
+/**
+Setup the decoder decoding parameters using user parameters.
+Decoding parameters are returned in jp2->j2k->cp. 
+@param jp2 JP2 decompressor handle
+@param parameters decompression parameters
+*/
+void jp2_setup_decoder(opj_jp2_t *jp2, opj_dparameters_t *parameters);
+/**
+Decode an image from a JPEG-2000 file stream
+@param jp2 JP2 decompressor handle
+@param cio Input buffer stream
+@return Returns a decoded image if successful, returns NULL otherwise
+*/
+opj_image_t* jp2_decode(opj_jp2_t *jp2, opj_cio_t *cio);
+/**
+Creates a JP2 compression structure
+@param cinfo Codec context info
+@return Returns a handle to a JP2 compressor if successful, returns NULL otherwise
+*/
+opj_jp2_t* jp2_create_compress(opj_common_ptr cinfo);
+/**
+Destroy a JP2 compressor handle
+@param jp2 JP2 compressor handle to destroy
+*/
+void jp2_destroy_compress(opj_jp2_t *jp2);
+/**
+Setup the encoder parameters using the current image and using user parameters. 
+Coding parameters are returned in jp2->j2k->cp. 
+@param jp2 JP2 compressor handle
+@param parameters compression parameters
+@param image input filled image
+*/
+void jp2_setup_encoder(opj_jp2_t *jp2, opj_cparameters_t *parameters, opj_image_t *image);
+/**
+Encode an image into a JPEG-2000 file stream
+@param jp2 JP2 compressor handle
+@param cio Output buffer stream
+@param image Image to encode
+@param index Name of the index file if required, NULL otherwise
+@return Returns true if successful, returns false otherwise
+*/
+bool jp2_encode(opj_jp2_t *jp2, opj_cio_t *cio, opj_image_t *image, char *index);
+/* ----------------------------------------------------------------------- */
+/*@}*/
 
-/* int jp2_write_jp2h(jp2_struct_t * jp2_struct);
- *
- * Write the jp2h header box 
- * jp2_struct: the jp2 structure you are working with
- */
-void jp2_write_jp2h(jp2_struct_t * jp2_struct);
+/*@}*/
 
-/* int jp2_read_jp2h(jp2_struct_t * jp2_struct);
- *
- * Read the jp2h header box 
- * jp2_struct: the jp2 structure you are working with
- */
-int jp2_read_jp2h(jp2_struct_t * jp2_struct);
+#endif /* __JP2_H */
 
-/* int jp2_wrap_j2k(jp2_struct_t * jp2_struct, char *j2k_codestream, 
-	  int j2k_len, char *output)
- *
- * Wrap a J2K codestream in a JP2 file
- * jp2_struct: the jp2 structure used to create jp2 boxes
- * j2k_codestream: the j2k codestream to include in jp2 file
- * output: pointer to jp2 codestream that will be created
- */
-int jp2_wrap_j2k(jp2_struct_t * jp2_struct, char *j2k_codestream, 
-		  char *output);
-
-
-/* int jp2_read_struct(unsigned char *src, jp2_struct_t * jp2_struct);
- *
- * Decode the structure of a JP2 file
- * src: pointer to memory where compressed data is stored
- * jp2_struct: the jp2 structure that will be created 
- * len: length of jp2 codestream
- */
-int jp2_read_struct(unsigned char *src, jp2_struct_t * jp2_struct, int len);
-
-#endif
