@@ -25,4 +25,5 @@
 # can be useful for creating a module that consists of many directories
 # spread out over the entire source repository.
 
-openjpeg -l . &libopenjpeg &codec
+opj-base -l . 
+openjpeg &opj-base &libopenjpeg &codec
