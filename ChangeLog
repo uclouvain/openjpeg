@@ -5,4 +5,7 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
-December 5, 2005 - 1.0.0
+December 8, 2005 - 1.1.1
+* [Antonin Descampe] fixed a bug in t1_getwmsedec (stepsize was divided by 8192)
+
+December 5, 2005 - 1.1.0

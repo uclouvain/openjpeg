@@ -511,7 +511,7 @@ static double t1_getwmsedec(int nmsedec, int compno, int level, int orient, int 
 		w1 = (numcomps > 1) ? mct_getnorm_real(compno) : 1;
 		w2 = dwt_getnorm_real(level, orient);
 	}
-	wmsedec = w1 * w2 * (stepsize / 8192.0) * (1 << bpno);
+	wmsedec = w1 * w2 * stepsize * (1 << bpno);
 	wmsedec *= wmsedec * nmsedec / 8192.0;
 	
 	return wmsedec;
