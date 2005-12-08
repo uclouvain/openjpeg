@@ -23,8 +23,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-
-
 #ifndef OPJ_INCLUDES_H
 #define OPJ_INCLUDES_H
 
@@ -33,7 +31,6 @@
    Standard includes used by the library
  ==========================================================
 */
-#include <setjmp.h>
 #include <memory.h>
 #include <stdlib.h>
 #include <string.h>
@@ -42,6 +39,7 @@
 #include <time.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <ctype.h>
 
 /*
  ==========================================================

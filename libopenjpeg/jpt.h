@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2004, Yannick Verschueren
- * Copyright (c) 2005, HervŽ Drolon, FreeImage Team
+ * Copyright (c) 2005, Hervé Drolon, FreeImage Team
  * Copyright (c) 2002-2005, Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
  * All rights reserved.
  *
@@ -39,20 +39,20 @@ JPT-stream functions are implemented in J2K.C.
 Message Header JPT stream structure
 */
 typedef struct opj_jpt_msg_header {
-  /** In-class Identifier */
-  unsigned int Id;
-  /** Last byte information */
-  unsigned int last_byte; 
-  /** Class Identifier */
-  unsigned int Class_Id;  
-  /** CSn : index identifier */
-  unsigned int CSn_Id;
-  /** Message offset */
-  unsigned int Msg_offset;
-  /** Message length */
-  unsigned int Msg_length;
-  /** Auxiliary for JPP case */
-  unsigned int Layer_nb;
+	/** In-class Identifier */
+	unsigned int Id;
+	/** Last byte information */
+	unsigned int last_byte;	
+	/** Class Identifier */
+	unsigned int Class_Id;	
+	/** CSn : index identifier */
+	unsigned int CSn_Id;
+	/** Message offset */
+	unsigned int Msg_offset;
+	/** Message length */
+	unsigned int Msg_length;
+	/** Auxiliary for JPP case */
+	unsigned int Layer_nb;
 } opj_jpt_msg_header_t;
 
 /* ----------------------------------------------------------------------- */

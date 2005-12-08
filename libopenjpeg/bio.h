@@ -2,7 +2,7 @@
  * Copyright (c) 2001-2003, David Janssens
  * Copyright (c) 2002-2003, Yannick Verschueren
  * Copyright (c) 2003-2005, Francois Devaux and Antonin Descampe
- * Copyright (c) 2005, HervŽ Drolon, FreeImage Team
+ * Copyright (c) 2005, Hervé Drolon, FreeImage Team
  * Copyright (c) 2002-2005, Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
  * All rights reserved.
  *
@@ -28,7 +28,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #ifndef __BIO_H
 #define __BIO_H
 /** 
@@ -45,47 +44,17 @@ The functions in BIO.C have for goal to realize an individual bit input - output
 Individual bit input-output stream (BIO)
 */
 typedef struct opj_bio {
-  /** pointer to the start of the buffer */
-  unsigned char *start;
-  /** pointer to the end of the buffer */
-  unsigned char *end;
-  /** pointer to the present position in the buffer */
-  unsigned char *bp;
-  /** temporary place where each byte is read or written */
-  unsigned int buf;
-  /** coder : number of bits free to write. decoder : number of bits read */
-  int ct;
+	/** pointer to the start of the buffer */
+	unsigned char *start;
+	/** pointer to the end of the buffer */
+	unsigned char *end;
+	/** pointer to the present position in the buffer */
+	unsigned char *bp;
+	/** temporary place where each byte is read or written */
+	unsigned int buf;
+	/** coder : number of bits free to write. decoder : number of bits read */
+	int ct;
 } opj_bio_t;
-
-/** @name Local static functions */
-/*@{*/
-/* ----------------------------------------------------------------------- */
-/**
-Write a bit
-@param bio BIO handle
-@param b Bit to write (0 or 1)
-*/
-static void bio_putbit(opj_bio_t *bio, int b);
-/**
-Read a bit
-@param bio BIO handle
-@return Returns the read bit
-*/
-static int bio_getbit(opj_bio_t *bio);
-/**
-Write a byte
-@param bio BIO handle
-@return Returns 0 if successful, returns 1 otherwise
-*/
-static int bio_byteout(opj_bio_t *bio);
-/**
-Read a byte
-@param bio BIO handle
-@return Returns 0 if successful, returns 1 otherwise
-*/
-static int bio_bytein(opj_bio_t *bio);
-/* ----------------------------------------------------------------------- */
-/*@}*/
 
 /** @name Exported functions */
 /*@{*/

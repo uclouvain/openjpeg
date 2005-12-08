@@ -2,7 +2,7 @@
  * Copyright (c) 2001-2003, David Janssens
  * Copyright (c) 2002-2003, Yannick Verschueren
  * Copyright (c) 2003-2005, Francois Devaux and Antonin Descampe
- * Copyright (c) 2005, HervŽ Drolon, FreeImage Team
+ * Copyright (c) 2005, Hervé Drolon, FreeImage Team
  * Copyright (c) 2002-2005, Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
  * All rights reserved.
  *
@@ -27,7 +27,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-
 #ifndef __T2_H
 #define __T2_H
 /**
@@ -43,61 +42,14 @@
 Tier-2 coding
 */
 typedef struct opj_t2 {
-  /** codec context */
-  opj_common_ptr cinfo;
+	/** codec context */
+	opj_common_ptr cinfo;
 
-  /** Encoding: pointer to the src image. Decoding: pointer to the dst image. */
-  opj_image_t *image;
-  /** pointer to the image coding parameters */
-  opj_cp_t *cp;
+	/** Encoding: pointer to the src image. Decoding: pointer to the dst image. */
+	opj_image_t *image;
+	/** pointer to the image coding parameters */
+	opj_cp_t *cp;
 } opj_t2_t;
-
-/** @name Local static functions */
-/*@{*/
-/* ----------------------------------------------------------------------- */
-
-static void t2_putcommacode(opj_bio_t *bio, int n);
-static int t2_getcommacode(opj_bio_t *bio);
-/**
-Variable length code for signalling delta Zil (truncation point)
-@param bio Bit Input/Output component
-@param n delta Zil
-*/
-static void t2_putnumpasses(opj_bio_t *bio, int n);
-static int t2_getnumpasses(opj_bio_t *bio);
-/**
-Encode a packet of a tile to a destination buffer
-@param t2 T2 handle
-@param tile Tile for which to write the packets
-@param tcp Tile coding parameters
-@param pi Packet identity
-@param dest Destination buffer
-@param len Length of the destination buffer
-@param image_info Structure to create an index file
-@param tileno Number of the tile encoded
-@return 
-*/
-static int t2_encode_packet(opj_t2_t* t2, opj_tcd_tile_t *tile, opj_tcp_t *tcp, opj_pi_iterator_t *pi, unsigned char *dest, int len, opj_image_info_t *image_info, int tileno);
-/**
-@param seg
-@param cblksty
-@param first
-*/
-static void t2_init_seg(opj_tcd_seg_t *seg, int cblksty, int first);
-/**
-Decode a packet of a tile from a source buffer
-@param t2 T2 handle
-@param src Source buffer
-@param len Length of the source buffer
-@param tile Tile for which to write the packets
-@param tcp Tile coding parameters
-@param pi Packet identity
-@return 
-*/
-int t2_decode_packet(opj_t2_t* t2, unsigned char *src, int len, opj_tcd_tile_t *tile, opj_tcp_t *tcp, opj_pi_iterator_t *pi);
-
-/* ----------------------------------------------------------------------- */
-/*@}*/
 
 /** @name Exported functions */
 /*@{*/

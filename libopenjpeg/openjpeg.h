@@ -2,7 +2,7 @@
  * Copyright (c) 2001-2003, David Janssens
  * Copyright (c) 2002-2003, Yannick Verschueren
  * Copyright (c) 2003-2005, Francois Devaux and Antonin Descampe
- * Copyright (c) 2005, HervŽ Drolon, FreeImage Team
+ * Copyright (c) 2005, Hervé Drolon, FreeImage Team
  * Copyright (c) 2002-2005, Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
  * All rights reserved.
  *
@@ -27,10 +27,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-
-
 #ifndef OPENJPEG_H
 #define OPENJPEG_H
+
+#define OPENJPEG_VERSION "1.0.0"
 
 /* 
 ==========================================================
@@ -51,13 +51,13 @@ The C language implementation does not provide the standard header file
 braindamage below.
 */
 #if !defined(bool)
-#define bool  int
+#define	bool	int
 #endif
 #if !defined(true)
-#define true  1
+#define true	1
 #endif
 #if !defined(false)
-#define false 0
+#define	false	0
 #endif
 #endif
 #endif /* __cplusplus */
@@ -69,11 +69,11 @@ braindamage below.
 */
 
 #ifndef MAX_PATH
-#define MAX_PATH 260  /**< Maximum allowed size for filenames */
+#define MAX_PATH 260	/**< Maximum allowed size for filenames */
 #endif /* MAX_PATH */
 
-#define J2K_MAXRLVLS 33         /**< Number of maximum resolution level authorized */
-#define J2K_MAXBANDS (3*J2K_MAXRLVLS-2) /**< Number of maximum sub-band linked to number of resolution level */
+#define J2K_MAXRLVLS 33					/**< Number of maximum resolution level authorized */
+#define J2K_MAXBANDS (3*J2K_MAXRLVLS-2)	/**< Number of maximum sub-band linked to number of resolution level */
 
 /* 
 ==========================================================
@@ -83,32 +83,32 @@ braindamage below.
 
 /** Progression order */
 typedef enum PROG_ORDER {
-  PROG_UNKNOWN = -1,  /**< place-holder */
-  LRCP = 0,   /**< layer-resolution-component-precinct order */
-  RLCP = 1,   /**< resolution-layer-component-precinct order */
-  RPCL = 2,   /**< resolution-precinct-component-layer order */
-  PCRL = 3,   /**< precinct-component-resolution-layer order */
-  CPRL = 4    /**< component-precinct-resolution-layer order */
+	PROG_UNKNOWN = -1,	/**< place-holder */
+	LRCP = 0,		/**< layer-resolution-component-precinct order */
+	RLCP = 1,		/**< resolution-layer-component-precinct order */
+	RPCL = 2,		/**< resolution-precinct-component-layer order */
+	PCRL = 3,		/**< precinct-component-resolution-layer order */
+	CPRL = 4		/**< component-precinct-resolution-layer order */
 } OPJ_PROG_ORDER;
 
 /**
 Supported image color spaces
 */
 typedef enum COLOR_SPACE {
-  CLRSPC_UNKNOWN = -1,  /**< place-holder */
-  CLRSPC_SRGB = 1,    /**< sRGB */
-  CLRSPC_GRAY = 2,    /**< grayscale */
-  CLRSPC_SYCC = 3     /**< YUV */
+	CLRSPC_UNKNOWN = -1,	/**< place-holder */
+	CLRSPC_SRGB = 1,		/**< sRGB */
+	CLRSPC_GRAY = 2,		/**< grayscale */
+	CLRSPC_SYCC = 3			/**< YUV */
 } OPJ_COLOR_SPACE;
 
 /**
 Supported codec
 */
 typedef enum CODEC_FORMAT {
-  CODEC_UNKNOWN = -1, /**< place-holder */
-  CODEC_J2K = 0,    /**< JPEG-2000 codestream : read/write */
-  CODEC_JPT = 1,    /**< JPT-stream (JPEG 2000, JPIP) : read only */
-  CODEC_JP2 = 2   /**< JPEG-2000 file format : read/write */
+	CODEC_UNKNOWN = -1,	/**< place-holder */
+	CODEC_J2K = 0,		/**< JPEG-2000 codestream : read/write */
+	CODEC_JPT = 1,		/**< JPT-stream (JPEG 2000, JPIP) : read only */
+	CODEC_JP2 = 2		/**< JPEG-2000 file format : read/write */
 } OPJ_CODEC_FORMAT;
 
 /* 
@@ -134,12 +134,12 @@ used for
 </ul>
 */
 typedef struct opj_event_mgr {
-  /** Error message callback if available, NULL otherwise */
-  opj_msg_callback error_handler;
-  /** Warning message callback if available, NULL otherwise */
-  opj_msg_callback warning_handler;
-  /** Debug message callback if available, NULL otherwise */
-  opj_msg_callback info_handler;
+	/** Error message callback if available, NULL otherwise */
+	opj_msg_callback error_handler;
+	/** Warning message callback if available, NULL otherwise */
+	opj_msg_callback warning_handler;
+	/** Debug message callback if available, NULL otherwise */
+	opj_msg_callback info_handler;
 } opj_event_mgr_t;
 
 
@@ -164,135 +164,135 @@ typedef struct opj_poc {
 Compression parameters
 */
 typedef struct opj_cparameters {
-  /** size of tile: tile_size_on = false (not in argument) or = true (in argument) */
-  bool tile_size_on;
-  /** XTOsiz */
-  int cp_tx0;
-  /** YTOsiz */
-  int cp_ty0;
-  /** XTsiz */
-  int cp_tdx;
-  /** YTsiz */
-  int cp_tdy;
-  /** allocation by rate/distortion */
-  int cp_disto_alloc;
-  /** allocation by fixed layer */
-  int cp_fixed_alloc;
-  /** add fixed_quality */
-  int cp_fixed_quality;
-  /** fixed layer */
-  int *cp_matrice;
-  /** comment for coding */
-  char *cp_comment;
-  /** csty : coding style */
-  int csty;
-  /** progression order (default LRCP) */
-  OPJ_PROG_ORDER prog_order;
-  /** progression order changes */
-  opj_poc_t POC[32];
-  /** number of progression order changes (POC), default to 0 */
-  int numpocs;
-  /** number of layers */
-  int tcp_numlayers;
-  /** rates of layers */
-  int tcp_rates[100];
-  /** different psnr for successive layers */
-  float tcp_distoratio[100];
-  /** number of resolutions */
-  int numresolution;
-  /** initial code block width, default to 64 */
-  int cblockw_init;
-  /** initial code block height, default to 64 */
-  int cblockh_init;
-  /** mode switch (cblk_style) */
-  int mode;
-  /** 1 : use the irreversible DWT 9-7, 0 : use lossless compression (default) */
-  int irreversible;
-  /** region of interest: affected component in [0..3], -1 means no ROI */
-  int roi_compno;
-  /** region of interest: upshift value */
-  int roi_shift;
-  /* number of precinct size specifications */
-  int res_spec;
-  /** initial precinct width */
-  int prcw_init[J2K_MAXRLVLS];
-  /** initial precinct height */
-  int prch_init[J2K_MAXRLVLS];
+	/** size of tile: tile_size_on = false (not in argument) or = true (in argument) */
+	bool tile_size_on;
+	/** XTOsiz */
+	int cp_tx0;
+	/** YTOsiz */
+	int cp_ty0;
+	/** XTsiz */
+	int cp_tdx;
+	/** YTsiz */
+	int cp_tdy;
+	/** allocation by rate/distortion */
+	int cp_disto_alloc;
+	/** allocation by fixed layer */
+	int cp_fixed_alloc;
+	/** add fixed_quality */
+	int cp_fixed_quality;
+	/** fixed layer */
+	int *cp_matrice;
+	/** comment for coding */
+	char *cp_comment;
+	/** csty : coding style */
+	int csty;
+	/** progression order (default LRCP) */
+	OPJ_PROG_ORDER prog_order;
+	/** progression order changes */
+	opj_poc_t POC[32];
+	/** number of progression order changes (POC), default to 0 */
+	int numpocs;
+	/** number of layers */
+	int tcp_numlayers;
+	/** rates of layers */
+	int tcp_rates[100];
+	/** different psnr for successive layers */
+	float tcp_distoratio[100];
+	/** number of resolutions */
+	int numresolution;
+	/** initial code block width, default to 64 */
+ 	int cblockw_init;
+	/** initial code block height, default to 64 */
+	int cblockh_init;
+	/** mode switch (cblk_style) */
+	int mode;
+	/** 1 : use the irreversible DWT 9-7, 0 : use lossless compression (default) */
+	int irreversible;
+	/** region of interest: affected component in [0..3], -1 means no ROI */
+	int roi_compno;
+	/** region of interest: upshift value */
+	int roi_shift;
+	/* number of precinct size specifications */
+	int res_spec;
+	/** initial precinct width */
+	int prcw_init[J2K_MAXRLVLS];
+	/** initial precinct height */
+	int prch_init[J2K_MAXRLVLS];
 
-  /**@name command line encoder parameters (not used inside the library) */
-  /*@{*/
-  /** input file name */
-  char infile[MAX_PATH];
-  /** output file name */
-  char outfile[MAX_PATH];
-  /** creation of an index file, default to 0 (false) */
-  int index_on;
-  /** index file name */
-  char index[MAX_PATH];
-  /** subimage encoding: origin image offset in x direction */
-  int image_offset_x0;
-  /** subimage encoding: origin image offset in y direction */
-  int image_offset_y0;
-  /** subsampling value for dx */
-  int subsampling_dx;
-  /** subsampling value for dy */
-  int subsampling_dy;
-  /** input file format 0: PGX, 1: PxM, 2: BMP */
-  int decod_format;
-  /** output file format 0: J2K, 1: JP2, 2: JPT */
-  int cod_format;
-  /*@}*/
+	/**@name command line encoder parameters (not used inside the library) */
+	/*@{*/
+	/** input file name */
+	char infile[MAX_PATH];
+	/** output file name */
+	char outfile[MAX_PATH];
+	/** creation of an index file, default to 0 (false) */
+	int index_on;
+	/** index file name */
+	char index[MAX_PATH];
+	/** subimage encoding: origin image offset in x direction */
+	int image_offset_x0;
+	/** subimage encoding: origin image offset in y direction */
+	int image_offset_y0;
+	/** subsampling value for dx */
+	int subsampling_dx;
+	/** subsampling value for dy */
+	int subsampling_dy;
+	/** input file format 0: PGX, 1: PxM, 2: BMP */
+	int decod_format;
+	/** output file format 0: J2K, 1: JP2, 2: JPT */
+	int cod_format;
+	/*@}*/
 } opj_cparameters_t;
 
 /**
 Decompression parameters
 */
 typedef struct opj_dparameters {
-  /** 
-  Set the number of highest resolution levels to be discarded. 
-  The image resolution is effectively divided by 2 to the power of the number of discarded levels. 
-  The reduce factor is limited by the smallest total number of decomposition levels among tiles.
-  if != 0, then original dimension divided by 2^(reduce); 
-  if == 0 or not used, image is decoded to the full resolution 
-  */
-  int cp_reduce;
-  /** 
-  Set the maximum number of quality layers to decode. 
-  If there are less quality layers than the specified number, all the quality layers are decoded.
-  if != 0, then only the first "layer" layers are decoded; 
-  if == 0 or not used, all the quality layers are decoded 
-  */
-  int cp_layer;
+	/** 
+	Set the number of highest resolution levels to be discarded. 
+	The image resolution is effectively divided by 2 to the power of the number of discarded levels. 
+	The reduce factor is limited by the smallest total number of decomposition levels among tiles.
+	if != 0, then original dimension divided by 2^(reduce); 
+	if == 0 or not used, image is decoded to the full resolution 
+	*/
+	int cp_reduce;
+	/** 
+	Set the maximum number of quality layers to decode. 
+	If there are less quality layers than the specified number, all the quality layers are decoded.
+	if != 0, then only the first "layer" layers are decoded; 
+	if == 0 or not used, all the quality layers are decoded 
+	*/
+	int cp_layer;
 
-  /**@name command line encoder parameters (not used inside the library) */
-  /*@{*/
-  /** input file name */
-  char infile[MAX_PATH];
-  /** output file name */
-  char outfile[MAX_PATH];
-  /** input file format 0: J2K, 1: JP2, 2: JPT */
-  int decod_format;
-  /** output file format 0: PGX, 1: PxM, 2: BMP */
-  int cod_format;
-  /*@}*/
+	/**@name command line encoder parameters (not used inside the library) */
+	/*@{*/
+	/** input file name */
+	char infile[MAX_PATH];
+	/** output file name */
+	char outfile[MAX_PATH];
+	/** input file format 0: J2K, 1: JP2, 2: JPT */
+	int decod_format;
+	/** output file format 0: PGX, 1: PxM, 2: BMP */
+	int cod_format;
+	/*@}*/
 } opj_dparameters_t;
 
 /** Common fields between JPEG-2000 compression and decompression master structs. */
 
 #define opj_common_fields \
-  opj_event_mgr_t *event_mgr; /**< pointer to the event manager */\
-  void * client_data;     /**< Available for use by application */\
-  bool is_decompressor;   /**< So common code can tell which is which */\
-  OPJ_CODEC_FORMAT codec_format;  /**< selected codec */\
-  void *j2k_handle;     /**< pointer to the J2K codec */\
-  void *jp2_handle      /**< pointer to the JP2 codec */
-  
+	opj_event_mgr_t *event_mgr;	/**< pointer to the event manager */\
+	void * client_data;			/**< Available for use by application */\
+	bool is_decompressor;		/**< So common code can tell which is which */\
+	OPJ_CODEC_FORMAT codec_format;	/**< selected codec */\
+	void *j2k_handle;			/**< pointer to the J2K codec */\
+	void *jp2_handle			/**< pointer to the JP2 codec */
+	
 /* Routines that are to be used by both halves of the library are declared
  * to receive a pointer to this structure.  There are no actual instances of
  * opj_common_struct_t, only of opj_cinfo_t and opj_dinfo_t.
  */
 typedef struct opj_common_struct {
-  opj_common_fields;    /* Fields common to both master struct types */
+  opj_common_fields;		/* Fields common to both master struct types */
   /* Additional fields follow in an actual opj_cinfo_t or
    * opj_dinfo_t.  All three structs must agree on these
    * initial fields!  (This would be a lot cleaner in C++.)
@@ -305,18 +305,18 @@ typedef opj_common_struct_t * opj_common_ptr;
 Compression context info
 */
 typedef struct opj_cinfo {
-  /** Fields shared with opj_dinfo_t */
-  opj_common_fields;  
-  /* other specific fields go here */
+	/** Fields shared with opj_dinfo_t */
+	opj_common_fields;	
+	/* other specific fields go here */
 } opj_cinfo_t;
 
 /**
 Decompression context info
 */
 typedef struct opj_dinfo {
-  /** Fields shared with opj_cinfo_t */
-  opj_common_fields;  
-  /* other specific fields go here */
+	/** Fields shared with opj_cinfo_t */
+	opj_common_fields;	
+	/* other specific fields go here */
 } opj_dinfo_t;
 
 /* 
@@ -329,7 +329,7 @@ typedef struct opj_dinfo {
  * Stream open flags.
  */
 /** The stream was opened for reading. */
-#define OPJ_STREAM_READ 0x0001
+#define OPJ_STREAM_READ	0x0001
 /** The stream was opened for writing. */
 #define OPJ_STREAM_WRITE 0x0002
 
@@ -337,22 +337,22 @@ typedef struct opj_dinfo {
 Byte input-output stream (CIO)
 */
 typedef struct opj_cio {
-  /** codec context */
-  opj_common_ptr cinfo;
+	/** codec context */
+	opj_common_ptr cinfo;
 
-  /** open mode (read/write) either OPJ_STREAM_READ or OPJ_STREAM_WRITE */
-  int openmode;
-  /** pointer to the start of the buffer */
-  unsigned char *buffer;
-  /** buffer size in bytes */
-  int length;
+	/** open mode (read/write) either OPJ_STREAM_READ or OPJ_STREAM_WRITE */
+	int openmode;
+	/** pointer to the start of the buffer */
+	unsigned char *buffer;
+	/** buffer size in bytes */
+	int length;
 
-  /** pointer to the start of the stream */
-  unsigned char *start;
-  /** pointer to the end of the stream */
-  unsigned char *end;
-  /** pointer to the current position */
-  unsigned char *bp;
+	/** pointer to the start of the stream */
+	unsigned char *start;
+	/** pointer to the end of the stream */
+	unsigned char *end;
+	/** pointer to the current position */
+	unsigned char *bp;
 } opj_cio_t;
 
 /* 
@@ -365,79 +365,88 @@ typedef struct opj_cio {
 Defines a single image component
 */
 typedef struct opj_image_comp {
-  /** XRsiz: horizontal separation of a sample of ith component with respect to the reference grid */
-  int dx;
-  /** YRsiz: vertical separation of a sample of ith component with respect to the reference grid */
-  int dy;
-  /** data width */
-  int w;
-  /** data height */
-  int h;
-  /** x component offset compared to the whole image */
-  int x0;
-  /** y component offset compared to the whole image */
-  int y0;
-  /** precision */
-  int prec;
-  /** image depth in bits */
-  int bpp;
-  /** signed (1) / unsigned (0) */
-  int sgnd;
-  /** number of decoded resolution */
-  int resno_decoded;
-  /** number of division by 2 of the out image compared to the original size of image */
-  int factor;
-  /** image component data */
-  int *data;
+	/** XRsiz: horizontal separation of a sample of ith component with respect to the reference grid */
+	int dx;
+	/** YRsiz: vertical separation of a sample of ith component with respect to the reference grid */
+	int dy;
+	/** data width */
+	int w;
+	/** data height */
+	int h;
+	/** x component offset compared to the whole image */
+	int x0;
+	/** y component offset compared to the whole image */
+	int y0;
+	/** precision */
+	int prec;
+	/** image depth in bits */
+	int bpp;
+	/** signed (1) / unsigned (0) */
+	int sgnd;
+	/** number of decoded resolution */
+	int resno_decoded;
+	/** number of division by 2 of the out image compared to the original size of image */
+	int factor;
+	/** image component data */
+	int *data;
 } opj_image_comp_t;
 
 /** 
 Defines image data and characteristics
 */
 typedef struct opj_image {
-  /** XOsiz: horizontal offset from the origin of the reference grid to the left side of the image area */
-  int x0;
-  /** YOsiz: vertical offset from the origin of the reference grid to the top side of the image area */
-  int y0;
-  /** Xsiz: width of the reference grid */
-  int x1;
-  /** Ysiz: height of the reference grid */
-  int y1;
-  /** number of components in the image */
-  int numcomps;
-  /** color space: sRGB, Greyscale or YUV */
-  OPJ_COLOR_SPACE color_space;
-  /** image components */
-  opj_image_comp_t *comps;
+	/** XOsiz: horizontal offset from the origin of the reference grid to the left side of the image area */
+	int x0;
+	/** YOsiz: vertical offset from the origin of the reference grid to the top side of the image area */
+	int y0;
+	/** Xsiz: width of the reference grid */
+	int x1;
+	/** Ysiz: height of the reference grid */
+	int y1;
+	/** number of components in the image */
+	int numcomps;
+	/** color space: sRGB, Greyscale or YUV */
+	OPJ_COLOR_SPACE color_space;
+	/** image components */
+	opj_image_comp_t *comps;
 } opj_image_t;
 
 /**
 Component parameters structure used by the opj_image_create function
 */
 typedef struct opj_image_comptparm {
-  /** XRsiz: horizontal separation of a sample of ith component with respect to the reference grid */
-  int dx;
-  /** YRsiz: vertical separation of a sample of ith component with respect to the reference grid */
-  int dy;
-  /** data width */
-  int w;
-  /** data height */
-  int h;
-  /** x component offset compared to the whole image */
-  int x0;
-  /** y component offset compared to the whole image */
-  int y0;
-  /** precision */
-  int prec;
-  /** image depth in bits */
-  int bpp;
-  /** signed (1) / unsigned (0) */
-  int sgnd;
+	/** XRsiz: horizontal separation of a sample of ith component with respect to the reference grid */
+	int dx;
+	/** YRsiz: vertical separation of a sample of ith component with respect to the reference grid */
+	int dy;
+	/** data width */
+	int w;
+	/** data height */
+	int h;
+	/** x component offset compared to the whole image */
+	int x0;
+	/** y component offset compared to the whole image */
+	int y0;
+	/** precision */
+	int prec;
+	/** image depth in bits */
+	int bpp;
+	/** signed (1) / unsigned (0) */
+	int sgnd;
 } opj_image_cmptparm_t;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+
+/* 
+==========================================================
+   openjpeg version
+==========================================================
+*/
+
+const char * opj_version();
 
 /* 
 ==========================================================

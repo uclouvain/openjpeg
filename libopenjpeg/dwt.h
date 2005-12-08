@@ -2,7 +2,7 @@
  * Copyright (c) 2001-2003, David Janssens
  * Copyright (c) 2002-2003, Yannick Verschueren
  * Copyright (c) 2003-2005, Francois Devaux and Antonin Descampe
- * Copyright (c) 2005, HervŽ Drolon, FreeImage Team
+ * Copyright (c) 2005, Hervé Drolon, FreeImage Team
  * Copyright (c) 2002-2005, Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
  * All rights reserved.
  *
@@ -42,47 +42,6 @@ DWT.C are used by some function in TCD.C.
 /** @defgroup DWT DWT - Implementation of a discrete wavelet transform */
 /*@{*/
 
-/** @name Local static functions */
-/*@{*/
-/* ----------------------------------------------------------------------- */
-/**
-Forward lazy transform (horizontal)
-*/
-static void dwt_deinterleave_h(int *a, int *b, int dn, int sn, int cas);
-/**
-Forward lazy transform (vertical)
-*/
-static void dwt_deinterleave_v(int *a, int *b, int dn, int sn, int x, int cas);
-/**
-Inverse lazy transform (horizontal)
-*/
-static void dwt_interleave_h(int *a, int *b, int dn, int sn, int cas);
-/**
-Inverse lazy transform (vertical)
-*/
-static void dwt_interleave_v(int *a, int *b, int dn, int sn, int x, int cas);
-/**
-Forward 5-3 wavelet tranform in 1-D
-*/
-static void dwt_encode_1(int *a, int dn, int sn, int cas);
-/**
-Inverse 5-3 wavelet tranform in 1-D
-*/
-static void dwt_decode_1(int *a, int dn, int sn, int cas);
-/**
-Forward 9-7 wavelet transform in 1-D
-*/
-static void dwt_encode_1_real(int *a, int dn, int sn, int cas);
-/**
-Inverse 9-7 wavelet transform in 1-D
-*/
-static void dwt_decode_1_real(int *a, int dn, int sn, int cas);
-/**
-FIXME : comment ???
-*/
-static void dwt_encode_stepsize(int stepsize, int numbps, opj_stepsize_t *bandno_stepsize);
-/* ----------------------------------------------------------------------- */
-/*@}*/
 
 /** @name Exported functions */
 /*@{*/

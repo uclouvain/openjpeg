@@ -2,7 +2,7 @@
  * Copyright (c) 2001-2003, David Janssens
  * Copyright (c) 2002-2003, Yannick Verschueren
  * Copyright (c) 2003-2005, Francois Devaux and Antonin Descampe
- * Copyright (c) 2005, HervŽ Drolon, FreeImage Team
+ * Copyright (c) 2005, Hervé Drolon, FreeImage Team
  * Copyright (c) 2002-2005, Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
  * All rights reserved.
  *
@@ -45,14 +45,14 @@ in MQC.C are used by some function in T1.C.
 This struct defines the state of a context.
 */
 typedef struct opj_mqc_state {
-  /** the probability of the Least Probable Symbol (0.75->0x8000, 1.5->0xffff) */
-  unsigned int qeval;
-  /** the Most Probable Symbol (0 or 1) */
-  int mps;
-  /** next state if the next encoded symbol is the MPS */
-  struct opj_mqc_state *nmps;
-  /** next state if the next encoded symbol is the LPS */
-  struct opj_mqc_state *nlps;
+	/** the probability of the Least Probable Symbol (0.75->0x8000, 1.5->0xffff) */
+	unsigned int qeval;
+	/** the Most Probable Symbol (0 or 1) */
+	int mps;
+	/** next state if the next encoded symbol is the MPS */
+	struct opj_mqc_state *nmps;
+	/** next state if the next encoded symbol is the LPS */
+	struct opj_mqc_state *nlps;
 } opj_mqc_state_t;
 
 #define MQC_NUMCTXS 32
@@ -61,69 +61,15 @@ typedef struct opj_mqc_state {
 MQ coder
 */
 typedef struct opj_mqc {
-  unsigned int c;
-  unsigned int a;
-  unsigned int ct;
-  unsigned char *bp;
-  unsigned char *start;
-  unsigned char *end;
-  opj_mqc_state_t *ctxs[MQC_NUMCTXS];
-  opj_mqc_state_t **curctx;
+	unsigned int c;
+	unsigned int a;
+	unsigned int ct;
+	unsigned char *bp;
+	unsigned char *start;
+	unsigned char *end;
+	opj_mqc_state_t *ctxs[MQC_NUMCTXS];
+	opj_mqc_state_t **curctx;
 } opj_mqc_t;
-
-/** @name Local static functions */
-/*@{*/
-/* ----------------------------------------------------------------------- */
-/**
-Output a byte, doing bit-stuffing if necessary.
-After a 0xff byte, the next byte must be smaller than 0x90.
-@param mqc MQC handle
-*/
-static void mqc_byteout(opj_mqc_t *mqc);
-/**
-Renormalize mqc->a and mqc->c while encoding, so that mqc->a stays between 0x8000 and 0x10000
-@param mqc MQC handle
-*/
-static void mqc_renorme(opj_mqc_t *mqc);
-/**
-Encode the most probable symbol
-@param mqc MQC handle
-*/
-static void mqc_codemps(opj_mqc_t *mqc);
-/**
-Encode the most least symbol
-@param mqc MQC handle
-*/
-static void mqc_codelps(opj_mqc_t *mqc);
-/**
-Fill mqc->c with 1's for flushing
-@param mqc MQC handle
-*/
-static void mqc_setbits(opj_mqc_t *mqc);
-/**
-FIXME: documentation ???
-@param mqc MQC handle
-@return 
-*/
-static int mqc_mpsexchange(opj_mqc_t *mqc);
-/**
-FIXME: documentation ???
-@param mqc MQC handle
-@return 
-*/
-static int mqc_lpsexchange(opj_mqc_t *mqc);
-/**
-Input a byte
-@param mqc MQC handle
-*/
-static void mqc_bytein(opj_mqc_t *mqc);
-/**
-Renormalize mqc->a and mqc->c while decoding
-@param mqc MQC handle
-*/
-static void mqc_renormd(opj_mqc_t *mqc);
-/* ----------------------------------------------------------------------- */
-/*@}*/
 
 /** @name Exported functions */
 /*@{*/

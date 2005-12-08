@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2005, Hervé Drolon, FreeImage Team
  * All rights reserved.
@@ -24,8 +23,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-
-
 #ifndef __EVENT_H
 #define __EVENT_H
 /**
@@ -35,9 +32,9 @@
 The functions in EVENT.C have for goal to send output messages (errors, warnings, debug) to the user.
 */
 
-#define EVT_ERROR 1 /**< Error event type */
-#define EVT_WARNING 2 /**< Warning event type */
-#define EVT_INFO  4 /**< Debug event type */
+#define EVT_ERROR	1	/**< Error event type */
+#define EVT_WARNING	2	/**< Warning event type */
+#define EVT_INFO	4	/**< Debug event type */
 
 /** @defgroup EVENT EVENT - Implementation of a event callback system */
 /*@{*/
@@ -52,7 +49,7 @@ Write formatted data to a string and send the string to a user callback.
 @param fmt Format-control string (plus optionnal arguments)
 @return Returns true if successful, returns false otherwise
 */
-bool opg_event_msg(opj_common_ptr cinfo, int event_type, const char *fmt, ...);
+bool opj_event_msg(opj_common_ptr cinfo, int event_type, const char *fmt, ...);
 /* ----------------------------------------------------------------------- */
 /*@}*/
 

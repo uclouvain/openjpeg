@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2003-2005, Francois Devaux and Antonin Descampe
- * Copyright (c) 2005, HervŽ Drolon, FreeImage Team
+ * Copyright (c) 2005, Hervé Drolon, FreeImage Team
  * Copyright (c) 2002-2005, Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
  * All rights reserved.
  *
@@ -43,20 +43,20 @@ with the corresponding mode switch.
 RAW encoding operations
 */
 typedef struct opj_raw {
-  /** temporary buffer where bits are coded or decoded */
-  unsigned char c;
-  /** number of bits already read or free to write */
-  unsigned int ct;
-  /** maximum length to decode */
-  unsigned int lenmax;
-  /** length decoded */
-  unsigned int len;
-  /** pointer to the current position in the buffer */
-  unsigned char *bp;
-  /** pointer to the start of the buffer */
-  unsigned char *start;
-  /** pointer to the end of the buffer */
-  unsigned char *end;
+	/** temporary buffer where bits are coded or decoded */
+	unsigned char c;
+	/** number of bits already read or free to write */
+	unsigned int ct;
+	/** maximum length to decode */
+	unsigned int lenmax;
+	/** length decoded */
+	unsigned int len;
+	/** pointer to the current position in the buffer */
+	unsigned char *bp;
+	/** pointer to the start of the buffer */
+	unsigned char *start;
+	/** pointer to the end of the buffer */
+	unsigned char *end;
 } opj_raw_t;
 
 /** @name Exported functions */

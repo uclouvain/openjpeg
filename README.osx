@@ -1,0 +1,16 @@
+Release Notes
+--------------
+This version of the library has been tested under OSX 10.2 using gcc 3.3.
+
+While the makefiles will make a .dylib and a .a, it is recommended to simply staticly link with the .a file.
+
+Installation
+------------
+Note: You will need to have root privileges in order to install the library in the /usr/lib directory.
+The installation process is as simple as this : 
+1) Enter the OpenJPEG directory
+2) Build the distribution : 
+make osx
+make osxinstall
+3) Clean all files produced during the build process
+make clean

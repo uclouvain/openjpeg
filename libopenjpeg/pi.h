@@ -2,7 +2,7 @@
  * Copyright (c) 2001-2003, David Janssens
  * Copyright (c) 2002-2003, Yannick Verschueren
  * Copyright (c) 2003-2005, Francois Devaux and Antonin Descampe
- * Copyright (c) 2005, HervŽ Drolon, FreeImage Team
+ * Copyright (c) 2005, Hervé Drolon, FreeImage Team
  * Copyright (c) 2002-2005, Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
  * All rights reserved.
  *
@@ -64,71 +64,35 @@ typedef struct opj_pi_comp {
 Packet iterator 
 */
 typedef struct opj_pi_iterator {
-  /** precise if the packet has been already used (usefull for progression order change) */
-  short int *include;
-  /** layer step used to localize the packet in the include vector */
-  int step_l;
-  /** resolution step used to localize the packet in the include vector */
-  int step_r; 
-  /** component step used to localize the packet in the include vector */
-  int step_c; 
-  /** precinct step used to localize the packet in the include vector */
-  int step_p; 
-  /** component that identify the packet */
-  int compno;
-  /** resolution that identify the packet */
-  int resno;
-  /** precinct that identify the packet */
-  int precno;
-  /** layer that identify the packet */
-  int layno;   
-  /** 0 if the first packet */
-  int first;
-  /** progression order change information */
-  opj_poc_t poc;
-  /** */
-  int numcomps;
-  /** */
-  opj_pi_comp_t *comps;
-  int tx0, ty0, tx1, ty1;
-  int x, y, dx, dy;
+	/** precise if the packet has been already used (usefull for progression order change) */
+	short int *include;
+	/** layer step used to localize the packet in the include vector */
+	int step_l;
+	/** resolution step used to localize the packet in the include vector */
+	int step_r;	
+	/** component step used to localize the packet in the include vector */
+	int step_c;	
+	/** precinct step used to localize the packet in the include vector */
+	int step_p;	
+	/** component that identify the packet */
+	int compno;
+	/** resolution that identify the packet */
+	int resno;
+	/** precinct that identify the packet */
+	int precno;
+	/** layer that identify the packet */
+	int layno;   
+	/** 0 if the first packet */
+	int first;
+	/** progression order change information */
+	opj_poc_t poc;
+	/** */
+	int numcomps;
+	/** */
+	opj_pi_comp_t *comps;
+	int tx0, ty0, tx1, ty1;
+	int x, y, dx, dy;
 } opj_pi_iterator_t;
-
-/** @name Local static functions */
-/*@{*/
-/* ----------------------------------------------------------------------- */
-/**
-Get next packet in layer-resolution-component-precinct order.
-@param pi packet iterator to modify
-@return returns false if pi pointed to the last packet or else returns true 
-*/
-static bool pi_next_lrcp(opj_pi_iterator_t * pi);
-/**
-Get next packet in resolution-layer-component-precinct order.
-@param pi packet iterator to modify
-@return returns false if pi pointed to the last packet or else returns true 
-*/
-static bool pi_next_rlcp(opj_pi_iterator_t * pi);
-/**
-Get next packet in resolution-precinct-component-layer order.
-@param pi packet iterator to modify
-@return returns false if pi pointed to the last packet or else returns true 
-*/
-static bool pi_next_rpcl(opj_pi_iterator_t * pi);
-/**
-Get next packet in precinct-component-resolution-layer order.
-@param pi packet iterator to modify
-@return returns false if pi pointed to the last packet or else returns true 
-*/
-static bool pi_next_pcrl(opj_pi_iterator_t * pi);
-/**
-Get next packet in component-precinct-resolution-layer order.
-@param pi packet iterator to modify
-@return returns false if pi pointed to the last packet or else returns true 
-*/
-static bool pi_next_cprl(opj_pi_iterator_t * pi);
-/* ----------------------------------------------------------------------- */
-/*@}*/
 
 /** @name Exported functions */
 /*@{*/

@@ -2,7 +2,7 @@
  * Copyright (c) 2001-2003, David Janssens
  * Copyright (c) 2002-2003, Yannick Verschueren
  * Copyright (c) 2003-2005, Francois Devaux and Antonin Descampe
- * Copyright (c) 2005, Herv Drolon, FreeImage Team
+ * Copyright (c) 2005, Hervé Drolon, FreeImage Team
  * Copyright (c) 2002-2005, Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
  * All rights reserved.
  *
@@ -28,65 +28,64 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #include "opj_includes.h"
 
 /* ----------------------------------------------------------------------- */
 
 opj_cio_t* opj_cio_open(opj_common_ptr cinfo, unsigned char *buffer, int length) {
-  opj_cp_t *cp = NULL;
-  opj_cio_t *cio = (opj_cio_t*)opj_malloc(sizeof(opj_cio_t));
-  if(!cio) return NULL;
-  cio->cinfo = cinfo;
-  if(buffer && length) {
-    /* wrap a user buffer containing the encoded image */
-    cio->openmode = OPJ_STREAM_READ;
-    cio->buffer = buffer;
-    cio->length = length;
-  }
-  else if(!buffer && !length && cinfo) {
-    /* allocate a buffer for the encoded image */
-    cio->openmode = OPJ_STREAM_WRITE;
-    switch(cinfo->codec_format) {
-      case CODEC_J2K:
-        cp = ((opj_j2k_t*)cinfo->j2k_handle)->cp;
-        break;
-      case CODEC_JP2:
-        cp = ((opj_jp2_t*)cinfo->jp2_handle)->j2k->cp;
-        break;
-      default:
-        opj_free(cio);
-        return NULL;
-    }
-    cio->length = cp->tdx * cp->tdy * cp->tw * cp->th * 2;
-    cio->buffer = (unsigned char *)opj_malloc(cio->length);
-    if(!cio->buffer) {
-      opj_free(cio);
-      return NULL;
-    }
-  }
-  else {
-    opj_free(cio);
-    return NULL;
-  }
+	opj_cp_t *cp = NULL;
+	opj_cio_t *cio = (opj_cio_t*)opj_malloc(sizeof(opj_cio_t));
+	if(!cio) return NULL;
+	cio->cinfo = cinfo;
+	if(buffer && length) {
+		/* wrap a user buffer containing the encoded image */
+		cio->openmode = OPJ_STREAM_READ;
+		cio->buffer = buffer;
+		cio->length = length;
+	}
+	else if(!buffer && !length && cinfo) {
+		/* allocate a buffer for the encoded image */
+		cio->openmode = OPJ_STREAM_WRITE;
+		switch(cinfo->codec_format) {
+			case CODEC_J2K:
+				cp = ((opj_j2k_t*)cinfo->j2k_handle)->cp;
+				break;
+			case CODEC_JP2:
+				cp = ((opj_jp2_t*)cinfo->jp2_handle)->j2k->cp;
+				break;
+			default:
+				opj_free(cio);
+				return NULL;
+		}
+		cio->length = cp->tdx * cp->tdy * cp->tw * cp->th * 2;
+		cio->buffer = (unsigned char *)opj_malloc(cio->length);
+		if(!cio->buffer) {
+			opj_free(cio);
+			return NULL;
+		}
+	}
+	else {
+		opj_free(cio);
+		return NULL;
+	}
 
-  /* Initialize byte IO */
-  cio->start = cio->buffer;
-  cio->end = cio->buffer + cio->length;
-  cio->bp = cio->buffer;
+	/* Initialize byte IO */
+	cio->start = cio->buffer;
+	cio->end = cio->buffer + cio->length;
+	cio->bp = cio->buffer;
 
-  return cio;
+	return cio;
 }
 
 void opj_cio_close(opj_cio_t *cio) {
-  if(cio) {
-    if(cio->openmode == OPJ_STREAM_WRITE) {
-      /* destroy the allocated buffer */
-      opj_free(cio->buffer);
-    }
-    /* destroy the cio */
-    opj_free(cio);
-  }
+	if(cio) {
+		if(cio->openmode == OPJ_STREAM_WRITE) {
+			/* destroy the allocated buffer */
+			opj_free(cio->buffer);
+		}
+		/* destroy the cio */
+		opj_free(cio);
+	}
 }
 
 
@@ -96,7 +95,7 @@ void opj_cio_close(opj_cio_t *cio) {
  * Get position in byte stream.
  */
 int cio_tell(opj_cio_t *cio) {
-  return cio->bp - cio->start;
+	return cio->bp - cio->start;
 }
 
 /*
@@ -105,44 +104,44 @@ int cio_tell(opj_cio_t *cio) {
  * pos : position, in number of bytes, from the beginning of the stream
  */
 void cio_seek(opj_cio_t *cio, int pos) {
-  cio->bp = cio->start + pos;
+	cio->bp = cio->start + pos;
 }
 
 /*
  * Number of bytes left before the end of the stream.
  */
 int cio_numbytesleft(opj_cio_t *cio) {
-  return cio->end - cio->bp;
+	return cio->end - cio->bp;
 }
 
 /*
  * Get pointer to the current position in the stream.
  */
 unsigned char *cio_getbp(opj_cio_t *cio) {
-  return cio->bp;
+	return cio->bp;
 }
 
 /*
  * Write a byte.
  */
 bool cio_byteout(opj_cio_t *cio, unsigned char v) {
-  if (cio->bp >= cio->end) {
-    opg_event_msg(cio->cinfo, EVT_ERROR, "write error\n");
-    return false;
-  }
-  *cio->bp++ = v;
-  return true;
+	if (cio->bp >= cio->end) {
+		opj_event_msg(cio->cinfo, EVT_ERROR, "write error\n");
+		return false;
+	}
+	*cio->bp++ = v;
+	return true;
 }
 
 /*
  * Read a byte.
  */
 unsigned char cio_bytein(opj_cio_t *cio) {
-  if (cio->bp >= cio->end) {
-    opg_event_msg(cio->cinfo, EVT_ERROR, "read error\n");
-    return 0;
-  }
-  return *cio->bp++;
+	if (cio->bp >= cio->end) {
+		opj_event_msg(cio->cinfo, EVT_ERROR, "read error\n");
+		return 0;
+	}
+	return *cio->bp++;
 }
 
 /*
@@ -152,12 +151,12 @@ unsigned char cio_bytein(opj_cio_t *cio) {
  * n : number of bytes to write
  */
 unsigned int cio_write(opj_cio_t *cio, unsigned int v, int n) {
-  int i;
-  for (i = n - 1; i >= 0; i--) {
-    if( !cio_byteout(cio, (unsigned char) ((v >> (i << 3)) & 0xff)) )
-      return 0;
-  }
-  return n;
+	int i;
+	for (i = n - 1; i >= 0; i--) {
+		if( !cio_byteout(cio, (unsigned char) ((v >> (i << 3)) & 0xff)) )
+			return 0;
+	}
+	return n;
 }
 
 /*
@@ -168,13 +167,13 @@ unsigned int cio_write(opj_cio_t *cio, unsigned int v, int n) {
  * return : value of the n bytes read
  */
 unsigned int cio_read(opj_cio_t *cio, int n) {
-  int i;
-  unsigned int v;
-  v = 0;
-  for (i = n - 1; i >= 0; i--) {
-    v += cio_bytein(cio) << (i << 3);
-  }
-  return v;
+	int i;
+	unsigned int v;
+	v = 0;
+	for (i = n - 1; i >= 0; i--) {
+		v += cio_bytein(cio) << (i << 3);
+	}
+	return v;
 }
 
 /* 
@@ -183,7 +182,7 @@ unsigned int cio_read(opj_cio_t *cio, int n) {
  * n : number of bytes to skip
  */
 void cio_skip(opj_cio_t *cio, int n) {
-  cio->bp += n;
+	cio->bp += n;
 }
 
 
