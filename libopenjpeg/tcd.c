@@ -1083,7 +1083,7 @@ bool tcd_rateallocate(opj_tcd_t *tcd, unsigned char *dest, int len, opj_image_in
 					lo = thresh;
 				} else {
 					l = t2_encode_packets(t2, tcd->tcd_tileno, tcd_tile, layno + 1, dest, maxlen, image_info);
-					opj_event_msg(tcd->cinfo, EVT_INFO, "rate alloc: len=%d, max=%d\n", l, maxlen);
+					/* opj_event_msg(tcd->cinfo, EVT_INFO, "rate alloc: len=%d, max=%d\n", l, maxlen); */
 					if (l == -999) {
 						lo = thresh;
 						continue;

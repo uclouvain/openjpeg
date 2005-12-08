@@ -558,6 +558,10 @@ int t2_encode_packets(opj_t2_t* t2, int tileno, opj_tcd_tile_t *tile, int maxlay
 		return -999;
 	}
 	
+	if(image_info) {
+		image_info->num = 0;
+	}
+	
 	for (pino = 0; pino <= cp->tcps[tileno].numpocs; pino++) {
 		while (pi_next(&pi[pino])) {
 			if (pi[pino].layno < maxlayers) {
