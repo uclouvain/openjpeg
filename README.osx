@@ -1,6 +1,6 @@
 Release Notes
 --------------
-This version of the library has been tested under OSX 10.2 using gcc 3.3.
+This version of the library has been tested under OSX 10.3 using gcc 3.3.
 
 While the makefiles will make a .dylib and a .a, it is recommended to simply staticly link with the .a file.
 
@@ -13,4 +13,13 @@ The installation process is as simple as this :
 make osx
 make osxinstall
 3) Clean all files produced during the build process
-make clean
+make osxclean
+
+Simple codec compilation
+------------------------
+Once you've built the library, you might want to test it with a basic codec. To do this, go to the codec directory and use one of the following commands to build an encoder and decoder respectively:
+
+gcc convert.c image_to_j2k.c -o image_to_j2k -lopenjpeg -I ../libopenjpeg/ -lm
+gcc convert.c j2k_to_image.c -o j2k_to_image -lopenjpeg -I ../libopenjpeg/ -lm
+
+You should add '-L..' to those lines if you did not use the 'osxinstall' target (and the 'osxclean' target neither...).

@@ -22,3 +22,11 @@ make install
 3) Clean all files produced during the build process
 make clean
 
+Simple codec compilation
+------------------------
+Once you've built the library, you might want to test it with a basic codec. To do this, go to the codec directory and use one of the following commands to build an encoder and decoder respectively:
+
+gcc convert.c image_to_j2k.c -o image_to_j2k -lopenjpeg -I ../libopenjpeg/ -lm
+gcc convert.c j2k_to_image.c -o j2k_to_image -lopenjpeg -I ../libopenjpeg/ -lm
+
+You should add '-L..' to those lines if you did not use the 'install' target (and the 'clean' target neither...).

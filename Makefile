@@ -34,9 +34,10 @@ default: all
 all: dist
 
 dist: OpenJPEG
-	cp *.a dist
-	cp *.so dist
-	cp libopenjpeg/openjpeg.h dist
+	mkdir dist
+	cp *.a dist/
+	cp *.so dist/
+	cp libopenjpeg/openjpeg.h dist/
 
 dos2unix:
 	@$(DOS2UNIX) $(SRCS) $(INCLS)
@@ -59,10 +60,13 @@ install:
 	ldconfig
 
 clean:
-	rm -f core dist/*.* u2dtmp* $(MODULES) $(STATICLIB) $(SHAREDLIB) $(LIBNAME)
+	rm -rf core dist/ u2dtmp* $(MODULES) $(STATICLIB) $(SHAREDLIB) $(LIBNAME)
 
 osx:
 	make -f Makefile.osx
 
 osxinstall:
 	make -f Makefile.osx install
+
+osxclean:
+	make -f Makefile.osx clean

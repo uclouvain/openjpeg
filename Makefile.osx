@@ -31,9 +31,10 @@ default: all
 all: dist
 
 dist: OpenJPEG
-	cp *.a dist
-	cp *.dylib dist
-	cp libopenjpeg/openjpeg.h dist
+	mkdir dist
+	cp *.a dist/
+	cp *.dylib dist/
+	cp libopenjpeg/openjpeg.h dist/
 
 OpenJPEG: $(STATICLIB) $(SHAREDLIB)
 
@@ -50,8 +51,8 @@ install:
 	install -m 644 -o root -g wheel $(STATICLIB) $(INSTALLDIR)
 	install -m 755 -o root -g wheel $(SHAREDLIB) $(INSTALLDIR)
 	ln -sf $(SHAREDLIB) $(INSTALLDIR)/$(LIBNAME)
-	ldconfig
+	ranlib $(INSTALLDIR)/$(STATICLIB)
 
 clean:
-	rm -f core dist/*.* u2dtmp* $(MODULES) $(STATICLIB) $(SHAREDLIB) $(LIBNAME)
+	rm -rf core dist/ u2dtmp* $(MODULES) $(STATICLIB) $(SHAREDLIB) $(LIBNAME)
 	
