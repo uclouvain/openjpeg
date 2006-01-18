@@ -447,7 +447,7 @@ void tcd_init_encode(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp, int cur
 		}
 		/* << Modification of the RATE */
 
-		/* tile->comps=(opj_tcd_tilecomp_t*)j2k_realloc(tile->comps,image->numcomps*sizeof(opj_tcd_tilecomp_t)); */
+		/* tile->comps=(opj_tcd_tilecomp_t*)opj_realloc(tile->comps,image->numcomps*sizeof(opj_tcd_tilecomp_t)); */
 		for (compno = 0; compno < tile->numcomps; compno++) {
 			opj_tccp_t *tccp = &tcp->tccps[compno];
 			
@@ -462,7 +462,7 @@ void tcd_init_encode(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp, int cur
 			
 			tilec->data = (int *) opj_malloc((tilec->x1 - tilec->x0) * (tilec->y1 - tilec->y0) * sizeof(int));
 			tilec->numresolutions = tccp->numresolutions;
-			/* tilec->resolutions=(opj_tcd_resolution_t*)j2k_realloc(tilec->resolutions,tilec->numresolutions*sizeof(opj_tcd_resolution_t)); */
+			/* tilec->resolutions=(opj_tcd_resolution_t*)opj_realloc(tilec->resolutions,tilec->numresolutions*sizeof(opj_tcd_resolution_t)); */
 			for (resno = 0; resno < tilec->numresolutions; resno++) {
 				int pdx, pdy;
 

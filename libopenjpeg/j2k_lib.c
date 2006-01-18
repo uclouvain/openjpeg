@@ -65,7 +65,7 @@ void* opj_malloc( size_t size ) {
 	return memblock;
 }
 
-void* j2k_realloc( void *memblock, size_t size ) {
+void* opj_realloc( void *memblock, size_t size ) {
 	return realloc(memblock, size);
 }
 

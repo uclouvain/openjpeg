@@ -843,7 +843,7 @@ static void j2k_read_ppm(opj_j2k_t *j2k) {
 			cp->ppm_data_first = cp->ppm_data;
 			cp->ppm_len = N_ppm;
 		} else {			/* NON-first PPM marker */
-			cp->ppm_data = (unsigned char *) j2k_realloc(cp->ppm_data, (N_ppm +	cp->ppm_store) * sizeof(unsigned char));
+			cp->ppm_data = (unsigned char *) opj_realloc(cp->ppm_data, (N_ppm +	cp->ppm_store) * sizeof(unsigned char));
 			cp->ppm_data_first = cp->ppm_data;
 			cp->ppm_len = N_ppm + cp->ppm_store;
 		}
@@ -875,7 +875,7 @@ static void j2k_read_ppt(opj_j2k_t *j2k) {
 		tcp->ppt_store = 0;
 		tcp->ppt_len = len - 3;
 	} else {			/* NON-first PPT marker */
-		tcp->ppt_data =	(unsigned char *) j2k_realloc(tcp->ppt_data, (len - 3 + tcp->ppt_store) * sizeof(unsigned char));
+		tcp->ppt_data =	(unsigned char *) opj_realloc(tcp->ppt_data, (len - 3 + tcp->ppt_store) * sizeof(unsigned char));
 		tcp->ppt_data_first = tcp->ppt_data;
 		tcp->ppt_len = len - 3 + tcp->ppt_store;
 	}

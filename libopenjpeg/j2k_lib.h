@@ -58,7 +58,7 @@ Reallocate memory blocks.
 @param size New size in bytes
 @return Returns a void pointer to the reallocated (and possibly moved) memory block
 */
-void* j2k_realloc( void *memblock, size_t size );
+void* opj_realloc( void *memblock, size_t size );
 
 /**
 Deallocates or frees a memory block.
