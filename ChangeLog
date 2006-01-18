@@ -5,7 +5,11 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
-December 8, 2005 - 1.1.1
+January 18, 2006
+* [Herve Drolon] changed the name of j2k_realloc to opj_realloc
+* [Herve Drolon] fixed a bug in opj_cio_open when saving 48-bit images (wrong buffer size calculation)
+
+December 8, 2005
 * [Antonin Descampe] fixed a bug when specifying a rate '-r' => no distortion info was available in the index
 * [Antonin Descampe] fixed a bug in t1_getwmsedec (stepsize was divided by 8192)
 
