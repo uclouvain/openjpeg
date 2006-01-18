@@ -57,7 +57,7 @@ opj_cio_t* opj_cio_open(opj_common_ptr cinfo, unsigned char *buffer, int length)
 				opj_free(cio);
 				return NULL;
 		}
-		cio->length = cp->tdx * cp->tdy * cp->tw * cp->th * 2;
+		cio->length = cp->tdx * cp->tdy * cp->tw * cp->th * 4;
 		cio->buffer = (unsigned char *)opj_malloc(cio->length);
 		if(!cio->buffer) {
 			opj_free(cio);
