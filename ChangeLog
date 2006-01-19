@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+January 19, 2006
+* [Herve Drolon] fixed a bug in jp2_read_ihdr (need to allocate jp2->comps)
+
 January 18, 2006
 * [Herve Drolon] changed the name of j2k_realloc to opj_realloc
 * [Herve Drolon] fixed a bug in opj_cio_open when saving 48-bit images (wrong buffer size calculation)

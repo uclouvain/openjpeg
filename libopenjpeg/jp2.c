@@ -161,6 +161,7 @@ static bool jp2_read_ihdr(opj_jp2_t *jp2, opj_cio_t *cio) {
 	jp2->h = cio_read(cio, 4);			/* HEIGHT */
 	jp2->w = cio_read(cio, 4);			/* WIDTH */
 	jp2->numcomps = cio_read(cio, 2);	/* NC */
+	jp2->comps = (opj_jp2_comps_t*) opj_malloc(jp2->numcomps * sizeof(opj_jp2_comps_t));
 
 	jp2->bpc = cio_read(cio, 1);		/* BPC */
 
