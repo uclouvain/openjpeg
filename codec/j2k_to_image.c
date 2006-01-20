@@ -87,7 +87,7 @@ void decode_help_display() {
 /* -------------------------------------------------------------------------- */
 
 int get_file_format(char *filename) {
-	int i;
+	unsigned int i;
 	static const char *extension[] = {"pgx", "pnm", "pgm", "ppm", "bmp", "j2k", "jp2", "jpt" };
 	static const int format[] = { PGX_DFMT, PXM_DFMT, PXM_DFMT, PXM_DFMT, BMP_DFMT, J2K_CFMT, JP2_CFMT, JPT_CFMT };
 	char * ext = strrchr(filename, '.') + 1;
@@ -217,6 +217,7 @@ void warning_callback(const char *msg, void *client_data) {
 sample debug callback expecting no client object
 */
 void info_callback(const char *msg, void *client_data) {
+	(void)client_data;
 	fprintf(stdout, "[INFO] %s", msg);
 }
 

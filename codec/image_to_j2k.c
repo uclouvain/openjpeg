@@ -200,7 +200,7 @@ OPJ_PROG_ORDER give_progression(char progression[4]) {
 }
 
 int get_file_format(char *filename) {
-	int i;
+	unsigned int i;
 	static const char *extension[] = {"pgx", "pnm", "pgm", "ppm", "bmp", "j2k", "jp2" };
 	static const int format[] = { PGX_DFMT, PXM_DFMT, PXM_DFMT, PXM_DFMT, BMP_DFMT, J2K_CFMT, JP2_CFMT };
 	char * ext = strrchr(filename, '.') + 1;

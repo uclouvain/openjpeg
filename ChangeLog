@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+January 20, 2006
+* [Antonin Descampe] fixed various minor warnings with gdcm patches
+
 January 19, 2006
 * [Herve Drolon] fixed a bug in jp2_read_ihdr (need to allocate jp2->comps)
 

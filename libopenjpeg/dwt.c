@@ -577,6 +577,7 @@ void dwt_decode_real(opj_tcd_tilecomp_t * tilec, int stop) {
 /* Get gain of 9-7 wavelet transform. */
 /* </summary>                         */
 int dwt_getgain_real(int orient) {
+	(void)orient;
 	return 0;
 }
 

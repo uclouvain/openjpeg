@@ -42,7 +42,7 @@ Read box headers
 @return Returns true if successful, returns false otherwise
 */
 static bool jp2_read_boxhdr(opj_common_ptr cinfo, opj_cio_t *cio, opj_jp2_box_t *box);
-static void jp2_write_url(opj_cio_t *cio, char *Idx_file);
+/*static void jp2_write_url(opj_cio_t *cio, char *Idx_file);*/
 /**
 Read the IHDR box - Image Header box
 @param jp2 JP2 handle
@@ -125,6 +125,7 @@ static bool jp2_read_boxhdr(opj_common_ptr cinfo, opj_cio_t *cio, opj_jp2_box_t 
 	return true;
 }
 
+#if 0
 static void jp2_write_url(opj_cio_t *cio, char *Idx_file) {
 	unsigned int i;
 	opj_jp2_box_t box;
@@ -146,6 +147,7 @@ static void jp2_write_url(opj_cio_t *cio, char *Idx_file) {
 	cio_write(cio, box.length, 4);	/* L */
 	cio_seek(cio, box.init_pos + box.length);
 }
+#endif
 
 static bool jp2_read_ihdr(opj_jp2_t *jp2, opj_cio_t *cio) {
 	opj_jp2_box_t box;
@@ -682,6 +684,7 @@ void jp2_setup_encoder(opj_jp2_t *jp2, opj_cparameters_t *parameters, opj_image_
 }
 
 bool jp2_encode(opj_jp2_t *jp2, opj_cio_t *cio, opj_image_t *image, char *index) {
+	(void)image;
 
 	/* JP2 encoding */
 

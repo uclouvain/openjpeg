@@ -245,8 +245,8 @@ opj_image_t* bmptoimage(char *filename, opj_cparameters_t *parameters) {
 			W = Info_h.biWidth;
 			H = Info_h.biHeight;
 
-			// PAD = 4 - (3 * W) % 4;
-			// PAD = (PAD == 4) ? 0 : PAD;
+			/* PAD = 4 - (3 * W) % 4; */
+			/* PAD = (PAD == 4) ? 0 : PAD; */
 			PAD = (3 * W) % 4 ? 4 - (3 * W) % 4 : 0;
 			
 			RGB = (unsigned char *) malloc((3 * W + PAD) * H * sizeof(unsigned char));
@@ -483,13 +483,13 @@ int imagetobmp(opj_image_t * image, char *outfile) {
 			return 1;
 		}
 	    
-		// w = int_ceildiv(image->x1 - image->x0, image->comps[0].dx);
-		// wr = int_ceildiv(int_ceildivpow2(image->x1 - image->x0,image->factor), image->comps[0].dx);
+		/* w = int_ceildiv(image->x1 - image->x0, image->comps[0].dx); */
+		/* wr = int_ceildiv(int_ceildivpow2(image->x1 - image->x0,image->factor), image->comps[0].dx); */
 		w = image->comps[0].w;
 		wr = int_ceildivpow2(image->comps[0].w, image->comps[0].factor);
 	    
-		// h = int_ceildiv(image->y1 - image->y0, image->comps[0].dy);
-		// hr = int_ceildiv(int_ceildivpow2(image->y1 - image->y0,image->factor), image->comps[0].dy);
+		/* h = int_ceildiv(image->y1 - image->y0, image->comps[0].dy); */
+		/* hr = int_ceildiv(int_ceildivpow2(image->y1 - image->y0,image->factor), image->comps[0].dy); */
 		h = image->comps[0].h;
 		hr = int_ceildivpow2(image->comps[0].h, image->comps[0].factor);
 	    
@@ -531,11 +531,11 @@ int imagetobmp(opj_image_t * image, char *outfile) {
 		for (i = 0; i < wr * hr; i++) {
 			unsigned char R, G, B;
 			/* a modifier */
-			// R = image->comps[0].data[w * h - ((i) / (w) + 1) * w + (i) % (w)];
+			/* R = image->comps[0].data[w * h - ((i) / (w) + 1) * w + (i) % (w)]; */
 			R = image->comps[0].data[w * hr - ((i) / (wr) + 1) * w + (i) % (wr)];
-			// G = image->comps[1].data[w * h - ((i) / (w) + 1) * w + (i) % (w)];
+			/* G = image->comps[1].data[w * h - ((i) / (w) + 1) * w + (i) % (w)]; */
 			G = image->comps[1].data[w * hr - ((i) / (wr) + 1) * w + (i) % (wr)];
-			// B = image->comps[2].data[w * h - ((i) / (w) + 1) * w + (i) % (w)];
+			/* B = image->comps[2].data[w * h - ((i) / (w) + 1) * w + (i) % (w)]; */
 			B = image->comps[2].data[w * hr - ((i) / (wr) + 1) * w + (i) % (wr)];
 			fprintf(fdest, "%c%c%c", B, G, R);
 			
@@ -552,13 +552,13 @@ int imagetobmp(opj_image_t * image, char *outfile) {
 		<<-- <<-- <<-- <<-- */
 
 		fdest = fopen(outfile, "wb");
-		// w = int_ceildiv(image->x1 - image->x0, image->comps[0].dx);
-		// wr = int_ceildiv(int_ceildivpow2(image->x1 - image->x0,image->factor), image->comps[0].dx);
+		/* w = int_ceildiv(image->x1 - image->x0, image->comps[0].dx); */
+		/* wr = int_ceildiv(int_ceildivpow2(image->x1 - image->x0,image->factor), image->comps[0].dx); */
 		w = image->comps[0].w;
 		wr = int_ceildivpow2(image->comps[0].w, image->comps[0].factor);
 	    
-		// h = int_ceildiv(image->y1 - image->y0, image->comps[0].dy);
-		// hr = int_ceildiv(int_ceildivpow2(image->y1 - image->y0,image->factor), image->comps[0].dy);
+		/* h = int_ceildiv(image->y1 - image->y0, image->comps[0].dy); */
+		/* hr = int_ceildiv(int_ceildivpow2(image->y1 - image->y0,image->factor), image->comps[0].dy); */
 		h = image->comps[0].h;
 		hr = int_ceildivpow2(image->comps[0].h, image->comps[0].factor);
 	    
@@ -605,7 +605,7 @@ int imagetobmp(opj_image_t * image, char *outfile) {
 
 	for (i = 0; i < wr * hr; i++) {
 		/* a modifier !! */
-		// fprintf(fdest, "%c", image->comps[0].data[w * h - ((i) / (w) + 1) * w + (i) % (w)]);
+		/* fprintf(fdest, "%c", image->comps[0].data[w * h - ((i) / (w) + 1) * w + (i) % (w)]); */
 		fprintf(fdest, "%c", image->comps[0].data[w * hr - ((i) / (wr) + 1) * w + (i) % (wr)]);
 		/*if (((i + 1) % w == 0 && w % 2))
 		fprintf(fdest, "%c", 0); */
@@ -662,7 +662,7 @@ opj_image_t* pgxtoimage(char *filename, opj_cparameters_t *parameters) {
 	int w, h, prec;
 	int i, numcomps, max;
 	OPJ_COLOR_SPACE color_space;
-	opj_image_cmptparm_t cmptparm;	// maximum of 1 component 
+	opj_image_cmptparm_t cmptparm;	/* maximum of 1 component  */
 	opj_image_t * image = NULL;
 
 	char endian1,endian2,sign;
@@ -797,13 +797,13 @@ int imagetopgx(opj_image_t * image, char *outfile) {
 			fprintf(stderr, "ERROR -> failed to open %s for writing\n", name);
 			return 1;
 		}
-		// w = int_ceildiv(image->x1 - image->x0, comp->dx);
-		// wr = int_ceildiv(int_ceildivpow2(image->x1 - image->x0,image->factor), comp->dx);
+		/* w = int_ceildiv(image->x1 - image->x0, comp->dx); */
+		/* wr = int_ceildiv(int_ceildivpow2(image->x1 - image->x0,image->factor), comp->dx); */
 		w = image->comps[compno].w;
 		wr = int_ceildivpow2(image->comps[compno].w, image->comps[compno].factor);
 	    
-		// h = int_ceildiv(image->y1 - image->y0, comp->dy);
-		// hr = int_ceildiv(int_ceildivpow2(image->y1 - image->y0,image->factor), comp->dy);
+		/* h = int_ceildiv(image->y1 - image->y0, comp->dy); */
+		/* hr = int_ceildiv(int_ceildivpow2(image->y1 - image->y0,image->factor), comp->dy); */
 		h = image->comps[compno].h;
 		hr = int_ceildivpow2(image->comps[compno].h, image->comps[compno].factor);
 	    
@@ -835,7 +835,6 @@ PNM IMAGE FORMAT
 <<-- <<-- <<-- <<-- */
 
 opj_image_t* pnmtoimage(char *filename, opj_cparameters_t *parameters) {
-	int tdy = parameters->cp_tdy;
 	int subsampling_dx = parameters->subsampling_dx;
 	int subsampling_dy = parameters->subsampling_dy;
 
@@ -955,7 +954,7 @@ opj_image_t* pnmtoimage(char *filename, opj_cparameters_t *parameters) {
 		for (i = 0; i < w * h; i++) {
 			for(compno = 0; compno < numcomps; compno++) {
 				unsigned int index = 0;
-				fscanf(f, "%d", &index);
+				fscanf(f, "%u", &index);
 				/* compno : 0 = GREY, (0, 1, 2) = (R, G, B) */
 				image->comps[compno].data[i] = index;
 			}
@@ -1006,12 +1005,12 @@ int imagetopnm(opj_image_t * image, char *outfile) {
 		}
 
 		w = int_ceildiv(image->x1 - image->x0, image->comps[0].dx);
-		// wr = int_ceildiv(int_ceildivpow2(image->x1 - image->x0,image->factor),image->comps[0].dx);
+		/* wr = int_ceildiv(int_ceildivpow2(image->x1 - image->x0,image->factor),image->comps[0].dx); */
 		wr = image->comps[0].w;
 		wrr = int_ceildivpow2(image->comps[0].w, image->comps[0].factor);
         
 		h = int_ceildiv(image->y1 - image->y0, image->comps[0].dy);
-		// hr = int_ceildiv(int_ceildivpow2(image->y1 - image->y0,image->factor), image->comps[0].dy);
+		/* hr = int_ceildiv(int_ceildivpow2(image->y1 - image->y0,image->factor), image->comps[0].dy); */
 		hr = image->comps[0].h;
 		hrr = int_ceildivpow2(image->comps[0].h, image->comps[0].factor);
 	    
@@ -1061,12 +1060,12 @@ int imagetopnm(opj_image_t * image, char *outfile) {
 			}
             
 			w = int_ceildiv(image->x1 - image->x0, image->comps[compno].dx);
-			// wr = int_ceildiv(int_ceildivpow2(image->x1 - image->x0,image->factor),image->comps[compno].dx);
+			/* wr = int_ceildiv(int_ceildivpow2(image->x1 - image->x0,image->factor),image->comps[compno].dx); */
 			wr = image->comps[compno].w;
 			wrr = int_ceildivpow2(image->comps[compno].w, image->comps[compno].factor);
 			
 			h = int_ceildiv(image->y1 - image->y0, image->comps[compno].dy);
-			// hr = int_ceildiv(int_ceildivpow2(image->y1 - image->y0,image->factor), image->comps[compno].dy);
+			/* hr = int_ceildiv(int_ceildivpow2(image->y1 - image->y0,image->factor), image->comps[compno].dy); */
 			hr = image->comps[compno].h;
 			hrr = int_ceildivpow2(image->comps[compno].h, image->comps[compno].factor);
 			
