@@ -11,3 +11,5 @@
 #	[<whitespace>]<filename><whitespace><error message><end-of-line>
 #
 # comment lines begin with '#'
+checkCtrlM cannot check out checkCtrlM
+checkTabs cannot check out checkTabs

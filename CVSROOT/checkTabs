@@ -1,0 +1,32 @@
+#!/bin/tcsh
+#
+# checkTabs checks source code for explicit TABS
+#   checks only files with the following extensions: .c, .cxx, .txx,
+#   exits with 0, if all commited files pass the test.
+#   exits with 1, if any one of the tests fails
+#
+# checkTabs can be run as a cvs commitinfo command.
+# The following commitinfo line (without the #) will run the script
+# ALL	$CVSROOT/CVSROOT/checkTabs
+# 
+set failed=0
+#
+# skip the first arg, the directory
+foreach file ( $argv[2-] )
+#
+# select files with extentions .txx, .cxx, .h, .html, .htm
+set match=`echo $file | egrep \[\.\]txx\$\|\[\.\]cxx\$\|\[\.\]h\$\|\[\.\]cpp\$\|\[\.\]htm\$\|\[\.\]html\$\|\[\.\]c\$\|\[\.\]mm\$\|\[\.\]h.in\$\|\[\.\]hxx.in\$\|CMakeLists.txt\$\|\[\.\]cmake\$\|\[\.\]cmake.in\$`
+if ( $match == "" ) continue;
+set count=`grep -n "	" /dev/null $file|wc -c`
+set results=`expr $count \| 0`
+if ( "$results" != "0" ) then
+	echo "=========================================================="
+	grep -n "	" /dev/null $file
+	echo ""
+	echo "$file has explicit TABSs."
+	echo "They must be converted to SPACES(2 per TAB) before you can commit."
+	echo "=========================================================="
+	set failed=1
+endif
+end
+exit $failed
