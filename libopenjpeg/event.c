@@ -30,7 +30,7 @@
      Utility functions
    ==========================================================*/
 
-#ifndef WIN32
+#ifndef _MSC_VER
 static char*
 i2a(unsigned i, char *a, unsigned r) {
 	if (i/r > 0) a = i2a(i/r,a,r);
