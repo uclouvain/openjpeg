@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+January 24, 2006
+! [Antonin Descampe] event.c : replaced "WIN32" by "_MSC_VER" for i2a
+
 January 20, 2006
 * [Antonin Descampe] fixed various minor warnings with gdcm patches
 
