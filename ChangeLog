@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 January 25, 2006
+* [Antonin Descampe] fixed a problem in convert.c when multiple comments
 + [Antonin Descampe] added cmake files to the project
 ! [Antonin Descampe] fix.c : replaced "WIN32" by "_MSC_VER" for int64
 + [Antonin Descampe] added "OPJ_EXPORT" in openjpeg.h to generate shared lib with win32

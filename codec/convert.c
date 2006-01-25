@@ -844,8 +844,7 @@ opj_image_t* pnmtoimage(char *filename, opj_cparameters_t *parameters) {
 	opj_image_cmptparm_t cmptparm[3];	/* maximum of 3 components */
 	opj_image_t * image = NULL;
 	char value;
-	char comment[256];
-
+	
 	f = fopen(filename, "rb");
 	if (!f) {
 		fprintf(stderr, "\033[0;33mFailed to open %s for reading !!\033[0;39m\n", filename);
@@ -856,74 +855,33 @@ opj_image_t* pnmtoimage(char *filename, opj_cparameters_t *parameters) {
 		return 0;
 	value = fgetc(f);
 
-	switch(value) {
-		case '2':	/* greyscale image type */
-		case '5':
-		{
-			numcomps = 1;
-			color_space = CLRSPC_GRAY;
-
-			fgetc(f);
-
-			if (fgetc(f) == '#') {
-				/* skip comments */
-				fseek(f, 0, SEEK_SET);
-				if (value == '2') {
-					fscanf(f, "P2\n");
-				} else if (value == '5') {
-					fscanf(f, "P5\n");
-				}
-				fgets(comment, 256, f);
-				fscanf(f, "%d %d\n255", &w, &h);
-			} else {
-				fseek(f, 0, SEEK_SET);
-				if (value == '2') {
-					fscanf(f, "P2\n%d %d\n255", &w, &h);
-				} else if (value == '5') {
-					fscanf(f, "P5\n%d %d\n255", &w, &h);
-				}
-			}
-			
-			fgetc(f);	/* <cr><lf> */
+		switch(value) {
+			case '2':	/* greyscale image type */
+			case '5':
+				numcomps = 1;
+				color_space = CLRSPC_GRAY;
+				break;
+				
+			case '3':	/* RGB image type */
+			case '6':
+				numcomps = 3;
+				color_space = CLRSPC_SRGB;
+				break;
+				
+			default:
+				fclose(f);
+				return NULL;
 		}
-		break;
-
-		case '3':	/* RGB image type */
-		case '6':
-		{
-			numcomps = 3;
-			color_space = CLRSPC_SRGB;
-
-			fgetc(f);
-
-			if (fgetc(f) == '#') {
-				/* skip comments */
-				fseek(f, 0, SEEK_SET);
-				if (value == '3') {
-					fscanf(f, "P3\n");
-				} else if (value == '6') {
-					fscanf(f, "P6\n");
-				}
-				fgets(comment, 256, f);
-				fscanf(f, "%d %d\n255", &w, &h);
-			} else {
-				fseek(f, 0, SEEK_SET);
-				if (value == '3') {
-					fscanf(f, "P3\n%d %d\n255", &w, &h);
-				} else if (value == '6') {
-					fscanf(f, "P6\n%d %d\n255", &w, &h);
-				}
-			}
-			
-			fgetc(f);	/* <cr><lf> */
-		}
-		break;
-
-		default:
-			fclose(f);
-			return NULL;
-	}
-
+		
+		fgetc(f);
+		
+		/* skip comments */
+		while(fgetc(f) == '#') while(fgetc(f) != '\n');
+		
+		fseek(f, -1, SEEK_CUR);
+		fscanf(f, "%d %d\n255", &w, &h);			
+		fgetc(f);	/* <cr><lf> */
+		
 	/* initialize image components */
 	memset(&cmptparm[0], 0, 3 * sizeof(opj_image_cmptparm_t));
 	for(i = 0; i < numcomps; i++) {
