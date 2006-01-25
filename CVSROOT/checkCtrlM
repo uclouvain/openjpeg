@@ -17,9 +17,7 @@ shift 1
 for file in "$@"; do
   #
   # select files with extentions .txx, .cxx, .h, .html, .htm, .c, .txt, .cmake
-  match=`echo $file | egrep
- 
-\[\.\]txx\$\|\[\.\]cxx\$\|\[\.\]h\$\|\[\.\]html\$\|\[\.\]htm\$\|\[\.\]c\$\|\[\.\]txt\$\|\[\.\]cmake\$`
+  match=`echo $file | egrep \[\.\]txx\$\|\[\.\]cxx\$\|\[\.\]h\$\|\[\.\]html\$\|\[\.\]htm\$\|\[\.\]c\$\|\[\.\]txt\$\|\[\.\]cmake\$`
   if [ "x$match" != "x" ] ; then
     count=`grep -n 
 \$ /dev/null $file|wc -c`
