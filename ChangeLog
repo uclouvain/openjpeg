@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+January 25, 2006
+! removed all CtrlM from files (openjpeg.h,t2.c,j2k_to_image.c)
+
 January 24, 2006
 ! [Antonin Descampe] event.c : replaced "WIN32" by "_MSC_VER" for i2a
 
