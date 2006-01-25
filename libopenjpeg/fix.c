@@ -30,7 +30,7 @@
 
 #include "fix.h"
 
-#ifdef WIN32
+#ifdef _MSC_VER
 #define int64 __int64
 #else
 #define int64 long long
