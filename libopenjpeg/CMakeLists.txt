@@ -1,6 +1,6 @@
 INCLUDE_REGULAR_EXPRESSION("^.*$")
 # Defines the source code for the library
-SET(openjpeg_SRCS
+SET(OpenJPEG_SRCS
   bio.c
   cio.c
   dwt.c
@@ -33,5 +33,7 @@ IF (WIN32)
 ENDIF (WIN32)
 
 # Create the library
-ADD_LIBRARY(${OPJ_PREFIX}openjpeg ${openjpeg_SRCS})
+ADD_LIBRARY(${OPJ_PREFIX}openjpeg ${OpenJPEG_SRCS})
 
+# Install library
+INSTALL_TARGETS(/lib/ ${OPJ_PREFIX}openjpeg)
