@@ -9,3 +9,12 @@ SET (DROP_LOCATION "/cgi-bin/HTTPUploadDartFile.cgi")
 SET (TRIGGER_SITE 
     "http://${DROP_SITE}/cgi-bin/Submit-Public-TestingResults.cgi")
 
+# Not used right now, since on public:
+# Project Home Page
+SET (PROJECT_URL "http://www.openjpeg.org")
+
+# Dart server configuration
+#SET (ROLLUP_URL "http://${DROP_SITE}/cgi-bin/openjpeg-rollup-dashboard.sh")
+SET (CVS_WEB_URL "http://euterpe.tele.ucl.ac.be/cgi-bin/viewcvs.cgi/")
+SET (CVS_WEB_CVSROOT "OpenJPEG")
+

@@ -1,5 +1,5 @@
 INCLUDE_REGULAR_EXPRESSION("^.*$")
-# Create the lib
+# Defines the source code for the library
 SET(openjpeg_SRCS
   bio.c
   cio.c
@@ -23,6 +23,7 @@ SET(openjpeg_SRCS
   tgt.c
 )
 
+# Handle the dllimport/dllexport for building shared lib on Win32
 IF (WIN32)
   IF (BUILD_SHARED_LIBS)
     ADD_DEFINITIONS(-DOPJ_SHARED)
@@ -31,5 +32,6 @@ IF (WIN32)
   ENDIF (BUILD_SHARED_LIBS)
 ENDIF (WIN32)
 
+# Create the library
 ADD_LIBRARY(${OPJ_PREFIX}openjpeg ${openjpeg_SRCS})
 

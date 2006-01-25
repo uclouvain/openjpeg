@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 January 25, 2006
+! [Mathieu Malaterre] Add a lot of comments on the CMake build system
 ! [Mathieu Malaterre] Fix MINGW32 and BORLAND compilation problems.
 
 January 25, 2006
