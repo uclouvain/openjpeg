@@ -8,7 +8,7 @@ What's New for OpenJPEG
 January 25, 2006
 ! [Antonin Descampe] fix.c : replaced "WIN32" by "_MSC_VER" for int64
 + [Antonin Descampe] added "OPJ_EXPORT" in openjpeg.h to generate shared lib with win32
-! [Antonin Descampe] removed all CtrlM from files (openjpeg.h,t2.c,j2k_to_image.c)
+! [Antonin Descampe] removed all CtrlM from files
 
 January 24, 2006
 ! [Antonin Descampe] event.c : replaced "WIN32" by "_MSC_VER" for i2a
