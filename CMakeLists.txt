@@ -34,8 +34,11 @@ IF(OPJ_STANDALONE)
   MARK_AS_ADVANCED(BUILD_TESTING DART_ROOT TCL_TCLSH)
   IF(BUILD_TESTING)
     ENABLE_TESTING()
+    SET(BUILDNAME "OpenJPEG-${CMAKE_SYSTEM}-${CMAKE_C_COMPILER}" CACHE STRING "Name of build on the dashboard")
+    MARK_AS_ADVANCED(BUILDNAME)
   ENDIF(BUILD_TESTING)
 ENDIF(OPJ_STANDALONE)
+
 # TODO, technically we should add tests, e.g:
 # http://www.crc.ricoh.com/~gormish/jpeg2000conformance/
 
