@@ -18,3 +18,5 @@ SET (PROJECT_URL "http://www.openjpeg.org")
 SET (CVS_WEB_URL "http://euterpe.tele.ucl.ac.be/cgi-bin/viewcvs.cgi/")
 SET (CVS_WEB_CVSROOT "OpenJPEG")
 
+SET (USE_DOXYGEN "On")
+SET (DOXYGEN_URL "http://www.openjpeg.org/libdoc/index.html")
