@@ -5,6 +5,11 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+January 26, 2006
+* [Herve Drolon] fixed various minor warnings occuring under gcc
+* [__david__] fixed a segfault in codec/image_to_j2k.c & codec/j2k_to_image.c
+* [__david__] fixed help option in codec/j2k_to_image & codec/image_to_j2k
+
 January 25, 2006
 ! [Mathieu Malaterre] Sync with ITK repository, also add ref to doxygen
 ! [Mathieu Malaterre] Add a lot of comments on the CMake build system

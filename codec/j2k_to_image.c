@@ -92,7 +92,7 @@ int get_file_format(char *filename) {
 	static const int format[] = { PGX_DFMT, PXM_DFMT, PXM_DFMT, PXM_DFMT, BMP_DFMT, J2K_CFMT, JP2_CFMT, JPT_CFMT };
 	char * ext = strrchr(filename, '.') + 1;
 	if(ext) {
-		for(i = 0; i < sizeof(format); i++) {
+		for(i = 0; i < sizeof(format)/sizeof(*format); i++) {
 			if(strnicmp(ext, extension[i], 3) == 0) {
 				return format[i];
 			}
@@ -108,7 +108,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters) 
 	/* parse the command line */
 
 	while (1) {
-		int c = getopt(argc, argv, "i:o:r:q:f:t:n:c:b:x:p:s:d:h:P:S:E:M:R:T:C:I");
+		int c = getopt(argc, argv, "i:o:r:q:f:t:n:c:b:x:p:s:d:hP:S:E:M:R:T:C:I");
 		if (c == -1)
 			break;
 		switch (c) {
