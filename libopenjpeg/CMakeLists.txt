@@ -23,16 +23,25 @@ SET(OpenJPEG_SRCS
   tgt.c
 )
 
+# Prepare the .def file (Module definition)
+# depending on wether we are:
+# 1. Building a dll (shared lib)
+# 2. Wether we are using cl or bcc32 (underscore convention)
 IF(WIN32 AND BUILD_SHARED_LIBS)
   SET(UNDERSCORE)
+  # Borland expect symbol to start with _
   IF(BORLAND)
     SET(UNDERSCORE "_")
   ENDIF(BORLAND)
+  # Borland will by default use a .def file if present in
+  # the binary directory
   CONFIGURE_FILE(
     ${OPENJPEG_SOURCE_DIR}/libopenjpeg/openjpeg.def.in
     ${OPENJPEG_BINARY_DIR}/libopenjpeg/openjpeg.def
     @ONLY IMMEDIATE
     )
+  # You can directly pass a .def file to cl this is
+  # recognized
   IF(NOT BORLAND)
     SET(OpenJPEG_SRCS ${OpenJPEG_SRCS}
       ${OPENJPEG_BINARY_DIR}/libopenjpeg/openjpeg.def
