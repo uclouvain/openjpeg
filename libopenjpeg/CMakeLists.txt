@@ -42,11 +42,11 @@ IF(WIN32 AND BUILD_SHARED_LIBS)
     )
   # You can directly pass a .def file to cl this is
   # recognized
-  IF(NOT BORLAND)
+  IF(NOT BORLAND AND NOT MINGW)
     SET(OpenJPEG_SRCS ${OpenJPEG_SRCS}
       ${OPENJPEG_BINARY_DIR}/libopenjpeg/openjpeg.def
       )
-  ENDIF(NOT BORLAND)
+  ENDIF(NOT BORLAND AND NOT MINGW)
 ENDIF(WIN32 AND BUILD_SHARED_LIBS)
 
 # Create the library
