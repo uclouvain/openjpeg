@@ -1,0 +1,17 @@
+LIBRARY openjpeg.dll
+EXPORTS @UNDERSCORE@opj_image_create
+        @UNDERSCORE@opj_image_destroy
+        @UNDERSCORE@opj_cio_open
+        @UNDERSCORE@opj_cio_close
+        @UNDERSCORE@cio_tell
+        @UNDERSCORE@opj_set_event_mgr
+        @UNDERSCORE@opj_create_decompress
+        @UNDERSCORE@opj_destroy_decompress
+        @UNDERSCORE@opj_set_default_decoder_parameters
+        @UNDERSCORE@opj_setup_decoder
+        @UNDERSCORE@opj_decode
+        @UNDERSCORE@opj_create_compress
+        @UNDERSCORE@opj_destroy_compress
+        @UNDERSCORE@opj_set_default_encoder_parameters
+        @UNDERSCORE@opj_setup_encoder
+        @UNDERSCORE@opj_encode

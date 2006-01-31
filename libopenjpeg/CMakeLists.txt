@@ -23,17 +23,26 @@ SET(OpenJPEG_SRCS
   tgt.c
 )
 
-# Handle the dllimport/dllexport for building shared lib on Win32
-IF (WIN32)
-  IF (BUILD_SHARED_LIBS)
-    ADD_DEFINITIONS(-DOPJ_SHARED)
-  ELSE (BUILD_SHARED_LIBS)
-    ADD_DEFINITIONS(-DOPJ_STATIC)
-  ENDIF (BUILD_SHARED_LIBS)
-ENDIF (WIN32)
+IF(WIN32 AND BUILD_SHARED_LIBS)
+  SET(UNDERSCORE)
+  IF(BORLAND)
+    SET(UNDERSCORE "_")
+  ENDIF(BORLAND)
+  CONFIGURE_FILE(
+    ${OPENJPEG_SOURCE_DIR}/libopenjpeg/openjpeg.def.in
+    ${OPENJPEG_BINARY_DIR}/libopenjpeg/openjpeg.def
+    @ONLY IMMEDIATE
+    )
+  IF(NOT BORLAND)
+    SET(OpenJPEG_SRCS ${OpenJPEG_SRCS}
+      ${OPENJPEG_BINARY_DIR}/libopenjpeg/openjpeg.def
+      )
+  ENDIF(NOT BORLAND)
+ENDIF(WIN32 AND BUILD_SHARED_LIBS)
 
 # Create the library
 ADD_LIBRARY(${OPJ_PREFIX}openjpeg ${OpenJPEG_SRCS})
 
 # Install library
 INSTALL_TARGETS(/lib/ ${OPJ_PREFIX}openjpeg)
+

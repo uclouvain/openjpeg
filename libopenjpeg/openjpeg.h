@@ -32,19 +32,7 @@
 
 #define OPENJPEG_VERSION "1.0.0"
 
-#if defined(_WIN32) && !defined (OPJ_STATIC)
-#ifdef OPJ_SHARED
-#define OPJ_EXPORT __declspec(dllexport)
-#else
-#define OPJ_EXPORT __declspec(dllimport)
-#endif
-#else
-#ifdef OPJ_STATIC
-#define OPJ_EXPORT extern
-#else
 #define OPJ_EXPORT
-#endif
-#endif
 
 /* 
 ==========================================================
