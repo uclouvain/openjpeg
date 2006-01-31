@@ -417,7 +417,6 @@ opj_image_t* bmptoimage(char *filename, opj_cparameters_t *parameters) {
 							opj_image_destroy(image);
 							fclose(IN);
 							return NULL;
-							break;
 						default:
 							for (i = 0; i < v; i++) {
 								v2 = getc(IN);

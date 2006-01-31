@@ -239,7 +239,6 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters) 
 							"!! Unrecognized format for infile : %s [accept only *.pnm, *.pgm, *.ppm, *.pgx or *.bmp] !!\n\n", 
 							infile);
 						return 1;
-						break;
 				}
 				strncpy(parameters->infile, infile, MAX_PATH);
 			}
@@ -258,7 +257,6 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters) 
 					default:
 						fprintf(stderr, "Unknown output format image %s [only *.j2k, *.jp2]!! \n", outfile);
 						return 1;
-						break;
 				}
 				strncpy(parameters->outfile, outfile, MAX_PATH);
 			}
@@ -451,11 +449,8 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters) 
 				/* ----------------------------------------------------- */
 			
 			case 'h':			/* display an help description */
-			{
 				encode_help_display();
 				return 1;
-			}
-			break;
 				
 				/* ----------------------------------------------------- */
 

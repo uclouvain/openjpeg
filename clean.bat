@@ -2,6 +2,7 @@ rd Release /s /q
 rd Debug /s /q
 rd codec\Debug /s /q
 rd codec\Release /s /q
+rd dist /s /q
 del *.pch /s /q
 del *.ncb /s /q
 del *.opt /s /q

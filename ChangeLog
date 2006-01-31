@@ -7,8 +7,10 @@ What's New for OpenJPEG
 
 January 31, 2006
 * [Mathieu Malaterre] Fix compilation using default openjpeg.dsw
+* [Herve Drolon] fixed various minor warnings occuring under icc9 and bcc32
 - [Mathieu Malaterre] Remove all references to OPJ_EXPORT, no declspec in header file anymore
 + [Mathieu Malaterre] Add a def.in file which is a template for Module Definition
++ [Herve Drolon] added MSVC project and compiler directives to build a 'standard' WIN32 DLL
 
 January 27, 2006
 * [Antonin Descampe] fixed a two initialization problems in t1.c and tcd.c
