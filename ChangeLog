@@ -5,6 +5,10 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+February 01, 2006
+! [Herve Drolon] changed function definitions of INT and FIX modules to 'inline'
++ [Herve Drolon] added a VERSION resource to the DLL version of OpenJPEG
+
 January 31, 2006
 * [Mathieu Malaterre] Fix compilation using default openjpeg.dsw
 * [Herve Drolon] fixed various minor warnings occuring under icc9 and bcc32
