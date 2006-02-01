@@ -5,9 +5,7 @@ SET(OpenJPEG_SRCS
   cio.c
   dwt.c
   event.c
-  fix.c
   image.c
-  int.c
   j2k.c
   j2k_lib.c
   jp2.c

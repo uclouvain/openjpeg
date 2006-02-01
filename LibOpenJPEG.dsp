@@ -111,15 +111,7 @@ SOURCE=libopenjpeg\event.c
 # End Source File
 # Begin Source File
 
-SOURCE=libopenjpeg\fix.c
-# End Source File
-# Begin Source File
-
 SOURCE=libopenjpeg\image.c
-# End Source File
-# Begin Source File
-
-SOURCE=libopenjpeg\int.c
 # End Source File
 # Begin Source File
 

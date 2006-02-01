@@ -73,8 +73,8 @@ PostBuild_Cmds=if not exist dist mkdir dist	copy libopenjpeg\openjpeg.h dist	cop
 # PROP Intermediate_Dir "Debug"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
-# ADD BASE CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "DLLOPENJPEG_EXPORTS" /Yu"stdafx.h" /FD /GZ  /c
-# ADD CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "OPJ_EXPORTS" /FD /GZ  /c
+# ADD BASE CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "DLLOPENJPEG_EXPORTS" /Yu"stdafx.h" /FD /GZ /c
+# ADD CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "OPJ_EXPORTS" /FD /GZ /c
 # SUBTRACT CPP /YX /Yc /Yu
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
@@ -118,15 +118,7 @@ SOURCE=.\libopenjpeg\event.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\libopenjpeg\fix.c
-# End Source File
-# Begin Source File
-
 SOURCE=.\libopenjpeg\image.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\libopenjpeg\int.c
 # End Source File
 # Begin Source File
 
@@ -272,6 +264,10 @@ SOURCE=.\libopenjpeg\tgt.h
 # Begin Group "Resource Files"
 
 # PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
+# Begin Source File
+
+SOURCE=.\OpenJPEG.rc
+# End Source File
 # End Group
 # End Target
 # End Project
