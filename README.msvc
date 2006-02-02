@@ -7,7 +7,7 @@ The library comes in two versions :
 
 In order to compile the library version *or* the DLL version, you will have to : 
 
-1) Open the MSVC project named LibOpenJPEG.dsw
+1) Open the MSVC workspace named LibOpenJPEG.dsw
 2) Set the choosen target as the active project, that means : 
  a) Go to the Menu 'Build -> Set Active Configuration'
  b) Choose one of the following configuration : 
