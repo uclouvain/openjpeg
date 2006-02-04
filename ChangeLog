@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+February 04, 2006
+* [galt] fixed a bug in codec/convert.c::imagetobmp
+
 February 01, 2006
 ! [Herve Drolon] changed function definitions of INT and FIX modules to 'inline'
 + [Herve Drolon] added a VERSION resource to the DLL version of OpenJPEG

@@ -596,24 +596,24 @@ int imagetobmp(opj_image_t * image, char *outfile) {
 		fprintf(fdest, "%c%c%c%c", (7834) & 0xff, ((7834) >> 8) & 0xff,	((7834) >> 16) & 0xff, ((7834) >> 24) & 0xff);
 		fprintf(fdest, "%c%c%c%c", (256) & 0xff, ((256) >> 8) & 0xff, ((256) >> 16) & 0xff, ((256) >> 24) & 0xff);
 		fprintf(fdest, "%c%c%c%c", (256) & 0xff, ((256) >> 8) & 0xff, ((256) >> 16) & 0xff, ((256) >> 24) & 0xff);
-	}
 
-	for (i = 0; i < 256; i++) {
-		fprintf(fdest, "%c%c%c%c", i, i, i, 0);
-	}
-
-	for (i = 0; i < wr * hr; i++) {
-		/* a modifier !! */
-		/* fprintf(fdest, "%c", image->comps[0].data[w * h - ((i) / (w) + 1) * w + (i) % (w)]); */
-		fprintf(fdest, "%c", image->comps[0].data[w * hr - ((i) / (wr) + 1) * w + (i) % (wr)]);
-		/*if (((i + 1) % w == 0 && w % 2))
-		fprintf(fdest, "%c", 0); */
-		if ((i + 1) % wr == 0) {
-			for (pad = wr % 4 ? 4 - wr % 4 : 0; pad > 0; pad--)	/* ADD */
-				fprintf(fdest, "%c", 0);
+		for (i = 0; i < 256; i++) {
+			fprintf(fdest, "%c%c%c%c", i, i, i, 0);
 		}
+
+		for (i = 0; i < wr * hr; i++) {
+			/* a modifier !! */
+			/* fprintf(fdest, "%c", image->comps[0].data[w * h - ((i) / (w) + 1) * w + (i) % (w)]); */
+			fprintf(fdest, "%c", image->comps[0].data[w * hr - ((i) / (wr) + 1) * w + (i) % (wr)]);
+			/*if (((i + 1) % w == 0 && w % 2))
+			fprintf(fdest, "%c", 0); */
+			if ((i + 1) % wr == 0) {
+				for (pad = wr % 4 ? 4 - wr % 4 : 0; pad > 0; pad--)	/* ADD */
+					fprintf(fdest, "%c", 0);
+			}
+		}
+		fclose(fdest);
 	}
-	fclose(fdest);
 
 	return 0;
 }
