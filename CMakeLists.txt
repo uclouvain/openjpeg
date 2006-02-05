@@ -22,10 +22,6 @@ SET(OPENJPEG_VERSION
   "${OPENJPEG_MAJOR_VERSION}.${OPENJPEG_MINOR_VERSION}.${OPENJPEG_BUILD_VERSION}")
 
 #-----------------------------------------------------------------------------
-# OpenJPEG build configuration options.
-OPTION(BUILD_SHARED_LIBS "Build OpenJPEG with shared libraries." OFF)
-
-#-----------------------------------------------------------------------------
 # For the codec...
 OPTION(BUILD_EXAMPLES "Build the Examples (codec...)." OFF)
 
