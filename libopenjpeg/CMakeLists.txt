@@ -21,11 +21,14 @@ SET(OpenJPEG_SRCS
   tgt.c
 )
 
-# Pass proper definition to preprocessor to generate
-# shared lib
-IF(WIN32 AND BUILD_SHARED_LIBS)
-  ADD_DEFINITIONS(-DOPJ_EXPORTS)
-ENDIF(WIN32 AND BUILD_SHARED_LIBS)
+# Pass proper definition to preprocessor to generate shared lib
+IF(WIN32)
+  IF(BUILD_SHARED_LIBS)
+    ADD_DEFINITIONS(-DOPJ_EXPORTS)
+  ELSE(BUILD_SHARED_LIBS)
+    ADD_DEFINITIONS(-DOPJ_STATIC)
+  ENDIF(BUILD_SHARED_LIBS)
+ENDIF(WIN32)
 
 # Create the library
 ADD_LIBRARY(${OPJ_PREFIX}openjpeg ${OpenJPEG_SRCS})
