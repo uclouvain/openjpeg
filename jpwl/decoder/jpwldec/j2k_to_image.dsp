@@ -125,6 +125,10 @@ SOURCE=..\libopenjpeg\jpt.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\libopenjpeg\jpw.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\libopenjpeg\mct.c
 # End Source File
 # Begin Source File
