@@ -172,15 +172,6 @@ typedef struct opj_tcd {
 	opj_tcp_t *tcp;
 	/** current encoded/decoded tile */
 	int tcd_tileno;
-	/**@name working variables */
-	/*@{*/
-	opj_tcd_tile_t *tile;
-	opj_tcd_tilecomp_t *tilec;
-	opj_tcd_resolution_t *res;
-	opj_tcd_band_t *band;
-	opj_tcd_precinct_t *prc;
-	opj_tcd_cblk_t *cblk;
-	/*@}*/
 } opj_tcd_t;
 
 /** @name Exported functions */

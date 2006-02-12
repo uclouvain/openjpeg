@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+February 12, 2006
+- [Herve Drolon] removed unneeded working variables in opj_tcd_t
+
 February 04, 2006
 * [galt] fixed a bug in codec/convert.c::imagetobmp
 
