@@ -943,7 +943,7 @@ bool tcd_rateallocate(opj_tcd_t *tcd, unsigned char *dest, int len, opj_image_in
 	int compno, resno, bandno, precno, cblkno, passno, layno;
 	double min, max;
 	double cumdisto[100];	/* fixed_quality */
-	const double K = 1;		/* 1.1; // fixed_quality */
+	const double K = 1;		/* 1.1; fixed_quality */
 	double maxSE = 0;
 
 	opj_cp_t *cp = tcd->cp;
@@ -1019,7 +1019,7 @@ bool tcd_rateallocate(opj_tcd_t *tcd, unsigned char *dest, int len, opj_image_in
 		double lo = min;
 		double hi = max;
 		int success = 0;
-		// TODO: remove maxlen
+		/* TODO: remove maxlen */
 		int maxlen = tcd_tcp->rates[layno] ? int_min(tcd_tcp->rates[layno], len) : len;
 		double goodthresh = 0;
 		int i;
