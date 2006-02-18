@@ -268,7 +268,7 @@ static int t2_encode_packet(opj_tcd_tile_t * tile, opj_tcp_t * tcp, opj_pi_itera
 			if (!layer->numpasses) {
 				continue;
 			}
-			if (c + layer->len > dest + len) {
+			if (c + layer->len > dest + length) {
 				return -999;
 			}
 			
