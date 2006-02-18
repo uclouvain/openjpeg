@@ -125,7 +125,7 @@ static int t2_getnumpasses(opj_bio_t *bio) {
 	return (37 + bio_read(bio, 7));
 }
 
-static int t2_encode_packet(opj_tcd_tile_t * tile, opj_tcp_t * tcp, opj_pi_iterator_t *pi, unsigned char *dest, int len, opj_image_info_t * image_info, int tileno) {
+static int t2_encode_packet(opj_tcd_tile_t * tile, opj_tcp_t * tcp, opj_pi_iterator_t *pi, unsigned char *dest, int length, opj_image_info_t * image_info, int tileno) {
 	int bandno, cblkno;
 	unsigned char *sop = 0, *eph = 0;
 	unsigned char *c = dest;
@@ -170,7 +170,7 @@ static int t2_encode_packet(opj_tcd_tile_t * tile, opj_tcp_t * tcp, opj_pi_itera
 	}
 	
 	bio = bio_create();
-	bio_init_enc(bio, c, len);
+	bio_init_enc(bio, c, length);
 	bio_write(bio, 1, 1);		/* Empty header bit */
 	
 	/* Writing Packet header */
