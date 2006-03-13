@@ -1,0 +1,85 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: j2k_to_image - Win32 Release--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\DOCUME~1\baruffa\IMPOST~1\Temp\RSP77.tmp" with contents
+[
+/nologo /ML /W3 /GX /O2 /I "../libopenjpeg" /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "_MBCS" /D "DONT_HAVE_GETOPT" /Fo"Release/" /Fd"Release/" /FD /c 
+"C:\Documents and Settings\baruffa\Desktop\DecoderJPWL\libopenjpeg\jpw.c"
+]
+Creating command line "cl.exe @C:\DOCUME~1\baruffa\IMPOST~1\Temp\RSP77.tmp" 
+Creating temporary file "C:\DOCUME~1\baruffa\IMPOST~1\Temp\RSP78.tmp" with contents
+[
+kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /incremental:no /pdb:"Release/j2k_to_image.pdb" /machine:I386 /out:"Release/j2k_to_image.exe" 
+".\Release\bio.obj"
+".\Release\cio.obj"
+".\Release\dwt.obj"
+".\Release\fix.obj"
+".\Release\getopt.obj"
+".\Release\int.obj"
+".\Release\j2k.obj"
+".\Release\j2k_to_image.obj"
+".\Release\jp2.obj"
+".\Release\jpt.obj"
+".\Release\jpw.obj"
+".\Release\mct.obj"
+".\Release\mqc.obj"
+".\Release\pi.obj"
+".\Release\raw.obj"
+".\Release\t1.obj"
+".\Release\t2.obj"
+".\Release\tcd.obj"
+".\Release\tgt.obj"
+]
+Creating command line "link.exe @C:\DOCUME~1\baruffa\IMPOST~1\Temp\RSP78.tmp"
+<h3>Output Window</h3>
+Compiling...
+jpw.c
+C:\Documents and Settings\baruffa\Desktop\DecoderJPWL\libopenjpeg\jpw.c(635) : warning C4018: '<' : signed/unsigned mismatch
+C:\Documents and Settings\baruffa\Desktop\DecoderJPWL\libopenjpeg\jpw.c(683) : warning C4018: '<' : signed/unsigned mismatch
+C:\Documents and Settings\baruffa\Desktop\DecoderJPWL\libopenjpeg\jpw.c(692) : warning C4018: '<' : signed/unsigned mismatch
+C:\Documents and Settings\baruffa\Desktop\DecoderJPWL\libopenjpeg\jpw.c(696) : warning C4018: '==' : signed/unsigned mismatch
+C:\Documents and Settings\baruffa\Desktop\DecoderJPWL\libopenjpeg\jpw.c(833) : warning C4018: '<' : signed/unsigned mismatch
+C:\Documents and Settings\baruffa\Desktop\DecoderJPWL\libopenjpeg\jpw.c(940) : warning C4018: '<' : signed/unsigned mismatch
+C:\Documents and Settings\baruffa\Desktop\DecoderJPWL\libopenjpeg\jpw.c(1077) : warning C4018: '<' : signed/unsigned mismatch
+C:\Documents and Settings\baruffa\Desktop\DecoderJPWL\libopenjpeg\jpw.c(1092) : warning C4018: '<' : signed/unsigned mismatch
+C:\Documents and Settings\baruffa\Desktop\DecoderJPWL\libopenjpeg\jpw.c(1197) : warning C4018: '<' : signed/unsigned mismatch
+C:\Documents and Settings\baruffa\Desktop\DecoderJPWL\libopenjpeg\jpw.c(1301) : warning C4018: '<' : signed/unsigned mismatch
+C:\Documents and Settings\baruffa\Desktop\DecoderJPWL\libopenjpeg\jpw.c(1389) : warning C4018: '<' : signed/unsigned mismatch
+C:\Documents and Settings\baruffa\Desktop\DecoderJPWL\libopenjpeg\jpw.c(1444) : warning C4018: '<' : signed/unsigned mismatch
+C:\Documents and Settings\baruffa\Desktop\DecoderJPWL\libopenjpeg\jpw.c(1628) : warning C4018: '<' : signed/unsigned mismatch
+C:\Documents and Settings\baruffa\Desktop\DecoderJPWL\libopenjpeg\jpw.c(1658) : warning C4018: '<' : signed/unsigned mismatch
+C:\Documents and Settings\baruffa\Desktop\DecoderJPWL\libopenjpeg\jpw.c(1732) : warning C4018: '<' : signed/unsigned mismatch
+C:\Documents and Settings\baruffa\Desktop\DecoderJPWL\libopenjpeg\jpw.c(1810) : warning C4018: '<' : signed/unsigned mismatch
+C:\Documents and Settings\baruffa\Desktop\DecoderJPWL\libopenjpeg\jpw.c(1987) : warning C4018: '<' : signed/unsigned mismatch
+C:\Documents and Settings\baruffa\Desktop\DecoderJPWL\libopenjpeg\jpw.c(2094) : warning C4018: '<' : signed/unsigned mismatch
+C:\Documents and Settings\baruffa\Desktop\DecoderJPWL\libopenjpeg\jpw.c(2214) : warning C4018: '<' : signed/unsigned mismatch
+C:\Documents and Settings\baruffa\Desktop\DecoderJPWL\libopenjpeg\jpw.c(2220) : warning C4018: '==' : signed/unsigned mismatch
+C:\Documents and Settings\baruffa\Desktop\DecoderJPWL\libopenjpeg\jpw.c(2228) : warning C4018: '<' : signed/unsigned mismatch
+C:\Documents and Settings\baruffa\Desktop\DecoderJPWL\libopenjpeg\jpw.c(2232) : warning C4018: '==' : signed/unsigned mismatch
+C:\Documents and Settings\baruffa\Desktop\DecoderJPWL\libopenjpeg\jpw.c(2314) : warning C4018: '<' : signed/unsigned mismatch
+C:\Documents and Settings\baruffa\Desktop\DecoderJPWL\libopenjpeg\jpw.c(2417) : warning C4018: '<' : signed/unsigned mismatch
+C:\Documents and Settings\baruffa\Desktop\DecoderJPWL\libopenjpeg\jpw.c(1864) : warning C4101: 'prova' : unreferenced local variable
+C:\Documents and Settings\baruffa\Desktop\DecoderJPWL\libopenjpeg\jpw.c(2582) : warning C4018: '<' : signed/unsigned mismatch
+C:\Documents and Settings\baruffa\Desktop\DecoderJPWL\libopenjpeg\jpw.c(2628) : warning C4018: '<' : signed/unsigned mismatch
+C:\Documents and Settings\baruffa\Desktop\DecoderJPWL\libopenjpeg\jpw.c(2788) : warning C4018: '<' : signed/unsigned mismatch
+C:\Documents and Settings\baruffa\Desktop\DecoderJPWL\libopenjpeg\jpw.c(2808) : warning C4018: '==' : signed/unsigned mismatch
+C:\Documents and Settings\baruffa\Desktop\DecoderJPWL\libopenjpeg\jpw.c(2818) : warning C4018: '<' : signed/unsigned mismatch
+C:\Documents and Settings\baruffa\Desktop\DecoderJPWL\libopenjpeg\jpw.c(2830) : warning C4018: '==' : signed/unsigned mismatch
+C:\Documents and Settings\baruffa\Desktop\DecoderJPWL\libopenjpeg\jpw.c(2888) : warning C4018: '<' : signed/unsigned mismatch
+C:\Documents and Settings\baruffa\Desktop\DecoderJPWL\libopenjpeg\jpw.c(2962) : warning C4018: '<' : signed/unsigned mismatch
+C:\Documents and Settings\baruffa\Desktop\DecoderJPWL\libopenjpeg\jpw.c(2499) : warning C4101: 'ldpepb' : unreferenced local variable
+C:\Documents and Settings\baruffa\Desktop\DecoderJPWL\libopenjpeg\jpw.c(2499) : warning C4101: 'pepb' : unreferenced local variable
+Linking...
+
+
+
+<h3>Results</h3>
+j2k_to_image.exe - 0 error(s), 35 warning(s)
+</pre>
+</body>
+</html>
