@@ -1650,18 +1650,6 @@ void jpwl_read_esd()
 			break;
 	}
 	
-	//esdata = esdata/2;
-	//for (i=0; i<esdata; i++)
-	//{
-	//	temp = cio_read(2);
-	//	mant = temp & 0x07FF;
-	//	ex = (temp >> 11) & 0x001F;
-	//	value = pow(2,ex-15)*(1+(mant/pow(2,11)));
-		//fprintf(f,"%x\n",cio_read(1));
-	//	fprintf(f,"level %d: %f\n",i,value);
-	//}
-	//printf("temp: %x\n",cio_read(2));
-	//cio_skip(-2);
 	fclose(f);
 }
 /*
