@@ -1,10 +1,4 @@
-// In questa versione si aggiunge la funzione che inserisce il marker RED
 
-// Per ora si suppone che venga aggiunto un solo RED, nel main header, e che sia
-// utilizzata la modalità byte-range mode. Osserviamo che ci sono problemi realizzativi
-// per l'utilizzo delle modalità a pacchetto (non ci sono pacchetti negli header!).
-// Decidiamo di aggiungere il marker RED subito prima di SOT (alla fine di MH!!!).
-// Per stare sicuri, come address length utilizziamo 4 bytes (b1=1).
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -149,7 +143,7 @@ typedef struct {
 	unsigned int pcrc;
 	unsigned long cl;
 	unsigned char pepc;
-	id_tecn *tecn;   // array di strutture di tipo id_tecn!!!
+	id_tecn *tecn;   
 } EPC_par;
 
 typedef struct {
@@ -180,39 +174,35 @@ RED red;
 int lmex, nbckpar, epbpm, next, startsot;
 unsigned long psot;
 
-unsigned char *cssrc;// Queste variabili servono per la gestione della codestream.
-unsigned int cslen;  // Se voglio utilizzare le funzioni "cio" per gestire un buffer,
-int cspos;			 // queste variabili consentono di reinizializzare cio per la CS!!
-unsigned int csread; // Lunghezza della codestream letta...serve per uscire in caso di errori
+unsigned char *cssrc;
+unsigned int cslen;  
+int cspos;			 
+unsigned int csread; 
 
-int redpos; // Per la gestione del passaggio delle funzioni "cio" al e dal buffer RED
-int decodeflag; // Vale 1 se RS è stato decodificato, 0 altrimenti
-unsigned long redlen; // Lunghezza del buffer che contiene REDdata
+int redpos; 
+int decodeflag; // 1 if there are not errors decoding RS codeword
+unsigned long redlen; 
 int redmode; // Se vale 0 allora RED in MH, se vale 1 allora RED in MH e nei vari TPH
-int redlenok; // Lunghezza del campo dati della RED che non necessita aggiornamento offset
-int nepbrd; // Tiene conto del numero di EPB letti
-int lastepb; // Se vale 1 l'EPB corrente è l'ultimo dell'header in questione!
+int redlenok; 
+int nepbrd; // umber of EPBs already read
+int lastepb; // Is 1 if the current EPB is the last of an header
 
 
-// La funzione seguente cerca la presenza nella codestream del marker EPC
-// in modo da determinare se si tratta di una codestream JPWL
-// Ritorna il numero di EPC presenti nella codestream
+// This is the main function which parses the CS searching JPWL marker segments
 int decode_JPWL(unsigned char *src, int len)
 {
 	unsigned int temp, nepb, j2k_state, pos, nepc, posi, mem, rest;
-	//int flag; // se 0 vuol dire che ha trovato EPC dopo SIZ, se 1 dopo EPB
-	int err; // se 1 vuol dire che EPC è corretto, se 0 vuol dire che contiene
-	         // ancora errori!
+	int err; 
 	unsigned long psot, i;
 	FILE *f,*g;
 
-	cssrc = src;  //*********Aggiunta in questa versione 1.7
-	cslen = len;  //*********Aggiunta in questa versione 1.7
-	redpos = 0;   //*********Aggiunta in questa versione 1.7
-	redlen = 0;   //*********Aggiunta in questa versione 1.7
+	cssrc = src;  
+	cslen = len;  
+	redpos = 0;   
+	redlen = 0;   
 	redlenok = 0;
-	redmode = 0;  //*********Aggiunta in questa versione 1.7
-				  // Per default si assume che la RED è scritta solo in MH!!!	
+	redmode = 0;  
+				  
 
 	csread = 0;	
 
@@ -222,146 +212,95 @@ int decode_JPWL(unsigned char *src, int len)
 			printf("Expected marker SOT\n");
 			return 0;
 	}
-	//csread+=2;
-
-	//temp = cio_read(2);  // qui dovrebbe leggere SIZ
-	//if (temp >> 8 != 0xff) {
-	//	fprintf(stderr, "%.8x: expected a marker instead of %x\n",
-	//        cio_tell() - 2, temp);
-	//	return 0;
-	//}
-	//temp = cio_read(2); // qui dovrebbe leggere la lunghezza di SIZ: Lsiz
-	//cio_skip(temp-2);
-
 	
-	j2k_state = 0; // inizializza j2k_state ad un valore indefinito
-	nepc = 0; // inizializza a zero il numero di EPC finora trovati
+	j2k_state = 0; 
+	nepc = 0; 
 	nepbrd = 0;
 	lastepb = 0;
 
-
-	//while ((j2k_state != J2K_STATE_MT)&&(csread < cslen))
 	while (j2k_state != J2K_STATE_MT)
 	{
-	
-		//nepc = find_EPC(nepc,&j2k_state);
-		temp = cio_read(2);  // qui dovrebbe leggere SIZ o SOT
+		temp = cio_read(2);  // Read SIZ or SOT
 		if (temp >> 8 != 0xff) {
 			fprintf(stderr, "%.8x: expected a marker instead of %x\n",
 			    cio_tell() - 2, temp);
 			return nepc;
 		}
-		//csread+=2;
 
-		posi = cio_tell();  // memorizza la posizione a monte della lunghezza di SIZ o SOT
+		posi = cio_tell();  // Start of Lsiz or Lsot
 		
-		//ncomp = 3;  // di default si assume che l'immagine abbia 3 componenti!!!
-		if (temp == J2K_MS_SIZ) // Ha letto SIZ!!!
+		if (temp == J2K_MS_SIZ) 
 		{
-			temp = cio_read(2); // legge Lsiz
-			//csread+=2;
-			//ncomp = (temp - 38)/3;  // calcola il numero di componenti dell'immagine
-			// nbckpar serve per modificare il numero di blocchi di decodifica per la prima 
-			// parte del primo EPB in base al numero di componenti utilizzate!!!
-			lmex = temp + 17;  // lunghezza dei dati da proteggere;
-			nbckpar = (int)ceil((double)lmex / 96); // 96 è nn-kk per il primo EPB
-									// temp=Lsiz, 17 tiene conto di EPB,SIZ,SOC
+			temp = cio_read(2); // Read Lsiz
+			
+			lmex = temp + 17;  // Length of data to be protected
+			nbckpar = (int)ceil((double)lmex / 96); 
+									
 			
 		}
-		else  // sta leggendo SOT oppure sta leggendo SIZ ma ci sono errori nel marker SIZ!!!
-		{     // ...in tal caso il decoder assume che l'immagine sia composta da 3 componenti
+		else  
+		{     
 			nbckpar = 1;
-			temp = cio_read(2); // qui dovrebbe leggere la lunghezza di SIZ o SOT
+			temp = cio_read(2); 
 		}
 		cio_skip(temp-2);
-		//csread += (temp - 2);
-		
 
-
-		temp = cio_read(2);  // qui dovrebbe leggere EPC o EPB, se ci sono
-		//if (temp >> 8 != 0xff) {
-		//	fprintf(stderr, "%.8x: expected a marker instead of %x\n",
-		//		cio_tell() - 2, temp);
-		//	return nepc;
-		//}
-		//csread += 2;
+		temp = cio_read(2);  // Read EPB or EPC if there are
 		if (temp != JPWL_MS_EPC)
 		{
-			temp = cio_read(2); // qui dovrebbe leggere la lunghezza di EPB, se c'è: Lepb
+			temp = cio_read(2); // Lepb
 			cio_skip(temp-2);
-			temp = cio_read(2); // qui dovrebbe leggere EPC, se c'è!!
-			//if (temp >> 8 != 0xff) {
-			//fprintf(stderr, "%.8x: expected a marker instead of %x\n",
-			//	cio_tell() - 2, temp);
-			//return nepc;
-			//}
-			//csread += temp + 2;
-
+			temp = cio_read(2); // EPC
 			pos = cio_tell();
 
 			if ((temp != JPWL_MS_EPC)&&(nepc == 0))
 			{
 				cio_seek(0);
-				return nepc;  // non ha trovato EPC => vede la codestream come NON JPWL
+				return nepc;  // NOT JPWL CS
 			}
 			
-			if ((temp != JPWL_MS_EPC)&&(nepc != 0))  //vuol dire che il TPH in questione non ha EPC
+			if ((temp != JPWL_MS_EPC)&&(nepc != 0))  // Current TPH doesn't have EPC
 			{
-				cio_seek(posi); // siamo a monte della lunghezza di SOT
+				cio_seek(posi); // Lsot
 				cio_skip(4);
 				psot = cio_read(4);
-				if (psot == 0)  // vuol dire che siamo nell'ultimo TPH
-					j2k_state = J2K_STATE_MT;  // cosi' al passo seguente si esce dal ciclo
+				if (psot == 0)  // Last TPH
+					j2k_state = J2K_STATE_MT;  // Next step skip out of the cicle
 				cio_seek(posi-2);
-				cio_skip(psot); // si pone a valle dei dati del tile corrente
+				cio_skip(psot); // End of data of the current TP
 				if (cio_read(2) == J2K_MS_EOC)
 					j2k_state = J2K_STATE_MT;
-				cio_skip(-2); // si pone a valle dei dati del tile corrente
-				//csread += (psot - pos);
-				//return nepc;
-
+				cio_skip(-2); 
 			}
-			if (temp == JPWL_MS_EPC) // ha trovato l'EPC non subito dopo SIZ, quindi c'è EPB!
+			if (temp == JPWL_MS_EPC) // There is EPB
 			{
 				if (nepc == 0)
 				{
 					j2k_state = J2K_STATE_MHSOC;
-					cio_seek(posi-4);   // si posiziona a monte di SOC
-					next = cio_tell();  // assegna a next = 0!!!!
+					cio_seek(posi-4);   // SOC
+					next = cio_tell();  
 				}
 				if (nepc != 0)
 				{
 					j2k_state = J2K_STATE_TPHSOT;
-					cio_seek(posi-2); // si posiziona a monte di SOT
+					cio_seek(posi-2); // SOT
 					next = cio_tell();
 				}
-				//printf("next: %x\n",next);
 
-				red.reddata = (char *) malloc(len * sizeof(char));// Allochiamo lo spazio necessario per RED
-																// Scegliamo len per "stare larghi"
+				red.reddata = (char *) malloc(len * sizeof(char));
+																
 				
-				// ********Cio' che segue è un'aggiunta in jpwldec1.9!!!!**********
+				
 				mem = next;
 				i = 0;
-				if (!(rest = read_EPB_2(&j2k_state)))// legge il primo EPB(della CS o del tile,caso + EPC!)
+				if (!(rest = read_EPB_2(&j2k_state)))// First EPB
 					return nepc;
 				i += rest;
-				temp = cio_tell(); // Memorizza posizione a valle di EPB
-				cio_seek(pos); // si posiziona a valle del marker EPC
-				err = read_EPC();  // Legge il primo EPC, o comunque il primo EPC di un tile
-				//if (err == 1)
-				//	printf("CRC EPC corretto!\n");
-				//else
-				//	printf("CRC EPC errato!\n");
-				nepc++;				// nel caso di più EPC usati nella codestream
-				nepb = epc.tecn[0].lid / 4;  // calcola il numero di EPB presenti
-				//printf("nepb: %d\n",nepb);
-				/***********************************************************************
-					Qui dovrà essere aggiunta la porzione di codice per la gestione
-					della scrittura della RED anche nei tile!
-				*************************************************************************/
-				
-				//while ((i<nepb)&&(csread < cslen))
+				temp = cio_tell(); // End of EPB
+				cio_seek(pos); // End of EPC
+				err = read_EPC();  // Read the first EPC
+				nepc++;				// Handle the case of more then on EPC
+				nepb = epc.tecn[0].lid / 4;  // Number of EPBs in the CS
 				while (i<nepb)
 				{
 					if ((j2k_state == J2K_STATE_MH)&&(lastepb == 0))
@@ -374,59 +313,35 @@ int decode_JPWL(unsigned char *src, int len)
 							i += rest;
 						}
 						while (lastepb == 0);
-						//while ((lastepb == 0)&&(csread < cslen));
 					}
 					if (j2k_state == J2K_STATE_TPHSOT)
 					{
-						cio_seek(temp); // Si posiziona all'inizio di SOT
+						cio_seek(temp); // SOT
 						pos = cio_tell();
-						//printf("pos: %x\n",pos);
-						//system("pause");
 						do
 						{
 							if (!(rest = read_EPB_2(&j2k_state)))
 								return nepc;
 							i += rest;
-							//printf("state: %x\n",j2k_state);
+						
 						}
 						while (lastepb == 0);
-						//printf("ciao!\n");
-						//while ((lastepb == 0)&&(csread < cslen));
-						//printf("state: %x\n",j2k_state);
-						//system("pause");
+						
 					}
 					if (j2k_state == J2K_STATE_MH)
 					{
 						temp = cio_read(2);
-						//if (temp >> 8 != 0xff) {
-						//	fprintf(stderr, "%.8x: expected a marker instead of %x\n",
-						//		cio_tell() - 2, temp);
-						//	return nepc;
-						//}
-
-						//while ((temp != J2K_MS_SOT)&&(csread < cslen))
+						
 						while (temp != J2K_MS_SOT)
 						{
 							cio_skip(cio_read(2)-2);
 							temp = cio_read(2);
-							//if (temp >> 8 != 0xff) {
-							//fprintf(stderr, "%.8x: expected a marker instead of %x\n",
-							//	cio_tell() - 2, temp);
-							//return nepc;
-							//}
-							//csread += 2;
+						
 						}
 						cio_skip(-2);
 					}
 					temp = cio_read(2);
-					//printf("mrk: %x\n",temp);
-					//system("pause");
-					//if (temp >> 8 != 0xff) {
-					//fprintf(stderr, "%.8x: expected a marker instead of %x\n",
-					//	cio_tell() - 2, temp);
-					//return nepc;
-					//}
-					//csread += 2;
+				
 					if (temp != J2K_MS_EOC)
 					{
 						if ((j2k_state == J2K_STATE_TPH)||(temp != J2K_MS_SOT))
@@ -446,10 +361,8 @@ int decode_JPWL(unsigned char *src, int len)
 						}
 					}
 				}
-				// Ora sono stati letti tutti gli EPB associati all'ultimo EPC letto
-				//printf("temp: %x\n",temp);
-
-				//while ((temp != J2K_MS_EOC)&&(csread < cslen))
+				// All EPBs read
+				
 				while (temp != J2K_MS_EOC)
 				{
 					cio_seek(pos);
@@ -458,107 +371,71 @@ int decode_JPWL(unsigned char *src, int len)
 					cio_seek(pos);
 					cio_skip(psot);
 					temp = cio_read(2);
-					//if (temp >> 8 != 0xff) {
-					//fprintf(stderr, "%.8x: expected a marker instead of %x\n",
-					//	cio_tell() - 2, temp);
-					//return nepc;
-					//}
-					//csread += 2;
+					
 				}
-				cio_skip(-2); // A questo punto siamo all'inizio di EOC
+				cio_skip(-2); // EOC
 				j2k_state = J2K_STATE_MT;
 				
 			}
 		}
-		else // ho trovato EPC dopo SIZ o SOT
+		else // There is EPC after SIZ
 		{
 			err = read_EPC();
-			//if (err == 1)
-			//		printf("CRC EPC corretto!\n");
-			//else
-			//		printf("CRC EPC errato!\n");
+		
 			if (nepc == 0)
 			{
-				cio_seek(posi); // siamo a monte della lunghezza di SIZ
-				cio_skip(cio_read(2)-2);  // si pone a valle di SIZ
-				temp = cio_read(2); // legge il marker successivo
-				//if (temp >> 8 != 0xff) {
-				//	fprintf(stderr, "%.8x: expected a marker instead of %x\n",
-				//		cio_tell() - 2, temp);
-				//	return nepc;
-				//}
-
-				//while ((temp != J2K_MS_SOT)&&(csread < cslen))
+				cio_seek(posi); 
+				cio_skip(cio_read(2)-2);  
+				temp = cio_read(2); 
+				
 				while (temp != J2K_MS_SOT)
 				{
-					cio_skip(cio_read(2)-2); // si pone a valle del MS corrente
-					temp = cio_read(2);  // legge il marker successivo
-					//if (temp >> 8 != 0xff) {
-					//fprintf(stderr, "%.8x: expected a marker instead of %x\n",
-					//	cio_tell() - 2, temp);
-					//return nepc;
-					//}
-					//csread += 2;
-					//printf("MS: %x\n",temp);
+					cio_skip(cio_read(2)-2); 
+					temp = cio_read(2);  
+				
 				}
-				cio_skip(-2); // si posiziona a valle del main header
+				cio_skip(-2); // End of Main-Header
 			}
 			if (nepc != 0)
 			{
-				cio_seek(posi); // siamo a monte della lunghezza di SOT
+				cio_seek(posi); 
 				cio_skip(4);
 				psot = cio_read(4);
-				if (psot == 0)  // vuol dire che siamo nell'ultimo TPH
-					j2k_state = J2K_STATE_MT;  // cosi' al passo seguente si esce dal cilclo
+				if (psot == 0)  // Last TPH
+					j2k_state = J2K_STATE_MT;  
 				cio_seek(posi-2);
-				cio_skip(psot); // si pone a valle dei dati del tile corrente
+				cio_skip(psot); 
 				if (cio_read(2) == J2K_MS_EOC)
 				{
 					j2k_state = J2K_STATE_MT;
-				    cio_skip(-2); // si pone a valle dei dati del tile corrente
+				    cio_skip(-2); 
 				}
 			}
-			//j2k_state = J2K_STATE_MT;
+			
 			nepc++;
 		}
-	} // fine while (j2k_state != J2K_STATE_MT)!!
+	} 
 
-	//printf("Eccomi!\n");
-	//f = fopen("output","wb");
-	//if (f==NULL)
-	//	printf("Unable to open file!\n");
-    //cio_seek(0);
-	//printf("CL: %d\n",epc.cl);
-	//for (i=0; i<epc.cl; i++)
-	//	fputc(cio_read(1),f);
-	//fclose(f);
-
+	
 	cio_seek(0);
-	//printf("redlen: %d\n",redlen);
+
 	if ((redlen != 0)&&(redmode==0))
 		{
-			red.lred = redlen + 3; // Tiene conto del campo Lred e del campo Pred
-			red.pred = 0x43; // Pred = 01000011 , per i motivi specificati all'inizio!
-			// Dobbiamo posizionarci alla fine del MH
-			temp = cio_read(2); // Legge SOC
+			red.lred = redlen + 3; 
+			red.pred = 0x43; // Pred = 01000011 
+			// Go to End of MH
+			temp = cio_read(2); // SOC
 			
-			//while ((temp != J2K_MS_SOT)&&(csread < cslen))
+		
 			while (temp != J2K_MS_SOT)
 			{
 				cio_skip(2);
 				cio_skip(cio_read(2)-2);
 				temp = cio_read(2);
-				//if (temp >> 8 != 0xff) {
-				//	fprintf(stderr, "%.8x: expected a marker instead of %x\n",
-				//		cio_tell() - 2, temp);
-				//	return nepc;
-				//}
+				
 				cio_skip(-2);
 			}
-			//cio_skip(-2);
-			//printf("sdfpo: %x\n",cio_read(2));
-			// A questo punto ci troviamo a valle dell'ultimo marker del MH
-			// Dobbiamo inserire il marker RED!!!
+			
 			insert_RED(cio_tell(),red.lred+2,redlenok);
 			g = fopen("output","wb");
 			if (g==NULL)
@@ -568,7 +445,7 @@ int decode_JPWL(unsigned char *src, int len)
 				fputc(cio_read(1),g);
 			fclose(g);
 			cslen = epc.cl + redlen + 5;
-			//free(red.reddata);
+		
 		}
 	else
 	{
@@ -576,57 +453,53 @@ int decode_JPWL(unsigned char *src, int len)
 		if (f==NULL)
 			printf("Unable to open file!\n");
 		cio_seek(0);
-		//printf("CL: %d\n",epc.cl);
-		for (i=0; i< cslen; i++)
+		
+		for (i=0; i<cslen; i++)
 			fputc(cio_read(1),f);
 		fclose(f);
 	}
-	//free(red.reddata);
+
 	cio_seek(0);
-	//printf("Eccomi qua!\n");
+	
 	return nepc;
 	}
 
-int read_EPC() // ritorna 1 se trova epc, 0 se non lo trova
+int read_EPC() 
 {
 	
 	unsigned int id, lid;  
-	//unsigned char *pid;  						   
+							   
 	int i, h, pos, nid;
 	unsigned int ltec, count;
 	unsigned char *buff;
 
-	//FILE *f;
-	
 
-	pos = cio_tell()-2; // memorizza la posizione a monte del marker EPC
+	pos = cio_tell()-2; // EPC position
 
 	
 	epc.lepc = cio_read(2);
 	epc.pcrc = cio_read(2);
 	epc.cl = cio_read(4);
-	//printf("CL: %d\n",epc.cl);
 	epc.pepc = cio_read(1);
-	if ((epc.pepc>>4)&1)	// E' presente una o più ESD !!!
+	if ((epc.pepc>>4)&1)	// One or more ESDs
 	{
-		esd = (ESD_MS *) malloc(10 * sizeof(ESD_MS)); // ******Si puo' togliere!!!!!
-		//printf("La codestream contiene il marker ESD!\n");
+		esd = (ESD_MS *) malloc(10 * sizeof(ESD_MS)); 
 	}
-	ltec = epc.lepc - 9; // lunghezza dell'EPC a partire dalla fine di pepc
+	ltec = epc.lepc - 9; 
 	count = 0;
-	nid = 0; // numero di tecniche id usate
+	nid = 0; // umber of techniques used
 	while (count<ltec)
 	{
 		id = cio_read(2);
 		count += 2;
 		lid = cio_read(2);
 		count += 2 + lid;
-		cio_skip(lid); // salta il campo Pid
+		cio_skip(lid); // Skip over Pid field
 		nid ++;
-	} // fine while (count<ltec)
-	// Ora nid contiene il numero totale di tecniche usate!!!
+	} 
+	
 	epc.tecn = (id_tecn *) malloc(nid * sizeof(id_tecn));
-	cio_seek(pos + 11); // si posiziona a valle di pepc!
+	cio_seek(pos + 11); 
 	for (i=0; i<nid; i++)
 	{
 		epc.tecn[i].id = cio_read(2);
@@ -636,200 +509,130 @@ int read_EPC() // ritorna 1 se trova epc, 0 se non lo trova
 				epc.tecn[i].pid[h] = cio_read(1);
 	}
 
-	/*f = fopen("epc.txt","w");
-	fprintf(f,"ECP: \t%x\n",0xff97);
-	fprintf(f,"Lepc:\t%x\n",epc.lepc);
-	fprintf(f,"Pcrc:\t%x\n",epc.pcrc);
-	fprintf(f,"CL:  \t%x\n",epc.cl);
-	fprintf(f,"Pepc:\t%x\n",epc.pepc);
-	fprintf(f,"ID:  \t%x\n",epc.tecn[0].id);
-	fprintf(f,"Lid: \t%x\n",epc.tecn[0].lid);
-	fprintf(f,"Pid: \tN.D.\n");
-	fclose(f);*/
-
-	/*
-	// Facciamo riscrivere tutto l'EPC letto!
-	printf("Lepc: %d\n",epc.lepc);
-	printf("Pcrc: %d\n",epc.pcrc);
-	printf("CL: %d\n",epc.cl);
-	printf("Pepc: %d\n",epc.pepc);
-	for (i=0; i<nid; i++)
-	{
-		printf("id[%d] : %d\n",i,epc.tecn[i].id);
-		printf("lid[%d] : %d\n",i,epc.tecn[i].lid);
-		for (h=0; h<epc.tecn[i].lid; h++)
-			printf("pid[%d] : %x\t",i,epc.tecn[i].pid[h]);
-		printf("\n");
-	}
-	*/
-	//f = fopen("pepbs","w");
-	//if (f==NULL)
-	//	printf("Unable to open file 'pepbs'!\n");
-	//for (i=0; i<(epc.tecn[0].lid/4); i++)
-	//{	for (h=0; h<4; h++)
-			//fputc(epc.tecn[0].pid[i+h],f);
-	//		fprintf(f,"%x",epc.tecn[0].pid[i*4+h]);
-	//	fprintf(f,"\n");
-	//}
-	//fclose(f);
-
-	// Ora occorre verificare la correttezza del campo Pcrc
+	
+	
+	// Check CRC
 	buff = (char *) malloc(epc.lepc* sizeof(char));
-	cio_seek(pos); // si posiziona all'inizio di EPC
+	cio_seek(pos); 
 	for (i=0; i<4; i++)
-		buff[i] = cio_read(1);  // copia nel buffer epc fino a pcrc escluso
-	//pcrc = cio_read(2); // ora abbiamo copiato in pcrc il campo corrispondente dell'EPC
+		buff[i] = cio_read(1);  
+	
 	cio_skip(2);
 	for (i=4; i<epc.lepc; i++)
 		buff[i] = cio_read(1);
-	//for (i=0; i<(epc.lepc); i++)
-	//	printf("%x ",buff[i]);
-	//printf("\n");
-	// Ora buff contiene tutto l'epc a meno di pcrc!
-	// Bisogna applicare la codifica crc a buff e verificare che il risultato coincida
-	// con pcrc salvato!
+	
+	
 	ResetCRC();
 	for (i=0; i < epc.lepc; i++){
 		UpdateCRC16(buff[i]);	
 	}
-	//printf("CRCSUM: %x\n",crcSum);
+	
 	if (crcSum == epc.pcrc)
-		return 1;  // se la funzione read_EPC ritorna 1 vuol dire che CRC è corretto
+		return 1;  // CRC correct
 	else
-		return 0;  // vuol dire che il campo Pcrc indica la presenza di errori in EPC
+		return 0;  // Errors!
 }
 
-int read_EPB_2(int *j2k_state) // ritorna il numero di EPB letti
+int read_EPB_2(int *j2k_state) // Returns the number of EPBs read
 {
 	unsigned int lepb, lsiz, temp, ldata, lsot, lbuf;
 	int posdata, posdata2, nblock, i,h, pos, lante, lpar;
-	int nn, kk, tt, nn1, kk1; // parametri per la decodifica RS
-	//int pos1, pos2, h; // utili per la gestione della decodifica della seconda parte di EPB
+	int nn, kk, tt, nn1, kk1; 
 	int nepbpm, posfirst, posend, count;
 	unsigned long lpack, ldpread;
 	EPB_par *epb;
-	unsigned long ldpepb, pepb, ndata, datacrc;  // ndata è utile per la decodifica della seconda parte EPB
+	unsigned long ldpepb, pepb, ndata, datacrc;  
 	unsigned char depb;
 	unsigned char *buff;
-	int lparity, packall; // se packall = 1 allora tutti gli EPB del tile sono packed
+	int lparity, packall; // If packall=1 all the following EPBs are packed
 
-	//FILE *f;
 
 	if (*j2k_state == J2K_STATE_MHSOC)  
-		{
-			// Se siamo giunti a questo punto vuol dire che SOC e i primi due campi di SIZ non sono
-			// errati!!...ora ci dobbiamo posizionare subito a valle di SIZ
-			//printf("j2k_state: %x\n",*j2k_state);
-			cio_skip(4); // si pone all'inizio del campo Lsiz
+		{	
+			cio_skip(4); //  Lsiz
 			lsiz = cio_read(2);
-			cio_skip(lsiz-2); // ora siamo all'inizio dell'EPB MS
-			pos = cio_tell(); // memorizza la posizione in cui inizia l'EPB
-			temp = cio_read(2);  // ci si aspetta qui di trovare il marker EPB
-			//*printf("EPB: %x\n",temp);
-			nn = 160; kk = 64; tt = 48;  // inizializzazione per codice RS(160,64)
+			cio_skip(lsiz-2); // EPB
+			pos = cio_tell(); 
+			temp = cio_read(2);  
+		
+			nn = 160; kk = 64; tt = 48;  // RS(160,64)
 			lante = lsiz+4; 
 			
-		} // fine if (j2k_state == J2K_STATE_MHSOC)
+		} 
 
 		if (*j2k_state == J2K_STATE_TPHSOT)
 		{
 			
-			//printf("j2k_state: %x\n",*j2k_state);
-			startsot = cio_tell(); // memorizza nella variabile globale la posizione di SOT
-			cio_skip(2); // si pone all'inizio del campo Lsot
+			
+			startsot = cio_tell(); // SOT
+			cio_skip(2); //  Lsot
 			lsot = cio_read(2);
-			cio_skip(2); // si posiziona all'inizio del campo Psot
-			psot = cio_read(4); // Legge il campo Psot
-			cio_skip(-6); // si riposiziona a valle del campo Lsot
-			//*printf("lsot: %d\n",lsot);
-			cio_skip(lsot-2); // ora siamo all'inizio dell'EPB MS
-			pos = cio_tell(); // memorizza la posizione in cui inizia l'EPB
-			temp = cio_read(2);  // ci si aspetta qui di trovare il marker EPB
-			//*printf("EPB: %x\n",temp);
-			nn = 80; kk = 25; tt = 28;  // inizializzazione per codice RS(80,25)
+			cio_skip(2); 
+			psot = cio_read(4); 
+			cio_skip(-6); 
+			
+			cio_skip(lsot-2); // EPB
+			pos = cio_tell(); 
+			temp = cio_read(2);
+		
+			nn = 80; kk = 25; tt = 28;  // RS(80,25)
 			lante = lsot+2;
 		}
 
 		if ((*j2k_state == J2K_STATE_MH)||(*j2k_state == J2K_STATE_TPH))
 		{
-			//printf("j2k_state: %x\n",*j2k_state);
-			pos = cio_tell(); // memorizza la posizione in cui inizia l'EPB
-			temp = cio_read(2); // ci si aspetta qui di trovare il marker EPB
-			nn = 40; kk = 13; tt = 14;  // inizializzazione per codice RS(40,13)
+			
+			pos = cio_tell(); // EPB
+			temp = cio_read(2); 
+			nn = 40; kk = 13; tt = 14;  // RS(40,13)
 			lante = 0;
 		}
 
-    // A questo punto possiamo decodificare la prima parte di dati tramite i codici di default
+    // Decode using default RS codes
 
-	//printf("state: %x\n",*j2k_state);
-	//system("pause");
-
-	//printf("nn,kk,tt: %d,%d,%d\n",nn,kk,tt);
 	nn1 = 255; kk1 = kk + (nn1 - nn);
 	alpha_to = (int *) malloc((nn1+1)*sizeof(int));
 	index_of = (int *) malloc((nn1+1)*sizeof(int));
 	gg = (int *) malloc((nn1-kk1+1)*sizeof(int));
-	recd = (int *) malloc((nn1)*sizeof(int)); ///forse alcune di queste malloc possono
-	data = (int *) malloc((kk1)*sizeof(int)); // essere eliminate, inutili per decodifica!!!
+	recd = (int *) malloc((nn1)*sizeof(int)); 
+	data = (int *) malloc((kk1)*sizeof(int)); 
 	bb = (int *) malloc((nn1-kk1)*sizeof(int));
 
-	//next = cio_tell();
-
-	//printf("COUNT: %d\n",count);
-	lepb = cio_read(2);  // legge la lunghezza di EPB..si spera che questo campo non è errato!
-	//*printf("LEPB: %x\n",lepb);
-	cio_skip(9);  // si posiziona all'inizio del campo dati di EPB
+	lepb = cio_read(2); 
+	cio_skip(9);  // EPB data field
 	posdata = cio_tell();
-	//printf("data: %x\n",cio_read(2));
-	//cio_skip(-2);
-	ldata = lepb - 11;  // determina la lunghezza del campo dati
+	ldata = lepb - 11;  // Length of data field
 	
-	lpar = nn - kk; // determina la lunghezza dei bit di parità utilizzati per correggere la prima parte di EPB
+	lpar = nn - kk; // Length of parity bytes
 	if (*j2k_state == J2K_STATE_MHSOC)  
 	{
 		lpar = nbckpar * (nn-kk);
 	}
-	//if (*j2k_state == J2K_STATE_TPHSOT)
 	else
 		nbckpar = 1;
-	//lbuf = lante + 13 + lpar;  // lpar è la lunghezza dei bit di parità 
-	//*printf("lbuf = %d\n",lbuf);
-	buff = (char *) malloc(nn1 * sizeof(char)); // buffer che conterrà tutti i dati che precedono EPB
-	          // e i parametri di EPB
+	buff = (char *) malloc(nn1 * sizeof(char)); 
 
 	for (i=0; i<nbckpar; i++)
 	{
-		//buff = (char *) malloc(nn1 * sizeof(char)); // buffer che conterrà tutti i dati che precedono EPB
-	                                           // e i parametri di EPB
-		//printf("Ho inizializzato il buffer!\n");
 		for (h=0; h<nn1; h++)
-			buff[h] = 0; // inizializza il buffer tutto a zero
+			buff[h] = 0; 
 	
-		// Bisognerà copiare tutto il contenuto da questo punto fino alla fine della prima parte dei dati EPB in buff
-		// Per come lavora il decoder RS, i bytes di parità vanno posti all'inizio del buffer
+		// Put parity bytes at the beginning of the buffer
 
-		write_buff(buff,posdata+i*(nn-kk),(nn-kk)); // copia nel buffer i byte di parità del campo dati
-		//printf("PROVA\n");
-		//for (h=0; h<nn1; h++)
-		//	printf(" %x\n",buff[h]);
-		//system("pause");
-	
-		//printf("nbckpar: %d\n",nbckpar);
-		//printf("nn: %d\n",nn);
-		cio_seek(next + i*kk);  // si posiziona all'inizio dei dati protetti (SOC,SOT o EPB)
+		write_buff(buff,posdata+i*(nn-kk),(nn-kk)); // Put in buffer parity bytes
+		cio_seek(next + i*kk);  // Start of protected data
 		if (i<(nbckpar -1))
 		{
 			for (h=(nn-kk); h<nn; h++)
 			{
-				buff[h] = cio_read(1);  // copia in buff i byte di messaggio (SOC,SIZ,ParEPB)
-				//printf(" %x\n",buff[i]);
+				buff[h] = cio_read(1);  // Put in buffer data bytes
 			}
 		}
 		else
 		{
 			if (*j2k_state == J2K_STATE_MHSOC)
 			{
-				ndata = lmex - ((nbckpar-1) * kk); // l'ultimo blocco dati non è in genere lungo 64!
+				ndata = lmex - ((nbckpar-1) * kk); // Handle last block case
 				for (h=(nn-kk); h<((nn-kk)+ndata); h++)
 				{
 					buff[h] = cio_read(1);
@@ -839,152 +642,100 @@ int read_EPB_2(int *j2k_state) // ritorna il numero di EPB letti
 				for (h=(nn-kk); h<nn; h++)
 					buff[h] = cio_read(1);  
 		}
-		//printf("Eccomi qua-1!\n");
-		//for (h=0; h<nn1; h++)
-		//	printf(" %x\n",buff[h]);
-		//system("pause");
-
+		
 		for (h=0; h<nn1; h++)
-			recd[h] = buff[h];  // copia in recd il contenuto di buff da decodificare
+			recd[h] = buff[h];  
 
-		//printf("Eccomi qua-1!\n");
-		//if (*j2k_state == J2K_STATE_MHSOC)
-		//if (i==0)
-		//{
-			
-			/*f = fopen("debug","a");
-			if (f==NULL)
-				printf("Unable to open file!\n");
-			fprintf(f,"\n");
-			for (h=0; h<nn1; h++)
-				fprintf(f,"%x ",recd[h]);
-			fprintf(f,"\n");
-			fclose(f);*/
-		//}
-		//else
-		//{
-		//f = fopen("debug","a");
-		//if (f==NULL)
-		//	printf("Unable to open file!\n");
-		//fprintf(f,"\n");
-		//for (h=0; h<nn1; h++)
-		//	fprintf(f,"%x ",recd[h]);
-		//fprintf(f,"\n");
-		//fclose(f);
-		//}
-		//printf("Eccomi qua-1!\n");
-		//for (h=0; h<nn1; h++)
-		//	printf(" %x\n",recd[h]);
-		//system("pause");
+		
 
 		generate_gf(nn1,kk1) ;
 		gen_poly(nn1,kk1) ;
 		for (h=0; h<nn1; h++)
-			recd[h] = index_of[recd[h]] ; // a questo punto recd[] contiene i bytes decodificati
+			recd[h] = index_of[recd[h]] ; 
 		decode_rs(nn1,kk1,tt); 
 
-		if (decodeflag == 0) //*******Aggiunto in questa versione 1.7
+		if (decodeflag == 0) 
 		{
-			//Inizializzo il buffer in cui vado a copiare la RED
-			cio_init(red.reddata,cslen); //*******Aggiunta in questa versione 1.7
+			
+			cio_init(red.reddata,cslen); 
 			cio_seek(redpos);
 
-			//printf("Il blocco corrispondente non è stato decodificato!\n");
-			cio_write(next + i*kk,4); // Scrive il byte di start del range considerato	
+			
+			cio_write(next + i*kk,4); // Start byte
 			redlen += 4;
 			if (i<(nbckpar -1))
-				cio_write(next + i*kk + kk - 1,4);  // Scrive il byte di end del range
+				cio_write(next + i*kk + kk - 1,4);  // End byte
 			else
 			{
 				if (*j2k_state == J2K_STATE_MHSOC)
-					cio_write(next + i*kk + ndata - 1,4);  // Scrive il byte di end del range
+					cio_write(next + i*kk + ndata - 1,4);  // End byte
 				else
 					cio_write(next + i*kk + kk - 1,4);
 			}
 			redlen += 4;
-			// Adesso segnaliamo la presenza di errori con 0xFFFF!!!
+			// 0xFFFF stands for errors occurred
 			cio_write(0xFFFF,2);
 			redlen += 2;
 			if ((*j2k_state == J2K_STATE_MHSOC)||(*j2k_state == J2K_STATE_MH))
 				redlenok+=10;
-			//cio_seek(redpos);
-			//printf("START: %x\n",cio_read(4));
-			//printf("END: %x\n",cio_read(4));
-			//printf("VALUE: %x\n",cio_read(2));
-			redpos = cio_tell(); // Memorizza la posizione attuale del buffer RED
-			//printf("ciao\n");
+			
+			redpos = cio_tell(); 
+			
 		}
 
-		//printf("Eccomi qua-2!\n");
-		//for (i=0; i<nn1; i++)
-		//	printf(" %x\n",recd[i]);
-		//system("pause");
-
-		// Adesso bisogna ricopiare il contenuto di recd[] nella codestream
-
-		cio_init(cssrc, cslen); //******Aggiunto in questa versione 1.7
 		
-		cio_seek(posdata+i*(nn-kk)); // si posiziona all'inizio del blocco di parità corrispondente	
+
+		// Copy recd[] content in the CS
+
+		cio_init(cssrc, cslen); 
+		
+		cio_seek(posdata+i*(nn-kk)); 
 		for (h=0; h<(nn-kk); h++)
-			cio_write(recd[h],1);  // copia i byte di parità corretti nel campo dati
+			cio_write(recd[h],1); 
 		cio_seek(next + i*kk);
-		//printf("next: %x\n",next);
+		
 		if (i<(nbckpar -1))
 		{
 			for (h=(nn-kk); h<nn; h++)
-				cio_write(recd[h],1);  // copia i bytes di messaggio nella codestream
+				cio_write(recd[h],1);  
 		}
 		else
 		{
 			if (*j2k_state == J2K_STATE_MHSOC)
 				for (h=(nn-kk); h<(nn-kk)+ndata; h++)
 				{
-					cio_write(recd[h],1);  // copia i bytes di messaggio nella codestream
+					cio_write(recd[h],1); 
 				}
 			else
 				for (h=(nn-kk); h<nn; h++)
-				cio_write(recd[h],1);  // copia i bytes di messaggio nella codestream
+				cio_write(recd[h],1);  
 		}
-	} // fine ciclo for (i=0; i<nbckpar; i++)
+	} 
 
-	// A questo punto la codestream è corretta fino alla fine della prima parte dei dati EPB
-	// Possiamo leggere i parametri di EPB per condurre la codifica seguente
+	// Decode with the remaining EPB parity bytes
 
 	
-	cio_seek(pos);  // si posiziona all'inizio di EPB
-	//printf("pos: %x\n",pos);
-	//system("pause");
-	temp = cio_read(2);  // ci si aspetta qui di trovare il marker EPB
+	cio_seek(pos);  // EPB
+	
+	temp = cio_read(2);  
 			if (temp != JPWL_MS_EPB)
 			{
-				//*printf("Non ho decodificato l'EPB!\n"); 
-				// Puo' succedere che l'EPC ha fornito informazione errata: in tal caso il
-				// processo di decodifica effettuato perde di significato.
-				// Puo' anche succedere pero' che il codice RS contenuto nell'EPB MS non
-				// è stato in grado di correggere l'errore sul marker EPB!!
+				
 				
 				return 0;
-				//return;
-				// Per adesso usciamo dalla procedura, ma la cosa migliore sarebbe
-				// fare in modo che il decoder vada a cercare l'eventuale EPB successivo
+				
+				
 			}
 
-	//*count++; // se siamo a questo punto vuol dire che è stato letto effettivamente un EPB
-	//printf("mark: %x\n",temp);
-	cio_skip(2); // ora è all'inizio del campo depb
-	depb = cio_read(1); // legge depb
-	//printf("depb: %x\n",depb);
-	ldpepb = cio_read(4); // legge ldpepb
-	//*printf("ldpepb: %x\n",ldpepb);
-	pepb = cio_read(4); // legge pepb
+	
+	cio_skip(2); 
+	depb = cio_read(1); 
+	
+	ldpepb = cio_read(4); 
 
-	/*f = fopen("epb.txt","a");
-	fprintf(f,"EPB:   \t%x\n",0xff96);
-	fprintf(f,"Lepb:  \t%x\n",lepb);
-	fprintf(f,"Depb:  \t%x\n",depb);
-	fprintf(f,"LDPepb:\t%x\n",ldpepb);
-	fprintf(f,"Pepb:  \t%x\n",pepb);
-	fclose(f);*/
+	pepb = cio_read(4); 
+
+	
 
 	if (nepbrd!=0)
 	{
@@ -994,54 +745,43 @@ int read_EPB_2(int *j2k_state) // ritorna il numero di EPB letti
 		if (pepb!=cio_read(4))
 		{
 			cio_skip(-4);
-			pepb=cio_read(4); // Copia nel campo pepb il corrispondente pepc contenuto in EPC
+			pepb=cio_read(4); 
 		}
 		cio_init(cssrc, cslen);
 		cio_seek(temp);
 	}
-	//*printf("pepb: %x\n",pepb);
-	//*printf("ldata1: %d\n",ldata);
-	ldata = ldata - nbckpar*(nn-kk);  // lunghezza della porzione rimanente del campo dati
-	//*printf("ldata2: %d\n",ldata);
+	
+	ldata = ldata - nbckpar*(nn-kk);  
+	
 	cio_seek(posdata + nbckpar*(nn-kk)); 
-	posdata2 = cio_tell(); // posizione inizio seconda parte dati EPB
+	posdata2 = cio_tell(); 
 	if (ldpepb == 0)
 		next = cio_tell();
-	//printf("pd2: %x\n",posdata2);
-	//printf("nbckpar: %d\n",nbckpar);
-	//printf("mark: %x\n",cio_read(2));
-	//cio_skip(-2);
+	
 
-	if (!((depb >> 6)&1))  // quello corrente non è l'ultimo EPB del tile corrente
+	if (!((depb >> 6)&1))  // Not the last EPB
 		lastepb = 0;
-	if ((depb >> 6)&1)  // quello corrente è l'ultimo EPB del tile corrente
+	if ((depb >> 6)&1)  // Last EPB of the TPH
 		lastepb = 1;
 
-	if (!((depb >> 7)&1))  // EPB in modalità unpacked
+	if (!((depb >> 7)&1))  // Unpacked mode
 	{
-		//printf("Unpacked\n");
-		//system("pause");
+		
 		if ((!((depb >> 6)&1))&&((*j2k_state == J2K_STATE_MHSOC)||(*j2k_state == J2K_STATE_MH)))
-			*j2k_state = J2K_STATE_MH; // vuol dire che il prossimo EPB è in MH ma non è il primo
-		//if (((depb >> 6)&1)&&((*j2k_state == J2K_STATE_MH)||(*j2k_state == J2K_STATE_MHSOC)))
-		//	*j2k_state = J2K_STATE_TPHSOT; // vuol dire che il prossimo EPB è il primo di un TPH
-		//if (((depb >> 6)&1)&&((*j2k_state == J2K_STATE_TPH)||(*j2k_state == J2K_STATE_TPHSOT)))
-		//	*j2k_state = J2K_STATE_TPHSOT; // vuol dire che il prossimo EPB è il primo di un TPH
+			*j2k_state = J2K_STATE_MH; 
+		
 		if ((!((depb >> 6)&1))&&((*j2k_state == J2K_STATE_TPHSOT)||(*j2k_state == J2K_STATE_TPH)))
-			*j2k_state = J2K_STATE_TPH; // vuol dire che il prossimo EPB è relativo ad un TPH
+			*j2k_state = J2K_STATE_TPH; 
 
 		nepbrd++;
 	
-		// Ora leggendo pepb il decoder deve capire quale codice applicare per la porzione di dati
-		// cui fa riferimento la seconda parte del campo EPBdata
+		
 
-		if (pepb)  // se pepb=0 allora si usano i codici di default precedenti
+		if (pepb)  // If Pepb=0 => default RS codes
 		{
 			if ((pepb>>28)==2)
 			{
-				// in questo caso deve effettuare la decodifica RS
-				/***********/
-				// liberiamo gli spazi allocati
+				
 				free(alpha_to);
 				free(index_of);
 				free(gg);
@@ -1056,8 +796,8 @@ int read_EPB_2(int *j2k_state) // ritorna il numero di EPB letti
 				alpha_to = (int *) malloc((nn1+1)*sizeof(int));
 				index_of = (int *) malloc((nn1+1)*sizeof(int));
 				gg = (int *) malloc((nn1-kk1+1)*sizeof(int));
-				recd = (int *) malloc((nn1)*sizeof(int)); ///forse alcune di queste malloc possono
-				data = (int *) malloc((kk1)*sizeof(int)); // essere eliminate, inutili per decodifica!!!
+				recd = (int *) malloc((nn1)*sizeof(int)); 
+				data = (int *) malloc((kk1)*sizeof(int)); 
 				bb = (int *) malloc((nn1-kk1)*sizeof(int));
 				generate_gf(nn1,kk1) ;
 				gen_poly(nn1,kk1) ;
@@ -1065,45 +805,35 @@ int read_EPB_2(int *j2k_state) // ritorna il numero di EPB letti
 	
 			if ((pepb>>28)==1)
 			{
-				// in questo caso deve effettuare le decodifica CRC
+				// CRC decode
 				free(buff);
 				buff = (char *) malloc(ldpepb * sizeof(char));
 				write_buff(buff,posdata2+ldata,ldpepb);
-				if (pepb & 0x00000001)	// vuol dire che bisogna decodificare secondo CRC 32
+				if (pepb & 0x00000001)	// CRC 32
 				{
-					/*per fare il crc32 occorre invertire i byte in ingresso, invertire il crc calcolato
-				    e farne il complemento a 1*/
+					
 					ResetCRC();
 					for (i=0; i < ldpepb; i++)
 						UpdateCRC32(reflectByte(buff[i]));	
 					reflectCRC32();
-					crcSum ^= 0xffffffff;	// effettua il complemento a 1	
+					crcSum ^= 0xffffffff;	// 1's complement
 					cio_seek(posdata2);
 					datacrc = cio_read(4);
-					//printf("CRCSUM: %x\n",crcSum);
-					//if (datacrc == crcSum)
-					//	printf("CRC corretto!\n");
-					//else
-					//	printf("CRC errato!\n");
+					
 				}
-				else	// vuol dire che bisogna decodificare secondo CRC 16
+				else	// CRC 16
 				{
 					ResetCRC();
 					for (i=0; i < ldpepb; i++)
 						UpdateCRC16(buff[i]);	
 					cio_seek(posdata2);
 					datacrc = cio_read(2);
-					//printf("CRCSUM: %x\n",crcSum);
-					//if (datacrc == crcSum)
-					//	printf("CRC corretto!\n");
-					//else
-					//	printf("CRC errato!\n");
+					
 				}
 				free(buff);
 				cio_seek(posdata2 + ldata + ldpepb);
 				next = cio_tell();
-				//printf("read: %x\n",cio_read(2));
-				//cio_skip(-2);
+				
 
 				temp = cio_read(2);
 				if (temp == J2K_MS_SOT)
@@ -1111,197 +841,137 @@ int read_EPB_2(int *j2k_state) // ritorna il numero di EPB letti
 				if (temp == J2K_MS_EOC)
 					*j2k_state = J2K_STATE_MT;
 				cio_skip(-2);
-				//printf("state: %x\n",*j2k_state);
-
+				
 				return 1;
-				//return (posdata2 + ldata + ldpepb);  // ritorna la posizione a valle dei dati successivi a EPB
-				//return;
+				
 			}
 	
 			if (pepb>=0x30000000)
 			{
-				// tecniche registrate in RA
+				// RA techniques
 				cio_seek(posdata2);
 				return 1;
-				//return (posdata2 + ldata + ldpepb);
-				// Per adesso prevede la semplice uscita dalla funzione
+				
+				
 			}
 	
 			if (pepb==0xffffffff)
 			{
-				// non sono usati metodi per i dati seguenti
+				
 				cio_seek(posdata2);
 				return 1;
-				//return (posdata2 + ldata + ldpepb);
-				//return;
+				
 			}
-		}// Fine if (pepb)
+		}
 	
 		
 	
-		/*******************/
-		// qui bisogna aggiungere la parte per la gestione della modalità packed/unpacked
-		/*******************/
-	
 		
-		//cio_seek(posdata + (nn-kk)); 
-		//posdata2 = cio_tell(); // posizione inizio seconda parte dati EPB
 		
-		/********************/
-		// Per adesso si suppone che il primo EPB di un header utilizza lo stesso codice
-		// di default anche per la seconda parte dei dati...in seguito bisognerà aggiungere
-		// la funzionalità che gestisce l'uso dei vari codici in base al campo pepb
-		/********************/
-	
-		// Ora bisogna copiare in buff la seconda parte dei dati di EPB e i dati successivi all'epb
-		// per una lunghezza pari a ldpepb
 	    
-		nblock = ldata / (nn-kk);  // numero di "blocchi di decodifica"
-		//printf("nblock = %d\n",nblock);
-		//*system("pause");
-		//cio_seek(posdata2);  // si posiziona all'inizio della seconda parte dei dati EPB
+		nblock = ldata / (nn-kk);  // Number of CW
+		
 		free(buff);
 		buff = (char *) malloc(nn1 * sizeof(char));
 		for (i=0; i<nblock; i++)
 		{
-			//free(buff);
-			//buff = (char *) malloc(nn1 * sizeof(char));
-			for (h=0; h<nn1; h++)
-				buff[h] = 0; // inizializza il buffer tutto a zero
-			write_buff(buff,posdata2+i*(nn-kk),(nn-kk)); // copia nel buff i bytes di parità
-			cio_seek(posdata2+ldata+i*kk); // si posiziona nel blocco dati corrispondente
 			
-			//if (i==0) {
-			//	printf("data: %x\n",cio_read(2));
-			//    cio_skip(-2);
-			//	system("pause");
-			//}
-			//pos1 = cio_tell(); // memorizza la posizione del blocco dati corrispondente
+			for (h=0; h<nn1; h++)
+				buff[h] = 0; 
+			write_buff(buff,posdata2+i*(nn-kk),(nn-kk)); // Parity bytes
+			cio_seek(posdata2+ldata+i*kk); 
+		
 			if (i<(nblock-1))
 			{
-				//for (h=(posdata2+i*(2*tt)); h<(posdata2+i*(2*tt))+64; h++)
 				for (h=(nn-kk); h<nn; h++)
 				{
-					buff[h] = cio_read(1);  // copia nel buff i bytes di messaggio
-					//if (i==1)
-					//  printf("Data: %x\n",buff[h]);  /**********/
+					buff[h] = cio_read(1);  // Data bytes
+					
 				}
-				//system("pause"); /***********/
+				
 			}
 			else
 			{
-				ndata = ldpepb - ((nblock-1) * kk);  // l'ultimo blocco di dati non necessariamente è lungo 64!
-				//*printf("ndata: %d\n",ndata);
-				//*system("pause");
-				//for (h=(posdata2+i*(2*tt)); h<(posdata2+i*(2*tt))+ndata; h++)
+				ndata = ldpepb - ((nblock-1) * kk);  // Last CW
+				
 				for (h=(nn-kk); h<(nn-kk)+ndata; h++)
 				{
-					buff[h] = cio_read(1);  // copia nel buff i bytes di messaggio
-					//printf("Data: %x\n",buff[h]);  /**********/
+					buff[h] = cio_read(1);  // Data
+				
 				}
-				//system("pause"); /***********/
-				next = cio_tell();  // posizione alla fine dei dati protetti (ldpepb)
-				//printf("next: %x\n",next);
+				
+				next = cio_tell();  
+				
 				if (cio_read(2) == 0xffd9)
 					*j2k_state = J2K_STATE_MT;
 				cio_skip(-2);
 			}
 			
 			for (h=0; h<nn1; h++)
-				recd[h] = buff[h];  // copia in recd il contenuto di buff da decodificare
+				recd[h] = buff[h];  
 
-			//if (*j2k_state == J2K_STATE_TPHSOT)
-			//{
-			//	f = fopen("debug","w");
-			//	if (f==NULL)
-			//		printf("Unable to open file!\n");
-			//	fprintf(f,"\n");
-			//	for (h=0; h<nn1; h++)
-			//		fprintf(f,"%x ",recd[h]);
-			//	fprintf(f,"\n");
-			//	fclose(f);
-			//}
-			//else
-			//{
-			/*f = fopen("debug","a");
-			if (f==NULL)
-				printf("Unable to open file!\n");
-			fprintf(f,"\n");
-			for (h=0; h<nn1; h++)
-				fprintf(f,"%x ",recd[h]);
-			fprintf(f,"\n");
-			fclose(f);*/
-			//}
-			//for (h=0; h<nn1; h++)
-			//	printf("mess: %x\n",recd[h]);
-			//system("pause");
-
-			//printf("nn1: %d\n",nn1);
-			//printf("kk1: %d\n",kk1);
+		
 	        
 			generate_gf(nn1,kk1) ;
 			gen_poly(nn1,kk1) ;
 			for (h=0; h<nn1; h++)
-				recd[h] = index_of[recd[h]] ;  // a questo punto recd[] contiene i bytes decodificati
+				recd[h] = index_of[recd[h]] ;  
 			decode_rs(nn1,kk1,tt);  
 			
-			if (decodeflag == 0) //*******Aggiunto in questa versione 1.7
+			if (decodeflag == 0) 
 			{
-				//Inizializzo il buffer in cui vado a copiare la RED
-				cio_init(red.reddata,cslen); //*******Aggiunta in questa versione 1.7
+				
+				cio_init(red.reddata,cslen); 
 				cio_seek(redpos);
 
-				//printf("Il blocco corrispondente non è stato decodificato!\n");
-				cio_write(posdata2+ldata+i*kk,4); // Scrive il byte di start del range considerato	
+				
+				cio_write(posdata2+ldata+i*kk,4); // Start byte
 				redlen += 4;
 				if (i<(nblock -1))
-					cio_write(posdata2+ldata+i*kk + kk - 1,4);  // Scrive il byte di end del range
+					cio_write(posdata2+ldata+i*kk + kk - 1,4);  //End byte
 				else
-					cio_write(posdata2+ldata+i*kk + ndata - 1,4);  // Scrive il byte di end del range
+					cio_write(posdata2+ldata+i*kk + ndata - 1,4);  // End byte
 				redlen += 4;
-				// Adesso segnaliamo la presenza di errori con 0xFFFF!!!
+	
 				cio_write(0xFFFF,2);
 				redlen += 2;
 				if ((*j2k_state == J2K_STATE_MH)||(*j2k_state == J2K_STATE_TPHSOT))
 					redlenok+=10;
-				redpos = cio_tell(); // Memorizza la posizione attuale del buffer RED
-				//printf("ciao\n");
+				redpos = cio_tell(); 
+				
 			}
 			if ((redlen==0)&(redmode==1))
 				free(red.reddata);
 			
-			//*printf("nciclo: %d\n\n",i);
-			//for (h=0; h<nn1; h++)
-			//	printf("mess: %x\n",recd[h]);
-			//system("pause");
+			
 
-			// Adesso bisogna ricopiare il contenuto di recd[] nella codestream
 			
-			cio_init(cssrc, cslen); //*****Aggiunto in questa versione 1.7
 			
-			cio_seek(posdata2+i*(nn-kk));  // si posiziona all'inizio del blocco di parità corrispondente
+			cio_init(cssrc, cslen); 
+			
+			cio_seek(posdata2+i*(nn-kk));  // Parity block
 			for (h=0; h<(nn-kk); h++)
 			{
-				cio_write(recd[h],1);  // copia nella codestream i bytes di parità corretti
-				//printf("par: %x\n",recd[h]);
+				cio_write(recd[h],1);  // Copy parity bytes
+				
 			}
-			//system("pause");
+			
 			
 			cio_seek(posdata2+ldata+i*kk);
 			if (i<(nblock-1))
 			{
-				//for (h=(posdata2+i*(2*tt)); h<(posdata2+i*(2*tt))+64; h++)
+				
 				for (h=(nn-kk); h<nn; h++)
-					cio_write(recd[h],1);  // copia nella codestream il blocco di dati corretti
+					cio_write(recd[h],1);  // Copy data bytes
 			}
 			else
 			{
-				ndata = ldpepb - (nblock-1) * kk;  // l'ultimo blocco di dati non necessariamente è lungo 64!			
-				//for (h=(posdata2+i*(2*tt)); h<(posdata2+i*(2*tt))+ndata; h++)
+				ndata = ldpepb - (nblock-1) * kk;  
+				
 				for (h=(nn-kk); h<(nn-kk)+ndata; h++)
-					cio_write(recd[h],1);  // copia nella codestream il blocco di dati corretti
+					cio_write(recd[h],1);  
 			}
-		}//fine ciclo for (i=0; i<nblock; i++)
+		}
 
 		temp = cio_read(2);
 		if (temp == J2K_MS_SOT)
@@ -1310,40 +980,34 @@ int read_EPB_2(int *j2k_state) // ritorna il numero di EPB letti
 			*j2k_state = J2K_STATE_MT;
 		cio_skip(-2);
 
-		//csread += (lepb + ldpepb);
-
+		
 		free(alpha_to);
 		free(index_of);
 		free(gg);
 		free(recd);
 		free(data);
 		free(bb);
-		/***********/
 		free(buff);
 		return 1;
-		//return next; // Ritorna la posizione subito a valle dell'EPB appena letto!!
+		
 	}
-	else	// Gli EPB sono scritti in modalità packed 
+	else	// Packed mode
 	{
 		if (*j2k_state == J2K_STATE_TPHSOT)
 			packall = 1;
 		else
 			packall = 0;
-		//printf("packall: %d\n",packall);
-
+	
 		posfirst = pos;
-		cio_seek(pos+2); // Si posiziona nel campo lepb del primo EPB packed
-		cio_skip(cio_read(2)-2);  // Si posiziona all'inizio del secondo EPB packed
+		cio_seek(pos+2); 
+		cio_skip(cio_read(2)-2); 
 		pos = cio_tell();
-		cio_skip(2); // Si posiziona all'inizio del campo lepb del secondo EPB packed
+		cio_skip(2); 
 		
 		
-		//printf("posfirst: %x\n",posfirst);
-		//printf("mrk: %x\n",cio_read(2));
-		//cio_skip(-2);
-		//system("pause");
+		
 
-		//lastepb = 0; // Si suppone che l'EPB corrente non sia l'ultimo di un tile!
+	
 		nepbpm = 1;
 
 		free(alpha_to);
@@ -1357,170 +1021,122 @@ int read_EPB_2(int *j2k_state) // ritorna il numero di EPB letti
 		alpha_to = (int *) malloc((nn1+1)*sizeof(int));
 		index_of = (int *) malloc((nn1+1)*sizeof(int));
 		gg = (int *) malloc((nn1-kk1+1)*sizeof(int));
-		recd = (int *) malloc((nn1)*sizeof(int)); ///forse alcune di queste malloc possono
-		data = (int *) malloc((kk1)*sizeof(int)); // essere eliminate, inutili per decodifica!!!
+		recd = (int *) malloc((nn1)*sizeof(int)); 
+		data = (int *) malloc((kk1)*sizeof(int)); 
 		bb = (int *) malloc((nn1-kk1)*sizeof(int));
 
 		
-		//while ((lastepb == 0)&&(csread < cslen))
+	
 		while (lastepb == 0)
 		{
 
-		lepb = cio_read(2);  // legge la lunghezza di EPB..si spera che questo campo non è errato!
-		cio_skip(9);  // si posiziona all'inizio del campo dati di EPB
+		lepb = cio_read(2); 
+		cio_skip(9);  // EPB data field
 		posdata = cio_tell();
-		ldata = lepb - 11;  // determina la lunghezza del campo dati
-		//printf("ldata: %d\n",ldata);
-		//printf("lante: %d\n",lante);
-		//lbuf = lante + 13 + (nn-kk);  // 2*tt è la lunghezza dei bit di parità 
-		lbuf = 13 + (nn-kk);  // 2*tt è la lunghezza dei bit di parità 
-		buff = (char *) malloc(nn1 * sizeof(char)); // buffer che conterrà tutti i dati che precedono EPB
-												// e i parametri di EPB
+		ldata = lepb - 11;  
+		lbuf = 13 + (nn-kk);  
+		buff = (char *) malloc(nn1 * sizeof(char)); 
 		for (i=0; i<nn1; i++)
-			buff[i] = 0; // inizializza il buffer tutto a zero
+			buff[i] = 0; 
 		
-		// Bisognerà copiare tutto il contenuto da questo punto fino alla fine della prima parte dei dati EPB in buff
-		// Per come lavora il decoder RS, i bytes di parità vanno posti all'inizio del buffer
+		
 
 		
-		write_buff(buff,posdata,(nn-kk)); // copia nel buffer i byte di parità del campo dati
+		write_buff(buff,posdata,(nn-kk)); // Parity bytes
 		
-		cio_seek(pos);  // si posiziona all'inizio dei dati protetti (SOC,SOT o EPB)
+		cio_seek(pos);  // Start of protected data
 		for (i=(nn-kk); i<lbuf; i++)
 		{
-			buff[i] = cio_read(1);  // copia in buff i byte di messaggio (SOC,SIZ,ParEPB)
+			buff[i] = cio_read(1);  // Data bytes
 		}
 
 		for (i=0; i<nn1; i++)
-			recd[i] = buff[i];  // copia in recd il contenuto di buff da decodificare
+			recd[i] = buff[i];  
 
-		/*f = fopen("debug","a");
-		if (f==NULL)
-			printf("Unable to open file!\n");
-		fprintf(f,"EPB PAR: %d\n",nepbpm);
-		for (h=0; h<nn1; h++)
-			fprintf(f,"%x ",recd[h]);
-		fprintf(f,"\n");
-		fclose(f);*/
-
+		
 		generate_gf(nn1,kk1) ;
 		gen_poly(nn1,kk1) ;
 		for (i=0; i<nn1; i++)
-			recd[i] = index_of[recd[i]] ; // a questo punto recd[] contiene i bytes decodificati     
+			recd[i] = index_of[recd[i]] ; 
 		decode_rs(nn1,kk1,tt);  
 
-		if (decodeflag == 0) //*******Aggiunto in questa versione 1.7
+		if (decodeflag == 0) 
 			{
-				//Inizializzo il buffer in cui vado a copiare la RED
-				cio_init(red.reddata,cslen); //*******Aggiunta in questa versione 1.7
+				
+				cio_init(red.reddata,cslen);
 				cio_seek(redpos);
 
-				//printf("Il blocco corrispondente non è stato decodificato!\n");
-				cio_write(pos,4); // Scrive il byte di start del range considerato	
-				cio_write(pos + lbuf - (nn - kk) - 1,4);  // Scrive il byte di end del range
-				// Adesso segnaliamo la presenza di errori con 0xFFFF!!!
+				
+				cio_write(pos,4); // Start byte
+				cio_write(pos + lbuf - (nn - kk) - 1,4);  // End byte
+				
 				cio_write(0xFFFF,2);
 				redlen += 10;
-				redpos = cio_tell(); // Memorizza la posizione attuale del buffer RED
-				//printf("ciao\n");
+				redpos = cio_tell(); 
 			}
-		// Adesso bisogna ricopiare il contenuto di recd[] nella codestream
+		
 
 		cio_init(cssrc, cslen);
 
-		cio_seek(posdata); // si posiziona all'inizio del campo dati della codestream	
-		//printf("read: %x\n",cio_read(2));
-		//cio_skip(-2);
-		//if (packall == 1)
-		//	for (i=0; i<(55); i++)
-		//		cio_write(recd[i],1);  // copia i byte di parità corretti nel campo dati
-		//else
-		//if (nepbpm==1)
-		//	for (i=0; i<(nn-kk); i++)
-		//		printf("%x ",recd[i]);
+		cio_seek(posdata); // Start of data
 		for (i=0; i<(nn-kk); i++)
-			cio_write(recd[i],1);  // copia i byte di parità corretti nel campo dati
+			cio_write(recd[i],1);  // Parity bytes
 		cio_seek(pos);
 		for (i=(nn-kk); i<lbuf; i++)
-			cio_write(recd[i],1);  // copia i bytes di messaggio nella codestream
+			cio_write(recd[i],1);  // Data bytes
 		
 
-		// A questo punto la codestream è corretta fino alla fine della prima parte dei dati EPB
-		// Possiamo leggere i parametri di EPB per condurre la codifica seguente
+		
 
 		
-		cio_seek(pos);  // si posiziona all'inizio di EPB
-		temp = cio_read(2);  // ci si aspetta qui di trovare il marker EPB
+		cio_seek(pos);  // EPB
+		temp = cio_read(2);  
 				if (temp != JPWL_MS_EPB)
 				{
-					// Puo' succedere che l'EPC ha fornito informazione errata: in tal caso il
-					// processo di decodifica effettuato perde di significato.
-					// Puo' anche succedere pero' che il codice RS contenuto nell'EPB MS non
-					// è stato in grado di correggere l'errore sul marker EPB!!
+					
 					return 0;
-					// Per adesso usciamo dalla procedura, ma la cosa migliore sarebbe
-					// fare in modo che il decoder vada a cercare l'eventuale EPB successivo
+				
 				}
 
-		cio_skip(2); // ora è all'inizio del campo depb
-		depb = cio_read(1); // legge depb
-		//printf("depb: %x\n",depb);
-		//if ((depb >> 6)&1)  // quello corrente è l'ultimo EPB del tile corrente
-		//{
-		//	lastepb = 1; // l'epb corrente è l'ultimo del tile
-			//nepbpm = ((depb << 2) >> 2); // numero di EPB accorpati in modalità packed
-		//	nepbpm = (depb & 0x3f); // numero di EPB accorpati in modalità packed
-			//printf("nepbpm: %d\n",nepbpm);
-		//}
-		if (!((depb >> 6)&1))  // quello corrente non è l'ultimo EPB del tile corrente
+		cio_skip(2); 
+		depb = cio_read(1); 
+		
+		if (!((depb >> 6)&1))  // Not the last EPB of the TPH
 			nepbpm += 1;
-		if ((depb >> 6)&1)  // quello corrente è l'ultimo EPB del tile corrente
+		if ((depb >> 6)&1)  // Last EPB of the TPH
 		{
 			nepbpm += 1;
 			lastepb = 1;
 		}
 
-		//printf("nepbpm: %d\n",nepbpm);
-		//printf("lastepb: %d\n",lastepb);
-		//system("pause");
-
-		cio_skip(-3); // si posiziona all'inizio del campo lepb
-		cio_skip(cio_read(2)-2);  // si posiziona a valle dell'epb corrente
-		pos = cio_tell(); // memorizza la posizione all'inizio dell'EPB successivo
-		//printf("mrk: %x\n",cio_read(2));
-		//cio_skip(-2);
-		//system("pause");
+		cio_skip(-3); 
+		cio_skip(cio_read(2)-2); 
+		pos = cio_tell(); // Next EPB
+		
 		cio_skip(2);
 
-		//conta++;
+		
 
-		//csread += lepb;
-
-		} // Fine while (lastepb == 0)!!!!
-		// A questo punto il decoder ha decodificato le porzioni iniziali di tutti gli EPB
-		// del tile corrente
+		} 
 	
 
-		// Ora dobbiamo decodificare le porzioni finali di tutti gli EPB!!!
+		// Decode EPB parity bytes protecting J2K data
 
-		// pos contiene la posizione a valle dell'ultimo degli EPB packed!!!
+		
 		cio_skip(-2);
 		posend = cio_tell();
-		//printf("posend: %x\n",posend);
-		//system("pause");
-		lpack = posend-posfirst; // lunghezza totale della catena di EPB
+		
+		lpack = posend-posfirst; // Total EPBs length
 		epb = (EPB_par *) malloc(nepbpm * sizeof(EPB_par));
 		cio_seek(posfirst);
-		//printf("posfirst: %x\n",posfirst);
-
-		//printf("nepbpm: %d\n",nepbpm);
+		
 		for (count=0; count<nepbpm; count++)
 		{
-			cio_skip(2); // si posiziona all'inizio di lepb
-			epb[count].lepb = cio_read(2); // legge lepb
-			epb[count].depb = cio_read(1); // legge depb
-			epb[count].ldpepb = cio_read(4); // legge ldpepb
-			epb[count].pepb = cio_read(4); // legge pepb
+			cio_skip(2); 
+			epb[count].lepb = cio_read(2); 
+			epb[count].depb = cio_read(1); 
+			epb[count].ldpepb = cio_read(4); 
+			epb[count].pepb = cio_read(4); 
 
 			temp = cio_tell();
 			cio_init(epc.tecn[0].pid, epc.tecn[0].lid);
@@ -1536,62 +1152,39 @@ int read_EPB_2(int *j2k_state) // ritorna il numero di EPB letti
 			if ((count == 0)&&(packall == 1))
 				epb[count].ldata = (epb[count].lepb - 11) - (80-25);
 			else
-				epb[count].ldata = (epb[count].lepb - 11) - (nn-kk);  // lunghezza della porzione rimanente del campo dati
-			cio_skip(-11); // si posiziona all'inizio di lepb dell'EPB corrente
-			cio_skip(epb[count].lepb); // si posiziona a valle dell'EPB corrente
-		} // Abbiamo a questo punto memorizzato nella struttura epb i parametri degli EPB packed
+				epb[count].ldata = (epb[count].lepb - 11) - (nn-kk);  
+			cio_skip(-11); 
+			cio_skip(epb[count].lepb); 
+		} 
 
-		//for (count=0; count<nepbpm; count++)
-		//{
-		//	printf("EPB[%d]: %x\t%x\t%x\t%x\t%d\n",count,epb[count].lepb,epb[count].depb,
-		//		epb[count].ldpepb,epb[count].pepb,epb[count].ldata);
-		//}
-
+		
 		nepbrd+=nepbpm;
 
-		cio_seek(posfirst);  // si posiziona all'inizio del primo degli EPB packed
+		cio_seek(posfirst);  // First of the packed EPBs
 		pos = cio_tell();
 		ldpread = 0;
 		lparity = nn - kk;
-		//printf("lparity: %d\n",lparity);
+		
 		for (count=0; count<nepbpm; count++)
 		{
 			cio_seek(pos);
-			//printf("mark: %x\n",cio_read(2));
-			//printf("count: %d\n",count);
-			//cio_skip(-2);
-			//system("pause");
-			cio_skip(13); // si posiziona all'inizio del campo dati
+			
+			cio_skip(13); // Data field
 			posdata = cio_tell();
-			//printf("tt: %d\n",nn-kk);
 			if ((count == 0)&&(packall == 1))
 				cio_seek(posdata + (80 - 25));
 			else
-				cio_seek(posdata + lparity); // si posiziona all'inizio seconda parte dati EPB corrente
-			posdata2 = cio_tell(); // posizione inizio seconda parte dati EPB
-			//printf("pd2: %x\n",posdata2);
-			//system("pause");
-			//cio_skip(-2);
-
-			//if ((!((epb[count].depb >> 6)&1))&&((*j2k_state == J2K_STATE_MHSOC)||(*j2k_state == J2K_STATE_MH)))
-			//	*j2k_state = J2K_STATE_MH; // vuol dire che il prossimo EPB è in MH ma non è il primo
-			//if (((epb[count].depb >> 6)&1)&&((*j2k_state == J2K_STATE_MH)||(*j2k_state == J2K_STATE_MHSOC)))
-			//	*j2k_state = J2K_STATE_TPHSOT; // vuol dire che il prossimo EPB è il primo di un TPH
-			//if (((epb[count].depb >> 6)&1)&&((*j2k_state == J2K_STATE_TPH)||(*j2k_state == J2K_STATE_TPHSOT)))
-			//	*j2k_state = J2K_STATE_TPHSOT; // vuol dire che il prossimo EPB è il primo di un TPH
-			//if ((!((epb[count].depb >> 6)&1))&&((*j2k_state == J2K_STATE_TPHSOT)||(*j2k_state == J2K_STATE_TPH)))
-			//	*j2k_state = J2K_STATE_TPH; // vuol dire che il prossimo EPB è relativo ad un TPH
+				cio_seek(posdata + lparity); 
+			posdata2 = cio_tell(); 
 			
-			// Ora leggendo pepb il decoder deve capire quale codice applicare per la porzione di dati
-			// cui fa riferimento la seconda parte del campo EPBdata
 			
-			if (epb[count].pepb)  // se pepb=0 allora si usano i codici di default precedenti
+			
+			
+			if (epb[count].pepb)  // If Pepb=0 => default RS codes
 			{
 				if ((epb[count].pepb>>28)==2)
 				{
-					// in questo caso deve effettuare la decodifica RS
-					/***********/
-					// liberiamo gli spazi allocati
+					
 					free(alpha_to);
 					free(index_of);
 					free(gg);
@@ -1606,8 +1199,8 @@ int read_EPB_2(int *j2k_state) // ritorna il numero di EPB letti
 					alpha_to = (int *) malloc((nn1+1)*sizeof(int));
 					index_of = (int *) malloc((nn1+1)*sizeof(int));
 					gg = (int *) malloc((nn1-kk1+1)*sizeof(int));
-					recd = (int *) malloc((nn1)*sizeof(int)); ///forse alcune di queste malloc possono
-					data = (int *) malloc((kk1)*sizeof(int)); // essere eliminate, inutili per decodifica!!!
+					recd = (int *) malloc((nn1)*sizeof(int)); 
+					data = (int *) malloc((kk1)*sizeof(int)); 
 					bb = (int *) malloc((nn1-kk1)*sizeof(int));
 					generate_gf(nn1,kk1) ;
 					gen_poly(nn1,kk1) ;
@@ -1615,46 +1208,37 @@ int read_EPB_2(int *j2k_state) // ritorna il numero di EPB letti
 
 				if ((epb[count].pepb>>28)==1)
 				{
-					// in questo caso deve effettuare le decodifica CRC
+					// CRC decode
 					free(buff);
 					buff = (char *) malloc(epb[count].ldpepb * sizeof(char));
 					write_buff(buff,posdata2+epb[count].ldata,epb[count].ldpepb);//***Correggi!!!!!!!!!!!
-					if (epb[count].pepb & 0x00000001)	// vuol dire che bisogna decodificare secondo CRC 32
+					if (epb[count].pepb & 0x00000001)	// CRC 32
 					{
-						/*per fare il crc32 occorre invertire i byte in ingresso, invertire il crc calcolato
-						e farne il complemento a 1*/
+						
 						ResetCRC();
-						cio_seek(posend+ldpread); // si posiziona nel blocco dati corrispondente
+						cio_seek(posend+ldpread); 
 						for (i=0; i < epb[count].ldpepb; i++)
 							UpdateCRC32(reflectByte(buff[i]));	
 						reflectCRC32();
 						if (lastepb==1)
 						{
-							next = startsot + psot; // **************Da correggere!!!!
+							next = startsot + psot; 
 							cio_seek(next);
-							//printf("%x\n",cio_read(2));
-							//cio_skip(-2);
 						}
 						if ((cio_read(2) == 0xffd9)||(psot == 0))
 							*j2k_state = J2K_STATE_MT;
 						cio_skip(-2);
-						//else
-						//{
-						//	next = cio_tell();  // posizione alla fine dei dati protetti (ldpepb)
-						//}
-						crcSum ^= 0xffffffff;	// effettua il complemento a 1	
+				
+						crcSum ^= 0xffffffff;	
 						cio_seek(posdata2);
 						datacrc = cio_read(4);
-						//if (datacrc == crcSum)
-						//	printf("CRC corretto!\n");
-						//else
-						//	printf("CRC errato!\n");
+						
 						
 					}
-					else	// vuol dire che bisogna decodificare secondo CRC 16
+					else	// CRC 16
 					{
 						ResetCRC();
-						cio_seek(posend+ldpread); // si posiziona nel blocco dati corrispondente
+						cio_seek(posend+ldpread); 
 						for (i=0; i < epb[count].ldpepb; i++)
 							UpdateCRC16(buff[i]);
 						if (lastepb==1)
@@ -1667,167 +1251,131 @@ int read_EPB_2(int *j2k_state) // ritorna il numero di EPB letti
 						cio_skip(-2);
 						cio_seek(posdata2);
 						datacrc = cio_read(2);
-						//if (datacrc == crcSum)
-						//	printf("CRC corretto!\n");
-						//else
-						//	printf("CRC errato!\n");
 					}
-					//free(buff);
 				}
 
 				if (epb[count].pepb>=0x30000000)
 				{
 					next = cio_tell();
-					// tecniche registrate in RA
+					// RA
 				}
 
 				if (epb[count].pepb==0xffffffff)
 				{
 					next = cio_tell();
-					// non sono usati metodi per i dati seguenti
+					
 				}
 			}
 			
-			if (((epb[count].pepb>>28)==2)||(epb[count].pepb==0))  // Vuol dire che si usano codici RS
+			if (((epb[count].pepb>>28)==2)||(epb[count].pepb==0))  // RS codes
 			{
-			// Ora bisogna copiare in buff la seconda parte dei dati di EPB e i dati successivi all'epb
-			// per una lunghezza pari a ldpepb
-	    
-			//printf("count: %d\n",count);
-			//printf("ldpread: %d\n",ldpread);
-			//system("pause");
-			//printf("nn: %d\n",nn);
-			//printf("kk: %d\n",kk);
-			//system("pause");
-			//printf("posiz: %x\n",posdata2 + epb[count].ldata);
-			nblock = epb[count].ldata / (nn-kk);  // numero di "blocchi di decodifica"
+			
+			nblock = epb[count].ldata / (nn-kk);  // Number of CW
 			free(buff);
 			buff = (char *) malloc(nn1 * sizeof(char));
-			//printf("ldata: %d\n",epb[count].ldata);
-			//printf("nblock: %d\n",nblock);
+			
 			for (i=0; i<nblock; i++)
 			{
-				//free(buff);
-				//buff = (char *) malloc(nn1 * sizeof(char));
+				
 				for (h=0; h<nn1; h++)
-					buff[h] = 0; // inizializza il buffer tutto a zero
-				write_buff(buff,posdata2+i*(nn-kk),(nn-kk)); // copia nel buff i bytes di parità
-				//if (i==(nblock-1))
-				//{
-				//	for (h=0; h<(nn-kk); h++)
-				//		printf("%x\n",buff[h]);
-				//	system("pause");
-				//}
-				cio_seek(posend+ldpread+i*kk); // si posiziona nel blocco dati corrispondente
+					buff[h] = 0;
+				write_buff(buff,posdata2+i*(nn-kk),(nn-kk));
+				
+				cio_seek(posend+ldpread+i*kk); 
 				if (i<(nblock-1))
 				{
 					for (h=(nn-kk); h<nn; h++)
 					{
-						buff[h] = cio_read(1);  // copia nel buff i bytes di messaggio
+						buff[h] = cio_read(1); 
 					}
 				}
 				else
 				{
-					ndata = epb[count].ldpepb - ((nblock-1) * kk);  // l'ultimo blocco di dati non necessariamente è lungo 64!
+					ndata = epb[count].ldpepb - ((nblock-1) * kk); 
 					for (h=(nn-kk); h<(nn-kk)+ndata; h++)
 					{
-						buff[h] = cio_read(1);  // copia nel buff i bytes di messaggio
+						buff[h] = cio_read(1); 
 					}
 					if (lastepb==1)
 					{
 						next = cio_tell();
-						//next = startsot + psot;
-						//cio_seek(next);
+					
 					}
-					//else
-					//{
-					//	next = cio_tell();  // posizione alla fine dei dati protetti (ldpepb)
-					//}
-					//next = cio_tell();  // posizione alla fine dei dati protetti (ldpepb)
+					
 					if ((cio_read(2) == 0xffd9)||(psot == 0))
 						*j2k_state = J2K_STATE_MT;
 					cio_skip(-2);
 				}
 			
 				for (h=0; h<nn1; h++)
-					recd[h] = buff[h];  // copia in recd il contenuto di buff da decodificare
+					recd[h] = buff[h]; 
 	        
-				/*f = fopen("debug","a");
-				if (f==NULL)
-					printf("Unable to open file!\n");
-				fprintf(f,"EPB DATA: %d-%d\n",count,i);
-				for (h=0; h<nn1; h++)
-					fprintf(f,"%x ",recd[h]);
-				fprintf(f,"\n");
-				fclose(f);*/
+			
 
 				generate_gf(nn1,kk1) ;
 				gen_poly(nn1,kk1) ;
 				for (h=0; h<nn1; h++)
-					recd[h] = index_of[recd[h]] ;// a questo punto recd[] contiene i bytes decodificati
+					recd[h] = index_of[recd[h]] ;
 				decode_rs(nn1,kk1,tt);  
 
-				if (decodeflag == 0) //*******Aggiunto in questa versione 1.7
+				if (decodeflag == 0)
 				{
-					//Inizializzo il buffer in cui vado a copiare la RED
-					cio_init(red.reddata,cslen); //*******Aggiunta in questa versione 1.7
+					
+					cio_init(red.reddata,cslen); 
 					cio_seek(redpos);
 
-					//printf("Il blocco corrispondente non è stato decodificato!\n");
-					cio_write(posend+ldpread+i*kk,4); // Scrive il byte di start del range considerato	
-					//printf("START: %x\n",posend+ldpread+i*kk);
-					//printf("END: %x\n",posend+ldpread+i*kk+ndata);
+					
+					cio_write(posend+ldpread+i*kk,4);
+					
 
 					if (i<(nblock -1))
-						cio_write(posend+ldpread+i*kk + kk - 1,4);  // Scrive il byte di end del range
+						cio_write(posend+ldpread+i*kk + kk - 1,4);  
 					else
-						cio_write(posend+ldpread+i*kk + ndata - 1,4);  // Scrive il byte di end del range
-					// Adesso segnaliamo la presenza di errori con 0xFFFF!!!
+						cio_write(posend+ldpread+i*kk + ndata - 1,4); 
+				
 					cio_write(0xFFFF,2);
 					redlen+=10;
-					redpos = cio_tell(); // Memorizza la posizione attuale del buffer RED
-					//printf("ciao\n");
+					redpos = cio_tell(); 
+					
 				}
 
-				// Adesso bisogna ricopiare il contenuto di recd[] nella codestream
+				
 
 				cio_init(cssrc, cslen);
 
-				cio_seek(posdata2+i*(nn-kk));  // si posiziona all'inizio del blocco di parità corrispondente
+				cio_seek(posdata2+i*(nn-kk)); 
 				for (h=0; h<(nn-kk); h++)
-					cio_write(recd[h],1);  // copia nella codestream i bytes di parità corretti
+					cio_write(recd[h],1);
 			
-				//cio_seek(posdata2+epb[count].ldata+i*kk);// si posiziona all'inizio del blocco dati corrispondente
-				cio_seek(posend+ldpread+i*kk);// si posiziona all'inizio del blocco dati corrispondente
+				
+				cio_seek(posend+ldpread+i*kk);
 				if (i<(nblock-1))
 				{
 					for (h=(nn-kk); h<nn; h++)
-						cio_write(recd[h],1);  // copia nella codestream il blocco di dati corretti
+						cio_write(recd[h],1); 
 				}
 				else
 				{
-					ndata = epb[count].ldpepb - (nblock-1) * kk;  // l'ultimo blocco di dati non necessariamente è lungo 64!			
+					ndata = epb[count].ldpepb - (nblock-1) * kk; 
 					for (h=(nn-kk); h<(nn-kk)+ndata; h++)
-						cio_write(recd[h],1);  // copia nella codestream il blocco di dati corretti
+						cio_write(recd[h],1); 
 				}
-			}//fine ciclo for (i=0; i<nblock; i++)
+			}
 
-			} // fine if (!(epb[count]->pepb))
+			} 
 		
-		// A questo punto abbiamo corretto anche la parte di dati cui fa riferimento la seconda
-		// parte del campo EPBdata
+		
 
 			ldpread += epb[count].ldpepb;
 			cio_seek(pos+2);
 			cio_skip(epb[count].lepb);
-			pos = cio_tell(); // posizione a valle dell'EPB corrente
+			pos = cio_tell(); 
 
-		} // fine for (count=0; count<nepbpm; count++)
+		} 
 
 		
-		cio_seek(next); // si posiziona alla fine dei dati corretti dall'EPB
-		//printf("read: %x\n",cio_read(2));
-		//cio_skip(-2);
+		cio_seek(next);
+		
 		temp = cio_read(2);
 		if (temp == J2K_MS_SOT)
 			*j2k_state = J2K_STATE_TPHSOT;
@@ -1835,8 +1383,6 @@ int read_EPB_2(int *j2k_state) // ritorna il numero di EPB letti
 			*j2k_state = J2K_STATE_MT;
 		cio_skip(-2);
 
-		//csread += ldpread;
-		
 		free(alpha_to);
 		free(index_of);
 		free(gg);
@@ -1845,145 +1391,119 @@ int read_EPB_2(int *j2k_state) // ritorna il numero di EPB letti
 		free(bb);
 		free(buff);
 		
-		return nepbpm; // Ritorna il numero di EPB letti in modalità packed
+		return nepbpm; // Number of packed EPBs read
 	}	
 		
 
 }
 
-int read_EPB(int next, int *j2k_state)  // funzione che ritorna la posizione subito a valle dell'EPB letto
-//void read_EPB(int *j2k_state)  // funzione che ritorna la posizione subito a valle dell'EPB letto
+int read_EPB(int next, int *j2k_state)  
 {
 	unsigned int lepb, lsiz, temp, ldata, lsot;
 	int posdata, posdata2, nblock, i,h, pos, lante, lpar;
-	int nn, kk, tt, nn1, kk1; // parametri per la decodifica RS
-	//int pos1, pos2, h; // utili per la gestione della decodifica della seconda parte di EPB
-	unsigned long ldpepb, pepb, ndata, datacrc;  // ndata è utile per la decodifica della seconda parte EPB
+	int nn, kk, tt, nn1, kk1;
+	
+	unsigned long ldpepb, pepb, ndata, datacrc;  
 	unsigned char depb;
 	unsigned char *buff;
 	int prova;
-	//FILE *f;
-
-	//next = 0;
-	//cio_seek(next); // si posiziona all'inizio della codestream
-	//j2k_state = J2K_STATE_MHSOC;  // ci troviamo nel Main-Header e ci aspettiamo SOC
-	//FIRST_epb = 1;  // vuol dire che bisogna usare il codice di default RS(160,64)
-    
-	//printf("nepb: %d\n",nepb);
-    //count = 0;  // ancora non abbiamo letto nessun EPB
-	//while (count < nepb)
-	//{
+	
 	cio_seek(next);
-	//next = cio_tell();
+	
 		if (*j2k_state == J2K_STATE_MHSOC)  
 		{
-			// Se siamo giunti a questo punto vuol dire che SOC e i primi due campi di SIZ non sono
-			// errati!!...ora ci dobbiamo posizionare subito a valle di SIZ
-			//*printf("j2k_state: %x\n",*j2k_state);
-			cio_skip(4); // si pone all'inizio del campo Lsiz
+			
+		
+			cio_skip(4); 
 			lsiz = cio_read(2);
-			cio_skip(lsiz-2); // ora siamo all'inizio dell'EPB MS
-			pos = cio_tell(); // memorizza la posizione in cui inizia l'EPB
-			temp = cio_read(2);  // ci si aspetta qui di trovare il marker EPB
-			//*printf("EPB: %x\n",temp);
-			nn = 160; kk = 64; tt = 48;  // inizializzazione per codice RS(160,64)
+			cio_skip(lsiz-2); 
+			pos = cio_tell(); 
+			temp = cio_read(2);
+			
+			nn = 160; kk = 64; tt = 48;  // RS(160,64)
 			lante = lsiz+4; 
 			
-		} // fine if (j2k_state == J2K_STATE_MHSOC)
+		}
 
 		if (*j2k_state == J2K_STATE_TPHSOT)
 		{
 			
-			//*printf("j2k_state: %x\n",*j2k_state);
-			startsot = cio_tell(); // memorizza nella variabile globale la posizione di SOT
-			cio_skip(2); // si pone all'inizio del campo Lsot
+			
+			startsot = cio_tell(); 
+			cio_skip(2); 
 			lsot = cio_read(2);
-			cio_skip(2); // si posiziona all'inizio del campo Psot
-			psot = cio_read(4); // Legge il campo Psot
-			cio_skip(-6); // si riposiziona a valle del campo Lsot
-			//*printf("lsot: %d\n",lsot);
-			cio_skip(lsot-2); // ora siamo all'inizio dell'EPB MS
-			pos = cio_tell(); // memorizza la posizione in cui inizia l'EPB
-			temp = cio_read(2);  // ci si aspetta qui di trovare il marker EPB
-			//*printf("EPB: %x\n",temp);
-			nn = 80; kk = 25; tt = 28;  // inizializzazione per codice RS(80,25)
+			cio_skip(2); 
+			psot = cio_read(4);
+			cio_skip(-6); 
+			
+			cio_skip(lsot-2); 
+			pos = cio_tell(); 
+			temp = cio_read(2);
+			
+			nn = 80; kk = 25; tt = 28;  // RS(80,25)
 			lante = lsot+2;
 		}
 
 		if ((*j2k_state == J2K_STATE_MH)||(*j2k_state == J2K_STATE_TPH))
 		{
-			//*printf("j2k_state: %x\n",*j2k_state);
-			pos = cio_tell(); // memorizza la posizione in cui inizia l'EPB
-			temp = cio_read(2); // ci si aspetta qui di trovare il marker EPB
-			nn = 40; kk = 13; tt = 14;  // inizializzazione per codice RS(40,13)
+			
+			pos = cio_tell(); 
+			temp = cio_read(2); 
+			nn = 40; kk = 13; tt = 14;  // RS(40,13)
 			lante = 0;
 		}
 
-    // A questo punto possiamo decodificare la prima parte di dati tramite i codici di default
+   
 
-	//printf("nn,kk,tt: %d,%d,%d\n",nn,kk,tt);
+	
 	nn1 = 255; kk1 = kk + (nn1 - nn);
 	alpha_to = (int *) malloc((nn1+1)*sizeof(int));
 	index_of = (int *) malloc((nn1+1)*sizeof(int));
 	gg = (int *) malloc((nn1-kk1+1)*sizeof(int));
-	recd = (int *) malloc((nn1)*sizeof(int)); ///forse alcune di queste malloc possono
-	data = (int *) malloc((kk1)*sizeof(int)); // essere eliminate, inutili per decodifica!!!
+	recd = (int *) malloc((nn1)*sizeof(int)); 
+	data = (int *) malloc((kk1)*sizeof(int)); 
 	bb = (int *) malloc((nn1-kk1)*sizeof(int));
 
-	//printf("COUNT: %d\n",count);
-	lepb = cio_read(2);  // legge la lunghezza di EPB..si spera che questo campo non è errato!
-	//*printf("LEPB: %x\n",lepb);
-	cio_skip(9);  // si posiziona all'inizio del campo dati di EPB
-	posdata = cio_tell();
-	//printf("data: %x\n",cio_read(2));
-	//cio_skip(-2);
-	ldata = lepb - 11;  // determina la lunghezza del campo dati
 	
-	lpar = nn - kk; // determina la lunghezza dei bit di parità utilizzati per correggere la prima parte di EPB
+	lepb = cio_read(2); 
+	
+	cio_skip(9);
+	posdata = cio_tell();
+	
+	ldata = lepb - 11;  
+	
+	lpar = nn - kk;
 	if (*j2k_state == J2K_STATE_MHSOC)  
 	{
 		lpar = nbckpar * (nn-kk);
 	}
 	if (*j2k_state == J2K_STATE_TPHSOT)
 		nbckpar = 1;
-	//lbuf = lante + 13 + lpar;  // lpar è la lunghezza dei bit di parità 
-	//*printf("lbuf = %d\n",lbuf);
-	buff = (char *) malloc(nn1 * sizeof(char)); // buffer che conterrà tutti i dati che precedono EPB
-	          // e i parametri di EPB
+
+	buff = (char *) malloc(nn1 * sizeof(char)); 
 
 	for (i=0; i<nbckpar; i++)
 	{
-		//buff = (char *) malloc(nn1 * sizeof(char)); // buffer che conterrà tutti i dati che precedono EPB
-	                                           // e i parametri di EPB
-		//printf("Ho inizializzato il buffer!\n");
+	
 		for (h=0; h<nn1; h++)
-			buff[h] = 0; // inizializza il buffer tutto a zero
+			buff[h] = 0;
 	
-		// Bisognerà copiare tutto il contenuto da questo punto fino alla fine della prima parte dei dati EPB in buff
-		// Per come lavora il decoder RS, i bytes di parità vanno posti all'inizio del buffer
+		
 
-		write_buff(buff,posdata+i*(nn-kk),(nn-kk)); // copia nel buffer i byte di parità del campo dati
-		//printf("PROVA\n");
-		//for (h=0; h<nn1; h++)
-		//	printf(" %x\n",buff[h]);
-		//system("pause");
-	
-		//printf("nbckpar: %d\n",nbckpar);
-		//printf("nn: %d\n",nn);
-		cio_seek(next + i*kk);  // si posiziona all'inizio dei dati protetti (SOC,SOT o EPB)
+		write_buff(buff,posdata+i*(nn-kk),(nn-kk)); // Parity bytes
+		cio_seek(next + i*kk);  // Start of protected data
 		if (i<(nbckpar -1))
 		{
 			for (h=(nn-kk); h<nn; h++)
 			{
-				buff[h] = cio_read(1);  // copia in buff i byte di messaggio (SOC,SIZ,ParEPB)
-				//printf(" %x\n",buff[i]);
+				buff[h] = cio_read(1);  // Data bytes
 			}
 		}
 		else
 		{
 			if (*j2k_state == J2K_STATE_MHSOC)
 			{
-				ndata = lmex - ((nbckpar-1) * kk); // l'ultimo blocco dati non è in genere lungo 64!
+				ndata = lmex - ((nbckpar-1) * kk); 
 				for (h=(nn-kk); h<((nn-kk)+ndata); h++)
 				{
 					buff[h] = cio_read(1);
@@ -1995,140 +1515,98 @@ int read_EPB(int next, int *j2k_state)  // funzione che ritorna la posizione sub
 				
 			
 		}
-		//printf("Eccomi qua-1!\n");
-		//for (h=0; h<nn1; h++)
-		//	printf(" %x\n",buff[h]);
-		//system("pause");
+		
 
 		for (h=0; h<nn1; h++)
-			recd[h] = buff[h];  // copia in recd il contenuto di buff da decodificare
+			recd[h] = buff[h];  
 
-		//printf("Eccomi qua-1!\n");
-		//if (*j2k_state == J2K_STATE_MHSOC)
-		//if (i==0)
-		//{
-		//	f = fopen("debug","a");
-		//	if (f==NULL)
-		//		printf("Unable to open file!\n");
-		//	fprintf(f,"\n");
-		//	for (h=0; h<nn1; h++)
-		//		fprintf(f,"%x ",recd[h]);
-		//	fprintf(f,"\n");
-		//	fclose(f);
-		//}
-		//else
-		//{
-		//f = fopen("debug","a");
-		//if (f==NULL)
-		//	printf("Unable to open file!\n");
-		//fprintf(f,"\n");
-		//for (h=0; h<nn1; h++)
-		//	fprintf(f,"%x ",recd[h]);
-		//fprintf(f,"\n");
-		//fclose(f);
-		//}
-		//printf("Eccomi qua-1!\n");
-		//for (h=0; h<nn1; h++)
-		//	printf(" %x\n",recd[h]);
-		//system("pause");
+	
+		
 
 		generate_gf(nn1,kk1) ;
 		gen_poly(nn1,kk1) ;
 		for (h=0; h<nn1; h++)
-			recd[h] = index_of[recd[h]] ; // a questo punto recd[] contiene i bytes decodificati
+			recd[h] = index_of[recd[h]] ; 
 		decode_rs(nn1,kk1,tt); 
 
-		if (decodeflag == 0) //*******Aggiunto in questa versione 1.7
+		if (decodeflag == 0) 
 		{
-			//Inizializzo il buffer in cui vado a copiare la RED
-			cio_init(red.reddata,cslen); //*******Aggiunta in questa versione 1.7
+			
+			cio_init(red.reddata,cslen); 
 			cio_seek(redpos);
 
-			//printf("Il blocco corrispondente non è stato decodificato!\n");
-			cio_write(next + i*kk,4); // Scrive il byte di start del range considerato	
+			
+			cio_write(next + i*kk,4); 
 			redlen += 4;
 			if (i<(nbckpar -1))
-				cio_write(next + i*kk + kk,4);  // Scrive il byte di end del range
+				cio_write(next + i*kk + kk,4);  
 			else
 			{
 				if (*j2k_state == J2K_STATE_MHSOC)
-					cio_write(next + i*kk + ndata,4);  // Scrive il byte di end del range
+					cio_write(next + i*kk + ndata,4); 
 				else
 					cio_write(next + i*kk + kk,4);
 			}
 			redlen += 4;
-			// Adesso segnaliamo la presenza di errori con 0xFFFF!!!
+		
 			cio_write(0xFFFF,2);
 			redlen += 2;
 			if ((*j2k_state == J2K_STATE_MHSOC)||(*j2k_state == J2K_STATE_MH))
 				redlenok+=10;
-			//cio_seek(redpos);
-			//printf("START: %x\n",cio_read(4));
-			//printf("END: %x\n",cio_read(4));
-			//printf("VALUE: %x\n",cio_read(2));
-			redpos = cio_tell(); // Memorizza la posizione attuale del buffer RED
-			//printf("ciao\n");
+			
+			redpos = cio_tell(); 
+			
 		}
 
-		//printf("Eccomi qua-2!\n");
-		//for (i=0; i<nn1; i++)
-		//	printf(" %x\n",recd[i]);
-		//system("pause");
+	
 
-		// Adesso bisogna ricopiare il contenuto di recd[] nella codestream
-
-		cio_init(cssrc, cslen); //******Aggiunto in questa versione 1.7
 		
-		cio_seek(posdata+i*(nn-kk)); // si posiziona all'inizio del blocco di parità corrispondente	
+
+		cio_init(cssrc, cslen);
+		
+		cio_seek(posdata+i*(nn-kk));
 		for (h=0; h<(nn-kk); h++)
-			cio_write(recd[h],1);  // copia i byte di parità corretti nel campo dati
+			cio_write(recd[h],1); 
 		cio_seek(next + i*kk);
 		if (i<(nbckpar -1))
 		{
 			for (h=(nn-kk); h<nn; h++)
-				cio_write(recd[h],1);  // copia i bytes di messaggio nella codestream
+				cio_write(recd[h],1);  
 		}
 		else
 		{
 			if (*j2k_state == J2K_STATE_MHSOC)
 				for (h=(nn-kk); h<(nn-kk)+ndata; h++)
 				{
-					cio_write(recd[h],1);  // copia i bytes di messaggio nella codestream
+					cio_write(recd[h],1);  
 				}
 			else
 				for (h=(nn-kk); h<nn; h++)
-				cio_write(recd[h],1);  // copia i bytes di messaggio nella codestream
+				cio_write(recd[h],1); 
 		}
-	} // fine ciclo for (i=0; i<nbckpar; i++)
-
-	// A questo punto la codestream è corretta fino alla fine della prima parte dei dati EPB
-	// Possiamo leggere i parametri di EPB per condurre la codifica seguente
+	} 
 
 	
-	cio_seek(pos);  // si posiziona all'inizio di EPB
-	temp = cio_read(2);  // ci si aspetta qui di trovare il marker EPB
+
+	
+	cio_seek(pos);  // EPB
+	temp = cio_read(2);  //
 			if (temp != JPWL_MS_EPB)
 			{
-				//*printf("Non ho decodificato l'EPB!\n"); 
-				// Puo' succedere che l'EPC ha fornito informazione errata: in tal caso il
-				// processo di decodifica effettuato perde di significato.
-				// Puo' anche succedere pero' che il codice RS contenuto nell'EPB MS non
-				// è stato in grado di correggere l'errore sul marker EPB!!
+				
 				
 				return 0;
-				//return;
-				// Per adesso usciamo dalla procedura, ma la cosa migliore sarebbe
-				// fare in modo che il decoder vada a cercare l'eventuale EPB successivo
+				
+				
 			}
 
-	//*count++; // se siamo a questo punto vuol dire che è stato letto effettivamente un EPB
-	//printf("mark: %x\n",temp);
-	cio_skip(2); // ora è all'inizio del campo depb
-	depb = cio_read(1); // legge depb
-	//*printf("depb: %x\n",depb);
-	ldpepb = cio_read(4); // legge ldpepb
-	//*printf("ldpepb: %x\n",ldpepb);
-	pepb = cio_read(4); // legge pepb
+	
+	cio_skip(2);
+	depb = cio_read(1); 
+	
+	ldpepb = cio_read(4); 
+	
+	pepb = cio_read(4);
 	if (nepbrd!=0)
 	{
 		temp = cio_tell();
@@ -2137,55 +1615,48 @@ int read_EPB(int next, int *j2k_state)  // funzione che ritorna la posizione sub
 		if (pepb!=cio_read(4))
 		{
 			cio_skip(-4);
-			pepb=cio_read(4); // Copia nel campo pepb il corrispondente pepc contenuto in EPC
+			pepb=cio_read(4); 
 		}
 		cio_init(cssrc, cslen);
 		cio_seek(temp);
 	}
-	//*printf("pepb: %x\n",pepb);
-	//*printf("ldata1: %d\n",ldata);
-	ldata = ldata - nbckpar*(nn-kk);  // lunghezza della porzione rimanente del campo dati
-	//*printf("ldata2: %d\n",ldata);
+	
+	ldata = ldata - nbckpar*(nn-kk);
+	
 	cio_seek(posdata + nbckpar*(nn-kk)); 
-	posdata2 = cio_tell(); // posizione inizio seconda parte dati EPB
-	//printf("nbckpar: %d\n",nbckpar);
-	//printf("mark: %x\n",cio_read(2));
-	//cio_skip(-2);
+	posdata2 = cio_tell();
+
 
 	if ((!((depb >> 6)&1))&&((*j2k_state == J2K_STATE_MHSOC)||(*j2k_state == J2K_STATE_MH)))
-		*j2k_state = J2K_STATE_MH; // vuol dire che il prossimo EPB è in MH ma non è il primo
+		*j2k_state = J2K_STATE_MH; 
 	if (((depb >> 6)&1)&&((*j2k_state == J2K_STATE_MH)||(*j2k_state == J2K_STATE_MHSOC)))
-		*j2k_state = J2K_STATE_TPHSOT; // vuol dire che il prossimo EPB è il primo di un TPH
+		*j2k_state = J2K_STATE_TPHSOT;
 	if (((depb >> 6)&1)&&((*j2k_state == J2K_STATE_TPH)||(*j2k_state == J2K_STATE_TPHSOT)))
-		*j2k_state = J2K_STATE_TPHSOT; // vuol dire che il prossimo EPB è il primo di un TPH
+		*j2k_state = J2K_STATE_TPHSOT; 
 	if ((!((depb >> 6)&1))&&((*j2k_state == J2K_STATE_TPHSOT)||(*j2k_state == J2K_STATE_TPH)))
-		*j2k_state = J2K_STATE_TPH; // vuol dire che il prossimo EPB è relativo ad un TPH
+		*j2k_state = J2K_STATE_TPH;
 
 	if (!((depb >> 7)&1))
-		epbpm = 1; // Gli EPB sono scritti in modalità unpacked (epbpm=0)
+		epbpm = 1; // Unpacked mode
 	else
-		epbpm = 0; // Gli EPB sono scritti in modalità packed (epbpm=1)
+		epbpm = 0; // Packed mode
 
 
 	nepbrd++;
 	
-	// Ora leggendo pepb il decoder deve capire quale codice applicare per la porzione di dati
-	// cui fa riferimento la seconda parte del campo EPBdata
-
-	if (pepb)  // se pepb=0 allora si usano i codici di default precedenti
+	
+	if (pepb)
 	{
 		if ((pepb>>28)==2)
 		{
-			// in questo caso deve effettuare la decodifica RS
-			/***********/
-			// liberiamo gli spazi allocati
+			
 			free(alpha_to);
 			free(index_of);
 			free(gg);
 			free(recd);
 			free(data);
 			free(bb);
-			/***********/
+			
 			kk = (int) pepb & 0x000000ff;
 		    nn = (int) (pepb>>8) & 0x000000ff;
 			tt = (int) ceil((double)(nn-kk)/2);
@@ -2193,8 +1664,8 @@ int read_EPB(int next, int *j2k_state)  // funzione che ritorna la posizione sub
 			alpha_to = (int *) malloc((nn1+1)*sizeof(int));
 			index_of = (int *) malloc((nn1+1)*sizeof(int));
 			gg = (int *) malloc((nn1-kk1+1)*sizeof(int));
-			recd = (int *) malloc((nn1)*sizeof(int)); ///forse alcune di queste malloc possono
-			data = (int *) malloc((kk1)*sizeof(int)); // essere eliminate, inutili per decodifica!!!
+			recd = (int *) malloc((nn1)*sizeof(int)); 
+			data = (int *) malloc((kk1)*sizeof(int)); 
 			bb = (int *) malloc((nn1-kk1)*sizeof(int));
 			generate_gf(nn1,kk1) ;
 			gen_poly(nn1,kk1) ;
@@ -2202,19 +1673,18 @@ int read_EPB(int next, int *j2k_state)  // funzione che ritorna la posizione sub
 
 		if ((pepb>>28)==1)
 		{
-			// in questo caso deve effettuare le decodifica CRC
+			//  CRC
 			free(buff);
 			buff = (char *) malloc(ldpepb * sizeof(char));
 			write_buff(buff,posdata2+ldata,ldpepb);
-			if (pepb & 0x00000001)	// vuol dire che bisogna decodificare secondo CRC 32
+			if (pepb & 0x00000001)	// CRC 32
 			{
-				/*per fare il crc32 occorre invertire i byte in ingresso, invertire il crc calcolato
-			    e farne il complemento a 1*/
+				
 				ResetCRC();
 				for (i=0; i < ldpepb; i++)
 					UpdateCRC32(reflectByte(buff[i]));	
 				reflectCRC32();
-				crcSum ^= 0xffffffff;	// effettua il complemento a 1	
+				crcSum ^= 0xffffffff;	
 				cio_seek(posdata2);
 				datacrc = cio_read(4);
 				if (datacrc == crcSum)
@@ -2222,7 +1692,7 @@ int read_EPB(int next, int *j2k_state)  // funzione che ritorna la posizione sub
 				else
 					printf("CRC errato!\n");
 			}
-			else	// vuol dire che bisogna decodificare secondo CRC 16
+			else	// CRC 16
 			{
 				ResetCRC();
 				for (i=0; i < ldpepb; i++)
@@ -2235,189 +1705,134 @@ int read_EPB(int next, int *j2k_state)  // funzione che ritorna la posizione sub
 					printf("CRC errato!\n");
 			}
 			free(buff);
-			return (posdata2 + ldata + ldpepb);  // ritorna la posizione a valle dei dati successivi a EPB
-			//return;
+			return (posdata2 + ldata + ldpepb); 
+			
 		}
 
 		if (pepb>=0x30000000)
 		{
-			// tecniche registrate in RA
+			//RA
 			return (posdata2 + ldata + ldpepb);
-			// Per adesso prevede la semplice uscita dalla funzione
+			
 		}
 
 		if (pepb==0xffffffff)
 		{
-			// non sono usati metodi per i dati seguenti
+			
 			return (posdata2 + ldata + ldpepb);
-			//return;
+			
 		}
 	}
 
 	
 
-	/*******************/
-	// qui bisogna aggiungere la parte per la gestione della modalità packed/unpacked
-	/*******************/
+	
 
 	
-	//cio_seek(posdata + (nn-kk)); 
-	//posdata2 = cio_tell(); // posizione inizio seconda parte dati EPB
-	
-	/********************/
-	// Per adesso si suppone che il primo EPB di un header utilizza lo stesso codice
-	// di default anche per la seconda parte dei dati...in seguito bisognerà aggiungere
-	// la funzionalità che gestisce l'uso dei vari codici in base al campo pepb
-	/********************/
-
-	// Ora bisogna copiare in buff la seconda parte dei dati di EPB e i dati successivi all'epb
-	// per una lunghezza pari a ldpepb
     
-	nblock = ldata / (nn-kk);  // numero di "blocchi di decodifica"
-	//printf("nblock = %d\n",nblock);
-	//*system("pause");
-	//cio_seek(posdata2);  // si posiziona all'inizio della seconda parte dei dati EPB
+	nblock = ldata / (nn-kk);  // Number of CW
+	
 	free(buff);
 	buff = (char *) malloc(nn1 * sizeof(char));
 	for (i=0; i<nblock; i++)
 	{
-		//free(buff);
-		//buff = (char *) malloc(nn1 * sizeof(char));
-		for (h=0; h<nn1; h++)
-			buff[h] = 0; // inizializza il buffer tutto a zero
-		write_buff(buff,posdata2+i*(nn-kk),(nn-kk)); // copia nel buff i bytes di parità
-		cio_seek(posdata2+ldata+i*kk); // si posiziona nel blocco dati corrispondente
 		
-		//if (i==0) {
-		//	printf("data: %x\n",cio_read(2));
-		//    cio_skip(-2);
-		//	system("pause");
-		//}
-		//pos1 = cio_tell(); // memorizza la posizione del blocco dati corrispondente
+		for (h=0; h<nn1; h++)
+			buff[h] = 0; 
+		write_buff(buff,posdata2+i*(nn-kk),(nn-kk)); 
+		cio_seek(posdata2+ldata+i*kk); 
+		
+		
 		if (i<(nblock-1))
 		{
-			//for (h=(posdata2+i*(2*tt)); h<(posdata2+i*(2*tt))+64; h++)
+			
 			for (h=(nn-kk); h<nn; h++)
 			{
-				buff[h] = cio_read(1);  // copia nel buff i bytes di messaggio
-				//if (i==1)
-				//  printf("Data: %x\n",buff[h]);  /**********/
+				buff[h] = cio_read(1);  
+			
 			}
-			//system("pause"); /***********/
+			
 		}
 		else
 		{
-			ndata = ldpepb - ((nblock-1) * kk);  // l'ultimo blocco di dati non necessariamente è lungo 64!
-			//*printf("ndata: %d\n",ndata);
-			//*system("pause");
-			//for (h=(posdata2+i*(2*tt)); h<(posdata2+i*(2*tt))+ndata; h++)
+			ndata = ldpepb - ((nblock-1) * kk);  
+			
 			for (h=(nn-kk); h<(nn-kk)+ndata; h++)
 			{
-				buff[h] = cio_read(1);  // copia nel buff i bytes di messaggio
-				//printf("Data: %x\n",buff[h]);  /**********/
+				buff[h] = cio_read(1);  
+				
 			}
-			//system("pause"); /***********/
-			next = cio_tell();  // posizione alla fine dei dati protetti (ldpepb)
+			
+			next = cio_tell(); 
 			if (cio_read(2) == 0xffd9)
 				*j2k_state = J2K_STATE_MT;
 			cio_skip(-2);
 		}
 		
 		for (h=0; h<nn1; h++)
-			recd[h] = buff[h];  // copia in recd il contenuto di buff da decodificare
+			recd[h] = buff[h];  
 
-		//if (*j2k_state == J2K_STATE_TPHSOT)
-		//{
-		//	f = fopen("debug","w");
-		//	if (f==NULL)
-		//		printf("Unable to open file!\n");
-		//	fprintf(f,"\n");
-		//	for (h=0; h<nn1; h++)
-		//		fprintf(f,"%x ",recd[h]);
-		//	fprintf(f,"\n");
-		//	fclose(f);
-		//}
-		//else
-		//{
-		//f = fopen("debug","a");
-		//if (f==NULL)
-		//	printf("Unable to open file!\n");
-		//fprintf(f,"\n");
-		//for (h=0; h<nn1; h++)
-		//	fprintf(f,"%x ",recd[h]);
-		//fprintf(f,"\n");
-		//fclose(f);
-		//}
-		//for (h=0; h<nn1; h++)
-		//	printf("mess: %x\n",recd[h]);
-		//system("pause");
-
-		//printf("nn1: %d\n",nn1);
-		//printf("kk1: %d\n",kk1);
-        
+		
 		generate_gf(nn1,kk1) ;
 		gen_poly(nn1,kk1) ;
 		for (h=0; h<nn1; h++)
-			recd[h] = index_of[recd[h]] ;  // a questo punto recd[] contiene i bytes decodificati
+			recd[h] = index_of[recd[h]] ;  
 		decode_rs(nn1,kk1,tt);  
 		
-		if (decodeflag == 0) //*******Aggiunto in questa versione 1.7
+		if (decodeflag == 0) 
 		{
-			//Inizializzo il buffer in cui vado a copiare la RED
-			cio_init(red.reddata,cslen); //*******Aggiunta in questa versione 1.7
+			
+			cio_init(red.reddata,cslen); 
 			cio_seek(redpos);
 
-			//printf("Il blocco corrispondente non è stato decodificato!\n");
-			cio_write(posdata2+ldata+i*kk,4); // Scrive il byte di start del range considerato	
+			
+			cio_write(posdata2+ldata+i*kk,4); 
 			redlen += 4;
 			if (i<(nblock -1))
-				cio_write(posdata2+ldata+i*kk + kk,4);  // Scrive il byte di end del range
+				cio_write(posdata2+ldata+i*kk + kk,4); 
 			else
-				cio_write(posdata2+ldata+i*kk + ndata,4);  // Scrive il byte di end del range
+				cio_write(posdata2+ldata+i*kk + ndata,4);  
 			redlen += 4;
-			// Adesso segnaliamo la presenza di errori con 0xFFFF!!!
+			
 			cio_write(0xFFFF,2);
 			redlen += 2;
 			if ((*j2k_state == J2K_STATE_MH)||(*j2k_state == J2K_STATE_TPHSOT))
 				redlenok+=10;
-			redpos = cio_tell(); // Memorizza la posizione attuale del buffer RED
-			//printf("ciao\n");
+			redpos = cio_tell(); 
+			
 		}
 		if ((redlen==0)&(redmode==1))
 			free(red.reddata);
 		
-		//*printf("nciclo: %d\n\n",i);
-		//for (h=0; h<nn1; h++)
-		//	printf("mess: %x\n",recd[h]);
-		//system("pause");
+		
 
-		// Adesso bisogna ricopiare il contenuto di recd[] nella codestream
 		
-		cio_init(cssrc, cslen); //*****Aggiunto in questa versione 1.7
 		
-		cio_seek(posdata2+i*(nn-kk));  // si posiziona all'inizio del blocco di parità corrispondente
+		cio_init(cssrc, cslen);
+		
+		cio_seek(posdata2+i*(nn-kk)); 
 		for (h=0; h<(nn-kk); h++)
 		{
-			cio_write(recd[h],1);  // copia nella codestream i bytes di parità corretti
-			//printf("par: %x\n",recd[h]);
+			cio_write(recd[h],1); 
+			
 		}
-		//system("pause");
+		
 		
 		cio_seek(posdata2+ldata+i*kk);
 		if (i<(nblock-1))
 		{
-			//for (h=(posdata2+i*(2*tt)); h<(posdata2+i*(2*tt))+64; h++)
+			
 			for (h=(nn-kk); h<nn; h++)
-				cio_write(recd[h],1);  // copia nella codestream il blocco di dati corretti
+				cio_write(recd[h],1);  
 		}
 		else
 		{
-			ndata = ldpepb - (nblock-1) * kk;  // l'ultimo blocco di dati non necessariamente è lungo 64!			
-			//for (h=(posdata2+i*(2*tt)); h<(posdata2+i*(2*tt))+ndata; h++)
+			ndata = ldpepb - (nblock-1) * kk;  
+			
 			for (h=(nn-kk); h<(nn-kk)+ndata; h++)
-				cio_write(recd[h],1);  // copia nella codestream il blocco di dati corretti
+				cio_write(recd[h],1); 
 		}
-	}//fine ciclo for (i=0; i<nblock; i++)
+	}
 	
 
 	free(alpha_to);
@@ -2426,270 +1841,197 @@ int read_EPB(int next, int *j2k_state)  // funzione che ritorna la posizione sub
 	free(recd);
 	free(data);
 	free(bb);
-	/***********/
-
-	//} // fine ciclo while iniziale
+	
 	free(buff);
-	// A questo punto abbiamo corretto anche la parte di dati cui fa riferimento la seconda
-	// parte del campo EPBdata
 
-	// Bisogna ora posizionarsi alla fine dei dati corretti
-	//next = posdata2 + ldata + ldpepb;
-    //cio_seek(next);
-	//if (cio_read(2) == 0xffd9)
-	//	*j2k_state = J2K_STATE_MT;
-	//printf("next: %x\n",cio_read(2));
-	//cio_skip(-2);
+
 	
-	return next; // Ritorna la posizione subito a valle dell'EPB appena letto!!!
-	//return;
 	
-	//*ltemp=cio_tell();
-	//if (cio_read(2)==0xffd9)
-	//{
-	//	cio_write(0xffd9,2);
-	//	cio_skip(-2);
-	//}
-	//cio_skip(-2);
-	//*if (cio_read(2)==0xffd9)
-	//*{
-	///*	cio_seek(0);
-	//	f=fopen("output.txt","wb");
-	//*	for (i=0; i<ltemp+2; i++)
-	//*		fputc(cio_read(1),f);
-    //*    cio_skip(-2);
-	//*	printf("EOC: %x\n",cio_read(2));
-	//*	fclose(f);
-	//*}
+	return next; // End of read EPB
 	
-    //*cio_skip(-2);
-	//*printf("next: %x\n",cio_read(2));
-	//*cio_skip(-2);
-	//*system("pause");
-	/***********/
-	// liberiamo gli spazi allocati
 	
 	
 	
 
-	//return;
-} // fine funzione read_EPB
+	
+}
 
 
 
-// La funzione seguente inizializza a zero la struttura relativa ad EPC
 
-//void init_EPC()
-//{
-//    epc.lepc = 0;
-//	epc.pcrc = 0;
-//	epc.cl = 0;
-//	epc.pepc = 0;
-//	epc.tecn = NULL;   
-//}
 
-int read_EPB_PM(int *j2k_state)  // Gestisce la lettura degli EPB packed mode
+
+int read_EPB_PM(int *j2k_state)  
 {
 	unsigned int lepb, lsiz, temp, ldata, lbuf, lsot;
 	int posdata, posdata2, nblock, i,h, pos, lante;
-	int lastepb, nepbpm, posfirst, posend, count; // variabili per la gestione modalità packed
-	unsigned long lpack, ldpread;	// variabili per la gestione modalità packed
-	EPB_par *epb;	// variabili per la gestione modalità packed
-	int nn, kk, tt, nn1, kk1; // parametri per la decodifica RS
-	unsigned long ldpepb, pepb, ndata, datacrc;  // ndata è utile per la decodifica della seconda parte EPB
+	int lastepb, nepbpm, posfirst, posend, count; 
+	unsigned long lpack, ldpread;	
+	EPB_par *epb;	
+	int nn, kk, tt, nn1, kk1;
+	unsigned long ldpepb, pepb, ndata, datacrc;  
 	unsigned char depb;
 	unsigned char *buff;
 
 	int lparity;
-	// int conta;
-	//FILE *f;
 	
-	//next = cio_tell();
-	//printf("read: %x\n",cio_read(2));
-	//cio_skip(-2);
 		if (*j2k_state == J2K_STATE_MHSOC)  
 		{
-			// Se siamo giunti a questo punto vuol dire che SOC e i primi due campi di SIZ non sono
-			// errati!!...ora ci dobbiamo posizionare subito a valle di SIZ
 			
-			cio_skip(4); // si pone all'inizio del campo Lsiz
+			
+			cio_skip(4);
 			lsiz = cio_read(2);
-			cio_skip(lsiz-2); // ora siamo all'inizio dell'EPB MS
-			pos = cio_tell(); // memorizza la posizione in cui inizia l'EPB
-			temp = cio_read(2);  // ci si aspetta qui di trovare il marker EPB
-			nn = 160; kk = 64; tt = 48;  // inizializzazione per codice RS(160,64)
+			cio_skip(lsiz-2); 
+			pos = cio_tell(); 
+			temp = cio_read(2); 
+			nn = 160; kk = 64; tt = 48;  // RS(160,64)
 			lante = lsiz+4;
 			
-		} // fine if (j2k_state == J2K_STATE_MHSOC)
+		} 
 
 		if (*j2k_state == J2K_STATE_TPHSOT)
 		{
 			
-			cio_skip(2); // si pone all'inizio del campo Lsot
+			cio_skip(2); 
 			lsot = cio_read(2);
-			cio_skip(lsot-2); // ora siamo all'inizio dell'EPB MS
-			pos = cio_tell(); // memorizza la posizione in cui inizia l'EPB
-			temp = cio_read(2);  // ci si aspetta qui di trovare il marker EPB
-			nn = 80; kk = 25; tt = 28;  // inizializzazione per codice RS(80,25)
+			cio_skip(lsot-2); // EPB MS
+			pos = cio_tell(); 
+			temp = cio_read(2); 
+			nn = 80; kk = 25; tt = 28;  // RS(80,25)
 			lante = lsot+2;
 		}
 
 		if ((*j2k_state == J2K_STATE_MH)||(*j2k_state == J2K_STATE_TPH))
 		{
-			pos = cio_tell(); // memorizza la posizione in cui inizia l'EPB
-			temp = cio_read(2); // ci si aspetta qui di trovare il marker EPB
-			nn = 40; kk = 13; tt = 14;  // inizializzazione per codice RS(40,13)
+			pos = cio_tell(); // EPB
+			temp = cio_read(2); 
+			nn = 40; kk = 13; tt = 14;  // RS(40,13)
 			lante = 0;
 		}
-	// A questo punto possiamo decodificare la prima parte di dati tramite i codici di default
+	
 
-	//printf("state: %x\n",*j2k_state);
-	//printf("tt: %d\n",nn-kk);
-	posfirst = pos; // memorizza la posizione al'inizio della catena di EPB packed
+	
+	posfirst = pos; 
 	nn1 = 255; kk1 = kk + (nn1 - nn);
 	alpha_to = (int *) malloc((nn1+1)*sizeof(int));
 	index_of = (int *) malloc((nn1+1)*sizeof(int));
 	gg = (int *) malloc((nn1-kk1+1)*sizeof(int));
-	recd = (int *) malloc((nn1)*sizeof(int)); ///forse alcune di queste malloc possono
-	data = (int *) malloc((kk1)*sizeof(int)); // essere eliminate, inutili per decodifica!!!
+	recd = (int *) malloc((nn1)*sizeof(int)); 
+	data = (int *) malloc((kk1)*sizeof(int)); 
 	bb = (int *) malloc((nn1-kk1)*sizeof(int));
 
-	lastepb = 0; // Si suppone che l'EPB corrente non sia l'ultimo di un tile!
+	lastepb = 0; 
 	nepbpm = 0;
-	//conta = 0;
+	
 
 	while (lastepb == 0)
 	{
 
-	lepb = cio_read(2);  // legge la lunghezza di EPB..si spera che questo campo non è errato!
-	cio_skip(9);  // si posiziona all'inizio del campo dati di EPB
+	lepb = cio_read(2); 
+	cio_skip(9);  
 	posdata = cio_tell();
-	ldata = lepb - 11;  // determina la lunghezza del campo dati
-	//printf("ldata: %d\n",ldata);
-	lbuf = lante + 13 + (nn-kk);  // 2*tt è la lunghezza dei bit di parità 
-	buff = (char *) malloc(nn1 * sizeof(char)); // buffer che conterrà tutti i dati che precedono EPB
-	                                           // e i parametri di EPB
+	ldata = lepb - 11; 
+
+	lbuf = lante + 13 + (nn-kk);  
+	buff = (char *) malloc(nn1 * sizeof(char)); 
 	for (i=0; i<nn1; i++)
-		buff[i] = 0; // inizializza il buffer tutto a zero
+		buff[i] = 0; 
 	
-	// Bisognerà copiare tutto il contenuto da questo punto fino alla fine della prima parte dei dati EPB in buff
-	// Per come lavora il decoder RS, i bytes di parità vanno posti all'inizio del buffer
+	
 
 	
-	write_buff(buff,posdata,(nn-kk)); // copia nel buffer i byte di parità del campo dati
+	write_buff(buff,posdata,(nn-kk)); 
 	
-	cio_seek(pos);  // si posiziona all'inizio dei dati protetti (SOC,SOT o EPB)
+	cio_seek(pos);  
 	for (i=(nn-kk); i<lbuf; i++)
 	{
-		buff[i] = cio_read(1);  // copia in buff i byte di messaggio (SOC,SIZ,ParEPB)
+		buff[i] = cio_read(1); 
 	}
 
 	for (i=0; i<nn1; i++)
-		recd[i] = buff[i];  // copia in recd il contenuto di buff da decodificare
+		recd[i] = buff[i]; 
 
-	//f = fopen("debug","a");
-	//if (f==NULL)
-	//	printf("Unable to open file!\n");
-	//fprintf(f,"EPB PAR: %d\n",conta);
-	//for (h=0; h<nn1; h++)
-	//	fprintf(f,"%x ",recd[h]);
-	//fprintf(f,"\n");
-	//fclose(f);
+	
 
 	generate_gf(nn1,kk1) ;
 	gen_poly(nn1,kk1) ;
 	for (i=0; i<nn1; i++)
-     recd[i] = index_of[recd[i]] ; // a questo punto recd[] contiene i bytes decodificati     
+     recd[i] = index_of[recd[i]] ;
 	decode_rs(nn1,kk1,tt);  
 
-	if (decodeflag == 0) //*******Aggiunto in questa versione 1.7
+	if (decodeflag == 0) 
 		{
-			//Inizializzo il buffer in cui vado a copiare la RED
-			cio_init(red.reddata,cslen); //*******Aggiunta in questa versione 1.7
+			
+			cio_init(red.reddata,cslen);
 			cio_seek(redpos);
 
-			//printf("Il blocco corrispondente non è stato decodificato!\n");
-			cio_write(pos,4); // Scrive il byte di start del range considerato	
-			cio_write(pos + lbuf - (nn - kk),4);  // Scrive il byte di end del range
-			// Adesso segnaliamo la presenza di errori con 0xFFFF!!!
+			
+			cio_write(pos,4);
+			cio_write(pos + lbuf - (nn - kk),4);
+			
 			cio_write(0xFFFF,2);
 			redlen += 10;
-			redpos = cio_tell(); // Memorizza la posizione attuale del buffer RED
-			//printf("ciao\n");
+			redpos = cio_tell(); 
+			
 		}
-	// Adesso bisogna ricopiare il contenuto di recd[] nella codestream
+	
 
 	cio_init(cssrc, cslen);
 
-	cio_seek(posdata); // si posiziona all'inizio del campo dati della codestream	
+	cio_seek(posdata);
 	for (i=0; i<(nn-kk); i++)
-		cio_write(recd[i],1);  // copia i byte di parità corretti nel campo dati
+		cio_write(recd[i],1); 
 	cio_seek(pos);
 	for (i=(nn-kk); i<lbuf; i++)
-		cio_write(recd[i],1);  // copia i bytes di messaggio nella codestream
-
-	// A questo punto la codestream è corretta fino alla fine della prima parte dei dati EPB
-	// Possiamo leggere i parametri di EPB per condurre la codifica seguente
+		cio_write(recd[i],1); 
 
 	
-	cio_seek(pos);  // si posiziona all'inizio di EPB
-	temp = cio_read(2);  // ci si aspetta qui di trovare il marker EPB
+
+	
+	cio_seek(pos);  
+	temp = cio_read(2);  
 			if (temp != JPWL_MS_EPB)
 			{
-				// Puo' succedere che l'EPC ha fornito informazione errata: in tal caso il
-				// processo di decodifica effettuato perde di significato.
-				// Puo' anche succedere pero' che il codice RS contenuto nell'EPB MS non
-				// è stato in grado di correggere l'errore sul marker EPB!!
+				
 				return 0;
-				// Per adesso usciamo dalla procedura, ma la cosa migliore sarebbe
-				// fare in modo che il decoder vada a cercare l'eventuale EPB successivo
+				
 			}
 
-	cio_skip(2); // ora è all'inizio del campo depb
-	depb = cio_read(1); // legge depb
-	//if ((depb >> 6)&1)  // quello corrente è l'ultimo EPB del tile corrente
-	//{
-	//	lastepb = 1; // l'epb corrente è l'ultimo del tile
-		//nepbpm = ((depb << 2) >> 2); // numero di EPB accorpati in modalità packed
-	//	nepbpm = (depb & 0x3f); // numero di EPB accorpati in modalità packed
-		//printf("nepbpm: %d\n",nepbpm);
-	//}
-	if (!((depb >> 6)&1))  // quello corrente non è l'ultimo EPB del tile corrente
+	cio_skip(2); 
+	depb = cio_read(1); 
+	
+	if (!((depb >> 6)&1))
 		nepbpm += 1;
-	if ((depb >> 6)&1)  // quello corrente è l'ultimo EPB del tile corrente
+	if ((depb >> 6)&1) 
 	{
 		nepbpm += 1;
 		lastepb = 1;
 	}
 
-	cio_skip(-3); // si posiziona all'inizio del campo lepb
-	cio_skip(cio_read(2)-2);  // si posiziona a valle dell'epb corrente
-	pos = cio_tell(); // memorizza la posizione all'inizio dell'EPB successivo
+	cio_skip(-3); 
+	cio_skip(cio_read(2)-2);
+	pos = cio_tell(); 
 	cio_skip(2);
 
-	//conta++;
-
-	} // Fine while (lastepb == 0)!!!!
-    // A questo punto il decoder ha decodificato le porzioni iniziali di tutti gli EPB
-	// del tile corrente
 	
 
-	// Ora dobbiamo decodificare le porzioni finali di tutti gli EPB!!!
+	} 
+	
 
-	// pos contiene la posizione a valle dell'ultimo degli EPB packed!!!
+	
 	cio_skip(-2);
 	posend = cio_tell();
-	lpack = posend-posfirst; // lunghezza totale della catena di EPB
+	lpack = posend-posfirst; // Total EPBs length
 	epb = (EPB_par *) malloc(nepbpm * sizeof(EPB_par));
 	cio_seek(posfirst);
-	//printf("nepbpm: %d\n",nepbpm);
+	
 	for (count=0; count<nepbpm; count++)
 	{
-		cio_skip(2); // si posiziona all'inizio di lepb
-		epb[count].lepb = cio_read(2); // legge lepb
-		epb[count].depb = cio_read(1); // legge depb
-		epb[count].ldpepb = cio_read(4); // legge ldpepb
-		epb[count].pepb = cio_read(4); // legge pepb
+		cio_skip(2);
+		epb[count].lepb = cio_read(2);
+		epb[count].depb = cio_read(1); 
+		epb[count].ldpepb = cio_read(4); 
+		epb[count].pepb = cio_read(4); 
 
 		temp = cio_tell();
 		cio_init(epc.tecn[0].pid, epc.tecn[0].lid);
@@ -2702,63 +2044,54 @@ int read_EPB_PM(int *j2k_state)  // Gestisce la lettura degli EPB packed mode
 		cio_init(cssrc, cslen);
 		cio_seek(temp);
 
-		epb[count].ldata = (epb[count].lepb - 11) - (nn-kk);  // lunghezza della porzione rimanente del campo dati
-		cio_skip(-11); // si posiziona all'inizio di lepb dell'EPB corrente
-	    cio_skip(epb[count].lepb); // si posiziona a valle dell'EPB corrente
-	} // Abbiamo a questo punto memorizzato nella struttura epb i parametri degli EPB packed
+		epb[count].ldata = (epb[count].lepb - 11) - (nn-kk);  
+		cio_skip(-11); 
+	    cio_skip(epb[count].lepb); 
+	} 
 
-	//for (count=0; count<nepbpm; count++)
-	//{
-	//	printf("EPB[%d]: %x\t%x\t%x\t%x\t%d\n",count,epb[count].lepb,epb[count].depb,
-	//		epb[count].ldpepb,epb[count].pepb,epb[count].ldata);
-	//}
+	
 
 	nepbrd+=nepbpm;
 
-	cio_seek(posfirst);  // si posiziona all'inizio del primo degli EPB packed
+	cio_seek(posfirst);  // First of the packed EPBs
 	pos = cio_tell();
 	ldpread = 0;
 	lparity = nn - kk;
-	//printf("lparity: %d\n",lparity);
+	
 	for (count=0; count<nepbpm; count++)
 	{
 		cio_seek(pos);
-		//printf("mark: %x\n",cio_read(2));
-		//cio_skip(-2);
-		cio_skip(13); // si posiziona all'inizio del campo dati
+		
+		cio_skip(13); 
 		posdata = cio_tell();
-		//printf("tt: %d\n",nn-kk);
-		cio_seek(posdata + lparity); // si posiziona all'inizio seconda parte dati EPB corrente
-		posdata2 = cio_tell(); // posizione inizio seconda parte dati EPB
-		//printf("rd: %x\n",cio_read(2));
-		//cio_skip(-2);
+		
+		cio_seek(posdata + lparity); 
+		posdata2 = cio_tell(); 
+		
 
 		if ((!((epb[count].depb >> 6)&1))&&((*j2k_state == J2K_STATE_MHSOC)||(*j2k_state == J2K_STATE_MH)))
-			*j2k_state = J2K_STATE_MH; // vuol dire che il prossimo EPB è in MH ma non è il primo
+			*j2k_state = J2K_STATE_MH; 
 		if (((epb[count].depb >> 6)&1)&&((*j2k_state == J2K_STATE_MH)||(*j2k_state == J2K_STATE_MHSOC)))
-			*j2k_state = J2K_STATE_TPHSOT; // vuol dire che il prossimo EPB è il primo di un TPH
+			*j2k_state = J2K_STATE_TPHSOT; 
 		if (((epb[count].depb >> 6)&1)&&((*j2k_state == J2K_STATE_TPH)||(*j2k_state == J2K_STATE_TPHSOT)))
-			*j2k_state = J2K_STATE_TPHSOT; // vuol dire che il prossimo EPB è il primo di un TPH
+			*j2k_state = J2K_STATE_TPHSOT; 
 		if ((!((epb[count].depb >> 6)&1))&&((*j2k_state == J2K_STATE_TPHSOT)||(*j2k_state == J2K_STATE_TPH)))
-			*j2k_state = J2K_STATE_TPH; // vuol dire che il prossimo EPB è relativo ad un TPH
+			*j2k_state = J2K_STATE_TPH; 
 		
-		// Ora leggendo pepb il decoder deve capire quale codice applicare per la porzione di dati
-		// cui fa riferimento la seconda parte del campo EPBdata
 		
-		if (epb[count].pepb)  // se pepb=0 allora si usano i codici di default precedenti
+		
+		if (epb[count].pepb)  
 		{
 			if ((epb[count].pepb>>28)==2)
 			{
-				// in questo caso deve effettuare la decodifica RS
-				/***********/
-				// liberiamo gli spazi allocati
+				
 				free(alpha_to);
 				free(index_of);
 				free(gg);
 				free(recd);
 				free(data);
 				free(bb);
-				/***********/
+				
 				kk = (int) epb[count].pepb & 0x000000ff;
 				nn = (int) (epb[count].pepb>>8) & 0x000000ff;
 				tt = (int) ceil((double)(nn-kk)/2);
@@ -2766,8 +2099,8 @@ int read_EPB_PM(int *j2k_state)  // Gestisce la lettura degli EPB packed mode
 				alpha_to = (int *) malloc((nn1+1)*sizeof(int));
 				index_of = (int *) malloc((nn1+1)*sizeof(int));
 				gg = (int *) malloc((nn1-kk1+1)*sizeof(int));
-				recd = (int *) malloc((nn1)*sizeof(int)); ///forse alcune di queste malloc possono
-				data = (int *) malloc((kk1)*sizeof(int)); // essere eliminate, inutili per decodifica!!!
+				recd = (int *) malloc((nn1)*sizeof(int)); 
+				data = (int *) malloc((kk1)*sizeof(int)); 
 				bb = (int *) malloc((nn1-kk1)*sizeof(int));
 				generate_gf(nn1,kk1) ;
 				gen_poly(nn1,kk1) ;
@@ -2775,16 +2108,15 @@ int read_EPB_PM(int *j2k_state)  // Gestisce la lettura degli EPB packed mode
 
 			if ((epb[count].pepb>>28)==1)
 			{
-				// in questo caso deve effettuare le decodifica CRC
+				// CRC
 				free(buff);
 				buff = (char *) malloc(epb[count].ldpepb * sizeof(char));
 				write_buff(buff,posdata2+epb[count].ldata,epb[count].ldpepb);
-				if (epb[count].pepb & 0x00000001)	// vuol dire che bisogna decodificare secondo CRC 32
+				if (epb[count].pepb & 0x00000001)	// CRC 32
 				{
-					/*per fare il crc32 occorre invertire i byte in ingresso, invertire il crc calcolato
-					e farne il complemento a 1*/
+					
 					ResetCRC();
-					cio_seek(posend+ldpread); // si posiziona nel blocco dati corrispondente
+					cio_seek(posend+ldpread); 
 					for (i=0; i < epb[count].ldpepb; i++)
 						UpdateCRC32(reflectByte(buff[i]));	
 					reflectCRC32();
@@ -2792,17 +2124,13 @@ int read_EPB_PM(int *j2k_state)  // Gestisce la lettura degli EPB packed mode
 					{
 						next = startsot + psot;
 						cio_seek(next);
-						//printf("%x\n",cio_read(2));
-						//cio_skip(-2);
+						
 					}
 					if ((cio_read(2) == 0xffd9)||(psot == 0))
 						*j2k_state = J2K_STATE_MT;
 					cio_skip(-2);
-					//else
-					//{
-					//	next = cio_tell();  // posizione alla fine dei dati protetti (ldpepb)
-					//}
-					crcSum ^= 0xffffffff;	// effettua il complemento a 1	
+					
+					crcSum ^= 0xffffffff;	
 					cio_seek(posdata2);
 					datacrc = cio_read(4);
 					if (datacrc == crcSum)
@@ -2811,10 +2139,10 @@ int read_EPB_PM(int *j2k_state)  // Gestisce la lettura degli EPB packed mode
 						printf("CRC errato!\n");
 					
 				}
-				else	// vuol dire che bisogna decodificare secondo CRC 16
+				else	// CRC 16
 				{
 					ResetCRC();
-					cio_seek(posend+ldpread); // si posiziona nel blocco dati corrispondente
+					cio_seek(posend+ldpread);
 					for (i=0; i < epb[count].ldpepb; i++)
 						UpdateCRC16(buff[i]);
 					if (lastepb==1)
@@ -2832,153 +2160,126 @@ int read_EPB_PM(int *j2k_state)  // Gestisce la lettura degli EPB packed mode
 					else
 						printf("CRC errato!\n");
 				}
-				//free(buff);
+				
 			}
 
 			if (epb[count].pepb>=0x30000000)
 			{
-				//if (lastepb==1)
-				//		next = startsot + psot;
-				// tecniche registrate in RA
+				
 			}
 
 			if (epb[count].pepb==0xffffffff)
 			{
-				//if (lastepb==1)
-				//		next = startsot + psot;
-				// non sono usati metodi per i dati seguenti
+				
 			}
 		}
 		
-		if (((epb[count].pepb>>28)==2)||(epb[count].pepb==0))  // Vuol dire che si usano codici RS
+		if (((epb[count].pepb>>28)==2)||(epb[count].pepb==0))  // RS codes
 		{
-		// Ora bisogna copiare in buff la seconda parte dei dati di EPB e i dati successivi all'epb
-		// per una lunghezza pari a ldpepb
+		
     
-		//printf("posiz: %x\n",posdata2 + epb[count].ldata);
-		nblock = epb[count].ldata / (nn-kk);  // numero di "blocchi di decodifica"
+		
+		nblock = epb[count].ldata / (nn-kk);  // Number of CW
 		free(buff);
 		buff = (char *) malloc(nn1 * sizeof(char));
-		//printf("ldata: %d\n",epb[count].ldata);
-		//printf("nblock: %d\n",nblock);
+		
 		for (i=0; i<nblock; i++)
 		{
-			//free(buff);
-			//buff = (char *) malloc(nn1 * sizeof(char));
+			
 			for (h=0; h<nn1; h++)
-				buff[h] = 0; // inizializza il buffer tutto a zero
-			write_buff(buff,posdata2+i*(nn-kk),(nn-kk)); // copia nel buff i bytes di parità
-			//if (i==(nblock-1))
-			//{
-			//	for (h=0; h<(nn-kk); h++)
-			//		printf("%x\n",buff[h]);
-			//	system("pause");
-			//}
-			cio_seek(posend+ldpread+i*kk); // si posiziona nel blocco dati corrispondente
+				buff[h] = 0; 
+			write_buff(buff,posdata2+i*(nn-kk),(nn-kk)); 
+			
+			cio_seek(posend+ldpread+i*kk);
 			if (i<(nblock-1))
 			{
 				for (h=(nn-kk); h<nn; h++)
 				{
-					buff[h] = cio_read(1);  // copia nel buff i bytes di messaggio
+					buff[h] = cio_read(1);  
 				}
 			}
 			else
 			{
-				ndata = epb[count].ldpepb - ((nblock-1) * kk);  // l'ultimo blocco di dati non necessariamente è lungo 64!
+				ndata = epb[count].ldpepb - ((nblock-1) * kk);  
 				for (h=(nn-kk); h<(nn-kk)+ndata; h++)
 				{
-					buff[h] = cio_read(1);  // copia nel buff i bytes di messaggio
+					buff[h] = cio_read(1);  
 				}
 				if (lastepb==1)
 				{
 					next = startsot + psot;
 					cio_seek(next);
 				}
-				//else
-				//{
-				//	next = cio_tell();  // posizione alla fine dei dati protetti (ldpepb)
-				//}
-				//next = cio_tell();  // posizione alla fine dei dati protetti (ldpepb)
 				if ((cio_read(2) == 0xffd9)||(psot == 0))
 					*j2k_state = J2K_STATE_MT;
 				cio_skip(-2);
 			}
 		
 			for (h=0; h<nn1; h++)
-				recd[h] = buff[h];  // copia in recd il contenuto di buff da decodificare
+				recd[h] = buff[h]; 
         
-			//f = fopen("debug","a");
-			//if (f==NULL)
-			//	printf("Unable to open file!\n");
-			//fprintf(f,"EPB DATA: %d-%d\n",count,i);
-			//for (h=0; h<nn1; h++)
-			//	fprintf(f,"%x ",recd[h]);
-			//fprintf(f,"\n");
-			//fclose(f);
+			
 
 			generate_gf(nn1,kk1) ;
 			gen_poly(nn1,kk1) ;
 			for (h=0; h<nn1; h++)
-				recd[h] = index_of[recd[h]] ;// a questo punto recd[] contiene i bytes decodificati
+				recd[h] = index_of[recd[h]] ;
 			decode_rs(nn1,kk1,tt);  
 
-			if (decodeflag == 0) //*******Aggiunto in questa versione 1.7
+			if (decodeflag == 0)
 			{
-				//Inizializzo il buffer in cui vado a copiare la RED
-				cio_init(red.reddata,cslen); //*******Aggiunta in questa versione 1.7
+				
+				cio_init(red.reddata,cslen); 
 				cio_seek(redpos);
 
-				//printf("Il blocco corrispondente non è stato decodificato!\n");
-				cio_write(posend+ldpread+i*kk,4); // Scrive il byte di start del range considerato	
+				
+				cio_write(posend+ldpread+i*kk,4);
 				if (i<(nblock -1))
-					cio_write(posend+ldpread+i*kk + kk,4);  // Scrive il byte di end del range
+					cio_write(posend+ldpread+i*kk + kk,4); 
 				else
-					cio_write(posend+ldpread+i*kk + ndata,4);  // Scrive il byte di end del range
-				// Adesso segnaliamo la presenza di errori con 0xFFFF!!!
+					cio_write(posend+ldpread+i*kk + ndata,4);  
 				cio_write(0xFFFF,2);
 				redlen+=10;
-				redpos = cio_tell(); // Memorizza la posizione attuale del buffer RED
-				//printf("ciao\n");
+				redpos = cio_tell();
+				
 			}
 
-			// Adesso bisogna ricopiare il contenuto di recd[] nella codestream
+		
 
 			cio_init(cssrc, cslen);
 
-			cio_seek(posdata2+i*(nn-kk));  // si posiziona all'inizio del blocco di parità corrispondente
+			cio_seek(posdata2+i*(nn-kk)); 
 			for (h=0; h<(nn-kk); h++)
-				cio_write(recd[h],1);  // copia nella codestream i bytes di parità corretti
+				cio_write(recd[h],1);  
 		
-			//cio_seek(posdata2+epb[count].ldata+i*kk);// si posiziona all'inizio del blocco dati corrispondente
-			cio_seek(posend+ldpread+i*kk);// si posiziona all'inizio del blocco dati corrispondente
+		
+			cio_seek(posend+ldpread+i*kk);
 			if (i<(nblock-1))
 			{
 				for (h=(nn-kk); h<nn; h++)
-					cio_write(recd[h],1);  // copia nella codestream il blocco di dati corretti
+					cio_write(recd[h],1); 
 			}
 			else
 			{
-				ndata = epb[count].ldpepb - (nblock-1) * kk;  // l'ultimo blocco di dati non necessariamente è lungo 64!			
+				ndata = epb[count].ldpepb - (nblock-1) * kk;  
 				for (h=(nn-kk); h<(nn-kk)+ndata; h++)
-					cio_write(recd[h],1);  // copia nella codestream il blocco di dati corretti
+					cio_write(recd[h],1); 
 			}
-		}//fine ciclo for (i=0; i<nblock; i++)
+		}
 
-		} // fine if (!(epb[count]->pepb))
+		} 
 	
-	// A questo punto abbiamo corretto anche la parte di dati cui fa riferimento la seconda
-	// parte del campo EPBdata
+	
 
 		ldpread += epb[count].ldpepb;
 		cio_seek(pos+2);
 		cio_skip(epb[count].lepb);
-		pos = cio_tell(); // posizione a valle dell'EPB corrente
+		pos = cio_tell(); 
 
-	} // fine for (count=0; count<nepbpm; count++)
+	} 
 
-	cio_seek(next); // si posiziona alla fine del tile
-	//printf("read: %x\n",cio_read(2));
-	//cio_skip(-2);
+	cio_seek(next); 
+	
 	
 	free(alpha_to);
 	free(index_of);
@@ -2988,78 +2289,66 @@ int read_EPB_PM(int *j2k_state)  // Gestisce la lettura degli EPB packed mode
 	free(bb);
 	free(buff);
 	
-	return nepbpm; // Ritorna il numero di EPB letti in modalità packed
+	return nepbpm;
 	
 }
 
-/*******************************************************************/
-///////////////FUNZIONE AGGIUNTA IN QUESTA VERSIONE//////////////////
+
 void insert_RED(int pos, int lred, int redlenok)
 {
 	unsigned long i;
 	unsigned char *buff;
 	int temp, mem;
-	// Buffer in cui verrà salvata la codestream a partire dal primo SOT
+	
 	buff = (char *) malloc((epc.cl-pos) * sizeof(char));
-	//printf("lung: %d\n",epc.cl-pos);
+
 	for (i=0; i<(epc.cl-pos); i++)
 	{
 		buff[i] = cio_read(1);
-		//printf("i: %d\n",i);
+		
 	}
-	//printf("fine: %x\n",buff[epc.cl-pos-1]);
-	// A questo punto andiamo a scrivere il marker segment RED
-	cio_seek(pos);
-	//cio_skip(-2);
-	//printf("red: %x\n",cio_read(2));
-	cio_write(JPWL_MS_RED,2); // Inserisce il marker
-	cio_write(red.lred,2); // Inserisce il campo Lred
-	cio_write(red.pred,1); // Inserisce il campo Pred
-	//printf("redlen: %d\n",redlen);
-	temp = cio_tell(); // Memorizza posizione corrente della CS
 	
-	//printf("redlenok: %d\n",redlenok);
-	//for (i=0; i<redlen; i++)
-	//	printf("%x",red.reddata[i]);
-	//printf("\n");
-	//printf("lred: %d\n",lred);
-	cio_init(red.reddata,cslen); // Aggiorna le posizioni a causa dell'offset introdotto
-	cio_seek(redlenok);			// dall'aggiunta del MS RED
+	
+	cio_seek(pos);
+	
+	cio_write(JPWL_MS_RED,2); 
+	cio_write(red.lred,2); 
+	cio_write(red.pred,1); 
+	
+	temp = cio_tell(); 
+	
+
+	cio_init(red.reddata,cslen); 
+	cio_seek(redlenok);			
 	for (i=0; i<(redlen-redlenok)/10; i++)
 	{
 		mem = cio_read(4);
-		//printf("mem: %x\n",mem);
+		
 		cio_skip(-4);
-		cio_write(mem + lred,4); // Aggiorna il byte di inizio
+		cio_write(mem + lred,4); // Start byte refresh
 		mem = cio_read(4);
-		//printf("mem: %x\n",mem);
+		
 		cio_skip(-4);
-		cio_write(mem + lred,4); // Aggiorna il byte di fine
+		cio_write(mem + lred,4); // End byte refresh
 	}
 
 	cio_init(cssrc,epc.cl+redlen+5);
 	cio_seek(temp);
 
 	for (i=0; i<redlen; i++)
-		cio_write(red.reddata[i],1); // Copio il buffer reddata nella codestream
-	// Adesso andiamo a riaggiungere il resto della codestream
-	//printf("cl: %d\n",epc.cl);
-	//printf("pos: %d\n",pos);
-	//printf("cl-pos: %d\n",epc.cl-pos);
-	//printf("fine: %x\n",buff[epc.cl-pos]);
+		cio_write(red.reddata[i],1); 
+	
 	cio_init(cssrc,epc.cl+redlen+5);
 	cio_seek(pos + redlen + 5);
 	for (i=0; i<(epc.cl-pos); i++)
 	{
 		cio_write(buff[i],1);
-		//printf("i: %d\n",i);
+		
 	}
 	cio_skip(-2);
-	//printf("fine: %x\n",cio_read(2));
-}
-/*******************************************************************/
 
-// La funzione seguente legge la codestream a partire da pos e la copia in buff
+}
+
 void write_buff(unsigned char *buff,int pos,long cl)
 {
     long i;
@@ -3068,8 +2357,7 @@ void write_buff(unsigned char *buff,int pos,long cl)
 		 buff[i] = cio_read(1);	 
 }
 
-// La funzione seguente copia il contenuto di buff a partire dalla posizione della
-// stream p
+
 void read_buff(unsigned char *buff,int pos,long cl)
 {
 	long i;
@@ -3098,7 +2386,6 @@ void UpdateCRC32(char x)
 	tmp = ((x ^ (crcSum >> 24)) & 0xff);
 	crcSum = ((crcSum << 8) ^ CrcT32[tmp]);
 }
-/* funzioni per l'inversione dei byte e del crc32 */
 
 char reflectByte(char inbyte)
 {
@@ -3135,15 +2422,6 @@ void reflectCRC32()
   crcSum = outcrc;
 }
 
-// Codice relativo alla CODIFICA/DECODIFICA RS
-
-
-
-//#define nn  255          /* nn=2**mm -1   length of codeword */
-//#define tt  48           /* number of errors that can be corrected */
-//#define kk  159           /* kk = nn-2*tt  */
-
-//int pp [mm+1] = { 1, 1, 0, 0, 1} ; /* specify irreducible polynomial coeffts */
 
 
 
