@@ -1066,11 +1066,7 @@ void t1_decode_cblks(opj_t1_t *t1, opj_tcd_tile_t *tile, opj_tcp_t *tcp) {
 							for (j = 0; j < cblk->y1 - cblk->y0; j++) {
 								for (i = 0; i < cblk->x1 - cblk->x0; i++) {
 									int tmp = t1->data[j][i];
-									if(tmp >> 1 == 0) {
-										tilec->data[x + i + (y + j) * (tilec->x1 - tilec->x0)] = 0;
-									} else {
-										tilec->data[x + i + (y + j) * (tilec->x1 - tilec->x0)] = tmp<0?(tmp>>1)+1:(tmp>>1);
-									}
+									tilec->data[x + i + (y + j) * (tilec->x1 - tilec->x0)] = tmp/2;
 								}
 							}
 						} else {		/* if (tcp->tccps[compno].qmfbid == 0) */
