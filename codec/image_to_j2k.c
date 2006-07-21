@@ -665,9 +665,12 @@ int main(int argc, char **argv) {
 	}
 
 	if(parameters.cp_comment == NULL) {
-    const char comment[] = "Created by OpenJPEG version 1.0";
-		parameters.cp_comment = (char*)malloc(strlen(comment)+1);
-    strcpy(parameters.cp_comment, comment);
+    const char comment[] = "Created by OpenJPEG version ";
+    const size_t clen = strlen(comment);
+    const char *version = opj_version();
+		parameters.cp_comment = (char*)malloc(clen+strlen(version)+1);
+    strncpy(parameters.cp_comment, comment, clen); /* clen bytes */
+    strcpy(parameters.cp_comment+clen, version); /* strlen(version) + \0 */
 	}
 
 	/* decode the source image */
