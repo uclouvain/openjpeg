@@ -631,7 +631,6 @@ void info_callback(const char *msg, void *client_data) {
 
 int main(int argc, char **argv) {
 	bool bSuccess;
-	bool delete_comment = true;
 	opj_cparameters_t parameters;	/* compression parameters */
 	opj_event_mgr_t event_mgr;		/* event manager */
 	opj_image_t *image = NULL;
@@ -654,9 +653,9 @@ int main(int argc, char **argv) {
 	}
 
 	if(parameters.cp_comment == NULL) {
-		parameters.cp_comment = "Created by OpenJPEG version 0.9";
-		/* no need to delete parameters.cp_comment on exit */
-		delete_comment = false;
+    const char comment[] = "Created by OpenJPEG version 1.0";
+		parameters.cp_comment = (char*)malloc(strlen(comment)+1);
+    strcpy(parameters.cp_comment, comment);
 	}
 
 	/* decode the source image */
@@ -778,9 +777,7 @@ int main(int argc, char **argv) {
 	}
 
 	/* free user parameters structure */
-	if(delete_comment) {
-		if(parameters.cp_comment) free(parameters.cp_comment);
-	}
+  if(parameters.cp_comment) free(parameters.cp_comment);
 	if(parameters.cp_matrice) free(parameters.cp_matrice);
 
 	/* free image data */
