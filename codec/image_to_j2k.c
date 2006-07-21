@@ -201,8 +201,12 @@ OPJ_PROG_ORDER give_progression(char progression[4]) {
 
 int get_file_format(char *filename) {
 	unsigned int i;
-	static const char *extension[] = {"pgx", "pnm", "pgm", "ppm", "bmp", "j2k", "jp2" };
-	static const int format[] = { PGX_DFMT, PXM_DFMT, PXM_DFMT, PXM_DFMT, BMP_DFMT, J2K_CFMT, JP2_CFMT };
+	static const char *extension[] = {
+    "pgx", "pnm", "pgm", "ppm", "bmp", "j2k", "jp2"
+    };
+	static const int format[] = {
+    PGX_DFMT, PXM_DFMT, PXM_DFMT, PXM_DFMT, BMP_DFMT, J2K_CFMT, JP2_CFMT
+    };
 	char * ext = strrchr(filename, '.') + 1;
 	for(i = 0; i < sizeof(format)/sizeof(*format); i++) {
 		if(strnicmp(ext, extension[i], 3) == 0) {
@@ -213,7 +217,7 @@ int get_file_format(char *filename) {
 	return -1;
 }
 
-/* ------------------------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------*/
 
 int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters) {
 	int i, j;
@@ -235,15 +239,16 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters) 
 					case BMP_DFMT:
 						break;
 					default:
-						fprintf(stderr, 
-							"!! Unrecognized format for infile : %s [accept only *.pnm, *.pgm, *.ppm, *.pgx or *.bmp] !!\n\n", 
+						fprintf(stderr,
+							"!! Unrecognized format for infile : %s "
+              "[accept only *.pnm, *.pgm, *.ppm, *.pgx or *.bmp] !!\n\n", 
 							infile);
 						return 1;
 				}
 				strncpy(parameters->infile, infile, MAX_PATH);
 			}
 			break;
-				
+
 				/* ----------------------------------------------------- */
 
 			case 'o':			/* output file */
@@ -263,7 +268,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters) 
 			break;
 
 				/* ----------------------------------------------------- */
-			
+
 			case 'r':			/* rates rates/distorsion */
 			{
 				char *s = optarg;
@@ -279,9 +284,9 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters) 
 				parameters->cp_disto_alloc = 1;
 			}
 			break;
-				
+
 				/* ----------------------------------------------------- */
-			
+
 			case 'q':			/* add fixed_quality */
 			{
 				char *s = optarg;
@@ -297,7 +302,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters) 
 				parameters->cp_fixed_quality = 1;
 			}
 			break;
-				
+
 				/* dda */
 				/* ----------------------------------------------------- */
 
@@ -345,7 +350,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters) 
 				parameters->cp_fixed_alloc = 1;
 			}
 			break;
-				
+
 				/* ----------------------------------------------------- */
 
 			case 't':			/* tiles */
@@ -354,15 +359,15 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters) 
 				parameters->tile_size_on = true;
 			}
 			break;
-				
+
 				/* ----------------------------------------------------- */
-			
+
 			case 'n':			/* resolution */
 			{
 				sscanf(optarg, "%d", &parameters->numresolution);
 			}
 			break;
-				
+
 				/* ----------------------------------------------------- */
 			case 'c':			/* precinct dimension */
 			{
@@ -372,7 +377,8 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters) 
 				char *s = optarg;
 				do {
 					sep = 0;
-					sscanf(s, "[%d,%d]%c", &parameters->prcw_init[res_spec], &parameters->prch_init[res_spec], &sep);
+					sscanf(s, "[%d,%d]%c", &parameters->prcw_init[res_spec],
+                                 &parameters->prch_init[res_spec], &sep);
 					parameters->csty |= 0x01;
 					res_spec++;
 					s = strpbrk(s, "]") + 2;
@@ -381,9 +387,9 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters) 
 				parameters->res_spec = res_spec;
 			}
 			break;
-				
+
 				/* ----------------------------------------------------- */
-			
+
 			case 'b':			/* code-block dimension */
 			{
 				int cblockw_init = 0, cblockh_init = 0;
@@ -391,16 +397,17 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters) 
 				if (cblockw_init * cblockh_init > 4096 || cblockw_init > 1024
 					|| cblockw_init < 4 || cblockh_init > 1024 || cblockh_init < 4) {
 					fprintf(stderr,
-						"!! Size of code_block error (option -b) !!\n\nRestriction :\n    * width*height<=4096\n    * 4<=width,height<= 1024\n\n");
+						"!! Size of code_block error (option -b) !!\n\nRestriction :\n"
+            "    * width*height<=4096\n    * 4<=width,height<= 1024\n\n");
 					return 1;
 				}
 				parameters->cblockw_init = cblockw_init;
 				parameters->cblockh_init = cblockh_init;
 			}
 			break;
-				
+
 				/* ----------------------------------------------------- */
-			
+
 			case 'x':			/* creation of index file */
 			{
 				char *index = optarg;
@@ -408,9 +415,9 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters) 
 				parameters->index_on = 1;
 			}
 			break;
-				
+
 				/* ----------------------------------------------------- */
-			
+
 			case 'p':			/* progression order */
 			{
 				char progression[4];
@@ -418,40 +425,44 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters) 
 				strncpy(progression, optarg, 4);
 				parameters->prog_order = give_progression(progression);
 				if (parameters->prog_order == -1) {
-					fprintf(stderr, "Unrecognized progression order [LRCP, RLCP, RPCL, PCRL, CPRL] !!\n");
+					fprintf(stderr, "Unrecognized progression order "
+            "[LRCP, RLCP, RPCL, PCRL, CPRL] !!\n");
 					return 1;
 				}
 			}
 			break;
-				
+
 				/* ----------------------------------------------------- */
-			
+
 			case 's':			/* subsampling factor */
 			{
-				if (sscanf(optarg, "%d,%d", &parameters->subsampling_dx, &parameters->subsampling_dy) != 2) {
+				if (sscanf(optarg, "%d,%d", &parameters->subsampling_dx,
+                                    &parameters->subsampling_dy) != 2) {
 					fprintf(stderr,	"'-s' sub-sampling argument error !  [-s dx,dy]\n");
 					return 1;
 				}
 			}
 			break;
-				
+
 				/* ----------------------------------------------------- */
-			
+
 			case 'd':			/* coordonnate of the reference grid */
 			{
-				if (sscanf(optarg, "%d,%d", &parameters->image_offset_x0, &parameters->image_offset_y0) != 2) {
-					fprintf(stderr,	"-d 'coordonnate of the reference grid' argument error !! [-d x0,y0]\n");
+				if (sscanf(optarg, "%d,%d", &parameters->image_offset_x0,
+                                    &parameters->image_offset_y0) != 2) {
+					fprintf(stderr,	"-d 'coordonnate of the reference grid' argument "
+            "error !! [-d x0,y0]\n");
 					return 1;
 				}
 			}
 			break;
-				
+
 				/* ----------------------------------------------------- */
-			
+
 			case 'h':			/* display an help description */
 				encode_help_display();
 				return 1;
-				
+
 				/* ----------------------------------------------------- */
 
 			case 'P':			/* POC */
@@ -465,7 +476,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters) 
 				fprintf(stderr, "/----------------------------------\\\n");
 				fprintf(stderr, "|  POC option not fully tested !!  |\n");
 				fprintf(stderr, "\\----------------------------------/\n");
-				
+
 				while (sscanf(s, "T%d=%d,%d,%d,%d,%d,%s", &POC[numpocs].tile,
 					&POC[numpocs].resno0, &POC[numpocs].compno0,
 					&POC[numpocs].layno1, &POC[numpocs].resno1,
@@ -484,25 +495,25 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters) 
 				parameters->numpocs = numpocs;
 			}
 			break;
-				
+
 				/* ------------------------------------------------------ */
-				
+
 			case 'S':			/* SOP marker */
 			{
 				parameters->csty |= 0x02;
 			}
 			break;
-				
+
 				/* ------------------------------------------------------ */
-			
+
 			case 'E':			/* EPH marker */
 			{
 				parameters->csty |= 0x04;
 			}
 			break;
-				
+
 				/* ------------------------------------------------------ */
-			
+
 			case 'M':			/* Mode switch pas tous au point !! */
 			{
 				int value = 0;
@@ -515,20 +526,21 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters) 
 				}
 			}
 			break;
-				
+
 				/* ------------------------------------------------------ */
-			
+
 			case 'R':			/* ROI */
 			{
-				if (sscanf(optarg, "OI:c=%d,U=%d", &parameters->roi_compno, &parameters->roi_shift) != 2) {
+				if (sscanf(optarg, "OI:c=%d,U=%d", &parameters->roi_compno,
+                                           &parameters->roi_shift) != 2) {
 					fprintf(stderr, "ROI error !! [-ROI:c='compno',U='shift']\n");
 					return 1;
 				}
 			}
 			break;
-				
+
 				/* ------------------------------------------------------ */
-			
+
 			case 'T':			/* Tile offset */
 			{
 				if (sscanf(optarg, "%d,%d", &parameters->cp_tx0, &parameters->cp_ty0) != 2) {
@@ -537,9 +549,9 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters) 
 				}
 			}
 			break;
-				
+
 				/* ------------------------------------------------------ */
-				
+
 			case 'C':			/* add a comment */
 			{
 				parameters->cp_comment = (char*)malloc(strlen(optarg) + 1);
@@ -548,17 +560,17 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters) 
 				}
 			}
 			break;
-				
+
 				/* ------------------------------------------------------ */
-			
+
 			case 'I':			/* reversible or not */
 			{
 				parameters->irreversible = 1;
 			}
 			break;
-				
+
 				/* ------------------------------------------------------ */
-			
+
 			default:
 				fprintf(stderr, "ERROR -> this option is not valid \"-%c %s\"\n", c, optarg);
 				return 1;
@@ -635,9 +647,9 @@ int main(int argc, char **argv) {
 	opj_event_mgr_t event_mgr;		/* event manager */
 	opj_image_t *image = NULL;
 
-	/* 
+	/*
 	configure the event callbacks (not required)
-	setting of each callback is optionnal 
+	setting of each callback is optionnal
 	*/
 	memset(&event_mgr, 0, sizeof(opj_event_mgr_t));
 	event_mgr.error_handler = error_callback;
@@ -669,7 +681,7 @@ int main(int argc, char **argv) {
 				return 1;
 			}
 			break;
-		
+
 		case PXM_DFMT:
 			image = pnmtoimage(parameters.infile, &parameters);
 			if (!image) {
@@ -699,9 +711,9 @@ int main(int argc, char **argv) {
 		opj_cinfo_t* cinfo = opj_create_compress(CODEC_J2K);
 
 		/* catch events using our callbacks and give a local context */
-		opj_set_event_mgr((opj_common_ptr)cinfo, &event_mgr, stderr);			
+		opj_set_event_mgr((opj_common_ptr)cinfo, &event_mgr, stderr);
 
-		/* setup the encoder parameters using the current image and using user parameters */
+		/* setup the encoder parameters using the current image and user parameters */
 		opj_setup_encoder(cinfo, &parameters, image);
 
 		/* open a byte stream for writing */

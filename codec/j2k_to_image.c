@@ -223,7 +223,7 @@ int main(int argc, char **argv) {
 	opj_event_mgr_t event_mgr;		/* event manager */
 	opj_image_t *image = NULL;
 	FILE *fsrc = NULL;
-	unsigned char *src = NULL; 
+	unsigned char *src = NULL;
 	int file_length;
 
 	opj_dinfo_t* dinfo = NULL;	/* handle to a decompressor */
@@ -242,21 +242,21 @@ int main(int argc, char **argv) {
 	if(parse_cmdline_decoder(argc, argv, &parameters) == 1) {
 		return 0;
 	}
-	
+
 	/* read the input file and put it in memory */
 	/* ---------------------------------------- */
 	fsrc = fopen(parameters.infile, "rb");
 	if (!fsrc) {
 		fprintf(stderr, "ERROR -> failed to open %s for reading\n", parameters.infile);
 		return 1;
-	}  
+	}
 	fseek(fsrc, 0, SEEK_END);
 	file_length = ftell(fsrc);
 	fseek(fsrc, 0, SEEK_SET);
 	src = (unsigned char *) malloc(file_length);
 	fread(src, 1, file_length, fsrc);
 	fclose(fsrc);
-	
+
 	/* decode the code-stream */
 	/* ---------------------- */
 
@@ -267,9 +267,9 @@ int main(int argc, char **argv) {
 
 			/* get a decoder handle */
 			dinfo = opj_create_decompress(CODEC_J2K);
-			
+
 			/* catch events using our callbacks and give a local context */
-			opj_set_event_mgr((opj_common_ptr)dinfo, &event_mgr, stderr);			
+			opj_set_event_mgr((opj_common_ptr)dinfo, &event_mgr, stderr);
 
 			/* setup the decoder decoding parameters using user parameters */
 			opj_setup_decoder(dinfo, &parameters);
@@ -285,7 +285,7 @@ int main(int argc, char **argv) {
 				opj_cio_close(cio);
 				return 1;
 			}
-			
+
 			/* close the byte stream */
 			opj_cio_close(cio);
 		}
@@ -297,11 +297,11 @@ int main(int argc, char **argv) {
 
 			/* get a decoder handle */
 			dinfo = opj_create_decompress(CODEC_JP2);
-			
-			/* catch events using our callbacks and give a local context */
-			opj_set_event_mgr((opj_common_ptr)dinfo, &event_mgr, stderr);			
 
-			/* setup the decoder decoding parameters using the current image and using user parameters */
+			/* catch events using our callbacks and give a local context */
+			opj_set_event_mgr((opj_common_ptr)dinfo, &event_mgr, stderr);
+
+			/* setup the decoder decoding parameters using the current image and user parameters */
 			opj_setup_decoder(dinfo, &parameters);
 
 			/* open a byte stream */
@@ -328,9 +328,9 @@ int main(int argc, char **argv) {
 
 			/* get a decoder handle */
 			dinfo = opj_create_decompress(CODEC_JPT);
-			
+
 			/* catch events using our callbacks and give a local context */
-			opj_set_event_mgr((opj_common_ptr)dinfo, &event_mgr, stderr);			
+			opj_set_event_mgr((opj_common_ptr)dinfo, &event_mgr, stderr);
 
 			/* setup the decoder decoding parameters using user parameters */
 			opj_setup_decoder(dinfo, &parameters);
@@ -341,11 +341,11 @@ int main(int argc, char **argv) {
 			/* decode the stream and fill the image structure */
 			image = opj_decode(dinfo, cio);
 			if(!image) {
-				fprintf(stderr, "ERROR -> j2k_to_image: failed to decode image!\n");				
+				fprintf(stderr, "ERROR -> j2k_to_image: failed to decode image!\n");
 				opj_destroy_decompress(dinfo);
 				opj_cio_close(cio);
 				return 1;
-			}	
+			}
 
 			/* close the byte stream */
 			opj_cio_close(cio);
@@ -356,7 +356,7 @@ int main(int argc, char **argv) {
 			fprintf(stderr, "ERROR -> j2k_to_image : Unknown input image format\n");
 			return 1;
 	}
-  
+
 	/* free the memory containing the code-stream */
 	free(src);
 	src = NULL;
@@ -368,11 +368,11 @@ int main(int argc, char **argv) {
 		case PXM_DFMT:			/* PNM PGM PPM */
 			imagetopnm(image, parameters.outfile);
 			break;
-            
+
 		case PGX_DFMT:			/* PGX */
 			imagetopgx(image, parameters.outfile);
 			break;
-		
+
 		case BMP_DFMT:			/* BMP */
 			imagetobmp(image, parameters.outfile);
 			break;
@@ -385,7 +385,7 @@ int main(int argc, char **argv) {
 
 	/* free image data structure */
 	opj_image_destroy(image);
-   
+
 	return 0;
 }
 
