@@ -97,7 +97,7 @@ typedef struct {
   DWORD biClrImportant;		/* Number of important color (0: ALL) */
 } BITMAPINFOHEADER_t;
 
-opj_image_t* bmptoimage(char *filename, opj_cparameters_t *parameters) {
+opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters) {
 	int subsampling_dx = parameters->subsampling_dx;
 	int subsampling_dy = parameters->subsampling_dy;
 
@@ -460,7 +460,7 @@ opj_image_t* bmptoimage(char *filename, opj_cparameters_t *parameters) {
  return image;
 }
 
-int imagetobmp(opj_image_t * image, char *outfile) {
+int imagetobmp(opj_image_t * image, const char *outfile) {
 	int w, wr, h, hr;
 	int i, pad;
 	FILE *fdest = NULL;
@@ -656,7 +656,7 @@ unsigned int readuint(FILE * f, int bigendian)
     return (c4 << 24) + (c3 << 16) + (c2 << 8) + c1;
 }
 
-opj_image_t* pgxtoimage(char *filename, opj_cparameters_t *parameters) {
+opj_image_t* pgxtoimage(const char *filename, opj_cparameters_t *parameters) {
 	FILE *f = NULL;
 	int w, h, prec;
 	int i, numcomps, max;
@@ -833,7 +833,7 @@ PNM IMAGE FORMAT
 
 <<-- <<-- <<-- <<-- */
 
-opj_image_t* pnmtoimage(char *filename, opj_cparameters_t *parameters) {
+opj_image_t* pnmtoimage(const char *filename, opj_cparameters_t *parameters) {
 	int subsampling_dx = parameters->subsampling_dx;
 	int subsampling_dy = parameters->subsampling_dy;
 
@@ -932,13 +932,13 @@ opj_image_t* pnmtoimage(char *filename, opj_cparameters_t *parameters) {
 	return image;
 }
 
-int imagetopnm(opj_image_t * image, char *outfile) {
+int imagetopnm(opj_image_t * image, const char *outfile) {
 	int w, wr, wrr, h, hr, hrr, max;
 	int i, compno;
 	int adjust;
 	FILE *fdest = NULL;
 	char S2;
-	char *tmp = outfile;
+	const char *tmp = outfile;
 
 	while (*tmp) {
 		tmp++;
