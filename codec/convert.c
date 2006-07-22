@@ -786,14 +786,12 @@ int imagetopgx(opj_image_t * image, const char *outfile) {
     const size_t olen = strlen(outfile);
     const size_t dotpos = olen - 4;
     const size_t total = dotpos + 1 + 1 + 4; /* '-' + '[1-3]' + '.pgx' */
-    if( outfile[dotpos] != '.' )
-      {
+    if( outfile[dotpos] != '.' ) {
       /* `pgx` was recognized but there is no dot at expected position */
       fprintf(stderr, "ERROR -> Impossible happen." );
       return 1;
       }
-    if( total > 256 )
-      {
+    if( total > 256 ) {
       name = (char*)malloc(total+1);
       }
     strncpy(name, outfile, dotpos);
@@ -808,8 +806,7 @@ int imagetopgx(opj_image_t * image, const char *outfile) {
 			return 1;
 		}
     /* dont need name anymore */
-    if( total > 256 )
-      {
+    if( total > 256 ) {
       free(name);
       }
 		/* w = int_ceildiv(image->x1 - image->x0, comp->dx); */
