@@ -5,6 +5,11 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+July 21, 2006
+* [Mathieu Malaterre] Fixed mem leaks and greyscale bmp
+* [Mathieu Malaterre] Fix pgx name length + random memory access
+! [Mathieu Malaterre] API is now const
+
 March 19, 2006
 * [Antonin] fixed a bug in t1.c that prevented in some cases a true lossless compression (thanks to Don Mimlitch for reporting this bug)
 
