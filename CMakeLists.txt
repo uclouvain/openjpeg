@@ -4,14 +4,23 @@
 # This CMake project will by default create a library called openjpeg
 # But if you want to use this project within your own (CMake) project
 # you will eventually like to prefix the library to avoid linking confusion
-# For this purpose you can define a CMake var: OPJ_PREFIX to whatever you like
+# For this purpose you can define a CMake var: OPENJPEG_NAMESPACE to whatever you like
 # e.g.:
-# SET(OPJ_PREFIX "gdcm")
-# Also if you want to test (CTest driven) you need to define :
-# OPJ_STANDALONE to 1, e.g
-# OPJ_STANDALONE:BOOL=1
+# SET(OPENJPEG_NAMESPACE "GDCMOPENJPEG")
 PROJECT(OPENJPEG C)
-CMAKE_MINIMUM_REQUIRED(VERSION 2.0)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.2)
+
+IF(NOT OPENJPEG_NAMESPACE)
+  SET(OPENJPEG_NAMESPACE "OPENJPEG")
+  SET(OPENJPEG_STANDALONE 1)
+ENDIF(NOT OPENJPEG_NAMESPACE)
+# In all cases:
+STRING(TOLOWER ${OPENJPEG_NAMESPACE} OPENJPEG_LIBRARY_NAME)
+
+PROJECT(${JPEG_NAMESPACE} C)
+
+# Do full dependency headers.
+INCLUDE_REGULAR_EXPRESSION("^.*$")
 
 #-----------------------------------------------------------------------------
 # OPENJPEG version number, usefull for packaging and doxygen doc:
@@ -29,8 +38,19 @@ OPTION(BUILD_SHARED_LIBS "Build OpenJPEG with shared libraries." OFF)
 # For the codec...
 OPTION(BUILD_EXAMPLES "Build the Examples (codec...)." OFF)
 
+
+# configure name mangling to allow multiple libraries to coexist
+# peacefully
+IF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/openjpeg_mangle.h.in)
+SET(MANGLE_PREFIX ${OPENJPEG_LIBRARY_NAME})
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/openjpeg_mangle.h.in
+               ${CMAKE_CURRENT_BINARY_DIR}/openjpeg_mangle.h
+               @ONLY IMMEDIATE)
+ENDIF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/openjpeg_mangle.h.in)
+
 #-----------------------------------------------------------------------------
 # Always build the library
+INCLUDE_DIRECTORIES(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 SUBDIRS(
   libopenjpeg
   )

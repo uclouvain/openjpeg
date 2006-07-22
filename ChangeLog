@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 July 21, 2006
+* [Mathieu Malaterre] Install exe and lib and include correctly
 * [Mathieu Malaterre] Fixed mem leaks and greyscale bmp
 * [Mathieu Malaterre] Fix pgx name length + random memory access
 ! [Mathieu Malaterre] API is now const
