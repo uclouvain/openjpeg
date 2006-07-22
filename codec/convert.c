@@ -344,7 +344,9 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters) {
 				}
 			}
 			free(RGB);
-            
+      free(table_R);
+      free(table_G);
+      free(table_B);
 		} else if (Info_h.biBitCount == 8 && Info_h.biCompression == 1) {				
 			table_R = (unsigned char *) malloc(256 * sizeof(unsigned char));
 			table_G = (unsigned char *) malloc(256 * sizeof(unsigned char));
@@ -450,6 +452,9 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters) {
 				}
 			}
 			free(RGB);
+      free(table_R);
+      free(table_G);
+      free(table_B);
 	} else {
 		fprintf(stderr, 
 			"Other system than 24 bits/pixels or 8 bits (no RLE coding) is not yet implemented [%d]\n", Info_h.biBitCount);
@@ -768,34 +773,45 @@ opj_image_t* pgxtoimage(const char *filename, opj_cparameters_t *parameters) {
 	return image;
 }
 
-int imagetopgx(opj_image_t * image, char *outfile) {
+int imagetopgx(opj_image_t * image, const char *outfile) {
 	int w, wr, h, hr;
 	int i, j, compno;
 	FILE *fdest = NULL;
 
 	for (compno = 0; compno < image->numcomps; compno++) {
 		opj_image_comp_t *comp = &image->comps[compno];
-		char name[256];
-		int nbytes = 0;
-		char *tmp = outfile;
-		while (*tmp) {
-			tmp++;
-		}
-		while (*tmp!='.') {
-			tmp--;
-		}
-		*tmp='\0';
-
+		char bname[256]; /* buffer for name */
+    char *name = bname; /* pointer */
+    int nbytes = 0;
+    const size_t olen = strlen(outfile);
+    const size_t dotpos = olen - 4;
+    const size_t total = dotpos + 1 + 1 + 4; /* '-' + '[1-3]' + '.pgx' */
+    if( outfile[dotpos] != '.' )
+      {
+      /* `pgx` was recognized but there is no dot at expected position */
+      fprintf(stderr, "ERROR -> Impossible happen." );
+      return 1;
+      }
+    if( total > 256 )
+      {
+      name = (char*)malloc(total+1);
+      }
+    strncpy(name, outfile, dotpos);
 		if (image->numcomps > 1) {
-			sprintf(name, "%s-%d.pgx", outfile, compno);
+			sprintf(name+dotpos, "-%d.pgx", compno);
 		} else {
-			sprintf(name, "%s.pgx", outfile);
+			strcpy(name+dotpos, ".pgx");
 		}
 		fdest = fopen(name, "wb");
 		if (!fdest) {
 			fprintf(stderr, "ERROR -> failed to open %s for writing\n", name);
 			return 1;
 		}
+    /* dont need name anymore */
+    if( total > 256 )
+      {
+      free(name);
+      }
 		/* w = int_ceildiv(image->x1 - image->x0, comp->dx); */
 		/* wr = int_ceildiv(int_ceildivpow2(image->x1 - image->x0,image->factor), comp->dx); */
 		w = image->comps[compno].w;
