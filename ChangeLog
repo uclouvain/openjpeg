@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+July 28, 2006
++ [Antonin Descampe] added a readme in /mj2 to warn people that it only works with opj0.97
+
 July 21, 2006
 * [Mathieu Malaterre] Install exe and lib and include correctly
 * [Mathieu Malaterre] Fixed mem leaks and greyscale bmp
