@@ -386,7 +386,6 @@ LABEL_SKIP:;
 opj_pi_iterator_t *pi_create(opj_image_t *image, opj_cp_t *cp, int tileno) {
 	int p, q;
 	int compno, resno, pino;
-	int maxres = 0;
 	opj_pi_iterator_t *pi = NULL;
 	opj_tcp_t *tcp = NULL;
 	opj_tccp_t *tccp = NULL;
@@ -402,6 +401,8 @@ opj_pi_iterator_t *pi_create(opj_image_t *image, opj_cp_t *cp, int tileno) {
 	}
 	
 	for (pino = 0; pino < tcp->numpocs + 1; pino++) {	/* change */
+		int maxres = 0;
+		int maxprec = 0;
 		p = tileno % cp->tw;
 		q = tileno / cp->tw;
 
@@ -467,17 +468,22 @@ opj_pi_iterator_t *pi_create(opj_image_t *image, opj_cp_t *cp, int tileno) {
 				py1 = int_ceildivpow2(ry1, res->pdy) << res->pdy;
 				res->pw = (rx0==rx1)?0:((px1 - px0) >> res->pdx);
 				res->ph = (ry0==ry1)?0:((py1 - py0) >> res->pdy);
+				
+				if (res->pw*res->ph > maxprec) {
+					maxprec = res->pw*res->ph;
+				}
+				
 			}
 		}
 		
 		tccp = &tcp->tccps[0];
 		pi[pino].step_p = 1;
-		pi[pino].step_c = 100 * pi[pino].step_p;
+		pi[pino].step_c = maxprec * pi[pino].step_p;
 		pi[pino].step_r = image->numcomps * pi[pino].step_c;
 		pi[pino].step_l = maxres * pi[pino].step_r;
 		
 		if (pino == 0) {
-			array_size = image->numcomps * maxres * tcp->numlayers * 100 * sizeof(short int);
+			array_size = image->numcomps * maxres * tcp->numlayers * maxprec * sizeof(short int);
 			pi[pino].include = (short int *) opj_malloc(array_size);
 			if(!pi[pino].include) {
 				/* TODO: throw an error */

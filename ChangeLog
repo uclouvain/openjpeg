@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+August 4, 2006
+* [Antonin] fixed a bug in pi.c, line 473, that appeared when more than 100 precincts were generated in a resolution level.
+
 July 28, 2006
 + [Antonin Descampe] added a readme in /mj2 to warn people that it only works with opj0.97
 
