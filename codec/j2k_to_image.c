@@ -108,7 +108,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters) 
 	/* parse the command line */
 
 	while (1) {
-		int c = getopt(argc, argv, "i:o:r:q:f:t:n:c:b:x:p:s:d:hP:S:E:M:R:T:C:I");
+		int c = getopt(argc, argv, "i:o:r:l:h");
 		if (c == -1)
 			break;
 		switch (c) {

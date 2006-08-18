@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+August 18, 2006
+* [Antonin] fixed a bug in j2k_to_image.c, that prevented the -l option to work correctly.
+
 August 4, 2006
 * [Antonin] fixed a bug in pi.c, line 473, that appeared when more than 100 precincts were generated in a resolution level.
 
