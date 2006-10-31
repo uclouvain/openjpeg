@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 October 31, 2006
+* [Antonin] fixed a bug in the computation of the mantissa (mu)
 + [Antonin] added the ability to specify the rate as "float" (before : integer)
 
 August 18, 2006
