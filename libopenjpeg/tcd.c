@@ -153,7 +153,7 @@ void tcd_malloc_encode(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp, int c
 					* (tile->x1 - tile->x0) 
 					* (tile->y1 - tile->y0) 
 					* image->comps[0].prec))/ 
-					(tcp->rates[j] * 8 * image->comps[0].dx * image->comps[0].dy) + 34
+					(tcp->rates[j] * 8 * image->comps[0].dx * image->comps[0].dy)
 					: 0;
 
 			if (tcp->rates[j]) {
