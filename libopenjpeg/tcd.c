@@ -149,11 +149,11 @@ void tcd_malloc_encode(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp, int c
 		/* Modification of the RATE >> */
 		for (j = 0; j < tcp->numlayers; j++) {
 			tcp->rates[j] = tcp->rates[j] ? 
-				int_ceildiv(tile->numcomps 
+				((float) (tile->numcomps 
 					* (tile->x1 - tile->x0) 
 					* (tile->y1 - tile->y0) 
-					* image->comps[0].prec, 
-					(tcp->rates[j] * 8 * image->comps[0].dx * image->comps[0].dy)) 
+					* image->comps[0].prec))/ 
+					(tcp->rates[j] * 8 * image->comps[0].dx * image->comps[0].dy) + 34
 					: 0;
 
 			if (tcp->rates[j]) {
@@ -394,12 +394,12 @@ void tcd_init_encode(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp, int cur
 		/* Modification of the RATE >> */
 		for (j = 0; j < tcp->numlayers; j++) {
 			tcp->rates[j] = tcp->rates[j] ? 
-				int_ceildiv(tile->numcomps 
-				* (tile->x1 - tile->x0) 
-				* (tile->y1 - tile->y0) 
-				* image->comps[0].prec, 
-				(tcp->rates[j] * 8 * image->comps[0].dx * image->comps[0].dy)) 
-				: 0;
+						((float) (tile->numcomps 
+								* (tile->x1 - tile->x0) 
+								* (tile->y1 - tile->y0) 
+								* image->comps[0].prec))/ 
+						(tcp->rates[j] * 8 * image->comps[0].dx * image->comps[0].dy) 
+						: 0;
 
 			if (tcp->rates[j]) {
 				if (j && tcp->rates[j] < tcp->rates[j - 1] + 10) {
@@ -1020,7 +1020,7 @@ bool tcd_rateallocate(opj_tcd_t *tcd, unsigned char *dest, int len, opj_image_in
 		double hi = max;
 		int success = 0;
 		/* TODO: remove maxlen */
-		int maxlen = tcd_tcp->rates[layno] ? int_min(tcd_tcp->rates[layno], len) : len;
+		int maxlen = tcd_tcp->rates[layno] ? (tcd_tcp->rates[layno] < len ? tcd_tcp->rates[layno] : len) : len;
 		double goodthresh = 0;
 		int i;
 		double distotarget;		/* fixed_quality */

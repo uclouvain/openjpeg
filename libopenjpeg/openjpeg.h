@@ -216,7 +216,7 @@ typedef struct opj_cparameters {
 	/** number of layers */
 	int tcp_numlayers;
 	/** rates of layers */
-	int tcp_rates[100];
+	float tcp_rates[100];
 	/** different psnr for successive layers */
 	float tcp_distoratio[100];
 	/** number of resolutions */

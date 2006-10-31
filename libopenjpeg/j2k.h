@@ -151,7 +151,7 @@ typedef struct opj_tcp {
 	/** multi-component transform identifier */
 	int mct;
 	/** rates of layers */
-	int rates[100];
+	float rates[100];
 	/** number of progression order changes */
 	int numpocs;
 	/** indicates if a POC marker has been used O:NO, 1:YES */

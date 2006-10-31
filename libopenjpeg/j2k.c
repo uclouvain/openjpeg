@@ -259,7 +259,7 @@ void j2k_dump_cp(FILE *fd, opj_image_t * img, opj_cp_t * cp) {
 		fprintf(fd, "    mct=%d\n", tcp->mct);
 		fprintf(fd, "    rates=");
 		for (layno = 0; layno < tcp->numlayers; layno++) {
-			fprintf(fd, "%d ", tcp->rates[layno]);
+			fprintf(fd, "%.1f ", tcp->rates[layno]);
 		}
 		fprintf(fd, "\n");
 		for (compno = 0; compno < img->numcomps; compno++) {
