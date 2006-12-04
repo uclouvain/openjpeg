@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2001-2003, David Janssens
+ * Copyright (c) 2001-2003, David Janssens
  * Copyright (c) 2002-2003, Yannick Verschueren
  * Copyright (c) 2003-2005, Francois Devaux and Antonin Descampe
  * Copyright (c) 2005, Hervé Drolon, FreeImage Team
@@ -57,8 +57,13 @@ void encode_help_display() {
 	fprintf(stdout,"HELP\n----\n\n");
 	fprintf(stdout,"- the -h option displays this help information on screen\n\n");
 
-
-	fprintf(stdout,"List of parameters for the JPEG 2000 encoder:\n");
+/* UniPG>> */
+	fprintf(stdout,"List of parameters for the JPEG 2000 "
+#ifdef USE_JPWL
+		"+ JPWL "
+#endif /* USE_JPWL */
+		"encoder:\n");
+/* <<UniPG */
 	fprintf(stdout,"\n");
 	fprintf(stdout,"REMARKS:\n");
 	fprintf(stdout,"---------\n");
@@ -88,6 +93,11 @@ void encode_help_display() {
 	fprintf(stdout," * No offset of the origin of the image\n");
 	fprintf(stdout," * No offset of the origin of the tiles\n");
 	fprintf(stdout," * Reversible DWT 5-3\n");
+/* UniPG>> */
+#ifdef USE_JPWL
+	fprintf(stdout," * No JPWL protection\n");
+#endif /* USE_JPWL */
+/* <<UniPG */
 	fprintf(stdout,"\n");
 	fprintf(stdout,"Parameters:\n");
 	fprintf(stdout,"------------\n");
@@ -150,6 +160,67 @@ void encode_help_display() {
 	fprintf(stdout,"\n");
 	fprintf(stdout,"-I           : use the irreversible DWT 9-7 (-I) \n");
 	fprintf(stdout,"\n");
+/* UniPG>> */
+#ifdef USE_JPWL
+	fprintf(stdout,"-W           : adoption of JPWL (Part 11) capabilities (-W params)\n");
+	fprintf(stdout,"               The parameters can be written and repeated in any order:\n");
+	fprintf(stdout,"               [h<tile><=type>,s<tile><=method>,a=<addr>,z=<size>,g=<range>,...\n");
+	fprintf(stdout,"                ...,p<tile:pack><=type>]\n");
+	fprintf(stdout,"\n");
+	fprintf(stdout,"                 h selects the header error protection (EPB): 'type' can be\n");
+	fprintf(stdout,"                   [0=none 1,absent=predefined 16=CRC-16 32=CRC-32 37-128=RS]\n");
+	fprintf(stdout,"                   if 'tile' is absent, it applies to main and tile headers\n");
+	fprintf(stdout,"                   if 'tile' is present, it applies from that tile\n");
+	fprintf(stdout,"                     onwards, up to the next h<tile> spec, or to the last tile\n");
+	fprintf(stdout,"                     in the codestream (max. %d specs)\n", JPWL_MAX_NO_TILESPECS);
+	fprintf(stdout,"\n");
+	fprintf(stdout,"                 p selects the packet error protection (EEP/UEP with EPBs)\n");
+	fprintf(stdout,"                  to be applied to raw data: 'type' can be\n");
+	fprintf(stdout,"                   [0=none 1,absent=predefined 16=CRC-16 32=CRC-32 37-128=RS]\n");
+	fprintf(stdout,"                   if 'tile:pack' is absent, it starts from tile 0, packet 0\n");
+	fprintf(stdout,"                   if 'tile:pack' is present, it applies from that tile\n");
+	fprintf(stdout,"                     and that packet onwards, up to the next packet spec\n");
+	fprintf(stdout,"                     or to the last packet in the last tile in the codestream\n");
+	fprintf(stdout,"                     (max. %d specs)\n", JPWL_MAX_NO_PACKSPECS);
+	fprintf(stdout,"\n");
+	fprintf(stdout,"                 s enables sensitivity data insertion (ESD): 'method' can be\n");
+	fprintf(stdout,"                   [-1=NO ESD 0=RELATIVE ERROR 1=MSE 2=MSE REDUCTION 3=PSNR\n");
+	fprintf(stdout,"                    4=PSNR INCREMENT 5=MAXERR 6=TSE 7=RESERVED]\n");
+	fprintf(stdout,"                   if 'tile' is absent, it applies to main header only\n");
+	fprintf(stdout,"                   if 'tile' is present, it applies from that tile\n");
+	fprintf(stdout,"                     onwards, up to the next s<tile> spec, or to the last tile\n");
+	fprintf(stdout,"                     in the codestream (max. %d specs)\n", JPWL_MAX_NO_TILESPECS);
+	fprintf(stdout,"\n");
+	fprintf(stdout,"                 g determines the addressing mode: <range> can be\n");
+	fprintf(stdout,"                   [0=PACKET 1=BYTE RANGE 2=PACKET RANGE]\n");
+	fprintf(stdout,"\n");
+	fprintf(stdout,"                 a determines the size of data addressing: <addr> can be\n");
+	fprintf(stdout,"                   2/4 bytes (small/large codestreams). If not set, auto-mode\n");
+	fprintf(stdout,"\n");
+	fprintf(stdout,"                 z determines the size of sensitivity values: <size> can be\n");
+	fprintf(stdout,"                   1/2 bytes, for the transformed pseudo-floating point value\n");
+	fprintf(stdout,"\n");
+	fprintf(stdout,"                 ex.:\n");
+	fprintf(stdout," h,h0=64,h3=16,h5=0,p0=78,p0:24=56,p1,p3:0=0,p3:20=32,s=0,s0=6,s3=-1,a=0,g=1,z=1\n");
+	fprintf(stdout,"                 means\n");
+	fprintf(stdout,"                   predefined EPB in MH, rs(64,32) from TPH 0 to TPH 2,\n");
+	fprintf(stdout,"                   CRC-16 in TPH 3 and TPH 4, no EPBs in remaining TPHs,\n");
+	fprintf(stdout,"                   UEP rs(78,32) for packets 0 to 23 of tile 0,\n");
+	fprintf(stdout,"                   UEP rs(56,32) for packets 24 to the last of tile 0,\n");
+	fprintf(stdout,"                   UEP rs default for packets of tile 1,\n");
+	fprintf(stdout,"                   no UEP for packets 0 to 19 of tile 3,\n");
+	fprintf(stdout,"                   UEP CRC-32 for packets 20 of tile 3 to last tile,\n");
+	fprintf(stdout,"                   relative sensitivity ESD for MH,\n");
+	fprintf(stdout,"                   TSE ESD from TPH 0 to TPH 2, byte range with automatic\n");
+	fprintf(stdout,"                   size of addresses and 1 byte for each sensitivity value\n");
+	fprintf(stdout,"\n");
+	fprintf(stdout,"                 ex.:\n");
+	fprintf(stdout,"                       h,s,p\n");
+	fprintf(stdout,"                 means\n");
+	fprintf(stdout,"                   default protection to headers (MH and TPHs) as well as\n");
+	fprintf(stdout,"                   data packets, one ESD in MH\n");
+#endif /* USE_JPWL */
+/* <<UniPG */
 	fprintf(stdout,"IMPORTANT:\n");
 	fprintf(stdout,"-----------\n");
 	fprintf(stdout,"\n");
@@ -159,6 +230,9 @@ void encode_help_display() {
 	fprintf(stdout,"Image_height Image_width\n");
 	fprintf(stdout,"progression order\n");
 	fprintf(stdout,"Tiles_size_X Tiles_size_Y\n");
+/* UniPG>> */
+	fprintf(stdout,"Tiles_nb_X Tiles_nb_Y\n");
+/* <<UniPG */
 	fprintf(stdout,"Components_nb\n");
 	fprintf(stdout,"Layers_nb\n");
 	fprintf(stdout,"decomposition_levels\n");
@@ -223,9 +297,16 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters) 
 	int i, j;
 
 	/* parse the command line */
+/* UniPG>> */
+	const char optlist[] = "i:o:hr:q:n:b:c:t:p:s:SEM:x:R:d:T:If:P:C:"
+#ifdef USE_JPWL
+		"W:"
+#endif /* USE_JPWL */
+		;
 
 	while (1) {
-		int c = getopt(argc, argv, "i:o:r:q:f:t:n:c:b:x:p:s:d:hP:S:E:M:R:T:C:I");
+		int c = getopt(argc, argv, optlist);
+/* <<UniPG */
 		if (c == -1)
 			break;
 		switch (c) {
@@ -561,6 +642,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters) 
 			}
 			break;
 
+
 				/* ------------------------------------------------------ */
 
 			case 'I':			/* reversible or not */
@@ -568,6 +650,330 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters) 
 				parameters->irreversible = 1;
 			}
 			break;
+
+/* UniPG>> */
+#ifdef USE_JPWL
+				/* ------------------------------------------------------ */
+			
+			case 'W':			/* JPWL capabilities switched on */
+			{
+				char *token = NULL;
+				int hprot, pprot, sens, addr, size, range;
+
+				/* we need to enable indexing */
+				if (!parameters->index_on) {
+					strncpy(parameters->index, JPWL_PRIVATEINDEX_NAME, MAX_PATH);
+					parameters->index_on = 1;
+				}
+
+				/* search for different protection methods */
+
+				/* break the option in comma points and parse the result */
+				token = strtok(optarg, ",");
+				while(token != NULL) {
+
+					/* search header error protection method */
+					if (*token == 'h') {
+
+						static int tile = 0, tilespec = 0, lasttileno = 0;
+
+						hprot = 1; /* predefined method */
+
+						if(sscanf(token, "h=%d", &hprot) == 1) {
+							/* Main header, specified */
+							if (!((hprot == 0) || (hprot == 1) || (hprot == 16) || (hprot == 32) ||
+								((hprot >= 37) && (hprot <= 128)))) {
+								fprintf(stderr, "ERROR -> invalid main header protection method h = %d\n", hprot);
+								return 1;
+							}
+							parameters->jpwl_hprot_MH = hprot;
+
+						} else if(sscanf(token, "h%d=%d", &tile, &hprot) == 2) {
+							/* Tile part header, specified */
+							if (!((hprot == 0) || (hprot == 1) || (hprot == 16) || (hprot == 32) ||
+								((hprot >= 37) && (hprot <= 128)))) {
+								fprintf(stderr, "ERROR -> invalid tile header protection method h = %d\n", hprot);
+								return 1;
+							}
+							if (tile < 0) {
+								fprintf(stderr, "ERROR -> invalid tile number on protection method t = %d\n", tile);
+								return 1;
+							}
+							if (tilespec < JPWL_MAX_NO_TILESPECS) {
+								parameters->jpwl_hprot_TPH_tileno[tilespec] = lasttileno = tile;
+								parameters->jpwl_hprot_TPH[tilespec++] = hprot;
+							}
+
+						} else if(sscanf(token, "h%d", &tile) == 1) {
+							/* Tile part header, unspecified */
+							if (tile < 0) {
+								fprintf(stderr, "ERROR -> invalid tile number on protection method t = %d\n", tile);
+								return 1;
+							}
+							if (tilespec < JPWL_MAX_NO_TILESPECS) {
+								parameters->jpwl_hprot_TPH_tileno[tilespec] = lasttileno = tile;
+								parameters->jpwl_hprot_TPH[tilespec++] = hprot;
+							}
+
+
+						} else if (!strcmp(token, "h")) {
+							/* Main header, unspecified */
+							parameters->jpwl_hprot_MH = hprot;
+
+						} else {
+							fprintf(stderr, "ERROR -> invalid protection method selection = %s\n", token);
+							return 1;
+						};
+
+					}
+
+					/* search packet error protection method */
+					if (*token == 'p') {
+
+						static int pack = 0, tile = 0, packspec = 0, lastpackno = 0;
+
+						pprot = 1; /* predefined method */
+
+						if (sscanf(token, "p=%d", &pprot) == 1) {
+							/* Method for all tiles and all packets */
+							if (!((pprot == 0) || (pprot == 1) || (pprot == 16) || (pprot == 32) ||
+								((pprot >= 37) && (pprot <= 128)))) {
+								fprintf(stderr, "ERROR -> invalid default packet protection method p = %d\n", pprot);
+								return 1;
+							}
+							parameters->jpwl_pprot_tileno[0] = 0;
+							parameters->jpwl_pprot_packno[0] = 0;
+							parameters->jpwl_pprot[0] = pprot;
+
+						} else if (sscanf(token, "p%d=%d", &tile, &pprot) == 2) {
+							/* method specified from that tile on */
+							if (!((pprot == 0) || (pprot == 1) || (pprot == 16) || (pprot == 32) ||
+								((pprot >= 37) && (pprot <= 128)))) {
+								fprintf(stderr, "ERROR -> invalid packet protection method p = %d\n", pprot);
+								return 1;
+							}
+							if (tile < 0) {
+								fprintf(stderr, "ERROR -> invalid tile number on protection method p = %d\n", tile);
+								return 1;
+							}
+							if (packspec < JPWL_MAX_NO_PACKSPECS) {
+								parameters->jpwl_pprot_tileno[packspec] = tile;
+								parameters->jpwl_pprot_packno[packspec] = 0;
+								parameters->jpwl_pprot[packspec++] = pprot;
+							}
+
+						} else if (sscanf(token, "p%d:%d=%d", &tile, &pack, &pprot) == 3) {
+							/* method fully specified from that tile and that packet on */
+							if (!((pprot == 0) || (pprot == 1) || (pprot == 16) || (pprot == 32) ||
+								((pprot >= 37) && (pprot <= 128)))) {
+								fprintf(stderr, "ERROR -> invalid packet protection method p = %d\n", pprot);
+								return 1;
+							}
+							if (tile < 0) {
+								fprintf(stderr, "ERROR -> invalid tile number on protection method p = %d\n", tile);
+								return 1;
+							}
+							if (pack < 0) {
+								fprintf(stderr, "ERROR -> invalid packet number on protection method p = %d\n", pack);
+								return 1;
+							}
+							if (packspec < JPWL_MAX_NO_PACKSPECS) {
+								parameters->jpwl_pprot_tileno[packspec] = tile;
+								parameters->jpwl_pprot_packno[packspec] = pack;
+								parameters->jpwl_pprot[packspec++] = pprot;
+							}
+
+						} else if (sscanf(token, "p%d:%d", &tile, &pack) == 2) {
+							/* default method from that tile and that packet on */
+							if (!((pprot == 0) || (pprot == 1) || (pprot == 16) || (pprot == 32) ||
+								((pprot >= 37) && (pprot <= 128)))) {
+								fprintf(stderr, "ERROR -> invalid packet protection method p = %d\n", pprot);
+								return 1;
+							}
+							if (tile < 0) {
+								fprintf(stderr, "ERROR -> invalid tile number on protection method p = %d\n", tile);
+								return 1;
+							}
+							if (pack < 0) {
+								fprintf(stderr, "ERROR -> invalid packet number on protection method p = %d\n", pack);
+								return 1;
+							}
+							if (packspec < JPWL_MAX_NO_PACKSPECS) {
+								parameters->jpwl_pprot_tileno[packspec] = tile;
+								parameters->jpwl_pprot_packno[packspec] = pack;
+								parameters->jpwl_pprot[packspec++] = pprot;
+							}
+
+						} else if (sscanf(token, "p%d", &tile) == 1) {
+							/* default from a tile on */
+							if (tile < 0) {
+								fprintf(stderr, "ERROR -> invalid tile number on protection method p = %d\n", tile);
+								return 1;
+							}
+							if (packspec < JPWL_MAX_NO_PACKSPECS) {
+								parameters->jpwl_pprot_tileno[packspec] = tile;
+								parameters->jpwl_pprot_packno[packspec] = 0;
+								parameters->jpwl_pprot[packspec++] = pprot;
+							}
+
+
+						} else if (!strcmp(token, "p")) {
+							/* all default */
+							parameters->jpwl_pprot_tileno[0] = 0;
+							parameters->jpwl_pprot_packno[0] = 0;
+							parameters->jpwl_pprot[0] = pprot;
+
+						} else {
+							fprintf(stderr, "ERROR -> invalid protection method selection = %s\n", token);
+							return 1;
+						};
+
+					}
+
+					/* search sensitivity method */
+					if (*token == 's') {
+
+						static int tile = 0, tilespec = 0, lasttileno = 0;
+
+						sens = 0; /* predefined: relative error */
+
+						if(sscanf(token, "s=%d", &sens) == 1) {
+							/* Main header, specified */
+							if ((sens < -1) || (sens > 7)) {
+								fprintf(stderr, "ERROR -> invalid main header sensitivity method s = %d\n", sens);
+								return 1;
+							}
+							parameters->jpwl_sens_MH = sens;
+
+						} else if(sscanf(token, "s%d=%d", &tile, &sens) == 2) {
+							/* Tile part header, specified */
+							if ((sens < -1) || (sens > 7)) {
+								fprintf(stderr, "ERROR -> invalid tile header sensitivity method s = %d\n", sens);
+								return 1;
+							}
+							if (tile < 0) {
+								fprintf(stderr, "ERROR -> invalid tile number on sensitivity method t = %d\n", tile);
+								return 1;
+							}
+							if (tilespec < JPWL_MAX_NO_TILESPECS) {
+								parameters->jpwl_sens_TPH_tileno[tilespec] = lasttileno = tile;
+								parameters->jpwl_sens_TPH[tilespec++] = sens;
+							}
+
+						} else if(sscanf(token, "s%d", &tile) == 1) {
+							/* Tile part header, unspecified */
+							if (tile < 0) {
+								fprintf(stderr, "ERROR -> invalid tile number on sensitivity method t = %d\n", tile);
+								return 1;
+							}
+							if (tilespec < JPWL_MAX_NO_TILESPECS) {
+								parameters->jpwl_sens_TPH_tileno[tilespec] = lasttileno = tile;
+								parameters->jpwl_sens_TPH[tilespec++] = hprot;
+							}
+
+						} else if (!strcmp(token, "s")) {
+							/* Main header, unspecified */
+							parameters->jpwl_sens_MH = sens;
+
+						} else {
+							fprintf(stderr, "ERROR -> invalid sensitivity method selection = %s\n", token);
+							return 1;
+						};
+						
+						parameters->jpwl_sens_size = 2; /* 2 bytes for default size */
+					}
+
+					/* search addressing size */
+					if (*token == 'a') {
+
+						static int tile = 0, tilespec = 0, lasttileno = 0;
+
+						addr = 0; /* predefined: auto */
+
+						if(sscanf(token, "a=%d", &addr) == 1) {
+							/* Specified */
+							if ((addr != 0) && (addr != 2) && (addr != 4)) {
+								fprintf(stderr, "ERROR -> invalid addressing size a = %d\n", addr);
+								return 1;
+							}
+							parameters->jpwl_sens_addr = addr;
+
+						} else if (!strcmp(token, "a")) {
+							/* default */
+							parameters->jpwl_sens_addr = addr; /* auto for default size */
+
+						} else {
+							fprintf(stderr, "ERROR -> invalid addressing selection = %s\n", token);
+							return 1;
+						};
+						
+					}
+
+					/* search sensitivity size */
+					if (*token == 'z') {
+
+						static int tile = 0, tilespec = 0, lasttileno = 0;
+
+						size = 1; /* predefined: 1 byte */
+
+						if(sscanf(token, "z=%d", &size) == 1) {
+							/* Specified */
+							if ((size != 0) && (size != 1) && (size != 2)) {
+								fprintf(stderr, "ERROR -> invalid sensitivity size z = %d\n", size);
+								return 1;
+							}
+							parameters->jpwl_sens_size = size;
+
+						} else if (!strcmp(token, "a")) {
+							/* default */
+							parameters->jpwl_sens_size = size; /* 1 for default size */
+
+						} else {
+							fprintf(stderr, "ERROR -> invalid size selection = %s\n", token);
+							return 1;
+						};
+						
+					}
+
+					/* search range method */
+					if (*token == 'g') {
+
+						static int tile = 0, tilespec = 0, lasttileno = 0;
+
+						range = 0; /* predefined: 0 (packet) */
+
+						if(sscanf(token, "g=%d", &range) == 1) {
+							/* Specified */
+							if ((range < 0) || (range > 3)) {
+								fprintf(stderr, "ERROR -> invalid sensitivity range method g = %d\n", range);
+								return 1;
+							}
+							parameters->jpwl_sens_range = range;
+
+						} else if (!strcmp(token, "g")) {
+							/* default */
+							parameters->jpwl_sens_range = range;
+
+						} else {
+							fprintf(stderr, "ERROR -> invalid range selection = %s\n", token);
+							return 1;
+						};
+						
+					}
+
+					/* next token or bust */
+					token = strtok(NULL, ",");
+				};
+
+
+				/* some info */
+				fprintf(stdout, "Info: JPWL capabilities enabled\n");
+				parameters->jpwl_epc_on = true;
+
+			}
+			break;
+#endif USE_JPWL
+/* <<UniPG */
 
 				/* ------------------------------------------------------ */
 
@@ -666,11 +1072,18 @@ int main(int argc, char **argv) {
 
 	if(parameters.cp_comment == NULL) {
     const char comment[] = "Created by OpenJPEG version ";
-    const size_t clen = strlen(comment);
+		const size_t clen = strlen(comment);
     const char *version = opj_version();
+/* UniPG>> */
+#ifdef USE_JPWL
+		parameters.cp_comment = (char*)malloc(clen+strlen(version)+11);
+		sprintf(parameters.cp_comment,"%s%s with JPWL", comment, version);
+#else
 		parameters.cp_comment = (char*)malloc(clen+strlen(version)+1);
-    strncpy(parameters.cp_comment, comment, clen); /* clen bytes */
-    strcpy(parameters.cp_comment+clen, version); /* strlen(version) + \0 */
+		sprintf(parameters.cp_comment,"%s%s", comment, version);
+#endif
+/* <<UniPG */
+
 	}
 
 	/* decode the source image */
