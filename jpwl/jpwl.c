@@ -375,10 +375,9 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 
 		int sot_len, Psot, Psotp, mm, epb_index = 0, prot_len = 0;
 		unsigned long sot_pos, post_sod_pos;
-
 		unsigned long int left_THmarks_len, epbs_len = 0;
-
 		int startpack = 0, stoppack = j2k->image_info->num;
+		jpwl_epb_ms_t *tph_epb;
 
 		sot_pos = j2k->image_info->tile[tileno].start_pos;
 		cio_seek(cio, sot_pos + 2); 
@@ -387,10 +386,11 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 		Psotp = cio_tell(cio);
 		Psot = cio_read(cio, 4); /* tile length */
 
+		/* a-priori length of the data dwelling between SOT and SOD */
 		post_sod_pos = j2k->image_info->tile[tileno].end_header + 1;
 		left_THmarks_len = post_sod_pos - (sot_pos + sot_len + 2);
 
-		/* add all the lengths of the markers which are len-ready and stay within SOT and SOD */
+		/* add all the lengths of the JPWL markers which are len-ready and stay within SOT and SOD */
 		for (mm = 0; mm < jwmarker_num; mm++) {
 			if ((jwmarker[mm].pos >= sot_pos) && (jwmarker[mm].pos < post_sod_pos)) {
 				if (jwmarker[mm].len_ready)
@@ -413,8 +413,8 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 			/* Create the EPB */
 			if (epb_mark = jpwl_epb_create(
 				j2k, /* this encoder handle */
-				false, /* is it the latest? in TPH, yes for now (if huge data size in TPH, we'd need more) */
-				true, /* is it packed? not for now */
+				false, /* is it the latest? in TPH, no for now (if huge data size in TPH, we'd need more) */
+				true, /* is it packed? yes for now */
 				tileno, /* we are in TPH */
 				epb_index++, /* its index is 0 (first) */
 				hprot, /* protection type parameters of following data */
@@ -444,6 +444,9 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 					tileno,
 					hprot
 					);
+
+				/* save this TPH EPB address */
+				tph_epb = epb_mark;
 
 			} else {
 				/* ooops, problems */
@@ -486,19 +489,19 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 
 					/* let's add the EPBs */
 					Psot += jpwl_epbs_add(
-								j2k, /* J2K handle */
-								jwmarker, /* pointer to JPWL markers list */
-								&jwmarker_num, /* pointer to the number of current markers */
-								false, /* latest */
-								true, /* packed */
-								false, /* inside MH */
-								&epb_index, /* pointer to EPB index */
-								pprot, /* protection type */
-								(double) (j2k->image_info->tile[tileno].start_pos + sot_len + 2) + 0.0001, /* position */
-								tileno, /* number of tile */
-								0, /* length of pre-data */
-								prot_len /*4000*/ /* length of post-data */
-								);
+						j2k, /* J2K handle */
+						jwmarker, /* pointer to JPWL markers list */
+						&jwmarker_num, /* pointer to the number of current markers */
+						false, /* latest */
+						true, /* packed */
+						false, /* inside MH */
+						&epb_index, /* pointer to EPB index */
+						pprot, /* protection type */
+						(double) (j2k->image_info->tile[tileno].start_pos + sot_len + 2) + 0.0001, /* position */
+						tileno, /* number of tile */
+						0, /* length of pre-data */
+						prot_len /*4000*/ /* length of post-data */
+						);
 				}
 
 				startpack = packno;
@@ -551,12 +554,18 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 						);
 		}
 
+		/* we can now check if the TPH EPB was really the last one */
+		if (epb_index == 1) {
+			/* set the TPH EPB to be the last one in current header */
+			tph_epb->Depb |= (unsigned char) ((true & 0x0001) << 6);
+
+		}
+
 		/* write back Psot */
 		cio_seek(cio, Psotp);
 		cio_write(cio, Psot, 4);
 
 	};
-
 
 	/* reset the position */
 	cio_seek(cio, ciopos);
