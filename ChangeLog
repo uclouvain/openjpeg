@@ -5,6 +5,17 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+December 04, 2006
+
++ [Francois-Olivier Devaux] New tag: version1.0 (includes codec and libopenjpeg directories)
+Total update of JPWL module
+    - [FOD] removed directories jpwl/decoder, jpwl/encoder, jpwl/decoder_02, jpwl/encoder_02
+    + [FOD] added in JPWL directory crc.h, jpwl.h, rs.h, crc.c, jpwl.c, jpwl_lib.c, rs.c, JPWL_image_to_j2k.dsp, JPWL_j2k_to_image.dsp, LibOpenJPEG_JPWL.dsp, JPWL_image_to_j2k.dsw, JPWL_j2k_to_image.dsw
+    ! [FOD] Modifications of libopenjpeg to integrate JPWL module (in libopenjpeg directory): j2k.c, j2k.h, openjpeg.c, openjpeg.h, opj_includes.g, t2.c
+    ! [FOD] Modification of codec to integrate JPWL module (in codec directory): image_to_j2k.c, j2k_to_image.c
+* Corrected incorrect fprintf() formatting in codec/convert.c
+* Code optimization usinq vsprintf() command in libopenjpeg/event.c
+
 October 31, 2006
 * [Antonin] fixed a bug in the computation of the mantissa (mu)
 + [Antonin] added the ability to specify the rate as "float" (before : integer)
