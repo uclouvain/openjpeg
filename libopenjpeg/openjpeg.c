@@ -119,6 +119,13 @@ void OPJ_CALLCONV opj_set_default_decoder_parameters(opj_dparameters_t *paramete
 
 		parameters->decod_format = -1;
 		parameters->cod_format = -1;
+/* UniPG>> */
+#ifdef USE_JPWL
+		parameters->jpwl_correct = false;
+		parameters->jpwl_exp_comps = JPWL_EXPECTED_COMPONENTS;
+		parameters->jpwl_max_tiles = JPWL_MAXIMUM_TILES;
+#endif /* USE_JPWL */
+/* <<UniPG */
 	}
 }
 
@@ -224,6 +231,38 @@ void OPJ_CALLCONV opj_set_default_encoder_parameters(opj_cparameters_t *paramete
 
 		parameters->decod_format = -1;
 		parameters->cod_format = -1;
+/* UniPG>> */
+#ifdef USE_JPWL
+		parameters->jpwl_epc_on = false;
+		parameters->jpwl_hprot_MH = -1; /* -1 means unassigned */
+		{
+			int i;
+			for (i = 0; i < JPWL_MAX_NO_TILESPECS; i++) {
+				parameters->jpwl_hprot_TPH_tileno[i] = -1; /* unassigned */
+				parameters->jpwl_hprot_TPH[i] = 0; /* absent */
+			}
+		};
+		{
+			int i;
+			for (i = 0; i < JPWL_MAX_NO_PACKSPECS; i++) {
+				parameters->jpwl_pprot_tileno[i] = -1; /* unassigned */
+				parameters->jpwl_pprot_packno[i] = -1; /* unassigned */
+				parameters->jpwl_pprot[i] = 0; /* absent */
+			}
+		};
+		parameters->jpwl_sens_size = 0; /* 0 means no ESD */
+		parameters->jpwl_sens_addr = 0; /* 0 means auto */
+		parameters->jpwl_sens_range = 0; /* 0 means packet */
+		parameters->jpwl_sens_MH = -1; /* -1 means unassigned */
+		{
+			int i;
+			for (i = 0; i < JPWL_MAX_NO_TILESPECS; i++) {
+				parameters->jpwl_sens_TPH_tileno[i] = -1; /* unassigned */
+				parameters->jpwl_sens_TPH[i] = -1; /* absent */
+			}
+		};
+#endif USE_JPWL
+/* <<UniPG */
 	}
 }
 

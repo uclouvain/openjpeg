@@ -363,6 +363,42 @@ static void j2k_read_siz(opj_j2k_t *j2k) {
 	cp->ty0 = cio_read(cio, 4);		/* YT0siz */
 	
 	image->numcomps = cio_read(cio, 2);	/* Csiz */
+/* UniPG>> */
+#ifdef USE_JPWL
+	if (j2k->cp->correct) {
+		/* if JPWL is on, we check whether TX errors have damaged
+		  too much the SIZ parameters */
+		if (!(image->x1 * image->y1)) {
+			opj_event_msg(j2k->cinfo, EVT_ERROR,
+				"JPWL: bad image size (%d x %d)\n",
+				image->x1, image->y1);
+			if (!JPWL_ASSUME || JPWL_ASSUME)
+				exit(1);
+		}
+		if (image->numcomps != ((len - 38) / 3)) {
+			opj_event_msg(j2k->cinfo, JPWL_ASSUME ? EVT_WARNING : EVT_ERROR,
+				"JPWL: Csiz is %d => space in SIZ only for %d comps.!!!\n",
+				image->numcomps, ((len - 38) / 3));
+			if (!JPWL_ASSUME)
+				exit(1);
+			/* we try to correct */
+			opj_event_msg(j2k->cinfo, EVT_WARNING, "- trying to adjust this\n");
+			if (image->numcomps < ((len - 38) / 3)) {
+				len = 38 + 3 * image->numcomps;
+				opj_event_msg(j2k->cinfo, EVT_WARNING, "- setting Lsiz to %d => HYPOTHESIS!!!\n",
+					len);				
+			} else {
+				image->numcomps = ((len - 38) / 3);
+				opj_event_msg(j2k->cinfo, EVT_WARNING, "- setting Csiz to %d => HYPOTHESIS!!!\n",
+					image->numcomps);				
+			}
+		}
+
+		/* update components number in the jpwl_exp_comps filed */
+		cp->exp_comps = image->numcomps;
+	}
+#endif /* USE_JPWL */
+/* <<UniPG */
 	image->comps = (opj_image_comp_t *) opj_malloc(image->numcomps * sizeof(opj_image_comp_t));
 	for (i = 0; i < image->numcomps; i++) {
 		int tmp, w, h;
@@ -372,6 +408,36 @@ static void j2k_read_siz(opj_j2k_t *j2k) {
 		image->comps[i].dx = cio_read(cio, 1);	/* XRsiz_i */
 		image->comps[i].dy = cio_read(cio, 1);	/* YRsiz_i */
 		
+/* UniPG>> */
+#ifdef USE_JPWL
+		if (j2k->cp->correct) {
+		/* if JPWL is on, we check whether TX errors have damaged
+			too much the SIZ parameters, again */
+			if (!(image->comps[i].dx * image->comps[i].dy)) {
+				opj_event_msg(j2k->cinfo, JPWL_ASSUME ? EVT_WARNING : EVT_ERROR,
+					"JPWL: bad XRsiz_%d/YRsiz_%d (%d x %d)\n",
+					i, i, image->comps[i].dx, image->comps[i].dy);
+				if (!JPWL_ASSUME)
+					exit(1);
+				/* we try to correct */
+				opj_event_msg(j2k->cinfo, EVT_WARNING, "- trying to adjust them\n");
+				if (!image->comps[i].dx) {
+					image->comps[i].dx = 1;
+					opj_event_msg(j2k->cinfo, EVT_WARNING, "- setting XRsiz_%d to %d => HYPOTHESIS!!!\n",
+						i, image->comps[i].dx);
+				}
+				if (!image->comps[i].dy) {
+					image->comps[i].dy = 1;
+					opj_event_msg(j2k->cinfo, EVT_WARNING, "- setting YRsiz_%d to %d => HYPOTHESIS!!!\n",
+						i, image->comps[i].dy);
+				}
+			}
+			
+		}
+#endif /* USE_JPWL */
+/* <<UniPG */
+
+
 		/* TODO: unused ? */
 		w = int_ceildiv(image->x1 - image->x0, image->comps[i].dx);
 		h = int_ceildiv(image->y1 - image->y0, image->comps[i].dy);
@@ -382,10 +448,63 @@ static void j2k_read_siz(opj_j2k_t *j2k) {
 	
 	cp->tw = int_ceildiv(image->x1 - cp->tx0, cp->tdx);
 	cp->th = int_ceildiv(image->y1 - cp->ty0, cp->tdy);
+/* UniPG>> */
+#ifdef USE_JPWL
+	if (j2k->cp->correct) {
+		/* if JPWL is on, we check whether TX errors have damaged
+		  too much the SIZ parameters */
+		if ((cp->tw < 1) || (cp->th < 1) || (cp->tw > cp->max_tiles) || (cp->th > cp->max_tiles)) {
+			opj_event_msg(j2k->cinfo, JPWL_ASSUME ? EVT_WARNING : EVT_ERROR,
+				"JPWL: bad number of tiles (%d x %d)\n",
+				cp->tw, cp->th);
+			if (!JPWL_ASSUME)
+				exit(1);
+			/* we try to correct */
+			opj_event_msg(j2k->cinfo, EVT_WARNING, "- trying to adjust them\n");
+			if (cp->tw < 1) {
+				cp->tw= 1;
+				opj_event_msg(j2k->cinfo, EVT_WARNING, "- setting %d tiles in x => HYPOTHESIS!!!\n",
+					cp->tw);
+			}
+			if (cp->tw > cp->max_tiles) {
+				opj_event_msg(j2k->cinfo, EVT_WARNING, "- too large x, increase expectance of %d\n",
+					cp->max_tiles);
+				cp->tw= 1;
+				opj_event_msg(j2k->cinfo, EVT_WARNING, "- setting %d tiles in x => HYPOTHESIS!!!\n",
+					cp->tw);
+			}
+			if (cp->th < 1) {
+				cp->th= 1;
+				opj_event_msg(j2k->cinfo, EVT_WARNING, "- setting %d tiles in y => HYPOTHESIS!!!\n",
+					cp->th);
+			}
+			if (cp->th > cp->max_tiles) {
+				opj_event_msg(j2k->cinfo, EVT_WARNING, "- too large y, increase expectance of %d to continue\n",
+					cp->max_tiles);
+				cp->th= 1;
+				opj_event_msg(j2k->cinfo, EVT_WARNING, "- setting %d tiles in y => HYPOTHESIS!!!\n",
+					cp->th);
+			}
+		}
+	}
+#endif /* USE_JPWL */
+/* <<UniPG */
 	cp->tcps = (opj_tcp_t *) opj_malloc(cp->tw * cp->th * sizeof(opj_tcp_t));
 	cp->tileno = (int *) opj_malloc(cp->tw * cp->th * sizeof(int));
 	cp->tileno_size = 0;
 	
+/* UniPG>> */
+#ifdef USE_JPWL
+	if (j2k->cp->correct) {
+		if (!cp->tcps) {
+			opj_event_msg(j2k->cinfo, JPWL_ASSUME ? EVT_WARNING : EVT_ERROR,
+				"JPWL: could not alloc tcps field of cp\n");
+			if (!JPWL_ASSUME || JPWL_ASSUME)
+				exit(1);
+		}
+	}
+#endif /* USE_JPWL */
+/* <<UniPG */	
 	for (i = 0; i < cp->tw * cp->th; i++) {
 		cp->tcps[i].POC = 0;
 		cp->tcps[i].numpocs = 0;
@@ -606,6 +725,27 @@ static void j2k_read_qcx(opj_j2k_t *j2k, int compno, int len) {
 	tccp->numgbits = tmp >> 5;
 	numbands = (tccp->qntsty == J2K_CCP_QNTSTY_SIQNT) ? 
 		1 : ((tccp->qntsty == J2K_CCP_QNTSTY_NOQNT) ? len - 1 : (len - 1) / 2);
+/* UniPG>> */
+#ifdef USE_JPWL
+	if (j2k->cp->correct) {
+
+		/* if JPWL is on, we check whether there are too many subbands */
+		if ((numbands < 0) || (numbands >= J2K_MAXBANDS)) {
+			opj_event_msg(j2k->cinfo, JPWL_ASSUME ? EVT_WARNING : EVT_ERROR,
+				"JPWL: bad number of subbands in Sqcx (%d)\n",
+				numbands);
+			if (!JPWL_ASSUME)
+				exit(1);
+			/* we try to correct */
+			opj_event_msg(j2k->cinfo, EVT_WARNING, "- trying to adjust them\n");
+			numbands = 1;
+			opj_event_msg(j2k->cinfo, EVT_WARNING, "- setting number of bands to %d => HYPOTHESIS!!!\n",
+				numbands);
+		};
+
+	};
+#endif /* USE_JPWL */
+/* <<UniPG */
 	for (bandno = 0; bandno < numbands; bandno++) {
 		int expn, mant;
 		if (tccp->qntsty == J2K_CCP_QNTSTY_NOQNT) {
@@ -684,6 +824,31 @@ static void j2k_read_qcc(opj_j2k_t *j2k) {
 	
 	len = cio_read(cio, 2);	/* Lqcc */
 	compno = cio_read(cio, numcomp <= 256 ? 1 : 2);	/* Cqcc */
+/* UniPG>> */
+#ifdef USE_JPWL
+	if (j2k->cp->correct) {
+
+		static int backup_compno = 0;
+
+		/* compno is negative or larger than the number of components!!! */
+		if ((compno < 0) || (compno >= numcomp)) {
+			opj_event_msg(j2k->cinfo, EVT_ERROR,
+				"JPWL: bad component number in QCC (%d out of a maximum of %d)\n",
+				compno, numcomp);
+			if (!JPWL_ASSUME)
+				exit(1);
+			/* we try to correct */
+			opj_event_msg(j2k->cinfo, EVT_WARNING, "- trying to adjust this\n");
+			compno = backup_compno % numcomp;
+			opj_event_msg(j2k->cinfo, EVT_WARNING, "- setting component number to %d\n",
+				compno);				
+		}
+
+		/* keep your private count of tiles */
+		backup_compno++;
+	};
+#endif /* USE_JPWL */
+/* <<UniPG */
 	j2k_read_qcx(j2k, compno, len - 2 - (numcomp <= 256 ? 1 : 2));
 }
 
@@ -844,6 +1009,20 @@ static void j2k_read_ppm(opj_j2k_t *j2k) {
 			cp->ppm_len = N_ppm;
 		} else {			/* NON-first PPM marker */
 			cp->ppm_data = (unsigned char *) opj_realloc(cp->ppm_data, (N_ppm +	cp->ppm_store) * sizeof(unsigned char));
+/* UniPG>> */
+#ifdef USE_JPWL
+			/* this memory allocation check could be done even in non-JPWL cases */
+			if (cp->correct) {
+				if (!cp->ppm_data) {
+					opj_event_msg(j2k->cinfo, EVT_ERROR,
+						"JPWL: failed memory allocation during PPM marker parsing (pos. %x)\n",
+						cio_tell(cio));
+					if (!JPWL_ASSUME || JPWL_ASSUME)
+						exit(1);
+				}
+			}
+#endif
+/* <<UniPG */
 			cp->ppm_data_first = cp->ppm_data;
 			cp->ppm_len = N_ppm + cp->ppm_store;
 		}
@@ -916,6 +1095,31 @@ static void j2k_read_sot(opj_j2k_t *j2k) {
 	
 	len = cio_read(cio, 2);
 	tileno = cio_read(cio, 2);
+/* UniPG>> */
+#ifdef USE_JPWL
+	if (j2k->cp->correct) {
+
+		static int backup_tileno = 0;
+
+		/* tileno is negative or larger than the number of tiles!!! */
+		if ((tileno < 0) || (tileno > (cp->tw * cp->th))) {
+			opj_event_msg(j2k->cinfo, EVT_ERROR,
+				"JPWL: bad tile number (%d out of a maximum of %d)\n",
+				tileno, (cp->tw * cp->th));
+			if (!JPWL_ASSUME)
+				exit(1);
+			/* we try to correct */
+			opj_event_msg(j2k->cinfo, EVT_WARNING, "- trying to adjust this\n");
+			tileno = backup_tileno;
+			opj_event_msg(j2k->cinfo, EVT_WARNING, "- setting tile number to %d\n",
+				tileno);				
+		}
+
+		/* keep your private count of tiles */
+		backup_tileno++;
+	};
+#endif /* USE_JPWL */
+/* <<UniPG */
 	
 	if (cp->tileno_size == 0) {
 		cp->tileno[cp->tileno_size] = tileno;
@@ -933,6 +1137,28 @@ static void j2k_read_sot(opj_j2k_t *j2k) {
 	}
 	
 	totlen = cio_read(cio, 4);
+/* UniPG>> */
+#ifdef USE_JPWL
+	if (j2k->cp->correct) {
+
+		/* totlen is negative or larger than the bytes left!!! */
+		if ((totlen < 0) || (totlen > (cio_numbytesleft(cio) + 8))) {
+			opj_event_msg(j2k->cinfo, EVT_ERROR,
+				"JPWL: bad tile byte size (%d bytes against %d bytes left)\n",
+				totlen, cio_numbytesleft(cio) + 8);
+			if (!JPWL_ASSUME)
+				exit(1);
+			/* we try to correct */
+			opj_event_msg(j2k->cinfo, EVT_WARNING, "- trying to adjust this\n");
+			totlen = 0;
+			opj_event_msg(j2k->cinfo, EVT_WARNING, "- setting Psot to %d => "
+				"assuming it is the last tile\n",
+				totlen);				
+		}
+
+	};
+#endif /* USE_JPWL */
+/* <<UniPG */
 	if (!totlen)
 		totlen = cio_numbytesleft(cio) + 8;
 	
@@ -1060,6 +1286,20 @@ static void j2k_read_rgn(opj_j2k_t *j2k) {
 	len = cio_read(cio, 2);										/* Lrgn */
 	compno = cio_read(cio, numcomps <= 256 ? 1 : 2);			/* Crgn */
 	roisty = cio_read(cio, 1);									/* Srgn */
+/* UniPG>> */
+#ifdef USE_JPWL
+	if (j2k->cp->correct) {
+		/* totlen is negative or larger than the bytes left!!! */
+		if (compno >= numcomps) {
+			opj_event_msg(j2k->cinfo, EVT_ERROR,
+				"JPWL: bad component number in RGN (%d when there are only %d)\n",
+				compno, numcomps);
+			if (!JPWL_ASSUME || JPWL_ASSUME)
+				exit(1);
+		}
+	};
+#endif /* USE_JPWL */
+/* <<UniPG */
 	tcp->tccps[compno].roishift = cio_read(cio, 1);				/* SPrgn */
 }
 
@@ -1094,10 +1334,6 @@ static void j2k_read_eoc(opj_j2k_t *j2k) {
 	j2k->state = J2K_STATE_MT;
 }
 
-static void j2k_read_unk(opj_j2k_t *j2k) {
-	opj_event_msg(j2k->cinfo, EVT_WARNING, "Unknown marker\n");
-}
-
 typedef struct opj_dec_mstabent {
 	/** marker value */
 	int id;
@@ -1127,8 +1363,78 @@ opj_dec_mstabent_t j2k_dec_mstab[] = {
   {J2K_MS_SOP, 0, 0},
   {J2K_MS_CRG, J2K_STATE_MH, j2k_read_crg},
   {J2K_MS_COM, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_com},
+/* UniPG>> */
+#ifdef USE_JPWL
+  {J2K_MS_EPC, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_epc},
+  {J2K_MS_EPB, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_epb},
+  {J2K_MS_ESD, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_esd},
+  {J2K_MS_RED, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_red},
+#endif /* USE_JPWL */
+/* <<UniPG */
   {0, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_unk}
 };
+
+static void j2k_read_unk(opj_j2k_t *j2k) {
+	opj_event_msg(j2k->cinfo, EVT_WARNING, "Unknown marker\n");
+/* UniPG>> */
+#ifdef USE_JPWL
+	if (j2k->cp->correct) {
+		int m = 0, id, i;
+		int min_id = 0, min_dist = 17, cur_dist = 0, tmp_id;
+		cio_seek(j2k->cio, cio_tell(j2k->cio) - 2);
+		id = cio_read(j2k->cio, 2);
+		opj_event_msg(j2k->cinfo, EVT_ERROR,
+			"JPWL: really don't know this marker %x\n",
+			id);
+		if (!JPWL_ASSUME) {
+			opj_event_msg(j2k->cinfo, EVT_ERROR,
+				"- possible synch loss due to uncorrectable channel errors => Exiting\n");
+			exit(1);
+		}
+		/* OK, activate this at your own risk!!! */
+		/* we look for the marker at the minimum hamming distance from this */
+		while (j2k_dec_mstab[m].id) {
+			
+			/* 1's where they differ */
+			tmp_id = j2k_dec_mstab[m].id ^ id;
+
+			/* compute the hamming distance between our id and the current */
+			cur_dist = 0;
+			for (i = 0; i < 16; i++) {
+				if ((tmp_id >> i) & 0x0001) {
+					cur_dist++;
+				}
+			}
+
+			/* if current distance is smaller, set the minimum */
+			if (cur_dist < min_dist) {
+				min_dist = cur_dist;
+				min_id = j2k_dec_mstab[m].id;
+			}
+			
+			/* jump to the next marker */
+			m++;
+		}
+
+		/* do we substitute the marker? */
+		if (min_dist < JPWL_MAXIMUM_HAMMING) {
+			opj_event_msg(j2k->cinfo, EVT_ERROR,
+				"- marker %x is at distance %d from the read %x\n",
+				min_id, min_dist, id);
+			opj_event_msg(j2k->cinfo, EVT_ERROR,
+				"- trying to substitute in place and crossing fingers!\n");
+			cio_seek(j2k->cio, cio_tell(j2k->cio) - 2);
+			cio_write(j2k->cio, min_id, 2);
+
+			/* rewind */
+			cio_seek(j2k->cio, cio_tell(j2k->cio) - 2);
+
+		}
+
+	};
+#endif /* USE_JPWL */
+/* <<UniPG */
+}
 
 /**
 Read the lookup table containing all the marker, status and action
@@ -1215,6 +1521,13 @@ void j2k_setup_decoder(opj_j2k_t *j2k, opj_dparameters_t *parameters) {
 		opj_cp_t *cp = (opj_cp_t*)opj_malloc(sizeof(opj_cp_t));
 		cp->reduce = parameters->cp_reduce;	
 		cp->layer = parameters->cp_layer;
+/* UniPG>> */
+#ifdef USE_JPWL
+		cp->correct = parameters->jpwl_correct;
+		cp->exp_comps = parameters->jpwl_exp_comps;
+		cp->max_tiles = parameters->jpwl_max_tiles;
+#endif /* USE_JPWL */
+/* <<UniPG */
 
 		/* keep a link to cp so that we can destroy it later in j2k_destroy_decompress */
 		j2k->cp = cp;
@@ -1237,6 +1550,43 @@ opj_image_t* j2k_decode(opj_j2k_t *j2k, opj_cio_t *cio) {
 	for (;;) {
 		opj_dec_mstabent_t *e;
 		int id = cio_read(cio, 2);
+
+/* UniPG>> */
+#ifdef USE_JPWL
+		/* we try to honor JPWL correction power */
+		if (j2k->cp->correct) {
+
+			int orig_pos = cio_tell(cio);
+			bool status;
+
+			/* call the corrector */
+			status = jpwl_correct(j2k);
+
+			/* go back to where you were */
+			cio_seek(cio, orig_pos - 2);
+
+			/* re-read the marker */
+			id = cio_read(cio, 2);
+
+			/* check whether it begins with ff */
+			if (id >> 8 != 0xff) {
+				opj_event_msg(j2k->cinfo, EVT_ERROR,
+					"JPWL: possible bad marker %x at %d\n",
+					id, cio_tell(cio) - 2);
+				if (!JPWL_ASSUME)
+					exit(1);
+				/* we try to correct */
+				opj_event_msg(j2k->cinfo, EVT_WARNING, "- trying to adjust this\n");
+				id = id | 0xff00;
+				cio_seek(cio, cio_tell(cio) - 2);
+				cio_write(cio, id, 2);
+				opj_event_msg(j2k->cinfo, EVT_WARNING, "- setting marker to %x\n",
+					id);				
+			}
+
+		}
+#endif USE_JPWL
+/* <<UniPG */
 		if (id >> 8 != 0xff) {
 			opj_image_destroy(image);
 			opj_event_msg(cinfo, EVT_ERROR, "%.8x: expected a marker instead of %x\n", cio_tell(cio) - 2, id);
@@ -1467,6 +1817,64 @@ void j2k_setup_encoder(opj_j2k_t *j2k, opj_cparameters_t *parameters, opj_image_
 		cp->tdy = image->y1 - cp->ty0;
 	}
 
+/* UniPG>> */
+#ifdef USE_JPWL
+	/*
+	calculate JPWL encoding parameters
+	*/
+
+	if (parameters->jpwl_epc_on) {
+		int i;
+
+		/* set JPWL on */
+		cp->epc_on = true;
+		cp->info_on = false; /* no informative technique */
+
+		/* set EPB on */
+		if ((parameters->jpwl_hprot_MH > 0) || (parameters->jpwl_hprot_TPH[0] > 0)) {
+			cp->epb_on = true;
+			
+			cp->hprot_MH = parameters->jpwl_hprot_MH;
+			for (i = 0; i < JPWL_MAX_NO_TILESPECS; i++) {
+				cp->hprot_TPH_tileno[i] = parameters->jpwl_hprot_TPH_tileno[i];
+				cp->hprot_TPH[i] = parameters->jpwl_hprot_TPH[i];
+			}
+			/* if tile specs are not specified, copy MH specs */
+			if (cp->hprot_TPH[0] == -1) {
+				cp->hprot_TPH_tileno[0] = 0;
+				cp->hprot_TPH[0] = parameters->jpwl_hprot_MH;
+			}
+			for (i = 0; i < JPWL_MAX_NO_PACKSPECS; i++) {
+				cp->pprot_tileno[i] = parameters->jpwl_pprot_tileno[i];
+				cp->pprot_packno[i] = parameters->jpwl_pprot_packno[i];
+				cp->pprot[i] = parameters->jpwl_pprot[i];
+			}
+		}
+
+		/* set ESD writing */
+		if ((parameters->jpwl_sens_size == 1) || (parameters->jpwl_sens_size == 2)) {
+			cp->esd_on = true;
+
+			cp->sens_size = parameters->jpwl_sens_size;
+			cp->sens_addr = parameters->jpwl_sens_addr;
+			cp->sens_range = parameters->jpwl_sens_range;
+
+			cp->sens_MH = parameters->jpwl_sens_MH;
+			for (i = 0; i < JPWL_MAX_NO_TILESPECS; i++) {
+				cp->sens_TPH_tileno[i] = parameters->jpwl_sens_TPH_tileno[i];
+				cp->sens_TPH[i] = parameters->jpwl_sens_TPH[i];
+			}
+		}
+
+		/* always set RED writing to false: we are at the encoder */
+		cp->red_on = false;
+
+	} else {
+		cp->epc_on = false;
+	}
+#endif /* USE_JPWL */
+/* <<UniPG */
+
 	/* initialize the mutiple tiles */
 	/* ---------------------------- */
 	cp->tcps = (opj_tcp_t *) opj_malloc(cp->tw * cp->th * sizeof(opj_tcp_t));
@@ -1581,6 +1989,17 @@ static int j2k_create_index(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_info_t *im
 	double total_disto = 0;
 
 	image_info->codestream_size = cio_tell(cio) + j2k->pos_correction;	/* Correction 14/4/03 suite rmq de Patrick */
+
+/* UniPG>> */
+#ifdef USE_JPWL
+	/* if JPWL is enabled and the name coincides with our own set
+	   then discard the creation of the file: this was just done to
+	   enable indexing, we do not want an index file
+	*/
+	if (j2k->cp->epc_on && !strcmp(index, JPWL_PRIVATEINDEX_NAME))
+		return 1;
+#endif /* USE_JPWL */
+/* <<UniPG */
 
 	stream = fopen(index, "w");
 	if (!stream) {
@@ -1828,6 +2247,13 @@ bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, char *index)
 	
 	j2k_write_soc(j2k);
 	j2k_write_siz(j2k);
+/* UniPG>> */
+#ifdef USE_JPWL
+	/** THIS CODE IS NOT USED */
+	//if(image_info && image_info->index_on && cp->epc_on)
+	//	j2k_write_epc(j2k);
+#endif /* USE_JPWL */
+/* <<UniPG */
 	j2k_write_cod(j2k);
 	j2k_write_qcd(j2k);
 	for (compno = 0; compno < image->numcomps; compno++) {
@@ -1918,6 +2344,39 @@ bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, char *index)
 			return false;
 		}
 	}
+
+/* UniPG>> */
+#ifdef USE_JPWL
+	/*
+	preparation of JPWL marker segments: can be finalized only when the whole
+	codestream is known
+	*/
+	if(image_info && image_info->index_on && cp->epc_on) {
+
+		/* let's begin creating a marker list, according to user wishes */
+		jpwl_prepare_marks(j2k, cio, image);
+
+		/* now we dump the JPWL markers on the codestream */
+		jpwl_dump_marks(j2k, cio, image);
+
+		/* do not know exactly what is this for,
+		but it gets called during index creation */
+		j2k->pos_correction = 0;
+
+		/* Re-creation of the index file, with updated info */
+		if(image_info && image_info->index_on) {
+			if(!j2k_create_index(j2k, cio, image_info, index)) {
+				opj_event_msg(j2k->cinfo, EVT_ERROR, "failed to re-create index file %s\n", index);
+				return false;
+			}
+		}
+
+		/* now we finalize the marker contents */
+		/*jpwl_finalize_marks(j2k, cio, image);*/
+
+	}
+#endif /* USE_JPWL */
+/* <<UniPG */
 	  
 	return true;
 }

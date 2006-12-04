@@ -30,7 +30,7 @@
 #ifndef OPENJPEG_H
 #define OPENJPEG_H
 
-#define OPENJPEG_VERSION "1.0.0"
+#define OPENJPEG_VERSION "1.1.0"
 
 /* 
 ==========================================================
@@ -95,6 +95,18 @@ braindamage below.
 
 #define J2K_MAXRLVLS 33					/**< Number of maximum resolution level authorized */
 #define J2K_MAXBANDS (3*J2K_MAXRLVLS-2)	/**< Number of maximum sub-band linked to number of resolution level */
+
+/* UniPG>> */
+#ifdef USE_JPWL
+#define JPWL_MAX_NO_TILESPECS	16 /**< Maximum number of tile parts expected by JPWL: increase at your will */
+#define JPWL_MAX_NO_PACKSPECS	16 /**< Maximum number of packet parts expected by JPWL: increase at your will */
+#define JPWL_MAX_NO_MARKERS	512 /**< Maximum number of JPWL markers: increase at your will */
+#define JPWL_PRIVATEINDEX_NAME "jpwl_index_privatefilename" /**< index file name used when JPWL is on */
+#define JPWL_EXPECTED_COMPONENTS 3 /**< Expect this number of components, so you'll find better the first EPB */
+#define JPWL_MAXIMUM_TILES 8192 /**< Expect this maximum number of tiles, to avoid some crashes */
+#define JPWL_MAXIMUM_HAMMING 2 /**< Expect this maximum number of bit errors in marker id's */
+#endif /* USE_JPWL */
+/* <<UniPG */
 
 /* 
 ==========================================================
@@ -263,6 +275,41 @@ typedef struct opj_cparameters {
 	/** output file format 0: J2K, 1: JP2, 2: JPT */
 	int cod_format;
 	/*@}*/
+
+/* UniPG>> */
+#ifdef USE_JPWL
+	/**@name JPWL encoding parameters */
+	/*@{*/
+	/** enables writing of EPC in MH, thus activating JPWL */
+	bool jpwl_epc_on;
+	/** error protection method for MH (0,1,16,32,37-128) */
+	int jpwl_hprot_MH;
+	/** tile number of header protection specification (>=0) */
+	int jpwl_hprot_TPH_tileno[JPWL_MAX_NO_TILESPECS];
+	/** error protection methods for TPHs (0,1,16,32,37-128) */
+	int jpwl_hprot_TPH[JPWL_MAX_NO_TILESPECS];
+	/** tile number of packet protection specification (>=0) */
+	int jpwl_pprot_tileno[JPWL_MAX_NO_PACKSPECS];
+	/** packet number of packet protection specification (>=0) */
+	int jpwl_pprot_packno[JPWL_MAX_NO_PACKSPECS];
+	/** error protection methods for packets (0,1,16,32,37-128) */
+	int jpwl_pprot[JPWL_MAX_NO_PACKSPECS];
+	/** enables writing of ESD, (0=no/1/2 bytes) */
+	int jpwl_sens_size;
+	/** sensitivity addressing size (0=auto/2/4 bytes) */
+	int jpwl_sens_addr;
+	/** sensitivity range (0-3) */
+	int jpwl_sens_range;
+	/** sensitivity method for MH (-1=no,0-7) */
+	int jpwl_sens_MH;
+	/** tile number of sensitivity specification (>=0) */
+	int jpwl_sens_TPH_tileno[JPWL_MAX_NO_TILESPECS];
+	/** sensitivity methods for TPHs (-1=no,0-7) */
+	int jpwl_sens_TPH[JPWL_MAX_NO_TILESPECS];
+	/*@}*/
+#endif /* USE_JPWL */
+/* <<UniPG */
+
 } opj_cparameters_t;
 
 /**
@@ -296,6 +343,20 @@ typedef struct opj_dparameters {
 	/** output file format 0: PGX, 1: PxM, 2: BMP */
 	int cod_format;
 	/*@}*/
+
+/* UniPG>> */
+#ifdef USE_JPWL
+	/**@name JPWL decoding parameters */
+	/*@{*/
+	/** activates the JPWL correction capabilities */
+	bool jpwl_correct;
+	/** expected number of components */
+	bool jpwl_exp_comps;
+	/** maximum number of tiles */
+	bool jpwl_max_tiles;
+	/*@}*/
+#endif /* USE_JPWL */
+/* <<UniPG */
 } opj_dparameters_t;
 
 /** Common fields between JPEG-2000 compression and decompression master structs. */

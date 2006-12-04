@@ -93,5 +93,10 @@ Most compilers implement their own version of this keyword ...
 #include "int.h"
 #include "fix.h"
 
+/* JPWL>> */
+#ifdef USE_JPWL
+#include "../jpwl/jpwl.h"
+#endif /* USE_JPWL */
+/* <<JPWL */
 
 #endif /* OPJ_INCLUDES_H */

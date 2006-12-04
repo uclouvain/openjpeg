@@ -75,6 +75,14 @@ The functions in J2K.C have for goal to read/write the several parts of the code
 #define J2K_MS_EPH 0xff92	/**< EPH marker value */
 #define J2K_MS_CRG 0xff63	/**< CRG marker value */
 #define J2K_MS_COM 0xff64	/**< COM marker value */
+/* UniPG>> */
+#ifdef USE_JPWL
+#define J2K_MS_EPC 0xff68	/**< EPC marker value (Part11) */
+#define J2K_MS_EPB 0xff66	/**< EPB marker value (Part11) */ 
+#define J2K_MS_ESD 0xff67	/**< ESD marker value (Part11) */ 
+#define J2K_MS_RED 0xff69	/**< RED marker value (Part11) */
+#endif /* USE_JPWL */
+/* <<UniPG */
 
 /* ----------------------------------------------------------------------- */
 
@@ -224,6 +232,50 @@ typedef struct opj_cp {
 	opj_tcp_t *tcps;
 	/** fixed layer */
 	int *matrice;
+/* UniPG>> */
+#ifdef USE_JPWL
+	/** enables writing of EPC in MH, thus activating JPWL */
+	bool epc_on;
+	/** enables writing of EPB, in case of activated JPWL */
+	bool epb_on;
+	/** enables writing of ESD, in case of activated JPWL */
+	bool esd_on;
+	/** enables writing of informative techniques of ESD, in case of activated JPWL */
+	bool info_on;
+	/** enables writing of RED, in case of activated JPWL */
+	bool red_on;
+	/** error protection method for MH (0,1,16,32,37-128) */
+	int hprot_MH;
+	/** tile number of header protection specification (>=0) */
+	int hprot_TPH_tileno[JPWL_MAX_NO_TILESPECS];
+	/** error protection methods for TPHs (0,1,16,32,37-128) */
+	int hprot_TPH[JPWL_MAX_NO_TILESPECS];
+	/** tile number of packet protection specification (>=0) */
+	int pprot_tileno[JPWL_MAX_NO_PACKSPECS];
+	/** packet number of packet protection specification (>=0) */
+	int pprot_packno[JPWL_MAX_NO_PACKSPECS];
+	/** error protection methods for packets (0,1,16,32,37-128) */
+	int pprot[JPWL_MAX_NO_PACKSPECS];
+	/** enables writing of ESD, (0/2/4 bytes) */
+	int sens_size;
+	/** sensitivity addressing size (0=auto/2/4 bytes) */
+	int sens_addr;
+	/** sensitivity range (0-3) */
+	int sens_range;
+	/** sensitivity method for MH (-1,0-7) */
+	int sens_MH;
+	/** tile number of sensitivity specification (>=0) */
+	int sens_TPH_tileno[JPWL_MAX_NO_TILESPECS];
+	/** sensitivity methods for TPHs (-1,0-7) */
+	int sens_TPH[JPWL_MAX_NO_TILESPECS];
+	/** enables JPWL correction at the decoder */
+	bool correct;
+	/** expected number of components at the decoder */
+	int exp_comps;
+	/** maximum number of tiles at the decoder */
+	int max_tiles;
+#endif /* USE_JPWL */
+/* <<UniPG */
 } opj_cp_t;
 
 /**
