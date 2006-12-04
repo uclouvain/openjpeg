@@ -122,7 +122,7 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters) {
   
 	IN = fopen(filename, "rb");
 	if (!IN) {
-		fprintf(stderr, "\033[0;33mFailed to open %s for reading !!\033[0;39m\n", filename);
+		fprintf(stderr, "Failed to open %s for reading !!\n", filename);
 		return 0;
 	}
 	
@@ -859,7 +859,7 @@ opj_image_t* pnmtoimage(const char *filename, opj_cparameters_t *parameters) {
 	
 	f = fopen(filename, "rb");
 	if (!f) {
-		fprintf(stderr, "\033[0;33mFailed to open %s for reading !!\033[0;39m\n", filename);
+		fprintf(stderr, "Failed to open %s for reading !!\n", filename);
 		return 0;
 	}
 
