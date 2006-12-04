@@ -100,7 +100,7 @@ bool opj_event_msg(opj_common_ptr cinfo, int event_type, const char *fmt, ...) {
 
 	if ((fmt != NULL) && (event_mgr != NULL)) {
 		va_list arg;
-		int str_length, i, j;
+		int str_length/*, i, j*/; /* UniPG */
 		char message[MSG_SIZE];
 		memset(message, 0, MSG_SIZE);
 		/* initialize the optional parameter list */
@@ -108,67 +108,7 @@ bool opj_event_msg(opj_common_ptr cinfo, int event_type, const char *fmt, ...) {
 		/* check the length of the format string */
 		str_length = (strlen(fmt) > MSG_SIZE) ? MSG_SIZE : strlen(fmt);
 		/* parse the format string and put the result in 'message' */
-		for (i = 0, j = 0; i < str_length; ++i) {
-			if (fmt[i] == '%') {
-				if (i + 1 < str_length) {
-					switch(tolower(fmt[i + 1])) {
-						case '%' :
-							message[j++] = '%';
-							break;
-						case 'o' : /* octal numbers */
-						{
-							char tmp[16];
-							_itoa(va_arg(arg, int), tmp, 8);
-							strcat(message, tmp);
-							j += strlen(tmp);
-							++i;
-							break;
-						}
-						case 'i' : /* decimal numbers */
-						case 'd' :
-						{
-							char tmp[16];
-							_itoa(va_arg(arg, int), tmp, 10);
-							strcat(message, tmp);
-							j += strlen(tmp);
-							++i;
-							break;
-						}
-						case 'x' : /* hexadecimal numbers */
-						{
-							char tmp[16];
-							_itoa(va_arg(arg, int), tmp, 16);
-							strcat(message, tmp);
-							j += strlen(tmp);
-							++i;
-							break;
-						}
-						case 's' : /* strings */
-						{
-							char *tmp = va_arg(arg, char*);
-							strcat(message, tmp);
-							j += strlen(tmp);
-							++i;
-							break;
-						}
-						case 'f' :	/* floats */
-						{
-							char tmp[16];
-							double value = va_arg(arg, double);
-							sprintf(tmp, "%f", value);
-							strcat(message, tmp);
-							j += strlen(tmp);
-							++i;
-							break;
-						}
-					};
-				} else {
-					message[j++] = fmt[i];
-				}
-			} else {
-				message[j++] = fmt[i];
-			};
-		}
+		vsprintf(message, fmt, arg); /* UniPG */
 		/* deinitialize the optional parameter list */
 		va_end(arg);
 
