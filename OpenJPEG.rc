@@ -1,5 +1,6 @@
 //Microsoft Developer Studio generated resource script.
 //
+#include "resource.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
@@ -27,8 +28,8 @@ LANGUAGE LANG_FRENCH, SUBLANG_FRENCH
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,0,0,0
- PRODUCTVERSION 1,0,0,0
+ FILEVERSION 1,1,0,0
+ PRODUCTVERSION 1,1,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -46,14 +47,14 @@ BEGIN
             VALUE "Comments", "The OpenJPEG library is an open-source JPEG 2000 codec. \0"
             VALUE "CompanyName", "OpenJPEG\0"
             VALUE "FileDescription", "OpenJPEG\0"
-            VALUE "FileVersion", "1, 0, 0, 0\0"
+            VALUE "FileVersion", "1, 1, 0, 0\0"
             VALUE "InternalName", "OpenJPEG\0"
             VALUE "LegalCopyright", "Copyright © 2002-2006, Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium\0"
             VALUE "LegalTrademarks", "See http://www.openjpeg.org for details\0"
             VALUE "OriginalFilename", "OpenJPEG.dll\0"
             VALUE "PrivateBuild", "\0"
             VALUE "ProductName", "OpenJPEG\0"
-            VALUE "ProductVersion", "1, 0, 0, 0\0"
+            VALUE "ProductVersion", "1, 1, 0, 0\0"
             VALUE "SpecialBuild", "\0"
         END
     END
