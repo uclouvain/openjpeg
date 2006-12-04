@@ -57,7 +57,13 @@ void decode_help_display() {
 	fprintf(stdout,"HELP\n----\n\n");
 	fprintf(stdout,"- the -h option displays this help information on screen\n\n");
 
-	fprintf(stdout,"List of parameters for the JPEG 2000 encoder:\n");
+/* UniPG>> */
+	fprintf(stdout,"List of parameters for the JPEG 2000 "
+#ifdef USE_JPWL
+		"+ JPWL "
+#endif /* USE_JPWL */
+		"decoder:\n");
+/* <<UniPG */
 	fprintf(stdout,"\n");
 	fprintf(stdout,"  -i <compressed file>\n");
 	fprintf(stdout,"    REQUIRED\n");
@@ -81,6 +87,16 @@ void decode_help_display() {
 	fprintf(stdout,"    Set the maximum number of quality layers to decode. If there are\n");
 	fprintf(stdout,"    less quality layers than the specified number, all the quality layers\n");
 	fprintf(stdout,"    are decoded.\n");
+/* UniPG>> */
+#ifdef USE_JPWL
+	fprintf(stdout,"  -W <options>\n");
+	fprintf(stdout,"    Activates the JPWL correction capability, if the codestream complies.\n");
+	fprintf(stdout,"    Options can be a comma separated list of <param=val> tokens:\n");
+	fprintf(stdout,"    c, c=numcomps\n");
+	fprintf(stdout,"       numcomps is the number of expected components in the codestream\n");
+	fprintf(stdout,"       (search of first EPB rely upon this, default is %d)\n", JPWL_EXPECTED_COMPONENTS);
+#endif /* USE_JPWL */
+/* <<UniPG */
 	fprintf(stdout,"\n");
 }
 
@@ -107,8 +123,17 @@ int get_file_format(char *filename) {
 int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters) {
 	/* parse the command line */
 
+/* UniPG>> */
+	const char optlist[] = "i:o:r:l:h"
+
+#ifdef USE_JPWL
+					"W:"
+#endif /* USE_JPWL */
+					;
+/* <<UniPG */
+
 	while (1) {
-		int c = getopt(argc, argv, "i:o:r:l:h");
+		int c = getopt(argc, argv, optlist); /* >>JPWL<< */
 		if (c == -1)
 			break;
 		switch (c) {
@@ -174,6 +199,78 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters) 
 				decode_help_display();
 				return 1;				
             
+/* UniPG>> */
+#ifdef USE_JPWL
+				/* ----------------------------------------------------- */	
+			
+			case 'W': 			/* activate JPWL correction */
+			{
+				char *token = NULL;
+
+				token = strtok(optarg, ",");
+				while(token != NULL) {
+
+					/* search expected number of components */
+					if (*token == 'c') {
+
+						static int compno;
+
+						compno = JPWL_EXPECTED_COMPONENTS; /* predefined no. of components */
+
+						if(sscanf(token, "c=%d", &compno) == 1) {
+							/* Specified */
+							if ((compno < 1) || (compno > 256)) {
+								fprintf(stderr, "ERROR -> invalid number of components c = %d\n", compno);
+								return 1;
+							}
+							parameters->jpwl_exp_comps = compno;
+
+						} else if (!strcmp(token, "c")) {
+							/* default */
+							parameters->jpwl_exp_comps = compno; /* auto for default size */
+
+						} else {
+							fprintf(stderr, "ERROR -> invalid components specified = %s\n", token);
+							return 1;
+						};
+					}
+
+					/* search maximum number of tiles */
+					if (*token == 't') {
+
+						static int tileno;
+
+						tileno = JPWL_MAXIMUM_TILES; /* maximum no. of tiles */
+
+						if(sscanf(token, "t=%d", &tileno) == 1) {
+							/* Specified */
+							if ((tileno < 1) || (tileno > JPWL_MAXIMUM_TILES)) {
+								fprintf(stderr, "ERROR -> invalid number of tiles t = %d\n", tileno);
+								return 1;
+							}
+							parameters->jpwl_max_tiles = tileno;
+
+						} else if (!strcmp(token, "t")) {
+							/* default */
+							parameters->jpwl_max_tiles = tileno; /* auto for default size */
+
+						} else {
+							fprintf(stderr, "ERROR -> invalid tiles specified = %s\n", token);
+							return 1;
+						};
+					}
+
+					/* next token or bust */
+					token = strtok(NULL, ",");
+				};
+				parameters->jpwl_correct = true;
+				fprintf(stdout, "JPWL correction capability activated\n");
+				fprintf(stdout, "- expecting %d components\n", parameters->jpwl_exp_comps);
+			}
+			break;	
+#endif /* USE_JPWL */
+/* <<UniPG */            
+
 				/* ----------------------------------------------------- */
 			
 			default:
