@@ -15,6 +15,7 @@ Total update of JPWL module
     ! [FOD] Modification of codec to integrate JPWL module (in codec directory): image_to_j2k.c, j2k_to_image.c
 * [FOD] Corrected incorrect fprintf() formatting in codec/convert.c
 * [FOD] Code optimization usinq vsprintf() command in libopenjpeg/event.c
+* [Giuseppe Baruffa] Fixed a bug in TPH EPBs parameters: now, "last in current header" information is correctly signaled
 
 October 31, 2006
 * [Antonin] fixed a bug in the computation of the mantissa (mu)
