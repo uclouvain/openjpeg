@@ -1018,6 +1018,14 @@ bool jpwl_epb_correct(opj_j2k_t *j2k, unsigned char *buffer, int type, int pre_l
 			}
 		}
 
+	} else if (Pepb == 0xFFFFFFFF) {
+		/* no method */
+
+		/* advance without doing anything */
+		remaining = L4;
+		while (remaining--)
+			L4_buf++;
+
 	} else if ((((Pepb & 0xF0000000) >> 28) == 2) || (((Pepb & 0xF0000000) >> 28) == 0)) {
 		/* RS coding here */
 

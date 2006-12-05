@@ -201,10 +201,10 @@ void encode_help_display() {
 	fprintf(stdout,"                   1/2 bytes, for the transformed pseudo-floating point value\n");
 	fprintf(stdout,"\n");
 	fprintf(stdout,"                 ex.:\n");
-	fprintf(stdout," h,h0=64,h3=16,h5=0,p0=78,p0:24=56,p1,p3:0=0,p3:20=32,s=0,s0=6,s3=-1,a=0,g=1,z=1\n");
+	fprintf(stdout," h,h0=64,h3=16,h5=32,p0=78,p0:24=56,p1,p3:0=0,p3:20=32,s=0,s0=6,s3=-1,a=0,g=1,z=1\n");
 	fprintf(stdout,"                 means\n");
 	fprintf(stdout,"                   predefined EPB in MH, rs(64,32) from TPH 0 to TPH 2,\n");
-	fprintf(stdout,"                   CRC-16 in TPH 3 and TPH 4, no EPBs in remaining TPHs,\n");
+	fprintf(stdout,"                   CRC-16 in TPH 3 and TPH 4, CRC-32 in remaining TPHs,\n");
 	fprintf(stdout,"                   UEP rs(78,32) for packets 0 to 23 of tile 0,\n");
 	fprintf(stdout,"                   UEP rs(56,32) for packets 24 to the last of tile 0,\n");
 	fprintf(stdout,"                   UEP rs default for packets of tile 1,\n");
@@ -219,6 +219,11 @@ void encode_help_display() {
 	fprintf(stdout,"                 means\n");
 	fprintf(stdout,"                   default protection to headers (MH and TPHs) as well as\n");
 	fprintf(stdout,"                   data packets, one ESD in MH\n");
+	fprintf(stdout,"\n");
+	fprintf(stdout,"                 N.B.: use the following recommendations when specifying\n");
+	fprintf(stdout,"                       the JPWL parameters list\n");
+	fprintf(stdout,"                   - when you use UEP, always pair the 'p' option with 'h'\n");
+	fprintf(stdout,"                 \n");
 #endif /* USE_JPWL */
 /* <<UniPG */
 	fprintf(stdout,"IMPORTANT:\n");

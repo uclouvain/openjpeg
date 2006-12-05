@@ -377,7 +377,7 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 		unsigned long sot_pos, post_sod_pos;
 		unsigned long int left_THmarks_len, epbs_len = 0;
 		int startpack = 0, stoppack = j2k->image_info->num;
-		jpwl_epb_ms_t *tph_epb;
+		jpwl_epb_ms_t *tph_epb = NULL;
 
 		sot_pos = j2k->image_info->tile[tileno].start_pos;
 		cio_seek(cio, sot_pos + 2); 
@@ -555,10 +555,10 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 		}
 
 		/* we can now check if the TPH EPB was really the last one */
-		if (epb_index == 1) {
+		if (tph_epb && (epb_index == 1)) {
 			/* set the TPH EPB to be the last one in current header */
 			tph_epb->Depb |= (unsigned char) ((true & 0x0001) << 6);
-
+			tph_epb = NULL;
 		}
 
 		/* write back Psot */
