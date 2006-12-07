@@ -94,6 +94,15 @@ int encode_rs(dtype data[], dtype bb[]);
  */
 int eras_dec_rs(dtype data[], int eras_pos[], int no_eras);
 
+/**
+Computes the minimum between two integers
+@param a first integer to compare
+@param b second integer to compare
+@return returns the minimum integer between a and b
+*/
+#ifndef min
+#define min(a,b)    (((a) < (b)) ? (a) : (b))
+#endif /* min */
 
 #endif /* __CRC32_HEADER__ */
 

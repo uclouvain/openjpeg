@@ -365,6 +365,16 @@ and get the CRC at the end
 */
 #define jpwl_updateCRC32(CRC, DATA) updateCRC32(CRC, DATA)
 
+/**
+Computes the minimum between two integers
+@param a first integer to compare
+@param b second integer to compare
+@return returns the minimum integer between a and b
+*/
+#ifndef min
+#define min(a,b)    (((a) < (b)) ? (a) : (b))
+#endif /* min */
+
 /*@}*/
 
 #endif /* USE_JPWL */

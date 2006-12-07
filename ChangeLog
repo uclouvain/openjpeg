@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+December 07, 2006
++ [Giuseppe Baruffa] Antonin verified that the MacOS build suffered from a missing definition of the "min" macro; I've added this definition (properly #ifndef'ed) into both jpwl.h and rs.h
+
 December 05, 2006
 * [Giuseppe Baruffa] Better fix of the TPH EPBs bug in JPWL module
 * [GB] Fixed the UEP bug in JPWL module; now, during a UEP specification, RS protection or CRC check can be switched off for selected range of packets, and consequently reswitched on without confusing the decoder
