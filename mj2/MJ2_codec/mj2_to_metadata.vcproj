@@ -22,7 +22,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="../libopenjpeg"
+				AdditionalIncludeDirectories="../libopenjpeg_097"
 				PreprocessorDefinitions="WIN32,NDEBUG,_CONSOLE,DONT_HAVE_GETOPT,NO_PACKETS_DECODING"
 				StringPooling="TRUE"
 				RuntimeLibrary="4"
@@ -80,7 +80,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../libopenjpeg"
+				AdditionalIncludeDirectories="../libopenjpeg_097"
 				PreprocessorDefinitions="WIN32,_DEBUG,_CONSOLE,DONT_HAVE_GETOPT,NO_PACKETS_DECODING"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="5"
@@ -91,7 +91,7 @@
 				ProgramDataBaseFileName=".\mj2_to_metadata___Win32_Debug0/"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
-				DebugInformationFormat="4"/>
+				DebugInformationFormat="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -137,183 +137,139 @@
 		<Filter
 			Name="MJ2"
 			Filter="">
-			<Filter
-				Name="MJ2 Header Files"
-				Filter="">
-				<File
-					RelativePath=".\compat\getopt.h">
-				</File>
-				<File
-					RelativePath="meta_out.h">
-				</File>
-				<File
-					RelativePath=".\mj2.h">
-				</File>
-				<File
-					RelativePath=".\mj2_convert.h">
-				</File>
-				<File
-					RelativePath="mj2_to_metadata.h">
-				</File>
-			</Filter>
-			<Filter
-				Name="MJ2 Source Files"
-				Filter="">
-				<File
-					RelativePath=".\compat\getopt.c">
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories="../libopenjpeg;$(NoInherit)"
-							CompileAs="0"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="meta_out.c">
-				</File>
-				<File
-					RelativePath=".\mj2.c">
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories="../libopenjpeg;$(NoInherit)"
-							CompileAs="0"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath=".\mj2_convert.c">
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories="../libopenjpeg;$(NoInherit)"
-							CompileAs="0"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath=".\mj2_to_metadata.c">
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories="../libopenjpeg;$(NoInherit)"
-							CompileAs="0"/>
-					</FileConfiguration>
-				</File>
-			</Filter>
+			<File
+				RelativePath=".\compat\getopt.c">
+			</File>
+			<File
+				RelativePath=".\compat\getopt.h">
+			</File>
+			<File
+				RelativePath=".\meta_out.c">
+			</File>
+			<File
+				RelativePath=".\meta_out.h">
+			</File>
+			<File
+				RelativePath=".\mj2.c">
+			</File>
+			<File
+				RelativePath=".\mj2.h">
+			</File>
+			<File
+				RelativePath=".\mj2_convert.c">
+			</File>
+			<File
+				RelativePath=".\mj2_convert.h">
+			</File>
+			<File
+				RelativePath=".\mj2_to_metadata.c">
+			</File>
+			<File
+				RelativePath=".\mj2_to_metadata.h">
+			</File>
 		</Filter>
 		<Filter
-			Name="OpenJPEG"
+			Name="libopenjpeg_097"
 			Filter="">
-			<Filter
-				Name="OpenJPEG Header Files"
-				Filter=".h">
-				<File
-					RelativePath="..\libopenjpeg\bio.h">
-				</File>
-				<File
-					RelativePath="..\libopenjpeg\cio.h">
-				</File>
-				<File
-					RelativePath="..\libopenjpeg\dwt.h">
-				</File>
-				<File
-					RelativePath="..\libopenjpeg\fix.h">
-				</File>
-				<File
-					RelativePath="..\libopenjpeg\int.h">
-				</File>
-				<File
-					RelativePath="..\libopenjpeg\j2k.h">
-				</File>
-				<File
-					RelativePath="..\libopenjpeg\jp2.h">
-				</File>
-				<File
-					RelativePath="..\libopenjpeg\jpt.h">
-				</File>
-				<File
-					RelativePath="..\libopenjpeg\mct.h">
-				</File>
-				<File
-					RelativePath="..\libopenjpeg\mqc.h">
-				</File>
-				<File
-					RelativePath="..\libopenjpeg\openjpeg.h">
-				</File>
-				<File
-					RelativePath="..\libopenjpeg\pi.h">
-				</File>
-				<File
-					RelativePath="..\libopenjpeg\raw.h">
-				</File>
-				<File
-					RelativePath="..\libopenjpeg\t1.h">
-				</File>
-				<File
-					RelativePath="..\libopenjpeg\t2.h">
-				</File>
-				<File
-					RelativePath="..\libopenjpeg\tcd.h">
-				</File>
-				<File
-					RelativePath="..\libopenjpeg\tgt.h">
-				</File>
-			</Filter>
-			<Filter
-				Name="OpenJPEG Source Files"
-				Filter=".c">
-				<File
-					RelativePath="..\libopenjpeg\bio.c">
-				</File>
-				<File
-					RelativePath="..\libopenjpeg\cio.c">
-				</File>
-				<File
-					RelativePath="..\libopenjpeg\dwt.c">
-				</File>
-				<File
-					RelativePath="..\libopenjpeg\fix.c">
-				</File>
-				<File
-					RelativePath="..\libopenjpeg\int.c">
-				</File>
-				<File
-					RelativePath="..\libopenjpeg\j2k.c">
-				</File>
-				<File
-					RelativePath="..\libopenjpeg\jp2.c">
-				</File>
-				<File
-					RelativePath="..\libopenjpeg\jpt.c">
-				</File>
-				<File
-					RelativePath="..\libopenjpeg\mct.c">
-				</File>
-				<File
-					RelativePath="..\libopenjpeg\mqc.c">
-				</File>
-				<File
-					RelativePath="..\libopenjpeg\pi.c">
-				</File>
-				<File
-					RelativePath="..\libopenjpeg\raw.c">
-				</File>
-				<File
-					RelativePath="..\libopenjpeg\t1.c">
-				</File>
-				<File
-					RelativePath="..\libopenjpeg\t2.c">
-				</File>
-				<File
-					RelativePath="..\libopenjpeg\tcd.c">
-				</File>
-				<File
-					RelativePath="..\libopenjpeg\tgt.c">
-				</File>
-			</Filter>
+			<File
+				RelativePath="..\libopenjpeg_097\bio.c">
+			</File>
+			<File
+				RelativePath="..\libopenjpeg_097\bio.h">
+			</File>
+			<File
+				RelativePath="..\libopenjpeg_097\cio.c">
+			</File>
+			<File
+				RelativePath="..\libopenjpeg_097\cio.h">
+			</File>
+			<File
+				RelativePath="..\libopenjpeg_097\dwt.c">
+			</File>
+			<File
+				RelativePath="..\libopenjpeg_097\dwt.h">
+			</File>
+			<File
+				RelativePath="..\libopenjpeg_097\fix.c">
+			</File>
+			<File
+				RelativePath="..\libopenjpeg_097\fix.h">
+			</File>
+			<File
+				RelativePath="..\libopenjpeg_097\int.c">
+			</File>
+			<File
+				RelativePath="..\libopenjpeg_097\int.h">
+			</File>
+			<File
+				RelativePath="..\libopenjpeg_097\j2k.c">
+			</File>
+			<File
+				RelativePath="..\libopenjpeg_097\j2k.h">
+			</File>
+			<File
+				RelativePath="..\libopenjpeg_097\jp2.c">
+			</File>
+			<File
+				RelativePath="..\libopenjpeg_097\jp2.h">
+			</File>
+			<File
+				RelativePath="..\libopenjpeg_097\jpt.c">
+			</File>
+			<File
+				RelativePath="..\libopenjpeg_097\jpt.h">
+			</File>
+			<File
+				RelativePath="..\libopenjpeg_097\mct.c">
+			</File>
+			<File
+				RelativePath="..\libopenjpeg_097\mct.h">
+			</File>
+			<File
+				RelativePath="..\libopenjpeg_097\mqc.c">
+			</File>
+			<File
+				RelativePath="..\libopenjpeg_097\mqc.h">
+			</File>
+			<File
+				RelativePath="..\libopenjpeg_097\openjpeg.h">
+			</File>
+			<File
+				RelativePath="..\libopenjpeg_097\pi.c">
+			</File>
+			<File
+				RelativePath="..\libopenjpeg_097\pi.h">
+			</File>
+			<File
+				RelativePath="..\libopenjpeg_097\raw.c">
+			</File>
+			<File
+				RelativePath="..\libopenjpeg_097\raw.h">
+			</File>
+			<File
+				RelativePath="..\libopenjpeg_097\t1.c">
+			</File>
+			<File
+				RelativePath="..\libopenjpeg_097\t1.h">
+			</File>
+			<File
+				RelativePath="..\libopenjpeg_097\t2.c">
+			</File>
+			<File
+				RelativePath="..\libopenjpeg_097\t2.h">
+			</File>
+			<File
+				RelativePath="..\libopenjpeg_097\tcd.c">
+			</File>
+			<File
+				RelativePath="..\libopenjpeg_097\tcd.h">
+			</File>
+			<File
+				RelativePath="..\libopenjpeg_097\tgt.c">
+			</File>
+			<File
+				RelativePath="..\libopenjpeg_097\tgt.h">
+			</File>
 		</Filter>
 		<File
 			RelativePath="resource.h">

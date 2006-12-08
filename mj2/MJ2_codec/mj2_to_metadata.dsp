@@ -41,7 +41,7 @@ RSC=rc.exe
 # PROP Intermediate_Dir "Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I "../libopenjpeg" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /D "DONT_HAVE_GETOPT" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I "../libopenjpeg_097" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /D "DONT_HAVE_GETOPT" /YX /FD /c
 # ADD BASE RSC /l 0x809 /d "NDEBUG"
 # ADD RSC /l 0x809 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -64,7 +64,7 @@ LINK32=link.exe
 # PROP Intermediate_Dir "mj2_to_metadata___Win32_Debug0"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /GZ /c
-# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "../libopenjpeg" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D "DONT_HAVE_GETOPT" /FR /YX /FD /GZ /c
+# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "../libopenjpeg_097" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D "DONT_HAVE_GETOPT" /FR /YX /FD /GZ /c
 # ADD BASE RSC /l 0x809 /d "_DEBUG"
 # ADD RSC /l 0x809 /d "_DEBUG"
 BSC32=bscmake.exe
@@ -102,6 +102,10 @@ SOURCE=.\mj2.h
 
 SOURCE=.\mj2_convert.h
 # End Source File
+# Begin Source File
+
+SOURCE=.\mj2_to_metadata.h
+# End Source File
 # End Group
 # Begin Group "MJ2 Source Files"
 
@@ -128,149 +132,141 @@ SOURCE=.\mj2_to_metadata.c
 # End Source File
 # End Group
 # End Group
-# Begin Group "OpenJPEG"
+# Begin Group "Libopenjpeg_097"
 
 # PROP Default_Filter ""
-# Begin Group "OpenJPEG Header Files"
-
-# PROP Default_Filter ".h"
 # Begin Source File
 
-SOURCE=..\libopenjpeg\bio.h
+SOURCE=..\libopenjpeg_097\bio.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\libopenjpeg\cio.h
+SOURCE=..\libopenjpeg_097\bio.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\libopenjpeg\dwt.h
+SOURCE=..\libopenjpeg_097\cio.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\libopenjpeg\fix.h
+SOURCE=..\libopenjpeg_097\cio.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\libopenjpeg\int.h
+SOURCE=..\libopenjpeg_097\dwt.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\libopenjpeg\j2k.h
+SOURCE=..\libopenjpeg_097\dwt.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\libopenjpeg\jp2.h
+SOURCE=..\libopenjpeg_097\fix.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\libopenjpeg\jpt.h
+SOURCE=..\libopenjpeg_097\fix.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\libopenjpeg\mct.h
+SOURCE=..\libopenjpeg_097\int.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\libopenjpeg\mqc.h
+SOURCE=..\libopenjpeg_097\int.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\libopenjpeg\openjpeg.h
+SOURCE=..\libopenjpeg_097\j2k.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\libopenjpeg\pi.h
+SOURCE=..\libopenjpeg_097\j2k.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\libopenjpeg\raw.h
+SOURCE=..\libopenjpeg_097\jp2.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\libopenjpeg\t1.h
+SOURCE=..\libopenjpeg_097\jp2.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\libopenjpeg\t2.h
+SOURCE=..\libopenjpeg_097\jpt.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\libopenjpeg\tcd.h
+SOURCE=..\libopenjpeg_097\jpt.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\libopenjpeg\tgt.h
-# End Source File
-# End Group
-# Begin Group "OpenJPEG Source Files"
-
-# PROP Default_Filter ".c"
-# Begin Source File
-
-SOURCE=..\libopenjpeg\bio.c
+SOURCE=..\libopenjpeg_097\mct.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\libopenjpeg\cio.c
+SOURCE=..\libopenjpeg_097\mct.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\libopenjpeg\dwt.c
+SOURCE=..\libopenjpeg_097\mqc.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\libopenjpeg\fix.c
+SOURCE=..\libopenjpeg_097\mqc.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\libopenjpeg\int.c
+SOURCE=..\libopenjpeg_097\openjpeg.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\libopenjpeg\j2k.c
+SOURCE=..\libopenjpeg_097\pi.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\libopenjpeg\jp2.c
+SOURCE=..\libopenjpeg_097\pi.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\libopenjpeg\jpt.c
+SOURCE=..\libopenjpeg_097\raw.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\libopenjpeg\mct.c
+SOURCE=..\libopenjpeg_097\raw.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\libopenjpeg\mqc.c
+SOURCE=..\libopenjpeg_097\t1.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\libopenjpeg\pi.c
+SOURCE=..\libopenjpeg_097\t1.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\libopenjpeg\raw.c
+SOURCE=..\libopenjpeg_097\t2.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\libopenjpeg\t1.c
+SOURCE=..\libopenjpeg_097\t2.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\libopenjpeg\t2.c
+SOURCE=..\libopenjpeg_097\tcd.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\libopenjpeg\tcd.c
+SOURCE=..\libopenjpeg_097\tcd.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\libopenjpeg\tgt.c
+SOURCE=..\libopenjpeg_097\tgt.c
 # End Source File
-# End Group
+# Begin Source File
+
+SOURCE=..\libopenjpeg_097\tgt.h
+# End Source File
 # End Group
 # End Target
 # End Project

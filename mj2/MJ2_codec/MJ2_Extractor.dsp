@@ -41,7 +41,7 @@ RSC=rc.exe
 # PROP Intermediate_Dir "Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I "../libopenjpeg" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I "../libopenjpeg_097" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
 # ADD BASE RSC /l 0x809 /d "NDEBUG"
 # ADD RSC /l 0x809 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -64,7 +64,7 @@ LINK32=link.exe
 # PROP Intermediate_Dir "MJ2_Extractor___Win32_Debug"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /GZ /c
-# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "../libopenjpeg" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /GZ /c
+# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "../libopenjpeg_097" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /GZ /c
 # ADD BASE RSC /l 0x809 /d "_DEBUG"
 # ADD RSC /l 0x809 /d "_DEBUG"
 BSC32=bscmake.exe
@@ -85,7 +85,7 @@ LINK32=link.exe
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
-SOURCE=..\libopenjpeg\cio.c
+SOURCE=..\libopenjpeg_097\cio.c
 # End Source File
 # Begin Source File
 
@@ -93,7 +93,7 @@ SOURCE=.\extract_j2k_from_mj2.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\libopenjpeg\jp2.c
+SOURCE=..\libopenjpeg_097\jp2.c
 # End Source File
 # Begin Source File
 
@@ -105,15 +105,15 @@ SOURCE=.\mj2.c
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
-SOURCE=..\libopenjpeg\cio.h
+SOURCE=..\libopenjpeg_097\cio.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\libopenjpeg\j2k.h
+SOURCE=..\libopenjpeg_097\j2k.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\libopenjpeg\jp2.h
+SOURCE=..\libopenjpeg_097\jp2.h
 # End Source File
 # Begin Source File
 

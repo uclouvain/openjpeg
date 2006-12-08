@@ -1,4 +1,4 @@
-# 
+#
 # Valentin Mesaros (Octalis | DICE/UCL Belgium)
 # 19 April 2005
 # 
@@ -6,7 +6,7 @@
 # 
 
 INCLUDES = -Imj2 \
-           -I../libopenjpeg
+           -I../libopenjpeg_097
 
 C_OPT = -Wall
 CFLAGS = $(INCLUDES) $(C_OPT)
@@ -15,8 +15,8 @@ CC = gcc
 
 OBJ_MJ2_DIR = obj
 BIN_MJ2_DIR = bin
-LIB_OPENJPEG_DIR = ../libopenjpeg/lib
-LIB_OPENJPEG = $(LIB_OPENJPEG_DIR)/libopenjpeg.a
+LIB_OPENJPEG_DIR = ../libopenjpeg_097/lib
+LIB_OPENJPEG = $(LIB_OPENJPEG_DIR)/libopenjpeg_097.a
 
 all: $(OBJ_MJ2_DIR) $(BIN_MJ2_DIR) \
      $(BIN_MJ2_DIR)/frames_to_mj2 \
