@@ -619,6 +619,12 @@ void jp2_setup_encoder(opj_jp2_t *jp2, opj_cparameters_t *parameters, opj_image_
 	/* setup the J2K codec */
 	/* ------------------- */
 
+	/* Check if number of components respects standard */
+	if (image->numcomps < 1 || image->numcomps > 16384) {
+		opj_event_msg(jp2->cinfo, EVT_ERROR, "Invalid number of components specified while setting up JP2 encoder\n");
+		return;
+	}
+
 	j2k_setup_encoder(jp2->j2k, parameters, image);
 
 	/* setup the JP2 codec */
