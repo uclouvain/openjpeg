@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+January 23, 2007
+! [FOD] Modification in the context numbers, to reflect what has been specified in standard, in libopenjpeg/t1.h
+
 December 07, 2006
 + [Giuseppe Baruffa] Antonin verified that the MacOS build suffered from a missing definition of the "min" macro; I've added this definition (properly #ifndef'ed) into both jpwl.h and rs.h
 
