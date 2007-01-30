@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
   cp.reduce=0;
 
   if (argc != 3) {
-    printf("Bad syntax: Usage: MJ2_decoder inputfile.mj2 outputfile.yuv\n"); 
+    printf("Bad syntax: Usage: mj2_to_frames inputfile.mj2 outputfile.yuv\n"); 
     printf("Example: MJ2_decoder foreman.mj2 foreman.yuv\n");
     return 1;
   }
