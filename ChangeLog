@@ -5,6 +5,10 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+January 30, 2007
+! [FOD] Use of OPJ_PATH_LEN (defined as 4096) to be the maximum allowed size for filenames instead of MAX_PATH which is not always defined. This caused some programs using OpenJPEG to crash. Modifications in openjpeg.h j2k_to_image.c and image_to_j2k.c
+! [FOD] Correction of the syntax usage in MJ2_codec/mj2_to_frames.c
+
 January 23, 2007
 ! [FOD] Modification in the context numbers, to reflect what has been specified in standard, in libopenjpeg/t1.h
 

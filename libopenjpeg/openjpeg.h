@@ -90,9 +90,7 @@ braindamage below.
 ==========================================================
 */
 
-#ifndef MAX_PATH
-#define MAX_PATH 260	/**< Maximum allowed size for filenames */
-#endif /* MAX_PATH */
+#define OPJ_PATH_LEN 4096 /**< Maximum allowed size for filenames */
 
 #define J2K_MAXRLVLS 33					/**< Number of maximum resolution level authorized */
 #define J2K_MAXBANDS (3*J2K_MAXRLVLS-2)	/**< Number of maximum sub-band linked to number of resolution level */
@@ -256,13 +254,13 @@ typedef struct opj_cparameters {
 	/**@name command line encoder parameters (not used inside the library) */
 	/*@{*/
 	/** input file name */
-	char infile[MAX_PATH];
+	char infile[OPJ_PATH_LEN];
 	/** output file name */
-	char outfile[MAX_PATH];
+	char outfile[OPJ_PATH_LEN];
 	/** creation of an index file, default to 0 (false) */
 	int index_on;
 	/** index file name */
-	char index[MAX_PATH];
+	char index[OPJ_PATH_LEN];
 	/** subimage encoding: origin image offset in x direction */
 	int image_offset_x0;
 	/** subimage encoding: origin image offset in y direction */
@@ -336,9 +334,9 @@ typedef struct opj_dparameters {
 	/**@name command line encoder parameters (not used inside the library) */
 	/*@{*/
 	/** input file name */
-	char infile[MAX_PATH];
+	char infile[OPJ_PATH_LEN];
 	/** output file name */
-	char outfile[MAX_PATH];
+	char outfile[OPJ_PATH_LEN];
 	/** input file format 0: J2K, 1: JP2, 2: JPT */
 	int decod_format;
 	/** output file format 0: PGX, 1: PxM, 2: BMP */
