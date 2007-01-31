@@ -261,7 +261,7 @@ void OPJ_CALLCONV opj_set_default_encoder_parameters(opj_cparameters_t *paramete
 				parameters->jpwl_sens_TPH[i] = -1; /* absent */
 			}
 		};
-#endif USE_JPWL
+#endif /* USE_JPWL */
 /* <<UniPG */
 	}
 }

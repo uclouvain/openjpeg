@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 January 31, 2007
+! [FOD] Extra tokens at the end of #endif directive corrected in openjpeg.c, j2k.c and image_to_j2k.c -> no more warnings in linux compilation
 ! [FOD] Linux Makefile added for the codec
 
 January 30, 2007

@@ -978,7 +978,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters) 
 
 			}
 			break;
-#endif USE_JPWL
+#endif /* USE_JPWL */
 /* <<UniPG */
 
 				/* ------------------------------------------------------ */

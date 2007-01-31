@@ -1586,7 +1586,7 @@ opj_image_t* j2k_decode(opj_j2k_t *j2k, opj_cio_t *cio) {
 			}
 
 		}
-#endif USE_JPWL
+#endif /* USE_JPWL */
 /* <<UniPG */
 		if (id >> 8 != 0xff) {
 			opj_image_destroy(image);
