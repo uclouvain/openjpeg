@@ -6,7 +6,8 @@ What's New for OpenJPEG
 + : added
 
 February 13, 2007
-! [FOD] Change file modified. -fPIC flag used for 64-bit compilation. Move operation (rather than copy) for the dist library creation, and -p flag added.
+! [FOD] David Fries suggestions. In image_to_j2k and j2k_to_image, strncpy() functions: instead of specifying the path size macro, let the compiler read the length out of the array entry.
+! [FOD] David Fries suggestions. Makefile modified. -fPIC flag used for 64-bit compilation. Move operation (rather than copy) for the dist library creation, and -p flag added.
 
 January 31, 2007
 ! [FOD] Extra tokens at the end of #endif directive corrected in openjpeg.c, j2k.c and image_to_j2k.c -> no more warnings in linux compilation

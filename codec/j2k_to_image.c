@@ -153,7 +153,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters) 
 							infile);
 						return 1;
 				}
-				strncpy(parameters->infile, infile, OPJ_PATH_LEN);
+				strncpy(parameters->infile, infile, sizeof(parameters->infile)-1);
 			}
 			break;
 				
@@ -172,7 +172,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters) 
 						fprintf(stderr, "Unknown output format image %s [only *.pnm, *.pgm, *.ppm, *.pgx or *.bmp]!! \n", outfile);
 						return 1;
 				}
-				strncpy(parameters->outfile, outfile, OPJ_PATH_LEN);
+				strncpy(parameters->outfile, outfile, sizeof(parameters->outfile)-1);
 			}
 			break;
 			

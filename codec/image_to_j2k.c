@@ -332,7 +332,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters) 
 							infile);
 						return 1;
 				}
-				strncpy(parameters->infile, infile, OPJ_PATH_LEN);
+				strncpy(parameters->infile, infile, sizeof(parameters->infile)-1);
 			}
 			break;
 
@@ -350,7 +350,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters) 
 						fprintf(stderr, "Unknown output format image %s [only *.j2k, *.jp2]!! \n", outfile);
 						return 1;
 				}
-				strncpy(parameters->outfile, outfile, OPJ_PATH_LEN);
+				strncpy(parameters->outfile, outfile, sizeof(parameters->outfile)-1);
 			}
 			break;
 
@@ -498,7 +498,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters) 
 			case 'x':			/* creation of index file */
 			{
 				char *index = optarg;
-				strncpy(parameters->index, index, OPJ_PATH_LEN);
+				strncpy(parameters->index, index, sizeof(parameters->index)-1);
 				parameters->index_on = 1;
 			}
 			break;
@@ -668,7 +668,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters) 
 
 				/* we need to enable indexing */
 				if (!parameters->index_on) {
-					strncpy(parameters->index, JPWL_PRIVATEINDEX_NAME, OPJ_PATH_LEN);
+					strncpy(parameters->index, JPWL_PRIVATEINDEX_NAME, sizeof(parameters->index)-1);
 					parameters->index_on = 1;
 				}
 
