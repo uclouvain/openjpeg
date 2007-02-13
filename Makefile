@@ -16,7 +16,7 @@ INSTALLDIR = /usr/lib
 # Converts cr/lf to just lf
 DOS2UNIX = dos2unix
 
-COMPILERFLAGS = -O3
+COMPILERFLAGS = -O3 -fPIC
 LIBRARIES = -lstdc++
 
 MODULES = $(SRCS:.c=.o)
@@ -34,10 +34,10 @@ default: all
 all: dist
 
 dist: OpenJPEG
-	mkdir dist
-	cp *.a dist/
-	cp *.so dist/
-	cp libopenjpeg/openjpeg.h dist/
+	mkdir -p dist
+	cp *.a dist
+	mv *.so dist
+	cp libopenjpeg/openjpeg.h dist
 
 dos2unix:
 	@$(DOS2UNIX) $(SRCS) $(INCLS)
