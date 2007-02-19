@@ -116,6 +116,7 @@ void OPJ_CALLCONV opj_set_default_decoder_parameters(opj_dparameters_t *paramete
 		/* default decoding parameters */
 		parameters->cp_layer = 0;
 		parameters->cp_reduce = 0;
+		parameters->cp_limit_decoding = NO_LIMITATION;
 
 		parameters->decod_format = -1;
 		parameters->cod_format = -1;

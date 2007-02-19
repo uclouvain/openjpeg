@@ -197,6 +197,8 @@ typedef struct opj_cp {
 	int reduce;
 	/** if != 0, then only the first "layer" layers are decoded; if == 0 or not used, all the quality layers are decoded */
 	int layer;
+	/** if == NO_LIMITATION, decode entire codestream; if == LIMIT_TO_MAIN_HEADER then only decode the main header */
+	OPJ_LIMIT_DECODING limit_decoding;
 	/** 0 = no index || 1 = index */
 	int index_on;
 	/** XTOsiz */

@@ -1522,6 +1522,7 @@ void j2k_setup_decoder(opj_j2k_t *j2k, opj_dparameters_t *parameters) {
 		opj_cp_t *cp = (opj_cp_t*)opj_malloc(sizeof(opj_cp_t));
 		cp->reduce = parameters->cp_reduce;	
 		cp->layer = parameters->cp_layer;
+		cp->limit_decoding = parameters->cp_limit_decoding;
 /* UniPG>> */
 #ifdef USE_JPWL
 		cp->correct = parameters->jpwl_correct;
@@ -1594,11 +1595,18 @@ opj_image_t* j2k_decode(opj_j2k_t *j2k, opj_cio_t *cio) {
 			return 0;
 		}
 		e = j2k_dec_mstab_lookup(id);
+		// Check if the marker is known
 		if (!(j2k->state & e->states)) {
 			opj_image_destroy(image);
 			opj_event_msg(cinfo, EVT_ERROR, "%.8x: unexpected marker %x\n", cio_tell(cio) - 2, id);
 			return 0;
 		}
+		// Check if the decoding is limited to the main header
+		if (e->id == J2K_MS_SOT && j2k->cp->limit_decoding == LIMIT_TO_MAIN_HEADER) {
+			opj_event_msg(cinfo, EVT_INFO, "Main Header decoded.\n");
+			return image;
+		}		
+
 		if (e->handler) {
 			(*e->handler)(j2k);
 		}
