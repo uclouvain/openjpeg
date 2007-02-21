@@ -934,8 +934,7 @@ void t1_destroy(opj_t1_t *t1) {
 
 void t1_encode_cblks(opj_t1_t *t1, opj_tcd_tile_t *tile, opj_tcp_t *tcp) {
 	int compno, resno, bandno, precno, cblkno;
-	int x, y, i, j, orient;
-	
+
 	tile->distotile = 0;		/* fixed_quality */
 
 	for (compno = 0; compno < tile->numcomps; compno++) {
@@ -951,38 +950,34 @@ void t1_encode_cblks(opj_t1_t *t1, opj_tcd_tile_t *tile, opj_tcp_t *tcp) {
 					opj_tcd_precinct_t *prc = &band->precincts[precno];
 
 					for (cblkno = 0; cblkno < prc->cw * prc->ch; cblkno++) {
+						int x, y, w, i, j, orient;
 						opj_tcd_cblk_t *cblk = &prc->cblks[cblkno];
 
-						if (band->bandno == 0) {
-							x = cblk->x0 - band->x0;
-							y = cblk->y0 - band->y0;
-						} else if (band->bandno == 1) {
+						x = cblk->x0 - band->x0;
+						y = cblk->y0 - band->y0;
+						if (band->bandno & 1) {
 							opj_tcd_resolution_t *pres = &tilec->resolutions[resno - 1];
-							x = pres->x1 - pres->x0 + cblk->x0 - band->x0;
-							y = cblk->y0 - band->y0;
-						} else if (band->bandno == 2) {
+							x += pres->x1 - pres->x0;
+						}
+						if (band->bandno & 2) {
 							opj_tcd_resolution_t *pres = &tilec->resolutions[resno - 1];
-							x = cblk->x0 - band->x0;
-							y = pres->y1 - pres->y0 + cblk->y0 - band->y0;
-						} else {		/* if (band->bandno == 3) */
-							opj_tcd_resolution_t *pres = &tilec->resolutions[resno - 1];
-							x = pres->x1 - pres->x0 + cblk->x0 - band->x0;
-							y = pres->y1 - pres->y0 + cblk->y0 - band->y0;
+							y += pres->y1 - pres->y0;
 						}
 						
+						w = tilec->x1 - tilec->x0;
 						if (tcp->tccps[compno].qmfbid == 1) {
 							for (j = 0; j < cblk->y1 - cblk->y0; j++) {
 								for (i = 0; i < cblk->x1 - cblk->x0; i++) {
 									t1->data[j][i] = 
-										tilec->data[(x + i) + (y + j) * (tilec->x1 - tilec->x0)] << T1_NMSEDEC_FRACBITS;
+										tilec->data[(x + i) + (y + j) * w] << T1_NMSEDEC_FRACBITS;
 								}
 							}
-						} else if (tcp->tccps[compno].qmfbid == 0) {
+						} else {		/* if (tcp->tccps[compno].qmfbid == 0) */
 							for (j = 0; j < cblk->y1 - cblk->y0; j++) {
 								for (i = 0; i < cblk->x1 - cblk->x0; i++) {
 									t1->data[j][i] = 
 										fix_mul(
-										tilec->data[x + i + (y + j) * (tilec->x1 - tilec->x0)], 
+										tilec->data[x + i + (y + j) * w],
 										8192 * 8192 / ((int) floor(band->stepsize * 8192))) >> (13 - T1_NMSEDEC_FRACBITS);
 								}
 							}
@@ -1005,7 +1000,7 @@ void t1_encode_cblks(opj_t1_t *t1, opj_tcd_tile_t *tile, opj_tcp_t *tcp) {
 
 void t1_decode_cblks(opj_t1_t *t1, opj_tcd_tile_t *tile, opj_tcp_t *tcp) {
 	int compno, resno, bandno, precno, cblkno;
-	
+
 	for (compno = 0; compno < tile->numcomps; compno++) {
 		opj_tcd_tilecomp_t *tilec = &tile->comps[compno];
 
@@ -1019,7 +1014,7 @@ void t1_decode_cblks(opj_t1_t *t1, opj_tcd_tile_t *tile, opj_tcp_t *tcp) {
 					opj_tcd_precinct_t *prc = &band->precincts[precno];
 
 					for (cblkno = 0; cblkno < prc->cw * prc->ch; cblkno++) {
-						int x, y, i, j, orient;
+						int x, y, w, i, j, orient;
 						opj_tcd_cblk_t *cblk = &prc->cblks[cblkno];
 
 						orient = band->bandno;	/* FIXME */
@@ -1031,30 +1026,23 @@ void t1_decode_cblks(opj_t1_t *t1, opj_tcd_tile_t *tile, opj_tcp_t *tcp) {
 						
 						t1_decode_cblk(t1, cblk, orient, tcp->tccps[compno].roishift, tcp->tccps[compno].cblksty);
 
-						if (band->bandno == 0) {
-							x = cblk->x0 - band->x0;
-							y = cblk->y0 - band->y0;
-						} else if (band->bandno == 1) {
+						x = cblk->x0 - band->x0;
+						y = cblk->y0 - band->y0;
+						if (band->bandno & 1) {
 							opj_tcd_resolution_t *pres = &tilec->resolutions[resno - 1];
-							x = pres->x1 - pres->x0 + cblk->x0 - band->x0;
-							y = cblk->y0 - band->y0;
-						} else if (band->bandno == 2) {
+							x += pres->x1 - pres->x0;
+						}
+						if (band->bandno & 2) {
 							opj_tcd_resolution_t *pres = &tilec->resolutions[resno - 1];
-							x = cblk->x0 - band->x0;
-							y = pres->y1 - pres->y0 + cblk->y0 - band->y0;
-						} else {		/* if (band->bandno == 3) */
-							opj_tcd_resolution_t *pres = &tilec->resolutions[resno - 1];
-							x = pres->x1 - pres->x0 + cblk->x0 - band->x0;
-							y = pres->y1 - pres->y0 + cblk->y0 - band->y0;
+							y += pres->y1 - pres->y0;
 						}
 						
 						if (tcp->tccps[compno].roishift) {
-							int thresh, val, mag;
-							thresh = 1 << tcp->tccps[compno].roishift;
+							int thresh = 1 << tcp->tccps[compno].roishift;
 							for (j = 0; j < cblk->y1 - cblk->y0; j++) {
 								for (i = 0; i < cblk->x1 - cblk->x0; i++) {
-									val = t1->data[j][i];
-									mag = int_abs(val);
+									int val = t1->data[j][i];
+									int mag = int_abs(val);
 									if (mag >= thresh) {
 										mag >>= tcp->tccps[compno].roishift;
 										t1->data[j][i] = val < 0 ? -mag : mag;
@@ -1063,22 +1051,22 @@ void t1_decode_cblks(opj_t1_t *t1, opj_tcd_tile_t *tile, opj_tcp_t *tcp) {
 							}
 						}
 						
+						w = tilec->x1 - tilec->x0;
 						if (tcp->tccps[compno].qmfbid == 1) {
 							for (j = 0; j < cblk->y1 - cblk->y0; j++) {
 								for (i = 0; i < cblk->x1 - cblk->x0; i++) {
-									int tmp = t1->data[j][i];
-									tilec->data[x + i + (y + j) * (tilec->x1 - tilec->x0)] = tmp/2;
+									tilec->data[x + i + (y + j) * w] = t1->data[j][i]/2;
 								}
 							}
 						} else {		/* if (tcp->tccps[compno].qmfbid == 0) */
 							for (j = 0; j < cblk->y1 - cblk->y0; j++) {
 								for (i = 0; i < cblk->x1 - cblk->x0; i++) {
-									double tmp = (double)(t1->data[j][i] * band->stepsize * 4096.0);
 									if (t1->data[j][i] >> 1 == 0) {
-										tilec->data[x + i + (y + j) * (tilec->x1 - tilec->x0)] = 0;
+										tilec->data[x + i + (y + j) * w] = 0;
 									} else {
+										double tmp = (double)((t1->data[j][i] << 12) * band->stepsize);
 										int tmp2 = ((int) (floor(fabs(tmp)))) + ((int) floor(fabs(tmp*2))%2);
-										tilec->data[x + i + (y + j) * (tilec->x1 - tilec->x0)] = ((tmp<0)?-tmp2:tmp2);
+										tilec->data[x + i + (y + j) * w] = ((tmp<0)?-tmp2:tmp2);
 									}
 								}
 							}

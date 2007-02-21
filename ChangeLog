@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+February 21, 2007
++ [FOD] Algorithmic optimizations in t1.c, thanks to Guido J. !
+
 February 19, 2007
 + [FOD] Added OPJ_LIMIT_DECODING enabling us to limit the decoding to main header (modified openjpeg.c, openjpeg.h, j2k.c and j2k.h)
 
