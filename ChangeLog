@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+February 22, 2007
++ [FOD] Added the OPJViewer Module (/OPJViewer), developed by Giuseppe Baruffa of the university of Perugia
+
 February 21, 2007
 + [FOD] Algorithmic optimizations in t1.c, thanks to Guido J. !
 
