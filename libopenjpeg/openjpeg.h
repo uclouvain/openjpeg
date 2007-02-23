@@ -31,7 +31,7 @@
 #ifndef OPENJPEG_H
 #define OPENJPEG_H
 
-#define OPENJPEG_VERSION "1.1.0"
+#define OPENJPEG_VERSION "1.1.1"
 
 /* 
 ==========================================================
