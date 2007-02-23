@@ -380,3 +380,4 @@ Computes the minimum between two integers
 #endif /* USE_JPWL */
 
 #endif /* __JPWL_H */
+

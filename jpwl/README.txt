@@ -36,7 +36,7 @@ The "jpwl" directory is already populated with a couple of Visual C++ 6.0 worksp
 2.2. Compiling the source code in Unix-like systems
 -----------------------------------------------------
 
-The code has been proven to compile under Linux and MacOS X.
+Under linux, enter the jpwl directory and type "make clean" and "make".
 
 
 3. Running the JPWL software
