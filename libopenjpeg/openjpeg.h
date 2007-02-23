@@ -366,9 +366,9 @@ typedef struct opj_dparameters {
 	/** activates the JPWL correction capabilities */
 	bool jpwl_correct;
 	/** expected number of components */
-	bool jpwl_exp_comps;
+	int jpwl_exp_comps;
 	/** maximum number of tiles */
-	bool jpwl_max_tiles;
+	int jpwl_max_tiles;
 	/*@}*/
 #endif /* USE_JPWL */
 /* <<UniPG */

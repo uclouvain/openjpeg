@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+February 23, 2007
+* [GB] Fixed a copy-and-paste type assignment error (bool instead of int) in the JPWL section of decoder parameters structure in openjpeg.h; minor type-casting in jpwl_lib.c. As a result, now OPJViewer should run correctly when built against the most current SVN trunk of LibOpenJPEG.lib
+
 February 22, 2007
 + [FOD] Added the OPJViewer Module (/OPJViewer), developed by Giuseppe Baruffa of the university of Perugia
 

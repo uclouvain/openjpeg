@@ -1483,7 +1483,7 @@ bool jpwl_esd_fill(opj_j2k_t *j2k, jpwl_esd_ms_t *esd, unsigned char *buf) {
 			else
 				/* packet: first is most important, and then in decreasing order
 				down to the last, which counts for 1 */
-				dvalue = jpwl_pfp_to_double(j2k->image_info->num - thispacket, esd->se_size);
+				dvalue = jpwl_pfp_to_double((unsigned short) (j2k->image_info->num - thispacket), esd->se_size);
 			break;
 
 		/* MSE */

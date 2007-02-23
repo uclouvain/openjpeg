@@ -124,7 +124,6 @@ bool wxJ2KHandler::LoadFile(wxImage *image, wxInputStream& stream, bool verbose,
 	opj_dparameters_t parameters;	/* decompression parameters */
 	opj_event_mgr_t event_mgr;		/* event manager */
 	opj_image_t *opjimage = NULL;
-	FILE *fsrc = NULL;
 	unsigned char *src = NULL;
     unsigned char *ptr;
 	int file_length;
@@ -147,13 +146,15 @@ bool wxJ2KHandler::LoadFile(wxImage *image, wxInputStream& stream, bool verbose,
 	opj_set_default_decoder_parameters(&parameters);
 
 	/* prepare parameters */
+	strncpy(parameters.infile, "", sizeof(parameters.infile)-1);
+	strncpy(parameters.outfile, "", sizeof(parameters.outfile)-1);
 	parameters.decod_format = J2K_CFMT;
 	parameters.cod_format = BMP_DFMT;
 
 	/* JPWL only */
 #ifdef USE_JPWL
-	parameters.jpwl_exp_comps = 3;
-	parameters.jpwl_max_tiles = 100;
+	parameters.jpwl_exp_comps = JPWL_EXPECTED_COMPONENTS;
+	parameters.jpwl_max_tiles = JPWL_MAXIMUM_TILES;
 	parameters.jpwl_correct = true;
 #endif /* USE_JPWL */
 
@@ -191,13 +192,15 @@ bool wxJ2KHandler::LoadFile(wxImage *image, wxInputStream& stream, bool verbose,
 		return false;
 	}
 
+	/* close the byte stream */
+	opj_cio_close(cio);
+
 	// check image components
 	if ((opjimage->numcomps != 1) && (opjimage->numcomps != 3)) {
 		wxMutexGuiEnter();
 		wxLogError("J2K: weird number of components");
 		wxMutexGuiLeave();
 		opj_destroy_decompress(dinfo);
-		opj_cio_close(cio);
 		free(src);
 		return false;
 	}
@@ -274,7 +277,6 @@ bool wxJ2KHandler::LoadFile(wxImage *image, wxInputStream& stream, bool verbose,
 
 	/* close openjpeg structs */
 	opj_destroy_decompress(dinfo);
-	opj_cio_close(cio);
 	opj_image_destroy(opjimage);
 	free(src);
 

@@ -589,7 +589,6 @@ bool wxMJ2Handler::LoadFile(wxImage *image, wxInputStream& stream, bool verbose,
 	opj_dparameters_t parameters;	/* decompression parameters */
 	opj_event_mgr_t event_mgr;		/* event manager */
 	opj_image_t *opjimage = NULL;
-	FILE *fsrc = NULL;
 	unsigned char *src = NULL;
     unsigned char *ptr;
 	int file_length, jp2c_point, jp2h_point;
@@ -612,6 +611,8 @@ bool wxMJ2Handler::LoadFile(wxImage *image, wxInputStream& stream, bool verbose,
 	opj_set_default_decoder_parameters(&parameters);
 
 	/* prepare parameters */
+	strncpy(parameters.infile, "", sizeof(parameters.infile)-1);
+	strncpy(parameters.outfile, "", sizeof(parameters.outfile)-1);
 	parameters.decod_format = JP2_CFMT;
 	parameters.cod_format = BMP_DFMT;
 
@@ -671,13 +672,15 @@ bool wxMJ2Handler::LoadFile(wxImage *image, wxInputStream& stream, bool verbose,
 		return false;
 	}
 
+	/* close the byte stream */
+	opj_cio_close(cio);
+
 	// check image size
 	if ((opjimage->numcomps != 1) && (opjimage->numcomps != 3)) {
 		wxMutexGuiEnter();
 		wxLogError("MJ2: weird number of components");
 		wxMutexGuiLeave();
 		opj_destroy_decompress(dinfo);
-		opj_cio_close(cio);
 		free(src);
 		return false;
 	}
@@ -736,7 +739,6 @@ bool wxMJ2Handler::LoadFile(wxImage *image, wxInputStream& stream, bool verbose,
 
 	/* close openjpeg structs */
 	opj_destroy_decompress(dinfo);
-	opj_cio_close(cio);
 	opj_image_destroy(opjimage);
 	free(src);
 
