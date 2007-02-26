@@ -47,9 +47,35 @@ int opterr = 1,			/* if error message should be printed */
  optreset;			/* reset getopt */
 const char *optarg;			/* argument associated with option */
 
+typedef struct option
+{
+	char *name;
+	int has_arg;
+	int *flag;
+	int val;
+}option_t;
+
 #define	BADCH	(int)'?'
 #define	BADARG	(int)':'
 #define	EMSG	""
+
+
+
+static void getopterror(int which) {
+	static char error1[]="Unknown option `-x'.\n";
+	static char error2[]="Missing argument for `-x'.\n";
+	if (opterr) {
+		if (which) {
+			error2[23]=optopt;
+			fprintf(stderr,"%s\n",error2);
+			
+		} else {
+			error1[17]=optopt;
+			fprintf(stderr,"%s\n",error1);
+		}
+	}
+}
+
 
 /*
  * getopt --
@@ -109,4 +135,111 @@ int getopt(int nargc, char *const *nargv, const char *ostr) {
     ++optind;
   }
   return (optopt);		/* dump back option letter */
+}
+
+
+int getopt_long(int argc, char * const argv[], const char *optstring,
+struct option *longopts, int *longindex, int totlen) {
+	static int lastidx,lastofs;
+	char *tmp;
+	int i,len;
+again:
+	if (optind>argc || !argv[optind] || *argv[optind]!='-' || argv[optind][1]==0)
+		return -1;
+
+	if (argv[optind][0]=='-' && argv[optind][1]==0) {
+		++optind;
+		return -1;
+	}
+
+	if (argv[optind][0]=='-') {	/* long option */
+		char* arg=argv[optind]+1;
+		char* max=strchr(arg,'=');
+		const struct option* o;
+		if (!max) max=arg+strlen(arg);
+		o=longopts;
+		len=sizeof(longopts[0]);
+
+		for (i=0;i<totlen;i=i+len,o++) {
+			if (!strncmp(o->name,arg,(size_t)(max-arg))) {	/* match */
+				if (longindex) *longindex=o-longopts;
+				if (o->has_arg>0) {
+					if (*max=='=')
+						optarg=max+1;
+					else {
+						optarg=argv[optind+1];
+						if(optarg){
+							if (strchr(optarg,'-')){ /* No argument */
+								if (*optstring==':') return ':';
+								if (opterr)
+								(void) fprintf(stderr,"%s: option requires an argument %c\n",arg, optopt);
+								return (BADCH);
+								++optind;
+							}
+						}
+						if (!optarg && o->has_arg==1) {	/* no argument there */
+							if (*optstring==':') return ':';
+							if (opterr)
+							(void) fprintf(stderr,"%s: option requires an argument %c\n",arg, optopt);
+							return (BADCH);
+							++optind;
+						}
+						++optind;
+					}
+				}
+				++optind;
+				if (o->flag)
+					*(o->flag)=o->val;
+				else
+					return o->val;
+				return 0;
+			}
+		}//(end for)
+
+		if (*optstring==':') return ':';
+
+		if (lastidx!=optind) {
+			lastidx=optind; lastofs=0;
+		}
+		optopt=argv[optind][lastofs+1];
+
+		if ((tmp=strchr(optstring,optopt))) {
+			if (*tmp==0) {	/* apparently, we looked for \0, i.e. end of argument */
+				++optind;
+				goto again;
+			}
+
+			if (tmp[1]==':') {	/* argument expected */
+				if (tmp[2]==':' || argv[optind][lastofs+2]) {	/* "-foo", return "oo" as optarg */
+					if (!*(optarg=argv[optind]+lastofs+2)) optarg=0;
+					goto found;
+				}
+
+				optarg=argv[optind+1];
+				if (!optarg) {	/* missing argument */
+					++optind;
+					if (*optstring==':') return ':';
+					getopterror(1);
+					return ':';
+				}
+				++optind;
+			}
+			else {
+				++lastofs;
+				return optopt;
+			}
+found:
+			++optind;
+			return optopt;
+		} 
+		else {	/* not found */
+			getopterror(0);
+			++optind;
+			return '?';
+		}
+		
+		fprintf(stderr,"Invalid option %s\n",arg);
+		++optind;
+		return '?';
+	}// end of long option
 }
