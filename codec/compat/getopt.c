@@ -108,10 +108,11 @@ int getopt(int nargc, char *const *nargv, const char *ostr) {
       return (-1);
     if (!*place)
       ++optind;
-    if (opterr && *ostr != ':')
-      (void) fprintf(stderr,
+		if (opterr && *ostr != ':') {
+      fprintf(stderr,
 		     "%s: illegal option -- %c\n", __progname, optopt);
-    return (BADCH);
+			return (BADCH);
+		}
   }
   if (*++oli != ':') {		/* don't need argument */
     optarg = NULL;
@@ -124,11 +125,12 @@ int getopt(int nargc, char *const *nargv, const char *ostr) {
       place = EMSG;
       if (*ostr == ':')
 	return (BADARG);
-      if (opterr)
-	(void) fprintf(stderr,
+			if (opterr) {
+				fprintf(stderr,
 		       "%s: option requires an argument -- %c\n",
 		       __progname, optopt);
-      return (BADCH);
+				return (BADCH);
+			}
     } else			/* white space */
       optarg = nargv[optind];
     place = EMSG;
@@ -171,17 +173,19 @@ again:
 						if(optarg){
 							if (strchr(optarg,'-')){ /* No argument */
 								if (*optstring==':') return ':';
-								if (opterr)
-								(void) fprintf(stderr,"%s: option requires an argument %c\n",arg, optopt);
-								return (BADCH);
+								if (opterr) {
+									fprintf(stderr,"%s: option requires an argument %c\n",arg, optopt);
+									return (BADCH);
+								}
 								++optind;
 							}
 						}
 						if (!optarg && o->has_arg==1) {	/* no argument there */
 							if (*optstring==':') return ':';
-							if (opterr)
-							(void) fprintf(stderr,"%s: option requires an argument %c\n",arg, optopt);
-							return (BADCH);
+							if (opterr) {
+								fprintf(stderr,"%s: option requires an argument %c\n",arg, optopt);
+								return (BADCH);							
+							}
 							++optind;
 						}
 						++optind;
@@ -242,4 +246,5 @@ found:
 		++optind;
 		return '?';
 	}// end of long option
+	return (BADCH);
 }
