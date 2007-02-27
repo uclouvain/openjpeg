@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+February 27, 2007
+* [Parvatha] Made get_file_format function more robust. Modifications in image_to_j2k.c, j2k_to_image.c, getopt.c, getopt.h
+
 February 26, 2007
 + [Parvatha] Option to read images from a Folder whose path is specified in the Input parameters by "-ImgDir" along with output decod format specified by "-OutFor" . Modifications in image_to_j2k.c, j2k_to_image.c, getopt.c, getopt.h
 + [Parvatha] Enabling use of multi character input parameters in the codec. Modifications in image_to_j2k.c, j2k_to_image.c, getopt.c, getopt.h

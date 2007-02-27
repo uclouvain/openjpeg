@@ -181,7 +181,10 @@ int get_file_format(char *filename) {
 	unsigned int i;
 	static const char *extension[] = {"pgx", "pnm", "pgm", "ppm", "bmp", "j2k", "jp2", "jpt" };
 	static const int format[] = { PGX_DFMT, PXM_DFMT, PXM_DFMT, PXM_DFMT, BMP_DFMT, J2K_CFMT, JP2_CFMT, JPT_CFMT };
-	char * ext = strrchr(filename, '.') + 1;
+	char * ext = strrchr(filename, '.');
+	if (ext == NULL)
+		return -1;
+	ext++;
 	if(ext) {
 		for(i = 0; i < sizeof(format)/sizeof(*format); i++) {
 			if(strnicmp(ext, extension[i], 3) == 0) {
@@ -193,12 +196,14 @@ int get_file_format(char *filename) {
 	return -1;
 }
 
-get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_dparameters_t *parameters){
+char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_dparameters_t *parameters){
 	char image_filename[OPJ_PATH_LEN], infilename[OPJ_PATH_LEN],outfilename[OPJ_PATH_LEN],temp_ofname[OPJ_PATH_LEN];
 
 	strcpy(image_filename,dirptr->filename[imageno]);
 	fprintf(stderr,"Imageno=%d %s\n",imageno,image_filename);
 	parameters->decod_format = get_file_format(image_filename);
+	if (parameters->decod_format == -1)
+		return 1;
 	sprintf(infilename,"%s/%s",img_fol->imgdirpath,image_filename);
 	strncpy(parameters->infile, infilename, sizeof(infilename));
 
@@ -208,6 +213,7 @@ get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_dparameters_t
 		sprintf(outfilename,"%s/%s.%s",img_fol->imgdirpath,temp_ofname,img_fol->out_format);
 		strncpy(parameters->outfile, outfilename, sizeof(outfilename));
 	}
+	return 0;
 }
 
 
@@ -427,14 +433,13 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 		}
 		if(!((parameters->outfile[0] == 0))){
 			fprintf(stderr, "Error: options -ImgDir and -o cannot be used together !!\n");
-			fprintf(stderr, "Specify OutputFormat using -OutFor<FORMAT> !!\n");
 			return 1;
 		}
 	}else{
 		if((parameters->infile[0] == 0) || (parameters->outfile[0] == 0)) {
 			fprintf(stderr, "Error: One of option; -i or -ImgDir must be specified\n");
 			fprintf(stderr, "Error: When using -i; -o must be used\n");
-			fprintf(stderr, "usage: image_to_j2k -i image-file -o j2k/jp2-file (+ options)\n");
+			fprintf(stderr, "usage: image_to_j2k -i *.j2k/jp2 -o *.pgm/ppm/pnm/pgx/bmp(+ options)\n");
 			return 1;
 		}
 	}
@@ -530,11 +535,12 @@ int main(int argc, char **argv) {
 
 		image = NULL;
 		fprintf(stderr,"\n");
-		process_file = 1;
 
-		
 		if(img_fol.set_imgdir==1){
-			get_next_file(imageno, dirptr,&img_fol, &parameters );
+			if (get_next_file(imageno, dirptr,&img_fol, &parameters)) {
+				fprintf(stderr,"skipping file...\n");
+				continue;
+			}
 
 		}
 
@@ -652,7 +658,7 @@ int main(int argc, char **argv) {
 
 		default:
 			fprintf(stderr, "False input image format skipping file..\n");
-			process_file = 0;
+			continue;
 	}
 
 		/* free the memory containing the code-stream */
@@ -661,7 +667,6 @@ int main(int argc, char **argv) {
 
 		/* create output image */
 		/* ------------------- */
-		if(process_file == 1){
 			switch (parameters.cod_format) {
 		case PXM_DFMT:			/* PNM PGM PPM */
 			imagetopnm(image, parameters.outfile);
@@ -682,7 +687,7 @@ int main(int argc, char **argv) {
 			}
 			/* free image data structure */
 			opj_image_destroy(image);
-		}
+
 	}
 	return 0;
 }
