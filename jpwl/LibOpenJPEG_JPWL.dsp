@@ -72,7 +72,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo
+# ADD LIB32 /nologo /out:"Debug\LibOpenJPEG_JPWLd.lib"
 
 !ENDIF 
 
@@ -90,6 +90,10 @@ SOURCE=..\libopenjpeg\bio.c
 # Begin Source File
 
 SOURCE=..\libopenjpeg\cio.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\crc.c
 # End Source File
 # Begin Source File
 
@@ -121,6 +125,14 @@ SOURCE=..\libopenjpeg\jpt.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\jpwl.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\jpwl_lib.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\libopenjpeg\mct.c
 # End Source File
 # Begin Source File
@@ -138,6 +150,10 @@ SOURCE=..\libopenjpeg\pi.c
 # Begin Source File
 
 SOURCE=..\libopenjpeg\raw.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\rs.c
 # End Source File
 # Begin Source File
 
@@ -166,6 +182,10 @@ SOURCE=..\libopenjpeg\bio.h
 # Begin Source File
 
 SOURCE=..\libopenjpeg\cio.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\crc.h
 # End Source File
 # Begin Source File
 
@@ -205,6 +225,10 @@ SOURCE=..\libopenjpeg\jpt.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\jpwl.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\libopenjpeg\mct.h
 # End Source File
 # Begin Source File
@@ -226,6 +250,10 @@ SOURCE=..\libopenjpeg\pi.h
 # Begin Source File
 
 SOURCE=..\libopenjpeg\raw.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\rs.h
 # End Source File
 # Begin Source File
 
