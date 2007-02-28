@@ -1,5 +1,9 @@
 #include <stdio.h>
+#ifdef WIN32
 #include <malloc.h>
+#else
+#include <stdlib.h>
+#endif
 #include <setjmp.h>
 #include <string.h>
 
