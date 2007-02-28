@@ -439,9 +439,9 @@ int mqc_bypass_flush_enc(opj_mqc_t *mqc) {
 
 void mqc_reset_enc(opj_mqc_t *mqc) {
 	mqc_resetstates(mqc);
-	mqc_setstate(mqc, 18, 0, 46);
-	mqc_setstate(mqc, 0, 0, 3);
-	mqc_setstate(mqc, 1, 0, 4);
+	mqc_setstate(mqc, T1_CTXNO_UNI, 0, 46);
+	mqc_setstate(mqc, T1_CTXNO_AGG, 0, 3);
+	mqc_setstate(mqc, T1_CTXNO_ZC, 0, 4);
 }
 
 int mqc_restart_enc(opj_mqc_t *mqc) {
