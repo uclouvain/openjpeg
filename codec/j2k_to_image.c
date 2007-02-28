@@ -52,6 +52,7 @@
 #define PGX_DFMT 11
 #define BMP_DFMT 12
 #define YUV_DFMT 13
+#define TIF_DFMT 14
 
 /* ----------------------------------------------------------------------- */
 
@@ -179,8 +180,8 @@ int load_images(dircnt_t *dirptr, char *imgdirpath){
 
 int get_file_format(char *filename) {
 	unsigned int i;
-	static const char *extension[] = {"pgx", "pnm", "pgm", "ppm", "bmp", "j2k", "jp2", "jpt" };
-	static const int format[] = { PGX_DFMT, PXM_DFMT, PXM_DFMT, PXM_DFMT, BMP_DFMT, J2K_CFMT, JP2_CFMT, JPT_CFMT };
+	static const char *extension[] = {"pgx", "pnm", "pgm", "ppm", "bmp","tif", "j2k", "jp2", "jpt" };
+	static const int format[] = { PGX_DFMT, PXM_DFMT, PXM_DFMT, PXM_DFMT, BMP_DFMT, TIF_DFMT, J2K_CFMT, JP2_CFMT, JPT_CFMT };
 	char * ext = strrchr(filename, '.');
 	if (ext == NULL)
 		return -1;
@@ -200,7 +201,7 @@ char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_dparamet
 	char image_filename[OPJ_PATH_LEN], infilename[OPJ_PATH_LEN],outfilename[OPJ_PATH_LEN],temp_ofname[OPJ_PATH_LEN];
 
 	strcpy(image_filename,dirptr->filename[imageno]);
-	fprintf(stderr,"Imageno=%d %s\n",imageno,image_filename);
+	fprintf(stderr,"File Number %d \"%s\"\n",imageno,image_filename);
 	parameters->decod_format = get_file_format(image_filename);
 	if (parameters->decod_format == -1)
 		return 1;
@@ -271,6 +272,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 					case PGX_DFMT:
 					case PXM_DFMT:
 					case BMP_DFMT:
+					case TIF_DFMT:
 						break;
 					default:
 						fprintf(stderr, "Unknown output format image %s [only *.pnm, *.pgm, *.ppm, *.pgx or *.bmp]!! \n", outfile);
@@ -298,6 +300,9 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 						break;
 					case BMP_DFMT:
 						img_fol->out_format = "bmp";
+						break;
+					case TIF_DFMT:
+						img_fol->out_format = "tif";
 						break;
 					default:
 						fprintf(stderr, "Unknown output format image %s [only *.pnm, *.pgm, *.ppm, *.pgx or *.bmp]!! \n");
@@ -484,7 +489,6 @@ int main(int argc, char **argv) {
 	int num_images;
 	int i,imageno;
 	dircnt_t *dirptr;
-	char process_file = 1;
 	opj_dinfo_t* dinfo = NULL;	/* handle to a decompressor */
 	opj_cio_t *cio = NULL;
 
@@ -657,7 +661,7 @@ int main(int argc, char **argv) {
 		break;
 
 		default:
-			fprintf(stderr, "False input image format skipping file..\n");
+			fprintf(stderr, "skipping file..\n");
 			continue;
 	}
 
@@ -667,26 +671,50 @@ int main(int argc, char **argv) {
 
 		/* create output image */
 		/* ------------------- */
-			switch (parameters.cod_format) {
+		switch (parameters.cod_format) {
 		case PXM_DFMT:			/* PNM PGM PPM */
-			imagetopnm(image, parameters.outfile);
+			if (imagetopnm(image, parameters.outfile)) {
+				fprintf(stdout,"Outfile %s not generated\n",parameters.outfile);
+			}
+			else {
+				fprintf(stdout,"Successfully generated Outfile %s\n",parameters.outfile);
+			}
 			break;
 
 		case PGX_DFMT:			/* PGX */
-			imagetopgx(image, parameters.outfile);
+			if(imagetopgx(image, parameters.outfile)){
+				fprintf(stdout,"Outfile %s not generated\n",parameters.outfile);
+			}
+			else {
+				fprintf(stdout,"Successfully generated Outfile %s\n",parameters.outfile);
+			}
 			break;
 
 		case BMP_DFMT:			/* BMP */
-			imagetobmp(image, parameters.outfile);
+			if(imagetobmp(image, parameters.outfile)){
+				fprintf(stdout,"Outfile %s not generated\n",parameters.outfile);
+			}
+			else {
+				fprintf(stdout,"Successfully generated Outfile %s\n",parameters.outfile);
+			}
 			break;
-			}
 
-			/* free remaining structures */
-			if(dinfo) {
-				opj_destroy_decompress(dinfo);
+		case TIF_DFMT:			/* TIFF */
+			if(imagetotif(image, parameters.outfile)){
+				fprintf(stdout,"Outfile %s not generated\n",parameters.outfile);
 			}
-			/* free image data structure */
-			opj_image_destroy(image);
+			else {
+				fprintf(stdout,"Successfully generated Outfile %s\n",parameters.outfile);
+			}
+			break;
+		}
+
+		/* free remaining structures */
+		if(dinfo) {
+			opj_destroy_decompress(dinfo);
+		}
+		/* free image data structure */
+		opj_image_destroy(image);
 
 	}
 	return 0;

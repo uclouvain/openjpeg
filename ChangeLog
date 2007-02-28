@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 February 28, 2007
++ [Parvatha] Enabled compression of TIF image format to j2k by tifftoimage() and decompression of codestream to TIF image format using imagetotif(). Modifications in image_to_j2k.c, j2k_to_image.c, convert.c, convert.h
 * [antonin] fixed a bug in context numerotation that prevented the RESET switch to work correctly : mqc_reset_enc in mqc.c
 * [Fod] Corrected codec Makefile by adding the compilation of "compat/getopt.c" 
 

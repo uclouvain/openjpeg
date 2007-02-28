@@ -52,6 +52,7 @@
 #define PGX_DFMT 11
 #define BMP_DFMT 12
 #define YUV_DFMT 13
+#define TIF_DFMT 14
 
 /* ----------------------------------------------------------------------- */
 
@@ -356,10 +357,10 @@ int load_images(dircnt_t *dirptr, char *imgdirpath){
 int get_file_format(char *filename) {
 	unsigned int i;
 	static const char *extension[] = {
-    "pgx", "pnm", "pgm", "ppm", "bmp", "j2k", "jp2"
+    "pgx", "pnm", "pgm", "ppm", "bmp","tif", "j2k", "jp2"
     };
 	static const int format[] = {
-    PGX_DFMT, PXM_DFMT, PXM_DFMT, PXM_DFMT, BMP_DFMT, J2K_CFMT, JP2_CFMT
+    PGX_DFMT, PXM_DFMT, PXM_DFMT, PXM_DFMT, BMP_DFMT,TIF_DFMT, J2K_CFMT, JP2_CFMT
     };
 	char * ext = strrchr(filename, '.');
 	if (ext == NULL)
@@ -443,11 +444,12 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,i
 					case PGX_DFMT:
 					case PXM_DFMT:
 					case BMP_DFMT:
+					case TIF_DFMT:
 						break;
 					default:
 						fprintf(stderr,
 							"!! Unrecognized format for infile : %s "
-              "[accept only *.pnm, *.pgm, *.ppm, *.pgx or *.bmp] !!\n\n", 
+              "[accept only *.pnm, *.pgm, *.ppm, *.pgx, *.bmp or *.tif] !!\n\n", 
 							infile);
 						return 1;
 				}
@@ -1145,8 +1147,8 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,i
 	}
 
 	/* check for possible errors */
-	if(img_fol->set_imgdir==1){
-		if(!(parameters->infile[0]==0)){
+	if(img_fol->set_imgdir == 1){
+		if(!(parameters->infile[0] == 0)){
 			fprintf(stderr, "Error: options -ImgDir and -i cannot be used together !!\n");
 			return 1;
 		}
@@ -1234,7 +1236,6 @@ int main(int argc, char **argv) {
 	opj_image_t *image = NULL;
 	int i,num_images;
 	int imageno;
-	char process_file = 1;
 	dircnt_t *dirptr;
 
 	/*
@@ -1319,7 +1320,9 @@ int main(int argc, char **argv) {
 				break;
 			case BMP_DFMT:
 				break;
-
+			case TIF_DFMT:
+				break;
+		
 			default:
 				fprintf(stderr,"skipping file...\n");
 				continue;			
@@ -1332,15 +1335,15 @@ int main(int argc, char **argv) {
 				case PGX_DFMT:
 					image = pgxtoimage(parameters.infile, &parameters);
 					if (!image) {
-						fprintf(stderr, " unable to load pgx file\n");
-						return 1;
+						fprintf(stderr, "Unable to load pgx file\n");
+						return 1; 
 					}
 					break;
 
 				case PXM_DFMT:
 					image = pnmtoimage(parameters.infile, &parameters);
 					if (!image) {
-						fprintf(stderr, " not a pnm file\n");
+						fprintf(stderr, "Unable to load pnm file\n");
 						return 1;
 					}
 					break;
@@ -1348,11 +1351,19 @@ int main(int argc, char **argv) {
 				case BMP_DFMT:
 					image = bmptoimage(parameters.infile, &parameters);
 					if (!image) {
-						fprintf(stderr, " not a bmp file\n");
+						fprintf(stderr, "Unable to load bmp file\n");
 						return 1;
 					}
 					break;
-			}
+			
+				case TIF_DFMT:
+					image = tiftoimage(parameters.infile, &parameters);
+					if (!image) {
+						fprintf(stderr, "Unable to load tiff file\n");
+						return 1;
+					}
+				break;
+		}
 
 			/* encode the destination image */
 			/* ---------------------------- */

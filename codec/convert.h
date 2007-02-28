@@ -35,6 +35,9 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters);
 
 int imagetobmp(opj_image_t *image, const char *outfile);
 
+/* TIFF to image conversion*/
+opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters);
+int imagetotif(opj_image_t *image, const char *outfile);
 /**
 Load a single image component encoded in PGX file format
 @param filename Name of the PGX file to load

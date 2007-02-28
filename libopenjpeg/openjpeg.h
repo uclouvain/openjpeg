@@ -277,7 +277,7 @@ typedef struct opj_cparameters {
 	int subsampling_dx;
 	/** subsampling value for dy */
 	int subsampling_dy;
-	/** input file format 0: PGX, 1: PxM, 2: BMP */
+	/** input file format 0: PGX, 1: PxM, 2: BMP 3:TIF*/
 	int decod_format;
 	/** output file format 0: J2K, 1: JP2, 2: JPT */
 	int cod_format;

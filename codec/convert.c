@@ -32,6 +32,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "openjpeg.h"
+#include "../libs/libtiff/tiffio.h"
 
 /*
  * Get logarithm of an integer and round downwards.
@@ -1063,4 +1064,359 @@ int imagetopnm(opj_image_t * image, const char *outfile) {
 	return 0;
 }
 
+/* -->> -->> -->> -->>
 
+	TIFF IMAGE FORMAT
+
+ <<-- <<-- <<-- <<-- */
+
+typedef struct tiff_infoheader{
+	DWORD tiWidth;  // Width of Image in pixel
+	DWORD tiHeight; // Height of Image in pixel
+	DWORD tiPhoto;	// Photometric
+	WORD  tiBps;	// Bits per sample
+	WORD  tiSf;		// Sample Format
+	WORD  tiSpp;	// Sample per pixel 1-bilevel,gray scale , 2- RGB
+	WORD  tiPC;	// Planar config (1-Interleaved, 2-Planarcomp)
+}tiff_infoheader_t;
+
+int imagetotif(opj_image_t * image, const char *outfile) {
+	int width, height;
+	int bps,index;
+	TIFF *tif;
+	tdata_t buf;
+	tstrip_t strip;
+	tsize_t strip_size;
+
+	if (image->numcomps == 3 && image->comps[0].dx == image->comps[1].dx
+		&& image->comps[1].dx == image->comps[2].dx
+		&& image->comps[0].dy == image->comps[1].dy
+		&& image->comps[1].dy == image->comps[2].dy
+		&& image->comps[0].prec == image->comps[1].prec
+		&& image->comps[1].prec == image->comps[2].prec) {
+
+			/* -->> -->> -->>    
+			RGB color	    
+			<<-- <<-- <<-- */
+
+			tif = TIFFOpen(outfile, "wb"); 
+			if (!tif) {
+				fprintf(stderr, "ERROR -> failed to open %s for writing\n", outfile);
+				return 1;
+			}
+
+			width	= image->comps[0].w;
+			height= image->comps[0].h;
+			bps		= image->comps[0].prec;
+			/* Set tags */
+			TIFFSetField(tif, TIFFTAG_IMAGEWIDTH, width);
+			TIFFSetField(tif, TIFFTAG_IMAGELENGTH, height);
+			TIFFSetField(tif, TIFFTAG_SAMPLESPERPIXEL, 3);
+			TIFFSetField(tif, TIFFTAG_BITSPERSAMPLE, bps);
+			TIFFSetField(tif, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
+			TIFFSetField(tif, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
+			TIFFSetField(tif, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
+			TIFFSetField(tif, TIFFTAG_ROWSPERSTRIP, 1);
+
+			/* Get a buffer for the data */
+			buf = _TIFFmalloc(TIFFStripSize(tif));
+			index=0;
+			strip_size=0;
+			strip_size=TIFFStripSize(tif);
+			for (strip = 0; strip < TIFFNumberOfStrips(tif); strip++) {
+				unsigned char *dat8;
+				int i;
+				dat8 = buf;
+				if (image->comps[0].prec == 8){
+					for (i=0; i<TIFFStripSize(tif); i+=3) {	// 8 bits per pixel 
+						dat8[i+0] = image->comps[0].data[index] ;	// R 
+						dat8[i+1] = image->comps[1].data[index] ;	// G 
+						dat8[i+2] = image->comps[2].data[index] ;	// B 
+						index++;
+					}
+				}else if (image->comps[0].prec == 12){
+					for (i=0; i<TIFFStripSize(tif); i+=9) {	// 12 bits per pixel 
+						dat8[i+0] = (image->comps[0].data[index]>>8)<<4 | (image->comps[0].data[index]>>4);
+						dat8[i+1] = (image->comps[0].data[index]<<4)|((image->comps[1].data[index]>>8)& 0x0f);
+						dat8[i+2] = (image->comps[1].data[index]);
+						dat8[i+3] = (image->comps[2].data[index]>>8)<<4 | (image->comps[2].data[index]>>4);
+						dat8[i+4] = (image->comps[2].data[index]<<4)|((image->comps[1].data[index+1]>>8)& 0x0f);
+						dat8[i+5] = (image->comps[0].data[index+1]);
+						dat8[i+6] = (image->comps[1].data[index+1]>>8)<<4 | (image->comps[1].data[index+1]>>4);
+						dat8[i+7] = (image->comps[1].data[index+1]<<4)|((image->comps[2].data[index+1]>>8)& 0x0f);
+						dat8[i+8] = (image->comps[2].data[index+1]);
+						index+=2;
+					}
+				}else if (image->comps[0].prec == 16){
+					for (i=0; i<TIFFStripSize(tif); i+=6) {	// 16 bits per pixel 
+						dat8[i+0] =  image->comps[0].data[index];//LSB
+						dat8[i+1] = (image->comps[0].data[index]>> 8);//MSB	 
+						dat8[i+2] =  image->comps[1].data[index]; 
+						dat8[i+3] = (image->comps[1].data[index]>> 8);	
+						dat8[i+4] =  image->comps[2].data[index];	 
+						dat8[i+5] = (image->comps[2].data[index]>> 8); 
+						index++;
+					}
+				}else{
+					fprintf(stderr,"Bits=%d, Only 8,12,16 bits implemented\n",image->comps[0].prec);
+					fprintf(stderr,"Aborting\n");
+					return 1;
+				}
+				TIFFWriteEncodedStrip(tif, strip, buf, strip_size);
+			}
+			_TIFFfree(buf);
+			TIFFClose(tif);
+		}else if (image->numcomps == 1){
+			/* -->> -->> -->>    
+			Black and White	    
+			<<-- <<-- <<-- */
+
+			tif = TIFFOpen(outfile, "wb"); 
+			if (!tif) {
+				fprintf(stderr, "ERROR -> failed to open %s for writing\n", outfile);
+				return 1;
+			}
+
+			width	= image->comps[0].w;
+			height= image->comps[0].h;
+			bps		= image->comps[0].prec;
+
+			/* Set tags */
+			TIFFSetField(tif, TIFFTAG_IMAGEWIDTH, width);
+			TIFFSetField(tif, TIFFTAG_IMAGELENGTH, height);
+			TIFFSetField(tif, TIFFTAG_SAMPLESPERPIXEL, 1);
+			TIFFSetField(tif, TIFFTAG_BITSPERSAMPLE, bps);
+			TIFFSetField(tif, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
+			TIFFSetField(tif, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
+			TIFFSetField(tif, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_MINISBLACK);
+			TIFFSetField(tif, TIFFTAG_ROWSPERSTRIP, 1);
+
+			/* Get a buffer for the data */
+			buf = _TIFFmalloc(TIFFStripSize(tif));
+			index = 0;
+			strip_size = 0;
+			strip_size = TIFFStripSize(tif);
+			for (strip = 0; strip < TIFFNumberOfStrips(tif); strip++) {
+				unsigned char *dat8;
+				int i;
+				dat8 = buf;
+				if (image->comps[0].prec == 8){
+					for (i=0; i<TIFFStripSize(tif); i+=1) {	// 8 bits per pixel 
+						dat8[i+0] = image->comps[0].data[index] ;
+						index++;
+					}
+				}else if (image->comps[0].prec == 12){
+					for (i = 0; i<TIFFStripSize(tif); i+=3) {	// 12 bits per pixel 
+						dat8[i+0] = (image->comps[0].data[index]>>8)<<4 | (image->comps[0].data[index]>>4);
+						dat8[i+1] = (image->comps[0].data[index]<<4)|((image->comps[0].data[index+1]>>8)& 0x0f);
+						dat8[i+2] = (image->comps[0].data[index+1]);
+						index+=2;
+					}
+				}else if (image->comps[0].prec == 16){
+					for (i=0; i<TIFFStripSize(tif); i+=2) {	// 16 bits per pixel 
+						dat8[i+0] =  image->comps[0].data[index];
+						dat8[i+1] = (image->comps[0].data[index]>> 8);
+						index++;
+					}
+				}else{
+					fprintf(stderr,"Bits=%d, Only 8,12,16 bits implemented\n",image->comps[0].prec);
+					fprintf(stderr,"Aborting\n");
+					return 1;
+				}
+				TIFFWriteEncodedStrip(tif, strip, buf, strip_size);
+			}
+			_TIFFfree(buf);
+			TIFFClose(tif);
+		}else{
+			fprintf(stderr,"False color format. Only RGB & Grayscale has been implemented\n");
+			fprintf(stderr,"Aborting\n");
+			return 1;
+		}
+		return 0;
+}
+
+opj_image_t* tiftoimage(char *filename, opj_cparameters_t *parameters)
+{
+	int subsampling_dx = parameters->subsampling_dx;
+	int subsampling_dy = parameters->subsampling_dy;
+	TIFF *tif;
+	tiff_infoheader_t Info;
+	tdata_t buf;
+	tstrip_t strip;
+	tsize_t strip_size;
+	int j, numcomps, w, h,index;
+	OPJ_COLOR_SPACE color_space;
+	opj_image_cmptparm_t cmptparm[3];
+	opj_image_t * image = NULL;
+
+	tif = TIFFOpen(filename, "r");
+
+	if (!tif) {
+		fprintf(stderr, "Failed to open %s for reading\n", filename);
+		return 0;
+	}
+
+	TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &Info.tiWidth);
+	TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &Info.tiHeight);
+	TIFFGetField(tif, TIFFTAG_BITSPERSAMPLE, &Info.tiBps);
+	TIFFGetField(tif, TIFFTAG_SAMPLEFORMAT, &Info.tiSf);
+	TIFFGetField(tif, TIFFTAG_SAMPLESPERPIXEL, &Info.tiSpp);
+	Info.tiPhoto = 0;
+	TIFFGetField(tif, TIFFTAG_PHOTOMETRIC, &Info.tiPhoto);
+	TIFFGetField(tif, TIFFTAG_PLANARCONFIG, &Info.tiPC);
+	w= Info.tiWidth;
+	h= Info.tiHeight;
+
+	if (Info.tiPhoto == 2) { 
+		/* -->> -->> -->>    
+		RGB color	    
+		<<-- <<-- <<-- */
+
+		numcomps = 3;
+		color_space = CLRSPC_SRGB;
+		/* initialize image components*/ 
+		memset(&cmptparm[0], 0, 3 * sizeof(opj_image_cmptparm_t));
+		for(j = 0; j < numcomps; j++) {
+			cmptparm[j].prec = Info.tiBps;
+			cmptparm[j].bpp = Info.tiBps;
+			cmptparm[j].sgnd = 0;
+			cmptparm[j].dx = subsampling_dx;
+			cmptparm[j].dy = subsampling_dy;
+			cmptparm[j].w = w;
+			cmptparm[j].h = h;
+		}
+		/* create the image*/ 
+		image = opj_image_create(numcomps, &cmptparm[0], color_space);
+		if(!image) {
+			TIFFClose(tif);
+			return NULL;
+		}
+
+		/* set image offset and reference grid */
+		image->x0 = parameters->image_offset_x0;
+		image->y0 = parameters->image_offset_y0;
+		image->x1 =	!image->x0 ? (w - 1) * subsampling_dx + 1 : image->x0 + (w - 1) * subsampling_dx + 1;
+		image->y1 =	!image->y0 ? (h - 1) * subsampling_dy + 1 : image->y0 + (h - 1) * subsampling_dy + 1;
+
+		buf = _TIFFmalloc(TIFFStripSize(tif));
+		strip_size=0;
+		strip_size=TIFFStripSize(tif);
+		index = 0;
+		/* Read the Image components*/
+		for (strip = 0; strip < TIFFNumberOfStrips(tif); strip++) {
+			unsigned char *dat8;
+			int i, ssize;
+			ssize = TIFFReadEncodedStrip(tif, strip, buf, strip_size);
+			dat8 = buf;
+
+			if (Info.tiBps==12){
+				for (i=0; i<ssize; i+=9) {	/*12 bits per pixel*/
+					image->comps[0].data[index]   = (	dat8[i+0]<<4 )				|(dat8[i+1]>>4);
+					image->comps[1].data[index]   = ((dat8[i+1]& 0x0f)<< 8)	| dat8[i+2];
+					image->comps[2].data[index]   = ( dat8[i+3]<<4)					|(dat8[i+4]>>4);
+					image->comps[0].data[index+1] = ((dat8[i+4]& 0x0f)<< 8)	| dat8[i+5];
+					image->comps[1].data[index+1] = ( dat8[i+6] <<4)				|(dat8[i+7]>>4);
+					image->comps[2].data[index+1] = ((dat8[i+7]& 0x0f)<< 8)	| dat8[i+8];
+					index+=2;
+				}
+			}
+			else if( Info.tiBps==16){
+				for (i=0; i<ssize; i+=6) {	/* 16 bits per pixel */
+					image->comps[0].data[index] = ( dat8[i+1] << 8 ) | dat8[i+0];	// R 
+					image->comps[1].data[index] = ( dat8[i+3] << 8 ) | dat8[i+2];	// G 
+					image->comps[2].data[index] = ( dat8[i+5] << 8 ) | dat8[i+4];	// B 
+					index++;
+				}
+			}
+			else if ( Info.tiBps==8){
+				for (i=0; i<ssize; i+=3) {	/* 8 bits per pixel */
+					image->comps[0].data[index] = dat8[i+0];	// R 
+					image->comps[1].data[index] = dat8[i+1];	// G 
+					image->comps[2].data[index] = dat8[i+2];	// B 
+					index++;
+				}
+			}
+			else{
+				fprintf(stderr,"Bits=%d, Only 8,12,16 bits implemented\n",Info.tiBps);
+				fprintf(stderr,"Aborting\n");
+				return NULL;
+			}
+		}
+
+		_TIFFfree(buf);
+		TIFFClose(tif);
+	}else if(Info.tiPhoto == 1) { 
+		/* -->> -->> -->>    
+		Black and White
+		<<-- <<-- <<-- */
+
+		numcomps = 1;
+		color_space = CLRSPC_GRAY;
+		/* initialize image components*/ 
+		memset(&cmptparm[0], 0, sizeof(opj_image_cmptparm_t));
+		cmptparm[0].prec = Info.tiBps;
+		cmptparm[0].bpp = Info.tiBps;
+		cmptparm[0].sgnd = 0;
+		cmptparm[0].dx = subsampling_dx;
+		cmptparm[0].dy = subsampling_dy;
+		cmptparm[0].w = w;
+		cmptparm[0].h = h;
+
+		/* create the image*/ 
+		image = opj_image_create(numcomps, &cmptparm[0], color_space);
+		if(!image) {
+			TIFFClose(tif);
+			return NULL;
+		}
+		/* set image offset and reference grid */
+		image->x0 = parameters->image_offset_x0;
+		image->y0 = parameters->image_offset_y0;
+		image->x1 =	!image->x0 ? (w - 1) * subsampling_dx + 1 : image->x0 + (w - 1) * subsampling_dx + 1;
+		image->y1 =	!image->y0 ? (h - 1) * subsampling_dy + 1 : image->y0 + (h - 1) * subsampling_dy + 1;
+
+		buf = _TIFFmalloc(TIFFStripSize(tif));
+		strip_size = 0;
+		strip_size = TIFFStripSize(tif);
+		index = 0;
+		/* Read the Image components*/
+		for (strip = 0; strip < TIFFNumberOfStrips(tif); strip++) {
+			unsigned char *dat8;
+			int i, ssize;
+			ssize = TIFFReadEncodedStrip(tif, strip, buf, strip_size);
+			dat8 = buf;
+
+			if (Info.tiBps==12){
+				for (i=0; i<ssize; i+=3) {	/* 12 bits per pixel*/
+					image->comps[0].data[index] = ( dat8[i+0]<<4 )				|(dat8[i+1]>>4) ;
+					image->comps[0].data[index] = ((dat8[i+1]& 0x0f)<< 8)	| dat8[i+2];
+					index+=2;
+				}
+			}
+			else if( Info.tiBps==16){
+				for (i=0; i<ssize; i+=2) {	/* 16 bits per pixel */
+					image->comps[0].data[index] = ( dat8[i+1] << 8 ) | dat8[i+0];
+					index++;
+				}
+			}
+			else if ( Info.tiBps==8){
+				for (i=0; i<ssize; i+=1) {	/* 8 bits per pixel */
+					image->comps[0].data[index] = dat8[i+0];
+					index++;
+				}
+			}
+			else{
+				fprintf(stderr,"Bits=%d, Only 8,12,16 bits implemented\n",Info.tiBps);
+				fprintf(stderr,"Aborting\n");
+				return NULL;
+			}
+		}
+
+		_TIFFfree(buf);
+		TIFFClose(tif);
+	}else{
+		fprintf(stderr,"False color format. Only RGB & Grayscale has been implemented\n");
+		fprintf(stderr,"Aborting\n");
+		return NULL;
+	}
+	return image;
+}
