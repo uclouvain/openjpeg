@@ -44,8 +44,18 @@
 #if wxUSE_LIBOPENJPEG
 
 #include "wx/image.h"
+#include "libopenjpeg/openjpeg.h"
 
 #define wxBITMAP_TYPE_J2K	47
+
+#define wxIMAGE_OPTION_REDUCEFACTOR  wxString(_T("reducefactor"))
+#define wxIMAGE_OPTION_QUALITYLAYERS  wxString(_T("qualitylayers"))
+#define wxIMAGE_OPTION_MAXCOMPS  wxString(_T("maxcomps"))
+#ifdef USE_JPWL
+#define wxIMAGE_OPTION_ENABLEJPWL  wxString(_T("enablejpwl"))
+#define wxIMAGE_OPTION_EXPCOMPS  wxString(_T("expcomps"))
+#define wxIMAGE_OPTION_MAXTILES  wxString(_T("maxtiles"))
+#endif // USE_JPWL
 
 class WXDLLEXPORT wxJ2KHandler: public wxImageHandler
 {
@@ -56,7 +66,23 @@ public:
         m_extension = wxT("j2k");
         m_type = wxBITMAP_TYPE_J2K;
         m_mime = wxT("image/j2k");
+
+		m_reducefactor = 0;
+		m_qualitylayers = 0;
+		m_components = 0;
+#ifdef USE_JPWL
+		m_enablejpwl = true;
+		m_expcomps = JPWL_EXPECTED_COMPONENTS;
+		m_maxtiles = JPWL_MAXIMUM_TILES;
+#endif // USE_JPWL
     }
+
+		// decoding engine parameters
+		int m_reducefactor, m_qualitylayers, m_components;
+#ifdef USE_JPWL
+		bool m_enablejpwl;
+		int m_expcomps, m_maxtiles;
+#endif // USE_JPWL
 
 #if wxUSE_STREAMS
     virtual bool LoadFile( wxImage *image, wxInputStream& stream, bool verbose=true, int index=-1 );

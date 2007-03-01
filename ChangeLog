@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+March 1, 2007
++ [GB] Zoom capability and decoder settings dialog in OPJViewer; modified JPWL library .dsp project in order to create a library with embedded JPWL functions
+
 February 28, 2007
 + [Parvatha] Enabled compression of TIF image format to j2k by tifftoimage() and decompression of codestream to TIF image format using imagetotif(). Modifications in image_to_j2k.c, j2k_to_image.c, convert.c, convert.h
 * [antonin] fixed a bug in context numerotation that prevented the RESET switch to work correctly : mqc_reset_enc in mqc.c

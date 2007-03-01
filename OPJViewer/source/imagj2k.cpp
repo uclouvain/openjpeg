@@ -51,10 +51,6 @@
     #include "wx/module.h"
 #endif
 
-
-#include "libopenjpeg/openjpeg.h"
-
-
 #include "wx/filefn.h"
 #include "wx/wfstream.h"
 
@@ -150,12 +146,18 @@ bool wxJ2KHandler::LoadFile(wxImage *image, wxInputStream& stream, bool verbose,
 	strncpy(parameters.outfile, "", sizeof(parameters.outfile)-1);
 	parameters.decod_format = J2K_CFMT;
 	parameters.cod_format = BMP_DFMT;
+	if (m_reducefactor)
+		parameters.cp_reduce = m_reducefactor;
+	if (m_qualitylayers)
+		parameters.cp_layer = m_qualitylayers;
+	/*if (n_components)
+		parameters. = n_components;*/
 
 	/* JPWL only */
 #ifdef USE_JPWL
-	parameters.jpwl_exp_comps = JPWL_EXPECTED_COMPONENTS;
-	parameters.jpwl_max_tiles = JPWL_MAXIMUM_TILES;
-	parameters.jpwl_correct = true;
+	parameters.jpwl_exp_comps = m_expcomps;
+	parameters.jpwl_max_tiles = m_maxtiles;
+	parameters.jpwl_correct = m_enablejpwl;
 #endif /* USE_JPWL */
 
 	/* get a decoder handle */
@@ -183,7 +185,7 @@ bool wxJ2KHandler::LoadFile(wxImage *image, wxInputStream& stream, bool verbose,
 	opjimage = opj_decode(dinfo, cio);
 	if (!opjimage) {
 		wxMutexGuiEnter();
-		wxLogError("J2K: failed to decode image!");
+		wxLogError(wxT("J2K: failed to decode image!"));
 		wxMutexGuiLeave();
 		opj_destroy_decompress(dinfo);
 		opj_cio_close(cio);
@@ -198,7 +200,7 @@ bool wxJ2KHandler::LoadFile(wxImage *image, wxInputStream& stream, bool verbose,
 	// check image components
 	if ((opjimage->numcomps != 1) && (opjimage->numcomps != 3)) {
 		wxMutexGuiEnter();
-		wxLogError("J2K: weird number of components");
+		wxLogError(wxT("J2K: weird number of components"));
 		wxMutexGuiLeave();
 		opj_destroy_decompress(dinfo);
 		free(src);

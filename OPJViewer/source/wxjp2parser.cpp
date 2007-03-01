@@ -61,8 +61,10 @@ typedef enum {
 			TKHD_BOX,
 			MDIA_BOX,
 			MINF_BOX,
+			VMHD_BOX,
 			STBL_BOX,
 			STSD_BOX,
+			STSZ_BOX,
 			MJP2_BOX,
 			MDAT_BOX,
 			ANY_BOX,
@@ -377,15 +379,15 @@ int OPJParseThread::box_handler_function(int boxtype, wxFile *fileid, wxFileOffs
 					new OPJMarkerData(wxT("INFO"))
 					);
 			} else {
-				unsigned __int64 creation_time, modification_time, duration;
+				int8byte creation_time, modification_time, duration;
 				unsigned long int timescale;
-				fileid->Read(&creation_time, sizeof(unsigned __int64));
+				fileid->Read(&creation_time, sizeof(int8byte));
 				creation_time = BYTE_SWAP8(creation_time);
-				fileid->Read(&modification_time, sizeof(unsigned __int64));
+				fileid->Read(&modification_time, sizeof(int8byte));
 				modification_time = BYTE_SWAP8(modification_time);
 				fileid->Read(&timescale, sizeof(unsigned long int));
 				timescale = BYTE_SWAP4(timescale);
-				fileid->Read(&duration, sizeof(unsigned __int64));
+				fileid->Read(&duration, sizeof(int8byte));
 				duration = BYTE_SWAP8(duration);
 				wxTreeItemId currid = m_tree->AppendItem(parentid,
 					wxString::Format(wxT("Creation time: %u"), creation_time),
@@ -454,6 +456,110 @@ int OPJParseThread::box_handler_function(int boxtype, wxFile *fileid, wxFileOffs
 		break;
 
 
+			/* Sample Size box */
+	case (STSZ_BOX): {
+
+			unsigned long int version, sample_size, sample_count, entry_size;
+			
+			fileid->Read(&version, sizeof(unsigned long int));
+			version = BYTE_SWAP4(version);
+			
+			fileid->Read(&sample_size, sizeof(unsigned long int));
+			sample_size = BYTE_SWAP4(sample_size);
+
+			if (sample_size == 0) {
+				fileid->Read(&sample_count, sizeof(unsigned long int));
+				sample_count = BYTE_SWAP4(sample_count);
+
+				wxTreeItemId currid = m_tree->AppendItem(parentid,
+					wxString::Format(wxT("Sample count: %d"), sample_count),
+					m_tree->TreeCtrlIcon_File, m_tree->TreeCtrlIcon_File + 1,
+					new OPJMarkerData(wxT("INFO"), m_tree->m_fname.GetFullPath(), filepoint, filelimit)
+					);
+
+				currid = m_tree->AppendItem(parentid,
+					wxT("Entries size (bytes)"),
+					m_tree->TreeCtrlIcon_Folder, m_tree->TreeCtrlIcon_Folder + 1,
+					new OPJMarkerData(wxT("INFO"), m_tree->m_fname.GetFullPath(), filepoint, filelimit)
+					);
+
+				wxString text;
+				for (int s = 0; s < sample_count; s++) {
+					fileid->Read(&entry_size, sizeof(unsigned long int));
+					entry_size = BYTE_SWAP4(entry_size);
+					
+					text << wxString::Format(wxT("%d, "), entry_size);
+
+					if (((s % 10) == (ITEM_PER_ROW - 1)) || (s == (sample_count - 1))) {
+						m_tree->AppendItem(currid,
+							text,
+							m_tree->TreeCtrlIcon_File, m_tree->TreeCtrlIcon_File + 1,
+							new OPJMarkerData(wxT("INFO"), m_tree->m_fname.GetFullPath(), filepoint, filelimit)
+							);
+						text = wxT("");
+					}
+
+				}
+				
+			}
+
+		};
+		break;
+
+
+			/* Video Media Header box */
+	case (VMHD_BOX): {
+
+			unsigned long int version;
+			unsigned short int graphicsmode, opcolor[3];
+			char graphicsdescr[100];
+
+			fileid->Read(&version, sizeof(unsigned long int));
+			version = BYTE_SWAP4(version);
+
+			fileid->Read(&graphicsmode, sizeof(unsigned short int));
+			graphicsmode = BYTE_SWAP2(graphicsmode);
+			switch (graphicsmode) {
+			case (0x00):
+					strcpy(graphicsdescr, "copy");
+					break;
+			case (0x24):
+					strcpy(graphicsdescr, "transparent");
+					break;
+			case (0x0100):
+					strcpy(graphicsdescr, "alpha");
+					break;
+			case (0x0101):
+					strcpy(graphicsdescr, "whitealpha");
+					break;
+			case (0x0102):
+					strcpy(graphicsdescr, "blackalpha");
+					break;
+			default:
+					strcpy(graphicsdescr, "unknown");
+					break;
+			};
+
+			fileid->Read(opcolor, 3 * sizeof(unsigned short int));
+			opcolor[0] = BYTE_SWAP2(opcolor[0]);
+			opcolor[1] = BYTE_SWAP2(opcolor[1]);
+			opcolor[2] = BYTE_SWAP2(opcolor[2]);
+
+			wxTreeItemId currid = m_tree->AppendItem(parentid,
+				wxString::Format(wxT("Composition mode: %d (%s)"), graphicsmode, graphicsdescr),
+				m_tree->TreeCtrlIcon_File, m_tree->TreeCtrlIcon_File + 1,
+				new OPJMarkerData(wxT("INFO"), m_tree->m_fname.GetFullPath(), filepoint, filelimit)
+				);
+
+			currid = m_tree->AppendItem(parentid,
+				wxString::Format(wxT("OP color: %d %d %d"), opcolor[0], opcolor[1], opcolor[2]),
+				m_tree->TreeCtrlIcon_File, m_tree->TreeCtrlIcon_File + 1,
+				new OPJMarkerData(wxT("INFO"), m_tree->m_fname.GetFullPath(), filepoint, filelimit)
+				);
+		};
+		break;
+
+
 
 			/* MJP2 Sample Description box */
 	case (MJP2_BOX): {
@@ -500,8 +606,6 @@ int OPJParseThread::box_handler_function(int boxtype, wxFile *fileid, wxFileOffs
 	default:
 		break;
 
-
-
 	};
 
 	return (0);
@@ -525,8 +629,10 @@ int OPJParseThread::box_handler_function(int boxtype, wxFile *fileid, wxFileOffs
 #define TKHD_SIGN           "tkhd"
 #define MDIA_SIGN           "mdia"
 #define MINF_SIGN           "minf"
+#define VMHD_SIGN           "vmhd"
 #define STBL_SIGN           "stbl"
 #define STSD_SIGN           "stsd"
+#define STSZ_SIGN           "stsz"
 #define MJP2_SIGN           "mjp2"
 #define MDAT_SIGN           "mdat"
 #define ANY_SIGN 			""
@@ -658,6 +764,13 @@ struct boxdef j2box[] =
 /* req */	{1, 1, 1},
 /* ins */	MDIA_BOX},
 
+/* sign */	{VMHD_SIGN,
+/* short */	"Video Media Header box",
+/* long */	"The video media header contains general presentation information, independent of the coding, for video media",
+/* sbox */	0,
+/* req */	{1, 1, 1},
+/* ins */	MINF_BOX},
+
 /* sign */	{STBL_SIGN,
 /* short */	"Sample Table box",
 /* long */	"The sample table contains all the time and data indexing of the media samples in a track",
@@ -666,12 +779,19 @@ struct boxdef j2box[] =
 /* ins */	MINF_BOX},
 
 /* sign */	{STSD_SIGN,
-/* short */	"Sample Description box",
+/* short */	"STSD Sample Description box",
 /* long */	"The sample description table gives detailed information about the coding type used, and any initialization "
 			"information needed for that coding",
 /* sbox */	0,
 /* req */	{1, 1, 1},
 /* ins */	MINF_BOX},
+
+/* sign */	{STSZ_SIGN,
+/* short */	"Sample Size box",
+/* long */	"This box contains the sample count and a table giving the size of each sample",
+/* sbox */	0,
+/* req */	{1, 1, 1},
+/* ins */	STBL_BOX},
 
 /* sign */	{MJP2_SIGN,
 /* short */	"MJP2 Sample Description box",
@@ -727,7 +847,7 @@ int OPJParseThread::jpeg2000parse(wxFile *fileid, wxFileOffset filepoint, wxFile
 	int                     LBox_read;
 	char                    TBox[5] = "\0\0\0\0";
 	int                     TBox_read;
-	__int64              XLBox = 0x0000000000000000;
+	int8byte				XLBox = 0x0000000000000000;
 	int                     XLBox_read;
 	unsigned long int       box_length = 0;
 	int                     last_box = 0, box_num = 0;

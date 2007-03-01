@@ -43,6 +43,16 @@
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows license
 /////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+// Name:        dialogs.h
+// Purpose:     Common dialogs demo
+// Author:      Julian Smart
+// Modified by: ABX (2004) - adjustementd for conditional building
+// Created:     04/01/98
+// RCS-ID:      $Id: dialogs.h,v 1.50 2006/10/08 14:12:59 VZ Exp $
+// Copyright:   (c) Julian Smart
+// Licence:     wxWindows license
+/////////////////////////////////////////////////////////////////////////////
 
 #ifndef __OPJ_VIEWER_H__
 #define __OPJ_VIEWER_H__
@@ -76,12 +86,28 @@
 #include <wx/cmdline.h>
 #include <wx/file.h>
 #include "wx/notebook.h"
+#include <wx/numdlg.h>
+
+#include "wx/propdlg.h"
+#include "wx/spinctrl.h"
+
+#include <wx/dnd.h>
+#include "wx/wxhtml.h"
+#include "wx/statline.h"
 
 #include "libopenjpeg\openjpeg.h"
 
 #include "imagj2k.h"
 #include "imagjp2.h"
 #include "imagmj2.h"
+
+#ifdef __WXMSW__
+typedef unsigned __int64 int8byte;
+#endif // __WXMSW__
+
+#ifdef __WXGTK__
+typedef unsigned long long int8byte;
+#endif // __WXGTK__
 
 #define USE_GENERIC_TREECTRL 0
 
@@ -94,7 +120,7 @@
 #endif
 
 #define OPJ_APPLICATION_NAME		wxT("OpenJPEG Viewer")
-#define OPJ_APPLICATION_VERSION		wxT("0.1 alpha")
+#define OPJ_APPLICATION_VERSION		wxT("0.2 alpha")
 #define OPJ_APPLICATION_TITLEBAR	OPJ_APPLICATION_NAME wxT(" ") OPJ_APPLICATION_VERSION
 #define OPJ_APPLICATION_COPYRIGHT	wxT("(C) 2007, Giuseppe Baruffa")
 
@@ -140,6 +166,13 @@ class OPJViewerApp: public wxApp
 		// the list of all filenames written in the command line
 		wxArrayString m_filelist;
 
+		// decoding engine parameters
+		int m_reducefactor, m_qualitylayers, m_components;
+#ifdef USE_JPWL
+		bool m_enablejpwl;
+		int m_expcomps, m_maxtiles;
+#endif // USE_JPWL
+
 	// private methods and variables
 	private:
 		bool m_showImages, m_showButtons;
@@ -163,9 +196,11 @@ class OPJCanvas: public wxScrolledWindow
 		void OnEvent(wxMouseEvent& event);
 		void WriteText(const wxString& text) { wxMutexGuiEnter(); wxLogMessage(text); wxMutexGuiLeave();}
 		OPJDecoThread *CreateDecoThread(void);
+		OPJChildFrame *m_childframe;
 
-		wxBitmap  m_image;
+		wxBitmap  m_image, m_image100;
 		wxFileName m_fname;
+		long m_zooml;
 
 	DECLARE_EVENT_TABLE()
 };
@@ -223,7 +258,7 @@ public:
     void OnEndLabelEdit(wxTreeEvent& event);*/
     /*void OnDeleteItem(wxTreeEvent& event);*/
     /*void OnContextMenu(wxContextMenuEvent& event);*/
-    /*void OnItemMenu(wxTreeEvent& event);*/
+    void OnItemMenu(wxTreeEvent& event);
     /*void OnGetInfo(wxTreeEvent& event);
     void OnSetInfo(wxTreeEvent& event);*/
     /*void OnItemExpanded(wxTreeEvent& event);*/
@@ -304,10 +339,15 @@ class OPJFrame: public wxMDIParentFrame
     void OnAbout(wxCommandEvent& WXUNUSED(event));
     void OnFileOpen(wxCommandEvent& WXUNUSED(event));
     void OnQuit(wxCommandEvent& WXUNUSED(event));
+    void OnClose(wxCommandEvent& WXUNUSED(event));
+    void OnZoom(wxCommandEvent& WXUNUSED(event));
+	void OnFit(wxCommandEvent& WXUNUSED(event));
 	void OnToggleWindow(wxCommandEvent& WXUNUSED(event));
+	void OnSetsDeco(wxCommandEvent& event);
 	void OnSashDrag(wxSashEvent& event);
 	void OpenFiles(wxArrayString paths, wxArrayString filenames);
 	void OnNotebook(wxNotebookEvent& event);
+	void Rescale(int scale, OPJChildFrame *child);
 
 	OPJMarkerTreeHash m_treehash;
 	OPJChildFrameHash m_childhash;
@@ -345,25 +385,29 @@ class OPJChildFrame: public wxMDIChildFrame
 	/*void OnQuit(wxCommandEvent& WXUNUSED(event));*/
 	void OnClose(wxCloseEvent& event);
 	void OnGotFocus(wxFocusEvent& event);
-	/*void OnLostFocus(wxFocusEvent& event);*/
+	void OnLostFocus(wxFocusEvent& event);
     OPJFrame *m_frame;
 	wxFileName m_fname;
 	int m_winnumber;
 
-DECLARE_EVENT_TABLE()
+	DECLARE_EVENT_TABLE()
 };
 
-#define SASHTEST_QUIT        wxID_EXIT
-#define SASHTEST_NEW_WINDOW  2
-#define SASHTEST_REFRESH     3
-#define SASHTEST_CHILD_QUIT  4
-#define SASHTEST_ABOUT       wxID_ABOUT
-#define SASHTEST_TOGGLE_WINDOW 6
+// frame and main menu ids
+enum {
+	OPJFRAME_FILEEXIT = wxID_EXIT,
+	OPJFRAME_HELPABOUT = wxID_ABOUT,
+	OPJFRAME_FILEOPEN,
+	OPJFRAME_FILETOGGLE,
+	OPJFRAME_VIEWZOOM,
+	OPJFRAME_VIEWFIT,
+	OPJFRAME_FILECLOSE,
+	OPJFRAME_SETSDECO,
 
-#define ID_WINDOW_TOP       100
-#define ID_WINDOW_LEFT1     101
-#define ID_WINDOW_LEFT2     102
-#define ID_WINDOW_BOTTOM    103
+	OPJFRAME_BROWSEWIN = 10000,
+	OPJFRAME_LOGWIN
+};
+
 
 // menu and control ids
 enum
@@ -466,4 +510,56 @@ private:
 
 };
 
+
+// Drag and drop files target
+class OPJDnDFile: public wxFileDropTarget
+{
+public:
+    OPJDnDFile(OPJFrame *pOwner) { m_pOwner = pOwner; }
+    virtual bool OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames);
+
+private:
+    OPJFrame *m_pOwner;
+};
+
+
+
+// Property sheet dialog
+class OPJDecoderDialog: public wxPropertySheetDialog
+{
+DECLARE_CLASS(OPJDecoderDialog)
+public:
+    OPJDecoderDialog(wxWindow* parent, int dialogType);
+    ~OPJDecoderDialog();
+
+	wxSpinCtrl *m_reduceCtrl, *m_layerCtrl, *m_numcompsCtrl;
+
+    wxPanel* CreateMainSettingsPage(wxWindow* parent);
+#ifdef USE_JPWL
+	void OnEnableJPWL(wxCommandEvent& event);
+    wxPanel* CreateJPWLSettingsPage(wxWindow* parent);
+	wxSpinCtrl *m_expcompsCtrl, *m_maxtilesCtrl;
+	wxCheckBox *m_enablejpwlCheck;
+#endif // USE_JPWL
+
+
+protected:
+
+    enum {
+		OPJDECO_REDUCEFACTOR = 100,
+		OPJDECO_QUALITYLAYERS,
+		OPJDECO_NUMCOMPS,
+		OPJDECO_ENABLEJPWL,
+		OPJDECO_EXPCOMPS,
+		OPJDECO_MAXTILES
+    };
+
+    wxImageList*    m_imageList;
+
+DECLARE_EVENT_TABLE()
+};
+
 #endif //__OPJ_VIEWER_H__
+
+
+

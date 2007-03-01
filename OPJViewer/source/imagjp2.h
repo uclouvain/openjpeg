@@ -44,6 +44,7 @@
 #if wxUSE_LIBOPENJPEG
 
 #include "wx/image.h"
+#include "libopenjpeg/openjpeg.h"
 
 #define wxBITMAP_TYPE_JP2	48
 
@@ -56,7 +57,23 @@ public:
         m_extension = wxT("jp2");
         m_type = wxBITMAP_TYPE_JP2;
         m_mime = wxT("image/jp2");
+
+		m_reducefactor = 0;
+		m_qualitylayers = 0;
+		m_components = 0;
+#ifdef USE_JPWL
+		m_enablejpwl = true;
+		m_expcomps = JPWL_EXPECTED_COMPONENTS;
+		m_maxtiles = JPWL_MAXIMUM_TILES;
+#endif // USE_JPWL
     }
+
+		// decoding engine parameters
+		int m_reducefactor, m_qualitylayers, m_components;
+#ifdef USE_JPWL
+		bool m_enablejpwl;
+		int m_expcomps, m_maxtiles;
+#endif // USE_JPWL
 
 #if wxUSE_STREAMS
     virtual bool LoadFile( wxImage *image, wxInputStream& stream, bool verbose=true, int index=-1 );

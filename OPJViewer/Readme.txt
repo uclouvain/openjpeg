@@ -1,8 +1,6 @@
 ===============================================================================
 
-	JPEG2000 Visualization Software
-
- - OPJViewer
+	JPEG2000 Visualization Software - OPJViewer
 
 		Version 0.1 alpha
 

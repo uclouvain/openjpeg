@@ -93,10 +93,33 @@
 // Copyright:   (c) 1998-2002 wxWidgets team
 // License:     wxWindows license
 /////////////////////////////////////////////////////////////////////////////
-#include "OPJViewer.h"
+/////////////////////////////////////////////////////////////////////////////
+// Name:        dialogs.cpp
+// Purpose:     Common dialogs demo
+// Author:      Julian Smart
+// Modified by: ABX (2004) - adjustements for conditional building + new menu
+// Created:     04/01/98
+// RCS-ID:      $Id: dialogs.cpp,v 1.163 2006/11/04 10:57:24 VZ Exp $
+// Copyright:   (c) Julian Smart
+// Licence:     wxWindows license
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+// Name:        dnd.cpp
+// Purpose:     Drag and drop sample
+// Author:      Vadim Zeitlin
+// Modified by:
+// Created:     04/01/98
+// RCS-ID:      $Id: dnd.cpp,v 1.107 2006/10/30 20:23:41 VZ Exp $
+// Copyright:
+// Licence:     wxWindows licence
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+// Name:        test.cpp
+// Purpose:     wxHtml testing example
+/////////////////////////////////////////////////////////////////////////////
 
-OPJFrame *frame = NULL;
-wxList my_children;
+
+#include "OPJViewer.h"
 
 IMPLEMENT_APP(OPJViewerApp)
 
@@ -110,37 +133,28 @@ int winNumber = 1;
 bool OPJViewerApp::OnInit(void)
 {
 #if wxUSE_UNICODE
+
     wxChar **wxArgv = new wxChar *[argc + 1];
 
-    {
-        int n;
-
-        for (n = 0; n < argc; n++ )
-        {
-            wxMB2WXbuf warg = wxConvertMB2WX(argv[n]);
-            wxArgv[n] = wxStrdup(warg);
-        }
-
-        wxArgv[n] = NULL;
+    for (int n = 0; n < argc; n++ ) {
+        wxMB2WXbuf warg = wxConvertMB2WX(argv[n]);
+        wxArgv[n] = wxStrdup(warg);
     }
+
+    wxArgv[n] = NULL;
+
 #else // !wxUSE_UNICODE
+
     #define wxArgv argv
+
 #endif // wxUSE_UNICODE/!wxUSE_UNICODE
 
 #if wxUSE_CMDLINE_PARSER
+
     static const wxCmdLineEntryDesc cmdLineDesc[] =
     {
         { wxCMD_LINE_SWITCH, _T("h"), _T("help"), _T("show this help message"),
             wxCMD_LINE_VAL_NONE, wxCMD_LINE_OPTION_HELP },
-        /*{ wxCMD_LINE_SWITCH, _T("v"), _T("verbose"), _T("be verbose") },
-        { wxCMD_LINE_SWITCH, _T("q"), _T("quiet"),   _T("be quiet") },
-
-        { wxCMD_LINE_OPTION, _T("o"), _T("output"),  _T("output file") },
-        { wxCMD_LINE_OPTION, _T("i"), _T("input"),   _T("input dir") },
-        { wxCMD_LINE_OPTION, _T("s"), _T("size"),    _T("output block size"),
-            wxCMD_LINE_VAL_NUMBER },
-        { wxCMD_LINE_OPTION, _T("d"), _T("date"),    _T("output file date"),
-            wxCMD_LINE_VAL_DATE },*/
 
         { wxCMD_LINE_PARAM,  NULL, NULL, _T("input file"),
             wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_PARAM_MULTIPLE },
@@ -154,20 +168,20 @@ bool OPJViewerApp::OnInit(void)
                      wxCMD_LINE_VAL_STRING,
                      wxCMD_LINE_OPTION_MANDATORY | wxCMD_LINE_NEEDS_SEPARATOR);*/
 
-    switch ( parser.Parse() )
-    {
-        case -1:
-            wxLogMessage(_T("Help was given, terminating."));
-            break;
+    switch (parser.Parse()) {
+    case -1:
+        wxLogMessage(wxT("Help was given, terminating."));
+        break;
 
-        case 0:
-            ShowCmdLine(parser);
-            break;
+    case 0:
+        ShowCmdLine(parser);
+        break;
 
-        default:
-            wxLogMessage(_T("Syntax error detected."));
-            break;
+    default:
+        wxLogMessage(wxT("Syntax error detected."));
+        break;
     }
+
 #endif // wxUSE_CMDLINE_PARSER
 
     //wxInitAllImageHandlers();
@@ -179,68 +193,74 @@ bool OPJViewerApp::OnInit(void)
   wxImage::AddHandler( new wxJP2Handler );
   wxImage::AddHandler( new wxMJ2Handler );
 #endif
+    // we use a PNG image in our HTML page
+    wxImage::AddHandler(new wxPNGHandler);
 
+	// set decoding engine parameters
+	m_reducefactor = 0;
+	m_qualitylayers = 0;
+	m_components = 0;
+#ifdef USE_JPWL
+	m_enablejpwl = true;
+	m_expcomps = JPWL_EXPECTED_COMPONENTS;
+	m_maxtiles = JPWL_MAXIMUM_TILES;
+#endif // USE_JPWL
 
 	// Create the main frame window
-
-  frame = new OPJFrame(NULL, wxID_ANY, OPJ_APPLICATION_TITLEBAR, wxDefaultPosition, wxSize(800, 600),
-                      wxDEFAULT_FRAME_STYLE |
-                      wxNO_FULL_REPAINT_ON_RESIZE |
+  OPJFrame *frame = new OPJFrame(NULL, wxID_ANY, OPJ_APPLICATION_TITLEBAR,
+					  wxDefaultPosition, wxSize(800, 600),
+                      wxDEFAULT_FRAME_STYLE | wxNO_FULL_REPAINT_ON_RESIZE |
                       wxHSCROLL | wxVSCROLL);
 
   // Give it an icon (this is ignored in MDI mode: uses resources)
 #ifdef __WXMSW__
-  frame->SetIcon(wxIcon(_T("OPJViewer16")));
+  frame->SetIcon(wxIcon(wxT("OPJViewer16")));
 #endif
 
   frame->Show(true);
 
   SetTopWindow(frame);
 
+	// if there are files on the command line, open them
+	if (!(m_filelist.IsEmpty())) {
+		//wxLogMessage(wxT("Habemus files!!!"));
+		wxArrayString paths, filenames;
+		for (int f = 0; f < wxGetApp().m_filelist.GetCount(); f++) {
+			paths.Add(wxFileName(wxGetApp().m_filelist[f]).GetFullPath());
+			filenames.Add(wxFileName(wxGetApp().m_filelist[f]).GetFullName());
+		}
+		//wxLogMessage(paths[0]);
+		frame->OpenFiles(paths, filenames);
+	}
+
   return true;
 }
 
 void OPJViewerApp::ShowCmdLine(const wxCmdLineParser& parser)
 {
-    wxString s = _T("Command line parsed successfully:\nInput files: ");
+    wxString s = wxT("Command line parsed successfully:\nInput files: ");
 
     size_t count = parser.GetParamCount();
-    for ( size_t param = 0; param < count; param++ )
-    {
+    for (size_t param = 0; param < count; param++) {
         s << parser.GetParam(param) << ';';
-
 		m_filelist.Add(parser.GetParam(param));
     }
-
-    /*s << '\n'
-      << _T("Verbose:\t") << (parser.Found(_T("v")) ? _T("yes") : _T("no")) << '\n'
-      << _T("Quiet:\t") << (parser.Found(_T("q")) ? _T("yes") : _T("no")) << '\n';
-
-    wxString strVal;
-    long lVal;
-    wxDateTime dt;
-    if ( parser.Found(_T("o"), &strVal) )
-        s << _T("Output file:\t") << strVal << '\n';
-    if ( parser.Found(_T("i"), &strVal) )
-        s << _T("Input dir:\t") << strVal << '\n';
-    if ( parser.Found(_T("s"), &lVal) )
-        s << _T("Size:\t") << lVal << '\n';
-    if ( parser.Found(_T("d"), &dt) )
-        s << _T("Date:\t") << dt.FormatISODate() << '\n';
-    if ( parser.Found(_T("project_name"), &strVal) )
-        s << _T("Project:\t") << strVal << '\n';*/
 
     //wxLogMessage(s);
 }
 
 // OPJFrame events
 BEGIN_EVENT_TABLE(OPJFrame, wxMDIParentFrame)
-    EVT_MENU(SASHTEST_ABOUT, OPJFrame::OnAbout)
-    EVT_MENU(SASHTEST_NEW_WINDOW, OPJFrame::OnFileOpen)
+    EVT_MENU(OPJFRAME_HELPABOUT, OPJFrame::OnAbout)
+    EVT_MENU(OPJFRAME_FILEOPEN, OPJFrame::OnFileOpen)
     EVT_SIZE(OPJFrame::OnSize)
-    EVT_MENU(SASHTEST_QUIT, OPJFrame::OnQuit)
-    EVT_MENU(SASHTEST_TOGGLE_WINDOW, OPJFrame::OnToggleWindow)
-    EVT_SASH_DRAGGED_RANGE(ID_WINDOW_TOP, ID_WINDOW_BOTTOM, OPJFrame::OnSashDrag)
+    EVT_MENU(OPJFRAME_FILEEXIT, OPJFrame::OnQuit)
+    EVT_MENU(OPJFRAME_FILECLOSE, OPJFrame::OnClose)
+    EVT_MENU(OPJFRAME_VIEWZOOM, OPJFrame::OnZoom)
+    EVT_MENU(OPJFRAME_VIEWFIT, OPJFrame::OnFit)
+    EVT_MENU(OPJFRAME_FILETOGGLE, OPJFrame::OnToggleWindow)
+    EVT_MENU(OPJFRAME_SETSDECO, OPJFrame::OnSetsDeco)
+    EVT_SASH_DRAGGED_RANGE(OPJFRAME_BROWSEWIN, OPJFRAME_LOGWIN, OPJFrame::OnSashDrag)
     EVT_NOTEBOOK_PAGE_CHANGED(LEFT_NOTEBOOK_ID, OPJFrame::OnNotebook)
 END_EVENT_TABLE()
 
@@ -252,24 +272,44 @@ OPJFrame::OPJFrame(wxWindow *parent, const wxWindowID id, const wxString& title,
 	// file menu and its items
 	wxMenu *file_menu = new wxMenu;
 
-	file_menu->Append(SASHTEST_NEW_WINDOW, wxT("&Open\tCtrl+O"));
-	file_menu->SetHelpString(SASHTEST_NEW_WINDOW, wxT("Open one or more files"));
+	file_menu->Append(OPJFRAME_FILEOPEN, wxT("&Open\tCtrl+O"));
+	file_menu->SetHelpString(OPJFRAME_FILEOPEN, wxT("Open one or more files"));
 
-	file_menu->Append(SASHTEST_TOGGLE_WINDOW, wxT("&Toggle browser\tCtrl+T"));
-	file_menu->SetHelpString(SASHTEST_TOGGLE_WINDOW, wxT("Toggle the left browsing pane"));
+	file_menu->Append(OPJFRAME_FILETOGGLE, wxT("&Toggle browser\tCtrl+T"));
+	file_menu->SetHelpString(OPJFRAME_FILETOGGLE, wxT("Toggle the left browsing pane"));
 
-	file_menu->Append(SASHTEST_QUIT, wxT("&Exit\tCtrl+Q"));
-	file_menu->SetHelpString(SASHTEST_QUIT, wxT("Quit this program"));
+	file_menu->Append(OPJFRAME_FILECLOSE, wxT("&Close\tCtrl+C"));
+	file_menu->SetHelpString(OPJFRAME_FILECLOSE, wxT("Close current image"));
+
+	file_menu->Append(OPJFRAME_FILEEXIT, wxT("&Exit\tCtrl+Q"));
+	file_menu->SetHelpString(OPJFRAME_FILEEXIT, wxT("Quit this program"));
+
+	// view menu and its items
+	wxMenu *view_menu = new wxMenu;
+
+	view_menu->Append(OPJFRAME_VIEWZOOM, wxT("&Zoom\tCtrl+Z"));
+	view_menu->SetHelpString(OPJFRAME_VIEWZOOM, wxT("Rescale the image"));
+
+	view_menu->Append(OPJFRAME_VIEWFIT, wxT("Zoom to &fit\tCtrl+F"));
+	view_menu->SetHelpString(OPJFRAME_VIEWFIT, wxT("Fit the image in canvas"));
+
+	// settings menu and its items
+	wxMenu *sets_menu = new wxMenu;
+
+	sets_menu->Append(OPJFRAME_SETSDECO, wxT("&Decoder\tCtrl+D"));
+	sets_menu->SetHelpString(OPJFRAME_SETSDECO, wxT("Decoder settings"));
 
 	// help menu and its items
 	wxMenu *help_menu = new wxMenu;
 
-	help_menu->Append(SASHTEST_ABOUT, wxT("&About\tF1"));
-	help_menu->SetHelpString(SASHTEST_ABOUT, wxT("Basic info on the program"));
+	help_menu->Append(OPJFRAME_HELPABOUT, wxT("&About\tF1"));
+	help_menu->SetHelpString(OPJFRAME_HELPABOUT, wxT("Basic info on the program"));
 
 	// the whole menubar
 	wxMenuBar *menu_bar = new wxMenuBar;
 	menu_bar->Append(file_menu, wxT("&File"));
+	menu_bar->Append(view_menu, wxT("&View"));
+	menu_bar->Append(sets_menu, wxT("&Settings"));
 	menu_bar->Append(help_menu, wxT("&Help"));
 
 	// Associate the menu bar with the frame
@@ -279,7 +319,7 @@ OPJFrame::OPJFrame(wxWindow *parent, const wxWindowID id, const wxString& title,
 	CreateStatusBar();
 
 	// the logging window
-	loggingWindow = new wxSashLayoutWindow(this, ID_WINDOW_BOTTOM,
+	loggingWindow = new wxSashLayoutWindow(this, OPJFRAME_LOGWIN,
 											wxDefaultPosition, wxSize(400, 130),
 											wxNO_BORDER | wxSW_3D | wxCLIP_CHILDREN
 											);
@@ -307,15 +347,18 @@ OPJFrame::OPJFrame(wxWindow *parent, const wxWindowID id, const wxString& title,
 	// create the text control of the browser
 	m_textCtrlbrowse = new wxTextCtrl(m_bookCtrlbottom, wxID_ANY, wxT(""),
 								wxDefaultPosition, wxDefaultSize,
-								wxTE_MULTILINE | wxSUNKEN_BORDER | wxTE_READONLY 
+								wxTE_MULTILINE | wxSUNKEN_BORDER | wxTE_READONLY | wxTE_RICH 
 								);
-	m_textCtrlbrowse->SetValue(_T("Browsing window\n"));
+	wxFont *browsefont = new wxFont(wxNORMAL_FONT->GetPointSize(),
+		wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
+    m_textCtrlbrowse->SetDefaultStyle(wxTextAttr(wxNullColour, wxNullColour, *browsefont));
+	m_textCtrlbrowse->AppendText(wxT("Browsing window\n"));
 
 	// add it the notebook
-	m_bookCtrlbottom->AddPage(m_textCtrlbrowse, wxT("Peek"));
+	m_bookCtrlbottom->AddPage(m_textCtrlbrowse, wxT("Peek"), false);
 
 	// the browser window
-	markerTreeWindow = new wxSashLayoutWindow(this, ID_WINDOW_LEFT1,
+	markerTreeWindow = new wxSashLayoutWindow(this, OPJFRAME_BROWSEWIN,
 											  wxDefaultPosition, wxSize(300, 30),
 											  wxNO_BORDER | wxSW_3D | wxCLIP_CHILDREN
 											  );
@@ -331,8 +374,6 @@ OPJFrame::OPJFrame(wxWindow *parent, const wxWindowID id, const wxString& title,
 								wxDefaultPosition, wxDefaultSize,
 								wxBK_TOP);
 
-
-#if wxUSE_LOG
 #ifdef __WXMOTIF__
 	// For some reason, we get a memcpy crash in wxLogStream::DoLogStream
 	// on gcc/wxMotif, if we use wxLogTextCtl. Maybe it's just gcc?
@@ -342,18 +383,10 @@ OPJFrame::OPJFrame(wxWindow *parent, const wxWindowID id, const wxString& title,
 	wxLogTextCtrl *logWindow = new wxLogTextCtrl(m_textCtrl);
 	delete wxLog::SetActiveTarget(logWindow);
 #endif
-#endif // wxUSE_LOG
 
-	// if there are files on the command line, open them
-	/*if (!wxGetApp().m_filelist.IsEmpty()) {
-	wxLogMessage(wxT("Habemus files!!!"));
-	wxArrayString paths, filenames;
-	for (int f = 0; f < wxGetApp().m_filelist.GetCount(); f++) {
-	paths.Add(wxFileName(wxGetApp().m_filelist[f]).GetFullPath());
-	filenames.Add(wxFileName(wxGetApp().m_filelist[f]).GetFullName());
-	}
-	OpenFiles(paths, filenames);
-	}*/
+	// associate drop targets with the controls
+	SetDropTarget(new OPJDnDFile(this));
+
 }
 
 // this is the frame destructor
@@ -385,7 +418,7 @@ void OPJFrame::OnNotebook(wxNotebookEvent& event)
 
 	m_childhash[childnum]->Activate();
 
-	wxLogMessage(wxString::Format(wxT("Selection changed (now %d --> %d)"), childnum, m_childhash[childnum]->m_winnumber));
+	//wxLogMessage(wxT("Selection changed (now %d --> %d)"), childnum, m_childhash[childnum]->m_winnumber);
 
 }
 
@@ -395,14 +428,138 @@ void OPJFrame::Resize(int number)
 	wxSize size = GetClientSize();
 }
 
+void OPJFrame::OnSetsDeco(wxCommandEvent& event)
+{
+    OPJDecoderDialog dialog(this, event.GetId());
+
+    if (dialog.ShowModal() == wxID_OK) {
+
+		// load settings
+		wxGetApp().m_reducefactor = dialog.m_reduceCtrl->GetValue();
+		wxGetApp().m_qualitylayers = dialog.m_layerCtrl->GetValue();
+		wxGetApp().m_components = dialog.m_numcompsCtrl->GetValue();
+#ifdef USE_JPWL
+		wxGetApp().m_enablejpwl = dialog.m_enablejpwlCheck->GetValue();
+		wxGetApp().m_expcomps = dialog.m_expcompsCtrl->GetValue();
+		wxGetApp().m_maxtiles = dialog.m_maxtilesCtrl->GetValue();
+#endif // USE_JPWL	
+		
+	};	
+}
+
 void OPJFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
 {
 	Close(true);
 }
 
+void OPJFrame::OnClose(wxCommandEvent& WXUNUSED(event))
+{
+	// current frame
+	OPJChildFrame *currframe = (OPJChildFrame *) GetActiveChild();
+
+	if (!currframe)
+		return;
+
+	wxCloseEvent e;
+	currframe->OnClose(e);
+}
+
+void OPJFrame::OnFit(wxCommandEvent& WXUNUSED(event))
+{
+	// current child
+	OPJChildFrame *currchild = (OPJChildFrame *) GetActiveChild();
+	if (!currchild)
+		return;
+
+	// current canvas
+	OPJCanvas *currcanvas = currchild->m_canvas;
+
+	// find a fit-to-width zoom
+	int zooml, wzooml, hzooml;
+	wxSize clientsize = currcanvas->GetClientSize();
+	wzooml = (int) ceil(100.0 * (double) (clientsize.GetWidth() - 2 * OPJ_CANVAS_BORDER) / (double) (currcanvas->m_image100.GetWidth()));
+	hzooml = (int) ceil(100.0 * (double) (clientsize.GetHeight() - 2 * OPJ_CANVAS_BORDER) / (double) (currcanvas->m_image100.GetHeight()));
+	zooml = wxMin(100, wxMin(wzooml, hzooml));
+
+	// fit to width
+	Rescale(zooml, currchild);
+}
+
+void OPJFrame::OnZoom(wxCommandEvent& WXUNUSED(event))
+{
+	// current frame
+	OPJChildFrame *currframe = (OPJChildFrame *) GetActiveChild();
+
+	if (!currframe)
+		return;
+
+	// get the preferred zoom
+	long zooml = wxGetNumberFromUser(wxT("Choose a scale between 5% and 300%"),
+		wxT("Zoom (%)"),
+		wxT("Image scale"),
+		currframe->m_canvas->m_zooml, 5, 300, NULL, wxDefaultPosition);
+
+	// rescale current frame image if necessary
+	if (zooml >= 5) {
+		Rescale(zooml, currframe);
+		wxLogMessage(wxT("zoom to %d%%"), zooml);
+	}
+}
+
+void OPJFrame::Rescale(int zooml, OPJChildFrame *currframe)
+{
+	wxImage new_image = currframe->m_canvas->m_image100.ConvertToImage();
+	if (zooml != 100)
+		new_image.Rescale((int) ((double) zooml * (double) new_image.GetWidth() / 100.0),
+			(int) ((double) zooml * (double) new_image.GetHeight() / 100.0),
+			wxIMAGE_QUALITY_NORMAL);
+    currframe->m_canvas->m_image = wxBitmap(new_image);
+	currframe->m_canvas->SetScrollbars(20,
+										20,
+										(int)(0.5 + (double) new_image.GetWidth() / 20.0),
+										(int)(0.5 + (double) new_image.GetHeight() / 20.0)
+										);
+	currframe->m_canvas->Refresh();
+
+	// update zoom
+	currframe->m_canvas->m_zooml = zooml;
+}
+
+
 // about window for the frame
 void OPJFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
+#ifdef OPJ_HTMLABOUT
+
+    wxBoxSizer *topsizer;
+    wxHtmlWindow *html;
+    wxDialog dlg(this, wxID_ANY, wxString(_("About")));
+
+    topsizer = new wxBoxSizer(wxVERTICAL);
+
+    html = new wxHtmlWindow(&dlg, wxID_ANY, wxDefaultPosition, wxSize(350, 250), wxHW_SCROLLBAR_NEVER);
+    html->SetBorders(0);
+    html->LoadPage(wxT("about/about.htm"));
+	//html->SetPage("<html><body>Hello, world!</body></html>");
+    html->SetSize(html->GetInternalRepresentation()->GetWidth(),
+                    html->GetInternalRepresentation()->GetHeight());
+
+    topsizer->Add(html, 1, wxALL, 10);
+
+    topsizer->Add(new wxStaticLine(&dlg, wxID_ANY), 0, wxEXPAND | wxLEFT | wxRIGHT, 10);
+
+    wxButton *bu1 = new wxButton(&dlg, wxID_OK, wxT("OK"));
+    bu1->SetDefault();
+
+    topsizer->Add(bu1, 0, wxALL | wxALIGN_RIGHT, 15);
+
+    dlg.SetSizer(topsizer);
+    topsizer->Fit(&dlg);
+
+    dlg.ShowModal();
+
+#else
+
 	wxMessageBox(wxString::Format(OPJ_APPLICATION_TITLEBAR
 								  wxT("\n\n")
 								  wxT("Built with %s and OpenJPEG ")
@@ -411,28 +568,25 @@ void OPJFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 								  wxT("\nRunning under %s\n\n")
 								  OPJ_APPLICATION_COPYRIGHT,
 								  wxVERSION_STRING,
-								  wxGetOsDescription().c_str()
-								  ),
+								  wxGetOsDescription().c_str()),
 				 wxT("About ") OPJ_APPLICATION_NAME,
 				 wxOK | wxICON_INFORMATION,
 				 this
 				 );
+
+#endif
+
 }
 
 void OPJFrame::OnToggleWindow(wxCommandEvent& WXUNUSED(event))
 {
     if (markerTreeWindow->IsShown())
-    {
         markerTreeWindow->Show(false);
-    }
     else
-    {
         markerTreeWindow->Show(true);
-    }
-#if wxUSE_MDI_ARCHITECTURE
+
     wxLayoutAlgorithm layout;
     layout.LayoutMDIFrame(this);
-#endif // wxUSE_MDI_ARCHITECTURE
 }
 
 void OPJFrame::OnSashDrag(wxSashEvent& event)
@@ -440,24 +594,21 @@ void OPJFrame::OnSashDrag(wxSashEvent& event)
     if (event.GetDragStatus() == wxSASH_STATUS_OUT_OF_RANGE)
         return;
 
-    switch (event.GetId())
-    {
-        case ID_WINDOW_LEFT1:
-        {
-            markerTreeWindow->SetDefaultSize(wxSize(event.GetDragRect().width, 1000));
-            break;
-        }
-        case ID_WINDOW_BOTTOM:
-        {
-            loggingWindow->SetDefaultSize(wxSize(1000, event.GetDragRect().height));
-            break;
-        }
+    switch (event.GetId()) {
+		case OPJFRAME_BROWSEWIN:
+		{
+			markerTreeWindow->SetDefaultSize(wxSize(event.GetDragRect().width, 1000));
+			break;
+		}
+		case OPJFRAME_LOGWIN:
+		{
+			loggingWindow->SetDefaultSize(wxSize(1000, event.GetDragRect().height));
+			break;
+		}
     }
 
-#if wxUSE_MDI_ARCHITECTURE
     wxLayoutAlgorithm layout;
     layout.LayoutMDIFrame(this);
-#endif // wxUSE_MDI_ARCHITECTURE
 
     // Leaves bits of itself behind sometimes
     GetClientWindow()->Refresh();
@@ -467,58 +618,44 @@ void OPJFrame::OnSashDrag(wxSashEvent& event)
 void OPJFrame::OpenFiles(wxArrayString paths, wxArrayString filenames)
 {
 
-        size_t count = paths.GetCount();
-        for ( size_t n = 0; n < count; n++ )
-        {
-			wxString msg, s;
-            s.Printf(_T("File %d: %s (%s)\n"),
-                     (int)n, paths[n].c_str(), filenames[n].c_str());
+	size_t count = paths.GetCount();
+	for (size_t n = 0; n < count; n++) {
 
-            msg += s;
-			//s.Printf(_T("Filter index: %d"), dialog.GetFilterIndex());
-			msg += s;
+		wxString msg, s;
+		s.Printf(_T("File %d: %s (%s)\n"), (int)n, paths[n].c_str(), filenames[n].c_str());
 
-			/*wxMessageDialog dialog2(this, msg, _T("Selected files"));
-			dialog2.ShowModal();*/
+		msg += s;
 
-			// Make another frame, containing a canvas
-			  OPJChildFrame *subframe = new OPJChildFrame(frame,
-											  paths[n],
-											  winNumber,
-											  _T("Canvas Frame"),
-											  wxDefaultPosition, wxSize(300, 300),
-											  wxDEFAULT_FRAME_STYLE |
-											  wxNO_FULL_REPAINT_ON_RESIZE);
-			  m_childhash[winNumber] = subframe;
+		/*wxMessageDialog dialog2(this, msg, _T("Selected files"));
+		dialog2.ShowModal();*/
 
-				  // create own marker tree
-				long tstyle = wxTR_DEFAULT_STYLE | wxSUNKEN_BORDER | 
-			#ifndef NO_VARIABLE_HEIGHT
-							 wxTR_HAS_VARIABLE_ROW_HEIGHT /*|*/
-			#endif
-							 /*wxTR_EDIT_LABELS*/;
+		// Make another frame, containing a canvas
+		OPJChildFrame *subframe = new OPJChildFrame(this,
+													paths[n],
+													winNumber,
+													wxT("Canvas Frame"),
+													wxDefaultPosition, wxSize(300, 300),
+													wxDEFAULT_FRAME_STYLE | wxNO_FULL_REPAINT_ON_RESIZE
+													);
+		m_childhash[winNumber] = subframe;
 
-				m_treehash[winNumber] = new OPJMarkerTree(m_bookCtrl, paths[n], wxT("Parsing..."), TreeTest_Ctrl,
-											wxDefaultPosition, wxDefaultSize,
-											tstyle);
+		// create own marker tree
+		m_treehash[winNumber] = new OPJMarkerTree(m_bookCtrl, paths[n], wxT("Parsing..."), TreeTest_Ctrl,
+												  wxDefaultPosition, wxDefaultSize,
+												  wxTR_DEFAULT_STYLE | wxSUNKEN_BORDER
+												  );
 
-				m_bookCtrl->AddPage(m_treehash[winNumber],
-										wxString::Format(wxT("%u"), winNumber), false);
+		m_bookCtrl->AddPage(m_treehash[winNumber], wxString::Format(wxT("%u"), winNumber), false);
 
-				for (int p = 0; p < m_bookCtrl->GetPageCount(); p++) {
-
-					if (m_bookCtrl->GetPageText(p) == wxString::Format(wxT("%u"), winNumber)) {
-						m_bookCtrl->ChangeSelection(p);
-						break;
-					}
-
-				}
-
-			  winNumber++;
-		
+		for (int p = 0; p < m_bookCtrl->GetPageCount(); p++) {
+			if (m_bookCtrl->GetPageText(p) == wxString::Format(wxT("%u"), winNumber)) {
+				m_bookCtrl->ChangeSelection(p);
+				break;
+			}
 		}
 
-
+		winNumber++;
+	}
 }
 
 void OPJFrame::OnFileOpen(wxCommandEvent& WXUNUSED(event))
@@ -533,15 +670,13 @@ void OPJFrame::OnFileOpen(wxCommandEvent& WXUNUSED(event))
                         wxEmptyString, wxEmptyString, wildcards,
                         wxFD_OPEN|wxFD_MULTIPLE);
 
-    if (dialog.ShowModal() == wxID_OK)
-    {
+    if (dialog.ShowModal() == wxID_OK) {
         wxArrayString paths, filenames;
 
         dialog.GetPaths(paths);
         dialog.GetFilenames(filenames);
 
 		OpenFiles(paths, filenames);
-
     }
 
 }
@@ -558,14 +693,17 @@ OPJCanvas::OPJCanvas(wxFileName fname, wxWindow *parent, const wxPoint& pos, con
     SetBackgroundColour(OPJ_CANVAS_COLOUR);
 
 	m_fname = fname;
+	m_childframe = (OPJChildFrame *) parent;
 
     OPJDecoThread *dthread = CreateDecoThread();
 
     if (dthread->Run() != wxTHREAD_NO_ERROR)
         wxLogMessage(wxT("Can't start deco thread!"));
     else
-		wxLogMessage(_T("New deco thread started."));
+		wxLogMessage(wxT("New deco thread started."));
 
+	// 100% zoom
+	m_zooml = 100;
 }
 
 OPJDecoThread *OPJCanvas::CreateDecoThread(void)
@@ -584,10 +722,6 @@ OPJDecoThread *OPJCanvas::CreateDecoThread(void)
 // Define the repainting behaviour
 void OPJCanvas::OnDraw(wxDC& dc)
 {
-    /*dc.SetFont(*wxSWISS_FONT);
-    dc.SetPen(*wxBLACK_PEN);
-    dc.DrawText(_T("Image drawing canvas"), 10, 10);
-    dc.DrawLine(8, 22, 300, 22);*/
 	if (m_image.Ok()) {
 		dc.DrawBitmap(m_image, OPJ_CANVAS_BORDER, OPJ_CANVAS_BORDER);
 	} else {
@@ -595,30 +729,6 @@ void OPJCanvas::OnDraw(wxDC& dc)
 		dc.SetPen(*wxBLACK_PEN);
 		dc.DrawText(_T("Decoding image, please wait..."), 40, 50);
 	}
-
-    /*dc.SetFont(*wxSWISS_FONT);
-    dc.SetPen(*wxGREEN_PEN);
-    dc.DrawLine(0, 0, 200, 200);
-    dc.DrawLine(200, 0, 0, 200);
-
-    dc.SetBrush(*wxCYAN_BRUSH);
-    dc.SetPen(*wxRED_PEN);
-    dc.DrawRectangle(100, 100, 100, 50);
-    dc.DrawRoundedRectangle(150, 150, 100, 50, 20);
-
-    dc.DrawEllipse(250, 250, 100, 50);
-#if wxUSE_SPLINES
-    dc.DrawSpline(50, 200, 50, 100, 200, 10);
-#endif // wxUSE_SPLINES
-    dc.DrawLine(50, 230, 200, 230);
-    dc.DrawText(_T("This is a test string"), 50, 230);
-
-    wxPoint points[3];
-    points[0].x = 200; points[0].y = 300;
-    points[1].x = 100; points[1].y = 400;
-    points[2].x = 300; points[2].y = 400;
-
-    dc.DrawPolygon(3, points);*/
 }
 
 // This implements a tiny doodling program! Drag the mouse using
@@ -630,9 +740,8 @@ void OPJCanvas::OnEvent(wxMouseEvent& event)
 
   wxPoint pt(event.GetLogicalPosition(dc));
 
-  if (xpos > -1 && ypos > -1 && event.Dragging())
-  {
-    dc.SetPen(*wxBLACK_PEN);
+  if ((xpos > -1) && (ypos > -1) && event.Dragging()) {
+    dc.SetPen(*wxRED_PEN);
     dc.DrawLine(xpos, ypos, pt.x, pt.y);
   }
   xpos = pt.x;
@@ -641,13 +750,11 @@ void OPJCanvas::OnEvent(wxMouseEvent& event)
 
 void OPJFrame::OnSize(wxSizeEvent& WXUNUSED(event))
 {
-#if wxUSE_MDI_ARCHITECTURE
     wxLayoutAlgorithm layout;
     layout.LayoutMDIFrame(this);
-#endif // wxUSE_MDI_ARCHITECTURE
 }
 
-// Note that SASHTEST_NEW_WINDOW and SASHTEST_ABOUT commands get passed
+// Note that OPJFRAME_FILEOPEN and OPJFRAME_HELPABOUT commands get passed
 // to the parent window for processing, so no need to
 // duplicate event handlers here.
 
@@ -655,7 +762,7 @@ BEGIN_EVENT_TABLE(OPJChildFrame, wxMDIChildFrame)
   /*EVT_MENU(SASHTEST_CHILD_QUIT, OPJChildFrame::OnQuit)*/
   EVT_CLOSE(OPJChildFrame::OnClose)
   EVT_SET_FOCUS(OPJChildFrame::OnGotFocus)
-  /*EVT_KILL_FOCUS(OPJChildFrame::OnLostFocus)*/
+  EVT_KILL_FOCUS(OPJChildFrame::OnLostFocus)
 END_EVENT_TABLE()
 
 OPJChildFrame::OPJChildFrame(OPJFrame *parent, wxFileName fname, int winnumber, const wxString& title, const wxPoint& pos, const wxSize& size,
@@ -664,7 +771,7 @@ const long style):
 {
   m_frame = (OPJFrame  *) parent;
   m_canvas = NULL;
-  my_children.Append(this);
+  //my_children.Append(this);
   m_fname = fname;
   m_winnumber = winnumber;
 	SetTitle(wxString::Format(_T("%d: "), m_winnumber) + m_fname.GetFullName());
@@ -672,38 +779,11 @@ const long style):
 
 	  // Give it an icon (this is ignored in MDI mode: uses resources)
 #ifdef __WXMSW__
-	  SetIcon(wxIcon(_T("sashtest_icn")));
+	  SetIcon(wxIcon(wxT("OPJChild16")));
 #endif
 
-#if wxUSE_STATUSBAR
 	  // Give it a status line
-	  //CreateStatusBar();
-#endif // wxUSE_STATUSBAR
-
-	  // Make a menubar
-	  /*wxMenu *file_menu = new wxMenu;
-
-	  file_menu->Append(SASHTEST_NEW_WINDOW, _T("&Open\tCtrl+O"));
-	  file_menu->Append(SASHTEST_CHILD_QUIT, _T("&Close\tCtrl+C"));
-	  file_menu->Append(SASHTEST_QUIT, _T("&Exit\tCtrl+Q"));
-
-	  wxMenu *option_menu = new wxMenu;
-
-	  // Dummy option
-	  option_menu->Append(SASHTEST_REFRESH, _T("&Refresh picture"));
-
-	  wxMenu *help_menu = new wxMenu;
-	  help_menu->Append(SASHTEST_ABOUT, _T("&About\tF1"));
-
-	  wxMenuBar *menu_bar = new wxMenuBar;
-
-	  menu_bar->Append(file_menu, _T("&File"));
-	  menu_bar->Append(option_menu, _T("&Options"));
-	  menu_bar->Append(help_menu, _T("&Help"));
-
-	  // Associate the menu bar with the frame
-	  SetMenuBar(menu_bar);*/
-
+	  /*CreateStatusBar();*/
 
 	  int width, height;
 	  GetClientSize(&width, &height);
@@ -712,20 +792,11 @@ const long style):
 	  canvas->SetCursor(wxCursor(wxCURSOR_PENCIL));
 	  m_canvas = canvas;
 
-	  // Give it scrollbars
+		// Give it scrollbars
 	  canvas->SetScrollbars(20, 20, 5, 5);
 
 	  Show(true);
 	  Maximize(true);
-
-
-    /*wxSize gsize = m_frame->m_bookCtrl->GetClientSize();
-    m_frame->m_treehash[m_winnumber]->SetSize(0, 0, gsize.x, gsize.y);*/
-
-    /*m_frame->Resize(m_winnumber);*/
-	/*m_frame->m_treehash[0]->Show(false);
-	m_frame->m_treehash[m_winnumber]->Show(true);*/
-    /*m_frame->Resize(m_winnumber);*/
 
 	/*wxLogError(wxString::Format(wxT("Created tree %d (0x%x)"), m_winnumber, m_frame->m_treehash[m_winnumber]));*/
 
@@ -733,22 +804,9 @@ const long style):
 
 OPJChildFrame::~OPJChildFrame(void)
 {
-  my_children.DeleteObject(this);
+  //my_children.DeleteObject(this);
 }
 
-/*void OPJChildFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
-{
-	for (int p = 0; p < m_frame->m_bookCtrl->GetPageCount(); p++) {
-
-		if (m_frame->m_bookCtrl->GetPageText(p) == wxString::Format(wxT("%u"), m_winnumber)) {
-			m_frame->m_bookCtrl->DeletePage(p);;
-			break;
-		}
-
-	}
-
-	Close(true);
-}*/
 
 void OPJChildFrame::OnClose(wxCloseEvent& event)
 {
@@ -762,7 +820,7 @@ void OPJChildFrame::OnClose(wxCloseEvent& event)
 	}
 	Destroy();
 
-	wxLogMessage(wxString::Format(wxT("Closed: %d"), m_winnumber));
+	wxLogMessage(wxT("Closed: %d"), m_winnumber);
 
 }
 
@@ -787,14 +845,13 @@ void OPJChildFrame::OnGotFocus(wxFocusEvent& event)
 
 	}
 
-	wxLogMessage(wxString::Format(wxT("Got focus: %d (%x)"), m_winnumber, event.GetWindow()));
+	//wxLogMessage(wxT("Got focus: %d (%x)"), m_winnumber, event.GetWindow());
 }
 
-/*void OPJChildFrame::OnLostFocus(wxFocusEvent& event)
+void OPJChildFrame::OnLostFocus(wxFocusEvent& event)
 {
-	wxLogMessage(wxString::Format(wxT("Lost focus: %d (%x)"), m_winnumber, event.GetWindow()));
-
-}*/
+	//wxLogMessage(wxT("Lost focus: %d (%x)"), m_winnumber, event.GetWindow());
+}
 
 #if USE_GENERIC_TREECTRL
 BEGIN_EVENT_TABLE(OPJMarkerTree, wxGenericTreeCtrl)
@@ -826,7 +883,7 @@ BEGIN_EVENT_TABLE(OPJMarkerTree, wxTreeCtrl)
     // EVT_TREE_ITEM_MENU is the preferred event for creating context menus
     // on a tree control, because it includes the point of the click or item,
     // meaning that no additional placement calculations are required.
-    /*EVT_TREE_ITEM_MENU(TreeTest_Ctrl, OPJMarkerTree::OnItemMenu)*/
+    EVT_TREE_ITEM_MENU(TreeTest_Ctrl, OPJMarkerTree::OnItemMenu)
     /*EVT_TREE_ITEM_RIGHT_CLICK(TreeTest_Ctrl, OPJMarkerTree::OnItemRClick)*/
 
     /*EVT_RIGHT_DOWN(OPJMarkerTree::OnRMouseDown)
@@ -842,8 +899,7 @@ IMPLEMENT_DYNAMIC_CLASS(OPJMarkerTree, wxTreeCtrl)
 #endif
 
 OPJMarkerTree::OPJMarkerTree(wxWindow *parent, wxFileName fname, wxString name, const wxWindowID id,
-                       const wxPoint& pos, const wxSize& size,
-                       long style)
+           const wxPoint& pos, const wxSize& size, long style)
           : wxTreeCtrl(parent, id, pos, size, style)
 {
     m_reverseSort = false;
@@ -863,17 +919,16 @@ OPJMarkerTree::OPJMarkerTree(wxWindow *parent, wxFileName fname, wxString name, 
     if (pthread->Run() != wxTHREAD_NO_ERROR)
         wxLogMessage(wxT("Can't start parse thread!"));
     else
-		wxLogMessage(_T("New parse thread started."));
+		wxLogMessage(wxT("New parse thread started."));
 }
 
 void OPJMarkerTree::CreateImageList(int size)
 {
-    if ( size == -1 )
-    {
+    if (size == -1) {
         SetImageList(NULL);
         return;
     }
-    if ( size == 0 )
+    if (size == 0)
         size = m_imageSize;
     else
         m_imageSize = size;
@@ -891,14 +946,10 @@ void OPJMarkerTree::CreateImageList(int size)
     icons[4] = wxIcon(icon5_xpm);
 
     int sizeOrig = icons[0].GetWidth();
-    for ( size_t i = 0; i < WXSIZEOF(icons); i++ )
-    {
-        if ( size == sizeOrig )
-        {
+    for (size_t i = 0; i < WXSIZEOF(icons); i++) {
+        if (size == sizeOrig) {
             images->Add(icons[i]);
-        }
-        else
-        {
+        } else {
             images->Add(wxBitmap(wxBitmap(icons[i]).ConvertToImage().Rescale(size, size)));
         }
     }
@@ -909,8 +960,7 @@ void OPJMarkerTree::CreateImageList(int size)
 #if USE_GENERIC_TREECTRL || !defined(__WXMSW__)
 void OPJMarkerTree::CreateButtonsImageList(int size)
 {
-    if ( size == -1 )
-    {
+    if ( size == -1 ) {
         SetButtonsImageList(NULL);
         return;
     }
@@ -926,15 +976,11 @@ void OPJMarkerTree::CreateButtonsImageList(int size)
     icons[2] = wxIcon(icon5_xpm);   // open
     icons[3] = wxIcon(icon5_xpm);   // open, selected
 
-    for ( size_t i = 0; i < WXSIZEOF(icons); i++ )
-    {
+    for ( size_t i = 0; i < WXSIZEOF(icons); i++ ) {
         int sizeOrig = icons[i].GetWidth();
-        if ( size == sizeOrig )
-        {
+        if ( size == sizeOrig ) {
             images->Add(icons[i]);
-        }
-        else
-        {
+        } else {
             images->Add(wxBitmap(wxBitmap(icons[i]).ConvertToImage().Rescale(size, size)));
         }
     }
@@ -1147,9 +1193,9 @@ void OPJMarkerTree::LogEvent(const wxChar *name, const wxTreeEvent& event)
     wxTreeItemId item = event.GetItem();
     wxString text;
     if ( item.IsOk() )
-        text << _T('"') << GetItemText(item).c_str() << _T('"');
+        text << wxT('"') << GetItemText(item).c_str() << wxT('"');
     else
-        text = _T("invalid item");
+        text = wxT("invalid item");
     wxLogMessage(wxT("%s(%s)"), name, text.c_str());
 }
 
@@ -1219,8 +1265,8 @@ void OPJMarkerTree::OnItemExpanding(wxTreeEvent& event)
 
 void OPJMarkerTree::OnSelChanged(wxTreeEvent& event)
 {
-#define BUNCH_LINESIZE	24
-#define BUNCH_NUMLINES	6
+#define BUNCH_LINESIZE	16
+#define BUNCH_NUMLINES	7
 
 	wxTreeItemId item = event.GetItem();
 	OPJMarkerData* data = (OPJMarkerData *) GetItemData(item);
@@ -1230,13 +1276,9 @@ void OPJMarkerTree::OnSelChanged(wxTreeEvent& event)
 
 	m_peektextCtrl->Clear();
 
-	/*wxTextAttr myattr = m_peektextCtrl->GetDefaultStyle();
-	myattr.SetFont(wxFont(10, wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
-	m_peektextCtrl->SetDefaultStyle(myattr);*/
-
-	text << wxString::Format(wxT("Selected... (%s -> %s, %s, %d, %d)"),
+	/*text << wxString::Format(wxT("Selected... (%s -> %s, %s, %d, %d)"),
 		text.c_str(), data->GetDesc1(), data->GetDesc2(),
-		data->m_start, data->m_length) << wxT("\n");
+		data->m_start, data->m_length) << wxT("\n");*/
 
 	// open the file and browse a little
 	wxFile *fp = new wxFile(m_fname.GetFullPath().c_str(), wxFile::read);
@@ -1248,10 +1290,11 @@ void OPJMarkerTree::OnSelChanged(wxTreeEvent& event)
 	int max_read = wxMin(WXSIZEOF(buffer), data->m_length - data->m_start + 1);
 	fp->Read(buffer, max_read);
 
+	// write the file data between start and stop
 	pos = 0;
 	for (l = 0; l < BUNCH_NUMLINES; l++) {
 
-		text << wxString::Format(wxT("%08d:"), data->m_start + pos);
+		text << wxString::Format(wxT("%010d:"), data->m_start + pos);
 
 		pre_pos = pos;
 
@@ -1274,7 +1317,11 @@ void OPJMarkerTree::OnSelChanged(wxTreeEvent& event)
 		for (c = 0; c < BUNCH_LINESIZE; c++) {
 
 			if (pre_pos < max_read) {
-				if ((buffer[pre_pos] == '\n') || (buffer[pre_pos] == '\t'))
+				if ((buffer[pre_pos] == '\n') ||
+					(buffer[pre_pos] == '\t') ||
+					(buffer[pre_pos] == '\0') ||
+					(buffer[pre_pos] == 0x0D) ||
+					(buffer[pre_pos] == 0x0B))
 					buffer[pre_pos] = ' ';
 				text << wxString::Format(wxT("%c."), wxChar(buffer[pre_pos]));
 			} else
@@ -1410,7 +1457,7 @@ void OPJMarkerTree::OnSelChanged(wxTreeEvent& event)
         }
     }
 
-    wxLogMessage( wxT("%s event: %s (flags = %c%c%c%c)"),
+    wxLogMessage(wxT("%s event: %s (flags = %c%c%c%c)"),
                   name,
                   key.c_str(),
                   event.ControlDown() ? wxT('C') : wxT('-'),
@@ -1539,17 +1586,19 @@ void OPJMarkerTree::OnEndLabelEdit(wxTreeEvent& event)
     wxLogMessage(wxT("OnItemActivated"));
 }*/
 
-/*void OPJMarkerTree::OnItemMenu(wxTreeEvent& event)
+void OPJMarkerTree::OnItemMenu(wxTreeEvent& event)
 {
-    wxTreeItemId itemId = event.GetItem();
+    /*wxTreeItemId itemId = event.GetItem();
     OPJMarkerData *item = itemId.IsOk() ? (OPJMarkerData *)GetItemData(itemId)
                                          : NULL;
 
     wxLogMessage(wxT("OnItemMenu for item \"%s\""), item ? item->GetDesc()
-                                                         : _T(""));
+                                                         : _T(""));*/
 
-    event.Skip();
-}*/
+	//wxLogMessage(wxT("EEEEEEEEEE"));
+
+    //event.Skip();
+}
 
 /*void OPJMarkerTree::OnContextMenu(wxContextMenuEvent& event)
 {
@@ -1719,45 +1768,74 @@ void *OPJDecoThread::Entry()
 
 	srand(GetId());
 	int m_countnum = rand() % 9;
-    text.Printf(wxT("Deco thread 0x%lx started (priority = %u, time = %d)."),
-                GetId(), GetPriority(), m_countnum);
+    //text.Printf(wxT("Deco thread 0x%lx started (priority = %u, time = %d)."),
+    //            GetId(), GetPriority(), m_countnum);
+    text.Printf(wxT("Deco thread %d started"), m_canvas->m_childframe->m_winnumber);
     WriteText(text);
-    // wxLogMessage(text); -- test wxLog thread safeness
 
-	//wxBusyCursor wait;
-	//wxBusyInfo wait(wxT("Decoding image ..."));
-
-
-    /*for (m_count = 0; m_count < m_countnum; m_count++) {
-        // check if we were asked to exit
-        if ( TestDestroy() )
-            break;
-
-        text.Printf(wxT("[%u] Deco thread 0x%lx here."), m_count, GetId());
-        WriteText(text);
-
-        // wxSleep() can't be called from non-GUI thread!
-        wxThread::Sleep(10);
-    }*/
-
-    wxBitmap bitmap( 100, 100 );
+    wxBitmap bitmap(100, 100);
     wxImage image = bitmap.ConvertToImage();
     image.Destroy();
 
 	WriteText(m_canvas->m_fname.GetFullPath());
 
+	// set handler properties
+	wxJ2KHandler *j2kkkhandler = (wxJ2KHandler *) wxImage::FindHandler( wxBITMAP_TYPE_J2K);
+	j2kkkhandler->m_reducefactor = wxGetApp().m_reducefactor;
+	j2kkkhandler->m_qualitylayers = wxGetApp().m_qualitylayers;
+	j2kkkhandler->m_components = wxGetApp().m_components;
+#ifdef USE_JPWL
+	j2kkkhandler->m_enablejpwl = wxGetApp().m_enablejpwl;
+	j2kkkhandler->m_expcomps = wxGetApp().m_expcomps;
+	j2kkkhandler->m_maxtiles = wxGetApp().m_maxtiles;
+#endif // USE_JPWL
+
+	wxJP2Handler *jp222handler = (wxJP2Handler *) wxImage::FindHandler( wxBITMAP_TYPE_JP2);
+	jp222handler->m_reducefactor = wxGetApp().m_reducefactor;
+	jp222handler->m_qualitylayers = wxGetApp().m_qualitylayers;
+	jp222handler->m_components = wxGetApp().m_components;
+#ifdef USE_JPWL
+	jp222handler->m_enablejpwl = wxGetApp().m_enablejpwl;
+	jp222handler->m_expcomps = wxGetApp().m_expcomps;
+	jp222handler->m_maxtiles = wxGetApp().m_maxtiles;
+#endif // USE_JPWL
+
+	wxMJ2Handler *mj222handler = (wxMJ2Handler *) wxImage::FindHandler( wxBITMAP_TYPE_MJ2);
+	mj222handler->m_reducefactor = wxGetApp().m_reducefactor;
+	mj222handler->m_qualitylayers = wxGetApp().m_qualitylayers;
+	mj222handler->m_components = wxGetApp().m_components;
+#ifdef USE_JPWL
+	mj222handler->m_enablejpwl = wxGetApp().m_enablejpwl;
+	mj222handler->m_expcomps = wxGetApp().m_expcomps;
+	mj222handler->m_maxtiles = wxGetApp().m_maxtiles;
+#endif // USE_JPWL
+
+	// load the file
     if (!image.LoadFile(m_canvas->m_fname.GetFullPath(), wxBITMAP_TYPE_ANY), 0) {
-        wxLogError(wxT("Can't load image"));
+        WriteText(wxT("Can't load image"));
 		return NULL;
 	}
 
-    m_canvas->m_image = wxBitmap(image);
-	m_canvas->Refresh();
-	m_canvas->SetScrollbars(20, 20, (int)(0.5 + (double) image.GetWidth() / 20.0), (int)(0.5 + (double) image.GetHeight() / 20.0));
+	// assign 100% image
+    m_canvas->m_image100 = wxBitmap(image);
 
-    text.Printf(wxT("Deco thread 0x%lx finished."), GetId());
+	// find a fit-to-width zoom
+	int zooml, wzooml, hzooml;
+	wxSize clientsize = m_canvas->GetClientSize();
+	wzooml = (int) floor(100.0 * (double) clientsize.GetWidth() / (double) (2 * OPJ_CANVAS_BORDER + image.GetWidth()));
+	hzooml = (int) floor(100.0 * (double) clientsize.GetHeight() / (double) (2 * OPJ_CANVAS_BORDER + image.GetHeight()));
+	zooml = wxMin(100, wxMin(wzooml, hzooml));
+
+	// fit to width
+	m_canvas->m_childframe->m_frame->Rescale(zooml, m_canvas->m_childframe);
+
+	//m_canvas->m_image = m_canvas->m_image100;
+	//m_canvas->Refresh();
+	//m_canvas->SetScrollbars(20, 20, (int)(0.5 + (double) image.GetWidth() / 20.0), (int)(0.5 + (double) image.GetHeight() / 20.0));
+
+    //text.Printf(wxT("Deco thread 0x%lx finished."), GetId());
+    text.Printf(wxT("Deco thread %d finished"), m_canvas->m_childframe->m_winnumber);
     WriteText(text);
-    // wxLogMessage(text); -- test wxLog thread safeness
 
     return NULL;
 }
@@ -1796,14 +1874,11 @@ void OPJParseThread::OnExit()
     wxArrayThread& threads = wxGetApp().m_parse_threads;
     threads.Remove(this);
 
-    if ( threads.IsEmpty() )
-    {
+    if (threads.IsEmpty()) {
         // signal the main thread that there are no more threads left if it is
         // waiting for us
-        if ( wxGetApp().m_parse_waitingUntilAllDone )
-        {
+        if (wxGetApp().m_parse_waitingUntilAllDone) {
             wxGetApp().m_parse_waitingUntilAllDone = false;
-
             wxGetApp().m_parse_semAllDone.Post();
         }
     }
@@ -1814,10 +1889,10 @@ void *OPJParseThread::Entry()
 
     wxString text;
 
-	srand( GetId() );
+	srand(GetId());
 	int m_countnum = rand() % 9;
     text.Printf(wxT("Parse thread 0x%lx started (priority = %u, time = %d)."),
-                GetId(), GetPriority(), m_countnum);
+            GetId(), GetPriority(), m_countnum);
     WriteText(text);
     // wxLogMessage(text); -- test wxLog thread safeness
 
@@ -1847,3 +1922,382 @@ void *OPJParseThread::Entry()
 
     return NULL;
 }
+
+
+
+
+
+
+
+// ----------------------------------------------------------------------------
+// OPJDecoderDialog
+// ----------------------------------------------------------------------------
+
+IMPLEMENT_CLASS(OPJDecoderDialog, wxPropertySheetDialog)
+
+BEGIN_EVENT_TABLE(OPJDecoderDialog, wxPropertySheetDialog)
+#ifdef USE_JPWL
+	EVT_CHECKBOX(OPJDECO_ENABLEJPWL, OPJDecoderDialog::OnEnableJPWL)
+#endif // USE_JPWL
+END_EVENT_TABLE()
+
+OPJDecoderDialog::OPJDecoderDialog(wxWindow* win, int dialogType)
+{
+    SetExtraStyle(wxDIALOG_EX_CONTEXTHELP|wxWS_EX_VALIDATE_RECURSIVELY);
+
+    int tabImage1 = -1;
+    int tabImage2 = -1;
+
+    int resizeBorder = wxRESIZE_BORDER;
+
+        m_imageList = NULL;
+
+    Create(win, wxID_ANY, wxT("Decoder settings"), wxDefaultPosition, wxDefaultSize,
+        wxDEFAULT_DIALOG_STYLE| (int) wxPlatform::IfNot(wxOS_WINDOWS_CE, resizeBorder)
+    );
+
+        CreateButtons(wxOK | wxCANCEL | (int)wxPlatform::IfNot(wxOS_WINDOWS_CE, wxHELP));
+
+    wxBookCtrlBase* notebook = GetBookCtrl();
+    notebook->SetImageList(m_imageList);
+
+    wxPanel* mainSettings = CreateMainSettingsPage(notebook);
+#ifdef USE_JPWL
+    wxPanel* jpwlSettings = CreateJPWLSettingsPage(notebook);
+#endif // USE_JPWL
+
+    notebook->AddPage(mainSettings, wxT("Main"), false);
+#ifdef USE_JPWL
+    notebook->AddPage(jpwlSettings, wxT("JPWL"), false);
+#endif // USE_JPWL
+
+    LayoutDialog();
+}
+
+OPJDecoderDialog::~OPJDecoderDialog()
+{
+    delete m_imageList;
+}
+
+/*wxPanel* OPJDecoderDialog::CreateGeneralSettingsPage(wxWindow* parent)
+{
+    wxPanel* panel = new wxPanel(parent, wxID_ANY);
+
+    wxBoxSizer *topSizer = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer *item0 = new wxBoxSizer( wxVERTICAL );
+
+    //// LOAD LAST FILE
+
+    wxBoxSizer* itemSizer3 = new wxBoxSizer( wxHORIZONTAL );
+    wxCheckBox* checkBox3 = new wxCheckBox(panel, ID_LOAD_LAST_PROJECT, _("&Load last project on startup"), wxDefaultPosition, wxDefaultSize);
+    itemSizer3->Add(checkBox3, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    item0->Add(itemSizer3, 0, wxGROW|wxALL, 0);
+
+    //// AUTOSAVE
+
+    wxString autoSaveLabel = _("&Auto-save every");
+    wxString minsLabel = _("mins");
+
+    wxBoxSizer* itemSizer12 = new wxBoxSizer( wxHORIZONTAL );
+    wxCheckBox* checkBox12 = new wxCheckBox(panel, ID_AUTO_SAVE, autoSaveLabel, wxDefaultPosition, wxDefaultSize);
+
+    wxSpinCtrl* spinCtrl12 = new wxSpinCtrl(panel, ID_AUTO_SAVE_MINS, wxEmptyString,
+        wxDefaultPosition, wxSize(40, wxDefaultCoord), wxSP_ARROW_KEYS, 1, 60, 1);
+
+    itemSizer12->Add(checkBox12, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    itemSizer12->Add(spinCtrl12, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    itemSizer12->Add(new wxStaticText(panel, wxID_STATIC, minsLabel), 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    item0->Add(itemSizer12, 0, wxGROW|wxALL, 0);
+
+    //// TOOLTIPS
+
+    wxBoxSizer* itemSizer8 = new wxBoxSizer( wxHORIZONTAL );
+    wxCheckBox* checkBox6 = new wxCheckBox(panel, ID_SHOW_TOOLTIPS, _("Show &tooltips"), wxDefaultPosition, wxDefaultSize);
+    itemSizer8->Add(checkBox6, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    item0->Add(itemSizer8, 0, wxGROW|wxALL, 0);
+
+    topSizer->Add( item0, 1, wxGROW|wxALIGN_CENTRE|wxALL, 5 );
+
+    panel->SetSizer(topSizer);
+    topSizer->Fit(panel);
+
+    return panel;
+}*/
+
+/*wxPanel* OPJDecoderDialog::CreateAestheticSettingsPage(wxWindow* parent)
+{
+    wxPanel* panel = new wxPanel(parent, wxID_ANY);
+
+    wxBoxSizer *topSizer = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer *item0 = new wxBoxSizer( wxVERTICAL );
+
+    //// PROJECT OR GLOBAL
+    wxString globalOrProjectChoices[2];
+    globalOrProjectChoices[0] = _("&New projects");
+    globalOrProjectChoices[1] = _("&This project");
+
+    wxRadioBox* projectOrGlobal = new wxRadioBox(panel, ID_APPLY_SETTINGS_TO, _("&Apply settings to:"),
+        wxDefaultPosition, wxDefaultSize, 2, globalOrProjectChoices);
+    item0->Add(projectOrGlobal, 0, wxGROW|wxALL, 5);
+
+    projectOrGlobal->SetSelection(0);
+
+    //// BACKGROUND STYLE
+    wxArrayString backgroundStyleChoices;
+    backgroundStyleChoices.Add(wxT("Colour"));
+    backgroundStyleChoices.Add(wxT("Image"));
+    wxStaticBox* staticBox3 = new wxStaticBox(panel, wxID_ANY, _("Background style:"));
+
+    wxBoxSizer* styleSizer = new wxStaticBoxSizer( staticBox3, wxVERTICAL );
+    item0->Add(styleSizer, 0, wxGROW|wxALL, 5);
+
+    wxBoxSizer* itemSizer2 = new wxBoxSizer( wxHORIZONTAL );
+
+    wxChoice* choice2 = new wxChoice(panel, ID_BACKGROUND_STYLE, wxDefaultPosition, wxDefaultSize, backgroundStyleChoices);
+
+    itemSizer2->Add(new wxStaticText(panel, wxID_ANY, _("&Window:")), 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    itemSizer2->Add(5, 5, 1, wxALL, 0);
+    itemSizer2->Add(choice2, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+
+    styleSizer->Add(itemSizer2, 0, wxGROW|wxALL, 5);
+
+#if wxUSE_SPINCTRL
+    //// FONT SIZE SELECTION
+
+    wxStaticBox* staticBox1 = new wxStaticBox(panel, wxID_ANY, _("Tile font size:"));
+    wxBoxSizer* itemSizer5 = new wxStaticBoxSizer( staticBox1, wxHORIZONTAL );
+
+    wxSpinCtrl* spinCtrl = new wxSpinCtrl(panel, ID_FONT_SIZE, wxEmptyString, wxDefaultPosition,
+        wxSize(80, wxDefaultCoord));
+    itemSizer5->Add(spinCtrl, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+
+    item0->Add(itemSizer5, 0, wxGROW|wxLEFT|wxRIGHT, 5);
+#endif
+
+    topSizer->Add( item0, 1, wxGROW|wxALIGN_CENTRE|wxALL, 5 );
+    topSizer->AddSpacer(5);
+
+    panel->SetSizer(topSizer);
+    topSizer->Fit(panel);
+
+    return panel;
+}*/
+
+wxPanel* OPJDecoderDialog::CreateMainSettingsPage(wxWindow* parent)
+{
+    wxPanel* panel = new wxPanel(parent, wxID_ANY);
+
+	// top sizer
+    wxBoxSizer *topSizer = new wxBoxSizer(wxVERTICAL);
+
+	// add some space
+	//topSizer->AddSpacer(5);
+
+		// sub top sizer
+		wxBoxSizer *subtopSizer = new wxBoxSizer(wxVERTICAL);
+
+			// resolutions settings, column
+			wxStaticBox* resolutionBox = new wxStaticBox(panel, wxID_ANY, wxT("Resolutions"));
+			wxBoxSizer* resolutionSizer = new wxStaticBoxSizer(resolutionBox, wxVERTICAL);
+
+				// reduce factor sizer, row
+				wxBoxSizer* reduceSizer = new wxBoxSizer(wxHORIZONTAL);
+
+				// add some text
+				reduceSizer->Add(new wxStaticText(panel, wxID_ANY, wxT("&Reduce factor:")),
+								0, wxALL | wxALIGN_CENTER_VERTICAL, 5);
+
+				// add some horizontal space
+				reduceSizer->Add(5, 5, 1, wxALL, 0);
+
+				// add the value control
+				reduceSizer->Add(
+					m_reduceCtrl = new wxSpinCtrl(panel, OPJDECO_REDUCEFACTOR,
+					wxString::Format(wxT("%d"), wxGetApp().m_reducefactor),
+								wxDefaultPosition, wxSize(80, wxDefaultCoord),
+								wxSP_ARROW_KEYS,
+								0, 10000, wxGetApp().m_reducefactor),
+					0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 5);
+
+			resolutionSizer->Add(reduceSizer, 0, wxGROW | wxALL, 5);
+
+		subtopSizer->Add(resolutionSizer, 0, wxGROW | wxALL, 5);
+
+			// quality layer settings, column
+			wxStaticBox* layerBox = new wxStaticBox(panel, wxID_ANY, wxT("Layers"));
+			wxBoxSizer* layerSizer = new wxStaticBoxSizer(layerBox, wxVERTICAL);
+
+				// quality layers sizer, row
+				wxBoxSizer* qualitySizer = new wxBoxSizer(wxHORIZONTAL);
+
+				// add some text
+				qualitySizer->Add(new wxStaticText(panel, wxID_ANY, wxT("&Quality layers:")),
+								0, wxALL | wxALIGN_CENTER_VERTICAL, 5);
+
+				// add some horizontal space
+				qualitySizer->Add(5, 5, 1, wxALL, 0);
+
+				// add the value control
+				qualitySizer->Add(
+					m_layerCtrl = new wxSpinCtrl(panel, OPJDECO_QUALITYLAYERS,
+								wxString::Format(wxT("%d"), wxGetApp().m_qualitylayers),
+								wxDefaultPosition, wxSize(80, wxDefaultCoord),
+								wxSP_ARROW_KEYS,
+								0, 100000, wxGetApp().m_qualitylayers),
+					0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 5);
+
+			layerSizer->Add(qualitySizer, 0, wxGROW | wxALL, 5);
+
+		subtopSizer->Add(layerSizer, 0, wxGROW | wxALL, 5);
+
+			// component settings, column
+			wxStaticBox* compoBox = new wxStaticBox(panel, wxID_ANY, wxT("Components"));
+			wxBoxSizer* compoSizer = new wxStaticBoxSizer(compoBox, wxVERTICAL);
+
+				// quality layers sizer, row
+				wxBoxSizer* numcompsSizer = new wxBoxSizer(wxHORIZONTAL);
+
+				// add some text
+				numcompsSizer->Add(new wxStaticText(panel, wxID_ANY, wxT("&No. of components:")),
+								0, wxALL | wxALIGN_CENTER_VERTICAL, 5);
+
+				// add some horizontal space
+				numcompsSizer->Add(5, 5, 1, wxALL, 0);
+
+				// add the value control
+				numcompsSizer->Add(
+					m_numcompsCtrl = new wxSpinCtrl(panel, OPJDECO_NUMCOMPS,
+								wxString::Format(wxT("%d"), wxGetApp().m_components),
+								wxDefaultPosition, wxSize(80, wxDefaultCoord),
+								wxSP_ARROW_KEYS,
+								0, 100000, wxGetApp().m_components),
+					0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 5);
+
+			compoSizer->Add(numcompsSizer, 0, wxGROW | wxALL, 5);
+
+		subtopSizer->Add(compoSizer, 0, wxGROW | wxALL, 5);
+
+	topSizer->Add(subtopSizer, 1, wxGROW | wxALIGN_CENTRE | wxALL, 5);
+
+	// assign top and fit it
+    panel->SetSizer(topSizer);
+    topSizer->Fit(panel);
+
+    return panel;
+}
+
+#ifdef USE_JPWL
+wxPanel* OPJDecoderDialog::CreateJPWLSettingsPage(wxWindow* parent)
+{
+    wxPanel* panel = new wxPanel(parent, wxID_ANY);
+
+	// top sizer
+    wxBoxSizer *topSizer = new wxBoxSizer(wxVERTICAL);
+
+	// add some space
+	//topSizer->AddSpacer(5);
+
+		// sub top sizer
+		wxBoxSizer *subtopSizer = new wxBoxSizer(wxVERTICAL);
+
+		// add JPWL enabling check box
+		subtopSizer->Add(
+			m_enablejpwlCheck = new wxCheckBox(panel, OPJDECO_ENABLEJPWL, wxT("Enable JPWL"), wxDefaultPosition, wxDefaultSize),
+			0, wxGROW | wxALL, 5);
+		m_enablejpwlCheck->SetValue(wxGetApp().m_enablejpwl);
+
+			// component settings, column
+			wxStaticBox* compoBox = new wxStaticBox(panel, wxID_ANY, wxT("Components"));
+			wxBoxSizer* compoSizer = new wxStaticBoxSizer(compoBox, wxVERTICAL);
+
+				// expected components sizer, row
+				wxBoxSizer* expcompsSizer = new wxBoxSizer(wxHORIZONTAL);
+
+				// add some text
+				expcompsSizer->Add(new wxStaticText(panel, wxID_ANY, wxT("&Expected comps.:")),
+								0, wxALL | wxALIGN_CENTER_VERTICAL, 5);
+
+				// add some horizontal space
+				expcompsSizer->Add(5, 5, 1, wxALL, 0);
+
+				// add the value control
+				expcompsSizer->Add(
+					m_expcompsCtrl = new wxSpinCtrl(panel, OPJDECO_EXPCOMPS,
+								wxString::Format(wxT("%d"), wxGetApp().m_expcomps),
+								wxDefaultPosition, wxSize(80, wxDefaultCoord),
+								wxSP_ARROW_KEYS,
+								1, 100000, wxGetApp().m_expcomps),
+					0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 5);
+				m_expcompsCtrl->Enable(wxGetApp().m_enablejpwl);
+
+			compoSizer->Add(expcompsSizer, 0, wxGROW | wxALL, 5);
+
+		subtopSizer->Add(compoSizer, 0, wxGROW | wxALL, 5);
+
+			// tiles settings, column
+			wxStaticBox* tileBox = new wxStaticBox(panel, wxID_ANY, wxT("Tiles"));
+			wxBoxSizer* tileSizer = new wxStaticBoxSizer(tileBox, wxVERTICAL);
+
+				// maximum tiles sizer, row
+				wxBoxSizer* maxtileSizer = new wxBoxSizer(wxHORIZONTAL);
+
+				// add some text
+				maxtileSizer->Add(new wxStaticText(panel, wxID_ANY, wxT("&Max. no. of tiles:")),
+								0, wxALL | wxALIGN_CENTER_VERTICAL, 5);
+
+				// add some horizontal space
+				maxtileSizer->Add(5, 5, 1, wxALL, 0);
+
+				// add the value control
+				maxtileSizer->Add(
+					m_maxtilesCtrl = new wxSpinCtrl(panel, OPJDECO_MAXTILES,
+								wxString::Format(wxT("%d"), wxGetApp().m_maxtiles),
+								wxDefaultPosition, wxSize(80, wxDefaultCoord),
+								wxSP_ARROW_KEYS,
+								1, 100000, wxGetApp().m_maxtiles),
+					0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 5);
+				m_maxtilesCtrl->Enable(wxGetApp().m_enablejpwl);
+
+			tileSizer->Add(maxtileSizer, 0, wxGROW | wxALL, 5);
+
+		subtopSizer->Add(tileSizer, 0, wxGROW | wxALL, 5);
+
+	topSizer->Add(subtopSizer, 1, wxGROW | wxALIGN_CENTRE | wxALL, 5);
+
+	// assign top and fit it
+    panel->SetSizer(topSizer);
+    topSizer->Fit(panel);
+
+    return panel;
+}
+
+void OPJDecoderDialog::OnEnableJPWL(wxCommandEvent& event)
+{
+	if (event.IsChecked()) {
+		wxLogMessage(wxT("JPWL enabled"));
+		m_expcompsCtrl->Enable(true);
+		m_maxtilesCtrl->Enable(true);
+	} else {
+		wxLogMessage(wxT("JPWL disabled"));
+		m_expcompsCtrl->Enable(false);
+		m_maxtilesCtrl->Enable(false);
+	}
+
+}
+
+bool OPJDnDFile::OnDropFiles(wxCoord, wxCoord, const wxArrayString& filenames)
+{
+    /*size_t nFiles = filenames.GetCount();
+    wxString str;
+    str.Printf( _T("%d files dropped\n"), (int)nFiles);
+    for ( size_t n = 0; n < nFiles; n++ ) {
+        str << filenames[n] << wxT("\n");
+    }
+    wxLogMessage(str);*/
+	m_pOwner->OpenFiles(filenames, filenames);
+
+    return true;
+}
+
+#endif // USE_JPWL
+

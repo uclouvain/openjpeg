@@ -149,6 +149,19 @@ bool wxJP2Handler::LoadFile(wxImage *image, wxInputStream& stream, bool verbose,
 	strncpy(parameters.outfile, "", sizeof(parameters.outfile)-1);
 	parameters.decod_format = JP2_CFMT;
 	parameters.cod_format = BMP_DFMT;
+	if (m_reducefactor)
+		parameters.cp_reduce = m_reducefactor;
+	if (m_qualitylayers)
+		parameters.cp_layer = m_qualitylayers;
+	/*if (n_components)
+		parameters. = n_components;*/
+
+	/* JPWL only */
+#ifdef USE_JPWL
+	parameters.jpwl_exp_comps = m_expcomps;
+	parameters.jpwl_max_tiles = m_maxtiles;
+	parameters.jpwl_correct = m_enablejpwl;
+#endif /* USE_JPWL */
 
 	/* get a decoder handle */
 	dinfo = opj_create_decompress(CODEC_JP2);
@@ -175,7 +188,7 @@ bool wxJP2Handler::LoadFile(wxImage *image, wxInputStream& stream, bool verbose,
 	opjimage = opj_decode(dinfo, cio);
 	if (!opjimage) {
 		wxMutexGuiEnter();
-		wxLogError("JP2: failed to decode image!");
+		wxLogError(wxT("JP2: failed to decode image!"));
 		wxMutexGuiLeave();
 		opj_destroy_decompress(dinfo);
 		opj_cio_close(cio);
@@ -189,7 +202,7 @@ bool wxJP2Handler::LoadFile(wxImage *image, wxInputStream& stream, bool verbose,
 	// check image size
 	if ((opjimage->numcomps != 1) && (opjimage->numcomps != 3)) {
 		wxMutexGuiEnter();
-		wxLogError("JP2: weird number of components");
+		wxLogError(wxT("JP2: weird number of components"));
 		wxMutexGuiLeave();
 		opj_destroy_decompress(dinfo);
 		free(src);

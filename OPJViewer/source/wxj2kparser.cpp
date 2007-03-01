@@ -196,7 +196,7 @@ void OPJParseThread::ParseJ2KFile(wxFile *m_file, wxFileOffset offset, wxFileOff
 
 				// marker name
 				wxTreeItemId subcurrid1 = m_tree->AppendItem(currid,
-					wxT("*** ") + wxString(marker_descr[m]) + wxT(" ***"),
+					wxT("*** ") + wxString::Format(wxT("%s"), marker_descr[m]) + wxT(" ***"),
 					image, imageSel,
 					new OPJMarkerData(wxT("INFO"))
 					);

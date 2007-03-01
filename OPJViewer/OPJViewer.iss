@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=OPJViewer
-AppVerName=OPJViewer 0.1 alpha
+AppVerName=OPJViewer 0.2 alpha
 AppPublisher=OpenJPEG
 AppPublisherURL=http://www.openjpeg.org
 AppSupportURL=http://www.openjpeg.org
@@ -11,9 +11,17 @@ AppUpdatesURL=http://www.openjpeg.org
 DefaultDirName={pf}\OPJViewer
 DefaultGroupName=OPJViewer
 OutputDir=setup
-OutputBaseFilename=OPJViewer01alpha_setup
+OutputBaseFilename=OPJViewer02alpha_setup
 Compression=lzma
-SolidCompression=yes
+SolidCompression=true
+InfoBeforeFile=source\readmebefore.txt
+InfoAfterFile=source\readmeafter.txt
+LicenseFile=source\license.txt
+VersionInfoVersion=0.2.0.0
+VersionInfoCompany=OpenJPEG
+VersionInfoDescription=JPEG 2000 viewer
+ShowLanguageDialog=yes
+SetupIconFile=source\OPJViewer.ico
 
 [Languages]
 Name: english; MessagesFile: compiler:Default.isl
@@ -22,13 +30,15 @@ Name: english; MessagesFile: compiler:Default.isl
 Name: desktopicon; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:AdditionalIcons}; Flags: unchecked
 
 [Files]
-Source: W32Release\OPJViewer.exe; DestDir: {app}; Flags: ignoreversion
+Source: Release\OPJViewer.exe; DestDir: {app}; Flags: ignoreversion
+Source: about\about.htm; DestDir: {app}/about; Flags: ignoreversion
+Source: about\opj_logo.png; DestDir: {app}/about; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
-Name: {group}\OPJViewer; Filename: {app}\OPJViewer.exe
+Name: {group}\OPJViewer; Filename: {app}\OPJViewer.exe; WorkingDir: {app}; IconIndex: 0
 Name: {group}\{cm:UninstallProgram,OPJViewer}; Filename: {uninstallexe}
-Name: {userdesktop}\OPJViewer; Filename: {app}\OPJViewer.exe; Tasks: desktopicon
+Name: {userdesktop}\OPJViewer; Filename: {app}\OPJViewer.exe; Tasks: desktopicon; WorkingDir: {app}; IconIndex: 0
 
 [Run]
-Filename: {app}\OPJViewer.exe; Description: {cm:LaunchProgram,OPJViewer}; Flags: nowait postinstall skipifsilent
+Filename: {app}\OPJViewer.exe; Description: {cm:LaunchProgram,OPJViewer}; Flags: nowait postinstall skipifsilent; WorkingDir: {app}
