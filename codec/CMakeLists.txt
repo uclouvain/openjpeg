@@ -36,10 +36,12 @@ IF(NOT BUILD_SHARED_LIBS)
   ADD_DEFINITIONS(-DOPJ_STATIC)
 ENDIF(NOT BUILD_SHARED_LIBS)
 
+FIND_PACKAGE(TIFF REQUIRED)
+
 # Loop over all executables:
 FOREACH(exe j2k_to_image image_to_j2k)
   ADD_EXECUTABLE(${exe} ${exe}.c ${common_SRCS})
-  TARGET_LINK_LIBRARIES(${exe} ${OPJ_PREFIX}openjpeg)
+  TARGET_LINK_LIBRARIES(${exe} ${OPJ_PREFIX}openjpeg ${TIFF_LIBRARIES})
   # On unix you need to link to the math library:
   IF(UNIX)
     TARGET_LINK_LIBRARIES(${exe} -lm)
