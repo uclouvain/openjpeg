@@ -5,6 +5,13 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+March 7, 2007
++ [Parvatha] Added option for Digital cinema profile compliant codestream. This can be chosen by "-cinema2K" or "-cinema4K" for a 2K and 4K compliance respectively. The feature for tileparts has not been implemented in this version. Modification in image_to_j2k.c
++ [Parvatha] Added the Digital Cinema profiles (CINEMA2K and CINEMA4K) to the list of profiles recognized in the codestream SIZ marker segment. Modification in openjpeg.h,j2k.c
++ [Parvatha] Added feature for constant quality within bitrate defined in Digital cinema standards. Modification in tcd.c
+! [Parvatha] Modified the method of generation of buffer length. Modification in cio.c
+ 
+
 March 1, 2007
 * [FOD] Modified codec projects (*.dsp) and makefile to include the tiff library (modified codec/image_to_j2k.dsp codec/j2k_to_image.dsp and codec/makefile)
 + [GB] Zoom capability and decoder settings dialog in OPJViewer; modified JPWL library .dsp project in order to create a library with embedded JPWL functions

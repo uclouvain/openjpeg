@@ -113,6 +113,19 @@ braindamage below.
 ==========================================================
 */
 
+typedef enum RSIZ_CAPABILITIES {
+	STD_RSIZ = 0,
+	CINEMA2K = 3,		/** Profile name for a 2K image*/
+	CINEMA4K = 4		/** Profile name for a 4K image*/
+} OPJ_RSIZ_CAPABILITIES;
+
+typedef enum CINEMA_MODE {
+	OFF = 0,
+	CINEMA2K_24 = 1,
+	CINEMA2K_48 = 2,
+	CINEMA4K_24 = 3
+}OPJ_CINEMA_MODE;
+
 /** Progression order */
 typedef enum PROG_ORDER {
 	PROG_UNKNOWN = -1,	/**< place-holder */
@@ -204,6 +217,12 @@ typedef struct opj_poc {
 Compression parameters
 */
 typedef struct opj_cparameters {
+	/** Digital Cinema compliance 0-not compliant, 1-compliant*/
+	OPJ_CINEMA_MODE cp_cinema;
+	/** Progression order*/
+	char cp_prog[4];
+	/** Profile name*/
+	OPJ_RSIZ_CAPABILITIES cp_rsiz;
 	/** size of tile: tile_size_on = false (not in argument) or = true (in argument) */
 	bool tile_size_on;
 	/** XTOsiz */

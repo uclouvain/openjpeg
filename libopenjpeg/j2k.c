@@ -324,7 +324,7 @@ static void j2k_write_siz(opj_j2k_t *j2k) {
 	cio_write(cio, J2K_MS_SIZ, 2);	/* SIZ */
 	lenp = cio_tell(cio);
 	cio_skip(cio, 2);
-	cio_write(cio, 0, 2);			/* Rsiz (capabilities) */
+	cio_write(cio, cp->rsiz, 2);			/* Rsiz (capabilities) */
 	cio_write(cio, image->x1, 4);	/* Xsiz */
 	cio_write(cio, image->y1, 4);	/* Ysiz */
 	cio_write(cio, image->x0, 4);	/* X0siz */
@@ -1780,7 +1780,8 @@ void j2k_setup_encoder(opj_j2k_t *j2k, opj_cparameters_t *parameters, opj_image_
 	/* 
 	copy user encoding parameters 
 	*/
-
+	cp->cinema = parameters->cp_cinema;
+	cp->rsiz   = parameters->cp_rsiz;
 	cp->disto_alloc = parameters->cp_disto_alloc;
 	cp->fixed_alloc = parameters->cp_fixed_alloc;
 	cp->fixed_quality = parameters->cp_fixed_quality;
@@ -1824,6 +1825,11 @@ void j2k_setup_encoder(opj_j2k_t *j2k, opj_cparameters_t *parameters, opj_image_
 	} else {
 		cp->tdx = image->x1 - cp->tx0;
 		cp->tdy = image->y1 - cp->ty0;
+	}
+
+	cp->img_size = 0;
+	for(i=0;i<image->numcomps ;i++){
+	cp->img_size += (image->comps[i].w *image->comps[i].h * image->comps[i].prec);
 	}
 
 /* UniPG>> */
@@ -1940,42 +1946,60 @@ void j2k_setup_encoder(opj_j2k_t *j2k, opj_cparameters_t *parameters, opj_image_
 			} else {
 				tccp->roishift = 0;
 			}
-			if (parameters->csty & J2K_CCP_CSTY_PRT) {
-				int p = 0;
-				for (j = tccp->numresolutions - 1; j >= 0; j--) {
-					if (p < parameters->res_spec) {
-						if (parameters->prcw_init[p] < 1) {
-							tccp->prcw[j] = 1;
-						} else {
-							tccp->prcw[j] = int_floorlog2(parameters->prcw_init[p]);
-						}
-						if (parameters->prch_init[p] < 1) {
-							tccp->prch[j] = 1;
-						} else {
-							tccp->prch[j] = int_floorlog2(parameters->prch_init[p]);
-						}
-					} else {
-						int res_spec = parameters->res_spec;
-						int size_prcw = parameters->prcw_init[res_spec - 1] >> (p - (res_spec - 1));
-						int size_prch = parameters->prch_init[res_spec - 1] >> (p - (res_spec - 1));
-						if (size_prcw < 1) {
-							tccp->prcw[j] = 1;
-						} else {
-							tccp->prcw[j] = int_floorlog2(size_prcw);
-						}
-						if (size_prch < 1) {
-							tccp->prch[j] = 1;
-						} else {
-							tccp->prch[j] = int_floorlog2(size_prch);
-						}
-					}
-					p++;
-					/*printf("\nsize precinct for level %d : %d,%d\n", j,tccp->prcw[j], tccp->prch[j]); */
+
+			if(parameters->cp_cinema)
+			{
+				//Precinct size for lowest frequency subband=128
+				tccp->prcw[0] = 7;
+				tccp->prch[0] = 7;
+				//Precinct size at all other resolutions = 256
+				for (j = 1; j < tccp->numresolutions; j++) {
+					tccp->prcw[j] = 8;
+					tccp->prch[j] = 8;
 				}
-			} else {
-				for (j = 0; j < tccp->numresolutions; j++) {
-					tccp->prcw[j] = 15;
-					tccp->prch[j] = 15;
+			}else{
+				if (parameters->csty & J2K_CCP_CSTY_PRT) {
+					int p = 0;
+					for (j = tccp->numresolutions - 1; j >= 0; j--) {
+						if (p < parameters->res_spec) {
+							
+							if (parameters->prcw_init[p] < 1) {
+								tccp->prcw[j] = 1;
+							} else {
+								tccp->prcw[j] = int_floorlog2(parameters->prcw_init[p]);
+							}
+							
+							if (parameters->prch_init[p] < 1) {
+								tccp->prch[j] = 1;
+							}else {
+								tccp->prch[j] = int_floorlog2(parameters->prch_init[p]);
+							}
+
+						} else {
+							int res_spec = parameters->res_spec;
+							int size_prcw = parameters->prcw_init[res_spec - 1] >> (p - (res_spec - 1));
+							int size_prch = parameters->prch_init[res_spec - 1] >> (p - (res_spec - 1));
+							
+							if (size_prcw < 1) {
+								tccp->prcw[j] = 1;
+							} else {
+								tccp->prcw[j] = int_floorlog2(size_prcw);
+							}
+							
+							if (size_prch < 1) {
+								tccp->prch[j] = 1;
+							} else {
+								tccp->prch[j] = int_floorlog2(size_prch);
+							}
+						}
+						p++;
+						/*printf("\nsize precinct for level %d : %d,%d\n", j,tccp->prcw[j], tccp->prch[j]); */
+					}	//end for
+				} else {
+					for (j = 0; j < tccp->numresolutions; j++) {
+						tccp->prcw[j] = 15;
+						tccp->prch[j] = 15;
+					}
 				}
 			}
 

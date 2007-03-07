@@ -1040,13 +1040,29 @@ bool tcd_rateallocate(opj_tcd_t *tcd, unsigned char *dest, int len, opj_image_in
 				tcd_makelayer(tcd, layno, thresh, 0);
 				
 				if (cp->fixed_quality) {	/* fixed_quality */
-					distoachieved =	(layno == 0) ? 
-						tcd_tile->distolayer[0]	: (cumdisto[layno - 1] + tcd_tile->distolayer[layno]);
-					if (distoachieved < distotarget) {
-						hi = thresh;
-						continue;
+					if(cp->cinema){
+						l = t2_encode_packets(t2, tcd->tcd_tileno, tcd_tile, layno + 1, dest, maxlen, image_info);
+						if (l == -999) {
+							lo = thresh;
+							continue;
+						}else{
+           		distoachieved =	layno == 0 ? 
+							tcd_tile->distolayer[0]	: cumdisto[layno - 1] + tcd_tile->distolayer[layno];
+							if (distoachieved < distotarget) {
+								hi=thresh; continue;
+							}else{
+								lo=thresh;
+							}
+						}
+					}else{
+						distoachieved =	(layno == 0) ? 
+							tcd_tile->distolayer[0]	: (cumdisto[layno - 1] + tcd_tile->distolayer[layno]);
+						if (distoachieved < distotarget) {
+							hi = thresh;
+							continue;
+						}
+						lo = thresh;
 					}
-					lo = thresh;
 				} else {
 					l = t2_encode_packets(t2, tcd->tcd_tileno, tcd_tile, layno + 1, dest, maxlen, image_info);
 					/* TODO: what to do with l ??? seek / tell ??? */

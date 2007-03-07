@@ -187,6 +187,12 @@ typedef struct opj_tcp {
 Coding parameters
 */
 typedef struct opj_cp {
+	/** Digital cinema profile*/
+	OPJ_CINEMA_MODE cinema;
+	/** Size of the image in bits*/
+	int img_size;
+	/** Rsiz*/
+	OPJ_RSIZ_CAPABILITIES rsiz;
 	/** allocation by rate/distortion */
 	int disto_alloc;
 	/** allocation by fixed layer */

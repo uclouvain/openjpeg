@@ -55,6 +55,8 @@
 #define TIF_DFMT 14
 
 /* ----------------------------------------------------------------------- */
+#define CINEMA_24_CS 1302083	/*Codestream length for 24fps*/
+#define CINEMA_48_CS 651041		/*Codestream length for 48fps*/
 
 typedef struct dircnt{
 	/** Buffer for holding images read from Directory*/
@@ -125,8 +127,10 @@ void encode_help_display() {
 	fprintf(stdout,"------------\n");
 	fprintf(stdout,"\n");
 	fprintf(stdout,"Required Parameters (except with -h):\n");
+	fprintf(stdout,"One of the two options -ImgDir or -i must be used\n");
 	fprintf(stdout,"\n");
 	fprintf(stdout,"-ImgDir      : Image file Directory path (example ../Images) \n");
+	fprintf(stdout,"    When using this option -OutFor must be used\n");
 	fprintf(stdout,"\n");
 	fprintf(stdout,"-OutFor \n");
 	fprintf(stdout,"    REQUIRED only if -ImgDir is used\n");
@@ -134,12 +138,19 @@ void encode_help_display() {
 	fprintf(stdout,"    Currently accepts PGM, PPM, PNM, PGX, BMP format\n");
 	fprintf(stdout,"\n");
 	fprintf(stdout,"-i           : source file  (-i source.pnm also *.pgm, *.ppm) \n");
+	fprintf(stdout,"    When using this option -o must be used\n");
 	fprintf(stdout,"\n");
 	fprintf(stdout,"-o           : destination file (-o dest.j2k or .jp2) \n");
 	fprintf(stdout,"\n");
 	fprintf(stdout,"Optional Parameters:\n");
 	fprintf(stdout,"\n");
 	fprintf(stdout,"-h           : display the help information \n ");
+	fprintf(stdout,"\n");
+	fprintf(stdout,"-cinema2k    : Digital Cinema 2K profile compliant codestream for 2K resolution.(-cinema2k 24 or 48) \n");
+  fprintf(stdout,"	  Need to specify the frames per second for a 2K resolution. Only 24 or 48 fps is allowed\n"); 
+	fprintf(stdout,"\n");
+	fprintf(stdout,"-cinema4k    : Digital Cinema 4K profile compliant codestream for 4K resolution \n");
+	fprintf(stdout,"	  Frames per second not required. Default value is 24fps\n"); 
 	fprintf(stdout,"\n");
 	fprintf(stdout,"-r           : different compression ratios for successive layers (-r 20,10,5)\n ");
 	fprintf(stdout,"	         - The rate specified for each quality level is the desired \n");
@@ -403,16 +414,92 @@ char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_cparamet
 }
 
 
+void cinema_setup_encoder(opj_cparameters_t *parameters,opj_image_t *image){
+	int i;
+	float temp_rate;
+	
+	parameters->tile_size_on = false;
+	parameters->cp_tdx=1;
+	parameters->cp_tdy=1;
 
+	/*Tile and Image shall be at (0,0)*/
+	parameters->cp_tx0=0; parameters->cp_ty0=0;
+
+	/*Codeblock size= 32*32*/
+	parameters->cblockw_init = 32;	
+	parameters->cblockh_init = 32;
+
+	/*The progression order shall be CPRL*/
+	strncpy(parameters->cp_prog,"CPRL",4);
+	parameters->prog_order = give_progression(parameters->cp_prog);
+	/*Tile parts not implemented*/
+
+	/* No ROI */
+	parameters->roi_compno = -1;
+
+	parameters->subsampling_dx = 1;		parameters->subsampling_dy = 1;
+
+	switch (parameters->cp_cinema){
+		case CINEMA2K_24:
+		case CINEMA4K_24:
+		  if (image->comps[0].w == 2048 || image->comps[0].h == 1080){
+				parameters->numresolution = 6;
+				parameters->cp_rsiz = CINEMA2K;
+			}else{
+				fprintf(stdout,"One of the image coordinates are not 2K\n");
+			}
+			
+			for(i=0;i<parameters->tcp_numlayers;i++){
+				temp_rate = 0 ;
+				if (parameters->tcp_rates[i]== 0){
+					parameters->tcp_rates[0]= ((float) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec))/ 
+					(CINEMA_24_CS * 8 * image->comps[0].dx * image->comps[0].dy);
+				}else{
+					temp_rate =((float) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec))/ 
+						(parameters->tcp_rates[i] * 8 * image->comps[0].dx * image->comps[0].dy);
+					if (temp_rate > CINEMA_24_CS ){
+						parameters->tcp_rates[i]= ((float) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec))/ 
+																				(CINEMA_24_CS * 8 * image->comps[0].dx * image->comps[0].dy);
+					}
+				}
+			}
+			break;
+		
+		case CINEMA2K_48:
+     if (image->comps[0].w == 4096 || image->comps[0].h == 2160){
+				parameters->numresolution = 7; 
+				parameters->cp_rsiz= CINEMA4K;
+			}else{
+				fprintf(stdout,"One of the image coordinates are not 4K\n");
+			}
+			for(i=0;i<parameters->tcp_numlayers;i++){
+				if (parameters->tcp_rates[i]== 0){
+					parameters->tcp_rates[0]= ((float) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec))/ 
+					(CINEMA_48_CS * 8 * image->comps[0].dx * image->comps[0].dy);
+				}else{
+					parameters->tcp_rates[i]=((float) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec))/ 
+						(parameters->tcp_rates[i] * 8 * image->comps[0].dx * image->comps[0].dy);
+					if (parameters->tcp_rates[i] > CINEMA_48_CS ){
+						parameters->tcp_rates[0]= ((float) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec))/ 
+																				(CINEMA_48_CS * 8 * image->comps[0].dx * image->comps[0].dy);
+					}
+				}
+			}
+			break;
+
+}
+
+	parameters->cp_disto_alloc = 1;
+}
 
 /* ------------------------------------------------------------------------------------ */
 
 int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,img_fol_t *img_fol) {
 	int i, j,totlen;
 	option_t long_option[]={
-		{"DCI",NO_ARG, NULL ,'z'},
-		{"ImgDir",REQ_ARG, NULL ,'y'},
-		{"fps",REQ_ARG, NULL ,'w'},
+		{"cinema2k",REQ_ARG, NULL ,'w'},
+		{"cinema4k",NO_ARG, NULL ,'y'},
+		{"ImgDir",REQ_ARG, NULL ,'z'},
 		{"TP",REQ_ARG, NULL ,'v'},
 		{"SOP",NO_ARG, NULL ,'S'},
 		{"EPH",NO_ARG, NULL ,'E'},
@@ -803,17 +890,45 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,i
 			break;
 
 				/* ------------------------------------------------------ */
-
-			case 'y':			/* Image Directory path */
-				{
-					img_fol->imgdirpath = (char*)malloc(strlen(optarg) + 1);
-					strcpy(img_fol->imgdirpath,optarg);
-					img_fol->set_imgdir=1;
-				}
-				break;
-
+			
+			case 'z':			/* Image Directory path */
+			{
+				img_fol->imgdirpath = (char*)malloc(strlen(optarg) + 1);
+				strcpy(img_fol->imgdirpath,optarg);
+				img_fol->set_imgdir=1;
+			}
+			break;
 
 				/* ------------------------------------------------------ */
+			
+			case 'w':			/* Digital Cinema 2K profile compliance*/
+			{
+				int fps=0;
+				sscanf(optarg,"%d",&fps);
+				if(fps == 24){
+					parameters->cp_cinema = CINEMA2K_24;
+				}else if(fps == 48 ){
+					parameters->cp_cinema = CINEMA2K_48;
+				}else {
+					fprintf(stderr,"Incorrect value!! must be 24 or 48\n");
+					return 1;
+				}
+				fprintf(stdout,"CINEMA 2K compliant codestream\n");
+				
+			}
+			break;
+				
+				/* ------------------------------------------------------ */
+			
+			case 'y':			/* Digital Cinema 4K profile compliance*/
+			{
+				parameters->cp_cinema = CINEMA4K_24;
+				fprintf(stdout,"CINEMA 4K compliant codestream\n");
+			}
+			break;
+				
+				/* ------------------------------------------------------ */
+
 /* UniPG>> */
 #ifdef USE_JPWL
 				/* ------------------------------------------------------ */
@@ -1378,6 +1493,10 @@ int main(int argc, char **argv) {
 
 				/* catch events using our callbacks and give a local context */
 				opj_set_event_mgr((opj_common_ptr)cinfo, &event_mgr, stderr);
+
+				if(parameters.cp_cinema){
+					cinema_setup_encoder(&parameters,image);
+				}
 
 				/* setup the encoder parameters using the current image and user parameters */
 				opj_setup_encoder(cinfo, &parameters, image);
