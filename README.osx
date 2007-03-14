@@ -6,7 +6,8 @@ While the makefiles will make a .dylib and a .a, it is recommended to simply sta
 
 Installation
 ------------
-Note: You will need to have root privileges in order to install the library in the /usr/lib directory.
+Note: You will need to have root privileges in order to install the library in
+/usr/include and /usr/lib directories.
 The installation process is as simple as this : 
 1) Enter the OpenJPEG directory
 2) Build the distribution : 
