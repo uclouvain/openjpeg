@@ -65,6 +65,8 @@ typedef struct opj_pi_comp {
 Packet iterator 
 */
 typedef struct opj_pi_iterator {
+	/** Enabling Tile part generation*/
+	char tp_on;
 	/** precise if the packet has been already used (usefull for progression order change) */
 	short int *include;
 	/** layer step used to localize the packet in the include vector */
@@ -99,14 +101,33 @@ typedef struct opj_pi_iterator {
 /*@{*/
 /* ----------------------------------------------------------------------- */
 /**
-Create a packet iterator
+Create a packet iterator for Encoder
 @param image Raw image for which the packets will be listed
 @param cp Coding parameters
 @param tileno Number that identifies the tile for which to list the packets
 @return Returns a packet iterator that points to the first packet of the tile
 @see pi_destroy
 */
-opj_pi_iterator_t *pi_create(opj_image_t * image, opj_cp_t * cp, int tileno);
+opj_pi_iterator_t *pi_initialise_encode(opj_image_t *image, opj_cp_t *cp, int tileno, int pino);
+/**
+Modify the packet iterator for enabling tile part generation
+@param pi Handle to the packet iterator generated in pi_initialise_encode  
+@param cp Coding parameters
+@param tileno Number that identifies the tile for which to list the packets
+@param tpnum Tile part number of the current tile
+@param tppos The position of the tile part flag in the progression order
+@param final_encoding If 0 Create a new packet iterator which is destroyed at end of call,If 1 use the packet iterator previously generated.
+*/
+void pi_create_encode( opj_pi_iterator_t *pi, opj_cp_t *cp,int tileno, int pino,int tpnum, int tppos,char final_encoding);
+/**
+Create a packet iterator for Decoder
+@param image Raw image for which the packets will be listed
+@param cp Coding parameters
+@param tileno Number that identifies the tile for which to list the packets
+@return Returns a packet iterator that points to the first packet of the tile
+@see pi_destroy
+*/
+opj_pi_iterator_t *pi_create_decode(opj_image_t * image, opj_cp_t * cp, int tileno);
 
 /**
 Destroy a packet iterator

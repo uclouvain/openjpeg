@@ -562,59 +562,59 @@ static int t2_decode_packet(opj_t2_t* t2, unsigned char *src, int len, opj_tcd_t
 
 /* ----------------------------------------------------------------------- */
 
-int t2_encode_packets(opj_t2_t* t2, int tileno, opj_tcd_tile_t *tile, int maxlayers, unsigned char *dest, int len, opj_image_info_t *image_info) {
+int t2_encode_packets(opj_t2_t* t2,int tileno, opj_tcd_tile_t *tile, int maxlayers, unsigned char *dest, int len, opj_image_info_t *image_info,opj_pi_iterator_t *tcd_pi,int tpnum, int tppos,int pino, char final_encoding){
 	unsigned char *c = dest;
 	int e = 0;
 	opj_pi_iterator_t *pi = NULL;
-	int pino;
 
 	opj_image_t *image = t2->image;
 	opj_cp_t *cp = t2->cp;
-	
-	/* create a packet iterator */
-	pi = pi_create(image, cp, tileno);
+
+	if(final_encoding == 0){
+		pi = pi_initialise_encode(image, cp, tileno,pino);
+	}else{
+		pi = tcd_pi;
+	}
 	if(!pi) {
 		/* TODO: throw an error */
 		return -999;
 	}
 	
+	pi_create_encode(pi, cp,tileno,pino,tpnum,tppos,final_encoding); 
+
 	if(image_info) {
 		image_info->num = 0;
 	}
-	
-	for (pino = 0; pino <= cp->tcps[tileno].numpocs; pino++) {
-		while (pi_next(&pi[pino])) {
-			if (pi[pino].layno < maxlayers) {
-				e = t2_encode_packet(tile, &cp->tcps[tileno], &pi[pino], c, dest + len - c, image_info, tileno);
-				if (e == -999) {
-					break;
-				} else {
-					c += e;
-				}
-				
-				/* INDEX >> */
-				if(image_info && image_info->index_on) {
-					if(image_info->index_write) {
-						opj_tile_info_t *info_TL = &image_info->tile[tileno];
-						opj_packet_info_t *info_PK = &info_TL->packet[image_info->num];
-						if (!image_info->num) {
-							info_PK->start_pos = info_TL->end_header + 1;
-						} else {
-							info_PK->start_pos = info_TL->packet[image_info->num - 1].end_pos + 1;
-						}
-						info_PK->end_pos = info_PK->start_pos + e - 1;
-					}
 
-					image_info->num++;
-				}
-				/* << INDEX */
+	while (pi_next(&pi[pino])) {
+		if (pi[pino].layno < maxlayers) {
+			e = t2_encode_packet(tile, &cp->tcps[tileno], &pi[pino], c, dest + len - c, image_info, tileno);
+			if (e == -999) {
+				break;
+			} else {
+				c += e;
 			}
+			/* INDEX >> */
+			if(image_info && image_info->index_on) {
+				if(image_info->index_write) {
+					opj_tile_info_t *info_TL = &image_info->tile[tileno];
+					opj_packet_info_t *info_PK = &info_TL->packet[image_info->num];
+					if (!image_info->num) {
+						info_PK->start_pos = info_TL->end_header + 1;
+					} else {
+						info_PK->start_pos = info_TL->packet[image_info->num - 1].end_pos + 1;
+					}
+					info_PK->end_pos = info_PK->start_pos + e - 1;
+				}
+
+				image_info->num++;
+			}
+			/* << INDEX */
 		}
 	}
-
-	/* don't forget to release pi */
-	pi_destroy(pi, cp, tileno);
-	
+	if(final_encoding == 0){
+		pi_destroy(pi, cp, tileno);
+	}
 	if (e == -999) {
 		return e;
 	}
@@ -632,7 +632,7 @@ int t2_decode_packets(opj_t2_t *t2, unsigned char *src, int len, int tileno, opj
 	opj_cp_t *cp = t2->cp;
 	
 	/* create a packet iterator */
-	pi = pi_create(image, cp, tileno);
+	pi = pi_create_decode(image, cp, tileno);
 	if(!pi) {
 		/* TODO: throw an error */
 		return -999;

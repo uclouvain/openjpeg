@@ -5,6 +5,7 @@
  * Copyright (c) 2002-2003, Yannick Verschueren
  * Copyright (c) 2003-2007, Francois-Olivier Devaux and Antonin Descampe
  * Copyright (c) 2005, Herve Drolon, FreeImage Team
+ * Copyright (c) 2006-2007, Parvatha Elangovan
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -100,7 +101,10 @@ static bool pi_next_lrcp(opj_pi_iterator_t * pi) {
 					continue;
 				}
 				res = &comp->resolutions[pi->resno];
-				for (pi->precno = 0; pi->precno < res->pw * res->ph; pi->precno++) {
+				if (!pi->tp_on){
+					pi->poc.precno1 = res->pw * res->ph;
+				}
+				for (pi->precno = pi->poc.precno0; pi->precno < pi->poc.precno1; pi->precno++) {
 					index = pi->layno * pi->step_l + pi->resno * pi->step_r + pi->compno * pi->step_c + pi->precno * pi->step_p;
 					if (!pi->include[index]) {
 						pi->include[index] = 1;
@@ -136,7 +140,10 @@ static bool pi_next_rlcp(opj_pi_iterator_t * pi) {
 					continue;
 				}
 				res = &comp->resolutions[pi->resno];
-				for (pi->precno = 0; pi->precno < res->pw * res->ph; pi->precno++) {
+				if(!pi->tp_on){
+					pi->poc.precno1 = res->pw * res->ph;
+				}
+				for (pi->precno = pi->poc.precno0; pi->precno < pi->poc.precno1; pi->precno++) {
 					index = pi->layno * pi->step_l + pi->resno * pi->step_r + pi->compno * pi->step_c + pi->precno * pi->step_p;
 					if (!pi->include[index]) {
 						pi->include[index] = 1;
@@ -175,10 +182,15 @@ static bool pi_next_rpcl(opj_pi_iterator_t * pi) {
 			}
 		}
 	}
-
+if (!pi->tp_on){
+			pi->poc.ty0 = pi->ty0;
+			pi->poc.tx0 = pi->tx0;
+			pi->poc.ty1 = pi->ty1;
+			pi->poc.tx1 = pi->tx1;
+		}
 	for (pi->resno = pi->poc.resno0; pi->resno < pi->poc.resno1; pi->resno++) {
-		for (pi->y = pi->ty0; pi->y < pi->ty1; pi->y += pi->dy - (pi->y % pi->dy)) {
-			for (pi->x = pi->tx0; pi->x < pi->tx1; pi->x += pi->dx - (pi->x % pi->dx)) {
+		for (pi->y = pi->poc.ty0; pi->y < pi->poc.ty1; pi->y += pi->dy - (pi->y % pi->dy)) {
+			for (pi->x = pi->poc.tx0; pi->x < pi->poc.tx1; pi->x += pi->dx - (pi->x % pi->dx)) {
 				for (pi->compno = pi->poc.compno0; pi->compno < pi->poc.compno1; pi->compno++) {
 					int levelno;
 					int trx0, try0;
@@ -254,9 +266,14 @@ static bool pi_next_pcrl(opj_pi_iterator_t * pi) {
 			}
 		}
 	}
-
-	for (pi->y = pi->ty0; pi->y < pi->ty1; pi->y += pi->dy - (pi->y % pi->dy)) {
-		for (pi->x = pi->tx0; pi->x < pi->tx1; pi->x += pi->dx - (pi->x % pi->dx)) {
+	if (!pi->tp_on){
+			pi->poc.ty0 = pi->ty0;
+			pi->poc.tx0 = pi->tx0;
+			pi->poc.ty1 = pi->ty1;
+			pi->poc.tx1 = pi->tx1;
+		}
+	for (pi->y = pi->poc.ty0; pi->y < pi->poc.ty1; pi->y += pi->dy - (pi->y % pi->dy)) {
+		for (pi->x = pi->poc.tx0; pi->x < pi->poc.tx1; pi->x += pi->dx - (pi->x % pi->dx)) {
 			for (pi->compno = pi->poc.compno0; pi->compno < pi->poc.compno1; pi->compno++) {
 				comp = &pi->comps[pi->compno];
 				for (pi->resno = pi->poc.resno0; pi->resno < int_min(pi->poc.resno1, comp->numresolutions); pi->resno++) {
@@ -330,8 +347,14 @@ static bool pi_next_cprl(opj_pi_iterator_t * pi) {
 			pi->dx = !pi->dx ? dx : int_min(pi->dx, dx);
 			pi->dy = !pi->dy ? dy : int_min(pi->dy, dy);
 		}
-		for (pi->y = pi->ty0; pi->y < pi->ty1; pi->y += pi->dy - (pi->y % pi->dy)) {
-			for (pi->x = pi->tx0; pi->x < pi->tx1; pi->x += pi->dx - (pi->x % pi->dx)) {
+		if (!pi->tp_on){
+			pi->poc.ty0 = pi->ty0;
+			pi->poc.tx0 = pi->tx0;
+			pi->poc.ty1 = pi->ty1;
+			pi->poc.tx1 = pi->tx1;
+		}
+		for (pi->y = pi->poc.ty0; pi->y < pi->poc.ty1; pi->y += pi->dy - (pi->y % pi->dy)) {
+			for (pi->x = pi->poc.tx0; pi->x < pi->poc.tx1; pi->x += pi->dx - (pi->x % pi->dx)) {
 				for (pi->resno = pi->poc.resno0; pi->resno < int_min(pi->poc.resno1, comp->numresolutions); pi->resno++) {
 					int levelno;
 					int trx0, try0;
@@ -384,7 +407,7 @@ LABEL_SKIP:;
 ==========================================================
 */
 
-opj_pi_iterator_t *pi_create(opj_image_t *image, opj_cp_t *cp, int tileno) {
+opj_pi_iterator_t *pi_create_decode(opj_image_t *image, opj_cp_t *cp, int tileno) {
 	int p, q;
 	int compno, resno, pino;
 	opj_pi_iterator_t *pi = NULL;
@@ -513,10 +536,162 @@ opj_pi_iterator_t *pi_create(opj_image_t *image, opj_cp_t *cp, int tileno) {
 			pi[pino].poc.compno1 = tcp->pocs[pino].compno1;
 			pi[pino].poc.prg = tcp->pocs[pino].prg;
 		}
+		pi[pino].poc.layno0  = 0;
+		pi[pino].poc.precno0 = 0; 
+		pi[pino].poc.precno1 = maxprec;
+			
 	}
 	
 	return pi;
 }
+
+
+opj_pi_iterator_t *pi_initialise_encode(opj_image_t *image, opj_cp_t *cp, int tileno, int pino){ 
+	int p, q;
+	int compno, resno;
+	int maxres = 0;
+	int maxprec = 0;
+	opj_pi_iterator_t *pi = NULL;
+	opj_tcp_t *tcp = NULL;
+	opj_tccp_t *tccp = NULL;
+	size_t array_size;
+	
+	tcp = &cp->tcps[tileno];
+
+	array_size = (tcp->numpocs + 1) * sizeof(opj_pi_iterator_t);
+	pi = (opj_pi_iterator_t *) opj_malloc(array_size);
+	pi->tp_on = cp->tp_on;
+	if(!pi) {	return NULL;}
+	
+		p = tileno % cp->tw;
+		q = tileno / cp->tw;
+
+		pi[pino].tx0 = int_max(cp->tx0 + p * cp->tdx, image->x0);
+		pi[pino].ty0 = int_max(cp->ty0 + q * cp->tdy, image->y0);
+		pi[pino].tx1 = int_min(cp->tx0 + (p + 1) * cp->tdx, image->x1);
+		pi[pino].ty1 = int_min(cp->ty0 + (q + 1) * cp->tdy, image->y1);
+		pi[pino].numcomps = image->numcomps;
+		
+		array_size = image->numcomps * sizeof(opj_pi_comp_t);
+		pi[pino].comps = (opj_pi_comp_t *) opj_malloc(array_size);
+		if(!pi[pino].comps) {
+			pi_destroy(pi, cp, tileno);
+			return NULL;
+		}
+		memset(pi[pino].comps, 0, array_size);
+		
+		for (compno = 0; compno < pi->numcomps; compno++) {
+			int tcx0, tcy0, tcx1, tcy1;
+			opj_pi_comp_t *comp = &pi[pino].comps[compno];
+			tccp = &tcp->tccps[compno];
+			comp->dx = image->comps[compno].dx;
+			comp->dy = image->comps[compno].dy;
+			comp->numresolutions = tccp->numresolutions;
+
+			array_size = comp->numresolutions * sizeof(opj_pi_resolution_t);
+			comp->resolutions =	(opj_pi_resolution_t *) opj_malloc(array_size);
+			if(!comp->resolutions) {
+				pi_destroy(pi, cp, tileno);
+				return NULL;
+			}
+
+			tcx0 = int_ceildiv(pi->tx0, comp->dx);
+			tcy0 = int_ceildiv(pi->ty0, comp->dy);
+			tcx1 = int_ceildiv(pi->tx1, comp->dx);
+			tcy1 = int_ceildiv(pi->ty1, comp->dy);
+			if (comp->numresolutions > maxres) {
+				maxres = comp->numresolutions;
+			}
+
+			for (resno = 0; resno < comp->numresolutions; resno++) {
+				int levelno;
+				int rx0, ry0, rx1, ry1;
+				int px0, py0, px1, py1;
+				opj_pi_resolution_t *res = &comp->resolutions[resno];
+				if (tccp->csty & J2K_CCP_CSTY_PRT) {
+					res->pdx = tccp->prcw[resno];
+					res->pdy = tccp->prch[resno];
+				} else {
+					res->pdx = 15;
+					res->pdy = 15;
+				}
+				levelno = comp->numresolutions - 1 - resno;
+				rx0 = int_ceildivpow2(tcx0, levelno);
+				ry0 = int_ceildivpow2(tcy0, levelno);
+				rx1 = int_ceildivpow2(tcx1, levelno);
+				ry1 = int_ceildivpow2(tcy1, levelno);
+				px0 = int_floordivpow2(rx0, res->pdx) << res->pdx;
+				py0 = int_floordivpow2(ry0, res->pdy) << res->pdy;
+				px1 = int_ceildivpow2(rx1, res->pdx) << res->pdx;
+				py1 = int_ceildivpow2(ry1, res->pdy) << res->pdy;
+				res->pw = (rx0==rx1)?0:((px1 - px0) >> res->pdx);
+				res->ph = (ry0==ry1)?0:((py1 - py0) >> res->pdy);
+
+				if (res->pw*res->ph > maxprec) {
+					maxprec = res->pw * res->ph;
+				}
+			}
+		}
+		
+		tccp = &tcp->tccps[0];
+		pi[pino].step_p = 1;
+		pi[pino].step_c = maxprec * pi[pino].step_p;
+		pi[pino].step_r = image->numcomps * pi[pino].step_c;
+		pi[pino].step_l = maxres * pi[pino].step_r;
+		
+		for (compno = 0; compno < pi->numcomps; compno++) {
+			opj_pi_comp_t *comp = &pi->comps[compno];
+			for (resno = 0; resno < comp->numresolutions; resno++) {
+				int dx, dy;
+				opj_pi_resolution_t *res = &comp->resolutions[resno];
+				dx = comp->dx * (1 << (res->pdx + comp->numresolutions - 1 - resno));
+				dy = comp->dy * (1 << (res->pdy + comp->numresolutions - 1 - resno));
+				pi[pino].dx = !pi->dx ? dx : int_min(pi->dx, dx);
+				pi[pino].dy = !pi->dy ? dy : int_min(pi->dy, dy);
+			}
+		}
+
+		if (pino == 0) {
+			array_size = image->numcomps * maxres * tcp->numlayers * 100 * sizeof(short int);
+			pi[pino].include = (short int *) opj_malloc(array_size);
+			if(!pi[pino].include) {
+				pi_destroy(pi, cp, tileno);
+				return NULL;
+			}
+		}
+		else {
+			pi[pino].include = pi[pino - 1].include;
+		}
+		
+		/* Generation of boundaries for each prog flag*/
+			if (tcp->POC == 1){
+				tcp->pocs[pino].compS= tcp->pocs[pino].compno0;
+				tcp->pocs[pino].compE= tcp->pocs[pino].compno1;
+				tcp->pocs[pino].resS = tcp->pocs[pino].resno0;
+				tcp->pocs[pino].resE = tcp->pocs[pino].resno1;
+        tcp->pocs[pino].layE = tcp->pocs[pino].layno1;
+				tcp->pocs[pino].prg  = tcp->pocs[pino].prg;
+			}else {
+				tcp->pocs[pino].compS= 0;
+				tcp->pocs[pino].compE= image->numcomps;
+				tcp->pocs[pino].resS = 0;
+				tcp->pocs[pino].resE = maxres;
+				tcp->pocs[pino].layE = tcp->numlayers;
+				tcp->pocs[pino].prg  = tcp->prg;
+			}
+			tcp->pocs[pino].layS = 0;				
+			tcp->pocs[pino].prcS = 0;
+			tcp->pocs[pino].prcE = maxprec;;
+			tcp->pocs[pino].txS = pi[pino].tx0;
+			tcp->pocs[pino].txE = pi[pino].tx1;
+			tcp->pocs[pino].tyS = pi[pino].ty0;
+			tcp->pocs[pino].tyE = pi[pino].ty1;
+			tcp->pocs[pino].dx = pi[pino].dx;
+			tcp->pocs[pino].dy = pi[pino].dy;
+		return pi;
+	}
+
+
 
 void pi_destroy(opj_pi_iterator_t *pi, opj_cp_t *cp, int tileno) {
 	int compno, pino;
@@ -558,4 +733,313 @@ bool pi_next(opj_pi_iterator_t * pi) {
 	
 	return false;
 }
+
+int pi_check_next_level(int pos,opj_cp_t *cp,int tileno, int pino, char *prog){
+	int i,l;
+	opj_tcp_t *tcps =&cp->tcps[tileno];
+	opj_poc_t *tcp = &tcps->pocs[pino];
+	if(pos>=0){
+		for(i=pos;pos>=0;i--){
+			switch(prog[i]){
+		case 'R':
+			if(tcp->res_t==tcp->resE){
+				l=pi_check_next_level(pos-1,cp,tileno,pino,prog);
+				if(l==1){
+					return 1;
+				}else{
+					return 0;
+				}
+			}else{
+				return 1;
+			}
+			break;
+		case 'C':
+			if(tcp->comp_t==tcp->compE){
+				l=pi_check_next_level(pos-1,cp,tileno,pino,prog);
+				if(l==1){
+					return 1;
+				}else{
+					return 0;
+				}
+			}else{
+				return 1;
+			}
+			break;
+		case 'L':
+			if(tcp->lay_t==tcp->layE){
+				l=pi_check_next_level(pos-1,cp,tileno,pino,prog);
+				if(l==1){
+					return 1;
+				}else{
+					return 0;
+				}
+			}else{
+				return 1;
+			}
+			break;
+		case 'P':
+			switch(tcp->prg){
+				case LRCP||RLCP:
+					if(tcp->prc_t == tcp->prcE){
+						l=pi_check_next_level(i-1,cp,tileno,pino,prog);
+						if(l==1){
+							return 1;
+						}else{
+							return 0;
+						}
+					}else{
+						return 1;
+					}
+					break;
+			default:
+				if(tcp->tx0_t == tcp->txE){
+					//TY 
+					if(tcp->ty0_t == tcp->tyE){
+						l=pi_check_next_level(i-1,cp,tileno,pino,prog);
+						if(l==1){
+							return 1;
+						}else{
+							return 0;
+						}
+					}else{
+						return 1;
+					}//TY
+				}else{
+					return 1;
+				}
+				break;
+			}//end case P
+		}//end switch
+		}//end for
+	}//end if
+	return 0;
+}
+
+
+void pi_create_encode( opj_pi_iterator_t *pi, opj_cp_t *cp,int tileno, int pino,int tpnum, int tppos,char final_encoding) {
+	char *prog;
+	int i,l;
+	int incr_top=1,resetX=0;
+	opj_tcp_t *tcps =&cp->tcps[tileno];
+	opj_poc_t *tcp= &tcps->pocs[pino];
+	prog = convert_progression_order(tcp->prg);
+
+	pi[pino].first = 1;
+	pi[pino].poc.prg = tcp->prg;	
+	
+	if(!(cp->tp_on & final_encoding)){
+		pi[pino].poc.resno0 = tcp->resS;
+		pi[pino].poc.resno1 = tcp->resE;
+		pi[pino].poc.compno0 = tcp->compS;
+		pi[pino].poc.compno1 = tcp->compE;
+		pi[pino].poc.layno0 = tcp->layS;
+		pi[pino].poc.layno1 = tcp->layE;
+		pi[pino].poc.precno0 = tcp->prcS;
+		pi[pino].poc.precno1 = tcp->prcE;
+		pi[pino].poc.tx0 = tcp->txS;
+		pi[pino].poc.ty0 = tcp->tyS;
+		pi[pino].poc.tx1 = tcp->txE;
+		pi[pino].poc.ty1 = tcp->tyE;
+	}else {
+		for(i=tppos+1;i<4;i++){
+			switch(prog[i]){
+			case 'R':
+				pi[pino].poc.resno0 = tcp->resS;
+				pi[pino].poc.resno1 = tcp->resE;
+				break;
+			case 'C':
+				pi[pino].poc.compno0 = tcp->compS;
+				pi[pino].poc.compno1 = tcp->compE;
+				break;
+			case 'L':
+				pi[pino].poc.layno0 = tcp->layS;
+				pi[pino].poc.layno1 = tcp->layE;
+				break;
+			case 'P':
+				switch(tcp->prg){
+					case LRCP:
+					case RLCP:
+						pi[pino].poc.precno0 = tcp->prcS;
+						pi[pino].poc.precno1 = tcp->prcE;
+						break;
+					default:
+						pi[pino].poc.tx0 = tcp->txS;
+						pi[pino].poc.ty0 = tcp->tyS;
+						pi[pino].poc.tx1 = tcp->txE;
+						pi[pino].poc.ty1 = tcp->tyE;
+						break;
+				}
+				break;
+			}
+		}
+
+		if(tpnum==0){
+			for(i=tppos;i>=0;i--){
+				switch(prog[i]){
+						case 'C':
+							tcp->comp_t = tcp->compS;
+							pi[pino].poc.compno0 = tcp->comp_t;
+							pi[pino].poc.compno1 = tcp->comp_t+1;
+							tcp->comp_t+=1;
+							break;
+						case 'R':
+							tcp->res_t = tcp->resS;
+							pi[pino].poc.resno0 = tcp->res_t;
+							pi[pino].poc.resno1 = tcp->res_t+1;
+							tcp->res_t+=1;
+							break;
+						case 'L':
+							tcp->lay_t = tcp->layS;
+							pi[pino].poc.layno0 = tcp->lay_t;
+							pi[pino].poc.layno1 = tcp->lay_t+1;
+							tcp->lay_t+=1;
+							break;
+						case 'P':
+							switch(tcp->prg){
+								case LRCP:
+								case RLCP:
+									tcp->prc_t = tcp->prcS;
+									pi[pino].poc.precno0 = tcp->prc_t;
+									pi[pino].poc.precno1 = tcp->prc_t+1;
+									tcp->prc_t+=1; 
+									break;
+								default:
+									tcp->tx0_t = tcp->txS;
+									tcp->ty0_t = tcp->tyS;
+									pi[pino].poc.tx0 = tcp->tx0_t;
+									pi[pino].poc.tx1 = tcp->tx0_t + tcp->dx - (tcp->tx0_t % tcp->dx);
+									pi[pino].poc.ty0 = tcp->ty0_t;
+									pi[pino].poc.ty1 = tcp->ty0_t + tcp->dy - (tcp->ty0_t % tcp->dy);
+									tcp->tx0_t = pi[pino].poc.tx1;
+									tcp->ty0_t = pi[pino].poc.ty1;
+									break;
+							}
+							break;
+				}
+			}
+			incr_top=1;
+		}else{
+			for(i=tppos;i>=0;i--){
+				if(incr_top==1){
+					switch(prog[i]){
+							case 'R':
+								if(tcp->res_t==tcp->resE){
+									l=pi_check_next_level(i-1,cp,tileno,pino,prog);
+									if(l==1){
+										tcp->res_t = tcp->resS;
+										pi[pino].poc.resno0 = tcp->res_t;
+										pi[pino].poc.resno1 = tcp->res_t+1;
+										tcp->res_t+=1;
+										incr_top=1;
+									}else{
+										incr_top=0;
+									}
+								}else{
+									pi[pino].poc.resno0 = tcp->res_t;
+									pi[pino].poc.resno1 = tcp->res_t+1;
+									tcp->res_t+=1;
+									incr_top=0;
+								}
+								break;
+							case 'C':
+								if(tcp->comp_t ==tcp->compE){
+									l=pi_check_next_level(i-1,cp,tileno,pino,prog);
+									if(l==1){
+										tcp->comp_t = tcp->compS;
+										pi[pino].poc.compno0 = tcp->comp_t;
+										pi[pino].poc.compno1 = tcp->comp_t+1;
+										tcp->comp_t+=1;
+										incr_top=1;
+									}else{
+										incr_top=0;
+									}
+								}else{
+									pi[pino].poc.compno0 = tcp->comp_t;
+									pi[pino].poc.compno1 = tcp->comp_t+1;
+									tcp->comp_t+=1;
+									incr_top=0;
+								}
+								break;	
+							case 'L':
+								if(tcp->lay_t == tcp->layE){
+									l=pi_check_next_level(i-1,cp,tileno,pino,prog);
+									if(l==1){
+										tcp->lay_t = tcp->layS;
+										pi[pino].poc.layno0 = tcp->lay_t;
+										pi[pino].poc.layno1 = tcp->lay_t+1;
+										tcp->lay_t+=1;
+										incr_top=1;
+									}else{
+										incr_top=0;
+									}
+								}else{
+									pi[pino].poc.layno0 = tcp->lay_t;
+									pi[pino].poc.layno1 = tcp->lay_t+1;
+									tcp->lay_t+=1;
+									incr_top=0;
+								}
+								break;
+							case 'P':
+								switch(tcp->prg){
+									case LRCP:
+									case RLCP:
+										if(tcp->prc_t == tcp->prcE){
+											l=pi_check_next_level(i-1,cp,tileno,pino,prog);
+											if(l==1){
+												tcp->prc_t = tcp->prcS;
+												pi[pino].poc.precno0 = tcp->prc_t;
+												pi[pino].poc.precno1 = tcp->prc_t+1;
+												tcp->prc_t+=1;
+												incr_top=1;
+											}else{
+												incr_top=0;
+											}
+										}else{
+											pi[pino].poc.precno0 = tcp->prc_t;
+											pi[pino].poc.precno1 = tcp->prc_t+1;
+											tcp->prc_t+=1;
+											incr_top=0;
+										}
+										break;
+									default:
+										if(tcp->tx0_t >= tcp->txE){
+											if(tcp->ty0_t >= tcp->tyE){
+												l=pi_check_next_level(i-1,cp,tileno,pino,prog);
+												if(l==1){
+													tcp->ty0_t = tcp->tyS;
+													pi[pino].poc.ty0 = tcp->ty0_t;
+													pi[pino].poc.ty1 = tcp->ty0_t + tcp->dy - (tcp->ty0_t % tcp->dy);
+													tcp->ty0_t = pi[pino].poc.ty1;
+													incr_top=1;resetX=1;
+												}else{
+													incr_top=0;resetX=0;
+												}
+											}else{
+												pi[pino].poc.ty0 = tcp->ty0_t;
+												pi[pino].poc.ty1 = tcp->ty0_t + tcp->dy - (tcp->ty0_t % tcp->dy);
+												tcp->ty0_t = pi[pino].poc.ty1;
+												incr_top=0;resetX=1;
+											}
+											if(resetX==1){
+												tcp->tx0_t = tcp->txS;
+												pi[pino].poc.tx0 = tcp->tx0_t;
+												pi[pino].poc.tx1 = tcp->tx0_t + tcp->dx- (tcp->tx0_t % tcp->dx);
+												tcp->tx0_t = pi[pino].poc.tx1;
+											}
+										}else{
+											pi[pino].poc.tx0 = tcp->tx0_t;
+											pi[pino].poc.tx1 = tcp->tx0_t + tcp->dx- (tcp->tx0_t % tcp->dx);
+											tcp->tx0_t = pi[pino].poc.tx1;
+											incr_top=0;
+										}
+										break;
+								}
+								break;
+					}
+				}
+			}
+		}
+	}
+}
+
 

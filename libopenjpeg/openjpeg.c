@@ -231,7 +231,7 @@ void OPJ_CALLCONV opj_set_default_encoder_parameters(opj_cparameters_t *paramete
 		parameters->roi_compno = -1;		/* no ROI */
 		parameters->subsampling_dx = 1;
 		parameters->subsampling_dy = 1;
-
+		parameters->tp_on = 0;
 		parameters->decod_format = -1;
 		parameters->cod_format = -1;
 /* UniPG>> */

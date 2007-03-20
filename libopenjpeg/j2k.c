@@ -5,6 +5,7 @@
  * Copyright (c) 2002-2003, Yannick Verschueren
  * Copyright (c) 2003-2007, Francois-Olivier Devaux and Antonin Descampe
  * Copyright (c) 2005, Herve Drolon, FreeImage Team
+ * Copyright (c) 2006-2007, Parvatha Elangovan
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -175,6 +176,11 @@ Read the PPT marker (packet packet headers, tile-part header)
 */
 static void j2k_read_ppt(opj_j2k_t *j2k);
 /**
+Write the TLM marker (Mainheader)
+@param j2k J2K handle
+*/
+static void j2k_write_tlm(opj_j2k_t *j2k);
+/**
 Write the SOT marker (start of tile-part)
 @param j2k J2K handle
 */
@@ -228,6 +234,28 @@ static void j2k_read_unk(opj_j2k_t *j2k);
 /*@}*/
 
 /* ----------------------------------------------------------------------- */
+typedef struct j2k_prog_order{
+	OPJ_PROG_ORDER enum_prog;
+	char str_prog[4];
+}j2k_prog_order_t;
+
+j2k_prog_order_t j2k_prog_order_list[] = {
+	{CPRL, "CPRL"},
+	{LRCP, "LRCP"},
+	{PCRL, "PCRL"},
+	{RLCP, "RLCP"},
+	{RPCL, "RPCL"}
+};
+
+char *convert_progression_order(OPJ_PROG_ORDER prg_order){
+	j2k_prog_order_t *po;
+	for(po = j2k_prog_order_list; po->enum_prog != -1; po++ ){
+		if(po->enum_prog == prg_order){
+			break;
+		}
+	}
+	return po->str_prog;
+}
 
 void j2k_dump_image(FILE *fd, opj_image_t * img) {
 	int compno;
@@ -303,6 +331,58 @@ void j2k_dump_cp(FILE *fd, opj_image_t * img, opj_cp_t * cp) {
 }
 
 /* ----------------------------------------------------------------------- */
+int j2k_get_num_tp(opj_cp_t *cp,int pino,int tileno){
+	char *prog;
+	int i;
+	int tpnum=1,tpend=0;
+	opj_tcp_t *tcp = &cp->tcps[tileno];
+	prog = convert_progression_order(tcp->prg);
+	
+	if(cp->tp_on == 1){
+		for(i=0;i<4;i++){
+			if(tpend!=1){
+				if( cp->tp_flag == prog[i] ){
+					tpend=1;cp->tp_pos=i;
+				}
+				switch(prog[i]){
+				case 'C':
+					tpnum= tpnum * tcp->pocs[pino].compE;
+					break;
+				case 'R':
+					tpnum= tpnum * tcp->pocs[pino].resE;
+					break;
+				case 'P':
+					tpnum= tpnum * tcp->pocs[pino].prcE;
+					break;
+				case 'L':
+					tpnum= tpnum * tcp->pocs[pino].layE;
+					break;
+				}
+			}
+		}
+	}else{
+		tpnum=1;
+	}
+	return tpnum;
+}
+
+/**	mem allocation for TLM marker*/
+int j2k_generate_tlm(opj_cp_t *cp,int img_numcomp,opj_image_t *image ){
+	int pino,tileno,maxres=0,totnum_tp=0;
+	for (tileno = 0; tileno < cp->tw * cp->th; tileno++) {
+		opj_tcp_t *tcp = &cp->tcps[tileno];
+		for(pino = 0; pino <= tcp->numpocs; pino++) {
+			int tp_num=0;
+			opj_pi_iterator_t *pi = (opj_pi_iterator_t *) opj_malloc(sizeof(opj_pi_iterator_t));
+			pi = pi_initialise_encode(image, cp, tileno,pino);
+			if(!pi) { return -1;}
+			tp_num = j2k_get_num_tp(cp,pino,tileno);
+			totnum_tp = totnum_tp + tp_num;
+			pi_destroy(pi, cp, tileno);
+		}
+	}
+	return totnum_tp;
+}
 
 static void j2k_write_soc(opj_j2k_t *j2k) {
 	opj_cio_t *cio = j2k->cio;
@@ -1067,6 +1147,18 @@ static void j2k_read_ppt(opj_j2k_t *j2k) {
 	tcp->ppt_store = j;
 }
 
+static void j2k_write_tlm(opj_j2k_t *j2k){
+	int lenp;
+	opj_cio_t *cio = j2k->cio;
+	j2k->tlm_start = cio_tell(cio);
+	cio_write(cio, J2K_MS_TLM, 2);/* TLM */
+	lenp = 4 + (5*j2k->totnum_tp);
+	cio_write(cio,lenp,2);				/* Ltlm */
+	cio_write(cio, 0,1);					/* Ztlm=0*/
+	cio_write(cio,80,1);					/* Stlm ST=1(8bits-255 tiles max),SP=1(Ptlm=32bits) */
+	cio_skip(cio,5*j2k->totnum_tp);
+}
+
 static void j2k_write_sot(opj_j2k_t *j2k) {
 	int lenp, len;
 
@@ -1078,8 +1170,8 @@ static void j2k_write_sot(opj_j2k_t *j2k) {
 	cio_skip(cio, 2);					/* Lsot (further) */
 	cio_write(cio, j2k->curtileno, 2);	/* Isot */
 	cio_skip(cio, 4);					/* Psot (further in j2k_write_sod) */
-	cio_write(cio, 0, 1);				/* TPsot */
-	cio_write(cio, 1, 1);				/* TNsot */
+	cio_write(cio, j2k->cur_tp_num , 1);	/* TPsot */
+	cio_write(cio, j2k->cur_totnum_tp, 1);		/* TNsot */
 	len = cio_tell(cio) - lenp;
 	cio_seek(cio, lenp);
 	cio_write(cio, len, 2);				/* Lsot */
@@ -1197,6 +1289,9 @@ static void j2k_write_sod(opj_j2k_t *j2k, void *tile_coder) {
 	opj_tcd_t *tcd = (opj_tcd_t*)tile_coder;	/* cast is needed because of conflicts in header inclusions */
 	opj_cp_t *cp = j2k->cp;
 	opj_cio_t *cio = j2k->cio;
+
+	tcd->cur_tp_num = j2k->cur_tp_num;
+	tcd->cur_totnum_tp = j2k->cur_totnum_tp;
 	
 	cio_write(cio, J2K_MS_SOD, 2);
 	if (j2k->curtileno == 0) {
@@ -1224,6 +1319,13 @@ static void j2k_write_sod(opj_j2k_t *j2k, void *tile_coder) {
 	totlen = cio_tell(cio) + l - j2k->sot_start;
 	cio_seek(cio, j2k->sot_start + 6);
 	cio_write(cio, totlen, 4);
+	cio_seek(cio, j2k->sot_start + totlen);
+	/* Writing Ttlm and Ptlm in TLM marker */
+	if(cp->cinema){
+		cio_seek(cio, j2k->tlm_start + 6 + (5*j2k->cur_tp_num));
+		cio_write(cio, j2k->curtileno, 1);
+		cio_write(cio, totlen, 4);
+	}
 	cio_seek(cio, j2k->sot_start + totlen);
 }
 
@@ -1827,6 +1929,11 @@ void j2k_setup_encoder(opj_j2k_t *j2k, opj_cparameters_t *parameters, opj_image_
 		cp->tdy = image->y1 - cp->ty0;
 	}
 
+	if(parameters->tp_on){
+		cp->tp_flag = parameters->tp_flag;
+		cp->tp_on = 1;
+	}
+	
 	cp->img_size = 0;
 	for(i=0;i<image->numcomps ;i++){
 	cp->img_size += (image->comps[i].w *image->comps[i].h * image->comps[i].prec);
@@ -2289,6 +2396,14 @@ bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, char *index)
 /* <<UniPG */
 	j2k_write_cod(j2k);
 	j2k_write_qcd(j2k);
+	
+	if(cp->cinema){
+		for (compno = 1; compno < image->numcomps; compno++) {
+			j2k_write_coc(j2k, compno);
+			j2k_write_qcc(j2k, compno);
+		}
+	}
+
 	for (compno = 0; compno < image->numcomps; compno++) {
 		opj_tcp_t *tcp = &cp->tcps[0];
 		if (tcp->tccps[compno].roishift)
@@ -2303,12 +2418,23 @@ bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, char *index)
 	}
 	/* << INDEX */
 
+	/*	 TLM Marker*/
+	if(cp->cinema){
+		j2k->totnum_tp = j2k_generate_tlm(cp,image->numcomps,image);
+		j2k_write_tlm(j2k);
+	}
+	/**** Main Header ENDS here ***/
+	
 	/* create the tile encoder */
 	tcd = tcd_create(j2k->cinfo);
 
 	/* encode each tile */
 
 	for (tileno = 0; tileno < cp->tw * cp->th; tileno++) {
+		int pino;
+		int tilepartno=0;
+
+		opj_tcp_t *tcp = &cp->tcps[tileno];
 		opj_event_msg(j2k->cinfo, EVT_INFO, "tile number %d / %d\n", tileno + 1, cp->tw * cp->th);
 		
 		j2k->curtileno = tileno;
@@ -2327,18 +2453,36 @@ bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, char *index)
 		}
 		/* << INDEX */
 
-		j2k_write_sot(j2k);
-		
-		for (compno = 1; compno < image->numcomps; compno++) {
-			j2k_write_coc(j2k, compno);
-			j2k_write_qcc(j2k, compno);
-		}
-		if (cp->tcps[tileno].numpocs) {
-			j2k_write_poc(j2k);
-		}
+		for(pino = 0; pino <= tcp->numpocs; pino++) {
+			int tot_num_tp;
+			opj_pi_iterator_t *pi = NULL;
+			tcd->cur_pino=pino;
+			tcd->pi = pi_initialise_encode(image, cp, tileno,pino);
+			pi=tcd->pi;
+			
+			/*Get number of tile parts*/
+			tot_num_tp = j2k_get_num_tp(cp,pino,tileno);
+			tcd->tp_pos = cp->tp_pos;
 
-		j2k_write_sod(j2k, tcd);
-		
+			for(tilepartno = 0; tilepartno < tot_num_tp ; tilepartno++){
+				j2k->cur_tp_num = tilepartno;
+				j2k->cur_totnum_tp = tot_num_tp;
+				j2k_write_sot(j2k);
+
+				if(j2k->cur_tp_num == 0 && cp->cinema == 0){
+					for (compno = 1; compno < image->numcomps; compno++) {
+						j2k_write_coc(j2k, compno);
+						j2k_write_qcc(j2k, compno);
+					}
+					if (cp->tcps[tileno].numpocs) {
+						j2k_write_poc(j2k);
+					}
+				}
+
+				j2k_write_sod(j2k, tcd);
+			}
+			pi_destroy(pi, cp, tileno);
+		}
 		/* INDEX >> */
 		if(image_info && image_info->index_on) {
 			image_info->tile[j2k->curtileno].end_pos = cio_tell(cio) + j2k->pos_correction - 1;

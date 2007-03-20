@@ -5,6 +5,7 @@
  * Copyright (c) 2002-2003, Yannick Verschueren
  * Copyright (c) 2003-2007, Francois-Olivier Devaux and Antonin Descampe
  * Copyright (c) 2005, Herve Drolon, FreeImage Team
+ * Copyright (c) 2006-2007, Parvatha Elangovan
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1041,7 +1042,7 @@ bool tcd_rateallocate(opj_tcd_t *tcd, unsigned char *dest, int len, opj_image_in
 				
 				if (cp->fixed_quality) {	/* fixed_quality */
 					if(cp->cinema){
-						l = t2_encode_packets(t2, tcd->tcd_tileno, tcd_tile, layno + 1, dest, maxlen, image_info);
+						l = t2_encode_packets(t2,tcd->tcd_tileno, tcd_tile, layno + 1, dest, maxlen, image_info,tcd->pi,tcd->cur_tp_num,tcd->tp_pos,tcd->cur_pino,0);
 						if (l == -999) {
 							lo = thresh;
 							continue;
@@ -1064,7 +1065,7 @@ bool tcd_rateallocate(opj_tcd_t *tcd, unsigned char *dest, int len, opj_image_in
 						lo = thresh;
 					}
 				} else {
-					l = t2_encode_packets(t2, tcd->tcd_tileno, tcd_tile, layno + 1, dest, maxlen, image_info);
+					l = t2_encode_packets(t2, tcd->tcd_tileno, tcd_tile, layno + 1, dest, maxlen, image_info,tcd->pi,tcd->cur_tp_num,tcd->tp_pos,tcd->cur_pino,0);
 					/* TODO: what to do with l ??? seek / tell ??? */
 					/* opj_event_msg(tcd->cinfo, EVT_INFO, "rate alloc: len=%d, max=%d\n", l, maxlen); */
 					if (l == -999) {
@@ -1122,6 +1123,8 @@ int tcd_encode_tile(opj_tcd_t *tcd, int tileno, unsigned char *dest, int len, op
 	tcd_tcp = tcd->tcp;
 	cp = tcd->cp;
 
+	encoding_time = opj_clock();	/* time needed to encode a tile */
+	if(tcd->cur_tp_num == 0){
 	/* INDEX >> "Precinct_nb_X et Precinct_nb_Y" */
 	if(image_info && image_info->index_on) {
 		opj_tcd_tilecomp_t *tilec_idx = &tile->comps[0];	/* based on component 0 */
@@ -1141,8 +1144,7 @@ int tcd_encode_tile(opj_tcd_t *tcd, int tileno, unsigned char *dest, int len, op
 	/* << INDEX */
 	
 	/*---------------TILE-------------------*/
-	encoding_time = opj_clock();	/* time needed to encode a tile */
-	
+
 	for (compno = 0; compno < tile->numcomps; compno++) {
 		int x, y;
 
@@ -1218,7 +1220,7 @@ int tcd_encode_tile(opj_tcd_t *tcd, int tileno, unsigned char *dest, int len, op
 		/* Fixed layer allocation */
 		tcd_rateallocate_fixed(tcd);
 	}
-	
+	}
 	/*--------------TIER2------------------*/
 
 	/* INDEX */
@@ -1227,18 +1229,24 @@ int tcd_encode_tile(opj_tcd_t *tcd, int tileno, unsigned char *dest, int len, op
 	}
 
 	t2 = t2_create(tcd->cinfo, image, cp);
-	l = t2_encode_packets(t2, tileno, tile, tcd_tcp->numlayers, dest, len, image_info);
+	l = t2_encode_packets(t2,tileno, tile, tcd_tcp->numlayers, dest, len, image_info,tcd->pi,tcd->cur_tp_num,tcd->tp_pos,tcd->cur_pino,1);
 	t2_destroy(t2);
 	
 	/*---------------CLEAN-------------------*/
 
 	encoding_time = opj_clock() - encoding_time;
-	opj_event_msg(tcd->cinfo, EVT_INFO, "- tile encoded in %f s\n", encoding_time);
-	
-	/* cleaning memory */
-	for (compno = 0; compno < tile->numcomps; compno++) {
-		opj_tcd_tilecomp_t *tilec = &tile->comps[compno];
-		opj_free(tilec->data);
+	if(tcd->cur_totnum_tp > 1){
+		opj_event_msg(tcd->cinfo, EVT_INFO, "- Tile part num %d encoded in %f s\n", tcd->cur_tp_num,encoding_time);
+	}else{
+    opj_event_msg(tcd->cinfo, EVT_INFO, "- tile encoded in %f s\n", encoding_time);
+	}
+
+	if(tcd->cur_tp_num == tcd->cur_totnum_tp - 1){
+		/* cleaning memory */
+		for (compno = 0; compno < tile->numcomps; compno++) {
+			opj_tcd_tilecomp_t *tilec = &tile->comps[compno];
+			opj_free(tilec->data);
+		}
 	}
 	
 	return l;

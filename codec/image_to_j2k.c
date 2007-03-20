@@ -5,6 +5,7 @@
  * Copyright (c) 2002-2003, Yannick Verschueren
  * Copyright (c) 2003-2007, Francois-Olivier Devaux and Antonin Descampe
  * Copyright (c) 2005, Herve Drolon, FreeImage Team 
+ * Copyright (c) 2006-2007, Parvatha Elangovan
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -414,41 +415,66 @@ char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_cparamet
 }
 
 
-void cinema_setup_encoder(opj_cparameters_t *parameters,opj_image_t *image){
-	int i;
-	float temp_rate;
-	
+void cinema_parameters(opj_cparameters_t *parameters){
 	parameters->tile_size_on = false;
 	parameters->cp_tdx=1;
 	parameters->cp_tdy=1;
+	
+	/*Tile part*/
+	parameters->tp_flag = 'C';
+	parameters->tp_on = 1;
 
 	/*Tile and Image shall be at (0,0)*/
-	parameters->cp_tx0=0; parameters->cp_ty0=0;
+	parameters->cp_tx0 = 0;
+	parameters->cp_ty0 = 0;
+	parameters->image_offset_x0 = 0;
+	parameters->image_offset_y0 = 0;
 
 	/*Codeblock size= 32*32*/
 	parameters->cblockw_init = 32;	
 	parameters->cblockh_init = 32;
+	parameters->csty |= 0x01;
 
 	/*The progression order shall be CPRL*/
-	strncpy(parameters->cp_prog,"CPRL",4);
-	parameters->prog_order = give_progression(parameters->cp_prog);
-	/*Tile parts not implemented*/
+	parameters->prog_order = CPRL;
 
 	/* No ROI */
 	parameters->roi_compno = -1;
 
 	parameters->subsampling_dx = 1;		parameters->subsampling_dy = 1;
+}
+
+void cinema_setup_encoder(opj_cparameters_t *parameters,opj_image_t *image){
+	int i;
+	float temp_rate;
+	switch (parameters->cp_cinema){
+	case CINEMA2K_24:
+	case CINEMA2K_48:
+		parameters->cp_rsiz = CINEMA2K;
+		if(parameters->numresolution > 6){
+			parameters->numresolution = 6;
+		}
+		if (!((image->comps[0].w == 2048) & (image->comps[0].h == 1080))){
+			fprintf(stdout,"Image coordinates is not 2K, %d x %d\n",image->comps[0].w,image->comps[0].h);
+		}
+	break;
+	
+	case CINEMA4K_24:
+		parameters->cp_rsiz = CINEMA4K;
+		if(parameters->numresolution < 1){
+				parameters->numresolution = 1;
+			}else if(parameters->numresolution > 7){
+				parameters->numresolution = 7;
+			}
+		if (!((image->comps[0].w == 4096) & (image->comps[0].h == 2160))){
+			fprintf(stdout,"Image coordinates is not 4K, %d x %d\n",image->comps[0].w,image->comps[0].h);
+		}
+		break;
+	}
 
 	switch (parameters->cp_cinema){
 		case CINEMA2K_24:
 		case CINEMA4K_24:
-		  if (image->comps[0].w == 2048 || image->comps[0].h == 1080){
-				parameters->numresolution = 6;
-				parameters->cp_rsiz = CINEMA2K;
-			}else{
-				fprintf(stdout,"One of the image coordinates are not 2K\n");
-			}
-			
 			for(i=0;i<parameters->tcp_numlayers;i++){
 				temp_rate = 0 ;
 				if (parameters->tcp_rates[i]== 0){
@@ -466,13 +492,7 @@ void cinema_setup_encoder(opj_cparameters_t *parameters,opj_image_t *image){
 			break;
 		
 		case CINEMA2K_48:
-     if (image->comps[0].w == 4096 || image->comps[0].h == 2160){
-				parameters->numresolution = 7; 
-				parameters->cp_rsiz= CINEMA4K;
-			}else{
-				fprintf(stdout,"One of the image coordinates are not 4K\n");
-			}
-			for(i=0;i<parameters->tcp_numlayers;i++){
+     	for(i=0;i<parameters->tcp_numlayers;i++){
 				if (parameters->tcp_rates[i]== 0){
 					parameters->tcp_rates[0]= ((float) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec))/ 
 					(CINEMA_48_CS * 8 * image->comps[0].dx * image->comps[0].dy);
@@ -889,6 +909,15 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,i
 			}
 			break;
 
+			/* ------------------------------------------------------ */
+			
+			case 'v':			/* Tile part generation*/
+			{
+				parameters->tp_flag = optarg[0];
+				parameters->tp_on = 1;
+			}
+			break;	
+
 				/* ------------------------------------------------------ */
 			
 			case 'z':			/* Image Directory path */
@@ -1262,6 +1291,11 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,i
 	}
 
 	/* check for possible errors */
+	if (parameters->cp_cinema){
+		if(parameters->tcp_numlayers > 0){
+     	fprintf(stdout,"Warning: DC profiles do not allow more than one quality layer. The codestream created will not be compliant with the DC profile\n");
+		}
+	}
 	if(img_fol->set_imgdir == 1){
 		if(!(parameters->infile[0] == 0)){
 			fprintf(stderr, "Error: options -ImgDir and -i cannot be used together !!\n");
@@ -1369,6 +1403,11 @@ int main(int argc, char **argv) {
 	if(parse_cmdline_encoder(argc, argv, &parameters,&img_fol) == 1) {
 		return 0;
 	}
+	
+	if (parameters.cp_cinema){
+		cinema_parameters(&parameters);
+	}
+				
 
 	/* Create comment for codestream */
 	if(parameters.cp_comment == NULL) {
@@ -1480,6 +1519,10 @@ int main(int argc, char **argv) {
 				break;
 		}
 
+			if(parameters.cp_cinema){
+				cinema_setup_encoder(&parameters,image);
+			}
+
 			/* encode the destination image */
 			/* ---------------------------- */
 
@@ -1493,10 +1536,6 @@ int main(int argc, char **argv) {
 
 				/* catch events using our callbacks and give a local context */
 				opj_set_event_mgr((opj_common_ptr)cinfo, &event_mgr, stderr);
-
-				if(parameters.cp_cinema){
-					cinema_setup_encoder(&parameters,image);
-				}
 
 				/* setup the encoder parameters using the current image and user parameters */
 				opj_setup_encoder(cinfo, &parameters, image);

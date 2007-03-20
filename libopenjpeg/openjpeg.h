@@ -5,6 +5,7 @@
  * Copyright (c) 2002-2003, Yannick Verschueren
  * Copyright (c) 2003-2007, Francois-Olivier Devaux and Antonin Descampe
  * Copyright (c) 2005, Herve Drolon, FreeImage Team
+ * Copyright (c) 2006-2007, Parvatha Elangovan
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -211,6 +212,12 @@ typedef struct opj_poc {
   OPJ_PROG_ORDER prg;
   int tile;
   char progorder[4];
+  int txS,txE,tyS,tyE,dx,dy;
+  int tx0,tx1,ty0,ty1;
+  int layno0, precno0, precno1;
+  int layS, resS, compS, prcS;
+  int layE, resE, compE, prcE;
+  int lay_t, res_t, comp_t, prc_t,tx0_t,ty0_t;
 } opj_poc_t;
 
 /**
@@ -219,10 +226,12 @@ Compression parameters
 typedef struct opj_cparameters {
 	/** Digital Cinema compliance 0-not compliant, 1-compliant*/
 	OPJ_CINEMA_MODE cp_cinema;
-	/** Progression order*/
-	char cp_prog[4];
 	/** Profile name*/
 	OPJ_RSIZ_CAPABILITIES cp_rsiz;
+	/** Tile part generation*/
+	char tp_on;
+	/** Flag for Tile part generation*/
+	char tp_flag;
 	/** size of tile: tile_size_on = false (not in argument) or = true (in argument) */
 	bool tile_size_on;
 	/** XTOsiz */

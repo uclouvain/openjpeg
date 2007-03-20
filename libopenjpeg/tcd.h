@@ -158,6 +158,14 @@ typedef struct opj_tcd_image {
 Tile coder/decoder
 */
 typedef struct opj_tcd {
+	/** Position of the tilepart flag in Progression order*/
+	int tp_pos;
+	/** Current tile part number*/
+	int cur_tp_num;
+	/** Total number of tileparts of the current tile*/
+	int cur_totnum_tp;
+	/** Current Packet iterator number */
+	int cur_pino;
 	/** codec context */
 	opj_common_ptr cinfo;
 
@@ -173,6 +181,8 @@ typedef struct opj_tcd {
 	opj_tcp_t *tcp;
 	/** current encoded/decoded tile */
 	int tcd_tileno;
+	/** Packet iterator*/
+	opj_pi_iterator_t *pi;
 } opj_tcd_t;
 
 /** @name Exported functions */

@@ -5,6 +5,7 @@
  * Copyright (c) 2002-2003, Yannick Verschueren
  * Copyright (c) 2003-2007, Francois-Olivier Devaux and Antonin Descampe
  * Copyright (c) 2005, Herve Drolon, FreeImage Team
+ * Copyright (c) 2006-2007, Parvatha Elangovan
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -193,6 +194,12 @@ typedef struct opj_cp {
 	int img_size;
 	/** Rsiz*/
 	OPJ_RSIZ_CAPABILITIES rsiz;
+	/** Enabling Tile part generation*/
+	char tp_on;
+	/** Flag determining tile part generation*/
+	char tp_flag;
+	/** Position of tile part flag in progression order*/
+	int tp_pos;
 	/** allocation by rate/distortion */
 	int disto_alloc;
 	/** allocation by fixed layer */
@@ -384,6 +391,18 @@ typedef struct opj_j2k {
 	int state;
 	/** number of the tile curently concern by coding/decoding */
 	int curtileno;
+	/** Tilepart number currently coding*/
+	int cur_tp_num;
+	/** Total number of tileparts of the current tile*/
+	int cur_totnum_tp;
+	/**
+	locate the start position of the TLM marker  
+	after encoding the tilepart, a jump (in j2k_write_sod) is done to the TLM marker to store the value of its length. 
+	*/
+	int tlm_start;
+	/** Total num of tile parts in whole image = num tiles* num tileparts in each tile*/
+	/** used in TLMmarker*/
+	int totnum_tp;	
 	/** 
 	locate the position of the end of the tile in the codestream, 
 	used to detect a truncated codestream (in j2k_read_sod)
@@ -473,6 +492,14 @@ Coding parameters are returned in j2k->cp.
 @param image input filled image
 */
 void j2k_setup_encoder(opj_j2k_t *j2k, opj_cparameters_t *parameters, opj_image_t *image);
+/**
+Converts an enum type progression order to string type
+*/
+char *convert_progression_order(OPJ_PROG_ORDER prg_order);
+/**
+Generates the number of tile parts for the current tile
+*/
+int j2k_get_num_tp(opj_cp_t *cp,int pino,int tileno);
 /**
 Encode an image into a JPEG-2000 codestream
 @param j2k J2K compressor handle
