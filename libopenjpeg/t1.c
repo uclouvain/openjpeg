@@ -1064,7 +1064,7 @@ void t1_decode_cblks(opj_t1_t *t1, opj_tcd_tile_t *tile, opj_tcp_t *tcp) {
 									if (t1->data[j][i] >> 1 == 0) {
 										tilec->data[x + i + (y + j) * w] = 0;
 									} else {
-										double tmp = (double)((t1->data[j][i] << 12) * band->stepsize);
+										double tmp = (double)(t1->data[j][i] * band->stepsize * 4096.0);
 										int tmp2 = ((int) (floor(fabs(tmp)))) + ((int) floor(fabs(tmp*2))%2);
 										tilec->data[x + i + (y + j) * w] = ((tmp<0)?-tmp2:tmp2);
 									}

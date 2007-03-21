@@ -5,6 +5,10 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+March 21, 2007
+* [Parvatha] Fixed j2k_prog_order_list[]. Modifications in j2k.c.
+* [Parvatha] Fixed t1_decode_cblks. Modifications in t1.c.
+
 March 20, 2007
 + [Parvatha] Added feature for generation of tile parts. Modifications in image_to_j2k.c, openjpeg.c, j2k.c, pi.c
 + [Parvatha] Added function j2k_write_tlm(),to generate TLM marker for a Digital cinema compliant codestream. Modifications in j2k.c.
