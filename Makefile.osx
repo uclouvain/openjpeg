@@ -1,4 +1,4 @@
-# Mac OSX makefile for OpenJPEG
+# MacOSX makefile for OpenJPEG
 
 VER_MAJOR = 1
 VER_MINOR = 1.1
@@ -9,14 +9,14 @@ INCLUDE = -Ilibopenjpeg
 
 # General configuration variables:
 CC = gcc
-LIBTOOL = libtool
+LIBTOOLSTAT = libtool
+LIBTOOLDYN = gcc
 
 PREFIX = /usr
 INSTALL_LIBDIR = $(PREFIX)/lib
 INSTALL_INCLUDE = $(PREFIX)/include
 
 COMPILERFLAGS = -O3 -fPIC
-LIBRARIES = -lc -lgcc -lstdc++
 
 MODULES = $(SRCS:.c=.o)
 CFLAGS = $(COMPILERFLAGS) $(INCLUDE)
@@ -24,13 +24,16 @@ CFLAGS = $(COMPILERFLAGS) $(INCLUDE)
 TARGET  = openjpeg
 STATICLIB = lib$(TARGET).a
 SHAREDLIB = lib$(TARGET)-$(VER_MAJOR).$(VER_MINOR).dylib
-LIBNAME = lib$(TARGET).dylib.$(VER_MAJOR)
+LIBNAME = lib$(TARGET).dylib
 
 
 
 default: all
 
 all: OpenJPEG
+
+dos2unix:
+	@$(DOS2UNIX) $(SRCS) $(INCLS)
 
 dist: OpenJPEG
 	install -d dist
@@ -45,10 +48,10 @@ OpenJPEG: $(STATICLIB) $(SHAREDLIB)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(STATICLIB): $(MODULES)
-	$(LIBTOOL) -o $@ $(MODULES)
+	$(LIBTOOLSTAT) -o $@ $(MODULES)
 
 $(SHAREDLIB): $(MODULES)
-	$(LIBTOOL) -dynamic $(LIBRARIES) -o $@ $(MODULES)
+	$(LIBTOOLDYN) -dynamiclib -o $@ $(MODULES)
 
 install:
 	install -d '$(DESTDIR)$(INSTALL_LIBDIR)' '$(DESTDIR)$(INSTALL_INCLUDE)'
@@ -56,8 +59,7 @@ install:
 	ranlib '$(DESTDIR)$(INSTALL_LIBDIR)/$(STATICLIB)'
 	install -m 755 -o root -g wheel $(SHAREDLIB) '$(DESTDIR)$(INSTALL_LIBDIR)'
 	ln -sf $(SHAREDLIB) '$(DESTDIR)$(INSTALL_LIBDIR)/$(LIBNAME)'
-	install -m 644 -o root -g root libopenjpeg/openjpeg.h '$(DESTDIR)$(INSTALL_INCLUDE)'
-	-ldconfig
+	install -m 644 -o root -g wheel ./libopenjpeg/openjpeg.h '$(DESTDIR)$(INSTALL_INCLUDE)'
 
 clean:
 	rm -rf core dist/ u2dtmp* $(MODULES) $(STATICLIB) $(SHAREDLIB) $(LIBNAME)

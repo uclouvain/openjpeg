@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+March 23, 2007
+* [antonin] Fixed Makefile.osx and changed Readme.osx accordingly
+
 March 21, 2007
 * [Parvatha] Fixed j2k_prog_order_list[]. Modifications in j2k.c.
 * [Parvatha] Fixed t1_decode_cblks. Modifications in t1.c.
