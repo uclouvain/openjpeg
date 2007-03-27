@@ -7,6 +7,8 @@ What's New for OpenJPEG
 
 March 27, 2007
 + [GB] Improved parsing in OPJViewer, as well some minor aesthetic modifications; support for image rendering with bit depths lower than 8 bits; can display an arbitrary frame of an MJ2 file (only in B/W, though); can reload a file; better resizing capabilities
+* [GB] Following to Hervé's suggestions, all the exit() calls, added by JPWL strict checking in t2.c and j2k.c, have been substituted with (object free'ing + opj_evt_message(EVT_ERROR) + return)
++ [GB] Added linking to TIFF library in the JPWL VC6 workspaces
 
 March 23, 2007
 * [antonin] Fixed Makefile.osx and changed Readme.osx accordingly

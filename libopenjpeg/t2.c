@@ -521,24 +521,25 @@ static int t2_decode_packet(opj_t2_t* t2, unsigned char *src, int len, opj_tcd_t
 					return -999;
 				}
 
-/* UniPG>> */
 #ifdef USE_JPWL
 			/* we need here a j2k handle to verify if making a check to
 			the validity of cblocks parameters is selected from user (-W) */
 
 				/* let's check that we are not exceeding */
 				if ((cblk->len + seg->newlen) > 8192) {
-					fprintf(stderr, "JPWL: segment too long (%d) for codeblock %d (p=%d, b=%d, r=%d, c=%d)\n",
+					opj_event_msg(t2->cinfo, EVT_WARNING,
+						"JPWL: segment too long (%d) for codeblock %d (p=%d, b=%d, r=%d, c=%d)\n",
 						seg->newlen, cblkno, precno, bandno, resno, compno);
-					if (!JPWL_ASSUME)
-						exit(-1);
+					if (!JPWL_ASSUME) {
+						opj_event_msg(t2->cinfo, EVT_ERROR, "JPWL: giving up\n");
+						return -999;
+					}
 					seg->newlen = 8192 - cblk->len;
-					fprintf(stderr, "      - truncating segment to %d\n", seg->newlen);
+					opj_event_msg(t2->cinfo, EVT_WARNING, "      - truncating segment to %d\n", seg->newlen);
 					break;
 				};
 
 #endif /* USE_JPWL */
-/* <<UniPG */
 				
 				memcpy(cblk->data + cblk->len, c, seg->newlen);
 				if (seg->numpasses == 0) {
