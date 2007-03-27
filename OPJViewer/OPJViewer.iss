@@ -31,8 +31,8 @@ Name: desktopicon; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:Ad
 
 [Files]
 Source: Release\OPJViewer.exe; DestDir: {app}; Flags: ignoreversion
-Source: about\about.htm; DestDir: {app}/about; Flags: ignoreversion
-Source: about\opj_logo.png; DestDir: {app}/about; Flags: ignoreversion
+;Source: about\about.htm; DestDir: {app}/about; Flags: ignoreversion
+;Source: about\opj_logo.png; DestDir: {app}/about; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

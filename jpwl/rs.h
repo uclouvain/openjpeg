@@ -104,7 +104,7 @@ Computes the minimum between two integers
 #define min(a,b)    (((a) < (b)) ? (a) : (b))
 #endif /* min */
 
-#endif /* __CRC32_HEADER__ */
+#endif /* __RS_HEADER__ */
 
 
 #endif /* USE_JPWL */

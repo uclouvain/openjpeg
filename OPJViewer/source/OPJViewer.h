@@ -94,6 +94,8 @@
 #include <wx/dnd.h>
 #include "wx/wxhtml.h"
 #include "wx/statline.h"
+#include <wx/fs_mem.h>
+
 
 #include "libopenjpeg\openjpeg.h"
 
@@ -119,10 +121,19 @@ typedef unsigned long long int8byte;
 #endif
 #endif
 
+#define OPJ_APPLICATION             wxT("OPJViewer")
 #define OPJ_APPLICATION_NAME		wxT("OpenJPEG Viewer")
 #define OPJ_APPLICATION_VERSION		wxT("0.2 alpha")
 #define OPJ_APPLICATION_TITLEBAR	OPJ_APPLICATION_NAME wxT(" ") OPJ_APPLICATION_VERSION
 #define OPJ_APPLICATION_COPYRIGHT	wxT("(C) 2007, Giuseppe Baruffa")
+
+#ifdef __WXMSW__
+#define OPJ_APPLICATION_PLATFORM    wxT("Windows")
+#endif
+
+#ifdef __WXGTK__
+#define OPJ_APPLICATION_PLATFORM    wxT("Linux")
+#endif
 
 #define OPJ_CANVAS_BORDER 10
 #define OPJ_CANVAS_COLOUR *wxWHITE
@@ -166,8 +177,11 @@ class OPJViewerApp: public wxApp
 		// the list of all filenames written in the command line
 		wxArrayString m_filelist;
 
+		// displaying engine parameters
+		int m_resizemethod;
+
 		// decoding engine parameters
-		int m_reducefactor, m_qualitylayers, m_components;
+		int m_reducefactor, m_qualitylayers, m_components, m_framenum;
 #ifdef USE_JPWL
 		bool m_enablejpwl;
 		int m_expcomps, m_maxtiles;
@@ -241,15 +255,16 @@ public:
     };
 
     OPJMarkerTree() { };
-    OPJMarkerTree(wxWindow *parent, wxFileName fname, wxString name, const wxWindowID id,
+    OPJMarkerTree(wxWindow *parent, OPJChildFrame *subframe, wxFileName fname, wxString name, const wxWindowID id,
                const wxPoint& pos, const wxSize& size,
                long style);
     virtual ~OPJMarkerTree(){};
-	OPJParseThread *CreateParseThread(wxTreeItemId parentid = 0x00);
+	OPJParseThread *CreateParseThread(wxTreeItemId parentid = 0x00, OPJChildFrame *subframe = NULL);
     void WriteText(const wxString& text) { wxMutexGuiEnter(); wxLogMessage(text); wxMutexGuiLeave(); }
 
 	wxFileName m_fname;
 	wxTextCtrl *m_peektextCtrl;
+	OPJChildFrame *m_childframe;
 
     /*void OnBeginDrag(wxTreeEvent& event);
     void OnBeginRDrag(wxTreeEvent& event);
@@ -335,14 +350,16 @@ class OPJFrame: public wxMDIParentFrame
     OPJFrame(wxWindow *parent, const wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, const long style);
 
     ~OPJFrame(void);
-    void OnSize(wxSizeEvent& event);
+	void OnSize(wxSizeEvent& WXUNUSED(event));
     void OnAbout(wxCommandEvent& WXUNUSED(event));
     void OnFileOpen(wxCommandEvent& WXUNUSED(event));
     void OnQuit(wxCommandEvent& WXUNUSED(event));
     void OnClose(wxCommandEvent& WXUNUSED(event));
     void OnZoom(wxCommandEvent& WXUNUSED(event));
 	void OnFit(wxCommandEvent& WXUNUSED(event));
-	void OnToggleWindow(wxCommandEvent& WXUNUSED(event));
+	void OnToggleBrowser(wxCommandEvent& WXUNUSED(event));
+	void OnTogglePeeker(wxCommandEvent& WXUNUSED(event));
+	void OnReload(wxCommandEvent& event);
 	void OnSetsDeco(wxCommandEvent& event);
 	void OnSashDrag(wxSashEvent& event);
 	void OpenFiles(wxArrayString paths, wxArrayString filenames);
@@ -390,6 +407,8 @@ class OPJChildFrame: public wxMDIChildFrame
 	wxFileName m_fname;
 	int m_winnumber;
 
+	unsigned long  m_twidth, m_theight, m_tx, m_ty;
+
 	DECLARE_EVENT_TABLE()
 };
 
@@ -398,9 +417,11 @@ enum {
 	OPJFRAME_FILEEXIT = wxID_EXIT,
 	OPJFRAME_HELPABOUT = wxID_ABOUT,
 	OPJFRAME_FILEOPEN,
-	OPJFRAME_FILETOGGLE,
+	OPJFRAME_FILETOGGLEB,
+	OPJFRAME_FILETOGGLEP,
 	OPJFRAME_VIEWZOOM,
 	OPJFRAME_VIEWFIT,
+	OPJFRAME_VIEWRELOAD,
 	OPJFRAME_FILECLOSE,
 	OPJFRAME_SETSDECO,
 
@@ -533,12 +554,15 @@ public:
     ~OPJDecoderDialog();
 
 	wxSpinCtrl *m_reduceCtrl, *m_layerCtrl, *m_numcompsCtrl;
+	wxRadioBox* m_resizeBox;
 
     wxPanel* CreateMainSettingsPage(wxWindow* parent);
+    wxPanel* CreatePart1SettingsPage(wxWindow* parent);
+    wxPanel* CreatePart3SettingsPage(wxWindow* parent);
 #ifdef USE_JPWL
 	void OnEnableJPWL(wxCommandEvent& event);
-    wxPanel* CreateJPWLSettingsPage(wxWindow* parent);
-	wxSpinCtrl *m_expcompsCtrl, *m_maxtilesCtrl;
+    wxPanel* CreatePart11SettingsPage(wxWindow* parent);
+	wxSpinCtrl *m_expcompsCtrl, *m_framenumCtrl, *m_maxtilesCtrl;
 	wxCheckBox *m_enablejpwlCheck;
 #endif // USE_JPWL
 
@@ -546,15 +570,15 @@ public:
 protected:
 
     enum {
-		OPJDECO_REDUCEFACTOR = 100,
+		OPJDECO_RESMETHOD = 100,
+		OPJDECO_REDUCEFACTOR,
 		OPJDECO_QUALITYLAYERS,
 		OPJDECO_NUMCOMPS,
 		OPJDECO_ENABLEJPWL,
 		OPJDECO_EXPCOMPS,
-		OPJDECO_MAXTILES
+		OPJDECO_MAXTILES,
+		OPJDECO_FRAMENUM
     };
-
-    wxImageList*    m_imageList;
 
 DECLARE_EVENT_TABLE()
 };

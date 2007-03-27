@@ -19,7 +19,6 @@ This implementation has been developed using the OpenJPEG library as decoding en
 
 If you find some bugs or if you have problems using the encoder/decoder, please send an e-mail to jpwl@diei.unipg.it
 
-
 2. Installing the viewer
 ==========================
 
@@ -94,4 +93,3 @@ The log/peek pane is shared among two different subpanels:
 ------------------
 
 * For mj2 files, only the first frame is displayed, and only in B/W
-* There is no zooming function

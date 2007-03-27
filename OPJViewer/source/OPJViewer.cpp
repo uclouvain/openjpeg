@@ -193,13 +193,18 @@ bool OPJViewerApp::OnInit(void)
   wxImage::AddHandler( new wxJP2Handler );
   wxImage::AddHandler( new wxMJ2Handler );
 #endif
-    // we use a PNG image in our HTML page
-    wxImage::AddHandler(new wxPNGHandler);
+    // we use a XPM image in our HTML page
+    wxImage::AddHandler(new wxXPMHandler);
+
+	// memory file system
+    wxFileSystem::AddHandler(new wxMemoryFSHandler);
 
 	// set decoding engine parameters
+	m_resizemethod = 0;
 	m_reducefactor = 0;
 	m_qualitylayers = 0;
 	m_components = 0;
+	m_framenum = 0;
 #ifdef USE_JPWL
 	m_enablejpwl = true;
 	m_expcomps = JPWL_EXPECTED_COMPONENTS;
@@ -225,7 +230,7 @@ bool OPJViewerApp::OnInit(void)
 	if (!(m_filelist.IsEmpty())) {
 		//wxLogMessage(wxT("Habemus files!!!"));
 		wxArrayString paths, filenames;
-		for (int f = 0; f < wxGetApp().m_filelist.GetCount(); f++) {
+		for (unsigned int f = 0; f < wxGetApp().m_filelist.GetCount(); f++) {
 			paths.Add(wxFileName(wxGetApp().m_filelist[f]).GetFullPath());
 			filenames.Add(wxFileName(wxGetApp().m_filelist[f]).GetFullName());
 		}
@@ -258,7 +263,9 @@ BEGIN_EVENT_TABLE(OPJFrame, wxMDIParentFrame)
     EVT_MENU(OPJFRAME_FILECLOSE, OPJFrame::OnClose)
     EVT_MENU(OPJFRAME_VIEWZOOM, OPJFrame::OnZoom)
     EVT_MENU(OPJFRAME_VIEWFIT, OPJFrame::OnFit)
-    EVT_MENU(OPJFRAME_FILETOGGLE, OPJFrame::OnToggleWindow)
+    EVT_MENU(OPJFRAME_VIEWRELOAD, OPJFrame::OnReload)
+    EVT_MENU(OPJFRAME_FILETOGGLEB, OPJFrame::OnToggleBrowser)
+    EVT_MENU(OPJFRAME_FILETOGGLEP, OPJFrame::OnTogglePeeker)
     EVT_MENU(OPJFRAME_SETSDECO, OPJFrame::OnSetsDeco)
     EVT_SASH_DRAGGED_RANGE(OPJFRAME_BROWSEWIN, OPJFRAME_LOGWIN, OPJFrame::OnSashDrag)
     EVT_NOTEBOOK_PAGE_CHANGED(LEFT_NOTEBOOK_ID, OPJFrame::OnNotebook)
@@ -275,8 +282,11 @@ OPJFrame::OPJFrame(wxWindow *parent, const wxWindowID id, const wxString& title,
 	file_menu->Append(OPJFRAME_FILEOPEN, wxT("&Open\tCtrl+O"));
 	file_menu->SetHelpString(OPJFRAME_FILEOPEN, wxT("Open one or more files"));
 
-	file_menu->Append(OPJFRAME_FILETOGGLE, wxT("&Toggle browser\tCtrl+T"));
-	file_menu->SetHelpString(OPJFRAME_FILETOGGLE, wxT("Toggle the left browsing pane"));
+	file_menu->Append(OPJFRAME_FILETOGGLEB, wxT("Toggle &browser\tCtrl+B"));
+	file_menu->SetHelpString(OPJFRAME_FILETOGGLEB, wxT("Toggle the left browsing pane"));
+
+	file_menu->Append(OPJFRAME_FILETOGGLEP, wxT("Toggle &peeker\tCtrl+P"));
+	file_menu->SetHelpString(OPJFRAME_FILETOGGLEP, wxT("Toggle the bottom peeking pane"));
 
 	file_menu->Append(OPJFRAME_FILECLOSE, wxT("&Close\tCtrl+C"));
 	file_menu->SetHelpString(OPJFRAME_FILECLOSE, wxT("Close current image"));
@@ -292,6 +302,9 @@ OPJFrame::OPJFrame(wxWindow *parent, const wxWindowID id, const wxString& title,
 
 	view_menu->Append(OPJFRAME_VIEWFIT, wxT("Zoom to &fit\tCtrl+F"));
 	view_menu->SetHelpString(OPJFRAME_VIEWFIT, wxT("Fit the image in canvas"));
+
+	view_menu->Append(OPJFRAME_VIEWRELOAD, wxT("&Reload image\tCtrl+R"));
+	view_menu->SetHelpString(OPJFRAME_VIEWRELOAD, wxT("Reload the current image"));
 
 	// settings menu and its items
 	wxMenu *sets_menu = new wxMenu;
@@ -435,9 +448,11 @@ void OPJFrame::OnSetsDeco(wxCommandEvent& event)
     if (dialog.ShowModal() == wxID_OK) {
 
 		// load settings
+		wxGetApp().m_resizemethod = dialog.m_resizeBox->GetSelection();
 		wxGetApp().m_reducefactor = dialog.m_reduceCtrl->GetValue();
 		wxGetApp().m_qualitylayers = dialog.m_layerCtrl->GetValue();
 		wxGetApp().m_components = dialog.m_numcompsCtrl->GetValue();
+		wxGetApp().m_framenum = dialog.m_framenumCtrl->GetValue();
 #ifdef USE_JPWL
 		wxGetApp().m_enablejpwl = dialog.m_enablejpwlCheck->GetValue();
 		wxGetApp().m_expcomps = dialog.m_expcompsCtrl->GetValue();
@@ -512,7 +527,7 @@ void OPJFrame::Rescale(int zooml, OPJChildFrame *currframe)
 	if (zooml != 100)
 		new_image.Rescale((int) ((double) zooml * (double) new_image.GetWidth() / 100.0),
 			(int) ((double) zooml * (double) new_image.GetHeight() / 100.0),
-			wxIMAGE_QUALITY_NORMAL);
+			wxGetApp().m_resizemethod ? wxIMAGE_QUALITY_HIGH : wxIMAGE_QUALITY_NORMAL);
     currframe->m_canvas->m_image = wxBitmap(new_image);
 	currframe->m_canvas->SetScrollbars(20,
 										20,
@@ -526,21 +541,44 @@ void OPJFrame::Rescale(int zooml, OPJChildFrame *currframe)
 }
 
 
+void OPJFrame::OnReload(wxCommandEvent& event)
+{
+	OPJChildFrame *currframe = (OPJChildFrame *) GetActiveChild();
+
+    OPJDecoThread *dthread = currframe->m_canvas->CreateDecoThread();
+
+    if (dthread->Run() != wxTHREAD_NO_ERROR)
+        wxLogMessage(wxT("Can't start deco thread!"));
+    else
+		wxLogMessage(wxT("New deco thread started."));
+
+	currframe->m_canvas->Refresh();
+
+	// update zoom
+	//currframe->m_canvas->m_zooml = zooml;
+}
+
+
 // about window for the frame
 void OPJFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
 #ifdef OPJ_HTMLABOUT
+#include "about_htm.h"
+#include "opj_logo.xpm"
 
     wxBoxSizer *topsizer;
     wxHtmlWindow *html;
     wxDialog dlg(this, wxID_ANY, wxString(_("About")));
 
+    wxMemoryFSHandler::AddFile("opj_logo.xpm", wxBitmap(opj_logo), wxBITMAP_TYPE_XPM);
+
     topsizer = new wxBoxSizer(wxVERTICAL);
 
-    html = new wxHtmlWindow(&dlg, wxID_ANY, wxDefaultPosition, wxSize(350, 250), wxHW_SCROLLBAR_NEVER);
+    html = new wxHtmlWindow(&dlg, wxID_ANY, wxDefaultPosition, wxSize(320, 250), wxHW_SCROLLBAR_NEVER);
     html->SetBorders(0);
-    html->LoadPage(wxT("about/about.htm"));
+    //html->LoadPage(wxT("about/about.htm"));
 	//html->SetPage("<html><body>Hello, world!</body></html>");
+	html->SetPage(htmlaboutpage);
     html->SetSize(html->GetInternalRepresentation()->GetWidth(),
                     html->GetInternalRepresentation()->GetHeight());
 
@@ -578,12 +616,23 @@ void OPJFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 
 }
 
-void OPJFrame::OnToggleWindow(wxCommandEvent& WXUNUSED(event))
+void OPJFrame::OnToggleBrowser(wxCommandEvent& WXUNUSED(event))
 {
     if (markerTreeWindow->IsShown())
         markerTreeWindow->Show(false);
     else
         markerTreeWindow->Show(true);
+
+    wxLayoutAlgorithm layout;
+    layout.LayoutMDIFrame(this);
+}
+
+void OPJFrame::OnTogglePeeker(wxCommandEvent& WXUNUSED(event))
+{
+    if (loggingWindow->IsShown())
+        loggingWindow->Show(false);
+    else
+        loggingWindow->Show(true);
 
     wxLayoutAlgorithm layout;
     layout.LayoutMDIFrame(this);
@@ -640,14 +689,14 @@ void OPJFrame::OpenFiles(wxArrayString paths, wxArrayString filenames)
 		m_childhash[winNumber] = subframe;
 
 		// create own marker tree
-		m_treehash[winNumber] = new OPJMarkerTree(m_bookCtrl, paths[n], wxT("Parsing..."), TreeTest_Ctrl,
+		m_treehash[winNumber] = new OPJMarkerTree(m_bookCtrl, subframe, paths[n], wxT("Parsing..."), TreeTest_Ctrl,
 												  wxDefaultPosition, wxDefaultSize,
 												  wxTR_DEFAULT_STYLE | wxSUNKEN_BORDER
 												  );
 
 		m_bookCtrl->AddPage(m_treehash[winNumber], wxString::Format(wxT("%u"), winNumber), false);
 
-		for (int p = 0; p < m_bookCtrl->GetPageCount(); p++) {
+		for (unsigned int p = 0; p < m_bookCtrl->GetPageCount(); p++) {
 			if (m_bookCtrl->GetPageText(p) == wxString::Format(wxT("%u"), winNumber)) {
 				m_bookCtrl->ChangeSelection(p);
 				break;
@@ -719,11 +768,22 @@ OPJDecoThread *OPJCanvas::CreateDecoThread(void)
     return dthread;
 }
 
+#define activeoverlay 0
 // Define the repainting behaviour
 void OPJCanvas::OnDraw(wxDC& dc)
 {
 	if (m_image.Ok()) {
 		dc.DrawBitmap(m_image, OPJ_CANVAS_BORDER, OPJ_CANVAS_BORDER);
+
+		if (activeoverlay) {
+			dc.SetPen(*wxRED_PEN);
+			dc.SetBrush(*wxTRANSPARENT_BRUSH);
+			//int tw, th;
+			dc.DrawRectangle(OPJ_CANVAS_BORDER, OPJ_CANVAS_BORDER,
+				(unsigned long int) (0.5 + (double) m_zooml * (double) m_childframe->m_twidth / 100.0),
+				(unsigned long int) (0.5 + (double) m_zooml * (double) m_childframe->m_theight / 100.0));
+		}
+
 	} else {
 		dc.SetFont(*wxSWISS_FONT);
 		dc.SetPen(*wxBLACK_PEN);
@@ -769,34 +829,33 @@ OPJChildFrame::OPJChildFrame(OPJFrame *parent, wxFileName fname, int winnumber, 
 const long style):
   wxMDIChildFrame(parent, wxID_ANY, title, pos, size, style)
 {
-  m_frame = (OPJFrame  *) parent;
-  m_canvas = NULL;
-  //my_children.Append(this);
-  m_fname = fname;
-  m_winnumber = winnumber;
+	m_frame = (OPJFrame  *) parent;
+	m_canvas = NULL;
+	//my_children.Append(this);
+	m_fname = fname;
+	m_winnumber = winnumber;
 	SetTitle(wxString::Format(_T("%d: "), m_winnumber) + m_fname.GetFullName());
-
 
 	  // Give it an icon (this is ignored in MDI mode: uses resources)
 #ifdef __WXMSW__
-	  SetIcon(wxIcon(wxT("OPJChild16")));
+	SetIcon(wxIcon(wxT("OPJChild16")));
 #endif
 
-	  // Give it a status line
-	  /*CreateStatusBar();*/
+	// Give it a status line
+	/*CreateStatusBar();*/
 
-	  int width, height;
-	  GetClientSize(&width, &height);
+	int width, height;
+	GetClientSize(&width, &height);
 
-	  OPJCanvas *canvas = new OPJCanvas(fname, this, wxPoint(0, 0), wxSize(width, height));
-	  canvas->SetCursor(wxCursor(wxCURSOR_PENCIL));
-	  m_canvas = canvas;
+	OPJCanvas *canvas = new OPJCanvas(fname, this, wxPoint(0, 0), wxSize(width, height));
+	canvas->SetCursor(wxCursor(wxCURSOR_PENCIL));
+	m_canvas = canvas;
 
-		// Give it scrollbars
-	  canvas->SetScrollbars(20, 20, 5, 5);
+	// Give it scrollbars
+	canvas->SetScrollbars(20, 20, 5, 5);
 
-	  Show(true);
-	  Maximize(true);
+	Show(true);
+	Maximize(true);
 
 	/*wxLogError(wxString::Format(wxT("Created tree %d (0x%x)"), m_winnumber, m_frame->m_treehash[m_winnumber]));*/
 
@@ -810,18 +869,15 @@ OPJChildFrame::~OPJChildFrame(void)
 
 void OPJChildFrame::OnClose(wxCloseEvent& event)
 {
-	for (int p = 0; p < m_frame->m_bookCtrl->GetPageCount(); p++) {
-
+	for (unsigned int p = 0; p < m_frame->m_bookCtrl->GetPageCount(); p++) {
 		if (m_frame->m_bookCtrl->GetPageText(p) == wxString::Format(wxT("%u"), m_winnumber)) {
 			m_frame->m_bookCtrl->DeletePage(p);
 			break;
 		}
-
 	}
 	Destroy();
 
 	wxLogMessage(wxT("Closed: %d"), m_winnumber);
-
 }
 
 void OPJChildFrame::OnActivate(wxActivateEvent& event)
@@ -836,7 +892,7 @@ void OPJChildFrame::OnGotFocus(wxFocusEvent& event)
 	if (!m_frame->m_bookCtrl)
 		return;
 
-	for (int p = 0; p < m_frame->m_bookCtrl->GetPageCount(); p++) {
+	for (unsigned int p = 0; p < m_frame->m_bookCtrl->GetPageCount(); p++) {
 
 		if (m_frame->m_bookCtrl->GetPageText(p) == wxString::Format(wxT("%u"), m_winnumber)) {
 			m_frame->m_bookCtrl->ChangeSelection(p);
@@ -898,7 +954,7 @@ IMPLEMENT_DYNAMIC_CLASS(OPJMarkerTree, wxGenericTreeCtrl)
 IMPLEMENT_DYNAMIC_CLASS(OPJMarkerTree, wxTreeCtrl)
 #endif
 
-OPJMarkerTree::OPJMarkerTree(wxWindow *parent, wxFileName fname, wxString name, const wxWindowID id,
+OPJMarkerTree::OPJMarkerTree(wxWindow *parent, OPJChildFrame *subframe, wxFileName fname, wxString name, const wxWindowID id,
            const wxPoint& pos, const wxSize& size, long style)
           : wxTreeCtrl(parent, id, pos, size, style)
 {
@@ -915,11 +971,13 @@ OPJMarkerTree::OPJMarkerTree(wxWindow *parent, wxFileName fname, wxString name, 
                                   image, image,
                                   new OPJMarkerData(name));
 
-    OPJParseThread *pthread = CreateParseThread();
+    OPJParseThread *pthread = CreateParseThread(0x00, subframe);
     if (pthread->Run() != wxTHREAD_NO_ERROR)
         wxLogMessage(wxT("Can't start parse thread!"));
     else
 		wxLogMessage(wxT("New parse thread started."));
+
+	m_childframe = subframe;
 }
 
 void OPJMarkerTree::CreateImageList(int size)
@@ -1048,15 +1106,16 @@ void OPJParseThread::LoadFile(wxFileName fname)
 
 	}
 
-	// close the file
-	m_file.Close();
-
 	// this is the root node
 	if (this->m_parentid)
 		m_tree->SetItemText(rootid, wxT("Codestream"));
 	else
+		//m_tree->SetItemText(rootid, wxString::Format(wxT("%s (%d B)"), fname.GetFullName(), m_file.Length()));
 		m_tree->SetItemText(rootid, fname.GetFullName());
 	
+	// close the file
+	m_file.Close();
+
 	WriteText(wxT("Parsing finished!"));
 }
 
@@ -1199,7 +1258,7 @@ void OPJMarkerTree::LogEvent(const wxChar *name, const wxTreeEvent& event)
     wxLogMessage(wxT("%s(%s)"), name, text.c_str());
 }
 
-OPJParseThread *OPJMarkerTree::CreateParseThread(wxTreeItemId parentid)
+OPJParseThread *OPJMarkerTree::CreateParseThread(wxTreeItemId parentid, OPJChildFrame *subframe)
 {
     OPJParseThread *pthread = new OPJParseThread(this, parentid);
 
@@ -1804,6 +1863,7 @@ void *OPJDecoThread::Entry()
 	mj222handler->m_reducefactor = wxGetApp().m_reducefactor;
 	mj222handler->m_qualitylayers = wxGetApp().m_qualitylayers;
 	mj222handler->m_components = wxGetApp().m_components;
+	mj222handler->m_framenum = wxGetApp().m_framenum;
 #ifdef USE_JPWL
 	mj222handler->m_enablejpwl = wxGetApp().m_enablejpwl;
 	mj222handler->m_expcomps = wxGetApp().m_expcomps;
@@ -1943,40 +2003,36 @@ END_EVENT_TABLE()
 
 OPJDecoderDialog::OPJDecoderDialog(wxWindow* win, int dialogType)
 {
-    SetExtraStyle(wxDIALOG_EX_CONTEXTHELP|wxWS_EX_VALIDATE_RECURSIVELY);
+	SetExtraStyle(wxDIALOG_EX_CONTEXTHELP|wxWS_EX_VALIDATE_RECURSIVELY);
 
-    int tabImage1 = -1;
-    int tabImage2 = -1;
+	Create(win, wxID_ANY, wxT("Decoder settings"),
+		wxDefaultPosition, wxDefaultSize,
+		wxDEFAULT_DIALOG_STYLE| (int) wxPlatform::IfNot(wxOS_WINDOWS_CE, wxRESIZE_BORDER)
+		);
 
-    int resizeBorder = wxRESIZE_BORDER;
+	CreateButtons(wxOK | wxCANCEL | (int)wxPlatform::IfNot(wxOS_WINDOWS_CE, wxHELP));
 
-        m_imageList = NULL;
+	wxBookCtrlBase* notebook = GetBookCtrl();
 
-    Create(win, wxID_ANY, wxT("Decoder settings"), wxDefaultPosition, wxDefaultSize,
-        wxDEFAULT_DIALOG_STYLE| (int) wxPlatform::IfNot(wxOS_WINDOWS_CE, resizeBorder)
-    );
-
-        CreateButtons(wxOK | wxCANCEL | (int)wxPlatform::IfNot(wxOS_WINDOWS_CE, wxHELP));
-
-    wxBookCtrlBase* notebook = GetBookCtrl();
-    notebook->SetImageList(m_imageList);
-
-    wxPanel* mainSettings = CreateMainSettingsPage(notebook);
+	wxPanel* mainSettings = CreateMainSettingsPage(notebook);
+	wxPanel* jpeg2000Settings = CreatePart1SettingsPage(notebook);
+	wxPanel* mjpeg2000Settings = CreatePart3SettingsPage(notebook);
 #ifdef USE_JPWL
-    wxPanel* jpwlSettings = CreateJPWLSettingsPage(notebook);
+	wxPanel* jpwlSettings = CreatePart11SettingsPage(notebook);
 #endif // USE_JPWL
 
-    notebook->AddPage(mainSettings, wxT("Main"), false);
+	notebook->AddPage(mainSettings, wxT("Display"), false);
+	notebook->AddPage(jpeg2000Settings, wxT("JPEG 2000"), false);
+	notebook->AddPage(mjpeg2000Settings, wxT("MJPEG 2000"), false);
 #ifdef USE_JPWL
-    notebook->AddPage(jpwlSettings, wxT("JPWL"), false);
+	notebook->AddPage(jpwlSettings, wxT("JPWL"), false);
 #endif // USE_JPWL
 
-    LayoutDialog();
+	LayoutDialog();
 }
 
 OPJDecoderDialog::~OPJDecoderDialog()
 {
-    delete m_imageList;
 }
 
 /*wxPanel* OPJDecoderDialog::CreateGeneralSettingsPage(wxWindow* parent)
@@ -2090,6 +2146,87 @@ wxPanel* OPJDecoderDialog::CreateMainSettingsPage(wxWindow* parent)
 	// top sizer
     wxBoxSizer *topSizer = new wxBoxSizer(wxVERTICAL);
 
+		// sub top sizer
+		wxBoxSizer *subtopSizer = new wxBoxSizer(wxVERTICAL);
+
+			// resize settings, column
+			wxString choices[] = {wxT("Low quality"), wxT("High quality")};
+			m_resizeBox = new wxRadioBox(panel, OPJDECO_RESMETHOD,
+				wxT("Resize method"),
+				wxDefaultPosition, wxDefaultSize,
+				WXSIZEOF(choices),
+				choices,
+				1,
+				wxRA_SPECIFY_ROWS);
+			m_resizeBox->SetSelection(wxGetApp().m_resizemethod);
+
+		subtopSizer->Add(m_resizeBox, 0, wxGROW | wxALL, 5);
+
+	topSizer->Add(subtopSizer, 1, wxGROW | wxALIGN_CENTRE | wxALL, 5);
+
+	// assign top and fit it
+    panel->SetSizer(topSizer);
+    topSizer->Fit(panel);
+
+    return panel;
+}
+
+wxPanel* OPJDecoderDialog::CreatePart3SettingsPage(wxWindow* parent)
+{
+    wxPanel* panel = new wxPanel(parent, wxID_ANY);
+
+	// top sizer
+    wxBoxSizer *topSizer = new wxBoxSizer(wxVERTICAL);
+
+	// add some space
+	//topSizer->AddSpacer(5);
+
+		// sub top sizer
+		wxBoxSizer *subtopSizer = new wxBoxSizer(wxVERTICAL);
+
+			// frame settings, column
+			wxStaticBox* frameBox = new wxStaticBox(panel, wxID_ANY, wxT("Frame"));
+			wxBoxSizer* frameSizer = new wxStaticBoxSizer(frameBox, wxVERTICAL);
+
+				// selected frame number, row
+				wxBoxSizer* framenumSizer = new wxBoxSizer(wxHORIZONTAL);
+
+				// add some text
+				framenumSizer->Add(new wxStaticText(panel, wxID_ANY, wxT("&Displayed frame:")),
+								0, wxALL | wxALIGN_CENTER_VERTICAL, 5);
+
+				// add some horizontal space
+				framenumSizer->Add(5, 5, 1, wxALL, 0);
+
+				// add the value control
+				framenumSizer->Add(
+					m_framenumCtrl = new wxSpinCtrl(panel, OPJDECO_FRAMENUM,
+								wxString::Format(wxT("%d"), wxGetApp().m_framenum),
+								wxDefaultPosition, wxSize(80, wxDefaultCoord),
+								wxSP_ARROW_KEYS,
+								1, 100000, wxGetApp().m_framenum),
+					0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 5);
+
+			frameSizer->Add(framenumSizer, 0, wxGROW | wxALL, 5);
+
+		subtopSizer->Add(frameSizer, 0, wxGROW | wxALL, 5);
+
+	topSizer->Add(subtopSizer, 1, wxGROW | wxALIGN_CENTRE | wxALL, 5);
+
+	// assign top and fit it
+    panel->SetSizer(topSizer);
+    topSizer->Fit(panel);
+
+    return panel;
+}
+
+wxPanel* OPJDecoderDialog::CreatePart1SettingsPage(wxWindow* parent)
+{
+    wxPanel* panel = new wxPanel(parent, wxID_ANY);
+
+	// top sizer
+    wxBoxSizer *topSizer = new wxBoxSizer(wxVERTICAL);
+
 	// add some space
 	//topSizer->AddSpacer(5);
 
@@ -2172,6 +2309,7 @@ wxPanel* OPJDecoderDialog::CreateMainSettingsPage(wxWindow* parent)
 								wxSP_ARROW_KEYS,
 								0, 100000, wxGetApp().m_components),
 					0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 5);
+				m_numcompsCtrl->Enable(false);
 
 			compoSizer->Add(numcompsSizer, 0, wxGROW | wxALL, 5);
 
@@ -2187,7 +2325,7 @@ wxPanel* OPJDecoderDialog::CreateMainSettingsPage(wxWindow* parent)
 }
 
 #ifdef USE_JPWL
-wxPanel* OPJDecoderDialog::CreateJPWLSettingsPage(wxWindow* parent)
+wxPanel* OPJDecoderDialog::CreatePart11SettingsPage(wxWindow* parent)
 {
     wxPanel* panel = new wxPanel(parent, wxID_ANY);
 
@@ -2285,6 +2423,8 @@ void OPJDecoderDialog::OnEnableJPWL(wxCommandEvent& event)
 
 }
 
+#endif // USE_JPWL
+
 bool OPJDnDFile::OnDropFiles(wxCoord, wxCoord, const wxArrayString& filenames)
 {
     /*size_t nFiles = filenames.GetCount();
@@ -2298,6 +2438,4 @@ bool OPJDnDFile::OnDropFiles(wxCoord, wxCoord, const wxArrayString& filenames)
 
     return true;
 }
-
-#endif // USE_JPWL
 

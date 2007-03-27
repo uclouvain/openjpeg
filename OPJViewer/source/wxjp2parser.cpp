@@ -484,7 +484,7 @@ int OPJParseThread::box_handler_function(int boxtype, wxFile *fileid, wxFileOffs
 					);
 
 				wxString text;
-				for (int s = 0; s < sample_count; s++) {
+				for (unsigned int s = 0; s < sample_count; s++) {
 					fileid->Read(&entry_size, sizeof(unsigned long int));
 					entry_size = BYTE_SWAP4(entry_size);
 					
@@ -844,15 +844,15 @@ int OPJParseThread::jpeg2000parse(wxFile *fileid, wxFileOffset filepoint, wxFile
 								  wxTreeItemId parentid, int level, char *scansign, unsigned long int *scanpoint)
 {
 	unsigned long int       LBox = 0x00000000;
-	int                     LBox_read;
+	//int                     LBox_read;
 	char                    TBox[5] = "\0\0\0\0";
-	int                     TBox_read;
+	//int                     TBox_read;
 	int8byte				XLBox = 0x0000000000000000;
-	int                     XLBox_read;
+	//int                     XLBox_read;
 	unsigned long int       box_length = 0;
 	int                     last_box = 0, box_num = 0;
 	int                     box_type = ANY_BOX;
-	unsigned char           onebyte[1], twobytes[2], fourbytes[4];
+	unsigned char           /*onebyte[1], twobytes[2],*/ fourbytes[4];
 
 	/* cycle all over the file */
 	box_num = 0;

@@ -233,14 +233,26 @@ bool wxJ2KHandler::LoadFile(wxImage *image, wxInputStream& stream, bool verbose,
 
 				}
 			}
-		} else {
+
+		} else if (shiftbpp < 0) {
 			for (row = 0; row < opjimage->comps[0].h; row++) {
 				for (col = 0; col < opjimage->comps[0].w; col++) {
 					
+					*(ptr++) = (*(r++)) << -shiftbpp;
+					*(ptr++) = (*(g++)) << -shiftbpp;
+					*(ptr++) = (*(b++)) << -shiftbpp;
+
+				}
+			}
+			
+		} else {
+			for (row = 0; row < opjimage->comps[0].h; row++) {
+				for (col = 0; col < opjimage->comps[0].w; col++) {
+
 					*(ptr++) = *(r++);
 					*(ptr++) = *(g++);
 					*(ptr++) = *(b++);
-
+				
 				}
 			}
 		}
@@ -257,6 +269,16 @@ bool wxJ2KHandler::LoadFile(wxImage *image, wxInputStream& stream, bool verbose,
 					*(ptr++) = (*(y)) >> shiftbpp;
 					*(ptr++) = (*(y)) >> shiftbpp;
 					*(ptr++) = (*(y++)) >> shiftbpp;
+
+				}
+			}
+		} else if (shiftbpp < 0) {
+			for (row = 0; row < opjimage->comps[0].h; row++) {
+				for (col = 0; col < opjimage->comps[0].w; col++) {
+					
+					*(ptr++) = (*(y)) << -shiftbpp;
+					*(ptr++) = (*(y)) << -shiftbpp;
+					*(ptr++) = (*(y++)) << -shiftbpp;
 
 				}
 			}

@@ -402,15 +402,15 @@ my_jpeg2000parse(wxInputStream& stream, unsigned long int filepoint, unsigned lo
 			  char *scansign, unsigned long int *scanpoint)
 {
 	unsigned long int       LBox = 0x00000000;
-	int                     LBox_read;
+	//int                     LBox_read;
 	char                    TBox[5] = "\0\0\0\0";
-	int                     TBox_read;
+	//int                     TBox_read;
 	__int64                 XLBox = 0x0000000000000000;
-	int                     XLBox_read;
+	//int                     XLBox_read;
 	unsigned long int       box_length = 0;
 	int                     last_box = 0, box_num = 0;
 	int                     box_type = ANY_BOX;
-	unsigned char           onebyte[1], twobytes[2], fourbytes[4];
+	unsigned char           /*onebyte[1], twobytes[2],*/ fourbytes[4];
 	int                     box_number = 0;
 
 	/* cycle all over the file */
@@ -499,7 +499,7 @@ my_jpeg2000parse(wxInputStream& stream, unsigned long int filepoint, unsigned lo
 
 // search first contiguos codestream box in an mj2 file
 unsigned long int
-searchfirstjp2c(wxInputStream& stream, unsigned long int fsize)
+searchjp2c(wxInputStream& stream, unsigned long int fsize, int number)
 {
 	char scansign[] = "jp2c";
 	unsigned long int scanpoint = 0L;
@@ -507,7 +507,7 @@ searchfirstjp2c(wxInputStream& stream, unsigned long int fsize)
 	wxLogMessage(wxT("MJ2: searching jp2c box... "));
 
 	/* do the parsing */
-	if (my_jpeg2000parse(stream, 0, fsize, 0, scansign, &scanpoint) < 0)		
+	if (my_jpeg2000parse(stream, 0, fsize, number, scansign, &scanpoint) < 0)		
 		wxLogMessage(wxT("MJ2: Unrecoverable error during file parsing: stopping"));
 
 	if (strcmp(scansign, "    "))
@@ -638,7 +638,7 @@ bool wxMJ2Handler::LoadFile(wxImage *image, wxInputStream& stream, bool verbose,
 	file_length = (int) stream.TellI();
 
 	/* search for the first codestream box and the movie header box  */
-	jp2c_point = searchfirstjp2c(stream, file_length);
+	jp2c_point = searchjp2c(stream, file_length, m_framenum);
 	jp2h_point = searchjpegheaderbox(stream, file_length);
 
 	// read the jp2h box and store it

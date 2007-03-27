@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+March 27, 2007
++ [GB] Improved parsing in OPJViewer, as well some minor aesthetic modifications; support for image rendering with bit depths lower than 8 bits; can display an arbitrary frame of an MJ2 file (only in B/W, though); can reload a file; better resizing capabilities
+
 March 23, 2007
 * [antonin] Fixed Makefile.osx and changed Readme.osx accordingly
 

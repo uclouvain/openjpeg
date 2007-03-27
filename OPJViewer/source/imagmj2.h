@@ -69,7 +69,7 @@ public:
     }
 
 		// decoding engine parameters
-		int m_reducefactor, m_qualitylayers, m_components;
+		int m_reducefactor, m_qualitylayers, m_components, m_framenum;
 #ifdef USE_JPWL
 		bool m_enablejpwl;
 		int m_expcomps, m_maxtiles;
