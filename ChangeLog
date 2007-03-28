@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+March 28, 2007
+* [FOD] Fixed an historical bug in t1.c that leaded to the inclusion of useless 0xFF in the codestream. Thanks to Sylvain, Pascal and Parvatha !
+
 March 27, 2007
 + [GB] Improved parsing in OPJViewer, as well some minor aesthetic modifications; support for image rendering with bit depths lower than 8 bits; can display an arbitrary frame of an MJ2 file (only in B/W, though); can reload a file; better resizing capabilities
 * [GB] Following to Hervé's suggestions, all the exit() calls, added by JPWL strict checking in t2.c and j2k.c, have been substituted with (object free'ing + opj_evt_message(EVT_ERROR) + return)

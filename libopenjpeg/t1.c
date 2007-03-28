@@ -626,7 +626,6 @@ static void t1_encode_cblk(opj_t1_t *t1, opj_tcd_cblk_t * cblk, int orient, int 
 		
 		pass->distortiondec = cumwmsedec;
 		pass->rate = mqc_numbytes(mqc) + correction;	/* FIXME */
-		pass->len = pass->rate - (passno == 0 ? 0 : cblk->passes[passno - 1].rate);
 		
 		/* Code-switch "RESET" */
 		if (cblksty & J2K_CCP_CBLKSTY_RESET)
@@ -640,6 +639,17 @@ static void t1_encode_cblk(opj_t1_t *t1, opj_tcd_cblk_t * cblk, int orient, int 
 		mqc_flush(mqc);
 	
 	cblk->totalpasses = passno;
+
+	for (passno = 0; passno<cblk->totalpasses; passno++) {
+		opj_tcd_pass_t *pass = &cblk->passes[passno];
+		if (pass->rate > mqc_numbytes(mqc))
+			pass->rate = mqc_numbytes(mqc);
+		/*Preventing generation of FF as last data byte of a pass*/
+		if((pass->rate>1) && (cblk->data[pass->rate - 1] == 0xFF)){
+			pass->rate--;
+		}
+		pass->len = pass->rate - (passno == 0 ? 0 : cblk->passes[passno - 1].rate);		
+	}
 }
 
 static void t1_decode_cblk(opj_t1_t *t1, opj_tcd_cblk_t * cblk, int orient, int roishift, int cblksty) {
@@ -1077,4 +1087,5 @@ void t1_decode_cblks(opj_t1_t *t1, opj_tcd_tile_t *tile, opj_tcp_t *tcp) {
 		} /* resno */
 	} /* compno */
 }
+
 
