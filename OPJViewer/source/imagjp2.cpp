@@ -86,35 +86,29 @@ IMPLEMENT_DYNAMIC_CLASS(wxJP2Handler,wxImageHandler)
 
 /* sample error callback expecting a FILE* client object */
 void jp2_error_callback(const char *msg, void *client_data) {
-	char m_msg[MAX_MESSAGE_LEN];
 	int message_len = strlen(msg) - 1;
 	if (msg[message_len] != '\n')
 		message_len = MAX_MESSAGE_LEN;
-	sprintf(m_msg, "[ERROR] %.*s", message_len, msg);
     wxMutexGuiEnter();
-	wxLogMessage(m_msg);
+	wxLogMessage(wxT("[ERROR] %.*s"), message_len, msg);
     wxMutexGuiLeave();
 }
 /* sample warning callback expecting a FILE* client object */
 void jp2_warning_callback(const char *msg, void *client_data) {
-	char m_msg[MAX_MESSAGE_LEN];
 	int message_len = strlen(msg) - 1;
 	if (msg[message_len] != '\n')
 		message_len = MAX_MESSAGE_LEN;
-	sprintf(m_msg, "[WARNING] %.*s", message_len, msg);
     wxMutexGuiEnter();
-	wxLogMessage(m_msg);
+	wxLogMessage(wxT("[WARNING] %.*s"), message_len, msg);
     wxMutexGuiLeave();
 }
 /* sample debug callback expecting no client object */
 void jp2_info_callback(const char *msg, void *client_data) {
-	char m_msg[MAX_MESSAGE_LEN];
 	int message_len = strlen(msg) - 1;
 	if (msg[message_len] != '\n')
 		message_len = MAX_MESSAGE_LEN;
-	sprintf(m_msg, "[INFO] %.*s", message_len, msg);
     wxMutexGuiEnter();
-	wxLogMessage(m_msg);
+	wxLogMessage(wxT("[INFO] %.*s"), message_len, msg);
     wxMutexGuiLeave();
 }
 

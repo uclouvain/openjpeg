@@ -30,16 +30,15 @@ wxT("<font size=-2 color=green>- Compiled with JPWL support</font><br>")
 #ifdef USE_JPSEC
 wxT("<font size=-2 color=green>- Compiled with JPSEC support</font>")
 #endif // USE_JPSEC
-wxT(
-"</td>"
+wxT("</td>"
 "</tr>"
 "<tr>"
 "<td colspan=2 bgcolor=#CC3300 height=3 valign=center></td>"
 "</tr>"
 "<tr>"
 "<td colspan=2>"
-"<font size=-2 color=#444444>OpenJPEG is &copy; 2002-2007 <a href=\"http://www.tele.ucl.ac.be/\">TELE</a> - <a href=\"http://www.uclouvain.be/\">Université Catholique de Louvain</a></font><br>"
-"<font size=-2 color=#444444>OPJViewer is also &copy; 2007 <a href=\"http://dsplab.diei.unipg.it/\">DSPLab</a> - <a href=\"http://www.unipg.it/\">Università degli studi di Perugia</a></font>"
+"<font size=-2 color=#444444>OpenJPEG is &copy; 2002-2007 <a href=\"http://www.tele.ucl.ac.be/\">TELE</a> - <a href=\"http://www.uclouvain.be/\">Universite' Catholique de Louvain</a></font><br>"
+"<font size=-2 color=#444444>OPJViewer is also &copy; 2007 <a href=\"http://dsplab.diei.unipg.it/\">DSPLab</a> - <a href=\"http://www.unipg.it/\">Universita' degli studi di Perugia</a></font>"
 "</td>"
 "</tr>"
 "</table>"

@@ -96,8 +96,9 @@
 #include "wx/statline.h"
 #include <wx/fs_mem.h>
 
+#include <wx/imaglist.h>
 
-#include "libopenjpeg\openjpeg.h"
+#include "libopenjpeg/openjpeg.h"
 
 #include "imagj2k.h"
 #include "imagjp2.h"

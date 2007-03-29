@@ -554,6 +554,8 @@ void OPJParseThread::ParseJ2KFile(wxFile *m_file, wxFileOffset offset, wxFileOff
 		/////////
 		case SIZ_VAL:
 			{
+			int c;
+
 			if (m_file->Read(twobytes, 2) != 2)
 				break;
 			unsigned short int rsiz = STREAM_TO_UINT16(twobytes, 0);
@@ -603,7 +605,7 @@ void OPJParseThread::ParseJ2KFile(wxFile *m_file, wxFileOffset offset, wxFileOff
 			unsigned char *xrsiz = new unsigned char(csiz);
 			unsigned char *yrsiz = new unsigned char(csiz);
 
-			for (int c = 0; c < csiz; c++) {
+			for (c = 0; c < csiz; c++) {
 
 				if (m_file->Read(&ssiz[c], 1) != 1)
 					break;

@@ -41,7 +41,7 @@ typedef enum {
 } j2filetype;
 
 /* enumeration for the box types */
-#define J2BOXNUM                23
+#define j22boxNUM                23
 typedef enum {
 
 			FILE_BOX,
@@ -70,7 +70,7 @@ typedef enum {
 			ANY_BOX,
 			UNK_BOX
 
-} j2boxtype;
+} j22boxtype;
 
 /* the box structure itself */
 struct boxdef {
@@ -80,12 +80,224 @@ struct boxdef {
 		char                  descr[LONG_DESCR_LEN];    /* long  description       */
 		int                   sbox;                     /* is it a superbox?       */
 		int                   req[J2FILENUM];           /* mandatory box           */
-		j2boxtype             ins;                      /* contained in box...     */
+		j22boxtype             ins;                      /* contained in box...     */
 
 };
 
+
+/* jp2 family box signatures */
+#define FILE_SIGN           ""
+#define JP_SIGN             "jP\040\040"
+#define FTYP_SIGN           "ftyp"
+#define JP2H_SIGN           "jp2h"
+#define IHDR_SIGN           "ihdr"
+#define COLR_SIGN           "colr"
+#define JP2C_SIGN           "jp2c"
+#define JP2I_SIGN           "jp2i"
+#define XML_SIGN            "xml\040"
+#define UUID_SIGN           "uuid"
+#define UINF_SIGN           "uinf"
+#define MOOV_SIGN           "moov"
+#define MVHD_SIGN           "mvhd"
+#define TRAK_SIGN           "trak"
+#define TKHD_SIGN           "tkhd"
+#define MDIA_SIGN           "mdia"
+#define MINF_SIGN           "minf"
+#define VMHD_SIGN           "vmhd"
+#define STBL_SIGN           "stbl"
+#define STSD_SIGN           "stsd"
+#define STSZ_SIGN           "stsz"
+#define MJP2_SIGN           "mjp2"
+#define MDAT_SIGN           "mdat"
+#define ANY_SIGN 			""
+#define UNK_SIGN            ""
+
 /* the possible boxes */
-struct boxdef j2box[];
+struct boxdef j22box[] =
+{
+/* sign */	{FILE_SIGN,
+/* short */	"placeholder for nothing",
+/* long */	"Nothing to say",
+/* sbox */	0,
+/* req */	{1, 1, 1},
+/* ins */	FILE_BOX},
+
+/* sign */	{JP_SIGN,
+/* short */	"JPEG 2000 Signature box",
+/* long */	"This box uniquely identifies the file as being part of the JPEG 2000 family of files",
+/* sbox */	0,
+/* req */	{1, 1, 1},
+/* ins */	FILE_BOX},
+
+/* sign */	{FTYP_SIGN,
+/* short */	"File Type box",
+/* long */	"This box specifies file type, version and compatibility information, including specifying if this file "
+			"is a conforming JP2 file or if it can be read by a conforming JP2 reader",
+/* sbox */	0,
+/* req */	{1, 1, 1},
+/* ins */	FILE_BOX},
+
+/* sign */	{JP2H_SIGN,
+/* short */	"JP2 Header box",
+/* long */	"This box contains a series of boxes that contain header-type information about the file",
+/* sbox */	1,
+/* req */	{1, 1, 1},
+/* ins */	FILE_BOX},
+
+/* sign */	{IHDR_SIGN,
+/* short */	"Image Header box",
+/* long */	"This box specifies the size of the image and other related fields",
+/* sbox */	0,
+/* req */	{1, 1, 1},
+/* ins */	JP2H_BOX},
+
+/* sign */	{COLR_SIGN,
+/* short */	"Colour Specification box",
+/* long */	"This box specifies the colourspace of the image",
+/* sbox */	0,
+/* req */	{1, 1, 1},
+/* ins */	JP2H_BOX},
+
+/* sign */	{JP2C_SIGN,
+/* short */	"Contiguous Codestream box",
+/* long */	"This box contains the codestream as defined by Annex A",
+/* sbox */	0,
+/* req */	{1, 1, 1},
+/* ins */	FILE_BOX},
+
+/* sign */	{JP2I_SIGN,
+/* short */	"Intellectual Property box",
+/* long */	"This box contains intellectual property information about the image",
+/* sbox */	0,
+/* req */	{0, 0, 0},
+/* ins */	FILE_BOX},
+
+/* sign */	{XML_SIGN,
+/* short */	"XML box",
+/* long */	"This box provides a tool by which vendors can add XML formatted information to a JP2 file",
+/* sbox */	0,
+/* req */	{0, 0, 0},
+/* ins */	FILE_BOX},
+
+/* sign */	{UUID_SIGN,
+/* short */	"UUID box",
+/* long */	"This box provides a tool by which vendors can add additional information to a file "
+			"without risking conflict with other vendors",
+/* sbox */	0,
+/* req */	{0, 0, 0},
+/* ins */	FILE_BOX},
+
+/* sign */	{UINF_SIGN,
+/* short */	"UUID Info box",
+/* long */	"This box provides a tool by which a vendor may provide access to additional information associated with a UUID",
+/* sbox */	0,
+/* req */	{0, 0, 0},
+/* ins */	FILE_BOX},
+
+/* sign */	{MOOV_SIGN,
+/* short */	"Movie box",
+/* long */	"This box contains the media data. In video tracks, this box would contain JPEG2000 video frames",
+/* sbox */	1,
+/* req */	{1, 1, 1},
+/* ins */	FILE_BOX},
+
+/* sign */	{MVHD_SIGN,
+/* short */	"Movie Header box",
+/* long */	"This box defines overall information which is media-independent, and relevant to the entire presentation "
+			"considered as a whole",
+/* sbox */	0,
+/* req */	{1, 1, 1},
+/* ins */	MOOV_BOX},
+
+/* sign */	{TRAK_SIGN,
+/* short */	"Track box",
+/* long */	"This is a container box for a single track of a presentation. A presentation may consist of one or more tracks",
+/* sbox */	1,
+/* req */	{1, 1, 1},
+/* ins */	MOOV_BOX},
+
+/* sign */	{TKHD_SIGN,
+/* short */	"Track Header box",
+/* long */	"This box specifies the characteristics of a single track. Exactly one Track Header Box is contained in a track",
+/* sbox */	0,
+/* req */	{1, 1, 1},
+/* ins */	TRAK_BOX},
+
+/* sign */	{MDIA_SIGN,
+/* short */	"Media box",
+/* long */	"The media declaration container contains all the objects which declare information about the media data "
+			"within a track",
+/* sbox */	1,
+/* req */	{1, 1, 1},
+/* ins */	TRAK_BOX},
+
+/* sign */	{MINF_SIGN,
+/* short */	"Media Information box",
+/* long */	"This box contains all the objects which declare characteristic information of the media in the track",
+/* sbox */	1,
+/* req */	{1, 1, 1},
+/* ins */	MDIA_BOX},
+
+/* sign */	{VMHD_SIGN,
+/* short */	"Video Media Header box",
+/* long */	"The video media header contains general presentation information, independent of the coding, for video media",
+/* sbox */	0,
+/* req */	{1, 1, 1},
+/* ins */	MINF_BOX},
+
+/* sign */	{STBL_SIGN,
+/* short */	"Sample Table box",
+/* long */	"The sample table contains all the time and data indexing of the media samples in a track",
+/* sbox */	1,
+/* req */	{1, 1, 1},
+/* ins */	MINF_BOX},
+
+/* sign */	{STSD_SIGN,
+/* short */	"STSD Sample Description box",
+/* long */	"The sample description table gives detailed information about the coding type used, and any initialization "
+			"information needed for that coding",
+/* sbox */	0,
+/* req */	{1, 1, 1},
+/* ins */	MINF_BOX},
+
+/* sign */	{STSZ_SIGN,
+/* short */	"Sample Size box",
+/* long */	"This box contains the sample count and a table giving the size of each sample",
+/* sbox */	0,
+/* req */	{1, 1, 1},
+/* ins */	STBL_BOX},
+
+/* sign */	{MJP2_SIGN,
+/* short */	"MJP2 Sample Description box",
+/* long */	"The MJP2 sample description table gives detailed information about the coding type used, and any initialization "
+			"information needed for that coding",
+/* sbox */	0,
+/* req */	{1, 1, 1},
+/* ins */	MINF_BOX},
+
+/* sign */	{MDAT_SIGN,
+/* short */	"Media Data box",
+/* long */	"The meta-data for a presentation is stored in the single Movie Box which occurs at the top-level of a file",
+/* sbox */	1,
+/* req */	{1, 1, 1},
+/* ins */	FILE_BOX},
+
+/* sign */	{ANY_SIGN,
+/* short */	"Any box",
+/* long */	"All the existing boxes",
+/* sbox */	0,
+/* req */	{0, 0, 0},
+/* ins */	FILE_BOX},
+
+/* sign */	{UNK_SIGN,
+/* short */	"Unknown Type box",
+/* long */	"The signature is not recognised to be that of an existing box",
+/* sbox */	0,
+/* req */	{0, 0, 0},
+/* ins */	ANY_BOX}
+
+};
+
 
 /* macro functions */
 /* From little endian to big endian, 2 and 4 bytes */
@@ -131,7 +343,7 @@ void indprint(wxString printout, int level)
 int OPJParseThread::box_handler_function(int boxtype, wxFile *fileid, wxFileOffset filepoint, wxFileOffset filelimit,
 						 wxTreeItemId parentid, int level, char *scansign, unsigned long int *scanpoint)
 {
-	switch ((j2boxtype) boxtype) {
+	switch ((j22boxtype) boxtype) {
 
 
 	/* JPEG 2000 Signature box */
@@ -325,7 +537,7 @@ int OPJParseThread::box_handler_function(int boxtype, wxFile *fileid, wxFileOffs
 
 			if (METH != 1)
 				currid = m_tree->AppendItem(parentid,
-					wxString::Format("ICC profile: there is one"),
+					wxString::Format(wxT("ICC profile: there is one")),
 					m_tree->TreeCtrlIcon_File, m_tree->TreeCtrlIcon_File + 1,
 					new OPJMarkerData(wxT("INFO"))
 					);
@@ -611,218 +823,6 @@ int OPJParseThread::box_handler_function(int boxtype, wxFile *fileid, wxFileOffs
 	return (0);
 }
 
-/* jp2 family box signatures */
-#define FILE_SIGN           ""
-#define JP_SIGN             "jP\040\040"
-#define FTYP_SIGN           "ftyp"
-#define JP2H_SIGN           "jp2h"
-#define IHDR_SIGN           "ihdr"
-#define COLR_SIGN           "colr"
-#define JP2C_SIGN           "jp2c"
-#define JP2I_SIGN           "jp2i"
-#define XML_SIGN            "xml\040"
-#define UUID_SIGN           "uuid"
-#define UINF_SIGN           "uinf"
-#define MOOV_SIGN           "moov"
-#define MVHD_SIGN           "mvhd"
-#define TRAK_SIGN           "trak"
-#define TKHD_SIGN           "tkhd"
-#define MDIA_SIGN           "mdia"
-#define MINF_SIGN           "minf"
-#define VMHD_SIGN           "vmhd"
-#define STBL_SIGN           "stbl"
-#define STSD_SIGN           "stsd"
-#define STSZ_SIGN           "stsz"
-#define MJP2_SIGN           "mjp2"
-#define MDAT_SIGN           "mdat"
-#define ANY_SIGN 			""
-#define UNK_SIGN            ""
-
-/* the possible boxes */
-struct boxdef j2box[] =
-{
-/* sign */	{FILE_SIGN,
-/* short */	"placeholder for nothing",
-/* long */	"Nothing to say",
-/* sbox */	0,
-/* req */	{1, 1, 1},
-/* ins */	FILE_BOX},
-
-/* sign */	{JP_SIGN,
-/* short */	"JPEG 2000 Signature box",
-/* long */	"This box uniquely identifies the file as being part of the JPEG 2000 family of files",
-/* sbox */	0,
-/* req */	{1, 1, 1},
-/* ins */	FILE_BOX},
-
-/* sign */	{FTYP_SIGN,
-/* short */	"File Type box",
-/* long */	"This box specifies file type, version and compatibility information, including specifying if this file "
-			"is a conforming JP2 file or if it can be read by a conforming JP2 reader",
-/* sbox */	0,
-/* req */	{1, 1, 1},
-/* ins */	FILE_BOX},
-
-/* sign */	{JP2H_SIGN,
-/* short */	"JP2 Header box",
-/* long */	"This box contains a series of boxes that contain header-type information about the file",
-/* sbox */	1,
-/* req */	{1, 1, 1},
-/* ins */	FILE_BOX},
-
-/* sign */	{IHDR_SIGN,
-/* short */	"Image Header box",
-/* long */	"This box specifies the size of the image and other related fields",
-/* sbox */	0,
-/* req */	{1, 1, 1},
-/* ins */	JP2H_BOX},
-
-/* sign */	{COLR_SIGN,
-/* short */	"Colour Specification box",
-/* long */	"This box specifies the colourspace of the image",
-/* sbox */	0,
-/* req */	{1, 1, 1},
-/* ins */	JP2H_BOX},
-
-/* sign */	{JP2C_SIGN,
-/* short */	"Contiguous Codestream box",
-/* long */	"This box contains the codestream as defined by Annex A",
-/* sbox */	0,
-/* req */	{1, 1, 1},
-/* ins */	FILE_BOX},
-
-/* sign */	{JP2I_SIGN,
-/* short */	"Intellectual Property box",
-/* long */	"This box contains intellectual property information about the image",
-/* sbox */	0,
-/* req */	{0, 0, 0},
-/* ins */	FILE_BOX},
-
-/* sign */	{XML_SIGN,
-/* short */	"XML box",
-/* long */	"This box provides a tool by which vendors can add XML formatted information to a JP2 file",
-/* sbox */	0,
-/* req */	{0, 0, 0},
-/* ins */	FILE_BOX},
-
-/* sign */	{UUID_SIGN,
-/* short */	"UUID box",
-/* long */	"This box provides a tool by which vendors can add additional information to a file "
-			"without risking conflict with other vendors",
-/* sbox */	0,
-/* req */	{0, 0, 0},
-/* ins */	FILE_BOX},
-
-/* sign */	{UINF_SIGN,
-/* short */	"UUID Info box",
-/* long */	"This box provides a tool by which a vendor may provide access to additional information associated with a UUID",
-/* sbox */	0,
-/* req */	{0, 0, 0},
-/* ins */	FILE_BOX},
-
-/* sign */	{MOOV_SIGN,
-/* short */	"Movie box",
-/* long */	"This box contains the media data. In video tracks, this box would contain JPEG2000 video frames",
-/* sbox */	1,
-/* req */	{1, 1, 1},
-/* ins */	FILE_BOX},
-
-/* sign */	{MVHD_SIGN,
-/* short */	"Movie Header box",
-/* long */	"This box defines overall information which is media-independent, and relevant to the entire presentation "
-			"considered as a whole",
-/* sbox */	0,
-/* req */	{1, 1, 1},
-/* ins */	MOOV_BOX},
-
-/* sign */	{TRAK_SIGN,
-/* short */	"Track box",
-/* long */	"This is a container box for a single track of a presentation. A presentation may consist of one or more tracks",
-/* sbox */	1,
-/* req */	{1, 1, 1},
-/* ins */	MOOV_BOX},
-
-/* sign */	{TKHD_SIGN,
-/* short */	"Track Header box",
-/* long */	"This box specifies the characteristics of a single track. Exactly one Track Header Box is contained in a track",
-/* sbox */	0,
-/* req */	{1, 1, 1},
-/* ins */	TRAK_BOX},
-
-/* sign */	{MDIA_SIGN,
-/* short */	"Media box",
-/* long */	"The media declaration container contains all the objects which declare information about the media data "
-			"within a track",
-/* sbox */	1,
-/* req */	{1, 1, 1},
-/* ins */	TRAK_BOX},
-
-/* sign */	{MINF_SIGN,
-/* short */	"Media Information box",
-/* long */	"This box contains all the objects which declare characteristic information of the media in the track",
-/* sbox */	1,
-/* req */	{1, 1, 1},
-/* ins */	MDIA_BOX},
-
-/* sign */	{VMHD_SIGN,
-/* short */	"Video Media Header box",
-/* long */	"The video media header contains general presentation information, independent of the coding, for video media",
-/* sbox */	0,
-/* req */	{1, 1, 1},
-/* ins */	MINF_BOX},
-
-/* sign */	{STBL_SIGN,
-/* short */	"Sample Table box",
-/* long */	"The sample table contains all the time and data indexing of the media samples in a track",
-/* sbox */	1,
-/* req */	{1, 1, 1},
-/* ins */	MINF_BOX},
-
-/* sign */	{STSD_SIGN,
-/* short */	"STSD Sample Description box",
-/* long */	"The sample description table gives detailed information about the coding type used, and any initialization "
-			"information needed for that coding",
-/* sbox */	0,
-/* req */	{1, 1, 1},
-/* ins */	MINF_BOX},
-
-/* sign */	{STSZ_SIGN,
-/* short */	"Sample Size box",
-/* long */	"This box contains the sample count and a table giving the size of each sample",
-/* sbox */	0,
-/* req */	{1, 1, 1},
-/* ins */	STBL_BOX},
-
-/* sign */	{MJP2_SIGN,
-/* short */	"MJP2 Sample Description box",
-/* long */	"The MJP2 sample description table gives detailed information about the coding type used, and any initialization "
-			"information needed for that coding",
-/* sbox */	0,
-/* req */	{1, 1, 1},
-/* ins */	MINF_BOX},
-
-/* sign */	{MDAT_SIGN,
-/* short */	"Media Data box",
-/* long */	"The meta-data for a presentation is stored in the single Movie Box which occurs at the top-level of a file",
-/* sbox */	1,
-/* req */	{1, 1, 1},
-/* ins */	FILE_BOX},
-
-/* sign */	{ANY_SIGN,
-/* short */	"Any box",
-/* long */	"All the existing boxes",
-/* sbox */	0,
-/* req */	{0, 0, 0},
-/* ins */	FILE_BOX},
-
-/* sign */	{UNK_SIGN,
-/* short */	"Unknown Type box",
-/* long */	"The signature is not recognised to be that of an existing box",
-/* sbox */	0,
-/* req */	{0, 0, 0},
-/* ins */	ANY_BOX}
-
-};
 
 void OPJParseThread::ParseJP2File(wxFile *fileid, wxFileOffset filepoint, wxFileOffset filelimit, wxTreeItemId parentid)
 {
@@ -893,7 +893,7 @@ int OPJParseThread::jpeg2000parse(wxFile *fileid, wxFileOffset filepoint, wxFile
 
 		/* determine the box type */
 		for (box_type = JP_BOX; box_type < UNK_BOX; box_type++)
-			if (memcmp(TBox, j2box[box_type].value, 4) == 0)
+			if (memcmp(TBox, j22box[box_type].value, 4) == 0)
 				break;	
 
 		/* read the optional XLBox, 8 bytes */
@@ -936,7 +936,7 @@ int OPJParseThread::jpeg2000parse(wxFile *fileid, wxFileOffset filepoint, wxFile
 
 		// box name
 		wxTreeItemId subcurrid1 = m_tree->AppendItem(currid,
-			wxT("*** ") + wxString(j2box[box_type].name) + wxT(" ***"),
+			wxT("*** ") + wxString::Format(wxT("%s"), j22box[box_type].name) + wxT(" ***"),
 			image, imageSel,
 			new OPJMarkerData(wxT("INFO"))
 			);
@@ -955,7 +955,7 @@ int OPJParseThread::jpeg2000parse(wxFile *fileid, wxFileOffset filepoint, wxFile
 			currid, level, scansign, scanpoint);
 
 		/* if it's a superbox go inside it */
-		if (j2box[box_type].sbox)
+		if (j22box[box_type].sbox)
 			jpeg2000parse(fileid, (LBox == 1) ? (filepoint + 16) : (filepoint + 8), filepoint + box_length,
 				currid, level + 1, scansign, scanpoint);
 

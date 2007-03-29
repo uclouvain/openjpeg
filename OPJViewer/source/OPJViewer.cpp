@@ -136,8 +136,9 @@ bool OPJViewerApp::OnInit(void)
 
     wxChar **wxArgv = new wxChar *[argc + 1];
 
-    for (int n = 0; n < argc; n++ ) {
-        wxMB2WXbuf warg = wxConvertMB2WX(argv[n]);
+	int n;
+    for (n = 0; n < argc; n++ ) {
+        wxMB2WXbuf warg = wxConvertMB2WX((char *) argv[n]);
         wxArgv[n] = wxStrdup(warg);
     }
 
@@ -570,7 +571,7 @@ void OPJFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
     wxHtmlWindow *html;
     wxDialog dlg(this, wxID_ANY, wxString(_("About")));
 
-    wxMemoryFSHandler::AddFile("opj_logo.xpm", wxBitmap(opj_logo), wxBITMAP_TYPE_XPM);
+    wxMemoryFSHandler::AddFile(wxT("opj_logo.xpm"), wxBitmap(opj_logo), wxBITMAP_TYPE_XPM);
 
     topsizer = new wxBoxSizer(wxVERTICAL);
 
@@ -1304,7 +1305,7 @@ void OPJMarkerTree::OnItemExpanding(wxTreeEvent& event)
 	else
 		text = wxT("invalid item");
 
-	if (strcmp(data->GetDesc1(), wxT("INFO-CSTREAM")))
+	if (wxStrcmp(data->GetDesc1(), wxT("INFO-CSTREAM")))
 		return;
 
 	wxLogMessage(wxT("Expanding... (%s -> %s, %s, %d, %d)"),
@@ -1364,7 +1365,7 @@ void OPJMarkerTree::OnSelChanged(wxTreeEvent& event)
 				text << wxT(" ");
 
 			if (pos < max_read) {
-				text << wxString::Format(wxT("%02X "), wxT(buffer[pos]));
+				text << wxString::Format(wxT("%02X "), buffer[pos]);
 			} else
 				text << wxT("   ");
 			pos++;

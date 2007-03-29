@@ -86,35 +86,29 @@ IMPLEMENT_DYNAMIC_CLASS(wxMJ2Handler,wxImageHandler)
 
 /* sample error callback expecting a FILE* client object */
 void mj2_error_callback(const char *msg, void *client_data) {
-	char m_msg[MAX_MESSAGE_LEN];
 	int message_len = strlen(msg) - 1;
 	if (msg[message_len] != '\n')
 		message_len = MAX_MESSAGE_LEN;
-	sprintf(m_msg, "[ERROR] %.*s", message_len, msg);
     wxMutexGuiEnter();
-	wxLogMessage(m_msg);
+	wxLogMessage(wxT("[ERROR] %.*s"), message_len, msg);
     wxMutexGuiLeave();
 }
 /* sample warning callback expecting a FILE* client object */
 void mj2_warning_callback(const char *msg, void *client_data) {
-	char m_msg[MAX_MESSAGE_LEN];
 	int message_len = strlen(msg) - 1;
 	if (msg[message_len] != '\n')
 		message_len = MAX_MESSAGE_LEN;
-	sprintf(m_msg, "[WARNING] %.*s", message_len, msg);
     wxMutexGuiEnter();
-	wxLogMessage(m_msg);
+	wxLogMessage(wxT("[WARNING] %.*s"), message_len, msg);
     wxMutexGuiLeave();
 }
 /* sample debug callback expecting no client object */
 void mj2_info_callback(const char *msg, void *client_data) {
-	char m_msg[MAX_MESSAGE_LEN];
 	int message_len = strlen(msg) - 1;
 	if (msg[message_len] != '\n')
 		message_len = MAX_MESSAGE_LEN;
-	sprintf(m_msg, "[INFO] %.*s", message_len, msg);
     wxMutexGuiEnter();
-	wxLogMessage(m_msg);
+	wxLogMessage(wxT("[INFO] %.*s"), message_len, msg);
     wxMutexGuiLeave();
 }
 
@@ -396,6 +390,14 @@ int
 my_box_handler_function(my_j2boxtype boxtype, wxInputStream& stream, unsigned long int filepoint, unsigned long int filelimit, int level,
 					 char *scansign, unsigned long int *scanpoint);
 
+#ifdef __WXMSW__
+typedef unsigned __int64 int8byte;
+#endif // __WXMSW__
+
+#ifdef __WXGTK__
+typedef unsigned long long int8byte;
+#endif // __WXGTK__
+
 /* internal mini-search for a box signature */
 int
 my_jpeg2000parse(wxInputStream& stream, unsigned long int filepoint, unsigned long int filelimit, int level,
@@ -405,7 +407,7 @@ my_jpeg2000parse(wxInputStream& stream, unsigned long int filepoint, unsigned lo
 	//int                     LBox_read;
 	char                    TBox[5] = "\0\0\0\0";
 	//int                     TBox_read;
-	__int64                 XLBox = 0x0000000000000000;
+	int8byte                 XLBox = 0x0000000000000000;
 	//int                     XLBox_read;
 	unsigned long int       box_length = 0;
 	int                     last_box = 0, box_num = 0;
@@ -514,7 +516,7 @@ searchjp2c(wxInputStream& stream, unsigned long int fsize, int number)
 		wxLogMessage(wxT("MJ2: not found"));
 	else {
 
-		wxLogMessage(wxString::Format("MJ2: found at byte %d", scanpoint));
+		wxLogMessage(wxString::Format(wxT("MJ2: found at byte %d"), scanpoint));
 
 	};
 
