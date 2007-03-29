@@ -113,21 +113,28 @@ braindamage below.
    enum definitions
 ==========================================================
 */
-
+/** 
+Rsiz Capabilities
+*/
 typedef enum RSIZ_CAPABILITIES {
-	STD_RSIZ = 0,
+	STD_RSIZ = 0,		/** Standard JPEG2000 profile*/
 	CINEMA2K = 3,		/** Profile name for a 2K image*/
 	CINEMA4K = 4		/** Profile name for a 4K image*/
 } OPJ_RSIZ_CAPABILITIES;
 
+/** 
+Digital cinema operation mode 
+*/
 typedef enum CINEMA_MODE {
-	OFF = 0,
-	CINEMA2K_24 = 1,
-	CINEMA2K_48 = 2,
-	CINEMA4K_24 = 3
+	OFF = 0,					/** Not Digital Cinema*/
+	CINEMA2K_24 = 1,	/** 2K Digital Cinema at 24 fps*/
+	CINEMA2K_48 = 2,	/** 2K Digital Cinema at 48 fps*/
+	CINEMA4K_24 = 3		/** 4K Digital Cinema at 24 fps*/
 }OPJ_CINEMA_MODE;
 
-/** Progression order */
+/** 
+Progression order 
+*/
 typedef enum PROG_ORDER {
 	PROG_UNKNOWN = -1,	/**< place-holder */
 	LRCP = 0,		/**< layer-resolution-component-precinct order */

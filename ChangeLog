@@ -5,6 +5,17 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+March 29, 2007
+* [Parvatha] Enable accepting file names with `-´ symbol .Modification getopt.c
+* [Parvatha] Rsiz profile name generation to be STD_RSIZ for profiles which are not DCI compliant.Modification in image_to_j2k.c
+! [Parvatha] renamed convert_progression_order to j2k_convert_progression_order. Modification j2k.c
+* [Parvatha] Calculation of number of tile part in each tile in j2k_calculate_tp. Modification j2k.c
+! [Parvatha] j2k_setup_encoder to set bit rate limitation for digital cinema compliance with quality option. Modification in j2k.c
+* [Parvatha] Equation to check multiple tile precincts. Modification pi.c
+! [Parvatha] array size generation of pi->include in pi_initialise_encode().Modification in pi.c
+* [Parvatha] modification in pi_create_encode for tile part generation.Modification in pi.c
++ [Parvatha] In tcd_rateallocate a variable stable_threshold which holds the valid threshold value. This is used to avoid error in case of a wrong threshold value in the last iteration. Modification in tcd.c.
+
 March 28, 2007
 * [FOD] Fixed an historical bug in t1.c that leaded to the inclusion of useless 0xFF in the codestream. Thanks to Sylvain, Pascal and Parvatha !
 

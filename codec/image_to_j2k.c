@@ -450,24 +450,24 @@ void cinema_setup_encoder(opj_cparameters_t *parameters,opj_image_t *image){
 	switch (parameters->cp_cinema){
 	case CINEMA2K_24:
 	case CINEMA2K_48:
-		parameters->cp_rsiz = CINEMA2K;
 		if(parameters->numresolution > 6){
 			parameters->numresolution = 6;
 		}
 		if (!((image->comps[0].w == 2048) & (image->comps[0].h == 1080))){
-			fprintf(stdout,"Image coordinates is not 2K, %d x %d\n",image->comps[0].w,image->comps[0].h);
+			fprintf(stdout,"Image coordinates %d x %d is not 2K compliant.\nDCI 2K compliance requires that atleast one of coordinates match 2048 x 1080\n",image->comps[0].w,image->comps[0].h);
+			parameters->cp_rsiz = STD_RSIZ;
 		}
 	break;
 	
 	case CINEMA4K_24:
-		parameters->cp_rsiz = CINEMA4K;
 		if(parameters->numresolution < 1){
 				parameters->numresolution = 1;
-			}else if(parameters->numresolution > 7){
+			}else if((parameters->numresolution < 7) || (parameters->numresolution > 7)){
 				parameters->numresolution = 7;
 			}
 		if (!((image->comps[0].w == 4096) & (image->comps[0].h == 2160))){
-			fprintf(stdout,"Image coordinates is not 4K, %d x %d\n",image->comps[0].w,image->comps[0].h);
+			fprintf(stdout,"Image coordinates %d x %d is not 4K compliant.\nDCI 4K compliance requires that atleast one of coordinates match 4096 x 2160\n",image->comps[0].w,image->comps[0].h);
+			parameters->cp_rsiz = STD_RSIZ;
 		}
 		break;
 	}
@@ -493,22 +493,21 @@ void cinema_setup_encoder(opj_cparameters_t *parameters,opj_image_t *image){
 		
 		case CINEMA2K_48:
      	for(i=0;i<parameters->tcp_numlayers;i++){
+				temp_rate = 0 ;
 				if (parameters->tcp_rates[i]== 0){
 					parameters->tcp_rates[0]= ((float) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec))/ 
 					(CINEMA_48_CS * 8 * image->comps[0].dx * image->comps[0].dy);
 				}else{
-					parameters->tcp_rates[i]=((float) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec))/ 
+					temp_rate =((float) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec))/ 
 						(parameters->tcp_rates[i] * 8 * image->comps[0].dx * image->comps[0].dy);
-					if (parameters->tcp_rates[i] > CINEMA_48_CS ){
+					if (temp_rate > CINEMA_48_CS ){
 						parameters->tcp_rates[0]= ((float) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec))/ 
 																				(CINEMA_48_CS * 8 * image->comps[0].dx * image->comps[0].dy);
 					}
 				}
 			}
 			break;
-
-}
-
+	}
 	parameters->cp_disto_alloc = 1;
 }
 
@@ -517,8 +516,8 @@ void cinema_setup_encoder(opj_cparameters_t *parameters,opj_image_t *image){
 int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,img_fol_t *img_fol) {
 	int i, j,totlen;
 	option_t long_option[]={
-		{"cinema2k",REQ_ARG, NULL ,'w'},
-		{"cinema4k",NO_ARG, NULL ,'y'},
+		{"cinema2K",REQ_ARG, NULL ,'w'},
+		{"cinema4K",NO_ARG, NULL ,'y'},
 		{"ImgDir",REQ_ARG, NULL ,'z'},
 		{"TP",REQ_ARG, NULL ,'v'},
 		{"SOP",NO_ARG, NULL ,'S'},
@@ -538,7 +537,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,i
 	img_fol->set_out_format=0;
 
 	while (1) {
-    int c = getopt_long(argc, argv, optlist,long_option,NULL,totlen);
+    int c = getopt_long(argc, argv, optlist,long_option,totlen);
 /* <<UniPG */
 		if (c == -1)
 			break;
@@ -943,6 +942,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,i
 					return 1;
 				}
 				fprintf(stdout,"CINEMA 2K compliant codestream\n");
+				parameters->cp_rsiz = CINEMA2K;
 				
 			}
 			break;
@@ -953,6 +953,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,i
 			{
 				parameters->cp_cinema = CINEMA4K_24;
 				fprintf(stdout,"CINEMA 4K compliant codestream\n");
+				parameters->cp_rsiz = CINEMA4K;
 			}
 			break;
 				
@@ -1292,7 +1293,8 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,i
 
 	/* check for possible errors */
 	if (parameters->cp_cinema){
-		if(parameters->tcp_numlayers > 0){
+		if(parameters->tcp_numlayers > 1){
+			parameters->cp_rsiz = STD_RSIZ;
      	fprintf(stdout,"Warning: DC profiles do not allow more than one quality layer. The codestream created will not be compliant with the DC profile\n");
 		}
 	}
@@ -1604,7 +1606,7 @@ int main(int argc, char **argv) {
 				}
 				fwrite(cio->buffer, 1, codestream_length, f);
 				fclose(f);
-
+				fprintf(stderr,"Generated outfile %s\n",parameters.outfile);
 				/* close and free the byte stream */
 				opj_cio_close(cio);
 

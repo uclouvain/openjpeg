@@ -92,7 +92,7 @@ static bool pi_next_lrcp(opj_pi_iterator_t * pi) {
 		pi->first = 0;
 	}
 
-	for (pi->layno = 0; pi->layno < pi->poc.layno1; pi->layno++) {
+	for (pi->layno = pi->poc.layno0; pi->layno < pi->poc.layno1; pi->layno++) {
 		for (pi->resno = pi->poc.resno0; pi->resno < pi->poc.resno1;
 		pi->resno++) {
 			for (pi->compno = pi->poc.compno0; pi->compno < pi->poc.compno1; pi->compno++) {
@@ -133,7 +133,7 @@ static bool pi_next_rlcp(opj_pi_iterator_t * pi) {
 	}
 
 	for (pi->resno = pi->poc.resno0; pi->resno < pi->poc.resno1; pi->resno++) {
-		for (pi->layno = 0; pi->layno < pi->poc.layno1; pi->layno++) {
+		for (pi->layno = pi->poc.layno0; pi->layno < pi->poc.layno1; pi->layno++) {
 			for (pi->compno = pi->poc.compno0; pi->compno < pi->poc.compno1; pi->compno++) {
 				comp = &pi->comps[pi->compno];
 				if (pi->resno >= comp->numresolutions) {
@@ -209,11 +209,11 @@ if (!pi->tp_on){
 					try1 = int_ceildiv(pi->ty1, comp->dy << levelno);
 					rpx = res->pdx + levelno;
 					rpy = res->pdy + levelno;
-					if ((!(pi->x % (comp->dx << rpx) == 0) || (pi->x == pi->tx0 && (trx0 << levelno) % (1 << rpx)))) {
-						continue;
+					if (!((pi->y % (comp->dy << rpy) == 0) || ((pi->y == pi->ty0) && ((try0 << levelno) % (1 << rpx))))){
+						continue;	
 					}
-					if ((!(pi->y % (comp->dy << rpy) == 0) || (pi->y == pi->ty0 && (try0 << levelno) % (1 << rpx)))) {
-						continue;
+					if (!((pi->x % (comp->dx << rpx) == 0) || ((pi->x == pi->tx0) && ((trx0 << levelno) % (1 << rpx))))){
+						continue; 
 					}
 					
 					if ((res->pw==0)||(res->pw==0)) continue;
@@ -225,7 +225,7 @@ if (!pi->tp_on){
 					prcj = int_floordivpow2(int_ceildiv(pi->y, comp->dy << levelno), res->pdy) 
 						 - int_floordivpow2(try0, res->pdy);
 					pi->precno = prci + prcj * res->pw;
-					for (pi->layno = 0; pi->layno < pi->poc.layno1; pi->layno++) {
+					for (pi->layno = pi->poc.layno0; pi->layno < pi->poc.layno1; pi->layno++) {
 						index = pi->layno * pi->step_l + pi->resno * pi->step_r + pi->compno * pi->step_c + pi->precno * pi->step_p;
 						if (!pi->include[index]) {
 							pi->include[index] = 1;
@@ -290,11 +290,11 @@ static bool pi_next_pcrl(opj_pi_iterator_t * pi) {
 					try1 = int_ceildiv(pi->ty1, comp->dy << levelno);
 					rpx = res->pdx + levelno;
 					rpy = res->pdy + levelno;
-					if ((!(pi->x % (comp->dx << rpx) == 0) || (pi->x == pi->tx0 && (trx0 << levelno) % (1 << rpx)))) {
-						continue;
+					if (!((pi->y % (comp->dy << rpy) == 0) || ((pi->y == pi->ty0) && ((try0 << levelno) % (1 << rpx))))){
+						continue;	
 					}
-					if ((!(pi->y % (comp->dy << rpy) == 0) || (pi->y == pi->ty0 && (try0 << levelno) % (1 << rpx)))) {
-						continue;
+					if (!((pi->x % (comp->dx << rpx) == 0) || ((pi->x == pi->tx0) && ((trx0 << levelno) % (1 << rpx))))){
+						continue; 
 					}
 					
 					if ((res->pw==0)||(res->pw==0)) continue;
@@ -306,7 +306,7 @@ static bool pi_next_pcrl(opj_pi_iterator_t * pi) {
 					prcj = int_floordivpow2(int_ceildiv(pi->y, comp->dy << levelno), res->pdy) 
 						 - int_floordivpow2(try0, res->pdy);
 					pi->precno = prci + prcj * res->pw;
-					for (pi->layno = 0; pi->layno < pi->poc.layno1; pi->layno++) {
+					for (pi->layno = pi->poc.layno0; pi->layno < pi->poc.layno1; pi->layno++) {
 						index = pi->layno * pi->step_l + pi->resno * pi->step_r + pi->compno * pi->step_c + pi->precno * pi->step_p;
 						if (!pi->include[index]) {
 							pi->include[index] = 1;
@@ -369,11 +369,11 @@ static bool pi_next_cprl(opj_pi_iterator_t * pi) {
 					try1 = int_ceildiv(pi->ty1, comp->dy << levelno);
 					rpx = res->pdx + levelno;
 					rpy = res->pdy + levelno;
-					if ((!(pi->x % (comp->dx << rpx) == 0) || (pi->x == pi->tx0 && (trx0 << levelno) % (1 << rpx)))) {
-						continue;
+					if (!((pi->y % (comp->dy << rpy) == 0) || ((pi->y == pi->ty0) && ((try0 << levelno) % (1 << rpx))))){
+						continue;	
 					}
-					if ((!(pi->y % (comp->dy << rpy) == 0) || (pi->y == pi->ty0 && (try0 << levelno) % (1 << rpx)))) {
-						continue;
+					if (!((pi->x % (comp->dx << rpx) == 0) || ((pi->x == pi->tx0) && ((trx0 << levelno) % (1 << rpx))))){
+						continue; 
 					}
 					
 					if ((res->pw==0)||(res->pw==0)) continue;
@@ -385,7 +385,7 @@ static bool pi_next_cprl(opj_pi_iterator_t * pi) {
 					prcj = int_floordivpow2(int_ceildiv(pi->y, comp->dy << levelno), res->pdy) 
 						 - int_floordivpow2(try0, res->pdy);
 					pi->precno = prci + prcj * res->pw;
-					for (pi->layno = 0; pi->layno < pi->poc.layno1; pi->layno++) {
+					for (pi->layno = pi->poc.layno0; pi->layno < pi->poc.layno1; pi->layno++) {
 						index = pi->layno * pi->step_l + pi->resno * pi->step_r + pi->compno * pi->step_c + pi->precno * pi->step_p;
 						if (!pi->include[index]) {
 							pi->include[index] = 1;
@@ -562,7 +562,7 @@ opj_pi_iterator_t *pi_initialise_encode(opj_image_t *image, opj_cp_t *cp, int ti
 	pi = (opj_pi_iterator_t *) opj_malloc(array_size);
 	pi->tp_on = cp->tp_on;
 	if(!pi) {	return NULL;}
-	
+	for(pino = 0;pino < tcp->numpocs+1 ; pino ++){
 		p = tileno % cp->tw;
 		q = tileno / cp->tw;
 
@@ -652,7 +652,7 @@ opj_pi_iterator_t *pi_initialise_encode(opj_image_t *image, opj_cp_t *cp, int ti
 		}
 
 		if (pino == 0) {
-			array_size = image->numcomps * maxres * tcp->numlayers * 100 * sizeof(short int);
+			array_size = (tcp->numpocs+1) * tcp->numlayers * pi[pino].step_l * sizeof(short int);
 			pi[pino].include = (short int *) opj_malloc(array_size);
 			if(!pi[pino].include) {
 				pi_destroy(pi, cp, tileno);
@@ -688,7 +688,8 @@ opj_pi_iterator_t *pi_initialise_encode(opj_image_t *image, opj_cp_t *cp, int ti
 			tcp->pocs[pino].tyE = pi[pino].ty1;
 			tcp->pocs[pino].dx = pi[pino].dx;
 			tcp->pocs[pino].dy = pi[pino].dy;
-		return pi;
+		}
+			return pi;
 	}
 
 
@@ -822,7 +823,7 @@ void pi_create_encode( opj_pi_iterator_t *pi, opj_cp_t *cp,int tileno, int pino,
 	int incr_top=1,resetX=0;
 	opj_tcp_t *tcps =&cp->tcps[tileno];
 	opj_poc_t *tcp= &tcps->pocs[pino];
-	prog = convert_progression_order(tcp->prg);
+	prog = j2k_convert_progression_order(tcp->prg);
 
 	pi[pino].first = 1;
 	pi[pino].poc.prg = tcp->prg;	
@@ -920,6 +921,35 @@ void pi_create_encode( opj_pi_iterator_t *pi, opj_cp_t *cp,int tileno, int pino,
 			incr_top=1;
 		}else{
 			for(i=tppos;i>=0;i--){
+				switch(prog[i]){
+						case 'C':
+							pi[pino].poc.compno0 = tcp->comp_t-1;
+							pi[pino].poc.compno1 = tcp->comp_t;
+							break;
+						case 'R':
+							pi[pino].poc.resno0 = tcp->res_t-1;
+							pi[pino].poc.resno1 = tcp->res_t;
+							break;
+						case 'L':
+							pi[pino].poc.layno0 = tcp->lay_t-1;
+							pi[pino].poc.layno1 = tcp->lay_t;
+							break;
+						case 'P':
+							switch(tcp->prg){
+								case LRCP:
+								case RLCP:
+									pi[pino].poc.precno0 = tcp->prc_t-1;
+									pi[pino].poc.precno1 = tcp->prc_t;
+									break;
+								default:
+									pi[pino].poc.tx0 = tcp->tx0_t - tcp->dx - (tcp->tx0_t % tcp->dx);
+									pi[pino].poc.tx1 = tcp->tx0_t ;
+									pi[pino].poc.ty0 = tcp->ty0_t - tcp->dy - (tcp->ty0_t % tcp->dy);
+									pi[pino].poc.ty1 = tcp->ty0_t ;
+									break;
+							}
+							break;
+				}
 				if(incr_top==1){
 					switch(prog[i]){
 							case 'R':

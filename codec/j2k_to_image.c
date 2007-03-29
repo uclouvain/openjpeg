@@ -240,7 +240,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 	totlen=sizeof(long_option);
 	img_fol->set_out_format = 0;
 	while (1) {
-		int c = getopt_long(argc, argv,optlist,long_option,NULL,totlen);
+		int c = getopt_long(argc, argv,optlist,long_option,totlen);
 		if (c == -1)
 			break;
 		switch (c) {
@@ -678,7 +678,7 @@ int main(int argc, char **argv) {
 				fprintf(stdout,"Outfile %s not generated\n",parameters.outfile);
 			}
 			else {
-				fprintf(stdout,"Successfully generated Outfile %s\n",parameters.outfile);
+				fprintf(stdout,"Generated Outfile %s\n",parameters.outfile);
 			}
 			break;
 
@@ -687,7 +687,7 @@ int main(int argc, char **argv) {
 				fprintf(stdout,"Outfile %s not generated\n",parameters.outfile);
 			}
 			else {
-				fprintf(stdout,"Successfully generated Outfile %s\n",parameters.outfile);
+				fprintf(stdout,"Generated Outfile %s\n",parameters.outfile);
 			}
 			break;
 
@@ -696,7 +696,7 @@ int main(int argc, char **argv) {
 				fprintf(stdout,"Outfile %s not generated\n",parameters.outfile);
 			}
 			else {
-				fprintf(stdout,"Successfully generated Outfile %s\n",parameters.outfile);
+				fprintf(stdout,"Generated Outfile %s\n",parameters.outfile);
 			}
 			break;
 
@@ -705,7 +705,7 @@ int main(int argc, char **argv) {
 				fprintf(stdout,"Outfile %s not generated\n",parameters.outfile);
 			}
 			else {
-				fprintf(stdout,"Successfully generated Outfile %s\n",parameters.outfile);
+				fprintf(stdout,"Generated Outfile %s\n",parameters.outfile);
 			}
 			break;
 		}

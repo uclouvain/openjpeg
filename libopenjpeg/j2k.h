@@ -391,10 +391,12 @@ typedef struct opj_j2k {
 	int state;
 	/** number of the tile curently concern by coding/decoding */
 	int curtileno;
+	/** Tile part number*/
+	int tp_num;
 	/** Tilepart number currently coding*/
 	int cur_tp_num;
 	/** Total number of tileparts of the current tile*/
-	int cur_totnum_tp;
+	int *cur_totnum_tp;
 	/**
 	locate the start position of the TLM marker  
 	after encoding the tilepart, a jump (in j2k_write_sod) is done to the TLM marker to store the value of its length. 
@@ -495,11 +497,7 @@ void j2k_setup_encoder(opj_j2k_t *j2k, opj_cparameters_t *parameters, opj_image_
 /**
 Converts an enum type progression order to string type
 */
-char *convert_progression_order(OPJ_PROG_ORDER prg_order);
-/**
-Generates the number of tile parts for the current tile
-*/
-int j2k_get_num_tp(opj_cp_t *cp,int pino,int tileno);
+char *j2k_convert_progression_order(OPJ_PROG_ORDER prg_order);
 /**
 Encode an image into a JPEG-2000 codestream
 @param j2k J2K compressor handle

@@ -563,7 +563,7 @@ static int t2_decode_packet(opj_t2_t* t2, unsigned char *src, int len, opj_tcd_t
 
 /* ----------------------------------------------------------------------- */
 
-int t2_encode_packets(opj_t2_t* t2,int tileno, opj_tcd_tile_t *tile, int maxlayers, unsigned char *dest, int len, opj_image_info_t *image_info,opj_pi_iterator_t *tcd_pi,int tpnum, int tppos,int pino, char final_encoding){
+int t2_encode_packets(opj_t2_t* t2,int tileno, opj_tcd_tile_t *tile, int maxlayers, unsigned char *dest, int len, opj_image_info_t *image_info,int tpnum, int tppos,int pino, char final_encoding){
 	unsigned char *c = dest;
 	int e = 0;
 	opj_pi_iterator_t *pi = NULL;
@@ -571,11 +571,7 @@ int t2_encode_packets(opj_t2_t* t2,int tileno, opj_tcd_tile_t *tile, int maxlaye
 	opj_image_t *image = t2->image;
 	opj_cp_t *cp = t2->cp;
 
-	if(final_encoding == 0){
-		pi = pi_initialise_encode(image, cp, tileno,pino);
-	}else{
-		pi = tcd_pi;
-	}
+	pi = pi_initialise_encode(image, cp, tileno,pino);
 	if(!pi) {
 		/* TODO: throw an error */
 		return -999;
@@ -613,9 +609,9 @@ int t2_encode_packets(opj_t2_t* t2,int tileno, opj_tcd_tile_t *tile, int maxlaye
 			/* << INDEX */
 		}
 	}
-	if(final_encoding == 0){
-		pi_destroy(pi, cp, tileno);
-	}
+	
+	pi_destroy(pi, cp, tileno);
+	
 	if (e == -999) {
 		return e;
 	}

@@ -125,7 +125,7 @@ int getopt(int nargc, char *const *nargv, const char *ostr) {
 
 
 int getopt_long(int argc, char * const argv[], const char *optstring,
-struct option *longopts, int *longindex, int totlen) {
+struct option *longopts, int totlen) {
 	static int lastidx,lastofs;
 	char *tmp;
 	int i,len;
@@ -147,24 +147,28 @@ again:
 		if(strlen(arg)>1){
 			for (i=0;i<totlen;i=i+len,o++) {
 				if (!strcmp(o->name,arg)) {	/* match */
-					if (longindex) *longindex=o-longopts;
-					if (o->has_arg>0) {
-							optarg=argv[optind+1];
-							if(optarg){
-								if (strchr(optarg,'-')){ /* Has read next input parameter: No arg for current parameter */
-									if (opterr) {
-										fprintf(stderr,"%s: option requires an argument\n",arg);
-										return (BADCH);
-									}
-								}
-							}
-							if (!optarg && o->has_arg==1) {	/* no argument there */
+					if (o->has_arg == 0) {
+						if (!(argv[optind+1][0]=='-')){
+							fprintf(stderr,"%s: option does not require an argument. Ignoring %s\n",arg,argv[optind+1]);
+							++optind;
+						}
+					}else{ 
+						optarg=argv[optind+1];
+						if(optarg){
+							if (optarg[0] == '-'){ /* Has read next input parameter: No arg for current parameter */								
 								if (opterr) {
-									fprintf(stderr,"%s: option requires an argument %c\n",arg, optopt);
+									fprintf(stderr,"%s: option requires an argument\n",arg);
 									return (BADCH);
 								}
 							}
-					++optind;
+						}
+						if (!optarg && o->has_arg==1) {	/* no argument there */
+							if (opterr) {
+								fprintf(stderr,"%s: option requires an argument \n",arg);
+								return (BADCH);
+							}
+						}
+						++optind;
 					}
 					++optind;
 					if (o->flag)
@@ -195,7 +199,7 @@ again:
 					}
 					optarg=argv[optind+1];
 					if(optarg){
-						if (strchr(optarg,'-')){ /* Has read next input parameter: No arg for current parameter */
+						if (optarg[0] == '-'){ /* Has read next input parameter: No arg for current parameter */
 							if (opterr) {
 								fprintf(stderr,"%s: option requires an argument\n",arg);
 								return (BADCH);
@@ -210,16 +214,16 @@ again:
 					}
 					++optind;
 				}else {/*Argument not expected*/
-				++lastofs;
-				return optopt;
+					++lastofs;
+					return optopt;
 				}
 found:
-			++optind;
-			return optopt;
+				++optind;
+				return optopt;
 			}	else {	/* not found */
-			fprintf(stderr,"Invalid option %s\n",arg);
-			++optind;
-			return (BADCH);
+				fprintf(stderr,"Invalid option %s\n",arg);
+				++optind;
+				return (BADCH);
 			}//end of not found
 		
 		}// end of single character
@@ -227,4 +231,4 @@ found:
 	fprintf(stderr,"Invalid option %s\n");
 	++optind;
 	return (BADCH);;
-	}//end function
+}//end function

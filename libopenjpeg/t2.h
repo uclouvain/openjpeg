@@ -66,7 +66,7 @@ Encode the packets of a tile to a destination buffer
 @param len the length of the destination buffer
 @param image_info structure to create an index file
 */
-int t2_encode_packets(opj_t2_t* t2,int tileno, opj_tcd_tile_t *tile, int maxlayers, unsigned char *dest, int len, opj_image_info_t *image_info,opj_pi_iterator_t *tcd_pi,int tpnum, int tppos,int pino,char final_encoding);
+int t2_encode_packets(opj_t2_t* t2,int tileno, opj_tcd_tile_t *tile, int maxlayers, unsigned char *dest, int len, opj_image_info_t *image_info,int tpnum, int tppos,int pino,char final_encoding);
 /**
 Decode the packets of a tile from a source buffer
 @param t2 T2 handle

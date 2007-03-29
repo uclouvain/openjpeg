@@ -1024,6 +1024,7 @@ bool tcd_rateallocate(opj_tcd_t *tcd, unsigned char *dest, int len, opj_image_in
 		/* TODO: remove maxlen */
 		int maxlen = tcd_tcp->rates[layno] ? int_min(((int) ceil(tcd_tcp->rates[layno])), len) : len;
 		double goodthresh = 0;
+		double stable_thresh = 0;
 		int i;
 		double distotarget;		/* fixed_quality */
 		
@@ -1042,7 +1043,7 @@ bool tcd_rateallocate(opj_tcd_t *tcd, unsigned char *dest, int len, opj_image_in
 				
 				if (cp->fixed_quality) {	/* fixed_quality */
 					if(cp->cinema){
-						l = t2_encode_packets(t2,tcd->tcd_tileno, tcd_tile, layno + 1, dest, maxlen, image_info,tcd->pi,tcd->cur_tp_num,tcd->tp_pos,tcd->cur_pino,0);
+						l = t2_encode_packets(t2,tcd->tcd_tileno, tcd_tile, layno + 1, dest, maxlen, image_info,tcd->cur_tp_num,tcd->tp_pos,tcd->cur_pino,0);
 						if (l == -999) {
 							lo = thresh;
 							continue;
@@ -1050,7 +1051,9 @@ bool tcd_rateallocate(opj_tcd_t *tcd, unsigned char *dest, int len, opj_image_in
            		distoachieved =	layno == 0 ? 
 							tcd_tile->distolayer[0]	: cumdisto[layno - 1] + tcd_tile->distolayer[layno];
 							if (distoachieved < distotarget) {
-								hi=thresh; continue;
+								hi=thresh; 
+								stable_thresh = thresh;
+								continue;
 							}else{
 								lo=thresh;
 							}
@@ -1060,12 +1063,13 @@ bool tcd_rateallocate(opj_tcd_t *tcd, unsigned char *dest, int len, opj_image_in
 							tcd_tile->distolayer[0]	: (cumdisto[layno - 1] + tcd_tile->distolayer[layno]);
 						if (distoachieved < distotarget) {
 							hi = thresh;
+							stable_thresh = thresh;
 							continue;
 						}
 						lo = thresh;
 					}
 				} else {
-					l = t2_encode_packets(t2, tcd->tcd_tileno, tcd_tile, layno + 1, dest, maxlen, image_info,tcd->pi,tcd->cur_tp_num,tcd->tp_pos,tcd->cur_pino,0);
+					l = t2_encode_packets(t2, tcd->tcd_tileno, tcd_tile, layno + 1, dest, maxlen, image_info,tcd->cur_tp_num,tcd->tp_pos,tcd->cur_pino,0);
 					/* TODO: what to do with l ??? seek / tell ??? */
 					/* opj_event_msg(tcd->cinfo, EVT_INFO, "rate alloc: len=%d, max=%d\n", l, maxlen); */
 					if (l == -999) {
@@ -1073,11 +1077,11 @@ bool tcd_rateallocate(opj_tcd_t *tcd, unsigned char *dest, int len, opj_image_in
 						continue;
 					}
 					hi = thresh;
+					stable_thresh = thresh;
 				}
-				
-				success = 1;
-				goodthresh = thresh;
 			}
+			success = 1;
+			goodthresh = stable_thresh;
 			t2_destroy(t2);
 		} else {
 			success = 1;
@@ -1229,19 +1233,16 @@ int tcd_encode_tile(opj_tcd_t *tcd, int tileno, unsigned char *dest, int len, op
 	}
 
 	t2 = t2_create(tcd->cinfo, image, cp);
-	l = t2_encode_packets(t2,tileno, tile, tcd_tcp->numlayers, dest, len, image_info,tcd->pi,tcd->cur_tp_num,tcd->tp_pos,tcd->cur_pino,1);
+	l = t2_encode_packets(t2,tileno, tile, tcd_tcp->numlayers, dest, len, image_info,tcd->tp_num,tcd->tp_pos,tcd->cur_pino,1);
 	t2_destroy(t2);
 	
 	/*---------------CLEAN-------------------*/
 
-	encoding_time = opj_clock() - encoding_time;
-	if(tcd->cur_totnum_tp > 1){
-		opj_event_msg(tcd->cinfo, EVT_INFO, "- Tile part num %d encoded in %f s\n", tcd->cur_tp_num,encoding_time);
-	}else{
-    opj_event_msg(tcd->cinfo, EVT_INFO, "- tile encoded in %f s\n", encoding_time);
-	}
-
+	
 	if(tcd->cur_tp_num == tcd->cur_totnum_tp - 1){
+		encoding_time = opj_clock() - encoding_time;
+		opj_event_msg(tcd->cinfo, EVT_INFO, "- tile encoded in %f s\n", encoding_time);
+	
 		/* cleaning memory */
 		for (compno = 0; compno < tile->numcomps; compno++) {
 			opj_tcd_tilecomp_t *tilec = &tile->comps[compno];
