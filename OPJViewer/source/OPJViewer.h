@@ -209,7 +209,15 @@ class OPJCanvas: public wxScrolledWindow
 
 		virtual void OnDraw(wxDC& dc);
 		void OnEvent(wxMouseEvent& event);
-		void WriteText(const wxString& text) { wxMutexGuiEnter(); wxLogMessage(text); wxMutexGuiLeave();}
+		void WriteText(const wxString& text) {
+#ifndef __WXGTK__ 
+			wxMutexGuiEnter();
+#endif //__WXGTK__
+			wxLogMessage(text);
+#ifndef __WXGTK__ 
+			wxMutexGuiLeave();
+#endif //__WXGTK__
+		}
 		OPJDecoThread *CreateDecoThread(void);
 		OPJChildFrame *m_childframe;
 

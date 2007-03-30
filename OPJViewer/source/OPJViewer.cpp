@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, Digital Signal Processing Laboratory, Università degli studi di Perugia (UPG), Italy
+ * Copyright (c) 2007, Digital Signal Processing Laboratory, UniversitÃ  degli studi di Perugia (UPG), Italy
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -351,7 +351,7 @@ OPJFrame::OPJFrame(wxWindow *parent, const wxWindowID id, const wxString& title,
 	// create the text control of the logger
 	m_textCtrl = new wxTextCtrl(m_bookCtrlbottom, wxID_ANY, wxT(""),
 								wxDefaultPosition, wxDefaultSize,
-								wxTE_MULTILINE | wxSUNKEN_BORDER | wxTE_READONLY 
+								wxTE_MULTILINE | wxSUNKEN_BORDER | wxTE_READONLY
 								);
 	m_textCtrl->SetValue(_T("Logging window\n"));
 
@@ -361,7 +361,7 @@ OPJFrame::OPJFrame(wxWindow *parent, const wxWindowID id, const wxString& title,
 	// create the text control of the browser
 	m_textCtrlbrowse = new wxTextCtrl(m_bookCtrlbottom, wxID_ANY, wxT(""),
 								wxDefaultPosition, wxDefaultSize,
-								wxTE_MULTILINE | wxSUNKEN_BORDER | wxTE_READONLY | wxTE_RICH 
+								wxTE_MULTILINE | wxSUNKEN_BORDER | wxTE_READONLY | wxTE_RICH
 								);
 	wxFont *browsefont = new wxFont(wxNORMAL_FONT->GetPointSize(),
 		wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
@@ -430,7 +430,8 @@ void OPJFrame::OnNotebook(wxNotebookEvent& event)
 
 	m_bookCtrl->GetPageText(sel).ToLong(&childnum);
 
-	m_childhash[childnum]->Activate();
+	if (m_childhash[childnum])
+		m_childhash[childnum]->Activate();
 
 	//wxLogMessage(wxT("Selection changed (now %d --> %d)"), childnum, m_childhash[childnum]->m_winnumber);
 
@@ -458,9 +459,9 @@ void OPJFrame::OnSetsDeco(wxCommandEvent& event)
 		wxGetApp().m_enablejpwl = dialog.m_enablejpwlCheck->GetValue();
 		wxGetApp().m_expcomps = dialog.m_expcompsCtrl->GetValue();
 		wxGetApp().m_maxtiles = dialog.m_maxtilesCtrl->GetValue();
-#endif // USE_JPWL	
-		
-	};	
+#endif // USE_JPWL
+
+	};
 }
 
 void OPJFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
@@ -744,6 +745,8 @@ OPJCanvas::OPJCanvas(wxFileName fname, wxWindow *parent, const wxPoint& pos, con
 
 	m_fname = fname;
 	m_childframe = (OPJChildFrame *) parent;
+	// 100% zoom
+	m_zooml = 100;
 
     OPJDecoThread *dthread = CreateDecoThread();
 
@@ -753,7 +756,8 @@ OPJCanvas::OPJCanvas(wxFileName fname, wxWindow *parent, const wxPoint& pos, con
 		wxLogMessage(wxT("New deco thread started."));
 
 	// 100% zoom
-	m_zooml = 100;
+	//m_zooml = 100;
+
 }
 
 OPJDecoThread *OPJCanvas::CreateDecoThread(void)
@@ -1113,7 +1117,7 @@ void OPJParseThread::LoadFile(wxFileName fname)
 	else
 		//m_tree->SetItemText(rootid, wxString::Format(wxT("%s (%d B)"), fname.GetFullName(), m_file.Length()));
 		m_tree->SetItemText(rootid, fname.GetFullName());
-	
+
 	// close the file
 	m_file.Close();
 
@@ -1347,7 +1351,7 @@ void OPJMarkerTree::OnSelChanged(wxTreeEvent& event)
 	fp->Seek(data->m_start, wxFromStart);
 
 	// read a bunch
-	int max_read = wxMin(WXSIZEOF(buffer), data->m_length - data->m_start + 1);
+	int max_read = wxMin(wxFileOffset(WXSIZEOF(buffer)), data->m_length - data->m_start + 1);
 	fp->Read(buffer, max_read);
 
 	// write the file data between start and stop
@@ -1795,12 +1799,16 @@ void OPJDecoThread::WriteText(const wxString& text)
     // before doing any GUI calls we must ensure that this thread is the only
     // one doing it!
 
+#ifndef __WXGTK__ 
     wxMutexGuiEnter();
+#endif // __WXGTK__
 
     msg << text;
     m_canvas->WriteText(msg);
 
+#ifndef __WXGTK__ 
     wxMutexGuiLeave();
+#endif // __WXGTK__
 }
 
 void OPJDecoThread::OnExit()
@@ -1827,17 +1835,22 @@ void *OPJDecoThread::Entry()
     wxString text;
 
 	srand(GetId());
-	int m_countnum = rand() % 9;
+	//int m_countnum = rand() % 9;
     //text.Printf(wxT("Deco thread 0x%lx started (priority = %u, time = %d)."),
     //            GetId(), GetPriority(), m_countnum);
     text.Printf(wxT("Deco thread %d started"), m_canvas->m_childframe->m_winnumber);
+
+
+
+
     WriteText(text);
 
     wxBitmap bitmap(100, 100);
-    wxImage image = bitmap.ConvertToImage();
+    wxImage image(100, 100, true); //= bitmap.ConvertToImage();
     image.Destroy();
 
 	WriteText(m_canvas->m_fname.GetFullPath());
+
 
 	// set handler properties
 	wxJ2KHandler *j2kkkhandler = (wxJ2KHandler *) wxImage::FindHandler( wxBITMAP_TYPE_J2K);
@@ -1888,7 +1901,9 @@ void *OPJDecoThread::Entry()
 	zooml = wxMin(100, wxMin(wzooml, hzooml));
 
 	// fit to width
+#ifndef __WXGTK__
 	m_canvas->m_childframe->m_frame->Rescale(zooml, m_canvas->m_childframe);
+#endif // __WXGTK__
 
 	//m_canvas->m_image = m_canvas->m_image100;
 	//m_canvas->Refresh();
@@ -1897,8 +1912,8 @@ void *OPJDecoThread::Entry()
     //text.Printf(wxT("Deco thread 0x%lx finished."), GetId());
     text.Printf(wxT("Deco thread %d finished"), m_canvas->m_childframe->m_winnumber);
     WriteText(text);
-
     return NULL;
+
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -1920,12 +1935,16 @@ void OPJParseThread::WriteText(const wxString& text)
     // before doing any GUI calls we must ensure that this thread is the only
     // one doing it!
 
+#ifndef __WXGTK__ 
     wxMutexGuiEnter();
+#endif // __WXGTK
 
     msg << text;
     m_tree->WriteText(msg);
 
+#ifndef __WXGTK__ 
     wxMutexGuiLeave();
+#endif // __WXGTK
 }
 
 void OPJParseThread::OnExit()
@@ -1948,6 +1967,8 @@ void OPJParseThread::OnExit()
 void *OPJParseThread::Entry()
 {
 
+	printf("Entering\n\n");
+
     wxString text;
 
 	srand(GetId());
@@ -1955,7 +1976,12 @@ void *OPJParseThread::Entry()
     text.Printf(wxT("Parse thread 0x%lx started (priority = %u, time = %d)."),
             GetId(), GetPriority(), m_countnum);
     WriteText(text);
-    // wxLogMessage(text); -- test wxLog thread safeness
+    LoadFile(m_tree->m_fname);
+    text.Printf(wxT("Parse thread 0x%lx finished."), GetId());
+    WriteText(text);
+
+
+    //wxLogMessage(wxT("Entering\n")); //test wxLog thread safeness
 
 	//wxBusyCursor wait;
 	//wxBusyInfo wait(wxT("Decoding image ..."));
@@ -1974,12 +2000,9 @@ void *OPJParseThread::Entry()
         wxThread::Sleep(10);
     }*/
 
-
-    LoadFile(m_tree->m_fname);
-
-    text.Printf(wxT("Parse thread 0x%lx finished."), GetId());
-    WriteText(text);
     // wxLogMessage(text); -- test wxLog thread safeness
+
+	printf("Exiting\n\n");
 
     return NULL;
 }

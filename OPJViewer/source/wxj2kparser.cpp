@@ -251,7 +251,9 @@ void OPJParseThread::ParseJ2KFile(wxFile *m_file, wxFileOffset offset, wxFileOff
 
 		// append the marker
 		wxTreeItemId currid = m_tree->AppendItem(parentid,
-			wxString::Format(wxT("%03d: %s (0x%04X)"), nmarks, marker_name[m], marker_val[m]),
+			wxString::Format(wxT("%03d: "), nmarks) +
+			wxString::FromAscii(marker_name[m]) + 
+			wxString::Format(wxT(" (0x%04X)"), marker_val[m]),
 			image, imageSel,
 			new OPJMarkerData(wxT("MARK"), m_tree->m_fname.GetFullPath(), offset, offset + currlen + 1)
 			);
@@ -262,7 +264,7 @@ void OPJParseThread::ParseJ2KFile(wxFile *m_file, wxFileOffset offset, wxFileOff
 
 		// marker name
 		wxTreeItemId subcurrid1 = m_tree->AppendItem(currid,
-			wxT("*** ") + wxString::Format(wxT("%s"), marker_descr[m]) + wxT(" ***"),
+			wxT("*** ") + wxString::FromAscii(marker_descr[m]) + wxT(" ***"),
 			image, imageSel,
 			new OPJMarkerData(wxT("INFO"))
 			);
@@ -555,7 +557,7 @@ void OPJParseThread::ParseJ2KFile(wxFile *m_file, wxFileOffset offset, wxFileOff
 		case SIZ_VAL:
 			{
 			int c;
-
+			
 			if (m_file->Read(twobytes, 2) != 2)
 				break;
 			unsigned short int rsiz = STREAM_TO_UINT16(twobytes, 0);
@@ -1179,7 +1181,8 @@ void OPJParseThread::ParseJ2KFile(wxFile *m_file, wxFileOffset offset, wxFileOff
 		case COM_VAL:
 			{
 			#define showlen 25
-			unsigned char comment[showlen];
+			char comment[showlen];
+			wxString comments;
 
 			if (m_file->Read(twobytes, 2) != 2)
 				break;
@@ -1202,9 +1205,11 @@ void OPJParseThread::ParseJ2KFile(wxFile *m_file, wxFileOffset offset, wxFileOff
 
 			if (m_file->Read(comment, showlen) != showlen)
 				break;
+			comments = wxString::FromAscii(comment).Truncate(wxMin(showlen, currlen - 4));
+			if ((currlen - 4) > showlen)
+				comments << wxT("...");
 			subcurrid3 = m_tree->AppendItem(currid,
-				wxString::Format(wxT("%.*s%s"), wxMin(showlen, currlen - 4), comment,
-				(((currlen - 4) > showlen) ? "..." : "")),
+				comments,
 				image, imageSel,
 				new OPJMarkerData(wxT("INFO"))
 				);

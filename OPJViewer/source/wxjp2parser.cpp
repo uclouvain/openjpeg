@@ -398,7 +398,9 @@ int OPJParseThread::box_handler_function(int boxtype, wxFile *fileid, wxFileOffs
 
 			// add info
 			wxTreeItemId currid = m_tree->AppendItem(parentid,
-				wxString::Format(wxT("Brand/Minor version: %.4s/%d"), BR, MinV),
+				wxT("Brand/Minor version: ") +
+				wxString::FromAscii(BR).Truncate(4) +
+				wxString::Format(wxT("/%d"), MinV),
 				m_tree->TreeCtrlIcon_File, m_tree->TreeCtrlIcon_File + 1,
 				new OPJMarkerData(wxT("INFO"))
 				);
@@ -412,7 +414,7 @@ int OPJParseThread::box_handler_function(int boxtype, wxFile *fileid, wxFileOffs
 			for (i = 0; i < numCL; i++) {
 				fileid->Read(CL, sizeof(char) * 4);
 				m_tree->AppendItem(currid,
-					wxString::Format(wxT("%.4s"), CL),
+					wxString::FromAscii(CL).Truncate(4),
 					m_tree->TreeCtrlIcon_File, m_tree->TreeCtrlIcon_File + 1,
 					new OPJMarkerData(wxT("INFO"))
 					);
@@ -511,7 +513,9 @@ int OPJParseThread::box_handler_function(int boxtype, wxFile *fileid, wxFileOffs
 
 			// add info
 			wxTreeItemId currid = m_tree->AppendItem(parentid,
-				wxString::Format(wxT("Specification method: %d (%s)"), METH, methdescr),
+				wxString::Format(wxT("Specification method: %d ("), METH) +
+				wxString::FromAscii(methdescr) +
+				wxT(")"),
 				m_tree->TreeCtrlIcon_File, m_tree->TreeCtrlIcon_File + 1,
 				new OPJMarkerData(wxT("INFO"))
 				);
@@ -530,7 +534,9 @@ int OPJParseThread::box_handler_function(int boxtype, wxFile *fileid, wxFileOffs
 
 			if (METH != 2)
 				currid = m_tree->AppendItem(parentid,
-					wxString::Format(wxT("Enumerated colourspace: %d (%s)"), EnumCS, enumcsdescr),
+					wxString::Format(wxT("Enumerated colourspace: %d ("), EnumCS) +
+					wxString::FromAscii(enumcsdescr) +
+					wxT(")"),
 					m_tree->TreeCtrlIcon_File, m_tree->TreeCtrlIcon_File + 1,
 					new OPJMarkerData(wxT("INFO"))
 					);
@@ -758,7 +764,9 @@ int OPJParseThread::box_handler_function(int boxtype, wxFile *fileid, wxFileOffs
 			opcolor[2] = BYTE_SWAP2(opcolor[2]);
 
 			wxTreeItemId currid = m_tree->AppendItem(parentid,
-				wxString::Format(wxT("Composition mode: %d (%s)"), graphicsmode, graphicsdescr),
+				wxString::Format(wxT("Composition mode: %d (")) + 
+				wxString::FromAscii(graphicsdescr) +
+				wxT(")"),
 				m_tree->TreeCtrlIcon_File, m_tree->TreeCtrlIcon_File + 1,
 				new OPJMarkerData(wxT("INFO"), m_tree->m_fname.GetFullPath(), filepoint, filelimit)
 				);
@@ -922,7 +930,9 @@ int OPJParseThread::jpeg2000parse(wxFile *fileid, wxFileOffset filepoint, wxFile
 		image = m_tree->TreeCtrlIcon_Folder;
 		imageSel = image + 1;
 		wxTreeItemId currid = m_tree->AppendItem(parentid,
-			wxString::Format(wxT("%03d: %s (0x%04X)"), box_num, TBox,
+			wxString::Format(wxT("%03d: "), box_num) +
+			wxString::FromAscii(TBox) +
+			wxString::Format(wxT(" (0x%04X)"),
 				((unsigned long int) TBox[3]) + ((unsigned long int) TBox[2] << 8) +
 				((unsigned long int) TBox[1] << 16) + ((unsigned long int) TBox[0] << 24)
 			),
@@ -936,7 +946,7 @@ int OPJParseThread::jpeg2000parse(wxFile *fileid, wxFileOffset filepoint, wxFile
 
 		// box name
 		wxTreeItemId subcurrid1 = m_tree->AppendItem(currid,
-			wxT("*** ") + wxString::Format(wxT("%s"), j22box[box_type].name) + wxT(" ***"),
+			wxT("*** ") + wxString::FromAscii(j22box[box_type].name) + wxT(" ***"),
 			image, imageSel,
 			new OPJMarkerData(wxT("INFO"))
 			);

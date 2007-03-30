@@ -85,27 +85,27 @@ void j2k_error_callback(const char *msg, void *client_data) {
 	int message_len = strlen(msg) - 1;
 	if (msg[message_len] != '\n')
 		message_len = MAX_MESSAGE_LEN;
-    wxMutexGuiEnter();
+    /*wxMutexGuiEnter();
 	wxLogMessage(wxT("[ERROR] %.*s"), message_len, msg);
-    wxMutexGuiLeave();
+    wxMutexGuiLeave();*/
 }
 /* sample warning callback expecting a FILE* client object */
 void j2k_warning_callback(const char *msg, void *client_data) {
 	int message_len = strlen(msg) - 1;
 	if (msg[message_len] != '\n')
 		message_len = MAX_MESSAGE_LEN;
-    wxMutexGuiEnter();
+    /*wxMutexGuiEnter();
 	wxLogMessage(wxT("[WARNING] %.*s"), message_len, msg);
-    wxMutexGuiLeave();
+    wxMutexGuiLeave();*/
 }
 /* sample debug callback expecting no client object */
 void j2k_info_callback(const char *msg, void *client_data) {
 	int message_len = strlen(msg) - 1;
 	if (msg[message_len] != '\n')
 		message_len = MAX_MESSAGE_LEN;
-    wxMutexGuiEnter();
+    /*wxMutexGuiEnter();
 	wxLogMessage(wxT("[INFO] %.*s"), message_len, msg);
-    wxMutexGuiLeave();
+    wxMutexGuiLeave();*/
 }
 
 // load the j2k codestream
@@ -125,6 +125,7 @@ bool wxJ2KHandler::LoadFile(wxImage *image, wxInputStream& stream, bool verbose,
 	/* handle to a decompressor */
 	opj_dinfo_t* dinfo = NULL;	
 	opj_cio_t *cio = NULL;
+
 
 	/* configure the event callbacks (not required) */
 	memset(&event_mgr, 0, sizeof(opj_event_mgr_t));

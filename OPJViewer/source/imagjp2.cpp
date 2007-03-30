@@ -112,6 +112,7 @@ void jp2_info_callback(const char *msg, void *client_data) {
     wxMutexGuiLeave();
 }
 
+
 // load the jp2 file format
 bool wxJP2Handler::LoadFile(wxImage *image, wxInputStream& stream, bool verbose, int index)
 {

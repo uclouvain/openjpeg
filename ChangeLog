@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+March 30, 2007
+* [GB] OPJViewer should now work under Linux, at least with not big j2k files. Tested under Suse 10.1 64 bit.
+
 March 29, 2007
 * [Parvatha] Enable accepting file names with `-´ symbol .Modification getopt.c
 * [Parvatha] Rsiz profile name generation to be STD_RSIZ for profiles which are not DCI compliant.Modification in image_to_j2k.c
