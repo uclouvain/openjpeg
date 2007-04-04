@@ -89,9 +89,9 @@ typedef struct opj_pi_iterator {
 	int first;
 	/** progression order change information */
 	opj_poc_t poc;
-	/** */
+	/** number of components in the image */
 	int numcomps;
-	/** */
+	/** Components*/
 	opj_pi_comp_t *comps;
 	int tx0, ty0, tx1, ty1;
 	int x, y, dx, dy;
@@ -105,10 +105,11 @@ Create a packet iterator for Encoder
 @param image Raw image for which the packets will be listed
 @param cp Coding parameters
 @param tileno Number that identifies the tile for which to list the packets
+@param t2_mode If == 0 In Threshold calculation ,If == 1 Final pass
 @return Returns a packet iterator that points to the first packet of the tile
 @see pi_destroy
 */
-opj_pi_iterator_t *pi_initialise_encode(opj_image_t *image, opj_cp_t *cp, int tileno, int pino);
+opj_pi_iterator_t *pi_initialise_encode(opj_image_t *image, opj_cp_t *cp, int tileno,J2K_T2_MODE t2_mode);
 /**
 Modify the packet iterator for enabling tile part generation
 @param pi Handle to the packet iterator generated in pi_initialise_encode  
@@ -116,9 +117,8 @@ Modify the packet iterator for enabling tile part generation
 @param tileno Number that identifies the tile for which to list the packets
 @param tpnum Tile part number of the current tile
 @param tppos The position of the tile part flag in the progression order
-@param final_encoding If 0 Create a new packet iterator which is destroyed at end of call,If 1 use the packet iterator previously generated.
 */
-void pi_create_encode( opj_pi_iterator_t *pi, opj_cp_t *cp,int tileno, int pino,int tpnum, int tppos,char final_encoding);
+void pi_create_encode( opj_pi_iterator_t *pi, opj_cp_t *cp,int tileno, int pino,int tpnum, int tppos);
 /**
 Create a packet iterator for Decoder
 @param image Raw image for which the packets will be listed

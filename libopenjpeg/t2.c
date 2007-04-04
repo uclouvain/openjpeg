@@ -563,36 +563,69 @@ static int t2_decode_packet(opj_t2_t* t2, unsigned char *src, int len, opj_tcd_t
 
 /* ----------------------------------------------------------------------- */
 
-int t2_encode_packets(opj_t2_t* t2,int tileno, opj_tcd_tile_t *tile, int maxlayers, unsigned char *dest, int len, opj_image_info_t *image_info,int tpnum, int tppos,int pino, char final_encoding){
+int t2_encode_packets(opj_t2_t* t2,int tileno, opj_tcd_tile_t *tile, int maxlayers, unsigned char *dest, int len, opj_image_info_t *image_info,int tpnum, int tppos,int pino, J2K_T2_MODE t2_mode){
 	unsigned char *c = dest;
 	int e = 0;
+	int compno;
+	int comp_len = 0;
 	opj_pi_iterator_t *pi = NULL;
-
+	int poc;
 	opj_image_t *image = t2->image;
 	opj_cp_t *cp = t2->cp;
-
-	pi = pi_initialise_encode(image, cp, tileno,pino);
+	int pocno = cp->cinema == CINEMA4K_24? 2: 1;
+	int maxcomp = cp->max_comp_size > 0 ? image->numcomps : 1;
+	
+	pi = pi_initialise_encode(image, cp, tileno, t2_mode);
 	if(!pi) {
 		/* TODO: throw an error */
 		return -999;
 	}
 	
-	pi_create_encode(pi, cp,tileno,pino,tpnum,tppos,final_encoding); 
-
 	if(image_info) {
 		image_info->num = 0;
 	}
-
-	while (pi_next(&pi[pino])) {
-		if (pi[pino].layno < maxlayers) {
-			e = t2_encode_packet(tile, &cp->tcps[tileno], &pi[pino], c, dest + len - c, image_info, tileno);
-			if (e == -999) {
-				break;
-			} else {
-				c += e;
+	
+	if(t2_mode == THRESH_CALC ){
+		for(compno = 0; compno < maxcomp; compno++ ){
+			for(poc = 0; poc < pocno ; poc++){
+				int comp_len = 0;
+				int tpnum = compno;
+				pi_create_encode(pi, cp,tileno,poc,tpnum,tppos); 
+				while (pi_next(&pi[poc])) {
+					if (pi[poc].layno < maxlayers) {
+						e = t2_encode_packet(tile, &cp->tcps[tileno], &pi[poc], c, dest + len - c, image_info, tileno);
+						comp_len = comp_len + e;
+						if (e == -999) {
+							break;
+						} else {
+							c += e;
+						}
+					}
+				}
+				if (e == -999) break;
+				if (comp_len > cp->max_comp_size){
+							e = -999;
+							break;
+				}
 			}
-			/* INDEX >> */
-			if(image_info && image_info->index_on) {
+			if (e == -999)  break;
+		}
+	}else{
+		pi_create_encode(pi, cp,tileno,pino,tpnum,tppos); 
+		while (pi_next(&pi[pino])) {
+			if (pi[pino].layno < maxlayers) {
+				e = t2_encode_packet(tile, &cp->tcps[tileno], &pi[pino], c, dest + len - c, image_info, tileno);
+				if (e == -999) {
+					break;
+				} else {
+					c += e;
+				}
+			}
+		}
+	}
+
+		/* INDEX >> */
+		if(image_info && image_info->index_on) {
 				if(image_info->index_write) {
 					opj_tile_info_t *info_TL = &image_info->tile[tileno];
 					opj_packet_info_t *info_PK = &info_TL->packet[image_info->num];
@@ -606,11 +639,8 @@ int t2_encode_packets(opj_t2_t* t2,int tileno, opj_tcd_tile_t *tile, int maxlaye
 
 				image_info->num++;
 			}
-			/* << INDEX */
-		}
-	}
-	
-	pi_destroy(pi, cp, tileno);
+		/* << INDEX */
+		pi_destroy(pi, cp, tileno);
 	
 	if (e == -999) {
 		return e;

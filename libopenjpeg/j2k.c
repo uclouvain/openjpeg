@@ -258,6 +258,43 @@ char *j2k_convert_progression_order(OPJ_PROG_ORDER prg_order){
 	return po->str_prog;
 }
 
+static void j2k_check_poc_val(opj_cparameters_t *parameters, int numcomps, int numlayers){
+	int index, resno, compno, layno, i;
+	char loss = 0;
+	int step_c = 1;
+	int step_r = numcomps * step_c;
+	int step_l = parameters->numresolution * step_r;
+	int array_size = step_l * numlayers * sizeof(int);
+	int *packet_array = (int *) opj_malloc(array_size);
+	
+	for (i = 0; i < parameters->numpocs ; i++) {
+		int layno0 = 0;
+		if(i > 0)
+			layno0 = (parameters->POC[i].layno1 > parameters->POC[i-1].layno1 )? parameters->POC[i-1].layno1 : 0;
+		for (resno = parameters->POC[i].resno0 ; resno < parameters->POC[i].resno1 ; resno++) {
+			for (compno = parameters->POC[i].compno0 ; compno < parameters->POC[i].compno1 ; compno++) {
+				for (layno = layno0; layno < parameters->POC[i].layno1 ; layno++) {
+					index = step_r * resno + step_c * compno + step_l * layno;
+					packet_array[index]= 1;
+				}
+			}
+		}
+	}
+	for (resno = 0; resno < parameters->numresolution; resno++) {
+		for (compno = 0; compno < numcomps; compno++) {
+			for (layno = 0; layno < numlayers ; layno++) {
+				index = step_r * resno + step_c * compno + step_l * layno;
+				if(!(	packet_array[index]== 1)){
+					loss = 1;
+				}
+			}
+		}
+	}
+	if(loss == 1)
+		fprintf(stdout,"Missing packets possible loss of data\n");
+	opj_free(packet_array);
+}
+
 void j2k_dump_image(FILE *fd, opj_image_t * img) {
 	int compno;
 	fprintf(fd, "image {\n");
@@ -376,7 +413,7 @@ int j2k_calculate_tp(opj_cp_t *cp,int img_numcomp,opj_image_t *image,opj_j2k_t *
 		opj_tcp_t *tcp = &cp->tcps[tileno];
 		for(pino = 0; pino <= tcp->numpocs; pino++) {
 			int tp_num=0;
-			opj_pi_iterator_t *pi = pi_initialise_encode(image, cp, tileno,pino);
+			opj_pi_iterator_t *pi = pi_initialise_encode(image, cp, tileno,FINAL_PASS);
 			if(!pi) { return -1;}
 			tp_num = j2k_get_num_tp(cp,pino,tileno);
 			totnum_tp = totnum_tp + tp_num;
@@ -956,7 +993,7 @@ static void j2k_write_poc(opj_j2k_t *j2k) {
 	opj_tccp_t *tccp = &tcp->tccps[0];
 	opj_cio_t *cio = j2k->cio;
 
-	numpchgs = tcp->numpocs;
+	numpchgs = 1 + tcp->numpocs;
 	cio_write(cio, J2K_MS_POC, 2);	/* POC  */
 	len = 2 + (5 + 2 * (numcomps <= 256 ? 1 : 2)) * numpchgs;
 	cio_write(cio, len, 2);		/* Lpoc */
@@ -1908,6 +1945,7 @@ void j2k_setup_encoder(opj_j2k_t *j2k, opj_cparameters_t *parameters, opj_image_
 	copy user encoding parameters 
 	*/
 	cp->cinema = parameters->cp_cinema;
+	cp->max_comp_size =	parameters->max_comp_size;
 	cp->rsiz   = parameters->cp_rsiz;
 	cp->disto_alloc = parameters->cp_disto_alloc;
 	cp->fixed_alloc = parameters->cp_fixed_alloc;
@@ -2052,6 +2090,7 @@ void j2k_setup_encoder(opj_j2k_t *j2k, opj_cparameters_t *parameters, opj_image_
 		if (parameters->numpocs) {
 			/* initialisation of POC */
 			tcp->POC = 1;
+			j2k_check_poc_val(parameters, image->numcomps, tcp->numlayers);
 			for (i = 0; i < parameters->numpocs; i++) {
 				if((tileno == parameters->POC[i].tile - 1) || (parameters->POC[i].tile == -1)) {
 					opj_poc_t *tcp_poc = &tcp->pocs[numpocs_tile];
@@ -2060,13 +2099,15 @@ void j2k_setup_encoder(opj_j2k_t *j2k, opj_cparameters_t *parameters, opj_image_
 					tcp_poc->layno1		= parameters->POC[numpocs_tile].layno1;
 					tcp_poc->resno1		= parameters->POC[numpocs_tile].resno1;
 					tcp_poc->compno1	= parameters->POC[numpocs_tile].compno1;
-					tcp_poc->prg		= parameters->POC[numpocs_tile].prg;
+					tcp_poc->prg1		= parameters->POC[numpocs_tile].prg1;
 					tcp_poc->tile		= parameters->POC[numpocs_tile].tile;
 					numpocs_tile++;
 				}
 			}
+			tcp->numpocs = numpocs_tile -1 ;
+		}else{ 
+			tcp->numpocs = 0;
 		}
-		tcp->numpocs = numpocs_tile;
 
 		tcp->tccps = (opj_tccp_t *) opj_malloc(image->numcomps * sizeof(opj_tccp_t));
 		
@@ -2447,6 +2488,9 @@ bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, char *index)
 	/*	 TLM Marker*/
 	if(cp->cinema){
 		j2k_write_tlm(j2k);
+		if (cp->cinema == CINEMA4K_24) {
+			j2k_write_poc(j2k);
+		}
 	}
 	/**** Main Header ENDS here ***/
 	

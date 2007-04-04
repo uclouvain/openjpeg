@@ -546,8 +546,8 @@ opj_pi_iterator_t *pi_create_decode(opj_image_t *image, opj_cp_t *cp, int tileno
 }
 
 
-opj_pi_iterator_t *pi_initialise_encode(opj_image_t *image, opj_cp_t *cp, int tileno, int pino){ 
-	int p, q;
+opj_pi_iterator_t *pi_initialise_encode(opj_image_t *image, opj_cp_t *cp, int tileno, J2K_T2_MODE t2_mode){ 
+	int p, q, pino;
 	int compno, resno;
 	int maxres = 0;
 	int maxprec = 0;
@@ -560,8 +560,9 @@ opj_pi_iterator_t *pi_initialise_encode(opj_image_t *image, opj_cp_t *cp, int ti
 
 	array_size = (tcp->numpocs + 1) * sizeof(opj_pi_iterator_t);
 	pi = (opj_pi_iterator_t *) opj_malloc(array_size);
-	pi->tp_on = cp->tp_on;
 	if(!pi) {	return NULL;}
+	pi->tp_on = cp->tp_on;
+	
 	for(pino = 0;pino < tcp->numpocs+1 ; pino ++){
 		p = tileno % cp->tw;
 		q = tileno / cp->tw;
@@ -580,7 +581,7 @@ opj_pi_iterator_t *pi_initialise_encode(opj_image_t *image, opj_cp_t *cp, int ti
 		}
 		memset(pi[pino].comps, 0, array_size);
 		
-		for (compno = 0; compno < pi->numcomps; compno++) {
+		for (compno = 0; compno < pi[pino].numcomps; compno++) {
 			int tcx0, tcy0, tcx1, tcy1;
 			opj_pi_comp_t *comp = &pi[pino].comps[compno];
 			tccp = &tcp->tccps[compno];
@@ -595,10 +596,10 @@ opj_pi_iterator_t *pi_initialise_encode(opj_image_t *image, opj_cp_t *cp, int ti
 				return NULL;
 			}
 
-			tcx0 = int_ceildiv(pi->tx0, comp->dx);
-			tcy0 = int_ceildiv(pi->ty0, comp->dy);
-			tcx1 = int_ceildiv(pi->tx1, comp->dx);
-			tcy1 = int_ceildiv(pi->ty1, comp->dy);
+			tcx0 = int_ceildiv(pi[pino].tx0, comp->dx);
+			tcy0 = int_ceildiv(pi[pino].ty0, comp->dy);
+			tcx1 = int_ceildiv(pi[pino].tx1, comp->dx);
+			tcy1 = int_ceildiv(pi[pino].ty1, comp->dy);
 			if (comp->numresolutions > maxres) {
 				maxres = comp->numresolutions;
 			}
@@ -652,7 +653,7 @@ opj_pi_iterator_t *pi_initialise_encode(opj_image_t *image, opj_cp_t *cp, int ti
 		}
 
 		if (pino == 0) {
-			array_size = (tcp->numpocs+1) * tcp->numlayers * pi[pino].step_l * sizeof(short int);
+			array_size = tcp->numlayers * pi[pino].step_l * sizeof(short int);
 			pi[pino].include = (short int *) opj_malloc(array_size);
 			if(!pi[pino].include) {
 				pi_destroy(pi, cp, tileno);
@@ -664,22 +665,24 @@ opj_pi_iterator_t *pi_initialise_encode(opj_image_t *image, opj_cp_t *cp, int ti
 		}
 		
 		/* Generation of boundaries for each prog flag*/
-			if (tcp->POC == 1){
+			if(tcp->POC & (t2_mode == FINAL_PASS)){
 				tcp->pocs[pino].compS= tcp->pocs[pino].compno0;
 				tcp->pocs[pino].compE= tcp->pocs[pino].compno1;
 				tcp->pocs[pino].resS = tcp->pocs[pino].resno0;
 				tcp->pocs[pino].resE = tcp->pocs[pino].resno1;
-        tcp->pocs[pino].layE = tcp->pocs[pino].layno1;
-				tcp->pocs[pino].prg  = tcp->pocs[pino].prg;
+				tcp->pocs[pino].layE = tcp->pocs[pino].layno1;
+				tcp->pocs[pino].prg  = tcp->pocs[pino].prg1;
+				if (pino > 0)
+					tcp->pocs[pino].layS = (tcp->pocs[pino].layE > tcp->pocs[pino - 1].layE) ? tcp->pocs[pino - 1].layE : 0;
 			}else {
 				tcp->pocs[pino].compS= 0;
 				tcp->pocs[pino].compE= image->numcomps;
 				tcp->pocs[pino].resS = 0;
 				tcp->pocs[pino].resE = maxres;
+				tcp->pocs[pino].layS = 0;
 				tcp->pocs[pino].layE = tcp->numlayers;
 				tcp->pocs[pino].prg  = tcp->prg;
 			}
-			tcp->pocs[pino].layS = 0;				
 			tcp->pocs[pino].prcS = 0;
 			tcp->pocs[pino].prcE = maxprec;;
 			tcp->pocs[pino].txS = pi[pino].tx0;
@@ -817,7 +820,7 @@ int pi_check_next_level(int pos,opj_cp_t *cp,int tileno, int pino, char *prog){
 }
 
 
-void pi_create_encode( opj_pi_iterator_t *pi, opj_cp_t *cp,int tileno, int pino,int tpnum, int tppos,char final_encoding) {
+void pi_create_encode( opj_pi_iterator_t *pi, opj_cp_t *cp,int tileno, int pino,int tpnum, int tppos){
 	char *prog;
 	int i,l;
 	int incr_top=1,resetX=0;
@@ -828,7 +831,7 @@ void pi_create_encode( opj_pi_iterator_t *pi, opj_cp_t *cp,int tileno, int pino,
 	pi[pino].first = 1;
 	pi[pino].poc.prg = tcp->prg;	
 	
-	if(!(cp->tp_on & final_encoding)){
+	if(!(cp->tp_on)){
 		pi[pino].poc.resno0 = tcp->resS;
 		pi[pino].poc.resno1 = tcp->resE;
 		pi[pino].poc.compno0 = tcp->compS;

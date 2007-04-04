@@ -5,6 +5,13 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+April 4,2007
++ [Parvatha] Digital cinema compliance for 4K chosen by "-cinema4K" option. Modification in image_to_j2k.c.
++ [Parvatha] Bit rate limitation for each color component. Modification in image_to_j2k.c, t2.c.
+* [Parvatha] Modified and tested Progression order change "-POC" option. Modification in image_to_j2k.c, j2k.c, pi.c.
++ [Parvatha] Function j2k_check_poc_val() to check for possible loss of packets in case of wrong POC declaration. Modification in j2k.c.
++ [Parvatha] Structure T2_MODE. This tells if the t2_encode_packets() is called during Threshold calculation or in Final pass. Modification in j2k.h, tcd.c
+
 March 30, 2007
 * [GB] OPJViewer should now work under Linux, at least with not big j2k files. Tested under Suse 10.1 64 bit.
 

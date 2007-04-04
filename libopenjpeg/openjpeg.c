@@ -223,6 +223,7 @@ void OPJ_CALLCONV opj_set_default_encoder_parameters(opj_cparameters_t *paramete
 		memset(parameters, 0, sizeof(opj_cparameters_t));
 		/* default coding parameters */
 		parameters->cp_cinema = OFF; 
+		parameters->max_comp_size = 0;
 		parameters->numresolution = 6;
 		parameters->cp_rsiz = STD_RSIZ;
 		parameters->cblockw_init = 64;

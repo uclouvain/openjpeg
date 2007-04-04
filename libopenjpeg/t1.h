@@ -110,7 +110,7 @@ typedef struct opj_t1 {
 	int lut_nmsedec_ref0[1 << T1_NMSEDEC_BITS];
 
 	int data[T1_MAXCBLKH][T1_MAXCBLKW];
-	int flags[T1_MAXCBLKH + 2][T1_MAXCBLKH + 2];
+	int flags[T1_MAXCBLKH + 2][T1_MAXCBLKW + 2];
 
 } opj_t1_t;
 

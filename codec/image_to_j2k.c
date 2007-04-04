@@ -58,6 +58,8 @@
 /* ----------------------------------------------------------------------- */
 #define CINEMA_24_CS 1302083	/*Codestream length for 24fps*/
 #define CINEMA_48_CS 651041		/*Codestream length for 48fps*/
+#define COMP_24_CS 1041666		/*Maximum size per color component for 2K & 4K @ 24fps*/
+#define COMP_48_CS 520833		/*Maximum size per color component for 2K @ 48fps*/
 
 typedef struct dircnt{
 	/** Buffer for holding images read from Directory*/
@@ -179,6 +181,10 @@ void encode_help_display() {
 	fprintf(stdout,"\n");
 	fprintf(stdout,"-s           : subsampling factor (-s 2,2) [-s X,Y] \n");
 	fprintf(stdout,"	     Remark: subsampling bigger than 2 can produce error\n");
+	fprintf(stdout,"\n");
+	fprintf(stdout,"-POC         : Progression order change (-POC T1=0,0,1,5,3,CPRL/T1=5,0,1,6,3,CPRL) \n");
+	fprintf(stdout,"      Example: T1=0,0,1,5,3,CPRL \n");
+	fprintf(stdout,"			 : Ttilenumber=Resolution num start,Component num start,Layer num end,Resolution num end,Component num end,Progression order\n");
 	fprintf(stdout,"\n");
 	fprintf(stdout,"-SOP         : write SOP marker before each packet \n");
 	fprintf(stdout,"\n");
@@ -414,6 +420,23 @@ char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_cparamet
  return 0;
 }
 
+static int initialise_4K_poc(opj_poc_t *POC, int numres){
+	POC[0].tile  = 1; 
+	POC[0].resno0  = 0; 
+	POC[0].compno0 = 0;
+	POC[0].layno1  = 1;
+	POC[0].resno1  = numres-1;
+	POC[0].compno1 = 3;
+	POC[0].prg1 = CPRL;
+	POC[1].tile  = 1;
+	POC[1].resno0  = numres-1; 
+	POC[1].compno0 = 0;
+	POC[1].layno1  = 1;
+	POC[1].resno1  = numres;
+	POC[1].compno1 = 3;
+	POC[1].prg1 = CPRL;
+	return 2;
+}
 
 void cinema_parameters(opj_cparameters_t *parameters){
 	parameters->tile_size_on = false;
@@ -447,6 +470,8 @@ void cinema_parameters(opj_cparameters_t *parameters){
 void cinema_setup_encoder(opj_cparameters_t *parameters,opj_image_t *image){
 	int i;
 	float temp_rate;
+	opj_poc_t *POC = NULL;
+
 	switch (parameters->cp_cinema){
 	case CINEMA2K_24:
 	case CINEMA2K_48:
@@ -462,13 +487,14 @@ void cinema_setup_encoder(opj_cparameters_t *parameters,opj_image_t *image){
 	case CINEMA4K_24:
 		if(parameters->numresolution < 1){
 				parameters->numresolution = 1;
-			}else if((parameters->numresolution < 7) || (parameters->numresolution > 7)){
+			}else if(parameters->numresolution > 7){
 				parameters->numresolution = 7;
 			}
 		if (!((image->comps[0].w == 4096) & (image->comps[0].h == 2160))){
 			fprintf(stdout,"Image coordinates %d x %d is not 4K compliant.\nDCI 4K compliance requires that atleast one of coordinates match 4096 x 2160\n",image->comps[0].w,image->comps[0].h);
 			parameters->cp_rsiz = STD_RSIZ;
 		}
+		parameters->numpocs = initialise_4K_poc(parameters->POC,parameters->numresolution);
 		break;
 	}
 
@@ -489,6 +515,7 @@ void cinema_setup_encoder(opj_cparameters_t *parameters,opj_image_t *image){
 					}
 				}
 			}
+			parameters->max_comp_size = COMP_24_CS;
 			break;
 		
 		case CINEMA2K_48:
@@ -506,6 +533,7 @@ void cinema_setup_encoder(opj_cparameters_t *parameters,opj_image_t *image){
 					}
 				}
 			}
+			parameters->max_comp_size = COMP_48_CS;
 			break;
 	}
 	parameters->cp_disto_alloc = 1;
@@ -523,6 +551,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,i
 		{"SOP",NO_ARG, NULL ,'S'},
 		{"EPH",NO_ARG, NULL ,'E'},
 		{"OutFor",REQ_ARG, NULL ,'O'},
+		{"POC",REQ_ARG, NULL ,'P'},
 	};
 
 	/* parse the command line */
@@ -582,7 +611,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,i
 			break;
 
 				/* ----------------------------------------------------- */
-			case 'O':			/* output file */
+			case 'O':			/* output format */
 				{
 					char outformat[50];
 					char *of = optarg;
@@ -811,16 +840,11 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,i
 				char *s = optarg;
 				POC = parameters->POC;
 
-				fprintf(stderr, "/----------------------------------\\\n");
-				fprintf(stderr, "|  POC option not fully tested !!  |\n");
-				fprintf(stderr, "\\----------------------------------/\n");
-
-				while (sscanf(s, "T%d=%d,%d,%d,%d,%d,%s", &POC[numpocs].tile,
+				while (sscanf(s, "T%d=%d,%d,%d,%d,%d,%4s", &POC[numpocs].tile,
 					&POC[numpocs].resno0, &POC[numpocs].compno0,
 					&POC[numpocs].layno1, &POC[numpocs].resno1,
-					&POC[numpocs].compno1, POC[numpocs].progorder) == 7) {
-					POC[numpocs].prg = give_progression(POC[numpocs].progorder);
-					/* POC[numpocs].tile; */
+					&POC[numpocs].compno1, &POC[numpocs].progorder) == 7) {
+					POC[numpocs].prg1 = give_progression(POC[numpocs].progorder);
 					numpocs++;
 					while (*s && *s != '/') {
 						s++;

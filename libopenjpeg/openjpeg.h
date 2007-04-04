@@ -214,17 +214,28 @@ typedef struct opj_event_mgr {
 Progression order changes
 */
 typedef struct opj_poc {
-  int resno0, compno0;
-  int layno1, resno1, compno1;
-  OPJ_PROG_ORDER prg;
-  int tile;
-  char progorder[4];
-  int txS,txE,tyS,tyE,dx,dy;
-  int tx0,tx1,ty0,ty1;
-  int layno0, precno0, precno1;
-  int layS, resS, compS, prcS;
-  int layE, resE, compE, prcE;
-  int lay_t, res_t, comp_t, prc_t,tx0_t,ty0_t;
+	/** Resolution num start, Component num start, given by POC */
+	int resno0, compno0;
+	/** Layer num end,Resolution num end, Component num end, given by POC */
+	int layno1, resno1, compno1;
+	/** Layer num start,Precinct num start, Precinct num end */
+	int layno0, precno0, precno1;
+	/** Progression order enum*/
+	OPJ_PROG_ORDER prg1,prg;
+	/** Progression order string*/
+	char progorder[5];
+	/** Tile number */
+	int tile;
+	/** Start and end values for Tile width and height*/
+	int tx0,tx1,ty0,ty1;
+	/** Start value, initialised in pi_initialise_encode*/
+	int layS, resS, compS, prcS;
+	/** End value, initialised in pi_initialise_encode */
+	int layE, resE, compE, prcE;
+	/** Start and end values of Tile width and height, initialised in pi_initialise_encode*/
+	int txS,txE,tyS,tyE,dx,dy;
+	/** Temporary values for Tile parts, initialised in pi_create_encode */
+	int lay_t, res_t, comp_t, prc_t,tx0_t,ty0_t;
 } opj_poc_t;
 
 /**
@@ -233,6 +244,8 @@ Compression parameters
 typedef struct opj_cparameters {
 	/** Digital Cinema compliance 0-not compliant, 1-compliant*/
 	OPJ_CINEMA_MODE cp_cinema;
+	/** Maximum rate for each component. If == 0, component size limitation is not considered */
+	int max_comp_size;
 	/** Profile name*/
 	OPJ_RSIZ_CAPABILITIES cp_rsiz;
 	/** Tile part generation*/

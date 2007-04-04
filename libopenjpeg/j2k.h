@@ -104,6 +104,14 @@ typedef enum J2K_STATUS {
 
 /* ----------------------------------------------------------------------- */
 
+/** 
+T2 encoding mode 
+*/
+typedef enum T2_MODE {
+	THRESH_CALC = 0,	/** Function called in Rate allocation process*/
+	FINAL_PASS = 1		/** Function called in Tier 2 process*/
+}J2K_T2_MODE;
+
 /**
 Quantization stepsize
 */
@@ -190,6 +198,8 @@ Coding parameters
 typedef struct opj_cp {
 	/** Digital cinema profile*/
 	OPJ_CINEMA_MODE cinema;
+	/** Maximum rate for each component. If == 0, component size limitation is not considered */
+	int max_comp_size;
 	/** Size of the image in bits*/
 	int img_size;
 	/** Rsiz*/
