@@ -5,6 +5,11 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+April 5, 2007
+! [FOD] fix.h optimized. Thanks a lot to Dzonatas <dzonatas at dzonux.net> !
+! [FOD] dwt.c optimized. Thanks a lot to Dzonatas <dzonatas at dzonux.net> !
+! [FOD] t1.c optimized. Thanks a lot to Callum Lerwick <seg at haxxed.com>  !
+
 April 4,2007
 + [Parvatha] Digital cinema compliance for 4K chosen by "-cinema4K" option. Modification in image_to_j2k.c.
 + [Parvatha] Bit rate limitation for each color component. Modification in image_to_j2k.c, t2.c.

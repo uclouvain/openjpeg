@@ -543,12 +543,9 @@ static void t1_encode_cblk(opj_t1_t *t1, opj_tcd_cblk_t * cblk, int orient, int 
 	
 	cblk->numbps = max ? (int_floorlog2(max) + 1) - T1_NMSEDEC_FRACBITS : 0;
 	
-	/* Changed by Dmitry Kolyadin */
-	for (i = 0; i <= w; i++) {
-		for (j = 0; j <= h; j++) {
-			t1->flags[j][i] = 0;
-		}
-	}
+	for (i = 0; i <= h; ++i) {
+		memset(&t1->flags[i], 0, (w+1) * sizeof(int));
+ 	}
 	
 	bpno = cblk->numbps - 1;
 	passtype = 2;
@@ -653,7 +650,7 @@ static void t1_encode_cblk(opj_t1_t *t1, opj_tcd_cblk_t * cblk, int orient, int 
 }
 
 static void t1_decode_cblk(opj_t1_t *t1, opj_tcd_cblk_t * cblk, int orient, int roishift, int cblksty) {
-	int i, j, w, h;
+	int i, w, h;
 	int bpno, passtype;
 	int segno, passno;
 	char type = T1_TYPE_MQ; /* BYPASS mode */
@@ -664,19 +661,13 @@ static void t1_decode_cblk(opj_t1_t *t1, opj_tcd_cblk_t * cblk, int orient, int 
 	w = cblk->x1 - cblk->x0;
 	h = cblk->y1 - cblk->y0;
 	
-	/* Changed by Dmitry Kolyadin */
-	for (j = 0; j <= h; j++) {
-		for (i = 0; i <= w; i++) {
-			t1->flags[j][i] = 0;
-		}
-	}
+	for (i = 0; i <= h; ++i) {
+		memset(&t1->flags[i], 0, (w + 1) * sizeof(int));
+ 	}
 	
-	/* Changed by Dmitry Kolyadin */
-	for (i = 0; i < w; i++) {
-		for (j = 0; j < h; j++){
-			t1->data[j][i] = 0;
-		}
-	}
+	for (i = 0; i < h; ++i) {
+		memset(&t1->data[i], 0, w * sizeof(int));
+ 	}
 	
 	bpno = roishift + cblk->numbps - 1;
 	passtype = 2;
