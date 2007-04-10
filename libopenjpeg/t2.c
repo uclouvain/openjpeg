@@ -603,9 +603,11 @@ int t2_encode_packets(opj_t2_t* t2,int tileno, opj_tcd_tile_t *tile, int maxlaye
 					}
 				}
 				if (e == -999) break;
-				if (comp_len > cp->max_comp_size){
-							e = -999;
-							break;
+				if (cp->max_comp_size){
+					if (comp_len > cp->max_comp_size){
+								e = -999;
+								break;
+					}
 				}
 			}
 			if (e == -999)  break;

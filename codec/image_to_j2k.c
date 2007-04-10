@@ -375,10 +375,10 @@ int load_images(dircnt_t *dirptr, char *imgdirpath){
 int get_file_format(char *filename) {
 	unsigned int i;
 	static const char *extension[] = {
-    "pgx", "pnm", "pgm", "ppm", "bmp","tif", "j2k", "jp2"
+    "pgx", "pnm", "pgm", "ppm", "bmp","tif", "j2k", "jp2", "j2c"
     };
 	static const int format[] = {
-    PGX_DFMT, PXM_DFMT, PXM_DFMT, PXM_DFMT, BMP_DFMT,TIF_DFMT, J2K_CFMT, JP2_CFMT
+    PGX_DFMT, PXM_DFMT, PXM_DFMT, PXM_DFMT, BMP_DFMT,TIF_DFMT, J2K_CFMT, JP2_CFMT, J2K_CFMT
     };
 	char * ext = strrchr(filename, '.');
 	if (ext == NULL)
@@ -478,7 +478,7 @@ void cinema_setup_encoder(opj_cparameters_t *parameters,opj_image_t *image){
 		if(parameters->numresolution > 6){
 			parameters->numresolution = 6;
 		}
-		if (!((image->comps[0].w == 2048) & (image->comps[0].h == 1080))){
+		if (!((image->comps[0].w == 2048) | (image->comps[0].h == 1080))){
 			fprintf(stdout,"Image coordinates %d x %d is not 2K compliant.\nDCI 2K compliance requires that atleast one of coordinates match 2048 x 1080\n",image->comps[0].w,image->comps[0].h);
 			parameters->cp_rsiz = STD_RSIZ;
 		}
@@ -490,7 +490,7 @@ void cinema_setup_encoder(opj_cparameters_t *parameters,opj_image_t *image){
 			}else if(parameters->numresolution > 7){
 				parameters->numresolution = 7;
 			}
-		if (!((image->comps[0].w == 4096) & (image->comps[0].h == 2160))){
+		if (!((image->comps[0].w == 4096) | (image->comps[0].h == 2160))){
 			fprintf(stdout,"Image coordinates %d x %d is not 4K compliant.\nDCI 4K compliance requires that atleast one of coordinates match 4096 x 2160\n",image->comps[0].w,image->comps[0].h);
 			parameters->cp_rsiz = STD_RSIZ;
 		}
@@ -619,15 +619,13 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,i
 					img_fol->set_out_format = 1;
 					parameters->cod_format = get_file_format(outformat);
 					switch(parameters->cod_format) {
-			case J2K_CFMT:
-				img_fol->out_format = "j2k";
-				break;
-			case JP2_CFMT:
-				img_fol->out_format = "jp2";
-				break;
-			default:
-				fprintf(stderr, "Unknown output format image [only j2k, jp2]!! \n");
-				return 1;
+						case J2K_CFMT:
+						case JP2_CFMT:
+							img_fol->out_format = optarg;
+							break;
+						default:
+							fprintf(stderr, "Unknown output format image [only j2k, jp2]!! \n");
+							return 1;
 					}
 				}
 				break;

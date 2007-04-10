@@ -5,6 +5,10 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+April 10,2007
++ [Parvatha] Accepting "j2c"  as format for Encoding and Decoding. Modification in image_to_j2k.c.
+* [Parvatha] Modified imagetotif() to read images with signed data. Modification in convert.c.
+
 April 5, 2007
 ! [FOD] fix.h optimized. Thanks a lot to Dzonatas <dzonatas at dzonux.net> !
 ! [FOD] dwt.c optimized. Thanks a lot to Dzonatas <dzonatas at dzonux.net> !
