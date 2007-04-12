@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+April 12,2007
+* [Parvatha] Fixed Error in tiftoimage(). Modification in convert.c.
+
 April 10,2007
 + [Parvatha] Accepting "j2c"  as format for Encoding and Decoding. Modification in image_to_j2k.c.
 * [Parvatha] Modified imagetotif() to read images with signed data. Modification in convert.c.

@@ -1355,7 +1355,7 @@ opj_image_t* tiftoimage(char *filename, opj_cparameters_t *parameters)
 
 			if (Info.tiBps==12){
 				for (i=0; i<ssize; i+=9) {	/*12 bits per pixel*/
-					if(index < datasize){
+					if(index < imgsize){
 						image->comps[0].data[index]   = ( dat8[i+0]<<4 )		|(dat8[i+1]>>4);
 						image->comps[1].data[index]   = ((dat8[i+1]& 0x0f)<< 8)	| dat8[i+2];
 						image->comps[2].data[index]   = ( dat8[i+3]<<4)			|(dat8[i+4]>>4);
@@ -1369,7 +1369,7 @@ opj_image_t* tiftoimage(char *filename, opj_cparameters_t *parameters)
 			}
 			else if( Info.tiBps==16){
 				for (i=0; i<ssize; i+=6) {	/* 16 bits per pixel */
-					if(index < datasize){
+					if(index < imgsize){
 						image->comps[0].data[index] = ( dat8[i+1] << 8 ) | dat8[i+0];	// R 
 						image->comps[1].data[index] = ( dat8[i+3] << 8 ) | dat8[i+2];	// G 
 						image->comps[2].data[index] = ( dat8[i+5] << 8 ) | dat8[i+4];	// B 
@@ -1380,7 +1380,7 @@ opj_image_t* tiftoimage(char *filename, opj_cparameters_t *parameters)
 			}
 			else if ( Info.tiBps==8){
 				for (i=0; i<ssize; i+=3) {	/* 8 bits per pixel */
-					if(index < datasize){
+					if(index < imgsize){
 						image->comps[0].data[index] = dat8[i+0];	// R 
 						image->comps[1].data[index] = dat8[i+1];	// G 
 						image->comps[2].data[index] = dat8[i+2];	// B 
