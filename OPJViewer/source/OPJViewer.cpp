@@ -201,6 +201,7 @@ bool OPJViewerApp::OnInit(void)
     wxFileSystem::AddHandler(new wxMemoryFSHandler);
 
 	// set decoding engine parameters
+	m_enabledeco = true;
 	m_resizemethod = 0;
 	m_reducefactor = 0;
 	m_qualitylayers = 0;
@@ -450,6 +451,7 @@ void OPJFrame::OnSetsDeco(wxCommandEvent& event)
     if (dialog.ShowModal() == wxID_OK) {
 
 		// load settings
+		wxGetApp().m_enabledeco = dialog.m_enabledecoCheck->GetValue();
 		wxGetApp().m_resizemethod = dialog.m_resizeBox->GetSelection();
 		wxGetApp().m_reducefactor = dialog.m_reduceCtrl->GetValue();
 		wxGetApp().m_qualitylayers = dialog.m_layerCtrl->GetValue();
@@ -747,6 +749,7 @@ OPJCanvas::OPJCanvas(wxFileName fname, wxWindow *parent, const wxPoint& pos, con
 	m_childframe = (OPJChildFrame *) parent;
 	// 100% zoom
 	m_zooml = 100;
+
 
     OPJDecoThread *dthread = CreateDecoThread();
 
@@ -1840,9 +1843,6 @@ void *OPJDecoThread::Entry()
     //            GetId(), GetPriority(), m_countnum);
     text.Printf(wxT("Deco thread %d started"), m_canvas->m_childframe->m_winnumber);
 
-
-
-
     WriteText(text);
 
     wxBitmap bitmap(100, 100);
@@ -1884,10 +1884,22 @@ void *OPJDecoThread::Entry()
 	mj222handler->m_maxtiles = wxGetApp().m_maxtiles;
 #endif // USE_JPWL
 
-	// load the file
-    if (!image.LoadFile(m_canvas->m_fname.GetFullPath(), wxBITMAP_TYPE_ANY), 0) {
-        WriteText(wxT("Can't load image"));
-		return NULL;
+	if (wxGetApp().m_enabledeco) {
+
+		// load the file
+		if (!image.LoadFile(m_canvas->m_fname.GetFullPath(), wxBITMAP_TYPE_ANY, 0)) {
+			WriteText(wxT("Can't load image"));
+			return NULL;
+		}
+
+	} else {
+
+		// display a macaron
+		if (!image.Create(300, 5, false)) {
+			WriteText(wxT("Can't create image"));
+			return NULL;
+		}
+
 	}
 
 	// assign 100% image
@@ -2021,6 +2033,7 @@ IMPLEMENT_CLASS(OPJDecoderDialog, wxPropertySheetDialog)
 
 BEGIN_EVENT_TABLE(OPJDecoderDialog, wxPropertySheetDialog)
 #ifdef USE_JPWL
+	EVT_CHECKBOX(OPJDECO_ENABLEDECO, OPJDecoderDialog::OnEnableDeco)
 	EVT_CHECKBOX(OPJDECO_ENABLEJPWL, OPJDecoderDialog::OnEnableJPWL)
 #endif // USE_JPWL
 END_EVENT_TABLE()
@@ -2036,20 +2049,26 @@ OPJDecoderDialog::OPJDecoderDialog(wxWindow* win, int dialogType)
 
 	CreateButtons(wxOK | wxCANCEL | (int)wxPlatform::IfNot(wxOS_WINDOWS_CE, wxHELP));
 
-	wxBookCtrlBase* notebook = GetBookCtrl();
+	m_settingsNotebook = GetBookCtrl();
 
-	wxPanel* mainSettings = CreateMainSettingsPage(notebook);
-	wxPanel* jpeg2000Settings = CreatePart1SettingsPage(notebook);
-	wxPanel* mjpeg2000Settings = CreatePart3SettingsPage(notebook);
+	wxPanel* mainSettings = CreateMainSettingsPage(m_settingsNotebook);
+	wxPanel* jpeg2000Settings = CreatePart1SettingsPage(m_settingsNotebook);
+	if (!wxGetApp().m_enabledeco)
+		jpeg2000Settings->Enable(false);
+	wxPanel* mjpeg2000Settings = CreatePart3SettingsPage(m_settingsNotebook);
+	if (!wxGetApp().m_enabledeco)
+		mjpeg2000Settings->Enable(false);
 #ifdef USE_JPWL
-	wxPanel* jpwlSettings = CreatePart11SettingsPage(notebook);
+	wxPanel* jpwlSettings = CreatePart11SettingsPage(m_settingsNotebook);
+	if (!wxGetApp().m_enabledeco)
+		jpwlSettings->Enable(false);
 #endif // USE_JPWL
 
-	notebook->AddPage(mainSettings, wxT("Display"), false);
-	notebook->AddPage(jpeg2000Settings, wxT("JPEG 2000"), false);
-	notebook->AddPage(mjpeg2000Settings, wxT("MJPEG 2000"), false);
+	m_settingsNotebook->AddPage(mainSettings, wxT("Display"), false);
+	m_settingsNotebook->AddPage(jpeg2000Settings, wxT("JPEG 2000"), false);
+	m_settingsNotebook->AddPage(mjpeg2000Settings, wxT("MJPEG 2000"), false);
 #ifdef USE_JPWL
-	notebook->AddPage(jpwlSettings, wxT("JPWL"), false);
+	m_settingsNotebook->AddPage(jpwlSettings, wxT("JPWL"), false);
 #endif // USE_JPWL
 
 	LayoutDialog();
@@ -2172,6 +2191,12 @@ wxPanel* OPJDecoderDialog::CreateMainSettingsPage(wxWindow* parent)
 
 		// sub top sizer
 		wxBoxSizer *subtopSizer = new wxBoxSizer(wxVERTICAL);
+
+		// add decoding enabling check box
+		subtopSizer->Add(
+			m_enabledecoCheck = new wxCheckBox(panel, OPJDECO_ENABLEDECO, wxT("Enable decoding"), wxDefaultPosition, wxDefaultSize),
+			0, wxGROW | wxALL, 5);
+		m_enabledecoCheck->SetValue(wxGetApp().m_enabledeco);
 
 			// resize settings, column
 			wxString choices[] = {wxT("Low quality"), wxT("High quality")};
@@ -2431,6 +2456,30 @@ wxPanel* OPJDecoderDialog::CreatePart11SettingsPage(wxWindow* parent)
     topSizer->Fit(panel);
 
     return panel;
+}
+
+void OPJDecoderDialog::OnEnableDeco(wxCommandEvent& event)
+{
+	size_t pp;
+
+	if (event.IsChecked()) {
+		wxLogMessage(wxT("Decoding enabled"));
+		m_resizeBox->Enable(true);
+		// enable all tabs except ourselves
+		for (pp = 0; pp < m_settingsNotebook->GetPageCount(); pp++) {
+			if (m_settingsNotebook->GetPageText(pp) != wxT("Display"))
+				m_settingsNotebook->GetPage(pp)->Enable(true);
+		}
+	} else {
+		wxLogMessage(wxT("Decoding disabled"));
+		m_resizeBox->Enable(false);
+		// disable all tabs except ourselves
+		for (pp = 0; pp < m_settingsNotebook->GetPageCount(); pp++) {
+			if (m_settingsNotebook->GetPageText(pp) != wxT("Display"))
+				m_settingsNotebook->GetPage(pp)->Enable(false);
+		}
+	}
+
 }
 
 void OPJDecoderDialog::OnEnableJPWL(wxCommandEvent& event)

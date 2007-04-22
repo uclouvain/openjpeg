@@ -17,26 +17,31 @@ This document describes the installation and use of the OPJViewer in the framewo
 
 This implementation has been developed using the OpenJPEG library as decoding engine and wxWidgets 2.8.0 as GUI engine.
 
-If you find some bugs or if you have problems using the encoder/decoder, please send an e-mail to jpwl@diei.unipg.it
+If you find some bugs or if you have problems using the viewer, please send an e-mail to jpwl@diei.unipg.it
 
 2. Installing the viewer
 ==========================
 
-There are two available options, at the moment: a) compile from source code, and b) download a precompiled binary. In order to perform option a), it is mandatory to have compiled and built the LibOpenJPEG_JPWL library and the wxWidgets 2.8.0 framework (you have to download it from http://www.wxwidgets.org/ and compile the wx* libraries).
+There are two options available, at the moment:
+
+a) compile from source code
+b) download a precompiled binary.
+
+In order to use option a), it is mandatory to have compiled and built the LibOpenJPEG_JPWL library and the wxWidgets 2.8.0 framework (you have to download it from http://www.wxwidgets.org/ and compile the wx* libraries).
 
 2.1. Compiling the source code in Windows
 -------------------------------------------
 
-These are the steps required to compile the viewer under windows.
+The steps required to compile the viewer under windows are:
 
-a) Download at least the libonjpeg, jpwl, and opjviewer folders from the SVN trunk.
+a) Download at least the libopenjpeg, jpwl, and opjviewer folders from the SVN trunk.
 b) Open the OPJViewer.dsw workspace with Visual C++ 6 and activate the "OPJViewer - Win32 Release" configuration.
 c) In the configuration settings, go to the C++ tab and modify the wxWidgets paths in order to reflect your wx* install configuration (Preprocessor -> Additional include directories): simply update each instance of the two wx paths, do not remove or add them.
 d) In the configuration settings, go to the Link tab and modify the wxWidgets path in order to reflect your wx* install configuration (Input -> Additional library path): simply update the wx path.
 e) In the configuration settings, go to the Resources tab and modify the wxWidgets path in order to reflect your wx* install configuration (Additional resource include directories): simply update the wx path.
 f) Build!
 g) Run!
-h) (OPTIONAL) Prepare an installer by compiling the InnoSetup script OPJViewer.iss (you need to download it from http://www.jrsoftware.org/isinfo.php).
+h) (OPTIONAL) Prepare an installer by compiling the InnoSetup script OPJViewer.iss (you need to download InnoSetup from http://www.jrsoftware.org/isinfo.php).
 
 2.2. Compiling the source code in Unix-like systems
 -----------------------------------------------------
@@ -47,8 +52,9 @@ The porting is possible and under way.
 3. General information on the viewer
 ====================================
 
-This viewer is conceived to open and display information and image of J2K, JP2, and MJ2 files.
-The viewer application graphical interface is divided into three main panels:
+This viewer is conceived to open and display information and image content of J2K, JP2,
+and MJ2 files.
+The viewer application interface is divided into three main panels:
 - a browsing pane;
 - a viewing pane;
 - a log/peek pane.
@@ -92,4 +98,4 @@ The log/peek pane is shared among two different subpanels:
 4.2. Limitations
 ------------------
 
-* For mj2 files, only the first frame is displayed, and only in B/W
+* For mj2 files, rendering is only in B/W

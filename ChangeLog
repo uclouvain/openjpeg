@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+April 23, 2007
++ [GB] Enable/disable image decoding in OPJViewer
+
 April 12,2007
 * [Parvatha] Fixed Error in tiftoimage(). Modification in convert.c.
 

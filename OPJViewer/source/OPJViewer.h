@@ -182,6 +182,7 @@ class OPJViewerApp: public wxApp
 		int m_resizemethod;
 
 		// decoding engine parameters
+		bool m_enabledeco;
 		int m_reducefactor, m_qualitylayers, m_components, m_framenum;
 #ifdef USE_JPWL
 		bool m_enablejpwl;
@@ -562,8 +563,12 @@ public:
     OPJDecoderDialog(wxWindow* parent, int dialogType);
     ~OPJDecoderDialog();
 
+	wxBookCtrlBase* m_settingsNotebook;
+	wxCheckBox *m_enabledecoCheck;
 	wxSpinCtrl *m_reduceCtrl, *m_layerCtrl, *m_numcompsCtrl;
 	wxRadioBox* m_resizeBox;
+
+	void OnEnableDeco(wxCommandEvent& event);
 
     wxPanel* CreateMainSettingsPage(wxWindow* parent);
     wxPanel* CreatePart1SettingsPage(wxWindow* parent);
@@ -583,6 +588,7 @@ protected:
 		OPJDECO_REDUCEFACTOR,
 		OPJDECO_QUALITYLAYERS,
 		OPJDECO_NUMCOMPS,
+		OPJDECO_ENABLEDECO,
 		OPJDECO_ENABLEJPWL,
 		OPJDECO_EXPCOMPS,
 		OPJDECO_MAXTILES,
