@@ -97,7 +97,6 @@ braindamage below.
 #define J2K_MAXBANDS (3*J2K_MAXRLVLS-2)	/**< Number of maximum sub-band linked to number of resolution level */
 
 /* UniPG>> */
-#ifdef USE_JPWL
 #define JPWL_MAX_NO_TILESPECS	16 /**< Maximum number of tile parts expected by JPWL: increase at your will */
 #define JPWL_MAX_NO_PACKSPECS	16 /**< Maximum number of packet parts expected by JPWL: increase at your will */
 #define JPWL_MAX_NO_MARKERS	512 /**< Maximum number of JPWL markers: increase at your will */
@@ -105,7 +104,6 @@ braindamage below.
 #define JPWL_EXPECTED_COMPONENTS 3 /**< Expect this number of components, so you'll find better the first EPB */
 #define JPWL_MAXIMUM_TILES 8192 /**< Expect this maximum number of tiles, to avoid some crashes */
 #define JPWL_MAXIMUM_HAMMING 2 /**< Expect this maximum number of bit errors in marker id's */
-#endif /* USE_JPWL */
 /* <<UniPG */
 
 /* 
@@ -168,8 +166,9 @@ typedef enum CODEC_FORMAT {
 Limit decoding to certain portions of the codestream. 
 */
 typedef enum LIMIT_DECODING {
-	NO_LIMITATION = 0,				/**< No limitation for the decoding. The entire codestream will de decoded */
-	LIMIT_TO_MAIN_HEADER = 1	/**< The decoding is limited to the Main Header */
+	NO_LIMITATION = 0,				  /**< No limitation for the decoding. The entire codestream will de decoded */
+	LIMIT_TO_MAIN_HEADER = 1,		/**< The decoding is limited to the Main Header */
+	DECODE_ALL_BUT_PACKETS = 2	/**< Decode everything except the JPEG 2000 packets */
 } OPJ_LIMIT_DECODING;
 
 /* 
@@ -242,16 +241,6 @@ typedef struct opj_poc {
 Compression parameters
 */
 typedef struct opj_cparameters {
-	/** Digital Cinema compliance 0-not compliant, 1-compliant*/
-	OPJ_CINEMA_MODE cp_cinema;
-	/** Maximum rate for each component. If == 0, component size limitation is not considered */
-	int max_comp_size;
-	/** Profile name*/
-	OPJ_RSIZ_CAPABILITIES cp_rsiz;
-	/** Tile part generation*/
-	char tp_on;
-	/** Flag for Tile part generation*/
-	char tp_flag;
 	/** size of tile: tile_size_on = false (not in argument) or = true (in argument) */
 	bool tile_size_on;
 	/** XTOsiz */
@@ -332,7 +321,6 @@ typedef struct opj_cparameters {
 	/*@}*/
 
 /* UniPG>> */
-#ifdef USE_JPWL
 	/**@name JPWL encoding parameters */
 	/*@{*/
 	/** enables writing of EPC in MH, thus activating JPWL */
@@ -362,9 +350,20 @@ typedef struct opj_cparameters {
 	/** sensitivity methods for TPHs (-1=no,0-7) */
 	int jpwl_sens_TPH[JPWL_MAX_NO_TILESPECS];
 	/*@}*/
-#endif /* USE_JPWL */
 /* <<UniPG */
 
+	/** Digital Cinema compliance 0-not compliant, 1-compliant*/
+	OPJ_CINEMA_MODE cp_cinema;
+	/** Maximum rate for each component. If == 0, component size limitation is not considered */
+	int max_comp_size;
+	/** Profile name*/
+	OPJ_RSIZ_CAPABILITIES cp_rsiz;
+	/** Tile part generation*/
+	char tp_on;
+	/** Flag for Tile part generation*/
+	char tp_flag;
+	/** MCT (multiple component transform) */
+	char tcp_mct;
 } opj_cparameters_t;
 
 /**
@@ -387,14 +386,6 @@ typedef struct opj_dparameters {
 	*/
 	int cp_layer;
 
-	/** 
-	Specify whether the decoding should be done on the entire codestream, or be limited to the main header
-	Limiting the decoding to the main header makes it possible to extract the characteristics of the codestream
-	if == NO_LIMITATION, the entire codestream is decoded; 
-	if == LIMIT_TO_MAIN_HEADER, only the main header is decoded; 
-	*/
-	OPJ_LIMIT_DECODING cp_limit_decoding;
-
 	/**@name command line encoder parameters (not used inside the library) */
 	/*@{*/
 	/** input file name */
@@ -408,7 +399,6 @@ typedef struct opj_dparameters {
 	/*@}*/
 
 /* UniPG>> */
-#ifdef USE_JPWL
 	/**@name JPWL decoding parameters */
 	/*@{*/
 	/** activates the JPWL correction capabilities */
@@ -418,8 +408,16 @@ typedef struct opj_dparameters {
 	/** maximum number of tiles */
 	int jpwl_max_tiles;
 	/*@}*/
-#endif /* USE_JPWL */
 /* <<UniPG */
+
+	/** 
+	Specify whether the decoding should be done on the entire codestream, or be limited to the main header
+	Limiting the decoding to the main header makes it possible to extract the characteristics of the codestream
+	if == NO_LIMITATION, the entire codestream is decoded; 
+	if == LIMIT_TO_MAIN_HEADER, only the main header is decoded; 
+	*/
+	OPJ_LIMIT_DECODING cp_limit_decoding;
+
 } opj_dparameters_t;
 
 /** Common fields between JPEG-2000 compression and decompression master structs. */
@@ -430,7 +428,8 @@ typedef struct opj_dparameters {
 	bool is_decompressor;		/**< So common code can tell which is which */\
 	OPJ_CODEC_FORMAT codec_format;	/**< selected codec */\
 	void *j2k_handle;			/**< pointer to the J2K codec */\
-	void *jp2_handle			/**< pointer to the JP2 codec */
+	void *jp2_handle;			/**< pointer to the JP2 codec */\
+	void *mj2_handle			/**< pointer to the MJ2 codec */
 	
 /* Routines that are to be used by both halves of the library are declared
  * to receive a pointer to this structure.  There are no actual instances of

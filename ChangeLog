@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+April 25, 2007
++ [FOD] Modification of the openjpeg.h file to avoid and ABI break with v1.1, removed the dangerous #IFDEF JPWL and added tcp_mct in cparameters.
+
 April 23, 2007
 + [GB] Enable/disable image decoding in OPJViewer
 
