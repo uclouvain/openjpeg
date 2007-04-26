@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+April 26, 2007
++ [gdcm] Add basic steps on how to use CMake for building examples (README.cmake)
+
 April 25, 2007
 + [FOD] Modification of the openjpeg.h file to avoid and ABI break with v1.1, removed the dangerous #IFDEF JPWL and added tcp_mct in cparameters.
 
