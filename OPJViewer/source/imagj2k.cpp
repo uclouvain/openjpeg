@@ -85,27 +85,27 @@ void j2k_error_callback(const char *msg, void *client_data) {
 	int message_len = strlen(msg) - 1;
 	if (msg[message_len] != '\n')
 		message_len = MAX_MESSAGE_LEN;
-    /*wxMutexGuiEnter();
+    wxMutexGuiEnter();
 	wxLogMessage(wxT("[ERROR] %.*s"), message_len, msg);
-    wxMutexGuiLeave();*/
+    wxMutexGuiLeave();
 }
 /* sample warning callback expecting a FILE* client object */
 void j2k_warning_callback(const char *msg, void *client_data) {
 	int message_len = strlen(msg) - 1;
 	if (msg[message_len] != '\n')
 		message_len = MAX_MESSAGE_LEN;
-    /*wxMutexGuiEnter();
+    wxMutexGuiEnter();
 	wxLogMessage(wxT("[WARNING] %.*s"), message_len, msg);
-    wxMutexGuiLeave();*/
+    wxMutexGuiLeave();
 }
 /* sample debug callback expecting no client object */
 void j2k_info_callback(const char *msg, void *client_data) {
 	int message_len = strlen(msg) - 1;
 	if (msg[message_len] != '\n')
 		message_len = MAX_MESSAGE_LEN;
-    /*wxMutexGuiEnter();
+    wxMutexGuiEnter();
 	wxLogMessage(wxT("[INFO] %.*s"), message_len, msg);
-    wxMutexGuiLeave();*/
+    wxMutexGuiLeave();
 }
 
 // load the j2k codestream
@@ -118,6 +118,7 @@ bool wxJ2KHandler::LoadFile(wxImage *image, wxInputStream& stream, bool verbose,
     unsigned char *ptr;
 	int file_length;
 	int shiftbpp;
+	int c, tempcomps;
 
 	// destroy the image
     image->Destroy();
@@ -193,14 +194,6 @@ bool wxJ2KHandler::LoadFile(wxImage *image, wxInputStream& stream, bool verbose,
 	opj_cio_close(cio);
 
 	// check image components
-	if ((opjimage->numcomps != 1) && (opjimage->numcomps != 3)) {
-		wxMutexGuiEnter();
-		wxLogError(wxT("J2K: weird number of components"));
-		wxMutexGuiLeave();
-		opj_destroy_decompress(dinfo);
-		free(src);
-		return false;
-	}
 
 	// check image depth (only on the first one, for now)
 	shiftbpp = opjimage->comps[0].prec - 8;
@@ -212,8 +205,34 @@ bool wxJ2KHandler::LoadFile(wxImage *image, wxInputStream& stream, bool verbose,
     image->SetMask( false );
     ptr = image->GetData();
 
+	// workaround for components different from 1 or 3
+	if ((opjimage->numcomps != 1) && (opjimage->numcomps != 3)) {
+		wxMutexGuiEnter();
+		wxLogMessage(wxT("J2K: weird number of components"));
+		tempcomps = 1;
+		wxMutexGuiLeave();
+	} else
+		tempcomps = opjimage->numcomps;
+
+	// workaround for subsampled components
+	for (c = 1; c < tempcomps; c++) {
+		if ((opjimage->comps[c].w != opjimage->comps[c - 1].w) || (opjimage->comps[c].h != opjimage->comps[c - 1].h)) {
+			tempcomps = 1;
+			break;
+		}
+	}
+
+	// workaround for different precision components
+	for (c = 1; c < tempcomps; c++) {
+		if (opjimage->comps[c].bpp != opjimage->comps[c - 1].bpp) {
+			tempcomps = 1;
+			break;
+		}
+	}
+
+
 	// RGB color picture
-	if (opjimage->numcomps == 3) {
+	if (tempcomps == 3) {
 		int row, col;
 		int *r = opjimage->comps[0].data;
 		int *g = opjimage->comps[1].data;
@@ -254,7 +273,7 @@ bool wxJ2KHandler::LoadFile(wxImage *image, wxInputStream& stream, bool verbose,
 	}
 
 	// B/W picture
-	if (opjimage->numcomps == 1) {
+	if (tempcomps == 1) {
 		int row, col;
 		int *y = opjimage->comps[0].data;
 		if (shiftbpp > 0) {

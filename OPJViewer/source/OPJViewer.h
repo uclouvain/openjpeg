@@ -113,6 +113,7 @@ typedef unsigned long long int8byte;
 #endif // __WXGTK__
 
 #define USE_GENERIC_TREECTRL 0
+#define USE_PENCIL_ON_CANVAS 0
 
 #if USE_GENERIC_TREECTRL
 #include "wx/generic/treectlg.h"
@@ -124,7 +125,7 @@ typedef unsigned long long int8byte;
 
 #define OPJ_APPLICATION             wxT("OPJViewer")
 #define OPJ_APPLICATION_NAME		wxT("OpenJPEG Viewer")
-#define OPJ_APPLICATION_VERSION		wxT("0.2 alpha")
+#define OPJ_APPLICATION_VERSION		wxT("0.3 alpha")
 #define OPJ_APPLICATION_TITLEBAR	OPJ_APPLICATION_NAME wxT(" ") OPJ_APPLICATION_VERSION
 #define OPJ_APPLICATION_COPYRIGHT	wxT("(C) 2007, Giuseppe Baruffa")
 

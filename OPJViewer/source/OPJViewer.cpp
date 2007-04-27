@@ -803,6 +803,7 @@ void OPJCanvas::OnDraw(wxDC& dc)
 // the left button.
 void OPJCanvas::OnEvent(wxMouseEvent& event)
 {
+#if USE_PENCIL_ON_CANVAS
   wxClientDC dc(this);
   PrepareDC(dc);
 
@@ -814,6 +815,7 @@ void OPJCanvas::OnEvent(wxMouseEvent& event)
   }
   xpos = pt.x;
   ypos = pt.y;
+#endif
 }
 
 void OPJFrame::OnSize(wxSizeEvent& WXUNUSED(event))
@@ -856,7 +858,9 @@ const long style):
 	GetClientSize(&width, &height);
 
 	OPJCanvas *canvas = new OPJCanvas(fname, this, wxPoint(0, 0), wxSize(width, height));
+#if USE_PENCIL_ON_CANVAS
 	canvas->SetCursor(wxCursor(wxCURSOR_PENCIL));
+#endif
 	m_canvas = canvas;
 
 	// Give it scrollbars

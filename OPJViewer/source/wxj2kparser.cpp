@@ -201,9 +201,9 @@ void OPJParseThread::ParseJ2KFile(wxFile *m_file, wxFileOffset offset, wxFileOff
 
 			// randomly marker coincident data
 			if ((currmark != SOT_VAL) &&
-				(currmark != EOC_VAL) /*&&
+				(currmark != EOC_VAL) &&
 				(currmark != SOP_VAL) &&
-				(currmark != EPH_VAL)*/) {
+				(currmark != EPH_VAL)) {
 				OPJ_ADVANCE(1);
 				continue;
 			}
