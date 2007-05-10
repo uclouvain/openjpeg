@@ -1474,24 +1474,27 @@ static void j2k_write_eoc(opj_j2k_t *j2k) {
 static void j2k_read_eoc(opj_j2k_t *j2k) {
 	int i, tileno;
 
-#ifndef NO_PACKETS_DECODING  
-	opj_tcd_t *tcd = tcd_create(j2k->cinfo);
-	tcd_malloc_decode(tcd, j2k->image, j2k->cp);
-	for (i = 0; i < j2k->cp->tileno_size; i++) {
-		tileno = j2k->cp->tileno[i];
-		tcd_decode_tile(tcd, j2k->tile_data[tileno], j2k->tile_len[tileno], tileno);
-		opj_free(j2k->tile_data[tileno]);
-		j2k->tile_data[tileno] = NULL;
+	/* if packets should be decoded */
+	if (j2k->cp->limit_decoding != DECODE_ALL_BUT_PACKETS) {
+		opj_tcd_t *tcd = tcd_create(j2k->cinfo);
+		tcd_malloc_decode(tcd, j2k->image, j2k->cp);
+		for (i = 0; i < j2k->cp->tileno_size; i++) {
+			tileno = j2k->cp->tileno[i];
+			tcd_decode_tile(tcd, j2k->tile_data[tileno], j2k->tile_len[tileno], tileno);
+			opj_free(j2k->tile_data[tileno]);
+			j2k->tile_data[tileno] = NULL;
+		}
+		tcd_free_decode(tcd);
+		tcd_destroy(tcd);
 	}
-	tcd_free_decode(tcd);
-	tcd_destroy(tcd);
-#else 
-	for (i = 0; i < j2k->cp->tileno_size; i++) {
-		tileno = j2k->cp->tileno[i];
-		opj_free(j2k->tile_data[tileno]);
-		j2k->tile_data[tileno] = NULL;
+	/* if packets should not be decoded  */
+	else {
+		for (i = 0; i < j2k->cp->tileno_size; i++) {
+			tileno = j2k->cp->tileno[i];
+			opj_free(j2k->tile_data[tileno]);
+			j2k->tile_data[tileno] = NULL;
+		}
 	}
-#endif
 	
 	j2k->state = J2K_STATE_MT;
 }
@@ -2083,7 +2086,7 @@ void j2k_setup_encoder(opj_j2k_t *j2k, opj_cparameters_t *parameters, opj_image_
 		}
 		tcp->csty = parameters->csty;
 		tcp->prg = parameters->prog_order;
-		tcp->mct = image->numcomps == 3 ? 1 : 0;
+		tcp->mct = parameters->tcp_mct; 
 
 		numpocs_tile = 0;
 		tcp->POC = 0;

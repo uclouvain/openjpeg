@@ -1542,6 +1542,8 @@ int main(int argc, char **argv) {
 					}
 				break;
 		}
+			/* Decide if MCT should be used */
+			parameters.tcp_mct = image->numcomps == 3 ? 1 : 0;
 
 			if(parameters.cp_cinema){
 				cinema_setup_encoder(&parameters,image);
