@@ -102,6 +102,19 @@ typedef struct opj_jp2_box {
 /*@{*/
 /* ----------------------------------------------------------------------- */
 /**
+Write the JP2H box - JP2 Header box (used in MJ2)
+@param jp2 JP2 handle
+@param cio Output buffer stream
+*/
+void jp2_write_jp2h(opj_jp2_t *jp2, opj_cio_t *cio);
+/**
+Read the JP2H box - JP2 Header box (used in MJ2)
+@param jp2 JP2 handle
+@param cio Input buffer stream
+@return Returns true if successful, returns false otherwise
+*/
+bool jp2_read_jp2h(opj_jp2_t *jp2, opj_cio_t *cio);
+/**
 Creates a JP2 decompression structure
 @param cinfo Codec context info
 @return Returns a handle to a JP2 decompressor if successful, returns NULL otherwise

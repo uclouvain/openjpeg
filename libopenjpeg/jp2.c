@@ -59,19 +59,6 @@ static bool jp2_read_bpcc(opj_jp2_t *jp2, opj_cio_t *cio);
 static void jp2_write_colr(opj_jp2_t *jp2, opj_cio_t *cio);
 static bool jp2_read_colr(opj_jp2_t *jp2, opj_cio_t *cio);
 /**
-Write the JP2H box - JP2 Header box
-@param jp2 JP2 handle
-@param cio Output buffer stream
-*/
-static void jp2_write_jp2h(opj_jp2_t *jp2, opj_cio_t *cio);
-/**
-Read the JP2H box - JP2 Header box
-@param jp2 JP2 handle
-@param cio Input buffer stream
-@return Returns true if successful, returns false otherwise
-*/
-static bool jp2_read_jp2h(opj_jp2_t *jp2, opj_cio_t *cio);
-/**
 Write the FTYP box - File type box
 @param jp2 JP2 handle
 @param cio Output buffer stream
@@ -308,7 +295,7 @@ static bool jp2_read_colr(opj_jp2_t *jp2, opj_cio_t *cio) {
 	return true;
 }
 
-static void jp2_write_jp2h(opj_jp2_t *jp2, opj_cio_t *cio) {
+void jp2_write_jp2h(opj_jp2_t *jp2, opj_cio_t *cio) {
 	opj_jp2_box_t box;
 
 	box.init_pos = cio_tell(cio);
@@ -328,7 +315,7 @@ static void jp2_write_jp2h(opj_jp2_t *jp2, opj_cio_t *cio) {
 	cio_seek(cio, box.init_pos + box.length);
 }
 
-static bool jp2_read_jp2h(opj_jp2_t *jp2, opj_cio_t *cio) {
+bool jp2_read_jp2h(opj_jp2_t *jp2, opj_cio_t *cio) {
 	opj_jp2_box_t box;
 	int skip_len;
 
