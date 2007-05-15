@@ -5,6 +5,11 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+May 11, 2007
+- [FOD]	JP3D library Binaries removed from SVN.
+! [FOD] MJ2 codec updated from LibOpenJPEG version 0.97 to LibOpenJPEG version 1. Hence, the MJ2 codec will now take advantage of all the improvements and optimizations done on the LibOpenJPEG library.
+! [FOD] Possibility to choose to apply MCT (multiple component transform) enabled, and new decoding_limit: DECODE_ALL_BUT_PACKETS (openjpeg.h)
+
 April 26, 2007
 + [gdcm] Add basic steps on how to use CMake for building examples (README.cmake)
 
