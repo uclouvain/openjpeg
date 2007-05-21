@@ -88,6 +88,8 @@ in T1.C are used by some function in TCD.C.
 
 /* ----------------------------------------------------------------------- */
 
+typedef short flag_t;
+
 /**
 Tier-1 coding (coding of code-block coefficients)
 */
@@ -101,7 +103,7 @@ typedef struct opj_t1 {
 	opj_raw_t *raw;
 
 	int data[T1_MAXCBLKH][T1_MAXCBLKW];
-	int flags[T1_MAXCBLKH + 2][T1_MAXCBLKW + 2];
+	flag_t flags[T1_MAXCBLKH + 2][T1_MAXCBLKW + 2];
 
 } opj_t1_t;
 
