@@ -100,15 +100,6 @@ typedef struct opj_t1 {
 	/** RAW component */
 	opj_raw_t *raw;
 
-	int lut_ctxno_zc[1024];
-	int lut_ctxno_sc[256];
-	int lut_ctxno_mag[4096];
-	int lut_spb[256];
-	int lut_nmsedec_sig[1 << T1_NMSEDEC_BITS];
-	int lut_nmsedec_sig0[1 << T1_NMSEDEC_BITS];
-	int lut_nmsedec_ref[1 << T1_NMSEDEC_BITS];
-	int lut_nmsedec_ref0[1 << T1_NMSEDEC_BITS];
-
 	int data[T1_MAXCBLKH][T1_MAXCBLKW];
 	int flags[T1_MAXCBLKH + 2][T1_MAXCBLKW + 2];
 

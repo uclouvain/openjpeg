@@ -243,6 +243,10 @@ SOURCE=libopenjpeg\t1.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\libopenjpeg\t1_luts.h
+# End Source File
+# Begin Source File
+
 SOURCE=libopenjpeg\t2.h
 # End Source File
 # Begin Source File
