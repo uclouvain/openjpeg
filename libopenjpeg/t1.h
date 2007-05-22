@@ -44,9 +44,6 @@ in T1.C are used by some function in TCD.C.
 /* ----------------------------------------------------------------------- */
 #define T1_NMSEDEC_BITS 7
 
-#define T1_MAXCBLKW 1024	/**< Maximum size of code-block (width) */
-#define T1_MAXCBLKH 1024	/**< Maximum size of code-block (heigth) */
-
 #define T1_SIG_NE 0x0001	/**< Context orientation : North-East direction */
 #define T1_SIG_SE 0x0002	/**< Context orientation : South-East direction */
 #define T1_SIG_SW 0x0004	/**< Context orientation : South-West direction */
@@ -102,10 +99,16 @@ typedef struct opj_t1 {
 	/** RAW component */
 	opj_raw_t *raw;
 
-	int data[T1_MAXCBLKH][T1_MAXCBLKW];
-	flag_t flags[T1_MAXCBLKH + 2][T1_MAXCBLKW + 2];
-
+	int *data;
+	flag_t *flags;
+	int w;
+	int h;
+	int datasize;
+	int flagssize;
+	int flags_stride;
 } opj_t1_t;
+
+#define MACRO_t1_flags(x,y) t1->flags[((x)*(t1->flags_stride))+(y)]
 
 /** @name Exported functions */
 /*@{*/
