@@ -1031,8 +1031,8 @@ static void j2k_read_poc(opj_j2k_t *j2k) {
 		poc = &tcp->pocs[i];
 		poc->resno0 = cio_read(cio, 1);	/* RSpoc_i */
 		poc->compno0 = cio_read(cio, numcomps <= 256 ? 1 : 2);	/* CSpoc_i */
-		poc->layno1 = int_min(cio_read(cio, 2), (unsigned int) tcp->numlayers);	/* LYEpoc_i */
-		poc->resno1 = int_min(cio_read(cio, 1), (unsigned int) tccp->numresolutions);	/* REpoc_i */
+		poc->layno1 = cio_read(cio, 2);    /* LYEpoc_i */
+		poc->resno1 = cio_read(cio, 1);    /* REpoc_i */
 		poc->compno1 = int_min(
 			cio_read(cio, numcomps <= 256 ? 1 : 2), (unsigned int) numcomps);	/* CEpoc_i */
 		poc->prg = (OPJ_PROG_ORDER)cio_read(cio, 1);	/* Ppoc_i */
