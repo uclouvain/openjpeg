@@ -465,6 +465,10 @@ void cinema_parameters(opj_cparameters_t *parameters){
 	parameters->roi_compno = -1;
 
 	parameters->subsampling_dx = 1;		parameters->subsampling_dy = 1;
+
+	/* 9-7 transform */
+	parameters->irreversible = 1;
+
 }
 
 void cinema_setup_encoder(opj_cparameters_t *parameters,opj_image_t *image){

@@ -1082,7 +1082,7 @@ typedef struct tiff_infoheader{
 }tiff_infoheader_t;
 
 int imagetotif(opj_image_t * image, const char *outfile) {
-	int width, height, imgsize;
+	int width, height;
 	int bps,index;
 	TIFF *tif;
 	tdata_t buf;
@@ -1107,8 +1107,7 @@ int imagetotif(opj_image_t * image, const char *outfile) {
 			}
 
 			width	= image->comps[0].w;
-			height	= image->comps[0].h;
-			imgsize = image->comps[0].w * image->comps[0].h ;
+			height= image->comps[0].h;
 			bps		= image->comps[0].prec;
 			/* Set tags */
 			TIFFSetField(tif, TIFFTAG_IMAGEWIDTH, width);
@@ -1130,74 +1129,34 @@ int imagetotif(opj_image_t * image, const char *outfile) {
 				int i;
 				dat8 = buf;
 				if (image->comps[0].prec == 8){
-					for (i=0; i < strip_size; i+=3) {	// 8 bits per pixel 
-						int r = 0,g = 0,b = 0;
-						if(index < imgsize){
-							r = image->comps[0].data[index];
-							r += (image->comps[0].sgnd ? 1 << (image->comps[0].prec - 1) : 0);
-							g = image->comps[1].data[index];
-							g += (image->comps[0].sgnd ? 1 << (image->comps[0].prec - 1) : 0);
-							b = image->comps[2].data[index];
-							b += (image->comps[0].sgnd ? 1 << (image->comps[0].prec - 1) : 0);
-
-							dat8[i+0] = r ;	// R 
-							dat8[i+1] = g ;	// G 
-							dat8[i+2] = b ;	// B 
-							index++;
-						}else
-							break;
+					for (i=0; i<TIFFStripSize(tif); i+=3) {	// 8 bits per pixel 
+						dat8[i+0] = image->comps[0].data[index] ;	// R 
+						dat8[i+1] = image->comps[1].data[index] ;	// G 
+						dat8[i+2] = image->comps[2].data[index] ;	// B 
+						index++;
 					}
 				}else if (image->comps[0].prec == 12){
-					for (i=0; i<strip_size; i+=9) {	// 12 bits per pixel 
-						int r = 0,g = 0,b = 0;
-						int r1 = 0,g1 = 0,b1 = 0;
-						if(index < imgsize){
-							r = image->comps[0].data[index];
-							r += (image->comps[0].sgnd ? 1 << (image->comps[0].prec - 1) : 0);
-							g = image->comps[1].data[index];
-							g += (image->comps[0].sgnd ? 1 << (image->comps[0].prec - 1) : 0);
-							b = image->comps[2].data[index];
-							b += (image->comps[0].sgnd ? 1 << (image->comps[0].prec - 1) : 0);
-							r1 = image->comps[0].data[index+1];
-							r1 += (image->comps[0].sgnd ? 1 << (image->comps[0].prec - 1) : 0);
-							g1 = image->comps[1].data[index+1];
-							g1 += (image->comps[0].sgnd ? 1 << (image->comps[0].prec - 1) : 0);
-							b1 = image->comps[2].data[index+1];
-							b1 += (image->comps[0].sgnd ? 1 << (image->comps[0].prec - 1) : 0);
-
-							dat8[i+0] = (r >> 4);
-							dat8[i+1] = ((r & 0x0f) << 4 )|((g >> 8)& 0x0f);
-							dat8[i+2] = g ;
-							dat8[i+3] = (b >> 4);
-							dat8[i+4] = ((b & 0x0f) << 4 )|((r1 >> 8)& 0x0f);
-							dat8[i+5] = (r1);
-							dat8[i+6] = (g1 >> 4);
-							dat8[i+7] = ((g1 & 0x0f)<< 4 )|((b1 >> 8)& 0x0f);
-							dat8[i+8] = (b1);
-							index+=2;
-						}else
-							break;
+					for (i=0; i<TIFFStripSize(tif); i+=9) {	// 12 bits per pixel 
+						dat8[i+0] = (image->comps[0].data[index]>>8)<<4 | (image->comps[0].data[index]>>4);
+						dat8[i+1] = (image->comps[0].data[index]<<4)|((image->comps[1].data[index]>>8)& 0x0f);
+						dat8[i+2] = (image->comps[1].data[index]);
+						dat8[i+3] = (image->comps[2].data[index]>>8)<<4 | (image->comps[2].data[index]>>4);
+						dat8[i+4] = (image->comps[2].data[index]<<4)|((image->comps[1].data[index+1]>>8)& 0x0f);
+						dat8[i+5] = (image->comps[0].data[index+1]);
+						dat8[i+6] = (image->comps[1].data[index+1]>>8)<<4 | (image->comps[1].data[index+1]>>4);
+						dat8[i+7] = (image->comps[1].data[index+1]<<4)|((image->comps[2].data[index+1]>>8)& 0x0f);
+						dat8[i+8] = (image->comps[2].data[index+1]);
+						index+=2;
 					}
 				}else if (image->comps[0].prec == 16){
-					for (i=0; i<strip_size; i+=6) {	// 16 bits per pixel
-						int r = 0,g = 0,b = 0;
-						if(index < imgsize){
-							r = image->comps[0].data[index];
-							r += (image->comps[0].sgnd ? 1 << (image->comps[0].prec - 1) : 0);
-							g = image->comps[1].data[index];
-							g += (image->comps[0].sgnd ? 1 << (image->comps[0].prec - 1) : 0);
-							b = image->comps[2].data[index];
-							b += (image->comps[0].sgnd ? 1 << (image->comps[0].prec - 1) : 0);
-
-							dat8[i+0] =  r;//LSB
-							dat8[i+1] = (r >> 8);//MSB	 
-							dat8[i+2] =  g; 
-							dat8[i+3] = (g >> 8);	
-							dat8[i+4] =  b;	 
-							dat8[i+5] = (b >> 8); 
-							index++;
-						}else
-							break;
+					for (i=0; i<TIFFStripSize(tif); i+=6) {	// 16 bits per pixel 
+						dat8[i+0] =  image->comps[0].data[index];//LSB
+						dat8[i+1] = (image->comps[0].data[index]>> 8);//MSB	 
+						dat8[i+2] =  image->comps[1].data[index]; 
+						dat8[i+3] = (image->comps[1].data[index]>> 8);	
+						dat8[i+4] =  image->comps[2].data[index];	 
+						dat8[i+5] = (image->comps[2].data[index]>> 8); 
+						index++;
 					}
 				}else{
 					fprintf(stderr,"Bits=%d, Only 8,12,16 bits implemented\n",image->comps[0].prec);
@@ -1290,7 +1249,6 @@ opj_image_t* tiftoimage(char *filename, opj_cparameters_t *parameters)
 	OPJ_COLOR_SPACE color_space;
 	opj_image_cmptparm_t cmptparm[3];
 	opj_image_t * image = NULL;
-	int imgsize;
 
 	tif = TIFFOpen(filename, "r");
 
@@ -1309,7 +1267,7 @@ opj_image_t* tiftoimage(char *filename, opj_cparameters_t *parameters)
 	TIFFGetField(tif, TIFFTAG_PLANARCONFIG, &Info.tiPC);
 	w= Info.tiWidth;
 	h= Info.tiHeight;
-
+	
 	if (Info.tiPhoto == 2) { 
 		/* -->> -->> -->>    
 		RGB color	    
@@ -1320,8 +1278,13 @@ opj_image_t* tiftoimage(char *filename, opj_cparameters_t *parameters)
 		/* initialize image components*/ 
 		memset(&cmptparm[0], 0, 3 * sizeof(opj_image_cmptparm_t));
 		for(j = 0; j < numcomps; j++) {
-			cmptparm[j].prec = Info.tiBps;
-			cmptparm[j].bpp = Info.tiBps;
+			if ((parameters->cp_cinema) & (Info.tiBps== 16)){
+				cmptparm[j].prec = 12;
+				cmptparm[j].bpp = 12;
+			}else{
+				cmptparm[j].prec = Info.tiBps;
+				cmptparm[j].bpp = Info.tiBps;
+			}
 			cmptparm[j].sgnd = 0;
 			cmptparm[j].dx = subsampling_dx;
 			cmptparm[j].dy = subsampling_dy;
@@ -1345,7 +1308,6 @@ opj_image_t* tiftoimage(char *filename, opj_cparameters_t *parameters)
 		strip_size=0;
 		strip_size=TIFFStripSize(tif);
 		index = 0;
-		imgsize = image->comps[0].w * image->comps[0].h ;
 		/* Read the Image components*/
 		for (strip = 0; strip < TIFFNumberOfStrips(tif); strip++) {
 			unsigned char *dat8;
@@ -1355,38 +1317,34 @@ opj_image_t* tiftoimage(char *filename, opj_cparameters_t *parameters)
 
 			if (Info.tiBps==12){
 				for (i=0; i<ssize; i+=9) {	/*12 bits per pixel*/
-					if(index < imgsize){
-						image->comps[0].data[index]   = ( dat8[i+0]<<4 )		|(dat8[i+1]>>4);
-						image->comps[1].data[index]   = ((dat8[i+1]& 0x0f)<< 8)	| dat8[i+2];
-						image->comps[2].data[index]   = ( dat8[i+3]<<4)			|(dat8[i+4]>>4);
-						image->comps[0].data[index+1] = ((dat8[i+4]& 0x0f)<< 8)	| dat8[i+5];
-						image->comps[1].data[index+1] = ( dat8[i+6] <<4)		|(dat8[i+7]>>4);
-						image->comps[2].data[index+1] = ((dat8[i+7]& 0x0f)<< 8)	| dat8[i+8];
-						index+=2;
-					}else
-						break;
+					image->comps[0].data[index]   = ( dat8[i+0]<<4 )		|(dat8[i+1]>>4);
+					image->comps[1].data[index]   = ((dat8[i+1]& 0x0f)<< 8)	| dat8[i+2];
+					image->comps[2].data[index]   = ( dat8[i+3]<<4)			|(dat8[i+4]>>4);
+					image->comps[0].data[index+1] = ((dat8[i+4]& 0x0f)<< 8)	| dat8[i+5];
+					image->comps[1].data[index+1] = ( dat8[i+6] <<4)		|(dat8[i+7]>>4);
+					image->comps[2].data[index+1] = ((dat8[i+7]& 0x0f)<< 8)	| dat8[i+8];
+					index+=2;
 				}
 			}
 			else if( Info.tiBps==16){
 				for (i=0; i<ssize; i+=6) {	/* 16 bits per pixel */
-					if(index < imgsize){
-						image->comps[0].data[index] = ( dat8[i+1] << 8 ) | dat8[i+0];	// R 
-						image->comps[1].data[index] = ( dat8[i+3] << 8 ) | dat8[i+2];	// G 
-						image->comps[2].data[index] = ( dat8[i+5] << 8 ) | dat8[i+4];	// B 
-						index++;
-					}else
-						break;
+					image->comps[0].data[index] = ( dat8[i+1] << 8 ) | dat8[i+0];	// R 
+					image->comps[1].data[index] = ( dat8[i+3] << 8 ) | dat8[i+2];	// G 
+					image->comps[2].data[index] = ( dat8[i+5] << 8 ) | dat8[i+4];	// B 
+					if(parameters->cp_cinema){/* Rounding to 12 bits*/
+						image->comps[0].data[index] = (image->comps[0].data[index] + 0x08) >> 4 ;
+						image->comps[1].data[index] = (image->comps[1].data[index] + 0x08) >> 4 ;
+						image->comps[2].data[index] = (image->comps[2].data[index] + 0x08) >> 4 ;
+                    }
+					index++;
 				}
 			}
 			else if ( Info.tiBps==8){
 				for (i=0; i<ssize; i+=3) {	/* 8 bits per pixel */
-					if(index < imgsize){
-						image->comps[0].data[index] = dat8[i+0];	// R 
-						image->comps[1].data[index] = dat8[i+1];	// G 
-						image->comps[2].data[index] = dat8[i+2];	// B 
-						index++;
-					}else
-						break;
+					image->comps[0].data[index] = dat8[i+0];	// R 
+					image->comps[1].data[index] = dat8[i+1];	// G 
+					image->comps[2].data[index] = dat8[i+2];	// B 
+					index++;
 				}
 			}
 			else{
