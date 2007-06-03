@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+June 2, 2007
++ [GB] OPJViewer opens now BMP, PNG, GIF, PNM, TIFF (with wxWidgets internals); added an encoder settings tab, for future integration with "save file as..." in JPEG 2000 format
+
 May 31, 2007
 * [FOD] Fixed the handling of 16bit TIFF files for cinema compression. Modified "convert.c"
 * [FOD] Fixed the parameters used for cinema compression (9-7 transform used instead of 5-3). Modified "image_to_j2k.c"

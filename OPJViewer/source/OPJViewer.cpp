@@ -194,6 +194,13 @@ bool OPJViewerApp::OnInit(void)
   wxImage::AddHandler( new wxJP2Handler );
   wxImage::AddHandler( new wxMJ2Handler );
 #endif
+#if OPJ_MANYFORMATS
+  wxImage::AddHandler( new wxBMPHandler );
+  wxImage::AddHandler( new wxPNGHandler );
+  wxImage::AddHandler( new wxGIFHandler );
+  wxImage::AddHandler( new wxPNMHandler );
+  wxImage::AddHandler( new wxTIFFHandler );
+#endif
     // we use a XPM image in our HTML page
     wxImage::AddHandler(new wxXPMHandler);
 
@@ -268,6 +275,7 @@ BEGIN_EVENT_TABLE(OPJFrame, wxMDIParentFrame)
     EVT_MENU(OPJFRAME_VIEWRELOAD, OPJFrame::OnReload)
     EVT_MENU(OPJFRAME_FILETOGGLEB, OPJFrame::OnToggleBrowser)
     EVT_MENU(OPJFRAME_FILETOGGLEP, OPJFrame::OnTogglePeeker)
+    EVT_MENU(OPJFRAME_SETSENCO, OPJFrame::OnSetsEnco)
     EVT_MENU(OPJFRAME_SETSDECO, OPJFrame::OnSetsDeco)
     EVT_SASH_DRAGGED_RANGE(OPJFRAME_BROWSEWIN, OPJFRAME_LOGWIN, OPJFrame::OnSashDrag)
     EVT_NOTEBOOK_PAGE_CHANGED(LEFT_NOTEBOOK_ID, OPJFrame::OnNotebook)
@@ -310,6 +318,9 @@ OPJFrame::OPJFrame(wxWindow *parent, const wxWindowID id, const wxString& title,
 
 	// settings menu and its items
 	wxMenu *sets_menu = new wxMenu;
+
+	sets_menu->Append(OPJFRAME_SETSENCO, wxT("&Encoder\tCtrl+E"));
+	sets_menu->SetHelpString(OPJFRAME_SETSENCO, wxT("Encoder settings"));
 
 	sets_menu->Append(OPJFRAME_SETSDECO, wxT("&Decoder\tCtrl+D"));
 	sets_menu->SetHelpString(OPJFRAME_SETSDECO, wxT("Decoder settings"));
@@ -442,6 +453,15 @@ void OPJFrame::OnNotebook(wxNotebookEvent& event)
 void OPJFrame::Resize(int number)
 {
 	wxSize size = GetClientSize();
+}
+
+void OPJFrame::OnSetsEnco(wxCommandEvent& event)
+{
+    OPJEncoderDialog dialog(this, event.GetId());
+
+    if (dialog.ShowModal() == wxID_OK) {
+
+	};
 }
 
 void OPJFrame::OnSetsDeco(wxCommandEvent& event)
@@ -717,9 +737,22 @@ void OPJFrame::OnFileOpen(wxCommandEvent& WXUNUSED(event))
 #ifdef __WXMOTIF__
 	wxT("JPEG 2000 files (*.jp2,*.j2k,*.j2c,*.mj2)|*.*j*2*");
 #else
-	wxT("JPEG 2000 files (*.jp2,*.j2k,*.j2c,*.mj2)|*.jp2;*.j2k;*.j2c;*.mj2|JPEG files (*.jpg)|*.jpg|All files|*");
+#if wxUSE_LIBOPENJPEG
+	wxT("JPEG 2000 files (*.jp2,*.j2k,*.j2c,*.mj2)|*.jp2;*.j2k;*.j2c;*.mj2")
 #endif
-    wxFileDialog dialog(this, _T("Open JPEG 2000 file(s)"),
+#if wxUSE_LIBJPEG
+		wxT("|JPEG files (*.jpg)|*.jpg")
+#endif
+#if OPJ_MANYFORMATS
+		wxT("|BMP files (*.bmp)|*.bmp")
+		wxT("|PNG files (*.png)|*.png")
+		wxT("|GIF files (*.gif)|*.gif")
+		wxT("|PNM files (*.pnm)|*.pnm")
+		wxT("|TIFF files (*.tif,*.tiff)|*.tif*")
+#endif
+		wxT("|All files|*");
+#endif
+    wxFileDialog dialog(this, _T("Open image file(s)"),
                         wxEmptyString, wxEmptyString, wildcards,
                         wxFD_OPEN|wxFD_MULTIPLE);
 
@@ -2082,110 +2115,6 @@ OPJDecoderDialog::~OPJDecoderDialog()
 {
 }
 
-/*wxPanel* OPJDecoderDialog::CreateGeneralSettingsPage(wxWindow* parent)
-{
-    wxPanel* panel = new wxPanel(parent, wxID_ANY);
-
-    wxBoxSizer *topSizer = new wxBoxSizer( wxVERTICAL );
-    wxBoxSizer *item0 = new wxBoxSizer( wxVERTICAL );
-
-    //// LOAD LAST FILE
-
-    wxBoxSizer* itemSizer3 = new wxBoxSizer( wxHORIZONTAL );
-    wxCheckBox* checkBox3 = new wxCheckBox(panel, ID_LOAD_LAST_PROJECT, _("&Load last project on startup"), wxDefaultPosition, wxDefaultSize);
-    itemSizer3->Add(checkBox3, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
-    item0->Add(itemSizer3, 0, wxGROW|wxALL, 0);
-
-    //// AUTOSAVE
-
-    wxString autoSaveLabel = _("&Auto-save every");
-    wxString minsLabel = _("mins");
-
-    wxBoxSizer* itemSizer12 = new wxBoxSizer( wxHORIZONTAL );
-    wxCheckBox* checkBox12 = new wxCheckBox(panel, ID_AUTO_SAVE, autoSaveLabel, wxDefaultPosition, wxDefaultSize);
-
-    wxSpinCtrl* spinCtrl12 = new wxSpinCtrl(panel, ID_AUTO_SAVE_MINS, wxEmptyString,
-        wxDefaultPosition, wxSize(40, wxDefaultCoord), wxSP_ARROW_KEYS, 1, 60, 1);
-
-    itemSizer12->Add(checkBox12, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
-    itemSizer12->Add(spinCtrl12, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
-    itemSizer12->Add(new wxStaticText(panel, wxID_STATIC, minsLabel), 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
-    item0->Add(itemSizer12, 0, wxGROW|wxALL, 0);
-
-    //// TOOLTIPS
-
-    wxBoxSizer* itemSizer8 = new wxBoxSizer( wxHORIZONTAL );
-    wxCheckBox* checkBox6 = new wxCheckBox(panel, ID_SHOW_TOOLTIPS, _("Show &tooltips"), wxDefaultPosition, wxDefaultSize);
-    itemSizer8->Add(checkBox6, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
-    item0->Add(itemSizer8, 0, wxGROW|wxALL, 0);
-
-    topSizer->Add( item0, 1, wxGROW|wxALIGN_CENTRE|wxALL, 5 );
-
-    panel->SetSizer(topSizer);
-    topSizer->Fit(panel);
-
-    return panel;
-}*/
-
-/*wxPanel* OPJDecoderDialog::CreateAestheticSettingsPage(wxWindow* parent)
-{
-    wxPanel* panel = new wxPanel(parent, wxID_ANY);
-
-    wxBoxSizer *topSizer = new wxBoxSizer( wxVERTICAL );
-    wxBoxSizer *item0 = new wxBoxSizer( wxVERTICAL );
-
-    //// PROJECT OR GLOBAL
-    wxString globalOrProjectChoices[2];
-    globalOrProjectChoices[0] = _("&New projects");
-    globalOrProjectChoices[1] = _("&This project");
-
-    wxRadioBox* projectOrGlobal = new wxRadioBox(panel, ID_APPLY_SETTINGS_TO, _("&Apply settings to:"),
-        wxDefaultPosition, wxDefaultSize, 2, globalOrProjectChoices);
-    item0->Add(projectOrGlobal, 0, wxGROW|wxALL, 5);
-
-    projectOrGlobal->SetSelection(0);
-
-    //// BACKGROUND STYLE
-    wxArrayString backgroundStyleChoices;
-    backgroundStyleChoices.Add(wxT("Colour"));
-    backgroundStyleChoices.Add(wxT("Image"));
-    wxStaticBox* staticBox3 = new wxStaticBox(panel, wxID_ANY, _("Background style:"));
-
-    wxBoxSizer* styleSizer = new wxStaticBoxSizer( staticBox3, wxVERTICAL );
-    item0->Add(styleSizer, 0, wxGROW|wxALL, 5);
-
-    wxBoxSizer* itemSizer2 = new wxBoxSizer( wxHORIZONTAL );
-
-    wxChoice* choice2 = new wxChoice(panel, ID_BACKGROUND_STYLE, wxDefaultPosition, wxDefaultSize, backgroundStyleChoices);
-
-    itemSizer2->Add(new wxStaticText(panel, wxID_ANY, _("&Window:")), 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
-    itemSizer2->Add(5, 5, 1, wxALL, 0);
-    itemSizer2->Add(choice2, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
-
-    styleSizer->Add(itemSizer2, 0, wxGROW|wxALL, 5);
-
-#if wxUSE_SPINCTRL
-    //// FONT SIZE SELECTION
-
-    wxStaticBox* staticBox1 = new wxStaticBox(panel, wxID_ANY, _("Tile font size:"));
-    wxBoxSizer* itemSizer5 = new wxStaticBoxSizer( staticBox1, wxHORIZONTAL );
-
-    wxSpinCtrl* spinCtrl = new wxSpinCtrl(panel, ID_FONT_SIZE, wxEmptyString, wxDefaultPosition,
-        wxSize(80, wxDefaultCoord));
-    itemSizer5->Add(spinCtrl, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
-
-    item0->Add(itemSizer5, 0, wxGROW|wxLEFT|wxRIGHT, 5);
-#endif
-
-    topSizer->Add( item0, 1, wxGROW|wxALIGN_CENTRE|wxALL, 5 );
-    topSizer->AddSpacer(5);
-
-    panel->SetSizer(topSizer);
-    topSizer->Fit(panel);
-
-    return panel;
-}*/
-
 wxPanel* OPJDecoderDialog::CreateMainSettingsPage(wxWindow* parent)
 {
     wxPanel* panel = new wxPanel(parent, wxID_ANY);
@@ -2348,7 +2277,7 @@ wxPanel* OPJDecoderDialog::CreatePart1SettingsPage(wxWindow* parent)
 				wxBoxSizer* numcompsSizer = new wxBoxSizer(wxHORIZONTAL);
 
 				// add some text
-				numcompsSizer->Add(new wxStaticText(panel, wxID_ANY, wxT("&No. of components:")),
+				numcompsSizer->Add(new wxStaticText(panel, wxID_ANY, wxT("&Component displayed:")),
 								0, wxALL | wxALIGN_CENTER_VERTICAL, 5);
 
 				// add some horizontal space
@@ -2362,7 +2291,7 @@ wxPanel* OPJDecoderDialog::CreatePart1SettingsPage(wxWindow* parent)
 								wxSP_ARROW_KEYS,
 								0, 100000, wxGetApp().m_components),
 					0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 5);
-				m_numcompsCtrl->Enable(false);
+				m_numcompsCtrl->Enable(true);
 
 			compoSizer->Add(numcompsSizer, 0, wxGROW | wxALL, 5);
 
@@ -2516,3 +2445,525 @@ bool OPJDnDFile::OnDropFiles(wxCoord, wxCoord, const wxArrayString& filenames)
     return true;
 }
 
+
+
+
+
+// ----------------------------------------------------------------------------
+// OPJEncoderDialog
+// ----------------------------------------------------------------------------
+
+IMPLEMENT_CLASS(OPJEncoderDialog, wxPropertySheetDialog)
+
+BEGIN_EVENT_TABLE(OPJEncoderDialog, wxPropertySheetDialog)
+#ifdef USE_JPWL
+	EVT_CHECKBOX(OPJENCO_ENABLEJPWL, OPJEncoderDialog::OnEnableJPWL)
+#endif // USE_JPWL
+END_EVENT_TABLE()
+
+OPJEncoderDialog::OPJEncoderDialog(wxWindow* win, int dialogType)
+{
+	SetExtraStyle(wxDIALOG_EX_CONTEXTHELP|wxWS_EX_VALIDATE_RECURSIVELY);
+
+	Create(win, wxID_ANY, wxT("Encoder settings"),
+		wxDefaultPosition, wxDefaultSize,
+		wxDEFAULT_DIALOG_STYLE| (int) wxPlatform::IfNot(wxOS_WINDOWS_CE, wxRESIZE_BORDER)
+		);
+
+	CreateButtons(wxOK | wxCANCEL | (int)wxPlatform::IfNot(wxOS_WINDOWS_CE, wxHELP));
+
+	m_settingsNotebook = GetBookCtrl();
+
+	wxPanel* mainSettings = CreateMainSettingsPage(m_settingsNotebook);
+	wxPanel* jpeg2000Settings = CreatePart1SettingsPage(m_settingsNotebook);
+/*	if (!wxGetApp().m_enabledeco)
+		jpeg2000Settings->Enable(false);
+	wxPanel* mjpeg2000Settings = CreatePart3SettingsPage(m_settingsNotebook);
+	if (!wxGetApp().m_enabledeco)
+		mjpeg2000Settings->Enable(false);
+#ifdef USE_JPWL
+	wxPanel* jpwlSettings = CreatePart11SettingsPage(m_settingsNotebook);
+	if (!wxGetApp().m_enabledeco)
+		jpwlSettings->Enable(false);
+#endif // USE_JPWL
+*/
+
+	m_settingsNotebook->AddPage(mainSettings, wxT("General"), false);
+	m_settingsNotebook->AddPage(jpeg2000Settings, wxT("JPEG 2000"), false);
+/*	m_settingsNotebook->AddPage(mjpeg2000Settings, wxT("MJPEG 2000"), false);
+#ifdef USE_JPWL
+	m_settingsNotebook->AddPage(jpwlSettings, wxT("JPWL"), false);
+#endif // USE_JPWL
+*/
+	LayoutDialog();
+}
+
+OPJEncoderDialog::~OPJEncoderDialog()
+{
+}
+
+wxPanel* OPJEncoderDialog::CreateMainSettingsPage(wxWindow* parent)
+{
+    wxPanel* panel = new wxPanel(parent, wxID_ANY);
+
+	// top sizer
+    wxBoxSizer *topSizer = new wxBoxSizer(wxVERTICAL);
+
+		// sub top sizer
+		wxBoxSizer *subtopSizer = new wxBoxSizer(wxVERTICAL);
+
+	topSizer->Add(subtopSizer, 1, wxGROW | wxALIGN_CENTRE | wxALL, 5);
+
+	// assign top and fit it
+    panel->SetSizer(topSizer);
+    topSizer->Fit(panel);
+
+    return panel;
+}
+
+wxPanel* OPJEncoderDialog::CreatePart1SettingsPage(wxWindow* parent)
+{
+    wxPanel* panel = new wxPanel(parent, wxID_ANY);
+
+	// top sizer
+    wxBoxSizer *topSizer = new wxBoxSizer(wxVERTICAL);
+
+	// add some space
+	//topSizer->AddSpacer(5);
+
+		// sub top sizer
+		wxFlexGridSizer *subtopSizer = new wxFlexGridSizer(2, 3, 3);
+
+			// image settings, column
+			wxStaticBox* imageBox = new wxStaticBox(panel, wxID_ANY, wxT("Image"));
+			wxBoxSizer* imageSizer = new wxStaticBoxSizer(imageBox, wxVERTICAL);
+
+				// subsampling factor sizer, row
+				wxBoxSizer* subsSizer = new wxBoxSizer(wxHORIZONTAL);
+
+				// add some text
+				subsSizer->Add(new wxStaticText(panel, wxID_ANY, wxT("&Subsampling:")),
+								0, wxALL | wxALIGN_CENTER_VERTICAL, 3);
+
+				// add some horizontal space
+				subsSizer->Add(3, 3, 1, wxALL, 0);
+
+				// add the value control
+				subsSizer->Add(
+					/*m_rateCtrl = */new wxTextCtrl(panel, OPJENCO_SUBSAMPLING,
+								wxT("1,1"),
+								wxDefaultPosition, wxSize(120, wxDefaultCoord),
+								wxTE_LEFT),
+					0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 3);
+
+			imageSizer->Add(subsSizer, 0, wxGROW | wxALL, 3);
+
+				// origin sizer, row
+				wxBoxSizer* imorigSizer = new wxBoxSizer(wxHORIZONTAL);
+
+				// add some text
+				imorigSizer->Add(new wxStaticText(panel, wxID_ANY, wxT("&Origin:")),
+								0, wxALL | wxALIGN_CENTER_VERTICAL, 3);
+
+				// add some horizontal space
+				imorigSizer->Add(3, 3, 1, wxALL, 0);
+
+				// add the value control
+				imorigSizer->Add(
+					/*m_rateCtrl = */new wxTextCtrl(panel, OPJENCO_IMORIG,
+								wxT("0,0"),
+								wxDefaultPosition, wxSize(120, wxDefaultCoord),
+								wxTE_LEFT),
+					0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 3);
+
+			imageSizer->Add(imorigSizer, 0, wxGROW | wxALL, 3);
+
+		subtopSizer->Add(imageSizer, 0, wxGROW | wxALL, 3);
+
+			// layer settings, column
+			wxStaticBox* layerBox = new wxStaticBox(panel, wxID_ANY, wxT("Layers"));
+			wxBoxSizer* layerSizer = new wxStaticBoxSizer(layerBox, wxVERTICAL);
+
+				// rate factor sizer, row
+				wxBoxSizer* rateSizer = new wxBoxSizer(wxHORIZONTAL);
+
+				// add some text
+				rateSizer->Add(new wxStaticText(panel, wxID_ANY, wxT("&Rate values:")),
+								0, wxALL | wxALIGN_CENTER_VERTICAL, 3);
+
+				// add some horizontal space
+				rateSizer->Add(3, 3, 1, wxALL, 0);
+
+				// add the value control
+				rateSizer->Add(
+					/*m_rateCtrl = */new wxTextCtrl(panel, OPJENCO_RATEFACTOR,
+								wxT("20,10,5"),
+								wxDefaultPosition, wxSize(120, wxDefaultCoord),
+								wxTE_LEFT),
+					0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 3);
+
+			layerSizer->Add(rateSizer, 0, wxGROW | wxALL, 3);
+
+				// quality factor sizer, row
+				wxBoxSizer* qualitySizer = new wxBoxSizer(wxHORIZONTAL);
+
+				// add some text
+				qualitySizer->Add(new wxStaticText(panel, wxID_ANY, wxT("&Quality values:")),
+								0, wxALL | wxALIGN_CENTER_VERTICAL, 3);
+
+				// add some horizontal space
+				qualitySizer->Add(3, 3, 1, wxALL, 0);
+
+				// add the value control
+				qualitySizer->Add(
+					/*m_rateCtrl = */new wxTextCtrl(panel, OPJENCO_QUALITYFACTOR,
+								wxT("30,35,40"),
+								wxDefaultPosition, wxSize(120, wxDefaultCoord),
+								wxTE_LEFT),
+					0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 3);
+
+			layerSizer->Add(qualitySizer, 0, wxGROW | wxALL, 3);
+
+		subtopSizer->Add(layerSizer, 0, wxGROW | wxALL, 3);
+
+			// wavelet settings, column
+			wxStaticBox* waveletBox = new wxStaticBox(panel, wxID_ANY, wxT("Transform"));
+			wxBoxSizer* waveletSizer = new wxStaticBoxSizer(waveletBox, wxVERTICAL);
+
+			// irreversible check box
+			waveletSizer->Add(
+				/*m_enabledecoCheck =*/ new wxCheckBox(panel, OPJENCO_ENABLEIRREV, wxT("Irreversible"),
+				wxDefaultPosition, wxDefaultSize),
+				0, wxGROW | wxALL, 3);
+			/*m_enabledecoCheck->SetValue(wxGetApp().m_enabledeco);*/
+
+				// resolution number sizer, row
+				wxBoxSizer* resnumSizer = new wxBoxSizer(wxHORIZONTAL);
+
+				// add some text
+				resnumSizer->Add(new wxStaticText(panel, wxID_ANY, wxT("&Resolutions:")),
+								0, wxALL | wxALIGN_CENTER_VERTICAL, 3);
+
+				// add some horizontal space
+				resnumSizer->Add(3, 3, 1, wxALL, 0);
+
+				// add the value control
+				resnumSizer->Add(
+					/*m_layerCtrl =*/ new wxSpinCtrl(panel, OPJENCO_RESNUMBER,
+								wxT("6"),
+								wxDefaultPosition, wxSize(80, wxDefaultCoord),
+								wxSP_ARROW_KEYS,
+								0, 256, 6),
+					0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 3);
+
+			waveletSizer->Add(resnumSizer, 0, wxGROW | wxALL, 3);
+
+				// codeblock sizer, row
+				wxBoxSizer* codeblockSizer = new wxBoxSizer(wxHORIZONTAL);
+
+				// add some text
+				codeblockSizer->Add(new wxStaticText(panel, wxID_ANY, wxT("&Codeblocks size:")),
+								0, wxALL | wxALIGN_CENTER_VERTICAL, 3);
+
+				// add some horizontal space
+				codeblockSizer->Add(3, 3, 1, wxALL, 0);
+
+				// add the value control
+				codeblockSizer->Add(
+					/*m_rateCtrl = */new wxTextCtrl(panel, OPJENCO_CODEBLOCKSIZE,
+								wxT("32,32"),
+								wxDefaultPosition, wxSize(120, wxDefaultCoord),
+								wxTE_LEFT),
+					0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 3);
+
+			waveletSizer->Add(codeblockSizer, 0, wxGROW | wxALL, 3);
+
+				// precinct sizer, row
+				wxBoxSizer* precinctSizer = new wxBoxSizer(wxHORIZONTAL);
+
+				// add some text
+				precinctSizer->Add(new wxStaticText(panel, wxID_ANY, wxT("&Precincts size:")),
+								0, wxALL | wxALIGN_CENTER_VERTICAL, 3);
+
+				// add some horizontal space
+				precinctSizer->Add(3, 3, 1, wxALL, 0);
+
+				// add the value control
+				precinctSizer->Add(
+					/*m_rateCtrl = */new wxTextCtrl(panel, OPJENCO_PRECINCTSIZE,
+								wxT("[128,128],[128,128]"),
+								wxDefaultPosition, wxSize(120, wxDefaultCoord),
+								wxTE_LEFT),
+					0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 3);
+
+			waveletSizer->Add(precinctSizer, 0, wxGROW | wxALL, 3);
+
+		subtopSizer->Add(waveletSizer, 0, wxGROW | wxALL, 3);
+
+			// tile settings, column
+			wxStaticBox* tileBox = new wxStaticBox(panel, wxID_ANY, wxT("Tiles"));
+			wxBoxSizer* tileSizer = new wxStaticBoxSizer(tileBox, wxVERTICAL);
+
+				// tile size sizer, row
+				wxBoxSizer* tilesizeSizer = new wxBoxSizer(wxHORIZONTAL);
+
+				// add some text
+				tilesizeSizer->Add(new wxStaticText(panel, wxID_ANY, wxT("&Size:")),
+								0, wxALL | wxALIGN_CENTER_VERTICAL, 3);
+
+				// add some horizontal space
+				tilesizeSizer->Add(3, 3, 1, wxALL, 0);
+
+				// add the value control
+				tilesizeSizer->Add(
+					/*m_rateCtrl = */new wxTextCtrl(panel, OPJENCO_TILESIZE,
+								wxT(""),
+								wxDefaultPosition, wxSize(120, wxDefaultCoord),
+								wxTE_LEFT),
+					0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 3);
+
+			tileSizer->Add(tilesizeSizer, 0, wxGROW | wxALL, 3);
+
+				// tile origin sizer, row
+				wxBoxSizer* tilorigSizer = new wxBoxSizer(wxHORIZONTAL);
+
+				// add some text
+				tilorigSizer->Add(new wxStaticText(panel, wxID_ANY, wxT("&Origin:")),
+								0, wxALL | wxALIGN_CENTER_VERTICAL, 3);
+
+				// add some horizontal space
+				tilorigSizer->Add(3, 3, 1, wxALL, 0);
+
+				// add the value control
+				tilorigSizer->Add(
+					/*m_rateCtrl = */new wxTextCtrl(panel, OPJENCO_TILORIG,
+								wxT("0,0"),
+								wxDefaultPosition, wxSize(120, wxDefaultCoord),
+								wxTE_LEFT),
+					0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 3);
+
+			tileSizer->Add(tilorigSizer, 0, wxGROW | wxALL, 3);
+
+		subtopSizer->Add(tileSizer, 0, wxGROW | wxALL, 3);
+
+			// progression settings, column
+			wxString choices[] = {wxT("LRCP"), wxT("RLCP"), wxT("RPCL"), wxT("PCRL"), wxT("CPRL")};
+			wxRadioBox *progressionBox = new wxRadioBox(panel, OPJENCO_PROGRESSION,
+				wxT("Progression"),
+				wxDefaultPosition, wxDefaultSize,
+				WXSIZEOF(choices),
+				choices,
+				4,
+				wxRA_SPECIFY_COLS);
+			progressionBox->SetSelection(0);
+
+		subtopSizer->Add(progressionBox, 0, wxGROW | wxALL, 3);
+
+			// resilience settings, column
+			wxStaticBox* resilBox = new wxStaticBox(panel, wxID_ANY, wxT("Resilience"));
+			wxBoxSizer* resilSizer = new wxStaticBoxSizer(resilBox, wxVERTICAL);
+
+				// resil2 sizer, row
+				wxBoxSizer* resil2Sizer = new wxBoxSizer(wxHORIZONTAL);
+
+				// SOP check box
+				resil2Sizer->Add(
+					/*m_enabledecoCheck =*/ new wxCheckBox(panel, OPJENCO_ENABLESOP, wxT("SOP"),
+					wxDefaultPosition, wxDefaultSize),
+					0, wxGROW | wxALL, 3);
+				/*m_enabledecoCheck->SetValue(wxGetApp().m_enabledeco);*/
+
+				// EPH check box
+				resil2Sizer->Add(
+					/*m_enabledecoCheck =*/ new wxCheckBox(panel, OPJENCO_ENABLEEPH, wxT("EPH"),
+					wxDefaultPosition, wxDefaultSize),
+					0, wxGROW | wxALL, 3);
+				/*m_enabledecoCheck->SetValue(wxGetApp().m_enabledeco);*/
+
+			resilSizer->Add(resil2Sizer, 0, wxGROW | wxALL, 3);
+
+			// separation
+			resilSizer->Add(new wxStaticLine(panel, wxID_ANY), 0, wxEXPAND | wxLEFT | wxRIGHT, 3);
+
+				// resil3 sizer, row
+				wxFlexGridSizer* resil3Sizer = new wxFlexGridSizer(3, 3, 3);
+
+				// BYPASS check box
+				resil3Sizer->Add(
+					/*m_enabledecoCheck =*/ new wxCheckBox(panel, OPJENCO_ENABLEBYPASS, wxT("BYPASS"),
+					wxDefaultPosition, wxDefaultSize),
+					0, wxGROW | wxALL, 3);
+				/*m_enabledecoCheck->SetValue(wxGetApp().m_enabledeco);*/
+
+				// RESET check box
+				resil3Sizer->Add(
+					/*m_enabledecoCheck =*/ new wxCheckBox(panel, OPJENCO_ENABLERESET, wxT("RESET"),
+					wxDefaultPosition, wxDefaultSize),
+					0, wxGROW | wxALL, 3);
+				/*m_enabledecoCheck->SetValue(wxGetApp().m_enabledeco);*/
+
+				// RESTART check box
+				resil3Sizer->Add(
+					/*m_enabledecoCheck =*/ new wxCheckBox(panel, OPJENCO_ENABLERESTART, wxT("RESTART"),
+					wxDefaultPosition, wxDefaultSize),
+					0, wxGROW | wxALL, 3);
+				/*m_enabledecoCheck->SetValue(wxGetApp().m_enabledeco);*/
+
+				// VSC check box
+				resil3Sizer->Add(
+					/*m_enabledecoCheck =*/ new wxCheckBox(panel, OPJENCO_ENABLEVSC, wxT("VSC"),
+					wxDefaultPosition, wxDefaultSize),
+					0, wxGROW | wxALL, 3);
+				/*m_enabledecoCheck->SetValue(wxGetApp().m_enabledeco);*/
+
+				// ERTERM check box
+				resil3Sizer->Add(
+					/*m_enabledecoCheck =*/ new wxCheckBox(panel, OPJENCO_ENABLEERTERM, wxT("ERTERM"),
+					wxDefaultPosition, wxDefaultSize),
+					0, wxGROW | wxALL, 3);
+				/*m_enabledecoCheck->SetValue(wxGetApp().m_enabledeco);*/
+
+				// SEGMARK check box
+				resil3Sizer->Add(
+					/*m_enabledecoCheck =*/ new wxCheckBox(panel, OPJENCO_ENABLESEGMARK, wxT("SEGMARK"),
+					wxDefaultPosition, wxDefaultSize),
+					0, wxGROW | wxALL, 3);
+				/*m_enabledecoCheck->SetValue(wxGetApp().m_enabledeco);*/
+
+			resilSizer->Add(resil3Sizer, 0, wxGROW | wxALL, 3);
+
+		subtopSizer->Add(resilSizer, 0, wxGROW | wxALL, 3);
+
+			// ROI settings, column
+			wxStaticBox* roiBox = new wxStaticBox(panel, wxID_ANY, wxT("ROI"));
+			wxBoxSizer* roiSizer = new wxStaticBoxSizer(roiBox, wxVERTICAL);
+
+				// component number sizer, row
+				wxBoxSizer* roicompSizer = new wxBoxSizer(wxHORIZONTAL);
+
+				// add some text
+				roicompSizer->Add(new wxStaticText(panel, wxID_ANY, wxT("&Component:")),
+								0, wxALL | wxALIGN_CENTER_VERTICAL, 3);
+
+				// add some horizontal space
+				roicompSizer->Add(3, 3, 1, wxALL, 0);
+
+				// add the value control
+				roicompSizer->Add(
+					/*m_layerCtrl =*/ new wxSpinCtrl(panel, OPJENCO_ROICOMP,
+								wxT("0"),
+								wxDefaultPosition, wxSize(80, wxDefaultCoord),
+								wxSP_ARROW_KEYS,
+								0, 256, 0),
+					0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 3);
+
+			roiSizer->Add(roicompSizer, 0, wxGROW | wxALL, 3);
+
+				// upshift sizer, row
+				wxBoxSizer* roishiftSizer = new wxBoxSizer(wxHORIZONTAL);
+
+				// add some text
+				roishiftSizer->Add(new wxStaticText(panel, wxID_ANY, wxT("&Upshift:")),
+								0, wxALL | wxALIGN_CENTER_VERTICAL, 3);
+
+				// add some horizontal space
+				roishiftSizer->Add(3, 3, 1, wxALL, 0);
+
+				// add the value control
+				roishiftSizer->Add(
+					/*m_layerCtrl =*/ new wxSpinCtrl(panel, OPJENCO_ROISHIFT,
+								wxT("0"),
+								wxDefaultPosition, wxSize(80, wxDefaultCoord),
+								wxSP_ARROW_KEYS,
+								0, 37, 0),
+					0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 3);
+
+			roiSizer->Add(roishiftSizer, 0, wxGROW | wxALL, 3);
+
+		subtopSizer->Add(roiSizer, 0, wxGROW | wxALL, 3);
+
+			// ROI settings, column
+			wxStaticBox* indexBox = new wxStaticBox(panel, wxID_ANY, wxT("Indexing"));
+			wxBoxSizer* indexSizer = new wxStaticBoxSizer(indexBox, wxVERTICAL);
+
+			// indexing check box
+			indexSizer->Add(
+				/*m_enabledecoCheck =*/ new wxCheckBox(panel, OPJENCO_ENABLEINDEX, wxT("Enabled"),
+				wxDefaultPosition, wxDefaultSize),
+				0, wxGROW | wxALL, 3);
+			/*m_enabledecoCheck->SetValue(wxGetApp().m_enabledeco);*/
+
+				// index file sizer, row
+				wxBoxSizer* indexnameSizer = new wxBoxSizer(wxHORIZONTAL);
+
+				// add some text
+				indexnameSizer->Add(new wxStaticText(panel, wxID_ANY, wxT("&File name:")),
+								0, wxALL | wxALIGN_CENTER_VERTICAL, 3);
+
+				// add some horizontal space
+				indexnameSizer->Add(3, 3, 1, wxALL, 0);
+
+				// add the value control
+				indexnameSizer->Add(
+					/*m_rateCtrl = */new wxTextCtrl(panel, OPJENCO_INDEXNAME,
+								wxT(""),
+								wxDefaultPosition, wxSize(120, wxDefaultCoord),
+								wxTE_LEFT),
+					0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 3);
+
+			indexSizer->Add(indexnameSizer, 0, wxGROW | wxALL, 3);
+
+		subtopSizer->Add(indexSizer, 0, wxGROW | wxALL, 3);
+
+/*			// component settings, column
+			wxStaticBox* compoBox = new wxStaticBox(panel, wxID_ANY, wxT("Components"));
+			wxBoxSizer* compoSizer = new wxStaticBoxSizer(compoBox, wxVERTICAL);
+
+				// quality layers sizer, row
+				wxBoxSizer* numcompsSizer = new wxBoxSizer(wxHORIZONTAL);
+
+				// add some text
+				numcompsSizer->Add(new wxStaticText(panel, wxID_ANY, wxT("&Component displayed:")),
+								0, wxALL | wxALIGN_CENTER_VERTICAL, 5);
+
+				// add some horizontal space
+				numcompsSizer->Add(5, 5, 1, wxALL, 0);
+
+				// add the value control
+				numcompsSizer->Add(
+					m_numcompsCtrl = new wxSpinCtrl(panel, OPJDECO_NUMCOMPS,
+								wxString::Format(wxT("%d"), wxGetApp().m_components),
+								wxDefaultPosition, wxSize(80, wxDefaultCoord),
+								wxSP_ARROW_KEYS,
+								0, 100000, wxGetApp().m_components),
+					0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 5);
+				m_numcompsCtrl->Enable(true);
+
+			compoSizer->Add(numcompsSizer, 0, wxGROW | wxALL, 5);
+
+		subtopSizer->Add(compoSizer, 0, wxGROW | wxALL, 5);
+*/
+	topSizer->Add(subtopSizer, 1, wxGROW | wxALIGN_CENTRE | wxALL, 5);
+
+	// assign top and fit it
+    panel->SetSizer(topSizer);
+    topSizer->Fit(panel);
+
+    return panel;
+}
+
+#ifdef USE_JPWL
+void OPJEncoderDialog::OnEnableJPWL(wxCommandEvent& event)
+{
+	/*if (event.IsChecked()) {
+		wxLogMessage(wxT("JPWL enabled"));
+		m_expcompsCtrl->Enable(true);
+		m_maxtilesCtrl->Enable(true);
+	} else {
+		wxLogMessage(wxT("JPWL disabled"));
+		m_expcompsCtrl->Enable(false);
+		m_maxtilesCtrl->Enable(false);
+	}*/
+
+}
+#endif // USE_JPWL

@@ -89,27 +89,41 @@ void mj2_error_callback(const char *msg, void *client_data) {
 	int message_len = strlen(msg) - 1;
 	if (msg[message_len] != '\n')
 		message_len = MAX_MESSAGE_LEN;
-    wxMutexGuiEnter();
+#ifndef __WXGTK__ 
+		wxMutexGuiEnter();
+#endif /* __WXGTK__ */
 	wxLogMessage(wxT("[ERROR] %.*s"), message_len, msg);
+#ifndef __WXGTK__ 
     wxMutexGuiLeave();
+#endif /* __WXGTK__ */
 }
+
 /* sample warning callback expecting a FILE* client object */
 void mj2_warning_callback(const char *msg, void *client_data) {
 	int message_len = strlen(msg) - 1;
 	if (msg[message_len] != '\n')
 		message_len = MAX_MESSAGE_LEN;
-    wxMutexGuiEnter();
+#ifndef __WXGTK__ 
+		wxMutexGuiEnter();
+#endif /* __WXGTK__ */
 	wxLogMessage(wxT("[WARNING] %.*s"), message_len, msg);
+#ifndef __WXGTK__ 
     wxMutexGuiLeave();
+#endif /* __WXGTK__ */
 }
+
 /* sample debug callback expecting no client object */
 void mj2_info_callback(const char *msg, void *client_data) {
 	int message_len = strlen(msg) - 1;
 	if (msg[message_len] != '\n')
 		message_len = MAX_MESSAGE_LEN;
-    wxMutexGuiEnter();
+#ifndef __WXGTK__ 
+		wxMutexGuiEnter();
+#endif /* __WXGTK__ */
 	wxLogMessage(wxT("[INFO] %.*s"), message_len, msg);
+#ifndef __WXGTK__ 
     wxMutexGuiLeave();
+#endif /* __WXGTK__ */
 }
 
 /* macro functions */
@@ -691,63 +705,8 @@ bool wxMJ2Handler::LoadFile(wxImage *image, wxInputStream& stream, bool verbose,
 	/* close the byte stream */
 	opj_cio_close(cio);
 
-	// check image size
-	if ((opjimage->numcomps != 1) && (opjimage->numcomps != 3)) {
-		wxMutexGuiEnter();
-		wxLogError(wxT("MJ2: weird number of components"));
-		wxMutexGuiLeave();
-		opj_destroy_decompress(dinfo);
-		free(src);
-		return false;
-	}
-
-	// prepare image size
-    image->Create(opjimage->comps[0].w, opjimage->comps[0].h, true );
-
-	// access image raw data
-    image->SetMask( false );
-    ptr = image->GetData();
-
-	// RGB color picture
-	// does not handle comps. subsampling,
-	// so simply render the first component
-	if (opjimage->numcomps == 3) {
-		int row, col;
-		int *r = opjimage->comps[0].data;
-		/*
-		int *g = opjimage->comps[1].data;
-		int *b = opjimage->comps[2].data;
-		*/
-		for (row = 0; row < opjimage->comps[0].h; row++) {
-			for (col = 0; col < opjimage->comps[0].w; col++) {
-				
-				/*
-				*(ptr++) = *(r++);
-				*(ptr++) = *(g++);
-				*(ptr++) = *(b++);
-				*/
-				*(ptr++) = *(r);
-				*(ptr++) = *(r);
-				*(ptr++) = *(r++);
-
-			}
-		}
-	}
-
-	// B/W picture
-	if (opjimage->numcomps == 1) {
-		int row, col;
-		int *y = opjimage->comps[0].data;
-		for (row = 0; row < opjimage->comps[0].h; row++) {
-			for (col = 0; col < opjimage->comps[0].w; col++) {
-				
-				*(ptr++) = *(y);
-				*(ptr++) = *(y);
-				*(ptr++) = *(y++);
-
-			}
-		}
-	}
+	/* common rendering method */
+#include "imagjpeg2000.cpp"
 
     wxMutexGuiEnter();
     wxLogMessage(wxT("MJ2: image loaded."));

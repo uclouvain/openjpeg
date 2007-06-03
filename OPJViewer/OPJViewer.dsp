@@ -42,15 +42,15 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /G6 /MD /W3 /GX /O2 /I "d:\programmi\wxWidgets-2.8.0\lib\vc_lib\msw" /I "d:\programmi\wxWidgets-2.8.0\include" /I ".." /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "_MBCS" /D "_WINDOWS" /D WINVER=0x400 /D "_MT" /D wxUSE_GUI=1 /D "wxUSE_LIBOPENJPEG" /D "OPJ_STATIC" /D "USE_JPWL" /D "OPJ_HTMLABOUT" /FR /FD /c
+# ADD CPP /nologo /G6 /MD /W3 /GX /O2 /I "c:\programmi\wxWidgets-2.8.0\lib\vc_lib\msw" /I "c:\programmi\wxWidgets-2.8.0\include" /I ".." /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "_MBCS" /D "_WINDOWS" /D WINVER=0x400 /D "_MT" /D wxUSE_GUI=1 /D "wxUSE_LIBOPENJPEG" /D "OPJ_STATIC" /D "USE_JPWL" /D "OPJ_HTMLABOUT" /D "OPJ_MANYFORMATS" /FR /FD /c
 # ADD BASE RSC /l 0x410 /d "NDEBUG"
-# ADD RSC /l 0x409 /i "d:\programmi\wxWidgets-2.8.0\include" /d "NDEBUG"
+# ADD RSC /l 0x409 /i "c:\programmi\wxWidgets-2.8.0\include" /d "NDEBUG"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /machine:I386
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib comctl32.lib rpcrt4.lib wsock32.lib wxzlib.lib wxregex.lib wxpng.lib wxjpeg.lib wxbase28.lib wxmsw28_core.lib wxmsw28_html.lib wxmsw28_adv.lib wxmsw28_core.lib wxbase28.lib wxtiff.lib wxjpeg.lib wxpng.lib wxzlib.lib wxregex.lib wxexpat.lib LibOpenJPEG_JPWL.lib /nologo /subsystem:windows /machine:I386 /nodefaultlib:"libcmt.lib" /libpath:"d:\programmi\wxWidgets-2.8.0\lib\vc_lib" /libpath:"..\jpwl\Release" /IGNORE:4089
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib comctl32.lib rpcrt4.lib wsock32.lib wxzlib.lib wxregex.lib wxpng.lib wxjpeg.lib wxbase28.lib wxmsw28_core.lib wxmsw28_html.lib wxmsw28_adv.lib wxmsw28_core.lib wxbase28.lib wxtiff.lib wxjpeg.lib wxpng.lib wxzlib.lib wxregex.lib wxexpat.lib LibOpenJPEG_JPWL.lib /nologo /subsystem:windows /machine:I386 /nodefaultlib:"libcmt.lib" /libpath:"c:\programmi\wxWidgets-2.8.0\lib\vc_lib" /libpath:"..\jpwl\Release" /IGNORE:4089
 # SUBTRACT LINK32 /pdb:none
 
 !ELSEIF  "$(CFG)" == "OPJViewer - Win32 Debug"
@@ -94,6 +94,11 @@ SOURCE=.\source\imagj2k.cpp
 # Begin Source File
 
 SOURCE=.\source\imagjp2.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\imagjpeg2000.cpp
+# PROP Exclude_From_Build 1
 # End Source File
 # Begin Source File
 

@@ -85,27 +85,41 @@ void j2k_error_callback(const char *msg, void *client_data) {
 	int message_len = strlen(msg) - 1;
 	if (msg[message_len] != '\n')
 		message_len = MAX_MESSAGE_LEN;
+#ifndef __WXGTK__ 
     wxMutexGuiEnter();
+#endif /* __WXGTK__ */
 	wxLogMessage(wxT("[ERROR] %.*s"), message_len, msg);
+#ifndef __WXGTK__ 
     wxMutexGuiLeave();
+#endif /* __WXGTK__ */
 }
+
 /* sample warning callback expecting a FILE* client object */
 void j2k_warning_callback(const char *msg, void *client_data) {
 	int message_len = strlen(msg) - 1;
 	if (msg[message_len] != '\n')
 		message_len = MAX_MESSAGE_LEN;
+#ifndef __WXGTK__ 
     wxMutexGuiEnter();
+#endif /* __WXGTK__ */
 	wxLogMessage(wxT("[WARNING] %.*s"), message_len, msg);
+#ifndef __WXGTK__ 
     wxMutexGuiLeave();
+#endif /* __WXGTK__ */
 }
+
 /* sample debug callback expecting no client object */
 void j2k_info_callback(const char *msg, void *client_data) {
 	int message_len = strlen(msg) - 1;
 	if (msg[message_len] != '\n')
 		message_len = MAX_MESSAGE_LEN;
+#ifndef __WXGTK__ 
     wxMutexGuiEnter();
+#endif /* __WXGTK__ */
 	wxLogMessage(wxT("[INFO] %.*s"), message_len, msg);
+#ifndef __WXGTK__ 
     wxMutexGuiLeave();
+#endif /* __WXGTK__ */
 }
 
 // load the j2k codestream
@@ -117,8 +131,6 @@ bool wxJ2KHandler::LoadFile(wxImage *image, wxInputStream& stream, bool verbose,
 	unsigned char *src = NULL;
     unsigned char *ptr;
 	int file_length;
-	int shiftbpp;
-	int c, tempcomps;
 
 	// destroy the image
     image->Destroy();
@@ -146,8 +158,6 @@ bool wxJ2KHandler::LoadFile(wxImage *image, wxInputStream& stream, bool verbose,
 		parameters.cp_reduce = m_reducefactor;
 	if (m_qualitylayers)
 		parameters.cp_layer = m_qualitylayers;
-	/*if (n_components)
-		parameters. = n_components;*/
 
 	/* JPWL only */
 #ifdef USE_JPWL
@@ -180,9 +190,13 @@ bool wxJ2KHandler::LoadFile(wxImage *image, wxInputStream& stream, bool verbose,
 	/* decode the stream and fill the image structure */
 	opjimage = opj_decode(dinfo, cio);
 	if (!opjimage) {
+#ifndef __WXGTK__ 
 		wxMutexGuiEnter();
+#endif /* __WXGTK__ */
 		wxLogError(wxT("J2K: failed to decode image!"));
+#ifndef __WXGTK__ 
 		wxMutexGuiLeave();
+#endif /* __WXGTK__ */
 		opj_destroy_decompress(dinfo);
 		opj_cio_close(cio);
 		opj_image_destroy(opjimage);
@@ -193,125 +207,16 @@ bool wxJ2KHandler::LoadFile(wxImage *image, wxInputStream& stream, bool verbose,
 	/* close the byte stream */
 	opj_cio_close(cio);
 
-	// check image components
+	/* common rendering method */
+#include "imagjpeg2000.cpp"
 
-	// check image depth (only on the first one, for now)
-	shiftbpp = opjimage->comps[0].prec - 8;
-
-	// prepare image size
-    image->Create(opjimage->comps[0].w, opjimage->comps[0].h, true );
-
-	// access image raw data
-    image->SetMask( false );
-    ptr = image->GetData();
-
-	// workaround for components different from 1 or 3
-	if ((opjimage->numcomps != 1) && (opjimage->numcomps != 3)) {
-		wxMutexGuiEnter();
-		wxLogMessage(wxT("J2K: weird number of components"));
-		tempcomps = 1;
-		wxMutexGuiLeave();
-	} else
-		tempcomps = opjimage->numcomps;
-
-	// workaround for subsampled components
-	for (c = 1; c < tempcomps; c++) {
-		if ((opjimage->comps[c].w != opjimage->comps[c - 1].w) || (opjimage->comps[c].h != opjimage->comps[c - 1].h)) {
-			tempcomps = 1;
-			break;
-		}
-	}
-
-	// workaround for different precision components
-	for (c = 1; c < tempcomps; c++) {
-		if (opjimage->comps[c].bpp != opjimage->comps[c - 1].bpp) {
-			tempcomps = 1;
-			break;
-		}
-	}
-
-
-	// RGB color picture
-	if (tempcomps == 3) {
-		int row, col;
-		int *r = opjimage->comps[0].data;
-		int *g = opjimage->comps[1].data;
-		int *b = opjimage->comps[2].data;
-		if (shiftbpp > 0) {
-			for (row = 0; row < opjimage->comps[0].h; row++) {
-				for (col = 0; col < opjimage->comps[0].w; col++) {
-					
-					*(ptr++) = (*(r++)) >> shiftbpp;
-					*(ptr++) = (*(g++)) >> shiftbpp;
-					*(ptr++) = (*(b++)) >> shiftbpp;
-
-				}
-			}
-
-		} else if (shiftbpp < 0) {
-			for (row = 0; row < opjimage->comps[0].h; row++) {
-				for (col = 0; col < opjimage->comps[0].w; col++) {
-					
-					*(ptr++) = (*(r++)) << -shiftbpp;
-					*(ptr++) = (*(g++)) << -shiftbpp;
-					*(ptr++) = (*(b++)) << -shiftbpp;
-
-				}
-			}
-			
-		} else {
-			for (row = 0; row < opjimage->comps[0].h; row++) {
-				for (col = 0; col < opjimage->comps[0].w; col++) {
-
-					*(ptr++) = *(r++);
-					*(ptr++) = *(g++);
-					*(ptr++) = *(b++);
-				
-				}
-			}
-		}
-	}
-
-	// B/W picture
-	if (tempcomps == 1) {
-		int row, col;
-		int *y = opjimage->comps[0].data;
-		if (shiftbpp > 0) {
-			for (row = 0; row < opjimage->comps[0].h; row++) {
-				for (col = 0; col < opjimage->comps[0].w; col++) {
-					
-					*(ptr++) = (*(y)) >> shiftbpp;
-					*(ptr++) = (*(y)) >> shiftbpp;
-					*(ptr++) = (*(y++)) >> shiftbpp;
-
-				}
-			}
-		} else if (shiftbpp < 0) {
-			for (row = 0; row < opjimage->comps[0].h; row++) {
-				for (col = 0; col < opjimage->comps[0].w; col++) {
-					
-					*(ptr++) = (*(y)) << -shiftbpp;
-					*(ptr++) = (*(y)) << -shiftbpp;
-					*(ptr++) = (*(y++)) << -shiftbpp;
-
-				}
-			}
-		} else {
-			for (row = 0; row < opjimage->comps[0].h; row++) {
-				for (col = 0; col < opjimage->comps[0].w; col++) {
-					
-					*(ptr++) = *(y);
-					*(ptr++) = *(y);
-					*(ptr++) = *(y++);
-
-				}
-			}
-		}
-	}
-
+#ifndef __WXGTK__ 
     wxMutexGuiEnter();
+#endif /* __WXGTK__ */
     wxLogMessage(wxT("J2K: image loaded."));
+#ifndef __WXGTK__ 
     wxMutexGuiLeave();
+#endif /* __WXGTK__ */
 
 	/* close openjpeg structs */
 	opj_destroy_decompress(dinfo);
@@ -328,7 +233,14 @@ bool wxJ2KHandler::LoadFile(wxImage *image, wxInputStream& stream, bool verbose,
 // save the j2k codestream
 bool wxJ2KHandler::SaveFile( wxImage *image, wxOutputStream& stream, bool verbose )
 {
+#ifndef __WXGTK__ 
+    wxMutexGuiEnter();
+#endif /* __WXGTK__ */
     wxLogError(wxT("J2K: Couldn't save image -> not implemented."));
+#ifndef __WXGTK__ 
+    wxMutexGuiLeave();
+#endif /* __WXGTK__ */
+
     return false;
 }
 

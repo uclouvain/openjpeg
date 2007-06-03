@@ -371,6 +371,7 @@ class OPJFrame: public wxMDIParentFrame
 	void OnToggleBrowser(wxCommandEvent& WXUNUSED(event));
 	void OnTogglePeeker(wxCommandEvent& WXUNUSED(event));
 	void OnReload(wxCommandEvent& event);
+	void OnSetsEnco(wxCommandEvent& event);
 	void OnSetsDeco(wxCommandEvent& event);
 	void OnSashDrag(wxSashEvent& event);
 	void OpenFiles(wxArrayString paths, wxArrayString filenames);
@@ -434,6 +435,7 @@ enum {
 	OPJFRAME_VIEWFIT,
 	OPJFRAME_VIEWRELOAD,
 	OPJFRAME_FILECLOSE,
+	OPJFRAME_SETSENCO,
 	OPJFRAME_SETSDECO,
 
 	OPJFRAME_BROWSEWIN = 10000,
@@ -556,7 +558,59 @@ private:
 
 
 
-// Property sheet dialog
+// Property sheet dialog: encoder
+class OPJEncoderDialog: public wxPropertySheetDialog
+{
+DECLARE_CLASS(OPJEncoderDialog)
+public:
+    OPJEncoderDialog(wxWindow* parent, int dialogType);
+    ~OPJEncoderDialog();
+
+	wxBookCtrlBase* m_settingsNotebook;
+
+    wxPanel* CreateMainSettingsPage(wxWindow* parent);
+    wxPanel* CreatePart1SettingsPage(wxWindow* parent);
+/*    wxPanel* CreatePart3SettingsPage(wxWindow* parent);*/
+#ifdef USE_JPWL
+	void OnEnableJPWL(wxCommandEvent& event);
+/*    wxPanel* CreatePart11SettingsPage(wxWindow* parent);
+	wxCheckBox *m_enablejpwlCheck;*/
+#endif // USE_JPWL
+
+
+protected:
+
+    enum {
+		OPJENCO_ENABLEJPWL = 100,
+		OPJENCO_RATEFACTOR,
+		OPJENCO_QUALITYFACTOR,
+		OPJENCO_RESNUMBER,
+		OPJENCO_CODEBLOCKSIZE,
+		OPJENCO_PRECINCTSIZE,
+		OPJENCO_TILESIZE,
+		OPJENCO_PROGRESSION,
+		OPJENCO_SUBSAMPLING,
+		OPJENCO_ENABLESOP,
+		OPJENCO_ENABLEEPH,
+		OPJENCO_ENABLEBYPASS,
+		OPJENCO_ENABLERESET,
+		OPJENCO_ENABLERESTART,
+		OPJENCO_ENABLEVSC,
+		OPJENCO_ENABLEERTERM,
+		OPJENCO_ENABLESEGMARK,
+		OPJENCO_ROICOMP,
+		OPJENCO_ROISHIFT,
+		OPJENCO_IMORIG,
+		OPJENCO_TILORIG,
+		OPJENCO_ENABLEIRREV,
+		OPJENCO_ENABLEINDEX,
+		OPJENCO_INDEXNAME
+    };
+
+DECLARE_EVENT_TABLE()
+};
+
+// Property sheet dialog: decoder
 class OPJDecoderDialog: public wxPropertySheetDialog
 {
 DECLARE_CLASS(OPJDecoderDialog)
