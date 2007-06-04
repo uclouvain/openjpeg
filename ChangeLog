@@ -5,6 +5,11 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+----------------------
+MAY 4, 2007
+VERSION 1.2.0 RELEASED
+----------------------
+
 May 4, 2007
 * [FOD] Bugs corrected in decoding of command line (getopt.c), in the handling of 16 bit files (t1.c and tcd.c) and the calculation of elapsed time for multiple tiles parts (tcd.c and tdc.h).
 
@@ -118,9 +123,13 @@ February 26, 2007
 + [Parvatha] Option to read images from a Folder whose path is specified in the Input parameters by "-ImgDir" along with output decod format specified by "-OutFor" . Modifications in image_to_j2k.c, j2k_to_image.c, getopt.c, getopt.h
 + [Parvatha] Enabling use of multi character input parameters in the codec. Modifications in image_to_j2k.c, j2k_to_image.c, getopt.c, getopt.h
 
+----------------------
+February 23, 2007
+VERSION 1.1.1 RELEASED
+----------------------
+
 February 23, 2007
 * [GB] Fixed a copy-and-paste type assignment error (bool instead of int) in the JPWL section of decoder parameters structure in openjpeg.h; minor type-casting in jpwl_lib.c. As a result, now OPJViewer should run correctly when built against the most current SVN trunk of LibOpenJPEG.lib
-* [FOD] Changed version number from 1.1.0 to 1.1.1 in openjpeg.h
 + [GB] Linux makefile for the JPWL module; newlines at end of JPWL files
 
 February 22, 2007
