@@ -1107,7 +1107,6 @@ bool tcd_rateallocate(opj_tcd_t *tcd, unsigned char *dest, int len, opj_image_in
 int tcd_encode_tile(opj_tcd_t *tcd, int tileno, unsigned char *dest, int len, opj_image_info_t * image_info) {
 	int compno;
 	int l, i, npck = 0;
-	double encoding_time;
 	opj_tcd_tile_t *tile = NULL;
 	opj_tcp_t *tcd_tcp = NULL;
 	opj_cp_t *cp = NULL;
@@ -1127,103 +1126,104 @@ int tcd_encode_tile(opj_tcd_t *tcd, int tileno, unsigned char *dest, int len, op
 	tcd_tcp = tcd->tcp;
 	cp = tcd->cp;
 
-	encoding_time = opj_clock();	/* time needed to encode a tile */
 	if(tcd->cur_tp_num == 0){
-	/* INDEX >> "Precinct_nb_X et Precinct_nb_Y" */
-	if(image_info && image_info->index_on) {
-		opj_tcd_tilecomp_t *tilec_idx = &tile->comps[0];	/* based on component 0 */
-		for (i = 0; i < tilec_idx->numresolutions; i++) {
-			opj_tcd_resolution_t *res_idx = &tilec_idx->resolutions[i];
-
-			image_info->tile[tileno].pw[i] = res_idx->pw;
-			image_info->tile[tileno].ph[i] = res_idx->ph;
-
-			npck += res_idx->pw * res_idx->ph;
-
-			image_info->tile[tileno].pdx[i] = tccp->prcw[i];
-			image_info->tile[tileno].pdy[i] = tccp->prch[i];
+		tcd->encoding_time = opj_clock();	/* time needed to encode a tile */
+		/* INDEX >> "Precinct_nb_X et Precinct_nb_Y" */
+		if(image_info && image_info->index_on) {
+			opj_tcd_tilecomp_t *tilec_idx = &tile->comps[0];	/* based on component 0 */
+			for (i = 0; i < tilec_idx->numresolutions; i++) {
+				opj_tcd_resolution_t *res_idx = &tilec_idx->resolutions[i];
+				
+				image_info->tile[tileno].pw[i] = res_idx->pw;
+				image_info->tile[tileno].ph[i] = res_idx->ph;
+				
+				npck += res_idx->pw * res_idx->ph;
+				
+				image_info->tile[tileno].pdx[i] = tccp->prcw[i];
+				image_info->tile[tileno].pdy[i] = tccp->prch[i];
+			}
+			image_info->tile[tileno].packet = (opj_packet_info_t *) opj_malloc(image_info->comp * image_info->layer * npck * sizeof(opj_packet_info_t));
 		}
-		image_info->tile[tileno].packet = (opj_packet_info_t *) opj_malloc(image_info->comp * image_info->layer * npck * sizeof(opj_packet_info_t));
-	}
-	/* << INDEX */
-	
-	/*---------------TILE-------------------*/
-
-	for (compno = 0; compno < tile->numcomps; compno++) {
-		int x, y;
-
-		int adjust = image->comps[compno].sgnd ? 0 : 1 << (image->comps[compno].prec - 1);
-		int offset_x = int_ceildiv(image->x0, image->comps[compno].dx);
-		int offset_y = int_ceildiv(image->y0, image->comps[compno].dy);
+		/* << INDEX */
 		
-		opj_tcd_tilecomp_t *tilec = &tile->comps[compno];
-		int tw = tilec->x1 - tilec->x0;
-		int w = int_ceildiv(image->x1 - image->x0, image->comps[compno].dx);
-
-		/* extract tile data */
-
-		if (tcd_tcp->tccps[compno].qmfbid == 1) {
-			for (y = tilec->y0; y < tilec->y1; y++) {
-				/* start of the src tile scanline */
-				int *data = &image->comps[compno].data[(tilec->x0 - offset_x) + (y - offset_y) * w];
-				/* start of the dst tile scanline */
-				int *tile_data = &tilec->data[(y - tilec->y0) * tw];
-				for (x = tilec->x0; x < tilec->x1; x++) {
-					*tile_data++ = *data++ - adjust;
+		/*---------------TILE-------------------*/
+		
+		for (compno = 0; compno < tile->numcomps; compno++) {
+			int x, y;
+			
+			int adjust = image->comps[compno].sgnd ? 0 : 1 << (image->comps[compno].prec - 1);
+			int offset_x = int_ceildiv(image->x0, image->comps[compno].dx);
+			int offset_y = int_ceildiv(image->y0, image->comps[compno].dy);
+			
+			opj_tcd_tilecomp_t *tilec = &tile->comps[compno];
+			int tw = tilec->x1 - tilec->x0;
+			int w = int_ceildiv(image->x1 - image->x0, image->comps[compno].dx);
+			
+			/* extract tile data */
+			
+			if (tcd_tcp->tccps[compno].qmfbid == 1) {
+				for (y = tilec->y0; y < tilec->y1; y++) {
+					/* start of the src tile scanline */
+					int *data = &image->comps[compno].data[(tilec->x0 - offset_x) + (y - offset_y) * w];
+					/* start of the dst tile scanline */
+					int *tile_data = &tilec->data[(y - tilec->y0) * tw];
+					for (x = tilec->x0; x < tilec->x1; x++) {
+						*tile_data++ = *data++ - adjust;
+					}
 				}
-			}
-		} else if (tcd_tcp->tccps[compno].qmfbid == 0) {
-			for (y = tilec->y0; y < tilec->y1; y++) {
-				/* start of the src tile scanline */
-				int *data = &image->comps[compno].data[(tilec->x0 - offset_x) + (y - offset_y) * w];
-				/* start of the dst tile scanline */
-				int *tile_data = &tilec->data[(y - tilec->y0) * tw];
-				for (x = tilec->x0; x < tilec->x1; x++) {
-					*tile_data++ = (*data++ - adjust) << 13;
+			} else if (tcd_tcp->tccps[compno].qmfbid == 0) {
+				for (y = tilec->y0; y < tilec->y1; y++) {
+					/* start of the src tile scanline */
+					int *data = &image->comps[compno].data[(tilec->x0 - offset_x) + (y - offset_y) * w];
+					/* start of the dst tile scanline */
+					int *tile_data = &tilec->data[(y - tilec->y0) * tw];
+					for (x = tilec->x0; x < tilec->x1; x++) {
+						*tile_data++ = (*data++ - adjust) << 11;
+					}
+					
 				}
 			}
 		}
-	}
-	
-	/*----------------MCT-------------------*/
-	if (tcd_tcp->mct) {
-		int samples = (tile->comps[0].x1 - tile->comps[0].x0) * (tile->comps[0].y1 - tile->comps[0].y0);
-		if (tcd_tcp->tccps[0].qmfbid == 0) {
-			mct_encode_real(tile->comps[0].data, tile->comps[1].data, tile->comps[2].data, samples);
+		
+		/*----------------MCT-------------------*/
+		if (tcd_tcp->mct) {
+			int samples = (tile->comps[0].x1 - tile->comps[0].x0) * (tile->comps[0].y1 - tile->comps[0].y0);
+			if (tcd_tcp->tccps[0].qmfbid == 0) {
+				mct_encode_real(tile->comps[0].data, tile->comps[1].data, tile->comps[2].data, samples);
+			} else {
+				mct_encode(tile->comps[0].data, tile->comps[1].data, tile->comps[2].data, samples);
+			}
+		}
+		
+		/*----------------DWT---------------------*/
+		
+		for (compno = 0; compno < tile->numcomps; compno++) {
+			opj_tcd_tilecomp_t *tilec = &tile->comps[compno];
+			if (tcd_tcp->tccps[compno].qmfbid == 1) {
+				dwt_encode(tilec);
+			} else if (tcd_tcp->tccps[compno].qmfbid == 0) {
+				dwt_encode_real(tilec);
+			}
+		}
+		
+		/*------------------TIER1-----------------*/
+		t1 = t1_create(tcd->cinfo);
+		t1_encode_cblks(t1, tile, tcd_tcp);
+		t1_destroy(t1);
+		
+		/*-----------RATE-ALLOCATE------------------*/
+		
+		/* INDEX */
+		if(image_info) {
+			image_info->index_write = 0;
+		}
+		if (cp->disto_alloc || cp->fixed_quality) {	/* fixed_quality */
+			/* Normal Rate/distortion allocation */
+			tcd_rateallocate(tcd, dest, len, image_info);
 		} else {
-			mct_encode(tile->comps[0].data, tile->comps[1].data, tile->comps[2].data, samples);
+			/* Fixed layer allocation */
+			tcd_rateallocate_fixed(tcd);
 		}
-	}
-	
-	/*----------------DWT---------------------*/
-
-	for (compno = 0; compno < tile->numcomps; compno++) {
-		opj_tcd_tilecomp_t *tilec = &tile->comps[compno];
-		if (tcd_tcp->tccps[compno].qmfbid == 1) {
-			dwt_encode(tilec);
-		} else if (tcd_tcp->tccps[compno].qmfbid == 0) {
-			dwt_encode_real(tilec);
-		}
-	}
-
-	/*------------------TIER1-----------------*/
-	t1 = t1_create(tcd->cinfo);
-	t1_encode_cblks(t1, tile, tcd_tcp);
-	t1_destroy(t1);
-	
-	/*-----------RATE-ALLOCATE------------------*/
-
-	/* INDEX */
-	if(image_info) {
-		image_info->index_write = 0;
-	}
-	if (cp->disto_alloc || cp->fixed_quality) {	/* fixed_quality */
-		/* Normal Rate/distortion allocation */
-		tcd_rateallocate(tcd, dest, len, image_info);
-	} else {
-		/* Fixed layer allocation */
-		tcd_rateallocate_fixed(tcd);
-	}
 	}
 	/*--------------TIER2------------------*/
 
@@ -1240,8 +1240,8 @@ int tcd_encode_tile(opj_tcd_t *tcd, int tileno, unsigned char *dest, int len, op
 
 	
 	if(tcd->cur_tp_num == tcd->cur_totnum_tp - 1){
-		encoding_time = opj_clock() - encoding_time;
-		opj_event_msg(tcd->cinfo, EVT_INFO, "- tile encoded in %f s\n", encoding_time);
+		tcd->encoding_time = opj_clock() - tcd->encoding_time;
+		opj_event_msg(tcd->cinfo, EVT_INFO, "- tile encoded in %f s\n", tcd->encoding_time);
 	
 		/* cleaning memory */
 		for (compno = 0; compno < tile->numcomps; compno++) {

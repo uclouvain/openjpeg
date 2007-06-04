@@ -1086,7 +1086,7 @@ void t1_encode_cblks(
 									t1->data[(j * t1->w) + i] = 
 										fix_mul(
 										tilec->data[x + i + (y + j) * w],
-										8192 * 8192 / ((int) floor(band->stepsize * 8192))) >> (13 - T1_NMSEDEC_FRACBITS);
+										8192 * 8192 / ((int) floor(band->stepsize * 8192))) >> (11 - T1_NMSEDEC_FRACBITS);
 								}
 							}
 						}

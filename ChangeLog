@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+May 4, 2007
+* [FOD] Bugs corrected in decoding of command line (getopt.c), in the handling of 16 bit files (t1.c and tcd.c) and the calculation of elapsed time for multiple tiles parts (tcd.c and tdc.h).
+
 June 2, 2007
 + [GB] OPJViewer opens now BMP, PNG, GIF, PNM, TIFF (with wxWidgets internals); added an encoder settings tab, for future integration with "save file as..." in JPEG 2000 format
 

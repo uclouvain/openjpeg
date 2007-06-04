@@ -129,11 +129,27 @@ struct option *longopts, int totlen) {
 	static int lastidx,lastofs;
 	char *tmp;
 	int i,len;
+	char param = 1;
+
 again:
-	if (optind>argc || !argv[optind] || *argv[optind]!='-' || argv[optind][1]==0)
+	if (optind>argc || !argv[optind] || *argv[optind]!='-')
 		return -1;
 
 	if (argv[optind][0]=='-' && argv[optind][1]==0) {
+		if(optind >= (argc - 1)){ /* no more input parameters */
+			param = 0;
+		}
+		else{ /* more input parameters */
+			if(argv[optind + 1][0] == '-'){
+				param = 0; /* Missing parameter after '-' */
+			}
+			else{
+				param = 2;
+			}
+		}
+	}
+
+	if (param == 0) {
 		++optind;
 		return (BADCH);
 	}
@@ -144,11 +160,18 @@ again:
 		o=longopts;
 		len=sizeof(longopts[0]);
 
+		if (param > 1){
+			arg = argv[optind+1];
+			optind++;
+		}
+		else
+			arg = argv[optind]+1;
+
 		if(strlen(arg)>1){
 			for (i=0;i<totlen;i=i+len,o++) {
 				if (!strcmp(o->name,arg)) {	/* match */
 					if (o->has_arg == 0) {
-						if (!(argv[optind+1][0]=='-')){
+						if ((argv[optind+1])&&(!(argv[optind+1][0]=='-'))){
 							fprintf(stderr,"%s: option does not require an argument. Ignoring %s\n",arg,argv[optind+1]);
 							++optind;
 						}

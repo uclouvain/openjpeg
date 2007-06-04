@@ -1278,7 +1278,7 @@ opj_image_t* tiftoimage(char *filename, opj_cparameters_t *parameters)
 		/* initialize image components*/ 
 		memset(&cmptparm[0], 0, 3 * sizeof(opj_image_cmptparm_t));
 		for(j = 0; j < numcomps; j++) {
-			if ((parameters->cp_cinema) & (Info.tiBps== 16)){
+			if (parameters->cp_cinema) {
 				cmptparm[j].prec = 12;
 				cmptparm[j].bpp = 12;
 			}else{
@@ -1335,7 +1335,7 @@ opj_image_t* tiftoimage(char *filename, opj_cparameters_t *parameters)
 						image->comps[0].data[index] = (image->comps[0].data[index] + 0x08) >> 4 ;
 						image->comps[1].data[index] = (image->comps[1].data[index] + 0x08) >> 4 ;
 						image->comps[2].data[index] = (image->comps[2].data[index] + 0x08) >> 4 ;
-                    }
+					}
 					index++;
 				}
 			}
@@ -1344,6 +1344,11 @@ opj_image_t* tiftoimage(char *filename, opj_cparameters_t *parameters)
 					image->comps[0].data[index] = dat8[i+0];	// R 
 					image->comps[1].data[index] = dat8[i+1];	// G 
 					image->comps[2].data[index] = dat8[i+2];	// B 
+					if(parameters->cp_cinema){/* Rounding to 12 bits*/
+						image->comps[0].data[index] = image->comps[0].data[index] << 4 ;
+						image->comps[1].data[index] = image->comps[1].data[index] << 4 ;
+						image->comps[2].data[index] = image->comps[2].data[index] << 4 ;
+					}
 					index++;
 				}
 			}

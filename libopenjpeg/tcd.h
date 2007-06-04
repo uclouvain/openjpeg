@@ -183,6 +183,8 @@ typedef struct opj_tcd {
 	opj_tcp_t *tcp;
 	/** current encoded/decoded tile */
 	int tcd_tileno;
+	/** Time taken to encode a tile*/
+	double encoding_time;
 } opj_tcd_t;
 
 /** @name Exported functions */
