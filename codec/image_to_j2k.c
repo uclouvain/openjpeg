@@ -495,7 +495,7 @@ void cinema_setup_encoder(opj_cparameters_t *parameters,opj_image_t *image){
 				parameters->numresolution = 7;
 			}
 		if (!((image->comps[0].w == 4096) | (image->comps[0].h == 2160))){
-			fprintf(stdout,"Image coordinates %d x %d is not 4K compliant.\JPEG Digital Cinema Profile-4 (4K profile) compliance requires that atleast one of coordinates match 4096 x 2160\n",image->comps[0].w,image->comps[0].h);
+			fprintf(stdout,"Image coordinates %d x %d is not 4K compliant.\nJPEG Digital Cinema Profile-4 (4K profile) compliance requires that atleast one of coordinates match 4096 x 2160\n",image->comps[0].w,image->comps[0].h);
 			parameters->cp_rsiz = STD_RSIZ;
 		}
 		parameters->numpocs = initialise_4K_poc(parameters->POC,parameters->numresolution);
