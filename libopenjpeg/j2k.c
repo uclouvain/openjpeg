@@ -1354,11 +1354,16 @@ static void j2k_write_sod(opj_j2k_t *j2k, void *tile_coder) {
 	if (j2k->curtileno == 0) {
 		j2k->sod_start = cio_tell(cio) + j2k->pos_correction;
 	}
-	
+
 	/* INDEX >> */
 	image_info = j2k->image_info;
 	if (image_info && image_info->index_on) {
-		image_info->tile[j2k->curtileno].end_header = cio_tell(cio) + j2k->pos_correction - 1;
+		if (!j2k->cur_tp_num ){
+			image_info->tile[j2k->curtileno].end_header = cio_tell(cio) + j2k->pos_correction - 1;
+		}else{
+			if(image_info->tile[j2k->curtileno].packet[image_info->num - 1].end_pos < cio_tell(cio))
+				image_info->tile[j2k->curtileno].packet[image_info->num].start_pos = cio_tell(cio);
+		}
 	}
 	/* << INDEX */
 	
@@ -1366,7 +1371,7 @@ static void j2k_write_sod(opj_j2k_t *j2k, void *tile_coder) {
 	for (layno = 0; layno < tcp->numlayers; layno++) {
 		tcp->rates[layno] -= tcp->rates[layno] ? (j2k->sod_start / (cp->th * cp->tw)) : 0;
 	}
-	if(image_info) {
+	if(image_info && (j2k->cur_tp_num == 0)) {
 		image_info->num = 0;
 	}
 	
@@ -2253,15 +2258,11 @@ static int j2k_create_index(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_info_t *im
 		int start_pos, end_pos;
 		double disto = 0;
 		pack_nb = 0;
-		
-		/*
-		fprintf(stream, "pkno tileno layerno resno compno precno start_pos   end_pos       deltaSE        \n");
-		*/
-		
+				
 		if (image_info->prog == LRCP) {	/* LRCP */
-			/*
-			fprintf(stream, "pack_nb tileno layno resno compno precno start_pos  end_pos   disto");
-			*/
+
+			fprintf(stream, "pack_nb tileno layno resno compno precno start_pos  end_pos disto\n");
+
 			for (layno = 0; layno < image_info->layer; layno++) {
 				for (resno = 0; resno < image_info->decomposition + 1; resno++) {
 					for (compno = 0; compno < image_info->comp; compno++) {
@@ -2280,9 +2281,9 @@ static int j2k_create_index(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_info_t *im
 			}
 		} /* LRCP */
 		else if (image_info->prog == RLCP) {	/* RLCP */
-			/*
-			fprintf(stream, "pack_nb tileno resno layno compno precno start_pos  end_pos   disto");
-			*/
+
+			fprintf(stream, "pack_nb tileno resno layno compno precno start_pos  end_pos disto\n");
+
 			for (resno = 0; resno < image_info->decomposition + 1; resno++) {
 				for (layno = 0; layno < image_info->layer; layno++) {
 					for (compno = 0; compno < image_info->comp; compno++) {
@@ -2301,26 +2302,26 @@ static int j2k_create_index(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_info_t *im
 			}
 		} /* RLCP */
 		else if (image_info->prog == RPCL) {	/* RPCL */
-			/*
-			fprintf(stream, "\npack_nb tileno resno precno compno layno start_pos  end_pos   disto\n"); 
-			*/
+
+			fprintf(stream, "\npack_nb tileno resno precno compno layno start_pos  end_pos disto\n"); 
+
 			for (resno = 0; resno < image_info->decomposition + 1; resno++) {
 				/* I suppose components have same XRsiz, YRsiz */
 				int x0 = image_info->tile_Ox + tileno - (int)floor( (float)tileno/(float)image_info->tw ) * image_info->tw * image_info->tile_x;
 				int y0 = image_info->tile_Ox + (int)floor( (float)tileno/(float)image_info->tw ) * image_info->tile_y;
 				int x1 = x0 + image_info->tile_x;
 				int y1 = y0 + image_info->tile_y;
-				for(y = y0; y < y1; y++) {
-					for(x = x0; x < x1; x++) {
-						for (compno = 0; compno < image_info->comp; compno++) {
-							int prec_max = image_info->tile[tileno].pw[resno] * image_info->tile[tileno].ph[resno];
-							for (precno = 0; precno < prec_max; precno++) {
-								int pcnx = image_info->tile[tileno].pw[resno];
-								int pcx = (int) pow( 2, image_info->tile[tileno].pdx[resno] + image_info->decomposition - resno );
-								int pcy = (int) pow( 2, image_info->tile[tileno].pdy[resno] + image_info->decomposition - resno );
-								int precno_x = precno - (int) floor( (float)precno/(float)pcnx ) * pcnx;
-								int precno_y = (int) floor( (float)precno/(float)pcnx );
-								if (precno_y*pcy == y ) {
+				for (compno = 0; compno < image_info->comp; compno++) {
+					int prec_max = image_info->tile[tileno].pw[resno] * image_info->tile[tileno].ph[resno];
+					for (precno = 0; precno < prec_max; precno++) {
+						int pcnx = image_info->tile[tileno].pw[resno];
+						int pcx = (int) pow( 2, image_info->tile[tileno].pdx[resno] + image_info->decomposition - resno );
+						int pcy = (int) pow( 2, image_info->tile[tileno].pdy[resno] + image_info->decomposition - resno );
+						int precno_x = precno - (int) floor( (float)precno/(float)pcnx ) * pcnx;
+						int precno_y = (int) floor( (float)precno/(float)pcnx );
+						for(y = y0; y < y1; y++) {							
+							if (precno_y*pcy == y ) {
+								for (x = x0; x < x1; x++) {									
 									if (precno_x*pcx == x ) {
 										for (layno = 0; layno < image_info->layer; layno++) {
 											start_pos = image_info->tile[tileno].packet[pack_nb].start_pos;
@@ -2332,11 +2333,11 @@ static int j2k_create_index(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_info_t *im
 											pack_nb++; 
 										}
 									}
-								}
-							} /* precno */
-						} /* compno */
-					} /* x = x0..x1 */
-				} /* y = y0..y1 */
+								}/* x = x0..x1 */
+							} 
+						}  /* y = y0..y1 */
+					} /* precno */
+				} /* compno */
 			} /* resno */
 		} /* RPCL */
 		else if (image_info->prog == PCRL) {	/* PCRL */
@@ -2345,21 +2346,21 @@ static int j2k_create_index(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_info_t *im
 			int y0 = image_info->tile_Ox + (int)floor( (float)tileno/(float)image_info->tw ) * image_info->tile_y;
 			int x1 = x0 + image_info->tile_x;
 			int y1 = y0 + image_info->tile_y;
-			/*
-			fprintf(stream, "\npack_nb tileno precno compno resno layno start_pos  end_pos   disto\n"); 
-			*/
-			for(y = y0; y < y1; y++) {
-				for(x = x0; x < x1; x++) {
-					for (compno = 0; compno < image_info->comp; compno++) {
-						for (resno = 0; resno < image_info->decomposition + 1; resno++) {
-							int prec_max = image_info->tile[tileno].pw[resno] * image_info->tile[tileno].ph[resno];
-							for (precno = 0; precno < prec_max; precno++) {
-								int pcnx = image_info->tile[tileno].pw[resno];
-								int pcx = (int) pow( 2, image_info->tile[tileno].pdx[resno] + image_info->decomposition - resno );
-								int pcy = (int) pow( 2, image_info->tile[tileno].pdy[resno] + image_info->decomposition - resno );
-								int precno_x = precno - (int) floor( (float)precno/(float)pcnx ) * pcnx;
-								int precno_y = (int) floor( (float)precno/(float)pcnx );
-								if (precno_y*pcy == y ) {
+
+			fprintf(stream, "\npack_nb tileno precno compno resno layno start_pos  end_pos disto\n"); 
+
+			for (compno = 0; compno < image_info->comp; compno++) {
+				for (resno = 0; resno < image_info->decomposition + 1; resno++) {
+					int prec_max = image_info->tile[tileno].pw[resno] * image_info->tile[tileno].ph[resno];
+					for (precno = 0; precno < prec_max; precno++) {
+						int pcnx = image_info->tile[tileno].pw[resno];
+						int pcx = (int) pow( 2, image_info->tile[tileno].pdx[resno] + image_info->decomposition - resno );
+						int pcy = (int) pow( 2, image_info->tile[tileno].pdy[resno] + image_info->decomposition - resno );
+						int precno_x = precno - (int) floor( (float)precno/(float)pcnx ) * pcnx;
+						int precno_y = (int) floor( (float)precno/(float)pcnx );
+						for(y = y0; y < y1; y++) {							
+							if (precno_y*pcy == y ) {
+								for (x = x0; x < x1; x++) {									
 									if (precno_x*pcx == x ) {
 										for (layno = 0; layno < image_info->layer; layno++) {
 											start_pos = image_info->tile[tileno].packet[pack_nb].start_pos;
@@ -2371,34 +2372,35 @@ static int j2k_create_index(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_info_t *im
 											pack_nb++; 
 										}
 									}
-								}
-							} /* precno */
-						} /* resno */
-					} /* compno */
-				} /* x = x0..x1 */
-			} /* y = y0..y1 */
+								}/* x = x0..x1 */
+							} 
+						}  /* y = y0..y1 */
+					} /* precno */
+				} /* resno */
+			} /* compno */
 		} /* PCRL */
 		else {	/* CPRL */
-			/*
-			fprintf(stream, "\npack_nb tileno compno precno resno layno start_pos  end_pos   disto\n"); 
-			*/
+
+			fprintf(stream, "\npack_nb tileno compno precno resno layno start_pos  end_pos disto\n"); 
+
 			for (compno = 0; compno < image_info->comp; compno++) {
 				/* I suppose components have same XRsiz, YRsiz */
 				int x0 = image_info->tile_Ox + tileno - (int)floor( (float)tileno/(float)image_info->tw ) * image_info->tw * image_info->tile_x;
 				int y0 = image_info->tile_Ox + (int)floor( (float)tileno/(float)image_info->tw ) * image_info->tile_y;
 				int x1 = x0 + image_info->tile_x;
 				int y1 = y0 + image_info->tile_y;
-				for(y = y0; y < y1; y++) {
-					for(x = x0; x < x1; x++) {
-						for (resno = 0; resno < image_info->decomposition + 1; resno++) {
-							int prec_max = image_info->tile[tileno].pw[resno] * image_info->tile[tileno].ph[resno];
-							for (precno = 0; precno < prec_max; precno++) {
-								int pcnx = image_info->tile[tileno].pw[resno];
-								int pcx = (int) pow( 2, image_info->tile[tileno].pdx[resno] + image_info->decomposition - resno );
-								int pcy = (int) pow( 2, image_info->tile[tileno].pdy[resno] + image_info->decomposition - resno );
-								int precno_x = precno - (int) floor( (float)precno/(float)pcnx ) * pcnx;
-								int precno_y = (int) floor( (float)precno/(float)pcnx );
-								if (precno_y*pcy == y ) {
+				
+				for (resno = 0; resno < image_info->decomposition + 1; resno++) {
+					int prec_max = image_info->tile[tileno].pw[resno] * image_info->tile[tileno].ph[resno];
+					for (precno = 0; precno < prec_max; precno++) {
+						int pcnx = image_info->tile[tileno].pw[resno];
+						int pcx = (int) pow( 2, image_info->tile[tileno].pdx[resno] + image_info->decomposition - resno );
+						int pcy = (int) pow( 2, image_info->tile[tileno].pdy[resno] + image_info->decomposition - resno );
+						int precno_x = precno - (int) floor( (float)precno/(float)pcnx ) * pcnx;
+						int precno_y = (int) floor( (float)precno/(float)pcnx );
+						for(y = y0; y < y1; y++) {
+							if (precno_y*pcy == y ) {
+								for (x = x0; x < x1; x++) {
 									if (precno_x*pcx == x ) {
 										for (layno = 0; layno < image_info->layer; layno++) {
 											start_pos = image_info->tile[tileno].packet[pack_nb].start_pos;
@@ -2410,12 +2412,12 @@ static int j2k_create_index(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_info_t *im
 											pack_nb++; 
 										}
 									}
-								}
-							} /* precno */
-						} /* resno */
-					} /* x = x0..x1 */
-				} /* y = y0..y1 */
-			} /* comno */
+								}/* x = x0..x1 */
+							}
+						} /* y = y0..y1 */
+					} /* precno */
+				} /* resno */
+			} /* compno */
 		} /* CPRL */   
 	} /* tileno */
 	

@@ -581,11 +581,7 @@ int t2_encode_packets(opj_t2_t* t2,int tileno, opj_tcd_tile_t *tile, int maxlaye
 		return -999;
 	}
 	
-	if(image_info) {
-		image_info->num = 0;
-	}
-	
-	if(t2_mode == THRESH_CALC ){
+	if(t2_mode == THRESH_CALC ){ /* Calculating threshold */
 		for(compno = 0; compno < maxcomp; compno++ ){
 			for(poc = 0; poc < pocno ; poc++){
 				int comp_len = 0;
@@ -605,14 +601,14 @@ int t2_encode_packets(opj_t2_t* t2,int tileno, opj_tcd_tile_t *tile, int maxlaye
 				if (e == -999) break;
 				if (cp->max_comp_size){
 					if (comp_len > cp->max_comp_size){
-								e = -999;
-								break;
+						e = -999;
+						break;
 					}
 				}
 			}
 			if (e == -999)  break;
 		}
-	}else{
+	}else{  /* t2_mode == FINAL_PASS  */
 		pi_create_encode(pi, cp,tileno,pino,tpnum,tppos); 
 		while (pi_next(&pi[pino])) {
 			if (pi[pino].layno < maxlayers) {
@@ -622,33 +618,33 @@ int t2_encode_packets(opj_t2_t* t2,int tileno, opj_tcd_tile_t *tile, int maxlaye
 				} else {
 					c += e;
 				}
+				/* INDEX >> */
+				if(image_info && image_info->index_on) {
+					if(image_info->index_write) {
+						opj_tile_info_t *info_TL = &image_info->tile[tileno];
+						opj_packet_info_t *info_PK = &info_TL->packet[image_info->num];
+						if (!image_info->num) {
+							info_PK->start_pos = info_TL->end_header + 1;
+						} else {
+							info_PK->start_pos = (cp->tp_on && info_PK->start_pos) ? info_PK->start_pos : info_TL->packet[image_info->num - 1].end_pos + 1;
+						}
+						info_PK->end_pos = info_PK->start_pos + e - 1;
+					}
+					
+					image_info->num++;
+				}
+				/* << INDEX */
 			}
 		}
 	}
-
-		/* INDEX >> */
-		if(image_info && image_info->index_on) {
-				if(image_info->index_write) {
-					opj_tile_info_t *info_TL = &image_info->tile[tileno];
-					opj_packet_info_t *info_PK = &info_TL->packet[image_info->num];
-					if (!image_info->num) {
-						info_PK->start_pos = info_TL->end_header + 1;
-					} else {
-						info_PK->start_pos = info_TL->packet[image_info->num - 1].end_pos + 1;
-					}
-					info_PK->end_pos = info_PK->start_pos + e - 1;
-				}
-
-				image_info->num++;
-			}
-		/* << INDEX */
-		pi_destroy(pi, cp, tileno);
+	
+	pi_destroy(pi, cp, tileno);
 	
 	if (e == -999) {
 		return e;
 	}
-
-    return (c - dest);
+	
+  return (c - dest);
 }
 
 int t2_decode_packets(opj_t2_t *t2, unsigned char *src, int len, int tileno, opj_tcd_tile_t *tile) {

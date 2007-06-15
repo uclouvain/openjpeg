@@ -5,6 +5,10 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+June 15, 2007
+* [FOD] Fixed the generation of index files 
+
+
 ----------------------
 MAY 4, 2007
 VERSION 1.2.0 RELEASED
