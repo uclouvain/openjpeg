@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+June 16, 2007
++ [GB] Possibility to disable parsing in OPJViewer; also, saves common settings to the registry
+
 June 15, 2007
 * [FOD] Fixed the generation of index files 
 

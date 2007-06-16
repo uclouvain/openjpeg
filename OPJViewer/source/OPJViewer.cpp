@@ -207,8 +207,30 @@ bool OPJViewerApp::OnInit(void)
 	// memory file system
     wxFileSystem::AddHandler(new wxMemoryFSHandler);
 
+#ifdef OPJ_INICONFIG
+	//load decoding engine parameters
+	OPJconfig = new wxConfig(OPJ_APPLICATION, OPJ_APPLICATION_VENDOR);
+
+	OPJconfig->Read(wxT("enabledeco"), &m_enabledeco, (bool) true);
+	OPJconfig->Read(wxT("enableparse"), &m_enableparse, (bool) true);
+	OPJconfig->Read(wxT("resizemethod"), &m_resizemethod, (long) 0);
+	OPJconfig->Read(wxT("reducefactor"), &m_reducefactor, (long) 0);
+	OPJconfig->Read(wxT("qualitylayers"), &m_qualitylayers, (long) 0);
+	OPJconfig->Read(wxT("components"), &m_components, (long) 0);
+	OPJconfig->Read(wxT("framenum"), &m_framenum, (long) 0);
+#ifdef USE_JPWL
+	OPJconfig->Read(wxT("enablejpwl"), &m_enablejpwl, (bool) true);
+	OPJconfig->Read(wxT("expcomps"), &m_expcomps, (long) JPWL_EXPECTED_COMPONENTS);
+	OPJconfig->Read(wxT("maxtiles"), &m_maxtiles, (long) JPWL_MAXIMUM_TILES);
+#endif // USE_JPWL
+
+	OPJconfig->Write(wxT("teststring"), wxT("This is a test value"));
+	OPJconfig->Write(wxT("testbool"), (bool) true);
+	OPJconfig->Write(wxT("testlong"), (long) 245);
+#else
 	// set decoding engine parameters
 	m_enabledeco = true;
+	m_enableparse = true;
 	m_resizemethod = 0;
 	m_reducefactor = 0;
 	m_qualitylayers = 0;
@@ -219,6 +241,7 @@ bool OPJViewerApp::OnInit(void)
 	m_expcomps = JPWL_EXPECTED_COMPONENTS;
 	m_maxtiles = JPWL_MAXIMUM_TILES;
 #endif // USE_JPWL
+#endif // OPJ_INICONFIG
 
 	// Create the main frame window
   OPJFrame *frame = new OPJFrame(NULL, wxID_ANY, OPJ_APPLICATION_TITLEBAR,
@@ -248,6 +271,26 @@ bool OPJViewerApp::OnInit(void)
 	}
 
   return true;
+}
+
+int OPJViewerApp::OnExit()
+{
+#ifdef OPJ_INICONFIG
+	OPJconfig->Write(wxT("enabledeco"), m_enabledeco);
+	OPJconfig->Write(wxT("enableparse"), m_enableparse);
+	OPJconfig->Write(wxT("resizemethod"), m_resizemethod);
+	OPJconfig->Write(wxT("reducefactor"), m_reducefactor);
+	OPJconfig->Write(wxT("qualitylayers"), m_qualitylayers);
+	OPJconfig->Write(wxT("components"), m_components);
+	OPJconfig->Write(wxT("framenum"), m_framenum);
+#ifdef USE_JPWL
+	OPJconfig->Write(wxT("enablejpwl"), m_enablejpwl);
+	OPJconfig->Write(wxT("expcomps"), m_expcomps);
+	OPJconfig->Write(wxT("maxtiles"), m_maxtiles);
+#endif // USE_JPWL
+#endif // OPJ_INICONFIG
+
+	return 1;
 }
 
 void OPJViewerApp::ShowCmdLine(const wxCmdLineParser& parser)
@@ -472,7 +515,8 @@ void OPJFrame::OnSetsDeco(wxCommandEvent& event)
 
 		// load settings
 		wxGetApp().m_enabledeco = dialog.m_enabledecoCheck->GetValue();
-		wxGetApp().m_resizemethod = dialog.m_resizeBox->GetSelection();
+		wxGetApp().m_enableparse = dialog.m_enableparseCheck->GetValue();
+		wxGetApp().m_resizemethod = dialog.m_resizeBox->GetSelection() - 1;
 		wxGetApp().m_reducefactor = dialog.m_reduceCtrl->GetValue();
 		wxGetApp().m_qualitylayers = dialog.m_layerCtrl->GetValue();
 		wxGetApp().m_components = dialog.m_numcompsCtrl->GetValue();
@@ -548,16 +592,23 @@ void OPJFrame::OnZoom(wxCommandEvent& WXUNUSED(event))
 void OPJFrame::Rescale(int zooml, OPJChildFrame *currframe)
 {
 	wxImage new_image = currframe->m_canvas->m_image100.ConvertToImage();
+
+	// resizing enabled?
+	if (wxGetApp().m_resizemethod == -1) {
+		zooml = 100;
+	}
+
 	if (zooml != 100)
 		new_image.Rescale((int) ((double) zooml * (double) new_image.GetWidth() / 100.0),
 			(int) ((double) zooml * (double) new_image.GetHeight() / 100.0),
 			wxGetApp().m_resizemethod ? wxIMAGE_QUALITY_HIGH : wxIMAGE_QUALITY_NORMAL);
-    currframe->m_canvas->m_image = wxBitmap(new_image);
+	currframe->m_canvas->m_image = wxBitmap(new_image);
 	currframe->m_canvas->SetScrollbars(20,
 										20,
 										(int)(0.5 + (double) new_image.GetWidth() / 20.0),
 										(int)(0.5 + (double) new_image.GetHeight() / 20.0)
 										);
+
 	currframe->m_canvas->Refresh();
 
 	// update zoom
@@ -1125,31 +1176,38 @@ void OPJParseThread::LoadFile(wxFileName fname)
 	// open the file
 	wxFile m_file(fname.GetFullPath().c_str(), wxFile::read);
 
-	// what is the extension?
-	if ((fname.GetExt() == wxT("j2k")) || (fname.GetExt() == wxT("j2c"))) {
+	// parsing enabled?
+	if (wxGetApp().m_enableparse) {
 
-		// parse the file
-		ParseJ2KFile(&m_file, 0, m_file.Length(), rootid);
+		// what is the extension?
+		if ((fname.GetExt() == wxT("j2k")) || (fname.GetExt() == wxT("j2c"))) {
 
-	} else if ((fname.GetExt() == wxT("jp2")) || (fname.GetExt() == wxT("mj2"))) {
+			// parse the file
+			ParseJ2KFile(&m_file, 0, m_file.Length(), rootid);
 
-		// parse the file
-		if (this->m_parentid) {
-			//WriteText(wxT("Only a subsection of jp2"));
-			OPJMarkerData *data = (OPJMarkerData *) m_tree->GetItemData(rootid);
-			ParseJ2KFile(&m_file, data->m_start, data->m_length, rootid);
-			m_tree->Expand(rootid);
+		} else if ((fname.GetExt() == wxT("jp2")) || (fname.GetExt() == wxT("mj2"))) {
 
-		} else
-			// as usual
-			ParseJP2File(&m_file, 0, m_file.Length(), rootid);
+			// parse the file
+			if (this->m_parentid) {
+				//WriteText(wxT("Only a subsection of jp2"));
+				OPJMarkerData *data = (OPJMarkerData *) m_tree->GetItemData(rootid);
+				ParseJ2KFile(&m_file, data->m_start, data->m_length, rootid);
+				m_tree->Expand(rootid);
 
-	} else {
+			} else {
+				// as usual
+				ParseJP2File(&m_file, 0, m_file.Length(), rootid);
+			}
 
-		// unknown extension
-		WriteText(wxT("Unknown file format!"));
+		} else {
+
+			// unknown extension
+			WriteText(wxT("Unknown file format!"));
+
+		}
 
 	}
+
 
 	// this is the root node
 	if (this->m_parentid)
@@ -2131,8 +2189,14 @@ wxPanel* OPJDecoderDialog::CreateMainSettingsPage(wxWindow* parent)
 			0, wxGROW | wxALL, 5);
 		m_enabledecoCheck->SetValue(wxGetApp().m_enabledeco);
 
+		// add parsing enabling check box
+		subtopSizer->Add(
+			m_enableparseCheck = new wxCheckBox(panel, OPJDECO_ENABLEPARSE, wxT("Enable parsing"), wxDefaultPosition, wxDefaultSize),
+			0, wxGROW | wxALL, 5);
+		m_enableparseCheck->SetValue(wxGetApp().m_enableparse);
+
 			// resize settings, column
-			wxString choices[] = {wxT("Low quality"), wxT("High quality")};
+			wxString choices[] = {wxT("Don't resize"), wxT("Low quality"), wxT("High quality")};
 			m_resizeBox = new wxRadioBox(panel, OPJDECO_RESMETHOD,
 				wxT("Resize method"),
 				wxDefaultPosition, wxDefaultSize,
@@ -2140,7 +2204,7 @@ wxPanel* OPJDecoderDialog::CreateMainSettingsPage(wxWindow* parent)
 				choices,
 				1,
 				wxRA_SPECIFY_ROWS);
-			m_resizeBox->SetSelection(wxGetApp().m_resizemethod);
+			m_resizeBox->SetSelection(wxGetApp().m_resizemethod + 1);
 
 		subtopSizer->Add(m_resizeBox, 0, wxGROW | wxALL, 5);
 

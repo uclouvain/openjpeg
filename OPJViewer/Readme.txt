@@ -52,8 +52,7 @@ The porting is possible and under way.
 3. General information on the viewer
 ====================================
 
-This viewer is conceived to open and display information and image content of J2K, JP2,
-and MJ2 files.
+This viewer is conceived to open and display information and image content of J2K, JP2, and MJ2 files.
 The viewer application interface is divided into three main panels:
 - a browsing pane;
 - a viewing pane;

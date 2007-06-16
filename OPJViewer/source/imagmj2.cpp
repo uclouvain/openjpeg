@@ -130,10 +130,18 @@ void mj2_info_callback(const char *msg, void *client_data) {
 /* From little endian to big endian, 2 and 4 bytes */
 #define	BYTE_SWAP2(X)	((X & 0x00FF) << 8) | ((X & 0xFF00) >> 8)
 #define	BYTE_SWAP4(X)	((X & 0x000000FF) << 24) | ((X & 0x0000FF00) << 8) | ((X & 0x00FF0000) >> 8) | ((X & 0xFF000000) >> 24)
+
+#ifdef __WXGTK__
+#define	BYTE_SWAP8(X)	((X & 0x00000000000000FFULL) << 56) | ((X & 0x000000000000FF00ULL) << 40) | \
+                        ((X & 0x0000000000FF0000ULL) << 24) | ((X & 0x00000000FF000000ULL) << 8) | \
+						((X & 0x000000FF00000000ULL) >> 8)  | ((X & 0x0000FF0000000000ULL) >> 24) | \
+						((X & 0x00FF000000000000ULL) >> 40) | ((X & 0xFF00000000000000ULL) >> 56)
+#else
 #define	BYTE_SWAP8(X)	((X & 0x00000000000000FF) << 56) | ((X & 0x000000000000FF00) << 40) | \
                         ((X & 0x0000000000FF0000) << 24) | ((X & 0x00000000FF000000) << 8) | \
 						((X & 0x000000FF00000000) >> 8)  | ((X & 0x0000FF0000000000) >> 24) | \
 						((X & 0x00FF000000000000) >> 40) | ((X & 0xFF00000000000000) >> 56)
+#endif
 
 /* From codestream to int values */
 #define STREAM_TO_UINT32(C, P)	(((unsigned long int) (C)[(P) + 0] << 24) + \

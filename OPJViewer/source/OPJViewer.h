@@ -128,6 +128,7 @@ typedef unsigned long long int8byte;
 #define OPJ_APPLICATION_VERSION		wxT("0.3 alpha")
 #define OPJ_APPLICATION_TITLEBAR	OPJ_APPLICATION_NAME wxT(" ") OPJ_APPLICATION_VERSION
 #define OPJ_APPLICATION_COPYRIGHT	wxT("(C) 2007, Giuseppe Baruffa")
+#define OPJ_APPLICATION_VENDOR      wxT("OpenJPEG")
 
 #ifdef __WXMSW__
 #define OPJ_APPLICATION_PLATFORM    wxT("Windows")
@@ -158,6 +159,7 @@ class OPJViewerApp: public wxApp
 
 		// other methods
 		bool OnInit(void);
+		int OnExit(void);
 		void SetShowImages(bool show) { m_showImages = show; }
 		bool ShowImages() const { return m_showImages; }
 		void ShowCmdLine(const wxCmdLineParser& parser);
@@ -183,12 +185,15 @@ class OPJViewerApp: public wxApp
 		int m_resizemethod;
 
 		// decoding engine parameters
-		bool m_enabledeco;
+		bool m_enabledeco, m_enableparse;
 		int m_reducefactor, m_qualitylayers, m_components, m_framenum;
 #ifdef USE_JPWL
 		bool m_enablejpwl;
 		int m_expcomps, m_maxtiles;
 #endif // USE_JPWL
+
+		// application configuration
+		wxConfig *OPJconfig; 
 
 	// private methods and variables
 	private:
@@ -619,7 +624,7 @@ public:
     ~OPJDecoderDialog();
 
 	wxBookCtrlBase* m_settingsNotebook;
-	wxCheckBox *m_enabledecoCheck;
+	wxCheckBox *m_enabledecoCheck, *m_enableparseCheck;
 	wxSpinCtrl *m_reduceCtrl, *m_layerCtrl, *m_numcompsCtrl;
 	wxRadioBox* m_resizeBox;
 
@@ -644,6 +649,7 @@ protected:
 		OPJDECO_QUALITYLAYERS,
 		OPJDECO_NUMCOMPS,
 		OPJDECO_ENABLEDECO,
+		OPJDECO_ENABLEPARSE,
 		OPJDECO_ENABLEJPWL,
 		OPJDECO_EXPCOMPS,
 		OPJDECO_MAXTILES,
