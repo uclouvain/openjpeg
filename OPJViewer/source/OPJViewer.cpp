@@ -318,6 +318,7 @@ BEGIN_EVENT_TABLE(OPJFrame, wxMDIParentFrame)
     EVT_MENU(OPJFRAME_VIEWRELOAD, OPJFrame::OnReload)
     EVT_MENU(OPJFRAME_FILETOGGLEB, OPJFrame::OnToggleBrowser)
     EVT_MENU(OPJFRAME_FILETOGGLEP, OPJFrame::OnTogglePeeker)
+    EVT_MENU(OPJFRAME_FILETOGGLET, OPJFrame::OnToggleToolbar)
     EVT_MENU(OPJFRAME_SETSENCO, OPJFrame::OnSetsEnco)
     EVT_MENU(OPJFRAME_SETSDECO, OPJFrame::OnSetsDeco)
     EVT_SASH_DRAGGED_RANGE(OPJFRAME_BROWSEWIN, OPJFRAME_LOGWIN, OPJFrame::OnSashDrag)
@@ -335,11 +336,18 @@ OPJFrame::OPJFrame(wxWindow *parent, const wxWindowID id, const wxString& title,
 	file_menu->Append(OPJFRAME_FILEOPEN, wxT("&Open\tCtrl+O"));
 	file_menu->SetHelpString(OPJFRAME_FILEOPEN, wxT("Open one or more files"));
 
+	file_menu->Append(OPJFRAME_FILESAVEAS, wxT("&Save as\tCtrl+S"));
+	file_menu->SetHelpString(OPJFRAME_FILESAVEAS, wxT("Save the current image"));
+	file_menu->Enable(OPJFRAME_FILESAVEAS, false);
+
 	file_menu->Append(OPJFRAME_FILETOGGLEB, wxT("Toggle &browser\tCtrl+B"));
 	file_menu->SetHelpString(OPJFRAME_FILETOGGLEB, wxT("Toggle the left browsing pane"));
 
 	file_menu->Append(OPJFRAME_FILETOGGLEP, wxT("Toggle &peeker\tCtrl+P"));
 	file_menu->SetHelpString(OPJFRAME_FILETOGGLEP, wxT("Toggle the bottom peeking pane"));
+
+	file_menu->Append(OPJFRAME_FILETOGGLET, wxT("Toggle &toolbar\tCtrl+T"));
+	file_menu->SetHelpString(OPJFRAME_FILETOGGLET, wxT("Toggle the toolbar"));
 
 	file_menu->Append(OPJFRAME_FILECLOSE, wxT("&Close\tCtrl+C"));
 	file_menu->SetHelpString(OPJFRAME_FILECLOSE, wxT("Close current image"));
@@ -386,6 +394,40 @@ OPJFrame::OPJFrame(wxWindow *parent, const wxWindowID id, const wxString& title,
 
 	// the status bar
 	CreateStatusBar();
+
+	// the toolbar
+	tool_bar = new wxToolBar(this, OPJFRAME_TOOLBAR,
+								wxDefaultPosition, wxDefaultSize,
+								wxTB_HORIZONTAL | wxNO_BORDER);
+	wxBitmap bmpOpen = wxArtProvider::GetBitmap(wxART_FILE_OPEN, wxART_TOOLBAR,
+												wxDefaultSize);
+	wxBitmap bmpSaveAs = wxArtProvider::GetBitmap(wxART_FILE_SAVE_AS, wxART_TOOLBAR,
+												wxDefaultSize);
+	wxBitmap bmpZoom = wxArtProvider::GetBitmap(wxART_FIND, wxART_TOOLBAR,
+												wxDefaultSize);
+	wxBitmap bmpFit = wxArtProvider::GetBitmap(wxART_FIND_AND_REPLACE, wxART_TOOLBAR,
+												wxDefaultSize);
+	wxBitmap bmpReload = wxArtProvider::GetBitmap(wxART_EXECUTABLE_FILE, wxART_TOOLBAR,
+												wxDefaultSize);
+	wxBitmap bmpDecosettings = wxArtProvider::GetBitmap(wxART_REPORT_VIEW, wxART_TOOLBAR,
+												wxDefaultSize);
+	wxBitmap bmpEncosettings = wxArtProvider::GetBitmap(wxART_LIST_VIEW, wxART_TOOLBAR,
+												wxDefaultSize);
+
+	tool_bar->AddTool(OPJFRAME_FILEOPEN, bmpOpen, wxT("Open"));
+	tool_bar->AddTool(OPJFRAME_FILESAVEAS, bmpSaveAs, wxT("Save as "));
+	tool_bar->EnableTool(OPJFRAME_FILESAVEAS, false);
+	tool_bar->AddSeparator();
+	tool_bar->AddTool(OPJFRAME_VIEWZOOM, bmpZoom, wxT("Zoom"));
+	tool_bar->AddTool(OPJFRAME_VIEWFIT, bmpFit, wxT("Zoom to fit"));
+	tool_bar->AddTool(OPJFRAME_VIEWRELOAD, bmpReload, wxT("Reload"));
+	tool_bar->AddSeparator();
+	tool_bar->AddTool(OPJFRAME_SETSDECO, bmpDecosettings, wxT("Decoder settings"));
+	tool_bar->AddTool(OPJFRAME_SETSENCO, bmpEncosettings, wxT("Encoder settings"));
+	tool_bar->Realize();
+	
+	// associate the toolbar with the frame
+	SetToolBar(tool_bar);
 
 	// the logging window
 	loggingWindow = new wxSashLayoutWindow(this, OPJFRAME_LOGWIN,
@@ -708,6 +750,17 @@ void OPJFrame::OnTogglePeeker(wxCommandEvent& WXUNUSED(event))
         loggingWindow->Show(false);
     else
         loggingWindow->Show(true);
+
+    wxLayoutAlgorithm layout;
+    layout.LayoutMDIFrame(this);
+}
+
+void OPJFrame::OnToggleToolbar(wxCommandEvent& WXUNUSED(event))
+{
+    if (tool_bar->IsShown())
+        tool_bar->Show(false);
+    else
+        tool_bar->Show(true);
 
     wxLayoutAlgorithm layout;
     layout.LayoutMDIFrame(this);

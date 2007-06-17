@@ -98,6 +98,9 @@
 
 #include <wx/imaglist.h>
 
+#include "wx/toolbar.h"
+#include "wx/artprov.h"
+
 #include "libopenjpeg/openjpeg.h"
 
 #include "imagj2k.h"
@@ -375,6 +378,7 @@ class OPJFrame: public wxMDIParentFrame
 	void OnFit(wxCommandEvent& WXUNUSED(event));
 	void OnToggleBrowser(wxCommandEvent& WXUNUSED(event));
 	void OnTogglePeeker(wxCommandEvent& WXUNUSED(event));
+	void OnToggleToolbar(wxCommandEvent& WXUNUSED(event));
 	void OnReload(wxCommandEvent& event);
 	void OnSetsEnco(wxCommandEvent& event);
 	void OnSetsDeco(wxCommandEvent& event);
@@ -387,6 +391,7 @@ class OPJFrame: public wxMDIParentFrame
 	OPJChildFrameHash m_childhash;
     wxSashLayoutWindow* markerTreeWindow;
     wxSashLayoutWindow* loggingWindow;
+	wxToolBar* tool_bar;
     void Resize(int number);
 	wxNotebook *m_bookCtrl;
 	wxNotebook *m_bookCtrlbottom;
@@ -434,8 +439,10 @@ enum {
 	OPJFRAME_FILEEXIT = wxID_EXIT,
 	OPJFRAME_HELPABOUT = wxID_ABOUT,
 	OPJFRAME_FILEOPEN,
+	OPJFRAME_FILESAVEAS,
 	OPJFRAME_FILETOGGLEB,
 	OPJFRAME_FILETOGGLEP,
+	OPJFRAME_FILETOGGLET,
 	OPJFRAME_VIEWZOOM,
 	OPJFRAME_VIEWFIT,
 	OPJFRAME_VIEWRELOAD,
@@ -444,7 +451,8 @@ enum {
 	OPJFRAME_SETSDECO,
 
 	OPJFRAME_BROWSEWIN = 10000,
-	OPJFRAME_LOGWIN
+	OPJFRAME_LOGWIN,
+	OPJFRAME_TOOLBAR
 };
 
 
