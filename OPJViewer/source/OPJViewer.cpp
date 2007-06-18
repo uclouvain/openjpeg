@@ -227,6 +227,14 @@ bool OPJViewerApp::OnInit(void)
 	OPJconfig->Write(wxT("teststring"), wxT("This is a test value"));
 	OPJconfig->Write(wxT("testbool"), (bool) true);
 	OPJconfig->Write(wxT("testlong"), (long) 245);
+
+	OPJconfig->Read(wxT("showtoolbar"), &m_showtoolbar, (bool) true);
+	OPJconfig->Read(wxT("showbrowser"), &m_showbrowser, (bool) true);
+	OPJconfig->Read(wxT("showpeeker"), &m_showpeeker, (bool) true);
+	OPJconfig->Read(wxT("browserwidth"), &m_browserwidth, (long) OPJ_BROWSER_WIDTH);
+	OPJconfig->Read(wxT("peekerheight"), &m_peekerheight, (long) OPJ_PEEKER_HEIGHT);
+	OPJconfig->Read(wxT("framewidth"), &m_framewidth, (long) OPJ_FRAME_WIDTH);
+	OPJconfig->Read(wxT("frameheight"), &m_frameheight, (long) OPJ_FRAME_HEIGHT);
 #else
 	// set decoding engine parameters
 	m_enabledeco = true;
@@ -241,11 +249,18 @@ bool OPJViewerApp::OnInit(void)
 	m_expcomps = JPWL_EXPECTED_COMPONENTS;
 	m_maxtiles = JPWL_MAXIMUM_TILES;
 #endif // USE_JPWL
+	m_showtoolbar = true;
+	m_showbrowser = true;
+	m_showpeeker = true;
+	m_browserwidth = OPJ_BROWSER_WIDTH;
+	m_peekerheight = OPJ_PEEKER_HEIGHT;
+	m_framewidth = OPJ_FRAME_WIDTH;
+	m_frameheight = OPJ_FRAME_HEIGHT;
 #endif // OPJ_INICONFIG
 
 	// Create the main frame window
   OPJFrame *frame = new OPJFrame(NULL, wxID_ANY, OPJ_APPLICATION_TITLEBAR,
-					  wxDefaultPosition, wxSize(800, 600),
+					  wxDefaultPosition, wxSize(wxGetApp().m_framewidth, wxGetApp().m_frameheight),
                       wxDEFAULT_FRAME_STYLE | wxNO_FULL_REPAINT_ON_RESIZE |
                       wxHSCROLL | wxVSCROLL);
 
@@ -288,6 +303,13 @@ int OPJViewerApp::OnExit()
 	OPJconfig->Write(wxT("expcomps"), m_expcomps);
 	OPJconfig->Write(wxT("maxtiles"), m_maxtiles);
 #endif // USE_JPWL
+	OPJconfig->Write(wxT("showtoolbar"), m_showtoolbar);
+	OPJconfig->Write(wxT("showbrowser"), m_showbrowser);
+	OPJconfig->Write(wxT("showpeeker"), m_showpeeker);
+	OPJconfig->Write(wxT("browserwidth"), m_browserwidth);
+	OPJconfig->Write(wxT("peekerheight"), m_peekerheight);
+	OPJconfig->Write(wxT("framewidth"), m_framewidth);
+	OPJconfig->Write(wxT("frameheight"), m_frameheight);
 #endif // OPJ_INICONFIG
 
 	return 1;
@@ -429,16 +451,28 @@ OPJFrame::OPJFrame(wxWindow *parent, const wxWindowID id, const wxString& title,
 	// associate the toolbar with the frame
 	SetToolBar(tool_bar);
 
+	// show the toolbar?
+	if (!wxGetApp().m_showtoolbar)
+		tool_bar->Show(false);
+	else
+		tool_bar->Show(true);
+
 	// the logging window
 	loggingWindow = new wxSashLayoutWindow(this, OPJFRAME_LOGWIN,
-											wxDefaultPosition, wxSize(400, 130),
+											wxDefaultPosition, wxSize(400, wxGetApp().m_peekerheight),
 											wxNO_BORDER | wxSW_3D | wxCLIP_CHILDREN
 											);
-	loggingWindow->SetDefaultSize(wxSize(1000, 130));
+	loggingWindow->SetDefaultSize(wxSize(1000, wxGetApp().m_peekerheight));
 	loggingWindow->SetOrientation(wxLAYOUT_HORIZONTAL);
 	loggingWindow->SetAlignment(wxLAYOUT_BOTTOM);
 	//loggingWindow->SetBackgroundColour(wxColour(0, 0, 255));
 	loggingWindow->SetSashVisible(wxSASH_TOP, true);
+
+	// show the logging?
+	if (!wxGetApp().m_showpeeker)
+		loggingWindow->Show(false);
+	else
+		loggingWindow->Show(true);
 
 	// create the bottom notebook
 	m_bookCtrlbottom = new wxNotebook(loggingWindow, BOTTOM_NOTEBOOK_ID,
@@ -470,10 +504,10 @@ OPJFrame::OPJFrame(wxWindow *parent, const wxWindowID id, const wxString& title,
 
 	// the browser window
 	markerTreeWindow = new wxSashLayoutWindow(this, OPJFRAME_BROWSEWIN,
-											  wxDefaultPosition, wxSize(300, 30),
+											  wxDefaultPosition, wxSize(wxGetApp().m_browserwidth, 30),
 											  wxNO_BORDER | wxSW_3D | wxCLIP_CHILDREN
 											  );
-	markerTreeWindow->SetDefaultSize(wxSize(300, 1000));
+	markerTreeWindow->SetDefaultSize(wxSize(wxGetApp().m_browserwidth, 1000));
 	markerTreeWindow->SetOrientation(wxLAYOUT_VERTICAL);
 	markerTreeWindow->SetAlignment(wxLAYOUT_LEFT);
 	//markerTreeWindow->SetBackgroundColour(wxColour(0, 255, 0));
@@ -484,6 +518,12 @@ OPJFrame::OPJFrame(wxWindow *parent, const wxWindowID id, const wxString& title,
 	m_bookCtrl = new wxNotebook(markerTreeWindow, LEFT_NOTEBOOK_ID,
 								wxDefaultPosition, wxDefaultSize,
 								wxBK_TOP);
+
+	// show the browser?
+	if (!wxGetApp().m_showbrowser)
+		markerTreeWindow->Show(false);
+	else
+		markerTreeWindow->Show(true);
 
 #ifdef __WXMOTIF__
 	// For some reason, we get a memcpy crash in wxLogStream::DoLogStream
@@ -503,6 +543,9 @@ OPJFrame::OPJFrame(wxWindow *parent, const wxWindowID id, const wxString& title,
 // this is the frame destructor
 OPJFrame::~OPJFrame(void)
 {
+	// save size settings
+	GetSize(&(wxGetApp().m_framewidth), &(wxGetApp().m_frameheight));
+
 	// delete all possible things
 	delete m_bookCtrl;
 	m_bookCtrl = NULL;
@@ -662,17 +705,19 @@ void OPJFrame::OnReload(wxCommandEvent& event)
 {
 	OPJChildFrame *currframe = (OPJChildFrame *) GetActiveChild();
 
-    OPJDecoThread *dthread = currframe->m_canvas->CreateDecoThread();
+	if (currframe) {
+		OPJDecoThread *dthread = currframe->m_canvas->CreateDecoThread();
 
-    if (dthread->Run() != wxTHREAD_NO_ERROR)
-        wxLogMessage(wxT("Can't start deco thread!"));
-    else
-		wxLogMessage(wxT("New deco thread started."));
+		if (dthread->Run() != wxTHREAD_NO_ERROR)
+			wxLogMessage(wxT("Can't start deco thread!"));
+		else
+			wxLogMessage(wxT("New deco thread started."));
 
-	currframe->m_canvas->Refresh();
+		currframe->m_canvas->Refresh();
 
-	// update zoom
-	//currframe->m_canvas->m_zooml = zooml;
+		// update zoom
+		//currframe->m_canvas->m_zooml = zooml;
+	}
 }
 
 
@@ -742,6 +787,11 @@ void OPJFrame::OnToggleBrowser(wxCommandEvent& WXUNUSED(event))
 
     wxLayoutAlgorithm layout;
     layout.LayoutMDIFrame(this);
+
+	wxGetApp().m_showbrowser = markerTreeWindow->IsShown();
+
+    // Leaves bits of itself behind sometimes
+    GetClientWindow()->Refresh();
 }
 
 void OPJFrame::OnTogglePeeker(wxCommandEvent& WXUNUSED(event))
@@ -753,6 +803,11 @@ void OPJFrame::OnTogglePeeker(wxCommandEvent& WXUNUSED(event))
 
     wxLayoutAlgorithm layout;
     layout.LayoutMDIFrame(this);
+
+	wxGetApp().m_showpeeker = loggingWindow->IsShown();
+
+    // Leaves bits of itself behind sometimes
+    GetClientWindow()->Refresh();
 }
 
 void OPJFrame::OnToggleToolbar(wxCommandEvent& WXUNUSED(event))
@@ -764,10 +819,17 @@ void OPJFrame::OnToggleToolbar(wxCommandEvent& WXUNUSED(event))
 
     wxLayoutAlgorithm layout;
     layout.LayoutMDIFrame(this);
+
+	wxGetApp().m_showtoolbar = tool_bar->IsShown();
+
+    // Leaves bits of itself behind sometimes
+    GetClientWindow()->Refresh();
 }
 
 void OPJFrame::OnSashDrag(wxSashEvent& event)
 {
+	int wid, hei;
+
     if (event.GetDragStatus() == wxSASH_STATUS_OUT_OF_RANGE)
         return;
 
@@ -789,6 +851,14 @@ void OPJFrame::OnSashDrag(wxSashEvent& event)
 
     // Leaves bits of itself behind sometimes
     GetClientWindow()->Refresh();
+
+	// update dimensions
+	markerTreeWindow->GetSize(&wid, &hei);
+	wxGetApp().m_browserwidth = wid;
+
+	loggingWindow->GetSize(&wid, &hei);
+	wxGetApp().m_peekerheight = hei;
+
 }
 
 // physically open the files

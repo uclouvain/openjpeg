@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+June 18, 2007
+* [GB] Reload image doesn't crash in OPJViewer; more settings saved to registry
+ 
 June 16, 2007
 + [GB] Possibility to disable parsing in OPJViewer; also, saves common settings to the registry
 

@@ -141,6 +141,12 @@ typedef unsigned long long int8byte;
 #define OPJ_APPLICATION_PLATFORM    wxT("Linux")
 #endif
 
+#define OPJ_FRAME_WIDTH   800
+#define OPJ_FRAME_HEIGHT  600
+
+#define OPJ_BROWSER_WIDTH 300
+#define OPJ_PEEKER_HEIGHT 130
+
 #define OPJ_CANVAS_BORDER 10
 #define OPJ_CANVAS_COLOUR *wxWHITE
 
@@ -193,7 +199,12 @@ class OPJViewerApp: public wxApp
 #ifdef USE_JPWL
 		bool m_enablejpwl;
 		int m_expcomps, m_maxtiles;
+		int m_framewidth, m_frameheight;
 #endif // USE_JPWL
+
+		// some layout settings
+		bool m_showtoolbar, m_showbrowser, m_showpeeker;
+		int m_browserwidth, m_peekerheight;
 
 		// application configuration
 		wxConfig *OPJconfig; 
