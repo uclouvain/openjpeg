@@ -391,6 +391,9 @@ class OPJFrame: public wxMDIParentFrame
 	void OnTogglePeeker(wxCommandEvent& WXUNUSED(event));
 	void OnToggleToolbar(wxCommandEvent& WXUNUSED(event));
 	void OnReload(wxCommandEvent& event);
+	void OnPrevFrame(wxCommandEvent& event);
+	void OnHomeFrame(wxCommandEvent& event);
+	void OnNextFrame(wxCommandEvent& event);
 	void OnSetsEnco(wxCommandEvent& event);
 	void OnSetsDeco(wxCommandEvent& event);
 	void OnSashDrag(wxSashEvent& event);
@@ -457,6 +460,9 @@ enum {
 	OPJFRAME_VIEWZOOM,
 	OPJFRAME_VIEWFIT,
 	OPJFRAME_VIEWRELOAD,
+	OPJFRAME_VIEWPREVFRAME,
+	OPJFRAME_VIEWHOMEFRAME,
+	OPJFRAME_VIEWNEXTFRAME,
 	OPJFRAME_FILECLOSE,
 	OPJFRAME_SETSENCO,
 	OPJFRAME_SETSDECO,

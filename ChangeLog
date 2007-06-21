@@ -7,6 +7,7 @@ What's New for OpenJPEG
 
 June 21, 2007
 * [FOD] Output image color space set when decoding a JP2 file in jp2.c
++ [GB] Previous, home, and next frame buttons for exploring MJ2 files in OPJViewer
 
 June 18, 2007
 * [GB] Reload image doesn't crash in OPJViewer; more settings saved to registry

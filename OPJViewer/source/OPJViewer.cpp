@@ -338,6 +338,9 @@ BEGIN_EVENT_TABLE(OPJFrame, wxMDIParentFrame)
     EVT_MENU(OPJFRAME_VIEWZOOM, OPJFrame::OnZoom)
     EVT_MENU(OPJFRAME_VIEWFIT, OPJFrame::OnFit)
     EVT_MENU(OPJFRAME_VIEWRELOAD, OPJFrame::OnReload)
+    EVT_MENU(OPJFRAME_VIEWPREVFRAME, OPJFrame::OnPrevFrame)
+    EVT_MENU(OPJFRAME_VIEWHOMEFRAME, OPJFrame::OnHomeFrame)
+    EVT_MENU(OPJFRAME_VIEWNEXTFRAME, OPJFrame::OnNextFrame)
     EVT_MENU(OPJFRAME_FILETOGGLEB, OPJFrame::OnToggleBrowser)
     EVT_MENU(OPJFRAME_FILETOGGLEP, OPJFrame::OnTogglePeeker)
     EVT_MENU(OPJFRAME_FILETOGGLET, OPJFrame::OnToggleToolbar)
@@ -389,6 +392,18 @@ OPJFrame::OPJFrame(wxWindow *parent, const wxWindowID id, const wxString& title,
 	view_menu->Append(OPJFRAME_VIEWRELOAD, wxT("&Reload image\tCtrl+R"));
 	view_menu->SetHelpString(OPJFRAME_VIEWRELOAD, wxT("Reload the current image"));
 
+	view_menu->AppendSeparator();
+
+	view_menu->Append(OPJFRAME_VIEWPREVFRAME, wxT("&Prev frame\tLeft"));
+	view_menu->SetHelpString(OPJFRAME_VIEWPREVFRAME, wxT("View previous frame"));
+
+	view_menu->Append(OPJFRAME_VIEWHOMEFRAME, wxT("&Start frame\tHome"));
+	view_menu->SetHelpString(OPJFRAME_VIEWHOMEFRAME, wxT("View starting frame"));
+
+	view_menu->Append(OPJFRAME_VIEWNEXTFRAME, wxT("&Next frame\tRight"));
+	view_menu->SetHelpString(OPJFRAME_VIEWNEXTFRAME, wxT("View next frame"));
+
+
 	// settings menu and its items
 	wxMenu *sets_menu = new wxMenu;
 
@@ -435,6 +450,12 @@ OPJFrame::OPJFrame(wxWindow *parent, const wxWindowID id, const wxString& title,
 												wxDefaultSize);
 	wxBitmap bmpEncosettings = wxArtProvider::GetBitmap(wxART_LIST_VIEW, wxART_TOOLBAR,
 												wxDefaultSize);
+	wxBitmap bmpPrevframe = wxArtProvider::GetBitmap(wxART_GO_BACK, wxART_TOOLBAR,
+												wxDefaultSize);
+	wxBitmap bmpHomeframe = wxArtProvider::GetBitmap(wxART_GO_HOME, wxART_TOOLBAR,
+												wxDefaultSize);
+	wxBitmap bmpNextframe = wxArtProvider::GetBitmap(wxART_GO_FORWARD, wxART_TOOLBAR,
+												wxDefaultSize);
 
 	tool_bar->AddTool(OPJFRAME_FILEOPEN, bmpOpen, wxT("Open"));
 	tool_bar->AddTool(OPJFRAME_FILESAVEAS, bmpSaveAs, wxT("Save as "));
@@ -446,6 +467,10 @@ OPJFrame::OPJFrame(wxWindow *parent, const wxWindowID id, const wxString& title,
 	tool_bar->AddSeparator();
 	tool_bar->AddTool(OPJFRAME_SETSDECO, bmpDecosettings, wxT("Decoder settings"));
 	tool_bar->AddTool(OPJFRAME_SETSENCO, bmpEncosettings, wxT("Encoder settings"));
+	tool_bar->AddSeparator();
+	tool_bar->AddTool(OPJFRAME_VIEWPREVFRAME, bmpPrevframe, wxT("Previous frame"));
+	tool_bar->AddTool(OPJFRAME_VIEWHOMEFRAME, bmpHomeframe, wxT("Starting frame"));
+	tool_bar->AddTool(OPJFRAME_VIEWNEXTFRAME, bmpNextframe, wxT("Next frame"));
 	tool_bar->Realize();
 	
 	// associate the toolbar with the frame
@@ -720,6 +745,34 @@ void OPJFrame::OnReload(wxCommandEvent& event)
 	}
 }
 
+void OPJFrame::OnPrevFrame(wxCommandEvent& event)
+{
+	if (--wxGetApp().m_framenum < 0)
+		wxGetApp().m_framenum = 0;
+
+	//wxLogMessage(wxT("================Go prev, dude!======================="));
+	wxCommandEvent e;
+	OnReload(e);
+}
+
+void OPJFrame::OnHomeFrame(wxCommandEvent& event)
+{
+	wxGetApp().m_framenum = 0;
+
+	//wxLogMessage(wxT("================Go home, dude!======================="));
+
+	wxCommandEvent e;
+	OnReload(e);
+}
+
+void OPJFrame::OnNextFrame(wxCommandEvent& event)
+{
+	++wxGetApp().m_framenum;
+
+	//wxLogMessage(wxT("================Go next, dude!======================="));
+	wxCommandEvent e;
+	OnReload(e);
+}
 
 // about window for the frame
 void OPJFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
