@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+June 21, 2007
+* [FOD] Output image color space set when decoding a JP2 file in jp2.c
+
 June 18, 2007
 * [GB] Reload image doesn't crash in OPJViewer; more settings saved to registry
  

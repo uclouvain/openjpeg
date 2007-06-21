@@ -563,6 +563,16 @@ opj_image_t* jp2_decode(opj_jp2_t *jp2, opj_cio_t *cio) {
 		opj_event_msg(cinfo, EVT_ERROR, "Failed to decode J2K image\n");
 	}
 
+	/* Set Image Color Space */
+	if (jp2->enumcs == 16)
+		image->color_space = CLRSPC_SRGB;
+	else if (jp2->enumcs == 17)
+		image->color_space = CLRSPC_GRAY;
+	else if (jp2->enumcs == 18)
+		image->color_space = CLRSPC_SYCC;
+	else
+		image->color_space = CLRSPC_UNKNOWN;
+
 	return image;
 }
 
