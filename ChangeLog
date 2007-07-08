@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+July 8, 2007
+* [ANTONIN] fixed the size of the memory allocation in cio.c (confusion between bits and bytes)
+
 June 21, 2007
 * [FOD] Output image color space set when decoding a JP2 file in jp2.c
 + [GB] Previous, home, and next frame buttons for exploring MJ2 files in OPJViewer

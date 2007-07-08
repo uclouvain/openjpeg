@@ -58,7 +58,7 @@ opj_cio_t* OPJ_CALLCONV opj_cio_open(opj_common_ptr cinfo, unsigned char *buffer
 				opj_free(cio);
 				return NULL;
 		}
-		cio->length = (int) (1.3 * cp->img_size);
+		cio->length = (int) (0.1625 * cp->img_size); /* 0.1625 = 1.3/8 */
 		cio->buffer = (unsigned char *)opj_malloc(cio->length);
 		if(!cio->buffer) {
 			opj_free(cio);
