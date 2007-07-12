@@ -128,20 +128,20 @@ int jpwl_epbs_add(opj_j2k_t *j2k, jpwl_marker_t *jwmarker, int *jwmarker_num,
 	while (post_len > 0) {
 
 		/* maximum postlen in order to respect EPB size
-		(we use 65450 instead of 65535 for keeping room for EPB parms)*/
+		(we use JPWL_MAXIMUM_EPB_ROOM instead of 65535 for keeping room for EPB parms)*/
 		/*      (message word size)    *            (number of containable parity words)  */
-		max_postlen = k_post * (unsigned long int) floor(65450.0 / (double) (n_post - k_post));
+		max_postlen = k_post * (unsigned long int) floor((double) JPWL_MAXIMUM_EPB_ROOM / (double) (n_post - k_post));
 
 		/* maximum postlen in order to respect EPB size */
 		if (*idx == 0)
-			/* (we use (65500 - L2) instead of 65535 for keeping room for EPB parms + pre-data) */
+			/* (we use (JPWL_MAXIMUM_EPB_ROOM - L2) instead of 65535 for keeping room for EPB parms + pre-data) */
 			/*      (message word size)    *                   (number of containable parity words)  */
-			max_postlen = k_post * (unsigned long int) floor((double) (65500 - L2) / (double) (n_post - k_post));
+			max_postlen = k_post * (unsigned long int) floor((double) (JPWL_MAXIMUM_EPB_ROOM - L2) / (double) (n_post - k_post));
 
 		else
-			/* (we use 65500 instead of 65535 for keeping room for EPB parms) */
+			/* (we use JPWL_MAXIMUM_EPB_ROOM instead of 65535 for keeping room for EPB parms) */
 			/*      (message word size)    *            (number of containable parity words)  */
-			max_postlen = k_post * (unsigned long int) floor(65500.0 / (double) (n_post - k_post));
+			max_postlen = k_post * (unsigned long int) floor((double) JPWL_MAXIMUM_EPB_ROOM / (double) (n_post - k_post));
 
 		/* length to use */
 		dL4 = min(max_postlen, post_len);
@@ -793,7 +793,7 @@ bool jpwl_epb_correct(opj_j2k_t *j2k, unsigned char *buffer, int type, int pre_l
 	/* Initialize RS structures */
 	P = n_pre - k_pre;
 	NN_P = NN - P;
-	tt = (int) floor((float) P / 2.0F);
+	tt = (int) floor((float) P / 2.0F); /* correction capability of the code */
 	memset(codeword, 0, NN);
 	parityword = codeword + NN_P;
 	init_rs(NN_P);
@@ -834,7 +834,8 @@ bool jpwl_epb_correct(opj_j2k_t *j2k, unsigned char *buffer, int type, int pre_l
 			/*if (conn == NULL)
 				opj_event_msg(j2k->cinfo, EVT_INFO, "codeword is correctly decoded\n");*/
 
-		} else if (status < tt) {
+		} else if (status <= tt) {
+			/* it has corrected 0 <= errs <= tt */
 			/*if (conn == NULL)
 				opj_event_msg(j2k->cinfo, EVT_WARNING, "%d errors corrected in codeword\n", status);*/
 			errnum += status;
@@ -848,21 +849,21 @@ bool jpwl_epb_correct(opj_j2k_t *j2k, unsigned char *buffer, int type, int pre_l
 
 
 		/* advance parity buffer */
-		if ((status >= 0) && (status < tt))
+		if ((status >= 0) && (status <= tt))
 			/* copy back corrected parity only if all is OK */
 			memcpy(L2_buf, parityword, P);
 		L2_buf += P;
 
 		/* advance message buffer */
 		if (remaining < k_pre) {
-			if ((status >= 0) && (status < tt))
+			if ((status >= 0) && (status <= tt))
 				/* copy back corrected data only if all is OK */
 				memcpy(L1_buf, codeword, remaining);
 			L1_buf += remaining;
 			remaining = 0;
 
 		} else {
-			if ((status >= 0) && (status < tt))
+			if ((status >= 0) && (status <= tt))
 				/* copy back corrected data only if all is OK */
 				memcpy(L1_buf, codeword, k_pre);
 			L1_buf += k_pre;
@@ -1043,7 +1044,7 @@ bool jpwl_epb_correct(opj_j2k_t *j2k, unsigned char *buffer, int type, int pre_l
 		/* Initialize RS structures */
 		P = n_post - k_post;
 		NN_P = NN - P;
-		tt = (int) floor((float) P / 2.0F);
+		tt = (int) floor((float) P / 2.0F); /* again, correction capability */
 		memset(codeword, 0, NN);
 		parityword = codeword + NN_P;
 		init_rs(NN_P);
@@ -1080,7 +1081,7 @@ bool jpwl_epb_correct(opj_j2k_t *j2k, unsigned char *buffer, int type, int pre_l
 				/*if (conn == NULL)
 					opj_event_msg(j2k->cinfo, EVT_INFO, "codeword is correctly decoded\n");*/
 
-			} else if (status < tt) {
+			} else if (status <= tt) {
 				/*if (conn == NULL)
 					opj_event_msg(j2k->cinfo, EVT_WARNING, "%d errors corrected in codeword\n", status);*/
 				errnum += status;
@@ -1094,21 +1095,21 @@ bool jpwl_epb_correct(opj_j2k_t *j2k, unsigned char *buffer, int type, int pre_l
 
 
 			/* advance parity buffer */
-			if ((status >= 0) && (status < tt))
+			if ((status >= 0) && (status <= tt))
 				/* copy back corrected data only if all is OK */
 				memcpy(L3_buf, parityword, P);
 			L3_buf += P;
 
 			/* advance message buffer */
 			if (remaining < k_post) {
-				if ((status >= 0) && (status < tt))
+				if ((status >= 0) && (status <= tt))
 					/* copy back corrected data only if all is OK */
 					memcpy(L4_buf, codeword, remaining);
 				L4_buf += remaining;
 				remaining = 0;
 
 			} else {
-				if ((status >= 0) && (status < tt))
+				if ((status >= 0) && (status <= tt))
 					/* copy back corrected data only if all is OK */
 					memcpy(L4_buf, codeword, k_post);
 				L4_buf += k_post;

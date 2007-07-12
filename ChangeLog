@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+July 12, 2007
+* [GB] fixed a bug in JPWL module, which prevented to exploit the full error correction capability of RS codes (e.g. it gave up at 5 errors, even if 6 were correctable); defined a JPWL_MAXIMUM_EPB_ROOM for better customization of the maximum dimension of EPBs (the dimension is pre-calculated on an hypothesis, if it goes beyond 65535 there will be problems, thus we give a little less than the max, let's say 65450)
+
 July 8, 2007
 * [ANTONIN] fixed the size of the memory allocation in cio.c (confusion between bits and bytes)
 
