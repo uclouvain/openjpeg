@@ -98,10 +98,6 @@ void encode_help_display() {
 	fprintf(stdout,"The markers written to the main_header are : SOC SIZ COD QCD COM.\n");
 	fprintf(stdout,"COD and QCD never appear in the tile_header.\n");
 	fprintf(stdout,"\n");
-	fprintf(stdout,"- This coder can encode a mega image, a test was made on a 24000x24000 pixels \n");
-	fprintf(stdout,"color image.  You need enough disk space memory (twice the original) to encode \n");
-	fprintf(stdout,"the image,i.e. for a 1.5 GB image you need a minimum of 3GB of disk memory)\n");
-	fprintf(stdout,"\n");
 	fprintf(stdout,"By default:\n");
 	fprintf(stdout,"------------\n");
 	fprintf(stdout,"\n");

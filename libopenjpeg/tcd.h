@@ -234,6 +234,7 @@ Initialize the tile decoder
 @param cp Coding parameters
 */
 void tcd_malloc_decode(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp);
+void tcd_malloc_decode_tile(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp, int tileno);
 void tcd_makelayer_fixed(opj_tcd_t *tcd, int layno, int final);
 void tcd_rateallocate_fixed(opj_tcd_t *tcd);
 void tcd_makelayer(opj_tcd_t *tcd, int layno, double thresh, int final);
@@ -261,6 +262,7 @@ Free the memory allocated for decoding
 @param tcd TCD handle
 */
 void tcd_free_decode(opj_tcd_t *tcd);
+void tcd_free_decode_tile(opj_tcd_t *tcd, int tileno);
 
 /* ----------------------------------------------------------------------- */
 /*@}*/

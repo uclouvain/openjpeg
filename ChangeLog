@@ -5,6 +5,11 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+July 13, 2007
+! [FOD] Modified the memory allocation for codestreams containing multiple tiles. The memory is now allocated for each tile indenpendently, leading to an important decrease of the virtual memory needed. [j2k.c tcd.h tcd.c]
+! [FOD] Modified old comments about the ability to decode mega-images and comments about the disk size necessary to do this. [image_to_j2k.c and frames_to_mj2.c]
+* [FOD] Added 2000 bytes for the memory allocation in cio.c for the minimum size of headers (useful in case of very small images) [cio.c]
+
 July 12, 2007
 * [GB] fixed a bug in JPWL module, which prevented to exploit the full error correction capability of RS codes (e.g. it gave up at 5 errors, even if 6 were correctable); defined a JPWL_MAXIMUM_EPB_ROOM for better customization of the maximum dimension of EPBs (the dimension is pre-calculated on an hypothesis, if it goes beyond 65535 there will be problems, thus we give a little less than the max, let's say 65450)
 

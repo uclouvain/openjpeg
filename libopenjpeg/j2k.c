@@ -1484,10 +1484,12 @@ static void j2k_read_eoc(opj_j2k_t *j2k) {
 		opj_tcd_t *tcd = tcd_create(j2k->cinfo);
 		tcd_malloc_decode(tcd, j2k->image, j2k->cp);
 		for (i = 0; i < j2k->cp->tileno_size; i++) {
+			tcd_malloc_decode_tile(tcd, j2k->image, j2k->cp, i);
 			tileno = j2k->cp->tileno[i];
 			tcd_decode_tile(tcd, j2k->tile_data[tileno], j2k->tile_len[tileno], tileno);
 			opj_free(j2k->tile_data[tileno]);
 			j2k->tile_data[tileno] = NULL;
+			tcd_free_decode_tile(tcd, i);
 		}
 		tcd_free_decode(tcd);
 		tcd_destroy(tcd);
