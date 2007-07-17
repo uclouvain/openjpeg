@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+July 17, 2007
++ [FOD] Added support for RAW images. This module has been developped by the University of Perugia team. Thanks to them ! [image_to_j2k.c j2k_to_image.c convert.c convert.h]
+
 July 13, 2007
 ! [FOD] Modified the memory allocation for codestreams containing multiple tiles. The memory is now allocated for each tile indenpendently, leading to an important decrease of the virtual memory needed. [j2k.c tcd.h tcd.c]
 ! [FOD] Modified old comments about the ability to decode mega-images and comments about the disk size necessary to do this. [image_to_j2k.c and frames_to_mj2.c]

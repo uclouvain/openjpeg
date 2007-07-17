@@ -34,6 +34,7 @@
 #include <string.h>
 #include "openjpeg.h"
 #include "../libs/libtiff/tiffio.h"
+#include "convert.h"
 
 /*
  * Get logarithm of an integer and round downwards.
@@ -1236,7 +1237,7 @@ int imagetotif(opj_image_t * image, const char *outfile) {
 		return 0;
 }
 
-opj_image_t* tiftoimage(char *filename, opj_cparameters_t *parameters)
+opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
 {
 	int subsampling_dx = parameters->subsampling_dx;
 	int subsampling_dy = parameters->subsampling_dy;
@@ -1435,4 +1436,191 @@ opj_image_t* tiftoimage(char *filename, opj_cparameters_t *parameters)
 		return NULL;
 	}
 	return image;
+}
+
+/* -->> -->> -->> -->>
+
+	RAW IMAGE FORMAT
+
+ <<-- <<-- <<-- <<-- */
+
+opj_image_t* rawtoimage(const char *filename, opj_cparameters_t *parameters, raw_cparameters_t *raw_cp) {
+	int subsampling_dx = parameters->subsampling_dx;
+	int subsampling_dy = parameters->subsampling_dy;
+
+	FILE *f = NULL;
+	int i, compno, numcomps, w, h;
+	OPJ_COLOR_SPACE color_space;
+	opj_image_cmptparm_t cmptparm[3];	/* maximum of 3 components */
+	opj_image_t * image = NULL;
+	unsigned short ch;
+	
+	if((raw_cp->rawWidth * raw_cp->rawHeight * raw_cp->rawComp * raw_cp->rawBitDepth) == 0)
+	{
+		fprintf(stderr,"\nError: invalid raw image parameters\n");
+		fprintf(stderr,"Please use the Format option -F:\n");
+		fprintf(stderr,"-F rawWidth x rawHeight x rawComp x rawBitDepth+s/u (Signed/Unsigned)\n");
+		fprintf(stderr,"Example: -i lena.raw -o lena.j2k -F 512x512x3x8xu\n");
+		fprintf(stderr,"Aborting\n");
+		return NULL;
+	}
+
+	f = fopen(filename, "rb");
+	if (!f) {
+		fprintf(stderr, "Failed to open %s for reading !!\n", filename);
+		fprintf(stderr,"Aborting\n");
+		return NULL;
+	}
+	numcomps = raw_cp->rawComp;
+	color_space = CLRSPC_SRGB;
+	w = raw_cp->rawWidth;
+	h = raw_cp->rawHeight;
+
+	
+	/* initialize image components */
+	memset(&cmptparm[0], 0, numcomps * sizeof(opj_image_cmptparm_t));
+	for(i = 0; i < numcomps; i++) {
+		cmptparm[i].prec = raw_cp->rawBitDepth;
+		cmptparm[i].bpp = raw_cp->rawBitDepth;
+		cmptparm[i].sgnd = raw_cp->rawSigned;
+		cmptparm[i].dx = subsampling_dx;
+		cmptparm[i].dy = subsampling_dy;
+		cmptparm[i].w = w;
+		cmptparm[i].h = h;
+	}
+	/* create the image */
+	image = opj_image_create(numcomps, &cmptparm[0], color_space);
+	if(!image) {
+		fclose(f);
+		return NULL;
+	}
+
+	/* set image offset and reference grid */
+	image->x0 = parameters->image_offset_x0;
+	image->y0 = parameters->image_offset_y0;
+	image->x1 = parameters->image_offset_x0 + (w - 1) *	subsampling_dx + 1;
+	image->y1 = parameters->image_offset_y0 + (h - 1) *	subsampling_dy + 1;
+
+	if(raw_cp->rawBitDepth <= 8)
+	{
+		unsigned char value = 0;
+		for(compno = 0; compno < numcomps; compno++) {
+			for (i = 0; i < w * h; i++) {
+				if (!fread(&value, 1, 1, f)) {
+					fprintf(stderr,"Error reading raw file. End of file probably reached.\n");
+					return NULL;
+				}
+				image->comps[compno].data[i] = raw_cp->rawSigned?(char)value:value;
+			}
+		}
+	}
+	else
+	{
+		unsigned short value = 0;
+		for(compno = 0; compno < numcomps; compno++) {
+			for (i = 0; i < w * h; i++) {
+				if (!fread(&value, 2, 1, f)) {
+					fprintf(stderr,"Error reading raw file. End of file probably reached.\n");
+					return NULL;
+				}
+				image->comps[compno].data[i] = raw_cp->rawSigned?(short)value:value;
+			}
+		}
+	}
+
+	if (fread(&ch, 1, 1, f)) {
+		fprintf(stderr,"Warning. End of raw file not reached... processing anyway\n");
+	}
+
+	fclose(f);
+
+	return image;
+}
+
+int imagetoraw(opj_image_t * image, const char *outfile)
+{
+	FILE *rawFile = NULL;
+	int compno, pixelsToWrite, offset, cont;
+
+	if((image->numcomps * image->x1 * image->y1) == 0)
+	{
+		fprintf(stderr,"\nError: invalid raw image parameters\n");
+		return 1;
+	}
+
+	rawFile = fopen(outfile, "wb");
+	if (!rawFile) {
+		fprintf(stderr, "Failed to open %s for writing !!\n", outfile);
+		return 1;
+	}
+
+	fprintf(stdout,"Raw image characteristics: %d components\n", image->numcomps);
+
+	for(compno = 0; compno < image->numcomps; compno++)
+	{
+		fprintf(stdout,"Component %d characteristics: %dx%dx%d %s\n", compno, image->comps[compno].w,
+			image->comps[compno].h, image->comps[compno].prec, image->comps[compno].sgnd==1 ? "signed": "unsigned");
+
+		pixelsToWrite = image->comps[compno].w * image->comps[compno].h;
+		offset = 0;
+
+		if(image->comps[compno].prec <= 8)
+		{
+			if(image->comps[compno].sgnd == 1)
+			{
+				signed char curr;
+				int mask = (1 << image->comps[compno].prec) - 1;
+				for(cont = 0; cont < pixelsToWrite; cont++)
+				{				
+					curr = (signed char) (image->comps[compno].data[cont] & mask);
+					fwrite(&curr, sizeof(signed char), 1, rawFile);
+				}
+			}
+			else if(image->comps[compno].sgnd == 0)
+			{
+				unsigned char curr;
+				int mask = (1 << image->comps[compno].prec) - 1;
+				for(cont = 0; cont < pixelsToWrite; cont++)
+				{				
+					curr = (unsigned char) (image->comps[compno].data[cont] & mask);
+					fwrite(&curr, sizeof(unsigned char), 1, rawFile);
+				}
+			}
+		}
+		else if(image->comps[compno].prec <= 16)
+		{
+			if(image->comps[compno].sgnd == 1)
+			{
+				signed short int curr;
+				int mask = (1 << image->comps[compno].prec) - 1;
+				for(cont = 0; cont < pixelsToWrite; cont++)
+				{				
+					curr = (signed short int) (image->comps[compno].data[cont] & mask);
+					fwrite(&curr, sizeof(signed short int), 1, rawFile);
+				}
+			}
+			else if(image->comps[compno].sgnd == 0)
+			{
+				unsigned short int curr;
+				int mask = (1 << image->comps[compno].prec) - 1;
+				for(cont = 0; cont < pixelsToWrite; cont++)
+				{				
+					curr = (unsigned short int) (image->comps[compno].data[cont] & mask);
+					fwrite(&curr, sizeof(unsigned short int), 1, rawFile);
+				}
+			}
+		}
+		else if (image->comps[compno].prec <= 32)
+		{
+
+
+		}
+		else
+		{
+			fprintf(stderr,"\nError: invalid precision\n");
+			return 1;
+		}
+	}
+	fclose(rawFile);
+	return 0;
 }

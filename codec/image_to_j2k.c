@@ -54,6 +54,7 @@
 #define BMP_DFMT 12
 #define YUV_DFMT 13
 #define TIF_DFMT 14
+#define RAW_DFMT 15
 
 /* ----------------------------------------------------------------------- */
 #define CINEMA_24_CS 1302083	/*Codestream length for 24fps*/
@@ -77,7 +78,6 @@ typedef struct img_folder{
 	char set_imgdir;
 	/** Enable Cod Format for output*/
 	char set_out_format;
-
 }img_fol_t;
 
 void encode_help_display() {
@@ -136,7 +136,7 @@ void encode_help_display() {
 	fprintf(stdout,"	  Need to specify only format without filename <BMP>  \n");
 	fprintf(stdout,"    Currently accepts PGM, PPM, PNM, PGX, BMP format\n");
 	fprintf(stdout,"\n");
-	fprintf(stdout,"-i           : source file  (-i source.pnm also *.pgm, *.ppm) \n");
+	fprintf(stdout,"-i           : source file  (-i source.pnm also *.pgm, *.ppm, *.bmp, *.tif, *.raw) \n");
 	fprintf(stdout,"    When using this option -o must be used\n");
 	fprintf(stdout,"\n");
 	fprintf(stdout,"-o           : destination file (-o dest.j2k or .jp2) \n");
@@ -278,9 +278,7 @@ void encode_help_display() {
 	fprintf(stdout,"Image_height Image_width\n");
 	fprintf(stdout,"progression order\n");
 	fprintf(stdout,"Tiles_size_X Tiles_size_Y\n");
-/* UniPG>> */
 	fprintf(stdout,"Tiles_nb_X Tiles_nb_Y\n");
-/* <<UniPG */
 	fprintf(stdout,"Components_nb\n");
 	fprintf(stdout,"Layers_nb\n");
 	fprintf(stdout,"decomposition_levels\n");
@@ -371,10 +369,10 @@ int load_images(dircnt_t *dirptr, char *imgdirpath){
 int get_file_format(char *filename) {
 	unsigned int i;
 	static const char *extension[] = {
-    "pgx", "pnm", "pgm", "ppm", "bmp","tif", "j2k", "jp2", "j2c"
+    "pgx", "pnm", "pgm", "ppm", "bmp","tif", "raw", "j2k", "jp2", "j2c"
     };
 	static const int format[] = {
-    PGX_DFMT, PXM_DFMT, PXM_DFMT, PXM_DFMT, BMP_DFMT,TIF_DFMT, J2K_CFMT, JP2_CFMT, J2K_CFMT
+    PGX_DFMT, PXM_DFMT, PXM_DFMT, PXM_DFMT, BMP_DFMT, TIF_DFMT, RAW_DFMT, J2K_CFMT, JP2_CFMT, J2K_CFMT
     };
 	char * ext = strrchr(filename, '.');
 	if (ext == NULL)
@@ -545,7 +543,8 @@ void cinema_setup_encoder(opj_cparameters_t *parameters,opj_image_t *image){
 
 /* ------------------------------------------------------------------------------------ */
 
-int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,img_fol_t *img_fol) {
+int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
+													img_fol_t *img_fol, raw_cparameters_t *raw_cp) {
 	int i, j,totlen;
 	option_t long_option[]={
 		{"cinema2K",REQ_ARG, NULL ,'w'},
@@ -559,8 +558,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,i
 	};
 
 	/* parse the command line */
-/* UniPG>> */
-	const char optlist[] = "i:o:hr:q:n:b:c:t:p:s:SEM:x:R:d:T:If:P:C:"
+	const char optlist[] = "i:o:hr:q:n:b:c:t:p:s:SEM:x:R:d:T:If:P:C:F:"
 #ifdef USE_JPWL
 		"W:"
 #endif /* USE_JPWL */
@@ -568,10 +566,10 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,i
 
 	totlen=sizeof(long_option);
 	img_fol->set_out_format=0;
+	raw_cp->rawWidth = 0;
 
 	while (1) {
     int c = getopt_long(argc, argv, optlist,long_option,totlen);
-/* <<UniPG */
 		if (c == -1)
 			break;
 		switch (c) {
@@ -584,11 +582,12 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,i
 					case PXM_DFMT:
 					case BMP_DFMT:
 					case TIF_DFMT:
+					case RAW_DFMT:
 						break;
 					default:
 						fprintf(stderr,
 							"!! Unrecognized format for infile : %s "
-              "[accept only *.pnm, *.pgm, *.ppm, *.pgx, *.bmp or *.tif] !!\n\n", 
+              "[accept only *.pnm, *.pgm, *.ppm, *.pgx, *.bmp, *.tif or *.raw] !!\n\n", 
 							infile);
 						return 1;
 				}
@@ -607,7 +606,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,i
 					case JP2_CFMT:
 						break;
 					default:
-						fprintf(stderr, "Unknown output format image %s [only *.j2k, *.jp2]!! \n", outfile);
+						fprintf(stderr, "Unknown output format image %s [only *.j2k, *.j2c or *.jp2]!! \n", outfile);
 						return 1;
 				}
 				strncpy(parameters->outfile, outfile, sizeof(parameters->outfile)-1);
@@ -628,7 +627,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,i
 							img_fol->out_format = optarg;
 							break;
 						default:
-							fprintf(stderr, "Unknown output format image [only j2k, jp2]!! \n");
+							fprintf(stderr, "Unknown output format image [only j2k, j2c, jp2]!! \n");
 							return 1;
 					}
 				}
@@ -651,6 +650,41 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,i
 					s++;
 				}
 				parameters->cp_disto_alloc = 1;
+			}
+			break;
+
+				/* ----------------------------------------------------- */
+
+			
+			case 'F':			/* Raw image format parameters */
+			{
+				char signo;
+				char *s = optarg;
+				if (sscanf(s, "%dx%dx%dx%dx%c", &raw_cp->rawWidth, &raw_cp->rawHeight, &raw_cp->rawComp, &raw_cp->rawBitDepth, &signo) == 5) {
+					if (signo == 's') {
+						raw_cp->rawSigned = true;
+						fprintf(stdout,"\nRaw file parameters: %dx%dx%dx%d Signed\n", raw_cp->rawWidth, raw_cp->rawHeight, raw_cp->rawComp, raw_cp->rawBitDepth);
+					}
+					else if (signo == 'u') {
+						raw_cp->rawSigned = false;
+						fprintf(stdout,"\nRaw file parameters: %dx%dx%dx%d Unsigned\n", raw_cp->rawWidth, raw_cp->rawHeight, raw_cp->rawComp, raw_cp->rawBitDepth);
+					}
+					else {
+						fprintf(stderr,"\nError: invalid raw image parameters: Unknown sign of raw file\n");
+						fprintf(stderr,"Please use the Format option -F:\n");
+						fprintf(stderr,"-F rawWidth x rawHeight x rawComp x rawBitDepth+s/u (Signed/Unsigned)\n");
+						fprintf(stderr,"Example: -i lena.raw -o lena.j2k -F 512x512x3x8xu\n");
+						fprintf(stderr,"Aborting\n");
+					}					
+				}
+				else {
+					fprintf(stderr,"\nError: invalid raw image parameters\n");
+					fprintf(stderr,"Please use the Format option -F:\n");
+					fprintf(stderr,"-F rawWidth x rawHeight x rawComp x rawBitDepth+s/u (Signed/Unsigned)\n");
+					fprintf(stderr,"Example: -i lena.raw -o lena.j2k -F 512x512x3x8xu\n");
+					fprintf(stderr,"Aborting\n");
+					return 1;
+				}
 			}
 			break;
 
@@ -1348,6 +1382,15 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,i
 		}
 	}
 
+	if (parameters->decod_format == RAW_DFMT && raw_cp->rawWidth == 0) {
+			fprintf(stderr,"\nError: invalid raw image parameters\n");
+			fprintf(stderr,"Please use the Format option -F:\n");
+			fprintf(stderr,"-F rawWidth x rawHeight x rawComp x rawBitDepth+s/u (Signed/Unsigned)\n");
+			fprintf(stderr,"Example: -i lena.raw -o lena.j2k -F 512x512x3x8xu\n");
+			fprintf(stderr,"Aborting\n");
+			return 1;
+	}
+
 	if ((parameters->cp_disto_alloc || parameters->cp_fixed_alloc || parameters->cp_fixed_quality)
 		&& (!(parameters->cp_disto_alloc ^ parameters->cp_fixed_alloc ^ parameters->cp_fixed_quality))) {
 		fprintf(stderr, "Error: options -r -q and -f cannot be used together !!\n");
@@ -1414,6 +1457,7 @@ int main(int argc, char **argv) {
 	int i,num_images;
 	int imageno;
 	dircnt_t *dirptr;
+	raw_cparameters_t raw_cp;
 
 	/*
 	configure the event callbacks (not required)
@@ -1428,14 +1472,13 @@ int main(int argc, char **argv) {
 	opj_set_default_encoder_parameters(&parameters);
 
 	/* parse input and get user encoding parameters */
-	if(parse_cmdline_encoder(argc, argv, &parameters,&img_fol) == 1) {
+	if(parse_cmdline_encoder(argc, argv, &parameters,&img_fol, &raw_cp) == 1) {
 		return 0;
 	}
 	
 	if (parameters.cp_cinema){
 		cinema_parameters(&parameters);
-	}
-				
+	}				
 
 	/* Create comment for codestream */
 	if(parameters.cp_comment == NULL) {
@@ -1504,7 +1547,8 @@ int main(int argc, char **argv) {
 				break;
 			case TIF_DFMT:
 				break;
-		
+			case RAW_DFMT:
+				break;
 			default:
 				fprintf(stderr,"skipping file...\n");
 				continue;			
@@ -1542,6 +1586,14 @@ int main(int argc, char **argv) {
 					image = tiftoimage(parameters.infile, &parameters);
 					if (!image) {
 						fprintf(stderr, "Unable to load tiff file\n");
+						return 1;
+					}
+				break;
+
+				case RAW_DFMT:
+					image = rawtoimage(parameters.infile, &parameters, &raw_cp);
+					if (!image) {
+						fprintf(stderr, "Unable to load raw file\n");
 						return 1;
 					}
 				break;
