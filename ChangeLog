@@ -6,6 +6,9 @@ What's New for OpenJPEG
 + : added
 
 July 17, 2007
+* [FOD] Fixed raw option for images with more than three components
+
+July 17, 2007
 + [FOD] Added support for RAW images. This module has been developped by the University of Perugia team. Thanks to them ! [image_to_j2k.c j2k_to_image.c convert.c convert.h]
 
 July 13, 2007

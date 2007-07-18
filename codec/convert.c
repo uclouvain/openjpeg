@@ -1451,7 +1451,7 @@ opj_image_t* rawtoimage(const char *filename, opj_cparameters_t *parameters, raw
 	FILE *f = NULL;
 	int i, compno, numcomps, w, h;
 	OPJ_COLOR_SPACE color_space;
-	opj_image_cmptparm_t cmptparm[3];	/* maximum of 3 components */
+	opj_image_cmptparm_t *cmptparm;	
 	opj_image_t * image = NULL;
 	unsigned short ch;
 	
@@ -1459,8 +1459,8 @@ opj_image_t* rawtoimage(const char *filename, opj_cparameters_t *parameters, raw
 	{
 		fprintf(stderr,"\nError: invalid raw image parameters\n");
 		fprintf(stderr,"Please use the Format option -F:\n");
-		fprintf(stderr,"-F rawWidth x rawHeight x rawComp x rawBitDepth+s/u (Signed/Unsigned)\n");
-		fprintf(stderr,"Example: -i lena.raw -o lena.j2k -F 512x512x3x8xu\n");
+		fprintf(stderr,"-F rawWidth,rawHeight,rawComp,rawBitDepth,s/u (Signed/Unsigned)\n");
+		fprintf(stderr,"Example: -i lena.raw -o lena.j2k -F 512,512,3,8,u\n");
 		fprintf(stderr,"Aborting\n");
 		return NULL;
 	}
@@ -1475,11 +1475,11 @@ opj_image_t* rawtoimage(const char *filename, opj_cparameters_t *parameters, raw
 	color_space = CLRSPC_SRGB;
 	w = raw_cp->rawWidth;
 	h = raw_cp->rawHeight;
-
+	cmptparm = (opj_image_cmptparm_t*) malloc(numcomps * sizeof(opj_image_cmptparm_t));
 	
-	/* initialize image components */
+	/* initialize image components */	
 	memset(&cmptparm[0], 0, numcomps * sizeof(opj_image_cmptparm_t));
-	for(i = 0; i < numcomps; i++) {
+	for(i = 0; i < numcomps; i++) {		
 		cmptparm[i].prec = raw_cp->rawBitDepth;
 		cmptparm[i].bpp = raw_cp->rawBitDepth;
 		cmptparm[i].sgnd = raw_cp->rawSigned;

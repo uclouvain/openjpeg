@@ -660,28 +660,28 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 			{
 				char signo;
 				char *s = optarg;
-				if (sscanf(s, "%dx%dx%dx%dx%c", &raw_cp->rawWidth, &raw_cp->rawHeight, &raw_cp->rawComp, &raw_cp->rawBitDepth, &signo) == 5) {
+				if (sscanf(s, "%d,%d,%d,%d,%c", &raw_cp->rawWidth, &raw_cp->rawHeight, &raw_cp->rawComp, &raw_cp->rawBitDepth, &signo) == 5) {
 					if (signo == 's') {
 						raw_cp->rawSigned = true;
-						fprintf(stdout,"\nRaw file parameters: %dx%dx%dx%d Signed\n", raw_cp->rawWidth, raw_cp->rawHeight, raw_cp->rawComp, raw_cp->rawBitDepth);
+						fprintf(stdout,"\nRaw file parameters: %d,%d,%d,%d Signed\n", raw_cp->rawWidth, raw_cp->rawHeight, raw_cp->rawComp, raw_cp->rawBitDepth);
 					}
 					else if (signo == 'u') {
 						raw_cp->rawSigned = false;
-						fprintf(stdout,"\nRaw file parameters: %dx%dx%dx%d Unsigned\n", raw_cp->rawWidth, raw_cp->rawHeight, raw_cp->rawComp, raw_cp->rawBitDepth);
+						fprintf(stdout,"\nRaw file parameters: %d,%d,%d,%d Unsigned\n", raw_cp->rawWidth, raw_cp->rawHeight, raw_cp->rawComp, raw_cp->rawBitDepth);
 					}
 					else {
 						fprintf(stderr,"\nError: invalid raw image parameters: Unknown sign of raw file\n");
 						fprintf(stderr,"Please use the Format option -F:\n");
-						fprintf(stderr,"-F rawWidth x rawHeight x rawComp x rawBitDepth+s/u (Signed/Unsigned)\n");
-						fprintf(stderr,"Example: -i lena.raw -o lena.j2k -F 512x512x3x8xu\n");
+						fprintf(stderr,"-F rawWidth,rawHeight,rawComp,rawBitDepth,s/u (Signed/Unsigned)\n");
+						fprintf(stderr,"Example: -i lena.raw -o lena.j2k -F 512,512,3,8,u\n");
 						fprintf(stderr,"Aborting\n");
 					}					
 				}
 				else {
 					fprintf(stderr,"\nError: invalid raw image parameters\n");
 					fprintf(stderr,"Please use the Format option -F:\n");
-					fprintf(stderr,"-F rawWidth x rawHeight x rawComp x rawBitDepth+s/u (Signed/Unsigned)\n");
-					fprintf(stderr,"Example: -i lena.raw -o lena.j2k -F 512x512x3x8xu\n");
+					fprintf(stderr,"-F rawWidth,rawHeight,rawComp,rawBitDepth,s/u (Signed/Unsigned)\n");
+						fprintf(stderr,"Example: -i lena.raw -o lena.j2k -F 512,512,3,8,u\n");
 					fprintf(stderr,"Aborting\n");
 					return 1;
 				}
@@ -1385,8 +1385,8 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 	if (parameters->decod_format == RAW_DFMT && raw_cp->rawWidth == 0) {
 			fprintf(stderr,"\nError: invalid raw image parameters\n");
 			fprintf(stderr,"Please use the Format option -F:\n");
-			fprintf(stderr,"-F rawWidth x rawHeight x rawComp x rawBitDepth+s/u (Signed/Unsigned)\n");
-			fprintf(stderr,"Example: -i lena.raw -o lena.j2k -F 512x512x3x8xu\n");
+			fprintf(stderr,"-F rawWidth,rawHeight,rawComp,rawBitDepth,s/u (Signed/Unsigned)\n");
+						fprintf(stderr,"Example: -i lena.raw -o lena.j2k -F 512,512,3,8,u\n");
 			fprintf(stderr,"Aborting\n");
 			return 1;
 	}
