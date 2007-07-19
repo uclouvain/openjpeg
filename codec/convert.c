@@ -473,6 +473,7 @@ int imagetobmp(opj_image_t * image, const char *outfile) {
 	int w, wr, h, hr;
 	int i, pad;
 	FILE *fdest = NULL;
+	int adjustR, adjustG, adjustB;
 
 	if (image->numcomps == 3 && image->comps[0].dx == image->comps[1].dx
 		&& image->comps[1].dx == image->comps[2].dx
@@ -491,13 +492,9 @@ int imagetobmp(opj_image_t * image, const char *outfile) {
 			return 1;
 		}
 	    
-		/* w = int_ceildiv(image->x1 - image->x0, image->comps[0].dx); */
-		/* wr = int_ceildiv(int_ceildivpow2(image->x1 - image->x0,image->factor), image->comps[0].dx); */
 		w = image->comps[0].w;
 		wr = int_ceildivpow2(image->comps[0].w, image->comps[0].factor);
 	    
-		/* h = int_ceildiv(image->y1 - image->y0, image->comps[0].dy); */
-		/* hr = int_ceildiv(int_ceildivpow2(image->y1 - image->y0,image->factor), image->comps[0].dy); */
 		h = image->comps[0].h;
 		hr = int_ceildivpow2(image->comps[0].h, image->comps[0].factor);
 	    
@@ -536,16 +533,40 @@ int imagetobmp(opj_image_t * image, const char *outfile) {
 		fprintf(fdest, "%c%c%c%c", (0) & 0xff, ((0) >> 8) & 0xff, ((0) >> 16) & 0xff, ((0) >> 24) & 0xff);
 		fprintf(fdest, "%c%c%c%c", (0) & 0xff, ((0) >> 8) & 0xff, ((0) >> 16) & 0xff, ((0) >> 24) & 0xff);
 	    
+		if (image->comps[0].prec > 8) {
+			adjustR = image->comps[0].prec - 8;
+			printf("BMP CONVERSION: Truncating component 0 from %d bits to 8 bits\n", image->comps[0].prec);
+		}
+		else 
+			adjustR = 0;
+		if (image->comps[1].prec > 8) {
+			adjustG = image->comps[1].prec - 8;
+			printf("BMP CONVERSION: Truncating component 1 from %d bits to 8 bits\n", image->comps[1].prec);
+		}
+		else 
+			adjustG = 0;
+		if (image->comps[2].prec > 8) {
+			adjustB = image->comps[2].prec - 8;
+			printf("BMP CONVERSION: Truncating component 2 from %d bits to 8 bits\n", image->comps[2].prec);
+		}
+		else 
+			adjustB = 0;
+
 		for (i = 0; i < wr * hr; i++) {
-			unsigned char R, G, B;
-			/* a modifier */
-			/* R = image->comps[0].data[w * h - ((i) / (w) + 1) * w + (i) % (w)]; */
-			R = image->comps[0].data[w * hr - ((i) / (wr) + 1) * w + (i) % (wr)];
-			/* G = image->comps[1].data[w * h - ((i) / (w) + 1) * w + (i) % (w)]; */
-			G = image->comps[1].data[w * hr - ((i) / (wr) + 1) * w + (i) % (wr)];
-			/* B = image->comps[2].data[w * h - ((i) / (w) + 1) * w + (i) % (w)]; */
-			B = image->comps[2].data[w * hr - ((i) / (wr) + 1) * w + (i) % (wr)];
-			fprintf(fdest, "%c%c%c", B, G, R);
+			unsigned char rc, gc, bc;
+			int r, g, b;
+							
+			r = image->comps[0].data[w * hr - ((i) / (wr) + 1) * w + (i) % (wr)];
+			r += (image->comps[0].sgnd ? 1 << (image->comps[0].prec - 1) : 0);
+			rc = (unsigned char) ((r >> adjustR)+((r >> (adjustR-1))%2));
+			g = image->comps[1].data[w * hr - ((i) / (wr) + 1) * w + (i) % (wr)];
+			g += (image->comps[1].sgnd ? 1 << (image->comps[1].prec - 1) : 0);
+			gc = (unsigned char) ((g >> adjustG)+((g >> (adjustG-1))%2));
+			b = image->comps[2].data[w * hr - ((i) / (wr) + 1) * w + (i) % (wr)];
+			b += (image->comps[2].sgnd ? 1 << (image->comps[2].prec - 1) : 0);
+			bc = (unsigned char) ((b >> adjustB)+((b >> (adjustB-1))%2));
+
+			fprintf(fdest, "%c%c%c", bc, gc, rc);
 			
 			if ((i + 1) % wr == 0) {
 				for (pad = (3 * wr) % 4 ? 4 - (3 * wr) % 4 : 0; pad > 0; pad--)	/* ADD */
@@ -560,13 +581,9 @@ int imagetobmp(opj_image_t * image, const char *outfile) {
 		<<-- <<-- <<-- <<-- */
 
 		fdest = fopen(outfile, "wb");
-		/* w = int_ceildiv(image->x1 - image->x0, image->comps[0].dx); */
-		/* wr = int_ceildiv(int_ceildivpow2(image->x1 - image->x0,image->factor), image->comps[0].dx); */
 		w = image->comps[0].w;
 		wr = int_ceildivpow2(image->comps[0].w, image->comps[0].factor);
 	    
-		/* h = int_ceildiv(image->y1 - image->y0, image->comps[0].dy); */
-		/* hr = int_ceildiv(int_ceildivpow2(image->y1 - image->y0,image->factor), image->comps[0].dy); */
 		h = image->comps[0].h;
 		hr = int_ceildivpow2(image->comps[0].h, image->comps[0].factor);
 	    
@@ -606,16 +623,25 @@ int imagetobmp(opj_image_t * image, const char *outfile) {
 		fprintf(fdest, "%c%c%c%c", (256) & 0xff, ((256) >> 8) & 0xff, ((256) >> 16) & 0xff, ((256) >> 24) & 0xff);
 		fprintf(fdest, "%c%c%c%c", (256) & 0xff, ((256) >> 8) & 0xff, ((256) >> 16) & 0xff, ((256) >> 24) & 0xff);
 
+		if (image->comps[0].prec > 8) {
+			adjustR = image->comps[0].prec - 8;
+			printf("BMP CONVERSION: Truncating component 0 from %d bits to 8 bits\n", image->comps[0].prec);
+		}
+
 		for (i = 0; i < 256; i++) {
 			fprintf(fdest, "%c%c%c%c", i, i, i, 0);
 		}
 
 		for (i = 0; i < wr * hr; i++) {
-			/* a modifier !! */
-			/* fprintf(fdest, "%c", image->comps[0].data[w * h - ((i) / (w) + 1) * w + (i) % (w)]); */
-			fprintf(fdest, "%c", image->comps[0].data[w * hr - ((i) / (wr) + 1) * w + (i) % (wr)]);
-			/*if (((i + 1) % w == 0 && w % 2))
-			fprintf(fdest, "%c", 0); */
+			unsigned char rc;
+			int r;
+			
+			r = image->comps[0].data[w * hr - ((i) / (wr) + 1) * w + (i) % (wr)];
+			r += (image->comps[0].sgnd ? 1 << (image->comps[0].prec - 1) : 0);
+			rc = (unsigned char) ((r >> adjustR)+((r >> (adjustR-1))%2));
+			
+			fprintf(fdest, "%c", rc);
+
 			if ((i + 1) % wr == 0) {
 				for (pad = wr % 4 ? 4 - wr % 4 : 0; pad > 0; pad--)	/* ADD */
 					fprintf(fdest, "%c", 0);
@@ -813,13 +839,10 @@ int imagetopgx(opj_image_t * image, const char *outfile) {
     if( total > 256 ) {
       free(name);
       }
-		/* w = int_ceildiv(image->x1 - image->x0, comp->dx); */
-		/* wr = int_ceildiv(int_ceildivpow2(image->x1 - image->x0,image->factor), comp->dx); */
+
 		w = image->comps[compno].w;
 		wr = int_ceildivpow2(image->comps[compno].w, image->comps[compno].factor);
 	    
-		/* h = int_ceildiv(image->y1 - image->y0, comp->dy); */
-		/* hr = int_ceildiv(int_ceildivpow2(image->y1 - image->y0,image->factor), comp->dy); */
 		h = image->comps[compno].h;
 		hr = int_ceildivpow2(image->comps[compno].h, image->comps[compno].factor);
 	    
@@ -952,7 +975,7 @@ opj_image_t* pnmtoimage(const char *filename, opj_cparameters_t *parameters) {
 int imagetopnm(opj_image_t * image, const char *outfile) {
 	int w, wr, wrr, h, hr, hrr, max;
 	int i, compno;
-	int adjust;
+	int adjustR, adjustG, adjustB, adjustX;
 	FILE *fdest = NULL;
 	char S2;
 	const char *tmp = outfile;
@@ -979,12 +1002,10 @@ int imagetopnm(opj_image_t * image, const char *outfile) {
 		}
 
 		w = int_ceildiv(image->x1 - image->x0, image->comps[0].dx);
-		/* wr = int_ceildiv(int_ceildivpow2(image->x1 - image->x0,image->factor),image->comps[0].dx); */
 		wr = image->comps[0].w;
 		wrr = int_ceildivpow2(image->comps[0].w, image->comps[0].factor);
         
 		h = int_ceildiv(image->y1 - image->y0, image->comps[0].dy);
-		/* hr = int_ceildiv(int_ceildivpow2(image->y1 - image->y0,image->factor), image->comps[0].dy); */
 		hr = image->comps[0].h;
 		hrr = int_ceildivpow2(image->comps[0].h, image->comps[0].factor);
 	    
@@ -994,28 +1015,49 @@ int imagetopnm(opj_image_t * image, const char *outfile) {
 		image->comps[0].y0 = int_ceildivpow2(image->comps[0].y0 -	int_ceildiv(image->y0, image->comps[0].dy), image->comps[0].factor);
 
 		fprintf(fdest, "P6\n%d %d\n%d\n", wrr, hrr, max);
-		adjust = image->comps[0].prec > 8 ? image->comps[0].prec - 8 : 0;
+
+		if (image->comps[0].prec > 8) {
+			adjustR = image->comps[0].prec - 8;
+			printf("PNM CONVERSION: Truncating component 0 from %d bits to 8 bits\n", image->comps[0].prec);
+		}
+		else 
+			adjustR = 0;
+		if (image->comps[1].prec > 8) {
+			adjustG = image->comps[1].prec - 8;
+			printf("PNM CONVERSION: Truncating component 1 from %d bits to 8 bits\n", image->comps[1].prec);
+		}
+		else 
+			adjustG = 0;
+		if (image->comps[2].prec > 8) {
+			adjustB = image->comps[2].prec - 8;
+			printf("PNM CONVERSION: Truncating component 2 from %d bits to 8 bits\n", image->comps[2].prec);
+		}
+		else 
+			adjustB = 0;
+
+
 		for (i = 0; i < wrr * hrr; i++) {
 			int r, g, b;
 			unsigned char rc,gc,bc;
 			r = image->comps[0].data[i / wrr * wr + i % wrr];
 			r += (image->comps[0].sgnd ? 1 << (image->comps[0].prec - 1) : 0);
-			rc = (unsigned char) ((r >> adjust)+((r >> (adjust-1))%2));
+			rc = (unsigned char) ((r >> adjustR)+((r >> (adjustR-1))%2));
 
 			g = image->comps[1].data[i / wrr * wr + i % wrr];
 			g += (image->comps[1].sgnd ? 1 << (image->comps[1].prec - 1) : 0);
-			gc = (unsigned char) ((g >> adjust)+((g >> (adjust-1))%2));
+			gc = (unsigned char) ((g >> adjustG)+((g >> (adjustG-1))%2));
 			
 			b = image->comps[2].data[i / wrr * wr + i % wrr];
 			b += (image->comps[2].sgnd ? 1 << (image->comps[2].prec - 1) : 0);
-			bc = (unsigned char) ((b >> adjust)+((b >> (adjust-1))%2));
+			bc = (unsigned char) ((b >> adjustB)+((b >> (adjustB-1))%2));
 			
 			fprintf(fdest, "%c%c%c", rc, gc, bc);
 		}
 		fclose(fdest);
+
 	} else {
 		int ncomp=(S2=='g' || S2=='G')?1:image->numcomps;
-		if (image->numcomps>ncomp) {
+		if (image->numcomps > ncomp) {
 			fprintf(stderr,"WARNING -> [PGM files] Only the first component\n");
 			fprintf(stderr,"           is written to the file\n");
 		}
@@ -1034,12 +1076,10 @@ int imagetopnm(opj_image_t * image, const char *outfile) {
 			}
             
 			w = int_ceildiv(image->x1 - image->x0, image->comps[compno].dx);
-			/* wr = int_ceildiv(int_ceildivpow2(image->x1 - image->x0,image->factor),image->comps[compno].dx); */
 			wr = image->comps[compno].w;
 			wrr = int_ceildivpow2(image->comps[compno].w, image->comps[compno].factor);
 			
 			h = int_ceildiv(image->y1 - image->y0, image->comps[compno].dy);
-			/* hr = int_ceildiv(int_ceildivpow2(image->y1 - image->y0,image->factor), image->comps[compno].dy); */
 			hr = image->comps[compno].h;
 			hrr = int_ceildivpow2(image->comps[compno].h, image->comps[compno].factor);
 			
@@ -1049,14 +1089,20 @@ int imagetopnm(opj_image_t * image, const char *outfile) {
 			image->comps[compno].y0 = int_ceildivpow2(image->comps[compno].y0 - int_ceildiv(image->y0, image->comps[compno].dy), image->comps[compno].factor);
 			
 			fprintf(fdest, "P5\n%d %d\n%d\n", wrr, hrr, max);
-			adjust = image->comps[compno].prec > 8 ? image->comps[compno].prec - 8 : 0;
-
+			
+			if (image->comps[compno].prec > 8) {
+				adjustX = image->comps[0].prec - 8;
+				printf("PNM CONVERSION: Truncating component %d from %d bits to 8 bits\n",compno, image->comps[compno].prec);
+			}
+			else 
+				adjustX = 0;
+			
 			for (i = 0; i < wrr * hrr; i++) {
 				int l;
 				unsigned char lc;
 				l = image->comps[compno].data[i / wrr * wr + i % wrr];
 				l += (image->comps[compno].sgnd ? 1 << (image->comps[compno].prec - 1) : 0);
-				lc = (unsigned char) ((l >> adjust)+((l >> (adjust-1))%2));
+				lc = (unsigned char) ((l >> adjustX)+((l >> (adjustX-1))%2));
 				fprintf(fdest, "%c", lc);
 			}
 			fclose(fdest);

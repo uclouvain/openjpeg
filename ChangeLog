@@ -5,6 +5,10 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+July 18, 2007
+! [FOD] Updated libtiff library version to 3.8.2 (for WIN32)
+* [FOD] Updated BMP and PxM truncation when decoding J2K files with more than 8 bits
+
 July 17, 2007
 * [FOD] Fixed raw option for images with more than three components
 
