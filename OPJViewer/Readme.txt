@@ -1,13 +1,8 @@
 ===============================================================================
-
 	JPEG2000 Visualization Software - OPJViewer
 
-		Version 0.1 alpha
-
+		Version 0.3 alpha
 ===============================================================================
-
-
-
 
 
 1. Scope
@@ -15,7 +10,7 @@
 
 This document describes the installation and use of the OPJViewer in the framework of OpenJPEG library.
 
-This implementation has been developed using the OpenJPEG library as decoding engine and wxWidgets 2.8.0 as GUI engine.
+This implementation has been developed using the OpenJPEG library as decoding engine and wxWidgets 2.8 as GUI engine.
 
 If you find some bugs or if you have problems using the viewer, please send an e-mail to jpwl@diei.unipg.it
 
@@ -27,7 +22,7 @@ There are two options available, at the moment:
 a) compile from source code
 b) download a precompiled binary.
 
-In order to use option a), it is mandatory to have compiled and built the LibOpenJPEG_JPWL library and the wxWidgets 2.8.0 framework (you have to download it from http://www.wxwidgets.org/ and compile the wx* libraries).
+In order to use option a), it is mandatory to have compiled and built the LibOpenJPEG_JPWL library and the wxWidgets 2.8 framework (you have to download it from http://www.wxwidgets.org/ and compile the wx* libraries).
 
 2.1. Compiling the source code in Windows
 -------------------------------------------

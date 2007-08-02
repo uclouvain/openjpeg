@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+August 02, 2007
++ [GB] Added a basic saving capability to OPJViewer
+
 July 18, 2007
 ! [FOD] Updated libtiff library version to 3.8.2 (for WIN32)
 * [FOD] Updated BMP and PxM truncation when decoding J2K files with more than 8 bits

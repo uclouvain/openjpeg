@@ -5,7 +5,7 @@ setLocal EnableDelayedExpansion
 for /f "tokens=2,* delims=^(^) " %%a in ('find /v "" ^< .\source\build.h') do (
 rem echo %%a
 set /A M = %%a + 1
-echo Build !M!
+echo Build %%a done^!
 echo wxT^("!M!"^) > buildtemp283746825t347
 )
 

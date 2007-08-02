@@ -151,6 +151,7 @@ typedef unsigned long long int8byte;
 #define OPJ_CANVAS_COLOUR *wxWHITE
 
 class OPJDecoThread;
+class OPJEncoThread;
 class OPJParseThread;
 WX_DEFINE_ARRAY_PTR(wxThread *, wxArrayThread);
 class OPJChildFrame;
@@ -175,17 +176,17 @@ class OPJViewerApp: public wxApp
 
 		// all the threads currently alive - as soon as the thread terminates, it's
 		// removed from the array
-		wxArrayThread m_deco_threads, m_parse_threads;
+		wxArrayThread m_deco_threads, m_parse_threads, m_enco_threads;
 
 		// crit section protects access to all of the arrays below
-		wxCriticalSection m_deco_critsect, m_parse_critsect;
+		wxCriticalSection m_deco_critsect, m_parse_critsect, m_enco_critsect;
 
 		// semaphore used to wait for the threads to exit, see OPJFrame::OnQuit()
-		wxSemaphore m_deco_semAllDone, m_parse_semAllDone;
+		wxSemaphore m_deco_semAllDone, m_parse_semAllDone, m_enco_semAllDone;
 
 		// the last exiting thread should post to m_semAllDone if this is true
 		// (protected by the same m_critsect)
-		bool m_deco_waitingUntilAllDone, m_parse_waitingUntilAllDone;
+		bool m_deco_waitingUntilAllDone, m_parse_waitingUntilAllDone, m_enco_waitingUntilAllDone;
 
 		// the list of all filenames written in the command line
 		wxArrayString m_filelist;
@@ -201,6 +202,12 @@ class OPJViewerApp: public wxApp
 		int m_expcomps, m_maxtiles;
 		int m_framewidth, m_frameheight;
 #endif // USE_JPWL
+
+		// encoding engine parameters
+		wxString m_subsampling, m_origin, m_rates, m_comment, m_index, m_quality;
+		wxString m_cbsize, m_prsize, m_tsize, m_torigin;
+		bool m_enablecomm, m_enableidx, m_irreversible, m_enablesop, m_enableeph;
+		int m_resolutions;
 
 		// some layout settings
 		bool m_showtoolbar, m_showbrowser, m_showpeeker;
@@ -240,10 +247,11 @@ class OPJCanvas: public wxScrolledWindow
 #endif //__WXGTK__
 		}
 		OPJDecoThread *CreateDecoThread(void);
+		OPJEncoThread *CreateEncoThread(void);
 		OPJChildFrame *m_childframe;
 
 		wxBitmap  m_image, m_image100;
-		wxFileName m_fname;
+		wxFileName m_fname, m_savename;
 		long m_zooml;
 
 	DECLARE_EVENT_TABLE()
@@ -383,6 +391,8 @@ class OPJFrame: public wxMDIParentFrame
 	void OnSize(wxSizeEvent& WXUNUSED(event));
     void OnAbout(wxCommandEvent& WXUNUSED(event));
     void OnFileOpen(wxCommandEvent& WXUNUSED(event));
+    void OnFileSaveAs(wxCommandEvent& WXUNUSED(event));
+    void OnMemoryOpen(wxCommandEvent& WXUNUSED(event));
     void OnQuit(wxCommandEvent& WXUNUSED(event));
     void OnClose(wxCommandEvent& WXUNUSED(event));
     void OnZoom(wxCommandEvent& WXUNUSED(event));
@@ -398,6 +408,7 @@ class OPJFrame: public wxMDIParentFrame
 	void OnSetsDeco(wxCommandEvent& event);
 	void OnSashDrag(wxSashEvent& event);
 	void OpenFiles(wxArrayString paths, wxArrayString filenames);
+	void SaveFile(wxArrayString paths, wxArrayString filenames);
 	void OnNotebook(wxNotebookEvent& event);
 	void Rescale(int scale, OPJChildFrame *child);
 
@@ -453,6 +464,7 @@ enum {
 	OPJFRAME_FILEEXIT = wxID_EXIT,
 	OPJFRAME_HELPABOUT = wxID_ABOUT,
 	OPJFRAME_FILEOPEN,
+	OPJFRAME_MEMORYOPEN,
 	OPJFRAME_FILESAVEAS,
 	OPJFRAME_FILETOGGLEB,
 	OPJFRAME_FILETOGGLEP,
@@ -522,6 +534,26 @@ enum
     TreeTest_Ctrl = 1000,
 	BOTTOM_NOTEBOOK_ID,
 	LEFT_NOTEBOOK_ID
+};
+
+class OPJEncoThread : public wxThread
+{
+public:
+    OPJEncoThread(OPJCanvas *canvas);
+
+    // thread execution starts here
+    virtual void *Entry();
+
+    // called when the thread exits - whether it terminates normally or is
+    // stopped with Delete() (but not when it is Kill()ed!)
+    virtual void OnExit();
+
+    // write something to the text control
+    void WriteText(const wxString& text);
+
+public:
+    unsigned m_count;
+    OPJCanvas *m_canvas;
 };
 
 class OPJDecoThread : public wxThread
@@ -603,10 +635,17 @@ public:
 /*    wxPanel* CreatePart3SettingsPage(wxWindow* parent);*/
 #ifdef USE_JPWL
 	void OnEnableJPWL(wxCommandEvent& event);
+	void OnEnableComm(wxCommandEvent& event);
+	void OnEnableIdx(wxCommandEvent& event);
 /*    wxPanel* CreatePart11SettingsPage(wxWindow* parent);
 	wxCheckBox *m_enablejpwlCheck;*/
 #endif // USE_JPWL
 
+	wxTextCtrl *m_subsamplingCtrl, *m_originCtrl, *m_rateCtrl, *m_commentCtrl;
+	wxTextCtrl *m_indexCtrl, *m_qualityCtrl, *m_cbsizeCtrl, *m_prsizeCtrl;
+	wxTextCtrl *m_tsizeCtrl, *m_toriginCtrl;
+	wxCheckBox *m_enablecommCheck, *m_enableidxCheck, *m_irrevCheck, *m_sopCheck, *m_ephCheck;
+	wxSpinCtrl *m_resolutionsCtrl;
 
 protected:
 
@@ -634,7 +673,9 @@ protected:
 		OPJENCO_TILORIG,
 		OPJENCO_ENABLEIRREV,
 		OPJENCO_ENABLEINDEX,
-		OPJENCO_INDEXNAME
+		OPJENCO_INDEXNAME,
+		OPJENCO_ENABLECOMM,
+		OPJENCO_COMMENTTEXT
     };
 
 DECLARE_EVENT_TABLE()
