@@ -586,7 +586,7 @@ int t2_encode_packets(opj_t2_t* t2,int tileno, opj_tcd_tile_t *tile, int maxlaye
 			for(poc = 0; poc < pocno ; poc++){
 				int comp_len = 0;
 				int tpnum = compno;
-				pi_create_encode(pi, cp,tileno,poc,tpnum,tppos); 
+				pi_create_encode(pi, cp,tileno,poc,tpnum,tppos,t2_mode); 
 				while (pi_next(&pi[poc])) {
 					if (pi[poc].layno < maxlayers) {
 						e = t2_encode_packet(tile, &cp->tcps[tileno], &pi[poc], c, dest + len - c, image_info, tileno);
@@ -609,7 +609,7 @@ int t2_encode_packets(opj_t2_t* t2,int tileno, opj_tcd_tile_t *tile, int maxlaye
 			if (e == -999)  break;
 		}
 	}else{  /* t2_mode == FINAL_PASS  */
-		pi_create_encode(pi, cp,tileno,pino,tpnum,tppos); 
+		pi_create_encode(pi, cp,tileno,pino,tpnum,tppos,t2_mode);
 		while (pi_next(&pi[pino])) {
 			if (pi[pino].layno < maxlayers) {
 				e = t2_encode_packet(tile, &cp->tcps[tileno], &pi[pino], c, dest + len - c, image_info, tileno);
@@ -714,4 +714,5 @@ void t2_destroy(opj_t2_t *t2) {
 		opj_free(t2);
 	}
 }
+
 

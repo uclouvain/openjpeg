@@ -1348,7 +1348,6 @@ static void j2k_write_sod(opj_j2k_t *j2k, void *tile_coder) {
 
 	tcd->tp_num = j2k->tp_num ;
 	tcd->cur_tp_num = j2k->cur_tp_num;
-	tcd->cur_totnum_tp = j2k->cur_totnum_tp[j2k->curtileno];
 	
 	cio_write(cio, J2K_MS_SOD, 2);
 	if (j2k->curtileno == 0) {
@@ -2515,7 +2514,7 @@ bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, char *index)
 		
 		j2k->curtileno = tileno;
 		j2k->cur_tp_num = 0;
-
+		tcd->cur_totnum_tp = j2k->cur_totnum_tp[j2k->curtileno];
 		/* initialisation before tile encoding  */
 		if (tileno == 0) {
 			tcd_malloc_encode(tcd, image, cp, j2k->curtileno);
@@ -2631,4 +2630,5 @@ bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, char *index)
 	
 	return true;
 }
+
 

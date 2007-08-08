@@ -665,7 +665,7 @@ opj_pi_iterator_t *pi_initialise_encode(opj_image_t *image, opj_cp_t *cp, int ti
 		}
 		
 		/* Generation of boundaries for each prog flag*/
-			if(tcp->POC & (t2_mode == FINAL_PASS)){
+			if(tcp->POC && ( cp->cinema || ((!cp->cinema) && (t2_mode == FINAL_PASS)))){
 				tcp->pocs[pino].compS= tcp->pocs[pino].compno0;
 				tcp->pocs[pino].compE= tcp->pocs[pino].compno1;
 				tcp->pocs[pino].resS = tcp->pocs[pino].resno0;
@@ -820,7 +820,7 @@ int pi_check_next_level(int pos,opj_cp_t *cp,int tileno, int pino, char *prog){
 }
 
 
-void pi_create_encode( opj_pi_iterator_t *pi, opj_cp_t *cp,int tileno, int pino,int tpnum, int tppos){
+void pi_create_encode( opj_pi_iterator_t *pi, opj_cp_t *cp,int tileno, int pino,int tpnum, int tppos, J2K_T2_MODE t2_mode){
 	char *prog;
 	int i,l;
 	int incr_top=1,resetX=0;
@@ -831,7 +831,7 @@ void pi_create_encode( opj_pi_iterator_t *pi, opj_cp_t *cp,int tileno, int pino,
 	pi[pino].first = 1;
 	pi[pino].poc.prg = tcp->prg;	
 	
-	if(!(cp->tp_on)){
+	if(!(cp->tp_on && ((!cp->cinema && (t2_mode == FINAL_PASS)) || cp->cinema))){
 		pi[pino].poc.resno0 = tcp->resS;
 		pi[pino].poc.resno1 = tcp->resE;
 		pi[pino].poc.compno0 = tcp->compS;
@@ -1074,5 +1074,6 @@ void pi_create_encode( opj_pi_iterator_t *pi, opj_cp_t *cp,int tileno, int pino,
 		}
 	}
 }
+
 
 

@@ -1188,7 +1188,7 @@ int imagetotif(opj_image_t * image, const char *outfile) {
 						dat8[i+1] = (image->comps[0].data[index]<<4)|((image->comps[1].data[index]>>8)& 0x0f);
 						dat8[i+2] = (image->comps[1].data[index]);
 						dat8[i+3] = (image->comps[2].data[index]>>8)<<4 | (image->comps[2].data[index]>>4);
-						dat8[i+4] = (image->comps[2].data[index]<<4)|((image->comps[1].data[index+1]>>8)& 0x0f);
+						dat8[i+4] = (image->comps[2].data[index]<<4)|((image->comps[0].data[index+1]>>8)& 0x0f);
 						dat8[i+5] = (image->comps[0].data[index+1]);
 						dat8[i+6] = (image->comps[1].data[index+1]>>8)<<4 | (image->comps[1].data[index+1]>>4);
 						dat8[i+7] = (image->comps[1].data[index+1]<<4)|((image->comps[2].data[index+1]>>8)& 0x0f);

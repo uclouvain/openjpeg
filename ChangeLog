@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+August 08, 2008
+* [Parvatha] Fixed the DCinema filesize allocation. It now includes the SOT marker size
+
 August 02, 2007
 + [GB] Added a basic saving capability to OPJViewer
 
