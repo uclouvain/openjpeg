@@ -251,7 +251,7 @@ found:
 		
 		}// end of single character
 	}//end '-'
-	fprintf(stderr,"Invalid option %s\n");
+	fprintf(stderr,"Invalid option\n");
 	++optind;
 	return (BADCH);;
 }//end function

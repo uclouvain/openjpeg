@@ -67,6 +67,300 @@ static int int_ceildiv(int a, int b) {
 	return (a + b - 1) / b;
 }
 
+
+/* -->> -->> -->> -->>
+
+  TGA IMAGE FORMAT
+
+ <<-- <<-- <<-- <<-- */
+
+// TGA header definition.
+#pragma pack(push,1) // Pack structure byte aligned
+typedef struct tga_header
+{                           
+    uint8   id_length;              /* Image id field length    */
+    uint8   colour_map_type;        /* Colour map type          */
+    uint8   image_type;             /* Image type               */
+    /*
+    ** Colour map specification
+    */
+    uint16  colour_map_index;       /* First entry index        */
+    uint16  colour_map_length;      /* Colour map length        */
+    uint8   colour_map_entry_size;  /* Colour map entry size    */
+    /*
+    ** Image specification
+    */
+    uint16  x_origin;               /* x origin of image        */
+    uint16  y_origin;               /* u origin of image        */
+    uint16  image_width;            /* Image width              */
+    uint16  image_height;           /* Image height             */
+    uint8   pixel_depth;            /* Pixel depth              */
+    uint8   image_desc;             /* Image descriptor         */
+} tga_header;
+#pragma pack(pop) // Return to normal structure packing alignment.
+
+int tga_readheader(FILE *fp, int *bits_per_pixel, int *width, int *height, int *flip_image)
+{
+	int palette_size;
+	tga_header tga ;
+
+	if (!bits_per_pixel || !width || !height || !flip_image)
+		return 0;
+	
+	// Read TGA header
+	fread((uint8*)&tga, sizeof(tga_header), 1, fp);
+
+	*bits_per_pixel = tga.pixel_depth;
+	
+	*width  = tga.image_width;
+	*height = tga.image_height ;
+
+	// Ignore tga identifier, if present ...
+	if (tga.id_length)
+	{
+		uint8 *id = (uint8 *) malloc(tga.id_length);
+		fread(id, tga.id_length, 1, fp);
+		free(id);  
+	}
+
+	// Test for compressed formats ... not yet supported ...
+	// Note :-  9 - RLE encoded palettized.
+	//	  	   10 - RLE encoded RGB.
+	if (tga.image_type > 8)
+	{
+		fprintf(stderr, "Sorry, compressed tga files are not currently supported.\n");
+		return 0 ;
+	}
+
+	*flip_image = !(tga.image_desc & 32);
+
+	// Palettized formats are not yet supported, skip over the palette, if present ... 
+	palette_size = tga.colour_map_length * (tga.colour_map_entry_size/8);
+	
+	if (palette_size>0)
+	{
+		fprintf(stderr, "File contains a palette - not yet supported.");
+		fseek(fp, palette_size, SEEK_CUR);
+	}
+	return 1;
+}
+
+int tga_writeheader(FILE *fp, int bits_per_pixel, int width, int height, bool flip_image)
+{
+	tga_header tga;
+
+	if (!bits_per_pixel || !width || !height)
+		return 0;
+
+	memset(&tga, 0, sizeof(tga_header));
+
+	tga.pixel_depth = bits_per_pixel;
+	tga.image_width  = width;
+	tga.image_height = height;
+	tga.image_type = 2; // Uncompressed.
+	tga.image_desc = 8; // 8 bits per component.
+
+	if (flip_image)
+		tga.image_desc |= 32;
+
+	// Write TGA header
+	fwrite((uint8*)&tga, sizeof(tga_header), 1, fp);
+
+	return 1;
+}
+
+opj_image_t* tgatoimage(const char *filename, opj_cparameters_t *parameters) {
+	FILE *f;
+	opj_image_t *image;
+	uint32 image_width, image_height, pixel_bit_depth;
+	uint32 x, y;
+	int flip_image=0;
+	opj_image_cmptparm_t cmptparm[4];	/* maximum 4 components */
+	int numcomps;
+	OPJ_COLOR_SPACE color_space;
+	bool mono ;
+	bool save_alpha;
+	int subsampling_dx, subsampling_dy;
+	int i;	
+
+	f = fopen(filename, "rb");
+	if (!f) {
+		fprintf(stderr, "Failed to open %s for reading !!\n", filename);
+		return 0;
+	}
+
+	if (!tga_readheader(f, &pixel_bit_depth, &image_width, &image_height, &flip_image))
+		return NULL;
+
+	// We currently only support 24 & 32 bit tga's ...
+	if (!((pixel_bit_depth == 24) || (pixel_bit_depth == 32)))
+		return NULL;
+
+	/* initialize image components */   
+	memset(&cmptparm[0], 0, 4 * sizeof(opj_image_cmptparm_t));
+
+	mono = (pixel_bit_depth == 8) || (pixel_bit_depth == 16);  // Mono with & without alpha.
+	save_alpha = (pixel_bit_depth == 16) || (pixel_bit_depth == 32); // Mono with alpha, or RGB with alpha
+
+	if (mono) {
+		color_space = CLRSPC_GRAY;
+		numcomps = save_alpha ? 2 : 1;
+	}	
+	else {
+		numcomps = save_alpha ? 4 : 3;
+		color_space = CLRSPC_SRGB;
+	}
+
+	subsampling_dx = parameters->subsampling_dx;
+	subsampling_dy = parameters->subsampling_dy;
+
+	for (i = 0; i < numcomps; i++) {
+		cmptparm[i].prec = 8;
+		cmptparm[i].bpp = 8;
+		cmptparm[i].sgnd = 0;
+		cmptparm[i].dx = subsampling_dx;
+		cmptparm[i].dy = subsampling_dy;
+		cmptparm[i].w = image_width;
+		cmptparm[i].h = image_height;
+	}
+
+	/* create the image */
+	image = opj_image_create(numcomps, &cmptparm[0], color_space);
+
+	if (!image)
+		return NULL;
+
+	/* set image offset and reference grid */
+	image->x0 = parameters->image_offset_x0;
+	image->y0 = parameters->image_offset_y0;
+	image->x1 =	!image->x0 ? (image_width - 1) * subsampling_dx + 1 : image->x0 + (image_width - 1) * subsampling_dx + 1;
+	image->y1 =	!image->y0 ? (image_height - 1) * subsampling_dy + 1 : image->y0 + (image_height - 1) * subsampling_dy + 1;
+
+	/* set image data */
+	for (y=0; y < image_height; y++) 
+	{
+		int index;
+
+		if (flip_image)
+			index = (image_height-y-1)*image_width;
+		else
+			index = y*image_width;
+
+		if (numcomps==3)
+		{
+			for (x=0;x<image_width;x++) 
+			{
+				uint8 r,g,b;
+				fread(&b, 1, 1, f);
+				fread(&g, 1, 1, f);
+				fread(&r, 1, 1, f);
+
+				image->comps[0].data[index]=r;
+				image->comps[1].data[index]=g;
+				image->comps[2].data[index]=b;
+				index++;
+			}
+		}
+		else if (numcomps==4)
+		{
+			for (x=0;x<image_width;x++) 
+			{
+				uint8 r,g,b,a;
+				fread(&b, 1, 1, f);
+				fread(&g, 1, 1, f);
+				fread(&r, 1, 1, f);
+				fread(&a, 1, 1, f);
+
+				image->comps[0].data[index]=r;
+				image->comps[1].data[index]=g;
+				image->comps[2].data[index]=b;
+				image->comps[3].data[index]=a;
+				index++;
+			}
+		}
+		else {
+			fprintf(stderr, "Currently unsupported bit depth : %s\n", filename);
+		}
+	}	
+	return image;
+}
+
+int imagetotga(opj_image_t * image, const char *outfile) {
+	int width, height, bpp, x, y;
+	bool write_alpha;
+	int i;
+	uint32 alpha_channel;
+	float r,g,b,a;
+	uint8 value;
+	float scale;
+	FILE *fdest;
+
+	fdest = fopen(outfile, "wb");
+	if (!fdest) {
+		fprintf(stderr, "ERROR -> failed to open %s for writing\n", outfile);
+		return 1;
+	}
+
+	for (i = 0; i < image->numcomps-1; i++)	{
+		if ((image->comps[0].dx != image->comps[i+1].dx) 
+			||(image->comps[0].dy != image->comps[i+1].dy) 
+			||(image->comps[0].prec != image->comps[i+1].prec))	{
+      fprintf(stderr, "Unable to create a tga file with such J2K image charateristics.");
+      return 1;
+   }
+	}
+
+	width  = int_ceildiv(image->x1-image->x0, image->comps[0].dx);
+	height = int_ceildiv(image->y1-image->y0, image->comps[0].dy);
+
+	// Mono with alpha, or RGB with alpha.
+	write_alpha = (image->numcomps==2) || (image->numcomps==4);   
+
+	// Write TGA header 
+	bpp = write_alpha ? 32 : 24;
+	if (!tga_writeheader(fdest, bpp, width, height, true))
+		return 1;
+
+	alpha_channel = image->numcomps-1; 
+
+	scale = 255.0f / (float)((1<<image->comps[0].prec)-1);
+
+	for (y=0; y < height; y++) {
+		uint32 index=y*width;
+
+		for (x=0; x < width; x++, index++)	{
+			r = (float)(image->comps[0].data[index]);
+
+			if (image->numcomps>2) {
+				g = (float)(image->comps[1].data[index]);
+				b = (float)(image->comps[2].data[index]);
+			}
+			else  {// Greyscale ...
+				g = r;
+				b = r;
+			}
+
+			// TGA format writes BGR ...
+			value = (uint8)(b*scale);
+			fwrite(&value,1,1,fdest);
+
+			value = (uint8)(g*scale);
+			fwrite(&value,1,1,fdest);
+
+			value = (uint8)(r*scale);
+			fwrite(&value,1,1,fdest);
+
+			if (write_alpha) {
+				a = (float)(image->comps[alpha_channel].data[index]);
+				value = (uint8)(a*scale);
+				fwrite(&value,1,1,fdest);
+			}
+		}
+	}
+
+	return 0;
+}
+
 /* -->> -->> -->> -->>
 
   BMP IMAGE FORMAT

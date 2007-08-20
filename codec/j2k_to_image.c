@@ -55,6 +55,7 @@
 #define YUV_DFMT 13
 #define TIF_DFMT 14
 #define RAW_DFMT 15
+#define TGA_DFMT 16
 
 /* ----------------------------------------------------------------------- */
 
@@ -96,14 +97,14 @@ void decode_help_display() {
 	fprintf(stdout,"  -OutFor \n");
 	fprintf(stdout,"    REQUIRED only if -ImgDir is used\n");
 	fprintf(stdout,"	  Need to specify only format without filename <BMP>  \n");
-	fprintf(stdout,"    Currently accepts PGM, PPM, PNM, PGX, BMP, TIF and RAW formats\n");
+	fprintf(stdout,"    Currently accepts PGM, PPM, PNM, PGX, BMP, TIF, RAW and TGA formats\n");
 	fprintf(stdout,"  -i <compressed file>\n");
 	fprintf(stdout,"    REQUIRED only if an Input image directory not specified\n");
 	fprintf(stdout,"    Currently accepts J2K-files, JP2-files and JPT-files. The file type\n");
 	fprintf(stdout,"    is identified based on its suffix.\n");
 	fprintf(stdout,"  -o <decompressed file>\n");
 	fprintf(stdout,"    REQUIRED\n");
-	fprintf(stdout,"    Currently accepts PGM, PPM, PNM, PGX, BMP, TIF and RAW files\n");
+	fprintf(stdout,"    Currently accepts PGM, PPM, PNM, PGX, BMP, TIF, RAW and TGA files\n");
 	fprintf(stdout,"    Binary data is written to the file (not ascii). If a PGX\n");
 	fprintf(stdout,"    filename is given, there will be as many output files as there are\n");
 	fprintf(stdout,"    components: an indice starting from 0 will then be appended to the\n");
@@ -182,15 +183,15 @@ int load_images(dircnt_t *dirptr, char *imgdirpath){
 
 int get_file_format(char *filename) {
 	unsigned int i;
-	static const char *extension[] = {"pgx", "pnm", "pgm", "ppm", "bmp","tif", "raw", "j2k", "jp2", "jpt", "j2c" };
-	static const int format[] = { PGX_DFMT, PXM_DFMT, PXM_DFMT, PXM_DFMT, BMP_DFMT, TIF_DFMT, RAW_DFMT, J2K_CFMT, JP2_CFMT, JPT_CFMT, J2K_CFMT };
+	static const char *extension[] = {"pgx", "pnm", "pgm", "ppm", "bmp","tif", "raw", "tga", "j2k", "jp2", "jpt", "j2c" };
+	static const int format[] = { PGX_DFMT, PXM_DFMT, PXM_DFMT, PXM_DFMT, BMP_DFMT, TIF_DFMT, RAW_DFMT, TGA_DFMT, J2K_CFMT, JP2_CFMT, JPT_CFMT, J2K_CFMT };
 	char * ext = strrchr(filename, '.');
 	if (ext == NULL)
 		return -1;
 	ext++;
 	if(ext) {
 		for(i = 0; i < sizeof(format)/sizeof(*format); i++) {
-			if(strnicmp(ext, extension[i], 3) == 0) {
+			if(_strnicmp(ext, extension[i], 3) == 0) {
 				return format[i];
 			}
 		}
@@ -276,9 +277,10 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 					case BMP_DFMT:
 					case TIF_DFMT:
 					case RAW_DFMT:
+					case TGA_DFMT:
 						break;
 					default:
-						fprintf(stderr, "Unknown output format image %s [only *.pnm, *.pgm, *.ppm, *.pgx, *.bmp, *.tif or *.raw]!! \n", outfile);
+						fprintf(stderr, "Unknown output format image %s [only *.pnm, *.pgm, *.ppm, *.pgx, *.bmp, *.tif, *.raw or *.tga]!! \n", outfile);
 						return 1;
 				}
 				strncpy(parameters->outfile, outfile, sizeof(parameters->outfile)-1);
@@ -310,8 +312,11 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 					case RAW_DFMT:
 						img_fol->out_format = "raw";
 						break;
+					case TGA_DFMT:
+						img_fol->out_format = "raw";
+						break;
 					default:
-						fprintf(stderr, "Unknown output format image %s [only *.pnm, *.pgm, *.ppm, *.pgx, *.bmp, *.tif or *.raw]!! \n");
+						fprintf(stderr, "Unknown output format image %s [only *.pnm, *.pgm, *.ppm, *.pgx, *.bmp, *.tif, *.raw or *.tga]!! \n", outformat);
 						return 1;
 						break;
 				}
@@ -439,7 +444,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 		}
 		if(img_fol->set_out_format == 0){
 			fprintf(stderr, "Error: When -ImgDir is used, -OutFor <FORMAT> must be used !!\n");
-			fprintf(stderr, "Only one format allowed! Valid format PGM, PPM, PNM, PGX, BMP, TIF, RAW!!\n");
+			fprintf(stderr, "Only one format allowed! Valid format PGM, PPM, PNM, PGX, BMP, TIF, RAW and TGA!!\n");
 			return 1;
 		}
 		if(!((parameters->outfile[0] == 0))){
@@ -450,7 +455,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 		if((parameters->infile[0] == 0) || (parameters->outfile[0] == 0)) {
 			fprintf(stderr, "Error: One of the options -i or -ImgDir must be specified\n");
 			fprintf(stderr, "Error: When using -i, -o must be used\n");
-			fprintf(stderr, "usage: image_to_j2k -i *.j2k/jp2/j2c -o *.pgm/ppm/pnm/pgx/bmp/tif/raw(+ options)\n");
+			fprintf(stderr, "usage: image_to_j2k -i *.j2k/jp2/j2c -o *.pgm/ppm/pnm/pgx/bmp/tif/raw/tga(+ options)\n");
 			return 1;
 		}
 	}
@@ -717,6 +722,15 @@ int main(int argc, char **argv) {
 		case RAW_DFMT:			/* RAW */
 			if(imagetoraw(image, parameters.outfile)){
 				fprintf(stdout,"Error generating raw file. Outfile %s not generated\n",parameters.outfile);
+			}
+			else {
+				fprintf(stdout,"Successfully generated Outfile %s\n",parameters.outfile);
+			}
+			break;
+
+		case TGA_DFMT:			/* TGA */
+			if(imagetotga(image, parameters.outfile)){
+				fprintf(stdout,"Error generating tga file. Outfile %s not generated\n",parameters.outfile);
 			}
 			else {
 				fprintf(stdout,"Successfully generated Outfile %s\n",parameters.outfile);

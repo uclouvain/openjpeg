@@ -55,6 +55,7 @@
 #define YUV_DFMT 13
 #define TIF_DFMT 14
 #define RAW_DFMT 15
+#define TGA_DFMT 16
 
 /* ----------------------------------------------------------------------- */
 #define CINEMA_24_CS 1302083	/*Codestream length for 24fps*/
@@ -134,9 +135,9 @@ void encode_help_display() {
 	fprintf(stdout,"-OutFor \n");
 	fprintf(stdout,"    REQUIRED only if -ImgDir is used\n");
 	fprintf(stdout,"	  Need to specify only format without filename <BMP>  \n");
-	fprintf(stdout,"    Currently accepts PGM, PPM, PNM, PGX, BMP format\n");
+	fprintf(stdout,"    Currently accepts PGM, PPM, PNM, PGX, BMP, TIF, RAW and TGA formats\n");
 	fprintf(stdout,"\n");
-	fprintf(stdout,"-i           : source file  (-i source.pnm also *.pgm, *.ppm, *.bmp, *.tif, *.raw) \n");
+	fprintf(stdout,"-i           : source file  (-i source.pnm also *.pgm, *.ppm, *.bmp, *.tif, *.raw, *.tga) \n");
 	fprintf(stdout,"    When using this option -o must be used\n");
 	fprintf(stdout,"\n");
 	fprintf(stdout,"-o           : destination file (-o dest.j2k or .jp2) \n");
@@ -369,17 +370,17 @@ int load_images(dircnt_t *dirptr, char *imgdirpath){
 int get_file_format(char *filename) {
 	unsigned int i;
 	static const char *extension[] = {
-    "pgx", "pnm", "pgm", "ppm", "bmp","tif", "raw", "j2k", "jp2", "j2c"
+    "pgx", "pnm", "pgm", "ppm", "bmp", "tif", "raw", "tga", "j2k", "jp2", "j2c"
     };
 	static const int format[] = {
-    PGX_DFMT, PXM_DFMT, PXM_DFMT, PXM_DFMT, BMP_DFMT, TIF_DFMT, RAW_DFMT, J2K_CFMT, JP2_CFMT, J2K_CFMT
+    PGX_DFMT, PXM_DFMT, PXM_DFMT, PXM_DFMT, BMP_DFMT, TIF_DFMT, RAW_DFMT, TGA_DFMT, J2K_CFMT, JP2_CFMT, J2K_CFMT
     };
 	char * ext = strrchr(filename, '.');
 	if (ext == NULL)
 		return -1;
 	ext++;
 	for(i = 0; i < sizeof(format)/sizeof(*format); i++) {
-		if(strnicmp(ext, extension[i], 3) == 0) {
+		if(_strnicmp(ext, extension[i], 3) == 0) {
 			return format[i];
 		}
 	}
@@ -583,11 +584,12 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 					case BMP_DFMT:
 					case TIF_DFMT:
 					case RAW_DFMT:
+					case TGA_DFMT:
 						break;
 					default:
 						fprintf(stderr,
 							"!! Unrecognized format for infile : %s "
-              "[accept only *.pnm, *.pgm, *.ppm, *.pgx, *.bmp, *.tif or *.raw] !!\n\n", 
+              "[accept only *.pnm, *.pgm, *.ppm, *.pgx, *.bmp, *.tif, *.raw or *.tga] !!\n\n", 
 							infile);
 						return 1;
 				}
@@ -1549,6 +1551,8 @@ int main(int argc, char **argv) {
 				break;
 			case RAW_DFMT:
 				break;
+			case TGA_DFMT:
+				break;
 			default:
 				fprintf(stderr,"skipping file...\n");
 				continue;			
@@ -1594,6 +1598,14 @@ int main(int argc, char **argv) {
 					image = rawtoimage(parameters.infile, &parameters, &raw_cp);
 					if (!image) {
 						fprintf(stderr, "Unable to load raw file\n");
+						return 1;
+					}
+				break;
+
+				case TGA_DFMT:
+					image = tgatoimage(parameters.infile, &parameters);
+					if (!image) {
+						fprintf(stderr, "Unable to load tga file\n");
 						return 1;
 					}
 				break;
