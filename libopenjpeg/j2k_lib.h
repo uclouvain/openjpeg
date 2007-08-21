@@ -61,7 +61,11 @@ Allocate memory aligned to a 16 byte boundry
 @param size Bytes to allocate
 @return Returns a void pointer to the allocated space, or NULL if there is insufficient memory available
 */
+#ifdef WIN32
 #include <xmmintrin.h>
+#else
+#include <mm_malloc.h>
+#endif
 #define opj_aligned_malloc(size)	_mm_malloc(size, 16)
 #define opj_aligned_free(m) _mm_free(m)
 

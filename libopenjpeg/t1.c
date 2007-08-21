@@ -1124,7 +1124,7 @@ void t1_decode_cblks(
 					opj_tcd_precinct_t *prc = &band->precincts[precno];
 
 					for (cblkno = 0; cblkno < prc->cw * prc->ch; ++cblkno) {
-						int x, y, w, i, j, orient, cblk_w, cblk_h;
+						int x, y, w, i, j, cblk_w, cblk_h;
 						opj_tcd_cblk_t *cblk = &prc->cblks[cblkno];
 
 						t1_decode_cblk(
