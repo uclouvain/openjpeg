@@ -1,9 +1,9 @@
-                                   <?xml version="1.0" encoding="Windows-1252"?>
+<?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8,00"
-	Name="mj2_to_metadata"
-	ProjectGUID="{5B7DCDB5-EA9B-4F31-AAE8-44B2DBD44060}"
+	Name="mj2_to_frames"
+	ProjectGUID="{64325EAD-A083-4C8E-B852-71006428881D}"
 	>
 	<Platforms>
 		<Platform
@@ -15,8 +15,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\mj2_to_metadata___Win32_Debug0"
-			IntermediateDirectory=".\mj2_to_metadata___Win32_Debug0"
+			OutputDirectory=".\mj2_to_frames___Win32_Debug0"
+			IntermediateDirectory=".\mj2_to_frames___Win32_Debug0"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
 			UseOfMFC="0"
@@ -37,7 +37,7 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				TypeLibraryName=".\mj2_to_metadata___Win32_Debug0/mj2_to_metadata.tlb"
+				TypeLibraryName=".\mj2_to_frames___Win32_Debug0/mj2_to_frames.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -47,11 +47,11 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;OPJ_STATIC;_CRT_SECURE_NO_DEPRECATE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
-				PrecompiledHeaderFile=".\mj2_to_metadata___Win32_Debug0/mj2_to_metadata.pch"
-				AssemblerListingLocation=".\mj2_to_metadata___Win32_Debug0/"
-				ObjectFile=".\mj2_to_metadata___Win32_Debug0/"
-				ProgramDataBaseFileName=".\mj2_to_metadata___Win32_Debug0/"
+				RuntimeLibrary="0"
+				PrecompiledHeaderFile=".\mj2_to_frames___Win32_Debug0/mj2_to_frames.pch"
+				AssemblerListingLocation=".\mj2_to_frames___Win32_Debug0/"
+				ObjectFile=".\mj2_to_frames___Win32_Debug0/"
+				ProgramDataBaseFileName=".\mj2_to_frames___Win32_Debug0/"
 				BrowseInformation="1"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
@@ -70,12 +70,13 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile=".\mj2_to_metadata___Win32_Debug0/mj2_to_metadata.exe"
+				AdditionalDependencies="odbc32.lib odbccp32.lib libcmtd.lib"
+				OutputFile=".\mj2_to_frames___Win32_Debug0/mj2_to_frames.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
-				IgnoreDefaultLibraryNames="libc"
+				IgnoreDefaultLibraryNames="LIBCMT"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\mj2_to_metadata___Win32_Debug0/mj2_to_metadata.pdb"
+				ProgramDatabaseFile=".\mj2_to_frames___Win32_Debug0/mj2_to_frames.pdb"
 				SubSystem="1"
 				TargetMachine="1"
 			/>
@@ -91,7 +92,7 @@
 			<Tool
 				Name="VCBscMakeTool"
 				SuppressStartupBanner="true"
-				OutputFile=".\mj2_to_metadata___Win32_Debug0/mj2_to_metadata.bsc"
+				OutputFile=".\mj2_to_frames___Win32_Debug0/mj2_to_frames.bsc"
 			/>
 			<Tool
 				Name="VCFxCopTool"
@@ -130,7 +131,7 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				TypeLibraryName=".\Release/mj2_to_metadata.tlb"
+				TypeLibraryName=".\Release/mj2_to_frames.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -142,10 +143,11 @@
 				StringPooling="true"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
-				PrecompiledHeaderFile=".\Release/mj2_to_metadata.pch"
+				PrecompiledHeaderFile=".\Release/mj2_to_frames.pch"
 				AssemblerListingLocation=".\Release/"
 				ObjectFile=".\Release/"
 				ProgramDataBaseFileName=".\Release/"
+				BrowseInformation="1"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 			/>
@@ -162,11 +164,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile=".\Release/mj2_to_metadata.exe"
+				OutputFile=".\Release/mj2_to_frames.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				IgnoreDefaultLibraryNames="libc"
-				ProgramDatabaseFile=".\Release/mj2_to_metadata.pdb"
+				ProgramDatabaseFile=".\Release/mj2_to_frames.pdb"
 				SubSystem="1"
 				TargetMachine="1"
 			/>
@@ -182,7 +183,7 @@
 			<Tool
 				Name="VCBscMakeTool"
 				SuppressStartupBanner="true"
-				OutputFile=".\Release/mj2_to_metadata.bsc"
+				OutputFile=".\Release/mj2_to_frames.bsc"
 			/>
 			<Tool
 				Name="VCFxCopTool"
@@ -212,19 +213,11 @@
 					>
 				</File>
 				<File
-					RelativePath="meta_out.h"
-					>
-				</File>
-				<File
 					RelativePath="mj2.h"
 					>
 				</File>
 				<File
 					RelativePath="mj2_convert.h"
-					>
-				</File>
-				<File
-					RelativePath="mj2_to_metadata.h"
 					>
 				</File>
 			</Filter>
@@ -233,28 +226,6 @@
 				>
 				<File
 					RelativePath="compat\getopt.c"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="meta_out.c"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -320,7 +291,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="mj2_to_metadata.c"
+					RelativePath="mj2_to_frames.c"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -342,6 +313,10 @@
 					</FileConfiguration>
 				</File>
 			</Filter>
+		</Filter>
+		<Filter
+			Name="OpenJPEG Headers"
+			>
 		</Filter>
 	</Files>
 	<Globals>

@@ -5,10 +5,14 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
-August 20, 2008
+August 21, 2007
++ [FOD] Added support for Visual Studio 2005
+* [FOD] Robustified MJ2 codecs
+
+August 20, 2007
 + [FOD] Added support for the TGA file format in the codec
 
-August 08, 2008
+August 08, 2007
 * [Parvatha] Fixed the DCinema filesize allocation. It now includes the SOT marker size
 
 August 02, 2007
