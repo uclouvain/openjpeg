@@ -172,6 +172,10 @@ void tcd_malloc_encode(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp, int c
 					if (!j && tcp->rates[j] < 30)
 						tcp->rates[j] = 30;
 				}
+				
+				if(j == (tcp->numlayers-1)){
+					tcp->rates[j] = tcp->rates[j]- 2;
+				}
 			}
 		}
 		/* << Modification of the RATE */
@@ -1055,8 +1059,7 @@ bool tcd_rateallocate(opj_tcd_t *tcd, unsigned char *dest, int len, opj_image_in
 		double lo = min;
 		double hi = max;
 		int success = 0;
-		/* TODO: remove maxlen */
-		int maxlen = tcd_tcp->rates[layno] ? int_min(((int) ceil(tcd_tcp->rates[layno]- 2)), len) : len;
+		int maxlen = tcd_tcp->rates[layno] ? int_min(((int) ceil(tcd_tcp->rates[layno])), len) : len;
 		double goodthresh = 0;
 		double stable_thresh = 0;
 		int i;
@@ -1441,6 +1444,7 @@ void tcd_free_decode_tile(opj_tcd_t *tcd, int tileno) {
 	}
 	if (tile->comps != NULL) opj_free(tile->comps);
 }
+
 
 
 
