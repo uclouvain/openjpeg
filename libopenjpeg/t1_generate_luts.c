@@ -146,16 +146,6 @@ static int t1_init_ctxno_sc(int f) {
 	return (T1_CTXNO_SC + n);
 }
 
-static int t1_init_ctxno_mag(int f) {
-	int n;
-	if (!(f & T1_REFINE))
-		n = (f & (T1_SIG_OTH)) ? 1 : 0;
-	else
-		n = 2;
-
-	return (T1_CTXNO_MAG + n);
-}
-
 static int t1_init_spb(int f) {
 	int hc, vc, n;
 
@@ -197,7 +187,6 @@ int main(){
 	double u, v, t;
 
 	int lut_ctxno_zc[1024];
-	int lut_ctxno_mag[4096];
 	int lut_nmsedec_sig[1 << T1_NMSEDEC_BITS];
 	int lut_nmsedec_sig0[1 << T1_NMSEDEC_BITS];
 	int lut_nmsedec_ref[1 << T1_NMSEDEC_BITS];
@@ -228,21 +217,6 @@ int main(){
 			printf("\n  ");
 	}
 	printf("0x%x\n};\n\n", t1_init_ctxno_sc(255 << 4));
-
-	// lut_ctxno_mag
-	for (j = 0; j < 2; ++j) {
-		for (i = 0; i < 2048; ++i) {
-			lut_ctxno_mag[(j << 11) + i] = t1_init_ctxno_mag((j ? T1_REFINE : 0) | i);
-		}
-	}
-
-	printf("static char lut_ctxno_mag[4096] = {\n  ");
-	for (i = 0; i < 4095; ++i) {
-		printf("%i, ", lut_ctxno_mag[i]);
-		if(!((i+1)&0xf))
-			printf("\n  ");
-	}
-	printf("%i\n};\n\n", lut_ctxno_mag[4095]);
 
 	// lut_spb
 	printf("static char lut_spb[256] = {\n  ");

@@ -16,6 +16,7 @@ August 21, 2007
 * [Callum Lerwick] mqc_setcurctx moved to the header to allow it to be inlined into the t1.
 * [Callum Lerwick] Consolidated some calls to mqc_setcurctx.
 * [Callum Lerwick] Cleaned up t1_generate_luts to output the proper types.
+* [Callum Lerwick] Replaced the large ctxno_mag lookup table with a small bit of inline-able branchless code
 
 August 20, 2007
 + [FOD] Added support for the TGA file format in the codec

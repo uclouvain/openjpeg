@@ -41,7 +41,7 @@
 
 static char t1_getctxno_zc(int f, int orient);
 static char t1_getctxno_sc(int f);
-static char t1_getctxno_mag(int f);
+static INLINE int t1_getctxno_mag(int f);
 static char t1_getspb(int f);
 static short t1_getnmsedec_sig(int x, int bitpos);
 static short t1_getnmsedec_ref(int x, int bitpos);
@@ -232,8 +232,10 @@ static char t1_getctxno_sc(int f) {
 	return lut_ctxno_sc[(f & (T1_SIG_PRIM | T1_SGN)) >> 4];
 }
 
-static char t1_getctxno_mag(int f) {
-	return lut_ctxno_mag[(f & T1_SIG_OTH) | (((f & T1_REFINE) != 0) << 11)];
+static int t1_getctxno_mag(int f) {
+	int tmp1 = (f & T1_SIG_OTH) ? T1_CTXNO_MAG + 1 : T1_CTXNO_MAG;
+	int tmp2 = (f & T1_REFINE) ? T1_CTXNO_MAG + 2 : tmp1;
+	return (tmp2);
 }
 
 static char t1_getspb(int f) {
