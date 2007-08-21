@@ -9,6 +9,7 @@ August 21, 2007
 + [FOD] Added support for Visual Studio 2005
 * [FOD] Robustified MJ2 codecs
 * [Parvatha] Solved problems with codec reading from image file directory when filename had more than one "." in name
+* [Callum Lerwick] Minor cleanup patch, that gets rid of a bunch of "old style declaration" warnings from Intel's compiler
 
 August 20, 2007
 + [FOD] Added support for the TGA file format in the codec

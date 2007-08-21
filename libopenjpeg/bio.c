@@ -114,7 +114,7 @@ static int bio_getbit(opj_bio_t *bio) {
 ==========================================================
 */
 
-opj_bio_t* bio_create() {
+opj_bio_t* bio_create(void) {
 	opj_bio_t *bio = (opj_bio_t*)opj_malloc(sizeof(opj_bio_t));
 	return bio;
 }

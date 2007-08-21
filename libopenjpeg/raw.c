@@ -42,7 +42,7 @@
 ==========================================================
 */
 
-opj_raw_t* raw_create() {
+opj_raw_t* raw_create(void) {
 	opj_raw_t *raw = (opj_raw_t*)opj_malloc(sizeof(opj_raw_t));
 	return raw;
 }

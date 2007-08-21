@@ -33,7 +33,7 @@
 #endif /* WIN32 */
 #include "opj_includes.h"
 
-double opj_clock() {
+double opj_clock(void) {
 #ifdef WIN32
 	/* WIN32: use QueryPerformance (very accurate) */
     LARGE_INTEGER freq , t ;
