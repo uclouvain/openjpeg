@@ -197,7 +197,13 @@ int main(){
 	// lut_ctxno_zc
 	for (j = 0; j < 4; ++j) {
 		for (i = 0; i < 256; ++i) {
-			lut_ctxno_zc[(j << 8) | i] = t1_init_ctxno_zc(i, j);
+			int orient = j;
+			if (orient == 2) {
+				orient = 1;
+			} else if (orient == 1) {
+				orient = 2;
+			}
+			lut_ctxno_zc[(orient << 8) | i] = t1_init_ctxno_zc(i, j);
 		}
 	}
 

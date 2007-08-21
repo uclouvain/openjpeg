@@ -17,6 +17,7 @@ August 21, 2007
 * [Callum Lerwick] Consolidated some calls to mqc_setcurctx.
 * [Callum Lerwick] Cleaned up t1_generate_luts to output the proper types.
 * [Callum Lerwick] Replaced the large ctxno_mag lookup table with a small bit of inline-able branchless code
+* [Callum Lerwick] Moved the orient flipping into the ctxno_zc table.
 
 August 20, 2007
 + [FOD] Added support for the TGA file format in the codec

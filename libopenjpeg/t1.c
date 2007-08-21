@@ -39,7 +39,7 @@
 /** @name Local static functions */
 /*@{*/
 
-static char t1_getctxno_zc(int f, int orient);
+static INLINE char t1_getctxno_zc(int f, int orient);
 static char t1_getctxno_sc(int f);
 static INLINE int t1_getctxno_mag(int f);
 static char t1_getspb(int f);
@@ -1044,7 +1044,7 @@ void t1_encode_cblks(
 					opj_tcd_precinct_t *prc = &band->precincts[precno];
 
 					for (cblkno = 0; cblkno < prc->cw * prc->ch; ++cblkno) {
-						int x, y, w, i, j, orient;
+						int x, y, w, i, j;
 						opj_tcd_cblk_t *cblk = &prc->cblks[cblkno];
 
 						x = cblk->x0 - band->x0;
@@ -1084,17 +1084,11 @@ void t1_encode_cblks(
 								}
 							}
 						}
-						orient = band->bandno;	/* FIXME */
-						if (orient == 2) {
-							orient = 1;
-						} else if (orient == 1) {
-							orient = 2;
-						}
 
 						t1_encode_cblk(
 								t1,
 								cblk,
-								orient,
+								band->bandno,
 								compno,
 								tilec->numresolutions - 1 - resno,
 								tcp->tccps[compno].qmfbid,
@@ -1133,17 +1127,10 @@ void t1_decode_cblks(
 						int x, y, w, i, j, orient, cblk_w, cblk_h;
 						opj_tcd_cblk_t *cblk = &prc->cblks[cblkno];
 
-						orient = band->bandno;	/* FIXME */
-						if (orient == 2) {
-							orient = 1;
-						} else if (orient == 1) {
-							orient = 2;
-						}
-						
 						t1_decode_cblk(
 								t1,
 								cblk,
-								orient,
+								band->bandno,
 								tcp->tccps[compno].roishift,
 								tcp->tccps[compno].cblksty);
 
