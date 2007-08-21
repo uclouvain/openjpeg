@@ -10,6 +10,7 @@ August 21, 2007
 * [FOD] Robustified MJ2 codecs
 * [Parvatha] Solved problems with codec reading from image file directory when filename had more than one "." in name
 * [Callum Lerwick] Minor cleanup patch, that gets rid of a bunch of "old style declaration" warnings from Intel's compiler
+* [Callum Lerwick] Aligned malloc using Intel's _mm_malloc(). Cleanup on the t1 memory allocation, getting rid of some leftover debug code
 
 August 20, 2007
 + [FOD] Added support for the TGA file format in the codec

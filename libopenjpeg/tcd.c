@@ -192,7 +192,7 @@ void tcd_malloc_encode(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp, int c
 			tilec->x1 = int_ceildiv(tile->x1, image->comps[compno].dx);
 			tilec->y1 = int_ceildiv(tile->y1, image->comps[compno].dy);
 			
-			tilec->data = (int *) opj_malloc((tilec->x1 - tilec->x0) * (tilec->y1 - tilec->y0) * sizeof(int));
+			tilec->data = (int *) opj_aligned_malloc((tilec->x1 - tilec->x0) * (tilec->y1 - tilec->y0) * sizeof(int));
 			tilec->numresolutions = tccp->numresolutions;
 
 			tilec->resolutions = (opj_tcd_resolution_t *) opj_malloc(tilec->numresolutions * sizeof(opj_tcd_resolution_t));
@@ -437,7 +437,7 @@ void tcd_init_encode(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp, int cur
 			tilec->x1 = int_ceildiv(tile->x1, image->comps[compno].dx);
 			tilec->y1 = int_ceildiv(tile->y1, image->comps[compno].dy);
 			
-			tilec->data = (int *) opj_malloc((tilec->x1 - tilec->x0) * (tilec->y1 - tilec->y0) * sizeof(int));
+			tilec->data = (int *) opj_aligned_malloc((tilec->x1 - tilec->x0) * (tilec->y1 - tilec->y0) * sizeof(int));
 			tilec->numresolutions = tccp->numresolutions;
 			/* tilec->resolutions=(opj_tcd_resolution_t*)opj_realloc(tilec->resolutions,tilec->numresolutions*sizeof(opj_tcd_resolution_t)); */
 			for (resno = 0; resno < tilec->numresolutions; resno++) {
@@ -676,7 +676,7 @@ void tcd_malloc_decode_tile(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp, 
 		tilec->x1 = int_ceildiv(tile->x1, image->comps[compno].dx);
 		tilec->y1 = int_ceildiv(tile->y1, image->comps[compno].dy);
 		
-		tilec->data = (int *) opj_malloc((tilec->x1 - tilec->x0) * (tilec->y1 - tilec->y0) * sizeof(int));
+		tilec->data = (int*) opj_aligned_malloc((tilec->x1 - tilec->x0) * (tilec->y1 - tilec->y0) * sizeof(int));
 		tilec->numresolutions = tccp->numresolutions;
 		tilec->resolutions = (opj_tcd_resolution_t *) opj_malloc(tilec->numresolutions * sizeof(opj_tcd_resolution_t));
 		
@@ -1279,14 +1279,14 @@ int tcd_encode_tile(opj_tcd_t *tcd, int tileno, unsigned char *dest, int len, op
 	if(tcd->cur_tp_num == tcd->cur_totnum_tp - 1){
 		tcd->encoding_time = opj_clock() - tcd->encoding_time;
 		opj_event_msg(tcd->cinfo, EVT_INFO, "- tile encoded in %f s\n", tcd->encoding_time);
-	
+
 		/* cleaning memory */
 		for (compno = 0; compno < tile->numcomps; compno++) {
 			opj_tcd_tilecomp_t *tilec = &tile->comps[compno];
-			opj_free(tilec->data);
+			opj_aligned_free(tilec->data);
 		}
 	}
-	
+
 	return l;
 }
 
@@ -1401,12 +1401,12 @@ bool tcd_decode_tile(opj_tcd_t *tcd, unsigned char *src, int len, int tileno) {
 	
 	tile_time = opj_clock() - tile_time;	/* time needed to decode a tile */
 	opj_event_msg(tcd->cinfo, EVT_INFO, "- tile decoded in %f s\n", tile_time);
-		
+
 	for (compno = 0; compno < tile->numcomps; compno++) {
-		opj_free(tcd->tcd_image->tiles[tileno].comps[compno].data);
+		opj_aligned_free(tcd->tcd_image->tiles[tileno].comps[compno].data);
 		tcd->tcd_image->tiles[tileno].comps[compno].data = NULL;
 	}
-	
+
 	if (eof) {
 		return false;
 	}

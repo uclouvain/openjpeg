@@ -758,47 +758,41 @@ static double t1_getwmsedec(
 	return wmsedec;
 }
 
-static void allocate_buffers(
+static bool allocate_buffers(
 		opj_t1_t *t1,
 		int w,
 		int h)
 {
-	int datasize;
+	int datasize=w * h;
 	int flagssize;
 
-	datasize=w * h;
-	//fprintf(stderr,"w=%i h=%i datasize=%i flagssize=%i\n",w,h,datasize,flagssize);
-
 	if(datasize > t1->datasize){
-		//fprintf(stderr,"Allocating t1->data: datasize=%i\n",datasize);
-		free(t1->data);
-		t1->data=malloc(datasize * sizeof(int));
+		opj_aligned_free(t1->data);
+		t1->data=opj_aligned_malloc(datasize * sizeof(int));
 		if(!t1->data){
-			return;
+			return false;
 		}
 		t1->datasize=datasize;
 	}
-	//memset(t1->data,0xff,t1->datasize);
 	memset(t1->data,0,datasize * sizeof(int));
 
 	t1->flags_stride=w+2;
-	flagssize=t1->flags_stride * (h+2);
+	flagssize = t1->flags_stride * (h+2);
 
 	if(flagssize > t1->flagssize){
-		//fprintf(stderr,"Allocating t1->flags: flagssize=%i\n",flagssize);
-		free(t1->flags);
-		t1->flags=malloc(flagssize * sizeof(flag_t));
+		opj_aligned_free(t1->flags);
+		t1->flags=opj_aligned_malloc(flagssize * sizeof(flag_t));
 		if(!t1->flags){
-			fprintf(stderr,"Allocating t1->flags FAILED!\n");
-			return;
+			return false;
 		}
 		t1->flagssize=flagssize;
 	}
-	//memset(t1->flags,0xff,t1->flagssize);
 	memset(t1->flags,0,flagssize * sizeof(flag_t));
 
 	t1->w=w;
 	t1->h=h;
+
+	return true;
 }
 
 /** mod fixed_quality */
@@ -948,12 +942,15 @@ static void t1_decode_cblk(
 	
 	opj_raw_t *raw = t1->raw;	/* RAW component */
 	opj_mqc_t *mqc = t1->mqc;	/* MQC component */
-	
-	allocate_buffers(
-			t1,
-			cblk->x1 - cblk->x0,
-			cblk->y1 - cblk->y0);
-	
+
+	if(!allocate_buffers(
+				t1,
+				cblk->x1 - cblk->x0,
+				cblk->y1 - cblk->y0))
+	{
+		return;
+	}
+
 	bpno = roishift + cblk->numbps - 1;
 	passtype = 2;
 	
@@ -1025,8 +1022,8 @@ void t1_destroy(opj_t1_t *t1) {
 		/* destroy MQC and RAW handles */
 		mqc_destroy(t1->mqc);
 		raw_destroy(t1->raw);
-		free(t1->data);
-		free(t1->flags);
+		opj_aligned_free(t1->data);
+		opj_aligned_free(t1->flags);
 		free(t1);
 	}
 }
@@ -1067,10 +1064,13 @@ void t1_encode_cblks(
 							y += pres->y1 - pres->y0;
 						}
 
-						allocate_buffers(
-								t1,
-								cblk->x1 - cblk->x0,
-								cblk->y1 - cblk->y0);
+						if(!allocate_buffers(
+									t1,
+									cblk->x1 - cblk->x0,
+									cblk->y1 - cblk->y0))
+						{
+							return;
+						}
 
 						w = tilec->x1 - tilec->x0;
 						if (tcp->tccps[compno].qmfbid == 1) {

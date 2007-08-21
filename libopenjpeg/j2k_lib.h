@@ -32,6 +32,10 @@
 The functions in J2K_LIB.C are internal utilities mainly used for memory management.
 */
 
+#ifndef __GCC__
+#define __attribute__(x) /* */
+#endif
+
 /** @defgroup MISC MISC - Miscellaneous internal functions */
 /*@{*/
 
@@ -50,7 +54,16 @@ Allocate a memory block with elements initialized to 0
 @param size Bytes to allocate
 @return Returns a void pointer to the allocated space, or NULL if there is insufficient memory available
 */
-void* opj_malloc( size_t size );
+void* __attribute__ ((malloc)) opj_malloc( size_t size );
+
+/**
+Allocate memory aligned to a 16 byte boundry
+@param size Bytes to allocate
+@return Returns a void pointer to the allocated space, or NULL if there is insufficient memory available
+*/
+#include <xmmintrin.h>
+#define opj_aligned_malloc(size)	_mm_malloc(size, 16)
+#define opj_aligned_free(m) _mm_free(m)
 
 /**
 Reallocate memory blocks.
@@ -58,7 +71,7 @@ Reallocate memory blocks.
 @param size New size in bytes
 @return Returns a void pointer to the reallocated (and possibly moved) memory block
 */
-void* opj_realloc( void *memblock, size_t size );
+void* __attribute__ ((malloc)) opj_realloc( void *memblock, size_t size );
 
 /**
 Deallocates or frees a memory block.
