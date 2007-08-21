@@ -261,21 +261,22 @@ static void t1_updateflags(flag_t *flagsp, int s, int stride) {
 	flag_t *sp = flagsp + stride;
 
 	static const flag_t mod[] = {
-		T1_SIG_S,            T1_SIG_N,            T1_SIG_E,            T1_SIG_W,
-		T1_SIG_S | T1_SGN_S, T1_SIG_N | T1_SGN_N, T1_SIG_E | T1_SGN_E, T1_SIG_W | T1_SGN_W
+		T1_SIG_S, T1_SIG_S|T1_SGN_S,
+		T1_SIG_E, T1_SIG_E|T1_SGN_E,
+		T1_SIG_W, T1_SIG_W|T1_SGN_W,
+		T1_SIG_N, T1_SIG_N|T1_SGN_N
 	};
-
-	s <<= 2;
 
 	np[-1] |= T1_SIG_SE;
 	np[0]  |= mod[s];
 	np[1]  |= T1_SIG_SW;
 
 	flagsp[-1] |= mod[s+2];
-	flagsp[1]  |= mod[s+3];
+	flagsp[0]  |= T1_SIG;
+	flagsp[1]  |= mod[s+4];
 
 	sp[-1] |= T1_SIG_NE;
-	sp[0]  |= mod[s+1];
+	sp[0]  |= mod[s+6];
 	sp[1]  |= T1_SIG_NW;
 }
 
@@ -315,7 +316,6 @@ static void t1_enc_sigpass_step(
 				mqc_encode(mqc, v ^ t1_getspb(flag));
 			}
 			t1_updateflags(flagsp, v, t1->flags_stride);
-			*flagsp |= T1_SIG;
 		}
 		*flagsp |= T1_VISIT;
 	}
@@ -342,7 +342,6 @@ static void t1_dec_sigpass_step(
 				v = raw_decode(raw);	/* ESSAI */
 				*datap = v ? -oneplushalf : oneplushalf;
 				t1_updateflags(flagsp, v, t1->flags_stride);
-				*flagsp |= T1_SIG;
 			}
 		} else {
 			mqc_setcurctx(mqc, t1_getctxno_zc(flag, orient));
@@ -351,7 +350,6 @@ static void t1_dec_sigpass_step(
 				v = mqc_decode(mqc) ^ t1_getspb(flag);
 				*datap = v ? -oneplushalf : oneplushalf;
 				t1_updateflags(flagsp, v, t1->flags_stride);
-				*flagsp |= T1_SIG;
 			}
 		}
 		*flagsp |= T1_VISIT;
@@ -560,7 +558,6 @@ LABEL_PARTIAL:
 			v = *datap < 0 ? 1 : 0;
 			mqc_encode(mqc, v ^ t1_getspb(flag));
 			t1_updateflags(flagsp, v, t1->flags_stride);
-			*flagsp |= T1_SIG;
 		}
 	}
 	*flagsp &= ~T1_VISIT;
@@ -591,7 +588,6 @@ LABEL_PARTIAL:
 			v = mqc_decode(mqc) ^ t1_getspb(flag);
 			*datap = v ? -oneplushalf : oneplushalf;
 			t1_updateflags(flagsp, v, t1->flags_stride);
-			*flagsp |= T1_SIG;
 		}
 	}
 	*flagsp &= ~T1_VISIT;
@@ -777,7 +773,7 @@ static bool allocate_buffers(
 	memset(t1->data,0,datasize * sizeof(int));
 
 	t1->flags_stride=w+2;
-	flagssize = t1->flags_stride * (h+2);
+	flagssize=t1->flags_stride * (h+2);
 
 	if(flagssize > t1->flagssize){
 		opj_aligned_free(t1->flags);

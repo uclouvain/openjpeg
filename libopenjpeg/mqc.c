@@ -371,10 +371,6 @@ void mqc_init_enc(opj_mqc_t *mqc, unsigned char *bp) {
 	mqc->start = bp;
 }
 
-void mqc_setcurctx(opj_mqc_t *mqc, int ctxno) {
-	mqc->curctx = &mqc->ctxs[ctxno];
-}
-
 void mqc_encode(opj_mqc_t *mqc, int d) {
 	if ((*mqc->curctx)->mps == d) {
 		mqc_codemps(mqc);

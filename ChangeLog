@@ -12,6 +12,8 @@ August 21, 2007
 * [Callum Lerwick] Minor cleanup patch, that gets rid of a bunch of "old style declaration" warnings from Intel's compiler
 * [Callum Lerwick] Aligned malloc using Intel's _mm_malloc(). Cleanup on the t1 memory allocation, getting rid of some leftover debug code
 * [Callum Lerwick] Memory leaks fixed
+* [Callum Lerwick] Reworks of t1_updateflags to get rid of the shift operation
+* [Callum Lerwick] mqc_setcurctx moved to the header to allow it to be inlined into the t1.
 
 August 20, 2007
 + [FOD] Added support for the TGA file format in the codec
