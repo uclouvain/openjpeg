@@ -238,11 +238,12 @@ static int t2_encode_packet(opj_tcd_tile_t * tile, opj_tcp_t * tcp, opj_pi_itera
 			}
 		}
 	}
-	
+
 	if (bio_flush(bio)) {
+		bio_destroy(bio);
 		return -999;		/* modified to eliminate longjmp !! */
 	}
-	
+
 	c += bio_numbytes(bio);
 
 	bio_destroy(bio);

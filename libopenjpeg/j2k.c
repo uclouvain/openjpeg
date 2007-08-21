@@ -2585,6 +2585,8 @@ bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, char *index)
 	tcd_free_encode(tcd);
 	tcd_destroy(tcd);
 
+	free(j2k->cur_totnum_tp);
+
 	j2k_write_eoc(j2k);
 	
 	/* Creation of the index file */
