@@ -46,7 +46,7 @@ int yuv_num_frames(mj2_tk_t * tk, char *infile)
   f = fopen(infile,"rb");
   if (!f) {  
     fprintf(stderr, "failed to open %s for reading\n",infile);
-    return 1;
+    return -1;
   }
 	
   frame_size = (int) (tk->w * tk->h * (1.0 + (double) 2 / (double) (tk->CbCr_subsampling_dx * tk->CbCr_subsampling_dy)));	/* Calculate frame size */
@@ -58,7 +58,7 @@ int yuv_num_frames(mj2_tk_t * tk, char *infile)
     fprintf(stderr,
 			"YUV does not contains any frame of %d x %d size\n", tk->w,
 			tk->h);
-    return 0;
+    return -1;
   }
 	
   numimages = end_of_f / frame_size;	/* Calculate number of images */
@@ -99,7 +99,7 @@ opj_image_t *mj2_image_create(mj2_tk_t * tk, opj_cparameters_t *parameters)
 	return img;
 }
 
-bool yuvtoimage(mj2_tk_t * tk, opj_image_t * img, int frame_num, opj_cparameters_t *parameters, char* infile)
+char yuvtoimage(mj2_tk_t * tk, opj_image_t * img, int frame_num, opj_cparameters_t *parameters, char* infile)
 {
   int i, compno;
   int offset;
@@ -111,8 +111,8 @@ bool yuvtoimage(mj2_tk_t * tk, opj_image_t * img, int frame_num, opj_cparameters
 	
   yuvfile = fopen(infile,"rb");
   if (!yuvfile) {  
-    fprintf(stderr, "failed to open %s for reading\n",parameters->infile);
-    return false;
+    fprintf(stderr, "failed to open %s for readings\n",parameters->infile);
+    return 1;
   }
 
   offset = (int) ((double) (frame_num * tk->w * tk->h) * (1.0 +
@@ -125,7 +125,7 @@ bool yuvtoimage(mj2_tk_t * tk, opj_image_t * img, int frame_num, opj_cparameters
     fprintf(stderr, "Cannot reach frame number %d in yuv file !!\n",
 			frame_num);
 		fclose(yuvfile);
-    return false;
+    return 1;
   }
 	
   img->x0 = tk->Dim[0];
@@ -140,13 +140,13 @@ bool yuvtoimage(mj2_tk_t * tk, opj_image_t * img, int frame_num, opj_cparameters
 			&& !feof(yuvfile); i++) {
 			if (!fread(&img->comps[compno].data[i], 1, 1, yuvfile)) {
 				fprintf(stderr, "Error reading %s file !!\n", infile);				
-				return false;
+				return 1;
 			}
 		}
 	}
 	fclose(yuvfile);
 	
-  return true;
+  return 0;
 }
 
 

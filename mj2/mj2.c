@@ -2081,7 +2081,7 @@ void mj2_write_mdhd(mj2_tk_t * tk, opj_cio_t *cio)
   cio_write(cio, tk->creation_time, 4);	/* Creation Time */
 	
   time(&ltime);			/* Time since 1/1/70 */
-  modification_time = ltime + 2082844800;	/* Seoonds between 1/1/04 and 1/1/70 */
+  modification_time = (unsigned int)ltime + 2082844800;	/* Seoonds between 1/1/04 and 1/1/70 */
 	
   cio_write(cio, modification_time, 4);	/* Modification Time */
 	
@@ -2224,7 +2224,7 @@ void mj2_write_tkhd(mj2_tk_t * tk, opj_cio_t *cio)
   cio_write(cio, 3, 4);		/* Version=0, flags=3 */
 	
   time(&ltime);			/* Time since 1/1/70 */
-  tk->modification_time = ltime + 2082844800;	/* Seoonds between 1/1/04 and 1/1/70 */
+  tk->modification_time = (unsigned int)ltime + 2082844800;	/* Seoonds between 1/1/04 and 1/1/70 */
 	
   cio_write(cio, tk->creation_time, 4);	/* Creation Time */
 	
@@ -2416,7 +2416,7 @@ void mj2_write_mvhd(opj_mj2_t * movie, opj_cio_t *cio)
   cio_write(cio, 0, 4);		/* Version = 0, flags = 0 */
 	
   time(&ltime);			/* Time since 1/1/70 */
-  movie->modification_time = ltime + 2082844800;	/* Seoonds between 1/1/04 and 1/1/70 */
+  movie->modification_time = (unsigned int)ltime + 2082844800;	/* Seoonds between 1/1/04 and 1/1/70 */
 	
   cio_write(cio, movie->creation_time, 4);	/* Creation Time */
 	
@@ -2748,8 +2748,10 @@ void mj2_setup_decoder(opj_mj2_t *movie, mj2_dparameters_t *mj2_parameters) {
 	movie->num_vtk=0;
   movie->num_stk=0;
   movie->num_htk=0;	
+
 	/* setup the J2K decoder parameters */
 	j2k_setup_decoder(movie->cinfo->j2k_handle, &mj2_parameters->j2k_parameters);
+
 }
 
 void mj2_destroy_decompress(opj_mj2_t *movie) {
@@ -2757,9 +2759,8 @@ void mj2_destroy_decompress(opj_mj2_t *movie) {
 		int i;
 		mj2_tk_t *tk=NULL;
 
-		if (movie->cinfo->j2k_handle) {
+		if (movie->cinfo->j2k_handle) 
 			j2k_destroy_compress(movie->j2k);
-		}
 		
 		if (movie->num_cl != 0)
 			opj_free(movie->cl);

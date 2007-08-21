@@ -251,8 +251,7 @@ int main(int argc, char **argv)
   mj2_parameters.h = 288;			// CIF default value
   mj2_parameters.CbCr_subsampling_dx = 2;	// CIF default value
   mj2_parameters.CbCr_subsampling_dy = 2;	// CIF default value
-  mj2_parameters.frame_rate = 25;
-  
+  mj2_parameters.frame_rate = 25;	  
 	/*
 	configure the event callbacks (not required)
 	setting of each callback is optionnal
@@ -275,6 +274,8 @@ int main(int argc, char **argv)
 		sprintf(j2k_parameters->cp_comment,"%s%s", comment, version);
 	}
 
+	mj2_parameters.decod_format = 0;
+	mj2_parameters.cod_format = 0;
 
   while (1) {
     int c = getopt(argc, argv,
@@ -610,7 +611,7 @@ int main(int argc, char **argv)
     
   /* Error messages */
   /* -------------- */
-  if (!mj2_parameters.infile || !mj2_parameters.outfile) {
+	if (!mj2_parameters.cod_format || !mj2_parameters.decod_format) {
     fprintf(stderr,
       "Correct usage: mj2_encoder -i yuv-file -o mj2-file (+ options)\n");
     return 1;
@@ -681,8 +682,8 @@ int main(int argc, char **argv)
 	mj2_setup_encoder(movie, &mj2_parameters);   
   
   movie->tk[0].num_samples = yuv_num_frames(&movie->tk[0],mj2_parameters.infile); 
-  if (!movie->tk[0].num_samples) {
-    fprintf(stderr,"Unable to count the number of frames in YUV input file\n");
+  if (movie->tk[0].num_samples == -1) {
+		return 1;
   }
   
   // One sample per chunk
@@ -705,6 +706,7 @@ int main(int argc, char **argv)
   cio_write(cio, MJ2_MDAT, 4);	
   fwrite(buf,cio_tell(cio),1,mj2file);
   offset = cio_tell(cio);
+  opj_cio_close(cio);
   opj_free(buf);
   
   for (i = 0; i < movie->num_stk + movie->num_htk + movie->num_vtk; i++) {
@@ -727,7 +729,7 @@ int main(int argc, char **argv)
       for (sampleno = 0; sampleno < numframes; sampleno++) {		
 				double init_time = opj_clock();
 				double elapsed_time;
-				if (!yuvtoimage(tk, img, sampleno, j2k_parameters, mj2_parameters.infile)) {
+				if (yuvtoimage(tk, img, sampleno, j2k_parameters, mj2_parameters.infile)) {
 					fprintf(stderr, "Error with frame number %d in YUV file\n", sampleno);
 					return 1;
 				}
@@ -751,6 +753,7 @@ int main(int argc, char **argv)
 				len = cio_tell(cio) - 8;
 				cio_seek(cio, 0);
 				cio_write(cio, len+8,4);
+				opj_cio_close(cio);
 				tk->sample[sampleno].sample_size = len+8;				
 				tk->sample[sampleno].offset = offset;
 				tk->chunk[sampleno].offset = offset;	// There is one sample per chunk 
@@ -784,6 +787,7 @@ int main(int argc, char **argv)
 	cio = opj_cio_open(movie->cinfo, buf, (TEMP_BUF+numframes*20));
 	mj2_write_moov(movie, cio);
   fwrite(buf,cio_tell(cio),1,mj2file);
+  opj_free(buf);
 
 	fprintf(stdout,"Total encoding time: %.2f s for %d frames (%.1f fps)\n", total_time, numframes, (float)numframes/total_time);
   

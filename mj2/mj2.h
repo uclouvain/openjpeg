@@ -80,13 +80,13 @@
 Decompressed format used in parameters
 YUV = 0
 */
-#define YUV_DFMT 0 
+#define YUV_DFMT 1 
 
 /**
 Compressed format used in parameters
 MJ2 = 0
 */
-#define MJ2_CFMT 0
+#define MJ2_CFMT 2
 
 
 /* ----------------------------------------------------------------------- */
