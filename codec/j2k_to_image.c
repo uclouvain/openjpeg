@@ -202,6 +202,7 @@ int get_file_format(char *filename) {
 
 char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_dparameters_t *parameters){
 	char image_filename[OPJ_PATH_LEN], infilename[OPJ_PATH_LEN],outfilename[OPJ_PATH_LEN],temp_ofname[OPJ_PATH_LEN];
+	char *temp_p, temp1[OPJ_PATH_LEN]="";
 
 	strcpy(image_filename,dirptr->filename[imageno]);
 	fprintf(stderr,"File Number %d \"%s\"\n",imageno,image_filename);
@@ -213,6 +214,10 @@ char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_dparamet
 
 	//Set output file
 	strcpy(temp_ofname,strtok(image_filename,"."));
+	while((temp_p = strtok(NULL,".")) != NULL){
+		strcat(temp_ofname,temp1);
+		sprintf(temp1,".%s",temp_p);
+	}
 	if(img_fol->set_out_format==1){
 		sprintf(outfilename,"%s/%s.%s",img_fol->imgdirpath,temp_ofname,img_fol->out_format);
 		strncpy(parameters->outfile, outfilename, sizeof(outfilename));
@@ -749,4 +754,5 @@ int main(int argc, char **argv) {
 	return 0;
 }
 //end main
+
 
