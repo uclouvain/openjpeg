@@ -298,21 +298,19 @@ static void t1_enc_sigpass_step(
 	flag = vsc ? ((*flagsp) & (~(T1_SIG_S | T1_SIG_SE | T1_SIG_SW | T1_SGN_S))) : (*flagsp);
 	if ((flag & T1_SIG_OTH) && !(flag & (T1_SIG | T1_VISIT))) {
 		v = int_abs(*datap) & one ? 1 : 0;
+		mqc_setcurctx(mqc, t1_getctxno_zc(flag, orient));	/* ESSAI */
 		if (type == T1_TYPE_RAW) {	/* BYPASS/LAZY MODE */
-			mqc_setcurctx(mqc, t1_getctxno_zc(flag, orient));	/* ESSAI */
 			mqc_bypass_enc(mqc, v);
 		} else {
-			mqc_setcurctx(mqc, t1_getctxno_zc(flag, orient));
 			mqc_encode(mqc, v);
 		}
 		if (v) {
 			v = *datap < 0 ? 1 : 0;
 			*nmsedec +=	t1_getnmsedec_sig(int_abs(*datap), bpno + T1_NMSEDEC_FRACBITS);
+			mqc_setcurctx(mqc, t1_getctxno_sc(flag));	/* ESSAI */
 			if (type == T1_TYPE_RAW) {	/* BYPASS/LAZY MODE */
-				mqc_setcurctx(mqc, t1_getctxno_sc(flag));	/* ESSAI */
 				mqc_bypass_enc(mqc, v);
 			} else {
-				mqc_setcurctx(mqc, t1_getctxno_sc(flag));
 				mqc_encode(mqc, v ^ t1_getspb(flag));
 			}
 			t1_updateflags(flagsp, v, t1->flags_stride);
@@ -432,11 +430,10 @@ static void t1_enc_refpass_step(
 	if ((flag & (T1_SIG | T1_VISIT)) == T1_SIG) {
 		*nmsedec += t1_getnmsedec_ref(int_abs(*datap), bpno + T1_NMSEDEC_FRACBITS);
 		v = int_abs(*datap) & one ? 1 : 0;
+		mqc_setcurctx(mqc, t1_getctxno_mag(flag));	/* ESSAI */
 		if (type == T1_TYPE_RAW) {	/* BYPASS/LAZY MODE */
-			mqc_setcurctx(mqc, t1_getctxno_mag(flag));	/* ESSAI */
 			mqc_bypass_enc(mqc, v);
 		} else {
-			mqc_setcurctx(mqc, t1_getctxno_mag(flag));
 			mqc_encode(mqc, v);
 		}
 		*flagsp |= T1_REFINE;
@@ -459,11 +456,10 @@ static void t1_dec_refpass_step(
 	
 	flag = vsc ? ((*flagsp) & (~(T1_SIG_S | T1_SIG_SE | T1_SIG_SW | T1_SGN_S))) : (*flagsp);
 	if ((flag & (T1_SIG | T1_VISIT)) == T1_SIG) {
+		mqc_setcurctx(mqc, t1_getctxno_mag(flag));	/* ESSAI */
 		if (type == T1_TYPE_RAW) {
-			mqc_setcurctx(mqc, t1_getctxno_mag(flag));	/* ESSAI */
 			v = raw_decode(raw);
 		} else {
-			mqc_setcurctx(mqc, t1_getctxno_mag(flag));
 			v = mqc_decode(mqc);
 		}
 		t = v ? poshalf : neghalf;

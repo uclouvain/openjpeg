@@ -14,6 +14,8 @@ August 21, 2007
 * [Callum Lerwick] Memory leaks fixed
 * [Callum Lerwick] Reworks of t1_updateflags to get rid of the shift operation
 * [Callum Lerwick] mqc_setcurctx moved to the header to allow it to be inlined into the t1.
+* [Callum Lerwick] Consolidated some calls to mqc_setcurctx.
+* [Callum Lerwick] Cleaned up t1_generate_luts to output the proper types.
 
 August 20, 2007
 + [FOD] Added support for the TGA file format in the codec

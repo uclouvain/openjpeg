@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8,00"
 	Name="LibOpenJPEG"
-	ProjectGUID="{4F27AA53-4181-4A1A-8238-3931B0A41048}"
+	ProjectGUID="{BDB8C37B-824E-4617-827C-B13E2F015EFE}"
 	>
 	<Platforms>
 		<Platform
