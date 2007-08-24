@@ -32,7 +32,7 @@
 The functions in J2K_LIB.C are internal utilities mainly used for memory management.
 */
 
-#ifndef __GCC__
+#ifndef __GNUC__
 #define __attribute__(x) /* */
 #endif
 
@@ -62,12 +62,34 @@ Allocate memory aligned to a 16 byte boundry
 @return Returns a void pointer to the allocated space, or NULL if there is insufficient memory available
 */
 #ifdef WIN32
-#include <xmmintrin.h>
-#else
+
+#ifdef __GNUC__
 #include <mm_malloc.h>
+#else /* MSVC, Intel C++ */
+#include <malloc.h>
 #endif
-#define opj_aligned_malloc(size)	_mm_malloc(size, 16)
+
+#define opj_aligned_malloc(size) _mm_malloc(size, 16)
 #define opj_aligned_free(m) _mm_free(m)
+
+#else /* Not WIN32 */
+
+/* Linux x86_64 and OSX always align allocations to 16 bytes */
+#if defined(__amd64__) || defined(__APPLE__)
+#define opj_aligned_malloc(size) malloc(size)
+#else
+extern int posix_memalign (void **, size_t, size_t);
+
+static INLINE void* __attribute__ ((malloc)) opj_aligned_malloc(size_t size){
+	void* mem = NULL;
+	posix_memalign(&mem, 16, size);
+	return mem;
+}
+#endif
+
+#define opj_aligned_free(m) free(m)
+
+#endif
 
 /**
 Reallocate memory blocks.
