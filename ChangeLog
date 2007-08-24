@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+August 24, 2007
+* [Parvatha] The end of main header is calculated after TLM and POC marker for Dcinema.
+
 August 21, 2007
 + [FOD] Added support for Visual Studio 2005
 * [FOD] Robustified MJ2 codecs

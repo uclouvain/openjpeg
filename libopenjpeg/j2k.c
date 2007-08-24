@@ -2484,12 +2484,7 @@ bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, char *index)
 	if (cp->comment != NULL) {
 		j2k_write_com(j2k);
 	}
-	/* INDEX >> */
-	if(image_info && image_info->index_on) {
-		image_info->main_head_end = cio_tell(cio) - 1;
-	}
-	/* << INDEX */
-
+	
 	j2k->totnum_tp = j2k_calculate_tp(cp,image->numcomps,image,j2k);
 	/*	 TLM Marker*/
 	if(cp->cinema){
@@ -2498,6 +2493,12 @@ bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, char *index)
 			j2k_write_poc(j2k);
 		}
 	}
+
+	/* INDEX >> */
+	if(image_info && image_info->index_on) {
+		image_info->main_head_end = cio_tell(cio) - 1;
+	}
+	/* << INDEX */
 	/**** Main Header ENDS here ***/
 	
 	/* create the tile encoder */
