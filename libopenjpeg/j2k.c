@@ -1816,6 +1816,7 @@ opj_image_t* j2k_decode_jpt_stream(opj_j2k_t *j2k, opj_cio_t *cio) {
 
 	/* create an empty image */
 	image = opj_image_create0();
+	j2k->image = image;
 
 	j2k->state = J2K_STATE_MHSOC;
 	
