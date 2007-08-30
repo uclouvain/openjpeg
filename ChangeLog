@@ -9,6 +9,7 @@ August 30, 2007
 * [FOD] Changed the OpenJPEG library interface to enable users to access information regarding the codestream (also called codestream index).
 		This index is usefull for all applications requiring to have a scalable acces to the codestream (like JPIP applications, ...)
         Currently, this information is only available when encoding an image.       
++ [FOD] Added the information regarding the end of packet position in the index        
 
 August 28, 2007
 * [FOD] Fixed wrong destructors called in openjpeg.c

@@ -128,7 +128,6 @@ static int t2_getnumpasses(opj_bio_t *bio) {
 
 static int t2_encode_packet(opj_tcd_tile_t * tile, opj_tcp_t * tcp, opj_pi_iterator_t *pi, unsigned char *dest, int length, opj_codestream_info_t *cstr_info, int tileno) {
 	int bandno, cblkno;
-	unsigned char *sop = 0, *eph = 0;
 	unsigned char *c = dest;
 
 	int compno = pi->compno;	/* component value */
@@ -143,15 +142,12 @@ static int t2_encode_packet(opj_tcd_tile_t * tile, opj_tcp_t * tcp, opj_pi_itera
 	
 	/* <SOP 0xff91> */
 	if (tcp->csty & J2K_CP_CSTY_SOP) {
-		sop = (unsigned char *) opj_malloc(6 * sizeof(unsigned char));
-		sop[0] = 255;
-		sop[1] = 145;
-		sop[2] = 0;
-		sop[3] = 4;
-		sop[4] = (cstr_info->num % 65536) / 256;
-		sop[5] = (cstr_info->num % 65536) % 256;
-		memcpy(c, sop, 6);
-		opj_free(sop);
+		c[0] = 255;
+		c[1] = 145;
+		c[2] = 0;
+		c[3] = 4;
+		c[4] = (cstr_info->num % 65536) / 256;
+		c[5] = (cstr_info->num % 65536) % 256;
 		c += 6;
 	}
 	/* </SOP> */
@@ -245,19 +241,24 @@ static int t2_encode_packet(opj_tcd_tile_t * tile, opj_tcp_t * tcp, opj_pi_itera
 	}
 
 	c += bio_numbytes(bio);
-
 	bio_destroy(bio);
 	
 	/* <EPH 0xff92> */
 	if (tcp->csty & J2K_CP_CSTY_EPH) {
-		eph = (unsigned char *) opj_malloc(2 * sizeof(unsigned char));
-		eph[0] = 255;
-		eph[1] = 146;
-		memcpy(c, eph, 2);
-		opj_free(eph);
+		c[0] = 255;
+		c[1] = 146;
 		c += 2;
 	}
 	/* </EPH> */
+
+	/* << INDEX */
+	// End of packet header position. Currently only represents the distance to start of packet
+	// Will be updated later by incrementing with packet start value
+	if(cstr_info && cstr_info->index_write && cstr_info->index_on) {
+		opj_packet_info_t *info_PK = &cstr_info->tile[tileno].packet[cstr_info->num];
+		info_PK->end_ph_pos = (int)(c - dest);
+	}
+	/* INDEX >> */
 	
 	/* Writing the packet body */
 	
@@ -277,16 +278,15 @@ static int t2_encode_packet(opj_tcd_tile_t * tile, opj_tcp_t * tcp, opj_pi_itera
 			memcpy(c, layer->data, layer->len);
 			cblk->numpasses += layer->numpasses;
 			c += layer->len;
-			/* ADD for index Cfr. Marcela --> delta disto by packet */
+			/* << INDEX */ 
 			if(cstr_info && cstr_info->index_write && cstr_info->index_on) {
-				opj_tile_info_t *info_TL = &cstr_info->tile[tileno];
-				opj_packet_info_t *info_PK = &info_TL->packet[cstr_info->num];
+				opj_packet_info_t *info_PK = &cstr_info->tile[tileno].packet[cstr_info->num];
 				info_PK->disto += layer->disto;
 				if (cstr_info->D_max < info_PK->disto) {
 					cstr_info->D_max = info_PK->disto;
 				}
 			}
-			/* </ADD> */
+			/* INDEX >> */
 		}
 	}
 	
@@ -630,6 +630,8 @@ int t2_encode_packets(opj_t2_t* t2,int tileno, opj_tcd_tile_t *tile, int maxlaye
 							info_PK->start_pos = (cp->tp_on && info_PK->start_pos) ? info_PK->start_pos : info_TL->packet[cstr_info->num - 1].end_pos + 1;
 						}
 						info_PK->end_pos = info_PK->start_pos + e - 1;
+						info_PK->end_ph_pos += info_PK->start_pos - 1;	// End of packet header which now only represents the distance 
+																														// to start of packet is incremented by value of start of packet
 					}
 					
 					cstr_info->num++;

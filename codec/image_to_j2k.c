@@ -598,14 +598,14 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 	}
 		
 	for (tileno = 0; tileno < cstr_info->tw * cstr_info->th; tileno++) {
-		int start_pos, end_pos;
+		int start_pos, end_ph_pos, end_pos;
 		double disto = 0;
 		pack_nb = 0;
 
 		fprintf(stream, "\nTILE %d DETAILS\n", tileno);				
 		if (cstr_info->prog == LRCP) {	/* LRCP */
 
-			fprintf(stream, "pack_nb tileno layno resno compno precno start_pos  end_pos disto\n");
+			fprintf(stream, "LRCP\npack_nb tileno layno resno compno precno start_pos end_ph_pos end_pos disto\n");
 
 			for (layno = 0; layno < cstr_info->layer; layno++) {
 				for (resno = 0; resno < cstr_info->decomposition + 1; resno++) {
@@ -613,10 +613,11 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 						int prec_max = cstr_info->tile[tileno].pw[resno] * cstr_info->tile[tileno].ph[resno];
 						for (precno = 0; precno < prec_max; precno++) {
 							start_pos = cstr_info->tile[tileno].packet[pack_nb].start_pos;
+							end_ph_pos = cstr_info->tile[tileno].packet[pack_nb].end_ph_pos;
 							end_pos = cstr_info->tile[tileno].packet[pack_nb].end_pos;
 							disto = cstr_info->tile[tileno].packet[pack_nb].disto;
-							fprintf(stream, "%4d %6d %7d %5d %6d %6d %9d %9d %8e\n",
-								pack_nb, tileno, layno, resno, compno, precno, start_pos, end_pos, disto);
+							fprintf(stream, "%4d %6d %7d %5d %6d  %6d    %6d     %6d %7d %8e\n",
+								pack_nb, tileno, layno, resno, compno, precno, start_pos, end_ph_pos, end_pos, disto);
 							total_disto += disto;
 							pack_nb++;
 						}
@@ -626,7 +627,7 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 		} /* LRCP */
 		else if (cstr_info->prog == RLCP) {	/* RLCP */
 
-			fprintf(stream, "pack_nb tileno resno layno compno precno start_pos  end_pos disto\n");
+			fprintf(stream, "RLCP\npack_nb tileno resno layno compno precno start_pos end_ph_pos end_pos disto\n");
 
 			for (resno = 0; resno < cstr_info->decomposition + 1; resno++) {
 				for (layno = 0; layno < cstr_info->layer; layno++) {
@@ -634,10 +635,11 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 						int prec_max = cstr_info->tile[tileno].pw[resno] * cstr_info->tile[tileno].ph[resno];
 						for (precno = 0; precno < prec_max; precno++) {
 							start_pos = cstr_info->tile[tileno].packet[pack_nb].start_pos;
+							end_ph_pos = cstr_info->tile[tileno].packet[pack_nb].end_ph_pos;
 							end_pos = cstr_info->tile[tileno].packet[pack_nb].end_pos;
 							disto = cstr_info->tile[tileno].packet[pack_nb].disto;
-							fprintf(stream, "%4d %6d %5d %7d %6d %6d %9d %9d %8e\n",
-								pack_nb, tileno, resno, layno, compno, precno, start_pos, end_pos, disto);
+							fprintf(stream, "%4d %6d %5d %7d %6d %6d %9d   %9d %7d %8e\n",
+								pack_nb, tileno, resno, layno, compno, precno, start_pos, end_ph_pos, end_pos, disto);
 							total_disto += disto;
 							pack_nb++;
 						}
@@ -647,7 +649,7 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 		} /* RLCP */
 		else if (cstr_info->prog == RPCL) {	/* RPCL */
 
-			fprintf(stream, "pack_nb tileno resno precno compno layno start_pos  end_pos disto\n"); 
+			fprintf(stream, "RPCL\npack_nb tileno resno precno compno layno start_pos end_ph_pos end_pos disto\n"); 
 
 			for (resno = 0; resno < cstr_info->decomposition + 1; resno++) {
 				/* I suppose components have same XRsiz, YRsiz */
@@ -669,10 +671,11 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 									if (precno_x*pcx == x ) {
 										for (layno = 0; layno < cstr_info->layer; layno++) {
 											start_pos = cstr_info->tile[tileno].packet[pack_nb].start_pos;
+											end_ph_pos = cstr_info->tile[tileno].packet[pack_nb].end_ph_pos;
 											end_pos = cstr_info->tile[tileno].packet[pack_nb].end_pos;
 											disto = cstr_info->tile[tileno].packet[pack_nb].disto;
-											fprintf(stream, "%4d %6d %5d %6d %6d %7d %9d %9d %8e\n",
-												pack_nb, tileno, resno, precno, compno, layno, start_pos, end_pos, disto); 
+											fprintf(stream, "%4d %6d %5d %6d %6d %7d %9d   %9d %7d %8e\n",
+												pack_nb, tileno, resno, precno, compno, layno, start_pos, end_ph_pos, end_pos, disto); 
 											total_disto += disto;
 											pack_nb++; 
 										}
@@ -691,7 +694,7 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 			int x1 = x0 + cstr_info->tile_x;
 			int y1 = y0 + cstr_info->tile_y;
 
-			fprintf(stream, "pack_nb tileno precno compno resno layno start_pos  end_pos disto\n"); 
+			fprintf(stream, "PCRL\npack_nb tileno precno compno resno layno start_pos end_ph_pos end_pos disto\n"); 
 
 			for (compno = 0; compno < cstr_info->comp; compno++) {
 				for (resno = 0; resno < cstr_info->decomposition + 1; resno++) {
@@ -708,10 +711,11 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 									if (precno_x*pcx == x ) {
 										for (layno = 0; layno < cstr_info->layer; layno++) {
 											start_pos = cstr_info->tile[tileno].packet[pack_nb].start_pos;
+											end_ph_pos = cstr_info->tile[tileno].packet[pack_nb].end_ph_pos;
 											end_pos = cstr_info->tile[tileno].packet[pack_nb].end_pos;
 											disto = cstr_info->tile[tileno].packet[pack_nb].disto;
-											fprintf(stream, "%4d %6d %6d %6d %5d %7d %9d %9d %8e\n",
-												pack_nb, tileno, precno, compno, resno, layno, start_pos, end_pos, disto); 
+											fprintf(stream, "%4d %6d %6d %6d %5d %7d %9d   %9d %7d %8e\n",
+												pack_nb, tileno, precno, compno, resno, layno, start_pos, end_ph_pos, end_pos, disto); 
 											total_disto += disto;
 											pack_nb++; 
 										}
@@ -725,7 +729,7 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 		} /* PCRL */
 		else {	/* CPRL */
 
-			fprintf(stream, "pack_nb tileno compno precno resno layno start_pos  end_pos disto\n"); 
+			fprintf(stream, "CPRL\npack_nb tileno compno precno resno layno start_pos end_ph_pos end_pos disto\n"); 
 
 			for (compno = 0; compno < cstr_info->comp; compno++) {
 				/* I suppose components have same XRsiz, YRsiz */
@@ -748,10 +752,11 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 									if (precno_x*pcx == x ) {
 										for (layno = 0; layno < cstr_info->layer; layno++) {
 											start_pos = cstr_info->tile[tileno].packet[pack_nb].start_pos;
+											end_ph_pos = cstr_info->tile[tileno].packet[pack_nb].end_ph_pos;
 											end_pos = cstr_info->tile[tileno].packet[pack_nb].end_pos;
 											disto = cstr_info->tile[tileno].packet[pack_nb].disto;
-											fprintf(stream, "%4d %6d %6d %6d %5d %7d %9d %9d %8e\n",
-												pack_nb, tileno, compno, precno, resno, layno, start_pos, end_pos, disto); 
+											fprintf(stream, "%4d %6d %6d %6d %5d %7d %9d   %9d %7d %8e\n",
+												pack_nb, tileno, compno, precno, resno, layno, start_pos, end_ph_pos, end_pos, disto); 
 											total_disto += disto;
 											pack_nb++; 
 										}

@@ -590,9 +590,11 @@ typedef struct opj_image_comptparm {
 Index structure : Information concerning a packet inside tile
 */
 typedef struct opj_packet_info {
-	/** start position */
+	/** packet start position (including SOP marker if it exists) */
 	int start_pos;
-	/** end position */
+	/** end of packet header position (including EPH marker if it exists)*/
+	int end_ph_pos;
+	/** packet end position */
 	int end_pos;
 	/** packet distorsion */
 	double disto;
