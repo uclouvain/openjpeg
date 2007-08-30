@@ -32,6 +32,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include "openjpeg.h"
 #include "compat/getopt.h"
@@ -146,10 +147,10 @@ void encode_help_display() {
 	fprintf(stdout,"\n");
 	fprintf(stdout,"-h           : display the help information \n ");
 	fprintf(stdout,"\n");
-	fprintf(stdout,"-cinema2k    : Digital Cinema 2K profile compliant codestream for 2K resolution.(-cinema2k 24 or 48) \n");
+	fprintf(stdout,"-cinema2K    : Digital Cinema 2K profile compliant codestream for 2K resolution.(-cinema2k 24 or 48) \n");
   fprintf(stdout,"	  Need to specify the frames per second for a 2K resolution. Only 24 or 48 fps is allowed\n"); 
 	fprintf(stdout,"\n");
-	fprintf(stdout,"-cinema4k    : Digital Cinema 4K profile compliant codestream for 4K resolution \n");
+	fprintf(stdout,"-cinema4K    : Digital Cinema 4K profile compliant codestream for 4K resolution \n");
 	fprintf(stdout,"	  Frames per second not required. Default value is 24fps\n"); 
 	fprintf(stdout,"\n");
 	fprintf(stdout,"-r           : different compression ratios for successive layers (-r 20,10,5)\n ");
@@ -384,7 +385,6 @@ int get_file_format(char *filename) {
 			return format[i];
 		}
 	}
-
 	return -1;
 }
 
@@ -483,7 +483,7 @@ void cinema_setup_encoder(opj_cparameters_t *parameters,opj_image_t *image){
 			parameters->numresolution = 6;
 		}
 		if (!((image->comps[0].w == 2048) | (image->comps[0].h == 1080))){
-			fprintf(stdout,"Image coordinates %d x %d is not 2K compliant.\nJPEG Digital Cinema Profile-3"
+			fprintf(stdout,"Image coordinates %d x %d is not 2K compliant.\nJPEG Digital Cinema Profile-3 "
 				"(2K profile) compliance requires that at least one of coordinates match 2048 x 1080\n",
 				image->comps[0].w,image->comps[0].h);
 			parameters->cp_rsiz = STD_RSIZ;
@@ -545,6 +545,233 @@ void cinema_setup_encoder(opj_cparameters_t *parameters,opj_image_t *image){
 			break;
 	}
 	parameters->cp_disto_alloc = 1;
+}
+
+/* ------------------------------------------------------------------------------------ */
+
+/**
+Create an index and write it to a file
+@param cstr_info Codestream information 
+@param index Index filename
+@return Returns 0 if successful, returns 1 otherwise
+*/
+int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
+	int tileno, compno, layno, resno, precno, pack_nb, x, y;
+	FILE *stream = NULL;
+	double total_disto = 0;
+
+	if (!cstr_info)		
+		return 1;
+
+	stream = fopen(index, "w");
+	if (!stream) {
+		fprintf(stderr, "failed to open index file [%s] for writing\n", index);
+		return 1;
+	}
+	
+	fprintf(stream, "%d %d\n", cstr_info->image_w, cstr_info->image_h);
+	fprintf(stream, "%d\n", cstr_info->prog);
+	fprintf(stream, "%d %d\n", cstr_info->tile_x, cstr_info->tile_y);
+	fprintf(stream, "%d %d\n", cstr_info->tw, cstr_info->th);
+	fprintf(stream, "%d\n", cstr_info->comp);
+	fprintf(stream, "%d\n", cstr_info->layer);
+	fprintf(stream, "%d\n", cstr_info->decomposition);
+	
+	for (resno = cstr_info->decomposition; resno >= 0; resno--) {
+		fprintf(stream, "[%d,%d] ", 
+			(1 << cstr_info->tile[0].pdx[resno]), (1 << cstr_info->tile[0].pdx[resno]));	/* based on tile 0 */
+	}
+	fprintf(stream, "\n");
+	fprintf(stream, "%d\n", cstr_info->main_head_end);
+	fprintf(stream, "%d\n", cstr_info->codestream_size);
+	
+	fprintf(stream, "\nINFO ON TILES\n");
+	fprintf(stream, "tileno start_pos  end_hd  end_tile         disto     nbpix   disto/nbpix\n");
+	for (tileno = 0; tileno < cstr_info->tw * cstr_info->th; tileno++) {
+		fprintf(stream, "%4d %9d %9d %9d %9e %9d %9e\n",
+			cstr_info->tile[tileno].num_tile,
+			cstr_info->tile[tileno].start_pos,
+			cstr_info->tile[tileno].end_header,
+			cstr_info->tile[tileno].end_pos,
+			cstr_info->tile[tileno].distotile, cstr_info->tile[tileno].nbpix,
+			cstr_info->tile[tileno].distotile / cstr_info->tile[tileno].nbpix);
+	}
+		
+	for (tileno = 0; tileno < cstr_info->tw * cstr_info->th; tileno++) {
+		int start_pos, end_pos;
+		double disto = 0;
+		pack_nb = 0;
+
+		fprintf(stream, "\nTILE %d DETAILS\n", tileno);				
+		if (cstr_info->prog == LRCP) {	/* LRCP */
+
+			fprintf(stream, "pack_nb tileno layno resno compno precno start_pos  end_pos disto\n");
+
+			for (layno = 0; layno < cstr_info->layer; layno++) {
+				for (resno = 0; resno < cstr_info->decomposition + 1; resno++) {
+					for (compno = 0; compno < cstr_info->comp; compno++) {
+						int prec_max = cstr_info->tile[tileno].pw[resno] * cstr_info->tile[tileno].ph[resno];
+						for (precno = 0; precno < prec_max; precno++) {
+							start_pos = cstr_info->tile[tileno].packet[pack_nb].start_pos;
+							end_pos = cstr_info->tile[tileno].packet[pack_nb].end_pos;
+							disto = cstr_info->tile[tileno].packet[pack_nb].disto;
+							fprintf(stream, "%4d %6d %7d %5d %6d %6d %9d %9d %8e\n",
+								pack_nb, tileno, layno, resno, compno, precno, start_pos, end_pos, disto);
+							total_disto += disto;
+							pack_nb++;
+						}
+					}
+				}
+			}
+		} /* LRCP */
+		else if (cstr_info->prog == RLCP) {	/* RLCP */
+
+			fprintf(stream, "pack_nb tileno resno layno compno precno start_pos  end_pos disto\n");
+
+			for (resno = 0; resno < cstr_info->decomposition + 1; resno++) {
+				for (layno = 0; layno < cstr_info->layer; layno++) {
+					for (compno = 0; compno < cstr_info->comp; compno++) {
+						int prec_max = cstr_info->tile[tileno].pw[resno] * cstr_info->tile[tileno].ph[resno];
+						for (precno = 0; precno < prec_max; precno++) {
+							start_pos = cstr_info->tile[tileno].packet[pack_nb].start_pos;
+							end_pos = cstr_info->tile[tileno].packet[pack_nb].end_pos;
+							disto = cstr_info->tile[tileno].packet[pack_nb].disto;
+							fprintf(stream, "%4d %6d %5d %7d %6d %6d %9d %9d %8e\n",
+								pack_nb, tileno, resno, layno, compno, precno, start_pos, end_pos, disto);
+							total_disto += disto;
+							pack_nb++;
+						}
+					}
+				}
+			}
+		} /* RLCP */
+		else if (cstr_info->prog == RPCL) {	/* RPCL */
+
+			fprintf(stream, "pack_nb tileno resno precno compno layno start_pos  end_pos disto\n"); 
+
+			for (resno = 0; resno < cstr_info->decomposition + 1; resno++) {
+				/* I suppose components have same XRsiz, YRsiz */
+				int x0 = cstr_info->tile_Ox + tileno - (int)floor((float)tileno/(float)cstr_info->tw ) * cstr_info->tw * cstr_info->tile_x;
+				int y0 = cstr_info->tile_Ox + (int)floor( (float)tileno/(float)cstr_info->tw ) * cstr_info->tile_y;
+				int x1 = x0 + cstr_info->tile_x;
+				int y1 = y0 + cstr_info->tile_y;
+				for (compno = 0; compno < cstr_info->comp; compno++) {
+					int prec_max = cstr_info->tile[tileno].pw[resno] * cstr_info->tile[tileno].ph[resno];
+					for (precno = 0; precno < prec_max; precno++) {
+						int pcnx = cstr_info->tile[tileno].pw[resno];
+						int pcx = (int) pow( 2, cstr_info->tile[tileno].pdx[resno] + cstr_info->decomposition - resno );
+						int pcy = (int) pow( 2, cstr_info->tile[tileno].pdy[resno] + cstr_info->decomposition - resno );
+						int precno_x = precno - (int) floor( (float)precno/(float)pcnx ) * pcnx;
+						int precno_y = (int) floor( (float)precno/(float)pcnx );
+						for(y = y0; y < y1; y++) {							
+							if (precno_y*pcy == y ) {
+								for (x = x0; x < x1; x++) {									
+									if (precno_x*pcx == x ) {
+										for (layno = 0; layno < cstr_info->layer; layno++) {
+											start_pos = cstr_info->tile[tileno].packet[pack_nb].start_pos;
+											end_pos = cstr_info->tile[tileno].packet[pack_nb].end_pos;
+											disto = cstr_info->tile[tileno].packet[pack_nb].disto;
+											fprintf(stream, "%4d %6d %5d %6d %6d %7d %9d %9d %8e\n",
+												pack_nb, tileno, resno, precno, compno, layno, start_pos, end_pos, disto); 
+											total_disto += disto;
+											pack_nb++; 
+										}
+									}
+								}/* x = x0..x1 */
+							} 
+						}  /* y = y0..y1 */
+					} /* precno */
+				} /* compno */
+			} /* resno */
+		} /* RPCL */
+		else if (cstr_info->prog == PCRL) {	/* PCRL */
+			/* I suppose components have same XRsiz, YRsiz */
+			int x0 = cstr_info->tile_Ox + tileno - (int)floor( (float)tileno/(float)cstr_info->tw ) * cstr_info->tw * cstr_info->tile_x;
+			int y0 = cstr_info->tile_Ox + (int)floor( (float)tileno/(float)cstr_info->tw ) * cstr_info->tile_y;
+			int x1 = x0 + cstr_info->tile_x;
+			int y1 = y0 + cstr_info->tile_y;
+
+			fprintf(stream, "pack_nb tileno precno compno resno layno start_pos  end_pos disto\n"); 
+
+			for (compno = 0; compno < cstr_info->comp; compno++) {
+				for (resno = 0; resno < cstr_info->decomposition + 1; resno++) {
+					int prec_max = cstr_info->tile[tileno].pw[resno] * cstr_info->tile[tileno].ph[resno];
+					for (precno = 0; precno < prec_max; precno++) {
+						int pcnx = cstr_info->tile[tileno].pw[resno];
+						int pcx = (int) pow( 2, cstr_info->tile[tileno].pdx[resno] + cstr_info->decomposition - resno );
+						int pcy = (int) pow( 2, cstr_info->tile[tileno].pdy[resno] + cstr_info->decomposition - resno );
+						int precno_x = precno - (int) floor( (float)precno/(float)pcnx ) * pcnx;
+						int precno_y = (int) floor( (float)precno/(float)pcnx );
+						for(y = y0; y < y1; y++) {							
+							if (precno_y*pcy == y ) {
+								for (x = x0; x < x1; x++) {									
+									if (precno_x*pcx == x ) {
+										for (layno = 0; layno < cstr_info->layer; layno++) {
+											start_pos = cstr_info->tile[tileno].packet[pack_nb].start_pos;
+											end_pos = cstr_info->tile[tileno].packet[pack_nb].end_pos;
+											disto = cstr_info->tile[tileno].packet[pack_nb].disto;
+											fprintf(stream, "%4d %6d %6d %6d %5d %7d %9d %9d %8e\n",
+												pack_nb, tileno, precno, compno, resno, layno, start_pos, end_pos, disto); 
+											total_disto += disto;
+											pack_nb++; 
+										}
+									}
+								}/* x = x0..x1 */
+							} 
+						}  /* y = y0..y1 */
+					} /* precno */
+				} /* resno */
+			} /* compno */
+		} /* PCRL */
+		else {	/* CPRL */
+
+			fprintf(stream, "pack_nb tileno compno precno resno layno start_pos  end_pos disto\n"); 
+
+			for (compno = 0; compno < cstr_info->comp; compno++) {
+				/* I suppose components have same XRsiz, YRsiz */
+				int x0 = cstr_info->tile_Ox + tileno - (int)floor( (float)tileno/(float)cstr_info->tw ) * cstr_info->tw * cstr_info->tile_x;
+				int y0 = cstr_info->tile_Ox + (int)floor( (float)tileno/(float)cstr_info->tw ) * cstr_info->tile_y;
+				int x1 = x0 + cstr_info->tile_x;
+				int y1 = y0 + cstr_info->tile_y;
+				
+				for (resno = 0; resno < cstr_info->decomposition + 1; resno++) {
+					int prec_max = cstr_info->tile[tileno].pw[resno] * cstr_info->tile[tileno].ph[resno];
+					for (precno = 0; precno < prec_max; precno++) {
+						int pcnx = cstr_info->tile[tileno].pw[resno];
+						int pcx = (int) pow( 2, cstr_info->tile[tileno].pdx[resno] + cstr_info->decomposition - resno );
+						int pcy = (int) pow( 2, cstr_info->tile[tileno].pdy[resno] + cstr_info->decomposition - resno );
+						int precno_x = precno - (int) floor( (float)precno/(float)pcnx ) * pcnx;
+						int precno_y = (int) floor( (float)precno/(float)pcnx );
+						for(y = y0; y < y1; y++) {
+							if (precno_y*pcy == y ) {
+								for (x = x0; x < x1; x++) {
+									if (precno_x*pcx == x ) {
+										for (layno = 0; layno < cstr_info->layer; layno++) {
+											start_pos = cstr_info->tile[tileno].packet[pack_nb].start_pos;
+											end_pos = cstr_info->tile[tileno].packet[pack_nb].end_pos;
+											disto = cstr_info->tile[tileno].packet[pack_nb].disto;
+											fprintf(stream, "%4d %6d %6d %6d %5d %7d %9d %9d %8e\n",
+												pack_nb, tileno, compno, precno, resno, layno, start_pos, end_pos, disto); 
+											total_disto += disto;
+											pack_nb++; 
+										}
+									}
+								}/* x = x0..x1 */
+							}
+						} /* y = y0..y1 */
+					} /* precno */
+				} /* resno */
+			} /* compno */
+		} /* CPRL */   
+	} /* tileno */
+	
+	fprintf(stream, "%8e\n", cstr_info->D_max); /* SE max */
+	fprintf(stream, "%.8e\n", total_disto);	/* SE totale */
+	fclose(stream);
+
+	fprintf(stderr,"Generated index file %s\n", index);
+
+	return 0;
 }
 
 /* ------------------------------------------------------------------------------------ */
@@ -1465,6 +1692,7 @@ int main(int argc, char **argv) {
 	int imageno;
 	dircnt_t *dirptr;
 	raw_cparameters_t raw_cp;
+	opj_codestream_info_t cstr_info;
 
 	/*
 	configure the event callbacks (not required)
@@ -1501,19 +1729,15 @@ int main(int argc, char **argv) {
 		sprintf(parameters.cp_comment,"%s%s", comment, version);
 #endif
 /* <<UniPG */
-
 	}
 
 	/* Read directory if necessary */
-
 	if(img_fol.set_imgdir==1){
 		num_images=get_num_images(img_fol.imgdirpath);
-
 		dirptr=(dircnt_t*)malloc(sizeof(dircnt_t));
 		if(dirptr){
 			dirptr->filename_buf = (char*)malloc(num_images*OPJ_PATH_LEN*sizeof(char));	// Stores at max 10 image file names
 			dirptr->filename = (char**) malloc(num_images*sizeof(char*));
-
 			if(!dirptr->filename_buf){
 				return 0;
 			}
@@ -1532,13 +1756,10 @@ int main(int argc, char **argv) {
 		num_images=1;
 	}
 	/*Encoding image one by one*/
-	for(imageno=0;imageno<num_images;imageno++)
-	{
-
+	for(imageno=0;imageno<num_images;imageno++)	{
 		image = NULL;
 		fprintf(stderr,"\n");
 		
-
 		if(img_fol.set_imgdir==1){
 			if (get_next_file(imageno, dirptr,&img_fol, &parameters)) {
 				fprintf(stderr,"skipping file...\n");
@@ -1644,7 +1865,7 @@ int main(int argc, char **argv) {
 				cio = opj_cio_open((opj_common_ptr)cinfo, NULL, 0);
 
 				/* encode the image */
-				bSuccess = opj_encode(cinfo, cio, image, parameters.index);
+				bSuccess = opj_encode(cinfo, cio, image, &cstr_info);
 				if (!bSuccess) {
 					opj_cio_close(cio);
 					fprintf(stderr, "failed to encode image\n");
@@ -1665,9 +1886,16 @@ int main(int argc, char **argv) {
 				/* close and free the byte stream */
 				opj_cio_close(cio);
 
+				/* Write the index to disk */
+				if (parameters.index_on) {
+					bSuccess = write_index_file(&cstr_info, parameters.index);
+					if (bSuccess) {
+						fprintf(stderr, "Failed to output index file\n");
+					}
+				}
+
 				/* free remaining compression structures */
 				opj_destroy_compress(cinfo);
-
 			} else {			/* JP2 format output */
 				int codestream_length;
 				opj_cio_t *cio = NULL;
@@ -1687,7 +1915,7 @@ int main(int argc, char **argv) {
 				cio = opj_cio_open((opj_common_ptr)cinfo, NULL, 0);
 
 				/* encode the image */
-				bSuccess = opj_encode(cinfo, cio, image, parameters.index);
+				bSuccess = opj_encode(cinfo, cio, image, &cstr_info);
 				if (!bSuccess) {
 					opj_cio_close(cio);
 					fprintf(stderr, "failed to encode image\n");
@@ -1706,6 +1934,14 @@ int main(int argc, char **argv) {
 				fprintf(stderr,"Generated outfile %s\n",parameters.outfile);
 				/* close and free the byte stream */
 				opj_cio_close(cio);
+				
+				/* Write the index to disk */
+				if (parameters.index_on) {
+					bSuccess = write_index_file(&cstr_info, parameters.index);
+					if (bSuccess) {
+						fprintf(stderr, "Failed to output index file\n");
+					}
+				}
 
 				/* free remaining compression structures */
 				opj_destroy_compress(cinfo);
@@ -1722,5 +1958,3 @@ int main(int argc, char **argv) {
 
 	return 0;
 }
-
-

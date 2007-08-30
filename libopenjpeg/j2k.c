@@ -1340,7 +1340,7 @@ static void j2k_write_sod(opj_j2k_t *j2k, void *tile_coder) {
 	int l, layno;
 	int totlen;
 	opj_tcp_t *tcp = NULL;
-	opj_image_info_t *image_info = NULL;
+	opj_codestream_info_t *cstr_info = NULL;
 	
 	opj_tcd_t *tcd = (opj_tcd_t*)tile_coder;	/* cast is needed because of conflicts in header inclusions */
 	opj_cp_t *cp = j2k->cp;
@@ -1355,13 +1355,13 @@ static void j2k_write_sod(opj_j2k_t *j2k, void *tile_coder) {
 	}
 
 	/* INDEX >> */
-	image_info = j2k->image_info;
-	if (image_info && image_info->index_on) {
+	cstr_info = j2k->cstr_info;
+	if (cstr_info && cstr_info->index_on) {
 		if (!j2k->cur_tp_num ){
-			image_info->tile[j2k->curtileno].end_header = cio_tell(cio) + j2k->pos_correction - 1;
+			cstr_info->tile[j2k->curtileno].end_header = cio_tell(cio) + j2k->pos_correction - 1;
 		}else{
-			if(image_info->tile[j2k->curtileno].packet[image_info->num - 1].end_pos < cio_tell(cio))
-				image_info->tile[j2k->curtileno].packet[image_info->num].start_pos = cio_tell(cio);
+			if(cstr_info->tile[j2k->curtileno].packet[cstr_info->num - 1].end_pos < cio_tell(cio))
+				cstr_info->tile[j2k->curtileno].packet[cstr_info->num].start_pos = cio_tell(cio);
 		}
 	}
 	/* << INDEX */
@@ -1370,11 +1370,11 @@ static void j2k_write_sod(opj_j2k_t *j2k, void *tile_coder) {
 	for (layno = 0; layno < tcp->numlayers; layno++) {
 		tcp->rates[layno] -= tcp->rates[layno] ? (j2k->sod_start / (cp->th * cp->tw)) : 0;
 	}
-	if(image_info && (j2k->cur_tp_num == 0)) {
-		image_info->num = 0;
+	if(cstr_info && (j2k->cur_tp_num == 0)) {
+		cstr_info->num = 0;
 	}
 	
-	l = tcd_encode_tile(tcd, j2k->curtileno, cio_getbp(cio), cio_numbytesleft(cio) - 2, image_info);
+	l = tcd_encode_tile(tcd, j2k->curtileno, cio_getbp(cio), cio_numbytesleft(cio) - 2, cstr_info);
 	
 	/* Writing Psot in SOT marker */
 	totlen = cio_tell(cio) + l - j2k->sot_start;
@@ -1901,18 +1901,17 @@ void j2k_destroy_compress(opj_j2k_t *j2k) {
 
 	if(!j2k) return;
 
-	if(j2k->image_info != NULL) {
-		opj_image_info_t *image_info = j2k->image_info;
-		if (image_info->index_on && j2k->cp) {
+	if(j2k->cstr_info != NULL) {
+		opj_codestream_info_t *cstr_info = j2k->cstr_info;
+		if (cstr_info->index_on && j2k->cp) {
 			opj_cp_t *cp = j2k->cp;
 			for (tileno = 0; tileno < cp->tw * cp->th; tileno++) {
-				opj_tile_info_t *tile_info = &image_info->tile[tileno];
+				opj_tile_info_t *tile_info = &cstr_info->tile[tileno];
 				opj_free(tile_info->thresh);
 				opj_free(tile_info->packet);
 			}
-			opj_free(image_info->tile);
+			opj_free(cstr_info->tile);
 		}
-		opj_free(image_info);
 	}
 	if(j2k->cp != NULL) {
 		opj_cp_t *cp = j2k->cp;
@@ -1970,9 +1969,6 @@ void j2k_setup_encoder(opj_j2k_t *j2k, opj_cparameters_t *parameters, opj_image_
 
 	/* creation of an index file ? */
 	cp->index_on = parameters->index_on;
-	if(cp->index_on) {
-		j2k->image_info = (opj_image_info_t*)opj_malloc(sizeof(opj_image_info_t));
-	}
 
 	/* tiles */
 	cp->tdx = parameters->cp_tdx;
@@ -2198,241 +2194,8 @@ void j2k_setup_encoder(opj_j2k_t *j2k, opj_cparameters_t *parameters, opj_image_
 	}
 }
 
-/**
-Create an index file
-@param j2k
-@param cio
-@param image_info
-@param index Index filename
-@return Returns 1 if successful, returns 0 otherwise
-*/
-static int j2k_create_index(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_info_t *image_info, char *index) {
-	int tileno, compno, layno, resno, precno, pack_nb, x, y;
-	FILE *stream = NULL;
-	double total_disto = 0;
-
-	image_info->codestream_size = cio_tell(cio) + j2k->pos_correction;	/* Correction 14/4/03 suite rmq de Patrick */
-
-
-#ifdef USE_JPWL
-	/* if JPWL is enabled and the name coincides with our own set
-	   then discard the creation of the file: this was just done to
-	   enable indexing, we do not want an index file
-	*/
-	if (j2k->cp->epc_on && !strcmp(index, JPWL_PRIVATEINDEX_NAME))
-		return 1;
-#endif /* USE_JPWL */
-
-
-	stream = fopen(index, "w");
-	if (!stream) {
-		opj_event_msg(j2k->cinfo, EVT_ERROR, "failed to open %s for writing\n", index);
-		return 0;
-	}
-	
-	fprintf(stream, "%d %d\n", image_info->image_w, image_info->image_h);
-	fprintf(stream, "%d\n", image_info->prog);
-	fprintf(stream, "%d %d\n", image_info->tile_x, image_info->tile_y);
-	fprintf(stream, "%d %d\n", image_info->tw, image_info->th);
-	fprintf(stream, "%d\n", image_info->comp);
-	fprintf(stream, "%d\n", image_info->layer);
-	fprintf(stream, "%d\n", image_info->decomposition);
-	
-	for (resno = image_info->decomposition; resno >= 0; resno--) {
-		fprintf(stream, "[%d,%d] ", 
-			(1 << image_info->tile[0].pdx[resno]), (1 << image_info->tile[0].pdx[resno]));	/* based on tile 0 */
-	}
-	fprintf(stream, "\n");
-	fprintf(stream, "%d\n", image_info->main_head_end);
-	fprintf(stream, "%d\n", image_info->codestream_size);
-	
-	for (tileno = 0; tileno < image_info->tw * image_info->th; tileno++) {
-		fprintf(stream, "%4d %9d %9d %9d %9e %9d %9e\n",
-			image_info->tile[tileno].num_tile,
-			image_info->tile[tileno].start_pos,
-			image_info->tile[tileno].end_header,
-			image_info->tile[tileno].end_pos,
-			image_info->tile[tileno].distotile, image_info->tile[tileno].nbpix,
-			image_info->tile[tileno].distotile / image_info->tile[tileno].nbpix);
-	}
-	
-	for (tileno = 0; tileno < image_info->tw * image_info->th; tileno++) {
-		int start_pos, end_pos;
-		double disto = 0;
-		pack_nb = 0;
-				
-		if (image_info->prog == LRCP) {	/* LRCP */
-
-			fprintf(stream, "pack_nb tileno layno resno compno precno start_pos  end_pos disto\n");
-
-			for (layno = 0; layno < image_info->layer; layno++) {
-				for (resno = 0; resno < image_info->decomposition + 1; resno++) {
-					for (compno = 0; compno < image_info->comp; compno++) {
-						int prec_max = image_info->tile[tileno].pw[resno] * image_info->tile[tileno].ph[resno];
-						for (precno = 0; precno < prec_max; precno++) {
-							start_pos = image_info->tile[tileno].packet[pack_nb].start_pos;
-							end_pos = image_info->tile[tileno].packet[pack_nb].end_pos;
-							disto = image_info->tile[tileno].packet[pack_nb].disto;
-							fprintf(stream, "%4d %6d %7d %5d %6d %6d %9d %9d %8e\n",
-								pack_nb, tileno, layno, resno, compno, precno, start_pos, end_pos, disto);
-							total_disto += disto;
-							pack_nb++;
-						}
-					}
-				}
-			}
-		} /* LRCP */
-		else if (image_info->prog == RLCP) {	/* RLCP */
-
-			fprintf(stream, "pack_nb tileno resno layno compno precno start_pos  end_pos disto\n");
-
-			for (resno = 0; resno < image_info->decomposition + 1; resno++) {
-				for (layno = 0; layno < image_info->layer; layno++) {
-					for (compno = 0; compno < image_info->comp; compno++) {
-						int prec_max = image_info->tile[tileno].pw[resno] * image_info->tile[tileno].ph[resno];
-						for (precno = 0; precno < prec_max; precno++) {
-							start_pos = image_info->tile[tileno].packet[pack_nb].start_pos;
-							end_pos = image_info->tile[tileno].packet[pack_nb].end_pos;
-							disto = image_info->tile[tileno].packet[pack_nb].disto;
-							fprintf(stream, "%4d %6d %5d %7d %6d %6d %9d %9d %8e\n",
-								pack_nb, tileno, resno, layno, compno, precno, start_pos, end_pos, disto);
-							total_disto += disto;
-							pack_nb++;
-						}
-					}
-				}
-			}
-		} /* RLCP */
-		else if (image_info->prog == RPCL) {	/* RPCL */
-
-			fprintf(stream, "\npack_nb tileno resno precno compno layno start_pos  end_pos disto\n"); 
-
-			for (resno = 0; resno < image_info->decomposition + 1; resno++) {
-				/* I suppose components have same XRsiz, YRsiz */
-				int x0 = image_info->tile_Ox + tileno - (int)floor( (float)tileno/(float)image_info->tw ) * image_info->tw * image_info->tile_x;
-				int y0 = image_info->tile_Ox + (int)floor( (float)tileno/(float)image_info->tw ) * image_info->tile_y;
-				int x1 = x0 + image_info->tile_x;
-				int y1 = y0 + image_info->tile_y;
-				for (compno = 0; compno < image_info->comp; compno++) {
-					int prec_max = image_info->tile[tileno].pw[resno] * image_info->tile[tileno].ph[resno];
-					for (precno = 0; precno < prec_max; precno++) {
-						int pcnx = image_info->tile[tileno].pw[resno];
-						int pcx = (int) pow( 2, image_info->tile[tileno].pdx[resno] + image_info->decomposition - resno );
-						int pcy = (int) pow( 2, image_info->tile[tileno].pdy[resno] + image_info->decomposition - resno );
-						int precno_x = precno - (int) floor( (float)precno/(float)pcnx ) * pcnx;
-						int precno_y = (int) floor( (float)precno/(float)pcnx );
-						for(y = y0; y < y1; y++) {							
-							if (precno_y*pcy == y ) {
-								for (x = x0; x < x1; x++) {									
-									if (precno_x*pcx == x ) {
-										for (layno = 0; layno < image_info->layer; layno++) {
-											start_pos = image_info->tile[tileno].packet[pack_nb].start_pos;
-											end_pos = image_info->tile[tileno].packet[pack_nb].end_pos;
-											disto = image_info->tile[tileno].packet[pack_nb].disto;
-											fprintf(stream, "%4d %6d %5d %6d %6d %7d %9d %9d %8e\n",
-												pack_nb, tileno, resno, precno, compno, layno, start_pos, end_pos, disto); 
-											total_disto += disto;
-											pack_nb++; 
-										}
-									}
-								}/* x = x0..x1 */
-							} 
-						}  /* y = y0..y1 */
-					} /* precno */
-				} /* compno */
-			} /* resno */
-		} /* RPCL */
-		else if (image_info->prog == PCRL) {	/* PCRL */
-			/* I suppose components have same XRsiz, YRsiz */
-			int x0 = image_info->tile_Ox + tileno - (int)floor( (float)tileno/(float)image_info->tw ) * image_info->tw * image_info->tile_x;
-			int y0 = image_info->tile_Ox + (int)floor( (float)tileno/(float)image_info->tw ) * image_info->tile_y;
-			int x1 = x0 + image_info->tile_x;
-			int y1 = y0 + image_info->tile_y;
-
-			fprintf(stream, "\npack_nb tileno precno compno resno layno start_pos  end_pos disto\n"); 
-
-			for (compno = 0; compno < image_info->comp; compno++) {
-				for (resno = 0; resno < image_info->decomposition + 1; resno++) {
-					int prec_max = image_info->tile[tileno].pw[resno] * image_info->tile[tileno].ph[resno];
-					for (precno = 0; precno < prec_max; precno++) {
-						int pcnx = image_info->tile[tileno].pw[resno];
-						int pcx = (int) pow( 2, image_info->tile[tileno].pdx[resno] + image_info->decomposition - resno );
-						int pcy = (int) pow( 2, image_info->tile[tileno].pdy[resno] + image_info->decomposition - resno );
-						int precno_x = precno - (int) floor( (float)precno/(float)pcnx ) * pcnx;
-						int precno_y = (int) floor( (float)precno/(float)pcnx );
-						for(y = y0; y < y1; y++) {							
-							if (precno_y*pcy == y ) {
-								for (x = x0; x < x1; x++) {									
-									if (precno_x*pcx == x ) {
-										for (layno = 0; layno < image_info->layer; layno++) {
-											start_pos = image_info->tile[tileno].packet[pack_nb].start_pos;
-											end_pos = image_info->tile[tileno].packet[pack_nb].end_pos;
-											disto = image_info->tile[tileno].packet[pack_nb].disto;
-											fprintf(stream, "%4d %6d %6d %6d %5d %7d %9d %9d %8e\n",
-												pack_nb, tileno, precno, compno, resno, layno, start_pos, end_pos, disto); 
-											total_disto += disto;
-											pack_nb++; 
-										}
-									}
-								}/* x = x0..x1 */
-							} 
-						}  /* y = y0..y1 */
-					} /* precno */
-				} /* resno */
-			} /* compno */
-		} /* PCRL */
-		else {	/* CPRL */
-
-			fprintf(stream, "\npack_nb tileno compno precno resno layno start_pos  end_pos disto\n"); 
-
-			for (compno = 0; compno < image_info->comp; compno++) {
-				/* I suppose components have same XRsiz, YRsiz */
-				int x0 = image_info->tile_Ox + tileno - (int)floor( (float)tileno/(float)image_info->tw ) * image_info->tw * image_info->tile_x;
-				int y0 = image_info->tile_Ox + (int)floor( (float)tileno/(float)image_info->tw ) * image_info->tile_y;
-				int x1 = x0 + image_info->tile_x;
-				int y1 = y0 + image_info->tile_y;
-				
-				for (resno = 0; resno < image_info->decomposition + 1; resno++) {
-					int prec_max = image_info->tile[tileno].pw[resno] * image_info->tile[tileno].ph[resno];
-					for (precno = 0; precno < prec_max; precno++) {
-						int pcnx = image_info->tile[tileno].pw[resno];
-						int pcx = (int) pow( 2, image_info->tile[tileno].pdx[resno] + image_info->decomposition - resno );
-						int pcy = (int) pow( 2, image_info->tile[tileno].pdy[resno] + image_info->decomposition - resno );
-						int precno_x = precno - (int) floor( (float)precno/(float)pcnx ) * pcnx;
-						int precno_y = (int) floor( (float)precno/(float)pcnx );
-						for(y = y0; y < y1; y++) {
-							if (precno_y*pcy == y ) {
-								for (x = x0; x < x1; x++) {
-									if (precno_x*pcx == x ) {
-										for (layno = 0; layno < image_info->layer; layno++) {
-											start_pos = image_info->tile[tileno].packet[pack_nb].start_pos;
-											end_pos = image_info->tile[tileno].packet[pack_nb].end_pos;
-											disto = image_info->tile[tileno].packet[pack_nb].disto;
-											fprintf(stream, "%4d %6d %6d %6d %5d %7d %9d %9d %8e\n",
-												pack_nb, tileno, compno, precno, resno, layno, start_pos, end_pos, disto); 
-											total_disto += disto;
-											pack_nb++; 
-										}
-									}
-								}/* x = x0..x1 */
-							}
-						} /* y = y0..y1 */
-					} /* precno */
-				} /* resno */
-			} /* compno */
-		} /* CPRL */   
-	} /* tileno */
-	
-	fprintf(stream, "%8e\n", image_info->D_max); /* SE max */
-	fprintf(stream, "%.8e\n", total_disto);	/* SE totale */
-	fclose(stream);
-
-	return 1;
-}
-
-bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, char *index) {
+bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, opj_codestream_info_t *cstr_info) {
 	int tileno, compno;
-	opj_image_info_t *image_info = NULL;
 	opj_cp_t *cp = NULL;
 
 	opj_tcd_t *tcd = NULL;	/* TCD component */
@@ -2445,23 +2208,26 @@ bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, char *index)
 	/* j2k_dump_cp(stdout, image, cp); */
 
 	/* INDEX >> */
-	image_info = j2k->image_info;
-	if (image_info && cp->index_on) {
-		image_info->index_on = cp->index_on;
-		image_info->tile = (opj_tile_info_t *) opj_malloc(cp->tw * cp->th * sizeof(opj_tile_info_t));
-		image_info->image_w = image->x1 - image->x0;
-		image_info->image_h = image->y1 - image->y0;
-		image_info->prog = (&cp->tcps[0])->prg;
-		image_info->tw = cp->tw;
-		image_info->th = cp->th;
-		image_info->tile_x = cp->tdx;	/* new version parser */
-		image_info->tile_y = cp->tdy;	/* new version parser */
-		image_info->tile_Ox = cp->tx0;	/* new version parser */
-		image_info->tile_Oy = cp->ty0;	/* new version parser */
-		image_info->comp = image->numcomps;
-		image_info->layer = (&cp->tcps[0])->numlayers;
-		image_info->decomposition = (&cp->tcps[0])->tccps->numresolutions - 1;
-		image_info->D_max = 0;		/* ADD Marcela */
+	j2k->cstr_info = cstr_info;
+	if (cstr_info && cp->index_on) {
+		cstr_info->index_on = cp->index_on;
+		cstr_info->tile = (opj_tile_info_t *) opj_malloc(cp->tw * cp->th * sizeof(opj_tile_info_t));
+		cstr_info->image_w = image->x1 - image->x0;
+		cstr_info->image_h = image->y1 - image->y0;
+		cstr_info->prog = (&cp->tcps[0])->prg;
+		cstr_info->tw = cp->tw;
+		cstr_info->th = cp->th;
+		cstr_info->tile_x = cp->tdx;	/* new version parser */
+		cstr_info->tile_y = cp->tdy;	/* new version parser */
+		cstr_info->tile_Ox = cp->tx0;	/* new version parser */
+		cstr_info->tile_Oy = cp->ty0;	/* new version parser */
+		cstr_info->comp = image->numcomps;
+		cstr_info->layer = (&cp->tcps[0])->numlayers;
+		cstr_info->decomposition = (&cp->tcps[0])->tccps->numresolutions - 1;
+		cstr_info->D_max = 0;		/* ADD Marcela */
+	}
+	else if (cstr_info) {
+		cstr_info->index_on = 0;
 	}
 	/* << INDEX */
 	
@@ -2487,7 +2253,7 @@ bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, char *index)
 	}
 	
 	j2k->totnum_tp = j2k_calculate_tp(cp,image->numcomps,image,j2k);
-	/*	 TLM Marker*/
+	/* TLM Marker*/
 	if(cp->cinema){
 		j2k_write_tlm(j2k);
 		if (cp->cinema == CINEMA4K_24) {
@@ -2496,8 +2262,8 @@ bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, char *index)
 	}
 
 	/* INDEX >> */
-	if(image_info && image_info->index_on) {
-		image_info->main_head_end = cio_tell(cio) - 1;
+	if(cstr_info && cstr_info->index_on) {
+		cstr_info->main_head_end = cio_tell(cio) - 1;
 	}
 	/* << INDEX */
 	/**** Main Header ENDS here ***/
@@ -2506,7 +2272,6 @@ bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, char *index)
 	tcd = tcd_create(j2k->cinfo);
 
 	/* encode each tile */
-
 	for (tileno = 0; tileno < cp->tw * cp->th; tileno++) {
 		int pino;
 		int tilepartno=0;
@@ -2525,9 +2290,9 @@ bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, char *index)
 		}
 		
 		/* INDEX >> */
-		if(image_info && image_info->index_on) {
-			image_info->tile[j2k->curtileno].num_tile = j2k->curtileno;
-			image_info->tile[j2k->curtileno].start_pos = cio_tell(cio) + j2k->pos_correction;
+		if(cstr_info && cstr_info->index_on) {
+			cstr_info->tile[j2k->curtileno].num_tile = j2k->curtileno;
+			cstr_info->tile[j2k->curtileno].start_pos = cio_tell(cio) + j2k->pos_correction;
 		}
 		/* << INDEX */
 
@@ -2559,8 +2324,8 @@ bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, char *index)
 			
 		}
 		/* INDEX >> */
-		if(image_info && image_info->index_on) {
-			image_info->tile[j2k->curtileno].end_pos = cio_tell(cio) + j2k->pos_correction - 1;
+		if(cstr_info && cstr_info->index_on) {
+			cstr_info->tile[j2k->curtileno].end_pos = cio_tell(cio) + j2k->pos_correction - 1;
 		}
 		/* << INDEX */
 		
@@ -2590,22 +2355,17 @@ bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, char *index)
 	free(j2k->cur_totnum_tp);
 
 	j2k_write_eoc(j2k);
-	
-	/* Creation of the index file */
-	if(image_info && image_info->index_on) {
-		if(!j2k_create_index(j2k, cio, image_info, index)) {
-			opj_event_msg(j2k->cinfo, EVT_ERROR, "failed to create index file %s\n", index);
-			return false;
-		}
-	}
 
+	if(cstr_info && cstr_info->index_on) {
+		cstr_info->codestream_size = cio_tell(cio) + j2k->pos_correction;	
+	}
 
 #ifdef USE_JPWL
 	/*
 	preparation of JPWL marker segments: can be finalized only when the whole
 	codestream is known
 	*/
-	if(image_info && image_info->index_on && cp->epc_on) {
+	if(cstr_info && cstr_info->index_on && cp->epc_on) {
 
 		/* let's begin creating a marker list, according to user wishes */
 		jpwl_prepare_marks(j2k, cio, image);
@@ -2616,23 +2376,11 @@ bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, char *index)
 		/* do not know exactly what is this for,
 		but it gets called during index creation */
 		j2k->pos_correction = 0;
-
-		/* Re-creation of the index file, with updated info */
-		if(image_info && image_info->index_on) {
-			if(!j2k_create_index(j2k, cio, image_info, index)) {
-				opj_event_msg(j2k->cinfo, EVT_ERROR, "failed to re-create index file %s\n", index);
-				return false;
-			}
-		}
-
-		/* now we finalize the marker contents */
-		/*jpwl_finalize_marks(j2k, cio, image);*/
-
 	}
 #endif /* USE_JPWL */
 
-	
 	return true;
 }
+
 
 

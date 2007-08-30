@@ -238,17 +238,17 @@ void tcd_malloc_decode_tile(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp, 
 void tcd_makelayer_fixed(opj_tcd_t *tcd, int layno, int final);
 void tcd_rateallocate_fixed(opj_tcd_t *tcd);
 void tcd_makelayer(opj_tcd_t *tcd, int layno, double thresh, int final);
-bool tcd_rateallocate(opj_tcd_t *tcd, unsigned char *dest, int len, opj_image_info_t * image_info);
+bool tcd_rateallocate(opj_tcd_t *tcd, unsigned char *dest, int len, opj_codestream_info_t *cstr_info);
 /**
 Encode a tile from the raw image into a buffer
 @param tcd TCD handle
 @param tileno Number that identifies one of the tiles to be encoded
 @param dest Destination buffer
 @param len Length of destination buffer
-@param image_info Creation of index file
+@param cstr_info Codestream information structure 
 @return 
 */
-int tcd_encode_tile(opj_tcd_t *tcd, int tileno, unsigned char *dest, int len, opj_image_info_t * image_info);
+int tcd_encode_tile(opj_tcd_t *tcd, int tileno, unsigned char *dest, int len, opj_codestream_info_t *cstr_info);
 /**
 Decode a tile from a buffer into a raw image
 @param tcd TCD handle

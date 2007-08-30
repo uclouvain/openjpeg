@@ -580,6 +580,98 @@ typedef struct opj_image_comptparm {
 	int sgnd;
 } opj_image_cmptparm_t;
 
+/* 
+==========================================================
+   Information on the JPEG 2000 codestream
+==========================================================
+*/
+
+/**
+Index structure : Information concerning a packet inside tile
+*/
+typedef struct opj_packet_info {
+	/** start position */
+	int start_pos;
+	/** end position */
+	int end_pos;
+	/** packet distorsion */
+	double disto;
+} opj_packet_info_t;
+
+/**
+Index structure : information regarding tiles inside image
+*/
+typedef struct opj_tile_info {
+	/** value of thresh for each layer by tile cfr. Marcela   */
+	double *thresh;
+	/** number of tile */
+	int num_tile;
+	/** start position */
+	int start_pos;
+	/** end position of the header */
+	int end_header;
+	/** end position */
+	int end_pos;
+	/** precinct number for each resolution level (width) */
+	int pw[33];
+	/** precinct number for each resolution level (height) */
+	int ph[33];
+	/** precinct size (in power of 2), in X for each resolution level */
+	int pdx[33];
+	/** precinct size (in power of 2), in Y for each resolution level */
+	int pdy[33];
+	/** information concerning packets inside tile */
+	opj_packet_info_t *packet;
+	/** add fixed_quality */
+	int nbpix;
+	/** add fixed_quality */
+	double distotile;
+} opj_tile_info_t;
+
+/**
+Index structure of the codestream
+*/
+typedef struct opj_codestream_info {
+	/** 0 = no index || 1 = index */
+	int index_on;
+	/** maximum distortion reduction on the whole image (add for Marcela) */
+	double D_max;
+	/** packet number */
+	int num;
+	/** writing the packet in the index with t2_encode_packets */
+	int index_write;
+	/** image width */
+	int image_w;
+	/** image height */
+	int image_h;
+	/** progression order */
+	OPJ_PROG_ORDER prog;
+	/** tile size in x */
+	int tile_x;
+	/** tile size in y */
+	int tile_y;
+	/** */
+	int tile_Ox;
+	/** */
+	int tile_Oy;
+	/** number of tiles in X */
+	int tw;
+	/** number of tiles in Y */
+	int th;
+	/** component numbers */
+	int comp;
+	/** number of layer */
+	int layer;
+	/** number of decomposition */
+	int decomposition;
+	/** main header position */
+	int main_head_end;
+	/** codestream's size */
+	int codestream_size;
+	/** information regarding tiles inside image */
+	opj_tile_info_t *tile;
+} opj_codestream_info_t;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -730,9 +822,9 @@ Set encoding parameters to default values, that means :
 OPJ_API void OPJ_CALLCONV opj_set_default_encoder_parameters(opj_cparameters_t *parameters);
 /**
 Setup the encoder parameters using the current image and using user parameters. 
-@param cinfo compressor handle
-@param parameters compression parameters
-@param image input filled image
+@param cinfo Compressor handle
+@param parameters Compression parameters
+@param image Input filled image
 */
 OPJ_API void OPJ_CALLCONV opj_setup_encoder(opj_cinfo_t *cinfo, opj_cparameters_t *parameters, opj_image_t *image);
 /**
@@ -740,10 +832,10 @@ Encode an image into a JPEG-2000 codestream
 @param cinfo compressor handle
 @param cio Output buffer stream
 @param image Image to encode
-@param index Name of the index file if required, NULL otherwise
+@param cstr_info Codestream information structure if required, NULL otherwise
 @return Returns true if successful, returns false otherwise
 */
-OPJ_API bool OPJ_CALLCONV opj_encode(opj_cinfo_t *cinfo, opj_cio_t *cio, opj_image_t *image, char *index);
+OPJ_API bool OPJ_CALLCONV opj_encode(opj_cinfo_t *cinfo, opj_cio_t *cio, opj_image_t *image, opj_codestream_info_t *cstr_info);
 
 #ifdef __cplusplus
 }

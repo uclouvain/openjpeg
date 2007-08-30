@@ -979,7 +979,7 @@ void tcd_makelayer(opj_tcd_t *tcd, int layno, double thresh, int final) {
 	}
 }
 
-bool tcd_rateallocate(opj_tcd_t *tcd, unsigned char *dest, int len, opj_image_info_t * image_info) {
+bool tcd_rateallocate(opj_tcd_t *tcd, unsigned char *dest, int len, opj_codestream_info_t *cstr_info) {
 	int compno, resno, bandno, precno, cblkno, passno, layno;
 	double min, max;
 	double cumdisto[100];	/* fixed_quality */
@@ -1048,8 +1048,8 @@ bool tcd_rateallocate(opj_tcd_t *tcd, unsigned char *dest, int len, opj_image_in
 	} /* compno */
 	
 	/* index file */
-	if(image_info && image_info->index_on) {
-		opj_tile_info_t *tile_info = &image_info->tile[tcd->tcd_tileno];
+	if(cstr_info && cstr_info->index_on) {
+		opj_tile_info_t *tile_info = &cstr_info->tile[tcd->tcd_tileno];
 		tile_info->nbpix = tcd_tile->nbpix;
 		tile_info->distotile = tcd_tile->distotile;
 		tile_info->thresh = (double *) opj_malloc(tcd_tcp->numlayers * sizeof(double));
@@ -1068,7 +1068,11 @@ bool tcd_rateallocate(opj_tcd_t *tcd, unsigned char *dest, int len, opj_image_in
 		/* fixed_quality */
 		distotarget = tcd_tile->distotile - ((K * maxSE) / pow((float)10, tcd_tcp->distoratio[layno] / 10));
         
-		if ((tcd_tcp->rates[layno]) || (cp->disto_alloc == 0)) {
+		/* Don't try to find an optimal threshold but rather take everything not included yet, if
+		  -r xx,yy,zz,0   (disto_alloc == 1 and rates == 0)
+		  -q xx,yy,zz,0	  (fixed_quality == 1 and distoratio == 0)
+		  ==> possible to have some lossy layers and the last layer for sure lossless */
+		if ( ((cp->disto_alloc==1) && (tcd_tcp->rates[layno]>0)) || ((cp->fixed_quality==1) && (tcd_tcp->distoratio[layno]>0))) {
 			opj_t2_t *t2 = t2_create(tcd->cinfo, tcd->image, cp);
 
 			for (i = 0; i < 32; i++) {
@@ -1080,7 +1084,7 @@ bool tcd_rateallocate(opj_tcd_t *tcd, unsigned char *dest, int len, opj_image_in
 				
 				if (cp->fixed_quality) {	/* fixed_quality */
 					if(cp->cinema){
-						l = t2_encode_packets(t2,tcd->tcd_tileno, tcd_tile, layno + 1, dest, maxlen, image_info,tcd->cur_tp_num,tcd->tp_pos,tcd->cur_pino,THRESH_CALC);
+						l = t2_encode_packets(t2,tcd->tcd_tileno, tcd_tile, layno + 1, dest, maxlen, cstr_info,tcd->cur_tp_num,tcd->tp_pos,tcd->cur_pino,THRESH_CALC);
 						if (l == -999) {
 							lo = thresh;
 							continue;
@@ -1106,7 +1110,7 @@ bool tcd_rateallocate(opj_tcd_t *tcd, unsigned char *dest, int len, opj_image_in
 						lo = thresh;
 					}
 				} else {
-					l = t2_encode_packets(t2, tcd->tcd_tileno, tcd_tile, layno + 1, dest, maxlen, image_info,tcd->cur_tp_num,tcd->tp_pos,tcd->cur_pino,THRESH_CALC);
+					l = t2_encode_packets(t2, tcd->tcd_tileno, tcd_tile, layno + 1, dest, maxlen, cstr_info,tcd->cur_tp_num,tcd->tp_pos,tcd->cur_pino,THRESH_CALC);
 					/* TODO: what to do with l ??? seek / tell ??? */
 					/* opj_event_msg(tcd->cinfo, EVT_INFO, "rate alloc: len=%d, max=%d\n", l, maxlen); */
 					if (l == -999) {
@@ -1129,8 +1133,8 @@ bool tcd_rateallocate(opj_tcd_t *tcd, unsigned char *dest, int len, opj_image_in
 			return false;
 		}
 		
-		if(image_info && image_info->index_on) {	/* Threshold for Marcela Index */
-			image_info->tile[tcd->tcd_tileno].thresh[layno] = goodthresh;
+		if(cstr_info && cstr_info->index_on) {	/* Threshold for Marcela Index */
+			cstr_info->tile[tcd->tcd_tileno].thresh[layno] = goodthresh;
 		}
 		tcd_makelayer(tcd, layno, goodthresh, 1);
         
@@ -1141,7 +1145,7 @@ bool tcd_rateallocate(opj_tcd_t *tcd, unsigned char *dest, int len, opj_image_in
 	return true;
 }
 
-int tcd_encode_tile(opj_tcd_t *tcd, int tileno, unsigned char *dest, int len, opj_image_info_t * image_info) {
+int tcd_encode_tile(opj_tcd_t *tcd, int tileno, unsigned char *dest, int len, opj_codestream_info_t *cstr_info) {
 	int compno;
 	int l, i, npck = 0;
 	opj_tcd_tile_t *tile = NULL;
@@ -1166,20 +1170,20 @@ int tcd_encode_tile(opj_tcd_t *tcd, int tileno, unsigned char *dest, int len, op
 	if(tcd->cur_tp_num == 0){
 		tcd->encoding_time = opj_clock();	/* time needed to encode a tile */
 		/* INDEX >> "Precinct_nb_X et Precinct_nb_Y" */
-		if(image_info && image_info->index_on) {
+		if(cstr_info && cstr_info->index_on) {
 			opj_tcd_tilecomp_t *tilec_idx = &tile->comps[0];	/* based on component 0 */
 			for (i = 0; i < tilec_idx->numresolutions; i++) {
 				opj_tcd_resolution_t *res_idx = &tilec_idx->resolutions[i];
 				
-				image_info->tile[tileno].pw[i] = res_idx->pw;
-				image_info->tile[tileno].ph[i] = res_idx->ph;
+				cstr_info->tile[tileno].pw[i] = res_idx->pw;
+				cstr_info->tile[tileno].ph[i] = res_idx->ph;
 				
 				npck += res_idx->pw * res_idx->ph;
 				
-				image_info->tile[tileno].pdx[i] = tccp->prcw[i];
-				image_info->tile[tileno].pdy[i] = tccp->prch[i];
+				cstr_info->tile[tileno].pdx[i] = tccp->prcw[i];
+				cstr_info->tile[tileno].pdy[i] = tccp->prch[i];
 			}
-			image_info->tile[tileno].packet = (opj_packet_info_t *) opj_malloc(image_info->comp * image_info->layer * npck * sizeof(opj_packet_info_t));
+			cstr_info->tile[tileno].packet = (opj_packet_info_t *) opj_malloc(cstr_info->comp * cstr_info->layer * npck * sizeof(opj_packet_info_t));
 		}
 		/* << INDEX */
 		
@@ -1251,12 +1255,12 @@ int tcd_encode_tile(opj_tcd_t *tcd, int tileno, unsigned char *dest, int len, op
 		/*-----------RATE-ALLOCATE------------------*/
 		
 		/* INDEX */
-		if(image_info) {
-			image_info->index_write = 0;
+		if(cstr_info) {
+			cstr_info->index_write = 0;
 		}
 		if (cp->disto_alloc || cp->fixed_quality) {	/* fixed_quality */
 			/* Normal Rate/distortion allocation */
-			tcd_rateallocate(tcd, dest, len, image_info);
+			tcd_rateallocate(tcd, dest, len, cstr_info);
 		} else {
 			/* Fixed layer allocation */
 			tcd_rateallocate_fixed(tcd);
@@ -1265,12 +1269,12 @@ int tcd_encode_tile(opj_tcd_t *tcd, int tileno, unsigned char *dest, int len, op
 	/*--------------TIER2------------------*/
 
 	/* INDEX */
-	if(image_info) {
-		image_info->index_write = 1;
+	if(cstr_info) {
+		cstr_info->index_write = 1;
 	}
 
 	t2 = t2_create(tcd->cinfo, image, cp);
-	l = t2_encode_packets(t2,tileno, tile, tcd_tcp->numlayers, dest, len, image_info,tcd->tp_num,tcd->tp_pos,tcd->cur_pino,FINAL_PASS);
+	l = t2_encode_packets(t2,tileno, tile, tcd_tcp->numlayers, dest, len, cstr_info,tcd->tp_num,tcd->tp_pos,tcd->cur_pino,FINAL_PASS);
 	t2_destroy(t2);
 	
 	/*---------------CLEAN-------------------*/

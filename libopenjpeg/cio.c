@@ -139,7 +139,7 @@ bool cio_byteout(opj_cio_t *cio, unsigned char v) {
  */
 unsigned char cio_bytein(opj_cio_t *cio) {
 	if (cio->bp >= cio->end) {
-		opj_event_msg(cio->cinfo, EVT_ERROR, "read error\n");
+		opj_event_msg(cio->cinfo, EVT_ERROR, "read error: passed the end of the codestream (start = %d, current = %d, end = %d\n", cio->start, cio->bp, cio->end);
 		return 0;
 	}
 	return *cio->bp++;

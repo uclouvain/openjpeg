@@ -179,7 +179,7 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 			(unsigned char) j2k->cp->sens_MH, /* sensitivity method */
 			j2k->cp->sens_size, /* sensitivity size */
 			-1, /* this ESD is in main header */
-			0 /*j2k->image_info->num*/, /* number of packets in codestream */
+			0 /*j2k->cstr_info->num*/, /* number of packets in codestream */
 			NULL /*sensval*/ /* pointer to sensitivity data of packets */
 			)) {
 			
@@ -215,21 +215,21 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 	/* cycle through TPHs */
 	sens = -1; /* default spec: no ESD */
 	tilespec = 0; /* first tile spec */
-	for (tileno = 0; tileno < j2k->image_info->tw * j2k->image_info->th; tileno++) {
+	for (tileno = 0; tileno < j2k->cstr_info->tw * j2k->cstr_info->th; tileno++) {
 
 		int sot_len, Psot, Psotp, mm;
 		unsigned long sot_pos, post_sod_pos;
 
 		unsigned long int left_THmarks_len;
 
-		sot_pos = j2k->image_info->tile[tileno].start_pos;
+		sot_pos = j2k->cstr_info->tile[tileno].start_pos;
 		cio_seek(cio, sot_pos + 2); 
 		sot_len = cio_read(cio, 2); /* SOT Len */
 		cio_skip(cio, 2);
 		Psotp = cio_tell(cio);
 		Psot = cio_read(cio, 4); /* tile length */
 
-		post_sod_pos = j2k->image_info->tile[tileno].end_header + 1;
+		post_sod_pos = j2k->cstr_info->tile[tileno].end_header + 1;
 		left_THmarks_len = post_sod_pos - sot_pos;
 
 		/* add all the lengths of the markers which are len-ready and stay within SOT and SOD */
@@ -269,7 +269,7 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 				if (jwmarker_num < JPWL_MAX_NO_MARKERS) {
 					jwmarker[jwmarker_num].id = J2K_MS_ESD; /* its type */
 					jwmarker[jwmarker_num].esdmark = esd_mark; /* the EPB */
-					jwmarker[jwmarker_num].pos = j2k->image_info->tile[tileno].start_pos + sot_len + 2; /* after SOT */
+					jwmarker[jwmarker_num].pos = j2k->cstr_info->tile[tileno].start_pos + sot_len + 2; /* after SOT */
 					jwmarker[jwmarker_num].dpos = (double) jwmarker[jwmarker_num].pos + 0.2; /* not first at all! */
 					jwmarker[jwmarker_num].len = esd_mark->Lesd; /* its length */
 					jwmarker[jwmarker_num].len_ready = true; /* ready, yet */
@@ -307,7 +307,7 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 		int mm;
 
 		/* position of SOT */
-		unsigned int sot_pos = j2k->image_info->main_head_end + 1;
+		unsigned int sot_pos = j2k->cstr_info->main_head_end + 1;
 
 		/* how much space is there between end of SIZ and beginning of SOT? */
 		int left_MHmarks_len = sot_pos - socsiz_len;
@@ -371,15 +371,15 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 	lastileno = 0;
 	packspec = 0;
 	pprot = -1;
-	for (tileno = 0; tileno < j2k->image_info->tw * j2k->image_info->th; tileno++) {
+	for (tileno = 0; tileno < j2k->cstr_info->tw * j2k->cstr_info->th; tileno++) {
 
 		int sot_len, Psot, Psotp, mm, epb_index = 0, prot_len = 0;
 		unsigned long sot_pos, post_sod_pos;
 		unsigned long int left_THmarks_len, epbs_len = 0;
-		int startpack = 0, stoppack = j2k->image_info->num;
+		int startpack = 0, stoppack = j2k->cstr_info->num;
 		jpwl_epb_ms_t *tph_epb = NULL;
 
-		sot_pos = j2k->image_info->tile[tileno].start_pos;
+		sot_pos = j2k->cstr_info->tile[tileno].start_pos;
 		cio_seek(cio, sot_pos + 2); 
 		sot_len = cio_read(cio, 2); /* SOT Len */
 		cio_skip(cio, 2);
@@ -387,7 +387,7 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 		Psot = cio_read(cio, 4); /* tile length */
 
 		/* a-priori length of the data dwelling between SOT and SOD */
-		post_sod_pos = j2k->image_info->tile[tileno].end_header + 1;
+		post_sod_pos = j2k->cstr_info->tile[tileno].end_header + 1;
 		left_THmarks_len = post_sod_pos - (sot_pos + sot_len + 2);
 
 		/* add all the lengths of the JPWL markers which are len-ready and stay within SOT and SOD */
@@ -426,7 +426,7 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 				if (jwmarker_num < JPWL_MAX_NO_MARKERS) {
 					jwmarker[jwmarker_num].id = J2K_MS_EPB; /* its type */
 					jwmarker[jwmarker_num].epbmark = epb_mark; /* the EPB */
-					jwmarker[jwmarker_num].pos = j2k->image_info->tile[tileno].start_pos + sot_len + 2; /* after SOT */
+					jwmarker[jwmarker_num].pos = j2k->cstr_info->tile[tileno].start_pos + sot_len + 2; /* after SOT */
 					jwmarker[jwmarker_num].dpos = (double) jwmarker[jwmarker_num].pos; /* first first first! */
 					jwmarker[jwmarker_num].len = epb_mark->Lepb; /* its length */
 					jwmarker[jwmarker_num].len_ready = true; /* ready */
@@ -457,7 +457,7 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 	
 		startpack = 0;
 		/* EPB MSs for UEP packet data protection in Tile Parts */
-		for (packno = 0; packno < j2k->image_info->num; packno++) {
+		for (packno = 0; packno < j2k->cstr_info->num; packno++) {
 
 			if ((packspec < JPWL_MAX_NO_PACKSPECS) &&
 				(j2k->cp->pprot_tileno[packspec] == tileno) && (j2k->cp->pprot_packno[packspec] == packno)) {
@@ -471,19 +471,19 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 						tileno,
 						startpack,
 						stoppack,
-						j2k->image_info->tile[tileno].packet[startpack].start_pos,
-						j2k->image_info->tile[tileno].packet[stoppack].end_pos,
+						j2k->cstr_info->tile[tileno].packet[startpack].start_pos,
+						j2k->cstr_info->tile[tileno].packet[stoppack].end_pos,
 						pprot);
 
-					prot_len = j2k->image_info->tile[tileno].packet[stoppack].end_pos + 1 -
-						j2k->image_info->tile[tileno].packet[startpack].start_pos;
+					prot_len = j2k->cstr_info->tile[tileno].packet[stoppack].end_pos + 1 -
+						j2k->cstr_info->tile[tileno].packet[startpack].start_pos;
 
 					/*
 					  particular case: if this is the last header and the last packet,
 					  then it is better to protect even the EOC marker
 					*/
-					if ((tileno == ((j2k->image_info->tw * j2k->image_info->th) - 1)) &&
-						(stoppack == (j2k->image_info->num - 1)))
+					if ((tileno == ((j2k->cstr_info->tw * j2k->cstr_info->th) - 1)) &&
+						(stoppack == (j2k->cstr_info->num - 1)))
 						/* add the EOC len */
 						prot_len += 2;
 
@@ -497,7 +497,7 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 						false, /* inside MH */
 						&epb_index, /* pointer to EPB index */
 						pprot, /* protection type */
-						(double) (j2k->image_info->tile[tileno].start_pos + sot_len + 2) + 0.0001, /* position */
+						(double) (j2k->cstr_info->tile[tileno].start_pos + sot_len + 2) + 0.0001, /* position */
 						tileno, /* number of tile */
 						0, /* length of pre-data */
 						prot_len /*4000*/ /* length of post-data */
@@ -521,19 +521,19 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 				tileno,
 				startpack,
 				stoppack,
-				j2k->image_info->tile[tileno].packet[startpack].start_pos,
-				j2k->image_info->tile[tileno].packet[stoppack].end_pos,
+				j2k->cstr_info->tile[tileno].packet[startpack].start_pos,
+				j2k->cstr_info->tile[tileno].packet[stoppack].end_pos,
 				pprot);
 
-			prot_len = j2k->image_info->tile[tileno].packet[stoppack].end_pos + 1 -
-				j2k->image_info->tile[tileno].packet[startpack].start_pos;
+			prot_len = j2k->cstr_info->tile[tileno].packet[stoppack].end_pos + 1 -
+				j2k->cstr_info->tile[tileno].packet[startpack].start_pos;
 
 			/*
 			  particular case: if this is the last header and the last packet,
 			  then it is better to protect even the EOC marker
 			*/
-			if ((tileno == ((j2k->image_info->tw * j2k->image_info->th) - 1)) &&
-				(stoppack == (j2k->image_info->num - 1)))
+			if ((tileno == ((j2k->cstr_info->tw * j2k->cstr_info->th) - 1)) &&
+				(stoppack == (j2k->cstr_info->num - 1)))
 				/* add the EOC len */
 				prot_len += 2;
 
@@ -547,7 +547,7 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 						false, /* inside MH */
 						&epb_index, /* pointer to EPB index */
 						pprot, /* protection type */
-						(double) (j2k->image_info->tile[tileno].start_pos + sot_len + 2) + 0.0001, /* position */
+						(double) (j2k->cstr_info->tile[tileno].start_pos + sot_len + 2) + 0.0001, /* position */
 						tileno, /* number of tile */
 						0, /* length of pre-data */
 						prot_len /*4000*/ /* length of post-data */
@@ -575,7 +575,7 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 void jpwl_dump_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 
 	int mm;
-	unsigned long int old_size = j2k->image_info->codestream_size;
+	unsigned long int old_size = j2k->cstr_info->codestream_size;
 	unsigned long int new_size = old_size;
 	int ciopos = cio_tell(cio);
 	unsigned char *jpwl_buf, *orig_buf;
@@ -655,7 +655,7 @@ void jpwl_dump_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 	update info file based on added markers
 	*/
 	if (!jpwl_update_info(j2k, jwmarker, jwmarker_num))
-		opj_event_msg(j2k->cinfo, EVT_ERROR, "Could not update OPJ image_info structure\n");
+		opj_event_msg(j2k->cinfo, EVT_ERROR, "Could not update OPJ cstr_info structure\n");
 
 	/* now we need to repass some markers and fill their data fields */
 	

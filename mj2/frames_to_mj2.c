@@ -142,8 +142,6 @@ void help_display()
   fprintf
     (stdout,"                 ex: RESTART(4) + RESET(2) + SEGMARK(32) = -M 38\n");
   fprintf
-    (stdout,"-x           : create an index file *.Idx (-x index_name.Idx) \n");
-  fprintf
     (stdout,"-ROI         : c=%%d,U=%%d : quantization indices upshifted \n");
   fprintf
     (stdout,"               for component c=%%d [%%d = 0,1,2]\n");
@@ -241,7 +239,7 @@ int main(int argc, char **argv)
 	opj_cinfo_t* cinfo;
   bool bSuccess;
 	int numframes;
-	double total_time = 0;
+	double total_time = 0;	
 
   /* default value */
   /* ------------- */
@@ -279,7 +277,7 @@ int main(int argc, char **argv)
 
   while (1) {
     int c = getopt(argc, argv,
-      "i:o:r:q:f:t:n:c:b:x:p:s:d:h P:S:E:M:R:T:C:I:W:F:");
+      "i:o:r:q:f:t:n:c:b:p:s:d:h P:S:E:M:R:T:C:I:W:F:");
     if (c == -1)
       break;
     switch (c) {
@@ -459,14 +457,6 @@ int main(int argc, char **argv)
 				}
 				j2k_parameters->cblockw_init = cblockw_init;
 				j2k_parameters->cblockh_init = cblockh_init;
-			}
-			break;
-      /* ----------------------------------------------------- */
-    case 'x':			/* creation of index file */
-      {
-				char *index = optarg;
-				strncpy(j2k_parameters->index, index, sizeof(j2k_parameters->index)-1);
-				j2k_parameters->index_on = 1;
 			}
 			break;
       /* ----------------------------------------------------- */
@@ -743,7 +733,7 @@ int main(int argc, char **argv)
 				cio_write(cio, JP2_JP2C, 4);	// JP2C
 
 				/* encode the image */
-				bSuccess = opj_encode(cinfo, cio, img, j2k_parameters->index);
+				bSuccess = opj_encode(cinfo, cio, img, NULL);
 				if (!bSuccess) {
 					opj_cio_close(cio);
 					fprintf(stderr, "failed to encode image\n");

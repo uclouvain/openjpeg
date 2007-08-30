@@ -1216,7 +1216,7 @@ jpwl_esd_ms_t *jpwl_esd_create(opj_j2k_t *j2k, int comp, unsigned char addrm, un
 		if (ad_size == 0)
 			/* if there are more than 66% of (2^16 - 1) bytes, switch to 4 bytes
 			 (we keep space for possible EPBs being inserted) */
-			ad_size = (j2k->image_info->codestream_size > (1 * 65535 / 3)) ? 4 : 2;
+			ad_size = (j2k->cstr_info->codestream_size > (1 * 65535 / 3)) ? 4 : 2;
 		esd->sensval_size = ad_size + ad_size + se_size; 
 		break;
 
@@ -1225,7 +1225,7 @@ jpwl_esd_ms_t *jpwl_esd_create(opj_j2k_t *j2k, int comp, unsigned char addrm, un
 		/* auto sense address size */
 		if (ad_size == 0)
 			/* if there are more than 2^16 - 1 packets, switch to 4 bytes */
-			ad_size = (j2k->image_info->num > 65535) ? 4 : 2;
+			ad_size = (j2k->cstr_info->num > 65535) ? 4 : 2;
 		esd->sensval_size = ad_size + ad_size + se_size; 
 		break;
 
@@ -1246,17 +1246,17 @@ jpwl_esd_ms_t *jpwl_esd_create(opj_j2k_t *j2k, int comp, unsigned char addrm, un
 		/* just based on the portions of a codestream */
 		case (0):
 			/* MH + no. of THs + no. of packets */
-			svalnum = 1 + (j2k->image_info->tw * j2k->image_info->th) * (1 + j2k->image_info->num);
+			svalnum = 1 + (j2k->cstr_info->tw * j2k->cstr_info->th) * (1 + j2k->cstr_info->num);
 			break;
 
 		/* all the ones that are based on the packets */
 		default:
 			if (tileno < 0)
 				/* MH: all the packets and all the tiles info is written */
-				svalnum = j2k->image_info->tw * j2k->image_info->th * j2k->image_info->num;
+				svalnum = j2k->cstr_info->tw * j2k->cstr_info->th * j2k->cstr_info->num;
 			else
 				/* TPH: only that tile info is written */
-				svalnum = j2k->image_info->num;
+				svalnum = j2k->cstr_info->num;
 			break;
 
 		}
@@ -1356,26 +1356,26 @@ bool jpwl_esd_fill(opj_j2k_t *j2k, jpwl_esd_ms_t *esd, unsigned char *buf) {
 		buf += 7;
 
 	/* let's fill the data fields */
-	for (vv = (esd->tileno < 0) ? 0 : (j2k->image_info->num * esd->tileno); vv < esd->svalnum; vv++) {
+	for (vv = (esd->tileno < 0) ? 0 : (j2k->cstr_info->num * esd->tileno); vv < esd->svalnum; vv++) {
 
-		int thistile = vv / j2k->image_info->num, thispacket = vv % j2k->image_info->num;
+		int thistile = vv / j2k->cstr_info->num, thispacket = vv % j2k->cstr_info->num;
 
 		/* skip for the hack some lines below */
-		if (thistile == j2k->image_info->tw * j2k->image_info->th)
+		if (thistile == j2k->cstr_info->tw * j2k->cstr_info->th)
 			break;
 
 		/* starting tile distortion */
 		if (thispacket == 0) {
-			TSE = j2k->image_info->tile[thistile].distotile;
-			oldMSE = TSE / j2k->image_info->tile[thistile].nbpix;
+			TSE = j2k->cstr_info->tile[thistile].distotile;
+			oldMSE = TSE / j2k->cstr_info->tile[thistile].nbpix;
 			oldPSNR = 10.0 * log10(Omax2 / oldMSE);
 		}
 
 		/* TSE */
-		TSE -= j2k->image_info->tile[thistile].packet[thispacket].disto;
+		TSE -= j2k->cstr_info->tile[thistile].packet[thispacket].disto;
 
 		/* MSE */
-		MSE = TSE / j2k->image_info->tile[thistile].nbpix;
+		MSE = TSE / j2k->cstr_info->tile[thistile].nbpix;
 
 		/* PSNR */
 		PSNR = 10.0 * log10(Omax2 / MSE);
@@ -1391,9 +1391,9 @@ bool jpwl_esd_fill(opj_j2k_t *j2k, jpwl_esd_ms_t *esd, unsigned char *buf) {
 		/* byte range */
 		case (1):
 			/* start address of packet */
-			addr1 = (j2k->image_info->tile[thistile].packet[thispacket].start_pos) & addrmask;
+			addr1 = (j2k->cstr_info->tile[thistile].packet[thispacket].start_pos) & addrmask;
 			/* end address of packet */
-			addr2 = (j2k->image_info->tile[thistile].packet[thispacket].end_pos) & addrmask;
+			addr2 = (j2k->cstr_info->tile[thistile].packet[thispacket].end_pos) & addrmask;
 			break;
 
 		/* packet range */
@@ -1417,7 +1417,7 @@ bool jpwl_esd_fill(opj_j2k_t *j2k, jpwl_esd_ms_t *esd, unsigned char *buf) {
 			if ((thistile == 0) && !doneMH) {
 				/* we have to manage MH addresses */
 				addr1 = 0; /* start of MH */
-				addr2 = j2k->image_info->main_head_end; /* end of MH */
+				addr2 = j2k->cstr_info->main_head_end; /* end of MH */
 				/* set special dvalue for this MH */
 				dvalue = -10.0;
 				doneMH = true; /* don't come here anymore */
@@ -1425,8 +1425,8 @@ bool jpwl_esd_fill(opj_j2k_t *j2k, jpwl_esd_ms_t *esd, unsigned char *buf) {
 
 			} else if (!doneTPH) {
 				/* we have to manage TPH addresses */
-				addr1 = j2k->image_info->tile[thistile].start_pos;
-				addr2 = j2k->image_info->tile[thistile].end_header;
+				addr1 = j2k->cstr_info->tile[thistile].start_pos;
+				addr2 = j2k->cstr_info->tile[thistile].end_header;
 				/* set special dvalue for this TPH */
 				dvalue = -1.0;
 				doneTPH = true; /* don't come here till the next tile */
@@ -1484,7 +1484,7 @@ bool jpwl_esd_fill(opj_j2k_t *j2k, jpwl_esd_ms_t *esd, unsigned char *buf) {
 			else
 				/* packet: first is most important, and then in decreasing order
 				down to the last, which counts for 1 */
-				dvalue = jpwl_pfp_to_double((unsigned short) (j2k->image_info->num - thispacket), esd->se_size);
+				dvalue = jpwl_pfp_to_double((unsigned short) (j2k->cstr_info->num - thispacket), esd->se_size);
 			break;
 
 		/* MSE */
@@ -1657,7 +1657,7 @@ bool jpwl_update_info(opj_j2k_t *j2k, jpwl_marker_t *jwmarker, int jwmarker_num)
 	int mm;
 	unsigned long int addlen;
 
-	opj_image_info_t *info = j2k->image_info;
+	opj_codestream_info_t *info = j2k->cstr_info;
 	int tileno, packno, numtiles = info->th * info->tw, numpacks = info->num;
 
 	if (!j2k || !jwmarker ) {

@@ -69,8 +69,17 @@ Allocate memory aligned to a 16 byte boundry
 #include <malloc.h>
 #endif
 
-#define opj_aligned_malloc(size) _mm_malloc(size, 16)
-#define opj_aligned_free(m) _mm_free(m)
+#ifdef _mm_malloc
+  #define opj_aligned_malloc(size) _mm_malloc(size, 16)
+  #else
+  #define opj_aligned_malloc(size) malloc(size)
+ #endif
+ 
+ #ifdef _mm_free
+  #define opj_aligned_free(m) _mm_free(m)
+  #else
+  #define opj_aligned_free(m) free(m)
+ #endif
 
 #else /* Not WIN32 */
 

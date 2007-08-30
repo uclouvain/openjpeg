@@ -53,11 +53,11 @@ Encode a packet of a tile to a destination buffer
 @param pi Packet identity
 @param dest Destination buffer
 @param len Length of the destination buffer
-@param image_info Structure to create an index file
+@param cstr_info Codestream information structure 
 @param tileno Number of the tile encoded
 @return 
 */
-static int t2_encode_packet(opj_tcd_tile_t *tile, opj_tcp_t *tcp, opj_pi_iterator_t *pi, unsigned char *dest, int len, opj_image_info_t *image_info, int tileno);
+static int t2_encode_packet(opj_tcd_tile_t *tile, opj_tcp_t *tcp, opj_pi_iterator_t *pi, unsigned char *dest, int len, opj_codestream_info_t *cstr_info, int tileno);
 /**
 @param seg
 @param cblksty
@@ -126,7 +126,7 @@ static int t2_getnumpasses(opj_bio_t *bio) {
 	return (37 + bio_read(bio, 7));
 }
 
-static int t2_encode_packet(opj_tcd_tile_t * tile, opj_tcp_t * tcp, opj_pi_iterator_t *pi, unsigned char *dest, int length, opj_image_info_t * image_info, int tileno) {
+static int t2_encode_packet(opj_tcd_tile_t * tile, opj_tcp_t * tcp, opj_pi_iterator_t *pi, unsigned char *dest, int length, opj_codestream_info_t *cstr_info, int tileno) {
 	int bandno, cblkno;
 	unsigned char *sop = 0, *eph = 0;
 	unsigned char *c = dest;
@@ -148,8 +148,8 @@ static int t2_encode_packet(opj_tcd_tile_t * tile, opj_tcp_t * tcp, opj_pi_itera
 		sop[1] = 145;
 		sop[2] = 0;
 		sop[3] = 4;
-		sop[4] = (image_info->num % 65536) / 256;
-		sop[5] = (image_info->num % 65536) % 256;
+		sop[4] = (cstr_info->num % 65536) / 256;
+		sop[5] = (cstr_info->num % 65536) % 256;
 		memcpy(c, sop, 6);
 		opj_free(sop);
 		c += 6;
@@ -278,12 +278,12 @@ static int t2_encode_packet(opj_tcd_tile_t * tile, opj_tcp_t * tcp, opj_pi_itera
 			cblk->numpasses += layer->numpasses;
 			c += layer->len;
 			/* ADD for index Cfr. Marcela --> delta disto by packet */
-			if(image_info && image_info->index_write && image_info->index_on) {
-				opj_tile_info_t *info_TL = &image_info->tile[tileno];
-				opj_packet_info_t *info_PK = &info_TL->packet[image_info->num];
+			if(cstr_info && cstr_info->index_write && cstr_info->index_on) {
+				opj_tile_info_t *info_TL = &cstr_info->tile[tileno];
+				opj_packet_info_t *info_PK = &info_TL->packet[cstr_info->num];
 				info_PK->disto += layer->disto;
-				if (image_info->D_max < info_PK->disto) {
-					image_info->D_max = info_PK->disto;
+				if (cstr_info->D_max < info_PK->disto) {
+					cstr_info->D_max = info_PK->disto;
 				}
 			}
 			/* </ADD> */
@@ -564,7 +564,7 @@ static int t2_decode_packet(opj_t2_t* t2, unsigned char *src, int len, opj_tcd_t
 
 /* ----------------------------------------------------------------------- */
 
-int t2_encode_packets(opj_t2_t* t2,int tileno, opj_tcd_tile_t *tile, int maxlayers, unsigned char *dest, int len, opj_image_info_t *image_info,int tpnum, int tppos,int pino, J2K_T2_MODE t2_mode){
+int t2_encode_packets(opj_t2_t* t2,int tileno, opj_tcd_tile_t *tile, int maxlayers, unsigned char *dest, int len, opj_codestream_info_t *cstr_info,int tpnum, int tppos,int pino, J2K_T2_MODE t2_mode){
 	unsigned char *c = dest;
 	int e = 0;
 	int compno;
@@ -590,7 +590,7 @@ int t2_encode_packets(opj_t2_t* t2,int tileno, opj_tcd_tile_t *tile, int maxlaye
 				pi_create_encode(pi, cp,tileno,poc,tpnum,tppos,t2_mode); 
 				while (pi_next(&pi[poc])) {
 					if (pi[poc].layno < maxlayers) {
-						e = t2_encode_packet(tile, &cp->tcps[tileno], &pi[poc], c, dest + len - c, image_info, tileno);
+						e = t2_encode_packet(tile, &cp->tcps[tileno], &pi[poc], c, dest + len - c, cstr_info, tileno);
 						comp_len = comp_len + e;
 						if (e == -999) {
 							break;
@@ -613,26 +613,26 @@ int t2_encode_packets(opj_t2_t* t2,int tileno, opj_tcd_tile_t *tile, int maxlaye
 		pi_create_encode(pi, cp,tileno,pino,tpnum,tppos,t2_mode);
 		while (pi_next(&pi[pino])) {
 			if (pi[pino].layno < maxlayers) {
-				e = t2_encode_packet(tile, &cp->tcps[tileno], &pi[pino], c, dest + len - c, image_info, tileno);
+				e = t2_encode_packet(tile, &cp->tcps[tileno], &pi[pino], c, dest + len - c, cstr_info, tileno);
 				if (e == -999) {
 					break;
 				} else {
 					c += e;
 				}
 				/* INDEX >> */
-				if(image_info && image_info->index_on) {
-					if(image_info->index_write) {
-						opj_tile_info_t *info_TL = &image_info->tile[tileno];
-						opj_packet_info_t *info_PK = &info_TL->packet[image_info->num];
-						if (!image_info->num) {
+				if(cstr_info && cstr_info->index_on) {
+					if(cstr_info->index_write) {
+						opj_tile_info_t *info_TL = &cstr_info->tile[tileno];
+						opj_packet_info_t *info_PK = &info_TL->packet[cstr_info->num];
+						if (!cstr_info->num) {
 							info_PK->start_pos = info_TL->end_header + 1;
 						} else {
-							info_PK->start_pos = (cp->tp_on && info_PK->start_pos) ? info_PK->start_pos : info_TL->packet[image_info->num - 1].end_pos + 1;
+							info_PK->start_pos = (cp->tp_on && info_PK->start_pos) ? info_PK->start_pos : info_TL->packet[cstr_info->num - 1].end_pos + 1;
 						}
 						info_PK->end_pos = info_PK->start_pos + e - 1;
 					}
 					
-					image_info->num++;
+					cstr_info->num++;
 				}
 				/* << INDEX */
 			}
