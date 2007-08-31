@@ -145,6 +145,8 @@ public:
 	bool m_enablecomm;
 	wxString m_comment;
 
+	bool write_index_file(opj_codestream_info_t *cstr_info, char *index);
+
 #if wxUSE_STREAMS
     virtual bool LoadFile( wxImage *image, wxInputStream& stream, bool verbose=true, int index=-1 );
     virtual bool SaveFile( wxImage *image, wxOutputStream& stream, bool verbose=true );
