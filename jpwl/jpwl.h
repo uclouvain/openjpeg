@@ -379,5 +379,32 @@ Computes the minimum between two integers
 
 #endif /* USE_JPWL */
 
+#ifdef USE_JPSEC
+
+/** @defgroup JPSEC JPSEC - JPEG-2000 Part 8 (JPSEC) codestream manager */
+/*@{*/
+
+/**
+Read the SEC marker (SEcured Codestream)
+@param j2k J2K handle
+*/
+void j2k_read_sec(opj_j2k_t *j2k);
+
+/**
+Write the SEC marker (SEcured Codestream)
+@param j2k J2K handle
+*/
+void j2k_write_sec(opj_j2k_t *j2k);
+
+/**
+Read the INSEC marker (SEcured Codestream)
+@param j2k J2K handle
+*/
+void j2k_read_insec(opj_j2k_t *j2k);
+
+/*@}*/
+
+#endif /* USE_JPSEC */
+
 #endif /* __JPWL_H */
 

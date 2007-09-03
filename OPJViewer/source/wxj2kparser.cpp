@@ -303,6 +303,7 @@ void OPJParseThread::ParseJ2KFile(wxFile *m_file, wxFileOffset offset, wxFileOff
 			};
 			break;
 
+#ifdef USE_JPWL
 		/////////
 		// RED //
 		/////////
@@ -550,6 +551,15 @@ void OPJParseThread::ParseJ2KFile(wxFile *m_file, wxFileOffset offset, wxFileOff
 
 			}
 			break;
+#endif // USE_JPWL
+
+#ifdef USE_JPSEC
+		case SEC_VAL:
+			{
+
+			}
+			break;
+#endif // USE_JPSEC
 
 		/////////
 		// SIZ //

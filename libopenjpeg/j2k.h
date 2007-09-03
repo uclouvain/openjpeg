@@ -79,12 +79,17 @@ The functions in J2K.C have for goal to read/write the several parts of the code
 #define J2K_MS_COM 0xff64	/**< COM marker value */
 /* UniPG>> */
 #ifdef USE_JPWL
-#define J2K_MS_EPC 0xff68	/**< EPC marker value (Part11) */
-#define J2K_MS_EPB 0xff66	/**< EPB marker value (Part11) */ 
-#define J2K_MS_ESD 0xff67	/**< ESD marker value (Part11) */ 
-#define J2K_MS_RED 0xff69	/**< RED marker value (Part11) */
+#define J2K_MS_EPC 0xff68	/**< EPC marker value (Part 11: JPEG 2000 for Wireless) */
+#define J2K_MS_EPB 0xff66	/**< EPB marker value (Part 11: JPEG 2000 for Wireless) */ 
+#define J2K_MS_ESD 0xff67	/**< ESD marker value (Part 11: JPEG 2000 for Wireless) */ 
+#define J2K_MS_RED 0xff69	/**< RED marker value (Part 11: JPEG 2000 for Wireless) */
 #endif /* USE_JPWL */
+#ifdef USE_JPSEC
+#define J2K_MS_SEC 0xff65    /**< SEC marker value (Part 8: Secure JPEG 2000) */
+#define J2K_MS_INSEC 0xff94  /**< INSEC marker value (Part 8: Secure JPEG 2000) */
+#endif /* USE_JPSEC */
 /* <<UniPG */
+
 
 /* ----------------------------------------------------------------------- */
 

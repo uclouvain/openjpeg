@@ -29,9 +29,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef USE_JPWL
-
 #include "../libopenjpeg/opj_includes.h"
+
+#ifdef USE_JPWL
 
 /** @defgroup JPWL JPWL - JPEG-2000 Part11 (JPWL) codestream manager */
 /*@{*/
@@ -1136,3 +1136,69 @@ bool jpwl_check_tile(opj_j2k_t *j2k, opj_tcd_t *tcd, int tileno) {
 /*@}*/
 
 #endif /* USE_JPWL */
+
+
+#ifdef USE_JPSEC
+
+/** @defgroup JPSEC JPSEC - JPEG-2000 Part 8 (JPSEC) codestream manager */
+/*@{*/
+
+
+/** @name Local static functions */
+/*@{*/
+
+void j2k_read_sec(opj_j2k_t *j2k) {
+	unsigned short int Lsec;
+	
+	opj_cio_t *cio = j2k->cio;
+
+	/* Simply read the SEC length */
+	Lsec = cio_read(cio, 2);
+
+	/* Now we write them to screen */
+	opj_event_msg(j2k->cinfo, EVT_INFO,
+		"SEC(%d)\n",
+		cio_tell(cio) - 2
+		);
+
+	cio_skip(cio, Lsec - 2);  
+}
+
+void j2k_write_sec(opj_j2k_t *j2k) {
+	unsigned short int Lsec = 24;
+	int i;
+
+	opj_cio_t *cio = j2k->cio;
+
+	cio_write(cio, J2K_MS_SEC, 2);	/* SEC */
+	cio_write(cio, Lsec, 2);
+
+	/* write dummy data */
+	for (i = 0; i < Lsec - 2; i++)
+		cio_write(cio, 0, 1);
+}
+
+void j2k_read_insec(opj_j2k_t *j2k) {
+	unsigned short int Linsec;
+	
+	opj_cio_t *cio = j2k->cio;
+
+	/* Simply read the INSEC length */
+	Linsec = cio_read(cio, 2);
+
+	/* Now we write them to screen */
+	opj_event_msg(j2k->cinfo, EVT_INFO,
+		"INSEC(%d)\n",
+		cio_tell(cio) - 2
+		);
+
+	cio_skip(cio, Linsec - 2);  
+}
+
+
+/*@}*/
+
+/*@}*/
+
+#endif /* USE_JPSEC */
+

@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+September 3, 2007
++ [GB] Added the knowledge of JPSEC SEC and INSEC markers (you have to compile the JPWL project). Management of these markers is limited to skipping them without crashing: no real security function at this stage. Deprecated USE_JPSEC will be removed next
+
 August 31, 2007
 * [GB] Fixed save capabilities in OPJViewer due to recent code upgrade
 

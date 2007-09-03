@@ -1541,6 +1541,10 @@ opj_dec_mstabent_t j2k_dec_mstab[] = {
   {J2K_MS_ESD, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_esd},
   {J2K_MS_RED, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_red},
 #endif /* USE_JPWL */
+#ifdef USE_JPSEC
+  {J2K_MS_SEC, J2K_STATE_MH, j2k_read_sec},
+  {J2K_MS_INSEC, 0, j2k_read_insec},
+#endif /* USE_JPSEC */
 
   {0, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_unk}
 };
@@ -2260,6 +2264,9 @@ bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, opj_codestre
 			j2k_write_poc(j2k);
 		}
 	}
+
+	/* uncomment only for testing JPSEC marker writing */
+	/* j2k_write_sec(j2k); */
 
 	/* INDEX >> */
 	if(cstr_info && cstr_info->index_on) {

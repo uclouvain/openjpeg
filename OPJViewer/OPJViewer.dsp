@@ -42,7 +42,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /G6 /MD /W3 /GX /O2 /I "d:\programmi\wxWidgets-2.8.0\lib\vc_lib\msw" /I "d:\programmi\wxWidgets-2.8.0\include" /I ".." /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "_MBCS" /D "_WINDOWS" /D WINVER=0x400 /D "_MT" /D wxUSE_GUI=1 /D "wxUSE_LIBOPENJPEG" /D "OPJ_STATIC" /D "USE_JPWL" /D "OPJ_HTMLABOUT" /D "OPJ_MANYFORMATS" /D "OPJ_INICONFIG" /FR /FD /c
+# ADD CPP /nologo /G6 /MD /W3 /GX /O2 /I "d:\programmi\wxWidgets-2.8.0\lib\vc_lib\msw" /I "d:\programmi\wxWidgets-2.8.0\include" /I ".." /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "_MBCS" /D "_WINDOWS" /D WINVER=0x400 /D "_MT" /D wxUSE_GUI=1 /D "wxUSE_LIBOPENJPEG" /D "OPJ_STATIC" /D "USE_JPWL" /D "USE_JPSEC" /D "OPJ_HTMLABOUT" /D "OPJ_MANYFORMATS" /D "OPJ_INICONFIG" /FR /FD /c
 # ADD BASE RSC /l 0x410 /d "NDEBUG"
 # ADD RSC /l 0x409 /i "d:\programmi\wxWidgets-2.8.0\include" /d "NDEBUG"
 BSC32=bscmake.exe
