@@ -421,6 +421,16 @@ int j2k_calculate_tp(opj_cp_t *cp,int img_numcomp,opj_image_t *image,opj_j2k_t *
 			pi_destroy(pi, cp, tileno);
 		}
 		j2k->cur_totnum_tp[tileno] = cur_totnum_tp;
+/* UniPG>> */
+		/* INDEX >> */
+		if (j2k->cstr_info && j2k->cstr_info->index_on) {
+			j2k->cstr_info->tile[tileno].num_tps = cur_totnum_tp;
+			j2k->cstr_info->tile[tileno].tp_start_pos = (int *) opj_malloc(cur_totnum_tp * sizeof(int));
+			j2k->cstr_info->tile[tileno].tp_end_header = (int *) opj_malloc(cur_totnum_tp * sizeof(int));
+			j2k->cstr_info->tile[tileno].tp_end_pos = (int *) opj_malloc(cur_totnum_tp	* sizeof(int));
+		}
+		/* << INDEX */
+/* <<UniPG */
 	}
 	return totnum_tp;
 }
@@ -1913,6 +1923,13 @@ void j2k_destroy_compress(opj_j2k_t *j2k) {
 				opj_tile_info_t *tile_info = &cstr_info->tile[tileno];
 				opj_free(tile_info->thresh);
 				opj_free(tile_info->packet);
+/* UniPG>> */
+                /* INDEX >> */
+                opj_free(tile_info->tp_start_pos);
+                opj_free(tile_info->tp_end_header);
+                opj_free(tile_info->tp_end_pos);
+                /* << INDEX */
+/* <<UniPG */
 			}
 			opj_free(cstr_info->tile);
 		}
@@ -2229,6 +2246,9 @@ bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, opj_codestre
 		cstr_info->layer = (&cp->tcps[0])->numlayers;
 		cstr_info->decomposition = (&cp->tcps[0])->tccps->numresolutions - 1;
 		cstr_info->D_max = 0;		/* ADD Marcela */
+/* UniPG>> */
+		cstr_info->main_head_start = cio_tell(cio); /* position of SOC */
+/* <<UniPG */
 	}
 	else if (cstr_info) {
 		cstr_info->index_on = 0;
@@ -2313,6 +2333,13 @@ bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, opj_codestre
 
 			for(tilepartno = 0; tilepartno < tot_num_tp ; tilepartno++){
 				j2k->tp_num = tilepartno;
+/* UniPG>> */
+				/* INDEX >> */
+				if(cstr_info && cstr_info->index_on)
+					cstr_info->tile[j2k->curtileno].tp_start_pos[j2k->cur_tp_num] =
+						cio_tell(cio) + j2k->pos_correction;
+				/* << INDEX */
+/* <<UniPG */				
 				j2k_write_sot(j2k);
 
 				if(j2k->cur_tp_num == 0 && cp->cinema == 0){
@@ -2325,7 +2352,21 @@ bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, opj_codestre
 					}
 				}
 
+/* UniPG>> */
+				/* INDEX >> */
+				if(cstr_info && cstr_info->index_on)
+					cstr_info->tile[j2k->curtileno].tp_end_header[j2k->cur_tp_num] =
+						cio_tell(cio) + j2k->pos_correction + 1;
+				/* << INDEX */
+/* <<UniPG */
 				j2k_write_sod(j2k, tcd);
+/* UniPG>> */
+				/* INDEX >> */
+				if(cstr_info && cstr_info->index_on)
+					cstr_info->tile[j2k->curtileno].tp_end_pos[j2k->cur_tp_num] =
+						cio_tell(cio) + j2k->pos_correction - 1;
+				/* << INDEX */
+/* <<UniPG */
 				j2k->cur_tp_num ++;
 			}
 			
@@ -2364,7 +2405,13 @@ bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, opj_codestre
 	j2k_write_eoc(j2k);
 
 	if(cstr_info && cstr_info->index_on) {
-		cstr_info->codestream_size = cio_tell(cio) + j2k->pos_correction;	
+		cstr_info->codestream_size = cio_tell(cio) + j2k->pos_correction;
+/* UniPG>> */
+		/* The following adjustment is done to adjust the codestream size */
+		/* if SOD is not at 0 in the buffer. Useful in case of JP2, where */
+		/* the first unch of bytes is not in the codestream               */
+		cstr_info->codestream_size -= cstr_info->main_head_start;
+/* <<UniPG */
 	}
 
 #ifdef USE_JPWL

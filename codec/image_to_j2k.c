@@ -559,6 +559,9 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 	int tileno, compno, layno, resno, precno, pack_nb, x, y;
 	FILE *stream = NULL;
 	double total_disto = 0;
+/* UniPG>> */
+	int tilepartno;
+/* <<UniPG */
 
 	if (!cstr_info)		
 		return 1;
@@ -582,17 +585,31 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 			(1 << cstr_info->tile[0].pdx[resno]), (1 << cstr_info->tile[0].pdx[resno]));	/* based on tile 0 */
 	}
 	fprintf(stream, "\n");
+/* UniPG>> */
+	fprintf(stream, "%d\n", cstr_info->main_head_start);
+/* <<UniPG */
 	fprintf(stream, "%d\n", cstr_info->main_head_end);
 	fprintf(stream, "%d\n", cstr_info->codestream_size);
 	
 	fprintf(stream, "\nINFO ON TILES\n");
-	fprintf(stream, "tileno start_pos  end_hd  end_tile         disto     nbpix   disto/nbpix\n");
+	fprintf(stream, "tileno start_pos  end_hd  end_tile"
+/* UniPG>> */
+		"   nbparts"
+/* <<UniPG */
+		"         disto     nbpix   disto/nbpix\n");
 	for (tileno = 0; tileno < cstr_info->tw * cstr_info->th; tileno++) {
-		fprintf(stream, "%4d %9d %9d %9d %9e %9d %9e\n",
+		fprintf(stream, "%4d %9d %9d %9d "
+/* UniPG>> */
+			"%9d "
+/* <<UniPG */
+			"%9e %9d %9e\n",
 			cstr_info->tile[tileno].num_tile,
 			cstr_info->tile[tileno].start_pos,
 			cstr_info->tile[tileno].end_header,
 			cstr_info->tile[tileno].end_pos,
+/* UniPG>> */
+			cstr_info->tile[tileno].num_tps,
+/* <<UniPG */
 			cstr_info->tile[tileno].distotile, cstr_info->tile[tileno].nbpix,
 			cstr_info->tile[tileno].distotile / cstr_info->tile[tileno].nbpix);
 	}
@@ -602,7 +619,17 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 		double disto = 0;
 		pack_nb = 0;
 
-		fprintf(stream, "\nTILE %d DETAILS\n", tileno);				
+		fprintf(stream, "\nTILE %d DETAILS\n", tileno);	
+/* UniPG>> */
+		fprintf(stream, "part_nb tileno start_pos end_tph_pos   end_pos\n");
+		for (tilepartno = 0; tilepartno < cstr_info->tile[tileno].num_tps; tilepartno++)
+			fprintf(stream, "%4d %9d %9d %11d %9d\n",
+				tilepartno, tileno,
+				cstr_info->tile[tileno].tp_start_pos[tilepartno],
+				cstr_info->tile[tileno].tp_end_header[tilepartno],
+				cstr_info->tile[tileno].tp_end_pos[tilepartno]
+				);
+/* <<UniPG */
 		if (cstr_info->prog == LRCP) {	/* LRCP */
 
 			fprintf(stream, "LRCP\npack_nb tileno layno resno compno precno start_pos end_ph_pos end_pos disto\n");

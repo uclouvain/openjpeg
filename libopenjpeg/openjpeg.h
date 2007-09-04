@@ -628,6 +628,16 @@ typedef struct opj_tile_info {
 	int nbpix;
 	/** add fixed_quality */
 	double distotile;
+	/* UniPG>> */
+    /** number of tile parts */
+    int num_tps;
+    /** start position of tile part */
+    int *tp_start_pos;
+    /** end position of tile part header */
+    int *tp_end_header;
+    /** end position of tile part */
+    int *tp_end_pos;
+	/* << UniPG */
 } opj_tile_info_t;
 
 /**
@@ -666,6 +676,10 @@ typedef struct opj_codestream_info {
 	int layer;
 	/** number of decomposition */
 	int decomposition;
+/* UniPG>> */
+    /** main header position */
+    int main_head_start;
+/* <<UniPG */
 	/** main header position */
 	int main_head_end;
 	/** codestream's size */
