@@ -53,6 +53,7 @@ ENDIF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/openjpeg_mangle.h.in)
 INCLUDE_DIRECTORIES(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 SUBDIRS(
   libopenjpeg
+  mj2
   )
 #-----------------------------------------------------------------------------
 # Build example only if requested
