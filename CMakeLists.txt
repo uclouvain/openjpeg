@@ -35,6 +35,12 @@ SET(OPENJPEG_VERSION
 OPTION(BUILD_SHARED_LIBS "Build OpenJPEG with shared libraries." OFF)
 
 #-----------------------------------------------------------------------------
+SET (EXECUTABLE_OUTPUT_PATH ${OPENJPEG_BINARY_DIR}/bin CACHE PATH "Single output directory for building all executables.")
+SET (LIBRARY_OUTPUT_PATH ${OPENJPEG_BINARY_DIR}/bin CACHE PATH "Single output directory for building all libraries.")
+MARK_AS_ADVANCED(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
+
+
+#-----------------------------------------------------------------------------
 # For the codec...
 OPTION(BUILD_EXAMPLES "Build the Examples (codec...)." OFF)
 
