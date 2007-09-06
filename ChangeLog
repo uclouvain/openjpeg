@@ -6,13 +6,14 @@ What's New for OpenJPEG
 + : added
 
 September 6, 2007
-* [Mathieu Malaterre] CMake: start compiling mj2, jpwl and jp3d
-* [Mathieu Malaterre] CMake: output all executable/libs into one single directory
-* [Mathieu Malaterre] CMake: start compiling index_create
-* [Mathieu Malaterre] OpenJPEG.rc update copyright year
-* [Mathieu Malaterre] CMake: add Java j2kviewer but do not compile it using cmake since cmake has too poor support for Java. Should create a custom command running ant instead.
-* [Mathieu Malaterre] CMake: Add doxygen output
++ [Mathieu Malaterre] CMake: start compiling mj2, jpwl and jp3d
++ [Mathieu Malaterre] CMake: output all executable/libs into one single directory
++ [Mathieu Malaterre] CMake: start compiling index_create
++ [Mathieu Malaterre] OpenJPEG.rc update copyright year
++ [Mathieu Malaterre] CMake: add Java j2kviewer but do not compile it using cmake since cmake has too poor support for Java. Should create a custom command running ant instead.
++ [Mathieu Malaterre] CMake: Add doxygen output
 + [GB] One more field in the codestream_info struct for recording the number of packets per tile part; JPWL now distributes the EPBs in all the tile part headers
++ [Mathieu Malaterre] CMake: Add very simple tests (simply run command line with no option)
 
 September 4, 2007
 + [GB] Added some fields in the codestream_info structure: they are used to record the position of single tile parts. Changed also the write_index function in the codec, to reflect the presence of this new information.

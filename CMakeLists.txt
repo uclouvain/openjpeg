@@ -81,7 +81,7 @@ ENDIF(BUILD_DOCUMENTATION)
 
 #-----------------------------------------------------------------------------
 # For openjpeg team if they ever want Dart+CMake
-IF(OPJ_STANDALONE)
+IF(OPENJPEG_STANDALONE)
   INCLUDE(Dart)
   MARK_AS_ADVANCED(BUILD_TESTING DART_ROOT TCL_TCLSH)
   IF(BUILD_TESTING)
@@ -89,7 +89,7 @@ IF(OPJ_STANDALONE)
     SET(BUILDNAME "OpenJPEG-${CMAKE_SYSTEM}-${CMAKE_C_COMPILER}" CACHE STRING "Name of build on the dashboard")
     MARK_AS_ADVANCED(BUILDNAME)
   ENDIF(BUILD_TESTING)
-ENDIF(OPJ_STANDALONE)
+ENDIF(OPENJPEG_STANDALONE)
 
 # TODO, technically we should add tests, e.g:
 # http://www.crc.ricoh.com/~gormish/jpeg2000conformance/
