@@ -12,9 +12,11 @@ September 6, 2007
 * [Mathieu Malaterre] OpenJPEG.rc update copyright year
 * [Mathieu Malaterre] CMake: add Java j2kviewer but do not compile it using cmake since cmake has too poor support for Java. Should create a custom command running ant instead.
 * [Mathieu Malaterre] CMake: Add doxygen output
++ [GB] One more field in the codestream_info struct for recording the number of packets per tile part; JPWL now distributes the EPBs in all the tile part headers
 
 September 4, 2007
 + [GB] Added some fields in the codestream_info structure: they are used to record the position of single tile parts. Changed also the write_index function in the codec, to reflect the presence of this new information.
+
 September 3, 2007
 + [GB] Added the knowledge of JPSEC SEC and INSEC markers (you have to compile the JPWL project). Management of these markers is limited to skipping them without crashing: no real security function at this stage. Deprecated USE_JPSEC will be removed next
 

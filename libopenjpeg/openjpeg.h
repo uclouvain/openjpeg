@@ -628,7 +628,7 @@ typedef struct opj_tile_info {
 	int nbpix;
 	/** add fixed_quality */
 	double distotile;
-	/* UniPG>> */
+/* UniPG>> */
     /** number of tile parts */
     int num_tps;
     /** start position of tile part */
@@ -637,7 +637,9 @@ typedef struct opj_tile_info {
     int *tp_end_header;
     /** end position of tile part */
     int *tp_end_pos;
-	/* << UniPG */
+	/** number of packets of tile part */
+	int *tp_num;
+/* << UniPG */
 } opj_tile_info_t;
 
 /**

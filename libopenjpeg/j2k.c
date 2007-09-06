@@ -428,6 +428,7 @@ int j2k_calculate_tp(opj_cp_t *cp,int img_numcomp,opj_image_t *image,opj_j2k_t *
 			j2k->cstr_info->tile[tileno].tp_start_pos = (int *) opj_malloc(cur_totnum_tp * sizeof(int));
 			j2k->cstr_info->tile[tileno].tp_end_header = (int *) opj_malloc(cur_totnum_tp * sizeof(int));
 			j2k->cstr_info->tile[tileno].tp_end_pos = (int *) opj_malloc(cur_totnum_tp	* sizeof(int));
+			j2k->cstr_info->tile[tileno].tp_num = (int *) opj_malloc(cur_totnum_tp	* sizeof(int));
 		}
 		/* << INDEX */
 /* <<UniPG */
@@ -1928,6 +1929,7 @@ void j2k_destroy_compress(opj_j2k_t *j2k) {
                 opj_free(tile_info->tp_start_pos);
                 opj_free(tile_info->tp_end_header);
                 opj_free(tile_info->tp_end_pos);
+                opj_free(tile_info->tp_num);
                 /* << INDEX */
 /* <<UniPG */
 			}
@@ -2221,6 +2223,10 @@ bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, opj_codestre
 
 	opj_tcd_t *tcd = NULL;	/* TCD component */
 
+/* UniPG>> */
+	int acc_pack_num = 0;
+/* <<UniPG */
+
 	j2k->cio = cio;	
 	j2k->image = image;
 
@@ -2362,9 +2368,13 @@ bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, opj_codestre
 				j2k_write_sod(j2k, tcd);
 /* UniPG>> */
 				/* INDEX >> */
-				if(cstr_info && cstr_info->index_on)
+				if(cstr_info && cstr_info->index_on) {
 					cstr_info->tile[j2k->curtileno].tp_end_pos[j2k->cur_tp_num] =
 						cio_tell(cio) + j2k->pos_correction - 1;
+					cstr_info->tile[j2k->curtileno].tp_num[j2k->cur_tp_num] =
+						cstr_info->num - acc_pack_num;
+					acc_pack_num = cstr_info->num;
+				}
 				/* << INDEX */
 /* <<UniPG */
 				j2k->cur_tp_num ++;
@@ -2409,7 +2419,7 @@ bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, opj_codestre
 /* UniPG>> */
 		/* The following adjustment is done to adjust the codestream size */
 		/* if SOD is not at 0 in the buffer. Useful in case of JP2, where */
-		/* the first unch of bytes is not in the codestream               */
+		/* the first bunch of bytes is not in the codestream              */
 		cstr_info->codestream_size -= cstr_info->main_head_start;
 /* <<UniPG */
 	}
@@ -2419,7 +2429,7 @@ bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, opj_codestre
 	preparation of JPWL marker segments: can be finalized only when the whole
 	codestream is known
 	*/
-	if(cstr_info && cstr_info->index_on && cp->epc_on) {
+	if(cp->epc_on) {
 
 		/* let's begin creating a marker list, according to user wishes */
 		jpwl_prepare_marks(j2k, cio, image);
@@ -2430,6 +2440,7 @@ bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, opj_codestre
 		/* do not know exactly what is this for,
 		but it gets called during index creation */
 		j2k->pos_correction = 0;
+
 	}
 #endif /* USE_JPWL */
 

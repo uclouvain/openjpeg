@@ -209,31 +209,31 @@ void encode_help_display() {
 #ifdef USE_JPWL
 	fprintf(stdout,"-W           : adoption of JPWL (Part 11) capabilities (-W params)\n");
 	fprintf(stdout,"               The parameters can be written and repeated in any order:\n");
-	fprintf(stdout,"               [h<tile><=type>,s<tile><=method>,a=<addr>,z=<size>,g=<range>,...\n");
-	fprintf(stdout,"                ...,p<tile:pack><=type>]\n");
+	fprintf(stdout,"               [h<tilepart><=type>,s<tilepart><=method>,a=<addr>,...\n");
+	fprintf(stdout,"                ...,z=<size>,g=<range>,p<tilepart:pack><=type>]\n");
 	fprintf(stdout,"\n");
 	fprintf(stdout,"                 h selects the header error protection (EPB): 'type' can be\n");
 	fprintf(stdout,"                   [0=none 1,absent=predefined 16=CRC-16 32=CRC-32 37-128=RS]\n");
-	fprintf(stdout,"                   if 'tile' is absent, it applies to main and tile headers\n");
-	fprintf(stdout,"                   if 'tile' is present, it applies from that tile\n");
-	fprintf(stdout,"                     onwards, up to the next h<tile> spec, or to the last tile\n");
+	fprintf(stdout,"                   if 'tilepart' is absent, it is for main and tile headers\n");
+	fprintf(stdout,"                   if 'tilepart' is present, it applies from that tile\n");
+	fprintf(stdout,"                     onwards, up to the next h<> spec, or to the last tilepart\n");
 	fprintf(stdout,"                     in the codestream (max. %d specs)\n", JPWL_MAX_NO_TILESPECS);
 	fprintf(stdout,"\n");
 	fprintf(stdout,"                 p selects the packet error protection (EEP/UEP with EPBs)\n");
 	fprintf(stdout,"                  to be applied to raw data: 'type' can be\n");
 	fprintf(stdout,"                   [0=none 1,absent=predefined 16=CRC-16 32=CRC-32 37-128=RS]\n");
-	fprintf(stdout,"                   if 'tile:pack' is absent, it starts from tile 0, packet 0\n");
-	fprintf(stdout,"                   if 'tile:pack' is present, it applies from that tile\n");
+	fprintf(stdout,"                   if 'tilepart:pack' is absent, it is from tile 0, packet 0\n");
+	fprintf(stdout,"                   if 'tilepart:pack' is present, it applies from that tile\n");
 	fprintf(stdout,"                     and that packet onwards, up to the next packet spec\n");
-	fprintf(stdout,"                     or to the last packet in the last tile in the codestream\n");
+	fprintf(stdout,"                     or to the last packet in the last tilepart in the stream\n");
 	fprintf(stdout,"                     (max. %d specs)\n", JPWL_MAX_NO_PACKSPECS);
 	fprintf(stdout,"\n");
 	fprintf(stdout,"                 s enables sensitivity data insertion (ESD): 'method' can be\n");
 	fprintf(stdout,"                   [-1=NO ESD 0=RELATIVE ERROR 1=MSE 2=MSE REDUCTION 3=PSNR\n");
 	fprintf(stdout,"                    4=PSNR INCREMENT 5=MAXERR 6=TSE 7=RESERVED]\n");
-	fprintf(stdout,"                   if 'tile' is absent, it applies to main header only\n");
-	fprintf(stdout,"                   if 'tile' is present, it applies from that tile\n");
-	fprintf(stdout,"                     onwards, up to the next s<tile> spec, or to the last tile\n");
+	fprintf(stdout,"                   if 'tilepart' is absent, it is for main header only\n");
+	fprintf(stdout,"                   if 'tilepart' is present, it applies from that tile\n");
+	fprintf(stdout,"                     onwards, up to the next s<> spec, or to the last tilepart\n");
 	fprintf(stdout,"                     in the codestream (max. %d specs)\n", JPWL_MAX_NO_TILESPECS);
 	fprintf(stdout,"\n");
 	fprintf(stdout,"                 g determines the addressing mode: <range> can be\n");
@@ -246,15 +246,16 @@ void encode_help_display() {
 	fprintf(stdout,"                   1/2 bytes, for the transformed pseudo-floating point value\n");
 	fprintf(stdout,"\n");
 	fprintf(stdout,"                 ex.:\n");
-	fprintf(stdout," h,h0=64,h3=16,h5=32,p0=78,p0:24=56,p1,p3:0=0,p3:20=32,s=0,s0=6,s3=-1,a=0,g=1,z=1\n");
+	fprintf(stdout,"                   h,h0=64,h3=16,h5=32,p0=78,p0:24=56,p1,p3:0=0,p3:20=32,s=0,\n");
+	fprintf(stdout,"                     s0=6,s3=-1,a=0,g=1,z=1\n");
 	fprintf(stdout,"                 means\n");
 	fprintf(stdout,"                   predefined EPB in MH, rs(64,32) from TPH 0 to TPH 2,\n");
 	fprintf(stdout,"                   CRC-16 in TPH 3 and TPH 4, CRC-32 in remaining TPHs,\n");
 	fprintf(stdout,"                   UEP rs(78,32) for packets 0 to 23 of tile 0,\n");
-	fprintf(stdout,"                   UEP rs(56,32) for packets 24 to the last of tile 0,\n");
-	fprintf(stdout,"                   UEP rs default for packets of tile 1,\n");
-	fprintf(stdout,"                   no UEP for packets 0 to 19 of tile 3,\n");
-	fprintf(stdout,"                   UEP CRC-32 for packets 20 of tile 3 to last tile,\n");
+	fprintf(stdout,"                   UEP rs(56,32) for packs. 24 to the last of tilepart 0,\n");
+	fprintf(stdout,"                   UEP rs default for packets of tilepart 1,\n");
+	fprintf(stdout,"                   no UEP for packets 0 to 19 of tilepart 3,\n");
+	fprintf(stdout,"                   UEP CRC-32 for packs. 20 of tilepart 3 to last tilepart,\n");
 	fprintf(stdout,"                   relative sensitivity ESD for MH,\n");
 	fprintf(stdout,"                   TSE ESD from TPH 0 to TPH 2, byte range with automatic\n");
 	fprintf(stdout,"                   size of addresses and 1 byte for each sensitivity value\n");
@@ -561,6 +562,11 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 	double total_disto = 0;
 /* UniPG>> */
 	int tilepartno;
+
+#ifdef USE_JPWL
+	if (!strcmp(index, JPWL_PRIVATEINDEX_NAME))
+		return 0;
+#endif /* USE_JPWL */
 /* <<UniPG */
 
 	if (!cstr_info)		
@@ -621,10 +627,11 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 
 		fprintf(stream, "\nTILE %d DETAILS\n", tileno);	
 /* UniPG>> */
-		fprintf(stream, "part_nb tileno start_pos end_tph_pos   end_pos\n");
+		fprintf(stream, "part_nb tileno   pack_nb start_pos end_tph_pos   end_pos\n");
 		for (tilepartno = 0; tilepartno < cstr_info->tile[tileno].num_tps; tilepartno++)
-			fprintf(stream, "%4d %9d %9d %11d %9d\n",
+			fprintf(stream, "%4d %9d %9d %9d %11d %9d\n",
 				tilepartno, tileno,
+				cstr_info->tile[tileno].tp_num[tilepartno],
 				cstr_info->tile[tileno].tp_start_pos[tilepartno],
 				cstr_info->tile[tileno].tp_end_header[tilepartno],
 				cstr_info->tile[tileno].tp_end_pos[tilepartno]
@@ -1326,11 +1333,11 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 							/* Tile part header, specified */
 							if (!((hprot == 0) || (hprot == 1) || (hprot == 16) || (hprot == 32) ||
 								((hprot >= 37) && (hprot <= 128)))) {
-								fprintf(stderr, "ERROR -> invalid tile header protection method h = %d\n", hprot);
+								fprintf(stderr, "ERROR -> invalid tile part header protection method h = %d\n", hprot);
 								return 1;
 							}
 							if (tile < 0) {
-								fprintf(stderr, "ERROR -> invalid tile number on protection method t = %d\n", tile);
+								fprintf(stderr, "ERROR -> invalid tile part number on protection method t = %d\n", tile);
 								return 1;
 							}
 							if (tilespec < JPWL_MAX_NO_TILESPECS) {
@@ -1341,7 +1348,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 						} else if(sscanf(token, "h%d", &tile) == 1) {
 							/* Tile part header, unspecified */
 							if (tile < 0) {
-								fprintf(stderr, "ERROR -> invalid tile number on protection method t = %d\n", tile);
+								fprintf(stderr, "ERROR -> invalid tile part number on protection method t = %d\n", tile);
 								return 1;
 							}
 							if (tilespec < JPWL_MAX_NO_TILESPECS) {
@@ -1387,7 +1394,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 								return 1;
 							}
 							if (tile < 0) {
-								fprintf(stderr, "ERROR -> invalid tile number on protection method p = %d\n", tile);
+								fprintf(stderr, "ERROR -> invalid tile part number on protection method p = %d\n", tile);
 								return 1;
 							}
 							if (packspec < JPWL_MAX_NO_PACKSPECS) {
@@ -1404,7 +1411,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 								return 1;
 							}
 							if (tile < 0) {
-								fprintf(stderr, "ERROR -> invalid tile number on protection method p = %d\n", tile);
+								fprintf(stderr, "ERROR -> invalid tile part number on protection method p = %d\n", tile);
 								return 1;
 							}
 							if (pack < 0) {
@@ -1425,7 +1432,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 								return 1;
 							}
 							if (tile < 0) {
-								fprintf(stderr, "ERROR -> invalid tile number on protection method p = %d\n", tile);
+								fprintf(stderr, "ERROR -> invalid tile part number on protection method p = %d\n", tile);
 								return 1;
 							}
 							if (pack < 0) {
@@ -1441,7 +1448,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 						} else if (sscanf(token, "p%d", &tile) == 1) {
 							/* default from a tile on */
 							if (tile < 0) {
-								fprintf(stderr, "ERROR -> invalid tile number on protection method p = %d\n", tile);
+								fprintf(stderr, "ERROR -> invalid tile part number on protection method p = %d\n", tile);
 								return 1;
 							}
 							if (packspec < JPWL_MAX_NO_PACKSPECS) {
@@ -1482,11 +1489,11 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 						} else if(sscanf(token, "s%d=%d", &tile, &sens) == 2) {
 							/* Tile part header, specified */
 							if ((sens < -1) || (sens > 7)) {
-								fprintf(stderr, "ERROR -> invalid tile header sensitivity method s = %d\n", sens);
+								fprintf(stderr, "ERROR -> invalid tile part header sensitivity method s = %d\n", sens);
 								return 1;
 							}
 							if (tile < 0) {
-								fprintf(stderr, "ERROR -> invalid tile number on sensitivity method t = %d\n", tile);
+								fprintf(stderr, "ERROR -> invalid tile part number on sensitivity method t = %d\n", tile);
 								return 1;
 							}
 							if (tilespec < JPWL_MAX_NO_TILESPECS) {
@@ -1497,7 +1504,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 						} else if(sscanf(token, "s%d", &tile) == 1) {
 							/* Tile part header, unspecified */
 							if (tile < 0) {
-								fprintf(stderr, "ERROR -> invalid tile number on sensitivity method t = %d\n", tile);
+								fprintf(stderr, "ERROR -> invalid tile part number on sensitivity method t = %d\n", tile);
 								return 1;
 							}
 							if (tilespec < JPWL_MAX_NO_TILESPECS) {

@@ -1658,7 +1658,7 @@ bool jpwl_update_info(opj_j2k_t *j2k, jpwl_marker_t *jwmarker, int jwmarker_num)
 	unsigned long int addlen;
 
 	opj_codestream_info_t *info = j2k->cstr_info;
-	int tileno, packno, numtiles = info->th * info->tw, numpacks = info->num;
+	int tileno, tpno, packno, numtiles = info->th * info->tw, numpacks = info->num;
 
 	if (!j2k || !jwmarker ) {
 		opj_event_msg(j2k->cinfo, EVT_ERROR, "J2K handle or JPWL markers list badly allocated\n");
@@ -1702,6 +1702,32 @@ bool jpwl_update_info(opj_j2k_t *j2k, jpwl_marker_t *jwmarker, int jwmarker_num)
 			if (jwmarker[mm].pos < (unsigned long int) info->tile[tileno].end_pos)
 				addlen += jwmarker[mm].len + 2;*/
 		info->tile[tileno].end_pos += addlen;
+
+		/* navigate through all the tile parts */
+		for (tpno = 0; tpno < info->tile[tileno].num_tps; tpno++) {
+
+			/* start_pos: increment with markers before SOT */
+			addlen = 0;
+			for (mm = 0; mm < jwmarker_num; mm++)
+				if (jwmarker[mm].pos < (unsigned long int) info->tile[tileno].tp_start_pos[tpno])
+					addlen += jwmarker[mm].len + 2;
+			info->tile[tileno].tp_start_pos[tpno] += addlen;
+
+			/* end_header: increment with markers before of it */
+			addlen = 0;
+			for (mm = 0; mm < jwmarker_num; mm++)
+				if (jwmarker[mm].pos < (unsigned long int) info->tile[tileno].tp_end_header[tpno])
+					addlen += jwmarker[mm].len + 2;
+			info->tile[tileno].tp_end_header[tpno] += addlen;
+
+			/* end_pos: increment with markers before the end of this tile part */
+			addlen = 0;
+			for (mm = 0; mm < jwmarker_num; mm++)
+				if (jwmarker[mm].pos < (unsigned long int) info->tile[tileno].tp_end_pos[tpno])
+					addlen += jwmarker[mm].len + 2;
+			info->tile[tileno].tp_end_pos[tpno] += addlen;
+
+		}
 
 		/* navigate through all the packets in this tile */
 		for (packno = 0; packno < numpacks; packno++) {

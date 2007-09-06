@@ -110,10 +110,10 @@ void jpwl_esd_write(jpwl_esd_ms_t *esdmark, unsigned char *buf);
 void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 
 	unsigned short int socsiz_len = 0;
-	int ciopos = cio_tell(cio);
+	int ciopos = cio_tell(cio), soc_pos = j2k->cstr_info->main_head_start;
 	unsigned char *socp = NULL;
 
-	int tileno, tilespec, hprot, sens, pprot, packspec, lastileno, packno;
+	int tileno, acc_tpno, tpno, tilespec, hprot, sens, pprot, packspec, lastileno, packno;
 
 	jpwl_epb_ms_t *epb_mark;
 	jpwl_epc_ms_t *epc_mark;
@@ -121,9 +121,9 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 
 	/* find SOC + SIZ length */
 	/* I assume SIZ is always the first marker after SOC */
-	cio_seek(cio, 4);
+	cio_seek(cio, soc_pos + 4);
 	socsiz_len = (unsigned short int) cio_read(cio, 2) + 4; /* add the 2 marks length itself */
-	cio_seek(cio, 0);
+	cio_seek(cio, soc_pos + 0);
 	socp = cio_getbp(cio); /* pointer to SOC */
 
 	/* 
@@ -142,7 +142,7 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 		if (epc_mark) {
 			jwmarker[jwmarker_num].id = J2K_MS_EPC; /* its type */
 			jwmarker[jwmarker_num].epcmark = epc_mark; /* the EPC */
-			jwmarker[jwmarker_num].pos = socsiz_len; /* after SIZ */
+			jwmarker[jwmarker_num].pos = soc_pos + socsiz_len; /* after SIZ */
 			jwmarker[jwmarker_num].dpos = (double) jwmarker[jwmarker_num].pos + 0.1; /* not so first */
 			jwmarker[jwmarker_num].len = epc_mark->Lepc; /* its length */
 			jwmarker[jwmarker_num].len_ready = true; /* ready */
@@ -187,7 +187,7 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 			if (jwmarker_num < JPWL_MAX_NO_MARKERS) {
 				jwmarker[jwmarker_num].id = J2K_MS_ESD; /* its type */
 				jwmarker[jwmarker_num].esdmark = esd_mark; /* the EPB */
-				jwmarker[jwmarker_num].pos = socsiz_len; /* we choose to place it after SIZ */
+				jwmarker[jwmarker_num].pos = soc_pos + socsiz_len; /* we choose to place it after SIZ */
 				jwmarker[jwmarker_num].dpos = (double) jwmarker[jwmarker_num].pos + 0.2; /* not first at all! */
 				jwmarker[jwmarker_num].len = esd_mark->Lesd; /* its length */
 				jwmarker[jwmarker_num].len_ready = true; /* not ready, yet */
@@ -212,89 +212,107 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 	/* 
 	 ESD MSs for Tile Part Headers 
 	*/
-	/* cycle through TPHs */
+	/* cycle through tiles */
 	sens = -1; /* default spec: no ESD */
 	tilespec = 0; /* first tile spec */
+	acc_tpno = 0;
 	for (tileno = 0; tileno < j2k->cstr_info->tw * j2k->cstr_info->th; tileno++) {
 
-		int sot_len, Psot, Psotp, mm;
-		unsigned long sot_pos, post_sod_pos;
+		opj_event_msg(j2k->cinfo, EVT_INFO,
+			"Tile %d has %d tile part(s)\n",
+			tileno, j2k->cstr_info->tile[tileno].num_tps
+			);
 
-		unsigned long int left_THmarks_len;
+		/* for every tile part in the tile */
+		for (tpno = 0; tpno < j2k->cstr_info->tile[tileno].num_tps; tpno++, acc_tpno++) {
+	
+			int sot_len, Psot, Psotp, mm;
+			unsigned long sot_pos, post_sod_pos;
 
-		sot_pos = j2k->cstr_info->tile[tileno].start_pos;
-		cio_seek(cio, sot_pos + 2); 
-		sot_len = cio_read(cio, 2); /* SOT Len */
-		cio_skip(cio, 2);
-		Psotp = cio_tell(cio);
-		Psot = cio_read(cio, 4); /* tile length */
+			unsigned long int left_THmarks_len;
 
-		post_sod_pos = j2k->cstr_info->tile[tileno].end_header + 1;
-		left_THmarks_len = post_sod_pos - sot_pos;
+			/******* sot_pos = j2k->cstr_info->tile[tileno].start_pos; */
+			sot_pos = j2k->cstr_info->tile[tileno].tp_start_pos[tpno];
+			cio_seek(cio, sot_pos + 2); 
+			sot_len = cio_read(cio, 2); /* SOT Len */
+			cio_skip(cio, 2);
+			Psotp = cio_tell(cio);
+			Psot = cio_read(cio, 4); /* tile length */
 
-		/* add all the lengths of the markers which are len-ready and stay within SOT and SOD */
-		for (mm = 0; mm < jwmarker_num; mm++) {
-			if ((jwmarker[mm].pos >= sot_pos) && (jwmarker[mm].pos < post_sod_pos)) {
-				if (jwmarker[mm].len_ready)
-					left_THmarks_len += jwmarker[mm].len + 2;
-				else {
-					opj_event_msg(j2k->cinfo, EVT_ERROR, "MS %x in %f is not len-ready: could not set up TH EPB\n",
-						jwmarker[mm].id, jwmarker[mm].dpos);				
-					exit(1);
+			/******* post_sod_pos = j2k->cstr_info->tile[tileno].end_header + 1; */
+			post_sod_pos = j2k->cstr_info->tile[tileno].tp_end_header[tpno] + 1;
+			left_THmarks_len = post_sod_pos - sot_pos;
+
+			/* add all the lengths of the markers which are len-ready and stay within SOT and SOD */
+			for (mm = 0; mm < jwmarker_num; mm++) {
+				if ((jwmarker[mm].pos >= sot_pos) && (jwmarker[mm].pos < post_sod_pos)) {
+					if (jwmarker[mm].len_ready)
+						left_THmarks_len += jwmarker[mm].len + 2;
+					else {
+						opj_event_msg(j2k->cinfo, EVT_ERROR, "MS %x in %f is not len-ready: could not set up TH EPB\n",
+							jwmarker[mm].id, jwmarker[mm].dpos);				
+						exit(1);
+					}
 				}
 			}
+
+			/******* if ((tilespec < JPWL_MAX_NO_TILESPECS) && (j2k->cp->sens_TPH_tileno[tilespec] == tileno)) */
+			if ((tilespec < JPWL_MAX_NO_TILESPECS) && (j2k->cp->sens_TPH_tileno[tilespec] == acc_tpno))
+				/* we got a specification from this tile onwards */
+				sens = j2k->cp->sens_TPH[tilespec++];
+		
+			/* must this TPH have an ESD MS? */
+			if (j2k->cp->esd_on && (sens >= 0)) {
+
+				/* Create the ESD */
+				if (esd_mark = jpwl_esd_create(
+					j2k, /* this encoder handle */
+					-1, /* we are averaging over all components */
+					(unsigned char) j2k->cp->sens_range, /* range method */
+					(unsigned char) j2k->cp->sens_addr, /* sensitivity addressing size */
+					(unsigned char) sens, /* sensitivity method */
+					j2k->cp->sens_size, /* sensitivity value size */
+					tileno, /* this ESD is in a tile */
+					0, /* number of packets in codestream */
+					NULL /* pointer to sensitivity data of packets */
+					)) {
+					
+					/* Add this marker to the 'insertanda' list */
+					if (jwmarker_num < JPWL_MAX_NO_MARKERS) {
+						jwmarker[jwmarker_num].id = J2K_MS_ESD; /* its type */
+						jwmarker[jwmarker_num].esdmark = esd_mark; /* the EPB */
+						/****** jwmarker[jwmarker_num].pos = j2k->cstr_info->tile[tileno].start_pos + sot_len + 2; */ /* after SOT */
+						jwmarker[jwmarker_num].pos = soc_pos + j2k->cstr_info->tile[tileno].tp_start_pos[tpno] + sot_len + 2; /* after SOT */
+						jwmarker[jwmarker_num].dpos = (double) jwmarker[jwmarker_num].pos + 0.2; /* not first at all! */
+						jwmarker[jwmarker_num].len = esd_mark->Lesd; /* its length */
+						jwmarker[jwmarker_num].len_ready = true; /* ready, yet */
+						jwmarker[jwmarker_num].pos_ready = true; /* ready */
+						jwmarker[jwmarker_num].parms_ready = true; /* not ready */
+						jwmarker[jwmarker_num].data_ready = false; /* ready */
+						jwmarker_num++;
+					}
+
+					/* update Psot of the tile  */
+					cio_seek(cio, Psotp);
+					cio_write(cio, Psot + esd_mark->Lesd + 2, 4);
+
+					opj_event_msg(j2k->cinfo, EVT_INFO,
+						/******* "TPH ESDs: tile %02d, method %d\n", */
+						"TPH ESDs: tile %02d, part %02d, method %d\n",
+						/******* tileno, */
+						tileno, tpno,
+						sens
+						);
+
+				} else {
+					/* ooops, problems */
+					/***** opj_event_msg(j2k->cinfo, EVT_ERROR, "Could not create TPH ESD #%d\n", tileno); */
+					opj_event_msg(j2k->cinfo, EVT_ERROR, "Could not create TPH ESD #%d,%d\n", tileno, tpno);
+				};
+
+			}
+			
 		}
-
-		if ((tilespec < JPWL_MAX_NO_TILESPECS) && (j2k->cp->sens_TPH_tileno[tilespec] == tileno))
-			/* we got a specification from this tile onwards */
-			sens = j2k->cp->sens_TPH[tilespec++];
-	
-		/* must this TPH have an ESD MS? */
-		if (j2k->cp->esd_on && (sens >= 0)) {
-
-			/* Create the ESD */
-			if (esd_mark = jpwl_esd_create(
-				j2k, /* this encoder handle */
-				-1, /* we are averaging over all components */
-				(unsigned char) j2k->cp->sens_range, /* range method */
-				(unsigned char) j2k->cp->sens_addr, /* sensitivity addressing size */
-				(unsigned char) sens, /* sensitivity method */
-				j2k->cp->sens_size, /* sensitivity value size */
-				tileno, /* this ESD is in a tile */
-				0, /* number of packets in codestream */
-				NULL /* pointer to sensitivity data of packets */
-				)) {
-				
-				/* Add this marker to the 'insertanda' list */
-				if (jwmarker_num < JPWL_MAX_NO_MARKERS) {
-					jwmarker[jwmarker_num].id = J2K_MS_ESD; /* its type */
-					jwmarker[jwmarker_num].esdmark = esd_mark; /* the EPB */
-					jwmarker[jwmarker_num].pos = j2k->cstr_info->tile[tileno].start_pos + sot_len + 2; /* after SOT */
-					jwmarker[jwmarker_num].dpos = (double) jwmarker[jwmarker_num].pos + 0.2; /* not first at all! */
-					jwmarker[jwmarker_num].len = esd_mark->Lesd; /* its length */
-					jwmarker[jwmarker_num].len_ready = true; /* ready, yet */
-					jwmarker[jwmarker_num].pos_ready = true; /* ready */
-					jwmarker[jwmarker_num].parms_ready = true; /* not ready */
-					jwmarker[jwmarker_num].data_ready = false; /* ready */
-					jwmarker_num++;
-				}
-
-				/* update Psot of the tile  */
-				cio_seek(cio, Psotp);
-				cio_write(cio, Psot + esd_mark->Lesd + 2, 4);
-
-				opj_event_msg(j2k->cinfo, EVT_INFO,
-					"TPH ESDs: tile %02d, method %d\n",
-					tileno,
-					sens
-					);
-
-			} else {
-				/* ooops, problems */
-				opj_event_msg(j2k->cinfo, EVT_ERROR, "Could not create TPH ESD #%d\n", tileno);				
-			};
-
-		}				
 	
 	};
 
@@ -341,7 +359,7 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 			if (jwmarker_num < JPWL_MAX_NO_MARKERS) {
 				jwmarker[jwmarker_num].id = J2K_MS_EPB; /* its type */
 				jwmarker[jwmarker_num].epbmark = epb_mark; /* the EPB */
-				jwmarker[jwmarker_num].pos = socsiz_len; /* after SIZ */
+				jwmarker[jwmarker_num].pos = soc_pos + socsiz_len; /* after SIZ */
 				jwmarker[jwmarker_num].dpos = (double) jwmarker[jwmarker_num].pos; /* first first first! */
 				jwmarker[jwmarker_num].len = epb_mark->Lepb; /* its length */
 				jwmarker[jwmarker_num].len_ready = true; /* ready */
@@ -371,199 +389,243 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 	lastileno = 0;
 	packspec = 0;
 	pprot = -1;
+	acc_tpno = 0;
 	for (tileno = 0; tileno < j2k->cstr_info->tw * j2k->cstr_info->th; tileno++) {
 
-		int sot_len, Psot, Psotp, mm, epb_index = 0, prot_len = 0;
-		unsigned long sot_pos, post_sod_pos;
-		unsigned long int left_THmarks_len, epbs_len = 0;
-		int startpack = 0, stoppack = j2k->cstr_info->num;
-		jpwl_epb_ms_t *tph_epb = NULL;
+		opj_event_msg(j2k->cinfo, EVT_INFO,
+			"Tile %d has %d tile part(s)\n",
+			tileno, j2k->cstr_info->tile[tileno].num_tps
+			);
 
-		sot_pos = j2k->cstr_info->tile[tileno].start_pos;
-		cio_seek(cio, sot_pos + 2); 
-		sot_len = cio_read(cio, 2); /* SOT Len */
-		cio_skip(cio, 2);
-		Psotp = cio_tell(cio);
-		Psot = cio_read(cio, 4); /* tile length */
+		/* for every tile part in the tile */
+		for (tpno = 0; tpno < j2k->cstr_info->tile[tileno].num_tps; tpno++, acc_tpno++) { 
+		
+			int sot_len, Psot, Psotp, mm, epb_index = 0, prot_len = 0;
+			unsigned long sot_pos, post_sod_pos;
+			unsigned long int left_THmarks_len, epbs_len = 0;
+			int startpack = 0, stoppack = j2k->cstr_info->num;
+			int first_tp_pack, last_tp_pack;
+			jpwl_epb_ms_t *tph_epb = NULL;
 
-		/* a-priori length of the data dwelling between SOT and SOD */
-		post_sod_pos = j2k->cstr_info->tile[tileno].end_header + 1;
-		left_THmarks_len = post_sod_pos - (sot_pos + sot_len + 2);
+			/****** sot_pos = j2k->cstr_info->tile[tileno].start_pos; */
+			sot_pos = j2k->cstr_info->tile[tileno].tp_start_pos[tpno];
+			cio_seek(cio, sot_pos + 2); 
+			sot_len = cio_read(cio, 2); /* SOT Len */
+			cio_skip(cio, 2);
+			Psotp = cio_tell(cio);
+			Psot = cio_read(cio, 4); /* tile length */
 
-		/* add all the lengths of the JPWL markers which are len-ready and stay within SOT and SOD */
-		for (mm = 0; mm < jwmarker_num; mm++) {
-			if ((jwmarker[mm].pos >= sot_pos) && (jwmarker[mm].pos < post_sod_pos)) {
-				if (jwmarker[mm].len_ready)
-					left_THmarks_len += jwmarker[mm].len + 2;
-				else {
-					opj_event_msg(j2k->cinfo, EVT_ERROR, "MS %x in %f is not len-ready: could not set up TH EPB\n",
-						jwmarker[mm].id, jwmarker[mm].dpos);				
-					exit(1);
+			/* a-priori length of the data dwelling between SOT and SOD */
+			/****** post_sod_pos = j2k->cstr_info->tile[tileno].end_header + 1; */
+			post_sod_pos = j2k->cstr_info->tile[tileno].tp_end_header[tpno] + 1;
+			left_THmarks_len = post_sod_pos - (sot_pos + sot_len + 2);
+
+			/* add all the lengths of the JPWL markers which are len-ready and stay within SOT and SOD */
+			for (mm = 0; mm < jwmarker_num; mm++) {
+				if ((jwmarker[mm].pos >= sot_pos) && (jwmarker[mm].pos < post_sod_pos)) {
+					if (jwmarker[mm].len_ready)
+						left_THmarks_len += jwmarker[mm].len + 2;
+					else {
+						opj_event_msg(j2k->cinfo, EVT_ERROR, "MS %x in %f is not len-ready: could not set up TH EPB\n",
+							jwmarker[mm].id, jwmarker[mm].dpos);				
+						exit(1);
+					}
 				}
 			}
-		}
 
-		if ((tilespec < JPWL_MAX_NO_TILESPECS) && (j2k->cp->hprot_TPH_tileno[tilespec] == tileno))
-			/* we got a specification from this tile onwards */
-			hprot = j2k->cp->hprot_TPH[tilespec++];
-	
-		/* must this TPH have an EPB MS? */
-		if (j2k->cp->epb_on && (hprot > 0)) {
+			/****** if ((tilespec < JPWL_MAX_NO_TILESPECS) && (j2k->cp->hprot_TPH_tileno[tilespec] == tileno)) */
+			if ((tilespec < JPWL_MAX_NO_TILESPECS) && (j2k->cp->hprot_TPH_tileno[tilespec] == acc_tpno))
+				/* we got a specification from this tile part onwards */
+				hprot = j2k->cp->hprot_TPH[tilespec++];
+		
+			/* must this TPH have an EPB MS? */
+			if (j2k->cp->epb_on && (hprot > 0)) {
 
-			/* Create the EPB */
-			if (epb_mark = jpwl_epb_create(
-				j2k, /* this encoder handle */
-				false, /* is it the latest? in TPH, no for now (if huge data size in TPH, we'd need more) */
-				true, /* is it packed? yes for now */
-				tileno, /* we are in TPH */
-				epb_index++, /* its index is 0 (first) */
-				hprot, /* protection type parameters of following data */
-				sot_len + 2, /* pre-data length: only SOT */
-				left_THmarks_len /* post-data length: from SOT end to SOD inclusive */
-				)) {
-				
-				/* Add this marker to the 'insertanda' list */
-				if (jwmarker_num < JPWL_MAX_NO_MARKERS) {
-					jwmarker[jwmarker_num].id = J2K_MS_EPB; /* its type */
-					jwmarker[jwmarker_num].epbmark = epb_mark; /* the EPB */
-					jwmarker[jwmarker_num].pos = j2k->cstr_info->tile[tileno].start_pos + sot_len + 2; /* after SOT */
-					jwmarker[jwmarker_num].dpos = (double) jwmarker[jwmarker_num].pos; /* first first first! */
-					jwmarker[jwmarker_num].len = epb_mark->Lepb; /* its length */
-					jwmarker[jwmarker_num].len_ready = true; /* ready */
-					jwmarker[jwmarker_num].pos_ready = true; /* ready */
-					jwmarker[jwmarker_num].parms_ready = true; /* ready */
-					jwmarker[jwmarker_num].data_ready = false; /* not ready */
-					jwmarker_num++;
+				/* Create the EPB */
+				if (epb_mark = jpwl_epb_create(
+					j2k, /* this encoder handle */
+					false, /* is it the latest? in TPH, no for now (if huge data size in TPH, we'd need more) */
+					true, /* is it packed? yes for now */
+					tileno, /* we are in TPH */
+					epb_index++, /* its index is 0 (first) */
+					hprot, /* protection type parameters of following data */
+					sot_len + 2, /* pre-data length: only SOT */
+					left_THmarks_len /* post-data length: from SOT end to SOD inclusive */
+					)) {
+					
+					/* Add this marker to the 'insertanda' list */
+					if (jwmarker_num < JPWL_MAX_NO_MARKERS) {
+						jwmarker[jwmarker_num].id = J2K_MS_EPB; /* its type */
+						jwmarker[jwmarker_num].epbmark = epb_mark; /* the EPB */
+						/****** jwmarker[jwmarker_num].pos = j2k->cstr_info->tile[tileno].start_pos + sot_len + 2; */ /* after SOT */
+						jwmarker[jwmarker_num].pos = soc_pos + j2k->cstr_info->tile[tileno].tp_start_pos[tpno] + sot_len + 2; /* after SOT */
+						jwmarker[jwmarker_num].dpos = (double) jwmarker[jwmarker_num].pos; /* first first first! */
+						jwmarker[jwmarker_num].len = epb_mark->Lepb; /* its length */
+						jwmarker[jwmarker_num].len_ready = true; /* ready */
+						jwmarker[jwmarker_num].pos_ready = true; /* ready */
+						jwmarker[jwmarker_num].parms_ready = true; /* ready */
+						jwmarker[jwmarker_num].data_ready = false; /* not ready */
+						jwmarker_num++;
+					}
+
+					/* update Psot of the tile  */
+					Psot += epb_mark->Lepb + 2;
+
+					opj_event_msg(j2k->cinfo, EVT_INFO,
+						/***** "TPH EPB : tile %02d, prot. %d\n", */
+						"TPH EPB : tile %02d, part %02d, prot. %d\n",
+						/***** tileno, */
+						tileno, tpno,
+						hprot
+						);
+
+					/* save this TPH EPB address */
+					tph_epb = epb_mark;
+
+				} else {
+					/* ooops, problems */
+					/****** opj_event_msg(j2k->cinfo, EVT_ERROR, "Could not create TPH EPB #%d\n", tileno);	*/
+					opj_event_msg(j2k->cinfo, EVT_ERROR, "Could not create TPH EPB in #%d,d\n", tileno, tpno);
+				};
+
+			}				
+		
+			startpack = 0;
+			/* EPB MSs for UEP packet data protection in Tile Parts */
+			/****** for (packno = 0; packno < j2k->cstr_info->num; packno++) { */
+			first_tp_pack = (tpno > 0) ? (first_tp_pack + j2k->cstr_info->tile[tileno].tp_num[tpno - 1]) : 0;
+			last_tp_pack = first_tp_pack + j2k->cstr_info->tile[tileno].tp_num[tpno] - 1;
+			for (packno = 0; packno < j2k->cstr_info->tile[tileno].tp_num[tpno]; packno++) {
+
+				/******** if ((packspec < JPWL_MAX_NO_PACKSPECS) &&
+					(j2k->cp->pprot_tileno[packspec] == tileno) && (j2k->cp->pprot_packno[packspec] == packno)) { */
+				if ((packspec < JPWL_MAX_NO_PACKSPECS) &&
+					(j2k->cp->pprot_tileno[packspec] == acc_tpno) && (j2k->cp->pprot_packno[packspec] == packno)) {
+
+					/* we got a specification from this tile and packet onwards */
+					/* print the previous spec */
+					if (packno > 0) {
+						stoppack = packno - 1;				
+						opj_event_msg(j2k->cinfo, EVT_INFO,
+							/***** "UEP EPBs: tile %02d, packs. %02d-%02d (B %d-%d), prot. %d\n", */
+							"UEP EPBs: tile %02d, part %02d, packs. %02d-%02d (B %d-%d), prot. %d\n",
+							/***** tileno, */
+							tileno, tpno,
+							startpack,
+							stoppack,
+							/***** j2k->cstr_info->tile[tileno].packet[startpack].start_pos, */
+							j2k->cstr_info->tile[tileno].packet[first_tp_pack + startpack].start_pos,
+							/***** j2k->cstr_info->tile[tileno].packet[stoppack].end_pos, */
+							j2k->cstr_info->tile[tileno].packet[first_tp_pack + stoppack].end_pos,
+							pprot);
+
+						/***** prot_len = j2k->cstr_info->tile[tileno].packet[stoppack].end_pos + 1 -
+							j2k->cstr_info->tile[tileno].packet[startpack].start_pos; */
+						prot_len = j2k->cstr_info->tile[tileno].packet[first_tp_pack + stoppack].end_pos + 1 -
+							j2k->cstr_info->tile[tileno].packet[first_tp_pack + startpack].start_pos;
+
+						/*
+						  particular case: if this is the last header and the last packet,
+						  then it is better to protect even the EOC marker
+						*/
+						/****** if ((tileno == ((j2k->cstr_info->tw * j2k->cstr_info->th) - 1)) &&
+							(stoppack == (j2k->cstr_info->num - 1))) */
+						if ((tileno == ((j2k->cstr_info->tw * j2k->cstr_info->th) - 1)) &&
+							(tpno == (j2k->cstr_info->tile[tileno].num_tps - 1)) &&
+							(stoppack == last_tp_pack))
+							/* add the EOC len */
+							prot_len += 2;
+
+						/* let's add the EPBs */
+						Psot += jpwl_epbs_add(
+							j2k, /* J2K handle */
+							jwmarker, /* pointer to JPWL markers list */
+							&jwmarker_num, /* pointer to the number of current markers */
+							false, /* latest */
+							true, /* packed */
+							false, /* inside MH */
+							&epb_index, /* pointer to EPB index */
+							pprot, /* protection type */
+							/****** (double) (j2k->cstr_info->tile[tileno].start_pos + sot_len + 2) + 0.0001, */ /* position */
+							(double) (j2k->cstr_info->tile[tileno].tp_start_pos[tpno] + sot_len + 2) + 0.0001, /* position */
+							tileno, /* number of tile */
+							0, /* length of pre-data */
+							prot_len /*4000*/ /* length of post-data */
+							);
+					}
+
+					startpack = packno;
+					pprot = j2k->cp->pprot[packspec++];
 				}
 
-				/* update Psot of the tile  */
-				Psot += epb_mark->Lepb + 2;
+				//printf("Tile %02d, pack %02d ==> %d\n", tileno, packno, pprot);
+		
+			}
+
+			/* we are at the end: print the remaining spec */
+			stoppack = packno - 1;
+			if (pprot >= 0) {
 
 				opj_event_msg(j2k->cinfo, EVT_INFO,
-					"TPH EPB : tile %02d, prot. %d\n",
-					tileno,
-					hprot
-					);
+					/**** "UEP EPBs: tile %02d, packs. %02d-%02d (B %d-%d), prot. %d\n", */
+					"UEP EPBs: tile %02d, part %02d, packs. %02d-%02d (B %d-%d), prot. %d\n",
+					/**** tileno, */
+					tileno, tpno,
+					startpack,
+					stoppack,
+					/***** j2k->image_info->tile[tileno].packet[startpack].start_pos,
+					j2k->image_info->tile[tileno].packet[stoppack].end_pos, */
+					j2k->cstr_info->tile[tileno].packet[first_tp_pack + startpack].start_pos,
+					j2k->cstr_info->tile[tileno].packet[first_tp_pack + stoppack].end_pos,
+					pprot);
 
-				/* save this TPH EPB address */
-				tph_epb = epb_mark;
+				/***** prot_len = j2k->cstr_info->tile[tileno].packet[stoppack].end_pos + 1 -
+					j2k->cstr_info->tile[tileno].packet[startpack].start_pos; */
+				prot_len = j2k->cstr_info->tile[tileno].packet[first_tp_pack + stoppack].end_pos + 1 -
+					j2k->cstr_info->tile[tileno].packet[first_tp_pack + startpack].start_pos;
 
-			} else {
-				/* ooops, problems */
-				opj_event_msg(j2k->cinfo, EVT_ERROR, "Could not create TPH EPB #%d\n", tileno);				
-			};
+				/*
+				  particular case: if this is the last header and the last packet,
+				  then it is better to protect even the EOC marker
+				*/
+				/***** if ((tileno == ((j2k->cstr_info->tw * j2k->cstr_info->th) - 1)) &&
+					(stoppack == (j2k->cstr_info->num - 1))) */
+				if ((tileno == ((j2k->cstr_info->tw * j2k->cstr_info->th) - 1)) &&
+					(tpno == (j2k->cstr_info->tile[tileno].num_tps - 1)) &&
+					(stoppack == last_tp_pack))
+					/* add the EOC len */
+					prot_len += 2;
 
-		}				
-	
-		startpack = 0;
-		/* EPB MSs for UEP packet data protection in Tile Parts */
-		for (packno = 0; packno < j2k->cstr_info->num; packno++) {
-
-			if ((packspec < JPWL_MAX_NO_PACKSPECS) &&
-				(j2k->cp->pprot_tileno[packspec] == tileno) && (j2k->cp->pprot_packno[packspec] == packno)) {
-
-				/* we got a specification from this tile and packet onwards */
-				/* print the previous spec */
-				if (packno > 0) {
-					stoppack = packno - 1;				
-					opj_event_msg(j2k->cinfo, EVT_INFO,
-						"UEP EPBs: tile %02d, packs. %02d-%02d (B %d-%d), prot. %d\n",
-						tileno,
-						startpack,
-						stoppack,
-						j2k->cstr_info->tile[tileno].packet[startpack].start_pos,
-						j2k->cstr_info->tile[tileno].packet[stoppack].end_pos,
-						pprot);
-
-					prot_len = j2k->cstr_info->tile[tileno].packet[stoppack].end_pos + 1 -
-						j2k->cstr_info->tile[tileno].packet[startpack].start_pos;
-
-					/*
-					  particular case: if this is the last header and the last packet,
-					  then it is better to protect even the EOC marker
-					*/
-					if ((tileno == ((j2k->cstr_info->tw * j2k->cstr_info->th) - 1)) &&
-						(stoppack == (j2k->cstr_info->num - 1)))
-						/* add the EOC len */
-						prot_len += 2;
-
-					/* let's add the EPBs */
-					Psot += jpwl_epbs_add(
-						j2k, /* J2K handle */
-						jwmarker, /* pointer to JPWL markers list */
-						&jwmarker_num, /* pointer to the number of current markers */
-						false, /* latest */
-						true, /* packed */
-						false, /* inside MH */
-						&epb_index, /* pointer to EPB index */
-						pprot, /* protection type */
-						(double) (j2k->cstr_info->tile[tileno].start_pos + sot_len + 2) + 0.0001, /* position */
-						tileno, /* number of tile */
-						0, /* length of pre-data */
-						prot_len /*4000*/ /* length of post-data */
-						);
-				}
-
-				startpack = packno;
-				pprot = j2k->cp->pprot[packspec++];
+				/* let's add the EPBs */
+				Psot += jpwl_epbs_add(
+							j2k, /* J2K handle */
+							jwmarker, /* pointer to JPWL markers list */
+							&jwmarker_num, /* pointer to the number of current markers */
+							true, /* latest */
+							true, /* packed */
+							false, /* inside MH */
+							&epb_index, /* pointer to EPB index */
+							pprot, /* protection type */
+							/***** (double) (j2k->cstr_info->tile[tileno].start_pos + sot_len + 2) + 0.0001,*/ /* position */
+							(double) (j2k->cstr_info->tile[tileno].tp_start_pos[tpno] + sot_len + 2) + 0.0001, /* position */
+							tileno, /* number of tile */
+							0, /* length of pre-data */
+							prot_len /*4000*/ /* length of post-data */
+							);
 			}
 
-			//printf("Tile %02d, pack %02d ==> %d\n", tileno, packno, pprot);
-	
+			/* we can now check if the TPH EPB was really the last one */
+			if (tph_epb && (epb_index == 1)) {
+				/* set the TPH EPB to be the last one in current header */
+				tph_epb->Depb |= (unsigned char) ((true & 0x0001) << 6);
+				tph_epb = NULL;
+			}
+
+			/* write back Psot */
+			cio_seek(cio, Psotp);
+			cio_write(cio, Psot, 4);
+		
 		}
-
-		/* we are at the end: print the remaining spec */
-		stoppack = packno - 1;
-		if (pprot >= 0) {
-
-			opj_event_msg(j2k->cinfo, EVT_INFO,
-				"UEP EPBs: tile %02d, packs. %02d-%02d (B %d-%d), prot. %d\n",
-				tileno,
-				startpack,
-				stoppack,
-				j2k->cstr_info->tile[tileno].packet[startpack].start_pos,
-				j2k->cstr_info->tile[tileno].packet[stoppack].end_pos,
-				pprot);
-
-			prot_len = j2k->cstr_info->tile[tileno].packet[stoppack].end_pos + 1 -
-				j2k->cstr_info->tile[tileno].packet[startpack].start_pos;
-
-			/*
-			  particular case: if this is the last header and the last packet,
-			  then it is better to protect even the EOC marker
-			*/
-			if ((tileno == ((j2k->cstr_info->tw * j2k->cstr_info->th) - 1)) &&
-				(stoppack == (j2k->cstr_info->num - 1)))
-				/* add the EOC len */
-				prot_len += 2;
-
-			/* let's add the EPBs */
-			Psot += jpwl_epbs_add(
-						j2k, /* J2K handle */
-						jwmarker, /* pointer to JPWL markers list */
-						&jwmarker_num, /* pointer to the number of current markers */
-						true, /* latest */
-						true, /* packed */
-						false, /* inside MH */
-						&epb_index, /* pointer to EPB index */
-						pprot, /* protection type */
-						(double) (j2k->cstr_info->tile[tileno].start_pos + sot_len + 2) + 0.0001, /* position */
-						tileno, /* number of tile */
-						0, /* length of pre-data */
-						prot_len /*4000*/ /* length of post-data */
-						);
-		}
-
-		/* we can now check if the TPH EPB was really the last one */
-		if (tph_epb && (epb_index == 1)) {
-			/* set the TPH EPB to be the last one in current header */
-			tph_epb->Depb |= (unsigned char) ((true & 0x0001) << 6);
-			tph_epb = NULL;
-		}
-
-		/* write back Psot */
-		cio_seek(cio, Psotp);
-		cio_write(cio, Psot, 4);
 
 	};
 
@@ -577,7 +639,7 @@ void jpwl_dump_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 	int mm;
 	unsigned long int old_size = j2k->cstr_info->codestream_size;
 	unsigned long int new_size = old_size;
-	int ciopos = cio_tell(cio);
+	int ciopos = cio_tell(cio), soc_pos = j2k->cstr_info->main_head_start;
 	unsigned char *jpwl_buf, *orig_buf;
 	unsigned long int orig_pos;
 	double epbcoding_time = 0.0, esdcoding_time = 0.0;
@@ -597,11 +659,15 @@ void jpwl_dump_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 		opj_event_msg(j2k->cinfo, EVT_ERROR, "Could not allocate room for JPWL temp codestream buffer\n");
 		exit(1);
 	};
+
+	/* copy the jp2 part, if any */
+	memcpy(jpwl_buf, cio->buffer, soc_pos);
+
 	orig_buf = jpwl_buf;
 
 	/* cycle through markers */
-	orig_pos = 0; /* start from the beginning */
-	cio_seek(cio, 0); /* rewind the original */
+	orig_pos = soc_pos + 0; /* start from the beginning */
+	cio_seek(cio, soc_pos + 0); /* rewind the original */
 	for (mm = 0; mm < jwmarker_num; mm++) {
 
 		/*
@@ -647,9 +713,9 @@ void jpwl_dump_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 	}
 
 	/* finish remaining original codestream */
-	memcpy(jpwl_buf, cio_getbp(cio), old_size - orig_pos);
-	jpwl_buf += old_size - orig_pos;
-	cio_seek(cio, old_size);
+	memcpy(jpwl_buf, cio_getbp(cio), soc_pos + old_size - orig_pos);
+	jpwl_buf += soc_pos + old_size - orig_pos;
+	cio_seek(cio, soc_pos + old_size);
 	
 	/*
 	update info file based on added markers
@@ -748,12 +814,12 @@ void jpwl_dump_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 	opj_free(cio->buffer);
 	/*cio->cinfo;*/ /* no change */
 	/*cio->openmode;*/ /* no change */
-	cio->buffer = jpwl_buf - new_size;
-	cio->length = new_size;
-	cio->start = jpwl_buf - new_size;
+	cio->buffer = jpwl_buf - new_size - soc_pos;
+	cio->length = new_size + soc_pos;
+	cio->start = jpwl_buf - new_size - soc_pos;
 	cio->end = jpwl_buf - 1;
-	cio->bp = jpwl_buf - new_size;
-	cio_seek(cio, new_size);
+	cio->bp = jpwl_buf - new_size - soc_pos;
+	cio_seek(cio, soc_pos + new_size);
 
 }
 
