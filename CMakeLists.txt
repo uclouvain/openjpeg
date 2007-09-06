@@ -62,6 +62,7 @@ SUBDIRS(
   mj2
   jpwl
   jp3d
+  indexer_JPIP
   )
 #-----------------------------------------------------------------------------
 # Build example only if requested

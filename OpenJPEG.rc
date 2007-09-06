@@ -49,7 +49,7 @@ BEGIN
             VALUE "FileDescription", "OpenJPEG\0"
             VALUE "FileVersion", "1, 1, 0, 0\0"
             VALUE "InternalName", "OpenJPEG\0"
-            VALUE "LegalCopyright", "Copyright © 2002-2006, Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium\0"
+            VALUE "LegalCopyright", "Copyright © 2002-2007, Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium\0"
             VALUE "LegalTrademarks", "See http://www.openjpeg.org for details\0"
             VALUE "OriginalFilename", "OpenJPEG.dll\0"
             VALUE "PrivateBuild", "\0"
