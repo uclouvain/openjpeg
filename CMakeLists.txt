@@ -63,6 +63,8 @@ SUBDIRS(
   jpwl
   jp3d
   indexer_JPIP
+  # cmake 2.4.5 has poor java support
+  #j2kviewer/src
   )
 #-----------------------------------------------------------------------------
 # Build example only if requested
