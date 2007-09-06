@@ -73,6 +73,13 @@ IF(BUILD_EXAMPLES)
 ENDIF(BUILD_EXAMPLES)
 
 #-----------------------------------------------------------------------------
+# For the documentation
+OPTION(BUILD_DOCUMENTATION "Build the doxygen documentation" OFF)
+IF(BUILD_DOCUMENTATION)
+  SUBDIRS(doc)
+ENDIF(BUILD_DOCUMENTATION)
+
+#-----------------------------------------------------------------------------
 # For openjpeg team if they ever want Dart+CMake
 IF(OPJ_STANDALONE)
   INCLUDE(Dart)
