@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+September 6, 2007
+* [Mathieu Malaterre] CMake: start compiling mj2, jpwl and jp3d
+
 September 4, 2007
 + [GB] Added some fields in the codestream_info structure: they are used to record the position of single tile parts. Changed also the write_index function in the codec, to reflect the presence of this new information.
 September 3, 2007
