@@ -55,6 +55,7 @@ SUBDIRS(
   libopenjpeg
   mj2
   jpwl
+  jp3d
   )
 #-----------------------------------------------------------------------------
 # Build example only if requested
