@@ -6,4 +6,4 @@ Basic instructions on how to build using CMake (CMake 2.4.5 or newer is required
   cd bin
   cmake .. -DBUILD_EXAMPLES:BOOL=ON
   make
-  ./codec/j2k_to_image 
+  ./bin/j2k_to_image 
