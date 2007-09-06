@@ -44,7 +44,7 @@ FOREACH(exe j2k_to_image image_to_j2k)
   TARGET_LINK_LIBRARIES(${exe} ${OPJ_PREFIX}openjpeg ${TIFF_LIBRARIES})
   # On unix you need to link to the math library:
   IF(UNIX)
-    TARGET_LINK_LIBRARIES(${exe} -lm)
+    TARGET_LINK_LIBRARIES(${exe} m)
   ENDIF(UNIX)
   # Install exe
   INSTALL_TARGETS(/bin/ ${exe})

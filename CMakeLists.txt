@@ -54,6 +54,7 @@ INCLUDE_DIRECTORIES(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 SUBDIRS(
   libopenjpeg
   mj2
+  jpwl
   )
 #-----------------------------------------------------------------------------
 # Build example only if requested
