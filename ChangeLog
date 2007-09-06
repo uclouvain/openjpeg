@@ -14,6 +14,7 @@ September 6, 2007
 + [Mathieu Malaterre] CMake: Add doxygen output
 + [GB] One more field in the codestream_info struct for recording the number of packets per tile part; JPWL now distributes the EPBs in all the tile part headers
 + [Mathieu Malaterre] CMake: Add very simple tests (simply run command line with no option)
+* [Mathieu Malaterre] Fix unitialized read in img_fol (we may need a smarter initialize than memset)
 
 September 4, 2007
 + [GB] Added some fields in the codestream_info structure: they are used to record the position of single tile parts. Changed also the write_index function in the codec, to reflect the presence of this new information.

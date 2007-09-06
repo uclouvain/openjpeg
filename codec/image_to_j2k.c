@@ -1745,6 +1745,9 @@ int main(int argc, char **argv) {
 	/* set encoding parameters to default values */
 	opj_set_default_encoder_parameters(&parameters);
 
+	/* need to initialize img_fol since parameters will be read in parse_cmdline_decoder */
+	memset(&img_fol,0,sizeof(img_fol_t));
+
 	/* parse input and get user encoding parameters */
 	if(parse_cmdline_encoder(argc, argv, &parameters,&img_fol, &raw_cp) == 1) {
 		return 0;
