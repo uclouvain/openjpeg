@@ -95,12 +95,17 @@ ENDIF(OPENJPEG_STANDALONE)
 # http://www.crc.ricoh.com/~gormish/jpeg2000conformance/
 # http://www.jpeg.org/jpeg2000guide/testimages/testimages.html
 
+#-----------------------------------------------------------------------------
+# Adding JPEG2000_CONFORMANCE_DATA_ROOT
+FIND_PATH(JPEG2000_CONFORMANCE_DATA_ROOT testimages.html
+  ${OPENJPEG_SOURCE_DIR}/../jpeg2000testimages
+  $ENV{JPEG2000_CONFORMANCE_DATA_ROOT}
+)
+
 FILE(GLOB_RECURSE OPENJPEG_DATA_IMAGES_GLOB
-#  "${OPENJPEG_SOURCE_DIR}/testing1/*.j2k"
-#  "${OPENJPEG_SOURCE_DIR}/testing1/*.jp2"
-  "${OPENJPEG_SOURCE_DIR}/testimages/*.j2k"
-  "${OPENJPEG_SOURCE_DIR}/testimages/*.j2c"
-  "${OPENJPEG_SOURCE_DIR}/testimages/*.jp2"
+  "${JPEG2000_CONFORMANCE_DATA_ROOT}/*.j2k"
+  "${JPEG2000_CONFORMANCE_DATA_ROOT}/*.j2c"
+  "${JPEG2000_CONFORMANCE_DATA_ROOT}/*.jp2"
   )
 
 FOREACH(filename ${OPENJPEG_DATA_IMAGES_GLOB})
