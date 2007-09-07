@@ -43,6 +43,8 @@ FOREACH(exe j2k_to_image image_to_j2k)
   ADD_EXECUTABLE(${exe} ${exe}.c ${common_SRCS})
   TARGET_LINK_LIBRARIES(${exe} ${OPJ_PREFIX}openjpeg ${TIFF_LIBRARIES})
   ADD_TEST(${exe} ${EXECUTABLE_OUTPUT_PATH}/${exe})
+  # calling those exe without option will make them fail always:
+  SET_TESTS_PROPERTIES(${exe} PROPERTIES WILL_FAIL TRUE)
   # On unix you need to link to the math library:
   IF(UNIX)
     TARGET_LINK_LIBRARIES(${exe} m)

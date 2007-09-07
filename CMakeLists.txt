@@ -91,6 +91,20 @@ IF(OPENJPEG_STANDALONE)
   ENDIF(BUILD_TESTING)
 ENDIF(OPENJPEG_STANDALONE)
 
-# TODO, technically we should add tests, e.g:
+# Adding test with dataset from:
 # http://www.crc.ricoh.com/~gormish/jpeg2000conformance/
+# http://www.jpeg.org/jpeg2000guide/testimages/testimages.html
+
+FILE(GLOB_RECURSE OPENJPEG_DATA_IMAGES_GLOB
+#  "${OPENJPEG_SOURCE_DIR}/testing1/*.j2k"
+#  "${OPENJPEG_SOURCE_DIR}/testing1/*.jp2"
+  "${OPENJPEG_SOURCE_DIR}/testimages/*.j2k"
+  "${OPENJPEG_SOURCE_DIR}/testimages/*.j2c"
+  "${OPENJPEG_SOURCE_DIR}/testimages/*.jp2"
+  )
+
+FOREACH(filename ${OPENJPEG_DATA_IMAGES_GLOB})
+  GET_FILENAME_COMPONENT(filename_temp ${filename} NAME)
+  ADD_TEST(j2i-${filename_temp} ${EXECUTABLE_OUTPUT_PATH}/j2k_to_image -i ${filename} -o ${filename_temp}.tif)
+ENDFOREACH(filename)
 

@@ -7,6 +7,7 @@ What's New for OpenJPEG
 
 September 7, 2007
 * [Mathieu Malaterre] Upon failure, properly return error code (!=0).
+* [Mathieu Malaterre] CMake: Add cmake code to do testing if user has properly setup a testimages directory
 
 September 6, 2007
 + [Mathieu Malaterre] CMake: start compiling mj2, jpwl and jp3d
