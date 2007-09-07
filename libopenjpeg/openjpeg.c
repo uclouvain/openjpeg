@@ -147,15 +147,15 @@ void OPJ_CALLCONV opj_setup_decoder(opj_dinfo_t *dinfo, opj_dparameters_t *param
 	}
 }
 
-opj_image_t* OPJ_CALLCONV opj_decode(opj_dinfo_t *dinfo, opj_cio_t *cio) {
+opj_image_t* OPJ_CALLCONV opj_decode(opj_dinfo_t *dinfo, opj_cio_t *cio, opj_codestream_info_t *cstr_info) {
 	if(dinfo && cio) {
 		switch(dinfo->codec_format) {
 			case CODEC_J2K:
-				return j2k_decode((opj_j2k_t*)dinfo->j2k_handle, cio);
+				return j2k_decode((opj_j2k_t*)dinfo->j2k_handle, cio, cstr_info);
 			case CODEC_JPT:
-				return j2k_decode_jpt_stream((opj_j2k_t*)dinfo->j2k_handle, cio);
+				return j2k_decode_jpt_stream((opj_j2k_t*)dinfo->j2k_handle, cio, cstr_info);
 			case CODEC_JP2:
-				return jp2_decode((opj_jp2_t*)dinfo->jp2_handle, cio);
+				return jp2_decode((opj_jp2_t*)dinfo->jp2_handle, cio, cstr_info);
 			case CODEC_UNKNOWN:
 			default:
 				break;
@@ -300,6 +300,18 @@ bool OPJ_CALLCONV opj_encode(opj_cinfo_t *cinfo, opj_cio_t *cio, opj_image_t *im
 				break;
 		}
 	}
-
 	return false;
+}
+
+void OPJ_CALLCONV opj_destroy_cstr_info(opj_codestream_info_t *cstr_info) {
+	if (cstr_info) {
+		int tileno;
+		for (tileno = 0; tileno < cstr_info->tw * cstr_info->th; tileno++) {
+			opj_tile_info_t *tile_info = &cstr_info->tile[tileno];
+			opj_free(tile_info->thresh);
+			opj_free(tile_info->packet);
+			opj_free(tile_info->tp);
+		}
+		opj_free(cstr_info->tile);
+	}
 }

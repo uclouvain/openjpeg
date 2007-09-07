@@ -994,7 +994,7 @@ static void t1_decode_cblk(
 /* ----------------------------------------------------------------------- */
 
 opj_t1_t* t1_create(opj_common_ptr cinfo) {
-	opj_t1_t *t1 = (opj_t1_t*) malloc(sizeof(opj_t1_t));
+	opj_t1_t *t1 = (opj_t1_t*) opj_malloc(sizeof(opj_t1_t));
 	if(!t1)
 		return NULL;
 

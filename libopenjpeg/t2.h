@@ -78,7 +78,7 @@ Decode the packets of a tile from a source buffer
 @param tileno number that identifies the tile for which to decode the packets
 @param tile tile for which to decode the packets
  */
-int t2_decode_packets(opj_t2_t *t2, unsigned char *src, int len, int tileno, opj_tcd_tile_t *tile);
+int t2_decode_packets(opj_t2_t *t2, unsigned char *src, int len, int tileno, opj_tcd_tile_t *tile, opj_codestream_info_t *cstr_info);
 
 /**
 Create a T2 handle

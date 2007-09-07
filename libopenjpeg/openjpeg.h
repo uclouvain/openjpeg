@@ -303,10 +303,6 @@ typedef struct opj_cparameters {
 	char infile[OPJ_PATH_LEN];
 	/** output file name */
 	char outfile[OPJ_PATH_LEN];
-	/** creation of an index file, default to 0 (false) */
-	int index_on;
-	/** index file name */
-	char index[OPJ_PATH_LEN];
 	/** subimage encoding: origin image offset in x direction */
 	int image_offset_x0;
 	/** subimage encoding: origin image offset in y direction */
@@ -490,7 +486,7 @@ typedef struct opj_cio {
 	/** pointer to the start of the buffer */
 	unsigned char *buffer;
 	/** buffer size in bytes */
-	int length;
+	unsigned int length;
 
 	/** pointer to the start of the stream */
 	unsigned char *start;
@@ -601,13 +597,27 @@ typedef struct opj_packet_info {
 } opj_packet_info_t;
 
 /**
-Index structure : information regarding tiles inside image
+Index structure : Information concerning tile-parts
+*/
+typedef struct opj_tp_info {
+	/** start position of tile part */
+	int tp_start_pos;
+	/** end position of tile part header */
+	int tp_end_header;
+	/** end position of tile part */
+	int tp_end_pos;
+	/** number of packets of tile part */
+	int tp_numpacks;
+} opj_tp_info_t;
+
+/**
+Index structure : information regarding tiles 
 */
 typedef struct opj_tile_info {
 	/** value of thresh for each layer by tile cfr. Marcela   */
 	double *thresh;
 	/** number of tile */
-	int num_tile;
+	int tileno;
 	/** start position */
 	int start_pos;
 	/** end position of the header */
@@ -625,33 +635,23 @@ typedef struct opj_tile_info {
 	/** information concerning packets inside tile */
 	opj_packet_info_t *packet;
 	/** add fixed_quality */
-	int nbpix;
+	int numpix;
 	/** add fixed_quality */
 	double distotile;
-/* UniPG>> */
-    /** number of tile parts */
-    int num_tps;
-    /** start position of tile part */
-    int *tp_start_pos;
-    /** end position of tile part header */
-    int *tp_end_header;
-    /** end position of tile part */
-    int *tp_end_pos;
-	/** number of packets of tile part */
-	int *tp_num;
-/* << UniPG */
+	/** number of tile parts */
+	int num_tps;
+	/** information concerning tile parts */
+	opj_tp_info_t *tp;
 } opj_tile_info_t;
 
 /**
 Index structure of the codestream
 */
 typedef struct opj_codestream_info {
-	/** 0 = no index || 1 = index */
-	int index_on;
 	/** maximum distortion reduction on the whole image (add for Marcela) */
 	double D_max;
 	/** packet number */
-	int num;
+	int packno;
 	/** writing the packet in the index with t2_encode_packets */
 	int index_write;
 	/** image width */
@@ -673,15 +673,13 @@ typedef struct opj_codestream_info {
 	/** number of tiles in Y */
 	int th;
 	/** component numbers */
-	int comp;
+	int numcomps;
 	/** number of layer */
-	int layer;
-	/** number of decomposition */
-	int decomposition;
-/* UniPG>> */
-    /** main header position */
-    int main_head_start;
-/* <<UniPG */
+	int numlayers;
+	/** number of decomposition of first component */
+	int numdecompos;
+	/** main header position */
+	int main_head_start;
 	/** main header position */
 	int main_head_end;
 	/** codestream's size */
@@ -802,9 +800,10 @@ OPJ_API void OPJ_CALLCONV opj_setup_decoder(opj_dinfo_t *dinfo, opj_dparameters_
 Decode an image from a JPEG-2000 codestream
 @param dinfo decompressor handle
 @param cio Input buffer stream
+@param cstr_info Codestream information structure if needed afterwards, NULL otherwise
 @return Returns a decoded image if successful, returns NULL otherwise
 */
-OPJ_API opj_image_t* OPJ_CALLCONV opj_decode(opj_dinfo_t *dinfo, opj_cio_t *cio);
+OPJ_API opj_image_t* OPJ_CALLCONV opj_decode(opj_dinfo_t *dinfo, opj_cio_t *cio, opj_codestream_info_t *cstr_info);
 /**
 Creates a J2K/JP2 compression structure
 @param format Coder to select
@@ -850,10 +849,15 @@ Encode an image into a JPEG-2000 codestream
 @param cinfo compressor handle
 @param cio Output buffer stream
 @param image Image to encode
-@param cstr_info Codestream information structure if required, NULL otherwise
+@param cstr_info Codestream information structure if needed afterwards, NULL otherwise
 @return Returns true if successful, returns false otherwise
 */
 OPJ_API bool OPJ_CALLCONV opj_encode(opj_cinfo_t *cinfo, opj_cio_t *cio, opj_image_t *image, opj_codestream_info_t *cstr_info);
+/**
+Destroy Codestream information after compression or decompression
+@param cstr_info Codestream information structure
+*/
+OPJ_API void OPJ_CALLCONV opj_destroy_cstr_info(opj_codestream_info_t *cstr_info);
 
 #ifdef __cplusplus
 }

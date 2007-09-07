@@ -42,6 +42,7 @@ opj_image_t* OPJ_CALLCONV opj_image_create(int numcmpts, opj_image_cmptparm_t *c
 		/* allocate memory for the per-component information */
 		image->comps = (opj_image_comp_t*)opj_malloc(image->numcomps * sizeof(opj_image_comp_t));
 		if(!image->comps) {
+			fprintf(stderr,"Unable to allocate memory for image.\n");
 			opj_image_destroy(image);
 			return NULL;
 		}
@@ -59,6 +60,7 @@ opj_image_t* OPJ_CALLCONV opj_image_create(int numcmpts, opj_image_cmptparm_t *c
 			comp->sgnd = cmptparms[compno].sgnd;
 			comp->data = (int*)opj_malloc(comp->w * comp->h * sizeof(int));
 			if(!comp->data) {
+				fprintf(stderr,"Unable to allocate memory for image.\n");
 				opj_image_destroy(image);
 				return NULL;
 			}

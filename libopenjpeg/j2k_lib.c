@@ -70,7 +70,7 @@ void* opj_realloc( void *memblock, size_t size ) {
 }
 
 void opj_free( void *memblock ) {
-	free(memblock);
+	free(memblock);	
 }
 
 

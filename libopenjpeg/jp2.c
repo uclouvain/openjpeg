@@ -541,7 +541,7 @@ void jp2_setup_decoder(opj_jp2_t *jp2, opj_dparameters_t *parameters) {
 	/* further JP2 initializations go here */
 }
 
-opj_image_t* jp2_decode(opj_jp2_t *jp2, opj_cio_t *cio) {
+opj_image_t* jp2_decode(opj_jp2_t *jp2, opj_cio_t *cio, opj_codestream_info_t *cstr_info) {
 	opj_common_ptr cinfo;
 	opj_image_t *image = NULL;
 
@@ -558,7 +558,7 @@ opj_image_t* jp2_decode(opj_jp2_t *jp2, opj_cio_t *cio) {
 	}
 
 	/* J2K decoding */
-	image = j2k_decode(jp2->j2k, cio);
+	image = j2k_decode(jp2->j2k, cio, cstr_info);
 	if(!image) {
 		opj_event_msg(cinfo, EVT_ERROR, "Failed to decode J2K image\n");
 	}

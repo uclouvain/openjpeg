@@ -1795,7 +1795,7 @@ opj_image_t* rawtoimage(const char *filename, opj_cparameters_t *parameters, raw
 	opj_image_t * image = NULL;
 	unsigned short ch;
 	
-	if((raw_cp->rawWidth * raw_cp->rawHeight * raw_cp->rawComp * raw_cp->rawBitDepth) == 0)
+	if((! (raw_cp->rawWidth & raw_cp->rawHeight & raw_cp->rawComp & raw_cp->rawBitDepth)) == 0)
 	{
 		fprintf(stderr,"\nError: invalid raw image parameters\n");
 		fprintf(stderr,"Please use the Format option -F:\n");
@@ -1834,7 +1834,6 @@ opj_image_t* rawtoimage(const char *filename, opj_cparameters_t *parameters, raw
 		fclose(f);
 		return NULL;
 	}
-
 	/* set image offset and reference grid */
 	image->x0 = parameters->image_offset_x0;
 	image->y0 = parameters->image_offset_y0;
@@ -1871,7 +1870,6 @@ opj_image_t* rawtoimage(const char *filename, opj_cparameters_t *parameters, raw
 	if (fread(&ch, 1, 1, f)) {
 		fprintf(stderr,"Warning. End of raw file not reached... processing anyway\n");
 	}
-
 	fclose(f);
 
 	return image;

@@ -131,7 +131,7 @@ typedef struct opj_tcd_tilecomp {
   int numresolutions;		/* number of resolutions level */
   opj_tcd_resolution_t *resolutions;	/* resolutions information */
   int *data;			/* data of the component */
-  int nbpix;			/* add fixed_quality */
+  int numpix;			/* add fixed_quality */
 } opj_tcd_tilecomp_t;
 
 /**
@@ -141,7 +141,7 @@ typedef struct opj_tcd_tile {
   int x0, y0, x1, y1;		/* dimension of the tile : left upper corner (x0, y0) right low corner (x1,y1) */
   int numcomps;			/* number of components in tile */
   opj_tcd_tilecomp_t *comps;	/* Components information */
-  int nbpix;			/* add fixed_quality */
+  int numpix;			/* add fixed_quality */
   double distotile;		/* add fixed_quality */
   double distolayer[100];	/* add fixed_quality */
 } opj_tcd_tile_t;
@@ -234,7 +234,7 @@ Initialize the tile decoder
 @param cp Coding parameters
 */
 void tcd_malloc_decode(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp);
-void tcd_malloc_decode_tile(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp, int tileno);
+void tcd_malloc_decode_tile(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp, int tileno, opj_codestream_info_t *cstr_info);
 void tcd_makelayer_fixed(opj_tcd_t *tcd, int layno, int final);
 void tcd_rateallocate_fixed(opj_tcd_t *tcd);
 void tcd_makelayer(opj_tcd_t *tcd, int layno, double thresh, int final);
@@ -256,7 +256,7 @@ Decode a tile from a buffer into a raw image
 @param len Length of source buffer
 @param tileno Number that identifies one of the tiles to be decoded
 */
-bool tcd_decode_tile(opj_tcd_t *tcd, unsigned char *src, int len, int tileno);
+bool tcd_decode_tile(opj_tcd_t *tcd, unsigned char *src, int len, int tileno, opj_codestream_info_t *cstr_info);
 /**
 Free the memory allocated for decoding
 @param tcd TCD handle

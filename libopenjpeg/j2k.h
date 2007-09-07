@@ -227,8 +227,6 @@ typedef struct opj_cp {
 	int layer;
 	/** if == NO_LIMITATION, decode entire codestream; if == LIMIT_TO_MAIN_HEADER then only decode the main header */
 	OPJ_LIMIT_DECODING limit_decoding;
-	/** 0 = no index || 1 = index */
-	int index_on;
 	/** XTOsiz */
 	int tx0;
 	/** YTOsiz */
@@ -394,16 +392,18 @@ void j2k_setup_decoder(opj_j2k_t *j2k, opj_dparameters_t *parameters);
 Decode an image from a JPEG-2000 codestream
 @param j2k J2K decompressor handle
 @param cio Input buffer stream
+@param cstr_info Codestream information structure if required, NULL otherwise
 @return Returns a decoded image if successful, returns NULL otherwise
 */
-opj_image_t* j2k_decode(opj_j2k_t *j2k, opj_cio_t *cio);
+opj_image_t* j2k_decode(opj_j2k_t *j2k, opj_cio_t *cio, opj_codestream_info_t *cstr_info);
 /**
 Decode an image form a JPT-stream (JPEG 2000, JPIP)
 @param j2k J2K decompressor handle
 @param cio Input buffer stream
+@param cstr_info Codestream information structure if required, NULL otherwise
 @return Returns a decoded image if successful, returns NULL otherwise
 */
-opj_image_t* j2k_decode_jpt_stream(opj_j2k_t *j2k, opj_cio_t *cio);
+opj_image_t* j2k_decode_jpt_stream(opj_j2k_t *j2k, opj_cio_t *cio, opj_codestream_info_t *cstr_info);
 /**
 Creates a J2K compression structure
 @param cinfo Codec context info

@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 September 7, 2007
++ [FOD] Indexes can now be generated when decoding J2K codestreams.
 * [Mathieu Malaterre] Upon failure, properly return error code (!=0).
 * [Mathieu Malaterre] CMake: Add cmake code to do testing if user has properly setup a testimages directory
 

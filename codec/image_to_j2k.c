@@ -582,11 +582,11 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 	fprintf(stream, "%d\n", cstr_info->prog);
 	fprintf(stream, "%d %d\n", cstr_info->tile_x, cstr_info->tile_y);
 	fprintf(stream, "%d %d\n", cstr_info->tw, cstr_info->th);
-	fprintf(stream, "%d\n", cstr_info->comp);
-	fprintf(stream, "%d\n", cstr_info->layer);
-	fprintf(stream, "%d\n", cstr_info->decomposition);
+	fprintf(stream, "%d\n", cstr_info->numcomps);
+	fprintf(stream, "%d\n", cstr_info->numlayers);
+	fprintf(stream, "%d\n", cstr_info->numdecompos);
 	
-	for (resno = cstr_info->decomposition; resno >= 0; resno--) {
+	for (resno = cstr_info->numdecompos; resno >= 0; resno--) {
 		fprintf(stream, "[%d,%d] ", 
 			(1 << cstr_info->tile[0].pdx[resno]), (1 << cstr_info->tile[0].pdx[resno]));	/* based on tile 0 */
 	}
@@ -598,26 +598,16 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 	fprintf(stream, "%d\n", cstr_info->codestream_size);
 	
 	fprintf(stream, "\nINFO ON TILES\n");
-	fprintf(stream, "tileno start_pos  end_hd  end_tile"
-/* UniPG>> */
-		"   nbparts"
-/* <<UniPG */
-		"         disto     nbpix   disto/nbpix\n");
+	fprintf(stream, "tileno start_pos  end_hd  end_tile   nbparts         disto     nbpix   disto/nbpix\n");
 	for (tileno = 0; tileno < cstr_info->tw * cstr_info->th; tileno++) {
-		fprintf(stream, "%4d %9d %9d %9d "
-/* UniPG>> */
-			"%9d "
-/* <<UniPG */
-			"%9e %9d %9e\n",
-			cstr_info->tile[tileno].num_tile,
+		fprintf(stream, "%4d %9d %9d %9d %9d %9e %9d %9e\n",
+			cstr_info->tile[tileno].tileno,
 			cstr_info->tile[tileno].start_pos,
 			cstr_info->tile[tileno].end_header,
 			cstr_info->tile[tileno].end_pos,
-/* UniPG>> */
 			cstr_info->tile[tileno].num_tps,
-/* <<UniPG */
-			cstr_info->tile[tileno].distotile, cstr_info->tile[tileno].nbpix,
-			cstr_info->tile[tileno].distotile / cstr_info->tile[tileno].nbpix);
+			cstr_info->tile[tileno].distotile, cstr_info->tile[tileno].numpix,
+			cstr_info->tile[tileno].distotile / cstr_info->tile[tileno].numpix);
 	}
 		
 	for (tileno = 0; tileno < cstr_info->tw * cstr_info->th; tileno++) {
@@ -626,24 +616,21 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 		pack_nb = 0;
 
 		fprintf(stream, "\nTILE %d DETAILS\n", tileno);	
-/* UniPG>> */
-		fprintf(stream, "part_nb tileno   pack_nb start_pos end_tph_pos   end_pos\n");
+		fprintf(stream, "part_nb tileno  num_packs  start_pos end_tph_pos   end_pos\n");
 		for (tilepartno = 0; tilepartno < cstr_info->tile[tileno].num_tps; tilepartno++)
-			fprintf(stream, "%4d %9d %9d %9d %11d %9d\n",
+			fprintf(stream, "%4d %9d  %9d  %9d %11d %9d\n",
 				tilepartno, tileno,
-				cstr_info->tile[tileno].tp_num[tilepartno],
-				cstr_info->tile[tileno].tp_start_pos[tilepartno],
-				cstr_info->tile[tileno].tp_end_header[tilepartno],
-				cstr_info->tile[tileno].tp_end_pos[tilepartno]
+				cstr_info->tile[tileno].tp[tilepartno].tp_numpacks,
+				cstr_info->tile[tileno].tp[tilepartno].tp_start_pos,
+				cstr_info->tile[tileno].tp[tilepartno].tp_end_header,
+				cstr_info->tile[tileno].tp[tilepartno].tp_end_pos
 				);
-/* <<UniPG */
 		if (cstr_info->prog == LRCP) {	/* LRCP */
-
 			fprintf(stream, "LRCP\npack_nb tileno layno resno compno precno start_pos end_ph_pos end_pos disto\n");
 
-			for (layno = 0; layno < cstr_info->layer; layno++) {
-				for (resno = 0; resno < cstr_info->decomposition + 1; resno++) {
-					for (compno = 0; compno < cstr_info->comp; compno++) {
+			for (layno = 0; layno < cstr_info->numlayers; layno++) {
+				for (resno = 0; resno < cstr_info->numdecompos + 1; resno++) {
+					for (compno = 0; compno < cstr_info->numcomps; compno++) {
 						int prec_max = cstr_info->tile[tileno].pw[resno] * cstr_info->tile[tileno].ph[resno];
 						for (precno = 0; precno < prec_max; precno++) {
 							start_pos = cstr_info->tile[tileno].packet[pack_nb].start_pos;
@@ -663,9 +650,9 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 
 			fprintf(stream, "RLCP\npack_nb tileno resno layno compno precno start_pos end_ph_pos end_pos disto\n");
 
-			for (resno = 0; resno < cstr_info->decomposition + 1; resno++) {
-				for (layno = 0; layno < cstr_info->layer; layno++) {
-					for (compno = 0; compno < cstr_info->comp; compno++) {
+			for (resno = 0; resno < cstr_info->numdecompos + 1; resno++) {
+				for (layno = 0; layno < cstr_info->numlayers; layno++) {
+					for (compno = 0; compno < cstr_info->numcomps; compno++) {
 						int prec_max = cstr_info->tile[tileno].pw[resno] * cstr_info->tile[tileno].ph[resno];
 						for (precno = 0; precno < prec_max; precno++) {
 							start_pos = cstr_info->tile[tileno].packet[pack_nb].start_pos;
@@ -685,25 +672,25 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 
 			fprintf(stream, "RPCL\npack_nb tileno resno precno compno layno start_pos end_ph_pos end_pos disto\n"); 
 
-			for (resno = 0; resno < cstr_info->decomposition + 1; resno++) {
+			for (resno = 0; resno < cstr_info->numdecompos + 1; resno++) {
 				/* I suppose components have same XRsiz, YRsiz */
 				int x0 = cstr_info->tile_Ox + tileno - (int)floor((float)tileno/(float)cstr_info->tw ) * cstr_info->tw * cstr_info->tile_x;
 				int y0 = cstr_info->tile_Ox + (int)floor( (float)tileno/(float)cstr_info->tw ) * cstr_info->tile_y;
 				int x1 = x0 + cstr_info->tile_x;
 				int y1 = y0 + cstr_info->tile_y;
-				for (compno = 0; compno < cstr_info->comp; compno++) {
+				for (compno = 0; compno < cstr_info->numcomps; compno++) {
 					int prec_max = cstr_info->tile[tileno].pw[resno] * cstr_info->tile[tileno].ph[resno];
 					for (precno = 0; precno < prec_max; precno++) {
 						int pcnx = cstr_info->tile[tileno].pw[resno];
-						int pcx = (int) pow( 2, cstr_info->tile[tileno].pdx[resno] + cstr_info->decomposition - resno );
-						int pcy = (int) pow( 2, cstr_info->tile[tileno].pdy[resno] + cstr_info->decomposition - resno );
+						int pcx = (int) pow( 2, cstr_info->tile[tileno].pdx[resno] + cstr_info->numdecompos - resno );
+						int pcy = (int) pow( 2, cstr_info->tile[tileno].pdy[resno] + cstr_info->numdecompos - resno );
 						int precno_x = precno - (int) floor( (float)precno/(float)pcnx ) * pcnx;
 						int precno_y = (int) floor( (float)precno/(float)pcnx );
 						for(y = y0; y < y1; y++) {							
 							if (precno_y*pcy == y ) {
 								for (x = x0; x < x1; x++) {									
 									if (precno_x*pcx == x ) {
-										for (layno = 0; layno < cstr_info->layer; layno++) {
+										for (layno = 0; layno < cstr_info->numlayers; layno++) {
 											start_pos = cstr_info->tile[tileno].packet[pack_nb].start_pos;
 											end_ph_pos = cstr_info->tile[tileno].packet[pack_nb].end_ph_pos;
 											end_pos = cstr_info->tile[tileno].packet[pack_nb].end_pos;
@@ -730,20 +717,20 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 
 			fprintf(stream, "PCRL\npack_nb tileno precno compno resno layno start_pos end_ph_pos end_pos disto\n"); 
 
-			for (compno = 0; compno < cstr_info->comp; compno++) {
-				for (resno = 0; resno < cstr_info->decomposition + 1; resno++) {
+			for (compno = 0; compno < cstr_info->numcomps; compno++) {
+				for (resno = 0; resno < cstr_info->numdecompos + 1; resno++) {
 					int prec_max = cstr_info->tile[tileno].pw[resno] * cstr_info->tile[tileno].ph[resno];
 					for (precno = 0; precno < prec_max; precno++) {
 						int pcnx = cstr_info->tile[tileno].pw[resno];
-						int pcx = (int) pow( 2, cstr_info->tile[tileno].pdx[resno] + cstr_info->decomposition - resno );
-						int pcy = (int) pow( 2, cstr_info->tile[tileno].pdy[resno] + cstr_info->decomposition - resno );
+						int pcx = (int) pow( 2, cstr_info->tile[tileno].pdx[resno] + cstr_info->numdecompos - resno );
+						int pcy = (int) pow( 2, cstr_info->tile[tileno].pdy[resno] + cstr_info->numdecompos - resno );
 						int precno_x = precno - (int) floor( (float)precno/(float)pcnx ) * pcnx;
 						int precno_y = (int) floor( (float)precno/(float)pcnx );
 						for(y = y0; y < y1; y++) {							
 							if (precno_y*pcy == y ) {
 								for (x = x0; x < x1; x++) {									
 									if (precno_x*pcx == x ) {
-										for (layno = 0; layno < cstr_info->layer; layno++) {
+										for (layno = 0; layno < cstr_info->numlayers; layno++) {
 											start_pos = cstr_info->tile[tileno].packet[pack_nb].start_pos;
 											end_ph_pos = cstr_info->tile[tileno].packet[pack_nb].end_ph_pos;
 											end_pos = cstr_info->tile[tileno].packet[pack_nb].end_pos;
@@ -765,26 +752,26 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 
 			fprintf(stream, "CPRL\npack_nb tileno compno precno resno layno start_pos end_ph_pos end_pos disto\n"); 
 
-			for (compno = 0; compno < cstr_info->comp; compno++) {
+			for (compno = 0; compno < cstr_info->numcomps; compno++) {
 				/* I suppose components have same XRsiz, YRsiz */
 				int x0 = cstr_info->tile_Ox + tileno - (int)floor( (float)tileno/(float)cstr_info->tw ) * cstr_info->tw * cstr_info->tile_x;
 				int y0 = cstr_info->tile_Ox + (int)floor( (float)tileno/(float)cstr_info->tw ) * cstr_info->tile_y;
 				int x1 = x0 + cstr_info->tile_x;
 				int y1 = y0 + cstr_info->tile_y;
 				
-				for (resno = 0; resno < cstr_info->decomposition + 1; resno++) {
+				for (resno = 0; resno < cstr_info->numdecompos + 1; resno++) {
 					int prec_max = cstr_info->tile[tileno].pw[resno] * cstr_info->tile[tileno].ph[resno];
 					for (precno = 0; precno < prec_max; precno++) {
 						int pcnx = cstr_info->tile[tileno].pw[resno];
-						int pcx = (int) pow( 2, cstr_info->tile[tileno].pdx[resno] + cstr_info->decomposition - resno );
-						int pcy = (int) pow( 2, cstr_info->tile[tileno].pdy[resno] + cstr_info->decomposition - resno );
+						int pcx = (int) pow( 2, cstr_info->tile[tileno].pdx[resno] + cstr_info->numdecompos - resno );
+						int pcy = (int) pow( 2, cstr_info->tile[tileno].pdy[resno] + cstr_info->numdecompos - resno );
 						int precno_x = precno - (int) floor( (float)precno/(float)pcnx ) * pcnx;
 						int precno_y = (int) floor( (float)precno/(float)pcnx );
 						for(y = y0; y < y1; y++) {
 							if (precno_y*pcy == y ) {
 								for (x = x0; x < x1; x++) {
 									if (precno_x*pcx == x ) {
-										for (layno = 0; layno < cstr_info->layer; layno++) {
+										for (layno = 0; layno < cstr_info->numlayers; layno++) {
 											start_pos = cstr_info->tile[tileno].packet[pack_nb].start_pos;
 											end_ph_pos = cstr_info->tile[tileno].packet[pack_nb].end_ph_pos;
 											end_pos = cstr_info->tile[tileno].packet[pack_nb].end_pos;
@@ -816,7 +803,7 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 /* ------------------------------------------------------------------------------------ */
 
 int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
-													img_fol_t *img_fol, raw_cparameters_t *raw_cp) {
+													img_fol_t *img_fol, raw_cparameters_t *raw_cp, char *indexfilename) {
 	int i, j,totlen;
 	option_t long_option[]={
 		{"cinema2K",REQ_ARG, NULL ,'w'},
@@ -1087,8 +1074,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 			case 'x':			/* creation of index file */
 			{
 				char *index = optarg;
-				strncpy(parameters->index, index, sizeof(parameters->index)-1);
-				parameters->index_on = 1;
+				strncpy(indexfilename, index, OPJ_PATH_LEN);
 			}
 			break;
 
@@ -1302,9 +1288,8 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 				int hprot, pprot, sens, addr, size, range;
 
 				/* we need to enable indexing */
-				if (!parameters->index_on) {
+				if (!indexfilename) {
 					strncpy(parameters->index, JPWL_PRIVATEINDEX_NAME, sizeof(parameters->index)-1);
-					parameters->index_on = 1;
 				}
 
 				/* search for different protection methods */
@@ -1731,7 +1716,8 @@ int main(int argc, char **argv) {
 	int imageno;
 	dircnt_t *dirptr;
 	raw_cparameters_t raw_cp;
-	opj_codestream_info_t cstr_info;
+	opj_codestream_info_t cstr_info;		/* Codestream information structure */
+	char indexfilename[OPJ_PATH_LEN];	/* index file name */
 
 	/*
 	configure the event callbacks (not required)
@@ -1745,11 +1731,12 @@ int main(int argc, char **argv) {
 	/* set encoding parameters to default values */
 	opj_set_default_encoder_parameters(&parameters);
 
-	/* need to initialize img_fol since parameters will be read in parse_cmdline_decoder */
+	/* Initialize indexfilename and img_fol */
+	*indexfilename = 0;
 	memset(&img_fol,0,sizeof(img_fol_t));
 
 	/* parse input and get user encoding parameters */
-	if(parse_cmdline_encoder(argc, argv, &parameters,&img_fol, &raw_cp) == 1) {
+	if(parse_cmdline_encoder(argc, argv, &parameters,&img_fol, &raw_cp, indexfilename) == 1) {
 		return 1;
 	}
 	
@@ -1929,8 +1916,8 @@ int main(int argc, char **argv) {
 				opj_cio_close(cio);
 
 				/* Write the index to disk */
-				if (parameters.index_on) {
-					bSuccess = write_index_file(&cstr_info, parameters.index);
+				if (*indexfilename) {
+					bSuccess = write_index_file(&cstr_info, indexfilename);
 					if (bSuccess) {
 						fprintf(stderr, "Failed to output index file\n");
 					}
@@ -1938,6 +1925,8 @@ int main(int argc, char **argv) {
 
 				/* free remaining compression structures */
 				opj_destroy_compress(cinfo);
+				opj_destroy_cstr_info(&cstr_info);
+
 			} else {			/* JP2 format output */
 				int codestream_length;
 				opj_cio_t *cio = NULL;
@@ -1978,8 +1967,8 @@ int main(int argc, char **argv) {
 				opj_cio_close(cio);
 				
 				/* Write the index to disk */
-				if (parameters.index_on) {
-					bSuccess = write_index_file(&cstr_info, parameters.index);
+				if (*indexfilename) {
+					bSuccess = write_index_file(&cstr_info, indexfilename);
 					if (bSuccess) {
 						fprintf(stderr, "Failed to output index file\n");
 					}
@@ -1987,7 +1976,7 @@ int main(int argc, char **argv) {
 
 				/* free remaining compression structures */
 				opj_destroy_compress(cinfo);
-
+				opj_destroy_cstr_info(&cstr_info);
 			}
 	
 			/* free image data */
