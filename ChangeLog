@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+September 8, 2007
+* [GB] Adapted the JPWL and OPJViewer code to new interface; fixed a samll bug in JPWL which created large EPBs even when null protection was specified
+
 September 7, 2007
 + [FOD] Indexes can now be generated when decoding J2K codestreams.
 * [Mathieu Malaterre] Upon failure, properly return error code (!=0).

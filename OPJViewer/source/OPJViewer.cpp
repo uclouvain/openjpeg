@@ -2995,11 +2995,19 @@ OPJEncoderDialog::OPJEncoderDialog(wxWindow* win, int dialogType)
 
 	m_settingsNotebook = GetBookCtrl();
 
-	wxPanel* jpeg2000Settings = CreatePart1SettingsPage(m_settingsNotebook);
+	wxPanel* jpeg2000_1Settings = CreatePart1_1SettingsPage(m_settingsNotebook);
+	wxPanel* jpeg2000_2Settings = CreatePart1_2SettingsPage(m_settingsNotebook);
 	wxPanel* mainSettings = CreateMainSettingsPage(m_settingsNotebook);
+#ifdef USE_JPWL
+	wxPanel* jpwlSettings = CreatePart11SettingsPage(m_settingsNotebook);
+#endif // USE_JPWL
 
-	m_settingsNotebook->AddPage(jpeg2000Settings, wxT("JPEG 2000"), false);
+	m_settingsNotebook->AddPage(jpeg2000_1Settings, wxT("JPEG 2000 - 1"), false);
+	m_settingsNotebook->AddPage(jpeg2000_2Settings, wxT("JPEG 2000 - 2"), false);
 	m_settingsNotebook->AddPage(mainSettings, wxT("General"), false);
+#ifdef USE_JPWL
+	m_settingsNotebook->AddPage(jpwlSettings, wxT("JPWL"), false);
+#endif // USE_JPWL
 
 	LayoutDialog();
 }
@@ -3027,7 +3035,28 @@ wxPanel* OPJEncoderDialog::CreateMainSettingsPage(wxWindow* parent)
     return panel;
 }
 
-wxPanel* OPJEncoderDialog::CreatePart1SettingsPage(wxWindow* parent)
+#ifdef USE_JPWL
+wxPanel* OPJEncoderDialog::CreatePart11SettingsPage(wxWindow* parent)
+{
+    wxPanel* panel = new wxPanel(parent, wxID_ANY);
+
+	// top sizer
+    wxBoxSizer *topSizer = new wxBoxSizer(wxVERTICAL);
+
+		// sub top sizer
+		wxBoxSizer *subtopSizer = new wxBoxSizer(wxVERTICAL);
+
+	topSizer->Add(subtopSizer, 1, wxGROW | wxALIGN_CENTRE | wxALL, 5);
+
+	// assign top and fit it
+    panel->SetSizer(topSizer);
+    topSizer->Fit(panel);
+
+    return panel;
+}
+#endif // USE_JPWL
+
+wxPanel* OPJEncoderDialog::CreatePart1_1SettingsPage(wxWindow* parent)
 {
     wxPanel* panel = new wxPanel(parent, wxID_ANY);
 
@@ -3038,7 +3067,7 @@ wxPanel* OPJEncoderDialog::CreatePart1SettingsPage(wxWindow* parent)
 	//topSizer->AddSpacer(5);
 
 		// sub top sizer
-		wxFlexGridSizer *subtopSizer = new wxFlexGridSizer(4, 3, 3);
+		wxFlexGridSizer *subtopSizer = new wxFlexGridSizer(2, 3, 3);
 
 			// image settings, column
 			wxStaticBox* imageBox = new wxStaticBox(panel, wxID_ANY, wxT("Image"));
@@ -3258,19 +3287,42 @@ wxPanel* OPJEncoderDialog::CreatePart1SettingsPage(wxWindow* parent)
 
 		subtopSizer->Add(tileSizer, 0, wxGROW | wxALL, 3);
 
-			// progression settings, column
-			wxString choices[] = {wxT("LRCP"), wxT("RLCP"), wxT("RPCL"), wxT("PCRL"), wxT("CPRL")};
+			// progression and profile settings, column
+			wxString choices[] = {wxT("LRCP"), wxT("RLCP"), wxT("RPCL"), wxT("PCRL"), wxT("CPRL"),
+				wxT("DCI2K24"), wxT("DCI2K48"), wxT("DCI4K")};
 			wxRadioBox *progressionBox = new wxRadioBox(panel, OPJENCO_PROGRESSION,
-				wxT("Progression order"),
+				wxT("Progression order/profile"),
 				wxDefaultPosition, wxDefaultSize,
 				WXSIZEOF(choices),
 				choices,
-				4,
+				3,
 				wxRA_SPECIFY_COLS);
 			progressionBox->SetSelection(0);
 
 		subtopSizer->Add(progressionBox, 0, wxGROW | wxALL, 3);
 
+	topSizer->Add(subtopSizer, 1, wxGROW | wxALIGN_CENTRE | wxALL, 5);
+
+	// assign top and fit it
+    panel->SetSizer(topSizer);
+    topSizer->Fit(panel);
+
+    return panel;
+}
+
+wxPanel* OPJEncoderDialog::CreatePart1_2SettingsPage(wxWindow* parent)
+{
+    wxPanel* panel = new wxPanel(parent, wxID_ANY);
+
+	// top sizer
+    wxBoxSizer *topSizer = new wxBoxSizer(wxVERTICAL);
+
+	// add some space
+	//topSizer->AddSpacer(5);
+
+		// sub top sizer
+		wxFlexGridSizer *subtopSizer = new wxFlexGridSizer(2, 3, 3);
+			
 			// resilience settings, column
 			wxStaticBox* resilBox = new wxStaticBox(panel, wxID_ANY, wxT("Error resilience"));
 			wxBoxSizer* resilSizer = new wxStaticBoxSizer(resilBox, wxVERTICAL);
@@ -3394,7 +3446,7 @@ wxPanel* OPJEncoderDialog::CreatePart1SettingsPage(wxWindow* parent)
 
 		subtopSizer->Add(roiSizer, 0, wxGROW | wxALL, 3);
 
-			// ROI settings, column
+			// Index file settings, column
 			wxStaticBox* indexBox = new wxStaticBox(panel, wxID_ANY, wxT("Indexing"));
 			wxBoxSizer* indexSizer = new wxStaticBoxSizer(indexBox, wxVERTICAL);
 
@@ -3452,6 +3504,40 @@ wxPanel* OPJEncoderDialog::CreatePart1SettingsPage(wxWindow* parent)
 			m_commentCtrl->Enable(wxGetApp().m_enablecomm);
 
 		subtopSizer->Add(commentSizer, 0, wxGROW | wxALL, 3);
+
+			// POC settings, column
+			wxStaticBox* pocBox = new wxStaticBox(panel, wxID_ANY, wxT("POC"));
+			wxBoxSizer* pocSizer = new wxStaticBoxSizer(pocBox, wxVERTICAL);
+
+			// POC check box
+			pocSizer->Add(
+				m_enablepocCheck = new wxCheckBox(panel, OPJENCO_ENABLEPOC, wxT("Enabled"),
+				wxDefaultPosition, wxDefaultSize),
+				0, wxGROW | wxALL, 3);
+			m_enablepocCheck->SetValue(/*wxGetApp().m_enableidx*/true);
+
+				// POC sizer, row
+				wxBoxSizer* pocspecSizer = new wxBoxSizer(wxHORIZONTAL);
+
+				// add some text
+				pocspecSizer->Add(new wxStaticText(panel, wxID_ANY, wxT("&Changes:")),
+								0, wxALL | wxALIGN_CENTER_VERTICAL, 3);
+
+				// add some horizontal space
+				pocspecSizer->Add(3, 3, 1, wxALL, 0);
+
+				// add the value control
+				pocspecSizer->Add(
+					m_pocCtrl = new wxTextCtrl(panel, OPJENCO_POCSPEC,
+								/*wxGetApp().m_index*/wxT("RRRR"),
+								wxDefaultPosition, wxSize(120, wxDefaultCoord),
+								wxTE_LEFT),
+					0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 3);
+				m_pocCtrl->Enable(/*wxGetApp().m_enableidx*/true);
+
+			pocSizer->Add(pocspecSizer, 0, wxGROW | wxALL, 3);
+
+		subtopSizer->Add(pocSizer, 0, wxGROW | wxALL, 3);
 
 	topSizer->Add(subtopSizer, 1, wxGROW | wxALIGN_CENTRE | wxALL, 5);
 

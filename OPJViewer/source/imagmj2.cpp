@@ -618,6 +618,7 @@ bool wxMJ2Handler::LoadFile(wxImage *image, wxInputStream& stream, bool verbose,
     unsigned char *ptr;
 	int file_length, jp2c_point, jp2h_point;
 	unsigned long int jp2hboxlen, jp2cboxlen;
+	opj_codestream_info_t cstr_info;  /* Codestream information structure */
 
 	// destroy the image
     image->Destroy();
@@ -699,7 +700,7 @@ bool wxMJ2Handler::LoadFile(wxImage *image, wxInputStream& stream, bool verbose,
 	cio = opj_cio_open((opj_common_ptr)dinfo, src, my_jPheadSIZE + jp2hboxlen + jp2cboxlen);
 
 	/* decode the stream and fill the image structure */
-	opjimage = opj_decode(dinfo, cio);
+	opjimage = opj_decode(dinfo, cio, &cstr_info);
 	if (!opjimage) {
 		wxMutexGuiEnter();
 		wxLogError(wxT("MJ2: failed to decode image!"));

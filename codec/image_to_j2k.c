@@ -1289,7 +1289,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 
 				/* we need to enable indexing */
 				if (!indexfilename) {
-					strncpy(parameters->index, JPWL_PRIVATEINDEX_NAME, sizeof(parameters->index)-1);
+					strncpy(indexfilename, JPWL_PRIVATEINDEX_NAME, OPJ_PATH_LEN);
 				}
 
 				/* search for different protection methods */

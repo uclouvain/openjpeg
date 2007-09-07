@@ -631,20 +631,22 @@ public:
 	wxBookCtrlBase* m_settingsNotebook;
 
     wxPanel* CreateMainSettingsPage(wxWindow* parent);
-    wxPanel* CreatePart1SettingsPage(wxWindow* parent);
+    wxPanel* CreatePart1_1SettingsPage(wxWindow* parent);
+    wxPanel* CreatePart1_2SettingsPage(wxWindow* parent);
 /*    wxPanel* CreatePart3SettingsPage(wxWindow* parent);*/
 #ifdef USE_JPWL
 	void OnEnableJPWL(wxCommandEvent& event);
 	void OnEnableComm(wxCommandEvent& event);
 	void OnEnableIdx(wxCommandEvent& event);
-/*    wxPanel* CreatePart11SettingsPage(wxWindow* parent);
-	wxCheckBox *m_enablejpwlCheck;*/
+	wxPanel* CreatePart11SettingsPage(wxWindow* parent);
+	/*wxCheckBox *m_enablejpwlCheck;*/
 #endif // USE_JPWL
 
 	wxTextCtrl *m_subsamplingCtrl, *m_originCtrl, *m_rateCtrl, *m_commentCtrl;
-	wxTextCtrl *m_indexCtrl, *m_qualityCtrl, *m_cbsizeCtrl, *m_prsizeCtrl;
+	wxTextCtrl *m_indexCtrl, *m_qualityCtrl, *m_cbsizeCtrl, *m_prsizeCtrl, *m_pocCtrl;
 	wxTextCtrl *m_tsizeCtrl, *m_toriginCtrl;
 	wxCheckBox *m_enablecommCheck, *m_enableidxCheck, *m_irrevCheck, *m_sopCheck, *m_ephCheck;
+	wxCheckBox *m_enablepocCheck;
 	wxSpinCtrl *m_resolutionsCtrl;
 
 protected:
@@ -667,6 +669,7 @@ protected:
 		OPJENCO_ENABLEVSC,
 		OPJENCO_ENABLEERTERM,
 		OPJENCO_ENABLESEGMARK,
+		OPJENCO_ENABLEPOC,
 		OPJENCO_ROICOMP,
 		OPJENCO_ROISHIFT,
 		OPJENCO_IMORIG,
@@ -674,6 +677,7 @@ protected:
 		OPJENCO_ENABLEIRREV,
 		OPJENCO_ENABLEINDEX,
 		OPJENCO_INDEXNAME,
+		OPJENCO_POCSPEC,
 		OPJENCO_ENABLECOMM,
 		OPJENCO_COMMENTTEXT
     };
