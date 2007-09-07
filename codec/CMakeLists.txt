@@ -53,4 +53,15 @@ FOREACH(exe j2k_to_image image_to_j2k)
   INSTALL_TARGETS(/bin/ ${exe})
 ENDFOREACH(exe)
 
+# Do testing here, once we know the examples are being built:
+FILE(GLOB_RECURSE OPENJPEG_DATA_IMAGES_GLOB
+  "${JPEG2000_CONFORMANCE_DATA_ROOT}/*.j2k"
+  "${JPEG2000_CONFORMANCE_DATA_ROOT}/*.j2c"
+  "${JPEG2000_CONFORMANCE_DATA_ROOT}/*.jp2"
+  )
+
+FOREACH(filename ${OPENJPEG_DATA_IMAGES_GLOB})
+  GET_FILENAME_COMPONENT(filename_temp ${filename} NAME)
+  ADD_TEST(j2i-${filename_temp} ${EXECUTABLE_OUTPUT_PATH}/j2k_to_image -i ${filename} -o ${filename_temp}.tif)
+ENDFOREACH(filename)
 
