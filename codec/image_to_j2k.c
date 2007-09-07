@@ -1750,7 +1750,7 @@ int main(int argc, char **argv) {
 
 	/* parse input and get user encoding parameters */
 	if(parse_cmdline_encoder(argc, argv, &parameters,&img_fol, &raw_cp) == 1) {
-		return 0;
+		return 1;
 	}
 	
 	if (parameters.cp_cinema){

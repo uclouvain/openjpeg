@@ -522,7 +522,7 @@ int main(int argc, char **argv) {
 
 	/* parse input and get user encoding parameters */
 	if(parse_cmdline_decoder(argc, argv, &parameters,&img_fol) == 1) {
-		return 0;
+		return 1;
 	}
 
 	if(img_fol.set_imgdir==1){	

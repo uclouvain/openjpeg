@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+September 7, 2007
+* [Mathieu Malaterre] Upon failure, properly return error code (!=0).
+
 September 6, 2007
 + [Mathieu Malaterre] CMake: start compiling mj2, jpwl and jp3d
 + [Mathieu Malaterre] CMake: output all executable/libs into one single directory
