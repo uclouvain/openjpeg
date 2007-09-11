@@ -39,10 +39,10 @@
 /** @name Local static variables */
 /*@{*/
 
-/** position of markers to insert */
-static jpwl_marker_t jwmarker[JPWL_MAX_NO_MARKERS]; 
-/** number of prepared markers */
+/** number of JPWL prepared markers */
 static int jwmarker_num;
+/** properties of JPWL markers to insert */
+static jpwl_marker_t jwmarker[JPWL_MAX_NO_MARKERS]; 
 
 /*@}*/
 
@@ -106,6 +106,57 @@ void jpwl_epc_write(jpwl_epc_ms_t *epcmark, unsigned char *buf);
 void jpwl_esd_write(jpwl_esd_ms_t *esdmark, unsigned char *buf);
 
 /*-----------------------------------------------------------------*/
+
+void jpwl_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
+
+	int mm;
+
+	/* let's reset some settings */
+
+	/* clear the existing markers */
+	for (mm = 0; mm < jwmarker_num; mm++) {
+
+		switch (jwmarker[mm].id) {
+
+		case J2K_MS_EPB:
+			free(jwmarker[mm].epbmark);
+			break;
+
+		case J2K_MS_EPC:
+			free(jwmarker[mm].epcmark);
+			break;
+
+		case J2K_MS_ESD:
+			free(jwmarker[mm].esdmark);
+			break;
+
+		case J2K_MS_RED:
+			free(jwmarker[mm].redmark);
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	/* clear the marker structure array */
+	memset(jwmarker, 0, sizeof(jpwl_marker_t) * JPWL_MAX_NO_MARKERS);
+
+	/* no more markers in the list */
+	jwmarker_num = 0;
+
+	/* let's begin creating a marker list, according to user wishes */
+	jpwl_prepare_marks(j2k, cio, image);
+
+	/* now we dump the JPWL markers on the codestream */
+	jpwl_dump_marks(j2k, cio, image);
+
+	/* do not know exactly what is this for,
+	but it gets called during index creation */
+	j2k->pos_correction = 0;
+
+}
+
 
 void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 
@@ -282,7 +333,7 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 						jwmarker[jwmarker_num].id = J2K_MS_ESD; /* its type */
 						jwmarker[jwmarker_num].esdmark = esd_mark; /* the EPB */
 						/****** jwmarker[jwmarker_num].pos = j2k->cstr_info->tile[tileno].start_pos + sot_len + 2; */ /* after SOT */
-						jwmarker[jwmarker_num].pos = soc_pos + j2k->cstr_info->tile[tileno].tp[tpno].tp_start_pos + sot_len + 2; /* after SOT */
+						jwmarker[jwmarker_num].pos = j2k->cstr_info->tile[tileno].tp[tpno].tp_start_pos + sot_len + 2; /* after SOT */
 						jwmarker[jwmarker_num].dpos = (double) jwmarker[jwmarker_num].pos + 0.2; /* not first at all! */
 						jwmarker[jwmarker_num].len = esd_mark->Lesd; /* its length */
 						jwmarker[jwmarker_num].len_ready = true; /* ready, yet */
@@ -458,7 +509,7 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 						jwmarker[jwmarker_num].id = J2K_MS_EPB; /* its type */
 						jwmarker[jwmarker_num].epbmark = epb_mark; /* the EPB */
 						/****** jwmarker[jwmarker_num].pos = j2k->cstr_info->tile[tileno].start_pos + sot_len + 2; */ /* after SOT */
-						jwmarker[jwmarker_num].pos = soc_pos + j2k->cstr_info->tile[tileno].tp[tpno].tp_start_pos + sot_len + 2; /* after SOT */
+						jwmarker[jwmarker_num].pos = j2k->cstr_info->tile[tileno].tp[tpno].tp_start_pos + sot_len + 2; /* after SOT */
 						jwmarker[jwmarker_num].dpos = (double) jwmarker[jwmarker_num].pos; /* first first first! */
 						jwmarker[jwmarker_num].len = epb_mark->Lepb; /* its length */
 						jwmarker[jwmarker_num].len_ready = true; /* ready */
@@ -647,23 +698,23 @@ void jpwl_dump_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 	/* Order JPWL markers according to their wishlist position */
 	qsort((void *) jwmarker, (size_t) jwmarker_num, sizeof (jpwl_marker_t), jpwl_markcomp);
 
-	/* compute markers total size */
+	/* compute markers total size */ 
 	for (mm = 0; mm < jwmarker_num; mm++) {
 		/*printf("%x, %d, %.10f, %d long\n", jwmarker[mm].id, jwmarker[mm].pos,
 			jwmarker[mm].dpos, jwmarker[mm].len);*/
 		new_size += jwmarker[mm].len + 2;
 	}
 
-	/* allocate a temporary buffer of proper size */
+	/* allocate a new buffer of proper size */
 	if (!(jpwl_buf = (unsigned char *) opj_malloc((size_t) new_size * sizeof (unsigned char)))) {
-		opj_event_msg(j2k->cinfo, EVT_ERROR, "Could not allocate room for JPWL temp codestream buffer\n");
+		opj_event_msg(j2k->cinfo, EVT_ERROR, "Could not allocate room for JPWL codestream buffer\n");
 		exit(1);
 	};
 
 	/* copy the jp2 part, if any */
-	memcpy(jpwl_buf, cio->buffer, soc_pos);
-
 	orig_buf = jpwl_buf;
+	memcpy(jpwl_buf, cio->buffer, soc_pos);
+	jpwl_buf += soc_pos;
 
 	/* cycle through markers */
 	orig_pos = soc_pos + 0; /* start from the beginning */
@@ -713,8 +764,8 @@ void jpwl_dump_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 	}
 
 	/* finish remaining original codestream */
-	memcpy(jpwl_buf, cio_getbp(cio), soc_pos + old_size - orig_pos);
-	jpwl_buf += soc_pos + old_size - orig_pos;
+	memcpy(jpwl_buf, cio_getbp(cio), old_size - (orig_pos - soc_pos));
+	jpwl_buf += old_size - (orig_pos - soc_pos);
 	cio_seek(cio, soc_pos + old_size);
 	
 	/*
@@ -814,7 +865,8 @@ void jpwl_dump_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 	opj_free(cio->buffer);
 	/*cio->cinfo;*/ /* no change */
 	/*cio->openmode;*/ /* no change */
-	cio->buffer = jpwl_buf - new_size - soc_pos;
+	/*cio->buffer = jpwl_buf - new_size - soc_pos;*/
+	cio->buffer = orig_buf;
 	cio->length = new_size + soc_pos;
 	cio->start = jpwl_buf - new_size - soc_pos;
 	cio->end = jpwl_buf - 1;

@@ -644,6 +644,20 @@ typedef struct opj_tile_info {
 	opj_tp_info_t *tp;
 } opj_tile_info_t;
 
+/* UniPG>> */
+/**
+Marker structure
+*/
+typedef struct opj_marker_info_t {
+	/** marker type */
+	unsigned short int type;
+	/** position in codestream */
+	int pos;
+	/** length, marker val included */
+	int len;
+} opj_marker_info_t;
+/* <<UniPG */
+
 /**
 Index structure of the codestream
 */
@@ -678,6 +692,12 @@ typedef struct opj_codestream_info {
 	int numlayers;
 	/** number of decomposition of first component */
 	int numdecompos;
+/* UniPG>> */
+	/** number of markers */
+	int marknum;
+	/** list of markers */
+	opj_marker_info_t *marker;
+/* <<UniPG */
 	/** main header position */
 	int main_head_start;
 	/** main header position */

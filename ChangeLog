@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+September 11, 2007
+* [GB] JPWL encoding is finalized correctly into the JP2 file format; added an additional structure in opj_codestream_info, to keep a record of the written markers
+
 September 8, 2007
 * [GB] Adapted the JPWL and OPJViewer code to new interface; fixed a samll bug in JPWL which created large EPBs even when null protection was specified
 

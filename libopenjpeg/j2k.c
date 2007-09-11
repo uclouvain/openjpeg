@@ -2454,20 +2454,12 @@ bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, opj_codestre
 
 #ifdef USE_JPWL
 	/*
-	preparation of JPWL marker segments: can be finalized only when the whole
-	codestream is known
+	preparation of JPWL marker segments
 	*/
 	if(cp->epc_on) {
 
-		/* let's begin creating a marker list, according to user wishes */
-		jpwl_prepare_marks(j2k, cio, image);
-
-		/* now we dump the JPWL markers on the codestream */
-		jpwl_dump_marks(j2k, cio, image);
-
-		/* do not know exactly what is this for,
-		but it gets called during index creation */
-		j2k->pos_correction = 0;
+		/* encode according to JPWL */
+		jpwl_encode(j2k, cio, image);
 
 	}
 #endif /* USE_JPWL */
