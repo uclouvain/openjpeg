@@ -1,12 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mj2_to_metadata", "mj2_to_metadata.vcproj", "{5B7DCDB5-EA9B-4F31-AAE8-44B2DBD44060}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mj2_to_metadata", "mj2_to_metadata.vcproj", "{69BE42AB-E7CE-4DA1-BBD2-39FEA2C91E0B}"
 	ProjectSection(ProjectDependencies) = postProject
-		{4F27AA53-4181-4A1A-8238-3931B0A41048} = {4F27AA53-4181-4A1A-8238-3931B0A41048}
+		{0B1B7713-35B6-40A7-9BFF-A7D0EB06A8BD} = {0B1B7713-35B6-40A7-9BFF-A7D0EB06A8BD}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LibOpenJPEG", "..\LibOpenJPEG.vcproj", "{4F27AA53-4181-4A1A-8238-3931B0A41048}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LibOpenJPEG", "..\LibOpenJPEG.vcproj", "{0B1B7713-35B6-40A7-9BFF-A7D0EB06A8BD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -14,14 +14,14 @@ Global
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{5B7DCDB5-EA9B-4F31-AAE8-44B2DBD44060}.Debug|Win32.ActiveCfg = Debug|Win32
-		{5B7DCDB5-EA9B-4F31-AAE8-44B2DBD44060}.Debug|Win32.Build.0 = Debug|Win32
-		{5B7DCDB5-EA9B-4F31-AAE8-44B2DBD44060}.Release|Win32.ActiveCfg = Release|Win32
-		{5B7DCDB5-EA9B-4F31-AAE8-44B2DBD44060}.Release|Win32.Build.0 = Release|Win32
-		{4F27AA53-4181-4A1A-8238-3931B0A41048}.Debug|Win32.ActiveCfg = Debug|Win32
-		{4F27AA53-4181-4A1A-8238-3931B0A41048}.Debug|Win32.Build.0 = Debug|Win32
-		{4F27AA53-4181-4A1A-8238-3931B0A41048}.Release|Win32.ActiveCfg = Release|Win32
-		{4F27AA53-4181-4A1A-8238-3931B0A41048}.Release|Win32.Build.0 = Release|Win32
+		{69BE42AB-E7CE-4DA1-BBD2-39FEA2C91E0B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{69BE42AB-E7CE-4DA1-BBD2-39FEA2C91E0B}.Debug|Win32.Build.0 = Debug|Win32
+		{69BE42AB-E7CE-4DA1-BBD2-39FEA2C91E0B}.Release|Win32.ActiveCfg = Release|Win32
+		{69BE42AB-E7CE-4DA1-BBD2-39FEA2C91E0B}.Release|Win32.Build.0 = Release|Win32
+		{0B1B7713-35B6-40A7-9BFF-A7D0EB06A8BD}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0B1B7713-35B6-40A7-9BFF-A7D0EB06A8BD}.Debug|Win32.Build.0 = Debug|Win32
+		{0B1B7713-35B6-40A7-9BFF-A7D0EB06A8BD}.Release|Win32.ActiveCfg = Release|Win32
+		{0B1B7713-35B6-40A7-9BFF-A7D0EB06A8BD}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

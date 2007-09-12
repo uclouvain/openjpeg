@@ -945,7 +945,7 @@ int xml_out_frame(FILE* file, FILE* xmlout, mj2_sample_t *sample, unsigned int s
 	cio = opj_cio_open((opj_common_ptr)dinfo, frame_codestream, sample->sample_size-8);
 
   /* Decode J2K to image: */
-	img = opj_decode(dinfo, cio);
+	img = opj_decode(dinfo, cio, NULL);		/* We don't need cstr_info -> set to NULL */
   if (!img) {
 		fprintf(stderr, "ERROR -> j2k_to_image: failed to decode image!\n");
 		opj_destroy_decompress(dinfo);

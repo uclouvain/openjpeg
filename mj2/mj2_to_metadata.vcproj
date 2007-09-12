@@ -1,9 +1,9 @@
-                                   <?xml version="1.0" encoding="Windows-1252"?>
+<?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8,00"
 	Name="mj2_to_metadata"
-	ProjectGUID="{5B7DCDB5-EA9B-4F31-AAE8-44B2DBD44060}"
+	ProjectGUID="{69BE42AB-E7CE-4DA1-BBD2-39FEA2C91E0B}"
 	>
 	<Platforms>
 		<Platform
@@ -73,7 +73,7 @@
 				OutputFile=".\mj2_to_metadata___Win32_Debug0/mj2_to_metadata.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
-				IgnoreDefaultLibraryNames="libc"
+				IgnoreDefaultLibraryNames="LIBCMT"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\mj2_to_metadata___Win32_Debug0/mj2_to_metadata.pdb"
 				SubSystem="1"
@@ -165,7 +165,7 @@
 				OutputFile=".\Release/mj2_to_metadata.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				IgnoreDefaultLibraryNames="libc"
+				IgnoreDefaultLibraryNames="libcmtd"
 				ProgramDatabaseFile=".\Release/mj2_to_metadata.pdb"
 				SubSystem="1"
 				TargetMachine="1"

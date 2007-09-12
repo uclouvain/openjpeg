@@ -160,7 +160,7 @@ int main(int argc, char *argv[]) {
 		/* open a byte stream */
 		cio = opj_cio_open((opj_common_ptr)dinfo, frame_codestream, sample->sample_size-8);
 		
-		img = opj_decode(dinfo, cio); // Decode J2K to image
+		img = opj_decode(dinfo, cio, NULL); // Decode J2K to image. We will not use the cstr_info afterwards -> set to NULL
 				
     if (((img->numcomps == 3) && (img->comps[0].dx == img->comps[1].dx / 2) 
       && (img->comps[0].dx == img->comps[2].dx / 2 ) && (img->comps[0].dx == 1)) 

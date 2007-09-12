@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+September 12, 2007
+* [FOD] Updated the MJ2 codec to be compatible with the recent changes in the OpenJPEG library
+
 September 11, 2007
 * [GB] JPWL encoding is finalized correctly into the JP2 file format; added an additional structure in opj_codestream_info, to keep a record of the written markers
 
