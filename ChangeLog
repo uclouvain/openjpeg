@@ -6,6 +6,10 @@ What's New for OpenJPEG
 + : added
 
 September 12, 2007
+* [FOD] Patch from Callum Lerwick.
+		Fixed the library linking so it links with the soversion properly set. 
+		Fixes up the install targets so that it interacts properly with RPM. 
+		Install target for MJ2. Sets some necessary and useful CFLAGS if gcc is in use.		
 * [FOD] Updated the MJ2 codec to be compatible with the recent changes in the OpenJPEG library
 
 September 11, 2007

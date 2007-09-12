@@ -38,3 +38,5 @@ IF(UNIX)
   TARGET_LINK_LIBRARIES(wrap_j2k_in_mj2 m)
 ENDIF(UNIX)
 
+INSTALL(TARGETS frames_to_mj2 mj2_to_frames extract_j2k_from_mj2 wrap_j2k_in_mj2
+	DESTINATION bin)
