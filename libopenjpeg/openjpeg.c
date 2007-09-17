@@ -147,7 +147,11 @@ void OPJ_CALLCONV opj_setup_decoder(opj_dinfo_t *dinfo, opj_dparameters_t *param
 	}
 }
 
-opj_image_t* OPJ_CALLCONV opj_decode(opj_dinfo_t *dinfo, opj_cio_t *cio, opj_codestream_info_t *cstr_info) {
+opj_image_t* OPJ_CALLCONV opj_decode(opj_dinfo_t *dinfo, opj_cio_t *cio) {
+	return opj_decode_with_info(dinfo, cio, NULL);
+}
+
+opj_image_t* OPJ_CALLCONV opj_decode_with_info(opj_dinfo_t *dinfo, opj_cio_t *cio, opj_codestream_info_t *cstr_info) {
 	if(dinfo && cio) {
 		switch(dinfo->codec_format) {
 			case CODEC_J2K:
@@ -161,7 +165,6 @@ opj_image_t* OPJ_CALLCONV opj_decode(opj_dinfo_t *dinfo, opj_cio_t *cio, opj_cod
 				break;
 		}
 	}
-
 	return NULL;
 }
 
@@ -287,7 +290,15 @@ void OPJ_CALLCONV opj_setup_encoder(opj_cinfo_t *cinfo, opj_cparameters_t *param
 	}
 }
 
-bool OPJ_CALLCONV opj_encode(opj_cinfo_t *cinfo, opj_cio_t *cio, opj_image_t *image, opj_codestream_info_t *cstr_info) {
+bool OPJ_CALLCONV opj_encode(opj_cinfo_t *cinfo, opj_cio_t *cio, opj_image_t *image, char *index) {
+	if (index != NULL)
+		opj_event_msg((opj_common_ptr)cinfo, EVT_WARNING, "Set index to NULL when calling the opj_encode function.\n"
+		"To extract the index, use the opj_encode_with_info() function.\n"
+		"No index will be generated during this encoding\n");
+	return opj_encode_with_info(cinfo, cio, image, NULL);
+}
+
+bool OPJ_CALLCONV opj_encode_with_info(opj_cinfo_t *cinfo, opj_cio_t *cio, opj_image_t *image, opj_codestream_info_t *cstr_info) {
 	if(cinfo && cio && image) {
 		switch(cinfo->codec_format) {
 			case CODEC_J2K:

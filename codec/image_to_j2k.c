@@ -1919,7 +1919,10 @@ int main(int argc, char **argv) {
 				cio = opj_cio_open((opj_common_ptr)cinfo, NULL, 0);
 
 				/* encode the image */
-				bSuccess = opj_encode(cinfo, cio, image, &cstr_info);
+				if (*indexfilename)					// If need to extract codestream information
+					bSuccess = opj_encode_with_info(cinfo, cio, image, &cstr_info);
+				else
+					bSuccess = opj_encode(cinfo, cio, image, NULL);
 				if (!bSuccess) {
 					opj_cio_close(cio);
 					fprintf(stderr, "failed to encode image\n");
@@ -1950,8 +1953,8 @@ int main(int argc, char **argv) {
 
 				/* free remaining compression structures */
 				opj_destroy_compress(cinfo);
-				opj_destroy_cstr_info(&cstr_info);
-
+				if (*indexfilename)
+					opj_destroy_cstr_info(&cstr_info);
 			} else {			/* JP2 format output */
 				int codestream_length;
 				opj_cio_t *cio = NULL;
@@ -1971,7 +1974,10 @@ int main(int argc, char **argv) {
 				cio = opj_cio_open((opj_common_ptr)cinfo, NULL, 0);
 
 				/* encode the image */
-				bSuccess = opj_encode(cinfo, cio, image, &cstr_info);
+				if (*indexfilename)					// If need to extract codestream information
+					bSuccess = opj_encode_with_info(cinfo, cio, image, &cstr_info);
+				else
+					bSuccess = opj_encode(cinfo, cio, image, NULL);
 				if (!bSuccess) {
 					opj_cio_close(cio);
 					fprintf(stderr, "failed to encode image\n");
@@ -2001,7 +2007,8 @@ int main(int argc, char **argv) {
 
 				/* free remaining compression structures */
 				opj_destroy_compress(cinfo);
-				opj_destroy_cstr_info(&cstr_info);
+				if (*indexfilename)
+					opj_destroy_cstr_info(&cstr_info);
 			}
 	
 			/* free image data */

@@ -817,13 +817,21 @@ Decoding parameters are returned in j2k->cp.
 */
 OPJ_API void OPJ_CALLCONV opj_setup_decoder(opj_dinfo_t *dinfo, opj_dparameters_t *parameters);
 /**
-Decode an image from a JPEG-2000 codestream
+Decode an image from a JPEG-2000 codestream 
+@param dinfo decompressor handle
+@param cio Input buffer stream
+@return Returns a decoded image if successful, returns NULL otherwise
+*/
+OPJ_API opj_image_t* OPJ_CALLCONV opj_decode(opj_dinfo_t *dinfo, opj_cio_t *cio);
+
+/**
+Decode an image from a JPEG-2000 codestream and extract the codestream information
 @param dinfo decompressor handle
 @param cio Input buffer stream
 @param cstr_info Codestream information structure if needed afterwards, NULL otherwise
 @return Returns a decoded image if successful, returns NULL otherwise
 */
-OPJ_API opj_image_t* OPJ_CALLCONV opj_decode(opj_dinfo_t *dinfo, opj_cio_t *cio, opj_codestream_info_t *cstr_info);
+OPJ_API opj_image_t* OPJ_CALLCONV opj_decode_with_info(opj_dinfo_t *dinfo, opj_cio_t *cio, opj_codestream_info_t *cstr_info);
 /**
 Creates a J2K/JP2 compression structure
 @param format Coder to select
@@ -869,10 +877,19 @@ Encode an image into a JPEG-2000 codestream
 @param cinfo compressor handle
 @param cio Output buffer stream
 @param image Image to encode
+@param index Depreacted -> Set to NULL. To extract index, used opj_encode_wci()
+@return Returns true if successful, returns false otherwise
+*/
+OPJ_API bool OPJ_CALLCONV opj_encode(opj_cinfo_t *cinfo, opj_cio_t *cio, opj_image_t *image, char *index);
+/**
+Encode an image into a JPEG-2000 codestream and extract the codestream information
+@param cinfo compressor handle
+@param cio Output buffer stream
+@param image Image to encode
 @param cstr_info Codestream information structure if needed afterwards, NULL otherwise
 @return Returns true if successful, returns false otherwise
 */
-OPJ_API bool OPJ_CALLCONV opj_encode(opj_cinfo_t *cinfo, opj_cio_t *cio, opj_image_t *image, opj_codestream_info_t *cstr_info);
+OPJ_API bool OPJ_CALLCONV opj_encode_with_info(opj_cinfo_t *cinfo, opj_cio_t *cio, opj_image_t *image, opj_codestream_info_t *cstr_info);
 /**
 Destroy Codestream information after compression or decompression
 @param cstr_info Codestream information structure

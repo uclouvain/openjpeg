@@ -7,6 +7,7 @@ What's New for OpenJPEG
 
 September 17, 2007
 * [FOD] Fixed issues with cstr_info when codestream has components with different number of resolutions. 
+! [FOD] OpenJPEG library interface modified to retain compatibility with version 1.2 
 
 September 12, 2007
 * [FOD] Patch from Callum Lerwick.

@@ -834,8 +834,6 @@ int main(int argc, char **argv) {
 		fread(src, 1, file_length, fsrc);
 		fclose(fsrc);
 
-
-
 		/* decode the code-stream */
 		/* ---------------------- */
 
@@ -857,7 +855,10 @@ int main(int argc, char **argv) {
 			cio = opj_cio_open((opj_common_ptr)dinfo, src, file_length);
 
 			/* decode the stream and fill the image structure */
-			image = opj_decode(dinfo, cio, &cstr_info);
+			if (*indexfilename)				// If need to extract codestream information
+				image = opj_decode_with_info(dinfo, cio, &cstr_info);
+			else
+				image = opj_decode(dinfo, cio);
 			if(!image) {
 				fprintf(stderr, "ERROR -> j2k_to_image: failed to decode image!\n");
 				opj_destroy_decompress(dinfo);
@@ -896,7 +897,10 @@ int main(int argc, char **argv) {
 			cio = opj_cio_open((opj_common_ptr)dinfo, src, file_length);
 
 			/* decode the stream and fill the image structure */
-			image = opj_decode(dinfo, cio, &cstr_info);
+			if (*indexfilename)				// If need to extract codestream information
+				image = opj_decode_with_info(dinfo, cio, &cstr_info);
+			else
+				image = opj_decode(dinfo, cio);			
 			if(!image) {
 				fprintf(stderr, "ERROR -> j2k_to_image: failed to decode image!\n");
 				opj_destroy_decompress(dinfo);
@@ -935,7 +939,10 @@ int main(int argc, char **argv) {
 			cio = opj_cio_open((opj_common_ptr)dinfo, src, file_length);
 
 			/* decode the stream and fill the image structure */
-			image = opj_decode(dinfo, cio, &cstr_info);
+			if (*indexfilename)				// If need to extract codestream information
+				image = opj_decode_with_info(dinfo, cio, &cstr_info);
+			else
+				image = opj_decode(dinfo, cio);
 			if(!image) {
 				fprintf(stderr, "ERROR -> j2k_to_image: failed to decode image!\n");
 				opj_destroy_decompress(dinfo);
@@ -1029,7 +1036,8 @@ int main(int argc, char **argv) {
 			opj_destroy_decompress(dinfo);
 		}
 		/* free codestream information structure */
-		opj_destroy_cstr_info(&cstr_info);
+		if (*indexfilename)	
+			opj_destroy_cstr_info(&cstr_info);
 		/* free image data structure */
 		opj_image_destroy(image);
 
