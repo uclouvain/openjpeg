@@ -1309,25 +1309,27 @@ bool tcd_decode_tile(opj_tcd_t *tcd, unsigned char *src, int len, int tileno, op
 
 	/* INDEX >>  */
 	if(cstr_info) {
-		int i, numpacks = 0;
-		opj_tcp_t *tcp = &tcd->cp->tcps[0];
-		opj_tccp_t *tccp = &tcp->tccps[0];
-		opj_tcd_tilecomp_t *tilec_idx = &tile->comps[0];	/* based on component 0 */
-		for (i = 0; i < tilec_idx->numresolutions; i++) {
-			opj_tcd_resolution_t *res_idx = &tilec_idx->resolutions[i];
-			cstr_info->tile[tileno].pw[i] = res_idx->pw;
-			cstr_info->tile[tileno].ph[i] = res_idx->ph;
-			numpacks += res_idx->pw * res_idx->ph;
-			if (tccp->csty & J2K_CP_CSTY_PRT) {
-				cstr_info->tile[tileno].pdx[i] = tccp->prcw[i];
-				cstr_info->tile[tileno].pdy[i] = tccp->prch[i];
-			}
-			else {
-				cstr_info->tile[tileno].pdx[i] = 15;
-				cstr_info->tile[tileno].pdx[i] = 15;
+		int resno, compno, numprec = 0;
+		for (compno = 0; compno < cstr_info->numcomps; compno++) {
+			opj_tcp_t *tcp = &tcd->cp->tcps[0];
+			opj_tccp_t *tccp = &tcp->tccps[compno];
+			opj_tcd_tilecomp_t *tilec_idx = &tile->comps[compno];	
+			for (resno = 0; resno < tilec_idx->numresolutions; resno++) {
+				opj_tcd_resolution_t *res_idx = &tilec_idx->resolutions[resno];
+				cstr_info->tile[tileno].pw[resno] = res_idx->pw;
+				cstr_info->tile[tileno].ph[resno] = res_idx->ph;
+				numprec += res_idx->pw * res_idx->ph;
+				if (tccp->csty & J2K_CP_CSTY_PRT) {
+					cstr_info->tile[tileno].pdx[resno] = tccp->prcw[resno];
+					cstr_info->tile[tileno].pdy[resno] = tccp->prch[resno];
+				}
+				else {
+					cstr_info->tile[tileno].pdx[resno] = 15;
+					cstr_info->tile[tileno].pdx[resno] = 15;
+				}
 			}
 		}
-		cstr_info->tile[tileno].packet = (opj_packet_info_t *) opj_malloc(cstr_info->numcomps * cstr_info->numlayers * numpacks * sizeof(opj_packet_info_t));
+		cstr_info->tile[tileno].packet = (opj_packet_info_t *) opj_malloc(cstr_info->numlayers * numprec * sizeof(opj_packet_info_t));
 		cstr_info->packno = 0;
 	}
 	/* << INDEX */
@@ -1468,6 +1470,8 @@ void tcd_free_decode_tile(opj_tcd_t *tcd, int tileno) {
 	}
 	if (tile->comps != NULL) opj_free(tile->comps);
 }
+
+
 
 
 

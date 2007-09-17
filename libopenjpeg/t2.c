@@ -748,7 +748,7 @@ int t2_decode_packets(opj_t2_t *t2, unsigned char *src, int len, int tileno, opj
 		return e;
 	}
 	
-    return (c - src);
+	return (c - src);
 }
 
 /* ----------------------------------------------------------------------- */
@@ -769,5 +769,7 @@ void t2_destroy(opj_t2_t *t2) {
 		opj_free(t2);
 	}
 }
+
+
 
 

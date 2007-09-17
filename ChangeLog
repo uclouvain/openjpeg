@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+September 17, 2007
+* [FOD] Fixed issues with cstr_info when codestream has components with different number of resolutions. 
+
 September 12, 2007
 * [FOD] Patch from Callum Lerwick.
 		Fixed the library linking so it links with the soversion properly set. 

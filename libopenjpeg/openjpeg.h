@@ -690,8 +690,8 @@ typedef struct opj_codestream_info {
 	int numcomps;
 	/** number of layer */
 	int numlayers;
-	/** number of decomposition of first component */
-	int numdecompos;
+	/** number of decomposition for each component */
+	int *numdecompos;
 /* UniPG>> */
 	/** number of markers */
 	int marknum;

@@ -675,7 +675,7 @@ static void j2k_read_siz(opj_j2k_t *j2k) {
 		cstr_info->tile_y = cp->tdy;	
 		cstr_info->tile_Ox = cp->tx0;	
 		cstr_info->tile_Oy = cp->ty0;			
-		cstr_info->tile = (opj_tile_info_t*) opj_malloc(cp->tw * cp->th * sizeof(opj_tile_info_t));
+		cstr_info->tile = (opj_tile_info_t*) opj_malloc(cp->tw * cp->th * sizeof(opj_tile_info_t));		
 	}
 }
 
@@ -824,7 +824,10 @@ static void j2k_read_cod(opj_j2k_t *j2k) {
 		opj_codestream_info_t *cstr_info = j2k->cstr_info;
 		cstr_info->prog = tcp->prg;
 		cstr_info->numlayers = tcp->numlayers;
-		cstr_info->numdecompos = tcp->tccps[0].numresolutions - 1;
+		cstr_info->numdecompos = (int*) malloc (image->numcomps * sizeof(int));
+		for (i = 0; i < image->numcomps; i++) {
+			cstr_info->numdecompos[i] = tcp->tccps[i].numresolutions - 1;
+		}
 	}
 }
 
@@ -1376,10 +1379,14 @@ static void j2k_read_sot(opj_j2k_t *j2k) {
 			j2k->cstr_info->tile[tileno].start_pos = cio_tell(cio) - 12;
 			j2k->cstr_info->tile[tileno].end_pos = j2k->cstr_info->tile[tileno].start_pos + totlen - 1;				
 			j2k->cstr_info->tile[tileno].num_tps = numparts;
-			j2k->cstr_info->tile[tileno].tp = (opj_tp_info_t *) opj_malloc(numparts * sizeof(opj_tp_info_t));
+			if (numparts)
+				j2k->cstr_info->tile[tileno].tp = (opj_tp_info_t *) opj_malloc(numparts * sizeof(opj_tp_info_t));
+			else
+				j2k->cstr_info->tile[tileno].tp = (opj_tp_info_t *) opj_malloc(10 * sizeof(opj_tp_info_t)); // Fixme (10)
 		}
-		else
+		else {
 			j2k->cstr_info->tile[tileno].end_pos += totlen;
+		}		
 		j2k->cstr_info->tile[tileno].tp[partno].tp_start_pos = cio_tell(cio) - 12;
 		j2k->cstr_info->tile[tileno].tp[partno].tp_end_pos = 
 			j2k->cstr_info->tile[tileno].tp[partno].tp_start_pos + totlen - 1;
@@ -1477,7 +1484,7 @@ static void j2k_read_sod(opj_j2k_t *j2k) {
 
 	if (len == cio_numbytesleft(cio) + 1) {
 		truncate = 1;		/* Case of a truncate codestream */
-	}
+	}	
 
 	data = (unsigned char *) opj_malloc((j2k->tile_len[curtileno] + len) * sizeof(unsigned char));
 
@@ -2278,6 +2285,7 @@ bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, opj_codestre
 	/* INDEX >> */
 	j2k->cstr_info = cstr_info;
 	if (cstr_info) {
+		int compno;
 		cstr_info->tile = (opj_tile_info_t *) opj_malloc(cp->tw * cp->th * sizeof(opj_tile_info_t));
 		cstr_info->image_w = image->x1 - image->x0;
 		cstr_info->image_h = image->y1 - image->y0;
@@ -2290,7 +2298,10 @@ bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, opj_codestre
 		cstr_info->tile_Oy = cp->ty0;	/* new version parser */
 		cstr_info->numcomps = image->numcomps;
 		cstr_info->numlayers = (&cp->tcps[0])->numlayers;
-		cstr_info->numdecompos = (&cp->tcps[0])->tccps->numresolutions - 1;
+		cstr_info->numdecompos = (int*) malloc (image->numcomps * sizeof(int));
+		for (compno=0; compno < image->numcomps; compno++) {
+			cstr_info->numdecompos[compno] = (&cp->tcps[0])->tccps->numresolutions - 1;
+		}
 		cstr_info->D_max = 0;		/* ADD Marcela */
 		cstr_info->main_head_start = cio_tell(cio); /* position of SOC */
 	}
@@ -2466,6 +2477,8 @@ bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, opj_codestre
 
 	return true;
 }
+
+
 
 
 
