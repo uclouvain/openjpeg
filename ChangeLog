@@ -5,6 +5,10 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+September 18, 2007
+* [Parvatha] Fixed issues with Reading and Writing TIF images in convert.c to avoid segmentation fault. 
+* [Parvatha] Fixed issues relating to using user specified rates for CINEMA option for multiple images.
+
 September 17, 2007
 * [FOD] Fixed issues with cstr_info when codestream has components with different number of resolutions. 
 ! [FOD] OpenJPEG library interface modified to retain compatibility with version 1.2 

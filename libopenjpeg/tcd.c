@@ -1069,11 +1069,12 @@ bool tcd_rateallocate(opj_tcd_t *tcd, unsigned char *dest, int len, opj_codestre
 		  ==> possible to have some lossy layers and the last layer for sure lossless */
 		if ( ((cp->disto_alloc==1) && (tcd_tcp->rates[layno]>0)) || ((cp->fixed_quality==1) && (tcd_tcp->distoratio[layno]>0))) {
 			opj_t2_t *t2 = t2_create(tcd->cinfo, tcd->image, cp);
+			double thresh = 0;
 
 			for (i = 0; i < 32; i++) {
-				double thresh = (lo + hi) / 2;
 				int l = 0;
 				double distoachieved = 0;	/* fixed_quality */
+				thresh = (lo + hi) / 2;
 				
 				tcd_makelayer(tcd, layno, thresh, 0);
 				
@@ -1117,7 +1118,7 @@ bool tcd_rateallocate(opj_tcd_t *tcd, unsigned char *dest, int len, opj_codestre
 				}
 			}
 			success = 1;
-			goodthresh = stable_thresh;
+			goodthresh = stable_thresh == 0? thresh : stable_thresh;
 			t2_destroy(t2);
 		} else {
 			success = 1;

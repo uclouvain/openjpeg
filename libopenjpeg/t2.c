@@ -591,6 +591,7 @@ int t2_encode_packets(opj_t2_t* t2,int tileno, opj_tcd_tile_t *tile, int maxlaye
 	int poc;
 	opj_image_t *image = t2->image;
 	opj_cp_t *cp = t2->cp;
+	opj_tcp_t *tcp = &cp->tcps[tileno];
 	int pocno = cp->cinema == CINEMA4K_24? 2: 1;
 	int maxcomp = cp->max_comp_size > 0 ? image->numcomps : 1;
 	
@@ -645,7 +646,7 @@ int t2_encode_packets(opj_t2_t* t2,int tileno, opj_tcd_tile_t *tile, int maxlaye
 						if (!cstr_info->packno) {
 							info_PK->start_pos = info_TL->end_header + 1;
 						} else {
-							info_PK->start_pos = (cp->tp_on && info_PK->start_pos) ? info_PK->start_pos : info_TL->packet[cstr_info->packno - 1].end_pos + 1;
+							info_PK->start_pos = ((cp->tp_on | tcp->POC)&& info_PK->start_pos) ? info_PK->start_pos : info_TL->packet[cstr_info->packno - 1].end_pos + 1;
 						}
 						info_PK->end_pos = info_PK->start_pos + e - 1;
 						info_PK->end_ph_pos += info_PK->start_pos - 1;	// End of packet header which now only represents the distance 

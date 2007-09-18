@@ -80,6 +80,8 @@ typedef struct img_folder{
 	char set_imgdir;
 	/** Enable Cod Format for output*/
 	char set_out_format;
+	/** User specified rate stored in case of cinema option*/
+	float *rates;
 }img_fol_t;
 
 void encode_help_display() {
@@ -482,7 +484,7 @@ void cinema_parameters(opj_cparameters_t *parameters){
 
 }
 
-void cinema_setup_encoder(opj_cparameters_t *parameters,opj_image_t *image){
+void cinema_setup_encoder(opj_cparameters_t *parameters,opj_image_t *image, img_fol_t *img_fol){
 	int i;
 	float temp_rate;
 	opj_poc_t *POC = NULL;
@@ -520,17 +522,19 @@ void cinema_setup_encoder(opj_cparameters_t *parameters,opj_image_t *image){
 	switch (parameters->cp_cinema){
 		case CINEMA2K_24:
 		case CINEMA4K_24:
-			for(i=0;i<parameters->tcp_numlayers;i++){
+			for(i=0 ; i<parameters->tcp_numlayers ; i++){
 				temp_rate = 0 ;
-				if (parameters->tcp_rates[i]== 0){
+				if (img_fol->rates[i]== 0){
 					parameters->tcp_rates[0]= ((float) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec))/ 
 					(CINEMA_24_CS * 8 * image->comps[0].dx * image->comps[0].dy);
 				}else{
 					temp_rate =((float) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec))/ 
-						(parameters->tcp_rates[i] * 8 * image->comps[0].dx * image->comps[0].dy);
+						(img_fol->rates[i] * 8 * image->comps[0].dx * image->comps[0].dy);
 					if (temp_rate > CINEMA_24_CS ){
 						parameters->tcp_rates[i]= ((float) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec))/ 
-																				(CINEMA_24_CS * 8 * image->comps[0].dx * image->comps[0].dy);
+						(CINEMA_24_CS * 8 * image->comps[0].dx * image->comps[0].dy);
+					}else{
+						parameters->tcp_rates[i]= img_fol->rates[i];
 					}
 				}
 			}
@@ -538,17 +542,19 @@ void cinema_setup_encoder(opj_cparameters_t *parameters,opj_image_t *image){
 			break;
 		
 		case CINEMA2K_48:
-     	for(i=0;i<parameters->tcp_numlayers;i++){
+			for(i=0 ; i<parameters->tcp_numlayers ; i++){
 				temp_rate = 0 ;
-				if (parameters->tcp_rates[i]== 0){
+				if (img_fol->rates[i]== 0){
 					parameters->tcp_rates[0]= ((float) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec))/ 
 					(CINEMA_48_CS * 8 * image->comps[0].dx * image->comps[0].dy);
 				}else{
 					temp_rate =((float) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec))/ 
-						(parameters->tcp_rates[i] * 8 * image->comps[0].dx * image->comps[0].dy);
+						(img_fol->rates[i] * 8 * image->comps[0].dx * image->comps[0].dy);
 					if (temp_rate > CINEMA_48_CS ){
 						parameters->tcp_rates[0]= ((float) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec))/ 
-																				(CINEMA_48_CS * 8 * image->comps[0].dx * image->comps[0].dy);
+						(CINEMA_48_CS * 8 * image->comps[0].dx * image->comps[0].dy);
+					}else{
+						parameters->tcp_rates[i]= img_fol->rates[i];
 					}
 				}
 			}
@@ -1766,6 +1772,10 @@ int main(int argc, char **argv) {
 	}
 	
 	if (parameters.cp_cinema){
+		img_fol.rates = (float*)malloc(parameters.tcp_numlayers * sizeof(float));
+		for(i=0; i< parameters.tcp_numlayers; i++){
+			img_fol.rates[i] = parameters.tcp_rates[i];
+		}
 		cinema_parameters(&parameters);
 	}				
 
@@ -1894,7 +1904,7 @@ int main(int argc, char **argv) {
 			parameters.tcp_mct = image->numcomps == 3 ? 1 : 0;
 
 			if(parameters.cp_cinema){
-				cinema_setup_encoder(&parameters,image);
+				cinema_setup_encoder(&parameters,image,&img_fol);
 			}
 
 			/* encode the destination image */
