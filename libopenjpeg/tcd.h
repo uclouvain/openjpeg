@@ -144,6 +144,8 @@ typedef struct opj_tcd_tile {
   int numpix;			/* add fixed_quality */
   double distotile;		/* add fixed_quality */
   double distolayer[100];	/* add fixed_quality */
+  /** packet number */
+  int packno;
 } opj_tcd_tile_t;
 
 /**

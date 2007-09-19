@@ -1423,7 +1423,7 @@ typedef struct tiff_infoheader{
 }tiff_infoheader_t;
 
 int imagetotif(opj_image_t * image, const char *outfile) {
-	int width, height, imgsize;
+	int width, height, imgsize ;
 	int bps,index,adjust = 0;
 	int last_i=0;
 	TIFF *tif;
@@ -1646,7 +1646,8 @@ int imagetotif(opj_image_t * image, const char *outfile) {
 			}
 
 			width	= image->comps[0].w;
-			height= image->comps[0].h;
+			height	= image->comps[0].h;
+			imgsize = image->comps[0].w * image->comps[0].h ;
 			bps		= image->comps[0].prec;
 
 			/* Set tags */
@@ -1670,38 +1671,47 @@ int imagetotif(opj_image_t * image, const char *outfile) {
 				dat8 = buf;
 				if (image->comps[0].prec == 8){
 					for (i=0; i<TIFFStripSize(tif); i+=1) {	// 8 bits per pixel 
-						int r = 0;
-						r = image->comps[0].data[index];
-						if (image->comps[0].sgnd){
-							r  += adjust;
-						}
-						dat8[i+0] = r;
-						index++;
+						if(index < imgsize){
+							int r = 0;
+							r = image->comps[0].data[index];
+							if (image->comps[0].sgnd){
+								r  += adjust;
+							}
+							dat8[i+0] = r;
+							index++;
+						}else
+							break; 
 					}
 				}else if (image->comps[0].prec == 12){
 					for (i = 0; i<TIFFStripSize(tif); i+=3) {	// 12 bits per pixel 
-						int r = 0, r1 = 0;
-						r  = image->comps[0].data[index];
-						r1 = image->comps[0].data[index+1];
-						if (image->comps[0].sgnd){
-							r  += adjust;
-							r1 += adjust;
-						}
-						dat8[i+0] = (r >> 4);
-						dat8[i+1] = ((r & 0x0f) << 4 )|((r1 >> 8)& 0x0f);
-						dat8[i+2] = r1 ;
-						index+=2;
+						if(index < imgsize){
+							int r = 0, r1 = 0;
+							r  = image->comps[0].data[index];
+							r1 = image->comps[0].data[index+1];
+							if (image->comps[0].sgnd){
+								r  += adjust;
+								r1 += adjust;
+							}
+							dat8[i+0] = (r >> 4);
+							dat8[i+1] = ((r & 0x0f) << 4 )|((r1 >> 8)& 0x0f);
+							dat8[i+2] = r1 ;
+							index+=2;
+						}else
+							break; 
 					}
 				}else if (image->comps[0].prec == 16){
 					for (i=0; i<TIFFStripSize(tif); i+=2) {	// 16 bits per pixel 
-						int r = 0;
-						r = image->comps[0].data[index];
-						if (image->comps[0].sgnd){
-							r  += adjust;
-						}
-						dat8[i+0] = r;
-						dat8[i+1] = r >> 8;
-						index++;
+						if(index < imgsize){
+							int r = 0;
+							r = image->comps[0].data[index];
+							if (image->comps[0].sgnd){
+								r  += adjust;
+							}
+							dat8[i+0] = r;
+							dat8[i+1] = r >> 8;
+							index++;
+						}else
+							break; 
 					}
 				}else{
 					fprintf(stderr,"Bits=%d, Only 8,12,16 bits implemented\n",image->comps[0].prec);
@@ -1733,7 +1743,7 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
 	OPJ_COLOR_SPACE color_space;
 	opj_image_cmptparm_t cmptparm[3];
 	opj_image_t * image = NULL;
-	int imgsize;
+	int imgsize = 0;
 
 	tif = TIFFOpen(filename, "r");
 
@@ -1889,6 +1899,7 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
 		strip_size = 0;
 		strip_size = TIFFStripSize(tif);
 		index = 0;
+		imgsize = image->comps[0].w * image->comps[0].h ;
 		/* Read the Image components*/
 		for (strip = 0; strip < TIFFNumberOfStrips(tif); strip++) {
 			unsigned char *dat8;

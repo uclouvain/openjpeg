@@ -1444,8 +1444,10 @@ static void j2k_write_sod(opj_j2k_t *j2k, void *tile_coder) {
 	for (layno = 0; layno < tcp->numlayers; layno++) {
 		tcp->rates[layno] -= tcp->rates[layno] ? (j2k->sod_start / (cp->th * cp->tw)) : 0;
 	}
-	if(cstr_info && (j2k->cur_tp_num == 0)) {
-		cstr_info->packno = 0;
+	if(j2k->cur_tp_num == 0){
+		tcd->tcd_image->tiles->packno = 0;
+		if(cstr_info)
+			cstr_info->packno = 0;
 	}
 	
 	l = tcd_encode_tile(tcd, j2k->curtileno, cio_getbp(cio), cio_numbytesleft(cio) - 2, cstr_info);

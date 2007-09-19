@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+September 19, 2007
+* [Parvatha] Fixed issues with generation of SOP marker. 
+
 September 18, 2007
 * [Parvatha] Fixed issues with Reading and Writing TIF images in convert.c to avoid segmentation fault. 
 * [Parvatha] Fixed issues relating to using user specified rates for CINEMA option for multiple images.

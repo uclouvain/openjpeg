@@ -147,8 +147,8 @@ static int t2_encode_packet(opj_tcd_tile_t * tile, opj_tcp_t * tcp, opj_pi_itera
 		c[1] = 145;
 		c[2] = 0;
 		c[3] = 4;
-		c[4] = (cstr_info->packno % 65536) / 256;
-		c[5] = (cstr_info->packno % 65536) % 256;
+		c[4] = (tile->packno % 65536) / 256;
+		c[5] = (tile->packno % 65536) % 256;
 		c += 6;
 	}
 	/* </SOP> */
@@ -656,6 +656,7 @@ int t2_encode_packets(opj_t2_t* t2,int tileno, opj_tcd_tile_t *tile, int maxlaye
 					cstr_info->packno++;
 				}
 				/* << INDEX */
+				tile->packno++;
 			}
 		}
 	}
