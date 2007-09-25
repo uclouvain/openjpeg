@@ -8,7 +8,7 @@
 # e.g.:
 # SET(OPENJPEG_NAMESPACE "GDCMOPENJPEG")
 PROJECT(OPENJPEG C)
-CMAKE_MINIMUM_REQUIRED(VERSION 2.2)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
 
 IF(NOT OPENJPEG_NAMESPACE)
   SET(OPENJPEG_NAMESPACE "OPENJPEG")
@@ -23,13 +23,20 @@ PROJECT(${JPEG_NAMESPACE} C)
 INCLUDE_REGULAR_EXPRESSION("^.*$")
 
 #-----------------------------------------------------------------------------
-# OPENJPEG version number, usefull for packaging and doxygen doc:
-SET(OPENJPEG_SOVERSION 2)
-SET(OPENJPEG_MAJOR_VERSION 1)
-SET(OPENJPEG_MINOR_VERSION 2)
-SET(OPENJPEG_BUILD_VERSION 0)
+# OPENJPEG version number, useful for packaging and doxygen doc:
+SET(OPENJPEG_VERSION_MAJOR 1)
+SET(OPENJPEG_VERSION_MINOR 2)
+SET(OPENJPEG_VERSION_BUILD 0)
 SET(OPENJPEG_VERSION
-  "${OPENJPEG_MAJOR_VERSION}.${OPENJPEG_MINOR_VERSION}.${OPENJPEG_BUILD_VERSION}")
+  "${OPENJPEG_VERSION_MAJOR}.${OPENJPEG_VERSION_MINOR}.${OPENJPEG_VERSION_BUILD}")
+
+# This setting of SOVERSION assumes that any API change
+# will increment either the minor or major version number of openjpeg
+SET(OPENJPEG_LIBRARY_PROPERTIES
+  VERSION   "${OPENJPEG_VERSION_MAJOR}.${OPENJPEG_VERSION_MINOR}.${OPENJPEG_VERSION_BUILD}"
+  SOVERSION "${OPENJPEG_VERSION_MAJOR}.${OPENJPEG_VERSION_MINOR}"
+)
+
 
 #-----------------------------------------------------------------------------
 # OpenJPEG build configuration options.
@@ -109,7 +116,3 @@ FIND_PATH(JPEG2000_CONFORMANCE_DATA_ROOT testimages.html
   $ENV{JPEG2000_CONFORMANCE_DATA_ROOT}
 )
 
-IF(CMAKE_COMPILER_IS_GNUCC)
-  SET(CMAKE_WARN_FLAGS "-Wall -Wextra -Wshadow -Wcast-align -Wstrict-prototypes -Wold-style-definition -Wdisabled-optimization -Wfloat-equal")
-  SET(CMAKE_C_FLAGS "${CMAKE_WARN_FLAGS} -ffast-math -fstrict-aliasing -std=c99 ${CMAKE_C_FLAGS}")
-ENDIF(CMAKE_COMPILER_IS_GNUCC)

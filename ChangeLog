@@ -5,6 +5,11 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+September 25, 2007
+* [Mathieu Malaterre] BUG: Fix previous patch from Callum Lerwick. I have no
+    clue what CMAKE_INSTALL_LIBDIR refers too. Bump up cmake 2.2 restriction to
+    cmake 2.4 because of previous patch (not backward compatible). Properly set the SOVERSION in a cross plateform way (yes WIN32 is a platform)
+
 September 19, 2007
 * [Parvatha] Fixed issues with generation of SOP marker. 
 
