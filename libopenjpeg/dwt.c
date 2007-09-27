@@ -604,7 +604,6 @@ static void dwt_decode_tile(opj_tcd_tilecomp_t * tilec, int stop, DWT1DFN dwt_1D
 	int i, j, k;
 	int *a = NULL;
 	int *aj = NULL;
-	int *m;
 	int w; //, l;
 	int rw;			/* width of the resolution level computed  */
 	int rh;			/* heigth of the resolution level computed  */
@@ -619,8 +618,8 @@ static void dwt_decode_tile(opj_tcd_tilecomp_t * tilec, int stop, DWT1DFN dwt_1D
 	w = tilec->x1-tilec->x0;
 	a = tilec->data;
 
-	m = (int*)opj_malloc(sizeof(int) * (dwt_decode_max_resolution(tr, i)+5));
-	h.mem = v.mem = (int*)( (unsigned)m + 16 - ( (unsigned)m % 16 ) ) ;
+	h.mem = (int*) opj_aligned_malloc(dwt_decode_max_resolution(tr, i) * sizeof(int));
+	v.mem = h.mem;
 
 	rw = tr->x1 - tr->x0;
 	rh = tr->y1 - tr->y0;
@@ -657,5 +656,5 @@ static void dwt_decode_tile(opj_tcd_tilecomp_t * tilec, int stop, DWT1DFN dwt_1D
 			aj++;
 		}
 	}
-	opj_free(m);
+	opj_aligned_free(h.mem);
 }
