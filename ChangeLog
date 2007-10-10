@@ -5,6 +5,11 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+October 10, 2007
+* [FOD] Patch from Callum Lewick. Clean up of j2klib.h for the aligned malloc stuff. 
+        It makes it work right with mingw, as _mm_malloc() isn't a macro, attempts to pave the way to using cmake to check for this stuff and combines a patch from Dana Fagerstrom at Sun that makes it use memalign() on Solaris
+        convert.c: Changed some error comments for TIFF images
+
 September 27, 2007
 * [FOD] Patch from Callum Lewick. Fixed dwt.c where an alignment in buffer was problematic under x86_64.
 

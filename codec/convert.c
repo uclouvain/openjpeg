@@ -1714,7 +1714,7 @@ int imagetotif(opj_image_t * image, const char *outfile) {
 							break; 
 					}
 				}else{
-					fprintf(stderr,"Bits=%d, Only 8,12,16 bits implemented\n",image->comps[0].prec);
+					fprintf(stderr,"TIFF file creation. Bits=%d, Only 8,12,16 bits implemented\n",image->comps[0].prec);
 					fprintf(stderr,"Aborting\n");
 					return 1;
 				}
@@ -1723,7 +1723,7 @@ int imagetotif(opj_image_t * image, const char *outfile) {
 			_TIFFfree(buf);
 			TIFFClose(tif);
 		}else{
-			fprintf(stderr,"False color format. Only RGB & Grayscale has been implemented\n");
+			fprintf(stderr,"TIFF file creation. Bad color format. Only RGB & Grayscale has been implemented\n");
 			fprintf(stderr,"Aborting\n");
 			return 1;
 		}
@@ -1858,7 +1858,7 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
 				}
 			}
 			else{
-				fprintf(stderr,"Bits=%d, Only 8,12,16 bits implemented\n",Info.tiBps);
+				fprintf(stderr,"TIFF file creation. Bits=%d, Only 8,12,16 bits implemented\n",Info.tiBps);
 				fprintf(stderr,"Aborting\n");
 				return NULL;
 			}
@@ -1936,7 +1936,7 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
 				}
 			}
 			else{
-				fprintf(stderr,"Bits=%d, Only 8,12,16 bits implemented\n",Info.tiBps);
+				fprintf(stderr,"TIFF file creation. Bits=%d, Only 8,12,16 bits implemented\n",Info.tiBps);
 				fprintf(stderr,"Aborting\n");
 				return NULL;
 			}
@@ -1945,7 +1945,7 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
 		_TIFFfree(buf);
 		TIFFClose(tif);
 	}else{
-		fprintf(stderr,"False color format. Only RGB & Grayscale has been implemented\n");
+		fprintf(stderr,"TIFF file creation. Bad color format. Only RGB & Grayscale has been implemented\n");
 		fprintf(stderr,"Aborting\n");
 		return NULL;
 	}
