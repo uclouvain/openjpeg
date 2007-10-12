@@ -5,6 +5,11 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+October 12, 2007
+* [FOD] Changed the way the image structure is allocated when the decoding parameters include some resolutions to discard. 
+        This should have a significant impact for the decoding of huge images when some resolutions are discarder (-r parameter)
+        Warning: The output image size is now reduced when discarding resolutions !
+
 October 10, 2007
 * [FOD] Patch from Callum Lewick. Clean up of j2klib.h for the aligned malloc stuff. 
         It makes it work right with mingw, as _mm_malloc() isn't a macro, attempts to pave the way to using cmake to check for this stuff and combines a patch from Dana Fagerstrom at Sun that makes it use memalign() on Solaris

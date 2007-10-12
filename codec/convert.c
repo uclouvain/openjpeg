@@ -310,15 +310,15 @@ int imagetotga(opj_image_t * image, const char *outfile) {
    }
 	}
 
-	width  = int_ceildiv(image->x1-image->x0, image->comps[0].dx);
-	height = int_ceildiv(image->y1-image->y0, image->comps[0].dy);
+	width = image->comps[0].w;
+	height = image->comps[0].h; 
 
 	// Mono with alpha, or RGB with alpha.
 	write_alpha = (image->numcomps==2) || (image->numcomps==4);   
 
 	// Write TGA header 
 	bpp = write_alpha ? 32 : 24;
-	if (!tga_writeheader(fdest, bpp, width, height, true))
+	if (!tga_writeheader(fdest, bpp, width , height, true))
 		return 1;
 
 	alpha_channel = image->numcomps-1; 
@@ -764,7 +764,7 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters) {
 }
 
 int imagetobmp(opj_image_t * image, const char *outfile) {
-	int w, wr, h, hr;
+	int w, h;
 	int i, pad;
 	FILE *fdest = NULL;
 	int adjustR, adjustG, adjustB;
@@ -786,42 +786,39 @@ int imagetobmp(opj_image_t * image, const char *outfile) {
 			return 1;
 		}
 	    
-		w = image->comps[0].w;
-		wr = int_ceildivpow2(image->comps[0].w, image->comps[0].factor);
-	    
+		w = image->comps[0].w;	    
 		h = image->comps[0].h;
-		hr = int_ceildivpow2(image->comps[0].h, image->comps[0].factor);
 	    
 		fprintf(fdest, "BM");
 	    
 		/* FILE HEADER */
 		/* ------------- */
 		fprintf(fdest, "%c%c%c%c",
-			(unsigned char) (hr * wr * 3 + 3 * hr * (wr % 2) + 54) & 0xff,
-			(unsigned char) ((hr * wr * 3 + 3 * hr * (wr % 2) + 54)	>> 8) & 0xff,
-			(unsigned char) ((hr * wr * 3 + 3 * hr * (wr % 2) + 54)	>> 16) & 0xff,
-			(unsigned char) ((hr * wr * 3 + 3 * hr * (wr % 2) + 54)	>> 24) & 0xff);
+			(unsigned char) (h * w * 3 + 3 * h * (w % 2) + 54) & 0xff,
+			(unsigned char) ((h * w * 3 + 3 * h * (w % 2) + 54)	>> 8) & 0xff,
+			(unsigned char) ((h * w * 3 + 3 * h * (w % 2) + 54)	>> 16) & 0xff,
+			(unsigned char) ((h * w * 3 + 3 * h * (w % 2) + 54)	>> 24) & 0xff);
 		fprintf(fdest, "%c%c%c%c", (0) & 0xff, ((0) >> 8) & 0xff, ((0) >> 16) & 0xff, ((0) >> 24) & 0xff);
 		fprintf(fdest, "%c%c%c%c", (54) & 0xff, ((54) >> 8) & 0xff,((54) >> 16) & 0xff, ((54) >> 24) & 0xff);
 	    
 		/* INFO HEADER   */
 		/* ------------- */
 		fprintf(fdest, "%c%c%c%c", (40) & 0xff, ((40) >> 8) & 0xff,	((40) >> 16) & 0xff, ((40) >> 24) & 0xff);
-		fprintf(fdest, "%c%c%c%c", (unsigned char) ((wr) & 0xff),
-			(unsigned char) ((wr) >> 8) & 0xff,
-			(unsigned char) ((wr) >> 16) & 0xff,
-			(unsigned char) ((wr) >> 24) & 0xff);
-		fprintf(fdest, "%c%c%c%c", (unsigned char) ((hr) & 0xff),
-			(unsigned char) ((hr) >> 8) & 0xff,
-			(unsigned char) ((hr) >> 16) & 0xff,
-			(unsigned char) ((hr) >> 24) & 0xff);
+		fprintf(fdest, "%c%c%c%c", (unsigned char) ((w) & 0xff),
+			(unsigned char) ((w) >> 8) & 0xff,
+			(unsigned char) ((w) >> 16) & 0xff,
+			(unsigned char) ((w) >> 24) & 0xff);
+		fprintf(fdest, "%c%c%c%c", (unsigned char) ((h) & 0xff),
+			(unsigned char) ((h) >> 8) & 0xff,
+			(unsigned char) ((h) >> 16) & 0xff,
+			(unsigned char) ((h) >> 24) & 0xff);
 		fprintf(fdest, "%c%c", (1) & 0xff, ((1) >> 8) & 0xff);
 		fprintf(fdest, "%c%c", (24) & 0xff, ((24) >> 8) & 0xff);
 		fprintf(fdest, "%c%c%c%c", (0) & 0xff, ((0) >> 8) & 0xff, ((0) >> 16) & 0xff, ((0) >> 24) & 0xff);
-		fprintf(fdest, "%c%c%c%c", (unsigned char) (3 * hr * wr + 3 * hr * (wr % 2)) & 0xff,
-			(unsigned char) ((hr * wr * 3 + 3 * hr * (wr % 2)) >> 8) & 0xff,
-			(unsigned char) ((hr * wr * 3 + 3 * hr * (wr % 2)) >> 16) & 0xff,
-			(unsigned char) ((hr * wr * 3 + 3 * hr * (wr % 2)) >> 24) & 0xff);
+		fprintf(fdest, "%c%c%c%c", (unsigned char) (3 * h * w + 3 * h * (w % 2)) & 0xff,
+			(unsigned char) ((h * w * 3 + 3 * h * (w % 2)) >> 8) & 0xff,
+			(unsigned char) ((h * w * 3 + 3 * h * (w % 2)) >> 16) & 0xff,
+			(unsigned char) ((h * w * 3 + 3 * h * (w % 2)) >> 24) & 0xff);
 		fprintf(fdest, "%c%c%c%c", (7834) & 0xff, ((7834) >> 8) & 0xff, ((7834) >> 16) & 0xff, ((7834) >> 24) & 0xff);
 		fprintf(fdest, "%c%c%c%c", (7834) & 0xff, ((7834) >> 8) & 0xff,	((7834) >> 16) & 0xff, ((7834) >> 24) & 0xff);
 		fprintf(fdest, "%c%c%c%c", (0) & 0xff, ((0) >> 8) & 0xff, ((0) >> 16) & 0xff, ((0) >> 24) & 0xff);
@@ -846,24 +843,24 @@ int imagetobmp(opj_image_t * image, const char *outfile) {
 		else 
 			adjustB = 0;
 
-		for (i = 0; i < wr * hr; i++) {
+		for (i = 0; i < w * h; i++) {
 			unsigned char rc, gc, bc;
 			int r, g, b;
 							
-			r = image->comps[0].data[w * hr - ((i) / (wr) + 1) * w + (i) % (wr)];
+			r = image->comps[0].data[w * h - ((i) / (w) + 1) * w + (i) % (w)];
 			r += (image->comps[0].sgnd ? 1 << (image->comps[0].prec - 1) : 0);
 			rc = (unsigned char) ((r >> adjustR)+((r >> (adjustR-1))%2));
-			g = image->comps[1].data[w * hr - ((i) / (wr) + 1) * w + (i) % (wr)];
+			g = image->comps[1].data[w * h - ((i) / (w) + 1) * w + (i) % (w)];
 			g += (image->comps[1].sgnd ? 1 << (image->comps[1].prec - 1) : 0);
 			gc = (unsigned char) ((g >> adjustG)+((g >> (adjustG-1))%2));
-			b = image->comps[2].data[w * hr - ((i) / (wr) + 1) * w + (i) % (wr)];
+			b = image->comps[2].data[w * h - ((i) / (w) + 1) * w + (i) % (w)];
 			b += (image->comps[2].sgnd ? 1 << (image->comps[2].prec - 1) : 0);
 			bc = (unsigned char) ((b >> adjustB)+((b >> (adjustB-1))%2));
 
 			fprintf(fdest, "%c%c%c", bc, gc, rc);
 			
-			if ((i + 1) % wr == 0) {
-				for (pad = (3 * wr) % 4 ? 4 - (3 * wr) % 4 : 0; pad > 0; pad--)	/* ADD */
+			if ((i + 1) % w == 0) {
+				for (pad = (3 * w) % 4 ? 4 - (3 * w) % 4 : 0; pad > 0; pad--)	/* ADD */
 					fprintf(fdest, "%c", 0);
 			}
 		}
@@ -875,20 +872,17 @@ int imagetobmp(opj_image_t * image, const char *outfile) {
 		<<-- <<-- <<-- <<-- */
 
 		fdest = fopen(outfile, "wb");
-		w = image->comps[0].w;
-		wr = int_ceildivpow2(image->comps[0].w, image->comps[0].factor);
-	    
+		w = image->comps[0].w;	    
 		h = image->comps[0].h;
-		hr = int_ceildivpow2(image->comps[0].h, image->comps[0].factor);
 	    
 		fprintf(fdest, "BM");
 	    
 		/* FILE HEADER */
 		/* ------------- */
-		fprintf(fdest, "%c%c%c%c", (unsigned char) (hr * wr + 54 + 1024 + hr * (wr % 2)) & 0xff,
-			(unsigned char) ((hr * wr + 54 + 1024 + hr * (wr % 2)) >> 8) & 0xff,
-			(unsigned char) ((hr * wr + 54 + 1024 + hr * (wr % 2)) >> 16) & 0xff,
-			(unsigned char) ((hr * wr + 54 + 1024 + wr * (wr % 2)) >> 24) & 0xff);
+		fprintf(fdest, "%c%c%c%c", (unsigned char) (h * w + 54 + 1024 + h * (w % 2)) & 0xff,
+			(unsigned char) ((h * w + 54 + 1024 + h * (w % 2)) >> 8) & 0xff,
+			(unsigned char) ((h * w + 54 + 1024 + h * (w % 2)) >> 16) & 0xff,
+			(unsigned char) ((h * w + 54 + 1024 + w * (w % 2)) >> 24) & 0xff);
 		fprintf(fdest, "%c%c%c%c", (0) & 0xff, ((0) >> 8) & 0xff, ((0) >> 16) & 0xff, ((0) >> 24) & 0xff);
 		fprintf(fdest, "%c%c%c%c", (54 + 1024) & 0xff, ((54 + 1024) >> 8) & 0xff, 
 			((54 + 1024) >> 16) & 0xff,
@@ -897,21 +891,21 @@ int imagetobmp(opj_image_t * image, const char *outfile) {
 		/* INFO HEADER */
 		/* ------------- */
 		fprintf(fdest, "%c%c%c%c", (40) & 0xff, ((40) >> 8) & 0xff,	((40) >> 16) & 0xff, ((40) >> 24) & 0xff);
-		fprintf(fdest, "%c%c%c%c", (unsigned char) ((wr) & 0xff),
-			(unsigned char) ((wr) >> 8) & 0xff,
-			(unsigned char) ((wr) >> 16) & 0xff,
-			(unsigned char) ((wr) >> 24) & 0xff);
-		fprintf(fdest, "%c%c%c%c", (unsigned char) ((hr) & 0xff),
-			(unsigned char) ((hr) >> 8) & 0xff,
-			(unsigned char) ((hr) >> 16) & 0xff,
-			(unsigned char) ((hr) >> 24) & 0xff);
+		fprintf(fdest, "%c%c%c%c", (unsigned char) ((w) & 0xff),
+			(unsigned char) ((w) >> 8) & 0xff,
+			(unsigned char) ((w) >> 16) & 0xff,
+			(unsigned char) ((w) >> 24) & 0xff);
+		fprintf(fdest, "%c%c%c%c", (unsigned char) ((h) & 0xff),
+			(unsigned char) ((h) >> 8) & 0xff,
+			(unsigned char) ((h) >> 16) & 0xff,
+			(unsigned char) ((h) >> 24) & 0xff);
 		fprintf(fdest, "%c%c", (1) & 0xff, ((1) >> 8) & 0xff);
 		fprintf(fdest, "%c%c", (8) & 0xff, ((8) >> 8) & 0xff);
 		fprintf(fdest, "%c%c%c%c", (0) & 0xff, ((0) >> 8) & 0xff, ((0) >> 16) & 0xff, ((0) >> 24) & 0xff);
-		fprintf(fdest, "%c%c%c%c", (unsigned char) (hr * wr + hr * (wr % 2)) & 0xff,
-			(unsigned char) ((hr * wr + hr * (wr % 2)) >> 8) &	0xff,
-			(unsigned char) ((hr * wr + hr * (wr % 2)) >> 16) &	0xff,
-			(unsigned char) ((hr * wr + hr * (wr % 2)) >> 24) & 0xff);
+		fprintf(fdest, "%c%c%c%c", (unsigned char) (h * w + h * (w % 2)) & 0xff,
+			(unsigned char) ((h * w + h * (w % 2)) >> 8) &	0xff,
+			(unsigned char) ((h * w + h * (w % 2)) >> 16) &	0xff,
+			(unsigned char) ((h * w + h * (w % 2)) >> 24) & 0xff);
 		fprintf(fdest, "%c%c%c%c", (7834) & 0xff, ((7834) >> 8) & 0xff,	((7834) >> 16) & 0xff, ((7834) >> 24) & 0xff);
 		fprintf(fdest, "%c%c%c%c", (7834) & 0xff, ((7834) >> 8) & 0xff,	((7834) >> 16) & 0xff, ((7834) >> 24) & 0xff);
 		fprintf(fdest, "%c%c%c%c", (256) & 0xff, ((256) >> 8) & 0xff, ((256) >> 16) & 0xff, ((256) >> 24) & 0xff);
@@ -926,18 +920,18 @@ int imagetobmp(opj_image_t * image, const char *outfile) {
 			fprintf(fdest, "%c%c%c%c", i, i, i, 0);
 		}
 
-		for (i = 0; i < wr * hr; i++) {
+		for (i = 0; i < w * h; i++) {
 			unsigned char rc;
 			int r;
 			
-			r = image->comps[0].data[w * hr - ((i) / (wr) + 1) * w + (i) % (wr)];
+			r = image->comps[0].data[w * h - ((i) / (w) + 1) * w + (i) % (w)];
 			r += (image->comps[0].sgnd ? 1 << (image->comps[0].prec - 1) : 0);
 			rc = (unsigned char) ((r >> adjustR)+((r >> (adjustR-1))%2));
 			
 			fprintf(fdest, "%c", rc);
 
-			if ((i + 1) % wr == 0) {
-				for (pad = wr % 4 ? 4 - wr % 4 : 0; pad > 0; pad--)	/* ADD */
+			if ((i + 1) % w == 0) {
+				for (pad = w % 4 ? 4 - w % 4 : 0; pad > 0; pad--)	/* ADD */
 					fprintf(fdest, "%c", 0);
 			}
 		}
@@ -1098,7 +1092,7 @@ opj_image_t* pgxtoimage(const char *filename, opj_cparameters_t *parameters) {
 }
 
 int imagetopgx(opj_image_t * image, const char *outfile) {
-	int w, wr, h, hr;
+	int w, h;
 	int i, j, compno;
 	FILE *fdest = NULL;
 
@@ -1135,12 +1129,9 @@ int imagetopgx(opj_image_t * image, const char *outfile) {
       }
 
 		w = image->comps[compno].w;
-		wr = int_ceildivpow2(image->comps[compno].w, image->comps[compno].factor);
-	    
 		h = image->comps[compno].h;
-		hr = int_ceildivpow2(image->comps[compno].h, image->comps[compno].factor);
 	    
-		fprintf(fdest, "PG ML %c %d %d %d\n", comp->sgnd ? '-' : '+', comp->prec, wr, hr);
+		fprintf(fdest, "PG ML %c %d %d %d\n", comp->sgnd ? '-' : '+', comp->prec, w, h);
 		if (comp->prec <= 8) {
 			nbytes = 1;
 		} else if (comp->prec <= 16) {
@@ -1148,8 +1139,8 @@ int imagetopgx(opj_image_t * image, const char *outfile) {
 		} else {
 			nbytes = 4;
 		}
-		for (i = 0; i < wr * hr; i++) {
-			int v = image->comps[compno].data[i / wr * w + i % wr];
+		for (i = 0; i < w * h; i++) {
+			int v = image->comps[compno].data[i];
 			for (j = nbytes - 1; j >= 0; j--) {
 				char byte = (char) (v >> (j * 8));
 				fwrite(&byte, 1, 1, fdest);
@@ -1267,7 +1258,7 @@ opj_image_t* pnmtoimage(const char *filename, opj_cparameters_t *parameters) {
 }
 
 int imagetopnm(opj_image_t * image, const char *outfile) {
-	int w, wr, wrr, h, hr, hrr, max;
+	int w, wr, h, hr, max;
 	int i, compno;
 	int adjustR, adjustG, adjustB, adjustX;
 	FILE *fdest = NULL;
@@ -1297,18 +1288,16 @@ int imagetopnm(opj_image_t * image, const char *outfile) {
 
 		w = int_ceildiv(image->x1 - image->x0, image->comps[0].dx);
 		wr = image->comps[0].w;
-		wrr = int_ceildivpow2(image->comps[0].w, image->comps[0].factor);
         
 		h = int_ceildiv(image->y1 - image->y0, image->comps[0].dy);
 		hr = image->comps[0].h;
-		hrr = int_ceildivpow2(image->comps[0].h, image->comps[0].factor);
 	    
 		max = image->comps[0].prec > 8 ? 255 : (1 << image->comps[0].prec) - 1;
 	    
 		image->comps[0].x0 = int_ceildivpow2(image->comps[0].x0 - int_ceildiv(image->x0, image->comps[0].dx), image->comps[0].factor);
 		image->comps[0].y0 = int_ceildivpow2(image->comps[0].y0 -	int_ceildiv(image->y0, image->comps[0].dy), image->comps[0].factor);
 
-		fprintf(fdest, "P6\n%d %d\n%d\n", wrr, hrr, max);
+		fprintf(fdest, "P6\n%d %d\n%d\n", wr, hr, max);
 
 		if (image->comps[0].prec > 8) {
 			adjustR = image->comps[0].prec - 8;
@@ -1330,18 +1319,18 @@ int imagetopnm(opj_image_t * image, const char *outfile) {
 			adjustB = 0;
 
 
-		for (i = 0; i < wrr * hrr; i++) {
+		for (i = 0; i < wr * hr; i++) {
 			int r, g, b;
 			unsigned char rc,gc,bc;
-			r = image->comps[0].data[i / wrr * wr + i % wrr];
+			r = image->comps[0].data[i];
 			r += (image->comps[0].sgnd ? 1 << (image->comps[0].prec - 1) : 0);
 			rc = (unsigned char) ((r >> adjustR)+((r >> (adjustR-1))%2));
 
-			g = image->comps[1].data[i / wrr * wr + i % wrr];
+			g = image->comps[1].data[i];
 			g += (image->comps[1].sgnd ? 1 << (image->comps[1].prec - 1) : 0);
 			gc = (unsigned char) ((g >> adjustG)+((g >> (adjustG-1))%2));
 			
-			b = image->comps[2].data[i / wrr * wr + i % wrr];
+			b = image->comps[2].data[i];
 			b += (image->comps[2].sgnd ? 1 << (image->comps[2].prec - 1) : 0);
 			bc = (unsigned char) ((b >> adjustB)+((b >> (adjustB-1))%2));
 			
@@ -1371,18 +1360,16 @@ int imagetopnm(opj_image_t * image, const char *outfile) {
             
 			w = int_ceildiv(image->x1 - image->x0, image->comps[compno].dx);
 			wr = image->comps[compno].w;
-			wrr = int_ceildivpow2(image->comps[compno].w, image->comps[compno].factor);
 			
 			h = int_ceildiv(image->y1 - image->y0, image->comps[compno].dy);
 			hr = image->comps[compno].h;
-			hrr = int_ceildivpow2(image->comps[compno].h, image->comps[compno].factor);
 			
 			max = image->comps[compno].prec > 8 ? 255 : (1 << image->comps[compno].prec) - 1;
 			
 			image->comps[compno].x0 = int_ceildivpow2(image->comps[compno].x0 - int_ceildiv(image->x0, image->comps[compno].dx), image->comps[compno].factor);
 			image->comps[compno].y0 = int_ceildivpow2(image->comps[compno].y0 - int_ceildiv(image->y0, image->comps[compno].dy), image->comps[compno].factor);
 			
-			fprintf(fdest, "P5\n%d %d\n%d\n", wrr, hrr, max);
+			fprintf(fdest, "P5\n%d %d\n%d\n", wr, hr, max);
 			
 			if (image->comps[compno].prec > 8) {
 				adjustX = image->comps[0].prec - 8;
@@ -1391,10 +1378,10 @@ int imagetopnm(opj_image_t * image, const char *outfile) {
 			else 
 				adjustX = 0;
 			
-			for (i = 0; i < wrr * hrr; i++) {
+			for (i = 0; i < wr * hr; i++) {
 				int l;
 				unsigned char lc;
-				l = image->comps[compno].data[i / wrr * wr + i % wrr];
+				l = image->comps[compno].data[i];
 				l += (image->comps[compno].sgnd ? 1 << (image->comps[compno].prec - 1) : 0);
 				lc = (unsigned char) ((l >> adjustX)+((l >> (adjustX-1))%2));
 				fprintf(fdest, "%c", lc);
@@ -1423,7 +1410,7 @@ typedef struct tiff_infoheader{
 }tiff_infoheader_t;
 
 int imagetotif(opj_image_t * image, const char *outfile) {
-	int width, height, imgsize ;
+	int width, height, imgsize;
 	int bps,index,adjust = 0;
 	int last_i=0;
 	TIFF *tif;
@@ -1450,7 +1437,7 @@ int imagetotif(opj_image_t * image, const char *outfile) {
 
 			width	= image->comps[0].w;
 			height	= image->comps[0].h;
-			imgsize = image->comps[0].w * image->comps[0].h ;
+			imgsize = width * height ;
 			bps		= image->comps[0].prec;
 			/* Set tags */
 			TIFFSetField(tif, TIFFTAG_IMAGEWIDTH, width);
@@ -1463,10 +1450,9 @@ int imagetotif(opj_image_t * image, const char *outfile) {
 			TIFFSetField(tif, TIFFTAG_ROWSPERSTRIP, 1);
 
 			/* Get a buffer for the data */
-			buf = _TIFFmalloc(TIFFStripSize(tif));
-			index=0;
-			strip_size=0;
 			strip_size=TIFFStripSize(tif);
+			buf = _TIFFmalloc(strip_size);
+			index=0;		
 			adjust = image->comps[0].sgnd ? 1 << (image->comps[0].prec - 1) : 0;
 			for (strip = 0; strip < TIFFNumberOfStrips(tif); strip++) {
 				unsigned char *dat8;
@@ -1647,7 +1633,7 @@ int imagetotif(opj_image_t * image, const char *outfile) {
 
 			width	= image->comps[0].w;
 			height	= image->comps[0].h;
-			imgsize = image->comps[0].w * image->comps[0].h ;
+			imgsize = width * height;
 			bps		= image->comps[0].prec;
 
 			/* Set tags */
@@ -1661,10 +1647,9 @@ int imagetotif(opj_image_t * image, const char *outfile) {
 			TIFFSetField(tif, TIFFTAG_ROWSPERSTRIP, 1);
 
 			/* Get a buffer for the data */
-			buf = _TIFFmalloc(TIFFStripSize(tif));
-			index = 0;
-			strip_size = 0;
 			strip_size = TIFFStripSize(tif);
+			buf = _TIFFmalloc(strip_size);
+			index = 0;			
 			for (strip = 0; strip < TIFFNumberOfStrips(tif); strip++) {
 				unsigned char *dat8;
 				int i;
@@ -2052,7 +2037,10 @@ opj_image_t* rawtoimage(const char *filename, opj_cparameters_t *parameters, raw
 int imagetoraw(opj_image_t * image, const char *outfile)
 {
 	FILE *rawFile = NULL;
-	int compno, pixelsToWrite, offset, cont;
+	int compno;
+	int w, h;
+	int line, row;
+	int *ptr;
 
 	if((image->numcomps * image->x1 * image->y1) == 0)
 	{
@@ -2073,8 +2061,8 @@ int imagetoraw(opj_image_t * image, const char *outfile)
 		fprintf(stdout,"Component %d characteristics: %dx%dx%d %s\n", compno, image->comps[compno].w,
 			image->comps[compno].h, image->comps[compno].prec, image->comps[compno].sgnd==1 ? "signed": "unsigned");
 
-		pixelsToWrite = image->comps[compno].w * image->comps[compno].h;
-		offset = 0;
+		w = image->comps[compno].w;
+		h = image->comps[compno].h;
 
 		if(image->comps[compno].prec <= 8)
 		{
@@ -2082,20 +2070,26 @@ int imagetoraw(opj_image_t * image, const char *outfile)
 			{
 				signed char curr;
 				int mask = (1 << image->comps[compno].prec) - 1;
-				for(cont = 0; cont < pixelsToWrite; cont++)
-				{				
-					curr = (signed char) (image->comps[compno].data[cont] & mask);
-					fwrite(&curr, sizeof(signed char), 1, rawFile);
+				ptr = image->comps[compno].data;
+				for (line = 0; line < h; line++) {
+					for(row = 0; row < w; row++)	{				
+						curr = (signed char) (*ptr & mask);
+						fwrite(&curr, sizeof(signed char), 1, rawFile);
+						ptr++;
+					}
 				}
 			}
 			else if(image->comps[compno].sgnd == 0)
 			{
 				unsigned char curr;
 				int mask = (1 << image->comps[compno].prec) - 1;
-				for(cont = 0; cont < pixelsToWrite; cont++)
-				{				
-					curr = (unsigned char) (image->comps[compno].data[cont] & mask);
-					fwrite(&curr, sizeof(unsigned char), 1, rawFile);
+				ptr = image->comps[compno].data;
+				for (line = 0; line < h; line++) {
+					for(row = 0; row < w; row++)	{	
+						curr = (unsigned char) (*ptr & mask);
+						fwrite(&curr, sizeof(unsigned char), 1, rawFile);
+						ptr++;
+					}
 				}
 			}
 		}
@@ -2105,31 +2099,37 @@ int imagetoraw(opj_image_t * image, const char *outfile)
 			{
 				signed short int curr;
 				int mask = (1 << image->comps[compno].prec) - 1;
-				for(cont = 0; cont < pixelsToWrite; cont++)
-				{				
-					curr = (signed short int) (image->comps[compno].data[cont] & mask);
-					fwrite(&curr, sizeof(signed short int), 1, rawFile);
+				ptr = image->comps[compno].data;
+				for (line = 0; line < h; line++) {
+					for(row = 0; row < w; row++)	{					
+						curr = (signed short int) (*ptr & mask);
+						fwrite(&curr, sizeof(signed short int), 1, rawFile);
+						ptr++;
+					}
 				}
 			}
 			else if(image->comps[compno].sgnd == 0)
 			{
 				unsigned short int curr;
 				int mask = (1 << image->comps[compno].prec) - 1;
-				for(cont = 0; cont < pixelsToWrite; cont++)
-				{				
-					curr = (unsigned short int) (image->comps[compno].data[cont] & mask);
-					fwrite(&curr, sizeof(unsigned short int), 1, rawFile);
+				ptr = image->comps[compno].data;
+				for (line = 0; line < h; line++) {
+					for(row = 0; row < w; row++)	{				
+						curr = (unsigned short int) (*ptr & mask);
+						fwrite(&curr, sizeof(unsigned short int), 1, rawFile);
+						ptr++;
+					}
 				}
 			}
 		}
 		else if (image->comps[compno].prec <= 32)
 		{
-
-
+			fprintf(stderr,"More than 16 bits per component no handled yet\n");
+			return 1;
 		}
 		else
 		{
-			fprintf(stderr,"\nError: invalid precision\n");
+			fprintf(stderr,"Error: invalid precision: %d\n", image->comps[compno].prec);
 			return 1;
 		}
 	}

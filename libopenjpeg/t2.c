@@ -586,7 +586,6 @@ int t2_encode_packets(opj_t2_t* t2,int tileno, opj_tcd_tile_t *tile, int maxlaye
 	unsigned char *c = dest;
 	int e = 0;
 	int compno;
-	int comp_len = 0;
 	opj_pi_iterator_t *pi = NULL;
 	int poc;
 	opj_image_t *image = t2->image;

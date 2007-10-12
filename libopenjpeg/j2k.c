@@ -406,7 +406,7 @@ static int j2k_get_num_tp(opj_cp_t *cp,int pino,int tileno){
 
 /**	mem allocation for TLM marker*/
 int j2k_calculate_tp(opj_cp_t *cp,int img_numcomp,opj_image_t *image,opj_j2k_t *j2k ){
-	int pino,tileno,maxres=0,totnum_tp=0;
+	int pino,tileno,totnum_tp=0;
 	j2k->cur_totnum_tp = (int *) opj_malloc(cp->tw * cp->th * sizeof(int));
 	for (tileno = 0; tileno < cp->tw * cp->th; tileno++) {
 		int cur_totnum_tp = 0;
@@ -579,7 +579,7 @@ static void j2k_read_siz(opj_j2k_t *j2k) {
 		h = int_ceildiv(image->y1 - image->y0, image->comps[i].dy);
 
 		image->comps[i].resno_decoded = 0;	/* number of resolution decoded */
-		image->comps[i].factor = 0;			/* reducing factor per component */
+		image->comps[i].factor = cp->reduce; /* reducing factor per component */
 	}
 	
 	cp->tw = int_ceildiv(image->x1 - cp->tx0, cp->tdx);
@@ -658,7 +658,7 @@ static void j2k_read_siz(opj_j2k_t *j2k) {
 	j2k->default_tcp->tccps = (opj_tccp_t *) opj_malloc(sizeof(opj_tccp_t) * image->numcomps);
 	for (i = 0; i < cp->tw * cp->th; i++) {
 		cp->tcps[i].tccps = (opj_tccp_t *) opj_malloc(sizeof(opj_tccp_t) * image->numcomps);
-	}
+	}	
 	j2k->tile_data = (unsigned char **) opj_malloc(cp->tw * cp->th * sizeof(unsigned char *));
 	j2k->tile_len = (int *) opj_malloc(cp->tw * cp->th * sizeof(int));
 	j2k->state = J2K_STATE_MH;
@@ -1069,7 +1069,6 @@ static void j2k_read_poc(opj_j2k_t *j2k) {
 	
 	opj_cp_t *cp = j2k->cp;
 	opj_tcp_t *tcp = j2k->state == J2K_STATE_TPH ? &cp->tcps[j2k->curtileno] : j2k->default_tcp;
-	opj_tccp_t *tccp = &tcp->tccps[0];
 	opj_cio_t *cio = j2k->cio;
 	
 	old_poc = tcp->POC ? tcp->numpocs + 1 : 0;

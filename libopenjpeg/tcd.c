@@ -637,10 +637,10 @@ void tcd_malloc_decode(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp) {
 			x1 = j == 0 ? tilec->x1 : int_max(x1,	(unsigned int) tilec->x1);
 			y1 = j == 0 ? tilec->y1 : int_max(y1,	(unsigned int) tilec->y1);
 		}
-		
-		w = x1 - x0;
-		h = y1 - y0;
-		
+
+		w = int_ceildivpow2(x1 - x0, image->comps[i].factor);
+		h = int_ceildivpow2(y1 - y0, image->comps[i].factor);
+
 		image->comps[i].data = (int *) opj_malloc(w * h * sizeof(int));
 		image->comps[i].w = w;
 		image->comps[i].h = h;
@@ -651,7 +651,6 @@ void tcd_malloc_decode(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp) {
 
 void tcd_malloc_decode_tile(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp, int tileno, opj_codestream_info_t *cstr_info) {
 	int compno, resno, bandno, precno, cblkno;
-	unsigned int x0 = 0, y0 = 0, x1 = 0, y1 = 0;
 	opj_tcp_t *tcp;
 	opj_tcd_tile_t *tile;
 
@@ -1363,6 +1362,11 @@ bool tcd_decode_tile(opj_tcd_t *tcd, unsigned char *src, int len, int tileno, op
 		if (tcd->cp->reduce != 0) {
 			tcd->image->comps[compno].resno_decoded =
 				tile->comps[compno].numresolutions - tcd->cp->reduce - 1;
+			if (tcd->image->comps[compno].resno_decoded < 1) {
+				opj_event_msg(tcd->cinfo, EVT_ERROR, "Error decoding tile. The number of resolutions to remove is higher than the number "
+					" of resolutions in the original codestream\nModify the cp_reduce parameter.\n");
+				return false;
+			}
 		}
         
 		if (tcd->tcp->tccps[compno].qmfbid == 1) {
@@ -1371,9 +1375,6 @@ bool tcd_decode_tile(opj_tcd_t *tcd, unsigned char *src, int len, int tileno, op
 			dwt_decode_real(tilec, tilec->numresolutions - 1 - tcd->image->comps[compno].resno_decoded);
 		}
 
-		if (tile->comps[compno].numresolutions > 0) {
-			tcd->image->comps[compno].factor = tile->comps[compno].numresolutions - (tcd->image->comps[compno].resno_decoded + 1);
-		}
 	}
 	dwt_time = opj_clock() - dwt_time;
 	opj_event_msg(tcd->cinfo, EVT_INFO, "- dwt took %f s\n", dwt_time);
@@ -1389,6 +1390,7 @@ bool tcd_decode_tile(opj_tcd_t *tcd, unsigned char *src, int len, int tileno, op
 				(tile->comps[0].x1 - tile->comps[0].x0) * (tile->comps[0].y1 - tile->comps[0].y0));
 		}
 	}
+
 	
 	/*---------------TILE-------------------*/
 	
