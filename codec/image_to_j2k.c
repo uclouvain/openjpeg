@@ -199,7 +199,7 @@ void encode_help_display() {
 	fprintf(stdout,"\n");
 	fprintf(stdout,"-ROI         : c=%%d,U=%%d : quantization indices upshifted \n");
 	fprintf(stdout,"               for component c=%%d [%%d = 0,1,2]\n");
-	fprintf(stdout,"               with a value of U=%%d [0 <= %%d <= 37] (i.e. -ROI:c=0,U=25) \n");
+	fprintf(stdout,"               with a value of U=%%d [0 <= %%d <= 37] (i.e. -ROI c=0,U=25) \n");
 	fprintf(stdout,"\n");
 	fprintf(stdout,"-d           : offset of the origin of the image (-d 150,300) \n");
 	fprintf(stdout,"\n");
@@ -845,6 +845,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 		{"EPH",NO_ARG, NULL ,'E'},
 		{"OutFor",REQ_ARG, NULL ,'O'},
 		{"POC",REQ_ARG, NULL ,'P'},
+		{"ROI",REQ_ARG, NULL ,'R'},
 	};
 
 	/* parse the command line */
@@ -1219,9 +1220,9 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 
 			case 'R':			/* ROI */
 			{
-				if (sscanf(optarg, "OI:c=%d,U=%d", &parameters->roi_compno,
+				if (sscanf(optarg, "c=%d,U=%d", &parameters->roi_compno,
                                            &parameters->roi_shift) != 2) {
-					fprintf(stderr, "ROI error !! [-ROI:c='compno',U='shift']\n");
+					fprintf(stderr, "ROI error !! [-ROI c='compno',U='shift']\n");
 					return 1;
 				}
 			}

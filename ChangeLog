@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+October 18, 2007
+* [FOD] Changed the ROI parameter in the image_to_j2k codec to make it correspond to the documentation (i.e. -ROI c=0,U=25)
+
 October 12, 2007
 * [FOD] Changed the way the image structure is allocated when the decoding parameters include some resolutions to discard. 
         This should have a significant impact for the decoding of huge images when some resolutions are discarder (-r parameter)
