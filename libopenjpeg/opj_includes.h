@@ -54,6 +54,11 @@
  ==========================================================
 */
 
+/* Ignore GCC attributes if this is not GCC */
+#ifndef __GNUC__
+	#define __attribute__(x) /* __attribute__(x) */
+#endif
+
 /*
 The inline keyword is supported by C99 but not by C90. 
 Most compilers implement their own version of this keyword ... 
@@ -72,6 +77,7 @@ Most compilers implement their own version of this keyword ...
 #endif /* INLINE */
 
 #include "j2k_lib.h"
+#include "opj_malloc.h"
 #include "event.h"
 #include "cio.h"
 

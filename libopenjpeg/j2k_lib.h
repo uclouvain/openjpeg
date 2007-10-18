@@ -29,12 +29,8 @@
 @file j2k_lib.h
 @brief Internal functions
 
-The functions in J2K_LIB.C are internal utilities mainly used for memory management.
+The functions in J2K_LIB.C are internal utilities mainly used for timing.
 */
-
-#ifndef __GNUC__
-#define __attribute__(x) /* */
-#endif
 
 /** @defgroup MISC MISC - Miscellaneous internal functions */
 /*@{*/
@@ -48,85 +44,6 @@ Difference in successive opj_clock() calls tells you the elapsed time
 @return Returns time in seconds
 */
 double opj_clock(void);
-
-/**
-Allocate a memory block with elements initialized to 0
-@param size Bytes to allocate
-@return Returns a void pointer to the allocated space, or NULL if there is insufficient memory available
-*/
-void* __attribute__ ((malloc)) opj_malloc( size_t size );
-
-/**
-Allocate memory aligned to a 16 byte boundry
-@param size Bytes to allocate
-@return Returns a void pointer to the allocated space, or NULL if there is insufficient memory available
-*/
-/* FIXME: These should be set with cmake tests, but we're currently not requiring use of cmake */
-#ifdef WIN32
-	/* Someone should tell the mingw people that their malloc.h ought to provide _mm_malloc() */
-	#ifdef __GNUC__
-		#include <mm_malloc.h>
-		#define HAVE_MM_MALLOC
-	#else /* MSVC, Intel C++ */
-		#include <malloc.h>
-		#ifdef _mm_malloc
-			#define HAVE_MM_MALLOC
-		#endif
-	#endif
-#else /* Not WIN32 */
-	#if defined(__sun)
-		#define HAVE_MEMALIGN
-	/* Linux x86_64 and OSX always align allocations to 16 bytes */
-	#elif !defined(__amd64__) && !defined(__APPLE__)
-		/* FIXME: Yes, this is a big assumption */
-		#define HAVE_POSIX_MEMALIGN
-	#endif
-#endif
-
-#define opj_aligned_malloc(size) malloc(size)
-#define opj_aligned_free(m) free(m)
-
-#ifdef HAVE_MM_MALLOC
-	#undef opj_aligned_malloc
-	#define opj_aligned_malloc(size) _mm_malloc(size, 16)
-	#undef opj_aligned_free
-	#define opj_aligned_free(m) _mm_free(m)
-#endif
-
-#ifdef HAVE_MEMALIGN
-	extern void* memalign(size_t, size_t);
-	#undef opj_aligned_malloc
-	#define opj_aligned_malloc(size) memalign(16, (size))
-	#undef opj_aligned_free
-	#define opj_aligned_free(m) free(m)
-#endif
-
-#ifdef HAVE_POSIX_MEMALIGN
-	#undef opj_aligned_malloc
-	extern int posix_memalign(void**, size_t, size_t);
-
-	static INLINE void* __attribute__ ((malloc)) opj_aligned_malloc(size_t size){
-		void* mem = NULL;
-		posix_memalign(&mem, 16, size);
-		return mem;
-	}
-	#undef opj_aligned_free
-	#define opj_aligned_free(m) free(m)
-#endif
-
-/**
-Reallocate memory blocks.
-@param memblock Pointer to previously allocated memory block
-@param size New size in bytes
-@return Returns a void pointer to the reallocated (and possibly moved) memory block
-*/
-void* __attribute__ ((malloc)) opj_realloc( void *memblock, size_t size );
-
-/**
-Deallocates or frees a memory block.
-@param memblock Previously allocated memory block to be freed
-*/
-void opj_free( void *memblock );
 
 /* ----------------------------------------------------------------------- */
 /*@}*/

@@ -71,7 +71,7 @@ opj_tgt_tree_t *tgt_create(int numleafsh, int numleafsv) {
 		return NULL;
 	}
 
-	tree->nodes = (opj_tgt_node_t *) opj_malloc(tree->numnodes * sizeof(opj_tgt_node_t));
+	tree->nodes = (opj_tgt_node_t*) opj_calloc(tree->numnodes, sizeof(opj_tgt_node_t));
 	if(!tree->nodes) {
 		opj_free(tree);
 		return NULL;

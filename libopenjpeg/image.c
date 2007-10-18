@@ -35,7 +35,7 @@ opj_image_t* OPJ_CALLCONV opj_image_create(int numcmpts, opj_image_cmptparm_t *c
 	int compno;
 	opj_image_t *image = NULL;
 
-	image = (opj_image_t*)opj_malloc(sizeof(opj_image_t));
+	image = (opj_image_t*) opj_calloc(1, sizeof(opj_image_t));
 	if(image) {
 		image->color_space = clrspc;
 		image->numcomps = numcmpts;
@@ -58,7 +58,7 @@ opj_image_t* OPJ_CALLCONV opj_image_create(int numcmpts, opj_image_cmptparm_t *c
 			comp->prec = cmptparms[compno].prec;
 			comp->bpp = cmptparms[compno].bpp;
 			comp->sgnd = cmptparms[compno].sgnd;
-			comp->data = (int*)opj_malloc(comp->w * comp->h * sizeof(int));
+			comp->data = (int*) opj_calloc(comp->w * comp->h, sizeof(int));
 			if(!comp->data) {
 				fprintf(stderr,"Unable to allocate memory for image.\n");
 				opj_image_destroy(image);

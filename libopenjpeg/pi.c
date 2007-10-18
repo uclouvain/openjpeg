@@ -413,17 +413,15 @@ opj_pi_iterator_t *pi_create_decode(opj_image_t *image, opj_cp_t *cp, int tileno
 	opj_pi_iterator_t *pi = NULL;
 	opj_tcp_t *tcp = NULL;
 	opj_tccp_t *tccp = NULL;
-	size_t array_size;
-	
+
 	tcp = &cp->tcps[tileno];
 
-	array_size = (tcp->numpocs + 1) * sizeof(opj_pi_iterator_t);
-	pi = (opj_pi_iterator_t *) opj_malloc(array_size);
+	pi = (opj_pi_iterator_t*) opj_calloc((tcp->numpocs + 1), sizeof(opj_pi_iterator_t));
 	if(!pi) {
 		/* TODO: throw an error */
 		return NULL;
 	}
-	
+
 	for (pino = 0; pino < tcp->numpocs + 1; pino++) {	/* change */
 		int maxres = 0;
 		int maxprec = 0;
@@ -436,14 +434,12 @@ opj_pi_iterator_t *pi_create_decode(opj_image_t *image, opj_cp_t *cp, int tileno
 		pi[pino].ty1 = int_min(cp->ty0 + (q + 1) * cp->tdy, image->y1);
 		pi[pino].numcomps = image->numcomps;
 
-		array_size = image->numcomps * sizeof(opj_pi_comp_t);
-		pi[pino].comps = (opj_pi_comp_t *) opj_malloc(array_size);
+		pi[pino].comps = (opj_pi_comp_t*) opj_calloc(image->numcomps, sizeof(opj_pi_comp_t));
 		if(!pi[pino].comps) {
 			/* TODO: throw an error */
 			pi_destroy(pi, cp, tileno);
 			return NULL;
 		}
-		memset(pi[pino].comps, 0, array_size);
 		
 		for (compno = 0; compno < pi->numcomps; compno++) {
 			int tcx0, tcy0, tcx1, tcy1;
@@ -453,8 +449,7 @@ opj_pi_iterator_t *pi_create_decode(opj_image_t *image, opj_cp_t *cp, int tileno
 			comp->dy = image->comps[compno].dy;
 			comp->numresolutions = tccp->numresolutions;
 
-			array_size = comp->numresolutions * sizeof(opj_pi_resolution_t);
-			comp->resolutions =	(opj_pi_resolution_t *) opj_malloc(array_size);
+			comp->resolutions = (opj_pi_resolution_t*) opj_calloc(comp->numresolutions, sizeof(opj_pi_resolution_t));
 			if(!comp->resolutions) {
 				/* TODO: throw an error */
 				pi_destroy(pi, cp, tileno);
@@ -507,8 +502,7 @@ opj_pi_iterator_t *pi_create_decode(opj_image_t *image, opj_cp_t *cp, int tileno
 		pi[pino].step_l = maxres * pi[pino].step_r;
 		
 		if (pino == 0) {
-			array_size = image->numcomps * maxres * tcp->numlayers * maxprec * sizeof(short int);
-			pi[pino].include = (short int *) opj_malloc(array_size);
+			pi[pino].include = (short int*) opj_calloc(image->numcomps * maxres * tcp->numlayers * maxprec, sizeof(short int));
 			if(!pi[pino].include) {
 				/* TODO: throw an error */
 				pi_destroy(pi, cp, tileno);
@@ -554,15 +548,13 @@ opj_pi_iterator_t *pi_initialise_encode(opj_image_t *image, opj_cp_t *cp, int ti
 	opj_pi_iterator_t *pi = NULL;
 	opj_tcp_t *tcp = NULL;
 	opj_tccp_t *tccp = NULL;
-	size_t array_size;
 	
 	tcp = &cp->tcps[tileno];
 
-	array_size = (tcp->numpocs + 1) * sizeof(opj_pi_iterator_t);
-	pi = (opj_pi_iterator_t *) opj_malloc(array_size);
+	pi = (opj_pi_iterator_t*) opj_calloc((tcp->numpocs + 1), sizeof(opj_pi_iterator_t));
 	if(!pi) {	return NULL;}
 	pi->tp_on = cp->tp_on;
-	
+
 	for(pino = 0;pino < tcp->numpocs+1 ; pino ++){
 		p = tileno % cp->tw;
 		q = tileno / cp->tw;
@@ -573,13 +565,11 @@ opj_pi_iterator_t *pi_initialise_encode(opj_image_t *image, opj_cp_t *cp, int ti
 		pi[pino].ty1 = int_min(cp->ty0 + (q + 1) * cp->tdy, image->y1);
 		pi[pino].numcomps = image->numcomps;
 		
-		array_size = image->numcomps * sizeof(opj_pi_comp_t);
-		pi[pino].comps = (opj_pi_comp_t *) opj_malloc(array_size);
+		pi[pino].comps = (opj_pi_comp_t*) opj_calloc(image->numcomps, sizeof(opj_pi_comp_t));
 		if(!pi[pino].comps) {
 			pi_destroy(pi, cp, tileno);
 			return NULL;
 		}
-		memset(pi[pino].comps, 0, array_size);
 		
 		for (compno = 0; compno < pi[pino].numcomps; compno++) {
 			int tcx0, tcy0, tcx1, tcy1;
@@ -589,8 +579,7 @@ opj_pi_iterator_t *pi_initialise_encode(opj_image_t *image, opj_cp_t *cp, int ti
 			comp->dy = image->comps[compno].dy;
 			comp->numresolutions = tccp->numresolutions;
 
-			array_size = comp->numresolutions * sizeof(opj_pi_resolution_t);
-			comp->resolutions =	(opj_pi_resolution_t *) opj_malloc(array_size);
+			comp->resolutions = (opj_pi_resolution_t*) opj_malloc(comp->numresolutions * sizeof(opj_pi_resolution_t));
 			if(!comp->resolutions) {
 				pi_destroy(pi, cp, tileno);
 				return NULL;
@@ -653,8 +642,7 @@ opj_pi_iterator_t *pi_initialise_encode(opj_image_t *image, opj_cp_t *cp, int ti
 		}
 
 		if (pino == 0) {
-			array_size = tcp->numlayers * pi[pino].step_l * sizeof(short int);
-			pi[pino].include = (short int *) opj_malloc(array_size);
+			pi[pino].include = (short int*) opj_calloc(tcp->numlayers * pi[pino].step_l, sizeof(short int));
 			if(!pi[pino].include) {
 				pi_destroy(pi, cp, tileno);
 				return NULL;

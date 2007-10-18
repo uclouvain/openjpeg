@@ -57,20 +57,3 @@ double opj_clock(void) {
 #endif
 }
 
-void* opj_malloc( size_t size ) {
-	void *memblock = malloc(size);
-	if(memblock) {
-		memset(memblock, 0, size);
-	}
-	return memblock;
-}
-
-void* opj_realloc( void *memblock, size_t size ) {
-	return realloc(memblock, size);
-}
-
-void opj_free( void *memblock ) {
-	free(memblock);	
-}
-
-

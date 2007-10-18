@@ -25,7 +25,14 @@
 * POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "opj_includes.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "openjpeg.h"
+#include "j2k_lib.h"
+#include "j2k.h"
+#include "jp2.h"
 #include "mj2.h"
 #include "mj2_convert.h"
 

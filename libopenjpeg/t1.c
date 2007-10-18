@@ -762,7 +762,7 @@ static bool allocate_buffers(
 
 	if(datasize > t1->datasize){
 		opj_aligned_free(t1->data);
-		t1->data=opj_aligned_malloc(datasize * sizeof(int));
+		t1->data = (int*) opj_aligned_malloc(datasize * sizeof(int));
 		if(!t1->data){
 			return false;
 		}
@@ -775,7 +775,7 @@ static bool allocate_buffers(
 
 	if(flagssize > t1->flagssize){
 		opj_aligned_free(t1->flags);
-		t1->flags=opj_aligned_malloc(flagssize * sizeof(flag_t));
+		t1->flags = (flag_t*) opj_aligned_malloc(flagssize * sizeof(flag_t));
 		if(!t1->flags){
 			return false;
 		}
@@ -998,15 +998,15 @@ opj_t1_t* t1_create(opj_common_ptr cinfo) {
 	if(!t1)
 		return NULL;
 
-		t1->cinfo = cinfo;
-		/* create MQC and RAW handles */
-		t1->mqc = mqc_create();
-		t1->raw = raw_create();
+	t1->cinfo = cinfo;
+	/* create MQC and RAW handles */
+	t1->mqc = mqc_create();
+	t1->raw = raw_create();
 
-	t1->datasize=0;
 	t1->data=NULL;
-	t1->flagssize=0;
 	t1->flags=NULL;
+	t1->datasize=0;
+	t1->flagssize=0;
 
 	return t1;
 }
@@ -1018,7 +1018,7 @@ void t1_destroy(opj_t1_t *t1) {
 		raw_destroy(t1->raw);
 		opj_aligned_free(t1->data);
 		opj_aligned_free(t1->flags);
-		free(t1);
+		opj_free(t1);
 	}
 }
 

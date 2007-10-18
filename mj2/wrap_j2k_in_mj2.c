@@ -26,8 +26,19 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "opj_includes.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "openjpeg.h"
+#include "j2k.h"
+#include "jp2.h"
+#include "cio.h"
 #include "mj2.h"
+
+static int int_ceildiv(int a, int b) {
+	return (a + b - 1) / b;
+}
 
 /**
 Size of memory first allocated for MOOV box

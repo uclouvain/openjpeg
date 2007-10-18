@@ -313,7 +313,7 @@ void tcd_malloc_encode(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp, int c
 						prc->cw = (brcblkxend - tlcblkxstart) >> cblkwidthexpn;
 						prc->ch = (brcblkyend - tlcblkystart) >> cblkheightexpn;
 
-						prc->cblks = (opj_tcd_cblk_t *) opj_malloc((prc->cw * prc->ch) * sizeof(opj_tcd_cblk_t));
+						prc->cblks = (opj_tcd_cblk_t*) opj_calloc((prc->cw * prc->ch), sizeof(opj_tcd_cblk_t));
 						prc->incltree = tgt_create(prc->cw, prc->ch);
 						prc->imsbtree = tgt_create(prc->cw, prc->ch);
 						
@@ -548,7 +548,7 @@ void tcd_init_encode(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp, int cur
 						prc->ch = (brcblkyend - tlcblkystart) >> cblkheightexpn;
 
 						opj_free(prc->cblks);
-						prc->cblks = (opj_tcd_cblk_t *) opj_malloc(prc->cw * prc->ch * sizeof(opj_tcd_cblk_t));
+						prc->cblks = (opj_tcd_cblk_t*) opj_calloc(prc->cw * prc->ch, sizeof(opj_tcd_cblk_t));
 
 						if (prc->incltree != NULL) {
 							tgt_destroy(prc->incltree);
@@ -603,7 +603,7 @@ void tcd_malloc_decode(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp) {
 		tileno = cp->tileno[j];		
 		tile = &(tcd->tcd_image->tiles[cp->tileno[tileno]]);		
 		tile->numcomps = image->numcomps;
-		tile->comps = (opj_tcd_tilecomp_t *) opj_malloc(image->numcomps * sizeof(opj_tcd_tilecomp_t));
+		tile->comps = (opj_tcd_tilecomp_t*) opj_calloc(image->numcomps, sizeof(opj_tcd_tilecomp_t));
 	}
 
 	for (i = 0; i < image->numcomps; i++) {
@@ -799,6 +799,7 @@ void tcd_malloc_decode_tile(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp, 
 						cblk->y0 = int_max(cblkystart, prc->y0);
 						cblk->x1 = int_min(cblkxend, prc->x1);
 						cblk->y1 = int_min(cblkyend, prc->y1);
+						cblk->numsegs = 0;
 					}
 				} /* precno */
 			} /* bandno */
@@ -1178,7 +1179,7 @@ int tcd_encode_tile(opj_tcd_t *tcd, int tileno, unsigned char *dest, int len, op
 				cstr_info->tile[tileno].pdx[i] = tccp->prcw[i];
 				cstr_info->tile[tileno].pdy[i] = tccp->prch[i];
 			}
-			cstr_info->tile[tileno].packet = (opj_packet_info_t *) opj_malloc(cstr_info->numcomps * cstr_info->numlayers * numpacks * sizeof(opj_packet_info_t));
+			cstr_info->tile[tileno].packet = (opj_packet_info_t*) opj_calloc(cstr_info->numcomps * cstr_info->numlayers * numpacks, sizeof(opj_packet_info_t));
 		}
 		/* << INDEX */
 		

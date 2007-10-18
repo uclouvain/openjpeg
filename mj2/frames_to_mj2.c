@@ -25,7 +25,15 @@
 * POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "opj_includes.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "openjpeg.h"
+#include "j2k_lib.h"
+#include "j2k.h"
+#include "jp2.h"
+#include "cio.h"
 #include "mj2.h"
 #include "mj2_convert.h"
 #include "compat/getopt.h"
@@ -697,8 +705,8 @@ int main(int argc, char **argv)
   fwrite(buf,cio_tell(cio),1,mj2file);
   offset = cio_tell(cio);
   opj_cio_close(cio);
-  opj_free(buf);
-  
+  free(buf);
+
   for (i = 0; i < movie->num_stk + movie->num_htk + movie->num_vtk; i++) {
     if (movie->tk[i].track_type != 0) {
       fprintf(stderr, "Unable to write sound or hint tracks\n");
@@ -755,7 +763,7 @@ int main(int argc, char **argv)
 
       }
 			/* free buffer data */
-			opj_free(buf);
+			free(buf);
 			/* free image data */
 			opj_image_destroy(img);
     }
@@ -770,14 +778,14 @@ int main(int argc, char **argv)
   cio_write(cio, offset - mdat_initpos, 4);
   fwrite(buf, 4, 1, mj2file);
   fseek(mj2file,0,SEEK_END);
-  opj_free(buf);
-  
+  free(buf);
+
   // Writing MOOV box 
 	buf = (char*) malloc ((TEMP_BUF+numframes*20) * sizeof(char));
 	cio = opj_cio_open(movie->cinfo, buf, (TEMP_BUF+numframes*20));
 	mj2_write_moov(movie, cio);
   fwrite(buf,cio_tell(cio),1,mj2file);
-  opj_free(buf);
+  free(buf);
 
 	fprintf(stdout,"Total encoding time: %.2f s for %d frames (%.1f fps)\n", total_time, numframes, (float)numframes/total_time);
   

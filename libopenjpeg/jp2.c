@@ -507,7 +507,7 @@ static bool jp2_read_struct(opj_jp2_t *jp2, opj_cio_t *cio) {
 /* ----------------------------------------------------------------------- */
 
 opj_jp2_t* jp2_create_decompress(opj_common_ptr cinfo) {
-	opj_jp2_t *jp2 = (opj_jp2_t*)opj_malloc(sizeof(opj_jp2_t));
+	opj_jp2_t *jp2 = (opj_jp2_t*) opj_calloc(1, sizeof(opj_jp2_t));
 	if(jp2) {
 		jp2->cinfo = cinfo;
 		/* create the J2K codec */

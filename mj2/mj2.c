@@ -96,9 +96,8 @@ int mj2_init_stdmovie(opj_mj2_t * movie)
   movie->brand = MJ2_MJ2;
   movie->minversion = 0;
   movie->num_cl = 2;
-  movie->cl =
-    (unsigned int *) malloc(movie->num_cl * sizeof(unsigned int));
-	
+  movie->cl = (unsigned int*) opj_malloc(movie->num_cl * sizeof(unsigned int));
+
   movie->cl[0] = MJ2_MJ2;
   movie->cl[1] = MJ2_MJ2S;
   time(&ltime);			/* Time since 1/1/70 */
@@ -139,9 +138,7 @@ int mj2_init_stdmovie(opj_mj2_t * movie)
       tk->same_sample_size = 0;
 			
       tk->num_samplestochunk = 1;	/* One sample per chunk                                      */
-      tk->sampletochunk =
-				(mj2_sampletochunk_t *) malloc(tk->num_samplestochunk *
-				sizeof(mj2_sampletochunk_t));
+		tk->sampletochunk = (mj2_sampletochunk_t*) opj_malloc(tk->num_samplestochunk * sizeof(mj2_sampletochunk_t));
       tk->sampletochunk[0].first_chunk = 1;
       tk->sampletochunk[0].samples_per_chunk = 1;
       tk->sampletochunk[0].sample_descr_idx = 1;
@@ -158,7 +155,7 @@ int mj2_init_stdmovie(opj_mj2_t * movie)
       }
 			
       tk->num_tts = 1;
-      tk->tts = (mj2_tts_t *) malloc(tk->num_tts * sizeof(mj2_tts_t));
+		tk->tts = (mj2_tts_t*) opj_malloc(tk->num_tts * sizeof(mj2_tts_t));
       tk->tts[0].sample_count = tk->num_samples;
       tk->tts[0].sample_delta = tk->timescale / tk->sample_rate;
 			
@@ -196,7 +193,7 @@ int mj2_init_stdmovie(opj_mj2_t * movie)
       tk->or_fieldcount = 1;
       tk->or_fieldorder = 0;
       tk->num_br = 2;
-      tk->br = (unsigned int *) malloc(tk->num_br * sizeof(unsigned int));
+		tk->br = (unsigned int*) opj_malloc(tk->num_br * sizeof(unsigned int));
       tk->br[0] = MJ2_JP2;
       tk->br[1] = MJ2_J2P0;
       tk->num_jp2x = 0;
@@ -226,10 +223,9 @@ void mj2_tts_decompact(mj2_tk_t * tk)
   for (i = 0; i < tk->num_tts; i++) {
     tk->num_samples += tk->tts[i].sample_count;
   }
-	
-  tk->sample =
-    (mj2_sample_t *) malloc(tk->num_samples * sizeof(mj2_sample_t));
-	
+
+  tk->sample = (mj2_sample_t*) opj_malloc(tk->num_samples * sizeof(mj2_sample_t));
+
   for (i = 0; i < tk->num_tts; i++) {
     for (j = 0; j < tk->tts[i].sample_count; j++) {
       tk->sample[j].sample_delta = tk->tts[i].sample_delta;
@@ -251,15 +247,13 @@ void mj2_stsc_decompact(mj2_tk_t * tk)
     tk->num_chunks =
       (unsigned int) ceil((double) tk->num_samples /
       (double) tk->sampletochunk[0].samples_per_chunk);
-    tk->chunk =
-      (mj2_chunk_t *) malloc(tk->num_chunks * sizeof(mj2_chunk_t));
+	 tk->chunk = (mj2_chunk_t*) opj_malloc(tk->num_chunks * sizeof(mj2_chunk_t));
     for (k = 0; k < tk->num_chunks; k++) {
       tk->chunk[k].num_samples = tk->sampletochunk[0].samples_per_chunk;
     }
     
   } else {
-    tk->chunk =
-      (mj2_chunk_t *) malloc(tk->num_samples * sizeof(mj2_chunk_t));
+    tk->chunk = (mj2_chunk_t*) opj_malloc(tk->num_samples * sizeof(mj2_chunk_t));
     tk->num_chunks = 0;
     for (i = 0; i < tk->num_samplestochunk -1 ; i++) {
       for (j = tk->sampletochunk[i].first_chunk - 1;
@@ -275,7 +269,7 @@ void mj2_stsc_decompact(mj2_tk_t * tk)
       tk->chunk[k].num_samples =
 				tk->sampletochunk[tk->num_samplestochunk - 1].samples_per_chunk;
     }
-    tk->chunk = realloc(tk->chunk, tk->num_chunks * sizeof(mj2_chunk_t));
+    tk->chunk = opj_realloc(tk->chunk, tk->num_chunks * sizeof(mj2_chunk_t));
   }
   
 }
@@ -396,9 +390,8 @@ int mj2_read_ftyp(opj_mj2_t * movie, opj_cio_t *cio)
   movie->brand = cio_read(cio, 4);	/* BR              */
   movie->minversion = cio_read(cio, 4);	/* MinV            */
   movie->num_cl = (box.length - 16) / 4;
-  movie->cl =
-    (unsigned int *) malloc(movie->num_cl * sizeof(unsigned int));
-	
+  movie->cl = (unsigned int*) opj_malloc(movie->num_cl * sizeof(unsigned int));
+
   for (i = movie->num_cl - 1; i > -1; i--)
     movie->cl[i] = cio_read(cio, 4);	/* CLi */
 	
@@ -643,12 +636,9 @@ int mj2_read_stsc(mj2_tk_t * tk, opj_cio_t *cio)
   }
 	
   tk->num_samplestochunk = cio_read(cio, 4);
-	
-  tk->sampletochunk =
-    (mj2_sampletochunk_t *) malloc(tk->num_samplestochunk *
-		sizeof(mj2_sampletochunk_t));
-	
-	
+
+  tk->sampletochunk = (mj2_sampletochunk_t*) opj_malloc(tk->num_samplestochunk * sizeof(mj2_sampletochunk_t));
+
   for (i = 0; i < tk->num_samplestochunk; i++) {
     tk->sampletochunk[i].first_chunk = cio_read(cio, 4);
     tk->sampletochunk[i].samples_per_chunk = cio_read(cio, 4);
@@ -725,9 +715,9 @@ int mj2_read_stts(mj2_tk_t * tk, opj_cio_t *cio)
   }
 	
   tk->num_tts = cio_read(cio, 4);
-	
-  tk->tts = (mj2_tts_t *) malloc(tk->num_tts * sizeof(mj2_tts_t));
-	
+
+  tk->tts = (mj2_tts_t*) opj_malloc(tk->num_tts * sizeof(mj2_tts_t));
+
   for (i = 0; i < tk->num_tts; i++) {
     tk->tts[i].sample_count = cio_read(cio, 4);
     tk->tts[i].sample_delta = cio_read(cio, 4);
@@ -905,8 +895,8 @@ int mj2_read_jp2p(mj2_tk_t * tk, opj_cio_t *cio)
 	
 	
   tk->num_br = (box.length - 12) / 4;
-  tk->br = (unsigned int *) malloc(tk->num_br * sizeof(unsigned int));
-	
+  tk->br = (unsigned int*) opj_malloc(tk->num_br * sizeof(unsigned int));
+
   for (i = 0; i < tk->num_br; i++) {
     tk->br[i] = cio_read(cio, 4);
   }
@@ -964,9 +954,8 @@ int mj2_read_jp2x(mj2_tk_t * tk, opj_cio_t *cio)
 	
 	
   tk->num_jp2x = (box.length - 8);
-  tk->jp2xdata =
-    (unsigned char *) malloc(tk->num_jp2x * sizeof(unsigned char));
-	
+  tk->jp2xdata = (unsigned char*) opj_malloc(tk->num_jp2x * sizeof(unsigned char));
+
   for (i = 0; i < tk->num_jp2x; i++) {
     tk->jp2xdata[i] = cio_read(cio, 1);
   }
@@ -1172,10 +1161,10 @@ int mj2_read_smj2(opj_image_t * img, mj2_tk_t * tk, opj_cio_t *cio)
 		opj_event_msg(tk->cinfo, EVT_ERROR, "Error reading JP2H Box\n");
     return 1;
   }
-  
-  tk->jp2_struct.comps = (opj_jp2_comps_t *) malloc(tk->jp2_struct.numcomps * sizeof(opj_jp2_comps_t));
-  tk->jp2_struct.cl = (int *) malloc(sizeof(int));
-	
+
+  tk->jp2_struct.comps = (opj_jp2_comps_t*) opj_malloc(tk->jp2_struct.numcomps * sizeof(opj_jp2_comps_t));
+  tk->jp2_struct.cl = (int*) opj_malloc(sizeof(int));
+
   tk->num_br = 0;
   tk->num_jp2x = 0;
 	
@@ -2046,8 +2035,8 @@ int mj2_read_hdlr(mj2_tk_t * tk, opj_cio_t *cio)
   cio_skip(cio,12);			/* Reserved */
 	
   tk->name_size = box.length - 32;
-	
-  tk->name = (char *) malloc(tk->name_size * sizeof(char));
+
+  tk->name = (char*) opj_malloc(tk->name_size * sizeof(char));
   for (i = 0; i < tk->name_size; i++) {
     tk->name[i] = cio_read(cio, 1);	/* Name */
   }
@@ -2581,10 +2570,9 @@ int mj2_read_moov(opj_mj2_t * movie, opj_image_t * img, opj_cio_t *cio)
 	
   if (mj2_read_mvhd(movie, cio))
     return 1;
-	
-  movie->tk =
-    (mj2_tk_t *) malloc((movie->next_tk_id - 1) * sizeof(mj2_tk_t));
-	
+
+  movie->tk = (mj2_tk_t*) opj_malloc((movie->next_tk_id - 1) * sizeof(mj2_tk_t));
+
   for (i = 0; cio_tell(cio) - box.init_pos < box.length; i++) {
 		mj2_tk_t *tk = &movie->tk[i];
 		tk->cinfo = movie->cinfo;
@@ -2622,8 +2610,8 @@ int mj2_read_struct(FILE *file, opj_mj2_t *movie) {
 	opj_cio_t *cio;
 	
 	/* open a byte stream for reading */	
-	src = (char*) malloc (300 * sizeof(char));	
-	  
+	src = (char*) opj_malloc(300 * sizeof(char));	
+
 	/* Assuming that jp and ftyp markers size do
      not exceed 300 bytes */
   fread(src,300,1, file);  
@@ -2706,7 +2694,7 @@ int mj2_read_struct(FILE *file, opj_mj2_t *movie) {
   }	
 
   fseek(file,foffset,SEEK_SET);
-  src = realloc(src,box.length);
+  src = opj_realloc(src,box.length);
   fsresult = fread(src,box.length,1,file);
   if (fsresult != 1) {
     opj_event_msg(cio->cinfo, EVT_ERROR, "End of file reached while trying to read MOOV box\n"); 
@@ -2717,8 +2705,8 @@ int mj2_read_struct(FILE *file, opj_mj2_t *movie) {
   
   if (mj2_read_moov(movie, &img, cio))
     return 1;
-  
-  free(src);
+
+  opj_free(src);
   return 0;
 }
 
@@ -2728,12 +2716,12 @@ int mj2_read_struct(FILE *file, opj_mj2_t *movie) {
 
 opj_dinfo_t* mj2_create_decompress() {
 	opj_mj2_t* mj2;
-	opj_dinfo_t *dinfo = (opj_dinfo_t*)opj_malloc(sizeof(opj_dinfo_t));
+	opj_dinfo_t *dinfo = (opj_dinfo_t*) opj_calloc(1, sizeof(opj_dinfo_t));
 	if(!dinfo) return NULL;
 
 	dinfo->is_decompressor = true;	
 
-  mj2 = (opj_mj2_t*)opj_malloc(sizeof(opj_mj2_t));
+	mj2 = (opj_mj2_t*) opj_calloc(1, sizeof(opj_mj2_t));
 	dinfo->mj2_handle = mj2;
 	if(mj2) {
 		mj2->cinfo = (opj_common_ptr)dinfo;
@@ -2806,10 +2794,10 @@ void mj2_destroy_decompress(opj_mj2_t *movie) {
 
 opj_cinfo_t* mj2_create_compress() {
 	opj_mj2_t* mj2;
-	opj_cinfo_t *cinfo = (opj_cinfo_t*)opj_malloc(sizeof(opj_cinfo_t));
+	opj_cinfo_t *cinfo = (opj_cinfo_t*) opj_calloc(1, sizeof(opj_cinfo_t));
 	if(!cinfo) return NULL;
 
-  mj2 = (opj_mj2_t*)opj_malloc(sizeof(opj_mj2_t));
+	mj2 = (opj_mj2_t*) opj_calloc(1, sizeof(opj_mj2_t));
 	cinfo->mj2_handle = mj2;
 	if(mj2) {
 		mj2->cinfo = (opj_common_ptr)cinfo;
@@ -2831,16 +2819,14 @@ void mj2_setup_encoder(opj_mj2_t *movie, mj2_cparameters_t *parameters) {
 
 		movie->brand = MJ2_MJ2;  // One brand: MJ2
 		movie->num_cl = 2;	  // Two compatible brands: MJ2 and MJ2S
-		movie->cl = (unsigned int *) malloc(movie->num_cl * sizeof(unsigned int));
+		movie->cl = (unsigned int*) opj_malloc(movie->num_cl * sizeof(unsigned int));
 		movie->cl[0] = MJ2_MJ2;
 		movie->cl[1] = MJ2_MJ2S;
 		movie->minversion = 0;	  // Minimum version: 0		
 
-		movie->tk = (mj2_tk_t*) malloc (sizeof(mj2_tk_t)); //Memory allocation for the video track
-		movie->tk[0].sample = (mj2_sample_t*) malloc (sizeof(mj2_sample_t));
-		movie->tk[0].chunk = (mj2_chunk_t *) malloc(sizeof(mj2_chunk_t));  
-		movie->tk[0].track_type = 0;	  // Video track
+		movie->tk = (mj2_tk_t*) opj_malloc(sizeof(mj2_tk_t)); //Memory allocation for the video track
 		movie->tk[0].track_ID = 1;	  // Track ID = 1 
+		movie->tk[0].track_type = 0;	  // Video track
 		movie->tk[0].Dim[0] = parameters->Dim[0];
 		movie->tk[0].Dim[1] = parameters->Dim[1];
 		movie->tk[0].w = parameters->w;
@@ -2848,17 +2834,19 @@ void mj2_setup_encoder(opj_mj2_t *movie, mj2_cparameters_t *parameters) {
 		movie->tk[0].CbCr_subsampling_dx = parameters->CbCr_subsampling_dx;
 		movie->tk[0].CbCr_subsampling_dy = parameters->CbCr_subsampling_dy;
 		movie->tk[0].sample_rate = parameters->frame_rate;
-		
+		movie->tk[0].name_size = 0;
+		movie->tk[0].chunk = (mj2_chunk_t*) opj_malloc(sizeof(mj2_chunk_t));  
+		movie->tk[0].sample = (mj2_sample_t*) opj_malloc(sizeof(mj2_sample_t));
+
 		jp2_struct = &movie->tk[0].jp2_struct;
 		jp2_struct->numcomps = 3;	// NC  		
-		jp2_struct->comps =
-			(opj_jp2_comps_t *) malloc(jp2_struct->numcomps * sizeof(opj_jp2_comps_t));
+		jp2_struct->comps = (opj_jp2_comps_t*) opj_malloc(jp2_struct->numcomps * sizeof(opj_jp2_comps_t));
 		jp2_struct->precedence = 0;   /* PRECEDENCE*/
 		jp2_struct->approx = 0;   /* APPROX*/		
 		jp2_struct->brand = JP2_JP2;	/* BR         */
 		jp2_struct->minversion = 0;	/* MinV       */
 		jp2_struct->numcl = 1;
-		jp2_struct->cl = (unsigned int *) malloc(jp2_struct->numcl * sizeof(int));
+		jp2_struct->cl = (unsigned int*) opj_malloc(jp2_struct->numcl * sizeof(int));
 		jp2_struct->cl[0] = JP2_JP2;	/* CL0 : JP2  */		
 		jp2_struct->C = 7;      /* C : Always 7*/
 		jp2_struct->UnkC = 0;      /* UnkC, colorspace specified in colr box*/

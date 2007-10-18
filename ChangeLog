@@ -7,6 +7,18 @@ What's New for OpenJPEG
 
 October 18, 2007
 * [FOD] Changed the ROI parameter in the image_to_j2k codec to make it correspond to the documentation (i.e. -ROI c=0,U=25)
+* [FOD] Patch from Callum Lewick. Memset patch. 
+		The main idea of the patch is that currently opj_malloc clears all allocations, which unnecessarily
+		dirties up the cache and eats bandwidth. This patch makes it no longer do so, and I've painstakingly determined which allocations actually need
+		to be cleared and changed them to use opj_calloc() instead. I previously tried to just get rid of the opj_*alloc wrappers but that
+		idea was nixed, so this time I'm trying it with macros. I also put in a gcc pragma that helps enforce their use. Which got messy.  :)  It caught a
+		few places they weren't used but it also revealed that the mj2 tools are not very cleanly separated from the library. It includes all the
+		internal headers, but it wasn't using the malloc wrappers. I figured the binaries should be "external" and have minimal knowledge of the
+		internals of the library. I patched them to not include opj_includes.h, and include only the internal headers they actually need. However,
+		they're using the opj_clock() function, which is in with the malloc wrappers. So I decided to move the malloc wrappers to their own header. 
+		But mj2.c seems to want to be "internal", so I patched it to use the wrappers. Note that this patch changes the semantics of opj_malloc, it no longer
+		clears the memory it allocates. If you need it to be cleared, you must use opj_calloc instead, or memset it yourself. It is also somewhat
+		invasive, please test it extensively. I've been pounding on it all summer with my test suite, Second Life, and valgrind, and it checks out clean.
 
 October 12, 2007
 * [FOD] Changed the way the image structure is allocated when the decoding parameters include some resolutions to discard. 
