@@ -189,7 +189,7 @@ bool wxJ2KHandler::LoadFile(wxImage *image, wxInputStream& stream, bool verbose,
 	cio = opj_cio_open((opj_common_ptr)dinfo, src, file_length);
 
 	/* decode the stream and fill the image structure */
-	opjimage = opj_decode(dinfo, cio, &cstr_info);
+	opjimage = opj_decode_with_info(dinfo, cio, &cstr_info);
 	if (!opjimage) {
 #ifndef __WXGTK__ 
 		wxMutexGuiEnter();
@@ -261,15 +261,15 @@ bool wxJ2KHandler::SaveFile( wxImage *wimage, wxOutputStream& stream, bool verbo
 	parameters.cp_cinema = OFF;
 
 	/* subsampling */
-	if (sscanf(m_subsampling.c_str(), wxT("%d,%d"), &(parameters.subsampling_dx), &(parameters.subsampling_dy)) != 2) {
+	if (sscanf(m_subsampling.ToAscii(), "%d,%d", &(parameters.subsampling_dx), &(parameters.subsampling_dy)) != 2) {
 		wxLogError(wxT("Wrong sub-sampling encoder setting: dx,dy"));
 		return false;
 	}
 
 	/* compression rates */
 	if (m_rates != wxT("")) {
-		char *s1 = (char *) m_rates.c_str();
-		wxLogMessage("rates %s", s1);
+		const char *s1 = m_rates.ToAscii();
+		wxLogMessage(wxT("rates %s"), s1);
 		while (sscanf(s1, "%f", &(parameters.tcp_rates[parameters.tcp_numlayers])) == 1) {
 			parameters.tcp_numlayers++;
 			while (*s1 && *s1 != ',') {
@@ -279,14 +279,14 @@ bool wxJ2KHandler::SaveFile( wxImage *wimage, wxOutputStream& stream, bool verbo
 				break;
 			s1++;
 		}
-		wxLogMessage("%d layers", parameters.tcp_numlayers);
+		wxLogMessage(wxT("%d layers"), parameters.tcp_numlayers);
 		parameters.cp_disto_alloc = 1;
 	}
 
 	/* image quality, dB */
 	if (m_rates == wxT("")) {
-		char *s2 = (char *) m_quality.c_str();
-		wxLogMessage("qualities %s", s2);
+		const char *s2 = m_quality.ToAscii();
+		wxLogMessage(wxT("qualities %s"), s2);
 		while (sscanf(s2, "%f", &parameters.tcp_distoratio[parameters.tcp_numlayers]) == 1) {
 			parameters.tcp_numlayers++;
 			while (*s2 && *s2 != ',') {
@@ -296,21 +296,21 @@ bool wxJ2KHandler::SaveFile( wxImage *wimage, wxOutputStream& stream, bool verbo
 				break;
 			s2++;
 		}
-		wxLogMessage("%d layers", parameters.tcp_numlayers);
+		wxLogMessage(wxT("%d layers"), parameters.tcp_numlayers);
 		parameters.cp_fixed_quality = 1;
 	}
 
 	/* image origin */
-	if (sscanf(m_origin.c_str(), "%d,%d", &parameters.image_offset_x0, &parameters.image_offset_y0) != 2) {
+	if (sscanf(m_origin.ToAscii(), "%d,%d", &parameters.image_offset_x0, &parameters.image_offset_y0) != 2) {
 		wxLogError(wxT("bad coordinate of the image origin: x0,y0"));
 		return false;
 	}
 				
 	/* Create comment for codestream */
 	if(m_enablecomm) {
-		parameters.cp_comment = (char *) malloc(strlen(m_comment.c_str()) + 1);
+		parameters.cp_comment = (char *) malloc(strlen(m_comment.ToAscii()) + 1);
 		if(parameters.cp_comment) {
-			strcpy(parameters.cp_comment, m_comment.c_str());
+			strcpy(parameters.cp_comment, m_comment.ToAscii());
 		}
 	} else {
 		parameters.cp_comment = NULL;
@@ -318,8 +318,8 @@ bool wxJ2KHandler::SaveFile( wxImage *wimage, wxOutputStream& stream, bool verbo
 
 	/* indexing file */
 	if (m_enableidx) {
-		strncpy(indexfilename, m_index.c_str(), OPJ_PATH_LEN);
-		wxLogMessage("index file is %s", indexfilename);
+		strncpy(indexfilename, m_index.ToAscii(), OPJ_PATH_LEN);
+		wxLogMessage(wxT("index file is %s"), indexfilename);
 	}
 
 	/* if no rate entered, lossless by default */
@@ -338,9 +338,9 @@ bool wxJ2KHandler::SaveFile( wxImage *wimage, wxOutputStream& stream, bool verbo
 	/* codeblocks size */
 	if (m_cbsize != wxT("")) {
 		int cblockw_init = 0, cblockh_init = 0;
-		sscanf(m_cbsize.c_str(), "%d,%d", &cblockw_init, &cblockh_init);
+		sscanf(m_cbsize.ToAscii(), "%d,%d", &cblockw_init, &cblockh_init);
 		if (cblockw_init * cblockh_init > 4096 || cblockw_init > 1024 || cblockw_init < 4 || cblockh_init > 1024 || cblockh_init < 4) {
-			wxLogError("!! Size of code_block error !! Restrictions:\n  width*height<=4096\n  4<=width,height<= 1024");
+			wxLogError(wxT("!! Size of code_block error !! Restrictions:\n  width*height<=4096\n  4<=width,height<= 1024"));
 			return false;
 		}
 		parameters.cblockw_init = cblockw_init;
@@ -364,13 +364,13 @@ bool wxJ2KHandler::SaveFile( wxImage *wimage, wxOutputStream& stream, bool verbo
 
 	/* tiles */
 	if (m_tsize != wxT("")) {
-		sscanf(m_tsize.c_str(), "%d,%d", &parameters.cp_tdx, &parameters.cp_tdy);
+		sscanf(m_tsize.ToAscii(), "%d,%d", &parameters.cp_tdx, &parameters.cp_tdy);
 		parameters.tile_size_on = true;
 	}
 
 	/* tile origin */
-	if (sscanf(m_torigin.c_str(), "%d,%d", &parameters.cp_tx0, &parameters.cp_ty0) != 2) {
-		wxLogError("tile offset setting error: X0,Y0");
+	if (sscanf(m_torigin.ToAscii(), "%d,%d", &parameters.cp_tx0, &parameters.cp_ty0) != 2) {
+		wxLogError(wxT("tile offset setting error: X0,Y0"));
 		return false;
 	}
 
@@ -443,7 +443,7 @@ bool wxJ2KHandler::SaveFile( wxImage *wimage, wxOutputStream& stream, bool verbo
 	cio = opj_cio_open((opj_common_ptr)cinfo, NULL, 0);
 
 	/* encode the image */
-	bSuccess = opj_encode(cinfo, cio, oimage, &cstr_info);
+	bSuccess = opj_encode_with_info(cinfo, cio, oimage, &cstr_info);
 	if (!bSuccess) {
 
 		opj_cio_close(cio);
@@ -526,16 +526,17 @@ bool wxJ2KHandler::DoCanRead( wxInputStream& stream )
     return hdr[0] == 0xFF && hdr[1] == 0x4F;
 }
 
-/**
-Create an index and write it to a file
-@param cstr_info Codestream information 
-@param index Index filename
-@return Returns 0 if successful, returns 1 otherwise
-*/
+// write the index file
 bool wxJ2KHandler::write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 	int tileno, compno, layno, resno, precno, pack_nb, x, y;
 	FILE *stream = NULL;
+	double total_disto = 0;
 	int tilepartno;
+
+#ifdef USE_JPWL
+	if (!strcmp(index, JPWL_PRIVATEINDEX_NAME))
+		return true;
+#endif // USE_JPWL
 
 	if (!cstr_info)		
 		return 1;
@@ -543,7 +544,7 @@ bool wxJ2KHandler::write_index_file(opj_codestream_info_t *cstr_info, char *inde
 	stream = fopen(index, "w");
 	if (!stream) {
 		fprintf(stderr, "failed to open index file [%s] for writing\n", index);
-		return 1;
+		return false;
 	}
 	
 	fprintf(stream, "%d %d\n", cstr_info->image_w, cstr_info->image_h);
@@ -553,54 +554,70 @@ bool wxJ2KHandler::write_index_file(opj_codestream_info_t *cstr_info, char *inde
 	fprintf(stream, "%d\n", cstr_info->numcomps);
 	fprintf(stream, "%d\n", cstr_info->numlayers);
 	fprintf(stream, "%d\n", cstr_info->numdecompos);
-	
-	for (resno = cstr_info->numdecompos; resno >= 0; resno--) {
+
+	for (resno = cstr_info->numdecompos[0]; resno >= 0; resno--) {
 		fprintf(stream, "[%d,%d] ", 
-			(1 << cstr_info->tile[0].pdx[resno]), (1 << cstr_info->tile[0].pdx[resno]));	/* based on tile 0 */
+			(1 << cstr_info->tile[0].pdx[resno]), (1 << cstr_info->tile[0].pdx[resno]));	/* based on tile 0 and component 0 */
 	}
+
 	fprintf(stream, "\n");
 	fprintf(stream, "%d\n", cstr_info->main_head_start);
 	fprintf(stream, "%d\n", cstr_info->main_head_end);
 	fprintf(stream, "%d\n", cstr_info->codestream_size);
 	
 	fprintf(stream, "\nINFO ON TILES\n");
-	fprintf(stream, "tileno start_pos  end_hd  end_tile   nbparts\n");
+	fprintf(stream, "tileno start_pos  end_hd  end_tile   nbparts         disto     nbpix   disto/nbpix\n");
 	for (tileno = 0; tileno < cstr_info->tw * cstr_info->th; tileno++) {
-		fprintf(stream, "%4d %9d %9d %9d %9d\n",
+		fprintf(stream, "%4d %9d %9d %9d %9d %9e %9d %9e\n",
 			cstr_info->tile[tileno].tileno,
 			cstr_info->tile[tileno].start_pos,
 			cstr_info->tile[tileno].end_header,
 			cstr_info->tile[tileno].end_pos,
-			cstr_info->tile[tileno].num_tps);
+			cstr_info->tile[tileno].num_tps,
+			cstr_info->tile[tileno].distotile, cstr_info->tile[tileno].numpix,
+			cstr_info->tile[tileno].distotile / cstr_info->tile[tileno].numpix);
 	}
 		
 	for (tileno = 0; tileno < cstr_info->tw * cstr_info->th; tileno++) {
 		int start_pos, end_ph_pos, end_pos;
+		double disto = 0;
+		int max_numdecompos = 0;
 		pack_nb = 0;
 
+		for (compno = 0; compno < cstr_info->numcomps; compno++) {
+			if (max_numdecompos < cstr_info->numdecompos[compno])
+				max_numdecompos = cstr_info->numdecompos[compno];
+		}	
+
 		fprintf(stream, "\nTILE %d DETAILS\n", tileno);	
-		fprintf(stream, "part_nb tileno  num_packs  start_pos end_tph_pos   end_pos\n");
+		fprintf(stream, "part_nb tileno  start_pack num_packs  start_pos end_tph_pos   end_pos\n");
 		for (tilepartno = 0; tilepartno < cstr_info->tile[tileno].num_tps; tilepartno++)
-			fprintf(stream, "%4d %9d  %9d  %9d %11d %9d\n",
+			fprintf(stream, "%4d %9d   %9d %9d  %9d %11d %9d\n",
 				tilepartno, tileno,
+				cstr_info->tile[tileno].tp[tilepartno].tp_start_pack,
 				cstr_info->tile[tileno].tp[tilepartno].tp_numpacks,
 				cstr_info->tile[tileno].tp[tilepartno].tp_start_pos,
 				cstr_info->tile[tileno].tp[tilepartno].tp_end_header,
 				cstr_info->tile[tileno].tp[tilepartno].tp_end_pos
 				);
 		if (cstr_info->prog == LRCP) {	/* LRCP */
-			fprintf(stream, "LRCP\npack_nb tileno layno resno compno precno start_pos end_ph_pos end_pos\n");
+			fprintf(stream, "LRCP\npack_nb tileno layno resno compno precno start_pos end_ph_pos end_pos disto\n");
 
 			for (layno = 0; layno < cstr_info->numlayers; layno++) {
-				for (resno = 0; resno < cstr_info->numdecompos + 1; resno++) {
+				for (resno = 0; resno < max_numdecompos + 1; resno++) {
 					for (compno = 0; compno < cstr_info->numcomps; compno++) {
-						int prec_max = cstr_info->tile[tileno].pw[resno] * cstr_info->tile[tileno].ph[resno];
+						int prec_max;
+						if (resno > cstr_info->numdecompos[compno])
+							break;
+						prec_max = cstr_info->tile[tileno].pw[resno] * cstr_info->tile[tileno].ph[resno];
 						for (precno = 0; precno < prec_max; precno++) {
 							start_pos = cstr_info->tile[tileno].packet[pack_nb].start_pos;
 							end_ph_pos = cstr_info->tile[tileno].packet[pack_nb].end_ph_pos;
 							end_pos = cstr_info->tile[tileno].packet[pack_nb].end_pos;
-							fprintf(stream, "%4d %6d %7d %5d %6d  %6d    %6d     %6d %7d\n",
-								pack_nb, tileno, layno, resno, compno, precno, start_pos, end_ph_pos, end_pos);
+							disto = cstr_info->tile[tileno].packet[pack_nb].disto;
+							fprintf(stream, "%4d %6d %7d %5d %6d  %6d    %6d     %6d %7d %8e\n",
+								pack_nb, tileno, layno, resno, compno, precno, start_pos, end_ph_pos, end_pos, disto);
+							total_disto += disto;
 							pack_nb++;
 						}
 					}
@@ -609,18 +626,23 @@ bool wxJ2KHandler::write_index_file(opj_codestream_info_t *cstr_info, char *inde
 		} /* LRCP */
 		else if (cstr_info->prog == RLCP) {	/* RLCP */
 
-			fprintf(stream, "RLCP\npack_nb tileno resno layno compno precno start_pos end_ph_pos end_pos\n");
+			fprintf(stream, "RLCP\npack_nb tileno resno layno compno precno start_pos end_ph_pos end_pos disto\n");
 
-			for (resno = 0; resno < cstr_info->numdecompos + 1; resno++) {
+			for (resno = 0; resno < max_numdecompos + 1; resno++) {
 				for (layno = 0; layno < cstr_info->numlayers; layno++) {
 					for (compno = 0; compno < cstr_info->numcomps; compno++) {
-						int prec_max = cstr_info->tile[tileno].pw[resno] * cstr_info->tile[tileno].ph[resno];
+						int prec_max; 
+						if (resno > cstr_info->numdecompos[compno])
+							break;
+						prec_max = cstr_info->tile[tileno].pw[resno] * cstr_info->tile[tileno].ph[resno];
 						for (precno = 0; precno < prec_max; precno++) {
 							start_pos = cstr_info->tile[tileno].packet[pack_nb].start_pos;
 							end_ph_pos = cstr_info->tile[tileno].packet[pack_nb].end_ph_pos;
 							end_pos = cstr_info->tile[tileno].packet[pack_nb].end_pos;
-							fprintf(stream, "%4d %6d %5d %7d %6d %6d %9d   %9d %7d\n",
-								pack_nb, tileno, resno, layno, compno, precno, start_pos, end_ph_pos, end_pos);
+							disto = cstr_info->tile[tileno].packet[pack_nb].disto;
+							fprintf(stream, "%4d %6d %5d %7d %6d %6d %9d   %9d %7d %8e\n",
+								pack_nb, tileno, resno, layno, compno, precno, start_pos, end_ph_pos, end_pos, disto);
+							total_disto += disto;
 							pack_nb++;
 						}
 					}
@@ -629,9 +651,9 @@ bool wxJ2KHandler::write_index_file(opj_codestream_info_t *cstr_info, char *inde
 		} /* RLCP */
 		else if (cstr_info->prog == RPCL) {	/* RPCL */
 
-			fprintf(stream, "RPCL\npack_nb tileno resno precno compno layno start_pos end_ph_pos end_pos\n"); 
+			fprintf(stream, "RPCL\npack_nb tileno resno precno compno layno start_pos end_ph_pos end_pos disto\n"); 
 
-			for (resno = 0; resno < cstr_info->numdecompos + 1; resno++) {
+			for (resno = 0; resno < max_numdecompos + 1; resno++) {
 				/* I suppose components have same XRsiz, YRsiz */
 				int x0 = cstr_info->tile_Ox + tileno - (int)floor((float)tileno/(float)cstr_info->tw ) * cstr_info->tw * cstr_info->tile_x;
 				int y0 = cstr_info->tile_Ox + (int)floor( (float)tileno/(float)cstr_info->tw ) * cstr_info->tile_y;
@@ -639,10 +661,12 @@ bool wxJ2KHandler::write_index_file(opj_codestream_info_t *cstr_info, char *inde
 				int y1 = y0 + cstr_info->tile_y;
 				for (compno = 0; compno < cstr_info->numcomps; compno++) {
 					int prec_max = cstr_info->tile[tileno].pw[resno] * cstr_info->tile[tileno].ph[resno];
+					if (resno > cstr_info->numdecompos[compno])
+							break;
 					for (precno = 0; precno < prec_max; precno++) {
 						int pcnx = cstr_info->tile[tileno].pw[resno];
-						int pcx = (int) pow( 2, cstr_info->tile[tileno].pdx[resno] + cstr_info->numdecompos - resno );
-						int pcy = (int) pow( 2, cstr_info->tile[tileno].pdy[resno] + cstr_info->numdecompos - resno );
+						int pcx = (int) pow( 2, cstr_info->tile[tileno].pdx[resno] + cstr_info->numdecompos[compno] - resno );
+						int pcy = (int) pow( 2, cstr_info->tile[tileno].pdy[resno] + cstr_info->numdecompos[compno] - resno );
 						int precno_x = precno - (int) floor( (float)precno/(float)pcnx ) * pcnx;
 						int precno_y = (int) floor( (float)precno/(float)pcnx );
 						for(y = y0; y < y1; y++) {							
@@ -653,8 +677,10 @@ bool wxJ2KHandler::write_index_file(opj_codestream_info_t *cstr_info, char *inde
 											start_pos = cstr_info->tile[tileno].packet[pack_nb].start_pos;
 											end_ph_pos = cstr_info->tile[tileno].packet[pack_nb].end_ph_pos;
 											end_pos = cstr_info->tile[tileno].packet[pack_nb].end_pos;
-											fprintf(stream, "%4d %6d %5d %6d %6d %7d %9d   %9d %7d\n",
-												pack_nb, tileno, resno, precno, compno, layno, start_pos, end_ph_pos, end_pos); 
+											disto = cstr_info->tile[tileno].packet[pack_nb].disto;
+											fprintf(stream, "%4d %6d %5d %6d %6d %7d %9d   %9d %7d %8e\n",
+												pack_nb, tileno, resno, precno, compno, layno, start_pos, end_ph_pos, end_pos, disto); 
+											total_disto += disto;
 											pack_nb++; 
 										}
 									}
@@ -672,15 +698,15 @@ bool wxJ2KHandler::write_index_file(opj_codestream_info_t *cstr_info, char *inde
 			int x1 = x0 + cstr_info->tile_x;
 			int y1 = y0 + cstr_info->tile_y;
 
-			fprintf(stream, "PCRL\npack_nb tileno precno compno resno layno start_pos end_ph_pos end_pos\n"); 
+			fprintf(stream, "PCRL\npack_nb tileno precno compno resno layno start_pos end_ph_pos end_pos disto\n"); 
 
 			for (compno = 0; compno < cstr_info->numcomps; compno++) {
-				for (resno = 0; resno < cstr_info->numdecompos + 1; resno++) {
+				for (resno = 0; resno < cstr_info->numdecompos[compno] + 1; resno++) {
 					int prec_max = cstr_info->tile[tileno].pw[resno] * cstr_info->tile[tileno].ph[resno];
 					for (precno = 0; precno < prec_max; precno++) {
 						int pcnx = cstr_info->tile[tileno].pw[resno];
-						int pcx = (int) pow( 2, cstr_info->tile[tileno].pdx[resno] + cstr_info->numdecompos - resno );
-						int pcy = (int) pow( 2, cstr_info->tile[tileno].pdy[resno] + cstr_info->numdecompos - resno );
+						int pcx = (int) pow( 2, cstr_info->tile[tileno].pdx[resno] + cstr_info->numdecompos[compno] - resno );
+						int pcy = (int) pow( 2, cstr_info->tile[tileno].pdy[resno] + cstr_info->numdecompos[compno] - resno );
 						int precno_x = precno - (int) floor( (float)precno/(float)pcnx ) * pcnx;
 						int precno_y = (int) floor( (float)precno/(float)pcnx );
 						for(y = y0; y < y1; y++) {							
@@ -691,8 +717,10 @@ bool wxJ2KHandler::write_index_file(opj_codestream_info_t *cstr_info, char *inde
 											start_pos = cstr_info->tile[tileno].packet[pack_nb].start_pos;
 											end_ph_pos = cstr_info->tile[tileno].packet[pack_nb].end_ph_pos;
 											end_pos = cstr_info->tile[tileno].packet[pack_nb].end_pos;
-											fprintf(stream, "%4d %6d %6d %6d %5d %7d %9d   %9d %7d\n",
-												pack_nb, tileno, precno, compno, resno, layno, start_pos, end_ph_pos, end_pos); 
+											disto = cstr_info->tile[tileno].packet[pack_nb].disto;
+											fprintf(stream, "%4d %6d %6d %6d %5d %7d %9d   %9d %7d %8e\n",
+												pack_nb, tileno, precno, compno, resno, layno, start_pos, end_ph_pos, end_pos, disto); 
+											total_disto += disto;
 											pack_nb++; 
 										}
 									}
@@ -705,7 +733,7 @@ bool wxJ2KHandler::write_index_file(opj_codestream_info_t *cstr_info, char *inde
 		} /* PCRL */
 		else {	/* CPRL */
 
-			fprintf(stream, "CPRL\npack_nb tileno compno precno resno layno start_pos end_ph_pos end_pos\n"); 
+			fprintf(stream, "CPRL\npack_nb tileno compno precno resno layno start_pos end_ph_pos end_pos disto\n"); 
 
 			for (compno = 0; compno < cstr_info->numcomps; compno++) {
 				/* I suppose components have same XRsiz, YRsiz */
@@ -714,12 +742,12 @@ bool wxJ2KHandler::write_index_file(opj_codestream_info_t *cstr_info, char *inde
 				int x1 = x0 + cstr_info->tile_x;
 				int y1 = y0 + cstr_info->tile_y;
 				
-				for (resno = 0; resno < cstr_info->numdecompos + 1; resno++) {
+				for (resno = 0; resno < cstr_info->numdecompos[compno] + 1; resno++) {
 					int prec_max = cstr_info->tile[tileno].pw[resno] * cstr_info->tile[tileno].ph[resno];
 					for (precno = 0; precno < prec_max; precno++) {
 						int pcnx = cstr_info->tile[tileno].pw[resno];
-						int pcx = (int) pow( 2, cstr_info->tile[tileno].pdx[resno] + cstr_info->numdecompos - resno );
-						int pcy = (int) pow( 2, cstr_info->tile[tileno].pdy[resno] + cstr_info->numdecompos - resno );
+						int pcx = (int) pow( 2, cstr_info->tile[tileno].pdx[resno] + cstr_info->numdecompos[compno] - resno );
+						int pcy = (int) pow( 2, cstr_info->tile[tileno].pdy[resno] + cstr_info->numdecompos[compno] - resno );
 						int precno_x = precno - (int) floor( (float)precno/(float)pcnx ) * pcnx;
 						int precno_y = (int) floor( (float)precno/(float)pcnx );
 						for(y = y0; y < y1; y++) {
@@ -730,8 +758,10 @@ bool wxJ2KHandler::write_index_file(opj_codestream_info_t *cstr_info, char *inde
 											start_pos = cstr_info->tile[tileno].packet[pack_nb].start_pos;
 											end_ph_pos = cstr_info->tile[tileno].packet[pack_nb].end_ph_pos;
 											end_pos = cstr_info->tile[tileno].packet[pack_nb].end_pos;
-											fprintf(stream, "%4d %6d %6d %6d %5d %7d %9d   %9d %7d\n",
-												pack_nb, tileno, compno, precno, resno, layno, start_pos, end_ph_pos, end_pos); 
+											disto = cstr_info->tile[tileno].packet[pack_nb].disto;
+											fprintf(stream, "%4d %6d %6d %6d %5d %7d %9d   %9d %7d %8e\n",
+												pack_nb, tileno, compno, precno, resno, layno, start_pos, end_ph_pos, end_pos, disto); 
+											total_disto += disto;
 											pack_nb++; 
 										}
 									}
@@ -744,6 +774,13 @@ bool wxJ2KHandler::write_index_file(opj_codestream_info_t *cstr_info, char *inde
 		} /* CPRL */   
 	} /* tileno */
 	
+	fprintf(stream, "%8e\n", cstr_info->D_max); /* SE max */
+	fprintf(stream, "%.8e\n", total_disto);	/* SE totale */
+	fprintf(stream, "\nMARKER LIST\n");
+	fprintf(stream, "%d\n", cstr_info->marknum);
+	fprintf(stream, "type\tstart_pos    length\n");
+	for (x = 0; x < cstr_info->marknum; x++)
+		fprintf(stream, "%X\t%9d %9d\n", cstr_info->marker[x].type, cstr_info->marker[x].pos, cstr_info->marker[x].len);
 	fclose(stream);
 
 	fprintf(stderr,"Generated index file %s\n", index);

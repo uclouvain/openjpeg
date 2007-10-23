@@ -272,10 +272,10 @@ class OPJMarkerData : public wxTreeItemData
 		const wxChar *GetDesc1() const { return m_desc.c_str(); }
 		const wxChar *GetDesc2() const { return m_filestring.c_str(); }
 		wxFileOffset m_start, m_length;
+		wxString m_desc;
 
 	// private methods and variables
 	private:
-		wxString m_desc;
 		wxString m_filestring;
 };
 

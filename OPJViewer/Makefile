@@ -1,4 +1,4 @@
-# Makefile for the main JPWL OpenJPEG codecs: JPWL_ j2k_to_image and JPWL_image_to_j2k
+# Makefile for OPJViewer
 
 # General configuration variables:
 CC = $(shell wx-config-2.8 --cxx)
@@ -13,29 +13,29 @@ MODULES = $(OPJV_SRCS:.cpp=.o)
 all: opjviewer lib
 
 .cpp.o:
-	$(CC) $(CFLAGS) -c $< -o $@
+        $(CC) $(CFLAGS) -c $< -o $@
 
 lib:
-	cd ../jpwl; make
+        cd ../jpwl; make
 
 opjviewer: $(OPJV_SRCS) lib
-	$(CC) $(CFLAGS) -I .. $(OPJV_SRCS) -o OPJViewer -L ../jpwl -lopenjpeg_JPWL -lm -lstdc++ -ltiff $(shell wx-config-2.8 --libs)  
+        $(CC) $(CFLAGS) -I .. $(OPJV_SRCS) -o OPJViewer -L ../jpwl -lopenjpeg_JPWL -lm -lstdc++ -ltiff $(shell wx-config-2.8 --libs)
 
 
 clean:
-	rm -f OPJViewer *.o *.a
-	cd ../libopenjpeg; rm -f *.o
+        rm -f OPJViewer *.o *.a
+        cd ../libopenjpeg; rm -f *.o
 
 
 
 
 #.cpp.o :
-#	$(CXX) -g -c `wx-config-2.8 --cxxflags` -I ../.. -D wxUSE_LIBOPENJPEG -D wxHACK_BOOLEAN -o $@ $<
+#       $(CXX) -g -c `wx-config-2.8 --cxxflags` -I ../.. -D wxUSE_LIBOPENJPEG -D wxHACK_BOOLEAN -o $@ $<
 
 #all:    $(PROGRAM)
 
 #$(PROGRAM):     $(OBJECTS)
-#	$(CXX) -o $(PROGRAM) $(OBJECTS) -lopenjpeg -L ../.. `wx-config-2.8 --libs`
+#       $(CXX) -o $(PROGRAM) $(OBJECTS) -lopenjpeg -L ../.. `wx-config-2.8 --libs`
 
 #clean:
-#	rm -f *.o $(PROGRAM)
+#       rm -f *.o $(PROGRAM)

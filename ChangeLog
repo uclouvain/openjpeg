@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+October 23, 2007
+* [GB] Improved success for the linux build; OPJViewer shows all the COM contents
+ 
 October 18, 2007
 * [FOD] Changed the ROI parameter in the image_to_j2k codec to make it correspond to the documentation (i.e. -ROI c=0,U=25)
 * [FOD] Patch from Callum Lewick. Memset patch. 

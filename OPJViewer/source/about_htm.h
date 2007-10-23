@@ -24,8 +24,8 @@ OPJ_APPLICATION " " OPJ_APPLICATION_VERSION
 "In addition to the basic codec, various other features are under development.</font><br>"
 "<font size=-2 color=red>* Build: ")
 #include "build.h"
-wxT("</font><br>")
-wxT("<font size=-2 color=red>* " wxVERSION_STRING ", " __DATE__ ", " __TIME__ "</font><br>")
+wxT(", " __DATE__ ", " __TIME__ "</font><br>")
+wxT("<font size=-2 color=red>* " wxVERSION_STRING "</font><br>")
 #ifdef USE_JPWL
 wxT("<font size=-2 color=green>- Compiled with JPWL support</font><br>")
 #endif // USE_JPWL

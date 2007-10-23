@@ -194,7 +194,7 @@ bool wxJP2Handler::LoadFile(wxImage *image, wxInputStream& stream, bool verbose,
 	cio = opj_cio_open((opj_common_ptr)dinfo, src, file_length);
 
 	/* decode the stream and fill the image structure */
-	opjimage = opj_decode(dinfo, cio, &cstr_info);
+	opjimage = opj_decode_with_info(dinfo, cio, &cstr_info);
 	if (!opjimage) {
 #ifndef __WXGTK__ 
 		wxMutexGuiEnter();

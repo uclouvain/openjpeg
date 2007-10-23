@@ -255,7 +255,8 @@ void OPJParseThread::ParseJ2KFile(wxFile *m_file, wxFileOffset offset, wxFileOff
 			wxString::FromAscii(marker_name[m]) + 
 			wxString::Format(wxT(" (0x%04X)"), marker_val[m]),
 			image, imageSel,
-			new OPJMarkerData(wxT("MARK"), m_tree->m_fname.GetFullPath(), offset, offset + currlen + 1)
+			new OPJMarkerData(wxT("MARK") + wxString::Format(wxT(" (%d)"), marker_val[m]),
+				m_tree->m_fname.GetFullPath(), offset, offset + currlen + 1)
 			);
 
 		// append some info

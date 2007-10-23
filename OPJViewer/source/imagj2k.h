@@ -108,9 +108,9 @@ public:
 #endif
 
 #ifdef USE_JPWL
-		m_comment += wxString::Format("%s with JPWL", opj_version());
+		m_comment += wxString::Format(wxT("%s with JPWL"), (char *) opj_version());
 #else
-		m_comment += wxString::Format("%s", opj_version());
+		m_comment += wxString::Format(wxT("%s"), (char *) opj_version());
 #endif
 
     }

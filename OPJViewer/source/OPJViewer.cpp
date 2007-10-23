@@ -306,9 +306,9 @@ bool OPJViewerApp::OnInit(void)
 #endif
 
 #ifdef USE_JPWL
-		m_comment += wxString::Format("%s with JPWL", opj_version());
+		m_comment += wxString::Format(wxT("%s with JPWL"), (char *) opj_version());
 #else
-		m_comment += wxString::Format("%s", opj_version());
+		m_comment += wxString::Format(wxT("%s"), (char *) opj_version());
 #endif
 	}
 
@@ -1245,7 +1245,11 @@ void OPJCanvas::OnDraw(wxDC& dc)
 	} else {
 		dc.SetFont(*wxSWISS_FONT);
 		dc.SetPen(*wxBLACK_PEN);
+#ifdef __WXGTK__
+		dc.DrawText(_T("Decoding image, please wait... (press \"Zoom to Fit\" to show the image)"), 40, 50);
+#else
 		dc.DrawText(_T("Decoding image, please wait..."), 40, 50);
+#endif
 	}
 }
 
@@ -1793,14 +1797,13 @@ void OPJMarkerTree::OnItemExpanding(wxTreeEvent& event)
 
 void OPJMarkerTree::OnSelChanged(wxTreeEvent& event)
 {
-#define BUNCH_LINESIZE	16
-#define BUNCH_NUMLINES	7
+	int bunch_linesize = 16;
+	int bunch_numlines = 7;
 
 	wxTreeItemId item = event.GetItem();
 	OPJMarkerData* data = (OPJMarkerData *) GetItemData(item);
 	wxString text;
 	int l, c, pos = 0, pre_pos;
-	unsigned char buffer[BUNCH_LINESIZE * BUNCH_NUMLINES];
 
 	m_peektextCtrl->Clear();
 
@@ -1815,19 +1818,25 @@ void OPJMarkerTree::OnSelChanged(wxTreeEvent& event)
 	fp->Seek(data->m_start, wxFromStart);
 
 	// read a bunch
-	int max_read = wxMin(wxFileOffset(WXSIZEOF(buffer)), data->m_length - data->m_start + 1);
+	int max_read = wxMin(wxFileOffset(bunch_linesize * bunch_numlines), data->m_length - data->m_start + 1);
+	if (data->m_desc == wxT("MARK (65380)")) {
+		/*wxLogMessage(data->m_desc);*/
+		max_read = data->m_length - data->m_start + 1;
+		bunch_numlines = (int) ceil((float) max_read / (float) bunch_linesize);
+	}
+	unsigned char *buffer = new unsigned char[bunch_linesize * bunch_numlines];
 	fp->Read(buffer, max_read);
 
 	// write the file data between start and stop
 	pos = 0;
-	for (l = 0; l < BUNCH_NUMLINES; l++) {
+	for (l = 0; l < bunch_numlines; l++) {
 
 		text << wxString::Format(wxT("%010d:"), data->m_start + pos);
 
 		pre_pos = pos;
 
 		// add hex browsing text
-		for (c = 0; c < BUNCH_LINESIZE; c++) {
+		for (c = 0; c < bunch_linesize; c++) {
 
 			if (!(c % 8))
 				text << wxT(" ");
@@ -1842,7 +1851,7 @@ void OPJMarkerTree::OnSelChanged(wxTreeEvent& event)
 		text << wxT("    ");
 
 		// add char browsing text
-		for (c = 0; c < BUNCH_LINESIZE; c++) {
+		for (c = 0; c < bunch_linesize; c++) {
 
 			if (pre_pos < max_read) {
 				if ((buffer[pre_pos] == '\n') ||
@@ -1865,6 +1874,8 @@ void OPJMarkerTree::OnSelChanged(wxTreeEvent& event)
 	fp->Close();
 
 	m_peektextCtrl->WriteText(text);
+
+	delete buffer;
 }
 
 /*void LogKeyEvent(const wxChar *name, const wxKeyEvent& event)
@@ -2324,7 +2335,7 @@ void *OPJEncoThread::Entry()
 	j2kkkhandler->m_comment = wxGetApp().m_comment;
 
 	// save the file
-	if (!m_canvas->m_image100.SaveFile(m_canvas->m_savename.GetFullPath(), wxBITMAP_TYPE_J2K)) {
+	if (!m_canvas->m_image100.SaveFile(m_canvas->m_savename.GetFullPath(), (wxBitmapType) wxBITMAP_TYPE_J2K)) {
 		WriteText(wxT("Can't save image"));
 		return NULL;
 	}
@@ -3185,7 +3196,7 @@ wxPanel* OPJEncoderDialog::CreatePart1_1SettingsPage(wxWindow* parent)
 				// add the value control
 				resnumSizer->Add(
 					m_resolutionsCtrl = new wxSpinCtrl(panel, OPJENCO_RESNUMBER,
-								wxString::Format("%d", wxGetApp().m_resolutions),
+								wxString::Format(wxT("%d"), wxGetApp().m_resolutions),
 								wxDefaultPosition, wxSize(80, wxDefaultCoord),
 								wxSP_ARROW_KEYS,
 								0, 256, 6),
