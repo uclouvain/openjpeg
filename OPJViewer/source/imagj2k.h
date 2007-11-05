@@ -82,8 +82,11 @@ public:
 		m_origin = wxT("0,0");
 		m_rates = wxT("20,10,5");
 		m_quality = wxT("30,35,40");
+		m_enablequality = false;
+		m_multicomp = false;
 		m_irreversible = false;
 		m_resolutions = 6;
+		m_progression = 0;
 		m_cbsize = wxT("32,32");
 		m_prsize = wxT("[128,128],[128,128]");
 		m_tsize = wxT("");
@@ -92,6 +95,12 @@ public:
 		m_resilience*/
 		m_enablesop = false;
 		m_enableeph = false;
+		m_enablereset = false;
+		m_enablesegmark = false;
+		m_enablevsc = false;
+		m_enablerestart = false;
+		m_enableerterm = false;
+		m_enablebypass = false;
 		/*m_roicompo
 		m_roiup
 		m_indexfname*/
@@ -127,8 +136,11 @@ public:
 	wxString m_origin;
 	wxString m_rates;
 	wxString m_quality;
+	bool m_enablequality;
+	bool m_multicomp;
 	bool m_irreversible;
 	int m_resolutions;
+	int m_progression;
 	wxString m_cbsize;
 	wxString m_prsize;
 	wxString m_tsize;
@@ -137,6 +149,12 @@ public:
 	m_resilience*/
 	bool m_enablesop;
 	bool m_enableeph;
+	bool m_enablebypass;
+	bool m_enableerterm;
+	bool m_enablerestart;
+	bool m_enablereset;
+	bool m_enablesegmark;
+	bool m_enablevsc;
 	/*m_roicompo
 	m_roiup
 	m_indexfname*/

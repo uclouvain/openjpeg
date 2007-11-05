@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+November 5, 2007
+*+ [GB] Fixed a bug which prevented JPWL from working on multi-tiled images; added some more fields in the interface info structures (keep a list of markers, save start packet number for each tile)
+
 October 23, 2007
 * [GB] Improved success for the linux build; OPJViewer shows all the COM contents
  

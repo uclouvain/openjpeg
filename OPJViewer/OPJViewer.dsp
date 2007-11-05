@@ -111,6 +111,10 @@ SOURCE=.\source\imagmj2.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\source\OPJDialogs.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\OPJViewer.cpp
 # End Source File
 # Begin Source File

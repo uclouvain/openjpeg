@@ -206,8 +206,11 @@ class OPJViewerApp: public wxApp
 		// encoding engine parameters
 		wxString m_subsampling, m_origin, m_rates, m_comment, m_index, m_quality;
 		wxString m_cbsize, m_prsize, m_tsize, m_torigin;
-		bool m_enablecomm, m_enableidx, m_irreversible, m_enablesop, m_enableeph;
-		int m_resolutions;
+		bool m_enablecomm, m_enableidx, m_multicomp, m_irreversible, m_enablesop, m_enableeph;
+		bool m_enablebypass, m_enablereset, m_enablerestart, m_enablevsc, m_enableerterm;
+		bool m_enablesegmark;
+		bool m_enablequality;
+		int m_resolutions, m_progression;
 
 		// some layout settings
 		bool m_showtoolbar, m_showbrowser, m_showpeeker;
@@ -404,6 +407,15 @@ class OPJFrame: public wxMDIParentFrame
 	void OnPrevFrame(wxCommandEvent& event);
 	void OnHomeFrame(wxCommandEvent& event);
 	void OnNextFrame(wxCommandEvent& event);
+	void OnLessLayers(wxCommandEvent& event);
+	void OnAllLayers(wxCommandEvent& event);
+	void OnMoreLayers(wxCommandEvent& event);
+	void OnLessRes(wxCommandEvent& event);
+	void OnFullRes(wxCommandEvent& event);
+	void OnMoreRes(wxCommandEvent& event);
+	void OnPrevComp(wxCommandEvent& event);
+	void OnAllComps(wxCommandEvent& event);
+	void OnNextComp(wxCommandEvent& event);
 	void OnSetsEnco(wxCommandEvent& event);
 	void OnSetsDeco(wxCommandEvent& event);
 	void OnSashDrag(wxSashEvent& event);
@@ -475,6 +487,15 @@ enum {
 	OPJFRAME_VIEWPREVFRAME,
 	OPJFRAME_VIEWHOMEFRAME,
 	OPJFRAME_VIEWNEXTFRAME,
+	OPJFRAME_VIEWLESSLAYERS,
+	OPJFRAME_VIEWALLLAYERS,
+	OPJFRAME_VIEWMORELAYERS,
+	OPJFRAME_VIEWLESSRES,
+	OPJFRAME_VIEWFULLRES,
+	OPJFRAME_VIEWMORERES,
+	OPJFRAME_VIEWPREVCOMP,
+	OPJFRAME_VIEWALLCOMPS,
+	OPJFRAME_VIEWNEXTCOMP,
 	OPJFRAME_FILECLOSE,
 	OPJFRAME_SETSENCO,
 	OPJFRAME_SETSDECO,
@@ -638,14 +659,19 @@ public:
 	void OnEnableJPWL(wxCommandEvent& event);
 	void OnEnableComm(wxCommandEvent& event);
 	void OnEnableIdx(wxCommandEvent& event);
+	void OnRadioQualityRate(wxCommandEvent& event);
 	wxPanel* CreatePart11SettingsPage(wxWindow* parent);
 	/*wxCheckBox *m_enablejpwlCheck;*/
 #endif // USE_JPWL
 
 	wxTextCtrl *m_subsamplingCtrl, *m_originCtrl, *m_rateCtrl, *m_commentCtrl;
+	wxRadioButton *m_rateRadio, *m_qualityRadio;
 	wxTextCtrl *m_indexCtrl, *m_qualityCtrl, *m_cbsizeCtrl, *m_prsizeCtrl, *m_pocCtrl;
 	wxTextCtrl *m_tsizeCtrl, *m_toriginCtrl;
-	wxCheckBox *m_enablecommCheck, *m_enableidxCheck, *m_irrevCheck, *m_sopCheck, *m_ephCheck;
+	wxRadioBox *progressionBox;
+	wxCheckBox *m_enablecommCheck, *m_enableidxCheck, *m_mctCheck, *m_irrevCheck;
+	wxCheckBox *m_sopCheck, *m_ephCheck, *m_enablebypassCheck, *m_enableresetCheck,
+		*m_enablerestartCheck, *m_enablevscCheck, *m_enableertermCheck, *m_enablesegmarkCheck;
 	wxCheckBox *m_enablepocCheck;
 	wxSpinCtrl *m_resolutionsCtrl;
 
@@ -654,7 +680,9 @@ protected:
     enum {
 		OPJENCO_ENABLEJPWL = 100,
 		OPJENCO_RATEFACTOR,
+		OPJENCO_RATERADIO,
 		OPJENCO_QUALITYFACTOR,
+		OPJENCO_QUALITYRADIO,
 		OPJENCO_RESNUMBER,
 		OPJENCO_CODEBLOCKSIZE,
 		OPJENCO_PRECINCTSIZE,
@@ -674,6 +702,7 @@ protected:
 		OPJENCO_ROISHIFT,
 		OPJENCO_IMORIG,
 		OPJENCO_TILORIG,
+		OPJENCO_ENABLEMCT,
 		OPJENCO_ENABLEIRREV,
 		OPJENCO_ENABLEINDEX,
 		OPJENCO_INDEXNAME,

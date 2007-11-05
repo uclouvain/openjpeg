@@ -13,18 +13,18 @@ MODULES = $(OPJV_SRCS:.cpp=.o)
 all: opjviewer lib
 
 .cpp.o:
-        $(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 lib:
-        cd ../jpwl; make
+	cd ../jpwl; make
 
 opjviewer: $(OPJV_SRCS) lib
         $(CC) $(CFLAGS) -I .. $(OPJV_SRCS) -o OPJViewer -L ../jpwl -lopenjpeg_JPWL -lm -lstdc++ -ltiff $(shell wx-config-2.8 --libs)
 
 
 clean:
-        rm -f OPJViewer *.o *.a
-        cd ../libopenjpeg; rm -f *.o
+	rm -f OPJViewer *.o *.a
+	cd ../libopenjpeg; rm -f *.o
 
 
 

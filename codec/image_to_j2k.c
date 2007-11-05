@@ -639,10 +639,11 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 		}	
 
 		fprintf(stream, "\nTILE %d DETAILS\n", tileno);	
-		fprintf(stream, "part_nb tileno  num_packs  start_pos end_tph_pos   end_pos\n");
+		fprintf(stream, "part_nb tileno  start_pack num_packs  start_pos end_tph_pos   end_pos\n");
 		for (tilepartno = 0; tilepartno < cstr_info->tile[tileno].num_tps; tilepartno++)
-			fprintf(stream, "%4d %9d  %9d  %9d %11d %9d\n",
+			fprintf(stream, "%4d %9d   %9d %9d  %9d %11d %9d\n",
 				tilepartno, tileno,
+				cstr_info->tile[tileno].tp[tilepartno].tp_start_pack,
 				cstr_info->tile[tileno].tp[tilepartno].tp_numpacks,
 				cstr_info->tile[tileno].tp[tilepartno].tp_start_pos,
 				cstr_info->tile[tileno].tp[tilepartno].tp_end_header,
@@ -824,6 +825,14 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 	
 	fprintf(stream, "%8e\n", cstr_info->D_max); /* SE max */
 	fprintf(stream, "%.8e\n", total_disto);	/* SE totale */
+/* UniPG>> */
+	/* print the markers' list */
+	fprintf(stream, "\nMARKER LIST\n");
+	fprintf(stream, "%d\n", cstr_info->marknum);
+	fprintf(stream, "type\tstart_pos    length\n");
+	for (x = 0; x < cstr_info->marknum; x++)
+		fprintf(stream, "%X\t%9d %9d\n", cstr_info->marker[x].type, cstr_info->marker[x].pos, cstr_info->marker[x].len);
+/* <<UniPG */
 	fclose(stream);
 
 	fprintf(stderr,"Generated index file %s\n", index);

@@ -334,6 +334,8 @@ bool jpwl_esd_fill(opj_j2k_t *j2k, jpwl_esd_ms_t *esdmark, unsigned char *buf);
 
 bool jpwl_epb_fill(opj_j2k_t *j2k, jpwl_epb_ms_t *epbmark, unsigned char *buf, unsigned char *post_buf);
 
+void j2k_add_marker(opj_codestream_info_t *cstr_info, unsigned short int type, int pos, int len);
+
 /** corrects the data in the JPWL codestream
 @param j2k J2K compressor handle
 @return true if correction is performed correctly

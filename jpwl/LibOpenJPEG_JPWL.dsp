@@ -245,6 +245,10 @@ SOURCE=..\libopenjpeg\opj_includes.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\libopenjpeg\opj_malloc.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\libopenjpeg\pi.h
 # End Source File
 # Begin Source File

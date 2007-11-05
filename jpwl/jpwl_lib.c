@@ -295,7 +295,7 @@ jpwl_epb_ms_t *jpwl_epb_create(opj_j2k_t *j2k, bool latest, bool packed, int til
 	return epb;
 }
 
-void jpwl_epb_write(jpwl_epb_ms_t *epb, unsigned char *buf) {
+void jpwl_epb_write(opj_j2k_t *j2k, jpwl_epb_ms_t *epb, unsigned char *buf) {
 
 	/* Marker */
 	*(buf++) = (unsigned char) (J2K_MS_EPB >> 8); 
@@ -323,6 +323,10 @@ void jpwl_epb_write(jpwl_epb_ms_t *epb, unsigned char *buf) {
 	/* Data */
 	/*memcpy(buf, epb->data, (size_t) epb->Lepb - 11);*/
 	memset(buf, 0, (size_t) epb->Lepb - 11);
+
+	/* update markers struct */
+	j2k_add_marker(j2k->cstr_info, J2K_MS_EPB, -1, epb->Lepb + 2);
+
 };
 
 
@@ -1145,7 +1149,7 @@ bool jpwl_epb_correct(opj_j2k_t *j2k, unsigned char *buffer, int type, int pre_l
 	return true;
 }
 
-void jpwl_epc_write(jpwl_epc_ms_t *epc, unsigned char *buf) {
+void jpwl_epc_write(opj_j2k_t *j2k, jpwl_epc_ms_t *epc, unsigned char *buf) {
 
 	/* Marker */
 	*(buf++) = (unsigned char) (J2K_MS_EPC >> 8); 
@@ -1171,6 +1175,10 @@ void jpwl_epc_write(jpwl_epc_ms_t *epc, unsigned char *buf) {
 	/* Data */
 	/*memcpy(buf, epc->data, (size_t) epc->Lepc - 9);*/
 	memset(buf, 0, (size_t) epc->Lepc - 9);
+
+	/* update markers struct */
+	j2k_add_marker(j2k->cstr_info, J2K_MS_EPC, -1, epc->Lepc + 2);
+
 };
 
 int jpwl_esds_add(opj_j2k_t *j2k, jpwl_marker_t *jwmarker, int *jwmarker_num,
@@ -1561,7 +1569,7 @@ bool jpwl_esd_fill(opj_j2k_t *j2k, jpwl_esd_ms_t *esd, unsigned char *buf) {
 	return true;
 }
 
-void jpwl_esd_write(jpwl_esd_ms_t *esd, unsigned char *buf) {
+void jpwl_esd_write(opj_j2k_t *j2k, jpwl_esd_ms_t *esd, unsigned char *buf) {
 
 	/* Marker */
 	*(buf++) = (unsigned char) (J2K_MS_ESD >> 8); 
@@ -1586,6 +1594,10 @@ void jpwl_esd_write(jpwl_esd_ms_t *esd, unsigned char *buf) {
 	else
 		memset(buf, 0xAA, (size_t) esd->Lesd - 5);
 		/*memcpy(buf, esd->data, (size_t) esd->Lesd - 5);*/
+
+	/* update markers struct */
+	j2k_add_marker(j2k->cstr_info, J2K_MS_ESD, -1, esd->Lesd + 2);
+
 }
 
 unsigned short int jpwl_double_to_pfp(double V, int bytes) {
@@ -1703,10 +1715,10 @@ bool jpwl_update_info(opj_j2k_t *j2k, jpwl_marker_t *jwmarker, int jwmarker_num)
 
 		/* end_pos: increment with markers before the end of this tile */
 		/* code is disabled, since according to JPWL no markers can be beyond TPH */
-		/*addlen = 0;
+		addlen = 0;
 		for (mm = 0; mm < jwmarker_num; mm++)
 			if (jwmarker[mm].pos < (unsigned long int) info->tile[tileno].end_pos)
-				addlen += jwmarker[mm].len + 2;*/
+				addlen += jwmarker[mm].len + 2;
 		info->tile[tileno].end_pos += addlen;
 
 		/* navigate through all the tile parts */
@@ -1740,11 +1752,19 @@ bool jpwl_update_info(opj_j2k_t *j2k, jpwl_marker_t *jwmarker, int jwmarker_num)
 			
 			/* start_pos: increment with markers before the packet */
 			/* disabled for the same reason as before */
+			addlen = 0;
+			for (mm = 0; mm < jwmarker_num; mm++)
+				if (jwmarker[mm].pos <= (unsigned long int) info->tile[tileno].packet[packno].start_pos)
+					addlen += jwmarker[mm].len + 2;
+			info->tile[tileno].packet[packno].start_pos += addlen;
+
+			/* end_ph_pos: increment with markers before the packet */
+			/* disabled for the same reason as before */
 			/*addlen = 0;
 			for (mm = 0; mm < jwmarker_num; mm++)
-				if (jwmarker[mm].pos < (unsigned long int) info->tile[tileno].packet[packno].start_pos)
+				if (jwmarker[mm].pos < (unsigned long int) info->tile[tileno].packet[packno].end_ph_pos)
 					addlen += jwmarker[mm].len + 2;*/
-			info->tile[tileno].packet[packno].start_pos += addlen;
+			info->tile[tileno].packet[packno].end_ph_pos += addlen;
 
 			/* end_pos: increment if marker is before the end of packet */
 			/* disabled for the same reason as before */
@@ -1756,6 +1776,8 @@ bool jpwl_update_info(opj_j2k_t *j2k, jpwl_marker_t *jwmarker, int jwmarker_num)
 
 		}
 	}
+
+	/* reorder the markers list */
 
 	return true;
 }

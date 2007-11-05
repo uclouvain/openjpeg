@@ -88,22 +88,25 @@ their relevant wishlist position
 int jpwl_markcomp(const void *arg1, const void *arg2);
 
 /** write an EPB MS to a buffer
+@param j2k J2K compressor handle
 @param epbmark pointer to the EPB MS
 @param buf pointer to the memory buffer
 */
-void jpwl_epb_write(jpwl_epb_ms_t *epbmark, unsigned char *buf);
+void jpwl_epb_write(opj_j2k_t *j2k, jpwl_epb_ms_t *epbmark, unsigned char *buf);
 
 /** write an EPC MS to a buffer
+@param j2k J2K compressor handle
 @param epcmark pointer to the EPC MS
 @param buf pointer to the memory buffer
 */
-void jpwl_epc_write(jpwl_epc_ms_t *epcmark, unsigned char *buf);
+void jpwl_epc_write(opj_j2k_t *j2k, jpwl_epc_ms_t *epcmark, unsigned char *buf);
 
 /** write an ESD MS to a buffer
+@param j2k J2K compressor handle
 @param esdmark pointer to the ESD MS
 @param buf pointer to the memory buffer
 */
-void jpwl_esd_write(jpwl_esd_ms_t *esdmark, unsigned char *buf);
+void jpwl_esd_write(opj_j2k_t *j2k, jpwl_esd_ms_t *esdmark, unsigned char *buf);
 
 /*-----------------------------------------------------------------*/
 
@@ -157,6 +160,24 @@ void jpwl_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 
 }
 
+void j2k_add_marker(opj_codestream_info_t *cstr_info, unsigned short int type, int pos, int len) {
+
+	if (!cstr_info)
+		return;
+
+	/* expand the list? */
+	if ((cstr_info->marknum + 1) > cstr_info->maxmarknum) {
+		cstr_info->maxmarknum = 100 + (int) ((float) cstr_info->maxmarknum * 1.0F);
+		cstr_info->marker = opj_realloc(cstr_info->marker, cstr_info->maxmarknum);
+	}
+
+	/* add the marker */
+	cstr_info->marker[cstr_info->marknum].type = type;
+	cstr_info->marker[cstr_info->marknum].pos = pos;
+	cstr_info->marker[cstr_info->marknum].len = len;
+	cstr_info->marknum++;
+
+}
 
 void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 
@@ -170,7 +191,7 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 	jpwl_epc_ms_t *epc_mark;
 	jpwl_esd_ms_t *esd_mark;
 
-	/* find SOC + SIZ length */
+	/* find (SOC + SIZ) length */
 	/* I assume SIZ is always the first marker after SOC */
 	cio_seek(cio, soc_pos + 4);
 	socsiz_len = (unsigned short int) cio_read(cio, 2) + 4; /* add the 2 marks length itself */
@@ -544,7 +565,8 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 			startpack = 0;
 			/* EPB MSs for UEP packet data protection in Tile Parts */
 			/****** for (packno = 0; packno < j2k->cstr_info->num; packno++) { */
-			first_tp_pack = (tpno > 0) ? (first_tp_pack + j2k->cstr_info->tile[tileno].tp[tpno - 1].tp_numpacks) : 0;
+			/*first_tp_pack = (tpno > 0) ? (first_tp_pack + j2k->cstr_info->tile[tileno].tp[tpno - 1].tp_numpacks) : 0;*/
+			first_tp_pack = j2k->cstr_info->tile[tileno].tp[tpno].tp_start_pack;
 			last_tp_pack = first_tp_pack + j2k->cstr_info->tile[tileno].tp[tpno].tp_numpacks - 1;
 			for (packno = 0; packno < j2k->cstr_info->tile[tileno].tp[tpno].tp_numpacks; packno++) {
 
@@ -706,7 +728,7 @@ void jpwl_dump_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 	}
 
 	/* allocate a new buffer of proper size */
-	if (!(jpwl_buf = (unsigned char *) opj_malloc((size_t) new_size * sizeof (unsigned char)))) {
+	if (!(jpwl_buf = (unsigned char *) opj_malloc((size_t) (new_size + soc_pos) * sizeof(unsigned char)))) {
 		opj_event_msg(j2k->cinfo, EVT_ERROR, "Could not allocate room for JPWL codestream buffer\n");
 		exit(1);
 	};
@@ -736,15 +758,15 @@ void jpwl_dump_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 		switch (jwmarker[mm].id) {
 
 		case J2K_MS_EPB:
-			jpwl_epb_write(jwmarker[mm].epbmark, jpwl_buf);
+			jpwl_epb_write(j2k, jwmarker[mm].epbmark, jpwl_buf);
 			break;
 
 		case J2K_MS_EPC:
-			jpwl_epc_write(jwmarker[mm].epcmark, jpwl_buf);
+			jpwl_epc_write(j2k, jwmarker[mm].epcmark, jpwl_buf);
 			break;
 
 		case J2K_MS_ESD:
-			jpwl_esd_write(jwmarker[mm].esdmark, jpwl_buf);
+			jpwl_esd_write(j2k, jwmarker[mm].esdmark, jpwl_buf);
 			break;
 
 		case J2K_MS_RED:
@@ -755,6 +777,10 @@ void jpwl_dump_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 			break;
 		};
 
+		/* we update the markers struct */
+		if (j2k->cstr_info)
+			j2k->cstr_info->marker[j2k->cstr_info->marknum - 1].pos = (jpwl_buf - orig_buf);
+		
 		/* we set the marker dpos to the new position in the JPWL codestream */
 		jwmarker[mm].dpos = (double) (jpwl_buf - orig_buf);
 
@@ -863,14 +889,13 @@ void jpwl_dump_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 
 	/* free original cio buffer and set it to the JPWL one */
 	opj_free(cio->buffer);
-	/*cio->cinfo;*/ /* no change */
-	/*cio->openmode;*/ /* no change */
-	/*cio->buffer = jpwl_buf - new_size - soc_pos;*/
+	cio->cinfo = cio->cinfo; /* no change */
+	cio->openmode = cio->openmode; /* no change */
 	cio->buffer = orig_buf;
 	cio->length = new_size + soc_pos;
-	cio->start = jpwl_buf - new_size - soc_pos;
-	cio->end = jpwl_buf - 1;
-	cio->bp = jpwl_buf - new_size - soc_pos;
+	cio->start = cio->buffer;
+	cio->end = cio->buffer + cio->length;
+	cio->bp = cio->buffer;
 	cio_seek(cio, soc_pos + new_size);
 
 }
@@ -982,6 +1007,10 @@ void j2k_write_epc(opj_j2k_t *j2k) {
 		cio_write(cio, Pcrc, 2);
 
 	cio_seek(cio, Lepcp + Lepc);
+
+	/* marker struct update */
+	j2k_add_marker(j2k->cstr_info, J2K_MS_EPC, Lepcp - 2, Lepc + 2);
+
 }
 
 void j2k_read_epb(opj_j2k_t *j2k) {
@@ -1130,6 +1159,9 @@ void j2k_write_epb(opj_j2k_t *j2k) {
 	cio_write(cio, Lepb, 2);		/* Lepb */
 
 	cio_seek(cio, Lepbp + Lepb);
+
+	/* marker struct update */
+	j2k_add_marker(j2k->cstr_info, J2K_MS_EPB, Lepbp - 2, Lepb + 2);
 }
 
 void j2k_read_esd(opj_j2k_t *j2k) {

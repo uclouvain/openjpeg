@@ -231,6 +231,11 @@ bool wxJ2KHandler::LoadFile(wxImage *image, wxInputStream& stream, bool verbose,
 
 }
 
+#define CINEMA_24_CS 1302083	/* Codestream length for 24fps */
+#define CINEMA_48_CS 651041		/* Codestream length for 48fps */
+#define COMP_24_CS 1041666		/* Maximum size per color component for 2K & 4K @ 24fps */
+#define COMP_48_CS 520833		/* Maximum size per color component for 2K @ 48fps */
+
 // save the j2k codestream
 bool wxJ2KHandler::SaveFile( wxImage *wimage, wxOutputStream& stream, bool verbose )
 {
@@ -267,7 +272,7 @@ bool wxJ2KHandler::SaveFile( wxImage *wimage, wxOutputStream& stream, bool verbo
 	}
 
 	/* compression rates */
-	if (m_rates != wxT("")) {
+	if ((m_rates != wxT("")) && (!m_enablequality)) {
 		const char *s1 = m_rates.ToAscii();
 		wxLogMessage(wxT("rates %s"), s1);
 		while (sscanf(s1, "%f", &(parameters.tcp_rates[parameters.tcp_numlayers])) == 1) {
@@ -284,7 +289,7 @@ bool wxJ2KHandler::SaveFile( wxImage *wimage, wxOutputStream& stream, bool verbo
 	}
 
 	/* image quality, dB */
-	if (m_rates == wxT("")) {
+	if ((m_quality != wxT("")) && (m_enablequality)) {
 		const char *s2 = m_quality.ToAscii();
 		wxLogMessage(wxT("qualities %s"), s2);
 		while (sscanf(s2, "%f", &parameters.tcp_distoratio[parameters.tcp_numlayers]) == 1) {
@@ -382,14 +387,103 @@ bool wxJ2KHandler::SaveFile( wxImage *wimage, wxOutputStream& stream, bool verbo
 	if (m_enableeph)
 		parameters.csty |= 0x04;
 
+	/* multiple component transform */
+	if (m_multicomp)
+		parameters.tcp_mct = 1;
+	else
+		parameters.tcp_mct = 0;
 
+	/* mode switch */
+	parameters.mode = (m_enablebypass ? 1 : 0) + (m_enablereset ? 2 : 0)
+		+ (m_enablerestart ? 4 : 0) + (m_enablevsc ? 8 : 0)
+		+ (m_enableerterm ? 16 : 0) + (m_enablesegmark ? 32 : 0);
 
-	/* compression settings */
-	//parameters.tcp_numlayers = 1;
-	//parameters.tcp_rates[0] = 10.0;
-	//parameters.cp_disto_alloc = 1;
-	//parameters.irreversible = 1;
-	parameters.tcp_mct = 1;
+	/* progression order */
+	switch (m_progression) {
+
+		/* LRCP */
+	case 0:
+		parameters.prog_order = LRCP;
+		break;
+
+		/* RLCP */
+	case 1:
+		parameters.prog_order = RLCP;
+		break;
+
+		/* RPCL */
+	case 2:
+		parameters.prog_order = RPCL;
+		break;
+
+		/* PCRL */
+	case 3:
+		parameters.prog_order = PCRL;
+		break;
+
+		/* CPRL */
+	case 4:
+		parameters.prog_order = CPRL;
+		break;
+
+		/* DCI2K24 */
+	case 5:
+		parameters.cp_cinema = CINEMA2K_24;
+		parameters.cp_rsiz = CINEMA2K;
+		break;
+
+		/* DCI2K48 */
+	case 6:
+		parameters.cp_cinema = CINEMA2K_48;
+		parameters.cp_rsiz = CINEMA2K;
+		break;
+
+		/* DCI4K */
+	case 7:
+		parameters.cp_cinema = CINEMA4K_24;
+		parameters.cp_rsiz = CINEMA4K;
+		break;
+
+	default:
+		break;
+	}
+
+	/* check cinema */
+	if (parameters.cp_cinema) {
+
+		/* set up */
+		parameters.tile_size_on = false;
+		parameters.cp_tdx=1;
+		parameters.cp_tdy=1;
+		
+		/*Tile part*/
+		parameters.tp_flag = 'C';
+		parameters.tp_on = 1;
+
+		/*Tile and Image shall be at (0,0)*/
+		parameters.cp_tx0 = 0;
+		parameters.cp_ty0 = 0;
+		parameters.image_offset_x0 = 0;
+		parameters.image_offset_y0 = 0;
+
+		/*Codeblock size= 32*32*/
+		parameters.cblockw_init = 32;	
+		parameters.cblockh_init = 32;
+		parameters.csty |= 0x01;
+
+		/*The progression order shall be CPRL*/
+		parameters.prog_order = CPRL;
+
+		/* No ROI */
+		parameters.roi_compno = -1;
+
+		parameters.subsampling_dx = 1;
+		parameters.subsampling_dy = 1;
+
+		/* 9-7 transform */
+		parameters.irreversible = 1;
+
+	}				
 
 	/* convert wx image into opj image */
 	cmptparm = (opj_image_cmptparm_t*) malloc(3 * sizeof(opj_image_cmptparm_t));
@@ -429,6 +523,103 @@ bool wxJ2KHandler::SaveFile( wxImage *wimage, wxOutputStream& stream, bool verbo
 			oimage->comps[2].data[i] = *(value++);
 	}
 
+	/* check cinema again */
+	if (parameters.cp_cinema) {
+		int i;
+		float temp_rate;
+		opj_poc_t *POC = NULL;
+
+		switch (parameters.cp_cinema) {
+
+		case CINEMA2K_24:
+		case CINEMA2K_48:
+			if (parameters.numresolution > 6) {
+				parameters.numresolution = 6;
+			}
+			if (!((oimage->comps[0].w == 2048) | (oimage->comps[0].h == 1080))) {
+				wxLogWarning(wxT("Image coordinates %d x %d is not 2K compliant. JPEG Digital Cinema Profile-3 "
+					"(2K profile) compliance requires that at least one of coordinates match 2048 x 1080"),
+					oimage->comps[0].w, oimage->comps[0].h);
+				parameters.cp_rsiz = STD_RSIZ;
+			}
+		break;
+		
+		case CINEMA4K_24:
+			if (parameters.numresolution < 1) {
+					parameters.numresolution = 1;
+			} else if (parameters.numresolution > 7) {
+					parameters.numresolution = 7;
+			}
+			if (!((oimage->comps[0].w == 4096) | (oimage->comps[0].h == 2160))) {
+				wxLogWarning(wxT("Image coordinates %d x %d is not 4K compliant. JPEG Digital Cinema Profile-4" 
+					"(4K profile) compliance requires that at least one of coordinates match 4096 x 2160"),
+					oimage->comps[0].w, oimage->comps[0].h);
+				parameters.cp_rsiz = STD_RSIZ;
+			}
+			parameters.POC[0].tile  = 1; 
+			parameters.POC[0].resno0  = 0; 
+			parameters.POC[0].compno0 = 0;
+			parameters.POC[0].layno1  = 1;
+			parameters.POC[0].resno1  = parameters.numresolution - 1;
+			parameters.POC[0].compno1 = 3;
+			parameters.POC[0].prg1 = CPRL;
+			parameters.POC[1].tile  = 1;
+			parameters.POC[1].resno0  = parameters.numresolution - 1; 
+			parameters.POC[1].compno0 = 0;
+			parameters.POC[1].layno1  = 1;
+			parameters.POC[1].resno1  = parameters.numresolution;
+			parameters.POC[1].compno1 = 3;
+			parameters.POC[1].prg1 = CPRL;
+			parameters.numpocs = 2;
+			break;
+		}
+
+		switch (parameters.cp_cinema) {
+		case CINEMA2K_24:
+		case CINEMA4K_24:
+			for (i = 0 ; i < parameters.tcp_numlayers; i++) {
+				temp_rate = 0;
+				if (parameters.tcp_rates[i] == 0) {
+					parameters.tcp_rates[0] = ((float) (oimage->numcomps * oimage->comps[0].w * oimage->comps[0].h * oimage->comps[0].prec)) / 
+					(CINEMA_24_CS * 8 * oimage->comps[0].dx * oimage->comps[0].dy);
+				}else{
+					temp_rate = ((float) (oimage->numcomps * oimage->comps[0].w * oimage->comps[0].h * oimage->comps[0].prec)) / 
+						(parameters.tcp_rates[i] * 8 * oimage->comps[0].dx * oimage->comps[0].dy);
+					if (temp_rate > CINEMA_24_CS ) {
+						parameters.tcp_rates[i]= ((float) (oimage->numcomps * oimage->comps[0].w * oimage->comps[0].h * oimage->comps[0].prec)) / 
+						(CINEMA_24_CS * 8 * oimage->comps[0].dx * oimage->comps[0].dy);
+					} else {
+						/* do nothing */
+					}
+				}
+			}
+			parameters.max_comp_size = COMP_24_CS;
+			break;
+			
+		case CINEMA2K_48:
+			for (i = 0; i < parameters.tcp_numlayers; i++) {
+				temp_rate = 0 ;
+				if (parameters.tcp_rates[i] == 0) {
+					parameters.tcp_rates[0] = ((float) (oimage->numcomps * oimage->comps[0].w * oimage->comps[0].h * oimage->comps[0].prec)) / 
+					(CINEMA_48_CS * 8 * oimage->comps[0].dx * oimage->comps[0].dy);
+				}else{
+					temp_rate =((float) (oimage->numcomps * oimage->comps[0].w * oimage->comps[0].h * oimage->comps[0].prec)) / 
+						(parameters.tcp_rates[i] * 8 * oimage->comps[0].dx * oimage->comps[0].dy);
+					if (temp_rate > CINEMA_48_CS ){
+						parameters.tcp_rates[0]= ((float) (oimage->numcomps * oimage->comps[0].w * oimage->comps[0].h * oimage->comps[0].prec)) / 
+						(CINEMA_48_CS * 8 * oimage->comps[0].dx * oimage->comps[0].dy);
+					}else{
+						/* do nothing */
+					}
+				}
+			}
+			parameters.max_comp_size = COMP_48_CS;
+			break;
+		}
+
+		parameters.cp_disto_alloc = 1;
+	}
+	
 	/* get a J2K compressor handle */
 	opj_cinfo_t* cinfo = opj_create_compress(CODEC_J2K);
 
@@ -480,7 +671,7 @@ bool wxJ2KHandler::SaveFile( wxImage *wimage, wxOutputStream& stream, bool verbo
 	/* Write the index to disk */
 	if (*indexfilename) {
 		bSuccess = write_index_file(&cstr_info, indexfilename);
-		if (bSuccess) {
+		if (!bSuccess) {
 			wxLogError(wxT("Failed to output index file"));
 		}
 	}

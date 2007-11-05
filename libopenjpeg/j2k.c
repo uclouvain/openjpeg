@@ -434,6 +434,15 @@ int j2k_calculate_tp(opj_cp_t *cp,int img_numcomp,opj_image_t *image,opj_j2k_t *
 static void j2k_write_soc(opj_j2k_t *j2k) {
 	opj_cio_t *cio = j2k->cio;
 	cio_write(cio, J2K_MS_SOC, 2);
+
+/* UniPG>> */
+#ifdef USE_JPWL
+
+	/* update markers struct */
+	j2k_add_marker(j2k->cstr_info, J2K_MS_SOC, cio_tell(cio) - 2, 2);
+
+#endif /* USE_JPWL */
+/* <<UniPG */
 }
 
 static void j2k_read_soc(opj_j2k_t *j2k) {	
@@ -1199,7 +1208,7 @@ static void j2k_read_ppm(opj_j2k_t *j2k) {
 						"JPWL: failed memory allocation during PPM marker parsing (pos. %x)\n",
 						cio_tell(cio));
 					if (!JPWL_ASSUME || JPWL_ASSUME) {
-						free(cp->ppm_data);
+						opj_free(cp->ppm_data);
 						opj_event_msg(j2k->cinfo, EVT_ERROR, "JPWL: giving up\n");
 						return;
 					}
@@ -1279,6 +1288,13 @@ static void j2k_write_sot(opj_j2k_t *j2k) {
 	cio_seek(cio, lenp);
 	cio_write(cio, len, 2);				/* Lsot */
 	cio_seek(cio, lenp + len);
+
+	/* UniPG>> */
+#ifdef USE_JPWL
+	/* update markers struct */
+	j2k_add_marker(j2k->cstr_info, J2K_MS_SOT, j2k->sot_start, len + 2);
+#endif /* USE_JPWL */
+	/* <<UniPG */
 }
 
 static void j2k_read_sot(opj_j2k_t *j2k) {
@@ -1436,6 +1452,12 @@ static void j2k_write_sod(opj_j2k_t *j2k, void *tile_coder) {
 			if(cstr_info->tile[j2k->curtileno].packet[cstr_info->packno - 1].end_pos < cio_tell(cio))
 				cstr_info->tile[j2k->curtileno].packet[cstr_info->packno].start_pos = cio_tell(cio);
 		}
+		/* UniPG>> */
+#ifdef USE_JPWL
+		/* update markers struct */
+		j2k_add_marker(j2k->cstr_info, J2K_MS_SOD, j2k->sod_start, 2);
+#endif /* USE_JPWL */
+		/* <<UniPG */
 	}
 	/* << INDEX */
 	
@@ -1557,6 +1579,13 @@ static void j2k_write_eoc(opj_j2k_t *j2k) {
 	opj_cio_t *cio = j2k->cio;
 	/* opj_event_msg(j2k->cinfo, "%.8x: EOC\n", cio_tell(cio) + j2k->pos_correction); */
 	cio_write(cio, J2K_MS_EOC, 2);
+
+/* UniPG>> */
+#ifdef USE_JPWL
+	/* update markers struct */
+	j2k_add_marker(j2k->cstr_info, J2K_MS_EOC, cio_tell(cio) - 2, 2);
+#endif /* USE_JPWL */
+/* <<UniPG */
 }
 
 static void j2k_read_eoc(opj_j2k_t *j2k) {
@@ -2276,10 +2305,6 @@ bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, opj_codestre
 
 	opj_tcd_t *tcd = NULL;	/* TCD component */
 
-	/* UniPG>> */
-	int acc_pack_num = 0;
-	/* <<UniPG */
-
 	j2k->cio = cio;	
 	j2k->image = image;
 
@@ -2309,6 +2334,9 @@ bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, opj_codestre
 		}
 		cstr_info->D_max = 0.0;		/* ADD Marcela */
 		cstr_info->main_head_start = cio_tell(cio); /* position of SOC */
+		cstr_info->maxmarknum = 100;
+		cstr_info->marker = (opj_marker_info_t *) opj_malloc(cstr_info->maxmarknum * sizeof(opj_marker_info_t));
+		cstr_info->marknum = 0;
 	}
 	/* << INDEX */
 
@@ -2359,6 +2387,10 @@ bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, opj_codestre
 	for (tileno = 0; tileno < cp->tw * cp->th; tileno++) {
 		int pino;
 		int tilepartno=0;
+		/* UniPG>> */
+		int acc_pack_num = 0;
+		/* <<UniPG */
+
 
 		opj_tcp_t *tcp = &cp->tcps[tileno];
 		opj_event_msg(j2k->cinfo, EVT_INFO, "tile number %d / %d\n", tileno + 1, cp->tw * cp->th);
@@ -2418,6 +2450,8 @@ bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, opj_codestre
 				if(cstr_info) {
 					cstr_info->tile[j2k->curtileno].tp[j2k->cur_tp_num].tp_end_pos =
 						cio_tell(cio) + j2k->pos_correction - 1;
+					cstr_info->tile[j2k->curtileno].tp[j2k->cur_tp_num].tp_start_pack =
+						acc_pack_num;
 					cstr_info->tile[j2k->curtileno].tp[j2k->cur_tp_num].tp_numpacks =
 						cstr_info->packno - acc_pack_num;
 					acc_pack_num = cstr_info->packno;

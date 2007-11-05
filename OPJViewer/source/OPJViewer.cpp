@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, Digital Signal Processing Laboratory, Università degli studi di Perugia (UPG), Italy
+ * Copyright (c) 2007, Digital Signal Processing Laboratory, Universita' degli studi di Perugia (UPG), Italy
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -214,10 +214,10 @@ bool OPJViewerApp::OnInit(void)
 	OPJconfig->Read(wxT("enabledeco"), &m_enabledeco, (bool) true);
 	OPJconfig->Read(wxT("enableparse"), &m_enableparse, (bool) true);
 	OPJconfig->Read(wxT("resizemethod"), &m_resizemethod, (long) 0);
-	OPJconfig->Read(wxT("reducefactor"), &m_reducefactor, (long) 0);
-	OPJconfig->Read(wxT("qualitylayers"), &m_qualitylayers, (long) 0);
-	OPJconfig->Read(wxT("components"), &m_components, (long) 0);
-	OPJconfig->Read(wxT("framenum"), &m_framenum, (long) 0);
+	OPJconfig->Read(wxT("xxxreducefactor"), &m_reducefactor, (long) 0);
+	OPJconfig->Read(wxT("xxxqualitylayers"), &m_qualitylayers, (long) 0);
+	OPJconfig->Read(wxT("xxxcomponents"), &m_components, (long) 0);
+	OPJconfig->Read(wxT("xxxframenum"), &m_framenum, (long) 0);
 #ifdef USE_JPWL
 	OPJconfig->Read(wxT("enablejpwl"), &m_enablejpwl, (bool) true);
 	OPJconfig->Read(wxT("expcomps"), &m_expcomps, (long) JPWL_EXPECTED_COMPONENTS);
@@ -241,14 +241,23 @@ bool OPJViewerApp::OnInit(void)
 	OPJconfig->Read(wxT("origin"), &m_origin, (wxString) wxT("0,0"));
 	OPJconfig->Read(wxT("rates"), &m_rates, (wxString) wxT("20,10,5"));
 	OPJconfig->Read(wxT("quality"), &m_quality, (wxString) wxT("30,35,40"));
+	OPJconfig->Read(wxT("enablequality"), &m_enablequality, (bool) false);
+	OPJconfig->Read(wxT("multicomp"), &m_multicomp, (bool) false);	
 	OPJconfig->Read(wxT("irreversible"), &m_irreversible, (bool) false);	
 	OPJconfig->Read(wxT("resolutions"), &m_resolutions, (int) 6);	
+	OPJconfig->Read(wxT("progression"), &m_progression, (int) 0);	
 	OPJconfig->Read(wxT("cbsize"), &m_cbsize, (wxString) wxT("32,32"));
 	OPJconfig->Read(wxT("prsize"), &m_prsize, (wxString) wxT("[128,128],[128,128]"));
 	OPJconfig->Read(wxT("tsize"), &m_tsize, (wxString) wxT(""));
 	OPJconfig->Read(wxT("torigin"), &m_torigin, (wxString) wxT("0,0"));
 	OPJconfig->Read(wxT("enablesop"), &m_enablesop, (bool) false);	
 	OPJconfig->Read(wxT("enableeph"), &m_enableeph, (bool) false);	
+	OPJconfig->Read(wxT("enablebypass"), &m_enablebypass, (bool) false);	
+	OPJconfig->Read(wxT("enablereset"), &m_enablereset, (bool) false);	
+	OPJconfig->Read(wxT("enablerestart"), &m_enablerestart, (bool) false);	
+	OPJconfig->Read(wxT("enablevsc"), &m_enablevsc, (bool) false);	
+	OPJconfig->Read(wxT("enableerterm"), &m_enableerterm, (bool) false);	
+	OPJconfig->Read(wxT("enablesegmark"), &m_enablesegmark, (bool) false);	
 	OPJconfig->Read(wxT("enablecomm"), &m_enablecomm, (bool) true);	
 	OPJconfig->Read(wxT("comment"), &m_comment, (wxString) wxT(""));
 	OPJconfig->Read(wxT("enableidx"), &m_enableidx, (bool) false);	
@@ -281,14 +290,23 @@ bool OPJViewerApp::OnInit(void)
 	m_origin = wxT("0,0");
 	m_rates = wxT("20,10,5");
 	m_quality = wxT("30,35,40");
+	m_enablequality = false;
+	m_multicomp = false;
 	m_irreversible = false;
 	m_resolutions = 6;
+	m_progression = 0;
 	m_cbsize= wxT("32,32");
 	m_prsize= wxT("[128,128],[128,128]");
 	m_tsize = wxT("");
 	m_torigin = wxT("0,0");
 	m_enablesop = false;
 	m_enableeph = false;
+	m_enablebypass = false;
+	m_enablereset = false;
+	m_enablerestart = false;
+	m_enablevsc = false;
+	m_enableerterm = false;
+	m_enablesegmark = false;
 	m_enableidx = false;
 	m_index = wxT("index.txt");
 	m_enablecomm = true;
@@ -369,14 +387,23 @@ int OPJViewerApp::OnExit()
 	OPJconfig->Write(wxT("origin"), m_origin);
 	OPJconfig->Write(wxT("rates"), m_rates);
 	OPJconfig->Write(wxT("quality"), m_quality);
+	OPJconfig->Write(wxT("enablequality"), m_enablequality);
+	OPJconfig->Write(wxT("multicomp"), m_multicomp);
 	OPJconfig->Write(wxT("irreversible"), m_irreversible);
 	OPJconfig->Write(wxT("resolutions"), m_resolutions);
+	OPJconfig->Write(wxT("progression"), m_progression);
 	OPJconfig->Write(wxT("cbsize"), m_cbsize);
 	OPJconfig->Write(wxT("prsize"), m_prsize);
 	OPJconfig->Write(wxT("tiles"), m_tsize);
 	OPJconfig->Write(wxT("torigin"), m_torigin);
 	OPJconfig->Write(wxT("enablesop"), m_enablesop);
 	OPJconfig->Write(wxT("enableeph"), m_enableeph);
+	OPJconfig->Write(wxT("enablebypass"), m_enablebypass);
+	OPJconfig->Write(wxT("enablereset"), m_enablereset);
+	OPJconfig->Write(wxT("enablerestart"), m_enablerestart);
+	OPJconfig->Write(wxT("enablevsc"), m_enablevsc);
+	OPJconfig->Write(wxT("enableerterm"), m_enableerterm);
+	OPJconfig->Write(wxT("enablesegmark"), m_enablesegmark);
 	OPJconfig->Write(wxT("enableidx"), m_enableidx);
 	OPJconfig->Write(wxT("index"), m_index);
 	OPJconfig->Write(wxT("enablecomm"), m_enablecomm);
@@ -415,6 +442,15 @@ BEGIN_EVENT_TABLE(OPJFrame, wxMDIParentFrame)
     EVT_MENU(OPJFRAME_VIEWPREVFRAME, OPJFrame::OnPrevFrame)
     EVT_MENU(OPJFRAME_VIEWHOMEFRAME, OPJFrame::OnHomeFrame)
     EVT_MENU(OPJFRAME_VIEWNEXTFRAME, OPJFrame::OnNextFrame)
+    EVT_MENU(OPJFRAME_VIEWLESSLAYERS, OPJFrame::OnLessLayers)
+    EVT_MENU(OPJFRAME_VIEWALLLAYERS, OPJFrame::OnAllLayers)
+    EVT_MENU(OPJFRAME_VIEWMORELAYERS, OPJFrame::OnMoreLayers)
+    EVT_MENU(OPJFRAME_VIEWLESSRES, OPJFrame::OnLessRes)
+    EVT_MENU(OPJFRAME_VIEWFULLRES, OPJFrame::OnFullRes)
+    EVT_MENU(OPJFRAME_VIEWMORERES, OPJFrame::OnMoreRes)
+    EVT_MENU(OPJFRAME_VIEWPREVCOMP, OPJFrame::OnPrevComp)
+    EVT_MENU(OPJFRAME_VIEWALLCOMPS, OPJFrame::OnAllComps)
+    EVT_MENU(OPJFRAME_VIEWNEXTCOMP, OPJFrame::OnNextComp)
     EVT_MENU(OPJFRAME_FILETOGGLEB, OPJFrame::OnToggleBrowser)
     EVT_MENU(OPJFRAME_FILETOGGLEP, OPJFrame::OnTogglePeeker)
     EVT_MENU(OPJFRAME_FILETOGGLET, OPJFrame::OnToggleToolbar)
@@ -486,6 +522,39 @@ OPJFrame::OPJFrame(wxWindow *parent, const wxWindowID id, const wxString& title,
 	view_menu->Append(OPJFRAME_VIEWNEXTFRAME, wxT("&Next frame\tRight"));
 	view_menu->SetHelpString(OPJFRAME_VIEWNEXTFRAME, wxT("View next frame"));
 
+	view_menu->AppendSeparator();
+
+	view_menu->Append(OPJFRAME_VIEWLESSLAYERS, wxT("&Less layers\t-"));
+	view_menu->SetHelpString(OPJFRAME_VIEWLESSLAYERS, wxT("Remove a layer"));
+
+	view_menu->Append(OPJFRAME_VIEWALLLAYERS, wxT("&All layers\t0"));
+	view_menu->SetHelpString(OPJFRAME_VIEWALLLAYERS, wxT("Show all layers"));
+
+	view_menu->Append(OPJFRAME_VIEWMORELAYERS, wxT("&More layers\t+"));
+	view_menu->SetHelpString(OPJFRAME_VIEWMORELAYERS, wxT("Add a layer"));
+
+	view_menu->AppendSeparator();
+
+	view_menu->Append(OPJFRAME_VIEWLESSRES, wxT("&Less resolution\t<"));
+	view_menu->SetHelpString(OPJFRAME_VIEWLESSRES, wxT("Reduce the resolution"));
+
+	view_menu->Append(OPJFRAME_VIEWFULLRES, wxT("&Full resolution\tf"));
+	view_menu->SetHelpString(OPJFRAME_VIEWFULLRES, wxT("Full resolution"));
+
+	view_menu->Append(OPJFRAME_VIEWMORERES, wxT("&More resolution\t>"));
+	view_menu->SetHelpString(OPJFRAME_VIEWMORERES, wxT("Increase the resolution"));
+
+	view_menu->AppendSeparator();
+
+	view_menu->Append(OPJFRAME_VIEWPREVCOMP, wxT("&Prev component\tDown"));
+	view_menu->SetHelpString(OPJFRAME_VIEWPREVCOMP, wxT("View previous component"));
+
+	view_menu->Append(OPJFRAME_VIEWALLCOMPS, wxT("&All components\ta"));
+	view_menu->SetHelpString(OPJFRAME_VIEWALLCOMPS, wxT("View all components"));
+
+	view_menu->Append(OPJFRAME_VIEWNEXTCOMP, wxT("&Next component\tUp"));
+	view_menu->SetHelpString(OPJFRAME_VIEWNEXTCOMP, wxT("View next component"));
+
 
 	// settings menu and its items
 	wxMenu *sets_menu = new wxMenu;
@@ -539,6 +608,18 @@ OPJFrame::OPJFrame(wxWindow *parent, const wxWindowID id, const wxString& title,
 												wxDefaultSize);
 	wxBitmap bmpNextframe = wxArtProvider::GetBitmap(wxART_GO_FORWARD, wxART_TOOLBAR,
 												wxDefaultSize);
+	wxBitmap bmpLesslayers = bmpPrevframe;
+	wxBitmap bmpAlllayers = wxArtProvider::GetBitmap(wxART_GO_TO_PARENT, wxART_TOOLBAR,
+												wxDefaultSize);
+	wxBitmap bmpMorelayers = bmpNextframe;
+	wxBitmap bmpLessres = bmpPrevframe;
+	wxBitmap bmpFullres = wxArtProvider::GetBitmap(wxART_GO_TO_PARENT, wxART_TOOLBAR,
+												wxDefaultSize);
+	wxBitmap bmpMoreres = bmpNextframe;
+	wxBitmap bmpPrevcomp = bmpPrevframe;
+	wxBitmap bmpAllcomps = wxArtProvider::GetBitmap(wxART_GO_TO_PARENT, wxART_TOOLBAR,
+												wxDefaultSize);
+	wxBitmap bmpNextcomp = bmpNextframe;
 
 	tool_bar->AddTool(OPJFRAME_FILEOPEN, bmpOpen, wxT("Open"));
 	tool_bar->AddTool(OPJFRAME_FILESAVEAS, bmpSaveAs, wxT("Save as "));
@@ -554,6 +635,18 @@ OPJFrame::OPJFrame(wxWindow *parent, const wxWindowID id, const wxString& title,
 	tool_bar->AddTool(OPJFRAME_VIEWPREVFRAME, bmpPrevframe, wxT("Previous frame"));
 	tool_bar->AddTool(OPJFRAME_VIEWHOMEFRAME, bmpHomeframe, wxT("Starting frame"));
 	tool_bar->AddTool(OPJFRAME_VIEWNEXTFRAME, bmpNextframe, wxT("Next frame"));
+	tool_bar->AddSeparator();
+	tool_bar->AddTool(OPJFRAME_VIEWLESSLAYERS, bmpLesslayers, wxT("Remove a layer"));
+	tool_bar->AddTool(OPJFRAME_VIEWALLLAYERS, bmpAlllayers, wxT("Show all layers"));
+	tool_bar->AddTool(OPJFRAME_VIEWMORELAYERS, bmpMorelayers, wxT("Add a layer"));
+	tool_bar->AddSeparator();
+	tool_bar->AddTool(OPJFRAME_VIEWLESSRES, bmpLessres, wxT("Reduce the resolution"));
+	tool_bar->AddTool(OPJFRAME_VIEWFULLRES, bmpFullres, wxT("Full resolution"));
+	tool_bar->AddTool(OPJFRAME_VIEWMORERES, bmpMoreres, wxT("Increase the resolution"));
+	tool_bar->AddSeparator();
+	tool_bar->AddTool(OPJFRAME_VIEWPREVCOMP, bmpPrevcomp, wxT("Previous component"));
+	tool_bar->AddTool(OPJFRAME_VIEWALLCOMPS, bmpAllcomps, wxT("All components"));
+	tool_bar->AddTool(OPJFRAME_VIEWNEXTCOMP, bmpNextcomp, wxT("Next component"));
 	tool_bar->Realize();
 	
 	// associate the toolbar with the frame
@@ -702,14 +795,23 @@ void OPJFrame::OnSetsEnco(wxCommandEvent& event)
 		wxGetApp().m_origin = dialog.m_originCtrl->GetValue();
 		wxGetApp().m_rates = dialog.m_rateCtrl->GetValue();
 		wxGetApp().m_quality = dialog.m_qualityCtrl->GetValue();
+		wxGetApp().m_enablequality = dialog.m_qualityRadio->GetValue();
+		wxGetApp().m_multicomp = dialog.m_mctCheck->GetValue();
 		wxGetApp().m_irreversible = dialog.m_irrevCheck->GetValue();
 		wxGetApp().m_resolutions = dialog.m_resolutionsCtrl->GetValue();
 		wxGetApp().m_cbsize = dialog.m_cbsizeCtrl->GetValue();
 		wxGetApp().m_prsize = dialog.m_prsizeCtrl->GetValue();
 		wxGetApp().m_tsize = dialog.m_tsizeCtrl->GetValue();
 		wxGetApp().m_torigin = dialog.m_toriginCtrl->GetValue();
+		wxGetApp().m_progression = dialog.progressionBox->GetSelection();
 		wxGetApp().m_enablesop = dialog.m_sopCheck->GetValue();
 		wxGetApp().m_enableeph = dialog.m_ephCheck->GetValue();
+		wxGetApp().m_enablebypass = dialog.m_enablebypassCheck->GetValue();
+		wxGetApp().m_enablereset = dialog.m_enableresetCheck->GetValue();
+		wxGetApp().m_enablerestart = dialog.m_enablerestartCheck->GetValue();
+		wxGetApp().m_enablevsc = dialog.m_enablevscCheck->GetValue();
+		wxGetApp().m_enableerterm = dialog.m_enableertermCheck->GetValue();
+		wxGetApp().m_enablesegmark = dialog.m_enablesegmarkCheck->GetValue();
 		wxGetApp().m_enableidx = dialog.m_enableidxCheck->GetValue();
 		wxGetApp().m_index = dialog.m_indexCtrl->GetValue();
 		wxGetApp().m_enablecomm = dialog.m_enablecommCheck->GetValue();
@@ -850,7 +952,6 @@ void OPJFrame::OnPrevFrame(wxCommandEvent& event)
 	if (--wxGetApp().m_framenum < 0)
 		wxGetApp().m_framenum = 0;
 
-	//wxLogMessage(wxT("================Go prev, dude!======================="));
 	wxCommandEvent e;
 	OnReload(e);
 }
@@ -858,8 +959,6 @@ void OPJFrame::OnPrevFrame(wxCommandEvent& event)
 void OPJFrame::OnHomeFrame(wxCommandEvent& event)
 {
 	wxGetApp().m_framenum = 0;
-
-	//wxLogMessage(wxT("================Go home, dude!======================="));
 
 	wxCommandEvent e;
 	OnReload(e);
@@ -869,7 +968,81 @@ void OPJFrame::OnNextFrame(wxCommandEvent& event)
 {
 	++wxGetApp().m_framenum;
 
-	//wxLogMessage(wxT("================Go next, dude!======================="));
+	wxCommandEvent e;
+	OnReload(e);
+}
+
+void OPJFrame::OnLessLayers(wxCommandEvent& event)
+{
+	if (--wxGetApp().m_qualitylayers < 1)
+		wxGetApp().m_qualitylayers = 1;
+
+	wxCommandEvent e;
+	OnReload(e);
+}
+
+void OPJFrame::OnAllLayers(wxCommandEvent& event)
+{
+	wxGetApp().m_qualitylayers = 0;
+
+	wxCommandEvent e;
+	OnReload(e);
+}
+
+void OPJFrame::OnMoreLayers(wxCommandEvent& event)
+{
+	++wxGetApp().m_qualitylayers;
+
+	wxCommandEvent e;
+	OnReload(e);
+}
+
+void OPJFrame::OnLessRes(wxCommandEvent& event)
+{
+	++wxGetApp().m_reducefactor;
+
+	wxCommandEvent e;
+	OnReload(e);
+}
+
+void OPJFrame::OnFullRes(wxCommandEvent& event)
+{
+	wxGetApp().m_reducefactor = 0;
+
+	wxCommandEvent e;
+	OnReload(e);
+}
+
+void OPJFrame::OnMoreRes(wxCommandEvent& event)
+{
+	if (--wxGetApp().m_reducefactor < 0)
+		wxGetApp().m_reducefactor = 0;
+
+	wxCommandEvent e;
+	OnReload(e);
+}
+
+void OPJFrame::OnPrevComp(wxCommandEvent& event)
+{
+	if (--wxGetApp().m_components < 1)
+		wxGetApp().m_components = 1;
+
+	wxCommandEvent e;
+	OnReload(e);
+}
+
+void OPJFrame::OnAllComps(wxCommandEvent& event)
+{
+	wxGetApp().m_components = 0;
+
+	wxCommandEvent e;
+	OnReload(e);
+}
+
+void OPJFrame::OnNextComp(wxCommandEvent& event)
+{
+	++wxGetApp().m_components;
+
 	wxCommandEvent e;
 	OnReload(e);
 }
@@ -1860,7 +2033,7 @@ void OPJMarkerTree::OnSelChanged(wxTreeEvent& event)
 					(buffer[pre_pos] == 0x0D) ||
 					(buffer[pre_pos] == 0x0B))
 					buffer[pre_pos] = ' ';
-				text << wxString::Format(wxT("%c."), wxChar(buffer[pre_pos]));
+				text << wxString::FromAscii((char) buffer[pre_pos]) << wxT(".");
 			} else
 				text << wxT("  ");
 			pre_pos++;
@@ -2321,14 +2494,23 @@ void *OPJEncoThread::Entry()
 	j2kkkhandler->m_origin = wxGetApp().m_origin;
 	j2kkkhandler->m_rates = wxGetApp().m_rates;
 	j2kkkhandler->m_quality = wxGetApp().m_quality;
+	j2kkkhandler->m_enablequality = wxGetApp().m_enablequality;
+	j2kkkhandler->m_multicomp = wxGetApp().m_multicomp;
 	j2kkkhandler->m_irreversible = wxGetApp().m_irreversible;
 	j2kkkhandler->m_resolutions = wxGetApp().m_resolutions;
+	j2kkkhandler->m_progression = wxGetApp().m_progression;
 	j2kkkhandler->m_cbsize = wxGetApp().m_cbsize;
 	j2kkkhandler->m_prsize = wxGetApp().m_prsize;
 	j2kkkhandler->m_tsize = wxGetApp().m_tsize;
 	j2kkkhandler->m_torigin = wxGetApp().m_torigin;
 	j2kkkhandler->m_enablesop = wxGetApp().m_enablesop;
 	j2kkkhandler->m_enableeph = wxGetApp().m_enableeph;
+	j2kkkhandler->m_enablebypass = wxGetApp().m_enablebypass;
+	j2kkkhandler->m_enablerestart = wxGetApp().m_enablerestart;
+	j2kkkhandler->m_enablereset = wxGetApp().m_enablereset;
+	j2kkkhandler->m_enablesegmark = wxGetApp().m_enablesegmark;
+	j2kkkhandler->m_enableerterm = wxGetApp().m_enableerterm;
+	j2kkkhandler->m_enablevsc = wxGetApp().m_enablevsc;
 	j2kkkhandler->m_enableidx = wxGetApp().m_enableidx;
 	j2kkkhandler->m_index = m_canvas->m_savename.GetPath(wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR) + wxGetApp().m_index;
 	j2kkkhandler->m_enablecomm = wxGetApp().m_enablecomm;
@@ -2586,1014 +2768,3 @@ void *OPJParseThread::Entry()
 
 
 
-// ----------------------------------------------------------------------------
-// OPJDecoderDialog
-// ----------------------------------------------------------------------------
-
-IMPLEMENT_CLASS(OPJDecoderDialog, wxPropertySheetDialog)
-
-BEGIN_EVENT_TABLE(OPJDecoderDialog, wxPropertySheetDialog)
-#ifdef USE_JPWL
-	EVT_CHECKBOX(OPJDECO_ENABLEDECO, OPJDecoderDialog::OnEnableDeco)
-	EVT_CHECKBOX(OPJDECO_ENABLEJPWL, OPJDecoderDialog::OnEnableJPWL)
-#endif // USE_JPWL
-END_EVENT_TABLE()
-
-OPJDecoderDialog::OPJDecoderDialog(wxWindow* win, int dialogType)
-{
-	SetExtraStyle(wxDIALOG_EX_CONTEXTHELP|wxWS_EX_VALIDATE_RECURSIVELY);
-
-	Create(win, wxID_ANY, wxT("Decoder settings"),
-		wxDefaultPosition, wxDefaultSize,
-		wxDEFAULT_DIALOG_STYLE| (int) wxPlatform::IfNot(wxOS_WINDOWS_CE, wxRESIZE_BORDER)
-		);
-
-	CreateButtons(wxOK | wxCANCEL | (int)wxPlatform::IfNot(wxOS_WINDOWS_CE, wxHELP));
-
-	m_settingsNotebook = GetBookCtrl();
-
-	wxPanel* mainSettings = CreateMainSettingsPage(m_settingsNotebook);
-	wxPanel* jpeg2000Settings = CreatePart1SettingsPage(m_settingsNotebook);
-	if (!wxGetApp().m_enabledeco)
-		jpeg2000Settings->Enable(false);
-	wxPanel* mjpeg2000Settings = CreatePart3SettingsPage(m_settingsNotebook);
-	if (!wxGetApp().m_enabledeco)
-		mjpeg2000Settings->Enable(false);
-#ifdef USE_JPWL
-	wxPanel* jpwlSettings = CreatePart11SettingsPage(m_settingsNotebook);
-	if (!wxGetApp().m_enabledeco)
-		jpwlSettings->Enable(false);
-#endif // USE_JPWL
-
-	m_settingsNotebook->AddPage(mainSettings, wxT("Display"), false);
-	m_settingsNotebook->AddPage(jpeg2000Settings, wxT("JPEG 2000"), false);
-	m_settingsNotebook->AddPage(mjpeg2000Settings, wxT("MJPEG 2000"), false);
-#ifdef USE_JPWL
-	m_settingsNotebook->AddPage(jpwlSettings, wxT("JPWL"), false);
-#endif // USE_JPWL
-
-	LayoutDialog();
-}
-
-OPJDecoderDialog::~OPJDecoderDialog()
-{
-}
-
-wxPanel* OPJDecoderDialog::CreateMainSettingsPage(wxWindow* parent)
-{
-    wxPanel* panel = new wxPanel(parent, wxID_ANY);
-
-	// top sizer
-    wxBoxSizer *topSizer = new wxBoxSizer(wxVERTICAL);
-
-		// sub top sizer
-		wxBoxSizer *subtopSizer = new wxBoxSizer(wxVERTICAL);
-
-		// add decoding enabling check box
-		subtopSizer->Add(
-			m_enabledecoCheck = new wxCheckBox(panel, OPJDECO_ENABLEDECO, wxT("Enable decoding"), wxDefaultPosition, wxDefaultSize),
-			0, wxGROW | wxALL, 5);
-		m_enabledecoCheck->SetValue(wxGetApp().m_enabledeco);
-
-		// add parsing enabling check box
-		subtopSizer->Add(
-			m_enableparseCheck = new wxCheckBox(panel, OPJDECO_ENABLEPARSE, wxT("Enable parsing"), wxDefaultPosition, wxDefaultSize),
-			0, wxGROW | wxALL, 5);
-		m_enableparseCheck->SetValue(wxGetApp().m_enableparse);
-
-			// resize settings, column
-			wxString choices[] = {wxT("Don't resize"), wxT("Low quality"), wxT("High quality")};
-			m_resizeBox = new wxRadioBox(panel, OPJDECO_RESMETHOD,
-				wxT("Resize method"),
-				wxDefaultPosition, wxDefaultSize,
-				WXSIZEOF(choices),
-				choices,
-				1,
-				wxRA_SPECIFY_ROWS);
-			m_resizeBox->SetSelection(wxGetApp().m_resizemethod + 1);
-
-		subtopSizer->Add(m_resizeBox, 0, wxGROW | wxALL, 5);
-
-	topSizer->Add(subtopSizer, 1, wxGROW | wxALIGN_CENTRE | wxALL, 5);
-
-	// assign top and fit it
-    panel->SetSizer(topSizer);
-    topSizer->Fit(panel);
-
-    return panel;
-}
-
-wxPanel* OPJDecoderDialog::CreatePart3SettingsPage(wxWindow* parent)
-{
-    wxPanel* panel = new wxPanel(parent, wxID_ANY);
-
-	// top sizer
-    wxBoxSizer *topSizer = new wxBoxSizer(wxVERTICAL);
-
-	// add some space
-	//topSizer->AddSpacer(5);
-
-		// sub top sizer
-		wxBoxSizer *subtopSizer = new wxBoxSizer(wxVERTICAL);
-
-			// frame settings, column
-			wxStaticBox* frameBox = new wxStaticBox(panel, wxID_ANY, wxT("Frame"));
-			wxBoxSizer* frameSizer = new wxStaticBoxSizer(frameBox, wxVERTICAL);
-
-				// selected frame number, row
-				wxBoxSizer* framenumSizer = new wxBoxSizer(wxHORIZONTAL);
-
-				// add some text
-				framenumSizer->Add(new wxStaticText(panel, wxID_ANY, wxT("&Displayed frame:")),
-								0, wxALL | wxALIGN_CENTER_VERTICAL, 5);
-
-				// add some horizontal space
-				framenumSizer->Add(5, 5, 1, wxALL, 0);
-
-				// add the value control
-				framenumSizer->Add(
-					m_framenumCtrl = new wxSpinCtrl(panel, OPJDECO_FRAMENUM,
-								wxString::Format(wxT("%d"), wxGetApp().m_framenum),
-								wxDefaultPosition, wxSize(80, wxDefaultCoord),
-								wxSP_ARROW_KEYS,
-								1, 100000, wxGetApp().m_framenum),
-					0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 5);
-
-			frameSizer->Add(framenumSizer, 0, wxGROW | wxALL, 5);
-
-		subtopSizer->Add(frameSizer, 0, wxGROW | wxALL, 5);
-
-	topSizer->Add(subtopSizer, 1, wxGROW | wxALIGN_CENTRE | wxALL, 5);
-
-	// assign top and fit it
-    panel->SetSizer(topSizer);
-    topSizer->Fit(panel);
-
-    return panel;
-}
-
-wxPanel* OPJDecoderDialog::CreatePart1SettingsPage(wxWindow* parent)
-{
-    wxPanel* panel = new wxPanel(parent, wxID_ANY);
-
-	// top sizer
-    wxBoxSizer *topSizer = new wxBoxSizer(wxVERTICAL);
-
-	// add some space
-	//topSizer->AddSpacer(5);
-
-		// sub top sizer
-		wxBoxSizer *subtopSizer = new wxBoxSizer(wxVERTICAL);
-
-			// resolutions settings, column
-			wxStaticBox* resolutionBox = new wxStaticBox(panel, wxID_ANY, wxT("Resolutions"));
-			wxBoxSizer* resolutionSizer = new wxStaticBoxSizer(resolutionBox, wxVERTICAL);
-
-				// reduce factor sizer, row
-				wxBoxSizer* reduceSizer = new wxBoxSizer(wxHORIZONTAL);
-
-				// add some text
-				reduceSizer->Add(new wxStaticText(panel, wxID_ANY, wxT("&Reduce factor:")),
-								0, wxALL | wxALIGN_CENTER_VERTICAL, 5);
-
-				// add some horizontal space
-				reduceSizer->Add(5, 5, 1, wxALL, 0);
-
-				// add the value control
-				reduceSizer->Add(
-					m_reduceCtrl = new wxSpinCtrl(panel, OPJDECO_REDUCEFACTOR,
-					wxString::Format(wxT("%d"), wxGetApp().m_reducefactor),
-								wxDefaultPosition, wxSize(80, wxDefaultCoord),
-								wxSP_ARROW_KEYS,
-								0, 10000, wxGetApp().m_reducefactor),
-					0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 5);
-
-			resolutionSizer->Add(reduceSizer, 0, wxGROW | wxALL, 5);
-
-		subtopSizer->Add(resolutionSizer, 0, wxGROW | wxALL, 5);
-
-			// quality layer settings, column
-			wxStaticBox* layerBox = new wxStaticBox(panel, wxID_ANY, wxT("Layers"));
-			wxBoxSizer* layerSizer = new wxStaticBoxSizer(layerBox, wxVERTICAL);
-
-				// quality layers sizer, row
-				wxBoxSizer* qualitySizer = new wxBoxSizer(wxHORIZONTAL);
-
-				// add some text
-				qualitySizer->Add(new wxStaticText(panel, wxID_ANY, wxT("&Quality layers:")),
-								0, wxALL | wxALIGN_CENTER_VERTICAL, 5);
-
-				// add some horizontal space
-				qualitySizer->Add(5, 5, 1, wxALL, 0);
-
-				// add the value control
-				qualitySizer->Add(
-					m_layerCtrl = new wxSpinCtrl(panel, OPJDECO_QUALITYLAYERS,
-								wxString::Format(wxT("%d"), wxGetApp().m_qualitylayers),
-								wxDefaultPosition, wxSize(80, wxDefaultCoord),
-								wxSP_ARROW_KEYS,
-								0, 100000, wxGetApp().m_qualitylayers),
-					0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 5);
-
-			layerSizer->Add(qualitySizer, 0, wxGROW | wxALL, 5);
-
-		subtopSizer->Add(layerSizer, 0, wxGROW | wxALL, 5);
-
-			// component settings, column
-			wxStaticBox* compoBox = new wxStaticBox(panel, wxID_ANY, wxT("Components"));
-			wxBoxSizer* compoSizer = new wxStaticBoxSizer(compoBox, wxVERTICAL);
-
-				// quality layers sizer, row
-				wxBoxSizer* numcompsSizer = new wxBoxSizer(wxHORIZONTAL);
-
-				// add some text
-				numcompsSizer->Add(new wxStaticText(panel, wxID_ANY, wxT("&Component displayed:")),
-								0, wxALL | wxALIGN_CENTER_VERTICAL, 5);
-
-				// add some horizontal space
-				numcompsSizer->Add(5, 5, 1, wxALL, 0);
-
-				// add the value control
-				numcompsSizer->Add(
-					m_numcompsCtrl = new wxSpinCtrl(panel, OPJDECO_NUMCOMPS,
-								wxString::Format(wxT("%d"), wxGetApp().m_components),
-								wxDefaultPosition, wxSize(80, wxDefaultCoord),
-								wxSP_ARROW_KEYS,
-								0, 100000, wxGetApp().m_components),
-					0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 5);
-				m_numcompsCtrl->Enable(true);
-
-			compoSizer->Add(numcompsSizer, 0, wxGROW | wxALL, 5);
-
-		subtopSizer->Add(compoSizer, 0, wxGROW | wxALL, 5);
-
-	topSizer->Add(subtopSizer, 1, wxGROW | wxALIGN_CENTRE | wxALL, 5);
-
-	// assign top and fit it
-    panel->SetSizer(topSizer);
-    topSizer->Fit(panel);
-
-    return panel;
-}
-
-#ifdef USE_JPWL
-wxPanel* OPJDecoderDialog::CreatePart11SettingsPage(wxWindow* parent)
-{
-    wxPanel* panel = new wxPanel(parent, wxID_ANY);
-
-	// top sizer
-    wxBoxSizer *topSizer = new wxBoxSizer(wxVERTICAL);
-
-	// add some space
-	//topSizer->AddSpacer(5);
-
-		// sub top sizer
-		wxBoxSizer *subtopSizer = new wxBoxSizer(wxVERTICAL);
-
-		// add JPWL enabling check box
-		subtopSizer->Add(
-			m_enablejpwlCheck = new wxCheckBox(panel, OPJDECO_ENABLEJPWL, wxT("Enable JPWL"), wxDefaultPosition, wxDefaultSize),
-			0, wxGROW | wxALL, 5);
-		m_enablejpwlCheck->SetValue(wxGetApp().m_enablejpwl);
-
-			// component settings, column
-			wxStaticBox* compoBox = new wxStaticBox(panel, wxID_ANY, wxT("Components"));
-			wxBoxSizer* compoSizer = new wxStaticBoxSizer(compoBox, wxVERTICAL);
-
-				// expected components sizer, row
-				wxBoxSizer* expcompsSizer = new wxBoxSizer(wxHORIZONTAL);
-
-				// add some text
-				expcompsSizer->Add(new wxStaticText(panel, wxID_ANY, wxT("&Expected comps.:")),
-								0, wxALL | wxALIGN_CENTER_VERTICAL, 5);
-
-				// add some horizontal space
-				expcompsSizer->Add(5, 5, 1, wxALL, 0);
-
-				// add the value control
-				expcompsSizer->Add(
-					m_expcompsCtrl = new wxSpinCtrl(panel, OPJDECO_EXPCOMPS,
-								wxString::Format(wxT("%d"), wxGetApp().m_expcomps),
-								wxDefaultPosition, wxSize(80, wxDefaultCoord),
-								wxSP_ARROW_KEYS,
-								1, 100000, wxGetApp().m_expcomps),
-					0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 5);
-				m_expcompsCtrl->Enable(wxGetApp().m_enablejpwl);
-
-			compoSizer->Add(expcompsSizer, 0, wxGROW | wxALL, 5);
-
-		subtopSizer->Add(compoSizer, 0, wxGROW | wxALL, 5);
-
-			// tiles settings, column
-			wxStaticBox* tileBox = new wxStaticBox(panel, wxID_ANY, wxT("Tiles"));
-			wxBoxSizer* tileSizer = new wxStaticBoxSizer(tileBox, wxVERTICAL);
-
-				// maximum tiles sizer, row
-				wxBoxSizer* maxtileSizer = new wxBoxSizer(wxHORIZONTAL);
-
-				// add some text
-				maxtileSizer->Add(new wxStaticText(panel, wxID_ANY, wxT("&Max. no. of tiles:")),
-								0, wxALL | wxALIGN_CENTER_VERTICAL, 5);
-
-				// add some horizontal space
-				maxtileSizer->Add(5, 5, 1, wxALL, 0);
-
-				// add the value control
-				maxtileSizer->Add(
-					m_maxtilesCtrl = new wxSpinCtrl(panel, OPJDECO_MAXTILES,
-								wxString::Format(wxT("%d"), wxGetApp().m_maxtiles),
-								wxDefaultPosition, wxSize(80, wxDefaultCoord),
-								wxSP_ARROW_KEYS,
-								1, 100000, wxGetApp().m_maxtiles),
-					0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 5);
-				m_maxtilesCtrl->Enable(wxGetApp().m_enablejpwl);
-
-			tileSizer->Add(maxtileSizer, 0, wxGROW | wxALL, 5);
-
-		subtopSizer->Add(tileSizer, 0, wxGROW | wxALL, 5);
-
-	topSizer->Add(subtopSizer, 1, wxGROW | wxALIGN_CENTRE | wxALL, 5);
-
-	// assign top and fit it
-    panel->SetSizer(topSizer);
-    topSizer->Fit(panel);
-
-    return panel;
-}
-
-void OPJDecoderDialog::OnEnableDeco(wxCommandEvent& event)
-{
-	size_t pp;
-
-	if (event.IsChecked()) {
-		wxLogMessage(wxT("Decoding enabled"));
-		m_resizeBox->Enable(true);
-		// enable all tabs except ourselves
-		for (pp = 0; pp < m_settingsNotebook->GetPageCount(); pp++) {
-			if (m_settingsNotebook->GetPageText(pp) != wxT("Display"))
-				m_settingsNotebook->GetPage(pp)->Enable(true);
-		}
-	} else {
-		wxLogMessage(wxT("Decoding disabled"));
-		m_resizeBox->Enable(false);
-		// disable all tabs except ourselves
-		for (pp = 0; pp < m_settingsNotebook->GetPageCount(); pp++) {
-			if (m_settingsNotebook->GetPageText(pp) != wxT("Display"))
-				m_settingsNotebook->GetPage(pp)->Enable(false);
-		}
-	}
-
-}
-
-void OPJDecoderDialog::OnEnableJPWL(wxCommandEvent& event)
-{
-	if (event.IsChecked()) {
-		wxLogMessage(wxT("JPWL enabled"));
-		m_expcompsCtrl->Enable(true);
-		m_maxtilesCtrl->Enable(true);
-	} else {
-		wxLogMessage(wxT("JPWL disabled"));
-		m_expcompsCtrl->Enable(false);
-		m_maxtilesCtrl->Enable(false);
-	}
-
-}
-
-#endif // USE_JPWL
-
-bool OPJDnDFile::OnDropFiles(wxCoord, wxCoord, const wxArrayString& filenames)
-{
-    /*size_t nFiles = filenames.GetCount();
-    wxString str;
-    str.Printf( _T("%d files dropped\n"), (int)nFiles);
-    for ( size_t n = 0; n < nFiles; n++ ) {
-        str << filenames[n] << wxT("\n");
-    }
-    wxLogMessage(str);*/
-	m_pOwner->OpenFiles(filenames, filenames);
-
-    return true;
-}
-
-
-
-
-
-// ----------------------------------------------------------------------------
-// OPJEncoderDialog
-// ----------------------------------------------------------------------------
-
-IMPLEMENT_CLASS(OPJEncoderDialog, wxPropertySheetDialog)
-
-BEGIN_EVENT_TABLE(OPJEncoderDialog, wxPropertySheetDialog)
-#ifdef USE_JPWL
-	EVT_CHECKBOX(OPJENCO_ENABLEJPWL, OPJEncoderDialog::OnEnableJPWL)
-	EVT_CHECKBOX(OPJENCO_ENABLECOMM, OPJEncoderDialog::OnEnableComm)
-	EVT_CHECKBOX(OPJENCO_ENABLEINDEX, OPJEncoderDialog::OnEnableIdx)
-#endif // USE_JPWL
-END_EVENT_TABLE()
-
-OPJEncoderDialog::OPJEncoderDialog(wxWindow* win, int dialogType)
-{
-	SetExtraStyle(wxDIALOG_EX_CONTEXTHELP|wxWS_EX_VALIDATE_RECURSIVELY);
-
-	Create(win, wxID_ANY, wxT("Encoder settings"),
-		wxDefaultPosition, wxDefaultSize,
-		wxDEFAULT_DIALOG_STYLE| (int) wxPlatform::IfNot(wxOS_WINDOWS_CE, wxRESIZE_BORDER)
-		);
-
-	CreateButtons(wxOK | wxCANCEL | (int)wxPlatform::IfNot(wxOS_WINDOWS_CE, wxHELP));
-
-	m_settingsNotebook = GetBookCtrl();
-
-	wxPanel* jpeg2000_1Settings = CreatePart1_1SettingsPage(m_settingsNotebook);
-	wxPanel* jpeg2000_2Settings = CreatePart1_2SettingsPage(m_settingsNotebook);
-	wxPanel* mainSettings = CreateMainSettingsPage(m_settingsNotebook);
-#ifdef USE_JPWL
-	wxPanel* jpwlSettings = CreatePart11SettingsPage(m_settingsNotebook);
-#endif // USE_JPWL
-
-	m_settingsNotebook->AddPage(jpeg2000_1Settings, wxT("JPEG 2000 - 1"), false);
-	m_settingsNotebook->AddPage(jpeg2000_2Settings, wxT("JPEG 2000 - 2"), false);
-	m_settingsNotebook->AddPage(mainSettings, wxT("General"), false);
-#ifdef USE_JPWL
-	m_settingsNotebook->AddPage(jpwlSettings, wxT("JPWL"), false);
-#endif // USE_JPWL
-
-	LayoutDialog();
-}
-
-OPJEncoderDialog::~OPJEncoderDialog()
-{
-}
-
-wxPanel* OPJEncoderDialog::CreateMainSettingsPage(wxWindow* parent)
-{
-    wxPanel* panel = new wxPanel(parent, wxID_ANY);
-
-	// top sizer
-    wxBoxSizer *topSizer = new wxBoxSizer(wxVERTICAL);
-
-		// sub top sizer
-		wxBoxSizer *subtopSizer = new wxBoxSizer(wxVERTICAL);
-
-	topSizer->Add(subtopSizer, 1, wxGROW | wxALIGN_CENTRE | wxALL, 5);
-
-	// assign top and fit it
-    panel->SetSizer(topSizer);
-    topSizer->Fit(panel);
-
-    return panel;
-}
-
-#ifdef USE_JPWL
-wxPanel* OPJEncoderDialog::CreatePart11SettingsPage(wxWindow* parent)
-{
-    wxPanel* panel = new wxPanel(parent, wxID_ANY);
-
-	// top sizer
-    wxBoxSizer *topSizer = new wxBoxSizer(wxVERTICAL);
-
-		// sub top sizer
-		wxBoxSizer *subtopSizer = new wxBoxSizer(wxVERTICAL);
-
-	topSizer->Add(subtopSizer, 1, wxGROW | wxALIGN_CENTRE | wxALL, 5);
-
-	// assign top and fit it
-    panel->SetSizer(topSizer);
-    topSizer->Fit(panel);
-
-    return panel;
-}
-#endif // USE_JPWL
-
-wxPanel* OPJEncoderDialog::CreatePart1_1SettingsPage(wxWindow* parent)
-{
-    wxPanel* panel = new wxPanel(parent, wxID_ANY);
-
-	// top sizer
-    wxBoxSizer *topSizer = new wxBoxSizer(wxVERTICAL);
-
-	// add some space
-	//topSizer->AddSpacer(5);
-
-		// sub top sizer
-		wxFlexGridSizer *subtopSizer = new wxFlexGridSizer(2, 3, 3);
-
-			// image settings, column
-			wxStaticBox* imageBox = new wxStaticBox(panel, wxID_ANY, wxT("Image"));
-			wxBoxSizer* imageSizer = new wxStaticBoxSizer(imageBox, wxVERTICAL);
-
-				// subsampling factor sizer, row
-				wxBoxSizer* subsSizer = new wxBoxSizer(wxHORIZONTAL);
-
-				// add some text
-				subsSizer->Add(new wxStaticText(panel, wxID_ANY, wxT("&Subsampling:")),
-								0, wxALL | wxALIGN_CENTER_VERTICAL, 3);
-
-				// add some horizontal space
-				subsSizer->Add(3, 3, 1, wxALL, 0);
-
-				// add the value control
-				subsSizer->Add(
-					m_subsamplingCtrl = new wxTextCtrl(panel, OPJENCO_SUBSAMPLING,
-								wxGetApp().m_subsampling,
-								wxDefaultPosition, wxSize(120, wxDefaultCoord),
-								wxTE_LEFT),
-					0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 3);
-
-			imageSizer->Add(subsSizer, 0, wxGROW | wxALL, 3);
-
-				// origin sizer, row
-				wxBoxSizer* imorigSizer = new wxBoxSizer(wxHORIZONTAL);
-
-				// add some text
-				imorigSizer->Add(new wxStaticText(panel, wxID_ANY, wxT("&Origin:")),
-								0, wxALL | wxALIGN_CENTER_VERTICAL, 3);
-
-				// add some horizontal space
-				imorigSizer->Add(3, 3, 1, wxALL, 0);
-
-				// add the value control
-				imorigSizer->Add(
-					m_originCtrl = new wxTextCtrl(panel, OPJENCO_IMORIG,
-								wxGetApp().m_origin,
-								wxDefaultPosition, wxSize(120, wxDefaultCoord),
-								wxTE_LEFT),
-					0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 3);
-
-			imageSizer->Add(imorigSizer, 0, wxGROW | wxALL, 3);
-
-		subtopSizer->Add(imageSizer, 0, wxGROW | wxALL, 3);
-
-			// layer settings, column
-			wxStaticBox* layerBox = new wxStaticBox(panel, wxID_ANY, wxT("Layers/compression"));
-			wxBoxSizer* layerSizer = new wxStaticBoxSizer(layerBox, wxVERTICAL);
-
-				// rate factor sizer, row
-				wxBoxSizer* rateSizer = new wxBoxSizer(wxHORIZONTAL);
-
-				// add some text
-				rateSizer->Add(new wxStaticText(panel, wxID_ANY, wxT("&Rate values:")),
-								0, wxALL | wxALIGN_CENTER_VERTICAL, 3);
-
-				// add some horizontal space
-				rateSizer->Add(3, 3, 1, wxALL, 0);
-
-				// add the value control
-				rateSizer->Add(
-					m_rateCtrl = new wxTextCtrl(panel, OPJENCO_RATEFACTOR,
-								wxGetApp().m_rates,
-								wxDefaultPosition, wxSize(120, wxDefaultCoord),
-								wxTE_LEFT),
-					0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 3);
-
-			layerSizer->Add(rateSizer, 0, wxGROW | wxALL, 3);
-
-				// quality factor sizer, row
-				wxBoxSizer* qualitySizer = new wxBoxSizer(wxHORIZONTAL);
-
-				// add some text
-				qualitySizer->Add(new wxStaticText(panel, wxID_ANY, wxT("&Quality values:")),
-								0, wxALL | wxALIGN_CENTER_VERTICAL, 3);
-
-				// add some horizontal space
-				qualitySizer->Add(3, 3, 1, wxALL, 0);
-
-				// add the value control
-				qualitySizer->Add(
-					m_qualityCtrl = new wxTextCtrl(panel, OPJENCO_QUALITYFACTOR,
-								wxGetApp().m_quality,
-								wxDefaultPosition, wxSize(120, wxDefaultCoord),
-								wxTE_LEFT),
-					0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 3);
-
-			layerSizer->Add(qualitySizer, 0, wxGROW | wxALL, 3);
-
-		subtopSizer->Add(layerSizer, 0, wxGROW | wxALL, 3);
-
-			// wavelet settings, column
-			wxStaticBox* waveletBox = new wxStaticBox(panel, wxID_ANY, wxT("Wavelet transform"));
-			wxBoxSizer* waveletSizer = new wxStaticBoxSizer(waveletBox, wxVERTICAL);
-
-			// irreversible check box
-			waveletSizer->Add(
-				m_irrevCheck = new wxCheckBox(panel, OPJENCO_ENABLEIRREV, wxT("Irreversible"),
-				wxDefaultPosition, wxDefaultSize),
-				0, wxGROW | wxALL, 3);
-			m_irrevCheck->SetValue(wxGetApp().m_irreversible);
-
-				// resolution number sizer, row
-				wxBoxSizer* resnumSizer = new wxBoxSizer(wxHORIZONTAL);
-
-				// add some text
-				resnumSizer->Add(new wxStaticText(panel, wxID_ANY, wxT("&Resolutions:")),
-								0, wxALL | wxALIGN_CENTER_VERTICAL, 3);
-
-				// add some horizontal space
-				resnumSizer->Add(3, 3, 1, wxALL, 0);
-
-				// add the value control
-				resnumSizer->Add(
-					m_resolutionsCtrl = new wxSpinCtrl(panel, OPJENCO_RESNUMBER,
-								wxString::Format(wxT("%d"), wxGetApp().m_resolutions),
-								wxDefaultPosition, wxSize(80, wxDefaultCoord),
-								wxSP_ARROW_KEYS,
-								0, 256, 6),
-					0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 3);
-
-			waveletSizer->Add(resnumSizer, 0, wxGROW | wxALL, 3);
-
-		subtopSizer->Add(waveletSizer, 0, wxGROW | wxALL, 3);
-
-			// codestream settings, column
-			wxStaticBox* codestreamBox = new wxStaticBox(panel, wxID_ANY, wxT("Codestream"));
-			wxBoxSizer* codestreamSizer = new wxStaticBoxSizer(codestreamBox, wxVERTICAL);
-
-				// codeblock sizer, row
-				wxBoxSizer* codeblockSizer = new wxBoxSizer(wxHORIZONTAL);
-
-				// add some text
-				codeblockSizer->Add(new wxStaticText(panel, wxID_ANY, wxT("&Codeblocks size:")),
-								0, wxALL | wxALIGN_CENTER_VERTICAL, 3);
-
-				// add some horizontal space
-				codeblockSizer->Add(3, 3, 1, wxALL, 0);
-
-				// add the value control
-				codeblockSizer->Add(
-					m_cbsizeCtrl = new wxTextCtrl(panel, OPJENCO_CODEBLOCKSIZE,
-								wxGetApp().m_cbsize,
-								wxDefaultPosition, wxSize(120, wxDefaultCoord),
-								wxTE_LEFT),
-					0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 3);
-
-			codestreamSizer->Add(codeblockSizer, 0, wxGROW | wxALL, 3);
-
-				// precinct sizer, row
-				wxBoxSizer* precinctSizer = new wxBoxSizer(wxHORIZONTAL);
-
-				// add some text
-				precinctSizer->Add(new wxStaticText(panel, wxID_ANY, wxT("&Precincts size:")),
-								0, wxALL | wxALIGN_CENTER_VERTICAL, 3);
-
-				// add some horizontal space
-				precinctSizer->Add(3, 3, 1, wxALL, 0);
-
-				// add the value control
-				precinctSizer->Add(
-					m_prsizeCtrl = new wxTextCtrl(panel, OPJENCO_PRECINCTSIZE,
-								wxGetApp().m_prsize,
-								wxDefaultPosition, wxSize(120, wxDefaultCoord),
-								wxTE_LEFT),
-					0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 3);
-
-			codestreamSizer->Add(precinctSizer, 0, wxGROW | wxALL, 3);
-
-		subtopSizer->Add(codestreamSizer, 0, wxGROW | wxALL, 3);
-
-			// tile settings, column
-			wxStaticBox* tileBox = new wxStaticBox(panel, wxID_ANY, wxT("Tiles"));
-			wxBoxSizer* tileSizer = new wxStaticBoxSizer(tileBox, wxVERTICAL);
-
-				// tile size sizer, row
-				wxBoxSizer* tilesizeSizer = new wxBoxSizer(wxHORIZONTAL);
-
-				// add some text
-				tilesizeSizer->Add(new wxStaticText(panel, wxID_ANY, wxT("&Size:")),
-								0, wxALL | wxALIGN_CENTER_VERTICAL, 3);
-
-				// add some horizontal space
-				tilesizeSizer->Add(3, 3, 1, wxALL, 0);
-
-				// add the value control
-				tilesizeSizer->Add(
-					m_tsizeCtrl = new wxTextCtrl(panel, OPJENCO_TILESIZE,
-								wxGetApp().m_tsize,
-								wxDefaultPosition, wxSize(120, wxDefaultCoord),
-								wxTE_LEFT),
-					0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 3);
-
-			tileSizer->Add(tilesizeSizer, 0, wxGROW | wxALL, 3);
-
-				// tile origin sizer, row
-				wxBoxSizer* tilorigSizer = new wxBoxSizer(wxHORIZONTAL);
-
-				// add some text
-				tilorigSizer->Add(new wxStaticText(panel, wxID_ANY, wxT("&Origin:")),
-								0, wxALL | wxALIGN_CENTER_VERTICAL, 3);
-
-				// add some horizontal space
-				tilorigSizer->Add(3, 3, 1, wxALL, 0);
-
-				// add the value control
-				tilorigSizer->Add(
-					m_toriginCtrl = new wxTextCtrl(panel, OPJENCO_TILORIG,
-								wxGetApp().m_torigin,
-								wxDefaultPosition, wxSize(120, wxDefaultCoord),
-								wxTE_LEFT),
-					0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 3);
-
-			tileSizer->Add(tilorigSizer, 0, wxGROW | wxALL, 3);
-
-		subtopSizer->Add(tileSizer, 0, wxGROW | wxALL, 3);
-
-			// progression and profile settings, column
-			wxString choices[] = {wxT("LRCP"), wxT("RLCP"), wxT("RPCL"), wxT("PCRL"), wxT("CPRL"),
-				wxT("DCI2K24"), wxT("DCI2K48"), wxT("DCI4K")};
-			wxRadioBox *progressionBox = new wxRadioBox(panel, OPJENCO_PROGRESSION,
-				wxT("Progression order/profile"),
-				wxDefaultPosition, wxDefaultSize,
-				WXSIZEOF(choices),
-				choices,
-				3,
-				wxRA_SPECIFY_COLS);
-			progressionBox->SetSelection(0);
-
-		subtopSizer->Add(progressionBox, 0, wxGROW | wxALL, 3);
-
-	topSizer->Add(subtopSizer, 1, wxGROW | wxALIGN_CENTRE | wxALL, 5);
-
-	// assign top and fit it
-    panel->SetSizer(topSizer);
-    topSizer->Fit(panel);
-
-    return panel;
-}
-
-wxPanel* OPJEncoderDialog::CreatePart1_2SettingsPage(wxWindow* parent)
-{
-    wxPanel* panel = new wxPanel(parent, wxID_ANY);
-
-	// top sizer
-    wxBoxSizer *topSizer = new wxBoxSizer(wxVERTICAL);
-
-	// add some space
-	//topSizer->AddSpacer(5);
-
-		// sub top sizer
-		wxFlexGridSizer *subtopSizer = new wxFlexGridSizer(2, 3, 3);
-			
-			// resilience settings, column
-			wxStaticBox* resilBox = new wxStaticBox(panel, wxID_ANY, wxT("Error resilience"));
-			wxBoxSizer* resilSizer = new wxStaticBoxSizer(resilBox, wxVERTICAL);
-
-				// resil2 sizer, row
-				wxBoxSizer* resil2Sizer = new wxBoxSizer(wxHORIZONTAL);
-
-				// SOP check box
-				resil2Sizer->Add(
-					m_sopCheck = new wxCheckBox(panel, OPJENCO_ENABLESOP, wxT("SOP"),
-						wxDefaultPosition, wxDefaultSize),
-						0, wxGROW | wxALL, 3);
-				m_sopCheck->SetValue(wxGetApp().m_enablesop);
-
-				// EPH check box
-				resil2Sizer->Add(
-					m_ephCheck = new wxCheckBox(panel, OPJENCO_ENABLEEPH, wxT("EPH"),
-						wxDefaultPosition, wxDefaultSize),
-						0, wxGROW | wxALL, 3);
-				m_ephCheck->SetValue(wxGetApp().m_enableeph);
-
-			resilSizer->Add(resil2Sizer, 0, wxGROW | wxALL, 3);
-
-			// separation
-			resilSizer->Add(new wxStaticLine(panel, wxID_ANY), 0, wxEXPAND | wxLEFT | wxRIGHT, 3);
-
-				// resil3 sizer, row
-				wxFlexGridSizer* resil3Sizer = new wxFlexGridSizer(3, 3, 3);
-
-				// BYPASS check box
-				resil3Sizer->Add(
-					/*m_enabledecoCheck =*/ new wxCheckBox(panel, OPJENCO_ENABLEBYPASS, wxT("BYPASS"),
-					wxDefaultPosition, wxDefaultSize),
-					0, wxGROW | wxALL, 3);
-				/*m_enabledecoCheck->SetValue(wxGetApp().m_enabledeco);*/
-
-				// RESET check box
-				resil3Sizer->Add(
-					/*m_enabledecoCheck =*/ new wxCheckBox(panel, OPJENCO_ENABLERESET, wxT("RESET"),
-					wxDefaultPosition, wxDefaultSize),
-					0, wxGROW | wxALL, 3);
-				/*m_enabledecoCheck->SetValue(wxGetApp().m_enabledeco);*/
-
-				// RESTART check box
-				resil3Sizer->Add(
-					/*m_enabledecoCheck =*/ new wxCheckBox(panel, OPJENCO_ENABLERESTART, wxT("RESTART"),
-					wxDefaultPosition, wxDefaultSize),
-					0, wxGROW | wxALL, 3);
-				/*m_enabledecoCheck->SetValue(wxGetApp().m_enabledeco);*/
-
-				// VSC check box
-				resil3Sizer->Add(
-					/*m_enabledecoCheck =*/ new wxCheckBox(panel, OPJENCO_ENABLEVSC, wxT("VSC"),
-					wxDefaultPosition, wxDefaultSize),
-					0, wxGROW | wxALL, 3);
-				/*m_enabledecoCheck->SetValue(wxGetApp().m_enabledeco);*/
-
-				// ERTERM check box
-				resil3Sizer->Add(
-					/*m_enabledecoCheck =*/ new wxCheckBox(panel, OPJENCO_ENABLEERTERM, wxT("ERTERM"),
-					wxDefaultPosition, wxDefaultSize),
-					0, wxGROW | wxALL, 3);
-				/*m_enabledecoCheck->SetValue(wxGetApp().m_enabledeco);*/
-
-				// SEGMARK check box
-				resil3Sizer->Add(
-					/*m_enabledecoCheck =*/ new wxCheckBox(panel, OPJENCO_ENABLESEGMARK, wxT("SEGMARK"),
-					wxDefaultPosition, wxDefaultSize),
-					0, wxGROW | wxALL, 3);
-				/*m_enabledecoCheck->SetValue(wxGetApp().m_enabledeco);*/
-
-			resilSizer->Add(resil3Sizer, 0, wxGROW | wxALL, 3);
-
-		subtopSizer->Add(resilSizer, 0, wxGROW | wxALL, 3);
-
-			// ROI settings, column
-			wxStaticBox* roiBox = new wxStaticBox(panel, wxID_ANY, wxT("Region Of Interest"));
-			wxBoxSizer* roiSizer = new wxStaticBoxSizer(roiBox, wxVERTICAL);
-
-				// component number sizer, row
-				wxBoxSizer* roicompSizer = new wxBoxSizer(wxHORIZONTAL);
-
-				// add some text
-				roicompSizer->Add(new wxStaticText(panel, wxID_ANY, wxT("&Component:")),
-								0, wxALL | wxALIGN_CENTER_VERTICAL, 3);
-
-				// add some horizontal space
-				roicompSizer->Add(3, 3, 1, wxALL, 0);
-
-				// add the value control
-				roicompSizer->Add(
-					/*m_layerCtrl =*/ new wxSpinCtrl(panel, OPJENCO_ROICOMP,
-								wxT("0"),
-								wxDefaultPosition, wxSize(80, wxDefaultCoord),
-								wxSP_ARROW_KEYS,
-								0, 256, 0),
-					0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 3);
-
-			roiSizer->Add(roicompSizer, 0, wxGROW | wxALL, 3);
-
-				// upshift sizer, row
-				wxBoxSizer* roishiftSizer = new wxBoxSizer(wxHORIZONTAL);
-
-				// add some text
-				roishiftSizer->Add(new wxStaticText(panel, wxID_ANY, wxT("&Upshift:")),
-								0, wxALL | wxALIGN_CENTER_VERTICAL, 3);
-
-				// add some horizontal space
-				roishiftSizer->Add(3, 3, 1, wxALL, 0);
-
-				// add the value control
-				roishiftSizer->Add(
-					/*m_layerCtrl =*/ new wxSpinCtrl(panel, OPJENCO_ROISHIFT,
-								wxT("0"),
-								wxDefaultPosition, wxSize(80, wxDefaultCoord),
-								wxSP_ARROW_KEYS,
-								0, 37, 0),
-					0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 3);
-
-			roiSizer->Add(roishiftSizer, 0, wxGROW | wxALL, 3);
-
-		subtopSizer->Add(roiSizer, 0, wxGROW | wxALL, 3);
-
-			// Index file settings, column
-			wxStaticBox* indexBox = new wxStaticBox(panel, wxID_ANY, wxT("Indexing"));
-			wxBoxSizer* indexSizer = new wxStaticBoxSizer(indexBox, wxVERTICAL);
-
-			// indexing check box
-			indexSizer->Add(
-				m_enableidxCheck = new wxCheckBox(panel, OPJENCO_ENABLEINDEX, wxT("Enabled"),
-				wxDefaultPosition, wxDefaultSize),
-				0, wxGROW | wxALL, 3);
-			m_enableidxCheck->SetValue(wxGetApp().m_enableidx);
-
-				// index file sizer, row
-				wxBoxSizer* indexnameSizer = new wxBoxSizer(wxHORIZONTAL);
-
-				// add some text
-				indexnameSizer->Add(new wxStaticText(panel, wxID_ANY, wxT("&File name:")),
-								0, wxALL | wxALIGN_CENTER_VERTICAL, 3);
-
-				// add some horizontal space
-				indexnameSizer->Add(3, 3, 1, wxALL, 0);
-
-				// add the value control
-				indexnameSizer->Add(
-					m_indexCtrl = new wxTextCtrl(panel, OPJENCO_INDEXNAME,
-								wxGetApp().m_index,
-								wxDefaultPosition, wxSize(120, wxDefaultCoord),
-								wxTE_LEFT),
-					0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 3);
-				m_indexCtrl->Enable(wxGetApp().m_enableidx);
-
-			indexSizer->Add(indexnameSizer, 0, wxGROW | wxALL, 3);
-
-		subtopSizer->Add(indexSizer, 0, wxGROW | wxALL, 3);
-
-			// Comment settings, column
-			wxStaticBox* commentBox = new wxStaticBox(panel, wxID_ANY, wxT("Comment"));
-			wxBoxSizer* commentSizer = new wxStaticBoxSizer(commentBox, wxVERTICAL);
-
-			// commenting check box
-			commentSizer->Add(
-				m_enablecommCheck = new wxCheckBox(panel, OPJENCO_ENABLECOMM, wxT("Enabled"),
-				wxDefaultPosition, wxDefaultSize),
-				0, wxGROW | wxALL, 3);
-			m_enablecommCheck->SetValue(wxGetApp().m_enablecomm);
-
-			// add some horizontal space
-			commentSizer->Add(3, 3, 1, wxALL, 0);
-
-			// add the value control
-			commentSizer->Add(
-				m_commentCtrl = new wxTextCtrl(panel, OPJENCO_COMMENTTEXT,
-							wxGetApp().m_comment,
-							wxDefaultPosition, wxSize(wxDefaultCoord, 60),
-							wxTE_LEFT | wxTE_MULTILINE),
-				0, wxGROW | wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 3);
-			m_commentCtrl->Enable(wxGetApp().m_enablecomm);
-
-		subtopSizer->Add(commentSizer, 0, wxGROW | wxALL, 3);
-
-			// POC settings, column
-			wxStaticBox* pocBox = new wxStaticBox(panel, wxID_ANY, wxT("POC"));
-			wxBoxSizer* pocSizer = new wxStaticBoxSizer(pocBox, wxVERTICAL);
-
-			// POC check box
-			pocSizer->Add(
-				m_enablepocCheck = new wxCheckBox(panel, OPJENCO_ENABLEPOC, wxT("Enabled"),
-				wxDefaultPosition, wxDefaultSize),
-				0, wxGROW | wxALL, 3);
-			m_enablepocCheck->SetValue(/*wxGetApp().m_enableidx*/true);
-
-				// POC sizer, row
-				wxBoxSizer* pocspecSizer = new wxBoxSizer(wxHORIZONTAL);
-
-				// add some text
-				pocspecSizer->Add(new wxStaticText(panel, wxID_ANY, wxT("&Changes:")),
-								0, wxALL | wxALIGN_CENTER_VERTICAL, 3);
-
-				// add some horizontal space
-				pocspecSizer->Add(3, 3, 1, wxALL, 0);
-
-				// add the value control
-				pocspecSizer->Add(
-					m_pocCtrl = new wxTextCtrl(panel, OPJENCO_POCSPEC,
-								/*wxGetApp().m_index*/wxT("RRRR"),
-								wxDefaultPosition, wxSize(120, wxDefaultCoord),
-								wxTE_LEFT),
-					0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 3);
-				m_pocCtrl->Enable(/*wxGetApp().m_enableidx*/true);
-
-			pocSizer->Add(pocspecSizer, 0, wxGROW | wxALL, 3);
-
-		subtopSizer->Add(pocSizer, 0, wxGROW | wxALL, 3);
-
-	topSizer->Add(subtopSizer, 1, wxGROW | wxALIGN_CENTRE | wxALL, 5);
-
-	// assign top and fit it
-    panel->SetSizer(topSizer);
-    topSizer->Fit(panel);
-
-    return panel;
-}
-
-void OPJEncoderDialog::OnEnableComm(wxCommandEvent& event)
-{
-	if (event.IsChecked()) {
-		wxLogMessage(wxT("Comment enabled"));
-		m_commentCtrl->Enable(true);
-	} else {
-		wxLogMessage(wxT("Comment disabled"));
-		m_commentCtrl->Enable(false);
-	}
-
-}
-
-void OPJEncoderDialog::OnEnableIdx(wxCommandEvent& event)
-{
-	if (event.IsChecked()) {
-		wxLogMessage(wxT("Index enabled"));
-		m_indexCtrl->Enable(true);
-	} else {
-		wxLogMessage(wxT("Index disabled"));
-		m_indexCtrl->Enable(false);
-	}
-}
-
-#ifdef USE_JPWL
-void OPJEncoderDialog::OnEnableJPWL(wxCommandEvent& event)
-{
-	/*if (event.IsChecked()) {
-		wxLogMessage(wxT("JPWL enabled"));
-		m_expcompsCtrl->Enable(true);
-		m_maxtilesCtrl->Enable(true);
-	} else {
-		wxLogMessage(wxT("JPWL disabled"));
-		m_expcompsCtrl->Enable(false);
-		m_maxtilesCtrl->Enable(false);
-	}*/
-
-}
-#endif // USE_JPWL

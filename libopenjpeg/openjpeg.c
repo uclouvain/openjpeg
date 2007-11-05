@@ -324,5 +324,6 @@ void OPJ_CALLCONV opj_destroy_cstr_info(opj_codestream_info_t *cstr_info) {
 			opj_free(tile_info->tp);
 		}
 		opj_free(cstr_info->tile);
+		opj_free(cstr_info->marker);
 	}
 }

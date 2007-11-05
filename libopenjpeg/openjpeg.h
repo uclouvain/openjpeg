@@ -606,6 +606,8 @@ typedef struct opj_tp_info {
 	int tp_end_header;
 	/** end position of tile part */
 	int tp_end_pos;
+	/** start packet of tile part */
+	int tp_start_pack;
 	/** number of packets of tile part */
 	int tp_numpacks;
 } opj_tp_info_t;
@@ -697,6 +699,8 @@ typedef struct opj_codestream_info {
 	int marknum;
 	/** list of markers */
 	opj_marker_info_t *marker;
+	/** actual size of markers array */
+	int maxmarknum;
 /* <<UniPG */
 	/** main header position */
 	int main_head_start;
