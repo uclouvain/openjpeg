@@ -271,7 +271,7 @@ int main(int argc, char *argv[]) {
   while(1)
   {
     sample = &movie->tk[0].sample[snum];
-    sprintf(j2kfilename,"%05d.j2k",/*argv[1],*/snum + 7111);
+    sprintf(j2kfilename,"%s_%05d.j2k",argv[1],snum);
     j2kfile = fopen(j2kfilename, "rb");
     if (!j2kfile) {
       if (snum==0) {  // Could not open a single codestream
