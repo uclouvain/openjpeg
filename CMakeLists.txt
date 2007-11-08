@@ -116,7 +116,12 @@ FIND_PATH(JPEG2000_CONFORMANCE_DATA_ROOT testimages.html
   $ENV{JPEG2000_CONFORMANCE_DATA_ROOT}
 )
 
+#-----------------------------------------------------------------------------
+# Compiler specific flags:
 IF(CMAKE_COMPILER_IS_GNUCC)
-  SET(CMAKE_WARN_FLAGS "-Wall")
-  SET(CMAKE_C_FLAGS "${CMAKE_WARN_FLAGS} -ffast-math -std=c99 ${CMAKE_C_FLAGS}")
+  # For all builds, make sure openjpeg is std99 compliant:
+  SET(CMAKE_C_FLAGS "-Wall -std=c99 ${CMAKE_C_FLAGS}")
+  # Do not use ffast-math for all build, it would produce incorrect results, only set for release:
+  SET(CMAKE_C_FLAGS_RELEASE "-ffast-math ${CMAKE_C_FLAGS_RELEASE}")
 ENDIF(CMAKE_COMPILER_IS_GNUCC)
+
