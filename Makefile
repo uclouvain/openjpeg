@@ -18,7 +18,7 @@ INSTALL_INCLUDE = $(PREFIX)/include
 # Converts cr/lf to just lf
 DOS2UNIX = dos2unix
 
-COMPILERFLAGS = -O3 -fPIC
+COMPILERFLAGS = -Wall -O3 -ffast-math -std=c99 -fPIC
 LIBRARIES = -lstdc++
 
 MODULES = $(SRCS:.c=.o)

@@ -5,6 +5,10 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+November 8, 2007
+! [FOD] In t1.c, small change to avoid calling twice t1_getwmsedec()
+		Patch from Callum Lewick. Basic gcc optimization flags in cmake and makefile match.
+
 November 5, 2007
 *+ [GB] Fixed a bug which prevented JPWL from working on multi-tiled images; added some more fields in the interface info structures (keep a list of markers, save start packet number for each tile)
 

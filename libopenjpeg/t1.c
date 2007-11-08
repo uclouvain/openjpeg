@@ -809,6 +809,7 @@ static void t1_encode_cblk(
 	int nmsedec = 0;
 	double cumwmsedec = 0.0;
 	char type = T1_TYPE_MQ;
+	double tempwmsedec;
 	
 	opj_mqc_t *mqc = t1->mqc;	/* MQC component */
 	
@@ -851,8 +852,9 @@ static void t1_encode_cblk(
 		}
 		
 		/* fixed_quality */
-		cumwmsedec += t1_getwmsedec(nmsedec, compno, level, orient, bpno, qmfbid, stepsize, numcomps);
-		tile->distotile += t1_getwmsedec(nmsedec, compno, level, orient, bpno, qmfbid, stepsize, numcomps);
+		tempwmsedec = t1_getwmsedec(nmsedec, compno, level, orient, bpno, qmfbid, stepsize, numcomps);
+		cumwmsedec += tempwmsedec;
+		tile->distotile += tempwmsedec;
 		
 		/* Code switch "RESTART" (i.e. TERMALL) */
 		if ((cblksty & J2K_CCP_CBLKSTY_TERMALL)	&& !((passtype == 2) && (bpno - 1 < 0))) {
