@@ -75,11 +75,11 @@ Inverse lazy transform (vertical)
 */
 static void dwt_interleave_v(dwt_t* v, int *a, int x);
 /**
-Forward 5-3 wavelet tranform in 1-D
+Forward 5-3 wavelet transform in 1-D
 */
 static void dwt_encode_1(int *a, int dn, int sn, int cas);
 /**
-Inverse 5-3 wavelet tranform in 1-D
+Inverse 5-3 wavelet transform in 1-D
 */
 static void dwt_decode_1(dwt_t *v);
 /**
@@ -95,7 +95,7 @@ FIXME : comment ???
 */
 static void dwt_encode_stepsize(int stepsize, int numbps, opj_stepsize_t *bandno_stepsize);
 /**
-Inverse wavelet tranform in 2-D.
+Inverse wavelet transform in 2-D.
 */
 static void dwt_decode_tile(opj_tcd_tilecomp_t * tilec, int stop , DWT1DFN fn);
 
@@ -199,7 +199,7 @@ static void dwt_interleave_v(dwt_t* v, int *a, int x) {
 
 
 /* <summary>                            */
-/* Forward 5-3 wavelet tranform in 1-D. */
+/* Forward 5-3 wavelet transform in 1-D. */
 /* </summary>                           */
 static void dwt_encode_1(int *a, int dn, int sn, int cas) {
 	int i;
@@ -220,7 +220,7 @@ static void dwt_encode_1(int *a, int dn, int sn, int cas) {
 }
 
 /* <summary>                            */
-/* Inverse 5-3 wavelet tranform in 1-D. */
+/* Inverse 5-3 wavelet transform in 1-D. */
 /* </summary>                           */ 
 static void dwt_decode_1_(int *a, int dn, int sn, int cas) {
 	int i;
@@ -241,7 +241,7 @@ static void dwt_decode_1_(int *a, int dn, int sn, int cas) {
 }
 
 /* <summary>                            */
-/* Inverse 5-3 wavelet tranform in 1-D. */
+/* Inverse 5-3 wavelet transform in 1-D. */
 /* </summary>                           */ 
 static void dwt_decode_1(dwt_t *v) {
 	dwt_decode_1_(v->mem, v->dn, v->sn, v->cas);
@@ -396,7 +396,7 @@ static void dwt_encode_stepsize(int stepsize, int numbps, opj_stepsize_t *bandno
 */
 
 /* <summary>                            */
-/* Forward 5-3 wavelet tranform in 2-D. */
+/* Forward 5-3 wavelet transform in 2-D. */
 /* </summary>                           */
 void dwt_encode(opj_tcd_tilecomp_t * tilec) {
 	int i, j, k;
@@ -411,7 +411,7 @@ void dwt_encode(opj_tcd_tilecomp_t * tilec) {
 	
 	for (i = 0; i < l; i++) {
 		int rw;			/* width of the resolution level computed                                                           */
-		int rh;			/* heigth of the resolution level computed                                                          */
+		int rh;			/* height of the resolution level computed                                                          */
 		int rw1;		/* width of the resolution level once lower than computed one                                       */
 		int rh1;		/* height of the resolution level once lower than computed one                                      */
 		int cas_col;	/* 0 = non inversion on horizontal filtering 1 = inversion between low-pass and high-pass filtering */
@@ -452,7 +452,7 @@ void dwt_encode(opj_tcd_tilecomp_t * tilec) {
 
 
 /* <summary>                            */
-/* Inverse 5-3 wavelet tranform in 2-D. */
+/* Inverse 5-3 wavelet transform in 2-D. */
 /* </summary>                           */
 void dwt_decode(opj_tcd_tilecomp_t * tilec, int stop) {
 	dwt_decode_tile(tilec, stop, &dwt_decode_1);
@@ -494,7 +494,7 @@ void dwt_encode_real(opj_tcd_tilecomp_t * tilec) {
 	
 	for (i = 0; i < l; i++) {
 		int rw;			/* width of the resolution level computed                                                     */
-		int rh;			/* heigth of the resolution level computed                                                    */
+		int rh;			/* height of the resolution level computed                                                    */
 		int rw1;		/* width of the resolution level once lower than computed one                                 */
 		int rh1;		/* height of the resolution level once lower than computed one                                */
 		int cas_col;	/* 0 = non inversion on horizontal filtering 1 = inversion between low-pass and high-pass filtering */
@@ -597,7 +597,7 @@ static int dwt_decode_max_resolution(opj_tcd_resolution_t* r, int i) {
 
 
 /* <summary>                            */
-/* Inverse wavelet tranform in 2-D.     */
+/* Inverse wavelet transform in 2-D.     */
 /* </summary>                           */
 static void dwt_decode_tile(opj_tcd_tilecomp_t * tilec, int stop, DWT1DFN dwt_1D) {
 	opj_tcd_resolution_t* tr;
@@ -606,7 +606,7 @@ static void dwt_decode_tile(opj_tcd_tilecomp_t * tilec, int stop, DWT1DFN dwt_1D
 	int *aj = NULL;
 	int w; //, l;
 	int rw;			/* width of the resolution level computed  */
-	int rh;			/* heigth of the resolution level computed  */
+	int rh;			/* height of the resolution level computed  */
 	dwt_t h;
 	dwt_t v;
 	
