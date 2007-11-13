@@ -44,16 +44,20 @@ static const double mct_norms_real[3] = { 1.732, 1.805, 1.573 };
 /* <summary> */
 /* Foward reversible MCT. */
 /* </summary> */
-void mct_encode(int *c0, int *c1, int *c2, int n) {
+void mct_encode(
+		int* restrict c0,
+		int* restrict c1,
+		int* restrict c2,
+		int n)
+{
 	int i;
-	for (i = 0; i < n; i++) {
-		int r, g, b, y, u, v;
-		r = c0[i];
-		g = c1[i];
-		b = c2[i];
-		y = (r + (g << 1) + b) >> 2;
-		u = b - g;
-		v = r - g;
+	for(i = 0; i < n; ++i) {
+		int r = c0[i];
+		int g = c1[i];
+		int b = c2[i];
+		int y = (r + (g * 2) + b) >> 2;
+		int u = b - g;
+		int v = r - g;
 		c0[i] = y;
 		c1[i] = u;
 		c2[i] = v;
@@ -63,16 +67,20 @@ void mct_encode(int *c0, int *c1, int *c2, int n) {
 /* <summary> */
 /* Inverse reversible MCT. */
 /* </summary> */
-void mct_decode(int *c0, int *c1, int *c2, int n) {
+void mct_decode(
+		int* restrict c0,
+		int* restrict c1, 
+		int* restrict c2, 
+		int n)
+{
 	int i;
-	for (i = 0; i < n; i++) {
-		int y, u, v, r, g, b;
-		y = c0[i];
-		u = c1[i];
-		v = c2[i];
-		g = y - ((u + v) >> 2);
-		r = v + g;
-		b = u + g;
+	for (i = 0; i < n; ++i) {
+		int y = c0[i];
+		int u = c1[i];
+		int v = c2[i];
+		int g = y - ((u + v) >> 2);
+		int r = v + g;
+		int b = u + g;
 		c0[i] = r;
 		c1[i] = g;
 		c2[i] = b;
@@ -89,16 +97,20 @@ double mct_getnorm(int compno) {
 /* <summary> */
 /* Foward irreversible MCT. */
 /* </summary> */
-void mct_encode_real(int *c0, int *c1, int *c2, int n) {
+void mct_encode_real(
+		int* restrict c0,
+		int* restrict c1,
+		int* restrict c2,
+		int n)
+{
 	int i;
-	for (i = 0; i < n; i++) {
-		int r, g, b, y, u, v;
-		r = c0[i];
-		g = c1[i];
-		b = c2[i];
-		y = fix_mul(r, 2449) + fix_mul(g, 4809) + fix_mul(b, 934);
-		u = -fix_mul(r, 1382) - fix_mul(g, 2714) + fix_mul(b, 4096);
-		v = fix_mul(r, 4096) - fix_mul(g, 3430) - fix_mul(b, 666);
+	for(i = 0; i < n; ++i) {
+		int r = c0[i];
+		int g = c1[i];
+		int b = c2[i];
+		int y =  fix_mul(r, 2449) + fix_mul(g, 4809) + fix_mul(b, 934);
+		int u = -fix_mul(r, 1382) - fix_mul(g, 2714) + fix_mul(b, 4096);
+		int v =  fix_mul(r, 4096) - fix_mul(g, 3430) - fix_mul(b, 666);
 		c0[i] = y;
 		c1[i] = u;
 		c2[i] = v;
@@ -108,16 +120,20 @@ void mct_encode_real(int *c0, int *c1, int *c2, int n) {
 /* <summary> */
 /* Inverse irreversible MCT. */
 /* </summary> */
-void mct_decode_real(int *c0, int *c1, int *c2, int n) {
+void mct_decode_real(
+		float* restrict c0,
+		float* restrict c1,
+		float* restrict c2,
+		int n)
+{
 	int i;
-	for (i = 0; i < n; i++) {
-		int y, u, v, r, g, b;
-		y = c0[i];
-		u = c1[i];
-		v = c2[i];
-		r = y + fix_mul(v, 11485);
-		g = y - fix_mul(u, 2819) - fix_mul(v, 5850);
-		b = y + fix_mul(u, 14516);
+	for(i = 0; i < n; ++i) {
+		float y = c0[i];
+		float u = c1[i];
+		float v = c2[i];
+		float r = y + (v * 1.402f);
+		float g = y - (u * 0.34413f) - (v * (0.71414f));
+		float b = y + (u * 1.772f);
 		c0[i] = r;
 		c1[i] = g;
 		c2[i] = b;

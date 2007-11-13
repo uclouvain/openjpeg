@@ -83,7 +83,7 @@ Apply an irreversible multi-component inverse transform to an image
 @param c2 Samples for blue chrominance component
 @param n Number of samples for each component
 */
-void mct_decode_real(int *c0, int *c1, int *c2, int n);
+void mct_decode_real(float* c0, float* c1, float* c2, int n);
 /**
 Get norm of the basis function used for the irreversible multi-component transform
 @param compno Number of the component (0->Y, 1->U, 2->V)

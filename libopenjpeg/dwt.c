@@ -5,6 +5,8 @@
  * Copyright (c) 2002-2003, Yannick Verschueren
  * Copyright (c) 2003-2007, Francois-Olivier Devaux and Antonin Descampe
  * Copyright (c) 2005, Herve Drolon, FreeImage Team
+ * Copyright (c) 2007, Jonathan Ballard <dzonatas@dzonux.net>
+ * Copyright (c) 2007, Callum Lerwick <seg@haxxed.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,6 +31,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifdef __SSE__
+#include <xmmintrin.h>
+#endif
 
 #include "opj_includes.h"
 
@@ -41,12 +46,32 @@
 /** @name Local data structures */
 /*@{*/
 
-typedef struct dwt_local{
-	int *	mem ;
+typedef struct dwt_local {
+	int* mem;
+	int dn;
+	int sn;
+	int cas;
+} dwt_t;
+
+typedef union {
+	float	f[4];
+} v4;
+
+typedef struct v4dwt_local {
+	v4*	wavelet ;
 	int		dn ;
 	int		sn ;
 	int		cas ;
-	} dwt_t ; 
+} v4dwt_t ;
+
+static const float alpha =  1.586134342f; //  12994
+static const float beta  =  0.052980118f; //    434
+static const float gamma = -0.882911075f; //  -7233
+static const float delta = -0.443506852f; //  -3633
+
+static const float K      = 1.230174105f; //  10078
+/* FIXME: What is this constant? */
+static const float c13318 = 1.625732422f;
 
 /*@}*/
 
@@ -87,17 +112,13 @@ Forward 9-7 wavelet transform in 1-D
 */
 static void dwt_encode_1_real(int *a, int dn, int sn, int cas);
 /**
-Inverse 9-7 wavelet transform in 1-D
-*/
-static void dwt_decode_1_real(dwt_t *v);
-/**
-FIXME : comment ???
+Explicit calculation of the Quantization Stepsizes 
 */
 static void dwt_encode_stepsize(int stepsize, int numbps, opj_stepsize_t *bandno_stepsize);
 /**
 Inverse wavelet transform in 2-D.
 */
-static void dwt_decode_tile(opj_tcd_tilecomp_t * tilec, int stop , DWT1DFN fn);
+static void dwt_decode_tile(opj_tcd_tilecomp_t* tilec, int i, DWT1DFN fn);
 
 /*@}*/
 
@@ -285,102 +306,6 @@ static void dwt_encode_1_real(int *a, int dn, int sn, int cas) {
 	}
 }
 
-static void dwt_decode_sm(dwt_t* v, int k, int n, int x) {
-	int m = k > n ? n : k;
-	int l = v->mem[1];			//D(0);
-	int j;
-	int i;
-	for (i = 0; i < m; i++) {
-		j = l;
-		WS(i) -= fix_mul( ( l = WD(i) ) + j , x);
-	}
-	if( i < k ) {
-		l = fix_mul( l + l , x );
-		for (; i < k; i++)
-			WS(i) -= l;
-	}
-}
-
-static void dwt_decode_sp(dwt_t* v, int k, int n, int x) {
-	int m = k > n ? n : k;
-	int l = v->mem[1];			//D(0);
-	int j;
-	int i;
-	for (i = 0; i < m; i++) {
-		j = l;
-		WS(i) += fix_mul( ( l = WD(i) ) + j , x);
-	}
-	if( i < k ) {
-		l = fix_mul( l + l , x );
-		for (; i < k; i++)
-			WS(i) += l;
-	}
-}
-
-static void dwt_decode_dm(dwt_t* v, int k, int n, int x) {
-	int m = k >= n ? n-1 : k;
-	int l = v->mem[0];				//S(0);
-	int i;
-	int j;
-	for (i = 0; i < m; i++) {
-		j = l;
-		WD(i) -=  fix_mul( ( l = WS(i+1) ) + j , x);
-	}
-	if( i < k ) {
-		l = fix_mul( l + l , x );
-		for (; i < k; i++)
-			WD(i) -= l;
-	}
-}
-
-static void dwt_decode_dp(dwt_t* v, int k, int n, int x) {
-	int m = k >= n ? n-1 : k;
-	int l = v->mem[0];				//S(0);
-	int i;
-	int j;
-	for (i = 0; i < m; i++) {
-		j = l;
-		WD(i) +=  fix_mul( ( l = WS(i+1) ) + j , x);
-	}
-
-	if( i < k ) {
-		l = fix_mul( l + l , x );
-		for (; i < k; i++)
-			WD(i) += l;
-	}
-}
-
-
-/* <summary>                             */
-/* Inverse 9-7 wavelet transform in 1-D. */
-/* </summary>                            */
-static void dwt_decode_1_real(dwt_t* v) {
-	int i;
-	if (!v->cas) {
-		if ((v->dn > 0) || (v->sn > 1)) {	/* NEW :  CASE ONE ELEMENT */
-			for (i = 0; i < v->sn; i++)
-				WS(i) = fix_mul(WS(i), 10078);	/* 10076 */
-			for (i = 0; i < v->dn; i++)
-				WD(i) = fix_mul(WD(i), 13318);	/* 13320 */
-			dwt_decode_sm(v, v->sn, v->dn, 3633);
-			dwt_decode_dm(v, v->dn, v->sn, 7233);
-			dwt_decode_sp(v, v->sn, v->dn, 434);
-			dwt_decode_dp(v, v->dn, v->sn, 12994);
-		}
-	} else {
-		if ((v->sn > 0) || (v->dn > 1)) {	/* NEW :  CASE ONE ELEMENT */
-			for (i = 0; i < v->sn; i++)
-				WD(i) = fix_mul(WD(i), 10078);	/* 10076 */
-			for (i = 0; i < v->dn; i++)
-				WS(i) = fix_mul(WS(i), 13318);	/* 13320 */
-			dwt_decode_dm(v, v->sn, v->dn, 3633);
-			dwt_decode_sm(v, v->dn, v->sn, 7233);
-			dwt_decode_dp(v, v->sn, v->dn, 434);
-			dwt_decode_sp(v, v->dn, v->sn, 12994);
-		}
-	}
-}
-
 static void dwt_encode_stepsize(int stepsize, int numbps, opj_stepsize_t *bandno_stepsize) {
 	int p, n;
 	p = int_floorlog2(stepsize) - 13;
@@ -454,8 +379,8 @@ void dwt_encode(opj_tcd_tilecomp_t * tilec) {
 /* <summary>                            */
 /* Inverse 5-3 wavelet transform in 2-D. */
 /* </summary>                           */
-void dwt_decode(opj_tcd_tilecomp_t * tilec, int stop) {
-	dwt_decode_tile(tilec, stop, &dwt_decode_1);
+void dwt_decode(opj_tcd_tilecomp_t* tilec, int numres) {
+	dwt_decode_tile(tilec, numres, &dwt_decode_1);
 }
 
 
@@ -534,14 +459,6 @@ void dwt_encode_real(opj_tcd_tilecomp_t * tilec) {
 }
 
 
-/* <summary>                             */
-/* Inverse 9-7 wavelet transform in 2-D. */
-/* </summary>                            */
-void dwt_decode_real(opj_tcd_tilecomp_t * tilec, int stop) {
-	dwt_decode_tile(tilec, stop, dwt_decode_1_real);
-}
-
-
 /* <summary>                          */
 /* Get gain of 9-7 wavelet transform. */
 /* </summary>                         */
@@ -582,7 +499,7 @@ void dwt_calc_explicit_stepsizes(opj_tccp_t * tccp, int prec) {
 /* <summary>                             */
 /* Determine maximum computed resolution level for inverse wavelet transform */
 /* </summary>                            */
-static int dwt_decode_max_resolution(opj_tcd_resolution_t* r, int i) {
+static int dwt_decode_max_resolution(opj_tcd_resolution_t* restrict r, int i) {
 	int mr	= 1;
 	int w;
 	while( --i ) {
@@ -599,62 +516,310 @@ static int dwt_decode_max_resolution(opj_tcd_resolution_t* r, int i) {
 /* <summary>                            */
 /* Inverse wavelet transform in 2-D.     */
 /* </summary>                           */
-static void dwt_decode_tile(opj_tcd_tilecomp_t * tilec, int stop, DWT1DFN dwt_1D) {
-	opj_tcd_resolution_t* tr;
-	int i, j, k;
-	int *a = NULL;
-	int *aj = NULL;
-	int w; //, l;
-	int rw;			/* width of the resolution level computed  */
-	int rh;			/* height of the resolution level computed  */
+static void dwt_decode_tile(opj_tcd_tilecomp_t* tilec, int numres, DWT1DFN dwt_1D) {
 	dwt_t h;
 	dwt_t v;
-	
-	if( 1 > ( i = tilec->numresolutions - stop ) )
-		return ;
 
-	tr = tilec->resolutions;
+	opj_tcd_resolution_t* tr = tilec->resolutions;
 
-	w = tilec->x1-tilec->x0;
-	a = tilec->data;
+	int rw = tr->x1 - tr->x0;	/* width of the resolution level computed */
+	int rh = tr->y1 - tr->y0;	/* height of the resolution level computed */
 
-	h.mem = (int*) opj_aligned_malloc(dwt_decode_max_resolution(tr, i) * sizeof(int));
+	int w = tilec->x1 - tilec->x0;
+
+	h.mem = opj_aligned_malloc(dwt_decode_max_resolution(tr, numres) * sizeof(int));
 	v.mem = h.mem;
 
-	rw = tr->x1 - tr->x0;
-	rh = tr->y1 - tr->y0;
+	while( --numres) {
+		int * restrict tiledp = tilec->data;
+		int j;
 
-	while( --i ) {
-		tr++;
+		++tr;
 		h.sn = rw;
 		v.sn = rh;
-		h.dn = ( rw = tr->x1 - tr->x0 ) - h.sn;
-		v.dn = ( rh = tr->y1 - tr->y0 ) - v.sn;
-				
-		h.cas = tr->x0 % 2;
-		v.cas = tr->y0 % 2;
 
-		aj = a;
-		j = rh;
-		while( j-- ) {		
-			dwt_interleave_h(&h, aj);
+		rw = tr->x1 - tr->x0;
+		rh = tr->y1 - tr->y0;
+
+		h.dn = rw - h.sn;
+		h.cas = tr->x0 % 2;
+
+		for(j = 0; j < rh; ++j) {
+			dwt_interleave_h(&h, &tiledp[j*w]);
 			(dwt_1D)(&h);
-			k = rw;
-			while( k-- )
-				aj[k] = h.mem[k];
-			aj += w;
+			memcpy(&tiledp[j*w], h.mem, rw * sizeof(int));
 		}
 
-		aj = a;
-		j = rw;
-		while( j-- ) {
-			dwt_interleave_v(&v, aj, w);
+		v.dn = rh - v.sn;
+		v.cas = tr->y0 % 2;
+
+		for(j = 0; j < rw; ++j){
+			int k;
+			dwt_interleave_v(&v, &tiledp[j], w);
 			(dwt_1D)(&v);
-			k = rh;
-			while( k-- )
-				aj[k * w] = v.mem[k];
-			aj++;
+			for(k = 0; k < rh; ++k) {
+				tiledp[k * w + j] = v.mem[k];
+			}
 		}
 	}
 	opj_aligned_free(h.mem);
 }
+
+static void v4dwt_interleave_h(v4dwt_t* restrict w, float* restrict a, int x, int size){
+	float* restrict bi = (float*) (w->wavelet + w->cas);
+	int count = w->sn;
+	int i, k;
+	for(k = 0; k < 2; ++k){
+		for(i = 0; i < count; ++i){
+			int j = i;
+			bi[i*8    ] = a[j];
+			j += x;
+			if(j > size) continue;
+			bi[i*8 + 1] = a[j];
+			j += x;
+			if(j > size) continue;
+			bi[i*8 + 2] = a[j];
+			j += x;
+			if(j > size) continue;
+			bi[i*8 + 3] = a[j];
+		}
+		bi = (float*) (w->wavelet + 1 - w->cas);
+		a += w->sn;
+		size -= w->sn;
+		count = w->dn;
+	}
+}
+
+static void v4dwt_interleave_v(v4dwt_t* restrict v , float* restrict a , int x){
+	v4* restrict bi = v->wavelet + v->cas;
+	int i;
+	for(i = 0; i < v->sn; ++i){
+		memcpy(&bi[i*2], &a[i*x], 4 * sizeof(float));
+	}
+	a += v->sn * x;
+	bi = v->wavelet + 1 - v->cas;
+	for(i = 0; i < v->dn; ++i){
+		memcpy(&bi[i*2], &a[i*x], 4 * sizeof(float));
+	}
+}
+
+#ifdef __SSE__
+
+static void v4dwt_decode_step1_sse(v4* w, int count, const __m128 c){
+	__m128* restrict vw = (__m128*) w;
+	int i;
+	for(i = 0; i < count; ++i){
+		__m128 tmp = vw[i*2];
+		vw[i*2] = tmp * c;
+	}
+}
+
+static void v4dwt_decode_step2_sse(v4* l, v4* w, int k, int m, __m128 c){
+	__m128* restrict vl = (__m128*) l;
+	__m128* restrict vw = (__m128*) w;
+	int i;
+	for(i = 0; i < m; ++i){
+		__m128 tmp1 = vl[ 0];
+		__m128 tmp2 = vw[-1];
+		__m128 tmp3 = vw[ 0];
+		vw[-1] = tmp2 + ((tmp1 + tmp3) * c);
+		vl = vw;
+		vw += 2;
+	}
+	if(m >= k){
+		return;
+	}
+	c += c;
+	c *= vl[0];
+	for(; m < k; ++m){
+		__m128 tmp = vw[-1];
+		vw[-1] = tmp + c;
+		vw += 2;
+	}
+}
+
+#else
+
+static void v4dwt_decode_step1(v4* w, int count, const float c){
+	float* restrict fw = (float*) w;
+	int i;
+	for(i = 0; i < count; ++i){
+		float tmp1 = fw[i*8    ];
+		float tmp2 = fw[i*8 + 1];
+		float tmp3 = fw[i*8 + 2];
+		float tmp4 = fw[i*8 + 3];
+		fw[i*8    ] = tmp1 * c;
+		fw[i*8 + 1] = tmp2 * c;
+		fw[i*8 + 2] = tmp3 * c;
+		fw[i*8 + 3] = tmp4 * c;
+	}
+}
+
+static void v4dwt_decode_step2(v4* l, v4* w, int k, int m, float c){
+	float* restrict fl = (float*) l;
+	float* restrict fw = (float*) w;
+	int i;
+	for(i = 0; i < m; ++i){
+		float tmp1_1 = fl[0];
+		float tmp1_2 = fl[1];
+		float tmp1_3 = fl[2];
+		float tmp1_4 = fl[3];
+		float tmp2_1 = fw[-4];
+		float tmp2_2 = fw[-3];
+		float tmp2_3 = fw[-2];
+		float tmp2_4 = fw[-1];
+		float tmp3_1 = fw[0];
+		float tmp3_2 = fw[1];
+		float tmp3_3 = fw[2];
+		float tmp3_4 = fw[3];
+		fw[-4] = tmp2_1 + ((tmp1_1 + tmp3_1) * c);
+		fw[-3] = tmp2_2 + ((tmp1_2 + tmp3_2) * c);
+		fw[-2] = tmp2_3 + ((tmp1_3 + tmp3_3) * c);
+		fw[-1] = tmp2_4 + ((tmp1_4 + tmp3_4) * c);
+		fl = fw;
+		fw += 8;
+	}
+	if(m < k){
+		float c1;
+		float c2;
+		float c3;
+		float c4;
+		c += c;
+		c1 = fl[0] * c;
+		c2 = fl[1] * c;
+		c3 = fl[2] * c;
+		c4 = fl[3] * c;
+		for(; m < k; ++m){
+			float tmp1 = fw[-4];
+			float tmp2 = fw[-3];
+			float tmp3 = fw[-2];
+			float tmp4 = fw[-1];
+			fw[-4] = tmp1 + c1;
+			fw[-3] = tmp2 + c2;
+			fw[-2] = tmp3 + c3;
+			fw[-1] = tmp4 + c4;
+			fw += 8;
+		}
+	}
+}
+
+#endif
+
+/* <summary>                             */
+/* Inverse 9-7 wavelet transform in 1-D. */
+/* </summary>                            */
+static void v4dwt_decode(v4dwt_t* restrict dwt){
+	int a, b;
+	if(dwt->cas == 0) {
+		if(!((dwt->dn > 0) || (dwt->sn > 1))){
+			return;
+		}
+		a = 0;
+		b = 1;
+	}else{
+		if(!((dwt->sn > 0) || (dwt->dn > 1))) {
+			return;
+		}
+		a = 1;
+		b = 0;
+	}
+#ifdef __SSE__
+	v4dwt_decode_step1_sse(dwt->wavelet+a, dwt->sn, _mm_set1_ps(K));
+	v4dwt_decode_step1_sse(dwt->wavelet+b, dwt->dn, _mm_set1_ps(c13318));
+	v4dwt_decode_step2_sse(dwt->wavelet+b, dwt->wavelet+a+1, dwt->sn, int_min(dwt->sn, dwt->dn-a), _mm_set1_ps(delta));
+	v4dwt_decode_step2_sse(dwt->wavelet+a, dwt->wavelet+b+1, dwt->dn, int_min(dwt->dn, dwt->sn-b), _mm_set1_ps(gamma));
+	v4dwt_decode_step2_sse(dwt->wavelet+b, dwt->wavelet+a+1, dwt->sn, int_min(dwt->sn, dwt->dn-a), _mm_set1_ps(beta));
+	v4dwt_decode_step2_sse(dwt->wavelet+a, dwt->wavelet+b+1, dwt->dn, int_min(dwt->dn, dwt->sn-b), _mm_set1_ps(alpha));
+#else
+	v4dwt_decode_step1(dwt->wavelet+a, dwt->sn, K);
+	v4dwt_decode_step1(dwt->wavelet+b, dwt->dn, c13318);
+	v4dwt_decode_step2(dwt->wavelet+b, dwt->wavelet+a+1, dwt->sn, int_min(dwt->sn, dwt->dn-a), delta);
+	v4dwt_decode_step2(dwt->wavelet+a, dwt->wavelet+b+1, dwt->dn, int_min(dwt->dn, dwt->sn-b), gamma);
+	v4dwt_decode_step2(dwt->wavelet+b, dwt->wavelet+a+1, dwt->sn, int_min(dwt->sn, dwt->dn-a), beta);
+	v4dwt_decode_step2(dwt->wavelet+a, dwt->wavelet+b+1, dwt->dn, int_min(dwt->dn, dwt->sn-b), alpha);
+#endif
+}
+
+/* <summary>                             */
+/* Inverse 9-7 wavelet transform in 2-D. */
+/* </summary>                            */
+void dwt_decode_real(opj_tcd_tilecomp_t* restrict tilec, int numres){
+	v4dwt_t h;
+	v4dwt_t v;
+
+	opj_tcd_resolution_t* res = tilec->resolutions;
+
+	int rw = res->x1 - res->x0;	/* width of the resolution level computed */
+	int rh = res->y1 - res->y0;	/* height of the resolution level computed */
+
+	int w = tilec->x1 - tilec->x0;
+
+	h.wavelet = (v4*) opj_aligned_malloc((dwt_decode_max_resolution(res, numres)+5) * sizeof(v4));
+	v.wavelet = h.wavelet;
+
+	while( --numres) {
+		float * restrict aj = (float*) tilec->data;
+		int bufsize = (tilec->x1 - tilec->x0) * (tilec->y1 - tilec->y0);
+		int j;
+
+		h.sn = rw;
+		v.sn = rh;
+
+		++res;
+
+		rw = res->x1 - res->x0;	/* width of the resolution level computed */
+		rh = res->y1 - res->y0;	/* height of the resolution level computed */
+
+		h.dn = rw - h.sn;
+		h.cas = res->x0 % 2;
+
+		for(j = rh; j > 0; j -= 4){
+			v4dwt_interleave_h(&h, aj, w, bufsize);
+			v4dwt_decode(&h);
+			if(j >= 4){
+				int k;
+				for(k = rw; --k >= 0;){
+					aj[k    ] = h.wavelet[k].f[0];
+					aj[k+w  ] = h.wavelet[k].f[1];
+					aj[k+w*2] = h.wavelet[k].f[2];
+					aj[k+w*3] = h.wavelet[k].f[3];
+				}
+			}else{
+				int k;
+				for(k = rw; --k >= 0;){
+					switch(j) {
+						case 3: aj[k+w*2] = h.wavelet[k].f[2];
+						case 2: aj[k+w  ] = h.wavelet[k].f[1];
+						case 1: aj[k    ] = h.wavelet[k].f[0];
+					}
+				}
+			}
+			aj += w*4;
+			bufsize -= w*4;
+		}
+
+		v.dn = rh - v.sn;
+		v.cas = res->y0 % 2;
+
+		aj = (float*) tilec->data;
+		for(j = rw; j > 0; j -= 4){
+			v4dwt_interleave_v(&v, aj, w);
+			v4dwt_decode(&v);
+			if(j >= 4){
+				int k;
+				for(k = 0; k < rh; ++k){
+					memcpy(&aj[k*w], &v.wavelet[k], 4 * sizeof(float));
+				}
+			}else{
+				int k;
+				for(k = 0; k < rh; ++k){
+					memcpy(&aj[k*w], &v.wavelet[k], j * sizeof(float));
+				}
+			}
+			aj += 4;
+		}
+	}
+
+	opj_aligned_free(h.wavelet);
+}
+

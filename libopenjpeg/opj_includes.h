@@ -76,6 +76,30 @@ Most compilers implement their own version of this keyword ...
 	#endif /* defined(<Compiler>) */
 #endif /* INLINE */
 
+/* Are restricted pointers available? (C99) */
+#if (__STDC_VERSION__ != 199901L)
+	/* Not a C99 compiler */
+	#ifdef __GNUC__
+		#define restrict __restrict__
+	#else
+		#define restrict /* restrict */
+	#endif
+#endif
+
+/* MSVC does not have lrintf */
+#ifdef _MSC_VER
+static INLINE long lrintf(float f){
+	int i;
+
+	_asm{
+		fld f
+		fistp i
+	};
+
+	return i;
+}
+#endif
+
 #include "j2k_lib.h"
 #include "opj_malloc.h"
 #include "event.h"

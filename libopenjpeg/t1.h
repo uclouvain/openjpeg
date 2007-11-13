@@ -138,7 +138,7 @@ Decode the code-blocks of a tile
 @param tile The tile to decode
 @param tcp Tile coding parameters
 */
-void t1_decode_cblks(opj_t1_t *t1, opj_tcd_tile_t *tile, opj_tcp_t *tcp);
+void t1_decode_cblks(opj_t1_t* t1, opj_tcd_tilecomp_t* tilec, opj_tccp_t* tccp);
 /* ----------------------------------------------------------------------- */
 /*@}*/
 
