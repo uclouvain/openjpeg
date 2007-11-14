@@ -45,9 +45,10 @@ each other. The functions in TCD.C are used by some function in J2K.C.
 FIXME: documentation
 */
 typedef struct opj_tcd_seg {
+  unsigned char** data;
+  int dataindex;
   int numpasses;
   int len;
-  unsigned char *data;
   int maxpasses;
   int numnewpasses;
   int newlen;
@@ -75,21 +76,28 @@ typedef struct opj_tcd_layer {
 /**
 FIXME: documentation
 */
-typedef struct opj_tcd_cblk {
+typedef struct opj_tcd_cblk_enc {
+  unsigned char* data;	/* Data */
+  opj_tcd_layer_t* layers;	/* layer information */
+  opj_tcd_pass_t* passes;	/* information about the passes */
   int x0, y0, x1, y1;		/* dimension of the code-blocks : left upper corner (x0, y0) right low corner (x1,y1) */
   int numbps;
   int numlenbits;
-  int len;			/* length */
   int numpasses;		/* number of pass already done for the code-blocks */
+  int numpassesinlayers;	/* number of passes in the layer */
+  int totalpasses;		/* total number of passes */
+} opj_tcd_cblk_enc_t;
+
+typedef struct opj_tcd_cblk_dec {
+  unsigned char* data;	/* Data */
+  opj_tcd_seg_t* segs;		/* segments informations */
+	int x0, y0, x1, y1;		/* dimension of the code-blocks : left upper corner (x0, y0) right low corner (x1,y1) */
+  int numbps;
+  int numlenbits;
+  int len;			/* length */
   int numnewpasses;		/* number of pass added to the code-blocks */
   int numsegs;			/* number of segments */
-  opj_tcd_seg_t segs[100];		/* segments informations */
-  unsigned char data[8192];	/* Data */
-  int numpassesinlayers;	/* number of passes in the layer */
-  opj_tcd_layer_t layers[100];	/* layer information */
-  int totalpasses;		/* total number of passes */
-  opj_tcd_pass_t passes[100];	/* information about the passes */
-} opj_tcd_cblk_t;
+} opj_tcd_cblk_dec_t;
 
 /**
 FIXME: documentation
@@ -97,7 +105,10 @@ FIXME: documentation
 typedef struct opj_tcd_precinct {
   int x0, y0, x1, y1;		/* dimension of the precinct : left upper corner (x0, y0) right low corner (x1,y1) */
   int cw, ch;			/* number of precinct in width and heigth */
-  opj_tcd_cblk_t *cblks;		/* code-blocks informations */
+  union{		/* code-blocks informations */
+	  opj_tcd_cblk_enc_t* enc;
+	  opj_tcd_cblk_dec_t* dec;
+  } cblks;
   opj_tgt_tree_t *incltree;		/* inclusion tree */
   opj_tgt_tree_t *imsbtree;		/* IMSB tree */
 } opj_tcd_precinct_t;

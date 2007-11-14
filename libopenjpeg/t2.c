@@ -63,7 +63,7 @@ static int t2_encode_packet(opj_tcd_tile_t *tile, opj_tcp_t *tcp, opj_pi_iterato
 @param cblksty
 @param first
 */
-static void t2_init_seg(opj_tcd_seg_t *seg, int cblksty, int first);
+static void t2_init_seg(opj_tcd_cblk_dec_t* cblk, int index, int cblksty, int first);
 /**
 Decode a packet of a tile from a source buffer
 @param t2 T2 handle
@@ -160,7 +160,7 @@ static int t2_encode_packet(opj_tcd_tile_t * tile, opj_tcp_t * tcp, opj_pi_itera
 			tgt_reset(prc->incltree);
 			tgt_reset(prc->imsbtree);
 			for (cblkno = 0; cblkno < prc->cw * prc->ch; cblkno++) {
-				opj_tcd_cblk_t *cblk = &prc->cblks[cblkno];
+				opj_tcd_cblk_enc_t* cblk = &prc->cblks.enc[cblkno];
 				cblk->numpasses = 0;
 				tgt_setvalue(prc->imsbtree, cblkno, band->numbps - cblk->numbps);
 			}
@@ -176,14 +176,14 @@ static int t2_encode_packet(opj_tcd_tile_t * tile, opj_tcp_t * tcp, opj_pi_itera
 		opj_tcd_band_t *band = &res->bands[bandno];
 		opj_tcd_precinct_t *prc = &band->precincts[precno];
 		for (cblkno = 0; cblkno < prc->cw * prc->ch; cblkno++) {
-			opj_tcd_cblk_t *cblk = &prc->cblks[cblkno];
+			opj_tcd_cblk_enc_t* cblk = &prc->cblks.enc[cblkno];
 			opj_tcd_layer_t *layer = &cblk->layers[layno];
 			if (!cblk->numpasses && layer->numpasses) {
 				tgt_setvalue(prc->incltree, cblkno, layno);
 			}
 		}
 		for (cblkno = 0; cblkno < prc->cw * prc->ch; cblkno++) {
-			opj_tcd_cblk_t *cblk = &prc->cblks[cblkno];
+			opj_tcd_cblk_enc_t* cblk = &prc->cblks.enc[cblkno];
 			opj_tcd_layer_t *layer = &cblk->layers[layno];
 			int increment = 0;
 			int nump = 0;
@@ -267,7 +267,7 @@ static int t2_encode_packet(opj_tcd_tile_t * tile, opj_tcp_t * tcp, opj_pi_itera
 		opj_tcd_band_t *band = &res->bands[bandno];
 		opj_tcd_precinct_t *prc = &band->precincts[precno];
 		for (cblkno = 0; cblkno < prc->cw * prc->ch; cblkno++) {
-			opj_tcd_cblk_t *cblk = &prc->cblks[cblkno];
+			opj_tcd_cblk_enc_t* cblk = &prc->cblks.enc[cblkno];
 			opj_tcd_layer_t *layer = &cblk->layers[layno];
 			if (!layer->numpasses) {
 				continue;
@@ -294,7 +294,12 @@ static int t2_encode_packet(opj_tcd_tile_t * tile, opj_tcp_t * tcp, opj_pi_itera
 	return (c - dest);
 }
 
-static void t2_init_seg(opj_tcd_seg_t * seg, int cblksty, int first) {
+static void t2_init_seg(opj_tcd_cblk_dec_t* cblk, int index, int cblksty, int first) {
+	opj_tcd_seg_t* seg;
+	cblk->segs = (opj_tcd_seg_t*) opj_realloc(cblk->segs, (index + 1) * sizeof(opj_tcd_seg_t));
+	seg = &cblk->segs[index];
+	seg->data = NULL;
+	seg->dataindex = 0;
 	seg->numpasses = 0;
 	seg->len = 0;
 	if (cblksty & J2K_CCP_CBLKSTY_TERMALL) {
@@ -340,7 +345,7 @@ static int t2_decode_packet(opj_t2_t* t2, unsigned char *src, int len, opj_tcd_t
 			tgt_reset(prc->incltree);
 			tgt_reset(prc->imsbtree);
 			for (cblkno = 0; cblkno < prc->cw * prc->ch; cblkno++) {
-				opj_tcd_cblk_t *cblk = &prc->cblks[cblkno];
+				opj_tcd_cblk_dec_t* cblk = &prc->cblks.dec[cblkno];
 				cblk->numsegs = 0;
 			}
 		}
@@ -424,9 +429,8 @@ static int t2_decode_packet(opj_t2_t* t2, unsigned char *src, int len, opj_tcd_t
 		if ((band->x1-band->x0 == 0)||(band->y1-band->y0 == 0)) continue;
 		
 		for (cblkno = 0; cblkno < prc->cw * prc->ch; cblkno++) {
-			int included, increment, n;
-			opj_tcd_cblk_t *cblk = &prc->cblks[cblkno];
-			opj_tcd_seg_t *seg = NULL;
+			int included, increment, n, segno;
+			opj_tcd_cblk_dec_t* cblk = &prc->cblks.dec[cblkno];
 			/* if cblk not yet included before --> inclusion tagtree */
 			if (!cblk->numsegs) {
 				included = tgt_decode(bio, prc->incltree, cblkno, layno + 1);
@@ -454,23 +458,25 @@ static int t2_decode_packet(opj_t2_t* t2, unsigned char *src, int len, opj_tcd_t
 			increment = t2_getcommacode(bio);
 			/* length indicator increment */
 			cblk->numlenbits += increment;
+			segno = 0;
 			if (!cblk->numsegs) {
-				seg = &cblk->segs[0];
-				t2_init_seg(seg, tcp->tccps[compno].cblksty, 1);
+				t2_init_seg(cblk, segno, tcp->tccps[compno].cblksty, 1);
 			} else {
-				seg = &cblk->segs[cblk->numsegs - 1];
-				if (seg->numpasses == seg->maxpasses) {
-					t2_init_seg(++seg, tcp->tccps[compno].cblksty, 0);
+				segno = cblk->numsegs - 1;
+				if (cblk->segs[segno].numpasses == cblk->segs[segno].maxpasses) {
+					++segno;
+					t2_init_seg(cblk, segno, tcp->tccps[compno].cblksty, 0);
 				}
 			}
 			n = cblk->numnewpasses;
 			
 			do {
-				seg->numnewpasses = int_min(seg->maxpasses - seg->numpasses, n);
-				seg->newlen = bio_read(bio, cblk->numlenbits + int_floorlog2(seg->numnewpasses));
-				n -= seg->numnewpasses;
+				cblk->segs[segno].numnewpasses = int_min(cblk->segs[segno].maxpasses - cblk->segs[segno].numpasses, n);
+				cblk->segs[segno].newlen = bio_read(bio, cblk->numlenbits + int_floorlog2(cblk->segs[segno].numnewpasses));
+				n -= cblk->segs[segno].numnewpasses;
 				if (n > 0) {
-					t2_init_seg(++seg, tcp->tccps[compno].cblksty, 0);
+					++segno;
+					t2_init_seg(cblk, segno, tcp->tccps[compno].cblksty, 0);
 				}
 			} while (n > 0);
 		}
@@ -518,7 +524,7 @@ static int t2_decode_packet(opj_t2_t* t2, unsigned char *src, int len, opj_tcd_t
 		if ((band->x1-band->x0 == 0)||(band->y1-band->y0 == 0)) continue;
 		
 		for (cblkno = 0; cblkno < prc->cw * prc->ch; cblkno++) {
-			opj_tcd_cblk_t *cblk = &prc->cblks[cblkno];
+			opj_tcd_cblk_dec_t* cblk = &prc->cblks.dec[cblkno];
 			opj_tcd_seg_t *seg = NULL;
 			if (!cblk->numnewpasses)
 				continue;
@@ -559,9 +565,11 @@ static int t2_decode_packet(opj_t2_t* t2, unsigned char *src, int len, opj_tcd_t
 
 #endif /* USE_JPWL */
 				
+				cblk->data = (unsigned char*) opj_realloc(cblk->data, (cblk->len + seg->newlen) * sizeof(unsigned char*));
 				memcpy(cblk->data + cblk->len, c, seg->newlen);
 				if (seg->numpasses == 0) {
-					seg->data = cblk->data + cblk->len;
+					seg->data = &cblk->data;
+					seg->dataindex = cblk->len;
 				}
 				c += seg->newlen;
 				cblk->len += seg->newlen;

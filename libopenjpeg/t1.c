@@ -194,7 +194,7 @@ Encode 1 code-block
 */
 static void t1_encode_cblk(
 		opj_t1_t *t1,
-		opj_tcd_cblk_t * cblk,
+		opj_tcd_cblk_enc_t* cblk,
 		int orient,
 		int compno,
 		int level,
@@ -213,7 +213,7 @@ Decode 1 code-block
 */
 static void t1_decode_cblk(
 		opj_t1_t *t1,
-		opj_tcd_cblk_t * cblk,
+		opj_tcd_cblk_dec_t* cblk,
 		int orient,
 		int roishift,
 		int cblksty);
@@ -792,7 +792,7 @@ static bool allocate_buffers(
 /** mod fixed_quality */
 static void t1_encode_cblk(
 		opj_t1_t *t1,
-		opj_tcd_cblk_t * cblk,
+		opj_tcd_cblk_enc_t* cblk,
 		int orient,
 		int compno,
 		int level,
@@ -925,7 +925,7 @@ static void t1_encode_cblk(
 
 static void t1_decode_cblk(
 		opj_t1_t *t1,
-		opj_tcd_cblk_t * cblk,
+		opj_tcd_cblk_dec_t* cblk,
 		int orient,
 		int roishift,
 		int cblksty)
@@ -958,10 +958,14 @@ static void t1_decode_cblk(
 		
 		/* BYPASS mode */
 		type = ((bpno <= (cblk->numbps - 1) - 4) && (passtype < 2) && (cblksty & J2K_CCP_CBLKSTY_LAZY)) ? T1_TYPE_RAW : T1_TYPE_MQ;
+		/* FIXME: slviewer gets here with a null pointer. Why? Partially downloaded and/or corrupt textures? */
+		if(seg->data == NULL){
+			continue;
+		}
 		if (type == T1_TYPE_RAW) {
-			raw_init_dec(raw, seg->data, seg->len);
+			raw_init_dec(raw, (*seg->data) + seg->dataindex, seg->len);
 		} else {
-			mqc_init_dec(mqc, seg->data, seg->len);
+			mqc_init_dec(mqc, (*seg->data) + seg->dataindex, seg->len);
 		}
 		
 		for (passno = 0; passno < seg->numpasses; ++passno) {
@@ -1046,7 +1050,7 @@ void t1_encode_cblks(
 					opj_tcd_precinct_t *prc = &band->precincts[precno];
 
 					for (cblkno = 0; cblkno < prc->cw * prc->ch; ++cblkno) {
-						opj_tcd_cblk_t *cblk = &prc->cblks[cblkno];
+						opj_tcd_cblk_enc_t* cblk = &prc->cblks.enc[cblkno];
 						int* restrict datap;
 						int* restrict tiledp;
 						int cblk_w;
@@ -1134,7 +1138,7 @@ void t1_decode_cblks(
 				opj_tcd_precinct_t* precinct = &band->precincts[precno];
 
 				for (cblkno = 0; cblkno < precinct->cw * precinct->ch; ++cblkno) {
-					opj_tcd_cblk_t* cblk = &precinct->cblks[cblkno];
+					opj_tcd_cblk_dec_t* cblk = &precinct->cblks.dec[cblkno];
 					int* restrict datap;
 					void* restrict tiledp;
 					int cblk_w, cblk_h;
@@ -1193,8 +1197,10 @@ void t1_decode_cblks(
 							}
 						}
 					}
+					opj_free(cblk->data);
+					opj_free(cblk->segs);
 				} /* cblkno */
-				opj_free(precinct->cblks);
+				opj_free(precinct->cblks.dec);
 			} /* precno */
 		} /* bandno */
 	} /* resno */

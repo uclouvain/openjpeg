@@ -33,7 +33,7 @@
 #include "opj_includes.h"
 
 void tcd_dump(FILE *fd, opj_tcd_t *tcd, opj_tcd_image_t * img) {
-	int tileno, compno, resno, bandno, precno, cblkno;
+	int tileno, compno, resno, bandno, precno;//, cblkno;
 
 	fprintf(fd, "image {\n");
 	fprintf(fd, "  tw=%d, th=%d x0=%d x1=%d y0=%d y1=%d\n", 
@@ -68,6 +68,7 @@ void tcd_dump(FILE *fd, opj_tcd_t *tcd, opj_tcd_image_t * img) {
 						fprintf(fd,
 							"            x0=%d, y0=%d, x1=%d, y1=%d, cw=%d, ch=%d\n",
 							prec->x0, prec->y0, prec->x1, prec->y1, prec->cw, prec->ch);
+						/*
 						for (cblkno = 0; cblkno < prec->cw * prec->ch; cblkno++) {
 							opj_tcd_cblk_t *cblk = &prec->cblks[cblkno];
 							fprintf(fd, "            cblk {\n");
@@ -76,6 +77,7 @@ void tcd_dump(FILE *fd, opj_tcd_t *tcd, opj_tcd_image_t * img) {
 								cblk->x0, cblk->y0, cblk->x1, cblk->y1);
 							fprintf(fd, "            }\n");
 						}
+						*/
 						fprintf(fd, "          }\n");
 					}
 					fprintf(fd, "        }\n");
@@ -313,7 +315,7 @@ void tcd_malloc_encode(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp, int c
 						prc->cw = (brcblkxend - tlcblkxstart) >> cblkwidthexpn;
 						prc->ch = (brcblkyend - tlcblkystart) >> cblkheightexpn;
 
-						prc->cblks = (opj_tcd_cblk_t*) opj_calloc((prc->cw * prc->ch), sizeof(opj_tcd_cblk_t));
+						prc->cblks.enc = (opj_tcd_cblk_enc_t*) opj_calloc((prc->cw * prc->ch), sizeof(opj_tcd_cblk_enc_t));
 						prc->incltree = tgt_create(prc->cw, prc->ch);
 						prc->imsbtree = tgt_create(prc->cw, prc->ch);
 						
@@ -323,13 +325,18 @@ void tcd_malloc_encode(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp, int c
 							int cblkxend = cblkxstart + (1 << cblkwidthexpn);
 							int cblkyend = cblkystart + (1 << cblkheightexpn);
 							
-							opj_tcd_cblk_t *cblk = &prc->cblks[cblkno];
+							opj_tcd_cblk_enc_t* cblk = &prc->cblks.enc[cblkno];
 
 							/* code-block size (global) */
 							cblk->x0 = int_max(cblkxstart, prc->x0);
 							cblk->y0 = int_max(cblkystart, prc->y0);
 							cblk->x1 = int_min(cblkxend, prc->x1);
 							cblk->y1 = int_min(cblkyend, prc->y1);
+							cblk->data = (unsigned char*) opj_calloc(8192+2, sizeof(unsigned char));
+							/* FIXME: mqc_init_enc and mqc_byteout underrun the buffer if we don't do this. Why? */
+							cblk->data += 2;
+							cblk->layers = (opj_tcd_layer_t*) opj_calloc(100, sizeof(opj_tcd_layer_t));
+							cblk->passes = (opj_tcd_pass_t*) opj_calloc(100, sizeof(opj_tcd_pass_t));
 						}
 					}
 				}
@@ -341,7 +348,7 @@ void tcd_malloc_encode(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp, int c
 }
 
 void tcd_free_encode(opj_tcd_t *tcd) {
-	int tileno, compno, resno, bandno, precno;
+	int tileno, compno, resno, bandno, precno, cblkno;
 
 	for (tileno = 0; tileno < 1; tileno++) {
 		opj_tcd_tile_t *tile = tcd->tcd_image->tiles;
@@ -366,8 +373,12 @@ void tcd_free_encode(opj_tcd_t *tcd) {
 							tgt_destroy(prc->imsbtree);	
 							prc->imsbtree = NULL;
 						}
-						opj_free(prc->cblks);
-						prc->cblks = NULL;
+						for (cblkno = 0; cblkno < prc->cw * prc->ch; cblkno++) {
+							opj_free(prc->cblks.enc[cblkno].data - 2);
+							opj_free(prc->cblks.enc[cblkno].layers);
+							opj_free(prc->cblks.enc[cblkno].passes);
+						}
+						opj_free(prc->cblks.enc);
 					} /* for (precno */
 					opj_free(band->precincts);
 					band->precincts = NULL;
@@ -547,8 +558,8 @@ void tcd_init_encode(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp, int cur
 						prc->cw = (brcblkxend - tlcblkxstart) >> cblkwidthexpn;
 						prc->ch = (brcblkyend - tlcblkystart) >> cblkheightexpn;
 
-						opj_free(prc->cblks);
-						prc->cblks = (opj_tcd_cblk_t*) opj_calloc(prc->cw * prc->ch, sizeof(opj_tcd_cblk_t));
+						opj_free(prc->cblks.enc);
+						prc->cblks.enc = (opj_tcd_cblk_enc_t*) opj_calloc(prc->cw * prc->ch, sizeof(opj_tcd_cblk_enc_t));
 
 						if (prc->incltree != NULL) {
 							tgt_destroy(prc->incltree);
@@ -566,13 +577,16 @@ void tcd_init_encode(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp, int cur
 							int cblkxend = cblkxstart + (1 << cblkwidthexpn);
 							int cblkyend = cblkystart + (1 << cblkheightexpn);
 
-							opj_tcd_cblk_t *cblk = &prc->cblks[cblkno];
-							
+							opj_tcd_cblk_enc_t* cblk = &prc->cblks.enc[cblkno];
+
 							/* code-block size (global) */
 							cblk->x0 = int_max(cblkxstart, prc->x0);
 							cblk->y0 = int_max(cblkystart, prc->y0);
 							cblk->x1 = int_min(cblkxend, prc->x1);
 							cblk->y1 = int_min(cblkyend, prc->y1);
+							cblk->data = (unsigned char*) opj_calloc(8192, sizeof(unsigned char));
+							cblk->layers = (opj_tcd_layer_t*) opj_calloc(100, sizeof(opj_tcd_layer_t));
+							cblk->passes = (opj_tcd_pass_t*) opj_calloc(100, sizeof(opj_tcd_pass_t));
 						}
 					} /* precno */
 				} /* bandno */
@@ -779,9 +793,9 @@ void tcd_malloc_decode_tile(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp, 
 					brcblkyend = int_ceildivpow2(prc->y1, cblkheightexpn) << cblkheightexpn;
 					prc->cw = (brcblkxend - tlcblkxstart) >> cblkwidthexpn;
 					prc->ch = (brcblkyend - tlcblkystart) >> cblkheightexpn;
-					
-					prc->cblks = (opj_tcd_cblk_t *) opj_malloc(prc->cw * prc->ch * sizeof(opj_tcd_cblk_t));
-					
+
+					prc->cblks.dec = (opj_tcd_cblk_dec_t*) opj_malloc(prc->cw * prc->ch * sizeof(opj_tcd_cblk_dec_t));
+
 					prc->incltree = tgt_create(prc->cw, prc->ch);
 					prc->imsbtree = tgt_create(prc->cw, prc->ch);
 					
@@ -790,9 +804,11 @@ void tcd_malloc_decode_tile(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp, 
 						int cblkystart = tlcblkystart + (cblkno / prc->cw) * (1 << cblkheightexpn);
 						int cblkxend = cblkxstart + (1 << cblkwidthexpn);
 						int cblkyend = cblkystart + (1 << cblkheightexpn);					
-						
+
+						opj_tcd_cblk_dec_t* cblk = &prc->cblks.dec[cblkno];
+						cblk->data = NULL;
+						cblk->segs = NULL;
 						/* code-block size (global) */
-						opj_tcd_cblk_t *cblk = &prc->cblks[cblkno];
 						cblk->x0 = int_max(cblkxstart, prc->x0);
 						cblk->y0 = int_max(cblkystart, prc->y0);
 						cblk->x1 = int_min(cblkxend, prc->x1);
@@ -837,7 +853,7 @@ void tcd_makelayer_fixed(opj_tcd_t *tcd, int layno, int final) {
 				for (precno = 0; precno < res->pw * res->ph; precno++) {
 					opj_tcd_precinct_t *prc = &band->precincts[precno];
 					for (cblkno = 0; cblkno < prc->cw * prc->ch; cblkno++) {
-						opj_tcd_cblk_t *cblk = &prc->cblks[cblkno];
+						opj_tcd_cblk_enc_t *cblk = &prc->cblks.enc[cblkno];
 						opj_tcd_layer_t *layer = &cblk->layers[layno];
 						int n;
 						int imsb = tcd->image->comps[compno].prec - cblk->numbps;	/* number of bit-plan equal to zero */
@@ -918,7 +934,7 @@ void tcd_makelayer(opj_tcd_t *tcd, int layno, double thresh, int final) {
 				for (precno = 0; precno < res->pw * res->ph; precno++) {
 					opj_tcd_precinct_t *prc = &band->precincts[precno];
 					for (cblkno = 0; cblkno < prc->cw * prc->ch; cblkno++) {
-						opj_tcd_cblk_t *cblk = &prc->cblks[cblkno];
+						opj_tcd_cblk_enc_t *cblk = &prc->cblks.enc[cblkno];
 						opj_tcd_layer_t *layer = &cblk->layers[layno];
 						
 						int n;
@@ -1002,7 +1018,7 @@ bool tcd_rateallocate(opj_tcd_t *tcd, unsigned char *dest, int len, opj_codestre
 					opj_tcd_precinct_t *prc = &band->precincts[precno];
 
 					for (cblkno = 0; cblkno < prc->cw * prc->ch; cblkno++) {
-						opj_tcd_cblk_t *cblk = &prc->cblks[cblkno];
+						opj_tcd_cblk_enc_t *cblk = &prc->cblks.enc[cblkno];
 
 						for (passno = 0; passno < cblk->totalpasses; passno++) {
 							opj_tcd_pass_t *pass = &cblk->passes[passno];
