@@ -16,6 +16,8 @@ November 14, 2007
 		them in the encoder, getting the decoder to do it was tricky enough... I also split opj_tcd_cblk_t into separate 
 		encode and decode versions. A lot of fields were not used by both, so this cuts its size even further.
 
+* [FOD] Avoided ABI breakage
+
 November 13, 2007
 ! [FOD] Patch by Dzonatas and Callum Lerwick.
         Fp/vectorization patch which basically converts most of the irreversible decode codepath to floating point,

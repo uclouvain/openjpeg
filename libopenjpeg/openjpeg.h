@@ -303,6 +303,10 @@ typedef struct opj_cparameters {
 	char infile[OPJ_PATH_LEN];
 	/** output file name */
 	char outfile[OPJ_PATH_LEN];
+	/** DEPRECATED. Index generation is now handeld with the opj_encode_with_info() function. Set to NULL */
+	int index_on;
+	/** DEPRECATED. Index generation is now handeld with the opj_encode_with_info() function. Set to NULL */
+	char index[OPJ_PATH_LEN];
 	/** subimage encoding: origin image offset in x direction */
 	int image_offset_x0;
 	/** subimage encoding: origin image offset in y direction */
@@ -486,7 +490,7 @@ typedef struct opj_cio {
 	/** pointer to the start of the buffer */
 	unsigned char *buffer;
 	/** buffer size in bytes */
-	unsigned int length;
+	int length;
 
 	/** pointer to the start of the stream */
 	unsigned char *start;
