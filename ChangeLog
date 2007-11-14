@@ -5,6 +5,10 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+
+November 14, 2007
+! [FOD] Patch by Callum Lerwick. Instead of reinventing realloc, j2k_read_sod now just uses opj_realloc in j2k.c
+
 November 13, 2007
 ! [FOD] Patch by Dzonatas and Callum Lerwick.
         Fp/vectorization patch which basically converts most of the irreversible decode codepath to floating point,
