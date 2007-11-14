@@ -323,9 +323,8 @@ static int t2_decode_packet(opj_t2_t* t2, unsigned char *src, int len, opj_tcd_t
 	int precno = pi->precno;	/* precinct value */
 	int layno  = pi->layno;		/* quality layer value */
 
-	opj_tcd_tilecomp_t *tilec = &tile->comps[compno];
-	opj_tcd_resolution_t *res = &tilec->resolutions[resno];
-	
+	opj_tcd_resolution_t* res = &tile->comps[compno].resolutions[resno];
+
 	unsigned char *hd = NULL;
 	int present;
 	

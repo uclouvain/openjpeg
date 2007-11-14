@@ -641,7 +641,6 @@ void tcd_malloc_decode(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp) {
 		w = int_ceildivpow2(x1 - x0, image->comps[i].factor);
 		h = int_ceildivpow2(y1 - y0, image->comps[i].factor);
 
-		image->comps[i].data = (int *) opj_malloc(w * h * sizeof(int));
 		image->comps[i].w = w;
 		image->comps[i].h = h;
 		image->comps[i].x0 = x0;
@@ -671,8 +670,6 @@ void tcd_malloc_decode_tile(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp, 
 		tilec->x1 = int_ceildiv(tile->x1, image->comps[compno].dx);
 		tilec->y1 = int_ceildiv(tile->y1, image->comps[compno].dy);
 
-		/* The +3 is headroom required by the vectorized DWT */
-		tilec->data = (int*) opj_aligned_malloc((((tilec->x1 - tilec->x0) * (tilec->y1 - tilec->y0))+3) * sizeof(int));
 		tilec->numresolutions = tccp->numresolutions;
 		tilec->resolutions = (opj_tcd_resolution_t *) opj_malloc(tilec->numresolutions * sizeof(opj_tcd_resolution_t));
 		
@@ -1352,7 +1349,10 @@ bool tcd_decode_tile(opj_tcd_t *tcd, unsigned char *src, int len, int tileno, op
 	t1_time = opj_clock();	/* time needed to decode a tile */
 	t1 = t1_create(tcd->cinfo);
 	for (compno = 0; compno < tile->numcomps; ++compno) {
-		t1_decode_cblks(t1, &tile->comps[compno], &tcd->tcp->tccps[compno]);
+		opj_tcd_tilecomp_t* tilec = &tile->comps[compno];
+		/* The +3 is headroom required by the vectorized DWT */
+		tilec->data = (int*) opj_aligned_malloc((((tilec->x1 - tilec->x0) * (tilec->y1 - tilec->y0))+3) * sizeof(int));
+		t1_decode_cblks(t1, tilec, &tcd->tcp->tccps[compno]);
 	}
 	t1_destroy(t1);
 	t1_time = opj_clock() - t1_time;
@@ -1423,6 +1423,9 @@ bool tcd_decode_tile(opj_tcd_t *tcd, unsigned char *src, int len, int tileno, op
 		int offset_y = int_ceildivpow2(imagec->y0, imagec->factor);
 
 		int i, j;
+		if(!imagec->data){
+			imagec->data = (int*) opj_malloc(imagec->w * imagec->h * sizeof(int));
+		}
 		if(tcd->tcp->tccps[compno].qmfbid == 1) {
 			for(j = res->y0; j < res->y1; ++j) {
 				for(i = res->x0; i < res->x1; ++i) {
@@ -1441,15 +1444,11 @@ bool tcd_decode_tile(opj_tcd_t *tcd, unsigned char *src, int len, int tileno, op
 				}
 			}
 		}
+		opj_aligned_free(tilec->data);
 	}
 
 	tile_time = opj_clock() - tile_time;	/* time needed to decode a tile */
 	opj_event_msg(tcd->cinfo, EVT_INFO, "- tile decoded in %f s\n", tile_time);
-
-	for (compno = 0; compno < tile->numcomps; compno++) {
-		opj_aligned_free(tcd->tcd_image->tiles[tileno].comps[compno].data);
-		tcd->tcd_image->tiles[tileno].comps[compno].data = NULL;
-	}
 
 	if (eof) {
 		return false;
@@ -1460,7 +1459,7 @@ bool tcd_decode_tile(opj_tcd_t *tcd, unsigned char *src, int len, int tileno, op
 
 void tcd_free_decode(opj_tcd_t *tcd) {
 	opj_tcd_image_t *tcd_image = tcd->tcd_image;	
-	if (tcd_image->tiles != NULL) opj_free(tcd_image->tiles);
+	opj_free(tcd_image->tiles);
 }
 
 void tcd_free_decode_tile(opj_tcd_t *tcd, int tileno) {
@@ -1477,15 +1476,14 @@ void tcd_free_decode_tile(opj_tcd_t *tcd, int tileno) {
 				opj_tcd_band_t *band = &res->bands[bandno];
 				for (precno = 0; precno < res->ph * res->pw; precno++) {
 					opj_tcd_precinct_t *prec = &band->precincts[precno];
-					if (prec->cblks != NULL) opj_free(prec->cblks);
 					if (prec->imsbtree != NULL) tgt_destroy(prec->imsbtree);
 					if (prec->incltree != NULL) tgt_destroy(prec->incltree);
 				}
-				if (band->precincts != NULL) opj_free(band->precincts);
+				opj_free(band->precincts);
 			}
 		}
-		if (tilec->resolutions != NULL) opj_free(tilec->resolutions);
+		opj_free(tilec->resolutions);
 	}
-	if (tile->comps != NULL) opj_free(tile->comps);
+	opj_free(tile->comps);
 }
 

@@ -1131,10 +1131,10 @@ void t1_decode_cblks(
 			opj_tcd_band_t* restrict band = &res->bands[bandno];
 
 			for (precno = 0; precno < res->pw * res->ph; ++precno) {
-				opj_tcd_precinct_t* prc = &band->precincts[precno];
+				opj_tcd_precinct_t* precinct = &band->precincts[precno];
 
-				for (cblkno = 0; cblkno < prc->cw * prc->ch; ++cblkno) {
-					opj_tcd_cblk_t* cblk = &prc->cblks[cblkno];
+				for (cblkno = 0; cblkno < precinct->cw * precinct->ch; ++cblkno) {
+					opj_tcd_cblk_t* cblk = &precinct->cblks[cblkno];
 					int* restrict datap;
 					void* restrict tiledp;
 					int cblk_w, cblk_h;
@@ -1194,6 +1194,7 @@ void t1_decode_cblks(
 						}
 					}
 				} /* cblkno */
+				opj_free(precinct->cblks);
 			} /* precno */
 		} /* bandno */
 	} /* resno */

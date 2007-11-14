@@ -7,7 +7,9 @@ What's New for OpenJPEG
 
 
 November 14, 2007
-! [FOD] Patch by Callum Lerwick. Instead of reinventing realloc, j2k_read_sod now just uses opj_realloc in j2k.c
+! [FOD] First Patch by Callum Lerwick. Instead of reinventing realloc, j2k_read_sod now just uses opj_realloc in j2k.c
+		Second Patch by Callum Lerwick. This patch rearranges the largest memory allocations so they're allocated as 
+		late as possible, and freed as soon as possible. This cuts memory usage by about half on two large test images.
 
 November 13, 2007
 ! [FOD] Patch by Dzonatas and Callum Lerwick.
