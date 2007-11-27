@@ -3,7 +3,9 @@
 # First thing define the common source:
 SET(common_SRCS
   convert.c
-  )
+  index.c
+)
+
 # Then check if getopt is present:
 INCLUDE (${CMAKE_ROOT}/Modules/CheckIncludeFile.cmake)
 SET(DONT_HAVE_GETOPT 1)
@@ -23,7 +25,6 @@ IF(DONT_HAVE_GETOPT)
     compat/getopt.c
   )
 ENDIF(DONT_HAVE_GETOPT)
-
 
 # Headers file are located here:
 INCLUDE_DIRECTORIES(

@@ -5,6 +5,10 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+November 14, 2007
++ [FOD] Created the file index.c in the codec directory. This file handles the creation of index files, 
+		at encoding and decoding. 
+* [FOD] Fixed bugs during the creation of the index (PCRL progression order)
 
 November 14, 2007
 ! [FOD] - First Patch by Callum Lerwick. Instead of reinventing realloc, j2k_read_sod now just uses opj_realloc in j2k.c

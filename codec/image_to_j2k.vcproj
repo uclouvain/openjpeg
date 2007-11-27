@@ -278,6 +278,14 @@
 				/>
 			</FileConfiguration>
 		</File>
+		<File
+			RelativePath=".\index.c"
+			>
+		</File>
+		<File
+			RelativePath=".\index.h"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

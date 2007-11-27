@@ -256,6 +256,14 @@
 			>
 		</File>
 		<File
+			RelativePath=".\index.c"
+			>
+		</File>
+		<File
+			RelativePath=".\index.h"
+			>
+		</File>
+		<File
 			RelativePath="j2k_to_image.c"
 			>
 			<FileConfiguration
