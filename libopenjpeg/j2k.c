@@ -750,8 +750,13 @@ static void j2k_read_cox(opj_j2k_t *j2k, int compno) {
 
 	tccp->numresolutions = cio_read(cio, 1) + 1;	/* SPcox (D) */
 
-	/* check the reduce value */
-	cp->reduce = int_min((tccp->numresolutions)-1, cp->reduce);
+	// If user wants to remove more resolutions than the codestream contains, return error
+	if (cp->reduce >= tccp->numresolutions) {
+		opj_event_msg(j2k->cinfo, EVT_ERROR, "Error decoding component %d.\nThe number of resolutions to remove is higher than the number "
+					"of resolutions of this component\nModify the cp_reduce parameter.\n\n", compno);
+		j2k->state |= J2K_STATE_ERR;
+	}
+
 	tccp->cblkw = cio_read(cio, 1) + 2;	/* SPcox (E) */
 	tccp->cblkh = cio_read(cio, 1) + 2;	/* SPcox (F) */
 	tccp->cblksty = cio_read(cio, 1);	/* SPcox (G) */
@@ -1586,6 +1591,7 @@ static void j2k_write_eoc(opj_j2k_t *j2k) {
 
 static void j2k_read_eoc(opj_j2k_t *j2k) {
 	int i, tileno;
+	bool success;
 
 	/* if packets should be decoded */
 	if (j2k->cp->limit_decoding != DECODE_ALL_BUT_PACKETS) {
@@ -1594,10 +1600,14 @@ static void j2k_read_eoc(opj_j2k_t *j2k) {
 		for (i = 0; i < j2k->cp->tileno_size; i++) {
 			tcd_malloc_decode_tile(tcd, j2k->image, j2k->cp, i, j2k->cstr_info);
 			tileno = j2k->cp->tileno[i];
-			tcd_decode_tile(tcd, j2k->tile_data[tileno], j2k->tile_len[tileno], tileno, j2k->cstr_info);
+			success = tcd_decode_tile(tcd, j2k->tile_data[tileno], j2k->tile_len[tileno], tileno, j2k->cstr_info);
 			opj_free(j2k->tile_data[tileno]);
 			j2k->tile_data[tileno] = NULL;
 			tcd_free_decode_tile(tcd, i);
+			if (success == false) {
+				j2k->state |= J2K_STATE_ERR;
+				break;
+			}
 		}
 		tcd_free_decode(tcd);
 		tcd_destroy(tcd);
@@ -1610,7 +1620,10 @@ static void j2k_read_eoc(opj_j2k_t *j2k) {
 			j2k->tile_data[tileno] = NULL;
 		}
 	}	
-	j2k->state = J2K_STATE_MT;
+	if (j2k->state & J2K_STATE_ERR)
+		j2k->state = J2K_STATE_MT + J2K_STATE_ERR;
+	else
+		j2k->state = J2K_STATE_MT; 
 }
 
 typedef struct opj_dec_mstabent {
@@ -1900,6 +1913,9 @@ opj_image_t* j2k_decode(opj_j2k_t *j2k, opj_cio_t *cio, opj_codestream_info_t *c
 		if (e->handler) {
 			(*e->handler)(j2k);
 		}
+		if (j2k->state & J2K_STATE_ERR) 
+			return NULL;	
+
 		if (j2k->state == J2K_STATE_MT) {
 			break;
 		}

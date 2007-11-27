@@ -9,6 +9,8 @@ November 14, 2007
 + [FOD] Created the file index.c in the codec directory. This file handles the creation of index files, 
 		at encoding and decoding. 
 * [FOD] Fixed bugs during the creation of the index (PCRL progression order)
+* [FOD] Fixed the maximum number of resolutions a user can discard while decoding.
+		Added an error state in J2K_STATE (j2k.c)
 
 November 14, 2007
 ! [FOD] - First Patch by Callum Lerwick. Instead of reinventing realloc, j2k_read_sod now just uses opj_realloc in j2k.c
