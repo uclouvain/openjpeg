@@ -45,6 +45,7 @@
 
 #include "wx/image.h"
 #include "libopenjpeg/openjpeg.h"
+#include "codec/index.h"
 
 #define wxBITMAP_TYPE_J2K	47
 
@@ -106,6 +107,8 @@ public:
 		m_indexfname*/
 		m_enableidx = false;
 		m_index = wxT("index.txt");
+		m_enablepoc = false;
+		m_poc = wxT("T1=0,0,1,5,3,CPRL/T1=5,0,1,6,3,CPRL");
 		m_enablecomm = true;
 
 #if defined __WXMSW__
@@ -162,8 +165,8 @@ public:
 	wxString m_index;
 	bool m_enablecomm;
 	wxString m_comment;
-
-	bool write_index_file(opj_codestream_info_t *cstr_info, char *index);
+	bool m_enablepoc;
+	wxString m_poc;
 
 #if wxUSE_STREAMS
     virtual bool LoadFile( wxImage *image, wxInputStream& stream, bool verbose=true, int index=-1 );
@@ -173,6 +176,7 @@ protected:
 #endif
 
 private:
+	OPJ_PROG_ORDER give_progression(char progression[4]);
     DECLARE_DYNAMIC_CLASS(wxJ2KHandler)
 };
 

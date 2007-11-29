@@ -1219,6 +1219,7 @@ void j2k_read_red(opj_j2k_t *j2k) {
 
 bool jpwl_check_tile(opj_j2k_t *j2k, opj_tcd_t *tcd, int tileno) {
 
+#ifdef oerhgierhgvhreit4u
 	/*
 	   we navigate through the tile and find possible invalid parameters:
        this saves a lot of crashes!!!!!
@@ -1279,6 +1280,8 @@ bool jpwl_check_tile(opj_j2k_t *j2k, opj_tcd_t *tcd, int tileno) {
 			}
 		}
 	}
+
+#endif
 
 	return true;
 }

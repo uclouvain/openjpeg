@@ -106,6 +106,9 @@
 #include "imagj2k.h"
 #include "imagjp2.h"
 #include "imagmj2.h"
+#ifdef USE_MXF
+#include "imagmxf.h"
+#endif // USE_MXF
 
 #ifdef __WXMSW__
 typedef unsigned __int64 int8byte;
@@ -149,6 +152,16 @@ typedef unsigned long long int8byte;
 
 #define OPJ_CANVAS_BORDER 10
 #define OPJ_CANVAS_COLOUR *wxWHITE
+
+
+
+#ifdef USE_JPWL
+
+//#define MYJPWL_MAX_NO_TILESPECS JPWL_MAX_NO_TILESPECS
+#define MYJPWL_MAX_NO_TILESPECS 4
+
+#endif // USE_JPWL
+
 
 class OPJDecoThread;
 class OPJEncoThread;
@@ -198,19 +211,25 @@ class OPJViewerApp: public wxApp
 		bool m_enabledeco, m_enableparse;
 		int m_reducefactor, m_qualitylayers, m_components, m_framenum;
 #ifdef USE_JPWL
-		bool m_enablejpwl;
+		bool m_enablejpwl, m_enablejpwle;
 		int m_expcomps, m_maxtiles;
 		int m_framewidth, m_frameheight;
 #endif // USE_JPWL
 
 		// encoding engine parameters
 		wxString m_subsampling, m_origin, m_rates, m_comment, m_index, m_quality;
-		wxString m_cbsize, m_prsize, m_tsize, m_torigin;
+		wxString m_cbsize, m_prsize, m_tsize, m_torigin, m_poc;
 		bool m_enablecomm, m_enableidx, m_multicomp, m_irreversible, m_enablesop, m_enableeph;
 		bool m_enablebypass, m_enablereset, m_enablerestart, m_enablevsc, m_enableerterm;
-		bool m_enablesegmark;
+		bool m_enablesegmark, m_enablepoc;
 		bool m_enablequality;
 		int m_resolutions, m_progression;
+#ifdef USE_JPWL
+		int m_hprotsel[MYJPWL_MAX_NO_TILESPECS], m_pprotsel[MYJPWL_MAX_NO_TILESPECS];
+		int m_htileval[MYJPWL_MAX_NO_TILESPECS], m_ptileval[MYJPWL_MAX_NO_TILESPECS],
+			m_ppackval[MYJPWL_MAX_NO_TILESPECS];
+		int m_sensisel[MYJPWL_MAX_NO_TILESPECS], m_stileval[MYJPWL_MAX_NO_TILESPECS];
+#endif // USE_JPWL
 
 		// some layout settings
 		bool m_showtoolbar, m_showbrowser, m_showpeeker;
@@ -655,13 +674,24 @@ public:
     wxPanel* CreatePart1_1SettingsPage(wxWindow* parent);
     wxPanel* CreatePart1_2SettingsPage(wxWindow* parent);
 /*    wxPanel* CreatePart3SettingsPage(wxWindow* parent);*/
-#ifdef USE_JPWL
-	void OnEnableJPWL(wxCommandEvent& event);
 	void OnEnableComm(wxCommandEvent& event);
 	void OnEnableIdx(wxCommandEvent& event);
+	void OnEnablePoc(wxCommandEvent& event);
 	void OnRadioQualityRate(wxCommandEvent& event);
+#ifdef USE_JPWL
+	void OnEnableJPWL(wxCommandEvent& event);
 	wxPanel* CreatePart11SettingsPage(wxWindow* parent);
 	/*wxCheckBox *m_enablejpwlCheck;*/
+	wxChoice *m_hprotChoice[MYJPWL_MAX_NO_TILESPECS];
+	wxSpinCtrl *m_htileCtrl[MYJPWL_MAX_NO_TILESPECS];
+	wxChoice *m_pprotChoice[MYJPWL_MAX_NO_TILESPECS];
+	wxSpinCtrl *m_ptileCtrl[MYJPWL_MAX_NO_TILESPECS];
+	wxSpinCtrl *m_ppackCtrl[MYJPWL_MAX_NO_TILESPECS];
+	wxChoice *m_sensiChoice[MYJPWL_MAX_NO_TILESPECS];
+	wxSpinCtrl *m_stileCtrl[MYJPWL_MAX_NO_TILESPECS];
+	void OnHprotSelect(wxCommandEvent& event);
+	void OnPprotSelect(wxCommandEvent& event);
+	void OnSensiSelect(wxCommandEvent& event);
 #endif // USE_JPWL
 
 	wxTextCtrl *m_subsamplingCtrl, *m_originCtrl, *m_rateCtrl, *m_commentCtrl;
@@ -672,7 +702,7 @@ public:
 	wxCheckBox *m_enablecommCheck, *m_enableidxCheck, *m_mctCheck, *m_irrevCheck;
 	wxCheckBox *m_sopCheck, *m_ephCheck, *m_enablebypassCheck, *m_enableresetCheck,
 		*m_enablerestartCheck, *m_enablevscCheck, *m_enableertermCheck, *m_enablesegmarkCheck;
-	wxCheckBox *m_enablepocCheck;
+	wxCheckBox *m_enablepocCheck, *m_enablejpwlCheck;
 	wxSpinCtrl *m_resolutionsCtrl;
 
 protected:
@@ -708,7 +738,14 @@ protected:
 		OPJENCO_INDEXNAME,
 		OPJENCO_POCSPEC,
 		OPJENCO_ENABLECOMM,
-		OPJENCO_COMMENTTEXT
+		OPJENCO_COMMENTTEXT,
+		OPJENCO_HPROT,
+		OPJENCO_HTILE,
+		OPJENCO_PPROT,
+		OPJENCO_PTILE,
+		OPJENCO_PPACK,
+		OPJENCO_SENSI,
+		OPJENCO_STILE
     };
 
 DECLARE_EVENT_TABLE()

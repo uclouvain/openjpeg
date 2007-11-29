@@ -32,8 +32,8 @@
 IMPLEMENT_CLASS(OPJDecoderDialog, wxPropertySheetDialog)
 
 BEGIN_EVENT_TABLE(OPJDecoderDialog, wxPropertySheetDialog)
-#ifdef USE_JPWL
 	EVT_CHECKBOX(OPJDECO_ENABLEDECO, OPJDecoderDialog::OnEnableDeco)
+#ifdef USE_JPWL
 	EVT_CHECKBOX(OPJDECO_ENABLEJPWL, OPJDecoderDialog::OnEnableJPWL)
 #endif // USE_JPWL
 END_EVENT_TABLE()
@@ -400,21 +400,6 @@ void OPJDecoderDialog::OnEnableJPWL(wxCommandEvent& event)
 
 #endif // USE_JPWL
 
-bool OPJDnDFile::OnDropFiles(wxCoord, wxCoord, const wxArrayString& filenames)
-{
-    /*size_t nFiles = filenames.GetCount();
-    wxString str;
-    str.Printf( _T("%d files dropped\n"), (int)nFiles);
-    for ( size_t n = 0; n < nFiles; n++ ) {
-        str << filenames[n] << wxT("\n");
-    }
-    wxLogMessage(str);*/
-	m_pOwner->OpenFiles(filenames, filenames);
-
-    return true;
-}
-
-
 
 
 
@@ -425,12 +410,16 @@ bool OPJDnDFile::OnDropFiles(wxCoord, wxCoord, const wxArrayString& filenames)
 IMPLEMENT_CLASS(OPJEncoderDialog, wxPropertySheetDialog)
 
 BEGIN_EVENT_TABLE(OPJEncoderDialog, wxPropertySheetDialog)
-#ifdef USE_JPWL
-	EVT_CHECKBOX(OPJENCO_ENABLEJPWL, OPJEncoderDialog::OnEnableJPWL)
 	EVT_CHECKBOX(OPJENCO_ENABLECOMM, OPJEncoderDialog::OnEnableComm)
 	EVT_CHECKBOX(OPJENCO_ENABLEINDEX, OPJEncoderDialog::OnEnableIdx)
+	EVT_CHECKBOX(OPJENCO_ENABLEPOC, OPJEncoderDialog::OnEnablePoc)
 	EVT_RADIOBUTTON(OPJENCO_RATERADIO, OPJEncoderDialog::OnRadioQualityRate)
 	EVT_RADIOBUTTON(OPJENCO_QUALITYRADIO, OPJEncoderDialog::OnRadioQualityRate)
+#ifdef USE_JPWL
+	EVT_CHECKBOX(OPJENCO_ENABLEJPWL, OPJEncoderDialog::OnEnableJPWL)
+	EVT_CHOICE(OPJENCO_HPROT, OPJEncoderDialog::OnHprotSelect)
+	EVT_CHOICE(OPJENCO_PPROT, OPJEncoderDialog::OnPprotSelect)
+	EVT_CHOICE(OPJENCO_SENSI, OPJEncoderDialog::OnSensiSelect)
 #endif // USE_JPWL
 END_EVENT_TABLE()
 
@@ -454,12 +443,12 @@ OPJEncoderDialog::OPJEncoderDialog(wxWindow* win, int dialogType)
 	wxPanel* jpwlSettings = CreatePart11SettingsPage(m_settingsNotebook);
 #endif // USE_JPWL
 
-	m_settingsNotebook->AddPage(jpeg2000_1Settings, wxT("JPEG 2000 - 1"), false);
-	m_settingsNotebook->AddPage(jpeg2000_2Settings, wxT("JPEG 2000 - 2"), false);
-	m_settingsNotebook->AddPage(mainSettings, wxT("General"), false);
 #ifdef USE_JPWL
 	m_settingsNotebook->AddPage(jpwlSettings, wxT("JPWL"), false);
 #endif // USE_JPWL
+	m_settingsNotebook->AddPage(jpeg2000_1Settings, wxT("JPEG 2000 - 1"), false);
+	m_settingsNotebook->AddPage(jpeg2000_2Settings, wxT("JPEG 2000 - 2"), false);
+	m_settingsNotebook->AddPage(mainSettings, wxT("General"), false);
 
 	LayoutDialog();
 }
@@ -491,12 +480,218 @@ wxPanel* OPJEncoderDialog::CreateMainSettingsPage(wxWindow* parent)
 wxPanel* OPJEncoderDialog::CreatePart11SettingsPage(wxWindow* parent)
 {
     wxPanel* panel = new wxPanel(parent, wxID_ANY);
+	int specno;
 
 	// top sizer
     wxBoxSizer *topSizer = new wxBoxSizer(wxVERTICAL);
 
+		// add JPWL enabling check box
+		topSizer->Add(
+			m_enablejpwlCheck = new wxCheckBox(panel, OPJENCO_ENABLEJPWL, wxT("Enable JPWL"),
+			wxDefaultPosition, wxDefaultSize),
+			0, wxGROW | wxALL | wxALIGN_CENTER, 5);
+		m_enablejpwlCheck->SetValue(wxGetApp().m_enablejpwle);
+
 		// sub top sizer
-		wxBoxSizer *subtopSizer = new wxBoxSizer(wxVERTICAL);
+		wxFlexGridSizer *subtopSizer = new wxFlexGridSizer(2, 3, 3);
+
+			// header settings, column
+			wxStaticBox* headerBox = new wxStaticBox(panel, wxID_ANY, wxT("Header protection"));
+			wxBoxSizer* headerSizer = new wxStaticBoxSizer(headerBox, wxVERTICAL);
+
+				// info sizer, row
+				wxBoxSizer* info1Sizer = new wxBoxSizer(wxHORIZONTAL);
+
+				// add some text
+				info1Sizer->Add(new wxStaticText(panel, wxID_ANY,
+								wxT("Type")),
+								0, wxALL | wxALIGN_CENTER_VERTICAL, 1);
+
+				// add some horizontal space
+				info1Sizer->Add(3, 3, 1, wxALL, 0);
+
+				// add some text
+				info1Sizer->Add(new wxStaticText(panel, wxID_ANY,
+								wxT("Tile part")),
+								0, wxALL | wxALIGN_CENTER_VERTICAL, 1);
+
+			headerSizer->Add(info1Sizer, 0, wxGROW | wxALL, 0);
+
+			// specify specs
+			wxString hprotvalues[] = {wxT("None"), wxT("Pred."), wxT("CRC16"), wxT("CRC32"),
+				wxT("RS37"), wxT("RS38"), wxT("RS40"), wxT("RS43"), wxT("RS45"), wxT("RS48"),
+				wxT("RS51"), wxT("RS53"), wxT("RS56"), wxT("RS64"), wxT("RS75"), wxT("RS80"),
+				wxT("RS85"), wxT("RS96"), wxT("RS112"), wxT("RS128")};
+			for (specno = 0; specno < MYJPWL_MAX_NO_TILESPECS; specno++) {
+
+					// tile+hprot sizer, row
+					wxBoxSizer* tilehprotSizer = new wxBoxSizer(wxHORIZONTAL);
+
+					// add the value selection
+					tilehprotSizer->Add(
+						m_hprotChoice[specno] = new wxChoice(panel, OPJENCO_HPROT,
+							wxDefaultPosition, wxSize(60, wxDefaultCoord),
+							WXSIZEOF(hprotvalues), hprotvalues),
+						0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 1);
+					m_hprotChoice[specno]->SetSelection(wxGetApp().m_hprotsel[specno]);
+
+					// add some horizontal space
+					tilehprotSizer->Add(3, 3, 1, wxALL, 0);
+
+					// add the value control
+					tilehprotSizer->Add(
+						m_htileCtrl[specno] = new wxSpinCtrl(panel, OPJENCO_HTILE,
+							wxString::Format(wxT("%d"), wxGetApp().m_htileval[specno]),
+							wxDefaultPosition, wxSize(45, wxDefaultCoord),
+							wxSP_ARROW_KEYS,
+							0, JPWL_MAXIMUM_TILES - 1, 0),
+						0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 1);
+
+				headerSizer->Add(tilehprotSizer, 0, wxGROW | wxALL, 0);
+			}
+
+			wxCommandEvent event1;
+			OnHprotSelect(event1);
+
+		subtopSizer->Add(headerSizer, 0, wxGROW | wxALL, 3);
+
+			// packet settings, column
+			wxStaticBox* packetBox = new wxStaticBox(panel, wxID_ANY, wxT("Packet protection"));
+			wxBoxSizer* packetSizer = new wxStaticBoxSizer(packetBox, wxVERTICAL);
+
+				// info sizer, row
+				wxBoxSizer* info2Sizer = new wxBoxSizer(wxHORIZONTAL);
+
+				// add some text
+				info2Sizer->Add(new wxStaticText(panel, wxID_ANY,
+								wxT("Type")),
+								0, wxALL | wxALIGN_CENTER_VERTICAL, 1);
+
+				// add some horizontal space
+				info2Sizer->Add(3, 3, 1, wxALL, 0);
+
+				// add some text
+				info2Sizer->Add(new wxStaticText(panel, wxID_ANY,
+								wxT("Tile part")),
+								0, wxALL | wxALIGN_CENTER_VERTICAL, 1);
+
+				// add some horizontal space
+				info2Sizer->Add(3, 3, 1, wxALL, 0);
+
+				// add some text
+				info2Sizer->Add(new wxStaticText(panel, wxID_ANY,
+								wxT("Packet")),
+								0, wxALL | wxALIGN_CENTER_VERTICAL, 1);
+
+			packetSizer->Add(info2Sizer, 0, wxGROW | wxALL, 0);
+
+			// specify specs
+			wxString pprotvalues[] = {wxT("None"), wxT("Pred."), wxT("CRC16"), wxT("CRC32"),
+				wxT("RS37"), wxT("RS38"), wxT("RS40"), wxT("RS43"), wxT("RS45"), wxT("RS48"),
+				wxT("RS51"), wxT("RS53"), wxT("RS56"), wxT("RS64"), wxT("RS75"), wxT("RS80"),
+				wxT("RS85"), wxT("RS96"), wxT("RS112"), wxT("RS128")};
+			for (specno = 0; specno < MYJPWL_MAX_NO_TILESPECS; specno++) {
+
+					// tile+pprot sizer, row
+					wxBoxSizer* tilepprotSizer = new wxBoxSizer(wxHORIZONTAL);
+
+					// add the value selection
+					tilepprotSizer->Add(
+						m_pprotChoice[specno] = new wxChoice(panel, OPJENCO_PPROT,
+							wxDefaultPosition, wxSize(60, wxDefaultCoord),
+							WXSIZEOF(pprotvalues), pprotvalues),
+						0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 1);
+					m_pprotChoice[specno]->SetSelection(wxGetApp().m_pprotsel[specno]);
+
+					// add some horizontal space
+					tilepprotSizer->Add(3, 3, 1, wxALL, 0);
+
+					// add the value control
+					tilepprotSizer->Add(
+						m_ptileCtrl[specno] = new wxSpinCtrl(panel, OPJENCO_PTILE,
+							wxString::Format(wxT("%d"), wxGetApp().m_ptileval[specno]),
+							wxDefaultPosition, wxSize(45, wxDefaultCoord),
+							wxSP_ARROW_KEYS,
+							0, JPWL_MAXIMUM_TILES - 1, 0),
+						0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 1);
+
+					// add some horizontal space
+					tilepprotSizer->Add(3, 3, 1, wxALL, 0);
+
+					// add the value control
+					tilepprotSizer->Add(
+						m_ppackCtrl[specno] = new wxSpinCtrl(panel, OPJENCO_PPACK,
+							wxString::Format(wxT("%d"), wxGetApp().m_ppackval[specno]),
+							wxDefaultPosition, wxSize(50, wxDefaultCoord),
+							wxSP_ARROW_KEYS,
+							0, 2047, 0),
+						0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 1);
+
+				packetSizer->Add(tilepprotSizer, 0, wxGROW | wxALL, 0);
+			}
+
+			wxCommandEvent event2;
+			OnPprotSelect(event2);
+
+		subtopSizer->Add(packetSizer, 0, wxGROW | wxALL, 3);
+
+			// sensitivity settings, column
+			wxStaticBox* sensiBox = new wxStaticBox(panel, wxID_ANY, wxT("Sensitivity"));
+			wxBoxSizer* sensiSizer = new wxStaticBoxSizer(sensiBox, wxVERTICAL);
+
+				// info sizer, row
+				wxBoxSizer* info3Sizer = new wxBoxSizer(wxHORIZONTAL);
+
+				// add some text
+				info3Sizer->Add(new wxStaticText(panel, wxID_ANY,
+								wxT("Type")),
+								0, wxALL | wxALIGN_CENTER_VERTICAL, 1);
+
+				// add some horizontal space
+				info3Sizer->Add(3, 3, 1, wxALL, 0);
+
+				// add some text
+				info3Sizer->Add(new wxStaticText(panel, wxID_ANY,
+								wxT("Tile part")),
+								0, wxALL | wxALIGN_CENTER_VERTICAL, 1);
+
+			sensiSizer->Add(info3Sizer, 0, wxGROW | wxALL, 0);
+
+			// specify specs
+			wxString sensivalues[] = {wxT("None"), wxT("RELATIVE ERROR"), wxT("MSE"),
+				wxT("MSE REDUCTION"), wxT("PSNR INCREMENT"), wxT("MAXERR"), wxT("TSE")};
+			for (specno = 0; specno < MYJPWL_MAX_NO_TILESPECS; specno++) {
+
+					// tile+sensi sizer, row
+					wxBoxSizer* tilesensiSizer = new wxBoxSizer(wxHORIZONTAL);
+
+					// add the value selection
+					tilesensiSizer->Add(
+						m_sensiChoice[specno] = new wxChoice(panel, OPJENCO_SENSI,
+							wxDefaultPosition, wxSize(110, wxDefaultCoord),
+							WXSIZEOF(sensivalues), sensivalues),
+						0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 1);
+					m_sensiChoice[specno]->SetSelection(wxGetApp().m_sensisel[specno]);
+
+					// add some horizontal space
+					tilesensiSizer->Add(3, 3, 1, wxALL, 0);
+
+					// add the value control
+					tilesensiSizer->Add(
+						m_stileCtrl[specno] = new wxSpinCtrl(panel, OPJENCO_STILE,
+							wxString::Format(wxT("%d"), wxGetApp().m_stileval[specno]),
+							wxDefaultPosition, wxSize(45, wxDefaultCoord),
+							wxSP_ARROW_KEYS,
+							0, JPWL_MAXIMUM_TILES - 1, 0),
+						0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 1);
+
+				sensiSizer->Add(tilesensiSizer, 0, wxGROW | wxALL, 0);
+			}
+
+			wxCommandEvent event3;
+			OnSensiSelect(event3);
+
+		subtopSizer->Add(sensiSizer, 0, wxGROW | wxALL, 3);
 
 	topSizer->Add(subtopSizer, 1, wxGROW | wxALIGN_CENTRE | wxALL, 5);
 
@@ -668,7 +863,7 @@ wxPanel* OPJEncoderDialog::CreatePart1_1SettingsPage(wxWindow* parent)
 								wxString::Format(wxT("%d"), wxGetApp().m_resolutions),
 								wxDefaultPosition, wxSize(80, wxDefaultCoord),
 								wxSP_ARROW_KEYS,
-								0, 256, 6),
+								1, 256, 6),
 					0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 3);
 
 			transformSizer->Add(resnumSizer, 0, wxGROW | wxALL, 3);
@@ -926,6 +1121,65 @@ wxPanel* OPJEncoderDialog::CreatePart1_2SettingsPage(wxWindow* parent)
 
 		subtopSizer->Add(roiSizer, 0, wxGROW | wxALL, 3);
 
+			// POC settings, column
+			wxStaticBox* pocBox = new wxStaticBox(panel, wxID_ANY, wxT("POC"));
+			wxBoxSizer* pocSizer = new wxStaticBoxSizer(pocBox, wxVERTICAL);
+
+			// POC check box
+			pocSizer->Add(
+				m_enablepocCheck = new wxCheckBox(panel, OPJENCO_ENABLEPOC, wxT("Enabled (tn=rs,cs,le,re,ce,pr)"),
+				wxDefaultPosition, wxDefaultSize),
+				0, wxGROW | wxALL, 3);
+			m_enablepocCheck->SetValue(wxGetApp().m_enablepoc);
+
+				// POC sizer, row
+				wxBoxSizer* pocspecSizer = new wxBoxSizer(wxHORIZONTAL);
+
+				// add some text
+				pocspecSizer->Add(new wxStaticText(panel, wxID_ANY, wxT("&Changes:")),
+								0, wxALL | wxALIGN_TOP, 3);
+
+				// add some horizontal space
+				pocspecSizer->Add(3, 3, 1, wxALL, 0);
+
+				// add the value control
+				pocspecSizer->Add(
+					m_pocCtrl = new wxTextCtrl(panel, OPJENCO_POCSPEC,
+								wxGetApp().m_poc,
+								wxDefaultPosition, wxSize(140, 60),
+								wxTE_LEFT | wxTE_MULTILINE),
+					0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 3);
+				m_pocCtrl->Enable(wxGetApp().m_enablepoc);
+
+			pocSizer->Add(pocspecSizer, 0, wxGROW | wxALL, 3);
+
+		subtopSizer->Add(pocSizer, 0, wxGROW | wxALL, 3);
+			
+			// Comment settings, column
+			wxStaticBox* commentBox = new wxStaticBox(panel, wxID_ANY, wxT("Comment"));
+			wxBoxSizer* commentSizer = new wxStaticBoxSizer(commentBox, wxVERTICAL);
+
+			// commenting check box
+			commentSizer->Add(
+				m_enablecommCheck = new wxCheckBox(panel, OPJENCO_ENABLECOMM, wxT("Enabled (empty to reset)"),
+				wxDefaultPosition, wxDefaultSize),
+				0, wxGROW | wxALL, 3);
+			m_enablecommCheck->SetValue(wxGetApp().m_enablecomm);
+
+			// add some horizontal space
+			commentSizer->Add(3, 3, 1, wxALL, 0);
+
+			// add the value control
+			commentSizer->Add(
+				m_commentCtrl = new wxTextCtrl(panel, OPJENCO_COMMENTTEXT,
+							wxGetApp().m_comment,
+							wxDefaultPosition, wxSize(wxDefaultCoord, 60),
+							wxTE_LEFT | wxTE_MULTILINE),
+				0, wxGROW | wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 3);
+			m_commentCtrl->Enable(wxGetApp().m_enablecomm);
+
+		subtopSizer->Add(commentSizer, 0, wxGROW | wxALL, 3);
+
 			// Index file settings, column
 			wxStaticBox* indexBox = new wxStaticBox(panel, wxID_ANY, wxT("Indexing"));
 			wxBoxSizer* indexSizer = new wxStaticBoxSizer(indexBox, wxVERTICAL);
@@ -960,65 +1214,6 @@ wxPanel* OPJEncoderDialog::CreatePart1_2SettingsPage(wxWindow* parent)
 
 		subtopSizer->Add(indexSizer, 0, wxGROW | wxALL, 3);
 
-			// Comment settings, column
-			wxStaticBox* commentBox = new wxStaticBox(panel, wxID_ANY, wxT("Comment"));
-			wxBoxSizer* commentSizer = new wxStaticBoxSizer(commentBox, wxVERTICAL);
-
-			// commenting check box
-			commentSizer->Add(
-				m_enablecommCheck = new wxCheckBox(panel, OPJENCO_ENABLECOMM, wxT("Enabled (empty to reset)"),
-				wxDefaultPosition, wxDefaultSize),
-				0, wxGROW | wxALL, 3);
-			m_enablecommCheck->SetValue(wxGetApp().m_enablecomm);
-
-			// add some horizontal space
-			commentSizer->Add(3, 3, 1, wxALL, 0);
-
-			// add the value control
-			commentSizer->Add(
-				m_commentCtrl = new wxTextCtrl(panel, OPJENCO_COMMENTTEXT,
-							wxGetApp().m_comment,
-							wxDefaultPosition, wxSize(wxDefaultCoord, 60),
-							wxTE_LEFT | wxTE_MULTILINE),
-				0, wxGROW | wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 3);
-			m_commentCtrl->Enable(wxGetApp().m_enablecomm);
-
-		subtopSizer->Add(commentSizer, 0, wxGROW | wxALL, 3);
-
-			// POC settings, column
-			wxStaticBox* pocBox = new wxStaticBox(panel, wxID_ANY, wxT("POC"));
-			wxBoxSizer* pocSizer = new wxStaticBoxSizer(pocBox, wxVERTICAL);
-
-			// POC check box
-			pocSizer->Add(
-				m_enablepocCheck = new wxCheckBox(panel, OPJENCO_ENABLEPOC, wxT("Enabled"),
-				wxDefaultPosition, wxDefaultSize),
-				0, wxGROW | wxALL, 3);
-			m_enablepocCheck->SetValue(/*wxGetApp().m_enableidx*/true);
-
-				// POC sizer, row
-				wxBoxSizer* pocspecSizer = new wxBoxSizer(wxHORIZONTAL);
-
-				// add some text
-				pocspecSizer->Add(new wxStaticText(panel, wxID_ANY, wxT("&Changes:")),
-								0, wxALL | wxALIGN_CENTER_VERTICAL, 3);
-
-				// add some horizontal space
-				pocspecSizer->Add(3, 3, 1, wxALL, 0);
-
-				// add the value control
-				pocspecSizer->Add(
-					m_pocCtrl = new wxTextCtrl(panel, OPJENCO_POCSPEC,
-								/*wxGetApp().m_index*/wxT("RRRR"),
-								wxDefaultPosition, wxSize(120, wxDefaultCoord),
-								wxTE_LEFT),
-					0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, 3);
-				m_pocCtrl->Enable(/*wxGetApp().m_enableidx*/true);
-
-			pocSizer->Add(pocspecSizer, 0, wxGROW | wxALL, 3);
-
-		subtopSizer->Add(pocSizer, 0, wxGROW | wxALL, 3);
-
 	topSizer->Add(subtopSizer, 1, wxGROW | wxALIGN_CENTRE | wxALL, 5);
 
 	// assign top and fit it
@@ -1052,6 +1247,18 @@ void OPJEncoderDialog::OnEnableIdx(wxCommandEvent& event)
 
 }
 
+void OPJEncoderDialog::OnEnablePoc(wxCommandEvent& event)
+{
+	if (event.IsChecked()) {
+		wxLogMessage(wxT("POC enabled"));
+		m_pocCtrl->Enable(true);
+	} else {
+		wxLogMessage(wxT("POC disabled"));
+		m_pocCtrl->Enable(false);
+	}
+
+}
+
 void OPJEncoderDialog::OnRadioQualityRate(wxCommandEvent& event)
 {
 	if (event.GetId() == OPJENCO_QUALITYRADIO) {
@@ -1068,15 +1275,99 @@ void OPJEncoderDialog::OnRadioQualityRate(wxCommandEvent& event)
 #ifdef USE_JPWL
 void OPJEncoderDialog::OnEnableJPWL(wxCommandEvent& event)
 {
-	/*if (event.IsChecked()) {
+	int specno;
+
+	if (event.IsChecked()) {
 		wxLogMessage(wxT("JPWL enabled"));
-		m_expcompsCtrl->Enable(true);
-		m_maxtilesCtrl->Enable(true);
+		for (specno = 0; specno < MYJPWL_MAX_NO_TILESPECS; specno++) {
+			m_hprotChoice[specno]->Enable(true);
+			m_htileCtrl[specno]->Enable(true);
+			m_pprotChoice[specno]->Enable(true);
+			m_ptileCtrl[specno]->Enable(true);
+			m_ppackCtrl[specno]->Enable(true);
+			m_sensiChoice[specno]->Enable(true);
+			m_stileCtrl[specno]->Enable(true);
+		}
+		OnHprotSelect(event);
+		OnPprotSelect(event);
+		OnSensiSelect(event);
 	} else {
 		wxLogMessage(wxT("JPWL disabled"));
-		m_expcompsCtrl->Enable(false);
-		m_maxtilesCtrl->Enable(false);
-	}*/
+		for (specno = 0; specno < MYJPWL_MAX_NO_TILESPECS; specno++) {
+			m_hprotChoice[specno]->Enable(false);
+			m_htileCtrl[specno]->Enable(false);
+			m_pprotChoice[specno]->Enable(false);
+			m_ptileCtrl[specno]->Enable(false);
+			m_ppackCtrl[specno]->Enable(false);
+			m_sensiChoice[specno]->Enable(false);
+			m_stileCtrl[specno]->Enable(false);
+		}
+	}
 
 }
+
+void OPJEncoderDialog::OnHprotSelect(wxCommandEvent& event)
+{
+	int specno;
+
+	// deactivate properly
+	for (specno = MYJPWL_MAX_NO_TILESPECS - 1; specno >= 0; specno--) {
+		if (!m_hprotChoice[specno]->GetSelection()) {
+			m_hprotChoice[specno]->Enable(false);
+			m_htileCtrl[specno]->Enable(false);
+		} else
+			break;
+	}
+	if (specno < (MYJPWL_MAX_NO_TILESPECS - 1)) {
+		m_hprotChoice[specno + 1]->Enable(true);
+		m_htileCtrl[specno + 1]->Enable(true);
+	}
+
+	//wxLogMessage(wxT("hprot changed: %d"), specno);
+}
+
+void OPJEncoderDialog::OnPprotSelect(wxCommandEvent& event)
+{
+	int specno;
+
+	// deactivate properly
+	for (specno = MYJPWL_MAX_NO_TILESPECS - 1; specno >= 0; specno--) {
+		if (!m_pprotChoice[specno]->GetSelection()) {
+			m_pprotChoice[specno]->Enable(false);
+			m_ptileCtrl[specno]->Enable(false);
+			m_ppackCtrl[specno]->Enable(false);
+		} else
+			break;
+	}
+	if (specno < (MYJPWL_MAX_NO_TILESPECS - 1)) {
+		m_pprotChoice[specno + 1]->Enable(true);
+		m_ptileCtrl[specno + 1]->Enable(true);
+		m_ppackCtrl[specno + 1]->Enable(true);
+	}
+
+	//wxLogMessage(wxT("pprot changed: %d"), specno);
+}
+
+void OPJEncoderDialog::OnSensiSelect(wxCommandEvent& event)
+{
+	int specno;
+
+	// deactivate properly
+	for (specno = MYJPWL_MAX_NO_TILESPECS - 1; specno >= 0; specno--) {
+		if (!m_sensiChoice[specno]->GetSelection()) {
+			m_sensiChoice[specno]->Enable(false);
+			m_stileCtrl[specno]->Enable(false);
+		} else
+			break;
+	}
+	if (specno < (MYJPWL_MAX_NO_TILESPECS - 1)) {
+		m_sensiChoice[specno + 1]->Enable(true);
+		m_stileCtrl[specno + 1]->Enable(true);
+	}
+
+	//wxLogMessage(wxT("sprot changed: %d"), specno);
+}
+
+
 #endif // USE_JPWL
+

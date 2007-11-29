@@ -42,7 +42,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /G6 /MD /W3 /GX /O2 /I "d:\programmi\wxWidgets-2.8.0\lib\vc_lib\msw" /I "d:\programmi\wxWidgets-2.8.0\include" /I ".." /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "_MBCS" /D "_WINDOWS" /D WINVER=0x400 /D "_MT" /D wxUSE_GUI=1 /D "wxUSE_LIBOPENJPEG" /D "OPJ_STATIC" /D "USE_JPWL" /D "USE_JPSEC" /D "OPJ_HTMLABOUT" /D "OPJ_MANYFORMATS" /D "OPJ_INICONFIG" /FR /FD /c
+# ADD CPP /nologo /G6 /MD /W3 /GX /O2 /I "d:\programmi\wxWidgets-2.8.0\lib\vc_lib\msw" /I "d:\programmi\wxWidgets-2.8.0\include" /I ".." /I "../libopenjpeg" /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "_MBCS" /D "_WINDOWS" /D WINVER=0x400 /D "_MT" /D wxUSE_GUI=1 /D "wxUSE_LIBOPENJPEG" /D "OPJ_STATIC" /D "USE_JPWL" /D "USE_JPSEC" /D "USE_MXF" /D "OPJ_HTMLABOUT" /D "OPJ_MANYFORMATS" /D "OPJ_INICONFIG" /FR /FD /c
 # ADD BASE RSC /l 0x410 /d "NDEBUG"
 # ADD RSC /l 0x409 /i "d:\programmi\wxWidgets-2.8.0\include" /d "NDEBUG"
 BSC32=bscmake.exe
@@ -72,15 +72,15 @@ PostBuild_Cmds=buildupdate.bat
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /GZ /c
-# ADD CPP /nologo /MDd /W3 /Gm /GX /Zi /Od /I "d:\Programmi\wxWidgets-2.8.0\INCLUDE" /I "d:\programmi\wxWidgets-2.8.0\lib\vc_lib\msw" /I "c:\programmi\wxWidgets-2.8.0\include" /I ".." /D "_DEBUG" /D "__WXDEBUG__" /D WXDEBUG=1 /D "WIN32" /D "_CONSOLE" /D "_MBCS" /D "_WINDOWS" /D WINVER=0x400 /D "_MT" /D wxUSE_GUI=1 /D "wxUSE_LIBOPENJPEG" /D "OPJ_STATIC" /D "USE_JPWL" /D "OPJ_HTMLABOUT" /FR /FD /GZ /c
+# ADD CPP /nologo /MDd /W3 /Gm /GX /Zi /Od /I "c:\Programmi\wxWidgets-2.8.0\INCLUDE" /I "c:\programmi\wxWidgets-2.8.0\lib\vc_lib\msw" /I "c:\programmi\wxWidgets-2.8.0\include" /I ".." /D "_DEBUG" /D "__WXDEBUG__" /D WXDEBUG=1 /D "WIN32" /D "_CONSOLE" /D "_MBCS" /D "_WINDOWS" /D WINVER=0x400 /D "_MT" /D wxUSE_GUI=1 /D "wxUSE_LIBOPENJPEG" /D "OPJ_STATIC" /D "USE_JPWL" /D "OPJ_HTMLABOUT" /FR /FD /GZ /c
 # ADD BASE RSC /l 0x410 /d "_DEBUG"
-# ADD RSC /l 0x410 /i "d:\programmi\wxWidgets-2.8.0\include" /d "_DEBUG"
+# ADD RSC /l 0x410 /i "c:\programmi\wxWidgets-2.8.0\include" /d "_DEBUG"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib comctl32.lib rpcrt4.lib wsock32.lib wxzlibd.lib wxregexd.lib wxpngd.lib wxjpegd.lib wxtiffd.lib wxbase28d.lib wxmsw28d_core.lib wxmsw28d_html.lib wxmsw28d_adv.lib LibOpenJPEG_JPWLd.lib /nologo /subsystem:windows /debug /machine:I386 /nodefaultlib:"libcmtd.lib" /pdbtype:sept /libpath:"d:\programmi\wxWidgets-2.8.0\lib\vc_lib" /libpath:"..\jpwl\Debug"
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib comctl32.lib rpcrt4.lib wsock32.lib wxzlibd.lib wxregexd.lib wxpngd.lib wxjpegd.lib wxtiffd.lib wxbase28d.lib wxmsw28d_core.lib wxmsw28d_html.lib wxmsw28d_adv.lib LibOpenJPEG_JPWLd.lib /nologo /subsystem:windows /debug /machine:I386 /nodefaultlib:"libcmtd.lib" /pdbtype:sept /libpath:"c:\programmi\wxWidgets-2.8.0\lib\vc_lib" /libpath:"..\jpwl\Debug"
 # SUBTRACT LINK32 /pdb:none
 
 !ENDIF 
@@ -111,7 +111,23 @@ SOURCE=.\source\imagmj2.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\source\imagmxf.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\codec\index.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\OPJAbout.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\source\OPJDialogs.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\OPJThreads.cpp
 # End Source File
 # Begin Source File
 
@@ -157,6 +173,14 @@ SOURCE=.\source\imagjp2.h
 # Begin Source File
 
 SOURCE=.\source\imagmj2.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\source\imagmxf.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\codec\index.h
 # End Source File
 # Begin Source File
 

@@ -95,6 +95,10 @@ SOURCE=..\codec\compat\getopt.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\codec\index.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\codec\j2k_to_image.c
 # End Source File
 # End Group
@@ -112,6 +116,10 @@ SOURCE=.\crc.h
 # Begin Source File
 
 SOURCE=..\codec\compat\getopt.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\codec\index.h
 # End Source File
 # Begin Source File
 

@@ -98,6 +98,10 @@ SOURCE=..\codec\compat\getopt.c
 
 SOURCE=..\codec\image_to_j2k.c
 # End Source File
+# Begin Source File
+
+SOURCE=..\codec\index.c
+# End Source File
 # End Group
 # Begin Group "Header Files"
 
@@ -109,6 +113,10 @@ SOURCE=..\codec\convert.h
 # Begin Source File
 
 SOURCE=..\codec\compat\getopt.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\codec\index.h
 # End Source File
 # Begin Source File
 

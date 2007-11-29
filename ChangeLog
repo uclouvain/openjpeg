@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+November 29, 2007
+! [GB] Added index.h and index.c in VC6 projects; wrapped index.h in the C++ preprocessor; modified OPJViewer project and some files.
+
 November 14, 2007
 + [FOD] Created the file index.c in the codec directory. This file handles the creation of index files, 
 		at encoding and decoding. 

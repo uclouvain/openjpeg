@@ -106,5 +106,13 @@ SOURCE=.\compat\getopt.h
 
 SOURCE=.\image_to_j2k.c
 # End Source File
+# Begin Source File
+
+SOURCE=.\index.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\index.h
+# End Source File
 # End Target
 # End Project

@@ -29,6 +29,10 @@
 #ifndef __J2K_INDEX_H
 #define __J2K_INDEX_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
 Write a structured index to a file
 @param cstr_info Codestream information 
@@ -36,6 +40,10 @@ Write a structured index to a file
 @return Returns 0 if successful, returns 1 otherwise
 */
 int write_index_file(opj_codestream_info_t *cstr_info, char *index);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __J2K_INDEX_H */
 

@@ -132,11 +132,11 @@ int winNumber = 1;
 // Initialise this in OnInit, not statically
 bool OPJViewerApp::OnInit(void)
 {
+	int n;
 #if wxUSE_UNICODE
 
     wxChar **wxArgv = new wxChar *[argc + 1];
 
-	int n;
     for (n = 0; n < argc; n++ ) {
         wxMB2WXbuf warg = wxConvertMB2WX((char *) argv[n]);
         wxArgv[n] = wxStrdup(warg);
@@ -189,6 +189,9 @@ bool OPJViewerApp::OnInit(void)
 #if wxUSE_LIBJPEG
   wxImage::AddHandler( new wxJPEGHandler );
 #endif
+#if USE_MXF
+  wxImage::AddHandler( new wxMXFHandler );
+#endif // USE_MXF
 #if wxUSE_LIBOPENJPEG
   wxImage::AddHandler( new wxJ2KHandler );
   wxImage::AddHandler( new wxJP2Handler );
@@ -211,17 +214,17 @@ bool OPJViewerApp::OnInit(void)
 	//load decoding engine parameters
 	OPJconfig = new wxConfig(OPJ_APPLICATION, OPJ_APPLICATION_VENDOR);
 
-	OPJconfig->Read(wxT("enabledeco"), &m_enabledeco, (bool) true);
-	OPJconfig->Read(wxT("enableparse"), &m_enableparse, (bool) true);
-	OPJconfig->Read(wxT("resizemethod"), &m_resizemethod, (long) 0);
-	OPJconfig->Read(wxT("xxxreducefactor"), &m_reducefactor, (long) 0);
-	OPJconfig->Read(wxT("xxxqualitylayers"), &m_qualitylayers, (long) 0);
-	OPJconfig->Read(wxT("xxxcomponents"), &m_components, (long) 0);
-	OPJconfig->Read(wxT("xxxframenum"), &m_framenum, (long) 0);
+	OPJconfig->Read(wxT("decode/enabledeco"), &m_enabledeco, (bool) true);
+	OPJconfig->Read(wxT("decode/enableparse"), &m_enableparse, (bool) true);
+	OPJconfig->Read(wxT("decode/resizemethod"), &m_resizemethod, (long) 0);
+	OPJconfig->Read(wxT("decode/xxxreducefactor"), &m_reducefactor, (long) 0);
+	OPJconfig->Read(wxT("decode/xxxqualitylayers"), &m_qualitylayers, (long) 0);
+	OPJconfig->Read(wxT("decode/xxxcomponents"), &m_components, (long) 0);
+	OPJconfig->Read(wxT("decode/xxxframenum"), &m_framenum, (long) 0);
 #ifdef USE_JPWL
-	OPJconfig->Read(wxT("enablejpwl"), &m_enablejpwl, (bool) true);
-	OPJconfig->Read(wxT("expcomps"), &m_expcomps, (long) JPWL_EXPECTED_COMPONENTS);
-	OPJconfig->Read(wxT("maxtiles"), &m_maxtiles, (long) JPWL_MAXIMUM_TILES);
+	OPJconfig->Read(wxT("decode/enablejpwl"), &m_enablejpwl, (bool) true);
+	OPJconfig->Read(wxT("decode/expcomps"), &m_expcomps, (long) JPWL_EXPECTED_COMPONENTS);
+	OPJconfig->Read(wxT("decode/maxtiles"), &m_maxtiles, (long) JPWL_MAXIMUM_TILES);
 #endif // USE_JPWL
 
 	OPJconfig->Write(wxT("teststring"), wxT("This is a test value"));
@@ -237,31 +240,45 @@ bool OPJViewerApp::OnInit(void)
 	OPJconfig->Read(wxT("frameheight"), &m_frameheight, (long) OPJ_FRAME_HEIGHT);
 
 	// load encoding engine parameters
-	OPJconfig->Read(wxT("subsampling"), &m_subsampling, (wxString) wxT("1,1"));
-	OPJconfig->Read(wxT("origin"), &m_origin, (wxString) wxT("0,0"));
-	OPJconfig->Read(wxT("rates"), &m_rates, (wxString) wxT("20,10,5"));
-	OPJconfig->Read(wxT("quality"), &m_quality, (wxString) wxT("30,35,40"));
-	OPJconfig->Read(wxT("enablequality"), &m_enablequality, (bool) false);
-	OPJconfig->Read(wxT("multicomp"), &m_multicomp, (bool) false);	
-	OPJconfig->Read(wxT("irreversible"), &m_irreversible, (bool) false);	
-	OPJconfig->Read(wxT("resolutions"), &m_resolutions, (int) 6);	
-	OPJconfig->Read(wxT("progression"), &m_progression, (int) 0);	
-	OPJconfig->Read(wxT("cbsize"), &m_cbsize, (wxString) wxT("32,32"));
-	OPJconfig->Read(wxT("prsize"), &m_prsize, (wxString) wxT("[128,128],[128,128]"));
-	OPJconfig->Read(wxT("tsize"), &m_tsize, (wxString) wxT(""));
-	OPJconfig->Read(wxT("torigin"), &m_torigin, (wxString) wxT("0,0"));
-	OPJconfig->Read(wxT("enablesop"), &m_enablesop, (bool) false);	
-	OPJconfig->Read(wxT("enableeph"), &m_enableeph, (bool) false);	
-	OPJconfig->Read(wxT("enablebypass"), &m_enablebypass, (bool) false);	
-	OPJconfig->Read(wxT("enablereset"), &m_enablereset, (bool) false);	
-	OPJconfig->Read(wxT("enablerestart"), &m_enablerestart, (bool) false);	
-	OPJconfig->Read(wxT("enablevsc"), &m_enablevsc, (bool) false);	
-	OPJconfig->Read(wxT("enableerterm"), &m_enableerterm, (bool) false);	
-	OPJconfig->Read(wxT("enablesegmark"), &m_enablesegmark, (bool) false);	
-	OPJconfig->Read(wxT("enablecomm"), &m_enablecomm, (bool) true);	
-	OPJconfig->Read(wxT("comment"), &m_comment, (wxString) wxT(""));
-	OPJconfig->Read(wxT("enableidx"), &m_enableidx, (bool) false);	
-	OPJconfig->Read(wxT("index"), &m_index, (wxString) wxT("index.txt"));
+	OPJconfig->Read(wxT("encode/subsampling"), &m_subsampling, (wxString) wxT("1,1"));
+	OPJconfig->Read(wxT("encode/origin"), &m_origin, (wxString) wxT("0,0"));
+	OPJconfig->Read(wxT("encode/rates"), &m_rates, (wxString) wxT("20,10,5"));
+	OPJconfig->Read(wxT("encode/quality"), &m_quality, (wxString) wxT("30,35,40"));
+	OPJconfig->Read(wxT("encode/enablequality"), &m_enablequality, (bool) false);
+	OPJconfig->Read(wxT("encode/multicomp"), &m_multicomp, (bool) false);	
+	OPJconfig->Read(wxT("encode/irreversible"), &m_irreversible, (bool) false);	
+	OPJconfig->Read(wxT("encode/resolutions"), &m_resolutions, (int) 6);	
+	OPJconfig->Read(wxT("encode/progression"), &m_progression, (int) 0);	
+	OPJconfig->Read(wxT("encode/cbsize"), &m_cbsize, (wxString) wxT("32,32"));
+	OPJconfig->Read(wxT("encode/prsize"), &m_prsize, (wxString) wxT("[128,128],[128,128]"));
+	OPJconfig->Read(wxT("encode/tsize"), &m_tsize, (wxString) wxT(""));
+	OPJconfig->Read(wxT("encode/torigin"), &m_torigin, (wxString) wxT("0,0"));
+	OPJconfig->Read(wxT("encode/enablesop"), &m_enablesop, (bool) false);	
+	OPJconfig->Read(wxT("encode/enableeph"), &m_enableeph, (bool) false);	
+	OPJconfig->Read(wxT("encode/enablebypass"), &m_enablebypass, (bool) false);	
+	OPJconfig->Read(wxT("encode/enablereset"), &m_enablereset, (bool) false);	
+	OPJconfig->Read(wxT("encode/enablerestart"), &m_enablerestart, (bool) false);	
+	OPJconfig->Read(wxT("encode/enablevsc"), &m_enablevsc, (bool) false);	
+	OPJconfig->Read(wxT("encode/enableerterm"), &m_enableerterm, (bool) false);	
+	OPJconfig->Read(wxT("encode/enablesegmark"), &m_enablesegmark, (bool) false);	
+	OPJconfig->Read(wxT("encode/enablecomm"), &m_enablecomm, (bool) true);	
+	OPJconfig->Read(wxT("encode/enablepoc"), &m_enablepoc, (bool) false);	
+	OPJconfig->Read(wxT("encode/comment"), &m_comment, (wxString) wxT(""));
+	OPJconfig->Read(wxT("encode/poc"), &m_poc, (wxString) wxT("T1=0,0,1,5,3,CPRL/T1=5,0,1,6,3,CPRL"));
+	OPJconfig->Read(wxT("encode/enableidx"), &m_enableidx, (bool) false);	
+	OPJconfig->Read(wxT("encode/index"), &m_index, (wxString) wxT("index.txt"));
+#ifdef USE_JPWL
+	OPJconfig->Read(wxT("encode/enablejpwl"), &m_enablejpwle, (bool) true);
+	for (n = 0; n < MYJPWL_MAX_NO_TILESPECS; n++) {
+		OPJconfig->Read(wxT("encode/jpwl/hprotsel") + wxString::Format(wxT("%02d"), n), &m_hprotsel[n], 0);
+		OPJconfig->Read(wxT("encode/jpwl/htileval") + wxString::Format(wxT("%02d"), n), &m_htileval[n], 0);
+		OPJconfig->Read(wxT("encode/jpwl/pprotsel") + wxString::Format(wxT("%02d"), n), &m_pprotsel[n], 0);
+		OPJconfig->Read(wxT("encode/jpwl/ptileval") + wxString::Format(wxT("%02d"), n), &m_ptileval[n], 0);
+		OPJconfig->Read(wxT("encode/jpwl/ppackval") + wxString::Format(wxT("%02d"), n), &m_ppackval[n], 0);
+		OPJconfig->Read(wxT("encode/jpwl/sensisel") + wxString::Format(wxT("%02d"), n), &m_sensisel[n], 0);
+		OPJconfig->Read(wxT("encode/jpwl/stileval") + wxString::Format(wxT("%02d"), n), &m_stileval[n], 0);
+	}
+#endif // USE_JPWL
 
 #else
 	// set decoding engine parameters
@@ -311,6 +328,19 @@ bool OPJViewerApp::OnInit(void)
 	m_index = wxT("index.txt");
 	m_enablecomm = true;
 	m_comment = wxT("");
+	m_enablepoc = false;
+	m_poc = wxT("T1=0,0,1,5,3,CPRL/T1=5,0,1,6,3,CPRL");
+#ifdef USE_JPWL
+	m_enablejpwle = true;
+	for (n = 0; n < MYJPWL_MAX_NO_TILESPECS; n++) {
+		m_hprotsel[n] = 0;
+		m_htileval[n] = 0;
+		m_pprotsel[n] = 0;
+		m_ptileval[n] = 0;
+		m_sensisel[n] = 0;
+		m_stileval[n] = 0;
+	}
+#endif // USE_JPWL
 
 #endif // OPJ_INICONFIG
 
@@ -362,18 +392,20 @@ bool OPJViewerApp::OnInit(void)
 
 int OPJViewerApp::OnExit()
 {
+	int n;
+
 #ifdef OPJ_INICONFIG
-	OPJconfig->Write(wxT("enabledeco"), m_enabledeco);
-	OPJconfig->Write(wxT("enableparse"), m_enableparse);
-	OPJconfig->Write(wxT("resizemethod"), m_resizemethod);
-	OPJconfig->Write(wxT("reducefactor"), m_reducefactor);
-	OPJconfig->Write(wxT("qualitylayers"), m_qualitylayers);
-	OPJconfig->Write(wxT("components"), m_components);
-	OPJconfig->Write(wxT("framenum"), m_framenum);
+	OPJconfig->Write(wxT("decode/enabledeco"), m_enabledeco);
+	OPJconfig->Write(wxT("decode/enableparse"), m_enableparse);
+	OPJconfig->Write(wxT("decode/resizemethod"), m_resizemethod);
+	OPJconfig->Write(wxT("decode/reducefactor"), m_reducefactor);
+	OPJconfig->Write(wxT("decode/qualitylayers"), m_qualitylayers);
+	OPJconfig->Write(wxT("decode/components"), m_components);
+	OPJconfig->Write(wxT("decode/framenum"), m_framenum);
 #ifdef USE_JPWL
-	OPJconfig->Write(wxT("enablejpwl"), m_enablejpwl);
-	OPJconfig->Write(wxT("expcomps"), m_expcomps);
-	OPJconfig->Write(wxT("maxtiles"), m_maxtiles);
+	OPJconfig->Write(wxT("decode/enablejpwl"), m_enablejpwl);
+	OPJconfig->Write(wxT("decode/expcomps"), m_expcomps);
+	OPJconfig->Write(wxT("decode/maxtiles"), m_maxtiles);
 #endif // USE_JPWL
 	OPJconfig->Write(wxT("showtoolbar"), m_showtoolbar);
 	OPJconfig->Write(wxT("showbrowser"), m_showbrowser);
@@ -383,31 +415,45 @@ int OPJViewerApp::OnExit()
 	OPJconfig->Write(wxT("framewidth"), m_framewidth);
 	OPJconfig->Write(wxT("frameheight"), m_frameheight);
 
-	OPJconfig->Write(wxT("subsampling"), m_subsampling);
-	OPJconfig->Write(wxT("origin"), m_origin);
-	OPJconfig->Write(wxT("rates"), m_rates);
-	OPJconfig->Write(wxT("quality"), m_quality);
-	OPJconfig->Write(wxT("enablequality"), m_enablequality);
-	OPJconfig->Write(wxT("multicomp"), m_multicomp);
-	OPJconfig->Write(wxT("irreversible"), m_irreversible);
-	OPJconfig->Write(wxT("resolutions"), m_resolutions);
-	OPJconfig->Write(wxT("progression"), m_progression);
-	OPJconfig->Write(wxT("cbsize"), m_cbsize);
-	OPJconfig->Write(wxT("prsize"), m_prsize);
-	OPJconfig->Write(wxT("tiles"), m_tsize);
-	OPJconfig->Write(wxT("torigin"), m_torigin);
-	OPJconfig->Write(wxT("enablesop"), m_enablesop);
-	OPJconfig->Write(wxT("enableeph"), m_enableeph);
-	OPJconfig->Write(wxT("enablebypass"), m_enablebypass);
-	OPJconfig->Write(wxT("enablereset"), m_enablereset);
-	OPJconfig->Write(wxT("enablerestart"), m_enablerestart);
-	OPJconfig->Write(wxT("enablevsc"), m_enablevsc);
-	OPJconfig->Write(wxT("enableerterm"), m_enableerterm);
-	OPJconfig->Write(wxT("enablesegmark"), m_enablesegmark);
-	OPJconfig->Write(wxT("enableidx"), m_enableidx);
-	OPJconfig->Write(wxT("index"), m_index);
-	OPJconfig->Write(wxT("enablecomm"), m_enablecomm);
-	OPJconfig->Write(wxT("comment"), m_comment);
+	OPJconfig->Write(wxT("encode/subsampling"), m_subsampling);
+	OPJconfig->Write(wxT("encode/origin"), m_origin);
+	OPJconfig->Write(wxT("encode/rates"), m_rates);
+	OPJconfig->Write(wxT("encode/quality"), m_quality);
+	OPJconfig->Write(wxT("encode/enablequality"), m_enablequality);
+	OPJconfig->Write(wxT("encode/multicomp"), m_multicomp);
+	OPJconfig->Write(wxT("encode/irreversible"), m_irreversible);
+	OPJconfig->Write(wxT("encode/resolutions"), m_resolutions);
+	OPJconfig->Write(wxT("encode/progression"), m_progression);
+	OPJconfig->Write(wxT("encode/cbsize"), m_cbsize);
+	OPJconfig->Write(wxT("encode/prsize"), m_prsize);
+	OPJconfig->Write(wxT("encode/tiles"), m_tsize);
+	OPJconfig->Write(wxT("encode/torigin"), m_torigin);
+	OPJconfig->Write(wxT("encode/enablesop"), m_enablesop);
+	OPJconfig->Write(wxT("encode/enableeph"), m_enableeph);
+	OPJconfig->Write(wxT("encode/enablebypass"), m_enablebypass);
+	OPJconfig->Write(wxT("encode/enablereset"), m_enablereset);
+	OPJconfig->Write(wxT("encode/enablerestart"), m_enablerestart);
+	OPJconfig->Write(wxT("encode/enablevsc"), m_enablevsc);
+	OPJconfig->Write(wxT("encode/enableerterm"), m_enableerterm);
+	OPJconfig->Write(wxT("encode/enablesegmark"), m_enablesegmark);
+	OPJconfig->Write(wxT("encode/enableidx"), m_enableidx);
+	OPJconfig->Write(wxT("encode/index"), m_index);
+	OPJconfig->Write(wxT("encode/enablecomm"), m_enablecomm);
+	OPJconfig->Write(wxT("encode/comment"), m_comment);
+	OPJconfig->Write(wxT("encode/enablepoc"), m_enablepoc);
+	OPJconfig->Write(wxT("encode/poc"), m_poc);
+#ifdef USE_JPWL
+	OPJconfig->Write(wxT("encode/enablejpwl"), m_enablejpwle);
+	for (n = 0; n < MYJPWL_MAX_NO_TILESPECS; n++) {
+		OPJconfig->Write(wxT("encode/jpwl/hprotsel") + wxString::Format(wxT("%02d"), n), m_hprotsel[n]);
+		OPJconfig->Write(wxT("encode/jpwl/htileval") + wxString::Format(wxT("%02d"), n), m_htileval[n]);
+		OPJconfig->Write(wxT("encode/jpwl/pprotsel") + wxString::Format(wxT("%02d"), n), m_pprotsel[n]);
+		OPJconfig->Write(wxT("encode/jpwl/ptileval") + wxString::Format(wxT("%02d"), n), m_ptileval[n]);
+		OPJconfig->Write(wxT("encode/jpwl/ppackval") + wxString::Format(wxT("%02d"), n), m_ppackval[n]);
+		OPJconfig->Write(wxT("encode/jpwl/sensisel") + wxString::Format(wxT("%02d"), n), m_sensisel[n]);
+		OPJconfig->Write(wxT("encode/jpwl/stileval") + wxString::Format(wxT("%02d"), n), m_stileval[n]);
+	}
+#endif // USE_JPWL
 
 #endif // OPJ_INICONFIG
 
@@ -786,6 +832,8 @@ void OPJFrame::Resize(int number)
 
 void OPJFrame::OnSetsEnco(wxCommandEvent& event)
 {
+	int n;
+
     OPJEncoderDialog dialog(this, event.GetId());
 
     if (dialog.ShowModal() == wxID_OK) {
@@ -816,6 +864,20 @@ void OPJFrame::OnSetsEnco(wxCommandEvent& event)
 		wxGetApp().m_index = dialog.m_indexCtrl->GetValue();
 		wxGetApp().m_enablecomm = dialog.m_enablecommCheck->GetValue();
 		wxGetApp().m_comment = dialog.m_commentCtrl->GetValue();
+		wxGetApp().m_enablepoc = dialog.m_enablepocCheck->GetValue();
+		wxGetApp().m_poc = dialog.m_pocCtrl->GetValue();
+#ifdef USE_JPWL
+		wxGetApp().m_enablejpwle = dialog.m_enablejpwlCheck->GetValue();
+		for (n = 0; n < MYJPWL_MAX_NO_TILESPECS; n++) {
+			wxGetApp().m_hprotsel[n] = dialog.m_hprotChoice[n]->GetSelection();
+			wxGetApp().m_htileval[n] = dialog.m_htileCtrl[n]->GetValue();
+			wxGetApp().m_pprotsel[n] = dialog.m_pprotChoice[n]->GetSelection();
+			wxGetApp().m_ptileval[n] = dialog.m_ptileCtrl[n]->GetValue();
+			wxGetApp().m_ppackval[n] = dialog.m_ppackCtrl[n]->GetValue();
+			wxGetApp().m_sensisel[n] = dialog.m_sensiChoice[n]->GetSelection();
+			wxGetApp().m_stileval[n] = dialog.m_stileCtrl[n]->GetValue();
+		}
+#endif // USE_JPWL
 	};
 }
 
@@ -1047,63 +1109,6 @@ void OPJFrame::OnNextComp(wxCommandEvent& event)
 	OnReload(e);
 }
 
-// about window for the frame
-void OPJFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
-{
-#ifdef OPJ_HTMLABOUT
-#include "about_htm.h"
-#include "opj_logo.xpm"
-
-    wxBoxSizer *topsizer;
-    wxHtmlWindow *html;
-    wxDialog dlg(this, wxID_ANY, wxString(_("About")));
-
-    wxMemoryFSHandler::AddFile(wxT("opj_logo.xpm"), wxBitmap(opj_logo), wxBITMAP_TYPE_XPM);
-
-    topsizer = new wxBoxSizer(wxVERTICAL);
-
-    html = new wxHtmlWindow(&dlg, wxID_ANY, wxDefaultPosition, wxSize(320, 250), wxHW_SCROLLBAR_NEVER);
-    html->SetBorders(0);
-    //html->LoadPage(wxT("about/about.htm"));
-	//html->SetPage("<html><body>Hello, world!</body></html>");
-	html->SetPage(htmlaboutpage);
-    html->SetSize(html->GetInternalRepresentation()->GetWidth(),
-                    html->GetInternalRepresentation()->GetHeight());
-
-    topsizer->Add(html, 1, wxALL, 10);
-
-    topsizer->Add(new wxStaticLine(&dlg, wxID_ANY), 0, wxEXPAND | wxLEFT | wxRIGHT, 10);
-
-    wxButton *bu1 = new wxButton(&dlg, wxID_OK, wxT("OK"));
-    bu1->SetDefault();
-
-    topsizer->Add(bu1, 0, wxALL | wxALIGN_RIGHT, 15);
-
-    dlg.SetSizer(topsizer);
-    topsizer->Fit(&dlg);
-
-    dlg.ShowModal();
-
-#else
-
-	wxMessageBox(wxString::Format(OPJ_APPLICATION_TITLEBAR
-								  wxT("\n\n")
-								  wxT("Built with %s and OpenJPEG ")
-								  wxT(OPENJPEG_VERSION)
-								  wxT("\non ") wxT(__DATE__) wxT(", ") wxT(__TIME__)
-								  wxT("\nRunning under %s\n\n")
-								  OPJ_APPLICATION_COPYRIGHT,
-								  wxVERSION_STRING,
-								  wxGetOsDescription().c_str()),
-				 wxT("About ") OPJ_APPLICATION_NAME,
-				 wxOK | wxICON_INFORMATION,
-				 this
-				 );
-
-#endif
-
-}
-
 void OPJFrame::OnToggleBrowser(wxCommandEvent& WXUNUSED(event))
 {
     if (markerTreeWindow->IsShown())
@@ -1275,6 +1280,9 @@ void OPJFrame::OnFileOpen(wxCommandEvent& WXUNUSED(event))
 #if wxUSE_LIBOPENJPEG
 	wxT("JPEG 2000 files (*.jp2,*.j2k,*.j2c,*.mj2)|*.jp2;*.j2k;*.j2c;*.mj2")
 #endif
+#if USE_MXF
+	wxT("|MXF JPEG 2000 video (*.mxf)|*.mxf")
+#endif // USE_MXF
 #if wxUSE_LIBJPEG
 		wxT("|JPEG files (*.jpg)|*.jpg")
 #endif
@@ -1332,6 +1340,9 @@ void OPJFrame::OnFileSaveAs(wxCommandEvent& WXUNUSED(event))
 
 void OPJFrame::OnMemoryOpen(wxCommandEvent& WXUNUSED(event))
 {
+	// do nothing
+	return;
+	
 	wxTextEntryDialog dialog(this, wxT("Memory HEX address range: start_address-stop_address"),
 							wxT("Decode a memory buffer"),
 							wxT("0x-0x"),
@@ -1548,1223 +1559,22 @@ void OPJChildFrame::OnLostFocus(wxFocusEvent& event)
 	//wxLogMessage(wxT("Lost focus: %d (%x)"), m_winnumber, event.GetWindow());
 }
 
-#if USE_GENERIC_TREECTRL
-BEGIN_EVENT_TABLE(OPJMarkerTree, wxGenericTreeCtrl)
-#else
-BEGIN_EVENT_TABLE(OPJMarkerTree, wxTreeCtrl)
-#endif
-    /*EVT_TREE_BEGIN_DRAG(TreeTest_Ctrl, OPJMarkerTree::OnBeginDrag)
-    EVT_TREE_BEGIN_RDRAG(TreeTest_Ctrl, OPJMarkerTree::OnBeginRDrag)
-    EVT_TREE_END_DRAG(TreeTest_Ctrl, OPJMarkerTree::OnEndDrag)*/
-    /*EVT_TREE_BEGIN_LABEL_EDIT(TreeTest_Ctrl, OPJMarkerTree::OnBeginLabelEdit)
-    EVT_TREE_END_LABEL_EDIT(TreeTest_Ctrl, OPJMarkerTree::OnEndLabelEdit)*/
-    /*EVT_TREE_DELETE_ITEM(TreeTest_Ctrl, OPJMarkerTree::OnDeleteItem)*/
-#if 0       // there are so many of those that logging them causes flicker
-    /*EVT_TREE_GET_INFO(TreeTest_Ctrl, OPJMarkerTree::OnGetInfo)*/
-#endif
-    /*EVT_TREE_SET_INFO(TreeTest_Ctrl, OPJMarkerTree::OnSetInfo)
-    EVT_TREE_ITEM_EXPANDED(TreeTest_Ctrl, OPJMarkerTree::OnItemExpanded)*/
-    EVT_TREE_ITEM_EXPANDING(TreeTest_Ctrl, OPJMarkerTree::OnItemExpanding)
-    /*EVT_TREE_ITEM_COLLAPSED(TreeTest_Ctrl, OPJMarkerTree::OnItemCollapsed)
-    EVT_TREE_ITEM_COLLAPSING(TreeTest_Ctrl, OPJMarkerTree::OnItemCollapsing)*/
 
-    EVT_TREE_SEL_CHANGED(TreeTest_Ctrl, OPJMarkerTree::OnSelChanged)
-    /*EVT_TREE_SEL_CHANGING(TreeTest_Ctrl, OPJMarkerTree::OnSelChanging)*/
-    /*EVT_TREE_KEY_DOWN(TreeTest_Ctrl, OPJMarkerTree::OnTreeKeyDown)*/
-    /*EVT_TREE_ITEM_ACTIVATED(TreeTest_Ctrl, OPJMarkerTree::OnItemActivated)*/
+////////////////////////////////
+// drag and drop 
+////////////////////////////////
 
-    // so many differents ways to handle right mouse button clicks...
-    /*EVT_CONTEXT_MENU(OPJMarkerTree::OnContextMenu)*/
-    // EVT_TREE_ITEM_MENU is the preferred event for creating context menus
-    // on a tree control, because it includes the point of the click or item,
-    // meaning that no additional placement calculations are required.
-    EVT_TREE_ITEM_MENU(TreeTest_Ctrl, OPJMarkerTree::OnItemMenu)
-    /*EVT_TREE_ITEM_RIGHT_CLICK(TreeTest_Ctrl, OPJMarkerTree::OnItemRClick)*/
-
-    /*EVT_RIGHT_DOWN(OPJMarkerTree::OnRMouseDown)
-    EVT_RIGHT_UP(OPJMarkerTree::OnRMouseUp)
-    EVT_RIGHT_DCLICK(OPJMarkerTree::OnRMouseDClick)*/
-END_EVENT_TABLE()
-
-// OPJMarkerTree implementation
-#if USE_GENERIC_TREECTRL
-IMPLEMENT_DYNAMIC_CLASS(OPJMarkerTree, wxGenericTreeCtrl)
-#else
-IMPLEMENT_DYNAMIC_CLASS(OPJMarkerTree, wxTreeCtrl)
-#endif
-
-OPJMarkerTree::OPJMarkerTree(wxWindow *parent, OPJChildFrame *subframe, wxFileName fname, wxString name, const wxWindowID id,
-           const wxPoint& pos, const wxSize& size, long style)
-          : wxTreeCtrl(parent, id, pos, size, style)
+bool OPJDnDFile::OnDropFiles(wxCoord, wxCoord, const wxArrayString& filenames)
 {
-    m_reverseSort = false;
-	m_fname = fname;
-
-	m_peektextCtrl = ((OPJFrame *) (parent->GetParent()->GetParent()))->m_textCtrlbrowse;
-    CreateImageList();
-
-    // Add some items to the tree
-    //AddTestItemsToTree(5, 5);
-    int image = wxGetApp().ShowImages() ? OPJMarkerTree::TreeCtrlIcon_Folder : -1;
-    wxTreeItemId rootId = AddRoot(name,
-                                  image, image,
-                                  new OPJMarkerData(name));
-
-    OPJParseThread *pthread = CreateParseThread(0x00, subframe);
-    if (pthread->Run() != wxTHREAD_NO_ERROR)
-        wxLogMessage(wxT("Can't start parse thread!"));
-    else
-		wxLogMessage(wxT("New parse thread started."));
-
-	m_childframe = subframe;
-}
-
-void OPJMarkerTree::CreateImageList(int size)
-{
-    if (size == -1) {
-        SetImageList(NULL);
-        return;
+    /*size_t nFiles = filenames.GetCount();
+    wxString str;
+    str.Printf( _T("%d files dropped\n"), (int)nFiles);
+    for ( size_t n = 0; n < nFiles; n++ ) {
+        str << filenames[n] << wxT("\n");
     }
-    if (size == 0)
-        size = m_imageSize;
-    else
-        m_imageSize = size;
+    wxLogMessage(str);*/
+	m_pOwner->OpenFiles(filenames, filenames);
 
-    // Make an image list containing small icons
-    wxImageList *images = new wxImageList(size, size, true);
-
-    // should correspond to TreeCtrlIcon_xxx enum
-    wxBusyCursor wait;
-    wxIcon icons[5];
-    icons[0] = wxIcon(icon1_xpm);
-    icons[1] = wxIcon(icon2_xpm);
-    icons[2] = wxIcon(icon3_xpm);
-    icons[3] = wxIcon(icon4_xpm);
-    icons[4] = wxIcon(icon5_xpm);
-
-    int sizeOrig = icons[0].GetWidth();
-    for (size_t i = 0; i < WXSIZEOF(icons); i++) {
-        if (size == sizeOrig) {
-            images->Add(icons[i]);
-        } else {
-            images->Add(wxBitmap(wxBitmap(icons[i]).ConvertToImage().Rescale(size, size)));
-        }
-    }
-
-    AssignImageList(images);
+    return true;
 }
-
-#if USE_GENERIC_TREECTRL || !defined(__WXMSW__)
-void OPJMarkerTree::CreateButtonsImageList(int size)
-{
-    if ( size == -1 ) {
-        SetButtonsImageList(NULL);
-        return;
-    }
-
-    // Make an image list containing small icons
-    wxImageList *images = new wxImageList(size, size, true);
-
-    // should correspond to TreeCtrlIcon_xxx enum
-    wxBusyCursor wait;
-    wxIcon icons[4];
-    icons[0] = wxIcon(icon3_xpm);   // closed
-    icons[1] = wxIcon(icon3_xpm);   // closed, selected
-    icons[2] = wxIcon(icon5_xpm);   // open
-    icons[3] = wxIcon(icon5_xpm);   // open, selected
-
-    for ( size_t i = 0; i < WXSIZEOF(icons); i++ ) {
-        int sizeOrig = icons[i].GetWidth();
-        if ( size == sizeOrig ) {
-            images->Add(icons[i]);
-        } else {
-            images->Add(wxBitmap(wxBitmap(icons[i]).ConvertToImage().Rescale(size, size)));
-        }
-    }
-
-    AssignButtonsImageList(images);
-#else
-void OPJMarkerTree::CreateButtonsImageList(int WXUNUSED(size))
-{
-#endif
-}
-
-void OPJParseThread::LoadFile(wxFileName fname)
-{
-	wxTreeItemId rootid;
-
-	// this is the root node
-	int image = wxGetApp().ShowImages() ? m_tree->TreeCtrlIcon_Folder : -1;
-
-	if (this->m_parentid) {
-		// leaf of a tree
-		rootid = m_parentid;
-		m_tree->SetItemText(rootid, wxT("Parsing..."));
-
-	} else {
-
-		// delete the existing tree hierarchy
-		m_tree->DeleteAllItems();
-
-		// new tree
-		rootid = m_tree->AddRoot(wxT("Parsing..."),
-			image,
-			image,
-			new OPJMarkerData(fname.GetFullPath())
-			);
-		//m_tree->SetItemFont(rootid, *wxITALIC_FONT);
-		m_tree->SetItemBold(rootid);
-	}
-
-	// open the file
-	wxFile m_file(fname.GetFullPath().c_str(), wxFile::read);
-
-	// parsing enabled?
-	if (wxGetApp().m_enableparse) {
-
-		// what is the extension?
-		if ((fname.GetExt() == wxT("j2k")) || (fname.GetExt() == wxT("j2c"))) {
-
-			// parse the file
-			ParseJ2KFile(&m_file, 0, m_file.Length(), rootid);
-
-		} else if ((fname.GetExt() == wxT("jp2")) || (fname.GetExt() == wxT("mj2"))) {
-
-			// parse the file
-			if (this->m_parentid) {
-				//WriteText(wxT("Only a subsection of jp2"));
-				OPJMarkerData *data = (OPJMarkerData *) m_tree->GetItemData(rootid);
-				ParseJ2KFile(&m_file, data->m_start, data->m_length, rootid);
-				m_tree->Expand(rootid);
-
-			} else {
-				// as usual
-				ParseJP2File(&m_file, 0, m_file.Length(), rootid);
-			}
-
-		} else {
-
-			// unknown extension
-			WriteText(wxT("Unknown file format!"));
-
-		}
-
-	}
-
-
-	// this is the root node
-	if (this->m_parentid)
-		m_tree->SetItemText(rootid, wxT("Codestream"));
-	else
-		//m_tree->SetItemText(rootid, wxString::Format(wxT("%s (%d B)"), fname.GetFullName(), m_file.Length()));
-		m_tree->SetItemText(rootid, fname.GetFullName());
-
-	// close the file
-	m_file.Close();
-
-	WriteText(wxT("Parsing finished!"));
-}
-
-/*int OPJMarkerTree::OnCompareItems(const wxTreeItemId& item1,
-                               const wxTreeItemId& item2)
-{
-    if ( m_reverseSort )
-    {
-        // just exchange 1st and 2nd items
-        return wxTreeCtrl::OnCompareItems(item2, item1);
-    }
-    else
-    {
-        return wxTreeCtrl::OnCompareItems(item1, item2);
-    }
-}*/
-
-/*void OPJMarkerTree::AddItemsRecursively(const wxTreeItemId& idParent,
-                                     size_t numChildren,
-                                     size_t depth,
-                                     size_t folder)
-{
-    if ( depth > 0 )
-    {
-        bool hasChildren = depth > 1;
-
-        wxString str;
-        for ( size_t n = 0; n < numChildren; n++ )
-        {
-            // at depth 1 elements won't have any more children
-            if ( hasChildren )
-                str.Printf(wxT("%s child %u"), wxT("Folder"), unsigned(n + 1));
-            else
-                str.Printf(wxT("%s child %u.%u"), wxT("File"), unsigned(folder), unsigned(n + 1));
-
-            // here we pass to AppendItem() normal and selected item images (we
-            // suppose that selected image follows the normal one in the enum)
-            int image, imageSel;
-            if ( wxGetApp().ShowImages() )
-            {
-                image = depth == 1 ? TreeCtrlIcon_File : TreeCtrlIcon_Folder;
-                imageSel = image + 1;
-            }
-            else
-            {
-                image = imageSel = -1;
-            }
-            wxTreeItemId id = AppendItem(idParent, str, image, imageSel,
-                                         new OPJMarkerData(str));
-
-            // and now we also set the expanded one (only for the folders)
-            if ( hasChildren && wxGetApp().ShowImages() )
-            {
-                SetItemImage(id, TreeCtrlIcon_FolderOpened,
-                             wxTreeItemIcon_Expanded);
-            }
-
-            // remember the last child for OnEnsureVisible()
-            if ( !hasChildren && n == numChildren - 1 )
-            {
-                m_lastItem = id;
-            }
-
-            AddItemsRecursively(id, numChildren, depth - 1, n + 1);
-        }
-    }
-    //else: done!
-}*/
-
-/*void OPJMarkerTree::AddTestItemsToTree(size_t numChildren,
-                                    size_t depth)
-{
-    int image = wxGetApp().ShowImages() ? OPJMarkerTree::TreeCtrlIcon_Folder : -1;
-    wxTreeItemId rootId = AddRoot(wxT("Root"),
-                                  image, image,
-                                  new OPJMarkerData(wxT("Root item")));
-    if ( image != -1 )
-    {
-        SetItemImage(rootId, TreeCtrlIcon_FolderOpened, wxTreeItemIcon_Expanded);
-    }
-
-    AddItemsRecursively(rootId, numChildren, depth, 0);
-
-    // set some colours/fonts for testing
-    SetItemFont(rootId, *wxITALIC_FONT);
-
-    wxTreeItemIdValue cookie;
-    wxTreeItemId id = GetFirstChild(rootId, cookie);
-    SetItemTextColour(id, *wxBLUE);
-
-    id = GetNextChild(rootId, cookie);
-    id = GetNextChild(rootId, cookie);
-    SetItemTextColour(id, *wxRED);
-    SetItemBackgroundColour(id, *wxLIGHT_GREY);
-}*/
-
-/*void OPJMarkerTree::GetItemsRecursively(const wxTreeItemId& idParent,
-                                     wxTreeItemIdValue cookie)
-{
-    wxTreeItemId id;
-
-    if ( !cookie )
-        id = GetFirstChild(idParent, cookie);
-    else
-        id = GetNextChild(idParent, cookie);
-
-    if ( !id.IsOk() )
-        return;
-
-    wxString text = GetItemText(id);
-    wxLogMessage(text);
-
-    if (ItemHasChildren(id))
-        GetItemsRecursively(id);
-
-    GetItemsRecursively(idParent, cookie);
-}*/
-
-/*void OPJMarkerTree::DoToggleIcon(const wxTreeItemId& item)
-{
-    int image = (GetItemImage(item) == TreeCtrlIcon_Folder)
-                    ? TreeCtrlIcon_File
-                    : TreeCtrlIcon_Folder;
-    SetItemImage(item, image, wxTreeItemIcon_Normal);
-
-    image = (GetItemImage(item) == TreeCtrlIcon_FolderSelected)
-                    ? TreeCtrlIcon_FileSelected
-                    : TreeCtrlIcon_FolderSelected;
-    SetItemImage(item, image, wxTreeItemIcon_Selected);
-}*/
-
-void OPJMarkerTree::LogEvent(const wxChar *name, const wxTreeEvent& event)
-{
-    wxTreeItemId item = event.GetItem();
-    wxString text;
-    if ( item.IsOk() )
-        text << wxT('"') << GetItemText(item).c_str() << wxT('"');
-    else
-        text = wxT("invalid item");
-    wxLogMessage(wxT("%s(%s)"), name, text.c_str());
-}
-
-OPJParseThread *OPJMarkerTree::CreateParseThread(wxTreeItemId parentid, OPJChildFrame *subframe)
-{
-    OPJParseThread *pthread = new OPJParseThread(this, parentid);
-
-    if (pthread->Create() != wxTHREAD_NO_ERROR)
-		wxLogError(wxT("Can't create parse thread!"));
-
-    wxCriticalSectionLocker enter(wxGetApp().m_parse_critsect);
-    wxGetApp().m_parse_threads.Add(pthread);
-
-    return pthread;
-}
-
-
-/*// avoid repetition
-#define TREE_EVENT_HANDLER(name)                                 \
-void OPJMarkerTree::name(wxTreeEvent& event)                        \
-{                                                                \
-    LogEvent(_T(#name), event);                                  \
-    SetLastItem(wxTreeItemId());                                 \
-    event.Skip();                                                \
-}*/
-
-/*TREE_EVENT_HANDLER(OnBeginRDrag)*/
-/*TREE_EVENT_HANDLER(OnDeleteItem)*/
-/*TREE_EVENT_HANDLER(OnGetInfo)
-TREE_EVENT_HANDLER(OnSetInfo)*/
-/*TREE_EVENT_HANDLER(OnItemExpanded)
-TREE_EVENT_HANDLER(OnItemExpanding)*/
-/*TREE_EVENT_HANDLER(OnItemCollapsed)*/
-/*TREE_EVENT_HANDLER(OnSelChanged)
-TREE_EVENT_HANDLER(OnSelChanging)*/
-
-/*#undef TREE_EVENT_HANDLER*/
-
-void OPJMarkerTree::OnItemExpanding(wxTreeEvent& event)
-{
-	wxTreeItemId item = event.GetItem();
-	OPJMarkerData* data = (OPJMarkerData *) GetItemData(item);
-	wxString text;
-
-	if (item.IsOk())
-		text << wxT('"') << GetItemText(item).c_str() << wxT('"');
-	else
-		text = wxT("invalid item");
-
-	if (wxStrcmp(data->GetDesc1(), wxT("INFO-CSTREAM")))
-		return;
-
-	wxLogMessage(wxT("Expanding... (%s -> %s, %s, %d, %d)"),
-		text.c_str(), data->GetDesc1(), data->GetDesc2(),
-		data->m_start, data->m_length);
-
-	// the codestream box is being asked for expansion
-	wxTreeItemIdValue cookie;
-	if (!GetFirstChild(item, cookie).IsOk()) {
-		OPJParseThread *pthread = CreateParseThread(item);
-		if (pthread->Run() != wxTHREAD_NO_ERROR)
-			wxLogMessage(wxT("Can't start parse thread!"));
-		else
-			wxLogMessage(wxT("New parse thread started."));
-	}
-}
-
-void OPJMarkerTree::OnSelChanged(wxTreeEvent& event)
-{
-	int bunch_linesize = 16;
-	int bunch_numlines = 7;
-
-	wxTreeItemId item = event.GetItem();
-	OPJMarkerData* data = (OPJMarkerData *) GetItemData(item);
-	wxString text;
-	int l, c, pos = 0, pre_pos;
-
-	m_peektextCtrl->Clear();
-
-	/*text << wxString::Format(wxT("Selected... (%s -> %s, %s, %d, %d)"),
-		text.c_str(), data->GetDesc1(), data->GetDesc2(),
-		data->m_start, data->m_length) << wxT("\n");*/
-
-	// open the file and browse a little
-	wxFile *fp = new wxFile(m_fname.GetFullPath().c_str(), wxFile::read);
-
-	// go to position claimed
-	fp->Seek(data->m_start, wxFromStart);
-
-	// read a bunch
-	int max_read = wxMin(wxFileOffset(bunch_linesize * bunch_numlines), data->m_length - data->m_start + 1);
-	if (data->m_desc == wxT("MARK (65380)")) {
-		/*wxLogMessage(data->m_desc);*/
-		max_read = data->m_length - data->m_start + 1;
-		bunch_numlines = (int) ceil((float) max_read / (float) bunch_linesize);
-	}
-	unsigned char *buffer = new unsigned char[bunch_linesize * bunch_numlines];
-	fp->Read(buffer, max_read);
-
-	// write the file data between start and stop
-	pos = 0;
-	for (l = 0; l < bunch_numlines; l++) {
-
-		text << wxString::Format(wxT("%010d:"), data->m_start + pos);
-
-		pre_pos = pos;
-
-		// add hex browsing text
-		for (c = 0; c < bunch_linesize; c++) {
-
-			if (!(c % 8))
-				text << wxT(" ");
-
-			if (pos < max_read) {
-				text << wxString::Format(wxT("%02X "), buffer[pos]);
-			} else
-				text << wxT("   ");
-			pos++;
-		}
-
-		text << wxT("    ");
-
-		// add char browsing text
-		for (c = 0; c < bunch_linesize; c++) {
-
-			if (pre_pos < max_read) {
-				if ((buffer[pre_pos] == '\n') ||
-					(buffer[pre_pos] == '\t') ||
-					(buffer[pre_pos] == '\0') ||
-					(buffer[pre_pos] == 0x0D) ||
-					(buffer[pre_pos] == 0x0B))
-					buffer[pre_pos] = ' ';
-				text << wxString::FromAscii((char) buffer[pre_pos]) << wxT(".");
-			} else
-				text << wxT("  ");
-			pre_pos++;
-		}
-
-		text << wxT("\n");
-
-	}
-
-	// close the file
-	fp->Close();
-
-	m_peektextCtrl->WriteText(text);
-
-	delete buffer;
-}
-
-/*void LogKeyEvent(const wxChar *name, const wxKeyEvent& event)
-{
-    wxString key;
-    long keycode = event.GetKeyCode();
-    {
-        switch ( keycode )
-        {
-            case WXK_BACK: key = wxT("BACK"); break;
-            case WXK_TAB: key = wxT("TAB"); break;
-            case WXK_RETURN: key = wxT("RETURN"); break;
-            case WXK_ESCAPE: key = wxT("ESCAPE"); break;
-            case WXK_SPACE: key = wxT("SPACE"); break;
-            case WXK_DELETE: key = wxT("DELETE"); break;
-            case WXK_START: key = wxT("START"); break;
-            case WXK_LBUTTON: key = wxT("LBUTTON"); break;
-            case WXK_RBUTTON: key = wxT("RBUTTON"); break;
-            case WXK_CANCEL: key = wxT("CANCEL"); break;
-            case WXK_MBUTTON: key = wxT("MBUTTON"); break;
-            case WXK_CLEAR: key = wxT("CLEAR"); break;
-            case WXK_SHIFT: key = wxT("SHIFT"); break;
-            case WXK_ALT: key = wxT("ALT"); break;
-            case WXK_CONTROL: key = wxT("CONTROL"); break;
-            case WXK_MENU: key = wxT("MENU"); break;
-            case WXK_PAUSE: key = wxT("PAUSE"); break;
-            case WXK_CAPITAL: key = wxT("CAPITAL"); break;
-            case WXK_END: key = wxT("END"); break;
-            case WXK_HOME: key = wxT("HOME"); break;
-            case WXK_LEFT: key = wxT("LEFT"); break;
-            case WXK_UP: key = wxT("UP"); break;
-            case WXK_RIGHT: key = wxT("RIGHT"); break;
-            case WXK_DOWN: key = wxT("DOWN"); break;
-            case WXK_SELECT: key = wxT("SELECT"); break;
-            case WXK_PRINT: key = wxT("PRINT"); break;
-            case WXK_EXECUTE: key = wxT("EXECUTE"); break;
-            case WXK_SNAPSHOT: key = wxT("SNAPSHOT"); break;
-            case WXK_INSERT: key = wxT("INSERT"); break;
-            case WXK_HELP: key = wxT("HELP"); break;
-            case WXK_NUMPAD0: key = wxT("NUMPAD0"); break;
-            case WXK_NUMPAD1: key = wxT("NUMPAD1"); break;
-            case WXK_NUMPAD2: key = wxT("NUMPAD2"); break;
-            case WXK_NUMPAD3: key = wxT("NUMPAD3"); break;
-            case WXK_NUMPAD4: key = wxT("NUMPAD4"); break;
-            case WXK_NUMPAD5: key = wxT("NUMPAD5"); break;
-            case WXK_NUMPAD6: key = wxT("NUMPAD6"); break;
-            case WXK_NUMPAD7: key = wxT("NUMPAD7"); break;
-            case WXK_NUMPAD8: key = wxT("NUMPAD8"); break;
-            case WXK_NUMPAD9: key = wxT("NUMPAD9"); break;
-            case WXK_MULTIPLY: key = wxT("MULTIPLY"); break;
-            case WXK_ADD: key = wxT("ADD"); break;
-            case WXK_SEPARATOR: key = wxT("SEPARATOR"); break;
-            case WXK_SUBTRACT: key = wxT("SUBTRACT"); break;
-            case WXK_DECIMAL: key = wxT("DECIMAL"); break;
-            case WXK_DIVIDE: key = wxT("DIVIDE"); break;
-            case WXK_F1: key = wxT("F1"); break;
-            case WXK_F2: key = wxT("F2"); break;
-            case WXK_F3: key = wxT("F3"); break;
-            case WXK_F4: key = wxT("F4"); break;
-            case WXK_F5: key = wxT("F5"); break;
-            case WXK_F6: key = wxT("F6"); break;
-            case WXK_F7: key = wxT("F7"); break;
-            case WXK_F8: key = wxT("F8"); break;
-            case WXK_F9: key = wxT("F9"); break;
-            case WXK_F10: key = wxT("F10"); break;
-            case WXK_F11: key = wxT("F11"); break;
-            case WXK_F12: key = wxT("F12"); break;
-            case WXK_F13: key = wxT("F13"); break;
-            case WXK_F14: key = wxT("F14"); break;
-            case WXK_F15: key = wxT("F15"); break;
-            case WXK_F16: key = wxT("F16"); break;
-            case WXK_F17: key = wxT("F17"); break;
-            case WXK_F18: key = wxT("F18"); break;
-            case WXK_F19: key = wxT("F19"); break;
-            case WXK_F20: key = wxT("F20"); break;
-            case WXK_F21: key = wxT("F21"); break;
-            case WXK_F22: key = wxT("F22"); break;
-            case WXK_F23: key = wxT("F23"); break;
-            case WXK_F24: key = wxT("F24"); break;
-            case WXK_NUMLOCK: key = wxT("NUMLOCK"); break;
-            case WXK_SCROLL: key = wxT("SCROLL"); break;
-            case WXK_PAGEUP: key = wxT("PAGEUP"); break;
-            case WXK_PAGEDOWN: key = wxT("PAGEDOWN"); break;
-            case WXK_NUMPAD_SPACE: key = wxT("NUMPAD_SPACE"); break;
-            case WXK_NUMPAD_TAB: key = wxT("NUMPAD_TAB"); break;
-            case WXK_NUMPAD_ENTER: key = wxT("NUMPAD_ENTER"); break;
-            case WXK_NUMPAD_F1: key = wxT("NUMPAD_F1"); break;
-            case WXK_NUMPAD_F2: key = wxT("NUMPAD_F2"); break;
-            case WXK_NUMPAD_F3: key = wxT("NUMPAD_F3"); break;
-            case WXK_NUMPAD_F4: key = wxT("NUMPAD_F4"); break;
-            case WXK_NUMPAD_HOME: key = wxT("NUMPAD_HOME"); break;
-            case WXK_NUMPAD_LEFT: key = wxT("NUMPAD_LEFT"); break;
-            case WXK_NUMPAD_UP: key = wxT("NUMPAD_UP"); break;
-            case WXK_NUMPAD_RIGHT: key = wxT("NUMPAD_RIGHT"); break;
-            case WXK_NUMPAD_DOWN: key = wxT("NUMPAD_DOWN"); break;
-            case WXK_NUMPAD_PAGEUP: key = wxT("NUMPAD_PAGEUP"); break;
-            case WXK_NUMPAD_PAGEDOWN: key = wxT("NUMPAD_PAGEDOWN"); break;
-            case WXK_NUMPAD_END: key = wxT("NUMPAD_END"); break;
-            case WXK_NUMPAD_BEGIN: key = wxT("NUMPAD_BEGIN"); break;
-            case WXK_NUMPAD_INSERT: key = wxT("NUMPAD_INSERT"); break;
-            case WXK_NUMPAD_DELETE: key = wxT("NUMPAD_DELETE"); break;
-            case WXK_NUMPAD_EQUAL: key = wxT("NUMPAD_EQUAL"); break;
-            case WXK_NUMPAD_MULTIPLY: key = wxT("NUMPAD_MULTIPLY"); break;
-            case WXK_NUMPAD_ADD: key = wxT("NUMPAD_ADD"); break;
-            case WXK_NUMPAD_SEPARATOR: key = wxT("NUMPAD_SEPARATOR"); break;
-            case WXK_NUMPAD_SUBTRACT: key = wxT("NUMPAD_SUBTRACT"); break;
-            case WXK_NUMPAD_DECIMAL: key = wxT("NUMPAD_DECIMAL"); break;
-
-            default:
-            {
-               if ( keycode < 128 && wxIsprint((int)keycode) )
-                   key.Printf(wxT("'%c'"), (char)keycode);
-               else if ( keycode > 0 && keycode < 27 )
-                   key.Printf(_("Ctrl-%c"), wxT('A') + keycode - 1);
-               else
-                   key.Printf(wxT("unknown (%ld)"), keycode);
-            }
-        }
-    }
-
-    wxLogMessage(wxT("%s event: %s (flags = %c%c%c%c)"),
-                  name,
-                  key.c_str(),
-                  event.ControlDown() ? wxT('C') : wxT('-'),
-                  event.AltDown() ? wxT('A') : wxT('-'),
-                  event.ShiftDown() ? wxT('S') : wxT('-'),
-                  event.MetaDown() ? wxT('M') : wxT('-'));
-}
-
-void OPJMarkerTree::OnTreeKeyDown(wxTreeEvent& event)
-{
-    LogKeyEvent(wxT("Tree key down "), event.GetKeyEvent());
-
-    event.Skip();
-}*/
-
-/*void OPJMarkerTree::OnBeginDrag(wxTreeEvent& event)
-{
-    // need to explicitly allow drag
-    if ( event.GetItem() != GetRootItem() )
-    {
-        m_draggedItem = event.GetItem();
-
-        wxLogMessage(wxT("OnBeginDrag: started dragging %s"),
-                     GetItemText(m_draggedItem).c_str());
-
-        event.Allow();
-    }
-    else
-    {
-        wxLogMessage(wxT("OnBeginDrag: this item can't be dragged."));
-    }
-}
-
-void OPJMarkerTree::OnEndDrag(wxTreeEvent& event)
-{
-    wxTreeItemId itemSrc = m_draggedItem,
-                 itemDst = event.GetItem();
-    m_draggedItem = (wxTreeItemId)0l;
-
-    // where to copy the item?
-    if ( itemDst.IsOk() && !ItemHasChildren(itemDst) )
-    {
-        // copy to the parent then
-        itemDst = GetItemParent(itemDst);
-    }
-
-    if ( !itemDst.IsOk() )
-    {
-        wxLogMessage(wxT("OnEndDrag: can't drop here."));
-
-        return;
-    }
-
-    wxString text = GetItemText(itemSrc);
-    wxLogMessage(wxT("OnEndDrag: '%s' copied to '%s'."),
-                 text.c_str(), GetItemText(itemDst).c_str());
-
-    // just do append here - we could also insert it just before/after the item
-    // on which it was dropped, but this requires slightly more work... we also
-    // completely ignore the client data and icon of the old item but could
-    // copy them as well.
-    //
-    // Finally, we only copy one item here but we might copy the entire tree if
-    // we were dragging a folder.
-    int image = wxGetApp().ShowImages() ? TreeCtrlIcon_File : -1;
-    AppendItem(itemDst, text, image);
-}*/
-
-/*void OPJMarkerTree::OnBeginLabelEdit(wxTreeEvent& event)
-{
-    wxLogMessage(wxT("OnBeginLabelEdit"));
-
-    // for testing, prevent this item's label editing
-    wxTreeItemId itemId = event.GetItem();
-    if ( IsTestItem(itemId) )
-    {
-        wxMessageBox(wxT("You can't edit this item."));
-
-        event.Veto();
-    }
-    else if ( itemId == GetRootItem() )
-    {
-        // test that it is possible to change the text of the item being edited
-        SetItemText(itemId, _T("Editing root item"));
-    }
-}
-
-void OPJMarkerTree::OnEndLabelEdit(wxTreeEvent& event)
-{
-    wxLogMessage(wxT("OnEndLabelEdit"));
-
-    // don't allow anything except letters in the labels
-    if ( !event.GetLabel().IsWord() )
-    {
-        wxMessageBox(wxT("The new label should be a single word."));
-
-        event.Veto();
-    }
-}*/
-
-/*void OPJMarkerTree::OnItemCollapsing(wxTreeEvent& event)
-{
-    wxLogMessage(wxT("OnItemCollapsing"));
-
-    // for testing, prevent the user from collapsing the first child folder
-    wxTreeItemId itemId = event.GetItem();
-    if ( IsTestItem(itemId) )
-    {
-        wxMessageBox(wxT("You can't collapse this item."));
-
-        event.Veto();
-    }
-}*/
-
-/*void OPJMarkerTree::OnItemActivated(wxTreeEvent& event)
-{
-    // show some info about this item
-    wxTreeItemId itemId = event.GetItem();
-    OPJMarkerData *item = (OPJMarkerData *)GetItemData(itemId);
-
-    if ( item != NULL )
-    {
-        item->ShowInfo(this);
-    }
-
-    wxLogMessage(wxT("OnItemActivated"));
-}*/
-
-void OPJMarkerTree::OnItemMenu(wxTreeEvent& event)
-{
-    /*wxTreeItemId itemId = event.GetItem();
-    OPJMarkerData *item = itemId.IsOk() ? (OPJMarkerData *)GetItemData(itemId)
-                                         : NULL;
-
-    wxLogMessage(wxT("OnItemMenu for item \"%s\""), item ? item->GetDesc()
-                                                         : _T(""));*/
-
-	//wxLogMessage(wxT("EEEEEEEEEE"));
-
-    //event.Skip();
-}
-
-/*void OPJMarkerTree::OnContextMenu(wxContextMenuEvent& event)
-{
-    wxPoint pt = event.GetPosition();
-    wxTreeItemId item;
-    wxLogMessage(wxT("OnContextMenu at screen coords (%i, %i)"), pt.x, pt.y);
-
-    // check if event was generated by keyboard (MSW-specific?)
-    if ( pt.x == -1 && pt.y == -1 ) //(this is how MSW indicates it)
-    {
-        if ( !HasFlag(wxTR_MULTIPLE) )
-            item = GetSelection();
-
-        // attempt to guess where to show the menu
-        if ( item.IsOk() )
-        {
-            // if an item was clicked, show menu to the right of it
-            wxRect rect;
-            GetBoundingRect(item, rect, true );// only the label
-            pt = wxPoint(rect.GetRight(), rect.GetTop());
-        }
-        else
-        {
-            pt = wxPoint(0, 0);
-        }
-    }
-    else // event was generated by mouse, use supplied coords
-    {
-        pt = ScreenToClient(pt);
-        item = HitTest(pt);
-    }
-
-    ShowMenu(item, pt);
-}*/
-
-/*void OPJMarkerTree::ShowMenu(wxTreeItemId id, const wxPoint& pt)
-{
-    wxString title;
-    if ( id.IsOk() )
-    {
-        title << wxT("Menu for ") << GetItemText(id);
-    }
-    else
-    {
-        title = wxT("Menu for no particular item");
-    }
-
-#if wxUSE_MENUS
-    wxMenu menu(title);
-    menu.Append(TreeTest_About, wxT("&About..."));
-    menu.AppendSeparator();
-    menu.Append(TreeTest_Highlight, wxT("&Highlight item"));
-    menu.Append(TreeTest_Dump, wxT("&Dump"));
-
-    PopupMenu(&menu, pt);
-#endif // wxUSE_MENUS
-}*/
-
-/*void OPJMarkerTree::OnItemRClick(wxTreeEvent& event)
-{
-    wxTreeItemId itemId = event.GetItem();
-    OPJMarkerData *item = itemId.IsOk() ? (OPJMarkerData *)GetItemData(itemId)
-                                         : NULL;
-
-    wxLogMessage(wxT("Item \"%s\" right clicked"), item ? item->GetDesc()
-                                                        : _T(""));
-
-    event.Skip();
-}*/
-
-/*
-void OPJMarkerTree::OnRMouseDown(wxMouseEvent& event)
-{
-    wxLogMessage(wxT("Right mouse button down"));
-
-    event.Skip();
-}
-
-void OPJMarkerTree::OnRMouseUp(wxMouseEvent& event)
-{
-    wxLogMessage(wxT("Right mouse button up"));
-
-    event.Skip();
-}
-
-void OPJMarkerTree::OnRMouseDClick(wxMouseEvent& event)
-{
-    wxTreeItemId id = HitTest(event.GetPosition());
-    if ( !id )
-        wxLogMessage(wxT("No item under mouse"));
-    else
-    {
-        OPJMarkerData *item = (OPJMarkerData *)GetItemData(id);
-        if ( item )
-            wxLogMessage(wxT("Item '%s' under mouse"), item->GetDesc());
-    }
-
-    event.Skip();
-}
-*/
-
-static inline const wxChar *Bool2String(bool b)
-{
-    return b ? wxT("") : wxT("not ");
-}
-
-void OPJMarkerData::ShowInfo(wxTreeCtrl *tree)
-{
-    wxLogMessage(wxT("Item '%s': %sselected, %sexpanded, %sbold,\n")
-                 wxT("%u children (%u immediately under this item)."),
-                 m_desc.c_str(),
-                 Bool2String(tree->IsSelected(GetId())),
-                 Bool2String(tree->IsExpanded(GetId())),
-                 Bool2String(tree->IsBold(GetId())),
-                 unsigned(tree->GetChildrenCount(GetId())),
-                 unsigned(tree->GetChildrenCount(GetId(), false)));
-}
-
-/////////////////////////////////////////////////////////////////////
-// Encoding thread class
-/////////////////////////////////////////////////////////////////////
-
-OPJEncoThread::OPJEncoThread(OPJCanvas *canvas)
-        : wxThread()
-{
-    m_count = 0;
-    m_canvas = canvas;
-}
-
-void OPJEncoThread::WriteText(const wxString& text)
-{
-    wxString msg;
-
-    // before doing any GUI calls we must ensure that this thread is the only
-    // one doing it!
-
-#ifndef __WXGTK__ 
-    wxMutexGuiEnter();
-#endif // __WXGTK__
-
-    msg << text;
-    m_canvas->WriteText(msg);
-
-#ifndef __WXGTK__ 
-    wxMutexGuiLeave();
-#endif // __WXGTK__
-}
-
-void OPJEncoThread::OnExit()
-{
-    wxCriticalSectionLocker locker(wxGetApp().m_enco_critsect);
-
-    wxArrayThread& ethreads = wxGetApp().m_enco_threads;
-    ethreads.Remove(this);
-
-    if (ethreads.IsEmpty() )
-    {
-        // signal the main thread that there are no more threads left if it is
-        // waiting for us
-        if (wxGetApp().m_enco_waitingUntilAllDone) {
-            wxGetApp().m_enco_waitingUntilAllDone = false;
-            wxGetApp().m_enco_semAllDone.Post();
-        }
-    }
-}
-
-void *OPJEncoThread::Entry()
-{
-    wxString text;
-
-	srand(GetId());
-	//int m_countnum = rand() % 9;
-    //text.Printf(wxT("Deco thread 0x%lx started (priority = %u, time = %d)."),
-    //            GetId(), GetPriority(), m_countnum);
-    text.Printf(wxT("Enco thread %d started"), m_canvas->m_childframe->m_winnumber);
-    WriteText(text);
-
-	// set handler properties
-	wxJ2KHandler *j2kkkhandler = (wxJ2KHandler *) wxImage::FindHandler( wxBITMAP_TYPE_J2K);
-	j2kkkhandler->m_subsampling = wxGetApp().m_subsampling;
-	j2kkkhandler->m_origin = wxGetApp().m_origin;
-	j2kkkhandler->m_rates = wxGetApp().m_rates;
-	j2kkkhandler->m_quality = wxGetApp().m_quality;
-	j2kkkhandler->m_enablequality = wxGetApp().m_enablequality;
-	j2kkkhandler->m_multicomp = wxGetApp().m_multicomp;
-	j2kkkhandler->m_irreversible = wxGetApp().m_irreversible;
-	j2kkkhandler->m_resolutions = wxGetApp().m_resolutions;
-	j2kkkhandler->m_progression = wxGetApp().m_progression;
-	j2kkkhandler->m_cbsize = wxGetApp().m_cbsize;
-	j2kkkhandler->m_prsize = wxGetApp().m_prsize;
-	j2kkkhandler->m_tsize = wxGetApp().m_tsize;
-	j2kkkhandler->m_torigin = wxGetApp().m_torigin;
-	j2kkkhandler->m_enablesop = wxGetApp().m_enablesop;
-	j2kkkhandler->m_enableeph = wxGetApp().m_enableeph;
-	j2kkkhandler->m_enablebypass = wxGetApp().m_enablebypass;
-	j2kkkhandler->m_enablerestart = wxGetApp().m_enablerestart;
-	j2kkkhandler->m_enablereset = wxGetApp().m_enablereset;
-	j2kkkhandler->m_enablesegmark = wxGetApp().m_enablesegmark;
-	j2kkkhandler->m_enableerterm = wxGetApp().m_enableerterm;
-	j2kkkhandler->m_enablevsc = wxGetApp().m_enablevsc;
-	j2kkkhandler->m_enableidx = wxGetApp().m_enableidx;
-	j2kkkhandler->m_index = m_canvas->m_savename.GetPath(wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR) + wxGetApp().m_index;
-	j2kkkhandler->m_enablecomm = wxGetApp().m_enablecomm;
-	j2kkkhandler->m_comment = wxGetApp().m_comment;
-
-	// save the file
-	if (!m_canvas->m_image100.SaveFile(m_canvas->m_savename.GetFullPath(), (wxBitmapType) wxBITMAP_TYPE_J2K)) {
-		WriteText(wxT("Can't save image"));
-		return NULL;
-	}
-
-    text.Printf(wxT("Enco thread %d finished"), m_canvas->m_childframe->m_winnumber);
-    WriteText(text);
-    return NULL;
-}
-
-/////////////////////////////////////////////////////////////////////
-// Decoding thread class
-/////////////////////////////////////////////////////////////////////
-
-OPJDecoThread::OPJDecoThread(OPJCanvas *canvas)
-        : wxThread()
-{
-    m_count = 0;
-    m_canvas = canvas;
-}
-
-void OPJDecoThread::WriteText(const wxString& text)
-{
-    wxString msg;
-
-    // before doing any GUI calls we must ensure that this thread is the only
-    // one doing it!
-
-#ifndef __WXGTK__ 
-    wxMutexGuiEnter();
-#endif // __WXGTK__
-
-    msg << text;
-    m_canvas->WriteText(msg);
-
-#ifndef __WXGTK__ 
-    wxMutexGuiLeave();
-#endif // __WXGTK__
-}
-
-void OPJDecoThread::OnExit()
-{
-    wxCriticalSectionLocker locker(wxGetApp().m_deco_critsect);
-
-    wxArrayThread& dthreads = wxGetApp().m_deco_threads;
-    dthreads.Remove(this);
-
-    if (dthreads.IsEmpty() )
-    {
-        // signal the main thread that there are no more threads left if it is
-        // waiting for us
-        if (wxGetApp().m_deco_waitingUntilAllDone) {
-            wxGetApp().m_deco_waitingUntilAllDone = false;
-            wxGetApp().m_deco_semAllDone.Post();
-        }
-    }
-}
-
-void *OPJDecoThread::Entry()
-{
-
-    wxString text;
-
-	srand(GetId());
-	//int m_countnum = rand() % 9;
-    //text.Printf(wxT("Deco thread 0x%lx started (priority = %u, time = %d)."),
-    //            GetId(), GetPriority(), m_countnum);
-    text.Printf(wxT("Deco thread %d started"), m_canvas->m_childframe->m_winnumber);
-
-    WriteText(text);
-
-    wxBitmap bitmap(100, 100);
-    wxImage image(100, 100, true); //= bitmap.ConvertToImage();
-    image.Destroy();
-
-	WriteText(m_canvas->m_fname.GetFullPath());
-
-
-	// set handler properties
-	wxJ2KHandler *j2kkkhandler = (wxJ2KHandler *) wxImage::FindHandler( wxBITMAP_TYPE_J2K);
-	j2kkkhandler->m_reducefactor = wxGetApp().m_reducefactor;
-	j2kkkhandler->m_qualitylayers = wxGetApp().m_qualitylayers;
-	j2kkkhandler->m_components = wxGetApp().m_components;
-#ifdef USE_JPWL
-	j2kkkhandler->m_enablejpwl = wxGetApp().m_enablejpwl;
-	j2kkkhandler->m_expcomps = wxGetApp().m_expcomps;
-	j2kkkhandler->m_maxtiles = wxGetApp().m_maxtiles;
-#endif // USE_JPWL
-
-	wxJP2Handler *jp222handler = (wxJP2Handler *) wxImage::FindHandler( wxBITMAP_TYPE_JP2);
-	jp222handler->m_reducefactor = wxGetApp().m_reducefactor;
-	jp222handler->m_qualitylayers = wxGetApp().m_qualitylayers;
-	jp222handler->m_components = wxGetApp().m_components;
-#ifdef USE_JPWL
-	jp222handler->m_enablejpwl = wxGetApp().m_enablejpwl;
-	jp222handler->m_expcomps = wxGetApp().m_expcomps;
-	jp222handler->m_maxtiles = wxGetApp().m_maxtiles;
-#endif // USE_JPWL
-
-	wxMJ2Handler *mj222handler = (wxMJ2Handler *) wxImage::FindHandler( wxBITMAP_TYPE_MJ2);
-	mj222handler->m_reducefactor = wxGetApp().m_reducefactor;
-	mj222handler->m_qualitylayers = wxGetApp().m_qualitylayers;
-	mj222handler->m_components = wxGetApp().m_components;
-	mj222handler->m_framenum = wxGetApp().m_framenum;
-#ifdef USE_JPWL
-	mj222handler->m_enablejpwl = wxGetApp().m_enablejpwl;
-	mj222handler->m_expcomps = wxGetApp().m_expcomps;
-	mj222handler->m_maxtiles = wxGetApp().m_maxtiles;
-#endif // USE_JPWL
-
-	if (wxGetApp().m_enabledeco) {
-
-		// load the file
-		if (!image.LoadFile(m_canvas->m_fname.GetFullPath(), wxBITMAP_TYPE_ANY, 0)) {
-			WriteText(wxT("Can't load image"));
-			return NULL;
-		}
-
-	} else {
-
-		// display a macaron
-		if (!image.Create(300, 5, false)) {
-			WriteText(wxT("Can't create image"));
-			return NULL;
-		}
-
-	}
-
-	// assign 100% image
-    m_canvas->m_image100 = wxBitmap(image);
-
-	// find a fit-to-width zoom
-	int zooml, wzooml, hzooml;
-	wxSize clientsize = m_canvas->GetClientSize();
-	wzooml = (int) floor(100.0 * (double) clientsize.GetWidth() / (double) (2 * OPJ_CANVAS_BORDER + image.GetWidth()));
-	hzooml = (int) floor(100.0 * (double) clientsize.GetHeight() / (double) (2 * OPJ_CANVAS_BORDER + image.GetHeight()));
-	zooml = wxMin(100, wxMin(wzooml, hzooml));
-
-	// fit to width
-#ifndef __WXGTK__
-	m_canvas->m_childframe->m_frame->Rescale(zooml, m_canvas->m_childframe);
-#endif // __WXGTK__
-
-	//m_canvas->m_image = m_canvas->m_image100;
-	//m_canvas->Refresh();
-	//m_canvas->SetScrollbars(20, 20, (int)(0.5 + (double) image.GetWidth() / 20.0), (int)(0.5 + (double) image.GetHeight() / 20.0));
-
-    //text.Printf(wxT("Deco thread 0x%lx finished."), GetId());
-    text.Printf(wxT("Deco thread %d finished"), m_canvas->m_childframe->m_winnumber);
-    WriteText(text);
-    return NULL;
-
-}
-
-/////////////////////////////////////////////////////////////////////
-// Parsing thread class
-/////////////////////////////////////////////////////////////////////
-
-OPJParseThread::OPJParseThread(OPJMarkerTree *tree, wxTreeItemId parentid)
-        : wxThread()
-{
-    m_count = 0;
-    m_tree = tree;
-	m_parentid = parentid;
-}
-
-void OPJParseThread::WriteText(const wxString& text)
-{
-    wxString msg;
-
-    // before doing any GUI calls we must ensure that this thread is the only
-    // one doing it!
-
-#ifndef __WXGTK__ 
-    wxMutexGuiEnter();
-#endif // __WXGTK
-
-    msg << text;
-    m_tree->WriteText(msg);
-
-#ifndef __WXGTK__ 
-    wxMutexGuiLeave();
-#endif // __WXGTK
-}
-
-void OPJParseThread::OnExit()
-{
-    wxCriticalSectionLocker locker(wxGetApp().m_parse_critsect);
-
-    wxArrayThread& threads = wxGetApp().m_parse_threads;
-    threads.Remove(this);
-
-    if (threads.IsEmpty()) {
-        // signal the main thread that there are no more threads left if it is
-        // waiting for us
-        if (wxGetApp().m_parse_waitingUntilAllDone) {
-            wxGetApp().m_parse_waitingUntilAllDone = false;
-            wxGetApp().m_parse_semAllDone.Post();
-        }
-    }
-}
-
-void *OPJParseThread::Entry()
-{
-
-	printf("Entering\n\n");
-
-    wxString text;
-
-	srand(GetId());
-	int m_countnum = rand() % 9;
-    text.Printf(wxT("Parse thread 0x%lx started (priority = %u, time = %d)."),
-            GetId(), GetPriority(), m_countnum);
-    WriteText(text);
-    LoadFile(m_tree->m_fname);
-    text.Printf(wxT("Parse thread 0x%lx finished."), GetId());
-    WriteText(text);
-
-
-    //wxLogMessage(wxT("Entering\n")); //test wxLog thread safeness
-
-	//wxBusyCursor wait;
-	//wxBusyInfo wait(wxT("Decoding image ..."));
-
-
-    /*for ( m_count = 0; m_count < m_countnum; m_count++ )
-    {
-        // check if we were asked to exit
-        if ( TestDestroy() )
-            break;
-
-        text.Printf(wxT("[%u] Parse thread 0x%lx here."), m_count, GetId());
-        WriteText(text);
-
-        // wxSleep() can't be called from non-GUI thread!
-        wxThread::Sleep(10);
-    }*/
-
-    // wxLogMessage(text); -- test wxLog thread safeness
-
-	printf("Exiting\n\n");
-
-    return NULL;
-}
-
-
-
-
-
-
 

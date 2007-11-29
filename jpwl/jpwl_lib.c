@@ -661,7 +661,7 @@ bool jpwl_correct(opj_j2k_t *j2k) {
 	j2k->state = J2K_STATE_MHSOC;
 
 	/* cycle all over the markers */
-	while ((unsigned int) cio_tell(cio) < cio->length) {
+	while (cio_tell(cio) < cio->length) {
 
 		/* read the marker */
 		mark_pos = cio_tell(cio);

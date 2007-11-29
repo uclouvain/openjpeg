@@ -28,6 +28,7 @@
 
 #include <stdio.h>
 #include <math.h>
+#include <string.h>
 #include "openjpeg.h"
 #include "index.h"
 
