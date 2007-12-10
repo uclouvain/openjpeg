@@ -5,6 +5,10 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+December 10, 2007
++ [FOD] First import of JAVAOpenJPEG, a Java wrapper of OpenJPEG, developed by Patrick Piscaglia of Telemis (www.telemis.com). 
+		Thank you Patrick for this new module !
+
 November 29, 2007
 ! [GB] Added index.h and index.c in VC6 projects; wrapped index.h in the C++ preprocessor; modified OPJViewer project and some files.
 

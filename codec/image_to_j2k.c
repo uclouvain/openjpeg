@@ -1692,7 +1692,7 @@ int main(int argc, char **argv) {
 				if (*indexfilename) {
 					bSuccess = write_index_file(&cstr_info, indexfilename);
 					if (bSuccess) {
-						fprintf(stderr, "Failed to output index file\n");
+						fprintf(stderr, "Failed to output index file into [%s]\n", indexfilename);
 					}
 				}
 
