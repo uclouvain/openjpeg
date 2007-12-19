@@ -6,6 +6,9 @@ What's New for OpenJPEG
 + : added
 
 December 19, 2007
+! [Parvatha] In pi.c, removed the Recursive function pi_check_next_level() and modified the code.
+
+December 19, 2007
 + [FOD] In mqc.h, changed MQC_NUMCTXS from 32 to 19 as there are only 19 possible contexts
 
 December 10, 2007

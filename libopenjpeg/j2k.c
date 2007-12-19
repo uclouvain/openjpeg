@@ -258,43 +258,6 @@ char *j2k_convert_progression_order(OPJ_PROG_ORDER prg_order){
 	return po->str_prog;
 }
 
-static void j2k_check_poc_val(opj_cparameters_t *parameters, int numcomps, int numlayers){
-	int* packet_array;
-	int index, resno, compno, layno, i;
-	int step_c = 1;
-	int step_r = numcomps * step_c;
-	int step_l = parameters->numresolution * step_r;
-	bool loss = false;
-	packet_array = (int*) opj_calloc(step_l * numlayers, sizeof(int));
-	
-	for (i = 0; i < parameters->numpocs ; i++) {
-		int layno0 = 0;
-		if(i > 0)
-			layno0 = (parameters->POC[i].layno1 > parameters->POC[i-1].layno1 )? parameters->POC[i-1].layno1 : 0;
-		for (resno = parameters->POC[i].resno0 ; resno < parameters->POC[i].resno1 ; resno++) {
-			for (compno = parameters->POC[i].compno0 ; compno < parameters->POC[i].compno1 ; compno++) {
-				for (layno = layno0; layno < parameters->POC[i].layno1 ; layno++) {
-					index = step_r * resno + step_c * compno + step_l * layno;
-					packet_array[index]= 1;
-				}
-			}
-		}
-	}
-	for (resno = 0; resno < parameters->numresolution; resno++) {
-		for (compno = 0; compno < numcomps; compno++) {
-			for (layno = 0; layno < numlayers ; layno++) {
-				index = step_r * resno + step_c * compno + step_l * layno;
-				if(!(	packet_array[index]== 1)){
-					loss = true;
-				}
-			}
-		}
-	}
-	if(loss)
-		fprintf(stdout,"Missing packets possible loss of data\n");
-	opj_free(packet_array);
-}
-
 void j2k_dump_image(FILE *fd, opj_image_t * img) {
 	int compno;
 	fprintf(fd, "image {\n");
@@ -2213,7 +2176,6 @@ void j2k_setup_encoder(opj_j2k_t *j2k, opj_cparameters_t *parameters, opj_image_
 		if (parameters->numpocs) {
 			/* initialisation of POC */
 			tcp->POC = 1;
-			j2k_check_poc_val(parameters, image->numcomps, tcp->numlayers);
 			for (i = 0; i < parameters->numpocs; i++) {
 				if((tileno == parameters->POC[i].tile - 1) || (parameters->POC[i].tile == -1)) {
 					opj_poc_t *tcp_poc = &tcp->pocs[numpocs_tile];
@@ -2528,6 +2490,7 @@ bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, opj_codestre
 
 	return true;
 }
+
 
 
 

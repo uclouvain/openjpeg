@@ -117,8 +117,9 @@ Modify the packet iterator for enabling tile part generation
 @param tileno Number that identifies the tile for which to list the packets
 @param tpnum Tile part number of the current tile
 @param tppos The position of the tile part flag in the progression order
+@param cur_totnum_tp The total number of tile parts in the current tile
 */
-void pi_create_encode( opj_pi_iterator_t *pi, opj_cp_t *cp,int tileno, int pino,int tpnum, int tppos, J2K_T2_MODE t2_mode);
+void pi_create_encode( opj_pi_iterator_t *pi, opj_cp_t *cp,int tileno, int pino,int tpnum, int tppos, J2K_T2_MODE t2_mode,int cur_totnum_tp);
 /**
 Create a packet iterator for Decoder
 @param image Raw image for which the packets will be listed

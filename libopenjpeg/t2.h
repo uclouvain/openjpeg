@@ -68,8 +68,9 @@ Encode the packets of a tile to a destination buffer
 @param tpnum Tile part number of the current tile
 @param tppos The position of the tile part flag in the progression order
 @param t2_mode If == 0 In Threshold calculation ,If == 1 Final pass
+@param cur_totnum_tp The total number of tile parts in the current tile
 */
-int t2_encode_packets(opj_t2_t* t2,int tileno, opj_tcd_tile_t *tile, int maxlayers, unsigned char *dest, int len, opj_codestream_info_t *cstr_info,int tpnum, int tppos,int pino,J2K_T2_MODE t2_mode);
+int t2_encode_packets(opj_t2_t* t2,int tileno, opj_tcd_tile_t *tile, int maxlayers, unsigned char *dest, int len, opj_codestream_info_t *cstr_info,int tpnum, int tppos,int pino,J2K_T2_MODE t2_mode,int cur_totnum_tp);
 /**
 Decode the packets of a tile from a source buffer
 @param t2 T2 handle
