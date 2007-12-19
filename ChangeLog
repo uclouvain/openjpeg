@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 December 19, 2007
+* [Antonin] changed variables names alpha, beta, gamma, delta in dwt.c to avoid re-declarations on Macosx
 ! [Parvatha] In pi.c, removed the Recursive function pi_check_next_level() and modified the code.
 * [FOD] Fixed allocation problem in pi.c
 
