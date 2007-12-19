@@ -727,7 +727,7 @@ bool pi_next(opj_pi_iterator_t * pi) {
 }
 
 void pi_create_encode( opj_pi_iterator_t *pi, opj_cp_t *cp,int tileno, int pino,int tpnum, int tppos, J2K_T2_MODE t2_mode,int cur_totnum_tp){
-	char *prog;
+	char prog[4];
 	int i;
 	int incr_top=1,resetX=0;
 	opj_tcp_t *tcps =&cp->tcps[tileno];
@@ -735,7 +735,6 @@ void pi_create_encode( opj_pi_iterator_t *pi, opj_cp_t *cp,int tileno, int pino,
 
 	pi[pino].first = 1;
 	pi[pino].poc.prg = tcp->prg;
-	prog = (char*)malloc(4*sizeof(char));
 
 	switch(tcp->prg){
 		case CPRL: strncpy(prog, "CPRL",4);
