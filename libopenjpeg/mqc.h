@@ -56,7 +56,7 @@ typedef struct opj_mqc_state {
 	struct opj_mqc_state *nlps;
 } opj_mqc_state_t;
 
-#define MQC_NUMCTXS 32
+#define MQC_NUMCTXS 19
 
 /**
 MQ coder

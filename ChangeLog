@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+December 19, 2007
++ [FOD] In mqc.h, changed MQC_NUMCTXS from 32 to 19 as there are only 19 possible contexts
+
 December 10, 2007
 + [FOD] First import of JAVAOpenJPEG, a Java wrapper of OpenJPEG, developed by Patrick Piscaglia of Telemis (www.telemis.com). 
 		Thank you Patrick for this new module !
