@@ -5,6 +5,11 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+----------------------
+December 21, 2007
+VERSION 1.3.0 RELEASED
+----------------------
+
 December 21, 2007
 * [FOD] Bug fixed by David Bruken. Fixed memory allocation issue in opj_malloc.h
 ! [FOD] Possible errors in pi_create_encode handled
