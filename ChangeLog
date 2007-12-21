@@ -5,6 +5,10 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+December 21, 2007
+* [FOD] Bug fixed by David Bruken. Fixed memory allocation issue in opj_malloc.h
+! [FOD] Possible errors in pi_create_encode handled
+
 December 19, 2007
 * [Antonin] changed variables names alpha, beta, gamma, delta in dwt.c to avoid re-declarations on Macosx
 ! [Parvatha] In pi.c, removed the Recursive function pi_check_next_level() and modified the code.

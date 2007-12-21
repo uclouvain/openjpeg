@@ -726,7 +726,7 @@ bool pi_next(opj_pi_iterator_t * pi) {
 	return false;
 }
 
-void pi_create_encode( opj_pi_iterator_t *pi, opj_cp_t *cp,int tileno, int pino,int tpnum, int tppos, J2K_T2_MODE t2_mode,int cur_totnum_tp){
+bool pi_create_encode( opj_pi_iterator_t *pi, opj_cp_t *cp,int tileno, int pino,int tpnum, int tppos, J2K_T2_MODE t2_mode,int cur_totnum_tp){
 	char prog[4];
 	int i;
 	int incr_top=1,resetX=0;
@@ -746,7 +746,9 @@ void pi_create_encode( opj_pi_iterator_t *pi, opj_cp_t *cp,int tileno, int pino,
 		case RLCP: strncpy(prog, "RLCP",4);
 			break;
 		case RPCL: strncpy(prog, "RPCL",4);
-			break; 
+			break;
+		case PROG_UNKNOWN: 
+			return true;
 	}
 
 	if(!(cp->tp_on && ((!cp->cinema && (t2_mode == FINAL_PASS)) || cp->cinema))){
@@ -956,5 +958,6 @@ void pi_create_encode( opj_pi_iterator_t *pi, opj_cp_t *cp,int tileno, int pino,
 			} 
 		}
 	}	
+	return false;
 }
 

@@ -612,7 +612,10 @@ int t2_encode_packets(opj_t2_t* t2,int tileno, opj_tcd_tile_t *tile, int maxlaye
 			for(poc = 0; poc < pocno ; poc++){
 				int comp_len = 0;
 				int tpnum = compno;
-				pi_create_encode(pi, cp,tileno,poc,tpnum,tppos,t2_mode,cur_totnum_tp); 
+				if (pi_create_encode(pi, cp,tileno,poc,tpnum,tppos,t2_mode,cur_totnum_tp)) {
+					opj_event_msg(t2->cinfo, EVT_ERROR, "Error initializing Packet Iterator\n");
+					return -999;
+				}
 				while (pi_next(&pi[poc])) {
 					if (pi[poc].layno < maxlayers) {
 						e = t2_encode_packet(tile, &cp->tcps[tileno], &pi[poc], c, dest + len - c, cstr_info, tileno);
