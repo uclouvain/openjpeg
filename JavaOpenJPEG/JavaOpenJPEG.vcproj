@@ -27,7 +27,7 @@
 				EnableIntrinsicFunctions="TRUE"
 				FavorSizeOrSpeed="1"
 				OptimizeForWindowsApplication="TRUE"
-				AdditionalIncludeDirectories="C:\users\pp\telemis\working\projects\codecs\OpenJPEG2000\codec;../libopenjpeg;&quot;../../../../3rdparty/windows/java-jni/include&quot;;&quot;../../../../3rdparty/windows/java-jni/include/win32&quot;"
+				AdditionalIncludeDirectories="../codec;../codec/compat;../libopenjpeg;&quot;.\java-jni\include&quot;;&quot;.\java-jni\include\win32&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;OPJ_STATIC;CHECK_THRESHOLDS"
 				StringPooling="TRUE"
 				RuntimeLibrary="0"

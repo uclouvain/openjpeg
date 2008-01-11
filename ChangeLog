@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+January 11, 2008
++ [FOD] Added missing files to JavaOpenJPEG project (files from Patrick Piscaglia)
+
 January 4, 2008
 * [Parvatha] Patch by Callum Lerwick. Fixed bug during encoding using tile option in tcd.c
 
