@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+January 16, 2008
+* [antonin] fixed opj_malloc.h for macosx (bugfix provided by janpeder, thanks)
+
 January 11, 2008
 + [FOD] Added missing files to JavaOpenJPEG project (files from Patrick Piscaglia)
 
