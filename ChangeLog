@@ -5,6 +5,10 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+January 17, 2008
++ [antonin] Initial commit of Xcode project directory (XCode 2.5 for macosx)
+			available targets : libopenjpeg (stat and dyn), image_to_j2k, j2k_to_image
+
 January 16, 2008
 * [antonin] fixed opj_malloc.h for macosx (bugfix provided by janpeder, thanks)
 
