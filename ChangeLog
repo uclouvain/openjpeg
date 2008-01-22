@@ -5,6 +5,11 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+January 22, 2008
+! [FOD] In image.c, changed the opj_image_create0() memory allocation from malloc() to calloc() in order
+		to avoid segfaults when freeing the memory allocated for the coding of bad images.
+		Thanks to Christopher Layne for this improvement. 
+
 January 17, 2008
 + [antonin] Initial commit of Xcode project directory (XCode 2.5 for macosx)
 			available targets : libopenjpeg (stat and dyn), image_to_j2k, j2k_to_image
