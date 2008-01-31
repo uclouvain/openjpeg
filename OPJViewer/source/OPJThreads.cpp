@@ -86,37 +86,37 @@ void *OPJEncoThread::Entry()
     WriteText(text);
 
 	// set handler properties
-	wxJ2KHandler *j2kkkhandler = (wxJ2KHandler *) wxImage::FindHandler( wxBITMAP_TYPE_J2K);
-	j2kkkhandler->m_subsampling = wxGetApp().m_subsampling;
-	j2kkkhandler->m_origin = wxGetApp().m_origin;
-	j2kkkhandler->m_rates = wxGetApp().m_rates;
-	j2kkkhandler->m_quality = wxGetApp().m_quality;
-	j2kkkhandler->m_enablequality = wxGetApp().m_enablequality;
-	j2kkkhandler->m_multicomp = wxGetApp().m_multicomp;
-	j2kkkhandler->m_irreversible = wxGetApp().m_irreversible;
-	j2kkkhandler->m_resolutions = wxGetApp().m_resolutions;
-	j2kkkhandler->m_progression = wxGetApp().m_progression;
-	j2kkkhandler->m_cbsize = wxGetApp().m_cbsize;
-	j2kkkhandler->m_prsize = wxGetApp().m_prsize;
-	j2kkkhandler->m_tsize = wxGetApp().m_tsize;
-	j2kkkhandler->m_torigin = wxGetApp().m_torigin;
-	j2kkkhandler->m_enablesop = wxGetApp().m_enablesop;
-	j2kkkhandler->m_enableeph = wxGetApp().m_enableeph;
-	j2kkkhandler->m_enablebypass = wxGetApp().m_enablebypass;
-	j2kkkhandler->m_enablerestart = wxGetApp().m_enablerestart;
-	j2kkkhandler->m_enablereset = wxGetApp().m_enablereset;
-	j2kkkhandler->m_enablesegmark = wxGetApp().m_enablesegmark;
-	j2kkkhandler->m_enableerterm = wxGetApp().m_enableerterm;
-	j2kkkhandler->m_enablevsc = wxGetApp().m_enablevsc;
-	j2kkkhandler->m_enableidx = wxGetApp().m_enableidx;
-	j2kkkhandler->m_index = m_canvas->m_savename.GetPath(wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR) + wxGetApp().m_index;
-	j2kkkhandler->m_enablecomm = wxGetApp().m_enablecomm;
-	j2kkkhandler->m_comment = wxGetApp().m_comment;
-	j2kkkhandler->m_enablepoc = wxGetApp().m_enablepoc;
-	j2kkkhandler->m_poc = wxGetApp().m_poc;
+	wxJPEG2000Handler *jpeg2000handler = (wxJPEG2000Handler *) wxImage::FindHandler(wxBITMAP_TYPE_JPEG2000);
+	jpeg2000handler->m_subsampling = wxGetApp().m_subsampling;
+	jpeg2000handler->m_origin = wxGetApp().m_origin;
+	jpeg2000handler->m_rates = wxGetApp().m_rates;
+	jpeg2000handler->m_quality = wxGetApp().m_quality;
+	jpeg2000handler->m_enablequality = wxGetApp().m_enablequality;
+	jpeg2000handler->m_multicomp = wxGetApp().m_multicomp;
+	jpeg2000handler->m_irreversible = wxGetApp().m_irreversible;
+	jpeg2000handler->m_resolutions = wxGetApp().m_resolutions;
+	jpeg2000handler->m_progression = wxGetApp().m_progression;
+	jpeg2000handler->m_cbsize = wxGetApp().m_cbsize;
+	jpeg2000handler->m_prsize = wxGetApp().m_prsize;
+	jpeg2000handler->m_tsize = wxGetApp().m_tsize;
+	jpeg2000handler->m_torigin = wxGetApp().m_torigin;
+	jpeg2000handler->m_enablesop = wxGetApp().m_enablesop;
+	jpeg2000handler->m_enableeph = wxGetApp().m_enableeph;
+	jpeg2000handler->m_enablebypass = wxGetApp().m_enablebypass;
+	jpeg2000handler->m_enablerestart = wxGetApp().m_enablerestart;
+	jpeg2000handler->m_enablereset = wxGetApp().m_enablereset;
+	jpeg2000handler->m_enablesegmark = wxGetApp().m_enablesegmark;
+	jpeg2000handler->m_enableerterm = wxGetApp().m_enableerterm;
+	jpeg2000handler->m_enablevsc = wxGetApp().m_enablevsc;
+	jpeg2000handler->m_enableidx = wxGetApp().m_enableidx;
+	jpeg2000handler->m_index = m_canvas->m_savename.GetPath(wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR) + wxGetApp().m_index;
+	jpeg2000handler->m_enablecomm = wxGetApp().m_enablecomm;
+	jpeg2000handler->m_comment = wxGetApp().m_comment;
+	jpeg2000handler->m_enablepoc = wxGetApp().m_enablepoc;
+	jpeg2000handler->m_poc = wxGetApp().m_poc;
 
 	// save the file
-	if (!m_canvas->m_image100.SaveFile(m_canvas->m_savename.GetFullPath(), (wxBitmapType) wxBITMAP_TYPE_J2K)) {
+	if (!m_canvas->m_image100.SaveFile(m_canvas->m_savename.GetFullPath(), (wxBitmapType) wxBITMAP_TYPE_JPEG2000)) {
 		WriteText(wxT("Can't save image"));
 		return NULL;
 	}
@@ -196,7 +196,7 @@ void *OPJDecoThread::Entry()
 
 
 	// set handler properties
-	wxJ2KHandler *j2kkkhandler = (wxJ2KHandler *) wxImage::FindHandler( wxBITMAP_TYPE_J2K);
+/*	wxJ2KHandler *j2kkkhandler = (wxJ2KHandler *) wxImage::FindHandler( wxBITMAP_TYPE_J2K);
 	j2kkkhandler->m_reducefactor = wxGetApp().m_reducefactor;
 	j2kkkhandler->m_qualitylayers = wxGetApp().m_qualitylayers;
 	j2kkkhandler->m_components = wxGetApp().m_components;
@@ -204,9 +204,9 @@ void *OPJDecoThread::Entry()
 	j2kkkhandler->m_enablejpwl = wxGetApp().m_enablejpwl;
 	j2kkkhandler->m_expcomps = wxGetApp().m_expcomps;
 	j2kkkhandler->m_maxtiles = wxGetApp().m_maxtiles;
-#endif // USE_JPWL
+#endif // USE_JPWL*/
 
-	wxJP2Handler *jp222handler = (wxJP2Handler *) wxImage::FindHandler( wxBITMAP_TYPE_JP2);
+/*	wxJP2Handler *jp222handler = (wxJP2Handler *) wxImage::FindHandler( wxBITMAP_TYPE_JP2);
 	jp222handler->m_reducefactor = wxGetApp().m_reducefactor;
 	jp222handler->m_qualitylayers = wxGetApp().m_qualitylayers;
 	jp222handler->m_components = wxGetApp().m_components;
@@ -214,9 +214,9 @@ void *OPJDecoThread::Entry()
 	jp222handler->m_enablejpwl = wxGetApp().m_enablejpwl;
 	jp222handler->m_expcomps = wxGetApp().m_expcomps;
 	jp222handler->m_maxtiles = wxGetApp().m_maxtiles;
-#endif // USE_JPWL
+#endif // USE_JPWL*/
 
-	wxMJ2Handler *mj222handler = (wxMJ2Handler *) wxImage::FindHandler( wxBITMAP_TYPE_MJ2);
+/*	wxMJ2Handler *mj222handler = (wxMJ2Handler *) wxImage::FindHandler( wxBITMAP_TYPE_MJ2);
 	mj222handler->m_reducefactor = wxGetApp().m_reducefactor;
 	mj222handler->m_qualitylayers = wxGetApp().m_qualitylayers;
 	mj222handler->m_components = wxGetApp().m_components;
@@ -225,7 +225,32 @@ void *OPJDecoThread::Entry()
 	mj222handler->m_enablejpwl = wxGetApp().m_enablejpwl;
 	mj222handler->m_expcomps = wxGetApp().m_expcomps;
 	mj222handler->m_maxtiles = wxGetApp().m_maxtiles;
+#endif // USE_JPWL*/
+
+	wxJPEG2000Handler *jpeg2000handler = (wxJPEG2000Handler *) wxImage::FindHandler(wxBITMAP_TYPE_JPEG2000);
+	jpeg2000handler->m_reducefactor = wxGetApp().m_reducefactor;
+	jpeg2000handler->m_qualitylayers = wxGetApp().m_qualitylayers;
+	jpeg2000handler->m_components = wxGetApp().m_components;
+	jpeg2000handler->m_framenum = wxGetApp().m_framenum;
+#ifdef USE_JPWL
+	jpeg2000handler->m_enablejpwl = wxGetApp().m_enablejpwl;
+	jpeg2000handler->m_expcomps = wxGetApp().m_expcomps;
+	jpeg2000handler->m_maxtiles = wxGetApp().m_maxtiles;
 #endif // USE_JPWL
+
+#ifdef USE_MXF
+	wxMXFHandler *mxfffhandler = (wxMXFHandler *) wxImage::FindHandler( wxBITMAP_TYPE_MXF);
+	mxfffhandler->m_reducefactor = wxGetApp().m_reducefactor;
+	mxfffhandler->m_qualitylayers = wxGetApp().m_qualitylayers;
+	mxfffhandler->m_components = wxGetApp().m_components;
+	mxfffhandler->m_framenum = wxGetApp().m_framenum;
+	mxfffhandler->m_filename = m_canvas->m_fname;
+#ifdef USE_JPWL
+	mxfffhandler->m_enablejpwl = wxGetApp().m_enablejpwl;
+	mxfffhandler->m_expcomps = wxGetApp().m_expcomps;
+	mxfffhandler->m_maxtiles = wxGetApp().m_maxtiles;
+#endif // USE_JPWL
+#endif // USE_MXF
 
 	if (wxGetApp().m_enabledeco) {
 
@@ -237,7 +262,7 @@ void *OPJDecoThread::Entry()
 
 	} else {
 
-		// display a macaron
+		// display a warning
 		if (!image.Create(300, 5, false)) {
 			WriteText(wxT("Can't create image"));
 			return NULL;

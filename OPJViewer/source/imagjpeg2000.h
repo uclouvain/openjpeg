@@ -24,21 +24,21 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 /////////////////////////////////////////////////////////////////////////////
-// Name:        imagj2k.h
-// Purpose:     wxImage JPEG 2000 raw codestream handler
+// Name:        imagalljpeg2000.h
+// Purpose:     wxImage JPEG 2000 family file format handler
 // Author:      G. Baruffa - based on imagjpeg.h, Vaclav Slavik
-// RCS-ID:      $Id: imagj2k.h,v 0.0 2007/02/08 23:45:00 VZ Exp $
+// RCS-ID:      $Id: imagalljpeg2000.h,v 0.0 2008/01/31 11:22:00 VZ Exp $
 // Copyright:   (c) Giuseppe Baruffa
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef _WX_IMAGJ2K_H_
-#define _WX_IMAGJ2K_H_
+#ifndef _WX_IMAGJPEG2000_H_
+#define _WX_IMAGJPEG2000_H_
 
 #include "wx/defs.h"
 
 //-----------------------------------------------------------------------------
-// wxJ2KHandler
+// wxJPEG2000Handler
 //-----------------------------------------------------------------------------
 
 #if wxUSE_LIBOPENJPEG
@@ -47,26 +47,17 @@
 #include "libopenjpeg/openjpeg.h"
 #include "codec/index.h"
 
-#define wxBITMAP_TYPE_J2K	47
+#define wxBITMAP_TYPE_JPEG2000	50
 
-#define wxIMAGE_OPTION_REDUCEFACTOR  wxString(_T("reducefactor"))
-#define wxIMAGE_OPTION_QUALITYLAYERS  wxString(_T("qualitylayers"))
-#define wxIMAGE_OPTION_MAXCOMPS  wxString(_T("maxcomps"))
-#ifdef USE_JPWL
-#define wxIMAGE_OPTION_ENABLEJPWL  wxString(_T("enablejpwl"))
-#define wxIMAGE_OPTION_EXPCOMPS  wxString(_T("expcomps"))
-#define wxIMAGE_OPTION_MAXTILES  wxString(_T("maxtiles"))
-#endif // USE_JPWL
-
-class WXDLLEXPORT wxJ2KHandler: public wxImageHandler
+class WXDLLEXPORT wxJPEG2000Handler: public wxImageHandler
 {
 public:
-    inline wxJ2KHandler()
+    inline wxJPEG2000Handler()
     {
-        m_name = wxT("JPEG 2000 codestream file");
-        m_extension = wxT("j2k");
-        m_type = wxBITMAP_TYPE_J2K;
-        m_mime = wxT("image/j2k");
+        m_name = wxT("JPEG 2000 family file format");
+        m_extension = wxT("mj2");
+        m_type = wxBITMAP_TYPE_JPEG2000;
+        m_mime = wxT("image/mj2");
 
 		/* decoding */
 		m_reducefactor = 0;
@@ -128,7 +119,7 @@ public:
     }
 
 	// decoding engine parameters
-	int m_reducefactor, m_qualitylayers, m_components;
+	int m_reducefactor, m_qualitylayers, m_components, m_framenum;
 #ifdef USE_JPWL
 	bool m_enablejpwl;
 	int m_expcomps, m_maxtiles;
@@ -169,18 +160,18 @@ public:
 	wxString m_poc;
 
 #if wxUSE_STREAMS
-    virtual bool LoadFile( wxImage *image, wxInputStream& stream, bool verbose=true, int index=-1 );
-    virtual bool SaveFile( wxImage *image, wxOutputStream& stream, bool verbose=true );
+    virtual bool LoadFile(wxImage *image, wxInputStream& stream, bool verbose=true, int index=-1);
+    virtual bool SaveFile(wxImage *image, wxOutputStream& stream, bool verbose=true);
 protected:
-    virtual bool DoCanRead( wxInputStream& stream );
+    virtual bool DoCanRead(wxInputStream& stream);
 #endif
 
 private:
 	OPJ_PROG_ORDER give_progression(char progression[4]);
-    DECLARE_DYNAMIC_CLASS(wxJ2KHandler)
+    DECLARE_DYNAMIC_CLASS(wxJPEG2000Handler)
 };
 
 #endif // wxUSE_LIBOPENJPEG
 
-#endif // _WX_IMAGJ2K_H_
+#endif // _WX_IMAGJPEG2000_H_
 

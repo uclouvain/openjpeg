@@ -20,18 +20,23 @@ OPJ_APPLICATION " " OPJ_APPLICATION_VERSION
 "<tr>"
 "<td align=justify>"
 "<center><font size=+0 color=#000000><a href=\"http://www.openjpeg.org/\">OpenJPEG</a></font></center>"
-"<font size=-1 color=#000000>The OpenJPEG library is an open-source JPEG 2000 codec written in C language. "
-"In addition to the basic codec, various other features are under development.</font><br>"
+"<p><font size=-1 color=#000000>The OpenJPEG library is an open-source JPEG 2000 codec written in C language. "
+"In addition to the basic codec, various other features are under development.</font></p><br>"
 "<font size=-2 color=red>* Build: ")
 #include "build.h"
 wxT(", " __DATE__ ", " __TIME__ "</font><br>")
 wxT("<font size=-2 color=red>* " wxVERSION_STRING "</font><br>")
+wxT("<font size=-2 color=red>* OpenJPEG " OPENJPEG_VERSION " (")
 #ifdef USE_JPWL
-wxT("<font size=-2 color=green>- Compiled with JPWL support</font><br>")
+wxT("<font size=-2 color=green>JPWL</font> ")
 #endif // USE_JPWL
 #ifdef USE_JPSEC
-wxT("<font size=-2 color=green>- Compiled with JPSEC support</font>")
+wxT("<font size=-2 color=green>JPSEC</font> ")
 #endif // USE_JPSEC
+wxT(")</font><br>")
+#ifdef USE_MXF
+wxT("<font size=-2 color=red>* MXFLib " MXFLIB_VERSION_MAJOR "." MXFLIB_VERSION_MINOR "." MXFLIB_VERSION_TWEAK " (" MXFLIB_VERSION_BUILD ")</font><br>")
+#endif // USE_MXF
 wxT("</td>"
 "</tr>"
 "<tr>"
@@ -39,8 +44,8 @@ wxT("</td>"
 "</tr>"
 "<tr>"
 "<td colspan=2>"
-"<font size=-2 color=#444444>OpenJPEG is &copy; 2002-2007 <a href=\"http://www.tele.ucl.ac.be/\">TELE</a> - <a href=\"http://www.uclouvain.be/\">Universite' Catholique de Louvain</a></font><br>"
-"<font size=-2 color=#444444>OPJViewer is also &copy; 2007 <a href=\"http://dsplab.diei.unipg.it/\">DSPLab</a> - <a href=\"http://www.unipg.it/\">Universita' degli studi di Perugia</a></font>"
+"<font size=-2 color=#444444>OpenJPEG is &copy; 2002-2008 <a href=\"http://www.tele.ucl.ac.be/\">TELE</a> - <a href=\"http://www.uclouvain.be/\">Universite' Catholique de Louvain</a></font><br>"
+"<font size=-2 color=#444444>OPJViewer is &copy; 2007-2008 <a href=\"http://dsplab.diei.unipg.it/\">DSPLab</a> - <a href=\"http://www.unipg.it/\">Universita' degli studi di Perugia</a></font>"
 "</td>"
 "</tr>"
 "</table>"

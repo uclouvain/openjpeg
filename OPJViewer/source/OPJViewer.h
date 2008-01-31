@@ -103,9 +103,10 @@
 
 #include "libopenjpeg/openjpeg.h"
 
-#include "imagj2k.h"
-#include "imagjp2.h"
-#include "imagmj2.h"
+//#include "imagj2k.h"
+//#include "imagjp2.h"
+//#include "imagmj2.h"
+#include "imagjpeg2000.h"
 #ifdef USE_MXF
 #include "imagmxf.h"
 #endif // USE_MXF
@@ -131,9 +132,9 @@ typedef unsigned long long int8byte;
 
 #define OPJ_APPLICATION             wxT("OPJViewer")
 #define OPJ_APPLICATION_NAME		wxT("OpenJPEG Viewer")
-#define OPJ_APPLICATION_VERSION		wxT("0.3 alpha")
+#define OPJ_APPLICATION_VERSION		wxT("0.4 beta")
 #define OPJ_APPLICATION_TITLEBAR	OPJ_APPLICATION_NAME wxT(" ") OPJ_APPLICATION_VERSION
-#define OPJ_APPLICATION_COPYRIGHT	wxT("(C) 2007, Giuseppe Baruffa")
+#define OPJ_APPLICATION_COPYRIGHT	wxT("(C) 2007-2008, Giuseppe Baruffa")
 #define OPJ_APPLICATION_VENDOR      wxT("OpenJPEG")
 
 #ifdef __WXMSW__
@@ -442,6 +443,7 @@ class OPJFrame: public wxMDIParentFrame
 	void SaveFile(wxArrayString paths, wxArrayString filenames);
 	void OnNotebook(wxNotebookEvent& event);
 	void Rescale(int scale, OPJChildFrame *child);
+	void OnLogmsgEvent(wxCommandEvent &event);
 
 	OPJMarkerTreeHash m_treehash;
 	OPJChildFrameHash m_childhash;

@@ -34,6 +34,30 @@
 
 #ifdef USE_MXF
 
+#include "mxflib/mxflib.h"
+using namespace mxflib;
+
+namespace
+{
+	//! Structure holding information about the essence in each body stream
+	struct EssenceInfo
+	{
+		UMIDPtr PackageID;
+		PackagePtr Package;
+		MDObjectPtr Descriptor;
+	};
+	//! Map of EssenceInfo structures indexed by BodySID
+	typedef std::map<UInt32, EssenceInfo> EssenceInfoMap;
+
+	//! The map of essence info for this file
+	EssenceInfoMap EssenceLookup;
+};
+
+//! Build an EssenceInfoMap for the essence in a given file
+/*! \return True if al OK, else false
+ */
+bool BuildEssenceInfo(MXFFilePtr &File, EssenceInfoMap &EssenceLookup);
+
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
@@ -73,6 +97,81 @@ IMPLEMENT_DYNAMIC_CLASS(wxMXFHandler,wxImageHandler)
 
 #if wxUSE_STREAMS
 
+#include <stdarg.h>
+#define MAX_MESSAGE_LEN 200
+
+//------------- MXF Manager
+
+// Debug and error messages
+
+//! Display a warning message
+void mxflib::warning(const char *Fmt, ...)
+{
+	char msg[MAX_MESSAGE_LEN];
+	va_list args;
+
+	va_start(args, Fmt);
+	_vsnprintf(msg, MAX_MESSAGE_LEN, Fmt, args);
+	va_end(args);
+
+	int message_len = strlen(msg) - 1;
+	if (msg[message_len] != '\n')
+		message_len = MAX_MESSAGE_LEN;
+#ifndef __WXGTK__ 
+		wxMutexGuiEnter();
+#endif /* __WXGTK__ */
+	wxLogMessage(wxT("[WARNING_MXF] %.*s"), message_len, msg);
+#ifndef __WXGTK__ 
+    wxMutexGuiLeave();
+#endif /* __WXGTK__ */
+}
+
+//! Display an error message
+void mxflib::error(const char *Fmt, ...)
+{
+	char msg[MAX_MESSAGE_LEN];
+	va_list args;
+
+	va_start(args, Fmt);
+	_vsnprintf(msg, MAX_MESSAGE_LEN, Fmt, args);
+	va_end(args);
+
+	int message_len = strlen(msg) - 1;
+	if (msg[message_len] != '\n')
+		message_len = MAX_MESSAGE_LEN;
+#ifndef __WXGTK__ 
+		wxMutexGuiEnter();
+#endif /* __WXGTK__ */
+	wxLogMessage(wxT("[ERROR_MXF] %.*s"), message_len, msg);
+#ifndef __WXGTK__ 
+    wxMutexGuiLeave();
+#endif /* __WXGTK__ */
+}
+
+//! Display an error message
+void mxflib::debug(const char *Fmt, ...)
+{
+	char msg[MAX_MESSAGE_LEN];
+	va_list args;
+
+	va_start(args, Fmt);
+	_vsnprintf(msg, MAX_MESSAGE_LEN, Fmt, args);
+	va_end(args);
+
+	int message_len = strlen(msg) - 1;
+	if (msg[message_len] != '\n')
+		message_len = MAX_MESSAGE_LEN;
+#ifndef __WXGTK__ 
+		wxMutexGuiEnter();
+#endif /* __WXGTK__ */
+	wxLogMessage(wxT("[DEBUG_MXF] %.*s"), message_len, msg);
+#ifndef __WXGTK__ 
+    wxMutexGuiLeave();
+#endif /* __WXGTK__ */
+}
+
+
+
 //------------- JPEG 2000 Data Source Manager
 
 #define J2K_CFMT 0
@@ -83,8 +182,6 @@ IMPLEMENT_DYNAMIC_CLASS(wxMXFHandler,wxImageHandler)
 #define PGX_DFMT 1
 #define BMP_DFMT 2
 #define YUV_DFMT 3
-
-#define MAX_MESSAGE_LEN 200
 
 /* sample error callback expecting a FILE* client object */
 void mxf_error_callback(const char *msg, void *client_data) {
@@ -142,7 +239,33 @@ bool wxMXFHandler::LoadFile(wxImage *image, wxInputStream& stream, bool verbose,
     unsigned char *ptr;
 	int file_length, j2k_point, j2k_len;
 	opj_codestream_info_t cstr_info;  /* Codestream information structure */
+	
+	// simply display the version of the library
+	wxLogMessage(wxT("Version of MXF: %s   "), wxString::FromAscii(LibraryVersion().c_str()));
+	//wxLogMessage(wxT("MXF file name: %s"), m_filename.GetFullPath());
 
+	// open MXF file
+	MXFFilePtr TestFile = new MXFFile;
+	if (! TestFile->Open(m_filename.GetFullPath().c_str(), true))
+	{
+		wxLogError(wxT("Could not find %s"), m_filename.GetFullPath().c_str());
+		return false;
+	} else
+		wxLogMessage(wxT("Found %s"), m_filename.GetFullPath().c_str());
+
+	// Get the size
+	TestFile->SeekEnd();
+	wxLogMessage(wxT("Size is %d bytes"), TestFile->Tell());
+	TestFile->Seek(0);
+
+	// essence information
+	//BuildEssenceInfo(TestFile, EssenceLookup);
+
+	// close MXF file
+	TestFile->Close();
+
+	return false;
+	
 	// destroy the image
     image->Destroy();
 
@@ -265,6 +388,111 @@ bool wxMXFHandler::DoCanRead( wxInputStream& stream )
 			hdr[2] == 0x2B &&
 			hdr[3] == 0x34);
 }
+
+//! Build an EssenceInfoMap for the essence in a given file
+/*! \return True if al OK, else false
+ */
+bool BuildEssenceInfo(MXFFilePtr &File, EssenceInfoMap &EssenceLookup)
+{
+	// Empty any old data
+	EssenceLookup.clear();
+
+	// Get the master metadata set (or the header if we must)
+	PartitionPtr MasterPartition = File->ReadMasterPartition();
+	if(!MasterPartition)
+	{
+		File->Seek(0);
+		MasterPartition = File->ReadPartition();
+		warning("File %s does not contain a cloased copy of header metadata - using the open copy in the file header\n", File->Name.c_str());
+	}
+
+	if(!MasterPartition) 
+	{
+		error("Could not read header metadata from file %s\n", File->Name.c_str());
+		return false;
+	}
+
+	// Read and parse the metadata
+	MasterPartition->ReadMetadata();
+	MetadataPtr HMeta = MasterPartition->ParseMetadata();
+	
+	if(!HMeta) 
+	{
+		error("Could not read header metadata from file %s\n", File->Name.c_str());
+		return false;
+	}
+
+	/* Scan the Essence container data sets to get PackageID to BodySID mapping */
+	MDObjectPtr ECDSet = HMeta[ContentStorage_UL];
+	if(ECDSet) ECDSet = ECDSet->GetLink();
+	if(ECDSet) ECDSet = ECDSet[EssenceContainerDataBatch_UL];
+	if(!ECDSet)
+	{
+		error("Header metadata in file %s does not contain an EssenceContainerData set\n", File->Name.c_str());
+		return false;
+	}
+
+	MDObject::iterator it = ECDSet->begin();
+	while(it != ECDSet->end())
+	{
+		MDObjectPtr ThisECDSet = (*it).second->GetLink();
+		MDObjectPtr PackageID;
+		if(ThisECDSet) PackageID = ThisECDSet->Child(LinkedPackageUID_UL);
+		if(PackageID)
+		{
+			EssenceInfo NewEI;
+			NewEI.PackageID = new UMID(PackageID->PutData()->Data);
+
+			// Inset the basic essence info - but not if this is external essence (BodySID == 0)
+			UInt32 BodySID = ThisECDSet->GetUInt(BodySID_UL);
+			if(BodySID) EssenceLookup[BodySID] = NewEI;
+		}
+		it++;
+	}
+
+	/* Now find the other items for the essence lookup map */
+	if(EssenceLookup.size())
+	{
+		PackageList::iterator it = HMeta->Packages.begin();
+		while(it != HMeta->Packages.end())
+		{
+			// Only Source Packages are of interest
+			if((*it)->IsA(SourcePackage_UL))
+			{
+				MDObjectPtr Descriptor = (*it)->Child(Descriptor_UL);
+				if(Descriptor) Descriptor = Descriptor->GetLink();
+
+				if(Descriptor)
+				{
+					MDObjectPtr PackageID = (*it)->Child(PackageUID_UL);
+					if(PackageID)
+					{
+						UMIDPtr TheID = new UMID(PackageID->PutData()->Data);
+						
+						/* Now do a lookup in the essence lookup map (it will need to be done the long way here */
+						EssenceInfoMap::iterator EL_it = EssenceLookup.begin();
+						while(EL_it != EssenceLookup.end())
+						{
+							if((*((*EL_it).second.PackageID)) == (*TheID))
+							{
+								// If found, set the missing items and stop searching
+								(*EL_it).second.Package = (*it);
+								(*EL_it).second.Descriptor = Descriptor;
+								break;
+							}
+							EL_it++;
+						}
+					}
+				}
+			}
+
+			it++;
+		}
+	}
+
+	return true;
+}
+
 
 #endif   // wxUSE_STREAMS
 

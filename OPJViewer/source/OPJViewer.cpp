@@ -189,14 +189,15 @@ bool OPJViewerApp::OnInit(void)
 #if wxUSE_LIBJPEG
   wxImage::AddHandler( new wxJPEGHandler );
 #endif
+#if wxUSE_LIBOPENJPEG
+  //wxImage::AddHandler( new wxJ2KHandler );
+  //wxImage::AddHandler( new wxJP2Handler );
+  //wxImage::AddHandler( new wxMJ2Handler );
+  wxImage::AddHandler( new wxJPEG2000Handler );
+#endif
 #if USE_MXF
   wxImage::AddHandler( new wxMXFHandler );
 #endif // USE_MXF
-#if wxUSE_LIBOPENJPEG
-  wxImage::AddHandler( new wxJ2KHandler );
-  wxImage::AddHandler( new wxJP2Handler );
-  wxImage::AddHandler( new wxMJ2Handler );
-#endif
 #if OPJ_MANYFORMATS
   wxImage::AddHandler( new wxBMPHandler );
   wxImage::AddHandler( new wxPNGHandler );
@@ -474,6 +475,11 @@ void OPJViewerApp::ShowCmdLine(const wxCmdLineParser& parser)
 }
 
 // OPJFrame events
+
+// Event class for sending text messages between worker and GUI threads
+DECLARE_EVENT_TYPE(wxEVT_LOGMSG_EVENT, -1)
+DEFINE_EVENT_TYPE(wxEVT_LOGMSG_EVENT)
+
 BEGIN_EVENT_TABLE(OPJFrame, wxMDIParentFrame)
     EVT_MENU(OPJFRAME_HELPABOUT, OPJFrame::OnAbout)
     EVT_MENU(OPJFRAME_FILEOPEN, OPJFrame::OnFileOpen)
@@ -504,6 +510,7 @@ BEGIN_EVENT_TABLE(OPJFrame, wxMDIParentFrame)
     EVT_MENU(OPJFRAME_SETSDECO, OPJFrame::OnSetsDeco)
     EVT_SASH_DRAGGED_RANGE(OPJFRAME_BROWSEWIN, OPJFRAME_LOGWIN, OPJFrame::OnSashDrag)
     EVT_NOTEBOOK_PAGE_CHANGED(LEFT_NOTEBOOK_ID, OPJFrame::OnNotebook)
+	EVT_COMMAND(wxID_ANY, wxEVT_LOGMSG_EVENT, OPJFrame::OnLogmsgEvent)
 END_EVENT_TABLE()
 
 // this is the frame constructor
@@ -1461,6 +1468,16 @@ void OPJFrame::OnSize(wxSizeEvent& WXUNUSED(event))
     wxLayoutAlgorithm layout;
     layout.LayoutMDIFrame(this);
 }
+
+void OPJFrame::OnLogmsgEvent(wxCommandEvent &event)
+{
+    // receive string
+    wxString text = event.GetString();
+
+	// show it on the log
+	wxLogMessage(text);
+}
+
 
 // Note that OPJFRAME_FILEOPEN and OPJFRAME_HELPABOUT commands get passed
 // to the parent window for processing, so no need to

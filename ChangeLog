@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+January 31, 2008
+! [GB] In opjviewer, unification of JPEG 2000 family handlers (*.jp2, *.mj2, *.j2k) in a single file
+
 January 22, 2008
 ! [FOD] In image.c, changed the opj_image_create0() memory allocation from malloc() to calloc() in order
 		to avoid segfaults when freeing the memory allocated for the coding of bad images.
