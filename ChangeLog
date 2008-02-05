@@ -5,6 +5,10 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+February 5, 2008
+! [Parvatha] In convert.c, corrected imagetobmp() conversion for grayscale. In tcd.c, corrected Rate modification in
+  tcd_init_encode(). Thanks to Jeremy Furtek and Jérôme Fimes.
+
 January 31, 2008
 ! [GB] In opjviewer, unification of JPEG 2000 family handlers (*.jp2, *.mj2, *.j2k) in a single file
 

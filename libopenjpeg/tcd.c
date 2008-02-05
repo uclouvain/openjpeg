@@ -418,12 +418,19 @@ void tcd_init_encode(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp, int cur
 		/* Modification of the RATE >> */
 		for (j = 0; j < tcp->numlayers; j++) {
 			tcp->rates[j] = tcp->rates[j] ? 
-						((float) (tile->numcomps 
-								* (tile->x1 - tile->x0) 
-								* (tile->y1 - tile->y0) 
-								* image->comps[0].prec))/ 
-						(tcp->rates[j] * 8 * image->comps[0].dx * image->comps[0].dy) 
-						: 0;
+				cp->tp_on ? 
+					(((float) (tile->numcomps 
+					* (tile->x1 - tile->x0) 
+					* (tile->y1 - tile->y0)
+					* image->comps[0].prec))
+					/(tcp->rates[j] * 8 * image->comps[0].dx * image->comps[0].dy)) - (((tcd->cur_totnum_tp - 1) * 14 )/ tcp->numlayers)
+					:
+				((float) (tile->numcomps 
+					* (tile->x1 - tile->x0) 
+					* (tile->y1 - tile->y0) 
+					* image->comps[0].prec))/ 
+					(tcp->rates[j] * 8 * image->comps[0].dx * image->comps[0].dy)
+					: 0;
 
 			if (tcp->rates[j]) {
 				if (j && tcp->rates[j] < tcp->rates[j - 1] + 10) {
