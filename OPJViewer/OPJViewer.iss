@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=OPJViewer
-AppVerName=OPJViewer 0.3 alpha
+AppVerName=OPJViewer 0.4 beta
 AppPublisher=OpenJPEG
 AppPublisherURL=http://www.openjpeg.org
 AppSupportURL=http://www.openjpeg.org
@@ -11,13 +11,13 @@ AppUpdatesURL=http://www.openjpeg.org
 DefaultDirName={pf}\OPJViewer
 DefaultGroupName=OPJViewer
 OutputDir=setup
-OutputBaseFilename=OPJViewer03alpha_setup
+OutputBaseFilename=OPJViewer04beta_setup
 Compression=lzma
 SolidCompression=true
 InfoBeforeFile=source\readmebefore.txt
 InfoAfterFile=source\readmeafter.txt
 LicenseFile=source\license.txt
-VersionInfoVersion=0.3.0.0
+VersionInfoVersion=0.4.0.0
 VersionInfoCompany=OpenJPEG
 VersionInfoDescription=JPEG 2000 viewer
 ShowLanguageDialog=yes

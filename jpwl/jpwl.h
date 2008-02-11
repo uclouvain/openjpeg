@@ -179,7 +179,7 @@ typedef struct jpwl_marker {
 	/** marker value (J2K_MS_EPC, etc.) */
 	int id;
 	/** union keeping the pointer to the real marker struct */
-	union {
+	union jpwl_marks {
 		/** pointer to EPB marker */
 		jpwl_epb_ms_t *epbmark;
 		/** pointer to EPC marker */
@@ -188,7 +188,7 @@ typedef struct jpwl_marker {
 		jpwl_esd_ms_t *esdmark;
 		/** pointer to RED marker */
 		jpwl_red_ms_t *redmark;
-	};
+	} m;
 	/** position where the marker should go, in the pre-JPWL codestream */ 
 	unsigned long int pos;
 	/** same as before, only written as a double, so we can sort it better */

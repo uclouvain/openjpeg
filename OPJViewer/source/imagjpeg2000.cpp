@@ -128,46 +128,61 @@ jpeg2000familytype(unsigned char *hdr, int hdr_len)
 
 }
 
-/* sample error callback expecting a FILE* client object */
-void jpeg2000_error_callback(const char *msg, void *client_data) {
-	int message_len = strlen(msg) - 1;
-	if (msg[message_len] != '\n')
-		message_len = MAX_MESSAGE_LEN;
+/* we have to use this to avoid GUI-noGUI threads crashing */
+void printevent(const char *msg)
+{
 #ifndef __WXGTK__ 
-		wxMutexGuiEnter();
+	wxMutexGuiEnter();
 #endif /* __WXGTK__ */
-	wxLogMessage(wxT("[ERROR] %.*s"), message_len, msg);
+	wxLogMessage(wxT("%s"), msg);
 #ifndef __WXGTK__ 
     wxMutexGuiLeave();
 #endif /* __WXGTK__ */
+}
+
+/* sample error callback expecting a FILE* client object */
+void jpeg2000_error_callback(const char *msg, void *client_data) {
+	char mess[MAX_MESSAGE_LEN + 20];
+	int message_len = strlen(msg);
+
+	if (message_len > MAX_MESSAGE_LEN)
+		message_len = MAX_MESSAGE_LEN;
+	
+	if (msg[message_len - 1] == '\n')
+		message_len--;
+
+	sprintf(mess, "[ERROR] %.*s", message_len, msg);
+	printevent(mess);
 }
 
 /* sample warning callback expecting a FILE* client object */
 void jpeg2000_warning_callback(const char *msg, void *client_data) {
-	int message_len = strlen(msg) - 1;
-	if (msg[message_len] != '\n')
+	char mess[MAX_MESSAGE_LEN + 20];
+	int message_len = strlen(msg);
+
+	if (message_len > MAX_MESSAGE_LEN)
 		message_len = MAX_MESSAGE_LEN;
-#ifndef __WXGTK__ 
-		wxMutexGuiEnter();
-#endif /* __WXGTK__ */
-	wxLogMessage(wxT("[WARNING] %.*s"), message_len, msg);
-#ifndef __WXGTK__ 
-    wxMutexGuiLeave();
-#endif /* __WXGTK__ */
+	
+	if (msg[message_len - 1] == '\n')
+		message_len--;
+
+	sprintf(mess, "[WARNING] %.*s", message_len, msg);
+	printevent(mess);
 }
 
 /* sample debug callback expecting no client object */
 void jpeg2000_info_callback(const char *msg, void *client_data) {
-	int message_len = strlen(msg) - 1;
-	if (msg[message_len] != '\n')
+	char mess[MAX_MESSAGE_LEN + 20];
+	int message_len = strlen(msg);
+
+	if (message_len > MAX_MESSAGE_LEN)
 		message_len = MAX_MESSAGE_LEN;
-#ifndef __WXGTK__ 
-		wxMutexGuiEnter();
-#endif /* __WXGTK__ */
-	wxLogMessage(wxT("[INFO] %.*s"), message_len, msg);
-#ifndef __WXGTK__ 
-    wxMutexGuiLeave();
-#endif /* __WXGTK__ */
+	
+	if (msg[message_len - 1] == '\n')
+		message_len--;
+
+	sprintf(mess, "[INFO] %.*s", message_len, msg);
+	printevent(mess);
 }
 
 /* macro functions */

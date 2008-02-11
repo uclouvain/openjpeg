@@ -5,6 +5,10 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+February 11, 2000
+* [GB] Minor style modifications to comply with c99 compiler flag; removed Microsoft-specific "union-in-struct" syntax; Re-enabled cstr_info struct creation when -W switch is specified
+! [GB] Changed a number of things in opjviewer (e.g., decoding thread does not execute GUI calls anymore), to have it running under linux --> it is better than before, but still crashes
+
 February 5, 2008
 ! [Parvatha] In convert.c, corrected imagetobmp() conversion for grayscale. In tcd.c, corrected Rate modification in
   tcd_init_encode(). Thanks to Jeremy Furtek and Jérôme Fimes.

@@ -130,7 +130,6 @@ void *OPJEncoThread::Entry()
 /////////////////////////////////////////////////////////////////////
 // Decoding thread class
 /////////////////////////////////////////////////////////////////////
-
 OPJDecoThread::OPJDecoThread(OPJCanvas *canvas)
         : wxThread()
 {
@@ -141,7 +140,15 @@ OPJDecoThread::OPJDecoThread(OPJCanvas *canvas)
 void OPJDecoThread::WriteText(const wxString& text)
 {
     wxString msg;
+	
+	// we use a fake event and post it for inter-thread gui communication
+    wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, OPJFRAME_THREADLOGMSG);
+    event.SetInt(-1); 
+	msg << text;
+	event.SetString(msg);
+    wxPostEvent(this->m_canvas->m_childframe->m_frame, event);
 
+/*
     // before doing any GUI calls we must ensure that this thread is the only
     // one doing it!
 
@@ -155,6 +162,7 @@ void OPJDecoThread::WriteText(const wxString& text)
 #ifndef __WXGTK__ 
     wxMutexGuiLeave();
 #endif // __WXGTK__
+*/
 }
 
 void OPJDecoThread::OnExit()
@@ -180,53 +188,24 @@ void *OPJDecoThread::Entry()
 
     wxString text;
 
-	srand(GetId());
+	//srand(GetId());
 	//int m_countnum = rand() % 9;
     //text.Printf(wxT("Deco thread 0x%lx started (priority = %u, time = %d)."),
     //            GetId(), GetPriority(), m_countnum);
-    text.Printf(wxT("Deco thread %d started"), m_canvas->m_childframe->m_winnumber);
 
+	// we have started
+    text.Printf(wxT("Deco thread %d started"), m_canvas->m_childframe->m_winnumber);
     WriteText(text);
 
+	// prepare dummy wximage
     wxBitmap bitmap(100, 100);
     wxImage image(100, 100, true); //= bitmap.ConvertToImage();
     image.Destroy();
 
+	// show image full name
 	WriteText(m_canvas->m_fname.GetFullPath());
 
-
 	// set handler properties
-/*	wxJ2KHandler *j2kkkhandler = (wxJ2KHandler *) wxImage::FindHandler( wxBITMAP_TYPE_J2K);
-	j2kkkhandler->m_reducefactor = wxGetApp().m_reducefactor;
-	j2kkkhandler->m_qualitylayers = wxGetApp().m_qualitylayers;
-	j2kkkhandler->m_components = wxGetApp().m_components;
-#ifdef USE_JPWL
-	j2kkkhandler->m_enablejpwl = wxGetApp().m_enablejpwl;
-	j2kkkhandler->m_expcomps = wxGetApp().m_expcomps;
-	j2kkkhandler->m_maxtiles = wxGetApp().m_maxtiles;
-#endif // USE_JPWL*/
-
-/*	wxJP2Handler *jp222handler = (wxJP2Handler *) wxImage::FindHandler( wxBITMAP_TYPE_JP2);
-	jp222handler->m_reducefactor = wxGetApp().m_reducefactor;
-	jp222handler->m_qualitylayers = wxGetApp().m_qualitylayers;
-	jp222handler->m_components = wxGetApp().m_components;
-#ifdef USE_JPWL
-	jp222handler->m_enablejpwl = wxGetApp().m_enablejpwl;
-	jp222handler->m_expcomps = wxGetApp().m_expcomps;
-	jp222handler->m_maxtiles = wxGetApp().m_maxtiles;
-#endif // USE_JPWL*/
-
-/*	wxMJ2Handler *mj222handler = (wxMJ2Handler *) wxImage::FindHandler( wxBITMAP_TYPE_MJ2);
-	mj222handler->m_reducefactor = wxGetApp().m_reducefactor;
-	mj222handler->m_qualitylayers = wxGetApp().m_qualitylayers;
-	mj222handler->m_components = wxGetApp().m_components;
-	mj222handler->m_framenum = wxGetApp().m_framenum;
-#ifdef USE_JPWL
-	mj222handler->m_enablejpwl = wxGetApp().m_enablejpwl;
-	mj222handler->m_expcomps = wxGetApp().m_expcomps;
-	mj222handler->m_maxtiles = wxGetApp().m_maxtiles;
-#endif // USE_JPWL*/
-
 	wxJPEG2000Handler *jpeg2000handler = (wxJPEG2000Handler *) wxImage::FindHandler(wxBITMAP_TYPE_JPEG2000);
 	jpeg2000handler->m_reducefactor = wxGetApp().m_reducefactor;
 	jpeg2000handler->m_qualitylayers = wxGetApp().m_qualitylayers;
@@ -239,7 +218,7 @@ void *OPJDecoThread::Entry()
 #endif // USE_JPWL
 
 #ifdef USE_MXF
-	wxMXFHandler *mxfffhandler = (wxMXFHandler *) wxImage::FindHandler( wxBITMAP_TYPE_MXF);
+	wxMXFHandler *mxfffhandler = (wxMXFHandler *) wxImage::FindHandler(wxBITMAP_TYPE_MXF);
 	mxfffhandler->m_reducefactor = wxGetApp().m_reducefactor;
 	mxfffhandler->m_qualitylayers = wxGetApp().m_qualitylayers;
 	mxfffhandler->m_components = wxGetApp().m_components;
@@ -252,11 +231,12 @@ void *OPJDecoThread::Entry()
 #endif // USE_JPWL
 #endif // USE_MXF
 
+	// if decoding is enabled...
 	if (wxGetApp().m_enabledeco) {
 
 		// load the file
 		if (!image.LoadFile(m_canvas->m_fname.GetFullPath(), wxBITMAP_TYPE_ANY, 0)) {
-			WriteText(wxT("Can't load image"));
+			WriteText(wxT("Can't load image!"));
 			return NULL;
 		}
 
@@ -264,7 +244,7 @@ void *OPJDecoThread::Entry()
 
 		// display a warning
 		if (!image.Create(300, 5, false)) {
-			WriteText(wxT("Can't create image"));
+			WriteText(wxT("Can't create image!"));
 			return NULL;
 		}
 
@@ -273,16 +253,22 @@ void *OPJDecoThread::Entry()
 	// assign 100% image
     m_canvas->m_image100 = wxBitmap(image);
 
+	// signal the frame to refresh the canvas
+    wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, OPJFRAME_VIEWFIT);
+	event.SetString(wxT("Fit me"));
+    event.SetInt(m_canvas->m_childframe->m_winnumber); 
+    wxPostEvent(m_canvas->m_childframe->m_frame, event);
+
 	// find a fit-to-width zoom
-	int zooml, wzooml, hzooml;
+	/*int zooml, wzooml, hzooml;
 	wxSize clientsize = m_canvas->GetClientSize();
 	wzooml = (int) floor(100.0 * (double) clientsize.GetWidth() / (double) (2 * OPJ_CANVAS_BORDER + image.GetWidth()));
 	hzooml = (int) floor(100.0 * (double) clientsize.GetHeight() / (double) (2 * OPJ_CANVAS_BORDER + image.GetHeight()));
-	zooml = wxMin(100, wxMin(wzooml, hzooml));
+	zooml = wxMin(100, wxMin(wzooml, hzooml));*/
 
 	// fit to width
 #ifndef __WXGTK__
-	m_canvas->m_childframe->m_frame->Rescale(zooml, m_canvas->m_childframe);
+	//m_canvas->m_childframe->m_frame->Rescale(zooml, m_canvas->m_childframe);
 #endif // __WXGTK__
 
 	//m_canvas->m_image = m_canvas->m_image100;
@@ -311,8 +297,15 @@ OPJParseThread::OPJParseThread(OPJMarkerTree *tree, wxTreeItemId parentid)
 void OPJParseThread::WriteText(const wxString& text)
 {
     wxString msg;
+	
+	// we use a fake event and post it for inter-thread gui communication
+    wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, OPJFRAME_THREADLOGMSG);
+    event.SetInt(-1); 
+	msg << text;
+	event.SetString(msg);
+    wxPostEvent(this->m_tree->m_childframe->m_frame, event);
 
-    // before doing any GUI calls we must ensure that this thread is the only
+/*    // before doing any GUI calls we must ensure that this thread is the only
     // one doing it!
 
 #ifndef __WXGTK__ 
@@ -324,7 +317,7 @@ void OPJParseThread::WriteText(const wxString& text)
 
 #ifndef __WXGTK__ 
     wxMutexGuiLeave();
-#endif // __WXGTK
+#endif // __WXGTK*/
 }
 
 void OPJParseThread::OnExit()
@@ -594,7 +587,6 @@ void OPJParseThread::LoadFile(wxFileName fname)
 		}
 
 	}
-
 
 	// this is the root node
 	if (this->m_parentid)

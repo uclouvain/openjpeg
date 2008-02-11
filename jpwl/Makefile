@@ -19,7 +19,7 @@ INSTALL_INCLUDE = $(PREFIX)/include
 # Converts cr/lf to just lf
 DOS2UNIX = dos2unix
 
-COMPILERFLAGS = -O3 -fPIC
+COMPILERFLAGS = -Wall -O3 -ffast-math -std=c99 -fPIC
 LIBRARIES = -lstdc++
 
 MODULES = $(SRCS:.c=.o)
@@ -60,10 +60,10 @@ $(SHAREDLIB): $(MODULES)
 	$(CC) -s -shared -Wl,-soname,$(LIBNAME) -o $@ $(MODULES) $(LIBRARIES)
 
 JPWL_j2k_to_image: ../codec/j2k_to_image.c
-	gcc $(CFLAGS) ../codec/convert.c ../codec/j2k_to_image.c -o JPWL_j2k_to_image -I ../libopenjpeg/ -L . -lopenjpeg_JPWL -lm -ltiff
+	gcc $(CFLAGS) ../codec/compat/getopt.c ../codec/index.c ../codec/convert.c ../codec/j2k_to_image.c -o JPWL_j2k_to_image -I ../libopenjpeg/ -L . -lopenjpeg_JPWL -lm -ltiff
 
 JPWL_image_to_j2k: ../codec/image_to_j2k.c
-	gcc $(CFLAGS) ../codec/convert.c ../codec/image_to_j2k.c -o JPWL_image_to_j2k -I ../libopenjpeg/ -L . -lopenjpeg_JPWL -lm -ltiff
+	gcc $(CFLAGS) ../codec/compat/getopt.c ../codec/index.c ../codec/convert.c ../codec/image_to_j2k.c -o JPWL_image_to_j2k -I ../libopenjpeg/ -L . -lopenjpeg_JPWL -lm -ltiff
 
 install: OpenJPEG
 	install -d '$(DESTDIR)$(INSTALL_LIBDIR)' '$(DESTDIR)$(INSTALL_INCLUDE)'

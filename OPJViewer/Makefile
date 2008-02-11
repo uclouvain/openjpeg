@@ -4,9 +4,9 @@
 CC = $(shell wx-config-2.8 --cxx)
 AR = ar
 
-CFLAGS = -DUSE_JPWL -DwxUSE_LIBOPENJPEG -DwxUSE_GUI=1 -DOPJ_STATIC -DOPJ_HTMLABOUT $(shell wx-config-2.8 --cxxflags) # -g -p -pg -DUSE_JPWL
+CFLAGS = -DUSE_JPWL -DwxUSE_LIBOPENJPEG -DwxUSE_GUI=1 -DOPJ_STATIC -DOPJ_HTMLABOUT -DOPJ_INICONFIG -DUSE_JPSEC -DOPJ_MANYFORMATS $(shell wx-config-2.8 --cxxflags) # -g -p -pg -DUSE_JPWL
 
-OPJV_SRCS = source/imagj2k.cpp source/imagmj2.cpp source/wxj2kparser.cpp source/imagjp2.cpp source/OPJViewer.cpp source/wxjp2parser.cpp source/OPJViewer.cpp source/OPJThreads.cpp
+OPJV_SRCS = source/imagjpeg2000.cpp source/wxj2kparser.cpp source/OPJViewer.cpp source/wxjp2parser.cpp source/OPJDialogs.cpp source/OPJThreads.cpp source/OPJAbout.cpp ../codec/index.c
 
 MODULES = $(OPJV_SRCS:.cpp=.o)
 
@@ -19,7 +19,7 @@ lib:
 	cd ../jpwl; make
 
 opjviewer: $(OPJV_SRCS) lib
-        $(CC) $(CFLAGS) -I .. $(OPJV_SRCS) -o OPJViewer -L ../jpwl -lopenjpeg_JPWL -lm -lstdc++ -ltiff $(shell wx-config-2.8 --libs)
+	$(CC) $(CFLAGS) -I .. -I ../codec -I ../libopenjpeg $(OPJV_SRCS) -o OPJViewer -L ../jpwl -lopenjpeg_JPWL -lm -lstdc++ -ltiff $(shell wx-config-2.8 --libs)
 
 
 clean:

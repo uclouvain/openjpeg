@@ -165,10 +165,6 @@ bool OPJViewerApp::OnInit(void)
 
     wxCmdLineParser parser(cmdLineDesc, argc, wxArgv);
 
-    /*parser.AddOption(_T("project_name"), _T(""), _T("full path to project file"),
-                     wxCMD_LINE_VAL_STRING,
-                     wxCMD_LINE_OPTION_MANDATORY | wxCMD_LINE_NEEDS_SEPARATOR);*/
-
     switch (parser.Parse()) {
     case -1:
         wxLogMessage(wxT("Help was given, terminating."));
@@ -190,9 +186,6 @@ bool OPJViewerApp::OnInit(void)
   wxImage::AddHandler( new wxJPEGHandler );
 #endif
 #if wxUSE_LIBOPENJPEG
-  //wxImage::AddHandler( new wxJ2KHandler );
-  //wxImage::AddHandler( new wxJP2Handler );
-  //wxImage::AddHandler( new wxMJ2Handler );
   wxImage::AddHandler( new wxJPEG2000Handler );
 #endif
 #if USE_MXF
@@ -477,9 +470,6 @@ void OPJViewerApp::ShowCmdLine(const wxCmdLineParser& parser)
 // OPJFrame events
 
 // Event class for sending text messages between worker and GUI threads
-DECLARE_EVENT_TYPE(wxEVT_LOGMSG_EVENT, -1)
-DEFINE_EVENT_TYPE(wxEVT_LOGMSG_EVENT)
-
 BEGIN_EVENT_TABLE(OPJFrame, wxMDIParentFrame)
     EVT_MENU(OPJFRAME_HELPABOUT, OPJFrame::OnAbout)
     EVT_MENU(OPJFRAME_FILEOPEN, OPJFrame::OnFileOpen)
@@ -510,7 +500,7 @@ BEGIN_EVENT_TABLE(OPJFrame, wxMDIParentFrame)
     EVT_MENU(OPJFRAME_SETSDECO, OPJFrame::OnSetsDeco)
     EVT_SASH_DRAGGED_RANGE(OPJFRAME_BROWSEWIN, OPJFRAME_LOGWIN, OPJFrame::OnSashDrag)
     EVT_NOTEBOOK_PAGE_CHANGED(LEFT_NOTEBOOK_ID, OPJFrame::OnNotebook)
-	EVT_COMMAND(wxID_ANY, wxEVT_LOGMSG_EVENT, OPJFrame::OnLogmsgEvent)
+    EVT_MENU(OPJFRAME_THREADLOGMSG, OPJFrame::OnThreadLogmsg)
 END_EVENT_TABLE()
 
 // this is the frame constructor
@@ -928,10 +918,21 @@ void OPJFrame::OnClose(wxCommandEvent& WXUNUSED(event))
 	currframe->OnClose(e);
 }
 
-void OPJFrame::OnFit(wxCommandEvent& WXUNUSED(event))
+void OPJFrame::OnFit(wxCommandEvent& event)
 {
+	OPJChildFrame *currchild;
+	wxString eventstring = event.GetString();
+
+	//wxLogMessage(wxT("OnFit:%d:%s"), event.GetInt(), eventstring);
+
 	// current child
-	OPJChildFrame *currchild = (OPJChildFrame *) GetActiveChild();
+	if (event.GetInt() >= 1) {
+		currchild = m_childhash[event.GetInt()];
+	} else {
+		currchild = (OPJChildFrame *) GetActiveChild();
+	}
+
+	// problems
 	if (!currchild)
 		return;
 
@@ -939,14 +940,14 @@ void OPJFrame::OnFit(wxCommandEvent& WXUNUSED(event))
 	OPJCanvas *currcanvas = currchild->m_canvas;
 
 	// find a fit-to-width zoom
-	int zooml, wzooml, hzooml;
+	/*int zooml, wzooml, hzooml;
 	wxSize clientsize = currcanvas->GetClientSize();
 	wzooml = (int) ceil(100.0 * (double) (clientsize.GetWidth() - 2 * OPJ_CANVAS_BORDER) / (double) (currcanvas->m_image100.GetWidth()));
 	hzooml = (int) ceil(100.0 * (double) (clientsize.GetHeight() - 2 * OPJ_CANVAS_BORDER) / (double) (currcanvas->m_image100.GetHeight()));
-	zooml = wxMin(100, wxMin(wzooml, hzooml));
+	zooml = wxMin(100, wxMin(wzooml, hzooml));*/
 
 	// fit to width
-	Rescale(zooml, currchild);
+	Rescale(-1, currchild);
 }
 
 void OPJFrame::OnZoom(wxCommandEvent& WXUNUSED(event))
@@ -976,7 +977,20 @@ void OPJFrame::Rescale(int zooml, OPJChildFrame *currframe)
 
 	// resizing enabled?
 	if (wxGetApp().m_resizemethod == -1) {
+
 		zooml = 100;
+
+	} else {
+
+		if (zooml < 0) {
+			// find a fit-to-width zoom
+			int wzooml, hzooml;
+			//wxSize clientsize = currframe->m_canvas->GetClientSize();
+			wxSize clientsize = currframe->m_frame->GetActiveChild()->GetClientSize();
+			wzooml = (int) floor(100.0 * (double) clientsize.GetWidth() / (double) (2 * OPJ_CANVAS_BORDER + currframe->m_canvas->m_image100.GetWidth()));
+			hzooml = (int) floor(100.0 * (double) clientsize.GetHeight() / (double) (2 * OPJ_CANVAS_BORDER + currframe->m_canvas->m_image100.GetHeight()));
+			zooml = wxMin(100, wxMin(wzooml, hzooml));
+		}
 	}
 
 	if (zooml != 100)
@@ -991,6 +1005,8 @@ void OPJFrame::Rescale(int zooml, OPJChildFrame *currframe)
 										);
 
 	currframe->m_canvas->Refresh();
+
+	wxLogMessage(wxT("Rescale said %d%%"), zooml);
 
 	// update zoom
 	currframe->m_canvas->m_zooml = zooml;
@@ -1199,6 +1215,36 @@ void OPJFrame::OnSashDrag(wxSashEvent& event)
 
 }
 
+void OPJFrame::OnThreadLogmsg(wxCommandEvent& event)
+{
+#if 1
+    wxLogMessage(wxT("Frame got message from worker thread: %d"), event.GetInt());
+    wxLogMessage(event.GetString());
+#else
+    int n = event.GetInt();
+    if ( n == -1 )
+    {
+        m_dlgProgress->Destroy();
+        m_dlgProgress = (wxProgressDialog *)NULL;
+
+        // the dialog is aborted because the event came from another thread, so
+        // we may need to wake up the main event loop for the dialog to be
+        // really closed
+        wxWakeUpIdle();
+    }
+    else
+    {
+        if ( !m_dlgProgress->Update(n) )
+        {
+            wxCriticalSectionLocker lock(m_critsectWork);
+
+            m_cancelled = true;
+        }
+    }
+#endif
+}
+
+
 // physically save the file
 void OPJFrame::SaveFile(wxArrayString paths, wxArrayString filenames)
 {
@@ -1364,6 +1410,7 @@ void OPJFrame::OnMemoryOpen(wxCommandEvent& WXUNUSED(event))
 
 BEGIN_EVENT_TABLE(OPJCanvas, wxScrolledWindow)
     EVT_MOUSE_EVENTS(OPJCanvas::OnEvent)
+    EVT_MENU(OPJCANVAS_THREADSIGNAL, OPJCanvas::OnThreadSignal)
 END_EVENT_TABLE()
 
 // Define a constructor for my canvas
@@ -1469,13 +1516,33 @@ void OPJFrame::OnSize(wxSizeEvent& WXUNUSED(event))
     layout.LayoutMDIFrame(this);
 }
 
-void OPJFrame::OnLogmsgEvent(wxCommandEvent &event)
+void OPJCanvas::OnThreadSignal(wxCommandEvent& event)
 {
-    // receive string
-    wxString text = event.GetString();
+#if 1
+    wxLogMessage(wxT("Canvas got signal from deco thread: %d"), event.GetInt());
+    wxLogMessage(event.GetString());
+#else
+    int n = event.GetInt();
+    if ( n == -1 )
+    {
+        m_dlgProgress->Destroy();
+        m_dlgProgress = (wxProgressDialog *)NULL;
 
-	// show it on the log
-	wxLogMessage(text);
+        // the dialog is aborted because the event came from another thread, so
+        // we may need to wake up the main event loop for the dialog to be
+        // really closed
+        wxWakeUpIdle();
+    }
+    else
+    {
+        if ( !m_dlgProgress->Update(n) )
+        {
+            wxCriticalSectionLocker lock(m_critsectWork);
+
+            m_cancelled = true;
+        }
+    }
+#endif
 }
 
 

@@ -269,8 +269,13 @@ class OPJCanvas: public wxScrolledWindow
 			wxMutexGuiLeave();
 #endif //__WXGTK__
 		}
+
+		void OnThreadSignal(wxCommandEvent& event);
+
 		OPJDecoThread *CreateDecoThread(void);
 		OPJEncoThread *CreateEncoThread(void);
+
+
 		OPJChildFrame *m_childframe;
 
 		wxBitmap  m_image, m_image100;
@@ -419,7 +424,7 @@ class OPJFrame: public wxMDIParentFrame
     void OnQuit(wxCommandEvent& WXUNUSED(event));
     void OnClose(wxCommandEvent& WXUNUSED(event));
     void OnZoom(wxCommandEvent& WXUNUSED(event));
-	void OnFit(wxCommandEvent& WXUNUSED(event));
+	void OnFit(wxCommandEvent& event);
 	void OnToggleBrowser(wxCommandEvent& WXUNUSED(event));
 	void OnTogglePeeker(wxCommandEvent& WXUNUSED(event));
 	void OnToggleToolbar(wxCommandEvent& WXUNUSED(event));
@@ -443,7 +448,7 @@ class OPJFrame: public wxMDIParentFrame
 	void SaveFile(wxArrayString paths, wxArrayString filenames);
 	void OnNotebook(wxNotebookEvent& event);
 	void Rescale(int scale, OPJChildFrame *child);
-	void OnLogmsgEvent(wxCommandEvent &event);
+	void OnThreadLogmsg(wxCommandEvent& event);
 
 	OPJMarkerTreeHash m_treehash;
 	OPJChildFrameHash m_childhash;
@@ -523,7 +528,10 @@ enum {
 
 	OPJFRAME_BROWSEWIN = 10000,
 	OPJFRAME_LOGWIN,
-	OPJFRAME_TOOLBAR
+	OPJFRAME_TOOLBAR,
+
+	OPJFRAME_THREADLOGMSG,
+	OPJCANVAS_THREADSIGNAL
 };
 
 

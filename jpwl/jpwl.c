@@ -122,19 +122,19 @@ void jpwl_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 		switch (jwmarker[mm].id) {
 
 		case J2K_MS_EPB:
-			free(jwmarker[mm].epbmark);
+			opj_free(jwmarker[mm].m.epbmark);
 			break;
 
 		case J2K_MS_EPC:
-			free(jwmarker[mm].epcmark);
+			opj_free(jwmarker[mm].m.epcmark);
 			break;
 
 		case J2K_MS_ESD:
-			free(jwmarker[mm].esdmark);
+			opj_free(jwmarker[mm].m.esdmark);
 			break;
 
 		case J2K_MS_RED:
-			free(jwmarker[mm].redmark);
+			opj_free(jwmarker[mm].m.redmark);
 			break;
 
 		default:
@@ -202,18 +202,18 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 	 EPC MS for Main Header: if we are here it's required
 	*/
 	/* create the EPC */
-	if (epc_mark = jpwl_epc_create(
+	if ((epc_mark = jpwl_epc_create(
 			j2k,
 			j2k->cp->esd_on, /* is ESD present? */
 			j2k->cp->red_on, /* is RED present? */
 			j2k->cp->epb_on, /* is EPB present? */
 			false /* are informative techniques present? */
-		)) {
+		))) {
 
 		/* Add this marker to the 'insertanda' list */
 		if (epc_mark) {
 			jwmarker[jwmarker_num].id = J2K_MS_EPC; /* its type */
-			jwmarker[jwmarker_num].epcmark = epc_mark; /* the EPC */
+			jwmarker[jwmarker_num].m.epcmark = epc_mark; /* the EPC */
 			jwmarker[jwmarker_num].pos = soc_pos + socsiz_len; /* after SIZ */
 			jwmarker[jwmarker_num].dpos = (double) jwmarker[jwmarker_num].pos + 0.1; /* not so first */
 			jwmarker[jwmarker_num].len = epc_mark->Lepc; /* its length */
@@ -243,7 +243,7 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 	if (j2k->cp->esd_on && (j2k->cp->sens_MH >= 0)) {
 
 		/* Create the ESD */
-		if (esd_mark = jpwl_esd_create(
+		if ((esd_mark = jpwl_esd_create(
 			j2k, /* this encoder handle */
 			-1, /* we are averaging over all components */
 			(unsigned char) j2k->cp->sens_range, /* range method */
@@ -253,12 +253,12 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 			-1, /* this ESD is in main header */
 			0 /*j2k->cstr_info->num*/, /* number of packets in codestream */
 			NULL /*sensval*/ /* pointer to sensitivity data of packets */
-			)) {
+			))) {
 			
 			/* Add this marker to the 'insertanda' list */
 			if (jwmarker_num < JPWL_MAX_NO_MARKERS) {
 				jwmarker[jwmarker_num].id = J2K_MS_ESD; /* its type */
-				jwmarker[jwmarker_num].esdmark = esd_mark; /* the EPB */
+				jwmarker[jwmarker_num].m.esdmark = esd_mark; /* the EPB */
 				jwmarker[jwmarker_num].pos = soc_pos + socsiz_len; /* we choose to place it after SIZ */
 				jwmarker[jwmarker_num].dpos = (double) jwmarker[jwmarker_num].pos + 0.2; /* not first at all! */
 				jwmarker[jwmarker_num].len = esd_mark->Lesd; /* its length */
@@ -337,7 +337,7 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 			if (j2k->cp->esd_on && (sens >= 0)) {
 
 				/* Create the ESD */
-				if (esd_mark = jpwl_esd_create(
+				if ((esd_mark = jpwl_esd_create(
 					j2k, /* this encoder handle */
 					-1, /* we are averaging over all components */
 					(unsigned char) j2k->cp->sens_range, /* range method */
@@ -347,12 +347,12 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 					tileno, /* this ESD is in a tile */
 					0, /* number of packets in codestream */
 					NULL /* pointer to sensitivity data of packets */
-					)) {
+					))) {
 					
 					/* Add this marker to the 'insertanda' list */
 					if (jwmarker_num < JPWL_MAX_NO_MARKERS) {
 						jwmarker[jwmarker_num].id = J2K_MS_ESD; /* its type */
-						jwmarker[jwmarker_num].esdmark = esd_mark; /* the EPB */
+						jwmarker[jwmarker_num].m.esdmark = esd_mark; /* the EPB */
 						/****** jwmarker[jwmarker_num].pos = j2k->cstr_info->tile[tileno].start_pos + sot_len + 2; */ /* after SOT */
 						jwmarker[jwmarker_num].pos = j2k->cstr_info->tile[tileno].tp[tpno].tp_start_pos + sot_len + 2; /* after SOT */
 						jwmarker[jwmarker_num].dpos = (double) jwmarker[jwmarker_num].pos + 0.2; /* not first at all! */
@@ -416,7 +416,7 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 		}
 
 		/* Create the EPB */
-		if (epb_mark = jpwl_epb_create(
+		if ((epb_mark = jpwl_epb_create(
 			j2k, /* this encoder handle */
 			true, /* is it the latest? */
 			true, /* is it packed? not for now */
@@ -425,12 +425,12 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 			j2k->cp->hprot_MH, /* protection type parameters of data */
 			socsiz_len, /* pre-data: only SOC+SIZ */
 			left_MHmarks_len /* post-data: from SOC to SOT, and all JPWL markers within */
-			)) {
+			))) {
 			
 			/* Add this marker to the 'insertanda' list */
 			if (jwmarker_num < JPWL_MAX_NO_MARKERS) {
 				jwmarker[jwmarker_num].id = J2K_MS_EPB; /* its type */
-				jwmarker[jwmarker_num].epbmark = epb_mark; /* the EPB */
+				jwmarker[jwmarker_num].m.epbmark = epb_mark; /* the EPB */
 				jwmarker[jwmarker_num].pos = soc_pos + socsiz_len; /* after SIZ */
 				jwmarker[jwmarker_num].dpos = (double) jwmarker[jwmarker_num].pos; /* first first first! */
 				jwmarker[jwmarker_num].len = epb_mark->Lepb; /* its length */
@@ -474,7 +474,7 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 		
 			int sot_len, Psot, Psotp, mm, epb_index = 0, prot_len = 0;
 			unsigned long sot_pos, post_sod_pos;
-			unsigned long int left_THmarks_len, epbs_len = 0;
+			unsigned long int left_THmarks_len/*, epbs_len = 0*/;
 			int startpack = 0, stoppack = j2k->cstr_info->packno;
 			int first_tp_pack, last_tp_pack;
 			jpwl_epb_ms_t *tph_epb = NULL;
@@ -514,7 +514,7 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 			if (j2k->cp->epb_on && (hprot > 0)) {
 
 				/* Create the EPB */
-				if (epb_mark = jpwl_epb_create(
+				if ((epb_mark = jpwl_epb_create(
 					j2k, /* this encoder handle */
 					false, /* is it the latest? in TPH, no for now (if huge data size in TPH, we'd need more) */
 					true, /* is it packed? yes for now */
@@ -523,12 +523,12 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 					hprot, /* protection type parameters of following data */
 					sot_len + 2, /* pre-data length: only SOT */
 					left_THmarks_len /* post-data length: from SOT end to SOD inclusive */
-					)) {
+					))) {
 					
 					/* Add this marker to the 'insertanda' list */
 					if (jwmarker_num < JPWL_MAX_NO_MARKERS) {
 						jwmarker[jwmarker_num].id = J2K_MS_EPB; /* its type */
-						jwmarker[jwmarker_num].epbmark = epb_mark; /* the EPB */
+						jwmarker[jwmarker_num].m.epbmark = epb_mark; /* the EPB */
 						/****** jwmarker[jwmarker_num].pos = j2k->cstr_info->tile[tileno].start_pos + sot_len + 2; */ /* after SOT */
 						jwmarker[jwmarker_num].pos = j2k->cstr_info->tile[tileno].tp[tpno].tp_start_pos + sot_len + 2; /* after SOT */
 						jwmarker[jwmarker_num].dpos = (double) jwmarker[jwmarker_num].pos; /* first first first! */
@@ -712,7 +712,7 @@ void jpwl_dump_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 	int mm;
 	unsigned long int old_size = j2k->cstr_info->codestream_size;
 	unsigned long int new_size = old_size;
-	int ciopos = cio_tell(cio), soc_pos = j2k->cstr_info->main_head_start;
+	int /*ciopos = cio_tell(cio),*/ soc_pos = j2k->cstr_info->main_head_start;
 	unsigned char *jpwl_buf, *orig_buf;
 	unsigned long int orig_pos;
 	double epbcoding_time = 0.0, esdcoding_time = 0.0;
@@ -758,15 +758,15 @@ void jpwl_dump_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 		switch (jwmarker[mm].id) {
 
 		case J2K_MS_EPB:
-			jpwl_epb_write(j2k, jwmarker[mm].epbmark, jpwl_buf);
+			jpwl_epb_write(j2k, jwmarker[mm].m.epbmark, jpwl_buf);
 			break;
 
 		case J2K_MS_EPC:
-			jpwl_epc_write(j2k, jwmarker[mm].epcmark, jpwl_buf);
+			jpwl_epc_write(j2k, jwmarker[mm].m.epcmark, jpwl_buf);
 			break;
 
 		case J2K_MS_ESD:
-			jpwl_esd_write(j2k, jwmarker[mm].esdmark, jpwl_buf);
+			jpwl_esd_write(j2k, jwmarker[mm].m.esdmark, jpwl_buf);
 			break;
 
 		case J2K_MS_RED:
@@ -812,11 +812,11 @@ void jpwl_dump_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 			unsigned short int mycrc = 0x0000;
 
 			/* fix and fill the DL field */
-			jwmarker[mm].epcmark->DL = new_size;
-			orig_buf[epc_pos + 6] = (unsigned char) (jwmarker[mm].epcmark->DL >> 24);
-			orig_buf[epc_pos + 7] = (unsigned char) (jwmarker[mm].epcmark->DL >> 16);
-			orig_buf[epc_pos + 8] = (unsigned char) (jwmarker[mm].epcmark->DL >> 8);
-			orig_buf[epc_pos + 9] = (unsigned char) (jwmarker[mm].epcmark->DL >> 0);
+			jwmarker[mm].m.epcmark->DL = new_size;
+			orig_buf[epc_pos + 6] = (unsigned char) (jwmarker[mm].m.epcmark->DL >> 24);
+			orig_buf[epc_pos + 7] = (unsigned char) (jwmarker[mm].m.epcmark->DL >> 16);
+			orig_buf[epc_pos + 8] = (unsigned char) (jwmarker[mm].m.epcmark->DL >> 8);
+			orig_buf[epc_pos + 9] = (unsigned char) (jwmarker[mm].m.epcmark->DL >> 0);
 
 			/* compute the CRC field (excluding itself) */
 			for (pp = 0; pp < 4; pp++)
@@ -825,9 +825,9 @@ void jpwl_dump_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 				jpwl_updateCRC16(&mycrc, orig_buf[epc_pos + pp]);
 
 			/* fix and fill the CRC */
-			jwmarker[mm].epcmark->Pcrc = mycrc;
-			orig_buf[epc_pos + 4] = (unsigned char) (jwmarker[mm].epcmark->Pcrc >> 8);
-			orig_buf[epc_pos + 5] = (unsigned char) (jwmarker[mm].epcmark->Pcrc >> 0);
+			jwmarker[mm].m.epcmark->Pcrc = mycrc;
+			orig_buf[epc_pos + 4] = (unsigned char) (jwmarker[mm].m.epcmark->Pcrc >> 8);
+			orig_buf[epc_pos + 5] = (unsigned char) (jwmarker[mm].m.epcmark->Pcrc >> 0);
 
 		}
 	}
@@ -842,7 +842,7 @@ void jpwl_dump_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 			/* remember that they are now in a new position (dpos) */
 			int esd_pos = (int) jwmarker[mm].dpos;
 
-			jpwl_esd_fill(j2k, jwmarker[mm].esdmark, &orig_buf[esd_pos]);
+			jpwl_esd_fill(j2k, jwmarker[mm].m.esdmark, &orig_buf[esd_pos]);
 		
 		}
 
@@ -867,16 +867,16 @@ void jpwl_dump_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 			accum_len = 0;
 			for (nn = mm; (nn < jwmarker_num) && (jwmarker[nn].id == J2K_MS_EPB) &&
 				(jwmarker[nn].pos == jwmarker[mm].pos); nn++)
-				accum_len += jwmarker[nn].epbmark->Lepb + 2;
+				accum_len += jwmarker[nn].m.epbmark->Lepb + 2;
 
 			/* fill the current (first) EPB with post-data starting from the computed position */
-			jpwl_epb_fill(j2k, jwmarker[mm].epbmark, &orig_buf[(int) jwmarker[mm].dpos],
+			jpwl_epb_fill(j2k, jwmarker[mm].m.epbmark, &orig_buf[(int) jwmarker[mm].dpos],
 				&orig_buf[(int) jwmarker[mm].dpos + accum_len]);
 		
 			/* fill the remaining EPBs in the header with post-data starting from the last position */
 			for (nn = mm + 1; (nn < jwmarker_num) && (jwmarker[nn].id == J2K_MS_EPB) &&
 				(jwmarker[nn].pos == jwmarker[mm].pos); nn++)
-				jpwl_epb_fill(j2k, jwmarker[nn].epbmark, &orig_buf[(int) jwmarker[nn].dpos], NULL);
+				jpwl_epb_fill(j2k, jwmarker[nn].m.epbmark, &orig_buf[(int) jwmarker[nn].dpos], NULL);
 
 			/* skip all the processed EPBs */
 			mm = nn - 1;
@@ -1106,9 +1106,9 @@ void j2k_read_epb(opj_j2k_t *j2k) {
 		if (((Pepb & 0xF0000000) >> 28) == 0)
 			sprintf(str1, "pred"); /* predefined */
 		else if (((Pepb & 0xF0000000) >> 28) == 1)
-			sprintf(str1, "crc-%d", 16 * ((Pepb & 0x00000001) + 1)); /* CRC mode */
+			sprintf(str1, "crc-%lu", 16 * ((Pepb & 0x00000001) + 1)); /* CRC mode */
 		else if (((Pepb & 0xF0000000) >> 28) == 2)
-			sprintf(str1, "rs(%d,32)", (Pepb & 0x0000FF00) >> 8); /* RS mode */
+			sprintf(str1, "rs(%lu,32)", (Pepb & 0x0000FF00) >> 8); /* RS mode */
 		else if (Pepb == 0xFFFFFFFF)
 			sprintf(str1, "nometh"); /* RS mode */
 		else

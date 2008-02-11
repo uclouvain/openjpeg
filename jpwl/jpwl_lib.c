@@ -152,7 +152,7 @@ int jpwl_epbs_add(opj_j2k_t *j2k, jpwl_marker_t *jwmarker, int *jwmarker_num,
 		/* length to use */
 		dL4 = min(max_postlen, post_len);
 
-		if (epb_mark = jpwl_epb_create(
+		if ((epb_mark = jpwl_epb_create(
 			j2k, /* this encoder handle */
 			latest ? (dL4 < max_postlen) : false, /* is it the latest? */
 			packed, /* is it packed? */
@@ -161,12 +161,12 @@ int jpwl_epbs_add(opj_j2k_t *j2k, jpwl_marker_t *jwmarker, int *jwmarker_num,
 			hprot, /* protection type parameters of following data */
 			0, /* pre-data: nothing for now */
 			dL4 /* post-data: the stub computed previously */
-			)) {
+			))) {
 			
 			/* Add this marker to the 'insertanda' list */
 			if (*jwmarker_num < JPWL_MAX_NO_MARKERS) {
 				jwmarker[*jwmarker_num].id = J2K_MS_EPB; /* its type */
-				jwmarker[*jwmarker_num].epbmark = epb_mark; /* the EPB */
+				jwmarker[*jwmarker_num].m.epbmark = epb_mark; /* the EPB */
 				jwmarker[*jwmarker_num].pos = (int) place_pos; /* after SOT */
 				jwmarker[*jwmarker_num].dpos = place_pos + 0.0000001 * (double)(*idx); /* not very first! */
 				jwmarker[*jwmarker_num].len = epb_mark->Lepb; /* its length */
@@ -200,10 +200,10 @@ jpwl_epb_ms_t *jpwl_epb_create(opj_j2k_t *j2k, bool latest, bool packed, int til
 						  unsigned long int pre_len, unsigned long int post_len) {
 
 	jpwl_epb_ms_t *epb = NULL;
-	unsigned short int data_len = 0;
+	/*unsigned short int data_len = 0;*/
 	unsigned short int L2, L3;
 	unsigned long int L1, L4;
-	unsigned char *predata_in = NULL;
+	/*unsigned char *predata_in = NULL;*/
 
 	bool insideMH = (tileno == -1);
 
@@ -335,7 +335,7 @@ jpwl_epc_ms_t *jpwl_epc_create(opj_j2k_t *j2k, bool esd_on, bool red_on, bool ep
 	jpwl_epc_ms_t *epc = NULL;
 
 	/* Alloc space */
-	if (!(epc = (jpwl_epc_ms_t *) malloc((size_t) 1 * sizeof (jpwl_epc_ms_t)))) {
+	if (!(epc = (jpwl_epc_ms_t *) opj_malloc((size_t) 1 * sizeof (jpwl_epc_ms_t)))) {
 		opj_event_msg(j2k->cinfo, EVT_ERROR, "Could not allocate room for EPC MS\n");
 		return NULL;
 	};
@@ -596,6 +596,15 @@ bool jpwl_correct(opj_j2k_t *j2k) {
 				return true;
 			}
 
+			/* Disable correction in case of missing or bad head EPB */
+			/* We can't do better! */
+			/* PATCHED: 2008-01-25 */
+			/* MOVED UP: 2008-02-01 */
+			if (!status) {
+				j2k->cp->correct = false;
+				opj_event_msg(j2k->cinfo, EVT_WARNING, "Couldn't find the MH EPB: disabling JPWL\n");
+			}
+
 		}
 
 	}
@@ -790,6 +799,8 @@ bool jpwl_epb_correct(opj_j2k_t *j2k, unsigned char *buffer, int type, int pre_l
 
 	case 3:
 		/* automatic setup */
+		opj_event_msg(j2k->cinfo, EVT_ERROR, "Auto. setup not yet implemented\n");
+		return false;
 		break;
 
 	default:
@@ -911,9 +922,9 @@ bool jpwl_epb_correct(opj_j2k_t *j2k, unsigned char *buffer, int type, int pre_l
 	if (((Pepb & 0xF0000000) >> 28) == 0)
 		sprintf(str1, "pred"); /* predefined */
 	else if (((Pepb & 0xF0000000) >> 28) == 1)
-		sprintf(str1, "crc-%d", 16 * ((Pepb & 0x00000001) + 1)); /* CRC mode */
+		sprintf(str1, "crc-%lu", 16 * ((Pepb & 0x00000001) + 1)); /* CRC mode */
 	else if (((Pepb & 0xF0000000) >> 28) == 2)
-		sprintf(str1, "rs(%d,32)", (Pepb & 0x0000FF00) >> 8); /* RS mode */
+		sprintf(str1, "rs(%lu,32)", (Pepb & 0x0000FF00) >> 8); /* RS mode */
 	else if (Pepb == 0xFFFFFFFF)
 		sprintf(str1, "nometh"); /* RS mode */
 	else
@@ -1196,7 +1207,7 @@ jpwl_esd_ms_t *jpwl_esd_create(opj_j2k_t *j2k, int comp, unsigned char addrm, un
 	jpwl_esd_ms_t *esd = NULL;
 
 	/* Alloc space */
-	if (!(esd = (jpwl_esd_ms_t *) malloc((size_t) 1 * sizeof (jpwl_esd_ms_t)))) {
+	if (!(esd = (jpwl_esd_ms_t *) opj_malloc((size_t) 1 * sizeof (jpwl_esd_ms_t)))) {
 		opj_event_msg(j2k->cinfo, EVT_ERROR, "Could not allocate room for ESD MS\n");
 		return NULL;
 	};
@@ -1325,8 +1336,8 @@ bool jpwl_esd_fill(opj_j2k_t *j2k, jpwl_esd_ms_t *esd, unsigned char *buf) {
 
 	int i;
 	unsigned long int vv;
-	unsigned long int addr1, addr2;
-	double dvalue, Omax2, tmp, TSE, MSE, oldMSE, PSNR, oldPSNR;
+	unsigned long int addr1 = 0L, addr2 = 0L;
+	double dvalue = 0.0, Omax2, tmp, TSE = 0.0, MSE, oldMSE = 0.0, PSNR, oldPSNR = 0.0;
 	unsigned short int pfpvalue;
 	unsigned long int addrmask = 0x00000000;
 	bool doneMH = false, doneTPH = false;

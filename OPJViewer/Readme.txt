@@ -1,7 +1,7 @@
 ===============================================================================
 	JPEG2000 Visualization Software - OPJViewer
 
-		Version 0.3 alpha
+		Version 0.4 beta
 ===============================================================================
 
 
@@ -37,6 +37,11 @@ e) In the configuration settings, go to the Resources tab and modify the wxWidge
 f) Build!
 g) Run!
 h) (OPTIONAL) Prepare an installer by compiling the InnoSetup script OPJViewer.iss (you need to download InnoSetup from http://www.jrsoftware.org/isinfo.php).
+
+2.1.1 Additional libraries
+----------------------------
+
+Since we are also working on the Digital Cinema JPEG 2000, we are integrating the viewer with the MXF library, which is used to prepare the DCPs for digital movies. You can enable its linking in the code by specifying the USE_MXF preprocessor directive but, remember, the integration is at a very early stage.
 
 2.2. Compiling the source code in Unix-like systems
 -----------------------------------------------------

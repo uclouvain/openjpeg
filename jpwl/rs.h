@@ -55,7 +55,8 @@
  * each error counting as two erasures.
  */
 #define MM  8		/* RS code over GF(2**MM) - change to suit */
-static int	KK;
+//static int	KK;
+int	KK;
 
 /* Original code */
 /*#define KK  239*/		/* KK = number of information symbols */
