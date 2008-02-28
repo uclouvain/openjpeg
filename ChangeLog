@@ -5,7 +5,11 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
-February 11, 2000
+February 28, 2008
+- [FOD] Removed the J2KViewer module, which has been replaced by OPJViewer
+* [FOD] Fixed the error handling of j2k_decode in jp2.c, thanks to Robin Cornelius
+
+February 11, 2008
 * [GB] Minor style modifications to comply with c99 compiler flag; removed Microsoft-specific "union-in-struct" syntax; Re-enabled cstr_info struct creation when -W switch is specified
 ! [GB] Changed a number of things in opjviewer (e.g., decoding thread does not execute GUI calls anymore), to have it running under linux --> it is better than before, but still crashes
 
