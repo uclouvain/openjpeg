@@ -58,7 +58,7 @@ const char* OPJ_CALLCONV opj_version(void) {
 }
 
 opj_dinfo_t* OPJ_CALLCONV opj_create_decompress(OPJ_CODEC_FORMAT format) {
-	opj_dinfo_t *dinfo = (opj_dinfo_t*)opj_calloc(sizeof(opj_dinfo_t));
+	opj_dinfo_t *dinfo = (opj_dinfo_t*)opj_calloc(1, sizeof(opj_dinfo_t));
 	if(!dinfo) return NULL;
 	dinfo->is_decompressor = true;
 	switch(format) {
@@ -169,7 +169,7 @@ opj_image_t* OPJ_CALLCONV opj_decode_with_info(opj_dinfo_t *dinfo, opj_cio_t *ci
 }
 
 opj_cinfo_t* OPJ_CALLCONV opj_create_compress(OPJ_CODEC_FORMAT format) {
-	opj_cinfo_t *cinfo = (opj_cinfo_t*)opj_calloc(sizeof(opj_cinfo_t));
+	opj_cinfo_t *cinfo = (opj_cinfo_t*)opj_calloc(1, sizeof(opj_cinfo_t));
 	if(!cinfo) return NULL;
 	cinfo->is_decompressor = false;
 	switch(format) {
