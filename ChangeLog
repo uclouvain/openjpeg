@@ -6,6 +6,12 @@ What's New for OpenJPEG
 + : added
 
 February 28, 2008
+* [FOD] Fixed openjpeg.c for proper initialization of codec context structures (dinfo in opj_create_compress() 
+		and opj_create_decompress(). Bug fix suggested by Andrey V. Kiselev
+* [FOD] Clean up of opj_aligned_malloc(), to just forgo the use of posix_memalign(), 
+		as apparently memalign() is what is working better for everyone. Patch by Callum.
+
+February 28, 2008
 - [FOD] Removed the J2KViewer module, which has been replaced by OPJViewer
 * [FOD] Fixed the error handling of j2k_decode in jp2.c, thanks to Robin Cornelius
 
