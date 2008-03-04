@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+March 4, 2008
+! [FOD] Changed Java files copyright in JavaOpenJPEG module
+
 February 28, 2008
 * [FOD] Fixed openjpeg.c for proper initialization of codec context structures (dinfo in opj_create_compress() 
 		and opj_create_decompress(). Bug fix suggested by Andrey V. Kiselev
