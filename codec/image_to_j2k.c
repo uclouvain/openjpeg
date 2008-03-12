@@ -208,6 +208,10 @@ void encode_help_display() {
 	fprintf(stdout,"\n");
 	fprintf(stdout,"-I           : use the irreversible DWT 9-7 (-I) \n");
 	fprintf(stdout,"\n");
+	fprintf(stdout,"-F           : characteristics of the raw input image\n");
+	fprintf(stdout,"               -F rawWidth,rawHeight,rawComp,rawBitDepth,s/u (Signed/Unsigned)\n");
+	fprintf(stdout,"               Example: -i lena.raw -o lena.j2k -F 512,512,3,8,u\n");
+	fprintf(stdout,"\n");
 /* UniPG>> */
 #ifdef USE_JPWL
 	fprintf(stdout,"-W           : adoption of JPWL (Part 11) capabilities (-W params)\n");
