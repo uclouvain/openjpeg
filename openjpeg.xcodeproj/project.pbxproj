@@ -58,6 +58,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		698C891A0DE1D76800F67421 /* OpenJPEG.rc */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; path = OpenJPEG.rc; sourceTree = "<group>"; };
+		698C891B0DE1D95300F67421 /* imagjpeg2000.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = imagjpeg2000.h; sourceTree = "<group>"; };
+		698C891C0DE1D95300F67421 /* OPJAbout.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = OPJAbout.cpp; sourceTree = "<group>"; };
+		698C891D0DE1D95300F67421 /* OPJViewer.rc */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; path = OPJViewer.rc; sourceTree = "<group>"; };
 		69F984B60D40A41700C2791C /* ChangeLog */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; path = ChangeLog; sourceTree = "<group>"; };
 		69F984B70D40A41700C2791C /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		69F984B90D40A41700C2791C /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
@@ -155,8 +159,6 @@
 		69F9854E0D40A41700C2791C /* meta_out.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = meta_out.h; sourceTree = "<group>"; };
 		69F9854F0D40A41700C2791C /* mj2.c */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.c; path = mj2.c; sourceTree = "<group>"; };
 		69F985500D40A41700C2791C /* mj2.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = mj2.h; sourceTree = "<group>"; };
-		69F985520D40A41700C2791C /* meta_out.c */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.c; path = meta_out.c; sourceTree = "<group>"; };
-		69F985530D40A41700C2791C /* mj2_to_metadata.c */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.c; path = mj2_to_metadata.c; sourceTree = "<group>"; };
 		69F985540D40A41700C2791C /* mj2_convert.c */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.c; path = mj2_convert.c; sourceTree = "<group>"; };
 		69F985550D40A41700C2791C /* mj2_convert.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = mj2_convert.h; sourceTree = "<group>"; };
 		69F9855B0D40A41700C2791C /* mj2_to_frames.c */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.c; path = mj2_to_frames.c; sourceTree = "<group>"; };
@@ -177,13 +179,7 @@
 		69F9857E0D40A41800C2791C /* icon3.xpm */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; path = icon3.xpm; sourceTree = "<group>"; };
 		69F9857F0D40A41800C2791C /* icon4.xpm */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; path = icon4.xpm; sourceTree = "<group>"; };
 		69F985800D40A41800C2791C /* icon5.xpm */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; path = icon5.xpm; sourceTree = "<group>"; };
-		69F985810D40A41800C2791C /* imagj2k.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = imagj2k.cpp; sourceTree = "<group>"; };
-		69F985820D40A41800C2791C /* imagj2k.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = imagj2k.h; sourceTree = "<group>"; };
-		69F985830D40A41800C2791C /* imagjp2.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = imagjp2.cpp; sourceTree = "<group>"; };
-		69F985840D40A41800C2791C /* imagjp2.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = imagjp2.h; sourceTree = "<group>"; };
 		69F985850D40A41800C2791C /* imagjpeg2000.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = imagjpeg2000.cpp; sourceTree = "<group>"; };
-		69F985860D40A41800C2791C /* imagmj2.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = imagmj2.cpp; sourceTree = "<group>"; };
-		69F985870D40A41800C2791C /* imagmj2.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = imagmj2.h; sourceTree = "<group>"; };
 		69F985880D40A41800C2791C /* imagmxf.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = imagmxf.cpp; sourceTree = "<group>"; };
 		69F985890D40A41800C2791C /* imagmxf.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = imagmxf.h; sourceTree = "<group>"; };
 		69F9858A0D40A41800C2791C /* license.txt */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; path = license.txt; sourceTree = "<group>"; };
@@ -233,6 +229,7 @@
 		69F984A60D40A3AE00C2791C = {
 			isa = PBXGroup;
 			children = (
+				698C891A0DE1D76800F67421 /* OpenJPEG.rc */,
 				69F984B60D40A41700C2791C /* ChangeLog */,
 				69F984B70D40A41700C2791C /* CMakeLists.txt */,
 				69F984B80D40A41700C2791C /* codec */,
@@ -446,7 +443,6 @@
 				69F9854E0D40A41700C2791C /* meta_out.h */,
 				69F9854F0D40A41700C2791C /* mj2.c */,
 				69F985500D40A41700C2791C /* mj2.h */,
-				69F985510D40A41700C2791C /* MJ2_codec */,
 				69F985540D40A41700C2791C /* mj2_convert.c */,
 				69F985550D40A41700C2791C /* mj2_convert.h */,
 				69F9855B0D40A41700C2791C /* mj2_to_frames.c */,
@@ -465,15 +461,6 @@
 				69F985430D40A41700C2791C /* getopt.h */,
 			);
 			path = compat;
-			sourceTree = "<group>";
-		};
-		69F985510D40A41700C2791C /* MJ2_codec */ = {
-			isa = PBXGroup;
-			children = (
-				69F985520D40A41700C2791C /* meta_out.c */,
-				69F985530D40A41700C2791C /* mj2_to_metadata.c */,
-			);
-			path = MJ2_codec;
 			sourceTree = "<group>";
 		};
 		69F9856F0D40A41800C2791C /* OPJViewer */ = {
@@ -501,6 +488,9 @@
 		69F985790D40A41800C2791C /* source */ = {
 			isa = PBXGroup;
 			children = (
+				698C891B0DE1D95300F67421 /* imagjpeg2000.h */,
+				698C891C0DE1D95300F67421 /* OPJAbout.cpp */,
+				698C891D0DE1D95300F67421 /* OPJViewer.rc */,
 				69F9857A0D40A41800C2791C /* about_htm.h */,
 				69F9857B0D40A41800C2791C /* build.h */,
 				69F9857C0D40A41800C2791C /* icon1.xpm */,
@@ -508,13 +498,7 @@
 				69F9857E0D40A41800C2791C /* icon3.xpm */,
 				69F9857F0D40A41800C2791C /* icon4.xpm */,
 				69F985800D40A41800C2791C /* icon5.xpm */,
-				69F985810D40A41800C2791C /* imagj2k.cpp */,
-				69F985820D40A41800C2791C /* imagj2k.h */,
-				69F985830D40A41800C2791C /* imagjp2.cpp */,
-				69F985840D40A41800C2791C /* imagjp2.h */,
 				69F985850D40A41800C2791C /* imagjpeg2000.cpp */,
-				69F985860D40A41800C2791C /* imagmj2.cpp */,
-				69F985870D40A41800C2791C /* imagmj2.h */,
 				69F985880D40A41800C2791C /* imagmxf.cpp */,
 				69F985890D40A41800C2791C /* imagmxf.h */,
 				69F9858A0D40A41800C2791C /* license.txt */,
@@ -617,10 +601,12 @@
 		69F984A80D40A3AE00C2791C /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 69F984A90D40A3AE00C2791C /* Build configuration list for PBXProject "openjpeg" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 0;
 			mainGroup = 69F984A60D40A3AE00C2791C;
 			productRefGroup = 69F985A20D40A48E00C2791C /* Products */;
 			projectDirPath = "";
+			projectRoot = "";
 			targets = (
 				69F985A00D40A48E00C2791C /* openjpeg */,
 				69F985B50D40A63D00C2791C /* opjdyn */,
