@@ -1438,7 +1438,11 @@ static void j2k_write_sod(opj_j2k_t *j2k, void *tile_coder) {
 	
 	tcp = &cp->tcps[j2k->curtileno];
 	for (layno = 0; layno < tcp->numlayers; layno++) {
-		tcp->rates[layno] -= tcp->rates[layno] ? (j2k->sod_start / (cp->th * cp->tw)) : 0;
+		if (tcp->rates[layno]>(j2k->sod_start / (cp->th * cp->tw))) {
+			tcp->rates[layno]-=(j2k->sod_start / (cp->th * cp->tw));
+		} else if (tcp->rates[layno]) {
+			tcp->rates[layno]=1;
+		}
 	}
 	if(j2k->cur_tp_num == 0){
 		tcd->tcd_image->tiles->packno = 0;

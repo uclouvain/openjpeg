@@ -6,6 +6,9 @@ What's New for OpenJPEG
 + : added
 
 May 22, 2008
+* [antonin] fixed a bug in j2k.c (j2k_write_sod) that allowed to get negative rates, thanks zhong1985624 for pointing this.
+
+May 22, 2008
 * [antonin] additional test to avoid crash due to invalid image size, patch by Christopher Layne
 
 May 20, 2008
