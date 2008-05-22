@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+May 22, 2008
+* [antonin] additional test to avoid crash due to invalid image size, patch by Christopher Layne
+
 May 20, 2008
 * [antonin] memory leak fixed in openjpeg.c (opj_destroy_cstr_info()), patch by Carsten Juttner
 
