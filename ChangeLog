@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+May 20, 2008
+* [antonin] memory leak fixed in openjpeg.c (opj_destroy_cstr_info()), patch by Carsten Juttner
+
 March 12, 2008
 + [GB] help line for the -F option in j2k_to_image
 

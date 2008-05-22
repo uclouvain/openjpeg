@@ -325,5 +325,6 @@ void OPJ_CALLCONV opj_destroy_cstr_info(opj_codestream_info_t *cstr_info) {
 		}
 		opj_free(cstr_info->tile);
 		opj_free(cstr_info->marker);
+		opj_free(cstr_info->numdecompos);
 	}
 }
