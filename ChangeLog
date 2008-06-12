@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+June 12, 2008
+* [antonin] fixed a bug in dirent.h that prevented codec on Linux Alpha Systems to compile correctly. Thanks to RobinC.
+
 May 22, 2008
 * [antonin] fixed a bug in j2k.c (j2k_write_sod) that allowed to get negative rates, thanks zhong1985624 for pointing this.
 

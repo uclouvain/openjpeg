@@ -118,7 +118,7 @@
 #   define HAVE_SYS_DIR_H
 # elif defined(__hpux)                         /* HP-UX */
 #   define HAVE_DIRENT_H
-# elif defined(__alpha) || defined(__alpha__)  /* Alpha OSF1 */
+# elif (defined(__alpha) || defined(__alpha__)) && !defined(__linux__)  /* Alpha OSF1 */
 #   error "not implemented"
 # elif defined(__sgi)                          /* Silicon Graphics */
 #   define HAVE_DIRENT_H
