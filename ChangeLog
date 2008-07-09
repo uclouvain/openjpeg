@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+July 9, 2008
++ [Parvatha] Added the default lossless parameter to opj_set_default_encoder_parameters in openjpeg.c.
+
 June 12, 2008
 * [antonin] fixed a bug in dirent.h that prevented codec on Linux Alpha Systems to compile correctly. Thanks to RobinC.
 
