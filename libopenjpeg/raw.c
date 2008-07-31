@@ -3,6 +3,7 @@
  * Copyright (c) 2002-2007, Professor Benoit Macq
  * Copyright (c) 2003-2007, Francois-Olivier Devaux and Antonin Descampe
  * Copyright (c) 2005, Herve Drolon, FreeImage Team
+ * Copyright (c) 2008, Jerome Fimes, Communications & Systemes <jerome.fimes@c-s.fr>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,7 +28,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "opj_includes.h"
+#include "raw.h"
+#include "opj_malloc.h"
 
 /* 
 ==========================================================
@@ -53,11 +55,11 @@ void raw_destroy(opj_raw_t *raw) {
 	}
 }
 
-int raw_numbytes(opj_raw_t *raw) {
+OPJ_UINT32 raw_numbytes(opj_raw_t *raw) {
 	return raw->bp - raw->start;
 }
 
-void raw_init_dec(opj_raw_t *raw, unsigned char *bp, int len) {
+void raw_init_dec(opj_raw_t *raw, OPJ_BYTE *bp, OPJ_UINT32 len) {
 	raw->start = bp;
 	raw->lenmax = len;
 	raw->len = 0;
@@ -65,8 +67,8 @@ void raw_init_dec(opj_raw_t *raw, unsigned char *bp, int len) {
 	raw->ct = 0;
 }
 
-int raw_decode(opj_raw_t *raw) {
-	int d;
+OPJ_UINT32 raw_decode(opj_raw_t *raw) {
+	OPJ_UINT32 d;
 	if (raw->ct == 0) {
 		raw->ct = 8;
 		if (raw->len == raw->lenmax) {

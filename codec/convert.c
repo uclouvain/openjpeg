@@ -914,8 +914,7 @@ int imagetobmp(opj_image_t * image, const char *outfile) {
 		if (image->comps[0].prec > 8) {
 			adjustR = image->comps[0].prec - 8;
 			printf("BMP CONVERSION: Truncating component 0 from %d bits to 8 bits\n", image->comps[0].prec);
-		}else 
-			adjustR = 0;
+		}
 
 		for (i = 0; i < 256; i++) {
 			fprintf(fdest, "%c%c%c%c", i, i, i, 0);
@@ -1087,7 +1086,7 @@ opj_image_t* pgxtoimage(const char *filename, opj_cparameters_t *parameters) {
 		comp->data[i] = v;
 	}
 	fclose(f);
-	comp->bpp = int_floorlog2(max) + 1;
+	//comp->bpp = int_floorlog2(max) + 1;
 
 	return image;
 }

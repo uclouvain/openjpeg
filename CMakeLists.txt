@@ -24,7 +24,7 @@ INCLUDE_REGULAR_EXPRESSION("^.*$")
 #-----------------------------------------------------------------------------
 # OPENJPEG version number, useful for packaging and doxygen doc:
 SET(OPENJPEG_VERSION_MAJOR 1)
-SET(OPENJPEG_VERSION_MINOR 3)
+SET(OPENJPEG_VERSION_MINOR 2)
 SET(OPENJPEG_VERSION_BUILD 0)
 SET(OPENJPEG_VERSION
   "${OPENJPEG_VERSION_MAJOR}.${OPENJPEG_VERSION_MINOR}.${OPENJPEG_VERSION_BUILD}")
@@ -36,10 +36,14 @@ SET(OPENJPEG_LIBRARY_PROPERTIES
   SOVERSION "${OPENJPEG_VERSION_MAJOR}.${OPENJPEG_VERSION_MINOR}"
 )
 
+#-----------------------------------------------------------------------------
+# Test for some required system information.
+INCLUDE (${CMAKE_ROOT}/Modules/CMakeBackwardCompatibilityC.cmake)
 
 #-----------------------------------------------------------------------------
 # OpenJPEG build configuration options.
 OPTION(BUILD_SHARED_LIBS "Build OpenJPEG with shared libraries." OFF)
+OPTION(ENABLE_PROFILING "Enable profiling for the library" OFF)
 
 #-----------------------------------------------------------------------------
 SET (EXECUTABLE_OUTPUT_PATH ${OPENJPEG_BINARY_DIR}/bin CACHE PATH "Single output directory for building all executables.")
@@ -62,28 +66,37 @@ CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/openjpeg_mangle.h.in
 ENDIF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/openjpeg_mangle.h.in)
 
 #-----------------------------------------------------------------------------
+# Configure files with settings for use by the build.
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/opj_configure.h.in 
+               ${CMAKE_CURRENT_BINARY_DIR}/opj_configure.h)
+
+
+#-----------------------------------------------------------------------------
 # Always build the library
 INCLUDE_DIRECTORIES(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 SUBDIRS(
   libopenjpeg
-  mj2
+  codec
+  test_V2_tile_handling
+  test_Free_image_V2_tile_handling
+  # mj2
   # cmake 2.4.5 has poor java support
   #j2kviewer/src
   )
 
-IF(NOT UNIX)
-SUBDIRS(
-  jpwl
-  jp3d
-  indexer_JPIP
-  )
-ENDIF(NOT UNIX)
+#IF(NOT UNIX)
+#SUBDIRS(
+#  jpwl
+#  jp3d
+#  indexer_JPIP
+#  )
+#ENDIF(NOT UNIX)
 
 #-----------------------------------------------------------------------------
 # Build example only if requested
-IF(BUILD_EXAMPLES)
-  SUBDIRS(codec)
-ENDIF(BUILD_EXAMPLES)
+#IF(BUILD_EXAMPLES)
+#  SUBDIRS(codec)
+#ENDIF(BUILD_EXAMPLES)
 
 #-----------------------------------------------------------------------------
 # For the documentation
@@ -94,15 +107,15 @@ ENDIF(BUILD_DOCUMENTATION)
 
 #-----------------------------------------------------------------------------
 # For openjpeg team if they ever want Dart+CMake
-IF(OPENJPEG_STANDALONE)
-  INCLUDE(Dart)
-  MARK_AS_ADVANCED(BUILD_TESTING DART_ROOT TCL_TCLSH)
-  IF(BUILD_TESTING)
-    ENABLE_TESTING()
-    SET(BUILDNAME "OpenJPEG-${CMAKE_SYSTEM}-${CMAKE_C_COMPILER}" CACHE STRING "Name of build on the dashboard")
-    MARK_AS_ADVANCED(BUILDNAME)
-  ENDIF(BUILD_TESTING)
-ENDIF(OPENJPEG_STANDALONE)
+#IF(OPENJPEG_STANDALONE)
+#  INCLUDE(Dart)
+#  MARK_AS_ADVANCED(BUILD_TESTING DART_ROOT TCL_TCLSH)
+#  IF(BUILD_TESTING)
+#    ENABLE_TESTING()
+#    SET(BUILDNAME "OpenJPEG-${CMAKE_SYSTEM}-${CMAKE_C_COMPILER}" CACHE STRING "Name of build on the dashboard")
+#    MARK_AS_ADVANCED(BUILDNAME)
+#  ENDIF(BUILD_TESTING)
+#ENDIF(OPENJPEG_STANDALONE)
 
 # Adding test with dataset from:
 # http://www.crc.ricoh.com/~gormish/jpeg2000conformance/

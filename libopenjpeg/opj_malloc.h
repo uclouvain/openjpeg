@@ -1,6 +1,7 @@
 /*
- * Copyright (c) 2005, Hervé Drolon, FreeImage Team
+ * Copyright (c) 2005, HervÃ© Drolon, FreeImage Team
  * Copyright (c) 2007, Callum Lerwick <seg@haxxed.com>
+ * Copyright (c) 2008, Jerome Fimes, Communications & Systemes <jerome.fimes@c-s.fr>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,7 +33,8 @@
 
 The functions in opj_malloc.h are internal utilities used for memory management.
 */
-
+#include "openjpeg.h"
+#include "opj_includes.h"
 /** @defgroup MISC MISC - Miscellaneous internal functions */
 /*@{*/
 
@@ -45,7 +47,8 @@ Allocate an uninitialized memory block
 @param size Bytes to allocate
 @return Returns a void pointer to the allocated space, or NULL if there is insufficient memory available
 */
-#define opj_malloc(size) malloc(size)
+#define opj_malloc(size)		malloc(size)
+#define my_opj_malloc(size)		malloc(size)
 
 /**
 Allocate a memory block with elements initialized to 0
@@ -76,9 +79,9 @@ Allocate memory aligned to a 16 byte boundry
 	#if defined(__sun)
 		#define HAVE_MEMALIGN
 	/* Linux x86_64 and OSX always align allocations to 16 bytes */
-	#elif !defined(__amd64__) && !defined(__APPLE__)	
-		#define HAVE_MEMALIGN
-		#include <malloc.h>			
+	#elif !defined(__amd64__) && !defined(__APPLE__)
+		/* FIXME: Yes, this is a big assumption */
+		#define HAVE_POSIX_MEMALIGN
 	#endif
 #endif
 
@@ -119,7 +122,9 @@ Reallocate memory blocks.
 @param size New size in bytes
 @return Returns a void pointer to the reallocated (and possibly moved) memory block
 */
-#define opj_realloc(m, s) realloc(m, s)
+#define opj_realloc(m, s)		realloc(m, s)
+#define my_opj_realloc(m,s)		realloc(m,s)
+
 
 /**
 Deallocates or frees a memory block.

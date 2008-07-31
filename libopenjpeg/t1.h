@@ -5,6 +5,7 @@
  * Copyright (c) 2002-2003, Yannick Verschueren
  * Copyright (c) 2003-2007, Francois-Olivier Devaux and Antonin Descampe
  * Copyright (c) 2005, Herve Drolon, FreeImage Team
+ * Copyright (c) 2008, Jerome Fimes, Communications & Systemes <jerome.fimes@c-s.fr>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,10 +38,10 @@
 The functions in T1.C have for goal to realize the tier-1 coding operation. The functions
 in T1.C are used by some function in TCD.C.
 */
-
+#include "openjpeg.h"
 /** @defgroup T1 T1 - Implementation of the tier-1 coding */
 /*@{*/
-
+//#include "raw.h"
 /* ----------------------------------------------------------------------- */
 #define T1_NMSEDEC_BITS 7
 
@@ -84,6 +85,14 @@ in T1.C are used by some function in TCD.C.
 #define T1_TYPE_RAW 1	/**< No encoding the information is store under raw format in codestream (mode switch RAW)*/
 
 /* ----------------------------------------------------------------------- */
+struct opj_common_struct;
+struct opj_tcd_tile;
+struct opj_tcp;
+struct opj_tcd_tilecomp;
+struct opj_mqc;
+struct opj_raw;
+struct opj_tccp;
+
 
 typedef short flag_t;
 
@@ -91,21 +100,18 @@ typedef short flag_t;
 Tier-1 coding (coding of code-block coefficients)
 */
 typedef struct opj_t1 {
-	/** codec context */
-	opj_common_ptr cinfo;
-
 	/** MQC component */
-	opj_mqc_t *mqc;
+	struct opj_mqc *mqc;
 	/** RAW component */
-	opj_raw_t *raw;
+	struct opj_raw *raw;
 
-	int *data;
+	OPJ_INT32 *data;
 	flag_t *flags;
-	int w;
-	int h;
-	int datasize;
-	int flagssize;
-	int flags_stride;
+	OPJ_UINT32 w;
+	OPJ_UINT32 h;
+	OPJ_UINT32 datasize;
+	OPJ_UINT32 flagssize;
+	OPJ_UINT32 flags_stride;
 } opj_t1_t;
 
 #define MACRO_t1_flags(x,y) t1->flags[((x)*(t1->flags_stride))+(y)]
@@ -113,32 +119,35 @@ typedef struct opj_t1 {
 /** @name Exported functions */
 /*@{*/
 /* ----------------------------------------------------------------------- */
+
 /**
-Create a new T1 handle 
-and initialize the look-up tables of the Tier-1 coder/decoder
-@return Returns a new T1 handle if successful, returns NULL otherwise
-@see t1_init_luts
+ * Creates a new Tier 1 handle 
+ * and initializes the look-up tables of the Tier-1 coder/decoder
+ * @return a new T1 handle if successful, returns NULL otherwise
 */
-opj_t1_t* t1_create(opj_common_ptr cinfo);
+opj_t1_t* t1_create();
+
 /**
-Destroy a previously created T1 handle
-@param t1 T1 handle to destroy
+ * Destroys a previously created T1 handle
+ * 
+ * @param p_t1 Tier 1 handle to destroy
 */
-void t1_destroy(opj_t1_t *t1);
+void t1_destroy(opj_t1_t *p_t1);
+
 /**
 Encode the code-blocks of a tile
 @param t1 T1 handle
 @param tile The tile to encode
 @param tcp Tile coding parameters
 */
-void t1_encode_cblks(opj_t1_t *t1, opj_tcd_tile_t *tile, opj_tcp_t *tcp);
+bool t1_encode_cblks(opj_t1_t *t1, struct opj_tcd_tile *tile, struct opj_tcp *tcp,const OPJ_FLOAT64 * mct_norms);
 /**
 Decode the code-blocks of a tile
 @param t1 T1 handle
 @param tile The tile to decode
 @param tcp Tile coding parameters
 */
-void t1_decode_cblks(opj_t1_t* t1, opj_tcd_tilecomp_t* tilec, opj_tccp_t* tccp);
+void t1_decode_cblks(opj_t1_t* t1, struct opj_tcd_tilecomp* tilec, struct opj_tccp* tccp);
 /* ----------------------------------------------------------------------- */
 /*@}*/
 

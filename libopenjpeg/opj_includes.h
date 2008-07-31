@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2005, Hervé Drolon, FreeImage Team
+ * Copyright (c) 2008, Jerome Fimes, Communications & Systemes <jerome.fimes@c-s.fr>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,13 +41,13 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <ctype.h>
+#include <assert.h>
 
 /*
  ==========================================================
    OpenJPEG interface
  ==========================================================
  */
-#include "openjpeg.h"
 
 /*
  ==========================================================
@@ -99,34 +100,5 @@ static INLINE long lrintf(float f){
 	return i;
 }
 #endif
-
-#include "j2k_lib.h"
-#include "opj_malloc.h"
-#include "event.h"
-#include "cio.h"
-
-#include "image.h"
-#include "j2k.h"
-#include "jp2.h"
-#include "jpt.h"
-
-#include "mqc.h"
-#include "raw.h"
-#include "bio.h"
-#include "tgt.h"
-#include "pi.h"
-#include "tcd.h"
-#include "t1.h"
-#include "dwt.h"
-#include "t2.h"
-#include "mct.h"
-#include "int.h"
-#include "fix.h"
-
-/* JPWL>> */
-#ifdef USE_JPWL
-#include "../jpwl/jpwl.h"
-#endif /* USE_JPWL */
-/* <<JPWL */
 
 #endif /* OPJ_INCLUDES_H */

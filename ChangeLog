@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+July 31, 2008
++ [antonin] created a branch for openjpeg version 2. Modifications that have been applied to the trunk after revision 483 should be re-applied on the branch (version 2 has been developed based on revision 483).
+
 July 9, 2008
 + [Parvatha] Added the default lossless parameter to opj_set_default_encoder_parameters in openjpeg.c.
 
@@ -42,7 +45,7 @@ February 11, 2008
 
 February 5, 2008
 ! [Parvatha] In convert.c, corrected imagetobmp() conversion for grayscale. In tcd.c, corrected Rate modification in
-  tcd_init_encode(). Thanks to Jeremy Furtek and Jérôme Fimes.
+  tcd_init_encode(). Thanks to Jeremy Furtek and JÃ©rÃ´me Fimes.
 
 January 31, 2008
 ! [GB] In opjviewer, unification of JPEG 2000 family handlers (*.jp2, *.mj2, *.j2k) in a single file
@@ -352,7 +355,7 @@ March 30, 2007
 * [GB] OPJViewer should now work under Linux, at least with not big j2k files. Tested under Suse 10.1 64 bit.
 
 March 29, 2007
-* [Parvatha] Enable accepting file names with `-´ symbol .Modification getopt.c
+* [Parvatha] Enable accepting file names with `-Â´ symbol .Modification getopt.c
 * [Parvatha] Rsiz profile name generation to be STD_RSIZ for profiles which are not DCI compliant.Modification in image_to_j2k.c
 ! [Parvatha] renamed convert_progression_order to j2k_convert_progression_order. Modification j2k.c
 * [Parvatha] Calculation of number of tile part in each tile in j2k_calculate_tp. Modification j2k.c
@@ -369,7 +372,7 @@ March 28, 2007
 March 27, 2007
 + [GB] Improved parsing in OPJViewer, as well some minor aesthetic modifications; support for image rendering with bit depths lower than 8 bits; 
 		can display an arbitrary frame of an MJ2 file (only in B/W, though); can reload a file; better resizing capabilities
-* [GB] Following to Hervé's suggestions, all the exit() calls, added by JPWL strict checking in t2.c and j2k.c, 
+* [GB] Following to HervÃ©'s suggestions, all the exit() calls, added by JPWL strict checking in t2.c and j2k.c, 
 		have been substituted with (object free'ing + opj_evt_message(EVT_ERROR) + return)
 + [GB] Added linking to TIFF library in the JPWL VC6 workspaces
 

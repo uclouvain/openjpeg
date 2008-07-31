@@ -6,6 +6,7 @@
  * Copyright (c) 2003-2007, Francois-Olivier Devaux and Antonin Descampe
  * Copyright (c) 2005, Herve Drolon, FreeImage Team 
  * Copyright (c) 2006-2007, Parvatha Elangovan
+ * Copyright (c) 2008, Jerome Fimes, Communications & Systemes <jerome.fimes@c-s.fr>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,10 +31,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 #include <stdio.h>
+#define __USE_BSD
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
-
+#define USE_OPJ_DEPRECATED
 #include "openjpeg.h"
 #include "compat/getopt.h"
 #include "convert.h"
@@ -208,9 +210,8 @@ void encode_help_display() {
 	fprintf(stdout,"\n");
 	fprintf(stdout,"-I           : use the irreversible DWT 9-7 (-I) \n");
 	fprintf(stdout,"\n");
-	fprintf(stdout,"-F           : characteristics of the raw input image\n");
-	fprintf(stdout,"               -F rawWidth,rawHeight,rawComp,rawBitDepth,s/u (Signed/Unsigned)\n");
-	fprintf(stdout,"               Example: -i lena.raw -o lena.j2k -F 512,512,3,8,u\n");
+	fprintf(stdout,"-m           : use array-based MCT, values are coma separated, line by line\n");
+	fprintf(stdout,"			   no specific separators between lines, no space allowed between values\n");
 	fprintf(stdout,"\n");
 /* UniPG>> */
 #ifdef USE_JPWL
@@ -522,6 +523,8 @@ void cinema_setup_encoder(opj_cparameters_t *parameters,opj_image_t *image, img_
 		}
 		parameters->numpocs = initialise_4K_poc(parameters->POC,parameters->numresolution);
 		break;
+	default :
+		break;
 	}
 
 	switch (parameters->cp_cinema){
@@ -565,6 +568,8 @@ void cinema_setup_encoder(opj_cparameters_t *parameters,opj_image_t *image, img_
 			}
 			parameters->max_comp_size = COMP_48_CS;
 			break;
+		default:
+			break;
 	}
 	parameters->cp_disto_alloc = 1;
 }
@@ -587,7 +592,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 	};
 
 	/* parse the command line */
-	const char optlist[] = "i:o:hr:q:n:b:c:t:p:s:SEM:x:R:d:T:If:P:C:F:"
+	const char optlist[] = "i:o:hr:q:n:b:c:t:p:s:SEM:x:R:d:T:If:P:C:F:m:"
 #ifdef USE_JPWL
 		"W:"
 #endif /* USE_JPWL */
@@ -908,7 +913,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 				while (sscanf(s, "T%d=%d,%d,%d,%d,%d,%4s", &POC[numpocs].tile,
 					&POC[numpocs].resno0, &POC[numpocs].compno0,
 					&POC[numpocs].layno1, &POC[numpocs].resno1,
-					&POC[numpocs].compno1, &POC[numpocs].progorder) == 7) {
+					&POC[numpocs].compno1, POC[numpocs].progorder) == 7) {
 					POC[numpocs].prg1 = give_progression(POC[numpocs].progorder);
 					numpocs++;
 					while (*s && *s != '/') {
@@ -1045,6 +1050,76 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 				parameters->cp_rsiz = CINEMA4K;
 			}
 			break;
+
+			case 'm':			/* output file */
+			{
+				char *lFilename = optarg;
+				char * lMatrix;
+				char *lCurrentPtr ;
+				int lNbComp = 0;
+				int lTotalComp;
+				int lMctComp;
+				float * lCurrentDoublePtr;
+				float * lSpace;
+				int * l_int_ptr;
+				int i;
+				int lStrLen;
+				
+				FILE * lFile = fopen(lFilename,"r");
+				if
+					(lFile == NULL)
+				{
+					return 1;
+				}
+				fseek(lFile,0,SEEK_END);
+				lStrLen = ftell(lFile);
+				fseek(lFile,0,SEEK_SET);
+				lMatrix = (char *) malloc(lStrLen + 1);
+				fread(lMatrix,lStrLen,1,lFile);
+				fclose(lFile);
+				lMatrix[lStrLen] = 0;
+				lCurrentPtr = lMatrix;
+
+				// replace ',' by 0
+				while
+					(*lCurrentPtr != 0 )
+				{
+					if
+						(*lCurrentPtr == ' ')
+					{
+						*lCurrentPtr = 0;
+						++lNbComp;
+					}
+					++lCurrentPtr;
+				}
+				++lNbComp;
+				lCurrentPtr = lMatrix;
+
+				lNbComp = (int) (sqrt(4*lNbComp + 1)/2. - 0.5);
+				lMctComp = lNbComp * lNbComp;
+				lTotalComp = lMctComp + lNbComp;
+				lSpace = (float *) malloc(lTotalComp * sizeof(float));
+				lCurrentDoublePtr = lSpace;
+				for
+					(i=0;i<lMctComp;++i)
+				{
+					lStrLen = strlen(lCurrentPtr) + 1;
+					*lCurrentDoublePtr++ = (float) atof(lCurrentPtr);
+					lCurrentPtr += lStrLen;
+				}
+				l_int_ptr = (int*) lCurrentDoublePtr;
+				for
+					(i=0;i<lNbComp;++i)
+				{
+					lStrLen = strlen(lCurrentPtr) + 1;
+					*l_int_ptr++ = atoi(lCurrentPtr);
+					lCurrentPtr += lStrLen;
+				}
+				opj_set_MCT(parameters,lSpace,(int *)(lSpace + lMctComp), lNbComp);
+				free(lSpace);
+				free(lMatrix);
+			}
+			break;
 				
 				/* ------------------------------------------------------ */
 
@@ -1058,7 +1133,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 				int hprot, pprot, sens, addr, size, range;
 
 				/* we need to enable indexing */
-				if (!indexfilename || !strcmp(indexfilename, "")) {
+				if (!indexfilename) {
 					strncpy(indexfilename, JPWL_PRIVATEINDEX_NAME, OPJ_PATH_LEN);
 				}
 
@@ -1126,7 +1201,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 					/* search packet error protection method */
 					if (*token == 'p') {
 
-						static int pack = 0, tile = 0, packspec = 0/*, lastpackno = 0*/;
+						static int pack = 0, tile = 0, packspec = 0, lastpackno = 0;
 
 						pprot = 1; /* predefined method */
 
@@ -1282,7 +1357,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 					/* search addressing size */
 					if (*token == 'a') {
 
-						/*static int tile = 0, tilespec = 0, lasttileno = 0*/;
+						static int tile = 0, tilespec = 0, lasttileno = 0;
 
 						addr = 0; /* predefined: auto */
 
@@ -1308,7 +1383,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 					/* search sensitivity size */
 					if (*token == 'z') {
 
-						/*static int tile = 0, tilespec = 0, lasttileno = 0;*/
+						static int tile = 0, tilespec = 0, lasttileno = 0;
 
 						size = 1; /* predefined: 1 byte */
 
@@ -1334,7 +1409,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 					/* search range method */
 					if (*token == 'g') {
 
-						/*static int tile = 0, tilespec = 0, lasttileno = 0;*/
+						static int tile = 0, tilespec = 0, lasttileno = 0;
 
 						range = 0; /* predefined: 0 (packet) */
 
@@ -1480,7 +1555,6 @@ int main(int argc, char **argv) {
 	bool bSuccess;
 	opj_cparameters_t parameters;	/* compression parameters */
 	img_fol_t img_fol;
-	opj_event_mgr_t event_mgr;		/* event manager */
 	opj_image_t *image = NULL;
 	int i,num_images;
 	int imageno;
@@ -1488,16 +1562,14 @@ int main(int argc, char **argv) {
 	raw_cparameters_t raw_cp;
 	opj_codestream_info_t cstr_info;		/* Codestream information structure */
 	char indexfilename[OPJ_PATH_LEN];	/* index file name */
+	opj_stream_t *cio = 00;
+	opj_codec_t* cinfo = 00;
+	FILE *f = NULL;
 
 	/*
 	configure the event callbacks (not required)
 	setting of each callback is optionnal
 	*/
-	memset(&event_mgr, 0, sizeof(opj_event_mgr_t));
-	event_mgr.error_handler = error_callback;
-	event_mgr.warning_handler = warning_callback;
-	event_mgr.info_handler = info_callback;
-
 	/* set encoding parameters to default values */
 	opj_set_default_encoder_parameters(&parameters);
 
@@ -1648,118 +1720,60 @@ int main(int argc, char **argv) {
 
 			/* encode the destination image */
 			/* ---------------------------- */
+			
 
-			if (parameters.cod_format == J2K_CFMT) {	/* J2K format output */
-				int codestream_length;
-				opj_cio_t *cio = NULL;
-				FILE *f = NULL;
-
-				/* get a J2K compressor handle */
-				opj_cinfo_t* cinfo = opj_create_compress(CODEC_J2K);
-
-				/* catch events using our callbacks and give a local context */
-				opj_set_event_mgr((opj_common_ptr)cinfo, &event_mgr, stderr);
-
-				/* setup the encoder parameters using the current image and user parameters */
-				opj_setup_encoder(cinfo, &parameters, image);
-
-				/* open a byte stream for writing */
-				/* allocate memory for all tiles */
-				cio = opj_cio_open((opj_common_ptr)cinfo, NULL, 0);
-
-				/* encode the image */
-				if (*indexfilename)					// If need to extract codestream information
-					bSuccess = opj_encode_with_info(cinfo, cio, image, &cstr_info);
-				else
-					bSuccess = opj_encode(cinfo, cio, image, NULL);
-				if (!bSuccess) {
-					opj_cio_close(cio);
-					fprintf(stderr, "failed to encode image\n");
-					return 1;
-				}
-				codestream_length = cio_tell(cio);
-
-				/* write the buffer to disk */
-				f = fopen(parameters.outfile, "wb");
-				if (!f) {
-					fprintf(stderr, "failed to open %s for writing\n", parameters.outfile);
-					return 1;
-				}
-				fwrite(cio->buffer, 1, codestream_length, f);
-				fclose(f);
-
-				fprintf(stderr,"Generated outfile %s\n",parameters.outfile);
-				/* close and free the byte stream */
-				opj_cio_close(cio);
-
-				/* Write the index to disk */
-				if (*indexfilename) {
-					bSuccess = write_index_file(&cstr_info, indexfilename);
-					if (bSuccess) {
-						fprintf(stderr, "Failed to output index file into [%s]\n", indexfilename);
-					}
-				}
-
-				/* free remaining compression structures */
-				opj_destroy_compress(cinfo);
-				if (*indexfilename)
-					opj_destroy_cstr_info(&cstr_info);
-			} else {			/* JP2 format output */
-				int codestream_length;
-				opj_cio_t *cio = NULL;
-				FILE *f = NULL;
-
-				/* get a JP2 compressor handle */
-				opj_cinfo_t* cinfo = opj_create_compress(CODEC_JP2);
-
-				/* catch events using our callbacks and give a local context */
-				opj_set_event_mgr((opj_common_ptr)cinfo, &event_mgr, stderr);			
-
-				/* setup the encoder parameters using the current image and using user parameters */
-				opj_setup_encoder(cinfo, &parameters, image);
-
-				/* open a byte stream for writing */
-				/* allocate memory for all tiles */
-				cio = opj_cio_open((opj_common_ptr)cinfo, NULL, 0);
-
-				/* encode the image */
-				if (*indexfilename)					// If need to extract codestream information
-					bSuccess = opj_encode_with_info(cinfo, cio, image, &cstr_info);
-				else
-					bSuccess = opj_encode(cinfo, cio, image, NULL);
-				if (!bSuccess) {
-					opj_cio_close(cio);
-					fprintf(stderr, "failed to encode image\n");
-					return 1;
-				}
-				codestream_length = cio_tell(cio);
-
-				/* write the buffer to disk */
-				f = fopen(parameters.outfile, "wb");
-				if (!f) {
-					fprintf(stderr, "failed to open %s for writing\n", parameters.outfile);
-					return 1;
-				}
-				fwrite(cio->buffer, 1, codestream_length, f);
-				fclose(f);
-				fprintf(stderr,"Generated outfile %s\n",parameters.outfile);
-				/* close and free the byte stream */
-				opj_cio_close(cio);
-				
-				/* Write the index to disk */
-				if (*indexfilename) {
-					bSuccess = write_index_file(&cstr_info, indexfilename);
-					if (bSuccess) {
-						fprintf(stderr, "Failed to output index file\n");
-					}
-				}
-
-				/* free remaining compression structures */
-				opj_destroy_compress(cinfo);
-				if (*indexfilename)
-					opj_destroy_cstr_info(&cstr_info);
+			cinfo = parameters.cod_format == J2K_CFMT ? opj_create_compress(CODEC_J2K) : opj_create_compress(CODEC_JP2);
+			opj_setup_encoder(cinfo, &parameters, image);
+			f = fopen(parameters.outfile, "wb");
+			if
+				(! f)
+			{
+				fprintf(stderr, "failed to encode image\n");
+				return 1;
 			}
-	
+			/* open a byte stream for writing */
+			/* allocate memory for all tiles */
+			cio = opj_stream_create_default_file_stream(f,false);
+			if
+				(! cio)
+			{
+				return 1;
+			}
+			/* encode the image */
+			/*if (*indexfilename)					// If need to extract codestream information
+				bSuccess = opj_encode_with_info(cinfo, cio, image, &cstr_info);
+				else*/
+			bSuccess = opj_start_compress(cinfo,image,cio);				
+			bSuccess = bSuccess && opj_encode(cinfo, cio);
+			bSuccess = bSuccess && opj_end_compress(cinfo, cio);
+
+			if 
+				(!bSuccess) 
+			{
+				opj_stream_destroy(cio);
+				fclose(f);
+				fprintf(stderr, "failed to encode image\n");
+				return 1;
+			}
+
+			fprintf(stderr,"Generated outfile %s\n",parameters.outfile);
+			/* close and free the byte stream */
+			opj_stream_destroy(cio);
+			fclose(f);
+
+			/* Write the index to disk */
+			if (*indexfilename) {
+				bSuccess = write_index_file(&cstr_info, indexfilename);
+				if (bSuccess) {
+					fprintf(stderr, "Failed to output index file\n");
+				}
+			}
+
+			/* free remaining compression structures */
+			opj_destroy_codec(cinfo);
+			if (*indexfilename)
+				opj_destroy_cstr_info(&cstr_info);
+			
 			/* free image data */
 			opj_image_destroy(image);
 	}

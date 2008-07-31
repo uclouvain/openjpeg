@@ -59,11 +59,7 @@ typedef struct option
 #define	BADARG	(int)':'
 #define	EMSG	""
 
-/* As this class remembers its values from one Java call to the other, reset the values before each use */
-void reset_options_reading() {
-	opterr = 1;
-	optind = 1;
-}
+
 
 /*
  * getopt --
@@ -136,7 +132,7 @@ struct option *longopts, int totlen) {
 	char param = 1;
 
 again:
-	if (optind >= argc || !argv[optind] || *argv[optind]!='-')
+	if (optind>argc || !argv[optind] || *argv[optind]!='-')
 		return -1;
 
 	if (argv[optind][0]=='-' && argv[optind][1]==0) {
