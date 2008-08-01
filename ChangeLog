@@ -5,6 +5,10 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+August 1st, 2008
+- [antonin] removed t1_generate_luts.c, useless in version 2.
+! [antonin] updated XCode project file for mac users.
+
 July 31, 2008
 + [antonin] created a branch for openjpeg version 2. Modifications that have been applied to the trunk after revision 483 should be re-applied on the branch (version 2 has been developed based on revision 483).
 
