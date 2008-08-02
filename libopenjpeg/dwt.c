@@ -128,7 +128,7 @@ static bool dwt_decode_tile(opj_tcd_tilecomp_t* tilec, OPJ_UINT32 i, DWT1DFN fn)
 
 static OPJ_UINT32 dwt_max_resolution(opj_tcd_resolution_t* restrict r, OPJ_UINT32 i);
 
-static INLINE bool dwt_encode_procedure(opj_tcd_tilecomp_t * tilec,void (*p_function)(OPJ_INT32 *, OPJ_INT32,OPJ_INT32,OPJ_INT32) );
+static bool dwt_encode_procedure(opj_tcd_tilecomp_t * tilec,void (*p_function)(OPJ_INT32 *, OPJ_INT32,OPJ_INT32,OPJ_INT32) );
 /*@}*/
 
 /*@}*/
