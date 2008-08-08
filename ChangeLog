@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+August 8, 2008
+! [FOD] Modified the way raw images with more that 8bpp are read and written
+
 July 9, 2008
 + [Parvatha] Added the default lossless parameter to opj_set_default_encoder_parameters in openjpeg.c.
 

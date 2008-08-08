@@ -2013,18 +2013,29 @@ opj_image_t* rawtoimage(const char *filename, opj_cparameters_t *parameters, raw
 			}
 		}
 	}
-	else
+	else if(raw_cp->rawBitDepth <= 16)
 	{
-		unsigned short value = 0;
+		unsigned short value;
 		for(compno = 0; compno < numcomps; compno++) {
 			for (i = 0; i < w * h; i++) {
-				if (!fread(&value, 2, 1, f)) {
+				unsigned char temp;
+				if (!fread(&temp, 1, 1, f)) {
 					fprintf(stderr,"Error reading raw file. End of file probably reached.\n");
 					return NULL;
 				}
+				value = temp << 8;
+				if (!fread(&temp, 1, 1, f)) {
+					fprintf(stderr,"Error reading raw file. End of file probably reached.\n");
+					return NULL;
+				}
+				value += temp;
 				image->comps[compno].data[i] = raw_cp->rawSigned?(short)value:value;
 			}
 		}
+	}
+	else {
+		fprintf(stderr,"OpenJPEG cannot encode raw components with bit depth higher than 16 bits.\n");
+		return NULL;
 	}
 
 	if (fread(&ch, 1, 1, f)) {
@@ -2103,8 +2114,12 @@ int imagetoraw(opj_image_t * image, const char *outfile)
 				ptr = image->comps[compno].data;
 				for (line = 0; line < h; line++) {
 					for(row = 0; row < w; row++)	{					
-						curr = (signed short int) (*ptr & mask);
-						fwrite(&curr, sizeof(signed short int), 1, rawFile);
+						unsigned char temp;
+						curr = (signed short int) (*ptr & mask);						
+						temp = curr >> 8;
+						fwrite(&temp, 1, 1, rawFile);
+						temp = curr;
+						fwrite(&temp, 1, 1, rawFile);
 						ptr++;
 					}
 				}
@@ -2116,8 +2131,12 @@ int imagetoraw(opj_image_t * image, const char *outfile)
 				ptr = image->comps[compno].data;
 				for (line = 0; line < h; line++) {
 					for(row = 0; row < w; row++)	{				
-						curr = (unsigned short int) (*ptr & mask);
-						fwrite(&curr, sizeof(unsigned short int), 1, rawFile);
+						unsigned char temp;
+						curr = (unsigned short int) (*ptr & mask);						
+						temp = curr >> 8;
+						fwrite(&temp, 1, 1, rawFile);
+						temp = curr;
+						fwrite(&temp, 1, 1, rawFile);
 						ptr++;
 					}
 				}
