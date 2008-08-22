@@ -6,6 +6,9 @@ What's New for OpenJPEG
 + : added
 
 August 21, 2008
+* [antonin] found a bug in tcd.c that was preventing to find the correct threshold in tcd_rateallocate.c for high-precision images. Applied a temporary patch but a better solution should be found.
+
+August 21, 2008
 * [antonin] fixed a bug in image_to_j2k.c that was preventing the 'r' option to work properly (everything was compressed lossless regardless of the specified rate).
 
 August 8, 2008
