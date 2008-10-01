@@ -31,6 +31,7 @@
  */
 #include <stdio.h>
 #include <string.h>
+#include <strings.h> /* strncasecmp */
 #include <stdlib.h>
 #include <math.h>
 
