@@ -782,13 +782,13 @@ JNIEXPORT jint JNICALL Java_org_openJpeg_OpenJPEGJavaDecoder_internalDecodeJ2Kto
 			ptr2 = image->comps[2].data;
 #ifdef CHECK_THRESHOLDS 
 			if (image->comps[0].sgnd) {
-				min_value = 0;
-				max_value = 255;
-			} else {
 				min_value = -128;
 				max_value = 127;
+			} else {
+				min_value = 0;
+				max_value = 255;
 			}
-#endif
+#endif			
 			// Get the pointer to the Java structure where the data must be copied
 			fid = (*env)->GetFieldID(env, cls,"image24", "[I");
 			jia = (*env)->GetObjectField(env, obj, fid);
@@ -828,13 +828,13 @@ JNIEXPORT jint JNICALL Java_org_openJpeg_OpenJPEGJavaDecoder_internalDecodeJ2Kto
 				ptrBBody = jbBody;
 #ifdef CHECK_THRESHOLDS 
 				if (image->comps[0].sgnd) {
-					min_value = 0;
-					max_value = 255;
-				} else {
 					min_value = -128;
 					max_value = 127;
+				} else {
+					min_value = 0;
+					max_value = 255;
 				}
-#endif				
+#endif								
 				//printf("C: transfering %d shorts to Java image8 pointer = %d\n", wr*hr,ptrSBody);
 				for (i=0; i<w*h; i++) {
 					tempUC = (unsigned char) (ptr[i]);
@@ -855,11 +855,11 @@ JNIEXPORT jint JNICALL Java_org_openJpeg_OpenJPEGJavaDecoder_internalDecodeJ2Kto
 				ptrSBody = jsBody;
 #ifdef CHECK_THRESHOLDS 
 				if (image->comps[0].sgnd) {
-					min_value = 0;
-					max_value = 65535;
-				} else {
 					min_value = -32768;
 					max_value = 32767;
+				} else {
+					min_value = 0;
+					max_value = 65535;
 				}
 				printf("C: minValue = %d, maxValue = %d\n", min_value, max_value);
 #endif				

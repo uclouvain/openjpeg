@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+August 31, 2009
+* [antonin] JavaOpenJpegDecoder.c : fixed a signed/unsigned behaviour when returning form C to JAVA
+
 August 21, 2008
 * [antonin] found a bug in tcd.c that was preventing to find the correct threshold in tcd_rateallocate.c for high-precision images. Applied a temporary patch but a better solution should be found.
 
