@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+September 8, 2009
+* [antonin] openjpeg.c : fixed initialization of parameters->cp_disto_alloc/fixed_quality/fixed_alloc/tcp_numlayers because they were preventing to use the -q and -f options.
+
 August 31, 2009
 * [antonin] JavaOpenJpegDecoder.c : fixed a signed/unsigned behaviour when returning form C to JAVA
 
