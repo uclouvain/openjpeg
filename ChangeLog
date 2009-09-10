@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+September 10, 2009
+* [antonin] fixed minor bugs which were triggering warnings at compilation (different signedness, wrong pointer type, etc)
+
 September 8, 2009
 * [antonin] openjpeg.c : fixed initialization of parameters->cp_disto_alloc/fixed_quality/fixed_alloc/tcp_numlayers because they were preventing to use the -q and -f options.
 

@@ -79,7 +79,7 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 	fprintf(stream, "%d %d\n", cstr_info->tw, cstr_info->th);
 	fprintf(stream, "%d\n", cstr_info->numcomps);
 	fprintf(stream, "%d\n", cstr_info->numlayers);
-	fprintf(stream, "%d\n", cstr_info->numdecompos);
+	fprintf(stream, "%d\n", cstr_info->numdecompos[0]); /* based on component 0 */
 
 	for (resno = cstr_info->numdecompos[0]; resno >= 0; resno--) {
 		fprintf(stream, "[%d,%d] ", 
