@@ -838,7 +838,7 @@
 /* Begin PBXProject section */
 		69F984A80D40A3AE00C2791C /* Project object */ = {
 			isa = PBXProject;
-			buildConfigurationList = 69F984A90D40A3AE00C2791C /* Build configuration list for PBXProject "openjpeg" */;
+			buildConfigurationList = 69F984A90D40A3AE00C2791C /* Build configuration list for PBXProject "openjpegV2" */;
 			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 0;
 			mainGroup = 69F984A60D40A3AE00C2791C;
@@ -1197,7 +1197,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		69F984A90D40A3AE00C2791C /* Build configuration list for PBXProject "openjpeg" */ = {
+		69F984A90D40A3AE00C2791C /* Build configuration list for PBXProject "openjpegV2" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				69F984AA0D40A3AE00C2791C /* Debug */,
