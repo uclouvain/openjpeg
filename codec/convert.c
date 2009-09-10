@@ -99,7 +99,7 @@ typedef struct tga_header
 } tga_header;
 #pragma pack(pop) // Return to normal structure packing alignment.
 
-int tga_readheader(FILE *fp, int *bits_per_pixel, int *width, int *height, int *flip_image)
+int tga_readheader(FILE *fp, uint32 *bits_per_pixel, uint32 *width, uint32 *height, int *flip_image)
 {
 	int palette_size;
 	tga_header tga ;

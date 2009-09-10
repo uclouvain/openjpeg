@@ -274,8 +274,8 @@
 		69803D3F0E433E5C00A62250 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		69803D400E433E5C00A62250 /* test_decoder.c */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.c; path = test_decoder.c; sourceTree = "<group>"; };
 		69803D410E433E5C00A62250 /* test_encoder.c */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.c; path = test_encoder.c; sourceTree = "<group>"; };
-		69803D8F0E43401100A62250 /* test_encoder */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = test_encoder; path = build/Release/test_encoder; sourceTree = "<group>"; };
-		69803DAA0E43406A00A62250 /* test_decoder */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = test_decoder; path = build/Release/test_decoder; sourceTree = "<group>"; };
+		69803D8F0E43401100A62250 /* test_encoder */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = test_encoder; sourceTree = BUILT_PRODUCTS_DIR; };
+		69803DAA0E43406A00A62250 /* test_decoder */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = test_decoder; sourceTree = BUILT_PRODUCTS_DIR; };
 		69F985A10D40A48E00C2791C /* libopenjpeg.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libopenjpeg.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		69F985B60D40A63D00C2791C /* libopenjpeg.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libopenjpeg.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		69F986390D40A7DA00C2791C /* image_to_j2k */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = image_to_j2k; sourceTree = BUILT_PRODUCTS_DIR; };
