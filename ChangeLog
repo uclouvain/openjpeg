@@ -8,6 +8,12 @@ What's New for OpenJPEG
 September 10, 2009
 * [antonin] fixed minor bugs which were triggering warnings at compilation (different signedness, wrong pointer type, etc)
 
+August 21, 2008
+* [antonin] found a bug in tcd.c that was preventing to find the correct threshold in tcd_rateallocate.c for high-precision images. Applied a temporary patch but a better solution should be found.
+
+August 8, 2008
+! [FOD] Modified the way raw images with more that 8bpp are read and written
+
 August 2nd, 2008
 * [Mathieu Malaterre] remove INLINE from forward decl. Fix CMakeLists.txt for UNIX platforms
 

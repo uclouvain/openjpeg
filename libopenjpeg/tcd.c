@@ -1019,7 +1019,7 @@ bool tcd_rateallocate(opj_tcd_t *tcd, OPJ_BYTE *dest, OPJ_UINT32 * p_data_writte
 			}
 
 			for 
-				(i = 0; i < 32; ++i) 
+				(i = 0; i < 128; ++i)
 			{
 				OPJ_FLOAT64 distoachieved = 0;	/* fixed_quality */
 				thresh = (lo + hi) / 2;
