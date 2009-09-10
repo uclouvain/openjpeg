@@ -167,7 +167,6 @@
 		69803CC30E433E5B00A62250 /* raw.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = raw.h; sourceTree = "<group>"; };
 		69803CC40E433E5B00A62250 /* t1.c */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.c; path = t1.c; sourceTree = "<group>"; };
 		69803CC50E433E5B00A62250 /* t1.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = t1.h; sourceTree = "<group>"; };
-		69803CC60E433E5B00A62250 /* t1_generate_luts.c */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.c; path = t1_generate_luts.c; sourceTree = "<group>"; };
 		69803CC70E433E5B00A62250 /* t1_luts.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = t1_luts.h; sourceTree = "<group>"; };
 		69803CC80E433E5B00A62250 /* t2.c */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.c; path = t2.c; sourceTree = "<group>"; };
 		69803CC90E433E5B00A62250 /* t2.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = t2.h; sourceTree = "<group>"; };
@@ -541,7 +540,6 @@
 				69803CC30E433E5B00A62250 /* raw.h */,
 				69803CC40E433E5B00A62250 /* t1.c */,
 				69803CC50E433E5B00A62250 /* t1.h */,
-				69803CC60E433E5B00A62250 /* t1_generate_luts.c */,
 				69803CC70E433E5B00A62250 /* t1_luts.h */,
 				69803CC80E433E5B00A62250 /* t2.c */,
 				69803CC90E433E5B00A62250 /* t2.h */,
