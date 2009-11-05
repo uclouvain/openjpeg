@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+November 5, 2009
+* [antonin] fixed "tiffio" header inclusion to use user version on Win32 system only (otherwise assume its existence in system headers).
+
 September 10, 2009
 * [antonin] fixed minor bugs which were triggering warnings at compilation (different signedness, wrong pointer type, etc)
 

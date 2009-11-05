@@ -697,6 +697,7 @@
 		69F984AA0D40A3AE00C2791C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = NO;
 			};
 			name = Debug;
@@ -704,6 +705,7 @@
 		69F984AB0D40A3AE00C2791C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
 			};
 			name = Release;

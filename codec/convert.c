@@ -32,8 +32,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "openjpeg.h"
+#ifdef WIN32
 #include "../libs/libtiff/tiffio.h"
+#else
+#include <tiffio.h>
+#endif /* WIN32 */
+#include "openjpeg.h"
 #include "convert.h"
 
 /*
