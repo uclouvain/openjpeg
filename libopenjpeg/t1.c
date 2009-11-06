@@ -178,7 +178,8 @@ static double t1_getwmsedec(
 		int bpno,
 		int qmfbid,
 		double stepsize,
-		int numcomps);
+		int numcomps,
+		int mct);
 /**
 Encode 1 code-block
 @param t1 T1 handle
@@ -202,6 +203,7 @@ static void t1_encode_cblk(
 		double stepsize,
 		int cblksty,
 		int numcomps,
+		int mct,
 		opj_tcd_tile_t * tile);
 /**
 Decode 1 code-block
@@ -736,14 +738,15 @@ static double t1_getwmsedec(
 		int bpno,
 		int qmfbid,
 		double stepsize,
-		int numcomps)
+		int numcomps,
+		int mct)
 {
 	double w1, w2, wmsedec;
 	if (qmfbid == 1) {
-		w1 = (numcomps > 1) ? mct_getnorm(compno) : 1.0;
+		w1 = (mct && numcomps==3) ? mct_getnorm(compno) : 1.0;
 		w2 = dwt_getnorm(level, orient);
 	} else {			/* if (qmfbid == 0) */
-		w1 = (numcomps > 1) ? mct_getnorm_real(compno) : 1.0;
+		w1 = (mct && numcomps==3) ? mct_getnorm_real(compno) : 1.0;
 		w2 = dwt_getnorm_real(level, orient);
 	}
 	wmsedec = w1 * w2 * stepsize * (1 << bpno);
@@ -800,6 +803,7 @@ static void t1_encode_cblk(
 		double stepsize,
 		int cblksty,
 		int numcomps,
+		int mct,
 		opj_tcd_tile_t * tile)
 {
 	double cumwmsedec = 0.0;
@@ -850,7 +854,7 @@ static void t1_encode_cblk(
 		}
 		
 		/* fixed_quality */
-		tempwmsedec = t1_getwmsedec(nmsedec, compno, level, orient, bpno, qmfbid, stepsize, numcomps);
+		tempwmsedec = t1_getwmsedec(nmsedec, compno, level, orient, bpno, qmfbid, stepsize, numcomps, mct);
 		cumwmsedec += tempwmsedec;
 		tile->distotile += tempwmsedec;
 		
@@ -1110,6 +1114,7 @@ void t1_encode_cblks(
 								band->stepsize,
 								tccp->cblksty,
 								tile->numcomps,
+								tcp->mct,
 								tile);
 
 					} /* cblkno */

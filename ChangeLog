@@ -6,6 +6,9 @@ What's New for OpenJPEG
 + : added
 
 November 5, 2009
+* [antonin] fixed MCT check bug in t1_getwmsedec. See http://groups.google.com/group/openjpeg/browse_thread/thread/d9d96dd4ec3e7443 for info.
+
+November 5, 2009
 * [antonin] fixed "tiffio" header inclusion to use user version on Win32 system only (otherwise assume its existence in system headers).
 
 September 10, 2009
