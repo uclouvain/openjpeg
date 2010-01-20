@@ -147,7 +147,8 @@ typedef enum PROG_ORDER {
 Supported image color spaces
 */
 typedef enum COLOR_SPACE {
-	CLRSPC_UNKNOWN = -1,	/**< place-holder */
+	CLRSPC_UNKNOWN = -1,	/**< not supported by the library */
+	CLRSPC_UNSPECIFIED = 0, /**< not specified in the codestream */ 
 	CLRSPC_SRGB = 1,		/**< sRGB */
 	CLRSPC_GRAY = 2,		/**< grayscale */
 	CLRSPC_SYCC = 3			/**< YUV */

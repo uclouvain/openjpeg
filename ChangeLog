@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+January 20, 2010
+! [FOD] Created a new constant in openjpeg.h to differentiate the case when the colorspace is not supported by the library and when it is not specified in the codestream. Suggested by Matteo Italia.
+
 November 5, 2009
 * [antonin] fixed MCT check bug in t1_getwmsedec. See http://groups.google.com/group/openjpeg/browse_thread/thread/d9d96dd4ec3e7443 for info.
 
