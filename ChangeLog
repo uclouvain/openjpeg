@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+February 18, 2010
+* [FOD] JP3D Module. Fixed issue when computing the number of elements in an array that leads to crash (thanks Kristof). Updated JP3D makefiles.
+
 January 20, 2010
 ! [FOD] Created a new constant in openjpeg.h to differentiate the case when the colorspace is not supported by the library and when it is not specified in the codestream. Suggested by Matteo Italia.
 
