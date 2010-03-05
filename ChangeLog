@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+March 5, 2010
++ [FOD] First import of OPJ_Validate tool
+
 February 18, 2010
 * [FOD] JP3D Module. Fixed issue when computing the number of elements in an array that leads to crash (thanks Kristof). Updated JP3D makefiles.
 
