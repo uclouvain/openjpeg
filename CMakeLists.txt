@@ -24,7 +24,7 @@ INCLUDE_REGULAR_EXPRESSION("^.*$")
 #-----------------------------------------------------------------------------
 # OPENJPEG version number, useful for packaging and doxygen doc:
 SET(OPENJPEG_VERSION_MAJOR 1)
-SET(OPENJPEG_VERSION_MINOR 3)
+SET(OPENJPEG_VERSION_MINOR 4)
 SET(OPENJPEG_VERSION_BUILD 0)
 SET(OPENJPEG_VERSION
   "${OPENJPEG_VERSION_MAJOR}.${OPENJPEG_VERSION_MINOR}.${OPENJPEG_VERSION_BUILD}")
