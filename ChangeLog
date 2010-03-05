@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+March 5,2010
+! [FOD] Updated makefiles for v1.4 and v2.0
+
 February 16, 2010
 * [FOD] Fixed libopenjpeg Makefile 
 
