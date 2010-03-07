@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+March 7, 2010
+* [FOD] Fixed small compatibility issues with win32 in codec (moved include <strings.h>)
+
 March 5,2010
 ! [FOD] Updated makefiles for v1.4 and v2.0
 
