@@ -31,7 +31,6 @@
  */
 #include <stdio.h>
 #include <string.h>
-#include <strings.h> /* strncasecmp */
 #include <stdlib.h>
 #include <math.h>
 
@@ -42,8 +41,9 @@
 #include "index.h"
 
 #ifndef WIN32
-#define stricmp strcasecmp
-#define strnicmp strncasecmp
+#include <strings.h>
+#define _stricmp strcasecmp
+#define _strnicmp strncasecmp
 #endif
 
 /* ----------------------------------------------------------------------- */
@@ -400,7 +400,7 @@ int get_file_format(char *filename) {
 		return -1;
 	ext++;
 	for(i = 0; i < sizeof(format)/sizeof(*format); i++) {
-		if(strnicmp(ext, extension[i], 3) == 0) {
+		if(_strnicmp(ext, extension[i], 3) == 0) {
 			return format[i];
 		}
 	}

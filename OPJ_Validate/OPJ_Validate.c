@@ -236,8 +236,8 @@ int main(int argc, char* argv[]) {
 		}
 	}		
 
-	printf("\n\REPORT;\n%d tests num_passed\n%d tests num_failed\n%d MD5 were num_inexistant\n", num_passed, num_failed, num_inexistant);
-	fprintf(report_file,"\n\REPORT;\n%d tests num_passed\n%d tests num_failed\n%d MD5 were num_inexistant\n", num_passed, num_failed, num_inexistant);
+	printf("\nREPORT;\n%d tests num_passed\n%d tests num_failed\n%d MD5 were num_inexistant\n", num_passed, num_failed, num_inexistant);
+	fprintf(report_file,"\nREPORT;\n%d tests num_passed\n%d tests num_failed\n%d MD5 were num_inexistant\n", num_passed, num_failed, num_inexistant);
 	fclose(param_file);
 	fclose(report_file);
 		
