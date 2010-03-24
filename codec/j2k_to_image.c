@@ -73,7 +73,7 @@ typedef struct img_folder{
 	/** The directory path of the folder containing input images*/
 	char *imgdirpath;
 	/** Output format*/
-	char *out_format;
+	const char *out_format;
 	/** Enable option*/
 	char set_imgdir;
 	/** Enable Cod Format for output*/

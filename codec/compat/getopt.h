@@ -5,7 +5,7 @@
 
 typedef struct option
 {
-	char *name;
+	const char *name;
 	int has_arg;
 	int *flag;
 	int val;

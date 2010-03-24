@@ -112,7 +112,7 @@ int main(int argc, char *argv[]) {
 	
 	/* get a MJ2 decompressor handle */
 	dinfo = mj2_create_decompress();
-	movie = dinfo->mj2_handle;
+	movie = (opj_mj2_t*)dinfo->mj2_handle;
 	
 	/* catch events using our callbacks and give a local context */
 	opj_set_event_mgr((opj_common_ptr)dinfo, &event_mgr, stderr);		
@@ -121,7 +121,7 @@ int main(int argc, char *argv[]) {
 	opj_set_default_decoder_parameters(&mj2_parameters.j2k_parameters);
 	
 	/* setup the decoder decoding parameters using user parameters */
-	mj2_setup_decoder(dinfo->mj2_handle, &mj2_parameters);
+	mj2_setup_decoder((opj_mj2_t*)dinfo->mj2_handle, &mj2_parameters);
 			
   if (mj2_read_struct(file, movie)) // Creating the movie structure
     return 1;	
@@ -156,7 +156,8 @@ int main(int argc, char *argv[]) {
     sample = &track->sample[snum];
 		if (sample->sample_size-8 > max_codstrm_size) {
 			max_codstrm_size =  sample->sample_size-8;
-			if ((frame_codestream = realloc(frame_codestream, max_codstrm_size)) == NULL) {
+			if ((frame_codestream = (unsigned char*)
+				realloc(frame_codestream, max_codstrm_size)) == NULL) {
 				printf("Error reallocation memory\n");
 				return 1;
 			}; 		

@@ -5,6 +5,8 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+March 24, 2010
+* [FOD] Code improvements using 'g++-4.4.0' to trace the code. Thanks to Winfried for this patch.		
 
 March 7, 2010
 * [FOD] Fixed small compatibility issues with win32 in codec (moved include <strings.h>)

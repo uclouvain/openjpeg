@@ -49,7 +49,7 @@ const char *optarg;			/* argument associated with option */
 
 typedef struct option
 {
-	char *name;
+	const char *name;
 	int has_arg;
 	int *flag;
 	int val;

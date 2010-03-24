@@ -864,7 +864,7 @@ void j2k_read_sot() {
     if (partno >= tile->Cztile_parts)
       {
 	tilepart_tmp = (info_tile_part_t*)malloc((INCREMENT + tile->Cztile_parts) * sizeof(info_tile_part_t));
-	memcpy(tmp, tile->tile_parts, tile->Cztile_parts);
+	memcpy(tilepart_tmp, tile->tile_parts, tile->Cztile_parts);
 	tile->Cztile_parts += INCREMENT;
 	free(tile->tile_parts);
 	tile->tile_parts = tilepart_tmp;
@@ -1008,7 +1008,7 @@ void j2k_read_unk() {
 
 int j2k_index_JPIP(char *Idx_file, char *J2K_file, int len, int version){
   FILE *dest;
-  char *index;
+  unsigned char *index;
   int pos_iptr, end_pos;
   int len_cidx, pos_cidx;
   int len_jp2c, pos_jp2c;
@@ -1021,7 +1021,7 @@ int j2k_index_JPIP(char *Idx_file, char *J2K_file, int len, int version){
   }
 
   /* INDEX MODE JPIP */
- index = (char*)malloc(len); 
+ index = (unsigned char*)malloc(len); 
  cio_init(index, len);
  jp2_write_jp();
  jp2_write_ftyp();
@@ -1149,7 +1149,7 @@ int main(int argc, char **argv)
 {  
   FILE *src;
   int totlen;
-  char *j2kfile;
+  unsigned char *j2kfile;
   j2k_image_t *imgg;
   j2k_cp_t *cp;
   int version;
@@ -1171,7 +1171,7 @@ int main(int argc, char **argv)
   totlen = ftell(src);
   fseek(src, 0, SEEK_SET);
   
-  j2kfile = (char*)malloc(totlen);
+  j2kfile = (unsigned char*)malloc(totlen);
   fread(j2kfile, 1, totlen, src);
   fclose(src);
 
@@ -1197,6 +1197,7 @@ int main(int argc, char **argv)
 
   if (!j2k_decode(j2kfile, totlen, &imgg, &cp)) {
     fprintf(stderr, "Index_creator: failed to decode image!\n");
+    free(j2kfile);
     return 1;
   }
   free(j2kfile);

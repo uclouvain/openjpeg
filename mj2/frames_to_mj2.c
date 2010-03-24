@@ -234,12 +234,12 @@ int main(int argc, char **argv)
 	opj_cparameters_t *j2k_parameters;	/* J2K compression parameters */
 	opj_event_mgr_t event_mgr;		/* event manager */
 	opj_cio_t *cio;
-	char value;
+	int value;
   opj_mj2_t *movie;
 	opj_image_t *img;
   int i, j;
   char *s, S1, S2, S3;
-  char *buf;
+  unsigned char *buf;
   int x1, y1,  len;
   long mdat_initpos, offset;
   FILE *mj2file;
@@ -519,7 +519,7 @@ int main(int argc, char **argv)
 				while (sscanf(s, "T%d=%d,%d,%d,%d,%d,%4s", &POC[numpocs].tile,
 					&POC[numpocs].resno0, &POC[numpocs].compno0,
 					&POC[numpocs].layno1, &POC[numpocs].resno1,
-					&POC[numpocs].compno1, &POC[numpocs].progorder) == 7) {
+					&POC[numpocs].compno1, POC[numpocs].progorder) == 7) {
 					POC[numpocs].prg1 = give_progression(POC[numpocs].progorder);
 					numpocs++;
 					while (*s && *s != '/') {
@@ -671,7 +671,7 @@ int main(int argc, char **argv)
     
 	/* get a MJ2 decompressor handle */
 	cinfo = mj2_create_compress();
-	movie = cinfo->mj2_handle;
+	movie = (opj_mj2_t*)cinfo->mj2_handle;
 	
 	/* catch events using our callbacks and give a local context */
 	opj_set_event_mgr((opj_common_ptr)cinfo, &event_mgr, stderr);
@@ -694,7 +694,7 @@ int main(int argc, char **argv)
   };    
   
   // Writing JP, FTYP and MDAT boxes 
-  buf = (char*) malloc (300 * sizeof(char)); // Assuming that the JP and FTYP
+  buf = (unsigned char*) malloc (300 * sizeof(unsigned char)); // Assuming that the JP and FTYP
   // boxes won't be longer than 300 bytes
 	cio = opj_cio_open((opj_common_ptr)movie->cinfo, buf, 300);
   mj2_write_jp(cio);
@@ -722,7 +722,7 @@ int main(int argc, char **argv)
 			
 			img = mj2_image_create(tk, j2k_parameters);          
 			buflen = 2 * (tk->w * tk->h * 8);
-			buf = (char *) malloc(buflen*sizeof(char));	
+			buf = (unsigned char *) malloc(buflen*sizeof(unsigned char));	
 
       for (sampleno = 0; sampleno < numframes; sampleno++) {		
 				double init_time = opj_clock();
@@ -771,7 +771,7 @@ int main(int argc, char **argv)
   
   fseek(mj2file, mdat_initpos, SEEK_SET);
 	
-  buf = (char*) malloc(4*sizeof(char));
+  buf = (unsigned char*) malloc(4*sizeof(unsigned char));
 
 	// Init a cio to write box length variable in a little endian way 
 	cio = opj_cio_open(NULL, buf, 4);
@@ -781,7 +781,7 @@ int main(int argc, char **argv)
   free(buf);
 
   // Writing MOOV box 
-	buf = (char*) malloc ((TEMP_BUF+numframes*20) * sizeof(char));
+	buf = (unsigned char*) malloc ((TEMP_BUF+numframes*20) * sizeof(unsigned char));
 	cio = opj_cio_open(movie->cinfo, buf, (TEMP_BUF+numframes*20));
 	mj2_write_moov(movie, cio);
   fwrite(buf,cio_tell(cio),1,mj2file);

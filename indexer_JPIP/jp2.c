@@ -50,7 +50,8 @@
 
 void jp2_write_url(char *Idx_file)
 {
-  int len, lenp, i;
+  int len, lenp; 
+  unsigned int i;
   char str[256];
 
   sprintf(str, "%s", Idx_file);

@@ -78,7 +78,7 @@ static void read_siz_marker(FILE *file, opj_image_t *image)
 {
   int len,i;
   char buf, buf2[2];
-  char *siz_buffer;
+  unsigned char *siz_buffer;
 	opj_cio_t *cio;
   
   fseek(file, 0, SEEK_SET);
@@ -92,7 +92,7 @@ static void read_siz_marker(FILE *file, opj_image_t *image)
   fread(buf2,2,1,file);		/* Lsiz                */
   len = ((buf2[0])<<8) + buf2[1];
   
-  siz_buffer = (char*) malloc(len * sizeof(char));
+  siz_buffer = (unsigned char*) malloc(len * sizeof(unsigned char));
   fread(siz_buffer,len, 1, file);
 	cio = opj_cio_open(NULL, siz_buffer, len);
   
@@ -119,6 +119,7 @@ static void read_siz_marker(FILE *file, opj_image_t *image)
   }
   fseek(file, 0, SEEK_SET);
 	opj_cio_close(cio);
+  free(siz_buffer);
 }
 
 static void setparams(opj_mj2_t *movie, opj_image_t *image) {
@@ -213,7 +214,7 @@ int main(int argc, char *argv[]) {
   unsigned char* frame_codestream;
   FILE *mj2file, *j2kfile;
   char j2kfilename[50];
-  char *buf;
+  unsigned char *buf;
   int offset, mdat_initpos;
   opj_image_t img;
  	opj_cio_t *cio;
@@ -249,13 +250,13 @@ int main(int argc, char *argv[]) {
 	
 	/* setup the decoder encoding parameters using user parameters */
 	movie = (opj_mj2_t*) cinfo->mj2_handle;
-	mj2_setup_encoder(cinfo->mj2_handle, &parameters);
+	mj2_setup_encoder((opj_mj2_t*)cinfo->mj2_handle, &parameters);
 
   
 	/* Writing JP, FTYP and MDAT boxes 
 	Assuming that the JP and FTYP boxes won't be longer than 300 bytes */
 	
-  buf = (char*) malloc (300 * sizeof(char)); 
+  buf = (unsigned char*) malloc (300 * sizeof(unsigned char)); 
   cio = opj_cio_open(movie->cinfo, buf, 300);
   mj2_write_jp(cio);
   mj2_write_ftyp(movie, cio);
@@ -312,14 +313,16 @@ int main(int argc, char *argv[]) {
     // Ending loop
     fclose(j2kfile);
     snum++;
-    movie->tk[0].sample = realloc(movie->tk[0].sample, (snum+1) * sizeof(mj2_sample_t));
-    movie->tk[0].chunk = realloc(movie->tk[0].chunk, (snum+1) * sizeof(mj2_chunk_t));
+    movie->tk[0].sample = (mj2_sample_t*)
+		realloc(movie->tk[0].sample, (snum+1) * sizeof(mj2_sample_t));
+    movie->tk[0].chunk = (mj2_chunk_t*)
+		realloc(movie->tk[0].chunk, (snum+1) * sizeof(mj2_chunk_t));
     free(frame_codestream);
   }
   
   // Writing the MDAT box length in header
   offset += cio_tell(cio);
-  buf = (char*) malloc (4 * sizeof(char));
+  buf = (unsigned char*) malloc (4 * sizeof(unsigned char));
 	cio = opj_cio_open(movie->cinfo, buf, 4);
   cio_write(cio,offset-mdat_initpos,4); 
   fseek(mj2file,(long)mdat_initpos,SEEK_SET);
@@ -333,7 +336,7 @@ int main(int argc, char *argv[]) {
   setparams(movie, &img);
 	
   // Writing MOOV box 
-	buf = (char*) malloc ((TEMP_BUF+snum*20) * sizeof(char));
+	buf = (unsigned char*) malloc ((TEMP_BUF+snum*20) * sizeof(unsigned char));
 	cio = opj_cio_open(movie->cinfo, buf, (TEMP_BUF+snum*20));
 	mj2_write_moov(movie, cio);
   fwrite(buf,cio_tell(cio),1,mj2file);

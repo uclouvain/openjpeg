@@ -105,7 +105,7 @@ int main(int argc, char *argv[]) {
 
 	/* setup the decoder decoding parameters using user parameters */
 	movie = (opj_mj2_t*) dinfo->mj2_handle;
-	mj2_setup_decoder(dinfo->mj2_handle, &parameters);
+	mj2_setup_decoder((opj_mj2_t*)dinfo->mj2_handle, &parameters);
 
   if (mj2_read_struct(file, movie)) // Creating the movie structure
     return 1;

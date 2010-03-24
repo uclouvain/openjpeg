@@ -245,7 +245,7 @@ j2k_prog_order_t j2k_prog_order_list[] = {
 	{PCRL, "PCRL"},
 	{RLCP, "RLCP"},
 	{RPCL, "RPCL"},
-	{-1, ""}
+	{(OPJ_PROG_ORDER)-1, ""}
 };
 
 char *j2k_convert_progression_order(OPJ_PROG_ORDER prg_order){
