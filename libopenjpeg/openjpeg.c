@@ -872,7 +872,8 @@ bool opj_set_MCT(opj_cparameters_t *parameters,OPJ_FLOAT32 * pEncodingMatrix,OPJ
 	OPJ_UINT32 l_dc_shift_size = pNbComp * sizeof(OPJ_INT32);
 	OPJ_UINT32 l_mct_total_size = l_matrix_size + l_dc_shift_size;
 	// add MCT capability
-	parameters->cp_rsiz |= 0x8100;
+	int rsiz = (int)parameters->cp_rsiz | (int)MCT;
+	parameters->cp_rsiz = (OPJ_RSIZ_CAPABILITIES)rsiz;
 	parameters->irreversible = 1;
 	// use array based MCT
 	parameters->tcp_mct = 2;

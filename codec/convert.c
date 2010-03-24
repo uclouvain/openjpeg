@@ -1458,7 +1458,7 @@ int imagetotif(opj_image_t * image, const char *outfile) {
 				unsigned char *dat8;
 				int i, ssize;
 				ssize = TIFFStripSize(tif);
-				dat8 = buf;
+				dat8 = (unsigned char*)buf;
 				if (image->comps[0].prec == 8){
 					for (i=0; i<ssize-2; i+=3) {	// 8 bits per pixel 
 						int r = 0,g = 0,b = 0;
@@ -1653,7 +1653,7 @@ int imagetotif(opj_image_t * image, const char *outfile) {
 			for (strip = 0; strip < TIFFNumberOfStrips(tif); strip++) {
 				unsigned char *dat8;
 				int i;
-				dat8 = buf;
+				dat8 = (unsigned char*)buf;
 				if (image->comps[0].prec == 8){
 					for (i=0; i<TIFFStripSize(tif); i+=1) {	// 8 bits per pixel 
 						if(index < imgsize){
@@ -1794,7 +1794,7 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
 			unsigned char *dat8;
 			int i, ssize;
 			ssize = TIFFReadEncodedStrip(tif, strip, buf, strip_size);
-			dat8 = buf;
+			dat8 = (unsigned char*)buf;
 
 			if (Info.tiBps==12){
 				for (i=0; i<ssize; i+=9) {	/*12 bits per pixel*/
@@ -1890,7 +1890,7 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
 			unsigned char *dat8;
 			int i, ssize;
 			ssize = TIFFReadEncodedStrip(tif, strip, buf, strip_size);
-			dat8 = buf;
+			dat8 = (unsigned char*)buf;
 
 			if (Info.tiBps==12){
 				for (i=0; i<ssize; i+=3) {	/* 12 bits per pixel*/

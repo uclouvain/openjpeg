@@ -586,13 +586,15 @@ opj_pi_iterator_t *pi_create_decode(
 	l_bound = l_tcp->numpocs+1;
 	
 	l_data_stride = 4 * J2K_MAXRLVLS;
-	l_tmp_data = opj_malloc(l_data_stride * p_image->numcomps * sizeof(OPJ_UINT32));
+	l_tmp_data = (OPJ_UINT32*)opj_malloc(
+		l_data_stride * p_image->numcomps * sizeof(OPJ_UINT32));
 	if
 		(! l_tmp_data)
 	{
 		return 00;
 	}
-	l_tmp_ptr = opj_malloc(p_image->numcomps * sizeof(OPJ_UINT32 *));
+	l_tmp_ptr = (OPJ_UINT32**)opj_malloc(
+		p_image->numcomps * sizeof(OPJ_UINT32 *));
 	if
 		(! l_tmp_ptr)
 	{
@@ -871,13 +873,15 @@ opj_pi_iterator_t *pi_initialise_encode(
 	l_bound = l_tcp->numpocs+1;
 	
 	l_data_stride = 4 * J2K_MAXRLVLS;
-	l_tmp_data = opj_malloc(l_data_stride * p_image->numcomps * sizeof(OPJ_UINT32));
+	l_tmp_data = (OPJ_UINT32*)opj_malloc(
+		l_data_stride * p_image->numcomps * sizeof(OPJ_UINT32));
 	if
 		(! l_tmp_data)
 	{
 		return 00;
 	}
-	l_tmp_ptr = opj_malloc(p_image->numcomps * sizeof(OPJ_UINT32 *));
+	l_tmp_ptr = (OPJ_UINT32**)opj_malloc(
+		p_image->numcomps * sizeof(OPJ_UINT32 *));
 	if
 		(! l_tmp_ptr)
 	{

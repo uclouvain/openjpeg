@@ -398,7 +398,7 @@ INLINE bool dwt_encode_procedure(opj_tcd_tilecomp_t * tilec,void (*p_function)(O
 	rh = l_cur_res->y1 - l_cur_res->y0;
 
 	l_data_size = dwt_max_resolution( tilec->resolutions,tilec->numresolutions) * sizeof(OPJ_INT32);
-	bj = opj_malloc(l_data_size);
+	bj = (OPJ_INT32*)opj_malloc(l_data_size);
 	if
 		(! bj)
 	{
@@ -563,7 +563,8 @@ static bool dwt_decode_tile(opj_tcd_tilecomp_t* tilec, OPJ_UINT32 numres, DWT1DF
 
 	OPJ_UINT32 w = tilec->x1 - tilec->x0;
 
-	h.mem = opj_aligned_malloc(dwt_max_resolution(tr, numres) * sizeof(OPJ_INT32));
+	h.mem = (OPJ_INT32*)
+	opj_aligned_malloc(dwt_max_resolution(tr, numres) * sizeof(OPJ_INT32));
 	if
 		(! h.mem)
 	{

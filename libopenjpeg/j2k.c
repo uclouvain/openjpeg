@@ -58,7 +58,7 @@
 typedef struct j2k_prog_order
 {
 	OPJ_PROG_ORDER enum_prog;
-	OPJ_CHAR str_prog[4];
+	OPJ_CHAR str_prog[5];
 }
 j2k_prog_order_t;
 
@@ -1254,7 +1254,7 @@ const j2k_prog_order_t j2k_prog_order_list [] =
 	{PCRL, "PCRL"},
 	{RLCP, "RLCP"},
 	{RPCL, "RPCL"},
-	{-1, ""}
+	{(OPJ_PROG_ORDER)-1, ""}
 };
 
 const OPJ_UINT32 MCT_ELEMENT_SIZE [] = 
@@ -1969,7 +1969,7 @@ bool j2k_write_siz(
 		(l_size_len > p_j2k->m_specific_param.m_encoder.m_header_tile_data_size)
 	{
 		p_j2k->m_specific_param.m_encoder.m_header_tile_data 
-			= opj_realloc(
+			= (OPJ_BYTE*)opj_realloc(
 				p_j2k->m_specific_param.m_encoder.m_header_tile_data,
 				l_size_len);
 		if
@@ -2289,7 +2289,8 @@ bool j2k_read_siz (
 	}
 	memset(p_j2k->m_specific_param.m_decoder.m_default_tcp->tccps ,0,l_image->numcomps*sizeof(opj_tccp_t));
 	
-	p_j2k->m_specific_param.m_decoder.m_default_tcp->m_mct_records = opj_malloc(J2K_MCT_DEFAULT_NB_RECORDS * sizeof(opj_mct_data_t));
+	p_j2k->m_specific_param.m_decoder.m_default_tcp->m_mct_records = 
+	(opj_mct_data_t*)opj_malloc(J2K_MCT_DEFAULT_NB_RECORDS * sizeof(opj_mct_data_t));
 	if
 		(! p_j2k->m_specific_param.m_decoder.m_default_tcp->m_mct_records)
 	{
@@ -2299,7 +2300,9 @@ bool j2k_read_siz (
 	memset(p_j2k->m_specific_param.m_decoder.m_default_tcp->m_mct_records,0,J2K_MCT_DEFAULT_NB_RECORDS * sizeof(opj_mct_data_t));
 	p_j2k->m_specific_param.m_decoder.m_default_tcp->m_nb_max_mct_records = J2K_MCT_DEFAULT_NB_RECORDS;
 
-	p_j2k->m_specific_param.m_decoder.m_default_tcp->m_mcc_records = opj_malloc(J2K_MCC_DEFAULT_NB_RECORDS * sizeof(opj_simple_mcc_decorrelation_data_t));
+	p_j2k->m_specific_param.m_decoder.m_default_tcp->m_mcc_records = 
+	(opj_simple_mcc_decorrelation_data_t*)
+	opj_malloc(J2K_MCC_DEFAULT_NB_RECORDS * sizeof(opj_simple_mcc_decorrelation_data_t));
 	if
 		(! p_j2k->m_specific_param.m_decoder.m_default_tcp->m_mcc_records)
 	{
@@ -2396,7 +2399,7 @@ bool j2k_write_com(
 		(l_total_com_size > p_j2k->m_specific_param.m_encoder.m_header_tile_data_size)
 	{
 		p_j2k->m_specific_param.m_encoder.m_header_tile_data 
-			= opj_realloc(
+			= (OPJ_BYTE*)opj_realloc(
 				p_j2k->m_specific_param.m_encoder.m_header_tile_data,
 				l_total_com_size);
 		if
@@ -2757,7 +2760,7 @@ bool j2k_write_cod(
 		(l_code_size > p_j2k->m_specific_param.m_encoder.m_header_tile_data_size)
 	{
 		p_j2k->m_specific_param.m_encoder.m_header_tile_data 
-			= opj_realloc(
+			= (OPJ_BYTE*)opj_realloc(
 				p_j2k->m_specific_param.m_encoder.m_header_tile_data,
 				l_code_size);
 		if
@@ -2938,7 +2941,7 @@ bool j2k_write_coc(
 		(l_coc_size > p_j2k->m_specific_param.m_encoder.m_header_tile_data_size)
 	{
 		p_j2k->m_specific_param.m_encoder.m_header_tile_data 
-			= opj_realloc(
+			= (OPJ_BYTE*)opj_realloc(
 				p_j2k->m_specific_param.m_encoder.m_header_tile_data,
 				l_coc_size);
 		if
@@ -3490,7 +3493,7 @@ bool j2k_write_qcd(
 		(l_qcd_size > p_j2k->m_specific_param.m_encoder.m_header_tile_data_size)
 	{
 		p_j2k->m_specific_param.m_encoder.m_header_tile_data 
-			= opj_realloc(
+			= (OPJ_BYTE*)opj_realloc(
 				p_j2k->m_specific_param.m_encoder.m_header_tile_data,
 				l_qcd_size);
 		if
@@ -3595,7 +3598,7 @@ bool j2k_write_qcc(
 		(l_qcc_size > p_j2k->m_specific_param.m_encoder.m_header_tile_data_size)
 	{
 		p_j2k->m_specific_param.m_encoder.m_header_tile_data 
-			= opj_realloc(
+			= (OPJ_BYTE*)opj_realloc(
 				p_j2k->m_specific_param.m_encoder.m_header_tile_data,
 				l_qcc_size);
 		if
@@ -3797,7 +3800,7 @@ bool j2k_write_cbd(
 		(l_cbd_size > p_j2k->m_specific_param.m_encoder.m_header_tile_data_size)
 	{
 		p_j2k->m_specific_param.m_encoder.m_header_tile_data 
-			= opj_realloc(
+			= (OPJ_BYTE*)opj_realloc(
 				p_j2k->m_specific_param.m_encoder.m_header_tile_data,
 				l_cbd_size);
 		if
@@ -3927,7 +3930,7 @@ bool j2k_write_mcc_record(
 		(l_mcc_size > p_j2k->m_specific_param.m_encoder.m_header_tile_data_size)
 	{
 		p_j2k->m_specific_param.m_encoder.m_header_tile_data 
-			= opj_realloc(
+			= (OPJ_BYTE*)opj_realloc(
 				p_j2k->m_specific_param.m_encoder.m_header_tile_data,
 				l_mcc_size);
 		if
@@ -4073,7 +4076,8 @@ bool j2k_read_mcc (
 			(l_tcp->m_nb_mcc_records == l_tcp->m_nb_max_mcc_records)
 		{
 			l_tcp->m_nb_max_mcc_records += J2K_MCC_DEFAULT_NB_RECORDS;
-			l_tcp->m_mcc_records = opj_realloc(l_tcp->m_mcc_records,l_tcp->m_nb_max_mcc_records * sizeof(opj_simple_mcc_decorrelation_data_t));
+			l_tcp->m_mcc_records = (opj_simple_mcc_decorrelation_data_t*)
+			opj_realloc(l_tcp->m_mcc_records,l_tcp->m_nb_max_mcc_records * sizeof(opj_simple_mcc_decorrelation_data_t));
 			if
 				(! l_tcp->m_mcc_records)
 			{
@@ -4265,7 +4269,7 @@ bool j2k_write_mct_record(
 		(l_mct_size > p_j2k->m_specific_param.m_encoder.m_header_tile_data_size)
 	{
 		p_j2k->m_specific_param.m_encoder.m_header_tile_data 
-			= opj_realloc(
+			= (OPJ_BYTE*)opj_realloc(
 				p_j2k->m_specific_param.m_encoder.m_header_tile_data,
 				l_mct_size);
 		if
@@ -4371,7 +4375,7 @@ bool j2k_read_mct (
 			(l_tcp->m_nb_mct_records == l_tcp->m_nb_max_mct_records)
 		{
 			l_tcp->m_nb_max_mct_records += J2K_MCT_DEFAULT_NB_RECORDS;
-			l_tcp->m_mct_records = opj_realloc(l_tcp->m_mct_records,l_tcp->m_nb_max_mct_records * sizeof(opj_mct_data_t));
+			l_tcp->m_mct_records = (opj_mct_data_t*)opj_realloc(l_tcp->m_mct_records,l_tcp->m_nb_max_mct_records * sizeof(opj_mct_data_t));
 			if
 				(! l_tcp->m_mct_records)
 			{
@@ -4390,8 +4394,8 @@ bool j2k_read_mct (
 		l_mct_data->m_data = 00;
 	}
 	l_mct_data->m_index = l_indix;
-	l_mct_data->m_array_type = (l_tmp  >> 8) & 3;
-	l_mct_data->m_element_type = (l_tmp  >> 10) & 3;
+	l_mct_data->m_array_type = (J2K_MCT_ARRAY_TYPE)((l_tmp  >> 8) & 3);
+	l_mct_data->m_element_type = (J2K_MCT_ELEMENT_TYPE)((l_tmp  >> 10) & 3);
 
 	opj_read_bytes(p_header_data,&l_tmp,2);				/* Ymct */	
 	p_header_data+=2;
@@ -4402,7 +4406,7 @@ bool j2k_read_mct (
 		return true;
 	}
 	p_header_size -= 6;
-	l_mct_data->m_data = opj_malloc(p_header_size);
+	l_mct_data->m_data = (OPJ_BYTE*)opj_malloc(p_header_size);
 	if
 		(! l_mct_data->m_data)
 	{
@@ -4441,7 +4445,7 @@ bool	 j2k_setup_mct_encoding (opj_tcp_t * p_tcp,opj_image_t * p_image)
 			(p_tcp->m_nb_mct_records == p_tcp->m_nb_max_mct_records)
 		{
 			p_tcp->m_nb_max_mct_records += J2K_MCT_DEFAULT_NB_RECORDS;
-			p_tcp->m_mct_records = opj_realloc(p_tcp->m_mct_records,p_tcp->m_nb_max_mct_records * sizeof(opj_mct_data_t));
+			p_tcp->m_mct_records = (opj_mct_data_t*)opj_realloc(p_tcp->m_mct_records,p_tcp->m_nb_max_mct_records * sizeof(opj_mct_data_t));
 			if
 				(! p_tcp->m_mct_records)
 			{
@@ -4463,7 +4467,7 @@ bool	 j2k_setup_mct_encoding (opj_tcp_t * p_tcp,opj_image_t * p_image)
 		l_mct_deco_data->m_element_type = MCT_TYPE_FLOAT;
 		l_nb_elem = p_image->numcomps * p_image->numcomps;
 		l_mct_size = l_nb_elem * MCT_ELEMENT_SIZE[l_mct_deco_data->m_element_type];
-		l_mct_deco_data->m_data = opj_malloc(l_mct_size );
+		l_mct_deco_data->m_data = (OPJ_BYTE*)opj_malloc(l_mct_size );
 		if
 			(! l_mct_deco_data->m_data)
 		{
@@ -4478,7 +4482,7 @@ bool	 j2k_setup_mct_encoding (opj_tcp_t * p_tcp,opj_image_t * p_image)
 		(p_tcp->m_nb_mct_records == p_tcp->m_nb_max_mct_records)
 	{
 		p_tcp->m_nb_max_mct_records += J2K_MCT_DEFAULT_NB_RECORDS;
-		p_tcp->m_mct_records = opj_realloc(p_tcp->m_mct_records,p_tcp->m_nb_max_mct_records * sizeof(opj_mct_data_t));
+		p_tcp->m_mct_records = (opj_mct_data_t*)opj_realloc(p_tcp->m_mct_records,p_tcp->m_nb_max_mct_records * sizeof(opj_mct_data_t));
 		if
 			(! p_tcp->m_mct_records)
 		{
@@ -4505,13 +4509,13 @@ bool	 j2k_setup_mct_encoding (opj_tcp_t * p_tcp,opj_image_t * p_image)
 	l_mct_offset_data->m_element_type = MCT_TYPE_FLOAT;
 	l_nb_elem = p_image->numcomps;
 	l_mct_size = l_nb_elem * MCT_ELEMENT_SIZE[l_mct_offset_data->m_element_type];
-	l_mct_offset_data->m_data = opj_malloc(l_mct_size );
+	l_mct_offset_data->m_data = (OPJ_BYTE*)opj_malloc(l_mct_size );
 	if
 		(! l_mct_offset_data->m_data)
 	{
 		return false;
 	}
-	l_data = opj_malloc(l_nb_elem * sizeof(OPJ_FLOAT32));
+	l_data = (OPJ_FLOAT32*)opj_malloc(l_nb_elem * sizeof(OPJ_FLOAT32));
 	if
 		(! l_data)
 	{
@@ -4536,7 +4540,8 @@ bool	 j2k_setup_mct_encoding (opj_tcp_t * p_tcp,opj_image_t * p_image)
 		(p_tcp->m_nb_mcc_records == p_tcp->m_nb_max_mcc_records)
 	{
 		p_tcp->m_nb_max_mcc_records += J2K_MCT_DEFAULT_NB_RECORDS;
-		p_tcp->m_mcc_records = opj_realloc(p_tcp->m_mcc_records,p_tcp->m_nb_max_mcc_records * sizeof(opj_simple_mcc_decorrelation_data_t));
+		p_tcp->m_mcc_records = (opj_simple_mcc_decorrelation_data_t*)
+		opj_realloc(p_tcp->m_mcc_records,p_tcp->m_nb_max_mcc_records * sizeof(opj_simple_mcc_decorrelation_data_t));
 		if
 			(! p_tcp->m_mcc_records)
 		{
@@ -4587,7 +4592,7 @@ bool j2k_write_mco(
 		(l_mco_size > p_j2k->m_specific_param.m_encoder.m_header_tile_data_size)
 	{
 		p_j2k->m_specific_param.m_encoder.m_header_tile_data 
-			= opj_realloc(
+			= (OPJ_BYTE*)opj_realloc(
 				p_j2k->m_specific_param.m_encoder.m_header_tile_data,
 				l_mco_size);
 		if
@@ -4749,7 +4754,7 @@ bool j2k_add_mct(opj_tcp_t * p_tcp,opj_image_t * p_image, OPJ_UINT32 p_index)
 		}
 		l_nb_elem = p_image->numcomps * p_image->numcomps;
 		l_mct_size = l_nb_elem * sizeof(OPJ_FLOAT32);
-		p_tcp->m_mct_decoding_matrix = opj_malloc(l_mct_size);
+		p_tcp->m_mct_decoding_matrix = (OPJ_FLOAT32*)opj_malloc(l_mct_size);
 		if
 			(! p_tcp->m_mct_decoding_matrix )
 		{
@@ -4769,7 +4774,7 @@ bool j2k_add_mct(opj_tcp_t * p_tcp,opj_image_t * p_image, OPJ_UINT32 p_index)
 		}
 		l_nb_elem = p_image->numcomps;
 		l_offset_size = l_nb_elem * sizeof(OPJ_UINT32);
-		l_offset_data = opj_malloc(l_offset_size);
+		l_offset_data = (OPJ_UINT32*)opj_malloc(l_offset_size);
 		if
 			(! l_offset_data )
 		{
@@ -4893,7 +4898,7 @@ bool j2k_write_poc(
 		(l_poc_size > p_j2k->m_specific_param.m_encoder.m_header_tile_data_size)
 	{
 		p_j2k->m_specific_param.m_encoder.m_header_tile_data 
-			= opj_realloc(
+			= (OPJ_BYTE*)opj_realloc(
 				p_j2k->m_specific_param.m_encoder.m_header_tile_data,
 				l_poc_size);
 		if
@@ -5325,7 +5330,7 @@ bool j2k_write_tlm(
 		(l_tlm_size > p_j2k->m_specific_param.m_encoder.m_header_tile_data_size)
 	{
 		p_j2k->m_specific_param.m_encoder.m_header_tile_data 
-			= opj_realloc(
+			= (OPJ_BYTE*)opj_realloc(
 				p_j2k->m_specific_param.m_encoder.m_header_tile_data,
 				l_tlm_size);
 		if
@@ -7231,10 +7236,10 @@ void j2k_setup_header_reading (opj_j2k_t *p_j2k)
 {
 	// preconditions
 	assert(p_j2k != 00);
-	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,j2k_read_header_procedure);
+	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(void*)j2k_read_header_procedure);
 
 	/* DEVELOPER CORNER, add your custom procedures */
-	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,j2k_copy_default_tcp_and_create_tcd);
+	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(void*)j2k_copy_default_tcp_and_create_tcd);
 
 }
 
@@ -7246,7 +7251,7 @@ void j2k_setup_decoding (opj_j2k_t *p_j2k)
 	// preconditions
 	assert(p_j2k != 00);
 
-	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,j2k_decode_tiles);
+	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(void*)j2k_decode_tiles);
 	/* DEVELOPER CORNER, add your custom procedures */
 
 }
@@ -7258,47 +7263,47 @@ void j2k_setup_header_writting (opj_j2k_t *p_j2k)
 {
 	// preconditions
 	assert(p_j2k != 00);
-	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,j2k_init_info );
-	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,j2k_write_soc );
-	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,j2k_write_siz );
-	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,j2k_write_cod );
-	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,j2k_write_qcd );
+	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(void*)j2k_init_info );
+	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(void*)j2k_write_soc );
+	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(void*)j2k_write_siz );
+	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(void*)j2k_write_cod );
+	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(void*)j2k_write_qcd );
 	
 
 	if
 		(p_j2k->m_cp.m_specific_param.m_enc.m_cinema)
 	{
-		opj_procedure_list_add_procedure(p_j2k->m_procedure_list,j2k_write_image_components );
-		opj_procedure_list_add_procedure(p_j2k->m_procedure_list,j2k_write_tlm );
+		opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(void*)j2k_write_image_components );
+		opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(void*)j2k_write_tlm );
 		if 
 			(p_j2k->m_cp.m_specific_param.m_enc.m_cinema == CINEMA4K_24) 
 		{
-			opj_procedure_list_add_procedure(p_j2k->m_procedure_list,j2k_write_poc );
+			opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(void*)j2k_write_poc );
 		}
 	}
-	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,j2k_write_regions);
+	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(void*)j2k_write_regions);
 
 	if 
 		(p_j2k->m_cp.comment != 00) 
 	{
-		opj_procedure_list_add_procedure(p_j2k->m_procedure_list,j2k_write_com);
+		opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(void*)j2k_write_com);
 	}
 	
 	/* DEVELOPER CORNER, insert your custom procedures */
 	if
 		(p_j2k->m_cp.rsiz & MCT)
 	{
-		opj_procedure_list_add_procedure(p_j2k->m_procedure_list,j2k_write_mct_data_group );
+		opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(void*)j2k_write_mct_data_group );
 	}
 	/* End of Developer Corner */
 
 	if
 		(p_j2k->cstr_info) 
 	{
-		opj_procedure_list_add_procedure(p_j2k->m_procedure_list,j2k_get_end_header );
+		opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(void*)j2k_get_end_header );
 	}
-	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,j2k_create_tcd);
-	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,j2k_update_rates);
+	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(void*)j2k_create_tcd);
+	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(void*)j2k_update_rates);
 }
 
 /**
@@ -7311,15 +7316,15 @@ void j2k_setup_end_compress (opj_j2k_t *p_j2k)
 	assert(p_j2k != 00);
 
 	/* DEVELOPER CORNER, insert your custom procedures */
-	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,j2k_write_eoc );
+	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(void*)j2k_write_eoc );
 	if
 		(p_j2k->m_cp.m_specific_param.m_enc.m_cinema)
 	{
-		opj_procedure_list_add_procedure(p_j2k->m_procedure_list,j2k_write_updated_tlm);
+		opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(void*)j2k_write_updated_tlm);
 	}
-	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,j2k_write_epc );
-	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,j2k_end_encoding );
-	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,j2k_destroy_header_memory);
+	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(void*)j2k_write_epc );
+	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(void*)j2k_end_encoding );
+	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(void*)j2k_destroy_header_memory);
 }
 
 
@@ -7332,12 +7337,12 @@ void j2k_setup_encoding_validation (opj_j2k_t *p_j2k)
 {
 	// preconditions
 	assert(p_j2k != 00);
-	opj_procedure_list_add_procedure(p_j2k->m_validation_list, j2k_build_encoder);
-	opj_procedure_list_add_procedure(p_j2k->m_validation_list, j2k_encoding_validation);
+	opj_procedure_list_add_procedure(p_j2k->m_validation_list, (void*)j2k_build_encoder);
+	opj_procedure_list_add_procedure(p_j2k->m_validation_list, (void*)j2k_encoding_validation);
 
 
 	/* DEVELOPER CORNER, add your custom validation procedure */
-	opj_procedure_list_add_procedure(p_j2k->m_validation_list, j2k_mct_validation);
+	opj_procedure_list_add_procedure(p_j2k->m_validation_list, (void*)j2k_mct_validation);
 }
 
 /**
@@ -7348,8 +7353,8 @@ void j2k_setup_decoding_validation (opj_j2k_t *p_j2k)
 {
 	// preconditions
 	assert(p_j2k != 00);
-	opj_procedure_list_add_procedure(p_j2k->m_validation_list, j2k_build_decoder);
-	opj_procedure_list_add_procedure(p_j2k->m_validation_list, j2k_decoding_validation);
+	opj_procedure_list_add_procedure(p_j2k->m_validation_list, (void*)j2k_build_decoder);
+	opj_procedure_list_add_procedure(p_j2k->m_validation_list, (void*)j2k_decoding_validation);
 	/* DEVELOPER CORNER, add your custom validation procedure */
 
 }
@@ -7600,7 +7605,7 @@ bool j2k_copy_default_tcp_and_create_tcd
 		if
 			(l_default_tcp->m_mct_decoding_matrix)
 		{
-			l_tcp->m_mct_decoding_matrix = opj_malloc(l_mct_size);
+			l_tcp->m_mct_decoding_matrix = (OPJ_FLOAT32*)opj_malloc(l_mct_size);
 			if
 				(! l_tcp->m_mct_decoding_matrix )
 			{
@@ -7609,7 +7614,7 @@ bool j2k_copy_default_tcp_and_create_tcd
 			memcpy(l_tcp->m_mct_decoding_matrix,l_default_tcp->m_mct_decoding_matrix,l_mct_size);
 		}
 		l_mct_records_size = l_default_tcp->m_nb_max_mct_records * sizeof(opj_mct_data_t);
-		l_tcp->m_mct_records = opj_malloc(l_mct_records_size);
+		l_tcp->m_mct_records = (opj_mct_data_t*)opj_malloc(l_mct_records_size);
 		if
 			(! l_tcp->m_mct_records)
 		{
@@ -7624,7 +7629,8 @@ bool j2k_copy_default_tcp_and_create_tcd
 			if
 				(l_src_mct_rec->m_data)
 			{
-				l_dest_mct_rec->m_data = opj_malloc(l_src_mct_rec->m_data_size);
+				l_dest_mct_rec->m_data = (OPJ_BYTE*)
+				opj_malloc(l_src_mct_rec->m_data_size);
 				if
 					(! l_dest_mct_rec->m_data)
 				{
@@ -7636,7 +7642,8 @@ bool j2k_copy_default_tcp_and_create_tcd
 			++l_dest_mct_rec;
 		}
 		l_mcc_records_size = l_default_tcp->m_nb_max_mcc_records * sizeof(opj_simple_mcc_decorrelation_data_t);
-		l_tcp->m_mcc_records = opj_malloc(l_mcc_records_size);
+		l_tcp->m_mcc_records = (opj_simple_mcc_decorrelation_data_t*)
+		opj_malloc(l_mcc_records_size);
 		if
 			(! l_tcp->m_mcc_records)
 		{
@@ -7934,15 +7941,16 @@ void j2k_setup_encoder(opj_j2k_t *p_j2k, opj_cparameters_t *parameters, opj_imag
 			(parameters->mct_data)
 		{
 			OPJ_UINT32 lMctSize = image->numcomps * image->numcomps * sizeof(OPJ_FLOAT32);
-			OPJ_FLOAT32 * lTmpBuf = opj_malloc(lMctSize);
+			OPJ_FLOAT32 * lTmpBuf = (OPJ_FLOAT32*)opj_malloc(lMctSize);
 			OPJ_INT32 * l_dc_shift = (OPJ_INT32 *) ((OPJ_BYTE *) parameters->mct_data + lMctSize);
 			tcp->mct = 2;
-			tcp->m_mct_coding_matrix = opj_malloc(lMctSize);
+			tcp->m_mct_coding_matrix = (OPJ_FLOAT32*)opj_malloc(lMctSize);
 			memcpy(tcp->m_mct_coding_matrix,parameters->mct_data,lMctSize);
 			memcpy(lTmpBuf,parameters->mct_data,lMctSize);
-			tcp->m_mct_decoding_matrix = opj_malloc(lMctSize);
+			tcp->m_mct_decoding_matrix = (OPJ_FLOAT32*)opj_malloc(lMctSize);
 			assert(opj_matrix_inversion_f(lTmpBuf,(tcp->m_mct_decoding_matrix),image->numcomps));
-			tcp->mct_norms = opj_malloc(image->numcomps * sizeof(OPJ_FLOAT64));
+			tcp->mct_norms = (OPJ_FLOAT64*)
+			opj_malloc(image->numcomps * sizeof(OPJ_FLOAT64));
 			opj_calculate_norms(tcp->mct_norms,image->numcomps,tcp->m_mct_decoding_matrix);
 			opj_free(lTmpBuf);
 			for 
@@ -8445,7 +8453,8 @@ bool j2k_read_tile_header (
 			if
 				(l_marker_size > p_j2k->m_specific_param.m_decoder.m_header_data_size)
 			{
-				p_j2k->m_specific_param.m_decoder.m_header_data = opj_realloc(p_j2k->m_specific_param.m_decoder.m_header_data,l_marker_size);
+				p_j2k->m_specific_param.m_decoder.m_header_data = (OPJ_BYTE*)
+				opj_realloc(p_j2k->m_specific_param.m_decoder.m_header_data,l_marker_size);
 				if
 					(p_j2k->m_specific_param.m_decoder.m_header_data == 00)
 				{
@@ -8784,7 +8793,8 @@ bool j2k_read_header_procedure(
 		if
 			(l_marker_size > p_j2k->m_specific_param.m_decoder.m_header_data_size)
 		{
-			p_j2k->m_specific_param.m_decoder.m_header_data = opj_realloc(p_j2k->m_specific_param.m_decoder.m_header_data,l_marker_size);
+			p_j2k->m_specific_param.m_decoder.m_header_data = (OPJ_BYTE*)
+			opj_realloc(p_j2k->m_specific_param.m_decoder.m_header_data,l_marker_size);
 			if
 				(p_j2k->m_specific_param.m_decoder.m_header_data == 00)
 			{
@@ -8833,7 +8843,7 @@ bool j2k_decode_tiles (
 	OPJ_UINT32 l_nb_comps;
 	OPJ_BYTE * l_current_data;
 
-	l_current_data = opj_malloc(1000);
+	l_current_data = (OPJ_BYTE*)opj_malloc(1000);
 	if
 		(! l_current_data)
 	{
@@ -8867,7 +8877,7 @@ bool j2k_decode_tiles (
 		if
 			(l_data_size > l_max_data_size)
 		{
-			l_current_data = opj_realloc(l_current_data,l_data_size);
+			l_current_data = (OPJ_BYTE*)opj_realloc(l_current_data,l_data_size);
 			if
 				(! l_current_data)
 			{
@@ -8938,7 +8948,7 @@ bool j2k_encode(
 	assert(p_stream != 00);
 	assert(p_manager != 00);
 
-	l_current_data = opj_malloc(1000);
+	l_current_data = (OPJ_BYTE*)opj_malloc(1000);
 	if
 		(! l_current_data)
 	{
@@ -8960,7 +8970,7 @@ bool j2k_encode(
 		if
 			(l_current_tile_size > l_max_tile_size)
 		{
-			l_current_data = opj_realloc(l_current_data,l_current_tile_size);
+			l_current_data = (OPJ_BYTE*)opj_realloc(l_current_data,l_current_tile_size);
 			if
 				(! l_current_data)
 			{

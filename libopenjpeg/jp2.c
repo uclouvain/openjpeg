@@ -505,7 +505,7 @@ bool jp2_read_header_procedure(
 	assert(jp2 != 00);
 	assert(p_manager != 00);
 
-	l_current_data = opj_malloc(l_last_data_size);
+	l_current_data = (unsigned char*)opj_malloc(l_last_data_size);
 	
 	if
 		(l_current_data == 00)
@@ -549,7 +549,7 @@ bool jp2_read_header_procedure(
 			if
 				(l_current_data_size > l_last_data_size)
 			{
-				l_current_data = opj_realloc(l_current_data,l_current_data_size);
+				l_current_data = (unsigned char*)opj_realloc(l_current_data,l_current_data_size);
 				l_last_data_size = l_current_data_size;
 			}
 			l_nb_bytes_read = opj_stream_read_data(cio,l_current_data,l_current_data_size,p_manager);
@@ -1902,7 +1902,7 @@ void jp2_setup_end_header_writting (opj_jp2_t *jp2)
 	// preconditions
 	assert(jp2 != 00);
 
-	opj_procedure_list_add_procedure(jp2->m_procedure_list,jp2_write_jp2c );
+	opj_procedure_list_add_procedure(jp2->m_procedure_list,(void*)jp2_write_jp2c );
 	/* DEVELOPER CORNER, add your custom procedures */
 }
 
@@ -1915,7 +1915,7 @@ void jp2_setup_header_reading (opj_jp2_t *jp2)
 	// preconditions
 	assert(jp2 != 00);
 
-	opj_procedure_list_add_procedure(jp2->m_procedure_list,jp2_read_header_procedure );
+	opj_procedure_list_add_procedure(jp2->m_procedure_list,(void*)jp2_read_header_procedure );
 	/* DEVELOPER CORNER, add your custom procedures */
 }
 
@@ -1927,7 +1927,7 @@ void jp2_setup_end_header_reading (opj_jp2_t *jp2)
 {
 	// preconditions
 	assert(jp2 != 00);
-	opj_procedure_list_add_procedure(jp2->m_procedure_list,jp2_read_header_procedure );
+	opj_procedure_list_add_procedure(jp2->m_procedure_list,(void*)jp2_read_header_procedure );
 	/* DEVELOPER CORNER, add your custom procedures */
 }
 
@@ -2005,7 +2005,7 @@ void jp2_setup_encoding_validation (opj_jp2_t *jp2)
 {
 	// preconditions
 	assert(jp2 != 00);
-	opj_procedure_list_add_procedure(jp2->m_validation_list, jp2_default_validation);
+	opj_procedure_list_add_procedure(jp2->m_validation_list, (void*)jp2_default_validation);
 	/* DEVELOPER CORNER, add your custom validation procedure */
 }
 
@@ -2027,10 +2027,10 @@ void jp2_setup_header_writting (opj_jp2_t *jp2)
 {
 	// preconditions
 	assert(jp2 != 00);
-	opj_procedure_list_add_procedure(jp2->m_procedure_list,jp2_write_jp );
-	opj_procedure_list_add_procedure(jp2->m_procedure_list,jp2_write_ftyp );
-	opj_procedure_list_add_procedure(jp2->m_procedure_list,jp2_write_jp2h );
-	opj_procedure_list_add_procedure(jp2->m_procedure_list,jp2_skip_jp2c );
+	opj_procedure_list_add_procedure(jp2->m_procedure_list,(void*)jp2_write_jp );
+	opj_procedure_list_add_procedure(jp2->m_procedure_list,(void*)jp2_write_ftyp );
+	opj_procedure_list_add_procedure(jp2->m_procedure_list,(void*)jp2_write_jp2h );
+	opj_procedure_list_add_procedure(jp2->m_procedure_list,(void*)jp2_skip_jp2c );
 	
 	/* DEVELOPER CORNER, insert your custom procedures */
 
