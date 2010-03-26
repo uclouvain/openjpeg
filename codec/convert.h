@@ -55,7 +55,7 @@ int imagetotga(opj_image_t * image, const char *outfile);
 opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters);
 int imagetobmp(opj_image_t *image, const char *outfile);
 
-/* TIFF to image conversion*/
+/* TIFF conversion*/
 opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters);
 int imagetotif(opj_image_t *image, const char *outfile);
 /**
@@ -73,6 +73,10 @@ int imagetopnm(opj_image_t *image, const char *outfile);
 /* RAW conversion */
 int imagetoraw(opj_image_t * image, const char *outfile);
 opj_image_t* rawtoimage(const char *filename, opj_cparameters_t *parameters, raw_cparameters_t *raw_cp);
+
+/* PNG conversion*/
+extern int imagetopng(opj_image_t *image, const char *write_idf);
+extern opj_image_t* pngtoimage(const char *filename, opj_cparameters_t *parameters);
 
 #endif /* __J2K_CONVERT_H */
 

@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+March 26, 2010
+* [FOD] Added support for PNG image format [Not yet functional under WIN32]. Thanks to Winfried for this patch.	See details here http://code.google.com/p/openjpeg/issues/detail?id=16
+
 March 24, 2010
 * [FOD] Code improvements using 'g++-4.4.0' to trace the code. Thanks to Winfried for this patch.		
 

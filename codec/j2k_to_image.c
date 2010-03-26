@@ -58,7 +58,7 @@
 #define TIF_DFMT 14
 #define RAW_DFMT 15
 #define TGA_DFMT 16
-
+#define PNG_DFMT 17
 /* ----------------------------------------------------------------------- */
 
 typedef struct dircnt{
@@ -188,8 +188,8 @@ int load_images(dircnt_t *dirptr, char *imgdirpath){
 
 int get_file_format(char *filename) {
 	unsigned int i;
-	static const char *extension[] = {"pgx", "pnm", "pgm", "ppm", "bmp","tif", "raw", "tga", "j2k", "jp2", "jpt", "j2c" };
-	static const int format[] = { PGX_DFMT, PXM_DFMT, PXM_DFMT, PXM_DFMT, BMP_DFMT, TIF_DFMT, RAW_DFMT, TGA_DFMT, J2K_CFMT, JP2_CFMT, JPT_CFMT, J2K_CFMT };
+	static const char *extension[] = {"pgx", "pnm", "pgm", "ppm", "bmp","tif", "raw", "tga", "png", "j2k", "jp2", "jpt", "j2c" };
+	static const int format[] = { PGX_DFMT, PXM_DFMT, PXM_DFMT, PXM_DFMT, BMP_DFMT, TIF_DFMT, RAW_DFMT, TGA_DFMT, PNG_DFMT, J2K_CFMT, JP2_CFMT, JPT_CFMT, J2K_CFMT };
 	char * ext = strrchr(filename, '.');
 	if (ext == NULL)
 		return -1;
@@ -286,6 +286,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 					case TIF_DFMT:
 					case RAW_DFMT:
 					case TGA_DFMT:
+					case PNG_DFMT:
 						break;
 					default:
 						fprintf(stderr, "Unknown output format image %s [only *.pnm, *.pgm, *.ppm, *.pgx, *.bmp, *.tif, *.raw or *.tga]!! \n", outfile);
@@ -322,6 +323,9 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 						break;
 					case TGA_DFMT:
 						img_fol->out_format = "raw";
+						break;
+					case PNG_DFMT:
+						img_fol->out_format = "png";
 						break;
 					default:
 						fprintf(stderr, "Unknown output format image %s [only *.pnm, *.pgm, *.ppm, *.pgx, *.bmp, *.tif, *.raw or *.tga]!! \n", outformat);
@@ -781,6 +785,15 @@ int main(int argc, char **argv) {
 		case TGA_DFMT:			/* TGA */
 			if(imagetotga(image, parameters.outfile)){
 				fprintf(stdout,"Error generating tga file. Outfile %s not generated\n",parameters.outfile);
+			}
+			else {
+				fprintf(stdout,"Successfully generated Outfile %s\n",parameters.outfile);
+			}
+			break;
+
+		case PNG_DFMT:			/* PNG */
+			if(imagetopng(image, parameters.outfile)){
+				fprintf(stdout,"Error generating png file. Outfile %s not generated\n",parameters.outfile);
 			}
 			else {
 				fprintf(stdout,"Successfully generated Outfile %s\n",parameters.outfile);
