@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+March 26, 2010
++ [FOD] Added support for "jpc" codestreams which are equivalent to "j2c" codestreams. Thanks to Winfried for this patch
+
 March 24, 2010
 * [FOD] Code improvements using 'g++-4.4.0' to trace the code. Thanks to Winfried for this patch.		
 
