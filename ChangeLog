@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 March 26, 2010
++ [FOD] Added support for "jpc" codestreams which are equivalent to "j2c" codestreams. Thanks to Winfried for this patch
 * [FOD] Added support for PNG image format [Not yet functional under WIN32]. Thanks to Winfried for this patch.	See details here http://code.google.com/p/openjpeg/issues/detail?id=16
 
 March 24, 2010
