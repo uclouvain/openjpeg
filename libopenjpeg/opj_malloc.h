@@ -45,7 +45,11 @@ Allocate an uninitialized memory block
 @param size Bytes to allocate
 @return Returns a void pointer to the allocated space, or NULL if there is insufficient memory available
 */
+#ifdef ALLOC_PERF_OPT
+void * OPJ_CALLCONV opj_malloc(size_t size);
+#else
 #define opj_malloc(size) malloc(size)
+#endif
 
 /**
 Allocate a memory block with elements initialized to 0
@@ -53,7 +57,11 @@ Allocate a memory block with elements initialized to 0
 @param size Bytes per block to allocate
 @return Returns a void pointer to the allocated space, or NULL if there is insufficient memory available
 */
+#ifdef ALLOC_PERF_OPT
+void * OPJ_CALLCONV opj_calloc(size_t _NumOfElements, size_t _SizeOfElements);
+#else
 #define opj_calloc(num, size) calloc(num, size)
+#endif
 
 /**
 Allocate memory aligned to a 16 byte boundry
@@ -113,19 +121,34 @@ Allocate memory aligned to a 16 byte boundry
 	#define opj_aligned_free(m) free(m)
 #endif
 
+#ifdef ALLOC_PERF_OPT
+	#undef opj_aligned_malloc
+	#define opj_aligned_malloc(size) opj_malloc(size)
+	#undef opj_aligned_free
+	#define opj_aligned_free(m) opj_free(m)
+#endif
+
 /**
 Reallocate memory blocks.
 @param memblock Pointer to previously allocated memory block
 @param size New size in bytes
 @return Returns a void pointer to the reallocated (and possibly moved) memory block
 */
+#ifdef ALLOC_PERF_OPT
+void * OPJ_CALLCONV opj_realloc(void * _Memory, size_t NewSize);
+#else
 #define opj_realloc(m, s) realloc(m, s)
+#endif
 
 /**
 Deallocates or frees a memory block.
 @param memblock Previously allocated memory block to be freed
 */
+#ifdef ALLOC_PERF_OPT
+void OPJ_CALLCONV opj_free(void * _Memory);
+#else
 #define opj_free(m) free(m)
+#endif
 
 #ifdef __GNUC__
 #pragma GCC poison malloc calloc realloc free
