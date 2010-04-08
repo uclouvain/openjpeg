@@ -560,7 +560,7 @@ void mqc_init_dec(opj_mqc_t *mqc, unsigned char *bp, int len) {
 	mqc->a = 0x8000;
 }
 
-INLINE int mqc_decode(opj_mqc_t *const mqc) {
+int mqc_decode(opj_mqc_t *const mqc) {
 	int d;
 	mqc->a -= (*mqc->curctx)->qeval;
 	if ((mqc->c >> 16) < (*mqc->curctx)->qeval) {

@@ -6,6 +6,8 @@ What's New for OpenJPEG
 + : added
 
 April 8, 2010
+* [FOD] Fixed issue 6 on google code. Variable "pi" not freed or pointed-to in function "pi_create_encode". Thanks to Kent Mein for reporting this.
+* [FOD] Fixed problem with Borland C++ Builder (Borland C do not have lrintf). Thanks Marek Mauder for this fix.
 * [FOD] Fixed pi.c bug (issue 15 on google code). Thanks to Anton Lionel for catching this.
 * [FOD] Fixed MJ2 codec bugs (issues 23-24 on google code). Thanks to Winfried for these patches
 * [FOD] Fixed JP3D codec file format analyzer. Thanks to Kristóf Ralovich for this patch.

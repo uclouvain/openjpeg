@@ -614,6 +614,7 @@ int t2_encode_packets(opj_t2_t* t2,int tileno, opj_tcd_tile_t *tile, int maxlaye
 				int tpnum = compno;
 				if (pi_create_encode(pi, cp,tileno,poc,tpnum,tppos,t2_mode,cur_totnum_tp)) {
 					opj_event_msg(t2->cinfo, EVT_ERROR, "Error initializing Packet Iterator\n");
+					pi_destroy(pi, cp, tileno);
 					return -999;
 				}
 				while (pi_next(&pi[poc])) {
