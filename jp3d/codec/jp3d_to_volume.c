@@ -196,14 +196,15 @@ int get_file_format(char *filename) {
 	int i;
 	static const char *extension[] = {"pgx", "bin", "j3d", "jp3d", "j2k", "img"};
 	static const int format[] = { PGX_DFMT, BIN_DFMT, J3D_CFMT, J3D_CFMT, J2K_CFMT, IMG_DFMT};
-	char * ext = strrchr(filename, '.') + 1;
-	for(i = 0; i < sizeof(format) / sizeof(format[0]); i++) {
-		if(strnicmp(ext, extension[i], 3) == 0) {
-			return format[i];
+	char * ext = strrchr(filename, '.');
+	if(ext) {
+		ext++;
+		for(i = 0; i < sizeof(format) / sizeof(format[0]); i++) {
+			if(strnicmp(ext, extension[i], 3) == 0) {
+				return format[i];
+			}
 		}
 	}
-
-	return -1;
 }
 
 /* -------------------------------------------------------------------------- */

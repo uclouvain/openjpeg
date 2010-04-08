@@ -215,8 +215,9 @@ int get_file_format(char *filename) {
 	int i;
 	static const char *extension[] = {"pgx", "bin", "img", "j3d", "jp3d", "j2k"};
 	static const int format[] = { PGX_DFMT, BIN_DFMT, IMG_DFMT, J3D_CFMT, J3D_CFMT, J2K_CFMT};
-	char * ext = strrchr(filename, '.') + 1;
+	char * ext = strrchr(filename, '.');
 	if (ext) {
+		ext++;
         for(i = 0; i < sizeof(format)/sizeof(*format); i++) {
 			if(strnicmp(ext, extension[i], 3) == 0) {
                 return format[i];
