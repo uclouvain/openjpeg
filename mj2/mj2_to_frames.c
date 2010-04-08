@@ -182,7 +182,7 @@ int main(int argc, char *argv[]) {
     {
       fprintf(stdout,"The frames will be output in a bmp format (output_1.bmp, ...)\n");
       sprintf(outfilename,"output_%d.bmp",snum);
-      if (imagetobmp(img, outfilename))	// Convert image to YUV
+      if (imagetobmp(img, outfilename))	// Convert image to BMP
 				return 1;
       
     }

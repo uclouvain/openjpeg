@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+April 8, 2010
+* [FOD] Fixed MJ2 codec bugs (issues 23-24 on google code). Thanks to Winfried for these patches.
+
 March 26, 2010
 + [FOD] Added support for "jpc" codestreams which are equivalent to "j2c" codestreams. Thanks to Winfried for this patch
 
