@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 April 8, 2010
+* [FOD] Fixed problem with Borland C++ Builder (Borland C do not have lrintf). Thanks Marek Mauder for this fix.
 * [FOD] Fixed pi.c bug (issue 15 on google code). Thanks to Anton Lionel for catching this.
 * [FOD] Fixed MJ2 codec bugs (issues 23-24 on google code). Thanks to Winfried for these patches.
 
