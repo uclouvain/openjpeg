@@ -133,16 +133,26 @@ static void setparams(opj_mj2_t *movie, opj_image_t *image) {
   movie->tk[0].depth = image->comps[0].prec;
 	
   if (image->numcomps==3) {
-    if ((image->comps[0].dx == 1) && (image->comps[1].dx == 1) && (image->comps[1].dx == 1)) 
+    if ((image->comps[0].dx == 1) 
+	&& (image->comps[1].dx == 1) 
+	&& (image->comps[2].dx == 1)) 
       movie->tk[0].CbCr_subsampling_dx = 1;
-    else if ((image->comps[0].dx == 1) && (image->comps[1].dx == 2) && (image->comps[1].dx == 2))
+    else 
+	if ((image->comps[0].dx == 1) 
+	&& (image->comps[1].dx == 2) 
+	&& (image->comps[2].dx == 2))
       movie->tk[0].CbCr_subsampling_dx = 2;
     else
       fprintf(stderr,"Image component sizes are incoherent\n");
     
-    if ((image->comps[0].dy == 1) && (image->comps[1].dy == 1) && (image->comps[1].dy == 1)) 
+    if ((image->comps[0].dy == 1) 
+	&& (image->comps[1].dy == 1) 
+	&& (image->comps[2].dy == 1)) 
       movie->tk[0].CbCr_subsampling_dy = 1;
-    else if ((image->comps[0].dy == 1) && (image->comps[1].dy == 2) && (image->comps[1].dy == 2))
+    else 
+	if ((image->comps[0].dy == 1) 
+	&& (image->comps[1].dy == 2) 
+	&& (image->comps[2].dy == 2))
       movie->tk[0].CbCr_subsampling_dy = 2;
     else
       fprintf(stderr,"Image component sizes are incoherent\n");
@@ -190,16 +200,26 @@ static void setparams(opj_mj2_t *movie, opj_image_t *image) {
   else
     movie->tk[0].jp2_struct.meth = 2;
 	
-  if (image->numcomps == 1)
-    movie->tk[0].jp2_struct.enumcs = 17;  // Grayscale
+    if (image->numcomps == 1)
+     movie->tk[0].jp2_struct.enumcs = 17;  // Grayscale
   
-  else   if ((image->comps[0].dx == 1) && (image->comps[1].dx == 1) && (image->comps[1].dx == 1) &&
-    (image->comps[0].dy == 1) && (image->comps[1].dy == 1) && (image->comps[1].dy == 1)) 
-    movie->tk[0].jp2_struct.enumcs = 16;    // RGB
+    else   
+	if ((image->comps[0].dx == 1) 
+	&& (image->comps[1].dx == 1) 
+	&& (image->comps[2].dx == 1) 
+    && (image->comps[0].dy == 1) 
+	&& (image->comps[1].dy == 1) 
+	&& (image->comps[2].dy == 1)) 
+     movie->tk[0].jp2_struct.enumcs = 16;    // RGB
   
-  else   if ((image->comps[0].dx == 1) && (image->comps[1].dx == 2) && (image->comps[1].dx == 2) &&
-    (image->comps[0].dy == 1) && (image->comps[1].dy == 2) && (image->comps[1].dy == 2)) 
-    movie->tk[0].jp2_struct.enumcs = 18;  // YUV
+    else   
+	if ((image->comps[0].dx == 1) 
+	&& (image->comps[1].dx == 2) 
+	&& (image->comps[2].dx == 2) 
+    && (image->comps[0].dy == 1) 
+	&& (image->comps[1].dy == 2) 
+	&& (image->comps[2].dy == 2)) 
+     movie->tk[0].jp2_struct.enumcs = 18;  // YUV
   
   else
     movie->tk[0].jp2_struct.enumcs = 0;	// Unkown profile */
