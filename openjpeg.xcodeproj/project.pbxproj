@@ -793,7 +793,10 @@
 				HEADER_SEARCH_PATHS = ./libopenjpeg;
 				INSTALL_PATH = "$(HOME)/bin";
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "-ltiff";
+				OTHER_LDFLAGS = (
+					"-lpng",
+					"-ltiff",
+				);
 				PREBINDING = NO;
 				PRODUCT_NAME = image_to_j2k;
 				USER_HEADER_SEARCH_PATHS = "";
@@ -812,7 +815,10 @@
 				HEADER_SEARCH_PATHS = ./libopenjpeg;
 				INSTALL_PATH = "$(HOME)/bin";
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "-ltiff";
+				OTHER_LDFLAGS = (
+					"-lpng",
+					"-ltiff",
+				);
 				PREBINDING = NO;
 				PRODUCT_NAME = image_to_j2k;
 				USER_HEADER_SEARCH_PATHS = "";
@@ -832,7 +838,10 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				HEADER_SEARCH_PATHS = ./libopenjpeg;
 				INSTALL_PATH = "$(HOME)/bin";
-				OTHER_LDFLAGS = "-ltiff";
+				OTHER_LDFLAGS = (
+					"-lpng",
+					"-ltiff",
+				);
 				PREBINDING = NO;
 				PRODUCT_NAME = j2k_to_image;
 				USER_HEADER_SEARCH_PATHS = "";
@@ -850,7 +859,10 @@
 				GCC_MODEL_TUNING = G5;
 				HEADER_SEARCH_PATHS = ./libopenjpeg;
 				INSTALL_PATH = "$(HOME)/bin";
-				OTHER_LDFLAGS = "-ltiff";
+				OTHER_LDFLAGS = (
+					"-lpng",
+					"-ltiff",
+				);
 				PREBINDING = NO;
 				PRODUCT_NAME = j2k_to_image;
 				USER_HEADER_SEARCH_PATHS = "";
