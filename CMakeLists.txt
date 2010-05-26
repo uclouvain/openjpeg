@@ -50,6 +50,13 @@ SET (EXECUTABLE_OUTPUT_PATH ${OPENJPEG_BINARY_DIR}/bin CACHE PATH "Single output
 SET (LIBRARY_OUTPUT_PATH ${OPENJPEG_BINARY_DIR}/bin CACHE PATH "Single output directory for building all libraries.")
 MARK_AS_ADVANCED(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
 
+#-----------------------------------------------------------------------------
+# Setup file for setting custom ctest vars
+CONFIGURE_FILE(
+  ${CMAKE_CURRENT_SOURCE_DIR}/CTestCustom.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/CTestCustom.cmake
+  @ONLY
+  )
 
 #-----------------------------------------------------------------------------
 # For the codec...
