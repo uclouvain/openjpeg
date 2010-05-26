@@ -7,7 +7,11 @@
 # For this purpose you can define a CMake var: OPENJPEG_NAMESPACE to whatever you like
 # e.g.:
 # SET(OPENJPEG_NAMESPACE "GDCMOPENJPEG")
-CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+
+if(COMMAND cmake_policy)
+  cmake_policy(SET CMP0003 NEW)
+endif(COMMAND cmake_policy)
 
 IF(NOT OPENJPEG_NAMESPACE)
   SET(OPENJPEG_NAMESPACE "OPENJPEG")
