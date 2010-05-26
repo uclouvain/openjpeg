@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+May 26, 2010
++ [antonin] MACOSX : Added a "build all" target to the XCode project file.
+
 April 16, 2010
 * [antonin] MACOSX : Fixed the XCode project file to link with the PNG library. Library and header should be located in /usr/local/lib/ and /usr/local/include/, respectively. Check http://ethan.tira-thompson.org/Mac_OS_X_Ports.html if it is not the case on your mac.
 

@@ -6,6 +6,23 @@
 	objectVersion = 42;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		694039A6117B7E090079DE22 /* build all */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 694039A9117B7E2E0079DE22 /* Build configuration list for PBXAggregateTarget "build all" */;
+			buildPhases = (
+			);
+			dependencies = (
+				694039AB117B7E390079DE22 /* PBXTargetDependency */,
+				694039B9117B7E860079DE22 /* PBXTargetDependency */,
+				694039AD117B7E3D0079DE22 /* PBXTargetDependency */,
+				694039AF117B7E420079DE22 /* PBXTargetDependency */,
+			);
+			name = "build all";
+			productName = "build all";
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		69F9860E0D40A7B000C2791C /* bio.c in Sources */ = {isa = PBXBuildFile; fileRef = 69F984FF0D40A41700C2791C /* bio.c */; };
 		69F9860F0D40A7B000C2791C /* cio.c in Sources */ = {isa = PBXBuildFile; fileRef = 69F985020D40A41700C2791C /* cio.c */; };
@@ -57,8 +74,38 @@
 		69F986640D40A91700C2791C /* libopenjpeg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 69F985A10D40A48E00C2791C /* libopenjpeg.a */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		694039AA117B7E390079DE22 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 69F984A80D40A3AE00C2791C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 69F985A00D40A48E00C2791C;
+			remoteInfo = openjpeg;
+		};
+		694039AC117B7E3D0079DE22 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 69F984A80D40A3AE00C2791C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 69F986380D40A7DA00C2791C;
+			remoteInfo = image_to_j2k;
+		};
+		694039AE117B7E420079DE22 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 69F984A80D40A3AE00C2791C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 69F9865B0D40A8E200C2791C;
+			remoteInfo = j2k_to_image;
+		};
+		694039B8117B7E860079DE22 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 69F984A80D40A3AE00C2791C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 69F985B50D40A63D00C2791C;
+			remoteInfo = opjdyn;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
-		698C891A0DE1D76800F67421 /* OpenJPEG.rc */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; path = OpenJPEG.rc; sourceTree = "<group>"; };
 		698C891B0DE1D95300F67421 /* imagjpeg2000.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = imagjpeg2000.h; sourceTree = "<group>"; };
 		698C891C0DE1D95300F67421 /* OPJAbout.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = OPJAbout.cpp; sourceTree = "<group>"; };
 		698C891D0DE1D95300F67421 /* OPJViewer.rc */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; path = OPJViewer.rc; sourceTree = "<group>"; };
@@ -229,7 +276,6 @@
 		69F984A60D40A3AE00C2791C = {
 			isa = PBXGroup;
 			children = (
-				698C891A0DE1D76800F67421 /* OpenJPEG.rc */,
 				69F984B60D40A41700C2791C /* ChangeLog */,
 				69F984B70D40A41700C2791C /* CMakeLists.txt */,
 				69F984B80D40A41700C2791C /* codec */,
@@ -612,6 +658,7 @@
 				69F985B50D40A63D00C2791C /* opjdyn */,
 				69F986380D40A7DA00C2791C /* image_to_j2k */,
 				69F9865B0D40A8E200C2791C /* j2k_to_image */,
+				694039A6117B7E090079DE22 /* build all */,
 			);
 		};
 /* End PBXProject section */
@@ -693,7 +740,51 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		694039AB117B7E390079DE22 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 69F985A00D40A48E00C2791C /* openjpeg */;
+			targetProxy = 694039AA117B7E390079DE22 /* PBXContainerItemProxy */;
+		};
+		694039AD117B7E3D0079DE22 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 69F986380D40A7DA00C2791C /* image_to_j2k */;
+			targetProxy = 694039AC117B7E3D0079DE22 /* PBXContainerItemProxy */;
+		};
+		694039AF117B7E420079DE22 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 69F9865B0D40A8E200C2791C /* j2k_to_image */;
+			targetProxy = 694039AE117B7E420079DE22 /* PBXContainerItemProxy */;
+		};
+		694039B9117B7E860079DE22 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 69F985B50D40A63D00C2791C /* opjdyn */;
+			targetProxy = 694039B8117B7E860079DE22 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		694039A7117B7E0A0079DE22 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PRODUCT_NAME = "build all";
+			};
+			name = Debug;
+		};
+		694039A8117B7E0A0079DE22 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PRODUCT_NAME = "build all";
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
 		69F984AA0D40A3AE00C2791C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -873,6 +964,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		694039A9117B7E2E0079DE22 /* Build configuration list for PBXAggregateTarget "build all" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				694039A7117B7E0A0079DE22 /* Debug */,
+				694039A8117B7E0A0079DE22 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		69F984A90D40A3AE00C2791C /* Build configuration list for PBXProject "openjpeg" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
