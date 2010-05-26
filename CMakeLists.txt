@@ -45,6 +45,14 @@ SET(OPENJPEG_LIBRARY_PROPERTIES
 INCLUDE (${CMAKE_ROOT}/Modules/CMakeBackwardCompatibilityC.cmake)
 
 #-----------------------------------------------------------------------------
+# Setup file for setting custom ctest vars
+CONFIGURE_FILE(
+  ${CMAKE_CURRENT_SOURCE_DIR}/CTestCustom.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/CTestCustom.cmake
+  @ONLY
+  )
+
+#-----------------------------------------------------------------------------
 # OpenJPEG build configuration options.
 OPTION(BUILD_SHARED_LIBS "Build OpenJPEG with shared libraries." OFF)
 OPTION(ENABLE_PROFILING "Enable profiling for the library" OFF)
