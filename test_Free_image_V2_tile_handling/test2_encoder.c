@@ -121,7 +121,7 @@ int main (int argc, char * argv [])
 	OPJ_CODEC_FORMAT l_codec_format;
 	FIBITMAP * l_bitmap;
 	FREE_IMAGE_FORMAT l_input_format;
-	char * l_image_data;
+	unsigned char * l_image_data;
 	char * l_input_file,*l_output_file;
 	if
 		(argc != 6)

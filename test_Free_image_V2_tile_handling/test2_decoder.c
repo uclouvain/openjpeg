@@ -124,11 +124,11 @@ int main (int argc,char * argv [])
 	OPJ_INT32 l_min_x, l_min_y, l_max_x, l_max_y;
 	OPJ_CODEC_FORMAT l_codec_format;
 	FIBITMAP * l_bitmap;
-	char * l_image_data;
+	unsigned char * l_image_data;
 	OPJ_INT32 l_req_x,l_req_y;
 	OPJ_UINT32 l_image_width,l_image_height,l_image_boundary,l_offset;
-	char * l_tile_ptr [3];
-	char * l_line_ptr, * l_current_ptr;
+	unsigned char * l_tile_ptr [3];
+	unsigned char * l_line_ptr, * l_current_ptr;
 	OPJ_UINT32 i,j;
 
 	if

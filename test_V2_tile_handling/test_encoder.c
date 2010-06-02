@@ -26,6 +26,8 @@
 #define USE_OPJ_DEPRECATED
 
 #include "openjpeg.h"
+#include "stdlib.h"
+
 /* set this macro to enable profiling for the given test */
 /* warning : in order to be effective, openjpeg must have been built with profiling enabled !! */
 //#define _PROFILE
@@ -94,6 +96,7 @@ int main ()
 	OPJ_UINT32 l_nb_tiles = (IMAGE_WIDTH/TILE_WIDTH) * (IMAGE_HEIGHT/TILE_HEIGHT);
 	OPJ_UINT32 l_data_size = TILE_WIDTH * TILE_HEIGHT * NUM_COMPS * (COMP_PREC/8);
 
+#ifdef USING_MCT
 	const OPJ_FLOAT32 l_mct [] = 
 	{
 		1 , 0 , 0 ,
@@ -105,6 +108,7 @@ int main ()
 	{
 		128 , 128 , 128
 	};
+#endif
 
 	opj_image_cmptparm_t * l_current_param_ptr;
 	OPJ_UINT32 i;
@@ -185,7 +189,9 @@ int main ()
 	/* l_param.tp_flag = 0; */	
 	
 	/* if we are using mct */
-	/* opj_set_MCT(&l_param,l_mct,l_offsets,NUM_COMPS); */
+#ifdef USING_MCT
+	opj_set_MCT(&l_param,l_mct,l_offsets,NUM_COMPS);
+#endif
 
 	
 	/* image definition */

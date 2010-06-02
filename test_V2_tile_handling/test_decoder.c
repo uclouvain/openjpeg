@@ -29,6 +29,7 @@
 //#define _PROFILE
 
 #include "openjpeg.h"
+#include "stdlib.h"
 #ifdef WIN32
 #include <malloc.h>
 #endif
