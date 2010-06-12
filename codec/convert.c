@@ -288,7 +288,7 @@ opj_image_t* tgatoimage(const char *filename, opj_cparameters_t *parameters) {
 int imagetotga(opj_image_t * image, const char *outfile) {
 	int width, height, bpp, x, y;
 	bool write_alpha;
-	int i;
+	unsigned int i;
 	uint32 alpha_channel;
 	float r,g,b,a;
 	uint8 value;
@@ -1093,7 +1093,8 @@ opj_image_t* pgxtoimage(const char *filename, opj_cparameters_t *parameters) {
 
 int imagetopgx(opj_image_t * image, const char *outfile) {
 	int w, h;
-	int i, j, compno;
+	int i, j;
+  unsigned int compno;
 	FILE *fdest = NULL;
 
 	for (compno = 0; compno < image->numcomps; compno++) {
@@ -1339,7 +1340,7 @@ int imagetopnm(opj_image_t * image, const char *outfile) {
 		fclose(fdest);
 
 	} else {
-		int ncomp=(S2=='g' || S2=='G')?1:image->numcomps;
+		unsigned int ncomp=(S2=='g' || S2=='G')?1:image->numcomps;
 		if (image->numcomps > ncomp) {
 			fprintf(stderr,"WARNING -> [PGM files] Only the first component\n");
 			fprintf(stderr,"           is written to the file\n");
@@ -2048,7 +2049,7 @@ opj_image_t* rawtoimage(const char *filename, opj_cparameters_t *parameters, raw
 int imagetoraw(opj_image_t * image, const char *outfile)
 {
 	FILE *rawFile = NULL;
-	int compno;
+	unsigned int compno;
 	int w, h;
 	int line, row;
 	int *ptr;
