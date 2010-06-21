@@ -61,19 +61,15 @@ FILE(GLOB_RECURSE OPENJPEG_DATA_IMAGES_GLOB
   "${JPEG2000_CONFORMANCE_DATA_ROOT}/*.jp2"
   )
 
-FOREACH(filename ${OPENJPEG_DATA_IMAGES_GLOB})
-  GET_FILENAME_COMPONENT(filename_temp ${filename} NAME)
-  # PPM
-  ADD_TEST(j2i-${filename_temp}-ppm ${EXECUTABLE_OUTPUT_PATH}/j2k_to_image -i ${filename} -o ${filename_temp}.ppm)
-  # PGX
-  ADD_TEST(j2i-${filename_temp}-pgx ${EXECUTABLE_OUTPUT_PATH}/j2k_to_image -i ${filename} -o ${filename_temp}.pgx)
-  # BMP
-  ADD_TEST(j2i-${filename_temp}-bmp ${EXECUTABLE_OUTPUT_PATH}/j2k_to_image -i ${filename} -o ${filename_temp}.bmp)
-  # TIF
-  ADD_TEST(j2i-${filename_temp}-tif ${EXECUTABLE_OUTPUT_PATH}/j2k_to_image -i ${filename} -o ${filename_temp}.tif)
-  # RAW
-  ADD_TEST(j2i-${filename_temp}-raw ${EXECUTABLE_OUTPUT_PATH}/j2k_to_image -i ${filename} -o ${filename_temp}.raw)
-  # TGA
-  ADD_TEST(j2i-${filename_temp}-tga ${EXECUTABLE_OUTPUT_PATH}/j2k_to_image -i ${filename} -o ${filename_temp}.tga)
-ENDFOREACH(filename)
+foreach(filename ${OPENJPEG_DATA_IMAGES_GLOB})
+  get_filename_component(filename_temp ${filename} NAME)
+  get_filename_component(filename_ext ${filename} EXT)
+  foreach(codec_type ppm pgx bmp tif raw tga)
+    ADD_TEST(j2i-${filename_temp}-${codec_type} ${EXECUTABLE_OUTPUT_PATH}/j2k_to_image -i ${filename} -o ${filename_temp}.${codec_type})
+    ADD_TEST(i2j-${filename_temp}-${codec_type} ${EXECUTABLE_OUTPUT_PATH}/image_to_j2k -i ${filename_temp}.${codec_type} -o ${filename_temp}.${codec_type}${filename_ext})
+    #if(UNIX)
+    #  ADD_TEST(cmp-${filename_temp}-${codec_type} cmp ${filename} ${filename_temp}.${codec_type}${filename_ext})
+    #endif(UNIX)
+  endforeach(codec_type)
+endforeach(filename)
 
