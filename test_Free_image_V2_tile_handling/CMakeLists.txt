@@ -24,7 +24,5 @@ FOREACH(exe test2_encoder test2_decoder)
   ADD_EXECUTABLE(${exe} ${exe}.c)
   TARGET_LINK_LIBRARIES(${exe} ${OPJ_PREFIX}openjpeg)
   TARGET_LINK_LIBRARIES(${exe} ${FREEIMAGE_LIBRARIES})
-  # Install exe
-  INSTALL_TARGETS(/bin/ ${exe})
 ENDFOREACH(exe)
 

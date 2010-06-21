@@ -39,6 +39,37 @@ SET(OPENJPEG_LIBRARY_PROPERTIES
   VERSION   "${OPENJPEG_VERSION_MAJOR}.${OPENJPEG_VERSION_MINOR}.${OPENJPEG_VERSION_BUILD}"
   SOVERSION "${OPENJPEG_VERSION_MAJOR}.${OPENJPEG_VERSION_MINOR}"
 )
+# You will also need to define a value for the following variables:
+# OPENJPEG_INSTALL_BIN_DIR          - binary dir (executables)
+# OPENJPEG_INSTALL_LIB_DIR          - library dir (libs)
+# OPENJPEG_INSTALL_DATA_DIR         - share dir (say, examples, data, etc)
+# OPENJPEG_INSTALL_INCLUDE_DIR      - include dir (headers)
+
+# --------------------------------------------------------------------------
+# Install directories
+
+STRING(TOLOWER ${PROJECT_NAME} projectname)
+SET(subdir "${projectname}-${OPENJPEG_VERSION_MAJOR}.${OPENJPEG_VERSION_MINOR}")
+
+IF(NOT OPENJPEG_INSTALL_BIN_DIR)
+  SET(OPENJPEG_INSTALL_BIN_DIR "bin")
+ENDIF(NOT OPENJPEG_INSTALL_BIN_DIR)
+
+IF(NOT OPENJPEG_INSTALL_LIB_DIR)
+  SET(OPENJPEG_INSTALL_LIB_DIR "lib")
+ENDIF(NOT OPENJPEG_INSTALL_LIB_DIR)
+
+IF(NOT OPENJPEG_INSTALL_DATA_DIR)
+  SET(OPENJPEG_INSTALL_DATA_DIR "share/${subdir}")
+ENDIF(NOT OPENJPEG_INSTALL_DATA_DIR)
+
+IF(NOT OPENJPEG_INSTALL_INCLUDE_DIR)
+  SET(OPENJPEG_INSTALL_INCLUDE_DIR "include/${subdir}")
+ENDIF(NOT OPENJPEG_INSTALL_INCLUDE_DIR)
+
+IF(NOT OPENJPEG_INSTALL_DOC_DIR)
+  SET(OPENJPEG_INSTALL_DOC_DIR "share/doc/${subdir}")
+ENDIF(NOT OPENJPEG_INSTALL_DOC_DIR)
 
 #-----------------------------------------------------------------------------
 # Test for some required system information.
@@ -111,7 +142,7 @@ IF(BUILD_DOCUMENTATION)
 ENDIF(BUILD_DOCUMENTATION)
 
 #-----------------------------------------------------------------------------
-# For openjpeg team if they ever want Dart+CMake
+# For openjpeg team if they ever want CDash+CMake
 OPTION(BUILD_TESTING "Build the tests." OFF)
 IF(BUILD_TESTING)
   ENABLE_TESTING()

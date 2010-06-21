@@ -21,7 +21,5 @@ ENDIF(NOT BUILD_SHARED_LIBS)
 FOREACH(exe test_encoder test_decoder)
   ADD_EXECUTABLE(${exe} ${exe}.c)
   TARGET_LINK_LIBRARIES(${exe} ${OPJ_PREFIX}openjpeg)
-  # Install exe
-  INSTALL_TARGETS(/bin/ ${exe})
 ENDFOREACH(exe)
 
