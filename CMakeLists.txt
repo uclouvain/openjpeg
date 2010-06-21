@@ -47,7 +47,7 @@ INCLUDE (${CMAKE_ROOT}/Modules/CMakeBackwardCompatibilityC.cmake)
 #-----------------------------------------------------------------------------
 # Setup file for setting custom ctest vars
 CONFIGURE_FILE(
-  ${CMAKE_CURRENT_SOURCE_DIR}/CTestCustom.cmake.in
+  ${CMAKE_CURRENT_SOURCE_DIR}/CMake/CTestCustom.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/CTestCustom.cmake
   @ONLY
   )
@@ -88,13 +88,12 @@ CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/opj_configure.h.in
 INCLUDE_DIRECTORIES(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 SUBDIRS(
   libopenjpeg
-  codec
-  test_V2_tile_handling
-  test_Free_image_V2_tile_handling
   # mj2
-  # cmake 2.4.5 has poor java support
   #j2kviewer/src
   )
+IF(BUILD_EXAMPLES)
+  SUBDIRS(codec)
+ENDIF(BUILD_EXAMPLES)
 
 #IF(NOT UNIX)
 #SUBDIRS(
@@ -105,12 +104,6 @@ SUBDIRS(
 #ENDIF(NOT UNIX)
 
 #-----------------------------------------------------------------------------
-# Build example only if requested
-#IF(BUILD_EXAMPLES)
-#  SUBDIRS(codec)
-#ENDIF(BUILD_EXAMPLES)
-
-#-----------------------------------------------------------------------------
 # For the documentation
 OPTION(BUILD_DOCUMENTATION "Build the doxygen documentation" OFF)
 IF(BUILD_DOCUMENTATION)
@@ -119,15 +112,18 @@ ENDIF(BUILD_DOCUMENTATION)
 
 #-----------------------------------------------------------------------------
 # For openjpeg team if they ever want Dart+CMake
-IF(OPENJPEG_STANDALONE)
+OPTION(BUILD_TESTING "Build the tests." OFF)
+IF(BUILD_TESTING)
+  ENABLE_TESTING()
   INCLUDE(CTest)
-  #MARK_AS_ADVANCED(BUILD_TESTING DART_ROOT TCL_TCLSH)
-  IF(BUILD_TESTING)
-    ENABLE_TESTING()
-    SET(BUILDNAME "OpenJPEG-${CMAKE_SYSTEM}-${CMAKE_C_COMPILER}" CACHE STRING "Name of build on the dashboard")
-    MARK_AS_ADVANCED(BUILDNAME)
-  ENDIF(BUILD_TESTING)
-ENDIF(OPENJPEG_STANDALONE)
+ENDIF(BUILD_TESTING)
+
+IF(BUILD_TESTING)
+  SUBDIRS(
+    test_V2_tile_handling
+    test_Free_image_V2_tile_handling
+  )
+ENDIF(BUILD_TESTING)
 
 # Adding test with dataset from:
 # http://www.crc.ricoh.com/~gormish/jpeg2000conformance/

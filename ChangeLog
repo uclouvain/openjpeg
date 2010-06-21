@@ -5,6 +5,10 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+Jun 21, 2010
+* [MM] Move CMake files to CMake folder
+* [MM] Remove some warnings in code
+
 April 8, 2010
 * [FOD] Fixed problem with Borland C++ Builder (Borland C do not have lrintf). Thanks Marek Mauder for this fix.
 * [FOD] Fixed pi.c bug (issue 15 on google code). Thanks to Anton Lionel for catching this.

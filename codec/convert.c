@@ -1260,7 +1260,8 @@ opj_image_t* pnmtoimage(const char *filename, opj_cparameters_t *parameters) {
 
 int imagetopnm(opj_image_t * image, const char *outfile) {
 	int w, wr, h, hr, max;
-	int i, compno;
+	int i;
+  unsigned int compno;
 	int adjustR, adjustG, adjustB, adjustX;
 	FILE *fdest = NULL;
 	char S2;

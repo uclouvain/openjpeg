@@ -16,13 +16,14 @@ IF(NOT BUILD_SHARED_LIBS)
   ADD_DEFINITIONS(-DOPJ_STATIC)
 ENDIF(NOT BUILD_SHARED_LIBS)
 
-INCLUDE(${OPENJPEG_SOURCE_DIR}/Free_CMakeImport.cmake)
+INCLUDE(${OPENJPEG_SOURCE_DIR}/CMake/Free_CMakeImport.cmake)
 
 # Loop over all executables:
 FOREACH(exe test2_encoder test2_decoder)
   
   ADD_EXECUTABLE(${exe} ${exe}.c)
   TARGET_LINK_LIBRARIES(${exe} ${OPJ_PREFIX}openjpeg)
+  TARGET_LINK_LIBRARIES(${exe} ${FREEIMAGE_LIBRARIES})
   # Install exe
   INSTALL_TARGETS(/bin/ ${exe})
 ENDFOREACH(exe)
