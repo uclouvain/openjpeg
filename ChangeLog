@@ -8,6 +8,7 @@ What's New for OpenJPEG
 Jun 21, 2010
 * [MM] Move CMake files to CMake folder
 * [MM] Remove some warnings in code
+* [MM] j2k_to_image properly return error code
 
 April 8, 2010
 * [FOD] Fixed problem with Borland C++ Builder (Borland C do not have lrintf). Thanks Marek Mauder for this fix.

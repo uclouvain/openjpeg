@@ -508,6 +508,7 @@ void info_callback(const char *msg, void *client_data) {
 
 int main(int argc, char **argv) 
 {
+  int ret;
 	opj_dparameters_t parameters;	/* decompression parameters */
 	img_fol_t img_fol;
 	opj_image_t *image = NULL;
@@ -534,7 +535,7 @@ int main(int argc, char **argv)
 
 	/* parse input and get user encoding parameters */
 	if(parse_cmdline_decoder(argc, argv, &parameters,&img_fol, indexfilename) == 1) {
-		return 1;
+		return EXIT_FAILURE;
 	}
 
 	/* Initialize reading of directory */
@@ -547,18 +548,18 @@ int main(int argc, char **argv)
 			dirptr->filename = (char**) malloc(num_images*sizeof(char*));
 
 			if(!dirptr->filename_buf){
-				return 0;
+				return EXIT_FAILURE;
 			}
 			for(i=0;i<num_images;i++){
 				dirptr->filename[i] = dirptr->filename_buf + i*OPJ_PATH_LEN;
 			}
 		}
 		if(load_images(dirptr,img_fol.imgdirpath)==1){
-			return 0;
+			return EXIT_FAILURE;
 		}
 		if (num_images==0){
 			fprintf(stdout,"Folder is empty\n");
-			return 0;
+			return EXIT_FAILURE;
 		}
 	}else{
 		num_images=1;
@@ -584,7 +585,7 @@ int main(int argc, char **argv)
 			(!fsrc) 
 		{
 			fprintf(stderr, "ERROR -> failed to open %s for reading\n", parameters.infile);
-			return 1;
+			return EXIT_FAILURE;
 		}
 		cio = opj_stream_create_default_file_stream(fsrc,true);
 		/* decode the code-stream */
@@ -650,7 +651,7 @@ int main(int argc, char **argv)
 			opj_destroy_codec(dinfo);
 			opj_stream_destroy(cio);
 			fclose(fsrc);
-			return 1;
+			return EXIT_FAILURE;
 		}
 
 		/* close the byte stream */
@@ -662,6 +663,7 @@ int main(int argc, char **argv)
 			bSuccess = write_index_file(&cstr_info, indexfilename);
 			if (bSuccess) {
 				fprintf(stderr, "Failed to output index file\n");
+        ret = EXIT_FAILURE;
 			}
 		}
 
@@ -671,54 +673,66 @@ int main(int argc, char **argv)
 		case PXM_DFMT:			/* PNM PGM PPM */
 			if (imagetopnm(image, parameters.outfile)) {
 				fprintf(stdout,"Outfile %s not generated\n",parameters.outfile);
+        ret = EXIT_FAILURE;
 			}
 			else {
 				fprintf(stdout,"Generated Outfile %s\n",parameters.outfile);
+        ret = EXIT_SUCCESS;
 			}
 			break;
 
 		case PGX_DFMT:			/* PGX */
 			if(imagetopgx(image, parameters.outfile)){
 				fprintf(stdout,"Outfile %s not generated\n",parameters.outfile);
+        ret = EXIT_FAILURE;
 			}
 			else {
 				fprintf(stdout,"Generated Outfile %s\n",parameters.outfile);
+        ret = EXIT_SUCCESS;
 			}
 			break;
 
 		case BMP_DFMT:			/* BMP */
 			if(imagetobmp(image, parameters.outfile)){
 				fprintf(stdout,"Outfile %s not generated\n",parameters.outfile);
+        ret = EXIT_FAILURE;
 			}
 			else {
 				fprintf(stdout,"Generated Outfile %s\n",parameters.outfile);
+        ret = EXIT_SUCCESS;
 			}
 			break;
 
 		case TIF_DFMT:			/* TIFF */
 			if(imagetotif(image, parameters.outfile)){
 				fprintf(stdout,"Outfile %s not generated\n",parameters.outfile);
+        ret = EXIT_FAILURE;
 			}
 			else {
 				fprintf(stdout,"Generated Outfile %s\n",parameters.outfile);
+        ret = EXIT_SUCCESS;
 			}
 			break;
 
 		case RAW_DFMT:			/* RAW */
 			if(imagetoraw(image, parameters.outfile)){
 				fprintf(stdout,"Error generating raw file. Outfile %s not generated\n",parameters.outfile);
+        ret = EXIT_FAILURE;
 			}
 			else {
 				fprintf(stdout,"Successfully generated Outfile %s\n",parameters.outfile);
+        ret = EXIT_SUCCESS;
 			}
 			break;
 
 		case TGA_DFMT:			/* TGA */
 			if(imagetotga(image, parameters.outfile)){
 				fprintf(stdout,"Error generating tga file. Outfile %s not generated\n",parameters.outfile);
+        ret = EXIT_FAILURE;
 			}
 			else {
 				fprintf(stdout,"Successfully generated Outfile %s\n",parameters.outfile);
+        ret = EXIT_SUCCESS;
 			}
 			break;
 		}
@@ -736,7 +750,7 @@ int main(int argc, char **argv)
 		opj_image_destroy(image);
 
 	}
-	return 0;
+	return ret;
 }
 //end main
 
