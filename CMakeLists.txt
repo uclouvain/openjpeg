@@ -71,6 +71,11 @@ IF(NOT OPENJPEG_INSTALL_DOC_DIR)
   SET(OPENJPEG_INSTALL_DOC_DIR "share/doc/${subdir}")
 ENDIF(NOT OPENJPEG_INSTALL_DOC_DIR)
 
+IF(NOT OPENJPEG_INSTALL_PACKAGE_DIR)
+  SET(OPENJPEG_INSTALL_PACKAGE_DIR ${OPENJPEG_INSTALL_LIB_DIR}/${subdir}
+    CACHE INTERNAL "")
+ENDIF(NOT OPENJPEG_INSTALL_PACKAGE_DIR)
+
 #-----------------------------------------------------------------------------
 # Test for some required system information.
 INCLUDE (${CMAKE_ROOT}/Modules/CMakeBackwardCompatibilityC.cmake)
@@ -175,4 +180,14 @@ IF(CMAKE_COMPILER_IS_GNUCC)
   # Do not use ffast-math for all build, it would produce incorrect results, only set for release:
   SET(CMAKE_C_FLAGS_RELEASE "-ffast-math ${CMAKE_C_FLAGS_RELEASE}")
 ENDIF(CMAKE_COMPILER_IS_GNUCC)
+
+# install all targets referenced as OPENJPEGTargets
+install(EXPORT OpenJPEGTargets DESTINATION ${OPENJPEG_INSTALL_PACKAGE_DIR})
+CONFIGURE_FILE( ${OPENJPEG_SOURCE_DIR}/CMake/OpenJPEGConfig.cmake.in
+  ${OPENJPEG_BINARY_DIR}/OpenJPEGConfig.cmake
+  @ONLY
+)
+INSTALL( FILES ${OPENJPEG_BINARY_DIR}/OpenJPEGConfig.cmake
+  DESTINATION ${OPENJPEG_INSTALL_PACKAGE_DIR}
+)
 

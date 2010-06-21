@@ -51,7 +51,10 @@ FOREACH(exe j2k_to_image image_to_j2k)
     TARGET_LINK_LIBRARIES(${exe} m)
   ENDIF(UNIX)
   # Install exe
-  INSTALL_TARGETS(/bin/ ${exe})
+  INSTALL(TARGETS ${exe}
+    EXPORT OpenJPEGTargets
+    DESTINATION ${OPENJPEG_INSTALL_BIN_DIR} COMPONENT Applications
+  )
 ENDFOREACH(exe)
 
 if(BUILD_TESTING)

@@ -11,6 +11,7 @@ Jun 21, 2010
 * [MM] j2k_to_image properly return error code
 * [MM] increase coverage by testing all codecs
 * [MM] fix installation. Place in subfolder to handle both API
+* [MM] Start using cmake API for easy packaging
 
 April 8, 2010
 * [FOD] Fixed problem with Borland C++ Builder (Borland C do not have lrintf). Thanks Marek Mauder for this fix.
