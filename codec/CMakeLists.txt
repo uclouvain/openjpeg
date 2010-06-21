@@ -54,6 +54,7 @@ FOREACH(exe j2k_to_image image_to_j2k)
   INSTALL_TARGETS(/bin/ ${exe})
 ENDFOREACH(exe)
 
+if(BUILD_TESTING)
 # Do testing here, once we know the examples are being built:
 FILE(GLOB_RECURSE OPENJPEG_DATA_IMAGES_GLOB
   "${JPEG2000_CONFORMANCE_DATA_ROOT}/*.j2k"
@@ -72,4 +73,4 @@ foreach(filename ${OPENJPEG_DATA_IMAGES_GLOB})
     #endif(UNIX)
   endforeach(codec_type)
 endforeach(filename)
-
+endif(BUILD_TESTING)
