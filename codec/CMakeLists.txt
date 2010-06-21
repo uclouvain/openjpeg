@@ -63,6 +63,17 @@ FILE(GLOB_RECURSE OPENJPEG_DATA_IMAGES_GLOB
 
 FOREACH(filename ${OPENJPEG_DATA_IMAGES_GLOB})
   GET_FILENAME_COMPONENT(filename_temp ${filename} NAME)
-  ADD_TEST(j2i-${filename_temp} ${EXECUTABLE_OUTPUT_PATH}/j2k_to_image -i ${filename} -o ${filename_temp}.tif)
+  # PPM
+  ADD_TEST(j2i-${filename_temp}-ppm ${EXECUTABLE_OUTPUT_PATH}/j2k_to_image -i ${filename} -o ${filename_temp}.ppm)
+  # PGX
+  ADD_TEST(j2i-${filename_temp}-pgx ${EXECUTABLE_OUTPUT_PATH}/j2k_to_image -i ${filename} -o ${filename_temp}.pgx)
+  # BMP
+  ADD_TEST(j2i-${filename_temp}-bmp ${EXECUTABLE_OUTPUT_PATH}/j2k_to_image -i ${filename} -o ${filename_temp}.bmp)
+  # TIF
+  ADD_TEST(j2i-${filename_temp}-tif ${EXECUTABLE_OUTPUT_PATH}/j2k_to_image -i ${filename} -o ${filename_temp}.tif)
+  # RAW
+  ADD_TEST(j2i-${filename_temp}-raw ${EXECUTABLE_OUTPUT_PATH}/j2k_to_image -i ${filename} -o ${filename_temp}.raw)
+  # TGA
+  ADD_TEST(j2i-${filename_temp}-tga ${EXECUTABLE_OUTPUT_PATH}/j2k_to_image -i ${filename} -o ${filename_temp}.tga)
 ENDFOREACH(filename)
 
