@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+June 21, 2010
++ [MM] Added a j2k_dump to simply dump the parameter of a J2K file
+
 May 26, 2010
 + [antonin] Added CTestConfig.cmake to the root directory to incorporate the testing dashboard.
 + [antonin] MACOSX : Added a "build all" target to the XCode project file.

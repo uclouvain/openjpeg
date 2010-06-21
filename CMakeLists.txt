@@ -40,7 +40,6 @@ SET(OPENJPEG_LIBRARY_PROPERTIES
   SOVERSION "${OPENJPEG_VERSION_MAJOR}.${OPENJPEG_VERSION_MINOR}"
 )
 
-
 #-----------------------------------------------------------------------------
 # OpenJPEG build configuration options.
 OPTION(BUILD_SHARED_LIBS "Build OpenJPEG with shared libraries." OFF)
@@ -104,16 +103,12 @@ IF(BUILD_DOCUMENTATION)
 ENDIF(BUILD_DOCUMENTATION)
 
 #-----------------------------------------------------------------------------
-# For openjpeg team if they ever want Dart+CMake
-IF(OPENJPEG_STANDALONE)
+# For openjpeg team if they ever want CDash+CMake
+OPTION(BUILD_TESTING "Build the tests." OFF)
+IF(BUILD_TESTING)
+  ENABLE_TESTING()
   INCLUDE(CTest)
-  #MARK_AS_ADVANCED(BUILD_TESTING DART_ROOT TCL_TCLSH)
-  IF(BUILD_TESTING)
-    ENABLE_TESTING()
-    #SET(BUILDNAME "OpenJPEG-${CMAKE_SYSTEM}-${CMAKE_C_COMPILER}" CACHE STRING "Name of build on the dashboard")
-    MARK_AS_ADVANCED(BUILDNAME)
-  ENDIF(BUILD_TESTING)
-ENDIF(OPENJPEG_STANDALONE)
+ENDIF(BUILD_TESTING)
 
 # Adding test with dataset from:
 # http://www.crc.ricoh.com/~gormish/jpeg2000conformance/

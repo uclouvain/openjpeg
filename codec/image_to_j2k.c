@@ -493,7 +493,6 @@ void cinema_parameters(opj_cparameters_t *parameters){
 void cinema_setup_encoder(opj_cparameters_t *parameters,opj_image_t *image, img_fol_t *img_fol){
 	int i;
 	float temp_rate;
-	opj_poc_t *POC = NULL;
 
 	switch (parameters->cp_cinema){
 	case CINEMA2K_24:
