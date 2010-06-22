@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+June 22, 2010
++ [MM] Apply patch from w. szukalski (sent to list)
+
 June 21, 2010
 + [MM] Added a j2k_dump to simply dump the parameter of a J2K file
 

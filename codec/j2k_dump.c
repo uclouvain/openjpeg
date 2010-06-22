@@ -317,7 +317,7 @@ int main(int argc, char *argv[])
 	int file_length;
 	int num_images;
 	int i,imageno;
-	dircnt_t *dirptr;
+	dircnt_t *dirptr = NULL;
 	opj_dinfo_t* dinfo = NULL;	/* handle to a decompressor */
 	opj_cio_t *cio = NULL;
 	opj_codestream_info_t cstr_info;  /* Codestream information structure */
