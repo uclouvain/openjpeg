@@ -1713,6 +1713,14 @@ int main(int argc, char **argv) {
 						return 1;
 					}
 				break;
+
+				case PNG_DFMT:
+					image = pngtoimage(parameters.infile, &parameters);
+					if (!image) {
+						fprintf(stderr, "Unable to load png file\n");
+						return 1;
+					}
+					break;
 		}
 			/* Decide if MCT should be used */
 			parameters.tcp_mct = image->numcomps == 3 ? 1 : 0;
