@@ -4,7 +4,7 @@
  * Copyright (c) 2001-2003, David Janssens
  * Copyright (c) 2002-2003, Yannick Verschueren
  * Copyright (c) 2003-2007, Francois-Olivier Devaux and Antonin Descampe
- * Copyright (c) 2005, Herve Drolon, FreeImage Team 
+ * Copyright (c) 2005, Herve Drolon, FreeImage Team
  * Copyright (c) 2006-2007, Parvatha Elangovan
  * Copyright (c) 2008, Jerome Fimes, Communications & Systemes <jerome.fimes@c-s.fr>
  * All rights reserved.
@@ -31,7 +31,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 #include <stdio.h>
-#define __USE_BSD
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
@@ -43,6 +42,7 @@
 #include "index.h"
 
 #ifndef WIN32
+#include <strings.h>
 #define _stricmp strcasecmp
 #define _strnicmp strncasecmp
 #endif
@@ -60,7 +60,7 @@
 #define TIF_DFMT 14
 #define RAW_DFMT 15
 #define TGA_DFMT 16
-
+#define PNG_DFMT 17
 /* ----------------------------------------------------------------------- */
 #define CINEMA_24_CS 1302083	/*Codestream length for 24fps*/
 #define CINEMA_48_CS 651041		/*Codestream length for 48fps*/
@@ -153,10 +153,10 @@ void encode_help_display() {
 	fprintf(stdout,"-h           : display the help information \n ");
 	fprintf(stdout,"\n");
 	fprintf(stdout,"-cinema2K    : Digital Cinema 2K profile compliant codestream for 2K resolution.(-cinema2k 24 or 48) \n");
-  fprintf(stdout,"	  Need to specify the frames per second for a 2K resolution. Only 24 or 48 fps is allowed\n"); 
+  fprintf(stdout,"	  Need to specify the frames per second for a 2K resolution. Only 24 or 48 fps is allowed\n");
 	fprintf(stdout,"\n");
 	fprintf(stdout,"-cinema4K    : Digital Cinema 4K profile compliant codestream for 4K resolution \n");
-	fprintf(stdout,"	  Frames per second not required. Default value is 24fps\n"); 
+	fprintf(stdout,"	  Frames per second not required. Default value is 24fps\n");
 	fprintf(stdout,"\n");
 	fprintf(stdout,"-r           : different compression ratios for successive layers (-r 20,10,5)\n ");
 	fprintf(stdout,"	         - The rate specified for each quality level is the desired \n");
@@ -210,6 +210,9 @@ void encode_help_display() {
 	fprintf(stdout,"\n");
 	fprintf(stdout,"-I           : use the irreversible DWT 9-7 (-I) \n");
 	fprintf(stdout,"\n");
+	fprintf(stdout,"-F           : characteristics of the raw input image\n");
+	fprintf(stdout,"               -F rawWidth,rawHeight,rawComp,rawBitDepth,s/u (Signed/Unsigned)\n");
+	fprintf(stdout,"               Example: -i lena.raw -o lena.j2k -F 512,512,3,8,u\n");
 	fprintf(stdout,"-m           : use array-based MCT, values are coma separated, line by line\n");
 	fprintf(stdout,"			   no specific separators between lines, no space allowed between values\n");
 	fprintf(stdout,"\n");
@@ -342,7 +345,7 @@ OPJ_PROG_ORDER give_progression(char progression[4]) {
 
 int get_num_images(char *imgdirpath){
 	DIR *dir;
-	struct dirent* content;	
+	struct dirent* content;
 	int num_images = 0;
 
 	/*Reading the input images from given input directory*/
@@ -364,7 +367,7 @@ int get_num_images(char *imgdirpath){
 
 int load_images(dircnt_t *dirptr, char *imgdirpath){
 	DIR *dir;
-	struct dirent* content;	
+	struct dirent* content;
 	int i = 0;
 
 	/*Reading the input images from given input directory*/
@@ -384,16 +387,16 @@ int load_images(dircnt_t *dirptr, char *imgdirpath){
 		strcpy(dirptr->filename[i],content->d_name);
 		i++;
 	}
-	return 0;	
+	return 0;
 }
 
 int get_file_format(char *filename) {
 	unsigned int i;
 	static const char *extension[] = {
-    "pgx", "pnm", "pgm", "ppm", "bmp", "tif", "raw", "tga", "j2k", "jp2", "j2c", "jpc"
+    "pgx", "pnm", "pgm", "ppm", "bmp", "tif", "raw", "tga", "png", "j2k", "jp2", "j2c", "jpc"
     };
 	static const int format[] = {
-    PGX_DFMT, PXM_DFMT, PXM_DFMT, PXM_DFMT, BMP_DFMT, TIF_DFMT, RAW_DFMT, TGA_DFMT, J2K_CFMT, JP2_CFMT, J2K_CFMT, J2K_CFMT
+    PGX_DFMT, PXM_DFMT, PXM_DFMT, PXM_DFMT, BMP_DFMT, TIF_DFMT, RAW_DFMT, TGA_DFMT, PNG_DFMT, J2K_CFMT, JP2_CFMT, J2K_CFMT, J2K_CFMT
     };
 	char * ext = strrchr(filename, '.');
 	if (ext == NULL)
@@ -440,15 +443,15 @@ char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_cparamet
 }
 
 static int initialise_4K_poc(opj_poc_t *POC, int numres){
-	POC[0].tile  = 1; 
-	POC[0].resno0  = 0; 
+	POC[0].tile  = 1;
+	POC[0].resno0  = 0;
 	POC[0].compno0 = 0;
 	POC[0].layno1  = 1;
 	POC[0].resno1  = numres-1;
 	POC[0].compno1 = 3;
 	POC[0].prg1 = CPRL;
 	POC[1].tile  = 1;
-	POC[1].resno0  = numres-1; 
+	POC[1].resno0  = numres-1;
 	POC[1].compno0 = 0;
 	POC[1].layno1  = 1;
 	POC[1].resno1  = numres;
@@ -461,7 +464,7 @@ void cinema_parameters(opj_cparameters_t *parameters){
 	parameters->tile_size_on = false;
 	parameters->cp_tdx=1;
 	parameters->cp_tdy=1;
-	
+
 	/*Tile part*/
 	parameters->tp_flag = 'C';
 	parameters->tp_on = 1;
@@ -473,7 +476,7 @@ void cinema_parameters(opj_cparameters_t *parameters){
 	parameters->image_offset_y0 = 0;
 
 	/*Codeblock size= 32*32*/
-	parameters->cblockw_init = 32;	
+	parameters->cblockw_init = 32;
 	parameters->cblockh_init = 32;
 	parameters->csty |= 0x01;
 
@@ -507,7 +510,7 @@ void cinema_setup_encoder(opj_cparameters_t *parameters,opj_image_t *image, img_
 			parameters->cp_rsiz = STD_RSIZ;
 		}
 	break;
-	
+
 	case CINEMA4K_24:
 		if(parameters->numresolution < 1){
 				parameters->numresolution = 1;
@@ -515,7 +518,7 @@ void cinema_setup_encoder(opj_cparameters_t *parameters,opj_image_t *image, img_
 				parameters->numresolution = 7;
 			}
 		if (!((image->comps[0].w == 4096) | (image->comps[0].h == 2160))){
-			fprintf(stdout,"Image coordinates %d x %d is not 4K compliant.\nJPEG Digital Cinema Profile-4" 
+			fprintf(stdout,"Image coordinates %d x %d is not 4K compliant.\nJPEG Digital Cinema Profile-4"
 				"(4K profile) compliance requires that at least one of coordinates match 4096 x 2160\n",
 				image->comps[0].w,image->comps[0].h);
 			parameters->cp_rsiz = STD_RSIZ;
@@ -532,13 +535,13 @@ void cinema_setup_encoder(opj_cparameters_t *parameters,opj_image_t *image, img_
 			for(i=0 ; i<parameters->tcp_numlayers ; i++){
 				temp_rate = 0 ;
 				if (img_fol->rates[i]== 0){
-					parameters->tcp_rates[0]= ((float) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec))/ 
+					parameters->tcp_rates[0]= ((float) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec))/
 					(CINEMA_24_CS * 8 * image->comps[0].dx * image->comps[0].dy);
 				}else{
-					temp_rate =((float) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec))/ 
+					temp_rate =((float) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec))/
 						(img_fol->rates[i] * 8 * image->comps[0].dx * image->comps[0].dy);
 					if (temp_rate > CINEMA_24_CS ){
-						parameters->tcp_rates[i]= ((float) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec))/ 
+						parameters->tcp_rates[i]= ((float) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec))/
 						(CINEMA_24_CS * 8 * image->comps[0].dx * image->comps[0].dy);
 					}else{
 						parameters->tcp_rates[i]= img_fol->rates[i];
@@ -547,18 +550,18 @@ void cinema_setup_encoder(opj_cparameters_t *parameters,opj_image_t *image, img_
 			}
 			parameters->max_comp_size = COMP_24_CS;
 			break;
-		
+
 		case CINEMA2K_48:
 			for(i=0 ; i<parameters->tcp_numlayers ; i++){
 				temp_rate = 0 ;
 				if (img_fol->rates[i]== 0){
-					parameters->tcp_rates[0]= ((float) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec))/ 
+					parameters->tcp_rates[0]= ((float) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec))/
 					(CINEMA_48_CS * 8 * image->comps[0].dx * image->comps[0].dy);
 				}else{
-					temp_rate =((float) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec))/ 
+					temp_rate =((float) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec))/
 						(img_fol->rates[i] * 8 * image->comps[0].dx * image->comps[0].dy);
 					if (temp_rate > CINEMA_48_CS ){
-						parameters->tcp_rates[0]= ((float) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec))/ 
+						parameters->tcp_rates[0]= ((float) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec))/
 						(CINEMA_48_CS * 8 * image->comps[0].dx * image->comps[0].dy);
 					}else{
 						parameters->tcp_rates[i]= img_fol->rates[i];
@@ -617,11 +620,12 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 					case TIF_DFMT:
 					case RAW_DFMT:
 					case TGA_DFMT:
+					case PNG_DFMT:
 						break;
 					default:
 						fprintf(stderr,
 							"!! Unrecognized format for infile : %s "
-              "[accept only *.pnm, *.pgm, *.ppm, *.pgx, *.bmp, *.tif, *.raw or *.tga] !!\n\n", 
+              "[accept only *.pnm, *.pgm, *.ppm, *.pgx, *.bmp, *.tif, *.raw or *.tga] !!\n\n",
 							infile);
 						return 1;
 				}
@@ -674,6 +678,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 			case 'r':			/* rates rates/distorsion */
 			{
 				char *s = optarg;
+				parameters->tcp_numlayers = 0;
 				while (sscanf(s, "%f", &parameters->tcp_rates[parameters->tcp_numlayers]) == 1) {
 					parameters->tcp_numlayers++;
 					while (*s && *s != ',') {
@@ -689,7 +694,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 
 				/* ----------------------------------------------------- */
 
-			
+
 			case 'F':			/* Raw image format parameters */
 			{
 				char signo;
@@ -709,7 +714,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 						fprintf(stderr,"-F rawWidth,rawHeight,rawComp,rawBitDepth,s/u (Signed/Unsigned)\n");
 						fprintf(stderr,"Example: -i lena.raw -o lena.j2k -F 512,512,3,8,u\n");
 						fprintf(stderr,"Aborting\n");
-					}					
+					}
 				}
 				else {
 					fprintf(stderr,"\nError: invalid raw image parameters\n");
@@ -1002,16 +1007,16 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 			break;
 
 			/* ------------------------------------------------------ */
-			
+
 			case 'v':			/* Tile part generation*/
 			{
 				parameters->tp_flag = optarg[0];
 				parameters->tp_on = 1;
 			}
-			break;	
+			break;
 
 				/* ------------------------------------------------------ */
-			
+
 			case 'z':			/* Image Directory path */
 			{
 				img_fol->imgdirpath = (char*)malloc(strlen(optarg) + 1);
@@ -1021,7 +1026,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 			break;
 
 				/* ------------------------------------------------------ */
-			
+
 			case 'w':			/* Digital Cinema 2K profile compliance*/
 			{
 				int fps=0;
@@ -1036,12 +1041,12 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 				}
 				fprintf(stdout,"CINEMA 2K compliant codestream\n");
 				parameters->cp_rsiz = CINEMA2K;
-				
+
 			}
 			break;
-				
+
 				/* ------------------------------------------------------ */
-			
+
 			case 'y':			/* Digital Cinema 4K profile compliance*/
 			{
 				parameters->cp_cinema = CINEMA4K_24;
@@ -1119,20 +1124,20 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 				free(lMatrix);
 			}
 			break;
-				
+			
 				/* ------------------------------------------------------ */
 
 /* UniPG>> */
 #ifdef USE_JPWL
 				/* ------------------------------------------------------ */
-			
+
 			case 'W':			/* JPWL capabilities switched on */
 			{
 				char *token = NULL;
 				int hprot, pprot, sens, addr, size, range;
 
 				/* we need to enable indexing */
-				if (!indexfilename) {
+				if (!indexfilename || !*indexfilename) {
 					strncpy(indexfilename, JPWL_PRIVATEINDEX_NAME, OPJ_PATH_LEN);
 				}
 
@@ -1200,7 +1205,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 					/* search packet error protection method */
 					if (*token == 'p') {
 
-						static int pack = 0, tile = 0, packspec = 0, lastpackno = 0;
+						static int pack = 0, tile = 0, packspec = 0;
 
 						pprot = 1; /* predefined method */
 
@@ -1349,14 +1354,13 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 							fprintf(stderr, "ERROR -> invalid sensitivity method selection = %s\n", token);
 							return 1;
 						};
-						
+
 						parameters->jpwl_sens_size = 2; /* 2 bytes for default size */
 					}
 
 					/* search addressing size */
 					if (*token == 'a') {
 
-						static int tile = 0, tilespec = 0, lasttileno = 0;
 
 						addr = 0; /* predefined: auto */
 
@@ -1376,13 +1380,12 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 							fprintf(stderr, "ERROR -> invalid addressing selection = %s\n", token);
 							return 1;
 						};
-						
+
 					}
 
 					/* search sensitivity size */
 					if (*token == 'z') {
 
-						static int tile = 0, tilespec = 0, lasttileno = 0;
 
 						size = 1; /* predefined: 1 byte */
 
@@ -1402,13 +1405,12 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 							fprintf(stderr, "ERROR -> invalid size selection = %s\n", token);
 							return 1;
 						};
-						
+
 					}
 
 					/* search range method */
 					if (*token == 'g') {
 
-						static int tile = 0, tilespec = 0, lasttileno = 0;
 
 						range = 0; /* predefined: 0 (packet) */
 
@@ -1428,7 +1430,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 							fprintf(stderr, "ERROR -> invalid range selection = %s\n", token);
 							return 1;
 						};
-						
+
 					}
 
 					/* next token or bust */
@@ -1580,14 +1582,14 @@ int main(int argc, char **argv) {
 	if(parse_cmdline_encoder(argc, argv, &parameters,&img_fol, &raw_cp, indexfilename) == 1) {
 		return 1;
 	}
-	
+
 	if (parameters.cp_cinema){
 		img_fol.rates = (float*)malloc(parameters.tcp_numlayers * sizeof(float));
 		for(i=0; i< parameters.tcp_numlayers; i++){
 			img_fol.rates[i] = parameters.tcp_rates[i];
 		}
 		cinema_parameters(&parameters);
-	}				
+	}
 
 	/* Create comment for codestream */
 	if(parameters.cp_comment == NULL) {
@@ -1633,7 +1635,7 @@ int main(int argc, char **argv) {
 	for(imageno=0;imageno<num_images;imageno++)	{
 		image = NULL;
 		fprintf(stderr,"\n");
-		
+
 		if(img_fol.set_imgdir==1){
 			if (get_next_file(imageno, dirptr,&img_fol, &parameters)) {
 				fprintf(stderr,"skipping file...\n");
@@ -1653,9 +1655,11 @@ int main(int argc, char **argv) {
 				break;
 			case TGA_DFMT:
 				break;
+			case PNG_DFMT:
+				break;
 			default:
 				fprintf(stderr,"skipping file...\n");
-				continue;			
+				continue;
 		}
 
 			/* decode the source image */
@@ -1666,7 +1670,7 @@ int main(int argc, char **argv) {
 					image = pgxtoimage(parameters.infile, &parameters);
 					if (!image) {
 						fprintf(stderr, "Unable to load pgx file\n");
-						return 1; 
+						return 1;
 					}
 					break;
 
@@ -1685,7 +1689,7 @@ int main(int argc, char **argv) {
 						return 1;
 					}
 					break;
-			
+
 				case TIF_DFMT:
 					image = tiftoimage(parameters.infile, &parameters);
 					if (!image) {

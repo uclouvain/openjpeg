@@ -32,8 +32,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "openjpeg.h"
+#ifdef WIN32
 #include "../libs/libtiff/tiffio.h"
+#include "../libs/libpng/png.h"
+#else
+#include <tiffio.h>
+#include <png.h>
+#endif /* WIN32 */
+#include "openjpeg.h"
 #include "convert.h"
 
 /*
@@ -2157,3 +2163,357 @@ int imagetoraw(opj_image_t * image, const char *outfile)
 	fclose(rawFile);
 	return 0;
 }
+
+opj_image_t *pngtoimage(const char *read_idf, opj_cparameters_t * params)
+#ifdef WIN32
+{
+	printf("Error. PNG format is not yet handled under windows\n");
+	return NULL;
+}
+#else
+{
+    png_bytep row;
+    png_structp png;
+    png_infop info;
+    double gamma, display_exponent;
+    int bit_depth, interlace_type, compression_type, filter_type;
+    int unit, pass, nr_passes;
+    png_uint_32 resx, resy;
+    unsigned int i, max, src_w;
+    png_uint_32 width, height;
+    int color_type, has_alpha;
+    unsigned char *png_buf, *s;
+    FILE *reader;
+/* j2k: */
+    opj_image_t *image;
+    opj_image_cmptparm_t cmptparm[4];
+    int sub_dx, sub_dy;
+    unsigned int nr_comp;
+    int *r, *g, *b, *a;
+
+    if ((reader = fopen(read_idf, "rb")) == NULL) {
+	fprintf(stderr, "pngtoimage: can not open %s\n", read_idf);
+	return NULL;
+    }
+    nr_passes = 0;
+    png_buf = NULL;
+
+/* libpng-VERSION/example.c: 
+ * PC : screen_gamma = 2.2;
+ * Mac: screen_gamma = 1.7 or 1.0;
+*/
+    display_exponent = 2.2;
+
+    if ((png = png_create_read_struct(PNG_LIBPNG_VER_STRING,
+				      NULL, NULL, NULL)) == NULL)
+	goto fin;
+    if ((info = png_create_info_struct(png)) == NULL)
+	goto fin;
+
+    if (setjmp(png_jmpbuf(png)))
+	goto fin;
+
+    png_init_io(png, reader);
+    png_read_info(png, info);
+
+    png_get_IHDR(png, info, &width, &height,
+		 &bit_depth, &color_type, &interlace_type,
+		 &compression_type, &filter_type);
+
+    if (color_type == PNG_COLOR_TYPE_PALETTE)
+	png_set_expand(png);
+    else if (color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8)
+	png_set_expand(png);
+
+    if (png_get_valid(png, info, PNG_INFO_tRNS))
+	png_set_expand(png);
+
+    if (bit_depth == 16)
+	png_set_strip_16(png);
+
+/* GRAY => RGB; GRAY_ALPHA => RGBA
+*/
+    if (color_type == PNG_COLOR_TYPE_GRAY
+	|| color_type == PNG_COLOR_TYPE_GRAY_ALPHA) {
+	png_set_gray_to_rgb(png);
+	color_type =
+	    (color_type == PNG_COLOR_TYPE_GRAY ? PNG_COLOR_TYPE_RGB :
+	     PNG_COLOR_TYPE_RGB_ALPHA);
+    }
+    if (!png_get_gAMA(png, info, &gamma))
+	gamma = 0.45455;
+
+    png_set_gamma(png, display_exponent, gamma);
+
+    nr_passes = png_set_interlace_handling(png);
+
+    png_read_update_info(png, info);
+
+    png_get_pHYs(png, info, &resx, &resy, &unit);
+
+    color_type = png_get_color_type(png, info);
+
+    has_alpha = (color_type == PNG_COLOR_TYPE_RGB_ALPHA);
+
+    if (has_alpha)
+	nr_comp = 4;
+    else
+	nr_comp = 3;
+
+    src_w = width * nr_comp;
+    png_buf = (unsigned char *) malloc(src_w * height);
+
+    if (nr_passes == 0)
+	nr_passes = 1;
+
+    for (pass = 0; pass < nr_passes; pass++) {
+	s = png_buf;
+
+	for (i = 0; i < height; i++) {
+/* libpng.3:
+ * If you want the "sparkle" effect, just call png_read_rows() as
+ * normal, with the third parameter NULL.
+*/
+	    png_read_rows(png, &s, NULL, 1);
+
+	    s += src_w;
+	}
+    }
+    memset(&cmptparm, 0, 4 * sizeof(opj_image_cmptparm_t));
+
+    sub_dx = params->subsampling_dx;
+    sub_dy = params->subsampling_dy;
+
+    for (i = 0; i < nr_comp; ++i) {
+	cmptparm[i].prec = 8;
+	cmptparm[i].bpp = 8;
+	cmptparm[i].sgnd = 0;
+	cmptparm[i].dx = sub_dx;
+	cmptparm[i].dy = sub_dy;
+	cmptparm[i].w = width;
+	cmptparm[i].h = height;
+    }
+
+    image = opj_image_create(nr_comp, &cmptparm[0], CLRSPC_SRGB);
+
+    if (image == NULL)
+	goto fin;
+
+    image->x0 = params->image_offset_x0;
+    image->y0 = params->image_offset_y0;
+    image->x1 =
+	params->image_offset_x0 + (width - 1) * sub_dx + 1 + image->x0;
+    image->y1 =
+	params->image_offset_y0 + (height - 1) * sub_dy + 1 + image->y0;
+
+    r = image->comps[0].data;
+    g = image->comps[1].data;
+    b = image->comps[2].data;
+    a = image->comps[3].data;
+    s = png_buf;
+
+    max = width * height;
+
+    for (i = 0; i < max; ++i) {
+	*r++ = *s++;
+	*g++ = *s++;
+	*b++ = *s++;
+
+	if (has_alpha)
+	    *a++ = *s++;
+    }
+
+  fin:
+    if (png)
+	png_destroy_read_struct(&png, &info, NULL);
+    if (png_buf)
+	free(png_buf);
+
+    fclose(reader);
+
+    return image;
+
+}				/* pngtoimage() */
+#endif
+
+int imagetopng(opj_image_t * image, const char *write_idf)
+#ifdef WIN32
+{
+	printf("Error. PNG format is not yet handled under windows\n");
+	return -1;
+}
+#else
+{
+    FILE *writer;
+    png_structp png_ptr;
+    png_infop info_ptr;
+    int *rs, *gs, *bs, *as;
+    unsigned char *row_buf, *d;
+    int fails, mono, graya, rgb, rgba;
+    int width, height, nr_colors, color_type;
+    int bit_depth, adjust, x, y;
+    png_color_8 sig_bit;
+
+    writer = fopen(write_idf, "wb");
+
+    if (writer == NULL)
+	return 1;
+
+    info_ptr = NULL;
+    fails = 1;
+
+/* Create and initialize the png_struct with the desired error handler
+ * functions.  If you want to use the default stderr and longjump method,
+ * you can supply NULL for the last three parameters.  We also check that
+ * the library version is compatible with the one used at compile time,
+ * in case we are using dynamically linked libraries.  REQUIRED.
+*/
+    png_ptr =
+	png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+/*png_voidp user_error_ptr, user_error_fn, user_warning_fn); */
+
+    if (png_ptr == NULL)
+	goto fin;
+
+/* Allocate/initialize the image information data.  REQUIRED 
+*/
+    info_ptr = png_create_info_struct(png_ptr);
+
+    if (info_ptr == NULL)
+	goto fin;
+
+/* Set error handling.  REQUIRED if you are not supplying your own
+ * error handling functions in the png_create_write_struct() call.
+*/
+    if (setjmp(png_jmpbuf(png_ptr)))
+	goto fin;
+
+/* I/O initialization functions is REQUIRED 
+*/
+    png_init_io(png_ptr, writer);
+
+/* Set the image information here.  Width and height are up to 2^31,
+ * bit_depth is one of 1, 2, 4, 8, or 16, but valid values also depend on
+ * the color_type selected. color_type is one of PNG_COLOR_TYPE_GRAY,
+ * PNG_COLOR_TYPE_GRAY_ALPHA, PNG_COLOR_TYPE_PALETTE, PNG_COLOR_TYPE_RGB,
+ * or PNG_COLOR_TYPE_RGB_ALPHA.  interlace is either PNG_INTERLACE_NONE or
+ * PNG_INTERLACE_ADAM7, and the compression_type and filter_type MUST
+ * currently be PNG_COMPRESSION_TYPE_BASE and PNG_FILTER_TYPE_BASE. 
+ * REQUIRED
+*/
+    png_set_compression_level(png_ptr, Z_BEST_COMPRESSION);
+
+    mono = graya = rgb = rgba = adjust = 0;
+
+    nr_colors = image->numcomps;
+    width = image->comps[0].w;
+    height = image->comps[0].h;
+    rs = image->comps[0].data;
+
+    if (nr_colors == 2) {
+	graya = 1;
+	color_type = PNG_COLOR_TYPE_GRAY_ALPHA;
+	sig_bit.gray = image->comps[0].prec;
+	bit_depth = image->comps[0].prec;
+	as = image->comps[1].data;
+    } else if (nr_colors == 3) {
+	rgb = 1;
+	color_type = PNG_COLOR_TYPE_RGB;
+	sig_bit.red = image->comps[0].prec;
+	sig_bit.green = image->comps[1].prec;
+	sig_bit.blue = image->comps[2].prec;
+	bit_depth = image->comps[0].prec;
+	gs = image->comps[1].data;
+	bs = image->comps[2].data;
+	if (image->comps[0].sgnd)
+	    adjust = 1 << (image->comps[0].prec - 1);
+    } else if (nr_colors == 4) {
+	rgb = rgba = 1;
+	color_type = PNG_COLOR_TYPE_RGB_ALPHA;
+	sig_bit.red = image->comps[0].prec;
+	sig_bit.green = image->comps[1].prec;
+	sig_bit.blue = image->comps[2].prec;
+	sig_bit.alpha = image->comps[3].prec;
+	bit_depth = image->comps[0].prec;
+	gs = image->comps[1].data;
+	bs = image->comps[2].data;
+	as = image->comps[3].data;
+	if (image->comps[0].sgnd)
+	    adjust = 1 << (image->comps[0].prec - 1);
+    } else {
+	mono = 1;
+	color_type = PNG_COLOR_TYPE_GRAY;
+	sig_bit.gray = image->comps[0].prec;
+	bit_depth = image->comps[0].prec;
+    }
+    png_set_sBIT(png_ptr, info_ptr, &sig_bit);
+
+    png_set_IHDR(png_ptr, info_ptr, width, height, bit_depth,
+		 color_type,
+		 PNG_INTERLACE_NONE,
+		 PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
+
+#ifdef HIDDEN_CODE
+/* Optional gamma chunk is strongly suggested if you have any guess
+ * as to the correct gamma of the image.
+*/
+
+    if (gamma > 0.0) {
+	png_set_gAMA(png_ptr, info_ptr, gamma);
+    }
+#endif				/* HIDDEN_CODE */
+#ifdef HIDDEN_CODE
+    if (have_bg) {
+	png_color_16 background;
+
+	background.red = bg_red;
+	background.green = bg_green;
+	background.blue = bg_blue;
+
+	png_set_bKGD(png_ptr, info_ptr, &background);
+    }
+#endif				/* HIDDEN_CODE */
+    png_write_info(png_ptr, info_ptr);
+
+    png_set_packing(png_ptr);
+
+    row_buf = (unsigned char *) malloc(width * nr_colors);
+
+    for (y = 0; y < height; ++y) {
+	d = row_buf;
+
+	for (x = 0; x < width; ++x) {
+	    if (mono) {
+		*d++ = (unsigned char) *rs++;
+	    }
+	    if (graya) {
+		*d++ = (unsigned char) *rs++;
+		*d++ = (unsigned char) *as++;
+	    } else if (rgb) {
+		*d++ = (unsigned char) (*rs++ + adjust);
+		*d++ = (unsigned char) (*gs++ + adjust);
+		*d++ = (unsigned char) (*bs++ + adjust);
+
+		if (rgba)
+		    *d++ = (unsigned char) (*as++ + adjust);
+	    }
+	}			/* for(x) */
+
+	png_write_row(png_ptr, row_buf);
+
+    }				/* for(y) */
+
+    png_write_end(png_ptr, info_ptr);
+
+    fails = 0;
+
+  fin:
+
+    if (png_ptr) {
+	png_destroy_write_struct(&png_ptr, &info_ptr);
+    }
+    fclose(writer);
+
+    return fails;
+}
+#endif
