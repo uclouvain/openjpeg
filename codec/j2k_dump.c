@@ -349,25 +349,26 @@ int main(int argc, char *argv[])
 			dirptr->filename = (char**) malloc(num_images*sizeof(char*));
 
 			if(!dirptr->filename_buf){
-				return 0;
+				return 1;
 			}
 			for(i=0;i<num_images;i++){
 				dirptr->filename[i] = dirptr->filename_buf + i*OPJ_PATH_LEN;
 			}
 		}
 		if(load_images(dirptr,img_fol.imgdirpath)==1){
-			return 0;
+			return 1;
 		}
 		if (num_images==0){
 			fprintf(stdout,"Folder is empty\n");
-			return 0;
+			return 1;
 		}
 	}else{
 		num_images=1;
 	}
 
 	/*Encoding image one by one*/
-	for(imageno = 0; imageno < num_images ; imageno++)	{
+	for(imageno = 0; imageno < num_images ; imageno++)
+  {
 		image = NULL;
 		fprintf(stderr,"\n");
 
