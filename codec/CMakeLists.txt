@@ -41,7 +41,7 @@ FIND_PACKAGE(TIFF REQUIRED)
 FIND_PACKAGE(PNG REQUIRED)
 
 # Loop over all executables:
-FOREACH(exe j2k_to_image image_to_j2k)
+FOREACH(exe j2k_to_image image_to_j2k j2k_dump)
   ADD_EXECUTABLE(${exe} ${exe}.c ${common_SRCS})
   TARGET_LINK_LIBRARIES(${exe} ${OPJ_PREFIX}openjpeg ${TIFF_LIBRARIES} ${PNG_LIBRARIES})
   ADD_TEST(${exe} ${EXECUTABLE_OUTPUT_PATH}/${exe})

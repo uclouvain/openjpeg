@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+Jun 22, 2010
++ [MM] Import j2k_dump from trunk (much faster!)
+
 Jun 21, 2010
 * [MM] Move CMake files to CMake folder
 * [MM] Remove some warnings in code

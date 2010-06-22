@@ -727,6 +727,7 @@ bool j2k_set_decode_area(
 			struct opj_event_mgr * p_manager
 			);
 
+void j2k_dump_image(FILE *fd, opj_image_t * img);
 
 /* ----------------------------------------------------------------------- */
 /*@}*/
