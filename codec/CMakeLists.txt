@@ -69,6 +69,18 @@ FILE(GLOB_RECURSE OPENJPEG_DATA_IMAGES_GLOB
 foreach(filename ${OPENJPEG_DATA_IMAGES_GLOB})
   get_filename_component(filename_temp ${filename} NAME)
   get_filename_component(filename_ext ${filename} EXT)
+  execute_process(COMMAND ${EXECUTABLE_OUTPUT_PATH}/j2k_dump -i ${filename}
+    OUTPUT_VARIABLE dump_success
+    OUTPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/${filename_temp}.dump
+    ERROR_QUIET
+  )
+  if(dump_success)
+  file(READ ${CMAKE_CURRENT_BINARY_DIR}/${filename_temp}.dump numcomp_file)
+  string(REGEX REPLACE ".*numcomps=([0-9]+).*" "\\1"
+    numcomps "${numcomp_file}")
+  #message( "found:${output_variable} for ${filename_temp}" )
+  endif()
+  ADD_TEST(dump-${filename_temp} ${EXECUTABLE_OUTPUT_PATH}/j2k_dump -i ${filename})
   foreach(codec_type ppm pgx bmp tif raw tga)
     ADD_TEST(j2i-${filename_temp}-${codec_type} ${EXECUTABLE_OUTPUT_PATH}/j2k_to_image -i ${filename} -o ${filename_temp}.${codec_type})
     ADD_TEST(i2j-${filename_temp}-${codec_type} ${EXECUTABLE_OUTPUT_PATH}/image_to_j2k -i ${filename_temp}.${codec_type} -o ${filename_temp}.${codec_type}${filename_ext})

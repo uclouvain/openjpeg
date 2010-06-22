@@ -455,6 +455,11 @@ int main(int argc, char *argv[])
 		//	return EXIT_FAILURE;
 		//}
 		/* dump image */
+    if(!image)
+      {
+			fprintf(stderr, "ERROR -> j2k_to_image: failed to read header\n");
+			return EXIT_FAILURE;
+      }
     j2k_dump_image(stdout, image);
 
 		/* dump cp */
