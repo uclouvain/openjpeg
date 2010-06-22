@@ -522,6 +522,8 @@ void cinema_setup_encoder(opj_cparameters_t *parameters,opj_image_t *image, img_
 		}
 		parameters->numpocs = initialise_4K_poc(parameters->POC,parameters->numresolution);
 		break;
+	default :
+		break;
 	}
 
 	switch (parameters->cp_cinema){
@@ -564,6 +566,8 @@ void cinema_setup_encoder(opj_cparameters_t *parameters,opj_image_t *image, img_
 				}
 			}
 			parameters->max_comp_size = COMP_48_CS;
+			break;
+		default:
 			break;
 	}
 	parameters->cp_disto_alloc = 1;
@@ -1060,7 +1064,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 				int hprot, pprot, sens, addr, size, range;
 
 				/* we need to enable indexing */
-				if (!indexfilename || !strcmp(indexfilename, "")) {
+				if (!indexfilename || !*indexfilename) {
 					strncpy(indexfilename, JPWL_PRIVATEINDEX_NAME, OPJ_PATH_LEN);
 				}
 
@@ -1128,7 +1132,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 					/* search packet error protection method */
 					if (*token == 'p') {
 
-						static int pack = 0, tile = 0, packspec = 0/*, lastpackno = 0*/;
+						static int pack = 0, tile = 0, packspec = 0;
 
 						pprot = 1; /* predefined method */
 
@@ -1284,7 +1288,6 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 					/* search addressing size */
 					if (*token == 'a') {
 
-						/*static int tile = 0, tilespec = 0, lasttileno = 0*/;
 
 						addr = 0; /* predefined: auto */
 
@@ -1310,7 +1313,6 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 					/* search sensitivity size */
 					if (*token == 'z') {
 
-						/*static int tile = 0, tilespec = 0, lasttileno = 0;*/
 
 						size = 1; /* predefined: 1 byte */
 
@@ -1336,7 +1338,6 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 					/* search range method */
 					if (*token == 'g') {
 
-						/*static int tile = 0, tilespec = 0, lasttileno = 0;*/
 
 						range = 0; /* predefined: 0 (packet) */
 

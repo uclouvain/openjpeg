@@ -2121,7 +2121,7 @@ int imagetoraw(opj_image_t * image, const char *outfile)
 				for (line = 0; line < h; line++) {
 					for(row = 0; row < w; row++)	{					
 						unsigned char temp;
-						curr = (signed short int) (*ptr & mask);						
+						curr = (signed short int) (*ptr & mask);
 						temp = (unsigned char) (curr >> 8);
 						fwrite(&temp, 1, 1, rawFile);
 						temp = (unsigned char) curr;
@@ -2138,7 +2138,7 @@ int imagetoraw(opj_image_t * image, const char *outfile)
 				for (line = 0; line < h; line++) {
 					for(row = 0; row < w; row++)	{				
 						unsigned char temp;
-						curr = (unsigned short int) (*ptr & mask);						
+						curr = (unsigned short int) (*ptr & mask);
 						temp = (unsigned char) (curr >> 8);
 						fwrite(&temp, 1, 1, rawFile);
 						temp = (unsigned char) curr;
