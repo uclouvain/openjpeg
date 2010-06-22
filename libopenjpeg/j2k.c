@@ -268,6 +268,7 @@ void j2k_dump_image(FILE *fd, opj_image_t * img) {
 		fprintf(fd, "  comp %d {\n", compno);
 		fprintf(fd, "    dx=%d, dy=%d\n", comp->dx, comp->dy);
 		fprintf(fd, "    prec=%d\n", comp->prec);
+		//fprintf(fd, "    bpp=%d\n", comp->bpp);
 		fprintf(fd, "    sgnd=%d\n", comp->sgnd);
 		fprintf(fd, "  }\n");
 	}

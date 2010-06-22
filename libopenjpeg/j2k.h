@@ -438,6 +438,7 @@ Encode an image into a JPEG-2000 codestream
 */
 bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, opj_codestream_info_t *cstr_info);
 
+void j2k_dump_image(FILE *fd, opj_image_t * img);
 void j2k_dump_cp(FILE *fd, opj_image_t * img, opj_cp_t * cp);
 /* ----------------------------------------------------------------------- */
 /*@}*/

@@ -302,8 +302,6 @@ void info_callback(const char *msg, void *client_data) {
 	fprintf(stdout, "[INFO] %s", msg);
 }
 
-//void j2k_dump_cp(FILE *fd, opj_image_t * img, opj_cp_t * cp);
-
 /* -------------------------------------------------------------------------- */
 
 int main(int argc, char *argv[])
@@ -425,7 +423,10 @@ int main(int argc, char *argv[])
 				opj_cio_close(cio);
 				return 1;
 			}
-			/* dump */
+			/* dump image */
+      j2k_dump_image(stdout, image);
+
+			/* dump cp */
       j2k_dump_cp(stdout, image, ((opj_j2k_t*)dinfo->j2k_handle)->cp);
 
 			/* close the byte stream */
@@ -469,7 +470,10 @@ int main(int argc, char *argv[])
 				opj_cio_close(cio);
 				return 1;
 			}
-			/* dump */
+			/* dump image */
+      j2k_dump_image(stdout, image);
+
+			/* dump cp */
       j2k_dump_cp(stdout, image, ((opj_jp2_t*)dinfo->jp2_handle)->j2k->cp);
 
 			/* close the byte stream */
