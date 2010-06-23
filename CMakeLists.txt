@@ -155,6 +155,9 @@ IF(BUILD_TESTING)
 ENDIF(BUILD_TESTING)
 
 IF(BUILD_TESTING)
+SET(CMAKE_MODULE_PATH "${OPENJPEG_SOURCE_DIR}/CMake")
+FIND_PACKAGE(FreeImage REQUIRED)
+
   SUBDIRS(
     test_V2_tile_handling
     test_Free_image_V2_tile_handling

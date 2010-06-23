@@ -16,7 +16,8 @@ IF(NOT BUILD_SHARED_LIBS)
   ADD_DEFINITIONS(-DOPJ_STATIC)
 ENDIF(NOT BUILD_SHARED_LIBS)
 
-INCLUDE(${OPENJPEG_SOURCE_DIR}/CMake/Free_CMakeImport.cmake)
+#INCLUDE(${OPENJPEG_SOURCE_DIR}/CMake/Free_CMakeImport.cmake)
+ADD_DEFINITIONS ( -DFREEIMAGE_LIB )
 
 # Loop over all executables:
 FOREACH(exe test2_encoder test2_decoder)
