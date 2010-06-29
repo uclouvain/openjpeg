@@ -9,9 +9,9 @@
 # SET(OPENJPEG_NAMESPACE "GDCMOPENJPEG")
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
-if(COMMAND cmake_policy)
-  cmake_policy(SET CMP0003 NEW)
-endif(COMMAND cmake_policy)
+IF(COMMAND CMAKE_POLICY)
+  CMAKE_POLICY(SET CMP0003 NEW)
+ENDIF(COMMAND CMAKE_POLICY)
 
 IF(NOT OPENJPEG_NAMESPACE)
   SET(OPENJPEG_NAMESPACE "OPENJPEG")
@@ -39,6 +39,54 @@ SET(OPENJPEG_LIBRARY_PROPERTIES
   VERSION   "${OPENJPEG_VERSION_MAJOR}.${OPENJPEG_VERSION_MINOR}.${OPENJPEG_VERSION_BUILD}"
   SOVERSION "${OPENJPEG_VERSION_MAJOR}.${OPENJPEG_VERSION_MINOR}"
 )
+# You will also need to define a value for the following variables:
+# OPENJPEG_INSTALL_BIN_DIR          - binary dir (executables)
+# OPENJPEG_INSTALL_LIB_DIR          - library dir (libs)
+# OPENJPEG_INSTALL_DATA_DIR         - share dir (say, examples, data, etc)
+# OPENJPEG_INSTALL_INCLUDE_DIR      - include dir (headers)
+
+# --------------------------------------------------------------------------
+# Install directories
+
+STRING(TOLOWER ${PROJECT_NAME} projectname)
+SET(subdir "${projectname}-${OPENJPEG_VERSION_MAJOR}.${OPENJPEG_VERSION_MINOR}")
+
+IF(NOT OPENJPEG_INSTALL_BIN_DIR)
+  SET(OPENJPEG_INSTALL_BIN_DIR "bin")
+ENDIF(NOT OPENJPEG_INSTALL_BIN_DIR)
+
+IF(NOT OPENJPEG_INSTALL_LIB_DIR)
+  SET(OPENJPEG_INSTALL_LIB_DIR "lib")
+ENDIF(NOT OPENJPEG_INSTALL_LIB_DIR)
+
+IF(NOT OPENJPEG_INSTALL_DATA_DIR)
+  SET(OPENJPEG_INSTALL_DATA_DIR "share/${subdir}")
+ENDIF(NOT OPENJPEG_INSTALL_DATA_DIR)
+
+IF(NOT OPENJPEG_INSTALL_INCLUDE_DIR)
+  SET(OPENJPEG_INSTALL_INCLUDE_DIR "include/${subdir}")
+ENDIF(NOT OPENJPEG_INSTALL_INCLUDE_DIR)
+
+IF(NOT OPENJPEG_INSTALL_DOC_DIR)
+  SET(OPENJPEG_INSTALL_DOC_DIR "share/doc/${subdir}")
+ENDIF(NOT OPENJPEG_INSTALL_DOC_DIR)
+
+IF(NOT OPENJPEG_INSTALL_PACKAGE_DIR)
+  SET(OPENJPEG_INSTALL_PACKAGE_DIR ${OPENJPEG_INSTALL_LIB_DIR}/${subdir}
+    CACHE INTERNAL "")
+ENDIF(NOT OPENJPEG_INSTALL_PACKAGE_DIR)
+
+#-----------------------------------------------------------------------------
+# Test for some required system information.
+INCLUDE (${CMAKE_ROOT}/Modules/CMakeBackwardCompatibilityC.cmake)
+
+#-----------------------------------------------------------------------------
+# Setup file for setting custom ctest vars
+CONFIGURE_FILE(
+  ${CMAKE_CURRENT_SOURCE_DIR}/CMake/CTestCustom.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/CTestCustom.cmake
+  @ONLY
+  )
 
 #-----------------------------------------------------------------------------
 # OpenJPEG build configuration options.
@@ -49,13 +97,6 @@ SET (EXECUTABLE_OUTPUT_PATH ${OPENJPEG_BINARY_DIR}/bin CACHE PATH "Single output
 SET (LIBRARY_OUTPUT_PATH ${OPENJPEG_BINARY_DIR}/bin CACHE PATH "Single output directory for building all libraries.")
 MARK_AS_ADVANCED(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
 
-#-----------------------------------------------------------------------------
-# Setup file for setting custom ctest vars
-CONFIGURE_FILE(
-  ${CMAKE_CURRENT_SOURCE_DIR}/CTestCustom.cmake.in
-  ${CMAKE_CURRENT_BINARY_DIR}/CTestCustom.cmake
-  @ONLY
-  )
 
 #-----------------------------------------------------------------------------
 # For the codec...
@@ -125,8 +166,18 @@ FIND_PATH(JPEG2000_CONFORMANCE_DATA_ROOT testimages.html
 # Compiler specific flags:
 IF(CMAKE_COMPILER_IS_GNUCC)
   # For all builds, make sure openjpeg is std99 compliant:
-  SET(CMAKE_C_FLAGS "-Wall -std=c99 ${CMAKE_C_FLAGS}")
+  # SET(CMAKE_C_FLAGS "-Wall -std=c99 ${CMAKE_C_FLAGS}") # FIXME: this setting prevented us from setting a coverage build.
   # Do not use ffast-math for all build, it would produce incorrect results, only set for release:
   SET(CMAKE_C_FLAGS_RELEASE "-ffast-math ${CMAKE_C_FLAGS_RELEASE}")
 ENDIF(CMAKE_COMPILER_IS_GNUCC)
+
+# install all targets referenced as OPENJPEGTargets
+install(EXPORT OpenJPEGTargets DESTINATION ${OPENJPEG_INSTALL_PACKAGE_DIR})
+CONFIGURE_FILE( ${OPENJPEG_SOURCE_DIR}/CMake/OpenJPEGConfig.cmake.in
+  ${OPENJPEG_BINARY_DIR}/OpenJPEGConfig.cmake
+  @ONLY
+)
+INSTALL( FILES ${OPENJPEG_BINARY_DIR}/OpenJPEGConfig.cmake
+  DESTINATION ${OPENJPEG_INSTALL_PACKAGE_DIR}
+)
 
