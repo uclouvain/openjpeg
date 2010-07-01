@@ -7,7 +7,11 @@
 # For this purpose you can define a CMake var: OPENJPEG_NAMESPACE to whatever you like
 # e.g.:
 # SET(OPENJPEG_NAMESPACE "GDCMOPENJPEG")
-CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+
+IF(COMMAND CMAKE_POLICY)
+  CMAKE_POLICY(SET CMP0003 NEW)
+ENDIF(COMMAND CMAKE_POLICY)
 
 IF(NOT OPENJPEG_NAMESPACE)
   SET(OPENJPEG_NAMESPACE "OPENJPEG")
@@ -15,10 +19,6 @@ IF(NOT OPENJPEG_NAMESPACE)
 ENDIF(NOT OPENJPEG_NAMESPACE)
 # In all cases:
 STRING(TOLOWER ${OPENJPEG_NAMESPACE} OPENJPEG_LIBRARY_NAME)
-
-IF(COMMAND CMAKE_POLICY)
-  CMAKE_POLICY(SET CMP0003 NEW)
-ENDIF(COMMAND CMAKE_POLICY)
 
 PROJECT(${OPENJPEG_NAMESPACE} C)
 
@@ -127,9 +127,6 @@ SUBDIRS(
   # mj2
   #j2kviewer/src
   )
-IF(BUILD_EXAMPLES)
-  SUBDIRS(codec)
-ENDIF(BUILD_EXAMPLES)
 
 #IF(NOT UNIX)
 #SUBDIRS(
@@ -138,6 +135,12 @@ ENDIF(BUILD_EXAMPLES)
 #  indexer_JPIP
 #  )
 #ENDIF(NOT UNIX)
+
+#-----------------------------------------------------------------------------
+# Build example only if requested
+IF(BUILD_EXAMPLES)
+  SUBDIRS(codec)
+ENDIF(BUILD_EXAMPLES)
 
 #-----------------------------------------------------------------------------
 # For the documentation
@@ -157,6 +160,7 @@ ENDIF(BUILD_TESTING)
 IF(BUILD_TESTING)
 SET(CMAKE_MODULE_PATH "${OPENJPEG_SOURCE_DIR}/CMake")
 FIND_PACKAGE(FreeImage REQUIRED)
+INCLUDE_DIRECTORIES( ${FREEIMAGE_INCLUDE_PATH} )
 
   SUBDIRS(
     test_V2_tile_handling
@@ -166,8 +170,8 @@ ENDIF(BUILD_TESTING)
 
 # Adding test with dataset from:
 # http://www.crc.ricoh.com/~gormish/jpeg2000conformance/
+# -> wget http://www.crc.ricoh.com/~gormish/jpeg2000conformance/j2kp4files_v1_5.zip
 # http://www.jpeg.org/jpeg2000guide/testimages/testimages.html
-
 #-----------------------------------------------------------------------------
 # Adding JPEG2000_CONFORMANCE_DATA_ROOT
 FIND_PATH(JPEG2000_CONFORMANCE_DATA_ROOT testimages.html
