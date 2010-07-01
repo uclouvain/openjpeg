@@ -3353,6 +3353,11 @@ bool j2k_read_SQcd_SQcc(
 	else
 	{
 		l_num_band = (l_tccp->qntsty == J2K_CCP_QNTSTY_NOQNT) ? (*p_header_size) : (*p_header_size) / 2;
+    if( l_num_band > J2K_MAXBANDS )
+      {
+      opj_event_msg(p_manager, EVT_ERROR, "Error reading CCP_QNTSTY element\n");
+      return false;
+      }
 	}
 
 #ifdef USE_JPWL
