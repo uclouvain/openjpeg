@@ -100,7 +100,7 @@ MARK_AS_ADVANCED(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
 
 #-----------------------------------------------------------------------------
 # For the codec...
-OPTION(BUILD_EXAMPLES "Build the Examples (codec...)." OFF)
+OPTION(BUILD_EXAMPLES "Build the Examples (codec...)." ON)
 
 
 # configure name mangling to allow multiple libraries to coexist
