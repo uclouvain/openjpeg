@@ -1,3 +1,11 @@
+
+# **************************************************
+# NOTE : This README is obsolete. We strongly
+# recommend using the cmake tool (see README.cmake)
+# to build openJPEG.
+# **************************************************
+
+
 Release Notes
 --------------
 This version of the library has been tested under the following OS:

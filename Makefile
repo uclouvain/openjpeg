@@ -1,3 +1,11 @@
+
+# ************************************************
+# NOTE : This Makefile is not maintained anymore.
+# Please use the cmake tool (see README.cmake) to
+# generate the right Makefile for your platform.
+# ************************************************
+
+
 # Linux makefile for OpenJPEG
 
 VER_MAJOR = 2
