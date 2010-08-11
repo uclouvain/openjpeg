@@ -28,6 +28,7 @@ if(EXISTS ${SELF_DIR}/OpenJPEGTargets.cmake)
   include(${SELF_DIR}/OpenJPEGTargets.cmake)
   get_filename_component(OPENJPEG_INCLUDE_ROOT "${SELF_DIR}/../../@OPENJPEG_INSTALL_INCLUDE_DIR@" ABSOLUTE)
   set(OPENJPEG_INCLUDE_DIRS ${OPENJPEG_INCLUDE_ROOT})
+  set(OPENJPEG_LIBRARIES openjpeg)
 
 else(EXISTS ${SELF_DIR}/OpenJPEGTargets.cmake)
   if(EXISTS ${SELF_DIR}/OpenJPEGExports.cmake)
