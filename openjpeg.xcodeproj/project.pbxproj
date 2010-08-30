@@ -3,13 +3,38 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 42;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		694039A6117B7E090079DE22 /* build all */ = {
+		692CF258122BB2640010088E /* build OPJ_JPWL */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 694039A9117B7E2E0079DE22 /* Build configuration list for PBXAggregateTarget "build all" */;
+			buildConfigurationList = 692CF261122BB2640010088E /* Build configuration list for PBXAggregateTarget "build OPJ_JPWL" */;
+			buildPhases = (
+			);
+			dependencies = (
+				692CF265122BB2760010088E /* PBXTargetDependency */,
+				692CF267122BB2760010088E /* PBXTargetDependency */,
+				692CF269122BB2760010088E /* PBXTargetDependency */,
+			);
+			name = "build OPJ_JPWL";
+			productName = "build all";
+		};
+		692CF26A122BB2850010088E /* build all */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 692CF271122BB2850010088E /* Build configuration list for PBXAggregateTarget "build all" */;
+			buildPhases = (
+			);
+			dependencies = (
+				692CF275122BB29A0010088E /* PBXTargetDependency */,
+				692CF277122BB29A0010088E /* PBXTargetDependency */,
+			);
+			name = "build all";
+			productName = "build all";
+		};
+		694039A6117B7E090079DE22 /* build OPJ */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 694039A9117B7E2E0079DE22 /* Build configuration list for PBXAggregateTarget "build OPJ" */;
 			buildPhases = (
 			);
 			dependencies = (
@@ -18,12 +43,48 @@
 				694039AD117B7E3D0079DE22 /* PBXTargetDependency */,
 				694039AF117B7E420079DE22 /* PBXTargetDependency */,
 			);
-			name = "build all";
+			name = "build OPJ";
 			productName = "build all";
 		};
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		692CF1FD122BADC70010088E /* libopenjpeg.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 69F985B60D40A63D00C2791C /* libopenjpeg.dylib */; };
+		692CF1FE122BADCA0010088E /* libopenjpeg.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 69F985B60D40A63D00C2791C /* libopenjpeg.dylib */; };
+		692CF202122BAE220010088E /* libopenjpeg.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 69F985B60D40A63D00C2791C /* libopenjpeg.dylib */; };
+		692CF211122BAFA10010088E /* bio.c in Sources */ = {isa = PBXBuildFile; fileRef = 69F984FF0D40A41700C2791C /* bio.c */; };
+		692CF212122BAFA10010088E /* cio.c in Sources */ = {isa = PBXBuildFile; fileRef = 69F985020D40A41700C2791C /* cio.c */; };
+		692CF213122BAFA10010088E /* dwt.c in Sources */ = {isa = PBXBuildFile; fileRef = 69F985060D40A41700C2791C /* dwt.c */; };
+		692CF214122BAFA10010088E /* event.c in Sources */ = {isa = PBXBuildFile; fileRef = 69F985090D40A41700C2791C /* event.c */; };
+		692CF215122BAFA10010088E /* image.c in Sources */ = {isa = PBXBuildFile; fileRef = 69F9850D0D40A41700C2791C /* image.c */; };
+		692CF216122BAFA10010088E /* j2k.c in Sources */ = {isa = PBXBuildFile; fileRef = 69F985110D40A41700C2791C /* j2k.c */; };
+		692CF217122BAFA10010088E /* j2k_lib.c in Sources */ = {isa = PBXBuildFile; fileRef = 69F985140D40A41700C2791C /* j2k_lib.c */; };
+		692CF218122BAFA10010088E /* jp2.c in Sources */ = {isa = PBXBuildFile; fileRef = 69F985170D40A41700C2791C /* jp2.c */; };
+		692CF219122BAFA10010088E /* jpt.c in Sources */ = {isa = PBXBuildFile; fileRef = 69F9851A0D40A41700C2791C /* jpt.c */; };
+		692CF21A122BAFA10010088E /* mct.c in Sources */ = {isa = PBXBuildFile; fileRef = 69F9851D0D40A41700C2791C /* mct.c */; };
+		692CF21B122BAFA10010088E /* mqc.c in Sources */ = {isa = PBXBuildFile; fileRef = 69F985200D40A41700C2791C /* mqc.c */; };
+		692CF21C122BAFA10010088E /* openjpeg.c in Sources */ = {isa = PBXBuildFile; fileRef = 69F985230D40A41700C2791C /* openjpeg.c */; };
+		692CF21D122BAFA10010088E /* pi.c in Sources */ = {isa = PBXBuildFile; fileRef = 69F985280D40A41700C2791C /* pi.c */; };
+		692CF21E122BAFA10010088E /* raw.c in Sources */ = {isa = PBXBuildFile; fileRef = 69F9852B0D40A41700C2791C /* raw.c */; };
+		692CF21F122BAFA10010088E /* t1.c in Sources */ = {isa = PBXBuildFile; fileRef = 69F9852E0D40A41700C2791C /* t1.c */; };
+		692CF220122BAFA10010088E /* t1_generate_luts.c in Sources */ = {isa = PBXBuildFile; fileRef = 69F985310D40A41700C2791C /* t1_generate_luts.c */; };
+		692CF221122BAFA10010088E /* t2.c in Sources */ = {isa = PBXBuildFile; fileRef = 69F985330D40A41700C2791C /* t2.c */; };
+		692CF222122BAFA10010088E /* tcd.c in Sources */ = {isa = PBXBuildFile; fileRef = 69F985360D40A41700C2791C /* tcd.c */; };
+		692CF223122BAFA10010088E /* tgt.c in Sources */ = {isa = PBXBuildFile; fileRef = 69F985390D40A41700C2791C /* tgt.c */; };
+		692CF225122BB0040010088E /* crc.c in Sources */ = {isa = PBXBuildFile; fileRef = 69F984F00D40A41700C2791C /* crc.c */; };
+		692CF226122BB0040010088E /* jpwl.c in Sources */ = {isa = PBXBuildFile; fileRef = 69F984F20D40A41700C2791C /* jpwl.c */; };
+		692CF227122BB0040010088E /* jpwl_lib.c in Sources */ = {isa = PBXBuildFile; fileRef = 69F984F80D40A41700C2791C /* jpwl_lib.c */; };
+		692CF228122BB0040010088E /* rs.c in Sources */ = {isa = PBXBuildFile; fileRef = 69F984FC0D40A41700C2791C /* rs.c */; };
+		692CF23E122BB1D60010088E /* convert.c in Sources */ = {isa = PBXBuildFile; fileRef = 69F984BD0D40A41700C2791C /* convert.c */; };
+		692CF23F122BB1D60010088E /* getopt.c in Sources */ = {isa = PBXBuildFile; fileRef = 69F984BB0D40A41700C2791C /* getopt.c */; };
+		692CF240122BB1D60010088E /* image_to_j2k.c in Sources */ = {isa = PBXBuildFile; fileRef = 69F984C10D40A41700C2791C /* image_to_j2k.c */; };
+		692CF241122BB1D60010088E /* index.c in Sources */ = {isa = PBXBuildFile; fileRef = 69F984C60D40A41700C2791C /* index.c */; };
+		692CF249122BB2030010088E /* libopenjpeg_JPWL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 692CF20E122BAF7A0010088E /* libopenjpeg_JPWL.a */; };
+		692CF24C122BB2110010088E /* convert.c in Sources */ = {isa = PBXBuildFile; fileRef = 69F984BD0D40A41700C2791C /* convert.c */; };
+		692CF24D122BB2110010088E /* getopt.c in Sources */ = {isa = PBXBuildFile; fileRef = 69F984BB0D40A41700C2791C /* getopt.c */; };
+		692CF24E122BB2110010088E /* index.c in Sources */ = {isa = PBXBuildFile; fileRef = 69F984C60D40A41700C2791C /* index.c */; };
+		692CF24F122BB2110010088E /* j2k_to_image.c in Sources */ = {isa = PBXBuildFile; fileRef = 69F984C90D40A41700C2791C /* j2k_to_image.c */; };
+		692CF257122BB2230010088E /* libopenjpeg_JPWL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 692CF20E122BAF7A0010088E /* libopenjpeg_JPWL.a */; };
 		69F9860E0D40A7B000C2791C /* bio.c in Sources */ = {isa = PBXBuildFile; fileRef = 69F984FF0D40A41700C2791C /* bio.c */; };
 		69F9860F0D40A7B000C2791C /* cio.c in Sources */ = {isa = PBXBuildFile; fileRef = 69F985020D40A41700C2791C /* cio.c */; };
 		69F986100D40A7B000C2791C /* dwt.c in Sources */ = {isa = PBXBuildFile; fileRef = 69F985060D40A41700C2791C /* dwt.c */; };
@@ -66,15 +127,48 @@
 		69F986530D40A84C00C2791C /* getopt.c in Sources */ = {isa = PBXBuildFile; fileRef = 69F984BB0D40A41700C2791C /* getopt.c */; };
 		69F986540D40A84C00C2791C /* image_to_j2k.c in Sources */ = {isa = PBXBuildFile; fileRef = 69F984C10D40A41700C2791C /* image_to_j2k.c */; };
 		69F986550D40A84C00C2791C /* index.c in Sources */ = {isa = PBXBuildFile; fileRef = 69F984C60D40A41700C2791C /* index.c */; };
-		69F986560D40A86900C2791C /* libopenjpeg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 69F985A10D40A48E00C2791C /* libopenjpeg.a */; };
 		69F986600D40A90E00C2791C /* convert.c in Sources */ = {isa = PBXBuildFile; fileRef = 69F984BD0D40A41700C2791C /* convert.c */; };
 		69F986610D40A90E00C2791C /* getopt.c in Sources */ = {isa = PBXBuildFile; fileRef = 69F984BB0D40A41700C2791C /* getopt.c */; };
 		69F986620D40A90E00C2791C /* index.c in Sources */ = {isa = PBXBuildFile; fileRef = 69F984C60D40A41700C2791C /* index.c */; };
 		69F986630D40A90E00C2791C /* j2k_to_image.c in Sources */ = {isa = PBXBuildFile; fileRef = 69F984C90D40A41700C2791C /* j2k_to_image.c */; };
-		69F986640D40A91700C2791C /* libopenjpeg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 69F985A10D40A48E00C2791C /* libopenjpeg.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		692CF264122BB2760010088E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 69F984A80D40A3AE00C2791C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 692CF20D122BAF7A0010088E /* openjpeg_JPWL */;
+			remoteInfo = openjpeg_JPWL;
+		};
+		692CF266122BB2760010088E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 69F984A80D40A3AE00C2791C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 692CF23C122BB1D60010088E /* JPWL_image_to_j2k */;
+			remoteInfo = JPWL_image_to_j2k;
+		};
+		692CF268122BB2760010088E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 69F984A80D40A3AE00C2791C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 692CF24A122BB2110010088E /* JPWL_j2k_to_image */;
+			remoteInfo = JPWL_j2k_to_image;
+		};
+		692CF274122BB29A0010088E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 69F984A80D40A3AE00C2791C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 694039A6117B7E090079DE22 /* build OPJ */;
+			remoteInfo = "build OPJ";
+		};
+		692CF276122BB29A0010088E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 69F984A80D40A3AE00C2791C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 692CF258122BB2640010088E /* build OPJ_JPWL */;
+			remoteInfo = "build OPJ_JPWL";
+		};
 		694039AA117B7E390079DE22 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 69F984A80D40A3AE00C2791C /* Project object */;
@@ -105,10 +199,28 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		692CF1F8122BAD330010088E /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 12;
+			dstPath = /usr/local/lib;
+			dstSubfolderSpec = 0;
+			files = (
+				692CF202122BAE220010088E /* libopenjpeg.dylib in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		692CF20E122BAF7A0010088E /* libopenjpeg_JPWL.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libopenjpeg_JPWL.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		692CF247122BB1D60010088E /* JPWL_image_to_j2k */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = JPWL_image_to_j2k; sourceTree = BUILT_PRODUCTS_DIR; };
+		692CF255122BB2110010088E /* JPWL_j2k_to_image */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = JPWL_j2k_to_image; sourceTree = BUILT_PRODUCTS_DIR; };
 		698C891B0DE1D95300F67421 /* imagjpeg2000.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = imagjpeg2000.h; sourceTree = "<group>"; };
 		698C891C0DE1D95300F67421 /* OPJAbout.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = OPJAbout.cpp; sourceTree = "<group>"; };
 		698C891D0DE1D95300F67421 /* OPJViewer.rc */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; path = OPJViewer.rc; sourceTree = "<group>"; };
+		69EF7F9511AE702C00A80EC4 /* CTestConfig.cmake */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; path = CTestConfig.cmake; sourceTree = "<group>"; };
+		69EF7F9611AE702C00A80EC4 /* CTestCustom.cmake.in */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; path = CTestCustom.cmake.in; sourceTree = "<group>"; };
 		69F984B60D40A41700C2791C /* ChangeLog */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; path = ChangeLog; sourceTree = "<group>"; };
 		69F984B70D40A41700C2791C /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		69F984B90D40A41700C2791C /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
@@ -254,11 +366,27 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		692CF242122BB1D60010088E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				692CF249122BB2030010088E /* libopenjpeg_JPWL.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		692CF250122BB2110010088E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				692CF257122BB2230010088E /* libopenjpeg_JPWL.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		69F986370D40A7DA00C2791C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				69F986560D40A86900C2791C /* libopenjpeg.a in Frameworks */,
+				692CF1FD122BADC70010088E /* libopenjpeg.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -266,7 +394,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				69F986640D40A91700C2791C /* libopenjpeg.a in Frameworks */,
+				692CF1FE122BADCA0010088E /* libopenjpeg.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -276,6 +404,8 @@
 		69F984A60D40A3AE00C2791C = {
 			isa = PBXGroup;
 			children = (
+				69EF7F9511AE702C00A80EC4 /* CTestConfig.cmake */,
+				69EF7F9611AE702C00A80EC4 /* CTestCustom.cmake.in */,
 				69F984B60D40A41700C2791C /* ChangeLog */,
 				69F984B70D40A41700C2791C /* CMakeLists.txt */,
 				69F984B80D40A41700C2791C /* codec */,
@@ -572,6 +702,9 @@
 				69F985B60D40A63D00C2791C /* libopenjpeg.dylib */,
 				69F986390D40A7DA00C2791C /* image_to_j2k */,
 				69F9865C0D40A8E200C2791C /* j2k_to_image */,
+				692CF20E122BAF7A0010088E /* libopenjpeg_JPWL.a */,
+				692CF247122BB1D60010088E /* JPWL_image_to_j2k */,
+				692CF255122BB2110010088E /* JPWL_j2k_to_image */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -579,6 +712,53 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		692CF20D122BAF7A0010088E /* openjpeg_JPWL */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 692CF224122BAFBF0010088E /* Build configuration list for PBXNativeTarget "openjpeg_JPWL" */;
+			buildPhases = (
+				692CF20B122BAF7A0010088E /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = openjpeg_JPWL;
+			productName = openjpegWL;
+			productReference = 692CF20E122BAF7A0010088E /* libopenjpeg_JPWL.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		692CF23C122BB1D60010088E /* JPWL_image_to_j2k */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 692CF244122BB1D60010088E /* Build configuration list for PBXNativeTarget "JPWL_image_to_j2k" */;
+			buildPhases = (
+				692CF23D122BB1D60010088E /* Sources */,
+				692CF242122BB1D60010088E /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = JPWL_image_to_j2k;
+			productName = image_to_j2k;
+			productReference = 692CF247122BB1D60010088E /* JPWL_image_to_j2k */;
+			productType = "com.apple.product-type.tool";
+		};
+		692CF24A122BB2110010088E /* JPWL_j2k_to_image */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 692CF252122BB2110010088E /* Build configuration list for PBXNativeTarget "JPWL_j2k_to_image" */;
+			buildPhases = (
+				692CF24B122BB2110010088E /* Sources */,
+				692CF250122BB2110010088E /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = JPWL_j2k_to_image;
+			productName = j2k_to_image;
+			productReference = 692CF255122BB2110010088E /* JPWL_j2k_to_image */;
+			productType = "com.apple.product-type.tool";
+		};
 		69F985A00D40A48E00C2791C /* openjpeg */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 69F985A30D40A48F00C2791C /* Build configuration list for PBXNativeTarget "openjpeg" */;
@@ -599,6 +779,7 @@
 			buildConfigurationList = 69F985B90D40A69400C2791C /* Build configuration list for PBXNativeTarget "opjdyn" */;
 			buildPhases = (
 				69F985B30D40A63D00C2791C /* Sources */,
+				692CF1F8122BAD330010088E /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -647,7 +828,7 @@
 		69F984A80D40A3AE00C2791C /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 69F984A90D40A3AE00C2791C /* Build configuration list for PBXProject "openjpeg" */;
-			compatibilityVersion = "Xcode 2.4";
+			compatibilityVersion = "Xcode 3.2";
 			hasScannedForEncodings = 0;
 			mainGroup = 69F984A60D40A3AE00C2791C;
 			productRefGroup = 69F985A20D40A48E00C2791C /* Products */;
@@ -658,12 +839,69 @@
 				69F985B50D40A63D00C2791C /* opjdyn */,
 				69F986380D40A7DA00C2791C /* image_to_j2k */,
 				69F9865B0D40A8E200C2791C /* j2k_to_image */,
-				694039A6117B7E090079DE22 /* build all */,
+				694039A6117B7E090079DE22 /* build OPJ */,
+				692CF20D122BAF7A0010088E /* openjpeg_JPWL */,
+				692CF23C122BB1D60010088E /* JPWL_image_to_j2k */,
+				692CF24A122BB2110010088E /* JPWL_j2k_to_image */,
+				692CF258122BB2640010088E /* build OPJ_JPWL */,
+				692CF26A122BB2850010088E /* build all */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
+		692CF20B122BAF7A0010088E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				692CF225122BB0040010088E /* crc.c in Sources */,
+				692CF226122BB0040010088E /* jpwl.c in Sources */,
+				692CF227122BB0040010088E /* jpwl_lib.c in Sources */,
+				692CF228122BB0040010088E /* rs.c in Sources */,
+				692CF211122BAFA10010088E /* bio.c in Sources */,
+				692CF212122BAFA10010088E /* cio.c in Sources */,
+				692CF213122BAFA10010088E /* dwt.c in Sources */,
+				692CF214122BAFA10010088E /* event.c in Sources */,
+				692CF215122BAFA10010088E /* image.c in Sources */,
+				692CF216122BAFA10010088E /* j2k.c in Sources */,
+				692CF217122BAFA10010088E /* j2k_lib.c in Sources */,
+				692CF218122BAFA10010088E /* jp2.c in Sources */,
+				692CF219122BAFA10010088E /* jpt.c in Sources */,
+				692CF21A122BAFA10010088E /* mct.c in Sources */,
+				692CF21B122BAFA10010088E /* mqc.c in Sources */,
+				692CF21C122BAFA10010088E /* openjpeg.c in Sources */,
+				692CF21D122BAFA10010088E /* pi.c in Sources */,
+				692CF21E122BAFA10010088E /* raw.c in Sources */,
+				692CF21F122BAFA10010088E /* t1.c in Sources */,
+				692CF220122BAFA10010088E /* t1_generate_luts.c in Sources */,
+				692CF221122BAFA10010088E /* t2.c in Sources */,
+				692CF222122BAFA10010088E /* tcd.c in Sources */,
+				692CF223122BAFA10010088E /* tgt.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		692CF23D122BB1D60010088E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				692CF23E122BB1D60010088E /* convert.c in Sources */,
+				692CF23F122BB1D60010088E /* getopt.c in Sources */,
+				692CF240122BB1D60010088E /* image_to_j2k.c in Sources */,
+				692CF241122BB1D60010088E /* index.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		692CF24B122BB2110010088E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				692CF24C122BB2110010088E /* convert.c in Sources */,
+				692CF24D122BB2110010088E /* getopt.c in Sources */,
+				692CF24E122BB2110010088E /* index.c in Sources */,
+				692CF24F122BB2110010088E /* j2k_to_image.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		69F9859E0D40A48E00C2791C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -741,6 +979,31 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		692CF265122BB2760010088E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 692CF20D122BAF7A0010088E /* openjpeg_JPWL */;
+			targetProxy = 692CF264122BB2760010088E /* PBXContainerItemProxy */;
+		};
+		692CF267122BB2760010088E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 692CF23C122BB1D60010088E /* JPWL_image_to_j2k */;
+			targetProxy = 692CF266122BB2760010088E /* PBXContainerItemProxy */;
+		};
+		692CF269122BB2760010088E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 692CF24A122BB2110010088E /* JPWL_j2k_to_image */;
+			targetProxy = 692CF268122BB2760010088E /* PBXContainerItemProxy */;
+		};
+		692CF275122BB29A0010088E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 694039A6117B7E090079DE22 /* build OPJ */;
+			targetProxy = 692CF274122BB29A0010088E /* PBXContainerItemProxy */;
+		};
+		692CF277122BB29A0010088E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 692CF258122BB2640010088E /* build OPJ_JPWL */;
+			targetProxy = 692CF276122BB29A0010088E /* PBXContainerItemProxy */;
+		};
 		694039AB117B7E390079DE22 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 69F985A00D40A48E00C2791C /* openjpeg */;
@@ -764,6 +1027,176 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		692CF20F122BAF7A0010088E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = /usr/local/lib;
+				OTHER_CFLAGS = "-DUSE_JPWL";
+				PREBINDING = NO;
+				PRODUCT_NAME = openjpeg_JPWL;
+			};
+			name = Debug;
+		};
+		692CF210122BAF7A0010088E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/lib;
+				OTHER_CFLAGS = "-DUSE_JPWL";
+				PREBINDING = NO;
+				PRODUCT_NAME = openjpeg_JPWL;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		692CF245122BB1D60010088E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_LINK_WITH_DYNAMIC_LIBRARIES = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				HEADER_SEARCH_PATHS = ./libopenjpeg;
+				INSTALL_PATH = "$(HOME)/bin";
+				OTHER_CFLAGS = "-DUSE_JPWL";
+				OTHER_LDFLAGS = (
+					"-lpng",
+					"-ltiff",
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = JPWL_image_to_j2k;
+				USER_HEADER_SEARCH_PATHS = "";
+				ZERO_LINK = YES;
+			};
+			name = Debug;
+		};
+		692CF246122BB1D60010088E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_LINK_WITH_DYNAMIC_LIBRARIES = YES;
+				GCC_MODEL_TUNING = G5;
+				HEADER_SEARCH_PATHS = ./libopenjpeg;
+				INSTALL_PATH = "$(HOME)/bin";
+				OTHER_CFLAGS = "-DUSE_JPWL";
+				OTHER_LDFLAGS = (
+					"-lpng",
+					"-ltiff",
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = JPWL_image_to_j2k;
+				USER_HEADER_SEARCH_PATHS = "";
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		692CF253122BB2110010088E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_LINK_WITH_DYNAMIC_LIBRARIES = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				HEADER_SEARCH_PATHS = ./libopenjpeg;
+				INSTALL_PATH = "$(HOME)/bin";
+				OTHER_CFLAGS = "-DUSE_JPWL";
+				OTHER_LDFLAGS = (
+					"-lpng",
+					"-ltiff",
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = JPWL_j2k_to_image;
+				USER_HEADER_SEARCH_PATHS = "";
+				ZERO_LINK = YES;
+			};
+			name = Debug;
+		};
+		692CF254122BB2110010088E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_LINK_WITH_DYNAMIC_LIBRARIES = YES;
+				GCC_MODEL_TUNING = G5;
+				HEADER_SEARCH_PATHS = ./libopenjpeg;
+				INSTALL_PATH = "$(HOME)/bin";
+				OTHER_CFLAGS = "-DUSE_JPWL";
+				OTHER_LDFLAGS = (
+					"-lpng",
+					"-ltiff",
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = JPWL_j2k_to_image;
+				USER_HEADER_SEARCH_PATHS = "";
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		692CF262122BB2640010088E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PRODUCT_NAME = "build all";
+			};
+			name = Debug;
+		};
+		692CF263122BB2640010088E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PRODUCT_NAME = "build all";
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		692CF272122BB2850010088E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PRODUCT_NAME = "build all";
+			};
+			name = Debug;
+		};
+		692CF273122BB2850010088E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PRODUCT_NAME = "build all";
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
 		694039A7117B7E0A0079DE22 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -790,6 +1223,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = NO;
+				GCC_LINK_WITH_DYNAMIC_LIBRARIES = YES;
 			};
 			name = Debug;
 		};
@@ -798,6 +1232,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
+				GCC_LINK_WITH_DYNAMIC_LIBRARIES = YES;
 			};
 			name = Release;
 		};
@@ -879,6 +1314,7 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_LINK_WITH_DYNAMIC_LIBRARIES = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				HEADER_SEARCH_PATHS = ./libopenjpeg;
@@ -902,6 +1338,7 @@
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_LINK_WITH_DYNAMIC_LIBRARIES = YES;
 				GCC_MODEL_TUNING = G5;
 				HEADER_SEARCH_PATHS = ./libopenjpeg;
 				INSTALL_PATH = "$(HOME)/bin";
@@ -925,6 +1362,7 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_LINK_WITH_DYNAMIC_LIBRARIES = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				HEADER_SEARCH_PATHS = ./libopenjpeg;
@@ -947,6 +1385,7 @@
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_LINK_WITH_DYNAMIC_LIBRARIES = YES;
 				GCC_MODEL_TUNING = G5;
 				HEADER_SEARCH_PATHS = ./libopenjpeg;
 				INSTALL_PATH = "$(HOME)/bin";
@@ -964,7 +1403,52 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		694039A9117B7E2E0079DE22 /* Build configuration list for PBXAggregateTarget "build all" */ = {
+		692CF224122BAFBF0010088E /* Build configuration list for PBXNativeTarget "openjpeg_JPWL" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				692CF20F122BAF7A0010088E /* Debug */,
+				692CF210122BAF7A0010088E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		692CF244122BB1D60010088E /* Build configuration list for PBXNativeTarget "JPWL_image_to_j2k" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				692CF245122BB1D60010088E /* Debug */,
+				692CF246122BB1D60010088E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		692CF252122BB2110010088E /* Build configuration list for PBXNativeTarget "JPWL_j2k_to_image" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				692CF253122BB2110010088E /* Debug */,
+				692CF254122BB2110010088E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		692CF261122BB2640010088E /* Build configuration list for PBXAggregateTarget "build OPJ_JPWL" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				692CF262122BB2640010088E /* Debug */,
+				692CF263122BB2640010088E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		692CF271122BB2850010088E /* Build configuration list for PBXAggregateTarget "build all" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				692CF272122BB2850010088E /* Debug */,
+				692CF273122BB2850010088E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		694039A9117B7E2E0079DE22 /* Build configuration list for PBXAggregateTarget "build OPJ" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				694039A7117B7E0A0079DE22 /* Debug */,
