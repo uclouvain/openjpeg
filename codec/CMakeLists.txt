@@ -25,11 +25,6 @@ IF(DONT_HAVE_GETOPT)
 ENDIF(DONT_HAVE_GETOPT)
 
 
-# Headers file are located here:
-INCLUDE_DIRECTORIES(
-  ${CMAKE_CURRENT_SOURCE_DIR}/../libjp3dvm
-  )
-
 # Do the proper thing when building static...if only there was configured
 # headers or def files instead
 #IF(NOT BUILD_SHARED_LIBS)
