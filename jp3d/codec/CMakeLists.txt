@@ -20,7 +20,7 @@ IF(DONT_HAVE_GETOPT)
   ADD_DEFINITIONS(-DDONT_HAVE_GETOPT)
   SET(common_SRCS
     ${common_SRCS}
-    compat/getopt.c
+    getopt.c
   )
 ENDIF(DONT_HAVE_GETOPT)
 
