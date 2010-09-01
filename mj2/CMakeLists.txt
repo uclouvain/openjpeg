@@ -5,6 +5,12 @@ INCLUDE_DIRECTORIES(
   ${OPENJPEG_SOURCE_DIR}/libopenjpeg
   )
 
+# Do the proper thing when building static...if only there was configured
+# headers or def files instead
+IF(NOT BUILD_SHARED_LIBS)
+  ADD_DEFINITIONS(-DOPJ_STATIC)
+ENDIF(NOT BUILD_SHARED_LIBS)
+
 ADD_EXECUTABLE(frames_to_mj2
   frames_to_mj2.c
   compat/getopt.c 

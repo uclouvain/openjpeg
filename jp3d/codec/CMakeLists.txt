@@ -27,9 +27,9 @@ ENDIF(DONT_HAVE_GETOPT)
 
 # Do the proper thing when building static...if only there was configured
 # headers or def files instead
-#IF(NOT BUILD_SHARED_LIBS)
-#  ADD_DEFINITIONS(-DOPJ_STATIC)
-#ENDIF(NOT BUILD_SHARED_LIBS)
+IF(NOT BUILD_SHARED_LIBS)
+  ADD_DEFINITIONS(-DOPJ_STATIC)
+ENDIF(NOT BUILD_SHARED_LIBS)
 
 #FIND_PACKAGE(TIFF REQUIRED)
 
