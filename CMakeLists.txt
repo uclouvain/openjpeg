@@ -149,13 +149,11 @@ INCLUDE_DIRECTORIES(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 SUBDIRS(
   libopenjpeg
   mj2
-  # cmake 2.4.5 has poor java support
-  #j2kviewer/src
+  jpwl
   )
 
 IF(NOT UNIX)
 SUBDIRS(
-  jpwl
   jp3d
   indexer_JPIP
   )
