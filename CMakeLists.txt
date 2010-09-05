@@ -144,6 +144,13 @@ CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/openjpeg_mangle.h.in
 ENDIF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/openjpeg_mangle.h.in)
 
 #-----------------------------------------------------------------------------
+# Translate CMake configuration options into #defines that can be queried from
+# the code.
+CONFIGURE_FILE(
+   ${PROJECT_SOURCE_DIR}/openjpegConfigure.h.in
+   ${PROJECT_BINARY_DIR}/openjpegConfigure.h)
+
+#-----------------------------------------------------------------------------
 # Always build the library
 INCLUDE_DIRECTORIES(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 SUBDIRS(
