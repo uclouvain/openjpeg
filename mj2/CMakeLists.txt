@@ -3,6 +3,7 @@
 # Headers file are located here:
 INCLUDE_DIRECTORIES(
   ${OPENJPEG_SOURCE_DIR}/libopenjpeg
+  ${OPENJPEG_SOURCE_DIR}/codec/compat
   )
 
 # Do the proper thing when building static...if only there was configured
