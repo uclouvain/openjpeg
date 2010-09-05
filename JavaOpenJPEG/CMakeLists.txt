@@ -4,20 +4,9 @@
 SET(common_SRCS
   convert.c
   )
-# Then check if getopt is present:
-INCLUDE (${CMAKE_ROOT}/Modules/CheckIncludeFile.cmake)
-SET(DONT_HAVE_GETOPT 1)
-IF(UNIX) #I am pretty sure only *nix sys have this anyway
-  CHECK_INCLUDE_FILE("getopt.h" CMAKE_HAVE_GETOPT_H)
-  # Seems like we need the contrary:
-  IF(CMAKE_HAVE_GETOPT_H)
-    SET(DONT_HAVE_GETOPT 0)
-  ENDIF(CMAKE_HAVE_GETOPT_H)
-ENDIF(UNIX)
 
 # If not getopt was found then add it to the lib:
 IF(DONT_HAVE_GETOPT)
-  ADD_DEFINITIONS(-DDONT_HAVE_GETOPT)
   SET(common_SRCS
     ${common_SRCS}
     compat/getopt.c
