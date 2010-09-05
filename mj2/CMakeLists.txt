@@ -13,8 +13,10 @@ ENDIF(NOT BUILD_SHARED_LIBS)
 
 ADD_EXECUTABLE(frames_to_mj2
   frames_to_mj2.c
-  compat/getopt.c 
-  mj2_convert.c mj2.c )
+  ${PROJECT_SOURCE_DIR}/codec/compat/getopt.c
+  mj2_convert.c
+  mj2.c
+  )
 TARGET_LINK_LIBRARIES(frames_to_mj2 ${OPJ_PREFIX}openjpeg)
 IF(UNIX)
   TARGET_LINK_LIBRARIES(frames_to_mj2 m)
@@ -22,7 +24,10 @@ ENDIF(UNIX)
 
 ADD_EXECUTABLE(mj2_to_frames
     mj2_to_frames.c
-    compat/getopt.c mj2_convert.c mj2.c )
+    ${PROJECT_SOURCE_DIR}/codec/compat/getopt.c
+    mj2_convert.c
+    mj2.c
+    )
 TARGET_LINK_LIBRARIES(mj2_to_frames ${OPJ_PREFIX}openjpeg)
 IF(UNIX)
   TARGET_LINK_LIBRARIES(mj2_to_frames m)

@@ -36,7 +36,7 @@
 #include "cio.h"
 #include "mj2.h"
 #include "mj2_convert.h"
-#include "compat/getopt.h"
+#include "getopt.h"
 
 /**
 Size of memory first allocated for MOOV box
