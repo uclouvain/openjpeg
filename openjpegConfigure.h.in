@@ -43,4 +43,53 @@
 #define OPJ_STATIC
 #endif
 
+/*
+ * The @HAVE_INCLUDE_H@ gets replaced with "1" or "", this define is
+ * to remap these values to 0 and 1
+ */
+#define OPENJPEG_CMAKEDEFINE_VAR_1 1
+#define OPENJPEG_CMAKEDEFINE_VAR_ 0
+
+/*
+ * Check Include files defines. We use the CMake standard names in the
+ * cmake files to reduce extra calls for checking header, but then
+ * conditionally defined them here with an OPENJPEG_ prefix to prevent
+ * collisions and re defined warnings.
+ */
+#if OPENJPEG_CMAKEDEFINE_VAR_@HAVE_FENV_H@
+# define OPENJPEG_HAVE_FENV_H
+#endif /* HAVE_FENV_H */
+
+#if OPENJPEG_CMAKEDEFINE_VAR_@HAVE_SYS_TYPES_H@
+# define OPENJPEG_HAVE_SYS_TYPES_H
+#endif  /* HAVE_SYS_TYPES_H */
+
+#if OPENJPEG_CMAKEDEFINE_VAR_@HAVE_STDINT_H@
+# define OPENJPEG_HAVE_STDINT_H
+#endif  /* HAVE_STDINT_H */
+
+#if OPENJPEG_CMAKEDEFINE_VAR_@HAVE_STDDEF_H@
+# define OPENJPEG_HAVE_STDDEF_H
+#endif /* HAVE_STDDEF_H */
+
+#if OPENJPEG_CMAKEDEFINE_VAR_@HAVE_UNISTD_H@
+# define OPENJPEG_HAVE_UNISTD_H
+#endif /* HAVE_UNISTD_H */
+
+#if OPENJPEG_CMAKEDEFINE_VAR_@HAVE_LIBLCMS1@
+# define OPENJPEG_HAVE_LIBLCMS1
+#endif /* HAVE_LIBLCMS1 */
+
+#if OPENJPEG_CMAKEDEFINE_VAR_@HAVE_LIBLCMS2@
+# define OPENJPEG_HAVE_LIBLCMS2
+#endif /* HAVE_LIBLCMS2 */
+
+#if OPENJPEG_CMAKEDEFINE_VAR_@HAVE_LIBPNG@
+# define OPENJPEG_HAVE_LIBPNG
+#endif /* HAVE_LIBPNG */
+
+#undef OPENJPEG_CMAKEDEFINE_VAR_1
+#undef OPENJPEG_CMAKEDEFINE_VAR_
+
+
 #endif
