@@ -39,7 +39,7 @@
 #cmakedefine OPENJPEG_USE_SYSTEM_ZLIB
 
 #cmakedefine BUILD_SHARED_LIBS
-#if !defined(BUILD_SHARED_LIBS)
+#if !defined(BUILD_SHARED_LIBS) && !defined(OPJ_STATIC)
 #define OPJ_STATIC
 #endif
 
