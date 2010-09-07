@@ -32,7 +32,7 @@ IF(DONT_HAVE_GETOPT)
   )
 ENDIF(DONT_HAVE_GETOPT)
 
-ADD_LIBRARY(openjpeg_JPWL ${JPWL_SRCS} ${OPJ_SRCS})
+ADD_LIBRARY(openjpeg_JPWL STATIC ${JPWL_SRCS} ${OPJ_SRCS})
 
 # Do the proper thing when building static...if only there was configured
 # headers or def files instead
