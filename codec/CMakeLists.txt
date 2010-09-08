@@ -14,6 +14,12 @@ IF(DONT_HAVE_GETOPT)
   )
 ENDIF(DONT_HAVE_GETOPT)
 
+# Do the proper thing when building static...if only there was configured
+# headers or def files instead
+IF(NOT BUILD_SHARED_LIBS)
+  ADD_DEFINITIONS(-DOPJ_STATIC)
+ENDIF(NOT BUILD_SHARED_LIBS)
+
 # Headers file are located here:
 INCLUDE_DIRECTORIES(
   ${OPENJPEG_SOURCE_DIR}/libopenjpeg

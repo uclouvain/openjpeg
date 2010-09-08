@@ -34,7 +34,6 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "openjpegConfigure.h"
 #include "openjpeg.h"
 #include "compat/getopt.h"
 #include "convert.h"

@@ -29,7 +29,6 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "openjpegConfigure.h"
 #include "openjpeg.h"
 #include "j2k.h"
 #include "jp2.h"

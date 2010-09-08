@@ -39,7 +39,6 @@
 #include <tiffio.h>
 #include <png.h>
 #endif /* WIN32 */
-#include "openjpegConfigure.h"
 #include "openjpeg.h"
 #include "convert.h"
 
