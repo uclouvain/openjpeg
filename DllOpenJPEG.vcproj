@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="DllOpenJPEG"
 	ProjectGUID="{89AC992C-5E2C-4E6B-A453-61C1DF446216}"
 	>
@@ -295,6 +295,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\libopenjpeg\function_list.c"
+				>
+			</File>
+			<File
 				RelativePath="libopenjpeg\image.c"
 				>
 				<FileConfiguration
@@ -313,6 +317,10 @@
 						PreprocessorDefinitions=""
 					/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\libopenjpeg\invert.c"
+				>
 			</File>
 			<File
 				RelativePath="libopenjpeg\j2k.c"
@@ -475,6 +483,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\libopenjpeg\profile.c"
+				>
+			</File>
+			<File
 				RelativePath="libopenjpeg\raw.c"
 				>
 				<FileConfiguration
@@ -600,11 +612,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\libopenjpeg\function_list.h"
+				>
+			</File>
+			<File
 				RelativePath="libopenjpeg\image.h"
 				>
 			</File>
 			<File
 				RelativePath="libopenjpeg\int.h"
+				>
+			</File>
+			<File
+				RelativePath=".\libopenjpeg\invert.h"
 				>
 			</File>
 			<File
@@ -641,6 +661,10 @@
 			</File>
 			<File
 				RelativePath="libopenjpeg\pi.h"
+				>
+			</File>
+			<File
+				RelativePath=".\libopenjpeg\profile.h"
 				>
 			</File>
 			<File

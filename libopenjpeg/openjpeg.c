@@ -367,7 +367,7 @@ opj_image_t* OPJ_CALLCONV opj_decode(opj_codec_t *p_info, opj_stream_t *cio)
  *								depending on the precision of the given component.
  * @param	p_stream			the stream to write data to.
  */
-bool opj_write_tile (
+bool OPJ_CALLCONV opj_write_tile (
 					 opj_codec_t *p_codec,
 					 OPJ_UINT32 p_tile_index,
 					 OPJ_BYTE * p_data,
@@ -411,7 +411,7 @@ bool opj_write_tile (
  * @return	true			if the tile header could be decoded. In case the decoding should end, the returned value is still true.
  *							returning false may be the result of a shortage of memory or an internal error.
  */				
-bool opj_read_tile_header(
+bool OPJ_CALLCONV opj_read_tile_header(
 					opj_codec_t *p_codec,
 					OPJ_UINT32 * p_tile_index,
 					OPJ_UINT32 * p_data_size,
@@ -460,7 +460,7 @@ bool opj_read_tile_header(
  *
  * @return	true			if the data could be decoded.
  */				
-bool opj_decode_tile_data(
+bool OPJ_CALLCONV opj_decode_tile_data(
 					opj_codec_t *p_codec,
 					OPJ_UINT32 p_tile_index,
 					OPJ_BYTE * p_data,
@@ -530,7 +530,7 @@ bool OPJ_CALLCONV opj_read_header (
  *
  * @return	true			if the area could be set.
  */				
-bool opj_set_decode_area(
+bool OPJ_CALLCONV opj_set_decode_area(
 					opj_codec_t *p_codec,
 					OPJ_INT32 p_start_x,
 					OPJ_INT32 p_start_y,
@@ -866,7 +866,7 @@ void OPJ_CALLCONV opj_destroy_cstr_info(opj_codestream_info_t *cstr_info) {
 	}
 }
 
-bool opj_set_MCT(opj_cparameters_t *parameters,OPJ_FLOAT32 * pEncodingMatrix,OPJ_INT32 * p_dc_shift,OPJ_UINT32 pNbComp)
+bool OPJ_CALLCONV opj_set_MCT(opj_cparameters_t *parameters,OPJ_FLOAT32 * pEncodingMatrix,OPJ_INT32 * p_dc_shift,OPJ_UINT32 pNbComp)
 {
 	OPJ_UINT32 l_matrix_size = pNbComp * pNbComp * sizeof(OPJ_FLOAT32);
 	OPJ_UINT32 l_dc_shift_size = pNbComp * sizeof(OPJ_INT32);
