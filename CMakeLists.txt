@@ -1,7 +1,4 @@
-# Linux makefile for OpenJPEG
-
-#VER_MAJOR = 1
-#VER_MINOR = 0.0
+# jp3d
 
 # Headers file are located here:
 INCLUDE_DIRECTORIES(

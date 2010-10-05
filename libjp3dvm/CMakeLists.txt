@@ -21,4 +21,4 @@ ADD_LIBRARY(${OPJ_PREFIX}openjp3dvm ${JP3DVM_SRCS})
 INSTALL_TARGETS(/lib/ ${OPJ_PREFIX}openjp3dvm)
 
 # Install includes files
-INSTALL_FILES(/include .h)
+INSTALL_FILES(/include/${subdir} openjpeg.h)

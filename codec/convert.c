@@ -31,9 +31,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "openjpeg.h"
+#include "../libjp3dvm/openjpeg.h"
 #ifdef WIN32
-#include "dirent.h"
+#include "windirent.h"
 #else
 #include <dirent.h>
 #endif /* WIN32 */

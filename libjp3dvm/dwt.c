@@ -683,7 +683,7 @@ void dwt_encode(opj_tcd_tilecomp_t * tilec, int dwtid[3]) {
 
 	a = tilec->data;
 
-	for (x = 0, y = 0, z = 0; x < levelx, y < levely; x++, y++, z++) {
+	for (x = 0, y = 0, z = 0; (x < levelx) && (y < levely); x++, y++, z++) {
 		int rw;			/* width of the resolution level computed                                                           */
 		int rh;			/* heigth of the resolution level computed                                                          */
 		int rd;			/* depth of the resolution level computed                                                          */
@@ -812,7 +812,7 @@ void dwt_decode(opj_tcd_tilecomp_t * tilec, int stops[3], int dwtid[3]) {
 	diff = tilec->numresolution[0] - tilec->numresolution[2];
 		
 /* General lifting framework -- DCCS-LIWT */
-	for (x = level - 1, y = level - 1, z = level - 1; x >= stops[0], y >= stops[1]; x--, y--, z--) {
+	for (x = level - 1, y = level - 1, z = level - 1; (x >= stops[0]) && (y >= stops[1]); x--, y--, z--) {
 		int rw;			/* width of the resolution level computed                                                           */
 		int rh;			/* heigth of the resolution level computed                                                          */
 		int rd;			/* depth of the resolution level computed                                                          */

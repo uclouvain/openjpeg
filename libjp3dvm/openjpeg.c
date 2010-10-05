@@ -30,7 +30,7 @@
 #endif /* WIN32 */
 
 #include "opj_includes.h"
-
+#define JP3D_VERSION "1.3.0"
 /* ---------------------------------------------------------------------- */
 #ifdef WIN32
 #ifndef OPJ_STATIC
@@ -54,7 +54,7 @@ DllMain(HANDLE hModule, DWORD ul_reason_for_call, LPVOID lpReserved) {
 /* ---------------------------------------------------------------------- */
 
 const char* OPJ_CALLCONV opj_version() {
-    return OPENJPEG_VERSION;
+    return JP3D_VERSION;
 }
 opj_dinfo_t* OPJ_CALLCONV opj_create_decompress(OPJ_CODEC_FORMAT format) {
 	opj_dinfo_t *dinfo = (opj_dinfo_t*)opj_malloc(sizeof(opj_dinfo_t));
