@@ -921,6 +921,7 @@ static bool t2_skip_packet_data(
 			while (l_cblk->numnewpasses > 0);
 			++l_cblk;
 		}
+		++l_band;
 	}
 	return true;
 }
