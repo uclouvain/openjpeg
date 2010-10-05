@@ -34,6 +34,8 @@
 
 #ifdef WIN32
 #include "windows.h" // needed for rand() function
+#else
+#include <stdlib.h>
 #endif
 
 

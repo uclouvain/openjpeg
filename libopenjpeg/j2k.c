@@ -1335,7 +1335,7 @@ const opj_dec_memory_marker_handler_t j2k_memory_marker_handler_tab [] =
   {J2K_MS_MCT, J2K_DEC_STATE_MH | J2K_DEC_STATE_TPH, j2k_read_mct},
   {J2K_MS_CBD, J2K_DEC_STATE_MH , j2k_read_cbd},
   {J2K_MS_MCC, J2K_DEC_STATE_MH | J2K_DEC_STATE_TPH, j2k_read_mcc},
-  {J2K_MS_MCO, J2K_DEC_STATE_MH | J2K_DEC_STATE_TPH, j2k_read_mco}
+  {J2K_MS_MCO, J2K_DEC_STATE_MH | J2K_DEC_STATE_TPH, j2k_read_mco},
 #ifdef USE_JPWL
   {J2K_MS_EPC, J2K_DEC_STATE_MH | J2K_DEC_STATE_TPH, j2k_read_epc},
   {J2K_MS_EPB, J2K_DEC_STATE_MH | J2K_DEC_STATE_TPH, j2k_read_epb},

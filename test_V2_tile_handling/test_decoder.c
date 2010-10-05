@@ -32,6 +32,8 @@
 #include "stdlib.h"
 #ifdef WIN32
 #include <malloc.h>
+#else
+#include <stdlib.h>
 #endif
 #define DA_X0 0
 #define DA_Y0 0
