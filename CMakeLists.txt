@@ -171,7 +171,7 @@ ENDIF(BUILD_EXAMPLES)
 # Build JPWL binaries ?
 OPTION(BUILD_JPWL "Build the JPWL binaries" OFF)
 IF(BUILD_JPWL)
-  SUBDIRS(doc)
+  SUBDIRS(jpwl)
 ENDIF(BUILD_JPWL)
 
 #-----------------------------------------------------------------------------
