@@ -26,7 +26,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "opj_includes.h"
+#include "../libopenjpeg/opj_includes.h"
 #include "mj2.h"
 
 /** @defgroup JP2 JP2 - JPEG-2000 file format reader/writer */
@@ -1159,7 +1159,7 @@ int mj2_read_smj2(opj_image_t * img, mj2_tk_t * tk, opj_cio_t *cio)
 	
   cio_skip(cio,2);			/* Pre-defined = -1 */
 	
-  if (!jp2_read_jp2h(&tk->jp2_struct, cio)) {
+  if (!jp2_read_jp2h(&tk->jp2_struct, cio, NULL)) {
 		opj_event_msg(tk->cinfo, EVT_ERROR, "Error reading JP2H Box\n");
     return 1;
   }

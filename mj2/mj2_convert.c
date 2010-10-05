@@ -26,7 +26,7 @@
 * POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "opj_includes.h"
+#include "../libopenjpeg/opj_includes.h"
 #include "mj2.h"
 
 /*  -----------------------	      */

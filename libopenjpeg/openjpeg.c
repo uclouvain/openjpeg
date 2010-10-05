@@ -1,3 +1,4 @@
+#include <opj_config.h>
 /*
  * Copyright (c) 2005, Hervé Drolon, FreeImage Team
  * All rights reserved.
@@ -54,7 +55,7 @@ DllMain(HANDLE hModule, DWORD ul_reason_for_call, LPVOID lpReserved) {
 
 
 const char* OPJ_CALLCONV opj_version(void) {
-    return OPENJPEG_VERSION;
+    return PACKAGE_VERSION;
 }
 
 opj_dinfo_t* OPJ_CALLCONV opj_create_decompress(OPJ_CODEC_FORMAT format) {

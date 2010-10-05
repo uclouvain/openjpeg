@@ -1,3 +1,4 @@
+#include <opj_config.h>
 /*
  * Copyright (c) 20010, Mathieu Malaterre, GDCM
  * All rights reserved.
@@ -30,11 +31,15 @@
 #include <math.h>
 
 #include "openjpeg.h"
-#include "j2k.h"
-#include "jp2.h"
+#include "../libopenjpeg/j2k.h"
+#include "../libopenjpeg/jp2.h"
 #include "compat/getopt.h"
 #include "convert.h"
-#include "dirent.h"
+#ifdef WIN32
+#include "windirent.h"
+#else
+#include <dirent.h>
+#endif /* WIN32 */
 #include "index.h"
 
 #ifndef WIN32

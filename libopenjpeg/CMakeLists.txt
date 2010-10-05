@@ -19,7 +19,10 @@ SET(OPENJPEG_SRCS
   t2.c
   tcd.c
   tgt.c
+  opj_convert.c
 )
+
+INCLUDE_DIRECTORIES( ${LCMS_INCLUDE_DIR} )
 
 # Pass proper definition to preprocessor to generate shared lib
 IF(WIN32)

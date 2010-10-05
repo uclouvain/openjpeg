@@ -49,8 +49,48 @@
 #define JP2_DBTL 0x6474626c		/**< ??? */
 #define JP2_BPCC 0x62706363		/**< Bits per component box */
 #define JP2_JP2  0x6a703220		/**< File type fields */
+#define JP2_PCLR 0x70636c72
+#define JP2_CMAP 0x636d6170
+#define JP2_CDEF 0x63646566
 
 /* ----------------------------------------------------------------------- */
+/* cdef, cmap, pclr, colr
+*/
+typedef struct opj_jp2_cdef_info
+{
+    unsigned short cn, typ, asoc;
+} opj_jp2_cdef_info_t;
+
+typedef struct opj_jp2_cdef
+{
+    opj_jp2_cdef_info_t *info;
+    unsigned short n;
+} opj_jp2_cdef_t;
+
+typedef struct opj_jp2_cmap_comp
+{
+    unsigned short cmp;
+    unsigned char mtyp, pcol;
+} opj_jp2_cmap_comp_t;
+
+typedef struct opj_jp2_pclr
+{
+    unsigned int *entries;
+    unsigned char *channel_sign;
+    unsigned char *channel_size;
+    opj_jp2_cmap_comp_t *cmap;
+    unsigned short nr_entries, nr_channels;
+} opj_jp2_pclr_t;
+
+struct extension
+{
+    unsigned char *jp2_profile_buf;
+    int jp2_profile_len;
+
+    opj_jp2_cdef_t *jp2_cdef;
+    opj_jp2_pclr_t *jp2_pclr;
+    unsigned char jp2_has_colr;
+};
 
 /** 
 JP2 component
@@ -113,7 +153,7 @@ Read the JP2H box - JP2 Header box (used in MJ2)
 @param cio Input buffer stream
 @return Returns true if successful, returns false otherwise
 */
-bool jp2_read_jp2h(opj_jp2_t *jp2, opj_cio_t *cio);
+bool jp2_read_jp2h(opj_jp2_t *jp2, opj_cio_t *cio, struct extension *ext);
 /**
 Creates a JP2 decompression structure
 @param cinfo Codec context info

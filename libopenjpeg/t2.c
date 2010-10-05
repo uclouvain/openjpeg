@@ -494,6 +494,7 @@ static int t2_decode_packet(opj_t2_t* t2, unsigned char *src, int len, opj_tcd_t
 	if (tcp->csty & J2K_CP_CSTY_EPH) {
 		if ((*hd) != 0xff || (*(hd + 1) != 0x92)) {
 			opj_event_msg(t2->cinfo, EVT_ERROR, "Expected EPH marker\n");
+			return -999;
 		} else {
 			hd += 2;
 		}
@@ -711,7 +712,7 @@ int t2_decode_packets(opj_t2_t *t2, unsigned char *src, int len, int tileno, opj
 			} else {
 				e = 0;
 			}
-			
+			if(e == -999) return -999;
 			/* progression in resolution */
 			image->comps[pi[pino].compno].resno_decoded =	
 				(e > 0) ? 

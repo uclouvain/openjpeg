@@ -29,6 +29,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+#include <opj_config.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -37,7 +38,11 @@
 #include "openjpeg.h"
 #include "compat/getopt.h"
 #include "convert.h"
-#include "dirent.h"
+#ifdef WIN32
+#include "windirent.h"
+#else
+#include <dirent.h>
+#endif /* WIN32 */
 #include "index.h"
 
 #ifndef WIN32
@@ -1619,7 +1624,7 @@ int main(int argc, char **argv) {
 						return 1;
 					}
 					break;
-
+#ifdef HAVE_LIBTIFF
 				case TIF_DFMT:
 					image = tiftoimage(parameters.infile, &parameters);
 					if (!image) {
@@ -1627,7 +1632,7 @@ int main(int argc, char **argv) {
 						return 1;
 					}
 				break;
-
+#endif /* HAVE_LIBTIFF */
 				case RAW_DFMT:
 					image = rawtoimage(parameters.infile, &parameters, &raw_cp);
 					if (!image) {
@@ -1643,7 +1648,7 @@ int main(int argc, char **argv) {
 						return 1;
 					}
 				break;
-
+#ifdef HAVE_LIBPNG
 				case PNG_DFMT:
 					image = pngtoimage(parameters.infile, &parameters);
 					if (!image) {
@@ -1651,7 +1656,16 @@ int main(int argc, char **argv) {
 						return 1;
 					}
 					break;
+#endif /* HAVE_LIBPNG */
 		}
+/* Can happen if input file is TIFF or PNG 
+ * and HAVE_LIBTIF or HAVE_LIBPNG is undefined
+*/
+			if( !image)
+		   {
+			fprintf(stderr, "Unable to load file: got no image\n");
+			return 1;
+		   }
 			/* Decide if MCT should be used */
 			parameters.tcp_mct = image->numcomps == 3 ? 1 : 0;
 

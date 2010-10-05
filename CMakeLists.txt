@@ -32,7 +32,8 @@ SET(OPENJPEG_VERSION_MINOR 4)
 SET(OPENJPEG_VERSION_BUILD 0)
 SET(OPENJPEG_VERSION
   "${OPENJPEG_VERSION_MAJOR}.${OPENJPEG_VERSION_MINOR}.${OPENJPEG_VERSION_BUILD}")
-
+SET(PACKAGE_VERSION
+  "${OPENJPEG_VERSION_MAJOR}.${OPENJPEG_VERSION_MINOR}.${OPENJPEG_VERSION_BUILD}")
 # This setting of SOVERSION assumes that any API change
 # will increment either the minor or major version number of openjpeg
 SET(OPENJPEG_LIBRARY_PROPERTIES
@@ -129,11 +130,6 @@ SET (LIBRARY_OUTPUT_PATH ${OPENJPEG_BINARY_DIR}/bin CACHE PATH "Single output di
 MARK_AS_ADVANCED(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
 
 
-#-----------------------------------------------------------------------------
-# For the codec...
-OPTION(BUILD_EXAMPLES "Build the Examples (codec...)." ON)
-
-
 # configure name mangling to allow multiple libraries to coexist
 # peacefully
 IF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/openjpeg_mangle.h.in)
@@ -146,9 +142,9 @@ ENDIF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/openjpeg_mangle.h.in)
 #-----------------------------------------------------------------------------
 # Translate CMake configuration options into #defines that can be queried from
 # the code.
-CONFIGURE_FILE(
-   ${PROJECT_SOURCE_DIR}/openjpegConfigure.h.in
-   ${PROJECT_BINARY_DIR}/openjpegConfigure.h)
+#CONFIGURE_FILE(
+#   ${PROJECT_SOURCE_DIR}/opj_configh.cmake.in
+#   ${PROJECT_BINARY_DIR}/opj_config.h)
 
 #-----------------------------------------------------------------------------
 # Always build the library
@@ -156,24 +152,37 @@ INCLUDE_DIRECTORIES(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 SUBDIRS(
   libopenjpeg
   mj2
-  jpwl
   )
 
 IF(NOT UNIX)
 SUBDIRS(
-  jp3d
   indexer_JPIP
   )
 ENDIF(NOT UNIX)
 
 #-----------------------------------------------------------------------------
-# Build example only if requested
+# Build example codec ?
+OPTION(BUILD_EXAMPLES "Build the Examples (codec...)." ON)
 IF(BUILD_EXAMPLES)
   SUBDIRS(codec)
 ENDIF(BUILD_EXAMPLES)
 
 #-----------------------------------------------------------------------------
-# For the documentation
+# Build JPWL binaries ?
+OPTION(BUILD_JPWL "Build the JPWL binaries" OFF)
+IF(BUILD_JPWL)
+  SUBDIRS(doc)
+ENDIF(BUILD_JPWL)
+
+#-----------------------------------------------------------------------------
+# Build JP3D binaries ?
+OPTION(BUILD_JP3D "Build the JP3D binaries" OFF)
+IF(BUILD_JP3D)
+  SUBDIRS(jp3d)
+ENDIF(BUILD_JP3D)
+
+#-----------------------------------------------------------------------------
+# Build documentation ?
 OPTION(BUILD_DOCUMENTATION "Build the doxygen documentation" OFF)
 IF(BUILD_DOCUMENTATION)
   SUBDIRS(doc)
@@ -215,5 +224,112 @@ CONFIGURE_FILE( ${OPENJPEG_SOURCE_DIR}/CMake/OpenJPEGConfig.cmake.in
 )
 INSTALL( FILES ${OPENJPEG_BINARY_DIR}/OpenJPEGConfig.cmake
   DESTINATION ${OPENJPEG_INSTALL_PACKAGE_DIR}
+)
+
+#----------------- CREATE OPJ_CONFIG.H -----------------
+
+SET(CMAKE_PREFIX_PATH "/usr /usr/local /opt /opt/local")
+
+FIND_FILE(HAVE_STRINGS_H strings.h)
+FIND_FILE(HAVE_INTTYPES_H inttypes.h)
+FIND_FILE(HAVE_MEMORY_H memory.h)
+FIND_FILE(HAVE_STDLIB_H stdlib.h)
+FIND_FILE(HAVE_STRING_H string.h)
+FIND_FILE(HAVE_SYS_STAT_H sys/stat.h)
+FIND_FILE(HAVE_SYS_TYPES_H sys/types.h)
+FIND_FILE(HAVE_UNISTD_H unistd.h)
+
+# Does the system have png library installed ?
+# FIND_PACKAGE not used because not robust enough
+
+#FIND_PACKAGE(PNG)
+#SET(HAVE_PNG_H "${PNG_FOUND}")
+#SET(HAVE_LIBPNG "${PNG_FOUND}")
+
+FIND_PATH(PNG_INCLUDE_DIR png.h PATHS /usr/include /usr/include/libpng14 /usr/include/libpng12 /usr/include/libpng)
+IF(PNG_INCLUDE_DIR STREQUAL "PNG_INCLUDE_DIR-NOTFOUND")
+  SET(HAVE_PNG_H 0)
+ELSE()
+  SET(HAVE_PNG_H 1)
+ENDIF()
+FIND_LIBRARY(PNG_LIBRARIES NAMES png14 png12 png )
+IF(PNG_LIBRARIES STREQUAL "PNG_LIBRARIES-NOTFOUND")
+  SET(HAVE_LIBPNG 0)
+ELSE()
+  SET(HAVE_LIBPNG 1)
+ENDIF()
+IF(HAVE_LIBPNG AND HAVE_PNG_H)
+  SET(PNG_FOUND 1)
+ELSE()
+  SET(PNG_FOUND 0)
+ENDIF()
+
+# Does the system have tiff library installed ?
+# FIND_PACKAGE not used because not robust enough
+
+#FIND_PACKAGE(TIFF)
+#SET(HAVE_TIFF_H "${TIFF_FOUND}")
+#SET(HAVE_LIBTIFF "${TIFF_FOUND}")
+
+FIND_PATH(TIFF_INCLUDE_DIR tiff.h)
+IF(TIFF_INCLUDE_DIR STREQUAL "TIFF_INCLUDE_DIR-NOTFOUND")
+  SET(HAVE_TIFF_H 0)
+ELSE()
+  SET(HAVE_TIFF_H 1)
+ENDIF()
+FIND_LIBRARY(TIFF_LIBRARIES tiff)
+IF(TIFF_LIBRARIES STREQUAL "TIFF_LIBRARIES-NOTFOUND")
+  SET(HAVE_LIBTIFF 0)
+ELSE()
+  SET(HAVE_LIBTIFF 1)
+ENDIF()
+IF(HAVE_LIBTIFF AND HAVE_TIFF_H)
+  SET(TIFF_FOUND 1)
+ELSE()
+  SET(TIFF_FOUND 0)
+ENDIF()
+
+# Does the system have lcms library installed ?
+
+SET(LCMS_LIB "")
+FIND_FILE(LCMS2_HEADER_FOUND lcms2.h)
+
+IF(LCMS2_HEADER_FOUND STREQUAL "LCMS2_HEADER_FOUND-NOTFOUND")
+ SET(LCMS2_HEADER_FOUND "")
+ENDIF()
+IF(LCMS2_HEADER_FOUND)
+ FIND_PATH(LCMS_INCLUDE_DIR  lcms2.h)
+ FIND_LIBRARY(HAVE_LIBLCMS2 lcms2)
+ IF(HAVE_LIBLCMS2 STREQUAL "HAVE_LIBLCMS2-NOTFOUND")
+  SET(HAVE_LIBLCMS2 "")
+ ENDIF()
+ IF(HAVE_LIBLCMS2)
+  SET(LCMS_LIB "${HAVE_LIBLCMS2}")
+  SET(HAVE_LCMS2_LIB 1)
+  SET(HAVE_LCMS2_H 1)
+ ENDIF()
+ENDIF()
+IF(NOT LCMS2_HEADER_FOUND)
+ FIND_FILE(LCMS1_HEADER_FOUND lcms.h)
+ IF(LCMS1_HEADER_FOUND STREQUAL "LCMS1_HEADER_FOUND-NOTFOUND")
+  SET(LCMS1_HEADER_FOUND "")
+ ENDIF()
+ IF(LCMS1_HEADER_FOUND)
+  FIND_PATH(LCMS_INCLUDE_DIR  lcms.h)
+  FIND_LIBRARY(HAVE_LIBLCMS1 lcms)
+  IF(HAVE_LIBLCMS1 STREQUAL "HAVE_LIBLCMS1-NOTFOUND")
+   SET(HAVE_LIBLCMS1 "")
+  ENDIF()
+  IF(HAVE_LIBLCMS1)
+   SET(LCMS_LIB "${HAVE_LIBLCMS1}")
+   SET(HAVE_LCMS1_LIB 1)
+   SET(HAVE_LCMS1_H 1)
+  ENDIF()
+ ENDIF()
+ENDIF()
+
+# generate opj_config.h
+CONFIGURE_FILE("${OPENJPEG_SOURCE_DIR}/opj_configh.cmake.in"
+  "${OPENJPEG_BINARY_DIR}/opj_config.h" 
 )
 

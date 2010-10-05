@@ -31,9 +31,9 @@
 #include <string.h>
 
 #include "openjpeg.h"
-#include "j2k.h"
-#include "jp2.h"
-#include "cio.h"
+#include "../libopenjpeg/j2k.h"
+#include "../libopenjpeg/jp2.h"
+#include "../libopenjpeg/cio.h"
 #include "mj2.h"
 
 static int int_ceildiv(int a, int b) {
