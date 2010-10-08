@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+October 08, 2010
+* [antonin] fixed a bug in mj2.c that prevented extract_j2k_from_mj2 to build properly. Patch from winfried.
+
 October 04, 2010
 + [antonin] Added files to let people build openjpeg with 'configure' tools
 + [antonin] Added makefiles to let people manually build openjpeg on *nix platforms
