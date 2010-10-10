@@ -9,8 +9,8 @@
  * if you want to define something because you know you have 
  * BOTH installed the library AND the header file(s).
  * Then e.g. write
-/* #undef HAVE_LIBPNG */
 #define HAVE_LIBPNG 1
+ *  
  *
  * The file 'opj_config.h' will be included in some source files.
  * You can not compile without it.

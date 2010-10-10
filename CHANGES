@@ -5,6 +5,31 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+October 10, 2010
+* [antonin] Patch from winfried
+
+				1. The jp3d/libjp3dvm/Makefile.am has been changed:
+
+				Installing: /usr/local/TEST_CONFIG/include/openjpeg3d-1.3/
+				Installing: /usr/local/TEST_CONFIG/include/openjpeg3d-1.3/openjpeg3d.h
+
+				PREFIX/include:
+
+					 23  openjpeg.h -> openjpeg-1.4/openjpeg.h
+					 27  openjpeg3d.h -> openjpeg3d-1.3/openjpeg3d.h
+
+				28773  openjpeg-1.4/openjpeg.h
+				22158  openjpeg3d-1.3/openjpeg3d.h
+					
+				2. The jp3d/Makefile.nix has been changed respectivly.
+					
+				3. The mj2/Makefile.nix contained a wrong path to 'compat/'
+					
+				4. opj_config.h.in.user contained a comment within a comment.
+					
+				5. 'autoreconf' reported that AC_PROG_RANLIB is no longer
+					necessary in 'configure.ac'.
+
 October 08, 2010
 * [antonin] fixed a bug in mj2.c that prevented extract_j2k_from_mj2 to build properly. Patch from winfried.
 
