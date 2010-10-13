@@ -36,12 +36,8 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
-
-#Cygwin needs this:
-@with_libjpwl_TRUE@am__append_1 = ../jpwl/libopenjpeg_JPWL.la
-@with_libjpwl_TRUE@am__append_2 = -DUSE_JPWL
-@with_liblcms1_TRUE@am__append_3 = @lcms1includes@
-@with_liblcms2_TRUE@am__append_4 = @lcms2includes@
+@with_liblcms1_TRUE@am__append_1 = @lcms1includes@
+@with_liblcms2_TRUE@am__append_2 = @lcms2includes@
 subdir = libopenjpeg
 DIST_COMMON = $(include_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
@@ -76,7 +72,7 @@ am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
 am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(includedir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
-libopenjpeg_la_DEPENDENCIES = $(am__append_1)
+libopenjpeg_la_DEPENDENCIES =
 am__objects_1 = bio.lo cio.lo dwt.lo event.lo image.lo j2k.lo \
 	j2k_lib.lo jp2.lo jpt.lo mct.lo mqc.lo openjpeg.lo pi.lo \
 	raw.lo t1.lo t2.lo tcd.lo tgt.lo opj_convert.lo
@@ -253,11 +249,11 @@ MINOR = @MINOR_NR@
 BUILD = @BUILD_NR@
 CURRENT = `expr $(MAJOR) + $(MINOR)`
 lib_LTLIBRARIES = libopenjpeg.la
-INCLUDES = -I.. -I. $(am__append_3) $(am__append_4)
+INCLUDES = -I.. -I. $(am__append_1) $(am__append_2)
 libopenjpeg_la_LDFLAGS = -no-undefined \
   -version-info $(CURRENT):$(BUILD):$(MINOR)
 
-libopenjpeg_la_LIBADD = @LDLIBS@ $(am__append_1)
+libopenjpeg_la_LIBADD = @LDLIBS@ 
 SRCS = bio.c cio.c dwt.c event.c image.c j2k.c j2k_lib.c jp2.c jpt.c \
  mct.c mqc.c openjpeg.c pi.c raw.c t1.c t2.c tcd.c tgt.c opj_convert.c
 
@@ -270,7 +266,7 @@ include_HEADERS = openjpeg.h
 
 # Converts cr/lf to just lf
 DOS2UNIX = dos2unix
-COMPILERFLAGS = -Wall -O3 -ffast-math -std=c99 $(am__append_2)
+COMPILERFLAGS = -Wall -O3 -ffast-math -std=c99
 headerdir = openjpeg-$(MAJOR).$(MINOR)
 all: all-am
 

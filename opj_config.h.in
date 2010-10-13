@@ -12,6 +12,9 @@
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
+/* Define to 1 if you have the `lcms' library (-llcms). */
+#undef HAVE_LIBLCMS
+
 /* define to 1 if you have lcms version 1.x */
 #undef HAVE_LIBLCMS1
 

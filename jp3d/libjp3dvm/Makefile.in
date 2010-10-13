@@ -626,7 +626,7 @@ all-local:
 	@rm -f .report_lib/libopenjp3dvm.lai
 	@echo "" > ../.report.txt
 	@echo "Installing: ${prefix}/include/${headerdir}/" >> ../.report.txt
-	@echo "Installing: ${prefix}/include/${headerdir}/openjpeg.h" >> ../.report.txt
+	@echo "Installing: ${prefix}/include/${headerdir}/openjpeg3d.h" >> ../.report.txt
 	@(cd .report_lib; \
 	l=`ls --file-type`; \
 	for f in $$l ; do \
@@ -636,8 +636,9 @@ all-local:
 
 install-data-hook:
 	(cd $(DESTDIR)${prefix}/include && rm -f openjpeg3d.h)
+	(cd ${prefix}/include/${headerdir} && mv openjpeg.h openjpeg3d.h) 
 	(cd $(DESTDIR)${prefix}/include && \
-	$(LN_S) ${headerdir}/openjpeg.h openjpeg3d.h)
+	$(LN_S) ${headerdir}/openjpeg3d.h openjpeg3d.h)
 
 uninstall-hook:
 	(cd $(DESTDIR)${prefix}/include && rm -rf openjpeg3d.h ${headerdir})

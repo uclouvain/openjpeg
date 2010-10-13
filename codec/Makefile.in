@@ -35,16 +35,14 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
-@with_libjpwl_TRUE@am__append_1 = -L../jpwl -lopenjpeg_JPWL
-@with_libjpwl_TRUE@am__append_2 = -DUSE_JPWL
-@with_libtiff_TRUE@am__append_3 = @tiffincludes@
-@with_libtiff_TRUE@am__append_4 = @tifflibs@
-@with_libpng_TRUE@am__append_5 = @pngincludes@
-@with_libpng_TRUE@am__append_6 = @pnglibs@
-@with_liblcms2_TRUE@am__append_7 = @lcms2includes@
-@with_liblcms2_TRUE@am__append_8 = @lcms2libs@
-@with_liblcms1_TRUE@am__append_9 = @lcms1includes@
-@with_liblcms1_TRUE@am__append_10 = @lcms1libs@
+@with_libtiff_TRUE@am__append_1 = @tiffincludes@
+@with_libtiff_TRUE@am__append_2 = @tifflibs@
+@with_libpng_TRUE@am__append_3 = @pngincludes@
+@with_libpng_TRUE@am__append_4 = @pnglibs@
+@with_liblcms2_TRUE@am__append_5 = @lcms2includes@
+@with_liblcms2_TRUE@am__append_6 = @lcms2libs@
+@with_liblcms1_TRUE@am__append_7 = @lcms1includes@
+@with_liblcms1_TRUE@am__append_8 = @lcms1libs@
 bin_PROGRAMS = j2k_to_image$(EXEEXT) image_to_j2k$(EXEEXT) \
 	j2k_dump$(EXEEXT)
 subdir = codec
@@ -65,8 +63,7 @@ image_to_j2k_OBJECTS = $(am_image_to_j2k_OBJECTS)
 image_to_j2k_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
 am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 image_to_j2k_DEPENDENCIES = $(am__DEPENDENCIES_2) \
 	../libopenjpeg/libopenjpeg.la
 am_j2k_dump_OBJECTS = getopt.$(OBJEXT) index.$(OBJEXT) \
@@ -244,11 +241,11 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 with_doxygen = @with_doxygen@
-COMPILERFLAGS = -Wall $(am__append_2)
-USERLIBS = -lm $(am__append_1) $(am__append_4) $(am__append_6) \
-	$(am__append_8) $(am__append_10)
-INCLUDES = -I.. -I. -I../libopenjpeg $(am__append_3) $(am__append_5) \
-	$(am__append_7) $(am__append_9)
+COMPILERFLAGS = -Wall
+USERLIBS = -lm $(am__append_2) $(am__append_4) $(am__append_6) \
+	$(am__append_8)
+INCLUDES = -I.. -I. -I../libopenjpeg $(am__append_1) $(am__append_3) \
+	$(am__append_5) $(am__append_7)
 LDADD = $(USERLIBS) ../libopenjpeg/libopenjpeg.la
 j2k_to_image_SOURCES = compat/getopt.c index.c convert.c j2k_to_image.c
 image_to_j2k_SOURCES = compat/getopt.c index.c convert.c image_to_j2k.c
