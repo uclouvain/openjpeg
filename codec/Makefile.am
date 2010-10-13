@@ -2,11 +2,6 @@ COMPILERFLAGS = -Wall
 USERLIBS = -lm
 INCLUDES = -I.. -I. -I../libopenjpeg
 
-if with_libjpwl
-USERLIBS += -L../jpwl -lopenjpeg_JPWL
-COMPILERFLAGS += -DUSE_JPWL
-endif
-
 if with_libtiff
 INCLUDES += @tiffincludes@
 USERLIBS += @tifflibs@

@@ -127,6 +127,10 @@ if test "x$with_libpng" = xyes ; then
   else
     if test -n "$LIBPNG_CONFIG" ; then
      pnglibs="`$LIBPNG_CONFIG --ldflags` -lz $LIB_MATH"
+    else
+      if test -n "$PKGCONFIG" ; then
+        pnglibs="`$PKGCONFIG --libs libpng` $LIB_MATH"
+      fi
     fi
   fi
   if test -n "$pnglibs" ; then
@@ -190,7 +194,7 @@ if test "x$with_libtiff" = xyes ; then
   LIBS="$tifflibs"
   with_libtiff="no"
 #
-  AC_CHECK_FUNC(TIFFOpen, true, tifflibs="")
+  AC_CHECK_LIB(tiff, TIFFOpen, , tifflibs="",)
 #
   if test -n "$tifflibs" ; then
    if test "$tiff_header_found" = "yes" ; then
@@ -267,7 +271,7 @@ if test "x$with_liblcms2" = xyes ; then
   LIBS="$lcms2libs"
   with_liblcms2="no"
 #
-  AC_CHECK_FUNC(cmsOpenProfileFromFile, true, lcms2libs="")
+  AC_CHECK_LIB(lcms2, cmsOpenProfileFromFile, ,lcms2libs="",)
 #
   if test -n "$lcms2libs" ; then
    if test "$lcms2_header_found" = "yes" ; then
@@ -342,7 +346,7 @@ if [[ -z "$lcms2libs" ]] ; then
    LIBS="$lcms1libs"
    with_liblcms1="no"
 #
-   AC_CHECK_FUNC(cmsOpenProfileFromFile, true, lcms1libs="")
+   AC_CHECK_LIB(lcms, cmsOpenProfileFromFile, ,lcms1libs="",)
 #
    if test -n "$lcms1libs" ; then
     if test "$lcms1_header_found" = "yes" ; then

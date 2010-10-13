@@ -33,10 +33,6 @@ INSTALL_INCLUDE = $(prefix)/include/$(headerdir)
 # Converts cr/lf to just lf
 DOS2UNIX = dos2unix
 
-ifeq ($(WITH_JPWL),yes)
-COMPILERFLAGS += -DUSE_JPWL
-endif
-
 ifeq ($(WITH_LCMS1),yes)
 INCLUDE += $(LCMS1_INCLUDE)
 LIBRARIES += $(LCMS1_LIB)

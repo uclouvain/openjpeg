@@ -12,11 +12,6 @@ libopenjpeg_la_LDFLAGS = -no-undefined \
 
 libopenjpeg_la_LIBADD = @LDLIBS@ 
 
-#Cygwin needs this:
-if with_libjpwl
-libopenjpeg_la_LIBADD += ../jpwl/libopenjpeg_JPWL.la
-endif
-
 SRCS = bio.c cio.c dwt.c event.c image.c j2k.c j2k_lib.c jp2.c jpt.c \
  mct.c mqc.c openjpeg.c pi.c raw.c t1.c t2.c tcd.c tgt.c opj_convert.c
 
@@ -36,10 +31,6 @@ dos2unix:
 	@$(DOS2UNIX) $(SRCS) $(INCLS)
 
 COMPILERFLAGS = -Wall -O3 -ffast-math -std=c99
-
-if with_libjpwl
-COMPILERFLAGS += -DUSE_JPWL
-endif
 
 if with_liblcms1
 INCLUDES += @lcms1includes@

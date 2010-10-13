@@ -13,11 +13,6 @@ INCLUDE += $(TIFF_INCLUDE)
 USERLIBS += $(TIFF_LIB)
 endif
 
-ifeq ($(WITH_JPWL),yes)
-USERLIBS += ../jpwl/libopenjpeg_JPWL.a
-CFLAGS += -DUSE_JPWL
-endif
-
 ifeq ($(WITH_PNG),yes)
 INCLUDE += $(PNG_INCLUDE)
 USERLIBS += $(PNG_LIB)
