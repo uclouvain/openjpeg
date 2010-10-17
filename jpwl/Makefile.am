@@ -38,7 +38,7 @@ DOS2UNIX = dos2unix
 dos2unix:
 	@$(DOS2UNIX) $(SRCS) $(INCLS)
 
-COMPILERFLAGS = -Wall -ffast-math -std=c99
+COMPILERFLAGS = -Wall -ffast-math -std=c99 -static
 
 USERLIBS = -lm
 INCLUDES = -I.. -I. -I../libopenjpeg

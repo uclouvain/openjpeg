@@ -198,7 +198,6 @@ builddir = @builddir@
 datadir = @datadir@
 datarootdir = @datarootdir@
 docdir = @docdir@
-doxy_dir = @doxy_dir@
 dvidir = @dvidir@
 exec_prefix = @exec_prefix@
 host = @host@
@@ -247,7 +246,7 @@ top_srcdir = @top_srcdir@
 with_doxygen = @with_doxygen@
 
 #OpenJPEG top source directory
-SUBDIRS = @jpwl_dir@ libopenjpeg codec mj2 @jp3d_dir@ @doxy_dir@
+SUBDIRS = libopenjpeg codec mj2 @jpwl_dir@ @jp3d_dir@ doc
 all: opj_config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 

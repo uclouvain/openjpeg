@@ -1,12 +1,7 @@
-COMPILERFLAGS = -Wall
+COMPILERFLAGS = -Wall -static
 
 USERLIBS =
 INCLUDES = -I.. -I. -I../libopenjpeg
-
-if with_libjpwl
-USERLIBS += -L../jpwl -lopenjpeg_JPWL
-COMPILERFLAGS += -DUSE_JPWL
-endif
 
 if with_liblcms2
 INCLUDES += @lcms2includes@

@@ -223,7 +223,6 @@ builddir = @builddir@
 datadir = @datadir@
 datarootdir = @datarootdir@
 docdir = @docdir@
-doxy_dir = @doxy_dir@
 dvidir = @dvidir@
 exec_prefix = @exec_prefix@
 host = @host@
@@ -303,7 +302,7 @@ libopenjpeg_JPWL_la_LIBADD = @LDLIBS@
 
 # Converts cr/lf to just lf
 DOS2UNIX = dos2unix
-COMPILERFLAGS = -Wall -ffast-math -std=c99
+COMPILERFLAGS = -Wall -ffast-math -std=c99 -static
 USERLIBS = -lm $(am__append_2) $(am__append_4) $(am__append_6) \
 	$(am__append_8)
 INCLUDES = -I.. -I. -I../libopenjpeg $(am__append_1) $(am__append_3) \

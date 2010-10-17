@@ -194,7 +194,6 @@ builddir = @builddir@
 datadir = @datadir@
 datarootdir = @datarootdir@
 docdir = @docdir@
-doxy_dir = @doxy_dir@
 dvidir = @dvidir@
 exec_prefix = @exec_prefix@
 host = @host@
@@ -241,7 +240,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 with_doxygen = @with_doxygen@
-COMPILERFLAGS = -Wall
+COMPILERFLAGS = -Wall -static
 USERLIBS = -lm $(am__append_2) $(am__append_4) $(am__append_6) \
 	$(am__append_8)
 INCLUDES = -I.. -I. -I../libopenjpeg $(am__append_1) $(am__append_3) \

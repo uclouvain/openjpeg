@@ -14,7 +14,6 @@
 # PARTICULAR PURPOSE.
 
 @SET_MAKE@
-
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
@@ -36,8 +35,7 @@ build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
 subdir = doc
-DIST_COMMON = $(dist_doc_DATA) $(srcdir)/Makefile.am \
-	$(srcdir)/Makefile.in
+DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -48,29 +46,6 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 SOURCES =
 DIST_SOURCES =
-am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
-am__vpath_adj = case $$p in \
-    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
-    *) f=$$p;; \
-  esac;
-am__strip_dir = f=`echo $$p | sed -e 's|^.*/||'`;
-am__install_max = 40
-am__nobase_strip_setup = \
-  srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*|]/\\\\&/g'`
-am__nobase_strip = \
-  for p in $$list; do echo "$$p"; done | sed -e "s|$$srcdirstrip/||"
-am__nobase_list = $(am__nobase_strip_setup); \
-  for p in $$list; do echo "$$p $$p"; done | \
-  sed "s| $$srcdirstrip/| |;"' / .*\//!s/ .*/ ./; s,\( .*\)/[^/]*$$,\1,' | \
-  $(AWK) 'BEGIN { files["."] = "" } { files[$$2] = files[$$2] " " $$1; \
-    if (++n[$$2] == $(am__install_max)) \
-      { print $$2, files[$$2]; n[$$2] = 0; files[$$2] = "" } } \
-    END { for (dir in files) print dir, files[dir] }'
-am__base_list = \
-  sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
-  sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
-am__installdirs = "$(DESTDIR)$(docdir)"
-DATA = $(dist_doc_DATA)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
@@ -167,8 +142,7 @@ build_vendor = @build_vendor@
 builddir = @builddir@
 datadir = @datadir@
 datarootdir = @datarootdir@
-docdir = $(datarootdir)/doc/openjpeg-$(MAJOR).$(MINOR)
-doxy_dir = @doxy_dir@
+docdir = @docdir@
 dvidir = @dvidir@
 exec_prefix = @exec_prefix@
 host = @host@
@@ -218,7 +192,7 @@ with_doxygen = @with_doxygen@
 MAJOR = @MAJOR_NR@
 MINOR = @MINOR_NR@
 BUILD = @BUILD_NR@
-dist_doc_DATA = ../license.txt ../ChangeLog
+doc_dir = $(datarootdir)/doc/openjpeg-$(MAJOR).$(MINOR)
 all: all-am
 
 .SUFFIXES:
@@ -258,26 +232,6 @@ mostlyclean-libtool:
 
 clean-libtool:
 	-rm -rf .libs _libs
-install-dist_docDATA: $(dist_doc_DATA)
-	@$(NORMAL_INSTALL)
-	test -z "$(docdir)" || $(MKDIR_P) "$(DESTDIR)$(docdir)"
-	@list='$(dist_doc_DATA)'; test -n "$(docdir)" || list=; \
-	for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  echo "$$d$$p"; \
-	done | $(am__base_list) | \
-	while read files; do \
-	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(docdir)'"; \
-	  $(INSTALL_DATA) $$files "$(DESTDIR)$(docdir)" || exit $$?; \
-	done
-
-uninstall-dist_docDATA:
-	@$(NORMAL_UNINSTALL)
-	@list='$(dist_doc_DATA)'; test -n "$(docdir)" || list=; \
-	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
-	test -n "$$files" || exit 0; \
-	echo " ( cd '$(DESTDIR)$(docdir)' && rm -f" $$files ")"; \
-	cd "$(DESTDIR)$(docdir)" && rm -f $$files
 tags: TAGS
 TAGS:
 
@@ -317,11 +271,8 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(DATA)
+all-am: Makefile all-local
 installdirs:
-	for dir in "$(DESTDIR)$(docdir)"; do \
-	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
-	done
 install: install-am
 install-exec: install-exec-am
 install-data: install-data-am
@@ -367,8 +318,9 @@ info: info-am
 
 info-am:
 
-install-data-am: install-dist_docDATA
-
+install-data-am:
+	@$(NORMAL_INSTALL)
+	$(MAKE) $(AM_MAKEFLAGS) install-data-hook
 install-dvi: install-dvi-am
 
 install-dvi-am:
@@ -411,25 +363,50 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-dist_docDATA
+uninstall-am:
 
-.MAKE: install-am install-strip
+.MAKE: install-am install-data-am install-strip
 
-.PHONY: all all-am check check-am clean clean-generic clean-libtool \
-	distclean distclean-generic distclean-libtool distdir dvi \
-	dvi-am html html-am info info-am install install-am \
-	install-data install-data-am install-dist_docDATA install-dvi \
-	install-dvi-am install-exec install-exec-am install-html \
-	install-html-am install-info install-info-am install-man \
-	install-pdf install-pdf-am install-ps install-ps-am \
-	install-strip installcheck installcheck-am installdirs \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	uninstall uninstall-am uninstall-dist_docDATA
+.PHONY: all all-am all-local check check-am clean clean-generic \
+	clean-libtool distclean distclean-generic distclean-libtool \
+	distdir dvi dvi-am html html-am info info-am install \
+	install-am install-data install-data-am install-data-hook \
+	install-dvi install-dvi-am install-exec install-exec-am \
+	install-html install-html-am install-info install-info-am \
+	install-man install-pdf install-pdf-am install-ps \
+	install-ps-am install-strip installcheck installcheck-am \
+	installdirs maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-generic mostlyclean-libtool pdf pdf-am \
+	ps ps-am uninstall uninstall-am
 
 
-docs:
-	doxygen Doxyfile.dox
+@with_doxygen_TRUE@docs:
+@with_doxygen_TRUE@	doxygen Doxyfile.dox
+
+all-local:
+	@echo "" > .report.txt
+	@echo "Installing: image_to_j2k.1 ${mandir}/man1" >> .report.txt
+	@echo "Installing: j2k_to_image.1  ${mandir}/man1" >> .report.txt
+	@echo "Installing: j2k_dump.1  ${mandir}/man1" >> .report.txt
+	@echo "Installing: libopenjpeg.3  ${mandir}/man3" >> .report.txt
+	@echo "Installing: LICENSE CHANGES $(doc_dir)" >> .report.txt
+
+install-data-hook:
+	$(INSTALL) -d $(doc_dir)
+	$(INSTALL) -d ${mandir}/man1 ${mandir}/man3
+@with_libjpwl_TRUE@	(cd ${mandir}/man1 && $(RM) JPWL_image_to_j2k* JPWL_j2k_to_image*)
+@with_libjpwl_TRUE@	(cd ${mandir}/man3 && $(RM) JPWL_libopenjpeg* )
+	(cd ${mandir}/man1 && $(RM) image_to_j2k* j2k_to_image* j2k_dump* )
+	(cd ${mandir}/man3 && $(RM) libopenjpeg* )
+	gzip -f image_to_j2k.1 j2k_to_image.1 j2k_dump.1 libopenjpeg.3
+	cp image_to_j2k.1.gz j2k_to_image.1.gz j2k_dump.1.gz ${mandir}/man1
+	cp libopenjpeg.3.gz ${mandir}/man3
+	gunzip *\.gz
+@with_libjpwl_TRUE@	(cd ${mandir}/man1 && \
+@with_libjpwl_TRUE@	$(LN_S) image_to_j2k.1.gz JPWL_image_to_j2k.1.gz && \
+@with_libjpwl_TRUE@	$(LN_S) j2k_to_image.1.gz JPWL_j2k_to_image.1.gz)
+@with_libjpwl_TRUE@	(cd ${mandir}/man3 && $(LN_S) libopenjpeg.3.gz JPWL_libopenjpeg.3.gz)
+	cp ../LICENSE ../CHANGES $(doc_dir)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

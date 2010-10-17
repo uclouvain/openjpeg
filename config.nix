@@ -6,21 +6,28 @@ JP3D_MAJOR = 1
 JP3D_MINOR = 3
 JP3D_BUILD = 0
 
-prefix=/usr/local
+prefix=/usr/local/OPJ646
 CC = gcc
 
 #Set this to yes if you want to compile/install shared libs.
-ENABLE_SHARED = no
+ENABLE_SHARED = yes
 #
 #Set to yes if you BOTH have the library AND the header
 #Set to no if a file is missing or you hate it.
 #Either lcms or lcms2 : not both
-#SHOULD BE IN SYNC WITH opj_config.h
+#==== HAVE YOU CREATED opj_config.h FROM opj_config.h.in.user ? ====
+#==== SHOULD BE IN SYNC WITH opj_config.h ====
 WITH_LCMS1 = no
-WITH_LCMS2 = no
-WITH_PNG = no
-WITH_TIFF = no
-
+WITH_LCMS2 = yes
+WITH_PNG = yes
+WITH_TIFF = yes
+#
+# Set to yes if you want compile/install 
+#    jpwl libraries/binaries
+#    jp3d libraries/binaries
+WITH_JPWL = yes
+WITH_JP3D = yes
+#
 #Set to yes if you have doxygen installed
 #Set to no if doxygen is missing.
 HAS_DOXYGEN = yes

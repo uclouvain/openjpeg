@@ -35,12 +35,10 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
-@with_libjpwl_TRUE@am__append_1 = -L../jpwl -lopenjpeg_JPWL
-@with_libjpwl_TRUE@am__append_2 = -DUSE_JPWL
-@with_liblcms2_TRUE@am__append_3 = @lcms2includes@
-@with_liblcms2_TRUE@am__append_4 = @lcms2libs@
-@with_liblcms1_TRUE@am__append_5 = @lcms1includes@
-@with_liblcms1_TRUE@am__append_6 = @lcms1libs@
+@with_liblcms2_TRUE@am__append_1 = @lcms2includes@
+@with_liblcms2_TRUE@am__append_2 = @lcms2libs@
+@with_liblcms1_TRUE@am__append_3 = @lcms1includes@
+@with_liblcms1_TRUE@am__append_4 = @lcms1libs@
 bin_PROGRAMS = frames_to_mj2$(EXEEXT) mj2_to_frames$(EXEEXT) \
 	extract_j2k_from_mj2$(EXEEXT) wrap_j2k_in_mj2$(EXEEXT)
 subdir = mj2
@@ -60,8 +58,7 @@ am_extract_j2k_from_mj2_OBJECTS = mj2.$(OBJEXT) \
 extract_j2k_from_mj2_OBJECTS = $(am_extract_j2k_from_mj2_OBJECTS)
 extract_j2k_from_mj2_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
-am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
+am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 extract_j2k_from_mj2_DEPENDENCIES = ../libopenjpeg/libopenjpeg.la \
 	$(am__DEPENDENCIES_2)
 am_frames_to_mj2_OBJECTS = getopt.$(OBJEXT) mj2_convert.$(OBJEXT) \
@@ -198,7 +195,6 @@ builddir = @builddir@
 datadir = @datadir@
 datarootdir = @datarootdir@
 docdir = @docdir@
-doxy_dir = @doxy_dir@
 dvidir = @dvidir@
 exec_prefix = @exec_prefix@
 host = @host@
@@ -245,9 +241,9 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 with_doxygen = @with_doxygen@
-COMPILERFLAGS = -Wall $(am__append_2)
-USERLIBS = $(am__append_1) $(am__append_4) $(am__append_6)
-INCLUDES = -I.. -I. -I../libopenjpeg $(am__append_3) $(am__append_5)
+COMPILERFLAGS = -Wall -static
+USERLIBS = $(am__append_2) $(am__append_4)
+INCLUDES = -I.. -I. -I../libopenjpeg $(am__append_1) $(am__append_3)
 LDADD = ../libopenjpeg/libopenjpeg.la $(USERLIBS)
 frames_to_mj2_SOURCES = ../codec/compat/getopt.c mj2_convert.c mj2.c \
  frames_to_mj2.c

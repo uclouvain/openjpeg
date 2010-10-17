@@ -139,7 +139,7 @@ uninstall:
 	rm -f $(DESTDIR)$(INSTALL_LIBDIR)/$(STATICLIB)
 ifeq ($(ENABLE_SHARED),yes)
 	(cd $(DESTDIR)$(INSTALL_LIBDIR) && \
-	rm $(LIBNAME).so $(LIBNAME).so.$(MAJOR).$(MINOR) $(SHAREDLIB))
+	rm -f $(LIBNAME).so $(LIBNAME).so.$(MAJOR).$(MINOR) $(SHAREDLIB))
 endif
 	ldconfig
 	rm -f $(DESTDIR)$(INSTALL_BIN)/JPWL_j2k_to_image

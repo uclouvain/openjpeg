@@ -1,4 +1,4 @@
-#top Makefile
+#top Makefile.nix
 include  config.nix
 
 TARGET  = openjpeg
@@ -59,12 +59,12 @@ default: all
 all: OpenJPEG
 	make -C codec -f Makefile.nix all
 	make -C mj2 -f Makefile.nix all
-
-jpwl-all:
+ifeq ($(WITH_JPWL),yes)
 	make -C jpwl -f Makefile.nix all
-
-jp3d-all:
+endif
+ifeq ($(WITH_JP3D),yes)
 	make -C jp3d -f Makefile.nix all
+endif
 
 dos2unix:
 	@$(DOS2UNIX) $(SRCS) $(INCLS)
@@ -101,7 +101,6 @@ ifeq ($(ENABLE_SHARED),yes)
 	(cd $(DESTDIR)$(INSTALL_LIBDIR) && \
 	ln -sf $(LIBNAME).so.$(MAJOR).$(MINOR) $(LIBNAME).so )
 endif
-	ldconfig
 	install -d $(DESTDIR)$(INSTALL_INCLUDE)
 	install -m 644 -o root -g root libopenjpeg/openjpeg.h \
 	$(DESTDIR)$(INSTALL_INCLUDE)
@@ -109,19 +108,49 @@ endif
 	ln -sf $(headerdir)/openjpeg.h openjpeg.h)
 	make -C codec -f Makefile.nix install
 	make -C mj2 -f Makefile.nix install
+ifeq ($(WITH_JPWL),yes)
+	make -C jpwl -f Makefile.nix install
+endif
+ifeq ($(WITH_JP3D),yes)
+	make -C jp3d -f Makefile.nix install
+endif
+	ldconfig
+	make -C doc -f Makefile.nix install
 
-jpwl-install: jpwl
+ifeq ($(WITH_JPWL),yes)
+jpwl-all:
+	make -C jpwl -f Makefile.nix all
+
+jpwl-install: jpwl-all
 	make -C jpwl -f Makefile.nix install
 	ldconfig
 
-jp3d-install: jp3d
+jpwl-clean:
+	make -C jpwl -f Makefile.nix clean
+
+jpwl-uninstall:
+	make -C jpwl -f Makefile.nix uninstall
+endif
+
+ifeq ($(WITH_JP3D),yes)
+jp3d-all:
+	make -C jp3d -f Makefile.nix all
+
+jp3d-install: jp3d-all
 	make -C jp3d -f Makefile.nix install
 	ldconfig
+
+jp3d-clean:
+	make -C jp3d -f Makefile.nix clean
+
+jp3d-uninstall:
+	make -C jp3d -f Makefile.nix uninstall
+endif
 
 doc-all:
 	make -C doc -f Makefile.nix all
 
-doc-install: docs
+doc-install: doc-all
 	make -C doc -f Makefile.nix install
 
 clean:
@@ -129,12 +158,13 @@ clean:
 	rm -f core u2dtmp* $(MODULES) $(STATICLIB) $(SHAREDLIB)
 	make -C codec -f Makefile.nix clean
 	make -C mj2 -f Makefile.nix clean
-
-jpwl-clean:
+	make -C doc -f Makefile.nix clean
+ifeq ($(WITH_JPWL),yes)
 	make -C jpwl -f Makefile.nix clean
-
-jp3d-clean:
+endif
+ifeq ($(WITH_JP3D),yes)
 	make -C jp3d -f Makefile.nix clean
+endif
 
 doc-clean:
 	make -C doc -f Makefile.nix clean
@@ -150,9 +180,10 @@ endif
 	rm -rf $(DESTDIR)$(INSTALL_INCLUDE)
 	make -C codec -f Makefile.nix uninstall
 	make -C mj2 -f Makefile.nix uninstall
-
-jpwl-uninstall:
+	make -C doc -f Makefile.nix uninstall
+ifeq ($(WITH_JPWL),yes)
 	make -C jpwl -f Makefile.nix uninstall
-
-jp3d-uninstall:
+endif
+ifeq ($(WITH_JP3D),yes)
 	make -C jp3d -f Makefile.nix uninstall
+endif

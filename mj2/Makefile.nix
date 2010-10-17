@@ -1,4 +1,4 @@
-#jpwl Makefile
+#mj2 Makefile.nix
 include ../config.nix
 
 CFLAGS = -Wall
@@ -6,11 +6,6 @@ CFLAGS = -Wall
 INSTALL_BIN = $(prefix)/bin
 USERLIBS = -lm
 INCLUDE = -I.. -I. -I../libopenjpeg
-
-ifeq ($(WITH_JPWL),yes)
-USERLIBS += ../jpwl/libopenjpeg_JPWL.a
-#CFLAGS += -DUSE_JPWL
-endif
 
 ifeq ($(WITH_LCMS2),yes)
 INCLUDE += $(LCMS2_INCLUDE)

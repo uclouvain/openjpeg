@@ -392,11 +392,11 @@ AC_SUBST(jpwl_dir)
 # -------------------------------
 # Test for creating SHARED LIBS
 # -------------------------------
-with_sharedlibs="no"
+with_sharedlibs="yes"
 AC_MSG_CHECKING(whether to build shared libraries)
 AC_ARG_ENABLE(shared,
- [  --enable-shared[=[yes|no]]       Build shared libs [ [default=no] ]],
- test "$enable_shared" = "yes" && with_sharedlibs="yes")
+ [  --enable-shared[=[yes|no]]       Build shared libs [ [default=yes] ]],
+ test "$enable_shared" = "no" && with_sharedlibs="no")
 #
 AC_MSG_RESULT($with_sharedlibs)
 AM_CONDITIONAL([with_sharedlibs], [test x$with_sharedlibs = xyes])
@@ -420,11 +420,7 @@ AC_SUBST(jp3d_dir)
 AC_SUBST(LDLIBS)
 #
 AC_CHECK_PROG(with_doxygen, doxygen, [yes],[no],,)
-doxy_dir=""
-if test "$with_doxygen" = "yes" ; then
- dox_dir="doc"
-fi
-AC_SUBST(doxy_dir)
+AM_CONDITIONAL([with_doxygen], [test x$with_doxygen = xyes])
 #
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([libopenjpeg/Makefile])
@@ -450,6 +446,7 @@ echo "lcms2 version       : $have_lcms2_version"
 echo "--enable-lcms1      : $with_liblcms1"
 echo "lcms1 header        : $lcms1_header_found"
 echo "lcms1 version       : $have_lcms1_version"
-echo "jpwl support        : $with_libjpwl"
+echo "--enable-jpwl       : $with_libjpwl"
 echo "--enable-jp3d       : $with_jp3d"
+echo "--enable-shared     : $with_sharedlibs"
 echo "----------------------------------------------"

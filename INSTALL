@@ -62,12 +62,15 @@ Main available cmake flags:
 3) Manually using Makefile.nix:
 - Manually edit the config.nix file
 - Manually create an opj_config.h file from opj_config.h.in.user
-- Then : (remove the unwanted targets)
-    make -f Makefile.nix all jpwl-all jp3d-all doc-all
-    make -f Makefile.nix clean jpwl-clean jp3d-clean doc-clean
-    make -f Makefile.nix install jpwl-install jp3d-install
-    make -f Makefile.nix uninstall jpwl-uninstall jp3d-uninstall
-
+  and edit this opj_config.h
+- Then : (if 'WITH_JPWL' and/or 'WITH_JP3D' are defined in config.nix)
+    make -f Makefile.nix all
+    make -f Makefile.nix install
+    make -f Makefile.nix clean
+    make -f Makefile.nix uninstall
+- If neither 'WITH_JPWL' nor 'WITH_JP3D' is defined in config.nix
+  and you want to clean/compile/install/uninstall JPWL/JP3D:
+  call the respective target in the respective directory.
 
 MACOSX
 ------

@@ -5,6 +5,41 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+October 17, 2010
+- [szukw000] doc/man/ : directory removed
+! [szukw000]
+	configure.ac : 'enable_shared' YES by default
+	doc/Makefile.am :
+		'all-local' and 'install-data-hook' added
+		'with_doxygen' conditional added
+	Makefile.am : 'doc' directory no longer substituted in SUBDIRS
+
+	to link binaries statically: '-static' added to:
+		codec/Makefile.am
+		mj2/Makefile.am
+		jpwl/Makefile.am
+		jp3d/codec/Makefile.am
+
+	mj2/Makefile.am : 'with_libjpwl' removed
+	mj2/Makefile.nix : 'with_libjpwl' removed
+
+	config.nix : 'WITH_JPWL', 'WITH_JP3D' added
+	doc/Makefile.nix : 'clean', 'install', 'uninstall' added
+	Makefile.nix : 'WITH_JPWL', 'WITH_JP3D' added
+
+	INSTALL : topic 3) changed regarding the changes in 'config.nix'
+
+October 13, 2010
+! [szukw000] 
+	configure.ac
+	bootstrap.sh
+
+	'with_libjpwl' removed from:
+		libopenjpeg/Makefile.am
+		codec/Makefile.am
+		codec/Makefile.nix
+		Makefile.nix
+
 October 10, 2010
 * [antonin] Patch from winfried
 

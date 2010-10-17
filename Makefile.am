@@ -1,5 +1,5 @@
 #OpenJPEG top source directory
-SUBDIRS = @jpwl_dir@ libopenjpeg codec mj2 @jp3d_dir@ @doxy_dir@
+SUBDIRS = libopenjpeg codec mj2 @jpwl_dir@ @jp3d_dir@ doc
 
 clean-local:
 	@rm -rf bin

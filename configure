@@ -747,7 +747,8 @@ ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
-doxy_dir
+with_doxygen_FALSE
+with_doxygen_TRUE
 with_doxygen
 LDLIBS
 jp3d_dir
@@ -1570,7 +1571,7 @@ Optional Features:
   --enable-lcms2=[yes|no]        Build with LCMS-2 support  [default=yes]
   --enable-lcms1=[yes|no]        Build with LCMS-1 support  [default=yes]
   --enable-jpwl=[yes|no]         Build with JPWL support  [default=no]
-  --enable-shared=[yes|no]       Build shared libs  [default=no]
+  --enable-shared=[yes|no]       Build shared libs  [default=yes]
   --enable-jp3d=[yes|no]         Build jp3d libs  [default=no]
 
 Optional Packages:
@@ -5866,13 +5867,13 @@ if test "${lt_cv_nm_interface+set}" = set; then :
 else
   lt_cv_nm_interface="BSD nm"
   echo "int some_variable = 0;" > conftest.$ac_ext
-  (eval echo "\"\$as_me:5869: $ac_compile\"" >&5)
+  (eval echo "\"\$as_me:5870: $ac_compile\"" >&5)
   (eval "$ac_compile" 2>conftest.err)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:5872: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
+  (eval echo "\"\$as_me:5873: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
   (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:5875: output\"" >&5)
+  (eval echo "\"\$as_me:5876: output\"" >&5)
   cat conftest.out >&5
   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
     lt_cv_nm_interface="MS dumpbin"
@@ -7063,7 +7064,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 7066 "configure"' > conftest.$ac_ext
+  echo '#line 7067 "configure"' > conftest.$ac_ext
   if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_compile\""; } >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -9054,11 +9055,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:9057: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:9058: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:9061: \$? = $ac_status" >&5
+   echo "$as_me:9062: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -9393,11 +9394,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:9396: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:9397: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:9400: \$? = $ac_status" >&5
+   echo "$as_me:9401: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -9498,11 +9499,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:9501: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:9502: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:9505: \$? = $ac_status" >&5
+   echo "$as_me:9506: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -9553,11 +9554,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:9556: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:9557: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:9560: \$? = $ac_status" >&5
+   echo "$as_me:9561: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -11920,7 +11921,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 11923 "configure"
+#line 11924 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -12016,7 +12017,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 12019 "configure"
+#line 12020 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -13972,11 +13973,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:13975: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:13976: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:13979: \$? = $ac_status" >&5
+   echo "$as_me:13980: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -14071,11 +14072,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:14074: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:14075: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:14078: \$? = $ac_status" >&5
+   echo "$as_me:14079: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -14123,11 +14124,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:14126: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:14127: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:14130: \$? = $ac_status" >&5
+   echo "$as_me:14131: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -16064,12 +16065,12 @@ fi
 # -------------------------------
 # Test for creating SHARED LIBS
 # -------------------------------
-with_sharedlibs="no"
+with_sharedlibs="yes"
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to build shared libraries" >&5
 $as_echo_n "checking whether to build shared libraries... " >&6; }
 # Check whether --enable-shared was given.
 if test "${enable_shared+set}" = set; then :
-  enableval=$enable_shared; test "$enable_shared" = "yes" && with_sharedlibs="yes"
+  enableval=$enable_shared; test "$enable_shared" = "no" && with_sharedlibs="no"
 fi
 
 #
@@ -16144,9 +16145,12 @@ $as_echo "no" >&6; }
 fi
 
 
-doxy_dir=""
-if test "$with_doxygen" = "yes" ; then
- dox_dir="doc"
+ if test x$with_doxygen = xyes; then
+  with_doxygen_TRUE=
+  with_doxygen_FALSE='#'
+else
+  with_doxygen_TRUE='#'
+  with_doxygen_FALSE=
 fi
 
 #
@@ -16312,6 +16316,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${with_sharedlibs_TRUE}" && test -z "${with_sharedlibs_FALSE}"; then
   as_fn_error "conditional \"with_sharedlibs\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${with_doxygen_TRUE}" && test -z "${with_doxygen_FALSE}"; then
+  as_fn_error "conditional \"with_doxygen\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 
@@ -18815,6 +18823,7 @@ echo "lcms2 version       : $have_lcms2_version"
 echo "--enable-lcms1      : $with_liblcms1"
 echo "lcms1 header        : $lcms1_header_found"
 echo "lcms1 version       : $have_lcms1_version"
-echo "jpwl support        : $with_libjpwl"
+echo "--enable-jpwl       : $with_libjpwl"
 echo "--enable-jp3d       : $with_jp3d"
+echo "--enable-shared     : $with_sharedlibs"
 echo "----------------------------------------------"
