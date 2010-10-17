@@ -195,7 +195,6 @@ builddir = @builddir@
 datadir = @datadir@
 datarootdir = @datarootdir@
 docdir = @docdir@
-doxy_dir = @doxy_dir@
 dvidir = @dvidir@
 exec_prefix = @exec_prefix@
 host = @host@

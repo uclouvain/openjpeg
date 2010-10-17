@@ -96,7 +96,7 @@ uninstall:
 	rm -f $(DESTDIR)$(INSTALL_LIBDIR)/$(STATICLIB)
 ifeq ($(ENABLE_SHARED),yes)
 	(cd $(DESTDIR)$(INSTALL_LIBDIR) && \
-	rm $(LIBNAME).so $(LIBNAME).so.$(JP3D_MAJOR).$(JP3D_MINOR) $(SHAREDLIB))
+	rm -f $(LIBNAME).so $(LIBNAME).so.$(JP3D_MAJOR).$(JP3D_MINOR) $(SHAREDLIB))
 endif
 	ldconfig
 	rm -f $(DESTDIR)$(prefix)/include/openjpeg3d.h
