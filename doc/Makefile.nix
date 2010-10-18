@@ -14,6 +14,8 @@ clean:
 	rm -rf html
 
 install:
+	cp man/man1/* .
+	cp man/man3/* .
 	install -d $(doc_dir)
 	install -d $(man_dir)/man1 $(man_dir)/man3
 ifeq ($(WITH_JPWL),yes)
@@ -23,9 +25,9 @@ endif
 	(cd $(man_dir)/man1 && rm -f image_to_j2k* j2k_to_image* j2k_dump* )
 	(cd $(man_dir)/man3 && rm -f libopenjpeg* )
 	gzip -f image_to_j2k.1 j2k_to_image.1 j2k_dump.1 libopenjpeg.3
-	cp image_to_j2k.1.gz j2k_to_image.1.gz j2k_dump.1.gz $(man_dir)/man1
-	cp libopenjpeg.3.gz $(man_dir)/man3
-	gunzip *\.gz
+	cp -f image_to_j2k.1.gz j2k_to_image.1.gz j2k_dump.1.gz $(man_dir)/man1
+	cp -f libopenjpeg.3.gz $(man_dir)/man3
+	rm -f *\.gz
 ifeq ($(WITH_JPWL),yes)
 	(cd $(man_dir)/man1 && \
 	ln -sf image_to_j2k.1.gz JPWL_image_to_j2k.1.gz && \

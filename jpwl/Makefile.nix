@@ -121,7 +121,7 @@ ifeq ($(ENABLE_SHARED),yes)
 	(cd $(DESTDIR)$(INSTALL_LIBDIR) && \
 	ln -sf $(LIBNAME).so.$(MAJOR).$(MINOR) $(LIBNAME).so )
 endif
-	ldconfig
+	$(LDCONFIG)
 	install -d $(DESTDIR)$(INSTALL_BIN)
 	install -m 755 -o root -g root JPWL_j2k_to_image $(DESTDIR)$(INSTALL_BIN)
 	install -m 755 -o root -g root JPWL_image_to_j2k $(DESTDIR)$(INSTALL_BIN)
@@ -141,6 +141,6 @@ ifeq ($(ENABLE_SHARED),yes)
 	(cd $(DESTDIR)$(INSTALL_LIBDIR) && \
 	rm -f $(LIBNAME).so $(LIBNAME).so.$(MAJOR).$(MINOR) $(SHAREDLIB))
 endif
-	ldconfig
+	$(LDCONFIG)
 	rm -f $(DESTDIR)$(INSTALL_BIN)/JPWL_j2k_to_image
 	rm -f $(DESTDIR)$(INSTALL_BIN)/JPWL_image_to_j2k

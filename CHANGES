@@ -5,6 +5,15 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+October 18, 2010
+! [szukw000]
+	doc/Makefile.am 
+	doc/Makefile.nix
+	jp3d/Makefile.nix
+	jpwl/Makefile.nix
+	Makefile.nix
+	config.nix
+
 October 17, 2010
 - [szukw000] doc/man/ : directory removed
 ! [szukw000]

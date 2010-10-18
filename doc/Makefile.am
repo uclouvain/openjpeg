@@ -16,6 +16,8 @@ all-local:
 	@echo "Installing: j2k_dump.1  ${mandir}/man1" >> .report.txt
 	@echo "Installing: libopenjpeg.3  ${mandir}/man3" >> .report.txt
 	@echo "Installing: LICENSE CHANGES $(doc_dir)" >> .report.txt
+	cp man/man1/* .
+	cp man/man3/* .
 
 install-data-hook:
 	$(INSTALL) -d $(doc_dir)
@@ -29,7 +31,7 @@ endif
 	gzip -f image_to_j2k.1 j2k_to_image.1 j2k_dump.1 libopenjpeg.3
 	cp image_to_j2k.1.gz j2k_to_image.1.gz j2k_dump.1.gz ${mandir}/man1
 	cp libopenjpeg.3.gz ${mandir}/man3
-	gunzip *\.gz
+	$(RM) *\.gz
 if with_libjpwl
 	(cd ${mandir}/man1 && \
 	$(LN_S) image_to_j2k.1.gz JPWL_image_to_j2k.1.gz && \

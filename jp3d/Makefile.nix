@@ -83,7 +83,7 @@ ifeq ($(ENABLE_SHARED),yes)
 	(cd $(DESTDIR)$(INSTALL_LIBDIR) && \
 	ln -sf $(LIBNAME).so.$(JP3D_MAJOR).$(JP3D_MINOR) $(LIBNAME).so )
 endif
-	ldconfig
+	$(LDCONFIG)
 	install -d $(DESTDIR)$(INSTALL_INCLUDE)
 	rm -f $(DESTDIR)$(INSTALL_INCLUDE)/openjpeg.h
 	install -m 644 -o root -g root libjp3dvm/openjpeg.h \
@@ -98,7 +98,7 @@ ifeq ($(ENABLE_SHARED),yes)
 	(cd $(DESTDIR)$(INSTALL_LIBDIR) && \
 	rm -f $(LIBNAME).so $(LIBNAME).so.$(JP3D_MAJOR).$(JP3D_MINOR) $(SHAREDLIB))
 endif
-	ldconfig
+	$(LDCONFIG)
 	rm -f $(DESTDIR)$(prefix)/include/openjpeg3d.h
 	rm -rf $(DESTDIR)$(INSTALL_INCLUDE)
 	make -C codec -f Makefile.nix uninstall

@@ -114,7 +114,7 @@ endif
 ifeq ($(WITH_JP3D),yes)
 	make -C jp3d -f Makefile.nix install
 endif
-	ldconfig
+	$(LDCONFIG)
 	make -C doc -f Makefile.nix install
 
 ifeq ($(WITH_JPWL),yes)
@@ -123,7 +123,7 @@ jpwl-all:
 
 jpwl-install: jpwl-all
 	make -C jpwl -f Makefile.nix install
-	ldconfig
+	$(LDCONFIG)
 
 jpwl-clean:
 	make -C jpwl -f Makefile.nix clean
@@ -138,7 +138,7 @@ jp3d-all:
 
 jp3d-install: jp3d-all
 	make -C jp3d -f Makefile.nix install
-	ldconfig
+	$(LDCONFIG)
 
 jp3d-clean:
 	make -C jp3d -f Makefile.nix clean
@@ -175,7 +175,7 @@ ifeq ($(ENABLE_SHARED),yes)
 	(cd $(DESTDIR)$(INSTALL_LIBDIR) && \
 	rm -f $(LIBNAME).so $(LIBNAME).so.$(MAJOR).$(MINOR) $(SHAREDLIB) )
 endif
-	ldconfig
+	$(LDCONFIG)
 	rm -f $(DESTDIR)$(prefix)/include/openjpeg.h
 	rm -rf $(DESTDIR)$(INSTALL_INCLUDE)
 	make -C codec -f Makefile.nix uninstall
