@@ -241,8 +241,8 @@ int main(int argc, char *argv[]) {
 	mj2_cparameters_t parameters;
 	
   if (argc != 3) {
-    printf("Bad syntax: Usage: MJ2_Wrapper source_location mj2_filename\n");
-    printf("Example: MJ2_Wrapper input/input output.mj2\n");
+    printf("Usage: %s source_location mj2_filename\n",argv[0]);
+    printf("Example: %s input/input output.mj2\n",argv[0]);
     return 1;
   }
   

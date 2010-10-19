@@ -72,7 +72,7 @@ void info_callback(const char *msg, void *client_data) {
 
 void help_display()
 {
-  fprintf(stdout,"HELP\n----\n\n");
+  fprintf(stdout,"HELP for frames_to_mj2\n----\n\n");
   fprintf(stdout,"- the -h option displays this help information on screen\n\n");
   
   
@@ -285,7 +285,7 @@ int main(int argc, char **argv)
 
   while (1) {
     int c = getopt(argc, argv,
-      "i:o:r:q:f:t:n:c:b:p:s:d:h P:S:E:M:R:T:C:I:W:F:");
+      "i:o:r:q:f:t:n:c:b:p:s:d:P:S:E:M:R:T:C:I:W:F:h");
     if (c == -1)
       break;
     switch (c) {
@@ -611,7 +611,7 @@ int main(int argc, char **argv)
   /* -------------- */
 	if (!mj2_parameters.cod_format || !mj2_parameters.decod_format) {
     fprintf(stderr,
-      "Correct usage: mj2_encoder -i yuv-file -o mj2-file (+ options)\n");
+      "Usage: %s -i yuv-file -o mj2-file (+ options)\n",argv[0]);
     return 1;
   }
   

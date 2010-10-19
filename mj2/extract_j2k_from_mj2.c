@@ -76,8 +76,8 @@ int main(int argc, char *argv[]) {
 	mj2_dparameters_t parameters;
 
   if (argc != 3) {
-    printf("Bad syntax: Usage: MJ2_extractor mj2filename output_location\n"); 
-    printf("Example: MJ2_extractor foreman.mj2 output/foreman\n");
+    printf("Usage: %s mj2filename output_location\n",argv[0]); 
+    printf("Example: %s foreman.mj2 output/foreman\n",argv[0]);
     return 1;
   }
   

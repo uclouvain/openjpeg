@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+October 18, 2010 
+* [antonin] fixed options and help display (patch from winfried) 
+
 October 18, 2010
 ! [szukw000]
 	doc/Makefile.am 

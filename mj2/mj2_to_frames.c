@@ -81,8 +81,7 @@ int main(int argc, char *argv[]) {
 	unsigned int numframes = 0;
 			
   if (argc != 3) {
-    printf("Bad syntax: Usage: mj2_to_frames inputfile.mj2 outputfile.yuv\n"); 
-    printf("Example: MJ2_decoder foreman.mj2 foreman.yuv\n");
+    printf("Usage: %s inputfile.mj2 outputfile.yuv\n",argv[0]); 
     return 1;
   }
   

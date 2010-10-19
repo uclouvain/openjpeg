@@ -92,7 +92,7 @@ typedef struct img_folder{
 }img_fol_t;
 
 void encode_help_display() {
-	fprintf(stdout,"HELP\n----\n\n");
+	fprintf(stdout,"HELP for image_to_j2k\n----\n\n");
 	fprintf(stdout,"- the -h option displays this help information on screen\n\n");
 
 /* UniPG>> */
@@ -145,9 +145,9 @@ void encode_help_display() {
 	fprintf(stdout,"-OutFor \n");
 	fprintf(stdout,"    REQUIRED only if -ImgDir is used\n");
 	fprintf(stdout,"	  Need to specify only format without filename <BMP>  \n");
-	fprintf(stdout,"    Currently accepts PGM, PPM, PNM, PGX, BMP, TIF, RAW and TGA formats\n");
+	fprintf(stdout,"    Currently accepts PGM, PPM, PNM, PGX, PNG, BMP, TIF, RAW and TGA formats\n");
 	fprintf(stdout,"\n");
-	fprintf(stdout,"-i           : source file  (-i source.pnm also *.pgm, *.ppm, *.bmp, *.tif, *.raw, *.tga) \n");
+	fprintf(stdout,"-i           : source file  (-i source.pnm also *.pgm, *.ppm, *.pgx, *png, *.bmp, *.tif, *.raw, *.tga) \n");
 	fprintf(stdout,"    When using this option -o must be used\n");
 	fprintf(stdout,"\n");
 	fprintf(stdout,"-o           : destination file (-o dest.j2k or .jp2) \n");
@@ -596,11 +596,11 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 	};
 
 	/* parse the command line */
-	const char optlist[] = "i:o:hr:q:n:b:c:t:p:s:SEM:x:R:d:T:If:P:C:F:"
+	const char optlist[] = "i:o:r:q:n:b:c:t:p:s:SEM:x:R:d:T:If:P:C:F:"
 #ifdef USE_JPWL
 		"W:"
 #endif /* USE_JPWL */
-		;
+		"h";
 
 	totlen=sizeof(long_option);
 	img_fol->set_out_format=0;
@@ -627,7 +627,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 					default:
 						fprintf(stderr,
 							"!! Unrecognized format for infile : %s "
-              "[accept only *.pnm, *.pgm, *.ppm, *.pgx, *.bmp, *.tif, *.raw or *.tga] !!\n\n",
+              "[accept only *.pnm, *.pgm, *.ppm, *.pgx, *png, *.bmp, *.tif, *.raw or *.tga] !!\n\n",
 							infile);
 						return 1;
 				}

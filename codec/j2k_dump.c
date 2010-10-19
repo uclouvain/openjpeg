@@ -85,7 +85,7 @@ typedef struct img_folder{
 }img_fol_t;
 
 void decode_help_display() {
-	fprintf(stdout,"HELP\n----\n\n");
+	fprintf(stdout,"HELP for j2k_dump\n----\n\n");
 	fprintf(stdout,"- the -h option displays this help information on screen\n\n");
 
 /* UniPG>> */

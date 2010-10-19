@@ -88,7 +88,7 @@ typedef struct img_folder{
 }img_fol_t;
 
 void decode_help_display() {
-	fprintf(stdout,"HELP\n----\n\n");
+	fprintf(stdout,"HELP for j2k_to_image\n----\n\n");
 	fprintf(stdout,"- the -h option displays this help information on screen\n\n");
 
 /* UniPG>> */
@@ -105,14 +105,14 @@ void decode_help_display() {
 	fprintf(stdout,"  -OutFor \n");
 	fprintf(stdout,"    REQUIRED only if -ImgDir is used\n");
 	fprintf(stdout,"	  Need to specify only format without filename <BMP>  \n");
-	fprintf(stdout,"    Currently accepts PGM, PPM, PNM, PGX, BMP, TIF, RAW and TGA formats\n");
+	fprintf(stdout,"    Currently accepts PGM, PPM, PNM, PGX, PNG, BMP, TIF, RAW and TGA formats\n");
 	fprintf(stdout,"  -i <compressed file>\n");
 	fprintf(stdout,"    REQUIRED only if an Input image directory not specified\n");
 	fprintf(stdout,"    Currently accepts J2K-files, JP2-files and JPT-files. The file type\n");
 	fprintf(stdout,"    is identified based on its suffix.\n");
 	fprintf(stdout,"  -o <decompressed file>\n");
 	fprintf(stdout,"    REQUIRED\n");
-	fprintf(stdout,"    Currently accepts PGM, PPM, PNM, PGX, BMP, TIF, RAW and TGA files\n");
+	fprintf(stdout,"    Currently accepts PGM, PPM, PNM, PGX, PNG, BMP, TIF, RAW and TGA files\n");
 	fprintf(stdout,"    Binary data is written to the file (not ascii). If a PGX\n");
 	fprintf(stdout,"    filename is given, there will be as many output files as there are\n");
 	fprintf(stdout,"    components: an indice starting from 0 will then be appended to the\n");
@@ -245,14 +245,14 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 		{"OutFor",REQ_ARG, NULL ,'O'},
 	};
 
-	const char optlist[] = "i:o:r:l:hx:"
+	const char optlist[] = "i:o:r:l:x:"
 
 /* UniPG>> */
 #ifdef USE_JPWL
 					"W:"
 #endif /* USE_JPWL */
 /* <<UniPG */
-					;
+			"h"		;
 	totlen=sizeof(long_option);
 	img_fol->set_out_format = 0;
 	while (1) {
