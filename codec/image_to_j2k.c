@@ -1411,9 +1411,8 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 		}
 	}else{
 		if((parameters->infile[0] == 0) || (parameters->outfile[0] == 0)) {
-			fprintf(stderr, "Error: One of the options; -i or -ImgDir must be specified\n");
-			fprintf(stderr, "Error: When using -i; -o must be used\n");
-			fprintf(stderr, "usage: image_to_j2k -i image-file -o j2k/jp2-file (+ options)\n");
+			fprintf(stderr, "Example: %s -i image.ppm  -o image.j2k\n",argv[0]);
+			fprintf(stderr, "    Try: %s -h\n",argv[0]);
 			return 1;
 		}
 	}

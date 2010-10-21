@@ -478,9 +478,8 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 		}
 	}else{
 		if((parameters->infile[0] == 0) || (parameters->outfile[0] == 0)) {
-			fprintf(stderr, "Error: One of the options -i or -ImgDir must be specified\n");
-			fprintf(stderr, "Error: When using -i, -o must be used\n");
-			fprintf(stderr, "usage: image_to_j2k -i *.j2k/jp2/j2c -o *.pgm/ppm/pnm/pgx/bmp/tif/raw/tga(+ options)\n");
+			fprintf(stderr, "Example: %s -i image.j2k -o image.pgm\n",argv[0]);
+			fprintf(stderr, "    Try: %s -h\n",argv[0]);
 			return 1;
 		}
 	}

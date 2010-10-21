@@ -6,6 +6,9 @@ What's New for OpenJPEG
 + : added
 
 October 20, 2010 
+* [antonin] fixed help display (patch from winfried)
+
+October 20, 2010 
 * [antonin] 
     fixed paths to png and tiff in CMakeLists.txt (patch from winfried)
     fixed link to lcms library (patch from winfried)
