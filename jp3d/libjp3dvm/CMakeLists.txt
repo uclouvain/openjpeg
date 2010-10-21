@@ -1,3 +1,4 @@
+ADD_DEFINITIONS(-O3)
 INCLUDE_REGULAR_EXPRESSION("^.*$")
 # Defines the source code for the library
 SET(JP3DVM_SRCS

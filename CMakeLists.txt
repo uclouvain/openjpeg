@@ -225,11 +225,9 @@ CONFIGURE_FILE( ${OPENJPEG_SOURCE_DIR}/CMake/OpenJPEGConfig.cmake.in
 INSTALL( FILES ${OPENJPEG_BINARY_DIR}/OpenJPEGConfig.cmake
   DESTINATION ${OPENJPEG_INSTALL_PACKAGE_DIR}
 )
-
-#----------------- CREATE OPJ_CONFIG.H -----------------
-
-SET(CMAKE_PREFIX_PATH "/usr /usr/local /opt /opt/local")
-
+#
+SET(CMAKE_PREFIX_PATH /usr /usr/local /opt /opt/local)
+#
 FIND_FILE(HAVE_STRINGS_H strings.h)
 FIND_FILE(HAVE_INTTYPES_H inttypes.h)
 FIND_FILE(HAVE_MEMORY_H memory.h)
@@ -238,15 +236,12 @@ FIND_FILE(HAVE_STRING_H string.h)
 FIND_FILE(HAVE_SYS_STAT_H sys/stat.h)
 FIND_FILE(HAVE_SYS_TYPES_H sys/types.h)
 FIND_FILE(HAVE_UNISTD_H unistd.h)
-
+#
 # Does the system have png library installed ?
 # FIND_PACKAGE not used because not robust enough
-
-#FIND_PACKAGE(PNG)
-#SET(HAVE_PNG_H "${PNG_FOUND}")
-#SET(HAVE_LIBPNG "${PNG_FOUND}")
-
-FIND_PATH(PNG_INCLUDE_DIR png.h PATHS /usr/include /usr/include/libpng14 /usr/include/libpng12 /usr/include/libpng)
+#
+FIND_PATH(PNG_INCLUDE_DIR png.h PATHS /usr/include /usr/include/libpng14 /usr/include/libpng12 /usr/include/libpng /usr/local/include /usr/local/include/libpng14 /usr/local/include/libpng12 /usr/local/include/libpng /opt/include /opt/include/libpng14 /opt/include/libpng12 /opt/include/libpng /opt/local/include /opt/local/include/libpng14 /opt/local/include/libpng12 /opt/local/include/libpng)
+#
 IF(PNG_INCLUDE_DIR STREQUAL "PNG_INCLUDE_DIR-NOTFOUND")
   SET(HAVE_PNG_H 0)
 ELSE()
@@ -263,14 +258,10 @@ IF(HAVE_LIBPNG AND HAVE_PNG_H)
 ELSE()
   SET(PNG_FOUND 0)
 ENDIF()
-
+#
 # Does the system have tiff library installed ?
 # FIND_PACKAGE not used because not robust enough
-
-#FIND_PACKAGE(TIFF)
-#SET(HAVE_TIFF_H "${TIFF_FOUND}")
-#SET(HAVE_LIBTIFF "${TIFF_FOUND}")
-
+#
 FIND_PATH(TIFF_INCLUDE_DIR tiff.h)
 IF(TIFF_INCLUDE_DIR STREQUAL "TIFF_INCLUDE_DIR-NOTFOUND")
   SET(HAVE_TIFF_H 0)
@@ -288,12 +279,12 @@ IF(HAVE_LIBTIFF AND HAVE_TIFF_H)
 ELSE()
   SET(TIFF_FOUND 0)
 ENDIF()
-
+#
 # Does the system have lcms library installed ?
-
+#
 SET(LCMS_LIB "")
 FIND_FILE(LCMS2_HEADER_FOUND lcms2.h)
-
+#
 IF(LCMS2_HEADER_FOUND STREQUAL "LCMS2_HEADER_FOUND-NOTFOUND")
  SET(LCMS2_HEADER_FOUND "")
 ENDIF()
@@ -327,7 +318,7 @@ IF(NOT LCMS2_HEADER_FOUND)
   ENDIF()
  ENDIF()
 ENDIF()
-
+#
 # generate opj_config.h
 CONFIGURE_FILE("${OPENJPEG_SOURCE_DIR}/opj_configh.cmake.in"
   "${OPENJPEG_BINARY_DIR}/opj_config.h" 
