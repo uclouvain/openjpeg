@@ -12,3 +12,12 @@ ADD_CUSTOM_TARGET(doxygen
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 ENDIF(DOXYGEN_EXECUTABLE)
+
+INSTALL(
+  FILES       man/man1/image_to_j2k.1
+              man/man1/j2k_dump.1
+              man/man1/j2k_to_image.1
+  DESTINATION ${OPENJPEG_INSTALL_MAN_DIR}/man1)
+INSTALL(
+  FILES       man/man3/libopenjpeg.3
+  DESTINATION ${OPENJPEG_INSTALL_MAN_DIR}/man3)
