@@ -122,7 +122,7 @@ CONFIGURE_FILE(
 
 #-----------------------------------------------------------------------------
 # OpenJPEG build configuration options.
-OPTION(BUILD_SHARED_LIBS "Build OpenJPEG with shared libraries." OFF)
+OPTION(BUILD_SHARED_LIBS "Build OpenJPEG with shared libraries." ON)
 
 #-----------------------------------------------------------------------------
 SET (EXECUTABLE_OUTPUT_PATH ${OPENJPEG_BINARY_DIR}/bin CACHE PATH "Single output directory for building all executables.")
