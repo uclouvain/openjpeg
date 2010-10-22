@@ -36,9 +36,9 @@ host_triplet = @host@
 target_triplet = @target@
 subdir = .
 DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
-	$(srcdir)/Makefile.in $(srcdir)/opj_config.h.in \
-	$(top_srcdir)/configure INSTALL config.guess config.sub \
-	depcomp install-sh ltmain.sh missing
+	$(srcdir)/Makefile.in $(srcdir)/libopenjpeg.pc.in \
+	$(srcdir)/opj_config.h.in $(top_srcdir)/configure INSTALL \
+	config.guess config.sub depcomp install-sh ltmain.sh missing
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -47,7 +47,7 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = opj_config.h
-CONFIG_CLEAN_FILES =
+CONFIG_CLEAN_FILES = libopenjpeg.pc
 CONFIG_CLEAN_VPATH_FILES =
 SOURCES =
 DIST_SOURCES =
@@ -247,6 +247,7 @@ with_doxygen = @with_doxygen@
 
 #OpenJPEG top source directory
 SUBDIRS = libopenjpeg codec mj2 @jpwl_dir@ @jp3d_dir@ doc
+pkgconf_dir = /usr/lib/pkgconfig
 all: opj_config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -302,6 +303,8 @@ $(srcdir)/opj_config.h.in:  $(am__configure_deps)
 
 distclean-hdr:
 	-rm -f opj_config.h stamp-h1
+libopenjpeg.pc: $(top_builddir)/config.status $(srcdir)/libopenjpeg.pc.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -722,10 +725,11 @@ ps: ps-recursive
 ps-am:
 
 uninstall-am:
-
+	@$(NORMAL_INSTALL)
+	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
 .MAKE: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) all \
 	ctags-recursive install-am install-data-am install-strip \
-	tags-recursive
+	tags-recursive uninstall-am
 
 .PHONY: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) CTAGS GTAGS \
 	all all-am am--refresh check check-am clean clean-generic \
@@ -742,7 +746,7 @@ uninstall-am:
 	installcheck installcheck-am installdirs installdirs-am \
 	maintainer-clean maintainer-clean-generic mostlyclean \
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags tags-recursive uninstall uninstall-am
+	tags tags-recursive uninstall uninstall-am uninstall-hook
 
 
 clean-local:
@@ -759,6 +763,15 @@ install-data-hook:
 	cat $$f/.report.txt ; \
 	done
 	@echo ""
+	@echo "Installing: libopenjpeg1.pc $(pkgconf_dir)"
+	@echo ""
+	@$(INSTALL) -d $(pkgconf_dir)
+	@cp libopenjpeg.pc $(pkgconf_dir)/libopenjpeg1.pc
+	@(cd $(pkgconf_dir) && $(RM) libopenjpeg.pc && \
+	$(LN_S) libopenjpeg1.pc libopenjpeg.pc)
+
+uninstall-hook:
+	@(cd $(pkgconf_dir) && $(RM) libopenjpeg.pc libopenjpeg1.pc)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

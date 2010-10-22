@@ -5,6 +5,12 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+October 22, 2010
++ [szukw000] added 'libopenjpeg.pc.in'
+! [szukw000] changed 'configure.ac' to create 'libopenjpeg.pc'
+! [szukw000] changed 'Makefile.am' to [un]install 'libopenjpeg.pc'
+! [szukw000] changed 'doc/Makefile.am' : 'uninstall-hook' added
+
 October 20, 2010 
 * [antonin] fixed help display (patch from winfried)
 

@@ -16156,6 +16156,8 @@ fi
 #
 ac_config_files="$ac_config_files Makefile"
 
+ac_config_files="$ac_config_files libopenjpeg.pc"
+
 ac_config_files="$ac_config_files libopenjpeg/Makefile"
 
 ac_config_files="$ac_config_files jpwl/Makefile"
@@ -17276,6 +17278,7 @@ do
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
+    "libopenjpeg.pc") CONFIG_FILES="$CONFIG_FILES libopenjpeg.pc" ;;
     "libopenjpeg/Makefile") CONFIG_FILES="$CONFIG_FILES libopenjpeg/Makefile" ;;
     "jpwl/Makefile") CONFIG_FILES="$CONFIG_FILES jpwl/Makefile" ;;
     "codec/Makefile") CONFIG_FILES="$CONFIG_FILES codec/Makefile" ;;
