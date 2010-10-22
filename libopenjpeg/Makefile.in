@@ -619,11 +619,11 @@ dos2unix:
 
 all-local:
 	@$(INSTALL) -d ../bin
-	@cp -d .libs/libopenjpeg.* ../bin/
+	@cp -P .libs/libopenjpeg.* ../bin/
 	@rm -f ../bin/libopenjpeg.la*
 	@rm -rf .report_lib
 	@$(INSTALL) -d .report_lib
-	@cp -d .libs/libopenjpeg.* .report_lib
+	@cp -P .libs/libopenjpeg.* .report_lib
 	@rm -f .report_lib/libopenjpeg.lai
 	@echo "" > .report.txt
 	@echo "Installing: ${prefix}/include/${headerdir}/" >> .report.txt

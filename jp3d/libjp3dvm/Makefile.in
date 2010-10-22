@@ -617,11 +617,11 @@ dos2unix:
 
 all-local:
 	@$(INSTALL) -d ../../bin
-	@cp -d .libs/libopenjp3dvm.* ../../bin
+	@cp -P .libs/libopenjp3dvm.* ../../bin
 	@rm -f ../../bin/libopenjp3dvm.la*
 	@rm -rf .report_lib
 	@$(INSTALL) -d .report_lib
-	@cp -d .libs/libopenjp3dvm.* .report_lib
+	@cp -P .libs/libopenjp3dvm.* .report_lib
 	@rm -f .report_lib/libopenjp3dvm.lai
 	@echo "" > ../.report.txt
 	@echo "Installing: ${prefix}/include/${headerdir}/" >> ../.report.txt

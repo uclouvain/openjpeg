@@ -6,6 +6,9 @@ What's New for OpenJPEG
 + : added
 
 October 22, 2010
+* [szukw000] replaced 'cp -d' with 'cp -P' for MacOSX
+
+October 22, 2010
 * [szukw000] 'jpwl/Makefile.am': added CFLAGS for bin_PROGRAMS
 
 October 22, 2010

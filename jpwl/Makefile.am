@@ -82,11 +82,11 @@ REPBIN=$(bin_PROGRAMS)
 all-local:
 	$(INSTALL) -d ../bin
 	$(INSTALL) $(bin_PROGRAMS) ../bin
-	cp -d .libs/libopenjpeg_JPWL.* ../bin
+	cp -P .libs/libopenjpeg_JPWL.* ../bin
 	rm -f ../bin/libopenjpeg_JPWL.la*
 	@rm -rf .report_lib
 	@$(INSTALL) -d .report_lib
-	@cp -d .libs/libopenjpeg_JPWL.* .report_lib
+	@cp -P .libs/libopenjpeg_JPWL.* .report_lib
 	@rm -f .report_lib/libopenjpeg_JPWL.lai
 	echo "" > .report.txt
 	@(for f in ${REPBIN} ; do \
