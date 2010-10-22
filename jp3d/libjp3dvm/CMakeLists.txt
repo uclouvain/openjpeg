@@ -22,4 +22,6 @@ ADD_LIBRARY(${OPJ_PREFIX}openjp3dvm ${JP3DVM_SRCS})
 INSTALL_TARGETS(/lib/ ${OPJ_PREFIX}openjp3dvm)
 
 # Install includes files
-INSTALL_FILES(/include/${subdir} openjpeg.h)
+INSTALL(FILES openjpeg.h
+  DESTINATION ${OPENJPEG_INSTALL_INCLUDE_DIR}/openjpeg3d-${OPENJPEG_VERSION_MAJOR}.${OPENJPEG_VERSION_MINOR}
+  RENAME openjpeg3d.h)
