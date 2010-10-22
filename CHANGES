@@ -6,6 +6,9 @@ What's New for OpenJPEG
 + : added
 
 October 22, 2010
+* [antonin] Currently the Visual Studio builds are broken in the SVN. Attached a patch to fix this issue (from szekerest)
+
+October 22, 2010
 * [szukw000] replaced 'cp -d' with 'cp -P' for MacOSX
 
 October 22, 2010

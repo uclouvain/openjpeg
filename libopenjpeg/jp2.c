@@ -514,13 +514,14 @@ static bool jp2_read_colr(opj_jp2_t *jp2, opj_cio_t *cio,
 	opj_jp2_box_t *box, struct extension *ext) 
 {
 	int skip_len;
+    opj_common_ptr cinfo;
 
 /* Part 1, I.5.3.3 : 'A conforming JP2 reader shall ignore all Colour
  * Specification boxes after the first.' 
 */
 	if(ext->jp2_has_colr) return false;
 
-	opj_common_ptr cinfo = jp2->cinfo;
+	cinfo = jp2->cinfo;
 
 	jp2->meth = cio_read(cio, 1);		/* METH */
 	jp2->precedence = cio_read(cio, 1);	/* PRECEDENCE */
