@@ -6,6 +6,9 @@ What's New for OpenJPEG
 + : added
 
 October 22, 2010
+* [szukw000] 'jpwl/Makefile.am': added CFLAGS for bin_PROGRAMS
+
+October 22, 2010
 + [szukw000] added 'libopenjpeg.pc.in'
 ! [szukw000] changed 'configure.ac' to create 'libopenjpeg.pc'
 ! [szukw000] changed 'Makefile.am' to [un]install 'libopenjpeg.pc'
@@ -32,7 +35,6 @@ October 18, 2010
 	config.nix
 
 October 17, 2010
-- [szukw000] doc/man/ : directory removed
 ! [szukw000]
 	configure.ac : 'enable_shared' YES by default
 	doc/Makefile.am :
