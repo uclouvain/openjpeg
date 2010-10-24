@@ -93,11 +93,53 @@ static bool jp2_read_jp(opj_jp2_t *jp2, opj_cio_t *cio);
 Decode the structure of a JP2 file
 @param jp2 JP2 handle
 @param cio Input buffer stream
+@param ext Collector for profile, cdef and pclr data
 @return Returns true if successful, returns false otherwise
 */
 static bool jp2_read_struct(opj_jp2_t *jp2, opj_cio_t *cio,
 	struct extension *ext);
-
+/**
+Apply collected palette data
+@param ext Collector for profile, cdef and pclr data
+@param image 
+*/
+static void jp2_apply_pclr(struct extension *ext, opj_image_t *image);
+/**
+Collect palette data
+@param jp2 JP2 handle
+@param cio Input buffer stream
+@param box
+@param ext Collector for profile, cdef and pclr data
+@return Returns true if successful, returns false otherwise
+*/
+static bool jp2_read_pclr(opj_jp2_t *jp2, opj_cio_t *cio,
+    opj_jp2_box_t *box, struct extension *ext);
+/**
+Collect component mapping data
+@param jp2 JP2 handle
+@param cio Input buffer stream
+@param box
+@param ext Collector for profile, cdef and pclr data
+@return Returns true if successful, returns false otherwise
+*/
+static bool jp2_read_cmap(opj_jp2_t *jp2, opj_cio_t *cio,
+    opj_jp2_box_t *box, struct extension *ext);
+/**
+Collect colour specification data
+@param jp2 JP2 handle
+@param cio Input buffer stream
+@param box
+@param ext Collector for profile, cdef and pclr data
+@return Returns true if successful, returns false otherwise
+*/
+static bool jp2_read_colr(opj_jp2_t *jp2, opj_cio_t *cio,
+    opj_jp2_box_t *box, struct extension *ext);
+/**
+Apply ICC profile if Color Management System available
+@param ext Collector for profile, cdef and pclr data
+@param image
+*/
+static void jp2_apply_profile(struct extension *ext, opj_image_t *image);
 /*@}*/
 
 /*@}*/

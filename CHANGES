@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+October 24, 2010
+* [antonin] Fixed doxygen data inside source code (from winfried)
+
 October 22, 2010
 * [antonin] Patch to support the MSVC Win 64 builds (from szekerest)
 

@@ -240,6 +240,7 @@ Encode 1 code-block
 @param stepsize
 @param cblksty Code-block style
 @param numcomps
+@param mct
 @param tile
 */
 static void t1_encode_cblk(

@@ -130,22 +130,22 @@ Allocate memory aligned to a 16 byte boundry
 
 /**
 Reallocate memory blocks.
-@param memblock Pointer to previously allocated memory block
-@param size New size in bytes
+@param m Pointer to previously allocated memory block
+@param s New size in bytes
 @return Returns a void pointer to the reallocated (and possibly moved) memory block
 */
 #ifdef ALLOC_PERF_OPT
-void * OPJ_CALLCONV opj_realloc(void * _Memory, size_t NewSize);
+void * OPJ_CALLCONV opj_realloc(void * m, size_t s);
 #else
 #define opj_realloc(m, s) realloc(m, s)
 #endif
 
 /**
 Deallocates or frees a memory block.
-@param memblock Previously allocated memory block to be freed
+@param m Previously allocated memory block to be freed
 */
 #ifdef ALLOC_PERF_OPT
-void OPJ_CALLCONV opj_free(void * _Memory);
+void OPJ_CALLCONV opj_free(void * m);
 #else
 #define opj_free(m) free(m)
 #endif
