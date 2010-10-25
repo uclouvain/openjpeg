@@ -5,8 +5,20 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+October 25, 2010
+* [ben.boeckel] Fix jp3d version
+
 October 24, 2010
 * [antonin] Fixed doxygen data inside source code (from winfried)
+
+October 22, 2010
+* [ben.boeckel] Don't install jp3d and libopenjpeg headers to the same place
+
+October 22, 2010
+* [ben.boeckel] Install man pages when using CMake
+
+October 22, 2010
+! [ben.boeckel] Default to building shared libraries
 
 October 22, 2010
 * [antonin] Patch to support the MSVC Win 64 builds (from szekerest)
