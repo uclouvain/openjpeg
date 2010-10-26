@@ -5,6 +5,10 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+October 26, 2010
+* [ben.boeckel] Install symlinks to versioned directory headers when using CMake
++ [ben.boeckel] Set the library version on jp3d when using CMake
+
 October 25, 2010
 * [ben.boeckel] Fix jp3d version
 
