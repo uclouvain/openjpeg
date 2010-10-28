@@ -5,6 +5,10 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+October 28, 2010
+* [ben.boeckel] Set the soname and soversion on the jpwl library with CMake
++ [ben.boeckel] Install jpwl binaries with CMake
+
 October 26, 2010
 * [ben.boeckel] Install symlinks to versioned directory headers when using CMake
 + [ben.boeckel] Set the library version on jp3d when using CMake

@@ -33,7 +33,13 @@ IF(DONT_HAVE_GETOPT)
   )
 ENDIF(DONT_HAVE_GETOPT)
 
-ADD_LIBRARY(openjpeg_JPWL STATIC ${JPWL_SRCS} ${OPJ_SRCS})
+ADD_LIBRARY(openjpeg_JPWL ${JPWL_SRCS} ${OPJ_SRCS})
+SET_TARGET_PROPERTIES(openjpeg_JPWL PROPERTIES
+  ${OPENJPEG_LIBRARY_PROPERTIES})
+
+INSTALL(TARGETS openjpeg_JPWL
+  DESTINATION ${OPENJPEG_INSTALL_LIB_DIR} COMPONENT Libraries
+)
 
 # Do the proper thing when building static...if only there was configured
 # headers or def files instead
@@ -86,3 +92,6 @@ IF(UNIX)
   TARGET_LINK_LIBRARIES(JPWL_image_to_j2k m)
 ENDIF(UNIX)
 
+INSTALL(TARGETS JPWL_image_to_j2k JPWL_j2k_to_image
+  DESTINATION ${OPENJPEG_INSTALL_BIN_DIR} COMPONENT Binaries
+)
