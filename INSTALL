@@ -30,6 +30,12 @@ If 'configure' does not find a library or header file,
 or to see available configure options, please try 
 './configure --help'.
 
+Note: if Doxygen is found on your system, a target 'docs'
+will automatically be created in 'doc/Makefile'. To build
+the documentation (it will create an 'html' directory):
+  cd doc
+	make docs
+
 2) Using cmake (see www.cmake.org)
 
 Type:
