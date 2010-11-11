@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+November 11, 2010
+- [antonin] removed call to dirent.h in jp3d;
+
 October 28, 2010
 * [ben.boeckel] Set the soname and soversion on the jpwl library with CMake
 + [ben.boeckel] Install jpwl binaries with CMake

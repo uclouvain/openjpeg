@@ -54,7 +54,6 @@
  ==========================================================
 */
 
-#include "dirent.h"
 #include "jp3d_lib.h"
 #include "event.h"
 #include "cio.h"
