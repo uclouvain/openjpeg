@@ -29,12 +29,13 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#include <opj_config.h>
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
 
+#include "../opj_config.h"
 #include "openjpeg.h"
 #include "compat/getopt.h"
 #include "convert.h"

@@ -28,7 +28,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#include <opj_config.h>
+#include "../opj_config.h"
 #ifdef HAVE_LIBLCMS2
 #include <math.h>
 #include <lcms2.h>
@@ -38,7 +38,6 @@
 #include <lcms.h>
 #endif
 #include "opj_includes.h"
-#include "opj_convert.h"
 
 /** @defgroup JP2 JP2 - JPEG-2000 file format reader/writer */
 /*@{*/

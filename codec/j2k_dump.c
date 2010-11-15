@@ -1,4 +1,3 @@
-#include <opj_config.h>
 /*
  * Copyright (c) 20010, Mathieu Malaterre, GDCM
  * All rights reserved.
@@ -30,6 +29,7 @@
 #include <stdlib.h>
 #include <math.h>
 
+#include "../opj_config.h"
 #include "openjpeg.h"
 #include "../libopenjpeg/j2k.h"
 #include "../libopenjpeg/jp2.h"

@@ -104,6 +104,7 @@ static INLINE long lrintf(float f){
 }
 #endif
 
+#include "opj_convert.h"
 #include "j2k_lib.h"
 #include "opj_malloc.h"
 #include "event.h"

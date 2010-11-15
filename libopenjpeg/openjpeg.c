@@ -1,4 +1,3 @@
-#include <opj_config.h>
 /*
  * Copyright (c) 2005, Hervé Drolon, FreeImage Team
  * All rights reserved.
@@ -29,6 +28,7 @@
 #include <windows.h>
 #endif /* WIN32 */
 
+#include "../opj_config.h"
 #include "opj_includes.h"
 
 /* ---------------------------------------------------------------------- */

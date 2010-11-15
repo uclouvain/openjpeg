@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 November 15, 2010
+* [antonin] minor changes in header inclusions
 * [antonin] complete rewrite of opj_convert.c with correct values (from winfried)
 
 November 11, 2010
