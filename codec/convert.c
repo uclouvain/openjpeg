@@ -29,15 +29,15 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#include <opj_config.h>
-#define TEST_WITH_GAMMA
+#include "../opj_config.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #ifdef HAVE_LIBTIFF
 #ifdef WIN32
-#include "tiffio.h"
+#include "../libs/libtiff/tiffio.h"
 #else
 #include <tiffio.h>
 #endif /* WIN32 */
@@ -45,13 +45,13 @@
 
 #ifdef HAVE_LIBPNG
 #ifdef WIN32
-#include "png.h"
+#include "../libs/png/png.h"
 #else
 #include <png.h>
 #endif /* WIN32 */
 #endif /* HAVE_LIBPNG */
 
-#include "openjpeg.h"
+#include "../libopenjpeg/openjpeg.h"
 #include "convert.h"
 
 /*
@@ -1478,7 +1478,7 @@ int imagetotif(opj_image_t * image, const char *outfile) {
 			adjust = image->comps[0].sgnd ? 1 << (image->comps[0].prec - 1) : 0;
 			for (strip = 0; strip < TIFFNumberOfStrips(tif); strip++) {
 				unsigned char *dat8;
-				int i, ssize;
+				tsize_t i, ssize;
 				ssize = TIFFStripSize(tif);
 				dat8 = (unsigned char*)buf;
 				if (image->comps[0].prec == 8){
@@ -1638,9 +1638,9 @@ int imagetotif(opj_image_t * image, const char *outfile) {
 					fprintf(stderr,"Aborting\n");
 					return 1;
 				}
-				TIFFWriteEncodedStrip(tif, strip, buf, strip_size);
+				(void)TIFFWriteEncodedStrip(tif, strip, (void*)buf, strip_size);
 			}
-			_TIFFfree(buf);
+			_TIFFfree((void*)buf);
 			TIFFClose(tif);
 		}else if (image->numcomps == 1){
 			/* -->> -->> -->>    
@@ -1674,7 +1674,7 @@ int imagetotif(opj_image_t * image, const char *outfile) {
 			index = 0;			
 			for (strip = 0; strip < TIFFNumberOfStrips(tif); strip++) {
 				unsigned char *dat8;
-				int i;
+				tsize_t i;
 				dat8 = (unsigned char*)buf;
 				if (image->comps[0].prec == 8){
 					for (i=0; i<TIFFStripSize(tif); i+=1) {	// 8 bits per pixel 
@@ -1725,7 +1725,7 @@ int imagetotif(opj_image_t * image, const char *outfile) {
 					fprintf(stderr,"Aborting\n");
 					return 1;
 				}
-				TIFFWriteEncodedStrip(tif, strip, buf, strip_size);
+				(void)TIFFWriteEncodedStrip(tif, strip, (void*)buf, strip_size);
 			}
 			_TIFFfree(buf);
 			TIFFClose(tif);
@@ -2187,12 +2187,6 @@ int imagetoraw(opj_image_t * image, const char *outfile)
 /* PNG allows bits per sample: 1, 2, 4, 8, 16 */
 
 opj_image_t *pngtoimage(const char *read_idf, opj_cparameters_t * params)
-#ifdef WIN32
-{
-	printf("Error. PNG format is not yet handled under windows\n");
-	return NULL;
-}
-#else
 {
 	png_structp  png;
 	png_infop    info;
@@ -2369,15 +2363,8 @@ fin:
 	return image;
 
 }/* pngtoimage() */
-#endif /* WIN32 */
 
 int imagetopng(opj_image_t * image, const char *write_idf)
-#ifdef WIN32
-{
-	printf("Error. PNG format is not yet handled under windows\n");
-	return -1;
-}
-#else
 {
 	FILE *writer;
 	png_structp png;
@@ -2385,26 +2372,29 @@ int imagetopng(opj_image_t * image, const char *write_idf)
 	int *red, *green, *blue, *alpha;
 	unsigned char *row_buf, *d;
 	int has_alpha, width, height, nr_comp, color_type;
-	int adjust, x, y, fails, is16;
-	int opj_prec, prec;
+	int adjustR, adjustG, adjustB, x, y, fails, is16, force16;
+	int opj_prec, prec, ushift, dshift;;
 	unsigned short mask;
 	png_color_8 sig_bit;
 
+	is16 = force16 = ushift = dshift = 0; fails = 1;
 	prec = opj_prec = image->comps[0].prec;
 
-	if(prec > 8) prec = 16;
-
+	if(prec > 8 && prec < 16)
+   {
+	 prec = 16; force16 = 1;
+   }
 	if(prec != 1 && prec != 2 && prec != 4 && prec != 8 && prec != 16)
-  {
+   {
 	fprintf(stderr,"imagetopng: can not create %s"
 	 "\n\twrong bit_depth %d\n", write_idf, prec);
-	return 1;
-  }
+	return fails;
+   }
 	writer = fopen(write_idf, "wb");
 
-	if(writer == NULL) return 1;
+	if(writer == NULL) return fails;
 
-	info = NULL; fails = 1; has_alpha = 0;
+	info = NULL; has_alpha = 0;
 
 /* Create and initialize the png_struct with the desired error handler
  * functions.  If you want to use the default stderr and longjump method,
@@ -2444,9 +2434,8 @@ int imagetopng(opj_image_t * image, const char *write_idf)
 */
 	png_set_compression_level(png, Z_BEST_COMPRESSION);
 
-	adjust = 0;
-	if(image->comps[0].sgnd) adjust = 1 << (opj_prec - 1);
-
+	if(prec == 16) mask = 0xffff;
+	else
 	if(prec == 8) mask = 0x00ff;
 	else
 	if(prec == 4) mask = 0x000f;
@@ -2454,10 +2443,6 @@ int imagetopng(opj_image_t * image, const char *write_idf)
 	if(prec == 2) mask = 0x0003;
 	else
 	if(prec == 1) mask = 0x0001;
-	else
-	if(opj_prec == 12) mask = 0x0fff;
-	else
-	mask = 0xffff;
 
 	nr_comp = image->numcomps;
 
@@ -2469,6 +2454,8 @@ int imagetopng(opj_image_t * image, const char *write_idf)
     && image->comps[0].prec == image->comps[1].prec
     && image->comps[1].prec == image->comps[2].prec)
    {
+	int v;
+
     has_alpha = (nr_comp > 3); 
 
 	is16 = (prec == 16);
@@ -2503,18 +2490,17 @@ int imagetopng(opj_image_t * image, const char *write_idf)
 /*=============================*/
 	png_write_info(png, info);
 /*=============================*/
-
-/* Shift the pixels up to a legal bit depth and fill in
- * as appropriate to correctly scale the image.
-*/
-	if(opj_prec > 8 && opj_prec < 16)
-  {
-	png_set_shift(png, &sig_bit);
-  }
 	if(opj_prec < 8)
   {
 	png_set_packing(png);
   }
+	if(force16)
+  {
+	ushift = 16 - opj_prec; dshift = opj_prec - ushift;	
+  }
+    adjustR = (image->comps[0].sgnd ? 1 << (image->comps[0].prec - 1) : 0);
+    adjustG = (image->comps[1].sgnd ? 1 << (image->comps[1].prec - 1) : 0);
+    adjustB = (image->comps[2].sgnd ? 1 << (image->comps[2].prec - 1) : 0);
 
 	row_buf = (unsigned char*)malloc(width * nr_comp * 2);
 
@@ -2527,29 +2513,41 @@ int imagetopng(opj_image_t * image, const char *write_idf)
 		if(is16)
 	   {
 /* Network byte order */
-		unsigned short v;
+		v = *red + adjustR; ++red;
+		
+		if(force16) { v = (v<<ushift) + (v>>dshift); }
 
-		v = (unsigned short)((*red + adjust) & mask); ++red;
 	    *d++ = (unsigned char)(v>>8); *d++ = (unsigned char)v;
-		v = (unsigned short)((*green + adjust) & mask); ++green;
+
+		v = *green + adjustG; ++green;
+		
+		if(force16) { v = (v<<ushift) + (v>>dshift); }
+
 	    *d++ = (unsigned char)(v>>8); *d++ = (unsigned char)v;
-		v = (unsigned short)((*blue + adjust) & mask); ++blue;
+
+		v =  *blue + adjustB; ++blue;
+		
+		if(force16) { v = (v<<ushift) + (v>>dshift); }
+
 	    *d++ = (unsigned char)(v>>8); *d++ = (unsigned char)v;
 
 		if(has_alpha)
 	  {
-		v = (unsigned short)((*alpha + adjust) & mask); ++alpha;
+		v = *alpha++;
+		
+		if(force16) { v = (v<<ushift) + (v>>dshift); }
+
 		*d++ = (unsigned char)(v>>8); *d++ = (unsigned char)v;
 	  }
 		continue;
 	   }
-		*d++ = (unsigned char)((*red + adjust) & mask); ++red;
-		*d++ = (unsigned char)((*green + adjust) & mask); ++green;
-		*d++ = (unsigned char)((*blue + adjust) & mask); ++blue;
+		*d++ = (unsigned char)((*red + adjustR) & mask); ++red;
+		*d++ = (unsigned char)((*green + adjustG) & mask); ++green;
+		*d++ = (unsigned char)((*blue + adjustB) & mask); ++blue;
 
 		if(has_alpha)
 	   {
-		*d++ = (unsigned char)((*alpha + adjust) & mask); ++alpha;
+		*d++ = (unsigned char)(*alpha & mask); ++alpha;
 	   }
  }	/* for(x) */
 
@@ -2566,7 +2564,14 @@ int imagetopng(opj_image_t * image, const char *write_idf)
 		&& image->comps[0].dy == image->comps[1].dy
 		&& image->comps[0].prec == image->comps[1].prec))
    {
+	int v;
+
 	red = image->comps[0].data;
+
+    if(force16)
+  {
+    ushift = 16 - opj_prec; dshift = opj_prec - ushift;
+  }
 
     sig_bit.gray = prec;
     sig_bit.red = sig_bit.green = sig_bit.blue = sig_bit.alpha = 0;
@@ -2588,20 +2593,11 @@ int imagetopng(opj_image_t * image, const char *write_idf)
      PNG_COMPRESSION_TYPE_BASE,  PNG_FILTER_TYPE_BASE);
 
 	png_set_sBIT(png, info, &sig_bit);
-#ifdef TEST_WITH_GAMMA
-    png_set_gAMA(png, info, 1.0);
-#endif
 /*=============================*/
 	png_write_info(png, info);
 /*=============================*/
+	adjustR = (image->comps[0].sgnd ? 1 << (image->comps[0].prec - 1) : 0);
 
-/* Shift the pixels up to a legal bit depth and fill in
- * as appropriate to correctly scale the image.
-*/
-	if(opj_prec > 8 && opj_prec < 16)
-  {
-	png_set_shift(png, &sig_bit);
-  }
 	if(opj_prec < 8)
   {
 	png_set_packing(png);
@@ -2610,12 +2606,10 @@ int imagetopng(opj_image_t * image, const char *write_idf)
 	if(prec > 8)
   {
 /* Network byte order */
-	unsigned short v;
+
 
 	row_buf = (unsigned char*)
 	 malloc(width * nr_comp * sizeof(unsigned short));
-
-	if(opj_prec == 12) mask = 0x0fff;
 
 	for(y = 0; y < height; ++y)
  {
@@ -2623,12 +2617,18 @@ int imagetopng(opj_image_t * image, const char *write_idf)
 
 		for(x = 0; x < width; ++x)
 	   {
-		v = (unsigned short)((*red + adjust) & mask); ++red;
+		v = *red + adjustR; ++red;
+
+		if(force16) { v = (v<<ushift) + (v>>dshift); }
+
 		*d++ = (unsigned char)(v>>8); *d++ = (unsigned char)(v & 0xff);
 
 		if(has_alpha)
 	  {
-		v = (unsigned short)((*alpha + adjust) & mask); ++alpha;
+		v = *alpha++;
+
+		if(force16) { v = (v<<ushift) + (v>>dshift); }
+
 		*d++ = (unsigned char)(v>>8); *d++ = (unsigned char)(v & 0xff);
 	  }
 	   }/* for(x) */
@@ -2647,11 +2647,11 @@ int imagetopng(opj_image_t * image, const char *write_idf)
 
 		for(x = 0; x < width; ++x)
 	   {
-		*d++ = (unsigned char)((*red + adjust) & mask); ++red;
+		*d++ = (unsigned char)((*red + adjustR) & mask); ++red;
 
 		if(has_alpha)
 	  {
-		*d++ = (unsigned char)((*alpha + adjust) & mask); ++alpha;
+		*d++ = (unsigned char)(*alpha & mask); ++alpha;
 	  }
 	   }/* for(x) */
 
@@ -2678,8 +2678,9 @@ fin:
    }
 	fclose(writer);
 
+	if(fails) remove(write_idf);
+
 	return fails;
 }/* imagetopng() */
-#endif /* WIN32 */
 #endif /* HAVE_LIBPNG */
 

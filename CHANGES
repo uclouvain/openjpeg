@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 November 15, 2010
+! [antonin] changed imagetopng() function to correctly deal with non-standard bit-depths. Add png support for win32. (from winfried)
 * [antonin] minor changes in header inclusions
 * [antonin] complete rewrite of opj_convert.c with correct values (from winfried)
 
