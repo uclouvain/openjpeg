@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+November 15, 2010
+* [antonin] complete rewrite of opj_convert.c with correct values (from winfried)
+
 November 11, 2010
 - [antonin] removed call to dirent.h in jp3d;
 
