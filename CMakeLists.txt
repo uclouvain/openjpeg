@@ -153,23 +153,21 @@ ENDIF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/openjpeg_mangle.h.in)
 #-----------------------------------------------------------------------------
 # Always build the library
 INCLUDE_DIRECTORIES(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
-SUBDIRS(
-  libopenjpeg
-  mj2
-  )
-
-IF(NOT UNIX)
-SUBDIRS(
-  indexer_JPIP
-  )
-ENDIF(NOT UNIX)
+SUBDIRS(libopenjpeg)
 
 #-----------------------------------------------------------------------------
-# Build example codec ?
-OPTION(BUILD_EXAMPLES "Build the Examples (codec...)." ON)
-IF(BUILD_EXAMPLES)
+# Build CODEC binaries ?
+OPTION(BUILD_CODEC "Build the CODEC binaries" ON)
+IF(BUILD_CODEC)
   SUBDIRS(codec)
-ENDIF(BUILD_EXAMPLES)
+ENDIF(BUILD_CODEC)
+
+#-----------------------------------------------------------------------------
+# Build MJ2 binaries ?
+OPTION(BUILD_MJ2 "Build the MJ2 binaries." ON)
+IF(BUILD_MJ2)
+  SUBDIRS(mj2)
+ENDIF(BUILD_MJ2)
 
 #-----------------------------------------------------------------------------
 # Build JPWL binaries ?
@@ -186,11 +184,18 @@ IF(BUILD_JP3D)
 ENDIF(BUILD_JP3D)
 
 #-----------------------------------------------------------------------------
-# Build documentation ?
-OPTION(BUILD_DOCUMENTATION "Build the doxygen documentation" OFF)
-IF(BUILD_DOCUMENTATION)
+# Build INDEXER_JPIP binaries ?
+OPTION(BUILD_INDEXER_JPIP "Build the INDEXER_JPIP binaries" OFF)
+IF(BUILD_INDEXER_JPIP AND NOT UNIX)
+  SUBDIRS(indexer_JPIP)
+ENDIF(BUILD_INDEXER_JPIP)
+
+#-----------------------------------------------------------------------------
+# Build DOCUMENTATION ?
+OPTION(BUILD_DOC "Build the doxygen documentation" OFF)
+IF(BUILD_DOC)
   SUBDIRS(doc)
-ENDIF(BUILD_DOCUMENTATION)
+ENDIF(BUILD_DOC)
 
 #-----------------------------------------------------------------------------
 # For openjpeg team if they ever want CDash+CMake

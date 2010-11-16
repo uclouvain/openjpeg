@@ -54,11 +54,13 @@ Binaries are located in the 'bin' directory.
 
 Main available cmake flags:
 * To specify the install path: '-DCMAKE_INSTALL_PREFIX=/path'
-* To build the shared libraries: '-DBUILD_SHARED_LIBS:bool=on'
-* To build the example codec: '-DBUILD_EXAMPLES:bool=on' (default is actually 'ON')
-* To build the JPWL binaries: '-DBUILD_JPWL:bool=on'
-* To build the JP3D binaries: '-DBUILD_JP3D:bool=on'
-* To build the doxygen documentation: '-DBUILD_DOCUMENTATION:bool=on'
+* To build the shared libraries: '-DBUILD_SHARED_LIBS:bool=on' (default: 'ON')
+* To build the CODEC executables: '-DBUILD_CODEC:bool=on' (default: 'ON')
+* To build the MJ2 executables: '-DBUILD_MJ2:bool=on' (default: 'ON')
+* To build the JPWL executables and JPWL library: '-DBUILD_JPWL:bool=on' (default: 'OFF')
+* To build the JP3D executables and JP3D library: '-DBUILD_JP3D:bool=on' (default: 'OFF')
+* [WIN32 ONLY] To build the INDEXER_JPIP executable: '-DBUILD_INDEXER_JPIP:bool=on' (default: 'OFF')
+* To build the doxygen documentation: '-DBUILD_DOC:bool=on' (default: 'OFF')
 * To enable testing (and automatic result upload to http://my.cdash.org/index.php?project=OPENJPEG):
     cmake . -DBUILD_TESTING:BOOL=ON -DJPEG2000_CONFORMANCE_DATA_ROOT:PATH=/path/to/your/JPEG2000/test/files
     make
