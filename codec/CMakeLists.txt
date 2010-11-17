@@ -56,6 +56,14 @@ FOREACH(exe j2k_to_image image_to_j2k j2k_dump)
   )
 ENDFOREACH(exe)
 
+# Install man pages
+INSTALL(
+  FILES       ../doc/man/man1/image_to_j2k.1
+              ../doc/man/man1/j2k_dump.1
+              ../doc/man/man1/j2k_to_image.1
+  DESTINATION ${OPENJPEG_INSTALL_MAN_DIR}/man1)
+#
+
 if(BUILD_TESTING)
 # Do testing here, once we know the examples are being built:
 FILE(GLOB_RECURSE OPENJPEG_DATA_IMAGES_GLOB

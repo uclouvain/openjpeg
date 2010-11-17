@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 November 17, 2010
+! [antonin] install man pages by default. install CHANGES and LICENSE
 ! [antonin] minor changes in cmake files (from winfried)
 
 November 16, 2010
