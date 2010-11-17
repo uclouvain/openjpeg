@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+November 17, 2010
+! [antonin] minor changes in cmake files (from winfried)
+
 November 16, 2010
 ! [antonin] minor changes in cmake flags
 

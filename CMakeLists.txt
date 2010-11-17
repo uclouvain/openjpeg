@@ -144,13 +144,6 @@ CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/openjpeg_mangle.h.in
 ENDIF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/openjpeg_mangle.h.in)
 
 #-----------------------------------------------------------------------------
-# Translate CMake configuration options into #defines that can be queried from
-# the code.
-#CONFIGURE_FILE(
-#   ${PROJECT_SOURCE_DIR}/opj_configh.cmake.in
-#   ${PROJECT_BINARY_DIR}/opj_config.h)
-
-#-----------------------------------------------------------------------------
 # Always build the library
 INCLUDE_DIRECTORIES(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 SUBDIRS(libopenjpeg)
@@ -164,7 +157,7 @@ ENDIF(BUILD_CODEC)
 
 #-----------------------------------------------------------------------------
 # Build MJ2 binaries ?
-OPTION(BUILD_MJ2 "Build the MJ2 binaries." ON)
+OPTION(BUILD_MJ2 "Build the MJ2 binaries." OFF)
 IF(BUILD_MJ2)
   SUBDIRS(mj2)
 ENDIF(BUILD_MJ2)
@@ -235,59 +228,87 @@ INSTALL( FILES ${OPENJPEG_BINARY_DIR}/OpenJPEGConfig.cmake
   DESTINATION ${OPENJPEG_INSTALL_PACKAGE_DIR}
 )
 #
-SET(CMAKE_PREFIX_PATH /usr /usr/local /opt /opt/local)
+IF(UNIX OR CYGWIN)
+  SET(CMAKE_INCLUDE_PATH /usr/include /usr/local/include /opt/include 
+	/opt/local/include /usr/include/libpng /usr/include/libpng14
+	/usr/include/libpng12 /usr/local/include/libpng 
+	/usr/local/include/libpng14 /usr/local/include/libpng12
+	/opt/include/libpng /opt/include/libpng14 /opt/include/libpng12
+	/opt/local/include/libpng /opt/local/include/libpng14
+	/opt/local/include/libpng12 )
+  SET(CMAKE_LIBRARY_PATH /usr/lib /usr/local/lib /opt/lib /opt/local/lib)
+ELSEIF(WIN32)
+  SET(CMAKE_INCLUDE_PATH ${OPENJPEG_SOURCE_DIR}/libs/libtiff 
+	${OPENJPEG_SOURCE_DIR}/libs/png ${OPENJPEG_SOURCE_DIR}/libs/lcms2
+	C:/WINDOWS/system32/user )
+  SET(CMAKE_LIBRARY_PATH ${OPENJPEG_SOURCE_DIR}/libs/libtiff
+	C:/WINDOWS/system32/user )
+ENDIF()
 #
-FIND_FILE(HAVE_STRINGS_H strings.h)
-FIND_FILE(HAVE_INTTYPES_H inttypes.h)
-FIND_FILE(HAVE_MEMORY_H memory.h)
-FIND_FILE(HAVE_STDLIB_H stdlib.h)
-FIND_FILE(HAVE_STRING_H string.h)
-FIND_FILE(HAVE_SYS_STAT_H sys/stat.h)
-FIND_FILE(HAVE_SYS_TYPES_H sys/types.h)
-FIND_FILE(HAVE_UNISTD_H unistd.h)
+FIND_FILE(HAVE_STRINGS_H_FOUND strings.h)
+IF(NOT HAVE_STRINGS_H_FOUND STREQUAL "HAVE_STRINGS_H_FOUND-NOTFOUND")
+  FIND_FILE(HAVE_STRINGS_H strings.h)
+  SET(HAS_STRINGS_H 1)
+ENDIF()
+FIND_FILE(HAVE_INTTYPES_H_FOUND inttypes.h)
+IF(NOT HAVE_INTTYPES_H_FOUND STREQUAL "HAVE_INTTYPES_H_FOUND-NOTFOUND")
+  FIND_FILE(HAVE_INTTYPES_H inttypes.h)
+  SET(HAS_INTTYPES_H 1)
+ENDIF()
+FIND_FILE(HAVE_MEMORY_H_FOUND memory.h)
+IF(NOT HAVE_MEMORY_H_FOUND STREQUAL "HAVE_MEMORY_H_FOUND-NOTFOUND")
+  FIND_FILE(HAVE_MEMORY_H memory.h)
+  SET(HAS_MEMORY_H 1)
+ENDIF()
+FIND_FILE(HAVE_STDINT_H_FOUND stdint.h)
+IF(NOT HAVE_STDINT_H_FOUND STREQUAL "HAVE_STDINT_H_FOUND-NOTFOUND")
+  FIND_FILE(HAVE_STDINT_H stdint.h)
+  SET(HAS_STDINT_H 1)
+ENDIF()
+FIND_FILE(HAVE_STDLIB_H_FOUND stdlib.h)
+IF(NOT HAVE_STDLIB_H_FOUND STREQUAL "HAVE_STDLIB_H_FOUND-NOTFOUND")
+  FIND_FILE(HAVE_STDLIB_H stdlib.h)
+  SET(HAS_STDLIB_H 1)
+ENDIF()
+FIND_FILE(HAVE_STRING_H_FOUND string.h)
+IF(NOT HAVE_STRING_H_FOUND STREQUAL "HAVE_STRING_H_FOUND-NOTFOUND")
+  FIND_FILE(HAVE_STRING_H string.h)
+  SET(HAS_STRING_H 1)
+ENDIF()
+FIND_FILE(HAVE_SYS_STAT_H_FOUND sys/stat.h)
+IF(NOT HAVE_SYS_STAT_H_FOUND STREQUAL "HAVE_SYS_STAT_H_FOUND-NOTFOUND")
+  FIND_FILE(HAVE_SYS_STAT_H sys/stat.h)
+  SET(HAS_SYS_STAT_H 1)
+ENDIF()
+FIND_FILE(HAVE_SYS_TYPES_H_FOUND sys/types.h)
+IF(NOT HAVE_SYS_TYPES_H_FOUND STREQUAL "HAVE_SYS_TYPES_H_FOUND-NOTFOUND")
+  FIND_FILE(HAVE_SYS_TYPES_H sys/types.h)
+  SET(HAS_SYS_TYPES_H 1)
+ENDIF()
+FIND_FILE(HAVE_UNISTD_H_FOUND unistd.h)
+IF(NOT HAVE_UNISTD_H_FOUND STREQUAL "HAVE_UNISTD_H_FOUND-NOTFOUND")
+  FIND_FILE(HAVE_UNISTD_H unistd.h)
+  SET(HAS_UNISTD_H 1)
+ENDIF()
 #
 # Does the system have png library installed ?
-# FIND_PACKAGE not used because not robust enough
 #
-FIND_PATH(PNG_INCLUDE_DIR png.h PATHS /usr/include /usr/include/libpng14 /usr/include/libpng12 /usr/include/libpng /usr/local/include /usr/local/include/libpng14 /usr/local/include/libpng12 /usr/local/include/libpng /opt/include /opt/include/libpng14 /opt/include/libpng12 /opt/include/libpng /opt/local/include /opt/local/include/libpng14 /opt/local/include/libpng12 /opt/local/include/libpng)
+FIND_PACKAGE(PNG)
 #
-IF(PNG_INCLUDE_DIR STREQUAL "PNG_INCLUDE_DIR-NOTFOUND")
-  SET(HAVE_PNG_H 0)
-ELSE()
+IF(PNG_FOUND)
   SET(HAVE_PNG_H 1)
-ENDIF()
-FIND_LIBRARY(PNG_LIBRARIES NAMES png14 png12 png )
-IF(PNG_LIBRARIES STREQUAL "PNG_LIBRARIES-NOTFOUND")
-  SET(HAVE_LIBPNG 0)
-ELSE()
   SET(HAVE_LIBPNG 1)
-ENDIF()
-IF(HAVE_LIBPNG AND HAVE_PNG_H)
-  SET(PNG_FOUND 1)
-ELSE()
-  SET(PNG_FOUND 0)
 ENDIF()
 #
 # Does the system have tiff library installed ?
-# FIND_PACKAGE not used because not robust enough
+# 
+FIND_PACKAGE(TIFF)
 #
-FIND_PATH(TIFF_INCLUDE_DIR tiff.h)
-IF(TIFF_INCLUDE_DIR STREQUAL "TIFF_INCLUDE_DIR-NOTFOUND")
-  SET(HAVE_TIFF_H 0)
-ELSE()
+IF(TIFF_FOUND)
   SET(HAVE_TIFF_H 1)
-ENDIF()
-FIND_LIBRARY(TIFF_LIBRARIES tiff)
-IF(TIFF_LIBRARIES STREQUAL "TIFF_LIBRARIES-NOTFOUND")
-  SET(HAVE_LIBTIFF 0)
-ELSE()
   SET(HAVE_LIBTIFF 1)
 ENDIF()
-IF(HAVE_LIBTIFF AND HAVE_TIFF_H)
-  SET(TIFF_FOUND 1)
-ELSE()
-  SET(TIFF_FOUND 0)
-ENDIF()
+#
 #
 # Does the system have lcms library installed ?
 #
@@ -299,7 +320,11 @@ IF(LCMS2_HEADER_FOUND STREQUAL "LCMS2_HEADER_FOUND-NOTFOUND")
 ENDIF()
 IF(LCMS2_HEADER_FOUND)
  FIND_PATH(LCMS_INCLUDE_DIR  lcms2.h)
- FIND_LIBRARY(HAVE_LIBLCMS2 lcms2)
+ IF(UNIX OR CYGWIN)
+   FIND_LIBRARY(HAVE_LIBLCMS2 lcms2)
+ ELSE()
+   FIND_LIBRARY(HAVE_LIBLCMS2 lcms2_static.lib)
+ ENDIF() 
  IF(HAVE_LIBLCMS2 STREQUAL "HAVE_LIBLCMS2-NOTFOUND")
   SET(HAVE_LIBLCMS2 "")
  ENDIF()
@@ -330,6 +355,7 @@ ENDIF()
 #
 # generate opj_config.h
 CONFIGURE_FILE("${OPENJPEG_SOURCE_DIR}/opj_configh.cmake.in"
-  "${OPENJPEG_BINARY_DIR}/opj_config.h" 
+  "${OPENJPEG_BINARY_DIR}/opj_config.h"
+  @ONLY 
 )
 
