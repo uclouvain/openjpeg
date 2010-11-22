@@ -6,7 +6,8 @@ What's New for OpenJPEG
 + : added
 
 November 22, 2010
-! [antonin] reverted 'include "../opj_config.h"' to 'include "opj_config.h"'
+! [antonin] xcode : changed to native architecture build by default
+* [antonin] reverted 'include "../opj_config.h"' to 'include "opj_config.h"'
 
 November 17, 2010
 ! [antonin] install man pages by default. install CHANGES and LICENSE

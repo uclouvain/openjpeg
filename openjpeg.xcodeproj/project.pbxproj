@@ -260,91 +260,91 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 69F984A80D40A3AE00C2791C /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 694E0D4412912A70008AFCC7 /* opj_config */;
+			remoteGlobalIDString = 694E0D4412912A70008AFCC7;
 			remoteInfo = opj_config;
 		};
 		694E0D5012912DFE008AFCC7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 69F984A80D40A3AE00C2791C /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 694E0D4412912A70008AFCC7 /* opj_config */;
+			remoteGlobalIDString = 694E0D4412912A70008AFCC7;
 			remoteInfo = opj_config;
 		};
 		694E0D5212912E09008AFCC7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 69F984A80D40A3AE00C2791C /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 694E0D4412912A70008AFCC7 /* opj_config */;
+			remoteGlobalIDString = 694E0D4412912A70008AFCC7;
 			remoteInfo = opj_config;
 		};
 		694E0D5412912E0E008AFCC7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 69F984A80D40A3AE00C2791C /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 694E0D4412912A70008AFCC7 /* opj_config */;
+			remoteGlobalIDString = 694E0D4412912A70008AFCC7;
 			remoteInfo = opj_config;
 		};
 		694E0D5612912E19008AFCC7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 69F984A80D40A3AE00C2791C /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 694E0D4412912A70008AFCC7 /* opj_config */;
+			remoteGlobalIDString = 694E0D4412912A70008AFCC7;
 			remoteInfo = opj_config;
 		};
 		694E0D5812912E1F008AFCC7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 69F984A80D40A3AE00C2791C /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 694E0D4412912A70008AFCC7 /* opj_config */;
+			remoteGlobalIDString = 694E0D4412912A70008AFCC7;
 			remoteInfo = opj_config;
 		};
 		694E0D5A12912E27008AFCC7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 69F984A80D40A3AE00C2791C /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 694E0D4412912A70008AFCC7 /* opj_config */;
+			remoteGlobalIDString = 694E0D4412912A70008AFCC7;
 			remoteInfo = opj_config;
 		};
 		694E0DA312913354008AFCC7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 69F984A80D40A3AE00C2791C /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 694E0D99129132D7008AFCC7 /* j2k_dump */;
+			remoteGlobalIDString = 694E0D99129132D7008AFCC7;
 			remoteInfo = j2k_dump;
 		};
 		694E0DAD12913478008AFCC7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 69F984A80D40A3AE00C2791C /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 694E0D4412912A70008AFCC7 /* opj_config */;
+			remoteGlobalIDString = 694E0D4412912A70008AFCC7;
 			remoteInfo = opj_config;
 		};
 		694E0DCB129134F3008AFCC7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 69F984A80D40A3AE00C2791C /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 694E0D4412912A70008AFCC7 /* opj_config */;
+			remoteGlobalIDString = 694E0D4412912A70008AFCC7;
 			remoteInfo = opj_config;
 		};
 		694E0DCD1291350B008AFCC7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 69F984A80D40A3AE00C2791C /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 69F985B50D40A63D00C2791C /* opj_dynamic */;
+			remoteGlobalIDString = 69F985B50D40A63D00C2791C;
 			remoteInfo = opj_dynamic;
 		};
 		694E0DCF12913537008AFCC7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 69F984A80D40A3AE00C2791C /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 694E0DA81291340E008AFCC7 /* opj_JPWL_dynamic */;
+			remoteGlobalIDString = 694E0DA81291340E008AFCC7;
 			remoteInfo = opj_JPWL_dynamic;
 		};
 		694E0EBB12953E05008AFCC7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 69F984A80D40A3AE00C2791C /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 694E0D4412912A70008AFCC7 /* opj_config */;
+			remoteGlobalIDString = 694E0D4412912A70008AFCC7;
 			remoteInfo = opj_config;
 		};
 		694E0EC512953EC7008AFCC7 /* PBXContainerItemProxy */ = {
@@ -372,28 +372,28 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 69F984A80D40A3AE00C2791C /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 694E0EE912953F82008AFCC7 /* wrap_j2k_in_mj2 */;
+			remoteGlobalIDString = 694E0EE912953F82008AFCC7;
 			remoteInfo = wrap_j2k_in_mj2;
 		};
 		694E0EFF12953FDB008AFCC7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 69F984A80D40A3AE00C2791C /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 694E0ED212953F2B008AFCC7 /* mj2_to_frames */;
+			remoteGlobalIDString = 694E0ED212953F2B008AFCC7;
 			remoteInfo = mj2_to_frames;
 		};
 		694E0F0112953FDB008AFCC7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 69F984A80D40A3AE00C2791C /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 694E0EC312953EC7008AFCC7 /* frames_to_mj2 */;
+			remoteGlobalIDString = 694E0EC312953EC7008AFCC7;
 			remoteInfo = frames_to_mj2;
 		};
 		694E0F0312953FDB008AFCC7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 69F984A80D40A3AE00C2791C /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 694E0EB612953DF3008AFCC7 /* extract_j2k_from_mj2 */;
+			remoteGlobalIDString = 694E0EB612953DF3008AFCC7;
 			remoteInfo = extract_j2k_from_mj2;
 		};
 /* End PBXContainerItemProxy section */
@@ -1750,6 +1750,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				COPY_PHASE_STRIP = NO;
 				GCC_LINK_WITH_DYNAMIC_LIBRARIES = YES;
 			};
@@ -1759,6 +1760,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				COPY_PHASE_STRIP = YES;
 				GCC_LINK_WITH_DYNAMIC_LIBRARIES = YES;
 			};
