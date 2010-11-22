@@ -29,7 +29,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "../opj_config.h"
+#include "opj_config.h"
 #include "openjpeg.h"
 #include "../libopenjpeg/j2k.h"
 #include "../libopenjpeg/jp2.h"

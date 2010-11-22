@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+November 22, 2010
+! [antonin] reverted 'include "../opj_config.h"' to 'include "opj_config.h"'
+
 November 17, 2010
 ! [antonin] install man pages by default. install CHANGES and LICENSE
 ! [antonin] minor changes in cmake files (from winfried)

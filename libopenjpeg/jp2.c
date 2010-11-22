@@ -28,7 +28,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#include "../opj_config.h"
+#include "opj_config.h"
 #ifdef HAVE_LIBLCMS2
 #include <math.h>
 #include <lcms2.h>

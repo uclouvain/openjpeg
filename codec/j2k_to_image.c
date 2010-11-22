@@ -35,7 +35,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "../opj_config.h"
+#include "opj_config.h"
 #include "openjpeg.h"
 #include "compat/getopt.h"
 #include "convert.h"

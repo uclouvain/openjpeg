@@ -28,7 +28,7 @@
 #include <windows.h>
 #endif /* WIN32 */
 
-#include "../opj_config.h"
+#include "opj_config.h"
 #include "opj_includes.h"
 
 /* ---------------------------------------------------------------------- */
