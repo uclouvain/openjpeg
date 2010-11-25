@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+November 25, 2010
+* [antonin] fix compilation and DLL creation of libopenjpeg with MSYS/MinGW (from vincent.torri, see issue 47 on googlecode)
+
 November 22, 2010
 ! [antonin] xcode : changed to native architecture build by default
 * [antonin] reverted 'include "../opj_config.h"' to 'include "opj_config.h"'
