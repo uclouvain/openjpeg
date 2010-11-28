@@ -27,16 +27,14 @@ ENDIF(DONT_HAVE_GETOPT)
 
 # Do the proper thing when building static...if only there was configured
 # headers or def files instead
-IF(NOT BUILD_SHARED_LIBS)
-  ADD_DEFINITIONS(-DOPJ_STATIC)
-ENDIF(NOT BUILD_SHARED_LIBS)
+ADD_DEFINITIONS(-DOPJ_STATIC)
 
 #FIND_PACKAGE(TIFF REQUIRED)
 
 # Loop over all executables:
 FOREACH(exe jp3d_to_volume volume_to_jp3d)
   ADD_EXECUTABLE(${exe} ${exe}.c ${common_SRCS})
-  TARGET_LINK_LIBRARIES(${exe} ${OPJ_PREFIX}openjp3dvm) # ${TIFF_LIBRARIES})
+  TARGET_LINK_LIBRARIES(${exe} ${OPENJPEG_LIBRARY_NAME}_JP3D.static) # ${TIFF_LIBRARIES})
   # On unix you need to link to the math library:
   IF(UNIX)
     TARGET_LINK_LIBRARIES(${exe} m)
