@@ -16,9 +16,7 @@ ENDIF(DONT_HAVE_GETOPT)
 
 # Do the proper thing when building static...if only there was configured
 # headers or def files instead
-IF(NOT BUILD_SHARED_LIBS)
-  ADD_DEFINITIONS(-DOPJ_STATIC)
-ENDIF(NOT BUILD_SHARED_LIBS)
+ADD_DEFINITIONS(-DOPJ_STATIC)
 
 # Headers file are located here:
 INCLUDE_DIRECTORIES(
@@ -35,7 +33,7 @@ ENDIF(TIFF_FOUND)
 # Loop over all executables:
 FOREACH(exe j2k_to_image image_to_j2k j2k_dump)
   ADD_EXECUTABLE(${exe} ${exe}.c ${common_SRCS})
-  TARGET_LINK_LIBRARIES(${exe} ${OPJ_PREFIX}openjpeg ${LCMS_LIB})
+  TARGET_LINK_LIBRARIES(${exe} ${OPENJPEG_LIBRARY_NAME}.static ${LCMS_LIB})
   IF(PNG_FOUND)
     TARGET_LINK_LIBRARIES(${exe} ${PNG_LIBRARIES})
   ENDIF(PNG_FOUND)
