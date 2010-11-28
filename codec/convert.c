@@ -2373,7 +2373,7 @@ int imagetopng(opj_image_t * image, const char *write_idf)
 	unsigned char *row_buf, *d;
 	int has_alpha, width, height, nr_comp, color_type;
 	int adjustR, adjustG, adjustB, x, y, fails, is16, force16;
-	int opj_prec, prec, ushift, dshift;;
+	int opj_prec, prec, ushift, dshift;
 	unsigned short mask;
 	png_color_8 sig_bit;
 

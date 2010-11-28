@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 November 28, 2010
+* [antonin] fixed a bug in codec/convert.c that prevented to build executables with WIN32 compiler (thanks winfried)
 ! [antonin] changed cmake behaviour: executables are now always statically linked. When -DBUIL_SHARED_LIBS option is ON (the default), the shared versions of the libraries are also built (but executables remain linked against the static libraries).
 
 November 25, 2010
