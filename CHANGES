@@ -6,7 +6,7 @@ What's New for OpenJPEG
 + : added
 
 November 28, 2010
-! [antonin] changed cmake behaviour: executables are now always statically linked. When -DBUIL_SHARED_LIBS option is ON (the default), the shared versions of the libraries are also built (but not linked against executables).
+! [antonin] changed cmake behaviour: executables are now always statically linked. When -DBUIL_SHARED_LIBS option is ON (the default), the shared versions of the libraries are also built (but executables remain linked against the static libraries).
 
 November 25, 2010
 * [antonin] fix compilation and DLL creation of libopenjpeg with MSYS/MinGW (from vincent.torri, see issue 47 on googlecode)
