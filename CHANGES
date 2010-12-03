@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+December 3, 2010
+* [antonin] workaround for name clash when building static and dynamic on WIN32 (see http://www.vtk.org/Bug/view.php?id=10190 for description) 
+
 November 28, 2010
 * [antonin] fixed a bug in codec/convert.c that prevented to build executables with WIN32 compiler (thanks winfried)
 ! [antonin] changed cmake behaviour: executables are now always statically linked. When -DBUIL_SHARED_LIBS option is ON (the default), the shared versions of the libraries are also built (but executables remain linked against the static libraries).
