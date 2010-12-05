@@ -126,7 +126,7 @@ CONFIGURE_FILE(
 
 #-----------------------------------------------------------------------------
 # OpenJPEG build configuration options.
-OPTION(BUILD_SHARED_LIBS "Build OpenJPEG shared libraries." ON)
+OPTION(BUILD_SHARED_LIBS "Build OpenJPEG shared library and link executables against it." ON)
 
 #-----------------------------------------------------------------------------
 SET (EXECUTABLE_OUTPUT_PATH ${OPENJPEG_BINARY_DIR}/bin CACHE PATH "Single output directory for building all executables.")
@@ -149,36 +149,36 @@ INCLUDE_DIRECTORIES(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 SUBDIRS(libopenjpeg)
 
 #-----------------------------------------------------------------------------
-# Build CODEC binaries ?
-OPTION(BUILD_CODEC "Build the CODEC binaries" ON)
+# Build CODEC executables ?
+OPTION(BUILD_CODEC "Build the CODEC executables" ON)
 IF(BUILD_CODEC)
   SUBDIRS(codec)
 ENDIF(BUILD_CODEC)
 
 #-----------------------------------------------------------------------------
-# Build MJ2 binaries ?
-OPTION(BUILD_MJ2 "Build the MJ2 binaries." OFF)
+# Build MJ2 executables ?
+OPTION(BUILD_MJ2 "Build the MJ2 executables." OFF)
 IF(BUILD_MJ2)
   SUBDIRS(mj2)
 ENDIF(BUILD_MJ2)
 
 #-----------------------------------------------------------------------------
-# Build JPWL binaries ?
-OPTION(BUILD_JPWL "Build the JPWL binaries" OFF)
+# Build JPWL executables ?
+OPTION(BUILD_JPWL "Build the JPWL executables" OFF)
 IF(BUILD_JPWL)
   SUBDIRS(jpwl)
 ENDIF(BUILD_JPWL)
 
 #-----------------------------------------------------------------------------
-# Build JP3D binaries ?
-OPTION(BUILD_JP3D "Build the JP3D binaries" OFF)
+# Build JP3D executables ?
+OPTION(BUILD_JP3D "Build the JP3D executables" OFF)
 IF(BUILD_JP3D)
   SUBDIRS(jp3d)
 ENDIF(BUILD_JP3D)
 
 #-----------------------------------------------------------------------------
-# Build INDEXER_JPIP binaries ?
-OPTION(BUILD_INDEXER_JPIP "Build the INDEXER_JPIP binaries" OFF)
+# Build INDEXER_JPIP executables ?
+OPTION(BUILD_INDEXER_JPIP "Build the INDEXER_JPIP executables" OFF)
 IF(BUILD_INDEXER_JPIP AND NOT UNIX)
   SUBDIRS(indexer_JPIP)
 ENDIF(BUILD_INDEXER_JPIP AND NOT UNIX)

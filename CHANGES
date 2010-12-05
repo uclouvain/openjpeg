@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 December 5, 2010
+! [antonin] revert to previous behaviour for cmake: builds (and links) dynamically by default. Static build only if -DBUILD_SHARED_LIBS is set to OFF.
 * [antonin] added a definition in getopt.h and an initial value in convert.c
 
 December 3, 2010
