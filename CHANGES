@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+December 5, 2010
+* [antonin] added a definition in getopt.h and an initial value in convert.c
+
 December 3, 2010
 * [antonin] workaround for name clash when building static and dynamic on WIN32 (see http://www.vtk.org/Bug/view.php?id=10190 for description) 
 
