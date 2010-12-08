@@ -25,14 +25,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <windows.h>
-#endif /* WIN32 */
+#endif /* _WIN32 */
 
 #include "opj_includes.h"
 #define JP3D_VERSION "1.3.0"
 /* ---------------------------------------------------------------------- */
-#ifdef WIN32
+#ifdef _WIN32
 #ifndef OPJ_STATIC
 BOOL APIENTRY
 DllMain(HANDLE hModule, DWORD ul_reason_for_call, LPVOID lpReserved) {
@@ -49,7 +49,7 @@ DllMain(HANDLE hModule, DWORD ul_reason_for_call, LPVOID lpReserved) {
     return TRUE;
 }
 #endif /* OPJ_STATIC */
-#endif /* WIN32 */
+#endif /* _WIN32 */
 
 /* ---------------------------------------------------------------------- */
 

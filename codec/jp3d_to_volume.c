@@ -37,10 +37,12 @@
 #include "getopt.h"
 #include "convert.h"
 
-#ifndef WIN32
+#ifdef _WIN32
+#include <windows.h>
+#else
 #define stricmp strcasecmp
 #define strnicmp strncasecmp
-#endif
+#endif /* _WIN32 */
 
 /* ----------------------------------------------------------------------- */
 static double calc_PSNR(opj_volume_t *original, opj_volume_t *decoded)
