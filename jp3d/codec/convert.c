@@ -32,11 +32,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../libjp3dvm/openjpeg.h"
-#ifdef WIN32
+#ifdef _WIN32
 #include "windirent.h"
 #else
 #include <dirent.h>
-#endif /* WIN32 */
+#endif /* _WIN32 */
 
 
 

@@ -29,40 +29,29 @@
 #include <stdlib.h>
 #include <math.h>
 
+#ifdef _WIN32
+#include "windirent.h"
+#else
+#include <dirent.h>
+#endif /* _WIN32 */
+
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <strings.h>
+#define _stricmp strcasecmp
+#define _strnicmp strncasecmp
+#endif /* _WIN32 */
+
 #include "opj_config.h"
 #include "openjpeg.h"
 #include "../libopenjpeg/j2k.h"
 #include "../libopenjpeg/jp2.h"
-#include "compat/getopt.h"
+#include "getopt.h"
 #include "convert.h"
-#ifdef WIN32
-#include "windirent.h"
-#else
-#include <dirent.h>
-#endif /* WIN32 */
 #include "index.h"
 
-#ifndef WIN32
-#include <strings.h>
-#define _stricmp strcasecmp
-#define _strnicmp strncasecmp
-#endif
-
-/* ----------------------------------------------------------------------- */
-
-#define J2K_CFMT 0
-#define JP2_CFMT 1
-#define JPT_CFMT 2
-
-#define PXM_DFMT 10
-#define PGX_DFMT 11
-#define BMP_DFMT 12
-#define YUV_DFMT 13
-#define TIF_DFMT 14
-#define RAW_DFMT 15
-#define TGA_DFMT 16
-#define PNG_DFMT 17
-/* ----------------------------------------------------------------------- */
+#include "format_defs.h"
 
 typedef struct dircnt{
 	/** Buffer for holding images read from Directory*/
@@ -477,6 +466,10 @@ int main(int argc, char *argv[])
 				return 1;
 			}
 			/* dump image */
+	  if(image->icc_profile_buf)
+	 {
+	  free(image->icc_profile_buf); image->icc_profile_buf = NULL;
+	 }	
       j2k_dump_image(stdout, image);
 
 			/* dump cp */

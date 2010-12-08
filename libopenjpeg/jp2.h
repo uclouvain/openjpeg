@@ -95,15 +95,15 @@ typedef struct opj_jp2_pclr
 /** 
 Collector for ICC profile, palette, component mapping, channel description 
 */
-struct extension
+typedef struct opj_jp2_color
 {
-    unsigned char *jp2_profile_buf;
-    int jp2_profile_len;
+    unsigned char *icc_profile_buf;
+    int icc_profile_len;
 
     opj_jp2_cdef_t *jp2_cdef;
     opj_jp2_pclr_t *jp2_pclr;
     unsigned char jp2_has_colr;
-};
+} opj_jp2_color_t;
 
 /** 
 JP2 component
@@ -167,7 +167,7 @@ Read the JP2H box - JP2 Header box (used in MJ2)
 @param ext Collector for profile, cdef and pclr data
 @return Returns true if successful, returns false otherwise
 */
-bool jp2_read_jp2h(opj_jp2_t *jp2, opj_cio_t *cio, struct extension *ext);
+bool jp2_read_jp2h(opj_jp2_t *jp2, opj_cio_t *cio, opj_jp2_color_t *color);
 /**
 Creates a JP2 decompression structure
 @param cinfo Codec context info

@@ -1,16 +1,17 @@
-# Build the demo app, small examples
+  # Build the demo app, small examples
 
 # First thing define the common source:
 SET(common_SRCS
   convert.c
   index.c
+  ${PROJECT_SOURCE_DIR}/common/color.c
 )
 
 # If not getopt was found then add it to the lib:
 IF(DONT_HAVE_GETOPT)
   SET(common_SRCS
     ${common_SRCS}
-    compat/getopt.c
+    ${PROJECT_SOURCE_DIR}/common/getopt.c
   )
 ENDIF(DONT_HAVE_GETOPT)
 
@@ -18,6 +19,7 @@ ENDIF(DONT_HAVE_GETOPT)
 INCLUDE_DIRECTORIES(
   ${OPENJPEG_SOURCE_DIR}/libopenjpeg
   ${LCMS_INCLUDE_DIR}
+  ${OPENJPEG_SOURCE_DIR}/common
   )
 IF(PNG_FOUND)
   INCLUDE_DIRECTORIES(${PNG_INCLUDE_DIR})

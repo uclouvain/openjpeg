@@ -29,6 +29,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "opj_config.h"
 #include "openjpeg.h"
 #include "../libopenjpeg/j2k_lib.h"
 #include "../libopenjpeg/j2k.h"
@@ -36,6 +37,13 @@
 #include "mj2.h"
 #include "mj2_convert.h"
 
+#ifdef HAVE_LIBLCMS2
+#include <lcms2.h>
+#endif
+#ifdef HAVE_LIBLCMS1
+#include <lcms.h>
+#endif
+#include "color.h"
 /* -------------------------------------------------------------------------- */
 
 /**
@@ -168,7 +176,24 @@ int main(int argc, char *argv[]) {
 		cio = opj_cio_open((opj_common_ptr)dinfo, frame_codestream, sample->sample_size-8);
 		
 		img = opj_decode(dinfo, cio); // Decode J2K to image
-				
+
+#ifdef WANT_SYCC_TO_RGB
+	if(img->color_space == CLRSPC_SYCC)
+  {
+	color_sycc_to_rgb(img);
+  }
+#endif
+
+	if(img->icc_profile_buf)
+  {
+#if defined(HAVE_LIBLCMS1) || defined(HAVE_LIBLCMS2)
+	color_apply_icc_profile(img);
+#endif
+
+	free(img->icc_profile_buf);
+	img->icc_profile_buf = NULL; img->icc_profile_len = 0;
+  }
+
     if (((img->numcomps == 3) && (img->comps[0].dx == img->comps[1].dx / 2) 
       && (img->comps[0].dx == img->comps[2].dx / 2 ) && (img->comps[0].dx == 1)) 
       || (img->numcomps == 1)) {

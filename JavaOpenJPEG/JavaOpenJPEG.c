@@ -37,32 +37,19 @@
 #include <math.h>
 
 #include "openjpeg.h"
-#include "compat/getopt.h"
+#include "getopt.h"
 #include "convert.h"
 #include "index.h"
 #include "dirent.h"
 #include "org_openJpeg_OpenJPEGJavaEncoder.h"
 
-#ifndef WIN32
+#ifndef _WIN32
 #define stricmp strcasecmp
 #define strnicmp strncasecmp
 #endif
 
-/* ----------------------------------------------------------------------- */
+#include "format_defs.h"
 
-#define J2K_CFMT 0
-#define JP2_CFMT 1
-#define JPT_CFMT 2
-
-#define PXM_DFMT 10
-#define PGX_DFMT 11
-#define BMP_DFMT 12
-#define YUV_DFMT 13
-#define TIF_DFMT 14
-#define RAW_DFMT 15
-#define TGA_DFMT 16
-
-/* ----------------------------------------------------------------------- */
 #define CINEMA_24_CS 1302083	/*Codestream length for 24fps*/
 #define CINEMA_48_CS 651041		/*Codestream length for 48fps*/
 #define COMP_24_CS 1041666		/*Maximum size per color component for 2K & 4K @ 24fps*/

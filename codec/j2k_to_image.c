@@ -35,38 +35,35 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "opj_config.h"
-#include "openjpeg.h"
-#include "compat/getopt.h"
-#include "convert.h"
-#ifdef WIN32
+#ifdef _WIN32
 #include "windirent.h"
 #else
 #include <dirent.h>
-#endif /* WIN32 */
-#include "index.h"
+#endif /* _WIN32 */
 
-#ifndef WIN32
+#ifdef _WIN32
+#include <windows.h>
+#else
 #include <strings.h>
 #define _stricmp strcasecmp
 #define _strnicmp strncasecmp
+#endif /* _WIN32 */
+
+#include "opj_config.h"
+#include "openjpeg.h"
+#include "getopt.h"
+#include "convert.h"
+#include "index.h"
+
+#ifdef HAVE_LIBLCMS2
+#include <lcms2.h>
 #endif
+#ifdef HAVE_LIBLCMS1
+#include <lcms.h>
+#endif
+#include "color.h"
 
-/* ----------------------------------------------------------------------- */
-
-#define J2K_CFMT 0
-#define JP2_CFMT 1
-#define JPT_CFMT 2
-
-#define PXM_DFMT 10
-#define PGX_DFMT 11
-#define BMP_DFMT 12
-#define YUV_DFMT 13
-#define TIF_DFMT 14
-#define RAW_DFMT 15
-#define TGA_DFMT 16
-#define PNG_DFMT 17
-/* ----------------------------------------------------------------------- */
+#include "format_defs.h"
 
 typedef struct dircnt{
 	/** Buffer for holding images read from Directory*/
@@ -739,6 +736,21 @@ int main(int argc, char **argv) {
 		/* free the memory containing the code-stream */
 		free(src);
 		src = NULL;
+
+	if(image->color_space == CLRSPC_SYCC)
+   {
+	color_sycc_to_rgb(image);
+   }
+
+	if(image->icc_profile_buf)
+   {
+#if defined(HAVE_LIBLCMS1) || defined(HAVE_LIBLCMS2)
+	color_apply_icc_profile(image);
+#endif
+
+	free(image->icc_profile_buf);
+	image->icc_profile_buf = NULL; image->icc_profile_len = 0;
+   }
 
 		/* create output image */
 		/* ------------------- */

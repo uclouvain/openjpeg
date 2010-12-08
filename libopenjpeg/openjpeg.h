@@ -554,6 +554,10 @@ typedef struct opj_image {
 	OPJ_COLOR_SPACE color_space;
 	/** image components */
 	opj_image_comp_t *comps;
+	/** 'restricted' ICC profile */
+	unsigned char *icc_profile_buf;
+	/** size of ICC profile */
+	int icc_profile_len;
 } opj_image_t;
 
 /**

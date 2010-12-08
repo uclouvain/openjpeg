@@ -13,7 +13,6 @@ SRCS = ./libopenjpeg/bio.c ./libopenjpeg/cio.c ./libopenjpeg/dwt.c \
  ./libopenjpeg/mct.c ./libopenjpeg/mqc.c ./libopenjpeg/openjpeg.c \
  ./libopenjpeg/pi.c ./libopenjpeg/raw.c ./libopenjpeg/t1.c \
  ./libopenjpeg/t2.c ./libopenjpeg/tcd.c ./libopenjpeg/tgt.c \
- ./libopenjpeg/opj_convert.c
 
 INCLS = ./libopenjpeg/bio.h ./libopenjpeg/cio.h ./libopenjpeg/dwt.h \
  ./libopenjpeg/event.h ./libopenjpeg/fix.h ./libopenjpeg/image.h \
@@ -22,9 +21,7 @@ INCLS = ./libopenjpeg/bio.h ./libopenjpeg/cio.h ./libopenjpeg/dwt.h \
  ./libopenjpeg/mqc.h ./libopenjpeg/openjpeg.h ./libopenjpeg/pi.h \
  ./libopenjpeg/raw.h ./libopenjpeg/t1.h ./libopenjpeg/t2.h \
  ./libopenjpeg/tcd.h ./libopenjpeg/tgt.h ./libopenjpeg/opj_malloc.h \
- ./libopenjpeg/opj_convert.h ./libopenjpeg/opj_includes.h
-
-AR = ar
+ ./libopenjpeg/opj_includes.h
 
 INSTALL_LIBDIR = $(prefix)/lib
 headerdir = openjpeg-$(MAJOR).$(MINOR)

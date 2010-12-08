@@ -3,7 +3,7 @@ include ../config.nix
 
 TARGET  = openjpeg_JPWL
 COMPILERFLAGS = -Wall -ffast-math -std=c99 -fPIC
-USERLIBS = -lm
+USERLIBS =
 
 JPWL_SRCS = ./crc.c ./jpwl.c ./jpwl_lib.c ./rs.c
 
@@ -13,7 +13,7 @@ SRCS = ../libopenjpeg/bio.c ../libopenjpeg/cio.c ../libopenjpeg/dwt.c \
   ../libopenjpeg/mct.c ../libopenjpeg/mqc.c ../libopenjpeg/openjpeg.c \
   ../libopenjpeg/pi.c ../libopenjpeg/raw.c ../libopenjpeg/t1.c \
   ../libopenjpeg/t2.c ../libopenjpeg/tcd.c ../libopenjpeg/tgt.c \
-  ../libopenjpeg/opj_convert.c $(JPWL_SRCS)
+  $(JPWL_SRCS)
 
 INCLS = ../libopenjpeg/bio.h ../libopenjpeg/cio.h ../libopenjpeg/dwt.h \
   ../libopenjpeg/event.h ../libopenjpeg/fix.h ../libopenjpeg/image.h \
@@ -22,11 +22,9 @@ INCLS = ../libopenjpeg/bio.h ../libopenjpeg/cio.h ../libopenjpeg/dwt.h \
   ../libopenjpeg/mqc.h ../libopenjpeg/openjpeg.h ../libopenjpeg/pi.h \
   ../libopenjpeg/raw.h ../libopenjpeg/t1.h ../libopenjpeg/t2.h \
   ../libopenjpeg/tcd.h ../libopenjpeg/tgt.h ../libopenjpeg/opj_malloc.h \
-  ../libopenjpeg/opj_convert.h ../libopenjpeg/opj_includes.h
+  ../libopenjpeg/opj_includes.h
 
-INCLUDE = -I.. -I. -I../libopenjpeg
-
-AR = ar
+INCLUDE = -I.. -I. -I../libopenjpeg -I../common
 
 INSTALL_LIBDIR = $(prefix)/lib
 INSTALL_BIN = $(prefix)/bin
@@ -56,6 +54,8 @@ ifeq ($(WITH_LCMS1),yes)
 INCLUDE += $(LCMS1_INCLUDE)
 USERLIBS += $(LCMS1_LIB)
 endif
+
+USERLIBS += -lm
 
 LIBRARIES += $(USERLIBS)
 
@@ -101,12 +101,12 @@ $(SHAREDLIB): $(MODULES)
 endif
 
 JPWL_j2k_to_image: ../codec/j2k_to_image.c
-	$(CC) $(CFLAGS) ../codec/compat/getopt.c ../codec/index.c \
-	../codec/convert.c ../codec/j2k_to_image.c \
+	$(CC) $(CFLAGS) ../common/getopt.c ../codec/index.c \
+	../codec/convert.c ../common/color.c ../codec/j2k_to_image.c \
 	-o JPWL_j2k_to_image ./libopenjpeg_JPWL.a $(USERLIBS)
 
 JPWL_image_to_j2k: ../codec/image_to_j2k.c
-	$(CC) $(CFLAGS) ../codec/compat/getopt.c ../codec/index.c \
+	$(CC) $(CFLAGS) ../common/getopt.c ../codec/index.c \
 	../codec/convert.c ../codec/image_to_j2k.c \
 	-o JPWL_image_to_j2k ./libopenjpeg_JPWL.a $(USERLIBS)
 

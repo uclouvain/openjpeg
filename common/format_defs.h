@@ -1,7 +1,10 @@
 /*
- * Copyright (c) 2001-2002, David Janssens
- * Copyright (c) 2003, Yannick Verschueren
- * Copyright (c) 2003,  Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
+ * Copyright (c) 2002-2007, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
+ * Copyright (c) 2002-2007, Professor Benoit Macq
+ * Copyright (c) 2001-2003, David Janssens
+ * Copyright (c) 2002-2003, Yannick Verschueren
+ * Copyright (c) 2003-2007, Francois-Olivier Devaux and Antonin Descampe
+ * Copyright (c) 2005, Herve Drolon, FreeImage Team
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,19 +29,20 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "fix.h"
+#ifndef _OPJ_FORMAT_DEFS_H_
+#define _OPJ_FORMAT_DEFS_H_
 
-#ifdef _WIN32
-#include <windows.h>
+#define J2K_CFMT 0
+#define JP2_CFMT 1
+#define JPT_CFMT 2
 
-#define int64 __int64
-#else
-#define int64 long long
-#endif /* _WIN32 */
+#define PXM_DFMT 10
+#define PGX_DFMT 11
+#define BMP_DFMT 12
+#define YUV_DFMT 13
+#define TIF_DFMT 14
+#define RAW_DFMT 15
+#define TGA_DFMT 16
+#define PNG_DFMT 17
 
-/// <summary>
-/// Multiply two fixed-precision rational numbers.
-/// </summary>
-int fix_mul(int a, int b) {
-    return (int)((int64)a*(int64)b>>13);
-}
+#endif /* _OPJ_FORMAT_DEFS_H_ */

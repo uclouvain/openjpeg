@@ -37,31 +37,17 @@
 #include <math.h>
 
 #include "openjpeg.h"
-#include "compat/getopt.h"
+#include "getopt.h"
 #include "convert.h"
 #include "dirent.h"
 #include "org_openJpeg_OpenJPEGJavaDecoder.h"
 
-#ifndef WIN32
+#ifndef _WIN32
 #define stricmp strcasecmp
 #define strnicmp strncasecmp
 #endif
 
-/* ----------------------------------------------------------------------- */
-
-#define J2K_CFMT 0
-#define JP2_CFMT 1
-#define JPT_CFMT 2
-
-#define PXM_DFMT 10
-#define PGX_DFMT 11
-#define BMP_DFMT 12
-#define YUV_DFMT 13
-#define TIF_DFMT 14
-#define RAW_DFMT 15
-#define TGA_DFMT 16
-
-/* ----------------------------------------------------------------------- */
+#include "format_defs.h"
 
 typedef struct callback_variables {
 	JNIEnv *env;

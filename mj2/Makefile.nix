@@ -5,7 +5,7 @@ CFLAGS = -Wall
 
 INSTALL_BIN = $(prefix)/bin
 USERLIBS = -lm
-INCLUDE = -I.. -I. -I../libopenjpeg
+INCLUDE = -I.. -I. -I../libopenjpeg -I../common
 
 ifeq ($(WITH_LCMS2),yes)
 INCLUDE += $(LCMS2_INCLUDE)
@@ -25,11 +25,12 @@ all: frames_to_mj2 mj2_to_frames extract_j2k_from_mj2 wrap_j2k_in_mj2
 	wrap_j2k_in_mj2 ../bin
 
 frames_to_mj2: frames_to_mj2.c ../libopenjpeg.a
-	$(CC) $(CFLAGS) ../codec/compat/getopt.c mj2_convert.c mj2.c frames_to_mj2.c \
+	$(CC) $(CFLAGS) ../common/getopt.c mj2_convert.c mj2.c frames_to_mj2.c \
 	-o frames_to_mj2 ../libopenjpeg.a $(USERLIBS)
 
 mj2_to_frames: mj2_to_frames.c ../libopenjpeg.a
-	$(CC) $(CFLAGS) ../codec/compat/getopt.c mj2_convert.c mj2.c mj2_to_frames.c \
+	$(CC) $(CFLAGS) ../common/getopt.c mj2_convert.c mj2.c \
+	../common/color.c mj2_to_frames.c \
 	-o mj2_to_frames ../libopenjpeg.a $(USERLIBS)
 
 extract_j2k_from_mj2: extract_j2k_from_mj2.c ../libopenjpeg.a

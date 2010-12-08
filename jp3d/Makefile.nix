@@ -21,8 +21,6 @@ INCLS = ./libjp3dvm/t1_3d.h ./libjp3dvm/bio.h ./libjp3dvm/cio.h \
 
 INCLUDE = -I.. -Ilibjp3dvm
 
-AR = ar
-
 INSTALL_LIBDIR = $(prefix)/lib
 headerdir = openjpeg3d-$(JP3D_MAJOR).$(JP3D_MINOR)
 INSTALL_INCLUDE = $(prefix)/include/$(headerdir)

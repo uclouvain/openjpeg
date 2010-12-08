@@ -5,7 +5,7 @@ CFLAGS = -Wall
 
 INSTALL_BIN = $(prefix)/bin
 
-INCLUDE = -I.. -I. -I../libopenjpeg
+INCLUDE = -I.. -I. -I../libopenjpeg -I../common
 USERLIBS = -lm
 
 ifeq ($(WITH_TIFF),yes)
@@ -35,15 +35,16 @@ all: j2k_to_image image_to_j2k j2k_dump
 	install j2k_to_image image_to_j2k j2k_dump ../bin
 
 j2k_to_image: j2k_to_image.c ../libopenjpeg.a
-	$(CC)  $(CFLAGS) compat/getopt.c index.c convert.c j2k_to_image.c \
+	$(CC)  $(CFLAGS) ../common/getopt.c index.c convert.c \
+	../common/color.c j2k_to_image.c \
 	-o j2k_to_image ../libopenjpeg.a $(USERLIBS)
 
 image_to_j2k: image_to_j2k.c ../libopenjpeg.a
-	$(CC) $(CFLAGS) compat/getopt.c index.c convert.c image_to_j2k.c \
+	$(CC) $(CFLAGS) ../common/getopt.c index.c convert.c image_to_j2k.c \
 	-o image_to_j2k ../libopenjpeg.a $(USERLIBS)
 
 j2k_dump: j2k_dump.c ../libopenjpeg.a
-	$(CC) $(CFLAGS) compat/getopt.c index.c j2k_dump.c \
+	$(CC) $(CFLAGS) ../common/getopt.c index.c j2k_dump.c \
 	-o j2k_dump ../libopenjpeg.a $(USERLIBS)
 
 clean:

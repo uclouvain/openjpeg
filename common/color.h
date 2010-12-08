@@ -1,7 +1,10 @@
 /*
- * Copyright (c) 2001-2002, David Janssens
- * Copyright (c) 2003, Yannick Verschueren
- * Copyright (c) 2003,  Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
+ * Copyright (c) 2002-2007, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
+ * Copyright (c) 2002-2007, Professor Benoit Macq
+ * Copyright (c) 2001-2003, David Janssens
+ * Copyright (c) 2002-2003, Yannick Verschueren
+ * Copyright (c) 2003-2007, Francois-Olivier Devaux and Antonin Descampe
+ * Copyright (c) 2005, Herve Drolon, FreeImage Team
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,19 +29,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "fix.h"
+#ifndef _OPJ_COLOR_H_
+#define _OPJ_COLOR_H_
 
-#ifdef _WIN32
-#include <windows.h>
+extern void color_sycc_to_rgb(opj_image_t *img);
+extern void color_apply_icc_profile(opj_image_t *image);
 
-#define int64 __int64
-#else
-#define int64 long long
-#endif /* _WIN32 */
-
-/// <summary>
-/// Multiply two fixed-precision rational numbers.
-/// </summary>
-int fix_mul(int a, int b) {
-    return (int)((int64)a*(int64)b>>13);
-}
+#endif /* _OPJ_COLOR_H_ */

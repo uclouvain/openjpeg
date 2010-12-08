@@ -1101,7 +1101,7 @@ int mj2_read_smj2(opj_image_t * img, mj2_tk_t * tk, opj_cio_t *cio)
   mj2_box_t box;
   mj2_box_t box2;
   int i;
-  struct extension ext;
+  opj_jp2_color_t color;
 	
   mj2_read_boxhdr(&box, cio);
 	
@@ -1159,9 +1159,9 @@ int mj2_read_smj2(opj_image_t * img, mj2_tk_t * tk, opj_cio_t *cio)
   tk->or_fieldorder = 0;
 	
   cio_skip(cio,2);			/* Pre-defined = -1 */
-  memset(&ext, 0, sizeof(struct extension));
+  memset(&color, 0, sizeof(opj_jp2_color_t));
 	
-  if (!jp2_read_jp2h(&tk->jp2_struct, cio, &ext)) {
+  if (!jp2_read_jp2h(&tk->jp2_struct, cio, &color)) {
 		opj_event_msg(tk->cinfo, EVT_ERROR, "Error reading JP2H Box\n");
     return 1;
   }

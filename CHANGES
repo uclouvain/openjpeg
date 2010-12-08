@@ -5,6 +5,15 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+December 8, 2010 
+  (thanks to Winfried for his help)
+* [antonin] changed remaining "WIN32" to "_WIN32"
+! [antonin] libopenjpeg has no more dependency on LCMS lib. Everything concerning color (icc profile, conversion to rgb, etc) has been put outside libopenjpeg and is used in j2k_to_image.c and mj2_to_frames.c.
+- [antonin] removed 'opj_convert{.c,.h}'
++ [antonin] added a directory 'common/' that contains 'getopt{.c,.h}' (previously in 'codec/compat').
++ [antonin] added files 'color{.c,.h}' in 'common/' that define the code for icc profile management and sycc_to_rgb conversion
++ [antonin] added 'common/format_defs.h' that contains common definitions used in image_to_j2k, j2k_to_image, j2k_dump.
+
 December 5, 2010
 ! [antonin] revert to previous behaviour for cmake: builds (and links) dynamically by default. Static build only if -DBUILD_SHARED_LIBS is set to OFF.
 * [antonin] added a definition in getopt.h and an initial value in convert.c

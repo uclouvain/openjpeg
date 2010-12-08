@@ -36,19 +36,19 @@
 #include <string.h>
 
 #ifdef HAVE_LIBTIFF
-#ifdef WIN32
+#ifdef _WIN32
 #include "../libs/libtiff/tiffio.h"
 #else
 #include <tiffio.h>
-#endif /* WIN32 */
+#endif /* _WIN32 */
 #endif /* HAVE_LIBTIFF */
 
 #ifdef HAVE_LIBPNG
-#ifdef WIN32
+#ifdef _WIN32
 #include "../libs/png/png.h"
 #else
 #include <png.h>
-#endif /* WIN32 */
+#endif /* _WIN32 */
 #endif /* HAVE_LIBPNG */
 
 #include "../libopenjpeg/openjpeg.h"

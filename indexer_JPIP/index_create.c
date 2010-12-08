@@ -1130,7 +1130,7 @@ int j2k_decode(unsigned char *src, int len, j2k_image_t **image, j2k_cp_t **cp) 
 }
 
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <windows.h>
 
 BOOL APIENTRY DllMain(HANDLE hModule, DWORD ul_reason_for_call, LPVOID lpReserved) {
@@ -1143,7 +1143,7 @@ BOOL APIENTRY DllMain(HANDLE hModule, DWORD ul_reason_for_call, LPVOID lpReserve
     }
     return TRUE;
 }
-#endif
+#endif /* _WIN32 */
 
 int main(int argc, char **argv)
 {  

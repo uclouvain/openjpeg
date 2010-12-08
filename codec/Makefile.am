@@ -1,6 +1,6 @@
 COMPILERFLAGS = -Wall -static
 USERLIBS = -lm
-INCLUDES = -I.. -I. -I../libopenjpeg
+INCLUDES = -I.. -I. -I../libopenjpeg -I../common
 
 if with_libtiff
 INCLUDES += @tiffincludes@
@@ -27,11 +27,12 @@ bin_PROGRAMS = j2k_to_image image_to_j2k j2k_dump
 CFLAGS = $(COMPILERFLAGS) $(INCLUDES)
 LDADD = $(USERLIBS) ../libopenjpeg/libopenjpeg.la
 
-j2k_to_image_SOURCES = compat/getopt.c index.c convert.c j2k_to_image.c
+j2k_to_image_SOURCES = ../common/getopt.c index.c convert.c \
+	../common/color.c j2k_to_image.c
 
-image_to_j2k_SOURCES = compat/getopt.c index.c convert.c image_to_j2k.c
+image_to_j2k_SOURCES = ../common/getopt.c index.c convert.c image_to_j2k.c
 
-j2k_dump_SOURCES = compat/getopt.c index.c j2k_dump.c
+j2k_dump_SOURCES = ../common/getopt.c index.c j2k_dump.c
 
 REPBIN=$(bin_PROGRAMS)
 

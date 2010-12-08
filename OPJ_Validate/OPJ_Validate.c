@@ -26,9 +26,9 @@
 * POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <windows.h>
-#endif
+#endif /* _WIN32 */
 #include <stdio.h>
 #include <string.h>
 #include "md5.h"
@@ -37,7 +37,7 @@
 
 int doprocess(char programme[4096],char command_line[4096]) {
 
-#ifdef WIN32
+#ifdef _WIN32
 	
 	int exit=STILL_ACTIVE;
 	STARTUPINFO siStartupInfo;
@@ -67,12 +67,12 @@ int doprocess(char programme[4096],char command_line[4096]) {
 	
 	return 0;
 
-#else // #ifndef WIN32
+#else /* !_WIN32 */
 	printf("\n%s\n", command_line);
 	system(command_line);
 	return 0;
 
-#endif
+#endif /* _WIN32 */
 	
 }
 

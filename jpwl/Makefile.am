@@ -17,7 +17,7 @@ SRCS = ../libopenjpeg/bio.c ../libopenjpeg/cio.c ../libopenjpeg/dwt.c \
   ../libopenjpeg/mct.c ../libopenjpeg/mqc.c ../libopenjpeg/openjpeg.c \
   ../libopenjpeg/pi.c ../libopenjpeg/raw.c ../libopenjpeg/t1.c \
   ../libopenjpeg/t2.c ../libopenjpeg/tcd.c ../libopenjpeg/tgt.c \
-  ../libopenjpeg/opj_convert.c $(JPWL_SRCS)
+  $(JPWL_SRCS)
 
 INCLS = ../libopenjpeg/bio.h ../libopenjpeg/cio.h ../libopenjpeg/dwt.h \
   ../libopenjpeg/event.h ../libopenjpeg/fix.h ../libopenjpeg/image.h \
@@ -26,7 +26,7 @@ INCLS = ../libopenjpeg/bio.h ../libopenjpeg/cio.h ../libopenjpeg/dwt.h \
   ../libopenjpeg/mqc.h ../libopenjpeg/openjpeg.h ../libopenjpeg/pi.h \
   ../libopenjpeg/raw.h ../libopenjpeg/t1.h ../libopenjpeg/t2.h \
   ../libopenjpeg/tcd.h ../libopenjpeg/tgt.h ../libopenjpeg/opj_malloc.h \
-  ../libopenjpeg/opj_convert.h ../libopenjpeg/opj_includes.h \
+  ../libopenjpeg/opj_includes.h \
   $(JPWL_INCLS)
 
 libopenjpeg_JPWL_la_SOURCES = $(SRCS) $(INCLS)
@@ -40,8 +40,8 @@ dos2unix:
 
 COMPILERFLAGS = -Wall -ffast-math -std=c99
 
-USERLIBS = -lm
-INCLUDES = -I.. -I. -I../libopenjpeg
+USERLIBS =
+INCLUDES = -I.. -I. -I../libopenjpeg -I../common
 
 if with_libtiff
 INCLUDES += @tiffincludes@
@@ -63,6 +63,8 @@ INCLUDES += @lcms1includes@
 USERLIBS += @lcms1libs@
 endif
 
+USERLIBS += -lm
+
 bin_PROGRAMS = JPWL_j2k_to_image JPWL_image_to_j2k
 
 JPWL_j2k_to_image_CFLAGS = $(COMPILERFLAGS) $(INCLUDES) -DUSE_JPWL -static
@@ -71,10 +73,10 @@ JPWL_image_to_j2k_CFLAGS = $(COMPILERFLAGS) $(INCLUDES) -DUSE_JPWL -static
 CFLAGS = $(COMPILERFLAGS) $(INCLUDES) -DUSE_JPWL
 LDADD = ./libopenjpeg_JPWL.la $(USERLIBS)
 
-JPWL_j2k_to_image_SOURCES = ../codec/compat/getopt.c ../codec/index.c \
-	../codec/convert.c ../codec/j2k_to_image.c
+JPWL_j2k_to_image_SOURCES = ../common/getopt.c ../codec/index.c \
+	../codec/convert.c ../common/color.c ../codec/j2k_to_image.c
 
-JPWL_image_to_j2k_SOURCES = ../codec/compat/getopt.c ../codec/index.c \
+JPWL_image_to_j2k_SOURCES = ../common/getopt.c ../codec/index.c \
 	../codec/convert.c ../codec/image_to_j2k.c 
 
 REPBIN=$(bin_PROGRAMS)

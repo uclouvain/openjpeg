@@ -9,6 +9,7 @@ JP3D_BUILD = 0
 prefix=/usr/local
 CC = gcc
 LDCONFIG = /sbin/ldconfig
+AR = ar
 #
 #Set this to no if you do no want to compile/install shared libs.
 ENABLE_SHARED = yes
@@ -19,15 +20,15 @@ ENABLE_SHARED = yes
 #==== HAVE YOU CREATED opj_config.h FROM opj_config.h.in.user ? ====
 #==== SHOULD BE IN SYNC WITH opj_config.h ====
 WITH_LCMS1 = no
-WITH_LCMS2 = no
-WITH_PNG = no
-WITH_TIFF = no
+WITH_LCMS2 = yes
+WITH_PNG = yes
+WITH_TIFF = yes
 #
 # Set to yes if you want compile/install 
 #    jpwl libraries/binaries
 #    jp3d libraries/binaries
-WITH_JPWL = no
-WITH_JP3D = no
+WITH_JPWL = yes
+WITH_JP3D = yes
 #
 #Set to yes if you have doxygen installed
 #Set to no if doxygen is missing.
@@ -39,7 +40,9 @@ LCMS2_INCLUDE = -I/usr/include
 PNG_INCLUDE = -I/usr/include
 TIFF_INCLUDE = -I/usr/include
 
-LCMS1_LIB = -L/usr/lib -llcms -lm
-LCMS2_LIB = -L/usr/lib -llcms2 -lm
-PNG_LIB = -L/usr/lib -lpng -lz -lm
-TIFF_LIB = -L/usr/lib -ltiff -lm
+LCMS1_LIB = -L/usr/lib -llcms
+LCMS2_LIB = -L/usr/lib -llcms2
+PNG_LIB = -L/usr/lib -lpng -lz
+#tiff with jpeg support?
+JPEG_LIB = -ljpeg
+TIFF_LIB = -L/usr/lib -ltiff $(JPEG_LIB)

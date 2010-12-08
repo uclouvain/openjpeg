@@ -28,7 +28,7 @@
 
 #define VERSION "0.0.8"
 
-#ifdef WIN32
+#ifdef _WIN32
 #ifdef LIBJ2K_EXPORTS
 #define LIBJ2K_API __declspec(dllexport)
 #else

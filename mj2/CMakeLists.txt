@@ -3,13 +3,13 @@
 # Headers file are located here:
 INCLUDE_DIRECTORIES(
   ${OPENJPEG_SOURCE_DIR}/libopenjpeg
-  ${OPENJPEG_SOURCE_DIR}/codec/compat
+  ${OPENJPEG_SOURCE_DIR}/common
   ${LCMS_INCLUDE_DIR}
   )
 
 ADD_EXECUTABLE(frames_to_mj2
   frames_to_mj2.c
-  ${PROJECT_SOURCE_DIR}/codec/compat/getopt.c
+  ${PROJECT_SOURCE_DIR}/common/getopt.c
   mj2_convert.c
   mj2.c
   )
@@ -20,9 +20,10 @@ ENDIF(UNIX)
 
 ADD_EXECUTABLE(mj2_to_frames
     mj2_to_frames.c
-    ${PROJECT_SOURCE_DIR}/codec/compat/getopt.c
+    ${PROJECT_SOURCE_DIR}/common/getopt.c
     mj2_convert.c
     mj2.c
+	${PROJECT_SOURCE_DIR}/common/color.c
     )
 TARGET_LINK_LIBRARIES(mj2_to_frames ${OPENJPEG_LIBRARY_NAME} ${LCMS_LIB})
 IF(UNIX)
