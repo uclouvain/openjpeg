@@ -750,7 +750,6 @@ LIBOBJS
 with_doxygen_FALSE
 with_doxygen_TRUE
 with_doxygen
-LDLIBS
 jp3d_dir
 with_sharedlibs_FALSE
 with_sharedlibs_TRUE
@@ -5867,13 +5866,13 @@ if test "${lt_cv_nm_interface+set}" = set; then :
 else
   lt_cv_nm_interface="BSD nm"
   echo "int some_variable = 0;" > conftest.$ac_ext
-  (eval echo "\"\$as_me:5870: $ac_compile\"" >&5)
+  (eval echo "\"\$as_me:5869: $ac_compile\"" >&5)
   (eval "$ac_compile" 2>conftest.err)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:5873: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
+  (eval echo "\"\$as_me:5872: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
   (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:5876: output\"" >&5)
+  (eval echo "\"\$as_me:5875: output\"" >&5)
   cat conftest.out >&5
   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
     lt_cv_nm_interface="MS dumpbin"
@@ -7064,7 +7063,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 7067 "configure"' > conftest.$ac_ext
+  echo '#line 7066 "configure"' > conftest.$ac_ext
   if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_compile\""; } >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -9055,11 +9054,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:9058: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:9057: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:9062: \$? = $ac_status" >&5
+   echo "$as_me:9061: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -9394,11 +9393,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:9397: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:9396: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:9401: \$? = $ac_status" >&5
+   echo "$as_me:9400: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -9499,11 +9498,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:9502: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:9501: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:9506: \$? = $ac_status" >&5
+   echo "$as_me:9505: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -9554,11 +9553,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:9557: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:9556: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:9561: \$? = $ac_status" >&5
+   echo "$as_me:9560: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -11921,7 +11920,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 11924 "configure"
+#line 11923 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -12017,7 +12016,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 12020 "configure"
+#line 12019 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -13973,11 +13972,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:13976: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:13975: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:13980: \$? = $ac_status" >&5
+   echo "$as_me:13979: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -14072,11 +14071,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:14075: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:14074: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:14079: \$? = $ac_status" >&5
+   echo "$as_me:14078: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -14124,11 +14123,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:14127: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:14126: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:14131: \$? = $ac_status" >&5
+   echo "$as_me:14130: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -15302,8 +15301,6 @@ $as_echo "#define AC_APPLE_UNIVERSAL_BUILD 1" >>confdefs.h
  esac
 
 #
-LDLIBS=""
-#
 LIB_MATH=""
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for sqrt in -lm" >&5
 $as_echo_n "checking for sqrt in -lm... " >&6; }
@@ -15345,7 +15342,47 @@ if test "x$ac_cv_lib_m_sqrt" = x""yes; then :
   LIB_MATH="-lm"
 fi
 
-LDLIBS=""
+LIB_Z=""
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for inflate in -lz" >&5
+$as_echo_n "checking for inflate in -lz... " >&6; }
+if test "${ac_cv_lib_z_inflate+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lz  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char inflate ();
+int
+main ()
+{
+return inflate ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_z_inflate=yes
+else
+  ac_cv_lib_z_inflate=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_z_inflate" >&5
+$as_echo "$ac_cv_lib_z_inflate" >&6; }
+if test "x$ac_cv_lib_z_inflate" = x""yes; then :
+  LIB_Z="-lz"
+fi
+
 #
 # Extract the first word of "pkg-config", so it can be a program name with args.
 set dummy pkg-config; ac_word=$2
@@ -15460,10 +15497,15 @@ fi
   else
    if test -n "$PKGCONFIG" ; then
      pngincludes="`$PKGCONFIG --variable=includedir libpng`"
-   fi
-   if test -n "$pngincludes" ; then
-    pngheader="$pngincludes"
-    pngincludes="-I$pngincludes"
+     if test -n "$pngincludes" ; then
+      pngheader="$pngincludes"
+      pngincludes="-I$pngincludes"
+     fi
+   else
+     if test -n "$LIBPNG_CONFIG" ; then
+      pngincludes="`$LIBPNG_CONFIG --I_opts`"
+      pngheader="`$LIBPNG_CONFIG --I_opts | $SED 's/-I//'`"
+     fi
    fi
   fi
   if test -n "$pngheader" ; then
@@ -15471,6 +15513,7 @@ fi
   else
    pngheader="png.h"
   fi
+#
   as_ac_Header=`$as_echo "ac_cv_header_$pngheader" | $as_tr_sh`
 ac_fn_c_check_header_mongrel "$LINENO" "$pngheader" "$as_ac_Header" "$ac_includes_default"
 eval as_val=\$$as_ac_Header
@@ -15479,26 +15522,6 @@ eval as_val=\$$as_ac_Header
 fi
 
 
-#last resort
-  if test "$png_header_found" = "no" ; then
-   pngincludes=""
-   pngheader=""
-   if test -n "$LIBPNG_CONFIG" ; then
-     pngincludes="`$LIBPNG_CONFIG --I_opts`"
-     pngheader="`$LIBPNG_CONFIG --I_opts | $SED 's/-I//'`"
-   fi
-   if test -n "$pngheader" ; then
-    pngheader="$pngheader/png.h"
-    as_ac_Header=`$as_echo "ac_cv_header_$pngheader" | $as_tr_sh`
-ac_fn_c_check_header_mongrel "$LINENO" "$pngheader" "$as_ac_Header" "$ac_includes_default"
-eval as_val=\$$as_ac_Header
-   if test "x$as_val" = x""yes; then :
-  png_header_found="yes"
-fi
-
-
-   fi
-  fi
 #
 
 # Check whether --with-png_libraries was given.
@@ -15507,20 +15530,73 @@ if test "${with_png_libraries+set}" = set; then :
 fi
 
   if [ -n "$with_png_libraries" ] ; then
-   pnglibs="-L$with_png_libraries -lpng -lz $LIB_MATH"
+   pnglibs="-L$with_png_libraries -lpng $LIB_Z $LIB_MATH"
   else
     if test -n "$LIBPNG_CONFIG" ; then
-     pnglibs="`$LIBPNG_CONFIG --ldflags` -lz $LIB_MATH"
+     pnglibs="`$LIBPNG_CONFIG --ldflags` $LIB_Z $LIB_MATH"
     else
       if test -n "$PKGCONFIG" ; then
-        pnglibs="`$PKGCONFIG --libs libpng` $LIB_MATH"
+        pnglibs="`$PKGCONFIG --libs libpng` $LIB_Z $LIB_MATH"
       fi
     fi
   fi
+  savedLIBS="$LIBS"
+  LIBS="$pnglibs"
+#
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for png_read_png in -lpng" >&5
+$as_echo_n "checking for png_read_png in -lpng... " >&6; }
+if test "${ac_cv_lib_png_png_read_png+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lpng  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char png_read_png ();
+int
+main ()
+{
+return png_read_png ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_png_png_read_png=yes
+else
+  ac_cv_lib_png_png_read_png=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_png_png_read_png" >&5
+$as_echo "$ac_cv_lib_png_png_read_png" >&6; }
+if test "x$ac_cv_lib_png_png_read_png" = x""yes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBPNG 1
+_ACEOF
+
+  LIBS="-lpng $LIBS"
+
+else
+  pnglibs=""
+fi
+
+#
+  LIBS="$savedLIBS"
   if test -n "$pnglibs" ; then
     if test -n "$pngincludes" ; then
       with_libpng="yes"
       png_header_found="yes"
+      LIBS="$LIBS $pnglibs"
 
 $as_echo "#define HAVE_LIBPNG 1" >>confdefs.h
 
@@ -15538,7 +15614,6 @@ else
   with_libpng_FALSE=
 fi
 
-LDLIBS="$LDLIBS $pnglibs"
 
 
 # -------------------------------
@@ -15558,8 +15633,134 @@ fi
 
 #
 if test "x$with_libtiff" = xyes ; then
+#TIFF compiled with JPEG and JBIG support?
+ libjpeg=""
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking for jpeg_read_header in -ljpeg" >&5
+$as_echo_n "checking for jpeg_read_header in -ljpeg... " >&6; }
+if test "${ac_cv_lib_jpeg_jpeg_read_header+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-ljpeg  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char jpeg_read_header ();
+int
+main ()
+{
+return jpeg_read_header ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_jpeg_jpeg_read_header=yes
+else
+  ac_cv_lib_jpeg_jpeg_read_header=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_jpeg_jpeg_read_header" >&5
+$as_echo "$ac_cv_lib_jpeg_jpeg_read_header" >&6; }
+if test "x$ac_cv_lib_jpeg_jpeg_read_header" = x""yes; then :
+  libjpeg=-ljpeg
+fi
+
+ libjbig=""
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking for jbg_enc_init in -ljbig" >&5
+$as_echo_n "checking for jbg_enc_init in -ljbig... " >&6; }
+if test "${ac_cv_lib_jbig_jbg_enc_init+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-ljbig  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char jbg_enc_init ();
+int
+main ()
+{
+return jbg_enc_init ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_jbig_jbg_enc_init=yes
+else
+  ac_cv_lib_jbig_jbg_enc_init=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_jbig_jbg_enc_init" >&5
+$as_echo "$ac_cv_lib_jbig_jbg_enc_init" >&6; }
+if test "x$ac_cv_lib_jbig_jbg_enc_init" = x""yes; then :
+  libjbig=-ljbig
+fi
+
+ libjbig85=""
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking for jbg85_enc_init in -ljbig85" >&5
+$as_echo_n "checking for jbg85_enc_init in -ljbig85... " >&6; }
+if test "${ac_cv_lib_jbig85_jbg85_enc_init+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-ljbig85  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char jbg85_enc_init ();
+int
+main ()
+{
+return jbg85_enc_init ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_jbig85_jbg85_enc_init=yes
+else
+  ac_cv_lib_jbig85_jbg85_enc_init=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_jbig85_jbg85_enc_init" >&5
+$as_echo "$ac_cv_lib_jbig85_jbg85_enc_init" >&6; }
+if test "x$ac_cv_lib_jbig85_jbg85_enc_init" = x""yes; then :
+  libjbig85=-ljbig85
+fi
+
 #standard path
  with_libtiff="no"
+ savedLIBS="$LIBS"
+ LIBS="-ltiff $libjpeg $libjbig $libjbig85 $LIB_Z $LIB_MATH"
  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for TIFFOpen in -ltiff" >&5
 $as_echo_n "checking for TIFFOpen in -ltiff... " >&6; }
 if test "${ac_cv_lib_tiff_TIFFOpen+set}" = set; then :
@@ -15600,6 +15801,7 @@ if test "x$ac_cv_lib_tiff_TIFFOpen" = x""yes; then :
   tifflibs=-ltiff
 fi
 
+ LIBS="$savedLIBS"
  if test -n "$tifflibs" ; then
   ac_fn_c_check_header_mongrel "$LINENO" "tiff.h" "ac_cv_header_tiff_h" "$ac_includes_default"
 if test "x$ac_cv_header_tiff_h" = x""yes; then :
@@ -15609,7 +15811,7 @@ fi
 
   if test "$tiff_header_found" = "yes" ; then
    with_libtiff="yes"
-   LIBS="$LIBS -ltiff $LIB_MATH"
+   LIBS="$LIBS -ltiff $libjpeg $libjbig $libjbig85 $LIB_Z $LIB_MATH"
 
 $as_echo "#define HAVE_LIBTIFF 1" >>confdefs.h
 
@@ -15722,7 +15924,6 @@ else
   with_libtiff_FALSE=
 fi
 
-LDLIBS="$tifflibs $LDLIBS"
 
 
 # -------------------------------
@@ -15880,7 +16081,6 @@ else
   with_liblcms2_FALSE=
 fi
 
-LDLIBS="$lcms2libs $LDLIBS"
 
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: lcms2libs:$lcms2libs" >&5
@@ -16030,7 +16230,6 @@ else
   with_liblcms1_FALSE=
 fi
 
-LDLIBS="$lcms1libs $LDLIBS"
 
 
 #
@@ -16103,8 +16302,6 @@ $as_echo "$with_jp3d" >&6; }
 if test "$with_jp3d" = "yes" ; then
  jp3d_dir="jp3d"
 fi
-
-#
 
 #
 # Extract the first word of "doxygen", so it can be a program name with args.

@@ -36,8 +36,6 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
-@with_liblcms1_TRUE@am__append_1 = @lcms1includes@
-@with_liblcms2_TRUE@am__append_2 = @lcms2includes@
 subdir = libopenjpeg
 DIST_COMMON = $(include_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
@@ -72,10 +70,10 @@ am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
 am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(includedir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
-libopenjpeg_la_DEPENDENCIES =
+libopenjpeg_la_LIBADD =
 am__objects_1 = bio.lo cio.lo dwt.lo event.lo image.lo j2k.lo \
 	j2k_lib.lo jp2.lo jpt.lo mct.lo mqc.lo openjpeg.lo pi.lo \
-	raw.lo t1.lo t2.lo tcd.lo tgt.lo opj_convert.lo
+	raw.lo t1.lo t2.lo tcd.lo tgt.lo
 am__objects_2 =
 am_libopenjpeg_la_OBJECTS = $(am__objects_1) $(am__objects_2)
 libopenjpeg_la_OBJECTS = $(am_libopenjpeg_la_OBJECTS)
@@ -142,7 +140,6 @@ JP3D_MAJOR_NR = @JP3D_MAJOR_NR@
 JP3D_MINOR_NR = @JP3D_MINOR_NR@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
-LDLIBS = @LDLIBS@
 LIBOBJS = @LIBOBJS@
 LIBPNG_CONFIG = @LIBPNG_CONFIG@
 LIBS = @LIBS@
@@ -248,17 +245,16 @@ MINOR = @MINOR_NR@
 BUILD = @BUILD_NR@
 CURRENT = `expr $(MAJOR) + $(MINOR)`
 lib_LTLIBRARIES = libopenjpeg.la
-INCLUDES = -I.. -I. $(am__append_1) $(am__append_2)
+INCLUDES = -I.. -I.
 libopenjpeg_la_LDFLAGS = -no-undefined \
   -version-info $(CURRENT):$(BUILD):$(MINOR)
 
-libopenjpeg_la_LIBADD = @LDLIBS@ 
 SRCS = bio.c cio.c dwt.c event.c image.c j2k.c j2k_lib.c jp2.c jpt.c \
- mct.c mqc.c openjpeg.c pi.c raw.c t1.c t2.c tcd.c tgt.c opj_convert.c
+ mct.c mqc.c openjpeg.c pi.c raw.c t1.c t2.c tcd.c tgt.c
 
 INCLS = bio.h cio.h dwt.h event.h fix.h image.h int.h j2k.h j2k_lib.h \
  jp2.h jpt.h mct.h mqc.h pi.h raw.h t1.h t2.h tcd.h tgt.h opj_malloc.h \
- opj_convert.h opj_includes.h
+ opj_includes.h
 
 libopenjpeg_la_SOURCES = $(SRCS) $(INCLS)
 include_HEADERS = openjpeg.h
@@ -353,7 +349,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mct.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mqc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/openjpeg.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/opj_convert.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pi.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/raw.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/t1.Plo@am__quote@

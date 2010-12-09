@@ -78,12 +78,11 @@ am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
 am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
-libopenjpeg_JPWL_la_DEPENDENCIES =
+libopenjpeg_JPWL_la_LIBADD =
 am__objects_1 = crc.lo jpwl.lo jpwl_lib.lo rs.lo
 am__objects_2 = bio.lo cio.lo dwt.lo event.lo image.lo j2k.lo \
 	j2k_lib.lo jp2.lo jpt.lo mct.lo mqc.lo openjpeg.lo pi.lo \
-	raw.lo t1.lo t2.lo tcd.lo tgt.lo opj_convert.lo \
-	$(am__objects_1)
+	raw.lo t1.lo t2.lo tcd.lo tgt.lo $(am__objects_1)
 am__objects_3 =
 am__objects_4 = $(am__objects_3)
 am_libopenjpeg_JPWL_la_OBJECTS = $(am__objects_2) $(am__objects_4)
@@ -110,6 +109,7 @@ JPWL_image_to_j2k_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
 am_JPWL_j2k_to_image_OBJECTS = JPWL_j2k_to_image-getopt.$(OBJEXT) \
 	JPWL_j2k_to_image-index.$(OBJEXT) \
 	JPWL_j2k_to_image-convert.$(OBJEXT) \
+	JPWL_j2k_to_image-color.$(OBJEXT) \
 	JPWL_j2k_to_image-j2k_to_image.$(OBJEXT)
 JPWL_j2k_to_image_OBJECTS = $(am_JPWL_j2k_to_image_OBJECTS)
 JPWL_j2k_to_image_LDADD = $(LDADD)
@@ -180,7 +180,6 @@ JP3D_MAJOR_NR = @JP3D_MAJOR_NR@
 JP3D_MINOR_NR = @JP3D_MINOR_NR@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
-LDLIBS = @LDLIBS@
 LIBOBJS = @LIBOBJS@
 LIBPNG_CONFIG = @LIBPNG_CONFIG@
 LIBS = @LIBS@
@@ -297,7 +296,7 @@ SRCS = ../libopenjpeg/bio.c ../libopenjpeg/cio.c ../libopenjpeg/dwt.c \
   ../libopenjpeg/mct.c ../libopenjpeg/mqc.c ../libopenjpeg/openjpeg.c \
   ../libopenjpeg/pi.c ../libopenjpeg/raw.c ../libopenjpeg/t1.c \
   ../libopenjpeg/t2.c ../libopenjpeg/tcd.c ../libopenjpeg/tgt.c \
-  ../libopenjpeg/opj_convert.c $(JPWL_SRCS)
+  $(JPWL_SRCS)
 
 INCLS = ../libopenjpeg/bio.h ../libopenjpeg/cio.h ../libopenjpeg/dwt.h \
   ../libopenjpeg/event.h ../libopenjpeg/fix.h ../libopenjpeg/image.h \
@@ -306,26 +305,25 @@ INCLS = ../libopenjpeg/bio.h ../libopenjpeg/cio.h ../libopenjpeg/dwt.h \
   ../libopenjpeg/mqc.h ../libopenjpeg/openjpeg.h ../libopenjpeg/pi.h \
   ../libopenjpeg/raw.h ../libopenjpeg/t1.h ../libopenjpeg/t2.h \
   ../libopenjpeg/tcd.h ../libopenjpeg/tgt.h ../libopenjpeg/opj_malloc.h \
-  ../libopenjpeg/opj_convert.h ../libopenjpeg/opj_includes.h \
+  ../libopenjpeg/opj_includes.h \
   $(JPWL_INCLS)
 
 libopenjpeg_JPWL_la_SOURCES = $(SRCS) $(INCLS)
-libopenjpeg_JPWL_la_LIBADD = @LDLIBS@
 
 # Converts cr/lf to just lf
 DOS2UNIX = dos2unix
 COMPILERFLAGS = -Wall -ffast-math -std=c99
-USERLIBS = -lm $(am__append_2) $(am__append_4) $(am__append_6) \
-	$(am__append_8)
-INCLUDES = -I.. -I. -I../libopenjpeg $(am__append_1) $(am__append_3) \
-	$(am__append_5) $(am__append_7)
+USERLIBS = $(am__append_2) $(am__append_4) $(am__append_6) \
+	$(am__append_8) -lm
+INCLUDES = -I.. -I. -I../libopenjpeg -I../common $(am__append_1) \
+	$(am__append_3) $(am__append_5) $(am__append_7)
 JPWL_j2k_to_image_CFLAGS = $(COMPILERFLAGS) $(INCLUDES) -DUSE_JPWL -static
 JPWL_image_to_j2k_CFLAGS = $(COMPILERFLAGS) $(INCLUDES) -DUSE_JPWL -static
 LDADD = ./libopenjpeg_JPWL.la $(USERLIBS)
-JPWL_j2k_to_image_SOURCES = ../codec/compat/getopt.c ../codec/index.c \
-	../codec/convert.c ../codec/j2k_to_image.c
+JPWL_j2k_to_image_SOURCES = ../common/getopt.c ../codec/index.c \
+	../codec/convert.c ../common/color.c ../codec/j2k_to_image.c
 
-JPWL_image_to_j2k_SOURCES = ../codec/compat/getopt.c ../codec/index.c \
+JPWL_image_to_j2k_SOURCES = ../common/getopt.c ../codec/index.c \
 	../codec/convert.c ../codec/image_to_j2k.c 
 
 REPBIN = $(bin_PROGRAMS)
@@ -456,6 +454,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/JPWL_image_to_j2k-getopt.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/JPWL_image_to_j2k-image_to_j2k.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/JPWL_image_to_j2k-index.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/JPWL_j2k_to_image-color.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/JPWL_j2k_to_image-convert.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/JPWL_j2k_to_image-getopt.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/JPWL_j2k_to_image-index.Po@am__quote@
@@ -475,7 +474,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mct.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mqc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/openjpeg.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/opj_convert.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pi.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/raw.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rs.Plo@am__quote@
@@ -631,26 +629,19 @@ tgt.lo: ../libopenjpeg/tgt.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o tgt.lo `test -f '../libopenjpeg/tgt.c' || echo '$(srcdir)/'`../libopenjpeg/tgt.c
 
-opj_convert.lo: ../libopenjpeg/opj_convert.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT opj_convert.lo -MD -MP -MF $(DEPDIR)/opj_convert.Tpo -c -o opj_convert.lo `test -f '../libopenjpeg/opj_convert.c' || echo '$(srcdir)/'`../libopenjpeg/opj_convert.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/opj_convert.Tpo $(DEPDIR)/opj_convert.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../libopenjpeg/opj_convert.c' object='opj_convert.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o opj_convert.lo `test -f '../libopenjpeg/opj_convert.c' || echo '$(srcdir)/'`../libopenjpeg/opj_convert.c
-
-JPWL_image_to_j2k-getopt.o: ../codec/compat/getopt.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(JPWL_image_to_j2k_CFLAGS) $(CFLAGS) -MT JPWL_image_to_j2k-getopt.o -MD -MP -MF $(DEPDIR)/JPWL_image_to_j2k-getopt.Tpo -c -o JPWL_image_to_j2k-getopt.o `test -f '../codec/compat/getopt.c' || echo '$(srcdir)/'`../codec/compat/getopt.c
+JPWL_image_to_j2k-getopt.o: ../common/getopt.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(JPWL_image_to_j2k_CFLAGS) $(CFLAGS) -MT JPWL_image_to_j2k-getopt.o -MD -MP -MF $(DEPDIR)/JPWL_image_to_j2k-getopt.Tpo -c -o JPWL_image_to_j2k-getopt.o `test -f '../common/getopt.c' || echo '$(srcdir)/'`../common/getopt.c
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/JPWL_image_to_j2k-getopt.Tpo $(DEPDIR)/JPWL_image_to_j2k-getopt.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../codec/compat/getopt.c' object='JPWL_image_to_j2k-getopt.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../common/getopt.c' object='JPWL_image_to_j2k-getopt.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(JPWL_image_to_j2k_CFLAGS) $(CFLAGS) -c -o JPWL_image_to_j2k-getopt.o `test -f '../codec/compat/getopt.c' || echo '$(srcdir)/'`../codec/compat/getopt.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(JPWL_image_to_j2k_CFLAGS) $(CFLAGS) -c -o JPWL_image_to_j2k-getopt.o `test -f '../common/getopt.c' || echo '$(srcdir)/'`../common/getopt.c
 
-JPWL_image_to_j2k-getopt.obj: ../codec/compat/getopt.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(JPWL_image_to_j2k_CFLAGS) $(CFLAGS) -MT JPWL_image_to_j2k-getopt.obj -MD -MP -MF $(DEPDIR)/JPWL_image_to_j2k-getopt.Tpo -c -o JPWL_image_to_j2k-getopt.obj `if test -f '../codec/compat/getopt.c'; then $(CYGPATH_W) '../codec/compat/getopt.c'; else $(CYGPATH_W) '$(srcdir)/../codec/compat/getopt.c'; fi`
+JPWL_image_to_j2k-getopt.obj: ../common/getopt.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(JPWL_image_to_j2k_CFLAGS) $(CFLAGS) -MT JPWL_image_to_j2k-getopt.obj -MD -MP -MF $(DEPDIR)/JPWL_image_to_j2k-getopt.Tpo -c -o JPWL_image_to_j2k-getopt.obj `if test -f '../common/getopt.c'; then $(CYGPATH_W) '../common/getopt.c'; else $(CYGPATH_W) '$(srcdir)/../common/getopt.c'; fi`
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/JPWL_image_to_j2k-getopt.Tpo $(DEPDIR)/JPWL_image_to_j2k-getopt.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../codec/compat/getopt.c' object='JPWL_image_to_j2k-getopt.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../common/getopt.c' object='JPWL_image_to_j2k-getopt.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(JPWL_image_to_j2k_CFLAGS) $(CFLAGS) -c -o JPWL_image_to_j2k-getopt.obj `if test -f '../codec/compat/getopt.c'; then $(CYGPATH_W) '../codec/compat/getopt.c'; else $(CYGPATH_W) '$(srcdir)/../codec/compat/getopt.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(JPWL_image_to_j2k_CFLAGS) $(CFLAGS) -c -o JPWL_image_to_j2k-getopt.obj `if test -f '../common/getopt.c'; then $(CYGPATH_W) '../common/getopt.c'; else $(CYGPATH_W) '$(srcdir)/../common/getopt.c'; fi`
 
 JPWL_image_to_j2k-index.o: ../codec/index.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(JPWL_image_to_j2k_CFLAGS) $(CFLAGS) -MT JPWL_image_to_j2k-index.o -MD -MP -MF $(DEPDIR)/JPWL_image_to_j2k-index.Tpo -c -o JPWL_image_to_j2k-index.o `test -f '../codec/index.c' || echo '$(srcdir)/'`../codec/index.c
@@ -694,19 +685,19 @@ JPWL_image_to_j2k-image_to_j2k.obj: ../codec/image_to_j2k.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(JPWL_image_to_j2k_CFLAGS) $(CFLAGS) -c -o JPWL_image_to_j2k-image_to_j2k.obj `if test -f '../codec/image_to_j2k.c'; then $(CYGPATH_W) '../codec/image_to_j2k.c'; else $(CYGPATH_W) '$(srcdir)/../codec/image_to_j2k.c'; fi`
 
-JPWL_j2k_to_image-getopt.o: ../codec/compat/getopt.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(JPWL_j2k_to_image_CFLAGS) $(CFLAGS) -MT JPWL_j2k_to_image-getopt.o -MD -MP -MF $(DEPDIR)/JPWL_j2k_to_image-getopt.Tpo -c -o JPWL_j2k_to_image-getopt.o `test -f '../codec/compat/getopt.c' || echo '$(srcdir)/'`../codec/compat/getopt.c
+JPWL_j2k_to_image-getopt.o: ../common/getopt.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(JPWL_j2k_to_image_CFLAGS) $(CFLAGS) -MT JPWL_j2k_to_image-getopt.o -MD -MP -MF $(DEPDIR)/JPWL_j2k_to_image-getopt.Tpo -c -o JPWL_j2k_to_image-getopt.o `test -f '../common/getopt.c' || echo '$(srcdir)/'`../common/getopt.c
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/JPWL_j2k_to_image-getopt.Tpo $(DEPDIR)/JPWL_j2k_to_image-getopt.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../codec/compat/getopt.c' object='JPWL_j2k_to_image-getopt.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../common/getopt.c' object='JPWL_j2k_to_image-getopt.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(JPWL_j2k_to_image_CFLAGS) $(CFLAGS) -c -o JPWL_j2k_to_image-getopt.o `test -f '../codec/compat/getopt.c' || echo '$(srcdir)/'`../codec/compat/getopt.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(JPWL_j2k_to_image_CFLAGS) $(CFLAGS) -c -o JPWL_j2k_to_image-getopt.o `test -f '../common/getopt.c' || echo '$(srcdir)/'`../common/getopt.c
 
-JPWL_j2k_to_image-getopt.obj: ../codec/compat/getopt.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(JPWL_j2k_to_image_CFLAGS) $(CFLAGS) -MT JPWL_j2k_to_image-getopt.obj -MD -MP -MF $(DEPDIR)/JPWL_j2k_to_image-getopt.Tpo -c -o JPWL_j2k_to_image-getopt.obj `if test -f '../codec/compat/getopt.c'; then $(CYGPATH_W) '../codec/compat/getopt.c'; else $(CYGPATH_W) '$(srcdir)/../codec/compat/getopt.c'; fi`
+JPWL_j2k_to_image-getopt.obj: ../common/getopt.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(JPWL_j2k_to_image_CFLAGS) $(CFLAGS) -MT JPWL_j2k_to_image-getopt.obj -MD -MP -MF $(DEPDIR)/JPWL_j2k_to_image-getopt.Tpo -c -o JPWL_j2k_to_image-getopt.obj `if test -f '../common/getopt.c'; then $(CYGPATH_W) '../common/getopt.c'; else $(CYGPATH_W) '$(srcdir)/../common/getopt.c'; fi`
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/JPWL_j2k_to_image-getopt.Tpo $(DEPDIR)/JPWL_j2k_to_image-getopt.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../codec/compat/getopt.c' object='JPWL_j2k_to_image-getopt.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../common/getopt.c' object='JPWL_j2k_to_image-getopt.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(JPWL_j2k_to_image_CFLAGS) $(CFLAGS) -c -o JPWL_j2k_to_image-getopt.obj `if test -f '../codec/compat/getopt.c'; then $(CYGPATH_W) '../codec/compat/getopt.c'; else $(CYGPATH_W) '$(srcdir)/../codec/compat/getopt.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(JPWL_j2k_to_image_CFLAGS) $(CFLAGS) -c -o JPWL_j2k_to_image-getopt.obj `if test -f '../common/getopt.c'; then $(CYGPATH_W) '../common/getopt.c'; else $(CYGPATH_W) '$(srcdir)/../common/getopt.c'; fi`
 
 JPWL_j2k_to_image-index.o: ../codec/index.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(JPWL_j2k_to_image_CFLAGS) $(CFLAGS) -MT JPWL_j2k_to_image-index.o -MD -MP -MF $(DEPDIR)/JPWL_j2k_to_image-index.Tpo -c -o JPWL_j2k_to_image-index.o `test -f '../codec/index.c' || echo '$(srcdir)/'`../codec/index.c
@@ -735,6 +726,20 @@ JPWL_j2k_to_image-convert.obj: ../codec/convert.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../codec/convert.c' object='JPWL_j2k_to_image-convert.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(JPWL_j2k_to_image_CFLAGS) $(CFLAGS) -c -o JPWL_j2k_to_image-convert.obj `if test -f '../codec/convert.c'; then $(CYGPATH_W) '../codec/convert.c'; else $(CYGPATH_W) '$(srcdir)/../codec/convert.c'; fi`
+
+JPWL_j2k_to_image-color.o: ../common/color.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(JPWL_j2k_to_image_CFLAGS) $(CFLAGS) -MT JPWL_j2k_to_image-color.o -MD -MP -MF $(DEPDIR)/JPWL_j2k_to_image-color.Tpo -c -o JPWL_j2k_to_image-color.o `test -f '../common/color.c' || echo '$(srcdir)/'`../common/color.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/JPWL_j2k_to_image-color.Tpo $(DEPDIR)/JPWL_j2k_to_image-color.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../common/color.c' object='JPWL_j2k_to_image-color.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(JPWL_j2k_to_image_CFLAGS) $(CFLAGS) -c -o JPWL_j2k_to_image-color.o `test -f '../common/color.c' || echo '$(srcdir)/'`../common/color.c
+
+JPWL_j2k_to_image-color.obj: ../common/color.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(JPWL_j2k_to_image_CFLAGS) $(CFLAGS) -MT JPWL_j2k_to_image-color.obj -MD -MP -MF $(DEPDIR)/JPWL_j2k_to_image-color.Tpo -c -o JPWL_j2k_to_image-color.obj `if test -f '../common/color.c'; then $(CYGPATH_W) '../common/color.c'; else $(CYGPATH_W) '$(srcdir)/../common/color.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/JPWL_j2k_to_image-color.Tpo $(DEPDIR)/JPWL_j2k_to_image-color.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../common/color.c' object='JPWL_j2k_to_image-color.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(JPWL_j2k_to_image_CFLAGS) $(CFLAGS) -c -o JPWL_j2k_to_image-color.obj `if test -f '../common/color.c'; then $(CYGPATH_W) '../common/color.c'; else $(CYGPATH_W) '$(srcdir)/../common/color.c'; fi`
 
 JPWL_j2k_to_image-j2k_to_image.o: ../codec/j2k_to_image.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(JPWL_j2k_to_image_CFLAGS) $(CFLAGS) -MT JPWL_j2k_to_image-j2k_to_image.o -MD -MP -MF $(DEPDIR)/JPWL_j2k_to_image-j2k_to_image.Tpo -c -o JPWL_j2k_to_image-j2k_to_image.o `test -f '../codec/j2k_to_image.c' || echo '$(srcdir)/'`../codec/j2k_to_image.c

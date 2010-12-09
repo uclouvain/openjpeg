@@ -73,7 +73,7 @@ j2k_dump_LDADD = $(LDADD)
 j2k_dump_DEPENDENCIES = $(am__DEPENDENCIES_2) \
 	../libopenjpeg/libopenjpeg.la
 am_j2k_to_image_OBJECTS = getopt.$(OBJEXT) index.$(OBJEXT) \
-	convert.$(OBJEXT) j2k_to_image.$(OBJEXT)
+	convert.$(OBJEXT) color.$(OBJEXT) j2k_to_image.$(OBJEXT)
 j2k_to_image_OBJECTS = $(am_j2k_to_image_OBJECTS)
 j2k_to_image_LDADD = $(LDADD)
 j2k_to_image_DEPENDENCIES = $(am__DEPENDENCIES_2) \
@@ -139,7 +139,6 @@ JP3D_MAJOR_NR = @JP3D_MAJOR_NR@
 JP3D_MINOR_NR = @JP3D_MINOR_NR@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
-LDLIBS = @LDLIBS@
 LIBOBJS = @LIBOBJS@
 LIBPNG_CONFIG = @LIBPNG_CONFIG@
 LIBS = @LIBS@
@@ -243,12 +242,14 @@ with_doxygen = @with_doxygen@
 COMPILERFLAGS = -Wall -static
 USERLIBS = -lm $(am__append_2) $(am__append_4) $(am__append_6) \
 	$(am__append_8)
-INCLUDES = -I.. -I. -I../libopenjpeg $(am__append_1) $(am__append_3) \
-	$(am__append_5) $(am__append_7)
+INCLUDES = -I.. -I. -I../libopenjpeg -I../common $(am__append_1) \
+	$(am__append_3) $(am__append_5) $(am__append_7)
 LDADD = $(USERLIBS) ../libopenjpeg/libopenjpeg.la
-j2k_to_image_SOURCES = compat/getopt.c index.c convert.c j2k_to_image.c
-image_to_j2k_SOURCES = compat/getopt.c index.c convert.c image_to_j2k.c
-j2k_dump_SOURCES = compat/getopt.c index.c j2k_dump.c
+j2k_to_image_SOURCES = ../common/getopt.c index.c convert.c \
+	../common/color.c j2k_to_image.c
+
+image_to_j2k_SOURCES = ../common/getopt.c index.c convert.c image_to_j2k.c
+j2k_dump_SOURCES = ../common/getopt.c index.c j2k_dump.c
 REPBIN = $(bin_PROGRAMS)
 all: all-am
 
@@ -343,6 +344,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/color.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/convert.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getopt.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/image_to_j2k.Po@am__quote@
@@ -371,19 +373,33 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
-getopt.o: compat/getopt.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT getopt.o -MD -MP -MF $(DEPDIR)/getopt.Tpo -c -o getopt.o `test -f 'compat/getopt.c' || echo '$(srcdir)/'`compat/getopt.c
+getopt.o: ../common/getopt.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT getopt.o -MD -MP -MF $(DEPDIR)/getopt.Tpo -c -o getopt.o `test -f '../common/getopt.c' || echo '$(srcdir)/'`../common/getopt.c
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/getopt.Tpo $(DEPDIR)/getopt.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='compat/getopt.c' object='getopt.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../common/getopt.c' object='getopt.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o getopt.o `test -f 'compat/getopt.c' || echo '$(srcdir)/'`compat/getopt.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o getopt.o `test -f '../common/getopt.c' || echo '$(srcdir)/'`../common/getopt.c
 
-getopt.obj: compat/getopt.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT getopt.obj -MD -MP -MF $(DEPDIR)/getopt.Tpo -c -o getopt.obj `if test -f 'compat/getopt.c'; then $(CYGPATH_W) 'compat/getopt.c'; else $(CYGPATH_W) '$(srcdir)/compat/getopt.c'; fi`
+getopt.obj: ../common/getopt.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT getopt.obj -MD -MP -MF $(DEPDIR)/getopt.Tpo -c -o getopt.obj `if test -f '../common/getopt.c'; then $(CYGPATH_W) '../common/getopt.c'; else $(CYGPATH_W) '$(srcdir)/../common/getopt.c'; fi`
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/getopt.Tpo $(DEPDIR)/getopt.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='compat/getopt.c' object='getopt.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../common/getopt.c' object='getopt.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o getopt.obj `if test -f 'compat/getopt.c'; then $(CYGPATH_W) 'compat/getopt.c'; else $(CYGPATH_W) '$(srcdir)/compat/getopt.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o getopt.obj `if test -f '../common/getopt.c'; then $(CYGPATH_W) '../common/getopt.c'; else $(CYGPATH_W) '$(srcdir)/../common/getopt.c'; fi`
+
+color.o: ../common/color.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT color.o -MD -MP -MF $(DEPDIR)/color.Tpo -c -o color.o `test -f '../common/color.c' || echo '$(srcdir)/'`../common/color.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/color.Tpo $(DEPDIR)/color.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../common/color.c' object='color.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o color.o `test -f '../common/color.c' || echo '$(srcdir)/'`../common/color.c
+
+color.obj: ../common/color.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT color.obj -MD -MP -MF $(DEPDIR)/color.Tpo -c -o color.obj `if test -f '../common/color.c'; then $(CYGPATH_W) '../common/color.c'; else $(CYGPATH_W) '$(srcdir)/../common/color.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/color.Tpo $(DEPDIR)/color.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../common/color.c' object='color.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o color.obj `if test -f '../common/color.c'; then $(CYGPATH_W) '../common/color.c'; else $(CYGPATH_W) '$(srcdir)/../common/color.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
