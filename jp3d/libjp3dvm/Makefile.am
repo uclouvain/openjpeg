@@ -19,7 +19,7 @@ INCLS = t1_3d.h bio.h cio.h  dwt.h event.h fix.h int.h jp3d.h jp3d_lib.h \
 libopenjp3dvm_la_SOURCES = $(SRCS) $(INCLS)
 
 includedir = ${prefix}/include/openjpeg3d-$(MAJOR).$(MINOR)
-include_HEADERS = openjpeg.h
+include_HEADERS = openjpeg3d.h
 
 # Converts cr/lf to just lf
 DOS2UNIX = dos2unix
@@ -56,7 +56,7 @@ all-local:
 
 install-data-hook:
 	(cd $(DESTDIR)${prefix}/include && rm -f openjpeg3d.h)
-	(cd ${prefix}/include/${headerdir} && mv openjpeg.h openjpeg3d.h) 
+	(cd ${prefix}/include/${headerdir} && mv openjpeg3d.h openjpeg3d.h) 
 	(cd $(DESTDIR)${prefix}/include && \
 	$(LN_S) ${headerdir}/openjpeg3d.h openjpeg3d.h)
 

@@ -46,7 +46,7 @@
 				Name="VCPostBuildEventTool"
 				CommandLine="if not exist bin mkdir bin
 copy Release\LibJp3dVM.lib bin
-copy libjp3dvm\openjpeg.h bin
+copy libjp3dvm\openjpeg3d.h bin
 "/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -98,7 +98,7 @@ copy libjp3dvm\openjpeg.h bin
 				Name="VCPostBuildEventTool"
 				CommandLine="if not exist bin mkdir bin
 copy Debug\LibJp3dVM.lib bin
-copy libjp3dvm\openjpeg.h bin
+copy libjp3dvm\openjpeg3d.h bin
 "/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -213,7 +213,7 @@ copy libjp3dvm\openjpeg.h bin
 				RelativePath=".\libjp3dvm\mqc.h">
 			</File>
 			<File
-				RelativePath=".\libjp3dvm\openjpeg.h">
+				RelativePath=".\libjp3dvm\openjpeg3d.h">
 			</File>
 			<File
 				RelativePath=".\libjp3dvm\opj_includes.h">

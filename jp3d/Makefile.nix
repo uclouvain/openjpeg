@@ -15,7 +15,7 @@ INCLS = ./libjp3dvm/t1_3d.h ./libjp3dvm/bio.h ./libjp3dvm/cio.h \
   ./libjp3dvm/dwt.h ./libjp3dvm/event.h ./libjp3dvm/fix.h \
   ./libjp3dvm/int.h ./libjp3dvm/jp3d.h ./libjp3dvm/jp3d_lib.h \
   ./libjp3dvm/volume.h ./libjp3dvm/mct.h ./libjp3dvm/mqc.h \
-  ./libjp3dvm/openjpeg.h ./libjp3dvm/pi.h ./libjp3dvm/raw.h \
+  ./libjp3dvm/openjpeg3d.h ./libjp3dvm/pi.h ./libjp3dvm/raw.h \
   ./libjp3dvm/t1.h  ./libjp3dvm/t2.h ./libjp3dvm/tcd.h \
   ./libjp3dvm/tgt.h ./libjp3dvm/opj_includes.h
 
@@ -83,8 +83,8 @@ ifeq ($(ENABLE_SHARED),yes)
 endif
 	$(LDCONFIG)
 	install -d $(DESTDIR)$(INSTALL_INCLUDE)
-	rm -f $(DESTDIR)$(INSTALL_INCLUDE)/openjpeg.h
-	install -m 644 -o root -g root libjp3dvm/openjpeg.h \
+	rm -f $(DESTDIR)$(INSTALL_INCLUDE)/openjpeg3d.h
+	install -m 644 -o root -g root libjp3dvm/openjpeg3d.h \
 	$(DESTDIR)$(INSTALL_INCLUDE)/openjpeg3d.h
 	(cd $(DESTDIR)$(prefix)/include && \
 	ln -sf $(headerdir)/openjpeg3d.h openjpeg3d.h)

@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 December 9, 2010
+! [antonin] renamed jp3d/libjp3dvm/openjpeg.h => jp3d/libjp3dvm/openjpeg3d.h
 - [antonin] removed "codec/compat/" directory
 * [szukw000] updated Makefile.in
 ! [szukw000] removed LCMS dependencies from Makefile.am/Makefile.nix
