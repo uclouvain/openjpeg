@@ -31,7 +31,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../libjp3dvm/openjpeg.h"
+#include "../libjp3dvm/openjpeg3d.h"
 #ifdef _WIN32
 #include "windirent.h"
 #else

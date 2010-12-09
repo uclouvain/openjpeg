@@ -39,7 +39,7 @@ The functions in EVENT.C have for goal to send output messages (errors, warnings
 /** @defgroup EVENT EVENT - Implementation of a event callback system */
 /*@{*/
 
-/** @name Funciones generales (see also openjpeg.h) */
+/** @name Funciones generales (see also openjpeg3d.h) */
 /*@{*/
 /* ----------------------------------------------------------------------- */
 /**

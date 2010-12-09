@@ -57,7 +57,7 @@ LINK32=link.exe
 # ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /machine:I386 /out:"Release/OpenJPEG.dll"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=if not exist dist mkdir dist	copy libopenjpeg\openjpeg.h dist	copy Release\OpenJPEG.dll dist	copy Release\OpenJPEG.lib dist
+PostBuild_Cmds=if not exist dist mkdir dist	copy libopenjpeg\openjpeg3d.h dist	copy Release\OpenJPEG.dll dist	copy Release\OpenJPEG.lib dist
 # End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "DllOpenJPEG - Win32 Debug"
@@ -88,7 +88,7 @@ LINK32=link.exe
 # ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /debug /machine:I386 /out:"Debug/OpenJPEGd.dll" /pdbtype:sept
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=if not exist dist mkdir dist	copy libopenjpeg\openjpeg.h dist	copy Debug\OpenJPEGd.dll dist	copy Debug\OpenJPEGd.lib dist
+PostBuild_Cmds=if not exist dist mkdir dist	copy libopenjpeg\openjpeg3d.h dist	copy Debug\OpenJPEGd.dll dist	copy Debug\OpenJPEGd.lib dist
 # End Special Build Tool
 
 !ENDIF 
@@ -230,7 +230,7 @@ SOURCE=.\libopenjpeg\mqc.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\libopenjpeg\openjpeg.h
+SOURCE=.\libopenjpeg\openjpeg3d.h
 # End Source File
 # Begin Source File
 
