@@ -10,8 +10,6 @@ INCLUDES = -I.. -I.
 libopenjpeg_la_LDFLAGS = -no-undefined \
   -version-info $(CURRENT):$(BUILD):$(MINOR)
 
-libopenjpeg_la_LIBADD = @LDLIBS@ 
-
 SRCS = bio.c cio.c dwt.c event.c image.c j2k.c j2k_lib.c jp2.c jpt.c \
  mct.c mqc.c openjpeg.c pi.c raw.c t1.c t2.c tcd.c tgt.c
 
@@ -31,14 +29,6 @@ dos2unix:
 	@$(DOS2UNIX) $(SRCS) $(INCLS)
 
 COMPILERFLAGS = -Wall -O3 -ffast-math -std=c99
-
-if with_liblcms1
-INCLUDES += @lcms1includes@
-endif
-
-if with_liblcms2
-INCLUDES += @lcms2includes@
-endif
 
 CFLAGS = $(COMPILERFLAGS) $(INCLUDES)
 

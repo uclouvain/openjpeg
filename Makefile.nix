@@ -30,16 +30,6 @@ INSTALL_INCLUDE = $(prefix)/include/$(headerdir)
 # Converts cr/lf to just lf
 DOS2UNIX = dos2unix
 
-ifeq ($(WITH_LCMS1),yes)
-INCLUDE += $(LCMS1_INCLUDE)
-LIBRARIES += $(LCMS1_LIB)
-endif
-
-ifeq ($(WITH_LCMS2),yes)
-INCLUDE += $(LCMS2_INCLUDE)
-LIBRARIES += $(LCMS2_LIB)
-endif
-
 MODULES = $(SRCS:.c=.o)
 
 CFLAGS = $(COMPILERFLAGS) $(INCLUDE)
@@ -84,7 +74,7 @@ $(STATICLIB): $(MODULES)
 
 ifeq ($(ENABLE_SHARED),yes)
 $(SHAREDLIB): $(MODULES)
-	$(CC) -s -shared -Wl,-soname,$(LIBNAME) -o $@ $(MODULES) $(LIBRARIES)
+	$(CC) -shared -Wl,-soname,$(LIBNAME) -o $@ $(MODULES) $(LIBRARIES)
 endif
 
 install: OpenJPEG

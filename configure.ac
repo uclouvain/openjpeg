@@ -60,11 +60,10 @@ AC_PROG_LIBTOOL
 #
 AC_C_BIGENDIAN
 #
-LDLIBS=""
-#
 LIB_MATH=""
 AC_CHECK_LIB(m,sqrt,LIB_MATH="-lm",,)
-LDLIBS=""
+LIB_Z=""
+AC_CHECK_LIB(z,inflate,LIB_Z="-lz",,)
 #
 AC_PATH_PROG([PKGCONFIG], [pkg-config])
 #
@@ -94,10 +93,15 @@ if test "x$with_libpng" = xyes ; then
   else
    if test -n "$PKGCONFIG" ; then
      pngincludes="`$PKGCONFIG --variable=includedir libpng`"
-   fi
-   if test -n "$pngincludes" ; then
-    pngheader="$pngincludes"
-    pngincludes="-I$pngincludes"
+     if test -n "$pngincludes" ; then
+      pngheader="$pngincludes"
+      pngincludes="-I$pngincludes"
+     fi
+   else
+     if test -n "$LIBPNG_CONFIG" ; then
+      pngincludes="`$LIBPNG_CONFIG --I_opts`"
+      pngheader="`$LIBPNG_CONFIG --I_opts | $SED 's/-I//'`"
+     fi
    fi
   fi
   if test -n "$pngheader" ; then
@@ -105,38 +109,33 @@ if test "x$with_libpng" = xyes ; then
   else
    pngheader="png.h"
   fi
+#
   AC_CHECK_HEADER($pngheader,png_header_found="yes",,)
-#last resort
-  if test "$png_header_found" = "no" ; then
-   pngincludes=""
-   pngheader=""
-   if test -n "$LIBPNG_CONFIG" ; then
-     pngincludes="`$LIBPNG_CONFIG --I_opts`"
-     pngheader="`$LIBPNG_CONFIG --I_opts | $SED 's/-I//'`"
-   fi
-   if test -n "$pngheader" ; then
-    pngheader="$pngheader/png.h"
-    AC_CHECK_HEADER($pngheader,png_header_found="yes",,)
-   fi
-  fi
 #
   AC_ARG_WITH(png_libraries,
  [  --with-png-libraries=DIR        PNG library in nonstandard DIR])
   if [[ -n "$with_png_libraries" ]] ; then
-   pnglibs="-L$with_png_libraries -lpng -lz $LIB_MATH"
+   pnglibs="-L$with_png_libraries -lpng $LIB_Z $LIB_MATH"
   else
     if test -n "$LIBPNG_CONFIG" ; then
-     pnglibs="`$LIBPNG_CONFIG --ldflags` -lz $LIB_MATH"
+     pnglibs="`$LIBPNG_CONFIG --ldflags` $LIB_Z $LIB_MATH"
     else
       if test -n "$PKGCONFIG" ; then
-        pnglibs="`$PKGCONFIG --libs libpng` $LIB_MATH"
+        pnglibs="`$PKGCONFIG --libs libpng` $LIB_Z $LIB_MATH"
       fi
     fi
   fi
+  savedLIBS="$LIBS"
+  LIBS="$pnglibs"
+#
+  AC_CHECK_LIB(png,png_read_png,,pnglibs="",)
+#
+  LIBS="$savedLIBS"
   if test -n "$pnglibs" ; then
     if test -n "$pngincludes" ; then
       with_libpng="yes"
       png_header_found="yes"
+      LIBS="$LIBS $pnglibs"
       AC_DEFINE(HAVE_LIBPNG, [1], [define to 1 if you have libpng])
     fi
   fi
@@ -144,7 +143,6 @@ fi
 #
 AC_MSG_RESULT(png is usable:$with_libpng)
 AM_CONDITIONAL([with_libpng], [test x$with_libpng = xyes])
-LDLIBS="$LDLIBS $pnglibs"
 AC_SUBST(pngincludes)
 AC_SUBST(pnglibs)
 # -------------------------------
@@ -161,14 +159,24 @@ AC_ARG_ENABLE(tiff,
 test "$enable_tiff" = "no"  && with_libtiff="no")
 #
 if test "x$with_libtiff" = xyes ; then
+#TIFF compiled with JPEG and JBIG support?
+ libjpeg=""
+ AC_CHECK_LIB(jpeg,jpeg_read_header,libjpeg=-ljpeg,,)
+ libjbig=""
+ AC_CHECK_LIB(jbig,jbg_enc_init,libjbig=-ljbig,,)
+ libjbig85=""
+ AC_CHECK_LIB(jbig85,jbg85_enc_init,libjbig85=-ljbig85,,)
 #standard path
  with_libtiff="no"
+ savedLIBS="$LIBS"
+ LIBS="-ltiff $libjpeg $libjbig $libjbig85 $LIB_Z $LIB_MATH"
  AC_CHECK_LIB(tiff, TIFFOpen, tifflibs=-ltiff)
+ LIBS="$savedLIBS"
  if test -n "$tifflibs" ; then
   AC_CHECK_HEADER(tiff.h,tiff_header_found="yes",,)
   if test "$tiff_header_found" = "yes" ; then 
    with_libtiff="yes"
-   LIBS="$LIBS -ltiff $LIB_MATH"
+   LIBS="$LIBS -ltiff $libjpeg $libjbig $libjbig85 $LIB_Z $LIB_MATH"
    AC_DEFINE(HAVE_LIBTIFF, [1], [define to 1 if you have libtiff])
   fi
  fi
@@ -208,7 +216,6 @@ fi
 #
 AC_MSG_RESULT(tiff is usable:$with_libtiff)
 AM_CONDITIONAL([with_libtiff], [test x$with_libtiff = xyes])
-LDLIBS="$tifflibs $LDLIBS"
 AC_SUBST(tiffincludes)
 AC_SUBST(tifflibs)
 # -------------------------------
@@ -292,7 +299,6 @@ fi
 #
 AC_MSG_RESULT(lcms2 is usable:$with_liblcms2)
 AM_CONDITIONAL([with_liblcms2], [test x$with_liblmcs2 = xyes])
-LDLIBS="$lcms2libs $LDLIBS"
 AC_SUBST(lcms2includes)
 AC_SUBST(lcms2libs)
 AC_MSG_RESULT(lcms2libs:$lcms2libs)
@@ -368,7 +374,6 @@ AC_MSG_RESULT(lcms is usable:$with_liblcms1)
 fi
 #
 AM_CONDITIONAL([with_liblcms1], [test x$with_liblcms1 = xyes])
-LDLIBS="$lcms1libs $LDLIBS"
 AC_SUBST(lcms1includes)
 AC_SUBST(lcms1libs)
 #
@@ -416,8 +421,6 @@ if test "$with_jp3d" = "yes" ; then
  jp3d_dir="jp3d"
 fi
 AC_SUBST(jp3d_dir)
-#
-AC_SUBST(LDLIBS)
 #
 AC_CHECK_PROG(with_doxygen, doxygen, [yes],[no],,)
 AM_CONDITIONAL([with_doxygen], [test x$with_doxygen = xyes])

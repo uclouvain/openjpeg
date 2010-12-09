@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+December 9, 2010
+! [szukw000] removed LCMS dependencies from Makefile.am/Makefile.nix
+
 December 8, 2010 
   (thanks to Winfried for his help)
 * [antonin] changed remaining "WIN32" to "_WIN32"

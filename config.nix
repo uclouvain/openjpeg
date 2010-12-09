@@ -20,15 +20,15 @@ ENABLE_SHARED = yes
 #==== HAVE YOU CREATED opj_config.h FROM opj_config.h.in.user ? ====
 #==== SHOULD BE IN SYNC WITH opj_config.h ====
 WITH_LCMS1 = no
-WITH_LCMS2 = yes
-WITH_PNG = yes
-WITH_TIFF = yes
+WITH_LCMS2 = no
+WITH_PNG = no
+WITH_TIFF = no
 #
 # Set to yes if you want compile/install 
 #    jpwl libraries/binaries
 #    jp3d libraries/binaries
-WITH_JPWL = yes
-WITH_JP3D = yes
+WITH_JPWL = no
+WITH_JP3D = no
 #
 #Set to yes if you have doxygen installed
 #Set to no if doxygen is missing.
@@ -43,6 +43,8 @@ TIFF_INCLUDE = -I/usr/include
 LCMS1_LIB = -L/usr/lib -llcms
 LCMS2_LIB = -L/usr/lib -llcms2
 PNG_LIB = -L/usr/lib -lpng -lz
-#tiff with jpeg support?
+#tiff with jpeg/jbig support?
+JBIG_LIB = -ljbig
+JBIG85_LIB = -ljbig85
 JPEG_LIB = -ljpeg
-TIFF_LIB = -L/usr/lib -ltiff $(JPEG_LIB)
+TIFF_LIB = -L/usr/lib -ltiff $(JPEG_LIB) $(JBIG_LIB) $(JBIG85_LIB)

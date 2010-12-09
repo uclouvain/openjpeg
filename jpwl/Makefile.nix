@@ -57,8 +57,6 @@ endif
 
 USERLIBS += -lm
 
-LIBRARIES += $(USERLIBS)
-
 MODULES = $(SRCS:.c=.o)
 
 CFLAGS = $(COMPILERFLAGS) $(INCLUDE) -DUSE_JPWL
@@ -97,7 +95,7 @@ $(STATICLIB): $(MODULES)
 
 ifeq ($(ENABLE_SHARED),yes)
 $(SHAREDLIB): $(MODULES)
-	$(CC) -s -shared -Wl,-soname,$(LIBNAME) -o $@ $(MODULES) $(LIBRARIES)
+	$(CC) -shared -Wl,-soname,$(LIBNAME) -o $@ $(MODULES) $(LIBRARIES)
 endif
 
 JPWL_j2k_to_image: ../codec/j2k_to_image.c

@@ -30,7 +30,6 @@ INCLS = ../libopenjpeg/bio.h ../libopenjpeg/cio.h ../libopenjpeg/dwt.h \
   $(JPWL_INCLS)
 
 libopenjpeg_JPWL_la_SOURCES = $(SRCS) $(INCLS)
-libopenjpeg_JPWL_la_LIBADD = @LDLIBS@
 
 # Converts cr/lf to just lf
 DOS2UNIX = dos2unix
