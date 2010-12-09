@@ -6,9 +6,8 @@ What's New for OpenJPEG
 + : added
 
 December 9, 2010
+- [antonin] removed "codec/compat/" directory
 * [szukw000] updated Makefile.in
-
-December 9, 2010
 ! [szukw000] removed LCMS dependencies from Makefile.am/Makefile.nix
 
 December 8, 2010 

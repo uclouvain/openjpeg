@@ -10,7 +10,7 @@ SET(common_SRCS
 IF(DONT_HAVE_GETOPT)
   SET(common_SRCS
     ${common_SRCS}
-    ../codec/compat/getopt.c
+    ../common/getopt.c
   )
 ENDIF(DONT_HAVE_GETOPT)
 
