@@ -10,10 +10,6 @@ SET(JP3DVM_SRCS
 bio.c  cio.c  dwt.c  event.c  jp3d.c  jp3d_lib.c  mct.c  mqc.c  openjpeg.c  pi.c  raw.c  t1.c  t1_3d.c  t2.c  tcd.c  tgt.c  volume.c
 )
 
-IF(LCMS_INCLUDE_DIR)
-  INCLUDE_DIRECTORIES( ${LCMS_INCLUDE_DIR} )
-ENDIF(LCMS_INCLUDE_DIR)
-
 # Build the library
 IF(WIN32)
   IF(BUILD_SHARED_LIBS)
@@ -27,9 +23,6 @@ SET_TARGET_PROPERTIES(${OPENJPEG_LIBRARY_NAME}_JP3D
   PROPERTIES
     VERSION   1.3.0
     SOVERSION 1)
-IF(LCMS_LIB)
-  TARGET_LINK_LIBRARIES(${OPENJPEG_LIBRARY_NAME}_JP3D ${LCMS_LIB})
-ENDIF(LCMS_LIB)
 
 # Install library
 INSTALL(TARGETS ${OPENJPEG_LIBRARY_NAME}_JP3D

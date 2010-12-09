@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 December 9, 2010
+! [antonin] removed LCMS dependency in jp3d/libjp3dvm/CMakeLists.txt
 ! [antonin] updated xcode project
 ! [antonin] renamed jp3d/libjp3dvm/openjpeg.h => jp3d/libjp3dvm/openjpeg3d.h
 - [antonin] removed "codec/compat/" directory
