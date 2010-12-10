@@ -751,6 +751,8 @@ with_doxygen_FALSE
 with_doxygen_TRUE
 with_doxygen
 jp3d_dir
+with_staticlibs_FALSE
+with_staticlibs_TRUE
 with_sharedlibs_FALSE
 with_sharedlibs_TRUE
 jpwl_dir
@@ -1571,6 +1573,7 @@ Optional Features:
   --enable-lcms1=[yes|no]        Build with LCMS-1 support  [default=yes]
   --enable-jpwl=[yes|no]         Build with JPWL support  [default=no]
   --enable-shared=[yes|no]       Build shared libs  [default=yes]
+  --enable-static=[yes|no]       Build static libs  [default=no]
   --enable-jp3d=[yes|no]         Build jp3d libs  [default=no]
 
 Optional Packages:
@@ -4922,37 +4925,6 @@ fi
 
 
 
-# Check whether --enable-static was given.
-if test "${enable_static+set}" = set; then :
-  enableval=$enable_static; p=${PACKAGE-default}
-    case $enableval in
-    yes) enable_static=yes ;;
-    no) enable_static=no ;;
-    *)
-     enable_static=no
-      # Look at the argument we got.  We use all the common list separators.
-      lt_save_ifs="$IFS"; IFS="${IFS}$PATH_SEPARATOR,"
-      for pkg in $enableval; do
-	IFS="$lt_save_ifs"
-	if test "X$pkg" = "X$p"; then
-	  enable_static=yes
-	fi
-      done
-      IFS="$lt_save_ifs"
-      ;;
-    esac
-else
-  enable_static=yes
-fi
-
-
-
-
-
-
-
-
-
 enable_win32_dll=yes
 
 case $host in
@@ -5866,13 +5838,13 @@ if test "${lt_cv_nm_interface+set}" = set; then :
 else
   lt_cv_nm_interface="BSD nm"
   echo "int some_variable = 0;" > conftest.$ac_ext
-  (eval echo "\"\$as_me:5869: $ac_compile\"" >&5)
+  (eval echo "\"\$as_me:5841: $ac_compile\"" >&5)
   (eval "$ac_compile" 2>conftest.err)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:5872: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
+  (eval echo "\"\$as_me:5844: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
   (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:5875: output\"" >&5)
+  (eval echo "\"\$as_me:5847: output\"" >&5)
   cat conftest.out >&5
   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
     lt_cv_nm_interface="MS dumpbin"
@@ -7063,7 +7035,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 7066 "configure"' > conftest.$ac_ext
+  echo '#line 7038 "configure"' > conftest.$ac_ext
   if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_compile\""; } >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -8629,6 +8601,36 @@ fi
 
 
 
+  # Check whether --enable-static was given.
+if test "${enable_static+set}" = set; then :
+  enableval=$enable_static; p=${PACKAGE-default}
+    case $enableval in
+    yes) enable_static=yes ;;
+    no) enable_static=no ;;
+    *)
+     enable_static=no
+      # Look at the argument we got.  We use all the common list separators.
+      lt_save_ifs="$IFS"; IFS="${IFS}$PATH_SEPARATOR,"
+      for pkg in $enableval; do
+	IFS="$lt_save_ifs"
+	if test "X$pkg" = "X$p"; then
+	  enable_static=yes
+	fi
+      done
+      IFS="$lt_save_ifs"
+      ;;
+    esac
+else
+  enable_static=yes
+fi
+
+
+
+
+
+
+
+
 
 
 # Check whether --with-pic was given.
@@ -9054,11 +9056,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:9057: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:9059: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:9061: \$? = $ac_status" >&5
+   echo "$as_me:9063: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -9393,11 +9395,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:9396: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:9398: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:9400: \$? = $ac_status" >&5
+   echo "$as_me:9402: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -9498,11 +9500,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:9501: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:9503: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:9505: \$? = $ac_status" >&5
+   echo "$as_me:9507: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -9553,11 +9555,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:9556: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:9558: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:9560: \$? = $ac_status" >&5
+   echo "$as_me:9562: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -11920,7 +11922,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 11923 "configure"
+#line 11925 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -12016,7 +12018,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 12019 "configure"
+#line 12021 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -13972,11 +13974,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:13975: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:13977: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:13979: \$? = $ac_status" >&5
+   echo "$as_me:13981: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -14071,11 +14073,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:14074: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:14076: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:14078: \$? = $ac_status" >&5
+   echo "$as_me:14080: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -14123,11 +14125,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:14126: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:14128: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:14130: \$? = $ac_status" >&5
+   echo "$as_me:14132: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -15384,6 +15386,8 @@ if test "x$ac_cv_lib_z_inflate" = x""yes; then :
 fi
 
 #
+LIBS="$LIBS $LIB_MATH $LIB_Z"
+#
 # Extract the first word of "pkg-config", so it can be a program name with args.
 set dummy pkg-config; ac_word=$2
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
@@ -15530,18 +15534,18 @@ if test "${with_png_libraries+set}" = set; then :
 fi
 
   if [ -n "$with_png_libraries" ] ; then
-   pnglibs="-L$with_png_libraries -lpng $LIB_Z $LIB_MATH"
+   pnglibs="-L$with_png_libraries -lpng"
   else
     if test -n "$LIBPNG_CONFIG" ; then
-     pnglibs="`$LIBPNG_CONFIG --ldflags` $LIB_Z $LIB_MATH"
+     pnglibs="`$LIBPNG_CONFIG --ldflags`"
     else
       if test -n "$PKGCONFIG" ; then
-        pnglibs="`$PKGCONFIG --libs libpng` $LIB_Z $LIB_MATH"
+        pnglibs="`$PKGCONFIG --libs libpng`"
       fi
     fi
   fi
   savedLIBS="$LIBS"
-  LIBS="$pnglibs"
+  LIBS="$pnglibs $LIB_Z $LIB_MATH"
 #
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for png_read_png in -lpng" >&5
 $as_echo_n "checking for png_read_png in -lpng... " >&6; }
@@ -15811,7 +15815,7 @@ fi
 
   if test "$tiff_header_found" = "yes" ; then
    with_libtiff="yes"
-   LIBS="$LIBS -ltiff $libjpeg $libjbig $libjbig85 $LIB_Z $LIB_MATH"
+   LIBS="$LIBS -ltiff $libjpeg $libjbig $libjbig85"
 
 $as_echo "#define HAVE_LIBTIFF 1" >>confdefs.h
 
@@ -15849,9 +15853,9 @@ fi
   if test -n "$with_tiff_libraries" ; then
    tifflibs="-L$with_tiff_libraries"
   fi
-  tifflibs="$tifflibs -ltiff $LIB_MATH"
+  tifflibs="$tifflibs -ltiff"
   savedLIBS="$LIBS"
-  LIBS="$tifflibs"
+  LIBS="$tifflibs $libjpeg $libjbig $libjbig85 $LIB_Z $LIB_MATH"
   with_libtiff="no"
 #
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for TIFFOpen in -ltiff" >&5
@@ -15910,7 +15914,7 @@ $as_echo "#define HAVE_LIBTIFF 1" >>confdefs.h
 
    fi
   fi
-  LIBS="$savedLIBS $tifflibs"
+  LIBS="$savedLIBS $tifflibs $libjpeg $libjbig $libjbig85"
  fi
 fi
 #
@@ -15998,10 +16002,10 @@ fi
    if test -z "$lcms2libs" ; then
     lcms2libs="-llcms2"
    fi
-   lcms2libs="$lcms2libs $LIB_MATH"
+   lcms2libs="$lcms2libs"
   fi
   savedLIBS="$LIBS"
-  LIBS="$lcms2libs"
+  LIBS="$lcms2libs $LIB_MATH"
   with_liblcms2="no"
 #
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for cmsOpenProfileFromFile in -llcms2" >&5
@@ -16146,10 +16150,10 @@ fi
     if test -z "$lcms1libs" ; then
      lcms1libs="-llcms"
     fi
-    lcms1libs="$lcms1libs $LIB_MATH"
+    lcms1libs="$lcms1libs"
    fi
    savedLIBS="$LIBS"
-   LIBS="$lcms1libs"
+   LIBS="$lcms1libs $LIB_MATH"
    with_liblcms1="no"
 #
    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for cmsOpenProfileFromFile in -llcms" >&5
@@ -16263,6 +16267,7 @@ fi
 #
 # -------------------------------
 # Test for creating SHARED LIBS
+# wanted result: shared xor static
 # -------------------------------
 with_sharedlibs="yes"
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to build shared libraries" >&5
@@ -16275,12 +16280,40 @@ fi
 #
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $with_sharedlibs" >&5
 $as_echo "$with_sharedlibs" >&6; }
+#
+# -------------------------------
+# Test for creating STATIC LIBS
+# -------------------------------
+if test "$with_sharedlibs" = "yes" ; then
+ with_staticlibs="no"
+else
+ with_staticlibs="yes"
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to build static libraries" >&5
+$as_echo_n "checking whether to build static libraries... " >&6; }
+ # Check whether --enable-static was given.
+if test "${enable_static+set}" = set; then :
+  enableval=$enable_static; test "$enable_static" = "no" && with_staticlibs="no"
+fi
+
+#
+ { $as_echo "$as_me:${as_lineno-$LINENO}: result: $with_staticlibs" >&5
+$as_echo "$with_staticlibs" >&6; }
+#
+fi
  if test x$with_sharedlibs = xyes; then
   with_sharedlibs_TRUE=
   with_sharedlibs_FALSE='#'
 else
   with_sharedlibs_TRUE='#'
   with_sharedlibs_FALSE=
+fi
+
+ if test x$with_staticlibs = xyes; then
+  with_staticlibs_TRUE=
+  with_staticlibs_FALSE='#'
+else
+  with_staticlibs_TRUE='#'
+  with_staticlibs_FALSE=
 fi
 
 #
@@ -16515,6 +16548,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${with_sharedlibs_TRUE}" && test -z "${with_sharedlibs_FALSE}"; then
   as_fn_error "conditional \"with_sharedlibs\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${with_staticlibs_TRUE}" && test -z "${with_staticlibs_FALSE}"; then
+  as_fn_error "conditional \"with_staticlibs\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${with_doxygen_TRUE}" && test -z "${with_doxygen_FALSE}"; then
@@ -17120,12 +17157,12 @@ sed_quote_subst='$sed_quote_subst'
 double_quote_subst='$double_quote_subst'
 delay_variable_subst='$delay_variable_subst'
 enable_shared='`$ECHO "X$enable_shared" | $Xsed -e "$delay_single_quote_subst"`'
-enable_static='`$ECHO "X$enable_static" | $Xsed -e "$delay_single_quote_subst"`'
 AS='`$ECHO "X$AS" | $Xsed -e "$delay_single_quote_subst"`'
 DLLTOOL='`$ECHO "X$DLLTOOL" | $Xsed -e "$delay_single_quote_subst"`'
 OBJDUMP='`$ECHO "X$OBJDUMP" | $Xsed -e "$delay_single_quote_subst"`'
 macro_version='`$ECHO "X$macro_version" | $Xsed -e "$delay_single_quote_subst"`'
 macro_revision='`$ECHO "X$macro_revision" | $Xsed -e "$delay_single_quote_subst"`'
+enable_static='`$ECHO "X$enable_static" | $Xsed -e "$delay_single_quote_subst"`'
 pic_mode='`$ECHO "X$pic_mode" | $Xsed -e "$delay_single_quote_subst"`'
 enable_fast_install='`$ECHO "X$enable_fast_install" | $Xsed -e "$delay_single_quote_subst"`'
 host_alias='`$ECHO "X$host_alias" | $Xsed -e "$delay_single_quote_subst"`'
@@ -18219,9 +18256,6 @@ available_tags="CXX "
 # Whether or not to build shared libraries.
 build_libtool_libs=$enable_shared
 
-# Whether or not to build static libraries.
-build_old_libs=$enable_static
-
 # Assembler program.
 AS=$AS
 
@@ -18234,6 +18268,9 @@ OBJDUMP=$OBJDUMP
 # Which release of libtool.m4 was used?
 macro_version=$macro_version
 macro_revision=$macro_revision
+
+# Whether or not to build static libraries.
+build_old_libs=$enable_static
 
 # What type of objects to build.
 pic_mode=$pic_mode
@@ -19026,4 +19063,5 @@ echo "lcms1 version       : $have_lcms1_version"
 echo "--enable-jpwl       : $with_libjpwl"
 echo "--enable-jp3d       : $with_jp3d"
 echo "--enable-shared     : $with_sharedlibs"
+echo "--enable-static     : $with_staticlibs"
 echo "----------------------------------------------"

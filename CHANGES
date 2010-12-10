@@ -5,6 +5,10 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+December 10, 2010
+! [szukw000] changed build choice in configure.ac/Makefile.am/Makefile.nix:
+             shared xor static
+
 December 9, 2010
 ! [antonin] removed LCMS dependency in jp3d/libjp3dvm/CMakeLists.txt
 ! [antonin] updated xcode project

@@ -34,18 +34,24 @@ all: j2k_to_image image_to_j2k j2k_dump
 	install -d ../bin
 	install j2k_to_image image_to_j2k j2k_dump ../bin
 
-j2k_to_image: j2k_to_image.c ../libopenjpeg.a
+ifeq ($(ENABLE_SHARED),yes)
+ELIB = ../libopenjpeg.so.$(MAJOR).$(MINOR).$(BUILD)
+else
+ELIB = ../libopenjpeg.a
+endif
+
+j2k_to_image: j2k_to_image.c $(ELIB)
 	$(CC)  $(CFLAGS) ../common/getopt.c index.c convert.c \
 	../common/color.c j2k_to_image.c \
-	-o j2k_to_image ../libopenjpeg.a $(USERLIBS)
+	-o j2k_to_image  $(ELIB) $(USERLIBS)
 
-image_to_j2k: image_to_j2k.c ../libopenjpeg.a
+image_to_j2k: image_to_j2k.c  $(ELIB)
 	$(CC) $(CFLAGS) ../common/getopt.c index.c convert.c image_to_j2k.c \
-	-o image_to_j2k ../libopenjpeg.a $(USERLIBS)
+	-o image_to_j2k  $(ELIB) $(USERLIBS)
 
-j2k_dump: j2k_dump.c ../libopenjpeg.a
+j2k_dump: j2k_dump.c  $(ELIB)
 	$(CC) $(CFLAGS) ../common/getopt.c index.c j2k_dump.c \
-	-o j2k_dump ../libopenjpeg.a $(USERLIBS)
+	-o j2k_dump $(ELIB) $(USERLIBS)
 
 clean:
 	rm -f j2k_to_image image_to_j2k j2k_dump

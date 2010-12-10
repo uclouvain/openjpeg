@@ -1,4 +1,9 @@
-COMPILERFLAGS = -Wall -static
+COMPILERFLAGS = -Wall
+
+if with_staticlibs
+COMPILERFLAGS += -static
+endif
+
 USERLIBS = -lm
 INCLUDES = -I.. -I. -I../libopenjpeg -I../common
 

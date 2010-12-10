@@ -62,21 +62,23 @@ MODULES = $(SRCS:.c=.o)
 CFLAGS = $(COMPILERFLAGS) $(INCLUDE) -DUSE_JPWL
 
 LIBNAME = lib$(TARGET)
-STATICLIB = $(LIBNAME).a
 
 ifeq ($(ENABLE_SHARED),yes)
 SHAREDLIB = $(LIBNAME).so.$(MAJOR).$(MINOR).$(BUILD)
+else
+STATICLIB = $(LIBNAME).a
 endif
 
 default: all
 
 all: OpenJPEG_JPWL JPWL_image_to_j2k JPWL_j2k_to_image
 	install -d ../bin
-	install -m 644 $(STATICLIB) ../bin
 ifeq ($(ENABLE_SHARED),yes)
 	install -m 755 $(SHAREDLIB) ../bin
 	(cd ../bin && ln -sf $(SHAREDLIB) $(LIBNAME).so.$(MAJOR).$(MINOR))
 	(cd ../bin && ln -sf $(LIBNAME).so.$(MAJOR).$(MINOR) $(LIBNAME).so)
+else
+	install -m 644 $(STATICLIB) ../bin
 endif
 	install JPWL_image_to_j2k JPWL_j2k_to_image ../bin
 
@@ -90,36 +92,42 @@ JPWL_codec: JPWL_j2k_to_image JPWL_image_to_j2k $(STATICLIB)
 .c.o:
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(STATICLIB): $(MODULES)
-	$(AR) r $@ $(MODULES)
-
 ifeq ($(ENABLE_SHARED),yes)
 $(SHAREDLIB): $(MODULES)
 	$(CC) -shared -Wl,-soname,$(LIBNAME) -o $@ $(MODULES) $(LIBRARIES)
+else
+$(STATICLIB): $(MODULES)
+	$(AR) r $@ $(MODULES)
+endif
+
+ifeq ($(ENABLE_SHARED),yes)
+ELIB = $(SHAREDLIB)
+else
+ELIB = $(STATICLIB)
 endif
 
 JPWL_j2k_to_image: ../codec/j2k_to_image.c
 	$(CC) $(CFLAGS) ../common/getopt.c ../codec/index.c \
 	../codec/convert.c ../common/color.c ../codec/j2k_to_image.c \
-	-o JPWL_j2k_to_image ./libopenjpeg_JPWL.a $(USERLIBS)
+	-o JPWL_j2k_to_image $(ELIB) $(USERLIBS)
 
 JPWL_image_to_j2k: ../codec/image_to_j2k.c
 	$(CC) $(CFLAGS) ../common/getopt.c ../codec/index.c \
 	../codec/convert.c ../codec/image_to_j2k.c \
-	-o JPWL_image_to_j2k ./libopenjpeg_JPWL.a $(USERLIBS)
+	-o JPWL_image_to_j2k $(ELIB) $(USERLIBS)
 
 install: OpenJPEG_JPWL
 	install -d $(DESTDIR)$(INSTALL_LIBDIR)
-	install -m 644 -o root -g root $(STATICLIB) $(DESTDIR)$(INSTALL_LIBDIR)
-	(cd $(DESTDIR)$(INSTALL_LIBDIR) && ranlib $(STATICLIB))
 ifeq ($(ENABLE_SHARED),yes)
 	install -m 755 -o root -g root $(SHAREDLIB) $(DESTDIR)$(INSTALL_LIBDIR)
 	(cd $(DESTDIR)$(INSTALL_LIBDIR) && \
 	ln -sf $(SHAREDLIB) $(LIBNAME).so.$(MAJOR).$(MINOR) )
 	(cd $(DESTDIR)$(INSTALL_LIBDIR) && \
 	ln -sf $(LIBNAME).so.$(MAJOR).$(MINOR) $(LIBNAME).so )
+else
+	install -m 644 -o root -g root $(STATICLIB) $(DESTDIR)$(INSTALL_LIBDIR)
+	(cd $(DESTDIR)$(INSTALL_LIBDIR) && ranlib $(STATICLIB))
 endif
-	$(LDCONFIG)
 	install -d $(DESTDIR)$(INSTALL_BIN)
 	install -m 755 -o root -g root JPWL_j2k_to_image $(DESTDIR)$(INSTALL_BIN)
 	install -m 755 -o root -g root JPWL_image_to_j2k $(DESTDIR)$(INSTALL_BIN)
@@ -134,11 +142,11 @@ cleancodec:
 clean: cleanlib cleancodec
 
 uninstall:
-	rm -f $(DESTDIR)$(INSTALL_LIBDIR)/$(STATICLIB)
 ifeq ($(ENABLE_SHARED),yes)
 	(cd $(DESTDIR)$(INSTALL_LIBDIR) && \
 	rm -f $(LIBNAME).so $(LIBNAME).so.$(MAJOR).$(MINOR) $(SHAREDLIB))
+else
+	rm -f $(DESTDIR)$(INSTALL_LIBDIR)/$(STATICLIB)
 endif
-	$(LDCONFIG)
 	rm -f $(DESTDIR)$(INSTALL_BIN)/JPWL_j2k_to_image
 	rm -f $(DESTDIR)$(INSTALL_BIN)/JPWL_image_to_j2k

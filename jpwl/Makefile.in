@@ -45,6 +45,8 @@ target_triplet = @target@
 @with_liblcms1_TRUE@am__append_7 = @lcms1includes@
 @with_liblcms1_TRUE@am__append_8 = @lcms1libs@
 bin_PROGRAMS = JPWL_j2k_to_image$(EXEEXT) JPWL_image_to_j2k$(EXEEXT)
+@with_staticlibs_TRUE@am__append_9 = -static
+@with_staticlibs_TRUE@am__append_10 = -static
 subdir = jpwl
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -317,8 +319,10 @@ USERLIBS = $(am__append_2) $(am__append_4) $(am__append_6) \
 	$(am__append_8) -lm
 INCLUDES = -I.. -I. -I../libopenjpeg -I../common $(am__append_1) \
 	$(am__append_3) $(am__append_5) $(am__append_7)
-JPWL_j2k_to_image_CFLAGS = $(COMPILERFLAGS) $(INCLUDES) -DUSE_JPWL -static
-JPWL_image_to_j2k_CFLAGS = $(COMPILERFLAGS) $(INCLUDES) -DUSE_JPWL -static
+JPWL_j2k_to_image_CFLAGS = $(COMPILERFLAGS) $(INCLUDES) -DUSE_JPWL \
+	$(am__append_9)
+JPWL_image_to_j2k_CFLAGS = $(COMPILERFLAGS) $(INCLUDES) -DUSE_JPWL \
+	$(am__append_10)
 LDADD = ./libopenjpeg_JPWL.la $(USERLIBS)
 JPWL_j2k_to_image_SOURCES = ../common/getopt.c ../codec/index.c \
 	../codec/convert.c ../common/color.c ../codec/j2k_to_image.c

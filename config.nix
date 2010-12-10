@@ -8,7 +8,6 @@ JP3D_BUILD = 0
 
 prefix=/usr/local
 CC = gcc
-LDCONFIG = /sbin/ldconfig
 AR = ar
 #
 #Set this to no if you do no want to compile/install shared libs.

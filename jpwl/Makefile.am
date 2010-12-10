@@ -66,8 +66,13 @@ USERLIBS += -lm
 
 bin_PROGRAMS = JPWL_j2k_to_image JPWL_image_to_j2k
 
-JPWL_j2k_to_image_CFLAGS = $(COMPILERFLAGS) $(INCLUDES) -DUSE_JPWL -static
-JPWL_image_to_j2k_CFLAGS = $(COMPILERFLAGS) $(INCLUDES) -DUSE_JPWL -static
+JPWL_j2k_to_image_CFLAGS = $(COMPILERFLAGS) $(INCLUDES) -DUSE_JPWL
+JPWL_image_to_j2k_CFLAGS = $(COMPILERFLAGS) $(INCLUDES) -DUSE_JPWL
+
+if with_staticlibs
+JPWL_j2k_to_image_CFLAGS += -static
+JPWL_image_to_j2k_CFLAGS += -static
+endif
 
 CFLAGS = $(COMPILERFLAGS) $(INCLUDES) -DUSE_JPWL
 LDADD = ./libopenjpeg_JPWL.la $(USERLIBS)

@@ -53,7 +53,6 @@ AC_OBJEXT
 #
 # Configure libtool
 AC_ENABLE_SHARED
-AC_ENABLE_STATIC
 AC_LIBTOOL_WIN32_DLL
 AC_LIBTOOL_SETUP
 AC_PROG_LIBTOOL
@@ -64,6 +63,8 @@ LIB_MATH=""
 AC_CHECK_LIB(m,sqrt,LIB_MATH="-lm",,)
 LIB_Z=""
 AC_CHECK_LIB(z,inflate,LIB_Z="-lz",,)
+#
+LIBS="$LIBS $LIB_MATH $LIB_Z"
 #
 AC_PATH_PROG([PKGCONFIG], [pkg-config])
 #
@@ -115,18 +116,18 @@ if test "x$with_libpng" = xyes ; then
   AC_ARG_WITH(png_libraries,
  [  --with-png-libraries=DIR        PNG library in nonstandard DIR])
   if [[ -n "$with_png_libraries" ]] ; then
-   pnglibs="-L$with_png_libraries -lpng $LIB_Z $LIB_MATH"
+   pnglibs="-L$with_png_libraries -lpng"
   else
     if test -n "$LIBPNG_CONFIG" ; then
-     pnglibs="`$LIBPNG_CONFIG --ldflags` $LIB_Z $LIB_MATH"
+     pnglibs="`$LIBPNG_CONFIG --ldflags`"
     else
       if test -n "$PKGCONFIG" ; then
-        pnglibs="`$PKGCONFIG --libs libpng` $LIB_Z $LIB_MATH"
+        pnglibs="`$PKGCONFIG --libs libpng`"
       fi
     fi
   fi
   savedLIBS="$LIBS"
-  LIBS="$pnglibs"
+  LIBS="$pnglibs $LIB_Z $LIB_MATH"
 #
   AC_CHECK_LIB(png,png_read_png,,pnglibs="",)
 #
@@ -176,7 +177,7 @@ if test "x$with_libtiff" = xyes ; then
   AC_CHECK_HEADER(tiff.h,tiff_header_found="yes",,)
   if test "$tiff_header_found" = "yes" ; then 
    with_libtiff="yes"
-   LIBS="$LIBS -ltiff $libjpeg $libjbig $libjbig85 $LIB_Z $LIB_MATH"
+   LIBS="$LIBS -ltiff $libjpeg $libjbig $libjbig85"
    AC_DEFINE(HAVE_LIBTIFF, [1], [define to 1 if you have libtiff])
   fi
  fi
@@ -197,9 +198,9 @@ if test "x$with_libtiff" = xyes ; then
   if test -n "$with_tiff_libraries" ; then
    tifflibs="-L$with_tiff_libraries"
   fi
-  tifflibs="$tifflibs -ltiff $LIB_MATH"
+  tifflibs="$tifflibs -ltiff"
   savedLIBS="$LIBS"
-  LIBS="$tifflibs"
+  LIBS="$tifflibs $libjpeg $libjbig $libjbig85 $LIB_Z $LIB_MATH"
   with_libtiff="no"
 #
   AC_CHECK_LIB(tiff, TIFFOpen, , tifflibs="",)
@@ -210,7 +211,7 @@ if test "x$with_libtiff" = xyes ; then
     AC_DEFINE(HAVE_LIBTIFF, [1], [define to 1 if you have libtiff])
    fi
   fi
-  LIBS="$savedLIBS $tifflibs"
+  LIBS="$savedLIBS $tifflibs $libjpeg $libjbig $libjbig85"
  fi
 fi
 #
@@ -272,10 +273,10 @@ if test "x$with_liblcms2" = xyes ; then
    if test -z "$lcms2libs" ; then
     lcms2libs="-llcms2"
    fi
-   lcms2libs="$lcms2libs $LIB_MATH"
+   lcms2libs="$lcms2libs"
   fi
   savedLIBS="$LIBS"
-  LIBS="$lcms2libs"
+  LIBS="$lcms2libs $LIB_MATH"
   with_liblcms2="no"
 #
   AC_CHECK_LIB(lcms2, cmsOpenProfileFromFile, ,lcms2libs="",)
@@ -346,10 +347,10 @@ if [[ -z "$lcms2libs" ]] ; then
     if test -z "$lcms1libs" ; then
      lcms1libs="-llcms"
     fi
-    lcms1libs="$lcms1libs $LIB_MATH"
+    lcms1libs="$lcms1libs"
    fi
    savedLIBS="$LIBS"
-   LIBS="$lcms1libs"
+   LIBS="$lcms1libs $LIB_MATH"
    with_liblcms1="no"
 #
    AC_CHECK_LIB(lcms, cmsOpenProfileFromFile, ,lcms1libs="",)
@@ -396,15 +397,33 @@ AC_SUBST(jpwl_dir)
 #
 # -------------------------------
 # Test for creating SHARED LIBS
+# wanted result: shared xor static
 # -------------------------------
 with_sharedlibs="yes"
 AC_MSG_CHECKING(whether to build shared libraries)
 AC_ARG_ENABLE(shared,
- [  --enable-shared[=[yes|no]]       Build shared libs [ [default=yes] ]],
- test "$enable_shared" = "no" && with_sharedlibs="no")
+[  --enable-shared[=[yes|no]]       Build shared libs [ [default=yes] ]],
+test "$enable_shared" = "no" && with_sharedlibs="no")
 #
 AC_MSG_RESULT($with_sharedlibs)
+#
+# -------------------------------
+# Test for creating STATIC LIBS
+# -------------------------------
+if test "$with_sharedlibs" = "yes" ; then
+ with_staticlibs="no"
+else
+ with_staticlibs="yes"
+ AC_MSG_CHECKING(whether to build static libraries)
+ AC_ARG_ENABLE(static,
+ [  --enable-static[=[yes|no]]       Build static libs [ [default=no] ]],
+ test "$enable_static" = "no" && with_staticlibs="no")
+#
+ AC_MSG_RESULT($with_staticlibs)
+#
+fi
 AM_CONDITIONAL([with_sharedlibs], [test x$with_sharedlibs = xyes])
+AM_CONDITIONAL([with_staticlibs], [test x$with_staticlibs = xyes])
 #
 # -------------------------------
 # Test for creating JP3D
@@ -453,4 +472,5 @@ echo "lcms1 version       : $have_lcms1_version"
 echo "--enable-jpwl       : $with_libjpwl"
 echo "--enable-jp3d       : $with_jp3d"
 echo "--enable-shared     : $with_sharedlibs"
+echo "--enable-static     : $with_staticlibs"
 echo "----------------------------------------------"
