@@ -2,7 +2,11 @@
 
 USERLIBS =
 INCLUDES = -I. -I../libjp3dvm
-CFLAGS = -Wall $(INCLUDES) -static
+CFLAGS = -Wall $(INCLUDES)
+
+if with_staticlibs
+CFLAGS += -static
+endif
 
 bin_PROGRAMS = jp3d_to_volume volume_to_jp3d
 LDADD = $(USERLIBS) ../libjp3dvm/libopenjp3dvm.la

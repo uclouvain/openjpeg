@@ -34,10 +34,11 @@ MODULES = $(SRCS:.c=.o)
 CFLAGS = $(COMPILERFLAGS) $(INCLUDE)
 
 LIBNAME = lib$(TARGET)
-STATICLIB = $(LIBNAME).a
 
 ifeq ($(ENABLE_SHARED),yes)
 SHAREDLIB = $(LIBNAME).so.$(JP3D_MAJOR).$(JP3D_MINOR).$(JP3D_BUILD)
+else
+STATICLIB = $(LIBNAME).a
 endif
 
 default: all
@@ -45,13 +46,14 @@ default: all
 all: Jp3dVM
 	make -C codec -f Makefile.nix all 
 	install -d ../bin
-	install -m 644 $(STATICLIB) ../bin
 ifeq ($(ENABLE_SHARED),yes)
 	install -m 755 $(SHAREDLIB) ../bin
 	(cd ../bin && \
 	ln -sf $(SHAREDLIB) $(LIBNAME).so.$(JP3D_MAJOR).$(JP3D_MINOR))
 	(cd ../bin && \
 	ln -sf $(LIBNAME).so.$(JP3D_MAJOR).$(JP3D_MINOR) $(LIBNAME).so)
+else
+	install -m 644 $(STATICLIB) ../bin
 endif
 
 dos2unix:
@@ -62,26 +64,26 @@ Jp3dVM: $(STATICLIB) $(SHAREDLIB)
 .c.o:
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(STATICLIB): $(MODULES)
-	$(AR) r $@ $(MODULES)
-
 ifeq ($(ENABLE_SHARED),yes)
 $(SHAREDLIB): $(MODULES)
 	$(CC) -s -shared -Wl,-soname,$(LIBNAME) -o $@ $(MODULES) $(LIBRARIES)
+else
+$(STATICLIB): $(MODULES)
+	$(AR) r $@ $(MODULES)
 endif
 
 install: Jp3dVM
 	install -d '$(DESTDIR)$(INSTALL_LIBDIR)'
-	install -m 644 -o root -g root $(STATICLIB) '$(DESTDIR)$(INSTALL_LIBDIR)'
-	(cd $(DESTDIR)$(INSTALL_LIBDIR) && ranlib $(STATICLIB))
 ifeq ($(ENABLE_SHARED),yes)
 	install -m 755 -o root -g root $(SHAREDLIB) '$(DESTDIR)$(INSTALL_LIBDIR)'
 	(cd $(DESTDIR)$(INSTALL_LIBDIR) &&  \
 	ln -sf $(SHAREDLIB) $(LIBNAME).so.$(JP3D_MAJOR).$(JP3D_MINOR) )
 	(cd $(DESTDIR)$(INSTALL_LIBDIR) && \
 	ln -sf $(LIBNAME).so.$(JP3D_MAJOR).$(JP3D_MINOR) $(LIBNAME).so )
+else
+	install -m 644 -o root -g root $(STATICLIB) '$(DESTDIR)$(INSTALL_LIBDIR)'
+	(cd $(DESTDIR)$(INSTALL_LIBDIR) && ranlib $(STATICLIB))
 endif
-	$(LDCONFIG)
 	install -d $(DESTDIR)$(INSTALL_INCLUDE)
 	rm -f $(DESTDIR)$(INSTALL_INCLUDE)/openjpeg3d.h
 	install -m 644 -o root -g root libjp3dvm/openjpeg3d.h \
@@ -91,15 +93,16 @@ endif
 	make -C codec -f Makefile.nix install
 
 uninstall:
-	rm -f $(DESTDIR)$(INSTALL_LIBDIR)/$(STATICLIB)
 ifeq ($(ENABLE_SHARED),yes)
 	(cd $(DESTDIR)$(INSTALL_LIBDIR) && \
 	rm -f $(LIBNAME).so $(LIBNAME).so.$(JP3D_MAJOR).$(JP3D_MINOR) $(SHAREDLIB))
+else
+	rm -f $(DESTDIR)$(INSTALL_LIBDIR)/$(STATICLIB)
 endif
-	$(LDCONFIG)
 	rm -f $(DESTDIR)$(prefix)/include/openjpeg3d.h
 	rm -rf $(DESTDIR)$(INSTALL_INCLUDE)
 	make -C codec -f Makefile.nix uninstall
+
 clean:
 	rm -f core u2dtmp* $(MODULES) $(STATICLIB) $(SHAREDLIB)
 	make -C codec -f Makefile.nix clean
