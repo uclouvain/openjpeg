@@ -36,6 +36,9 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
+@with_sharedlibs_TRUE@am__append_1 = -DOPJ_EXPORTS
+@with_sharedlibs_FALSE@am__append_2 = -DOPJ_STATIC
+@with_sharedlibs_FALSE@am__append_3 = -static
 subdir = jp3d/libjp3dvm
 DIST_COMMON = $(include_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
@@ -215,7 +218,6 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
-lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -248,9 +250,8 @@ MINOR = @JP3D_MINOR_NR@
 BUILD = @JP3D_BUILD_NR@
 CURRENT = `expr $(MAJOR) + $(MINOR)`
 lib_LTLIBRARIES = libopenjp3dvm.la
-libopenjp3dvm_la_LDFLAGS = -no-undefined \
-  -version-info $(CURRENT):$(BUILD):$(MINOR)
-
+libopenjp3dvm_la_LDFLAGS = -no-undefined -version-info \
+	$(CURRENT):$(BUILD):$(MINOR) $(am__append_3)
 SRCS = bio.c cio.c dwt.c event.c jp3d.c jp3d_lib.c volume.c mct.c mqc.c \
   openjpeg.c pi.c raw.c t1.c t1_3d.c t2.c tcd.c tgt.c
 
@@ -262,8 +263,9 @@ include_HEADERS = openjpeg3d.h
 
 # Converts cr/lf to just lf
 DOS2UNIX = dos2unix
-INCLUDES = -I../.. -I.. -I.
-COMPILERFLAGS = -Wall -O3 -ffast-math -std=c99
+INCLUDES = -I../.. -I.
+COMPILERFLAGS = -Wall -O3 -ffast-math -std=c99 $(am__append_1) \
+	$(am__append_2)
 #CFLAGS += -DJP3D_VERSION="\"$(MAJOR).$(MINOR).$(BUILD)\""
 headerdir = openjpeg3d-$(MAJOR).$(MINOR)
 all: all-am
@@ -634,7 +636,6 @@ all-local:
 
 install-data-hook:
 	(cd $(DESTDIR)${prefix}/include && rm -f openjpeg3d.h)
-	(cd ${prefix}/include/${headerdir} && mv openjpeg3d.h openjpeg3d.h) 
 	(cd $(DESTDIR)${prefix}/include && \
 	$(LN_S) ${headerdir}/openjpeg3d.h openjpeg3d.h)
 

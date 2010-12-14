@@ -4,8 +4,10 @@ USERLIBS =
 INCLUDES = -I. -I../libjp3dvm
 CFLAGS = -Wall $(INCLUDES)
 
-if with_staticlibs
-CFLAGS += -static
+if with_sharedlibs
+CFLAGS += -DOPJ_EXPORTS
+else
+CFLAGS += -DOPJ_STATIC
 endif
 
 bin_PROGRAMS = jp3d_to_volume volume_to_jp3d

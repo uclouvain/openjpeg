@@ -27,9 +27,15 @@ DOS2UNIX = dos2unix
 dos2unix:
 	@$(DOS2UNIX) $(SRCS) $(INCLS)
 
-
-INCLUDES = -I../.. -I.. -I.
+INCLUDES = -I../.. -I.
 COMPILERFLAGS = -Wall -O3 -ffast-math -std=c99
+
+if with_sharedlibs
+COMPILERFLAGS += -DOPJ_EXPORTS
+else
+COMPILERFLAGS += -DOPJ_STATIC
+libopenjp3dvm_la_LDFLAGS += -static
+endif
 
 CFLAGS = $(COMPILERFLAGS) $(INCLUDES) 
 #CFLAGS += -DJP3D_VERSION="\"$(MAJOR).$(MINOR).$(BUILD)\""
@@ -56,7 +62,6 @@ all-local:
 
 install-data-hook:
 	(cd $(DESTDIR)${prefix}/include && rm -f openjpeg3d.h)
-	(cd ${prefix}/include/${headerdir} && mv openjpeg3d.h openjpeg3d.h) 
 	(cd $(DESTDIR)${prefix}/include && \
 	$(LN_S) ${headerdir}/openjpeg3d.h openjpeg3d.h)
 
