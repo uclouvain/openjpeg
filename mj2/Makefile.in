@@ -35,11 +35,12 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
-@with_staticlibs_TRUE@am__append_1 = -static
-@with_liblcms2_TRUE@am__append_2 = @lcms2includes@
-@with_liblcms2_TRUE@am__append_3 = @lcms2libs@
-@with_liblcms1_TRUE@am__append_4 = @lcms1includes@
-@with_liblcms1_TRUE@am__append_5 = @lcms1libs@
+@with_sharedlibs_TRUE@am__append_1 = -DOPJ_EXPORTS
+@with_sharedlibs_FALSE@am__append_2 = -DOPJ_STATIC
+@with_liblcms2_TRUE@am__append_3 = @lcms2includes@
+@with_liblcms2_TRUE@am__append_4 = @lcms2libs@
+@with_liblcms1_TRUE@am__append_5 = @lcms1includes@
+@with_liblcms1_TRUE@am__append_6 = @lcms1libs@
 bin_PROGRAMS = frames_to_mj2$(EXEEXT) mj2_to_frames$(EXEEXT) \
 	extract_j2k_from_mj2$(EXEEXT) wrap_j2k_in_mj2$(EXEEXT)
 subdir = mj2
@@ -216,7 +217,6 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
-lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -241,10 +241,10 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 with_doxygen = @with_doxygen@
-COMPILERFLAGS = -Wall $(am__append_1)
-USERLIBS = $(am__append_3) $(am__append_5)
-INCLUDES = -I.. -I. -I../libopenjpeg -I../common $(am__append_2) \
-	$(am__append_4)
+COMPILERFLAGS = -Wall $(am__append_1) $(am__append_2)
+USERLIBS = $(am__append_4) $(am__append_6)
+INCLUDES = -I.. -I. -I../libopenjpeg -I../common $(am__append_3) \
+	$(am__append_5)
 LDADD = ../libopenjpeg/libopenjpeg.la $(USERLIBS)
 frames_to_mj2_SOURCES = ../common/getopt.c mj2_convert.c mj2.c \
  frames_to_mj2.c

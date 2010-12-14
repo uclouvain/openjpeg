@@ -129,7 +129,7 @@ if test "x$with_libpng" = xyes ; then
   savedLIBS="$LIBS"
   LIBS="$pnglibs $LIB_Z $LIB_MATH"
 #
-  AC_CHECK_LIB(png,png_read_png,,pnglibs="",)
+  AC_CHECK_LIB(png,png_create_read_struct,,pnglibs="",)
 #
   LIBS="$savedLIBS"
   if test -n "$pnglibs" ; then
@@ -299,7 +299,7 @@ if test "x$with_liblcms2" = xyes ; then
 fi
 #
 AC_MSG_RESULT(lcms2 is usable:$with_liblcms2)
-AM_CONDITIONAL([with_liblcms2], [test x$with_liblmcs2 = xyes])
+AM_CONDITIONAL([with_liblcms2], [test x$with_liblcms2 = xyes])
 AC_SUBST(lcms2includes)
 AC_SUBST(lcms2libs)
 AC_MSG_RESULT(lcms2libs:$lcms2libs)
@@ -406,24 +406,7 @@ AC_ARG_ENABLE(shared,
 test "$enable_shared" = "no" && with_sharedlibs="no")
 #
 AC_MSG_RESULT($with_sharedlibs)
-#
-# -------------------------------
-# Test for creating STATIC LIBS
-# -------------------------------
-if test "$with_sharedlibs" = "yes" ; then
- with_staticlibs="no"
-else
- with_staticlibs="yes"
- AC_MSG_CHECKING(whether to build static libraries)
- AC_ARG_ENABLE(static,
- [  --enable-static[=[yes|no]]       Build static libs [ [default=no] ]],
- test "$enable_static" = "no" && with_staticlibs="no")
-#
- AC_MSG_RESULT($with_staticlibs)
-#
-fi
 AM_CONDITIONAL([with_sharedlibs], [test x$with_sharedlibs = xyes])
-AM_CONDITIONAL([with_staticlibs], [test x$with_staticlibs = xyes])
 #
 # -------------------------------
 # Test for creating JP3D
@@ -472,5 +455,4 @@ echo "lcms1 version       : $have_lcms1_version"
 echo "--enable-jpwl       : $with_libjpwl"
 echo "--enable-jp3d       : $with_jp3d"
 echo "--enable-shared     : $with_sharedlibs"
-echo "--enable-static     : $with_staticlibs"
 echo "----------------------------------------------"

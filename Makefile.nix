@@ -35,10 +35,11 @@ MODULES = $(SRCS:.c=.o)
 CFLAGS = $(COMPILERFLAGS) $(INCLUDE)
 
 LIBNAME = lib$(TARGET)
-STATICLIB = $(LIBNAME).a
 
 ifeq ($(ENABLE_SHARED),yes)
 SHAREDLIB = $(LIBNAME).so.$(MAJOR).$(MINOR).$(BUILD)
+else
+STATICLIB = $(LIBNAME).a
 endif
 
 default: all
@@ -58,35 +59,37 @@ dos2unix:
 
 OpenJPEG: $(STATICLIB) $(SHAREDLIB)
 	install -d bin
-	install -m 644 $(STATICLIB) bin
 ifeq ($(ENABLE_SHARED),yes)
 	install -m 755 $(SHAREDLIB) bin
 	(cd bin && ln -sf $(SHAREDLIB) $(LIBNAME).so.$(MAJOR).$(MINOR))
-	(cd bin && ln -sf $(LIBNAME).so.$(MAJOR).$(MINOR) $(LIBNAME).so)
+	(cd bin && ln -sf $(SHAREDLIB) $(LIBNAME).so)
+else
+	install -m 644 $(STATICLIB) bin
 endif
 
 .c.o:
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(STATICLIB): $(MODULES)
-	rm -f $(STATICLIB)
-	$(AR) r $@ $(MODULES)
-
 ifeq ($(ENABLE_SHARED),yes)
 $(SHAREDLIB): $(MODULES)
 	$(CC) -shared -Wl,-soname,$(LIBNAME) -o $@ $(MODULES) $(LIBRARIES)
+else
+$(STATICLIB): $(MODULES)
+	rm -f $(STATICLIB)
+	$(AR) r $@ $(MODULES)
 endif
 
 install: OpenJPEG
 	install -d $(DESTDIR)$(INSTALL_LIBDIR) 
-	install -m 644 -o root -g root $(STATICLIB) $(DESTDIR)$(INSTALL_LIBDIR)
-	(cd $(DESTDIR)$(INSTALL_LIBDIR) && ranlib $(STATICLIB) )
 ifeq ($(ENABLE_SHARED),yes)
 	install -m 755 -o root -g root $(SHAREDLIB) $(DESTDIR)$(INSTALL_LIBDIR)
 	(cd $(DESTDIR)$(INSTALL_LIBDIR) && \
 	ln -sf $(SHAREDLIB) $(LIBNAME).so.$(MAJOR).$(MINOR) )
 	(cd $(DESTDIR)$(INSTALL_LIBDIR) && \
-	ln -sf $(LIBNAME).so.$(MAJOR).$(MINOR) $(LIBNAME).so )
+	ln -sf $(SHAREDLIB) $(LIBNAME).so )
+else
+	install -m 644 -o root -g root $(STATICLIB) $(DESTDIR)$(INSTALL_LIBDIR)
+	(cd $(DESTDIR)$(INSTALL_LIBDIR) && ranlib $(STATICLIB) )
 endif
 	install -d $(DESTDIR)$(INSTALL_INCLUDE)
 	install -m 644 -o root -g root libopenjpeg/openjpeg.h \
@@ -157,10 +160,11 @@ doc-clean:
 	make -C doc -f Makefile.nix clean
 
 uninstall:
-	rm -f $(DESTDIR)$(INSTALL_LIBDIR)/$(STATICLIB)
 ifeq ($(ENABLE_SHARED),yes)
 	(cd $(DESTDIR)$(INSTALL_LIBDIR) && \
 	rm -f $(LIBNAME).so $(LIBNAME).so.$(MAJOR).$(MINOR) $(SHAREDLIB) )
+else
+	rm -f $(DESTDIR)$(INSTALL_LIBDIR)/$(STATICLIB)
 endif
 	$(LDCONFIG)
 	rm -f $(DESTDIR)$(prefix)/include/openjpeg.h
@@ -174,3 +178,6 @@ endif
 ifeq ($(WITH_JP3D),yes)
 	make -C jp3d -f Makefile.nix uninstall
 endif
+
+distclean: clean
+	rm -rf bin

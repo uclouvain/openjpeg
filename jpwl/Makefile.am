@@ -69,9 +69,11 @@ bin_PROGRAMS = JPWL_j2k_to_image JPWL_image_to_j2k
 JPWL_j2k_to_image_CFLAGS = $(COMPILERFLAGS) $(INCLUDES) -DUSE_JPWL
 JPWL_image_to_j2k_CFLAGS = $(COMPILERFLAGS) $(INCLUDES) -DUSE_JPWL
 
-if with_staticlibs
-JPWL_j2k_to_image_CFLAGS += -static
-JPWL_image_to_j2k_CFLAGS += -static
+if with_sharedlibs
+COMPILERFLAGS += -DOPJ_EXPORTS
+else
+COMPILERFLAGS += -DOPJ_STATIC
+libopenjpeg_JPWL_la_LDFLAGS += -static
 endif
 
 CFLAGS = $(COMPILERFLAGS) $(INCLUDES) -DUSE_JPWL

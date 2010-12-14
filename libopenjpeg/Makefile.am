@@ -30,6 +30,13 @@ dos2unix:
 
 COMPILERFLAGS = -Wall -O3 -ffast-math -std=c99
 
+if with_sharedlibs
+COMPILERFLAGS += -DOPJ_EXPORTS
+else
+COMPILERFLAGS += -DOPJ_STATIC
+libopenjpeg_la_LDFLAGS += -static
+endif
+
 CFLAGS = $(COMPILERFLAGS) $(INCLUDES)
 
 headerdir = openjpeg-$(MAJOR).$(MINOR)

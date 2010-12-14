@@ -1,7 +1,9 @@
 COMPILERFLAGS = -Wall
 
-if with_staticlibs
-COMPILERFLAGS += -static
+if with_sharedlibs
+COMPILERFLAGS += -DOPJ_EXPORTS
+else
+COMPILERFLAGS += -DOPJ_STATIC
 endif
 
 USERLIBS = -lm

@@ -35,15 +35,16 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
-@with_staticlibs_TRUE@am__append_1 = -static
-@with_libtiff_TRUE@am__append_2 = @tiffincludes@
-@with_libtiff_TRUE@am__append_3 = @tifflibs@
-@with_libpng_TRUE@am__append_4 = @pngincludes@
-@with_libpng_TRUE@am__append_5 = @pnglibs@
-@with_liblcms2_TRUE@am__append_6 = @lcms2includes@
-@with_liblcms2_TRUE@am__append_7 = @lcms2libs@
-@with_liblcms1_TRUE@am__append_8 = @lcms1includes@
-@with_liblcms1_TRUE@am__append_9 = @lcms1libs@
+@with_sharedlibs_TRUE@am__append_1 = -DOPJ_EXPORTS
+@with_sharedlibs_FALSE@am__append_2 = -DOPJ_STATIC
+@with_libtiff_TRUE@am__append_3 = @tiffincludes@
+@with_libtiff_TRUE@am__append_4 = @tifflibs@
+@with_libpng_TRUE@am__append_5 = @pngincludes@
+@with_libpng_TRUE@am__append_6 = @pnglibs@
+@with_liblcms2_TRUE@am__append_7 = @lcms2includes@
+@with_liblcms2_TRUE@am__append_8 = @lcms2libs@
+@with_liblcms1_TRUE@am__append_9 = @lcms1includes@
+@with_liblcms1_TRUE@am__append_10 = @lcms1libs@
 bin_PROGRAMS = j2k_to_image$(EXEEXT) image_to_j2k$(EXEEXT) \
 	j2k_dump$(EXEEXT)
 subdir = codec
@@ -215,7 +216,6 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
-lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -240,11 +240,11 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 with_doxygen = @with_doxygen@
-COMPILERFLAGS = -Wall $(am__append_1)
-USERLIBS = -lm $(am__append_3) $(am__append_5) $(am__append_7) \
-	$(am__append_9)
-INCLUDES = -I.. -I. -I../libopenjpeg -I../common $(am__append_2) \
-	$(am__append_4) $(am__append_6) $(am__append_8)
+COMPILERFLAGS = -Wall $(am__append_1) $(am__append_2)
+USERLIBS = -lm $(am__append_4) $(am__append_6) $(am__append_8) \
+	$(am__append_10)
+INCLUDES = -I.. -I. -I../libopenjpeg -I../common $(am__append_3) \
+	$(am__append_5) $(am__append_7) $(am__append_9)
 LDADD = $(USERLIBS) ../libopenjpeg/libopenjpeg.la
 j2k_to_image_SOURCES = ../common/getopt.c index.c convert.c \
 	../common/color.c j2k_to_image.c

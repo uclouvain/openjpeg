@@ -5,6 +5,10 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+December 14, 2010
+! [szukw000] adapted Makefile.am/Makefile.nix to build
+             choice: shared xor static
+
 December 11, 2010
 * [antonin] fixed flags when building jp3d with MinGW
 

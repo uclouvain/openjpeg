@@ -36,6 +36,9 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
+@with_sharedlibs_TRUE@am__append_1 = -DOPJ_EXPORTS
+@with_sharedlibs_FALSE@am__append_2 = -DOPJ_STATIC
+@with_sharedlibs_FALSE@am__append_3 = -static
 subdir = libopenjpeg
 DIST_COMMON = $(include_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
@@ -215,7 +218,6 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
-lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -246,9 +248,8 @@ BUILD = @BUILD_NR@
 CURRENT = `expr $(MAJOR) + $(MINOR)`
 lib_LTLIBRARIES = libopenjpeg.la
 INCLUDES = -I.. -I.
-libopenjpeg_la_LDFLAGS = -no-undefined \
-  -version-info $(CURRENT):$(BUILD):$(MINOR)
-
+libopenjpeg_la_LDFLAGS = -no-undefined -version-info \
+	$(CURRENT):$(BUILD):$(MINOR) $(am__append_3)
 SRCS = bio.c cio.c dwt.c event.c image.c j2k.c j2k_lib.c jp2.c jpt.c \
  mct.c mqc.c openjpeg.c pi.c raw.c t1.c t2.c tcd.c tgt.c
 
@@ -261,7 +262,8 @@ include_HEADERS = openjpeg.h
 
 # Converts cr/lf to just lf
 DOS2UNIX = dos2unix
-COMPILERFLAGS = -Wall -O3 -ffast-math -std=c99
+COMPILERFLAGS = -Wall -O3 -ffast-math -std=c99 $(am__append_1) \
+	$(am__append_2)
 headerdir = openjpeg-$(MAJOR).$(MINOR)
 all: all-am
 
