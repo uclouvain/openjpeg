@@ -29,6 +29,7 @@
 			dependencies = (
 				692CF275122BB29A0010088E /* PBXTargetDependency */,
 				692CF277122BB29A0010088E /* PBXTargetDependency */,
+				6938D7E912D0F4C10017B83E /* PBXTargetDependency */,
 			);
 			name = "build all";
 			productName = "build all";
@@ -229,6 +230,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 692CF258122BB2640010088E;
 			remoteInfo = "build OPJ_JPWL";
+		};
+		6938D7E812D0F4C10017B83E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 69F984A80D40A3AE00C2791C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 694E0EFA12953FD2008AFCC7 /* build OPJ_MJ2 */;
+			remoteInfo = "build OPJ_MJ2";
 		};
 		694039AA117B7E390079DE22 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1192,6 +1200,11 @@
 			isa = PBXTargetDependency;
 			target = 692CF258122BB2640010088E /* build OPJ_JPWL */;
 			targetProxy = 692CF276122BB29A0010088E /* PBXContainerItemProxy */;
+		};
+		6938D7E912D0F4C10017B83E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 694E0EFA12953FD2008AFCC7 /* build OPJ_MJ2 */;
+			targetProxy = 6938D7E812D0F4C10017B83E /* PBXContainerItemProxy */;
 		};
 		694039AB117B7E390079DE22 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
