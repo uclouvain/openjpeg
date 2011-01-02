@@ -24,12 +24,10 @@ SET(OPJ_SRCS
 )
 SET(JPWL_SRCS crc.c jpwl.c jpwl_lib.c rs.c)
 
+SET(common_SRCS "")
 # If not getopt was found then add it to the lib:
 IF(DONT_HAVE_GETOPT)
-  SET(OPJ_SRCS
-    ${OPJ_SRCS}
-    ../common/getopt.c
-  )
+  SET(common_SRCS ${OPENJPEG_SOURCE_DIR}/common/getopt.c)
 ENDIF(DONT_HAVE_GETOPT)
 
 # Build the library
@@ -70,8 +68,10 @@ ADD_EXECUTABLE(JPWL_j2k_to_image
 ../codec/j2k_to_image.c
 ../codec/convert.c
 ../codec/index.c
-../common/color.c
+${OPENJPEG_SOURCE_DIR}/common/color.c
+${common_SRCS}
 )
+
 TARGET_LINK_LIBRARIES(JPWL_j2k_to_image ${OPENJPEG_LIBRARY_NAME}_JPWL ${LCMS_LIB})
 IF(PNG_FOUND)
   TARGET_LINK_LIBRARIES(JPWL_j2k_to_image ${PNG_LIBRARIES})
@@ -88,7 +88,9 @@ ADD_EXECUTABLE(JPWL_image_to_j2k
 ../codec/convert.c
 ../codec/index.c
 ../codec/image_to_j2k.c
+${common_SRCS}
 )
+
 TARGET_LINK_LIBRARIES(JPWL_image_to_j2k ${OPENJPEG_LIBRARY_NAME}_JPWL ${LCMS_LIB})
 IF(PNG_FOUND)
   TARGET_LINK_LIBRARIES(JPWL_image_to_j2k ${PNG_LIBRARIES})

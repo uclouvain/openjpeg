@@ -247,6 +247,7 @@ ELSEIF(WIN32)
 	${OPENJPEG_SOURCE_DIR}/libs/png ${OPENJPEG_SOURCE_DIR}/libs/lcms2
 	C:/WINDOWS/system32/user )
   SET(CMAKE_LIBRARY_PATH ${OPENJPEG_SOURCE_DIR}/libs/libtiff
+        ${OPENJPEG_SOURCE_DIR}/libs/png ${OPENJPEG_SOURCE_DIR}/libs/lcms2
 	C:/WINDOWS/system32/user )
 ENDIF()
 #

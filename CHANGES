@@ -5,6 +5,15 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+January 2, 2011
+* [antonin] bug fixes to enable cmake compilation on WIN32 platform
+			- fixed getopt bug in jpwl/CMakeLists.txt
+			- added png, zlib and lcms win32 libraries to libs directory
+			- updated libs/libtiff library
+			- moved j2k_dump_{image,cp} to j2k_dump.c to remain consistent with API interface
+			- changed mj2 cmake compilation method: as long as mj2 binaries do not strictly use the API interface, libopenjpeg source files are directly included in mj2 executables compilation.
+! [antonin] small update to xcode project
+
 December 14, 2010
 ! [szukw000] adapted Makefile.am/Makefile.nix to build
              choice: shared xor static

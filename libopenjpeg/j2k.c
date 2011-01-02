@@ -258,80 +258,6 @@ char *j2k_convert_progression_order(OPJ_PROG_ORDER prg_order){
 	return po->str_prog;
 }
 
-void j2k_dump_image(FILE *fd, opj_image_t * img) {
-	int compno;
-	fprintf(fd, "image {\n");
-	fprintf(fd, "  x0=%d, y0=%d, x1=%d, y1=%d\n", img->x0, img->y0, img->x1, img->y1);
-	fprintf(fd, "  numcomps=%d\n", img->numcomps);
-	for (compno = 0; compno < img->numcomps; compno++) {
-		opj_image_comp_t *comp = &img->comps[compno];
-		fprintf(fd, "  comp %d {\n", compno);
-		fprintf(fd, "    dx=%d, dy=%d\n", comp->dx, comp->dy);
-		fprintf(fd, "    prec=%d\n", comp->prec);
-		//fprintf(fd, "    bpp=%d\n", comp->bpp);
-		fprintf(fd, "    sgnd=%d\n", comp->sgnd);
-		fprintf(fd, "  }\n");
-	}
-	fprintf(fd, "}\n");
-}
-
-void j2k_dump_cp(FILE *fd, opj_image_t * img, opj_cp_t * cp) {
-	int tileno, compno, layno, bandno, resno, numbands;
-	fprintf(fd, "coding parameters {\n");
-	fprintf(fd, "  tx0=%d, ty0=%d\n", cp->tx0, cp->ty0);
-	fprintf(fd, "  tdx=%d, tdy=%d\n", cp->tdx, cp->tdy);
-	fprintf(fd, "  tw=%d, th=%d\n", cp->tw, cp->th);
-	for (tileno = 0; tileno < cp->tw * cp->th; tileno++) {
-		opj_tcp_t *tcp = &cp->tcps[tileno];
-		fprintf(fd, "  tile %d {\n", tileno);
-		fprintf(fd, "    csty=%x\n", tcp->csty);
-		fprintf(fd, "    prg=%d\n", tcp->prg);
-		fprintf(fd, "    numlayers=%d\n", tcp->numlayers);
-		fprintf(fd, "    mct=%d\n", tcp->mct);
-		fprintf(fd, "    rates=");
-		for (layno = 0; layno < tcp->numlayers; layno++) {
-			fprintf(fd, "%.1f ", tcp->rates[layno]);
-		}
-		fprintf(fd, "\n");
-		for (compno = 0; compno < img->numcomps; compno++) {
-			opj_tccp_t *tccp = &tcp->tccps[compno];
-			fprintf(fd, "    comp %d {\n", compno);
-			fprintf(fd, "      csty=%x\n", tccp->csty);
-			fprintf(fd, "      numresolutions=%d\n", tccp->numresolutions);
-			fprintf(fd, "      cblkw=%d\n", tccp->cblkw);
-			fprintf(fd, "      cblkh=%d\n", tccp->cblkh);
-			fprintf(fd, "      cblksty=%x\n", tccp->cblksty);
-			fprintf(fd, "      qmfbid=%d\n", tccp->qmfbid);
-			fprintf(fd, "      qntsty=%d\n", tccp->qntsty);
-			fprintf(fd, "      numgbits=%d\n", tccp->numgbits);
-			fprintf(fd, "      roishift=%d\n", tccp->roishift);
-			fprintf(fd, "      stepsizes=");
-			numbands = tccp->qntsty == J2K_CCP_QNTSTY_SIQNT ? 1 : tccp->numresolutions * 3 - 2;
-			for (bandno = 0; bandno < numbands; bandno++) {
-				fprintf(fd, "(%d,%d) ", tccp->stepsizes[bandno].mant,
-					tccp->stepsizes[bandno].expn);
-			}
-			fprintf(fd, "\n");
-			
-			if (tccp->csty & J2K_CCP_CSTY_PRT) {
-				fprintf(fd, "      prcw=");
-				for (resno = 0; resno < tccp->numresolutions; resno++) {
-					fprintf(fd, "%d ", tccp->prcw[resno]);
-				}
-				fprintf(fd, "\n");
-				fprintf(fd, "      prch=");
-				for (resno = 0; resno < tccp->numresolutions; resno++) {
-					fprintf(fd, "%d ", tccp->prch[resno]);
-				}
-				fprintf(fd, "\n");
-			}
-			fprintf(fd, "    }\n");
-		}
-		fprintf(fd, "  }\n");
-	}
-	fprintf(fd, "}\n");
-}
-
 /* ----------------------------------------------------------------------- */
 static int j2k_get_num_tp(opj_cp_t *cp,int pino,int tileno){
 	char *prog;
@@ -2295,8 +2221,6 @@ bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, opj_codestre
 	j2k->image = image;
 
 	cp = j2k->cp;
-
-	/* j2k_dump_cp(stdout, image, cp); */
 
 	/* INDEX >> */
 	j2k->cstr_info = cstr_info;

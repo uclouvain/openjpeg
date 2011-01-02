@@ -4,14 +4,14 @@
 SET(common_SRCS
   convert.c
   index.c
-  ${PROJECT_SOURCE_DIR}/common/color.c
+  ${OPENJPEG_SOURCE_DIR}/common/color.c
 )
 
 # If not getopt was found then add it to the lib:
 IF(DONT_HAVE_GETOPT)
   SET(common_SRCS
     ${common_SRCS}
-    ${PROJECT_SOURCE_DIR}/common/getopt.c
+    ${OPENJPEG_SOURCE_DIR}/common/getopt.c
   )
 ENDIF(DONT_HAVE_GETOPT)
 
@@ -27,6 +27,14 @@ ENDIF(PNG_FOUND)
 IF(TIFF_FOUND)
   INCLUDE_DIRECTORIES(${TIFF_INCLUDE_DIR})
 ENDIF(TIFF_FOUND)
+
+IF(WIN32)
+  IF(BUILD_SHARED_LIBS)
+    ADD_DEFINITIONS(-DOPJ_EXPORTS)
+  ELSE(BUILD_SHARED_LIBS)
+    ADD_DEFINITIONS(-DOPJ_STATIC)
+  ENDIF(BUILD_SHARED_LIBS)
+ENDIF(WIN32)
 
 # Loop over all executables:
 FOREACH(exe j2k_to_image image_to_j2k j2k_dump)
