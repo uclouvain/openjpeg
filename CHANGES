@@ -5,6 +5,11 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+January 3, 2011
+- [antonin] removed badly written tests from CTest in 'codec/CMakeLists.txt'
+
+_______ R697 : OPENJPEG 1.4 RELEASED ______________________________
+
 January 2, 2011
 * [antonin] bug fixes to enable cmake compilation on WIN32 platform
 			- fixed getopt bug in jpwl/CMakeLists.txt
