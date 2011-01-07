@@ -3,8 +3,8 @@ SUBDIRS = libopenjpeg codec mj2 @jpwl_dir@ @jp3d_dir@ doc
 
 clean-local:
 	@rm -rf bin
-	@l='$(SUBDIRS)'; for f in $$l ; do \
-	rm -f $$f/.report.txt ; \
+	@list='$(SUBDIRS)'; for dir in $${list} ; do \
+	rm -f $${dir}/.report.txt ; \
 	done
 
 distclean-local: clean-local
@@ -13,8 +13,8 @@ pkgconf_dir = /usr/lib/pkgconfig
 
 install-data-hook:
 	@echo ""
-	@l='$(SUBDIRS)'; for f in $$l ; do \
-	cat $$f/.report.txt ; \
+	@list='$(SUBDIRS)'; for dir in $${list} ; do \
+	cat $${dir}/.report.txt ; \
 	done
 	@echo ""
 	@echo "Installing: libopenjpeg1.pc $(pkgconf_dir)"

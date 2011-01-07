@@ -408,6 +408,30 @@ test "$enable_shared" = "no" && with_sharedlibs="no")
 AC_MSG_RESULT($with_sharedlibs)
 AM_CONDITIONAL([with_sharedlibs], [test x$with_sharedlibs = xyes])
 #
+#
+build_so="no"
+build_dll="no"
+build_dylib="no"
+case "${host_os}" in
+    *cygwin*)
+        build_dll="yes"
+        ;;
+    *mingw*)
+        build_dll="yes"
+        ;;
+    *darwin*)
+        build_dylib="yes"
+        ;;
+	*)
+		build_so="yes"
+		;;
+esac
+#
+AM_CONDITIONAL([build_dll], [test x$build_dll = xyes])
+AM_CONDITIONAL([build_dylib], [test x$build_dylib = xyes])
+AM_CONDITIONAL([build_so], [test x$build_so = xyes])
+#
+
 # -------------------------------
 # Test for creating JP3D
 # -------------------------------

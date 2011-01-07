@@ -47,6 +47,6 @@ all-local:
 	$(INSTALL) -d ../bin
 	$(INSTALL) $(bin_PROGRAMS) ../bin
 	@echo "" > .report.txt
-	@for f in ${REPBIN} ; do \
-	echo "Installing: ${prefix}/bin/$$f" >> .report.txt ; \
+	@for file in ${REPBIN} ; do \
+	echo "Installing: ${prefix}/bin/$${file}" >> .report.txt ; \
 	done

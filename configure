@@ -612,6 +612,12 @@ with_doxygen_FALSE
 with_doxygen_TRUE
 with_doxygen
 jp3d_dir
+build_so_FALSE
+build_so_TRUE
+build_dylib_FALSE
+build_dylib_TRUE
+build_dll_FALSE
+build_dll_TRUE
 with_sharedlibs_FALSE
 with_sharedlibs_TRUE
 jpwl_dir
@@ -16080,6 +16086,51 @@ else
 fi
 
 #
+#
+build_so="no"
+build_dll="no"
+build_dylib="no"
+case "${host_os}" in
+    *cygwin*)
+        build_dll="yes"
+        ;;
+    *mingw*)
+        build_dll="yes"
+        ;;
+    *darwin*)
+        build_dylib="yes"
+        ;;
+	*)
+		build_so="yes"
+		;;
+esac
+#
+ if test x$build_dll = xyes; then
+  build_dll_TRUE=
+  build_dll_FALSE='#'
+else
+  build_dll_TRUE='#'
+  build_dll_FALSE=
+fi
+
+ if test x$build_dylib = xyes; then
+  build_dylib_TRUE=
+  build_dylib_FALSE='#'
+else
+  build_dylib_TRUE='#'
+  build_dylib_FALSE=
+fi
+
+ if test x$build_so = xyes; then
+  build_so_TRUE=
+  build_so_FALSE='#'
+else
+  build_so_TRUE='#'
+  build_so_FALSE=
+fi
+
+#
+
 # -------------------------------
 # Test for creating JP3D
 # -------------------------------
@@ -16307,6 +16358,18 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${with_sharedlibs_TRUE}" && test -z "${with_sharedlibs_FALSE}"; then
   as_fn_error "conditional \"with_sharedlibs\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${build_dll_TRUE}" && test -z "${build_dll_FALSE}"; then
+  as_fn_error "conditional \"build_dll\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${build_dylib_TRUE}" && test -z "${build_dylib_FALSE}"; then
+  as_fn_error "conditional \"build_dylib\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${build_so_TRUE}" && test -z "${build_so_FALSE}"; then
+  as_fn_error "conditional \"build_so\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${with_doxygen_TRUE}" && test -z "${with_doxygen_FALSE}"; then

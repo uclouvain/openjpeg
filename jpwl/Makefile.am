@@ -88,22 +88,51 @@ JPWL_image_to_j2k_SOURCES = ../common/getopt.c ../codec/index.c \
 REPBIN=$(bin_PROGRAMS)
 
 all-local:
-	$(INSTALL) -d ../bin
+	@$(INSTALL) -d ../bin
 	$(INSTALL) $(bin_PROGRAMS) ../bin
-	cp -P .libs/libopenjpeg_JPWL.* ../bin
-	rm -f ../bin/libopenjpeg_JPWL.la*
-	@rm -rf .report_lib
-	@$(INSTALL) -d .report_lib
-	@cp -P .libs/libopenjpeg_JPWL.* .report_lib
-	@rm -f .report_lib/libopenjpeg_JPWL.lai
-	echo "" > .report.txt
-	@(for f in ${REPBIN} ; do \
-	echo "Installing: ${prefix}/bin/$$f" >> .report.txt ; \
+	@rm -rf .report_dir
+	@$(INSTALL) -d .report_dir
+if build_so
+if with_sharedlibs
+	@find .libs -type f -name "*\.so*" -exec cp -P {} .report_dir \;
+	@find .libs -type l -name "*\.so*" -exec cp -P {} .report_dir \;
+else !with_sharedlibs
+	@find .libs -type f -name "*\.a" -exec cp -P {} .report_dir \;
+endif !with_sharedlibs
+endif
+if build_dll
+if with_sharedlibs
+	@find .libs -type f -name "*\.dll" -exec cp -P {} .report_dir \;
+	@find .libs -type f -name "*\.a" -exec cp -P {} .report_dir \;
+else !with_sharedlibs
+	@find .libs -type f -name "*\.a" -exec cp -P {} .report_dir \;
+endif !with_sharedlibs
+endif
+if build_dylib
+if with_sharedlibs
+	@find .libs -type f -name "*\.dylib" -exec cp -P {} .report_dir \;
+else !with_sharedlibs
+	@find .libs -type l -name "*\.a" -exec cp -P {} .report_dir \;
+endif !with_sharedlibs
+endif
+	@cp -a .report_dir/* ../bin
+	@echo "" > .report.txt
+	@(for file in ${REPBIN} ; do \
+	echo "Installing: ${prefix}/bin/$${file}" >> .report.txt ; \
 	done)
-	@(cd .report_lib; \
-	l=`ls --file-type`; \
-	for f in $$l ; do \
-	echo "Installing: ${prefix}/lib/$$f" >> ../.report.txt ; \
-	done)
-	@rm -rf .report_lib
-
+	@echo "Installing: ${prefix}/lib/libopenjpeg_JPWL.la" >> .report.txt
+	@(cd .report_dir; \
+	for file in `ls *.dll 2> /dev/null` ; do \
+	echo "Installing: ${prefix}/bin/$${file}" >> ../.report.txt ; \
+	done ; \
+	for file in `ls *.a 2> /dev/null` ; do \
+	echo "Installing: ${prefix}/lib/$${file}" >> ../.report.txt ; \
+	done ; \
+	for file in `ls *.so* 2> /dev/null` ; do \
+	echo "Installing: ${prefix}/lib/$${file}" >> ../.report.txt ; \
+	done ; \
+	for file in `ls *.dylib 2> /dev/null` ; do \
+	echo "Installing: ${prefix}/lib/$${file}" >> ../.report.txt ; \
+	done \
+	)
+	@rm -rf .report_dir

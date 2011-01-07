@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+January 7, 2011
+! [szukw000] changed report code in Makefile.am
+
 January 3, 2011
 - [antonin] removed badly written tests from CTest in 'codec/CMakeLists.txt'
 

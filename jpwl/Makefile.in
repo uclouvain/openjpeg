@@ -973,24 +973,39 @@ dos2unix:
 	@$(DOS2UNIX) $(SRCS) $(INCLS)
 
 all-local:
-	$(INSTALL) -d ../bin
+	@$(INSTALL) -d ../bin
 	$(INSTALL) $(bin_PROGRAMS) ../bin
-	cp -P .libs/libopenjpeg_JPWL.* ../bin
-	rm -f ../bin/libopenjpeg_JPWL.la*
-	@rm -rf .report_lib
-	@$(INSTALL) -d .report_lib
-	@cp -P .libs/libopenjpeg_JPWL.* .report_lib
-	@rm -f .report_lib/libopenjpeg_JPWL.lai
-	echo "" > .report.txt
-	@(for f in ${REPBIN} ; do \
-	echo "Installing: ${prefix}/bin/$$f" >> .report.txt ; \
+	@rm -rf .report_dir
+	@$(INSTALL) -d .report_dir
+@build_so_TRUE@@with_sharedlibs_TRUE@	@find .libs -type f -name "*\.so*" -exec cp -P {} .report_dir \;
+@build_so_TRUE@@with_sharedlibs_TRUE@	@find .libs -type l -name "*\.so*" -exec cp -P {} .report_dir \;
+@build_so_TRUE@@with_sharedlibs_FALSE@	@find .libs -type f -name "*\.a" -exec cp -P {} .report_dir \;
+@build_dll_TRUE@@with_sharedlibs_TRUE@	@find .libs -type f -name "*\.dll" -exec cp -P {} .report_dir \;
+@build_dll_TRUE@@with_sharedlibs_TRUE@	@find .libs -type f -name "*\.a" -exec cp -P {} .report_dir \;
+@build_dll_TRUE@@with_sharedlibs_FALSE@	@find .libs -type f -name "*\.a" -exec cp -P {} .report_dir \;
+@build_dylib_TRUE@@with_sharedlibs_TRUE@	@find .libs -type f -name "*\.dylib" -exec cp -P {} .report_dir \;
+@build_dylib_TRUE@@with_sharedlibs_FALSE@	@find .libs -type l -name "*\.a" -exec cp -P {} .report_dir \;
+	@cp -a .report_dir/* ../bin
+	@echo "" > .report.txt
+	@(for file in ${REPBIN} ; do \
+	echo "Installing: ${prefix}/bin/$${file}" >> .report.txt ; \
 	done)
-	@(cd .report_lib; \
-	l=`ls --file-type`; \
-	for f in $$l ; do \
-	echo "Installing: ${prefix}/lib/$$f" >> ../.report.txt ; \
-	done)
-	@rm -rf .report_lib
+	@echo "Installing: ${prefix}/lib/libopenjpeg_JPWL.la" >> .report.txt
+	@(cd .report_dir; \
+	for file in `ls *.dll 2> /dev/null` ; do \
+	echo "Installing: ${prefix}/bin/$${file}" >> ../.report.txt ; \
+	done ; \
+	for file in `ls *.a 2> /dev/null` ; do \
+	echo "Installing: ${prefix}/lib/$${file}" >> ../.report.txt ; \
+	done ; \
+	for file in `ls *.so* 2> /dev/null` ; do \
+	echo "Installing: ${prefix}/lib/$${file}" >> ../.report.txt ; \
+	done ; \
+	for file in `ls *.dylib 2> /dev/null` ; do \
+	echo "Installing: ${prefix}/lib/$${file}" >> ../.report.txt ; \
+	done \
+	)
+	@rm -rf .report_dir
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
