@@ -618,21 +618,36 @@ dos2unix:
 
 all-local:
 	@$(INSTALL) -d ../../bin
-	@cp -P .libs/libopenjp3dvm.* ../../bin
-	@rm -f ../../bin/libopenjp3dvm.la*
-	@rm -rf .report_lib
-	@$(INSTALL) -d .report_lib
-	@cp -P .libs/libopenjp3dvm.* .report_lib
-	@rm -f .report_lib/libopenjp3dvm.lai
+	@rm -rf .report_dir
+	@$(INSTALL) -d .report_dir
+@build_so_TRUE@@with_sharedlibs_TRUE@	@find .libs -type f -name "*\.so*" -exec cp -P {} .report_dir \;
+@build_so_TRUE@@with_sharedlibs_TRUE@	@find .libs -type l -name "*\.so*" -exec cp -P {} .report_dir \;
+@build_so_TRUE@@with_sharedlibs_FALSE@	@find .libs -type f -name "*\.a" -exec cp -P {} .report_dir \;
+@build_dll_TRUE@@with_sharedlibs_TRUE@	@find .libs -type f -name "*\.dll" -exec cp -P {} .report_dir \;
+@build_dll_TRUE@@with_sharedlibs_TRUE@	@find .libs -type f -name "*\.a" -exec cp -P {} .report_dir \;
+@build_dll_TRUE@@with_sharedlibs_FALSE@	@find .libs -type f -name "*\.a" -exec cp -P {} .report_dir \;
+@build_dylib_TRUE@@with_sharedlibs_TRUE@	@find .libs -type f -name "*\.dylib" -exec cp -P {} .report_dir \;
+@build_dylib_TRUE@@with_sharedlibs_FALSE@	@find .libs -type l -name "*\.a" -exec cp -P {} .report_dir \;
+	@cp -a .report_dir/* ../../bin
 	@echo "" > ../.report.txt
 	@echo "Installing: ${prefix}/include/${headerdir}/" >> ../.report.txt
 	@echo "Installing: ${prefix}/include/${headerdir}/openjpeg3d.h" >> ../.report.txt
-	@(cd .report_lib; \
-	l=`ls --file-type`; \
-	for f in $$l ; do \
-	echo "Installing: ${prefix}/lib/$$f" >> ../../.report.txt ; \
-	done)
-	@rm -rf .report_lib
+	@echo "Installing: ${prefix}/lib/libopenjp3dvm.la" >> ../.report.txt
+	@(cd .report_dir; \
+	for file in `ls *.dll 2> /dev/null` ; do \
+	echo "Installing: ${prefix}/bin/$${file}" >> ../../.report.txt ; \
+	done ; \
+	for file in `ls *.a 2> /dev/null` ; do \
+	echo "Installing: ${prefix}/lib/$${file}" >> ../../.report.txt ; \
+	done ; \
+	for file in `ls *.so* 2> /dev/null` ; do \
+	echo "Installing: ${prefix}/lib/$${file}" >> ../../.report.txt ; \
+	done ; \
+	for file in `ls *.dylib 2> /dev/null` ; do \
+	echo "Installing: ${prefix}/lib/$${file}" >> ../../.report.txt ; \
+	done \
+	)
+	@rm -rf .report_dir
 
 install-data-hook:
 	(cd $(DESTDIR)${prefix}/include && rm -f openjpeg3d.h)
