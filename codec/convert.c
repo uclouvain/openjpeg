@@ -35,6 +35,12 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef _WIN32
+#define BYTE_ORDER LITTLE_ENDIAN
+#else
+#include <endian.h>
+#endif
+
 #ifdef HAVE_LIBTIFF
 #ifdef _WIN32
 #include "../libs/libtiff/tiffio.h"
@@ -66,25 +72,6 @@ static int int_floorlog2(int a) {
 	}
 	return l;
 }
-
-/*
- * Divide an integer by a power of 2 and round upwards.
- *
- * a divided by 2^b
- */
-static int int_ceildivpow2(int a, int b) {
-	return (a + (1 << b) - 1) >> b;
-}
-
-/*
- * Divide an integer and round upwards.
- *
- * a divided by b
- */
-static int int_ceildiv(int a, int b) {
-	return (a + b - 1) / b;
-}
-
 
 /* -->> -->> -->> -->>
 
@@ -1278,141 +1265,236 @@ opj_image_t* pnmtoimage(const char *filename, opj_cparameters_t *parameters) {
 	return image;
 }
 
-int imagetopnm(opj_image_t * image, const char *outfile) {
-	int w, wr, h, hr, max;
-	int i, compno;
-	int adjustR, adjustG, adjustB, adjustX;
+int imagetopnm(opj_image_t * image, const char *outfile) 
+{
+	int *red, *green, *blue, *alpha;
+	int wr, hr, max;
+	int i, compno, ncomp;
+	int adjustR, adjustG, adjustB;
+	int fails, is16, force16, want_gray, has_alpha;
+	int prec, opj_prec, ushift, dshift, v;
 	FILE *fdest = NULL;
-	char S2;
 	const char *tmp = outfile;
+	char *destname;
 
-	while (*tmp) {
-		tmp++;
-	}
-	tmp--;
-	tmp--;
-	S2 = *tmp;
+    if((opj_prec = image->comps[0].prec) > 16)
+   {
+	fprintf(stderr,"%s:%d:imagetopnm\n\tprecision %d is larger than 16"
+	"\n\t: refused.\n",__FILE__,__LINE__,opj_prec);
+	return 1;
+   }
+	prec = opj_prec;
+    is16 = force16 = ushift = dshift = has_alpha = 0; fails = 1;
 
-	if (image->numcomps == 3 && image->comps[0].dx == image->comps[1].dx
-		&& image->comps[1].dx == image->comps[2].dx
-		&& image->comps[0].dy == image->comps[1].dy
-		&& image->comps[1].dy == image->comps[2].dy
-		&& image->comps[0].prec == image->comps[1].prec
-		&& image->comps[1].prec == image->comps[2].prec
-		&& S2 !='g' && S2 !='G') {
+    if(prec > 8 && prec < 16)
+   {
+     prec = 16; force16 = 1;
+   }
+	
+	while (*tmp) ++tmp; tmp -= 2; 
+	want_gray = (*tmp == 'g' || *tmp == 'G'); 
+	ncomp = image->numcomps;
 
-		fdest = fopen(outfile, "wb");
-		if (!fdest) {
-			fprintf(stderr, "ERROR -> failed to open %s for writing\n", outfile);
-			return 1;
-		}
+fprintf(stderr,"%s:%d:ncomp(%d) opj_prec(%d) prec(%d)\n",
+__FILE__,__LINE__,ncomp,opj_prec,prec);
 
-		w = int_ceildiv(image->x1 - image->x0, image->comps[0].dx);
-		wr = image->comps[0].w;
-        
-		h = int_ceildiv(image->y1 - image->y0, image->comps[0].dy);
-		hr = image->comps[0].h;
+	if (ncomp > 2 
+	&& image->comps[0].dx == image->comps[1].dx
+	&& image->comps[1].dx == image->comps[2].dx
+	&& image->comps[0].dy == image->comps[1].dy
+	&& image->comps[1].dy == image->comps[2].dy
+	&& image->comps[0].prec == image->comps[1].prec
+	&& image->comps[1].prec == image->comps[2].prec
+	&& !want_gray
+	   )
+   {
+	fdest = fopen(outfile, "wb");
+
+	if (!fdest) 
+  {
+	fprintf(stderr, "ERROR -> failed to open %s for writing\n", outfile);
+	return fails;
+  }
+	wr = image->comps[0].w; hr = image->comps[0].h;
 	    
-		max = image->comps[0].prec > 8 ? 255 : (1 << image->comps[0].prec) - 1;
-	    
-		image->comps[0].x0 = int_ceildivpow2(image->comps[0].x0 - int_ceildiv(image->x0, image->comps[0].dx), image->comps[0].factor);
-		image->comps[0].y0 = int_ceildivpow2(image->comps[0].y0 -	int_ceildiv(image->y0, image->comps[0].dy), image->comps[0].factor);
+	max = (1<<prec) - 1; has_alpha = (ncomp == 4);
 
-		fprintf(fdest, "P6\n%d %d\n%d\n", wr, hr, max);
+	is16 = (prec == 16);
 
-		if (image->comps[0].prec > 8) {
-			adjustR = image->comps[0].prec - 8;
-			printf("PNM CONVERSION: Truncating component 0 from %d bits to 8 bits\n", image->comps[0].prec);
-		}
-		else 
-			adjustR = 0;
-		if (image->comps[1].prec > 8) {
-			adjustG = image->comps[1].prec - 8;
-			printf("PNM CONVERSION: Truncating component 1 from %d bits to 8 bits\n", image->comps[1].prec);
-		}
-		else 
-			adjustG = 0;
-		if (image->comps[2].prec > 8) {
-			adjustB = image->comps[2].prec - 8;
-			printf("PNM CONVERSION: Truncating component 2 from %d bits to 8 bits\n", image->comps[2].prec);
-		}
-		else 
-			adjustB = 0;
+    red = image->comps[0].data;
+    green = image->comps[1].data;
+    blue = image->comps[2].data;
+	
+	if(has_alpha)
+  {
+	 fprintf(fdest, "P7\n# OpenJPEG-%s\nWIDTH %d\nHEIGHT %d\nDEPTH 4\n"
+		"MAXVAL %d\nTUPLTYPE RGB_ALPHA\nENDHDR\n", opj_version(),
+		wr, hr, max);
+	alpha = image->comps[3].data;
+  }
+	else
+  {
+	 fprintf(fdest, "P6\n# OpenJPEG-%s\n%d %d\n%d\n", 
+		opj_version(), wr, hr, max);
+	alpha = NULL;
+  }
+    if(force16)
+  {
+    ushift = 16 - opj_prec; dshift = opj_prec - ushift;
+  }
+    adjustR = (image->comps[0].sgnd ? 1 << (image->comps[0].prec - 1) : 0);
+    adjustG = (image->comps[1].sgnd ? 1 << (image->comps[1].prec - 1) : 0);
+    adjustB = (image->comps[2].sgnd ? 1 << (image->comps[2].prec - 1) : 0);
 
+    for(i = 0; i < wr * hr; ++i)
+  {
+	if(is16)
+ {
+/* MSB first: 'man ppm' */
 
-		for (i = 0; i < wr * hr; i++) {
-			int r, g, b;
-			unsigned char rc,gc,bc;
-			r = image->comps[0].data[i];
-			r += (image->comps[0].sgnd ? 1 << (image->comps[0].prec - 1) : 0);
-			rc = (unsigned char) ((r >> adjustR)+((r >> (adjustR-1))%2));
+        v = *red + adjustR; ++red;
 
-			g = image->comps[1].data[i];
-			g += (image->comps[1].sgnd ? 1 << (image->comps[1].prec - 1) : 0);
-			gc = (unsigned char) ((g >> adjustG)+((g >> (adjustG-1))%2));
-			
-			b = image->comps[2].data[i];
-			b += (image->comps[2].sgnd ? 1 << (image->comps[2].prec - 1) : 0);
-			bc = (unsigned char) ((b >> adjustB)+((b >> (adjustB-1))%2));
-			
-			fprintf(fdest, "%c%c%c", rc, gc, bc);
-		}
-		fclose(fdest);
+        if(force16) { v = (v<<ushift) + (v>>dshift); }
 
-	} else {
-		int ncomp=(S2=='g' || S2=='G')?1:image->numcomps;
-		if (image->numcomps > ncomp) {
-			fprintf(stderr,"WARNING -> [PGM files] Only the first component\n");
-			fprintf(stderr,"           is written to the file\n");
-		}
-		for (compno = 0; compno < ncomp; compno++) {
-			char name[256];
-			if (ncomp > 1) {
-				sprintf(name, "%d.%s", compno, outfile);
-			} else {
-				sprintf(name, "%s", outfile);
-			}
-			
-			fdest = fopen(name, "wb");
-			if (!fdest) {
-				fprintf(stderr, "ERROR -> failed to open %s for writing\n", name);
-				return 1;
-			}
-            
-			w = int_ceildiv(image->x1 - image->x0, image->comps[compno].dx);
-			wr = image->comps[compno].w;
-			
-			h = int_ceildiv(image->y1 - image->y0, image->comps[compno].dy);
-			hr = image->comps[compno].h;
-			
-			max = image->comps[compno].prec > 8 ? 255 : (1 << image->comps[compno].prec) - 1;
-			
-			image->comps[compno].x0 = int_ceildivpow2(image->comps[compno].x0 - int_ceildiv(image->x0, image->comps[compno].dx), image->comps[compno].factor);
-			image->comps[compno].y0 = int_ceildivpow2(image->comps[compno].y0 - int_ceildiv(image->y0, image->comps[compno].dy), image->comps[compno].factor);
-			
-			fprintf(fdest, "P5\n%d %d\n%d\n", wr, hr, max);
-			
-			if (image->comps[compno].prec > 8) {
-				adjustX = image->comps[0].prec - 8;
-				printf("PNM CONVERSION: Truncating component %d from %d bits to 8 bits\n",compno, image->comps[compno].prec);
-			}
-			else 
-				adjustX = 0;
-			
-			for (i = 0; i < wr * hr; i++) {
-				int l;
-				unsigned char lc;
-				l = image->comps[compno].data[i];
-				l += (image->comps[compno].sgnd ? 1 << (image->comps[compno].prec - 1) : 0);
-				lc = (unsigned char) ((l >> adjustX)+((l >> (adjustX-1))%2));
-				fprintf(fdest, "%c", lc);
-			}
-			fclose(fdest);
-		}
-	}
+#if BYTE_ORDER == LITTLE_ENDIAN
+        fprintf(fdest, "%c%c",(unsigned char)v, (unsigned char)(v/256));
+#else
+		fprintf(fdest, "%c%c",(unsigned char)(v/256), (unsigned char)v);
+#endif
+        v = *green + adjustG; ++green;
+
+        if(force16) { v = (v<<ushift) + (v>>dshift); }
+
+#if BYTE_ORDER == LITTLE_ENDIAN
+        fprintf(fdest, "%c%c",(unsigned char)v, (unsigned char)(v/256));
+#else
+		fprintf(fdest, "%c%c",(unsigned char)(v/256), (unsigned char)v);
+#endif
+
+        v =  *blue + adjustB; ++blue;
+
+        if(force16) { v = (v<<ushift) + (v>>dshift); }
+
+#if BYTE_ORDER == LITTLE_ENDIAN
+        fprintf(fdest, "%c%c",(unsigned char)v, (unsigned char)(v/256));
+#else
+		fprintf(fdest, "%c%c",(unsigned char)(v/256), (unsigned char)v);
+#endif
+
+        if(has_alpha)
+       {
+        v = *alpha++;
+
+        if(force16) { v = (v<<ushift) + (v>>dshift); }
+
+#if BYTE_ORDER == LITTLE_ENDIAN
+        fprintf(fdest, "%c%c",(unsigned char)v, (unsigned char)(v/256));
+#else
+		fprintf(fdest, "%c%c",(unsigned char)(v/256), (unsigned char)v);
+#endif
+       }
+        continue;
+
+ }
+/* prec <= 8: */
+
+	fprintf(fdest, "%c%c%c",(unsigned char)*red++, (unsigned char)*green++,
+		(unsigned char)*blue++);
+
+	if(has_alpha)
+ 	 fprintf(fdest, "%c", (unsigned char)*alpha++);
+
+  }	/* for(i */
+
+	fclose(fdest); return 0;
+   }
+
+    if(force16)
+   {
+    ushift = 16 - opj_prec; dshift = opj_prec - ushift;
+   }
+/* YUV or MONO: */
+	if(want_gray) ncomp = 1;
+//FIXME: with[out] alpha ?
+	has_alpha = 0; alpha = NULL;
+
+	if (image->numcomps > ncomp) 
+   {
+	fprintf(stderr,"WARNING -> [PGM file] Only the first component\n");
+	fprintf(stderr,"           is written to the file\n");
+   }
+	destname = (char*)malloc(strlen(outfile) + 8);
+
+	for (compno = 0; compno < ncomp; compno++) 
+   {
+	if (ncomp > 1) 
+	 sprintf(destname, "%d.%s", compno, outfile);
+	else
+	 sprintf(destname, "%s", outfile);
+
+	fdest = fopen(destname, "wb");
+	if (!fdest) 
+  {
+	fprintf(stderr, "ERROR -> failed to open %s for writing\n", destname);
+	free(destname);
+	return 1;
+  }
+	wr = image->comps[compno].w; hr = image->comps[compno].h;
+
+	max = (1<<prec) - 1;
+
+	fprintf(fdest, "P5\n#OpenJPEG-%s\n%d %d\n%d\n", 
+		opj_version(), wr, hr, max);
+
+	red = image->comps[compno].data;
+	adjustR = 
+	(image->comps[compno].sgnd ? 1 << (image->comps[compno].prec - 1) : 0);
+
+    if(prec > 8)
+  {
+/* MSB first: 'man ppm' */
+
+	for (i = 0; i < wr * hr; i++) 
+ {
+
+        v = *red + adjustR; ++red;
+
+        if(force16) { v = (v<<ushift) + (v>>dshift); }
+
+#if BYTE_ORDER == LITTLE_ENDIAN
+        fprintf(fdest, "%c%c",(unsigned char)v, (unsigned char)(v/256));
+#else
+		fprintf(fdest, "%c%c",(unsigned char)(v/256), (unsigned char)v);
+#endif
+
+        if(has_alpha)
+      {
+        v = *alpha++;
+
+        if(force16) { v = (v<<ushift) + (v>>dshift); }
+
+#if BYTE_ORDER == LITTLE_ENDIAN
+        fprintf(fdest, "%c%c",(unsigned char)v, (unsigned char)(v/256));
+#else
+		fprintf(fdest, "%c%c",(unsigned char)(v/256), (unsigned char)v);
+#endif
+      }
+
+ }/* for(i */
+  }
+	else /* prec <= 8 */
+  {
+	for(i = 0; i < wr * hr; ++i)
+ {
+	 fprintf(fdest, "%c", (unsigned char)(*red + adjustR)); ++red;
+ }
+  }
+	fclose(fdest);
+   } /* for (compno */
+	free(destname);
 
 	return 0;
-}
+}/* imagetopnm() */
 
 #ifdef HAVE_LIBTIFF
 /* -->> -->> -->> -->>
@@ -2517,19 +2599,30 @@ int imagetopng(opj_image_t * image, const char *write_idf)
 		
 		if(force16) { v = (v<<ushift) + (v>>dshift); }
 
+#if BYTE_ORDER == LITTLE_ENDIAN
 	    *d++ = (unsigned char)(v>>8); *d++ = (unsigned char)v;
-
+#else
+		 *d++ = (unsigned char)(v>>24);  *d++ = (unsigned char)(v>>16);
+#endif
 		v = *green + adjustG; ++green;
 		
 		if(force16) { v = (v<<ushift) + (v>>dshift); }
 
+#if BYTE_ORDER == LITTLE_ENDIAN
 	    *d++ = (unsigned char)(v>>8); *d++ = (unsigned char)v;
+#else
+		 *d++ = (unsigned char)(v>>24);  *d++ = (unsigned char)(v>>16);
+#endif
 
 		v =  *blue + adjustB; ++blue;
 		
 		if(force16) { v = (v<<ushift) + (v>>dshift); }
 
+#if BYTE_ORDER == LITTLE_ENDIAN
 	    *d++ = (unsigned char)(v>>8); *d++ = (unsigned char)v;
+#else
+		 *d++ = (unsigned char)(v>>24);  *d++ = (unsigned char)(v>>16);
+#endif
 
 		if(has_alpha)
 	  {
@@ -2537,7 +2630,11 @@ int imagetopng(opj_image_t * image, const char *write_idf)
 		
 		if(force16) { v = (v<<ushift) + (v>>dshift); }
 
-		*d++ = (unsigned char)(v>>8); *d++ = (unsigned char)v;
+#if BYTE_ORDER == LITTLE_ENDIAN
+	    *d++ = (unsigned char)(v>>8); *d++ = (unsigned char)v;
+#else
+		 *d++ = (unsigned char)(v>>24);  *d++ = (unsigned char)(v>>16);
+#endif
 	  }
 		continue;
 	   }
@@ -2621,7 +2718,11 @@ int imagetopng(opj_image_t * image, const char *write_idf)
 
 		if(force16) { v = (v<<ushift) + (v>>dshift); }
 
-		*d++ = (unsigned char)(v>>8); *d++ = (unsigned char)(v & 0xff);
+#if BYTE_ORDER == LITTLE_ENDIAN
+	    *d++ = (unsigned char)(v>>8); *d++ = (unsigned char)v;
+#else
+		 *d++ = (unsigned char)(v>>24);  *d++ = (unsigned char)(v>>16);
+#endif
 
 		if(has_alpha)
 	  {
@@ -2629,7 +2730,11 @@ int imagetopng(opj_image_t * image, const char *write_idf)
 
 		if(force16) { v = (v<<ushift) + (v>>dshift); }
 
-		*d++ = (unsigned char)(v>>8); *d++ = (unsigned char)(v & 0xff);
+#if BYTE_ORDER == LITTLE_ENDIAN
+	    *d++ = (unsigned char)(v>>8); *d++ = (unsigned char)v;
+#else
+		 *d++ = (unsigned char)(v>>24);  *d++ = (unsigned char)(v>>16);
+#endif
 	  }
 	   }/* for(x) */
 	png_write_row(png, row_buf);
@@ -2683,4 +2788,3 @@ fin:
 	return fails;
 }/* imagetopng() */
 #endif /* HAVE_LIBPNG */
-
