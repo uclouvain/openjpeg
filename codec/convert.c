@@ -1295,9 +1295,6 @@ int imagetopnm(opj_image_t * image, const char *outfile)
 	want_gray = (*tmp == 'g' || *tmp == 'G'); 
 	ncomp = image->numcomps;
 
-fprintf(stderr,"%s:%d:ncomp(%d) opj_prec(%d) prec(%d)\n",
-__FILE__,__LINE__,ncomp,opj_prec,prec);
-
 	if (ncomp > 2 
 	&& image->comps[0].dx == image->comps[1].dx
 	&& image->comps[1].dx == image->comps[2].dx

@@ -6,6 +6,9 @@ What's New for OpenJPEG
 + : added
 
 January 9, 2011 
+- [antonin] removed forgotten debug info in imagetopnm().
+
+January 9, 2011 
 ! [antonin] imagetopnm() has been rewritten to allow 16-bits precision, and PAM (P7) support. See Netpbm for more info. (patch from szukw000).
 
 January 7, 2011
