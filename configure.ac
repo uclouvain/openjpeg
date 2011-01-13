@@ -452,7 +452,7 @@ AC_CHECK_PROG(with_doxygen, doxygen, [yes],[no],,)
 AM_CONDITIONAL([with_doxygen], [test x$with_doxygen = xyes])
 #
 AC_CONFIG_FILES([Makefile])
-AC_CONFIG_FILES([libopenjpeg.pc])
+AC_CONFIG_FILES([libopenjpeg1.pc])
 AC_CONFIG_FILES([libopenjpeg/Makefile])
 AC_CONFIG_FILES([jpwl/Makefile])
 AC_CONFIG_FILES([codec/Makefile])
