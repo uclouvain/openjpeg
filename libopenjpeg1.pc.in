@@ -5,7 +5,7 @@ includedir=@includedir@
 
 Name: openjpeg
 Description: JPEG2000 files library
-URL: http://code.google.com/p/openjpeg/
+URL: http://www.openjpeg.org/
 Version: @VERSION@
 Libs: -L${libdir} -lopenjpeg
 Cflags: -I${includedir}

@@ -7,6 +7,7 @@ What's New for OpenJPEG
 
 January 13, 2001
 + [rdieter] add pkg-config support to cmake
+! [rdieter] adjust autotools pkg-config support to match
 
 January 9, 2011 
 - [antonin] removed forgotten debug info in imagetopnm().

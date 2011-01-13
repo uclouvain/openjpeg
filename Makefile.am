@@ -9,7 +9,7 @@ clean-local:
 
 distclean-local: clean-local
 
-pkgconf_dir = /usr/lib/pkgconfig
+pkgconf_dir = $(libdir)/pkgconfig
 
 install-data-hook:
 	@echo ""
@@ -20,7 +20,7 @@ install-data-hook:
 	@echo "Installing: libopenjpeg1.pc $(pkgconf_dir)"
 	@echo ""
 	@$(INSTALL) -d $(pkgconf_dir)
-	@cp libopenjpeg.pc $(pkgconf_dir)/libopenjpeg1.pc
+	@cp libopenjpeg1.pc $(pkgconf_dir)/libopenjpeg1.pc
 	@(cd $(pkgconf_dir) && $(RM) libopenjpeg.pc && \
 	$(LN_S) libopenjpeg1.pc libopenjpeg.pc)
 
