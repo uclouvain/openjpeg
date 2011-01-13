@@ -17,12 +17,12 @@ install-data-hook:
 	cat $${dir}/.report.txt ; \
 	done
 	@echo ""
-	@echo "Installing: libopenjpeg1.pc $(pkgconf_dir)"
+	@echo "Installing: libopenjpeg1.pc $(DESTDIR)$(pkgconf_dir)"
 	@echo ""
-	@$(INSTALL) -d $(pkgconf_dir)
-	@cp libopenjpeg1.pc $(pkgconf_dir)/libopenjpeg1.pc
-	@(cd $(pkgconf_dir) && $(RM) libopenjpeg.pc && \
+	@$(INSTALL) -d $(DESTDIR)$(pkgconf_dir)
+	@cp libopenjpeg1.pc $(DESTDIR)$(pkgconf_dir)/libopenjpeg1.pc
+	@(cd $(DESTDIR)$(pkgconf_dir) && $(RM) libopenjpeg.pc && \
 	$(LN_S) libopenjpeg1.pc libopenjpeg.pc)
 
 uninstall-hook:
-	@(cd $(pkgconf_dir) && $(RM) libopenjpeg.pc libopenjpeg1.pc)
+	@(cd $(DESTDIR)$(pkgconf_dir) && $(RM) libopenjpeg.pc libopenjpeg1.pc)

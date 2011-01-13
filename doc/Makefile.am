@@ -20,30 +20,30 @@ all-local:
 	@cp man/man3/* .
 
 install-data-hook:
-	$(INSTALL) -d $(doc_dir)
-	$(INSTALL) -d ${mandir}/man1 ${mandir}/man3
+	$(INSTALL) -d $(DESTDIR)$(doc_dir)
+	$(INSTALL) -d $(DESTDIR)${mandir}/man1 $(DESTDIR)${mandir}/man3
 if with_libjpwl
-	@(cd ${mandir}/man1 && $(RM) JPWL_image_to_j2k* JPWL_j2k_to_image*)
-	@(cd ${mandir}/man3 && $(RM) JPWL_libopenjpeg* )
+	@(cd $(DESTDIR)${mandir}/man1 && $(RM) JPWL_image_to_j2k* JPWL_j2k_to_image*)
+	@(cd $(DESTDIR)${mandir}/man3 && $(RM) JPWL_libopenjpeg* )
 endif
-	@(cd ${mandir}/man1 && $(RM) image_to_j2k* j2k_to_image* j2k_dump* )
-	@(cd ${mandir}/man3 && $(RM) libopenjpeg* )
+	@(cd $(DESTDIR)${mandir}/man1 && $(RM) image_to_j2k* j2k_to_image* j2k_dump* )
+	@(cd $(DESTDIR)${mandir}/man3 && $(RM) libopenjpeg* )
 	@gzip -f image_to_j2k.1 j2k_to_image.1 j2k_dump.1 libopenjpeg.3
-	@cp image_to_j2k.1.gz j2k_to_image.1.gz j2k_dump.1.gz ${mandir}/man1
-	@cp libopenjpeg.3.gz ${mandir}/man3
+	@cp image_to_j2k.1.gz j2k_to_image.1.gz j2k_dump.1.gz $(DESTDIR)${mandir}/man1
+	@cp libopenjpeg.3.gz $(DESTDIR)${mandir}/man3
 	@$(RM) *\.gz
 if with_libjpwl
-	@(cd ${mandir}/man1 && \
+	@(cd $(DESTDIR)${mandir}/man1 && \
 	$(LN_S) image_to_j2k.1.gz JPWL_image_to_j2k.1.gz && \
 	$(LN_S) j2k_to_image.1.gz JPWL_j2k_to_image.1.gz)
 	@(cd ${mandir}/man3 && $(LN_S) libopenjpeg.3.gz JPWL_libopenjpeg.3.gz)
 endif
-	@$(INSTALL) -m 644 ../LICENSE ../CHANGES $(doc_dir)
+	@$(INSTALL) -m 644 ../LICENSE ../CHANGES $(DESTDIR)$(doc_dir)
 
 uninstall-hook:
-	@(cd ${mandir}/man1 && $(RM) JPWL_image_to_j2k* JPWL_j2k_to_image* && \
+	@(cd $(DESTDIR)${mandir}/man1 && $(RM) JPWL_image_to_j2k* JPWL_j2k_to_image* && \
 	$(RM) image_to_j2k* j2k_to_image* j2k_dump* )
-	@(cd ${mandir}/man3 && $(RM) JPWL_libopenjpeg* && \
+	@(cd $(DESTDIR)${mandir}/man3 && $(RM) JPWL_libopenjpeg* && \
 	$(RM) libopenjpeg* )
-	@(cd $(doc_dir) && $(RM) * )
-	@rmdir $(doc_dir)
+	@(cd $(DESTDIR)$(doc_dir) && $(RM) * )
+	@rmdir $(DESTDIR)$(doc_dir)
