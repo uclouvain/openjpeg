@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+January 16, 2001
+* [antonin] convert.c: inclusion of endian.h has to be different on APPLE platforms
+
 January 13, 2001
 + [rdieter] add pkg-config support to cmake
 ! [rdieter] adjust autotools pkg-config support to match

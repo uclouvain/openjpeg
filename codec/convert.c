@@ -37,6 +37,8 @@
 
 #ifdef _WIN32
 #define BYTE_ORDER LITTLE_ENDIAN
+#elif __APPLE__
+#include <machine/endian.h>
 #else
 #include <endian.h>
 #endif
