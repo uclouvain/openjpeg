@@ -5,10 +5,13 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
-January 16, 2001
+January 17, 2011
+- [rdieter] remove generated files (ticket 52)
+
+January 16, 2011
 * [antonin] convert.c: inclusion of endian.h has to be different on APPLE platforms
 
-January 13, 2001
+January 13, 2011
 + [rdieter] add pkg-config support to cmake
 ! [rdieter] adjust autotools pkg-config support to match
 * [rdieter] fix symlink creation (cmake)
