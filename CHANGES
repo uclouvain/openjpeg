@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 January 23, 2011
+- [antonin] removed obsolete VS files
 ! [antonin] MJ2 module: 
 			- Add two components to mj2.h: meth, enumcs.
 			- Define or reset all components of mj2_cparameters_t before its usage.
