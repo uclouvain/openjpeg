@@ -6,6 +6,10 @@ What's New for OpenJPEG
 + : added
 
 January 23, 2011
+! [antonin] MJ2 module: 
+			- Add two components to mj2.h: meth, enumcs.
+			- Define or reset all components of mj2_cparameters_t before its usage.
+			- Add argument '-D prec' to frames_to_mj2.c and use the precision in mj2_convert.c (solves Issue 49).
 * [antonin] move 'KK' definition from rs.h to rs.c to prevent duplicate symbol error when building jpwl with autotools.
 
 January 18, 2011

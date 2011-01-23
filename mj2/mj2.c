@@ -90,7 +90,8 @@ int mj2_read_boxhdr(mj2_box_t * box, opj_cio_t *cio)
 
 int mj2_init_stdmovie(opj_mj2_t * movie)
 {
-  int i;
+  mj2_tk_t *tk0;
+  int i, w, h, prec;
   unsigned int j;
   time_t ltime;
 	
@@ -117,17 +118,24 @@ int mj2_init_stdmovie(opj_mj2_t * movie)
   movie->trans_matrix[7] = 0;
   movie->trans_matrix[8] = 0x40000000;
   movie->next_tk_id = 1;
-	
-  for (i = 0; i < movie->num_htk + movie->num_stk + movie->num_vtk; i++) {
+
+  tk0 = &movie->tk[0];
+  w = tk0->w; h = tk0->h; prec = tk0->depth;
+
+	for (i = 0; i < movie->num_htk + movie->num_stk + movie->num_vtk; i++) 
+   {
     mj2_tk_t *tk = &movie->tk[i];
+
     movie->next_tk_id++;
     tk->jp2_struct.comps = NULL;
     tk->jp2_struct.cl = NULL;
-    
-    if (tk->track_type == 0) {
-      if (tk->num_samples == 0)
+  
+    if (tk->track_type == 0) /* no sound or hint track */
+   {
+    if (tk->num_samples == 0)
 				return 1;
 			
+    tk->w = w; tk->h = h; tk->depth = prec;
       tk->Dim[0] = 0;
       tk->Dim[1] = 0;
 			
@@ -138,22 +146,24 @@ int mj2_init_stdmovie(opj_mj2_t * movie)
 			
       tk->same_sample_size = 0;
 			
-      tk->num_samplestochunk = 1;	/* One sample per chunk                                      */
+      tk->num_samplestochunk = 1;	/* One sample per chunk  */
 		tk->sampletochunk = (mj2_sampletochunk_t*) opj_malloc(tk->num_samplestochunk * sizeof(mj2_sampletochunk_t));
       tk->sampletochunk[0].first_chunk = 1;
       tk->sampletochunk[0].samples_per_chunk = 1;
       tk->sampletochunk[0].sample_descr_idx = 1;
       
-      if (tk->sample_rate == 0) {
-				opj_event_msg(tk->cinfo, EVT_ERROR,
-					"Error while initializing MJ2 movie: Sample rate of track %d must be different from zero\n",
-					tk->track_ID);
-				return 1;
-      }
+      if (tk->sample_rate == 0) 
+  {
+	opj_event_msg(tk->cinfo, EVT_ERROR,
+	"Error while initializing MJ2 movie: Sample rate of track"
+	" %d must be different from zero\n", tk->track_ID);
+	return 1;
+  }
 			
-      for (j = 0; j < tk->num_samples; j++) {
-				tk->sample[j].sample_delta = tk->timescale / tk->sample_rate;
-      }
+      for (j = 0; j < tk->num_samples; j++) 
+  {
+	tk->sample[j].sample_delta = tk->timescale / tk->sample_rate;
+  }
 			
       tk->num_tts = 1;
 		tk->tts = (mj2_tts_t*) opj_malloc(tk->num_tts * sizeof(mj2_tts_t));
@@ -2842,9 +2852,10 @@ void mj2_setup_encoder(opj_mj2_t *movie, mj2_cparameters_t *parameters) {
 		movie->tk[0].name_size = 0;
 		movie->tk[0].chunk = (mj2_chunk_t*) opj_malloc(sizeof(mj2_chunk_t));  
 		movie->tk[0].sample = (mj2_sample_t*) opj_malloc(sizeof(mj2_sample_t));
+		movie->tk[0].depth = parameters->prec;
 
 		jp2_struct = &movie->tk[0].jp2_struct;
-		jp2_struct->numcomps = 3;	// NC  		
+		jp2_struct->numcomps = parameters->numcomps;	// NC  		
 		jp2_struct->comps = (opj_jp2_comps_t*) opj_malloc(jp2_struct->numcomps * sizeof(opj_jp2_comps_t));
 		jp2_struct->precedence = 0;   /* PRECEDENCE*/
 		jp2_struct->approx = 0;   /* APPROX*/		
@@ -2859,8 +2870,8 @@ void mj2_setup_encoder(opj_mj2_t *movie, mj2_cparameters_t *parameters) {
 		jp2_struct->w = parameters->w;
 		jp2_struct->h = parameters->h;
 		jp2_struct->bpc = 7;  
-		jp2_struct->meth = 1;
-		jp2_struct->enumcs = 18;  // YUV
+		jp2_struct->meth = parameters->meth;
+		jp2_struct->enumcs = parameters->enumcs;
   }
 }
 

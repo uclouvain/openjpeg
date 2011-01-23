@@ -39,7 +39,7 @@
 
 int yuv_num_frames(mj2_tk_t * tk, char *infile)
 {
-  int numimages, frame_size;
+  int numimages, frame_size, prec_size;
   long end_of_f;
 	FILE *f;
 
@@ -48,8 +48,10 @@ int yuv_num_frames(mj2_tk_t * tk, char *infile)
     fprintf(stderr, "failed to open %s for reading\n",infile);
     return -1;
   }
-	
+	prec_size = (tk->depth + 7)/8;/* bytes of precision */
+
   frame_size = (int) (tk->w * tk->h * (1.0 + (double) 2 / (double) (tk->CbCr_subsampling_dx * tk->CbCr_subsampling_dy)));	/* Calculate frame size */
+	frame_size *= prec_size; 
 	
   fseek(f, 0, SEEK_END);
   end_of_f = ftell(f);		/* Calculate file size */
@@ -86,8 +88,8 @@ opj_image_t *mj2_image_create(mj2_tk_t * tk, opj_cparameters_t *parameters)
 	/* initialize image components */
 	memset(&cmptparm[0], 0, 3 * sizeof(opj_image_cmptparm_t));
 	for(i = 0; i < numcomps; i++) {
-		cmptparm[i].prec = 8;
-		cmptparm[i].bpp = 8;
+		cmptparm[i].prec = tk->depth;
+		cmptparm[i].bpp = tk->depth;
 		cmptparm[i].sgnd = 0;		
 		cmptparm[i].dx = i ? subsampling_dx * tk->CbCr_subsampling_dx : subsampling_dx;
 		cmptparm[i].dy = i ? subsampling_dy * tk->CbCr_subsampling_dy : subsampling_dy;
@@ -102,7 +104,7 @@ opj_image_t *mj2_image_create(mj2_tk_t * tk, opj_cparameters_t *parameters)
 char yuvtoimage(mj2_tk_t * tk, opj_image_t * img, int frame_num, opj_cparameters_t *parameters, char* infile)
 {
   int i, compno;
-  int offset;
+  int offset, size, max, prec_size;
   long end_of_f, position;
 	int numcomps = 3;
 	int subsampling_dx = parameters->subsampling_dx;
@@ -114,9 +116,12 @@ char yuvtoimage(mj2_tk_t * tk, opj_image_t * img, int frame_num, opj_cparameters
     fprintf(stderr, "failed to open %s for readings\n",parameters->infile);
     return 1;
   }
+	prec_size = (tk->depth + 7)/8;/* bytes of precision */
 
   offset = (int) ((double) (frame_num * tk->w * tk->h) * (1.0 +
 		1.0 * (double) 2 / (double) (tk->CbCr_subsampling_dx * tk->CbCr_subsampling_dy)));
+  offset *= prec_size;
+
   fseek(yuvfile, 0, SEEK_END);
   end_of_f = ftell(yuvfile);
   fseek(yuvfile, sizeof(unsigned char) * offset, SEEK_SET);
@@ -134,16 +139,22 @@ char yuvtoimage(mj2_tk_t * tk, opj_image_t * img, int frame_num, opj_cparameters
     (tk->w - 1) * subsampling_dx + 1;
   img->y1 = !tk->Dim[1] ? (tk->h - 1) * subsampling_dy + 1 : tk->Dim[1] +
     (tk->h - 1) * subsampling_dy + 1;
+
+	size = tk->w * tk->h * prec_size;
 	
-	for(compno = 0; compno < numcomps; compno++) {
-		for (i = 0; i < (tk->w * tk->h / (img->comps[compno].dx * img->comps[compno].dy))
-			&& !feof(yuvfile); i++) {
-			if (!fread(&img->comps[compno].data[i], 1, 1, yuvfile)) {
-				fprintf(stderr, "Error reading %s file !!\n", infile);				
-				return 1;
-			}
-		}
-	}
+	for(compno = 0; compno < numcomps; compno++) 
+   {
+	max = size/(img->comps[compno].dx * img->comps[compno].dy);
+
+	for (i = 0; i < max && !feof(yuvfile); i++)
+  {
+	if (!fread(&img->comps[compno].data[i], 1, 1, yuvfile)) 
+ {
+	fprintf(stderr, "Error reading %s file !!\n", infile);				
+	return 1;
+ }
+  }
+   }
 	fclose(yuvfile);
 	
   return 0;

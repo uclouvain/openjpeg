@@ -124,11 +124,12 @@ int main(int argc, char *argv[]) {
 	/* catch events using our callbacks and give a local context */
 	opj_set_event_mgr((opj_common_ptr)dinfo, &event_mgr, stderr);		
 
+	memset(&mj2_parameters, 0, sizeof(mj2_dparameters_t));
 	/* set J2K decoding parameters to default values */
 	opj_set_default_decoder_parameters(&mj2_parameters.j2k_parameters);
 	
 	/* setup the decoder decoding parameters using user parameters */
-	mj2_setup_decoder((opj_mj2_t*)dinfo->mj2_handle, &mj2_parameters);
+	mj2_setup_decoder(movie, &mj2_parameters);
 			
   if (mj2_read_struct(file, movie)) // Creating the movie structure
     return 1;	

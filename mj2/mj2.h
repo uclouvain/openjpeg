@@ -295,6 +295,8 @@ typedef struct mj2_cparameters {
   int numcomps;			
 	/*   In YUV files, precision always considered as 8 */
   int prec;		
+  unsigned int meth;
+  unsigned int enumcs;
 } mj2_cparameters_t;
 
 
