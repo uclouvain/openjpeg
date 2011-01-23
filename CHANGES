@@ -5,7 +5,10 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
-January 18, 2001
+January 23, 2011
+* [antonin] move 'KK' definition from rs.h to rs.c to prevent duplicate symbol error when building jpwl with autotools.
+
+January 18, 2011
 ! [rdieter] cmake: SOVERSION change to 1 (from 1.4) to match auto-tools
 
 January 17, 2011

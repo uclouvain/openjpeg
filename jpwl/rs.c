@@ -73,6 +73,9 @@
  */
 typedef int gf;
 
+/* KK = number of information symbols */
+static int	KK;
+
 /* Primitive polynomials - see Lin & Costello, Appendix A,
  * and  Lee & Messerschmitt, p. 453.
  */
