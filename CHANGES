@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+January 29, 2011
+* [antonin] removed 'é' in license header to prevent warning C4819 (see http://code.google.com/p/openjpeg/issues/detail?id=57).
+
 January 24, 2011
 - [antonin] remove more obsolete VS files. Left only mj2_to_metadata VS files, as this is the only executable not yet handled by CMake.
 
