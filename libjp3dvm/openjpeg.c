@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005, Hervé Drolon, FreeImage Team
+ * Copyright (c) 2005, Hervcalloc Drolon, FreeImage Team
  * Copyright (c) 2006, Mónica Díez García, Image Processing Laboratory, University of Valladolid, Spain
  * All rights reserved.
  *
