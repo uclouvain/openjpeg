@@ -593,7 +593,7 @@ static bool jp2_read_colr(opj_jp2_t *jp2, opj_cio_t *cio,
 bool jp2_read_jp2h(opj_jp2_t *jp2, opj_cio_t *cio, opj_jp2_color_t *color) 
 {
 	opj_jp2_box_t box;
-	unsigned int jp2h_end;
+	int jp2h_end;
 
 	opj_common_ptr cinfo = jp2->cinfo;
 

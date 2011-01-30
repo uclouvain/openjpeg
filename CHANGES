@@ -5,6 +5,10 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+January 30, 2011
+* [antonin] fixed warnings in jp2.c (signed compared to unsigned) and dwt.c (bad cast)
+- [antonin] removed depcomp file from trunk (automatically copied by automake in main folder)
+
 January 29, 2011
 * [antonin] removed 'é' in license header to prevent warning C4819 (see http://code.google.com/p/openjpeg/issues/detail?id=57).
 
