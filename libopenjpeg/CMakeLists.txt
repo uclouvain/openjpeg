@@ -43,7 +43,7 @@ INSTALL(FILES openjpeg.h
   DESTINATION ${OPENJPEG_INSTALL_INCLUDE_DIR}/${subdir} COMPONENT Headers
 )
 INSTALL(CODE
-  "EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E create_symlink \"${subdir}/openjpeg.h\" \"\$ENV{DESTDIR}${OPENJPEG_INSTALL_INCLUDE_DIR}/openjpeg.h\")")
+  "EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E create_symlink ${subdir}/openjpeg.h \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${OPENJPEG_INSTALL_INCLUDE_DIR}/openjpeg.h)")
 
 # install man page of the library
 INSTALL(

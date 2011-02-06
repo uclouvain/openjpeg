@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+February 6, 2011
+* [antonin] cmake : fixed installed links to openjpeg.h and openjpeg3d.h.
+
 January 30, 2011
 * [antonin] fixed warnings in jp2.c (signed compared to unsigned) and dwt.c (bad cast)
 - [antonin] removed depcomp file from trunk (automatically copied by automake in main folder)
