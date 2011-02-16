@@ -184,9 +184,9 @@ ENDIF(BUILD_JP3D)
 #-----------------------------------------------------------------------------
 # Build INDEXER_JPIP executables ?
 OPTION(BUILD_INDEXER_JPIP "Build the INDEXER_JPIP executables" OFF)
-IF(BUILD_INDEXER_JPIP AND NOT UNIX)
+IF(BUILD_INDEXER_JPIP)
   SUBDIRS(indexer_JPIP)
-ENDIF(BUILD_INDEXER_JPIP AND NOT UNIX)
+ENDIF(BUILD_INDEXER_JPIP)
 
 #-----------------------------------------------------------------------------
 # Build DOCUMENTATION ?
