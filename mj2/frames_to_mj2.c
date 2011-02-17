@@ -251,7 +251,7 @@ int main(int argc, char **argv)
 	opj_cinfo_t* cinfo;
 	bool bSuccess;
 	int numframes;
-	int prec = 0;
+	int prec = 8;/* DEFAULT */
 	double total_time = 0;	
 
 	memset(&mj2_parameters, 0, sizeof(mj2_cparameters_t));
@@ -623,7 +623,11 @@ int main(int argc, char **argv)
       "Usage: %s -i yuv-file -o mj2-file (+ options)\n",argv[0]);
     return 1;
   }
-  
+    if(prec < 1 || prec > 16)
+  {
+	fprintf(stderr, "Error: Depth %d must be in the range 8 .. 16\n",prec);
+	return 1;	
+  }
 	if ((j2k_parameters->cp_disto_alloc || j2k_parameters->cp_fixed_alloc || j2k_parameters->cp_fixed_quality)
 		&& (!(j2k_parameters->cp_disto_alloc ^ j2k_parameters->cp_fixed_alloc ^ j2k_parameters->cp_fixed_quality))) {
 		fprintf(stderr, "Error: options -r -q and -f cannot be used together !!\n");
@@ -667,9 +671,6 @@ int main(int argc, char **argv)
   y1 = !mj2_parameters.Dim[1] ? (mj2_parameters.h - 1) * j2k_parameters->subsampling_dy 
 		+ 1 : mj2_parameters.Dim[1] + (mj2_parameters.h - 1) * j2k_parameters->subsampling_dy + 1;   
 	mj2_parameters.numcomps = 3; /* YUV files only have 3 components */ 
-
-
-	if(prec < 1 || prec > 32) prec = 8; /* DEFAULT */
 
 	mj2_parameters.prec = prec;
 

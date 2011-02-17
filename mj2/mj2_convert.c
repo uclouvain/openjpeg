@@ -104,23 +104,26 @@ opj_image_t *mj2_image_create(mj2_tk_t * tk, opj_cparameters_t *parameters)
 char yuvtoimage(mj2_tk_t * tk, opj_image_t * img, int frame_num, opj_cparameters_t *parameters, char* infile)
 {
   int i, compno;
-  int offset, size, max, prec_size;
+  int offset, size, max, prec_bytes, is_16, v;
   long end_of_f, position;
 	int numcomps = 3;
 	int subsampling_dx = parameters->subsampling_dx;
 	int subsampling_dy = parameters->subsampling_dy;
 	FILE *yuvfile;
-	
+	int *data;
+	unsigned char uc;
+
   yuvfile = fopen(infile,"rb");
   if (!yuvfile) {  
     fprintf(stderr, "failed to open %s for readings\n",parameters->infile);
     return 1;
   }
-	prec_size = (tk->depth + 7)/8;/* bytes of precision */
+	is_16 = (tk->depth > 8);
+	prec_bytes = (is_16?2:1);
 
   offset = (int) ((double) (frame_num * tk->w * tk->h) * (1.0 +
 		1.0 * (double) 2 / (double) (tk->CbCr_subsampling_dx * tk->CbCr_subsampling_dy)));
-  offset *= prec_size;
+  offset *= prec_bytes;
 
   fseek(yuvfile, 0, SEEK_END);
   end_of_f = ftell(yuvfile);
@@ -140,19 +143,25 @@ char yuvtoimage(mj2_tk_t * tk, opj_image_t * img, int frame_num, opj_cparameters
   img->y1 = !tk->Dim[1] ? (tk->h - 1) * subsampling_dy + 1 : tk->Dim[1] +
     (tk->h - 1) * subsampling_dy + 1;
 
-	size = tk->w * tk->h * prec_size;
+	size = tk->w * tk->h * prec_bytes;
 	
 	for(compno = 0; compno < numcomps; compno++) 
    {
 	max = size/(img->comps[compno].dx * img->comps[compno].dy);
+	data = img->comps[compno].data;
 
 	for (i = 0; i < max && !feof(yuvfile); i++)
   {
-	if (!fread(&img->comps[compno].data[i], 1, 1, yuvfile)) 
+	v = 0;
+	fread(&uc, 1, 1, yuvfile);
+	v = uc;
+
+	if(is_16)
  {
-	fprintf(stderr, "Error reading %s file !!\n", infile);				
-	return 1;
+	fread(&uc, 1, 1, yuvfile);
+	v |= (uc<<8);
  }
+	*data++ = v;
   }
    }
 	fclose(yuvfile);
@@ -173,8 +182,10 @@ char yuvtoimage(mj2_tk_t * tk, opj_image_t * img, int frame_num, opj_cparameters
 bool imagetoyuv(opj_image_t * img, char *outfile)
 {
   FILE *f;
-  int i;
-  
+  int *data;
+  int i, v, is_16, prec_bytes;
+  unsigned char buf[2];
+
   if (img->numcomps == 3) {
     if (img->comps[0].dx != img->comps[1].dx / 2
       || img->comps[1].dx != img->comps[2].dx) {
@@ -193,38 +204,61 @@ bool imagetoyuv(opj_image_t * img, char *outfile)
     fprintf(stderr, "failed to open %s for writing\n", outfile);
     return false;
   }
-  
+  is_16 = (img->comps[0].prec > 8);
+  prec_bytes = (is_16?2:1);
+  data = img->comps[0].data;
   
   for (i = 0; i < (img->comps[0].w * img->comps[0].h); i++) {
-    unsigned char y;
-    y = img->comps[0].data[i];
-    fwrite(&y, 1, 1, f);
+    v = *data++;
+    buf[0] = (unsigned char)v;
+
+	if(is_16) buf[1] = (unsigned char)(v>>8);
+
+    fwrite(buf, 1, prec_bytes, f);
   }
   
   
   if (img->numcomps == 3) {
+	data = img->comps[1].data;
+
     for (i = 0; i < (img->comps[1].w * img->comps[1].h); i++) {
-      unsigned char cb;
-      cb = img->comps[1].data[i];
-      fwrite(&cb, 1, 1, f);
+      v = *data++;
+      buf[0] = (unsigned char)v;
+
+      if(is_16) buf[1] = (unsigned char)(v>>8);
+
+      fwrite(buf, 1, prec_bytes, f);
     }
-    
+    data = img->comps[2].data;
     
     for (i = 0; i < (img->comps[2].w * img->comps[2].h); i++) {
-      unsigned char cr;
-      cr = img->comps[2].data[i];
-      fwrite(&cr, 1, 1, f);
+      v = *data++;
+      buf[0] = (unsigned char)v;
+
+      if(is_16) buf[1] = (unsigned char)(v>>8);
+
+      fwrite(buf, 1, prec_bytes, f);
     }
   } else if (img->numcomps == 1) {
+/* fake CbCr values */
+	if(is_16) 
+  { 
+	buf[0] = 255;
+	if(img->comps[0].prec == 10) buf[1] = 1;
+	else
+	if(img->comps[0].prec == 12) buf[1] = 3;
+	else
+	 buf[1] = 125;
+  } 
+	else buf[0] = 125;
+
     for (i = 0; i < (img->comps[0].w * img->comps[0].h * 0.25); i++) {
-      unsigned char cb = 125;
-      fwrite(&cb, 1, 1, f);
+      fwrite(buf, 1, prec_bytes, f);
     }
     
     
     for (i = 0; i < (img->comps[0].w * img->comps[0].h * 0.25); i++) {
-      unsigned char cr = 125;
-      fwrite(&cr, 1, 1, f);
+      fwrite(buf, 1, prec_bytes, f);
     }
   }  
   fclose(f);
