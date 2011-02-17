@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 February 17, 2011
+* [antonin] replaced 'long' by 'size_t' in dwt.c to be sure to cast to a pointer size.
 * [antonin] now allows 16-bit precision for mj2 encoding and decoding (solves Issue 49 and Issue 63). Credit to Winfried.
 
 February 9, 2011
