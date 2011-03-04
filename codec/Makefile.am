@@ -1,27 +1,23 @@
-#jp3d/codec/
 
-USERLIBS =
-INCLUDES = -I. -I../libjp3dvm
-CFLAGS = -Wall $(INCLUDES)
-
-if with_sharedlibs
-CFLAGS += -DOPJ_EXPORTS
-else
-CFLAGS += -DOPJ_STATIC
-endif
+MAINTAINERCLEANFILES = Makefile.in
 
 bin_PROGRAMS = jp3d_to_volume volume_to_jp3d
 LDADD = $(USERLIBS) ../libjp3dvm/libopenjp3dvm.la
 
-jp3d_to_volume_SOURCES = getopt.c convert.c jp3d_to_volume.c
+jp3d_to_volume_CPPFLAGS =
+jp3d_to_volume_CFLAGS =
+jp3d_to_volume_LDADD = $(top_builddir)/jp3d/libjp3dvm/libopenjp3dvm.la -lm
+jp3d_to_volume_SOURCES = getopt.c convert.c jp3d_to_volume.c convert.h
 
-volume_to_jp3d_SOURCES = getopt.c convert.c volume_to_jp3d.c
+volume_to_jp3d_CPPFLAGS =
+volume_to_jp3d_CFLAGS =
+volume_to_jp3d_LDADD = $(top_builddir)/jp3d/libjp3dvm/libopenjp3dvm.la
+volume_to_jp3d_SOURCES = getopt.c convert.c volume_to_jp3d.c convert.h
 
-REPBIN=$(bin_PROGRAMS)
+EXTRA_DIST = \
+CMakeLists.txt \
+windirent.h
 
-all-local:
-	$(INSTALL) -d ../../bin
-	$(INSTALL) $(bin_PROGRAMS) ../../bin
-	@(for file in ${REPBIN} ; do \
-	echo "Installing: ${prefix}/bin/$${file}" >> ../.report.txt ; \
-	done)
+install-data-hook:
+	@echo -e " (B)\t\t$(bindir)/jp3d_to_volume$(EXEEXT)" >> $(top_builddir)/report.txt
+	@echo -e " (B)\t\t$(bindir)/volume_to_jp3d$(EXEEXT)" >> $(top_builddir)/report.txt
