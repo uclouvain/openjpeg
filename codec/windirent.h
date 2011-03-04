@@ -107,6 +107,8 @@
 #if !defined(HAVE_DIRENT_H) && !defined(HAVE_DIRECT_H) && !defined(HAVE_SYS_DIR_H) && !defined(HAVE_NDIR_H) && !defined(HAVE_SYS_NDIR_H) && !defined(HAVE_DIR_H)
 # if defined(_MSC_VER)                         /* Microsoft C/C++ */
     /* no dirent.h */
+# elif defined(__MINGW32__)                    /* MinGW */
+    /* no dirent.h */
 # elif defined(__BORLANDC__)                   /* Borland C/C++ */
 #   define HAVE_DIRENT_H
 #   define VOID_CLOSEDIR
