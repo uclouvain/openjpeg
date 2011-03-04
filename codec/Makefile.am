@@ -19,5 +19,5 @@ CMakeLists.txt \
 windirent.h
 
 install-data-hook:
-	@echo -e " (B)\t\t$(bindir)/jp3d_to_volume$(EXEEXT)" >> $(top_builddir)/report.txt
-	@echo -e " (B)\t\t$(bindir)/volume_to_jp3d$(EXEEXT)" >> $(top_builddir)/report.txt
+	@echo -e " (B)\t$(bindir)/jp3d_to_volume$(EXEEXT)" >> $(top_builddir)/report.txt
+	@echo -e " (B)\t$(bindir)/volume_to_jp3d$(EXEEXT)" >> $(top_builddir)/report.txt
