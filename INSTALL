@@ -7,34 +7,39 @@ UNIX/LINUX similar systems
 
 1) Using configure tools
 
-You can simply type
-  ./configure [--prefix=/path]
+To build from top-level directory, you can simply type: 
+  ./bootstrap.sh
+  ./configure
   make
 
-If you are root:
-  make install
-  make clean
-  make distclean
+To keep all build files in a separate directory, you can type instead: 
+  ./bootstrap.sh
+  mkdir build
+  cd build
+  ../configure
+  make
 
-else:
+To install:
   sudo make install
+  
+To clean:
   make clean
   make distclean
 
-Binaries are located in the 'bin' directory.
+To build doc (requires 'doxygen' to be found on your system):
+(this will create an html directory in TOP_LEVEL/doc)
+  make doc
 
-If 'configure' does not work on your system please
-call './bootstrap.sh'.
+Main './configure' options (type './configure --help' for more details)
+  '--enable-mj2'
+  '--enable-jp3d'
+  '--enable-jpwl'
+  '--prefix=/path/to/install/directory' (example : '--prefix=$PWD/installed')
+  '--enable-debug' (default : disabled)
 
-If 'configure' does not find a library or header file,
-or to see available configure options, please try 
-'./configure --help'.
+You can also specify your own CFLAGS and LDFLAGS with (for example):
+  CFLAGS="-O3 -pipe" LDFLAGS="-Wl,-s" ./configure
 
-Note: if Doxygen is found on your system, a target 'docs'
-will automatically be created in 'doc/Makefile'. To build
-the documentation (it will create an 'html' directory):
-  cd doc
-	make docs
 
 2) Using cmake (see www.cmake.org)
 
@@ -84,22 +89,16 @@ Main available cmake flags:
 MACOSX
 ------
 
-The same building procedures as above will soon be available for MACOSX.
-The xcode project file has also to be updated.
-Right now, the CMake procedure is the only one working. Please refer to instructions above.
+The same building procedures as above (autotools and cmake) work for MACOSX.
+The xcode project file can also be used.
+
 If it does not work, try adding the following flag to the cmake command : 
   '-DCMAKE_OSX_ARCHITECTURES:STRING=i386'
 
 WINDOWS
 -------
 
-If you're using cygwin, the same procedures as for Unix should work. Otherwise:
+If you're using cygwin or MinGW, the same procedures as for Unix can be used. 
 
-1) Using cmake to generate project files
-
-Use the cmake procedure above with the '-G <generator-name>' flag to generate the project
-files for the IDE you are using. Type 'cmake --help' for available generators on your platform.
-
-2) Using the provided project files
-
-These files are obsolete and will be updated soon.
+Otherwise you can use cmake to generate project files for the IDE you are using (VC2010, etc).
+Type 'cmake --help' for available generators on your platform.

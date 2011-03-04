@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+March 4, 2011
+! [antonin] updated autotools files to improve build and install procedures (credit to Vincent Torri).
+
 February 17, 2011
 * [antonin] replaced 'long' by 'size_t' in dwt.c to be sure to cast to a pointer size.
 * [antonin] now allows 16-bit precision for mj2 encoding and decoding (solves Issue 49 and Issue 63). Credit to Winfried.

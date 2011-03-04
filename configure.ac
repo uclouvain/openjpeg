@@ -1,482 +1,472 @@
-#AC_PREREQ([2.65])
-define([OPJ_MAJOR], [1])
-define([OPJ_MINOR], [4])
-define([OPJ_BUILD], [0])
-#
-define([JP3D_MAJOR], [1])
-define([JP3D_MINOR], [3])
-define([JP3D_BUILD], [0])
-#
-#
-#AC_INIT (PACKAGE, VERSION, [BUG-REPORT], [TARNAME], [URL])
-AC_INIT(OpenJPEG,
-OPJ_MAJOR.OPJ_MINOR.OPJ_BUILD,
-http://code.google.com/p/openjpeg/,
-openjpeg-OPJ_MAJOR.OPJ_MINOR.OPJ_BUILD,
-http://www.openjpeg.org/)
-AC_CONFIG_SRCDIR([libopenjpeg/openjpeg.c])
-AC_CONFIG_HEADERS(opj_config.h)
-#
+
+m4_define([OPJ_MAJOR], [1])
+m4_define([OPJ_MINOR], [4])
+m4_define([OPJ_MICRO], [0])
+
+m4_define([JP3D_MAJOR], [1])
+m4_define([JP3D_MINOR], [3])
+m4_define([JP3D_MICRO], [0])
+
+m4_define([lt_rev], m4_eval(OPJ_MAJOR + OPJ_MINOR))
+m4_define([lt_cur], OPJ_MICRO)
+m4_define([lt_age], OPJ_MINOR)
+
+AC_PREREQ([2.62])
+AC_INIT([OpenJPEG],
+   [OPJ_MAJOR.OPJ_MINOR.OPJ_MICRO],
+   [openjpeg@googlegroups.com],
+   [openjpeg],
+   [http://www.openjpeg.org])
+AC_CONFIG_SRCDIR([configure.ac])
+AC_CONFIG_MACRO_DIR([m4])
+AC_CONFIG_HEADERS([opj_config.h])
+
 AC_CANONICAL_SYSTEM
-#foreign:package will not follow the GNU Standards
-AM_INIT_AUTOMAKE(foreign)
-#
+AC_CANONICAL_HOST
+
+AM_INIT_AUTOMAKE(1.11 foreign dist-bzip2)
+m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
+
 MAJOR_NR=OPJ_MAJOR
 MINOR_NR=OPJ_MINOR
-BUILD_NR=OPJ_BUILD
+MICRO_NR=OPJ_MICRO
 AC_SUBST(MAJOR_NR)
 AC_SUBST(MINOR_NR)
-AC_SUBST(BUILD_NR)
-#
+AC_SUBST(MICRO_NR)
+
 JP3D_MAJOR_NR=JP3D_MAJOR
 JP3D_MINOR_NR=JP3D_MINOR
-JP3D_BUILD_NR=JP3D_BUILD
+JP3D_MICRO_NR=JP3D_MICRO
 AC_SUBST(JP3D_MAJOR_NR)
 AC_SUBST(JP3D_MINOR_NR)
-AC_SUBST(JP3D_BUILD_NR)
-#
-# Checks for programs.
-AC_PROG_CC
-AC_PROG_CXX
-AC_PROG_INSTALL
-AC_PROG_LN_S
-AC_PROG_SED
-AC_SYS_LARGEFILE
-AC_FUNC_FSEEKO
-AC_PROG_MAKE_SET
-#AC_HEADER_DIRENT
-#
-# Tests for Windows
-#
-AC_EXEEXT
-AC_OBJEXT
-#
-# Configure libtool
-AC_ENABLE_SHARED
-AC_LIBTOOL_WIN32_DLL
-AC_LIBTOOL_SETUP
-AC_PROG_LIBTOOL
-#
-AC_C_BIGENDIAN
-#
-LIB_MATH=""
-AC_CHECK_LIB(m,sqrt,LIB_MATH="-lm",,)
-LIB_Z=""
-AC_CHECK_LIB(z,inflate,LIB_Z="-lz",,)
-#
-LIBS="$LIBS $LIB_MATH $LIB_Z"
-#
-AC_PATH_PROG([PKGCONFIG], [pkg-config])
-#
-# ------------------------------
-# Test for PNG
-# ------------------------------
-AC_MSG_CHECKING(whether to build with PNG support)
-pngincludes=""
-pnglibs=""
-png_header_found="no"
-with_libpng="yes"
-#
-AC_ARG_ENABLE(png,
-[  --enable-png[=[yes|no]]          Build with PNG support [ [default=yes] ]],
-test "$enable_png" = "no"  && with_libpng="no")
-#
-if test "x$with_libpng" = xyes ; then
-  with_libpng="no"
-  AC_PATH_PROG([LIBPNG_CONFIG], [libpng-config])
-#
-  pngheader=""
-  AC_ARG_WITH(png_includes,
- [  --with-png-includes=DIR         PNG includes in nonstandard DIR])
-  if test -n "$with_png_includes" ; then
-   pngheader="$with_png_includes"
-   pngincludes="-I$with_png_includes"
-  else
-   if test -n "$PKGCONFIG" ; then
-     pngincludes="`$PKGCONFIG --variable=includedir libpng`"
-     if test -n "$pngincludes" ; then
-      pngheader="$pngincludes"
-      pngincludes="-I$pngincludes"
-     fi
-   else
-     if test -n "$LIBPNG_CONFIG" ; then
-      pngincludes="`$LIBPNG_CONFIG --I_opts`"
-      pngheader="`$LIBPNG_CONFIG --I_opts | $SED 's/-I//'`"
-     fi
-   fi
-  fi
-  if test -n "$pngheader" ; then
-   pngheader="$pngheader/png.h"
-  else
-   pngheader="png.h"
-  fi
-#
-  AC_CHECK_HEADER($pngheader,png_header_found="yes",,)
-#
-  AC_ARG_WITH(png_libraries,
- [  --with-png-libraries=DIR        PNG library in nonstandard DIR])
-  if [[ -n "$with_png_libraries" ]] ; then
-   pnglibs="-L$with_png_libraries -lpng"
-  else
-    if test -n "$LIBPNG_CONFIG" ; then
-     pnglibs="`$LIBPNG_CONFIG --ldflags`"
-    else
-      if test -n "$PKGCONFIG" ; then
-        pnglibs="`$PKGCONFIG --libs libpng`"
-      fi
-    fi
-  fi
-  savedLIBS="$LIBS"
-  LIBS="$pnglibs $LIB_Z $LIB_MATH"
-#
-  AC_CHECK_LIB(png,png_create_read_struct,,pnglibs="",)
-#
-  LIBS="$savedLIBS"
-  if test -n "$pnglibs" ; then
-    if test -n "$pngincludes" ; then
-      with_libpng="yes"
-      png_header_found="yes"
-      LIBS="$LIBS $pnglibs"
-      AC_DEFINE(HAVE_LIBPNG, [1], [define to 1 if you have libpng])
-    fi
-  fi
-fi
-#
-AC_MSG_RESULT(png is usable:$with_libpng)
-AM_CONDITIONAL([with_libpng], [test x$with_libpng = xyes])
-AC_SUBST(pngincludes)
-AC_SUBST(pnglibs)
-# -------------------------------
-# Test for TIFF
-# -------------------------------
-AC_MSG_CHECKING(whether to build with TIFF support)
-tifflibs=""
-tiffincludes=""
-with_libtiff="yes"
-tiff_header_found="no"
-#
-AC_ARG_ENABLE(tiff,
-[  --enable-tiff[=[yes|no]]         Build with TIFF support [ [default=yes] ]],
-test "$enable_tiff" = "no"  && with_libtiff="no")
-#
-if test "x$with_libtiff" = xyes ; then
-#TIFF compiled with JPEG and JBIG support?
- libjpeg=""
- AC_CHECK_LIB(jpeg,jpeg_read_header,libjpeg=-ljpeg,,)
- libjbig=""
- AC_CHECK_LIB(jbig,jbg_enc_init,libjbig=-ljbig,,)
- libjbig85=""
- AC_CHECK_LIB(jbig85,jbg85_enc_init,libjbig85=-ljbig85,,)
-#standard path
- with_libtiff="no"
- savedLIBS="$LIBS"
- LIBS="-ltiff $libjpeg $libjbig $libjbig85 $LIB_Z $LIB_MATH"
- AC_CHECK_LIB(tiff, TIFFOpen, tifflibs=-ltiff)
- LIBS="$savedLIBS"
- if test -n "$tifflibs" ; then
-  AC_CHECK_HEADER(tiff.h,tiff_header_found="yes",,)
-  if test "$tiff_header_found" = "yes" ; then 
-   with_libtiff="yes"
-   LIBS="$LIBS -ltiff $libjpeg $libjbig $libjbig85"
-   AC_DEFINE(HAVE_LIBTIFF, [1], [define to 1 if you have libtiff])
-  fi
- fi
-#
- if test "x$with_libtiff" = xno ; then
-#non-standard path
-  AC_ARG_WITH(tiff_includes,
-  [  --with-tiff-includes=DIR        TIFF includes in nonstandard DIR])
-  if test -n "$with_tiff_includes" ; then
-   tiffheader="$with_tiff_includes/tiff.h"
-   AC_CHECK_HEADER($tiffheader,tiff_header_found="yes",,)
-   if test "$tiff_header_found" = "yes" ; then
-     tiffincludes="-I$with_tiff_includes"
-   fi
-  fi
-  AC_ARG_WITH(tiff_libraries,
-  [  --with-tiff-libraries=DIR       TIFF library in nonstandard DIR])
-  if test -n "$with_tiff_libraries" ; then
-   tifflibs="-L$with_tiff_libraries"
-  fi
-  tifflibs="$tifflibs -ltiff"
-  savedLIBS="$LIBS"
-  LIBS="$tifflibs $libjpeg $libjbig $libjbig85 $LIB_Z $LIB_MATH"
-  with_libtiff="no"
-#
-  AC_CHECK_LIB(tiff, TIFFOpen, , tifflibs="",)
-#
-  if test -n "$tifflibs" ; then
-   if test "$tiff_header_found" = "yes" ; then
-    with_libtiff="yes"
-    AC_DEFINE(HAVE_LIBTIFF, [1], [define to 1 if you have libtiff])
-   fi
-  fi
-  LIBS="$savedLIBS $tifflibs $libjpeg $libjbig $libjbig85"
- fi
-fi
-#
-AC_MSG_RESULT(tiff is usable:$with_libtiff)
-AM_CONDITIONAL([with_libtiff], [test x$with_libtiff = xyes])
-AC_SUBST(tiffincludes)
-AC_SUBST(tifflibs)
-# -------------------------------
-# Test for LCMS version 2.x 
-# -------------------------------
-AC_MSG_CHECKING(whether to build with LCMS support)
-lcms1includes=""
-lcms1libs=""
-lcms2includes=""
-lcms2libs=""
-with_liblcms1="no"
-lcms1_header_found="no"
-lcms2_header_found="no"
-have_lcms1_version=""
-have_lcms2_version=""
-with_liblcms2="yes"
-#
-AC_ARG_ENABLE(lcms2,
-[  --enable-lcms2[=[yes|no]]        Build with LCMS-2 support [ [default=yes] ]],
-test "$enable_lcms2" = "no"  && with_liblcms2="no")
-#
-if test "x$with_liblcms2" = xyes ; then
-  with_liblcms2="no"
-  lcms2header=""
-  AC_ARG_WITH(lcms2_includes,
- [  --with-lcms2-includes=DIR       LCMS-2 includes in nonstandard DIR])
-  if test -n "$with_lcms2_includes" ; then
-   lcms2header="$with_lcms2_includes"
-   lcms2includes="-I$with_lcms2_includes"
-  else
-   if test -n "$PKGCONFIG" ; then
-     lcms2includes="`$PKGCONFIG --variable=prefix lcms2`"
-   fi
-   if test -n "$lcms2includes" ; then
-    lcms2header="$lcms2_includes"
-    lcms2includes="-I$lcms2includes/include"
-   fi
-  fi
-  if test -n "$lcms2header" ; then
-   lcms2header="$lcms2header/lcms2.h"
-  else
-   lcms2header="lcms2.h"
-  fi
-  AC_CHECK_HEADER($lcms2header,lcms2_header_found="yes",,)
-#
-  AC_ARG_WITH(lcms2_libraries,
- [  --with-lcms2-libraries=DIR      LCMS-2 library in nonstandard DIR])
-  if test -n "$with_lcms2_libraries" ; then
-   lcms2libs="-L$with_lcms2_libraries -llcms2"
-  else
-   if test -n "$PKGCONFIG" ; then
-     lcms2libs="`$PKGCONFIG --libs lcms2`"
-   fi
-   if test -z "$lcms2libs" ; then
-    lcms2libs="-llcms2"
-   fi
-   lcms2libs="$lcms2libs"
-  fi
-  savedLIBS="$LIBS"
-  LIBS="$lcms2libs $LIB_MATH"
-  with_liblcms2="no"
-#
-  AC_CHECK_LIB(lcms2, cmsOpenProfileFromFile, ,lcms2libs="",)
-#
-  if test -n "$lcms2libs" ; then
-   if test "$lcms2_header_found" = "yes" ; then
-    with_liblcms2="yes"
-    AC_DEFINE(HAVE_LIBLCMS2, [1], [define to 1 if you have lcms version 2.x])
-    if test -n "$PKGCONFIG" ; then
-      have_lcms2_version="`$PKGCONFIG --modversion lcms2`"
-    fi
-   fi
-  fi
-  if test "$with_liblcms2" = "no" ; then
-    lcms2libs=""
-    lcms2includes=""
-    lcms2libs=""
-  fi
-  LIBS="$savedLIBS $lcms2libs"
-fi
-#
-AC_MSG_RESULT(lcms2 is usable:$with_liblcms2)
-AM_CONDITIONAL([with_liblcms2], [test x$with_liblcms2 = xyes])
-AC_SUBST(lcms2includes)
-AC_SUBST(lcms2libs)
-AC_MSG_RESULT(lcms2libs:$lcms2libs)
-# ----------------------------
-# Test for LCMS version 1.x
-# ----------------------------
-if [[ -z "$lcms2libs" ]] ; then
- with_liblcms1="yes"
- AC_ARG_ENABLE(lcms1,
- [  --enable-lcms1[=[yes|no]]        Build with LCMS-1 support [ [default=yes] ]],
- test "$enable_lcms1" = "no"  && with_liblcms1="no")
-#
- if test "x$with_liblcms1" = xyes ; then
-   with_liblcms1="no"
-   lcms1header=""
-   AC_ARG_WITH(lcms1_includes,
-  [  --with-lcms1-includes=DIR       LCMS-1 includes in nonstandard DIR])
-   if test -n "$with_lcms1_includes" ; then
-    lcms1header="$with_lcms1_includes"
-    lcms1includes="-I$with_lcms1_includes"
-   else
-    if test -n "$PKGCONFIG" ; then
-      lcms1includes="`$PKGCONFIG --variable=includedir lcms`"
-    fi
-    if test -n "$lcms1includes" ; then
-     lcms1header="$lcms1includes"
-     lcms1includes="-I$lcms1includes"
-    fi
-   fi
-   if test -n "$lcms1header" ; then
-    lcms1header="$lcms1header/lcms.h"
-   else
-    lcms1header="lcms.h"
-   fi
-   AC_CHECK_HEADER($lcms1header,lcms1_header_found="yes",,)
-#
-   AC_ARG_WITH(lcms1_libraries,
-  [  --with-lcms1-libraries=DIR      LCMS-1 library in nonstandard DIR])
-   if test -n "$with_lcms1_libraries" ; then
-    lcms1libs="-L$with_lcms1_libraries -llcms"
-   else
-    if test -n "$PKGCONFIG" ; then
-      lcms1libs="`$PKGCONFIG --libs lcms`"
-    fi
-    if test -z "$lcms1libs" ; then
-     lcms1libs="-llcms"
-    fi
-    lcms1libs="$lcms1libs"
-   fi
-   savedLIBS="$LIBS"
-   LIBS="$lcms1libs $LIB_MATH"
-   with_liblcms1="no"
-#
-   AC_CHECK_LIB(lcms, cmsOpenProfileFromFile, ,lcms1libs="",)
-#
-   if test -n "$lcms1libs" ; then
-    if test "$lcms1_header_found" = "yes" ; then
-     with_liblcms1="yes"
-     AC_DEFINE(HAVE_LIBLCMS1, [1], [define to 1 if you have lcms version 1.x])
-     if test -n "$PKGCONFIG" ; then
-       have_lcms1_version="`$PKGCONFIG --modversion lcms`"
-     fi
-    fi
-   fi
-   if test "$with_liblcms1" = "no" ; then
-     lcms1libs=""
-     lcms1includes=""
-     lcms1libs=""
-   fi
-   LIBS="$savedLIBS $lcms1libs"
- fi
-AC_MSG_RESULT(lcms is usable:$with_liblcms1)
-fi
-#
-AM_CONDITIONAL([with_liblcms1], [test x$with_liblcms1 = xyes])
-AC_SUBST(lcms1includes)
-AC_SUBST(lcms1libs)
-#
-# -------------------------------
-# Test for USE_JPWL
-# -------------------------------
-AC_MSG_CHECKING(whether to build with JPWL support)
-with_libjpwl="no"
-jpwl_dir=""
-AC_ARG_ENABLE(jpwl,
- [  --enable-jpwl[=[yes|no]]         Build with JPWL support [ [default=no] ]],
- test "$enable_jpwl" = "yes" && with_libjpwl="yes")
-#
-AC_MSG_RESULT($with_libjpwl)
-AM_CONDITIONAL([with_libjpwl], [test x$with_libjpwl = xyes])
-if test "$with_libjpwl" = "yes" ; then
- jpwl_dir="jpwl"
-fi
-AC_SUBST(jpwl_dir)
-#
-# -------------------------------
-# Test for creating SHARED LIBS
-# wanted result: shared xor static
-# -------------------------------
-with_sharedlibs="yes"
-AC_MSG_CHECKING(whether to build shared libraries)
-AC_ARG_ENABLE(shared,
-[  --enable-shared[=[yes|no]]       Build shared libs [ [default=yes] ]],
-test "$enable_shared" = "no" && with_sharedlibs="no")
-#
-AC_MSG_RESULT($with_sharedlibs)
-AM_CONDITIONAL([with_sharedlibs], [test x$with_sharedlibs = xyes])
-#
-#
-build_so="no"
-build_dll="no"
-build_dylib="no"
-case "${host_os}" in
-    *cygwin*)
-        build_dll="yes"
-        ;;
-    *mingw*)
-        build_dll="yes"
-        ;;
-    *darwin*)
-        build_dylib="yes"
-        ;;
-	*)
-		build_so="yes"
-		;;
-esac
-#
-AM_CONDITIONAL([build_dll], [test x$build_dll = xyes])
-AM_CONDITIONAL([build_dylib], [test x$build_dylib = xyes])
-AM_CONDITIONAL([build_so], [test x$build_so = xyes])
-#
+AC_SUBST(JP3D_MICRO_NR)
 
-# -------------------------------
-# Test for creating JP3D
-# -------------------------------
-with_jp3d="no"
-jp3d_dir=""
-AC_MSG_CHECKING(whether to build the JP3D library)
-AC_ARG_ENABLE(jp3d,
- [  --enable-jp3d[=[yes|no]]         Build jp3d libs [ [default=no] ]],
- test "$enable_jp3d" = "yes" && with_jp3d="yes")
-#
-AC_MSG_RESULT($with_jp3d)
-if test "$with_jp3d" = "yes" ; then
- jp3d_dir="jp3d"
+LT_PREREQ([2.0])
+LT_INIT([win32-dll])
+
+lt_version=lt_rev:lt_cur:lt_age
+AC_SUBST(lt_version)
+
+
+### Needed information
+
+have_win32=no
+have_darwin="no"
+case "$host_os" in
+   mingw*)
+      have_win32="yes"
+      ;;
+   darwin*)
+      have_darwin="yes"
+      ;;
+esac
+
+AM_CONDITIONAL([HAVE_WIN32], [test "x${have_win32}" = "xyes"])
+AM_CONDITIONAL([HAVE_DARWIN], [test "x${have_darwin}" = "xyes"])
+
+
+### Additional options to configure
+
+# debug
+
+AC_ARG_ENABLE([debug],
+   [AC_HELP_STRING([--enable-debug], [build with debug symbols @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_debug="yes"
+    else
+       want_debug="no"
+    fi
+   ],
+   [want_debug="no"])
+
+AC_MSG_CHECKING([whether to build in debug mode])
+AC_MSG_RESULT([${want_debug}])
+
+# MJ2
+
+AC_ARG_ENABLE([mj2],
+   [AC_HELP_STRING([--enable-mj2], [build mj2 binaries @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_mj2="yes"
+    else
+       want_mj2="no"
+    fi
+   ],
+   [want_mj2="no"])
+
+AC_MSG_CHECKING([whether to build the MJ2 binaries])
+AC_MSG_RESULT([${want_mj2}])
+
+if test "x${want_mj2}" = "xyes" ; then
+   AC_DEFINE(USE_MJ2, [1], [define to 1 if you use mj2])
 fi
-AC_SUBST(jp3d_dir)
-#
-AC_CHECK_PROG(with_doxygen, doxygen, [yes],[no],,)
-AM_CONDITIONAL([with_doxygen], [test x$with_doxygen = xyes])
-#
-AC_CONFIG_FILES([Makefile])
-AC_CONFIG_FILES([libopenjpeg1.pc])
-AC_CONFIG_FILES([libopenjpeg/Makefile])
-AC_CONFIG_FILES([jpwl/Makefile])
-AC_CONFIG_FILES([codec/Makefile])
-AC_CONFIG_FILES([mj2/Makefile])
-AC_CONFIG_FILES([doc/Makefile])
-AC_CONFIG_FILES([jp3d/Makefile])
-AC_CONFIG_FILES([jp3d/libjp3dvm/Makefile])
-AC_CONFIG_FILES([jp3d/codec/Makefile])
+
+AM_CONDITIONAL([WANT_MJ2], [test "x${want_mj2}" = "xyes"])
+
+# JPWL
+
+AC_ARG_ENABLE([jpwl],
+   [AC_HELP_STRING([--enable-jpwl], [build JPWL library @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_jpwl="yes"
+    else
+       want_jpwl="no"
+    fi
+   ],
+   [want_jpwl="no"])
+
+AC_MSG_CHECKING([whether to build the JPWL library])
+AC_MSG_RESULT([${want_jpwl}])
+
+if test "x${want_jpwl}" = "xyes" ; then
+   AC_DEFINE(USE_JPWL, [1], [define to 1 if you use jpwl])
+fi
+
+AM_CONDITIONAL([WANT_JPWL], [test "x${want_jpwl}" = "xyes"])
+
+# JP3D
+
+AC_ARG_ENABLE([jp3d],
+   [AC_HELP_STRING([--enable-jp3d], [build jp3d library @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_jp3d="yes"
+    else
+       want_jp3d="no"
+    fi
+   ],
+   [want_jp3d="no"])
+
+AC_MSG_CHECKING([whether to build the JP3D library])
+AC_MSG_RESULT([${want_jp3d}])
+
+if test "x${want_jp3d}" = "xyes" ; then
+   AC_DEFINE(USE_JP3D, [1], [define to 1 if you use jp3d])
+fi
+
+AM_CONDITIONAL([WANT_JP3D], [test "x${want_jp3d}" = "xyes"])
+
+
+### Checks for programs
+
+AC_PROG_CC
+
+# pkg-config
+
+PKG_PROG_PKG_CONFIG
+
+# Check whether pkg-config supports Requires.private
+if $PKG_CONFIG --atleast-pkgconfig-version 0.22 ; then
+   pkgconfig_requires_private="Requires.private"
+else
+   pkgconfig_requires_private="Requires"
+fi
+AC_SUBST(pkgconfig_requires_private)
+
+# doxygen
+
+OPJ_CHECK_DOXYGEN
+
+#  ln -s
+
+AC_PROG_LN_S
+
+
+### Checks for libraries
+
+# libpng
+
+AC_ARG_ENABLE([png],
+   [AC_HELP_STRING([--disable-png], [disable PNG support @<:@default=enabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_png="yes"
+    else
+       want_png="no"
+    fi
+   ],
+   [want_png="yes"])
+
+AC_MSG_CHECKING([whether to build with PNG support])
+AC_MSG_RESULT([${want_png}])
+
+if test "x${want_png}" = "xyes" ; then
+
+   PKG_CHECK_MODULES([PNG], [libpng14],
+      [have_libpng="yes"],
+      [
+       PKG_CHECK_MODULES([PNG], [libpng12],
+          [have_libpng="yes"],
+          [
+           PKG_CHECK_MODULES([PNG], [libpng10],
+              [have_libpng="yes"],
+              [
+               PKG_CHECK_MODULES([PNG], [libpng],
+                  [have_libpng="yes"],
+                  [have_libpng="no"])
+              ])
+          ])
+      ])
+
+   if ! test "x${have_libpng}" = "xyes" ; then
+      OPJ_CHECK_LIB([/usr],
+         [png.h],
+         [png],
+         [png_create_write_struct],
+         [have_libpng="yes"],
+         [have_libpng="no"])
+   fi
+
+   if ! test "x${have_libpng}" = "xyes" ; then
+      OPJ_CHECK_LIB([/usr/local],
+         [png.h],
+         [png],
+         [png_create_write_struct],
+         [have_libpng="yes"],
+         [have_libpng="no"])
+   fi
+
+   if ! test "x${have_libpng}" = "xyes" ; then
+      OPJ_CHECK_LIB([/opt],
+         [png.h],
+         [png],
+         [png_create_write_struct],
+         [have_libpng="yes"],
+         [have_libpng="no"])
+   fi
+
+   if test "x${have_libpng}" = "xno" ; then
+      AC_MSG_WARN([Can not find a usuable PNG library. Make sure that CPPFLAGS and LDFLAGS are correctly set.])
+   fi
+
+fi
+
+AC_MSG_CHECKING([whether PNG is available])
+AC_MSG_RESULT([${have_libpng}])
+
+if test "x${have_libpng}" = "xyes" ; then
+   AC_DEFINE(HAVE_LIBPNG, [1], [define to 1 if you have libpng])
+fi
+
+AM_CONDITIONAL([with_libpng], [test x${have_libpng} = "xyes"])
+
+#libtiff
+
+AC_ARG_ENABLE([tiff],
+   [AC_HELP_STRING([--disable-tiff], [disable TIFF support @<:@default=enabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_tiff="yes"
+    else
+       want_tiff="no"
+    fi
+   ],
+   [want_tiff="yes"])
+
+AC_MSG_CHECKING([whether to build with TIFF support])
+AC_MSG_RESULT([${want_tiff}])
+
+if test "x${want_tiff}" = "xyes" ; then
+
+   OPJ_CHECK_LIB([/usr],
+      [tiff.h],
+      [tiff],
+      [TIFFOpen],
+      [have_libtiff="yes"],
+      [have_libtiff="no"])
+
+   if ! test "x${have_libtiff}" = "xyes" ; then
+      OPJ_CHECK_LIB([/usr/local],
+         [tiff.h],
+         [tiff],
+         [TIFFOpen],
+         [have_libtiff="yes"],
+         [have_libtiff="no"])
+   fi
+
+   if ! test "x${have_libtiff}" = "xyes" ; then
+      OPJ_CHECK_LIB([/opt],
+         [tiff.h],
+         [tiff],
+         [TIFFOpen],
+         [have_libtiff="yes"],
+         [have_libtiff="no"])
+   fi
+
+   if test "x${have_libtiff}" = "xno" ; then
+      AC_MSG_WARN([Can not find a usuable TIFF library. Make sure that CPPFLAGS and LDFLAGS are correctly set.])
+   fi
+fi
+
+AC_MSG_CHECKING([whether TIFF is available])
+AC_MSG_RESULT([${have_libtiff}])
+
+if test "x${have_libtiff}" = "xyes" ; then
+   AC_DEFINE(HAVE_LIBTIFF, [1], [define to 1 if you have libtiff])
+fi
+
+AM_CONDITIONAL([with_libtiff], [test "x${have_libtiff}" = "xyes"])
+
+AC_ARG_VAR([TIFF_CFLAGS], [preprocessor flags for libtiff])
+AC_SUBST(TIFF_CFLAGS)
+AC_ARG_VAR([TIFF_LIBS], [linker flags for libtiff])
+AC_SUBST(TIFF_LIBS)
+
+# libcms2
+
+lcms_output="no"
+
+AC_ARG_ENABLE([lcms2],
+   [AC_HELP_STRING([--disable-lcms2], [disable LCMS-2 support @<:@default=enabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_lcms2="yes"
+    else
+       want_lcms2="no"
+    fi
+   ],
+   [want_lcms2="yes"])
+
+AC_MSG_CHECKING([whether to build with LCMS-2 support])
+AC_MSG_RESULT([${want_lcms2}])
+
+if test "x${want_lcms2}" = "xyes" ; then
+   PKG_CHECK_MODULES([LCMS2], [lcms2],
+      [
+       have_lcms2="yes"
+       requirements="lcms2"
+      ],
+      [have_lcms2="no"])
+fi
+
+AC_MSG_CHECKING([whether LCMS-2 is available])
+AC_MSG_RESULT([${have_lcms2}])
+
+if test "x${have_lcms2}" = "xyes" ; then
+   AC_DEFINE(HAVE_LIBLCMS2, [1], [define to 1 if you have lcms version 2.x])
+   lcms_output="lcms version 2.x"
+fi
+
+# libcms1
+
+AC_ARG_ENABLE([lcms1],
+   [AC_HELP_STRING([--disable-lcms1], [disable LCMS-1 support @<:@default=enabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_lcms1="yes"
+    else
+       want_lcms1="no"
+    fi
+   ],
+   [want_lcms1="yes"])
+
+AC_MSG_CHECKING([whether to build with LCMS-1 support])
+AC_MSG_RESULT([${want_lcms1}])
+
+if test "x${have_lcms2}" = "xno" ; then
+
+   if test "x${want_lcms1}" = "xyes" ; then
+      PKG_CHECK_MODULES([LCMS1], [lcms1],
+         [
+          have_lcms1="yes"
+          requirements="lcms1"
+         ],
+         [PKG_CHECK_MODULES([LCMS1], [lcms],
+            [
+             have_lcms1="yes"
+             requirements="lcms"
+            ],
+            [have_lcms1="no"])])
+   fi
+
+   AC_MSG_CHECKING([whether LCMS-1 is available])
+   AC_MSG_RESULT([${have_lcms1}])
+
+   if test "x${have_lcms1}" = "xyes" ; then
+      AC_DEFINE(HAVE_LIBLCMS1, [1], [define to 1 if you have lcms version 1.x])
+      lcms_output="lcms version 1.x"
+   fi
+
+fi
+
+
+
+### Checks for header files
+
+## FIXME: declarations must be fixed in source code. See autoconf manual
+AC_HEADER_DIRENT
+
+
+### Checks for types
+
+
+### Checks for structures
+
+
+### Checks for compiler characteristics
+
+AC_C_BIGENDIAN
+
+#OPJ_COMPILER_FLAG([-Wall])
+#OPJ_COMPILER_FLAG([-Wextra])
+#OPJ_COMPILER_FLAG([-Wshadow])
+#OPJ_COMPILER_FLAG([-Wpointer-arith])
+OPJ_COMPILER_FLAG([-Wno-unused-result])
+
+if test "x${want_debug}" = "xyes" ; then
+   OPJ_COMPILER_FLAG([-g])
+   OPJ_COMPILER_FLAG([-O0])
+else
+   OPJ_COMPILER_FLAG([-O3])
+fi
+
+
+### Checks for linker characteristics
+
+
+### Checks for library functions
+
+AC_CONFIG_FILES([
+Makefile
+libopenjpeg1.pc
+libopenjpeg/Makefile
+jpwl/Makefile
+codec/Makefile
+mj2/Makefile
+doc/Makefile
+jp3d/Makefile
+jp3d/libjp3dvm/Makefile
+jp3d/codec/Makefile
+])
+
 AC_OUTPUT
-#
-echo "----------------------------------------------"
-echo "           your configuration"
-echo ""
-echo "--with-png-libraries: $with_libpng"
-echo "libpng header       : $png_header_found"
-echo "--enable-tiff       : $with_libtiff"
-echo "libtiff header      : $tiff_header_found"
-echo "--enable-lcms2      : $with_liblcms2"
-echo "lcms2 header        : $lcms2_header_found"
-echo "lcms2 version       : $have_lcms2_version"
-echo "--enable-lcms1      : $with_liblcms1"
-echo "lcms1 header        : $lcms1_header_found"
-echo "lcms1 version       : $have_lcms1_version"
-echo "--enable-jpwl       : $with_libjpwl"
-echo "--enable-jp3d       : $with_jp3d"
-echo "--enable-shared     : $with_sharedlibs"
-echo "----------------------------------------------"
+
+### Summary
+
+echo
+echo
+echo
+echo "------------------------------------------------------------------------"
+echo "$PACKAGE $VERSION"
+echo "------------------------------------------------------------------------"
+echo
+echo
+echo "Configuration Options Summary:"
+echo
+echo "  Debug...............: ${want_debug}"
+echo
+echo "  Optional support:"
+echo "    libpng............: ${have_libpng}"
+echo "    libtiff...........: ${have_libtiff}"
+echo "    libcms............: ${lcms_output}"
+echo
+echo "  Documentation.......: ${opj_have_doxygen}"
+echo "    Build.............: make doc"
+echo
+echo "  mj2.................: ${want_mj2}"
+echo "  jpwl................: ${want_jpwl}"
+echo "  jp3d................: ${want_jp3d}"
+echo
