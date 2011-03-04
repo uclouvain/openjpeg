@@ -107,7 +107,7 @@ EXTRA_DIST = \
 CMakeLists.txt
 
 install-data-hook:
-	@echo -e " (B)\t\t$(bindir)/frames_to_mj2$(EXEEXT)" >> $(top_builddir)/report.txt
-	@echo -e " (B)\t\t$(bindir)/mj2_to_frames$(EXEEXT)" >> $(top_builddir)/report.txt
-	@echo -e " (B)\t\t$(bindir)/extract_j2k_from_mj2$(EXEEXT)" >> $(top_builddir)/report.txt
-	@echo -e " (B)\t\t$(bindir)/wrap_j2k_in_mj2$(EXEEXT)" >> $(top_builddir)/report.txt
+	@echo -e " (B)\t$(bindir)/frames_to_mj2$(EXEEXT)" >> $(top_builddir)/report.txt
+	@echo -e " (B)\t$(bindir)/mj2_to_frames$(EXEEXT)" >> $(top_builddir)/report.txt
+	@echo -e " (B)\t$(bindir)/extract_j2k_from_mj2$(EXEEXT)" >> $(top_builddir)/report.txt
+	@echo -e " (B)\t$(bindir)/wrap_j2k_in_mj2$(EXEEXT)" >> $(top_builddir)/report.txt

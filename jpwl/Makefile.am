@@ -90,11 +90,11 @@ EXTRA_DIST = \
 CMakeLists.txt
 
 install-data-hook:
-	@echo -e " (B)\t\t$(bindir)/JPWL_j2k_to_image$(EXEEXT)" >> $(top_builddir)/report.txt
-	@echo -e " (B)\t\t$(bindir)/JPWL_image_to_j2k$(EXEEXT)" >> $(top_builddir)/report.txt
+	@echo -e " (B)\t$(bindir)/JPWL_j2k_to_image$(EXEEXT)" >> $(top_builddir)/report.txt
+	@echo -e " (B)\t$(bindir)/JPWL_image_to_j2k$(EXEEXT)" >> $(top_builddir)/report.txt
 	@echo -e " (LA)\t$(libdir)/libopenjpeg_JPWL.la" >> $(top_builddir)/report.txt
 	@( $(call solist) ) >> $(top_builddir)/report.txt
-	@echo -e " (A)\t\t$(base)/$(a)" >> $(top_builddir)/report.txt
+	@echo -e " (A)\t$(base)/$(a)" >> $(top_builddir)/report.txt
 
 solist    = $(foreach f, $(dll) $(so), echo -e ' $(SO_PREFIX)\t$(base)/$(f)' ;)
 get_tok   = $(shell grep -E "^$(1)=" $(lib_LTLIBRARIES) | cut -d "'" -f 2)

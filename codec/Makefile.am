@@ -67,6 +67,6 @@ CMakeLists.txt \
 windirent.h
 
 install-data-hook:
-	@echo -e " (B)\t\t$(bindir)/j2k_to_image$(EXEEXT)" >> $(top_builddir)/report.txt
-	@echo -e " (B)\t\t$(bindir)/image_to_j2k$(EXEEXT)" >> $(top_builddir)/report.txt
-	@echo -e " (B)\t\t$(bindir)/j2k_dump$(EXEEXT)" >> $(top_builddir)/report.txt
+	@echo -e " (B)\t$(bindir)/j2k_to_image$(EXEEXT)" >> $(top_builddir)/report.txt
+	@echo -e " (B)\t$(bindir)/image_to_j2k$(EXEEXT)" >> $(top_builddir)/report.txt
+	@echo -e " (B)\t$(bindir)/j2k_dump$(EXEEXT)" >> $(top_builddir)/report.txt

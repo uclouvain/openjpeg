@@ -68,8 +68,8 @@ install-data-hook:
 	@rm -rf $(top_builddir)/report.txt
 	@echo -e " (LA)\t$(libdir)/libopenjpeg.la" >> $(top_builddir)/report.txt
 	@( $(call solist) ) >> $(top_builddir)/report.txt
-	@echo -e " (A)\t\t$(base)/$(a)" >> $(top_builddir)/report.txt
-	@echo -e " (H)\t\t$(includedir)/openjpeg-$(MAJOR_NR).$(MINOR_NR)/openjpeg.h" >> $(top_builddir)/report.txt
+	@echo -e " (A)\t$(base)/$(a)" >> $(top_builddir)/report.txt
+	@echo -e " (H)\t$(includedir)/openjpeg-$(MAJOR_NR).$(MINOR_NR)/openjpeg.h" >> $(top_builddir)/report.txt
 	@echo -e " (LN)\t$(includedir)/openjpeg.h" >> $(top_builddir)/report.txt
 
 uninstall-hook:

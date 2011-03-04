@@ -61,8 +61,8 @@ install-data-hook:
 	          openjpeg3d.h
 	@echo -e " (LA)\t$(libdir)/libopenjp3dvm.la" >> $(top_builddir)/report.txt
 	@( $(call solist) ) >> $(top_builddir)/report.txt
-	@echo -e " (A)\t\t$(base)/$(a)" >> $(top_builddir)/report.txt
-	@echo -e " (H)\t\t$(includedir)/openjpeg3d-$(MAJOR_NR).$(MINOR_NR)/openjpeg3d.h" >> $(top_builddir)/report.txt
+	@echo -e " (A)\t$(base)/$(a)" >> $(top_builddir)/report.txt
+	@echo -e " (H)\t$(includedir)/openjpeg3d-$(MAJOR_NR).$(MINOR_NR)/openjpeg3d.h" >> $(top_builddir)/report.txt
 	@echo -e " (LN)\t$(includedir)/openjpeg3d.h" >> $(top_builddir)/report.txt
 
 uninstall-hook:
