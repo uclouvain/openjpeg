@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+March 5, 2011
+! [antonin] cosmetic change for status report of ./configure
+
 March 4, 2011
 * [antonin] now assume MinGW does not have dirent.h (actually have it but without opendir function). Fixed also a WIN32 check in jp3d/libjp3dvm/openjpeg3d.h.
 ! [antonin] updated autotools files to improve build and install procedures (credit to Vincent Torri).

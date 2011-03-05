@@ -179,6 +179,8 @@ AC_PROG_LN_S
 
 # libpng
 
+have_libpng="no"
+
 AC_ARG_ENABLE([png],
    [AC_HELP_STRING([--disable-png], [disable PNG support @<:@default=enabled@:>@])],
    [
@@ -254,6 +256,8 @@ fi
 AM_CONDITIONAL([with_libpng], [test x${have_libpng} = "xyes"])
 
 #libtiff
+
+have_libtiff="no"
 
 AC_ARG_ENABLE([tiff],
    [AC_HELP_STRING([--disable-tiff], [disable TIFF support @<:@default=enabled@:>@])],
