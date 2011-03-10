@@ -5,7 +5,7 @@ lib_LTLIBRARIES = libopenjp3dvm.la
 includesdir = ${includedir}/openjpeg3d-@JP3D_MAJOR_NR@.@JP3D_MINOR_NR@
 includes_HEADERS = openjpeg3d.h
 
-libopenjp3dvm_la_LDFLAGS = -no-undefined -version-info @lt_version@
+libopenjp3dvm_la_LDFLAGS = -no-undefined -version-info @lt_version_jp3d@
 
 libopenjp3dvm_la_CPPFLAGS = \
 -I. \

@@ -1,4 +1,10 @@
 
+# According to http://www.gnu.org/software/libtool/manual/libtool.html#Updating-version-info :
+#
+# 1) when bugs are fixed or internal code is changed: increase MICRO
+# 2) if API is added, increase MINOR and set MICRO to 0
+# 3) if API or ABI is broken (this case should (must) never happen as it's very bad for a library), or a new designed library, increase MAJOR and set MINOR and MICRO to 0
+
 m4_define([OPJ_MAJOR], [1])
 m4_define([OPJ_MINOR], [4])
 m4_define([OPJ_MICRO], [0])
@@ -7,9 +13,13 @@ m4_define([JP3D_MAJOR], [1])
 m4_define([JP3D_MINOR], [3])
 m4_define([JP3D_MICRO], [0])
 
-m4_define([lt_rev], m4_eval(OPJ_MAJOR + OPJ_MINOR))
-m4_define([lt_cur], OPJ_MICRO)
+m4_define([lt_cur], m4_eval(OPJ_MAJOR + OPJ_MINOR))
+m4_define([lt_rev], OPJ_MICRO)
 m4_define([lt_age], OPJ_MINOR)
+
+m4_define([lt_cur_jp3d], m4_eval(JP3D_MAJOR + JP3D_MINOR))
+m4_define([lt_rev_jp3d], JP3D_MICRO)
+m4_define([lt_age_jp3d], JP3D_MINOR)
 
 AC_PREREQ([2.62])
 AC_INIT([OpenJPEG],
@@ -44,8 +54,11 @@ AC_SUBST(JP3D_MICRO_NR)
 LT_PREREQ([2.0])
 LT_INIT([win32-dll])
 
-lt_version=lt_rev:lt_cur:lt_age
+lt_version=lt_cur:lt_rev:lt_age
 AC_SUBST(lt_version)
+
+lt_version_jp3d=lt_cur_jp3d:lt_rev_jp3d:lt_age_jp3d
+AC_SUBST(lt_version_jp3d)
 
 
 ### Needed information

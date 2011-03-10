@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+March 10, 2011
+* [antonin] fixed lt_version in configure.ac
+
 March 5, 2011
 ! [antonin] cosmetic change for status report of ./configure
 
