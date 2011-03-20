@@ -156,44 +156,26 @@ SUBDIRS(libopenjpeg)
 #-----------------------------------------------------------------------------
 # Build CODEC executables ?
 OPTION(BUILD_CODEC "Build the CODEC executables" ON)
-IF(BUILD_CODEC)
-  SUBDIRS(codec)
-ENDIF(BUILD_CODEC)
 
 #-----------------------------------------------------------------------------
 # Build MJ2 executables ?
 OPTION(BUILD_MJ2 "Build the MJ2 executables." OFF)
-IF(BUILD_MJ2)
-  SUBDIRS(mj2)
-ENDIF(BUILD_MJ2)
 
 #-----------------------------------------------------------------------------
 # Build JPWL executables ?
 OPTION(BUILD_JPWL "Build the JPWL executables" OFF)
-IF(BUILD_JPWL)
-  SUBDIRS(jpwl)
-ENDIF(BUILD_JPWL)
 
 #-----------------------------------------------------------------------------
 # Build JP3D executables ?
 OPTION(BUILD_JP3D "Build the JP3D executables" OFF)
-IF(BUILD_JP3D)
-  SUBDIRS(jp3d)
-ENDIF(BUILD_JP3D)
 
 #-----------------------------------------------------------------------------
 # Build INDEXER_JPIP executables ?
 OPTION(BUILD_INDEXER_JPIP "Build the INDEXER_JPIP executables" OFF)
-IF(BUILD_INDEXER_JPIP)
-  SUBDIRS(indexer_JPIP)
-ENDIF(BUILD_INDEXER_JPIP)
 
 #-----------------------------------------------------------------------------
 # Build DOCUMENTATION ?
 OPTION(BUILD_DOC "Build the doxygen documentation" OFF)
-IF(BUILD_DOC)
-  SUBDIRS(doc)
-ENDIF(BUILD_DOC)
 
 #-----------------------------------------------------------------------------
 # For openjpeg team if they ever want CDash+CMake
@@ -237,24 +219,6 @@ INSTALL(
   FILES       CHANGES 
               LICENSE
   DESTINATION ${OPENJPEG_INSTALL_DOC_DIR})
-#
-IF(UNIX OR CYGWIN)
-  SET(CMAKE_INCLUDE_PATH /usr/include /usr/local/include /opt/include 
-	/opt/local/include /usr/include/libpng /usr/include/libpng14
-	/usr/include/libpng12 /usr/local/include/libpng 
-	/usr/local/include/libpng14 /usr/local/include/libpng12
-	/opt/include/libpng /opt/include/libpng14 /opt/include/libpng12
-	/opt/local/include/libpng /opt/local/include/libpng14
-	/opt/local/include/libpng12 )
-  SET(CMAKE_LIBRARY_PATH /usr/lib /usr/local/lib /opt/lib /opt/local/lib)
-ELSEIF(WIN32)
-  SET(CMAKE_INCLUDE_PATH ${OPENJPEG_SOURCE_DIR}/libs/libtiff 
-	${OPENJPEG_SOURCE_DIR}/libs/png ${OPENJPEG_SOURCE_DIR}/libs/lcms2
-	C:/WINDOWS/system32/user )
-  SET(CMAKE_LIBRARY_PATH ${OPENJPEG_SOURCE_DIR}/libs/libtiff
-        ${OPENJPEG_SOURCE_DIR}/libs/png ${OPENJPEG_SOURCE_DIR}/libs/lcms2
-	C:/WINDOWS/system32/user )
-ENDIF()
 #
 FIND_FILE(HAVE_STRINGS_H_FOUND strings.h)
 IF(NOT HAVE_STRINGS_H_FOUND STREQUAL "HAVE_STRINGS_H_FOUND-NOTFOUND")
@@ -302,71 +266,158 @@ IF(NOT HAVE_UNISTD_H_FOUND STREQUAL "HAVE_UNISTD_H_FOUND-NOTFOUND")
   SET(HAS_UNISTD_H 1)
 ENDIF()
 #
-# Does the system have png library installed ?
+IF(BUILD_CODEC OR BUILD_JPWL OR BUILD_MJ2)
 #
-FIND_PACKAGE(PNG)
 #
-IF(PNG_FOUND)
-  SET(HAVE_PNG_H 1)
-  SET(HAVE_LIBPNG 1)
+IF(UNIX OR CYGWIN)
+ SET(CMAKE_INCLUDE_PATH /usr/include /usr/local/include /opt/include 
+	/opt/local/include /usr/include/libpng /usr/include/libpng14
+	/usr/include/libpng12 /usr/local/include/libpng 
+	/usr/local/include/libpng14 /usr/local/include/libpng12
+	/opt/include/libpng /opt/include/libpng14 /opt/include/libpng12
+	/opt/local/include/libpng /opt/local/include/libpng14)
+ SET(CMAKE_LIBRARY_PATH /usr/lib /usr/local/lib /opt/lib /opt/local/lib)
 ENDIF()
 #
-# Does the system have tiff library installed ?
-# 
-FIND_PACKAGE(TIFF)
+ FIND_PACKAGE(ZLIB QUIET)
 #
-IF(TIFF_FOUND)
-  SET(HAVE_TIFF_H 1)
-  SET(HAVE_LIBTIFF 1)
-ENDIF()
+ IF(ZLIB_LIBRARY STREQUAL "ZLIB_LIBRARY-NOTFOUND")
+   SET(ZLIB_FOUND 0)
+ ENDIF(ZLIB_LIBRARY STREQUAL "ZLIB_LIBRARY-NOTFOUND")
 #
+ IF(ZLIB_FOUND)
+   SET(HAVE_ZLIB_H 1)
+   SET(HABE_LIBZ 1)
+   SET(Z_LIBNAME ${ZLIB_LIBRARIES})
+   SET(Z_INCLUDE_DIRNAME ${ZLIB_INCLUDE_DIR}) 
+ ENDIF(ZLIB_FOUND)
 #
-# Does the system have lcms library installed ?
+ FIND_PACKAGE(PNG QUIET)
 #
-SET(LCMS_LIB "")
-FIND_FILE(LCMS2_HEADER_FOUND lcms2.h)
+ IF(PNG_LIBRARY STREQUAL "PNG_LIBRARY-NOTFOUND")
+   SET(PNG_FOUND 0)
+ ENDIF(PNG_LIBRARY STREQUAL "PNG_LIBRARY-NOTFOUND")
 #
-IF(LCMS2_HEADER_FOUND STREQUAL "LCMS2_HEADER_FOUND-NOTFOUND")
- SET(LCMS2_HEADER_FOUND "")
-ENDIF()
-IF(LCMS2_HEADER_FOUND)
- FIND_PATH(LCMS_INCLUDE_DIR  lcms2.h)
- IF(UNIX OR CYGWIN)
-   FIND_LIBRARY(HAVE_LIBLCMS2 lcms2)
- ELSE()
-   FIND_LIBRARY(HAVE_LIBLCMS2 lcms2_static.lib)
- ENDIF() 
- IF(HAVE_LIBLCMS2 STREQUAL "HAVE_LIBLCMS2-NOTFOUND")
-  SET(HAVE_LIBLCMS2 "")
- ENDIF()
- IF(HAVE_LIBLCMS2)
-  SET(LCMS_LIB "${HAVE_LIBLCMS2}")
-  SET(HAVE_LCMS2_LIB 1)
-  SET(HAVE_LCMS2_H 1)
- ENDIF()
-ENDIF()
-IF(NOT LCMS2_HEADER_FOUND)
- FIND_FILE(LCMS1_HEADER_FOUND lcms.h)
- IF(LCMS1_HEADER_FOUND STREQUAL "LCMS1_HEADER_FOUND-NOTFOUND")
-  SET(LCMS1_HEADER_FOUND "")
- ENDIF()
- IF(LCMS1_HEADER_FOUND)
-  FIND_PATH(LCMS_INCLUDE_DIR  lcms.h)
-  FIND_LIBRARY(HAVE_LIBLCMS1 lcms)
-  IF(HAVE_LIBLCMS1 STREQUAL "HAVE_LIBLCMS1-NOTFOUND")
-   SET(HAVE_LIBLCMS1 "")
-  ENDIF()
-  IF(HAVE_LIBLCMS1)
-   SET(LCMS_LIB "${HAVE_LIBLCMS1}")
-   SET(HAVE_LCMS1_LIB 1)
-   SET(HAVE_LCMS1_H 1)
-  ENDIF()
- ENDIF()
-ENDIF()
+ IF(PNG_FOUND)
+   SET(HAVE_PNG_H 1)
+   SET(HAVE_LIBPNG 1)
+   SET(PNG_LIBNAME ${PNG_LIBRARIES})
+   SET(PNG_INCLUDE_DIRNAME ${PNG_INCLUDE_DIR})
+ ENDIF(PNG_FOUND)
+#
+ FIND_PACKAGE(TIFF QUIET)
+#
+ IF(TIFF_LIBRARY STREQUAL "TIFF_LIBRARY-NOTFOUND")
+   SET(TIFF_FOUND 0)
+ ENDIF(TIFF_LIBRARY STREQUAL "TIFF_LIBRARY-NOTFOUND")
+#
+ IF(TIFF_FOUND)
+   SET(HAVE_TIFF_H 1)
+   SET(HAVE_LIBTIFF 1)
+   SET(TIFF_LIBNAME ${TIFF_LIBRARIES})
+   SET(TIFF_INCLUDE_DIRNAME ${TIFF_INCLUDE_DIR})
+ ENDIF(TIFF_FOUND)
+#
+ FIND_PACKAGE(LCMS QUIET)
+#
+ IF(LCMS_LIBRARY STREQUAL "LCMS_LIBRARY-NOTFOUND")
+  SET(LCMS_FOUND 0)
+ ENDIF(LCMS_LIBRARY STREQUAL "LCMS_LIBRARY-NOTFOUND") 
+#
+ IF(LCMS_FOUND)
+  SET(HAVE_LCMS1_H 1)
+  SET(HAVE_LCMS1_LIB 1)
+  SET(LCMS_LIBNAME ${LCMS_LIBRARIES})
+  SET(LCMS_INCLUDE_DIRNAME ${LCMS_INCLUDE_DIR})
+ ENDIF(LCMS_FOUND)
+#
+ IF(NOT LCMS_FOUND)
+  FIND_PACKAGE(LCMS2 QUIET)
+   IF(LCMS2_LIBRARY STREQUAL "LCMS2_LIBRARY-NOTFOUND")
+    SET(LCMS2_FOUND 0)
+  ENDIF(LCMS2_LIBRARY STREQUAL "LCMS2_LIBRARY-NOTFOUND")
+#
+  IF(LCMS2_FOUND)
+   SET(HAVE_LCMS2_H 1)
+    SET(HAVE_LCMS2_LIB 1)
+    SET(LCMS_LIBNAME ${LCMS2_LIBRARIES})
+    SET(LCMS_INCLUDE_DIRNAME ${LCMS2_INCLUDE_DIR})
+  ENDIF(LCMS2_FOUND)
+ ENDIF(NOT LCMS_FOUND)
+#-------------------------------------------------------------
+ OPTION(BUILD_THIRDPARTY "Build the thirdparty executables" ON)
+#
+ IF(NOT ZLIB_FOUND OR NOT PNG_FOUND OR NOT TIFF_FOUND OR NOT LCMS_FOUND OR NOT LCMS2_FOUND) 
+  IF(BUILD_THIRDPARTY)
+   SET(HAVE_ZLIB_H 1)
+   SET(HAVE_LIBZ 1)
+   SET(HAVE_PNG_H 1)
+   SET(HAVE_LIBPNG 1)
+   SET(HAVE_TIFF_H 1)
+   SET(HAVE_LIBTIFF 1)
+   SET(HAVE_LCMS2_H 1)
+   SET(HAVE_LIBLCMS2 1)
+#
+   ADD_SUBDIRECTORY(${OPENJPEG_SOURCE_DIR}/thirdparty)
+#
+   LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/thirdparty/lib)
+#
+   IF(NOT ZLIB_FOUND)
+    INCLUDE_DIRECTORIES(${OPENJPEG_SOURCE_DIR}/thirdparty/include)
+    SET(ZLIB_INCLUDE_DIRNAME ${OPENJPEG_SOURCE_DIR}/thirdparty/include)
+    SET(Z_LIBNAME z)
+    SET(ZLIB_FOUND 1)
+   ENDIF(NOT ZLIB_FOUND)
+#
+   IF(NOT PNG_FOUND)
+    SET(PNG_INCLUDE_DIRNAME ${OPENJPEG_SOURCE_DIR}/thirdparty/libpng)
+    SET(PNG_LIBNAME png)
+    SET(PNG_FOUND 1)
+   ENDIF(NOT PNG_FOUND)
+#
+   IF(NOT LCMS_FOUND AND NOT LCMS2_FOUND)
+    SET(LCMS_INCLUDE_DIRNAME ${OPENJPEG_SOURCE_DIR}/thirdparty/liblcms2/include)
+    SET(LCMS_LIBNAME lcms2)
+    SET(LCMS2_FOUND 1)
+   ENDIF(NOT LCMS_FOUND AND NOT LCMS2_FOUND)
+#
+   IF(NOT TIFF_FOUND)
+    SET(TIFF_INCLUDE_DIRNAME ${OPENJPEG_SOURCE_DIR}/thirdparty/libtiff)
+    SET(TIFF_LIBNAME tiff)
+    SET(TIFF_FOUND 1)
+   ENDIF(NOT TIFF_FOUND)
+#
+  ENDIF(BUILD_THIRDPARTY)
+ ENDIF(NOT ZLIB_FOUND OR NOT PNG_FOUND OR NOT TIFF_FOUND OR NOT LCMS_FOUND OR NOT LCMS2_FOUND)
+#
+ENDIF(BUILD_CODEC OR BUILD_JPWL OR BUILD_MJ2)
+#
+IF(BUILD_CODEC)
+ SUBDIRS(codec)
+ENDIF(BUILD_CODEC)
+#
+IF(BUILD_MJ2)
+ SUBDIRS(mj2)
+ENDIF(BUILD_MJ2)
+#
+IF(BUILD_JPWL)
+ SUBDIRS(jpwl)
+ENDIF(BUILD_JPWL)
+#
+IF(BUILD_JP3D)
+ SUBDIRS(jp3d)
+ENDIF(BUILD_JP3D)
+#
+IF(BUILD_INDEXER_JPIP)
+ SUBDIRS(indexer_JPIP)
+ENDIF(BUILD_INDEXER_JPIP)
+#
+IF(BUILD_DOC)
+ SUBDIRS(doc)
+ENDIF(BUILD_DOC)
 #
 # generate opj_config.h
 CONFIGURE_FILE("${OPENJPEG_SOURCE_DIR}/opj_configh.cmake.in"
-  "${OPENJPEG_BINARY_DIR}/opj_config.h"
-  @ONLY 
+ "${OPENJPEG_BINARY_DIR}/opj_config.h"
+ @ONLY 
 )
-

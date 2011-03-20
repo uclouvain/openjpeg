@@ -5,6 +5,10 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+March 20, 2011
++ [antonin] added a 'thirdparty' directory to include main source files of libtiff, libpng, libz and liblcms to enable support of these formats in the codec executables. CMake will try to statically build these libraries if they are not found on the system. Note that these third party libraries are not required to build libopenjpeg (which has no dependencies).
+- [antonin] removed the 'libs' directory containing win32 compiled versions of libpng, libtiff and liblcms. 
+
 March 10, 2011
 * [antonin] fixed lt_version in configure.ac
 

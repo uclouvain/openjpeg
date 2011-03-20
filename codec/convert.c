@@ -44,19 +44,12 @@
 #endif
 
 #ifdef HAVE_LIBTIFF
-#ifdef _WIN32
-#include "../libs/libtiff/tiffio.h"
-#else
 #include <tiffio.h>
-#endif /* _WIN32 */
 #endif /* HAVE_LIBTIFF */
 
 #ifdef HAVE_LIBPNG
-#ifdef _WIN32
-#include "../libs/png/png.h"
-#else
+#include <zlib.h>
 #include <png.h>
-#endif /* _WIN32 */
 #endif /* HAVE_LIBPNG */
 
 #include "../libopenjpeg/openjpeg.h"
@@ -1515,7 +1508,7 @@ typedef struct tiff_infoheader{
 int imagetotif(opj_image_t * image, const char *outfile) {
 	int width, height, imgsize;
 	int bps,index,adjust = 0;
-	int last_i=0;
+	unsigned int last_i=0;
 	TIFF *tif;
 	tdata_t buf;
 	tstrip_t strip;
