@@ -681,7 +681,7 @@ bool jp2_read_jp2h(opj_jp2_t *jp2, opj_cio_t *cio, opj_jp2_color_t *color)
 
 }/* jp2_read_jp2h() */
 
-opj_image_t* jp2_decode(opj_jp2_t *jp2, opj_cio_t *cio, 
+opj_image_t* opj_jp2_decode(opj_jp2_t *jp2, opj_cio_t *cio, 
 	opj_codestream_info_t *cstr_info) 
 {
 	opj_common_ptr cinfo;
@@ -743,7 +743,7 @@ opj_image_t* jp2_decode(opj_jp2_t *jp2, opj_cio_t *cio,
    }
 	return image;
 
-}/* jp2_decode() */
+}/* opj_jp2_decode() */
 
 
 void jp2_write_jp2h(opj_jp2_t *jp2, opj_cio_t *cio) {
@@ -1065,7 +1065,7 @@ void jp2_setup_encoder(opj_jp2_t *jp2, opj_cparameters_t *parameters, opj_image_
 
 }
 
-bool jp2_encode(opj_jp2_t *jp2, opj_cio_t *cio, opj_image_t *image, opj_codestream_info_t *cstr_info) {
+bool opj_jp2_encode(opj_jp2_t *jp2, opj_cio_t *cio, opj_image_t *image, opj_codestream_info_t *cstr_info) {
 
 	/* JP2 encoding */
 

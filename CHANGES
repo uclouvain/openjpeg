@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 April 12, 2011
+* [antonin] Fixed internal function names conflict with Jasper (http://code.google.com/p/openjpeg/issues/detail?id=30)
 * [antonin] convert.c: ENDIAN condition removed, tiftoimage and imagetotif updated (ALPHA added for RGB and GRAY, correct handling of 12-bit precision), small bugfixes (credit to Winfried)
 * [antonin] small fix in configure.ac (credit to Vincent Torri)
 
