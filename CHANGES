@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 April 12, 2011
+- [antonin] Removed folders mj2, JavaOpenJpeg, jpwl, OPJViewer (not compliant with v2). Removed obsolete windows project files. Removed obsolete Makefiles (only build method currently supported with v2 branch: cmake). Renamed ChangeLog to CHANGES. Renamed License.txt to LICENSE. Removed obsolete README files.
 * [antonin] Fixed internal function names conflict with Jasper (http://code.google.com/p/openjpeg/issues/detail?id=30)
 
 November 25, 2010
