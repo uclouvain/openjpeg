@@ -231,7 +231,7 @@ opj_codec_t* OPJ_CALLCONV opj_create_decompress(OPJ_CODEC_FORMAT p_format)
 		
 		case CODEC_JP2:
 			/* get a JP2 decoder handle */
-			l_info->m_codec_data.m_decompression.opj_decode = (opj_image_t* (*) (void *, struct opj_stream_private *, struct opj_event_mgr * ))jp2_decode;
+			l_info->m_codec_data.m_decompression.opj_decode = (opj_image_t* (*) (void *, struct opj_stream_private *, struct opj_event_mgr * ))opj_jp2_decode;
 			l_info->m_codec_data.m_decompression.opj_end_decompress =  (bool (*) (void *,struct opj_stream_private *,struct opj_event_mgr *)) jp2_end_decompress;
 			l_info->m_codec_data.m_decompression.opj_read_header =  (bool (*) (
 				void *,
@@ -260,7 +260,7 @@ opj_codec_t* OPJ_CALLCONV opj_create_decompress(OPJ_CODEC_FORMAT p_format)
 					struct opj_stream_private *,	
 					struct opj_event_mgr * )) jp2_read_tile_header;
 
-			l_info->m_codec_data.m_decompression.opj_decode_tile_data = (bool (*) (void *,OPJ_UINT32,OPJ_BYTE*,OPJ_UINT32,struct opj_stream_private *,	struct opj_event_mgr * )) jp2_decode_tile;
+			l_info->m_codec_data.m_decompression.opj_decode_tile_data = (bool (*) (void *,OPJ_UINT32,OPJ_BYTE*,OPJ_UINT32,struct opj_stream_private *,	struct opj_event_mgr * )) opj_jp2_decode_tile;
 
 			l_info->m_codec_data.m_decompression.opj_destroy = (void (*) (void *))jp2_destroy;
 			l_info->m_codec_data.m_decompression.opj_setup_decoder = (void (*) (void * ,opj_dparameters_t * )) jp2_setup_decoder;
@@ -612,7 +612,7 @@ opj_codec_t* OPJ_CALLCONV opj_create_compress(OPJ_CODEC_FORMAT p_format)
 		
 		case CODEC_JP2:
 			/* get a JP2 decoder handle */
-			l_info->m_codec_data.m_compression.opj_encode = (bool (*) (void *, struct opj_stream_private *, struct opj_event_mgr * )) jp2_encode;
+			l_info->m_codec_data.m_compression.opj_encode = (bool (*) (void *, struct opj_stream_private *, struct opj_event_mgr * )) opj_jp2_encode;
 			l_info->m_codec_data.m_compression.opj_end_compress = (bool (*) (void *, struct opj_stream_private *, struct opj_event_mgr *)) jp2_end_compress;
 			l_info->m_codec_data.m_compression.opj_start_compress = (bool (*) (void *,struct opj_stream_private *,struct opj_image * ,	struct opj_event_mgr *))  jp2_start_compress;
 			l_info->m_codec_data.m_compression.opj_write_tile = (bool (*) (void *,OPJ_UINT32,OPJ_BYTE*,OPJ_UINT32,struct opj_stream_private *,	struct opj_event_mgr *)) jp2_write_tile;
@@ -840,7 +840,7 @@ bool OPJ_CALLCONV opj_set_error_handler(opj_codec_t * p_codec, opj_msg_callback 
 			case CODEC_J2K:
 				return j2k_encode((opj_j2k_t*)cinfo->j2k_handle, (opj_stream_private_t *) cio, image, cstr_info);
 			case CODEC_JP2:
-				return jp2_encode((opj_jp2_t*)cinfo->jp2_handle, (opj_stream_private_t *) cio, image, cstr_info);
+				return opj_jp2_encode((opj_jp2_t*)cinfo->jp2_handle, (opj_stream_private_t *) cio, image, cstr_info);
 			case CODEC_JPT:
 			case CODEC_UNKNOWN:
 			default:

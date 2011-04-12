@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+April 12, 2011
+* [antonin] Fixed internal function names conflict with Jasper (http://code.google.com/p/openjpeg/issues/detail?id=30)
+
 November 25, 2010
 * [antonin] Fix leak in jp2_read_header_procedure() (from even.rouault, see issue 29 on googlecode)
 

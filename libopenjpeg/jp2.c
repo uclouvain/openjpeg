@@ -1829,7 +1829,7 @@ Encode an image into a JPEG-2000 file stream
 @param cstr_info Codestream information structure if required, NULL otherwise
 @return Returns true if successful, returns false otherwise
 */
-bool jp2_encode(opj_jp2_t *jp2, struct opj_stream_private *cio, struct opj_event_mgr * p_manager)
+bool opj_jp2_encode(opj_jp2_t *jp2, struct opj_stream_private *cio, struct opj_event_mgr * p_manager)
 {
 	return j2k_encode(jp2->j2k,cio,p_manager);
 }
@@ -1857,7 +1857,7 @@ bool jp2_write_tile (
  * @param	p_stream			the stream to write data to.
  * @param	p_manager	the user event manager.
  */
-bool jp2_decode_tile (
+bool opj_jp2_decode_tile (
 					opj_jp2_t * p_jp2,
 					OPJ_UINT32 p_tile_index,
 					OPJ_BYTE * p_data,
@@ -2074,7 +2074,7 @@ bool jp2_skip_jp2c(
 	return true;
 }
 
-struct opj_image * jp2_decode(opj_jp2_t *jp2, struct opj_stream_private *cio, struct opj_event_mgr * p_manager) 
+struct opj_image * opj_jp2_decode(opj_jp2_t *jp2, struct opj_stream_private *cio, struct opj_event_mgr * p_manager) 
 {
 	/* J2K decoding */
 	struct opj_image * image = j2k_decode(jp2->j2k, cio, p_manager);
