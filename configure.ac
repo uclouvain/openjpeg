@@ -178,6 +178,7 @@ else
    pkgconfig_requires_private="Requires"
 fi
 AC_SUBST(pkgconfig_requires_private)
+AC_SUBST(requirements)
 
 # doxygen
 
