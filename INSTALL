@@ -32,7 +32,6 @@ To build doc (requires 'doxygen' to be found on your system):
 
 Main './configure' options (type './configure --help' for more details)
   '--enable-mj2'
-  '--enable-jp3d'
   '--enable-jpwl'
   '--prefix=/path/to/install/directory' (example : '--prefix=$PWD/installed')
   '--enable-debug' (default : disabled)
@@ -64,7 +63,6 @@ Main available cmake flags:
 * To build the CODEC executables: '-DBUILD_CODEC:bool=on' (default: 'ON')
 * To build the MJ2 executables: '-DBUILD_MJ2:bool=on' (default: 'OFF')
 * To build the JPWL executables and JPWL library: '-DBUILD_JPWL:bool=on' (default: 'OFF')
-* To build the JP3D executables and JP3D library: '-DBUILD_JP3D:bool=on' (default: 'OFF')
 * [WIN32 ONLY] To build the INDEXER_JPIP executable: '-DBUILD_INDEXER_JPIP:bool=on' (default: 'OFF')
 * To build the doxygen documentation: '-DBUILD_DOC:bool=on' (default: 'OFF')
 * To enable testing (and automatic result upload to http://my.cdash.org/index.php?project=OPENJPEG):
@@ -77,13 +75,13 @@ Main available cmake flags:
 - Manually edit the config.nix file
 - Manually create an opj_config.h file from opj_config.h.in.user
   and edit this opj_config.h
-- Then : (if 'WITH_JPWL' and/or 'WITH_JP3D' are defined in config.nix)
+- Then : (if 'WITH_JPWL' is defined in config.nix)
     make -f Makefile.nix all
     make -f Makefile.nix install
     make -f Makefile.nix clean
     make -f Makefile.nix uninstall
-- If neither 'WITH_JPWL' nor 'WITH_JP3D' is defined in config.nix
-  and you want to clean/compile/install/uninstall JPWL/JP3D:
+- If 'WITH_JPWL' is not defined in config.nix
+  and you want to clean/compile/install/uninstall JPWL:
   call the respective target in the respective directory.
 
 MACOSX

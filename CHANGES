@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+April 13, 2011
+! [antonin] renamed and reorganized "jp3d" directory to "openjpeg3d". Is now a standalone directory, with independent cmake files. Done as it uses its own version of the openjpeg library and does not depend on the one currently developped. Will be removed from the trunk and stored in a branch.
+
 April 12, 2011
 * [antonin] Fixed internal function names conflict with Jasper (http://code.google.com/p/openjpeg/issues/detail?id=30)
 * [antonin] convert.c: ENDIAN condition removed, tiftoimage and imagetotif updated (ALPHA added for RGB and GRAY, correct handling of 12-bit precision), small bugfixes (credit to Winfried)

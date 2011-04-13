@@ -1,8 +1,8 @@
 
 namespace eval VMDecoder {
 	variable var
-	variable JP3Ddecoder "../bin/jp3d_vm_dec.exe"
-	#variable JP3Ddecoder "jp3d_vm_dec.exe"
+	variable JP3Ddecoder "../bin/jp3d_to_volume.exe"
+	#variable JP3Ddecoder "jp3d_to_volume.exe"
 }
 
 

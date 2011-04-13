@@ -166,10 +166,6 @@ OPTION(BUILD_MJ2 "Build the MJ2 executables." OFF)
 OPTION(BUILD_JPWL "Build the JPWL executables" OFF)
 
 #-----------------------------------------------------------------------------
-# Build JP3D executables ?
-OPTION(BUILD_JP3D "Build the JP3D executables" OFF)
-
-#-----------------------------------------------------------------------------
 # Build INDEXER_JPIP executables ?
 OPTION(BUILD_INDEXER_JPIP "Build the INDEXER_JPIP executables" OFF)
 
@@ -399,10 +395,6 @@ ENDIF(BUILD_MJ2)
 IF(BUILD_JPWL)
  SUBDIRS(jpwl)
 ENDIF(BUILD_JPWL)
-#
-IF(BUILD_JP3D)
- SUBDIRS(jp3d)
-ENDIF(BUILD_JP3D)
 #
 IF(BUILD_INDEXER_JPIP)
  SUBDIRS(indexer_JPIP)
