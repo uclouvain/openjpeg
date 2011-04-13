@@ -2,7 +2,7 @@
 
 SET(common_SRCS "")
 IF(DONT_HAVE_GETOPT)
-  SET(common_SRCS ${OPENJPEG_SOURCE_DIR}/common/getopt.c)
+  SET(common_SRCS ${OPENJPEG_SOURCE_DIR}/applications/common/getopt.c)
 ENDIF(DONT_HAVE_GETOPT)
 
 # While mj2 executables do not use the API correctly, we do not link with the library but rather compile the sources files.
@@ -36,7 +36,7 @@ ENDIF(WIN32)
 # Headers file are located here:
 INCLUDE_DIRECTORIES(
   ${OPENJPEG_SOURCE_DIR}/libopenjpeg
-  ${OPENJPEG_SOURCE_DIR}/common
+  ${OPENJPEG_SOURCE_DIR}/applications/common
   ${LCMS_INCLUDE_DIRNAME}
   )
 
@@ -58,7 +58,7 @@ ADD_EXECUTABLE(mj2_to_frames
     ${common_SRCS}
     ${OPJ_SRCS}
     ${MJ2_SRCS}
-    ${OPENJPEG_SOURCE_DIR}/common/color.c
+    ${OPENJPEG_SOURCE_DIR}/applications/common/color.c
     )
 IF(LCMS_FOUND OR LCMS2_FOUND)
   TARGET_LINK_LIBRARIES(mj2_to_frames ${LCMS_LIBNAME})
@@ -92,4 +92,4 @@ IF(UNIX)
 ENDIF(UNIX)
 
 INSTALL(TARGETS frames_to_mj2 mj2_to_frames extract_j2k_from_mj2 wrap_j2k_in_mj2
-	DESTINATION bin)
+	DESTINATION ${OPENJPEG_INSTALL_BIN_DIR})

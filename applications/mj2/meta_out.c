@@ -14,7 +14,7 @@ can be bound by the Open JPEG open-source license and disclaimer, expressed else
 
 #include <windows.h> /* for time functions */
 
-#include "../libopenjpeg/opj_includes.h"
+#include "opj_includes.h"
 #include "mj2.h"
 
 #include <time.h>

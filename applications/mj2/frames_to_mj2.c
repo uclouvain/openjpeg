@@ -30,10 +30,10 @@
 #include <string.h>
 
 #include "openjpeg.h"
-#include "../libopenjpeg/j2k_lib.h"
-#include "../libopenjpeg/j2k.h"
-#include "../libopenjpeg/jp2.h"
-#include "../libopenjpeg/cio.h"
+#include "j2k_lib.h"
+#include "j2k.h"
+#include "jp2.h"
+#include "cio.h"
 #include "mj2.h"
 #include "mj2_convert.h"
 #include "getopt.h"

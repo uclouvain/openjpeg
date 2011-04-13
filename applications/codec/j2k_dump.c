@@ -45,8 +45,8 @@
 
 #include "opj_config.h"
 #include "openjpeg.h"
-#include "../libopenjpeg/j2k.h"
-#include "../libopenjpeg/jp2.h"
+#include "j2k.h"
+#include "jp2.h"
 #include "getopt.h"
 #include "convert.h"
 #include "index.h"

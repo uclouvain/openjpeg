@@ -45,7 +45,7 @@
 #include <png.h>
 #endif /* HAVE_LIBPNG */
 
-#include "../libopenjpeg/openjpeg.h"
+#include "openjpeg.h"
 #include "convert.h"
 
 /*

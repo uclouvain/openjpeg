@@ -29,7 +29,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "../libopenjpeg/opj_includes.h"
+#include "opj_includes.h"
 
 #ifdef USE_JPWL
 

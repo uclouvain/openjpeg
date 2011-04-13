@@ -4,14 +4,14 @@
 SET(common_SRCS
   convert.c
   index.c
-  ${OPENJPEG_SOURCE_DIR}/common/color.c
+  ${OPENJPEG_SOURCE_DIR}/applications/common/color.c
 )
 
 # If not getopt was found then add it to the lib:
 IF(DONT_HAVE_GETOPT)
   SET(common_SRCS
     ${common_SRCS}
-    ${OPENJPEG_SOURCE_DIR}/common/getopt.c
+    ${OPENJPEG_SOURCE_DIR}/applications/common/getopt.c
   )
 ENDIF(DONT_HAVE_GETOPT)
 
@@ -19,7 +19,7 @@ ENDIF(DONT_HAVE_GETOPT)
 INCLUDE_DIRECTORIES(
   ${OPENJPEG_SOURCE_DIR}/libopenjpeg
   ${LCMS_INCLUDE_DIRNAME}
-  ${OPENJPEG_SOURCE_DIR}/common
+  ${OPENJPEG_SOURCE_DIR}/applications/common
   ${Z_INCLUDE_DIRNAME}
   ${PNG_INCLUDE_DIRNAME}
   ${TIFF_INCLUDE_DIRNAME}
@@ -55,11 +55,41 @@ ENDFOREACH(exe)
 
 # Install man pages
 INSTALL(
-  FILES       ../doc/man/man1/image_to_j2k.1
-              ../doc/man/man1/j2k_dump.1
-              ../doc/man/man1/j2k_to_image.1
+  FILES       ${OPENJPEG_SOURCE_DIR}/doc/man/man1/image_to_j2k.1
+              ${OPENJPEG_SOURCE_DIR}/doc/man/man1/j2k_dump.1
+              ${OPENJPEG_SOURCE_DIR}/doc/man/man1/j2k_to_image.1
   DESTINATION ${OPENJPEG_INSTALL_MAN_DIR}/man1)
 #
+
+IF(BUILD_JPWL)
+  ADD_EXECUTABLE(JPWL_j2k_to_image
+  j2k_to_image.c
+  ${common_SRCS}
+  )
+
+  TARGET_LINK_LIBRARIES(JPWL_j2k_to_image ${OPENJPEG_LIBRARY_NAME}_JPWL
+    ${LCMS_LIBNAME} ${Z_LIBNAME} ${PNG_LIBNAME} ${TIFF_LIBNAME})
+  #
+  IF(UNIX)
+    TARGET_LINK_LIBRARIES(JPWL_j2k_to_image m)
+  ENDIF(UNIX)
+
+  ADD_EXECUTABLE(JPWL_image_to_j2k
+  image_to_j2k.c
+  ${common_SRCS}
+  )
+
+  TARGET_LINK_LIBRARIES(JPWL_image_to_j2k ${OPENJPEG_LIBRARY_NAME}_JPWL 
+  	${LCMS_LIBNAME} ${Z_LIBNAME} ${PNG_LIBNAME} ${TIFF_LIBNAME})
+  #
+  IF(UNIX)
+    TARGET_LINK_LIBRARIES(JPWL_image_to_j2k m)
+  ENDIF(UNIX)
+
+  INSTALL(TARGETS JPWL_image_to_j2k JPWL_j2k_to_image
+    DESTINATION ${OPENJPEG_INSTALL_BIN_DIR} COMPONENT Applications
+  )
+ENDIF(BUILD_JPWL)
 
 if(BUILD_TESTING)
 # Do testing here, once we know the examples are being built:

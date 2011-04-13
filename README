@@ -1,1 +1,23 @@
+
+OPENJPEG LIBRARY and APPLICATIONS
+----------------------------------
+
+Details on folders hierarchy:
+
+* libopenjpeg: contains the sources of the openjpeg library
+    * jpwl: contains the additional sources if you want to build a JPWL-flavoured library.
+* applications: contains all applications that use the openjpeg library
+    * common: common files to all applications
+    * codec: a basic codec
+    * mj2: motion jpeg 2000 executables
+    * JavaOpenJPEG: java jni to use openjpeg in a java program
+    * indexer_JPIP: obsolete. Will be replaced by a complete JPIP implementation soon.
+    * OPJViewer: gui for displaying j2k files (based on wxWidget)
+* thirdparty: thirdparty libraries used by some applications. These libraries will be build only if there are not found on the system. Note that libopenjpeg itself does not have any dependency.
+* doc: doxygen documentation setup file and man pages
+* testing: all files required to test the library and executables (obsolete)
+* CMake: cmake related files
+* m4: autotools related files
+
+see LICENSE for license and copyright information
 see INSTALL for installation procedures.

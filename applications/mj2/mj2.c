@@ -26,7 +26,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "../libopenjpeg/opj_includes.h"
+#include "opj_includes.h"
 #include "mj2.h"
 
 /** @defgroup JP2 JP2 - JPEG-2000 file format reader/writer */

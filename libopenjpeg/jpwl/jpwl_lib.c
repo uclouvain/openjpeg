@@ -31,7 +31,7 @@
 
 #ifdef USE_JPWL
 
-#include "../libopenjpeg/opj_includes.h"
+#include "opj_includes.h"
 #include <limits.h>
 
 /** Minimum and maximum values for the double->pfp conversion */
