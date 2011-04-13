@@ -1,7 +1,7 @@
 
 namespace eval VMEncoder {
 	variable var
-	variable JP3Dencoder "../bin/jp3d_vm_enc.exe"
+	variable JP3Dencoder "../bin/volume_to_jp3d.exe"
 }
 
 proc VMEncoder::create { nb } {

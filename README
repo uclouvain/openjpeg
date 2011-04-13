@@ -19,52 +19,18 @@ If you find some bugs or if you have problems using the encoder/decoder, please 
 ======================================================
 
 - After decompressing the zip file provided, you should find 
-at least the following files in the created 'jp3d_vm' directory:
+at least the following files in the created 'openjpeg3d' directory:
 
- * libjp3dvm - This directory contains all library related code
+ * libopenjpeg3d - This directory contains all library related code
  * codec - This directory contains all codec related code
  * tcltk - This directory contains the API scripts
  * README - The file you are reading
- * LICENCE - Copyright statement of the JP3D VM software
+ * LICENSE - Copyright statement of the JP3D VM software
 
-2.1. Compiling the source code in Windows
--------------------------------------------
+2.1. Compilation
+-----------------
 
-This version has been compiled with Visual Studio 2003 using
-the projects included in the distribution:
-
- * LibJp3dVM.vcproj - Creates the library with all the JP3D functionalities
- * jp3d_vm_enc.vcproj - Test encoder 
- * jp3d_vm_dec.vcproj - Test decoder 
-
-2.2. Compiling the source code in Unix-like systems
--------------------------------------------
-
-Library compilation
-------------------------
-This version of the library has been tested under the following OS:
-- Fedora Core 
-
-The installation process is as simple as this : 
-1) Enter the 'jp3d_vm' directory
-2) Build the distribution : 
-make
-make install
-3) Clean all files produced during the build process
-make clean
-
-Codec compilation
-------------------------
-Once you've built the library, you should compile the JP3D codec.
-
-1) Go to the 'codec' directory 
-2) Build the encoder and decoder programs:
-
-gcc convert.c volume_to_jp3d.c -o jp3d_vm_enc -I ../libjp3dvm/ -lm -ljp3dvm
-gcc convert.c jp3d_to_volume.c -o jp3d_vm_dec -I ../libjp3dvm/ -lm -ljp3dvm
-
-Note: You should add '-L ../libjp3dvm/' to those lines if you
-did not use the 'install' target (and the 'clean' target neither...).
+see INSTALL file for compilation and installation instructions
 
 3. Running the JP3D VM
 ====================================================
