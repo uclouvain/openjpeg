@@ -33,17 +33,17 @@
 #ifndef OPENJPEG_H
 #define OPENJPEG_H
 
-#if defined(OPJ_STATIC) || (!defined(WIN32) && !defined(__MINGW32__)) || defined(__WIN32__)
+#if defined(OPJ_STATIC) || !defined(_WIN32)
 	#define OPJ_API
 	#define OPJ_CALLCONV
 #else
 	#define OPJ_CALLCONV __stdcall
-	#ifdef OPJ_EXPORTS
+	#if defined(OPJ_EXPORTS) || defined(DLL_EXPORT)
 		#define OPJ_API __declspec(dllexport)
 	#else
 		#define OPJ_API __declspec(dllimport)
-	#endif /* OPJ_EXPORTS */
-#endif /* !OPJ_STATIC || !WIN32 */
+	#endif /* OPJ_EXPORTS || DLL_EXPORT */
+#endif /* !OPJ_STATIC || !_WIN32 */
 
 #ifndef __cplusplus
 	#if defined(HAVE_STDBOOL_H)
