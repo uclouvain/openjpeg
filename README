@@ -11,7 +11,7 @@ Details on folders hierarchy:
     * codec: a basic codec
     * mj2: motion jpeg 2000 executables
     * JavaOpenJPEG: java jni to use openjpeg in a java program
-    * indexer_JPIP: obsolete. Will be replaced by a complete JPIP implementation soon.
+    * jpip: complete client-server architecture for remote browsing of jpeg 2000 images. See corresponding README for more details.
     * OPJViewer: gui for displaying j2k files (based on wxWidget)
 * thirdparty: thirdparty libraries used by some applications. These libraries will be build only if there are not found on the system. Note that libopenjpeg itself does not have any dependency.
 * doc: doxygen documentation setup file and man pages

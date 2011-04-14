@@ -28,7 +28,7 @@
 
 #define VERSION "0.0.8"
 
-#ifdef _WIN32
+#ifdef WIN32
 #ifdef LIBJ2K_EXPORTS
 #define LIBJ2K_API __declspec(dllexport)
 #else
@@ -105,6 +105,7 @@ typedef struct {
 } j2k_poc_t;
 
 typedef struct {
+  //int first;
   int csty;                  /* coding style                                                            */  
   int prg;                   /* progression order                                                       */
   int numlayers;             /* number of layers                                                        */
@@ -204,7 +205,6 @@ typedef struct{
   int length_header;                  /* Length of the header                  */
   int end_pos;                        /* End position of the tile part         */
   int end_header;                     /* End position of the tile part header  */
-
   int num_reso_AUX;                   /* Number of resolution level completed  */
 } info_tile_part_t;
 

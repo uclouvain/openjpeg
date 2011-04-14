@@ -30,6 +30,7 @@
 #include <string.h>
 #include <setjmp.h>
 #include <math.h>
+#include <unistd.h>
 
 #include "j2k.h"
 #include "cio.h"
@@ -157,7 +158,7 @@ int jpip_write_mhix(info_image_t img, int status, int tileno)
   cio_skip(4);                               /* L [at the end]                    */
   cio_write(JPIP_MHIX, 4);                   /* MHIX                              */
 
-  if (status) /* MAIN HEADER */
+  if (status==0) /* MAIN HEADER */
     {
       cio_write(img.Main_head_end,8);        /* TLEN                              */
       
@@ -327,7 +328,7 @@ void jpip_read_mhix(int len)
 int jpip_write_faix(int v, int compno, info_image_t img, j2k_cp_t *j2k_cp, int version)
 {
   int len, lenp, i, j;
-  /*int version = 0;*/
+  int Aux;
   int tileno, resno, precno, layno, num_packet=0;
 
   lenp=cio_tell();
@@ -347,8 +348,17 @@ int jpip_write_faix(int v, int compno, info_image_t img, j2k_cp_t *j2k_cp, int v
 	      cio_write(img.tile[i].tile_parts[j].start_pos,(version & 0x01)?8:4); /* start position */
 	      cio_write(img.tile[i].tile_parts[j].length,(version & 0x01)?8:4);    /* length         */
 	      if (version & 0x02)
-		cio_write(img.tile[i].tile_parts[j].num_reso_AUX,4); /* Aux_i,j : Auxiliary value */
-	      //cio_write(0,4);
+		{
+		  if (img.tile[i].numparts == 1 && img.Decomposition > 1)
+		    Aux = img.Decomposition + 1;
+		  else
+		    Aux = j + 1;
+		  
+		  cio_write(Aux,4);
+		  //cio_write(img.tile[i].tile_parts[j].num_reso_AUX,4); /* Aux_i,j : Auxiliary value */
+		  // fprintf(stderr,"AUX value %d\n",Aux);
+		}
+		  //cio_write(0,4);
 	    }
 	  /* PADDING */
 	  while (j < img.num_max_tile_parts)

@@ -32,6 +32,7 @@
 #include <string.h>
 #include <setjmp.h>
 #include <math.h>
+#include <unistd.h>
 
 #include "j2k.h"
 #include "cio.h"
@@ -68,7 +69,7 @@
 #define J2K_STATE_TPH 0x0010
 #define J2K_STATE_MT 0x0020
 
-#define START_NB 5
+#define START_NB 10
 #define INCREMENT 5
 
 jmp_buf j2k_error;
@@ -322,7 +323,7 @@ void j2k_read_cod() {
     /* <INDEX> [MHIX BOX] */
     if (j2k_state == J2K_STATE_MH)
       {
-	img.marker[img.num_marker].type = J2K_MS_SIZ;
+	img.marker[img.num_marker].type = J2K_MS_COD;
 	img.marker[img.num_marker].start_pos = cio_tell()-2;
 	img.marker[img.num_marker].len = len;
 	img.num_marker++;
@@ -330,7 +331,7 @@ void j2k_read_cod() {
     else
       {
 	tile = &img.tile[j2k_curtileno];
-	tile->marker[tile->num_marker].type = J2K_MS_SIZ;
+	tile->marker[tile->num_marker].type = J2K_MS_COD;
 	tile->marker[tile->num_marker].start_pos = cio_tell()-2;
 	tile->marker[tile->num_marker].len = len;
 	tile->num_marker++;
@@ -848,7 +849,7 @@ void j2k_read_sot() {
 
     /* <INDEX> */
     if (tileno == 0 && partno == 0 ) 
-      img.Main_head_end = cio_tell() - 7;  /* Correction End = First byte of first SOT */
+      img.Main_head_end = cio_tell() - 12;  /* Correction End = First byte of first SOT */
     
     img.tile[tileno].num_tile = tileno;
     /* </INDEX> */
@@ -864,7 +865,7 @@ void j2k_read_sot() {
     if (partno >= tile->Cztile_parts)
       {
 	tilepart_tmp = (info_tile_part_t*)malloc((INCREMENT + tile->Cztile_parts) * sizeof(info_tile_part_t));
-	memcpy(tilepart_tmp, tile->tile_parts, tile->Cztile_parts);
+	memcpy(tilepart_tmp, tile->tile_parts, tile->Cztile_parts); /*add tilepart_ a tmp*/
 	tile->Cztile_parts += INCREMENT;
 	free(tile->tile_parts);
 	tile->tile_parts = tilepart_tmp;
@@ -873,14 +874,12 @@ void j2k_read_sot() {
     tile->tile_parts[partno].start_pos = cio_tell() - 12;        /* INDEX : start_pos of the tile_part       */
     tile->tile_parts[partno].length = totlen;                    /* INDEX : length of the tile_part          */  
     tile->tile_parts[partno].end_pos = totlen + cio_tell() - 12; /* INDEX : end position of the tile_part    */
-
+    //tile->tile_parts[partno].num_reso_AUX = j2k_default_tcp.tccps[0].numresolutions;
 
     j2k_curtileno = tileno;
     j2k_eot = cio_getbp() - 12 + totlen;
     j2k_state = J2K_STATE_TPH;
     tcp = &j2k_cp->tcps[j2k_curtileno];
-    
-    tile->tile_parts[numparts].num_reso_AUX = tcp->tccps[0].numresolutions; /* INDEX : AUX value for TPIX       */
 
      if (partno == 0)
        //  if (tcp->first == 1) 
@@ -897,6 +896,7 @@ void j2k_read_sot() {
 	}
 	//j2k_cp->tcps[j2k_curtileno].first=0;
       }
+     //   tile->tile_parts[numparts].num_reso_AUX = tcp->tccps[0].numresolutions; /* INDEX : AUX value for TPIX       */
 }
 
 
@@ -958,11 +958,10 @@ void j2k_read_rgn() {
 
 
 void j2k_read_sod() {
-    int len;
+    int len, i;
     unsigned char *data;
     info_tile_t *tile;
     info_tile_part_t *tile_part;
-    // fprintf(stderr,"SOD\n");
     /* <INDEX> [MHIX BOX] */
     tile = &img.tile[j2k_curtileno];
     tile->marker[tile->num_marker].type = J2K_MS_SOD;
@@ -976,17 +975,27 @@ void j2k_read_sod() {
     tile_part->end_header = cio_tell() - 1;                              /* INDEX : end header position of the tile-part header */
 
     len = int_min(j2k_eot - cio_getbp(), cio_numbytesleft());
+
+    data = (unsigned char*)malloc((j2k_tile_len[j2k_curtileno] + len) * sizeof(unsigned char));
+
+    for (i=0; i<j2k_tile_len[j2k_curtileno]; i++)
+      data[i] = j2k_tile_data[j2k_curtileno][i];
+    for (i=0 ; i<len ; i++)
+      data[i+j2k_tile_len[j2k_curtileno]] = cio_read(1);
     
     j2k_tile_len[j2k_curtileno] += len;
-    data = (unsigned char*)realloc(j2k_tile_data[j2k_curtileno], j2k_tile_len[j2k_curtileno]);   
-    memcpy(data, cio_getbp(), len);
-    j2k_tile_data[j2k_curtileno] = data;
-    cio_skip(len);
+/*
+    free(j2k_tile_data[j2k_curtileno]);
+ */
+    j2k_tile_data[j2k_curtileno] = data;	
+    data = NULL;
+
     j2k_state = J2K_STATE_TPHSOT;
 }
 
 void j2k_read_eoc() {
     int tileno;
+
     tcd_init(j2k_img, j2k_cp, &img);
     for (tileno = 0; tileno<j2k_cp->tw * j2k_cp->th; tileno++) {
         tcd_decode_tile(j2k_tile_data[tileno], j2k_tile_len[tileno], tileno, &img);
@@ -1008,7 +1017,7 @@ void j2k_read_unk() {
 
 int j2k_index_JPIP(char *Idx_file, char *J2K_file, int len, int version){
   FILE *dest;
-  unsigned char *index;
+  char *index;
   int pos_iptr, end_pos;
   int len_cidx, pos_cidx;
   int len_jp2c, pos_jp2c;
@@ -1021,7 +1030,7 @@ int j2k_index_JPIP(char *Idx_file, char *J2K_file, int len, int version){
   }
 
   /* INDEX MODE JPIP */
- index = (unsigned char*)malloc(len); 
+ index = (char*)malloc(len); 
  cio_init(index, len);
  jp2_write_jp();
  jp2_write_ftyp();
@@ -1087,13 +1096,13 @@ j2k_dec_mstabent_t j2k_dec_mstab[]={
 };
 
 j2k_dec_mstabent_t *j2k_dec_mstab_lookup(int id) {
-  j2k_dec_mstabent_t *e;
-  for (e = j2k_dec_mstab; e->id != 0; e++) {
-    if (e->id == id) {
-      break;
+    j2k_dec_mstabent_t *e;
+    for (e = j2k_dec_mstab; e->id != 0; e++) {
+        if (e->id == id) {
+            break;
+        }
     }
-  }
-  return e;
+    return e;
 }
 
 int j2k_decode(unsigned char *src, int len, j2k_image_t **image, j2k_cp_t **cp) {
@@ -1130,7 +1139,7 @@ int j2k_decode(unsigned char *src, int len, j2k_image_t **image, j2k_cp_t **cp) 
 }
 
 
-#ifdef _WIN32
+#ifdef WIN32
 #include <windows.h>
 
 BOOL APIENTRY DllMain(HANDLE hModule, DWORD ul_reason_for_call, LPVOID lpReserved) {
@@ -1143,20 +1152,20 @@ BOOL APIENTRY DllMain(HANDLE hModule, DWORD ul_reason_for_call, LPVOID lpReserve
     }
     return TRUE;
 }
-#endif /* _WIN32 */
+#endif
 
 int main(int argc, char **argv)
 {  
   FILE *src;
   int totlen;
-  unsigned char *j2kfile;
+  char *j2kfile;
   j2k_image_t *imgg;
   j2k_cp_t *cp;
   int version;
 
   if (argc != 4)
     {
-      fprintf(stderr,"\nUSAGE : ./index_create J2K-file JP2-file version\n\nVersion : 0, 1, 2 or 3\n  0 : [faix] 4-byte and no AUX fields\n  1 : [faix] 8-byte and no AUX fields\n  2 : [faix] 4-byte and AUX fields\n  3 : [faix] 8-byte and AUX fields\n\nReference Document : annex I from JPIP-FCD-version 2 (SC 29 N5727)\n\n");
+      fprintf(stderr,"\nERROR in entry : index_create J2K-file JP2-file version\n\nVersion : 0, 1, 2 or 3\n0 : [faix] 4-byte and no AUX fields\n1 : [faix] 8-byte and no AUX fields\n2 : [faix] 4-byte and AUX fields\n3 : [faix] 8-byte and AUX fields\n");
       return 1;
     }
 
@@ -1171,7 +1180,7 @@ int main(int argc, char **argv)
   totlen = ftell(src);
   fseek(src, 0, SEEK_SET);
   
-  j2kfile = (unsigned char*)malloc(totlen);
+  j2kfile = (char*)malloc(totlen);
   fread(j2kfile, 1, totlen, src);
   fclose(src);
 
@@ -1197,7 +1206,6 @@ int main(int argc, char **argv)
 
   if (!j2k_decode(j2kfile, totlen, &imgg, &cp)) {
     fprintf(stderr, "Index_creator: failed to decode image!\n");
-    free(j2kfile);
     return 1;
   }
   free(j2kfile);

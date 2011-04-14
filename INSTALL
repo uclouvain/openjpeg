@@ -67,7 +67,6 @@ Main available cmake flags:
 * To build the CODEC executables: '-DBUILD_CODEC:bool=on' (default: 'ON')
 * To build the MJ2 executables: '-DBUILD_MJ2:bool=on' (default: 'OFF')
 * To build the JPWL executables and JPWL library: '-DBUILD_JPWL:bool=on' (default: 'OFF')
-* [WIN32 ONLY] To build the INDEXER_JPIP executable: '-DBUILD_INDEXER_JPIP:bool=on' (default: 'OFF')
 * To enable testing (and automatic result upload to http://my.cdash.org/index.php?project=OPENJPEG):
     cmake . -DBUILD_TESTING:BOOL=ON -DJPEG2000_CONFORMANCE_DATA_ROOT:PATH=/path/to/your/JPEG2000/test/files
     make

@@ -210,7 +210,6 @@ ADD_SUBDIRECTORY(libopenjpeg)
 # Build Applications
 OPTION(BUILD_CODEC "Build the CODEC executables" ON)
 OPTION(BUILD_MJ2 "Build the MJ2 executables." OFF)
-OPTION(BUILD_INDEXER_JPIP "Build the INDEXER_JPIP executables" OFF)
 ADD_SUBDIRECTORY(applications)
 
 #-----------------------------------------------------------------------------

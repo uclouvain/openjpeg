@@ -20,4 +20,4 @@ jp2.o : jp2.c j2k.h cio.h tcd.h int.h
 index_create : bio.o cio.o int.o pi.o t2.o tgt.o tcd.o index_create.o jpip.o jp2.o
 
 clean:
-	rm -rf *.o *.*~ *~ core.*
+	rm -rf index_create *.o *.*~ *~ core.*
