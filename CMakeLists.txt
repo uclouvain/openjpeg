@@ -218,11 +218,8 @@ ADD_SUBDIRECTORY(applications)
 OPTION(BUILD_JPWL "Build the JPWL library and executables" OFF)
 
 #-----------------------------------------------------------------------------
-# Build DOCUMENTATION
-OPTION(BUILD_DOC "Build the doxygen documentation" OFF)
-IF(BUILD_DOC)
- ADD_SUBDIRECTORY(doc)
-ENDIF(BUILD_DOC)
+# Build DOCUMENTATION (not in ALL target and only if Doxygen is found)
+ADD_SUBDIRECTORY(doc)
 
 #-----------------------------------------------------------------------------
 # CDash+CMake : to be updated

@@ -5,6 +5,10 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+April 14, 2011
+* [antonin] fixed applications/codec/CMakeLists.txt that prevented JPWL executables to be built with JPWL functionalities.
+! [antonin] changed make all behaviour : DOC target removed from ALL.
+
 April 13, 2011
 ! [antonin] changed the directory hierarchy of the whole project. See README files for details.
 ! [antonin] moved "openjpeg3d" directory from the trunk to the branches directory.

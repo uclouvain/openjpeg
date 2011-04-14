@@ -53,6 +53,10 @@ If you are root:
 else:
   sudo make install
   make clean
+  
+To build the Doxygen documentation (Doxygen needs to be found on the system):
+(A 'html' directory is generated in the 'doc' directory)
+  make doc
 
 Binaries are located in the 'bin' directory.
 
@@ -64,7 +68,6 @@ Main available cmake flags:
 * To build the MJ2 executables: '-DBUILD_MJ2:bool=on' (default: 'OFF')
 * To build the JPWL executables and JPWL library: '-DBUILD_JPWL:bool=on' (default: 'OFF')
 * [WIN32 ONLY] To build the INDEXER_JPIP executable: '-DBUILD_INDEXER_JPIP:bool=on' (default: 'OFF')
-* To build the doxygen documentation: '-DBUILD_DOC:bool=on' (default: 'OFF')
 * To enable testing (and automatic result upload to http://my.cdash.org/index.php?project=OPENJPEG):
     cmake . -DBUILD_TESTING:BOOL=ON -DJPEG2000_CONFORMANCE_DATA_ROOT:PATH=/path/to/your/JPEG2000/test/files
     make
