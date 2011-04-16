@@ -1,48 +1,48 @@
-# Main CMakeLists.txt to build the OpenJPEG3D 3D project using CMake (www.cmake.org)
+# Main CMakeLists.txt to build the OpenJP3D 3D project using CMake (www.cmake.org)
 # Written by Mathieu Malaterre
 
-# This CMake project will by default create a library called openjpeg3d3d
+# This CMake project will by default create a library called openjp3d
 # But if you want to use this project within your own (CMake) project
 # you will eventually like to prefix the library to avoid linking confusion
-# For this purpose you can define a CMake var: OPENJPEG3D_NAMESPACE to whatever you like
+# For this purpose you can define a CMake var: OPENJP3D_NAMESPACE to whatever you like
 # e.g.:
-# SET(OPENJPEG3D_NAMESPACE "GDCMOPENJPEG3D")
+# SET(OPENJP3D_NAMESPACE "GDCMOPENJP3D")
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
 IF(COMMAND CMAKE_POLICY)
   CMAKE_POLICY(SET CMP0003 NEW)
 ENDIF(COMMAND CMAKE_POLICY)
 
-IF(NOT OPENJPEG3D_NAMESPACE)
-  SET(OPENJPEG3D_NAMESPACE "OPENJPEG3D")
-  SET(OPENJPEG3D_STANDALONE 1)
-ENDIF(NOT OPENJPEG3D_NAMESPACE)
+IF(NOT OPENJP3D_NAMESPACE)
+  SET(OPENJP3D_NAMESPACE "OPENJP3D")
+  SET(OPENJP3D_STANDALONE 1)
+ENDIF(NOT OPENJP3D_NAMESPACE)
 # In all cases:
-STRING(TOLOWER ${OPENJPEG3D_NAMESPACE} OPENJPEG3D_LIBRARY_NAME)
+STRING(TOLOWER ${OPENJP3D_NAMESPACE} OPENJP3D_LIBRARY_NAME)
 
-PROJECT(${OPENJPEG3D_NAMESPACE} C)
+PROJECT(${OPENJP3D_NAMESPACE} C)
 
 # Do full dependency headers.
 INCLUDE_REGULAR_EXPRESSION("^.*$")
 
 #-----------------------------------------------------------------------------
-# OPENJPEG3D version number, useful for packaging and doxygen doc:
-SET(OPENJPEG3D_VERSION_MAJOR 1)
-SET(OPENJPEG3D_VERSION_MINOR 3)
-SET(OPENJPEG3D_VERSION_BUILD 0)
-SET(OPENJPEG3D_VERSION
-  "${OPENJPEG3D_VERSION_MAJOR}.${OPENJPEG3D_VERSION_MINOR}.${OPENJPEG3D_VERSION_BUILD}")
+# OPENJP3D version number, useful for packaging and doxygen doc:
+SET(OPENJP3D_VERSION_MAJOR 1)
+SET(OPENJP3D_VERSION_MINOR 3)
+SET(OPENJP3D_VERSION_BUILD 0)
+SET(OPENJP3D_VERSION
+  "${OPENJP3D_VERSION_MAJOR}.${OPENJP3D_VERSION_MINOR}.${OPENJP3D_VERSION_BUILD}")
 SET(PACKAGE_VERSION
-  "${OPENJPEG3D_VERSION_MAJOR}.${OPENJPEG3D_VERSION_MINOR}.${OPENJPEG3D_VERSION_BUILD}")
-SET(OPENJPEG3D_LIBRARY_PROPERTIES
-  VERSION   "${OPENJPEG3D_VERSION_MAJOR}.${OPENJPEG3D_VERSION_MINOR}.${OPENJPEG3D_VERSION_BUILD}"
-  SOVERSION "${OPENJPEG3D_VERSION_MAJOR}"
+  "${OPENJP3D_VERSION_MAJOR}.${OPENJP3D_VERSION_MINOR}.${OPENJP3D_VERSION_BUILD}")
+SET(OPENJP3D_LIBRARY_PROPERTIES
+  VERSION   "${OPENJP3D_VERSION_MAJOR}.${OPENJP3D_VERSION_MINOR}.${OPENJP3D_VERSION_BUILD}"
+  SOVERSION "${OPENJP3D_VERSION_MAJOR}"
 )
 # You will also need to define a value for the following variables:
-# OPENJPEG3D_INSTALL_BIN_DIR          - binary dir (executables)
-# OPENJPEG3D_INSTALL_LIB_DIR          - library dir (libs)
-# OPENJPEG3D_INSTALL_DATA_DIR         - share dir (say, examples, data, etc)
-# OPENJPEG3D_INSTALL_INCLUDE_DIR      - include dir (headers)
+# OPENJP3D_INSTALL_BIN_DIR          - binary dir (executables)
+# OPENJP3D_INSTALL_LIB_DIR          - library dir (libs)
+# OPENJP3D_INSTALL_DATA_DIR         - share dir (say, examples, data, etc)
+# OPENJP3D_INSTALL_INCLUDE_DIR      - include dir (headers)
 
 
 # On Visual Studio 8 MS deprecated C. This removes all 1.276E1265 security
@@ -75,36 +75,36 @@ ENDIF(WIN32)
 # Install directories
 
 STRING(TOLOWER ${PROJECT_NAME} projectname)
-SET(subdir "${projectname}-${OPENJPEG3D_VERSION_MAJOR}.${OPENJPEG3D_VERSION_MINOR}")
+SET(subdir "${projectname}-${OPENJP3D_VERSION_MAJOR}.${OPENJP3D_VERSION_MINOR}")
 
-IF(NOT OPENJPEG3D_INSTALL_BIN_DIR)
-  SET(OPENJPEG3D_INSTALL_BIN_DIR "bin")
-ENDIF(NOT OPENJPEG3D_INSTALL_BIN_DIR)
+IF(NOT OPENJP3D_INSTALL_BIN_DIR)
+  SET(OPENJP3D_INSTALL_BIN_DIR "bin")
+ENDIF(NOT OPENJP3D_INSTALL_BIN_DIR)
 
-IF(NOT OPENJPEG3D_INSTALL_LIB_DIR)
-  SET(OPENJPEG3D_INSTALL_LIB_DIR "lib")
-ENDIF(NOT OPENJPEG3D_INSTALL_LIB_DIR)
+IF(NOT OPENJP3D_INSTALL_LIB_DIR)
+  SET(OPENJP3D_INSTALL_LIB_DIR "lib")
+ENDIF(NOT OPENJP3D_INSTALL_LIB_DIR)
 
-IF(NOT OPENJPEG3D_INSTALL_DATA_DIR)
-  SET(OPENJPEG3D_INSTALL_DATA_DIR "share/${subdir}")
-ENDIF(NOT OPENJPEG3D_INSTALL_DATA_DIR)
+IF(NOT OPENJP3D_INSTALL_DATA_DIR)
+  SET(OPENJP3D_INSTALL_DATA_DIR "share/${subdir}")
+ENDIF(NOT OPENJP3D_INSTALL_DATA_DIR)
 
-IF(NOT OPENJPEG3D_INSTALL_INCLUDE_DIR)
-  SET(OPENJPEG3D_INSTALL_INCLUDE_DIR "include/")
-ENDIF(NOT OPENJPEG3D_INSTALL_INCLUDE_DIR)
+IF(NOT OPENJP3D_INSTALL_INCLUDE_DIR)
+  SET(OPENJP3D_INSTALL_INCLUDE_DIR "include/")
+ENDIF(NOT OPENJP3D_INSTALL_INCLUDE_DIR)
 
-IF(NOT OPENJPEG3D_INSTALL_MAN_DIR)
-  SET(OPENJPEG3D_INSTALL_MAN_DIR "share/man/")
-ENDIF(NOT OPENJPEG3D_INSTALL_MAN_DIR)
+IF(NOT OPENJP3D_INSTALL_MAN_DIR)
+  SET(OPENJP3D_INSTALL_MAN_DIR "share/man/")
+ENDIF(NOT OPENJP3D_INSTALL_MAN_DIR)
 
-IF(NOT OPENJPEG3D_INSTALL_DOC_DIR)
-  SET(OPENJPEG3D_INSTALL_DOC_DIR "share/doc/${subdir}")
-ENDIF(NOT OPENJPEG3D_INSTALL_DOC_DIR)
+IF(NOT OPENJP3D_INSTALL_DOC_DIR)
+  SET(OPENJP3D_INSTALL_DOC_DIR "share/doc/${subdir}")
+ENDIF(NOT OPENJP3D_INSTALL_DOC_DIR)
 
-IF(NOT OPENJPEG3D_INSTALL_PACKAGE_DIR)
-  SET(OPENJPEG3D_INSTALL_PACKAGE_DIR ${OPENJPEG3D_INSTALL_LIB_DIR}/${subdir}
+IF(NOT OPENJP3D_INSTALL_PACKAGE_DIR)
+  SET(OPENJP3D_INSTALL_PACKAGE_DIR ${OPENJP3D_INSTALL_LIB_DIR}/${subdir}
     CACHE INTERNAL "")
-ENDIF(NOT OPENJPEG3D_INSTALL_PACKAGE_DIR)
+ENDIF(NOT OPENJP3D_INSTALL_PACKAGE_DIR)
 
 #-----------------------------------------------------------------------------
 # Test for some required system information.
@@ -115,56 +115,56 @@ INCLUDE (${CMAKE_ROOT}/Modules/CMakeBackwardCompatibilityC.cmake)
 INCLUDE (${PROJECT_SOURCE_DIR}/CMake/CheckHaveGetopt.cmake )
 
 #-----------------------------------------------------------------------------
-# OpenJPEG3D build configuration options.
-OPTION(BUILD_SHARED_LIBS "Build OpenJPEG3D shared library and link executables against it." ON)
+# OpenJP3D build configuration options.
+OPTION(BUILD_SHARED_LIBS "Build OpenJP3D shared library and link executables against it." ON)
 
 #-----------------------------------------------------------------------------
-SET (EXECUTABLE_OUTPUT_PATH ${OPENJPEG3D_BINARY_DIR}/bin CACHE PATH "Single output directory for building all executables.")
-SET (LIBRARY_OUTPUT_PATH ${OPENJPEG3D_BINARY_DIR}/bin CACHE PATH "Single output directory for building all libraries.")
+SET (EXECUTABLE_OUTPUT_PATH ${OPENJP3D_BINARY_DIR}/bin CACHE PATH "Single output directory for building all executables.")
+SET (LIBRARY_OUTPUT_PATH ${OPENJP3D_BINARY_DIR}/bin CACHE PATH "Single output directory for building all libraries.")
 MARK_AS_ADVANCED(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
 
 
 # configure name mangling to allow multiple libraries to coexist
 # peacefully
-IF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/openjpeg3d_mangle.h.in)
-SET(MANGLE_PREFIX ${OPENJPEG3D_LIBRARY_NAME})
-CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/openjpeg3d_mangle.h.in
-               ${CMAKE_CURRENT_BINARY_DIR}/openjpeg3d_mangle.h
+IF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/openjp3d_mangle.h.in)
+SET(MANGLE_PREFIX ${OPENJP3D_LIBRARY_NAME})
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/openjp3d_mangle.h.in
+               ${CMAKE_CURRENT_BINARY_DIR}/openjp3d_mangle.h
                @ONLY IMMEDIATE)
-ENDIF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/openjpeg3d_mangle.h.in)
+ENDIF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/openjp3d_mangle.h.in)
 
 #-----------------------------------------------------------------------------
 # pkgconfig support
-CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/libopenjpeg3d.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/libopenjpeg3d.pc @ONLY)
-INSTALL( FILES  ${CMAKE_CURRENT_BINARY_DIR}/libopenjpeg3d.pc DESTINATION ${OPENJPEG3D_INSTALL_LIB_DIR}/pkgconfig )
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/libopenjp3d.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/libopenjp3d.pc @ONLY)
+INSTALL( FILES  ${CMAKE_CURRENT_BINARY_DIR}/libopenjp3d.pc DESTINATION ${OPENJP3D_INSTALL_LIB_DIR}/pkgconfig )
 
 #-----------------------------------------------------------------------------
 # Always build the library
 INCLUDE_DIRECTORIES(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
-SUBDIRS(libopenjpeg3d)
+SUBDIRS(libopenjp3d)
 
 #-----------------------------------------------------------------------------
 # Compiler specific flags:
 IF(CMAKE_COMPILER_IS_GNUCC)
-  # For all builds, make sure openjpeg3d is std99 compliant:
+  # For all builds, make sure openjp3d is std99 compliant:
   # SET(CMAKE_C_FLAGS "-Wall -std=c99 ${CMAKE_C_FLAGS}") # FIXME: this setting prevented us from setting a coverage build.
   # Do not use ffast-math for all build, it would produce incorrect results, only set for release:
   SET(CMAKE_C_FLAGS_RELEASE "-ffast-math ${CMAKE_C_FLAGS_RELEASE}")
 ENDIF(CMAKE_COMPILER_IS_GNUCC)
 
-# install all targets referenced as OPENJPEG3DTargets
-install(EXPORT OpenJPEG3DTargets DESTINATION ${OPENJPEG3D_INSTALL_PACKAGE_DIR})
-CONFIGURE_FILE( ${OPENJPEG3D_SOURCE_DIR}/CMake/OpenJPEG3DConfig.cmake.in
-  ${OPENJPEG3D_BINARY_DIR}/OpenJPEG3DConfig.cmake
+# install all targets referenced as OPENJP3DTargets
+install(EXPORT OpenJP3DTargets DESTINATION ${OPENJP3D_INSTALL_PACKAGE_DIR})
+CONFIGURE_FILE( ${OPENJP3D_SOURCE_DIR}/CMake/OpenJP3DConfig.cmake.in
+  ${OPENJP3D_BINARY_DIR}/OpenJP3DConfig.cmake
   @ONLY
 )
-INSTALL( FILES ${OPENJPEG3D_BINARY_DIR}/OpenJPEG3DConfig.cmake
-  DESTINATION ${OPENJPEG3D_INSTALL_PACKAGE_DIR}
+INSTALL( FILES ${OPENJP3D_BINARY_DIR}/OpenJP3DConfig.cmake
+  DESTINATION ${OPENJP3D_INSTALL_PACKAGE_DIR}
 )
 # install CHANGES and LICENSE
 INSTALL(
   FILES       LICENSE
-  DESTINATION ${OPENJPEG3D_INSTALL_DOC_DIR})
+  DESTINATION ${OPENJP3D_INSTALL_DOC_DIR})
 #
 FIND_FILE(HAVE_STRINGS_H_FOUND strings.h)
 IF(NOT HAVE_STRINGS_H_FOUND STREQUAL "HAVE_STRINGS_H_FOUND-NOTFOUND")
@@ -216,7 +216,7 @@ ENDIF()
 # Headers file are located here:
 INCLUDE_DIRECTORIES(
   ${CMAKE_CURRENT_SOURCE_DIR}/codec
-  ${CMAKE_CURRENT_SOURCE_DIR}/libopenjpeg3d
+  ${CMAKE_CURRENT_SOURCE_DIR}/libopenjp3d
   )
 
 

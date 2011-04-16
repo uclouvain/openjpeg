@@ -33,7 +33,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "openjpeg3d.h"
+#include "openjp3d.h"
 #include "getopt.h"
 #include "convert.h"
 

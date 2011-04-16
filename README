@@ -19,9 +19,9 @@ If you find some bugs or if you have problems using the encoder/decoder, please 
 ======================================================
 
 - After decompressing the zip file provided, you should find 
-at least the following files in the created 'openjpeg3d' directory:
+at least the following files in the created 'openjp3d' directory:
 
- * libopenjpeg3d - This directory contains all library related code
+ * libopenjp3d - This directory contains all library related code
  * codec - This directory contains all codec related code
  * tcltk - This directory contains the API scripts
  * README - The file you are reading

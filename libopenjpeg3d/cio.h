@@ -40,7 +40,7 @@ The functions in CIO.C have for goal to realize a byte input / output process.
 /** @defgroup CIO CIO - byte input-output stream */
 /*@{*/
 
-/** @name Funciones generales (see also openjpeg3d.h) */
+/** @name Funciones generales (see also openjp3d.h) */
 /*@{*/
 /* ----------------------------------------------------------------------- */
 /**

@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+April 16, 2011
+! [antonin] renamed "openjpeg3d" in "openjp3d"
+
 April 13, 2011
 ! [antonin] moved "openjpeg3d" directory from the trunk to the branches directory.
 ! [antonin] renamed and reorganized "jp3d" directory to "openjpeg3d". Is now a standalone directory, with independent cmake files. Done as it uses its own version of the openjpeg library and does not depend on the one currently developped. Will be removed from the trunk and stored in a branch.

@@ -32,7 +32,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "openjpeg3d.h"
+#include "openjp3d.h"
 #include "getopt.h"
 #include "convert.h"
 

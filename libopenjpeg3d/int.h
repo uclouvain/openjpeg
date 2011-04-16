@@ -39,7 +39,7 @@ The functions in INT.H have for goal to realize operations on integers.
 /** @defgroup INT INT - Implementation of operations on integers */
 /*@{*/
 
-/** @name Funciones generales (see also openjpeg3d.h) */
+/** @name Funciones generales (see also openjp3d.h) */
 /*@{*/
 /* ----------------------------------------------------------------------- */
 /**

@@ -1,48 +1,48 @@
 #-----------------------------------------------------------------------------
 #
-# OPENJPEG3DConfig.cmake - CMake configuration file for external projects.
+# OPENJP3DConfig.cmake - CMake configuration file for external projects.
 #
-# This file is configured by OPENJPEG3D and used by the UseOPENJPEG3D.cmake
-# module to load OPENJPEG3D's settings for an external project.
-@OPENJPEG3D_CONFIG_INSTALL_ONLY@
-# The OPENJPEG3D version number.
-SET(OPENJPEG3D_MAJOR_VERSION "@OPENJPEG3D_VERSION_MAJOR@")
-SET(OPENJPEG3D_MINOR_VERSION "@OPENJPEG3D_VERSION_MINOR@")
-SET(OPENJPEG3D_BUILD_VERSION "@OPENJPEG3D_VERSION_BUILD@")
+# This file is configured by OPENJP3D and used by the UseOPENJP3D.cmake
+# module to load OPENJP3D's settings for an external project.
+@OPENJP3D_CONFIG_INSTALL_ONLY@
+# The OPENJP3D version number.
+SET(OPENJP3D_MAJOR_VERSION "@OPENJP3D_VERSION_MAJOR@")
+SET(OPENJP3D_MINOR_VERSION "@OPENJP3D_VERSION_MINOR@")
+SET(OPENJP3D_BUILD_VERSION "@OPENJP3D_VERSION_BUILD@")
 
 # The libraries.
-SET(OPENJPEG3D_LIBRARIES "@OPENJPEG3D_LIBRARIES@")
+SET(OPENJP3D_LIBRARIES "@OPENJP3D_LIBRARIES@")
 
 # The CMake macros dir.
-SET(OPENJPEG3D_CMAKE_DIR "@OPENJPEG3D_CMAKE_DIR_CONFIG@")
+SET(OPENJP3D_CMAKE_DIR "@OPENJP3D_CMAKE_DIR_CONFIG@")
 
 # The configuration options.
-SET(OPENJPEG3D_BUILD_SHARED_LIBS "@OPENJPEG3D_BUILD_SHARED_LIBS@")
+SET(OPENJP3D_BUILD_SHARED_LIBS "@OPENJP3D_BUILD_SHARED_LIBS@")
 
 # The "use" file.
-SET(OPENJPEG3D_USE_FILE "@OPENJPEG3D_USE_FILE_CONFIG@")
+SET(OPENJP3D_USE_FILE "@OPENJP3D_USE_FILE_CONFIG@")
 
 get_filename_component(SELF_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
-if(EXISTS ${SELF_DIR}/OpenJPEG3DTargets.cmake)
+if(EXISTS ${SELF_DIR}/OpenJP3DTargets.cmake)
   # This is an install tree
-  include(${SELF_DIR}/OpenJPEG3DTargets.cmake)
-  get_filename_component(OPENJPEG3D_INCLUDE_ROOT "${SELF_DIR}/../../@OPENJPEG3D_INSTALL_INCLUDE_DIR@" ABSOLUTE)
-  set(OPENJPEG3D_INCLUDE_DIRS ${OPENJPEG3D_INCLUDE_ROOT})
+  include(${SELF_DIR}/OpenJP3DTargets.cmake)
+  get_filename_component(OPENJP3D_INCLUDE_ROOT "${SELF_DIR}/../../@OPENJP3D_INSTALL_INCLUDE_DIR@" ABSOLUTE)
+  set(OPENJP3D_INCLUDE_DIRS ${OPENJP3D_INCLUDE_ROOT})
 
-else(EXISTS ${SELF_DIR}/OpenJPEG3DTargets.cmake)
-  if(EXISTS ${SELF_DIR}/OpenJPEG3DExports.cmake)
+else(EXISTS ${SELF_DIR}/OpenJP3DTargets.cmake)
+  if(EXISTS ${SELF_DIR}/OpenJP3DExports.cmake)
     # This is a build tree
-    SET( OPENJPEG3D_INCLUDE_DIRS @OPENJPEG3D_INCLUDE_PATH@)
+    SET( OPENJP3D_INCLUDE_DIRS @OPENJP3D_INCLUDE_PATH@)
 
-    include(${SELF_DIR}/OpenJPEG3DExports.cmake)
+    include(${SELF_DIR}/OpenJP3DExports.cmake)
 
-  else(EXISTS ${SELF_DIR}/OpenJPEG3DExports.cmake)
+  else(EXISTS ${SELF_DIR}/OpenJP3DExports.cmake)
     message(FATAL_ERROR "ooops")
-  endif(EXISTS ${SELF_DIR}/OpenJPEG3DExports.cmake)
-endif(EXISTS ${SELF_DIR}/OpenJPEG3DTargets.cmake)
+  endif(EXISTS ${SELF_DIR}/OpenJP3DExports.cmake)
+endif(EXISTS ${SELF_DIR}/OpenJP3DTargets.cmake)
 
-set(OPENJPEG3D_USE_FILE ${SELF_DIR}/UseOPENJPEG3D.cmake)
+set(OPENJP3D_USE_FILE ${SELF_DIR}/UseOPENJP3D.cmake)
 
 # Backward compatible part:
-SET(OPENJPEG3D_FOUND       TRUE)
+SET(OPENJP3D_FOUND       TRUE)
 

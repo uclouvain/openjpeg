@@ -2,8 +2,8 @@ MAINTAINERCLEANFILES = Makefile.in
 
 lib_LTLIBRARIES = libopenjp3dvm.la
 
-includesdir = ${includedir}/openjpeg3d-@JP3D_MAJOR_NR@.@JP3D_MINOR_NR@
-includes_HEADERS = openjpeg3d.h
+includesdir = ${includedir}/openjp3d-@JP3D_MAJOR_NR@.@JP3D_MINOR_NR@
+includes_HEADERS = openjp3d.h
 
 libopenjp3dvm_la_LDFLAGS = -no-undefined -version-info @lt_version_jp3d@
 
@@ -56,17 +56,17 @@ CMakeLists.txt
 
 install-data-hook:
 	cd $(DESTDIR)$(includedir) && \
-	  rm -f openjpeg3d.h && \
-	  $(LN_S) openjpeg3d-@JP3D_MAJOR_NR@.@JP3D_MINOR_NR@/openjpeg3d.h \
-	          openjpeg3d.h
+	  rm -f openjp3d.h && \
+	  $(LN_S) openjp3d-@JP3D_MAJOR_NR@.@JP3D_MINOR_NR@/openjp3d.h \
+	          openjp3d.h
 	@echo -e " (LA)\t$(libdir)/libopenjp3dvm.la" >> $(top_builddir)/report.txt
 	@( $(call solist) ) >> $(top_builddir)/report.txt
 	@echo -e " (A)\t$(base)/$(a)" >> $(top_builddir)/report.txt
-	@echo -e " (H)\t$(includedir)/openjpeg3d-$(MAJOR_NR).$(MINOR_NR)/openjpeg3d.h" >> $(top_builddir)/report.txt
-	@echo -e " (LN)\t$(includedir)/openjpeg3d.h" >> $(top_builddir)/report.txt
+	@echo -e " (H)\t$(includedir)/openjp3d-$(MAJOR_NR).$(MINOR_NR)/openjp3d.h" >> $(top_builddir)/report.txt
+	@echo -e " (LN)\t$(includedir)/openjp3d.h" >> $(top_builddir)/report.txt
 
 uninstall-hook:
-	rm -f $(DESTDIR)$(includedir)/openjpeg3d.h
+	rm -f $(DESTDIR)$(includedir)/openjp3d.h
 
 solist    = $(foreach f, $(dll) $(so), echo -e ' $(SO_PREFIX)\t$(base)/$(f)' ;)
 get_tok   = $(shell grep -E "^$(1)=" $(lib_LTLIBRARIES) | cut -d "'" -f 2)
