@@ -101,7 +101,7 @@ WARN_LOGFILE           =
 # configuration options related to the input files
 #---------------------------------------------------------------------------
 INPUT                  = ../libopenjpeg \
-                         ../jpwl
+                         ../libopenjpeg/jpwl
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          = *.h \
                          *.c
