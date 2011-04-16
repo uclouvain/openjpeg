@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 April 16, 2011
+* [antonin] fixed a bug in mqc.c (see https://groups.google.com/d/topic/openjpeg/kQ1PbZUd19k/discussion, credit to Peter Wimmer)
 * [antonin] fixed wrong path in Doxyfile.dox
 
 April 14, 2011
