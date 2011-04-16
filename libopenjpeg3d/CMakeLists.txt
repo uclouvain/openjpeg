@@ -3,7 +3,7 @@ INCLUDE_REGULAR_EXPRESSION("^.*$")
 
 # Defines the source code for the library
 SET(OPENJP3D_SRCS
-bio.c  cio.c  dwt.c  event.c  jp3d.c  jp3d_lib.c  mct.c  mqc.c  openjpeg.c  pi.c  raw.c  t1.c  t1_3d.c  t2.c  tcd.c  tgt.c  volume.c
+bio.c  cio.c  dwt.c  event.c  jp3d.c  jp3d_lib.c  mct.c  mqc.c  openjp3d.c  pi.c  raw.c  t1.c  t1_3d.c  t2.c  tcd.c  tgt.c  volume.c
 )
 
 # Build the library

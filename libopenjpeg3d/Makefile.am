@@ -23,7 +23,7 @@ jp3d_lib.c \
 volume.c \
 mct.c \
 mqc.c \
-openjpeg.c \
+openjp3d.c \
 pi.c \
 raw.c \
 t1.c \
