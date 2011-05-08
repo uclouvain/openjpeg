@@ -27,11 +27,17 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-
+#ifndef _WIN32
 #include <strings.h>
+#endif
 #include <stdio.h>
 #include <string.h>
 #include "query_parser.h"
+
+#ifdef _WIN32
+#include <windows.h>
+#define strcasecmp  _stricmp
+#endif
 
 #ifdef SERVER
 #include "fcgi_stdio.h"
@@ -50,6 +56,16 @@
  */
 void init_queryparam( query_param_t *query_param);
 
+/*
+ * get a pair of field name and value from the string starting fieldname=fieldval&... format
+ *
+ * @param[in] stringptr pointer to the beginning of the parsing string
+ * @param[out] fieldname string to copy the field name, if not found, NULL
+ * @param[out] fieldval string to copy the field value, if not found, NULL
+ * @return pointer to the next field string, if there is none, NULL
+ */
+char * get_fieldparam( char *stringptr, char *fieldname, char *fieldval);
+
 /**
  * parse string to string array
  *
@@ -60,10 +76,15 @@ void str2cclose( char *src, char cclose[][MAX_LENOFCID]);
 
 void parse_metareq( char *field, query_param_t *query_param);
 
+//! maximum length of field name
+#define MAX_LENOFFIELDNAME 10
+
+//! maximum length of field value
+#define MAX_LENOFFIELDVAL 128
 
 void parse_query( char *query_string, query_param_t *query_param)
 {
-  char *pquery, *field, *fieldname;
+  char *pquery, fieldname[MAX_LENOFFIELDNAME], fieldval[MAX_LENOFFIELDVAL];
 
   init_queryparam( query_param);
   
@@ -71,43 +92,40 @@ void parse_query( char *query_string, query_param_t *query_param)
 
   while( pquery!=NULL) {
     
-    field = strsep(&pquery, "&\n");
-    //field = strtok_r( query, "&", pquery);
-    
-    fieldname = strsep(&field, "=");
-    //fieldname = strtok( field, "=");
+    pquery = get_fieldparam( pquery, fieldname, fieldval);
 
-    if( field != NULL){
+    if( fieldname[0] != '\0'){
       if( strcasecmp( fieldname, "target") == 0)
-	strcpy( query_param->target,field);
+	strcpy( query_param->target,fieldval);
       
       else if( strcasecmp( fieldname, "fsiz") == 0)
-	sscanf( field, "%d,%d", &query_param->fx, &query_param->fy);
+	sscanf( fieldval, "%d,%d", &query_param->fx, &query_param->fy);
       
       else if( strcasecmp( fieldname, "roff") == 0)
-	sscanf( field, "%d,%d", &query_param->rx, &query_param->ry);
+	sscanf( fieldval, "%d,%d", &query_param->rx, &query_param->ry);
 
       else if( strcasecmp( fieldname, "rsiz") == 0)
-	sscanf( field, "%d,%d", &query_param->rw, &query_param->rh);
+	sscanf( fieldval, "%d,%d", &query_param->rw, &query_param->rh);
       
       else if( strcasecmp( fieldname, "cid") == 0)
-	strcpy( query_param->cid, field);
+	strcpy( query_param->cid, fieldval);
 
       else if( strcasecmp( fieldname, "cnew") == 0)
 	query_param->cnew = true;
       
       else if( strcasecmp( fieldname, "cclose") == 0)
-	str2cclose( field, query_param->cclose);
+	str2cclose( fieldval, query_param->cclose);
       
       else if( strcasecmp( fieldname, "metareq") == 0)
-	parse_metareq( field, query_param);
+	parse_metareq( fieldval, query_param);
     }
   }
 }
 
-
 void init_queryparam( query_param_t *query_param)
 {
+  int i;
+
   query_param->target[0]='\0';
   query_param->fx=-1;
   query_param->fy=-1;
@@ -120,7 +138,7 @@ void init_queryparam( query_param_t *query_param)
   memset( query_param->cclose, 0, MAX_NUMOFCCLOSE*MAX_LENOFCID);
   memset( query_param->box_type, 0, MAX_NUMOFBOX*4);
   memset( query_param->limit, 0, MAX_NUMOFBOX*sizeof(int));
-  for( int i=0; i<MAX_NUMOFBOX; i++){
+  for( i=0; i<MAX_NUMOFBOX; i++){
     query_param->w[i] = false;
     query_param->s[i] = false;
     query_param->g[i] = false;
@@ -133,8 +151,35 @@ void init_queryparam( query_param_t *query_param)
 }
 
 
+char * get_fieldparam( char *stringptr, char *fieldname, char *fieldval)
+{
+  char *eqp, *andp, *nexfieldptr;
+
+  if((eqp = strchr( stringptr, '='))==NULL){
+    fprintf( stderr, "= not found\n");
+    strcpy( fieldname, "");
+    strcpy( fieldval, "");
+    return NULL;
+  }
+  if((andp = strchr( stringptr, '&'))==NULL){
+    andp = strchr( stringptr, '\0');
+    nexfieldptr = NULL;
+  }
+  else
+    nexfieldptr = andp+1;
+
+  strncpy( fieldname, stringptr, eqp-stringptr);
+  fieldname[eqp-stringptr]='\0';
+  strncpy( fieldval, eqp+1, andp-eqp-1);
+  fieldval[andp-eqp-1]='\0';
+
+  return nexfieldptr;
+}
+
 void print_queryparam( query_param_t query_param)
 {
+  int i;
+
   fprintf( logstream, "query parameters:\n");
   fprintf( logstream, "\t target: %s\n", query_param.target);
   fprintf( logstream, "\t fx,fy: %d, %d\n", query_param.fx, query_param.fy);
@@ -143,12 +188,12 @@ void print_queryparam( query_param_t query_param)
   fprintf( logstream, "\t cid: %s\n", query_param.cid);
   
   fprintf( logstream, "\t cclose: ");
-  for( int i=0; query_param.cclose[i][0]!=0 && i<MAX_NUMOFCCLOSE; i++)
+  for( i=0; query_param.cclose[i][0]!=0 && i<MAX_NUMOFCCLOSE; i++)
     fprintf( logstream, "%s ", query_param.cclose[i]);
   fprintf(logstream, "\n");
   
   fprintf( logstream, "\t req-box-prop\n");
-  for( int i=0; query_param.box_type[i][0]!=0 && i<MAX_NUMOFBOX; i++){
+  for( i=0; query_param.box_type[i][0]!=0 && i<MAX_NUMOFBOX; i++){
     fprintf( logstream, "\t\t box_type: %.4s limit: %d w:%d s:%d g:%d a:%d priority:%d\n", query_param.box_type[i], query_param.limit[i], query_param.w[i], query_param.s[i], query_param.g[i], query_param.a[i], query_param.priority[i]);
   }
   
@@ -159,9 +204,10 @@ void print_queryparam( query_param_t query_param)
 
 void str2cclose( char *src, char cclose[][MAX_LENOFCID])
 {
+  int i, u, v;
   size_t len = strlen( src);
   
-  for( int i=0, u=0, v=0; i<len; i++){
+  for( i=0, u=0, v=0; i<len; i++){
     if( src[i]==','){
       u++;
       v=0;
@@ -179,7 +225,7 @@ void parse_metareq( char *field, query_param_t *query_param)
   char *ptr, *src;
   int numofboxreq = 0;
   
-  bzero( req_box_prop, 20);
+  memset( req_box_prop, 0, 20);
 
   // req-box-prop
   ptr = strchr( field, '[');
@@ -191,7 +237,7 @@ void parse_metareq( char *field, query_param_t *query_param)
       parse_req_box_prop( req_box_prop, numofboxreq++, query_param);
       ptr++;
       src = ptr;
-      bzero( req_box_prop, 20);
+      memset( req_box_prop, 0, 20);
     }
     ptr++;
   }
