@@ -1,5 +1,5 @@
 /*
- * $Id: query_parser.h 44 2011-02-15 12:32:29Z kaori $
+ * $Id: query_parser.h 53 2011-05-09 16:55:39Z kaori $
  *
  * Copyright (c) 2002-2011, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
  * Copyright (c) 2002-2011, Professor Benoit Macq
@@ -31,13 +31,7 @@
 #ifndef   	QUERY_PARSER_H_
 # define   	QUERY_PARSER_H_
 
-#ifdef _WIN32
-#define bool int
-#define true 1
-#define false 0
-#else
-#include <stdbool.h>
-#endif
+#include "bool.h"
 
 //! maximum length of target name
 #define MAX_LENOFTARGET 128

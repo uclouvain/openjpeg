@@ -1,5 +1,5 @@
 /*
- * $Id: opj_server.c 46 2011-02-17 14:50:55Z kaori $
+ * $Id: opj_server.c 53 2011-05-09 16:55:39Z kaori $
  *
  * Copyright (c) 2002-2011, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
  * Copyright (c) 2002-2011, Professor Benoit Macq
@@ -373,6 +373,7 @@ void enqueue_tiles( query_param_t query_param, index_param_t *codeidx, msgqueue_
 {
   imgreg_param_t imgreg;
   range_param_t tile_Xrange, tile_Yrange;
+  int u, v, tile_id;
 
   imgreg  = map_viewin2imgreg( query_param.fx, query_param.fy, 
 			       query_param.rx, query_param.ry, query_param.rw, query_param.rh,
@@ -380,10 +381,10 @@ void enqueue_tiles( query_param_t query_param, index_param_t *codeidx, msgqueue_
 			       get_nmax( codeidx->tilepart));
 
   
-  for( int u=0, tile_id=0; u<codeidx->YTnum; u++){
+  for( u=0, tile_id=0; u<codeidx->YTnum; u++){
     tile_Yrange = get_tile_Yrange( *codeidx, u, imgreg.level);
     
-    for( int v=0; v<codeidx->XTnum; v++, tile_id++){
+    for( v=0; v<codeidx->XTnum; v++, tile_id++){
       tile_Xrange = get_tile_Xrange( *codeidx, v, imgreg.level);
 	
       if( tile_Xrange.minvalue < tile_Xrange.maxvalue && tile_Yrange.minvalue < tile_Yrange.maxvalue){
@@ -416,7 +417,8 @@ void enqueue_tiles( query_param_t query_param, index_param_t *codeidx, msgqueue_
 
 void enqueue_metabins( query_param_t query_param, metadatalist_param_t *metadatalist, msgqueue_param_t *msgqueue)
 {
-  for( int i=0; query_param.box_type[i][0]!=0 && i<MAX_NUMOFBOX; i++){
+  int i;
+  for( i=0; query_param.box_type[i][0]!=0 && i<MAX_NUMOFBOX; i++){
     if( query_param.box_type[i][0] == '*'){
       // not implemented
     }

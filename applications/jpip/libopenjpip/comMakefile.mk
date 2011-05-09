@@ -1,8 +1,8 @@
 ifdef jpipserver
-CFLAGS  = -O3 -Wall -std=c99 -pedantic -m32 -DSERVER
+CFLAGS  = -O3 -Wall -m32 -DSERVER
 LIBNAME = libopenjpip_server.a
 else
-CFLAGS  = -O3 -Wall -std=c99 -pedantic
+CFLAGS  = -O3 -Wall
 LIBNAME = libopenjpip_local.a
 endif
 

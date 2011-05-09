@@ -1,6 +1,6 @@
 LIBDIR = ../libopenjpip
 LIBFNAME = $(LIBDIR)/libopenjpip_local.a
-CFLAGS  = -O3 -Wall -std=c99 -pedantic -I$(LIBDIR)
+CFLAGS  = -O3 -Wall -I$(LIBDIR)
 LDFLAGS = -L$(LIBDIR) -lm -lopenjpip_local
 
 ALL = jpt_to_jp2 jpt_to_j2k test_index addXMLinJP2

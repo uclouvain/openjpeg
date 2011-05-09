@@ -1,5 +1,5 @@
 /*
- * $Id: msgqueue_manager.c 44 2011-02-15 12:32:29Z kaori $
+ * $Id: msgqueue_manager.c 53 2011-05-09 16:55:39Z kaori $
  *
  * Copyright (c) 2002-2011, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
  * Copyright (c) 2002-2011, Professor Benoit Macq
@@ -154,6 +154,7 @@ void enqueue_tile( int tile_id, int level, msgqueue_param_t *msgqueue)
   faixbox_param_t *tilepart;
   message_param_t *msg;
   Byte8_t binOffset, binLength;
+  int i;
 
   target = msgqueue->target;
   codeidx  = target->codeidx;
@@ -170,7 +171,7 @@ void enqueue_tile( int tile_id, int level, msgqueue_param_t *msgqueue)
   tp_model = &codeidx->tp_model[ tile_id*numOftparts];
   
   binOffset=0;
-  for( int i=0; i<numOftparts-level; i++){
+  for( i=0; i<numOftparts-level; i++){
     binLength = get_elemLen( tilepart, i, tile_id);
     
     if( !tp_model[i]){
@@ -466,15 +467,16 @@ void emit_bigendian_bytes( Byte8_t code, int bytelength)
 void print_binarycode( Byte8_t n, int segmentlen)
 {
   char buf[256];
-  int i=0;
+  int i=0, j, k;
+
   do{
     buf[i++] = n%2 ? '1' : '0';
   }while((n=n/2));
 
-  for( int j=segmentlen-1; j>=i; j--)
+  for( j=segmentlen-1; j>=i; j--)
     putchar('0');
   
-  for( int j=i-1, k=0; j>=0; j--, k++){
+  for( j=i-1, k=0; j>=0; j--, k++){
     putchar( buf[j]);
     if( !((k+1)%segmentlen))
       printf(" ");
@@ -721,6 +723,7 @@ Byte_t * recons_codestream( msgqueue_param_t *msgqueue, Byte_t *stream, Byte8_t 
   message_param_t *ptr;
   Byte_t *codestream = NULL;
   int last_tileID;
+  int tileID;
   
   *codelen = 0;
 
@@ -733,7 +736,7 @@ Byte_t * recons_codestream( msgqueue_param_t *msgqueue, Byte_t *stream, Byte8_t 
 
   last_tileID = get_last_tileID( msgqueue, csn); 
   
-  for( int tileID=0; tileID <= last_tileID; tileID++){
+  for( tileID=0; tileID <= last_tileID; tileID++){
     bool found = false;
     ptr = msgqueue->first;
     while(( ptr = search_message( TILE_MSG, tileID, csn, ptr))!=NULL){

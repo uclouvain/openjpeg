@@ -1,5 +1,5 @@
 /*
- * $Id: query_parser.c 44 2011-02-15 12:32:29Z kaori $
+ * $Id: query_parser.c 53 2011-05-09 16:55:39Z kaori $
  *
  * Copyright (c) 2002-2011, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
  * Copyright (c) 2002-2011, Professor Benoit Macq
@@ -27,17 +27,18 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _WIN32
-#include <strings.h>
-#endif
-#include <stdio.h>
-#include <string.h>
-#include "query_parser.h"
+
 
 #ifdef _WIN32
 #include <windows.h>
 #define strcasecmp  _stricmp
+#else
+#include <strings.h>
 #endif
+
+#include <stdio.h>
+#include <string.h>
+#include "query_parser.h"
 
 #ifdef SERVER
 #include "fcgi_stdio.h"
@@ -205,6 +206,7 @@ void print_queryparam( query_param_t query_param)
 void str2cclose( char *src, char cclose[][MAX_LENOFCID])
 {
   int i, u, v;
+
   size_t len = strlen( src);
   
   for( i=0, u=0, v=0; i<len; i++){

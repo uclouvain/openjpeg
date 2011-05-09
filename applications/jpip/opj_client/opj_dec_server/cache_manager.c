@@ -1,5 +1,5 @@
 /*
- * $Id: cache_manager.c 44 2011-02-15 12:32:29Z kaori $
+ * $Id: cache_manager.c 53 2011-05-09 16:55:39Z kaori $
  *
  * Copyright (c) 2002-2011, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
  * Copyright (c) 2002-2011, Professor Benoit Macq
@@ -85,11 +85,13 @@ cache_param_t * gene_cache( char *targetname, int csn, char *cid)
 
 void delete_cache( cache_param_t **cache)
 {
+  int i;
+
   delete_metadatalist( &(*cache)->metadatalist);
 
   if((*cache)->ihdrbox)
     free((*cache)->ihdrbox);
-  for( int i=0; i<(*cache)->numOfcid; i++)
+  for( i=0; i<(*cache)->numOfcid; i++)
     free( (*cache)->cid[i]);
   free( (*cache)->cid);
   free( *cache);
@@ -138,11 +140,12 @@ cache_param_t * search_cacheBycsn( int csn, cachelist_param_t *cachelist)
 cache_param_t * search_cacheBycid( char cid[], cachelist_param_t *cachelist)
 {
   cache_param_t *foundcache;
+  int i;
 
   foundcache = cachelist->first;
   
   while( foundcache != NULL){
-    for( int i=0; i<foundcache->numOfcid; i++)
+    for( i=0; i<foundcache->numOfcid; i++)
       if( strcmp( cid, foundcache->cid[i]) == 0)
 	return foundcache;
     foundcache = foundcache->next;
@@ -153,12 +156,13 @@ cache_param_t * search_cacheBycid( char cid[], cachelist_param_t *cachelist)
 void add_cachecid( char *cid, cache_param_t *cache)
 {
   char **tmp;
+  int i;
 
   tmp = cache->cid;
   
   cache->cid = (char **)malloc( (cache->numOfcid+1)*sizeof(char *));
 
-  for( int i=0; i<cache->numOfcid; i++){
+  for( i=0; i<cache->numOfcid; i++){
     cache->cid[i] = (char *)malloc( MAX_LENOFCID);
     strcpy( cache->cid[i], tmp[i]);
     free( tmp[i]);
@@ -185,8 +189,9 @@ void remove_cidInCache( char *cid, cache_param_t *cache)
 {
   int idx = -1;
   char **tmp;
+  int i, j;
 
-  for( int i=0; i<cache->numOfcid; i++)
+  for( i=0; i<cache->numOfcid; i++)
     if( strcmp( cid, cache->cid[i]) == 0){
       idx = i;
       break;
@@ -201,7 +206,7 @@ void remove_cidInCache( char *cid, cache_param_t *cache)
 
   cache->cid = (char **)malloc( (cache->numOfcid-1)*sizeof(char *));
   
-  for( int i=0, j=0; i<cache->numOfcid; i++){
+  for( i=0, j=0; i<cache->numOfcid; i++){
     if( i != idx){
       cache->cid[j] = (char *)malloc( MAX_LENOFCID);
       strcpy( cache->cid[j], tmp[i]);
@@ -216,11 +221,14 @@ void remove_cidInCache( char *cid, cache_param_t *cache)
 
 void print_cache( cache_param_t *cache)
 {
+  int i;
+  
   fprintf( stdout,"cache\n");
   fprintf( stdout,"\t filename: %s\n", cache->filename);
   fprintf( stdout,"\t csn: %d\n", cache->csn);
   fprintf( stdout,"\t cid:");
-  for( int i=0; i<cache->numOfcid; i++)
+
+  for( i=0; i<cache->numOfcid; i++)
     fprintf( stdout," %s", cache->cid[i]);
   fprintf( stdout,"\n");
 }

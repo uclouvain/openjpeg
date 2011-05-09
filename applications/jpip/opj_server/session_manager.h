@@ -1,5 +1,5 @@
 /*
- * $Id: session_manager.h 44 2011-02-15 12:32:29Z kaori $
+ * $Id: session_manager.h 53 2011-05-09 16:55:39Z kaori $
  *
  * Copyright (c) 2002-2011, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
  * Copyright (c) 2002-2011, Professor Benoit Macq
@@ -31,7 +31,7 @@
 #ifndef   	SESSION_MANAGER_H_
 # define   	SESSION_MANAGER_H_
 
-#include <stdbool.h>
+#include "bool.h"
 #include "channel_manager.h"
 #include "target_manager.h"
 

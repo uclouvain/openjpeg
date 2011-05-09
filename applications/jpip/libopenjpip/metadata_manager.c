@@ -1,5 +1,5 @@
 /*
- * $Id: metadata_manager.c 44 2011-02-15 12:32:29Z kaori $
+ * $Id: metadata_manager.c 53 2011-05-09 16:55:39Z kaori $
  *
  * Copyright (c) 2002-2011, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
  * Copyright (c) 2002-2011, Professor Benoit Macq
@@ -218,8 +218,9 @@ metadata_param_t * search_metadata( int idx, metadatalist_param_t *list)
 int search_metadataidx( char boxtype[4], metadatalist_param_t *list)
 {
   metadata_param_t *ptr;
+  int i;
 
-  for( int i=0; i<4; i++)
+  for( i=0; i<4; i++)
     if( boxtype[i] == '_')
       boxtype[i] = ' ';
   

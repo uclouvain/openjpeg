@@ -1,0 +1,20 @@
+What's New for OpenJPIP
+
+* : fixed
+- : removed
+! : changed
++ : added
+
+May 9, 2011
+* [kaori] Removal of c99 from the compile option (to be compatible to win platform) and bool definition in libopenjpip/bool.h
+
+May 9, 2011
+* [antonin] OpenJPIP: small bug fixes to compile on win platform
+
+May 8, 2011
+* [antonin] OpenJPIP: fixed several bugs in opj_server (removal of strsep function, duplication of query string) + some changes to compile opj_server under windows (replacement of strcasecmp(), bzero()).
+
+April 14, 2011
++ [antonin] initial commit of OpenJPIP 1.0, a JPIP client-server architecture based on OpenJPEG (see README file in jpip directory for more details)
+* [antonin] fixed applications/codec/CMakeLists.txt that prevented JPWL executables to be built with JPWL functionalities.
+! [antonin] changed make all behaviour : DOC target removed from ALL.

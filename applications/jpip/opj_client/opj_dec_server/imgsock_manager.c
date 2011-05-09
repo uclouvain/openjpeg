@@ -1,5 +1,5 @@
 /*
- * $Id: imgsock_manager.c 44 2011-02-15 12:32:29Z kaori $
+ * $Id: imgsock_manager.c 53 2011-05-09 16:55:39Z kaori $
  *
  * Copyright (c) 2002-2011, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
  * Copyright (c) 2002-2011, Professor Benoit Macq
@@ -28,9 +28,15 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifdef _WIN32
+#include <windows.h>
+#define strcasecmp  _stricmp
+#else
+#include <strings.h>
+#endif
+
 #include <stdio.h>
 #include <string.h>
-#include <strings.h>
 #include <stdlib.h>
 #include <netdb.h>
 #include <sys/types.h>
@@ -86,6 +92,7 @@ msgtype_t identify_clientmsg( int connected_socket)
   int read_size;
   char buf[BUF_LEN];
   char *magicid[] = { "JPT-stream", "PNM request", "XML request", "CID request", "CID destroy", "JP2 save", "QUIT"};
+  int i;
   
   read_size = read_line( connected_socket, buf);
 
@@ -94,7 +101,7 @@ msgtype_t identify_clientmsg( int connected_socket)
     return ERROR;
   }
 
-  for( int i=0; i<NUM_OF_MSGTYPES; i++){
+  for( i=0; i<NUM_OF_MSGTYPES; i++){
     if( strncasecmp( magicid[i], buf, strlen(magicid[i])) == 0){
       printf("Client message: %s\n", magicid[i]);
       return i;
@@ -207,7 +214,7 @@ void send_PNMstream( int connected_socket, Byte_t *pnmstream, unsigned int width
 
 void send_stream( int connected_socket, void *stream, int length)
 {
-  Byte_t *ptr = (Byte_t*)stream;
+  void *ptr = stream;
   int remlen = length;
 
   while( remlen > 0){

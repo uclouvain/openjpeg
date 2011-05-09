@@ -1,5 +1,5 @@
 /*
- * $Id: placeholder_manager.c 44 2011-02-15 12:32:29Z kaori $
+ * $Id: placeholder_manager.c 53 2011-05-09 16:55:39Z kaori $
  *
  * Copyright (c) 2002-2011, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
  * Copyright (c) 2002-2011, Professor Benoit Macq
@@ -108,16 +108,20 @@ void insert_placeholder_into_list( placeholder_param_t *phld, placeholderlist_pa
 
 void print_placeholder( placeholder_param_t *phld)
 {
+  int i;
+
   fprintf( logstream, "placeholder info:\n");
   fprintf( logstream, "\t LBox: %d %#x\n", phld->LBox, phld->LBox);
   fprintf( logstream, "\t TBox: %.4s\n", phld->TBox);
   fprintf( logstream, "\t Flags: %#x %#x\n", phld->Flags, phld->Flags);
   fprintf( logstream, "\t OrigID: %lld\n", phld->OrigID);
   fprintf( logstream, "\t OrigBH: ");
-  for( int i=0; i< phld->OrigBHlen; i++)
+  
+  for( i=0; i< phld->OrigBHlen; i++)
     fprintf( logstream, "%02x ", phld->OrigBH[i]);
   fprintf( logstream, "\t");
-  for( int i=0; i< phld->OrigBHlen; i++)
+
+  for( i=0; i< phld->OrigBHlen; i++)
     fprintf( logstream, "%c", phld->OrigBH[i]);
   fprintf( logstream, "\n");
 }

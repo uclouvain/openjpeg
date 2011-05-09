@@ -1,5 +1,5 @@
 /*
- * $Id: faixbox_manager.c 44 2011-02-15 12:32:29Z kaori $
+ * $Id: faixbox_manager.c 53 2011-05-09 16:55:39Z kaori $
  *
  * Copyright (c) 2002-2011, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
  * Copyright (c) 2002-2011, Professor Benoit Macq
@@ -59,6 +59,7 @@ faixbox_param_t * gene_faixbox( box_param_t *box)
 
   if( faix->version%2){
     subfaixbox8_param_t *subfaixbox;
+    int i;
     
     faix->subfaixbox.byte8_params = (subfaixbox8_param_t *)malloc( sizeof(subfaixbox8_param_t));
     
@@ -73,7 +74,7 @@ faixbox_param_t * gene_faixbox( box_param_t *box)
     if( faix->version == 3)
       subfaixbox->aux = ( Byte4_t *)malloc( numOfelem*sizeof(Byte4_t));
     
-    for( int i=0; i<numOfelem; i++){
+    for( i=0; i<numOfelem; i++){
       subfaixbox->elem[i].off = fetch_DBox8bytebigendian( box, (pos+=8)-8);
       subfaixbox->elem[i].len = fetch_DBox8bytebigendian( box, (pos+=8)-8);
       if( faix->version == 3)
@@ -82,6 +83,7 @@ faixbox_param_t * gene_faixbox( box_param_t *box)
   }
   else{
     subfaixbox4_param_t *subfaixbox;
+    int i;
 
     faix->subfaixbox.byte4_params = (subfaixbox4_param_t *)malloc( sizeof(subfaixbox4_param_t));
     
@@ -96,7 +98,7 @@ faixbox_param_t * gene_faixbox( box_param_t *box)
     if( faix->version == 2)
       subfaixbox->aux = ( Byte4_t *)malloc( numOfelem*sizeof(Byte4_t));
     
-    for( int i=0; i<numOfelem; i++){
+    for( i=0; i<numOfelem; i++){
       subfaixbox->elem[i].off = fetch_DBox4bytebigendian( box, (pos+=4)-4);
       subfaixbox->elem[i].len = fetch_DBox4bytebigendian( box, (pos+=4)-4);
       if( faix->version == 2)
@@ -108,14 +110,16 @@ faixbox_param_t * gene_faixbox( box_param_t *box)
 
 void print_faixbox( faixbox_param_t *faix)
 {
+  Byte8_t i, j;
+
   fprintf( logstream, "faix box info\n");
   fprintf( logstream, "\tversion: %d\n", faix->version);
   
   fprintf( logstream, "\t nmax: %#llx = %lld\n", get_nmax( faix), get_nmax( faix));
   fprintf( logstream, "\t m: %#llx = %lld\n", get_m( faix), get_m( faix));
 
-  for( Byte8_t i=0; i<get_m( faix); i++){
-    for( Byte8_t j=0; j<get_nmax( faix); j++){
+  for( i=0; i<get_m( faix); i++){
+    for( j=0; j<get_nmax( faix); j++){
       fprintf( logstream, "\t off = %#llx, len = %#llx", get_elemOff( faix, j, i), get_elemLen( faix, j, i));
       if( 2 <= faix->version)
 	fprintf( logstream, ", aux = %#x", get_elemAux( faix, j, i));

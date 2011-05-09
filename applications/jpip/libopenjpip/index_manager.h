@@ -1,5 +1,5 @@
 /*
- * $Id: index_manager.h 44 2011-02-15 12:32:29Z kaori $
+ * $Id: index_manager.h 53 2011-05-09 16:55:39Z kaori $
  *
  * Copyright (c) 2002-2011, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
  * Copyright (c) 2002-2011, Professor Benoit Macq
@@ -32,7 +32,7 @@
 # define   	INDEX_MANAGER_H_
 
 #include <stdio.h>
-#include <stdbool.h>
+#include "bool.h"
 #include "byte_manager.h"
 #include "faixbox_manager.h"
 #include "metadata_manager.h"

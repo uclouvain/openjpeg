@@ -1,5 +1,5 @@
 /*
- * $Id: index_manager.c 44 2011-02-15 12:32:29Z kaori $
+ * $Id: index_manager.c 53 2011-05-09 16:55:39Z kaori $
  *
  * Copyright (c) 2002-2011, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
  * Copyright (c) 2002-2011, Professor Benoit Macq
@@ -28,14 +28,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdbool.h>
 #include <stdlib.h>
-#include <strings.h>
 #include <math.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <string.h>
+
 #include "index_manager.h"
 #include "box_manager.h"
 #include "manfbox_manager.h"
@@ -124,6 +123,8 @@ index_param_t * parse_jp2file( int fd)
 
 void print_index( index_param_t index)
 {
+  int i;
+
   fprintf( logstream, "index info:\n");
   fprintf( logstream, "\tCodestream  Offset: %#llx\n", index.offset);
   fprintf( logstream, "\t            Length: %#llx\n", index.length);
@@ -136,7 +137,7 @@ void print_index( index_param_t index)
   fprintf( logstream, "\t    XTnum, YTnum: (%d,%d)\n", index.XTnum, index.YTnum);
   fprintf( logstream, "\t Num of Components: %d\n", index.Csiz);
   
-  for( int i=0; i<index.Csiz; i++)
+  for( i=0; i<index.Csiz; i++)
     fprintf( logstream, "\t[%d] (Ssiz, XRsiz, YRsiz): (%d, %d, %d) = (%#x, %#x, %#x)\n", i, index.Ssiz[i], index.XRsiz[i], index.YRsiz[i], index.Ssiz[i], index.XRsiz[i], index.YRsiz[i]);
 
   print_faixbox( index.tilepart);
@@ -147,15 +148,16 @@ void print_index( index_param_t index)
 void print_cachemodel( index_param_t index)
 {
   Byte8_t TPnum; // num of tile parts in each tile
+  int i, j, k, n;
 
   TPnum = get_nmax( index.tilepart);
   
   fprintf( logstream, "\t main header model: %d\n", index.mhead_model);
 
   fprintf( logstream, "\t tile part model:\n");
-  for( int i=0, n=0; i<index.YTnum; i++){
-    for( int j=0; j<index.XTnum; j++){
-      for( int k=0; k<TPnum; k++)
+  for( i=0, n=0; i<index.YTnum; i++){
+    for( j=0; j<index.XTnum; j++){
+      for( k=0; k<TPnum; k++)
 	fprintf( logstream, "%d", index.tp_model[n++]);
       fprintf( logstream, " ");
     }
@@ -395,7 +397,7 @@ bool set_tpixdata( box_param_t *cidx_box, index_param_t *jp2idx)
   numOfelem = get_nmax( faix)*get_m( faix);
   
   jp2idx->tp_model = (bool *)malloc( numOfelem*sizeof(bool));
-  bzero( jp2idx->tp_model, numOfelem*sizeof(bool));
+  memset( jp2idx->tp_model, 0, numOfelem*sizeof(bool));
 
   //delete_faixbox( &faix); // currently the jp2idx element
   free( tpix_box);
@@ -447,7 +449,8 @@ bool set_thixdata( box_param_t *cidx_box, index_param_t *jp2idx)
 bool set_SIZmkrdata( markeridx_param_t *sizmkidx, codestream_param_t codestream, index_param_t *jp2idx)
 {
   marker_param_t sizmkr;
-  
+  int i;
+
   sizmkr = set_marker( codestream, sizmkidx->code, sizmkidx->offset, sizmkidx->length);
 
   if( sizmkidx->length != fetch_marker2bytebigendian( sizmkr, 0)){
@@ -469,7 +472,7 @@ bool set_SIZmkrdata( markeridx_param_t *sizmkidx, codestream_param_t codestream,
   jp2idx->XTnum  = ( jp2idx->Xsiz-jp2idx->XTOsiz+jp2idx->XTsiz-1)/jp2idx->XTsiz;
   jp2idx->YTnum  = ( jp2idx->Ysiz-jp2idx->YTOsiz+jp2idx->YTsiz-1)/jp2idx->YTsiz;
   
-  for( int i=0; i<(int)jp2idx->Csiz; i++){
+  for( i=0; i<(int)jp2idx->Csiz; i++){
     jp2idx->Ssiz[i]  = fetch_marker1byte( sizmkr, 38+i*3);
     jp2idx->XRsiz[i] = fetch_marker1byte( sizmkr, 39+i*3);
     jp2idx->YRsiz[i] = fetch_marker1byte( sizmkr, 40+i*3);
@@ -496,11 +499,12 @@ range_param_t get_tile_Yrange( index_param_t index, Byte4_t tile_yid, int level)
 range_param_t get_tile_range( Byte4_t Osiz, Byte4_t siz, Byte4_t TOsiz, Byte4_t Tsiz, Byte4_t tile_id, int level)
 {
   range_param_t range;
+  int n;
 
   range.minvalue = max( Osiz, TOsiz+tile_id*Tsiz);
   range.maxvalue = min( siz,  TOsiz+(tile_id+1)*Tsiz);
 
-  for( int n=0; n<level; n++){
+  for( n=0; n<level; n++){
     range.minvalue = ceil(range.minvalue/2.0);
     range.maxvalue = ceil(range.maxvalue/2.0);
   }

@@ -1,5 +1,5 @@
 /*
- * $Id: jp2k_decoder.c 44 2011-02-15 12:32:29Z kaori $
+ * $Id: jp2k_decoder.c 53 2011-05-09 16:55:39Z kaori $
  *
  * Copyright (c) 2002-2011, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
  * Copyright (c) 2002-2011, Professor Benoit Macq
@@ -129,6 +129,7 @@ Byte_t * imagetopnm(opj_image_t *image, ihdrbox_param_t **ihdrbox)
   int adjustR, adjustG=0, adjustB=0;
   int datasize;
   Byte_t *pix=NULL, *ptr=NULL;
+  int i;
   
   if(*ihdrbox){
     if( (*ihdrbox)->nc != image->numcomps)
@@ -179,7 +180,7 @@ Byte_t * imagetopnm(opj_image_t *image, ihdrbox_param_t **ihdrbox)
   pix = (Byte_t *)malloc( datasize);
   ptr = pix;
 
-  for( int i = 0; i < image->comps[0].w * image->comps[0].h; i++){
+  for( i = 0; i < image->comps[0].w * image->comps[0].h; i++){
     int r, g, b;
     r = image->comps[0].data[i];
     r += (image->comps[0].sgnd ? 1 << (image->comps[0].prec - 1) : 0);

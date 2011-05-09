@@ -1,6 +1,6 @@
 LIBDIR = ../../libopenjpip
 LIBFNAME = $(LIBDIR)/libopenjpip_local.a
-CFLAGS  = -O3 -Wall -std=c99 -pedantic -I$(LIBDIR)
+CFLAGS  = -O3 -Wall -I$(LIBDIR)
 LDFLAGS = -L$(LIBDIR) -lm -lopenjpeg -lopenjpip_local
 
 

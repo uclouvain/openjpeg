@@ -1,5 +1,5 @@
 /*
- * $Id: msgqueue_manager.h 44 2011-02-15 12:32:29Z kaori $
+ * $Id: msgqueue_manager.h 53 2011-05-09 16:55:39Z kaori $
  *
  * Copyright (c) 2002-2011, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
  * Copyright (c) 2002-2011, Professor Benoit Macq
@@ -31,8 +31,8 @@
 #ifndef   	MSGQUEUE_MANAGER_H_
 # define   	MSGQUEUE_MANAGER_H_
 
-#include <stdbool.h>
 #include <stdio.h>
+#include "bool.h"
 #include "byte_manager.h"
 #include "target_manager.h"
 #include "placeholder_manager.h"
