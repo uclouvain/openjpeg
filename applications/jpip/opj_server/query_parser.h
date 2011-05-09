@@ -31,7 +31,13 @@
 #ifndef   	QUERY_PARSER_H_
 # define   	QUERY_PARSER_H_
 
+#ifdef _WIN32
+#define bool int
+#define true 1
+#define false 0
+#else
 #include <stdbool.h>
+#endif
 
 //! maximum length of target name
 #define MAX_LENOFTARGET 128

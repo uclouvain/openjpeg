@@ -207,7 +207,7 @@ void send_PNMstream( int connected_socket, Byte_t *pnmstream, unsigned int width
 
 void send_stream( int connected_socket, void *stream, int length)
 {
-  void *ptr = stream;
+  Byte_t *ptr = (Byte_t*)stream;
   int remlen = length;
 
   while( remlen > 0){

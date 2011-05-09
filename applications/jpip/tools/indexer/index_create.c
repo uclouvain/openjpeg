@@ -1017,7 +1017,7 @@ void j2k_read_unk() {
 
 int j2k_index_JPIP(char *Idx_file, char *J2K_file, int len, int version){
   FILE *dest;
-  char *index;
+  unsigned char *index;
   int pos_iptr, end_pos;
   int len_cidx, pos_cidx;
   int len_jp2c, pos_jp2c;
@@ -1030,7 +1030,7 @@ int j2k_index_JPIP(char *Idx_file, char *J2K_file, int len, int version){
   }
 
   /* INDEX MODE JPIP */
- index = (char*)malloc(len); 
+ index = (unsigned char*)malloc(len); 
  cio_init(index, len);
  jp2_write_jp();
  jp2_write_ftyp();
@@ -1158,7 +1158,7 @@ int main(int argc, char **argv)
 {  
   FILE *src;
   int totlen;
-  char *j2kfile;
+  unsigned char *j2kfile;
   j2k_image_t *imgg;
   j2k_cp_t *cp;
   int version;
@@ -1180,7 +1180,7 @@ int main(int argc, char **argv)
   totlen = ftell(src);
   fseek(src, 0, SEEK_SET);
   
-  j2kfile = (char*)malloc(totlen);
+  j2kfile = (unsigned char*)malloc(totlen);
   fread(j2kfile, 1, totlen, src);
   fclose(src);
 

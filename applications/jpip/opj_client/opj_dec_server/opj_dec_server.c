@@ -130,7 +130,7 @@ int main(int argc, char *argv[]){
   bool quit = false;
   
   int listening_socket = open_listeningsocket();
-  int addrlen = sizeof(peer_sin);
+  socklen_t addrlen = sizeof(peer_sin);
 
   cachelist_param_t *cachelist = gene_cachelist();
   

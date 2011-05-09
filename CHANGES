@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+May 9, 2011
+* [antonin] OpenJPIP: small bug fixes to compile on win platform
+
 May 8, 2011
 * [antonin] OpenJPIP: fixed several bugs in opj_server (removal of strsep function, duplication of query string) + some changes to compile opj_server under windows (replacement of strcasecmp(), bzero()).
 
