@@ -1,5 +1,5 @@
 /*
- * $Id: imgsock_manager.c 53 2011-05-09 16:55:39Z kaori $
+ * $Id: imgsock_manager.c 54 2011-05-10 13:22:47Z kaori $
  *
  * Copyright (c) 2002-2011, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
  * Copyright (c) 2002-2011, Professor Benoit Macq
@@ -33,26 +33,26 @@
 #define strcasecmp  _stricmp
 #else
 #include <strings.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/uio.h>
+#include <sys/param.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <netdb.h>
 #endif
 
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <netdb.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/uio.h>
 #include <unistd.h>
-#include <sys/param.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
 #include "imgsock_manager.h"
 
 #define BUF_LEN 256
 
-int open_listeningsocket()
+SOCKET open_listeningsocket()
 {
-  int listening_socket;
+  SOCKET listening_socket;
   struct sockaddr_in sin;
   int sock_optval = 1;
   int port = 5000;
@@ -69,17 +69,20 @@ int open_listeningsocket()
     exit(1);
   }
 
+  memset(&sin, 0, sizeof(sin));
   sin.sin_family = AF_INET;
   sin.sin_port = htons(port);
   sin.sin_addr.s_addr = htonl(INADDR_ANY);
 
   if ( bind(listening_socket, (struct sockaddr *)&sin, sizeof(sin)) < 0 ){
     perror("bind");
+    closesocket(listening_socket);
     exit(1);
   }
 
   if( listen(listening_socket, SOMAXCONN) == -1){
     perror("listen");
+    closesocket(listening_socket);
     exit(1);
   }
   printf("port %d is listened\n", port);
@@ -87,18 +90,18 @@ int open_listeningsocket()
   return listening_socket;
 }
 
-msgtype_t identify_clientmsg( int connected_socket)
+msgtype_t identify_clientmsg( SOCKET connected_socket)
 {
-  int read_size;
+  int receive_size;
   char buf[BUF_LEN];
   char *magicid[] = { "JPT-stream", "PNM request", "XML request", "CID request", "CID destroy", "JP2 save", "QUIT"};
   int i;
   
-  read_size = read_line( connected_socket, buf);
+  receive_size = receive_line( connected_socket, buf);
 
-  if( read_size == 0){ 
-    fprintf( stderr, "Error to read the header of client message\n");
-    return ERROR;
+  if( receive_size == 0){ 
+    fprintf( stderr, "Error to receive the header of client message\n");
+    return MSGERROR;
   }
 
   for( i=0; i<NUM_OF_MSGTYPES; i++){
@@ -109,10 +112,10 @@ msgtype_t identify_clientmsg( int connected_socket)
   }
   
   fprintf( stderr, "Cannot identify client message type\n");
-  return ERROR;
+  return MSGERROR;
 }
 
-Byte_t * receive_JPTstream( int connected_socket, char *target, char *cid, int *streamlen)
+Byte_t * receive_JPTstream( SOCKET connected_socket, char *target, char *cid, int *streamlen)
 {
   Byte_t *jptstream=NULL, *ptr;
   char buf[BUF_LEN], versionstring[] = "version 1.0";
@@ -121,39 +124,39 @@ Byte_t * receive_JPTstream( int connected_socket, char *target, char *cid, int *
   target[0] = 0;
   cid[0] = 0;
   
-  if((linelen = read_line( connected_socket, buf)) == 0)
+  if((linelen = receive_line( connected_socket, buf)) == 0)
     return NULL;
   if( strncmp( versionstring, buf, strlen(versionstring))!=0){
     fprintf( stderr, "Wrong format\n");
     return NULL;
   }
   
-  if((linelen = read_line( connected_socket, buf)) == 0)
+  if((linelen = receive_line( connected_socket, buf)) == 0)
     return NULL;
 
   if( strstr( buf, "jp2")){ 
     // register cid option
     strcpy( target, buf);
 
-    if((linelen = read_line( connected_socket, buf)) == 0)
+    if((linelen = receive_line( connected_socket, buf)) == 0)
       return NULL;
     strcpy( cid, buf);
     
-    if((linelen = read_line( connected_socket, buf)) == 0)
+    if((linelen = receive_line( connected_socket, buf)) == 0)
       return NULL;
   }
 
   *streamlen = atoi( buf);
-  fprintf( stderr, "Reading Data length: %d\n", *streamlen);
+  fprintf( stderr, "Receiveing Data length: %d\n", *streamlen);
   
       
   jptstream = (unsigned  char *)malloc( (*streamlen));
   ptr = jptstream;
   remlen = (*streamlen);
   while( remlen > 0){
-    redlen = read( connected_socket, ptr, remlen);
+    redlen = recv( connected_socket, ptr, remlen, 0);
     if( redlen == -1){
-      fprintf( stderr, "read jptstream error\n");
+      fprintf( stderr, "receive jptstream error\n");
       break;
     }
     remlen -= redlen;
@@ -164,9 +167,9 @@ Byte_t * receive_JPTstream( int connected_socket, char *target, char *cid, int *
   return jptstream;
 }
 
-void send_stream( int connected_socket, void *stream, int length);
+void send_stream( SOCKET connected_socket, void *stream, int length);
 
-void send_XMLstream( int connected_socket, Byte_t *xmlstream, int length)
+void send_XMLstream( SOCKET connected_socket, Byte_t *xmlstream, int length)
 {
   Byte_t header[5];
   
@@ -180,7 +183,7 @@ void send_XMLstream( int connected_socket, Byte_t *xmlstream, int length)
   send_stream( connected_socket, xmlstream, length);
 }
 
-void send_CIDstream( int connected_socket, char *cid, int cidlen)
+void send_CIDstream( SOCKET connected_socket, char *cid, int cidlen)
 {
   Byte_t header[4];
 
@@ -193,7 +196,7 @@ void send_CIDstream( int connected_socket, char *cid, int cidlen)
   send_stream( connected_socket, cid, cidlen);
 }
 
-void send_PNMstream( int connected_socket, Byte_t *pnmstream, unsigned int width, unsigned int height, unsigned int numofcomp, Byte_t maxval)
+void send_PNMstream( SOCKET connected_socket, Byte_t *pnmstream, unsigned int width, unsigned int height, unsigned int numofcomp, Byte_t maxval)
 { 
   int pnmlen = 0;
   Byte_t header[7];
@@ -212,13 +215,13 @@ void send_PNMstream( int connected_socket, Byte_t *pnmstream, unsigned int width
   send_stream( connected_socket, pnmstream, pnmlen);
 }
 
-void send_stream( int connected_socket, void *stream, int length)
+void send_stream( SOCKET connected_socket, void *stream, int length)
 {
   void *ptr = stream;
   int remlen = length;
 
   while( remlen > 0){
-    int sentlen = write( connected_socket, ptr, remlen); 
+    int sentlen = send( connected_socket, ptr, remlen, 0);
     if( sentlen == -1){
       fprintf( stderr, "sending stream error\n");
       break;
@@ -228,14 +231,14 @@ void send_stream( int connected_socket, void *stream, int length)
   }
 }
 
-int read_line(int socket, char *p)
+int receive_line(SOCKET connected_socket, char *p)
 {
   int len = 0;
   while (1){
     int ret;
-    ret = read(socket, p, 1);
+    ret = recv( connected_socket, p, 1, 0);
     if ( ret == -1 ){
-      perror("read");
+      perror("receive");
       exit(1);
     } else if ( ret == 0 ){
       break;
@@ -248,12 +251,12 @@ int read_line(int socket, char *p)
   *p = '\0';
 
   if( len == 0)
-    fprintf( stderr, "Header read error\n");
+    fprintf( stderr, "Header receive error\n");
 
   return len;
 }
 
-void response_signal( int connected_socket, bool succeed)
+void response_signal( SOCKET connected_socket, bool succeed)
 {
   Byte_t code;
 
@@ -262,6 +265,6 @@ void response_signal( int connected_socket, bool succeed)
   else
     code = 0;
 
-  if( write( connected_socket, &code, 1) != 1)
+  if( send( connected_socket, &code, 1, 0) != 1)
     fprintf( stderr, "Response signalling error\n");
 }

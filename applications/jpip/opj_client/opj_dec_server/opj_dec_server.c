@@ -1,5 +1,5 @@
 /*
- * $Id: opj_dec_server.c 46 2011-02-17 14:50:55Z kaori $
+ * $Id: opj_dec_server.c 54 2011-05-10 13:22:47Z kaori $
  *
  * Copyright (c) 2002-2011, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
  * Copyright (c) 2002-2011, Professor Benoit Macq
@@ -47,9 +47,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
 #include <unistd.h>
 #include "byte_manager.h"
 #include "msgqueue_manager.h"
@@ -57,6 +54,14 @@
 #include "imgsock_manager.h"
 #include "jptstream_manager.h"
 #include "cache_manager.h"
+
+#ifdef _WIN32
+WSADATA initialisation_win32;
+#else
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <netinet/in.h>
+#endif //_WIN32
 
 //! maximum length of target name
 #define MAX_LENOFTARGET 128
@@ -73,7 +78,7 @@
  * @param[in,out] jptlen           address of jptstream length
  * @param[in,out] msgqueue         message queue pointer
  */
-void handle_JPTstreamMSG( int connected_socket, cachelist_param_t *cachelist, Byte_t **jptstream, int *jptlen, msgqueue_param_t *msgqueue);
+void handle_JPTstreamMSG( SOCKET connected_socket, cachelist_param_t *cachelist, Byte_t **jptstream, int *jptlen, msgqueue_param_t *msgqueue);
 
 /**
  * handle PNM request message
@@ -83,7 +88,7 @@ void handle_JPTstreamMSG( int connected_socket, cachelist_param_t *cachelist, By
  * @param[in] msgqueue         message queue pointer
  * @param[in] cachelist        cache list pointer
  */
-void handle_PNMreqMSG( int connected_socket, Byte_t *jptstream, msgqueue_param_t *msgqueue, cachelist_param_t *cachelist);
+void handle_PNMreqMSG( SOCKET connected_socket, Byte_t *jptstream, msgqueue_param_t *msgqueue, cachelist_param_t *cachelist);
 
 /**
  * handle XML request message
@@ -92,7 +97,7 @@ void handle_PNMreqMSG( int connected_socket, Byte_t *jptstream, msgqueue_param_t
  * @param[in] jptstream        address of caching jptstream pointer
  * @param[in] cachelist        cache list pointer
  */
-void handle_XMLreqMSG( int connected_socket, Byte_t *jptstream, cachelist_param_t *cachelist);
+void handle_XMLreqMSG( SOCKET connected_socket, Byte_t *jptstream, cachelist_param_t *cachelist);
 
 /**
  * handle ChannelID request message
@@ -100,7 +105,7 @@ void handle_XMLreqMSG( int connected_socket, Byte_t *jptstream, cachelist_param_
  * @param[in] connected_socket socket descriptor
  * @param[in] cachelist        cache list pointer
  */
-void handle_CIDreqMSG( int connected_socket, cachelist_param_t *cachelist);
+void handle_CIDreqMSG( SOCKET connected_socket, cachelist_param_t *cachelist);
 
 /**
  * handle distroy ChannelID message
@@ -108,7 +113,7 @@ void handle_CIDreqMSG( int connected_socket, cachelist_param_t *cachelist);
  * @param[in]     connected_socket socket descriptor
  * @param[in,out] cachelist        cache list pointer
  */
-void handle_dstCIDreqMSG( int connected_socket, cachelist_param_t *cachelist);
+void handle_dstCIDreqMSG( SOCKET connected_socket, cachelist_param_t *cachelist);
 
 /**
  * handle saving JP2 file request message
@@ -118,19 +123,28 @@ void handle_dstCIDreqMSG( int connected_socket, cachelist_param_t *cachelist);
  * @param[in] msgqueue         message queue pointer
  * @param[in] jptstream        address of caching jptstream pointer
  */
-void handle_JP2saveMSG( int connected_socket, cachelist_param_t *cachelist, msgqueue_param_t *msgqueue, Byte_t *jptstream);
+void handle_JP2saveMSG( SOCKET connected_socket, cachelist_param_t *cachelist, msgqueue_param_t *msgqueue, Byte_t *jptstream);
 
 int main(int argc, char *argv[]){
 
-  int connected_socket;
+  SOCKET connected_socket;
   struct sockaddr_in peer_sin;
   Byte_t *jptstream = NULL;
   int jptlen = 0;
   msgqueue_param_t *msgqueue = gene_msgqueue( true, NULL);
   bool quit = false;
+
+#ifdef _WIN32
+  int erreur = WSAStartup(MAKEWORD(2,2),&initialisation_win32);
+  if( erreur!=0)
+    fprintf( stderr, "Erreur initialisation Winsock error : %d %d\n",erreur,WSAGetLastError());
+  else
+    printf( "Initialisation Winsock\n");
+#endif //_WIN32
   
   int listening_socket = open_listeningsocket();
-  socklen_t addrlen = sizeof(peer_sin);
+  
+  int addrlen = sizeof(peer_sin);
 
   cachelist_param_t *cachelist = gene_cachelist();
   
@@ -165,19 +179,19 @@ int main(int argc, char *argv[]){
     case QUIT:
       quit = true;
       break;
-    case ERROR:
+    case MSGERROR:
       break;
     }
         
     printf("cut the connection. listening to port\n");
-    if( close(connected_socket) == -1 ){
+    if( closesocket(connected_socket) != 0){
       perror("close");
       return -1;
     }
     if( quit)
       break;
   }
-  if( close(listening_socket) == -1 ){
+  if( closesocket(listening_socket) != 0){
     perror("close");
     return -1;
   }
@@ -190,10 +204,18 @@ int main(int argc, char *argv[]){
   save_codestream( jptstream, jptlen, "jpt");
   free( jptstream);
 
+#ifdef _WIN32
+  if( WSACleanup() != 0){
+    printf("\nError in WSACleanup : %d %d",erreur,WSAGetLastError());
+  }else{
+    printf("\nWSACleanup OK\n");
+  }
+#endif
+
   return 0;
 }
 
-void handle_JPTstreamMSG( int connected_socket, cachelist_param_t *cachelist,
+void handle_JPTstreamMSG( SOCKET connected_socket, cachelist_param_t *cachelist,
 			  Byte_t **jptstream, int *jptlen, msgqueue_param_t *msgqueue)
 {
   Byte_t *newjptstream;
@@ -231,7 +253,7 @@ void handle_JPTstreamMSG( int connected_socket, cachelist_param_t *cachelist,
   response_signal( connected_socket, true);
 }
 
-void handle_PNMreqMSG( int connected_socket, Byte_t *jptstream, msgqueue_param_t *msgqueue, cachelist_param_t *cachelist)
+void handle_PNMreqMSG( SOCKET connected_socket, Byte_t *jptstream, msgqueue_param_t *msgqueue, cachelist_param_t *cachelist)
 {
   Byte_t *pnmstream;
   ihdrbox_param_t *ihdrbox;
@@ -239,14 +261,14 @@ void handle_PNMreqMSG( int connected_socket, Byte_t *jptstream, msgqueue_param_t
   cache_param_t *cache;
   int fw, fh;
   
-  read_line( connected_socket, cid);
+  receive_line( connected_socket, cid);
   if(!(cache = search_cacheBycid( cid, cachelist)))
     return;
 
-  read_line( connected_socket, tmp);
+  receive_line( connected_socket, tmp);
   fw = atoi( tmp);
   
-  read_line( connected_socket, tmp);
+  receive_line( connected_socket, tmp);
   fh = atoi( tmp);
 
   pnmstream = jpt_to_pnm( jptstream, msgqueue, cache->csn, fw, fh, &cache->ihdrbox);
@@ -256,12 +278,12 @@ void handle_PNMreqMSG( int connected_socket, Byte_t *jptstream, msgqueue_param_t
   free( pnmstream);
 }
 
-void handle_XMLreqMSG( int connected_socket, Byte_t *jptstream, cachelist_param_t *cachelist)
+void handle_XMLreqMSG( SOCKET connected_socket, Byte_t *jptstream, cachelist_param_t *cachelist)
 {
   char cid[MAX_LENOFCID];
   cache_param_t *cache;
 
-  read_line( connected_socket, cid);
+  receive_line( connected_socket, cid);
   if(!(cache = search_cacheBycid( cid, cachelist)))
     return;
   
@@ -272,13 +294,13 @@ void handle_XMLreqMSG( int connected_socket, Byte_t *jptstream, cachelist_param_
   free( xmlstream);
 }
 
-void handle_CIDreqMSG( int connected_socket, cachelist_param_t *cachelist)
+void handle_CIDreqMSG( SOCKET connected_socket, cachelist_param_t *cachelist)
 {
   char target[MAX_LENOFTARGET], *cid = NULL;
   cache_param_t *cache;
   int cidlen = 0;
 
-  read_line( connected_socket, target);
+  receive_line( connected_socket, target);
   cache = search_cache( target, cachelist);
   
   if( cache){
@@ -290,23 +312,23 @@ void handle_CIDreqMSG( int connected_socket, cachelist_param_t *cachelist)
   send_CIDstream( connected_socket, cid, cidlen);
 }
 
-void handle_dstCIDreqMSG( int connected_socket, cachelist_param_t *cachelist)
+void handle_dstCIDreqMSG( SOCKET connected_socket, cachelist_param_t *cachelist)
 {
   char cid[MAX_LENOFCID];
 
-  read_line( connected_socket, cid);
+  receive_line( connected_socket, cid);
   remove_cachecid( cid, cachelist);
   response_signal( connected_socket, true);
 }
 
-void handle_JP2saveMSG( int connected_socket, cachelist_param_t *cachelist, msgqueue_param_t *msgqueue, Byte_t *jptstream)
+void handle_JP2saveMSG( SOCKET connected_socket, cachelist_param_t *cachelist, msgqueue_param_t *msgqueue, Byte_t *jptstream)
 {
   char cid[MAX_LENOFCID];
   cache_param_t *cache;
   Byte_t *jp2stream;
   Byte8_t jp2len;
 
-  read_line( connected_socket, cid);
+  receive_line( connected_socket, cid);
   if(!(cache = search_cacheBycid( cid, cachelist)))
     return;
   

@@ -5,6 +5,9 @@ What's New for OpenJPIP
 ! : changed
 + : added
 
+May 10, 2011
+! [kaori] Modification of opj_dec_server to be portable to windows  
+
 May 9, 2011
 * [kaori] Removal of c99 from the compile option (to be compatible to win platform) and bool definition in libopenjpip/bool.h
 

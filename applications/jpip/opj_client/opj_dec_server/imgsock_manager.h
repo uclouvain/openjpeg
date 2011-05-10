@@ -1,5 +1,5 @@
 /*
- * $Id: imgsock_manager.h 53 2011-05-09 16:55:39Z kaori $
+ * $Id: imgsock_manager.h 54 2011-05-10 13:22:47Z kaori $
  *
  * Copyright (c) 2002-2011, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
  * Copyright (c) 2002-2011, Professor Benoit Macq
@@ -34,16 +34,22 @@
 #include "bool.h"
 #include "byte_manager.h"
 
+#ifdef _WIN32
+#include <winsock2.h>
+#else
+typedef int SOCKET;
+#define closesocket close
+#endif //_WIN32
+
 /**
  * open listening socket
  *
- * @return file descriptor for the new socket
+ * @return new socket
  */
-int open_listeningsocket();
+SOCKET open_listeningsocket();
 
 #define NUM_OF_MSGTYPES 7
-typedef enum eMSGTYPE{ JPTSTREAM, PNMREQ, XMLREQ, CIDREQ, CIDDST, JP2SAVE, QUIT, ERROR} msgtype_t;
-
+typedef enum eMSGTYPE{ JPTSTREAM, PNMREQ, XMLREQ, CIDREQ, CIDDST, JP2SAVE, QUIT, MSGERROR} msgtype_t;
 
 /**
  * indeitify client message type
@@ -51,7 +57,7 @@ typedef enum eMSGTYPE{ JPTSTREAM, PNMREQ, XMLREQ, CIDREQ, CIDDST, JP2SAVE, QUIT,
  * @param [in] connected_socket file descriptor of the connected socket
  * @return                      message type
  */
-msgtype_t identify_clientmsg( int connected_socket);
+msgtype_t identify_clientmsg( SOCKET connected_socket);
 
 /**
  * receive JPT-stream from client
@@ -62,7 +68,7 @@ msgtype_t identify_clientmsg( int connected_socket);
  * @param [out] streamlen        length of the received codestream
  * @return                          codestream
  */
-Byte_t * receive_JPTstream( int connected_socket, char *target, char *cid, int *streamlen);
+Byte_t * receive_JPTstream( SOCKET connected_socket, char *target, char *cid, int *streamlen);
 
 /**
  * send PGM/PPM image stream to the client
@@ -74,7 +80,7 @@ Byte_t * receive_JPTstream( int connected_socket, char *target, char *cid, int *
  * @param [in]  numofcomp        number of components of the image
  * @param [in]  maxval           maximum value of the image (only 255 supported)
  */
-void send_PNMstream( int connected_socket, Byte_t *pnmstream, unsigned int width, unsigned int height, unsigned int numofcomp, Byte_t maxval);
+void send_PNMstream( SOCKET connected_socket, Byte_t *pnmstream, unsigned int width, unsigned int height, unsigned int numofcomp, Byte_t maxval);
 
 /**
  * send XML data stream to the client
@@ -83,7 +89,7 @@ void send_PNMstream( int connected_socket, Byte_t *pnmstream, unsigned int width
  * @param [in]  xmlstream        xml data stream
  * @param [in]  length           legnth of the xml data stream
  */
-void send_XMLstream( int connected_socket, Byte_t *xmlstream, int length);
+void send_XMLstream( SOCKET connected_socket, Byte_t *xmlstream, int length);
 
 /**
  * send CID data stream to the client
@@ -92,7 +98,7 @@ void send_XMLstream( int connected_socket, Byte_t *xmlstream, int length);
  * @param [in]  cid              cid string
  * @param [in]  cidlen           legnth of the cid string
  */
-void send_CIDstream( int connected_socket, char *cid, int cidlen);
+void send_CIDstream( SOCKET connected_socket, char *cid, int cidlen);
 
 /**
  * send response signal to the client
@@ -100,17 +106,17 @@ void send_CIDstream( int connected_socket, char *cid, int cidlen);
  * @param [in]  connected_socket file descriptor of the connected socket
  * @param [in]  succeed          whether if the requested process succeeded
  */
-void response_signal( int connected_socket, bool succeed);
+void response_signal( SOCKET connected_socket, bool succeed);
 
 /**
- * read a string line (ending with '\n') from client
+ * receive a string line (ending with '\n') from client
  *
  * @param [in]  connected_socket file descriptor of the connected socket
  * @param [out] buf              string to be stored
  * @return                       red size
  */
 
-int read_line(int connected_socket, char *buf);
+int receive_line(SOCKET connected_socket, char *buf);
 #endif /* !IMGSOCK_MANAGER_H_ */
 
 /*! \file

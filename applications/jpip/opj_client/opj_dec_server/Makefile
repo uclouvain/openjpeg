@@ -2,7 +2,7 @@ LIBDIR = ../../libopenjpip
 LIBFNAME = $(LIBDIR)/libopenjpip_local.a
 CFLAGS  = -O3 -Wall -I$(LIBDIR)
 LDFLAGS = -L$(LIBDIR) -lm -lopenjpeg -lopenjpip_local
-
+#-lws2_32
 
 ALL = opj_dec_server
 
