@@ -6,6 +6,8 @@ What's New for OpenJPIP
 + : added
 
 May 10, 2011
+! [kaori] opj_viewer removed the xml functions (for users without Xersus2)
++ [kaori] renamed opj_viewer  to opj_viewer_xerces ( needs Xersus2)
 ! [kaori] Modification of opj_dec_server to be portable to windows  
 
 May 9, 2011
