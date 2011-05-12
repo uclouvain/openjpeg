@@ -21,5 +21,3 @@ May 8, 2011
 
 April 14, 2011
 + [antonin] initial commit of OpenJPIP 1.0, a JPIP client-server architecture based on OpenJPEG (see README file in jpip directory for more details)
-* [antonin] fixed applications/codec/CMakeLists.txt that prevented JPWL executables to be built with JPWL functionalities.
-! [antonin] changed make all behaviour : DOC target removed from ALL.

@@ -5,18 +5,12 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
-May 9, 2011
-* [antonin] OpenJPIP: small bug fixes to compile on win platform
-
-May 8, 2011
-* [antonin] OpenJPIP: fixed several bugs in opj_server (removal of strsep function, duplication of query string) + some changes to compile opj_server under windows (replacement of strcasecmp(), bzero()).
-
 April 16, 2011
 * [antonin] fixed a bug in mqc.c (see https://groups.google.com/d/topic/openjpeg/kQ1PbZUd19k/discussion, credit to Peter Wimmer)
 * [antonin] fixed wrong path in Doxyfile.dox
 
 April 14, 2011
-+ [antonin] initial commit of OpenJPIP 1.0, a JPIP client-server architecture based on OpenJPEG (see README file in jpip directory for more details)
++ [antonin] initial commit of OpenJPIP 1.0, a JPIP client-server architecture based on OpenJPEG (see README file in jpip directory for more details, see 'applications/jpip/CHANGES' for subsequent jpip-related commits)
 * [antonin] fixed applications/codec/CMakeLists.txt that prevented JPWL executables to be built with JPWL functionalities.
 ! [antonin] changed make all behaviour : DOC target removed from ALL.
 
