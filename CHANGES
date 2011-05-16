@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 May 16, 2011
+* [antonin] fixed another bug related to the number of packets in a tile-part, not correctly taken into acccount when generating an index file during decoding.
 * [antonin] fixed part of issue 69, when tile-part index is inconsistent with the total number of tile-parts
 
 May 12, 2011
