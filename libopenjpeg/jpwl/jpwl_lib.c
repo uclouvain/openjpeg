@@ -74,7 +74,7 @@ int jpwl_markcomp(const void *arg1, const void *arg2)
 }
 
 int jpwl_epbs_add(opj_j2k_t *j2k, jpwl_marker_t *jwmarker, int *jwmarker_num,
-				  bool latest, bool packed, bool insideMH, int *idx, int hprot,
+				  opj_bool latest, opj_bool packed, opj_bool insideMH, int *idx, int hprot,
 				  double place_pos, int tileno,
 				  unsigned long int pre_len, unsigned long int post_len) {
 
@@ -154,7 +154,7 @@ int jpwl_epbs_add(opj_j2k_t *j2k, jpwl_marker_t *jwmarker, int *jwmarker_num,
 
 		if ((epb_mark = jpwl_epb_create(
 			j2k, /* this encoder handle */
-			latest ? (dL4 < max_postlen) : false, /* is it the latest? */
+			latest ? (dL4 < max_postlen) : OPJ_FALSE, /* is it the latest? */
 			packed, /* is it packed? */
 			tileno, /* we are in TPH */
 			*idx, /* its index */
@@ -170,10 +170,10 @@ int jpwl_epbs_add(opj_j2k_t *j2k, jpwl_marker_t *jwmarker, int *jwmarker_num,
 				jwmarker[*jwmarker_num].pos = (int) place_pos; /* after SOT */
 				jwmarker[*jwmarker_num].dpos = place_pos + 0.0000001 * (double)(*idx); /* not very first! */
 				jwmarker[*jwmarker_num].len = epb_mark->Lepb; /* its length */
-				jwmarker[*jwmarker_num].len_ready = true; /* ready */
-				jwmarker[*jwmarker_num].pos_ready = true; /* ready */
-				jwmarker[*jwmarker_num].parms_ready = true; /* ready */
-				jwmarker[*jwmarker_num].data_ready = false; /* not ready */
+				jwmarker[*jwmarker_num].len_ready = OPJ_TRUE; /* ready */
+				jwmarker[*jwmarker_num].pos_ready = OPJ_TRUE; /* ready */
+				jwmarker[*jwmarker_num].parms_ready = OPJ_TRUE; /* ready */
+				jwmarker[*jwmarker_num].data_ready = OPJ_FALSE; /* not ready */
 				(*jwmarker_num)++;
 			}
 
@@ -196,7 +196,7 @@ int jpwl_epbs_add(opj_j2k_t *j2k, jpwl_marker_t *jwmarker, int *jwmarker_num,
 }
 
 
-jpwl_epb_ms_t *jpwl_epb_create(opj_j2k_t *j2k, bool latest, bool packed, int tileno, int idx, int hprot,
+jpwl_epb_ms_t *jpwl_epb_create(opj_j2k_t *j2k, opj_bool latest, opj_bool packed, int tileno, int idx, int hprot,
 						  unsigned long int pre_len, unsigned long int post_len) {
 
 	jpwl_epb_ms_t *epb = NULL;
@@ -205,7 +205,7 @@ jpwl_epb_ms_t *jpwl_epb_create(opj_j2k_t *j2k, bool latest, bool packed, int til
 	unsigned long int L1, L4;
 	/*unsigned char *predata_in = NULL;*/
 
-	bool insideMH = (tileno == -1);
+	opj_bool insideMH = (tileno == -1);
 
 	/* Alloc space */
 	if (!(epb = (jpwl_epb_ms_t *) opj_malloc((size_t) 1 * sizeof (jpwl_epb_ms_t)))) {
@@ -330,7 +330,7 @@ void jpwl_epb_write(opj_j2k_t *j2k, jpwl_epb_ms_t *epb, unsigned char *buf) {
 };
 
 
-jpwl_epc_ms_t *jpwl_epc_create(opj_j2k_t *j2k, bool esd_on, bool red_on, bool epb_on, bool info_on) {
+jpwl_epc_ms_t *jpwl_epc_create(opj_j2k_t *j2k, opj_bool esd_on, opj_bool red_on, opj_bool epb_on, opj_bool info_on) {
 
 	jpwl_epc_ms_t *epc = NULL;
 
@@ -356,7 +356,7 @@ jpwl_epc_ms_t *jpwl_epc_create(opj_j2k_t *j2k, bool esd_on, bool red_on, bool ep
 	return (epc);
 }
 
-bool jpwl_epb_fill(opj_j2k_t *j2k, jpwl_epb_ms_t *epb, unsigned char *buf, unsigned char *post_buf) {
+opj_bool jpwl_epb_fill(opj_j2k_t *j2k, jpwl_epb_ms_t *epb, unsigned char *buf, unsigned char *post_buf) {
 
 	unsigned long int L1, L2, L3, L4;
 	int remaining;
@@ -373,12 +373,12 @@ bool jpwl_epb_fill(opj_j2k_t *j2k, jpwl_epb_ms_t *epb, unsigned char *buf, unsig
 	/* some consistency check */
 	if (!buf) {
 		opj_event_msg(j2k->cinfo, EVT_ERROR, "There is no operating buffer for EPBs\n");
-		return false;
+		return OPJ_FALSE;
 	}
 
 	if (!post_buf && !L4_buf) {
 		opj_event_msg(j2k->cinfo, EVT_ERROR, "There is no operating buffer for EPBs data\n");
-		return false;
+		return OPJ_FALSE;
 	}
 
 	/*
@@ -539,15 +539,15 @@ bool jpwl_epb_fill(opj_j2k_t *j2k, jpwl_epb_ms_t *epb, unsigned char *buf, unsig
 
 	}
 
-	return true;
+	return OPJ_TRUE;
 }
 
 
-bool jpwl_correct(opj_j2k_t *j2k) {
+opj_bool jpwl_correct(opj_j2k_t *j2k) {
 
 	opj_cio_t *cio = j2k->cio;
-	bool status;
-	static bool mh_done = false;
+	opj_bool status;
+	static opj_bool mh_done = OPJ_FALSE;
 	int mark_pos, id, len, skips, sot_pos;
 	unsigned long int Psot = 0;
 
@@ -592,8 +592,8 @@ bool jpwl_correct(opj_j2k_t *j2k) {
 
 			if (status && (mark_val == J2K_MS_EPB)) {
 				/* we found it! */
-				mh_done = true;
-				return true;
+				mh_done = OPJ_TRUE;
+				return OPJ_TRUE;
 			}
 
 			/* Disable correction in case of missing or bad head EPB */
@@ -601,7 +601,7 @@ bool jpwl_correct(opj_j2k_t *j2k) {
 			/* PATCHED: 2008-01-25 */
 			/* MOVED UP: 2008-02-01 */
 			if (!status) {
-				j2k->cp->correct = false;
+				j2k->cp->correct = OPJ_FALSE;
 				opj_event_msg(j2k->cinfo, EVT_WARNING, "Couldn't find the MH EPB: disabling JPWL\n");
 			}
 
@@ -609,7 +609,7 @@ bool jpwl_correct(opj_j2k_t *j2k) {
 
 	}
 
-	if (true /*(j2k->state == J2K_STATE_TPHSOT) || (j2k->state == J2K_STATE_TPH)*/) {
+	if (OPJ_TRUE /*(j2k->state == J2K_STATE_TPHSOT) || (j2k->state == J2K_STATE_TPH)*/) {
 		/* else, look if 12 positions ahead there is an EPB, in case of TPH */
 		cio_seek(cio, mark_pos);
 		if ((cio->bp + 12) < cio->end) {
@@ -627,11 +627,11 @@ bool jpwl_correct(opj_j2k_t *j2k) {
 									 );
 			if (status)
 				/* we found it! */
-				return true;
+				return OPJ_TRUE;
 		}
 	}
 
-	return false;
+	return OPJ_FALSE;
 
 	/* for now, don't use this code */
 
@@ -652,13 +652,13 @@ bool jpwl_correct(opj_j2k_t *j2k) {
 								 );
 		if (status)
 			/* we found it! */
-			return true;
+			return OPJ_TRUE;
 	}
 
 	/* nope, no EPBs probably, or they are so damaged that we can give up */
-	return false;
+	return OPJ_FALSE;
 	
-	return true;
+	return OPJ_TRUE;
 
 	/* AN ATTEMPT OF PARSER */
 	/* NOT USED ACTUALLY    */
@@ -741,7 +741,7 @@ bool jpwl_correct(opj_j2k_t *j2k) {
 
 }
 
-bool jpwl_epb_correct(opj_j2k_t *j2k, unsigned char *buffer, int type, int pre_len, int post_len, int *conn,
+opj_bool jpwl_epb_correct(opj_j2k_t *j2k, unsigned char *buffer, int type, int pre_len, int post_len, int *conn,
 					  unsigned char **L4_bufp) {
 
 	/* Operating buffer */
@@ -763,14 +763,14 @@ bool jpwl_epb_correct(opj_j2k_t *j2k, unsigned char *buffer, int type, int pre_l
 	unsigned char Depb;
 	char str1[25] = "";
 	int myconn, errnum = 0;
-	bool errflag = false;
+	opj_bool errflag = OPJ_FALSE;
 	
 	opj_cio_t *cio = j2k->cio;
 
 	/* check for common errors */
 	if (!buffer) {
 		opj_event_msg(j2k->cinfo, EVT_ERROR, "The EPB pointer is a NULL buffer\n");
-		return false;
+		return OPJ_FALSE;
 	}
 	
 	/* set bignesses */
@@ -800,13 +800,13 @@ bool jpwl_epb_correct(opj_j2k_t *j2k, unsigned char *buffer, int type, int pre_l
 	case 3:
 		/* automatic setup */
 		opj_event_msg(j2k->cinfo, EVT_ERROR, "Auto. setup not yet implemented\n");
-		return false;
+		return OPJ_FALSE;
 		break;
 
 	default:
 		/* unknown type */
 		opj_event_msg(j2k->cinfo, EVT_ERROR, "Unknown expected EPB type\n");
-		return false;
+		return OPJ_FALSE;
 		break;
 
 	}
@@ -845,11 +845,11 @@ bool jpwl_epb_correct(opj_j2k_t *j2k, unsigned char *buffer, int type, int pre_l
 			/*if (conn == NULL)
 				opj_event_msg(j2k->cinfo, EVT_WARNING,
 					"Possible decoding error in codeword @ position #%d\n", (L1_buf - buffer) / k_pre);*/
-			errflag = true;
+			errflag = OPJ_TRUE;
 			/* we can try to safely get out from the function:
 			  if we are here, either this is not an EPB or the first codeword
 			  is too damaged to be helpful */
-			/*return false;*/
+			/*return OPJ_FALSE;*/
 
 		} else if (status == 0) {
 			/*if (conn == NULL)
@@ -864,8 +864,8 @@ bool jpwl_epb_correct(opj_j2k_t *j2k, unsigned char *buffer, int type, int pre_l
 		} else {
 			/*if (conn == NULL)
 				opj_event_msg(j2k->cinfo, EVT_WARNING, "EPB correction capability exceeded\n");
-			return false;*/
-			errflag = true;
+			return OPJ_FALSE;*/
+			errflag = OPJ_TRUE;
 		}
 
 
@@ -901,7 +901,7 @@ bool jpwl_epb_correct(opj_j2k_t *j2k, unsigned char *buffer, int type, int pre_l
 				(float) errnum / ((float) n_pre * (float) L1 / (float) k_pre));*/
 		if (errflag) {
 			/*opj_event_msg(j2k->cinfo, EVT_INFO, "+ there were unrecoverable errors\n");*/
-			return false;
+			return OPJ_FALSE;
 		}
 
 	}
@@ -960,7 +960,7 @@ bool jpwl_epb_correct(opj_j2k_t *j2k, unsigned char *buffer, int type, int pre_l
 		printf("connected = %d\n", myconn);*/
 
 	/*cio_seek(j2k->cio, orig_pos);
-	return true;*/
+	return OPJ_TRUE;*/
 
 	/* post-data
 	   the position of L4 buffer is at the end of currently connected EPBs
@@ -983,7 +983,7 @@ bool jpwl_epb_correct(opj_j2k_t *j2k, unsigned char *buffer, int type, int pre_l
 	/* Do a further check here on the read parameters */
 	if (L4 > (unsigned long) cio_numbytesleft(j2k->cio))
 		/* overflow */
-		return false;
+		return OPJ_FALSE;
 
 	/* we are ready for decoding the remaining data */
 	if (((Pepb & 0xF0000000) >> 28) == 1) {
@@ -1009,7 +1009,7 @@ bool jpwl_epb_correct(opj_j2k_t *j2k, unsigned char *buffer, int type, int pre_l
 			} else {
 				if (conn == NULL)
 					opj_event_msg(j2k->cinfo, EVT_WARNING, "- CRC is KO (r=%d, c=%d)\n", filecrc, mycrc);
-				errflag = true;
+				errflag = OPJ_TRUE;
 			}	
 		}
 
@@ -1036,7 +1036,7 @@ bool jpwl_epb_correct(opj_j2k_t *j2k, unsigned char *buffer, int type, int pre_l
 			} else {
 				if (conn == NULL)
 					opj_event_msg(j2k->cinfo, EVT_WARNING, "- CRC is KO (r=%d, c=%d)\n", filecrc, mycrc);
-				errflag = true;
+				errflag = OPJ_TRUE;
 			}
 		}
 
@@ -1096,7 +1096,7 @@ bool jpwl_epb_correct(opj_j2k_t *j2k, unsigned char *buffer, int type, int pre_l
 				/*if (conn == NULL)
 					opj_event_msg(j2k->cinfo, EVT_WARNING,
 						"Possible decoding error in codeword @ position #%d\n", (L4_buf - (buffer + Lepb + 2)) / k_post);*/
-				errflag = true;
+				errflag = OPJ_TRUE;
 
 			} else if (status == 0) {
 				/*if (conn == NULL)
@@ -1110,8 +1110,8 @@ bool jpwl_epb_correct(opj_j2k_t *j2k, unsigned char *buffer, int type, int pre_l
 			} else {
 				/*if (conn == NULL)
 					opj_event_msg(j2k->cinfo, EVT_WARNING, "EPB correction capability exceeded\n");
-				return false;*/
-				errflag = true;
+				return OPJ_FALSE;*/
+				errflag = OPJ_TRUE;
 			}
 
 
@@ -1157,7 +1157,7 @@ bool jpwl_epb_correct(opj_j2k_t *j2k, unsigned char *buffer, int type, int pre_l
 
 	cio_seek(j2k->cio, orig_pos);
 
-	return true;
+	return OPJ_TRUE;
 }
 
 void jpwl_epc_write(opj_j2k_t *j2k, jpwl_epc_ms_t *epc, unsigned char *buf) {
@@ -1332,7 +1332,7 @@ jpwl_esd_ms_t *jpwl_esd_create(opj_j2k_t *j2k, int comp, unsigned char addrm, un
 	return (esd);
 }
 
-bool jpwl_esd_fill(opj_j2k_t *j2k, jpwl_esd_ms_t *esd, unsigned char *buf) {
+opj_bool jpwl_esd_fill(opj_j2k_t *j2k, jpwl_esd_ms_t *esd, unsigned char *buf) {
 
 	int i;
 	unsigned long int vv;
@@ -1340,7 +1340,7 @@ bool jpwl_esd_fill(opj_j2k_t *j2k, jpwl_esd_ms_t *esd, unsigned char *buf) {
 	double dvalue = 0.0, Omax2, tmp, TSE = 0.0, MSE, oldMSE = 0.0, PSNR, oldPSNR = 0.0;
 	unsigned short int pfpvalue;
 	unsigned long int addrmask = 0x00000000;
-	bool doneMH = false, doneTPH = false;
+	opj_bool doneMH = OPJ_FALSE, doneTPH = OPJ_FALSE;
 
 	/* sensitivity values in image info are as follows:
 		- for each tile, distotile is the starting distortion for that tile, sum of all components
@@ -1365,7 +1365,7 @@ bool jpwl_esd_fill(opj_j2k_t *j2k, jpwl_esd_ms_t *esd, unsigned char *buf) {
 	if (esd->data) {
 		for (i = 0; i < (int) esd->svalnum; i++)
 			*(buf++) = esd->data[i]; 
-		return true;
+		return OPJ_TRUE;
 	}
 
 	/* addressing mask */
@@ -1445,7 +1445,7 @@ bool jpwl_esd_fill(opj_j2k_t *j2k, jpwl_esd_ms_t *esd, unsigned char *buf) {
 				addr2 = j2k->cstr_info->main_head_end; /* end of MH */
 				/* set special dvalue for this MH */
 				dvalue = -10.0;
-				doneMH = true; /* don't come here anymore */
+				doneMH = OPJ_TRUE; /* don't come here anymore */
 				vv--; /* wrap back loop counter */
 
 			} else if (!doneTPH) {
@@ -1454,12 +1454,12 @@ bool jpwl_esd_fill(opj_j2k_t *j2k, jpwl_esd_ms_t *esd, unsigned char *buf) {
 				addr2 = j2k->cstr_info->tile[thistile].end_header;
 				/* set special dvalue for this TPH */
 				dvalue = -1.0;
-				doneTPH = true; /* don't come here till the next tile */
+				doneTPH = OPJ_TRUE; /* don't come here till the next tile */
 				vv--; /* wrap back loop counter */
 			}
 
 		} else
-			doneTPH = false; /* reset TPH counter */
+			doneTPH = OPJ_FALSE; /* reset TPH counter */
 
 		/* write the addresses to the buffer */
 		switch (esd->ad_size) {
@@ -1577,7 +1577,7 @@ bool jpwl_esd_fill(opj_j2k_t *j2k, jpwl_esd_ms_t *esd, unsigned char *buf) {
 
 	}
 
-	return true;
+	return OPJ_TRUE;
 }
 
 void jpwl_esd_write(opj_j2k_t *j2k, jpwl_esd_ms_t *esd, unsigned char *buf) {
@@ -1681,7 +1681,7 @@ double jpwl_pfp_to_double(unsigned short int em, int bytes) {
 
 }
 
-bool jpwl_update_info(opj_j2k_t *j2k, jpwl_marker_t *jwmarker, int jwmarker_num) {
+opj_bool jpwl_update_info(opj_j2k_t *j2k, jpwl_marker_t *jwmarker, int jwmarker_num) {
 
 	int mm;
 	unsigned long int addlen;
@@ -1691,7 +1691,7 @@ bool jpwl_update_info(opj_j2k_t *j2k, jpwl_marker_t *jwmarker, int jwmarker_num)
 
 	if (!j2k || !jwmarker ) {
 		opj_event_msg(j2k->cinfo, EVT_ERROR, "J2K handle or JPWL markers list badly allocated\n");
-		return false;
+		return OPJ_FALSE;
 	}
 
 	/* main_head_end: how many markers are there before? */
@@ -1790,7 +1790,7 @@ bool jpwl_update_info(opj_j2k_t *j2k, jpwl_marker_t *jwmarker, int jwmarker_num)
 
 	/* reorder the markers list */
 
-	return true;
+	return OPJ_TRUE;
 }
 
 #endif /* USE_JPWL */

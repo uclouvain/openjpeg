@@ -1103,7 +1103,7 @@ static double t1_getwmsedec(
 	return wmsedec;
 }
 
-static bool allocate_buffers(
+static opj_bool allocate_buffers(
 		opj_t1_t *t1,
 		int w,
 		int h)
@@ -1115,7 +1115,7 @@ static bool allocate_buffers(
 		opj_aligned_free(t1->data);
 		t1->data = (int*) opj_aligned_malloc(datasize * sizeof(int));
 		if(!t1->data){
-			return false;
+			return OPJ_FALSE;
 		}
 		t1->datasize=datasize;
 	}
@@ -1128,7 +1128,7 @@ static bool allocate_buffers(
 		opj_aligned_free(t1->flags);
 		t1->flags = (flag_t*) opj_aligned_malloc(flagssize * sizeof(flag_t));
 		if(!t1->flags){
-			return false;
+			return OPJ_FALSE;
 		}
 		t1->flagssize=flagssize;
 	}
@@ -1137,7 +1137,7 @@ static bool allocate_buffers(
 	t1->w=w;
 	t1->h=h;
 
-	return true;
+	return OPJ_TRUE;
 }
 
 /** mod fixed_quality */

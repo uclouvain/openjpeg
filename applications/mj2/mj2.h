@@ -362,7 +362,7 @@ Encode an image into a JPEG-2000 file stream
 @param index Name of the index file if required, NULL otherwise
 @return Returns true if successful, returns false otherwise
 */
-bool mj2_encode(opj_mj2_t *movie, opj_cio_t *cio, opj_image_t *image, char *index);
+opj_bool mj2_encode(opj_mj2_t *movie, opj_cio_t *cio, opj_image_t *image, char *index);
 
 /**
 Init a Standard MJ2 movie

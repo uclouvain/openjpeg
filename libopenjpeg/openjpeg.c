@@ -61,7 +61,7 @@ const char* OPJ_CALLCONV opj_version(void) {
 opj_dinfo_t* OPJ_CALLCONV opj_create_decompress(OPJ_CODEC_FORMAT format) {
 	opj_dinfo_t *dinfo = (opj_dinfo_t*)opj_calloc(1, sizeof(opj_dinfo_t));
 	if(!dinfo) return NULL;
-	dinfo->is_decompressor = true;
+	dinfo->is_decompressor = OPJ_TRUE;
 	switch(format) {
 		case CODEC_J2K:
 		case CODEC_JPT:
@@ -123,7 +123,7 @@ void OPJ_CALLCONV opj_set_default_decoder_parameters(opj_dparameters_t *paramete
 		parameters->cod_format = -1;
 /* UniPG>> */
 #ifdef USE_JPWL
-		parameters->jpwl_correct = false;
+		parameters->jpwl_correct = OPJ_FALSE;
 		parameters->jpwl_exp_comps = JPWL_EXPECTED_COMPONENTS;
 		parameters->jpwl_max_tiles = JPWL_MAXIMUM_TILES;
 #endif /* USE_JPWL */
@@ -172,7 +172,7 @@ opj_image_t* OPJ_CALLCONV opj_decode_with_info(opj_dinfo_t *dinfo, opj_cio_t *ci
 opj_cinfo_t* OPJ_CALLCONV opj_create_compress(OPJ_CODEC_FORMAT format) {
 	opj_cinfo_t *cinfo = (opj_cinfo_t*)opj_calloc(1, sizeof(opj_cinfo_t));
 	if(!cinfo) return NULL;
-	cinfo->is_decompressor = false;
+	cinfo->is_decompressor = OPJ_FALSE;
 	switch(format) {
 		case CODEC_J2K:
 			/* get a J2K coder handle */
@@ -247,7 +247,7 @@ void OPJ_CALLCONV opj_set_default_encoder_parameters(opj_cparameters_t *paramete
 
 /* UniPG>> */
 #ifdef USE_JPWL
-		parameters->jpwl_epc_on = false;
+		parameters->jpwl_epc_on = OPJ_FALSE;
 		parameters->jpwl_hprot_MH = -1; /* -1 means unassigned */
 		{
 			int i;
@@ -297,7 +297,7 @@ void OPJ_CALLCONV opj_setup_encoder(opj_cinfo_t *cinfo, opj_cparameters_t *param
 	}
 }
 
-bool OPJ_CALLCONV opj_encode(opj_cinfo_t *cinfo, opj_cio_t *cio, opj_image_t *image, char *index) {
+opj_bool OPJ_CALLCONV opj_encode(opj_cinfo_t *cinfo, opj_cio_t *cio, opj_image_t *image, char *index) {
 	if (index != NULL)
 		opj_event_msg((opj_common_ptr)cinfo, EVT_WARNING, "Set index to NULL when calling the opj_encode function.\n"
 		"To extract the index, use the opj_encode_with_info() function.\n"
@@ -305,7 +305,7 @@ bool OPJ_CALLCONV opj_encode(opj_cinfo_t *cinfo, opj_cio_t *cio, opj_image_t *im
 	return opj_encode_with_info(cinfo, cio, image, NULL);
 }
 
-bool OPJ_CALLCONV opj_encode_with_info(opj_cinfo_t *cinfo, opj_cio_t *cio, opj_image_t *image, opj_codestream_info_t *cstr_info) {
+opj_bool OPJ_CALLCONV opj_encode_with_info(opj_cinfo_t *cinfo, opj_cio_t *cio, opj_image_t *image, opj_codestream_info_t *cstr_info) {
 	if(cinfo && cio && image) {
 		switch(cinfo->codec_format) {
 			case CODEC_J2K:
@@ -318,7 +318,7 @@ bool OPJ_CALLCONV opj_encode_with_info(opj_cinfo_t *cinfo, opj_cio_t *cio, opj_i
 				break;
 		}
 	}
-	return false;
+	return OPJ_FALSE;
 }
 
 void OPJ_CALLCONV opj_destroy_cstr_info(opj_codestream_info_t *cstr_info) {

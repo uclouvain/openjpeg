@@ -59,7 +59,7 @@ static jpwl_marker_t jwmarker[JPWL_MAX_NO_MARKERS];
 @param info_on true if informative techniques are activated
 @return returns the freshly created EPC
 */
-jpwl_epc_ms_t *jpwl_epc_create(opj_j2k_t *j2k, bool esd_on, bool red_on, bool epb_on, bool info_on);
+jpwl_epc_ms_t *jpwl_epc_create(opj_j2k_t *j2k, opj_bool esd_on, opj_bool red_on, opj_bool epb_on, opj_bool info_on);
 
 /*@}*/
 
@@ -207,7 +207,7 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 			j2k->cp->esd_on, /* is ESD present? */
 			j2k->cp->red_on, /* is RED present? */
 			j2k->cp->epb_on, /* is EPB present? */
-			false /* are informative techniques present? */
+			OPJ_FALSE /* are informative techniques present? */
 		))) {
 
 		/* Add this marker to the 'insertanda' list */
@@ -217,10 +217,10 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 			jwmarker[jwmarker_num].pos = soc_pos + socsiz_len; /* after SIZ */
 			jwmarker[jwmarker_num].dpos = (double) jwmarker[jwmarker_num].pos + 0.1; /* not so first */
 			jwmarker[jwmarker_num].len = epc_mark->Lepc; /* its length */
-			jwmarker[jwmarker_num].len_ready = true; /* ready */
-			jwmarker[jwmarker_num].pos_ready = true; /* ready */
-			jwmarker[jwmarker_num].parms_ready = false; /* not ready */
-			jwmarker[jwmarker_num].data_ready = true; /* ready */
+			jwmarker[jwmarker_num].len_ready = OPJ_TRUE; /* ready */
+			jwmarker[jwmarker_num].pos_ready = OPJ_TRUE; /* ready */
+			jwmarker[jwmarker_num].parms_ready = OPJ_FALSE; /* not ready */
+			jwmarker[jwmarker_num].data_ready = OPJ_TRUE; /* ready */
 			jwmarker_num++;
 		};
 
@@ -262,10 +262,10 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 				jwmarker[jwmarker_num].pos = soc_pos + socsiz_len; /* we choose to place it after SIZ */
 				jwmarker[jwmarker_num].dpos = (double) jwmarker[jwmarker_num].pos + 0.2; /* not first at all! */
 				jwmarker[jwmarker_num].len = esd_mark->Lesd; /* its length */
-				jwmarker[jwmarker_num].len_ready = true; /* not ready, yet */
-				jwmarker[jwmarker_num].pos_ready = true; /* ready */
-				jwmarker[jwmarker_num].parms_ready = true; /* not ready */
-				jwmarker[jwmarker_num].data_ready = false; /* not ready */
+				jwmarker[jwmarker_num].len_ready = OPJ_TRUE; /* not ready, yet */
+				jwmarker[jwmarker_num].pos_ready = OPJ_TRUE; /* ready */
+				jwmarker[jwmarker_num].parms_ready = OPJ_TRUE; /* not ready */
+				jwmarker[jwmarker_num].data_ready = OPJ_FALSE; /* not ready */
 				jwmarker_num++;
 			}
 
@@ -357,10 +357,10 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 						jwmarker[jwmarker_num].pos = j2k->cstr_info->tile[tileno].tp[tpno].tp_start_pos + sot_len + 2; /* after SOT */
 						jwmarker[jwmarker_num].dpos = (double) jwmarker[jwmarker_num].pos + 0.2; /* not first at all! */
 						jwmarker[jwmarker_num].len = esd_mark->Lesd; /* its length */
-						jwmarker[jwmarker_num].len_ready = true; /* ready, yet */
-						jwmarker[jwmarker_num].pos_ready = true; /* ready */
-						jwmarker[jwmarker_num].parms_ready = true; /* not ready */
-						jwmarker[jwmarker_num].data_ready = false; /* ready */
+						jwmarker[jwmarker_num].len_ready = OPJ_TRUE; /* ready, yet */
+						jwmarker[jwmarker_num].pos_ready = OPJ_TRUE; /* ready */
+						jwmarker[jwmarker_num].parms_ready = OPJ_TRUE; /* not ready */
+						jwmarker[jwmarker_num].data_ready = OPJ_FALSE; /* ready */
 						jwmarker_num++;
 					}
 
@@ -418,8 +418,8 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 		/* Create the EPB */
 		if ((epb_mark = jpwl_epb_create(
 			j2k, /* this encoder handle */
-			true, /* is it the latest? */
-			true, /* is it packed? not for now */
+			OPJ_TRUE, /* is it the latest? */
+			OPJ_TRUE, /* is it packed? not for now */
 			-1, /* we are in main header */
 			0, /* its index is 0 (first) */
 			j2k->cp->hprot_MH, /* protection type parameters of data */
@@ -434,10 +434,10 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 				jwmarker[jwmarker_num].pos = soc_pos + socsiz_len; /* after SIZ */
 				jwmarker[jwmarker_num].dpos = (double) jwmarker[jwmarker_num].pos; /* first first first! */
 				jwmarker[jwmarker_num].len = epb_mark->Lepb; /* its length */
-				jwmarker[jwmarker_num].len_ready = true; /* ready */
-				jwmarker[jwmarker_num].pos_ready = true; /* ready */
-				jwmarker[jwmarker_num].parms_ready = true; /* ready */
-				jwmarker[jwmarker_num].data_ready = false; /* not ready */
+				jwmarker[jwmarker_num].len_ready = OPJ_TRUE; /* ready */
+				jwmarker[jwmarker_num].pos_ready = OPJ_TRUE; /* ready */
+				jwmarker[jwmarker_num].parms_ready = OPJ_TRUE; /* ready */
+				jwmarker[jwmarker_num].data_ready = OPJ_FALSE; /* not ready */
 				jwmarker_num++;
 			}
 
@@ -516,8 +516,8 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 				/* Create the EPB */
 				if ((epb_mark = jpwl_epb_create(
 					j2k, /* this encoder handle */
-					false, /* is it the latest? in TPH, no for now (if huge data size in TPH, we'd need more) */
-					true, /* is it packed? yes for now */
+					OPJ_FALSE, /* is it the latest? in TPH, no for now (if huge data size in TPH, we'd need more) */
+					OPJ_TRUE, /* is it packed? yes for now */
 					tileno, /* we are in TPH */
 					epb_index++, /* its index is 0 (first) */
 					hprot, /* protection type parameters of following data */
@@ -533,10 +533,10 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 						jwmarker[jwmarker_num].pos = j2k->cstr_info->tile[tileno].tp[tpno].tp_start_pos + sot_len + 2; /* after SOT */
 						jwmarker[jwmarker_num].dpos = (double) jwmarker[jwmarker_num].pos; /* first first first! */
 						jwmarker[jwmarker_num].len = epb_mark->Lepb; /* its length */
-						jwmarker[jwmarker_num].len_ready = true; /* ready */
-						jwmarker[jwmarker_num].pos_ready = true; /* ready */
-						jwmarker[jwmarker_num].parms_ready = true; /* ready */
-						jwmarker[jwmarker_num].data_ready = false; /* not ready */
+						jwmarker[jwmarker_num].len_ready = OPJ_TRUE; /* ready */
+						jwmarker[jwmarker_num].pos_ready = OPJ_TRUE; /* ready */
+						jwmarker[jwmarker_num].parms_ready = OPJ_TRUE; /* ready */
+						jwmarker[jwmarker_num].data_ready = OPJ_FALSE; /* not ready */
 						jwmarker_num++;
 					}
 
@@ -614,9 +614,9 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 							j2k, /* J2K handle */
 							jwmarker, /* pointer to JPWL markers list */
 							&jwmarker_num, /* pointer to the number of current markers */
-							false, /* latest */
-							true, /* packed */
-							false, /* inside MH */
+							OPJ_FALSE, /* latest */
+							OPJ_TRUE, /* packed */
+							OPJ_FALSE, /* inside MH */
 							&epb_index, /* pointer to EPB index */
 							pprot, /* protection type */
 							/****** (double) (j2k->cstr_info->tile[tileno].start_pos + sot_len + 2) + 0.0001, */ /* position */
@@ -674,9 +674,9 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 							j2k, /* J2K handle */
 							jwmarker, /* pointer to JPWL markers list */
 							&jwmarker_num, /* pointer to the number of current markers */
-							true, /* latest */
-							true, /* packed */
-							false, /* inside MH */
+							OPJ_TRUE, /* latest */
+							OPJ_TRUE, /* packed */
+							OPJ_FALSE, /* inside MH */
 							&epb_index, /* pointer to EPB index */
 							pprot, /* protection type */
 							/***** (double) (j2k->cstr_info->tile[tileno].start_pos + sot_len + 2) + 0.0001,*/ /* position */
@@ -690,7 +690,7 @@ void jpwl_prepare_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 			/* we can now check if the TPH EPB was really the last one */
 			if (tph_epb && (epb_index == 1)) {
 				/* set the TPH EPB to be the last one in current header */
-				tph_epb->Depb |= (unsigned char) ((true & 0x0001) << 6);
+				tph_epb->Depb |= (unsigned char) ((OPJ_TRUE & 0x0001) << 6);
 				tph_epb = NULL;
 			}
 
@@ -1018,8 +1018,8 @@ void j2k_read_epb(opj_j2k_t *j2k) {
 	unsigned short int Lepb;
 	unsigned char Depb;
 	char str1[25] = "";
-	bool status;
-	static bool first_in_tph = true;
+	opj_bool status;
+	static opj_bool first_in_tph = OPJ_TRUE;
 	int type, pre_len, post_len;
 	static unsigned char *redund = NULL;
 	
@@ -1045,7 +1045,7 @@ void j2k_read_epb(opj_j2k_t *j2k) {
 			/* we are in TPH */
 			type = 1; /* TPH */
 			pre_len = 12; /* SOC+SIZ */
-			first_in_tph = false;
+			first_in_tph = OPJ_FALSE;
 			post_len = -1; /* auto */
 
 		} else {
@@ -1088,7 +1088,7 @@ void j2k_read_epb(opj_j2k_t *j2k) {
 		/* last in current header? */
 		if (Depb & 0x40) {
 			redund = NULL; /* reset the pointer to L4 buffer */
-			first_in_tph = true;
+			first_in_tph = OPJ_TRUE;
 		}
 
 		/* advance to EPB endpoint */
@@ -1217,7 +1217,7 @@ void j2k_read_red(opj_j2k_t *j2k) {
 	cio_skip(cio, Lred - 3);  
 }
 
-bool jpwl_check_tile(opj_j2k_t *j2k, opj_tcd_t *tcd, int tileno) {
+opj_bool jpwl_check_tile(opj_j2k_t *j2k, opj_tcd_t *tcd, int tileno) {
 
 #ifdef oerhgierhgvhreit4u
 	/*
@@ -1273,7 +1273,7 @@ bool jpwl_check_tile(opj_j2k_t *j2k, opj_tcd_t *tcd, int tileno) {
 								"JPWL: wrong x-cord of block origin %d => x-prec is (%d, %d)\n",
 								block->x0, prec->x0, prec->x1);
 							if (!JPWL_ASSUME || JPWL_ASSUME)
-								return false;
+								return OPJ_FALSE;
 						};
 					}
 				}				
@@ -1283,7 +1283,7 @@ bool jpwl_check_tile(opj_j2k_t *j2k, opj_tcd_t *tcd, int tileno) {
 
 #endif
 
-	return true;
+	return OPJ_TRUE;
 }
 
 /*@}*/

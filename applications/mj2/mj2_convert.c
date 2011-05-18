@@ -179,7 +179,7 @@ char yuvtoimage(mj2_tk_t * tk, opj_image_t * img, int frame_num, opj_cparameters
 //  -----------------------
 
 
-bool imagetoyuv(opj_image_t * img, char *outfile)
+opj_bool imagetoyuv(opj_image_t * img, char *outfile)
 {
   FILE *f;
   int *data;
@@ -191,18 +191,18 @@ bool imagetoyuv(opj_image_t * img, char *outfile)
       || img->comps[1].dx != img->comps[2].dx) {
       fprintf(stderr,
 				"Error with the input image components size: cannot create yuv file)\n");
-      return false;
+      return OPJ_FALSE;
     }
   } else if (!(img->numcomps == 1)) {
     fprintf(stderr,
       "Error with the number of image components(must be one or three)\n");
-    return false;
+    return OPJ_FALSE;
   }
   
   f = fopen(outfile, "a+b");
   if (!f) {
     fprintf(stderr, "failed to open %s for writing\n", outfile);
-    return false;
+    return OPJ_FALSE;
   }
   is_16 = (img->comps[0].prec > 8);
   prec_bytes = (is_16?2:1);
@@ -262,7 +262,7 @@ bool imagetoyuv(opj_image_t * img, char *outfile)
     }
   }  
   fclose(f);
-  return true;
+  return OPJ_TRUE;
 }
 
 //  -----------------------

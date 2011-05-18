@@ -140,7 +140,7 @@ int tga_readheader(FILE *fp, unsigned int *bits_per_pixel,
 }
 
 int tga_writeheader(FILE *fp, int bits_per_pixel, int width, int height, 
-	bool flip_image)
+	opj_bool flip_image)
 {
 	tga_header tga;
 
@@ -173,8 +173,8 @@ opj_image_t* tgatoimage(const char *filename, opj_cparameters_t *parameters) {
 	opj_image_cmptparm_t cmptparm[4];	/* maximum 4 components */
 	int numcomps;
 	OPJ_COLOR_SPACE color_space;
-	bool mono ;
-	bool save_alpha;
+	opj_bool mono ;
+	opj_bool save_alpha;
 	int subsampling_dx, subsampling_dy;
 	int i;	
 
@@ -282,7 +282,7 @@ opj_image_t* tgatoimage(const char *filename, opj_cparameters_t *parameters) {
 
 int imagetotga(opj_image_t * image, const char *outfile) {
 	int width, height, bpp, x, y;
-	bool write_alpha;
+	opj_bool write_alpha;
 	int i;
 	unsigned int alpha_channel;
 	float r,g,b,a;
@@ -313,7 +313,7 @@ int imagetotga(opj_image_t * image, const char *outfile) {
 
 	// Write TGA header 
 	bpp = write_alpha ? 32 : 24;
-	if (!tga_writeheader(fdest, bpp, width , height, true))
+	if (!tga_writeheader(fdest, bpp, width , height, OPJ_TRUE))
 		return 1;
 
 	alpha_channel = image->numcomps-1; 

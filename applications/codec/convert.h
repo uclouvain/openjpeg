@@ -43,7 +43,7 @@ typedef struct raw_cparameters {
 	/** bit depth of the raw image */
 	int rawBitDepth;
 	/** signed/unsigned raw image */
-	bool rawSigned;
+	opj_bool rawSigned;
 	/*@}*/
 } raw_cparameters_t;
 

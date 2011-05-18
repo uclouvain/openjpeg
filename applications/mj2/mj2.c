@@ -35,16 +35,6 @@
 /** @name Local static functions */
 /*@{*/
 
-/**
-Read box headers
-@param cinfo Codec context info
-@param cio Input stream
-@param box
-@return Returns true if successful, returns false otherwise
-*/
-/*-- UNUSED
-static bool jp2_read_boxhdr(opj_common_ptr cinfo, opj_cio_t *cio, opj_jp2_box_t *box);
---*/
 /*
 * 
 * Read box headers
@@ -2733,7 +2723,7 @@ opj_dinfo_t* mj2_create_decompress() {
 	opj_dinfo_t *dinfo = (opj_dinfo_t*) opj_calloc(1, sizeof(opj_dinfo_t));
 	if(!dinfo) return NULL;
 
-	dinfo->is_decompressor = true;	
+	dinfo->is_decompressor = OPJ_TRUE;	
 
 	mj2 = (opj_mj2_t*) opj_calloc(1, sizeof(opj_mj2_t));
 	dinfo->mj2_handle = mj2;

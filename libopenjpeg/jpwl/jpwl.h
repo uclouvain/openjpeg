@@ -49,7 +49,7 @@ The functions in JPWL.C have for goal to read/write the markers added by JPWL.
 /**
 Assume a basic codestream structure, so you can resort better from uncorrected errors
 */
-#define JPWL_ASSUME true
+#define JPWL_ASSUME OPJ_TRUE
 
 /**
 EPB (Error Protection Block) Marker segment
@@ -58,9 +58,9 @@ typedef struct jpwl_epb_ms {
 	/**@name Private fields set by epb_create */
 	/*@{*/
 	/** is the latest in header? */
-	bool latest;
+	opj_bool latest;
 	/** is it in packed mode? */
-	bool packed;
+	opj_bool packed;
 	/** TH where this marker has been placed (-1 means MH) */
 	int tileno;
 	/** index in current header (0-63) */
@@ -100,13 +100,13 @@ EPC (Error Protection Capability) Marker segment
 */
 typedef struct jpwl_epc_ms {
 	/** is ESD active? */
-	bool esd_on;
+	opj_bool esd_on;
 	/** is RED active? */
-	bool red_on;
+	opj_bool red_on;
 	/** is EPB active? */
-	bool epb_on;
+	opj_bool epb_on;
 	/** are informative techniques active? */
-	bool info_on;
+	opj_bool info_on;
 	/**@name Marker segment fields */
 	/*@{*/
 	/** two bytes for the length of EPC MS, exluding the marker itself (9 to 65535 bytes) */
@@ -196,13 +196,13 @@ typedef struct jpwl_marker {
 	/** length of the marker segment (marker excluded) */
 	unsigned short int len;
 	/** the marker length is ready or not? */
-	bool len_ready;
+	opj_bool len_ready;
 	/** the marker position is ready or not? */
-	bool pos_ready;
+	opj_bool pos_ready;
 	/** the marker parameters are ready or not? */
-	bool parms_ready;
+	opj_bool parms_ready;
 	/** are the written data ready or not */
-	bool data_ready;
+	opj_bool data_ready;
 }	jpwl_marker_t;
 
 /**
@@ -280,7 +280,7 @@ void j2k_read_red(opj_j2k_t *j2k);
 @param post_len length of post-protected data
 @return returns the freshly created EPB
 */
-jpwl_epb_ms_t *jpwl_epb_create(opj_j2k_t *j2k, bool latest, bool packed, int tileno, int idx, int hprot,
+jpwl_epb_ms_t *jpwl_epb_create(opj_j2k_t *j2k, opj_bool latest, opj_bool packed, int tileno, int idx, int hprot,
 							   unsigned long int pre_len, unsigned long int post_len);
 
 /** add a number of EPB marker segments
@@ -299,7 +299,7 @@ jpwl_epb_ms_t *jpwl_epb_create(opj_j2k_t *j2k, bool latest, bool packed, int til
 @return returns the length of all added markers
 */
 int jpwl_epbs_add(opj_j2k_t *j2k, jpwl_marker_t *jwmarker, int *jwmarker_num,
-				  bool latest, bool packed, bool insideMH, int *idx, int hprot,
+				  opj_bool latest, opj_bool packed, opj_bool insideMH, int *idx, int hprot,
 				  double place_pos, int tileno,
 				  unsigned long int pre_len, unsigned long int post_len);
 
@@ -327,12 +327,12 @@ int jpwl_esds_add(opj_j2k_t *j2k, jpwl_marker_t *jwmarker, int *jwmarker_num,
 @param jwmarker_num number of JPWL markers
 @return returns true in case of success
 */			  
-bool jpwl_update_info(opj_j2k_t *j2k, jpwl_marker_t *jwmarker, int jwmarker_num);
+opj_bool jpwl_update_info(opj_j2k_t *j2k, jpwl_marker_t *jwmarker, int jwmarker_num);
 
 
-bool jpwl_esd_fill(opj_j2k_t *j2k, jpwl_esd_ms_t *esdmark, unsigned char *buf);
+opj_bool jpwl_esd_fill(opj_j2k_t *j2k, jpwl_esd_ms_t *esdmark, unsigned char *buf);
 
-bool jpwl_epb_fill(opj_j2k_t *j2k, jpwl_epb_ms_t *epbmark, unsigned char *buf, unsigned char *post_buf);
+opj_bool jpwl_epb_fill(opj_j2k_t *j2k, jpwl_epb_ms_t *epbmark, unsigned char *buf, unsigned char *post_buf);
 
 void j2k_add_marker(opj_codestream_info_t *cstr_info, unsigned short int type, int pos, int len);
 
@@ -340,7 +340,7 @@ void j2k_add_marker(opj_codestream_info_t *cstr_info, unsigned short int type, i
 @param j2k J2K compressor handle
 @return true if correction is performed correctly
 */
-bool jpwl_correct(opj_j2k_t *j2k);
+opj_bool jpwl_correct(opj_j2k_t *j2k);
 
 /** corrects the data protected by an EPB
 @param j2k J2K compressor handle
@@ -352,7 +352,7 @@ bool jpwl_correct(opj_j2k_t *j2k);
 @param L4_bufp is a pointer to the buffer pointer of redundancy data
 @return returns true if correction could be succesfully performed
 */
-bool jpwl_epb_correct(opj_j2k_t *j2k, unsigned char *buffer, int type, int pre_len, int post_len, int *conn,
+opj_bool jpwl_epb_correct(opj_j2k_t *j2k, unsigned char *buffer, int type, int pre_len, int post_len, int *conn,
 					  unsigned char **L4_bufp);
 
 /** check that a tile and its children have valid data
@@ -360,7 +360,7 @@ bool jpwl_epb_correct(opj_j2k_t *j2k, unsigned char *buffer, int type, int pre_l
 @param tcd Tile decompressor handle
 @param tileno number of the tile to check
 */
-bool jpwl_check_tile(opj_j2k_t *j2k, opj_tcd_t *tcd, int tileno);
+opj_bool jpwl_check_tile(opj_j2k_t *j2k, opj_tcd_t *tcd, int tileno);
 
 /** Macro functions for CRC computation */
 

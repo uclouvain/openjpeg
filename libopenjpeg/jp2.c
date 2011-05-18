@@ -43,7 +43,7 @@ Read box headers
 @param box
 @return Returns true if successful, returns false otherwise
 */
-static bool jp2_read_boxhdr(opj_common_ptr cinfo, opj_cio_t *cio, opj_jp2_box_t *box);
+static opj_bool jp2_read_boxhdr(opj_common_ptr cinfo, opj_cio_t *cio, opj_jp2_box_t *box);
 /*static void jp2_write_url(opj_cio_t *cio, char *Idx_file);*/
 /**
 Read the IHDR box - Image Header box
@@ -51,10 +51,10 @@ Read the IHDR box - Image Header box
 @param cio Input buffer stream
 @return Returns true if successful, returns false otherwise
 */
-static bool jp2_read_ihdr(opj_jp2_t *jp2, opj_cio_t *cio);
+static opj_bool jp2_read_ihdr(opj_jp2_t *jp2, opj_cio_t *cio);
 static void jp2_write_ihdr(opj_jp2_t *jp2, opj_cio_t *cio);
 static void jp2_write_bpcc(opj_jp2_t *jp2, opj_cio_t *cio);
-static bool jp2_read_bpcc(opj_jp2_t *jp2, opj_cio_t *cio);
+static opj_bool jp2_read_bpcc(opj_jp2_t *jp2, opj_cio_t *cio);
 static void jp2_write_colr(opj_jp2_t *jp2, opj_cio_t *cio);
 /**
 Write the FTYP box - File type box
@@ -68,9 +68,9 @@ Read the FTYP box - File type box
 @param cio Input buffer stream
 @return Returns true if successful, returns false otherwise
 */
-static bool jp2_read_ftyp(opj_jp2_t *jp2, opj_cio_t *cio);
+static opj_bool jp2_read_ftyp(opj_jp2_t *jp2, opj_cio_t *cio);
 static int jp2_write_jp2c(opj_jp2_t *jp2, opj_cio_t *cio, opj_image_t *image, opj_codestream_info_t *cstr_info);
-static bool jp2_read_jp2c(opj_jp2_t *jp2, opj_cio_t *cio, unsigned int *j2k_codestream_length, unsigned int *j2k_codestream_offset);
+static opj_bool jp2_read_jp2c(opj_jp2_t *jp2, opj_cio_t *cio, unsigned int *j2k_codestream_length, unsigned int *j2k_codestream_offset);
 static void jp2_write_jp(opj_cio_t *cio);
 /**
 Read the JP box - JPEG 2000 signature
@@ -78,7 +78,7 @@ Read the JP box - JPEG 2000 signature
 @param cio Input buffer stream
 @return Returns true if successful, returns false otherwise
 */
-static bool jp2_read_jp(opj_jp2_t *jp2, opj_cio_t *cio);
+static opj_bool jp2_read_jp(opj_jp2_t *jp2, opj_cio_t *cio);
 /**
 Decode the structure of a JP2 file
 @param jp2 JP2 handle
@@ -86,7 +86,7 @@ Decode the structure of a JP2 file
 @param color Collector for profile, cdef and pclr data
 @return Returns true if successful, returns false otherwise
 */
-static bool jp2_read_struct(opj_jp2_t *jp2, opj_cio_t *cio,
+static opj_bool jp2_read_struct(opj_jp2_t *jp2, opj_cio_t *cio,
 	opj_jp2_color_t *color);
 /**
 Apply collected palette data
@@ -102,7 +102,7 @@ Collect palette data
 @param color Collector for profile, cdef and pclr data
 @return Returns true if successful, returns false otherwise
 */
-static bool jp2_read_pclr(opj_jp2_t *jp2, opj_cio_t *cio,
+static opj_bool jp2_read_pclr(opj_jp2_t *jp2, opj_cio_t *cio,
     opj_jp2_box_t *box, opj_jp2_color_t *color);
 /**
 Collect component mapping data
@@ -112,7 +112,7 @@ Collect component mapping data
 @param color Collector for profile, cdef and pclr data
 @return Returns true if successful, returns false otherwise
 */
-static bool jp2_read_cmap(opj_jp2_t *jp2, opj_cio_t *cio,
+static opj_bool jp2_read_cmap(opj_jp2_t *jp2, opj_cio_t *cio,
     opj_jp2_box_t *box, opj_jp2_color_t *color);
 /**
 Collect colour specification data
@@ -122,7 +122,7 @@ Collect colour specification data
 @param color Collector for profile, cdef and pclr data
 @return Returns true if successful, returns false otherwise
 */
-static bool jp2_read_colr(opj_jp2_t *jp2, opj_cio_t *cio,
+static opj_bool jp2_read_colr(opj_jp2_t *jp2, opj_cio_t *cio,
     opj_jp2_box_t *box, opj_jp2_color_t *color);
 /*@}*/
 
@@ -130,14 +130,14 @@ static bool jp2_read_colr(opj_jp2_t *jp2, opj_cio_t *cio,
 
 /* ----------------------------------------------------------------------- */
 
-static bool jp2_read_boxhdr(opj_common_ptr cinfo, opj_cio_t *cio, opj_jp2_box_t *box) {
+static opj_bool jp2_read_boxhdr(opj_common_ptr cinfo, opj_cio_t *cio, opj_jp2_box_t *box) {
 	box->init_pos = cio_tell(cio);
 	box->length = cio_read(cio, 4);
 	box->type = cio_read(cio, 4);
 	if (box->length == 1) {
 		if (cio_read(cio, 4) != 0) {
 			opj_event_msg(cinfo, EVT_ERROR, "Cannot handle box sizes higher than 2^32\n");
-			return false;
+			return OPJ_FALSE;
 		}
 		box->length = cio_read(cio, 4);
 		if (box->length == 0) 
@@ -147,7 +147,7 @@ static bool jp2_read_boxhdr(opj_common_ptr cinfo, opj_cio_t *cio, opj_jp2_box_t 
 		box->length = cio_numbytesleft(cio) + 8;
 	}
 	
-	return true;
+	return OPJ_TRUE;
 }
 
 #if 0
@@ -174,7 +174,7 @@ static void jp2_write_url(opj_cio_t *cio, char *Idx_file) {
 }
 #endif
 
-static bool jp2_read_ihdr(opj_jp2_t *jp2, opj_cio_t *cio) {
+static opj_bool jp2_read_ihdr(opj_jp2_t *jp2, opj_cio_t *cio) {
 	opj_jp2_box_t box;
 
 	opj_common_ptr cinfo = jp2->cinfo;
@@ -182,7 +182,7 @@ static bool jp2_read_ihdr(opj_jp2_t *jp2, opj_cio_t *cio) {
 	jp2_read_boxhdr(cinfo, cio, &box);
 	if (JP2_IHDR != box.type) {
 		opj_event_msg(cinfo, EVT_ERROR, "Expected IHDR Marker\n");
-		return false;
+		return OPJ_FALSE;
 	}
 
 	jp2->h = cio_read(cio, 4);			/* HEIGHT */
@@ -198,10 +198,10 @@ static bool jp2_read_ihdr(opj_jp2_t *jp2, opj_cio_t *cio) {
 
 	if (cio_tell(cio) - box.init_pos != box.length) {
 		opj_event_msg(cinfo, EVT_ERROR, "Error with IHDR Box\n");
-		return false;
+		return OPJ_FALSE;
 	}
 
-	return true;
+	return OPJ_TRUE;
 }
 
 static void jp2_write_ihdr(opj_jp2_t *jp2, opj_cio_t *cio) {
@@ -246,7 +246,7 @@ static void jp2_write_bpcc(opj_jp2_t *jp2, opj_cio_t *cio) {
 }
 
 
-static bool jp2_read_bpcc(opj_jp2_t *jp2, opj_cio_t *cio) {
+static opj_bool jp2_read_bpcc(opj_jp2_t *jp2, opj_cio_t *cio) {
 	unsigned int i;
 	opj_jp2_box_t box;
 
@@ -255,7 +255,7 @@ static bool jp2_read_bpcc(opj_jp2_t *jp2, opj_cio_t *cio) {
 	jp2_read_boxhdr(cinfo, cio, &box);
 	if (JP2_BPCC != box.type) {
 		opj_event_msg(cinfo, EVT_ERROR, "Expected BPCC Marker\n");
-		return false;
+		return OPJ_FALSE;
 	}
 
 	for (i = 0; i < jp2->numcomps; i++) {
@@ -264,10 +264,10 @@ static bool jp2_read_bpcc(opj_jp2_t *jp2, opj_cio_t *cio) {
 
 	if (cio_tell(cio) - box.init_pos != box.length) {
 		opj_event_msg(cinfo, EVT_ERROR, "Error with BPCC Box\n");
-		return false;
+		return OPJ_FALSE;
 	}
 
-	return true;
+	return OPJ_TRUE;
 }
 
 static void jp2_write_colr(opj_jp2_t *jp2, opj_cio_t *cio) {
@@ -389,7 +389,7 @@ static void jp2_apply_pclr(opj_jp2_color_t *color, opj_image_t *image)
 
 }/* apply_pclr() */
 
-static bool jp2_read_pclr(opj_jp2_t *jp2, opj_cio_t *cio,
+static opj_bool jp2_read_pclr(opj_jp2_t *jp2, opj_cio_t *cio,
 	opj_jp2_box_t *box, opj_jp2_color_t *color)
 {
 	opj_jp2_pclr_t *jp2_pclr;
@@ -402,7 +402,7 @@ static bool jp2_read_pclr(opj_jp2_t *jp2, opj_cio_t *cio,
 /* Part 1, I.5.3.4: 'There shall be at most one Palette box inside
  * a JP2 Header box' :
 */
-	if(color->jp2_pclr) return false;
+	if(color->jp2_pclr) return OPJ_FALSE;
 
 	nr_entries = cio_read(cio, 2); /* NE */
 	nr_channels = cio_read(cio, 1);/* NPC */
@@ -438,22 +438,22 @@ static bool jp2_read_pclr(opj_jp2_t *jp2, opj_cio_t *cio,
   }
    }
 
-	return true;
+	return OPJ_TRUE;
 }/* jp2_read_pclr() */
 
-static bool jp2_read_cmap(opj_jp2_t *jp2, opj_cio_t *cio,
+static opj_bool jp2_read_cmap(opj_jp2_t *jp2, opj_cio_t *cio,
 	opj_jp2_box_t *box, opj_jp2_color_t *color)
 {
 	opj_jp2_cmap_comp_t *cmap;
 	unsigned short i, nr_channels;
 
 /* Need nr_channels: */
-	if(color->jp2_pclr == NULL) return false;
+	if(color->jp2_pclr == NULL) return OPJ_FALSE;
 
 /* Part 1, I.5.3.5: 'There shall be at most one Component Mapping box
  * inside a JP2 Header box' :
 */
-	if(color->jp2_pclr->cmap) return false;
+	if(color->jp2_pclr->cmap) return OPJ_FALSE;
 
 	nr_channels = color->jp2_pclr->nr_channels;
 	cmap = (opj_jp2_cmap_comp_t*)
@@ -468,7 +468,7 @@ static bool jp2_read_cmap(opj_jp2_t *jp2, opj_cio_t *cio,
    }
 	color->jp2_pclr->cmap = cmap;
 
-	return true;
+	return OPJ_TRUE;
 }/* jp2_read_cmap() */
 
 static void jp2_apply_cdef(opj_image_t *image, opj_jp2_color_t *color)
@@ -506,7 +506,7 @@ static void jp2_apply_cdef(opj_image_t *image, opj_jp2_color_t *color)
 
 }/* jp2_apply_cdef() */
 
-static bool jp2_read_cdef(opj_jp2_t *jp2, opj_cio_t *cio,
+static opj_bool jp2_read_cdef(opj_jp2_t *jp2, opj_cio_t *cio,
 	opj_jp2_box_t *box, opj_jp2_color_t *color)
 {
 	opj_jp2_cdef_info_t *info;
@@ -515,9 +515,9 @@ static bool jp2_read_cdef(opj_jp2_t *jp2, opj_cio_t *cio,
 /* Part 1, I.5.3.6: 'The shall be at most one Channel Definition box
  * inside a JP2 Header box.' 
 */
-	if(color->jp2_cdef) return false;
+	if(color->jp2_cdef) return OPJ_FALSE;
 
-	if((n = cio_read(cio, 2)) == 0) return false; /* szukw000: FIXME */
+	if((n = cio_read(cio, 2)) == 0) return OPJ_FALSE; /* szukw000: FIXME */
 
 	info = (opj_jp2_cdef_info_t*)
 	 opj_malloc(n * sizeof(opj_jp2_cdef_info_t));
@@ -533,10 +533,10 @@ static bool jp2_read_cdef(opj_jp2_t *jp2, opj_cio_t *cio,
 	info[i].asoc = cio_read(cio, 2);
 
    }
-	return true;
+	return OPJ_TRUE;
 }/* jp2_read_cdef() */
 
-static bool jp2_read_colr(opj_jp2_t *jp2, opj_cio_t *cio,
+static opj_bool jp2_read_colr(opj_jp2_t *jp2, opj_cio_t *cio,
 	opj_jp2_box_t *box, opj_jp2_color_t *color) 
 {
 	int skip_len;
@@ -545,7 +545,7 @@ static bool jp2_read_colr(opj_jp2_t *jp2, opj_cio_t *cio,
 /* Part 1, I.5.3.3 : 'A conforming JP2 reader shall ignore all Colour
  * Specification boxes after the first.' 
 */
-	if(color->jp2_has_colr) return false;
+	if(color->jp2_has_colr) return OPJ_FALSE;
 
 	cinfo = jp2->cinfo;
 
@@ -564,7 +564,7 @@ static bool jp2_read_colr(opj_jp2_t *jp2, opj_cio_t *cio,
 	if (skip_len < 0) 
   {
 	opj_event_msg(cinfo, EVT_ERROR, "Error with COLR box size\n");
-	return false;
+	return OPJ_FALSE;
   }
 	if(skip_len > 0)
   {
@@ -583,14 +583,14 @@ static bool jp2_read_colr(opj_jp2_t *jp2, opj_cio_t *cio,
 	if (cio_tell(cio) - box->init_pos != box->length) 
    {
 	opj_event_msg(cinfo, EVT_ERROR, "Error with COLR Box\n");
-	return false;
+	return OPJ_FALSE;
    }
 	color->jp2_has_colr = 1;
 
-	return true;
+	return OPJ_TRUE;
 }/* jp2_read_colr() */
 
-bool jp2_read_jp2h(opj_jp2_t *jp2, opj_cio_t *cio, opj_jp2_color_t *color) 
+opj_bool jp2_read_jp2h(opj_jp2_t *jp2, opj_cio_t *cio, opj_jp2_color_t *color) 
 {
 	opj_jp2_box_t box;
 	int jp2h_end;
@@ -605,24 +605,24 @@ bool jp2_read_jp2h(opj_jp2_t *jp2, opj_cio_t *cio, opj_jp2_color_t *color)
 	if (box.type == JP2_JP2C) 
  {
 	opj_event_msg(cinfo, EVT_ERROR, "Expected JP2H Marker\n");
-	return false;
+	return OPJ_FALSE;
  }
 	cio_skip(cio, box.length - 8);
 
-	if(cio->bp >= cio->end) return false;
+	if(cio->bp >= cio->end) return OPJ_FALSE;
 
 	jp2_read_boxhdr(cinfo, cio, &box);
   }
    } while(JP2_JP2H != box.type);
 
 	if (!jp2_read_ihdr(jp2, cio))
-		return false;
+		return OPJ_FALSE;
 	jp2h_end = box.init_pos + box.length;
 
 	if (jp2->bpc == 255) 
    {
 	if (!jp2_read_bpcc(jp2, cio))
-		return false;
+		return OPJ_FALSE;
    }
 	jp2_read_boxhdr(cinfo, cio, &box);
 
@@ -787,7 +787,7 @@ static void jp2_write_ftyp(opj_jp2_t *jp2, opj_cio_t *cio) {
 	cio_seek(cio, box.init_pos + box.length);
 }
 
-static bool jp2_read_ftyp(opj_jp2_t *jp2, opj_cio_t *cio) {
+static opj_bool jp2_read_ftyp(opj_jp2_t *jp2, opj_cio_t *cio) {
 	int i;
 	opj_jp2_box_t box;
 
@@ -797,7 +797,7 @@ static bool jp2_read_ftyp(opj_jp2_t *jp2, opj_cio_t *cio) {
 
 	if (JP2_FTYP != box.type) {
 		opj_event_msg(cinfo, EVT_ERROR, "Expected FTYP Marker\n");
-		return false;
+		return OPJ_FALSE;
 	}
 
 	jp2->brand = cio_read(cio, 4);		/* BR */
@@ -811,10 +811,10 @@ static bool jp2_read_ftyp(opj_jp2_t *jp2, opj_cio_t *cio) {
 
 	if (cio_tell(cio) - box.init_pos != box.length) {
 		opj_event_msg(cinfo, EVT_ERROR, "Error with FTYP Box\n");
-		return false;
+		return OPJ_FALSE;
 	}
 
-	return true;
+	return OPJ_TRUE;
 }
 
 static int jp2_write_jp2c(opj_jp2_t *jp2, opj_cio_t *cio, opj_image_t *image, opj_codestream_info_t *cstr_info) {
@@ -846,7 +846,7 @@ static int jp2_write_jp2c(opj_jp2_t *jp2, opj_cio_t *cio, opj_image_t *image, op
 	return box.length;
 }
 
-static bool jp2_read_jp2c(opj_jp2_t *jp2, opj_cio_t *cio, unsigned int *j2k_codestream_length, unsigned int *j2k_codestream_offset) {
+static opj_bool jp2_read_jp2c(opj_jp2_t *jp2, opj_cio_t *cio, unsigned int *j2k_codestream_length, unsigned int *j2k_codestream_offset) {
 	opj_jp2_box_t box;
 
 	opj_common_ptr cinfo = jp2->cinfo;
@@ -862,7 +862,7 @@ static bool jp2_read_jp2c(opj_jp2_t *jp2, opj_cio_t *cio, unsigned int *j2k_code
 	*j2k_codestream_offset = cio_tell(cio);
 	*j2k_codestream_length = box.length - 8;
 
-	return true;
+	return OPJ_TRUE;
 }
 
 static void jp2_write_jp(opj_cio_t *cio) {
@@ -879,7 +879,7 @@ static void jp2_write_jp(opj_cio_t *cio) {
 	cio_seek(cio, box.init_pos + box.length);
 }
 
-static bool jp2_read_jp(opj_jp2_t *jp2, opj_cio_t *cio) {
+static opj_bool jp2_read_jp(opj_jp2_t *jp2, opj_cio_t *cio) {
 	opj_jp2_box_t box;
 
 	opj_common_ptr cinfo = jp2->cinfo;
@@ -887,33 +887,33 @@ static bool jp2_read_jp(opj_jp2_t *jp2, opj_cio_t *cio) {
 	jp2_read_boxhdr(cinfo, cio, &box);
 	if (JP2_JP != box.type) {
 		opj_event_msg(cinfo, EVT_ERROR, "Expected JP Marker\n");
-		return false;
+		return OPJ_FALSE;
 	}
 	if (0x0d0a870a != cio_read(cio, 4)) {
 		opj_event_msg(cinfo, EVT_ERROR, "Error with JP Marker\n");
-		return false;
+		return OPJ_FALSE;
 	}
 	if (cio_tell(cio) - box.init_pos != box.length) {
 		opj_event_msg(cinfo, EVT_ERROR, "Error with JP Box size\n");
-		return false;
+		return OPJ_FALSE;
 	}
 
-	return true;
+	return OPJ_TRUE;
 }
 
 
-static bool jp2_read_struct(opj_jp2_t *jp2, opj_cio_t *cio,
+static opj_bool jp2_read_struct(opj_jp2_t *jp2, opj_cio_t *cio,
 	opj_jp2_color_t *color) {
 	if (!jp2_read_jp(jp2, cio))
-		return false;
+		return OPJ_FALSE;
 	if (!jp2_read_ftyp(jp2, cio))
-		return false;
+		return OPJ_FALSE;
 	if (!jp2_read_jp2h(jp2, cio, color))
-		return false;
+		return OPJ_FALSE;
 	if (!jp2_read_jp2c(jp2, cio, &jp2->j2k_codestream_length, &jp2->j2k_codestream_offset))
-		return false;
+		return OPJ_FALSE;
 	
-	return true;
+	return OPJ_TRUE;
 }
 
 /* ----------------------------------------------------------------------- */
@@ -1065,7 +1065,7 @@ void jp2_setup_encoder(opj_jp2_t *jp2, opj_cparameters_t *parameters, opj_image_
 
 }
 
-bool opj_jp2_encode(opj_jp2_t *jp2, opj_cio_t *cio, opj_image_t *image, opj_codestream_info_t *cstr_info) {
+opj_bool opj_jp2_encode(opj_jp2_t *jp2, opj_cio_t *cio, opj_image_t *image, opj_codestream_info_t *cstr_info) {
 
 	/* JP2 encoding */
 
@@ -1080,10 +1080,10 @@ bool opj_jp2_encode(opj_jp2_t *jp2, opj_cio_t *cio, opj_image_t *image, opj_code
 
 	if(!jp2_write_jp2c(jp2, cio, image, cstr_info)) {
 		opj_event_msg(jp2->cinfo, EVT_ERROR, "Failed to encode image\n");
-		return false;
+		return OPJ_FALSE;
 	}
 
-	return true;
+	return OPJ_TRUE;
 }
 
 

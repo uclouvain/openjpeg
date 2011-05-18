@@ -443,7 +443,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 					/* next token or bust */
 					token = strtok(NULL, ",");
 				};
-				parameters->jpwl_correct = true;
+				parameters->jpwl_correct = OPJ_TRUE;
 				fprintf(stdout, "JPWL correction capability activated\n");
 				fprintf(stdout, "- expecting %d components\n", parameters->jpwl_exp_comps);
 			}

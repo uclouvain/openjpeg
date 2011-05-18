@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+May 18, 2011
+! [antonin] defined new type "opj_bool", and new constants OPJ_FALSE and OPJ_TRUE, to avoid having to deal with "stdbool.h" (patch from Winfried)
+
 May 16, 2011
 * [antonin] fixed another bug related to the number of packets in a tile-part, not correctly taken into acccount when generating an index file during decoding.
 * [antonin] fixed part of issue 69, when tile-part index is inconsistent with the total number of tile-parts

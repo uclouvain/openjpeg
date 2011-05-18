@@ -454,7 +454,7 @@ static int initialise_4K_poc(opj_poc_t *POC, int numres){
 }
 
 void cinema_parameters(opj_cparameters_t *parameters){
-	parameters->tile_size_on = false;
+	parameters->tile_size_on = OPJ_FALSE;
 	parameters->cp_tdx=1;
 	parameters->cp_tdy=1;
 
@@ -694,11 +694,11 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 				char *s = optarg;
 				if (sscanf(s, "%d,%d,%d,%d,%c", &raw_cp->rawWidth, &raw_cp->rawHeight, &raw_cp->rawComp, &raw_cp->rawBitDepth, &signo) == 5) {
 					if (signo == 's') {
-						raw_cp->rawSigned = true;
+						raw_cp->rawSigned = OPJ_TRUE;
 						fprintf(stdout,"\nRaw file parameters: %d,%d,%d,%d Signed\n", raw_cp->rawWidth, raw_cp->rawHeight, raw_cp->rawComp, raw_cp->rawBitDepth);
 					}
 					else if (signo == 'u') {
-						raw_cp->rawSigned = false;
+						raw_cp->rawSigned = OPJ_FALSE;
 						fprintf(stdout,"\nRaw file parameters: %d,%d,%d,%d Unsigned\n", raw_cp->rawWidth, raw_cp->rawHeight, raw_cp->rawComp, raw_cp->rawBitDepth);
 					}
 					else {
@@ -791,7 +791,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 			case 't':			/* tiles */
 			{
 				sscanf(optarg, "%d,%d", &parameters->cp_tdx, &parameters->cp_tdy);
-				parameters->tile_size_on = true;
+				parameters->tile_size_on = OPJ_TRUE;
 			}
 			break;
 
@@ -1363,7 +1363,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 
 				/* some info */
 				fprintf(stdout, "Info: JPWL capabilities enabled\n");
-				parameters->jpwl_epc_on = true;
+				parameters->jpwl_epc_on = OPJ_TRUE;
 
 			}
 			break;
@@ -1475,7 +1475,7 @@ void info_callback(const char *msg, void *client_data) {
 /* -------------------------------------------------------------------------- */
 
 int main(int argc, char **argv) {
-	bool bSuccess;
+	opj_bool bSuccess;
 	opj_cparameters_t parameters;	/* compression parameters */
 	img_fol_t img_fol;
 	opj_event_mgr_t event_mgr;		/* event manager */

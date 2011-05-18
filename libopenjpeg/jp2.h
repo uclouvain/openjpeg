@@ -167,7 +167,7 @@ Read the JP2H box - JP2 Header box (used in MJ2)
 @param ext Collector for profile, cdef and pclr data
 @return Returns true if successful, returns false otherwise
 */
-bool jp2_read_jp2h(opj_jp2_t *jp2, opj_cio_t *cio, opj_jp2_color_t *color);
+opj_bool jp2_read_jp2h(opj_jp2_t *jp2, opj_cio_t *cio, opj_jp2_color_t *color);
 /**
 Creates a JP2 decompression structure
 @param cinfo Codec context info
@@ -221,7 +221,7 @@ Encode an image into a JPEG-2000 file stream
 @param cstr_info Codestream information structure if required, NULL otherwise
 @return Returns true if successful, returns false otherwise
 */
-bool opj_jp2_encode(opj_jp2_t *jp2, opj_cio_t *cio, opj_image_t *image, opj_codestream_info_t *cstr_info);
+opj_bool opj_jp2_encode(opj_jp2_t *jp2, opj_cio_t *cio, opj_image_t *image, opj_codestream_info_t *cstr_info);
 /* ----------------------------------------------------------------------- */
 /*@}*/
 

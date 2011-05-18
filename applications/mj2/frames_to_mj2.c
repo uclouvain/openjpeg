@@ -249,7 +249,7 @@ int main(int argc, char **argv)
 	FILE *mj2file;
 	int sampleno;  
 	opj_cinfo_t* cinfo;
-	bool bSuccess;
+	opj_bool bSuccess;
 	int numframes;
 	int prec = 8;/* DEFAULT */
 	double total_time = 0;	
@@ -430,7 +430,7 @@ int main(int argc, char **argv)
       /* ----------------------------------------------------- */
     case 't':			/* tiles */
       sscanf(optarg, "%d,%d", &j2k_parameters->cp_tdx, &j2k_parameters->cp_tdy);
-			j2k_parameters->tile_size_on = true;
+			j2k_parameters->tile_size_on = OPJ_TRUE;
       break;
       /* ----------------------------------------------------- */
     case 'n':			/* resolution */
