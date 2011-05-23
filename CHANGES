@@ -5,6 +5,10 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+May 23, 2011
++ [antonin] added autotools as a build method for jpip (credit to Vincent Torri)
+* [antonin] fixed autotools (broken since the new directory structure) (credit to Vincent Torri)
+
 May 18, 2011
 ! [antonin] defined new type "opj_bool", and new constants OPJ_FALSE and OPJ_TRUE, to avoid having to deal with "stdbool.h" (patch from Winfried)
 

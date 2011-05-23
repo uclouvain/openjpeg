@@ -1,24 +1,24 @@
 MAINTAINERCLEANFILES = Makefile.in
 
 OPJ_SRC = \
-../libopenjpeg/bio.c \
-../libopenjpeg/cio.c \
-../libopenjpeg/dwt.c \
-../libopenjpeg/event.c \
-../libopenjpeg/image.c \
-../libopenjpeg/j2k.c \
-../libopenjpeg/j2k_lib.c \
-../libopenjpeg/jp2.c \
-../libopenjpeg/jpt.c \
-../libopenjpeg/mct.c \
-../libopenjpeg/mqc.c \
-../libopenjpeg/openjpeg.c \
-../libopenjpeg/pi.c \
-../libopenjpeg/raw.c \
-../libopenjpeg/t1.c \
-../libopenjpeg/t2.c \
-../libopenjpeg/tcd.c \
-../libopenjpeg/tgt.c
+../../libopenjpeg/bio.c \
+../../libopenjpeg/cio.c \
+../../libopenjpeg/dwt.c \
+../../libopenjpeg/event.c \
+../../libopenjpeg/image.c \
+../../libopenjpeg/j2k.c \
+../../libopenjpeg/j2k_lib.c \
+../../libopenjpeg/jp2.c \
+../../libopenjpeg/jpt.c \
+../../libopenjpeg/mct.c \
+../../libopenjpeg/mqc.c \
+../../libopenjpeg/openjpeg.c \
+../../libopenjpeg/pi.c \
+../../libopenjpeg/raw.c \
+../../libopenjpeg/t1.c \
+../../libopenjpeg/t2.c \
+../../libopenjpeg/tcd.c \
+../../libopenjpeg/tgt.c
 
 bin_PROGRAMS = \
 frames_to_mj2 \
@@ -28,12 +28,10 @@ wrap_j2k_in_mj2
 
 frames_to_mj2_CPPFLAGS = \
 -I. \
--I$(top_srcdir)/common \
--I$(top_builddir)/common \
+-I$(top_srcdir)/applications/common \
+-I$(top_builddir)/applications/common \
 -I$(top_srcdir)/libopenjpeg \
 -I$(top_builddir)/libopenjpeg \
--I$(top_srcdir)/mj2 \
--I$(top_builddir)/mj2 \
 -DOPJ_STATIC
 frames_to_mj2_CFLAGS = 
 frames_to_mj2_LDADD = -lm
@@ -48,12 +46,10 @@ mj2_convert.h
 
 mj2_to_frames_CPPFLAGS = \
 -I. \
--I$(top_srcdir)/common \
--I$(top_builddir)/common \
+-I$(top_srcdir)/applications/common \
+-I$(top_builddir)/applications/common \
 -I$(top_srcdir)/libopenjpeg \
 -I$(top_builddir)/libopenjpeg \
--I$(top_srcdir)/mj2 \
--I$(top_builddir)/mj2 \
 @LCMS2_CFLAGS@ \
 @LCMS1_CFLAGS@ \
 -DOPJ_STATIC
@@ -71,12 +67,10 @@ mj2_convert.h
 
 extract_j2k_from_mj2_CPPFLAGS = \
 -I. \
--I$(top_srcdir)/common \
--I$(top_builddir)/common \
+-I$(top_srcdir)/applications/common \
+-I$(top_builddir)/applications/common \
 -I$(top_srcdir)/libopenjpeg \
 -I$(top_builddir)/libopenjpeg \
--I$(top_srcdir)/mj2 \
--I$(top_builddir)/mj2 \
 -DOPJ_STATIC
 extract_j2k_from_mj2_CFLAGS = 
 extract_j2k_from_mj2_LDADD = -lm
@@ -88,12 +82,10 @@ mj2.h
 
 wrap_j2k_in_mj2_CPPFLAGS = \
 -I. \
--I$(top_srcdir)/common \
--I$(top_builddir)/common \
+-I$(top_srcdir)/applications/common \
+-I$(top_builddir)/applications/common \
 -I$(top_srcdir)/libopenjpeg \
 -I$(top_builddir)/libopenjpeg \
--I$(top_srcdir)/mj2 \
--I$(top_builddir)/mj2 \
 -DOPJ_STATIC
 wrap_j2k_in_mj2_CFLAGS = 
 wrap_j2k_in_mj2_LDADD = -lm

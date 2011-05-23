@@ -1,5 +1,11 @@
 MAINTAINERCLEANFILES = Makefile.in
 
+SUBDIRS = .
+
+if WANT_JPWL
+SUBDIRS += jpwl
+endif
+
 includesdir = $(includedir)/openjpeg-$(MAJOR_NR).$(MINOR_NR)
 includes_HEADERS = openjpeg.h
 
@@ -31,6 +37,7 @@ openjpeg.c \
 pi.c \
 raw.c \
 t1.c \
+t1_generate_luts.c \
 t2.c \
 tcd.c \
 tgt.c \
@@ -47,15 +54,15 @@ jp2.h \
 jpt.h \
 mct.h \
 mqc.h \
+opj_includes.h \
+opj_malloc.h \
 pi.h \
 raw.h \
 t1.h \
 t1_luts.h \
 t2.h \
 tcd.h \
-tgt.h \
-opj_malloc.h \
-opj_includes.h
+tgt.h
 
 EXTRA_DIST = \
 CMakeLists.txt

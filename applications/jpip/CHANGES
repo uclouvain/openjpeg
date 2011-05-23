@@ -5,6 +5,9 @@ What's New for OpenJPIP
 ! : changed
 + : added
 
+May 23, 2011
++ [antonin] added autotools as a build method for jpip (credit to Vincent Torri)
+
 May 10, 2011
 ! [kaori] opj_viewer removed the xml functions (for users without Xersus2)
 + [kaori] renamed opj_viewer  to opj_viewer_xerces ( needs Xersus2)

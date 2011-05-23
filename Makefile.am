@@ -2,21 +2,7 @@ DISTCHECK_CONFIGURE_FLAGS = --enable-jp3d=yes --enable-jpwl=yes --enable-mj2=yes
 
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = libopenjpeg codec
-
-if WANT_JP3D
-SUBDIRS += jp3d
-endif
-
-if WANT_JPWL
-SUBDIRS += jpwl
-endif
-
-if WANT_MJ2
-SUBDIRS += mj2
-endif
-
-SUBDIRS += doc
+SUBDIRS = libopenjpeg applications doc
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libopenjpeg1.pc

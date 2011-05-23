@@ -9,17 +9,9 @@ m4_define([OPJ_MAJOR], [1])
 m4_define([OPJ_MINOR], [4])
 m4_define([OPJ_MICRO], [0])
 
-m4_define([JP3D_MAJOR], [1])
-m4_define([JP3D_MINOR], [3])
-m4_define([JP3D_MICRO], [0])
-
 m4_define([lt_cur], m4_eval(OPJ_MAJOR + OPJ_MINOR))
 m4_define([lt_rev], OPJ_MICRO)
 m4_define([lt_age], OPJ_MINOR)
-
-m4_define([lt_cur_jp3d], m4_eval(JP3D_MAJOR + JP3D_MINOR))
-m4_define([lt_rev_jp3d], JP3D_MICRO)
-m4_define([lt_age_jp3d], JP3D_MINOR)
 
 AC_PREREQ([2.62])
 AC_INIT([OpenJPEG],
@@ -44,21 +36,11 @@ AC_SUBST(MAJOR_NR)
 AC_SUBST(MINOR_NR)
 AC_SUBST(MICRO_NR)
 
-JP3D_MAJOR_NR=JP3D_MAJOR
-JP3D_MINOR_NR=JP3D_MINOR
-JP3D_MICRO_NR=JP3D_MICRO
-AC_SUBST(JP3D_MAJOR_NR)
-AC_SUBST(JP3D_MINOR_NR)
-AC_SUBST(JP3D_MICRO_NR)
-
 LT_PREREQ([2.0])
 LT_INIT([win32-dll])
 
 lt_version=lt_cur:lt_rev:lt_age
 AC_SUBST(lt_version)
-
-lt_version_jp3d=lt_cur_jp3d:lt_rev_jp3d:lt_age_jp3d
-AC_SUBST(lt_version_jp3d)
 
 
 ### Needed information
@@ -140,27 +122,56 @@ fi
 
 AM_CONDITIONAL([WANT_JPWL], [test "x${want_jpwl}" = "xyes"])
 
-# JP3D
+# JPIP
 
-AC_ARG_ENABLE([jp3d],
-   [AC_HELP_STRING([--enable-jp3d], [build jp3d library @<:@default=disabled@:>@])],
+AC_ARG_ENABLE([jpip],
+   [AC_HELP_STRING([--enable-jpip], [build jpip library @<:@default=disabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
-       want_jp3d="yes"
+       want_jpip="yes"
     else
-       want_jp3d="no"
+       want_jpip="no"
     fi
    ],
-   [want_jp3d="no"])
+   [want_jpip="no"])
 
-AC_MSG_CHECKING([whether to build the JP3D library])
-AC_MSG_RESULT([${want_jp3d}])
+AC_MSG_CHECKING([whether to build the JPIP library])
+AC_MSG_RESULT([${want_jpip}])
 
-if test "x${want_jp3d}" = "xyes" ; then
-   AC_DEFINE(USE_JP3D, [1], [define to 1 if you use jp3d])
+if test "x${want_jpip}" = "xyes" ; then
+   AC_DEFINE(USE_JPIP, [1], [define to 1 if you use jpip])
 fi
 
-AM_CONDITIONAL([WANT_JP3D], [test "x${want_jp3d}" = "xyes"])
+# libfcgi
+
+if test "x${want_jpip}" = "xyes" ; then
+   OPJ_CHECK_LIB([/usr],
+      [fcgi_stdio.h],
+      [fcgi],
+      [FCGI_printf],
+      [want_jpip="yes"],
+      [want_jpip="no"])
+fi
+
+if test "x${want_jpip}" = "xno" ; then
+   OPJ_CHECK_LIB([/usr/local],
+      [fcgi_stdio.h],
+      [fcgi],
+      [FCGI_printf],
+      [want_jpip="yes"],
+      [want_jpip="no"])
+fi
+
+if test "x${want_jpip}" = "xno" ; then
+   OPJ_CHECK_LIB([/opt],
+      [fcgi_stdio.h],
+      [fcgi],
+      [FCGI_printf],
+      [want_jpip="yes"],
+      [want_jpip="no"])
+fi
+
+AM_CONDITIONAL([WANT_JPIP], [test "x${want_jpip}" = "xyes"])
 
 
 ### Checks for programs
@@ -269,7 +280,7 @@ fi
 
 AM_CONDITIONAL([with_libpng], [test x${have_libpng} = "xyes"])
 
-#libtiff
+# libtiff
 
 have_libtiff="no"
 
@@ -410,8 +421,6 @@ if test "x${have_lcms2}" = "xno" ; then
 
 fi
 
-
-
 ### Checks for header files
 
 ## FIXME: declarations must be fixed in source code. See autoconf manual
@@ -451,13 +460,16 @@ AC_CONFIG_FILES([
 Makefile
 libopenjpeg1.pc
 libopenjpeg/Makefile
-jpwl/Makefile
-codec/Makefile
-mj2/Makefile
+libopenjpeg/jpwl/Makefile
+applications/Makefile
+applications/codec/Makefile
+applications/mj2/Makefile
+applications/jpip/Makefile
+applications/jpip/libopenjpip/Makefile
+applications/jpip/opj_server/Makefile
+applications/jpip/opj_client/Makefile
+applications/jpip/opj_client/opj_dec_server/Makefile
 doc/Makefile
-jp3d/Makefile
-jp3d/libjp3dvm/Makefile
-jp3d/codec/Makefile
 ])
 
 AC_OUTPUT
@@ -486,5 +498,5 @@ echo "    Build.............: make doc"
 echo
 echo "  mj2.................: ${want_mj2}"
 echo "  jpwl................: ${want_jpwl}"
-echo "  jp3d................: ${want_jp3d}"
+echo "  jpip................: ${want_jpip}"
 echo
