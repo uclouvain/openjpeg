@@ -6,6 +6,7 @@ What's New for OpenJPIP
 + : added
 
 May 23, 2011
++ [antonin] added autotools for the 'tools' directory
 + [antonin] added autotools as a build method for jpip (credit to Vincent Torri)
 
 May 10, 2011

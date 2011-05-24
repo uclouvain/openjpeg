@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 May 23, 2011
+* [antonin] fixed a bug in autotools that prevented "make distcheck" to work properly (credit to Vincent Torri)
 + [antonin] added autotools as a build method for jpip (credit to Vincent Torri)
 * [antonin] fixed autotools (broken since the new directory structure) (credit to Vincent Torri)
 
