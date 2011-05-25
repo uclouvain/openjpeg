@@ -53,7 +53,7 @@ Neither the author, nor the university accept any responsibility for any kind of
 <Optional>
  - Xerces2 java XML parser on the client for accessing embedded image metadata (http://xerces.apache.org/xerces2-j)
 
-We tested this software with a virtual server running on the same Linux machine as the clients. Currently, it works only on linux or macosx platforms, windows version should come later.
+We tested this software with a virtual server running on the same Linux machine as the clients.
 
 ----------
 4. Building instructions
@@ -109,6 +109,7 @@ Client:
       Scale up request: Enlarge the window
       ROI request:      Select a region by mouse click and drag, then click inside the red frame of the selected region
     <If Xerces2 is installed>
+    % java -jar opj_viewer_xerces.jar http://hostname/myFCGI JP2_filename.jp2
       Annotate image with ROI information in XML metadata: Click button "Region Of Interest"
       Open a new window presenting an aligned image with a locally stored image: Click button "Image Registration" (Under Construction)
 

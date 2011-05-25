@@ -64,14 +64,28 @@
  *
  * 
  * \section sysarchtect System Architecture
- * JPIP protocol is implimented between the server program opj_server and the client java program opj_viewer.\n
- * The opj_server parses JPIP requests and sends corresponding JPT-stream.
- * The opj_viewer is an image viewer with GUI to publish JPIP requests and receive JPT-stream.\n
- * JPT-stream is unreadable for the opj_viewer by itself, and the local server program opj_dec_server handles the decoding and caching of JPT-stream.\n
- * Typical requests and replies among JPIP server (opj_server), JPIP client (opj_viewer), and Image decoding Server (opj_dec_server) is presented below.\n
- * The JPIP client requests the JPIP server JPT-stream, which is directly sent to the Image decoding Server, and which provides the image in PGM or PPM format to the JPIP client.\n
- * JPIP client can read PGM and PPM images natively.\n
- * Before connecting to the JPIP server, the JPIP client checks local cache data of the requesting image with the image decoding server.
+ * JPIP protocol is implimented between the JPIP server program (opj_server) and the JPIP client java program (opj_viewer).\n
+ * Figure below represents the overview of our system architecture.\n
+ * The JPIP server parses JPIP query and sends corresponding JPT-stream.
+ * The JPIP client viewer is an image viewer with GUI to publish JPIP requests and receive JPT-stream.\n
+ * Particularly, our system has the image decoding module implemented on a server (opj_dec_server, Image decoding Server). 
+ * Image decoding Server and JPIP client viewer communicate closely. 
+ * This specific architecture enables sharing cache of image codestream data among all viewers connected to the same Image decoding Server not only locally but also remotely.
+ *
+ *  \image html jpip_architect.png "OpenJPIP system architecture"
+ *
+ * JPIP server follows up the client cache during a session. \n
+ * Concretely, the JPIP server models cache in each session, to which Channel IDs are associated. 
+ * A Channel ID identifies a JPIP client viewer. 
+ * And, new viewers can belong to a session by referring to one of its channel ID.
+ * The Image decoding Server maintains the association between channel IDs and targets, and provides a reference channel ID to a Viewer on demand.\n
+ * 
+ * Typical requests and replies among JPIP server, JPIP client, and Image decoding server is presented below.\n
+ * The JPIP server parses HTTP query and sends corresponding JPT-stream back to the JPIP client (Viewer).
+ * JPT-stream is unreadable by JPIP client, and it is directly passed to Image decoding Server, and which provides the image in raw format (PGM or PPM) to the JPIP client.
+ * The Image decoding Server handles the decoding and caching of JPT-stream.
+ * JPIP client can read PGM and PPM images natively.
+ * Before connecting to the JPIP server, every JPIP client checks local cache data of the requesting image with the image decoding server.
  * If its cache exists, the image decoding server provides ChannelID (CID), which identifies the image and its cache model on the JPIP server, and the whole system can continue the session using the CID.
  *
  *  \image html jpip_protocol.png "Message Sequence Chart of OpenJPIP impementation"
