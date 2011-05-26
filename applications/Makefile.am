@@ -12,8 +12,8 @@ endif
 
 EXTRA_DIST = \
 CMakeLists.txt \
-color.c \
-color.h \
-format_defs.h \
-getopt.c \
-getopt.h
+common/color.c \
+common/color.h \
+common/format_defs.h \
+common/getopt.c \
+common/getopt.h

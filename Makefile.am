@@ -23,29 +23,14 @@ missing
 
 EXTRA_DIST = \
 CMake/CheckHaveGetopt.cmake \
-CMake/CTestCustom.cmake.in \
 CMake/OpenJPEGConfig.cmake.in \
+testing/CTestCustom.cmake.in \
+testing/CTestConfig.cmake \
 CMakeLists.txt \
-CTestConfig.cmake \
-CTestCustom.cmake.in \
-CMakeLists.txt \
-JavaOpenJPEG/java-jni/include/jawt.h \
-JavaOpenJPEG/java-jni/include/jdwpTransport.h \
-JavaOpenJPEG/java-jni/include/jni.h \
-JavaOpenJPEG/java-jni/include/jvmdi.h \
-JavaOpenJPEG/java-jni/include/jvmpi.h \
-JavaOpenJPEG/java-jni/include/jvmti.h \
-JavaOpenJPEG/java-jni/include/win32/jawt_md.h \
-JavaOpenJPEG/java-jni/include/win32/jni_md.h \
-JavaOpenJPEG/java-jni/lib/jvm.lib \
-JavaOpenJPEG/JavaOpenJPEG.c \
-JavaOpenJPEG/JavaOpenJPEGDecoder.c \
-JavaOpenJPEG/java-sources/org/openJpeg/OpenJPEGJavaDecoder.java \
-JavaOpenJPEG/java-sources/org/openJpeg/OpenJPEGJavaEncoder.java \
-JavaOpenJPEG/org_openJpeg_OpenJPEGJavaDecoder.h \
-JavaOpenJPEG/org_openJpeg_OpenJPEGJavaEncoder.h \
 LICENSE \
 CHANGES \
+README \
+INSTALL \
 bootstrap.sh \
 libopenjpeg1.pc.cmake \
 libopenjpeg1.pc.in \
