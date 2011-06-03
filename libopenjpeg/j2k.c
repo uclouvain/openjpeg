@@ -1282,7 +1282,7 @@ static void j2k_read_sot(opj_j2k_t *j2k) {
 	numparts = cio_read(cio, 1);
   
   if (partno >= numparts) {
-    opj_event_msg(j2k->cinfo, EVT_WARNING, "SOT marker inconsistency in tile %d: tile-part index greater than number of tile-parts\n", tileno);
+    opj_event_msg(j2k->cinfo, EVT_WARNING, "SOT marker inconsistency in tile %d: tile-part index greater (%d) than number of tile-parts (%d)\n", tileno, partno, numparts);
     numparts = partno+1;
   }
 	
