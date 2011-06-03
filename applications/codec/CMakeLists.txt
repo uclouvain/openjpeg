@@ -37,7 +37,11 @@ ENDIF(WIN32)
 FOREACH(exe j2k_to_image image_to_j2k j2k_dump)
   ADD_EXECUTABLE(${exe} ${exe}.c ${common_SRCS})
   TARGET_LINK_LIBRARIES(${exe} ${OPENJPEG_LIBRARY_NAME} 
-	${LCMS_LIBNAME} ${Z_LIBNAME} ${PNG_LIBNAME} ${TIFF_LIBNAME})
+${Z_LIBNAME} ${PNG_LIBNAME} ${TIFF_LIBNAME})
+
+  IF(LCMS_FOUND OR LCMS2_FOUND)
+    TARGET_LINK_LIBRARIES(${exe} ${LCMS_LIBNAME})
+  ENDIF(LCMS_FOUND OR LCMS2_FOUND)
 
   ADD_TEST(${exe} ${EXECUTABLE_OUTPUT_PATH}/${exe})
   # calling those exe without option will make them fail always:

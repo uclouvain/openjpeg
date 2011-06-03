@@ -7,6 +7,7 @@ What's New for OpenJPEG
 
 June 3, 2011
 + [malaterre] adding partno and numpart info as part of the warning message (issue #69)
++ [malaterre] make sure that cmake build system works on debian
 
 May 23, 2011
 * [antonin] fixed a bug in autotools that prevented "make distcheck" to work properly (credit to Vincent Torri)
