@@ -206,7 +206,7 @@ bool parse_JPIPrequest( query_param_t query_param,
     if( !close_channel( query_param, sessionlist, &cursession, &curchannel))
       return false;
   
-  if( (query_param.fx > 0 && query_param.fx > 0) || query_param.box_type[0][0] != 0)
+  if( (query_param.fx > 0 && query_param.fy > 0) || query_param.box_type[0][0] != 0)
     if( !gene_JPTstream( query_param, cursession, curchannel, msgqueue))
       return false;
       
@@ -360,7 +360,7 @@ bool gene_JPTstream( query_param_t query_param,
     enqueue_metabins( query_param, codeidx->metadatalist, *msgqueue); 
 
   // image code
-  if( query_param.fx > 0 && query_param.fx > 0){
+  if( query_param.fx > 0 && query_param.fy > 0){
     if( !codeidx->mhead_model)
       enqueue_mainheader( *msgqueue);
     enqueue_tiles( query_param, codeidx, *msgqueue);
