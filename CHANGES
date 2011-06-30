@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+June 30, 2011
+! [antonin] fixed CTest configuration files
+
 June 3, 2011
 + [malaterre] adding partno and numpart info as part of the warning message (issue #69)
 + [malaterre] make sure that cmake build system works on debian

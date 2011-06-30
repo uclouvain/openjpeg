@@ -111,8 +111,8 @@ INCLUDE (${OPENJPEG_SOURCE_DIR}/CMake/CheckHaveGetopt.cmake )
 #-----------------------------------------------------------------------------
 # Setup file for setting custom ctest vars
 CONFIGURE_FILE(
-  ${CMAKE_SOURCE_DIR}/testing/CTestCustom.cmake.in
-  ${CMAKE_BINARY_DIR}/testing/CTestCustom.cmake
+  ${CMAKE_SOURCE_DIR}/CMake/CTestCustom.cmake.in
+  ${CMAKE_BINARY_DIR}/CTestCustom.cmake
   @ONLY
   )
 
@@ -202,6 +202,14 @@ CONFIGURE_FILE("${OPENJPEG_SOURCE_DIR}/opj_configh.cmake.in"
  )
 
 #-----------------------------------------------------------------------------
+# CDash+CMake : to be updated
+OPTION(BUILD_TESTING "Build the tests." OFF)
+IF(BUILD_TESTING)
+  ENABLE_TESTING()
+  INCLUDE(CTest)
+ENDIF(BUILD_TESTING)
+
+#-----------------------------------------------------------------------------
 # Build Library
 INCLUDE_DIRECTORIES(BEFORE ${OPENJPEG_BINARY_DIR})
 ADD_SUBDIRECTORY(libopenjpeg)
@@ -221,21 +229,18 @@ OPTION(BUILD_JPWL "Build the JPWL library and executables" OFF)
 ADD_SUBDIRECTORY(doc)
 
 #-----------------------------------------------------------------------------
-# CDash+CMake : to be updated
-OPTION(BUILD_TESTING "Build the tests." OFF)
+# Tests data
 IF(BUILD_TESTING)
-  ENABLE_TESTING()
-  INCLUDE(CTest)
-ENDIF(BUILD_TESTING)
 # Adding test with dataset from:
-# http://www.crc.ricoh.com/~gormish/jpeg2000conformance/
-# -> wget http://www.crc.ricoh.com/~gormish/jpeg2000conformance/j2kp4files_v1_5.zip
+# http://www.openjpeg.org/conformance/j2kp4files_v1_5.zip
+# -> wget http://www.openjpeg.org/conformance/j2kp4files_v1_5.zip
 # http://www.jpeg.org/jpeg2000guide/testimages/testimages.html
 # Adding JPEG2000_CONFORMANCE_DATA_ROOT
 FIND_PATH(JPEG2000_CONFORMANCE_DATA_ROOT testimages.html
   ${OPENJPEG_SOURCE_DIR}/../jpeg2000testimages
   $ENV{JPEG2000_CONFORMANCE_DATA_ROOT}
 )
+ENDIF(BUILD_TESTING)
 
 #-----------------------------------------------------------------------------
 # install all targets referenced as OPENJPEGTargets
