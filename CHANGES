@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+July 3, 2011
+* [antonin] fixed handling of "jp2->meth" value (Restricted ICC profile handling currently not implemented)
+
 June 30, 2011
 ! [antonin] fixed CTest configuration files
 

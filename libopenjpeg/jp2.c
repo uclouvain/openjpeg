@@ -281,11 +281,10 @@ static void jp2_write_colr(opj_jp2_t *jp2, opj_cio_t *cio) {
 	cio_write(cio, jp2->precedence, 1);	/* PRECEDENCE */
 	cio_write(cio, jp2->approx, 1);		/* APPROX */
 
-	if (jp2->meth == 1) {
-		cio_write(cio, jp2->enumcs, 4);	/* EnumCS */
-	} else {
-		cio_write(cio, 0, 1);			/* PROFILE (??) */
-	}
+	if(jp2->meth == 2)
+	 jp2->enumcs = 0;
+
+	cio_write(cio, jp2->enumcs, 4);	/* EnumCS */
 
 	box.length = cio_tell(cio) - box.init_pos;
 	cio_seek(cio, box.init_pos);
@@ -557,7 +556,8 @@ static opj_bool jp2_read_colr(opj_jp2_t *jp2, opj_cio_t *cio,
    {
 	jp2->enumcs = cio_read(cio, 4);	/* EnumCS */
    } 
-	else 
+	else
+	if (jp2->meth == 2) 
    {
 /* skip PROFILE */
 	skip_len = box->init_pos + box->length - cio_tell(cio);
@@ -1042,24 +1042,13 @@ void jp2_setup_encoder(opj_jp2_t *jp2, opj_cparameters_t *parameters, opj_image_
 	for (i = 0; i < image->numcomps; i++) {
 		jp2->comps[i].bpcc = image->comps[i].prec - 1 + (image->comps[i].sgnd << 7);
 	}
-
-	/* Colour Specification box */
-
-	if ((image->numcomps == 1 || image->numcomps == 3) && (jp2->bpc != 255)) {
-		jp2->meth = 1;	/* METH: Enumerated colourspace */
-	} else {
-		jp2->meth = 2;	/* METH: Restricted ICC profile */
-	}
-	if (jp2->meth == 1) {
-		if (image->color_space == 1)
-			jp2->enumcs = 16;	/* sRGB as defined by IEC 61966-2.1 */
-		else if (image->color_space == 2)
-			jp2->enumcs = 17;	/* greyscale */
-		else if (image->color_space == 3)
-			jp2->enumcs = 18;	/* YUV */
-	} else {
-		jp2->enumcs = 0;		/* PROFILE (??) */
-	}
+	jp2->meth = 1;
+	if (image->color_space == 1)
+		jp2->enumcs = 16;	/* sRGB as defined by IEC 61966-2.1 */
+	else if (image->color_space == 2)
+		jp2->enumcs = 17;	/* greyscale */
+	else if (image->color_space == 3)
+		jp2->enumcs = 18;	/* YUV */
 	jp2->precedence = 0;	/* PRECEDENCE */
 	jp2->approx = 0;		/* APPROX */
 

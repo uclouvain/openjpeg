@@ -289,6 +289,9 @@ void color_apply_icc_profile(opj_image_t *image)
 
 	in_prof = 
 	 cmsOpenProfileFromMem(image->icc_profile_buf, image->icc_profile_len);
+
+	if(in_prof == NULL) return;
+
 	in_space = cmsGetPCS(in_prof);
 	out_space = cmsGetColorSpace(in_prof);
 	intent = cmsGetHeaderRenderingIntent(in_prof);
