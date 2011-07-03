@@ -390,7 +390,8 @@ typedef struct {
   DWORD biClrImportant;		/* Number of important color (0: ALL) */
 } BITMAPINFOHEADER_t;
 
-opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters) {
+opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters) 
+{
 	int subsampling_dx = parameters->subsampling_dx;
 	int subsampling_dy = parameters->subsampling_dy;
 
@@ -408,354 +409,435 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters) {
 
 	int x, y, index;
 	int gray_scale = 1, not_end_file = 1; 
-
+	int has_color;
 	unsigned int line = 0, col = 0;
 	unsigned char v, v2;
 	DWORD W, H;
   
 	IN = fopen(filename, "rb");
-	if (!IN) {
-		fprintf(stderr, "Failed to open %s for reading !!\n", filename);
-		return 0;
-	}
+	if (!IN) 
+   {
+	fprintf(stderr, "Failed to open %s for reading !!\n", filename);
+	return NULL;
+   }
 	
 	File_h.bfType = getc(IN);
 	File_h.bfType = (getc(IN) << 8) + File_h.bfType;
 	
-	if (File_h.bfType != 19778) {
-		fprintf(stderr,"Error, not a BMP file!\n");
-		return 0;
-	} else {
+	if (File_h.bfType != 19778) 
+   {
+	fprintf(stderr,"Error, not a BMP file!\n");
+	fclose(IN);
+	return NULL;
+   }
 		/* FILE HEADER */
 		/* ------------- */
-		File_h.bfSize = getc(IN);
-		File_h.bfSize = (getc(IN) << 8) + File_h.bfSize;
-		File_h.bfSize = (getc(IN) << 16) + File_h.bfSize;
-		File_h.bfSize = (getc(IN) << 24) + File_h.bfSize;
+	File_h.bfSize = getc(IN);
+	File_h.bfSize = (getc(IN) << 8) + File_h.bfSize;
+	File_h.bfSize = (getc(IN) << 16) + File_h.bfSize;
+	File_h.bfSize = (getc(IN) << 24) + File_h.bfSize;
 
-		File_h.bfReserved1 = getc(IN);
-		File_h.bfReserved1 = (getc(IN) << 8) + File_h.bfReserved1;
+	File_h.bfReserved1 = getc(IN);
+	File_h.bfReserved1 = (getc(IN) << 8) + File_h.bfReserved1;
 
-		File_h.bfReserved2 = getc(IN);
-		File_h.bfReserved2 = (getc(IN) << 8) + File_h.bfReserved2;
+	File_h.bfReserved2 = getc(IN);
+	File_h.bfReserved2 = (getc(IN) << 8) + File_h.bfReserved2;
 
-		File_h.bfOffBits = getc(IN);
-		File_h.bfOffBits = (getc(IN) << 8) + File_h.bfOffBits;
-		File_h.bfOffBits = (getc(IN) << 16) + File_h.bfOffBits;
-		File_h.bfOffBits = (getc(IN) << 24) + File_h.bfOffBits;
+	File_h.bfOffBits = getc(IN);
+	File_h.bfOffBits = (getc(IN) << 8) + File_h.bfOffBits;
+	File_h.bfOffBits = (getc(IN) << 16) + File_h.bfOffBits;
+	File_h.bfOffBits = (getc(IN) << 24) + File_h.bfOffBits;
 
 		/* INFO HEADER */
 		/* ------------- */
 
-		Info_h.biSize = getc(IN);
-		Info_h.biSize = (getc(IN) << 8) + Info_h.biSize;
-		Info_h.biSize = (getc(IN) << 16) + Info_h.biSize;
-		Info_h.biSize = (getc(IN) << 24) + Info_h.biSize;
+	Info_h.biSize = getc(IN);
+	Info_h.biSize = (getc(IN) << 8) + Info_h.biSize;
+	Info_h.biSize = (getc(IN) << 16) + Info_h.biSize;
+	Info_h.biSize = (getc(IN) << 24) + Info_h.biSize;
 
-		Info_h.biWidth = getc(IN);
-		Info_h.biWidth = (getc(IN) << 8) + Info_h.biWidth;
-		Info_h.biWidth = (getc(IN) << 16) + Info_h.biWidth;
-		Info_h.biWidth = (getc(IN) << 24) + Info_h.biWidth;
-		w = Info_h.biWidth;
+	if(Info_h.biSize != 40)
+   {
+	fprintf(stderr,"Error, unknown BMP header size %d\n", Info_h.biSize);
+	fclose(IN);
+	return NULL;
+   }
+	Info_h.biWidth = getc(IN);
+	Info_h.biWidth = (getc(IN) << 8) + Info_h.biWidth;
+	Info_h.biWidth = (getc(IN) << 16) + Info_h.biWidth;
+	Info_h.biWidth = (getc(IN) << 24) + Info_h.biWidth;
+	w = Info_h.biWidth;
 
-		Info_h.biHeight = getc(IN);
-		Info_h.biHeight = (getc(IN) << 8) + Info_h.biHeight;
-		Info_h.biHeight = (getc(IN) << 16) + Info_h.biHeight;
-		Info_h.biHeight = (getc(IN) << 24) + Info_h.biHeight;
-		h = Info_h.biHeight;
+	Info_h.biHeight = getc(IN);
+	Info_h.biHeight = (getc(IN) << 8) + Info_h.biHeight;
+	Info_h.biHeight = (getc(IN) << 16) + Info_h.biHeight;
+	Info_h.biHeight = (getc(IN) << 24) + Info_h.biHeight;
+	h = Info_h.biHeight;
 
-		Info_h.biPlanes = getc(IN);
-		Info_h.biPlanes = (getc(IN) << 8) + Info_h.biPlanes;
+	Info_h.biPlanes = getc(IN);
+	Info_h.biPlanes = (getc(IN) << 8) + Info_h.biPlanes;
 
-		Info_h.biBitCount = getc(IN);
-		Info_h.biBitCount = (getc(IN) << 8) + Info_h.biBitCount;
+	Info_h.biBitCount = getc(IN);
+	Info_h.biBitCount = (getc(IN) << 8) + Info_h.biBitCount;
 
-		Info_h.biCompression = getc(IN);
-		Info_h.biCompression = (getc(IN) << 8) + Info_h.biCompression;
-		Info_h.biCompression = (getc(IN) << 16) + Info_h.biCompression;
-		Info_h.biCompression = (getc(IN) << 24) + Info_h.biCompression;
+	Info_h.biCompression = getc(IN);
+	Info_h.biCompression = (getc(IN) << 8) + Info_h.biCompression;
+	Info_h.biCompression = (getc(IN) << 16) + Info_h.biCompression;
+	Info_h.biCompression = (getc(IN) << 24) + Info_h.biCompression;
 
-		Info_h.biSizeImage = getc(IN);
-		Info_h.biSizeImage = (getc(IN) << 8) + Info_h.biSizeImage;
-		Info_h.biSizeImage = (getc(IN) << 16) + Info_h.biSizeImage;
-		Info_h.biSizeImage = (getc(IN) << 24) + Info_h.biSizeImage;
+	Info_h.biSizeImage = getc(IN);
+	Info_h.biSizeImage = (getc(IN) << 8) + Info_h.biSizeImage;
+	Info_h.biSizeImage = (getc(IN) << 16) + Info_h.biSizeImage;
+	Info_h.biSizeImage = (getc(IN) << 24) + Info_h.biSizeImage;
 
-		Info_h.biXpelsPerMeter = getc(IN);
-		Info_h.biXpelsPerMeter = (getc(IN) << 8) + Info_h.biXpelsPerMeter;
-		Info_h.biXpelsPerMeter = (getc(IN) << 16) + Info_h.biXpelsPerMeter;
-		Info_h.biXpelsPerMeter = (getc(IN) << 24) + Info_h.biXpelsPerMeter;
+	Info_h.biXpelsPerMeter = getc(IN);
+	Info_h.biXpelsPerMeter = (getc(IN) << 8) + Info_h.biXpelsPerMeter;
+	Info_h.biXpelsPerMeter = (getc(IN) << 16) + Info_h.biXpelsPerMeter;
+	Info_h.biXpelsPerMeter = (getc(IN) << 24) + Info_h.biXpelsPerMeter;
 
-		Info_h.biYpelsPerMeter = getc(IN);
-		Info_h.biYpelsPerMeter = (getc(IN) << 8) + Info_h.biYpelsPerMeter;
-		Info_h.biYpelsPerMeter = (getc(IN) << 16) + Info_h.biYpelsPerMeter;
-		Info_h.biYpelsPerMeter = (getc(IN) << 24) + Info_h.biYpelsPerMeter;
+	Info_h.biYpelsPerMeter = getc(IN);
+	Info_h.biYpelsPerMeter = (getc(IN) << 8) + Info_h.biYpelsPerMeter;
+	Info_h.biYpelsPerMeter = (getc(IN) << 16) + Info_h.biYpelsPerMeter;
+	Info_h.biYpelsPerMeter = (getc(IN) << 24) + Info_h.biYpelsPerMeter;
 
-		Info_h.biClrUsed = getc(IN);
-		Info_h.biClrUsed = (getc(IN) << 8) + Info_h.biClrUsed;
-		Info_h.biClrUsed = (getc(IN) << 16) + Info_h.biClrUsed;
-		Info_h.biClrUsed = (getc(IN) << 24) + Info_h.biClrUsed;
+	Info_h.biClrUsed = getc(IN);
+	Info_h.biClrUsed = (getc(IN) << 8) + Info_h.biClrUsed;
+	Info_h.biClrUsed = (getc(IN) << 16) + Info_h.biClrUsed;
+	Info_h.biClrUsed = (getc(IN) << 24) + Info_h.biClrUsed;
 
-		Info_h.biClrImportant = getc(IN);
-		Info_h.biClrImportant = (getc(IN) << 8) + Info_h.biClrImportant;
-		Info_h.biClrImportant = (getc(IN) << 16) + Info_h.biClrImportant;
-		Info_h.biClrImportant = (getc(IN) << 24) + Info_h.biClrImportant;
+	Info_h.biClrImportant = getc(IN);
+	Info_h.biClrImportant = (getc(IN) << 8) + Info_h.biClrImportant;
+	Info_h.biClrImportant = (getc(IN) << 16) + Info_h.biClrImportant;
+	Info_h.biClrImportant = (getc(IN) << 24) + Info_h.biClrImportant;
 
 		/* Read the data and store them in the OUT file */
-    
-		if (Info_h.biBitCount == 24) {
-			numcomps = 3;
-			color_space = CLRSPC_SRGB;
-			/* initialize image components */
-			memset(&cmptparm[0], 0, 3 * sizeof(opj_image_cmptparm_t));
-			for(i = 0; i < numcomps; i++) {
-				cmptparm[i].prec = 8;
-				cmptparm[i].bpp = 8;
-				cmptparm[i].sgnd = 0;
-				cmptparm[i].dx = subsampling_dx;
-				cmptparm[i].dy = subsampling_dy;
-				cmptparm[i].w = w;
-				cmptparm[i].h = h;
-			}
-			/* create the image */
-			image = opj_image_create(numcomps, &cmptparm[0], color_space);
-			if(!image) {
-				fclose(IN);
-				return NULL;
-			}
 
-			/* set image offset and reference grid */
-			image->x0 = parameters->image_offset_x0;
-			image->y0 = parameters->image_offset_y0;
-			image->x1 =	!image->x0 ? (w - 1) * subsampling_dx + 1 : image->x0 + (w - 1) * subsampling_dx + 1;
-			image->y1 =	!image->y0 ? (h - 1) * subsampling_dy + 1 : image->y0 + (h - 1) * subsampling_dy + 1;
-
-			/* set image data */
-
-			/* Place the cursor at the beginning of the image information */
-			fseek(IN, 0, SEEK_SET);
-			fseek(IN, File_h.bfOffBits, SEEK_SET);
-			
-			W = Info_h.biWidth;
-			H = Info_h.biHeight;
-
-			/* PAD = 4 - (3 * W) % 4; */
-			/* PAD = (PAD == 4) ? 0 : PAD; */
-			PAD = (3 * W) % 4 ? 4 - (3 * W) % 4 : 0;
-			
-			RGB = (unsigned char *) malloc((3 * W + PAD) * H * sizeof(unsigned char));
-			
-			fread(RGB, sizeof(unsigned char), (3 * W + PAD) * H, IN);
-			
-			index = 0;
-
-			for(y = 0; y < (int)H; y++) {
-				unsigned char *scanline = RGB + (3 * W + PAD) * (H - 1 - y);
-				for(x = 0; x < (int)W; x++) {
-					unsigned char *pixel = &scanline[3 * x];
-					image->comps[0].data[index] = pixel[2];	/* R */
-					image->comps[1].data[index] = pixel[1];	/* G */
-					image->comps[2].data[index] = pixel[0];	/* B */
-					index++;
-				}
-			}
-
-			free(RGB);
-
-		} else if (Info_h.biBitCount == 8 && Info_h.biCompression == 0) {
-			table_R = (unsigned char *) malloc(256 * sizeof(unsigned char));
-			table_G = (unsigned char *) malloc(256 * sizeof(unsigned char));
-			table_B = (unsigned char *) malloc(256 * sizeof(unsigned char));
-			
-			for (j = 0; j < Info_h.biClrUsed; j++) {
-				table_B[j] = getc(IN);
-				table_G[j] = getc(IN);
-				table_R[j] = getc(IN);
-				getc(IN);
-				if (table_R[j] != table_G[j] && table_R[j] != table_B[j] && table_G[j] != table_B[j])
-					gray_scale = 0;
-			}
-			
-			/* Place the cursor at the beginning of the image information */
-			fseek(IN, 0, SEEK_SET);
-			fseek(IN, File_h.bfOffBits, SEEK_SET);
-			
-			W = Info_h.biWidth;
-			H = Info_h.biHeight;
-			if (Info_h.biWidth % 2)
-				W++;
-			
-			numcomps = gray_scale ? 1 : 3;
-			color_space = gray_scale ? CLRSPC_GRAY : CLRSPC_SRGB;
-			/* initialize image components */
-			memset(&cmptparm[0], 0, 3 * sizeof(opj_image_cmptparm_t));
-			for(i = 0; i < numcomps; i++) {
-				cmptparm[i].prec = 8;
-				cmptparm[i].bpp = 8;
-				cmptparm[i].sgnd = 0;
-				cmptparm[i].dx = subsampling_dx;
-				cmptparm[i].dy = subsampling_dy;
-				cmptparm[i].w = w;
-				cmptparm[i].h = h;
-			}
-			/* create the image */
-			image = opj_image_create(numcomps, &cmptparm[0], color_space);
-			if(!image) {
-				fclose(IN);
-				return NULL;
-			}
-
-			/* set image offset and reference grid */
-			image->x0 = parameters->image_offset_x0;
-			image->y0 = parameters->image_offset_y0;
-			image->x1 =	!image->x0 ? (w - 1) * subsampling_dx + 1 : image->x0 + (w - 1) * subsampling_dx + 1;
-			image->y1 =	!image->y0 ? (h - 1) * subsampling_dy + 1 : image->y0 + (h - 1) * subsampling_dy + 1;
-
-			/* set image data */
-
-			RGB = (unsigned char *) malloc(W * H * sizeof(unsigned char));
-			
-			fread(RGB, sizeof(unsigned char), W * H, IN);
-			if (gray_scale) {
-				index = 0;
-				for (j = 0; j < W * H; j++) {
-					if ((j % W < W - 1 && Info_h.biWidth % 2) || !(Info_h.biWidth % 2)) {
-						image->comps[0].data[index] = table_R[RGB[W * H - ((j) / (W) + 1) * W + (j) % (W)]];
-						index++;
-					}
-				}
-
-			} else {		
-				index = 0;
-				for (j = 0; j < W * H; j++) {
-					if ((j % W < W - 1 && Info_h.biWidth % 2) || !(Info_h.biWidth % 2)) {
-						unsigned char pixel_index = RGB[W * H - ((j) / (W) + 1) * W + (j) % (W)];
-						image->comps[0].data[index] = table_R[pixel_index];
-						image->comps[1].data[index] = table_G[pixel_index];
-						image->comps[2].data[index] = table_B[pixel_index];
-						index++;
-					}
-				}
-			}
-			free(RGB);
-      free(table_R);
-      free(table_G);
-      free(table_B);
-		} else if (Info_h.biBitCount == 8 && Info_h.biCompression == 1) {				
-			table_R = (unsigned char *) malloc(256 * sizeof(unsigned char));
-			table_G = (unsigned char *) malloc(256 * sizeof(unsigned char));
-			table_B = (unsigned char *) malloc(256 * sizeof(unsigned char));
-			
-			for (j = 0; j < Info_h.biClrUsed; j++) {
-				table_B[j] = getc(IN);
-				table_G[j] = getc(IN);
-				table_R[j] = getc(IN);
-				getc(IN);
-				if (table_R[j] != table_G[j] && table_R[j] != table_B[j] && table_G[j] != table_B[j])
-					gray_scale = 0;
-			}
-
-			numcomps = gray_scale ? 1 : 3;
-			color_space = gray_scale ? CLRSPC_GRAY : CLRSPC_SRGB;
-			/* initialize image components */
-			memset(&cmptparm[0], 0, 3 * sizeof(opj_image_cmptparm_t));
-			for(i = 0; i < numcomps; i++) {
-				cmptparm[i].prec = 8;
-				cmptparm[i].bpp = 8;
-				cmptparm[i].sgnd = 0;
-				cmptparm[i].dx = subsampling_dx;
-				cmptparm[i].dy = subsampling_dy;
-				cmptparm[i].w = w;
-				cmptparm[i].h = h;
-			}
-			/* create the image */
-			image = opj_image_create(numcomps, &cmptparm[0], color_space);
-			if(!image) {
-				fclose(IN);
-				return NULL;
-			}
-
-			/* set image offset and reference grid */
-			image->x0 = parameters->image_offset_x0;
-			image->y0 = parameters->image_offset_y0;
-			image->x1 =	!image->x0 ? (w - 1) * subsampling_dx + 1 : image->x0 + (w - 1) * subsampling_dx + 1;
-			image->y1 =	!image->y0 ? (h - 1) * subsampling_dy + 1 : image->y0 + (h - 1) * subsampling_dy + 1;
-
-			/* set image data */
-			
-			/* Place the cursor at the beginning of the image information */
-			fseek(IN, 0, SEEK_SET);
-			fseek(IN, File_h.bfOffBits, SEEK_SET);
-			
-			RGB = (unsigned char *) malloc(Info_h.biWidth * Info_h.biHeight * sizeof(unsigned char));
-            
-			while (not_end_file) {
-				v = getc(IN);
-				if (v) {
-					v2 = getc(IN);
-					for (i = 0; i < (int) v; i++) {
-						RGB[line * Info_h.biWidth + col] = v2;
-						col++;
-					}
-				} else {
-					v = getc(IN);
-					switch (v) {
-						case 0:
-							col = 0;
-							line++;
-							break;
-						case 1:
-							line++;
-							not_end_file = 0;
-							break;
-						case 2:
-							fprintf(stderr,"No Delta supported\n");
-							opj_image_destroy(image);
-							fclose(IN);
-							return NULL;
-						default:
-							for (i = 0; i < v; i++) {
-								v2 = getc(IN);
-								RGB[line * Info_h.biWidth + col] = v2;
-								col++;
-							}
-							if (v % 2)
-								v2 = getc(IN);
-							break;
-					}
-				}
-			}
-			if (gray_scale) {
-				index = 0;
-				for (line = 0; line < Info_h.biHeight; line++) {
-					for (col = 0; col < Info_h.biWidth; col++) {
-						image->comps[0].data[index] = table_R[(int)RGB[(Info_h.biHeight - line - 1) * Info_h.biWidth + col]];
-						index++;
-					}
-				}
-			} else {
-				index = 0;
-				for (line = 0; line < Info_h.biHeight; line++) {
-					for (col = 0; col < Info_h.biWidth; col++) {
-						unsigned char pixel_index = (int)RGB[(Info_h.biHeight - line - 1) * Info_h.biWidth + col];
-						image->comps[0].data[index] = table_R[pixel_index];
-						image->comps[1].data[index] = table_G[pixel_index];
-						image->comps[2].data[index] = table_B[pixel_index];
-						index++;
-					}
-				}
-			}
-			free(RGB);
-      free(table_R);
-      free(table_G);
-      free(table_B);
-	} else {
-		fprintf(stderr, 
-			"Other system than 24 bits/pixels or 8 bits (no RLE coding) is not yet implemented [%d]\n", Info_h.biBitCount);
-	}
+	if (Info_h.biBitCount == 24) 
+   {
+	numcomps = 3;
+	color_space = CLRSPC_SRGB;
+	/* initialize image components */
+	memset(&cmptparm[0], 0, 3 * sizeof(opj_image_cmptparm_t));
+	for(i = 0; i < numcomps; i++) 
+  {
+	cmptparm[i].prec = 8;
+	cmptparm[i].bpp = 8;
+	cmptparm[i].sgnd = 0;
+	cmptparm[i].dx = subsampling_dx;
+	cmptparm[i].dy = subsampling_dy;
+	cmptparm[i].w = w;
+	cmptparm[i].h = h;
+  }
+	/* create the image */
+	image = opj_image_create(numcomps, &cmptparm[0], color_space);
+	if(!image) 
+  {
 	fclose(IN);
+	return NULL;
+  }
+
+	/* set image offset and reference grid */
+	image->x0 = parameters->image_offset_x0;
+	image->y0 = parameters->image_offset_y0;
+	image->x1 =	!image->x0 ? (w - 1) * subsampling_dx + 1 : image->x0 + (w - 1) * subsampling_dx + 1;
+	image->y1 =	!image->y0 ? (h - 1) * subsampling_dy + 1 : image->y0 + (h - 1) * subsampling_dy + 1;
+
+	/* set image data */
+
+	/* Place the cursor at the beginning of the image information */
+	fseek(IN, 0, SEEK_SET);
+	fseek(IN, File_h.bfOffBits, SEEK_SET);
+			
+	W = Info_h.biWidth;
+	H = Info_h.biHeight;
+
+	/* PAD = 4 - (3 * W) % 4; */
+	/* PAD = (PAD == 4) ? 0 : PAD; */
+	PAD = (3 * W) % 4 ? 4 - (3 * W) % 4 : 0;
+			
+	RGB = (unsigned char *) 
+	 malloc((3 * W + PAD) * H * sizeof(unsigned char));
+			
+	fread(RGB, sizeof(unsigned char), (3 * W + PAD) * H, IN);
+			
+	index = 0;
+
+	for(y = 0; y < (int)H; y++) 
+  {
+	unsigned char *scanline = RGB + (3 * W + PAD) * (H - 1 - y);
+	for(x = 0; x < (int)W; x++) 
+ {
+	unsigned char *pixel = &scanline[3 * x];
+	image->comps[0].data[index] = pixel[2];	/* R */
+	image->comps[1].data[index] = pixel[1];	/* G */
+	image->comps[2].data[index] = pixel[0];	/* B */
+	index++;
  }
- 
- return image;
+  }
+	free(RGB);
+   }/* if (Info_h.biBitCount == 24) */ 
+	else 
+	if (Info_h.biBitCount == 8 && Info_h.biCompression == 0)//RGB 
+   {
+	if(Info_h.biClrUsed == 0) Info_h.biClrUsed = 256;
+	else
+	if(Info_h.biClrUsed > 256) Info_h.biClrUsed = 256;
+
+	table_R = (unsigned char *) malloc(256 * sizeof(unsigned char));
+	table_G = (unsigned char *) malloc(256 * sizeof(unsigned char));
+	table_B = (unsigned char *) malloc(256 * sizeof(unsigned char));
+		
+	has_color = 0;	
+	for (j = 0; j < Info_h.biClrUsed; j++) 
+  {
+	table_B[j] = getc(IN);
+	table_G[j] = getc(IN);
+	table_R[j] = getc(IN);
+	getc(IN);
+	has_color += 
+	 !(table_R[j] == table_G[j] && table_R[j] == table_B[j]);
+  }
+	if(has_color) gray_scale = 0;
+		   
+	/* Place the cursor at the beginning of the image information */
+	fseek(IN, 0, SEEK_SET);
+	fseek(IN, File_h.bfOffBits, SEEK_SET);
+			
+	W = Info_h.biWidth;
+	H = Info_h.biHeight;
+	if (Info_h.biWidth % 2)
+	 W++;
+			
+	numcomps = gray_scale ? 1 : 3;
+	color_space = gray_scale ? CLRSPC_GRAY : CLRSPC_SRGB;
+		/* initialize image components */
+	memset(&cmptparm[0], 0, 3 * sizeof(opj_image_cmptparm_t));
+	for(i = 0; i < numcomps; i++) 
+  {
+	cmptparm[i].prec = 8;
+	cmptparm[i].bpp = 8;
+	cmptparm[i].sgnd = 0;
+	cmptparm[i].dx = subsampling_dx;
+	cmptparm[i].dy = subsampling_dy;
+	cmptparm[i].w = w;
+	cmptparm[i].h = h;
+  }
+	/* create the image */
+	image = opj_image_create(numcomps, &cmptparm[0], color_space);
+	if(!image) 
+  {
+	fclose(IN);
+	free(table_R); free(table_G); free(table_B);
+	return NULL;
+  }
+
+	/* set image offset and reference grid */
+	image->x0 = parameters->image_offset_x0;
+	image->y0 = parameters->image_offset_y0;
+	image->x1 =	!image->x0 ? (w - 1) * subsampling_dx + 1 : image->x0 + (w - 1) * subsampling_dx + 1;
+	image->y1 =	!image->y0 ? (h - 1) * subsampling_dy + 1 : image->y0 + (h - 1) * subsampling_dy + 1;
+
+	/* set image data */
+
+	RGB = (unsigned char *) malloc(W * H * sizeof(unsigned char));
+			
+	fread(RGB, sizeof(unsigned char), W * H, IN);
+	if (gray_scale) 
+  {
+	index = 0;
+	for (j = 0; j < W * H; j++) 
+ {
+		if ((j % W < W - 1 && Info_h.biWidth % 2) || !(Info_h.biWidth % 2)) 
+	   {
+		image->comps[0].data[index] = 
+		 table_R[RGB[W * H - ((j) / (W) + 1) * W + (j) % (W)]];
+		index++;
+	   }
+ }
+
+  } 
+	else 
+  {
+	index = 0;
+	for (j = 0; j < W * H; j++) 
+ {
+		if ((j % W < W - 1 && Info_h.biWidth % 2) 
+		|| !(Info_h.biWidth % 2)) 
+	   {
+		unsigned char pixel_index = 
+		 RGB[W * H - ((j) / (W) + 1) * W + (j) % (W)];
+		image->comps[0].data[index] = table_R[pixel_index];
+		image->comps[1].data[index] = table_G[pixel_index];
+		image->comps[2].data[index] = table_B[pixel_index];
+		index++;
+	   }
+ }
+  }
+	free(RGB);
+	free(table_R);
+	free(table_G);
+	free(table_B);
+   }/* RGB8 */ 
+	else 
+	if (Info_h.biBitCount == 8 && Info_h.biCompression == 1)//RLE8
+   {
+	unsigned char *pix, *beyond;
+	unsigned int *gray, *red, *green, *blue;
+	unsigned int x, y, max;
+	int i, c, c1;
+	unsigned char uc;
+
+	if(Info_h.biClrUsed == 0) Info_h.biClrUsed = 256;
+	else
+	if(Info_h.biClrUsed > 256) Info_h.biClrUsed = 256;
+
+	table_R = (unsigned char *) malloc(256 * sizeof(unsigned char));
+	table_G = (unsigned char *) malloc(256 * sizeof(unsigned char));
+	table_B = (unsigned char *) malloc(256 * sizeof(unsigned char));
+
+	has_color = 0;	
+	for (j = 0; j < Info_h.biClrUsed; j++) 
+  {
+	table_B[j] = getc(IN);
+	table_G[j] = getc(IN);
+	table_R[j] = getc(IN);
+	getc(IN);
+	has_color += 
+	 !(table_R[j] == table_G[j] && table_R[j] == table_B[j]);
+
+  }
+	if(has_color) gray_scale = 0;
+
+	numcomps = gray_scale ? 1 : 3;
+	color_space = gray_scale ? CLRSPC_GRAY : CLRSPC_SRGB;
+	/* initialize image components */
+	memset(&cmptparm[0], 0, 3 * sizeof(opj_image_cmptparm_t));
+	for(i = 0; i < numcomps; i++) 
+  {
+	cmptparm[i].prec = 8;
+	cmptparm[i].bpp = 8;
+	cmptparm[i].sgnd = 0;
+	cmptparm[i].dx = subsampling_dx;
+	cmptparm[i].dy = subsampling_dy;
+	cmptparm[i].w = w;
+	cmptparm[i].h = h;
+  }
+	/* create the image */
+	image = opj_image_create(numcomps, &cmptparm[0], color_space);
+	if(!image) 
+  {
+	fclose(IN);
+	free(table_R); free(table_G); free(table_B);
+	return NULL;
+  }
+
+	/* set image offset and reference grid */
+	image->x0 = parameters->image_offset_x0;
+	image->y0 = parameters->image_offset_y0;
+	image->x1 =	!image->x0 ? (w - 1) * subsampling_dx + 1 : image->x0 + (w - 1) * subsampling_dx + 1;
+	image->y1 =	!image->y0 ? (h - 1) * subsampling_dy + 1 : image->y0 + (h - 1) * subsampling_dy + 1;
+
+	/* set image data */
+			
+	/* Place the cursor at the beginning of the image information */
+	fseek(IN, 0, SEEK_SET);
+	fseek(IN, File_h.bfOffBits, SEEK_SET);
+
+    W = Info_h.biWidth;
+    H = Info_h.biHeight;
+    RGB = (unsigned char *)calloc(1, W * H * sizeof(unsigned char));
+    beyond = RGB + W * H;
+    pix = beyond - W;
+    x = y = 0;
+
+    while(y < H)
+  {
+    c = getc(IN);
+
+    if (c)
+ {
+    c1 = getc(IN);
+
+    for (i = 0; i < c && x < W && pix < beyond; i++, x++, pix++)
+     *pix = c1;
+ }
+    else
+ {
+    c = getc(IN);
+
+	    if(c == 0x00) /* EOL */
+	   {
+		x = 0; ++y; pix = RGB + x + (H - y - 1) * W;
+	   }
+		else
+		if(c == 0x01) /* EOP */
+		  break;
+		else
+		if(c == 0x02) /* MOVE by dxdy */
+	   {
+	    c = getc(IN);  x += c;
+	    c = getc(IN);  y += c;
+	    pix = RGB + (H - y - 1) * W + x;
+	   }
+	    else /* 03 .. 255 */
+	   {
+	    i = 0;
+	    for(; i < c && x < W && pix < beyond; i++, x++, pix++)
+      {
+		c1 = getc(IN);
+		*pix = c1;
+      }
+		if(c & 1) /* skip padding byte */
+		 getc(IN);
+	   }
+ }
+  }/* while() */
+
+	if (gray_scale)
+  {
+	int *gray;
+
+    gray = image->comps[0].data;
+    pix = RGB;
+    max = W * H;
+
+    while(max--)
+ {
+    uc = *pix++;
+
+    *gray++ = table_R[uc];
+ }
+  }
+    else
+  {
+	int *red, *green, *blue;
+
+    red = image->comps[0].data;
+    green = image->comps[1].data;
+    blue = image->comps[2].data;
+    pix = RGB;
+    max = W * H;
+
+    while(max--)
+ {
+    uc = *pix++;
+
+    *red++ = table_R[uc];
+    *green++ = table_G[uc];
+    *blue++ = table_B[uc];
+ }
+  }
+    free(RGB);
+    free(table_R); free(table_G); free(table_B);
+   }/* RLE8 */ 
+	else 
+   {
+	fprintf(stderr, 
+	"Other system than 24 bits/pixels or 8 bits (no RLE coding) "
+		"is not yet implemented [%d]\n", Info_h.biBitCount);
+   }
+	fclose(IN);
+	return image;
 }
 
 int imagetobmp(opj_image_t * image, const char *outfile) {

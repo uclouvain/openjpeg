@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 July 3, 2011
+* [antonin] fixed bmptoimage (see http://groups.google.com/group/openjpeg/browse_thread/thread/33a24c5896bf6391)
 * [antonin] fixed handling of "jp2->meth" value (Restricted ICC profile handling currently not implemented)
 
 June 30, 2011
