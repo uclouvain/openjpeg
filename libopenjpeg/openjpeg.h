@@ -75,7 +75,7 @@ typedef float		OPJ_FLOAT32;
 	typedef long long	OPJ_INT64;
 #endif
 
-#define OPENJPEG_VERSION "1.2.0"
+#define OPENJPEG_VERSION "2.0.0"
 /* 
 ==========================================================
    Compiler directives
