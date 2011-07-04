@@ -487,7 +487,7 @@ void print_binarycode( Byte8_t n, int segmentlen)
 Byte_t * parse_bin_id_vbas( Byte_t *streamptr, Byte_t *bb, Byte_t *c, Byte8_t *in_class_id);
 Byte_t * parse_vbas( Byte_t *streamptr, Byte8_t *elem);
 
-void parse_stream( Byte_t *stream, Byte8_t jptlen, Byte8_t offset, msgqueue_param_t *msgqueue)
+void parse_JPIPstream( Byte_t *JPIPstream, Byte8_t streamlen, Byte8_t offset, msgqueue_param_t *msgqueue)
 {
   Byte_t *ptr;  // stream pointer
   message_param_t *msg;
@@ -496,8 +496,8 @@ void parse_stream( Byte_t *stream, Byte8_t jptlen, Byte8_t offset, msgqueue_para
 
   class_id = -1; // dummy
   csn = 0;
-  ptr = stream;
-  while( ptr-stream < jptlen){
+  ptr = JPIPstream;
+  while( ptr-JPIPstream < streamlen){
     msg = (message_param_t *)malloc( sizeof(message_param_t));
     
     ptr = parse_bin_id_vbas( ptr, &bb, &c, &msg->in_class_id);
@@ -522,7 +522,7 @@ void parse_stream( Byte_t *stream, Byte8_t jptlen, Byte8_t offset, msgqueue_para
     else
       msg->aux = 0;
     
-    msg->res_offset = ptr-stream+offset;   
+    msg->res_offset = ptr-JPIPstream+offset;   
     msg->phld = NULL;
     msg->next = NULL;
 
@@ -538,7 +538,7 @@ void parse_stream( Byte_t *stream, Byte8_t jptlen, Byte8_t offset, msgqueue_para
 
 void parse_metadata( metadata_param_t *metadata, message_param_t *msg, Byte_t *stream);
 
-void parse_metamsg( msgqueue_param_t *msgqueue, Byte_t *stream, Byte8_t jptlen, metadatalist_param_t *metadatalist)
+void parse_metamsg( msgqueue_param_t *msgqueue, Byte_t *stream, Byte8_t streamlen, metadatalist_param_t *metadatalist)
 {
   message_param_t *msg;
 

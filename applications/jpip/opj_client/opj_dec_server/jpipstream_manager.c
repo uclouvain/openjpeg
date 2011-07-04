@@ -1,5 +1,5 @@
 /*
- * $Id: jptstream_manager.c 44 2011-02-15 12:32:29Z kaori $
+ * $Id$
  *
  * Copyright (c) 2002-2011, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
  * Copyright (c) 2002-2011, Professor Benoit Macq
@@ -32,45 +32,22 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include "jptstream_manager.h"
+#include "jpipstream_manager.h"
 #include "jp2k_decoder.h"
 #include "imgreg_manager.h"
 
-Byte_t * update_JPTstream( Byte_t *newjptstream, int newjptlen, Byte_t *cache_jptstream, int *jptlen)
+Byte_t * update_JPIPstream( Byte_t *newstream, int newstreamlen, Byte_t *cache_stream, int *streamlen)
 {
-  Byte_t *jptstream = (Byte_t *)malloc( (*jptlen)+newjptlen);
-  if( *jptlen > 0)
-    memcpy( jptstream, cache_jptstream, *jptlen);
-  memcpy( jptstream+(*jptlen), newjptstream, newjptlen);
-  *jptlen += newjptlen;
+  Byte_t *stream = (Byte_t *)malloc( (*streamlen)+newstreamlen);
+  if( *streamlen > 0)
+    memcpy( stream, cache_stream, *streamlen);
+  memcpy( stream+(*streamlen), newstream, newstreamlen);
+  *streamlen += newstreamlen;
 
-  if(cache_jptstream)
-    free( cache_jptstream);
+  if(cache_stream)
+    free( cache_stream);
   
-  return jptstream;
-}
-
-Byte_t * jpt_to_pnm( Byte_t *jptstream, msgqueue_param_t *msgqueue, Byte8_t csn, int fw, int fh, ihdrbox_param_t **ihdrbox)
-{
-  Byte_t *pnmstream;
-  Byte_t *j2kstream; // j2k or jp2 codestream
-  Byte8_t j2klen;
-  int level = 0;
-  
-  if( *ihdrbox){
-    // infinit value is set for maxmum level
-    int fx = fw, fy = fh;
-    int xmin = 0, ymin = 0;
-    int xmax = (*ihdrbox)->width, ymax = (*ihdrbox)->height;
-    find_level( 1000, &level, &fx, &fy, &xmin, &ymin, &xmax, &ymax);
-  }
-  
-  j2kstream = recons_j2k( msgqueue, jptstream, csn, level+1, &j2klen);
-  
-  pnmstream = j2k_to_pnm( j2kstream, j2klen, ihdrbox);
-  free( j2kstream);
-
-  return pnmstream;
+  return stream;
 }
 
 void save_codestream( Byte_t *codestream, Byte8_t streamlen, char *fmt)
@@ -88,4 +65,28 @@ void save_codestream( Byte_t *codestream, Byte8_t streamlen, char *fmt)
   fp = fopen( filename, "wb");
   fwrite( codestream, streamlen, 1, fp);
   fclose( fp);
+}
+
+
+Byte_t * jpipstream_to_pnm( Byte_t *jpipstream, msgqueue_param_t *msgqueue, Byte8_t csn, int fw, int fh, ihdrbox_param_t **ihdrbox)
+{
+  Byte_t *pnmstream;
+  Byte_t *j2kstream; // j2k or jp2 codestream
+  Byte8_t j2klen;
+  int level = 0;
+  
+  if( *ihdrbox){
+    // infinit value is set for maxmum level
+    int fx = fw, fy = fh;
+    int xmin = 0, ymin = 0;
+    int xmax = (*ihdrbox)->width, ymax = (*ihdrbox)->height;
+    find_level( 1000, &level, &fx, &fy, &xmin, &ymin, &xmax, &ymax);
+  }
+  
+  j2kstream = recons_j2k( msgqueue, jpipstream, csn, level+1, &j2klen);
+  
+  pnmstream = j2k_to_pnm( j2kstream, j2klen, ihdrbox);
+  free( j2kstream);
+
+  return pnmstream;
 }

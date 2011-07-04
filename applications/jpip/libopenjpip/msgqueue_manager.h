@@ -119,24 +119,24 @@ void emit_stream_from_msgqueue( msgqueue_param_t *msgqueue);
 
 
 /**
- * parse JPT-stream to message queue
+ * parse JPT- JPP- stream to message queue
  *
- * @param[in]     stream       JPT-stream data pointer
- * @param[in]     jptlen       JPT-stream length
- * @param[in]     offset       offset of the JPT-stream from the whole beginning
+ * @param[in]     JPIPstream   JPT- JPP- stream data pointer
+ * @param[in]     streamlen    JPIPstream length
+ * @param[in]     offset       offset of the stream from the whole beginning
  * @param[in,out] msgqueue     adding message queue pointer
  */
-void parse_stream( Byte_t *stream, Byte8_t jptlen, Byte8_t offset, msgqueue_param_t *msgqueue);
+void parse_JPIPstream( Byte_t *JPIPstream, Byte8_t streamlen, Byte8_t offset, msgqueue_param_t *msgqueue);
 
 /**
- * parse JPT-stream to message queue
+ * parse JPT- JPP- stream to message queue
  *
  * @param[in] msgqueue     reference message queue pointer
- * @param[in] stream       JPT-stream data pointer
- * @param[in] jptlen       JPT-stream length
+ * @param[in] stream       stream data pointer
+ * @param[in] streamlen    stream length
  * @param[in] metadatalist adding metadata list pointer
  */
-void parse_metamsg( msgqueue_param_t *msgqueue, Byte_t *stream, Byte8_t jptlen, metadatalist_param_t *metadatalist);
+void parse_metamsg( msgqueue_param_t *msgqueue, Byte_t *stream, Byte8_t streamlen, metadatalist_param_t *metadatalist);
 
 
 /**

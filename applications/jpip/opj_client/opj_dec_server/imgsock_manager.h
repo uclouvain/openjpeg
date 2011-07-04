@@ -48,8 +48,8 @@ typedef int SOCKET;
  */
 SOCKET open_listeningsocket();
 
-#define NUM_OF_MSGTYPES 7
-typedef enum eMSGTYPE{ JPTSTREAM, PNMREQ, XMLREQ, CIDREQ, CIDDST, JP2SAVE, QUIT, MSGERROR} msgtype_t;
+#define NUM_OF_MSGTYPES 8
+typedef enum eMSGTYPE{ JPTSTREAM, JPPSTREAM, PNMREQ, XMLREQ, CIDREQ, CIDDST, JP2SAVE, QUIT, MSGERROR} msgtype_t;
 
 /**
  * indeitify client message type
@@ -60,15 +60,15 @@ typedef enum eMSGTYPE{ JPTSTREAM, PNMREQ, XMLREQ, CIDREQ, CIDDST, JP2SAVE, QUIT,
 msgtype_t identify_clientmsg( SOCKET connected_socket);
 
 /**
- * receive JPT-stream from client
+ * receive a JPT- JPP- stream from client
  *
  * @param [in]  connected_socket file descriptor of the connected socket
  * @param [out] target           received target file name (if not received, null string)
  * @param [out] cid              received channel identifier (if not received, null string)
  * @param [out] streamlen        length of the received codestream
- * @return                          codestream
+ * @return                       JPT- JPP- codestream
  */
-Byte_t * receive_JPTstream( SOCKET connected_socket, char *target, char *cid, int *streamlen);
+Byte_t * receive_JPIPstream( SOCKET connected_socket, char *target, char *cid, int *streamlen);
 
 /**
  * send PGM/PPM image stream to the client

@@ -94,7 +94,7 @@ msgtype_t identify_clientmsg( SOCKET connected_socket)
 {
   int receive_size;
   char buf[BUF_LEN];
-  char *magicid[] = { "JPT-stream", "PNM request", "XML request", "CID request", "CID destroy", "JP2 save", "QUIT"};
+  char *magicid[] = { "JPT-stream", "JPP-stream", "PNM request", "XML request", "CID request", "CID destroy", "JP2 save", "QUIT"};
   int i;
   
   receive_size = receive_line( connected_socket, buf);
@@ -115,9 +115,9 @@ msgtype_t identify_clientmsg( SOCKET connected_socket)
   return MSGERROR;
 }
 
-Byte_t * receive_JPTstream( SOCKET connected_socket, char *target, char *cid, int *streamlen)
+Byte_t * receive_JPIPstream( SOCKET connected_socket, char *target, char *cid, int *streamlen)
 {
-  Byte_t *jptstream=NULL, *ptr;
+  Byte_t *jpipstream=NULL, *ptr;
   char buf[BUF_LEN], versionstring[] = "version 1.0";
   int linelen, redlen, remlen;
   
@@ -150,13 +150,13 @@ Byte_t * receive_JPTstream( SOCKET connected_socket, char *target, char *cid, in
   fprintf( stderr, "Receiveing Data length: %d\n", *streamlen);
   
       
-  jptstream = (unsigned  char *)malloc( (*streamlen));
-  ptr = jptstream;
+  jpipstream = (unsigned  char *)malloc( (*streamlen));
+  ptr = jpipstream;
   remlen = (*streamlen);
   while( remlen > 0){
     redlen = recv( connected_socket, ptr, remlen, 0);
     if( redlen == -1){
-      fprintf( stderr, "receive jptstream error\n");
+      fprintf( stderr, "receive JPT- JPP- stream error\n");
       break;
     }
     remlen -= redlen;
@@ -164,7 +164,7 @@ Byte_t * receive_JPTstream( SOCKET connected_socket, char *target, char *cid, in
   }
   fprintf( stderr, "    done\n");
     
-  return jptstream;
+  return jpipstream;
 }
 
 void send_stream( SOCKET connected_socket, void *stream, int length);
