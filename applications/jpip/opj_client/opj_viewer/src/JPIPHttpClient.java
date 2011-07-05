@@ -135,7 +135,7 @@ public class JPIPHttpClient
 	int buflen = 0;
 	URL url = null;
 	HttpURLConnection urlconn = null;
-	byte[] jptstream = null;
+	byte[] jpipstream = null;
     
 	try{
 	    url = new URL( urlstring);
@@ -185,7 +185,7 @@ public class JPIPHttpClient
 		ByteArrayOutputStream tmpstream = new ByteArrayOutputStream();
 		byte[] buf = new byte[ 1024];
 	
-		System.err.println("reading jptstream...");
+		System.err.println("reading jpipstream...");
 	
 		int redlen;
 		do{
@@ -198,15 +198,15 @@ public class JPIPHttpClient
       
 		buflen = tmpstream.size();
 	
-		jptstream = tmpstream.toByteArray();
+		jpipstream = tmpstream.toByteArray();
             
 		tmpstream = null;
       
-		System.err.println("jptlen: " + buflen);
+		System.err.println("jpiplen: " + buflen);
 		System.err.println("    succeeded");  
 	    }
 	    else{
-		System.err.println("No new jptstream");
+		System.err.println("No new jpipstream");
 	    }
 	    input.close();
 	}
@@ -231,7 +231,7 @@ public class JPIPHttpClient
 
 	urlconn.disconnect();     
         
-	return jptstream;
+	return jpipstream;
     }
   
     private String const_urlstring( String target, 
@@ -241,6 +241,9 @@ public class JPIPHttpClient
 				    String reqcid, boolean reqcnew)
     {
 	String urlstring = comURL;
+
+	// C.7.3 Image Return Type
+	// add type=jpp-stream(;ptype=ext) or type=jpt-stream;ttype=ext
 
 	if( target != null){
 	    if( !urlstring.endsWith("?"))

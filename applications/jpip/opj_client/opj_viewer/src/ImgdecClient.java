@@ -33,32 +33,32 @@ import java.net.*;
 
 public class ImgdecClient{
 
-    public static PnmImage decode_jptstream( byte[] jptstream, String cid, int fw, int fh)
+    public static PnmImage decode_jpipstream( byte[] jpipstream, String cid, int fw, int fh)
     {
-	if( jptstream != null)
-	    send_JPTstream( jptstream);
+	if( jpipstream != null)
+	    send_JPIPstream( jpipstream);
 	return get_PNMstream( cid, fw, fh);
     }
 
-    public static PnmImage decode_jptstream( byte[] jptstream, String j2kfilename, String cid, int fw, int fh)
+    public static PnmImage decode_jpipstream( byte[] jpipstream, String j2kfilename, String cid, int fw, int fh)
     {
-	send_JPTstream( jptstream, j2kfilename, cid);
+	send_JPIPstream( jpipstream, j2kfilename, cid);
 	return get_PNMstream( cid, fw, fh);
     }
     
-    public static void send_JPTstream( byte[] jptstream)
+    public static void send_JPIPstream( byte[] jpipstream)
     {
 	try{
 	    Socket imgdecSocket = new Socket( "localhost", 5000);
 	    DataOutputStream os = new DataOutputStream( imgdecSocket.getOutputStream());
 	    DataInputStream  is = new DataInputStream( imgdecSocket.getInputStream());
       
-	    System.err.println("Sending " + jptstream.length + "Data Bytes to decodingServer");
+	    System.err.println("Sending " + jpipstream.length + "Data Bytes to decodingServer");
 	    
-	    os.writeBytes("JPT-stream\n");
-	    os.writeBytes("version 1.0\n");
-	    os.writeBytes( jptstream.length + "\n"); 
-	    os.write( jptstream, 0, jptstream.length);
+	    os.writeBytes("JPIP-stream\n");
+	    os.writeBytes("version 1.1\n");
+	    os.writeBytes( jpipstream.length + "\n"); 
+	    os.write( jpipstream, 0, jpipstream.length);
       
 	    byte signal = is.readByte();
       
@@ -71,7 +71,7 @@ public class ImgdecClient{
 	}
     }
 
-    public static void send_JPTstream( byte[] jptstream, String j2kfilename, String cid)
+    public static void send_JPIPstream( byte[] jpipstream, String j2kfilename, String cid)
     {
 	try{
 	    Socket imgdecSocket = new Socket( "localhost", 5000);
@@ -79,17 +79,17 @@ public class ImgdecClient{
 	    DataInputStream  is = new DataInputStream( imgdecSocket.getInputStream());
 	    int length = 0;
 	    
-	    if( jptstream != null)
-		length = jptstream.length;
+	    if( jpipstream != null)
+		length = jpipstream.length;
 	    
 	    System.err.println("Sending " + length + "Data Bytes to decodingServer");
       
-	    os.writeBytes("JPT-stream\n");
-	    os.writeBytes("version 1.0\n");
+	    os.writeBytes("JPIP-stream\n");
+	    os.writeBytes("version 1.1\n");
 	    os.writeBytes( j2kfilename + "\n");
 	    os.writeBytes( cid + "\n");
 	    os.writeBytes( length + "\n");
-	    os.write( jptstream, 0, length);
+	    os.write( jpipstream, 0, length);
       
 	    byte signal = is.readByte();
       

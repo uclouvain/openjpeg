@@ -94,7 +94,7 @@ msgtype_t identify_clientmsg( SOCKET connected_socket)
 {
   int receive_size;
   char buf[BUF_LEN];
-  char *magicid[] = { "JPT-stream", "JPP-stream", "PNM request", "XML request", "CID request", "CID destroy", "JP2 save", "QUIT"};
+  char *magicid[] = { "JPIP-stream", "PNM request", "XML request", "CID request", "CID destroy", "JP2 save", "QUIT"};
   int i;
   
   receive_size = receive_line( connected_socket, buf);
@@ -111,14 +111,14 @@ msgtype_t identify_clientmsg( SOCKET connected_socket)
     }
   }
   
-  fprintf( stderr, "Cannot identify client message type\n");
+  fprintf( stderr, "Cannot identify client message type %s\n", buf);
   return MSGERROR;
 }
 
 Byte_t * receive_JPIPstream( SOCKET connected_socket, char *target, char *cid, int *streamlen)
 {
   Byte_t *jpipstream=NULL, *ptr;
-  char buf[BUF_LEN], versionstring[] = "version 1.0";
+  char buf[BUF_LEN], versionstring[] = "version 1.1";
   int linelen, redlen, remlen;
   
   target[0] = 0;

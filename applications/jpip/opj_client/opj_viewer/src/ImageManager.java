@@ -48,15 +48,15 @@ public class ImageManager extends JPIPHttpClient
 	System.err.println();
 	
 	String refcid = ImgdecClient.query_cid( j2kfilename);
-	byte[] jptstream;
+	byte[] jpipstream;
 	
 	if( refcid == null)
-	    jptstream = super.requestViewWindow( j2kfilename, reqfw, reqfh, true);
+	    jpipstream = super.requestViewWindow( j2kfilename, reqfw, reqfh, true);
 	else
-	    jptstream = super.requestViewWindow( reqfw, reqfh, refcid, true);
+	    jpipstream = super.requestViewWindow( reqfw, reqfh, refcid, true);
 	
 	System.err.println( "decoding to PNM image");
-	pnmimage = ImgdecClient.decode_jptstream( jptstream, j2kfilename, cid, fw, fh);
+	pnmimage = ImgdecClient.decode_jpipstream( jpipstream, j2kfilename, cid, fw, fh);
 	System.err.println( "     done");
 
 	//	System.out.println( "fw: " + fw + " fh: " + fh + "pnm w: ");
@@ -68,10 +68,10 @@ public class ImageManager extends JPIPHttpClient
     {
 	System.err.println();
 
-	byte[] jptstream = super.requestViewWindow( reqfw, reqfh, reqrx, reqry, reqrw, reqrh);
+	byte[] jpipstream = super.requestViewWindow( reqfw, reqfh, reqrx, reqry, reqrw, reqrh);
 
 	System.err.println( "decoding to PNM image");
-	pnmimage = ImgdecClient.decode_jptstream( jptstream, cid, fw, fh);
+	pnmimage = ImgdecClient.decode_jpipstream( jpipstream, cid, fw, fh);
 	System.err.println( "     done");
 	
 	return pnmimage.createROIImage( rx, ry, rw, rh);
@@ -82,10 +82,10 @@ public class ImageManager extends JPIPHttpClient
 	System.err.println();
 	
 	byte []xmldata = null;
-	byte[] jptstream = super.requestXML();
+	byte[] jpipstream = super.requestXML();
 	
-	if( jptstream != null){
-	    ImgdecClient.send_JPTstream( jptstream);
+	if( jpipstream != null){
+	    ImgdecClient.send_JPIPstream( jpipstream);
       
 	    xmldata = ImgdecClient.get_XMLstream( cid);    
 	}

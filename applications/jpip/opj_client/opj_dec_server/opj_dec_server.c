@@ -152,8 +152,7 @@ int main(int argc, char *argv[]){
     msgtype_t msgtype = identify_clientmsg( connected_socket);
     
     switch( msgtype){
-    case JPTSTREAM:
-    case JPPSTREAM:
+    case JPIPSTREAM:
       handle_JPIPstreamMSG( connected_socket, cachelist, &jpipstream, &jpipstreamlen, msgqueue);
       break;
       

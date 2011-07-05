@@ -48,8 +48,8 @@ typedef int SOCKET;
  */
 SOCKET open_listeningsocket();
 
-#define NUM_OF_MSGTYPES 8
-typedef enum eMSGTYPE{ JPTSTREAM, JPPSTREAM, PNMREQ, XMLREQ, CIDREQ, CIDDST, JP2SAVE, QUIT, MSGERROR} msgtype_t;
+#define NUM_OF_MSGTYPES 7
+typedef enum eMSGTYPE{ JPIPSTREAM, PNMREQ, XMLREQ, CIDREQ, CIDDST, JP2SAVE, QUIT, MSGERROR} msgtype_t;
 
 /**
  * indeitify client message type
@@ -122,10 +122,10 @@ int receive_line(SOCKET connected_socket, char *buf);
 /*! \file
  * PROTOCOL specification to communicate with opj_dec_server
  *
- *\section sec1 JPT-stream
- * Cache JPT-stream in server
+ *\section sec1 JPIP-stream
+ * Cache JPT- JPP- stream in server
  *
- * client -> server: JPT-stream\\n version 1.0\\n (optional for cid registration: targetnamestring\\n cidstring\\n) bytelengthvalue\\n data \n
+ * client -> server: JPIP-stream\\n version 1.1\\n (optional for cid registration: targetnamestring\\n cidstring\\n) bytelengthvalue\\n data \n
  * server -> client: 1 or 0 (of 1Byte response signal)
  * 
  *\section sec2 PNM request
