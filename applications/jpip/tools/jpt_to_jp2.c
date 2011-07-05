@@ -88,7 +88,7 @@ int main(int argc,char *argv[])
 
   metadatalist = gene_metadatalist();
   msgqueue = gene_msgqueue( true, NULL);
-  parse_stream( jptstream, jptlen, 0, msgqueue);
+  parse_JPIPstream( jptstream, jptlen, 0, msgqueue);
   parse_metamsg( msgqueue, jptstream, jptlen, metadatalist);
   print_msgqueue( msgqueue);
   //print_allmetadata( metadatalist);

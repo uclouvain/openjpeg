@@ -83,7 +83,7 @@ int main(int argc,char *argv[])
   close(infd);
 
   msgqueue = gene_msgqueue( true, NULL);
-  parse_stream( jptstream, jptlen, 0, msgqueue);
+  parse_JPIPstream( jptstream, jptlen, 0, msgqueue);
   
   //print_msgqueue( msgqueue);
 
