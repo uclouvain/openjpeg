@@ -49,6 +49,9 @@
 #define logstream stderr
 #endif //SERVER
 
+#define PRECINCT_MSG 0
+#define EXT_PRECINCT_MSG 1
+#define TILE_HEADER_MSG 2
 #define TILE_MSG 4
 #define EXT_TILE_MSG 5
 #define MAINHEADER_MSG 6
@@ -658,17 +661,26 @@ message_param_t * search_message( Byte8_t class_id, Byte8_t in_class_id, Byte8_t
  */
 void delete_message_in_msgqueue( message_param_t **message, msgqueue_param_t *msgqueue);
 
-Byte_t * recons_codestream( msgqueue_param_t *msgqueue, Byte_t *stream, Byte8_t csn, int minlev, Byte8_t *codelen);
+/**
+ * reconstruct j2k codestream from JPT- (in future, JPP-) stream
+ *
+ * @param[in] msgqueue   message queue pointer
+ * @param[in] jpipstream original JPT- JPP- stream 
+ * @param[in] csn        codestream number
+ * @param[in] minlev     minimum decomposition level
+ * @param[out] codelen   codestream length
+ * @return               generated reconstructed j2k codestream
+ */
+Byte_t * recons_codestream( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte8_t csn, int minlev, Byte8_t *codelen);
 
-// usable only to JPT-stream messages
-Byte_t * recons_j2k( msgqueue_param_t *msgqueue, Byte_t *stream, Byte8_t csn, int minlev, Byte8_t *j2klen)
+Byte_t * recons_j2k( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte8_t csn, int minlev, Byte8_t *j2klen)
 {
   Byte_t *j2kstream = NULL;
   
   if( !msgqueue)
     return NULL;
   
-  j2kstream = recons_codestream( msgqueue, stream, csn, minlev, j2klen);
+  j2kstream = recons_codestream( msgqueue, jpipstream, csn, minlev, j2klen);
 
   return j2kstream;
 }
@@ -676,7 +688,7 @@ Byte_t * recons_j2k( msgqueue_param_t *msgqueue, Byte_t *stream, Byte8_t csn, in
 Byte_t * add_emptyboxstream( placeholder_param_t *phld, Byte_t *jp2stream, Byte8_t *jp2len);
 Byte_t * add_msgstream( message_param_t *message, Byte_t *origstream, Byte_t *j2kstream, Byte8_t *j2klen);
 
-Byte_t * recons_jp2( msgqueue_param_t *msgqueue, Byte_t *stream, Byte8_t csn, Byte8_t *jp2len)
+Byte_t * recons_jp2( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte8_t csn, Byte8_t *jp2len)
 {
   message_param_t *ptr;
   Byte_t *jp2stream = NULL;
@@ -700,11 +712,11 @@ Byte_t * recons_jp2( msgqueue_param_t *msgqueue, Byte_t *stream, Byte8_t csn, By
       else
 	jp2stream = add_emptyboxstream( ptr->phld, jp2stream, jp2len); // header only
     }
-    jp2stream = add_msgstream( ptr, stream, jp2stream, jp2len);
+    jp2stream = add_msgstream( ptr, jpipstream, jp2stream, jp2len);
     ptr = ptr->next;
   }
   
-  codestream = recons_codestream( msgqueue, stream, csn, 0, &codelen);
+  codestream = recons_codestream( msgqueue, jpipstream, csn, 0, &codelen);
   
   if( jp2cDBoxOffset != 0 && codelen <= jp2cDBoxlen)
     memcpy( jp2stream+jp2cDBoxOffset, codestream, codelen);
@@ -718,7 +730,9 @@ int get_last_tileID( msgqueue_param_t *msgqueue, Byte8_t csn);
 Byte_t * add_emptytilestream( const int tileID, Byte_t *j2kstream, Byte8_t *j2klen);
 Byte_t * add_EOC( Byte_t *j2kstream, Byte8_t *j2klen);
 
-Byte_t * recons_codestream( msgqueue_param_t *msgqueue, Byte_t *stream, Byte8_t csn, int minlev, Byte8_t *codelen)
+// usable only to JPT-stream messages
+// PRECINCT_MSG, EXT_PRECINCT_MSG, TILE_HEADER_MSG need to be handled
+Byte_t * recons_codestream( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte8_t csn, int minlev, Byte8_t *codelen)
 {
   message_param_t *ptr;
   Byte_t *codestream = NULL;

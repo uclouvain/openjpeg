@@ -142,26 +142,26 @@ void parse_metamsg( msgqueue_param_t *msgqueue, Byte_t *stream, Byte8_t streamle
 /**
  * reconstruct j2k codestream from message queue
  *
- * @param[in]  msgqueue  message queue pointer
- * @param[in]  stream    original stream
- * @param[in]  csn       codestream number
- * @param[in]  minlev    minimum decomposition level
- * @param[out] j2klen    pointer to the j2k codestream length
- * @return     generated reconstructed j2k codestream
+ * @param[in]  msgqueue   message queue pointer
+ * @param[in]  jpipstream original jpt- jpp- stream
+ * @param[in]  csn        codestream number
+ * @param[in]  minlev     minimum decomposition level
+ * @param[out] j2klen     pointer to the j2k codestream length
+ * @return     generated  reconstructed j2k codestream
  */
-Byte_t * recons_j2k( msgqueue_param_t *msgqueue, Byte_t *stream, Byte8_t csn, int minlev, Byte8_t *j2klen);
+Byte_t * recons_j2k( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte8_t csn, int minlev, Byte8_t *j2klen);
 
 
 /**
  * reconstruct jp2 file codestream from message queue
  *
- * @param[in]  msgqueue  message queue pointer
- * @param[in]  stream    original stream
- * @param[in]  csn       codestream number
- * @param[out] jp2len    pointer to the jp2 codestream length
- * @return     generated reconstructed jp2 codestream
+ * @param[in]  msgqueue   message queue pointer
+ * @param[in]  jpipstream original jpt- jpp- stream
+ * @param[in]  csn        codestream number
+ * @param[out] jp2len     pointer to the jp2 codestream length
+ * @return     generated  reconstructed jp2 codestream
  */
-Byte_t * recons_jp2( msgqueue_param_t *msgqueue, Byte_t *stream, Byte8_t csn, Byte8_t *jp2len);
+Byte_t * recons_jp2( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte8_t csn, Byte8_t *jp2len);
 
 
 #endif 	    /* !MSGQUEUE_MANAGER_H_ */
