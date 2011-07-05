@@ -1,5 +1,5 @@
 /*
- * $Id: jpt_to_j2k.c 46 2011-02-17 14:50:55Z kaori $
+ * $Id$
  *
  * Copyright (c) 2002-2011, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
  * Copyright (c) 2002-2011, Professor Benoit Macq
@@ -29,13 +29,15 @@
  */
 
 /*! \file
- *  \brief jpt_to_j2k is a program to convert JPT-stream to J2K file
+ *  \brief jpip_to_j2k is a program to convert JPT- JPP- stream to J2K file
  *
  *  \section impinst Implementing instructions
  *  This program takes two arguments. \n
- *   -# Input  JPT file
+ *   -# Input  JPT or JPP file
  *   -# Output J2K file\n
- *   % ./jpt_to_j2k input.jpt output.j2k
+ *   % ./jpip_to_j2k input.jpt output.j2k
+ *   or
+ *   % ./jpip_to_j2k input.jpp output.j2k
  */
 
 #include <stdio.h>
@@ -51,13 +53,13 @@ int main(int argc,char *argv[])
 {
   msgqueue_param_t *msgqueue;
   int infd, outfd;
-  Byte8_t jptlen, j2klen;
+  Byte8_t jpiplen, j2klen;
   struct stat sb;
-  Byte_t *jptstream, *j2kstream;
+  Byte_t *jpipstream, *j2kstream;
   
   if( argc < 3){
     fprintf( stderr, "Too few arguments:\n");
-    fprintf( stderr, " - input  jpt file\n");
+    fprintf( stderr, " - input  jpt or jpp file\n");
     fprintf( stderr, " - output j2k file\n");
     return -1;
   }
@@ -71,26 +73,26 @@ int main(int argc,char *argv[])
     fprintf( stderr, "input file stream is broken\n");
     return -1;
   }
-  jptlen = (Byte8_t)sb.st_size;
+  jpiplen = (Byte8_t)sb.st_size;
 
-  jptstream = (Byte_t *)malloc( jptlen);
+  jpipstream = (Byte_t *)malloc( jpiplen);
 
-  if( read( infd, jptstream, jptlen) != jptlen){
+  if( read( infd, jpipstream, jpiplen) != jpiplen){
     fprintf( stderr, "file reading error\n");
-    free( jptstream);
+    free( jpipstream);
     return -1;
   }
   close(infd);
 
   msgqueue = gene_msgqueue( true, NULL);
-  parse_JPIPstream( jptstream, jptlen, 0, msgqueue);
+  parse_JPIPstream( jpipstream, jpiplen, 0, msgqueue);
   
   //print_msgqueue( msgqueue);
 
-  j2kstream = recons_j2k( msgqueue, jptstream, msgqueue->first->csn, 0, &j2klen);
+  j2kstream = recons_j2k( msgqueue, jpipstream, msgqueue->first->csn, 0, &j2klen);
   
   delete_msgqueue( &msgqueue);
-  free( jptstream);
+  free( jpipstream);
 
 
   if(( outfd = open( argv[2], O_WRONLY|O_CREAT, S_IRWXU|S_IRWXG)) == -1){

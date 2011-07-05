@@ -3,17 +3,17 @@ LIBFNAME = $(LIBDIR)/libopenjpip_local.a
 CFLAGS  = -O3 -Wall -I$(LIBDIR)
 LDFLAGS = -L$(LIBDIR) -lm -lopenjpip_local
 
-ALL = jpt_to_jp2 jpt_to_j2k test_index addXMLinJP2
+ALL = jpip_to_jp2 jpip_to_j2k test_index addXMLinJP2
 
 all: t_indexer $(ALL)
   
 t_indexer:
 	make -C indexer
 
-jpt_to_jp2: jpt_to_jp2.o $(LIBFNAME)
+jpip_to_jp2: jpip_to_jp2.o $(LIBFNAME)
 	    $(CC) $(CFLAGS) $< $(LDFLAGS) -o $@
 
-jpt_to_j2k: jpt_to_j2k.o $(LIBFNAME)
+jpip_to_j2k: jpip_to_j2k.o $(LIBFNAME)
 	    $(CC) $(CFLAGS) $< $(LDFLAGS) -o $@
 
 test_index: test_index.o $(LIBFNAME)

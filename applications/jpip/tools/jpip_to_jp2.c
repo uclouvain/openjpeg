@@ -1,5 +1,5 @@
 /*
- * $Id: jpt_to_jp2.c 46 2011-02-17 14:50:55Z kaori $
+ * $Id$
  *
  * Copyright (c) 2002-2011, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
  * Copyright (c) 2002-2011, Professor Benoit Macq
@@ -29,13 +29,15 @@
  */
 
 /*! \file
- *  \brief jpt_to_jp2 is a program to convert JPT-stream to JP2 file
+ *  \brief jpip_to_jp2 is a program to convert JPT- JPP- stream to JP2 file
  *
  *  \section impinst Implementing instructions
  *  This program takes two arguments. \n
- *   -# Input JPT file
+ *   -# Input JPT or JPP file
  *   -# Output JP2 file\n
  *   % ./jpt_to_jp2 input.jpt output.jp2
+ *   or
+ *   % ./jpt_to_jp2 input.jpp output.jp2
  */
 
 #include <stdio.h>
@@ -53,15 +55,15 @@ int main(int argc,char *argv[])
 {
   msgqueue_param_t *msgqueue;
   int infd, outfd;
-  Byte8_t jptlen, jp2len;
+  Byte8_t jpiplen, jp2len;
   struct stat sb;
-  Byte_t *jptstream, *jp2stream;
+  Byte_t *jpipstream, *jp2stream;
   metadatalist_param_t *metadatalist;
   ihdrbox_param_t *ihdrbox;
     
   if( argc < 3){
     fprintf( stderr, "Too few arguments:\n");
-    fprintf( stderr, " - input  jpt file\n");
+    fprintf( stderr, " - input  jpt or jpp file\n");
     fprintf( stderr, " - output jp2 file\n");
     return -1;
   }
@@ -75,30 +77,30 @@ int main(int argc,char *argv[])
     fprintf( stderr, "input file stream is broken\n");
     return -1;
   }
-  jptlen = (Byte8_t)sb.st_size;
+  jpiplen = (Byte8_t)sb.st_size;
 
-  jptstream = (Byte_t *)malloc( jptlen);
+  jpipstream = (Byte_t *)malloc( jpiplen);
 
-  if( read( infd, jptstream, jptlen) != jptlen){
+  if( read( infd, jpipstream, jpiplen) != jpiplen){
     fprintf( stderr, "file reading error\n");
-    free( jptstream);
+    free( jpipstream);
     return -1;
   }
   close(infd);
 
   metadatalist = gene_metadatalist();
   msgqueue = gene_msgqueue( true, NULL);
-  parse_JPIPstream( jptstream, jptlen, 0, msgqueue);
-  parse_metamsg( msgqueue, jptstream, jptlen, metadatalist);
+  parse_JPIPstream( jpipstream, jpiplen, 0, msgqueue);
+  parse_metamsg( msgqueue, jpipstream, jpiplen, metadatalist);
   print_msgqueue( msgqueue);
   //print_allmetadata( metadatalist);
 
-  ihdrbox = get_ihdrbox( metadatalist, jptstream);
+  ihdrbox = get_ihdrbox( metadatalist, jpipstream);
 
   printf("W*H: %d*%d\n", ihdrbox->height, ihdrbox->width);
   printf("NC: %d, bpc: %d\n", ihdrbox->nc, ihdrbox->bpc);
   
-  jp2stream = recons_jp2( msgqueue, jptstream, msgqueue->first->csn, &jp2len);
+  jp2stream = recons_jp2( msgqueue, jpipstream, msgqueue->first->csn, &jp2len);
     
   if(( outfd = open( argv[2], O_WRONLY|O_CREAT, S_IRWXU|S_IRWXG)) == -1){
     fprintf( stderr, "file %s open error\n", argv[2]);
@@ -117,7 +119,7 @@ int main(int argc,char *argv[])
   delete_msgqueue( &msgqueue);
   delete_metadatalist( &metadatalist);
 
-  free( jptstream);
+  free( jpipstream);
 
   return 0;
 }
