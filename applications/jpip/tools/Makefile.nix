@@ -8,7 +8,7 @@ ALL = jpip_to_jp2 jpip_to_j2k test_index addXMLinJP2
 all: t_indexer $(ALL)
   
 t_indexer:
-	make -C indexer
+	make -C indexer -f Makefile.nix
 
 jpip_to_jp2: jpip_to_jp2.o $(LIBFNAME)
 	    $(CC) $(CFLAGS) $< $(LDFLAGS) -o $@
@@ -21,4 +21,4 @@ test_index: test_index.o $(LIBFNAME)
 
 clean:
 	rm -f $(ALL) *.o *~
-	make clean -C indexer
+	make clean -C indexer -f Makefile.nix

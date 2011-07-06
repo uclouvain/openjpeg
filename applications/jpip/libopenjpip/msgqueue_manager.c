@@ -744,7 +744,7 @@ Byte_t * recons_codestream( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte
   // main header first
   ptr = msgqueue->first;
   while(( ptr = search_message( MAINHEADER_MSG, -1, csn, ptr))!=NULL){
-    codestream = add_msgstream( ptr, stream, codestream, codelen);
+    codestream = add_msgstream( ptr, jpipstream, codestream, codelen);
     ptr = ptr->next;
   }
 
@@ -755,14 +755,14 @@ Byte_t * recons_codestream( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte
     ptr = msgqueue->first;
     while(( ptr = search_message( TILE_MSG, tileID, csn, ptr))!=NULL){
       found = true;
-      codestream = add_msgstream( ptr, stream, codestream, codelen);
+      codestream = add_msgstream( ptr, jpipstream, codestream, codelen);
       ptr = ptr->next;
     }
     ptr = msgqueue->first;
     while(( ptr = search_message( EXT_TILE_MSG, tileID, csn, ptr))!=NULL){
       if( ptr->aux >= minlev){
 	found = true;
-	codestream = add_msgstream( ptr, stream, codestream, codelen);
+	codestream = add_msgstream( ptr, jpipstream, codestream, codelen);
       }
       ptr = ptr->next;
     }
