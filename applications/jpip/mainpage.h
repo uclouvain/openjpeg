@@ -39,8 +39,8 @@
  * - opj_server.c     JPIP server supporting HTTP connection and JPT-stream
  * - opj_dec_server.c Server to decode JPT-stream and communicate locally with JPIP client, which is coded in java
  * - addXMLinJP2.c  To Embed metadata into JP2 file
- * - jpt_to_jp2.c   To Convert JPT-stream to JP2
- * - jpt_to_j2k.c   To Convert JPT-stream to J2K
+ * - jpip_to_jp2.c   To Convert JPT-stream to JP2
+ * - jpip_to_j2k.c   To Convert JPT-stream to J2K
  * - test_index.c   To test index code format of a JP2 file
  *
  * \section license License

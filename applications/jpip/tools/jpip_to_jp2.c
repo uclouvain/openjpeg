@@ -35,9 +35,9 @@
  *  This program takes two arguments. \n
  *   -# Input JPT or JPP file
  *   -# Output JP2 file\n
- *   % ./jpt_to_jp2 input.jpt output.jp2
+ *   % ./jpip_to_jp2 input.jpt output.jp2
  *   or
- *   % ./jpt_to_jp2 input.jpp output.jp2
+ *   % ./jpip_to_jp2 input.jpp output.jp2
  */
 
 #include <stdio.h>

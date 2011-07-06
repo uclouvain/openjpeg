@@ -5,6 +5,9 @@ What's New for OpenJPIP
 ! : changed
 + : added
 
+July 6, 2011
+* [antonin] JPIP : fixed autotools to work with recent name changes
+
 July 5, 2011
 ! [kaori] changed parameter, file names, message names regarding JPT-stream to JPIP-stream, which handles also JPP-stream
 

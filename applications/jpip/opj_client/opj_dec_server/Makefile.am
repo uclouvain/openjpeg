@@ -19,8 +19,8 @@ imgsock_manager.c \
 imgsock_manager.h \
 jp2k_decoder.c \
 jp2k_decoder.h \
-jptstream_manager.c \
-jptstream_manager.h \
+jpipstream_manager.c \
+jpipstream_manager.h \
 opj_dec_server.c
 
 
