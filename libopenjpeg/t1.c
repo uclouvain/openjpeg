@@ -1413,6 +1413,7 @@ void t1_encode_cblks(
 
 			for (bandno = 0; bandno < res->numbands; ++bandno) {
 				opj_tcd_band_t* restrict band = &res->bands[bandno];
+        int bandconst = 8192 * 8192 / ((int) floor(band->stepsize * 8192));
 
 				for (precno = 0; precno < res->pw * res->ph; ++precno) {
 					opj_tcd_precinct_t *prc = &band->precincts[precno];
@@ -1463,7 +1464,7 @@ void t1_encode_cblks(
 									datap[(j * cblk_w) + i] =
 										fix_mul(
 										tmp,
-										8192 * 8192 / ((int) floor(band->stepsize * 8192))) >> (11 - T1_NMSEDEC_FRACBITS);
+										bandconst) >> (11 - T1_NMSEDEC_FRACBITS);
 								}
 							}
 						}
