@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+July 10, 2011
+! [antonin] improved encoding speed in t1_encode_cblks (credit to Giuseppe Baruffa)
+
 July 3, 2011
 * [antonin] fixed bmptoimage (see http://groups.google.com/group/openjpeg/browse_thread/thread/33a24c5896bf6391)
 * [antonin] fixed handling of "jp2->meth" value (Restricted ICC profile handling currently not implemented)
