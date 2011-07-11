@@ -5,7 +5,7 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
-_______ R812 : OPJ-V1-BRANCH created ______________________________
+_______ R812 : 'openjpeg-1.5' branch created ______________________________
 
 July 10, 2011
 ! [antonin] improved encoding speed in t1_encode_cblks (credit to Giuseppe Baruffa)
