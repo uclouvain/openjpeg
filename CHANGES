@@ -5,14 +5,14 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
-_______ R812 : 'openjpeg-1.5' branch created ______________________________
-
 July 13, 2011
 + [vtorri] added 'libopenjpeg-jpwl.pc.in'
 * [vtorri] fixed substitution in libopenjpeg1.pc.in
 ! [vtorri] increase micro version to 99. When released, set minor to 5 and micro to 0
 * [vtorri] added -lm to the linker for libopenjpeg and to the .pc file
 - [vtorri] removed useless LCMS flags from Makefile.am for libopenjpeg
+
+_______ R812 : 'openjpeg-1.5' branch created ______________________________
 
 
 July 10, 2011
