@@ -7,7 +7,7 @@
 
 m4_define([OPJ_MAJOR], [1])
 m4_define([OPJ_MINOR], [4])
-m4_define([OPJ_MICRO], [0])
+m4_define([OPJ_MICRO], [99])
 
 m4_define([lt_cur], m4_eval(OPJ_MAJOR + OPJ_MINOR))
 m4_define([lt_rev], OPJ_MICRO)
@@ -364,10 +364,7 @@ AC_MSG_RESULT([${want_lcms2}])
 
 if test "x${want_lcms2}" = "xyes" ; then
    PKG_CHECK_MODULES([LCMS2], [lcms2],
-      [
-       have_lcms2="yes"
-       requirements="lcms2"
-      ],
+      [have_lcms2="yes"],
       [have_lcms2="no"])
 fi
 
@@ -399,15 +396,9 @@ if test "x${have_lcms2}" = "xno" ; then
 
    if test "x${want_lcms1}" = "xyes" ; then
       PKG_CHECK_MODULES([LCMS1], [lcms1],
-         [
-          have_lcms1="yes"
-          requirements="lcms1"
-         ],
+         [have_lcms1="yes"],
          [PKG_CHECK_MODULES([LCMS1], [lcms],
-            [
-             have_lcms1="yes"
-             requirements="lcms"
-            ],
+            [have_lcms1="yes"],
             [have_lcms1="no"])])
    fi
 
@@ -459,6 +450,7 @@ fi
 AC_CONFIG_FILES([
 Makefile
 libopenjpeg1.pc
+libopenjpeg-jpwl.pc
 libopenjpeg/Makefile
 libopenjpeg/jpwl/Makefile
 applications/Makefile

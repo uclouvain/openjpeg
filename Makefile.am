@@ -7,6 +7,10 @@ SUBDIRS = libopenjpeg applications doc
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libopenjpeg1.pc
 
+if WANT_JPWL
+pkgconfig_DATA += libopenjpeg-jpwl.pc
+endif
+
 
 MAINTAINERCLEANFILES = \
 Makefile.in \
@@ -52,6 +56,9 @@ install-data-hook:
 	$(LN_S) -nf libopenjpeg1.pc $(DESTDIR)$(pkgconfigdir)/libopenjpeg.pc
 	@echo -e " (PC)\t$(pkgconfigdir)/libopenjpeg1.pc" >> $(top_builddir)/report.txt
 	@echo -e " (LN)\t$(pkgconfigdir)/libopenjpeg.pc" >> $(top_builddir)/report.txt
+if WANT_JPWL
+	@echo -e " (PC)\t$(pkgconfigdir)/libopenjpeg-jpwl.pc" >> $(top_builddir)/report.txt
+endif
 	@cat $(top_builddir)/report.txt
 	@rm $(top_builddir)/report.txt
 
