@@ -1,4 +1,4 @@
-  # Build the demo app, small examples
+# Build the demo app, small examples
 
 # First thing define the common source:
 SET(common_SRCS
@@ -37,11 +37,7 @@ ENDIF(WIN32)
 FOREACH(exe j2k_to_image image_to_j2k j2k_dump)
   ADD_EXECUTABLE(${exe} ${exe}.c ${common_SRCS})
   TARGET_LINK_LIBRARIES(${exe} ${OPENJPEG_LIBRARY_NAME} 
-${Z_LIBNAME} ${PNG_LIBNAME} ${TIFF_LIBNAME})
-
-  IF(LCMS_FOUND OR LCMS2_FOUND)
-    TARGET_LINK_LIBRARIES(${exe} ${LCMS_LIBNAME})
-  ENDIF(LCMS_FOUND OR LCMS2_FOUND)
+${Z_LIBNAME} ${PNG_LIBNAME} ${TIFF_LIBNAME} ${LCMS_LIBNAME} )
 
   ADD_TEST(${exe} ${EXECUTABLE_OUTPUT_PATH}/${exe})
   # calling those exe without option will make them fail always:

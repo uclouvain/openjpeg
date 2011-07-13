@@ -39,6 +39,12 @@ SET(OPENJPEG_LIBRARY_PROPERTIES
   SOVERSION "${OPENJPEG_VERSION_MAJOR}"
 )
 
+
+# Path to additional CMake modules
+SET(CMAKE_MODULE_PATH
+    ${CMAKE_SOURCE_DIR}/CMake
+    ${CMAKE_MODULE_PATH})
+
 # On Visual Studio 8 MS deprecated C. This removes all 1.276E1265 security
 # warnings
 IF(WIN32)
@@ -150,7 +156,7 @@ IF(CMAKE_COMPILER_IS_GNUCC)
 ENDIF(CMAKE_COMPILER_IS_GNUCC)
 
 #-----------------------------------------------------------------------------
-# opj_config.h generation
+# opj_config.h generation (1/2)
 FIND_FILE(HAVE_STRINGS_H_FOUND strings.h)
 IF(NOT HAVE_STRINGS_H_FOUND STREQUAL "HAVE_STRINGS_H_FOUND-NOTFOUND")
   FIND_FILE(HAVE_STRINGS_H strings.h)
@@ -196,10 +202,6 @@ IF(NOT HAVE_UNISTD_H_FOUND STREQUAL "HAVE_UNISTD_H_FOUND-NOTFOUND")
   FIND_FILE(HAVE_UNISTD_H unistd.h)
   SET(HAS_UNISTD_H 1)
 ENDIF()
-CONFIGURE_FILE("${OPENJPEG_SOURCE_DIR}/opj_configh.cmake.in"
- "${OPENJPEG_BINARY_DIR}/opj_config.h"
- @ONLY
- )
 
 #-----------------------------------------------------------------------------
 # CDash+CMake : to be updated
@@ -218,7 +220,19 @@ ADD_SUBDIRECTORY(libopenjpeg)
 # Build Applications
 OPTION(BUILD_CODEC "Build the CODEC executables" ON)
 OPTION(BUILD_MJ2 "Build the MJ2 executables." OFF)
-ADD_SUBDIRECTORY(applications)
+
+IF(BUILD_CODEC OR BUILD_MJ2)
+  OPTION(BUILD_THIRDPARTY "Build the thirdparty executables if it is needed" OFF)
+  ADD_SUBDIRECTORY(thirdparty)
+  ADD_SUBDIRECTORY(applications)
+ENDIF (BUILD_CODEC OR BUILD_MJ2)
+
+#-----------------------------------------------------------------------------
+# opj_config.h generation (2/2)
+CONFIGURE_FILE("${OPENJPEG_SOURCE_DIR}/opj_configh.cmake.in"
+ "${OPENJPEG_BINARY_DIR}/opj_config.h"
+ @ONLY
+ )
 
 #-----------------------------------------------------------------------------
 # Build JPWL-flavoured library and executables
