@@ -5,7 +5,10 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
-July 10, 2011
+July 18, 2011
+! [mickael] correct build error (mislocated declaration) with convert to tiff function when HAVE_LIBTIFF is defined
+
+July 13, 2011
 ! [mickael] improved some CMakeLists files linked to the build of applications which used thirdparty
 
 _______ R812 : 'openjpeg-1.5' branch created ______________________________

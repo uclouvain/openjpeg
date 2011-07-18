@@ -1925,9 +1925,9 @@ int imagetotif(opj_image_t * image, const char *outfile)
   {
 	unsigned char *dat8;
 	tsize_t i, ssize;
+  int step, restx;
 	ssize = TIFFStripSize(tif);
 	dat8 = (unsigned char*)buf;
-	int step, restx;
 
 	if(bps == 8)
  {
