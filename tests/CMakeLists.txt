@@ -11,8 +11,8 @@ SET(comparePGXimages_SRCS comparePGXimages.c ${OPENJPEG_SOURCE_DIR}/applications
 # If not getopt was found then add it to the exe:
 IF(DONT_HAVE_GETOPT)
   message("dont have getopt, we will add it")
-  SET(common_SRCS
-    ${common_SRCS}
+  SET(comparePGXimages_SRCS
+    ${comparePGXimages_SRCS}
     ${OPENJPEG_SOURCE_DIR}/applications/common/getopt.c
   )
 ENDIF(DONT_HAVE_GETOPT)

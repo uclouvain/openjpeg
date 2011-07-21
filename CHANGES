@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 July 21, 2011
+! [mickael] correct a compil error linked to getopt with win platform
 !+ [mickael] add new decode tests based on conformance data and tolerance. Non regression is also added on the decoder output. Deactivate old tests.
 ! [mickael] to follow last version of conformance data about component separator for pgx file, we changed - to _ separator even if nb component = 1
 ! [mickael] removed unused warning configuration message
