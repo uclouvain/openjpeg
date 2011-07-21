@@ -65,9 +65,6 @@ IF (ZLIB_FOUND)
     ENDIF(BUILD_THIRDPARTY) 
 
   ENDIF(PNG_FOUND)
-  
-ELSE (ZLIB_FOUND)
-  message(WARNING "To add lib PNG we need that ZLIB was previously found")
 ENDIF (ZLIB_FOUND)
 
 #------------
