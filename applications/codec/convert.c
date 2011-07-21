@@ -1200,11 +1200,11 @@ int imagetopgx(opj_image_t * image, const char *outfile) {
       name = (char*)malloc(total+1);
       }
     strncpy(name, outfile, dotpos);
-		if (image->numcomps > 1) {
-			sprintf(name+dotpos, "-%d.pgx", compno);
-		} else {
+		//if (image->numcomps > 1) {
+			sprintf(name+dotpos, "_%d.pgx", compno);
+		/*} else {
 			strcpy(name+dotpos, ".pgx");
-		}
+		}*/
 		fdest = fopen(name, "wb");
 		if (!fdest) {
 			fprintf(stderr, "ERROR -> failed to open %s for writing\n", name);

@@ -6,6 +6,9 @@ What's New for OpenJPEG
 + : added
 
 July 21, 2011
+! [mickael] to follow last version of conformance data about component separator for pgx file, we changed - to _ separator even if nb component = 1
+
+July 21, 2011
 ! [mickael] removed unused warning configuration message
 
 July 18, 2011
