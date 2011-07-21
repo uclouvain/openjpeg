@@ -1,0 +1,31 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+
+INCLUDE_DIRECTORIES(${OPENJPEG_SOURCE_DIR}/libopenjpeg
+                    ${OPENJPEG_SOURCE_DIR}/applications/codec
+                    ${OPENJPEG_SOURCE_DIR}/applications/common
+                    )
+
+# First thing define the common source:
+SET(comparePGXimages_SRCS comparePGXimages.c ${OPENJPEG_SOURCE_DIR}/applications/codec/convert.c)
+
+# If not getopt was found then add it to the exe:
+IF(DONT_HAVE_GETOPT)
+  message("dont have getopt, we will add it")
+  SET(common_SRCS
+    ${common_SRCS}
+    ${OPENJPEG_SOURCE_DIR}/applications/common/getopt.c
+  )
+ENDIF(DONT_HAVE_GETOPT)
+
+ADD_EXECUTABLE(comparePGXimages ${comparePGXimages_SRCS})
+TARGET_LINK_LIBRARIES(comparePGXimages ${OPENJPEG_LIBRARY_NAME}
+                                        ${PNG_LIBNAME}
+                                        ${TIFF_LIBNAME}
+                                        )
+
+# No image send to the dashboard if lib PNG is not available.
+IF(NOT HAVE_LIBPNG)
+  MESSAGE(WARNING "Lib PNG seems to be not available: if you want run the non-regression tests with images reported to the dashboard, you need it (try BUILD_THIRDPARTY)") 
+ENDIF(NOT HAVE_LIBPNG)
+
+ADD_SUBDIRECTORY(conformance)

@@ -101,38 +101,38 @@ IF(BUILD_JPWL)
   )
 ENDIF(BUILD_JPWL)
 
-if(BUILD_TESTING)
-# Do testing here, once we know the examples are being built:
-FILE(GLOB_RECURSE OPENJPEG_DATA_IMAGES_GLOB
-  "${JPEG2000_CONFORMANCE_DATA_ROOT}/*.j2k"
-  "${JPEG2000_CONFORMANCE_DATA_ROOT}/*.j2c"
-  "${JPEG2000_CONFORMANCE_DATA_ROOT}/*.jp2"
-  )
+#if(BUILD_TESTING)
+## Do testing here, once we know the examples are being built:
+#FILE(GLOB_RECURSE OPENJPEG_DATA_IMAGES_GLOB
+#  "${JPEG2000_CONFORMANCE_DATA_ROOT}/*.j2k"
+#  "${JPEG2000_CONFORMANCE_DATA_ROOT}/*.j2c"
+#  "${JPEG2000_CONFORMANCE_DATA_ROOT}/*.jp2"
+#  )
 
-foreach(filename ${OPENJPEG_DATA_IMAGES_GLOB})
-  get_filename_component(filename_temp ${filename} NAME)
-  get_filename_component(filename_ext ${filename} EXT)
-  execute_process(COMMAND ${EXECUTABLE_OUTPUT_PATH}/j2k_dump -i ${filename}
-    OUTPUT_VARIABLE dump_success
-    OUTPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/${filename_temp}.dump
-    ERROR_QUIET
-  )
-  if(dump_success)
-  file(READ ${CMAKE_CURRENT_BINARY_DIR}/${filename_temp}.dump numcomp_file)
-  string(REGEX REPLACE ".*numcomps=([0-9]+).*" "\\1"
-    numcomps "${numcomp_file}")
-  #message( "found:${output_variable} for ${filename_temp}" )
-  endif()
-  ADD_TEST(dump-${filename_temp} ${EXECUTABLE_OUTPUT_PATH}/j2k_dump -i ${filename})
-  foreach(codec_type ppm pgx bmp tif raw tga png)
-    ADD_TEST(j2i-${filename_temp}-${codec_type} ${EXECUTABLE_OUTPUT_PATH}/j2k_to_image -i ${filename} -o ${filename_temp}.${codec_type})
-  endforeach(codec_type)
-  foreach(codec_type ppm bmp tif tga png)
-    ADD_TEST(i2j-${filename_temp}-${codec_type} ${EXECUTABLE_OUTPUT_PATH}/image_to_j2k -i ${filename_temp}.${codec_type} -o ${filename_temp}.${codec_type}${filename_ext})
-    SET_TESTS_PROPERTIES(i2j-${filename_temp}-${codec_type} PROPERTIES DEPENDS j2i-${filename_temp}-${codec_type})
-    #if(UNIX)
-    #  ADD_TEST(cmp-${filename_temp}-${codec_type} cmp ${filename} ${filename_temp}.${codec_type}${filename_ext})
-    #endif(UNIX)
-  endforeach(codec_type)
-endforeach(filename)
-endif(BUILD_TESTING)
+#foreach(filename ${OPENJPEG_DATA_IMAGES_GLOB})
+#  get_filename_component(filename_temp ${filename} NAME)
+#  get_filename_component(filename_ext ${filename} EXT)
+#  execute_process(COMMAND ${EXECUTABLE_OUTPUT_PATH}/j2k_dump -i ${filename}
+#    OUTPUT_VARIABLE dump_success
+#    OUTPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/${filename_temp}.dump
+#    ERROR_QUIET
+#  )
+#  if(dump_success)
+#  file(READ ${CMAKE_CURRENT_BINARY_DIR}/${filename_temp}.dump numcomp_file)
+#  string(REGEX REPLACE ".*numcomps=([0-9]+).*" "\\1"
+#    numcomps "${numcomp_file}")
+#  #message( "found:${output_variable} for ${filename_temp}" )
+#  endif()
+#  ADD_TEST(dump-${filename_temp} ${EXECUTABLE_OUTPUT_PATH}/j2k_dump -i ${filename})
+#  foreach(codec_type ppm pgx bmp tif raw tga png)
+#    ADD_TEST(j2i-${filename_temp}-${codec_type} ${EXECUTABLE_OUTPUT_PATH}/j2k_to_image -i ${filename} -o ${filename_temp}.${codec_type})
+#  endforeach(codec_type)
+#  foreach(codec_type ppm bmp tif tga png)
+#    ADD_TEST(i2j-${filename_temp}-${codec_type} ${EXECUTABLE_OUTPUT_PATH}/image_to_j2k -i ${filename_temp}.${codec_type} -o ${filename_temp}.${codec_type}${filename_ext})
+#    SET_TESTS_PROPERTIES(i2j-${filename_temp}-${codec_type} PROPERTIES DEPENDS j2i-${filename_temp}-${codec_type})
+#    #if(UNIX)
+#    #  ADD_TEST(cmp-${filename_temp}-${codec_type} cmp ${filename} ${filename_temp}.${codec_type}${filename_ext})
+#    #endif(UNIX)
+#  endforeach(codec_type)
+#endforeach(filename)
+#endif(BUILD_TESTING)

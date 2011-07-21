@@ -204,14 +204,6 @@ IF(NOT HAVE_UNISTD_H_FOUND STREQUAL "HAVE_UNISTD_H_FOUND-NOTFOUND")
 ENDIF()
 
 #-----------------------------------------------------------------------------
-# CDash+CMake : to be updated
-OPTION(BUILD_TESTING "Build the tests." OFF)
-IF(BUILD_TESTING)
-  ENABLE_TESTING()
-  INCLUDE(CTest)
-ENDIF(BUILD_TESTING)
-
-#-----------------------------------------------------------------------------
 # Build Library
 INCLUDE_DIRECTORIES(BEFORE ${OPENJPEG_BINARY_DIR})
 ADD_SUBDIRECTORY(libopenjpeg)
@@ -241,6 +233,27 @@ OPTION(BUILD_JPWL "Build the JPWL library and executables" OFF)
 #-----------------------------------------------------------------------------
 # Build DOCUMENTATION (not in ALL target and only if Doxygen is found)
 ADD_SUBDIRECTORY(doc)
+
+#-----------------------------------------------------------------------------
+# Buld Testing
+OPTION(BUILD_TESTING "Build the tests." OFF)
+IF(BUILD_TESTING)
+  IF(BUILD_CODEC)
+    ENABLE_TESTING()
+    INCLUDE(CTest)
+  
+    # Add repository where to find tests
+    ADD_SUBDIRECTORY(tests)
+  
+    # Search openjpeg data needed for the tests
+    # They could be found via svn on the OpenJPEG google code project
+    # svn checkout http://openjpeg.googlecode.com/svn/data (about 70 Mo) 
+    FIND_PATH(OPJ_DATA_ROOT README-OPJ-Data 
+              PATHS $ENV{OPJ_DATA_ROOT} ${CMAKE_SOURCE_DIR}/../opj-data)
+  ELSE(BUILD_CODEC)
+    message(FATAL_ERROR "You need build codec to run the tests")
+  ENDIF(BUILD_CODEC)
+ENDIF(BUILD_TESTING)
 
 #-----------------------------------------------------------------------------
 # Tests data
