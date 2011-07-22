@@ -3,6 +3,9 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 INCLUDE_DIRECTORIES(${OPENJPEG_SOURCE_DIR}/libopenjpeg
                     ${OPENJPEG_SOURCE_DIR}/applications/codec
                     ${OPENJPEG_SOURCE_DIR}/applications/common
+                    ${Z_INCLUDE_DIRNAME}
+                    ${PNG_INCLUDE_DIRNAME}
+                    ${TIFF_INCLUDE_DIRNAME}
                     )
 
 # First thing define the common source:
@@ -19,9 +22,10 @@ ENDIF(DONT_HAVE_GETOPT)
 
 ADD_EXECUTABLE(comparePGXimages ${comparePGXimages_SRCS})
 TARGET_LINK_LIBRARIES(comparePGXimages ${OPENJPEG_LIBRARY_NAME}
-                                        ${PNG_LIBNAME}
-                                        ${TIFF_LIBNAME}
-                                        )
+                                       ${Z_LIBNAME}
+                                       ${PNG_LIBNAME}
+                                       ${TIFF_LIBNAME}
+                                       )
 
 # No image send to the dashboard if lib PNG is not available.
 IF(NOT HAVE_LIBPNG)
