@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+July 23, 2011
++ [vtorri] Added libpng 1.5 detection. Dropped libpng 1.0.* explicit detection (we are in 2011 !). Patch by Winfried.
+
 July 13, 2011
 + [vtorri] added 'libopenjpeg-jpwl.pc.in'
 * [vtorri] fixed substitution in libopenjpeg1.pc.in

@@ -222,13 +222,13 @@ AC_MSG_RESULT([${want_png}])
 
 if test "x${want_png}" = "xyes" ; then
 
-   PKG_CHECK_MODULES([PNG], [libpng14],
+   PKG_CHECK_MODULES([PNG], [libpng15],
       [have_libpng="yes"],
       [
-       PKG_CHECK_MODULES([PNG], [libpng12],
+       PKG_CHECK_MODULES([PNG], [libpng14],
           [have_libpng="yes"],
           [
-           PKG_CHECK_MODULES([PNG], [libpng10],
+           PKG_CHECK_MODULES([PNG], [libpng12],
               [have_libpng="yes"],
               [
                PKG_CHECK_MODULES([PNG], [libpng],
