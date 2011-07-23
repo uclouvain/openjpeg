@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 July 23, 2011
++ [vtorri] Fixed issue #74.
 + [vtorri] Added libpng 1.5 detection. Dropped libpng 1.0.* explicit detection (we are in 2011 !). Patch by Winfried.
 
 July 13, 2011
