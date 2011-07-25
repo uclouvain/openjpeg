@@ -8,6 +8,7 @@ What's New for OpenJPEG
 July 25, 2011
 * [mickael] fixed issue 74 for trunk
 ! [mickael] modify j2k_dump to support output file, needed for non-regression tests
++! [mickael] added non-regression tests for j2k_dump function and conformance data
 
 July 22, 2011
 ! [mickael] correct some troubles about thirdparty when they are used

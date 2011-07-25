@@ -46,10 +46,9 @@ FOREACH(numFileC0P0 RANGE 1 16)
   
   # Manage cases which need to try different resolution reduction
   IF (numFileC0P0 EQUAL 3 OR numFileC0P0 EQUAL 15)
-   
     get_filename_component(filenameRefSub ${filenameRef} NAME_WE)
-    
     #r = 0
+    
     ADD_TEST(ETS-C0P0-${filenameInput}-r0-decode 
         ${EXECUTABLE_OUTPUT_PATH}/j2k_to_image 
         -i ${INPUT_CONF}/${filenameInput}
@@ -83,7 +82,7 @@ FOREACH(numFileC0P0 RANGE 1 16)
     SET_TESTS_PROPERTIES(NR-C0P0-${filenameInput}-r0-compare2base  
                          PROPERTIES DEPENDS 
                          ETS-C0P0-${filenameInput}-r0-decode)  
-     
+    
     #r = 1
     ADD_TEST(ETS-C0P0-${filenameInput}-r1-decode
         ${EXECUTABLE_OUTPUT_PATH}/j2k_to_image 
@@ -117,7 +116,7 @@ FOREACH(numFileC0P0 RANGE 1 16)
  
     SET_TESTS_PROPERTIES(NR-C0P0-${filenameInput}-r1-compare2base  
                          PROPERTIES DEPENDS 
-                         ETS-C0P0-${filenameInput}-r1-decode)  
+                         ETS-C0P0-${filenameInput}-r1-decode) 
 
   ELSE(numFileC0P0 EQUAL 3 OR numFileC0P0 EQUAL 15)
   
@@ -154,7 +153,7 @@ FOREACH(numFileC0P0 RANGE 1 16)
     SET_TESTS_PROPERTIES(NR-C0P0-${filenameInput}-compare2base  
                          PROPERTIES DEPENDS 
                          ETS-C0P0-${filenameInput}-decode)    
-   
+      
   ENDIF(numFileC0P0 EQUAL 3 OR numFileC0P0 EQUAL 15)
 
 ENDFOREACH(numFileC0P0)
@@ -181,13 +180,11 @@ FOREACH(numFileC0P1 RANGE 1 7)
   list(GET CP1_nbC_list ${numFileC0P1}  nbComponents)
   list(GET C0P1_PEAK_list ${numFileC0P1}  PEAK_limit)
   list(GET C0P1_MSE_list ${numFileC0P1}  MSE_limit) 
-  
 
   # Manage cases which need to try different resolution reduction
   IF (numFileC0P1 EQUAL 4 )
-     
     get_filename_component(filenameRefSub ${filenameRef} NAME_WE)
-  
+    
     #r = 0
     ADD_TEST(ETS-C0P1-${filenameInput}-r0-decode 
         ${EXECUTABLE_OUTPUT_PATH}/j2k_to_image 
@@ -221,8 +218,8 @@ FOREACH(numFileC0P1 RANGE 1 7)
  
     SET_TESTS_PROPERTIES(NR-C0P1-${filenameInput}-r0-compare2base  
                          PROPERTIES DEPENDS 
-                         ETS-C0P1-${filenameInput}-r0-decode)    
-        
+                         ETS-C0P1-${filenameInput}-r0-decode)
+    
     #r = 3
     ADD_TEST(ETS-C0P1-${filenameInput}-r3-decode
         ${EXECUTABLE_OUTPUT_PATH}/j2k_to_image 
@@ -256,8 +253,8 @@ FOREACH(numFileC0P1 RANGE 1 7)
  
     SET_TESTS_PROPERTIES(NR-C0P1-${filenameInput}-r3-compare2base  
                          PROPERTIES DEPENDS 
-                         ETS-C0P1-${filenameInput}-r3-decode)    
-
+                         ETS-C0P1-${filenameInput}-r3-decode)
+       
   ELSE(numFileC0P1 EQUAL 4)
 
     ADD_TEST(ETS-C0P1-${filenameInput}-decode
@@ -292,8 +289,8 @@ FOREACH(numFileC0P1 RANGE 1 7)
  
     SET_TESTS_PROPERTIES(NR-C0P1-${filenameInput}-compare2base  
                          PROPERTIES DEPENDS 
-                         ETS-C0P1-${filenameInput}-decode)          
-        
+                         ETS-C0P1-${filenameInput}-decode)
+            
   ENDIF(numFileC0P1 EQUAL 4)
 
 ENDFOREACH(numFileC0P1)
@@ -358,8 +355,8 @@ FOREACH(numFileC1P0 RANGE 1 16)
  
   SET_TESTS_PROPERTIES(NR-C1P0-${filenameInput}-compare2base  
                        PROPERTIES DEPENDS 
-                       ETS-C1P0-${filenameInput}-decode)      
-  
+                       ETS-C1P0-${filenameInput}-decode)
+    
 ENDFOREACH(numFileC1P0)
 
 #--------------------------------------------------------------------------
@@ -402,7 +399,7 @@ FOREACH(numFileC1P1 RANGE 1 7)
       
   SET_TESTS_PROPERTIES(ETS-C1P1-${filenameInput}-compare2ref  
                        PROPERTIES DEPENDS 
-                       ETS-C1P1-${filenameInput}-decode)    
+                       ETS-C1P1-${filenameInput}-decode)
                        
   ADD_TEST(NR-C1P1-${filenameInput}-compare2base
       ${EXECUTABLE_OUTPUT_PATH}/comparePGXimages
@@ -415,6 +412,73 @@ FOREACH(numFileC1P1 RANGE 1 7)
       
   SET_TESTS_PROPERTIES(NR-C1P1-${filenameInput}-compare2base  
                        PROPERTIES DEPENDS 
-                       ETS-C1P1-${filenameInput}-decode)                                              
+                       ETS-C1P1-${filenameInput}-decode)
                        
 ENDFOREACH(numFileC1P1)
+
+#--------------------------------------------------------------------------#
+#--------------------------------------------------------------------------#
+#--------------------------------------------------------------------------#
+
+#--------------------------------------------------------------------------
+# Tests about dump of profile 0 file
+# try to dump image and codestream informations into a file
+# non regression comparison this file to the baseline
+
+FOREACH(numFileP0 RANGE 1 16) 
+
+  # Build filenames
+  IF(${numFileP0} LESS 10)
+    SET( filenameInput p0_0${numFileP0}.j2k )
+  ELSE(${numFileP0} LESS 10)
+    SET( filenameInput p0_${numFileP0}.j2k )
+  ENDIF(${numFileP0} LESS 10)
+  get_filename_component(filenameRefSub ${filenameInput} NAME_WE)
+
+
+  ADD_TEST(NR-${filenameInput}-dump
+      ${EXECUTABLE_OUTPUT_PATH}/j2k_dump
+     -i ${INPUT_CONF}/${filenameInput}
+     -o ${TEMP}/${filenameInput}.txt
+     )
+     
+  ADD_TEST(NR-${filenameInput}-compare_dump2base
+      ${EXECUTABLE_OUTPUT_PATH}/compare_dump_files
+     -b ${BASELINE_NR}/opj_${filenameRefSub}.txt
+     -t ${TEMP}/${filenameInput}.txt
+     )
+     
+  SET_TESTS_PROPERTIES(NR-${filenameInput}-compare_dump2base  
+                       PROPERTIES DEPENDS 
+                       NR-${filenameInput}-dump)
+                       
+ENDFOREACH(numFileP0 RANGE 1 16) 
+
+#--------------------------------------------------------------------------
+# Tests about dump of profile 1 file
+# try to dump image and codestream informations into a file
+# non regression comparison this file to the baseline
+
+FOREACH(numFileP1 RANGE 1 7) 
+
+  # Build filenames
+  SET( filenameInput p1_0${numFileP1}.j2k )
+  get_filename_component(filenameInputSub ${filenameInput} NAME_WE)
+
+  ADD_TEST(NR-${filenameInput}-dump
+      ${EXECUTABLE_OUTPUT_PATH}/j2k_dump
+     -i ${INPUT_CONF}/${filenameInput}
+     -o ${TEMP}/${filenameInput}.txt
+     )
+     
+  ADD_TEST(NR-${filenameInput}-compare_dump2base
+      ${EXECUTABLE_OUTPUT_PATH}/compare_dump_files
+     -b ${BASELINE_NR}/opj_${filenameInputSub}.txt
+     -t ${TEMP}/${filenameInput}.txt
+     )
+     
+  SET_TESTS_PROPERTIES(NR-${filenameInput}-compare_dump2base
+                       PROPERTIES DEPENDS 
+                       NR-${filenameInput}-dump) 
+                       
+ENDFOREACH(numFileP1 RANGE 1 7) 

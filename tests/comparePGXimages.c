@@ -1,5 +1,5 @@
 /*
- * compareImagesPGX2.c
+ * comparePGXimages.c
  *
  *  Created on: 8 juil. 2011
  *      Author: mickael
@@ -10,16 +10,12 @@
 #include <math.h>
 #include <string.h>
 
-//#include <unistd.h>
-
 #include "opj_config.h"
 #include "getopt.h"
 
 #include "openjpeg.h"
 #include "format_defs.h"
 #include "convert.h"
-
-//#include "commonTesting.h"
 
 double* parseToleranceValues( char* inArg, const int nbcomp);
 void comparePGXimages_help_display();
@@ -49,6 +45,9 @@ typedef struct test_cmp_parameters
 
 } test_cmp_parameters;
 
+/*******************************************************************************
+ * Command line help function
+ *******************************************************************************/
 void comparePGXimages_help_display() {
   fprintf(stdout,"\nList of parameters for the comparePGX function  \n");
   fprintf(stdout,"\n");
@@ -319,6 +318,8 @@ char* createMultiComponentsFilename(const char* inFilename, const int indexF, co
   else
     {
     //printf("Token %c not found\n", token);
+    outFilename = (char*)malloc(1);
+    outFilename[0] = '\0';
     return outFilename;
     }
 
@@ -657,7 +658,7 @@ int main(int argc, char **argv)
    for (it_comp = 0; it_comp < imageDiff->numcomps; it_comp++)
      {
      double SE=0,PEAK=0;
-     double MSE=0,PSNR=0;
+     double MSE=0;
      char *filenamePNGbase_it_comp, *filenamePNGtest_it_comp, *filenamePNGdiff_it_comp;
 
      filenamePNGbase_it_comp = (char*) malloc(memsizebasefilename);
