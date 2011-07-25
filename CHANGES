@@ -8,6 +8,9 @@ What's New for OpenJPEG
 July 22, 2011
 ! [mickael] correct some troubles about thirdparty when they are used
 
+July 25, 2011
+* fixed issue 74 for trunk
+
 July 21, 2011
 ! [mickael] correct a compil error linked to getopt with win platform
 !+ [mickael] add new decode tests based on conformance data and tolerance. Non regression is also added on the decoder output. Deactivate old tests.
