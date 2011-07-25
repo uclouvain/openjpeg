@@ -5,11 +5,12 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+July 25, 2011
+* [mickael] fixed issue 74 for trunk
+! [mickael] modify j2k_dump to support output file, needed for non-regression tests
+
 July 22, 2011
 ! [mickael] correct some troubles about thirdparty when they are used
-
-July 25, 2011
-* fixed issue 74 for trunk
 
 July 21, 2011
 ! [mickael] correct a compil error linked to getopt with win platform

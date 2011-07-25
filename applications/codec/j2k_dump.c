@@ -92,6 +92,10 @@ void decode_help_display() {
 	fprintf(stdout,"    REQUIRED only if an Input image directory not specified\n");
 	fprintf(stdout,"    Currently accepts J2K-files, JP2-files and JPT-files. The file type\n");
 	fprintf(stdout,"    is identified based on its suffix.\n");
+	fprintf(stdout,"  -o <output file>\n");
+  fprintf(stdout,"    OPTIONAL\n");
+  fprintf(stdout,"    Output file where file info will be dump.\n");
+  fprintf(stdout,"    By default it will be in the stdout.\n");
 	fprintf(stdout,"\n");
 }
 
@@ -197,7 +201,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 		{"ImgDir",REQ_ARG, NULL ,'y'},
 	};
 
-	const char optlist[] = "i:h";
+	const char optlist[] = "i:o:h";
 	totlen=sizeof(long_option);
 	img_fol->set_out_format = 0;
 	while (1) {
@@ -221,6 +225,15 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 						return 1;
 				}
 				strncpy(parameters->infile, infile, sizeof(parameters->infile)-1);
+			}
+			break;
+
+			/* ------------------------------------------------------ */
+
+			case 'o':     /* output file */
+			{
+			  char *outfile = optarg;
+			  strncpy(parameters->outfile, outfile, sizeof(parameters->outfile)-1);
 			}
 			break;
 				
@@ -306,7 +319,7 @@ int main(int argc, char *argv[])
 	img_fol_t img_fol;
 	opj_event_mgr_t event_mgr;		/* event manager */
 	opj_image_t *image = NULL;
-	FILE *fsrc = NULL;
+	FILE *fsrc = NULL, *fout = NULL;;
 	unsigned char *src = NULL;
 	int file_length;
 	int num_images;
@@ -361,6 +374,19 @@ int main(int argc, char *argv[])
 	}else{
 		num_images=1;
 	}
+
+	//
+	if (parameters.outfile[0] != 0)
+	  {
+	  fout = fopen(parameters.outfile,"w");
+    if (!fout)
+      {
+      fprintf(stderr, "ERROR -> failed to open %s for reading\n", parameters.outfile);
+      return 1;
+      }
+	  }
+	else
+	  fout = stdout;
 
 	/*Encoding image one by one*/
 	for(imageno = 0; imageno < num_images ; imageno++)
@@ -421,10 +447,10 @@ int main(int argc, char *argv[])
 				return 1;
 			}
 			/* dump image */
-      j2k_dump_image(stdout, image);
+      j2k_dump_image(fout, image);
 
 			/* dump cp */
-      j2k_dump_cp(stdout, image, ((opj_j2k_t*)dinfo->j2k_handle)->cp);
+      j2k_dump_cp(fout, image, ((opj_j2k_t*)dinfo->j2k_handle)->cp);
 
 			/* close the byte stream */
 			opj_cio_close(cio);
@@ -472,10 +498,10 @@ int main(int argc, char *argv[])
 	 {
 	  free(image->icc_profile_buf); image->icc_profile_buf = NULL;
 	 }	
-      j2k_dump_image(stdout, image);
+      j2k_dump_image(fout, image);
 
 			/* dump cp */
-      j2k_dump_cp(stdout, image, ((opj_jp2_t*)dinfo->jp2_handle)->j2k->cp);
+      j2k_dump_cp(fout, image, ((opj_jp2_t*)dinfo->jp2_handle)->j2k->cp);
 
 			/* close the byte stream */
 			opj_cio_close(cio);
@@ -553,6 +579,8 @@ int main(int argc, char *argv[])
 		opj_image_destroy(image);
 
 	}
+
+	fclose(fout);
 
   return EXIT_SUCCESS;
 }
