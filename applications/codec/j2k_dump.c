@@ -319,7 +319,7 @@ int main(int argc, char *argv[])
 	img_fol_t img_fol;
 	opj_event_mgr_t event_mgr;		/* event manager */
 	opj_image_t *image = NULL;
-	FILE *fsrc = NULL, *fout = NULL;;
+	FILE *fsrc = NULL, *fout = NULL;
 	unsigned char *src = NULL;
 	int file_length;
 	int num_images;

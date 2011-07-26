@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+July 26, 2011
+! [mickael] delete double semi-colon at end of line which generate crash on win platform
+
 July 25, 2011
 * [mickael] fixed issue 74 for trunk
 ! [mickael] modify j2k_dump to support output file, needed for non-regression tests
