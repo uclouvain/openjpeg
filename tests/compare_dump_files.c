@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "getopt.h"
 
@@ -155,8 +156,7 @@ int main(int argc, char **argv)
     if(chbase != chtest)
       {
       size_t nbytes = 2048;
-      char* strbase, *strtest;
-      int nbytes_read_base, nbytes_read_test;
+      char *strbase, *strtest, *strbase_d, *strtest_d;
 
       printf("Files differ at line %lu:\n", l);
       fseek(fbase,pos,SEEK_SET);
@@ -164,14 +164,18 @@ int main(int argc, char **argv)
 
       strbase = (char *) malloc(nbytes + 1);
       strtest = (char *) malloc(nbytes + 1);
-      nbytes_read_base = getline(&strbase, &nbytes, fbase);
-      nbytes_read_test = getline(&strtest, &nbytes, ftest);
-      strbase[nbytes_read_base-1] = '\0';
-      strtest[nbytes_read_test-1] = '\0';
-      printf("<%s> vs. <%s>\n", strbase, strtest);
+      fgets(strbase, nbytes, fbase);
+      fgets(strtest, nbytes, ftest);
+      strbase_d = (char *) malloc(strlen(strbase));
+      strtest_d = (char *) malloc(strlen(strtest));
+      strncpy(strbase_d, strbase, strlen(strbase)-1);
+      strncpy(strtest_d, strtest, strlen(strtest)-1);
+      strbase_d[strlen(strbase)] = '\0';
+      strtest_d[strlen(strtest)] = '\0';
+      printf("<%s> vs. <%s>\n", strbase_d, strtest_d);
 
-      free(strbase);
-      free(strtest);
+      free(strbase);free(strtest);
+      free(strbase_d);free(strtest_d);
       same = 0;
       break;
       }

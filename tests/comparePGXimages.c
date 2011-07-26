@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "opj_config.h"
 #include "getopt.h"
