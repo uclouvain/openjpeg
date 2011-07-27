@@ -102,7 +102,11 @@ int tga_readheader(FILE *fp, unsigned int *bits_per_pixel,
 		return 0;
 	
 	// Read TGA header
-	fread((unsigned char*)&tga, sizeof(tga_header), 1, fp);
+	if ( fread((unsigned char*)&tga, sizeof(tga_header), 1, fp) != 1 )
+	{
+		fprintf(stderr, "\nError: fread return a number of element different from the expected.\n");
+	    return 0 ;
+	}
 
 	*bits_per_pixel = tga.pixel_depth;
 	
@@ -113,7 +117,12 @@ int tga_readheader(FILE *fp, unsigned int *bits_per_pixel,
 	if (tga.id_length)
 	{
 		unsigned char *id = (unsigned char *) malloc(tga.id_length);
-		fread(id, tga.id_length, 1, fp);
+		if ( !fread(id, tga.id_length, 1, fp) )
+		{
+			fprintf(stderr, "\nError: fread return a number of element different from the expected.\n");
+			free(id);
+		    return 0 ;
+		}
 		free(id);  
 	}
 
@@ -246,9 +255,25 @@ opj_image_t* tgatoimage(const char *filename, opj_cparameters_t *parameters) {
 			for (x=0;x<image_width;x++) 
 			{
 				unsigned char r,g,b;
-				fread(&b, 1, 1, f);
-				fread(&g, 1, 1, f);
-				fread(&r, 1, 1, f);
+
+				if( !fread(&b, 1, 1, f) )
+				{
+					fprintf(stderr, "\nError: fread return a number of element different from the expected.\n");
+					opj_image_destroy(image);
+				    return NULL;
+				}
+				if ( !fread(&g, 1, 1, f) )
+				{
+					fprintf(stderr, "\nError: fread return a number of element different from the expected.\n");
+					opj_image_destroy(image);
+				    return NULL;
+				}
+				if ( !fread(&r, 1, 1, f) )
+				{
+					fprintf(stderr, "\nError: fread return a number of element different from the expected.\n");
+					opj_image_destroy(image);
+				    return NULL;
+				}
 
 				image->comps[0].data[index]=r;
 				image->comps[1].data[index]=g;
@@ -261,10 +286,30 @@ opj_image_t* tgatoimage(const char *filename, opj_cparameters_t *parameters) {
 			for (x=0;x<image_width;x++) 
 			{
 				unsigned char r,g,b,a;
-				fread(&b, 1, 1, f);
-				fread(&g, 1, 1, f);
-				fread(&r, 1, 1, f);
-				fread(&a, 1, 1, f);
+				if ( !fread(&b, 1, 1, f) )
+				{
+					fprintf(stderr, "\nError: fread return a number of element different from the expected.\n");
+					opj_image_destroy(image);
+				    return NULL;
+				}
+				if ( !fread(&g, 1, 1, f) )
+				{
+					fprintf(stderr, "\nError: fread return a number of element different from the expected.\n");
+					opj_image_destroy(image);
+				    return NULL;
+				}
+				if ( !fread(&r, 1, 1, f) )
+				{
+					fprintf(stderr, "\nError: fread return a number of element different from the expected.\n");
+					opj_image_destroy(image);
+				    return NULL;
+				}
+				if ( !fread(&a, 1, 1, f) )
+				{
+					fprintf(stderr, "\nError: fread return a number of element different from the expected.\n");
+					opj_image_destroy(image);
+				    return NULL;
+				}
 
 				image->comps[0].data[index]=r;
 				image->comps[1].data[index]=g;
@@ -408,10 +453,8 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
 	unsigned int j, PAD = 0;
 
 	int x, y, index;
-	int gray_scale = 1, not_end_file = 1; 
+	int gray_scale = 1;
 	int has_color;
-	unsigned int line = 0, col = 0;
-	unsigned char v, v2;
 	DWORD W, H;
   
 	IN = fopen(filename, "rb");
@@ -558,7 +601,13 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
 	RGB = (unsigned char *) 
 	 malloc((3 * W + PAD) * H * sizeof(unsigned char));
 			
-	fread(RGB, sizeof(unsigned char), (3 * W + PAD) * H, IN);
+	if ( fread(RGB, sizeof(unsigned char), (3 * W + PAD) * H, IN) != (3 * W + PAD) * H )
+	{
+		free(RGB);
+		opj_image_destroy(image);
+		fprintf(stderr, "\nError: fread return a number of element different from the expected.\n");
+	    return NULL;
+	}
 			
 	index = 0;
 
@@ -641,7 +690,16 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
 
 	RGB = (unsigned char *) malloc(W * H * sizeof(unsigned char));
 			
-	fread(RGB, sizeof(unsigned char), W * H, IN);
+	if ( fread(RGB, sizeof(unsigned char), W * H, IN) != W * H )
+	{
+		free(table_R);
+		free(table_G);
+		free(table_B);
+		free(RGB);
+		opj_image_destroy(image);
+		fprintf(stderr, "\nError: fread return a number of element different from the expected.\n");
+	    return NULL;
+	}
 	if (gray_scale) 
   {
 	index = 0;
@@ -680,156 +738,163 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
    }/* RGB8 */ 
 	else 
 	if (Info_h.biBitCount == 8 && Info_h.biCompression == 1)//RLE8
-   {
-	unsigned char *pix, *beyond;
-	unsigned int *gray, *red, *green, *blue;
-	unsigned int x, y, max;
-	int i, c, c1;
-	unsigned char uc;
+	{
+		unsigned char *pix, *beyond;
+		int *gray, *red, *green, *blue;
+		unsigned int x, y, max;
+		int i, c, c1;
+		unsigned char uc;
 
-	if(Info_h.biClrUsed == 0) Info_h.biClrUsed = 256;
-	else
-	if(Info_h.biClrUsed > 256) Info_h.biClrUsed = 256;
+		if (Info_h.biClrUsed == 0)
+			Info_h.biClrUsed = 256;
+		else if (Info_h.biClrUsed > 256)
+			Info_h.biClrUsed = 256;
 
-	table_R = (unsigned char *) malloc(256 * sizeof(unsigned char));
-	table_G = (unsigned char *) malloc(256 * sizeof(unsigned char));
-	table_B = (unsigned char *) malloc(256 * sizeof(unsigned char));
+		table_R = (unsigned char *) malloc(256 * sizeof(unsigned char));
+		table_G = (unsigned char *) malloc(256 * sizeof(unsigned char));
+		table_B = (unsigned char *) malloc(256 * sizeof(unsigned char));
 
-	has_color = 0;	
-	for (j = 0; j < Info_h.biClrUsed; j++) 
-  {
-	table_B[j] = getc(IN);
-	table_G[j] = getc(IN);
-	table_R[j] = getc(IN);
-	getc(IN);
-	has_color += 
-	 !(table_R[j] == table_G[j] && table_R[j] == table_B[j]);
+		has_color = 0;
+		for (j = 0; j < Info_h.biClrUsed; j++)
+		{
+			table_B[j] = getc(IN);
+			table_G[j] = getc(IN);
+			table_R[j] = getc(IN);
+			getc(IN);
+			has_color += !(table_R[j] == table_G[j] && table_R[j] == table_B[j]);
+		}
 
-  }
-	if(has_color) gray_scale = 0;
+		if (has_color)
+			gray_scale = 0;
 
-	numcomps = gray_scale ? 1 : 3;
-	color_space = gray_scale ? CLRSPC_GRAY : CLRSPC_SRGB;
-	/* initialize image components */
-	memset(&cmptparm[0], 0, 3 * sizeof(opj_image_cmptparm_t));
-	for(i = 0; i < numcomps; i++) 
-  {
-	cmptparm[i].prec = 8;
-	cmptparm[i].bpp = 8;
-	cmptparm[i].sgnd = 0;
-	cmptparm[i].dx = subsampling_dx;
-	cmptparm[i].dy = subsampling_dy;
-	cmptparm[i].w = w;
-	cmptparm[i].h = h;
-  }
-	/* create the image */
-	image = opj_image_create(numcomps, &cmptparm[0], color_space);
-	if(!image) 
-  {
-	fclose(IN);
-	free(table_R); free(table_G); free(table_B);
-	return NULL;
-  }
+		numcomps = gray_scale ? 1 : 3;
+		color_space = gray_scale ? CLRSPC_GRAY : CLRSPC_SRGB;
+		/* initialize image components */
+		memset(&cmptparm[0], 0, 3 * sizeof(opj_image_cmptparm_t));
+		for (i = 0; i < numcomps; i++)
+		{
+			cmptparm[i].prec = 8;
+			cmptparm[i].bpp = 8;
+			cmptparm[i].sgnd = 0;
+			cmptparm[i].dx = subsampling_dx;
+			cmptparm[i].dy = subsampling_dy;
+			cmptparm[i].w = w;
+			cmptparm[i].h = h;
+		}
+		/* create the image */
+		image = opj_image_create(numcomps, &cmptparm[0], color_space);
+		if (!image)
+		{
+			fclose(IN);
+			free(table_R);
+			free(table_G);
+			free(table_B);
+			return NULL;
+		}
 
-	/* set image offset and reference grid */
-	image->x0 = parameters->image_offset_x0;
-	image->y0 = parameters->image_offset_y0;
-	image->x1 =	!image->x0 ? (w - 1) * subsampling_dx + 1 : image->x0 + (w - 1) * subsampling_dx + 1;
-	image->y1 =	!image->y0 ? (h - 1) * subsampling_dy + 1 : image->y0 + (h - 1) * subsampling_dy + 1;
+		/* set image offset and reference grid */
+		image->x0 = parameters->image_offset_x0;
+		image->y0 = parameters->image_offset_y0;
+		image->x1 = !image->x0 ? (w - 1) * subsampling_dx + 1 : image->x0 + (w
+				- 1) * subsampling_dx + 1;
+		image->y1 = !image->y0 ? (h - 1) * subsampling_dy + 1 : image->y0 + (h
+				- 1) * subsampling_dy + 1;
 
-	/* set image data */
-			
-	/* Place the cursor at the beginning of the image information */
-	fseek(IN, 0, SEEK_SET);
-	fseek(IN, File_h.bfOffBits, SEEK_SET);
+		/* set image data */
 
-    W = Info_h.biWidth;
-    H = Info_h.biHeight;
-    RGB = (unsigned char *)calloc(1, W * H * sizeof(unsigned char));
-    beyond = RGB + W * H;
-    pix = beyond - W;
-    x = y = 0;
+		/* Place the cursor at the beginning of the image information */
+		fseek(IN, 0, SEEK_SET);
+		fseek(IN, File_h.bfOffBits, SEEK_SET);
 
-    while(y < H)
-  {
-    c = getc(IN);
+		W = Info_h.biWidth;
+		H = Info_h.biHeight;
+		RGB = (unsigned char *) calloc(1, W * H * sizeof(unsigned char));
+		beyond = RGB + W * H;
+		pix = beyond - W;
+		x = y = 0;
 
-    if (c)
- {
-    c1 = getc(IN);
+		while (y < H)
+		{
+			c = getc(IN);
 
-    for (i = 0; i < c && x < W && pix < beyond; i++, x++, pix++)
-     *pix = c1;
- }
-    else
- {
-    c = getc(IN);
+			if (c)
+			{
+				c1 = getc(IN);
 
-	    if(c == 0x00) /* EOL */
-	   {
-		x = 0; ++y; pix = RGB + x + (H - y - 1) * W;
-	   }
+				for (i = 0; i < c && x < W && pix < beyond; i++, x++, pix++)
+					*pix = c1;
+			}
+			else
+			{
+				c = getc(IN);
+
+				if (c == 0x00) /* EOL */
+				{
+					x = 0;
+					++y;
+					pix = RGB + x + (H - y - 1) * W;
+				}
+				else if (c == 0x01) /* EOP */
+					break;
+				else if (c == 0x02) /* MOVE by dxdy */
+				{
+					c = getc(IN);
+					x += c;
+					c = getc(IN);
+					y += c;
+					pix = RGB + (H - y - 1) * W + x;
+				}
+				else /* 03 .. 255 */
+				{
+					i = 0;
+					for (; i < c && x < W && pix < beyond; i++, x++, pix++)
+					{
+						c1 = getc(IN);
+						*pix = c1;
+					}
+					if (c & 1) /* skip padding byte */
+						getc(IN);
+				}
+			}
+		}/* while() */
+
+		if (gray_scale)
+		{
+			gray = image->comps[0].data;
+			pix = RGB;
+			max = W * H;
+
+			while (max--)
+			{
+				uc = *pix++;
+
+				*gray++ = table_R[uc];
+			}
+		}
 		else
-		if(c == 0x01) /* EOP */
-		  break;
-		else
-		if(c == 0x02) /* MOVE by dxdy */
-	   {
-	    c = getc(IN);  x += c;
-	    c = getc(IN);  y += c;
-	    pix = RGB + (H - y - 1) * W + x;
-	   }
-	    else /* 03 .. 255 */
-	   {
-	    i = 0;
-	    for(; i < c && x < W && pix < beyond; i++, x++, pix++)
-      {
-		c1 = getc(IN);
-		*pix = c1;
-      }
-		if(c & 1) /* skip padding byte */
-		 getc(IN);
-	   }
- }
-  }/* while() */
+		{
+			//int *red, *green, *blue;
 
-	if (gray_scale)
-  {
-	int *gray;
+			red = image->comps[0].data;
+			green = image->comps[1].data;
+			blue = image->comps[2].data;
+			pix = RGB;
+			max = W * H;
 
-    gray = image->comps[0].data;
-    pix = RGB;
-    max = W * H;
+			while (max--)
+			{
+				uc = *pix++;
 
-    while(max--)
- {
-    uc = *pix++;
-
-    *gray++ = table_R[uc];
- }
-  }
-    else
-  {
-	int *red, *green, *blue;
-
-    red = image->comps[0].data;
-    green = image->comps[1].data;
-    blue = image->comps[2].data;
-    pix = RGB;
-    max = W * H;
-
-    while(max--)
- {
-    uc = *pix++;
-
-    *red++ = table_R[uc];
-    *green++ = table_G[uc];
-    *blue++ = table_B[uc];
- }
-  }
-    free(RGB);
-    free(table_R); free(table_G); free(table_B);
-   }/* RLE8 */ 
+				*red++ = table_R[uc];
+				*green++ = table_G[uc];
+				*blue++ = table_B[uc];
+			}
+		}
+		free(RGB);
+		free(table_R);
+		free(table_G);
+		free(table_B);
+	}/* RLE8 */
 	else 
    {
 	fprintf(stderr, 
@@ -1007,7 +1072,6 @@ int imagetobmp(opj_image_t * image, const char *outfile) {
 		}
 
 		for (i = 0; i < w * h; i++) {
-			unsigned char rc;
 			int r;
 			
 			r = image->comps[0].data[w * h - ((i) / (w) + 1) * w + (i) % (w)];
@@ -1038,15 +1102,27 @@ PGX IMAGE FORMAT
 unsigned char readuchar(FILE * f)
 {
   unsigned char c1;
-  fread(&c1, 1, 1, f);
+  if ( !fread(&c1, 1, 1, f) )
+  {
+	  fprintf(stderr, "\nError: fread return a number of element different from the expected.\n");
+	  return 0;
+  }
   return c1;
 }
 
 unsigned short readushort(FILE * f, int bigendian)
 {
   unsigned char c1, c2;
-  fread(&c1, 1, 1, f);
-  fread(&c2, 1, 1, f);
+  if ( !fread(&c1, 1, 1, f) )
+  {
+	  fprintf(stderr, "\nError: fread return a number of element different from the expected.\n");
+	  return 0;
+  }
+  if ( !fread(&c2, 1, 1, f) )
+  {
+	  fprintf(stderr, "\nError: fread return a number of element different from the expected.\n");
+	  return 0;
+  }
   if (bigendian)
     return (c1 << 8) + c2;
   else
@@ -1056,10 +1132,26 @@ unsigned short readushort(FILE * f, int bigendian)
 unsigned int readuint(FILE * f, int bigendian)
 {
   unsigned char c1, c2, c3, c4;
-  fread(&c1, 1, 1, f);
-  fread(&c2, 1, 1, f);
-  fread(&c3, 1, 1, f);
-  fread(&c4, 1, 1, f);
+  if ( !fread(&c1, 1, 1, f) )
+  {
+	  fprintf(stderr, "\nError: fread return a number of element different from the expected.\n");
+	  return 0;
+  }
+  if ( !fread(&c2, 1, 1, f) )
+  {
+	  fprintf(stderr, "\nError: fread return a number of element different from the expected.\n");
+	  return 0;
+  }
+  if ( !fread(&c3, 1, 1, f) )
+  {
+	  fprintf(stderr, "\nError: fread return a number of element different from the expected.\n");
+	  return 0;
+  }
+  if ( !fread(&c4, 1, 1, f) )
+  {
+	  fprintf(stderr, "\nError: fread return a number of element different from the expected.\n");
+	  return 0;
+  }
   if (bigendian)
     return (c1 << 24) + (c2 << 16) + (c3 << 8) + c4;
   else
@@ -1097,6 +1189,7 @@ opj_image_t* pgxtoimage(const char *filename, opj_cparameters_t *parameters) {
 	fseek(f, 0, SEEK_SET);
 	fscanf(f, "PG%[ \t]%c%c%[ \t+-]%d%[ \t]%d%[ \t]%d",temp,&endian1,&endian2,signtmp,&prec,temp,&w,temp,&h);
 	
+
 	i=0;
 	sign='+';		
 	while (signtmp[i]!='\0') {
@@ -1308,7 +1401,14 @@ static void read_pnm_header(FILE *reader, struct pnm_header *ph)
     char idf[256], type[256];
     char line[256];
 
-    fgets(line, 250, reader);
+    char* return_value_fgets = fgets(line, 250, reader);
+    if (!strcmp(return_value_fgets,line))
+    {
+    	fprintf(stderr,"\nWARNING: fgets return a value different that the first argument");
+    	free(return_value_fgets);
+    	return;
+    }
+    free(return_value_fgets);
 
     if(line[0] != 'P')
    {
@@ -1563,7 +1663,8 @@ opj_image_t* pnmtoimage(const char *filename, opj_cparameters_t *parameters) {
     for(compno = 0; compno < numcomps; compno++)
  {
 	index = 0;
-    fscanf(fp, "%u", &index);
+    if (fscanf(fp, "%u", &index) != 1)
+    	fprintf(stderr, "\nWARNING: fscanf return a number of element different from the expected.\n");
 
     image->comps[compno].data[i] = (index * 255)/header_info.maxval;
  }
@@ -1584,14 +1685,16 @@ opj_image_t* pnmtoimage(const char *filename, opj_cparameters_t *parameters) {
   {
     for(compno = 0; compno < numcomps; compno++)
  {
-        fread(&c0, 1, 1, fp);
+    	  if ( !fread(&c0, 1, 1, fp) )
+    		  fprintf(stderr, "\nError: fread return a number of element different from the expected.\n");
         if(one)
        {
         image->comps[compno].data[i] = c0;
        }
         else
        {
-        fread(&c1, 1, 1, fp);
+      	  if ( !fread(&c1, 1, 1, fp) )
+      		  fprintf(stderr, "\nError: fread return a number of element different from the expected.\n");
 /* netpbm: */
 		image->comps[compno].data[i] = ((c0<<8) | c1);
        }
@@ -1605,7 +1708,8 @@ opj_image_t* pnmtoimage(const char *filename, opj_cparameters_t *parameters) {
   {
     unsigned int index;
 
-    fscanf(fp, "%u", &index);
+    if ( fscanf(fp, "%u", &index) != 1)
+    	fprintf(stderr, "\nWARNING: fscanf return a number of element different from the expected.\n");
 
     image->comps[0].data[i] = (index?0:255);
   }
@@ -1640,7 +1744,8 @@ opj_image_t* pnmtoimage(const char *filename, opj_cparameters_t *parameters) {
 
 	for(i = 0; i < w * h; ++i)
   {
-	fread(&uc, 1, 1, fp);
+  	  if ( !fread(&uc, 1, 1, fp) )
+  		  fprintf(stderr, "\nError: fread return a number of element different from the expected.\n");
 	image->comps[0].data[i] = (uc & 1)?0:255;
   }
    }

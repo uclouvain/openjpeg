@@ -1482,7 +1482,7 @@ int main(int argc, char **argv) {
 	opj_image_t *image = NULL;
 	int i,num_images;
 	int imageno;
-	dircnt_t *dirptr;
+	dircnt_t *dirptr = NULL;
 	raw_cparameters_t raw_cp;
 	opj_codestream_info_t cstr_info;		/* Codestream information structure */
 	char indexfilename[OPJ_PATH_LEN];	/* index file name */

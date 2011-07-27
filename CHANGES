@@ -7,6 +7,7 @@ What's New for OpenJPEG
 
 July 27, 2011
 ! [mickael] added new decoding/dump tests based on data found in input/nonregresion repository (remove JPEG2000_CONFORMANCE_DATA_ROOT variable, add REF_DECODER_BIN_PATH variable for the encoder test suite). Remove definitively old tests. 
+! [mickael] correct some warnings detected under unix platform
 
 July 26, 2011
 ! [mickael] delete double semi-colon at end of line which generate crash on win platform

@@ -15,7 +15,6 @@ FILE(GLOB_RECURSE OPJ_DATA_NR_LIST
 FOREACH(filepath ${OPJ_DATA_NR_LIST})
   GET_FILENAME_COMPONENT(filename ${filepath} NAME)
   GET_FILENAME_COMPONENT(filenameSub ${filename} NAME_WE)
-  message("${filenameSub}")
   
   ADD_TEST(NR-${filename}-dump
       ${EXECUTABLE_OUTPUT_PATH}/j2k_dump

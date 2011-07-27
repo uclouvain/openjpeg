@@ -521,7 +521,7 @@ int main(int argc, char **argv) {
 	int file_length;
 	int num_images;
 	int i,imageno;
-	dircnt_t *dirptr;
+	dircnt_t *dirptr = NULL;
 	opj_dinfo_t* dinfo = NULL;	/* handle to a decompressor */
 	opj_cio_t *cio = NULL;
 	opj_codestream_info_t cstr_info;  /* Codestream information structure */
@@ -595,7 +595,13 @@ int main(int argc, char **argv) {
 		file_length = ftell(fsrc);
 		fseek(fsrc, 0, SEEK_SET);
 		src = (unsigned char *) malloc(file_length);
-		fread(src, 1, file_length, fsrc);
+		if (fread(src, 1, file_length, fsrc) != file_length)
+		{
+			free(src);
+			fclose(fsrc);
+			fprintf(stderr, "\nERROR: fread return a number of element different from the expected.\n");
+			return 1;
+		}
 		fclose(fsrc);
 
 		/* decode the code-stream */

@@ -164,6 +164,7 @@ int main(int argc, char **argv)
       size_t nbytes = 2048;
       int CRLF_shift=1;
       char *strbase, *strtest, *strbase_d, *strtest_d;
+      char *return_value_fgets;
 
       printf("Files differ at line %lu:\n", l);
       fseek(fbase,pos,SEEK_SET);
@@ -179,8 +180,17 @@ int main(int argc, char **argv)
 
       strbase = (char *) malloc(nbytes + 1);
       strtest = (char *) malloc(nbytes + 1);
-      fgets(strbase, nbytes, fbase);
-      fgets(strtest, nbytes, ftest);
+
+      return_value_fgets = fgets(strbase, nbytes, fbase);
+      if (!strcmp(return_value_fgets,strbase))
+      	fprintf(stderr,"\nWARNING: fgets return a value different that the first argument");
+      free(return_value_fgets);
+
+      return_value_fgets = fgets(strtest, nbytes, ftest);
+      if (!strcmp(return_value_fgets,strtest))
+    	  fprintf(stderr,"\nWARNING: fgets return a value different that the first argument");
+      free(return_value_fgets);
+
       strbase_d = (char *) malloc(strlen(strbase)+1);
       strtest_d = (char *) malloc(strlen(strtest)+1);
       strncpy(strbase_d, strbase, strlen(strbase)-1);
