@@ -250,23 +250,13 @@ IF(BUILD_TESTING)
     # svn checkout http://openjpeg.googlecode.com/svn/data (about 70 Mo) 
     FIND_PATH(OPJ_DATA_ROOT README-OPJ-Data 
               PATHS $ENV{OPJ_DATA_ROOT} ${CMAKE_SOURCE_DIR}/../opj-data)
+              
+    SET (REF_DECODER_BIN_PATH "NOT-FOUND" CACHE PATH "Single directory where find the reference encoder binaries to enable encoding test suite.")
+    MARK_AS_ADVANCED(REF_DECODER_BIN_PATH)
+          
   ELSE(BUILD_CODEC)
     message(FATAL_ERROR "You need build codec to run the tests")
   ENDIF(BUILD_CODEC)
-ENDIF(BUILD_TESTING)
-
-#-----------------------------------------------------------------------------
-# Tests data
-IF(BUILD_TESTING)
-# Adding test with dataset from:
-# http://www.openjpeg.org/conformance/j2kp4files_v1_5.zip
-# -> wget http://www.openjpeg.org/conformance/j2kp4files_v1_5.zip
-# http://www.jpeg.org/jpeg2000guide/testimages/testimages.html
-# Adding JPEG2000_CONFORMANCE_DATA_ROOT
-FIND_PATH(JPEG2000_CONFORMANCE_DATA_ROOT testimages.html
-  ${OPENJPEG_SOURCE_DIR}/../jpeg2000testimages
-  $ENV{JPEG2000_CONFORMANCE_DATA_ROOT}
-)
 ENDIF(BUILD_TESTING)
 
 #-----------------------------------------------------------------------------
