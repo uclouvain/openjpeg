@@ -1200,9 +1200,10 @@ int jpwl_esds_add(opj_j2k_t *j2k, jpwl_marker_t *jwmarker, int *jwmarker_num,
 	return 0;
 }
 
-jpwl_esd_ms_t *jpwl_esd_create(opj_j2k_t *j2k, int comp, unsigned char addrm, unsigned char ad_size,
-								unsigned char senst, unsigned char se_size, int tileno,
-								unsigned long int svalnum, void *sensval) {
+jpwl_esd_ms_t *jpwl_esd_create(opj_j2k_t *j2k, int comp, 
+	unsigned char addrm, unsigned char ad_size,
+	unsigned char senst, int se_size, int tileno,
+	unsigned long int svalnum, void *sensval) {
 
 	jpwl_esd_ms_t *esd = NULL;
 
@@ -1232,7 +1233,7 @@ jpwl_esd_ms_t *jpwl_esd_create(opj_j2k_t *j2k, int comp, unsigned char addrm, un
 	/* packet mode */
 	case (0):
 		ad_size = 0; /* as per the standard */
-		esd->sensval_size = se_size; 
+		esd->sensval_size = (unsigned int)se_size; 
 		break;
 
 	/* byte range */

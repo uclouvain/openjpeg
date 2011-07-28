@@ -39,7 +39,7 @@ opj_image_t *mj2_image_create(mj2_tk_t * tk, opj_cparameters_t *parameters);
 
 char yuvtoimage(mj2_tk_t * tk, opj_image_t * img, int frame_num, opj_cparameters_t *parameters, char* infile);
 
-int yuv_num_frames(mj2_tk_t * tk, char *infile);
+unsigned int yuv_num_frames(mj2_tk_t * tk, char *infile);
 
 
 #endif

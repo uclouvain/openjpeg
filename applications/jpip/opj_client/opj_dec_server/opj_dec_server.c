@@ -144,7 +144,7 @@ int main(int argc, char *argv[]){
   
   int listening_socket = open_listeningsocket();
   
-  int addrlen = sizeof(peer_sin);
+  unsigned int addrlen = sizeof(peer_sin);
 
   cachelist_param_t *cachelist = gene_cachelist();
   

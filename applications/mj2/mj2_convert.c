@@ -37,20 +37,20 @@
 /*				      */
 /*  -----------------------	      */
 
-int yuv_num_frames(mj2_tk_t * tk, char *infile)
+unsigned int yuv_num_frames(mj2_tk_t * tk, char *infile)
 {
-  int numimages, frame_size, prec_size;
-  long end_of_f;
+  unsigned int prec_size;
+  long end_of_f, frame_size;
 	FILE *f;
 
   f = fopen(infile,"rb");
   if (!f) {  
     fprintf(stderr, "failed to open %s for reading\n",infile);
-    return -1;
+    return 0;
   }
 	prec_size = (tk->depth + 7)/8;/* bytes of precision */
 
-  frame_size = (int) (tk->w * tk->h * (1.0 + (double) 2 / (double) (tk->CbCr_subsampling_dx * tk->CbCr_subsampling_dy)));	/* Calculate frame size */
+  frame_size = (long) (tk->w * tk->h * (1.0 + (double) 2 / (double) (tk->CbCr_subsampling_dx * tk->CbCr_subsampling_dy)));	/* Calculate frame size */
 	frame_size *= prec_size; 
 	
   fseek(f, 0, SEEK_END);
@@ -60,13 +60,11 @@ int yuv_num_frames(mj2_tk_t * tk, char *infile)
     fprintf(stderr,
 			"YUV does not contains any frame of %d x %d size\n", tk->w,
 			tk->h);
-    return -1;
+    return 0;
   }
+  fclose(f);
 	
-  numimages = end_of_f / frame_size;	/* Calculate number of images */
-	fclose(f);
-
-  return numimages;
+  return (unsigned int)(end_of_f / frame_size);
 }
 
 //  -----------------------

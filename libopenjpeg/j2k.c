@@ -236,7 +236,7 @@ static void j2k_read_unk(opj_j2k_t *j2k);
 /* ----------------------------------------------------------------------- */
 typedef struct j2k_prog_order{
 	OPJ_PROG_ORDER enum_prog;
-	char str_prog[4];
+	char str_prog[5];
 }j2k_prog_order_t;
 
 j2k_prog_order_t j2k_prog_order_list[] = {

@@ -129,7 +129,7 @@ int getopt(int nargc, char *const *nargv, const char *ostr) {
 
 
 int getopt_long(int argc, char * const argv[], const char *optstring,
-struct option *longopts, int totlen) {
+const struct option *longopts, int totlen) {
 	static int lastidx,lastofs;
 	char *tmp;
 	int i,len;

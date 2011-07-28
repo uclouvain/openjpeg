@@ -240,9 +240,7 @@ void mj2_tts_decompact(mj2_tk_t * tk)
 */
 void mj2_stsc_decompact(mj2_tk_t * tk)
 {
-  int j, i;
-  unsigned int k;
-  int sampleno=0;
+  unsigned int i, j, k, sampleno = 0;
   
   if (tk->num_samplestochunk == 1) {
     tk->num_chunks =
@@ -283,10 +281,8 @@ void mj2_stsc_decompact(mj2_tk_t * tk)
 */
 void mj2_stco_decompact(mj2_tk_t * tk)
 {
-  int j;
-  unsigned int i;
-  int k = 0;
-  int intra_chunk_offset;
+  unsigned int i, j, k = 0;
+  unsigned int intra_chunk_offset;
 	
   for (i = 0; i < tk->num_chunks; i++) {
     intra_chunk_offset = 0;
@@ -585,7 +581,7 @@ int mj2_read_stsz(mj2_tk_t * tk, opj_cio_t *cio)
 */
 void mj2_write_stsc(mj2_tk_t * tk, opj_cio_t *cio)
 {
-  int i;
+  unsigned int i;
   mj2_box_t box;
 	
   box.init_pos = cio_tell(cio);
@@ -617,7 +613,7 @@ void mj2_write_stsc(mj2_tk_t * tk, opj_cio_t *cio)
 */
 int mj2_read_stsc(mj2_tk_t * tk, opj_cio_t *cio)
 {
-  int i;
+  unsigned int i;
   mj2_box_t box;
 	
   mj2_read_boxhdr(&box, cio);	/* Box Size */

@@ -103,7 +103,7 @@ typedef struct mj2_tts {
 Chunk
 */
 typedef struct mj2_chunk {		
-  int num_samples;
+  unsigned int num_samples;
   int sample_descr_idx;
   int offset;
 } mj2_chunk_t;
@@ -112,8 +112,8 @@ typedef struct mj2_chunk {
 Sample to chunk
 */
 typedef struct mj2_sampletochunk {		
-  int first_chunk;
-  int samples_per_chunk;
+  unsigned int first_chunk;
+  unsigned int samples_per_chunk;
   int sample_descr_idx;
 } mj2_sampletochunk_t;
 
@@ -205,7 +205,7 @@ typedef struct mj2_tk {
   mj2_tts_t *tts;		
   unsigned int num_chunks;
   mj2_chunk_t *chunk;
-  int num_samplestochunk;
+  unsigned int num_samplestochunk;
   mj2_sampletochunk_t *sampletochunk;
   char *name;
   opj_jp2_t jp2_struct;

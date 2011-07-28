@@ -1968,7 +1968,6 @@ int imagetotif(opj_image_t * image, const char *outfile)
 	int width, height, imgsize;
 	int bps,index,adjust, sgnd;
 	int ushift, dshift, has_alpha, force16;
-	unsigned int last_i=0;
 	TIFF *tif;
 	tdata_t buf;
 	tstrip_t strip;
@@ -2029,7 +2028,7 @@ int imagetotif(opj_image_t * image, const char *outfile)
 	for(strip = 0; strip < TIFFNumberOfStrips(tif); strip++) 
   {
 	unsigned char *dat8;
-	tsize_t i, ssize;
+	tsize_t i, ssize, last_i = 0;
   int step, restx;
 	ssize = TIFFStripSize(tif);
 	dat8 = (unsigned char*)buf;
