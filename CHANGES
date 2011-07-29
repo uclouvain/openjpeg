@@ -8,6 +8,7 @@ What's New for OpenJPEG
 July 29, 2011
 ! [mickael] solve some obvious warnings for WIN platform, increase number of warning reported on the dashboard, correct last warnings with gcc 4.4 (-Wall)
 ! [mickael] increase number of warning reported on the dashboard (forgot the file in the last commit)
+! [mickael] update MJ2 CMakeLists regards to the new thirdparty strategy
 
 July 27, 2011
 ! [mickael] added new decoding/dump tests based on data found in input/nonregresion repository (remove JPEG2000_CONFORMANCE_DATA_ROOT variable, add REF_DECODER_BIN_PATH variable for the encoder test suite). Remove definitively old tests. 
