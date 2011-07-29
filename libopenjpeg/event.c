@@ -30,6 +30,7 @@
      Utility functions
    ==========================================================*/
 
+#ifdef OPJ_CODE_NOT_USED
 #ifndef _WIN32
 static char*
 i2a(unsigned i, char *a, unsigned r) {
@@ -58,7 +59,7 @@ _itoa(int i, char *a, int r) {
 }
 
 #endif /* !_WIN32 */
-
+#endif
 /* ----------------------------------------------------------------------- */
 
 opj_event_mgr_t* OPJ_CALLCONV opj_set_event_mgr(opj_common_ptr cinfo, opj_event_mgr_t *event_mgr, void *context) {

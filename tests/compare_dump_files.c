@@ -24,7 +24,7 @@ typedef struct test_cmp_parameters
 /*******************************************************************************
  * Command line help function
  *******************************************************************************/
-void compare_dump_files_help_display() {
+void compare_dump_files_help_display(void) {
   fprintf(stdout,"\nList of parameters for the compare_dump_files function  \n");
   fprintf(stdout,"\n");
   fprintf(stdout,"  -b \t REQUIRED \t filename to the reference/baseline dump file \n");

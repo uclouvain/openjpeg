@@ -158,9 +158,14 @@ int tga_writeheader(FILE *fp, int bits_per_pixel, int width, int height,
 
 	memset(&tga, 0, sizeof(tga_header));
 
-	tga.pixel_depth = bits_per_pixel;
-	tga.image_width  = width;
-	tga.image_height = height;
+	if ( bits_per_pixel < 256 )
+		tga.pixel_depth = (unsigned char)bits_per_pixel;
+	else{
+		fprintf(stderr,"ERROR: Wrong bits per pixel inside tga_header");
+		return 0;
+	}
+	tga.image_width  = (unsigned short)width;
+	tga.image_height = (unsigned short)height;
 	tga.image_type = 2; // Uncompressed.
 	tga.image_desc = 8; // 8 bits per component.
 
@@ -639,9 +644,9 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
 	has_color = 0;	
 	for (j = 0; j < Info_h.biClrUsed; j++) 
   {
-	table_B[j] = getc(IN);
-	table_G[j] = getc(IN);
-	table_R[j] = getc(IN);
+	table_B[j] = (unsigned char)getc(IN);
+	table_G[j] = (unsigned char)getc(IN);
+	table_R[j] = (unsigned char)getc(IN);
 	getc(IN);
 	has_color += 
 	 !(table_R[j] == table_G[j] && table_R[j] == table_B[j]);
@@ -757,9 +762,9 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
 		has_color = 0;
 		for (j = 0; j < Info_h.biClrUsed; j++)
 		{
-			table_B[j] = getc(IN);
-			table_G[j] = getc(IN);
-			table_R[j] = getc(IN);
+			table_B[j] = (unsigned char)getc(IN);
+			table_G[j] = (unsigned char)getc(IN);
+			table_R[j] = (unsigned char)getc(IN);
 			getc(IN);
 			has_color += !(table_R[j] == table_G[j] && table_R[j] == table_B[j]);
 		}
@@ -822,7 +827,7 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
 				c1 = getc(IN);
 
 				for (i = 0; i < c && x < W && pix < beyond; i++, x++, pix++)
-					*pix = c1;
+					*pix = (unsigned char)c1;
 			}
 			else
 			{
@@ -850,7 +855,7 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
 					for (; i < c && x < W && pix < beyond; i++, x++, pix++)
 					{
 						c1 = getc(IN);
-						*pix = c1;
+						*pix = (unsigned char)c1;
 					}
 					if (c & 1) /* skip padding byte */
 						getc(IN);
@@ -1187,8 +1192,10 @@ opj_image_t* pgxtoimage(const char *filename, opj_cparameters_t *parameters) {
 	}
 
 	fseek(f, 0, SEEK_SET);
-	fscanf(f, "PG%[ \t]%c%c%[ \t+-]%d%[ \t]%d%[ \t]%d",temp,&endian1,&endian2,signtmp,&prec,temp,&w,temp,&h);
-	
+	if( fscanf(f, "PG%[ \t]%c%c%[ \t+-]%d%[ \t]%d%[ \t]%d",temp,&endian1,&endian2,signtmp,&prec,temp,&w,temp,&h) != 9){
+		fprintf(stderr, "ERROR: Failed to read the right number of element from the fscanf() function!\n");
+		return NULL;
+	}
 
 	i=0;
 	sign='+';		

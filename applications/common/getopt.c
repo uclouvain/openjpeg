@@ -60,7 +60,7 @@ typedef struct option
 #define	EMSG	""
 
 /* As this class remembers its values from one Java call to the other, reset the values before each use */
-void reset_options_reading() {
+void reset_options_reading(void) {
 	opterr = 1;
 	optind = 1;
 }

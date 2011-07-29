@@ -149,8 +149,8 @@ static int t2_encode_packet(opj_tcd_tile_t * tile, opj_tcp_t * tcp, opj_pi_itera
 		c[1] = 145;
 		c[2] = 0;
 		c[3] = 4;
-		c[4] = (tile->packno % 65536) / 256;
-		c[5] = (tile->packno % 65536) % 256;
+		c[4] = (unsigned char)((tile->packno % 65536) / 256);
+		c[5] = (unsigned char)((tile->packno % 65536) % 256);
 		c += 6;
 	}
 	/* </SOP> */

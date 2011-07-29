@@ -19,7 +19,7 @@
 #include "convert.h"
 
 double* parseToleranceValues( char* inArg, const int nbcomp);
-void comparePGXimages_help_display();
+void comparePGXimages_help_display(void);
 opj_image_t* readImageFromFilePGX(char* filename, int nbFilenamePGX, char *separator);
 #ifdef HAVE_LIBPNG
 int imageToPNG(const opj_image_t* image, const char* filename, int num_comp_select);
@@ -49,7 +49,7 @@ typedef struct test_cmp_parameters
 /*******************************************************************************
  * Command line help function
  *******************************************************************************/
-void comparePGXimages_help_display() {
+void comparePGXimages_help_display(void) {
   fprintf(stdout,"\nList of parameters for the comparePGX function  \n");
   fprintf(stdout,"\n");
   fprintf(stdout,"  -b \t REQUIRED \t filename to the reference/baseline PGX image \n");
@@ -713,12 +713,12 @@ int main(int argc, char **argv)
        if ( nbPixelDiff > 0)
          {
          char it_compc[255];
+         it_compc[0] = '\0';
 
          printf("<DartMeasurement name=\"NumberOfPixelsWithDifferences_%d\" type=\"numeric/int\"> %d </DartMeasurement> \n", it_comp, nbPixelDiff);
          printf("<DartMeasurement name=\"ComponentError_%d\" type=\"numeric/double\"> %f </DartMeasurement> \n", it_comp, sumDiff);
 
 #ifdef HAVE_LIBPNG
-         it_compc[0] = '\0';
          sprintf(it_compc, "_%i", it_comp);
          strcat(it_compc,".png");
          strcat(filenamePNGbase_it_comp, it_compc);
