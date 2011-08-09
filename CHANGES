@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+August 9, 2011
+- [antonin] removed xcode project files (cmake and autotools are now the only supported build methods)
+
 July 29, 2011
 ! [mickael] solve some obvious warnings for WIN platform, increase number of warning reported on the dashboard, correct last warnings with gcc 4.4 (-Wall)
 ! [mickael] increase number of warning reported on the dashboard (forgot the file in the last commit)
