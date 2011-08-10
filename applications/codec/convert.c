@@ -1415,7 +1415,6 @@ static void read_pnm_header(FILE *reader, struct pnm_header *ph)
     	free(return_value_fgets);
     	return;
     }
-    free(return_value_fgets);
 
     if(line[0] != 'P')
    {
