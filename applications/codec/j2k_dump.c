@@ -200,8 +200,10 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 	option_t long_option[]={
 		{"ImgDir",REQ_ARG, NULL ,'y'},
 	};
-
 	const char optlist[] = "i:o:h";
+
+	OPJ_ARG_NOT_USED(indexfilename);
+
 	totlen=sizeof(long_option);
 	img_fol->set_out_format = 0;
 	do {

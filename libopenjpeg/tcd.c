@@ -676,6 +676,8 @@ void tcd_malloc_decode_tile(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp, 
 	opj_tcp_t *tcp;
 	opj_tcd_tile_t *tile;
 
+	OPJ_ARG_NOT_USED(cstr_info);
+
 	tcd->cp = cp;
 	
 	tcp = &(cp->tcps[cp->tileno[tileno]]);

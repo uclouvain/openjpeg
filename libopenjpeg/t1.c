@@ -382,8 +382,9 @@ static INLINE void t1_dec_sigpass_step_raw(
 		int vsc)
 {
 	int v, flag;
-	
 	opj_raw_t *raw = t1->raw;	/* RAW component */
+	
+	OPJ_ARG_NOT_USED(orient);
 	
 	flag = vsc ? ((*flagsp) & (~(T1_SIG_S | T1_SIG_SE | T1_SIG_SW | T1_SGN_S))) : (*flagsp);
 	if ((flag & T1_SIG_OTH) && !(flag & (T1_SIG | T1_VISIT))) {
@@ -823,8 +824,9 @@ static void t1_dec_clnpass_step_partial(
 		int oneplushalf)
 {
 	int v, flag;
-	
 	opj_mqc_t *mqc = t1->mqc;	/* MQC component */
+	
+	OPJ_ARG_NOT_USED(orient);
 	
 	flag = *flagsp;
 	mqc_setcurctx(mqc, t1_getctxno_sc(flag));

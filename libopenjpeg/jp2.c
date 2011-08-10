@@ -398,6 +398,9 @@ static opj_bool jp2_read_pclr(opj_jp2_t *jp2, opj_cio_t *cio,
 	unsigned short i, j;
 	unsigned char uc;
 
+	OPJ_ARG_NOT_USED(box);
+	OPJ_ARG_NOT_USED(jp2);
+
 /* Part 1, I.5.3.4: 'There shall be at most one Palette box inside
  * a JP2 Header box' :
 */
@@ -445,6 +448,9 @@ static opj_bool jp2_read_cmap(opj_jp2_t *jp2, opj_cio_t *cio,
 {
 	opj_jp2_cmap_comp_t *cmap;
 	unsigned short i, nr_channels;
+
+	OPJ_ARG_NOT_USED(box);
+	OPJ_ARG_NOT_USED(jp2);
 
 /* Need nr_channels: */
 	if(color->jp2_pclr == NULL) return OPJ_FALSE;
@@ -510,6 +516,9 @@ static opj_bool jp2_read_cdef(opj_jp2_t *jp2, opj_cio_t *cio,
 {
 	opj_jp2_cdef_info_t *info;
 	unsigned short i, n;
+
+	OPJ_ARG_NOT_USED(box);
+	OPJ_ARG_NOT_USED(jp2);
 
 /* Part 1, I.5.3.6: 'The shall be at most one Channel Definition box
  * inside a JP2 Header box.' 

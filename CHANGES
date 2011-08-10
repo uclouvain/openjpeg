@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+August 10, 2011
+! [mickael] removed unused parameters warnings with the solution proposed by myself and Bob Friesenhahn.
+
 August 9, 2011
 - [antonin] removed xcode project files (cmake and autotools are now the only supported build methods)
 
