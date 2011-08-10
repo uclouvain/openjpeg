@@ -104,9 +104,6 @@ static INLINE long lrintf(float f){
 }
 #endif
 
-// Avoid compile-time warning because parameter is not used
-#define OPJ_ARG_NOT_USED(x) (void)(x)
-
 #include "j2k_lib.h"
 #include "opj_malloc.h"
 #include "event.h"

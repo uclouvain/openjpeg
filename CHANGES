@@ -10,6 +10,7 @@ August 10, 2011
 ! [mickael] add copyright header into new test functions.
 * [mickael] fixed glibc error with broken2 and broken4 images.
 * [mickael] fixed segfault with 123.j2c and bug.j2c images (thanks to Tim Mattox for his improvement).
+! [mickael] moved the definition of OPJ_ARG_NOT_USED from opj_includes.h to openjpeg.h
 
 August 9, 2011
 - [antonin] removed xcode project files (cmake and autotools are now the only supported build methods)
