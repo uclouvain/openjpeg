@@ -1418,18 +1418,23 @@ opj_bool tcd_decode_tile(opj_tcd_t *tcd, unsigned char *src, int len, int tileno
 
 	if (tcd->tcp->mct) {
 		int n = (tile->comps[0].x1 - tile->comps[0].x0) * (tile->comps[0].y1 - tile->comps[0].y0);
-		if (tcd->tcp->tccps[0].qmfbid == 1) {
-			mct_decode(
-					tile->comps[0].data,
-					tile->comps[1].data,
-					tile->comps[2].data, 
-					n);
-		} else {
-			mct_decode_real(
-					(float*)tile->comps[0].data,
-					(float*)tile->comps[1].data,
-					(float*)tile->comps[2].data, 
-					n);
+
+		if (tile->numcomps >= 3 ){
+			if (tcd->tcp->tccps[0].qmfbid == 1) {
+				mct_decode(
+						tile->comps[0].data,
+						tile->comps[1].data,
+						tile->comps[2].data,
+						n);
+			} else {
+				mct_decode_real(
+						(float*)tile->comps[0].data,
+						(float*)tile->comps[1].data,
+						(float*)tile->comps[2].data,
+						n);
+			}
+		} else{
+			opj_event_msg(tcd->cinfo, EVT_WARNING,"Number of components (%d) is inconsistent with a MCT. Skip the MCT step.\n",tile->numcomps);
 		}
 	}
 
