@@ -75,9 +75,10 @@ jpwl_epc_ms_t *jpwl_epc_create(opj_j2k_t *j2k, opj_bool esd_on, opj_bool red_on,
 @param sensval pointer to an array of sensitivity values (if NULL, they will be automatically filled)
 @return returns the freshly created ESD
 */
-jpwl_esd_ms_t *jpwl_esd_create(opj_j2k_t *j2k, int comps, unsigned char addrm, unsigned char ad_size,
-								unsigned char senst, int se_size, int tileno,
-								unsigned long int svalnum, void *sensval);
+jpwl_esd_ms_t *jpwl_esd_create(opj_j2k_t *j2k, int comps, 
+	unsigned char addrm, unsigned char ad_size,
+	unsigned char senst, int se_size, int tileno,
+	unsigned long int svalnum, void *sensval);
 			
 /** this function is used to compare two JPWL markers based on
 their relevant wishlist position
@@ -168,7 +169,7 @@ void j2k_add_marker(opj_codestream_info_t *cstr_info, unsigned short int type, i
 	/* expand the list? */
 	if ((cstr_info->marknum + 1) > cstr_info->maxmarknum) {
 		cstr_info->maxmarknum = 100 + (int) ((float) cstr_info->maxmarknum * 1.0F);
-		cstr_info->marker = opj_realloc(cstr_info->marker, cstr_info->maxmarknum);
+		cstr_info->marker = (opj_marker_info_t*)opj_realloc(cstr_info->marker, cstr_info->maxmarknum);
 	}
 
 	/* add the marker */
@@ -906,7 +907,7 @@ void j2k_read_epc(opj_j2k_t *j2k) {
 	unsigned short int Lepc, Pcrc = 0x0000;
 	unsigned char Pepc;	
 	opj_cio_t *cio = j2k->cio;
-	char *ans1;
+	const char *ans1;
 
 	/* Simply read the EPC parameters */
 	Lepcp = cio_tell(cio);

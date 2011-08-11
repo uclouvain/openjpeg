@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+August 11, 2011
+! [mickael] backport rev[824-834] and rev[837-859] into the openjpeg-1.5 branch 
+
 August 9, 2011
 - [antonin] removed xcode project files (cmake and autotools are now the only supported build methods)
 

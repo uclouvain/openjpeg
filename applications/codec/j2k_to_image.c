@@ -85,7 +85,7 @@ typedef struct img_folder{
 
 }img_fol_t;
 
-void decode_help_display() {
+void decode_help_display(void) {
 	fprintf(stdout,"HELP for j2k_to_image\n----\n\n");
 	fprintf(stdout,"- the -h option displays this help information on screen\n\n");
 
@@ -237,7 +237,7 @@ char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_dparamet
 /* -------------------------------------------------------------------------- */
 int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,img_fol_t *img_fol, char *indexfilename) {
 	/* parse the command line */
-	int totlen;
+	int totlen, c;
 	option_t long_option[]={
 		{"ImgDir",REQ_ARG, NULL ,'y'},
 		{"OutFor",REQ_ARG, NULL ,'O'},
@@ -253,8 +253,8 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 			"h"		;
 	totlen=sizeof(long_option);
 	img_fol->set_out_format = 0;
-	while (1) {
-		int c = getopt_long(argc, argv,optlist,long_option,totlen);
+	do {
+		c = getopt_long(argc, argv,optlist,long_option,totlen);
 		if (c == -1)
 			break;
 		switch (c) {
@@ -457,7 +457,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 				fprintf(stderr,"WARNING -> this option is not valid \"-%c %s\"\n",c, optarg);
 				break;
 		}
-	}
+	}while(c != -1);
 
 	/* check for possible errors */
 	if(img_fol->set_imgdir==1){
@@ -521,7 +521,7 @@ int main(int argc, char **argv) {
 	int file_length;
 	int num_images;
 	int i,imageno;
-	dircnt_t *dirptr;
+	dircnt_t *dirptr = NULL;
 	opj_dinfo_t* dinfo = NULL;	/* handle to a decompressor */
 	opj_cio_t *cio = NULL;
 	opj_codestream_info_t cstr_info;  /* Codestream information structure */
@@ -595,7 +595,13 @@ int main(int argc, char **argv) {
 		file_length = ftell(fsrc);
 		fseek(fsrc, 0, SEEK_SET);
 		src = (unsigned char *) malloc(file_length);
-		fread(src, 1, file_length, fsrc);
+		if (fread(src, 1, file_length, fsrc) != (size_t)file_length)
+		{
+			free(src);
+			fclose(fsrc);
+			fprintf(stderr, "\nERROR: fread return a number of element different from the expected.\n");
+			return 1;
+		}
 		fclose(fsrc);
 
 		/* decode the code-stream */
@@ -635,7 +641,7 @@ int main(int argc, char **argv) {
 
 			/* Write the index to disk */
 			if (*indexfilename) {
-				char bSuccess;
+				opj_bool bSuccess;
 				bSuccess = write_index_file(&cstr_info, indexfilename);
 				if (bSuccess) {
 					fprintf(stderr, "Failed to output index file\n");
@@ -677,7 +683,7 @@ int main(int argc, char **argv) {
 
 			/* Write the index to disk */
 			if (*indexfilename) {
-				char bSuccess;
+				opj_bool bSuccess;
 				bSuccess = write_index_file(&cstr_info, indexfilename);
 				if (bSuccess) {
 					fprintf(stderr, "Failed to output index file\n");
@@ -719,7 +725,7 @@ int main(int argc, char **argv) {
 
 			/* Write the index to disk */
 			if (*indexfilename) {
-				char bSuccess;
+				opj_bool bSuccess;
 				bSuccess = write_index_file(&cstr_info, indexfilename);
 				if (bSuccess) {
 					fprintf(stderr, "Failed to output index file\n");

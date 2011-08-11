@@ -82,7 +82,7 @@ typedef struct img_folder{
 	float *rates;
 }img_fol_t;
 
-void encode_help_display() {
+void encode_help_display(void) {
 	fprintf(stdout,"HELP for image_to_j2k\n----\n\n");
 	fprintf(stdout,"- the -h option displays this help information on screen\n\n");
 
@@ -573,7 +573,7 @@ void cinema_setup_encoder(opj_cparameters_t *parameters,opj_image_t *image, img_
 
 int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 													img_fol_t *img_fol, raw_cparameters_t *raw_cp, char *indexfilename) {
-	int i, j,totlen;
+	int i, j, totlen, c;
 	option_t long_option[]={
 		{"cinema2K",REQ_ARG, NULL ,'w'},
 		{"cinema4K",NO_ARG, NULL ,'y'},
@@ -597,8 +597,8 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 	img_fol->set_out_format=0;
 	raw_cp->rawWidth = 0;
 
-	while (1) {
-    int c = getopt_long(argc, argv, optlist,long_option,totlen);
+	do{
+		c = getopt_long(argc, argv, optlist,long_option,totlen);
 		if (c == -1)
 			break;
 		switch (c) {
@@ -1376,7 +1376,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 				fprintf(stderr, "ERROR -> Command line not valid\n");
 				return 1;
 		}
-	}
+	}while(c != -1);
 
 	/* check for possible errors */
 	if (parameters->cp_cinema){
@@ -1482,7 +1482,7 @@ int main(int argc, char **argv) {
 	opj_image_t *image = NULL;
 	int i,num_images;
 	int imageno;
-	dircnt_t *dirptr;
+	dircnt_t *dirptr = NULL;
 	raw_cparameters_t raw_cp;
 	opj_codestream_info_t cstr_info;		/* Codestream information structure */
 	char indexfilename[OPJ_PATH_LEN];	/* index file name */

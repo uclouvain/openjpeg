@@ -73,7 +73,7 @@ typedef struct img_folder{
 
 }img_fol_t;
 
-void decode_help_display() {
+void decode_help_display(void) {
 	fprintf(stdout,"HELP for j2k_dump\n----\n\n");
 	fprintf(stdout,"- the -h option displays this help information on screen\n\n");
 
@@ -92,6 +92,10 @@ void decode_help_display() {
 	fprintf(stdout,"    REQUIRED only if an Input image directory not specified\n");
 	fprintf(stdout,"    Currently accepts J2K-files, JP2-files and JPT-files. The file type\n");
 	fprintf(stdout,"    is identified based on its suffix.\n");
+	fprintf(stdout,"  -o <output file>\n");
+  fprintf(stdout,"    OPTIONAL\n");
+  fprintf(stdout,"    Output file where file info will be dump.\n");
+  fprintf(stdout,"    By default it will be in the stdout.\n");
 	fprintf(stdout,"\n");
 }
 
@@ -192,16 +196,18 @@ char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_dparamet
 /* -------------------------------------------------------------------------- */
 int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,img_fol_t *img_fol, char *indexfilename) {
 	/* parse the command line */
-	int totlen;
+	int totlen, c;
 	option_t long_option[]={
 		{"ImgDir",REQ_ARG, NULL ,'y'},
 	};
+	const char optlist[] = "i:o:h";
 
-	const char optlist[] = "i:h";
+	OPJ_ARG_NOT_USED(indexfilename);
+
 	totlen=sizeof(long_option);
 	img_fol->set_out_format = 0;
-	while (1) {
-		int c = getopt_long(argc, argv,optlist,long_option,totlen);
+	do {
+		c = getopt_long(argc, argv,optlist,long_option,totlen);
 		if (c == -1)
 			break;
 		switch (c) {
@@ -221,6 +227,15 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 						return 1;
 				}
 				strncpy(parameters->infile, infile, sizeof(parameters->infile)-1);
+			}
+			break;
+
+			/* ------------------------------------------------------ */
+
+			case 'o':     /* output file */
+			{
+			  char *outfile = optarg;
+			  strncpy(parameters->outfile, outfile, sizeof(parameters->outfile)-1);
 			}
 			break;
 				
@@ -246,7 +261,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 				fprintf(stderr,"WARNING -> this option is not valid \"-%c %s\"\n",c, optarg);
 				break;
 		}
-	}
+	}while(c != -1);
 
 	/* check for possible errors */
 	if(img_fol->set_imgdir==1){
@@ -306,7 +321,7 @@ int main(int argc, char *argv[])
 	img_fol_t img_fol;
 	opj_event_mgr_t event_mgr;		/* event manager */
 	opj_image_t *image = NULL;
-	FILE *fsrc = NULL;
+	FILE *fsrc = NULL, *fout = NULL;
 	unsigned char *src = NULL;
 	int file_length;
 	int num_images;
@@ -362,6 +377,19 @@ int main(int argc, char *argv[])
 		num_images=1;
 	}
 
+	//
+	if (parameters.outfile[0] != 0)
+	  {
+	  fout = fopen(parameters.outfile,"w");
+    if (!fout)
+      {
+      fprintf(stderr, "ERROR -> failed to open %s for reading\n", parameters.outfile);
+      return 1;
+      }
+	  }
+	else
+	  fout = stdout;
+
 	/*Encoding image one by one*/
 	for(imageno = 0; imageno < num_images ; imageno++)
   {
@@ -386,7 +414,13 @@ int main(int argc, char *argv[])
 		file_length = ftell(fsrc);
 		fseek(fsrc, 0, SEEK_SET);
 		src = (unsigned char *) malloc(file_length);
-		fread(src, 1, file_length, fsrc);
+		if (fread(src, 1, file_length, fsrc) != (size_t)file_length)
+		{
+			free(src);
+			fclose(fsrc);
+			fprintf(stderr, "\nERROR: fread return a number of element different from the expected.\n");
+			return 1;
+		}
 		fclose(fsrc);
 
 		/* decode the code-stream */
@@ -421,17 +455,17 @@ int main(int argc, char *argv[])
 				return 1;
 			}
 			/* dump image */
-      j2k_dump_image(stdout, image);
+      j2k_dump_image(fout, image);
 
 			/* dump cp */
-      j2k_dump_cp(stdout, image, ((opj_j2k_t*)dinfo->j2k_handle)->cp);
+      j2k_dump_cp(fout, image, ((opj_j2k_t*)dinfo->j2k_handle)->cp);
 
 			/* close the byte stream */
 			opj_cio_close(cio);
 
 			/* Write the index to disk */
 			if (*indexfilename) {
-				char bSuccess;
+				opj_bool bSuccess;
 				bSuccess = write_index_file(&cstr_info, indexfilename);
 				if (bSuccess) {
 					fprintf(stderr, "Failed to output index file\n");
@@ -472,17 +506,17 @@ int main(int argc, char *argv[])
 	 {
 	  free(image->icc_profile_buf); image->icc_profile_buf = NULL;
 	 }	
-      j2k_dump_image(stdout, image);
+      j2k_dump_image(fout, image);
 
 			/* dump cp */
-      j2k_dump_cp(stdout, image, ((opj_jp2_t*)dinfo->jp2_handle)->j2k->cp);
+      j2k_dump_cp(fout, image, ((opj_jp2_t*)dinfo->jp2_handle)->j2k->cp);
 
 			/* close the byte stream */
 			opj_cio_close(cio);
 
 			/* Write the index to disk */
 			if (*indexfilename) {
-				char bSuccess;
+				opj_bool bSuccess;
 				bSuccess = write_index_file(&cstr_info, indexfilename);
 				if (bSuccess) {
 					fprintf(stderr, "Failed to output index file\n");
@@ -524,7 +558,7 @@ int main(int argc, char *argv[])
 
 			/* Write the index to disk */
 			if (*indexfilename) {
-				char bSuccess;
+				opj_bool bSuccess;
 				bSuccess = write_index_file(&cstr_info, indexfilename);
 				if (bSuccess) {
 					fprintf(stderr, "Failed to output index file\n");
@@ -553,6 +587,8 @@ int main(int argc, char *argv[])
 		opj_image_destroy(image);
 
 	}
+
+	fclose(fout);
 
   return EXIT_SUCCESS;
 }

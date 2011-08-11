@@ -63,6 +63,8 @@ typedef int opj_bool;
 #define OPJ_TRUE 1
 #define OPJ_FALSE 0
 
+// Avoid compile-time warning because parameter is not used
+#define OPJ_ARG_NOT_USED(x) (void)(x)
 /* 
 ==========================================================
    Useful constant definitions

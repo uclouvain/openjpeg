@@ -236,7 +236,7 @@ static void j2k_read_unk(opj_j2k_t *j2k);
 /* ----------------------------------------------------------------------- */
 typedef struct j2k_prog_order{
 	OPJ_PROG_ORDER enum_prog;
-	char str_prog[4];
+	char str_prog[5];
 }j2k_prog_order_t;
 
 j2k_prog_order_t j2k_prog_order_list[] = {
@@ -297,6 +297,9 @@ static int j2k_get_num_tp(opj_cp_t *cp,int pino,int tileno){
 /**	mem allocation for TLM marker*/
 int j2k_calculate_tp(opj_cp_t *cp,int img_numcomp,opj_image_t *image,opj_j2k_t *j2k ){
 	int pino,tileno,totnum_tp=0;
+
+	OPJ_ARG_NOT_USED(img_numcomp);
+
 	j2k->cur_totnum_tp = (int *) opj_malloc(cp->tw * cp->th * sizeof(int));
 	for (tileno = 0; tileno < cp->tw * cp->th; tileno++) {
 		int cur_totnum_tp = 0;
@@ -835,6 +838,15 @@ static void j2k_read_qcx(opj_j2k_t *j2k, int compno, int len) {
 		};
 
 	};
+
+#else
+	/* We check whether there are too many subbands */
+	if ((numbands < 0) || (numbands >= J2K_MAXBANDS)) {
+		opj_event_msg(j2k->cinfo, EVT_WARNING ,
+					"bad number of subbands in Sqcx (%d) regarding to J2K_MAXBANDS (%d) \n"
+				    "- limiting number of bands to J2K_MAXBANDS and try to move to the next markers\n", numbands, J2K_MAXBANDS);
+	}
+
 #endif /* USE_JPWL */
 
 	for (bandno = 0; bandno < numbands; bandno++) {
@@ -847,8 +859,10 @@ static void j2k_read_qcx(opj_j2k_t *j2k, int compno, int len) {
 			expn = tmp >> 11;
 			mant = tmp & 0x7ff;
 		}
-		tccp->stepsizes[bandno].expn = expn;
-		tccp->stepsizes[bandno].mant = mant;
+		if (bandno < J2K_MAXBANDS){
+			tccp->stepsizes[bandno].expn = expn;
+			tccp->stepsizes[bandno].mant = mant;
+		}
 	}
 	
 	/* Add Antonin : if scalar_derived -> compute other stepsizes */
@@ -912,7 +926,7 @@ static void j2k_read_qcc(opj_j2k_t *j2k) {
 	int len, compno;
 	int numcomp = j2k->image->numcomps;
 	opj_cio_t *cio = j2k->cio;
-	
+
 	len = cio_read(cio, 2);	/* Lqcc */
 	compno = cio_read(cio, numcomp <= 256 ? 1 : 2);	/* Cqcc */
 
@@ -1847,9 +1861,10 @@ opj_image_t* j2k_decode_jpt_stream(opj_j2k_t *j2k, opj_cio_t *cio,  opj_codestre
 	opj_image_t *image = NULL;
 	opj_jpt_msg_header_t header;
 	int position;
-
 	opj_common_ptr cinfo = j2k->cinfo;
-	
+
+	OPJ_ARG_NOT_USED(cstr_info);
+
 	j2k->cio = cio;
 
 	/* create an empty image */

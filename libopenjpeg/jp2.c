@@ -398,13 +398,16 @@ static opj_bool jp2_read_pclr(opj_jp2_t *jp2, opj_cio_t *cio,
 	unsigned short i, j;
 	unsigned char uc;
 
+	OPJ_ARG_NOT_USED(box);
+	OPJ_ARG_NOT_USED(jp2);
+
 /* Part 1, I.5.3.4: 'There shall be at most one Palette box inside
  * a JP2 Header box' :
 */
 	if(color->jp2_pclr) return OPJ_FALSE;
 
-	nr_entries = cio_read(cio, 2); /* NE */
-	nr_channels = cio_read(cio, 1);/* NPC */
+	nr_entries = (unsigned short)cio_read(cio, 2); /* NE */
+	nr_channels = (unsigned short)cio_read(cio, 1);/* NPC */
 
 	entries = (unsigned int*)
 	 opj_malloc(nr_channels * nr_entries * sizeof(unsigned int));
@@ -446,6 +449,9 @@ static opj_bool jp2_read_cmap(opj_jp2_t *jp2, opj_cio_t *cio,
 	opj_jp2_cmap_comp_t *cmap;
 	unsigned short i, nr_channels;
 
+	OPJ_ARG_NOT_USED(box);
+	OPJ_ARG_NOT_USED(jp2);
+
 /* Need nr_channels: */
 	if(color->jp2_pclr == NULL) return OPJ_FALSE;
 
@@ -460,7 +466,7 @@ static opj_bool jp2_read_cmap(opj_jp2_t *jp2, opj_cio_t *cio,
 
 	for(i = 0; i < nr_channels; ++i)
    {
-	cmap[i].cmp = cio_read(cio, 2);
+	cmap[i].cmp = (unsigned short)cio_read(cio, 2);
 	cmap[i].mtyp = cio_read(cio, 1);
 	cmap[i].pcol = cio_read(cio, 1);
 
@@ -511,12 +517,15 @@ static opj_bool jp2_read_cdef(opj_jp2_t *jp2, opj_cio_t *cio,
 	opj_jp2_cdef_info_t *info;
 	unsigned short i, n;
 
+	OPJ_ARG_NOT_USED(box);
+	OPJ_ARG_NOT_USED(jp2);
+
 /* Part 1, I.5.3.6: 'The shall be at most one Channel Definition box
  * inside a JP2 Header box.' 
 */
 	if(color->jp2_cdef) return OPJ_FALSE;
 
-	if((n = cio_read(cio, 2)) == 0) return OPJ_FALSE; /* szukw000: FIXME */
+	if((n = (unsigned short)cio_read(cio, 2)) == 0) return OPJ_FALSE; /* szukw000: FIXME */
 
 	info = (opj_jp2_cdef_info_t*)
 	 opj_malloc(n * sizeof(opj_jp2_cdef_info_t));
@@ -527,9 +536,9 @@ static opj_bool jp2_read_cdef(opj_jp2_t *jp2, opj_cio_t *cio,
 
 	for(i = 0; i < n; ++i)
    {
-	info[i].cn = cio_read(cio, 2);
-	info[i].typ = cio_read(cio, 2);
-	info[i].asoc = cio_read(cio, 2);
+	info[i].cn = (unsigned short)cio_read(cio, 2);
+	info[i].typ = (unsigned short)cio_read(cio, 2);
+	info[i].asoc = (unsigned short)cio_read(cio, 2);
 
    }
 	return OPJ_TRUE;

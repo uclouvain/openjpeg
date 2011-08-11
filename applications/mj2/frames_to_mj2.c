@@ -199,29 +199,29 @@ void help_display()
   fprintf(stdout,"TotalDisto\n\n");
 }
 
-int give_progression(char progression[4])
+OPJ_PROG_ORDER give_progression(char progression[5])
 {
   if (progression[0] == 'L' && progression[1] == 'R'
     && progression[2] == 'C' && progression[3] == 'P') {
-    return 0;
+    return LRCP;
   } else {
     if (progression[0] == 'R' && progression[1] == 'L'
       && progression[2] == 'C' && progression[3] == 'P') {
-      return 1;
+      return RLCP;
     } else {
       if (progression[0] == 'R' && progression[1] == 'P'
 				&& progression[2] == 'C' && progression[3] == 'L') {
-				return 2;
+				return RPCL;
       } else {
 				if (progression[0] == 'P' && progression[1] == 'C'
 					&& progression[2] == 'R' && progression[3] == 'L') {
-					return 3;
+					return PCRL;
 				} else {
 					if (progression[0] == 'C' && progression[1] == 'P'
 						&& progression[2] == 'R' && progression[3] == 'L') {
-						return 4;
+						return CPRL;
 					} else {
-						return -1;
+						return PROG_UNKNOWN;
 					}
 				}
       }
@@ -475,9 +475,9 @@ int main(int argc, char **argv)
       /* ----------------------------------------------------- */
     case 'p':			/* progression order */
 			{
-				char progression[4];
+				char progression[5];
 				
-				strncpy(progression, optarg, 4);
+				strncpy(progression, optarg, 5);
 				j2k_parameters->prog_order = give_progression(progression);
 				if (j2k_parameters->prog_order == -1) {
 					fprintf(stderr, "Unrecognized progression order "
@@ -696,7 +696,7 @@ int main(int argc, char **argv)
 	movie->tk[0].num_samples = 
 	 yuv_num_frames(&movie->tk[0],mj2_parameters.infile);
 
-	if (movie->tk[0].num_samples == -1) {
+	if (movie->tk[0].num_samples == 0) {
 		return 1;
 	}
 
