@@ -347,6 +347,7 @@ AC_SUBST(TIFF_LIBS)
 # libcms2
 
 lcms_output="no"
+have_lcms2="no"
 
 AC_ARG_ENABLE([lcms2],
    [AC_HELP_STRING([--disable-lcms2], [disable LCMS-2 support @<:@default=enabled@:>@])],
