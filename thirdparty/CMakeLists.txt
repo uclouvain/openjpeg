@@ -18,7 +18,7 @@ IF(ZLIB_FOUND)
 
   SET(Z_LIBNAME ${ZLIB_LIBRARIES} PARENT_SCOPE)
   SET(Z_INCLUDE_DIRNAME ${ZLIB_INCLUDE_DIRS} PARENT_SCOPE) 
-  message("Your system seems to have a Z lib available, we will used it to generate PNG lib")
+  message("Your system seems to have a Z lib available, we will use it to generate PNG lib")
 
 ELSE (ZLIB_FOUND) # not found
   
@@ -42,7 +42,7 @@ IF (ZLIB_FOUND)
 
   IF(PNG_FOUND)
 
-    message("Your system seems to have a PNG lib available, we will used it")
+    message("Your system seems to have a PNG lib available, we will use it")
     SET(HAVE_PNG_H 1 PARENT_SCOPE)
     SET(HAVE_LIBPNG 1 PARENT_SCOPE)
     SET(PNG_LIBNAME ${PNG_LIBRARIES} PARENT_SCOPE)
@@ -73,7 +73,7 @@ FIND_PACKAGE(TIFF)
 
 IF(TIFF_FOUND)
 
-  message("Your system seems to have a TIFF lib available, we will used it")
+  message("Your system seems to have a TIFF lib available, we will use it")
   SET(HAVE_TIFF_H 1 PARENT_SCOPE)
   SET(HAVE_LIBTIFF 1 PARENT_SCOPE)
   SET(TIFF_LIBNAME ${TIFF_LIBRARIES} PARENT_SCOPE)
@@ -103,7 +103,7 @@ FIND_PACKAGE(LCMS2)
 
 IF(LCMS2_FOUND)
 
-  message("Your system seems to have a LCMS2 lib available, we will used it")
+  message("Your system seems to have a LCMS2 lib available, we will use it")
   SET(HAVE_LCMS2_H 1 PARENT_SCOPE)
   SET(HAVE_LIBLCMS2 1 PARENT_SCOPE)
   SET(LCMS_LIBNAME ${LCMS2_LIBRARIES} PARENT_SCOPE)
@@ -115,7 +115,7 @@ ELSE (LCMS2_FOUND) # not found lcms2
   
   IF(LCMS_FOUND)
   
-    message("Your system seems to have a LCMS lib available, we will used it")
+    message("Your system seems to have a LCMS lib available, we will use it")
     SET(HAVE_LCMS_H 1 PARENT_SCOPE)
     SET(HAVE_LIBLCMS 1 PARENT_SCOPE)
     SET(LCMS_LIBNAME ${LCMS_LIBRARIES} PARENT_SCOPE)
