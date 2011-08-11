@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+August 11, 2011
+! [mickael] fixed wrong patch with the return value of fgets into convert.c file
+
 August 10, 2011
 ! [mickael] removed unused parameters warnings with the solution proposed by myself and Bob Friesenhahn.
 ! [mickael] add copyright header into new test functions.

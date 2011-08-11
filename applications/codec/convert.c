@@ -1408,11 +1408,9 @@ static void read_pnm_header(FILE *reader, struct pnm_header *ph)
     char idf[256], type[256];
     char line[256];
 
-    char* return_value_fgets = fgets(line, 250, reader);
-    if (!strcmp(return_value_fgets,line))
+    if (fgets(line, 250, reader) == NULL)
     {
-    	fprintf(stderr,"\nWARNING: fgets return a value different that the first argument");
-    	free(return_value_fgets);
+    	fprintf(stderr,"\nWARNING: fgets return a NULL value");
     	return;
     }
 
