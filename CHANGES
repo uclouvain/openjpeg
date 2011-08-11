@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 August 11, 2011
+* [antonin] minor bug fix in configure.ac (credit to Vincent Torri)
 ! [mickael] backport rev[824-834] and rev[837-859] into the openjpeg-1.5 branch 
 
 August 9, 2011
