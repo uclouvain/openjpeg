@@ -1861,10 +1861,10 @@ opj_image_t* j2k_decode_jpt_stream(opj_j2k_t *j2k, opj_cio_t *cio,  opj_codestre
 	opj_image_t *image = NULL;
 	opj_jpt_msg_header_t header;
 	int position;
+	opj_common_ptr cinfo = j2k->cinfo;
 
 	OPJ_ARG_NOT_USED(cstr_info);
 
-	opj_common_ptr cinfo = j2k->cinfo;
 	j2k->cio = cio;
 
 	/* create an empty image */

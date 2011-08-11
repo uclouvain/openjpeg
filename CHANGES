@@ -6,7 +6,8 @@ What's New for OpenJPEG
 + : added
 
 August 11, 2011
-! [mickael] fixed wrong patch with the return value of fgets into convert.c file
+* [mickael] fixed wrong patch with the return value of fgets into convert.c file
+* [mickael] fixed build error with position of variable declaration after patch 856
 
 August 10, 2011
 ! [mickael] removed unused parameters warnings with the solution proposed by myself and Bob Friesenhahn.
