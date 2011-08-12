@@ -1,0 +1,1 @@
+ADD_SUBDIRECTORY(opj_dec_server)

@@ -212,12 +212,13 @@ ADD_SUBDIRECTORY(libopenjpeg)
 # Build Applications
 OPTION(BUILD_CODEC "Build the CODEC executables" ON)
 OPTION(BUILD_MJ2 "Build the MJ2 executables." OFF)
+OPTION(BUILD_JPIP "Build the JPIP library and executables." OFF)
 
-IF(BUILD_CODEC OR BUILD_MJ2)
+IF(BUILD_CODEC OR BUILD_MJ2 OR BUILD_JPIP)
   OPTION(BUILD_THIRDPARTY "Build the thirdparty executables if it is needed" OFF)
   ADD_SUBDIRECTORY(thirdparty)
   ADD_SUBDIRECTORY(applications)
-ENDIF (BUILD_CODEC OR BUILD_MJ2)
+ENDIF (BUILD_CODEC OR BUILD_MJ2 OR BUILD_JPIP)
 
 #-----------------------------------------------------------------------------
 # opj_config.h generation (2/2)

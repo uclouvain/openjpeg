@@ -1,0 +1,5 @@
+
+ADD_SUBDIRECTORY(libopenjpip)
+ADD_SUBDIRECTORY(opj_server)
+ADD_SUBDIRECTORY(opj_client)
+ADD_SUBDIRECTORY(tools)
