@@ -5,6 +5,9 @@ What's New for OpenJPIP
 ! : changed
 + : added
 
+August 12, 2011
++ [antonin] added cmake support to openjpip
+
 July 6, 2011
 * [antonin] JPIP : fixed autotools to work with recent name changes
 
