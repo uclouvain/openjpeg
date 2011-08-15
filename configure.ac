@@ -138,41 +138,6 @@ AC_ARG_ENABLE([jpip],
 AC_MSG_CHECKING([whether to build the JPIP library])
 AC_MSG_RESULT([${want_jpip}])
 
-if test "x${want_jpip}" = "xyes" ; then
-   AC_DEFINE(USE_JPIP, [1], [define to 1 if you use jpip])
-fi
-
-# libfcgi
-
-if test "x${want_jpip}" = "xyes" ; then
-   OPJ_CHECK_LIB([/usr],
-      [fcgi_stdio.h],
-      [fcgi],
-      [FCGI_printf],
-      [want_jpip="yes"],
-      [want_jpip="no"])
-fi
-
-if test "x${want_jpip}" = "xno" ; then
-   OPJ_CHECK_LIB([/usr/local],
-      [fcgi_stdio.h],
-      [fcgi],
-      [FCGI_printf],
-      [want_jpip="yes"],
-      [want_jpip="no"])
-fi
-
-if test "x${want_jpip}" = "xno" ; then
-   OPJ_CHECK_LIB([/opt],
-      [fcgi_stdio.h],
-      [fcgi],
-      [FCGI_printf],
-      [want_jpip="yes"],
-      [want_jpip="no"])
-fi
-
-AM_CONDITIONAL([WANT_JPIP], [test "x${want_jpip}" = "xyes"])
-
 
 ### Checks for programs
 
@@ -239,26 +204,7 @@ if test "x${want_png}" = "xyes" ; then
       ])
 
    if ! test "x${have_libpng}" = "xyes" ; then
-      OPJ_CHECK_LIB([/usr],
-         [png.h],
-         [png],
-         [png_create_write_struct],
-         [have_libpng="yes"],
-         [have_libpng="no"])
-   fi
-
-   if ! test "x${have_libpng}" = "xyes" ; then
-      OPJ_CHECK_LIB([/usr/local],
-         [png.h],
-         [png],
-         [png_create_write_struct],
-         [have_libpng="yes"],
-         [have_libpng="no"])
-   fi
-
-   if ! test "x${have_libpng}" = "xyes" ; then
-      OPJ_CHECK_LIB([/opt],
-         [png.h],
+      OPJ_CHECK_LIB([png.h],
          [png],
          [png_create_write_struct],
          [have_libpng="yes"],
@@ -300,30 +246,12 @@ AC_MSG_RESULT([${want_tiff}])
 
 if test "x${want_tiff}" = "xyes" ; then
 
-   OPJ_CHECK_LIB([/usr],
+   OPJ_CHECK_LIB(
       [tiff.h],
       [tiff],
       [TIFFOpen],
       [have_libtiff="yes"],
       [have_libtiff="no"])
-
-   if ! test "x${have_libtiff}" = "xyes" ; then
-      OPJ_CHECK_LIB([/usr/local],
-         [tiff.h],
-         [tiff],
-         [TIFFOpen],
-         [have_libtiff="yes"],
-         [have_libtiff="no"])
-   fi
-
-   if ! test "x${have_libtiff}" = "xyes" ; then
-      OPJ_CHECK_LIB([/opt],
-         [tiff.h],
-         [tiff],
-         [TIFFOpen],
-         [have_libtiff="yes"],
-         [have_libtiff="no"])
-   fi
 
    if test "x${have_libtiff}" = "xno" ; then
       AC_MSG_WARN([Can not find a usuable TIFF library. Make sure that CPPFLAGS and LDFLAGS are correctly set.])
@@ -338,11 +266,6 @@ if test "x${have_libtiff}" = "xyes" ; then
 fi
 
 AM_CONDITIONAL([with_libtiff], [test "x${have_libtiff}" = "xyes"])
-
-AC_ARG_VAR([TIFF_CFLAGS], [preprocessor flags for libtiff])
-AC_SUBST(TIFF_CFLAGS)
-AC_ARG_VAR([TIFF_LIBS], [linker flags for libtiff])
-AC_SUBST(TIFF_LIBS)
 
 # libcms2
 
@@ -421,6 +344,31 @@ if test "x${have_lcms2}" = "xno" ; then
    fi
 
 fi
+
+# libfcgi
+
+if test "x${want_jpip}" = "xyes" ; then
+
+   have_fcgi="no"
+   OPJ_CHECK_LIB(
+      [fcgi_stdio.h],
+      [fcgi],
+      [FCGI_Accept],
+      [have_fcgi="yes"],
+      [have_fcgi="no"])
+
+   if ! test "x${have_fcgi}" = "xyes" ; then
+      AC_MSG_WARN([FastCGI library not found. OpenJPIP will not be compiled.])
+      want_jpip="no"
+   fi
+
+fi
+
+if test "x${want_jpip}" = "xyes" ; then
+   AC_DEFINE(USE_JPIP, [1], [define to 1 if you use jpip])
+fi
+
+AM_CONDITIONAL([WANT_JPIP], [test "x${want_jpip}" = "xyes"])
 
 ### Checks for header files
 

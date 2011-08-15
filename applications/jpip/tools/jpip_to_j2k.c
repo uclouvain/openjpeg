@@ -94,8 +94,11 @@ int main(int argc,char *argv[])
   delete_msgqueue( &msgqueue);
   free( jpipstream);
 
-
+#ifdef _WIN32
+  if(( outfd = open( argv[2], O_WRONLY|O_CREAT, _S_IREAD | _S_IWRITE)) == -1){
+#else
   if(( outfd = open( argv[2], O_WRONLY|O_CREAT, S_IRWXU|S_IRWXG)) == -1){
+#endif
     fprintf( stderr, "file %s open error\n", argv[2]);
     return -1;
   }

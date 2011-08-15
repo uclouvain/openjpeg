@@ -101,8 +101,12 @@ int main(int argc,char *argv[])
   printf("NC: %d, bpc: %d\n", ihdrbox->nc, ihdrbox->bpc);
   
   jp2stream = recons_jp2( msgqueue, jpipstream, msgqueue->first->csn, &jp2len);
-    
+
+#ifdef _WIN32
+  if(( outfd = open( argv[2], O_WRONLY|O_CREAT, _S_IREAD | _S_IWRITE)) == -1){
+#else    
   if(( outfd = open( argv[2], O_WRONLY|O_CREAT, S_IRWXU|S_IRWXG)) == -1){
+#endif
     fprintf( stderr, "file %s open error\n", argv[2]);
     return -1;
   }
