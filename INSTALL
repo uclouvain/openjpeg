@@ -7,6 +7,10 @@ UNIX/LINUX similar systems
 
 1) Using configure tools
 
+It is highly recommended that pkg-config is installed. If needed, you have to
+properly set the environment variable PKG_CONFIG_PATH so that the .pc files
+are found.
+
 To build from top-level directory, you can simply type: 
   ./bootstrap.sh
   ./configure
@@ -38,6 +42,19 @@ Main './configure' options (type './configure --help' for more details)
 
 You can also specify your own CFLAGS and LDFLAGS with (for example):
   CFLAGS="-O3 -pipe" LDFLAGS="-Wl,-s" ./configure
+
+The (optional) dependencies of some binaries are libpng, libtiff, libcms 1 or 2
+and FastCGI. Only libtiff and FastCGI have no .pc file. There should be some
+automatic detection if they are installed in /usr, /usr/local or /opt/local.
+Otherwise, you can tune their detection (as well as for libpng and libcms1 or 2
+too) with the environment variables:
+
+TIFF_CFLAGS
+TIFF_LIBS
+FCGI_CFLAGS
+FCGI_LIBS
+
+See './configure --help' output for more details.
 
 
 2) Using cmake (see www.cmake.org)
@@ -98,7 +115,7 @@ If it does not work, try adding the following flag to the cmake command :
 WINDOWS
 -------
 
-If you're using cygwin or MinGW, the same procedures as for Unix can be used. 
+If you're using cygwin or MinGW+MSYS, the same procedures as for Unix can be used. 
 
 Otherwise you can use cmake to generate project files for the IDE you are using (VC2010, etc).
 Type 'cmake --help' for available generators on your platform.
