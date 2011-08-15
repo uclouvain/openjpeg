@@ -8,6 +8,8 @@ opj_dec_server_CPPFLAGS = \
 -I$(top_builddir)/applications/jpip/opj_server \
 -I$(top_srcdir)/applications/jpip/libopenjpip \
 -I$(top_builddir)/applications/jpip/libopenjpip \
+-I$(top_srcdir)/libopenjpeg \
+-I$(top_builddir)/libopenjpeg \
 @FCGI_CFLAGS@ \
 -DSERVER
 opj_dec_server_CFLAGS = 
