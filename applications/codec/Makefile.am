@@ -99,7 +99,7 @@ JPWL_image_to_j2k_CFLAGS =
 JPWL_image_to_j2k_LDADD = $(top_builddir)/libopenjpeg/jpwl/libopenjpeg_JPWL.la @TIFF_LIBS@ @PNG_LIBS@
 
 JPWL_image_to_j2k_SOURCES = \
-..//common/getopt.c \
+../common/getopt.c \
 index.c \
 convert.c \
 image_to_j2k.c

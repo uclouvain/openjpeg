@@ -26,7 +26,7 @@ AC_CONFIG_HEADERS([opj_config.h])
 AC_CANONICAL_SYSTEM
 AC_CANONICAL_HOST
 
-AM_INIT_AUTOMAKE(1.11 foreign dist-bzip2)
+AM_INIT_AUTOMAKE(1[.11 foreign dist-bzip2])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 MAJOR_NR=OPJ_MAJOR
@@ -375,6 +375,7 @@ AC_HEADER_DIRENT
 
 ### Checks for compiler characteristics
 
+AM_PROG_CC_C_O
 AC_C_BIGENDIAN
 
 #OPJ_COMPILER_FLAG([-Wall])
