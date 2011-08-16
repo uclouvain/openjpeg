@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+August 16, 2011
+* [antonin] fixed cmake support for openjpip
+
 August 15, 2011
 * [antonin] fixed a bug in autotools files that prevented libfcgi to be correctly found in some cases (patch from V.Torri).
 
