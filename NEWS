@@ -1,0 +1,33 @@
+
+OpenJPEG NEWS - user visible changes
+====================================
+
+Changes from OpenJPEG 1.4.0 to OpenJPEG 1.5.0
+----------------------------------------------
+
+New Features:
+
+    * openjpip: 
+     - complete client-server architecture for remote browsing of jpeg 2000 images. 
+     - located in 'applications/jpip'.
+     - see corresponding README for more details.
+
+API modifications:
+
+    * 'bool' type has been replaced by 'opj_bool' type. 'stdbool.h' is no more required.
+    
+Misc:
+
+    * added this NEWS file.
+    * improved cmake and autotools build methods.
+    * removed manual makefiles, VS project files and XCode project files.
+    * added a 'thirdparty' directory to contain all dependencies.
+     - These libraries will be build only if there are not found on the system.
+     - Note that libopenjpeg itself does not have any dependency.
+    * changed the directory hierarchy of the whole project. See README files for details.
+    * tests : a complete test suite has been setup.
+     - both JPEG 2000 conformance tests and non-regressions tests are configured.
+     - results are submitted to the OpenJPEG dashboard (http://my.cdash.org/index.php?project=OPENJPEG)
+     - images are located in 'http://openjpeg.googlecode.com/svn/data' folder.
+     - configuration files and utilities are located in 'tests' folder.
+    * Many bug fixes. See CHANGES for details.

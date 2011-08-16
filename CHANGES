@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 August 16, 2011
++ [antonin] added NEWS, AUTHORS and THANKS files. Cosmetic changes in autotools files.
 - [antonin] removed obsolete testing directory and *.nix files
 * [antonin] fixed cmake support for openjpip
 
