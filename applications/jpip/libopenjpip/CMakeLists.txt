@@ -24,9 +24,9 @@ ${CMAKE_CURRENT_SOURCE_DIR}/target_manager.c
 )
 
 # Build the library
-ADD_LIBRARY(openjpip_local ${OPENJPIP_SRCS})
+ADD_LIBRARY(openjpip_local STATIC ${OPENJPIP_SRCS})
 
-ADD_LIBRARY(openjpip_server ${OPENJPIP_SRCS})
+ADD_LIBRARY(openjpip_server STATIC ${OPENJPIP_SRCS})
 TARGET_LINK_LIBRARIES(openjpip_server ${FCGI_LIBNAME})
 SET_TARGET_PROPERTIES(openjpip_server
   PROPERTIES COMPILE_FLAGS "-DSERVER")
