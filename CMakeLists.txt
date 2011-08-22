@@ -250,7 +250,7 @@ IF(BUILD_TESTING)
     # They could be found via svn on the OpenJPEG google code project
     # svn checkout http://openjpeg.googlecode.com/svn/data (about 70 Mo) 
     FIND_PATH(OPJ_DATA_ROOT README-OPJ-Data 
-              PATHS $ENV{OPJ_DATA_ROOT} ${CMAKE_SOURCE_DIR}/../opj-data)
+              PATHS $ENV{OPJ_DATA_ROOT} ${CMAKE_SOURCE_DIR}/../data)
               
     SET (REF_DECODER_BIN_PATH "NOT-FOUND" CACHE PATH "Single directory where find the reference encoder binaries to enable encoding test suite.")
     MARK_AS_ADVANCED(REF_DECODER_BIN_PATH)
