@@ -33,16 +33,15 @@
 
 #include <time.h>
 #include "query_parser.h"
-#include "target_manager.h"
+#include "cachemodel_manager.h"
 
 //! Channel parameters
 typedef struct channel_param{
-  target_param_t *target;       //!< reference pointer to the target
-  char cid[MAX_LENOFCID];       //!< channel identifier
-  // - a record of the client's capabilities and preferences
-  // - to the extent that the server queues requests
-  time_t start_tm;              //!< starting time
-  struct channel_param *next;   //!< pointer to the next channel
+  cachemodel_param_t *cachemodel; //!< reference pointer to the cache model
+  char cid[MAX_LENOFCID];         //!< channel identifier
+  // - a record of the client's capabilities and preferences to the extent that the server queues requests
+  time_t start_tm;                //!< starting time
+  struct channel_param *next;     //!< pointer to the next channel
 } channel_param_t;
 
 
@@ -65,11 +64,11 @@ channellist_param_t * gene_channellist();
  * generate a channel under the channel list
  *
  * @param[in] query_param query parameters
- * @param[in] target      reference target
+ * @param[in] cachemodel  reference cachemodel
  * @param[in] channellist channel list pointer
  * @return                pointer to the generated channel
  */
-channel_param_t * gene_channel( query_param_t query_param, target_param_t *target, channellist_param_t *channellist);
+channel_param_t * gene_channel( query_param_t query_param, cachemodel_param_t *cachemodel, channellist_param_t *channellist);
 
 /**
  * set channel variable parameters

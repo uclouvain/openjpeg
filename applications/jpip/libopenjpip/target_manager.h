@@ -42,6 +42,7 @@ typedef struct target_param{
   int fd;                         //!< file descriptor
   int csn;                        //!< codestream number
   index_param_t *codeidx;         //!< index information of codestream
+  int num_of_use;                 //!< numbers of sessions refering to this target
   struct target_param *next;      //!< pointer to the next target
 } target_param_t;
 
@@ -65,11 +66,28 @@ targetlist_param_t * gene_targetlist();
 /**
  * generate a target
  *
+ * @param[in] targetlist target list to insert the generated target
  * @param[in] targetname target file name
  * @return               pointer to the generated target
  */
-target_param_t * gene_target( char *targetname);
+target_param_t * gene_target( targetlist_param_t *targetlist, char *targetname);
 
+
+/**
+ * refer a target, used to make a new cache model
+ *
+ * @param[in]  reftarget reference target pointer
+ * @param[out] ptr       address of feeding target pointer
+ */
+void refer_target( target_param_t *reftarget, target_param_t **ptr);
+
+
+/**
+ * refer a target, used to make a new cache model
+ *
+ * @param[in]  target reference pointer to the target
+ */
+void unrefer_target( target_param_t *target);
 
 /**
  * delete a target
@@ -94,6 +112,14 @@ void delete_target_in_list( target_param_t **target, targetlist_param_t *targetl
  * @param[in,out] targetlist address of the target list pointer
  */
 void delete_targetlist(targetlist_param_t **targetlist);
+
+
+/**
+ * print target parameters
+ *
+ * @param[in] target target pointer
+ */
+void print_target( target_param_t *target);
 
 /**
  * print all target parameters

@@ -1,4 +1,5 @@
 LIBDIR = ../libopenjpip
+
 LIBFNAME = $(LIBDIR)/libopenjpip_server.a
 CFLAGS  = -O3 -Wall -m32 -DSERVER -I$(LIBDIR)
 LDFLAGS = -L$(LIBDIR) -lm -lfcgi -lopenjpip_server

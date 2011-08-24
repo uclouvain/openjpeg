@@ -68,13 +68,12 @@ targetlist_param_t * gene_targetlist()
  */
 int open_jp2file( char filename[]);
 
-target_param_t * gene_target( char *targetname)
+target_param_t * gene_target( targetlist_param_t *targetlist, char *targetname)
 {
   target_param_t *target;
   int fd;
   index_param_t *jp2idx;
   static int last_csn = 0;
-
 
   if( targetname[0]=='\0'){
     fprintf( FCGI_stderr, "Error: exception, no targetname in gene_target()\n");
@@ -96,10 +95,32 @@ target_param_t * gene_target( char *targetname)
   target->fd = fd;
   target->csn = last_csn++;
   target->codeidx = jp2idx;
+  target->num_of_use = 0;
   
   target->next=NULL;
 
+  if( targetlist->first) // there are one or more entries
+    targetlist->last->next = target;
+  else                   // first entry
+    targetlist->first = target;
+  targetlist->last = target;
+
+#ifndef SERVER
+  fprintf( logstream, "local log: target %s generated\n", targetname);
+#endif
+  
   return target;
+}
+
+void refer_target( target_param_t *reftarget, target_param_t **ptr)
+{
+  *ptr = reftarget;
+  reftarget->num_of_use++;
+}
+
+void unrefer_target( target_param_t *target)
+{
+  target->num_of_use--;
 }
 
 void delete_target( target_param_t **target)
@@ -146,14 +167,20 @@ void delete_targetlist(targetlist_param_t **targetlist)
   free( *targetlist);
 }
 
+void print_target( target_param_t *target)
+{
+  fprintf( logstream, "target:\n");
+  fprintf( logstream, "\t csn=%d\n", target->csn);
+  fprintf( logstream, "\t target=%s\n\n", target->filename);
+}
+
 void print_alltarget( targetlist_param_t *targetlist)
 {
   target_param_t *ptr;
 
   ptr = targetlist->first;
   while( ptr != NULL){
-    fprintf( logstream,"csn=%d\n", ptr->csn);
-    fprintf( logstream,"target=%s\n", ptr->filename);
+    print_target( ptr);
     ptr=ptr->next;
   }
 }

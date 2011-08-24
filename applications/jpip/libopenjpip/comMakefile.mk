@@ -10,7 +10,7 @@ all: $(LIBNAME)
 
 $(LIBNAME): target_manager.o byte_manager.o box_manager.o boxheader_manager.o manfbox_manager.o \
 	mhixbox_manager.o marker_manager.o codestream_manager.o faixbox_manager.o index_manager.o \
-	msgqueue_manager.o metadata_manager.o placeholder_manager.o ihdrbox_manager.o imgreg_manager.o 
+	msgqueue_manager.o metadata_manager.o placeholder_manager.o ihdrbox_manager.o imgreg_manager.o cachemodel_manager.o
 	ar r $@ $^
 
 clean:

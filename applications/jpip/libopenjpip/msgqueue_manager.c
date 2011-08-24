@@ -57,7 +57,7 @@
 #define MAINHEADER_MSG 6
 #define METADATA_MSG 8
 
-msgqueue_param_t * gene_msgqueue( bool stateless, target_param_t *target)
+msgqueue_param_t * gene_msgqueue( bool stateless, cachemodel_param_t *cachemodel)
 {
   msgqueue_param_t *msgqueue;
 
@@ -67,7 +67,7 @@ msgqueue_param_t * gene_msgqueue( bool stateless, target_param_t *target)
   msgqueue->last  = NULL;
 
   msgqueue->stateless = stateless;
-  msgqueue->target = target;
+  msgqueue->cachemodel = cachemodel;
   
   return msgqueue;
 }
@@ -86,8 +86,8 @@ void delete_msgqueue( msgqueue_param_t **msgqueue)
     free( ptr);
     ptr = next;
   }
-  if( (*msgqueue)->stateless && (*msgqueue)->target)
-    delete_target( &((*msgqueue)->target));
+  if( (*msgqueue)->stateless && (*msgqueue)->cachemodel)
+    delete_cachemodel( &((*msgqueue)->cachemodel));
 
   free(*msgqueue); 
 }
@@ -124,10 +124,12 @@ void enqueue_message( message_param_t *msg, msgqueue_param_t *msgqueue);
 
 void enqueue_mainheader( msgqueue_param_t *msgqueue)
 {
+  cachemodel_param_t *cachemodel;
   target_param_t *target;
   message_param_t *msg;
 
-  target = msgqueue->target;
+  cachemodel = msgqueue->cachemodel;
+  target = cachemodel->target;
 
   msg = (message_param_t *)malloc( sizeof(message_param_t));
 
@@ -144,11 +146,12 @@ void enqueue_mainheader( msgqueue_param_t *msgqueue)
 
   enqueue_message( msg, msgqueue);
 
-  target->codeidx->mhead_model = true;
+  cachemodel->mhead_model = true;
 }
 
 void enqueue_tile( int tile_id, int level, msgqueue_param_t *msgqueue)
 {
+  cachemodel_param_t *cachemodel;
   target_param_t *target;
   bool *tp_model;
   Byte8_t numOftparts; // num of tile parts par tile
@@ -159,7 +162,8 @@ void enqueue_tile( int tile_id, int level, msgqueue_param_t *msgqueue)
   Byte8_t binOffset, binLength;
   int i;
 
-  target = msgqueue->target;
+  cachemodel = msgqueue->cachemodel;
+  target = cachemodel->target;
   codeidx  = target->codeidx;
   tilepart = codeidx->tilepart;
   
@@ -171,7 +175,7 @@ void enqueue_tile( int tile_id, int level, msgqueue_param_t *msgqueue)
     return;
   }
   
-  tp_model = &codeidx->tp_model[ tile_id*numOftparts];
+  tp_model = &cachemodel->tp_model[ tile_id*numOftparts];
   
   binOffset=0;
   for( i=0; i<numOftparts-level; i++){
@@ -213,7 +217,7 @@ void enqueue_metadata( int meta_id, msgqueue_param_t *msgqueue)
   metadata_param_t *metadata;
   Byte8_t binOffset;
 
-  metadatalist = msgqueue->target->codeidx->metadatalist;
+  metadatalist = msgqueue->cachemodel->target->codeidx->metadatalist;
   metadata = search_metadata( meta_id, metadatalist);
   
   if( !metadata){
@@ -243,7 +247,7 @@ void enqueue_box( int meta_id, boxlist_param_t *boxlist, msgqueue_param_t *msgqu
   
   box = boxlist->first;
   while( box){
-    msg = gene_metamsg( meta_id, *binOffset, box->length, box->offset, NULL, msgqueue->target->csn);
+    msg = gene_metamsg( meta_id, *binOffset, box->length, box->offset, NULL, msgqueue->cachemodel->target->csn);
     enqueue_message( msg, msgqueue);
 
     *binOffset += box->length;
@@ -258,7 +262,7 @@ void enqueue_phld( int meta_id, placeholderlist_param_t *phldlist, msgqueue_para
   
   phld = phldlist->first;
   while( phld){
-    msg = gene_metamsg( meta_id, *binOffset, phld->LBox, 0, phld, msgqueue->target->csn);
+    msg = gene_metamsg( meta_id, *binOffset, phld->LBox, 0, phld, msgqueue->cachemodel->target->csn);
     enqueue_message( msg, msgqueue);
 
     *binOffset += phld->LBox;
@@ -270,7 +274,7 @@ void enqueue_boxcontents( int meta_id, boxcontents_param_t *boxcontents, msgqueu
 {
   message_param_t *msg;
 
-  msg = gene_metamsg( meta_id, *binOffset, boxcontents->length, boxcontents->offset, NULL, msgqueue->target->csn);
+  msg = gene_metamsg( meta_id, *binOffset, boxcontents->length, boxcontents->offset, NULL, msgqueue->cachemodel->target->csn);
   enqueue_message( msg, msgqueue);
   
   *binOffset += boxcontents->length;
@@ -357,7 +361,7 @@ void emit_stream_from_msgqueue( msgqueue_param_t *msgqueue)
     if( msg->phld)
       emit_placeholder( msg->phld);
     else
-      emit_body( msg, msgqueue->target->fd);
+      emit_body( msg, msgqueue->cachemodel->target->fd);
 
     msg = msg->next;
   }

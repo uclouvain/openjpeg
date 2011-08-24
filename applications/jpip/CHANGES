@@ -5,6 +5,9 @@ What's New for OpenJPIP
 ! : changed
 + : added
 
+August 24, 2011
++ [kaori] added cachemodel_manager, which had been managed in target_manager previously
+
 August 16, 2011
 * [antonin] fixed cmake support for openjpip
 

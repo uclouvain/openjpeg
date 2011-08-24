@@ -146,7 +146,7 @@ public class JPIPHttpClient
 	    urlconn.setRequestMethod("GET");
 	    urlconn.setInstanceFollowRedirects(false);
 	    urlconn.connect();
-      
+	    
 	    Map<String,java.util.List<String>> headers = urlconn.getHeaderFields();
 	    java.util.List<String> hvaluelist;
 
@@ -177,10 +177,10 @@ public class JPIPHttpClient
 		cid = hvalueline.substring( hvalueline.indexOf('=')+1, hvalueline.indexOf(','));
 		System.err.println("cid: " + cid);
 	    }
-
+	    
 	    InputStream input = urlconn.getInputStream();
 	    buflen = input.available();
-	    
+
 	    if( buflen > 0){
 		ByteArrayOutputStream tmpstream = new ByteArrayOutputStream();
 		byte[] buf = new byte[ 1024];
@@ -230,7 +230,7 @@ public class JPIPHttpClient
 	}
 
 	urlconn.disconnect();     
-        
+        	
 	return jpipstream;
     }
   

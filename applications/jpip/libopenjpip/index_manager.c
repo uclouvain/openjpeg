@@ -35,6 +35,7 @@
 #include <unistd.h>
 #include <string.h>
 
+#include "bool.h"
 #include "index_manager.h"
 #include "box_manager.h"
 #include "manfbox_manager.h"
@@ -145,31 +146,10 @@ void print_index( index_param_t index)
   print_allmetadata( index.metadatalist);
 }
 
-void print_cachemodel( index_param_t index)
-{
-  Byte8_t TPnum; // num of tile parts in each tile
-  int i, j, k, n;
-
-  TPnum = get_nmax( index.tilepart);
-  
-  fprintf( logstream, "\t main header model: %d\n", index.mhead_model);
-
-  fprintf( logstream, "\t tile part model:\n");
-  for( i=0, n=0; i<index.YTnum; i++){
-    for( j=0; j<index.XTnum; j++){
-      for( k=0; k<TPnum; k++)
-	fprintf( logstream, "%d", index.tp_model[n++]);
-      fprintf( logstream, " ");
-    }
-    fprintf( logstream, "\n");
-  }
-}
-
 void delete_index( index_param_t **index)
 {
   delete_metadatalist( &((*index)->metadatalist));
   delete_faixbox( &((*index)->tilepart));
-  free( (*index)->tp_model);
   free(*index);
 }
 
@@ -365,7 +345,6 @@ bool set_mainmhixdata( box_param_t *cidx_box, codestream_param_t codestream, ind
   if( !(mhix_box = gene_boxbyType( cidx_box->fd, get_DBoxoff( cidx_box), get_DBoxlen( cidx_box), "mhix")))
     return false;
 
-  jp2idx->mhead_model = 0;
   jp2idx->mhead_length = fetch_DBox8bytebigendian( mhix_box, 0);
 
   mhix = gene_mhixbox( mhix_box);
@@ -383,8 +362,6 @@ bool set_tpixdata( box_param_t *cidx_box, index_param_t *jp2idx)
 {
   box_param_t *tpix_box;   //!< tpix box
   box_param_t *faix_box;   //!< faix box
-  faixbox_param_t *faix;   //!< faix
-  size_t numOfelem;
   
   if( !(tpix_box = gene_boxbyType( cidx_box->fd, get_DBoxoff( cidx_box), get_DBoxlen( cidx_box), "tpix")))
     return false;
@@ -392,14 +369,8 @@ bool set_tpixdata( box_param_t *cidx_box, index_param_t *jp2idx)
   if( !(faix_box = gene_boxbyType( tpix_box->fd, get_DBoxoff( tpix_box), get_DBoxlen( tpix_box), "faix")))
     return false;
 
-  faix = gene_faixbox( faix_box);
-  jp2idx->tilepart = faix;
-  numOfelem = get_nmax( faix)*get_m( faix);
+  jp2idx->tilepart = gene_faixbox( faix_box);
   
-  jp2idx->tp_model = (bool *)malloc( numOfelem*sizeof(bool));
-  memset( jp2idx->tp_model, 0, numOfelem*sizeof(bool));
-
-  //delete_faixbox( &faix); // currently the jp2idx element
   free( tpix_box);
   free( faix_box);
 

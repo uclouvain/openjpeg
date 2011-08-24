@@ -70,11 +70,13 @@
  *
  * @param[in]     query_param   structured query
  * @param[in]     sessionlist   session list pointer
+ * @param[in]     targetlist    target list pointer
  * @param[in,out] msgqueue      address of the message queue pointer
  * @return                      if succeeded (true) or failed (false)
  */
 bool parse_JPIPrequest( query_param_t query_param,
 			sessionlist_param_t *sessionlist,
+			targetlist_param_t *targetlist,
 			msgqueue_param_t **msgqueue);
 
 
@@ -97,12 +99,14 @@ bool associate_channel( query_param_t    query_param,
  *
  * @param[in]     query_param   structured query
  * @param[in]     sessionlist   session list pointer
+ * @param[in]     target        requested target pointer
  * @param[in,out] cursession    address of the associated/opened session pointer
  * @param[in,out] curchannel    address of the associated/opened channel pointer
  * @return                      if succeeded (true) or failed (false)
  */
 bool open_channel( query_param_t query_param, 
 		   sessionlist_param_t *sessionlist,
+		   target_param_t *target,
 		   session_param_t **cursession, 
 		   channel_param_t **curchannel);
 
@@ -124,12 +128,14 @@ bool close_channel( query_param_t query_param,
  * REQUEST: view-window (fsiz)
  *
  * @param[in]     query_param structured query
+ * @param[in]     target      requested target pointer
  * @param[in,out] cursession  associated session pointer
  * @param[in,out] curchannel  associated channel pointer
  * @param[in,out] msgqueue    address of the message queue pointer
  * @return                    if succeeded (true) or failed (false)
  */
 bool gene_JPTstream( query_param_t query_param,
+		     target_param_t *target,
 		     session_param_t *cursession, 
 		     channel_param_t *curchannel,
 		     msgqueue_param_t **msgqueue);
@@ -137,10 +143,12 @@ bool gene_JPTstream( query_param_t query_param,
 int main(void)
 { 
   sessionlist_param_t *sessionlist;
+  targetlist_param_t *targetlist;
   bool parse_status;
   
   sessionlist = gene_sessionlist();
-
+  targetlist  = gene_targetlist();
+  
 #ifdef SERVER
 
   char *query_string;
@@ -168,8 +176,7 @@ int main(void)
 #endif
 
       msgqueue = NULL;
-      parse_status = parse_JPIPrequest( query_param, sessionlist, &msgqueue);
-
+      parse_status = parse_JPIPrequest( query_param, sessionlist, targetlist, &msgqueue);
       
       fprintf( FCGI_stdout, "\r\n");
 
@@ -178,28 +185,38 @@ int main(void)
       // 	print_allsession( sessionlist);
       print_msgqueue( msgqueue);
 #endif
+
       emit_stream_from_msgqueue( msgqueue);
 
       delete_msgqueue( &msgqueue);
     }
+
   delete_sessionlist( &sessionlist);
+  delete_targetlist( &targetlist);
 
   return 0;
 }
 
 bool parse_JPIPrequest( query_param_t query_param,
 			sessionlist_param_t *sessionlist,
+			targetlist_param_t *targetlist,
 			msgqueue_param_t **msgqueue)
 { 
+  target_param_t *target = NULL;
   session_param_t *cursession = NULL;
   channel_param_t *curchannel = NULL;
-
+  
+  if( query_param.target[0] !='\0')
+    if( !( target = search_target( query_param.target, targetlist)))
+      if(!( target = gene_target( targetlist, query_param.target)))
+	return false;
+    
   if( query_param.cid[0] != '\0')
     if( !associate_channel( query_param, sessionlist, &cursession, &curchannel))
       return false;
   
   if( query_param.cnew){
-    if( !open_channel( query_param, sessionlist, &cursession, &curchannel))
+    if( !open_channel( query_param, sessionlist, target, &cursession, &curchannel))
       return false;
   }
   if( query_param.cclose[0][0] != '\0')
@@ -207,7 +224,7 @@ bool parse_JPIPrequest( query_param_t query_param,
       return false;
   
   if( (query_param.fx > 0 && query_param.fy > 0) || query_param.box_type[0][0] != 0)
-    if( !gene_JPTstream( query_param, cursession, curchannel, msgqueue))
+    if( !gene_JPTstream( query_param, target, cursession, curchannel, msgqueue))
       return false;
       
   return true;
@@ -232,36 +249,24 @@ bool associate_channel( query_param_t    query_param,
 
 bool open_channel( query_param_t query_param, 
 		   sessionlist_param_t *sessionlist,
+		   target_param_t *target,
 		   session_param_t **cursession, 
 		   channel_param_t **curchannel)
 {
-  target_param_t *target=NULL;
+  cachemodel_param_t *cachemodel = NULL;
 
-  if( query_param.target[0] !='\0'){   // target query specified
-    if( *cursession){
-      if( !( target = search_target( query_param.target, (*cursession)->targetlist))){	
-	if((target = gene_target( query_param.target)))
-	  insert_target_into_session( *cursession, target);
-	else
-	  return false;
-      }
-    }
-    else{
-      if((target = gene_target( query_param.target))){
-	// new session
-	*cursession = gene_session( sessionlist);
-      	insert_target_into_session( *cursession, target);
-      }
-      else
+  if( target){
+    if( !(*cursession))
+      *cursession = gene_session( sessionlist);
+    if( !( cachemodel = search_cachemodel( target, (*cursession)->cachemodellist)))
+      if( !(cachemodel = gene_cachemodel( (*cursession)->cachemodellist, target)))
 	return false;
-    }
   }
-  else{
-    if( *cursession)
-      target = (*curchannel)->target;
-  }
-  
-  *curchannel = gene_channel( query_param, target, (*cursession)->channellist);
+  else
+    if( *curchannel)
+      cachemodel = (*curchannel)->cachemodel;
+
+  *curchannel = gene_channel( query_param, cachemodel, (*cursession)->channellist);
   if( *curchannel == NULL)
     return false;
 
@@ -335,22 +340,25 @@ void enqueue_metabins( query_param_t query_param, metadatalist_param_t *metadata
 
 
 bool gene_JPTstream( query_param_t query_param,
+		     target_param_t *target,
 		     session_param_t *cursession, 
 		     channel_param_t *curchannel,
 		     msgqueue_param_t **msgqueue)
 {
-  target_param_t *target;
   index_param_t *codeidx;
+  cachemodel_param_t *cachemodel;
   
   if( !cursession || !curchannel){ // stateless
-    if((target = gene_target( query_param.target)))
-      *msgqueue = gene_msgqueue( true, target);
-    else
+    if( !target)
       return false;
+    if( !(cachemodel = gene_cachemodel( NULL, target)))
+      return false;
+    *msgqueue = gene_msgqueue( true, cachemodel);
   }
   else{ // session
-    target  = curchannel->target;
-    *msgqueue = gene_msgqueue( false, target);
+    cachemodel  = curchannel->cachemodel;
+    target = cachemodel->target;
+    *msgqueue = gene_msgqueue( false, cachemodel);
   }
   
   codeidx = target->codeidx;
@@ -359,13 +367,12 @@ bool gene_JPTstream( query_param_t query_param,
   if( query_param.box_type[0][0] != 0)
     enqueue_metabins( query_param, codeidx->metadatalist, *msgqueue); 
 
-  // image code
+  // image codestream
   if( query_param.fx > 0 && query_param.fy > 0){
-    if( !codeidx->mhead_model)
+    if( !cachemodel->mhead_model)
       enqueue_mainheader( *msgqueue);
     enqueue_tiles( query_param, codeidx, *msgqueue);
   }
-  
   return true;
 }
 
