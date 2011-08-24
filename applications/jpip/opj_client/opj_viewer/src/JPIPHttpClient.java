@@ -40,6 +40,7 @@ public class JPIPHttpClient
     protected int rx, ry;
     protected int rw, rh;
     protected String cid;
+    protected String tid;
     
     public JPIPHttpClient( String URI)
     {
@@ -48,6 +49,7 @@ public class JPIPHttpClient
 	rx = ry = -1;
 	rw = rh = -1;
 	cid = null;
+	tid = null;
     }
 
     public int getFw(){ return fw;}
@@ -176,6 +178,12 @@ public class JPIPHttpClient
 		String hvalueline = hvaluelist.get(0);
 		cid = hvalueline.substring( hvalueline.indexOf('=')+1, hvalueline.indexOf(','));
 		System.err.println("cid: " + cid);
+	    }
+
+	    if(( hvaluelist = headers.get("JPIP-tid")) != null){
+		String hvalueline = hvaluelist.get(0);
+		tid = hvalueline.substring( hvalueline.indexOf('=')+1);
+		System.err.println("tid: " + tid);
 	    }
 	    
 	    InputStream input = urlconn.getInputStream();

@@ -31,7 +31,6 @@
 #ifndef   	CODESTREAM_MANAGER_H_
 # define   	CODESTREAM_MANAGER_H_
 
-#include <stdio.h>
 #include "byte_manager.h"
 
 //! codestream parameters

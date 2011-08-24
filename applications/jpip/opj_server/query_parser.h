@@ -35,6 +35,9 @@
 
 //! maximum length of target name
 #define MAX_LENOFTARGET 128
+ 
+//! maximum length of target identifier
+#define MAX_LENOFTID 30
 
 //! maximum length of channel identifier
 #define MAX_LENOFCID 30
@@ -48,6 +51,7 @@
 //! Query parameters
 typedef struct query_param{
   char target[MAX_LENOFTARGET];               //!< target name
+  char tid[MAX_LENOFTID];                     //!< target identifier
   int fx, fy;                                 //!< frame size (fx,fy)
   int rx, ry, rw, rh;                         //!< roi region
   char cid[MAX_LENOFCID];                     //!< channel identifier

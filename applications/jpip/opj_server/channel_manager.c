@@ -68,7 +68,7 @@ channel_param_t * gene_channel( query_param_t query_param, cachemodel_param_t *c
   channel->cachemodel = cachemodel;
 
   // set channel ID and get present time
-  snprintf( channel->cid, MAX_LENOFCID, "%x%x", (unsigned int)time( &channel->start_tm), (unsigned int)rand());;
+  snprintf( channel->cid, MAX_LENOFCID, "%x%x", (unsigned int)time( &channel->start_tm), (unsigned int)rand());
   
   channel->next=NULL;
 

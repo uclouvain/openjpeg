@@ -28,6 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include "jp2k_decoder.h"

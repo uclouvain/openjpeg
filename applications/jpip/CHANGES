@@ -7,6 +7,7 @@ What's New for OpenJPIP
 
 August 24, 2011
 + [kaori] added cachemodel_manager, which had been managed in target_manager previously
++ [kaori] added tid request support
 
 August 16, 2011
 * [antonin] fixed cmake support for openjpip

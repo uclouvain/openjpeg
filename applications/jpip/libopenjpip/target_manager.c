@@ -35,6 +35,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <time.h>
 #include "target_manager.h"
 
 #ifdef SERVER
@@ -91,6 +92,7 @@ target_param_t * gene_target( targetlist_param_t *targetlist, char *targetname)
   }
 
   target = (target_param_t *)malloc( sizeof(target_param_t));
+  snprintf( target->tid, MAX_LENOFTID, "%x-%x", (unsigned int)time(NULL), (unsigned int)rand());
   strcpy( target->filename, targetname); 
   target->fd = fd;
   target->csn = last_csn++;
@@ -98,6 +100,8 @@ target_param_t * gene_target( targetlist_param_t *targetlist, char *targetname)
   target->num_of_use = 0;
   
   target->next=NULL;
+
+  fprintf( FCGI_stdout, "JPIP-tid: %s\r\n", target->tid);
 
   if( targetlist->first) // there are one or more entries
     targetlist->last->next = target;
@@ -170,6 +174,7 @@ void delete_targetlist(targetlist_param_t **targetlist)
 void print_target( target_param_t *target)
 {
   fprintf( logstream, "target:\n");
+  fprintf( logstream, "\t tid=%s\n", target->tid);
   fprintf( logstream, "\t csn=%d\n", target->csn);
   fprintf( logstream, "\t target=%s\n\n", target->filename);
 }
@@ -198,6 +203,26 @@ target_param_t * search_target( char targetname[], targetlist_param_t *targetlis
       
     foundtarget = foundtarget->next;
   }
+  return NULL;
+}
+
+target_param_t * search_targetBytid( char tid[], targetlist_param_t *targetlist)
+{
+  target_param_t *foundtarget;
+  
+  foundtarget = targetlist->first;
+  
+  while( foundtarget != NULL){
+    
+    if( strcmp( tid, foundtarget->tid) == 0)
+      return foundtarget;
+      
+    foundtarget = foundtarget->next;
+  }
+
+  fprintf( FCGI_stdout, "Status: 404\r\n"); 
+  fprintf( FCGI_stdout, "Reason: tid %s not found\r\n", tid);
+  
   return NULL;
 }
 

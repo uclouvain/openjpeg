@@ -113,10 +113,11 @@ int main(void)
 #ifndef SERVER
       print_queryparam( query_param);
 #endif
-
-      msgqueue = NULL;
-      parse_status = parse_JPIPrequest( query_param, sessionlist, targetlist, &msgqueue);
       
+      msgqueue = NULL;
+      if( !(parse_status = parse_JPIPrequest( query_param, sessionlist, targetlist, &msgqueue)))
+	fprintf( FCGI_stderr, "Error: JPIP request failed\n");
+            
       fprintf( FCGI_stdout, "\r\n");
 
 #ifndef SERVER
@@ -136,6 +137,15 @@ int main(void)
   return 0;
 }
 
+/**
+ * REQUEST: target identification by target or tid request
+ *
+ * @param[in]     query_param   structured query
+ * @param[in]     targetlist    target list pointer
+ * @param[out]    target        address of target pointer
+ * @return                      if succeeded (true) or failed (false)
+ */
+bool identify_target( query_param_t query_param, targetlist_param_t *targetlist, target_param_t **target);
 
 /**
  * REQUEST: channel association
@@ -205,16 +215,15 @@ bool parse_JPIPrequest( query_param_t query_param,
   target_param_t *target = NULL;
   session_param_t *cursession = NULL;
   channel_param_t *curchannel = NULL;
-  
-  if( query_param.target[0] !='\0')
-    if( !( target = search_target( query_param.target, targetlist)))
-      if(!( target = gene_target( targetlist, query_param.target)))
-	return false;
-    
-  if( query_param.cid[0] != '\0')
+
+  if( !identify_target( query_param, targetlist, &target))
+    return false;
+ 
+  if( query_param.cid[0] != '\0'){
     if( !associate_channel( query_param, sessionlist, &cursession, &curchannel))
       return false;
-  
+  }
+
   if( query_param.cnew){
     if( !open_channel( query_param, sessionlist, target, &cursession, &curchannel))
       return false;
@@ -227,6 +236,36 @@ bool parse_JPIPrequest( query_param_t query_param,
     if( !gene_JPTstream( query_param, target, cursession, curchannel, msgqueue))
       return false;
       
+  return true;
+}
+
+bool identify_target( query_param_t query_param, targetlist_param_t *targetlist, target_param_t **target)
+{
+  if( query_param.target[0] !='\0')
+    if( !( *target = search_target( query_param.target, targetlist)))
+      if(!( *target = gene_target( targetlist, query_param.target)))
+	return false;
+
+  if( query_param.tid[0] !='\0'){
+    if( strcmp( query_param.tid, "0") != 0 ){
+      if( query_param.cid[0] != '\0'){
+	fprintf( FCGI_stdout, "Reason: Target can not be specified both through tid and cid\r\n");
+	fprintf( FCGI_stdout, "Status: 400\r\n");
+	return false;
+      }
+      if( !( *target = search_targetBytid( query_param.tid, targetlist)))
+	return false;
+    }
+    else{
+      if( *target)
+	fprintf( FCGI_stdout, "JPIP-tid: %s\r\n", (*target)->tid);
+      else{
+	fprintf( FCGI_stdout, "Reason: target not specified\r\n");
+	fprintf( FCGI_stdout, "Status: 400\r\n");
+	return false;
+      }
+    }
+  }
   return true;
 }
 

@@ -28,6 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <sys/types.h>
@@ -742,31 +743,45 @@ Byte_t * recons_codestream( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte
   Byte_t *codestream = NULL;
   int last_tileID;
   int tileID;
-  
+  bool found;
+  Byte8_t binOffset;
+
   *codelen = 0;
 
   // main header first
   ptr = msgqueue->first;
+  binOffset = 0;
   while(( ptr = search_message( MAINHEADER_MSG, -1, csn, ptr))!=NULL){
-    codestream = add_msgstream( ptr, jpipstream, codestream, codelen);
+    if( ptr->bin_offset == binOffset){
+      codestream = add_msgstream( ptr, jpipstream, codestream, codelen);
+      binOffset += ptr->length;
+    }
     ptr = ptr->next;
   }
 
   last_tileID = get_last_tileID( msgqueue, csn); 
   
   for( tileID=0; tileID <= last_tileID; tileID++){
-    bool found = false;
+    found = false;
+    binOffset = 0;
+
     ptr = msgqueue->first;
     while(( ptr = search_message( TILE_MSG, tileID, csn, ptr))!=NULL){
-      found = true;
-      codestream = add_msgstream( ptr, jpipstream, codestream, codelen);
+      if( ptr->bin_offset == binOffset){
+	found = true;
+	codestream = add_msgstream( ptr, jpipstream, codestream, codelen);
+	binOffset += ptr->length;
+      }
       ptr = ptr->next;
     }
     ptr = msgqueue->first;
     while(( ptr = search_message( EXT_TILE_MSG, tileID, csn, ptr))!=NULL){
       if( ptr->aux >= minlev){
-	found = true;
-	codestream = add_msgstream( ptr, jpipstream, codestream, codelen);
+	if( ptr->bin_offset == binOffset){
+	  found = true;
+	  codestream = add_msgstream( ptr, jpipstream, codestream, codelen);
+	  binOffset += ptr->length;
+	}
       }
       ptr = ptr->next;
     }
