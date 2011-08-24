@@ -79,6 +79,63 @@ bool parse_JPIPrequest( query_param_t query_param,
 			targetlist_param_t *targetlist,
 			msgqueue_param_t **msgqueue);
 
+int main(void)
+{ 
+  sessionlist_param_t *sessionlist;
+  targetlist_param_t *targetlist;
+  bool parse_status;
+  
+  sessionlist = gene_sessionlist();
+  targetlist  = gene_targetlist();
+  
+#ifdef SERVER
+
+  char *query_string;
+  while(FCGI_Accept() >= 0)
+#else
+
+  char query_string[128];
+  while((fgets( query_string, 128, stdin))[0] != '\n' )
+#endif
+    {
+
+#ifdef SERVER     
+      query_string = getenv("QUERY_STRING");    
+#endif //SERVER
+      
+      fprintf( FCGI_stdout, "Content-type: image/jpt-stream\r\n");
+      
+      query_param_t query_param;
+      msgqueue_param_t *msgqueue;
+
+      parse_query( query_string, &query_param); 
+      
+#ifndef SERVER
+      print_queryparam( query_param);
+#endif
+
+      msgqueue = NULL;
+      parse_status = parse_JPIPrequest( query_param, sessionlist, targetlist, &msgqueue);
+      
+      fprintf( FCGI_stdout, "\r\n");
+
+#ifndef SERVER
+      //      if( parse_status)
+      // 	print_allsession( sessionlist);
+      print_msgqueue( msgqueue);
+#endif
+
+      emit_stream_from_msgqueue( msgqueue);
+
+      delete_msgqueue( &msgqueue);
+    }
+
+  delete_sessionlist( &sessionlist);
+  delete_targetlist( &targetlist);
+
+  return 0;
+}
+
 
 /**
  * REQUEST: channel association
@@ -139,63 +196,6 @@ bool gene_JPTstream( query_param_t query_param,
 		     session_param_t *cursession, 
 		     channel_param_t *curchannel,
 		     msgqueue_param_t **msgqueue);
-
-int main(void)
-{ 
-  sessionlist_param_t *sessionlist;
-  targetlist_param_t *targetlist;
-  bool parse_status;
-  
-  sessionlist = gene_sessionlist();
-  targetlist  = gene_targetlist();
-  
-#ifdef SERVER
-
-  char *query_string;
-  while(FCGI_Accept() >= 0)
-#else
-
-  char query_string[128];
-  while((fgets( query_string, 128, stdin))[0] != '\n' )
-#endif
-    {
-
-#ifdef SERVER     
-      query_string = getenv("QUERY_STRING");    
-#endif //SERVER
-      
-      fprintf( FCGI_stdout, "Content-type: image/jpt-stream\r\n");
-      
-      query_param_t query_param;
-      msgqueue_param_t *msgqueue;
-
-      parse_query( query_string, &query_param); 
-      
-#ifndef SERVER
-      print_queryparam( query_param);
-#endif
-
-      msgqueue = NULL;
-      parse_status = parse_JPIPrequest( query_param, sessionlist, targetlist, &msgqueue);
-      
-      fprintf( FCGI_stdout, "\r\n");
-
-#ifndef SERVER
-      //      if( parse_status)
-      // 	print_allsession( sessionlist);
-      print_msgqueue( msgqueue);
-#endif
-
-      emit_stream_from_msgqueue( msgqueue);
-
-      delete_msgqueue( &msgqueue);
-    }
-
-  delete_sessionlist( &sessionlist);
-  delete_targetlist( &targetlist);
-
-  return 0;
-}
 
 bool parse_JPIPrequest( query_param_t query_param,
 			sessionlist_param_t *sessionlist,
