@@ -94,7 +94,7 @@ msgtype_t identify_clientmsg( SOCKET connected_socket)
 {
   int receive_size;
   char buf[BUF_LEN];
-  char *magicid[] = { "JPIP-stream", "PNM request", "XML request", "CID request", "CID destroy", "JP2 save", "QUIT"};
+  char *magicid[] = { "JPIP-stream", "PNM request", "XML request", "TID request", "CID request", "CID destroy", "JP2 save", "QUIT"};
   int i;
   
   receive_size = receive_line( connected_socket, buf);
@@ -106,7 +106,7 @@ msgtype_t identify_clientmsg( SOCKET connected_socket)
 
   for( i=0; i<NUM_OF_MSGTYPES; i++){
     if( strncasecmp( magicid[i], buf, strlen(magicid[i])) == 0){
-      printf("Client message: %s\n", magicid[i]);
+      printf("%s\n", magicid[i]);
       return i;
     }
   }
@@ -115,10 +115,10 @@ msgtype_t identify_clientmsg( SOCKET connected_socket)
   return MSGERROR;
 }
 
-Byte_t * receive_JPIPstream( SOCKET connected_socket, char *target, char *cid, int *streamlen)
+Byte_t * receive_JPIPstream( SOCKET connected_socket, char *target, char *tid, char *cid, int *streamlen)
 {
   Byte_t *jpipstream=NULL, *ptr;
-  char buf[BUF_LEN], versionstring[] = "version 1.1";
+  char buf[BUF_LEN], versionstring[] = "version 1.2";
   int linelen, redlen, remlen;
   
   target[0] = 0;
@@ -137,6 +137,10 @@ Byte_t * receive_JPIPstream( SOCKET connected_socket, char *target, char *cid, i
   if( strstr( buf, "jp2")){ 
     // register cid option
     strcpy( target, buf);
+    
+    if((linelen = receive_line( connected_socket, buf)) == 0)
+      return NULL;
+    strcpy( tid, buf);
 
     if((linelen = receive_line( connected_socket, buf)) == 0)
       return NULL;
@@ -147,9 +151,8 @@ Byte_t * receive_JPIPstream( SOCKET connected_socket, char *target, char *cid, i
   }
 
   *streamlen = atoi( buf);
-  fprintf( stderr, "Receiveing Data length: %d\n", *streamlen);
+  fprintf( stderr, "Receive Data: %d Bytes\n", *streamlen);
   
-      
   jpipstream = (unsigned  char *)malloc( (*streamlen));
   ptr = jpipstream;
   remlen = (*streamlen);
@@ -162,7 +165,6 @@ Byte_t * receive_JPIPstream( SOCKET connected_socket, char *target, char *cid, i
     remlen -= redlen;
     ptr = ptr + redlen;
   }
-  fprintf( stderr, "    done\n");
     
   return jpipstream;
 }
@@ -183,17 +185,29 @@ void send_XMLstream( SOCKET connected_socket, Byte_t *xmlstream, int length)
   send_stream( connected_socket, xmlstream, length);
 }
 
+void send_IDstream(  SOCKET connected_socket, char *id, int idlen, char *label);
+
 void send_CIDstream( SOCKET connected_socket, char *cid, int cidlen)
+{
+  send_IDstream( connected_socket, cid, cidlen, "CID");
+}
+
+void send_TIDstream( SOCKET connected_socket, char *tid, int tidlen)
+{
+  send_IDstream( connected_socket, tid, tidlen, "TID");
+}
+
+void send_IDstream(  SOCKET connected_socket, char *id, int idlen, char *label)
 {
   Byte_t header[4];
 
-  header[0] = 'C';
-  header[1] = 'I';
-  header[2] = 'D';
-  header[3] = cidlen & 0xff;
+  header[0] = label[0];
+  header[1] = label[1];
+  header[2] = label[2];
+  header[3] = idlen & 0xff;
 
   send_stream( connected_socket, header, 4);
-  send_stream( connected_socket, cid, cidlen);
+  send_stream( connected_socket, id, idlen);
 }
 
 void send_PNMstream( SOCKET connected_socket, Byte_t *pnmstream, unsigned int width, unsigned int height, unsigned int numofcomp, Byte_t maxval)

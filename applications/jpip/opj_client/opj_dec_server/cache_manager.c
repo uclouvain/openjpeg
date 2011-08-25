@@ -61,12 +61,13 @@ void delete_cachelist(cachelist_param_t **cachelist)
   free( *cachelist);
 }
 
-cache_param_t * gene_cache( char *targetname, int csn, char *cid)
+cache_param_t * gene_cache( char *targetname, int csn, char *tid, char *cid)
 {
   cache_param_t *cache;
   
   cache = (cache_param_t *)malloc( sizeof(cache_param_t));
   strcpy( cache->filename, targetname);
+  strcpy( cache->tid, tid);
   cache->csn = csn;
   cache->cid = (char **)malloc( sizeof(char *));
   *cache->cid = (char *)malloc( MAX_LENOFCID);
@@ -175,6 +176,14 @@ void add_cachecid( char *cid, cache_param_t *cache)
   cache->numOfcid ++;
 }
 
+void update_cachetid( char *tid, cache_param_t *cache)
+{
+  if( tid[0] != '0' && strcmp( tid, cache->tid) !=0){
+    fprintf( stderr, "tid is updated to %s for %s\n", tid, cache->filename);
+    strcpy( cache->tid, tid);
+  }
+}
+
 void remove_cidInCache( char *cid, cache_param_t *cache);
 
 void remove_cachecid( char *cid, cachelist_param_t *cachelist)
@@ -225,6 +234,7 @@ void print_cache( cache_param_t *cache)
   
   fprintf( stdout,"cache\n");
   fprintf( stdout,"\t filename: %s\n", cache->filename);
+  fprintf( stdout,"\t tid: %s\n", cache->tid);
   fprintf( stdout,"\t csn: %d\n", cache->csn);
   fprintf( stdout,"\t cid:");
 

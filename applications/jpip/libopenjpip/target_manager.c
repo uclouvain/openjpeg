@@ -101,8 +101,6 @@ target_param_t * gene_target( targetlist_param_t *targetlist, char *targetname)
   
   target->next=NULL;
 
-  fprintf( FCGI_stdout, "JPIP-tid: %s\r\n", target->tid);
-
   if( targetlist->first) // there are one or more entries
     targetlist->last->next = target;
   else                   // first entry
@@ -220,9 +218,6 @@ target_param_t * search_targetBytid( char tid[], targetlist_param_t *targetlist)
     foundtarget = foundtarget->next;
   }
 
-  fprintf( FCGI_stdout, "Status: 404\r\n"); 
-  fprintf( FCGI_stdout, "Reason: tid %s not found\r\n", tid);
-  
   return NULL;
 }
 

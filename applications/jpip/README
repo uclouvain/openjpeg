@@ -90,6 +90,11 @@ Server:
 
  2. Launch opj_server from the server terminal:
     % spawn-fcgi -f ./opj_server -p 3000 -n
+ 
+ For shutting down JPIP server:
+     %GET http://hostname/myFCGI?quitJPIP
+     Notice, http://hostname/myFCGI is the HTTP server URI (myFCGI refers to opj_server by the server setting)
+     Requst message "quitJPIP" can be changed in Makfile, modify -DQUIT_SIGNAL=\"quitJPIP\"
 
 Client:
  1. Launch image decoding server, and keep it alive as long as image viewers are open

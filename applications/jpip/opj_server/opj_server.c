@@ -55,6 +55,9 @@
 #include "imgreg_manager.h"
 #include "msgqueue_manager.h"
 
+#ifndef QUIT_SIGNAL
+#define QUIT_SIGNAL "quitJPIP"
+#endif
 
 #ifdef SERVER
 #include "fcgi_stdio.h"
@@ -102,6 +105,9 @@ int main(void)
 #ifdef SERVER     
       query_string = getenv("QUERY_STRING");    
 #endif //SERVER
+
+      if( strcmp( query_string, QUIT_SIGNAL) == 0)
+	break;
       
       fprintf( FCGI_stdout, "Content-type: image/jpt-stream\r\n");
       
@@ -130,6 +136,8 @@ int main(void)
 
       delete_msgqueue( &msgqueue);
     }
+  
+  fprintf( FCGI_stderr, "JPIP server terminated by a client request\n");
 
   delete_sessionlist( &sessionlist);
   delete_targetlist( &targetlist);
@@ -216,9 +224,11 @@ bool parse_JPIPrequest( query_param_t query_param,
   session_param_t *cursession = NULL;
   channel_param_t *curchannel = NULL;
 
-  if( !identify_target( query_param, targetlist, &target))
-    return false;
- 
+  if( query_param.target[0] != '\0' || query_param.tid[0] != '\0'){
+    if( !identify_target( query_param, targetlist, &target))
+      return false;
+  }
+
   if( query_param.cid[0] != '\0'){
     if( !associate_channel( query_param, sessionlist, &cursession, &curchannel))
       return false;
@@ -241,32 +251,30 @@ bool parse_JPIPrequest( query_param_t query_param,
 
 bool identify_target( query_param_t query_param, targetlist_param_t *targetlist, target_param_t **target)
 {
+  if( query_param.tid[0] !='\0' && strcmp( query_param.tid, "0") != 0 ){
+    if( query_param.cid[0] != '\0'){
+      fprintf( FCGI_stdout, "Reason: Target can not be specified both through tid and cid\r\n");
+      fprintf( FCGI_stdout, "Status: 400\r\n");
+      return false;
+    }
+    if( ( *target = search_targetBytid( query_param.tid, targetlist)))
+      return true;
+  }
+
   if( query_param.target[0] !='\0')
     if( !( *target = search_target( query_param.target, targetlist)))
       if(!( *target = gene_target( targetlist, query_param.target)))
 	return false;
 
-  if( query_param.tid[0] !='\0'){
-    if( strcmp( query_param.tid, "0") != 0 ){
-      if( query_param.cid[0] != '\0'){
-	fprintf( FCGI_stdout, "Reason: Target can not be specified both through tid and cid\r\n");
-	fprintf( FCGI_stdout, "Status: 400\r\n");
-	return false;
-      }
-      if( !( *target = search_targetBytid( query_param.tid, targetlist)))
-	return false;
-    }
-    else{
-      if( *target)
-	fprintf( FCGI_stdout, "JPIP-tid: %s\r\n", (*target)->tid);
-      else{
-	fprintf( FCGI_stdout, "Reason: target not specified\r\n");
-	fprintf( FCGI_stdout, "Status: 400\r\n");
-	return false;
-      }
-    }
+  if( *target){
+    fprintf( FCGI_stdout, "JPIP-tid: %s\r\n", (*target)->tid);
+    return true;
   }
-  return true;
+  else{
+    fprintf( FCGI_stdout, "Reason: target not found\r\n");
+    fprintf( FCGI_stdout, "Status: 400\r\n");
+    return false;
+  }
 }
 
 bool associate_channel( query_param_t    query_param, 

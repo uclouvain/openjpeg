@@ -1,7 +1,7 @@
 LIBDIR = ../libopenjpip
 
 LIBFNAME = $(LIBDIR)/libopenjpip_server.a
-CFLAGS  = -O3 -Wall -m32 -DSERVER -I$(LIBDIR)
+CFLAGS  = -O3 -Wall -m32 -DSERVER -DQUIT_SIGNAL=\"quitJPIP\" -I$(LIBDIR)
 LDFLAGS = -L$(LIBDIR) -lm -lfcgi -lopenjpip_server
 
 ALL = opj_server
