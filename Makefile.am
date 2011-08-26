@@ -24,18 +24,18 @@ missing
 EXTRA_DIST = \
 CMake/CheckHaveGetopt.cmake \
 CMake/OpenJPEGConfig.cmake.in \
-testing/CTestCustom.cmake.in \
-testing/CTestConfig.cmake \
 CMakeLists.txt \
-LICENSE \
+AUTHORS \
 CHANGES \
-README \
 INSTALL \
+LICENSE \
+NEWS \
+README \
+THANKS \
 bootstrap.sh \
 libopenjpeg1.pc.cmake \
 libopenjpeg1.pc.in \
 opj_configh.cmake.in \
-opj_config.h.in.user \
 m4/opj_check_lib.m4 \
 m4/opj_doxygen.m4 \
 m4/pkg.m4
@@ -49,7 +49,11 @@ doc:
 	@cd doc && make doc
 
 install-data-hook:
+if HAVE_WIN32
+	$(LN_S) -f libopenjpeg1.pc $(DESTDIR)$(pkgconfigdir)/libopenjpeg.pc
+else
 	$(LN_S) -nf libopenjpeg1.pc $(DESTDIR)$(pkgconfigdir)/libopenjpeg.pc
+endif
 	@echo -e " (PC)\t$(pkgconfigdir)/libopenjpeg1.pc" >> $(top_builddir)/report.txt
 	@echo -e " (LN)\t$(pkgconfigdir)/libopenjpeg.pc" >> $(top_builddir)/report.txt
 	@cat $(top_builddir)/report.txt
