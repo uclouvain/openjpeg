@@ -1,7 +1,10 @@
 /*
- * Copyright (c) 2001-2002, David Janssens
- * Copyright (c) 2003, Yannick Verschueren
- * Copyright (c) 2003,  Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
+ * $Id$
+ *
+ * Copyright (c) 2002-2011, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
+ * Copyright (c) 2002-2011, Professor Benoit Macq
+ * Copyright (c) 2003-2004, Yannick Verschueren
+ * Copyright (c) 2010-2011, Kaori Hagihara
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,55 +29,28 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __TGT_H
-#define __TGT_H
-
-typedef struct tgt_node {
-	struct tgt_node *parent;
-	int value;
-	int low;
-	int known;
-} tgt_node_t;
-
-typedef struct {
-	int numleafsh;
-	int numleafsv;
-	int numnodes;
-	tgt_node_t *nodes;
-} tgt_tree_t;
-
-/*
- * Create a tag-tree
- * numleafsh: width of the array of leafs of the tree
- * numleafsv: height of the array of leafs of the tree
+/*! \file
+ *  \brief Modification of jpip.h from 2KAN indexer
  */
-tgt_tree_t *tgt_create(int numleafsh, int numleafsv);
 
-/*
- * Reset a tag-tree (set all leafs to 0)
- * tree: tag-tree to reset
+
+#ifndef  CIDX_MANAGER_H_
+# define CIDX_MANAGER_H_
+
+#include "openjpeg.h"
+
+
+/* 
+ * Write Codestream index box (superbox)
+ *
+ * @param[in] offset    offset of j2k codestream
+ * @param[in] cio       file output handle
+ * @param[in] image     image data
+ * @param[in] cstr_info codestream information
+ * @param[in] j2klen    length of j2k codestream
+ * @return              length of cidx box
  */
-void tgt_reset(tgt_tree_t *tree);
+int write_cidx( int offset, opj_cio_t *cio, opj_image_t *image, opj_codestream_info_t cstr_info, int j2klen);
 
-/*
- * Destroy a tag-tree, liberating memory
- * tree: tag-tree to destroy
- */
-void tgt_destroy(tgt_tree_t *tree);
 
-/*
- * Set the value of a leaf of a tag-tree
- * tree: tag-tree to modify
- * leafno: number that identifies the leaf to modify
- * value: new value of the leaf
- */
-void tgt_setvalue(tgt_tree_t *tree, int leafno, int value);
-
-/*
- * Decode the value of a leaf of the tag-tree up to a given threshold
- * leafno: number that identifies the leaf to decode
- * threshold: threshold to use when decoding value of the leaf
- */
-int tgt_decode(tgt_tree_t *tree, int leafno, int threshold);
-
-#endif
+#endif      /* !CIDX_MANAGER_H_ */

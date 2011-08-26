@@ -1,9 +1,8 @@
 J2KINCDIR = ../../../../libopenjpeg
-J2KCNFDIR = ../../../..
 J2KLIBDIR = $(J2KINCDIR)/.libs
 JPIPLIBDIR = ../../libopenjpip
 LIBFNAME = $(JPIPLIBDIR)/libopenjpip_local.a $(J2KLIBDIR)/libopenjpeg.a
-CFLAGS  = -O3 -Wall -I$(JPIPLIBDIR) -I$(J2KINCDIR) -I$(J2KCNFDIR)
+CFLAGS  = -O3 -Wall -I$(JPIPLIBDIR) -I$(J2KINCDIR)
 LDFLAGS = -L$(JPIPLIBDIR) -L$(J2KLIBDIR) -lm -lopenjpip_local
 #-lws2_32
 

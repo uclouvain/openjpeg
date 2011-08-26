@@ -1,23 +1,14 @@
-CC = gcc
+INCDIR = ../../../../libopenjpeg
+LIBDIR = $(INCDIR)/.libs
+LIBFNAME = $(LIBDIR)/libopenjpeg.a
+CFLAGS  = -O3 -Wall -I$(INCDIR)
+LDFLAGS = -L$(LIBDIR) -lm 
 
-LDFLAGS = -lm
-CFLAGS = -Wall
+ALL = j2k_to_idxjp2
 
-all: index_create
+all: $(ALL)
 
-
-bio.o : bio.c bio.h
-cio.o : cio.c cio.h
-int.o : int.c
-pi.o  : pi.c pi.h int.h
-index_create.o : index_create.c j2k.h cio.h tcd.h int.h
-t2.o  : t2.c t2.h tcd.h bio.h j2k.h pi.h tgt.h int.h cio.h
-tgt.o : tgt.c bio.h tgt.h
-tcd.o : tcd.c tcd.h t2.h int.h
-jpip.o : jpip.c j2k.h cio.h tcd.h int.h
-jp2.o : jp2.c j2k.h cio.h tcd.h int.h
-
-index_create : bio.o cio.o int.o pi.o t2.o tgt.o tcd.o index_create.o jpip.o jp2.o
-
+j2k_to_idxjp2: j2k_to_idxjp2.o event_mgr_handler.o idxjp2_manager.o j2k_decoder.o cidx_manager.o cio_ext.o tpix_manager.o thix_manager.o ppix_manager.o phix_manager.o $(LIBFNAME)
+	$(CC) $(CFLAGS) $< event_mgr_handler.o idxjp2_manager.o j2k_decoder.o cidx_manager.o cio_ext.o tpix_manager.o thix_manager.o ppix_manager.o phix_manager.o $(LDFLAGS) $(LIBFNAME) -o $@
 clean:
-	rm -rf index_create *.o *.*~ *~ core.*
+	rm -f $(ALL) *.o *~

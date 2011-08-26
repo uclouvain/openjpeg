@@ -1,6 +1,13 @@
 /*
- * Copyright (c) 2003, Yannick Verschueren
- * Copyright (c) 2003,  Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
+ * $Id$
+ *
+ * Copyright (c) 2002-2011, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
+ * Copyright (c) 2002-2011, Professor Benoit Macq
+ * Copyright (c) 2001-2003, David Janssens
+ * Copyright (c) 2002-2003, Yannick Verschueren
+ * Copyright (c) 2003-2007, Francois-Olivier Devaux and Antonin Descampe
+ * Copyright (c) 2005, Herve Drolon, FreeImage Team
+ * Copyright (c) 2010-2011, Kaori Hagihara
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,18 +32,31 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __JPIP_H
-#define __JPIP_H
+#include "cio_ext.h"
+#include "event.h"
 
-#include "j2k.h"
 
-// Codestream index box (superbox)
-int jpip_write_cidx(int offset, info_image_t img, j2k_cp_t *j2k_cp, int version);
+/*
+ * Write a byte.
+ */
+opj_bool cio_ext_byteout(opj_cio_t *cio, unsigned char v);
 
-// Index Finder Box
-void jpip_write_iptr(int offset, int length);
+unsigned int cio_ext_write( opj_cio_t *cio, unsigned long long int v, int n)
+{  
+  int i;
+  for (i = n - 1; i >= 0; i--) {
+    if( !cio_ext_byteout(cio, (unsigned char) ((v >> (i << 3)) & 0xff)) )
+      return 0;
+  }
+  return n;
+}
 
-// File Index Box
-int jpip_write_fidx(int offset_jp2c, int length_jp2c, int offset_idx, int length_idx);
-
-#endif
+opj_bool cio_ext_byteout(opj_cio_t *cio, unsigned char v)
+{
+  if (cio->bp >= cio->end) {
+    opj_event_msg(cio->cinfo, EVT_ERROR, "write error\n");
+    return OPJ_FALSE;
+  }
+  *cio->bp++ = v;
+  return OPJ_TRUE;
+}

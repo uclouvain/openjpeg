@@ -6,6 +6,7 @@ What's New for OpenJPIP
 + : added
 
 August 26, 2011
+! [kaori] indexer using the latest openjpeg library
 * [antonin] fixed cmake and autotools files to reflect recent changes in JPIP
 ! [kaori] fixed Makefile.nix to load openjpeg library from this archive
 
