@@ -31,10 +31,9 @@
 #ifndef   	MSGQUEUE_MANAGER_H_
 # define   	MSGQUEUE_MANAGER_H_
 
-#include <stdio.h>
 #include "bool.h"
 #include "byte_manager.h"
-#include "target_manager.h"
+#include "cachemodel_manager.h"
 #include "placeholder_manager.h"
 
 //! message parameters
@@ -56,17 +55,17 @@ typedef struct msgqueue_param{
   message_param_t *first; //!< first message pointer of the list
   message_param_t *last;  //!< last  message pointer of the list
   bool stateless;         //!< if this is a stateless message queue
-  target_param_t *target; //!< reference target pointer
+  cachemodel_param_t *cachemodel; //!< reference cachemodel pointer
 } msgqueue_param_t;
 
 /**
  * generate message queue
  *
- * @param[in] stateless if this is a stateless message queue
- * @param[in] target    reference target pointer
- * @return generated message queue pointer
+ * @param[in] stateless   if this is a stateless message queue
+ * @param[in] cachemodel  cachemodel pointer
+ * @return                generated message queue pointer
  */
-msgqueue_param_t * gene_msgqueue( bool stateless, target_param_t *target);
+msgqueue_param_t * gene_msgqueue( bool stateless, cachemodel_param_t *cachemodel);
 
 /**
  * delete message queue

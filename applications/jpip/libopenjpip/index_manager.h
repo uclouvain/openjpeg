@@ -31,8 +31,6 @@
 #ifndef   	INDEX_MANAGER_H_
 # define   	INDEX_MANAGER_H_
 
-#include <stdio.h>
-#include "bool.h"
 #include "byte_manager.h"
 #include "faixbox_manager.h"
 #include "metadata_manager.h"
@@ -72,9 +70,6 @@ typedef struct index_param{
   Byte_t  YRsiz[3];          //!< vertical separation of a sample of
 			     //!component with respect to the reference grid
   faixbox_param_t *tilepart; //!< tile part information from tpix box
-  bool mhead_model;          //!< main header model, if sent, 1, else 0
-  bool *tp_model;            //!< dynamic array pointer of tile part
-			     //!model, if sent, 1, else 0
 } index_param_t;
 
 
@@ -93,13 +88,6 @@ index_param_t * parse_jp2file( int fd);
  * @param[in] index index parameters
  */
 void print_index( index_param_t index);
-
-/**
- * print cache model
- *
- * @param[in] index index parameters
- */
-void print_cachemodel( index_param_t index);
 
 
 /**

@@ -40,9 +40,9 @@ public class ImgdecClient{
 	return get_PNMstream( cid, fw, fh);
     }
 
-    public static PnmImage decode_jpipstream( byte[] jpipstream, String j2kfilename, String cid, int fw, int fh)
+    public static PnmImage decode_jpipstream( byte[] jpipstream, String j2kfilename, String tid, String cid, int fw, int fh)
     {
-	send_JPIPstream( jpipstream, j2kfilename, cid);
+	send_JPIPstream( jpipstream, j2kfilename, tid, cid);
 	return get_PNMstream( cid, fw, fh);
     }
     
@@ -56,7 +56,7 @@ public class ImgdecClient{
 	    System.err.println("Sending " + jpipstream.length + "Data Bytes to decodingServer");
 	    
 	    os.writeBytes("JPIP-stream\n");
-	    os.writeBytes("version 1.1\n");
+	    os.writeBytes("version 1.2\n");
 	    os.writeBytes( jpipstream.length + "\n"); 
 	    os.write( jpipstream, 0, jpipstream.length);
       
@@ -71,7 +71,7 @@ public class ImgdecClient{
 	}
     }
 
-    public static void send_JPIPstream( byte[] jpipstream, String j2kfilename, String cid)
+    public static void send_JPIPstream( byte[] jpipstream, String j2kfilename, String tid, String cid)
     {
 	try{
 	    Socket imgdecSocket = new Socket( "localhost", 5000);
@@ -85,8 +85,12 @@ public class ImgdecClient{
 	    System.err.println("Sending " + length + "Data Bytes to decodingServer");
       
 	    os.writeBytes("JPIP-stream\n");
-	    os.writeBytes("version 1.1\n");
+	    os.writeBytes("version 1.2\n");
 	    os.writeBytes( j2kfilename + "\n");
+	    if( tid == null)
+		os.writeBytes( "0\n");
+	    else
+		os.writeBytes( tid + "\n");
 	    os.writeBytes( cid + "\n");
 	    os.writeBytes( length + "\n");
 	    os.write( jpipstream, 0, length);
@@ -189,7 +193,27 @@ public class ImgdecClient{
 
     public static String query_cid( String j2kfilename)
     {
-	String cid = null;
+	int []retmsglabel = new int[3];
+	retmsglabel[0] = 67;
+	retmsglabel[1] = 73;
+	retmsglabel[2] = 68;
+
+	return query_id( "CID request", j2kfilename, retmsglabel);
+    }
+
+    public static String query_tid( String j2kfilename)
+    {
+	int []retmsglabel = new int[3];
+	retmsglabel[0] = 84;
+	retmsglabel[1] = 73;
+	retmsglabel[2] = 68;
+
+	return query_id( "TID request", j2kfilename, retmsglabel);
+    }
+
+    public static String query_id( String reqmsghead, String j2kfilename, int[] retmsglabel)
+    {
+	String id = null;
 	
 	try{
 	    Socket imgdecSocket = new Socket( "localhost", 5000);
@@ -197,23 +221,23 @@ public class ImgdecClient{
 	    DataInputStream is = new DataInputStream( imgdecSocket.getInputStream());
 	    byte []header = new byte[4];
 
-	    os.writeBytes("CID request\n");
+	    os.writeBytes( reqmsghead + "\n");
 	    os.writeBytes( j2kfilename + "\n");
 
 	    read_stream( is, header, 4);
 	    
-	    if( header[0] == 67 && header[1] == 73 && header[2] == 68){
+	    if( header[0] == retmsglabel[0] && header[1] == retmsglabel[1] && header[2] == retmsglabel[2]){
 		int length = header[3]&0xff;
 
 		if( length > 0){
 		
-		    byte []ciddata = new byte[ length];
-		    read_stream( is, ciddata, length);
-		    cid = new String( ciddata);
+		    byte []iddata = new byte[ length];
+		    read_stream( is, iddata, length);
+		    id = new String( iddata);
 		}
 	    }
 	    else
-		System.err.println("Error in query_cid(), not starting with CID");
+		System.err.println("Error in query_id("+ reqmsghead + "), wrong to start with " + header);
 	}
 	catch (UnknownHostException e) {
 	    System.err.println("Trying to connect to unknown host: " + e);
@@ -221,7 +245,7 @@ public class ImgdecClient{
 	    System.err.println("IOException: " + e);
 	}
 
-	return cid;	
+	return id;	
     }
   
     public static void read_stream( DataInputStream is, byte []stream, int length)

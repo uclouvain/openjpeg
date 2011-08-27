@@ -21,6 +21,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/ihdrbox_manager.c
 ${CMAKE_CURRENT_SOURCE_DIR}/manfbox_manager.c
 ${CMAKE_CURRENT_SOURCE_DIR}/mhixbox_manager.c
 ${CMAKE_CURRENT_SOURCE_DIR}/target_manager.c
+${CMAKE_CURRENT_SOURCE_DIR}/cachemodel_manager.c
 )
 
 # Build the library

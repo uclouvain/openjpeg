@@ -50,16 +50,19 @@ public class ImageManager extends JPIPHttpClient
 	String refcid = ImgdecClient.query_cid( j2kfilename);
 	byte[] jpipstream;
 	
-	if( refcid == null)
-	    jpipstream = super.requestViewWindow( j2kfilename, reqfw, reqfh, true);
+	if( refcid == null){
+	    String reftid = ImgdecClient.query_tid( j2kfilename);
+	    if( reftid == null)
+		jpipstream = super.requestViewWindow( j2kfilename, reqfw, reqfh, true);
+	    else
+		jpipstream = super.requestViewWindow( j2kfilename, reftid, reqfw, reqfh, true);
+	}
 	else
 	    jpipstream = super.requestViewWindow( reqfw, reqfh, refcid, true);
 	
 	System.err.println( "decoding to PNM image");
-	pnmimage = ImgdecClient.decode_jpipstream( jpipstream, j2kfilename, cid, fw, fh);
+	pnmimage = ImgdecClient.decode_jpipstream( jpipstream, j2kfilename, tid, cid, fw, fh);
 	System.err.println( "     done");
-
-	//	System.out.println( "fw: " + fw + " fh: " + fh + "pnm w: ");
 	
 	return pnmimage.createROIImage( rx, ry, rw, rh);
     }

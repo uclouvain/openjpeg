@@ -32,6 +32,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "session_manager.h"
+#include "target_manager.h"
 
 #ifdef SERVER
 #include "fcgi_stdio.h"
@@ -62,7 +63,7 @@ session_param_t * gene_session( sessionlist_param_t *sessionlist)
   session = (session_param_t *)malloc( sizeof(session_param_t));
 
   session->channellist = gene_channellist();
-  session->targetlist = gene_targetlist();
+  session->cachemodellist = gene_cachemodellist();
 
   session->next = NULL;
   
@@ -102,19 +103,19 @@ bool search_session_and_channel( char cid[],
   return false;
 }
 
-void insert_target_into_session( session_param_t *session, target_param_t *target)
+void insert_cachemodel_into_session( session_param_t *session, cachemodel_param_t *cachemodel)
 {
-  if(!target)
+  if(!cachemodel)
     return;
 
 #ifndef SERVER
-  fprintf( logstream, "local log: insert target into session %p\n", (void *)session);
+  fprintf( logstream, "local log: insert cachemodel into session\n");
 #endif
-  if( session->targetlist->first != NULL)
-    session->targetlist->last->next = target;
+  if( session->cachemodellist->first != NULL)
+    session->cachemodellist->last->next = cachemodel;
   else
-    session->targetlist->first = target;
-  session->targetlist->last = target;
+    session->cachemodellist->first = cachemodel;
+  session->cachemodellist->last = cachemodel;
 }
 
 bool delete_session( session_param_t **session, sessionlist_param_t *sessionlist)
@@ -138,7 +139,7 @@ bool delete_session( session_param_t **session, sessionlist_param_t *sessionlist
   }
   
   delete_channellist( &((*session)->channellist));
-  delete_targetlist ( &((*session)->targetlist));
+  delete_cachemodellist( &((*session)->cachemodellist));
 
 #ifndef SERVER
   fprintf( logstream, "local log: session: %p deleted!\n", (void *)(*session));
@@ -157,7 +158,7 @@ void delete_sessionlist( sessionlist_param_t **sessionlist)
     sessionNext=sessionPtr->next;
 
     delete_channellist( &(sessionPtr->channellist));
-    delete_targetlist ( &(sessionPtr->targetlist));
+    delete_cachemodellist( &(sessionPtr->cachemodellist));
 
 #ifndef SERVER
     fprintf( logstream, "local log: session: %p deleted!\n", (void *)sessionPtr);
@@ -176,6 +177,7 @@ void delete_sessionlist( sessionlist_param_t **sessionlist)
 void print_allsession( sessionlist_param_t *sessionlist)
 {
   session_param_t *ptr;
+  cachemodel_param_t *cachemodel;
   int i=0;
 
   fprintf( logstream, "SESSIONS info:\n");
@@ -184,7 +186,11 @@ void print_allsession( sessionlist_param_t *sessionlist)
   while( ptr != NULL){
     fprintf( logstream, "session No.%d\n", i++);
     print_allchannel( ptr->channellist);
-    print_alltarget( ptr->targetlist);
+    cachemodel = ptr->cachemodellist->first;
+    while( cachemodel){
+      print_target( cachemodel->target);
+      cachemodel = cachemodel->next;
+    }
     ptr=ptr->next;
   }
 }

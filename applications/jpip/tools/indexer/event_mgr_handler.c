@@ -1,5 +1,5 @@
 /*
- * $Id: boxheader_manager.c 44 2011-02-15 12:32:29Z kaori $
+ * $Id$
  *
  * Copyright (c) 2002-2011, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
  * Copyright (c) 2002-2011, Professor Benoit Macq
@@ -29,54 +29,44 @@
  */
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include <stdlib.h>
-#include "boxheader_manager.h"
+#include "event_mgr_handler.h"
 
-#ifdef SERVER
-#include "fcgi_stdio.h"
-#define logstream FCGI_stdout
-#else
-#define FCGI_stdout stdout
-#define FCGI_stderr stderr
-#define logstream stderr
-#endif //SERVER
+void error_callback(const char *msg, void *client_data);
+void warning_callback(const char *msg, void *client_data);
+void info_callback(const char *msg, void *client_data);
 
-
-boxheader_param_t * gene_boxheader( int fd, Byte8_t offset)
+opj_event_mgr_t set_default_event_mgr()
 {
-  Byte8_t boxlen;
-  Byte_t headlen;
-  char *boxtype;
-  boxheader_param_t *boxheader;
+  opj_event_mgr_t event_mgr;
 
-  boxlen = fetch_4bytebigendian( fd, offset);
-  boxtype = (char *)fetch_bytes( fd, offset+4, 4);
-  headlen = 8;
-    
-  if( boxlen == 1){ // read XLBox
-    boxlen = fetch_8bytebigendian( fd, offset+8);
-    headlen = 16;
-  }
-  boxheader = (boxheader_param_t *)malloc( sizeof( boxheader_param_t));
-  boxheader->headlen = headlen;
-  boxheader->length = boxlen;
-  strncpy( boxheader->type, boxtype, 4);
-  boxheader->next = NULL;
-  
-  free( boxtype);
-  return boxheader;
+  /* configure the event callbacks (not required) */
+  memset(&event_mgr, 0, sizeof(opj_event_mgr_t));
+  event_mgr.error_handler = error_callback;
+  event_mgr.warning_handler = warning_callback;
+  event_mgr.info_handler = info_callback;
+
+  return event_mgr;
 }
 
-boxheader_param_t * gene_childboxheader( box_param_t *superbox, Byte8_t offset)
-{
-  return gene_boxheader( superbox->fd, get_DBoxoff( superbox)+offset);
+/**
+   sample error callback expecting a FILE* client object
+*/
+void error_callback(const char *msg, void *client_data) {
+  FILE *stream = (FILE*)client_data;
+  fprintf(stream, "[ERROR] %s", msg);
 }
-
-void print_boxheader( boxheader_param_t *boxheader)
-{
-  fprintf( logstream, "boxheader info:\n"
-	   "\t type: %.4s\n"
-	   "\t length:%lld %#llx\n", boxheader->type, boxheader->length, boxheader->length);
+/**
+   sample warning callback expecting a FILE* client object
+*/
+void warning_callback(const char *msg, void *client_data) {
+  FILE *stream = (FILE*)client_data;
+  fprintf(stream, "[WARNING] %s", msg);
+}
+/**
+   sample debug callback expecting no client object
+*/
+void info_callback(const char *msg, void *client_data) {
+  (void)client_data;
+  //  fprintf(stdout, "[INFO] %s", msg);
 }

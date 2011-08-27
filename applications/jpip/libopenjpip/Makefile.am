@@ -21,6 +21,7 @@ ihdrbox_manager.c \
 manfbox_manager.c \
 mhixbox_manager.c \
 target_manager.c \
+cachemodel_manager.c \
 bool.h \
 boxheader_manager.h \
 box_manager.h \
@@ -36,7 +37,8 @@ metadata_manager.h \
 mhixbox_manager.h \
 msgqueue_manager.h \
 placeholder_manager.h \
-target_manager.h
+target_manager.h \
+cachemodel_manager.h
 
 libopenjpip_server_la_CPPFLAGS = \
 -I. \

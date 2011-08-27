@@ -1,7 +1,9 @@
 /*
- * Copyright (c) 2001-2002, David Janssens
- * Copyright (c) 2003-2004, Yannick Verschueren
- * Copyright (c) 2003-2004, Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
+ * $Id$
+ *
+ * Copyright (c) 2002-2011, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
+ * Copyright (c) 2002-2011, Professor Benoit Macq
+ * Copyright (c) 2010-2011, Kaori Hagihara
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,19 +28,25 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __CIO_H
-#define __CIO_H
+/*! \file
+ *  \brief Additional functions to libopenjpeg/cio.h
+ */
 
-int cio_tell();
-void cio_seek(int pos);
-int cio_numbytes();
-int cio_numbytesleft();
-unsigned char *cio_getbp();
-void cio_init(unsigned char *bp, int len);
-/* void cio_write(unsigned int v, int n); */
-void cio_write(long long v, int n);
-/* unsigned int cio_read(int n); */
-long long cio_read(int n);
-void cio_skip(int n);
+#ifndef  CIO_EXT_H_
+# define CIO_EXT_H_
 
-#endif
+#include "openjpeg.h"
+
+
+/*
+ * Write byte codes with 5 bytes to 8 bytes length
+ *     cio_write supports up to 4 bytes
+ *
+ * @param[in] cio file handler
+ * @param[in] v   byte code
+ * @param[in] n   byte length
+ * @return        really writen byte length
+ */
+unsigned int cio_ext_write( opj_cio_t *cio, unsigned long long int v, int n);
+
+#endif      /* !CIO_EXT_H_ */

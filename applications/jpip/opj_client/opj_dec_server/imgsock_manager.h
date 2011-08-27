@@ -48,8 +48,8 @@ typedef int SOCKET;
  */
 SOCKET open_listeningsocket();
 
-#define NUM_OF_MSGTYPES 7
-typedef enum eMSGTYPE{ JPIPSTREAM, PNMREQ, XMLREQ, CIDREQ, CIDDST, JP2SAVE, QUIT, MSGERROR} msgtype_t;
+#define NUM_OF_MSGTYPES 8
+typedef enum eMSGTYPE{ JPIPSTREAM, PNMREQ, XMLREQ, TIDREQ, CIDREQ, CIDDST, JP2SAVE, QUIT, MSGERROR} msgtype_t;
 
 /**
  * indeitify client message type
@@ -64,11 +64,12 @@ msgtype_t identify_clientmsg( SOCKET connected_socket);
  *
  * @param [in]  connected_socket file descriptor of the connected socket
  * @param [out] target           received target file name (if not received, null string)
+ * @param [out] tid              received target identifier (if not received, null string)
  * @param [out] cid              received channel identifier (if not received, null string)
  * @param [out] streamlen        length of the received codestream
  * @return                       JPT- JPP- codestream
  */
-Byte_t * receive_JPIPstream( SOCKET connected_socket, char *target, char *cid, int *streamlen);
+Byte_t * receive_JPIPstream( SOCKET connected_socket, char *target, char *tid, char *cid, int *streamlen);
 
 /**
  * send PGM/PPM image stream to the client
@@ -90,6 +91,15 @@ void send_PNMstream( SOCKET connected_socket, Byte_t *pnmstream, unsigned int wi
  * @param [in]  length           legnth of the xml data stream
  */
 void send_XMLstream( SOCKET connected_socket, Byte_t *xmlstream, int length);
+
+/**
+ * send TID data stream to the client
+ *
+ * @param [in]  connected_socket file descriptor of the connected socket
+ * @param [in]  tid              tid string
+ * @param [in]  tidlen           legnth of the tid string
+ */
+void send_TIDstream( SOCKET connected_socket, char *tid, int tidlen);
 
 /**
  * send CID data stream to the client
@@ -125,7 +135,7 @@ int receive_line(SOCKET connected_socket, char *buf);
  *\section sec1 JPIP-stream
  * Cache JPT- JPP- stream in server
  *
- * client -> server: JPIP-stream\\n version 1.1\\n (optional for cid registration: targetnamestring\\n cidstring\\n) bytelengthvalue\\n data \n
+ * client -> server: JPIP-stream\\n version 1.1\\n (optional for cid registration: targetnamestring\\n  tidstring\\n  cidstring\\n) bytelengthvalue\\n data \n
  * server -> client: 1 or 0 (of 1Byte response signal)
  * 
  *\section sec2 PNM request
@@ -140,25 +150,31 @@ int receive_line(SOCKET connected_socket, char *buf);
  * client -> server: XML request\\n \n
  * server -> client: XML (3Byte) length (2Byte Big endian) data
  *
- *\section sec4 CID request
+ *\section sec4 TID request
+ * Get target ID of target image
+ *
+ * client -> server: TID request\\n targetname\\n \n
+ * server -> client: TID (3Byte) length (1Byte) tiddata
+ *
+ *\section sec5 CID request
  * Get Channel ID of identical target image
  *
  * client -> server: CID request\\n targetname\\n \n
  * server -> client: CID (3Byte) length (1Byte) ciddata
  *
- *\section sec5 CID destroy
+ *\section sec6 CID destroy
  * Close Channel ID
  *
  * client -> server: CID destroy\\n ciddata \n
  * server -> client: 1 or 0 (of 1Byte response signal)
  *
- *\section sec6 JP2 save
+ *\section sec7 JP2 save
  * Save in JP2 file format
  *
  * client -> server: JP2 save\\n ciddata \n
  * server -> client: 1 or 0 (of 1Byte response signal)
  *
- *\section sec7 QUIT
+ *\section sec8 QUIT
  * Quit the opj_dec_server program
  *
  * client -> server: quit or QUIT

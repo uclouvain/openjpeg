@@ -40,6 +40,7 @@ public class JPIPHttpClient
     protected int rx, ry;
     protected int rw, rh;
     protected String cid;
+    protected String tid;
     
     public JPIPHttpClient( String URI)
     {
@@ -48,6 +49,7 @@ public class JPIPHttpClient
 	rx = ry = -1;
 	rw = rh = -1;
 	cid = null;
+	tid = null;
     }
 
     public int getFw(){ return fw;}
@@ -75,45 +77,57 @@ public class JPIPHttpClient
 
     public byte[] requestViewWindow( int reqfw, int reqfh, String reqcid)
     {
-	return requestViewWindow( null, reqfw, reqfh, -1, -1, -1, -1, reqcid, false);
+	return requestViewWindow( null, null, reqfw, reqfh, -1, -1, -1, -1, reqcid, false);
     }
 
     public byte[] requestViewWindow( int reqfw, int reqfh, int reqrx, int reqry, int reqrw, int reqrh, String reqcid)
     {
-	return requestViewWindow( null, reqfw, reqfh, reqrx, reqry, reqrw, reqrh, reqcid, false);
+	return requestViewWindow( null, null, reqfw, reqfh, reqrx, reqry, reqrw, reqrh, reqcid, false);
     }
 
     public byte[] requestViewWindow( String target, int reqfw, int reqfh)
     {
-	return requestViewWindow( target, reqfw, reqfh, -1, -1, -1, -1, null, false);
+	return requestViewWindow( target, null, reqfw, reqfh, -1, -1, -1, -1, null, false);
     }
     
     public byte[] requestViewWindow( String target, int reqfw, int reqfh, boolean reqcnew)
     {
 	if( cid == null) // 1 channel allocation only
-	    return requestViewWindow( target, reqfw, reqfh, -1, -1, -1, -1, null, reqcnew);
+	    return requestViewWindow( target, null, reqfw, reqfh, -1, -1, -1, -1, null, reqcnew);
+	else
+	    return null;
+    }
+
+    public byte[] requestViewWindow( String target, String reqtid, int reqfw, int reqfh, boolean reqcnew)
+    {
+	if( cid == null) // 1 channel allocation only
+	    return requestViewWindow( target, reqtid, reqfw, reqfh, -1, -1, -1, -1, null, reqcnew);
 	else
 	    return null;
     }
     
     public byte[] requestViewWindow( String target, int reqfw, int reqfh, int reqrx, int reqry, int reqrw, int reqrh)
     {
-	return requestViewWindow( target, reqfw, reqfh, reqrx, reqry, reqrw, reqrh, null, false);
+	return requestViewWindow( target, null, reqfw, reqfh, reqrx, reqry, reqrw, reqrh, null, false);
     }
 
  
     public byte[] requestViewWindow( int reqfw, int reqfh, String reqcid, boolean reqcnew)
     {
-	return requestViewWindow( null, reqfw, reqfh, -1, -1, -1, -1, reqcid, reqcnew);
+	return requestViewWindow( null, null, reqfw, reqfh, -1, -1, -1, -1, reqcid, reqcnew);
     }
     
-    public byte[] requestViewWindow( String target, 
-					int reqfw, int reqfh, 
-					int reqrx, int reqry, 
-					int reqrw, int reqrh, 
-					String reqcid, boolean reqcnew)
+    public byte[] requestViewWindow( String target,
+				     String reqtid,
+				     int reqfw, int reqfh, 
+				     int reqrx, int reqry, 
+				     int reqrw, int reqrh, 
+				     String reqcid, boolean reqcnew)
     {
-	String urlstring = const_urlstring( target, reqfw, reqfh, reqrx, reqry, reqrw, reqrh, reqcid, reqcnew);
+	if( reqtid != null)
+	    tid = reqtid;
+
+	String urlstring = const_urlstring( target, reqtid, reqfw, reqfh, reqrx, reqry, reqrw, reqrh, reqcid, reqcnew);
 	return GETrequest( urlstring);
     }
     
@@ -146,10 +160,17 @@ public class JPIPHttpClient
 	    urlconn.setRequestMethod("GET");
 	    urlconn.setInstanceFollowRedirects(false);
 	    urlconn.connect();
-      
+	    
 	    Map<String,java.util.List<String>> headers = urlconn.getHeaderFields();
 	    java.util.List<String> hvaluelist;
-
+	    
+	    String status = headers.get(null).get(0);
+	    
+	    System.err.println( status);
+	    if( !status.contains("OK"))
+		System.err.println( headers.get("Reason"));
+	    System.err.println( headers.get("Content-type"));
+	    
 	    if(( hvaluelist = headers.get("JPIP-fsiz")) != null){
 		String hvalueline = hvaluelist.get(0);
 		fw = Integer.valueOf( hvalueline.substring( 0, hvalueline.indexOf(','))).intValue();
@@ -178,9 +199,15 @@ public class JPIPHttpClient
 		System.err.println("cid: " + cid);
 	    }
 
+	    if(( hvaluelist = headers.get("JPIP-tid")) != null){
+		String hvalueline = hvaluelist.get(0);
+		tid = hvalueline.substring( hvalueline.indexOf('=')+1);
+		System.err.println("tid: " + tid);
+	    }
+	    
 	    InputStream input = urlconn.getInputStream();
 	    buflen = input.available();
-	    
+
 	    if( buflen > 0){
 		ByteArrayOutputStream tmpstream = new ByteArrayOutputStream();
 		byte[] buf = new byte[ 1024];
@@ -230,11 +257,12 @@ public class JPIPHttpClient
 	}
 
 	urlconn.disconnect();     
-        
+        	
 	return jpipstream;
     }
   
-    private String const_urlstring( String target, 
+    private String const_urlstring( String target,
+				    String reqtid,
 				    int reqfw, int reqfh, 
 				    int reqrx, int reqry, 
 				    int reqrw, int reqrh, 
@@ -249,6 +277,11 @@ public class JPIPHttpClient
 	    if( !urlstring.endsWith("?"))
 		urlstring = urlstring.concat( "&");
 	    urlstring = urlstring.concat( "target=" + target);
+	}
+	if( reqtid != null){
+	    if( !urlstring.endsWith("?"))
+		urlstring = urlstring.concat( "&");
+	    urlstring = urlstring.concat( "tid=" + reqtid);
 	}
 	if( reqfw != -1 && reqfh != -1){
 	    if( !urlstring.endsWith("?"))

@@ -33,13 +33,13 @@
 
 #include "bool.h"
 #include "channel_manager.h"
-#include "target_manager.h"
+#include "cachemodel_manager.h"
 
 //! Session parameters
 typedef struct session_param{
-  channellist_param_t *channellist; //!< channel list pointer
-  targetlist_param_t  *targetlist;  //!< target  list pointer
-  struct session_param *next;       //!< pointer to the next session
+  channellist_param_t *channellist;        //!< channel list pointer
+  cachemodellist_param_t *cachemodellist; //!< cache list pointer
+  struct session_param *next;              //!< pointer to the next session
 } session_param_t;
 
 //! Session list parameters
@@ -80,12 +80,12 @@ bool search_session_and_channel( char cid[],
 				 channel_param_t **foundchannel);
 
 /**
- * insert a target into a session
+ * insert a cache model into a session
  *
- * @param[in] session session pointer
- * @param[in] target target pointer
+ * @param[in] session    session pointer
+ * @param[in] cachemodel cachemodel pointer
  */
-void insert_target_into_session( session_param_t *session, target_param_t *target);
+void insert_cachemodel_into_session( session_param_t *session, cachemodel_param_t *cachemodel);
 
 
 /**

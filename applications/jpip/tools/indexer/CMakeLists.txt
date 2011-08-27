@@ -1,26 +1,32 @@
 SET(INDEXER_SRCS
-${CMAKE_CURRENT_SOURCE_DIR}/bio.c
-${CMAKE_CURRENT_SOURCE_DIR}/cio.c
-${CMAKE_CURRENT_SOURCE_DIR}/index_create.c
-${CMAKE_CURRENT_SOURCE_DIR}/int.c
-${CMAKE_CURRENT_SOURCE_DIR}/jp2.c
-${CMAKE_CURRENT_SOURCE_DIR}/jpip.c
-${CMAKE_CURRENT_SOURCE_DIR}/pi.c
-${CMAKE_CURRENT_SOURCE_DIR}/t2.c
-${CMAKE_CURRENT_SOURCE_DIR}/tcd.c
-${CMAKE_CURRENT_SOURCE_DIR}/tgt.c
+${CMAKE_CURRENT_SOURCE_DIR}/j2k_to_idxjp2.c
+${CMAKE_CURRENT_SOURCE_DIR}/cidx_manager.c
+${CMAKE_CURRENT_SOURCE_DIR}/cio_ext.c
+${CMAKE_CURRENT_SOURCE_DIR}/event_mgr_handler.c
+${CMAKE_CURRENT_SOURCE_DIR}/idxjp2_manager.c
+${CMAKE_CURRENT_SOURCE_DIR}/j2k_decoder.c
+${CMAKE_CURRENT_SOURCE_DIR}/phix_manager.c
+${CMAKE_CURRENT_SOURCE_DIR}/ppix_manager.c
+${CMAKE_CURRENT_SOURCE_DIR}/thix_manager.c
+${CMAKE_CURRENT_SOURCE_DIR}/tpix_manager.c
 )
+
+# Headers file are located here:
+INCLUDE_DIRECTORIES(
+  ${OPENJPEG_SOURCE_DIR}/libopenjpeg
+  )
 
 # Build executable
 
-ADD_EXECUTABLE(index_create ${INDEXER_SRCS})
+ADD_EXECUTABLE(j2k_to_idxjp2 ${INDEXER_SRCS})
+TARGET_LINK_LIBRARIES(j2k_to_idxjp2 ${OPENJPEG_LIBRARY_NAME})
 
 # On unix you need to link to the math library:
 IF(UNIX)
-  TARGET_LINK_LIBRARIES(index_create m)
+  TARGET_LINK_LIBRARIES(j2k_to_idxjp2 m)
 ENDIF(UNIX)
 # Install exe
-INSTALL(TARGETS index_create
+INSTALL(TARGETS j2k_to_idxjp2
   EXPORT OpenJPEGTargets
   DESTINATION ${OPENJPEG_INSTALL_BIN_DIR} COMPONENT Applications
 )

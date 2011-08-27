@@ -54,23 +54,21 @@ channellist_param_t * gene_channellist()
   return channellist;
 }
 
-
-channel_param_t * gene_channel( query_param_t query_param, target_param_t *target, channellist_param_t *channellist)
+channel_param_t * gene_channel( query_param_t query_param, cachemodel_param_t *cachemodel, channellist_param_t *channellist)
 {
   channel_param_t *channel;
-
-  // set the target
-  if( !target){
+  
+  if( !cachemodel){
     fprintf( FCGI_stdout, "Status: 404\r\n"); 
     fprintf( FCGI_stdout, "Reason: cnew cancelled\r\n"); 
     return NULL;
   }
-  
+
   channel = (channel_param_t *)malloc( sizeof(channel_param_t));
-  channel->target = target;
+  channel->cachemodel = cachemodel;
 
   // set channel ID and get present time
-  snprintf( channel->cid, MAX_LENOFCID, "%x%x", (unsigned int)time( &channel->start_tm), (unsigned int)rand());;
+  snprintf( channel->cid, MAX_LENOFCID, "%x%x", (unsigned int)time( &channel->start_tm), (unsigned int)rand());
   
   channel->next=NULL;
 
@@ -141,7 +139,7 @@ void print_allchannel( channellist_param_t *channellist)
 
   ptr = channellist->first;
   while( ptr != NULL){
-    fprintf( logstream,"channel-ID=%s \t target=%s\n", ptr->cid, ptr->target->filename);
+    fprintf( logstream,"channel-ID=%s \t target=%s\n", ptr->cid, ptr->cachemodel->target->filename);
     ptr=ptr->next;
   }
 }

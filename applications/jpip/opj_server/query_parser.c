@@ -99,6 +99,9 @@ void parse_query( char *query_string, query_param_t *query_param)
       if( strcasecmp( fieldname, "target") == 0)
 	strcpy( query_param->target,fieldval);
       
+      else if( strcasecmp( fieldname, "tid") == 0)
+	strcpy( query_param->tid, fieldval);
+
       else if( strcasecmp( fieldname, "fsiz") == 0)
 	sscanf( fieldval, "%d,%d", &query_param->fx, &query_param->fy);
       
@@ -128,6 +131,7 @@ void init_queryparam( query_param_t *query_param)
   int i;
 
   query_param->target[0]='\0';
+  query_param->tid[0]='\0';
   query_param->fx=-1;
   query_param->fy=-1;
   query_param->rx=-1;
@@ -183,6 +187,7 @@ void print_queryparam( query_param_t query_param)
 
   fprintf( logstream, "query parameters:\n");
   fprintf( logstream, "\t target: %s\n", query_param.target);
+  fprintf( logstream, "\t tid: %s\n", query_param.tid);
   fprintf( logstream, "\t fx,fy: %d, %d\n", query_param.fx, query_param.fy);
   fprintf( logstream, "\t rx,ry: %d, %d \t rw,rh: %d, %d\n", query_param.rx, query_param.ry, query_param.rw, query_param.rh);
   fprintf( logstream, "\t cnew: %d\n", query_param.cnew);

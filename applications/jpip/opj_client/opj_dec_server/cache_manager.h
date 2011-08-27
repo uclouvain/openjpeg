@@ -37,9 +37,13 @@
 //! maximum length of target name
 #define MAX_LENOFTARGET 128
 
+//! maximum length of target identifier
+#define MAX_LENOFTID 30
+
 //! cache parameters
 typedef struct cache_param{
   char filename[MAX_LENOFTARGET];     //!< file name
+  char tid[MAX_LENOFTID];             //!< taregt identifier
   int csn;                            //!< codestream number
   char **cid;                         //!< dynamic array of channel identifiers
   int numOfcid;                       //!< number of cids
@@ -74,10 +78,11 @@ void delete_cachelist(cachelist_param_t **cachelist);
  *
  * @param[in] targetname target file name
  * @param[in] csn        codestream number
+ * @param[in] tid        target identifier
  * @param[in] cid        channel identifier
  * @return               pointer to the generated cache
  */
-cache_param_t * gene_cache( char *targetname, int csn, char *cid);
+cache_param_t * gene_cache( char *targetname, int csn, char *tid, char *cid);
 
 /**
  * delete a cache
@@ -131,6 +136,16 @@ cache_param_t * search_cacheBycid( char cid[], cachelist_param_t *cachelist);
  * @param[in] cache cache pointer
  */
 void add_cachecid( char *cid, cache_param_t *cache);
+
+
+/**
+ * update tid of a cache
+ *
+ * @param[in] tid   target identifier
+ * @param[in] cache cache pointer
+ */
+void update_cachetid( char *tid, cache_param_t *cache);
+
 
 /**
  * remove cid in cache

@@ -1,7 +1,9 @@
 /*
- * Copyright (c) 2001-2002, David Janssens
- * Copyright (c) 2003, Yannick Verschueren
- * Copyright (c) 2003, Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
+ * $Id$
+ *
+ * Copyright (c) 2002-2011, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
+ * Copyright (c) 2002-2011, Professor Benoit Macq
+ * Copyright (c) 2010-2011, Kaori Hagihara
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,16 +28,31 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __INT_H
-#define __INT_H
+#ifndef  J2K_TO_IDXJP2_H_
+# define J2K_TO_IDXJP2_H_
 
-int int_min(int a, int b);
-int int_max(int a, int b);
-int int_clamp(int a, int min, int max);
-int int_abs(int a);
-int int_ceildiv(int a, int b);
-int int_ceildivpow2(int a, int b);
-int int_floordivpow2(int a, int b);
-int int_floorlog2(int a);
+#include "openjpeg.h"
 
-#endif
+/* 
+ * Decode j2k codestream
+ *
+ * @param[in]  j2kstream j2k codestream
+ * @param[in]  j2klen    length of j2k codestream
+ * @param[out] cstr_info codestream information
+ * @return               image data
+ */
+opj_image_t * decode_j2k( unsigned char *j2kstream, int j2klen, opj_codestream_info_t *cstr_info);
+
+
+/* 
+ * Write a JP2 file with index box
+ *
+ * @param[in] filename  file name
+ * @param[in] j2kstream j2k codestream
+ * @param[in] j2klen    length of j2k codestream
+ * @param[in] image     image data
+ * @param[in] cstr_info codestream information
+ */
+void fwrite_idxjp2( char filename[], unsigned char *j2kstream, int j2klen, opj_image_t *image, opj_codestream_info_t cstr_info);
+
+#endif      /* !J2K_TO_IDXJP2S_H_ */

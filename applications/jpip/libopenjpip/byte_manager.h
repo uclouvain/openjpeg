@@ -31,8 +31,6 @@
 #ifndef   	BYTE_MANAGER_H_
 # define   	BYTE_MANAGER_H_
 
-#include <stdio.h>
-
 //! 1Byte parameter type
 typedef unsigned char Byte_t;
 

@@ -90,6 +90,11 @@ Server:
 
  2. Launch opj_server from the server terminal:
     % spawn-fcgi -f ./opj_server -p 3000 -n
+ 
+ For shutting down JPIP server:
+     %GET http://hostname/myFCGI?quitJPIP
+     Notice, http://hostname/myFCGI is the HTTP server URI (myFCGI refers to opj_server by the server setting)
+     Requst message "quitJPIP" can be changed in Makfile, modify -DQUIT_SIGNAL=\"quitJPIP\"
 
 Client:
  1. Launch image decoding server, and keep it alive as long as image viewers are open
@@ -127,7 +132,7 @@ An example to encode a TIF image "copenhague1.tif" at resolution 4780x4050, 8bit
     % ./kdu_compress -i copenhague1.tif -o copenhague1.j2k Corder=RPCL  ORGtparts=R Stiles={256,256}
 
  2. JP2 encoding with embedding indexing data
-    % ./index_create copenhague1.j2k copenhague1.jp2 2
+    % ./j2k_to_idxjp2 copenhague1.j2k copenhague1.jp2
 
 <Option>
  3. Embed metadata into JP2 file

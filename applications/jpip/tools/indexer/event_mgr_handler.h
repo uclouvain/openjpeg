@@ -1,7 +1,9 @@
 /*
- * Copyright (c) 2001-2002, David Janssens
- * Copyright (c) 2003, Yannick Verschueren
- * Copyright (c) 2003, Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
+ * $Id$
+ *
+ * Copyright (c) 2002-2011, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
+ * Copyright (c) 2002-2011, Professor Benoit Macq
+ * Copyright (c) 2010-2011, Kaori Hagihara
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,64 +28,16 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-/// <summary>
-/// Get the minimum of two integers.
-/// </summary>
-int int_min(int a, int b) {
-    return a<b?a:b;
-}
+#ifndef  EVENT_MG_HANDLER_H_
+# define EVENT_MG_HANDLER_H_
 
-/// <summary>
-/// Get the maximum of two integers.
-/// </summary>
-int int_max(int a, int b) {
-    return a>b?a:b;
-}
+#include "openjpeg.h"
 
-/// <summary>
-/// Clamp an integer inside an interval.
-/// </summary>
-int int_clamp(int a, int min, int max) {
-    if (a<min) return min;
-    if (a>max) return max;
-    return a;
-}
+/* 
+ * Set default event message handler
+ *
+ * @return event message handler
+ */
+opj_event_mgr_t set_default_event_mgr();
 
-/// <summary>
-/// Get absolute value of integer.
-/// </summary>
-int int_abs(int a) {
-    return a<0?-a:a;
-}
-
-/// <summary>
-/// Divide an integer and round upwards.
-/// </summary>
-int int_ceildiv(int a, int b) {
-    return (a+b-1)/b;
-}
-
-/// <summary>
-/// Divide an integer by a power of 2 and round upwards.
-/// </summary>
-int int_ceildivpow2(int a, int b) {
-    return (a+(1<<b)-1)>>b;
-}
-
-/// <summary>
-/// Divide an integer by a power of 2 and round downwards.
-/// </summary>
-int int_floordivpow2(int a, int b) {
-    return a>>b;
-}
-
-/// <summary>
-/// Get logarithm of an integer and round downwards.
-/// </summary>
-int int_floorlog2(int a) {
-    int l;
-    for (l=0; a>1; l++) {
-        a>>=1;
-    }
-    return l;
-}
+#endif      /* !EVENT_MG_HANDLER_H_ */
