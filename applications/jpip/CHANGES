@@ -5,6 +5,9 @@ What's New for OpenJPIP
 ! : changed
 + : added
 
+August 27, 2011
+* [antonin] fixed missing include directory in opj_client/opj_dec_server/CMakeLists.txt
+
 August 26, 2011
 * [antonin] fixed cmake and autotools files to reflect recent indexer changes in JPIP
 ! [kaori] indexer using the latest openjpeg library

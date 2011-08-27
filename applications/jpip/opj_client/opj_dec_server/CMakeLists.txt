@@ -8,7 +8,8 @@ ${CMAKE_CURRENT_SOURCE_DIR}/jpipstream_manager.c
 )
 
 INCLUDE_DIRECTORIES(
-  ../../libopenjpip
+  ${OPENJPEG_SOURCE_DIR}/libopenjpeg
+  ${OPENJPEG_SOURCE_DIR}/applications/jpip/libopenjpip
 )
 
 # Build executable
