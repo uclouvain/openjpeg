@@ -38,6 +38,7 @@
 
 /*
  * Write a byte.
+ * A copy of cio.c:opj_bool cio_byteout(opj_cio_t *cio, unsigned char v)
  */
 opj_bool cio_ext_byteout(opj_cio_t *cio, unsigned char v);
 
