@@ -1,0 +1,14 @@
+image_to_j2k -i input/Bretagne1.ppm -o temp/Bretagne1_0.j2k -r 200,50,10
+image_to_j2k -i input/Bretagne1.ppm -o temp/Bretagne1_1.j2k -q 30,35,40 -n 2
+image_to_j2k -i input/Bretagne1.ppm -o temp/Bretagne1_2.j2k -q 30,35,40 -b 16,16 -c [64,64]
+image_to_j2k -i input/Bretagne2.ppm -o temp/Bretagne2_0.j2k -c [128,128],[128,128],[128,128] -r 100,20,2 -t 640,480 -b 32,32
+image_to_j2k -i input/Bretagne2.ppm -o temp/Bretagne2_1.j2k -t 127,127 -p PCRL
+image_to_j2k -i input/Bretagne2.ppm -o temp/Bretagne2_2.j2k -s 2,2 -SOP
+image_to_j2k -i input/Bretagne2.ppm -o temp/Bretagne2_3.j2k -EPH -M 38
+image_to_j2k -i input/Bretagne2.ppm -o temp/Bretagne2_4.j2k -d 150,300 -r 800
+image_to_j2k -i input/Cevennes1.bmp -o temp/Cevennes1.j2k -r 10
+image_to_j2k -i input/Cevennes2.ppm -o temp/Cevennes2.jp2 -r 50
+image_to_j2k -i input/Rome.bmp -o temp/Rome.jp2 -q 30,35,50 -p LRCP -n 3
+# image_to_j2k -i input/X_4_2K_24_185_CBR_WB_000.tif -o temp/X_4_2K_24_185_CBR_WB_000.j2k -cinema2K 24
+# image_to_j2k -i input/X_5_2K_24_235_CBR_STEM24_000.tif -o temp/X_5_2K_24_235_CBR_STEM24_000.j2k -cinema2K 24
+# image_to_j2k -i input/X_6_2K_24_FULL_CBR_CIRCLE_000.tif -o temp/X_6_2K_24_FULL_CBR_CIRCLE_000.j2k -cinema2K 24

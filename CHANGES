@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+August 30, 2011
++ [mickael] added first version of the encoding tests suite
+
 August 16, 2011
 + [antonin] added NEWS, AUTHORS and THANKS files. Cosmetic changes in autotools files.
 - [antonin] removed obsolete testing directory and *.nix files
