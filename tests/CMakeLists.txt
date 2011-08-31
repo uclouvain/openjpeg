@@ -13,6 +13,8 @@ SET(comparePGXimages_SRCS comparePGXimages.c ${OPENJPEG_SOURCE_DIR}/applications
 
 SET(compare_dump_files_SRCS compare_dump_files.c)
 
+SET(compareRAWimages_SRCS compareRAWimages.c)
+
 # If not getopt was found then add it to the exe:
 IF(DONT_HAVE_GETOPT)
   message("dont have getopt, we will add it")
@@ -25,6 +27,11 @@ IF(DONT_HAVE_GETOPT)
     ${compare_dump_files_SRCS}
     ${OPENJPEG_SOURCE_DIR}/applications/common/getopt.c
   )
+  
+  SET(compareRAWimages_SRCS
+    ${compareRAWimages_SRCS}
+    ${OPENJPEG_SOURCE_DIR}/applications/common/getopt.c
+  )
 ENDIF(DONT_HAVE_GETOPT)
 
 ADD_EXECUTABLE(comparePGXimages ${comparePGXimages_SRCS})
@@ -35,6 +42,8 @@ TARGET_LINK_LIBRARIES(comparePGXimages ${OPENJPEG_LIBRARY_NAME}
                                        )
                                        
 ADD_EXECUTABLE(compare_dump_files ${compare_dump_files_SRCS})
+
+ADD_EXECUTABLE(compareRAWimages ${compareRAWimages_SRCS})
 
 # No image send to the dashboard if lib PNG is not available.
 IF(NOT HAVE_LIBPNG)

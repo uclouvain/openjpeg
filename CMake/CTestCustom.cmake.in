@@ -17,6 +17,7 @@
 #
 #----------------------------------------------------------------------
 
+SET(CTEST_CUSTOM_MAXIMUM_PASSED_TEST_OUTPUT_SIZE 1000000)
 SET (CTEST_CUSTOM_MAXIMUM_NUMBER_OF_ERRORS   50)
 SET (CTEST_CUSTOM_MAXIMUM_NUMBER_OF_WARNINGS 2000)
 
@@ -25,7 +26,9 @@ SET(CTEST_CUSTOM_COVERAGE_EXCLUDE
 
  # Exclude files from the Testing directories
  ".*/tests/.*"
- ".*/Testing/.*"
+ 
+  # Exclude files from the ThirdParty Utilities directories
+ ".*/thirdparty/.*"
  )
 
 SET(CTEST_CUSTOM_WARNING_EXCEPTION

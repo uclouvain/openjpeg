@@ -75,12 +75,13 @@ IF (NOT WIN32)
 CONFIGURE_FILE("opj_ref_decode_cmd.sh.in"
                "${CMAKE_CURRENT_BINARY_DIR}/opj_ref_decode_cmd.sh"
                @ONLY)
-ELSE (NOT WIN32)
-               
-CONFIGURE_FILE("opj_ref_decode_cmd.bat.in"
-               "${CMAKE_CURRENT_BINARY_DIR}/opj_ref_decode_cmd.bat"
-               @ONLY)               
 ENDIF (NOT WIN32)
+   
+string(COMPARE EQUAL ${REF_DECODER_BIN_PATH} "NOTFOUND" REF_DECODER_NOTFOUND)            
+IF (REF_DECODER_NOTFOUND)
+  MESSAGE(STATUS "REF_DECODER_BIN_PATH not found, if you want all the encoding tests suite please provide a ragular path")  
+ENDIF (REF_DECODER_NOTFOUND)
+
 
 # Read the file into a list
 FILE(STRINGS encoder_test_suite.txt OPJ_TEST_ENC_CMD_LINE_LIST)
@@ -183,13 +184,11 @@ FOREACH(OPJ_TEST_ENC_CMD_LINE ${OPJ_TEST_ENC_CMD_LINE_LIST})
                          NR-ENC-${INPUT_FILENAME_NAME}-${it_test}-dump) 
 
     # Decode the encoding file with kakadu expand command
-    string(COMPARE EQUAL ${REF_DECODER_BIN_PATH} "NOTFOUND" REF_DECODER_NOTFOUND)
-    
     IF (NOT REF_DECODER_NOTFOUND)
       IF (NOT WIN32)
         # Need a bash script to export the path of the kakadu library into PATH  
-        ADD_TEST(NAME NR-ENC-${INPUT_FILENAME_NAME}-${it_test}-decode-ref
-          COMMAND sh ${CMAKE_CURRENT_BINARY_DIR}/opj_ref_decode_cmd.sh
+        ADD_TEST( NR-ENC-${INPUT_FILENAME_NAME}-${it_test}-decode-ref
+           bash ${CMAKE_CURRENT_BINARY_DIR}/opj_ref_decode_cmd.sh
           -i ${OUTPUT_FILENAME}
           -o ${OUTPUT_FILENAME}.raw
         )
@@ -204,15 +203,20 @@ FOREACH(OPJ_TEST_ENC_CMD_LINE ${OPJ_TEST_ENC_CMD_LINE_LIST})
       SET_TESTS_PROPERTIES(NR-ENC-${INPUT_FILENAME_NAME}-${it_test}-decode-ref
                            PROPERTIES DEPENDS 
                            NR-ENC-${INPUT_FILENAME_NAME}-${it_test}-encode) 
-    ELSE (NOT REF_DECODER_NOTFOUND)
-      MESSAGE(STATUS "REF_DECODER_BIN_PATH not found, if you want all the encoding tests suite please provide a ragular path")  
-    ENDIF (NOT REF_DECODER_NOTFOUND)
     
-    # Compare the decoding file with baseline generated from the kdu_expand and baseline.j2k 
-    #ADD_TEST(NR-ENC-${it_test}-compare_expand
-    #  -b ${BASELINE_NR}/.raw
-    #  -t ${TEMP}/${OUTPUT_FILENAME}.raw
-    #)
+      # Compare the decoding file with baseline generated from the kdu_expand and baseline.j2k 
+      ADD_TEST(NR-ENC-${INPUT_FILENAME_NAME}-${it_test}-compare_dec-ref-out2base
+        ${EXECUTABLE_OUTPUT_PATH}/compareRAWimages
+        #-b ${BASELINE_NR}/opj_${OUTPUT_FILENAME_NAME_WE}-ENC-${it_test}.raw
+        -b ${BASELINE_NR}/opj_${OUTPUT_FILENAME_NAME_WE}-ENC-${it_test}.raw
+        -t ${OUTPUT_FILENAME}.raw
+      )
+    
+      SET_TESTS_PROPERTIES(NR-ENC-${INPUT_FILENAME_NAME}-${it_test}-compare_dec-ref-out2base
+                           PROPERTIES DEPENDS 
+                           NR-ENC-${INPUT_FILENAME_NAME}-${it_test}-decode-ref)
+    
+    ENDIF (NOT REF_DECODER_NOTFOUND)
     
   ENDIF(NOT IGNORE_LINE_FOUND)
 
