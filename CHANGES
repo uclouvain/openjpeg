@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 August 31, 2011
+* [mickael] fixed a segfault with fgets return value for some cases inside test function compare_dump_file()
 + [mickael] enhance the encoding test suite and remove unsued CONFIGURE_FILE into a CMakeList
 
 August 30, 2011

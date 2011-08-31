@@ -190,7 +190,6 @@ int main(int argc, char **argv)
       size_t nbytes = 2048;
       int CRLF_shift=1;
       char *strbase, *strtest, *strbase_d, *strtest_d;
-      char *return_value_fgets;
 
       printf("Files differ at line %lu:\n", l);
       fseek(fbase,pos,SEEK_SET);
@@ -207,27 +206,29 @@ int main(int argc, char **argv)
       strbase = (char *) malloc(nbytes + 1);
       strtest = (char *) malloc(nbytes + 1);
 
-      return_value_fgets = fgets(strbase, nbytes, fbase);
-      if (!strcmp(return_value_fgets,strbase))
-      	fprintf(stderr,"\nWARNING: fgets return a value different that the first argument");
-      free(return_value_fgets);
+	if (fgets(strbase, nbytes, fbase) == NULL)
+		fprintf(stderr,"\nWARNING: fgets return a NULL value");
+	else
+	{
+		if (fgets(strtest, nbytes, ftest) == NULL)
+			fprintf(stderr,"\nWARNING: fgets return a NULL value");
+		else
+		{
+			strbase_d = (char *) malloc(strlen(strbase)+1);
+			strtest_d = (char *) malloc(strlen(strtest)+1);
+			strncpy(strbase_d, strbase, strlen(strbase)-1);
+			strncpy(strtest_d, strtest, strlen(strtest)-CRLF_shift);
+			strbase_d[strlen(strbase)-1] = '\0';
+			strtest_d[strlen(strtest)-CRLF_shift] = '\0';
+			printf("<%s> vs. <%s>\n", strbase_d, strtest_d);
+			free(strbase_d);free(strtest_d);
+		}
+	}
 
-      return_value_fgets = fgets(strtest, nbytes, ftest);
-      if (!strcmp(return_value_fgets,strtest))
-    	  fprintf(stderr,"\nWARNING: fgets return a value different that the first argument");
-      free(return_value_fgets);
+	free(strbase);free(strtest);
+	
+	same = 0;
 
-      strbase_d = (char *) malloc(strlen(strbase)+1);
-      strtest_d = (char *) malloc(strlen(strtest)+1);
-      strncpy(strbase_d, strbase, strlen(strbase)-1);
-      strncpy(strtest_d, strtest, strlen(strtest)-CRLF_shift);
-      strbase_d[strlen(strbase)-1] = '\0';
-      strtest_d[strlen(strtest)-CRLF_shift] = '\0';
-      printf("<%s> vs. <%s>\n", strbase_d, strtest_d);
-
-      free(strbase);free(strtest);
-      free(strbase_d);free(strtest_d);
-      same = 0;
       break;
       }
     else
