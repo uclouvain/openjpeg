@@ -5,6 +5,9 @@ What's New for OpenJPIP
 ! : changed
 + : added
 
+Septempber 1, 2011
+* [kaori] changed terminating status of opj_server in debug/non-server mode
+
 August 27, 2011
 * [antonin] fixed missing include directory in opj_client/opj_dec_server/CMakeLists.txt
 
