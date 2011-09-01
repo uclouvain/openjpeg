@@ -79,7 +79,7 @@ ENDIF (NOT WIN32)
    
 string(COMPARE EQUAL ${REF_DECODER_BIN_PATH} "NOTFOUND" REF_DECODER_NOTFOUND)            
 IF (REF_DECODER_NOTFOUND)
-  MESSAGE(STATUS "REF_DECODER_BIN_PATH not found, if you want all the encoding tests suite please provide a ragular path")  
+  MESSAGE(STATUS "REF_DECODER_BIN_PATH not found, if you want all the encoding tests suite please provide a regular path")  
 ENDIF (REF_DECODER_NOTFOUND)
 
 

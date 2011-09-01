@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+September 1st, 2011
+! [antonin] renamed getopt.{c/h} to opj_getopt.{c/h} and forced the use of these files rather than the system ones. This fixed issue 78. Credit to Winfried.
+
 August 31, 2011
 * [mickael] fixed a segfault with fgets return value for some cases inside test function compare_dump_file()
 + [mickael] enhance the encoding test suite and remove unsued CONFIGURE_FILE into a CMakeList

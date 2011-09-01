@@ -67,9 +67,9 @@ static int int_floorlog2(int a) {
 
  <<-- <<-- <<-- <<-- */
 
+#ifdef INFORMATION_ONLY
 // TGA header definition.
-#pragma pack(push,1) // Pack structure byte aligned
-typedef struct tga_header
+struct tga_header
 {                           
     unsigned char   id_length;              /* Image id field length    */
     unsigned char   colour_map_type;        /* Colour map type          */
@@ -89,35 +89,66 @@ typedef struct tga_header
     unsigned short  image_height;           /* Image height             */
     unsigned char   pixel_depth;            /* Pixel depth              */
     unsigned char   image_desc;             /* Image descriptor         */
-} tga_header;
-#pragma pack(pop) // Return to normal structure packing alignment.
+};
+#endif /* INFORMATION_ONLY */
+
+static unsigned short get_ushort(unsigned short val) {
+
+#ifdef ORDER_BIGENDIAN
+    return( ((val & 0xff) << 8) + (val >> 8) );
+#else
+    return( val );
+#endif
+
+}
+
+#define TGA_HEADER_SIZE 18
 
 int tga_readheader(FILE *fp, unsigned int *bits_per_pixel, 
 	unsigned int *width, unsigned int *height, int *flip_image)
 {
 	int palette_size;
-	tga_header tga ;
+	unsigned char *tga ;
+	unsigned char id_len, cmap_type, image_type;
+	unsigned char pixel_depth, image_desc;
+	unsigned short cmap_index, cmap_len, cmap_entry_size;
+	unsigned short x_origin, y_origin, image_w, image_h;
 
 	if (!bits_per_pixel || !width || !height || !flip_image)
 		return 0;
-	
-	// Read TGA header
-	if ( fread((unsigned char*)&tga, sizeof(tga_header), 1, fp) != 1 )
+	tga = (unsigned char*)malloc(18);
+
+	if ( fread(tga, TGA_HEADER_SIZE, 1, fp) != 1 )
 	{
 		fprintf(stderr, "\nError: fread return a number of element different from the expected.\n");
 	    return 0 ;
 	}
+	id_len = (unsigned char)tga[0];
+	cmap_type = (unsigned char)tga[1];
+	image_type = (unsigned char)tga[2];
+	cmap_index = get_ushort(*(unsigned short*)(&tga[3]));
+	cmap_len = get_ushort(*(unsigned short*)(&tga[5]));
+	cmap_entry_size = (unsigned char)tga[7];
 
-	*bits_per_pixel = tga.pixel_depth;
-	
-	*width  = tga.image_width;
-	*height = tga.image_height ;
+
+	x_origin = get_ushort(*(unsigned short*)(&tga[8]));
+	y_origin = get_ushort(*(unsigned short*)(&tga[10]));
+	image_w = get_ushort(*(unsigned short*)(&tga[12]));
+	image_h = get_ushort(*(unsigned short*)(&tga[14]));
+	pixel_depth = (unsigned char)tga[16];
+	image_desc  = (unsigned char)tga[17];
+
+	free(tga);
+
+	*bits_per_pixel = (unsigned int)pixel_depth;
+	*width  = (unsigned int)image_w;
+	*height = (unsigned int)image_h;
 
 	// Ignore tga identifier, if present ...
-	if (tga.id_length)
+	if (id_len)
 	{
-		unsigned char *id = (unsigned char *) malloc(tga.id_length);
-		if ( !fread(id, tga.id_length, 1, fp) )
+		unsigned char *id = (unsigned char *) malloc(id_len);
+		if ( !fread(id, id_len, 1, fp) )
 		{
 			fprintf(stderr, "\nError: fread return a number of element different from the expected.\n");
 			free(id);
@@ -129,16 +160,16 @@ int tga_readheader(FILE *fp, unsigned int *bits_per_pixel,
 	// Test for compressed formats ... not yet supported ...
 	// Note :-  9 - RLE encoded palettized.
 	//	  	   10 - RLE encoded RGB.
-	if (tga.image_type > 8)
+	if (image_type > 8)
 	{
 		fprintf(stderr, "Sorry, compressed tga files are not currently supported.\n");
 		return 0 ;
 	}
 
-	*flip_image = !(tga.image_desc & 32);
+	*flip_image = !(image_desc & 32);
 
 	// Palettized formats are not yet supported, skip over the palette, if present ... 
-	palette_size = tga.colour_map_length * (tga.colour_map_entry_size/8);
+	palette_size = cmap_len * (cmap_entry_size/8);
 	
 	if (palette_size>0)
 	{
@@ -151,31 +182,56 @@ int tga_readheader(FILE *fp, unsigned int *bits_per_pixel,
 int tga_writeheader(FILE *fp, int bits_per_pixel, int width, int height, 
 	opj_bool flip_image)
 {
-	tga_header tga;
+	unsigned short image_w, image_h, us0;
+	unsigned char uc0, image_type;
+	unsigned char pixel_depth, image_desc;
 
 	if (!bits_per_pixel || !width || !height)
 		return 0;
 
-	memset(&tga, 0, sizeof(tga_header));
+	pixel_depth = 0;
 
 	if ( bits_per_pixel < 256 )
-		tga.pixel_depth = (unsigned char)bits_per_pixel;
+		pixel_depth = (unsigned char)bits_per_pixel;
 	else{
 		fprintf(stderr,"ERROR: Wrong bits per pixel inside tga_header");
 		return 0;
 	}
-	tga.image_width  = (unsigned short)width;
-	tga.image_height = (unsigned short)height;
-	tga.image_type = 2; // Uncompressed.
-	tga.image_desc = 8; // 8 bits per component.
+	uc0 = 0;
+
+	if(fwrite(&uc0, 1, 1, fp) != 1) goto fails; // id_length
+	if(fwrite(&uc0, 1, 1, fp) != 1) goto fails; // colour_map_type
+
+	image_type = 2; // Uncompressed.
+	if(fwrite(&image_type, 1, 1, fp) != 1) goto fails;
+
+	us0 = 0;
+	if(fwrite(&us0, 2, 1, fp) != 1) goto fails; // colour_map_index
+	if(fwrite(&us0, 2, 1, fp) != 1) goto fails; // colour_map_length
+	if(fwrite(&uc0, 1, 1, fp) != 1) goto fails; // colour_map_entry_size
+
+	if(fwrite(&us0, 2, 1, fp) != 1) goto fails; // x_origin
+	if(fwrite(&us0, 2, 1, fp) != 1) goto fails; // y_origin
+
+	image_w = (unsigned short)width;
+	image_h = (unsigned short) height;
+
+	if(fwrite(&image_w, 2, 1, fp) != 1) goto fails;
+	if(fwrite(&image_h, 2, 1, fp) != 1) goto fails;
+
+	if(fwrite(&pixel_depth, 1, 1, fp) != 1) goto fails;
+
+	image_desc = 8; // 8 bits per component.
 
 	if (flip_image)
-		tga.image_desc |= 32;
-
-	// Write TGA header
-	fwrite((unsigned char*)&tga, sizeof(tga_header), 1, fp);
+		image_desc |= 32;
+	if(fwrite(&image_desc, 1, 1, fp) != 1) goto fails;
 
 	return 1;
+
+fails:
+	fputs("\nwrite_tgaheader: write ERROR\n", stderr);
+	return 0;
 }
 
 opj_image_t* tgatoimage(const char *filename, opj_cparameters_t *parameters) {

@@ -9,30 +9,11 @@ INCLUDE_DIRECTORIES(${OPENJPEG_SOURCE_DIR}/libopenjpeg
                     )
 
 # First thing define the common source:
-SET(comparePGXimages_SRCS comparePGXimages.c ${OPENJPEG_SOURCE_DIR}/applications/codec/convert.c)
+SET(comparePGXimages_SRCS comparePGXimages.c ${OPENJPEG_SOURCE_DIR}/applications/codec/convert.c ${OPENJPEG_SOURCE_DIR}/applications/common/opj_getopt.c)
 
-SET(compare_dump_files_SRCS compare_dump_files.c)
+SET(compare_dump_files_SRCS compare_dump_files.c ${OPENJPEG_SOURCE_DIR}/applications/common/opj_getopt.c)
 
-SET(compareRAWimages_SRCS compareRAWimages.c)
-
-# If not getopt was found then add it to the exe:
-IF(DONT_HAVE_GETOPT)
-  message("dont have getopt, we will add it")
-  SET(comparePGXimages_SRCS
-    ${comparePGXimages_SRCS}
-    ${OPENJPEG_SOURCE_DIR}/applications/common/getopt.c
-  )
-  
-  SET(compare_dump_files_SRCS
-    ${compare_dump_files_SRCS}
-    ${OPENJPEG_SOURCE_DIR}/applications/common/getopt.c
-  )
-  
-  SET(compareRAWimages_SRCS
-    ${compareRAWimages_SRCS}
-    ${OPENJPEG_SOURCE_DIR}/applications/common/getopt.c
-  )
-ENDIF(DONT_HAVE_GETOPT)
+SET(compareRAWimages_SRCS compareRAWimages.c ${OPENJPEG_SOURCE_DIR}/applications/common/opj_getopt.c)
 
 ADD_EXECUTABLE(comparePGXimages ${comparePGXimages_SRCS})
 TARGET_LINK_LIBRARIES(comparePGXimages ${OPENJPEG_LIBRARY_NAME}

@@ -111,10 +111,6 @@ ENDIF(NOT OPENJPEG_INSTALL_PACKAGE_DIR)
 INCLUDE (${CMAKE_ROOT}/Modules/CMakeBackwardCompatibilityC.cmake)
 
 #-----------------------------------------------------------------------------
-# Test for getopt being available in this system
-INCLUDE (${OPENJPEG_SOURCE_DIR}/CMake/CheckHaveGetopt.cmake )
-
-#-----------------------------------------------------------------------------
 # Setup file for setting custom ctest vars
 CONFIGURE_FILE(
   ${CMAKE_SOURCE_DIR}/CMake/CTestCustom.cmake.in

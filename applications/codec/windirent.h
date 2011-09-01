@@ -124,7 +124,7 @@
 #   error "not implemented"
 # elif defined(__sgi)                          /* Silicon Graphics */
 #   define HAVE_DIRENT_H
-# elif defined(sun) || defined(_sun)           /* Sun Solaris */
+# elif defined(sun) || defined(__sun)           /* Sun Solaris */
 #   define HAVE_DIRENT_H
 # elif defined(__FreeBSD__)                    /* FreeBSD */
 #   define HAVE_DIRENT_H

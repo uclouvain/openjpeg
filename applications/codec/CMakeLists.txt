@@ -5,15 +5,8 @@ SET(common_SRCS
   convert.c
   index.c
   ${OPENJPEG_SOURCE_DIR}/applications/common/color.c
-)
-
-# If not getopt was found then add it to the lib:
-IF(DONT_HAVE_GETOPT)
-  SET(common_SRCS
-    ${common_SRCS}
-    ${OPENJPEG_SOURCE_DIR}/applications/common/getopt.c
+  ${OPENJPEG_SOURCE_DIR}/applications/common/opj_getopt.c
   )
-ENDIF(DONT_HAVE_GETOPT)
 
 # Headers file are located here:
 INCLUDE_DIRECTORIES(

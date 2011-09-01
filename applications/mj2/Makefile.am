@@ -37,7 +37,7 @@ frames_to_mj2_CFLAGS =
 frames_to_mj2_LDADD = -lm
 frames_to_mj2_SOURCES = \
 $(OPJ_SRC) \
-../common/getopt.c \
+../common/opj_getopt.c \
 mj2_convert.c \
 mj2.c \
 frames_to_mj2.c \
@@ -58,7 +58,7 @@ mj2_to_frames_LDADD = @LCMS2_LIBS@ @LCMS1_LIBS@
 mj2_to_frames_SOURCES = \
 $(OPJ_SRC) \
 ../common/color.c \
-../common/getopt.c \
+../common/opj_getopt.c \
 mj2_convert.c \
 mj2.c \
 mj2_to_frames.c \

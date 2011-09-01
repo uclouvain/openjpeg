@@ -22,7 +22,7 @@ j2k_to_image_CFLAGS =
 j2k_to_image_LDADD = $(top_builddir)/libopenjpeg/libopenjpeg.la @LCMS1_LIBS@ @LCMS2_LIBS@ @TIFF_LIBS@ @PNG_LIBS@ -lm
 j2k_to_image_SOURCES = \
 ../common/color.c \
-../common/getopt.c \
+../common/opj_getopt.c \
 convert.c \
 index.c \
 j2k_to_image.c \
@@ -41,7 +41,7 @@ image_to_j2k_CPPFLAGS = \
 image_to_j2k_CFLAGS = 
 image_to_j2k_LDADD = $(top_builddir)/libopenjpeg/libopenjpeg.la @TIFF_LIBS@ @PNG_LIBS@ -lm
 image_to_j2k_SOURCES = \
-../common/getopt.c \
+../common/opj_getopt.c \
 convert.c \
 index.c \
 image_to_j2k.c \
@@ -60,10 +60,10 @@ j2k_dump_CPPFLAGS = \
 j2k_dump_CFLAGS = 
 j2k_dump_LDADD = $(top_builddir)/libopenjpeg/libopenjpeg.la -lm
 j2k_dump_SOURCES = \
-../common/getopt.c \
+../common/opj_getopt.c \
 index.c \
 j2k_dump.c \
-../common/getopt.h \
+../common/opj_getopt.h \
 index.h
 
 JPWL_j2k_to_image_CPPFLAGS = \
@@ -81,7 +81,7 @@ JPWL_j2k_to_image_CFLAGS =
 JPWL_j2k_to_image_LDADD = $(top_builddir)/libopenjpeg/jpwl/libopenjpeg_JPWL.la  @LCMS1_LIBS@ @LCMS2_LIBS@ @TIFF_LIBS@ @PNG_LIBS@
 JPWL_j2k_to_image_SOURCES = \
 ../common/color.c \
-../common/getopt.c \
+../common/opj_getopt.c \
 index.c \
 convert.c \
 j2k_to_image.c
@@ -99,7 +99,7 @@ JPWL_image_to_j2k_CFLAGS =
 JPWL_image_to_j2k_LDADD = $(top_builddir)/libopenjpeg/jpwl/libopenjpeg_JPWL.la @TIFF_LIBS@ @PNG_LIBS@
 
 JPWL_image_to_j2k_SOURCES = \
-../common/getopt.c \
+../common/opj_getopt.c \
 index.c \
 convert.c \
 image_to_j2k.c
