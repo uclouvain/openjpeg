@@ -37,7 +37,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#include "getopt.h"
+#include "opj_getopt.h"
 
 typedef struct test_cmp_parameters
 {
@@ -71,42 +71,42 @@ int parse_cmdline_cmp(int argc, char **argv, test_cmp_parameters* param)
   param->base_filename = NULL;
   param->test_filename = NULL;
 
-  opterr = 0;
+  opj_opterr = 0;
 
-  while ((c = getopt(argc, argv, optlist)) != -1)
+  while ((c = opj_getopt(argc, argv, optlist)) != -1)
     switch (c)
       {
       case 'b':
-        sizemembasefile = (int)strlen(optarg)+1;
+        sizemembasefile = (int)strlen(opj_optarg)+1;
         param->base_filename = (char*) malloc(sizemembasefile);
         param->base_filename[0] = '\0';
-        strncpy(param->base_filename, optarg, strlen(optarg));
-        param->base_filename[strlen(optarg)] = '\0';
+        strncpy(param->base_filename, opj_optarg, strlen(opj_optarg));
+        param->base_filename[strlen(opj_optarg)] = '\0';
         //printf("param->base_filename = %s [%d / %d]\n", param->base_filename, strlen(param->base_filename), sizemembasefile );
         break;
       case 't':
-        sizememtestfile = (int) strlen(optarg) + 1;
+        sizememtestfile = (int) strlen(opj_optarg) + 1;
         param->test_filename = (char*) malloc(sizememtestfile);
         param->test_filename[0] = '\0';
-        strncpy(param->test_filename, optarg, strlen(optarg));
-        param->test_filename[strlen(optarg)] = '\0';
+        strncpy(param->test_filename, opj_optarg, strlen(opj_optarg));
+        param->test_filename[strlen(opj_optarg)] = '\0';
         //printf("param->test_filename = %s [%d / %d]\n", param->test_filename, strlen(param->test_filename), sizememtestfile);
        break;
       case '?':
-        if ( (optopt == 'b') || (optopt == 't') )
-          fprintf(stderr, "Option -%c requires an argument.\n", optopt);
+        if ( (opj_optopt == 'b') || (opj_optopt == 't') )
+          fprintf(stderr, "Option -%c requires an argument.\n", opj_optopt);
         else
-          if (isprint(optopt)) fprintf(stderr, "Unknown option `-%c'.\n", optopt);
-          else fprintf(stderr, "Unknown option character `\\x%x'.\n", optopt);
+          if (isprint(opj_optopt)) fprintf(stderr, "Unknown option `-%c'.\n", opj_optopt);
+          else fprintf(stderr, "Unknown option character `\\x%x'.\n", opj_optopt);
         return 1;
       default:
-        fprintf(stderr, "WARNING -> this option is not valid \"-%c %s\"\n", c, optarg);
+        fprintf(stderr, "WARNING -> this option is not valid \"-%c %s\"\n", c, opj_optarg);
         break;
       }
 
-  if (optind != argc)
+  if (opj_optind != argc)
     {
-    for (index = optind; index < argc; index++)
+    for (index = opj_optind; index < argc; index++)
       fprintf(stderr,"Non-option argument %s\n", argv[index]);
     return EXIT_FAILURE;
     }
@@ -190,7 +190,6 @@ int main(int argc, char **argv)
       size_t nbytes = 2048;
       int CRLF_shift=1;
       char *strbase, *strtest, *strbase_d, *strtest_d;
-      char *return_value_fgets;
 
       printf("Files differ at line %lu:\n", l);
       fseek(fbase,pos,SEEK_SET);
@@ -207,27 +206,29 @@ int main(int argc, char **argv)
       strbase = (char *) malloc(nbytes + 1);
       strtest = (char *) malloc(nbytes + 1);
 
-      return_value_fgets = fgets(strbase, nbytes, fbase);
-      if (!strcmp(return_value_fgets,strbase))
-      	fprintf(stderr,"\nWARNING: fgets return a value different that the first argument");
-      free(return_value_fgets);
+	if (fgets(strbase, nbytes, fbase) == NULL)
+		fprintf(stderr,"\nWARNING: fgets return a NULL value");
+	else
+	{
+		if (fgets(strtest, nbytes, ftest) == NULL)
+			fprintf(stderr,"\nWARNING: fgets return a NULL value");
+		else
+		{
+			strbase_d = (char *) malloc(strlen(strbase)+1);
+			strtest_d = (char *) malloc(strlen(strtest)+1);
+			strncpy(strbase_d, strbase, strlen(strbase)-1);
+			strncpy(strtest_d, strtest, strlen(strtest)-CRLF_shift);
+			strbase_d[strlen(strbase)-1] = '\0';
+			strtest_d[strlen(strtest)-CRLF_shift] = '\0';
+			printf("<%s> vs. <%s>\n", strbase_d, strtest_d);
+			free(strbase_d);free(strtest_d);
+		}
+	}
 
-      return_value_fgets = fgets(strtest, nbytes, ftest);
-      if (!strcmp(return_value_fgets,strtest))
-    	  fprintf(stderr,"\nWARNING: fgets return a value different that the first argument");
-      free(return_value_fgets);
+	free(strbase);free(strtest);
+	
+	same = 0;
 
-      strbase_d = (char *) malloc(strlen(strbase)+1);
-      strtest_d = (char *) malloc(strlen(strtest)+1);
-      strncpy(strbase_d, strbase, strlen(strbase)-1);
-      strncpy(strtest_d, strtest, strlen(strtest)-CRLF_shift);
-      strbase_d[strlen(strbase)-1] = '\0';
-      strtest_d[strlen(strtest)-CRLF_shift] = '\0';
-      printf("<%s> vs. <%s>\n", strbase_d, strtest_d);
-
-      free(strbase);free(strtest);
-      free(strbase_d);free(strtest_d);
-      same = 0;
       break;
       }
     else

@@ -4,15 +4,8 @@
 SET(common_SRCS
   ../codec/convert.c
   ../codec/index.c
+  ../common/opj_getopt.c
   )
-
-# If not getopt was found then add it to the lib:
-IF(DONT_HAVE_GETOPT)
-  SET(common_SRCS
-    ${common_SRCS}
-    ../common/getopt.c
-  )
-ENDIF(DONT_HAVE_GETOPT)
 
 
 # Headers file are located here:

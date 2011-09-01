@@ -15,5 +15,5 @@ CMakeLists.txt \
 common/color.c \
 common/color.h \
 common/format_defs.h \
-common/getopt.c \
-common/getopt.h
+common/opj_getopt.c \
+common/opj_getopt.h

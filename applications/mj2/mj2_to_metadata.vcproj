@@ -208,7 +208,7 @@
 				Name="MJ2 Header Files"
 				>
 				<File
-					RelativePath="compat\getopt.h"
+					RelativePath="compat\opj_getopt.h"
 					>
 				</File>
 				<File
@@ -232,7 +232,7 @@
 				Name="MJ2 Source Files"
 				>
 				<File
-					RelativePath="compat\getopt.c"
+					RelativePath="compat\opj_getopt.c"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"

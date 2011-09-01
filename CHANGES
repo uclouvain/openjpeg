@@ -5,6 +5,16 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+September 1st, 2011
+! [antonin] renamed getopt.{c/h} to opj_getopt.{c/h} and forced the use of these files rather than the system ones. This fixed issue 78. Credit to Winfried.
+
+August 31, 2011
+* [mickael] fixed a segfault with fgets return value for some cases inside test function compare_dump_file()
++ [mickael] enhance the encoding test suite and remove unsued CONFIGURE_FILE into a CMakeList
+
+August 30, 2011
++ [mickael] added first version of the encoding tests suite
+
 August 16, 2011
 + [antonin] added NEWS, AUTHORS and THANKS files. Cosmetic changes in autotools files.
 - [antonin] removed obsolete testing directory and *.nix files

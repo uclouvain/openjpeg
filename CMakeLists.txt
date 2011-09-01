@@ -111,10 +111,6 @@ ENDIF(NOT OPENJPEG_INSTALL_PACKAGE_DIR)
 INCLUDE (${CMAKE_ROOT}/Modules/CMakeBackwardCompatibilityC.cmake)
 
 #-----------------------------------------------------------------------------
-# Test for getopt being available in this system
-INCLUDE (${OPENJPEG_SOURCE_DIR}/CMake/CheckHaveGetopt.cmake )
-
-#-----------------------------------------------------------------------------
 # Setup file for setting custom ctest vars
 CONFIGURE_FILE(
   ${CMAKE_SOURCE_DIR}/CMake/CTestCustom.cmake.in
@@ -243,18 +239,19 @@ IF(BUILD_TESTING)
     ENABLE_TESTING()
     INCLUDE(CTest)
   
-    # Add repository where to find tests
-    ADD_SUBDIRECTORY(tests)
-  
     # Search openjpeg data needed for the tests
     # They could be found via svn on the OpenJPEG google code project
     # svn checkout http://openjpeg.googlecode.com/svn/data (about 70 Mo) 
     FIND_PATH(OPJ_DATA_ROOT README-OPJ-Data 
               PATHS $ENV{OPJ_DATA_ROOT} ${CMAKE_SOURCE_DIR}/../data)
-              
-    SET (REF_DECODER_BIN_PATH "NOT-FOUND" CACHE PATH "Single directory where find the reference encoder binaries to enable encoding test suite.")
+  
+    # For encoding tests we need the path to the ref decoder exe/lib (kakadu)           
+    SET (REF_DECODER_BIN_PATH "NOTFOUND" CACHE PATH "Single directory where find the reference decoder binaries to enable encoding test suite.")
     MARK_AS_ADVANCED(REF_DECODER_BIN_PATH)
-          
+    
+    # Add repository where to find tests
+    ADD_SUBDIRECTORY(tests)
+    
   ELSE(BUILD_CODEC)
     message(FATAL_ERROR "You need build codec to run the tests")
   ENDIF(BUILD_CODEC)

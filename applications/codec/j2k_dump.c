@@ -47,7 +47,7 @@
 #include "openjpeg.h"
 #include "j2k.h"
 #include "jp2.h"
-#include "getopt.h"
+#include "opj_getopt.h"
 #include "convert.h"
 #include "index.h"
 
@@ -197,7 +197,7 @@ char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_dparamet
 int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,img_fol_t *img_fol, char *indexfilename) {
 	/* parse the command line */
 	int totlen, c;
-	option_t long_option[]={
+	opj_option_t long_option[]={
 		{"ImgDir",REQ_ARG, NULL ,'y'},
 	};
 	const char optlist[] = "i:o:h";
@@ -207,13 +207,13 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 	totlen=sizeof(long_option);
 	img_fol->set_out_format = 0;
 	do {
-		c = getopt_long(argc, argv,optlist,long_option,totlen);
+		c = opj_getopt_long(argc, argv,optlist,long_option,totlen);
 		if (c == -1)
 			break;
 		switch (c) {
 			case 'i':			/* input file */
 			{
-				char *infile = optarg;
+				char *infile = opj_optarg;
 				parameters->decod_format = get_file_format(infile);
 				switch(parameters->decod_format) {
 					case J2K_CFMT:
@@ -234,7 +234,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 
 			case 'o':     /* output file */
 			{
-			  char *outfile = optarg;
+			  char *outfile = opj_optarg;
 			  strncpy(parameters->outfile, outfile, sizeof(parameters->outfile)-1);
 			}
 			break;
@@ -249,8 +249,8 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 
 			case 'y':			/* Image Directory path */
 				{
-					img_fol->imgdirpath = (char*)malloc(strlen(optarg) + 1);
-					strcpy(img_fol->imgdirpath,optarg);
+					img_fol->imgdirpath = (char*)malloc(strlen(opj_optarg) + 1);
+					strcpy(img_fol->imgdirpath,opj_optarg);
 					img_fol->set_imgdir=1;
 				}
 				break;
@@ -258,7 +258,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 				/* ----------------------------------------------------- */
 			
 			default:
-				fprintf(stderr,"WARNING -> this option is not valid \"-%c %s\"\n",c, optarg);
+				fprintf(stderr,"WARNING -> this option is not valid \"-%c %s\"\n",c, opj_optarg);
 				break;
 		}
 	}while(c != -1);

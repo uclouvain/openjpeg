@@ -36,7 +36,7 @@
 #include "cio.h"
 #include "mj2.h"
 #include "mj2_convert.h"
-#include "getopt.h"
+#include "opj_getopt.h"
 
 /**
 Size of memory first allocated for MOOV box
@@ -289,15 +289,15 @@ int main(int argc, char **argv)
 	}
 
   while (1) {
-    int c = getopt(argc, argv,
+    int c = opj_getopt(argc, argv,
       "i:o:r:q:f:t:n:c:b:p:s:d:P:S:E:M:R:T:C:I:W:F:D:h");
     if (c == -1)
       break;
     switch (c) {
     case 'i':			/* IN fill */
 			{
-				char *infile = optarg;
-				s = optarg;
+				char *infile = opj_optarg;
+				s = opj_optarg;
 				while (*s) {
 					s++;
 				}
@@ -324,7 +324,7 @@ int main(int argc, char **argv)
       /* ----------------------------------------------------- */
     case 'o':			/* OUT fill */
 			{
-				char *outfile = optarg;
+				char *outfile = opj_optarg;
 				while (*outfile) {
 					outfile++;
 				}
@@ -335,7 +335,7 @@ int main(int argc, char **argv)
 				outfile--;
 				S1 = *outfile;
 				
-				outfile = optarg;
+				outfile = opj_optarg;
 				
 				if ((S1 == 'm' && S2 == 'j' && S3 == '2')
 					|| (S1 == 'M' && S2 == 'J' && S3 == '2'))
@@ -353,7 +353,7 @@ int main(int argc, char **argv)
     case 'r':			/* rates rates/distorsion */
 			{
 				float rate;
-				s = optarg;
+				s = opj_optarg;
 				while (sscanf(s, "%f", &rate) == 1) {
 					j2k_parameters->tcp_rates[j2k_parameters->tcp_numlayers] = rate * 2;
 					j2k_parameters->tcp_numlayers++;
@@ -369,7 +369,7 @@ int main(int argc, char **argv)
       break;
       /* ----------------------------------------------------- */
     case 'q':			/* add fixed_quality */
-      s = optarg;
+      s = opj_optarg;
 			while (sscanf(s, "%f", &j2k_parameters->tcp_distoratio[j2k_parameters->tcp_numlayers]) == 1) {
 				j2k_parameters->tcp_numlayers++;
 				while (*s && *s != ',') {
@@ -388,7 +388,7 @@ int main(int argc, char **argv)
 				int *row = NULL, *col = NULL;
 				int numlayers = 0, numresolution = 0, matrix_width = 0;
 				
-				s = optarg;
+				s = opj_optarg;
 				sscanf(s, "%d", &numlayers);
 				s++;
 				if (numlayers > 9)
@@ -429,12 +429,12 @@ int main(int argc, char **argv)
 			break;
       /* ----------------------------------------------------- */
     case 't':			/* tiles */
-      sscanf(optarg, "%d,%d", &j2k_parameters->cp_tdx, &j2k_parameters->cp_tdy);
+      sscanf(opj_optarg, "%d,%d", &j2k_parameters->cp_tdx, &j2k_parameters->cp_tdy);
 			j2k_parameters->tile_size_on = OPJ_TRUE;
       break;
       /* ----------------------------------------------------- */
     case 'n':			/* resolution */
-      sscanf(optarg, "%d", &j2k_parameters->numresolution);
+      sscanf(opj_optarg, "%d", &j2k_parameters->numresolution);
       break;
       /* ----------------------------------------------------- */
     case 'c':			/* precinct dimension */
@@ -442,7 +442,7 @@ int main(int argc, char **argv)
 				char sep;
 				int res_spec = 0;
 
-				char *s = optarg;
+				char *s = opj_optarg;
 				do {
 					sep = 0;
 					sscanf(s, "[%d,%d]%c", &j2k_parameters->prcw_init[res_spec],
@@ -460,7 +460,7 @@ int main(int argc, char **argv)
     case 'b':			/* code-block dimension */
 			{
 				int cblockw_init = 0, cblockh_init = 0;
-				sscanf(optarg, "%d,%d", &cblockw_init, &cblockh_init);
+				sscanf(opj_optarg, "%d,%d", &cblockw_init, &cblockh_init);
 				if (cblockw_init * cblockh_init > 4096 || cblockw_init > 1024
 					|| cblockw_init < 4 || cblockh_init > 1024 || cblockh_init < 4) {
 					fprintf(stderr,
@@ -477,7 +477,7 @@ int main(int argc, char **argv)
 			{
 				char progression[5];
 				
-				strncpy(progression, optarg, 5);
+				strncpy(progression, opj_optarg, 5);
 				j2k_parameters->prog_order = give_progression(progression);
 				if (j2k_parameters->prog_order == -1) {
 					fprintf(stderr, "Unrecognized progression order "
@@ -489,7 +489,7 @@ int main(int argc, char **argv)
       /* ----------------------------------------------------- */
     case 's':			/* subsampling factor */
       {
-				if (sscanf(optarg, "%d,%d", &j2k_parameters->subsampling_dx,
+				if (sscanf(opj_optarg, "%d,%d", &j2k_parameters->subsampling_dx,
                                     &j2k_parameters->subsampling_dy) != 2) {
 					fprintf(stderr,	"'-s' sub-sampling argument error !  [-s dx,dy]\n");
 					return 1;
@@ -499,7 +499,7 @@ int main(int argc, char **argv)
       /* ----------------------------------------------------- */
     case 'd':			/* coordonnate of the reference grid */
       {
-				if (sscanf(optarg, "%d,%d", &j2k_parameters->image_offset_x0,
+				if (sscanf(opj_optarg, "%d,%d", &j2k_parameters->image_offset_x0,
                                     &j2k_parameters->image_offset_y0) != 2) {
 					fprintf(stderr,	"-d 'coordonnate of the reference grid' argument "
             "error !! [-d x0,y0]\n");
@@ -518,7 +518,7 @@ int main(int argc, char **argv)
 				int numpocs = 0;		/* number of progression order change (POC) default 0 */
 				opj_poc_t *POC = NULL;	/* POC : used in case of Progression order change */
 
-				char *s = optarg;
+				char *s = opj_optarg;
 				POC = j2k_parameters->POC;
 
 				while (sscanf(s, "T%d=%d,%d,%d,%d,%d,%4s", &POC[numpocs].tile,
@@ -548,7 +548,7 @@ int main(int argc, char **argv)
       break;
       /* ------------------------------------------------------ */
     case 'M':			/* Mode switch pas tous au point !! */
-      if (sscanf(optarg, "%d", &value) == 1) {
+      if (sscanf(opj_optarg, "%d", &value) == 1) {
 				for (i = 0; i <= 5; i++) {
 					int cache = value & (1 << i);
 					if (cache)
@@ -559,7 +559,7 @@ int main(int argc, char **argv)
       /* ------------------------------------------------------ */
     case 'R':			/* ROI */
       {
-				if (sscanf(optarg, "OI:c=%d,U=%d", &j2k_parameters->roi_compno,
+				if (sscanf(opj_optarg, "OI:c=%d,U=%d", &j2k_parameters->roi_compno,
                                            &j2k_parameters->roi_shift) != 2) {
 					fprintf(stderr, "ROI error !! [-ROI:c='compno',U='shift']\n");
 					return 1;
@@ -569,7 +569,7 @@ int main(int argc, char **argv)
       /* ------------------------------------------------------ */
     case 'T':			/* Tile offset */
 			{
-				if (sscanf(optarg, "%d,%d", &j2k_parameters->cp_tx0, &j2k_parameters->cp_ty0) != 2) {
+				if (sscanf(opj_optarg, "%d,%d", &j2k_parameters->cp_tx0, &j2k_parameters->cp_ty0) != 2) {
 					fprintf(stderr, "-T 'tile offset' argument error !! [-T X0,Y0]");
 					return 1;
 				}
@@ -578,9 +578,9 @@ int main(int argc, char **argv)
       /* ------------------------------------------------------ */
     case 'C':			/* Add a comment */
 			{
-				j2k_parameters->cp_comment = (char*)malloc(strlen(optarg) + 1);
+				j2k_parameters->cp_comment = (char*)malloc(strlen(opj_optarg) + 1);
 				if(j2k_parameters->cp_comment) {
-					strcpy(j2k_parameters->cp_comment, optarg);
+					strcpy(j2k_parameters->cp_comment, opj_optarg);
 				}
 			}
 			break;
@@ -593,7 +593,7 @@ int main(int argc, char **argv)
       /* ------------------------------------------------------ */
     case 'W':			/* Width and Height and Cb and Cr subsampling in case of YUV format files */
       if (sscanf
-				(optarg, "%d,%d,%d,%d", &mj2_parameters.w, &mj2_parameters.h, &mj2_parameters.CbCr_subsampling_dx,
+				(opj_optarg, "%d,%d,%d,%d", &mj2_parameters.w, &mj2_parameters.h, &mj2_parameters.CbCr_subsampling_dx,
 				&mj2_parameters.CbCr_subsampling_dy) != 4) {
 				fprintf(stderr, "-W argument error");
 				return 1;
@@ -601,14 +601,14 @@ int main(int argc, char **argv)
       break;
       /* ------------------------------------------------------ */
     case 'F':			/* Video frame rate */
-      if (sscanf(optarg, "%d", &mj2_parameters.frame_rate) != 1) {
+      if (sscanf(opj_optarg, "%d", &mj2_parameters.frame_rate) != 1) {
 				fprintf(stderr, "-F argument error");
 				return 1;
       }
       break;
       /* ------------------------------------------------------ */
 	case 'D': /* Depth: the precision */
-		if(sscanf(optarg, "%d", &prec) != 1) prec = 0;
+		if(sscanf(opj_optarg, "%d", &prec) != 1) prec = 0;
 		break;
 
     default:

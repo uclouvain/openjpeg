@@ -16,7 +16,7 @@ can be bound by the Open JPEG open-source license and disclaimer, expressed else
 
 #include "mj2_to_metadata.h"
 #include <string.h>
-#include "getopt.h"
+#include "opj_getopt.h"
 
 /* -------------------------------------------------------------------------- */
 

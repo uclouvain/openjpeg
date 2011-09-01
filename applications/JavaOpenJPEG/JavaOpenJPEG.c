@@ -37,7 +37,7 @@
 #include <math.h>
 
 #include "openjpeg.h"
-#include "getopt.h"
+#include "opj_getopt.h"
 #include "convert.h"
 #include "index.h"
 #include "dirent.h"
@@ -492,7 +492,7 @@ void cinema_setup_encoder(opj_cparameters_t *parameters,opj_image_t *image, img_
 int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 													img_fol_t *img_fol, char *indexfilename) {
 	int i, j,totlen;
-	option_t long_option[]={
+	opj_option_t long_option[]={
 		{"cinema2K",REQ_ARG, NULL ,'w'},
 		{"cinema4K",NO_ARG, NULL ,'y'},
 		{"ImgDir",REQ_ARG, NULL ,'z'},
@@ -523,7 +523,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 	reset_options_reading();
 
 	while (1) {
-    int c = getopt_long(argc, argv, optlist,long_option,totlen);
+    int c = opj_getopt_long(argc, argv, optlist,long_option,totlen);
 		if (c == -1)
 			break;
 		switch (c) {
@@ -532,7 +532,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 
 			case 'o':			/* output file */
 			{
-				char *outfile = optarg;
+				char *outfile = opj_optarg;
 				parameters->cod_format = get_file_format(outfile);
 				switch(parameters->cod_format) {
 					case J2K_CFMT:
@@ -550,14 +550,14 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 			case 'O':			/* output format */
 				{
 					char outformat[50];
-					char *of = optarg;
+					char *of = opj_optarg;
 					sprintf(outformat,".%s",of);
 					img_fol->set_out_format = 1;
 					parameters->cod_format = get_file_format(outformat);
 					switch(parameters->cod_format) {
 						case J2K_CFMT:
 						case JP2_CFMT:
-							img_fol->out_format = optarg;
+							img_fol->out_format = opj_optarg;
 							break;
 						default:
 							fprintf(stderr, "Unknown output format image [only j2k, j2c, jp2]!! \n");
@@ -572,7 +572,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 
 			case 'r':			/* rates rates/distorsion */
 			{
-				char *s = optarg;
+				char *s = opj_optarg;
 				while (sscanf(s, "%f", &parameters->tcp_rates[parameters->tcp_numlayers]) == 1) {
 					parameters->tcp_numlayers++;
 					while (*s && *s != ',') {
@@ -590,7 +590,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 
 			case 'q':			/* add fixed_quality */
 			{
-				char *s = optarg;
+				char *s = opj_optarg;
 				while (sscanf(s, "%f", &parameters->tcp_distoratio[parameters->tcp_numlayers]) == 1) {
 					parameters->tcp_numlayers++;
 					while (*s && *s != ',') {
@@ -612,7 +612,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 				int *row = NULL, *col = NULL;
 				int numlayers = 0, numresolution = 0, matrix_width = 0;
 
-				char *s = optarg;
+				char *s = opj_optarg;
 				sscanf(s, "%d", &numlayers);
 				s++;
 				if (numlayers > 9)
@@ -656,7 +656,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 
 			case 't':			/* tiles */
 			{
-				sscanf(optarg, "%d,%d", &parameters->cp_tdx, &parameters->cp_tdy);
+				sscanf(opj_optarg, "%d,%d", &parameters->cp_tdx, &parameters->cp_tdy);
 				parameters->tile_size_on = true;
 			}
 			break;
@@ -665,7 +665,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 
 			case 'n':			/* resolution */
 			{
-				sscanf(optarg, "%d", &parameters->numresolution);
+				sscanf(opj_optarg, "%d", &parameters->numresolution);
 			}
 			break;
 
@@ -675,7 +675,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 				char sep;
 				int res_spec = 0;
 
-				char *s = optarg;
+				char *s = opj_optarg;
 				do {
 					sep = 0;
 					sscanf(s, "[%d,%d]%c", &parameters->prcw_init[res_spec],
@@ -694,7 +694,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 			case 'b':			/* code-block dimension */
 			{
 				int cblockw_init = 0, cblockh_init = 0;
-				sscanf(optarg, "%d,%d", &cblockw_init, &cblockh_init);
+				sscanf(opj_optarg, "%d,%d", &cblockw_init, &cblockh_init);
 				if (cblockw_init * cblockh_init > 4096 || cblockw_init > 1024
 					|| cblockw_init < 4 || cblockh_init > 1024 || cblockh_init < 4) {
 					fprintf(stderr,
@@ -711,7 +711,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 
 			case 'x':			/* creation of index file */
 			{
-				char *index = optarg;
+				char *index = opj_optarg;
 				strncpy(indexfilename, index, OPJ_PATH_LEN);
 			}
 			break;
@@ -722,7 +722,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 			{
 				char progression[4];
 
-				strncpy(progression, optarg, 4);
+				strncpy(progression, opj_optarg, 4);
 				parameters->prog_order = give_progression(progression);
 				if (parameters->prog_order == -1) {
 					fprintf(stderr, "Unrecognized progression order "
@@ -736,7 +736,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 
 			case 's':			/* subsampling factor */
 			{
-				if (sscanf(optarg, "%d,%d", &parameters->subsampling_dx,
+				if (sscanf(opj_optarg, "%d,%d", &parameters->subsampling_dx,
                                     &parameters->subsampling_dy) != 2) {
 					fprintf(stderr,	"'-s' sub-sampling argument error !  [-s dx,dy]\n");
 					return 1;
@@ -748,7 +748,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 
 			case 'd':			/* coordonnate of the reference grid */
 			{
-				if (sscanf(optarg, "%d,%d", &parameters->image_offset_x0,
+				if (sscanf(opj_optarg, "%d,%d", &parameters->image_offset_x0,
                                     &parameters->image_offset_y0) != 2) {
 					fprintf(stderr,	"-d 'coordonnate of the reference grid' argument "
             "error !! [-d x0,y0]\n");
@@ -770,7 +770,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 				int numpocs = 0;		/* number of progression order change (POC) default 0 */
 				opj_poc_t *POC = NULL;	/* POC : used in case of Progression order change */
 
-				char *s = optarg;
+				char *s = opj_optarg;
 				POC = parameters->POC;
 
 				while (sscanf(s, "T%d=%d,%d,%d,%d,%d,%4s", &POC[numpocs].tile,
@@ -812,7 +812,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 			case 'M':			/* Mode switch pas tous au point !! */
 			{
 				int value = 0;
-				if (sscanf(optarg, "%d", &value) == 1) {
+				if (sscanf(opj_optarg, "%d", &value) == 1) {
 					for (i = 0; i <= 5; i++) {
 						int cache = value & (1 << i);
 						if (cache)
@@ -826,7 +826,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 
 			case 'R':			/* ROI */
 			{
-				if (sscanf(optarg, "c=%d,U=%d", &parameters->roi_compno,
+				if (sscanf(opj_optarg, "c=%d,U=%d", &parameters->roi_compno,
                                            &parameters->roi_shift) != 2) {
 					fprintf(stderr, "ROI error !! [-ROI c='compno',U='shift']\n");
 					return 1;
@@ -838,7 +838,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 
 			case 'T':			/* Tile offset */
 			{
-				if (sscanf(optarg, "%d,%d", &parameters->cp_tx0, &parameters->cp_ty0) != 2) {
+				if (sscanf(opj_optarg, "%d,%d", &parameters->cp_tx0, &parameters->cp_ty0) != 2) {
 					fprintf(stderr, "-T 'tile offset' argument error !! [-T X0,Y0]");
 					return 1;
 				}
@@ -849,9 +849,9 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 
 			case 'C':			/* add a comment */
 			{
-				parameters->cp_comment = (char*)malloc(strlen(optarg) + 1);
+				parameters->cp_comment = (char*)malloc(strlen(opj_optarg) + 1);
 				if(parameters->cp_comment) {
-					strcpy(parameters->cp_comment, optarg);
+					strcpy(parameters->cp_comment, opj_optarg);
 				}
 			}
 			break;
@@ -869,7 +869,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 			
 			case 'v':			/* Tile part generation*/
 			{
-				parameters->tp_flag = optarg[0];
+				parameters->tp_flag = opj_optarg[0];
 				parameters->tp_on = 1;
 			}
 			break;	
@@ -878,8 +878,8 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 			
 			case 'z':			/* Image Directory path */
 			{
-				img_fol->imgdirpath = (char*)malloc(strlen(optarg) + 1);
-				strcpy(img_fol->imgdirpath,optarg);
+				img_fol->imgdirpath = (char*)malloc(strlen(opj_optarg) + 1);
+				strcpy(img_fol->imgdirpath,opj_optarg);
 				img_fol->set_imgdir=1;
 			}
 			break;
@@ -889,7 +889,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 			case 'w':			/* Digital Cinema 2K profile compliance*/
 			{
 				int fps=0;
-				sscanf(optarg,"%d",&fps);
+				sscanf(opj_optarg,"%d",&fps);
 				if(fps == 24){
 					parameters->cp_cinema = CINEMA2K_24;
 				}else if(fps == 48 ){
@@ -933,7 +933,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 				/* search for different protection methods */
 
 				/* break the option in comma points and parse the result */
-				token = strtok(optarg, ",");
+				token = strtok(opj_optarg, ",");
 				while(token != NULL) {
 
 					/* search header error protection method */
