@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+September 2, 2011
+* [mickael] fixed windows nighlty crash about one missing opj_getopt() (and warning with other platform)
+
 September 1st, 2011
 ! [antonin] renamed getopt.{c/h} to opj_getopt.{c/h} and forced the use of these files rather than the system ones. This fixed issue 78. Credit to Winfried.
 
