@@ -51,8 +51,6 @@ FOREACH(filepath ${OPJ_DATA_NR_LIST})
 #                       PROPERTIES DEPENDS 
 #                       NR-${filename}-decode)    
   
-<<<<<<< .working
-ENDFOREACH(filepath)=======
 ENDFOREACH(filepath)
 
 
@@ -209,8 +207,3 @@ FOREACH(OPJ_TEST_ENC_CMD_LINE ${OPJ_TEST_ENC_CMD_LINE_LIST})
   ENDIF(NOT IGNORE_LINE_FOUND)
 
 ENDFOREACH(OPJ_TEST_ENC_CMD_LINE)
-
-
-
-
->>>>>>> .merge-right.r907

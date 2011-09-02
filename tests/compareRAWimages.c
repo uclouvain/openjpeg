@@ -74,7 +74,7 @@ int parse_cmdline_cmp(int argc, char **argv, test_cmp_parameters* param)
 	param->test_filename = NULL;
 
 	opj_opterr = 0;
-	while ((c = getopt(argc, argv, optlist)) != -1)
+	while ((c = opj_getopt(argc, argv, optlist)) != -1)
 		switch (c)
 		{
 		case 'b':
