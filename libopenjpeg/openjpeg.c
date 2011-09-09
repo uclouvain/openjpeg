@@ -248,7 +248,7 @@ void OPJ_CALLCONV opj_set_default_encoder_parameters(opj_cparameters_t *paramete
     parameters->cp_disto_alloc = 0;
 		parameters->cp_fixed_alloc = 0;
 		parameters->cp_fixed_quality = 0;
-
+		parameters->jpip_on = OPJ_FALSE;
 /* UniPG>> */
 #ifdef USE_JPWL
 		parameters->jpwl_epc_on = OPJ_FALSE;
@@ -315,7 +315,7 @@ opj_bool OPJ_CALLCONV opj_encode_with_info(opj_cinfo_t *cinfo, opj_cio_t *cio, o
 			case CODEC_J2K:
 				return j2k_encode((opj_j2k_t*)cinfo->j2k_handle, cio, image, cstr_info);
 			case CODEC_JP2:
-				return opj_jp2_encode((opj_jp2_t*)cinfo->jp2_handle, cio, image, cstr_info);
+				return opj_jp2_encode((opj_jp2_t*)cinfo->jp2_handle, cio, image, cstr_info);	    
 			case CODEC_JPT:
 			case CODEC_UNKNOWN:
 			default:
@@ -333,6 +333,7 @@ void OPJ_CALLCONV opj_destroy_cstr_info(opj_codestream_info_t *cstr_info) {
 			opj_free(tile_info->thresh);
 			opj_free(tile_info->packet);
 			opj_free(tile_info->tp);
+			opj_free(tile_info->marker);
 		}
 		opj_free(cstr_info->tile);
 		opj_free(cstr_info->marker);

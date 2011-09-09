@@ -22,6 +22,11 @@ ${OPENJPEG_SOURCE_DIR}/libopenjpeg/t1.c
 ${OPENJPEG_SOURCE_DIR}/libopenjpeg/t2.c
 ${OPENJPEG_SOURCE_DIR}/libopenjpeg/tcd.c
 ${OPENJPEG_SOURCE_DIR}/libopenjpeg/tgt.c
+${OPENJPEG_SOURCE_DIR}/libopenjpeg/cidx_manager.c
+${OPENJPEG_SOURCE_DIR}/libopenjpeg/phix_manager.c
+${OPENJPEG_SOURCE_DIR}/libopenjpeg/ppix_manager.c
+${OPENJPEG_SOURCE_DIR}/libopenjpeg/thix_manager.c
+${OPENJPEG_SOURCE_DIR}/libopenjpeg/tpix_manager.c
 )
 
 SET(MJ2_SRCS mj2.c mj2_convert.c)

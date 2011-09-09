@@ -41,6 +41,11 @@ t1_generate_luts.c \
 t2.c \
 tcd.c \
 tgt.c \
+cidx_manager.c \
+phix_manager.c \
+ppix_manager.c \
+thix_manager.c \
+tpix_manager.c \
 bio.h \
 cio.h \
 dwt.h \
@@ -62,7 +67,8 @@ t1.h \
 t1_luts.h \
 t2.h \
 tcd.h \
-tgt.h
+tgt.h \
+cidx_manager.h
 
 EXTRA_DIST = \
 CMakeLists.txt

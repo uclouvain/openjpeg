@@ -18,7 +18,12 @@ OPJ_SRC = \
 ../../libopenjpeg/t1.c \
 ../../libopenjpeg/t2.c \
 ../../libopenjpeg/tcd.c \
-../../libopenjpeg/tgt.c
+../../libopenjpeg/tgt.c \
+../../libopenjpeg/cidx_manager.c \
+../../libopenjpeg/phix_manager.c \
+../../libopenjpeg/ppix_manager.c \
+../../libopenjpeg/thix_manager.c \
+../../libopenjpeg/tpix_manager.c
 
 bin_PROGRAMS = \
 frames_to_mj2 \

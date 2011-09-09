@@ -6,6 +6,7 @@
  * Copyright (c) 2003-2007, Francois-Olivier Devaux and Antonin Descampe
  * Copyright (c) 2005, Herve Drolon, FreeImage Team
  * Copyright (c) 2006-2007, Parvatha Elangovan
+ * Copyright (c) 2010-2011, Kaori Hagihara
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -228,6 +229,23 @@ Read an unknown marker
 @param j2k J2K handle
 */
 static void j2k_read_unk(opj_j2k_t *j2k);
+/**
+Add main header marker information
+@param cstr_info Codestream information structure
+@param type marker type
+@param pos byte offset of marker segment
+@param len length of marker segment
+ */
+static void j2k_add_mhmarker(opj_codestream_info_t *cstr_info, unsigned short int type, int pos, int len);
+/**
+Add tile header marker information
+@param tileno tile index number
+@param cstr_info Codestream information structure
+@param type marker type
+@param pos byte offset of marker segment
+@param len length of marker segment
+ */
+static void j2k_add_tlmarker( int tileno, opj_codestream_info_t *cstr_info, unsigned short int type, int pos, int len);
 
 /*@}*/
 
@@ -328,12 +346,14 @@ static void j2k_write_soc(opj_j2k_t *j2k) {
 	opj_cio_t *cio = j2k->cio;
 	cio_write(cio, J2K_MS_SOC, 2);
 
+	if(j2k->cstr_info)
+	  j2k_add_mhmarker(j2k->cstr_info, J2K_MS_SOC, cio_tell(cio), 0);
+
 /* UniPG>> */
 #ifdef USE_JPWL
 
 	/* update markers struct */
 	j2k_add_marker(j2k->cstr_info, J2K_MS_SOC, cio_tell(cio) - 2, 2);
-
 #endif /* USE_JPWL */
 /* <<UniPG */
 }
@@ -354,7 +374,7 @@ static void j2k_write_siz(opj_j2k_t *j2k) {
 	opj_cio_t *cio = j2k->cio;
 	opj_image_t *image = j2k->image;
 	opj_cp_t *cp = j2k->cp;
-	
+
 	cio_write(cio, J2K_MS_SIZ, 2);	/* SIZ */
 	lenp = cio_tell(cio);
 	cio_skip(cio, 2);
@@ -377,6 +397,9 @@ static void j2k_write_siz(opj_j2k_t *j2k) {
 	cio_seek(cio, lenp);
 	cio_write(cio, len, 2);		/* Lsiz */
 	cio_seek(cio, lenp + len);
+	
+	if(j2k->cstr_info)
+	  j2k_add_mhmarker(j2k->cstr_info, J2K_MS_SIZ, lenp, len);
 }
 
 static void j2k_read_siz(opj_j2k_t *j2k) {
@@ -607,6 +630,11 @@ static void j2k_write_com(opj_j2k_t *j2k) {
 		cio_seek(cio, lenp);
 		cio_write(cio, len, 2);
 		cio_seek(cio, lenp + len);
+
+		
+		if(j2k->cstr_info)
+		  j2k_add_mhmarker(j2k->cstr_info, J2K_MS_COM, lenp, len);
+
 	}
 }
 
@@ -710,6 +738,10 @@ static void j2k_write_cod(opj_j2k_t *j2k) {
 	cio_seek(cio, lenp);
 	cio_write(cio, len, 2);		/* Lcod */
 	cio_seek(cio, lenp + len);
+
+	if(j2k->cstr_info)
+	  j2k_add_mhmarker(j2k->cstr_info, J2K_MS_COD, lenp, len);
+
 }
 
 static void j2k_read_cod(opj_j2k_t *j2k) {
@@ -890,6 +922,9 @@ static void j2k_write_qcd(opj_j2k_t *j2k) {
 	cio_seek(cio, lenp);
 	cio_write(cio, len, 2);			/* Lqcd */
 	cio_seek(cio, lenp + len);
+
+	if(j2k->cstr_info)
+	  j2k_add_mhmarker(j2k->cstr_info, J2K_MS_QCD, lenp, len);
 }
 
 static void j2k_read_qcd(opj_j2k_t *j2k) {
@@ -1211,6 +1246,10 @@ static void j2k_write_sot(opj_j2k_t *j2k) {
 	j2k_add_marker(j2k->cstr_info, J2K_MS_SOT, j2k->sot_start, len + 2);
 #endif /* USE_JPWL */
 	/* <<UniPG */
+
+	if( j2k->cstr_info && j2k->cur_tp_num==0){
+	  j2k_add_tlmarker( j2k->curtileno, j2k->cstr_info, J2K_MS_SOT, lenp, len);
+	}
 }
 
 static void j2k_read_sot(opj_j2k_t *j2k) {
@@ -1357,6 +1396,11 @@ static void j2k_write_sod(opj_j2k_t *j2k, void *tile_coder) {
 	tcd->cur_tp_num = j2k->cur_tp_num;
 	
 	cio_write(cio, J2K_MS_SOD, 2);
+
+	if( j2k->cstr_info && j2k->cur_tp_num==0){
+	  j2k_add_tlmarker( j2k->curtileno, j2k->cstr_info, J2K_MS_SOD, cio_tell(cio), 0);
+	}
+
 	if (j2k->curtileno == 0) {
 		j2k->sod_start = cio_tell(cio) + j2k->pos_correction;
 	}
@@ -1849,7 +1893,6 @@ opj_image_t* j2k_decode(opj_j2k_t *j2k, opj_cio_t *cio, opj_codestream_info_t *c
 	if (j2k->state != J2K_STATE_MT) {
 		opj_event_msg(cinfo, EVT_WARNING, "Incomplete bitstream\n");
 	}
-
 	return image;
 }
 
@@ -2337,6 +2380,9 @@ opj_bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, opj_code
 		/* INDEX >> */
 		if(cstr_info) {
 			cstr_info->tile[j2k->curtileno].start_pos = cio_tell(cio) + j2k->pos_correction;
+			cstr_info->tile[j2k->curtileno].maxmarknum = 10;
+			cstr_info->tile[j2k->curtileno].marker = (opj_marker_info_t *) opj_malloc(cstr_info->tile[j2k->curtileno].maxmarknum * sizeof(opj_marker_info_t));
+			cstr_info->tile[j2k->curtileno].marknum = 0;
 		}
 		/* << INDEX */
 
@@ -2446,8 +2492,43 @@ opj_bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, opj_code
 	return OPJ_TRUE;
 }
 
+static void j2k_add_mhmarker(opj_codestream_info_t *cstr_info, unsigned short int type, int pos, int len) {
 
+	if (!cstr_info)
+		return;
 
+	/* expand the list? */
+	if ((cstr_info->marknum + 1) > cstr_info->maxmarknum) {
+		cstr_info->maxmarknum = 100 + (int) ((float) cstr_info->maxmarknum * 1.0F);
+		cstr_info->marker = (opj_marker_info_t*)opj_realloc(cstr_info->marker, cstr_info->maxmarknum);
+	}
 
+	/* add the marker */
+	cstr_info->marker[cstr_info->marknum].type = type;
+	cstr_info->marker[cstr_info->marknum].pos = pos;
+	cstr_info->marker[cstr_info->marknum].len = len;
+	cstr_info->marknum++;
 
+}
 
+static void j2k_add_tlmarker( int tileno, opj_codestream_info_t *cstr_info, unsigned short int type, int pos, int len) {
+
+  opj_marker_info_t *marker;
+
+	if (!cstr_info)
+		return;
+
+	/* expand the list? */
+	if ((cstr_info->tile[tileno].marknum + 1) > cstr_info->tile[tileno].maxmarknum) {
+		cstr_info->tile[tileno].maxmarknum = 100 + (int) ((float) cstr_info->tile[tileno].maxmarknum * 1.0F);
+		cstr_info->tile[tileno].marker = (opj_marker_info_t*)opj_realloc(cstr_info->tile[tileno].marker, cstr_info->maxmarknum);
+	}
+
+	marker = &(cstr_info->tile[tileno].marker[cstr_info->tile[tileno].marknum]);
+
+	/* add the marker */
+	marker->type = type;
+	marker->pos = pos;
+	marker->len = len;
+	cstr_info->tile[tileno].marknum++;
+}
