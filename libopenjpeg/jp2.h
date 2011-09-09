@@ -140,6 +140,7 @@ typedef struct opj_jp2 {
 	opj_jp2_comps_t *comps;
 	unsigned int j2k_codestream_offset;
 	unsigned int j2k_codestream_length;
+	opj_bool jpip_on;
 } opj_jp2_t;
 
 /**
@@ -222,6 +223,7 @@ Encode an image into a JPEG-2000 file stream
 @return Returns true if successful, returns false otherwise
 */
 opj_bool opj_jp2_encode(opj_jp2_t *jp2, opj_cio_t *cio, opj_image_t *image, opj_codestream_info_t *cstr_info);
+
 /* ----------------------------------------------------------------------- */
 /*@}*/
 

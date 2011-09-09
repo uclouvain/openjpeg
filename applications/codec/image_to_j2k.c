@@ -209,6 +209,9 @@ void encode_help_display(void) {
 	fprintf(stdout,"               -F rawWidth,rawHeight,rawComp,rawBitDepth,s/u (Signed/Unsigned)\n");
 	fprintf(stdout,"               Example: -i lena.raw -o lena.j2k -F 512,512,3,8,u\n");
 	fprintf(stdout,"\n");
+	fprintf(stdout,"-jpip        : write jpip codestream index box in JP2 output file\n");
+	fprintf(stdout,"               NOTICE: currently supports only RPCL order\n");
+	fprintf(stdout,"\n");
 /* UniPG>> */
 #ifdef USE_JPWL
 	fprintf(stdout,"-W           : adoption of JPWL (Part 11) capabilities (-W params)\n");
@@ -584,6 +587,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 		{"OutFor",REQ_ARG, NULL ,'O'},
 		{"POC",REQ_ARG, NULL ,'P'},
 		{"ROI",REQ_ARG, NULL ,'R'},
+		{"jpip",NO_ARG, NULL, 'J'}
 	};
 
 	/* parse the command line */
@@ -1369,8 +1373,15 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 			break;
 #endif /* USE_JPWL */
 /* <<UniPG */
-
+/* ------------------------------------------------------ */
+			
+			case 'J':			/* jpip on */
+			{
+			  parameters->jpip_on = OPJ_TRUE;
+			}
+			break;
 				/* ------------------------------------------------------ */
+
 
 			default:
 				fprintf(stderr, "ERROR -> Command line not valid\n");
@@ -1686,7 +1697,7 @@ int main(int argc, char **argv) {
 
 				/* encode the image */
 				if (*indexfilename)					// If need to extract codestream information
-					bSuccess = opj_encode_with_info(cinfo, cio, image, &cstr_info);
+				  bSuccess = opj_encode_with_info(cinfo, cio, image, &cstr_info);
 				else
 					bSuccess = opj_encode(cinfo, cio, image, NULL);
 				if (!bSuccess) {
@@ -1725,9 +1736,10 @@ int main(int argc, char **argv) {
 				int codestream_length;
 				opj_cio_t *cio = NULL;
 				FILE *f = NULL;
+				opj_cinfo_t *cinfo = NULL;
 
-				/* get a JP2 compressor handle */
-				opj_cinfo_t* cinfo = opj_create_compress(CODEC_JP2);
+				/* get a JP2 compressor handle */				
+				cinfo = opj_create_compress(CODEC_JP2);
 
 				/* catch events using our callbacks and give a local context */
 				opj_set_event_mgr((opj_common_ptr)cinfo, &event_mgr, stderr);
@@ -1740,8 +1752,8 @@ int main(int argc, char **argv) {
 				cio = opj_cio_open((opj_common_ptr)cinfo, NULL, 0);
 
 				/* encode the image */
-				if (*indexfilename)					// If need to extract codestream information
-					bSuccess = opj_encode_with_info(cinfo, cio, image, &cstr_info);
+				if (*indexfilename || parameters.jpip_on) // If need to extract codestream information
+				  bSuccess = opj_encode_with_info(cinfo, cio, image, &cstr_info);
 				else
 					bSuccess = opj_encode(cinfo, cio, image, NULL);
 				if (!bSuccess) {

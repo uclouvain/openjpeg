@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+September 9, 2011
++ [antonin] added a new indexer functionality to the library. With the new '-jpip' option at encoding, the user can now generate a JP2 file including an XML box with the index used when browsing the image with JPIP. 
+
 September 2, 2011
 ! [mickael] correct nightly crash on all platform linked to merge operation and missing opj_getopt command
 

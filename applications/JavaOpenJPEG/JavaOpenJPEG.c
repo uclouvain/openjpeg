@@ -216,6 +216,9 @@ void encode_help_display() {
 	fprintf(stdout,"\n");
 	fprintf(stdout,"-I           : use the irreversible DWT 9-7 (-I) \n");
 	fprintf(stdout,"\n");
+	fprintf(stdout,"-jpip        : write jpip codestream index box in JP2 output file\n");
+	fprintf(stdout,"               NOTICE: currently supports only RPCL order\n");
+	fprintf(stdout,"\n");
 /* UniPG>> */
 #ifdef USE_JPWL
 	fprintf(stdout,"-W           : adoption of JPWL (Part 11) capabilities (-W params)\n");
@@ -502,6 +505,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 		{"OutFor",REQ_ARG, NULL ,'O'},
 		{"POC",REQ_ARG, NULL ,'P'},
 		{"ROI",REQ_ARG, NULL ,'R'},
+		{"jpip",NO_ARG, NULL, 'J'}
 	};
 
 	/* parse the command line */
@@ -1238,7 +1242,13 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 			break;
 #endif /* USE_JPWL */
 /* <<UniPG */
-
+/* ------------------------------------------------------ */
+			
+			case 'J':			/* jpip on */
+			{
+			  parameters->jpip_on = OPJ_TRUE;
+			}
+			break;
 				/* ------------------------------------------------------ */
 
 			default:
@@ -1898,7 +1908,7 @@ JNIEXPORT jlong JNICALL Java_org_openJpeg_OpenJPEGJavaEncoder_internalEncodeImag
 		if (parameters.cod_format == J2K_CFMT) {	/* J2K format output */
 			cinfo = opj_create_compress(CODEC_J2K);
 		} else {									/* JP2 format output */
-			cinfo = opj_create_compress(CODEC_JP2);
+		    cinfo = opj_create_compress(CODEC_JP2);
 		}
 		/* catch events using our callbacks and give a local context */
 		opj_set_event_mgr((opj_common_ptr)cinfo, &event_mgr, &msgErrorCallback_vars);
