@@ -106,10 +106,11 @@ Client:
     % ../opj_dec_server
 
  2. Open image viewers (as many as needed)
-    % java -jar opj_viewer.jar http://hostname/myFCGI JP2_filename.jp2
+    % java -jar opj_viewer.jar http://hostname/myFCGI JP2_filename.jp2 [stateless]
     ( The arguments 
       - http://hostname/myFCGI is the HTTP server URI (myFCGI refers to opj_server by the server setting)
-      - JP2_filename.jp2 is the name of a JP2 file available on the server.)
+      - JP2_filename.jp2 is the name of a JP2 file available on the server.
+      - stateless if stateless request is desired, otherwise session request is implemented
     Image viewer GUI instructions:
       Scale up request: Enlarge the window
       ROI request:      Select a region by mouse click and drag, then click inside the red frame of the selected region
