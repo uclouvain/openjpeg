@@ -55,7 +55,7 @@ public class ImageViewer extends JPanel
     private Rectangle roirect[] = null;
     private String roiname[] = null;
       
-    public ImageViewer( String j2kfilename, ImageManager manager)
+    public ImageViewer( String j2kfilename, ImageManager manager, boolean session)
     {
 	String str;
 
@@ -70,7 +70,7 @@ public class ImageViewer extends JPanel
 	myRL = new ResizeListener(this);
 
 	imgmanager = manager;
-	img = imgmanager.getImage( j2kfilename, vw, vh);
+	img = imgmanager.getImage( j2kfilename, vw, vh, session);
 
 	addMouseListener(myMML);
 	addMouseMotionListener(myMML);

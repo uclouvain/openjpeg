@@ -38,13 +38,13 @@ public class ImageWindow extends JFrame
     //    private OptionPanel optpanel;
     private ImageManager imgmanager;
     
-    public ImageWindow( String uri, String j2kfilename)
+    public ImageWindow( String uri, String j2kfilename, boolean session)
     {
 	super( j2kfilename);
 
 	imgmanager = new ImageManager( uri);
     
-	imgviewer = new ImageViewer( j2kfilename, imgmanager);
+	imgviewer = new ImageViewer( j2kfilename, imgmanager, session);
 	imgviewer.setOpaque(true); //content panes must be opaque
     
 	//	optpanel = new OptionPanel( imgmanager, imgviewer);
@@ -71,16 +71,21 @@ public class ImageWindow extends JFrame
     public static void main(String s[])
     {
 	String j2kfilename, uri;
+	boolean session;
 
 	if(s.length > 0){
 	    uri = s[0];
 	    j2kfilename = s[1];
+	    if( s.length > 2)
+		session = !s[2].equalsIgnoreCase( "stateless");
+	    else
+		session = true;
 	}
 	else{
-	    System.out.println("Usage: java -jar opj_viewer.jar HTTP_server_URI imagefile.jp2");
+	    System.out.println("Usage: java -jar opj_viewer.jar HTTP_server_URI imagefile.jp2 [stateless/session]");
 	    return;
 	}
-	ImageWindow frame = new ImageWindow( uri, j2kfilename);
+	ImageWindow frame = new ImageWindow( uri, j2kfilename, session);
     
 	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
    

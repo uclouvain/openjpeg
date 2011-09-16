@@ -33,17 +33,17 @@ import java.net.*;
 
 public class ImgdecClient{
 
-    public static PnmImage decode_jpipstream( byte[] jpipstream, String cid, int fw, int fh)
+    public static PnmImage decode_jpipstream( byte[] jpipstream, String tid, String cid, int fw, int fh)
     {
 	if( jpipstream != null)
 	    send_JPIPstream( jpipstream);
-	return get_PNMstream( cid, fw, fh);
+	return get_PNMstream( cid, tid, fw, fh);
     }
 
     public static PnmImage decode_jpipstream( byte[] jpipstream, String j2kfilename, String tid, String cid, int fw, int fh)
     {
 	send_JPIPstream( jpipstream, j2kfilename, tid, cid);
-	return get_PNMstream( cid, fw, fh);
+	return get_PNMstream( cid, tid, fw, fh);
     }
     
     public static void send_JPIPstream( byte[] jpipstream)
@@ -91,10 +91,13 @@ public class ImgdecClient{
 		os.writeBytes( "0\n");
 	    else
 		os.writeBytes( tid + "\n");
-	    os.writeBytes( cid + "\n");
+	    if( cid == null)
+		os.writeBytes( "0\n");
+	    else
+		os.writeBytes( cid + "\n");
 	    os.writeBytes( length + "\n");
 	    os.write( jpipstream, 0, length);
-      
+	    
 	    byte signal = is.readByte();
       
 	    if( signal == 0)
@@ -106,7 +109,7 @@ public class ImgdecClient{
 	}
     }
 
-    public static PnmImage get_PNMstream( String cid, int fw, int fh)
+    public static PnmImage get_PNMstream( String cid, String tid, int fw, int fh)
     {
 	PnmImage pnmstream = new PnmImage();
 	try {
@@ -116,7 +119,13 @@ public class ImgdecClient{
 	    byte []header = new byte[7];
 	    
 	    os.writeBytes("PNM request\n");
-	    os.writeBytes( cid + "\n");
+	    if( cid != null)
+		os.writeBytes( cid + "\n");
+	    else
+		if( tid != null)
+		    os.writeBytes( tid + "\n");
+		else
+		    os.writeBytes( "0\n");
 	    os.writeBytes( fw + "\n");
 	    os.writeBytes( fh + "\n");
 
