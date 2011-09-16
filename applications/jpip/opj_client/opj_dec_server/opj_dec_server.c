@@ -247,10 +247,12 @@ void handle_JPIPstreamMSG( SOCKET connected_socket, cachelist_param_t *cachelist
   parse_metamsg( msgqueue, *jpipstream, *streamlen, metadatalist);
   
   // cid registration
-  if( target[0] != 0 && tid[0] != 0 && cid[0] != 0){
+  if( target[0] != 0){
     if((cache = search_cache( target, cachelist))){
-      add_cachecid( cid, cache);
-      update_cachetid( tid, cache);
+      if( tid[0] != 0)
+	update_cachetid( tid, cache);
+      if( cid[0] != 0)
+	add_cachecid( cid, cache);
     }
     else{
       cache = gene_cache( target, msgqueue->last->csn, tid, cid);
@@ -277,7 +279,8 @@ void handle_PNMreqMSG( SOCKET connected_socket, Byte_t *jpipstream, msgqueue_par
   
   receive_line( connected_socket, cid);
   if(!(cache = search_cacheBycid( cid, cachelist)))
-    return;
+    if(!(cache = search_cacheBytid( cid, cachelist)))
+      return;
 
   receive_line( connected_socket, tmp);
   fw = atoi( tmp);

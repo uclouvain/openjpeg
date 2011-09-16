@@ -123,6 +123,7 @@ Byte_t * receive_JPIPstream( SOCKET connected_socket, char *target, char *tid, c
   
   target[0] = 0;
   cid[0] = 0;
+  tid[0] = 0;
   
   if((linelen = receive_line( connected_socket, buf)) == 0)
     return NULL;
@@ -140,11 +141,13 @@ Byte_t * receive_JPIPstream( SOCKET connected_socket, char *target, char *tid, c
     
     if((linelen = receive_line( connected_socket, buf)) == 0)
       return NULL;
-    strcpy( tid, buf);
+    if( strcmp( buf, "0") != 0)
+      strcpy( tid, buf);
 
     if((linelen = receive_line( connected_socket, buf)) == 0)
       return NULL;
-    strcpy( cid, buf);
+    if( strcmp( buf, "0") != 0)
+      strcpy( cid, buf);
     
     if((linelen = receive_line( connected_socket, buf)) == 0)
       return NULL;
