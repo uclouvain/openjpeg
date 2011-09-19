@@ -841,7 +841,7 @@ opj_bool t2_decode_packets_v2(
 						OPJ_BYTE *p_src,
 						OPJ_UINT32 * p_data_read,
 						OPJ_UINT32 p_max_len,
-						struct opj_codestream_info *p_cstr_info)
+						struct opj_codestream_info_v2 *p_cstr_info)
 {
 	OPJ_BYTE *l_current_data = p_src;
 	opj_pi_iterator_t *l_pi = 00;
@@ -901,7 +901,7 @@ opj_bool t2_decode_packets_v2(
 
 			/* INDEX >> */
 			if(p_cstr_info) {
-				opj_tile_info_t *info_TL = &p_cstr_info->tile[p_tile_no];
+				opj_tile_info_v2_t *info_TL = &p_cstr_info->tile[p_tile_no];
 				opj_packet_info_t *info_PK = &info_TL->packet[p_cstr_info->packno];
 				if (!p_cstr_info->packno) {
 					info_PK->start_pos = info_TL->end_header + 1;

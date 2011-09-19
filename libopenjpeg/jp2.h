@@ -334,8 +334,7 @@ opj_bool jp2_end_decompress(opj_jp2_v2_t *jp2, struct opj_stream_private *cio, s
  */
 opj_bool jp2_read_header(	struct opj_stream_private *p_stream,
 							opj_jp2_v2_t *jp2,
-							opj_image_header_t ** p_image_header,
-							struct opj_codestream_info** p_cstr_info,
+							opj_file_info_t * p_file_info,
 							struct opj_event_mgr * p_manager
 							);
 

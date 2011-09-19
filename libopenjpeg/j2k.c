@@ -1476,23 +1476,34 @@ opj_bool j2k_read_siz_v2 (
 
 	/* Index */
 	if (p_j2k->cstr_info) {
-		//opj_codestream_info_t *cstr_info = p_j2k->cstr_info;
+		int it_tile = 0;
+
 		p_j2k->cstr_info->image_w = l_image->x1 - l_image->x0;
 		p_j2k->cstr_info->image_h = l_image->y1 - l_image->y0;
 		p_j2k->cstr_info->numcomps = l_image->numcomps;
 		p_j2k->cstr_info->tw = l_cp->tw;
 		p_j2k->cstr_info->th = l_cp->th;
-		p_j2k->cstr_info->tile_x = l_cp->tdx;
-		p_j2k->cstr_info->tile_y = l_cp->tdy;
-		p_j2k->cstr_info->tile_Ox = l_cp->tx0;
-		p_j2k->cstr_info->tile_Oy = l_cp->ty0;
-		p_j2k->cstr_info->tile = (opj_tile_info_t*) opj_calloc(l_nb_tiles, sizeof(opj_tile_info_t));
-		if (p_j2k->cstr_info->tile == 00) {
-			opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory to take in charge SIZ marker\n");
+		p_j2k->cstr_info->tdx = l_cp->tdx;
+		p_j2k->cstr_info->tdy = l_cp->tdy;
+		p_j2k->cstr_info->tx0 = l_cp->tx0;
+		p_j2k->cstr_info->ty0 = l_cp->ty0;
+
+		p_j2k->cstr_info->tile = (opj_tile_info_v2_t*) opj_calloc(l_nb_tiles, sizeof(opj_tile_info_v2_t));
+		if (! p_j2k->cstr_info->tile) {
+			opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory [SIZ marker]\n");
 			return OPJ_FALSE;
 		}
-		memset(p_j2k->cstr_info->tile,0,l_nb_tiles * sizeof(opj_tile_info_t));
+
+		for (it_tile = 0; it_tile < l_nb_tiles; it_tile++ ) {
+			p_j2k->cstr_info->tile[it_tile].tccp_info =
+					(opj_tccp_info_t*) opj_calloc( l_image->numcomps, sizeof(opj_tccp_info_t));
+			if (! p_j2k->cstr_info->tile[it_tile].tccp_info) {
+				opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory [SIZ marker]\n");
+				return OPJ_FALSE;
+			}
+		}
 	}
+
 	return OPJ_TRUE;
 }
 
@@ -1706,20 +1717,20 @@ opj_bool j2k_read_cod_v2 (
 	opj_tcp_v2_t *l_tcp = 00;
 	opj_image_header_t *l_image = 00;
 
-	// preconditions
+	/* preconditions */
 	assert(p_header_data != 00);
 	assert(p_j2k != 00);
 	assert(p_manager != 00);
 
 	l_image = p_j2k->m_image_header;
 	l_cp = &(p_j2k->m_cp);
-	// If we are in a tile-part header
+
+	/* If we are in the first tile-part header of the current tile */
 	l_tcp = (p_j2k->m_specific_param.m_decoder.m_state == J2K_STATE_TPH) ? /*FIXME J2K_DEC_STATE_TPH)*/
 				&l_cp->tcps[p_j2k->m_current_tile_number] :
 				p_j2k->m_specific_param.m_decoder.m_default_tcp;
 
-
-	// Make sure room is sufficient
+	/* Make sure room is sufficient */
 	if (p_header_size < 5) {
 		opj_event_msg_v2(p_manager, EVT_ERROR, "Error reading COD marker\n");
 		return OPJ_FALSE;
@@ -3505,7 +3516,7 @@ opj_bool j2k_read_sod_v2 (
 					)
 {
 	OPJ_UINT32 l_current_read_size;
-	opj_codestream_info_t * l_cstr_info = 00;
+	opj_codestream_info_v2_t * l_cstr_info = 00;
 	OPJ_BYTE ** l_current_data = 00;
 	opj_tcp_v2_t * l_tcp = 00;
 	OPJ_UINT32 * l_tile_len = 00;
@@ -4894,16 +4905,13 @@ opj_bool j2k_end_decompress(
  */
 opj_bool j2k_read_header(	struct opj_stream_private *p_stream,
 							opj_j2k_v2_t* p_j2k,
-							struct opj_image_header** image_header,
-							struct opj_codestream_info** cstr_info,
+							opj_file_info_t* p_file_info,
 							struct opj_event_mgr* p_manager )
 {
-	// preconditions
+	/* preconditions */
 	assert(p_j2k != 00);
 	assert(p_stream != 00);
 	assert(p_manager != 00);
-
-	//p_image_header = NULL;
 
 	/* create an empty image header */
 	p_j2k->m_image_header = opj_image_header_create0();
@@ -4931,18 +4939,120 @@ opj_bool j2k_read_header(	struct opj_stream_private *p_stream,
 		return OPJ_FALSE;
 	}
 
-	*cstr_info = p_j2k->cstr_info;
+	/* If necessary copy j2k header information into the output structure */
+	if (p_file_info->file_info_flag & OPJ_J2K_INFO){
+		fill_cstr_info( &(p_file_info->codestream_info), p_j2k, p_manager);
+	}
 
-	*image_header = p_j2k->m_image_header;
-	(*image_header)->tile_x0 = p_j2k->m_cp.tx0;
-	(*image_header)->tile_y0 = p_j2k->m_cp.ty0;
-	(*image_header)->tile_width = p_j2k->m_cp.tdx;
-	(*image_header)->tile_height = p_j2k->m_cp.tdy;
-	(*image_header)->nb_tiles_x = p_j2k->m_cp.tw;
-	(*image_header)->nb_tiles_y = p_j2k->m_cp.th;
+	/* If necessary copy image header information into the output structure */
+	if (p_file_info->file_info_flag & OPJ_IMG_INFO){
+		fill_img_info( &(p_file_info->img_info), p_j2k, p_manager);
+	}
 
 	return OPJ_TRUE;
 }
+
+/**
+ * Fill the image info struct from information read from main header.
+ */
+opj_bool fill_img_info(opj_image_header_t* img_info, opj_j2k_v2_t* p_j2k, struct opj_event_mgr* p_manager)
+{
+	opj_image_header_t* l_image_header = p_j2k->m_image_header;
+
+	img_info->x0 = l_image_header->x0;
+	img_info->y0 = l_image_header->y0;
+	img_info->x1 = l_image_header->x1;
+	img_info->y1 = l_image_header->y1;
+	img_info->numcomps = l_image_header->numcomps;
+
+	if (img_info->numcomps) {
+		img_info->comps = (opj_image_comp_header_t*)opj_malloc(img_info->numcomps * sizeof(opj_image_comp_header_t));
+		if (!img_info->comps){
+			opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory\n");
+			return OPJ_FALSE;
+		}
+
+		memcpy(img_info->comps, l_image_header->comps, img_info->numcomps * sizeof(opj_image_comp_header_t) );
+	}
+
+
+	img_info->icc_profile_len = l_image_header->icc_profile_len;
+	if (img_info->icc_profile_len) {
+		img_info->icc_profile_buf = (unsigned char*)opj_malloc(img_info->icc_profile_len * sizeof(unsigned char));
+		if (!img_info->icc_profile_buf){
+			opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory\n");
+			return OPJ_FALSE;
+		}
+
+		memcpy(img_info->icc_profile_buf, l_image_header->icc_profile_buf, img_info->icc_profile_len);
+	}
+
+	return OPJ_TRUE;
+}
+
+/**
+ * Fill the codestream info struct from information read from main header.
+ */
+opj_bool fill_cstr_info(opj_codestream_info_v2_t* cstr_info, opj_j2k_v2_t* p_j2k, struct opj_event_mgr* p_manager)
+{
+
+	//opj_cp_v2_t l_cp = p_j2k->m_cp;
+	opj_image_header_t* l_image_header = p_j2k->m_image_header;
+	int it_tile, it_comp;
+	int nb_tiles, nb_comps;
+
+	cstr_info->image_w = l_image_header->x1 - l_image_header->x0;
+	cstr_info->image_h = l_image_header->y1 - l_image_header->y0;
+	cstr_info->numcomps = l_image_header->numcomps;
+	cstr_info->tw = p_j2k->m_cp.tw;
+	cstr_info->th = p_j2k->m_cp.th;
+	cstr_info->tdx = p_j2k->m_cp.tdx;
+	cstr_info->tdy = p_j2k->m_cp.tdy;
+	cstr_info->tx0 = p_j2k->m_cp.tx0;
+	cstr_info->ty0 = p_j2k->m_cp.ty0;
+
+	nb_tiles = p_j2k->m_cp.tw * p_j2k->m_cp.th;
+	nb_comps = l_image_header->numcomps;
+
+	cstr_info->tile = (opj_tile_info_v2_t*) opj_calloc(nb_tiles, sizeof(opj_tile_info_v2_t));
+	if (! p_j2k->cstr_info->tile) {
+		opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory\n");
+		return OPJ_FALSE;
+	}
+
+	for (it_tile=0; it_tile < nb_tiles; it_tile++){
+		cstr_info->tile[it_tile].tileno = it_tile;
+		cstr_info->tile[it_tile].csty = p_j2k->m_cp.tcps[it_tile].csty;
+		cstr_info->tile[it_tile].prg = p_j2k->m_cp.tcps[it_tile].prg;
+		cstr_info->tile[it_tile].mct = p_j2k->m_cp.tcps[it_tile].mct;
+		cstr_info->tile[it_tile].numlayers = p_j2k->m_cp.tcps[it_tile].numlayers;
+		// FIXME Number of tile part l_cstr_info->tile[it_tile].num_tps = ;
+
+		cstr_info->tile[it_tile].tccp_info =
+			(opj_tccp_info_t*) opj_calloc(nb_comps, sizeof(opj_tccp_info_t));
+		if (! p_j2k->cstr_info->tile[it_tile].tccp_info) {
+			opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory\n");
+			return OPJ_FALSE;
+		}
+
+		for (it_comp=0; it_comp < nb_comps; it_comp++){
+			cstr_info->tile[it_tile].tccp_info[it_comp].compno = it_comp;
+			cstr_info->tile[it_tile].tccp_info[it_comp].cblkh = p_j2k->m_cp.tcps[it_tile].tccps[it_comp].cblkh;
+			cstr_info->tile[it_tile].tccp_info[it_comp].cblkw = p_j2k->m_cp.tcps[it_tile].tccps[it_comp].cblkw;
+			cstr_info->tile[it_tile].tccp_info[it_comp].cblksty = p_j2k->m_cp.tcps[it_tile].tccps[it_comp].cblksty;
+			cstr_info->tile[it_tile].tccp_info[it_comp].csty = p_j2k->m_cp.tcps[it_tile].tccps[it_comp].csty;
+			cstr_info->tile[it_tile].tccp_info[it_comp].numgbits = p_j2k->m_cp.tcps[it_tile].tccps[it_comp].numgbits;
+			cstr_info->tile[it_tile].tccp_info[it_comp].numresolutions = p_j2k->m_cp.tcps[it_tile].tccps[it_comp].numresolutions;
+			cstr_info->tile[it_tile].tccp_info[it_comp].qmfbid = p_j2k->m_cp.tcps[it_tile].tccps[it_comp].qmfbid;
+			cstr_info->tile[it_tile].tccp_info[it_comp].qntsty = p_j2k->m_cp.tcps[it_tile].tccps[it_comp].qntsty;
+			cstr_info->tile[it_tile].tccp_info[it_comp].roishift = p_j2k->m_cp.tcps[it_tile].tccps[it_comp].roishift;
+		}
+	}
+
+	return OPJ_TRUE;
+}
+
+
 
 /**
  * Sets up the procedures to do on reading header. Developpers wanting to extend the library can add their own reading procedures.
@@ -5891,7 +6001,7 @@ opj_j2k_v2_t* j2k_create_decompress_v2()
 	l_j2k->m_specific_param.m_decoder.m_header_data_size = J2K_DEFAULT_HEADER_SIZE;
 
 	// codestream info creation
-	l_j2k->cstr_info = (opj_codestream_info_t*) opj_malloc(sizeof(opj_codestream_info_t));
+	l_j2k->cstr_info = (opj_codestream_info_v2_t*) opj_malloc(sizeof(opj_codestream_info_v2_t));
 	if (!l_j2k->cstr_info){
 		opj_free(l_j2k);
 		return NULL;
@@ -5936,7 +6046,7 @@ opj_bool j2k_read_SPCod_SPCoc(
 	opj_tccp_t *l_tccp = NULL;
 	OPJ_BYTE * l_current_ptr = NULL;
 
-	// preconditions
+	/* preconditions */
 	assert(p_j2k != 00);
 	assert(p_manager != 00);
 	assert(p_header_data != 00);
@@ -5946,22 +6056,23 @@ opj_bool j2k_read_SPCod_SPCoc(
 				&l_cp->tcps[p_j2k->m_current_tile_number] :
 				p_j2k->m_specific_param.m_decoder.m_default_tcp;
 
-	// precondition again
+	/* precondition again */
 	assert(compno < p_j2k->m_image_header->numcomps);
 
 	l_tccp = &l_tcp->tccps[compno];
 	l_current_ptr = p_header_data;
 
-	// make sure room is sufficient
+	/* make sure room is sufficient */
 	if (*p_header_size < 5) {
 		opj_event_msg_v2(p_manager, EVT_ERROR, "Error reading SPCod SPCoc element\n");
 		return OPJ_FALSE;
 	}
+
 	opj_read_bytes(l_current_ptr, &l_tccp->numresolutions ,1);		/* SPcox (D) */
 	++l_tccp->numresolutions;										/* tccp->numresolutions = read() + 1 */
 	++l_current_ptr;
 
-	// If user wants to remove more resolutions than the codestream contains, return error
+	/* If user wants to remove more resolutions than the codestream contains, return error */
 	if (l_cp->m_specific_param.m_dec.m_reduce >= l_tccp->numresolutions) {
 		opj_event_msg_v2(p_manager, EVT_ERROR, "Error decoding component %d.\nThe number of resolutions to remove is higher than the number "
 					"of resolutions of this component\nModify the cp_reduce parameter.\n\n", compno);
@@ -5985,18 +6096,20 @@ opj_bool j2k_read_SPCod_SPCoc(
 
 	*p_header_size = *p_header_size - 5;
 
-	// use custom precinct size ?
+	/* use custom precinct size ? */
 	if (l_tccp->csty & J2K_CCP_CSTY_PRT) {
 		if (*p_header_size < l_tccp->numresolutions) {
 			opj_event_msg_v2(p_manager, EVT_ERROR, "Error reading SPCod SPCoc element\n");
 			return OPJ_FALSE;
 		}
+
 		for	(i = 0; i < l_tccp->numresolutions; ++i) {
 			opj_read_bytes(l_current_ptr,&l_tmp ,1);		/* SPcoc (I_i) */
 			++l_current_ptr;
 			l_tccp->prcw[i] = l_tmp & 0xf;
 			l_tccp->prch[i] = l_tmp >> 4;
 		}
+
 		*p_header_size = *p_header_size - l_tccp->numresolutions;
 	}
 	else {
@@ -6010,6 +6123,14 @@ opj_bool j2k_read_SPCod_SPCoc(
 	/* INDEX >> */
 	if (p_j2k->cstr_info && compno == 0) {
 		OPJ_UINT32 l_data_size = l_tccp->numresolutions * sizeof(OPJ_UINT32);
+
+		p_j2k->cstr_info->tile[p_j2k->m_current_tile_number].tccp_info[compno].cblkh = l_tccp->cblkh;
+		p_j2k->cstr_info->tile[p_j2k->m_current_tile_number].tccp_info[compno].cblkw = l_tccp->cblkw;
+		p_j2k->cstr_info->tile[p_j2k->m_current_tile_number].tccp_info[compno].numresolutions = l_tccp->numresolutions;
+		p_j2k->cstr_info->tile[p_j2k->m_current_tile_number].tccp_info[compno].cblksty = l_tccp->cblksty;
+		p_j2k->cstr_info->tile[p_j2k->m_current_tile_number].tccp_info[compno].qmfbid = l_tccp->qmfbid;
+
+
 		memcpy(p_j2k->cstr_info->tile[p_j2k->m_current_tile_number].pdx,l_tccp->prcw, l_data_size);
 		memcpy(p_j2k->cstr_info->tile[p_j2k->m_current_tile_number].pdy,l_tccp->prch, l_data_size);
 	}
@@ -6031,7 +6152,7 @@ void j2k_copy_tile_component_parameters( opj_j2k_v2_t *p_j2k )
 	opj_tccp_t *l_ref_tccp = NULL, *l_copied_tccp = NULL;
 	OPJ_UINT32 l_prc_size;
 
-	// preconditions
+	/* preconditions */
 	assert(p_j2k != 00);
 
 	l_cp = &(p_j2k->m_cp);

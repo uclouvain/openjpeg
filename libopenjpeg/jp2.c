@@ -2389,8 +2389,7 @@ static opj_bool jp2_read_boxhdr_char(
  */
 opj_bool jp2_read_header(	struct opj_stream_private *p_stream,
 							opj_jp2_v2_t *jp2,
-							opj_image_header_t ** p_image_header,
-							struct opj_codestream_info** p_cstr_info,
+							opj_file_info_t * p_file_info,
 							struct opj_event_mgr * p_manager
 							)
 {
@@ -2417,8 +2416,7 @@ opj_bool jp2_read_header(	struct opj_stream_private *p_stream,
 
 	return j2k_read_header(	p_stream,
 							jp2->j2k,
-							p_image_header,
-							p_cstr_info,
+							p_file_info,
 							p_manager);
 }
 

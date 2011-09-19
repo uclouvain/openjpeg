@@ -201,7 +201,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 	opj_option_t long_option[]={
 		{"ImgDir",REQ_ARG, NULL ,'y'},
 	};
-	const char optlist[] = "i:o:h";
+	const char optlist[] = "i:o:d:h";
 
 	totlen=sizeof(long_option);
 	img_fol->set_out_format = 0;
@@ -257,7 +257,19 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 				break;
 
 				/* ----------------------------------------------------- */
+			case 'd':     		/* Input decode ROI */
+			{
+				int size_optarg = (int)strlen(optarg) + 1;
+				char *ROI_values = (char*) malloc(size_optarg);
+				ROI_values[0] = '\0';
+				strncpy(ROI_values, optarg, strlen(optarg));
+				ROI_values[strlen(optarg)] = '\0';
+				printf("ROI_values = %s [%d / %d]\n", ROI_values, strlen(ROI_values), size_optarg );
+				parse_ROI_values( ROI_values, &parameters->ROI_x0, &parameters->ROI_y0, &parameters->ROI_x1, &parameters->ROI_y1);
+			}
+			break;
 			
+				/* ----------------------------------------------------- */
 			default:
 				fprintf(stderr,"WARNING -> this option is not valid \"-%c %s\"\n",c, opj_optarg);
 				break;
@@ -288,6 +300,34 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 	}
 
 	return 0;
+}
+
+/*******************************************************************************
+ * Parse ROI input values
+ * separator = ","
+ *******************************************************************************/
+int parse_ROI_values( char* inArg, unsigned int *ROI_x0, unsigned int *ROI_y0, unsigned int *ROI_x1, unsigned int *ROI_y1)
+{
+	int it = 0;
+	int values[4];
+	char delims[] = ",";
+	char *result = NULL;
+	result = strtok( inArg, delims );
+
+	while( (result != NULL) && (it < 4 ) ) {
+		values[it] = atoi(result);
+		result = strtok( NULL, delims );
+		it++;
+	}
+
+	if (it != 4) {
+		return EXIT_FAILURE;
+	}
+	else{
+		*ROI_x0 = values[0]; *ROI_y0 = values[1];
+		*ROI_x1 = values[2]; *ROI_y1 = values[3];
+		return EXIT_SUCCESS;
+	}
 }
 
 /* -------------------------------------------------------------------------- */
@@ -323,6 +363,7 @@ int main(int argc, char *argv[])
 	img_fol_t img_fol;
 	opj_event_mgr_t event_mgr;		/* event manager */
 	opj_image_header_t* image = NULL;
+	opj_file_info_t file_info;
 	FILE *fsrc = NULL, *fout = NULL;
 	int num_images;
 	int i,imageno;
@@ -394,7 +435,7 @@ int main(int argc, char *argv[])
 
 	/* Read the header of each image one by one */
 	for(imageno = 0; imageno < num_images ; imageno++){
-		image = NULL;
+
 		fprintf(stderr,"\n");
 
 		if(img_fol.set_imgdir==1){
@@ -404,7 +445,6 @@ int main(int argc, char *argv[])
 			}
 		}
 
-		/*NEW V2 STYLE*/
 		/* read the input file and put it in memory */
 		/* ---------------------------------------- */
 		fsrc = fopen(parameters.infile, "rb");
@@ -414,6 +454,10 @@ int main(int argc, char *argv[])
 		}
 
 		cio = opj_stream_create_default_file_stream(fsrc,1);
+		if (!cio){
+			fprintf(stderr, "ERROR -> failed to create the stream from the file\n");
+			return EXIT_FAILURE;
+		}
 
 		/* decode the code-stream */
 		/* ---------------------- */
@@ -449,7 +493,7 @@ int main(int argc, char *argv[])
 		/* setup the decoder decoding parameters using user parameters */
 		opj_setup_decoder_v2(dinfo, &parameters, &event_mgr);
 
-		if(! opj_read_header(cio, dinfo, &image, &cstr_info)){
+		if(! opj_read_header(cio, dinfo, &file_info, OPJ_IMG_INFO | OPJ_J2K_INFO)){
 			fprintf(stderr, "ERROR -> j2k_dump: failed to read the header\n");
 			opj_stream_destroy(cio);
 			fclose(fsrc);
@@ -457,8 +501,14 @@ int main(int argc, char *argv[])
 			return EXIT_FAILURE;
 		}
 
-		/* Dump file informations from header */
+		printf("Setting decoding area to %d,%d,%d,%d\n",
+				parameters.ROI_x0, parameters.ROI_y0, parameters.ROI_x1, parameters.ROI_x1);
+		opj_set_decode_area(dinfo,
+							parameters.ROI_x0, parameters.ROI_y0,
+							parameters.ROI_x1, parameters.ROI_x1);
 
+		/* Dump file informations from header */
+		dump_file_info(fout, &file_info);
 
 		/* close the byte stream */
 		opj_stream_destroy(cio);
@@ -471,9 +521,10 @@ int main(int argc, char *argv[])
 
 
 		opj_image_header_destroy(image);
+		//FIXME opj_file_info_destroy(file_info);
 
 	}
-/*NEW V2 STYLE*/
+
 
 	/* Close the output file */
 	fclose(fout);
@@ -496,8 +547,8 @@ static void j2k_dump_image(FILE *fd, opj_image_header_t * img) {
 		fprintf(fd, "    sgnd=%d\n", comp->sgnd);
 		fprintf(fd, "  }\n");
 	}
-	fprintf(fd, "  XTOsiz=%d, YTOsiz=%d, XTsiz=%d, YTsiz=%d\n", img->tile_x0, img->tile_y0, img->tile_width, img->tile_height);
-	fprintf(fd, "  Nb of tiles in x direction=%d, Nb of tiles in y direction=%d\n", img->nb_tiles_x, img->nb_tiles_y);
+	//fprintf(fd, "  XTOsiz=%d, YTOsiz=%d, XTsiz=%d, YTsiz=%d\n", img->tile_x0, img->tile_y0, img->tile_width, img->tile_height);
+	//fprintf(fd, "  Nb of tiles in x direction=%d, Nb of tiles in y direction=%d\n", img->nb_tiles_x, img->nb_tiles_y);
 	fprintf(fd, "}\n");
 }
 

@@ -105,6 +105,15 @@ typedef float			OPJ_FLOAT32;
 #define JPWL_MAXIMUM_EPB_ROOM 65450 /**< Expect this maximum number of bytes for composition of EPBs */
 /* <<UniPG */
 
+/**
+Supported options about file information
+*/
+#define OPJ_NO_INFO		0x0	/**< No information provied to the user */
+#define OPJ_IMG_INFO	0x1	/**< Basic image information provided to the user */
+#define OPJ_J2K_INFO	0x2	/**< J2K codestream information provided to the user */
+#define OPJ_JP2_INFO	0x4	/**< JP2 file information provided to the user */
+
+
 /* 
 ==========================================================
    enum definitions
@@ -170,6 +179,9 @@ typedef enum LIMIT_DECODING {
 	LIMIT_TO_MAIN_HEADER = 1,		/**< The decoding is limited to the Main Header */
 	DECODE_ALL_BUT_PACKETS = 2	/**< Decode everything except the JPEG 2000 packets */
 } OPJ_LIMIT_DECODING;
+
+
+
 
 /* 
 ==========================================================
@@ -421,6 +433,14 @@ typedef struct opj_dparameters {
 	*/
 	OPJ_LIMIT_DECODING cp_limit_decoding;
 
+
+	/* V2 */
+	OPJ_UINT32 ROI_x0;
+	OPJ_UINT32 ROI_x1;
+	OPJ_UINT32 ROI_y0;
+	OPJ_UINT32 ROI_y1;
+
+
 } opj_dparameters_t;
 
 /** Common fields between JPEG-2000 compression and decompression master structs. */
@@ -649,6 +669,7 @@ typedef struct opj_image_header {
 	/** image components */
 	opj_image_comp_header_t *comps;
 
+#ifdef TODO_MSD
 	/** XTOsiz */
 	OPJ_UINT32 tile_x0;
 	/** YTOsiz */
@@ -661,6 +682,7 @@ typedef struct opj_image_header {
 	OPJ_UINT32 nb_tiles_x;
 	/** number of tiles in height */
 	OPJ_UINT32 nb_tiles_y;
+#endif
 
 	/** 'restricted' ICC profile */
 	unsigned char *icc_profile_buf;
@@ -814,9 +836,43 @@ typedef struct opj_codestream_info {
 
 // NEW codestream
 
+/**
+Tile-component coding parameters
+*/
+typedef struct opj_tccp_info
+{
+	/** component index */
+	OPJ_UINT32 compno;
+	/** coding style */
+	OPJ_UINT32 csty;
+	/** number of resolutions */
+	OPJ_UINT32 numresolutions;
+	/** code-blocks width */
+	OPJ_UINT32 cblkw;
+	/** code-blocks height */
+	OPJ_UINT32 cblkh;
+	/** code-block coding style */
+	OPJ_UINT32 cblksty;
+	/** discrete wavelet transform identifier */
+	OPJ_UINT32 qmfbid;
+	/** quantisation style */
+	OPJ_UINT32 qntsty;
+	/** stepsizes used for quantization */
+	//FIXME opj_stepsize_t stepsizes[J2K_MAXBANDS];
+	/** number of guard bits */
+	OPJ_UINT32 numgbits;
+	/** Region Of Interest shift */
+	OPJ_INT32 roishift;
+	/** precinct width */
+	OPJ_UINT32 prcw[J2K_MAXRLVLS];
+	/** precinct height */
+	OPJ_UINT32 prch[J2K_MAXRLVLS];
+}
+opj_tccp_info_t;
+
 typedef struct opj_tile_v2_info {
 
-	/** number of tile */
+	/** number (index) of tile */
 	int tileno;
 
 	/** start position */
@@ -830,6 +886,17 @@ typedef struct opj_tile_v2_info {
 	int numpix;
 	/** add fixed_quality */
 	double distotile;
+
+	/** coding style */
+	OPJ_UINT32 csty;
+	/** progression order */
+	OPJ_PROG_ORDER prg;
+	/** number of layers */
+	OPJ_UINT32 numlayers;
+	/** multi-component transform identifier */
+	OPJ_UINT32 mct;
+	/** rates of layers */
+	OPJ_FLOAT32 rates[100];
 
 	/** precinct number for each resolution level (width) */
 	int pw[33];
@@ -848,14 +915,18 @@ typedef struct opj_tile_v2_info {
 	/** information concerning tile parts */
 	opj_tp_info_t *tp;
 
+	/** information concerning tile component parameters*/
+	opj_tccp_info_t *tccp_info;
+
 	/** value of thresh for each layer by tile cfr. Marcela   */
-		double *thresh;
+	double *thresh;
 } opj_tile_info_v2_t;
 
 /**
 Index structure of the codestream
 */
-typedef struct opj_codestream_v2_info {
+typedef struct opj_codestream_info_v2 {
+	/* Basic image info */
 	/** image width */
 	int image_w;
 	/** image height */
@@ -863,14 +934,15 @@ typedef struct opj_codestream_v2_info {
 	/** numbers of component */
 	int numcomps;
 
+	/* Codestream Info */
 	/** progression order */
 	OPJ_PROG_ORDER prog;
 	/** number of layer */
 	int numlayers;
 
-	/** */
+	/** tile origin in x */
 	int tx0;
-	/** */
+	/** tile origin in y */
 	int ty0;
 	/** tile size in x */
 	int tdx;
@@ -912,6 +984,47 @@ typedef struct opj_codestream_v2_info {
 	/** information regarding tiles inside image */
 	opj_tile_info_v2_t *tile;
 } opj_codestream_info_v2_t;
+
+
+/*
+==========================================================
+   Metadata from the JP2file
+==========================================================
+*/
+
+/**
+Info structure of the file
+*/
+typedef struct opj_jp2_metadata {
+	/** */
+	OPJ_INT32	empty_fields;
+
+} opj_jp2_metadata_t;
+
+/*
+==========================================================
+   Information on the JPEG2000 file
+==========================================================
+*/
+
+/**
+Info structure of the file
+*/
+typedef struct opj_file_info {
+	/** file format */
+	OPJ_INT32	file_format;
+	/** file info level*/
+	OPJ_INT32	file_info_flag;
+	/** image info*/
+	opj_image_header_t img_info;
+	/** codestream info */
+	opj_codestream_info_v2_t codestream_info;
+	/** file info */
+	opj_jp2_metadata_t jp2_metadata;
+
+} opj_file_info_t;
+
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -1198,8 +1311,8 @@ OPJ_API void OPJ_CALLCONV opj_destroy_cstr_info(opj_codestream_info_t *cstr_info
  */
 OPJ_API opj_bool OPJ_CALLCONV opj_read_header (	opj_stream_t *p_cio,
 												opj_codec_t *p_codec,
-												opj_image_header_t **p_image_header,
-												opj_codestream_info_t **p_cstr_info	);
+												opj_file_info_t * p_file_info,
+												OPJ_INT32 file_info_flag);
 
 /**
 Destroy a decompressor handle
@@ -1207,8 +1320,25 @@ Destroy a decompressor handle
 */
 OPJ_API void OPJ_CALLCONV opj_destroy_codec(opj_codec_t * p_codec);
 
+/**
+ * Sets the given area to be decoded. This function should be called right after opj_read_header and before any tile header reading.
+ *
+ * @param	p_codec			the jpeg2000 codec.
+ * @param	p_start_x		the left position of the rectangle to decode (in image coordinates).
+ * @param	p_end_x			the right position of the rectangle to decode (in image coordinates).
+ * @param	p_start_y		the up position of the rectangle to decode (in image coordinates).
+ * @param	p_end_y			the bottom position of the rectangle to decode (in image coordinates).
+ *
+ * @return	true			if the area could be set.
+ */
+OPJ_API opj_bool OPJ_CALLCONV opj_set_decode_area(	opj_codec_t *p_codec,
+													OPJ_INT32 p_start_x, OPJ_INT32 p_start_y,
+													OPJ_INT32 p_end_x, OPJ_INT32 p_end_y );
+
 #ifdef __cplusplus
 }
 #endif
 
 #endif /* OPENJPEG_H */
+
+

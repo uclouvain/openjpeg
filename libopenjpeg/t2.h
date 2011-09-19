@@ -104,7 +104,12 @@ Decode the packets of a tile from a source buffer
 @param tileno number that identifies the tile for which to decode the packets
 @param tile tile for which to decode the packets
  */
-opj_bool t2_decode_packets_v2(opj_t2_v2_t *t2, OPJ_UINT32 tileno,struct opj_tcd_tile *tile, OPJ_BYTE *src, OPJ_UINT32 * p_data_read, OPJ_UINT32 len,   struct opj_codestream_info *cstr_info);
+opj_bool t2_decode_packets_v2(	opj_t2_v2_t *t2,
+								OPJ_UINT32 tileno,
+								struct opj_tcd_tile *tile,
+								OPJ_BYTE *src, OPJ_UINT32 * p_data_read,
+								OPJ_UINT32 len,
+								struct opj_codestream_info_v2 *cstr_info);
 
 /**
  * Creates a Tier 2 handle

@@ -41,6 +41,8 @@ Write a structured index to a file
 */
 int write_index_file(opj_codestream_info_t *cstr_info, char *index);
 
+int dump_file_info(FILE* stream, opj_file_info_t *file_info);
+
 #ifdef __cplusplus
 }
 #endif

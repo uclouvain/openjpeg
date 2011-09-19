@@ -767,7 +767,7 @@ typedef struct opj_j2k_v2
 	struct opj_procedure_list *	m_validation_list;
 
 	/** helper used to write the index file */
-	opj_codestream_info_t *cstr_info;
+	opj_codestream_info_v2_t *cstr_info;
 
 	/** the current tile coder/decoder **/
 	struct opj_tcd_v2 *	m_tcd;
@@ -884,8 +884,7 @@ opj_bool j2k_end_decompress(opj_j2k_v2_t *j2k, struct opj_stream_private *cio, s
  */
 opj_bool j2k_read_header(	struct opj_stream_private *p_stream,
 							opj_j2k_v2_t* p_j2k,
-							struct opj_image_header** image_header,
-							struct opj_codestream_info** cstr_info,
+							opj_file_info_t * p_file_info,
 							struct opj_event_mgr* p_manager );
 
 

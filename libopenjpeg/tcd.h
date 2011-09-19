@@ -436,7 +436,11 @@ Decode a tile from a buffer into a raw image
 @param len Length of source buffer
 @param tileno Number that identifies one of the tiles to be decoded
 */
-opj_bool tcd_decode_tile_v2(opj_tcd_v2_t *tcd, OPJ_BYTE *src, OPJ_UINT32 len, OPJ_UINT32 tileno, struct opj_codestream_info *cstr_info);
+opj_bool tcd_decode_tile_v2(opj_tcd_v2_t *tcd,
+							OPJ_BYTE *src,
+							OPJ_UINT32 len,
+							OPJ_UINT32 tileno,
+							struct opj_codestream_info_v2 *cstr_info);
 
 
 /**
