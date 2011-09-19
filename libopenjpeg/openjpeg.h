@@ -947,7 +947,7 @@ Deallocate any resources associated with an image
 */
 OPJ_API void OPJ_CALLCONV opj_image_destroy(opj_image_t *image);
 
-OPJ_API void OPJ_CALLCONV opj_image_header_destroy(opj_image_header_t *image);
+OPJ_API void OPJ_CALLCONV opj_image_header_destroy(opj_image_header_t *image_header);
 
 /* 
 ==========================================================

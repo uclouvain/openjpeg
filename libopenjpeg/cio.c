@@ -567,9 +567,8 @@ OPJ_UINT32 opj_stream_read_data (opj_stream_private_t * p_stream,OPJ_BYTE * p_bu
 				(p_stream->m_bytes_in_buffer == -1)
 			{
 				// end of stream
-#ifdef TODO_MSD
-				opj_event_msg(p_event_mgr, EVT_INFO, "Stream reached its end !\n");
-#endif
+				opj_event_msg_v2(p_event_mgr, EVT_INFO, "Stream reached its end !\n");
+
 				p_stream->m_bytes_in_buffer = 0;
 				p_stream->m_status |= opj_stream_e_end;
 				// end of stream
@@ -605,9 +604,8 @@ OPJ_UINT32 opj_stream_read_data (opj_stream_private_t * p_stream,OPJ_BYTE * p_bu
 				(p_stream->m_bytes_in_buffer == -1)
 			{
 				// end of stream
-#ifdef TODO_MSD
-				opj_event_msg(p_event_mgr, EVT_INFO, "Stream reached its end !\n");
-#endif
+				opj_event_msg_v2(p_event_mgr, EVT_INFO, "Stream reached its end !\n");
+
 				p_stream->m_bytes_in_buffer = 0;
 				p_stream->m_status |= opj_stream_e_end;
 				// end of stream
@@ -713,9 +711,8 @@ opj_bool opj_stream_flush (opj_stream_private_t * p_stream, opj_event_mgr_t * p_
 			(l_current_write_nb_bytes == -1)
 		{
 			p_stream->m_status |= opj_stream_e_error;
-#ifdef TODO_MSD
-			opj_event_msg(p_event_mgr, EVT_INFO, "Error on writting stream!\n");
-#endif
+			opj_event_msg_v2(p_event_mgr, EVT_INFO, "Error on writting stream!\n");
+
 			return EXIT_FAILURE;
 		}
 		p_stream->m_current_data += l_current_write_nb_bytes;
@@ -776,9 +773,8 @@ OPJ_SIZE_T opj_stream_read_skip (opj_stream_private_t * p_stream, OPJ_SIZE_T p_s
 		if
 			(l_current_skip_nb_bytes == (OPJ_SIZE_T) -1)
 		{
-#ifdef TODO_MSD
-			opj_event_msg(p_event_mgr, EVT_INFO, "Stream reached its end !\n");
-# endif
+			opj_event_msg_v2(p_event_mgr, EVT_INFO, "Stream reached its end !\n");
+
 			p_stream->m_status |= opj_stream_e_end;
 			p_stream->m_byte_offset += l_skip_nb_bytes;
 			// end if stream
@@ -830,9 +826,8 @@ OPJ_SIZE_T opj_stream_write_skip (opj_stream_private_t * p_stream, OPJ_SIZE_T p_
 		if
 			(l_current_skip_nb_bytes == (OPJ_SIZE_T)-1)
 		{
-#ifdef TODO_MSD
-			opj_event_msg(p_event_mgr, EVT_INFO, "Stream error!\n");
-#endif
+			opj_event_msg_v2(p_event_mgr, EVT_INFO, "Stream error!\n");
+
 			p_stream->m_status |= opj_stream_e_error;
 			p_stream->m_byte_offset += l_skip_nb_bytes;
 			// end if stream

@@ -181,7 +181,7 @@ char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_dparamet
 	sprintf(infilename,"%s/%s",img_fol->imgdirpath,image_filename);
 	strncpy(parameters->infile, infilename, sizeof(infilename));
 
-	//Set output file
+	/* Set output file */
 	strcpy(temp_ofname,strtok(image_filename,"."));
 	while((temp_p = strtok(NULL,".")) != NULL){
 		strcat(temp_ofname,temp1);
@@ -216,7 +216,9 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 				parameters->decod_format = get_file_format(infile);
 				switch(parameters->decod_format) {
 					case J2K_CFMT:
+						break;
 					case JP2_CFMT:
+						break;
 					case JPT_CFMT:
 						break;
 					default:
@@ -322,15 +324,14 @@ int main(int argc, char *argv[])
 	opj_event_mgr_t event_mgr;		/* event manager */
 	opj_image_header_t* image = NULL;
 	FILE *fsrc = NULL, *fout = NULL;
-	opj_bool bResult;
 	int num_images;
 	int i,imageno;
 	dircnt_t *dirptr = NULL;
 	opj_codec_t* dinfo = NULL;	/* handle to a decompressor */
 	opj_stream_t *cio = NULL;
 	opj_codestream_info_t* cstr_info =NULL;  /* Codestream information structure */
-	//OPJ_INT32 l_tile_x0,l_tile_y0;
-	//OPJ_UINT32 l_tile_width,l_tile_height,l_nb_tiles_x,l_nb_tiles_y;
+	/* OPJ_INT32 l_tile_x0,l_tile_y0; */
+	/* OPJ_UINT32 l_tile_width,l_tile_height,l_nb_tiles_x,l_nb_tiles_y; */
 
 
 	/* FIXME configure the event callbacks (not required) */
@@ -357,7 +358,7 @@ int main(int argc, char *argv[])
 
 		dirptr=(dircnt_t*)malloc(sizeof(dircnt_t));
 		if(dirptr){
-			dirptr->filename_buf = (char*)malloc(num_images*OPJ_PATH_LEN*sizeof(char));	// Stores at max 10 image file names
+			dirptr->filename_buf = (char*)malloc(num_images*OPJ_PATH_LEN*sizeof(char));	/* Stores at max 10 image file names */
 			dirptr->filename = (char**) malloc(num_images*sizeof(char*));
 
 			if(!dirptr->filename_buf){
@@ -380,7 +381,7 @@ int main(int argc, char *argv[])
 		num_images=1;
 	}
 
-	//
+	/* Try to open for writing the output file if necessary */
 	if (parameters.outfile[0] != 0){
 		fout = fopen(parameters.outfile,"w");
 		if (!fout){
@@ -391,7 +392,7 @@ int main(int argc, char *argv[])
 	else
 		fout = stdout;
 
-	/*Read the header of each image one by one*/
+	/* Read the header of each image one by one */
 	for(imageno = 0; imageno < num_images ; imageno++){
 		image = NULL;
 		fprintf(stderr,"\n");
@@ -448,84 +449,36 @@ int main(int argc, char *argv[])
 		/* setup the decoder decoding parameters using user parameters */
 		opj_setup_decoder_v2(dinfo, &parameters, &event_mgr);
 
-		/* decode the stream and fill the image structure */
-		/*		if (*indexfilename)				// If need to extract codestream information
-				image = opj_decode_with_info(dinfo, cio, &cstr_info);
-			else
-			*/
-		//opj_codestream_info_t *cstr_info = NULL;
-
-		/*bResult = opj_read_header(	dinfo,
-									&image,
-									&l_tile_x0,
-									&l_tile_y0,
-									&l_tile_width,
-									&l_tile_height,
-									&l_nb_tiles_x,
-									&l_nb_tiles_y,
-									cio);*/
-
-		bResult = opj_read_header(cio, dinfo, &image, &cstr_info);
-
-		if(!bResult){
-			fprintf(stderr, "ERROR -> j2k_to_image: failed to read header\n");
+		if(! opj_read_header(cio, dinfo, &image, &cstr_info)){
+			fprintf(stderr, "ERROR -> j2k_dump: failed to read the header\n");
+			opj_stream_destroy(cio);
+			fclose(fsrc);
+			opj_destroy_codec(dinfo);
 			return EXIT_FAILURE;
 		}
 
-		if (parameters.decod_format == J2K_CFMT){
-			/* dump image */
-			j2k_dump_image(fout, image);
-			write_index_file_v2(fout, cstr_info);
-			/* dump cp */
-			//j2k_dump_cp(stdout, image, ((opj_codec_private_t)dinfo)->m_codec);
-			//j2k_dump_cp(fout, image, ((opj_j2k_t*)dinfo->j2k_handle)->cp);
-		}
-		else if (parameters.decod_format == JP2_CFMT){
-			/* dump image */
-			if(image->icc_profile_buf){
-				free(image->icc_profile_buf);
-				image->icc_profile_buf = NULL;
-			}
-			j2k_dump_image(fout, image);
-			/* dump cp */
-			//j2k_dump_cp(stdout, image, dinfo->m_codec);
-			//j2k_dump_cp(fout, image, ((opj_jp2_t*)dinfo->jp2_handle)->j2k->cp);
-		}
+		/* Dump file informations from header */
+
 
 		/* close the byte stream */
 		opj_stream_destroy(cio);
 		fclose(fsrc);
 
-		/* Write the index to disk */
-		/*if (*indexfilename) {
-			char bSuccess;
-			bSuccess = write_index_file(&cstr_info, indexfilename);
-			if (bSuccess) {
-				fprintf(stderr, "Failed to output index file\n");
-				ret = EXIT_FAILURE;
-			}
-			else
-				ret = EXIT_SUCCESS;
-		}
-		else*/
-			ret = EXIT_SUCCESS;
-
 		/* free remaining structures */
 		if (dinfo) {
 			opj_destroy_codec(dinfo);
 		}
-		/* free codestream information structure */
-		/*if (*indexfilename)
-			FIXME A GARDER opj_destroy_cstr_info(&cstr_info);*/
-		/* free image data structure */
+
+
 		opj_image_header_destroy(image);
 
 	}
 /*NEW V2 STYLE*/
 
+	/* Close the output file */
 	fclose(fout);
 
-  return ret;
+  return EXIT_SUCCESS;
 }
 
 
@@ -539,7 +492,7 @@ static void j2k_dump_image(FILE *fd, opj_image_header_t * img) {
 		fprintf(fd, "  comp %d {\n", compno);
 		fprintf(fd, "    dx=%d, dy=%d\n", comp->dx, comp->dy);
 		fprintf(fd, "    prec=%d\n", comp->prec);
-		//fprintf(fd, "    bpp=%d\n", comp->bpp);
+		/* fprintf(fd, "    bpp=%d\n", comp->bpp); */
 		fprintf(fd, "    sgnd=%d\n", comp->sgnd);
 		fprintf(fd, "  }\n");
 	}

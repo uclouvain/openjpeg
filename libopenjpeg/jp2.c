@@ -1317,7 +1317,7 @@ static opj_bool jp2_read_colr_v2(	opj_jp2_v2_t * jp2,
 
 	}
 	else // TODO MSD
-		opj_event_msg_v2(p_manager, EVT_INFO, "COLR BOX meth value is not is not a regular value (%d), so we will skip the fields following approx field.\n", jp2->meth);
+		opj_event_msg_v2(p_manager, EVT_INFO, "COLR BOX meth value is not a regular value (%d), so we will skip the fields following the approx field.\n", jp2->meth);
 
 	jp2->color.jp2_has_colr = 1;
 

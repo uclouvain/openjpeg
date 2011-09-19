@@ -94,13 +94,16 @@ void OPJ_CALLCONV opj_image_destroy(opj_image_t *image) {
 }
 
 
-void OPJ_CALLCONV opj_image_header_destroy(opj_image_header_t *image) {
-	if(image) {
-		if(image->comps) {
+void OPJ_CALLCONV opj_image_header_destroy(opj_image_header_t *image_header) {
+	if(image_header) {
+		if(image_header->comps) {
 			/* image components */
-			opj_free(image->comps);
+			opj_free(image_header->comps);
 		}
-		opj_free(image);
+		if(image_header->icc_profile_buf) {
+			opj_free(image_header->icc_profile_buf);
+		}
+		opj_free(image_header);
 	}
 }
 
