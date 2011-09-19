@@ -36,8 +36,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include "indexbox_manager.h"
-#include "cio.h"
+#include "opj_includes.h"
 
 /* 
  * Write faix box of ppix
@@ -59,7 +58,7 @@ int write_ppix( int coff, opj_codestream_info_t cstr_info, opj_bool EPHused, int
 
   //  printf("cstr_info.packno %d\n", cstr_info.packno); //NMAX?
 
-  box = (opj_jp2_box_t *)calloc( cstr_info.numcomps, sizeof(opj_jp2_box_t));
+  box = (opj_jp2_box_t *)opj_calloc( cstr_info.numcomps, sizeof(opj_jp2_box_t));
   
   for (i=0;i<2;i++){
     if (i) cio_seek( cio, lenp);
@@ -81,7 +80,7 @@ int write_ppix( int coff, opj_codestream_info_t cstr_info, opj_bool EPHused, int
     cio_seek( cio, lenp+len);
   }
   
-  free(box);
+  opj_free(box);
 
   return len;
 }

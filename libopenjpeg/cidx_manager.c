@@ -31,9 +31,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "cidx_manager.h"
-#include "indexbox_manager.h"
-#include "cio.h"
+#include "opj_includes.h"
 
 
 /* 
@@ -76,7 +74,7 @@ int write_cidx( int offset, opj_cio_t *cio, opj_image_t *image, opj_codestream_i
   int num_box = 0;
   opj_bool  EPHused;
 
-  box = (opj_jp2_box_t *)calloc( 32, sizeof(opj_jp2_box_t));
+  box = (opj_jp2_box_t *)opj_calloc( 32, sizeof(opj_jp2_box_t));
 
   for (i=0;i<2;i++){
   
@@ -120,7 +118,7 @@ int write_cidx( int offset, opj_cio_t *cio, opj_image_t *image, opj_codestream_i
     cio_seek( cio, lenp+len);
   }
 
-  free( box);
+  opj_free( box);
   
   return len;
 }

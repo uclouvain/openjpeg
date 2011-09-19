@@ -260,11 +260,11 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 
 			case 'd':     		/* Input decode ROI */
 			{
-				int size_optarg = (int)strlen(optarg) + 1;
+				int size_optarg = (int)strlen(opj_optarg) + 1;
 				char *ROI_values = (char*) malloc(size_optarg);
 				ROI_values[0] = '\0';
-				strncpy(ROI_values, optarg, strlen(optarg));
-				ROI_values[strlen(optarg)] = '\0';
+				strncpy(ROI_values, opj_optarg, strlen(opj_optarg));
+				ROI_values[strlen(opj_optarg)] = '\0';
 				/*printf("ROI_values = %s [%d / %d]\n", ROI_values, strlen(ROI_values), size_optarg ); */
 				parse_ROI_values( ROI_values, &parameters->ROI_x0, &parameters->ROI_y0, &parameters->ROI_x1, &parameters->ROI_y1);
 			}
