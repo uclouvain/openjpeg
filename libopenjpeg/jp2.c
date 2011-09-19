@@ -1156,11 +1156,11 @@ static opj_bool jp2_read_cdef_v2(	opj_jp2_v2_t * jp2,
 	 * inside a JP2 Header box.'*/
 	if(jp2->color.jp2_cdef) return OPJ_FALSE;
 
-	opj_read_bytes(p_cdef_header_data,&l_value ,1);			/* N */
-	++p_cdef_header_data;
+	opj_read_bytes(p_cdef_header_data,&l_value ,2);			/* N */
+	p_cdef_header_data+= 2;
 
 	if ( (OPJ_UINT16)l_value == 0){ /* szukw000: FIXME */
-		opj_event_msg_v2(p_manager, EVT_ERROR, "Number of component description is equal to zero in CDEF box.\n");
+		opj_event_msg_v2(p_manager, EVT_ERROR, "Number of channel description is equal to zero in CDEF box.\n");
 		return OPJ_FALSE;
 	}
 
@@ -2273,7 +2273,7 @@ opj_bool jp2_read_jp2h_v2(
 		}
 
 		if (box.length > p_header_size) {
-			opj_event_msg_v2(p_manager, EVT_ERROR, "Stream error while reading JP2 Header box\n");
+			opj_event_msg_v2(p_manager, EVT_ERROR, "Stream error while reading JP2 Header box: box length is inconsistent.\n");
 			return OPJ_FALSE;
 		}
 

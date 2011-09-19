@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 September 19, 2011
++ [mickael] WIP: enchance the new version with some bug fixes from v1 and from me
 + [mickael] WIP: add support of jp2 for new j2k_dump function and some other small stuff
 + [mickael] WIP: new image_header struct is used and enable used of cstr_info
 + [mickael] WIP: manage the case of event_mgr is not provided to setup_decoder function 

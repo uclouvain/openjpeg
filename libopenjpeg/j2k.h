@@ -78,6 +78,8 @@ The functions in J2K.C have for goal to read/write the several parts of the code
 #define J2K_MS_CRG 0xff63	/**< CRG marker value */
 #define J2K_MS_COM 0xff64	/**< COM marker value */
 
+#define J2K_MS_UNK 0		/**< UNKNOWN marker value */
+
 #ifdef TODO_MS
 #define J2K_MS_CBD 0xff78	/**< CBD marker value */
 #define J2K_MS_MCC 0xff75	/**< MCC marker value */
@@ -523,14 +525,30 @@ typedef struct opj_cp_v2
 	OPJ_UINT32 tw;
 	/** number of tiles in heigth */
 	OPJ_UINT32 th;
-	/** packet header storage original buffer */
-	OPJ_BYTE *ppm_buffer;
+
+
+
+
 	/** packet header store there for futur use in t2_decode_packet */
 	OPJ_BYTE *ppm_data;
 	/** size of the ppm_data*/
 	OPJ_UINT32 ppm_len;
+	/** size of the ppm_data*/
+	OPJ_UINT32 ppm_data_read;
+
+	OPJ_BYTE *ppm_data_current;
+
+	/** packet header storage original buffer */
+	OPJ_BYTE *ppm_buffer;
+	/** pointer remaining on the first byte of the first header if ppm is used */
+	OPJ_BYTE *ppm_data_first;
 	/** Number of bytes actually stored inside the ppm_data */
 	OPJ_UINT32 ppm_data_size;
+	/** use in case of multiple marker PPM (number of info already store) */
+	OPJ_INT32 ppm_store;
+	/** use in case of multiple marker PPM (case on non-finished previous info) */
+	OPJ_INT32 ppm_previous;
+
 	/** tile coding parameters */
 	opj_tcp_v2_t *tcps;
 	union

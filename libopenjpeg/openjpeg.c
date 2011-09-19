@@ -223,7 +223,7 @@ opj_codec_t* OPJ_CALLCONV opj_create_decompress_v2(OPJ_CODEC_FORMAT p_format)
 					opj_codestream_info_t**,
 					struct opj_event_mgr * )) j2k_read_header;
 			l_info->m_codec_data.m_decompression.opj_destroy = (void (*) (void *))j2k_destroy;
-			l_info->m_codec_data.m_decompression.opj_setup_decoder = (void (*) (void * ,opj_dparameters_t * )) j2k_setup_decoder;
+			l_info->m_codec_data.m_decompression.opj_setup_decoder = (void (*) (void * ,opj_dparameters_t * )) j2k_setup_decoder_v2;
 			l_info->m_codec_data.m_decompression.opj_read_tile_header = (opj_bool (*) (
 				void *,
 				OPJ_UINT32*,
