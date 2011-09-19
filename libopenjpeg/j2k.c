@@ -3693,6 +3693,27 @@ void j2k_setup_decoder(opj_j2k_t *j2k, opj_dparameters_t *parameters) {
 	}
 }
 
+void j2k_setup_decoder_v2(opj_j2k_v2_t *j2k, opj_dparameters_t *parameters) {
+	if(j2k && parameters) {
+		/* create and initialize the coding parameters structure */
+		//opj_cp_v2_t *cp = (opj_cp_v2_t*) opj_calloc(1, sizeof(opj_cp_v2_t));
+		j2k->m_cp.m_specific_param.m_dec.m_layer = parameters->cp_layer;
+		j2k->m_cp.m_specific_param.m_dec.m_reduce = parameters->cp_reduce;
+
+		/*cp->reduce = parameters->cp_reduce;
+		cp->layer = parameters->cp_layer;
+		cp->limit_decoding = parameters->cp_limit_decoding;*/
+
+		// TODO MS
+#ifdef USE_JPWL
+		cp->correct = parameters->jpwl_correct;
+		cp->exp_comps = parameters->jpwl_exp_comps;
+		cp->max_tiles = parameters->jpwl_max_tiles;
+#endif /* USE_JPWL */
+
+	}
+}
+
 opj_image_t* j2k_decode(opj_j2k_t *j2k, opj_cio_t *cio, opj_codestream_info_t *cstr_info) {
 	opj_image_t *image = NULL;
 
@@ -3886,6 +3907,43 @@ opj_j2k_t* j2k_create_compress(opj_common_ptr cinfo) {
 		j2k->cinfo = cinfo;
 	}
 	return j2k;
+}
+
+opj_j2k_v2_t* j2k_create_compress_v2()
+{
+	opj_j2k_v2_t *l_j2k = (opj_j2k_v2_t*) opj_malloc(sizeof(opj_j2k_v2_t));
+	if (!l_j2k) {
+		return NULL;
+	}
+
+	memset(l_j2k,0,sizeof(opj_j2k_v2_t));
+
+	l_j2k->m_is_decoder = 0;
+	l_j2k->m_cp.m_is_decoder = 0;
+
+	l_j2k->m_specific_param.m_encoder.m_header_tile_data = (OPJ_BYTE *) opj_malloc(J2K_DEFAULT_HEADER_SIZE);
+	if (! l_j2k->m_specific_param.m_encoder.m_header_tile_data) {
+		j2k_destroy(l_j2k);
+		return NULL;
+	}
+
+	l_j2k->m_specific_param.m_encoder.m_header_tile_data_size = J2K_DEFAULT_HEADER_SIZE;
+
+	// validation list creation
+	l_j2k->m_validation_list = opj_procedure_list_create();
+	if (! l_j2k->m_validation_list) {
+		j2k_destroy(l_j2k);
+		return NULL;
+	}
+
+	// execution list creation
+	l_j2k->m_procedure_list = opj_procedure_list_create();
+	if (! l_j2k->m_procedure_list) {
+		j2k_destroy(l_j2k);
+		return NULL;
+	}
+
+	return l_j2k;
 }
 
 void j2k_destroy_compress(opj_j2k_t *j2k) {
@@ -4443,7 +4501,7 @@ static void j2k_add_tlmarker( int tileno, opj_codestream_info_t *cstr_info, unsi
  * codestream.
  */
 opj_bool j2k_end_decompress(
-						opj_j2k_t *p_j2k,
+						opj_j2k_v2_t *p_j2k,
 						opj_stream_private_t *p_stream,
 						opj_event_mgr_t * p_manager)
 {

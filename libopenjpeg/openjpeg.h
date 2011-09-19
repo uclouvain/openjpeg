@@ -812,6 +812,107 @@ typedef struct opj_codestream_info {
 	opj_tile_info_t *tile;
 } opj_codestream_info_t;
 
+// NEW codestream
+
+typedef struct opj_tile_v2_info {
+
+	/** number of tile */
+	int tileno;
+
+	/** start position */
+	int start_pos;
+	/** end position of the header */
+	int end_header;
+	/** end position */
+	int end_pos;
+
+	/** add fixed_quality */
+	int numpix;
+	/** add fixed_quality */
+	double distotile;
+
+	/** precinct number for each resolution level (width) */
+	int pw[33];
+	/** precinct number for each resolution level (height) */
+	int ph[33];
+	/** precinct size (in power of 2), in X for each resolution level */
+	int pdx[33];
+	/** precinct size (in power of 2), in Y for each resolution level */
+	int pdy[33];
+	/** information concerning packets inside tile */
+	opj_packet_info_t *packet;
+
+
+	/** number of tile parts */
+	int num_tps;
+	/** information concerning tile parts */
+	opj_tp_info_t *tp;
+
+	/** value of thresh for each layer by tile cfr. Marcela   */
+		double *thresh;
+} opj_tile_info_v2_t;
+
+/**
+Index structure of the codestream
+*/
+typedef struct opj_codestream_v2_info {
+	/** image width */
+	int image_w;
+	/** image height */
+	int image_h;
+	/** numbers of component */
+	int numcomps;
+
+	/** progression order */
+	OPJ_PROG_ORDER prog;
+	/** number of layer */
+	int numlayers;
+
+	/** */
+	int tx0;
+	/** */
+	int ty0;
+	/** tile size in x */
+	int tdx;
+	/** tile size in y */
+	int tdy;
+	/** number of tiles in X */
+	int tw;
+	/** number of tiles in Y */
+	int th;
+
+	/** number of decomposition for each component */
+	int *numdecompos;
+
+	/** maximum distortion reduction on the whole image (add for Marcela) */
+	double D_max;
+	/** packet number */
+	int packno;
+	/** writing the packet in the index with t2_encode_packets */
+	int index_write;
+
+
+
+/* UniPG>> */
+	/** number of markers */
+	int marknum;
+	/** list of markers */
+	opj_marker_info_t *marker;
+	/** actual size of markers array */
+	int maxmarknum;
+/* <<UniPG */
+
+	/** main header position */
+	int main_head_start;
+	/** main header position */
+	int main_head_end;
+	/** codestream's size */
+	int codestream_size;
+
+	/** information regarding tiles inside image */
+	opj_tile_info_v2_t *tile;
+} opj_codestream_info_v2_t;
+
 #ifdef __cplusplus
 extern "C" {
 #endif

@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 20010, Mathieu Malaterre, GDCM
+ * Copyright (c) 2010, Mathieu Malaterre, GDCM
+ * Copyright (c) 2011, Mickael Savinaud, Communications & Systemes <mickael.savinaud@c-s.fr>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -474,6 +475,7 @@ int main(int argc, char *argv[])
 		if (parameters.decod_format == J2K_CFMT){
 			/* dump image */
 			j2k_dump_image(fout, image);
+			write_index_file_v2(fout, cstr_info);
 			/* dump cp */
 			//j2k_dump_cp(stdout, image, ((opj_codec_private_t)dinfo)->m_codec);
 			//j2k_dump_cp(fout, image, ((opj_j2k_t*)dinfo->j2k_handle)->cp);
@@ -541,6 +543,8 @@ static void j2k_dump_image(FILE *fd, opj_image_header_t * img) {
 		fprintf(fd, "    sgnd=%d\n", comp->sgnd);
 		fprintf(fd, "  }\n");
 	}
+	fprintf(fd, "  XTOsiz=%d, YTOsiz=%d, XTsiz=%d, YTsiz=%d\n", img->tile_x0, img->tile_y0, img->tile_width, img->tile_height);
+	fprintf(fd, "  Nb of tiles in x direction=%d, Nb of tiles in y direction=%d\n", img->nb_tiles_x, img->nb_tiles_y);
 	fprintf(fd, "}\n");
 }
 

@@ -784,6 +784,9 @@ Decoding parameters are returned in j2k->cp.
 @param parameters decompression parameters
 */
 void j2k_setup_decoder(opj_j2k_t *j2k, opj_dparameters_t *parameters);
+
+void j2k_setup_decoder_v2(opj_j2k_v2_t *j2k, opj_dparameters_t *parameters);
+
 /**
 Decode an image from a JPEG-2000 codestream
 @param j2k J2K decompressor handle
@@ -806,6 +809,14 @@ Creates a J2K compression structure
 @return Returns a handle to a J2K compressor if successful, returns NULL otherwise
 */
 opj_j2k_t* j2k_create_compress(opj_common_ptr cinfo);
+
+/**
+Creates a J2K compression structure
+@param cinfo Codec context info
+@return Returns a handle to a J2K compressor if successful, returns NULL otherwise
+*/
+opj_j2k_v2_t* j2k_create_compress_v2();
+
 /**
 Destroy a J2K compressor handle
 @param j2k J2K compressor handle to destroy
@@ -842,7 +853,7 @@ opj_bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, opj_code
  * Ends the decompression procedures and possibiliy add data to be read after the
  * codestream.
  */
-opj_bool j2k_end_decompress(opj_j2k_t *j2k, struct opj_stream_private *cio, struct opj_event_mgr * p_manager);
+opj_bool j2k_end_decompress(opj_j2k_v2_t *j2k, struct opj_stream_private *cio, struct opj_event_mgr * p_manager);
 
 /**
  * Reads a jpeg2000 codestream header structure.

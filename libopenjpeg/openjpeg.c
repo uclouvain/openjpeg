@@ -55,7 +55,7 @@ typedef struct opj_decompression
 		opj_bool (*opj_decode_tile_data)(void * p_codec,OPJ_UINT32 p_tile_index,OPJ_BYTE * p_data,OPJ_UINT32 p_data_size,struct opj_stream_private *p_cio,struct opj_event_mgr * p_manager);
 	opj_bool (* opj_end_decompress) (void *p_codec,struct opj_stream_private *cio,struct opj_event_mgr * p_manager);
 	void (* opj_destroy) (void * p_codec);
-	void (*opj_setup_decoder) (void * p_codec,opj_dparameters_t * p_param);
+	void (*opj_setup_decoder) (void * p_codec, opj_dparameters_t * p_param);
 	opj_bool (*opj_set_decode_area) (void * p_codec,OPJ_INT32 p_start_x,OPJ_INT32 p_end_x,OPJ_INT32 p_start_y,OPJ_INT32 p_end_y,struct opj_event_mgr * p_manager);
 
 
@@ -212,11 +212,9 @@ opj_codec_t* OPJ_CALLCONV opj_create_decompress_v2(OPJ_CODEC_FORMAT p_format)
 
 	l_info->is_decompressor = 1;
 
-	switch
-		(p_format)
-	{
+	switch (p_format) {
 		case CODEC_J2K:
-			l_info->m_codec_data.m_decompression.opj_decode = (opj_image_t* (*) (void *, struct opj_stream_private *, struct opj_event_mgr * ))j2k_decode;
+			l_info->m_codec_data.m_decompression.opj_decode = (opj_image_t* (*) (void *, struct opj_stream_private *, struct opj_event_mgr * ))j2k_decode; // TODO MSD
 			l_info->m_codec_data.m_decompression.opj_end_decompress =  (opj_bool (*) (void *,struct opj_stream_private *,struct opj_event_mgr *))j2k_end_decompress;
 			l_info->m_codec_data.m_decompression.opj_read_header =  (opj_bool (*) (
 					struct opj_stream_private *,
@@ -241,31 +239,24 @@ opj_codec_t* OPJ_CALLCONV opj_create_decompress_v2(OPJ_CODEC_FORMAT p_format)
 				l_info->m_codec_data.m_decompression.opj_decode_tile_data = (opj_bool (*) (void *,OPJ_UINT32,OPJ_BYTE*,OPJ_UINT32,struct opj_stream_private *,	struct opj_event_mgr * )) j2k_decode_tile;
 			l_info->m_codec_data.m_decompression.opj_set_decode_area = (opj_bool (*) (void *,OPJ_INT32,OPJ_INT32,OPJ_INT32,OPJ_INT32, struct opj_event_mgr * )) j2k_set_decode_area;
 			l_info->m_codec = j2k_create_decompress_v2();
-			if
-				(! l_info->m_codec)
-			{
+
+			if (! l_info->m_codec) {
 				opj_free(l_info);
-				return 00;
+				return NULL;
 			}
+
 			break;
 
 		case CODEC_JP2:
 			/* get a JP2 decoder handle */
-#ifdef TODO_MSD
-			l_info->m_codec_data.m_decompression.opj_decode = (opj_image_t* (*) (void *, struct opj_stream_private *, struct opj_event_mgr * ))opj_jp2_decode;
+			l_info->m_codec_data.m_decompression.opj_decode = (opj_image_t* (*) (void *, struct opj_stream_private *, struct opj_event_mgr * ))opj_jp2_decode; // TODO MSD
 			l_info->m_codec_data.m_decompression.opj_end_decompress =  (opj_bool (*) (void *,struct opj_stream_private *,struct opj_event_mgr *)) jp2_end_decompress;
 			l_info->m_codec_data.m_decompression.opj_read_header =  (opj_bool (*) (
-				void *,
-				opj_image_t **,
-
-				OPJ_INT32 * ,
-				OPJ_INT32 * ,
-				OPJ_UINT32 * ,
-				OPJ_UINT32 * ,
-				OPJ_UINT32 * ,
-				OPJ_UINT32 * ,
-				struct opj_stream_private *,
-				struct opj_event_mgr * )) jp2_read_header;
+					struct opj_stream_private *,
+					void *,
+					opj_image_header_t **,
+					opj_codestream_info_t**,
+					struct opj_event_mgr * )) jp2_read_header;
 
 			l_info->m_codec_data.m_decompression.opj_read_tile_header = (
 				opj_bool (*) (
@@ -284,18 +275,16 @@ opj_codec_t* OPJ_CALLCONV opj_create_decompress_v2(OPJ_CODEC_FORMAT p_format)
 			l_info->m_codec_data.m_decompression.opj_decode_tile_data = (opj_bool (*) (void *,OPJ_UINT32,OPJ_BYTE*,OPJ_UINT32,struct opj_stream_private *,	struct opj_event_mgr * )) opj_jp2_decode_tile;
 
 			l_info->m_codec_data.m_decompression.opj_destroy = (void (*) (void *))jp2_destroy;
-			l_info->m_codec_data.m_decompression.opj_setup_decoder = (void (*) (void * ,opj_dparameters_t * )) jp2_setup_decoder;
+			l_info->m_codec_data.m_decompression.opj_setup_decoder = (void (*) (void * ,opj_dparameters_t * )) jp2_setup_decoder_v2;
 			l_info->m_codec_data.m_decompression.opj_set_decode_area = (opj_bool (*) (void *,OPJ_INT32,OPJ_INT32,OPJ_INT32,OPJ_INT32, struct opj_event_mgr * )) jp2_set_decode_area;
 
-
 			l_info->m_codec = jp2_create(OPJ_TRUE);
-			if
-				(! l_info->m_codec)
-			{
+
+			if (! l_info->m_codec) {
 				opj_free(l_info);
 				return 00;
 			}
-#endif
+
 			break;
 		case CODEC_UNKNOWN:
 		case CODEC_JPT:
