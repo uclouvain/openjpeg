@@ -736,7 +736,8 @@ typedef struct opj_j2k_v2
 	OPJ_UINT32 m_current_tile_number;
 
 	/** pointer to the encoded / decoded image */
-	opj_image_t *m_image;
+	//opj_image_t *m_image;
+	opj_image_header_t* m_image_header;
 
 	/** Coding parameters */
 	opj_cp_v2_t m_cp;
@@ -852,18 +853,12 @@ opj_bool j2k_end_decompress(opj_j2k_t *j2k, struct opj_stream_private *cio, stru
  *
  * @return true if the box is valid.
  */
-opj_bool j2k_read_header(
-								opj_j2k_v2_t *p_j2k,
-								struct opj_image ** p_image,
-								OPJ_INT32 * p_tile_x0,
-								OPJ_INT32 * p_tile_y0,
-								OPJ_UINT32 * p_tile_width,
-								OPJ_UINT32 * p_tile_height,
-								OPJ_UINT32 * p_nb_tiles_x,
-								OPJ_UINT32 * p_nb_tiles_y,
-								struct opj_stream_private *cio,
-								struct opj_event_mgr * p_manager
-							);
+opj_bool j2k_read_header(	struct opj_stream_private *p_stream,
+							opj_j2k_v2_t* p_j2k,
+							struct opj_image_header** image_header,
+							struct opj_codestream_info** cstr_info,
+							struct opj_event_mgr* p_manager );
+
 
 /**
  * Destroys a jpeg2000 codec.

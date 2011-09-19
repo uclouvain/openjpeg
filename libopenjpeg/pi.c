@@ -92,7 +92,7 @@ static opj_bool pi_next_cprl(opj_pi_iterator_t * pi);
  * @param	p_resolutions	pointer to an area corresponding to the one described above.
  */
 void get_all_encoding_parameters(
-								const opj_image_t *p_image,
+								const opj_image_header_t *p_image,
 								const opj_cp_v2_t *p_cp,
 								OPJ_UINT32 tileno,
 								OPJ_INT32 * p_tx0,
@@ -116,7 +116,7 @@ void get_all_encoding_parameters(
  * @param	p_tile_no	the index of the tile from which creating the packet iterator.
  */
 opj_pi_iterator_t * pi_create(
-								const opj_image_t *image,
+								const opj_image_header_t *image,
 								const opj_cp_v2_t *cp,
 								OPJ_UINT32 tileno
 							);
@@ -597,7 +597,7 @@ opj_pi_iterator_t *pi_create_decode(opj_image_t *image, opj_cp_t *cp, int tileno
 
 
 opj_pi_iterator_t *pi_create_decode_v2(
-										opj_image_t *p_image,
+										opj_image_header_t *p_image,
 										opj_cp_v2_t *p_cp,
 										OPJ_UINT32 p_tile_no
 										)
@@ -624,7 +624,7 @@ opj_pi_iterator_t *pi_create_decode_v2(
 	opj_tcp_v2_t *l_tcp = 00;
 	const opj_tccp_t *l_tccp = 00;
 	opj_pi_comp_t *l_current_comp = 00;
-	opj_image_comp_t * l_img_comp = 00;
+	opj_image_comp_header_t * l_img_comp = 00;
 	opj_pi_iterator_t * l_current_pi = 00;
 	OPJ_UINT32 * l_encoding_value_ptr = 00;
 
@@ -655,10 +655,8 @@ opj_pi_iterator_t *pi_create_decode_v2(
 	}
 
 	// memory allocation for pi
-	l_pi = pi_create(p_image,p_cp,p_tile_no);
-	if
-		(!l_pi)
-	{
+	l_pi = pi_create(p_image, p_cp, p_tile_no);
+	if (!l_pi) {
 		opj_free(l_tmp_data);
 		opj_free(l_tmp_ptr);
 		return 00;
@@ -743,7 +741,7 @@ opj_pi_iterator_t *pi_create_decode_v2(
 		(pino = 1 ; pino<l_bound ; ++pino )
 	{
 		opj_pi_comp_t *l_current_comp = l_current_pi->comps;
-		opj_image_comp_t * l_img_comp = p_image->comps;
+		opj_image_comp_header_t * l_img_comp = p_image->comps;
 		l_tccp = l_tcp->tccps;
 
 		l_current_pi->tx0 = l_tx0;
@@ -1244,7 +1242,7 @@ opj_bool pi_create_encode( opj_pi_iterator_t *pi, opj_cp_t *cp,int tileno, int p
  * @param	p_resolutions	pointer to an area corresponding to the one described above.
  */
 void get_all_encoding_parameters(
-								const opj_image_t *p_image,
+								const opj_image_header_t *p_image,
 								const opj_cp_v2_t *p_cp,
 								OPJ_UINT32 tileno,
 								OPJ_INT32 * p_tx0,
@@ -1264,7 +1262,7 @@ void get_all_encoding_parameters(
 	// pointers
 	const opj_tcp_v2_t *tcp = 00;
 	const opj_tccp_t * l_tccp = 00;
-	const opj_image_comp_t * l_img_comp = 00;
+	const opj_image_comp_header_t * l_img_comp = 00;
 
 	// to store l_dx, l_dy, w and h for each resolution and component.
 	OPJ_UINT32 * lResolutionPtr;
@@ -1377,7 +1375,7 @@ void get_all_encoding_parameters(
  * @param	p_tile_no	the index of the tile from which creating the packet iterator.
  */
 opj_pi_iterator_t * pi_create(
-								const opj_image_t *image,
+								const opj_image_header_t *image,
 								const opj_cp_v2_t *cp,
 								OPJ_UINT32 tileno
 							)
@@ -1404,41 +1402,36 @@ opj_pi_iterator_t * pi_create(
 	tcp = &cp->tcps[tileno];
 	l_poc_bound = tcp->numpocs+1;
 
-
 	// memory allocations
 	l_pi = (opj_pi_iterator_t*) opj_calloc((l_poc_bound), sizeof(opj_pi_iterator_t));
-
-	if
-		(!l_pi)
-	{
-		return 00;
+	if (!l_pi) {
+		return NULL;
 	}
 	memset(l_pi,0,l_poc_bound * sizeof(opj_pi_iterator_t));
+
 	l_current_pi = l_pi;
-	for
-		(pino = 0; pino < l_poc_bound ; ++pino)
-	{
+	for (pino = 0; pino < l_poc_bound ; ++pino) {
+
 		l_current_pi->comps = (opj_pi_comp_t*) opj_calloc(image->numcomps, sizeof(opj_pi_comp_t));
-		if
-			(! l_current_pi->comps)
-		{
+		if (! l_current_pi->comps) {
 			pi_destroy_v2(l_pi, l_poc_bound);
-			return 00;
+			return NULL;
 		}
+
 		l_current_pi->numcomps = image->numcomps;
 		memset(l_current_pi->comps,0,image->numcomps * sizeof(opj_pi_comp_t));
-		for
-			(compno = 0; compno < image->numcomps; ++compno)
-		{
+
+		for (compno = 0; compno < image->numcomps; ++compno) {
 			opj_pi_comp_t *comp = &l_current_pi->comps[compno];
+
 			tccp = &tcp->tccps[compno];
+
 			comp->resolutions = (opj_pi_resolution_t*) opj_malloc(tccp->numresolutions * sizeof(opj_pi_resolution_t));
-			if
-				(!comp->resolutions)
-			{
+			if (!comp->resolutions) {
 				pi_destroy_v2(l_pi, l_poc_bound);
 				return 00;
 			}
+
 			comp->numresolutions = tccp->numresolutions;
 			memset(comp->resolutions,0,tccp->numresolutions * sizeof(opj_pi_resolution_t));
 		}

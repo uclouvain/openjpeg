@@ -1583,35 +1583,31 @@ void tcd_free_decode_tile(opj_tcd_t *tcd, int tileno) {
 }
 
 
-opj_bool tcd_init_v2(
-					   opj_tcd_v2_t *p_tcd,
-					   opj_image_t * p_image,
-					   opj_cp_v2_t * p_cp
-					   )
+opj_bool tcd_init_v2(  opj_tcd_v2_t *p_tcd,
+					   opj_image_header_t * p_image_header,
+					   opj_cp_v2_t * p_cp )
 {
 	OPJ_UINT32 l_tile_comp_size;
 
-	p_tcd->image = p_image;
+	p_tcd->image_header = p_image_header;
 	p_tcd->cp = p_cp;
 	p_tcd->tcd_image->tiles = (opj_tcd_tile_t *) opj_malloc(sizeof(opj_tcd_tile_t));
 
-	if
-		(! p_tcd->tcd_image->tiles)
-	{
+	if (! p_tcd->tcd_image->tiles) {
 		return OPJ_FALSE;
 	}
 	memset(p_tcd->tcd_image->tiles,0, sizeof(opj_tcd_tile_t));
 
-	l_tile_comp_size = p_image->numcomps * sizeof(opj_tcd_tilecomp_t);
+	l_tile_comp_size = p_image_header->numcomps * sizeof(opj_tcd_tilecomp_t);
 	p_tcd->tcd_image->tiles->comps = (opj_tcd_tilecomp_t *) opj_malloc(l_tile_comp_size);
-	if
-		(! p_tcd->tcd_image->tiles->comps )
-	{
+	if (! p_tcd->tcd_image->tiles->comps ) {
 		return OPJ_FALSE;
 	}
 	memset( p_tcd->tcd_image->tiles->comps , 0 , l_tile_comp_size);
-	p_tcd->tcd_image->tiles->numcomps = p_image->numcomps;
+
+	p_tcd->tcd_image->tiles->numcomps = p_image_header->numcomps;
 	p_tcd->tp_pos = p_cp->m_specific_param.m_enc.m_tp_pos;
+
 	return OPJ_TRUE;
 }
 
@@ -1663,7 +1659,7 @@ opj_bool FUNCTION																\
 	opj_stepsize_t * l_step_size = 00;										\
 	opj_tcd_precinct_t *l_current_precinct = 00;							\
 	TYPE* l_code_block = 00;												\
-	opj_image_t *	l_image = 00;											\
+	opj_image_header_t *	l_image = 00;											\
 	OPJ_UINT32 p,q;															\
 	OPJ_UINT32 l_level_no;													\
 	OPJ_UINT32 l_pdx, l_pdy;												\
@@ -1686,8 +1682,8 @@ opj_bool FUNCTION																\
 	l_tile = p_tcd->tcd_image->tiles;										\
 	l_tccp = l_tcp->tccps;													\
 	l_tilec = l_tile->comps;												\
-	l_image = p_tcd->image;													\
-	l_image_comp = p_tcd->image->comps;										\
+	l_image = p_tcd->image_header;													\
+	l_image_comp = p_tcd->image_header->comps;										\
 																			\
 	p = p_tile_no % l_cp->tw;	/* tile coordinates */						\
 	q = p_tile_no / l_cp->tw;												\
@@ -2014,15 +2010,15 @@ OPJ_UINT32 tcd_get_decoded_tile_size (
 {
 	OPJ_UINT32 i;
 	OPJ_UINT32 l_data_size = 0;
-	opj_image_comp_t * l_img_comp = 00;
+	opj_image_comp_header_t * l_img_comp = 00;
 	opj_tcd_tilecomp_t * l_tile_comp = 00;
 	opj_tcd_resolution_t * l_res = 00;
 	OPJ_UINT32 l_size_comp, l_remaining;
 
 	l_tile_comp = p_tcd->tcd_image->tiles->comps;
-	l_img_comp = p_tcd->image->comps;
+	l_img_comp = p_tcd->image_header->comps;
 	for
-		(i=0;i<p_tcd->image->numcomps;++i)
+		(i=0;i<p_tcd->image_header->numcomps;++i)
 	{
 		l_size_comp = l_img_comp->prec >> 3; /*(/ 8)*/
 		l_remaining = l_img_comp->prec & 7;  /* (%8) */
@@ -2136,7 +2132,7 @@ opj_bool tcd_update_tile_data (
 						 )
 {
 	OPJ_UINT32 i,j,k,l_data_size = 0;
-	opj_image_comp_t * l_img_comp = 00;
+	opj_image_comp_header_t * l_img_comp = 00;
 	opj_tcd_tilecomp_t * l_tilec = 00;
 	opj_tcd_resolution_t * l_res;
 	OPJ_UINT32 l_size_comp, l_remaining;
@@ -2150,9 +2146,9 @@ opj_bool tcd_update_tile_data (
 	}
 
 	l_tilec = p_tcd->tcd_image->tiles->comps;
-	l_img_comp = p_tcd->image->comps;
+	l_img_comp = p_tcd->image_header->comps;
 	for
-		(i=0;i<p_tcd->image->numcomps;++i)
+		(i=0;i<p_tcd->image_header->numcomps;++i)
 	{
 		l_size_comp = l_img_comp->prec >> 3; /*(/ 8)*/
 		l_remaining = l_img_comp->prec & 7;  /* (%8) */
@@ -2405,7 +2401,7 @@ opj_bool tcd_t2_decode (
 {
 	opj_t2_v2_t * l_t2;
 
-	l_t2 = t2_create_v2(p_tcd->image, p_tcd->cp);
+	l_t2 = t2_create_v2(p_tcd->image_header, p_tcd->cp);
 	if
 		(l_t2 == 00)
 	{
@@ -2469,7 +2465,7 @@ opj_bool tcd_dwt_decode (
 	opj_tcd_tile_t * l_tile = p_tcd->tcd_image->tiles;
 	opj_tcd_tilecomp_t * l_tile_comp = l_tile->comps;
 	opj_tccp_t * l_tccp = p_tcd->tcp->tccps;
-	opj_image_comp_t * l_img_comp = p_tcd->image->comps;
+	opj_image_comp_header_t * l_img_comp = p_tcd->image_header->comps;
 
 	for
 		(compno = 0; compno < l_tile->numcomps; compno++)
@@ -2555,7 +2551,7 @@ opj_bool tcd_mct_decode (
 								// nb of components (i.e. size of pData)
 								l_tile->numcomps,
 								// tells if the data is signed
-								p_tcd->image->comps->sgnd))
+								p_tcd->image_header->comps->sgnd))
 		{
 			opj_free(l_data);
 			return OPJ_FALSE;
@@ -2593,7 +2589,7 @@ opj_bool tcd_dc_level_shift_decode (
 	OPJ_UINT32 compno;
 	opj_tcd_tilecomp_t * l_tile_comp = 00;
 	opj_tccp_t * l_tccp = 00;
-	opj_image_comp_t * l_img_comp = 00;
+	opj_image_comp_header_t * l_img_comp = 00;
 	opj_tcd_resolution_t* l_res = 00;
 	opj_tcp_v2_t * l_tcp = 00;
 	opj_tcd_tile_t * l_tile;
@@ -2606,7 +2602,7 @@ opj_bool tcd_dc_level_shift_decode (
 	l_tile_comp = l_tile->comps;
 	l_tcp = p_tcd->tcp;
 	l_tccp = p_tcd->tcp->tccps;
-	l_img_comp = p_tcd->image->comps;
+	l_img_comp = p_tcd->image_header->comps;
 
 	for
 		(compno = 0; compno < l_tile->numcomps; compno++)

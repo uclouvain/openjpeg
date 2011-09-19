@@ -600,6 +600,75 @@ typedef struct opj_image_comptparm {
 	int sgnd;
 } opj_image_cmptparm_t;
 
+
+
+/**
+Defines a single image component characteristics (uses in new API)
+*/
+typedef struct opj_image_comp_header {
+	/** XRsiz: horizontal separation of a sample of ith component with respect to the reference grid */
+	int dx;
+	/** YRsiz: vertical separation of a sample of ith component with respect to the reference grid */
+	int dy;
+	/** data width */
+	int w;
+	/** data height */
+	int h;
+	/** x component offset compared to the whole image */
+	int x0;
+	/** y component offset compared to the whole image */
+	int y0;
+	/** precision */
+	int prec;
+	/** image depth in bits */
+	int bpp;
+	/** signed (1) / unsigned (0) */
+	int sgnd;
+	/** number of decoded resolution */
+	int resno_decoded;
+	/** number of division by 2 of the out image compared to the original size of image */
+	int factor;
+} opj_image_comp_header_t;
+
+/**
+Defines image characteristics (uses in new API)
+*/
+typedef struct opj_image_header {
+	/** XOsiz: horizontal offset from the origin of the reference grid to the left side of the image area */
+	OPJ_UINT32 x0;
+	/** YOsiz: vertical offset from the origin of the reference grid to the top side of the image area */
+	OPJ_UINT32 y0;
+	/** Xsiz: width of the reference grid */
+	OPJ_UINT32 x1;
+	/** Ysiz: height of the reference grid */
+	OPJ_UINT32 y1;
+	/** number of components in the image */
+	OPJ_UINT16 numcomps;
+	/** color space: sRGB, Greyscale or YUV */
+	OPJ_COLOR_SPACE color_space;
+	/** image components */
+	opj_image_comp_header_t *comps;
+
+	/** XTOsiz */
+	OPJ_UINT32 tile_x0;
+	/** YTOsiz */
+	OPJ_UINT32 tile_y0;
+	/** XTsiz */
+	OPJ_UINT32 tile_width;
+	/** YTsiz */
+	OPJ_UINT32 tile_height;
+	/** number of tiles in width */
+	OPJ_UINT32 nb_tiles_x;
+	/** number of tiles in height */
+	OPJ_UINT32 nb_tiles_y;
+
+	/** 'restricted' ICC profile */
+	unsigned char *icc_profile_buf;
+	/** size of ICC profile */
+	int icc_profile_len;
+} opj_image_header_t;
+
+
 /* 
 ==========================================================
    Information on the JPEG 2000 codestream
@@ -776,6 +845,8 @@ Deallocate any resources associated with an image
 @param image image to be destroyed
 */
 OPJ_API void OPJ_CALLCONV opj_image_destroy(opj_image_t *image);
+
+OPJ_API void OPJ_CALLCONV opj_image_header_destroy(opj_image_header_t *image);
 
 /* 
 ==========================================================
@@ -1024,16 +1095,10 @@ OPJ_API void OPJ_CALLCONV opj_destroy_cstr_info(opj_codestream_info_t *cstr_info
  * @param	p_nb_tiles_x	pointer to a value that will hold the number of tiles in the x direction.
  * @param	p_nb_tiles_y	pointer to a value that will hold the number of tiles in the y direction.
  */
-OPJ_API opj_bool OPJ_CALLCONV opj_read_header (
-										opj_codec_t *p_codec,
-										opj_image_t ** p_image,
-										OPJ_INT32 * p_tile_x0,
-										OPJ_INT32 * p_tile_y0,
-										OPJ_UINT32 * p_tile_width,
-										OPJ_UINT32 * p_tile_height,
-										OPJ_UINT32 * p_nb_tiles_x,
-										OPJ_UINT32 * p_nb_tiles_y,
-										opj_stream_t *p_cio);
+OPJ_API opj_bool OPJ_CALLCONV opj_read_header (	opj_stream_t *p_cio,
+												opj_codec_t *p_codec,
+												opj_image_header_t **p_image_header,
+												opj_codestream_info_t **p_cstr_info	);
 
 /**
 Destroy a decompressor handle

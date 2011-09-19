@@ -283,8 +283,8 @@ typedef struct opj_tcd_v2
 	OPJ_UINT32 cur_pino;
 	/** info on each image tile */
 	opj_tcd_image_t *tcd_image;
-	/** image */
-	struct opj_image *image;
+	/** image header */
+	struct opj_image_header *image_header;
 	/** coding parameters */
 	struct opj_cp_v2 *cp;
 	/** coding/decoding parameters common to all tiles */
@@ -335,7 +335,7 @@ void tcd_destroy_v2(opj_tcd_v2_t *tcd);
 opj_bool tcd_init_v2(
 						opj_tcd_v2_t *p_tcd,
 						//struct opj_image * p_image,
-						opj_image_t * p_image,
+						opj_image_header_t * p_image_header,
 						//struct opj_cp * p_cp
 						opj_cp_v2_t * p_cp
 					);

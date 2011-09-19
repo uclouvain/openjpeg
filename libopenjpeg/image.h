@@ -46,12 +46,19 @@ Create an empty image
 opj_image_t* opj_image_create0(void);
 
 /**
- * Updates the components of the image from the coding parameters.
+Create an empty image header
+@return returns an image header if successful, returns NULL otherwise
+*/
+opj_image_header_t* opj_image_header_create0(void);
+
+
+/**
+ * Updates the components characteristics of the image from the coding parameters.
  *
- * @param p_image		the image to update.
+ * @param p_image_header		the image header to update.
  * @param p_cp			the coding parameters from which to update the image.
  */
-void opj_image_comp_update(struct opj_image * p_image,const struct opj_cp_v2 * p_cp);
+void opj_image_comp_header_update(struct opj_image_header * p_image_header, const struct opj_cp_v2* p_cp);
 
 /*@}*/
 

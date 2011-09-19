@@ -31,6 +31,11 @@ opj_image_t* opj_image_create0(void) {
 	return image;
 }
 
+opj_image_header_t* opj_image_header_create0(void) {
+	opj_image_header_t *image_header = (opj_image_header_t*)opj_calloc(1, sizeof(opj_image_header_t));
+	return image_header;
+}
+
 opj_image_t* OPJ_CALLCONV opj_image_create(int numcmpts, opj_image_cmptparm_t *cmptparms, OPJ_COLOR_SPACE clrspc) {
 	int compno;
 	opj_image_t *image = NULL;
@@ -70,6 +75,7 @@ opj_image_t* OPJ_CALLCONV opj_image_create(int numcmpts, opj_image_cmptparm_t *c
 	return image;
 }
 
+// TODO remove this one
 void OPJ_CALLCONV opj_image_destroy(opj_image_t *image) {
 	int i;
 	if(image) {
@@ -87,26 +93,37 @@ void OPJ_CALLCONV opj_image_destroy(opj_image_t *image) {
 	}
 }
 
+
+void OPJ_CALLCONV opj_image_header_destroy(opj_image_header_t *image) {
+	if(image) {
+		if(image->comps) {
+			/* image components */
+			opj_free(image->comps);
+		}
+		opj_free(image);
+	}
+}
+
 /**
- * Updates the components of the image from the coding parameters.
+ * Updates the components characteristics of the image from the coding parameters.
  *
- * @param p_image		the image to update.
- * @param p_cp			the coding parameters from which to update the image.
+ * @param p_image_header	the image header to update.
+ * @param p_cp				the coding parameters from which to update the image.
  */
-void opj_image_comp_update(opj_image_t * p_image,const opj_cp_v2_t * p_cp)
+void opj_image_comp_header_update(opj_image_header_t * p_image_header, const opj_cp_v2_t * p_cp)
 {
 	OPJ_UINT32 i, l_width, l_height;
-	OPJ_INT32 l_x0,l_y0,l_x1,l_y1;
-	OPJ_INT32 l_comp_x0,l_comp_y0,l_comp_x1,l_comp_y1;
-	opj_image_comp_t * l_img_comp = 00;
+	OPJ_INT32 l_x0, l_y0, l_x1, l_y1;
+	OPJ_INT32 l_comp_x0, l_comp_y0, l_comp_x1, l_comp_y1;
+	opj_image_comp_header_t* l_img_comp = NULL;
 
-	l_x0 = int_max(p_cp->tx0 , p_image->x0);
-	l_y0 = int_max(p_cp->ty0 , p_image->y0);
-	l_x1 = int_min(p_cp->tx0 + p_cp->tw * p_cp->tdx, p_image->x1);
-	l_y1 = int_min(p_cp->ty0 + p_cp->th * p_cp->tdy, p_image->y1);
+	l_x0 = int_max(p_cp->tx0 , p_image_header->x0);
+	l_y0 = int_max(p_cp->ty0 , p_image_header->y0);
+	l_x1 = int_min(p_cp->tx0 + p_cp->tw * p_cp->tdx, p_image_header->x1);
+	l_y1 = int_min(p_cp->ty0 + p_cp->th * p_cp->tdy, p_image_header->y1);
 
-	l_img_comp = p_image->comps;
-	for	(i = 0; i < p_image->numcomps; ++i) {
+	l_img_comp = p_image_header->comps;
+	for	(i = 0; i < p_image_header->numcomps; ++i) {
 		l_comp_x0 = int_ceildiv(l_x0, l_img_comp->dx);
 		l_comp_y0 = int_ceildiv(l_y0, l_img_comp->dy);
 		l_comp_x1 = int_ceildiv(l_x1, l_img_comp->dx);

@@ -60,7 +60,7 @@ typedef struct opj_t2_v2 {
 	opj_common_ptr cinfo;
 
 	/** Encoding: pointer to the src image. Decoding: pointer to the dst image. */
-	opj_image_t *image;
+	opj_image_header_t *image;
 	/** pointer to the image coding parameters */
 	opj_cp_v2_t *cp;
 } opj_t2_v2_t;
@@ -113,7 +113,7 @@ opj_bool t2_decode_packets_v2(opj_t2_v2_t *t2, OPJ_UINT32 tileno,struct opj_tcd_
  * @param	p_cp		Image coding parameters.
  * @return		a new T2 handle if successful, NULL otherwise.
 */
-opj_t2_v2_t* t2_create_v2(struct opj_image *p_image, opj_cp_v2_t *p_cp);
+opj_t2_v2_t* t2_create_v2(struct opj_image_header *p_image, opj_cp_v2_t *p_cp);
 
 /**
 Create a T2 handle

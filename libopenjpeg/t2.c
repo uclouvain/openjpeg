@@ -846,7 +846,7 @@ opj_bool t2_decode_packets_v2(
 	OPJ_BYTE *l_current_data = p_src;
 	opj_pi_iterator_t *l_pi = 00;
 	OPJ_UINT32 pino;
-	opj_image_t *l_image = p_t2->image;
+	opj_image_header_t *l_image = p_t2->image;
 	opj_cp_v2_t *l_cp = p_t2->cp;
 	opj_cp_v2_t *cp = p_t2->cp;
 	opj_tcp_v2_t *l_tcp = &(p_t2->cp->tcps[p_tile_no]);
@@ -856,56 +856,46 @@ opj_bool t2_decode_packets_v2(
 	OPJ_UINT32 curtp = 0;
 	OPJ_UINT32 tp_start_packno;
 	opj_packet_info_t *l_pack_info = 00;
-	opj_image_comp_t* l_img_comp = 00;
+	opj_image_comp_header_t* l_img_comp = 00;
 
 
-	if
-		(p_cstr_info)
-	{
+	if (p_cstr_info) {
 		l_pack_info = p_cstr_info->tile[p_tile_no].packet;
 	}
 
 	/* create a packet iterator */
 	l_pi = pi_create_decode_v2(l_image, l_cp, p_tile_no);
-	if
-		(!l_pi)
-	{
+	if (!l_pi) {
 		return OPJ_FALSE;
 	}
 
 	tp_start_packno = 0;
 	l_current_pi = l_pi;
 
-	for
-		(pino = 0; pino <= l_tcp->numpocs; ++pino)
-	{
-		while
-			(pi_next(l_current_pi))
-		{
+	for	(pino = 0; pino <= l_tcp->numpocs; ++pino) {
 
-			if
-				(l_tcp->num_layers_to_decode > l_current_pi->layno && l_current_pi->resno < p_tile->comps[l_current_pi->compno].minimum_num_resolutions)
-			{
+		while (pi_next(l_current_pi)) {
+
+			if (l_tcp->num_layers_to_decode > l_current_pi->layno
+					&& l_current_pi->resno < p_tile->comps[l_current_pi->compno].minimum_num_resolutions) {
 				l_nb_bytes_read = 0;
-				if
-					(! t2_decode_packet_v2(p_t2,p_tile,l_tcp,l_current_pi,l_current_data,&l_nb_bytes_read,p_max_len,l_pack_info))
-				{
+
+				if (! t2_decode_packet_v2(p_t2,p_tile,l_tcp,l_current_pi,l_current_data,&l_nb_bytes_read,p_max_len,l_pack_info)) {
 					pi_destroy_v2(l_pi,l_nb_pocs);
 					return OPJ_FALSE;
 				}
+
 				l_img_comp = &(l_image->comps[l_current_pi->compno]);
 				l_img_comp->resno_decoded = uint_max(l_current_pi->resno, l_img_comp->resno_decoded);
 			}
-			else
-			{
+			else {
 				l_nb_bytes_read = 0;
-				if
-					(! t2_skip_packet(p_t2,p_tile,l_tcp,l_current_pi,l_current_data,&l_nb_bytes_read,p_max_len,l_pack_info))
-				{
+				if (! t2_skip_packet(p_t2,p_tile,l_tcp,l_current_pi,l_current_data,&l_nb_bytes_read,p_max_len,l_pack_info)) {
 					pi_destroy_v2(l_pi,l_nb_pocs);
 					return OPJ_FALSE;
 				}
 			}
+
 			l_current_data += l_nb_bytes_read;
 			p_max_len -= l_nb_bytes_read;
 
@@ -965,7 +955,7 @@ opj_t2_t* t2_create(opj_common_ptr cinfo, opj_image_t *image, opj_cp_t *cp) {
  * @return		a new T2 handle if successful, NULL otherwise.
 */
 opj_t2_v2_t* t2_create_v2(
-					opj_image_t *p_image,
+					opj_image_header_t *p_image,
 					opj_cp_v2_t *p_cp)
 {
 	/* create the tcd structure */
@@ -1010,27 +1000,27 @@ static opj_bool t2_decode_packet_v2(
 
 	*p_data_read = 0;
 
-	if
-		(! t2_read_packet_header(p_t2,p_tile,p_tcp,p_pi,&l_read_data,p_src,&l_nb_bytes_read,p_max_length,p_pack_info))
-	{
+	if (! t2_read_packet_header(p_t2,p_tile,p_tcp,p_pi,&l_read_data,p_src,&l_nb_bytes_read,p_max_length,p_pack_info)) {
 		return OPJ_FALSE;
 	}
+
 	p_src += l_nb_bytes_read;
 	l_nb_total_bytes_read += l_nb_bytes_read;
 	p_max_length -= l_nb_bytes_read;
+
 	/* we should read data for the packet */
-	if
-		(l_read_data)
-	{
+	if (l_read_data) {
 		l_nb_bytes_read = 0;
-		if
-			(! t2_read_packet_data(p_t2,p_tile,p_pi,p_src,&l_nb_bytes_read,p_max_length,p_pack_info))
-		{
+
+		if (! t2_read_packet_data(p_t2,p_tile,p_pi,p_src,&l_nb_bytes_read,p_max_length,p_pack_info)) {
 			return OPJ_FALSE;
 		}
+
 		l_nb_total_bytes_read += l_nb_bytes_read;
 	}
+
 	*p_data_read = l_nb_total_bytes_read;
+
 	return OPJ_FALSE;
 }
 

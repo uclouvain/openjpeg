@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 September 19, 2011
++ [mickael] WIP: new image_header struct is used and enable used of cstr_info
 + [mickael] WIP: manage the case of event_mgr is not provided to setup_decoder function 
 + [mickael] WIP: insert elements from V2 framework into the trunk (add missing files). 
 + [mickael] Work In Progress: insert elements from V2 framework into the trunk. 
