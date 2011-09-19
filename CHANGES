@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 September 19, 2011
++ [mickael] WIP: update t1, t2, tcd to use same strut as in V2
 + [mickael] WIP: begin to test opj_read_tile_header with V2 style
 + [mickael] WIP: create a new framework to output file information
 + [mickael] WIP: remove a piece of code copy by the merge op at the wrong place

@@ -117,7 +117,9 @@ typedef enum J2K_STATUS {
 	J2K_STATE_TPH    = 0x0010, /**< the decoding process is in a tile part header */
 	J2K_STATE_MT     = 0x0020, /**< the EOC marker has just been read */
 	J2K_STATE_NEOC   = 0x0040, /**< the decoding process must not expect a EOC marker because the codestream is truncated */
-	J2K_STATE_ERR    = 0x0080  /**< the decoding process has encountered an error */
+
+	J2K_STATE_EOC	 = 0x0100,  /**< the decoding process has encountered the EOC marker */
+	J2K_STATE_ERR    = 0x8000 /**< the decoding process has encountered an error (FIXME warning V1 = 0x0080)*/
 } J2K_STATUS;
 
 /* ----------------------------------------------------------------------- */

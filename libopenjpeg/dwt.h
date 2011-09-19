@@ -64,6 +64,7 @@ void dwt_decode(opj_tcd_tilecomp_t* tilec, int numres);
 #endif
 opj_bool dwt_decode(opj_tcd_tilecomp_t* tilec, OPJ_UINT32 numres);
 
+opj_bool dwt_decode_v2(opj_tcd_tilecomp_v2_t* tilec, OPJ_UINT32 numres);
 
 /**
 Get the gain of a subband for the reversible 5-3 DWT.
@@ -71,6 +72,8 @@ Get the gain of a subband for the reversible 5-3 DWT.
 @return Returns 0 if orient = 0, returns 1 if orient = 1 or 2, returns 2 otherwise
 */
 int dwt_getgain(int orient);
+
+OPJ_UINT32 dwt_getgain_v2(OPJ_UINT32 orient) ;
 /**
 Get the norm of a wavelet function of a subband at a specified level for the reversible 5-3 DWT.
 @param level Level of the wavelet function
@@ -93,12 +96,16 @@ Apply an irreversible inverse DWT transform to a component of an image.
 */
 // V1 void dwt_decode_real(opj_tcd_tilecomp_t* tilec, int numres);
 opj_bool dwt_decode_real(opj_tcd_tilecomp_t* tilec, int numres);
+
+opj_bool dwt_decode_real_v2(opj_tcd_tilecomp_v2_t* restrict tilec, OPJ_UINT32 numres);
+
 /**
 Get the gain of a subband for the irreversible 9-7 DWT.
 @param orient Number that identifies the subband (0->LL, 1->HL, 2->LH, 3->HH)
 @return Returns the gain of the 9-7 wavelet transform
 */
 int dwt_getgain_real(int orient);
+OPJ_UINT32 dwt_getgain_real_v2(OPJ_UINT32 orient);
 /**
 Get the norm of a wavelet function of a subband at a specified level for the irreversible 9-7 DWT
 @param level Level of the wavelet function

@@ -2997,29 +2997,32 @@ static void j2k_read_ppt(opj_j2k_t *j2k) {
  * @param	p_header_size	the size of the data contained in the PPT marker.
  * @param	p_manager		the user event manager.
 */
-opj_bool j2k_read_ppt_v2 (
-						opj_j2k_v2_t *p_j2k,
-						OPJ_BYTE * p_header_data,
-						OPJ_UINT32 p_header_size,
-						struct opj_event_mgr * p_manager
-					)
+opj_bool j2k_read_ppt_v2 (	opj_j2k_v2_t *p_j2k,
+							OPJ_BYTE * p_header_data,
+							OPJ_UINT32 p_header_size,
+							struct opj_event_mgr * p_manager )
 {
-
 	opj_cp_v2_t *l_cp = 00;
 	opj_tcp_v2_t *l_tcp = 00;
 	OPJ_UINT32 l_Z_ppt;
 
-	// preconditions
+	/* preconditions */
 	assert(p_header_data != 00);
 	assert(p_j2k != 00);
 	assert(p_manager != 00);
 
+	/* We need to have the Z_ppt element at minimum */
 	if (p_header_size < 1) {
 		opj_event_msg_v2(p_manager, EVT_ERROR, "Error reading PPT marker\n");
 		return OPJ_FALSE;
 	}
 
 	l_cp = &(p_j2k->m_cp);
+	if (l_cp->ppm){
+		opj_event_msg_v2(p_manager, EVT_ERROR, "Error reading PPT marker: packet header have been previously found in the main header (PPM marker).\n");
+		return OPJ_FALSE;
+	}
+
 	l_tcp = &(l_cp->tcps[p_j2k->m_current_tile_number]);
 	l_tcp->ppt = 1;
 
@@ -3027,35 +3030,39 @@ opj_bool j2k_read_ppt_v2 (
 	++p_header_data;
 	--p_header_size;
 
-	// first PPT marker
+	/* Allocate buffer to read the packet header */
 	if (l_Z_ppt == 0) {
 		/* First PPT marker */
-		l_tcp->ppt_len = p_header_size;
 		l_tcp->ppt_data_size = 0;
-		l_tcp->ppt_buffer = (OPJ_BYTE *) opj_malloc(l_tcp->ppt_len);
-		l_tcp->ppt_data = l_tcp->ppt_buffer;
+		l_tcp->ppt_len = p_header_size;
 
+		l_tcp->ppt_buffer = (OPJ_BYTE *) opj_calloc(l_tcp->ppt_len, sizeof(OPJ_BYTE) );
 		if (l_tcp->ppt_buffer == 00) {
 			opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory reading PPT marker\n");
 			return OPJ_FALSE;
 		}
-		memset(l_tcp->ppt_buffer,0,l_tcp->ppt_len);
+		l_tcp->ppt_data = l_tcp->ppt_buffer;
+
+		/* memset(l_tcp->ppt_buffer,0,l_tcp->ppt_len); */
 	}
 	else {
 		l_tcp->ppt_len += p_header_size;
-		l_tcp->ppt_buffer = (OPJ_BYTE *) opj_realloc(l_tcp->ppt_buffer,l_tcp->ppt_len);
 
+		l_tcp->ppt_buffer = (OPJ_BYTE *) opj_realloc(l_tcp->ppt_buffer,l_tcp->ppt_len);
 		if (l_tcp->ppt_buffer == 00) {
 			opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory reading PPT marker\n");
 			return OPJ_FALSE;
 		}
-
 		l_tcp->ppt_data = l_tcp->ppt_buffer;
+
 		memset(l_tcp->ppt_buffer+l_tcp->ppt_data_size,0,p_header_size);
 	}
+
+	/* Read packet header from buffer */
 	memcpy(l_tcp->ppt_buffer+l_tcp->ppt_data_size,p_header_data,p_header_size);
 
 	l_tcp->ppt_data_size += p_header_size;
+
 	return OPJ_TRUE;
 }
 
@@ -3253,11 +3260,12 @@ opj_bool j2k_read_sot_v2 (
 	OPJ_UINT32 l_current_part;
 	OPJ_UINT32 l_tile_x,l_tile_y;
 
-	// preconditions
+	/* preconditions */
 	assert(p_header_data != 00);
 	assert(p_j2k != 00);
 	assert(p_manager != 00);
 
+	/* Size of this marker is fixed = 12 (we have already read marker and its size)*/
 	if (p_header_size != 8) {
 		opj_event_msg_v2(p_manager, EVT_ERROR, "Error reading SOT marker\n");
 		return OPJ_FALSE;
@@ -3322,7 +3330,6 @@ opj_bool j2k_read_sot_v2 (
 				"- setting Psot to %d => assuming it is the last tile\n",
 				totlen);
 		}
-
 	};
 #endif /* USE_JPWL */
 
@@ -3337,18 +3344,22 @@ opj_bool j2k_read_sot_v2 (
 	opj_read_bytes(p_header_data,&l_num_parts ,1);		/* TNsot */
 	++p_header_data;
 
-	if (l_num_parts != 0) {
+	if (l_num_parts != 0) { /* Number of tile-part header is provided by this tile-part header */
 		l_tcp->m_nb_tile_parts = l_num_parts;
 	}
 
+	/* If know the number of tile part header we will check if we didn't read the last*/
 	if (l_tcp->m_nb_tile_parts) {
 		if (l_tcp->m_nb_tile_parts == (l_current_part + 1)) {
-			p_j2k->m_specific_param.m_decoder.m_can_decode = 1;
+			p_j2k->m_specific_param.m_decoder.m_can_decode = 1; /* Process the last tile-part header*/
 		}
 	}
 
-	p_j2k->m_specific_param.m_decoder.m_sot_length = l_tot_len - 12; // SOT_marker_size = 12
-	p_j2k->m_specific_param.m_decoder.m_state = J2K_STATE_TPH;// FIXME J2K_DEC_STATE_TPH;
+	/* Keep the size of data to skip after this marker */
+	p_j2k->m_specific_param.m_decoder.m_sot_length = l_tot_len - 12; /* SOT_marker_size = 12 */
+	p_j2k->m_specific_param.m_decoder.m_state = J2K_STATE_TPH;
+
+	/* Check if the current tile is outside the area we want decode (in tile index)*/
 	p_j2k->m_specific_param.m_decoder.m_skip_data =
 			(l_tile_x < p_j2k->m_specific_param.m_decoder.m_start_tile_x)
 		||	(l_tile_x >= p_j2k->m_specific_param.m_decoder.m_end_tile_x)
@@ -3545,7 +3556,9 @@ opj_bool j2k_read_sod_v2 (
 	}
 
 	l_cstr_info = p_j2k->cstr_info;
+
 	/* Index */
+#ifdef TODO_MSD
 	if (l_cstr_info) {
 		OPJ_SIZE_T l_current_pos = opj_stream_tell(p_stream)-1;
 		l_cstr_info->tile[p_j2k->m_current_tile_number].tp[p_j2k->m_specific_param.m_encoder.m_current_tile_part_number].tp_end_header = l_current_pos;
@@ -3556,6 +3569,7 @@ opj_bool j2k_read_sod_v2 (
 
 		l_cstr_info->packno = 0;
 	}
+#endif
 
 	l_current_read_size = opj_stream_read_data(	p_stream,
 												*l_current_data + *l_tile_len,
@@ -3563,10 +3577,10 @@ opj_bool j2k_read_sod_v2 (
 												p_manager);
 
 	if (l_current_read_size != p_j2k->m_specific_param.m_decoder.m_sot_length) {
-		p_j2k->m_specific_param.m_decoder.m_state = J2K_STATE_NEOC; // FIXME J2K_DEC_STATE_NEOC;
+		p_j2k->m_specific_param.m_decoder.m_state = J2K_STATE_NEOC;
 	}
 	else {
-		p_j2k->m_specific_param.m_decoder.m_state = J2K_STATE_TPHSOT; // FIXME J2K_DEC_STATE_TPHSOT;
+		p_j2k->m_specific_param.m_decoder.m_state = J2K_STATE_TPHSOT;
 	}
 
 	*l_tile_len +=  l_current_read_size;
@@ -5169,10 +5183,10 @@ opj_bool j2k_read_header_procedure(	opj_j2k_v2_t *p_j2k,
 	// Read 2 bytes as the new marker ID
 	opj_read_bytes(p_j2k->m_specific_param.m_decoder.m_header_data,&l_current_marker,2);
 
-	// Try to read until the SOT is detected
+	/* Try to read until the SOT is detected */
 	while (l_current_marker != J2K_MS_SOT) {
 
-		// Check if the current marker ID is valid
+		/* Check if the current marker ID is valid */
 		if (l_current_marker < 0xff00) {
 			opj_event_msg_v2(p_manager, EVT_ERROR, "We expected read a marker ID (0xff--) instead of %.8x\n", l_current_marker);
 			return OPJ_FALSE;
@@ -5683,7 +5697,7 @@ opj_bool j2k_read_tile_header(	opj_j2k_v2_t * p_j2k,
 	OPJ_UINT32 l_current_marker = J2K_MS_SOT;
 	OPJ_UINT32 l_marker_size;
 	const opj_dec_memory_marker_handler_t * l_marker_handler = 00;
-	opj_tcp_v2_t * l_tcp = 00;
+	opj_tcp_v2_t * l_tcp = NULL;
 	OPJ_UINT32 l_nb_tiles;
 
 	/* preconditions */
@@ -5691,97 +5705,120 @@ opj_bool j2k_read_tile_header(	opj_j2k_v2_t * p_j2k,
 	assert(p_j2k != 00);
 	assert(p_manager != 00);
 
-	if (p_j2k->m_specific_param.m_decoder.m_state == 0x0100){// FIXME J2K_DEC_STATE_EOC)
+	/* Reach the End Of Codestream ?*/
+	if (p_j2k->m_specific_param.m_decoder.m_state == J2K_STATE_EOC){
 		l_current_marker = J2K_MS_EOC;
 	}
-	else if	(p_j2k->m_specific_param.m_decoder.m_state != J2K_STATE_TPHSOT){ // FIXME J2K_DEC_STATE_TPHSOT)
+	/* We need to encounter a SOT marker (a new tile-part header) */
+	else if	(p_j2k->m_specific_param.m_decoder.m_state != J2K_STATE_TPHSOT){
 		return OPJ_FALSE;
 	}
 
+	/* Read into the codestream until reach the EOC or ! can_decode ??? FIXME */
 	while (! p_j2k->m_specific_param.m_decoder.m_can_decode && l_current_marker != J2K_MS_EOC) {
+
+		/* Try to read until the Start Of Data is detected */
 		while (l_current_marker != J2K_MS_SOD) {
 
+			/* Try to read 2 bytes (the marker size) from stream and copy them into the buffer */
 			if (opj_stream_read_data(p_stream,p_j2k->m_specific_param.m_decoder.m_header_data,2,p_manager) != 2) {
 				opj_event_msg_v2(p_manager, EVT_ERROR, "Stream too short\n");
 				return OPJ_FALSE;
 			}
 
+			/* Read 2 bytes from the buffer as the marker size */
 			opj_read_bytes(p_j2k->m_specific_param.m_decoder.m_header_data,&l_marker_size,2);
 
-			if (p_j2k->m_specific_param.m_decoder.m_state & J2K_STATE_TPH){ // FIXME J2K_DEC_STATE_TPH)
+			/* Why this condition? FIXME */
+			if (p_j2k->m_specific_param.m_decoder.m_state & J2K_STATE_TPH){
 				p_j2k->m_specific_param.m_decoder.m_sot_length -= (l_marker_size + 2);
 			}
-			l_marker_size -= 2;
+			l_marker_size -= 2; /* Subtract the size of the marker ID already read */
 
+			/* Get the marker handler from the marker ID */
 			l_marker_handler = j2k_get_marker_handler(l_current_marker);
 
-			/* Check if the marker is known */
+			/* Check if the marker is known and if it is the right place to find it */
 			if (! (p_j2k->m_specific_param.m_decoder.m_state & l_marker_handler->states) ) {
 				opj_event_msg_v2(p_manager, EVT_ERROR, "Marker is not compliant with its position\n");
 				return OPJ_FALSE;
 			}
+/* FIXME manage case of unknown marker as in the main header ? */
 
+			/* Check if the marker size is compatible with the header data size */
 			if (l_marker_size > p_j2k->m_specific_param.m_decoder.m_header_data_size) {
 				p_j2k->m_specific_param.m_decoder.m_header_data = (OPJ_BYTE*)
 					opj_realloc(p_j2k->m_specific_param.m_decoder.m_header_data,l_marker_size);
 				if (p_j2k->m_specific_param.m_decoder.m_header_data == 00) {
 					return OPJ_FALSE;
 				}
-
 				p_j2k->m_specific_param.m_decoder.m_header_data_size = l_marker_size;
 			}
 
+			/* Try to read the rest of the marker segment from stream and copy them into the buffer */
 			if (opj_stream_read_data(p_stream,p_j2k->m_specific_param.m_decoder.m_header_data,l_marker_size,p_manager) != l_marker_size) {
 				opj_event_msg_v2(p_manager, EVT_ERROR, "Stream too short\n");
 				return OPJ_FALSE;
 			}
 
+			/* Read the marker segment with the correct marker handler */
 			if (! (*(l_marker_handler->handler))(p_j2k,p_j2k->m_specific_param.m_decoder.m_header_data,l_marker_size,p_manager)) {
 				opj_event_msg_v2(p_manager, EVT_ERROR, "Marker is not compliant with its position\n");
 				return OPJ_FALSE;
 			}
 
 			if (p_j2k->m_specific_param.m_decoder.m_skip_data) {
+				/* Skip the rest of the tile part header*/
 				if (opj_stream_skip(p_stream,p_j2k->m_specific_param.m_decoder.m_sot_length,p_manager) != p_j2k->m_specific_param.m_decoder.m_sot_length) {
 					opj_event_msg_v2(p_manager, EVT_ERROR, "Stream too short\n");
 					return OPJ_FALSE;
 				}
-				l_current_marker = J2K_MS_SOD;
+				l_current_marker = J2K_MS_SOD; /* Normally we reached a SOD */
 			}
 			else {
+				/* Try to read 2 bytes (the next marker ID) from stream and copy them into the buffer*/
 				if (opj_stream_read_data(p_stream,p_j2k->m_specific_param.m_decoder.m_header_data,2,p_manager) != 2) {
 					opj_event_msg_v2(p_manager, EVT_ERROR, "Stream too short\n");
 					return OPJ_FALSE;
 				}
+				/* Read 2 bytes from the buffer as the new marker ID */
 				opj_read_bytes(p_j2k->m_specific_param.m_decoder.m_header_data,&l_current_marker,2);
 			}
 		}
 
+		/* If we didn't skip data before, we need to read the SOD marker*/
 		if (! p_j2k->m_specific_param.m_decoder.m_skip_data) {
-			if (! j2k_read_sod_v2(p_j2k,p_stream,p_manager)) {
+			/* Try to read the SOD marker and skip data ? FIXME */
+			if (! j2k_read_sod_v2(p_j2k, p_stream, p_manager)) {
 				return OPJ_FALSE;
 			}
 		}
 		else {
+			/* Indicate we will try to read a new tile-part header*/
 			p_j2k->m_specific_param.m_decoder.m_skip_data = 0;
 			p_j2k->m_specific_param.m_decoder.m_can_decode = 0;
-			p_j2k->m_specific_param.m_decoder.m_state = J2K_STATE_TPHSOT; // FIXME J2K_DEC_STATE_TPHSOT;
+			p_j2k->m_specific_param.m_decoder.m_state = J2K_STATE_TPHSOT;
 
+			/* Try to read 2 bytes (the next marker ID) from stream and copy them into the buffer */
 			if (opj_stream_read_data(p_stream,p_j2k->m_specific_param.m_decoder.m_header_data,2,p_manager) != 2) {
 				opj_event_msg_v2(p_manager, EVT_ERROR, "Stream too short\n");
 				return OPJ_FALSE;
 			}
+
+			/* Read 2 bytes from buffer as the new marker ID */
 			opj_read_bytes(p_j2k->m_specific_param.m_decoder.m_header_data,&l_current_marker,2);
 		}
 	}
 
+	/* Current marker is the EOC marker ?*/
 	if (l_current_marker == J2K_MS_EOC) {
-		if (p_j2k->m_specific_param.m_decoder.m_state != 0x0100 ){// FIXME J2K_DEC_STATE_EOC)
+		if (p_j2k->m_specific_param.m_decoder.m_state != J2K_STATE_EOC ){
 			p_j2k->m_current_tile_number = 0;
-			p_j2k->m_specific_param.m_decoder.m_state = 0x0100;// FIXME J2K_DEC_STATE_EOC;
+			p_j2k->m_specific_param.m_decoder.m_state = J2K_STATE_EOC;
 		}
 	}
 
+	/* FIXME ???*/
 	if ( ! p_j2k->m_specific_param.m_decoder.m_can_decode) {
 		l_tcp = p_j2k->m_cp.tcps + p_j2k->m_current_tile_number;
 		l_nb_tiles = p_j2k->m_cp.th * p_j2k->m_cp.tw;
@@ -5797,6 +5834,7 @@ opj_bool j2k_read_tile_header(	opj_j2k_v2_t * p_j2k,
 		}
 	}
 
+	/*FIXME ???*/
 	if (! tcd_init_decode_tile(p_j2k->m_tcd, p_j2k->m_current_tile_number)) {
 		opj_event_msg_v2(p_manager, EVT_ERROR, "Cannot decode tile, memory error\n");
 		return OPJ_FALSE;
@@ -5919,10 +5957,10 @@ opj_bool j2k_set_decode_area(	opj_j2k_v2_t *p_j2k,
 	/* Check if the positions provided by the user are correct */
 
 	/* Left */
-	if (p_start_x > l_cp->tw * l_cp->tdx) {
+	if (p_start_x > l_cp->tx0 + l_cp->tw * l_cp->tdx) {
 		opj_event_msg_v2(p_manager, EVT_ERROR,
-			"Left position of the decoded area (ROI_x0=%d) is outside the tile area (nb_tw x XTsiz=%d).\n",
-			p_start_x, l_cp->tw * l_cp->tdx);
+			"Left position of the decoded area (ROI_x0=%d) is outside the tile area (XTOsiz + nb_tw x XTsiz=%d).\n",
+			p_start_x, l_cp->tx0 + l_cp->tw * l_cp->tdx);
 		return OPJ_FALSE;
 	}
 	else if (p_start_x < l_cp->tx0){
@@ -5935,10 +5973,10 @@ opj_bool j2k_set_decode_area(	opj_j2k_v2_t *p_j2k,
 		p_j2k->m_specific_param.m_decoder.m_start_tile_x = (p_start_x - l_cp->tx0) / l_cp->tdx;
 
 	/* Up */
-	if (p_start_y > l_cp->th * l_cp->tdy){
+	if (p_start_y > l_cp->ty0 + l_cp->th * l_cp->tdy){
 		opj_event_msg_v2(p_manager, EVT_ERROR,
-				"Up position of the decoded area (ROI_y0=%d) is outside the tile area (nb_th x YTsiz=%d).\n",
-				p_start_y, l_cp->th * l_cp->tdy);
+				"Up position of the decoded area (ROI_y0=%d) is outside the tile area (YTOsiz + nb_th x YTsiz=%d).\n",
+				p_start_y, l_cp->ty0 + l_cp->th * l_cp->tdy);
 		return OPJ_FALSE;
 	}
 	else if (p_start_y < l_cp->ty0){
@@ -5957,10 +5995,10 @@ opj_bool j2k_set_decode_area(	opj_j2k_v2_t *p_j2k,
 			p_end_x, l_cp->tx0);
 		return OPJ_FALSE;
 	}
-	else if (p_end_x > l_cp->tw * l_cp->tdx) {
+	else if (p_end_x > l_cp->tx0 + l_cp->tw * l_cp->tdx) {
 		opj_event_msg_v2(p_manager, EVT_WARNING,
-			"Right position of the decoded area (ROI_x1=%d) is outside the tile area (nb_tw x XTsiz=%d).\n",
-			p_end_x, l_cp->tw * l_cp->tdx);
+			"Right position of the decoded area (ROI_x1=%d) is outside the tile area (XTOsiz + nb_tw x XTsiz=%d).\n",
+			p_end_x, l_cp->tx0 + l_cp->tw * l_cp->tdx);
 		p_j2k->m_specific_param.m_decoder.m_end_tile_x = l_cp->tw; // FIXME (-1) ???
 	}
 	else
@@ -5973,10 +6011,10 @@ opj_bool j2k_set_decode_area(	opj_j2k_v2_t *p_j2k,
 			p_end_x, l_cp->ty0);
 		return OPJ_FALSE;
 	}
-	if (p_end_y > l_cp->th * l_cp->tdy){
+	if (p_end_y > l_cp->ty0 + l_cp->th * l_cp->tdy){
 		opj_event_msg_v2(p_manager, EVT_WARNING,
-			"Bottom position of the decoded area (ROI_y1=%d) is outside the tile area (nb_th x YTsiz=%d).\n",
-			p_end_y, l_cp->th * l_cp->tdy);
+			"Bottom position of the decoded area (ROI_y1=%d) is outside the tile area (YTOsiz + nb_th x YTsiz=%d).\n",
+			p_end_y, l_cp->ty0 + l_cp->th * l_cp->tdy);
 		p_j2k->m_specific_param.m_decoder.m_start_tile_y = l_cp->th; // FIXME (-1) ???
 	}
 	else
