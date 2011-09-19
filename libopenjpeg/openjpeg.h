@@ -1335,6 +1335,36 @@ OPJ_API opj_bool OPJ_CALLCONV opj_set_decode_area(	opj_codec_t *p_codec,
 													OPJ_INT32 p_start_x, OPJ_INT32 p_start_y,
 													OPJ_INT32 p_end_x, OPJ_INT32 p_end_y );
 
+/**
+ * Reads a tile header. This function is compulsory and allows one to know the size of the tile thta will be decoded.
+ * The user may need to refer to the image got by opj_read_header to understand the size being taken by the tile.
+ *
+ * @param	p_codec			the jpeg2000 codec.
+ * @param	p_tile_index	pointer to a value that will hold the index of the tile being decoded, in case of success.
+ * @param	p_data_size		pointer to a value that will hold the maximum size of the decoded data, in case of success. In case
+ *							of truncated codestreams, the actual number of bytes decoded may be lower. The computation of the size is the same
+ *							as depicted in opj_write_tile.
+ * @param	p_tile_x0		pointer to a value that will hold the x0 pos of the tile (in the image).
+ * @param	p_tile_y0		pointer to a value that will hold the y0 pos of the tile (in the image).
+ * @param	p_tile_x1		pointer to a value that will hold the x1 pos of the tile (in the image).
+ * @param	p_tile_y1		pointer to a value that will hold the y1 pos of the tile (in the image).
+ * @param	p_nb_comps		pointer to a value that will hold the number of components in the tile.
+ * @param	p_should_go_on	pointer to a boolean that will hold the fact that the decoding should go on. In case the
+ *							codestream is over at the time of the call, the value will be set to false. The user should then stop
+ *							the decoding.
+ * @param	p_stream		the stream to decode.
+ * @return	true			if the tile header could be decoded. In case the decoding should end, the returned value is still true.
+ *							returning false may be the result of a shortage of memory or an internal error.
+ */
+OPJ_API opj_bool OPJ_CALLCONV opj_read_tile_header(	opj_codec_t *p_codec,
+												opj_stream_t * p_stream,
+												OPJ_UINT32 * p_tile_index,
+												OPJ_UINT32 * p_data_size,
+												OPJ_INT32 * p_tile_x0, OPJ_INT32 * p_tile_y0,
+												OPJ_INT32 * p_tile_x1, OPJ_INT32 * p_tile_y1,
+												OPJ_UINT32 * p_nb_comps,
+												opj_bool * p_should_go_on );
+
 #ifdef __cplusplus
 }
 #endif

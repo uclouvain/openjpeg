@@ -195,8 +195,8 @@ char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_dparamet
 }
 
 /* -------------------------------------------------------------------------- */
+/* parse the command line */
 int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,img_fol_t *img_fol) {
-	/* parse the command line */
 	int totlen, c;
 	opj_option_t long_option[]={
 		{"ImgDir",REQ_ARG, NULL ,'y'},
@@ -231,7 +231,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 			}
 			break;
 
-			/* ------------------------------------------------------ */
+				/* ------------------------------------------------------ */
 
 			case 'o':     /* output file */
 			{
@@ -257,6 +257,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 				break;
 
 				/* ----------------------------------------------------- */
+
 			case 'd':     		/* Input decode ROI */
 			{
 				int size_optarg = (int)strlen(optarg) + 1;
@@ -264,7 +265,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 				ROI_values[0] = '\0';
 				strncpy(ROI_values, optarg, strlen(optarg));
 				ROI_values[strlen(optarg)] = '\0';
-				printf("ROI_values = %s [%d / %d]\n", ROI_values, strlen(ROI_values), size_optarg );
+				/*printf("ROI_values = %s [%d / %d]\n", ROI_values, strlen(ROI_values), size_optarg ); */
 				parse_ROI_values( ROI_values, &parameters->ROI_x0, &parameters->ROI_y0, &parameters->ROI_x1, &parameters->ROI_y1);
 			}
 			break;
@@ -371,8 +372,7 @@ int main(int argc, char *argv[])
 	opj_codec_t* dinfo = NULL;	/* handle to a decompressor */
 	opj_stream_t *cio = NULL;
 	opj_codestream_info_t* cstr_info =NULL;  /* Codestream information structure */
-	/* OPJ_INT32 l_tile_x0,l_tile_y0; */
-	/* OPJ_UINT32 l_tile_width,l_tile_height,l_nb_tiles_x,l_nb_tiles_y; */
+	opj_bool l_go_on = OPJ_TRUE;
 
 
 	/* FIXME configure the event callbacks (not required) */
@@ -502,10 +502,40 @@ int main(int argc, char *argv[])
 		}
 
 		printf("Setting decoding area to %d,%d,%d,%d\n",
-				parameters.ROI_x0, parameters.ROI_y0, parameters.ROI_x1, parameters.ROI_x1);
-		opj_set_decode_area(dinfo,
-							parameters.ROI_x0, parameters.ROI_y0,
-							parameters.ROI_x1, parameters.ROI_x1);
+				parameters.ROI_x0, parameters.ROI_y0, parameters.ROI_x1, parameters.ROI_y1);
+
+		if (! opj_set_decode_area(	dinfo,
+									parameters.ROI_x0, parameters.ROI_y0,
+									parameters.ROI_x1, parameters.ROI_y1)){
+			fprintf(stderr, "ERROR -> j2k_dump: failed to set the decoded area\n");
+			opj_stream_destroy(cio);
+			fclose(fsrc);
+			opj_destroy_codec(dinfo);
+			return EXIT_FAILURE;
+		}
+
+		while (l_go_on) {
+			OPJ_INT32 l_current_tile_x0,l_current_tile_y0,l_current_tile_x1,l_current_tile_y1;
+			OPJ_UINT32 l_nb_comps, l_tile_index, l_data_size;
+
+			if (! opj_read_tile_header(	dinfo,
+										cio,
+										&l_tile_index,
+										&l_data_size,
+										&l_current_tile_x0,
+										&l_current_tile_y0,
+										&l_current_tile_x1,
+										&l_current_tile_y1,
+										&l_nb_comps,
+										&l_go_on
+										)) {
+				fprintf(stderr, "ERROR -> j2k_dump: failed read the tile header\n");
+				opj_stream_destroy(cio);
+				fclose(fsrc);
+				opj_destroy_codec(dinfo);
+				return EXIT_FAILURE;
+			}
+		}
 
 		/* Dump file informations from header */
 		dump_file_info(fout, &file_info);

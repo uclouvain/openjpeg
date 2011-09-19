@@ -2451,27 +2451,21 @@ void jp2_setup_header_reading (opj_jp2_v2_t *jp2)
  * @param	p_stream			the stream to write data to.
  * @param	p_manager	the user event manager.
  */
-opj_bool jp2_read_tile_header (
-					 opj_jp2_v2_t * p_jp2,
-					 OPJ_UINT32 * p_tile_index,
-					 OPJ_UINT32 * p_data_size,
-					 OPJ_INT32 * p_tile_x0,
-					 OPJ_INT32 * p_tile_y0,
-					 OPJ_INT32 * p_tile_x1,
-					 OPJ_INT32 * p_tile_y1,
-					 OPJ_UINT32 * p_nb_comps,
-					 opj_bool * p_go_on,
-					 opj_stream_private_t *p_stream,
-					 opj_event_mgr_t * p_manager
-					)
+opj_bool jp2_read_tile_header(	opj_jp2_v2_t * p_jp2,
+					 	 		OPJ_UINT32 * p_tile_index,
+					 	 		OPJ_UINT32 * p_data_size,
+					 	 		OPJ_INT32 * p_tile_x0, OPJ_INT32 * p_tile_y0,
+					 	 		OPJ_INT32 * p_tile_x1, OPJ_INT32 * p_tile_y1,
+					 	 		OPJ_UINT32 * p_nb_comps,
+					 	 		opj_bool * p_go_on,
+					 	 		opj_stream_private_t *p_stream,
+					 	 		opj_event_mgr_t * p_manager )
 {
-	return j2k_read_tile_header (p_jp2->j2k,
+	return j2k_read_tile_header(p_jp2->j2k,
 								p_tile_index,
 								p_data_size,
-								p_tile_x0,
-								p_tile_y0,
-								p_tile_x1,
-								p_tile_y1,
+								p_tile_x0, p_tile_y0,
+								p_tile_x1, p_tile_y1,
 								p_nb_comps,
 								p_go_on,
 								p_stream,
@@ -2558,16 +2552,12 @@ void jp2_destroy(opj_jp2_v2_t *jp2)
  *
  * @return	true			if the area could be set.
  */
-opj_bool jp2_set_decode_area(
-			opj_jp2_v2_t *p_jp2,
-			OPJ_INT32 p_start_x,
-			OPJ_INT32 p_start_y,
-			OPJ_INT32 p_end_x,
-			OPJ_INT32 p_end_y,
-			struct opj_event_mgr * p_manager
-			)
+opj_bool jp2_set_decode_area(	opj_jp2_v2_t *p_jp2,
+								OPJ_INT32 p_start_x, OPJ_INT32 p_start_y,
+								OPJ_INT32 p_end_x, OPJ_INT32 p_end_y,
+								struct opj_event_mgr * p_manager )
 {
-	return j2k_set_decode_area(p_jp2->j2k,p_start_x,p_start_y,p_end_x,p_end_y,p_manager);
+	return j2k_set_decode_area(p_jp2->j2k, p_start_x, p_start_y, p_end_x, p_end_y, p_manager);
 }
 
 /* ----------------------------------------------------------------------- */

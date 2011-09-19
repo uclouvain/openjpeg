@@ -736,8 +736,61 @@ opj_bool OPJ_CALLCONV opj_set_decode_area(	opj_codec_t *p_codec,
 				p_start_y,
 				p_end_x,
 				p_end_y,
-				&(l_info->m_event_mgr));
+				l_info->m_event_mgr);
 
+	}
+	return OPJ_FALSE;
+}
+
+/**
+ * Reads a tile header. This function is compulsory and allows one to know the size of the tile thta will be decoded.
+ * The user may need to refer to the image got by opj_read_header to understand the size being taken by the tile.
+ *
+ * @param	p_codec			the jpeg2000 codec.
+ * @param	p_tile_index	pointer to a value that will hold the index of the tile being decoded, in case of success.
+ * @param	p_data_size		pointer to a value that will hold the maximum size of the decoded data, in case of success. In case
+ *							of truncated codestreams, the actual number of bytes decoded may be lower. The computation of the size is the same
+ *							as depicted in opj_write_tile.
+ * @param	p_tile_x0		pointer to a value that will hold the x0 pos of the tile (in the image).
+ * @param	p_tile_y0		pointer to a value that will hold the y0 pos of the tile (in the image).
+ * @param	p_tile_x1		pointer to a value that will hold the x1 pos of the tile (in the image).
+ * @param	p_tile_y1		pointer to a value that will hold the y1 pos of the tile (in the image).
+ * @param	p_nb_comps		pointer to a value that will hold the number of components in the tile.
+ * @param	p_should_go_on	pointer to a boolean that will hold the fact that the decoding should go on. In case the
+ *							codestream is over at the time of the call, the value will be set to false. The user should then stop
+ *							the decoding.
+ * @param	p_stream		the stream to decode.
+ * @return	true			if the tile header could be decoded. In case the decoding should end, the returned value is still true.
+ *							returning false may be the result of a shortage of memory or an internal error.
+ */
+opj_bool OPJ_CALLCONV opj_read_tile_header(
+					opj_codec_t *p_codec,
+					opj_stream_t * p_stream,
+					OPJ_UINT32 * p_tile_index,
+					OPJ_UINT32 * p_data_size,
+					OPJ_INT32 * p_tile_x0, OPJ_INT32 * p_tile_y0,
+					OPJ_INT32 * p_tile_x1, OPJ_INT32 * p_tile_y1,
+					OPJ_UINT32 * p_nb_comps,
+					opj_bool * p_should_go_on)
+{
+	if (p_codec && p_stream && p_data_size && p_tile_index) {
+		opj_codec_private_t * l_info = (opj_codec_private_t *) p_codec;
+		opj_stream_private_t * l_cio = (opj_stream_private_t *) p_stream;
+
+		if (! l_info->is_decompressor) {
+			return OPJ_FALSE;
+		}
+
+		return l_info->m_codec_data.m_decompression.opj_read_tile_header(
+			l_info->m_codec,
+			p_tile_index,
+			p_data_size,
+			p_tile_x0, p_tile_y0,
+			p_tile_x1, p_tile_y1,
+			p_nb_comps,
+			p_should_go_on,
+			l_cio,
+			l_info->m_event_mgr);
 	}
 	return OPJ_FALSE;
 }

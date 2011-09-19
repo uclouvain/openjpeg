@@ -5670,19 +5670,15 @@ void j2k_cp_destroy (opj_cp_v2_t *p_cp)
  * @param	p_stream			the stream to write data to.
  * @param	p_manager	the user event manager.
  */
-opj_bool j2k_read_tile_header (
-					 opj_j2k_v2_t * p_j2k,
-					 OPJ_UINT32 * p_tile_index,
-					 OPJ_UINT32 * p_data_size,
-					 OPJ_INT32 * p_tile_x0,
-					 OPJ_INT32 * p_tile_y0,
-					 OPJ_INT32 * p_tile_x1,
-					 OPJ_INT32 * p_tile_y1,
-					 OPJ_UINT32 * p_nb_comps,
-					 opj_bool * p_go_on,
-					 opj_stream_private_t *p_stream,
-					 opj_event_mgr_t * p_manager
-					)
+opj_bool j2k_read_tile_header(	opj_j2k_v2_t * p_j2k,
+					 	 	 	OPJ_UINT32 * p_tile_index,
+					 	 	 	OPJ_UINT32 * p_data_size,
+					 	 	 	OPJ_INT32 * p_tile_x0, OPJ_INT32 * p_tile_y0,
+					 	 	 	OPJ_INT32 * p_tile_x1, OPJ_INT32 * p_tile_y1,
+								OPJ_UINT32 * p_nb_comps,
+								opj_bool * p_go_on,
+								opj_stream_private_t *p_stream,
+								opj_event_mgr_t * p_manager )
 {
 	OPJ_UINT32 l_current_marker = J2K_MS_SOT;
 	OPJ_UINT32 l_marker_size;
@@ -5690,91 +5686,70 @@ opj_bool j2k_read_tile_header (
 	opj_tcp_v2_t * l_tcp = 00;
 	OPJ_UINT32 l_nb_tiles;
 
-	// preconditions
+	/* preconditions */
 	assert(p_stream != 00);
 	assert(p_j2k != 00);
 	assert(p_manager != 00);
 
-	if
-		(p_j2k->m_specific_param.m_decoder.m_state == 0x0100)// FIXME J2K_DEC_STATE_EOC)
-	{
+	if (p_j2k->m_specific_param.m_decoder.m_state == 0x0100){// FIXME J2K_DEC_STATE_EOC)
 		l_current_marker = J2K_MS_EOC;
 	}
-	else if
-		(p_j2k->m_specific_param.m_decoder.m_state != J2K_STATE_TPHSOT) // FIXME J2K_DEC_STATE_TPHSOT)
-	{
+	else if	(p_j2k->m_specific_param.m_decoder.m_state != J2K_STATE_TPHSOT){ // FIXME J2K_DEC_STATE_TPHSOT)
 		return OPJ_FALSE;
 	}
 
-	while
-		(! p_j2k->m_specific_param.m_decoder.m_can_decode && l_current_marker != J2K_MS_EOC)
-	{
-		while
-			(l_current_marker != J2K_MS_SOD)
-		{
-			if
-				(opj_stream_read_data(p_stream,p_j2k->m_specific_param.m_decoder.m_header_data,2,p_manager) != 2)
-			{
+	while (! p_j2k->m_specific_param.m_decoder.m_can_decode && l_current_marker != J2K_MS_EOC) {
+		while (l_current_marker != J2K_MS_SOD) {
+
+			if (opj_stream_read_data(p_stream,p_j2k->m_specific_param.m_decoder.m_header_data,2,p_manager) != 2) {
 				opj_event_msg_v2(p_manager, EVT_ERROR, "Stream too short\n");
 				return OPJ_FALSE;
 			}
+
 			opj_read_bytes(p_j2k->m_specific_param.m_decoder.m_header_data,&l_marker_size,2);
-			if
-				(p_j2k->m_specific_param.m_decoder.m_state & J2K_STATE_TPH) // FIXME J2K_DEC_STATE_TPH)
-			{
+
+			if (p_j2k->m_specific_param.m_decoder.m_state & J2K_STATE_TPH){ // FIXME J2K_DEC_STATE_TPH)
 				p_j2k->m_specific_param.m_decoder.m_sot_length -= (l_marker_size + 2);
 			}
 			l_marker_size -= 2;
 
 			l_marker_handler = j2k_get_marker_handler(l_current_marker);
-			// Check if the marker is known
-			if
-				(! (p_j2k->m_specific_param.m_decoder.m_state & l_marker_handler->states) )
-			{
+
+			/* Check if the marker is known */
+			if (! (p_j2k->m_specific_param.m_decoder.m_state & l_marker_handler->states) ) {
 				opj_event_msg_v2(p_manager, EVT_ERROR, "Marker is not compliant with its position\n");
 				return OPJ_FALSE;
 			}
-			if
-				(l_marker_size > p_j2k->m_specific_param.m_decoder.m_header_data_size)
-			{
+
+			if (l_marker_size > p_j2k->m_specific_param.m_decoder.m_header_data_size) {
 				p_j2k->m_specific_param.m_decoder.m_header_data = (OPJ_BYTE*)
-				opj_realloc(p_j2k->m_specific_param.m_decoder.m_header_data,l_marker_size);
-				if
-					(p_j2k->m_specific_param.m_decoder.m_header_data == 00)
-				{
+					opj_realloc(p_j2k->m_specific_param.m_decoder.m_header_data,l_marker_size);
+				if (p_j2k->m_specific_param.m_decoder.m_header_data == 00) {
 					return OPJ_FALSE;
 				}
-				p_j2k->m_specific_param.m_decoder.m_header_data_size = l_marker_size;
 
+				p_j2k->m_specific_param.m_decoder.m_header_data_size = l_marker_size;
 			}
-			if
-				(opj_stream_read_data(p_stream,p_j2k->m_specific_param.m_decoder.m_header_data,l_marker_size,p_manager) != l_marker_size)
-			{
+
+			if (opj_stream_read_data(p_stream,p_j2k->m_specific_param.m_decoder.m_header_data,l_marker_size,p_manager) != l_marker_size) {
 				opj_event_msg_v2(p_manager, EVT_ERROR, "Stream too short\n");
 				return OPJ_FALSE;
 			}
-			if
-				(! (*(l_marker_handler->handler))(p_j2k,p_j2k->m_specific_param.m_decoder.m_header_data,l_marker_size,p_manager))
-			{
+
+			if (! (*(l_marker_handler->handler))(p_j2k,p_j2k->m_specific_param.m_decoder.m_header_data,l_marker_size,p_manager)) {
 				opj_event_msg_v2(p_manager, EVT_ERROR, "Marker is not compliant with its position\n");
 				return OPJ_FALSE;
 			}
-			if
-				(p_j2k->m_specific_param.m_decoder.m_skip_data)
-			{
-				if
-					(opj_stream_skip(p_stream,p_j2k->m_specific_param.m_decoder.m_sot_length,p_manager) != p_j2k->m_specific_param.m_decoder.m_sot_length)
-				{
+
+			if (p_j2k->m_specific_param.m_decoder.m_skip_data) {
+				if (opj_stream_skip(p_stream,p_j2k->m_specific_param.m_decoder.m_sot_length,p_manager) != p_j2k->m_specific_param.m_decoder.m_sot_length) {
 					opj_event_msg_v2(p_manager, EVT_ERROR, "Stream too short\n");
 					return OPJ_FALSE;
 				}
 				l_current_marker = J2K_MS_SOD;
 			}
-			else
-			{
-				if
-					(opj_stream_read_data(p_stream,p_j2k->m_specific_param.m_decoder.m_header_data,2,p_manager) != 2)
-				{
+			else {
+				if (opj_stream_read_data(p_stream,p_j2k->m_specific_param.m_decoder.m_header_data,2,p_manager) != 2) {
 					opj_event_msg_v2(p_manager, EVT_ERROR, "Stream too short\n");
 					return OPJ_FALSE;
 				}
@@ -5782,23 +5757,17 @@ opj_bool j2k_read_tile_header (
 			}
 		}
 
-		if
-			(! p_j2k->m_specific_param.m_decoder.m_skip_data)
-		{
-			if
-				(! j2k_read_sod_v2(p_j2k,p_stream,p_manager))
-			{
+		if (! p_j2k->m_specific_param.m_decoder.m_skip_data) {
+			if (! j2k_read_sod_v2(p_j2k,p_stream,p_manager)) {
 				return OPJ_FALSE;
 			}
 		}
-		else
-		{
+		else {
 			p_j2k->m_specific_param.m_decoder.m_skip_data = 0;
 			p_j2k->m_specific_param.m_decoder.m_can_decode = 0;
 			p_j2k->m_specific_param.m_decoder.m_state = J2K_STATE_TPHSOT; // FIXME J2K_DEC_STATE_TPHSOT;
-			if
-				(opj_stream_read_data(p_stream,p_j2k->m_specific_param.m_decoder.m_header_data,2,p_manager) != 2)
-			{
+
+			if (opj_stream_read_data(p_stream,p_j2k->m_specific_param.m_decoder.m_header_data,2,p_manager) != 2) {
 				opj_event_msg_v2(p_manager, EVT_ERROR, "Stream too short\n");
 				return OPJ_FALSE;
 			}
@@ -5806,54 +5775,46 @@ opj_bool j2k_read_tile_header (
 		}
 	}
 
-	if
-		(l_current_marker == J2K_MS_EOC)
-	{
-		if
-			(p_j2k->m_specific_param.m_decoder.m_state != 0x0100 )// FIXME J2K_DEC_STATE_EOC)
-		{
+	if (l_current_marker == J2K_MS_EOC) {
+		if (p_j2k->m_specific_param.m_decoder.m_state != 0x0100 ){// FIXME J2K_DEC_STATE_EOC)
 			p_j2k->m_current_tile_number = 0;
-			p_j2k->m_specific_param.m_decoder.m_state = 0x0100;// FIXMEJ2K_DEC_STATE_EOC;
+			p_j2k->m_specific_param.m_decoder.m_state = 0x0100;// FIXME J2K_DEC_STATE_EOC;
 		}
 	}
-	if
-		( ! p_j2k->m_specific_param.m_decoder.m_can_decode)
-	{
+
+	if ( ! p_j2k->m_specific_param.m_decoder.m_can_decode) {
 		l_tcp = p_j2k->m_cp.tcps + p_j2k->m_current_tile_number;
 		l_nb_tiles = p_j2k->m_cp.th * p_j2k->m_cp.tw;
-		while
-			(
-				(p_j2k->m_current_tile_number < l_nb_tiles)
-				&&	(l_tcp->m_data == 00)
-			)
-		{
+
+		while( (p_j2k->m_current_tile_number < l_nb_tiles) && (l_tcp->m_data == 00) ) {
 			++p_j2k->m_current_tile_number;
 			++l_tcp;
 		}
-		if
-			(p_j2k->m_current_tile_number == l_nb_tiles)
-		{
+
+		if (p_j2k->m_current_tile_number == l_nb_tiles) {
 			*p_go_on = OPJ_FALSE;
 			return OPJ_TRUE;
 		}
 	}
-	if
-		(! tcd_init_decode_tile(p_j2k->m_tcd, p_j2k->m_current_tile_number))
-	{
+
+	if (! tcd_init_decode_tile(p_j2k->m_tcd, p_j2k->m_current_tile_number)) {
 		opj_event_msg_v2(p_manager, EVT_ERROR, "Cannot decode tile, memory error\n");
 		return OPJ_FALSE;
 	}
+
 	*p_tile_index = p_j2k->m_current_tile_number;
 	*p_go_on = OPJ_TRUE;
 	*p_data_size = tcd_get_decoded_tile_size(p_j2k->m_tcd);
-	* p_tile_x0 = p_j2k->m_tcd->tcd_image->tiles->x0;
-	* p_tile_y0 = p_j2k->m_tcd->tcd_image->tiles->y0;
-	* p_tile_x1 = p_j2k->m_tcd->tcd_image->tiles->x1;
-	* p_tile_y1 = p_j2k->m_tcd->tcd_image->tiles->y1;
-	* p_nb_comps = p_j2k->m_tcd->tcd_image->tiles->numcomps;
+	*p_tile_x0 = p_j2k->m_tcd->tcd_image->tiles->x0;
+	*p_tile_y0 = p_j2k->m_tcd->tcd_image->tiles->y0;
+	*p_tile_x1 = p_j2k->m_tcd->tcd_image->tiles->x1;
+	*p_tile_y1 = p_j2k->m_tcd->tcd_image->tiles->y1;
+	*p_nb_comps = p_j2k->m_tcd->tcd_image->tiles->numcomps;
 	p_j2k->m_specific_param.m_decoder.m_state |= 0x0080;// FIXME J2K_DEC_STATE_DATA;
+
 	return OPJ_TRUE;
 }
+
 
 opj_bool j2k_decode_tile (
 					opj_j2k_v2_t * p_j2k,
@@ -5941,27 +5902,89 @@ opj_bool j2k_decode_tile (
  *
  * @return	true			if the area could be set.
  */
-opj_bool j2k_set_decode_area(
-			opj_j2k_v2_t *p_j2k,
-			OPJ_INT32 p_start_x,
-			OPJ_INT32 p_start_y,
-			OPJ_INT32 p_end_x,
-			OPJ_INT32 p_end_y,
-			struct opj_event_mgr * p_manager
-			)
+opj_bool j2k_set_decode_area(	opj_j2k_v2_t *p_j2k,
+								OPJ_INT32 p_start_x, OPJ_INT32 p_start_y,
+								OPJ_INT32 p_end_x, OPJ_INT32 p_end_y,
+								struct opj_event_mgr * p_manager )
 {
 	opj_cp_v2_t * l_cp = &(p_j2k->m_cp);
 
-	if
-		(p_j2k->m_specific_param.m_decoder.m_state != J2K_STATE_TPHSOT)// FIXME J2K_DEC_STATE_TPHSOT)
-	{
+	/* Check if we are read the main header */
+	if (p_j2k->m_specific_param.m_decoder.m_state != J2K_STATE_TPHSOT) { // FIXME J2K_DEC_STATE_TPHSOT)
+		opj_event_msg_v2(p_manager, EVT_ERROR, "Need to decode the main header before begin to decode the remaining codestream");
 		return OPJ_FALSE;
 	}
-	p_j2k->m_specific_param.m_decoder.m_start_tile_x = (p_start_x - l_cp->tx0) / l_cp->tdx;
-	p_j2k->m_specific_param.m_decoder.m_start_tile_y = (p_start_y - l_cp->ty0) / l_cp->tdy;
-	p_j2k->m_specific_param.m_decoder.m_end_tile_x = int_ceildiv((p_end_x - l_cp->tx0), l_cp->tdx);
-	p_j2k->m_specific_param.m_decoder.m_end_tile_y = int_ceildiv((p_end_y - l_cp->ty0), l_cp->tdy);
+
+	/* ----- */
+	/* Check if the positions provided by the user are correct */
+
+	/* Left */
+	if (p_start_x > l_cp->tw * l_cp->tdx) {
+		opj_event_msg_v2(p_manager, EVT_ERROR,
+			"Left position of the decoded area (ROI_x0=%d) is outside the tile area (nb_tw x XTsiz=%d).\n",
+			p_start_x, l_cp->tw * l_cp->tdx);
+		return OPJ_FALSE;
+	}
+	else if (p_start_x < l_cp->tx0){
+		opj_event_msg_v2(p_manager, EVT_WARNING,
+				"Left position of the decoded area (ROI_x0=%d) is outside the tile area (XTOsiz=%d).\n",
+				p_start_x, l_cp->tx0);
+		p_j2k->m_specific_param.m_decoder.m_start_tile_x = 0;
+	}
+	else
+		p_j2k->m_specific_param.m_decoder.m_start_tile_x = (p_start_x - l_cp->tx0) / l_cp->tdx;
+
+	/* Up */
+	if (p_start_y > l_cp->th * l_cp->tdy){
+		opj_event_msg_v2(p_manager, EVT_ERROR,
+				"Up position of the decoded area (ROI_y0=%d) is outside the tile area (nb_th x YTsiz=%d).\n",
+				p_start_y, l_cp->th * l_cp->tdy);
+		return OPJ_FALSE;
+	}
+	else if (p_start_y < l_cp->ty0){
+		opj_event_msg_v2(p_manager, EVT_WARNING,
+				"Up position of the decoded area (ROI_y0=%d) is outside the tile area (YTOsiz=%d).\n",
+				p_start_y, l_cp->ty0);
+		p_j2k->m_specific_param.m_decoder.m_start_tile_y = 0;
+	}
+	else
+		p_j2k->m_specific_param.m_decoder.m_start_tile_y = (p_start_y - l_cp->ty0) / l_cp->tdy;
+
+	/* Right */
+	if (p_end_x < l_cp->tx0) {
+		opj_event_msg_v2(p_manager, EVT_ERROR,
+			"Right position of the decoded area (ROI_x1=%d) is outside the tile area (XTOsiz=%d).\n",
+			p_end_x, l_cp->tx0);
+		return OPJ_FALSE;
+	}
+	else if (p_end_x > l_cp->tw * l_cp->tdx) {
+		opj_event_msg_v2(p_manager, EVT_WARNING,
+			"Right position of the decoded area (ROI_x1=%d) is outside the tile area (nb_tw x XTsiz=%d).\n",
+			p_end_x, l_cp->tw * l_cp->tdx);
+		p_j2k->m_specific_param.m_decoder.m_end_tile_x = l_cp->tw; // FIXME (-1) ???
+	}
+	else
+		p_j2k->m_specific_param.m_decoder.m_end_tile_x = int_ceildiv((p_end_x - l_cp->tx0), l_cp->tdx);
+
+	/* Bottom */
+	if (p_end_x < l_cp->ty0) {
+		opj_event_msg_v2(p_manager, EVT_ERROR,
+			"Right position of the decoded area (ROI_y1=%d) is outside the tile area (YTOsiz=%d).\n",
+			p_end_x, l_cp->ty0);
+		return OPJ_FALSE;
+	}
+	if (p_end_y > l_cp->th * l_cp->tdy){
+		opj_event_msg_v2(p_manager, EVT_WARNING,
+			"Bottom position of the decoded area (ROI_y1=%d) is outside the tile area (nb_th x YTsiz=%d).\n",
+			p_end_y, l_cp->th * l_cp->tdy);
+		p_j2k->m_specific_param.m_decoder.m_start_tile_y = l_cp->th; // FIXME (-1) ???
+	}
+	else
+		p_j2k->m_specific_param.m_decoder.m_end_tile_y = int_ceildiv((p_end_y - l_cp->ty0), l_cp->tdy);
+	/* ----- */
+
 	p_j2k->m_specific_param.m_decoder.m_discard_tiles = 1;
+
 	return OPJ_TRUE;
 }
 
