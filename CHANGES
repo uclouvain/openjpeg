@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 September 19, 2011
++ [mickael] WIP: remove a piece of code copy by the merge op at the wrong place
 + [mickael] WIP: begin to clean j2k_dump and some other small things
 + [mickael] WIP: enchance the new version with some bug fixes from v1 and from me
 + [mickael] WIP: add support of jp2 for new j2k_dump function and some other small stuff

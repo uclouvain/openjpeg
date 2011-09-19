@@ -4863,6 +4863,7 @@ static void j2k_add_tlmarker( int tileno, opj_codestream_info_t *cstr_info, unsi
 
 
 
+
 /*
  * -----------------------------------------------------------------------
  * -----------------------------------------------------------------------
@@ -6213,11 +6214,4 @@ void j2k_copy_tile_quantization_parameters( opj_j2k_v2_t *p_j2k )
 		memcpy(l_copied_tccp->stepsizes,l_ref_tccp->stepsizes,l_size);
 		++l_copied_tccp;
 	}
-}
-
-	/* add the marker */
-	marker->type = type;
-	marker->pos = pos;
-	marker->len = len;
-	cstr_info->tile[tileno].marknum++;
 }
