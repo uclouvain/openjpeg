@@ -52,6 +52,19 @@ typedef struct opj_t2 {
 	opj_cp_t *cp;
 } opj_t2_t;
 
+/**
+Tier-2 coding
+*/
+typedef struct opj_t2_v2 {
+	/** codec context */
+	opj_common_ptr cinfo;
+
+	/** Encoding: pointer to the src image. Decoding: pointer to the dst image. */
+	opj_image_t *image;
+	/** pointer to the image coding parameters */
+	opj_cp_v2_t *cp;
+} opj_t2_v2_t;
+
 /** @name Exported functions */
 /*@{*/
 /* ----------------------------------------------------------------------- */
@@ -84,6 +97,25 @@ Decode the packets of a tile from a source buffer
 int t2_decode_packets(opj_t2_t *t2, unsigned char *src, int len, int tileno, opj_tcd_tile_t *tile, opj_codestream_info_t *cstr_info);
 
 /**
+Decode the packets of a tile from a source buffer
+@param t2 T2 handle
+@param src the source buffer
+@param len length of the source buffer
+@param tileno number that identifies the tile for which to decode the packets
+@param tile tile for which to decode the packets
+ */
+opj_bool t2_decode_packets_v2(opj_t2_v2_t *t2, OPJ_UINT32 tileno,struct opj_tcd_tile *tile, OPJ_BYTE *src, OPJ_UINT32 * p_data_read, OPJ_UINT32 len,   struct opj_codestream_info *cstr_info);
+
+/**
+ * Creates a Tier 2 handle
+ *
+ * @param	p_image		Source or destination image
+ * @param	p_cp		Image coding parameters.
+ * @return		a new T2 handle if successful, NULL otherwise.
+*/
+opj_t2_v2_t* t2_create_v2(struct opj_image *p_image, opj_cp_v2_t *p_cp);
+
+/**
 Create a T2 handle
 @param cinfo Codec context info
 @param image Source or destination image
@@ -96,6 +128,12 @@ Destroy a T2 handle
 @param t2 T2 handle to destroy
 */
 void t2_destroy(opj_t2_t *t2);
+
+/**
+Destroy a T2 handle
+@param t2 T2 handle to destroy
+*/
+void t2_destroy_v2(opj_t2_v2_t *t2);
 
 /* ----------------------------------------------------------------------- */
 /*@}*/

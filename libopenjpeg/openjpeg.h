@@ -64,8 +64,19 @@ typedef int opj_bool;
 #define OPJ_TRUE 1
 #define OPJ_FALSE 0
 
+typedef unsigned int	OPJ_UINT32;
+typedef int				OPJ_INT32;
+typedef unsigned short	OPJ_UINT16;
+typedef short			OPJ_INT16;
+typedef char			OPJ_CHAR;
+typedef unsigned char	OPJ_BYTE;
+typedef unsigned int	OPJ_SIZE_T;
+typedef double			OPJ_FLOAT64;
+typedef float			OPJ_FLOAT32;
+
 // Avoid compile-time warning because parameter is not used
 #define OPJ_ARG_NOT_USED(x) (void)(x)
+
 /* 
 ==========================================================
    Useful constant definitions
@@ -76,6 +87,12 @@ typedef int opj_bool;
 
 #define J2K_MAXRLVLS 33					/**< Number of maximum resolution level authorized */
 #define J2K_MAXBANDS (3*J2K_MAXRLVLS-2)	/**< Number of maximum sub-band linked to number of resolution level */
+
+#define J2K_DEFAULT_NB_SEGS				10
+#define J2K_STREAM_CHUNK_SIZE			0x100000 /** 1 mega by default */
+#define J2K_DEFAULT_HEADER_SIZE			1000
+#define J2K_MCC_DEFAULT_NB_RECORDS		10
+#define J2K_MCT_DEFAULT_NB_RECORDS		10
 
 /* UniPG>> */
 #define JPWL_MAX_NO_TILESPECS	16 /**< Maximum number of tile parts expected by JPWL: increase at your will */
@@ -177,6 +194,7 @@ used for
 </ul>
 */
 typedef struct opj_event_mgr {
+	void* client_data;
 	/** Error message callback if available, NULL otherwise */
 	opj_msg_callback error_handler;
 	/** Warning message callback if available, NULL otherwise */
@@ -448,6 +466,11 @@ typedef struct opj_dinfo {
 	/* other specific fields go here */
 } opj_dinfo_t;
 
+/**
+ * J2k codec.
+ */
+typedef void * opj_codec_t;
+
 /* 
 ==========================================================
    I/O stream typedef definitions
@@ -483,6 +506,14 @@ typedef struct opj_cio {
 	/** pointer to the current position */
 	unsigned char *bp;
 } opj_cio_t;
+
+typedef OPJ_UINT32 (* opj_stream_read_fn) (void * p_buffer, OPJ_UINT32 p_nb_bytes, void * p_user_data) ;
+typedef OPJ_UINT32 (* opj_stream_write_fn) (void * p_buffer, OPJ_UINT32 p_nb_bytes, void * p_user_data) ;
+typedef OPJ_SIZE_T (* opj_stream_skip_fn) (OPJ_SIZE_T p_nb_bytes, void * p_user_data) ;
+typedef opj_bool (* opj_stream_seek_fn) (OPJ_SIZE_T p_nb_bytes, void * p_user_data) ;
+
+
+typedef void * opj_stream_t;
 
 /* 
 ==========================================================
@@ -525,15 +556,15 @@ Defines image data and characteristics
 */
 typedef struct opj_image {
 	/** XOsiz: horizontal offset from the origin of the reference grid to the left side of the image area */
-	int x0;
+	OPJ_UINT32 x0;
 	/** YOsiz: vertical offset from the origin of the reference grid to the top side of the image area */
-	int y0;
+	OPJ_UINT32 y0;
 	/** Xsiz: width of the reference grid */
-	int x1;
+	OPJ_UINT32 x1;
 	/** Ysiz: height of the reference grid */
-	int y1;
+	OPJ_UINT32 y1;
 	/** number of components in the image */
-	int numcomps;
+	OPJ_UINT16 numcomps;
 	/** color space: sRGB, Greyscale or YUV */
 	OPJ_COLOR_SPACE color_space;
 	/** image components */
@@ -543,6 +574,7 @@ typedef struct opj_image {
 	/** size of ICC profile */
 	int icc_profile_len;
 } opj_image_t;
+
 
 /**
 Component parameters structure used by the opj_image_create function
@@ -783,6 +815,73 @@ Set position in byte stream
 */
 OPJ_API void OPJ_CALLCONV cio_seek(opj_cio_t *cio, int pos);
 
+
+/**
+ * Creates an abstract stream. This function does nothing except allocating memory and initializing the abstract stream.
+ *
+ * @param	l_is_reader		if set to true then the stream will be an input stream, an output stream else.
+ *
+ * @return	a stream object.
+*/
+OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_default_create(opj_bool p_is_input);
+OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create(OPJ_UINT32 p_size, opj_bool p_is_input);
+
+/**
+ * Destroys a stream created by opj_create_stream. This function does NOT close the abstract stream. If needed the user must
+ * close its own implementation of the stream.
+ *
+ * @param	p_stream	the stream to destroy.
+ */
+OPJ_API void OPJ_CALLCONV opj_stream_destroy(opj_stream_t* p_stream);
+
+/**
+ * Sets the given function to be used as a read function.
+ * @param		p_stream	the stream to modify
+ * @param		p_function	the function to use a read function.
+*/
+OPJ_API void OPJ_CALLCONV opj_stream_set_read_function(opj_stream_t* p_stream, opj_stream_read_fn p_function);
+
+/**
+ * Sets the given function to be used as a write function.
+ * @param		p_stream	the stream to modify
+ * @param		p_function	the function to use a write function.
+*/
+OPJ_API void OPJ_CALLCONV opj_stream_set_write_function(opj_stream_t* p_stream, opj_stream_write_fn p_function);
+
+/**
+ * Sets the given function to be used as a skip function.
+ * @param		p_stream	the stream to modify
+ * @param		p_function	the function to use a skip function.
+*/
+OPJ_API void OPJ_CALLCONV opj_stream_set_skip_function(opj_stream_t* p_stream, opj_stream_skip_fn p_function);
+
+/**
+ * Sets the given function to be used as a seek function, the stream is then seekable.
+ * @param		p_stream	the stream to modify
+ * @param		p_function	the function to use a skip function.
+*/
+OPJ_API void OPJ_CALLCONV opj_stream_set_seek_function(opj_stream_t* p_stream, opj_stream_seek_fn p_function);
+
+
+/**
+ * Sets the given data to be used as a user data for the stream.
+ * @param		p_stream	the stream to modify
+ * @param		p_data		the data to set.
+*/
+OPJ_API void OPJ_CALLCONV opj_stream_set_user_data (opj_stream_t* p_stream, void * p_data);
+
+
+/**
+ * Helper function.
+ * Sets the stream to be a file stream. The FILE must have been open previously.
+ * @param		p_stream	the stream to modify
+ * @param		p_file		handler to an already open file.
+*/
+OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_default_file_stream (FILE * p_file, opj_bool p_is_read_stream);
+OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream (FILE * p_file, OPJ_UINT32 p_buffer_size, opj_bool p_is_read_stream);
+
+
+
 /* 
 ==========================================================
    event manager functions definitions
@@ -796,6 +895,14 @@ OPJ_API opj_event_mgr_t* OPJ_CALLCONV opj_set_event_mgr(opj_common_ptr cinfo, op
    codec functions definitions
 ==========================================================
 */
+/**
+Creates a J2K/JPT/JP2 decompression structure
+@param format Decoder to select
+@return Returns a handle to a decompressor if successful, returns NULL otherwise
+*/
+OPJ_API opj_codec_t* OPJ_CALLCONV opj_create_decompress_v2(OPJ_CODEC_FORMAT format);
+
+
 /**
 Creates a J2K/JPT/JP2 decompression structure
 @param format Decoder to select
@@ -819,6 +926,11 @@ Decoding parameters are returned in j2k->cp.
 @param parameters decompression parameters
 */
 OPJ_API void OPJ_CALLCONV opj_setup_decoder(opj_dinfo_t *dinfo, opj_dparameters_t *parameters);
+
+OPJ_API opj_bool OPJ_CALLCONV opj_setup_decoder_v2(	opj_codec_t *p_info,
+													opj_dparameters_t *parameters,
+													opj_event_mgr_t* event_mgr);
+
 /**
 Decode an image from a JPEG-2000 codestream 
 @param dinfo decompressor handle
@@ -899,6 +1011,35 @@ Destroy Codestream information after compression or decompression
 */
 OPJ_API void OPJ_CALLCONV opj_destroy_cstr_info(opj_codestream_info_t *cstr_info);
 
+
+/**
+ * Decodes an image header.
+ *
+ * @param	p_codec			codec to use to decode the image.
+ * @param	p_image			pointer to a previously created image.
+ * @param	p_tile_x0		pointer to a value that will hold the reference point x0 of the tiling grid.
+ * @param	p_tile_y0		pointer to a value that will hold the reference point y0 of the tiling grid.
+ * @param	p_tile_width	pointer to a value that will hold the size in x of a tile in the grid.
+ * @param	p_tile_height	pointer to a value that will hold the size in y of a tile in the grid.
+ * @param	p_nb_tiles_x	pointer to a value that will hold the number of tiles in the x direction.
+ * @param	p_nb_tiles_y	pointer to a value that will hold the number of tiles in the y direction.
+ */
+OPJ_API opj_bool OPJ_CALLCONV opj_read_header (
+										opj_codec_t *p_codec,
+										opj_image_t ** p_image,
+										OPJ_INT32 * p_tile_x0,
+										OPJ_INT32 * p_tile_y0,
+										OPJ_UINT32 * p_tile_width,
+										OPJ_UINT32 * p_tile_height,
+										OPJ_UINT32 * p_nb_tiles_x,
+										OPJ_UINT32 * p_nb_tiles_y,
+										opj_stream_t *p_cio);
+
+/**
+Destroy a decompressor handle
+@param dinfo decompressor handle to destroy
+*/
+OPJ_API void OPJ_CALLCONV opj_destroy_codec(opj_codec_t * p_codec);
 
 #ifdef __cplusplus
 }

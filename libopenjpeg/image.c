@@ -87,3 +87,37 @@ void OPJ_CALLCONV opj_image_destroy(opj_image_t *image) {
 	}
 }
 
+/**
+ * Updates the components of the image from the coding parameters.
+ *
+ * @param p_image		the image to update.
+ * @param p_cp			the coding parameters from which to update the image.
+ */
+void opj_image_comp_update(opj_image_t * p_image,const opj_cp_v2_t * p_cp)
+{
+	OPJ_UINT32 i, l_width, l_height;
+	OPJ_INT32 l_x0,l_y0,l_x1,l_y1;
+	OPJ_INT32 l_comp_x0,l_comp_y0,l_comp_x1,l_comp_y1;
+	opj_image_comp_t * l_img_comp = 00;
+
+	l_x0 = int_max(p_cp->tx0 , p_image->x0);
+	l_y0 = int_max(p_cp->ty0 , p_image->y0);
+	l_x1 = int_min(p_cp->tx0 + p_cp->tw * p_cp->tdx, p_image->x1);
+	l_y1 = int_min(p_cp->ty0 + p_cp->th * p_cp->tdy, p_image->y1);
+
+	l_img_comp = p_image->comps;
+	for	(i = 0; i < p_image->numcomps; ++i) {
+		l_comp_x0 = int_ceildiv(l_x0, l_img_comp->dx);
+		l_comp_y0 = int_ceildiv(l_y0, l_img_comp->dy);
+		l_comp_x1 = int_ceildiv(l_x1, l_img_comp->dx);
+		l_comp_y1 = int_ceildiv(l_y1, l_img_comp->dy);
+		l_width = int_ceildivpow2(l_comp_x1 - l_comp_x0, l_img_comp->factor);
+		l_height = int_ceildivpow2(l_comp_y1 - l_comp_y0, l_img_comp->factor);
+		l_img_comp->w = l_width;
+		l_img_comp->h = l_height;
+		l_img_comp->x0 = l_x0;
+		l_img_comp->y0 = l_y0;
+		++l_img_comp;
+	}
+}
+

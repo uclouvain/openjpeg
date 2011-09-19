@@ -32,6 +32,9 @@
 The functions in IMAGE.C have for goal to realize operations on images.
 */
 
+struct opj_image;
+struct opj_cp_v2;
+
 /** @defgroup IMAGE IMAGE - Implementation of operations on images */
 /*@{*/
 
@@ -41,6 +44,14 @@ Create an empty image
 @return returns an empty image if successful, returns NULL otherwise
 */
 opj_image_t* opj_image_create0(void);
+
+/**
+ * Updates the components of the image from the coding parameters.
+ *
+ * @param p_image		the image to update.
+ * @param p_cp			the coding parameters from which to update the image.
+ */
+void opj_image_comp_update(struct opj_image * p_image,const struct opj_cp_v2 * p_cp);
 
 /*@}*/
 

@@ -133,6 +133,18 @@ Create a packet iterator for Decoder
 */
 opj_pi_iterator_t *pi_create_decode(opj_image_t * image, opj_cp_t * cp, int tileno);
 
+
+/**
+Create a packet iterator for Decoder
+@param image Raw image for which the packets will be listed
+@param cp Coding parameters
+@param tileno Number that identifies the tile for which to list the packets
+@return Returns a packet iterator that points to the first packet of the tile
+@see pi_destroy
+*/
+opj_pi_iterator_t *pi_create_decode_v2(struct opj_image * image, struct opj_cp_v2 * cp, OPJ_UINT32 tileno);
+
+
 /**
 Destroy a packet iterator
 @param pi Previously created packet iterator
@@ -141,6 +153,17 @@ Destroy a packet iterator
 @see pi_create
 */
 void pi_destroy(opj_pi_iterator_t *pi, opj_cp_t *cp, int tileno);
+
+
+/**
+ * Destroys a packet iterator array.
+ *
+ * @param	p_pi			the packet iterator array to destroy.
+ * @param	p_nb_elements	the number of elements in the array.
+ */
+void pi_destroy_v2(
+				opj_pi_iterator_t *p_pi,
+				OPJ_UINT32 p_nb_elements);
 
 /**
 Modify the packet iterator to point to the next packet

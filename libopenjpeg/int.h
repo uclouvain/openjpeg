@@ -50,6 +50,15 @@ Get the minimum of two integers
 static INLINE int int_min(int a, int b) {
 	return a < b ? a : b;
 }
+
+/**
+Get the minimum of two integers
+@return Returns a if a < b else b
+*/
+static INLINE OPJ_UINT32 uint_min(OPJ_UINT32 a, OPJ_UINT32 b) {
+	return a < b ? a : b;
+}
+
 /**
 Get the maximum of two integers
 @return Returns a if a > b else b
@@ -57,6 +66,15 @@ Get the maximum of two integers
 static INLINE int int_max(int a, int b) {
 	return (a > b) ? a : b;
 }
+
+/**
+Get the maximum of two integers
+@return Returns a if a > b else b
+*/
+static INLINE OPJ_UINT32 uint_max(OPJ_UINT32  a, OPJ_UINT32  b) {
+	return (a > b) ? a : b;
+}
+
 /**
 Clamp an integer inside an interval
 @return
@@ -111,6 +129,19 @@ static INLINE int int_floorlog2(int a) {
 	}
 	return l;
 }
+/**
+Get logarithm of an integer and round downwards
+@return Returns log2(a)
+*/
+static INLINE OPJ_UINT32  uint_floorlog2(OPJ_UINT32  a) {
+	OPJ_UINT32  l;
+	for (l = 0; a > 1; ++l)
+	{
+		a >>= 1;
+	}
+	return l;
+}
+
 /* ----------------------------------------------------------------------- */
 /*@}*/
 

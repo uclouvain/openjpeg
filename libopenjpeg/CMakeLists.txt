@@ -24,6 +24,7 @@ SET(OPENJPEG_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/ppix_manager.c
   ${CMAKE_CURRENT_SOURCE_DIR}/thix_manager.c
   ${CMAKE_CURRENT_SOURCE_DIR}/tpix_manager.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/function_list.c
 )
 
 # Build the library

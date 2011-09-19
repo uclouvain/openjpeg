@@ -40,6 +40,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <ctype.h>
+#include <assert.h>
 
 /*
  ==========================================================
@@ -135,5 +136,8 @@ static INLINE long lrintf(float f){
 #include "./jpwl/jpwl.h"
 #endif /* USE_JPWL */
 /* <<JPWL */
+
+// V2
+#include "function_list.h"
 
 #endif /* OPJ_INCLUDES_H */

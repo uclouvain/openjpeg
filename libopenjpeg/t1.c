@@ -1582,3 +1582,74 @@ void t1_decode_cblks(
 	} /* resno */
 }
 
+
+
+/* ----------------------------------------------------------------------- */
+/**
+ * Creates a new Tier 1 handle
+ * and initializes the look-up tables of the Tier-1 coder/decoder
+ * @return a new T1 handle if successful, returns NULL otherwise
+*/
+opj_t1_t* t1_create_v2()
+{
+	opj_t1_t *l_t1 = 00;
+
+	l_t1 = (opj_t1_t*) opj_malloc(sizeof(opj_t1_t));
+	if
+		(!l_t1)
+	{
+		return 00;
+	}
+	memset(l_t1,0,sizeof(opj_t1_t));
+
+	/* create MQC and RAW handles */
+	l_t1->mqc = mqc_create();
+	if
+		(! l_t1->mqc)
+	{
+		t1_destroy(l_t1);
+		return 00;
+	}
+	l_t1->raw = raw_create();
+	if
+		(! l_t1->raw)
+	{
+		t1_destroy(l_t1);
+		return 00;
+	}
+	return l_t1;
+}
+
+
+/**
+ * Destroys a previously created T1 handle
+ *
+ * @param p_t1 Tier 1 handle to destroy
+*/
+void t1_destroy_v2(opj_t1_t *p_t1)
+{
+	if
+		(! p_t1)
+	{
+		return;
+	}
+
+	/* destroy MQC and RAW handles */
+	mqc_destroy(p_t1->mqc);
+	p_t1->mqc = 00;
+	raw_destroy(p_t1->raw);
+	p_t1->raw = 00;
+	if
+		(p_t1->data)
+	{
+		opj_aligned_free(p_t1->data);
+		p_t1->data = 00;
+	}
+	if
+		(p_t1->flags)
+	{
+		opj_aligned_free(p_t1->flags);
+		p_t1->flags = 00;
+	}
+	opj_free(p_t1);
+}

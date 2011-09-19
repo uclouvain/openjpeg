@@ -139,6 +139,22 @@ Decode the code-blocks of a tile
 @param tccp Tile coding parameters
 */
 void t1_decode_cblks(opj_t1_t* t1, opj_tcd_tilecomp_t* tilec, opj_tccp_t* tccp);
+
+
+
+/**
+ * Creates a new Tier 1 handle
+ * and initializes the look-up tables of the Tier-1 coder/decoder
+ * @return a new T1 handle if successful, returns NULL otherwise
+*/
+opj_t1_t* t1_create_v2();
+
+/**
+ * Destroys a previously created T1 handle
+ *
+ * @param p_t1 Tier 1 handle to destroy
+*/
+void t1_destroy_v2(opj_t1_t *p_t1);
 /* ----------------------------------------------------------------------- */
 /*@}*/
 
