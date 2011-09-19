@@ -386,7 +386,16 @@ opj_bool OPJ_CALLCONV opj_setup_decoder_v2(opj_codec_t *p_info, opj_dparameters_
 		}
 
 		l_info->m_codec_data.m_decompression.opj_setup_decoder(l_info->m_codec,parameters);
-		l_info->m_event_mgr = event_mgr;
+
+		if (event_mgr == NULL)
+		{
+			l_info->m_event_mgr->error_handler = opj_default_callback ;
+			l_info->m_event_mgr->warning_handler = opj_default_callback ;
+			l_info->m_event_mgr->info_handler = opj_default_callback ;
+			l_info->m_event_mgr->client_data = stderr;
+		}
+		else
+			l_info->m_event_mgr = event_mgr;
 		return OPJ_TRUE;
 	}
 	return OPJ_FALSE;
