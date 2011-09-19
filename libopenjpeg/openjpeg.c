@@ -794,3 +794,41 @@ opj_bool OPJ_CALLCONV opj_read_tile_header(
 	}
 	return OPJ_FALSE;
 }
+
+/**
+ * Reads a tile data. This function is compulsory and allows one to decode tile data. opj_read_tile_header should be called before.
+ * The user may need to refer to the image got by opj_read_header to understand the size being taken by the tile.
+ *
+ * @param	p_codec			the jpeg2000 codec.
+ * @param	p_tile_index	the index of the tile being decoded, this should be the value set by opj_read_tile_header.
+ * @param	p_data			pointer to a memory block that will hold the decoded data.
+ * @param	p_data_size		size of p_data. p_data_size should be bigger or equal to the value set by opj_read_tile_header.
+ * @param	p_stream		the stream to decode.
+ *
+ * @return	true			if the data could be decoded.
+ */
+opj_bool OPJ_CALLCONV opj_decode_tile_data(
+					opj_codec_t *p_codec,
+					OPJ_UINT32 p_tile_index,
+					OPJ_BYTE * p_data,
+					OPJ_UINT32 p_data_size,
+					opj_stream_t *p_stream
+					)
+{
+	if (p_codec && p_data && p_stream) {
+		opj_codec_private_t * l_info = (opj_codec_private_t *) p_codec;
+		opj_stream_private_t * l_cio = (opj_stream_private_t *) p_stream;
+
+		if (! l_info->is_decompressor) {
+			return OPJ_FALSE;
+		}
+
+		return l_info->m_codec_data.m_decompression.opj_decode_tile_data(	l_info->m_codec,
+																			p_tile_index,
+																			p_data,
+																			p_data_size,
+																			l_cio,
+																			l_info->m_event_mgr);
+	}
+	return OPJ_FALSE;
+}

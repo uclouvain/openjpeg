@@ -1365,6 +1365,25 @@ OPJ_API opj_bool OPJ_CALLCONV opj_read_tile_header(	opj_codec_t *p_codec,
 												OPJ_UINT32 * p_nb_comps,
 												opj_bool * p_should_go_on );
 
+
+/**
+ * Reads a tile data. This function is compulsory and allows one to decode tile data. opj_read_tile_header should be called before.
+ * The user may need to refer to the image got by opj_read_header to understand the size being taken by the tile.
+ *
+ * @param	p_codec			the jpeg2000 codec.
+ * @param	p_tile_index	the index of the tile being decoded, this should be the value set by opj_read_tile_header.
+ * @param	p_data			pointer to a memory block that will hold the decoded data.
+ * @param	p_data_size		size of p_data. p_data_size should be bigger or equal to the value set by opj_read_tile_header.
+ * @param	p_stream		the stream to decode.
+ *
+ * @return	true			if the data could be decoded.
+ */
+OPJ_API opj_bool OPJ_CALLCONV opj_decode_tile_data(	opj_codec_t *p_codec,
+													OPJ_UINT32 p_tile_index,
+													OPJ_BYTE * p_data,
+													OPJ_UINT32 p_data_size,
+													opj_stream_t *p_stream );
+
 #ifdef __cplusplus
 }
 #endif

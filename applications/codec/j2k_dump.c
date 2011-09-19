@@ -374,6 +374,8 @@ int main(int argc, char *argv[])
 	opj_codestream_info_t* cstr_info =NULL;  /* Codestream information structure */
 	opj_bool l_go_on = OPJ_TRUE;
 
+	OPJ_UINT32 l_max_data_size = 1000;
+	OPJ_BYTE * l_data = (OPJ_BYTE *) malloc(1000);
 
 	/* FIXME configure the event callbacks (not required) */
 	memset(&event_mgr, 0, sizeof(opj_event_mgr_t));
@@ -518,6 +520,7 @@ int main(int argc, char *argv[])
 			OPJ_INT32 l_current_tile_x0,l_current_tile_y0,l_current_tile_x1,l_current_tile_y1;
 			OPJ_UINT32 l_nb_comps, l_tile_index, l_data_size;
 
+
 			if (! opj_read_tile_header(	dinfo,
 										cio,
 										&l_tile_index,
@@ -534,6 +537,32 @@ int main(int argc, char *argv[])
 				fclose(fsrc);
 				opj_destroy_codec(dinfo);
 				return EXIT_FAILURE;
+			}
+
+			if (l_go_on) {
+
+				if (l_data_size > l_max_data_size) {
+
+					l_data = (OPJ_BYTE *) realloc(l_data,l_data_size);
+					if (! l_data) {
+						opj_stream_destroy(cio);
+						fclose(fsrc);
+						opj_destroy_codec(dinfo);
+						return 1;
+					}
+
+					l_max_data_size = l_data_size;
+				}
+
+				if (! opj_decode_tile_data(dinfo,l_tile_index,l_data,l_data_size,cio))
+				{
+					free(l_data);
+					opj_stream_destroy(cio);
+					fclose(fsrc);
+					opj_destroy_codec(dinfo);
+					return 1;
+				}
+				/** now should inspect image to know the reduction factor and then how to behave with data */
 			}
 		}
 

@@ -5715,7 +5715,7 @@ opj_bool j2k_read_tile_header(	opj_j2k_v2_t * p_j2k,
 	}
 
 	/* Read into the codestream until reach the EOC or ! can_decode ??? FIXME */
-	while (! p_j2k->m_specific_param.m_decoder.m_can_decode && l_current_marker != J2K_MS_EOC) {
+	while ( (!p_j2k->m_specific_param.m_decoder.m_can_decode) && (l_current_marker != J2K_MS_EOC) ) {
 
 		/* Try to read until the Start Of Data is detected */
 		while (l_current_marker != J2K_MS_SOD) {
@@ -5848,82 +5848,79 @@ opj_bool j2k_read_tile_header(	opj_j2k_v2_t * p_j2k,
 	*p_tile_x1 = p_j2k->m_tcd->tcd_image->tiles->x1;
 	*p_tile_y1 = p_j2k->m_tcd->tcd_image->tiles->y1;
 	*p_nb_comps = p_j2k->m_tcd->tcd_image->tiles->numcomps;
-	p_j2k->m_specific_param.m_decoder.m_state |= 0x0080;// FIXME J2K_DEC_STATE_DATA;
+
+	 p_j2k->m_specific_param.m_decoder.m_state |= 0x0080;// FIXME J2K_DEC_STATE_DATA;
 
 	return OPJ_TRUE;
 }
 
 
-opj_bool j2k_decode_tile (
-					opj_j2k_v2_t * p_j2k,
-					OPJ_UINT32 p_tile_index,
-					OPJ_BYTE * p_data,
-					OPJ_UINT32 p_data_size,
-					opj_stream_private_t *p_stream,
-					opj_event_mgr_t * p_manager
-					)
+opj_bool j2k_decode_tile (	opj_j2k_v2_t * p_j2k,
+							OPJ_UINT32 p_tile_index,
+							OPJ_BYTE * p_data,
+							OPJ_UINT32 p_data_size,
+							opj_stream_private_t *p_stream,
+							opj_event_mgr_t * p_manager )
 {
 	OPJ_UINT32 l_current_marker;
 	OPJ_BYTE l_data [2];
 	opj_tcp_v2_t * l_tcp;
 
-	// preconditions
+	/* preconditions */
 	assert(p_stream != 00);
 	assert(p_j2k != 00);
 	assert(p_manager != 00);
 
-	if
-		(! (p_j2k->m_specific_param.m_decoder.m_state & 0x0080/*FIXME J2K_DEC_STATE_DATA*/) || p_tile_index != p_j2k->m_current_tile_number)
-	{
+	if ( !(p_j2k->m_specific_param.m_decoder.m_state & 0x0080/*FIXME J2K_DEC_STATE_DATA*/)
+		|| (p_tile_index != p_j2k->m_current_tile_number) ) {
 		return OPJ_FALSE;
 	}
+
 	l_tcp = &(p_j2k->m_cp.tcps[p_tile_index]);
-	if
-		(! l_tcp->m_data)
-	{
+	if (! l_tcp->m_data) {
 		j2k_tcp_destroy(&(p_j2k->m_cp.tcps[p_tile_index]));
 		return OPJ_FALSE;
 	}
-	if
-		(! tcd_decode_tile_v2(p_j2k->m_tcd, l_tcp->m_data, l_tcp->m_data_size, p_tile_index, p_j2k->cstr_info))
-	{
+
+	if (! tcd_decode_tile_v2(	p_j2k->m_tcd,
+								l_tcp->m_data,
+								l_tcp->m_data_size,
+								p_tile_index,
+								p_j2k->cstr_info) ) {
 		j2k_tcp_destroy(l_tcp);
 		p_j2k->m_specific_param.m_decoder.m_state |= 0x8000;//FIXME J2K_DEC_STATE_ERR;
 		return OPJ_FALSE;
 	}
-	if
-		(! tcd_update_tile_data(p_j2k->m_tcd,p_data,p_data_size))
-	{
+
+	if (! tcd_update_tile_data(p_j2k->m_tcd,p_data,p_data_size)) {
 		return OPJ_FALSE;
 	}
+
 	j2k_tcp_destroy(l_tcp);
 	p_j2k->m_tcd->tcp = 0;
 
 	p_j2k->m_specific_param.m_decoder.m_can_decode = 0;
 	p_j2k->m_specific_param.m_decoder.m_state &= (~ (0x0080));// FIXME J2K_DEC_STATE_DATA);
-	if
-		(p_j2k->m_specific_param.m_decoder.m_state != 0x0100)//FIXME J2K_DEC_STATE_EOC)
-	{
-		if
-			(opj_stream_read_data(p_stream,l_data,2,p_manager) != 2)
-		{
+
+	if (p_j2k->m_specific_param.m_decoder.m_state != 0x0100){ //FIXME J2K_DEC_STATE_EOC)
+		if (opj_stream_read_data(p_stream,l_data,2,p_manager) != 2) {
 			opj_event_msg_v2(p_manager, EVT_ERROR, "Stream too short\n");
 			return OPJ_FALSE;
 		}
+
 		opj_read_bytes(l_data,&l_current_marker,2);
-		if
-			(l_current_marker == J2K_MS_EOC)
-		{
+
+		if (l_current_marker == J2K_MS_EOC) {
 			p_j2k->m_current_tile_number = 0;
 			p_j2k->m_specific_param.m_decoder.m_state =  0x0100;//FIXME J2K_DEC_STATE_EOC;
 		}
-		else if
-			(l_current_marker != J2K_MS_SOT)
+		else if (l_current_marker != J2K_MS_SOT)
 		{
 			opj_event_msg_v2(p_manager, EVT_ERROR, "Stream too short, expected SOT\n");
 			return OPJ_FALSE;
 		}
 	}
+
 	return OPJ_TRUE;
 }
 

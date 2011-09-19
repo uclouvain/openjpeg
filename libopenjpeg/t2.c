@@ -903,6 +903,7 @@ opj_bool t2_decode_packets_v2(
 			p_max_len -= l_nb_bytes_read;
 
 			/* INDEX >> */
+#ifdef TODO_MSD
 			if(p_cstr_info) {
 				opj_tile_info_v2_t *info_TL = &p_cstr_info->tile[p_tile_no];
 				opj_packet_info_t *info_PK = &info_TL->packet[p_cstr_info->packno];
@@ -920,15 +921,18 @@ opj_bool t2_decode_packets_v2(
 				info_PK->end_ph_pos += info_PK->start_pos - 1;	// End of packet header which now only represents the distance
 				++p_cstr_info->packno;
 			}
+#endif
 			/* << INDEX */
 		}
 		++l_current_pi;
 	}
 	/* INDEX >> */
+#ifdef TODO_MSD
 	if
 		(p_cstr_info) {
 		p_cstr_info->tile[p_tile_no].tp[curtp].tp_numpacks = p_cstr_info->packno - tp_start_packno; // Number of packets in last tile-part
 	}
+#endif
 	/* << INDEX */
 
 	/* don't forget to release pi */
@@ -1024,7 +1028,7 @@ static opj_bool t2_decode_packet_v2(
 
 	*p_data_read = l_nb_total_bytes_read;
 
-	return OPJ_FALSE;
+	return OPJ_TRUE;
 }
 
 static opj_bool t2_skip_packet(
