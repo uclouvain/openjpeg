@@ -7,6 +7,7 @@ What's New for OpenJPEG
 
 September 20, 2011
 * [mickael] WIP: fixed build issues with MJ2 option ON
+* [mickael] WIP: fixed build issues with JPWL option ON
 
 September 19, 2011
 + [mickael] Enhance some new JPIP files about opj_config inclusion and using of free/calloc (credit to Julien Malik) 

@@ -564,15 +564,15 @@ typedef struct opj_cp_v2
 /* UniPG>> */
 #ifdef USE_JPWL
 	/** enables writing of EPC in MH, thus activating JPWL */
-	bool epc_on;
+	opj_bool epc_on;
 	/** enables writing of EPB, in case of activated JPWL */
-	bool epb_on;
+	opj_bool epb_on;
 	/** enables writing of ESD, in case of activated JPWL */
-	bool esd_on;
+	opj_bool esd_on;
 	/** enables writing of informative techniques of ESD, in case of activated JPWL */
-	bool info_on;
+	opj_bool info_on;
 	/** enables writing of RED, in case of activated JPWL */
-	bool red_on;
+	opj_bool red_on;
 	/** error protection method for MH (0,1,16,32,37-128) */
 	int hprot_MH;
 	/** tile number of header protection specification (>=0) */
@@ -598,7 +598,7 @@ typedef struct opj_cp_v2
 	/** sensitivity methods for TPHs (-1,0-7) */
 	int sens_TPH[JPWL_MAX_NO_TILESPECS];
 	/** enables JPWL correction at the decoder */
-	bool correct;
+	opj_bool correct;
 	/** expected number of components at the decoder */
 	int exp_comps;
 	/** maximum number of tiles at the decoder */

@@ -1387,16 +1387,16 @@ static opj_bool t2_read_packet_data(
 			the validity of cblocks parameters is selected from user (-W) */
 
 				/* let's check that we are not exceeding */
-				if ((cblk->len + seg->newlen) > 8192) {
-					opj_event_msg(t2->cinfo, EVT_WARNING,
+				if ((l_cblk->len + l_seg->newlen) > 8192) {
+					opj_event_msg(p_t2->cinfo, EVT_WARNING,
 						"JPWL: segment too long (%d) for codeblock %d (p=%d, b=%d, r=%d, c=%d)\n",
-						seg->newlen, cblkno, precno, bandno, resno, compno);
+						l_seg->newlen, cblkno, p_pi->precno, bandno, p_pi->resno, p_pi->compno);
 					if (!JPWL_ASSUME) {
-						opj_event_msg(t2->cinfo, EVT_ERROR, "JPWL: giving up\n");
-						return -999;
+						opj_event_msg(p_t2->cinfo, EVT_ERROR, "JPWL: giving up\n");
+						return OPJ_FALSE;
 					}
-					seg->newlen = 8192 - cblk->len;
-					opj_event_msg(t2->cinfo, EVT_WARNING, "      - truncating segment to %d\n", seg->newlen);
+					l_seg->newlen = 8192 - l_cblk->len;
+					opj_event_msg(p_t2->cinfo, EVT_WARNING, "      - truncating segment to %d\n", l_seg->newlen);
 					break;
 				};
 
@@ -1496,16 +1496,16 @@ static opj_bool t2_skip_packet_data(
 			the validity of cblocks parameters is selected from user (-W) */
 
 				/* let's check that we are not exceeding */
-				if ((cblk->len + seg->newlen) > 8192) {
-					opj_event_msg(t2->cinfo, EVT_WARNING,
+				if ((l_cblk->len + l_seg->newlen) > 8192) {
+					opj_event_msg(p_t2->cinfo, EVT_WARNING,
 						"JPWL: segment too long (%d) for codeblock %d (p=%d, b=%d, r=%d, c=%d)\n",
-						seg->newlen, cblkno, precno, bandno, resno, compno);
+						l_seg->newlen, cblkno, p_pi->precno, bandno, p_pi->resno, p_pi->compno);
 					if (!JPWL_ASSUME) {
-						opj_event_msg(t2->cinfo, EVT_ERROR, "JPWL: giving up\n");
+						opj_event_msg(p_t2->cinfo, EVT_ERROR, "JPWL: giving up\n");
 						return -999;
 					}
-					seg->newlen = 8192 - cblk->len;
-					opj_event_msg(t2->cinfo, EVT_WARNING, "      - truncating segment to %d\n", seg->newlen);
+					l_seg->newlen = 8192 - l_cblk->len;
+					opj_event_msg(p_t2->cinfo, EVT_WARNING, "      - truncating segment to %d\n", l_seg->newlen);
 					break;
 				};
 

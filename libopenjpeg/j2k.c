@@ -756,23 +756,25 @@ const opj_dec_memory_marker_handler_t j2k_memory_marker_handler_tab [] =
   {J2K_MS_SOP, 0, 0},
   {J2K_MS_CRG, J2K_STATE_MH, j2k_read_crg_v2},
   {J2K_MS_COM, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_com_v2},
-  {J2K_MS_UNK, J2K_STATE_MH | J2K_STATE_TPH, 0}//j2k_read_unk_v2}
-#ifdef TODO_MS
+#ifdef TODO_MS /* FIXME */
   {J2K_MS_MCT, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_mct},
   {J2K_MS_CBD, J2K_STATE_MH , j2k_read_cbd},
   {J2K_MS_MCC, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_mcc},
   {J2K_MS_MCO, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_mco},
 #endif
 #ifdef USE_JPWL
-  {J2K_MS_EPC, J2K_DEC_STATE_MH | J2K_DEC_STATE_TPH, j2k_read_epc},
-  {J2K_MS_EPB, J2K_DEC_STATE_MH | J2K_DEC_STATE_TPH, j2k_read_epb},
-  {J2K_MS_ESD, J2K_DEC_STATE_MH | J2K_DEC_STATE_TPH, j2k_read_esd},
-  {J2K_MS_RED, J2K_DEC_STATE_MH | J2K_DEC_STATE_TPH, j2k_read_red},
+#ifdef TODO_MS /* FIXME */
+  {J2K_MS_EPC, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_epc},
+  {J2K_MS_EPB, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_epb},
+  {J2K_MS_ESD, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_esd},
+  {J2K_MS_RED, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_red},
+#endif
 #endif /* USE_JPWL */
 #ifdef USE_JPSEC
   {J2K_MS_SEC, J2K_DEC_STATE_MH, j2k_read_sec},
   {J2K_MS_INSEC, 0, j2k_read_insec}
 #endif /* USE_JPSEC */
+  {J2K_MS_UNK, J2K_STATE_MH | J2K_STATE_TPH, 0}//j2k_read_unk_v2}
 };
 
 
@@ -1248,41 +1250,44 @@ opj_bool j2k_read_siz_v2 (
 	}
 
 #ifdef USE_JPWL
-	if (p_j2k->m_cp->correct) {
+	if (l_cp->correct) {
 		/* if JPWL is on, we check whether TX errors have damaged
 		  too much the SIZ parameters */
-		if (!(image->x1 * image->y1)) {
-			opj_event_msg(p_j2k->cinfo, EVT_ERROR,
+		if (!(l_image->x1 * l_image->y1)) {
+			opj_event_msg_v2(p_manager, EVT_ERROR,
 				"JPWL: bad image size (%d x %d)\n",
-				image->x1, image->y1);
+				l_image->x1, l_image->y1);
 			if (!JPWL_ASSUME || JPWL_ASSUME) {
-				opj_event_msg(p_j2k->cinfo, EVT_ERROR, "JPWL: giving up\n");
-				return;
-			}
-		}
-		if (image->numcomps != ((len - 38) / 3)) {
-			opj_event_msg(p_j2k->cinfo, JPWL_ASSUME ? EVT_WARNING : EVT_ERROR,
-				"JPWL: Csiz is %d => space in SIZ only for %d comps.!!!\n",
-				image->numcomps, ((len - 38) / 3));
-			if (!JPWL_ASSUME) {
-				opj_event_msg(p_j2k->cinfo, EVT_ERROR, "JPWL: giving up\n");
-				return;
-			}
-			/* we try to correct */
-			opj_event_msg(p_j2k->cinfo, EVT_WARNING, "- trying to adjust this\n");
-			if (image->numcomps < ((len - 38) / 3)) {
-				len = 38 + 3 * image->numcomps;
-				opj_event_msg(p_j2k->cinfo, EVT_WARNING, "- setting Lsiz to %d => HYPOTHESIS!!!\n",
-					len);
-			} else {
-				image->numcomps = ((len - 38) / 3);
-				opj_event_msg(p_j2k->cinfo, EVT_WARNING, "- setting Csiz to %d => HYPOTHESIS!!!\n",
-					image->numcomps);
+				opj_event_msg_v2(p_manager, EVT_ERROR, "JPWL: giving up\n");
+				return OPJ_FALSE;
 			}
 		}
 
+	/* FIXME check previously in the function so why keep this piece of code ? Need by the norm ?
+		if (l_image->numcomps != ((len - 38) / 3)) {
+			opj_event_msg_v2(p_manager, JPWL_ASSUME ? EVT_WARNING : EVT_ERROR,
+				"JPWL: Csiz is %d => space in SIZ only for %d comps.!!!\n",
+				l_image->numcomps, ((len - 38) / 3));
+			if (!JPWL_ASSUME) {
+				opj_event_msg_v2(p_manager, EVT_ERROR, "JPWL: giving up\n");
+				return OPJ_FALSE;
+			}
+	*/		/* we try to correct */
+	/*		opj_event_msg_v2(p_manager, EVT_WARNING, "- trying to adjust this\n");
+			if (l_image->numcomps < ((len - 38) / 3)) {
+				len = 38 + 3 * l_image->numcomps;
+				opj_event_msg_v2(p_manager, EVT_WARNING, "- setting Lsiz to %d => HYPOTHESIS!!!\n",
+					len);
+			} else {
+				l_image->numcomps = ((len - 38) / 3);
+				opj_event_msg_v2(p_manager, EVT_WARNING, "- setting Csiz to %d => HYPOTHESIS!!!\n",
+					l_image->numcomps);
+			}
+		}
+	*/
+
 		/* update components number in the jpwl_exp_comps filed */
-		cp->exp_comps = image->numcomps;
+		l_cp->exp_comps = l_image->numcomps;
 	}
 #endif /* USE_JPWL */
 
@@ -1312,28 +1317,28 @@ opj_bool j2k_read_siz_v2 (
 		l_img_comp->dy = (OPJ_INT32)tmp; // should be between 1 and 255
 
 #ifdef USE_JPWL
-		if (p_j2k->m_cp->correct) {
+		if (l_cp->correct) {
 		/* if JPWL is on, we check whether TX errors have damaged
 			too much the SIZ parameters, again */
-			if (!(image->comps[i].dx * image->comps[i].dy)) {
-				opj_event_msg(p_j2k->cinfo, JPWL_ASSUME ? EVT_WARNING : EVT_ERROR,
+			if (!(l_image->comps[i].dx * l_image->comps[i].dy)) {
+				opj_event_msg_v2(p_manager, JPWL_ASSUME ? EVT_WARNING : EVT_ERROR,
 					"JPWL: bad XRsiz_%d/YRsiz_%d (%d x %d)\n",
-					i, i, image->comps[i].dx, image->comps[i].dy);
+					i, i, l_image->comps[i].dx, l_image->comps[i].dy);
 				if (!JPWL_ASSUME) {
-					opj_event_msg(p_j2k->cinfo, EVT_ERROR, "JPWL: giving up\n");
-					return;
+					opj_event_msg_v2(p_manager, EVT_ERROR, "JPWL: giving up\n");
+					return OPJ_FALSE;
 				}
 				/* we try to correct */
-				opj_event_msg(p_j2k->cinfo, EVT_WARNING, "- trying to adjust them\n");
-				if (!image->comps[i].dx) {
-					image->comps[i].dx = 1;
-					opj_event_msg(p_j2k->cinfo, EVT_WARNING, "- setting XRsiz_%d to %d => HYPOTHESIS!!!\n",
-						i, image->comps[i].dx);
+				opj_event_msg_v2(p_manager, EVT_WARNING, "- trying to adjust them\n");
+				if (!l_image->comps[i].dx) {
+					l_image->comps[i].dx = 1;
+					opj_event_msg_v2(p_manager, EVT_WARNING, "- setting XRsiz_%d to %d => HYPOTHESIS!!!\n",
+						i, l_image->comps[i].dx);
 				}
-				if (!image->comps[i].dy) {
-					image->comps[i].dy = 1;
-					opj_event_msg(p_j2k->cinfo, EVT_WARNING, "- setting YRsiz_%d to %d => HYPOTHESIS!!!\n",
-						i, image->comps[i].dy);
+				if (!l_image->comps[i].dy) {
+					l_image->comps[i].dy = 1;
+					opj_event_msg_v2(p_manager, EVT_WARNING, "- setting YRsiz_%d to %d => HYPOTHESIS!!!\n",
+						i, l_image->comps[i].dy);
 				}
 			}
 		}
@@ -1363,40 +1368,40 @@ opj_bool j2k_read_siz_v2 (
 	}
 
 #ifdef USE_JPWL
-	if (p_j2k->m_cp->correct) {
+	if (l_cp->correct) {
 		/* if JPWL is on, we check whether TX errors have damaged
 		  too much the SIZ parameters */
-		if ((cp->tw < 1) || (cp->th < 1) || (cp->tw > cp->max_tiles) || (cp->th > cp->max_tiles)) {
-			opj_event_msg(p_j2k->cinfo, JPWL_ASSUME ? EVT_WARNING : EVT_ERROR,
+		if ((l_cp->tw < 1) || (l_cp->th < 1) || (l_cp->tw > l_cp->max_tiles) || (l_cp->th > l_cp->max_tiles)) {
+			opj_event_msg_v2(p_manager, JPWL_ASSUME ? EVT_WARNING : EVT_ERROR,
 				"JPWL: bad number of tiles (%d x %d)\n",
-				cp->tw, cp->th);
+				l_cp->tw, l_cp->th);
 			if (!JPWL_ASSUME) {
-				opj_event_msg(p_j2k->cinfo, EVT_ERROR, "JPWL: giving up\n");
-				return;
+				opj_event_msg_v2(p_manager, EVT_ERROR, "JPWL: giving up\n");
+				return OPJ_FALSE;
 			}
 			/* we try to correct */
-			opj_event_msg(p_j2k->cinfo, EVT_WARNING, "- trying to adjust them\n");
-			if (cp->tw < 1) {
-				cp->tw= 1;
-				opj_event_msg(p_j2k->cinfo, EVT_WARNING, "- setting %d tiles in x => HYPOTHESIS!!!\n",
-					cp->tw);
+			opj_event_msg_v2(p_manager, EVT_WARNING, "- trying to adjust them\n");
+			if (l_cp->tw < 1) {
+				l_cp->tw= 1;
+				opj_event_msg_v2(p_manager, EVT_WARNING, "- setting %d tiles in x => HYPOTHESIS!!!\n",
+						l_cp->tw);
 			}
-			if (cp->tw > cp->max_tiles) {
-				cp->tw= 1;
-				opj_event_msg(p_j2k->cinfo, EVT_WARNING, "- too large x, increase expectance of %d\n"
+			if (l_cp->tw > l_cp->max_tiles) {
+				l_cp->tw= 1;
+				opj_event_msg_v2(p_manager, EVT_WARNING, "- too large x, increase expectance of %d\n"
 					"- setting %d tiles in x => HYPOTHESIS!!!\n",
-					cp->max_tiles, cp->tw);
+					l_cp->max_tiles, l_cp->tw);
 			}
-			if (cp->th < 1) {
-				cp->th= 1;
-				opj_event_msg(p_j2k->cinfo, EVT_WARNING, "- setting %d tiles in y => HYPOTHESIS!!!\n",
-					cp->th);
+			if (l_cp->th < 1) {
+				l_cp->th= 1;
+				opj_event_msg_v2(p_manager, EVT_WARNING, "- setting %d tiles in y => HYPOTHESIS!!!\n",
+						l_cp->th);
 			}
-			if (cp->th > cp->max_tiles) {
-				cp->th= 1;
-				opj_event_msg(p_j2k->cinfo, EVT_WARNING, "- too large y, increase expectance of %d to continue\n",
+			if (l_cp->th > l_cp->max_tiles) {
+				l_cp->th= 1;
+				opj_event_msg_v2(p_manager, EVT_WARNING, "- too large y, increase expectance of %d to continue\n",
 					"- setting %d tiles in y => HYPOTHESIS!!!\n",
-					cp->max_tiles, cp->th);
+					l_cp->max_tiles, l_cp->th);
 			}
 		}
 	}
@@ -1411,13 +1416,13 @@ opj_bool j2k_read_siz_v2 (
 	memset(l_cp->tcps,0,l_nb_tiles*sizeof(opj_tcp_t));
 
 #ifdef USE_JPWL
-	if (p_j2k->m_cp->correct) {
-		if (!cp->tcps) {
-			opj_event_msg(p_j2k->cinfo, JPWL_ASSUME ? EVT_WARNING : EVT_ERROR,
+	if (l_cp->correct) {
+		if (!l_cp->tcps) {
+			opj_event_msg_v2(p_manager, JPWL_ASSUME ? EVT_WARNING : EVT_ERROR,
 				"JPWL: could not alloc tcps field of cp\n");
 			if (!JPWL_ASSUME || JPWL_ASSUME) {
-				opj_event_msg(p_j2k->cinfo, EVT_ERROR, "JPWL: giving up\n");
-				return;
+				opj_event_msg_v2(p_manager, EVT_ERROR, "JPWL: giving up\n");
+				return OPJ_FALSE;
 			}
 		}
 	}
@@ -2118,32 +2123,6 @@ opj_bool j2k_read_qcc_v2(
 
 	l_num_comp = p_j2k->m_image_header->numcomps;
 
-#ifdef USE_JPWL
-	if (p_j2k->m_cp->correct) {
-
-		static OPJ_UINT32 backup_compno = 0;
-
-		/* compno is negative or larger than the number of components!!! */
-		if ((compno < 0) || (compno >= numcomp)) {
-			opj_event_msg(p_j2k->cinfo, EVT_ERROR,
-				"JPWL: bad component number in QCC (%d out of a maximum of %d)\n",
-				compno, numcomp);
-			if (!JPWL_ASSUME) {
-				opj_event_msg(p_j2k->cinfo, EVT_ERROR, "JPWL: giving up\n");
-				return;
-			}
-			/* we try to correct */
-			compno = backup_compno % numcomp;
-			opj_event_msg(p_j2k->cinfo, EVT_WARNING, "- trying to adjust this\n"
-				"- setting component number to %d\n",
-				compno);
-		}
-
-		/* keep your private count of tiles */
-		backup_compno++;
-	};
-#endif /* USE_JPWL */
-
 	if (l_num_comp <= 256) {
 		if (p_header_size < 1) {
 			opj_event_msg_v2(p_manager, EVT_ERROR, "Error reading QCC marker\n");
@@ -2162,6 +2141,32 @@ opj_bool j2k_read_qcc_v2(
 		p_header_data+=2;
 		p_header_size-=2;
 	}
+
+#ifdef USE_JPWL
+	if (p_j2k->m_cp.correct) {
+
+		static OPJ_UINT32 backup_compno = 0;
+
+		/* compno is negative or larger than the number of components!!! */
+		if ((l_comp_no < 0) || (l_comp_no >= l_num_comp)) {
+			opj_event_msg_v2(p_manager, EVT_ERROR,
+				"JPWL: bad component number in QCC (%d out of a maximum of %d)\n",
+				l_comp_no, l_num_comp);
+			if (!JPWL_ASSUME) {
+				opj_event_msg_v2(p_manager, EVT_ERROR, "JPWL: giving up\n");
+				return OPJ_FALSE;
+			}
+			/* we try to correct */
+			l_comp_no = backup_compno % l_num_comp;
+			opj_event_msg_v2(p_manager, EVT_WARNING, "- trying to adjust this\n"
+				"- setting component number to %d\n",
+				l_comp_no);
+		}
+
+		/* keep your private count of tiles */
+		backup_compno++;
+	};
+#endif /* USE_JPWL */
 
 	if (! j2k_read_SQcd_SQcc(p_j2k,l_comp_no,p_header_data,&p_header_size,p_manager)) {
 		opj_event_msg_v2(p_manager, EVT_ERROR, "Error reading QCC marker\n");
@@ -3280,22 +3285,23 @@ opj_bool j2k_read_sot_v2 (
 	l_tile_y = p_j2k->m_current_tile_number / l_cp->tw;
 
 #ifdef USE_JPWL
-	if (p_j2k->m_cp->correct) {
+	if (l_cp->correct) {
 
+		int tileno = p_j2k->m_current_tile_number;
 		static int backup_tileno = 0;
 
 		/* tileno is negative or larger than the number of tiles!!! */
-		if ((tileno < 0) || (tileno > (cp->tw * cp->th))) {
-			opj_event_msg(p_j2k->cinfo, EVT_ERROR,
+		if ((tileno < 0) || (tileno > (l_cp->tw * l_cp->th))) {
+			opj_event_msg_v2(p_manager, EVT_ERROR,
 				"JPWL: bad tile number (%d out of a maximum of %d)\n",
-				tileno, (cp->tw * cp->th));
+				tileno, (l_cp->tw * l_cp->th));
 			if (!JPWL_ASSUME) {
-				opj_event_msg(p_j2k->cinfo, EVT_ERROR, "JPWL: giving up\n");
-				return;
+				opj_event_msg_v2(p_manager, EVT_ERROR, "JPWL: giving up\n");
+				return OPJ_FALSE;
 			}
 			/* we try to correct */
 			tileno = backup_tileno;
-			opj_event_msg(p_j2k->cinfo, EVT_WARNING, "- trying to adjust this\n"
+			opj_event_msg_v2(p_manager, EVT_WARNING, "- trying to adjust this\n"
 				"- setting tile number to %d\n",
 				tileno);
 		}
@@ -3313,22 +3319,22 @@ opj_bool j2k_read_sot_v2 (
 	p_header_data+=4;
 
 #ifdef USE_JPWL
-	if (p_j2k->m_cp->correct) {
+	if (l_cp->correct) {
 
 		/* totlen is negative or larger than the bytes left!!! */
-		if ((totlen < 0) || (totlen > (p_stream_numbytesleft(p_stream) + 8))) {
-			opj_event_msg(p_j2k->cinfo, EVT_ERROR,
+		if ((l_tot_len < 0) || (l_tot_len > p_header_size ) ) { /* FIXME it seems correct; for info in V1 -> (p_stream_numbytesleft(p_stream) + 8))) { */
+			opj_event_msg_v2(p_manager, EVT_ERROR,
 				"JPWL: bad tile byte size (%d bytes against %d bytes left)\n",
-				totlen, p_stream_numbytesleft(p_stream) + 8);
+				l_tot_len, p_header_size ); /* FIXME it seems correct; for info in V1 -> p_stream_numbytesleft(p_stream) + 8); */
 			if (!JPWL_ASSUME) {
-				opj_event_msg(p_j2k->cinfo, EVT_ERROR, "JPWL: giving up\n");
-				return;
+				opj_event_msg_v2(p_manager, EVT_ERROR, "JPWL: giving up\n");
+				return OPJ_FALSE;
 			}
 			/* we try to correct */
-			totlen = 0;
-			opj_event_msg(p_j2k->cinfo, EVT_WARNING, "- trying to adjust this\n"
+			l_tot_len = 0;
+			opj_event_msg_v2(p_manager, EVT_WARNING, "- trying to adjust this\n"
 				"- setting Psot to %d => assuming it is the last tile\n",
-				totlen);
+				l_tot_len);
 		}
 	};
 #endif /* USE_JPWL */
@@ -3696,15 +3702,15 @@ opj_bool j2k_read_rgn_v2 (
 	++p_header_data;
 
 #ifdef USE_JPWL
-	if (p_j2k->m_cp->correct) {
+	if (l_cp->correct) {
 		/* totlen is negative or larger than the bytes left!!! */
-		if (compno >= numcomps) {
-			opj_event_msg(p_j2k->cinfo, EVT_ERROR,
+		if (l_comp_room >= l_nb_comp) {
+			opj_event_msg_v2(p_manager, EVT_ERROR,
 				"JPWL: bad component number in RGN (%d when there are only %d)\n",
-				compno, numcomps);
+				l_comp_room, l_nb_comp);
 			if (!JPWL_ASSUME || JPWL_ASSUME) {
-				opj_event_msg(p_j2k->cinfo, EVT_ERROR, "JPWL: giving up\n");
-				return;
+				opj_event_msg_v2(p_manager, EVT_ERROR, "JPWL: giving up\n");
+				return OPJ_FALSE;
 			}
 		}
 	};
@@ -4104,9 +4110,9 @@ void j2k_setup_decoder_v2(opj_j2k_v2_t *j2k, opj_dparameters_t *parameters) {
 
 		// TODO MS
 #ifdef USE_JPWL
-		cp->correct = parameters->jpwl_correct;
-		cp->exp_comps = parameters->jpwl_exp_comps;
-		cp->max_tiles = parameters->jpwl_max_tiles;
+		j2k->m_cp.correct = parameters->jpwl_correct;
+		j2k->m_cp.exp_comps = parameters->jpwl_exp_comps;
+		j2k->m_cp.max_tiles = parameters->jpwl_max_tiles;
 #endif /* USE_JPWL */
 
 	}
@@ -6304,22 +6310,22 @@ opj_bool j2k_read_SQcd_SQcc(
 	}
 
 #ifdef USE_JPWL
-	if (p_j2k->m_cp->correct) {
+	if (l_cp->correct) {
 
 		/* if JPWL is on, we check whether there are too many subbands */
-		if ((numbands < 0) || (numbands >= J2K_MAXBANDS)) {
-			opj_event_msg(p_j2k->cinfo, JPWL_ASSUME ? EVT_WARNING : EVT_ERROR,
+		if ((l_num_band < 0) || (l_num_band >= J2K_MAXBANDS)) {
+			opj_event_msg_v2(p_manager, JPWL_ASSUME ? EVT_WARNING : EVT_ERROR,
 				"JPWL: bad number of subbands in Sqcx (%d)\n",
-				numbands);
+				l_num_band);
 			if (!JPWL_ASSUME) {
-				opj_event_msg(p_j2k->cinfo, EVT_ERROR, "JPWL: giving up\n");
-				return;
+				opj_event_msg_v2(p_manager, EVT_ERROR, "JPWL: giving up\n");
+				return OPJ_FALSE;
 			}
 			/* we try to correct */
-			numbands = 1;
-			opj_event_msg(p_j2k->cinfo, EVT_WARNING, "- trying to adjust them\n"
+			l_num_band = 1;
+			opj_event_msg_v2(p_manager, EVT_WARNING, "- trying to adjust them\n"
 				"- setting number of bands to %d => HYPOTHESIS!!!\n",
-				numbands);
+				l_num_band);
 		};
 
 	};
