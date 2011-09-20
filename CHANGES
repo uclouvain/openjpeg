@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+September 20, 2011
+* [mickael] WIP: fixed build issues with MJ2 option ON
+
 September 19, 2011
 + [mickael] Enhance some new JPIP files about opj_config inclusion and using of free/calloc (credit to Julien Malik) 
 + [mickael] WIP: begin to test opj_decode_tile_data
