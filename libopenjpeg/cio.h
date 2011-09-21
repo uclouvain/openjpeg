@@ -89,27 +89,19 @@ void cio_skip(opj_cio_t *cio, int n);
 /* ----------------------------------------------------------------------- */
 
 #if defined(OPJ_BIG_ENDIAN)
-	#if !defined(OPJ_LITTLE_ENDIAN)
-			#define opj_write_bytes		opj_write_bytes_BE
-			#define opj_read_bytes		opj_read_bytes_BE
-			#define opj_write_double	opj_write_double_BE
-			#define opj_read_double		opj_read_double_BE
-			#define opj_write_float		opj_write_float_BE
-			#define opj_read_float		opj_read_float_BE
-	#else
-			#error "Either BIG_ENDIAN or LITTLE_ENDIAN must be #defined, but not both."
-	#endif
+	#define opj_write_bytes		opj_write_bytes_BE
+	#define opj_read_bytes		opj_read_bytes_BE
+	#define opj_write_double	opj_write_double_BE
+	#define opj_read_double		opj_read_double_BE
+	#define opj_write_float		opj_write_float_BE
+	#define opj_read_float		opj_read_float_BE
 #else
-	#if defined(OPJ_LITTLE_ENDIAN)
-			#define opj_write_bytes		opj_write_bytes_LE
-			#define opj_read_bytes		opj_read_bytes_LE
-			#define opj_write_double	opj_write_double_LE
-			#define opj_read_double		opj_read_double_LE
-			#define opj_write_float		opj_write_float_LE
-			#define opj_read_float		opj_read_float_LE
-	#else
-		#error "Either BIG_ENDIAN or LITTLE_ENDIAN must be #defined, but not none."
-	#endif
+	#define opj_write_bytes		opj_write_bytes_LE
+	#define opj_read_bytes		opj_read_bytes_LE
+	#define opj_write_double	opj_write_double_LE
+	#define opj_read_double		opj_read_double_LE
+	#define opj_write_float		opj_write_float_LE
+	#define opj_read_float		opj_read_float_LE
 #endif
 
 

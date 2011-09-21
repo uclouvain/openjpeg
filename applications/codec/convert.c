@@ -94,7 +94,7 @@ struct tga_header
 
 static unsigned short get_ushort(unsigned short val) {
 
-#ifdef ORDER_BIGENDIAN
+#ifdef OPJ_BIG_ENDIAN
     return( ((val & 0xff) << 8) + (val >> 8) );
 #else
     return( val );

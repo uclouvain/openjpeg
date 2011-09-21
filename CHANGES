@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+September 21, 2011
++ [mickael] Enhance the support of endianess with cmake and inside the code (credit to Winfried) 
+
 September 20, 2011
 * [mickael] WIP: fixed build issues with MJ2 option ON
 * [mickael] WIP: fixed build issues with JPWL option ON

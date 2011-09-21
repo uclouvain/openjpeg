@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+#include "opj_config.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -44,7 +45,6 @@
 #define _strnicmp strncasecmp
 #endif /* _WIN32 */
 
-#include "opj_config.h"
 #include "openjpeg.h"
 #include "j2k.h"
 #include "jp2.h"

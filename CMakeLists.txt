@@ -39,12 +39,13 @@ SET(OPENJPEG_LIBRARY_PROPERTIES
   SOVERSION "${OPENJPEG_VERSION_MAJOR}"
 )
 
-
+# --------------------------------------------------------------------------
 # Path to additional CMake modules
 SET(CMAKE_MODULE_PATH
     ${CMAKE_SOURCE_DIR}/CMake
     ${CMAKE_MODULE_PATH})
 
+# --------------------------------------------------------------------------
 # On Visual Studio 8 MS deprecated C. This removes all 1.276E1265 security
 # warnings
 IF(WIN32)
@@ -108,6 +109,7 @@ ENDIF(NOT OPENJPEG_INSTALL_PACKAGE_DIR)
 
 #-----------------------------------------------------------------------------
 # Test for some required system information.
+# For example this macro test the endianness (CMAKE_WORDS_BIGENDIAN)
 INCLUDE (${CMAKE_ROOT}/Modules/CMakeBackwardCompatibilityC.cmake)
 
 #-----------------------------------------------------------------------------
