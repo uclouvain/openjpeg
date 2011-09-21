@@ -60,8 +60,8 @@ _itoa(int i, char *a, int r) {
 
 #endif /* !_WIN32 */
 #endif
-/* ----------------------------------------------------------------------- */
 
+/* ----------------------------------------------------------------------- */
 opj_event_mgr_t* OPJ_CALLCONV opj_set_event_mgr(opj_common_ptr cinfo, opj_event_mgr_t *event_mgr, void *context) {
 	if(cinfo) {
 		opj_event_mgr_t *previous = cinfo->event_mgr;
@@ -73,6 +73,7 @@ opj_event_mgr_t* OPJ_CALLCONV opj_set_event_mgr(opj_common_ptr cinfo, opj_event_
 	return NULL;
 }
 
+/* ----------------------------------------------------------------------- */
 opj_bool opj_event_msg(opj_common_ptr cinfo, int event_type, const char *fmt, ...) {
 #define MSG_SIZE 512 /* 512 bytes should be more than enough for a short message */
 	opj_msg_callback msg_handler = NULL;
@@ -120,6 +121,7 @@ opj_bool opj_event_msg(opj_common_ptr cinfo, int event_type, const char *fmt, ..
 	return OPJ_TRUE;
 }
 
+/* ----------------------------------------------------------------------- */
 opj_bool opj_event_msg_v2(opj_event_mgr_t* event_mgr, int event_type, const char *fmt, ...) {
 #define MSG_SIZE 512 /* 512 bytes should be more than enough for a short message */
 	opj_msg_callback msg_handler = NULL;
@@ -164,4 +166,63 @@ opj_bool opj_event_msg_v2(opj_event_mgr_t* event_mgr, int event_type, const char
 	}
 
 	return OPJ_TRUE;
+}
+
+/* ----------------------------------------------------------------------- */
+void opj_set_default_event_handler(opj_event_mgr_t * p_manager, opj_bool verbose)
+{
+	p_manager->client_data = NULL;
+	p_manager->error_handler = opj_error_default_callback;
+
+	if (verbose) {
+		p_manager->info_handler = opj_info_default_callback;
+		p_manager->warning_handler = opj_warning_default_callback;
+	}
+	else {
+		/* FIXME (MSD) This message should be remove when the documentation will be updated */
+		fprintf(stdout, "[INFO] Verbose mode = OFF => no other info/warning output.\n");
+		p_manager->info_handler = opj_default_callback ;
+		p_manager->warning_handler = opj_default_callback ;
+	}
+}
+
+/* ---------------------------------------------------------------------- */
+/* Default callback functions                                             */
+
+/**
+ * Default callback function.
+ * Do nothing.
+ */
+void opj_default_callback (const char *msg, void *client_data)
+{
+}
+
+/**
+ * Default info callback function.
+ * Output = stdout.
+ */
+void opj_info_default_callback (const char *msg, void *client_data)
+{
+	(void)client_data;
+	fprintf(stdout, "[INFO] %s", msg);
+}
+
+/**
+ * Default warning callback function.
+ * Output = stderr.
+ */
+void opj_warning_default_callback (const char *msg, void *client_data)
+{
+	(void)client_data;
+	fprintf(stderr, "[WARNING] %s", msg);
+}
+
+/**
+ * Default error callback function.
+ * Output = stderr.
+ */
+void opj_error_default_callback (const char *msg, void *client_data)
+{
+	(void)client_data;
+	fprintf(stderr, "[ERROR] %s", msg);
 }

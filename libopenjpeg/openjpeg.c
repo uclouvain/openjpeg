@@ -31,17 +31,22 @@
 #include "opj_config.h"
 #include "opj_includes.h"
 
+
+/**
+ * Decompression handler.
+ */
 typedef struct opj_decompression
 {
+	/** Main header reading function handler*/
 	opj_bool (* opj_read_header) (	struct opj_stream_private * cio,
 									void * p_codec,
 									opj_file_info_t * file_info,
 									struct opj_event_mgr * p_manager);
-
+	/** FIXME DOC */
 	opj_image_t* (* opj_decode) (	void * p_codec,
 									struct opj_stream_private *p_cio,
 									struct opj_event_mgr * p_manager);
-
+	/** FIXME DOC */
 	opj_bool (*opj_read_tile_header)(	void * p_codec,
 										OPJ_UINT32 * p_tile_index,
 										OPJ_UINT32* p_data_size,
@@ -51,28 +56,31 @@ typedef struct opj_decompression
 										opj_bool * p_should_go_on,
 										struct opj_stream_private *p_cio,
 										struct opj_event_mgr * p_manager);
-
+	/** FIXME DOC */
 	opj_bool (*opj_decode_tile_data)(	void * p_codec,
 										OPJ_UINT32 p_tile_index,
 										OPJ_BYTE * p_data,
 										OPJ_UINT32 p_data_size,
 										struct opj_stream_private *p_cio,
 										struct opj_event_mgr * p_manager);
-
+	/** FIXME DOC */
 	opj_bool (* opj_end_decompress) (	void *p_codec,
 										struct opj_stream_private *cio,
 										struct opj_event_mgr * p_manager);
-
+	/** Codec destroy function handler*/
 	void (* opj_destroy) (void * p_codec);
-
+	/** Setup decoder function handler */
 	void (*opj_setup_decoder) (void * p_codec, opj_dparameters_t * p_param);
-
+	/** Set decode area function handler */
 	opj_bool (*opj_set_decode_area) (	void * p_codec,
 										OPJ_INT32 p_start_x, OPJ_INT32 p_end_x,
 										OPJ_INT32 p_start_y, OPJ_INT32 p_end_y,
 										struct opj_event_mgr * p_manager);
 }opj_decompression_t;
 
+/**
+ * Compression handler. FIXME DOC
+ */
 typedef struct opj_compression
 {
 	opj_bool (* opj_start_compress) (void *p_codec,struct opj_stream_private *cio,struct opj_image * p_image,	struct opj_event_mgr * p_manager);
@@ -84,38 +92,29 @@ typedef struct opj_compression
 
 }opj_compression_t;
 
+/**
+ * Main codec handler used for compression or decompression.
+ */
 typedef struct opj_codec_private
 {
-	/* code-blocks informations */
+	/** FIXME DOC */
 	union {
 		opj_decompression_t m_decompression;
 		opj_compression_t m_compression;
     } m_codec_data;
+    /** FIXME DOC*/
 	void * m_codec;
+	/** Event handler */
 	opj_event_mgr_t* m_event_mgr;
-	unsigned is_decompressor : 1;
+	/** Flag to indicate if the codec is used to decode or encode*/
+	opj_bool is_decompressor;
 }
 opj_codec_private_t;
 
-/**
- * Default callback function.
- * Do nothing.
- */
-void opj_default_callback (const char *msg, void *client_data)
-{
-	//FIXME V2 -> V1 cf below
-}
 
-void set_default_event_handler(opj_event_mgr_t * p_manager)
-{
-	//FIXME V2 -> V1
-	//p_manager->m_error_data = 00;
-	//p_manager->m_warning_data = 00;
-	//p_manager->m_info_data = 00;
-	p_manager->error_handler = opj_default_callback;
-	p_manager->info_handler = opj_default_callback;
-	p_manager->warning_handler = opj_default_callback;
-}
+
+/* ---------------------------------------------------------------------- */
+
 
 OPJ_UINT32 opj_read_from_file (void * p_buffer, OPJ_UINT32 p_nb_bytes, FILE * p_file)
 {
@@ -176,6 +175,8 @@ DllMain(HANDLE hModule, DWORD ul_reason_for_call, LPVOID lpReserved) {
 const char* OPJ_CALLCONV opj_version(void) {
     return PACKAGE_VERSION;
 }
+
+
 
 opj_dinfo_t* OPJ_CALLCONV opj_create_decompress(OPJ_CODEC_FORMAT format) {
 	opj_dinfo_t *dinfo = (opj_dinfo_t*)opj_calloc(1, sizeof(opj_dinfo_t));
@@ -378,27 +379,28 @@ void OPJ_CALLCONV opj_setup_decoder(opj_dinfo_t *dinfo, opj_dparameters_t *param
 
 opj_bool OPJ_CALLCONV opj_setup_decoder_v2(opj_codec_t *p_info, opj_dparameters_t *parameters, opj_event_mgr_t* event_mgr)
 {
-	if (p_info && parameters) {
-		opj_codec_private_t * l_info = (opj_codec_private_t *) p_info;
+	opj_codec_private_t * l_info = (opj_codec_private_t *) p_info;
 
-		if (! l_info->is_decompressor) {
-			return OPJ_FALSE;
-		}
-
-		l_info->m_codec_data.m_decompression.opj_setup_decoder(l_info->m_codec,parameters);
-
-		if (event_mgr == NULL)
-		{
-			l_info->m_event_mgr->error_handler = opj_default_callback ;
-			l_info->m_event_mgr->warning_handler = opj_default_callback ;
-			l_info->m_event_mgr->info_handler = opj_default_callback ;
-			l_info->m_event_mgr->client_data = stderr;
-		}
-		else
-			l_info->m_event_mgr = event_mgr;
-		return OPJ_TRUE;
+	if ( !p_info || !parameters || !event_mgr ){
+		fprintf(stderr, "[ERROR] Input parameters of the setup_decoder function are incorrect.\n");
+		return OPJ_FALSE;
 	}
-	return OPJ_FALSE;
+
+	if ( !event_mgr->error_handler || !event_mgr->warning_handler || !event_mgr->error_handler){
+		fprintf(stderr, "[ERROR] Event handler provided to the setup_decoder function is not valid.\n");
+		return OPJ_FALSE;
+	}
+
+	if (! l_info->is_decompressor) {
+		opj_event_msg_v2(event_mgr, EVT_ERROR, "Codec provided to the setup_decoder function is not a decompressor handler.\n");
+		return OPJ_FALSE;
+	}
+
+	l_info->m_codec_data.m_decompression.opj_setup_decoder(l_info->m_codec, parameters);
+
+	l_info->m_event_mgr = event_mgr;
+
+	return OPJ_TRUE;
 }
 
 opj_image_t* OPJ_CALLCONV opj_decode(opj_dinfo_t *dinfo, opj_cio_t *cio) {
@@ -675,6 +677,7 @@ opj_bool OPJ_CALLCONV opj_read_header (	opj_stream_t *p_cio,
 		opj_stream_private_t* l_cio = (opj_stream_private_t*) p_cio;
 
 		if(! l_info->is_decompressor) {
+			opj_event_msg_v2(l_info->m_event_mgr, EVT_ERROR, "Codec provided to the read_header function is not a decompressor handler.\n");
 			return OPJ_FALSE;
 		}
 
@@ -684,25 +687,24 @@ opj_bool OPJ_CALLCONV opj_read_header (	opj_stream_t *p_cio,
 					p_file_info,
 					l_info->m_event_mgr);
 	}
+
+	fprintf(stderr, "[ERROR] Input parameters of the read_header function are incorrect.\n");
 	return OPJ_FALSE;
 }
 
 
 void OPJ_CALLCONV opj_destroy_codec(opj_codec_t *p_info)
 {
-	if
-		(p_info)
-	{
+	if (p_info) {
 		opj_codec_private_t * l_info = (opj_codec_private_t *) p_info;
-		if
-			(l_info->is_decompressor)
-		{
+
+		if (l_info->is_decompressor) {
 			l_info->m_codec_data.m_decompression.opj_destroy(l_info->m_codec);
 		}
-		else
-		{
+		else {
 			l_info->m_codec_data.m_compression.opj_destroy(l_info->m_codec);
 		}
+
 		l_info->m_codec = 00;
 		opj_free(l_info);
 	}

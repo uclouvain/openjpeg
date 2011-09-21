@@ -1750,11 +1750,12 @@ void jp2_setup_decoder(opj_jp2_t *jp2, opj_dparameters_t *parameters) {
 	/* further JP2 initializations go here */
 }
 
-void jp2_setup_decoder_v2(opj_jp2_v2_t *jp2, opj_dparameters_t *parameters) {
+void jp2_setup_decoder_v2(opj_jp2_v2_t *jp2, opj_dparameters_t *parameters)
+{
 	/* setup the J2K codec */
 	j2k_setup_decoder_v2(jp2->j2k, parameters);
-	/* further JP2 initializations go here */
 
+	/* further JP2 initializations go here */
 	jp2->color.jp2_has_colr = 0;
 }
 

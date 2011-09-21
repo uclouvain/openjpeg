@@ -74,6 +74,11 @@ typedef struct img_folder{
 
 }img_fol_t;
 
+/* -------------------------------------------------------------------------- */
+static void j2k_dump_image(FILE *fd, opj_image_header_t * img);
+static void j2k_dump_cp(FILE *fd, opj_image_t * img, opj_cp_v2_t * cp);
+
+/* -------------------------------------------------------------------------- */
 void decode_help_display(void) {
 	fprintf(stdout,"HELP for j2k_dump\n----\n\n");
 	fprintf(stdout,"- the -h option displays this help information on screen\n\n");
@@ -97,13 +102,18 @@ void decode_help_display(void) {
 	fprintf(stdout,"    OPTIONAL\n");
 	fprintf(stdout,"    Output file where file info will be dump.\n");
 	fprintf(stdout,"    By default it will be in the stdout.\n");
+	fprintf(stdout,"  -d <x0,x1,y0,y1>\n"); /* FIXME WIP_MSD */
+	fprintf(stdout,"    OPTIONAL\n");
+	fprintf(stdout,"    Decoding area\n");
+	fprintf(stdout,"    By default all tiles header are read.\n");
+	fprintf(stdout,"  -v "); /* FIXME WIP_MSD */
+	fprintf(stdout,"    OPTIONAL\n");
+	fprintf(stdout,"    Activate or not the verbose mode (display info and warning message)\n");
+	fprintf(stdout,"    By default verbose mode is off.\n");
 	fprintf(stdout,"\n");
 }
 
 /* -------------------------------------------------------------------------- */
-static void j2k_dump_image(FILE *fd, opj_image_header_t * img);
-static void j2k_dump_cp(FILE *fd, opj_image_t * img, opj_cp_v2_t * cp);
-
 int get_num_images(char *imgdirpath){
 	DIR *dir;
 	struct dirent* content;	
@@ -125,6 +135,7 @@ int get_num_images(char *imgdirpath){
 	return num_images;
 }
 
+/* -------------------------------------------------------------------------- */
 int load_images(dircnt_t *dirptr, char *imgdirpath){
 	DIR *dir;
 	struct dirent* content;	
@@ -150,6 +161,7 @@ int load_images(dircnt_t *dirptr, char *imgdirpath){
 	return 0;	
 }
 
+/* -------------------------------------------------------------------------- */
 int get_file_format(char *filename) {
 	unsigned int i;
 	static const char *extension[] = {"pgx", "pnm", "pgm", "ppm", "bmp","tif", "raw", "tga", "png", "j2k", "jp2", "jpt", "j2c", "jpc"  };
@@ -169,6 +181,7 @@ int get_file_format(char *filename) {
 	return -1;
 }
 
+/* -------------------------------------------------------------------------- */
 char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_dparameters_t *parameters){
 	char image_filename[OPJ_PATH_LEN], infilename[OPJ_PATH_LEN],outfilename[OPJ_PATH_LEN],temp_ofname[OPJ_PATH_LEN];
 	char *temp_p, temp1[OPJ_PATH_LEN]="";
@@ -195,13 +208,16 @@ char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_dparamet
 }
 
 /* -------------------------------------------------------------------------- */
-/* parse the command line */
+/**
+ * Parse the command line
+ */
+/* -------------------------------------------------------------------------- */
 int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,img_fol_t *img_fol) {
 	int totlen, c;
 	opj_option_t long_option[]={
 		{"ImgDir",REQ_ARG, NULL ,'y'},
 	};
-	const char optlist[] = "i:o:d:h";
+	const char optlist[] = "i:o:d:hv";
 
 	totlen=sizeof(long_option);
 	img_fol->set_out_format = 0;
@@ -249,12 +265,12 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 				/* ------------------------------------------------------ */
 
 			case 'y':			/* Image Directory path */
-				{
-					img_fol->imgdirpath = (char*)malloc(strlen(opj_optarg) + 1);
-					strcpy(img_fol->imgdirpath,opj_optarg);
-					img_fol->set_imgdir=1;
-				}
-				break;
+			{
+				img_fol->imgdirpath = (char*)malloc(strlen(opj_optarg) + 1);
+				strcpy(img_fol->imgdirpath,opj_optarg);
+				img_fol->set_imgdir=1;
+			}
+			break;
 
 				/* ----------------------------------------------------- */
 
@@ -266,7 +282,14 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 				strncpy(ROI_values, opj_optarg, strlen(opj_optarg));
 				ROI_values[strlen(opj_optarg)] = '\0';
 				/*printf("ROI_values = %s [%d / %d]\n", ROI_values, strlen(ROI_values), size_optarg ); */
-				parse_ROI_values( ROI_values, &parameters->ROI_x0, &parameters->ROI_y0, &parameters->ROI_x1, &parameters->ROI_y1);
+				parse_ROI_values( ROI_values, &parameters->DA_x0, &parameters->DA_y0, &parameters->DA_x1, &parameters->DA_y1);
+			}
+			break;
+			/* ----------------------------------------------------- */
+
+			case 'v':     		/* Verbose mode */
+			{
+				parameters->m_verbose = 1;
 			}
 			break;
 			
@@ -303,11 +326,13 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 	return 0;
 }
 
-/*******************************************************************************
- * Parse ROI input values
+/* -------------------------------------------------------------------------- */
+/**
+ * Parse decoding area input values
  * separator = ","
- *******************************************************************************/
-int parse_ROI_values( char* inArg, unsigned int *ROI_x0, unsigned int *ROI_y0, unsigned int *ROI_x1, unsigned int *ROI_y1)
+ */
+/* -------------------------------------------------------------------------- */
+int parse_ROI_values( char* inArg, unsigned int *DA_x0, unsigned int *DA_y0, unsigned int *DA_x1, unsigned int *DA_y1)
 {
 	int it = 0;
 	int values[4];
@@ -325,78 +350,53 @@ int parse_ROI_values( char* inArg, unsigned int *ROI_x0, unsigned int *ROI_y0, u
 		return EXIT_FAILURE;
 	}
 	else{
-		*ROI_x0 = values[0]; *ROI_y0 = values[1];
-		*ROI_x1 = values[2]; *ROI_y1 = values[3];
+		*DA_x0 = values[0]; *DA_y0 = values[1];
+		*DA_x1 = values[2]; *DA_y1 = values[3];
 		return EXIT_SUCCESS;
 	}
 }
 
-/* -------------------------------------------------------------------------- */
-
-/**
-sample error callback expecting a FILE* client object
-*/
-void error_callback(const char *msg, void *client_data) {
-	FILE *stream = (FILE*)client_data;
-	fprintf(stream, "[ERROR] %s", msg);
-}
-/**
-sample warning callback expecting a FILE* client object
-*/
-void warning_callback(const char *msg, void *client_data) {
-	FILE *stream = (FILE*)client_data;
-	fprintf(stream, "[WARNING] %s", msg);
-}
-/**
-sample debug callback expecting no client object
-*/
-void info_callback(const char *msg, void *client_data) {
-	(void)client_data;
-	fprintf(stdout, "[INFO] %s", msg);
-}
 
 /* -------------------------------------------------------------------------- */
-
+/**
+ * J2K_DUMP MAIN
+ */
+/* -------------------------------------------------------------------------- */
 int main(int argc, char *argv[])
 {
-	int ret;
-	opj_dparameters_t parameters;	/* decompression parameters */
-	img_fol_t img_fol;
-	opj_event_mgr_t event_mgr;		/* event manager */
-	opj_image_header_t* image = NULL;
-	opj_file_info_t file_info;
 	FILE *fsrc = NULL, *fout = NULL;
-	int num_images;
-	int i,imageno;
-	dircnt_t *dirptr = NULL;
-	opj_codec_t* dinfo = NULL;	/* handle to a decompressor */
-	opj_stream_t *cio = NULL;
-	opj_codestream_info_t* cstr_info =NULL;  /* Codestream information structure */
-	opj_bool l_go_on = OPJ_TRUE;
 
+	opj_dparameters_t parameters;			/* Decompression parameters */
+	opj_event_mgr_t event_mgr;				/* Event manager */
+	opj_file_info_t file_info;				/* File info structure */
+	opj_codec_t* dinfo = NULL;				/* Handle to a decompressor */
+	opj_stream_t *cio = NULL;				/* Stream */
+
+	OPJ_INT32 num_images, imageno;
+	img_fol_t img_fol;
+	dircnt_t *dirptr = NULL;
+
+	opj_bool l_go_on = OPJ_TRUE;
 	OPJ_UINT32 l_max_data_size = 1000;
 	OPJ_BYTE * l_data = (OPJ_BYTE *) malloc(1000);
 
-	/* FIXME configure the event callbacks (not required) */
-	memset(&event_mgr, 0, sizeof(opj_event_mgr_t));
-	event_mgr.error_handler = error_callback;
-	event_mgr.warning_handler = warning_callback;
-	event_mgr.info_handler = info_callback;
-	event_mgr.client_data = stderr;
-
-	/* set decoding parameters to default values */
+	/* Set decoding parameters to default values */
 	opj_set_default_decoder_parameters(&parameters);
 
 	/* Initialize img_fol */
 	memset(&img_fol,0,sizeof(img_fol_t));
 
-	/* parse input and get user encoding parameters */
+	/* Parse input and get user encoding parameters */
 	if(parse_cmdline_decoder(argc, argv, &parameters,&img_fol) == 1) {
 		return EXIT_FAILURE;
 	}
 
+	/* Set default event mgr */
+	opj_set_default_event_handler(&event_mgr, parameters.m_verbose);
+
 	/* Initialize reading of directory */
 	if(img_fol.set_imgdir==1){	
+		int it_image;
 		num_images=get_num_images(img_fol.imgdirpath);
 
 		dirptr=(dircnt_t*)malloc(sizeof(dircnt_t));
@@ -408,8 +408,8 @@ int main(int argc, char *argv[])
 				return EXIT_FAILURE;
 			}
 
-			for(i=0;i<num_images;i++){
-				dirptr->filename[i] = dirptr->filename_buf + i*OPJ_PATH_LEN;
+			for(it_image=0;it_image<num_images;it_image++){
+				dirptr->filename[it_image] = dirptr->filename_buf + it_image*OPJ_PATH_LEN;
 			}
 		}
 		if(load_images(dirptr,img_fol.imgdirpath)==1){
@@ -447,7 +447,7 @@ int main(int argc, char *argv[])
 			}
 		}
 
-		/* read the input file and put it in memory */
+		/* Read the input file and put it in memory */
 		/* ---------------------------------------- */
 		fsrc = fopen(parameters.infile, "rb");
 		if (!fsrc) {
@@ -461,28 +461,25 @@ int main(int argc, char *argv[])
 			return EXIT_FAILURE;
 		}
 
-		/* decode the code-stream */
-		/* ---------------------- */
+		/* Read the JPEG2000 stream */
+		/* ------------------------ */
 
 		switch(parameters.decod_format) {
-			case J2K_CFMT:
-			{	/* JPEG-2000 codestream */
-
-				/* get a decoder handle */
+			case J2K_CFMT:	/* JPEG-2000 codestream */
+			{
+				/* Get a decoder handle */
 				dinfo = opj_create_decompress_v2(CODEC_J2K);
 				break;
 			}
-			case JP2_CFMT:
-			{	/* JPEG 2000 compressed image data */
-
-				/* get a decoder handle */
+			case JP2_CFMT:	/* JPEG 2000 compressed image data */
+			{
+				/* Get a decoder handle */
 				dinfo = opj_create_decompress_v2(CODEC_JP2);
 				break;
 			}
-			case JPT_CFMT:
-			{	/* JPEG 2000, JPIP */
-
-				/* get a decoder handle */
+			case JPT_CFMT:	/* JPEG 2000, JPIP */
+			{
+				/* Get a decoder handle */
 				dinfo = opj_create_decompress_v2(CODEC_JPT);
 				break;
 			}
@@ -492,27 +489,38 @@ int main(int argc, char *argv[])
 				continue;
 		}
 
-		/* setup the decoder decoding parameters using user parameters */
-		opj_setup_decoder_v2(dinfo, &parameters, &event_mgr);
+		/* Setup the decoder decoding parameters using user parameters */
+		if ( !opj_setup_decoder_v2(dinfo, &parameters, &event_mgr) ){
+			fprintf(stderr, "ERROR -> j2k_dump: failed to setup the decoder\n");
+			opj_stream_destroy(cio);
+			fclose(fsrc);
+			opj_destroy_codec(dinfo);
+			fclose(fout);
+			return EXIT_FAILURE;
+		}
 
+		/* Read the main header of the codestream and if necessary the JP2 boxes*/
 		if(! opj_read_header(cio, dinfo, &file_info, OPJ_IMG_INFO | OPJ_J2K_INFO)){
 			fprintf(stderr, "ERROR -> j2k_dump: failed to read the header\n");
 			opj_stream_destroy(cio);
 			fclose(fsrc);
 			opj_destroy_codec(dinfo);
+			fclose(fout);
 			return EXIT_FAILURE;
 		}
 
-		printf("Setting decoding area to %d,%d,%d,%d\n",
-				parameters.ROI_x0, parameters.ROI_y0, parameters.ROI_x1, parameters.ROI_y1);
+		fprintf(stdout,"Setting decoding area to %d,%d,%d,%d\n",
+				parameters.DA_x0, parameters.DA_y0, parameters.DA_x1, parameters.DA_y1);
 
+		/* FIXME WIP_MSD <*/
 		if (! opj_set_decode_area(	dinfo,
-									parameters.ROI_x0, parameters.ROI_y0,
-									parameters.ROI_x1, parameters.ROI_y1)){
+									parameters.DA_x0, parameters.DA_y0,
+									parameters.DA_x1, parameters.DA_y1)){
 			fprintf(stderr, "ERROR -> j2k_dump: failed to set the decoded area\n");
 			opj_stream_destroy(cio);
-			fclose(fsrc);
 			opj_destroy_codec(dinfo);
+			fclose(fsrc);
+			fclose(fout);
 			return EXIT_FAILURE;
 		}
 
@@ -546,9 +554,10 @@ int main(int argc, char *argv[])
 					l_data = (OPJ_BYTE *) realloc(l_data,l_data_size);
 					if (! l_data) {
 						opj_stream_destroy(cio);
-						fclose(fsrc);
 						opj_destroy_codec(dinfo);
-						return 1;
+						fclose(fsrc);
+						fclose(fout);
+						return EXIT_FAILURE;
 					}
 
 					l_max_data_size = l_data_size;
@@ -558,13 +567,15 @@ int main(int argc, char *argv[])
 				{
 					free(l_data);
 					opj_stream_destroy(cio);
-					fclose(fsrc);
 					opj_destroy_codec(dinfo);
-					return 1;
+					fclose(fsrc);
+					fclose(fout);
+					return EXIT_FAILURE;
 				}
 				/** now should inspect image to know the reduction factor and then how to behave with data */
 			}
 		}
+		/* FIXME WIP_MSD >*/
 
 		/* Dump file informations from header */
 		dump_file_info(fout, &file_info);
@@ -578,12 +589,7 @@ int main(int argc, char *argv[])
 			opj_destroy_codec(dinfo);
 		}
 
-
-		opj_image_header_destroy(image);
-		//FIXME opj_file_info_destroy(file_info);
-
 	}
-
 
 	/* Close the output file */
 	fclose(fout);

@@ -192,7 +192,7 @@ typedef enum LIMIT_DECODING {
 /**
 Callback function prototype for events
 @param msg Event message
-@param client_data 
+@param client_data FIXME DOC
 */
 typedef void (*opj_msg_callback) (const char *msg, void *client_data);
 
@@ -206,6 +206,7 @@ used for
 </ul>
 */
 typedef struct opj_event_mgr {
+	/** FIXME DOC */
 	void* client_data;
 	/** Error message callback if available, NULL otherwise */
 	opj_msg_callback error_handler;
@@ -434,11 +435,16 @@ typedef struct opj_dparameters {
 	OPJ_LIMIT_DECODING cp_limit_decoding;
 
 
-	/* V2 */
-	OPJ_UINT32 ROI_x0;
-	OPJ_UINT32 ROI_x1;
-	OPJ_UINT32 ROI_y0;
-	OPJ_UINT32 ROI_y1;
+	/** Decoding area left boundary */
+	OPJ_UINT32 DA_x0;
+	/** Decoding area right boundary */
+	OPJ_UINT32 DA_x1;
+	/** Decoding area up boundary */
+	OPJ_UINT32 DA_y0;
+	/** Decoding area bottom boundary */
+	OPJ_UINT32 DA_y1;
+	/** Verbose mode */
+	opj_bool m_verbose;
 
 
 } opj_dparameters_t;
@@ -1175,6 +1181,17 @@ OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream (FILE * p_file,
 
 OPJ_API opj_event_mgr_t* OPJ_CALLCONV opj_set_event_mgr(opj_common_ptr cinfo, opj_event_mgr_t *event_mgr, void *context);
 
+/**
+ * Set the default event handler. This function set the output of message event to be stderr for warning and error output
+ * and stdout for info output. It is optional, you can set your own event handler or provide a null structure to the
+ * opj_setup_decoder function. In this last case no output will be displayed.
+ *
+ * @param	p_manager		a opj_event_mgr structure which will be pass to the codec.
+ *
+ */
+OPJ_API void OPJ_CALLCONV opj_set_default_event_handler(opj_event_mgr_t * p_manager, opj_bool verbose);
+
+
 /* 
 ==========================================================
    codec functions definitions
@@ -1212,6 +1229,17 @@ Decoding parameters are returned in j2k->cp.
 */
 OPJ_API void OPJ_CALLCONV opj_setup_decoder(opj_dinfo_t *dinfo, opj_dparameters_t *parameters);
 
+
+/**
+ * Setup the decoder with decompression parameters provided by the user and with the message handler
+ * provided by the user.
+ *
+ * @param dinfo 		decompressor handlers
+ * @param parameters 	decompression parameters
+ * @param vent_mgr		message handler
+ *
+ * @return true			if the decoder is correctly set
+ */
 OPJ_API opj_bool OPJ_CALLCONV opj_setup_decoder_v2(	opj_codec_t *p_info,
 													opj_dparameters_t *parameters,
 													opj_event_mgr_t* event_mgr);
@@ -1383,6 +1411,7 @@ OPJ_API opj_bool OPJ_CALLCONV opj_decode_tile_data(	opj_codec_t *p_codec,
 													OPJ_BYTE * p_data,
 													OPJ_UINT32 p_data_size,
 													opj_stream_t *p_stream );
+
 
 #ifdef __cplusplus
 }
