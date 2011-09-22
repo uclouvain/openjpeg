@@ -48,18 +48,9 @@ Write formatted data to a string and send the string to a user callback.
 @param event_type Event type or callback to use to send the message
 @param fmt Format-control string (plus optional arguments)
 @return Returns true if successful, returns false otherwise
-* FIXME Change by its v2 version this function after ended the merge (perhaps remove to the exported function)
+* FIXME Change by its v2 version this function after ended the merge 
 */
 opj_bool opj_event_msg(opj_common_ptr cinfo, int event_type, const char *fmt, ...);
-
-/**
- * Set the default event handler. This function set the output of message event to be stderr for warning and error output
- * and stdout for info output. It is optional, you can set your own event handler or provide a null structure to the
- * opj_setup_decoder function. In this last case no output will be displayed.
- *
- * @param	p_manager		a opj_event_mgr structure which will be pass to the codec.
- */
-void opj_set_default_event_handler(opj_event_mgr_t * p_manager, opj_bool verbose);
 
 /* ----------------------------------------------------------------------- */
 /*@}*/

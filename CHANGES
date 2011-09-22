@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+September 22, 2011
+* [mickael] WIP: fix build compilation error with windows platform about event_mgr management. 
+
 September 21, 2011
 + [mickael] WIP: clean the j2k_dump application and the lib regards to the event management
 + [mickael] Enhance the support of endianess with cmake and inside the code (credit to Winfried) 

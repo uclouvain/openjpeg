@@ -169,7 +169,7 @@ opj_bool opj_event_msg_v2(opj_event_mgr_t* event_mgr, int event_type, const char
 }
 
 /* ----------------------------------------------------------------------- */
-void opj_set_default_event_handler(opj_event_mgr_t * p_manager, opj_bool verbose)
+void OPJ_CALLCONV opj_set_default_event_handler(opj_event_mgr_t * p_manager, opj_bool verbose)
 {
 	p_manager->client_data = NULL;
 	p_manager->error_handler = opj_error_default_callback;

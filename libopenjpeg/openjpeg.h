@@ -1179,6 +1179,10 @@ OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream (FILE * p_file,
 ==========================================================
 */
 
+/**
+ * FIXME DOC 
+ * FIXME Need to adapt this function to the V2 framework
+ */
 OPJ_API opj_event_mgr_t* OPJ_CALLCONV opj_set_event_mgr(opj_common_ptr cinfo, opj_event_mgr_t *event_mgr, void *context);
 
 /**
