@@ -140,9 +140,3 @@ void opj_image_comp_header_update(opj_image_header_t * p_image_header, const opj
 		++l_img_comp;
 	}
 }
-
-void opj_initialise_file_info(opj_file_info_t *file_info, OPJ_INT32 file_info_flag, OPJ_INT32 codec_format) {
-
-	file_info->file_info_flag = file_info_flag;
-	file_info->file_format = codec_format;
-}

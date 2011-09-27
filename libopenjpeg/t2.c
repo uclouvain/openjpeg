@@ -844,7 +844,7 @@ opj_bool t2_decode_packets_v2(
 						OPJ_BYTE *p_src,
 						OPJ_UINT32 * p_data_read,
 						OPJ_UINT32 p_max_len,
-						struct opj_codestream_info_v2 *p_cstr_info)
+						opj_codestream_index_t *p_cstr_index)
 {
 	OPJ_BYTE *l_current_data = p_src;
 	opj_pi_iterator_t *l_pi = 00;
@@ -861,10 +861,11 @@ opj_bool t2_decode_packets_v2(
 	opj_packet_info_t *l_pack_info = 00;
 	opj_image_comp_header_t* l_img_comp = 00;
 
-
-	if (p_cstr_info) {
-		l_pack_info = p_cstr_info->tile[p_tile_no].packet;
+#ifdef TODO_MSD
+	if (p_cstr_index) {
+		l_pack_info = p_cstr_index->tile_index[p_tile_no].packet;
 	}
+#endif
 
 	/* create a packet iterator */
 	l_pi = pi_create_decode_v2(l_image, l_cp, p_tile_no);

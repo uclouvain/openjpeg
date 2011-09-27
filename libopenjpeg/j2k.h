@@ -80,7 +80,7 @@ The functions in J2K.C have for goal to read/write the several parts of the code
 
 #define J2K_MS_UNK 0		/**< UNKNOWN marker value */
 
-#ifdef TODO_MS
+#ifdef TODO_MS /* FIXME */
 #define J2K_MS_CBD 0xff78	/**< CBD marker value */
 #define J2K_MS_MCC 0xff75	/**< MCC marker value */
 #define J2K_MS_MCT 0xff74	/**< MCT marker value */
@@ -745,6 +745,10 @@ JPEG-2000 codestream reader/writer
 */
 typedef struct opj_j2k_v2
 {
+	/* J2K codestream is decoded*/
+	opj_bool m_is_decoder;
+
+	/* FIXME DOC*/
 	union
 	{
 		opj_j2k_dec_t m_decoder;
@@ -769,13 +773,13 @@ typedef struct opj_j2k_v2
 	struct opj_procedure_list *	m_validation_list;
 
 	/** helper used to write the index file */
-	opj_codestream_info_v2_t *cstr_info;
+	opj_codestream_index_t *cstr_index;
 
 	/** the current tile coder/decoder **/
 	struct opj_tcd_v2 *	m_tcd;
 	//opj_tcd_v2_t *	m_tcd;
 
-	OPJ_UINT32 m_is_decoder : 1;
+
 
 }
 opj_j2k_v2_t;
@@ -886,7 +890,7 @@ opj_bool j2k_end_decompress(opj_j2k_v2_t *j2k, struct opj_stream_private *cio, s
  */
 opj_bool j2k_read_header(	struct opj_stream_private *p_stream,
 							opj_j2k_v2_t* p_j2k,
-							opj_file_info_t * p_file_info,
+							opj_image_header_t* p_img_header,
 							struct opj_event_mgr* p_manager );
 
 
@@ -945,21 +949,67 @@ opj_bool j2k_read_tile_header (
  *
  * @return	true			if the area could be set.
  */
-opj_bool j2k_set_decode_area(
-			opj_j2k_v2_t *p_j2k,
-			OPJ_INT32 p_start_x,
-			OPJ_INT32 p_start_y,
-			OPJ_INT32 p_end_x,
-			OPJ_INT32 p_end_y,
-			struct opj_event_mgr * p_manager
-			);
+opj_bool j2k_set_decode_area(	opj_j2k_v2_t *p_j2k,
+								OPJ_INT32 p_start_x, OPJ_INT32 p_start_y,
+								OPJ_INT32 p_end_x, OPJ_INT32 p_end_y,
+								struct opj_event_mgr * p_manager );
 
 /**
  * Creates a J2K decompression structure.
  *
  * @return a handle to a J2K decompressor if successful, NULL otherwise.
-*/
+ */
 opj_j2k_v2_t* j2k_create_decompress_v2();
+
+
+/**
+ * Dump some elements from the J2K decompression structure .
+ *
+ *@param p_j2k				the jpeg2000 codec.
+ *@param flag				flag to describe what elments are dump.
+ *@param out_stream			output stream where dump the elements.
+ *
+*/
+void j2k_dump (opj_j2k_v2_t* p_j2k, OPJ_INT32 flag, FILE* out_stream);
+
+
+
+/**
+ * Dump an image header structure.
+ *
+ *@param img_header			the image header to dump.
+ *@param dev_dump_flag		flag to describe if we are in the case of this function is use outside j2k_dump function
+ *@param out_stream			output stream where dump the elements.
+ */
+void j2k_dump_image_header(opj_image_header_t* img_header, opj_bool dev_dump_flag, FILE* out_stream);
+
+/**
+ * Dump a component image header structure.
+ *
+ *@param comp_header		the component image header to dump.
+ *@param dev_dump_flag		flag to describe if we are in the case of this function is use outside j2k_dump function
+ *@param out_stream			output stream where dump the elements.
+ */
+void j2k_dump_image_comp_header(opj_image_comp_header_t* comp_header, opj_bool dev_dump_flag, FILE* out_stream);
+
+/**
+ * Get the codestream info from a JPEG2000 codec.
+ *
+ *@param	p_j2k				the component image header to dump.
+ *
+ *@return	the codestream information extract from the jpg2000 codec
+ */
+opj_codestream_info_v2_t* j2k_get_cstr_info(opj_j2k_v2_t* p_j2k);
+
+/**
+ * Get the codestream index from a JPEG2000 codec.
+ *
+ *@param	p_j2k				the component image header to dump.
+ *
+ *@return	the codestream index extract from the jpg2000 codec
+ */
+opj_codestream_index_t* j2k_get_cstr_index(opj_j2k_v2_t* p_j2k);
+
 
 
 #endif /* __J2K_H */

@@ -145,7 +145,7 @@ JP2 component
 typedef struct opj_jp2_comps {
   int depth;		  
   int sgnd;		   
-  int bpcc;
+  OPJ_UINT32 bpcc;
 } opj_jp2_comps_t;
 
 /**
@@ -221,8 +221,8 @@ opj_jp2_v2_t;
 JP2 Box
 */
 typedef struct opj_jp2_box {
-  OPJ_INT32 length;
-  OPJ_INT32 type;
+  OPJ_UINT32 length;
+  OPJ_UINT32 type;
   OPJ_INT32 init_pos;
 } opj_jp2_box_t;
 
@@ -334,7 +334,7 @@ opj_bool jp2_end_decompress(opj_jp2_v2_t *jp2, struct opj_stream_private *cio, s
  */
 opj_bool jp2_read_header(	struct opj_stream_private *p_stream,
 							opj_jp2_v2_t *jp2,
-							opj_file_info_t * p_file_info,
+							opj_image_header_t * p_img_header,
 							struct opj_event_mgr * p_manager
 							);
 

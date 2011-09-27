@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 September 27, 2011
++ (mickael] WIP: add basis for a new output management of the codestream information and index
 * [mickael] WIP: fix some warnings from j2k_dump and index.c
 
 September 22, 2011

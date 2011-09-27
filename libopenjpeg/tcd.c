@@ -107,7 +107,7 @@ opj_bool tcd_t2_decode (
 					OPJ_BYTE * p_src_data,
 					OPJ_UINT32 * p_data_read,
 					OPJ_UINT32 p_max_src_size,
-					opj_codestream_info_v2_t *p_cstr_info
+					opj_codestream_index_t *p_cstr_index
 					);
 
 opj_bool tcd_t1_decode (
@@ -2008,12 +2008,13 @@ opj_bool tcd_decode_tile_v2(
 					 OPJ_BYTE *p_src,
 					 OPJ_UINT32 p_max_length,
 					 OPJ_UINT32 p_tile_no,
-					 opj_codestream_info_v2_t *p_cstr_info)
+					 opj_codestream_index_t *p_cstr_index)
 {
 	OPJ_UINT32 l_data_read;
 	p_tcd->tcd_tileno = p_tile_no;
 	p_tcd->tcp = &(p_tcd->cp->tcps[p_tile_no]);
 
+#ifdef TODO_MSD /* FIXME */
 	/* INDEX >>  */
 	if(p_cstr_info) {
 		OPJ_UINT32 resno, compno, numprec = 0;
@@ -2034,12 +2035,13 @@ opj_bool tcd_decode_tile_v2(
 		p_cstr_info->packno = 0;
 	}
 	/* << INDEX */
+#endif
 
 	/*--------------TIER2------------------*/
 	// FIXME _ProfStart(PGROUP_T2);
 	l_data_read = 0;
 	if
-		(! tcd_t2_decode(p_tcd, p_src, &l_data_read, p_max_length, p_cstr_info))
+		(! tcd_t2_decode(p_tcd, p_src, &l_data_read, p_max_length, p_cstr_index))
 	{
 		return OPJ_FALSE;
 	}
@@ -2317,7 +2319,7 @@ opj_bool tcd_t2_decode (
 					OPJ_BYTE * p_src_data,
 					OPJ_UINT32 * p_data_read,
 					OPJ_UINT32 p_max_src_size,
-					opj_codestream_info_v2_t *p_cstr_info
+					opj_codestream_index_t *p_cstr_index
 					)
 {
 	opj_t2_v2_t * l_t2;
@@ -2337,7 +2339,7 @@ opj_bool tcd_t2_decode (
 					p_src_data,
 					p_data_read,
 					p_max_src_size,
-					p_cstr_info))
+					p_cstr_index))
 	{
 		t2_destroy_v2(l_t2);
 		return OPJ_FALSE;

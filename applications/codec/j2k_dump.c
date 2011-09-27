@@ -76,10 +76,6 @@ typedef struct img_folder{
 
 /* -------------------------------------------------------------------------- */
 /* Declarations                                                               */
-
-static void j2k_dump_image(FILE *fd, opj_image_header_t * img);
-static void j2k_dump_cp(FILE *fd, opj_image_t * img, opj_cp_v2_t * cp);
-
 int get_num_images(char *imgdirpath);
 int load_images(dircnt_t *dirptr, char *imgdirpath);
 int get_file_format(char *filename);
@@ -378,9 +374,11 @@ int main(int argc, char *argv[])
 
 	opj_dparameters_t parameters;			/* Decompression parameters */
 	opj_event_mgr_t event_mgr;				/* Event manager */
-	opj_file_info_t file_info;				/* File info structure */
+	opj_image_header_t img_header;			/* Image info structure */
 	opj_codec_t* dinfo = NULL;				/* Handle to a decompressor */
 	opj_stream_t *cio = NULL;				/* Stream */
+	opj_codestream_info_v2_t* cstr_info;
+	opj_codestream_index_t* cstr_index;
 
 	OPJ_INT32 num_images, imageno;
 	img_fol_t img_fol;
@@ -510,7 +508,7 @@ int main(int argc, char *argv[])
 		}
 
 		/* Read the main header of the codestream and if necessary the JP2 boxes*/
-		if(! opj_read_header(cio, dinfo, &file_info, OPJ_IMG_INFO | OPJ_J2K_INFO)){
+		if(! opj_read_header(cio, dinfo, &img_header)){
 			fprintf(stderr, "ERROR -> j2k_dump: failed to read the header\n");
 			opj_stream_destroy(cio);
 			fclose(fsrc);
@@ -519,9 +517,16 @@ int main(int argc, char *argv[])
 			return EXIT_FAILURE;
 		}
 
+		opj_dump_codec(dinfo, OPJ_IMG_INFO | OPJ_J2K_MH_INFO | OPJ_J2K_MH_IND, stdout );
+
+		cstr_info = opj_get_cstr_info(dinfo);
+
+		cstr_index = opj_get_cstr_index(dinfo);
+
 		fprintf(stdout,"Setting decoding area to %d,%d,%d,%d\n",
 				parameters.DA_x0, parameters.DA_y0, parameters.DA_x1, parameters.DA_y1);
 
+#ifdef MSD
 		/* FIXME WIP_MSD <*/
 		if (! opj_set_decode_area(	dinfo,
 									parameters.DA_x0, parameters.DA_y0,
@@ -586,9 +591,7 @@ int main(int argc, char *argv[])
 			}
 		}
 		/* FIXME WIP_MSD >*/
-
-		/* Dump file informations from header */
-		dump_file_info(fout, &file_info);
+#endif
 
 		/* close the byte stream */
 		opj_stream_destroy(cio);
@@ -599,6 +602,9 @@ int main(int argc, char *argv[])
 			opj_destroy_codec(dinfo);
 		}
 
+		/* destroy the image header */
+		opj_image_header_destroy(&img_header);
+
 	}
 
 	/* Close the output file */
@@ -606,81 +612,3 @@ int main(int argc, char *argv[])
 
   return EXIT_SUCCESS;
 }
-
-
-static void j2k_dump_image(FILE *fd, opj_image_header_t * img) {
-	int compno;
-	fprintf(fd, "image {\n");
-	fprintf(fd, "  x0=%d, y0=%d, x1=%d, y1=%d\n", img->x0, img->y0, img->x1, img->y1);
-	fprintf(fd, "  numcomps=%d\n", img->numcomps);
-	for (compno = 0; compno < img->numcomps; compno++) {
-		opj_image_comp_header_t *comp = &img->comps[compno];
-		fprintf(fd, "  comp %d {\n", compno);
-		fprintf(fd, "    dx=%d, dy=%d\n", comp->dx, comp->dy);
-		fprintf(fd, "    prec=%d\n", comp->prec);
-		/* fprintf(fd, "    bpp=%d\n", comp->bpp); */
-		fprintf(fd, "    sgnd=%d\n", comp->sgnd);
-		fprintf(fd, "  }\n");
-	}
-	//fprintf(fd, "  XTOsiz=%d, YTOsiz=%d, XTsiz=%d, YTsiz=%d\n", img->tile_x0, img->tile_y0, img->tile_width, img->tile_height);
-	//fprintf(fd, "  Nb of tiles in x direction=%d, Nb of tiles in y direction=%d\n", img->nb_tiles_x, img->nb_tiles_y);
-	fprintf(fd, "}\n");
-}
-
-static void j2k_dump_cp(FILE *fd, opj_image_t * img, opj_cp_v2_t * cp) {
-	int tileno, compno, layno, bandno, resno, numbands;
-	fprintf(fd, "coding parameters {\n");
-	fprintf(fd, "  tx0=%d, ty0=%d\n", cp->tx0, cp->ty0);
-	fprintf(fd, "  tdx=%d, tdy=%d\n", cp->tdx, cp->tdy);
-	fprintf(fd, "  tw=%d, th=%d\n", cp->tw, cp->th);
-	for (tileno = 0; tileno < cp->tw * cp->th; tileno++) {
-		opj_tcp_v2_t *tcp = &cp->tcps[tileno];
-		fprintf(fd, "  tile %d {\n", tileno);
-		fprintf(fd, "    csty=%x\n", tcp->csty);
-		fprintf(fd, "    prg=%d\n", tcp->prg);
-		fprintf(fd, "    numlayers=%d\n", tcp->numlayers);
-		fprintf(fd, "    mct=%d\n", tcp->mct);
-		fprintf(fd, "    rates=");
-		for (layno = 0; layno < tcp->numlayers; layno++) {
-			fprintf(fd, "%.1f ", tcp->rates[layno]);
-		}
-		fprintf(fd, "\n");
-		for (compno = 0; compno < img->numcomps; compno++) {
-			opj_tccp_t *tccp = &tcp->tccps[compno];
-			fprintf(fd, "    comp %d {\n", compno);
-			fprintf(fd, "      csty=%x\n", tccp->csty);
-			fprintf(fd, "      numresolutions=%d\n", tccp->numresolutions);
-			fprintf(fd, "      cblkw=%d\n", tccp->cblkw);
-			fprintf(fd, "      cblkh=%d\n", tccp->cblkh);
-			fprintf(fd, "      cblksty=%x\n", tccp->cblksty);
-			fprintf(fd, "      qmfbid=%d\n", tccp->qmfbid);
-			fprintf(fd, "      qntsty=%d\n", tccp->qntsty);
-			fprintf(fd, "      numgbits=%d\n", tccp->numgbits);
-			fprintf(fd, "      roishift=%d\n", tccp->roishift);
-			fprintf(fd, "      stepsizes=");
-			numbands = tccp->qntsty == J2K_CCP_QNTSTY_SIQNT ? 1 : tccp->numresolutions * 3 - 2;
-			for (bandno = 0; bandno < numbands; bandno++) {
-				fprintf(fd, "(%d,%d) ", tccp->stepsizes[bandno].mant,
-					tccp->stepsizes[bandno].expn);
-			}
-			fprintf(fd, "\n");
-			
-			if (tccp->csty & J2K_CCP_CSTY_PRT) {
-				fprintf(fd, "      prcw=");
-				for (resno = 0; resno < tccp->numresolutions; resno++) {
-					fprintf(fd, "%d ", tccp->prcw[resno]);
-				}
-				fprintf(fd, "\n");
-				fprintf(fd, "      prch=");
-				for (resno = 0; resno < tccp->numresolutions; resno++) {
-					fprintf(fd, "%d ", tccp->prch[resno]);
-				}
-				fprintf(fd, "\n");
-			}
-			fprintf(fd, "    }\n");
-		} /*end of component*/
-		fprintf(fd, "  }\n");
-	} /*end of tile */
-	fprintf(fd, "}\n");
-}
-

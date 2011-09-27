@@ -109,7 +109,7 @@ opj_bool t2_decode_packets_v2(	opj_t2_v2_t *t2,
 								struct opj_tcd_tile_v2 *tile,
 								OPJ_BYTE *src, OPJ_UINT32 * p_data_read,
 								OPJ_UINT32 len,
-								struct opj_codestream_info_v2 *cstr_info);
+								opj_codestream_index_t *cstr_info);
 
 /**
  * Creates a Tier 2 handle

@@ -487,7 +487,7 @@ opj_bool tcd_decode_tile_v2(opj_tcd_v2_t *tcd,
 							OPJ_BYTE *src,
 							OPJ_UINT32 len,
 							OPJ_UINT32 tileno,
-							struct opj_codestream_info_v2 *cstr_info);
+							opj_codestream_index_t *cstr_info);
 
 
 /**
