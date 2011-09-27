@@ -169,20 +169,25 @@ opj_bool opj_event_msg_v2(opj_event_mgr_t* event_mgr, int event_type, const char
 }
 
 /* ----------------------------------------------------------------------- */
-void OPJ_CALLCONV opj_set_default_event_handler(opj_event_mgr_t * p_manager, opj_bool verbose)
+void OPJ_CALLCONV opj_initialize_default_event_handler(opj_event_mgr_t * p_event, opj_bool verbose)
 {
-	p_manager->client_data = NULL;
-	p_manager->error_handler = opj_error_default_callback;
+	if (! p_event){
+		fprintf(stderr, "[ERROR] Event structure provided to the opj_set_default_event_handler is equal to null pointer.\n");
+		return;
+	}
+
+	p_event->client_data = NULL;
+	p_event->error_handler = opj_error_default_callback;
 
 	if (verbose) {
-		p_manager->info_handler = opj_info_default_callback;
-		p_manager->warning_handler = opj_warning_default_callback;
+		p_event->info_handler = opj_info_default_callback;
+		p_event->warning_handler = opj_warning_default_callback;
 	}
 	else {
 		/* FIXME (MSD) This message should be remove when the documentation will be updated */
 		fprintf(stdout, "[INFO] Verbose mode = OFF => no other info/warning output.\n");
-		p_manager->info_handler = opj_default_callback ;
-		p_manager->warning_handler = opj_default_callback ;
+		p_event->info_handler = opj_default_callback ;
+		p_event->warning_handler = opj_default_callback ;
 	}
 }
 

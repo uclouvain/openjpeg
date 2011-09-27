@@ -6,7 +6,8 @@ What's New for OpenJPEG
 + : added
 
 September 27, 2011
-+ (mickael] WIP: fix some warnings about a static function and j2k_read_unk_v2
++ (mickael] WIP: enhance the event management into the new API
+* (mickael] WIP: fix some warnings about a static function and j2k_read_unk_v2
 + (mickael] WIP: add basis for a new output management of the codestream information and index
 * [mickael] WIP: fix some warnings from j2k_dump and index.c
 

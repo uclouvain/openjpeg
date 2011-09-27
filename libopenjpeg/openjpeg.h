@@ -1164,19 +1164,20 @@ OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream (FILE * p_file,
 
 /**
  * FIXME DOC 
- * FIXME Need to adapt this function to the V2 framework
+ * FIXME DEPRECATED
  */
 OPJ_API opj_event_mgr_t* OPJ_CALLCONV opj_set_event_mgr(opj_common_ptr cinfo, opj_event_mgr_t *event_mgr, void *context);
 
 /**
- * Set the default event handler. This function set the output of message event to be stderr for warning and error output
- * and stdout for info output. It is optional, you can set your own event handler or provide a null structure to the
- * opj_setup_decoder function. In this last case no output will be displayed.
+ * Initialize a default event handler. This function set the output of message event to be stderr for warning and error output
+ * and stdout for info output in the verbose mode. In the case of the non-verbose mode only the error message are displayed.
+ * You can initialize your own event handler struct when you fill the field of the event structure. If you provide a null
+ * structure to the opj_setup_decoder function, no output will be displayed.
  *
  * @param	p_manager		a opj_event_mgr structure which will be pass to the codec.
  *
  */
-OPJ_API void OPJ_CALLCONV opj_set_default_event_handler(opj_event_mgr_t * p_manager, opj_bool verbose);
+OPJ_API void OPJ_CALLCONV opj_initialize_default_event_handler(opj_event_mgr_t * p_manager, opj_bool verbose);
 
 
 /* 
@@ -1225,7 +1226,7 @@ OPJ_API void OPJ_CALLCONV opj_setup_decoder(opj_dinfo_t *dinfo, opj_dparameters_
  *
  * @param dinfo 		decompressor handlers
  * @param parameters 	decompression parameters
- * @param vent_mgr		message handler
+ * @param event_mgr		message handler
  *
  * @return true			if the decoder is correctly set
  */

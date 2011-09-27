@@ -400,7 +400,7 @@ int main(int argc, char *argv[])
 	}
 
 	/* Set default event mgr */
-	opj_set_default_event_handler(&event_mgr, parameters.m_verbose);
+	opj_initialize_default_event_handler(&event_mgr, parameters.m_verbose);
 
 	/* Initialize reading of directory */
 	if(img_fol.set_imgdir==1){	
