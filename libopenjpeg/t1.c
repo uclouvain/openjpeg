@@ -315,6 +315,21 @@ static void t1_decode_cblk(
 		int roishift,
 		int cblksty);
 
+/**
+Decode 1 code-block
+@param t1 T1 handle
+@param cblk Code-block coding parameters
+@param orient
+@param roishift Region of interest shifting value
+@param cblksty Code-block style
+*/
+static void t1_decode_cblk_v2(
+		opj_t1_t *t1,
+		opj_tcd_cblk_dec_v2_t* cblk,
+		OPJ_UINT32 orient,
+		OPJ_UINT32 roishift,
+		OPJ_UINT32 cblksty);
+
 /*@}*/
 
 /*@}*/

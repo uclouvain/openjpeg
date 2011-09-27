@@ -686,6 +686,7 @@ static void j2k_add_tlmarker( int tileno, opj_codestream_info_t *cstr_info, unsi
 */
 static opj_bool j2k_read_unk_v2 (	opj_j2k_v2_t *p_j2k,
 									struct opj_stream_private *p_stream,
+									OPJ_UINT32 *output_marker,
 									struct opj_event_mgr * p_manager );
 
 /**
@@ -3928,12 +3929,13 @@ static void j2k_read_unk(opj_j2k_t *j2k) {
 */
 opj_bool j2k_read_unk_v2 (	opj_j2k_v2_t *p_j2k,
 							struct opj_stream_private *p_stream,
+							OPJ_UINT32 *output_marker,
 							struct opj_event_mgr * p_manager
 							)
 {
-	OPJ_BYTE l_data [2];
-	OPJ_UINT32 l_unknown_size, l_unknown_marker;
-	const opj_dec_memory_marker_handler_t * l_marker_handler = 00;
+	OPJ_UINT32 l_unknown_marker;
+	const opj_dec_memory_marker_handler_t * l_marker_handler;
+	OPJ_UINT32 l_size_unk = 2;
 
 	// preconditions
 	assert(p_j2k != 00);
@@ -3942,22 +3944,6 @@ opj_bool j2k_read_unk_v2 (	opj_j2k_v2_t *p_j2k,
 
 	opj_event_msg_v2(p_manager, EVT_WARNING, "Unknown marker\n");
 
-
-
-/*	if (opj_stream_read_data(p_stream,l_data,2,p_manager) != 2) {
-		opj_event_msg_v2(p_manager, EVT_WARNING, "Unknown marker\n");
-		return OPJ_FALSE;
-	}
-
-	opj_read_bytes(l_data,&l_unknown_size,2);
-	if (l_unknown_size < 2) {
-		return OPJ_FALSE;
-	}
-	l_unknown_size-=2;
-
-	if (opj_stream_skip(p_stream,l_unknown_size,p_manager) != l_unknown_size) {
-		return OPJ_FALSE;
-	}*/
 	while(1) {
 		// Try to read 2 bytes (the next marker ID) from stream and copy them into the buffer
 		if (opj_stream_read_data(p_stream,p_j2k->m_specific_param.m_decoder.m_header_data,2,p_manager) != 2) {
@@ -3978,11 +3964,21 @@ opj_bool j2k_read_unk_v2 (	opj_j2k_v2_t *p_j2k,
 				return OPJ_FALSE;
 			}
 			else {
-				if (l_marker_handler->id != J2K_MS_UNK)
-					break; // next marker is known and well located
+				if (l_marker_handler->id != J2K_MS_UNK) {
+					/* Add the marker to the codestream index*/
+					if (l_marker_handler->id != J2K_MS_SOT)
+						j2k_add_mhmarker_v2(p_j2k->cstr_index, J2K_MS_UNK,
+											(OPJ_UINT32) opj_stream_tell(p_stream) - l_size_unk,
+											l_size_unk);
+					break; /* next marker is known and well located */
+				}
+				else
+					l_size_unk += 2;
 			}
 		}
 	}
+
+	*output_marker = l_marker_handler->id ;
 
 	return OPJ_TRUE;
 }
@@ -5139,53 +5135,23 @@ opj_bool j2k_read_header_procedure(	opj_j2k_v2_t *p_j2k,
 		/* Get the marker handler from the marker ID */
 		l_marker_handler = j2k_get_marker_handler(l_current_marker);
 
-		/* Check if the marker is known and if it is the right place to find it */
-		if (! (p_j2k->m_specific_param.m_decoder.m_state & l_marker_handler->states) ) {
-			opj_event_msg_v2(p_manager, EVT_ERROR, "Marker is not compliant with its position\n");
-			return OPJ_FALSE;
-		}
-
 		/* Manage case where marker is unknown */
 		if (l_marker_handler->id == J2K_MS_UNK) {
-			OPJ_UINT32 l_size_unk = 2;
-			opj_event_msg_v2(p_manager, EVT_WARNING, "Unknown marker\n");
-
-			/* Try to detect the next valid marker */
-			while(1) {
-				/* Try to read 2 bytes (the next marker ID) from stream and copy them into the buffer */
-				if (opj_stream_read_data(p_stream,p_j2k->m_specific_param.m_decoder.m_header_data,2,p_manager) != 2) {
-					opj_event_msg_v2(p_manager, EVT_ERROR, "Stream too short\n");
-					return OPJ_FALSE;
-				}
-
-				/* Read 2 bytes as the new marker ID */
-				opj_read_bytes(p_j2k->m_specific_param.m_decoder.m_header_data,&l_current_marker,2);
-
-				/* Check if the current marker ID is valid */
-				if ( !(l_current_marker < 0xff00) ) {
-					/* Get the marker handler from the marker ID */
-					l_marker_handler = j2k_get_marker_handler(l_current_marker);
-
-					if ( !(p_j2k->m_specific_param.m_decoder.m_state & l_marker_handler->states) ) {
-						opj_event_msg_v2(p_manager, EVT_ERROR, "Marker is not compliant with its position\n");
-						return OPJ_FALSE;
-					}
-					else{
-						if (l_marker_handler->id != J2K_MS_UNK) {
-							/* Add the marker to the codestream index*/
-							j2k_add_mhmarker_v2(p_j2k->cstr_index, J2K_MS_UNK,
-												(OPJ_UINT32) opj_stream_tell(p_stream) - l_size_unk,
-												l_size_unk);
-							break; /* next marker is known and well located */
-						}
-						else
-							l_size_unk += 2;
-					}
-				}
+			if (! j2k_read_unk_v2(p_j2k, p_stream, &l_current_marker, p_manager)){
+				opj_event_msg_v2(p_manager, EVT_ERROR, "Unknow marker have been detected and generated error.\n");
+				return OPJ_FALSE;
 			}
 
 			if (l_current_marker == J2K_MS_SOT)
 				break; /* SOT marker is detected main header is completely read */
+			else	/* Get the marker handler from the marker ID */
+				l_marker_handler = j2k_get_marker_handler(l_current_marker);
+		}
+
+		/* Check if the marker is known and if it is the right place to find it */
+		if (! (p_j2k->m_specific_param.m_decoder.m_state & l_marker_handler->states) ) {
+			opj_event_msg_v2(p_manager, EVT_ERROR, "Marker is not compliant with its position\n");
+			return OPJ_FALSE;
 		}
 
 		/* Try to read 2 bytes (the marker size) from stream and copy them into the buffer */
