@@ -75,8 +75,18 @@ typedef struct img_folder{
 }img_fol_t;
 
 /* -------------------------------------------------------------------------- */
+/* Declarations                                                               */
+
 static void j2k_dump_image(FILE *fd, opj_image_header_t * img);
 static void j2k_dump_cp(FILE *fd, opj_image_t * img, opj_cp_v2_t * cp);
+
+int get_num_images(char *imgdirpath);
+int load_images(dircnt_t *dirptr, char *imgdirpath);
+int get_file_format(char *filename);
+char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_dparameters_t *parameters);
+
+int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,img_fol_t *img_fol);
+int parse_DA_values( char* inArg, unsigned int *DA_x0, unsigned int *DA_y0, unsigned int *DA_x1, unsigned int *DA_y1);
 
 /* -------------------------------------------------------------------------- */
 void decode_help_display(void) {
@@ -282,7 +292,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 				strncpy(ROI_values, opj_optarg, strlen(opj_optarg));
 				ROI_values[strlen(opj_optarg)] = '\0';
 				/*printf("ROI_values = %s [%d / %d]\n", ROI_values, strlen(ROI_values), size_optarg ); */
-				parse_ROI_values( ROI_values, &parameters->DA_x0, &parameters->DA_y0, &parameters->DA_x1, &parameters->DA_y1);
+				parse_DA_values( ROI_values, &parameters->DA_x0, &parameters->DA_y0, &parameters->DA_x1, &parameters->DA_y1);
 			}
 			break;
 			/* ----------------------------------------------------- */
@@ -332,7 +342,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
  * separator = ","
  */
 /* -------------------------------------------------------------------------- */
-int parse_ROI_values( char* inArg, unsigned int *DA_x0, unsigned int *DA_y0, unsigned int *DA_x1, unsigned int *DA_y1)
+int parse_DA_values( char* inArg, unsigned int *DA_x0, unsigned int *DA_y0, unsigned int *DA_x1, unsigned int *DA_y1)
 {
 	int it = 0;
 	int values[4];
