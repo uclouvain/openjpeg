@@ -6,6 +6,8 @@ What's New for OpenJPEG
 + : added
 
 September 30, 2011
+* [vincent] fix autotools for various compilation problems
+* [vincent] fix indexer compilation. Patch from Winfried
 * [kaori] modified indexer for JPIP, JPP-stream
 
 September 27, 2011

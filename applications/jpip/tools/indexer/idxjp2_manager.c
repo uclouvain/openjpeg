@@ -38,7 +38,7 @@
  */
 
 #include <stdio.h>
-#include "ext_openjpeg.h"
+#include "ext_libopenjpeg/ext_openjpeg.h"
 #include "j2k_to_idxjp2.h"
 #include "event_mgr_handler.h"
 

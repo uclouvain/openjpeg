@@ -33,6 +33,7 @@
  *  \brief Modification of jpip.c from 2KAN indexer
  */
 
+#include <stdio.h>
 #include <math.h>
 #include "indexbox_manager.h"
 #include "cio_ext.h"

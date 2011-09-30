@@ -32,6 +32,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <stdio.h>
+
 #include "cio_ext.h"
 #include "event.h"
 
@@ -43,7 +45,7 @@
 opj_bool cio_ext_byteout(opj_cio_t *cio, unsigned char v);
 
 unsigned int cio_ext_write( opj_cio_t *cio, unsigned long long int v, int n)
-{  
+{
   int i;
   for (i = n - 1; i >= 0; i--) {
     if( !cio_ext_byteout(cio, (unsigned char) ((v >> (i << 3)) & 0xff)) )

@@ -116,10 +116,6 @@ AC_ARG_ENABLE([jpwl],
 AC_MSG_CHECKING([whether to build the JPWL library])
 AC_MSG_RESULT([${want_jpwl}])
 
-if test "x${want_jpwl}" = "xyes" ; then
-   AC_DEFINE(USE_JPWL, [1], [define to 1 if you use jpwl])
-fi
-
 AM_CONDITIONAL([WANT_JPWL], [test "x${want_jpwl}" = "xyes"])
 
 # JPIP

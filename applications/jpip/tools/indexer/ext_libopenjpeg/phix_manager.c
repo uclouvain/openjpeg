@@ -34,6 +34,7 @@
  */
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <math.h>
 #include "indexbox_manager.h"
 #include "cio_ext.h"

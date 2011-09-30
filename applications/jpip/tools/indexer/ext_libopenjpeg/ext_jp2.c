@@ -28,6 +28,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <stdio.h>
+
 #include "ext_openjpeg.h"
 #include "cio.h"
 #include "cio_ext.h"
