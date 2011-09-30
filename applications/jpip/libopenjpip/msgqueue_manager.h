@@ -3,7 +3,8 @@
  *
  * Copyright (c) 2002-2011, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
  * Copyright (c) 2002-2011, Professor Benoit Macq
- * Copyright (c) 2010-2011, Kaori Hagihara
+ * Copyright (c) 2010-2011, Kaori Hagihara 
+ * Copyright (c) 2011,      Lucian Corlaciu, GSoC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,6 +36,14 @@
 #include "byte_manager.h"
 #include "cachemodel_manager.h"
 #include "placeholder_manager.h"
+
+#define PRECINCT_MSG 0
+#define EXT_PRECINCT_MSG 1
+#define TILE_HEADER_MSG 2
+#define TILE_MSG 4
+#define EXT_TILE_MSG 5
+#define MAINHEADER_MSG 6
+#define METADATA_MSG 8
 
 //! message parameters
 typedef struct message_param{
@@ -75,6 +84,14 @@ msgqueue_param_t * gene_msgqueue( bool stateless, cachemodel_param_t *cachemodel
 void delete_msgqueue( msgqueue_param_t **msgqueue);
 
 /**
+ * delete a message in msgqueue
+ *
+ * @param[in] message  address of the deleting message pointer
+ * @param[in] msgqueue message queue pointer
+ */
+void delete_message_in_msgqueue( message_param_t **message, msgqueue_param_t *msgqueue);
+
+/**
  * print message queue
  *
  * @param[in] msgqueue message queue pointer
@@ -91,6 +108,15 @@ void enqueue_mainheader( msgqueue_param_t *msgqueue);
 
 
 /**
+ * enqueue tile headers data-bin into message queue
+ *
+ * @param[in]     tile_id  tile id starting from 0
+ * @param[in,out] msgqueue message queue pointer
+ */
+void enqueue_tileheader( int tile_id, msgqueue_param_t *msgqueue);
+
+
+/**
  * enqueue tile data-bin into message queue
  *
  * @param[in]     tile_id  tile id starting from 0
@@ -98,6 +124,16 @@ void enqueue_mainheader( msgqueue_param_t *msgqueue);
  * @param[in,out] msgqueue message queue pointer
  */
 void enqueue_tile( int tile_id, int level, msgqueue_param_t *msgqueue);
+
+/**
+ * enqueue precinct data-bin into message queue
+ *
+ * @param[in]     seq_id   precinct sequence number within its tile
+ * @param[in]     tile_id  tile index
+ * @param[in]     comp_id  component number
+ * @param[in,out] msgqueue message queue
+ */
+void enqueue_precinct( int seq_id, int tile_id, int comp_id, msgqueue_param_t *msgqueue);
 
 
 /**
@@ -137,30 +173,16 @@ void parse_JPIPstream( Byte_t *JPIPstream, Byte8_t streamlen, Byte8_t offset, ms
  */
 void parse_metamsg( msgqueue_param_t *msgqueue, Byte_t *stream, Byte8_t streamlen, metadatalist_param_t *metadatalist);
 
-
 /**
- * reconstruct j2k codestream from message queue
+ * compute precinct ID A.3.2.1
  *
- * @param[in]  msgqueue   message queue pointer
- * @param[in]  jpipstream original jpt- jpp- stream
- * @param[in]  csn        codestream number
- * @param[in]  minlev     minimum decomposition level
- * @param[out] j2klen     pointer to the j2k codestream length
- * @return     generated  reconstructed j2k codestream
+ * @param[in]  t                 tile index
+ * @param[in]  c                 component index
+ * @param[in]  s                 sequence number
+ * @param[in]  num_components    total number of components
+ * @param[in]  num_tiles         total number of tiles
+ * @return                       precicnt id
  */
-Byte_t * recons_j2k( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte8_t csn, int minlev, Byte8_t *j2klen);
-
-
-/**
- * reconstruct jp2 file codestream from message queue
- *
- * @param[in]  msgqueue   message queue pointer
- * @param[in]  jpipstream original jpt- jpp- stream
- * @param[in]  csn        codestream number
- * @param[out] jp2len     pointer to the jp2 codestream length
- * @return     generated  reconstructed jp2 codestream
- */
-Byte_t * recons_jp2( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte8_t csn, Byte8_t *jp2len);
-
+Byte8_t comp_precinct_id( int t, int c, int s, int num_components, int num_tiles);
 
 #endif 	    /* !MSGQUEUE_MANAGER_H_ */

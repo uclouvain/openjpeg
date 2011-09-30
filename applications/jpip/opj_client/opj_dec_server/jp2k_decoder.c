@@ -135,13 +135,13 @@ Byte_t * imagetopnm(opj_image_t *image, ihdrbox_param_t **ihdrbox)
   if(*ihdrbox){
     if( (*ihdrbox)->nc != image->numcomps)
       fprintf( stderr, "Exception: num of components not identical, codestream: %d, ihdrbox: %d\n", image->numcomps, (*ihdrbox)->nc);
-    
+
     if( (*ihdrbox)->width != image->comps[0].w)
-      fprintf( stderr, "Exception: width value not identical, codestream: %d, ihdrbox: %d\n", image->comps[0].w, (*ihdrbox)->width);
+      (*ihdrbox)->width = image->comps[0].w;
     
     if( (*ihdrbox)->height != image->comps[0].h)
-      fprintf( stderr, "Exception: heigth value not identical, codestream: %d, ihdrbox: %d\n", image->comps[0].h, (*ihdrbox)->height);
-    
+      (*ihdrbox)->height = image->comps[0].h;
+
     if( (*ihdrbox)->bpc != image->comps[0].prec)
       fprintf( stderr, "Exception: bits per component not identical, codestream: %d, ihdrbox: %d\n", image->comps[0].prec, (*ihdrbox)->bpc);
   }

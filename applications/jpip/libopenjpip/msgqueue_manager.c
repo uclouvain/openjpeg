@@ -4,6 +4,7 @@
  * Copyright (c) 2002-2011, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
  * Copyright (c) 2002-2011, Professor Benoit Macq
  * Copyright (c) 2010-2011, Kaori Hagihara
+ * Copyright (c) 2011,      Lucian Corlaciu, GSoC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,16 +31,14 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 #include <sys/types.h>
 #include <unistd.h>
 #include <sys/stat.h>
-#include <fcntl.h>
 #include <string.h>
 #include <ctype.h>
 #include "msgqueue_manager.h"
 #include "metadata_manager.h"
-
+#include "index_manager.h"
 
 #ifdef SERVER
 #include "fcgi_stdio.h"
@@ -49,14 +48,6 @@
 #define FCGI_stderr stderr
 #define logstream stderr
 #endif //SERVER
-
-#define PRECINCT_MSG 0
-#define EXT_PRECINCT_MSG 1
-#define TILE_HEADER_MSG 2
-#define TILE_MSG 4
-#define EXT_TILE_MSG 5
-#define MAINHEADER_MSG 6
-#define METADATA_MSG 8
 
 msgqueue_param_t * gene_msgqueue( bool stateless, cachemodel_param_t *cachemodel)
 {
@@ -96,6 +87,7 @@ void delete_msgqueue( msgqueue_param_t **msgqueue)
 void print_msgqueue( msgqueue_param_t *msgqueue)
 {
   message_param_t *ptr;
+  char *message_class[] = { "Precinct", "Ext-Prec", "TileHead", "non", "Tile", "Ext-Tile", "Main", "non", "Meta"};
 
   if( !msgqueue)
     return;
@@ -104,7 +96,7 @@ void print_msgqueue( msgqueue_param_t *msgqueue)
   ptr = msgqueue->first;
 
   while( ptr){
-    fprintf( logstream, "\t class_id: %lld\n", ptr->class_id );
+    fprintf( logstream, "\t class_id: %lld %s\n", ptr->class_id, message_class[ptr->class_id]);
     fprintf( logstream, "\t in_class_id: %lld\n", ptr->in_class_id );
     fprintf( logstream, "\t csn: %lld\n", ptr->csn );
     fprintf( logstream, "\t bin_offset: %#llx\n", ptr->bin_offset );
@@ -127,11 +119,13 @@ void enqueue_mainheader( msgqueue_param_t *msgqueue)
 {
   cachemodel_param_t *cachemodel;
   target_param_t *target;
+  index_param_t *codeidx;
   message_param_t *msg;
 
   cachemodel = msgqueue->cachemodel;
   target = cachemodel->target;
-
+  codeidx = target->codeidx;
+  
   msg = (message_param_t *)malloc( sizeof(message_param_t));
 
   msg->last_byte = true;
@@ -139,15 +133,44 @@ void enqueue_mainheader( msgqueue_param_t *msgqueue)
   msg->class_id = MAINHEADER_MSG;
   msg->csn = target->csn;
   msg->bin_offset = 0;
-  msg->length = target->codeidx->mhead_length;
+  msg->length = codeidx->mhead_length;
   msg->aux = 0; // non exist
-  msg->res_offset = target->codeidx->offset;
+  msg->res_offset = codeidx->offset;
   msg->phld = NULL;
   msg->next = NULL;
 
   enqueue_message( msg, msgqueue);
 
   cachemodel->mhead_model = true;
+}
+
+void enqueue_tileheader( int tile_id, msgqueue_param_t *msgqueue)
+{
+  cachemodel_param_t *cachemodel;
+  target_param_t *target;
+  index_param_t *codeidx;
+  message_param_t *msg;
+
+  cachemodel = msgqueue->cachemodel;
+  target = cachemodel->target;
+  codeidx = target->codeidx;
+  
+  if( !cachemodel->th_model[ tile_id]){
+    msg = (message_param_t *)malloc( sizeof(message_param_t));
+    msg->last_byte = true;
+    msg->in_class_id = tile_id;
+    msg->class_id = TILE_HEADER_MSG;
+    msg->csn = target->csn;
+    msg->bin_offset = 0;
+    msg->length = codeidx->tileheader[tile_id]->tlen;
+    msg->aux = 0; // non exist
+    msg->res_offset = codeidx->offset + get_elemOff( codeidx->tilepart, 0, tile_id); // Changed from Lucian's
+    msg->phld = NULL;
+    msg->next = NULL;
+    
+    enqueue_message( msg, msgqueue);
+    cachemodel->th_model[ tile_id] = true;
+  }
 }
 
 void enqueue_tile( int tile_id, int level, msgqueue_param_t *msgqueue)
@@ -206,6 +229,43 @@ void enqueue_tile( int tile_id, int level, msgqueue_param_t *msgqueue)
     }
     binOffset += binLength;
   }
+}
+
+void enqueue_precinct( int seq_id, int tile_id, int comp_id, msgqueue_param_t *msgqueue)
+{
+  cachemodel_param_t *cachemodel;
+  index_param_t *codeidx;
+  faixbox_param_t *precpacket;
+  message_param_t *msg;
+  Byte8_t nmax;
+
+  cachemodel = msgqueue->cachemodel;
+  codeidx = cachemodel->target->codeidx;
+  precpacket = codeidx->precpacket[ comp_id];
+
+  nmax = get_nmax(precpacket);
+  
+  if( !cachemodel->pp_model[comp_id][ tile_id*nmax+seq_id]){
+    msg = (message_param_t *)malloc( sizeof(message_param_t));
+    msg->last_byte = true;
+    msg->in_class_id = comp_precinct_id( tile_id, comp_id, seq_id, codeidx->SIZ.Csiz, codeidx->SIZ.XTnum * codeidx->SIZ.YTnum);
+    msg->class_id = PRECINCT_MSG;
+    msg->csn = cachemodel->target->csn;
+    msg->bin_offset = 0;
+    msg->length = get_elemLen( precpacket, seq_id, tile_id);
+    msg->aux = 0;
+    msg->res_offset = codeidx->offset+get_elemOff( precpacket, seq_id, tile_id);
+    msg->phld = NULL;
+    msg->next = NULL;
+
+    enqueue_message( msg, msgqueue);
+    cachemodel->pp_model[comp_id][ tile_id*nmax+seq_id] = true;
+  }
+}
+
+Byte8_t comp_precinct_id( int t, int c, int s, int num_components, int num_tiles)
+{
+  return t + (c + s * num_components ) * num_tiles;
 }
 
 void enqueue_box(  int meta_id, boxlist_param_t *boxlist, msgqueue_param_t *msgqueue, Byte8_t *binOffset);
@@ -327,8 +387,8 @@ void emit_stream_from_msgqueue( msgqueue_param_t *msgqueue)
     return;
 
   msg = msgqueue->first;
-  class_id = 0;
-  csn = 0;
+  class_id = -1;
+  csn = -1;
   while( msg){
     if( msg->csn == csn){
       if( msg->class_id == class_id)
@@ -472,6 +532,7 @@ void emit_bigendian_bytes( Byte8_t code, int bytelength)
     n--;
   }
 }
+
 void print_binarycode( Byte8_t n, int segmentlen)
 {
   char buf[256];
@@ -503,7 +564,7 @@ void parse_JPIPstream( Byte_t *JPIPstream, Byte8_t streamlen, Byte8_t offset, ms
   Byte8_t class_id, csn;
 
   class_id = -1; // dummy
-  csn = 0;
+  csn = -1;
   ptr = JPIPstream;
   while( ptr-JPIPstream < streamlen){
     msg = (message_param_t *)malloc( sizeof(message_param_t));
@@ -512,10 +573,9 @@ void parse_JPIPstream( Byte_t *JPIPstream, Byte8_t streamlen, Byte8_t offset, ms
     
     msg->last_byte   = c == 1 ? true : false;
     
-    if( bb >= 2){
+    if( bb >= 2)
       ptr = parse_vbas( ptr, &class_id);
-      //      fprintf( stdout, "class_id: %lld\n", class_id);
-    }
+
     msg->class_id = class_id;
     
     if (bb == 3)
@@ -646,183 +706,6 @@ Byte_t * parse_vbas( Byte_t *streamptr, Byte8_t *elem)
   return ptr;
 }
 
-/**
- * search a message by class_id
- *
- * @param[in] class_id    class identifiers 
- * @param[in] in_class_id in-class identifiers, -1 means any
- * @param[in] csn         codestream number
- * @param[in] msg         first message pointer of the searching list
- * @return                found message pointer
- */
-message_param_t * search_message( Byte8_t class_id, Byte8_t in_class_id, Byte8_t csn, message_param_t *msg);
-
-
-/**
- * delete a message in msgqueue
- *
- * @param[in] message  address of the deleting message pointer
- * @param[in] msgqueue message queue pointer
- */
-void delete_message_in_msgqueue( message_param_t **message, msgqueue_param_t *msgqueue);
-
-/**
- * reconstruct j2k codestream from JPT- (in future, JPP-) stream
- *
- * @param[in] msgqueue   message queue pointer
- * @param[in] jpipstream original JPT- JPP- stream 
- * @param[in] csn        codestream number
- * @param[in] minlev     minimum decomposition level
- * @param[out] codelen   codestream length
- * @return               generated reconstructed j2k codestream
- */
-Byte_t * recons_codestream( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte8_t csn, int minlev, Byte8_t *codelen);
-
-Byte_t * recons_j2k( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte8_t csn, int minlev, Byte8_t *j2klen)
-{
-  Byte_t *j2kstream = NULL;
-  
-  if( !msgqueue)
-    return NULL;
-  
-  j2kstream = recons_codestream( msgqueue, jpipstream, csn, minlev, j2klen);
-
-  return j2kstream;
-}
-
-Byte_t * add_emptyboxstream( placeholder_param_t *phld, Byte_t *jp2stream, Byte8_t *jp2len);
-Byte_t * add_msgstream( message_param_t *message, Byte_t *origstream, Byte_t *j2kstream, Byte8_t *j2klen);
-
-Byte_t * recons_jp2( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte8_t csn, Byte8_t *jp2len)
-{
-  message_param_t *ptr;
-  Byte_t *jp2stream = NULL;
-  Byte_t *codestream = NULL;
-  Byte8_t codelen;
-  Byte8_t jp2cDBoxOffset = 0, jp2cDBoxlen = 0;
-  
-  *jp2len = 0;
-
-  if( !msgqueue)
-    return NULL;
-    
-  ptr = msgqueue->first;
-  while(( ptr = search_message( METADATA_MSG, -1, csn, ptr))!=NULL){
-    if( ptr->phld){
-      if( strncmp( (char *)ptr->phld->OrigBH+4, "jp2c", 4) == 0){
-	jp2cDBoxOffset = *jp2len + ptr->phld->OrigBHlen;
-	jp2stream = add_emptyboxstream( ptr->phld, jp2stream, jp2len); // header only
-	jp2cDBoxlen = *jp2len - jp2cDBoxOffset;
-      }
-      else
-	jp2stream = add_emptyboxstream( ptr->phld, jp2stream, jp2len); // header only
-    }
-    jp2stream = add_msgstream( ptr, jpipstream, jp2stream, jp2len);
-    ptr = ptr->next;
-  }
-  
-  codestream = recons_codestream( msgqueue, jpipstream, csn, 0, &codelen);
-  
-  if( jp2cDBoxOffset != 0 && codelen <= jp2cDBoxlen)
-    memcpy( jp2stream+jp2cDBoxOffset, codestream, codelen);
-
-  free( codestream);
-  
-  return jp2stream;
-}
-
-int get_last_tileID( msgqueue_param_t *msgqueue, Byte8_t csn);
-Byte_t * add_emptytilestream( const int tileID, Byte_t *j2kstream, Byte8_t *j2klen);
-Byte_t * add_EOC( Byte_t *j2kstream, Byte8_t *j2klen);
-
-// usable only to JPT-stream messages
-// PRECINCT_MSG, EXT_PRECINCT_MSG, TILE_HEADER_MSG need to be handled
-Byte_t * recons_codestream( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte8_t csn, int minlev, Byte8_t *codelen)
-{
-  message_param_t *ptr;
-  Byte_t *codestream = NULL;
-  int last_tileID;
-  int tileID;
-  bool found;
-  Byte8_t binOffset;
-
-  *codelen = 0;
-
-  // main header first
-  ptr = msgqueue->first;
-  binOffset = 0;
-  while(( ptr = search_message( MAINHEADER_MSG, -1, csn, ptr))!=NULL){
-    if( ptr->bin_offset == binOffset){
-      codestream = add_msgstream( ptr, jpipstream, codestream, codelen);
-      binOffset += ptr->length;
-    }
-    ptr = ptr->next;
-  }
-
-  last_tileID = get_last_tileID( msgqueue, csn); 
-  
-  for( tileID=0; tileID <= last_tileID; tileID++){
-    found = false;
-    binOffset = 0;
-
-    ptr = msgqueue->first;
-    while(( ptr = search_message( TILE_MSG, tileID, csn, ptr))!=NULL){
-      if( ptr->bin_offset == binOffset){
-	found = true;
-	codestream = add_msgstream( ptr, jpipstream, codestream, codelen);
-	binOffset += ptr->length;
-      }
-      ptr = ptr->next;
-    }
-    ptr = msgqueue->first;
-    while(( ptr = search_message( EXT_TILE_MSG, tileID, csn, ptr))!=NULL){
-      if( ptr->aux >= minlev){
-	if( ptr->bin_offset == binOffset){
-	  found = true;
-	  codestream = add_msgstream( ptr, jpipstream, codestream, codelen);
-	  binOffset += ptr->length;
-	}
-      }
-      ptr = ptr->next;
-    }
-    if(!found)
-      codestream = add_emptytilestream( tileID, codestream, codelen);
-  }
-  codestream = add_EOC( codestream, codelen);
-  
-  return codestream;
-}
-
-int get_last_tileID( msgqueue_param_t *msgqueue, Byte8_t csn)
-{
-  int last_tileID = 0;
-  message_param_t *msg;
-  
-  msg = msgqueue->first;
-  while( msg){
-    if((msg->class_id == TILE_MSG || msg->class_id == EXT_TILE_MSG) && msg->csn == csn && last_tileID < msg->in_class_id)
-      last_tileID = msg->in_class_id;
-    msg = msg->next;
-  }
-  return last_tileID;
-}
-
-message_param_t * search_message( Byte8_t class_id, Byte8_t in_class_id, Byte8_t csn, message_param_t *msg)
-{
-  while( msg != NULL){
-    if( in_class_id == -1){
-      if( msg->class_id == class_id && msg->csn == csn)
-	return msg;
-    }
-    else{
-      if( msg->class_id == class_id && msg->in_class_id == in_class_id && msg->csn == csn)
-	return msg;
-    }
-    msg = msg->next;
-  }
-  return NULL;
-}
-
 void delete_message_in_msgqueue( message_param_t **msg, msgqueue_param_t *msgqueue)
 {
   message_param_t *ptr;
@@ -844,140 +727,4 @@ void delete_message_in_msgqueue( message_param_t **msg, msgqueue_param_t *msgque
       msgqueue->last = ptr;
   }
   free( *msg);
-}
-
-Byte_t * gene_msgstream( message_param_t *message, Byte_t *stream, Byte8_t *length);
-Byte_t * gene_emptytilestream( const int tileID, Byte8_t *length);
-
-
-Byte_t * add_msgstream( message_param_t *message, Byte_t *origstream, Byte_t *j2kstream, Byte8_t *j2klen)
-{
-  Byte_t *newstream;
-  Byte8_t newlen;
-  Byte_t *buf;
-
-  if( !message)
-    return NULL;
-
-  newstream = gene_msgstream( message, origstream, &newlen);
-
-  buf = (Byte_t *)malloc(( *j2klen)+newlen);
-
-  memcpy( buf, j2kstream, *j2klen);
-  memcpy( buf+(*j2klen), newstream, newlen);
-  
-  *j2klen += newlen;
-  
-  free( newstream);
-  if(j2kstream) free(j2kstream);
-
-  return buf;
-}
- 
-
-Byte_t * add_emptyboxstream( placeholder_param_t *phld, Byte_t *jp2stream, Byte8_t *jp2len)
-{
-  Byte_t *newstream;
-  Byte8_t newlen;
-  Byte_t *buf;
-  
-  if( phld->OrigBHlen == 8)
-    newlen = big4(phld->OrigBH);
-  else
-    newlen = big8(phld->OrigBH+8);
-
-  newstream = (Byte_t *)malloc( newlen);
-  memset( newstream, 0, newlen);
-  memcpy( newstream, phld->OrigBH, phld->OrigBHlen);
-
-  buf = (Byte_t *)malloc(( *jp2len)+newlen);
-
-  memcpy( buf, jp2stream, *jp2len);
-  memcpy( buf+(*jp2len), newstream, newlen);
-  
-  *jp2len += newlen;
-  
-  free( newstream);
-  if(jp2stream) free(jp2stream);
-
-  return buf;
-}
-
-Byte_t * add_emptytilestream( const int tileID, Byte_t *j2kstream, Byte8_t *j2klen)
-{
-  Byte_t *newstream;
-  Byte8_t newlen;
-  Byte_t *buf;
-
-  newstream = gene_emptytilestream( tileID, &newlen);
-
-  buf = (Byte_t *)malloc(( *j2klen)+newlen);
-
-  memcpy( buf, j2kstream, *j2klen);
-  memcpy( buf+(*j2klen), newstream, newlen);
-  
-  *j2klen += newlen;
-
-  free( newstream);
-  if(j2kstream) free(j2kstream);
-
-  return buf;
-}
-
-Byte_t * add_EOC( Byte_t *j2kstream, Byte8_t *j2klen)
-{
-  Byte2_t EOC = 0xd9ff;
-
-  Byte_t *buf;
-
-  buf = (Byte_t *)malloc(( *j2klen)+2);
-
-  memcpy( buf, j2kstream, *j2klen);
-  memcpy( buf+(*j2klen), &EOC, 2);
-
-  *j2klen += 2;
-
-  if(j2kstream) free(j2kstream);
-
-  return buf;
-}
-
-Byte_t * gene_msgstream( message_param_t *message, Byte_t *stream, Byte8_t *length)
-{
-  Byte_t *buf;
-
-  if( !message)
-    return NULL;
-
-  *length = message->length;
-  buf = (Byte_t *)malloc( *length);
-  memcpy( buf, stream+message->res_offset,  *length);
-
-  return buf;
-}
-
-Byte_t * gene_emptytilestream( const int tileID, Byte8_t *length)
-{
-  Byte_t *buf;
-  const Byte2_t SOT = 0x90ff;
-  const Byte2_t Lsot = 0xa << 8;
-  Byte2_t Isot;
-  const Byte4_t Psot = 0xe << 24;
-  const Byte_t TPsot = 0, TNsot = 0;
-  const Byte2_t SOD = 0x93ff;
-
-  *length = 14;
-  buf = (Byte_t *)malloc(*length);
-
-  Isot = tileID << 8;
-  
-  memcpy( buf, &SOT, 2);
-  memcpy( buf+2, &Lsot, 2);
-  memcpy( buf+4, &Isot, 2);
-  memcpy( buf+6, &Psot, 4);
-  memcpy( buf+10, &TPsot, 1);
-  memcpy( buf+11, &TNsot, 1);
-  memcpy( buf+12, &SOD, 2);
-
-  return buf;
 }

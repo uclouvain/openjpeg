@@ -35,57 +35,20 @@ import java.util.regex.*;
 
 public class PnmImage extends Component
 {
-    public byte[] data = null;
-    public int width = 0;
-    public int height = 0;
-    public int channel = 0;
+    private byte[] data = null;
+    private int width = 0;
+    private int height = 0;
+    private int channel = 0;
     
-    public Image createROIImage( int rx, int ry, int rw, int rh)
+    public PnmImage( int c, int w, int h)
     {
-	int []pix = new int[ rw*rh];
-	
-	for( int i=0; i<rh; i++)
-	    for( int j=0; j<rw; j++){
-		pix[i*rw+j] = 0xFF << 24; // transparency
-		if( channel == 1){
-		    Byte lum = data[(ry+i)*width+rx+j];
-		    short slum;
-	  
-		    if( lum < 0)
-			slum = (short)(2*128+lum);
-		    else
-			slum = (short)lum;
-	  
-		    for( int c=0; c<3; c++){
-			pix[i*rw+j] = pix[i*rw+j] | slum << (8*c);
-		    }
-		}
-		else
-		    for( int c=0; c<3; c++){
-			Byte lum = data[ ((ry+i)*width+rx+j)*channel+(2-c)];
-			short slum;
-	    
-			if( lum < 0)
-			    slum = (short)(2*128+lum);
-			else
-			    slum = (short)lum;
-	    
-			pix[i*rw+j] = pix[i*rw+j] | slum << (8*c);
-		    }
-	    }
-	return createImage(new MemoryImageSource( rw, rh, pix, 0, rw));
+	channel = c;
+	width   = w;
+	height  = h;
+	data = new byte [ w*h*c];
     }
-
-    public Image createScaleImage( double scale)
-    {
-	Image src = createROIImage( 0, 0, width, height);	
-	ImageFilter replicate = new ReplicateScaleFilter( (int)(width*scale), (int)(height*scale));
-	ImageProducer prod = new FilteredImageSource( src.getSource(), replicate);
-	
-	return createImage(prod);
-    }
-    
-    public void openimage( String filename)
+       
+    public PnmImage( String filename)
     {
 	String  str;
 	Pattern pat;
@@ -137,5 +100,55 @@ public class PnmImage extends Component
 	    }    
 	    fis.close();
 	} catch (IOException e) { e.printStackTrace(); }
-    }   
+    }
+
+    public byte [] get_data(){	return data;}
+    public int get_width() { return width;}
+    public int get_height(){ return height;}
+    
+    public Image createROIImage( int rx, int ry, int rw, int rh)
+    {
+	int []pix = new int[ rw*rh];
+	
+	for( int i=0; i<rh; i++)
+	    for( int j=0; j<rw; j++){
+		pix[i*rw+j] = 0xFF << 24; // transparency
+		if( channel == 1){
+		    Byte lum = data[(ry+i)*width+rx+j];
+		    short slum;
+	  
+		    if( lum < 0)
+			slum = (short)(2*128+lum);
+		    else
+			slum = (short)lum;
+	  
+		    for( int c=0; c<3; c++){
+			pix[i*rw+j] = pix[i*rw+j] | slum << (8*c);
+		    }
+		}
+		else
+		    for( int c=0; c<3; c++){
+			Byte lum = data[ ((ry+i)*width+rx+j)*channel+(2-c)];
+			short slum;
+	    
+			if( lum < 0)
+			    slum = (short)(2*128+lum);
+			else
+			    slum = (short)lum;
+	    
+			pix[i*rw+j] = pix[i*rw+j] | slum << (8*c);
+		    }
+	    }
+
+	return createImage(new MemoryImageSource( rw, rh, pix, 0, rw));
+    }
+
+    public Image createScaleImage( double scale)
+    {
+    	Image src = createROIImage( 0, 0, width, height);	
+    	ImageFilter replicate = new ReplicateScaleFilter( (int)(width*scale), (int)(height*scale));
+    	ImageProducer prod = new FilteredImageSource( src.getSource(), replicate);
+	
+    	return createImage(prod);
+    }
 }

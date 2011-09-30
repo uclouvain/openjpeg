@@ -54,6 +54,7 @@
 #include "imgsock_manager.h"
 #include "jpipstream_manager.h"
 #include "cache_manager.h"
+#include "jp2k_encoder.h"
 
 #ifdef _WIN32
 WSADATA initialisation_win32;
@@ -237,15 +238,15 @@ void handle_JPIPstreamMSG( SOCKET connected_socket, cachelist_param_t *cachelist
   metadatalist_param_t *metadatalist;
   
   newjpipstream = receive_JPIPstream( connected_socket, target, tid, cid, &newstreamlen);
-  
+
   parse_JPIPstream( newjpipstream, newstreamlen, *streamlen, msgqueue);
-  
+
   *jpipstream = update_JPIPstream( newjpipstream, newstreamlen, *jpipstream, streamlen);
   free( newjpipstream);
 
   metadatalist = gene_metadatalist();
   parse_metamsg( msgqueue, *jpipstream, *streamlen, metadatalist);
-  
+
   // cid registration
   if( target[0] != 0){
     if((cache = search_cache( target, cachelist))){
@@ -265,7 +266,7 @@ void handle_JPIPstreamMSG( SOCKET connected_socket, cachelist_param_t *cachelist
   if( cache->metadatalist)
     delete_metadatalist( &cache->metadatalist);
   cache->metadatalist = metadatalist;
-  
+
   response_signal( connected_socket, true);
 }
 
@@ -276,7 +277,7 @@ void handle_PNMreqMSG( SOCKET connected_socket, Byte_t *jpipstream, msgqueue_par
   char cid[MAX_LENOFCID], tmp[10];
   cache_param_t *cache;
   int fw, fh;
-  
+
   receive_line( connected_socket, cid);
   if(!(cache = search_cacheBycid( cid, cachelist)))
     if(!(cache = search_cacheBytid( cid, cachelist)))
@@ -290,6 +291,7 @@ void handle_PNMreqMSG( SOCKET connected_socket, Byte_t *jpipstream, msgqueue_par
 
   pnmstream = jpipstream_to_pnm( jpipstream, msgqueue, cache->csn, fw, fh, &cache->ihdrbox);
   ihdrbox = cache->ihdrbox;
+
   send_PNMstream( connected_socket, pnmstream, ihdrbox->width, ihdrbox->height, ihdrbox->nc, ihdrbox->bpc > 8 ? 255 : (1 << ihdrbox->bpc) - 1);
 
   free( pnmstream);

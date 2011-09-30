@@ -47,7 +47,7 @@ imgreg_param_t map_viewin2imgreg( const int fx,    const int fy,
 				  const int rw,    const int rh,
 				  const int XOsiz, const int YOsiz,
 				  const int Xsiz,  const int Ysiz,
-				  const int numOfdecomp)
+				  const int numOfreslev)
 {
   imgreg_param_t imgreg;
   int px,py;
@@ -61,7 +61,7 @@ imgreg_param_t map_viewin2imgreg( const int fx,    const int fy,
   xmax = Xsiz;
   ymax = Ysiz;
   
-  find_level( numOfdecomp, &imgreg.level, &imgreg.fx, &imgreg.fy, &imgreg.xosiz, &imgreg.yosiz, &xmax, &ymax);
+  find_level( numOfreslev, &imgreg.level, &imgreg.fx, &imgreg.fy, &imgreg.xosiz, &imgreg.yosiz, &xmax, &ymax);
 
   if( rx == -1 ||  ry == -1){
     imgreg.ox = 0;
@@ -79,6 +79,12 @@ imgreg_param_t map_viewin2imgreg( const int fx,    const int fy,
   else{
     px = ceil((double)((rx+rw)*imgreg.fx)/(double)fx);
     py = ceil((double)((ry+rh)*imgreg.fy)/(double)fy);
+    
+    if( imgreg.fx < px)
+      px = imgreg.fx;
+    if( imgreg.fy < py)
+      py = imgreg.fy;
+    
     imgreg.sx = px - imgreg.ox;
     imgreg.sy = py - imgreg.oy;
   }
@@ -120,6 +126,20 @@ void find_level( int maxlev, int *lev, int *fx, int *fy, int *xmin, int *ymin, i
   }
 }
 
+int comp_decomplev( int fw, int fh, int Xsiz, int Ysiz)
+{
+  int level;
+  int xmin, xmax, ymin, ymax;
+
+  level = 0;
+  xmin = ymin = 0;
+  xmax = Xsiz;
+  ymax = Ysiz;
+  
+  find_level( 1000, &level, &fw, &fh, &xmin, &ymin, &xmax, &ymax);
+
+  return level;
+}
 
 void print_imgreg( imgreg_param_t imgreg)
 {

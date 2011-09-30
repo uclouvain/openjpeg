@@ -50,6 +50,7 @@
 #include "byte_manager.h"
 #include "ihdrbox_manager.h"
 #include "metadata_manager.h"
+#include "jp2k_encoder.h"
 
 int main(int argc,char *argv[])
 {
@@ -95,7 +96,7 @@ int main(int argc,char *argv[])
   print_msgqueue( msgqueue);
   //print_allmetadata( metadatalist);
 
-  ihdrbox = get_ihdrbox( metadatalist, jpipstream);
+  ihdrbox = gene_ihdrbox( metadatalist, jpipstream);
 
   printf("W*H: %d*%d\n", ihdrbox->height, ihdrbox->width);
   printf("NC: %d, bpc: %d\n", ihdrbox->nc, ihdrbox->bpc);

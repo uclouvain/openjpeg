@@ -39,6 +39,8 @@ typedef struct cachemodel_param{
   target_param_t *target;        //!< reference pointer to the target
   bool mhead_model;              //!< main header model, if sent, 1, else 0
   bool *tp_model;                //!< dynamic array pointer of tile part model, if sent, 1, else 0
+  bool *th_model;                //!< dynamic array pointer of tile header model
+  bool **pp_model;                //!< dynamic array pointer of precint packet model
   struct cachemodel_param *next; //!< pointer to the next cache model
 } cachemodel_param_t;
 

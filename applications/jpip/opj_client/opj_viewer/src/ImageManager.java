@@ -40,8 +40,8 @@ public class ImageManager extends JPIPHttpClient
 	pnmimage = null;
     }
     
-    public int getOrigWidth(){ return pnmimage.width;}
-    public int getOrigHeight(){ return pnmimage.height;}
+    public int getOrigWidth(){ return pnmimage.get_width();}
+    public int getOrigHeight(){ return pnmimage.get_height();}
     
     public Image getImage( String j2kfilename, int reqfw, int reqfh, boolean reqcnew)
     {
@@ -64,10 +64,14 @@ public class ImageManager extends JPIPHttpClient
 	    jpipstream = super.requestViewWindow( reqfw, reqfh, refcid, reqcnew);
 	
 	System.err.println( "decoding to PNM image");
-	pnmimage = ImgdecClient.decode_jpipstream( jpipstream, j2kfilename, tid, cid, fw, fh);
-	System.err.println( "     done");
-	
-	return pnmimage.createROIImage( rx, ry, rw, rh);
+	if((pnmimage = ImgdecClient.decode_jpipstream( jpipstream, j2kfilename, tid, cid, fw, fh))!=null){
+	    System.err.println( "     done");
+	    return pnmimage.createROIImage( rx, ry, rw, rh);
+	}
+	else{
+	    System.err.println( "     failed");
+	    return null;
+	}
     }
     
     public Image getImage( int reqfw, int reqfh, int reqrx, int reqry, int reqrw, int reqrh)
@@ -77,10 +81,14 @@ public class ImageManager extends JPIPHttpClient
 	byte[] jpipstream = super.requestViewWindow( reqfw, reqfh, reqrx, reqry, reqrw, reqrh);
 
 	System.err.println( "decoding to PNM image");
-	pnmimage = ImgdecClient.decode_jpipstream( jpipstream, tid, cid, fw, fh);
-	System.err.println( "     done");
-	
-	return pnmimage.createROIImage( rx, ry, rw, rh);
+	if((pnmimage = ImgdecClient.decode_jpipstream( jpipstream, tid, cid, fw, fh)) != null){
+	    System.err.println( "     done");
+	    return pnmimage.createROIImage( rx, ry, rw, rh);
+	}
+	else{
+	    System.err.println( "     failed");
+	    return null;
+	}
     }
     
     public byte[] getXML()

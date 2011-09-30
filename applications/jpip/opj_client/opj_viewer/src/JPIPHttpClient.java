@@ -312,6 +312,11 @@ public class JPIPHttpClient
 		urlstring = urlstring.concat( "&");
 	    urlstring = urlstring.concat( "cnew=http");
 	}
+
+	if( !urlstring.endsWith("?"))
+	    urlstring = urlstring.concat( "&");
+	urlstring = urlstring.concat( "type=jpp-stream");
+
 	return urlstring;
     }
     

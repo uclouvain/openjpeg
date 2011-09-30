@@ -22,6 +22,8 @@ manfbox_manager.c \
 mhixbox_manager.c \
 target_manager.c \
 cachemodel_manager.c \
+j2kheader_manager.c \
+jp2k_encoder.c \
 bool.h \
 boxheader_manager.h \
 box_manager.h \
@@ -38,7 +40,9 @@ mhixbox_manager.h \
 msgqueue_manager.h \
 placeholder_manager.h \
 target_manager.h \
-cachemodel_manager.h
+cachemodel_manager.h \
+j2kheader_manager.h \
+jp2k_encoder.h
 
 libopenjpip_server_la_CPPFLAGS = \
 -I. \

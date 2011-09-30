@@ -44,8 +44,7 @@ public class RegimViewer extends JPanel
     
     public RegimViewer( String refname, double[] mat)
     {
-	refpnm = new PnmImage();
-	refpnm.openimage(refname.replaceFirst("jp2", "pgm")); // decoding not realized
+	refpnm = new PnmImage( refname.replaceFirst("jp2", "pgm")); // decoding not realized
 	affine_matrix = new double[6];
 
 	affine_matrix[0] = mat[0];

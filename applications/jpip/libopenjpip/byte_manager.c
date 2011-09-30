@@ -145,3 +145,11 @@ Byte8_t big8( Byte_t *buf)
   return (((Byte8_t) big4 (buf)) << 32)
         + ((Byte8_t) big4 (buf + 4));
 }
+
+void modify_4Bytecode( Byte4_t code, Byte_t *stream)
+{
+  *stream     = (Byte_t) ((Byte4_t)(code & 0xff000000) >> 24);
+  *(stream+1) = (Byte_t) ((Byte4_t)(code & 0x00ff0000) >> 16);
+  *(stream+2) = (Byte_t) ((Byte4_t)(code & 0x0000ff00) >> 8);
+  *(stream+3) = (Byte_t) (code & 0x000000ff);
+}

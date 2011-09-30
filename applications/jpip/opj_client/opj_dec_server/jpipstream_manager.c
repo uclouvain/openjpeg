@@ -33,8 +33,8 @@
 #include <string.h>
 #include <time.h>
 #include "jpipstream_manager.h"
+#include "jp2k_encoder.h"
 #include "jp2k_decoder.h"
-#include "imgreg_manager.h"
 
 Byte_t * update_JPIPstream( Byte_t *newstream, int newstreamlen, Byte_t *cache_stream, int *streamlen)
 {
@@ -73,17 +73,8 @@ Byte_t * jpipstream_to_pnm( Byte_t *jpipstream, msgqueue_param_t *msgqueue, Byte
   Byte_t *pnmstream;
   Byte_t *j2kstream; // j2k or jp2 codestream
   Byte8_t j2klen;
-  int level = 0;
   
-  if( *ihdrbox){
-    // infinit value is set for maxmum level
-    int fx = fw, fy = fh;
-    int xmin = 0, ymin = 0;
-    int xmax = (*ihdrbox)->width, ymax = (*ihdrbox)->height;
-    find_level( 1000, &level, &fx, &fy, &xmin, &ymin, &xmax, &ymax);
-  }
-  
-  j2kstream = recons_j2k( msgqueue, jpipstream, csn, level+1, &j2klen);
+  j2kstream = recons_j2k( msgqueue, jpipstream, csn, fw, fh, &j2klen);
   
   pnmstream = j2k_to_pnm( j2kstream, j2klen, ihdrbox);
   free( j2kstream);

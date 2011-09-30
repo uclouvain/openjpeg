@@ -108,10 +108,11 @@ public class ImgdecClient{
 	    System.err.println("IOException: " + e);
 	}
     }
-
+    
     public static PnmImage get_PNMstream( String cid, String tid, int fw, int fh)
     {
-	PnmImage pnmstream = new PnmImage();
+	PnmImage pnmstream = null;
+	
 	try {
 	    Socket imgdecSocket = new Socket( "localhost", 5000);
 	    DataOutputStream os = new DataOutputStream( imgdecSocket.getOutputStream());
@@ -130,25 +131,20 @@ public class ImgdecClient{
 	    os.writeBytes( fh + "\n");
 
 	    read_stream( is, header, 7);
-            
+	    
 	    if( header[0] == 80){
 		// P5: gray, P6: color  
 		byte magicknum = header[1];
 		if( magicknum == 5 || magicknum == 6){
-		    int length;
-		    boolean iscolor = magicknum==6 ? true:false;
-		    if( iscolor)
-			pnmstream.channel = 3;
-		    else
-			pnmstream.channel = 1;
-		    pnmstream.width  = (header[2]&0xff)<<8 | (header[3]&0xff);
-		    pnmstream.height = (header[4]&0xff)<<8 | (header[5]&0xff);
+		    int c = magicknum==6 ? 3: 1;
+		    int w = (header[2]&0xff)<<8 | (header[3]&0xff);
+		    int h = (header[4]&0xff)<<8 | (header[5]&0xff);
 		    int maxval = header[6]&0xff;
-	  
-		    if( maxval == 255){
-			length = pnmstream.width*pnmstream.height*pnmstream.channel;
-			pnmstream.data = new byte [ length];
-			read_stream( is, pnmstream.data, length);
+		    int length = w*h*c;
+		    
+		    if( maxval == 255 && length != 0){
+			pnmstream = new PnmImage( c, w, h);
+			read_stream( is, pnmstream.get_data(), length);
 		    }
 		    else
 			System.err.println("Error in get_PNMstream(), only 255 is accepted");
@@ -158,6 +154,7 @@ public class ImgdecClient{
 	    }
 	    else
 		System.err.println("Error in get_PNMstream(), Not starting with P");
+	    
 	    os.close();
 	    is.close();
 	    imgdecSocket.close();
@@ -265,7 +262,7 @@ public class ImgdecClient{
 	try{
 	    while( remlen > 0){
 		int redlen = is.read( stream, off, remlen);
-
+		
 		if( redlen == -1){
 		    System.err.println("    failed to read_stream()");
 		    break;
