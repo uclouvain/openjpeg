@@ -89,7 +89,10 @@ int write_phixfaix( int coff, int compno, opj_codestream_info_t cstr_info, opj_b
   int size_of_coding; // 4 or 8
   int version;
   int tileno, resno, precno, layno, num_packet=0;
-    
+  int i,nmax=0;
+  opj_tile_info_t *tile_Idx;
+  opj_packet_info_t packet;
+
   if( j2klen > pow( 2, 32)){
     size_of_coding =  8;
     version = 1;
@@ -103,20 +106,23 @@ int write_phixfaix( int coff, int compno, opj_codestream_info_t cstr_info, opj_b
   cio_skip( cio, 4);              /* L [at the end]      */
   cio_write( cio, JPIP_FAIX, 4);  /* FAIX                */ 
   cio_write( cio, version,1);     /* Version 0 = 4 bytes */
-
-  cio_write( cio, cstr_info.packno, size_of_coding); /* NMAX */
+  
+  for( i=0; i<=cstr_info.numdecompos[compno]; i++)
+    nmax += cstr_info.tile[0].ph[i] * cstr_info.tile[0].pw[i] * cstr_info.numlayers;
+  
+  cio_write( cio, nmax, size_of_coding); /* NMAX */
   cio_write( cio, cstr_info.tw*cstr_info.th, size_of_coding);      /* M    */
   
   for( tileno=0; tileno<cstr_info.tw*cstr_info.th; tileno++){
     
-    opj_tile_info_t *tile_Idx = &cstr_info.tile[ tileno];
+    tile_Idx = &cstr_info.tile[ tileno];
     //    int correction = EPHused ? 3 : 1;
     num_packet = 0;
 
-    for( resno=0; resno<cstr_info.numdecompos[compno]+1; resno++){
+    for( resno=0; resno<=cstr_info.numdecompos[compno]; resno++){
       for( precno=0; precno<tile_Idx->pw[resno]*tile_Idx->ph[resno]; precno++){
-	for( layno=0; layno<cstr_info.numlayers; layno++){	  
-	  opj_packet_info_t packet = tile_Idx->packet[num_packet];
+	for( layno=0; layno<cstr_info.numlayers; layno++){
+	  packet = tile_Idx->packet[num_packet * cstr_info.numcomps + compno];
 	  cio_write( cio, packet.start_pos-coff, size_of_coding);                                   /* start position */
 	  cio_write( cio, packet.end_ph_pos-packet.start_pos+1, size_of_coding); /* length         */
 	  
@@ -126,7 +132,7 @@ int write_phixfaix( int coff, int compno, opj_codestream_info_t cstr_info, opj_b
     }
 
     /* PADDING */
-    while( num_packet < cstr_info.packno){
+    while( num_packet < nmax){
       cio_write( cio, 0, size_of_coding); /* start position            */
       cio_write( cio, 0, size_of_coding); /* length                    */
       num_packet++;

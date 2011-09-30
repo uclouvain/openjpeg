@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+September 30, 2011
+* [kaori] modified indexer for JPIP, JPP-stream
+
 September 27, 2011
 + (mickael] WIP: enhance the event management into the new API
 * (mickael] WIP: fix some warnings about a static function and j2k_read_unk_v2
