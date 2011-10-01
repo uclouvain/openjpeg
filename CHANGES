@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+October 1, 2011
++ [vincent] fix output when --disable-shared or --disable-static is passed to configure. Minor fix for jpwl compilation.
+
 September 9, 2011
 + [antonin] added a new indexer functionality to the library. With the new '-jpip' option at encoding, the user can now generate a JP2 file including an XML box with the index used when browsing the image with JPIP. 
 

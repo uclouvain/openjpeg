@@ -78,8 +78,12 @@ install-data-hook:
 	          openjpeg.h
 	@rm -rf $(top_builddir)/report.txt
 	@echo -e " (LA)\t$(libdir)/libopenjpeg.la" >> $(top_builddir)/report.txt
+if BUILD_SHARED
 	@( $(call solist) ) >> $(top_builddir)/report.txt
+endif
+if BUILD_STATIC
 	@echo -e " (A)\t$(base)/$(a)" >> $(top_builddir)/report.txt
+endif
 	@echo -e " (H)\t$(includedir)/openjpeg-$(MAJOR_NR).$(MINOR_NR)/openjpeg.h" >> $(top_builddir)/report.txt
 	@echo -e " (LN)\t$(includedir)/openjpeg.h" >> $(top_builddir)/report.txt
 
