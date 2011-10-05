@@ -39,26 +39,21 @@ struct opj_cp_v2;
 /*@{*/
 
 /**
-Create an empty image
-@todo this function should be removed
-@return returns an empty image if successful, returns NULL otherwise
-*/
+ * Create an empty image
+ *
+ * @return returns an empty image if successful, returns NULL otherwise
+ */
 opj_image_t* opj_image_create0(void);
 
-/**
-Create an empty image header
-@return returns an image header if successful, returns NULL otherwise
-*/
-opj_image_header_t* opj_image_header_create0(void);
 
 
 /**
  * Updates the components characteristics of the image from the coding parameters.
  *
  * @param p_image_header		the image header to update.
- * @param p_cp			the coding parameters from which to update the image.
+ * @param p_cp					the coding parameters from which to update the image.
  */
-void opj_image_comp_header_update(struct opj_image_header * p_image_header, const struct opj_cp_v2* p_cp);
+void opj_image_comp_header_update(opj_image_t * p_image, const struct opj_cp_v2* p_cp);
 
 /*@}*/
 

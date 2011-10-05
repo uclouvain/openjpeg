@@ -46,8 +46,6 @@
 #endif /* _WIN32 */
 
 #include "openjpeg.h"
-#include "j2k.h"
-#include "jp2.h"
 #include "opj_getopt.h"
 #include "convert.h"
 #include "index.h"
@@ -374,7 +372,7 @@ int main(int argc, char *argv[])
 
 	opj_dparameters_t parameters;			/* Decompression parameters */
 	opj_event_mgr_t event_mgr;				/* Event manager */
-	opj_image_header_t img_header;			/* Image info structure */
+	opj_image_t image;					/* Image structure */
 	opj_codec_t* dinfo = NULL;				/* Handle to a decompressor */
 	opj_stream_t *cio = NULL;				/* Stream */
 	opj_codestream_info_v2_t* cstr_info;
@@ -465,6 +463,7 @@ int main(int argc, char *argv[])
 
 		cio = opj_stream_create_default_file_stream(fsrc,1);
 		if (!cio){
+			fclose(fsrc);
 			fprintf(stderr, "ERROR -> failed to create the stream from the file\n");
 			return EXIT_FAILURE;
 		}
@@ -508,7 +507,7 @@ int main(int argc, char *argv[])
 		}
 
 		/* Read the main header of the codestream and if necessary the JP2 boxes*/
-		if(! opj_read_header(cio, dinfo, &img_header)){
+		if(! opj_read_header(cio, dinfo, &image)){
 			fprintf(stderr, "ERROR -> j2k_dump: failed to read the header\n");
 			opj_stream_destroy(cio);
 			fclose(fsrc);
@@ -523,10 +522,11 @@ int main(int argc, char *argv[])
 
 		cstr_index = opj_get_cstr_index(dinfo);
 
+#ifdef MSD
 		fprintf(stdout,"Setting decoding area to %d,%d,%d,%d\n",
 				parameters.DA_x0, parameters.DA_y0, parameters.DA_x1, parameters.DA_y1);
 
-#ifdef MSD
+
 		/* FIXME WIP_MSD <*/
 		if (! opj_set_decode_area(	dinfo,
 									parameters.DA_x0, parameters.DA_y0,
@@ -603,7 +603,7 @@ int main(int argc, char *argv[])
 		}
 
 		/* destroy the image header */
-		opj_image_header_destroy(&img_header);
+		opj_image_destroy(&image);
 
 	}
 

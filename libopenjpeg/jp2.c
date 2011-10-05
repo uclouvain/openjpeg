@@ -191,7 +191,7 @@ Apply collected palette data
 @param color Collector for profile, cdef and pclr data
 @param image 
 */
-static void jp2_apply_pclr(opj_jp2_color_t *color, opj_image_t *image);
+static void jp2_apply_pclr(opj_image_t *image, opj_jp2_color_t *color);
 /**
 Collect palette data
 @param jp2 JP2 handle
@@ -763,16 +763,17 @@ static void free_color_data(opj_jp2_color_t *color)
 	if(color->icc_profile_buf) opj_free(color->icc_profile_buf);
 }
 
-static void jp2_apply_pclr(opj_jp2_color_t *color, opj_image_t *image)
+
+static void jp2_apply_pclr(opj_image_t *image, opj_jp2_color_t *color)
 {
 	opj_image_comp_t *old_comps, *new_comps;
-	unsigned char *channel_size, *channel_sign;
-	unsigned int *entries;
+	OPJ_BYTE *channel_size, *channel_sign;
+	OPJ_UINT32 *entries;
 	opj_jp2_cmap_comp_t *cmap;
-	int *src, *dst;
-	unsigned int j, max;
-	unsigned short i, nr_channels, cmp, pcol;
-	int k, top_k;
+	OPJ_INT32 *src, *dst;
+	OPJ_UINT32 j, max;
+	OPJ_UINT16 i, nr_channels, cmp, pcol;
+	OPJ_INT32 k, top_k;
 
 	channel_size = color->jp2_pclr->channel_size;
 	channel_sign = color->jp2_pclr->channel_sign;
@@ -782,50 +783,52 @@ static void jp2_apply_pclr(opj_jp2_color_t *color, opj_image_t *image)
 
 	old_comps = image->comps;
 	new_comps = (opj_image_comp_t*)
-	 opj_malloc(nr_channels * sizeof(opj_image_comp_t));
+			opj_malloc(nr_channels * sizeof(opj_image_comp_t));
 
-	for(i = 0; i < nr_channels; ++i)
-   {
-	pcol = cmap[i].pcol; cmp = cmap[i].cmp;
+	for(i = 0; i < nr_channels; ++i) {
+		pcol = cmap[i].pcol; cmp = cmap[i].cmp;
 
-	new_comps[pcol] = old_comps[cmp];
+		new_comps[pcol] = old_comps[cmp];
 
-	if(cmap[i].mtyp == 0) /* Direct use */
-  {
-	old_comps[cmp].data = NULL; continue;
-  }
-/* Palette mapping: */
-	new_comps[pcol].data = (int*)
-	 opj_malloc(old_comps[cmp].w * old_comps[cmp].h * sizeof(int));
-	new_comps[pcol].prec = channel_size[i];
-	new_comps[pcol].sgnd = channel_sign[i];
-   }
+		/* Direct use */
+		if(cmap[i].mtyp == 0){
+			old_comps[cmp].data = NULL; continue;
+		}
+
+		/* Palette mapping: */
+		new_comps[pcol].data = (int*)
+				opj_malloc(old_comps[cmp].w * old_comps[cmp].h * sizeof(int));
+		new_comps[pcol].prec = channel_size[i];
+		new_comps[pcol].sgnd = channel_sign[i];
+	}
+
 	top_k = color->jp2_pclr->nr_entries - 1;
 
-	for(i = 0; i < nr_channels; ++i)
-   {
-/* Direct use: */
-	if(cmap[i].mtyp == 0) continue;
+	for(i = 0; i < nr_channels; ++i) {
+		/* Direct use: */
+		if(cmap[i].mtyp == 0) continue;
 
-/* Palette mapping: */
-	cmp = cmap[i].cmp; pcol = cmap[i].pcol;
-	src = old_comps[cmp].data; 
-	dst = new_comps[pcol].data;
-	max = new_comps[pcol].w * new_comps[pcol].h;
+		/* Palette mapping: */
+		cmp = cmap[i].cmp; pcol = cmap[i].pcol;
+		src = old_comps[cmp].data;
+		dst = new_comps[pcol].data;
+		max = new_comps[pcol].w * new_comps[pcol].h;
 
-	for(j = 0; j < max; ++j)
-  {
-/* The index */
-	if((k = src[j]) < 0) k = 0; else if(k > top_k) k = top_k;
-/* The colour */
-	dst[j] = entries[k * nr_channels + pcol];
-  }
-   }
+		for(j = 0; j < max; ++j)
+		{
+			/* The index */
+			if((k = src[j]) < 0) k = 0; else if(k > top_k) k = top_k;
+
+			/* The colour */
+			dst[j] = entries[k * nr_channels + pcol];
+		}
+	}
+
 	max = image->numcomps;
-	for(i = 0; i < max; ++i)
-   {
-	if(old_comps[i].data) opj_free(old_comps[i].data);
-   }
+	for(i = 0; i < max; ++i) {
+		if(old_comps[i].data) opj_free(old_comps[i].data);
+	}
+
 	opj_free(old_comps);
 	image->comps = new_comps;
 	image->numcomps = nr_channels;
@@ -833,6 +836,7 @@ static void jp2_apply_pclr(opj_jp2_color_t *color, opj_image_t *image)
 	jp2_free_pclr(color);
 
 }/* apply_pclr() */
+
 
 static opj_bool jp2_read_pclr(opj_jp2_t *jp2, opj_cio_t *cio,
 	opj_jp2_box_t *box, opj_jp2_color_t *color)
@@ -1062,32 +1066,33 @@ static opj_bool jp2_read_cmap_v2(	opj_jp2_v2_t * jp2,
 static void jp2_apply_cdef(opj_image_t *image, opj_jp2_color_t *color)
 {
 	opj_jp2_cdef_info_t *info;
-	int color_space;
-	unsigned short i, n, cn, typ, asoc, acn;
+	OPJ_INT32 color_space;
+	OPJ_UINT16 i, n, cn, typ, asoc, acn;
 
 	color_space = image->color_space;
 	info = color->jp2_cdef->info;
 	n = color->jp2_cdef->n;
 
 	for(i = 0; i < n; ++i)
-   {
-/* WATCH: acn = asoc - 1 ! */
-	if((asoc = info[i].asoc) == 0) continue;
+	{
+		/* WATCH: acn = asoc - 1 ! */
+		if((asoc = info[i].asoc) == 0) continue;
 
-	cn = info[i].cn; typ = info[i].typ; acn = asoc - 1;
+		cn = info[i].cn; typ = info[i].typ; acn = asoc - 1;
 
-	if(cn != acn)
-  {
-	opj_image_comp_t saved;
+		if(cn != acn)
+		{
+			opj_image_comp_t saved;
 
-	memcpy(&saved, &image->comps[cn], sizeof(opj_image_comp_t));
-	memcpy(&image->comps[cn], &image->comps[acn], sizeof(opj_image_comp_t));
-	memcpy(&image->comps[acn], &saved, sizeof(opj_image_comp_t));
+			memcpy(&saved, &image->comps[cn], sizeof(opj_image_comp_t));
+			memcpy(&image->comps[cn], &image->comps[acn], sizeof(opj_image_comp_t));
+			memcpy(&image->comps[acn], &saved, sizeof(opj_image_comp_t));
 
-	info[i].asoc = cn + 1;
-	info[acn].asoc = info[acn].cn + 1;
-  }
-   }
+			info[i].asoc = cn + 1;
+			info[acn].asoc = info[acn].cn + 1;
+		}
+	}
+
 	if(color->jp2_cdef->info) opj_free(color->jp2_cdef->info);
 
 	opj_free(color->jp2_cdef); color->jp2_cdef = NULL;
@@ -1467,7 +1472,7 @@ opj_image_t* opj_jp2_decode(opj_jp2_t *jp2, opj_cio_t *cio,
 	if( !color.jp2_pclr->cmap) 
 	 jp2_free_pclr(&color);
 	else
-	 jp2_apply_pclr(&color, image);
+	 jp2_apply_pclr(image, &color);
    }
 	if(color.icc_profile_buf)
    {
@@ -1478,6 +1483,48 @@ opj_image_t* opj_jp2_decode(opj_jp2_t *jp2, opj_cio_t *cio,
 	return image;
 
 }/* opj_jp2_decode() */
+
+opj_bool opj_jp2_decode_v2(	opj_jp2_v2_t *jp2,
+							struct opj_stream_private *cio,
+							opj_image_t* p_image,
+							struct opj_event_mgr * p_manager)
+{
+	/* J2K decoding */
+	if( j2k_decode_v2(jp2->j2k, cio, p_image, p_manager) ) {
+		opj_event_msg_v2(p_manager, EVT_ERROR, "Failed to decode J2K image\n");
+		return OPJ_FALSE;
+	}
+
+	/* Set Image Color Space */
+	if (jp2->enumcs == 16)
+		p_image->color_space = CLRSPC_SRGB;
+	else if (jp2->enumcs == 17)
+		p_image->color_space = CLRSPC_GRAY;
+	else if (jp2->enumcs == 18)
+		p_image->color_space = CLRSPC_SYCC;
+	else
+		p_image->color_space = CLRSPC_UNKNOWN;
+
+	/* Apply the color space if needed */
+	if(jp2->color.jp2_cdef) {
+		jp2_apply_cdef(p_image, &(jp2->color));
+	}
+
+	if(jp2->color.jp2_pclr) {
+		/* Part 1, I.5.3.4: Either both or none : */
+		if( !jp2->color.jp2_pclr->cmap)
+			jp2_free_pclr(&(jp2->color));
+		else
+			jp2_apply_pclr(p_image, &(jp2->color));
+	}
+
+	if(jp2->color.icc_profile_buf) {
+		p_image->icc_profile_buf = jp2->color.icc_profile_buf;
+		p_image->icc_profile_len = jp2->color.icc_profile_len;
+	}
+
+	return OPJ_TRUE;
+}
 
 
 void jp2_write_jp2h(opj_jp2_t *jp2, opj_cio_t *cio) {
@@ -2390,7 +2437,7 @@ static opj_bool jp2_read_boxhdr_char(
  */
 opj_bool jp2_read_header(	struct opj_stream_private *p_stream,
 							opj_jp2_v2_t *jp2,
-							opj_image_header_t* p_img_header,
+							opj_image_t* p_image,
 							struct opj_event_mgr * p_manager
 							)
 {
@@ -2417,7 +2464,7 @@ opj_bool jp2_read_header(	struct opj_stream_private *p_stream,
 
 	return j2k_read_header(	p_stream,
 							jp2->j2k,
-							p_img_header,
+							p_image,
 							p_manager);
 }
 

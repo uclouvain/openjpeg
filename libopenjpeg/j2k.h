@@ -553,6 +553,7 @@ typedef struct opj_cp_v2
 
 	/** tile coding parameters */
 	opj_tcp_v2_t *tcps;
+
 	union
 	{
 		opj_decoding_param_t m_dec;
@@ -756,12 +757,9 @@ typedef struct opj_j2k_v2
 	}
 	m_specific_param;
 
-	/** number of the tile curently concern by coding/decoding */
-	OPJ_UINT32 m_current_tile_number;
-
 	/** pointer to the encoded / decoded image */
 	//opj_image_t *m_image;
-	opj_image_header_t* m_image_header;
+	opj_image_t* m_image;
 
 	/** Coding parameters */
 	opj_cp_v2_t m_cp;
@@ -774,6 +772,9 @@ typedef struct opj_j2k_v2
 
 	/** helper used to write the index file */
 	opj_codestream_index_t *cstr_index;
+
+	/** number of the tile curently concern by coding/decoding */
+	OPJ_UINT32 m_current_tile_number;
 
 	/** the current tile coder/decoder **/
 	struct opj_tcd_v2 *	m_tcd;
@@ -890,7 +891,7 @@ opj_bool j2k_end_decompress(opj_j2k_v2_t *j2k, struct opj_stream_private *cio, s
  */
 opj_bool j2k_read_header(	struct opj_stream_private *p_stream,
 							opj_j2k_v2_t* p_j2k,
-							opj_image_header_t* p_img_header,
+							opj_image_t* p_image,
 							struct opj_event_mgr* p_manager );
 
 
@@ -981,7 +982,7 @@ void j2k_dump (opj_j2k_v2_t* p_j2k, OPJ_INT32 flag, FILE* out_stream);
  *@param dev_dump_flag		flag to describe if we are in the case of this function is use outside j2k_dump function
  *@param out_stream			output stream where dump the elements.
  */
-void j2k_dump_image_header(opj_image_header_t* img_header, opj_bool dev_dump_flag, FILE* out_stream);
+void j2k_dump_image_header(opj_image_t* image, opj_bool dev_dump_flag, FILE* out_stream);
 
 /**
  * Dump a component image header structure.
@@ -990,7 +991,7 @@ void j2k_dump_image_header(opj_image_header_t* img_header, opj_bool dev_dump_fla
  *@param dev_dump_flag		flag to describe if we are in the case of this function is use outside j2k_dump function
  *@param out_stream			output stream where dump the elements.
  */
-void j2k_dump_image_comp_header(opj_image_comp_header_t* comp_header, opj_bool dev_dump_flag, FILE* out_stream);
+void j2k_dump_image_comp_header(opj_image_comp_t* comp, opj_bool dev_dump_flag, FILE* out_stream);
 
 /**
  * Get the codestream info from a JPEG2000 codec.
@@ -1010,6 +1011,14 @@ opj_codestream_info_v2_t* j2k_get_cstr_info(opj_j2k_v2_t* p_j2k);
  */
 opj_codestream_index_t* j2k_get_cstr_index(opj_j2k_v2_t* p_j2k);
 
+/**
+ * Decode an image from a JPEG-2000 codestream
+ * @param j2k J2K decompressor handle
+ * @param cio Input buffer stream
+ * @param cstr_info Codestream information structure if required, NULL otherwise
+ * @return Returns a decoded image if successful, returns NULL otherwise
+*/
+opj_bool j2k_decode_v2(opj_j2k_v2_t *j2k, struct opj_stream_private *cio, opj_image_t* p_image, opj_event_mgr_t * p_manager);
 
 
 #endif /* __J2K_H */

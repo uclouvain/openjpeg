@@ -92,7 +92,7 @@ static opj_bool pi_next_cprl(opj_pi_iterator_t * pi);
  * @param	p_resolutions	pointer to an area corresponding to the one described above.
  */
 void get_all_encoding_parameters(
-								const opj_image_header_t *p_image,
+								const opj_image_t *p_image,
 								const opj_cp_v2_t *p_cp,
 								OPJ_UINT32 tileno,
 								OPJ_INT32 * p_tx0,
@@ -115,11 +115,9 @@ void get_all_encoding_parameters(
  * @param	p_cp		the coding parameters.
  * @param	p_tile_no	the index of the tile from which creating the packet iterator.
  */
-opj_pi_iterator_t * pi_create(
-								const opj_image_header_t *image,
+opj_pi_iterator_t * pi_create(	const opj_image_t *image,
 								const opj_cp_v2_t *cp,
-								OPJ_UINT32 tileno
-							);
+								OPJ_UINT32 tileno );
 
 void pi_update_decode_not_poc (opj_pi_iterator_t * p_pi,opj_tcp_v2_t * p_tcp,OPJ_UINT32 p_max_precision,OPJ_UINT32 p_max_res);
 void pi_update_decode_poc (opj_pi_iterator_t * p_pi,opj_tcp_v2_t * p_tcp,OPJ_UINT32 p_max_precision,OPJ_UINT32 p_max_res);
@@ -596,8 +594,7 @@ opj_pi_iterator_t *pi_create_decode(opj_image_t *image, opj_cp_t *cp, int tileno
 }
 
 
-opj_pi_iterator_t *pi_create_decode_v2(
-										opj_image_header_t *p_image,
+opj_pi_iterator_t *pi_create_decode_v2(	opj_image_t *p_image,
 										opj_cp_v2_t *p_cp,
 										OPJ_UINT32 p_tile_no
 										)
@@ -624,7 +621,7 @@ opj_pi_iterator_t *pi_create_decode_v2(
 	opj_tcp_v2_t *l_tcp = 00;
 	const opj_tccp_t *l_tccp = 00;
 	opj_pi_comp_t *l_current_comp = 00;
-	opj_image_comp_header_t * l_img_comp = 00;
+	opj_image_comp_t * l_img_comp = 00;
 	opj_pi_iterator_t * l_current_pi = 00;
 	OPJ_UINT32 * l_encoding_value_ptr = 00;
 
@@ -741,7 +738,7 @@ opj_pi_iterator_t *pi_create_decode_v2(
 		(pino = 1 ; pino<l_bound ; ++pino )
 	{
 		opj_pi_comp_t *l_current_comp = l_current_pi->comps;
-		opj_image_comp_header_t * l_img_comp = p_image->comps;
+		opj_image_comp_t * l_img_comp = p_image->comps;
 		l_tccp = l_tcp->tccps;
 
 		l_current_pi->tx0 = l_tx0;
@@ -1242,7 +1239,7 @@ opj_bool pi_create_encode( opj_pi_iterator_t *pi, opj_cp_t *cp,int tileno, int p
  * @param	p_resolutions	pointer to an area corresponding to the one described above.
  */
 void get_all_encoding_parameters(
-								const opj_image_header_t *p_image,
+								const opj_image_t *p_image,
 								const opj_cp_v2_t *p_cp,
 								OPJ_UINT32 tileno,
 								OPJ_INT32 * p_tx0,
@@ -1262,7 +1259,7 @@ void get_all_encoding_parameters(
 	// pointers
 	const opj_tcp_v2_t *tcp = 00;
 	const opj_tccp_t * l_tccp = 00;
-	const opj_image_comp_header_t * l_img_comp = 00;
+	const opj_image_comp_t * l_img_comp = 00;
 
 	// to store l_dx, l_dy, w and h for each resolution and component.
 	OPJ_UINT32 * lResolutionPtr;
@@ -1374,11 +1371,9 @@ void get_all_encoding_parameters(
  * @param	p_cp		the coding parameters.
  * @param	p_tile_no	the index of the tile from which creating the packet iterator.
  */
-opj_pi_iterator_t * pi_create(
-								const opj_image_header_t *image,
+opj_pi_iterator_t * pi_create(	const opj_image_t *image,
 								const opj_cp_v2_t *cp,
-								OPJ_UINT32 tileno
-							)
+								OPJ_UINT32 tileno )
 {
 	// loop
 	OPJ_UINT32 pino, compno;

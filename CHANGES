@@ -5,15 +5,18 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+October 05, 2011
++ [mickael] WIP: fix the decoding process with conformance files and V2 framework 
+
 September 30, 2011
 * [vincent] fix autotools for various compilation problems
 * [vincent] fix indexer compilation. Patch from Winfried
 * [kaori] modified indexer for JPIP, JPP-stream
 
 September 27, 2011
-+ (mickael] WIP: enhance the event management into the new API
-* (mickael] WIP: fix some warnings about a static function and j2k_read_unk_v2
-+ (mickael] WIP: add basis for a new output management of the codestream information and index
++ [mickael] WIP: enhance the event management into the new API
+* [mickael] WIP: fix some warnings about a static function and j2k_read_unk_v2
++ [mickael] WIP: add basis for a new output management of the codestream information and index
 * [mickael] WIP: fix some warnings from j2k_dump and index.c
 
 September 22, 2011

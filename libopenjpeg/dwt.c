@@ -764,8 +764,10 @@ static void v4dwt_interleave_h(v4dwt_t* restrict w, float* restrict a, int x, in
 	float* restrict bi = (float*) (w->wavelet + w->cas);
 	int count = w->sn;
 	int i, k;
+
 	for(k = 0; k < 2; ++k){
-		if (count + 3 * x < size && ((size_t) a & 0x0f) == 0 && ((size_t) bi & 0x0f) == 0 && (x & 0x0f) == 0) {
+		if (count + 3 * x < size && ((size_t) a & 0x0f) == 0 &&
+				((size_t) bi & 0x0f) == 0 && (x & 0x0f) == 0) {
 			/* Fast code path */
 			for(i = 0; i < count; ++i){
 				int j = i;
@@ -777,22 +779,24 @@ static void v4dwt_interleave_h(v4dwt_t* restrict w, float* restrict a, int x, in
 				j += x;
 				bi[i*8 + 3] = a[j];
 			}
-		} else {
+		}
+		else {
 			/* Slow code path */
-		for(i = 0; i < count; ++i){
-			int j = i;
-			bi[i*8    ] = a[j];
-			j += x;
-			if(j > size) continue;
-			bi[i*8 + 1] = a[j];
-			j += x;
-			if(j > size) continue;
-			bi[i*8 + 2] = a[j];
-			j += x;
-			if(j > size) continue;
-			bi[i*8 + 3] = a[j];
+			for(i = 0; i < count; ++i){
+				int j = i;
+				bi[i*8    ] = a[j];
+				j += x;
+				if(j > size) continue;
+				bi[i*8 + 1] = a[j];
+				j += x;
+				if(j > size) continue;
+				bi[i*8 + 2] = a[j];
+				j += x;
+				if(j > size) continue;
+				bi[i*8 + 3] = a[j];
+			}
 		}
-		}
+
 		bi = (float*) (w->wavelet + 1 - w->cas);
 		a += w->sn;
 		size -= w->sn;
@@ -1087,57 +1091,65 @@ opj_bool dwt_decode_real_v2(opj_tcd_tilecomp_v2_t* restrict tilec, OPJ_UINT32 nu
 		rh = res->y1 - res->y0;	/* height of the resolution level computed */
 
 		h.dn = rw - h.sn;
-		h.cas = res->x0 & 1;
+		h.cas = res->x0 % 2;
 
-		for(j = rh; j > 0; j -= 4) {
+		for(j = rh; j > 3; j -= 4) {
+			OPJ_INT32 k;
 			v4dwt_interleave_h(&h, aj, w, bufsize);
 			v4dwt_decode(&h);
 
-			if(j >= 4){
-				OPJ_INT32 k = rw;
-
-				while (--k >= 0) {
-					aj[k    ] = h.wavelet[k].f[0];
-					aj[k+w  ] = h.wavelet[k].f[1];
-					aj[k+w*2] = h.wavelet[k].f[2];
-					aj[k+w*3] = h.wavelet[k].f[3];
-				}
-			}
-			else {
-				OPJ_INT32 k = rw;
-
-				while (--k >= 0) {
-					switch(j) {
-						case 3: aj[k+w*2] = h.wavelet[k].f[2];
-						case 2: aj[k+w  ] = h.wavelet[k].f[1];
-						case 1: aj[k    ] = h.wavelet[k].f[0];
-					}
-				}
+			for(k = rw; --k >= 0;){
+				aj[k    ] = h.wavelet[k].f[0];
+				aj[k+w  ] = h.wavelet[k].f[1];
+				aj[k+w*2] = h.wavelet[k].f[2];
+				aj[k+w*3] = h.wavelet[k].f[3];
 			}
 
 			aj += w*4;
 			bufsize -= w*4;
 		}
 
+		if (rh & 0x03) {
+			int k;
+			j = rh & 0x03;
+			v4dwt_interleave_h(&h, aj, w, bufsize);
+			v4dwt_decode(&h);
+			for(k = rw; --k >= 0;){
+				switch(j) {
+					case 3: aj[k+w*2] = h.wavelet[k].f[2];
+					case 2: aj[k+w  ] = h.wavelet[k].f[1];
+					case 1: aj[k    ] = h.wavelet[k].f[0];
+				}
+			}
+		}
+
 		v.dn = rh - v.sn;
 		v.cas = res->y0 % 2;
 
 		aj = (OPJ_FLOAT32*) tilec->data;
-		for(j = rw; j > 0; j -= 4){
+		for(j = rw; j > 3; j -= 4){
+			OPJ_INT32 k;
+
 			v4dwt_interleave_v(&v, aj, w);
 			v4dwt_decode(&v);
-			if(j >= 4){
-				OPJ_UINT32 k;
-				for(k = 0; k < rh; ++k){
-					memcpy(&aj[k*w], &v.wavelet[k], 4 * sizeof(OPJ_FLOAT32));
-				}
-			}else{
-				OPJ_UINT32 k;
-				for(k = 0; k < rh; ++k){
-					memcpy(&aj[k*w], &v.wavelet[k], j * sizeof(OPJ_FLOAT32));
-				}
+
+			for(k = 0; k < rh; ++k){
+				memcpy(&aj[k*w], &v.wavelet[k], 4 * sizeof(OPJ_FLOAT32));
 			}
 			aj += 4;
+		}
+
+		if (rw & 0x03){
+			OPJ_INT32 k;
+
+			j = rw & 0x03;
+
+			v4dwt_interleave_v(&v, aj, w);
+			v4dwt_decode(&v);
+
+			for(k = 0; k < rh; ++k){
+				memcpy(&aj[k*w], &v.wavelet[k], j * sizeof(OPJ_FLOAT32));
+			}
 		}
 	}
 

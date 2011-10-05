@@ -285,6 +285,20 @@ Decode an image from a JPEG-2000 file stream
 @return Returns a decoded image if successful, returns NULL otherwise
 */
 opj_image_t* opj_jp2_decode(opj_jp2_t *jp2, opj_cio_t *cio, opj_codestream_info_t *cstr_info);
+
+/**
+ * Decode an image from a JPEG-2000 file stream
+ * @param jp2 JP2 decompressor handle
+ * @param cio Input buffer stream
+ * @param cstr_info Codestream information structure if required, NULL otherwise
+ * @return Returns a decoded image if successful, returns NULL otherwise
+*/
+opj_bool opj_jp2_decode_v2(	opj_jp2_v2_t *jp2,
+							struct opj_stream_private *cio,
+							opj_image_t* p_image,
+							struct opj_event_mgr * p_manager);
+
+
 /**
 Creates a JP2 compression structure
 @param cinfo Codec context info
@@ -334,7 +348,7 @@ opj_bool jp2_end_decompress(opj_jp2_v2_t *jp2, struct opj_stream_private *cio, s
  */
 opj_bool jp2_read_header(	struct opj_stream_private *p_stream,
 							opj_jp2_v2_t *jp2,
-							opj_image_header_t * p_img_header,
+							opj_image_t * p_img_header,
 							struct opj_event_mgr * p_manager
 							);
 

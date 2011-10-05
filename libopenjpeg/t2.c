@@ -849,7 +849,7 @@ opj_bool t2_decode_packets_v2(
 	OPJ_BYTE *l_current_data = p_src;
 	opj_pi_iterator_t *l_pi = 00;
 	OPJ_UINT32 pino;
-	opj_image_header_t *l_image = p_t2->image;
+	opj_image_t *l_image = p_t2->image;
 	opj_cp_v2_t *l_cp = p_t2->cp;
 	opj_cp_v2_t *cp = p_t2->cp;
 	opj_tcp_v2_t *l_tcp = &(p_t2->cp->tcps[p_tile_no]);
@@ -859,7 +859,7 @@ opj_bool t2_decode_packets_v2(
 	OPJ_UINT32 curtp = 0;
 	OPJ_UINT32 tp_start_packno;
 	opj_packet_info_t *l_pack_info = 00;
-	opj_image_comp_header_t* l_img_comp = 00;
+	opj_image_comp_t* l_img_comp = 00;
 
 #ifdef TODO_MSD
 	if (p_cstr_index) {
@@ -962,20 +962,19 @@ opj_t2_t* t2_create(opj_common_ptr cinfo, opj_image_t *image, opj_cp_t *cp) {
  * @param	p_cp		Image coding parameters.
  * @return		a new T2 handle if successful, NULL otherwise.
 */
-opj_t2_v2_t* t2_create_v2(
-					opj_image_header_t *p_image,
-					opj_cp_v2_t *p_cp)
+opj_t2_v2_t* t2_create_v2(	opj_image_t *p_image,
+							opj_cp_v2_t *p_cp)
 {
 	/* create the tcd structure */
 	opj_t2_v2_t *l_t2 = (opj_t2_v2_t*)opj_malloc(sizeof(opj_t2_v2_t));
-	if
-		(!l_t2)
-	{
-		return 00;
+	if (!l_t2) {
+		return NULL;
 	}
 	memset(l_t2,0,sizeof(opj_t2_t));
+
 	l_t2->image = p_image;
 	l_t2->cp = p_cp;
+
 	return l_t2;
 }
 

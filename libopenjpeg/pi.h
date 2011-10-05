@@ -142,7 +142,7 @@ Create a packet iterator for Decoder
 @return Returns a packet iterator that points to the first packet of the tile
 @see pi_destroy
 */
-opj_pi_iterator_t *pi_create_decode_v2(struct opj_image_header * image, struct opj_cp_v2 * cp, OPJ_UINT32 tileno);
+opj_pi_iterator_t *pi_create_decode_v2(struct opj_image * image, struct opj_cp_v2 * cp, OPJ_UINT32 tileno);
 
 
 /**

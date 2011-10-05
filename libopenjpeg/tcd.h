@@ -172,8 +172,8 @@ typedef struct opj_tcd_precinct_v2 {
 		opj_tcd_cblk_dec_v2_t* dec;
 	} cblks;
 	OPJ_UINT32 block_size;			/* size taken by cblks (in bytes) */
-	struct opj_tgt_tree *incltree;	/* inclusion tree */
-	struct opj_tgt_tree *imsbtree;	/* IMSB tree */
+	opj_tgt_tree_t *incltree;	/* inclusion tree */
+	opj_tgt_tree_t *imsbtree;	/* IMSB tree */
 } opj_tcd_precinct_v2_t;
 
 /**
@@ -331,7 +331,7 @@ typedef struct opj_tcd_v2
 	/** info on each image tile */
 	opj_tcd_image_v2_t *tcd_image;
 	/** image header */
-	struct opj_image_header *image_header;
+	opj_image_t *image;
 	/** coding parameters */
 	struct opj_cp_v2 *cp;
 	/** coding/decoding parameters common to all tiles */
@@ -379,11 +379,8 @@ void tcd_destroy_v2(opj_tcd_v2_t *tcd);
  *
  * @return true if the encoding values could be set (false otherwise).
 */
-opj_bool tcd_init_v2(
-						opj_tcd_v2_t *p_tcd,
-						//struct opj_image * p_image,
-						opj_image_header_t * p_image_header,
-						//struct opj_cp * p_cp
+opj_bool tcd_init_v2(	opj_tcd_v2_t *p_tcd,
+						opj_image_t * p_image,
 						opj_cp_v2_t * p_cp
 					);
 

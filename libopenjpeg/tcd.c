@@ -167,7 +167,7 @@ opj_tcd_v2_t* tcd_create_v2(opj_bool p_is_decoder)
 		opj_free(l_tcd);
 		return 00;
 	}
-	memset(l_tcd->tcd_image,0,sizeof(opj_tcd_image_t));
+	memset(l_tcd->tcd_image,0,sizeof(opj_tcd_image_v2_t));
 
 	return l_tcd;
 }
@@ -1583,28 +1583,28 @@ void tcd_free_decode_tile(opj_tcd_t *tcd, int tileno) {
 
 
 opj_bool tcd_init_v2(  opj_tcd_v2_t *p_tcd,
-					   opj_image_header_t * p_image_header,
+					   opj_image_t * p_image,
 					   opj_cp_v2_t * p_cp )
 {
 	OPJ_UINT32 l_tile_comp_size;
 
-	p_tcd->image_header = p_image_header;
+	p_tcd->image = p_image;
 	p_tcd->cp = p_cp;
-	p_tcd->tcd_image->tiles = (opj_tcd_tile_v2_t *) opj_malloc(sizeof(opj_tcd_tile_v2_t));
 
+	p_tcd->tcd_image->tiles = (opj_tcd_tile_v2_t *) opj_malloc(sizeof(opj_tcd_tile_v2_t));
 	if (! p_tcd->tcd_image->tiles) {
 		return OPJ_FALSE;
 	}
 	memset(p_tcd->tcd_image->tiles,0, sizeof(opj_tcd_tile_v2_t));
 
-	l_tile_comp_size = p_image_header->numcomps * sizeof(opj_tcd_tilecomp_v2_t);
+	l_tile_comp_size = p_image->numcomps * sizeof(opj_tcd_tilecomp_v2_t);
 	p_tcd->tcd_image->tiles->comps = (opj_tcd_tilecomp_v2_t *) opj_malloc(l_tile_comp_size);
 	if (! p_tcd->tcd_image->tiles->comps ) {
 		return OPJ_FALSE;
 	}
 	memset( p_tcd->tcd_image->tiles->comps , 0 , l_tile_comp_size);
 
-	p_tcd->tcd_image->tiles->numcomps = p_image_header->numcomps;
+	p_tcd->tcd_image->tiles->numcomps = p_image->numcomps;
 	p_tcd->tp_pos = p_cp->m_specific_param.m_enc.m_tp_pos;
 
 	return OPJ_TRUE;
@@ -1647,13 +1647,13 @@ opj_bool FUNCTION (	opj_tcd_v2_t *p_tcd,										\
 	opj_tcd_tile_v2_t * l_tile = 00;											\
 	opj_tccp_t *l_tccp = 00;													\
 	opj_tcd_tilecomp_v2_t *l_tilec = 00;										\
-	opj_image_comp_header_t * l_image_comp = 00;								\
+	opj_image_comp_t * l_image_comp = 00;										\
 	opj_tcd_resolution_v2_t *l_res = 00;										\
 	opj_tcd_band_v2_t *l_band = 00;												\
 	opj_stepsize_t * l_step_size = 00;											\
 	opj_tcd_precinct_v2_t *l_current_precinct = 00;								\
 	TYPE* l_code_block = 00;													\
-	opj_image_header_t *l_image = 00;											\
+	opj_image_t *l_image = 00;													\
 	OPJ_UINT32 p,q;																\
 	OPJ_UINT32 l_level_no;														\
 	OPJ_UINT32 l_pdx, l_pdy;													\
@@ -1677,26 +1677,30 @@ opj_bool FUNCTION (	opj_tcd_v2_t *p_tcd,										\
 	l_tile = p_tcd->tcd_image->tiles;											\
 	l_tccp = l_tcp->tccps;														\
 	l_tilec = l_tile->comps;													\
-	l_image = p_tcd->image_header;												\
-	l_image_comp = p_tcd->image_header->comps;									\
+	l_image = p_tcd->image;														\
+	l_image_comp = p_tcd->image->comps;											\
 																				\
 	p = p_tile_no % l_cp->tw;	/* tile coordinates */							\
 	q = p_tile_no / l_cp->tw;													\
+	/*fprintf(stderr, "Tile coordinate = %d,%d\n", p, q);*/						\
 																				\
 	/* 4 borders of the tile rescale on the image if necessary */				\
 	l_tile->x0 = int_max(l_cp->tx0 + p * l_cp->tdx, l_image->x0);				\
 	l_tile->y0 = int_max(l_cp->ty0 + q * l_cp->tdy, l_image->y0);				\
 	l_tile->x1 = int_min(l_cp->tx0 + (p + 1) * l_cp->tdx, l_image->x1);			\
 	l_tile->y1 = int_min(l_cp->ty0 + (q + 1) * l_cp->tdy, l_image->y1);			\
+	/*fprintf(stderr, "Tile border = %d,%d,%d,%d\n", l_tile->x0, l_tile->y0,l_tile->x1,l_tile->y1);*/\
 																				\
 	/*tile->numcomps = image->numcomps; */										\
 	for(compno = 0; compno < l_tile->numcomps; ++compno) {						\
+		/*fprintf(stderr, "compno = %d/%d\n", compno, l_tile->numcomps);*/		\
 																				\
 		/* border of each l_tile component (global) */							\
 		l_tilec->x0 = int_ceildiv(l_tile->x0, l_image_comp->dx);				\
 		l_tilec->y0 = int_ceildiv(l_tile->y0, l_image_comp->dy);				\
 		l_tilec->x1 = int_ceildiv(l_tile->x1, l_image_comp->dx);				\
 		l_tilec->y1 = int_ceildiv(l_tile->y1, l_image_comp->dy);				\
+		/*fprintf(stderr, "\tTile compo border = %d,%d,%d,%d\n", l_tilec->x0, l_tilec->y0,l_tilec->x1,l_tilec->y1);*/\
 																				\
 		l_data_size = (l_tilec->x1 - l_tilec->x0)								\
 					* (l_tilec->y1 - l_tilec->y0) * sizeof(OPJ_UINT32 );		\
@@ -1714,7 +1718,8 @@ opj_bool FUNCTION (	opj_tcd_v2_t *p_tcd,										\
 			if (! l_tilec->data ) {												\
 				return OPJ_FALSE;												\
 			}																	\
-            																	\
+            /*fprintf(stderr, "\tAllocate data of tilec (int): %d x OPJ_UINT32\n",l_data_size);*/	\
+																				\
 			l_tilec->data_size = l_data_size;									\
 		}																		\
 		else if (l_data_size > l_tilec->data_size) {							\
@@ -1722,7 +1727,7 @@ opj_bool FUNCTION (	opj_tcd_v2_t *p_tcd,										\
 			if (! l_tilec->data) {												\
 				return OPJ_FALSE;												\
 			}																	\
-																				\
+			/*fprintf(stderr, "\tReallocate data of tilec (int): from %d to %d x OPJ_UINT32\n", l_tilec->data_size, l_data_size);*/		\
 			l_tilec->data_size = l_data_size;									\
 		}																		\
 																			\
@@ -1733,7 +1738,7 @@ opj_bool FUNCTION (	opj_tcd_v2_t *p_tcd,										\
 			if (! l_tilec->resolutions ) {										\
 				return OPJ_FALSE;												\
 			}																	\
-																				\
+			/*fprintf(stderr, "\tAllocate resolutions of tilec (opj_tcd_resolution_v2_t): %d\n",l_data_size);*/		\
 			l_tilec->resolutions_size = l_data_size;							\
 			memset(l_tilec->resolutions,0,l_data_size);							\
 		}																		\
@@ -1742,22 +1747,24 @@ opj_bool FUNCTION (	opj_tcd_v2_t *p_tcd,										\
 			if (! l_tilec->resolutions) {										\
 				return OPJ_FALSE;												\
 			}																	\
-																				\
+			/*fprintf(stderr, "\tReallocate data of tilec (int): from %d to %d x OPJ_UINT32\n", l_tilec->resolutions_size, l_data_size);*/	\
 			memset(((OPJ_BYTE*) l_tilec->resolutions)+l_tilec->resolutions_size,0,l_data_size - l_tilec->resolutions_size);	\
 			l_tilec->resolutions_size = l_data_size;							\
 		}																		\
-																					\
+																				\
 		l_level_no = l_tilec->numresolutions - 1;								\
 		l_res = l_tilec->resolutions;											\
 		l_step_size = l_tccp->stepsizes;										\
 		if (l_tccp->qmfbid == 0) {												\
-			l_gain_ptr = &dwt_getgain_real_v2;										\
+			l_gain_ptr = &dwt_getgain_real_v2;									\
 		}																		\
 		else {																	\
-			l_gain_ptr  = &dwt_getgain_v2;											\
+			l_gain_ptr  = &dwt_getgain_v2;										\
 		}																		\
+		/*fprintf(stderr, "\tlevel_no=%d\n",l_level_no);*/						\
 																				\
 		for(resno = 0; resno < l_tilec->numresolutions; ++resno) {				\
+			/*fprintf(stderr, "\t\tresno = %d/%d\n", resno, l_tilec->numresolutions);*/	\
 			OPJ_INT32 tlcbgxstart, tlcbgystart, brcbgxend, brcbgyend;			\
 			OPJ_UINT32 cbgwidthexpn, cbgheightexpn;								\
 			OPJ_UINT32 cblkwidthexpn, cblkheightexpn;							\
@@ -1767,17 +1774,21 @@ opj_bool FUNCTION (	opj_tcd_v2_t *p_tcd,										\
 			l_res->y0 = int_ceildivpow2(l_tilec->y0, l_level_no);				\
 			l_res->x1 = int_ceildivpow2(l_tilec->x1, l_level_no);				\
 			l_res->y1 = int_ceildivpow2(l_tilec->y1, l_level_no);				\
+			/*fprintf(stderr, "\t\t\tres_x0= %d, res_y0 =%d, res_x1=%d, res_y1=%d\n", l_res->x0, l_res->y0, l_res->x1, l_res->y1);*/	\
 			/* p. 35, table A-23, ISO/IEC FDIS154444-1 : 2000 (18 august 2000) */	\
 			l_pdx = l_tccp->prcw[resno];										\
 			l_pdy = l_tccp->prch[resno];										\
+			/*fprintf(stderr, "\t\t\tpdx=%d, pdy=%d\n", l_pdx, l_pdy);*/		\
 			/* p. 64, B.6, ISO/IEC FDIS15444-1 : 2000 (18 august 2000)  */		\
 			l_tl_prc_x_start = int_floordivpow2(l_res->x0, l_pdx) << l_pdx;		\
 			l_tl_prc_y_start = int_floordivpow2(l_res->y0, l_pdy) << l_pdy;		\
 			l_br_prc_x_end = int_ceildivpow2(l_res->x1, l_pdx) << l_pdx;		\
 			l_br_prc_y_end = int_ceildivpow2(l_res->y1, l_pdy) << l_pdy;		\
+			/*fprintf(stderr, "\t\t\tprc_x_start=%d, prc_y_start=%d, br_prc_x_end=%d, br_prc_y_end=%d \n", l_tl_prc_x_start, l_tl_prc_y_start, l_br_prc_x_end ,l_br_prc_y_end );*/	\
 																				\
 			l_res->pw = (l_res->x0 == l_res->x1) ? 0 : ((l_br_prc_x_end - l_tl_prc_x_start) >> l_pdx);	\
 			l_res->ph = (l_res->y0 == l_res->y1) ? 0 : ((l_br_prc_y_end - l_tl_prc_y_start) >> l_pdy);	\
+			/*fprintf(stderr, "\t\t\tres_pw=%d, res_ph=%d\n", l_res->pw, l_res->ph );*/	\
 																				\
 			l_nb_precincts = l_res->pw * l_res->ph;								\
 			l_nb_precinct_size = l_nb_precincts * sizeof(opj_tcd_precinct_v2_t);	\
@@ -1805,7 +1816,8 @@ opj_bool FUNCTION (	opj_tcd_v2_t *p_tcd,										\
 			l_band = l_res->bands;												\
 																				\
 			for (bandno = 0; bandno < l_res->numbands; ++bandno) {				\
-				OPJ_INT32 numbps;												\
+				OPJ_INT32 numbps;\
+				/*fprintf(stderr, "\t\t\tband_no=%d/%d\n", bandno, l_res->numbands );*/	\
 																				\
 				if (resno == 0) {												\
 					l_band->bandno = 0 ;										\
@@ -1838,7 +1850,7 @@ opj_bool FUNCTION (	opj_tcd_v2_t *p_tcd,										\
 					if (! l_band->precincts) {									\
 						return OPJ_FALSE;										\
 					}															\
-																				\
+					/*fprintf(stderr, "\t\t\t\tAllocate precincts of a band (opj_tcd_precinct_v2_t): %d\n",l_nb_precinct_size);	*/	\
 					memset(l_band->precincts,0,l_nb_precinct_size);				\
 					l_band->precincts_data_size = l_nb_precinct_size;			\
 				}																\
@@ -1848,6 +1860,7 @@ opj_bool FUNCTION (	opj_tcd_v2_t *p_tcd,										\
 					if (! l_band->precincts) {									\
 						return OPJ_FALSE;										\
 					}															\
+					/*fprintf(stderr, "\t\t\t\tReallocate precincts of a band (opj_tcd_precinct_v2_t): from %d to %d\n",l_band->precincts_data_size, l_nb_precinct_size);*/\
 					memset(((OPJ_BYTE *) l_band->precincts) + l_band->precincts_data_size,0,l_nb_precinct_size - l_band->precincts_data_size);\
 					l_band->precincts_data_size = l_nb_precinct_size;			\
 				}																\
@@ -1859,19 +1872,31 @@ opj_bool FUNCTION (	opj_tcd_v2_t *p_tcd,										\
 					OPJ_INT32 cbgystart = tlcbgystart + (precno / l_res->pw) * (1 << cbgheightexpn);	\
 					OPJ_INT32 cbgxend = cbgxstart + (1 << cbgwidthexpn);		\
 					OPJ_INT32 cbgyend = cbgystart + (1 << cbgheightexpn);		\
+					/*fprintf(stderr, "\t precno=%d; bandno=%d, resno=%d; compno=%d\n", precno, bandno , resno, compno);*/\
+					/*fprintf(stderr, "\t tlcbgxstart(=%d) + (precno(=%d) percent res->pw(=%d)) * (1 << cbgwidthexpn(=%d)) \n",tlcbgxstart,precno,l_res->pw,cbgwidthexpn);*/\
 																				\
 					/* precinct size (global) */								\
+					/*fprintf(stderr, "\t cbgxstart=%d, l_band->x0 = %d \n",cbgxstart, l_band->x0);*/ \
+																				\
 					l_current_precinct->x0 = int_max(cbgxstart, l_band->x0);	\
 					l_current_precinct->y0 = int_max(cbgystart, l_band->y0);	\
 					l_current_precinct->x1 = int_min(cbgxend, l_band->x1);		\
 					l_current_precinct->y1 = int_min(cbgyend, l_band->y1);		\
+					/*fprintf(stderr, "\t prc_x0=%d; prc_y0=%d, prc_x1=%d; prc_y1=%d\n",l_current_precinct->x0, l_current_precinct->y0 ,l_current_precinct->x1, l_current_precinct->y1);*/ \
+																				\
 					tlcblkxstart = int_floordivpow2(l_current_precinct->x0, cblkwidthexpn) << cblkwidthexpn;	\
+					/*fprintf(stderr, "\t tlcblkxstart =%d\n",tlcblkxstart );*/ \
 					tlcblkystart = int_floordivpow2(l_current_precinct->y0, cblkheightexpn) << cblkheightexpn;	\
+					/*fprintf(stderr, "\t tlcblkystart =%d\n",tlcblkystart );*/ \
 					brcblkxend = int_ceildivpow2(l_current_precinct->x1, cblkwidthexpn) << cblkwidthexpn;	\
+					/*fprintf(stderr, "\t brcblkxend =%d\n",brcblkxend );*/ 	\
 					brcblkyend = int_ceildivpow2(l_current_precinct->y1, cblkheightexpn) << cblkheightexpn;	\
+					/*fprintf(stderr, "\t brcblkyend =%d\n",brcblkyend );*/	 	\
 					l_current_precinct->cw = (brcblkxend - tlcblkxstart) >> cblkwidthexpn;	\
 					l_current_precinct->ch = (brcblkyend - tlcblkystart) >> cblkheightexpn;	\
+																				\
 					l_nb_code_blocks = l_current_precinct->cw * l_current_precinct->ch;	\
+					/*fprintf(stderr, "\t\t\t\t precinct_cw = %d x recinct_ch = %d\n",l_current_precinct->cw, l_current_precinct->ch);	*/	\
 					l_nb_code_blocks_size = l_nb_code_blocks * sizeof(TYPE);	\
 																				\
 					if (! l_current_precinct->cblks.ELEMENT) {					\
@@ -1879,6 +1904,7 @@ opj_bool FUNCTION (	opj_tcd_v2_t *p_tcd,										\
 						if (! l_current_precinct->cblks.ELEMENT ) {				\
 							return OPJ_FALSE;									\
 						}														\
+						/*fprintf(stderr, "\t\t\t\tAllocate cblks of a precinct (opj_tcd_cblk_dec_v2_t): %d\n",l_nb_code_blocks_size);*/		\
 																				\
 						memset(l_current_precinct->cblks.ELEMENT,0,l_nb_code_blocks_size);\
 																				\
@@ -1890,6 +1916,7 @@ opj_bool FUNCTION (	opj_tcd_v2_t *p_tcd,										\
 						if (! l_current_precinct->cblks.ELEMENT ) {				\
 							return OPJ_FALSE;									\
 						}														\
+						/*fprintf(stderr, "\t\t\t\tReallocate cblks of a precinct (opj_tcd_cblk_dec_v2_t): from %d to %d\n",l_current_precinct->block_size, l_nb_code_blocks_size);	*/	\
 																				\
 						memset(((OPJ_BYTE *) l_current_precinct->cblks.ELEMENT) + l_current_precinct->block_size	\
 										,0																			\
@@ -1899,7 +1926,7 @@ opj_bool FUNCTION (	opj_tcd_v2_t *p_tcd,										\
 					}															\
 																				\
 					if (! l_current_precinct->incltree) {						\
-                        l_current_precinct->incltree = tgt_create(l_current_precinct->cw,	\
+                        l_current_precinct->incltree = tgt_create_v2(l_current_precinct->cw,	\
 																  l_current_precinct->ch);	\
 					}															\
 					else{														\
@@ -1909,11 +1936,12 @@ opj_bool FUNCTION (	opj_tcd_v2_t *p_tcd,										\
 					}															\
 																				\
 					if (! l_current_precinct->incltree)	{						\
-						return OPJ_FALSE;										\
+						fprintf(stderr, "WARNING: No incltree created.\n");\
+						/*return OPJ_FALSE;*/										\
 					}															\
 																				\
 					if (! l_current_precinct->imsbtree) {						\
-                        l_current_precinct->imsbtree = tgt_create(				\
+                        l_current_precinct->imsbtree = tgt_create_v2(				\
 														l_current_precinct->cw,	\
 														l_current_precinct->ch);\
 					}															\
@@ -1925,7 +1953,8 @@ opj_bool FUNCTION (	opj_tcd_v2_t *p_tcd,										\
 					}															\
 																				\
 					if (! l_current_precinct->imsbtree) {						\
-						return OPJ_FALSE;										\
+						fprintf(stderr, "WARNING: No imsbtree created.\n");\
+						/*return OPJ_FALSE;*/										\
 					}															\
 																				\
 					l_code_block = l_current_precinct->cblks.ELEMENT;			\
@@ -1973,15 +2002,15 @@ OPJ_UINT32 tcd_get_decoded_tile_size ( opj_tcd_v2_t *p_tcd )
 {
 	OPJ_UINT32 i;
 	OPJ_UINT32 l_data_size = 0;
-	opj_image_comp_header_t * l_img_comp = 00;
+	opj_image_comp_t * l_img_comp = 00;
 	opj_tcd_tilecomp_v2_t * l_tile_comp = 00;
 	opj_tcd_resolution_v2_t * l_res = 00;
 	OPJ_UINT32 l_size_comp, l_remaining;
 
 	l_tile_comp = p_tcd->tcd_image->tiles->comps;
-	l_img_comp = p_tcd->image_header->comps;
+	l_img_comp = p_tcd->image->comps;
 
-	for (i=0;i<p_tcd->image_header->numcomps;++i) {
+	for (i=0;i<p_tcd->image->numcomps;++i) {
 		l_size_comp = l_img_comp->prec >> 3; /*(/ 8)*/
 		l_remaining = l_img_comp->prec & 7;  /* (%8) */
 
@@ -2096,7 +2125,7 @@ opj_bool tcd_update_tile_data (
 						 )
 {
 	OPJ_UINT32 i,j,k,l_data_size = 0;
-	opj_image_comp_header_t * l_img_comp = 00;
+	opj_image_comp_t * l_img_comp = 00;
 	opj_tcd_tilecomp_v2_t * l_tilec = 00;
 	opj_tcd_resolution_v2_t * l_res;
 	OPJ_UINT32 l_size_comp, l_remaining;
@@ -2108,9 +2137,9 @@ opj_bool tcd_update_tile_data (
 	}
 
 	l_tilec = p_tcd->tcd_image->tiles->comps;
-	l_img_comp = p_tcd->image_header->comps;
+	l_img_comp = p_tcd->image->comps;
 
-	for (i=0;i<p_tcd->image_header->numcomps;++i) {
+	for (i=0;i<p_tcd->image->numcomps;++i) {
 		l_size_comp = l_img_comp->prec >> 3; /*(/ 8)*/
 		l_remaining = l_img_comp->prec & 7;  /* (%8) */
 		l_res = l_tilec->resolutions + l_img_comp->resno_decoded;
@@ -2242,14 +2271,14 @@ void tcd_free_tile(opj_tcd_v2_t *p_tcd)
 		l_res = l_tile_comp->resolutions;
 		if (l_res) {
 
-			l_nb_resolutions = l_tile_comp->resolutions_size / sizeof(opj_tcd_resolution_t);
+			l_nb_resolutions = l_tile_comp->resolutions_size / sizeof(opj_tcd_resolution_v2_t);
 			for (resno = 0; resno < l_nb_resolutions; ++resno) {
 				l_band = l_res->bands;
 				for	(bandno = 0; bandno < 3; ++bandno) {
 					l_precinct = l_band->precincts;
 					if (l_precinct) {
 
-						l_nb_precincts = l_band->precincts_data_size / sizeof(opj_tcd_precinct_t);
+						l_nb_precincts = l_band->precincts_data_size / sizeof(opj_tcd_precinct_v2_t);
 						for (precno = 0; precno < l_nb_precincts; ++precno) {
 							tgt_destroy(l_precinct->incltree);
 							l_precinct->incltree = 00;
@@ -2298,6 +2327,7 @@ opj_bool tcd_code_block_dec_allocate (opj_tcd_cblk_dec_v2_t * p_code_block)
 		if (! p_code_block->data) {
 			return OPJ_FALSE;
 		}
+		/*fprintf(stderr, "Allocate 8192 elements of code_block->data\n");*/
 
 		l_seg_size = J2K_DEFAULT_NB_SEGS * sizeof(opj_tcd_seg_t);
 		p_code_block->segs = (opj_tcd_seg_t *) opj_malloc(l_seg_size);
@@ -2305,8 +2335,10 @@ opj_bool tcd_code_block_dec_allocate (opj_tcd_cblk_dec_v2_t * p_code_block)
 			return OPJ_FALSE;
 		}
 		memset(p_code_block->segs,0,l_seg_size);
+		/*fprintf(stderr, "Allocate %d elements of code_block->data\n", J2K_DEFAULT_NB_SEGS * sizeof(opj_tcd_seg_t));*/
 
 		p_code_block->m_current_max_segs = J2K_DEFAULT_NB_SEGS;
+		/*fprintf(stderr, "m_current_max_segs of code_block->data = %d\n", p_code_block->m_current_max_segs);*/
 	}
 	// TODO
 	//p_code_block->numsegs = 0;
@@ -2324,26 +2356,23 @@ opj_bool tcd_t2_decode (
 {
 	opj_t2_v2_t * l_t2;
 
-	l_t2 = t2_create_v2(p_tcd->image_header, p_tcd->cp);
-	if
-		(l_t2 == 00)
-	{
+	l_t2 = t2_create_v2(p_tcd->image, p_tcd->cp);
+	if (l_t2 == 00) {
 		return OPJ_FALSE;
 	}
 
-	if
-		(! t2_decode_packets_v2(
+	if (! t2_decode_packets_v2(
 					l_t2,
 					p_tcd->tcd_tileno,
 					p_tcd->tcd_image->tiles,
 					p_src_data,
 					p_data_read,
 					p_max_src_size,
-					p_cstr_index))
-	{
+					p_cstr_index)) {
 		t2_destroy_v2(l_t2);
 		return OPJ_FALSE;
 	}
+
 	t2_destroy_v2(l_t2);
 
 	/*---------------CLEAN-------------------*/
@@ -2383,7 +2412,7 @@ opj_bool tcd_dwt_decode ( opj_tcd_v2_t *p_tcd )
 	opj_tcd_tile_v2_t * l_tile = p_tcd->tcd_image->tiles;
 	opj_tcd_tilecomp_v2_t * l_tile_comp = l_tile->comps;
 	opj_tccp_t * l_tccp = p_tcd->tcp->tccps;
-	opj_image_comp_header_t * l_img_comp = p_tcd->image_header->comps;
+	opj_image_comp_t * l_img_comp = p_tcd->image->comps;
 
 	for (compno = 0; compno < l_tile->numcomps; compno++) {
 		/*
@@ -2455,7 +2484,7 @@ opj_bool tcd_mct_decode ( opj_tcd_v2_t *p_tcd )
 								// nb of components (i.e. size of pData)
 								l_tile->numcomps,
 								// tells if the data is signed
-								p_tcd->image_header->comps->sgnd)) {
+								p_tcd->image->comps->sgnd)) {
 			opj_free(l_data);
 			return OPJ_FALSE;
 		}
@@ -2486,7 +2515,7 @@ opj_bool tcd_dc_level_shift_decode ( opj_tcd_v2_t *p_tcd )
 	OPJ_UINT32 compno;
 	opj_tcd_tilecomp_v2_t * l_tile_comp = 00;
 	opj_tccp_t * l_tccp = 00;
-	opj_image_comp_header_t * l_img_comp = 00;
+	opj_image_comp_t * l_img_comp = 00;
 	opj_tcd_resolution_v2_t* l_res = 00;
 	opj_tcp_v2_t * l_tcp = 00;
 	opj_tcd_tile_v2_t * l_tile;
@@ -2499,7 +2528,7 @@ opj_bool tcd_dc_level_shift_decode ( opj_tcd_v2_t *p_tcd )
 	l_tile_comp = l_tile->comps;
 	l_tcp = p_tcd->tcp;
 	l_tccp = p_tcd->tcp->tccps;
-	l_img_comp = p_tcd->image_header->comps;
+	l_img_comp = p_tcd->image->comps;
 
 	for (compno = 0; compno < l_tile->numcomps; compno++) {
 		l_res = l_tile_comp->resolutions + l_img_comp->resno_decoded;
@@ -2557,8 +2586,15 @@ void tcd_code_block_dec_deallocate (opj_tcd_precinct_v2_t * p_precinct)
 
 	opj_tcd_cblk_dec_v2_t * l_code_block = p_precinct->cblks.dec;
 	if (l_code_block) {
+		/*fprintf(stderr,"deallocate codeblock:{\n");*/
+		/*fprintf(stderr,"\t x0=%d, y0=%d, x1=%d, y1=%d\n",l_code_block->x0, l_code_block->y0, l_code_block->x1, l_code_block->y1);*/
+		/*fprintf(stderr,"\t numbps=%d, numlenbits=%d, len=%d, numnewpasses=%d, real_num_segs=%d, m_current_max_segs=%d\n ",
+				l_code_block->numbps, l_code_block->numlenbits, l_code_block->len, l_code_block->numnewpasses, l_code_block->real_num_segs, l_code_block->m_current_max_segs );*/
 
-		l_nb_code_blocks = p_precinct->block_size / sizeof(opj_tcd_cblk_dec_t);
+
+		l_nb_code_blocks = p_precinct->block_size / sizeof(opj_tcd_cblk_dec_v2_t);
+		/*fprintf(stderr,"nb_code_blocks =%d\t}\n", l_nb_code_blocks);*/
+
 		for (cblkno = 0; cblkno < l_nb_code_blocks; ++cblkno) {
 
 			if (l_code_block->data) {

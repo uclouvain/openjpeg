@@ -563,29 +563,29 @@ Defines a single image component
 */
 typedef struct opj_image_comp {
 	/** XRsiz: horizontal separation of a sample of ith component with respect to the reference grid */
-	int dx;
+	OPJ_UINT32 dx;
 	/** YRsiz: vertical separation of a sample of ith component with respect to the reference grid */
-	int dy;
+	OPJ_UINT32 dy;
 	/** data width */
-	int w;
+	OPJ_UINT32 w;
 	/** data height */
-	int h;
+	OPJ_UINT32 h;
 	/** x component offset compared to the whole image */
-	int x0;
+	OPJ_UINT32 x0;
 	/** y component offset compared to the whole image */
-	int y0;
+	OPJ_UINT32 y0;
 	/** precision */
-	int prec;
+	OPJ_UINT32 prec;
 	/** image depth in bits */
-	int bpp;
+	OPJ_UINT32 bpp;
 	/** signed (1) / unsigned (0) */
-	int sgnd;
+	OPJ_UINT32 sgnd;
 	/** number of decoded resolution */
-	int resno_decoded;
+	OPJ_UINT32 resno_decoded;
 	/** number of division by 2 of the out image compared to the original size of image */
-	int factor;
+	OPJ_UINT32 factor;
 	/** image component data */
-	int *data;
+	OPJ_INT32 *data;
 } opj_image_comp_t;
 
 /** 
@@ -601,15 +601,15 @@ typedef struct opj_image {
 	/** Ysiz: height of the reference grid */
 	OPJ_UINT32 y1;
 	/** number of components in the image */
-	OPJ_UINT16 numcomps;
+	OPJ_UINT32 numcomps;
 	/** color space: sRGB, Greyscale or YUV */
 	OPJ_COLOR_SPACE color_space;
 	/** image components */
 	opj_image_comp_t *comps;
 	/** 'restricted' ICC profile */
-	unsigned char *icc_profile_buf;
+	OPJ_BYTE *icc_profile_buf;
 	/** size of ICC profile */
-	int icc_profile_len;
+	OPJ_INT32 icc_profile_len;
 } opj_image_t;
 
 
@@ -639,58 +639,6 @@ typedef struct opj_image_comptparm {
 
 
 
-/**
-Defines a single image component characteristics (uses in new API)
-*/
-typedef struct opj_image_comp_header {
-	/** XRsiz: horizontal separation of a sample of ith component with respect to the reference grid */
-	int dx;
-	/** YRsiz: vertical separation of a sample of ith component with respect to the reference grid */
-	int dy;
-	/** data width */
-	int w;
-	/** data height */
-	int h;
-	/** x component offset compared to the whole image */
-	int x0;
-	/** y component offset compared to the whole image */
-	int y0;
-	/** precision */
-	int prec;
-	/** image depth in bits */
-	int bpp;
-	/** signed (1) / unsigned (0) */
-	int sgnd;
-	/** number of decoded resolution */
-	int resno_decoded;
-	/** number of division by 2 of the out image compared to the original size of image */
-	int factor;
-} opj_image_comp_header_t;
-
-/**
-Defines image characteristics (uses in new API)
-*/
-typedef struct opj_image_header {
-	/** XOsiz: horizontal offset from the origin of the reference grid to the left side of the image area */
-	OPJ_UINT32 x0;
-	/** YOsiz: vertical offset from the origin of the reference grid to the top side of the image area */
-	OPJ_UINT32 y0;
-	/** Xsiz: width of the reference grid */
-	OPJ_UINT32 x1;
-	/** Ysiz: height of the reference grid */
-	OPJ_UINT32 y1;
-	/** number of components in the image */
-	OPJ_UINT16 numcomps;
-	/** color space: sRGB, Greyscale or YUV */
-	OPJ_COLOR_SPACE color_space;
-	/** image components */
-	opj_image_comp_header_t *comps;
-
-	/** 'restricted' ICC profile */
-	unsigned char *icc_profile_buf;
-	/** size of ICC profile */
-	int icc_profile_len;
-} opj_image_header_t;
 
 
 /* 
@@ -1036,18 +984,11 @@ Create an image
 OPJ_API opj_image_t* OPJ_CALLCONV opj_image_create(int numcmpts, opj_image_cmptparm_t *cmptparms, OPJ_COLOR_SPACE clrspc);
 
 /**
-Deallocate any resources associated with an image
-@param image image to be destroyed
-*/
+ * Deallocate any resources associated with an image
+ * @param image image to be destroyed
+ */
 OPJ_API void OPJ_CALLCONV opj_image_destroy(opj_image_t *image);
 
-
-/**
- * Deallocate any resources associated with an image header
- *
- * @param image_header		image header to be destroyed
- */
-OPJ_API void OPJ_CALLCONV opj_image_header_destroy(opj_image_header_t *image_header);
 
 /* 
 ==========================================================
@@ -1320,13 +1261,13 @@ OPJ_API void OPJ_CALLCONV opj_destroy_cstr_info(opj_codestream_info_t *cstr_info
  *
  * @param	p_cio			the jpeg2000 stream.
  * @param	p_codec			the jpeg2000 codec to read.
- * @param	p_image			header of the image hold in the codestream.
+ * @param	p_image			the image structure initialized with the characteristics of encoded image.
  *
  * @return true				if the main header of the codestream and the JP2 header is correctly read.
  */
 OPJ_API opj_bool OPJ_CALLCONV opj_read_header (	opj_stream_t *p_cio,
 												opj_codec_t *p_codec,
-												opj_image_header_t * p_img_header);
+												opj_image_t *p_image);
 
 /**
  * Destroy a decompressor handle
@@ -1457,6 +1398,19 @@ OPJ_API opj_jp2_metadata_t* OPJ_CALLCONV opj_get_jp2_metadata(opj_codec_t *p_cod
  *
  */
 OPJ_API opj_jp2_index_t* OPJ_CALLCONV opj_get_jp2_index(opj_codec_t *p_codec);
+
+/**
+Decode an image from a JPEG-2000 codestream
+@param dinfo decompressor handle
+@param cio Input buffer stream
+@return Returns a decoded image if successful, returns NULL otherwise
+*/
+OPJ_API opj_bool OPJ_CALLCONV opj_decode_v2(opj_codec_t *p_decompressor,
+											opj_stream_t * cio,
+											opj_image_t *p_image);
+
+OPJ_API opj_bool OPJ_CALLCONV opj_end_decompress (	opj_codec_t *p_codec,
+													opj_stream_t *p_cio);
 
 
 #ifdef __cplusplus
