@@ -579,7 +579,7 @@ int main(int argc, char **argv)
 	opj_image_t image;
 	opj_stream_t *cio = NULL;				/* Stream */
 	opj_codec_t* dinfo = NULL;				/* Handle to a decompressor */
-
+	opj_bool bRes1, bRes2; 
 
 
 	char indexfilename[OPJ_PATH_LEN];	/* index file name */
@@ -715,8 +715,8 @@ int main(int argc, char **argv)
 
 
 		/* Get the decoded image */
-		opj_bool bRes1 = opj_decode_v2(dinfo, cio, &image);
-		opj_bool bRes2 = opj_end_decompress(dinfo,cio);
+		bRes1 = opj_decode_v2(dinfo, cio, &image);
+		bRes2 = opj_end_decompress(dinfo,cio);
 
 		/*if ( !(opj_decode_v2(dinfo, cio, &image)) || !(opj_end_decompress(dinfo,cio)) ) {*/
 		if ( !bRes1  || !bRes2) {

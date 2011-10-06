@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+October 06, 2011
+* [mickael] WIP: fix build errors with windows configuration induced by rev 960
+
 October 05, 2011
 + [mickael] WIP: fix the decoding process with conformance files and V2 framework 
 
