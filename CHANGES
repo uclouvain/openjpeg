@@ -7,6 +7,7 @@ What's New for OpenJPEG
 
 October 06, 2011
 * [mickael] WIP: fix build errors with windows configuration induced by rev 960
++ [mickael] WIP: Enhance html documentation generation with cmake, add a mainpage to this documentation and bump version to 1.99.0 into the main CMakeLists (as rev951)
 
 October 05, 2011
 + [mickael] WIP: fix the decoding process with conformance files and V2 framework 

@@ -28,7 +28,7 @@ INCLUDE_REGULAR_EXPRESSION("^.*$")
 #-----------------------------------------------------------------------------
 # OPENJPEG version number, useful for packaging and doxygen doc:
 SET(OPENJPEG_VERSION_MAJOR 1)
-SET(OPENJPEG_VERSION_MINOR 4)
+SET(OPENJPEG_VERSION_MINOR 99)
 SET(OPENJPEG_VERSION_BUILD 0)
 SET(OPENJPEG_VERSION
   "${OPENJPEG_VERSION_MAJOR}.${OPENJPEG_VERSION_MINOR}.${OPENJPEG_VERSION_BUILD}")
@@ -231,7 +231,10 @@ OPTION(BUILD_JPWL "Build the JPWL library and executables" OFF)
 
 #-----------------------------------------------------------------------------
 # Build DOCUMENTATION (not in ALL target and only if Doxygen is found)
-ADD_SUBDIRECTORY(doc)
+OPTION(BUILD_DOC "Build the HTML documentation (with doxygen if available)." OFF)
+IF(BUILD_DOC)
+    ADD_SUBDIRECTORY(doc)
+ENDIF(BUILD_DOC)
 
 #-----------------------------------------------------------------------------
 # Buld Testing
