@@ -36,8 +36,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "indexbox_manager.h"
-#include "cio.h"
+#include "opj_includes.h"
 
 /* 
  * Write tile-part headers mhix box
@@ -57,7 +56,7 @@ int write_thix( int coff, opj_codestream_info_t cstr_info, opj_cio_t *cio)
   opj_jp2_box_t *box;
 
   lenp = 0;
-  box = (opj_jp2_box_t *)calloc( cstr_info.tw*cstr_info.th, sizeof(opj_jp2_box_t));
+  box = (opj_jp2_box_t *)opj_calloc( cstr_info.tw*cstr_info.th, sizeof(opj_jp2_box_t));
 
   for ( i = 0; i < 2 ; i++ ){
     if (i)
@@ -79,7 +78,7 @@ int write_thix( int coff, opj_codestream_info_t cstr_info, opj_cio_t *cio)
     cio_seek( cio, lenp+len);
   }
 
-  free(box);
+  opj_free(box);
 
   return len;
 }
@@ -89,7 +88,6 @@ int write_tilemhix( int coff, opj_codestream_info_t cstr_info, int tileno, opj_c
   int i;
   opj_tile_info_t tile;
   opj_tp_info_t tp;
-  int marknum;
   int len, lenp;
   opj_marker_info_t *marker;
 

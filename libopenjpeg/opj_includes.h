@@ -107,6 +107,7 @@ static INLINE long lrintf(float f){
 #include "j2k_lib.h"
 #include "opj_malloc.h"
 #include "event.h"
+#include "bio.h"
 #include "cio.h"
 
 #include "image.h"

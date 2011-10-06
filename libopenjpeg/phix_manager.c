@@ -35,8 +35,7 @@
 
 #include <stdlib.h>
 #include <math.h>
-#include "indexbox_manager.h"
-#include "cio.h"
+#include "opj_includes.h"
 
 /* 
  * Write faix box of phix
@@ -56,7 +55,7 @@ int write_phix( int coff, opj_codestream_info_t cstr_info, opj_bool EPHused, int
   int len, lenp=0, compno, i;
   opj_jp2_box_t *box;
 
-  box = (opj_jp2_box_t *)calloc( cstr_info.numcomps, sizeof(opj_jp2_box_t));
+  box = (opj_jp2_box_t *)opj_calloc( cstr_info.numcomps, sizeof(opj_jp2_box_t));
   
   for( i=0;i<2;i++){
     if (i) cio_seek( cio, lenp);
@@ -78,7 +77,7 @@ int write_phix( int coff, opj_codestream_info_t cstr_info, opj_bool EPHused, int
     cio_seek( cio, lenp+len);
   }
 
-  free(box);
+  opj_free(box);
 
   return len;
 }
