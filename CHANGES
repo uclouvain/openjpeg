@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+October 6, 2011
++ [mickael] enhance html documentation generation with cmake and add a openjpeg mainpage to this doc
+
 October 1, 2011
 + [vincent] fix output when --disable-shared or --disable-static is passed to configure. Minor fix for jpwl compilation.
 
