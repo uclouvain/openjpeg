@@ -421,6 +421,35 @@ opj_bool jp2_set_decode_area(
 			struct opj_event_mgr * p_manager
 			);
 
+
+/**
+ * Dump some elements from the JP2 decompression structure .
+ *
+ *@param p_jp2				the jp2 codec.
+ *@param flag				flag to describe what elments are dump.
+ *@param out_stream			output stream where dump the elements.
+ *
+*/
+void jp2_dump (opj_jp2_v2_t* p_jp2, OPJ_INT32 flag, FILE* out_stream);
+
+/**
+ * Get the codestream info from a JPEG2000 codec.
+ *
+ *@param	p_jp2				jp2 codec.
+ *
+ *@return	the codestream information extract from the jpg2000 codec
+ */
+opj_codestream_info_v2_t* jp2_get_cstr_info(opj_jp2_v2_t* p_jp2);
+
+/**
+ * Get the codestream index from a JPEG2000 codec.
+ *
+ *@param	p_jp2				jp2 codec.
+ *
+ *@return	the codestream index extract from the jpg2000 codec
+ */
+opj_codestream_index_t* jp2_get_cstr_index(opj_jp2_v2_t* p_jp2);
+
 /*@}*/
 
 /*@}*/

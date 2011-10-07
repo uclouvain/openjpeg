@@ -2441,7 +2441,7 @@ opj_bool jp2_read_header(	struct opj_stream_private *p_stream,
 							struct opj_event_mgr * p_manager
 							)
 {
-	// preconditions
+	/* preconditions */
 	assert(jp2 != 00);
 	assert(p_stream != 00);
 	assert(p_manager != 00);
@@ -2648,3 +2648,24 @@ opj_jp2_v2_t* jp2_create(opj_bool p_is_decoder)
 
 	return jp2;
 }
+
+void jp2_dump(opj_jp2_v2_t* p_jp2, OPJ_INT32 flag, FILE* out_stream)
+{
+	/* preconditions */
+	assert(p_jp2 != 00);
+
+	j2k_dump(p_jp2->j2k,
+					flag,
+					out_stream);
+}
+
+opj_codestream_index_t* jp2_get_cstr_index(opj_jp2_v2_t* p_jp2)
+{
+	return j2k_get_cstr_index(p_jp2->j2k);
+}
+
+opj_codestream_info_v2_t* jp2_get_cstr_info(opj_jp2_v2_t* p_jp2)
+{
+	return j2k_get_cstr_info(p_jp2->j2k);
+}
+

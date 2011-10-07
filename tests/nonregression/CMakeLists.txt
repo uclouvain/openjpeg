@@ -281,7 +281,7 @@ FOREACH(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
         # Compare the dump output with the baseline
         ADD_TEST(NR-DEC-${INPUT_FILENAME_NAME}-${IT_TEST_DEC}-compare_dump2base
           ${EXECUTABLE_OUTPUT_PATH}/compare_dump_files
-         -b ${BASELINE_NR}/opj_${INPUT_FILENAME_NAME_WE}.txt
+         -b ${BASELINE_NR}/opj_v2_${INPUT_FILENAME_NAME_WE}.txt
          -t ${TEMP}/${INPUT_FILENAME_NAME}.txt
         )
      

@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 October 07, 2011
++ [mickael] WIP: update jp2 dump functions with the new V2 framework
 + [mickael] WIP: update output filename of conformance dump test to be compatible with new baseline
 * [mickael] WIP: correct wrong input in dump_codec function and add missing return value
 * [mickael] WIP: correct mistake inside set_decoded_area function (credit to Francois De Vieilleville)
