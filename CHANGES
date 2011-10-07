@@ -6,8 +6,10 @@ What's New for OpenJPEG
 + : added
 
 October 7, 2011
-+ [mickael] rename opj_configh.cmake.in to opj_config.h.cmake.in and update CMakeLists.txt to be more clear
++ [mickael] enhance non regression test suite generation (and some test names). It is based on a file as encoder previously.  
 + [mickael] add tests about jp2 conformance
++ [mickael] rename opj_configh.cmake.in to opj_config.h.cmake.in and update CMakeLists.txt to be more clear
+
 
 October 6, 2011
 + [mickael] enhance html documentation generation with cmake and add a openjpeg mainpage to this doc
