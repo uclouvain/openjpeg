@@ -6085,7 +6085,7 @@ opj_bool j2k_set_decode_area(	opj_j2k_v2_t *p_j2k,
 		p_j2k->m_specific_param.m_decoder.m_end_tile_x = int_ceildiv((p_end_x - l_cp->tx0), l_cp->tdx);
 
 	/* Bottom */
-	if (p_end_x < l_cp->ty0) {
+	if (p_end_y < l_cp->ty0) {
 		opj_event_msg_v2(p_manager, EVT_ERROR,
 			"Right position of the decoded area (ROI_y1=%d) is outside the tile area (YTOsiz=%d).\n",
 			p_end_x, l_cp->ty0);
