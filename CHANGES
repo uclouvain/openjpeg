@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+October 7, 2011
++ [mickael] rename opj_configh.cmake.in to opj_config.h.cmake.in and update CMakeLists.txt to be more clear
+
 October 6, 2011
 + [mickael] enhance html documentation generation with cmake and add a openjpeg mainpage to this doc
 + [mickael] enhance some new JPIP files with opj_config inclusion and using of opj_free/opj_calloc functions (credit to Julien Malik)

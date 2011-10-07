@@ -218,7 +218,7 @@ ENDIF (BUILD_CODEC OR BUILD_MJ2 OR BUILD_JPIP)
 
 #-----------------------------------------------------------------------------
 # opj_config.h generation (2/2)
-CONFIGURE_FILE("${OPENJPEG_SOURCE_DIR}/opj_configh.cmake.in"
+CONFIGURE_FILE("${OPENJPEG_SOURCE_DIR}/opj_config.h.cmake.in"
  "${OPENJPEG_BINARY_DIR}/opj_config.h"
  @ONLY
  )
