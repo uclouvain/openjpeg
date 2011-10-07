@@ -7,6 +7,7 @@ What's New for OpenJPEG
 
 October 7, 2011
 + [mickael] rename opj_configh.cmake.in to opj_config.h.cmake.in and update CMakeLists.txt to be more clear
++ [mickael] add tests about jp2 conformance
 
 October 6, 2011
 + [mickael] enhance html documentation generation with cmake and add a openjpeg mainpage to this doc

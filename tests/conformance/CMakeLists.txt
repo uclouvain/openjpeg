@@ -416,6 +416,55 @@ FOREACH(numFileC1P1 RANGE 1 7)
                        
 ENDFOREACH(numFileC1P1)
 
+#--------------------------------------------------------------------------
+# Tests about JP2 file
+# try to decode
+# compare to ref file
+# non regression comparison
+
+# Tolerances given by Table G.1
+
+FOREACH(numFileJP2 RANGE 1 9) 
+
+  # Build filenames
+  SET( filenameInput "file${numFileJP2}.jp2" )
+  SET( filenameRef   jp2_${numFileJP2}.tif )
+  
+  # Get corresponding tests parameters
+  list(GET JP2_PEAK_list ${numFileJP2}  PEAK_limit)
+  
+  ADD_TEST(ETS-JP2-${filenameInput}-decode
+      ${EXECUTABLE_OUTPUT_PATH}/j2k_to_image 
+      -i ${INPUT_CONF}/${filenameInput}
+      -o ${TEMP}/${filenameInput}.tif
+      )
+#
+# FIXME: Need to implement a compare tif images function
+#  
+#  ADD_TEST(ETS-JP2-${filenameInput}-compare2ref
+#      ${EXECUTABLE_OUTPUT_PATH}/compareTIFimages
+#     -b ${BASELINE_CONF}/${filenameRef_tif}
+#     -t ${TEMP}/${filenameInput}.pgx
+#     -p 4
+#     )
+#      
+#  SET_TESTS_PROPERTIES(ETS-JP2-${filenameInput}-compare2ref  
+#                       PROPERTIES DEPENDS 
+#                       ETS-JP2-${filenameInput}-decode)
+#                       
+#  ADD_TEST(NR-JP2-${filenameInput}-compare2base
+#      ${EXECUTABLE_OUTPUT_PATH}/compareTIFimages
+#     -b ${BASELINE_NR}/opj_${filenameRef}
+#     -t ${TEMP}/${filenameInput}.tif
+#     -d 
+#     )
+#      
+#  SET_TESTS_PROPERTIES(NR-JP2-${filenameInput}-compare2base  
+#                       PROPERTIES DEPENDS 
+#                       ETS-JP2-${filenameInput}-decode)
+                       
+ENDFOREACH(numFileJP2)
+
 #--------------------------------------------------------------------------#
 #--------------------------------------------------------------------------#
 #--------------------------------------------------------------------------#
@@ -452,7 +501,7 @@ FOREACH(numFileP0 RANGE 1 16)
                        PROPERTIES DEPENDS 
                        NR-${filenameInput}-dump)
                        
-ENDFOREACH(numFileP0 RANGE 1 16) 
+ENDFOREACH(numFileP0) 
 
 #--------------------------------------------------------------------------
 # Tests about dump of profile 1 file
@@ -481,4 +530,33 @@ FOREACH(numFileP1 RANGE 1 7)
                        PROPERTIES DEPENDS 
                        NR-${filenameInput}-dump) 
                        
-ENDFOREACH(numFileP1 RANGE 1 7) 
+ENDFOREACH(numFileP1) 
+
+#--------------------------------------------------------------------------
+# Tests about dump of JP2 file
+# try to dump image and codestream informations into a file
+# non regression comparison this file to the baseline
+
+FOREACH(numFileJP2 RANGE 1 9) 
+
+  # Build filenames
+  SET( filenameInput "file${numFileJP2}.jp2" )
+  get_filename_component(filenameInputSub ${filenameInput} NAME_WE)
+
+  ADD_TEST(NR-${filenameInput}-dump
+      ${EXECUTABLE_OUTPUT_PATH}/j2k_dump
+     -i ${INPUT_CONF}/${filenameInput}
+     -o ${TEMP}/${filenameInput}.txt
+     )
+     
+  ADD_TEST(NR-${filenameInput}-compare_dump2base
+      ${EXECUTABLE_OUTPUT_PATH}/compare_dump_files
+     -b ${BASELINE_NR}/opj_${filenameInputSub}.txt
+     -t ${TEMP}/${filenameInput}.txt
+     )
+     
+  SET_TESTS_PROPERTIES(NR-${filenameInput}-compare_dump2base
+                       PROPERTIES DEPENDS 
+                       NR-${filenameInput}-dump) 
+                       
+ENDFOREACH(numFileJP2) 
