@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 October 07, 2011
+* [mickael] WIP: correct wrong input in dump_codec function and add missing return value
 * [mickael] WIP: correct mistake inside set_decoded_area function (credit to Francois De Vieilleville)
 + [mickael] WIP: backport rev 967-969 from opj-1.5 to trunk about test suite enhancement and rename of opj_configh.cmake.in
 

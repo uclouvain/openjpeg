@@ -883,9 +883,11 @@ void OPJ_CALLCONV opj_dump_codec(	opj_codec_t *p_codec,
 		opj_codec_private_t* l_codec = (opj_codec_private_t*) p_codec;
 
 		l_codec->opj_dump_codec(l_codec->m_codec, info_flag, output_stream);
+		return;
 	}
 
 	fprintf(stderr, "[ERROR] Input parameter of the dump_codec function are incorrect.\n");
+	return;
 }
 
 /*

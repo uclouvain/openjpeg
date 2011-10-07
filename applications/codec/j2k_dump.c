@@ -516,7 +516,7 @@ int main(int argc, char *argv[])
 			return EXIT_FAILURE;
 		}
 
-		opj_dump_codec(dinfo, OPJ_IMG_INFO | OPJ_J2K_MH_INFO | OPJ_J2K_MH_IND, stdout );
+		opj_dump_codec(dinfo, OPJ_IMG_INFO | OPJ_J2K_MH_INFO | OPJ_J2K_MH_IND, fout );
 
 		cstr_info = opj_get_cstr_info(dinfo);
 
