@@ -493,7 +493,7 @@ FOREACH(numFileP0 RANGE 1 16)
      
   ADD_TEST(NR-${filenameInput}-compare_dump2base
       ${EXECUTABLE_OUTPUT_PATH}/compare_dump_files
-     -b ${BASELINE_NR}/opj_${filenameRefSub}.txt
+     -b ${BASELINE_NR}/opj_v2_${filenameRefSub}.txt
      -t ${TEMP}/${filenameInput}.txt
      )
      
@@ -522,7 +522,7 @@ FOREACH(numFileP1 RANGE 1 7)
      
   ADD_TEST(NR-${filenameInput}-compare_dump2base
       ${EXECUTABLE_OUTPUT_PATH}/compare_dump_files
-     -b ${BASELINE_NR}/opj_${filenameInputSub}.txt
+     -b ${BASELINE_NR}/opj_v2_${filenameInputSub}.txt
      -t ${TEMP}/${filenameInput}.txt
      )
      
@@ -551,7 +551,7 @@ FOREACH(numFileJP2 RANGE 1 9)
      
   ADD_TEST(NR-${filenameInput}-compare_dump2base
       ${EXECUTABLE_OUTPUT_PATH}/compare_dump_files
-     -b ${BASELINE_NR}/opj_${filenameInputSub}.txt
+     -b ${BASELINE_NR}/opj_v2_${filenameInputSub}.txt
      -t ${TEMP}/${filenameInput}.txt
      )
      
