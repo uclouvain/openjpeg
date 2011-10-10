@@ -51,8 +51,12 @@ rs.h
 
 install-data-hook:
 	@echo -e " (LA)\t$(libdir)/libopenjpeg_JPWL.la" >> $(top_builddir)/report.txt
+if BUILD_SHARED
 	@( $(call solist) ) >> $(top_builddir)/report.txt
+endif
+if BUILD_STATIC
 	@echo -e " (A)\t$(base)/$(a)" >> $(top_builddir)/report.txt
+endif
 
 solist    = $(foreach f, $(dll) $(so), echo -e ' $(SO_PREFIX)\t$(base)/$(f)' ;)
 get_tok   = $(shell grep -E "^$(1)=" $(lib_LTLIBRARIES) | cut -d "'" -f 2)

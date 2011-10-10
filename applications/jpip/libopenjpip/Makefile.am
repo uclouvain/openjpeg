@@ -66,11 +66,19 @@ libopenjpip_local_la_SOURCES = $(JPIP_SRC)
 
 install-data-hook:
 	@echo -e " (LA)\t$(libdir)/libopenjpip_server.la" >> $(top_builddir)/report.txt
+if BUILD_SHARED
 	@( $(call solist_s) ) >> $(top_builddir)/report.txt
+endif
+if BUILD_STATIC
 	@echo -e " (A)\t$(base_s)/$(a_s)" >> $(top_builddir)/report.txt
+endif
 	@echo -e " (LA)\t$(libdir)/libopenjpip_local.la" >> $(top_builddir)/report.txt
+if BUILD_SHARED
 	@( $(call solist_c) ) >> $(top_builddir)/report.txt
+endif
+if BUILD_STATIC
 	@echo -e " (A)\t$(base_c)/$(a_c)" >> $(top_builddir)/report.txt
+endif
 
 solist_s    = $(foreach f, $(dll_s) $(so_s), echo -e ' $(SO_PREFIX)\t$(base_s)/$(f)' ;)
 get_tok_s   = $(shell grep -E "^$(1)=" libopenjpip_server.la | cut -d "'" -f 2)

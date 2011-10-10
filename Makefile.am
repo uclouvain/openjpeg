@@ -7,6 +7,11 @@ SUBDIRS = libopenjpeg applications doc
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libopenjpeg1.pc
 
+if WANT_JPWL
+pkgconfig_DATA += libopenjpeg-jpwl.pc
+endif
+
+
 
 MAINTAINERCLEANFILES = \
 Makefile.in \
@@ -39,6 +44,7 @@ THANKS \
 bootstrap.sh \
 libopenjpeg1.pc.cmake \
 libopenjpeg1.pc.in \
+libopenjpeg-jpwl.pc.in \
 opj_config.h.cmake.in \
 m4/opj_check_lib.m4 \
 m4/opj_doxygen.m4 \

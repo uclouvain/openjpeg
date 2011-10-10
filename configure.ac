@@ -183,13 +183,13 @@ AC_MSG_RESULT([${want_png}])
 
 if test "x${want_png}" = "xyes" ; then
 
-   PKG_CHECK_MODULES([PNG], [libpng14],
+   PKG_CHECK_MODULES([PNG], [libpng15],
       [have_libpng="yes"],
       [
-       PKG_CHECK_MODULES([PNG], [libpng12],
+       PKG_CHECK_MODULES([PNG], [libpng14],
           [have_libpng="yes"],
           [
-           PKG_CHECK_MODULES([PNG], [libpng10],
+           PKG_CHECK_MODULES([PNG], [libpng12],
               [have_libpng="yes"],
               [
                PKG_CHECK_MODULES([PNG], [libpng],
@@ -284,10 +284,7 @@ AC_MSG_RESULT([${want_lcms2}])
 
 if test "x${want_lcms2}" = "xyes" ; then
    PKG_CHECK_MODULES([LCMS2], [lcms2],
-      [
-       have_lcms2="yes"
-       requirements="lcms2"
-      ],
+      [have_lcms2="yes"],
       [have_lcms2="no"])
 fi
 
@@ -319,15 +316,9 @@ if test "x${have_lcms2}" = "xno" ; then
 
    if test "x${want_lcms1}" = "xyes" ; then
       PKG_CHECK_MODULES([LCMS1], [lcms1],
-         [
-          have_lcms1="yes"
-          requirements="lcms1"
-         ],
+         [have_lcms1="yes"],
          [PKG_CHECK_MODULES([LCMS1], [lcms],
-            [
-             have_lcms1="yes"
-             requirements="lcms"
-            ],
+            [have_lcms1="yes"],
             [have_lcms1="no"])])
    fi
 
@@ -402,9 +393,17 @@ fi
 
 ### Checks for library functions
 
+
+### Post configuration
+
+AM_CONDITIONAL([BUILD_SHARED], [test "x${enable_shared}" = "xyes"])
+AM_CONDITIONAL([BUILD_STATIC], [test "x${enable_static}" = "xyes"])
+
+
 AC_CONFIG_FILES([
 Makefile
 libopenjpeg1.pc
+libopenjpeg-jpwl.pc
 libopenjpeg/Makefile
 libopenjpeg/jpwl/Makefile
 applications/Makefile

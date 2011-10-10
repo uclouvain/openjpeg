@@ -1,0 +1,13 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: openjpeg
+Description: JPEG2000 Wireless (Part 11 - JPWL) library
+URL: http://www.openjpeg.org/
+Version: @VERSION@
+@pkgconfig_requires_private@: @requirements@
+Libs: -L${libdir} -lopenjpeg_JPWL
+Libs.private: -lm
+Cflags: -I${includedir}
