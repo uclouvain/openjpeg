@@ -7,7 +7,7 @@ What's New for OpenJPEG
 
 October 10, 2011
 * [vincent] fix 'distcheck' rule
-+ [vincent] add libopenjpeg-jpwl.pc
++ [vincent] add libopenjpeg-jpwl.pc.in
 * [vincent] fix output when --disable-shared or --disable-static is passed to configure. Minor clean up of configure.ac.
 
 October 07, 2011
