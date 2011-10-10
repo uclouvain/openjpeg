@@ -25,7 +25,7 @@ indexbox_manager.h \
 phix_manager.c \
 ppix_manager.c \
 thix_manager.c \
-tpix_manager.c 
+tpix_manager.c
 
 install-data-hook:
 	@echo -e " (B)\t$(bindir)/j2k_to_idxjp2$(EXEEXT)" >> $(top_builddir)/report.txt
