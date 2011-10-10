@@ -415,7 +415,6 @@ applications/jpip/opj_server/Makefile
 applications/jpip/opj_client/Makefile
 applications/jpip/opj_client/opj_dec_server/Makefile
 applications/jpip/tools/Makefile
-applications/jpip/tools/indexer/Makefile
 doc/Makefile
 ])
 

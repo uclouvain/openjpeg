@@ -9,6 +9,7 @@ October 10, 2011
 * [vincent] fix 'distcheck' rule
 + [vincent] add libopenjpeg-jpwl.pc.in
 * [vincent] fix output when --disable-shared or --disable-static is passed to configure. Minor clean up of configure.ac.
+! [kaori]   change -v option was reactivated for JPIP
 
 October 07, 2011
 * [mickael] WIP: correct mistake in text output inside set_decoded_area function (credit to Winfried)
