@@ -50,9 +50,17 @@ class ResizeListener implements ComponentListener
     public void componentResized(ComponentEvent e) {
 	Dimension cursize = iv.getSize();
 	if( largest.getWidth() < cursize.getWidth() || largest.getHeight() < cursize.getHeight()){
-	    largest = cursize;
+	    update_largest( cursize);
 	    iv.enlarge();
 	}
+    }
+    
+    private void update_largest( Dimension cursize)
+    {
+	if( largest.getWidth() < cursize.getWidth())
+	    largest.setSize( cursize.getWidth(), largest.getHeight());
+	if( largest.getHeight() < cursize.getHeight())
+	    largest.setSize( largest.getWidth(), cursize.getHeight());
     }
 
     public void componentShown(ComponentEvent e) {}

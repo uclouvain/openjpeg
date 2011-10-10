@@ -4,6 +4,7 @@
  * Copyright (c) 2002-2011, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
  * Copyright (c) 2002-2011, Professor Benoit Macq
  * Copyright (c) 2010-2011, Kaori Hagihara
+ * Copyright (c) 2011,      Lucian Corlaciu, GSoC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -48,12 +49,17 @@
 //! maximum number of meta request box
 #define MAX_NUMOFBOX 10
 
+//! image return type
+typedef enum image_return { JPPstream, JPTstream, UNKNOWN=-1} image_return_t;
+
 //! Query parameters
 typedef struct query_param{
   char target[MAX_LENOFTARGET];               //!< target name
   char tid[MAX_LENOFTID];                     //!< target identifier
   int fx, fy;                                 //!< frame size (fx,fy)
   int rx, ry, rw, rh;                         //!< roi region
+  int lastcomp;                               //!< last component number
+  bool *comps;                                //!< components for jpp-stream, null means all components
   char cid[MAX_LENOFCID];                     //!< channel identifier
   bool cnew;                                  //!< if there is new channel request(true) or not (false)
   char cclose[MAX_NUMOFCCLOSE][MAX_LENOFCID]; //!< closing channel identifiers
@@ -67,6 +73,7 @@ typedef struct query_param{
   int root_bin;                               //!< root-bin
   int max_depth;                              //!< max-depth
   bool metadata_only;                         //!< metadata-only request
+  image_return_t return_type;                 //!< image return type
 } query_param_t;
 
 

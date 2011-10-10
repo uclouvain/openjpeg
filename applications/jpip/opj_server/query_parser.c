@@ -3,7 +3,8 @@
  *
  * Copyright (c) 2002-2011, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
  * Copyright (c) 2002-2011, Professor Benoit Macq
- * Copyright (c) 2010-2011, Kaori Hagihara
+ * Copyright (c) 2010-2011, Kaori Hagihara 
+ * Copyright (c) 2011,      Lucian Corlaciu, GSoC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -77,6 +78,10 @@ void str2cclose( char *src, char cclose[][MAX_LENOFCID]);
 
 void parse_metareq( char *field, query_param_t *query_param);
 
+// parse the requested components (parses forms like:a; a,b; a-b; a-b,c;  a,b-c)
+void parse_comps( char *field, query_param_t *query_param);
+
+
 //! maximum length of field name
 #define MAX_LENOFFIELDNAME 10
 
@@ -122,6 +127,16 @@ void parse_query( char *query_string, query_param_t *query_param)
       
       else if( strcasecmp( fieldname, "metareq") == 0)
 	parse_metareq( fieldval, query_param);
+      
+      else if( strcasecmp( fieldname, "comps") == 0)
+	parse_comps( fieldval, query_param);
+      
+      else if( strcasecmp( fieldname, "type") == 0){
+	if( strncasecmp( fieldval, "jpp-stream", 10) == 0)
+	  query_param->return_type = JPPstream;
+	else if( strncasecmp( fieldval, "jpt-stream", 10) == 0)
+	  query_param->return_type = JPTstream;
+      }
     }
   }
 }
@@ -138,6 +153,8 @@ void init_queryparam( query_param_t *query_param)
   query_param->ry=-1;
   query_param->rw=-1;
   query_param->rh=-1;
+  query_param->lastcomp = -1;
+  query_param->comps = NULL;  
   query_param->cid[0]='\0';
   query_param->cnew=false;
   memset( query_param->cclose, 0, MAX_NUMOFCCLOSE*MAX_LENOFCID);
@@ -153,6 +170,7 @@ void init_queryparam( query_param_t *query_param)
   query_param->root_bin = 0;
   query_param->max_depth = -1;
   query_param->metadata_only = false;
+  query_param->return_type = UNKNOWN;
 }
 
 
@@ -190,6 +208,15 @@ void print_queryparam( query_param_t query_param)
   fprintf( logstream, "\t tid: %s\n", query_param.tid);
   fprintf( logstream, "\t fx,fy: %d, %d\n", query_param.fx, query_param.fy);
   fprintf( logstream, "\t rx,ry: %d, %d \t rw,rh: %d, %d\n", query_param.rx, query_param.ry, query_param.rw, query_param.rh);
+  fprintf( logstream, "\t components: ");
+  if( query_param.lastcomp == -1)
+    fprintf( logstream, "ALL\n");
+  else{
+    for( i=0; i<=query_param.lastcomp; i++)
+      if( query_param.comps[i])
+	fprintf( logstream, "%d ", i);
+    fprintf( logstream, "\n");
+  }
   fprintf( logstream, "\t cnew: %d\n", query_param.cnew);
   fprintf( logstream, "\t cid: %s\n", query_param.cid);
   
@@ -206,6 +233,7 @@ void print_queryparam( query_param_t query_param)
   fprintf( logstream, "\t root-bin:  %d\n", query_param.root_bin);
   fprintf( logstream, "\t max-depth: %d\n", query_param.max_depth);
   fprintf( logstream, "\t metadata-only: %d\n", query_param.metadata_only);
+  fprintf( logstream, "\t image return type: %d, [JPP-stream=0, JPT-stream=1, UNKNOWN=-1]\n", query_param.return_type);
 }
 
 void str2cclose( char *src, char cclose[][MAX_LENOFCID])
@@ -300,4 +328,40 @@ void parse_req_box_prop( char *req_box_prop, int idx, query_param_t *query_param
     query_param->priority[idx] = true;
   
   idx++;   
+}
+
+void parse_comps( char *field, query_param_t *query_param)
+{
+  int i,start,stop,aux = -1;
+  char *ptr1,*ptr2;
+
+  ptr1 = strchr( field, '-');
+  ptr2 = strchr( field, ',');
+
+  if( ptr1 && ptr2)
+    if( ptr1 > ptr2)
+      sscanf( field, "%d,%d-%d",&aux, &start, &stop);
+    else
+      sscanf( field, "%d-%d,%d", &start, &stop, &aux);
+  else
+    if(ptr1)
+      sscanf( field, "%d-%d", &start, &stop);
+    else if(ptr2){
+      sscanf( field, "%d,%d", &start, &stop);
+      aux = start;
+      start = stop;
+    }
+    else{
+      sscanf( field, "%d", &stop);
+      start = stop;
+    }
+  
+  query_param->lastcomp = stop > aux ? stop : aux;
+  query_param->comps = (bool *)calloc( 1, (query_param->lastcomp+1)*sizeof(bool));
+
+  for( i=start; i<=stop; i++)
+    query_param->comps[i]=true;
+  
+  if(aux!=-1)
+    query_param->comps[aux] = true;
 }

@@ -961,7 +961,7 @@ static int write_fidx( int offset_jp2c, int length_jp2c, int offset_idx, int len
   cio_skip( cio, 4);              /* L [at the end] */
   cio_write( cio, JPIP_FIDX, 4);  /* IPTR           */
   
-  write_prxy( offset_jp2c, length_jp2c, offset_idx, offset_jp2c, cio);
+  write_prxy( offset_jp2c, length_jp2c, offset_idx, length_idx, cio);
 
   len = cio_tell( cio)-lenp;
   cio_seek( cio, lenp);
@@ -1154,7 +1154,7 @@ void jp2_setup_encoder(opj_jp2_t *jp2, opj_cparameters_t *parameters, opj_image_
 
 opj_bool opj_jp2_encode(opj_jp2_t *jp2, opj_cio_t *cio, opj_image_t *image, opj_codestream_info_t *cstr_info) {
 
-	int pos_iptr, pos_cidx, pos_jp2c, len_jp2c, end_pos, pos_fidx, len_fidx;
+	int pos_iptr, pos_cidx, pos_jp2c, len_jp2c, len_cidx, end_pos, pos_fidx, len_fidx;
 
 	/* JP2 encoding */
 
@@ -1181,10 +1181,10 @@ opj_bool opj_jp2_encode(opj_jp2_t *jp2, opj_cio_t *cio, opj_image_t *image, opj_
 	if( jp2->jpip_on){
 	  pos_cidx = cio_tell( cio);
 	  
-	  write_cidx( pos_jp2c+8, cio, image, *cstr_info, len_jp2c-8);
+	  len_cidx = write_cidx( pos_jp2c+8, cio, image, *cstr_info, len_jp2c-8);
 	  
 	  pos_fidx = cio_tell( cio);
-	  len_fidx = write_fidx( pos_jp2c, len_jp2c, pos_cidx, cio_tell(cio), cio);
+	  len_fidx = write_fidx( pos_jp2c, len_jp2c, pos_cidx, len_cidx, cio);
 	  
 	  end_pos = cio_tell( cio);
 	  

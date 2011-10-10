@@ -1,5 +1,5 @@
 ========================================================================
-                    OpenJPIP software 1.0 ReadMe
+                    OpenJPIP software 2.0 ReadMe
 
 OpenJPEG:
 http://www.openjpeg.org
@@ -26,8 +26,8 @@ OpenJPIP software is an implementation of JPEG 2000 Part9: Interactivity tools, 
 ( For more info about JPIP, check the website: http://www.jpeg.org/jpeg2000/j2kpart9.html)
 The current implementation uses some results from the 2KAN project (http://www.2kan.org).
 
-First Version 1.0 covers:
- - JPT-stream (Tile based) media types
+First Version 2.0 covers:
+ - JPT-stream (Tile) and JPP-stream (Precinct) media types
  - Session, channels, cache model managements
  - JPIP over HTTP
  - Indexing JPEG 2000 files
@@ -49,7 +49,6 @@ Neither the author, nor the university accept any responsibility for any kind of
  - OpenJPEG library (currently assumes it is installed on the system => will not use the one built higher in the directory structure)
  - FastCGI development kit (C libraries) at server (http://www.fastcgi.com)
  - Java application launcher at client
- - Kakadu software ( http://www.kakadusoftware.com). Currently required to encode jpeg 2000 images with tile-parts. This will be implemented soon in openjpeg, making this requirement obsolete.
 <Optional>
  - Xerces2 java XML parser on the client for accessing embedded image metadata (http://xerces.apache.org/xerces2-j)
 
@@ -61,8 +60,6 @@ We tested this software with a virtual server running on the same Linux machine 
 
 A Makefile is available in the same directory as this README file. Simply type 'make' and it will build all the required C-executables.
 Concerning the java-based opj_viewer, simply type 'ant' in the corresponding directory (requires 'ant' utility of course)
-
-CMake files ar planned to be included ASAP.
 
 The documentation can be build this way (requires doxygen utility):
   cd doc
@@ -128,12 +125,7 @@ Client:
 ----------
 
 An example to encode a TIF image "copenhague1.tif" at resolution 4780x4050, 8bit/pixel, grayscale.
-
- 1. J2K encoding using Kakadu with an option which introduces the tile-part flag at each resolution level
-    % ./kdu_compress -i copenhague1.tif -o copenhague1.j2k Corder=RPCL  ORGtparts=R Stiles={256,256}
-
- 2. JP2 encoding with embedding indexing data
-    % ./j2k_to_idxjp2 copenhague1.j2k copenhague1.jp2
+   % ./image_to_j2k -i copenhague1.tif -o copenhague1.jp2 -p RPCL -c [64,64] -t 640,480 -jpip
 
 <Option>
  3. Embed metadata into JP2 file

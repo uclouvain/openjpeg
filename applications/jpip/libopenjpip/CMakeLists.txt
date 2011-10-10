@@ -22,6 +22,8 @@ ${CMAKE_CURRENT_SOURCE_DIR}/manfbox_manager.c
 ${CMAKE_CURRENT_SOURCE_DIR}/mhixbox_manager.c
 ${CMAKE_CURRENT_SOURCE_DIR}/target_manager.c
 ${CMAKE_CURRENT_SOURCE_DIR}/cachemodel_manager.c
+${CMAKE_CURRENT_SOURCE_DIR}/j2kheader_manager.c
+${CMAKE_CURRENT_SOURCE_DIR}/jp2k_encoder.c
 )
 
 # Build the library

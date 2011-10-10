@@ -147,4 +147,5 @@ int search_metadataidx( char boxtype[4], metadatalist_param_t *list);
  * @param[in] metadatalist metadata list pointer
  */
 void insert_metadata_into_list( metadata_param_t *metabin, metadatalist_param_t *metadatalist);
+
 #endif 	    /* !METADATA_MANAGER_H_ */

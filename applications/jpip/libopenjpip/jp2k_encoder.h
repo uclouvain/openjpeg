@@ -1,9 +1,10 @@
 /*
- * $Id: ihdrbox_manager.c 44 2011-02-15 12:32:29Z kaori $
+ * $Id$
  *
  * Copyright (c) 2002-2011, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
  * Copyright (c) 2002-2011, Professor Benoit Macq
- * Copyright (c) 2010-2011, Kaori Hagihara
+ * Copyright (c) 2010-2011, Kaori Hagihara 
+ * Copyright (c) 2011,      Lucian Corlaciu, GSoC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,47 +29,36 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "ihdrbox_manager.h"
+#ifndef   	JP2K_ENCODER_H_
+# define   	JP2K_ENCODER_H_
 
-ihdrbox_param_t * gene_ihdrbox( metadatalist_param_t *metadatalist, Byte_t *jpipstream)
-{
-  ihdrbox_param_t *ihdrbox;
-  metadata_param_t *meta;
-  box_param_t *jp2h, *ihdr;
-  
-  jp2h = NULL;
-  meta = metadatalist->first;
-  while( meta){
-    if( meta->boxlist){
-      jp2h = search_box( "jp2h", meta->boxlist);
-      if( jp2h)
-	break;
-    }
-    meta = meta->next;
-  }
-  if( !jp2h){
-    fprintf( stderr, "jp2h box not found\n");
-    return NULL;
-  }
-  
-  ihdr = gene_boxbyTypeinStream( jpipstream, get_DBoxoff( jp2h), get_DBoxlen( jp2h), "ihdr");
+#include "byte_manager.h"
+#include "msgqueue_manager.h"
 
-  if( !ihdr){
-    fprintf( stderr, "ihdr box not found\n");
-    return NULL;
-  }
-  
-  ihdrbox = (ihdrbox_param_t *)malloc( sizeof(ihdrbox_param_t));
-  
-  ihdrbox->height = big4( jpipstream+get_DBoxoff(ihdr));
-  ihdrbox->width  = big4( jpipstream+get_DBoxoff(ihdr)+4);
-  ihdrbox->nc     = big2( jpipstream+get_DBoxoff(ihdr)+8);
-  ihdrbox->bpc    = *(jpipstream+get_DBoxoff(ihdr)+10)+1;
+/**
+ * reconstruct j2k codestream from message queue
+ *
+ * @param[in]  msgqueue   message queue pointer
+ * @param[in]  jpipstream original jpt- jpp- stream
+ * @param[in]  csn        codestream number
+ * @param[in]  fw         reconstructing image frame width
+ * @param[in]  fh         reconstructing image frame height
+ * @param[out] j2klen     pointer to the j2k codestream length
+ * @return     generated  reconstructed j2k codestream
+ */
+Byte_t * recons_j2k( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte8_t csn, int fw, int fh, Byte8_t *j2klen);
 
-  free( ihdr);
 
-  return ihdrbox;
-}
+/**
+ * reconstruct jp2 file codestream from message queue
+ *
+ * @param[in]  msgqueue   message queue pointer
+ * @param[in]  jpipstream original jpt- jpp- stream
+ * @param[in]  csn        codestream number
+ * @param[out] jp2len     pointer to the jp2 codestream length
+ * @return     generated  reconstructed jp2 codestream
+ */
+Byte_t * recons_jp2( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte8_t csn, Byte8_t *jp2len);
 
+
+#endif 	    /* !JP2K_ENCODER_H_ */

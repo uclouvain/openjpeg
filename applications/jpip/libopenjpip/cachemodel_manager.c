@@ -59,7 +59,10 @@ cachemodel_param_t * gene_cachemodel( cachemodellist_param_t *cachemodellist, ta
 {
   cachemodel_param_t *cachemodel;
   faixbox_param_t *tilepart;
+  faixbox_param_t *precpacket;
   size_t numOfelem;
+  Byte8_t numOftiles;
+  int i;
 
   cachemodel = (cachemodel_param_t *)malloc( sizeof(cachemodel_param_t));
 
@@ -67,9 +70,15 @@ cachemodel_param_t * gene_cachemodel( cachemodellist_param_t *cachemodellist, ta
   cachemodel->mhead_model = false;
   
   tilepart = target->codeidx->tilepart;
-  numOfelem = get_nmax( tilepart)*get_m( tilepart);
+  numOftiles = get_m( tilepart);
+  numOfelem = get_nmax( tilepart)*numOftiles;
   cachemodel->tp_model = (bool *)calloc( 1, numOfelem*sizeof(bool));
-  
+  cachemodel->th_model = (bool *)calloc( 1, numOftiles*sizeof(bool));
+  cachemodel->pp_model = (bool **)malloc( target->codeidx->SIZ.Csiz*sizeof(bool *));
+  for( i=0; i<target->codeidx->SIZ.Csiz; i++){
+    precpacket = target->codeidx->precpacket[i];
+    cachemodel->pp_model[i] = (bool *)calloc( 1, get_nmax(precpacket)*get_m(precpacket)*sizeof(bool));
+  }
   cachemodel->next = NULL;
   
   if( cachemodellist){
@@ -89,23 +98,38 @@ cachemodel_param_t * gene_cachemodel( cachemodellist_param_t *cachemodellist, ta
 
 void print_cachemodel( cachemodel_param_t cachemodel)
 {
+  target_param_t *target;
   Byte8_t TPnum; // num of tile parts in each tile
+  Byte8_t Pmax; // max num of packets per tile
   int i, j, k, n;
+
+  target = cachemodel.target;
   
-  fprintf( logstream, "target: %s\n", cachemodel.target->filename);
+  fprintf( logstream, "target: %s\n", target->filename);
   fprintf( logstream, "\t main header model: %d\n", cachemodel.mhead_model);
 
   fprintf( logstream, "\t tile part model:\n");
+  TPnum = get_nmax( target->codeidx->tilepart);
 
-  TPnum = get_nmax( cachemodel.target->codeidx->tilepart);
-
-  for( i=0, n=0; i<cachemodel.target->codeidx->YTnum; i++){
-    for( j=0; j<cachemodel.target->codeidx->XTnum; j++){
+  for( i=0, n=0; i<target->codeidx->SIZ.YTnum; i++){
+    for( j=0; j<target->codeidx->SIZ.XTnum; j++){
       for( k=0; k<TPnum; k++)
 	fprintf( logstream, "%d", cachemodel.tp_model[n++]);
       fprintf( logstream, " ");
     }
     fprintf( logstream, "\n");
+  }
+
+  fprintf( logstream, "\t tile header and precinct packet model:\n");
+  for( i=0; i<target->codeidx->SIZ.XTnum*target->codeidx->SIZ.YTnum; i++){
+    fprintf( logstream, "\t  tile.%d  %d\n", i, cachemodel.th_model[i]);
+    for( j=0; j<target->codeidx->SIZ.Csiz; j++){
+      fprintf( logstream, "\t   compo.%d: ", j);
+      Pmax = get_nmax( target->codeidx->precpacket[j]);
+      for( k=0; k<Pmax; k++)
+	fprintf( logstream, "%d", cachemodel.pp_model[j][i*Pmax+k]);
+      fprintf( logstream, "\n");
+    }
   }
 }
 
@@ -140,9 +164,17 @@ void delete_cachemodellist( cachemodellist_param_t **cachemodellist)
 
 void delete_cachemodel( cachemodel_param_t **cachemodel)
 {
+  int i;
+
   unrefer_target( (*cachemodel)->target);
   
   free( (*cachemodel)->tp_model);
+  free( (*cachemodel)->th_model);
+  
+  if( (*cachemodel)->target->codeidx->SIZ.Csiz > 1)
+    for( i=0; i<(*cachemodel)->target->codeidx->SIZ.Csiz; i++)
+      free( (*cachemodel)->pp_model[i]);
+  free( (*cachemodel)->pp_model);
 
 #ifndef SERVER
   fprintf( logstream, "local log: cachemodel deleted\n");

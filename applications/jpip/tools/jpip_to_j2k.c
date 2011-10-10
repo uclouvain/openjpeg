@@ -47,7 +47,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include "msgqueue_manager.h"
-
+#include "jp2k_encoder.h"
 
 int main(int argc,char *argv[])
 {
@@ -89,7 +89,7 @@ int main(int argc,char *argv[])
   
   //print_msgqueue( msgqueue);
 
-  j2kstream = recons_j2k( msgqueue, jpipstream, msgqueue->first->csn, 0, &j2klen);
+  j2kstream = recons_j2k( msgqueue, jpipstream, msgqueue->first->csn, 0, 0, &j2klen);
   
   delete_msgqueue( &msgqueue);
   free( jpipstream);

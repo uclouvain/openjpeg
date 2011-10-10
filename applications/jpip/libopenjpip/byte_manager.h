@@ -116,5 +116,12 @@ Byte4_t big4( Byte_t *buf);
  */
 Byte8_t big8( Byte_t *buf);
 
+/**
+ * modify 4Byte code in a codestream
+ *  
+ * @param[in]  code code value
+ * @param[out] stream modifying codestream
+ */
+void modify_4Bytecode( Byte4_t code, Byte_t *stream);
 
 #endif 	    /* !BYTE_MANAGER_H_ */

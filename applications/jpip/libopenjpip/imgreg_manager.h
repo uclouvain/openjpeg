@@ -50,7 +50,7 @@ typedef struct imgreg_param{
  * @param[in] rw,rh       size  of region
  * @param[in] XOsiz,YOsiz offset from the origin of the reference grid to the left side of the image area
  * @param[in] Xsiz,Ysiz   size of the reference grid
- * @param[in] numOfdecomp number of decomposition levels
+ * @param[in] numOfreslev number of resolution levels
  * @return                structure of image region parameters
  */
 imgreg_param_t map_viewin2imgreg( const int fx,    const int fy, 
@@ -58,7 +58,7 @@ imgreg_param_t map_viewin2imgreg( const int fx,    const int fy,
 				  const int rw,    const int rh,
 				  const int XOsiz, const int YOsiz,
 				  const int Xsiz,  const int Ysiz,
-				  const int numOfdecomp);
+				  const int numOfreslev);
 
 
 /**
@@ -77,6 +77,18 @@ imgreg_param_t map_viewin2imgreg( const int fx,    const int fy,
  * @param[in/out] ymax   vertical   image size pointer
  */
 void find_level( int maxlev, int *lev, int *fx, int *fy, int *xmin, int *ymin, int *xmax, int *ymax);
+
+/**
+ * compute decomposition level (only to get the level
+ *   use find_level for all parameters
+ *
+ * @param[in] fx   horizontal frame size
+ * @param[in] fy   vertical   frame size
+ * @param[in] Xsiz image width
+ * @param[in] Ysiz image height
+ * @return decomposition level
+ */
+int comp_decomplev( int fw, int fh, int Xsiz, int Ysiz);
 
 /**
  * print image region parameters

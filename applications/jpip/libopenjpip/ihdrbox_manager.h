@@ -35,14 +35,22 @@
 #include "box_manager.h"
 #include "metadata_manager.h"
 
+//! I.5.3.1 Image Header box
 typedef struct ihdrbox_param{
   Byte4_t height;
   Byte4_t width;
-  Byte2_t nc;
-  Byte_t  bpc;
+  Byte2_t nc;       //!< number of components
+  Byte_t  bpc;      //!< bits per component
 } ihdrbox_param_t;
 
-ihdrbox_param_t * get_ihdrbox( metadatalist_param_t *metadatalist, Byte_t *jptstream);
+/**
+ * generate ihdr box
+ *
+ * @param[in] metadatalist metadata list pointer
+ * @param[in] jpipstream   JPT/JPP stream
+ * @return    pointer to generated ihdr box
+ */
+ihdrbox_param_t * gene_ihdrbox( metadatalist_param_t *metadatalist, Byte_t *jpipstream);
 
 
 #endif 	    /* !IHDRBOX_MANAGER_H_ */
