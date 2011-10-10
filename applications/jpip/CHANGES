@@ -5,6 +5,9 @@ What's New for OpenJPIP
 ! : changed
 + : added
 
+October 10, 2011
+- [antonin] removed obsolete indexer utility
+
 September 30, 2011
 + [kaori] enabled JPP-stream
 

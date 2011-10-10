@@ -1,7 +1,5 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-SUBDIRS = indexer
-
 bin_PROGRAMS = jpip_to_jp2 jpip_to_j2k test_index addXMLinJP2
 
 jpip_to_jp2_CPPFLAGS = \

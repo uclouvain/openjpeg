@@ -5,10 +5,7 @@ LDFLAGS = -L$(LIBDIR) -lm -lopenjpip_local
 
 ALL = jpip_to_jp2 jpip_to_j2k test_index addXMLinJP2
 
-all: t_indexer $(ALL)
-  
-t_indexer:
-	make -C indexer -f Makefile.nix
+all: $(ALL)
 
 jpip_to_jp2: jpip_to_jp2.o $(LIBFNAME)
 	    $(CC) $(CFLAGS) $< $(LDFLAGS) -o $@

@@ -1,6 +1,4 @@
 
-ADD_SUBDIRECTORY(indexer)
-
 INCLUDE_DIRECTORIES(
   ../libopenjpip
 )
