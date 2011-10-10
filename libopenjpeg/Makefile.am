@@ -50,6 +50,7 @@ dwt.h \
 event.h \
 fix.h \
 image.h \
+indexbox_manager.h \
 int.h \
 j2k.h \
 j2k_lib.h \

@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+October 10, 2011
+* [vincent] fix 'distcheck' rule
+
 October 7, 2011
 + [mickael] enhance non regression test suite generation (and some test names). It is based on a file as encoder previously.  
 + [mickael] add tests about jp2 conformance
@@ -16,7 +19,7 @@ October 6, 2011
 + [mickael] enhance some new JPIP files with opj_config inclusion and using of opj_free/opj_calloc functions (credit to Julien Malik)
 
 October 1, 2011
-+ [vincent] fix output when --disable-shared or --disable-static is passed to configure. Minor fix for jpwl compilation.
+* [vincent] fix output when --disable-shared or --disable-static is passed to configure. Minor fix for jpwl compilation.
 
 September 9, 2011
 + [antonin] added a new indexer functionality to the library. With the new '-jpip' option at encoding, the user can now generate a JP2 file including an XML box with the index used when browsing the image with JPIP. 

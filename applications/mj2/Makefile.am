@@ -59,7 +59,7 @@ mj2_to_frames_CPPFLAGS = \
 @LCMS1_CFLAGS@ \
 -DOPJ_STATIC
 mj2_to_frames_CFLAGS = 
-mj2_to_frames_LDADD = @LCMS2_LIBS@ @LCMS1_LIBS@
+mj2_to_frames_LDADD = @LCMS2_LIBS@ @LCMS1_LIBS@ -lm
 mj2_to_frames_SOURCES = \
 $(OPJ_SRC) \
 ../common/color.c \
