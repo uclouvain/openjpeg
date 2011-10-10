@@ -154,7 +154,7 @@ void enqueue_tileheader( int tile_id, msgqueue_param_t *msgqueue)
   cachemodel = msgqueue->cachemodel;
   target = cachemodel->target;
   codeidx = target->codeidx;
-  
+
   if( !cachemodel->th_model[ tile_id]){
     msg = (message_param_t *)malloc( sizeof(message_param_t));
     msg->last_byte = true;
@@ -164,7 +164,7 @@ void enqueue_tileheader( int tile_id, msgqueue_param_t *msgqueue)
     msg->bin_offset = 0;
     msg->length = codeidx->tileheader[tile_id]->tlen;
     msg->aux = 0; // non exist
-    msg->res_offset = codeidx->offset + get_elemOff( codeidx->tilepart, 0, tile_id); // Changed from Lucian's
+    msg->res_offset = codeidx->offset + get_elemOff( codeidx->tilepart, 0, tile_id);
     msg->phld = NULL;
     msg->next = NULL;
     
@@ -183,7 +183,7 @@ void enqueue_tile( int tile_id, int level, msgqueue_param_t *msgqueue)
   index_param_t *codeidx;
   faixbox_param_t *tilepart;
   message_param_t *msg;
-  Byte8_t binOffset, binLength;
+  Byte8_t binOffset, binLength, class_id;
   int i;
 
   cachemodel = msgqueue->cachemodel;
@@ -194,13 +194,15 @@ void enqueue_tile( int tile_id, int level, msgqueue_param_t *msgqueue)
   numOftparts = get_nmax( tilepart);
   numOftiles  = get_m( tilepart);
 
+  class_id = (numOftparts==1) ? TILE_MSG : EXT_TILE_MSG;
+  
   if( tile_id < 0 || numOftiles <= tile_id){
     fprintf( FCGI_stderr, "Error, Invalid tile-id %d\n", tile_id);
     return;
   }
   
   tp_model = &cachemodel->tp_model[ tile_id*numOftparts];
-  
+
   binOffset=0;
   for( i=0; i<numOftparts-level; i++){
     binLength = get_elemLen( tilepart, i, tile_id);
@@ -210,11 +212,7 @@ void enqueue_tile( int tile_id, int level, msgqueue_param_t *msgqueue)
       
       msg->last_byte = i==numOftparts-1? true : false;
       msg->in_class_id = tile_id;
-#if 0
-      msg->class_id = TILE_MSG;
-#else
-      msg->class_id = EXT_TILE_MSG;
-#endif
+      msg->class_id = class_id;
       msg->csn = target->csn;
       msg->bin_offset = binOffset;
       msg->length = binLength;

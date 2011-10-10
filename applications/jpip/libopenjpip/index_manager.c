@@ -706,3 +706,11 @@ Byte4_t min( Byte4_t n1, Byte4_t n2)
   else
     return n2;
 }
+
+bool isJPTfeasible( index_param_t index)
+{
+  if( 1 < get_nmax( index.tilepart))
+    return true;
+  else
+    return false;
+}

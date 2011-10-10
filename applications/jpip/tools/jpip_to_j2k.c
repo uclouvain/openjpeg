@@ -88,9 +88,9 @@ int main(int argc,char *argv[])
   parse_JPIPstream( jpipstream, jpiplen, 0, msgqueue);
   
   //print_msgqueue( msgqueue);
-
-  j2kstream = recons_j2k( msgqueue, jpipstream, msgqueue->first->csn, 0, 0, &j2klen);
   
+  j2kstream = recons_j2k( msgqueue, jpipstream, msgqueue->first->csn, 0, 0, &j2klen);
+    
   delete_msgqueue( &msgqueue);
   free( jpipstream);
 

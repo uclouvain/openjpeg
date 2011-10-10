@@ -35,6 +35,7 @@
 #include "faixbox_manager.h"
 #include "metadata_manager.h"
 #include "mhixbox_manager.h"
+#include "bool.h"
 
 //! progression order 
 typedef enum porder {
@@ -165,5 +166,14 @@ range_param_t get_tile_Yrange( SIZmarker_param_t SIZ, Byte4_t tile_id, int level
  */
 Byte4_t get_tile_XSiz( SIZmarker_param_t SIZ, Byte4_t tile_id, int level);
 Byte4_t get_tile_YSiz( SIZmarker_param_t SIZ, Byte4_t tile_id, int level);
+
+
+/**
+ * answers if the target is feasible to JPT-stream
+ *
+ * @param[in] index index parameters
+ * @return    true if JPT-stream is feasible
+ */
+bool isJPTfeasible( index_param_t index);
 
 #endif 	    /* !INDEX_MANAGER_H_ */

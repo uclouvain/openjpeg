@@ -40,8 +40,6 @@ import java.io.*;
 
 public class ImageViewer extends JPanel
 {  
-    private MML myMML;
-    private ResizeListener myRL;
     private ImageManager imgmanager;
     private int vw, vh;
     private int iw, ih;
@@ -54,12 +52,13 @@ public class ImageViewer extends JPanel
     private Rectangle rect = new Rectangle();
     private Rectangle roirect[] = null;
     private String roiname[] = null;
-      
-    public ImageViewer( String j2kfilename, ImageManager manager)
+
+    public ImageViewer( String j2kfilename, ImageManager manager, boolean session, boolean jppstream)      
     {
 	String str;
+	MML myMML;
 
-	this.setSize( 200, 200);
+	this.setSize( 170, 170);
 	Dimension asz = this.getSize();
     
 	vw = asz.width;
@@ -67,14 +66,14 @@ public class ImageViewer extends JPanel
     
 	setBackground(Color.black);
 	myMML = new MML(this);
-	myRL = new ResizeListener(this);
-
+	
 	imgmanager = manager;
-	img = imgmanager.getImage( j2kfilename, vw, vh);
+
+	img = imgmanager.getImage( j2kfilename, vw, vh, session, jppstream, !jppstream);
 
 	addMouseListener(myMML);
 	addMouseMotionListener(myMML);
-	addComponentListener(myRL);
+	addComponentListener( new ResizeListener(this));
     }
 
     public Image getImage()
@@ -87,8 +86,8 @@ public class ImageViewer extends JPanel
 	roirect = null;
 	roiname = null;
 
-	double scalex = vw/(double)rect.width;
-	double scaley = vh/(double)rect.height;
+	double scalex = (double)vw/(double)rect.width;
+	double scaley = (double)vh/(double)rect.height;
     
 	int fw = (int)(imgmanager.getFw()*scalex);
 	int fh = (int)(imgmanager.getFh()*scaley);

@@ -103,11 +103,12 @@ Client:
     % ../opj_dec_server
 
  2. Open image viewers (as many as needed)
-    % java -jar opj_viewer.jar http://hostname/myFCGI JP2_filename.jp2 [stateless]
+    % java -jar opj_viewer.jar http://hostname/myFCGI JP2_filename.jp2 [stateless/session] [jptstream/jppstream]
     ( The arguments 
       - http://hostname/myFCGI is the HTTP server URI (myFCGI refers to opj_server by the server setting)
       - JP2_filename.jp2 is the name of a JP2 file available on the server.
-      - stateless if stateless request is desired, otherwise session request is implemented
+      - request type stateless for no caching, session (default) for caching
+      - return media type, JPT-stream tile based stream, or JPP-stream (default) precinct based stream  
     Image viewer GUI instructions:
       Scale up request: Enlarge the window
       ROI request:      Select a region by mouse click and drag, then click inside the red frame of the selected region
@@ -125,7 +126,11 @@ Client:
 ----------
 
 An example to encode a TIF image "copenhague1.tif" at resolution 4780x4050, 8bit/pixel, grayscale.
-   % ./image_to_j2k -i copenhague1.tif -o copenhague1.jp2 -p RPCL -c [64,64] -t 640,480 -jpip
+   % ./image_to_j2k -i copenhague1.tif -o copenhague1.jp2 -p RPCL -c [64,64] -t 640,480 -jpip -v R
+
+ options
+  -jpip : embed index table box into the output JP2 file (obligation for JPIP)
+  -v R  : partition a tile into tile parts of different resolution levels (obligation for JPT-stream)
 
 <Option>
  3. Embed metadata into JP2 file

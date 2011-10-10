@@ -7,6 +7,7 @@ What's New for OpenJPIP
 
 October 10, 2011
 - [antonin] removed obsolete indexer utility
++ [kaori]   enable JPT-stream request from client viewer option
 
 September 30, 2011
 + [kaori] enabled JPP-stream

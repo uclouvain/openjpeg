@@ -37,6 +37,7 @@
 //! Cache model parameters
 typedef struct cachemodel_param{
   target_param_t *target;        //!< reference pointer to the target
+  bool jppstream;                //!< return type, true: JPP-stream, false: JPT-stream
   bool mhead_model;              //!< main header model, if sent, 1, else 0
   bool *tp_model;                //!< dynamic array pointer of tile part model, if sent, 1, else 0
   bool *th_model;                //!< dynamic array pointer of tile header model
@@ -59,13 +60,14 @@ typedef struct cachemodellist_param{
 cachemodellist_param_t * gene_cachemodellist();
 
 /**
- * generate a session under the sesion list
+ * generate a cache model under a list
  *
- * @param[in] cachemodellist cachemodel list to insert the generated cache model
+ * @param[in] cachemodellist cachemodel list to insert the generated cache model, NULL for stateless
  * @param[in] target         pointer the reference target
+ * @param[in] reqJPP         if JPP-stream is desired true, JPT-stream false
  * @return                   pointer to the generated cache model
  */
-cachemodel_param_t * gene_cachemodel( cachemodellist_param_t *cachemodellist, target_param_t *target);
+cachemodel_param_t * gene_cachemodel( cachemodellist_param_t *cachemodellist, target_param_t *target, bool reqJPP);
 
 
 /**

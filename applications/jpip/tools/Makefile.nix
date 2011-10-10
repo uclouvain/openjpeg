@@ -18,4 +18,3 @@ test_index: test_index.o $(LIBFNAME)
 
 clean:
 	rm -f $(ALL) *.o *~
-	make clean -C indexer -f Makefile.nix
