@@ -22,9 +22,13 @@ ltmain.sh \
 missing
 
 EXTRA_DIST = \
-CMake/CheckHaveGetopt.cmake \
+CMake/CTestCustom.cmake.in \
+CMake/FindFCGI.cmake \
+CMake/FindLCMS2.cmake \
+CMake/FindLCMS.cmake \
 CMake/OpenJPEGConfig.cmake.in \
 CMakeLists.txt \
+CTestConfig.cmake \
 AUTHORS \
 CHANGES \
 INSTALL \
@@ -35,7 +39,7 @@ THANKS \
 bootstrap.sh \
 libopenjpeg1.pc.cmake \
 libopenjpeg1.pc.in \
-opj_configh.cmake.in \
+opj_config.h.cmake.in \
 m4/opj_check_lib.m4 \
 m4/opj_doxygen.m4 \
 m4/pkg.m4

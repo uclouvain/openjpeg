@@ -25,7 +25,6 @@ event_mgr_handler.c \
 event_mgr_handler.h \
 idxjp2_manager.c \
 j2k_decoder.c \
-indexbox_manager.h \
 ext_libopenjpeg/phix_manager.c \
 ext_libopenjpeg/ppix_manager.c \
 ext_libopenjpeg/thix_manager.c \

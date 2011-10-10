@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+October 10, 2011
+* [vincent] fix 'distcheck' rule
+
 October 07, 2011
 * [mickael] WIP: correct mistake in text output inside set_decoded_area function (credit to Winfried)
 + [mickael] WIP: update jp2 dump functions with the new V2 framework

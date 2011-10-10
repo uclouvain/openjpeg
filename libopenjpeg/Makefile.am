@@ -14,11 +14,9 @@ lib_LTLIBRARIES = libopenjpeg.la
 libopenjpeg_la_CPPFLAGS = \
 -I. \
 -I$(top_srcdir)/libopenjpeg \
--I$(top_builddir)/libopenjpeg \
-@LCMS1_CFLAGS@ \
-@LCMS2_CFLAGS@
+-I$(top_builddir)/libopenjpeg
 libopenjpeg_la_CFLAGS =
-libopenjpeg_la_LIBADD = @LCMS1_LIBS@ @LCMS2_LIBS@
+libopenjpeg_la_LIBADD = -lm
 libopenjpeg_la_LDFLAGS = -no-undefined -version-info @lt_version@
 
 libopenjpeg_la_SOURCES = \
@@ -53,6 +51,7 @@ dwt.h \
 event.h \
 fix.h \
 image.h \
+indexbox_manager.h \
 int.h \
 j2k.h \
 j2k_lib.h \
