@@ -43,22 +43,25 @@ public class ImageManager extends JPIPHttpClient
     public int getOrigWidth(){ return pnmimage.width;}
     public int getOrigHeight(){ return pnmimage.height;}
     
-    public Image getImage( String j2kfilename, int reqfw, int reqfh)
+    public Image getImage( String j2kfilename, int reqfw, int reqfh, boolean reqcnew)
     {
 	System.err.println();
 	
-	String refcid = ImgdecClient.query_cid( j2kfilename);
+	String refcid = null;
 	byte[] jpipstream;
 	
+	if( reqcnew)
+	    refcid = ImgdecClient.query_cid( j2kfilename);
+	    
 	if( refcid == null){
 	    String reftid = ImgdecClient.query_tid( j2kfilename);
 	    if( reftid == null)
-		jpipstream = super.requestViewWindow( j2kfilename, reqfw, reqfh, true);
+		jpipstream = super.requestViewWindow( j2kfilename, reqfw, reqfh, reqcnew);
 	    else
-		jpipstream = super.requestViewWindow( j2kfilename, reftid, reqfw, reqfh, true);
+		jpipstream = super.requestViewWindow( j2kfilename, reftid, reqfw, reqfh, reqcnew);
 	}
 	else
-	    jpipstream = super.requestViewWindow( reqfw, reqfh, refcid, true);
+	    jpipstream = super.requestViewWindow( reqfw, reqfh, refcid, reqcnew);
 	
 	System.err.println( "decoding to PNM image");
 	pnmimage = ImgdecClient.decode_jpipstream( jpipstream, j2kfilename, tid, cid, fw, fh);
@@ -70,11 +73,11 @@ public class ImageManager extends JPIPHttpClient
     public Image getImage( int reqfw, int reqfh, int reqrx, int reqry, int reqrw, int reqrh)
     {
 	System.err.println();
-
+	
 	byte[] jpipstream = super.requestViewWindow( reqfw, reqfh, reqrx, reqry, reqrw, reqrh);
 
 	System.err.println( "decoding to PNM image");
-	pnmimage = ImgdecClient.decode_jpipstream( jpipstream, cid, fw, fh);
+	pnmimage = ImgdecClient.decode_jpipstream( jpipstream, tid, cid, fw, fh);
 	System.err.println( "     done");
 	
 	return pnmimage.createROIImage( rx, ry, rw, rh);
@@ -96,7 +99,9 @@ public class ImageManager extends JPIPHttpClient
     }
     public void closeChannel()
     {
-	ImgdecClient.destroy_cid( cid);
-	super.closeChannel();
+	if( cid != null){
+	    ImgdecClient.destroy_cid( cid);
+	    super.closeChannel();
+	}
     }
 }

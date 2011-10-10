@@ -72,7 +72,11 @@ public class JPIPHttpClient
 	if( cid != null)
 	    return requestViewWindow( reqfw, reqfh, reqrx, reqry, reqrw, reqrh, cid);
 	else
-	    return null;
+	    //		return null;
+	    if( tid != null)
+		return requestViewWindow( null, tid, reqfw, reqfh, reqrx, reqry, reqrw, reqrh, null, false);
+	    else
+		return null;
     }
 
     public byte[] requestViewWindow( int reqfw, int reqfh, String reqcid)

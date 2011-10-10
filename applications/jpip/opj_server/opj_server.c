@@ -98,7 +98,7 @@ int main(void)
 #else
 
   char query_string[128];
-  while((fgets( query_string, 128, stdin))[0] != '\n' )
+  while( fgets( query_string, 128, stdin) && query_string[0]!='\n')
 #endif
     {
 

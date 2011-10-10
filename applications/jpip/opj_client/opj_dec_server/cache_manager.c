@@ -154,6 +154,20 @@ cache_param_t * search_cacheBycid( char cid[], cachelist_param_t *cachelist)
   return NULL;
 }
 
+cache_param_t * search_cacheBytid( char tid[], cachelist_param_t *cachelist)
+{
+  cache_param_t *foundcache;
+
+  foundcache = cachelist->first;
+  
+  while( foundcache != NULL){
+    if( strcmp( tid, foundcache->tid) == 0)
+      return foundcache;
+    foundcache = foundcache->next;
+  }
+  return NULL;
+}
+
 void add_cachecid( char *cid, cache_param_t *cache)
 {
   char **tmp;

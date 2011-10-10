@@ -141,7 +141,7 @@ int receive_line(SOCKET connected_socket, char *buf);
  *\section sec2 PNM request
  * Get decoded PGM/PPM image
  *
- * client -> server: PNM request\\n cidstring\\n fw\\n fh\\n \n
+ * client -> server: PNM request\\n [cid/tid]string\\n fw\\n fh\\n \n
  * server -> client: P6 or P5 (2Byte) width (2Byte Big endian) height (2Byte Big endian) maxval (1Byte) data
  *
  *\section sec3 XML request
