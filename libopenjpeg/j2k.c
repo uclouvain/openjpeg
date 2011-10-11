@@ -3352,10 +3352,9 @@ opj_bool j2k_read_sot_v2 (
 
 	/* Ref A.4.2: Psot could be equal zero if it is the last tile-part of the codestream.*/
 	if (!l_tot_len) {
-		opj_event_msg_v2(p_manager, EVT_ERROR, "Psot value of the current tile-part is equal to zero, "
-				"for the moment we couldn't manage this case (need to compute the number of byte left"
-				" in the codestream).\n");
-		return OPJ_FALSE;
+		opj_event_msg_v2(p_manager, EVT_INFO, "Psot value of the current tile-part is equal to zero, "
+				"we assuming it is the last tile-part of the codestream.\n");
+		p_j2k->m_specific_param.m_decoder.m_last_tile_part = 1;
 	}
 
 	opj_read_bytes(p_header_data,&l_current_part ,1);	/* TPsot */
@@ -3575,7 +3574,11 @@ opj_bool j2k_read_sod_v2 (
 	assert(p_stream != 00);
 
 	l_tcp = &(p_j2k->m_cp.tcps[p_j2k->m_current_tile_number]);
-	p_j2k->m_specific_param.m_decoder.m_sot_length -= 2;
+
+	if (p_j2k->m_specific_param.m_decoder.m_last_tile_part)
+		p_j2k->m_specific_param.m_decoder.m_sot_length = opj_stream_get_number_byte_left(p_stream) - 2;
+	else
+		p_j2k->m_specific_param.m_decoder.m_sot_length -= 2;
 
 	l_current_data = &(l_tcp->m_data);
 	l_tile_len = &l_tcp->m_data_size;
@@ -6765,7 +6768,7 @@ opj_codestream_info_v2_t* j2k_get_cstr_info(opj_j2k_v2_t* p_j2k)
 	cstr_info->m_default_tile_info.numlayers = l_default_tile->numlayers;
 	cstr_info->m_default_tile_info.mct = l_default_tile->mct;
 
-	cstr_info->m_default_tile_info.tccp_info = (opj_tccp_info_t*) opj_calloc(1,sizeof(opj_tccp_info_t));
+	cstr_info->m_default_tile_info.tccp_info = (opj_tccp_info_t*) opj_calloc(cstr_info->nbcomps, sizeof(opj_tccp_info_t));
 
 	for (compno = 0; compno < numcomps; compno++) {
 		opj_tccp_t *l_tccp = &(l_default_tile->tccps[compno]);
@@ -6781,8 +6784,8 @@ opj_codestream_info_v2_t* j2k_get_cstr_info(opj_j2k_v2_t* p_j2k)
 		l_tccp_info->qmfbid = l_tccp->qmfbid;
 		if (l_tccp->numresolutions < J2K_MAXRLVLS)
 		{
-			memcpy(l_tccp_info->prch, l_tccp->prch, l_tccp->numresolutions);
-			memcpy(l_tccp_info->prcw, l_tccp->prcw, l_tccp->numresolutions);
+			memcpy(l_tccp_info->prch, l_tccp->prch, l_tccp->numresolutions - 1);
+			memcpy(l_tccp_info->prcw, l_tccp->prcw, l_tccp->numresolutions - 1);
 		}
 
 		/* quantization style*/

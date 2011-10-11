@@ -2458,52 +2458,59 @@ opj_bool tcd_mct_decode ( opj_tcd_v2_t *p_tcd )
 	}
 
 	l_samples = (l_tile_comp->x1 - l_tile_comp->x0) * (l_tile_comp->y1 - l_tile_comp->y0);
-	if (l_tcp->mct == 2) {
-		OPJ_BYTE ** l_data;
 
-		if (! l_tcp->m_mct_decoding_matrix) {
-			return OPJ_TRUE;
-		}
+	if (l_tile->numcomps >= 3 ){
+		if (l_tcp->mct == 2) {
+			OPJ_BYTE ** l_data;
 
-		l_data = (OPJ_BYTE **) opj_malloc(l_tile->numcomps*sizeof(OPJ_BYTE*));
-		if (! l_data) {
-			return OPJ_FALSE;
-		}
+			if (! l_tcp->m_mct_decoding_matrix) {
+				return OPJ_TRUE;
+			}
 
-		for (i=0;i<l_tile->numcomps;++i) {
-			l_data[i] = (OPJ_BYTE*) l_tile_comp->data;
-			++l_tile_comp;
-		}
+			l_data = (OPJ_BYTE **) opj_malloc(l_tile->numcomps*sizeof(OPJ_BYTE*));
+			if (! l_data) {
+				return OPJ_FALSE;
+			}
 
-		if (! mct_decode_custom(// MCT data
-								(OPJ_BYTE*) l_tcp->m_mct_decoding_matrix,
-								// size of components
-								l_samples,
-								// components
-								l_data,
-								// nb of components (i.e. size of pData)
-								l_tile->numcomps,
-								// tells if the data is signed
-								p_tcd->image->comps->sgnd)) {
+			for (i=0;i<l_tile->numcomps;++i) {
+				l_data[i] = (OPJ_BYTE*) l_tile_comp->data;
+				++l_tile_comp;
+			}
+
+			if (! mct_decode_custom(// MCT data
+									(OPJ_BYTE*) l_tcp->m_mct_decoding_matrix,
+									// size of components
+									l_samples,
+									// components
+									l_data,
+									// nb of components (i.e. size of pData)
+									l_tile->numcomps,
+									// tells if the data is signed
+									p_tcd->image->comps->sgnd)) {
+				opj_free(l_data);
+				return OPJ_FALSE;
+			}
+
 			opj_free(l_data);
-			return OPJ_FALSE;
-		}
-
-		opj_free(l_data);
-	}
-	else {
-		if (l_tcp->tccps->qmfbid == 1) {
-			mct_decode(	l_tile->comps[0].data,
-						l_tile->comps[1].data,
-						l_tile->comps[2].data,
-						l_samples);
 		}
 		else {
-			mct_decode_real(	(float*)l_tile->comps[0].data,
-								(float*)l_tile->comps[1].data,
-								(float*)l_tile->comps[2].data,
-								l_samples);
+			if (l_tcp->tccps->qmfbid == 1) {
+				mct_decode(	l_tile->comps[0].data,
+							l_tile->comps[1].data,
+							l_tile->comps[2].data,
+							l_samples);
+			}
+			else {
+				mct_decode_real(	(float*)l_tile->comps[0].data,
+									(float*)l_tile->comps[1].data,
+									(float*)l_tile->comps[2].data,
+									l_samples);
+			}
 		}
+	}
+	else {
+		/* FIXME need to use opj_event_msg_v2 function */
+		fprintf(stderr,"Number of components (%d) is inconsistent with a MCT. Skip the MCT step.\n",l_tile->numcomps);
 	}
 
 	return OPJ_TRUE;

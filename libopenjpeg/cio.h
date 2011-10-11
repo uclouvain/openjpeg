@@ -126,6 +126,11 @@ typedef struct opj_stream_private
 	void *					m_user_data;
 
 	/**
+	 * User data length
+	 */
+	OPJ_UINT32 				m_user_data_length;
+
+	/**
 	 * Pointer to actual read function (NULL at the initialization of the cio.
 	 */
 	opj_stream_read_fn		m_read_fn;
@@ -325,6 +330,16 @@ OPJ_SIZE_T opj_stream_skip (opj_stream_private_t * p_stream,OPJ_SIZE_T p_size, s
  * @return		the current position o fthe stream.
  */
 OPJ_SIZE_T opj_stream_tell (const opj_stream_private_t * p_stream);
+
+
+/**
+ * Get the number of bytes left before the end of the stream (similar to cio_numbytesleft).
+ *
+ * @param		p_stream	the stream to get the information from.
+ *
+ * @return		Number of bytes left before the end of the stream.
+ */
+OPJ_SIZE_T opj_stream_get_number_byte_left (const opj_stream_private_t * p_stream);
 
 /**
  * Skips a number of bytes from the stream.

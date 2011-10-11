@@ -126,6 +126,17 @@ OPJ_UINT32 opj_read_from_file (void * p_buffer, OPJ_UINT32 p_nb_bytes, FILE * p_
 	return l_nb_read ? l_nb_read : -1;
 }
 
+OPJ_UINT32 opj_get_data_length_from_file (FILE * p_file)
+{
+	OPJ_UINT32 file_length = 0;
+
+	fseek(p_file, 0, SEEK_END);
+	file_length = ftell(p_file);
+	fseek(p_file, 0, SEEK_SET);
+
+	return file_length;
+}
+
 OPJ_UINT32 opj_write_from_file (void * p_buffer, OPJ_UINT32 p_nb_bytes, FILE * p_file)
 {
 	return fwrite(p_buffer,1,p_nb_bytes,p_file);
@@ -586,6 +597,7 @@ opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream (FILE * p_file, OPJ_UIN
 	}
 
 	opj_stream_set_user_data(l_stream, p_file);
+	opj_stream_set_user_data_length(l_stream, opj_get_data_length_from_file(p_file));
 	opj_stream_set_read_function(l_stream, (opj_stream_read_fn) opj_read_from_file);
 	opj_stream_set_write_function(l_stream, (opj_stream_write_fn) opj_write_from_file);
 	opj_stream_set_skip_function(l_stream, (opj_stream_skip_fn) opj_skip_from_file);

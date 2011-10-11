@@ -439,11 +439,11 @@ OPJ_API void OPJ_CALLCONV opj_stream_destroy(opj_stream_t* p_stream)
 OPJ_API void OPJ_CALLCONV opj_stream_set_read_function(opj_stream_t* p_stream, opj_stream_read_fn p_function)
 {
 	opj_stream_private_t* l_stream = (opj_stream_private_t*) p_stream;
-	if
-		((!l_stream) || (! (l_stream->m_status & opj_stream_e_input)))
-	{
+
+	if ((!l_stream) || (! (l_stream->m_status & opj_stream_e_input))) {
 		return;
 	}
+
 	l_stream->m_read_fn = p_function;
 }
 
@@ -499,6 +499,18 @@ OPJ_API void OPJ_CALLCONV opj_stream_set_user_data(opj_stream_t* p_stream, void 
 {
 	opj_stream_private_t* l_stream = (opj_stream_private_t*) p_stream;
 	l_stream->m_user_data = p_data;
+}
+
+/**
+ * Sets the given data to be used as a user data for the stream.
+ * @param		p_stream	the stream to modify
+ * @param		p_data		the data to set.
+*/
+OPJ_API void OPJ_CALLCONV opj_stream_set_user_data_length(opj_stream_t* p_stream, OPJ_UINT32 data_length)
+{
+	opj_stream_private_t* l_stream = (opj_stream_private_t*) p_stream;
+
+	l_stream->m_user_data_length = data_length;
 }
 
 /**
@@ -850,6 +862,21 @@ OPJ_SIZE_T opj_stream_write_skip (opj_stream_private_t * p_stream, OPJ_SIZE_T p_
 OPJ_SIZE_T opj_stream_tell (const opj_stream_private_t * p_stream)
 {
 	return p_stream->m_byte_offset;
+}
+
+
+/**
+ * Get the number of bytes left before the end of the stream (similar to cio_numbytesleft).
+ *
+ * @param		p_stream	the stream to get the information from.
+ *
+ * @return		Number of bytes left before the end of the stream.
+ */
+OPJ_SIZE_T opj_stream_get_number_byte_left (const opj_stream_private_t * p_stream)
+{
+	return p_stream->m_user_data_length ?
+				p_stream->m_user_data_length - p_stream->m_byte_offset :
+				0;
 }
 
 /**
