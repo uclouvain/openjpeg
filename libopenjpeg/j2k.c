@@ -6784,8 +6784,8 @@ opj_codestream_info_v2_t* j2k_get_cstr_info(opj_j2k_v2_t* p_j2k)
 		l_tccp_info->qmfbid = l_tccp->qmfbid;
 		if (l_tccp->numresolutions < J2K_MAXRLVLS)
 		{
-			memcpy(l_tccp_info->prch, l_tccp->prch, l_tccp->numresolutions - 1);
-			memcpy(l_tccp_info->prcw, l_tccp->prcw, l_tccp->numresolutions - 1);
+			memcpy(l_tccp_info->prch, l_tccp->prch, l_tccp->numresolutions);
+			memcpy(l_tccp_info->prcw, l_tccp->prcw, l_tccp->numresolutions);
 		}
 
 		/* quantization style*/
