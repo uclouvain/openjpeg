@@ -212,11 +212,16 @@ Byte2_t modify_CODmkrstream( CODmarker_param_t COD, int numOfdecomp, Byte_t *COD
     return 0;
   }
   
-  newLcod  = 13+numOfdecomp;
+  if( COD.Scod & 0x01){
+    newLcod  = 13+numOfdecomp;
 
-  *CODstream++ = (Byte_t)((Byte2_t)(newLcod & 0xff00) >> 8);
-  *CODstream++ = (Byte_t)(newLcod & 0x00ff);
-
+    *CODstream++ = (Byte_t)((Byte2_t)(newLcod & 0xff00) >> 8);
+    *CODstream++ = (Byte_t)(newLcod & 0x00ff);
+  }
+  else{
+    newLcod = COD.Lcod;
+    CODstream += 2;
+  }
   CODstream += 5; // skip Scod & SGcod
   
   // SPcod
@@ -258,7 +263,7 @@ bool modify_tileheader( Byte_t *j2kstream, Byte8_t SOToffset, int numOfdecomp, B
     thstream += ((thstream[0]<<8)+(thstream[1])); // marker length
   }
 
-  if( (*j2klen)-SOToffset < Psot){
+  if( (*j2klen)-SOToffset != Psot){
     Psot = (*j2klen)-SOToffset;
     modify_4Bytecode( Psot, Psot_stream);
   }

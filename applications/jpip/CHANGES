@@ -5,9 +5,12 @@ What's New for OpenJPIP
 ! : changed
 + : added
 
+October 11, 2011
++ [antonin] enable JPT-stream request from client viewer option (credit to kaori)
+
 October 10, 2011
-- [antonin] removed obsolete indexer utility
-+ [antonin] enabled JPP-stream
+- [antonin] removed obsolete indexer utility (credit to kaori)
++ [antonin] enabled JPP-stream (credit to kaori)
 
 September 16, 2011
 + [kaori] enabled stateless requests from the opj_viewers

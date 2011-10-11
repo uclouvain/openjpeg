@@ -248,12 +248,12 @@ Byte_t * recons_codestream_from_JPPstream( msgqueue_param_t *msgqueue, Byte_t *j
     fprintf( FCGI_stderr, "Error, Only RPCL order supported\n");
     return j2kstream;
   }
-  
+
   if( fw == 0 || fh == 0)
     mindeclev = 0;
   else
     mindeclev = comp_decomplev( fw, fh, SIZ.Xsiz, SIZ.Ysiz);
-
+  
   max_reslev = -1;
   last_tileID = get_last_tileID( msgqueue, csn, true); 
   
@@ -312,17 +312,23 @@ Byte_t * recons_RPCLbitstream( msgqueue_param_t *msgqueue, Byte_t *jpipstream, B
 			       Byte8_t tileID, SIZmarker_param_t SIZ, CODmarker_param_t COD, int mindeclev, 
 			       int *max_reslev, Byte8_t *j2klen)
 {
-  int r, p, c;
+  int r, p, c, numOfprcts;
   bool foundPrec;
   Byte8_t binOffset, precID, seqID;
   Byte4_t XTsiz, YTsiz;
   message_param_t *ptr;
   
   for( r=0, seqID=0; r<=(COD.numOfdecomp-mindeclev); r++){
-    XTsiz = get_tile_XSiz( SIZ, tileID, COD.numOfdecomp-r);
-    YTsiz = get_tile_YSiz( SIZ, tileID, COD.numOfdecomp-r);
     
-    for( p=0; p<ceil((double)XTsiz/(double)COD.XPsiz[r])*ceil((double)YTsiz/(double)COD.YPsiz[r]); p++, seqID++){      
+    if( COD.Scod & 0x01){
+      XTsiz = get_tile_XSiz( SIZ, tileID, COD.numOfdecomp-r);
+      YTsiz = get_tile_YSiz( SIZ, tileID, COD.numOfdecomp-r);
+      numOfprcts = ceil((double)XTsiz/(double)COD.XPsiz[r])*ceil((double)YTsiz/(double)COD.YPsiz[r]);
+    }
+    else
+      numOfprcts = 1;
+    
+    for( p=0; p<numOfprcts; p++, seqID++){      
       for( c=0; c<SIZ.Csiz; c++){
 
 	precID = comp_precinct_id( tileID, c, seqID, SIZ.Csiz, SIZ.XTnum*SIZ.YTnum);
@@ -341,7 +347,7 @@ Byte_t * recons_RPCLbitstream( msgqueue_param_t *msgqueue, Byte_t *jpipstream, B
 	  }
 	  ptr = ptr->next;
 	}
-	if(!foundPrec)
+	if(!foundPrec && COD.Scod & 0x01)
 	  j2kstream = add_padding( 1, j2kstream, j2klen);
       }
     }

@@ -106,7 +106,6 @@ void print_msgqueue( msgqueue_param_t *msgqueue);
  */
 void enqueue_mainheader( msgqueue_param_t *msgqueue);
 
-
 /**
  * enqueue tile headers data-bin into message queue
  *
@@ -114,7 +113,6 @@ void enqueue_mainheader( msgqueue_param_t *msgqueue);
  * @param[in,out] msgqueue message queue pointer
  */
 void enqueue_tileheader( int tile_id, msgqueue_param_t *msgqueue);
-
 
 /**
  * enqueue tile data-bin into message queue

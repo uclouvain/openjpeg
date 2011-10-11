@@ -55,7 +55,7 @@ cachemodellist_param_t * gene_cachemodellist()
   return cachemodellist;
 }
 
-cachemodel_param_t * gene_cachemodel( cachemodellist_param_t *cachemodellist, target_param_t *target)
+cachemodel_param_t * gene_cachemodel( cachemodellist_param_t *cachemodellist, target_param_t *target, bool reqJPP)
 {
   cachemodel_param_t *cachemodel;
   faixbox_param_t *tilepart;
@@ -67,6 +67,19 @@ cachemodel_param_t * gene_cachemodel( cachemodellist_param_t *cachemodellist, ta
   cachemodel = (cachemodel_param_t *)malloc( sizeof(cachemodel_param_t));
 
   refer_target( target, &cachemodel->target);
+  
+  if( reqJPP){
+    if( target->jppstream)
+      cachemodel->jppstream = true;
+    else
+      cachemodel->jppstream = false;
+  } else{ // reqJPT
+    if( target->jptstream)
+      cachemodel->jppstream = false;
+    else
+      cachemodel->jppstream = true;
+  }
+
   cachemodel->mhead_model = false;
   
   tilepart = target->codeidx->tilepart;

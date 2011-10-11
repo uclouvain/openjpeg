@@ -8,6 +8,7 @@ What's New for OpenJPEG
 October 10, 2011
 * [vincent] fix 'distcheck' rule
 * [antonin] modified indexer for JPIP, JPP-stream
+! [kaori]   change -v option was reactivated for JPIP
 
 October 7, 2011
 + [mickael] enhance non regression test suite generation (and some test names). It is based on a file as encoder previously.  

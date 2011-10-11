@@ -31,6 +31,7 @@
 #ifndef   	TARGET_MANAGER_H_
 # define   	TARGET_MANAGER_H_
 
+#include "bool.h"
 #include "index_manager.h"
 
 //! maximum length of target identifier
@@ -47,6 +48,8 @@ typedef struct target_param{
   int csn;                        //!< codestream number
   index_param_t *codeidx;         //!< index information of codestream
   int num_of_use;                 //!< numbers of sessions refering to this target
+  bool jppstream;                 //!< if this target can return JPP-stream
+  bool jptstream;                 //!< if this target can return JPP-stream
   struct target_param *next;      //!< pointer to the next target
 } target_param_t;
 

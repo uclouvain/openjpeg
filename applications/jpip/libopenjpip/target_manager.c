@@ -97,8 +97,9 @@ target_param_t * gene_target( targetlist_param_t *targetlist, char *targetname)
   target->fd = fd;
   target->csn = last_csn++;
   target->codeidx = jp2idx;
-  target->num_of_use = 0;
-  
+  target->num_of_use = 0; 
+  target->jppstream = true;
+  target->jptstream = isJPTfeasible( *jp2idx);
   target->next=NULL;
 
   if( targetlist->first) // there are one or more entries
