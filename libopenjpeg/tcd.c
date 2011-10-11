@@ -1714,7 +1714,7 @@ opj_bool FUNCTION (	opj_tcd_v2_t *p_tcd,										\
 		}																		\
 																				\
 		if (l_tilec->data == 00) {												\
-            l_tilec->data = (OPJ_INT32 *) opj_aligned_malloc(l_data_size);		\
+            l_tilec->data = (OPJ_INT32 *) opj_malloc(l_data_size);		\
 			if (! l_tilec->data ) {												\
 				return OPJ_FALSE;												\
 			}																	\
@@ -2301,7 +2301,7 @@ void tcd_free_tile(opj_tcd_v2_t *p_tcd)
 		}
 
 		if (l_tile_comp->data) {
-			opj_aligned_free(l_tile_comp->data);
+			opj_free(l_tile_comp->data);
 			l_tile_comp->data = 00;
 		}
 		++l_tile_comp;

@@ -2632,6 +2632,13 @@ opj_jp2_v2_t* jp2_create(opj_bool p_is_decoder)
 			return 00;
 		}
 
+		/* Color structure */
+		jp2->color.icc_profile_buf = NULL;
+		jp2->color.icc_profile_len = 0;
+		jp2->color.jp2_cdef = NULL;
+		jp2->color.jp2_pclr = NULL;
+		jp2->color.jp2_has_colr = 0;
+
 		// validation list creation
 		jp2->m_validation_list = opj_procedure_list_create();
 		if (! jp2->m_validation_list) {
