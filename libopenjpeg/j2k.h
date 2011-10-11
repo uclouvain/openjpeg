@@ -632,6 +632,12 @@ typedef struct opj_j2k_dec
 	OPJ_UINT32 m_start_tile_y;
 	OPJ_UINT32 m_end_tile_x;
 	OPJ_UINT32 m_end_tile_y;
+	/**
+	 * Indicate that the current tile-part is assume as the last tile part of the codestream.
+	 * It is useful in the case of PSot is equal to zero. The sot length will be compute in the
+	 * SOD reader function. FIXME NOT USED for the moment
+	 */
+	opj_bool   m_last_tile_part;
 	/** to tell that a tile can be decoded. */
 	OPJ_UINT32 m_can_decode			: 1;
 	OPJ_UINT32 m_discard_tiles		: 1;

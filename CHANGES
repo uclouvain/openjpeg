@@ -6,7 +6,8 @@ What's New for OpenJPEG
 + : added
 
 October 11, 2011
-* [mickael] WIP: correct mistake with JP2 files and manage correctly the text_GBR.jp2 filecase.
+* [mickael] WIP: add output elements about decoding of jp2 files with last tile part lenght equal zero
+* [mickael] WIP: correct mistake with JP2 files and manage correctly the text_GBR.jp2 filecase
 
 October 10, 2011
 * [vincent] fix 'distcheck' rule

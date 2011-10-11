@@ -3350,8 +3350,11 @@ opj_bool j2k_read_sot_v2 (
 	};
 #endif /* USE_JPWL */
 
+	/* Ref A.4.2: Psot could be equal zero if it is the last tile-part of the codestream.*/
 	if (!l_tot_len) {
-		opj_event_msg_v2(p_manager, EVT_ERROR, "Cannot read data with no size known, giving up\n");
+		opj_event_msg_v2(p_manager, EVT_ERROR, "Psot value of the current tile-part is equal to zero, "
+				"for the moment we couldn't manage this case (need to compute the number of byte left"
+				" in the codestream).\n");
 		return OPJ_FALSE;
 	}
 
@@ -3368,6 +3371,7 @@ opj_bool j2k_read_sot_v2 (
 			if (l_current_part >= l_tcp->m_nb_tile_parts){
 				opj_event_msg_v2(p_manager, EVT_ERROR, "In SOT marker, TPSot (%d) is not valid regards to the current "
 						"number of tile-part (%d), giving up\n", l_current_part, l_tcp->m_nb_tile_parts );
+				p_j2k->m_specific_param.m_decoder.m_last_tile_part = 1;
 				return OPJ_FALSE;
 			}
 		}
@@ -3381,8 +3385,15 @@ opj_bool j2k_read_sot_v2 (
 		}
 	}
 
-	/* Keep the size of data to skip after this marker */
-	p_j2k->m_specific_param.m_decoder.m_sot_length = l_tot_len - 12; /* SOT_marker_size = 12 */
+	if (!p_j2k->m_specific_param.m_decoder.m_last_tile_part){
+		/* Keep the size of data to skip after this marker */
+		p_j2k->m_specific_param.m_decoder.m_sot_length = l_tot_len - 12; /* SOT_marker_size = 12 */
+	}
+	else {
+		/* FIXME: need to be computed from the number of bytes remaining in the codestream */
+		p_j2k->m_specific_param.m_decoder.m_sot_length = 0;
+	}
+
 	p_j2k->m_specific_param.m_decoder.m_state = J2K_STATE_TPH;
 
 	/* Check if the current tile is outside the area we want decode (in tile index)*/
