@@ -10,7 +10,7 @@
 #     image to base)
 #
 # Line begin with ! should failed (should be used for bad jpeg2000 file which should be 
-# gracefully rejected)
+# gracefully rejected). Please add a short resume about why this file should be rejected.
 #
 # You can use @INPUT_NR_PATH@ and @TEMP_PATH@ cmake variable which refers to OPJ_DATA_ROOT 
 # repository. However you can use relative path or absolute path.
@@ -60,4 +60,5 @@ j2k_to_image -i  @INPUT_NR_PATH@/orb-blue10-win-j2k.j2k -o @TEMP_PATH@/orb-blue1
 j2k_to_image -i  @INPUT_NR_PATH@/orb-blue10-win-jp2.jp2 -o @TEMP_PATH@/orb-blue10-win-jp2.jp2.pgx
 j2k_to_image -i  @INPUT_NR_PATH@/relax.jp2 -o @TEMP_PATH@/relax.jp2.pgx
 j2k_to_image -i  @INPUT_NR_PATH@/test_lossless.j2k -o @TEMP_PATH@/test_lossless.j2k.pgx
-j2k_to_image -i  @INPUT_NR_PATH@/text_GBR.jp2 -o @TEMP_PATH@/text_GBR.jp2.pgx
+# text_GBR.jp2 file exhibt a error about a tile part with a index > of the number of tile-part in this tile.
+!j2k_to_image -i  @INPUT_NR_PATH@/text_GBR.jp2 -o @TEMP_PATH@/text_GBR.jp2.pgx

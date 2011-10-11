@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+October 11, 2011
+* [mickael] WIP: correct mistake with JP2 files and manage correctly the text_GBR.jp2 filecase.
+
 October 10, 2011
 * [vincent] fix 'distcheck' rule
 + [vincent] add libopenjpeg-jpwl.pc.in

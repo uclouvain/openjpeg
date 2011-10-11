@@ -1490,8 +1490,8 @@ opj_bool opj_jp2_decode_v2(	opj_jp2_v2_t *jp2,
 							struct opj_event_mgr * p_manager)
 {
 	/* J2K decoding */
-	if( j2k_decode_v2(jp2->j2k, cio, p_image, p_manager) ) {
-		opj_event_msg_v2(p_manager, EVT_ERROR, "Failed to decode J2K image\n");
+	if( ! j2k_decode_v2(jp2->j2k, cio, p_image, p_manager) ) {
+		opj_event_msg_v2(p_manager, EVT_ERROR, "Failed to decode the codestream in the JP2 file\n");
 		return OPJ_FALSE;
 	}
 
@@ -1521,6 +1521,7 @@ opj_bool opj_jp2_decode_v2(	opj_jp2_v2_t *jp2,
 	if(jp2->color.icc_profile_buf) {
 		p_image->icc_profile_buf = jp2->color.icc_profile_buf;
 		p_image->icc_profile_len = jp2->color.icc_profile_len;
+		jp2->color.icc_profile_buf = NULL;
 	}
 
 	return OPJ_TRUE;

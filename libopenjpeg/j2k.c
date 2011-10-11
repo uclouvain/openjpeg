@@ -3362,6 +3362,15 @@ opj_bool j2k_read_sot_v2 (
 	++p_header_data;
 
 	if (l_num_parts != 0) { /* Number of tile-part header is provided by this tile-part header */
+		/* Useful to manage the case of textGBR.jp2 file because two values of TNSot are allowed: the correct numbers of
+		 * tile-parts for that tile and zero (A.4.2 of 15444-1 : 2002). */
+		if (l_tcp->m_nb_tile_parts) {
+			if (l_current_part >= l_tcp->m_nb_tile_parts){
+				opj_event_msg_v2(p_manager, EVT_ERROR, "In SOT marker, TPSot (%d) is not valid regards to the current "
+						"number of tile-part (%d), giving up\n", l_current_part, l_tcp->m_nb_tile_parts );
+				return OPJ_FALSE;
+			}
+		}
 		l_tcp->m_nb_tile_parts = l_num_parts;
 	}
 
@@ -5709,7 +5718,7 @@ opj_bool j2k_read_tile_header(	opj_j2k_v2_t * p_j2k,
 
 			/* Read the marker segment with the correct marker handler */
 			if (! (*(l_marker_handler->handler))(p_j2k,p_j2k->m_specific_param.m_decoder.m_header_data,l_marker_size,p_manager)) {
-				opj_event_msg_v2(p_manager, EVT_ERROR, "Marker is not compliant with its position\n");
+				opj_event_msg_v2(p_manager, EVT_ERROR, "Fail to read the current marker segment (%#x)\n", l_current_marker);
 				return OPJ_FALSE;
 			}
 
