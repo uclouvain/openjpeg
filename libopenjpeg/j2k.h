@@ -77,15 +77,12 @@ The functions in J2K.C have for goal to read/write the several parts of the code
 #define J2K_MS_EPH 0xff92	/**< EPH marker value */
 #define J2K_MS_CRG 0xff63	/**< CRG marker value */
 #define J2K_MS_COM 0xff64	/**< COM marker value */
-
-#define J2K_MS_UNK 0		/**< UNKNOWN marker value */
-
-#ifdef TODO_MS /* FIXME */
 #define J2K_MS_CBD 0xff78	/**< CBD marker value */
 #define J2K_MS_MCC 0xff75	/**< MCC marker value */
 #define J2K_MS_MCT 0xff74	/**< MCT marker value */
 #define J2K_MS_MCO 0xff77	/**< MCO marker value */
-#endif
+
+#define J2K_MS_UNK 0		/**< UNKNOWN marker value */
 
 /* UniPG>> */
 #ifdef USE_JPWL
@@ -121,6 +118,27 @@ typedef enum J2K_STATUS {
 	J2K_STATE_EOC	 = 0x0100,  /**< the decoding process has encountered the EOC marker */
 	J2K_STATE_ERR    = 0x8000 /**< the decoding process has encountered an error (FIXME warning V1 = 0x0080)*/
 } J2K_STATUS;
+
+/**
+ * Type of elements storing in the MCT data
+ */
+typedef enum MCT_ELEMENT_TYPE
+{
+	MCT_TYPE_INT16 = 0,		/** MCT data is stored as signed shorts*/
+	MCT_TYPE_INT32 = 1,		/** MCT data is stored as signed integers*/
+	MCT_TYPE_FLOAT = 2,		/** MCT data is stored as floats*/
+	MCT_TYPE_DOUBLE = 3		/** MCT data is stored as doubles*/
+} J2K_MCT_ELEMENT_TYPE;
+
+/**
+ * Type of MCT array
+ */
+typedef enum MCT_ARRAY_TYPE
+{
+	MCT_TYPE_DEPENDENCY = 0,
+	MCT_TYPE_DECORRELATION = 1,
+	MCT_TYPE_OFFSET = 2
+} J2K_MCT_ARRAY_TYPE;
 
 /* ----------------------------------------------------------------------- */
 
@@ -247,28 +265,9 @@ typedef struct opj_tcp {
 	opj_tccp_t *tccps;
 } opj_tcp_t;
 
-
 /**
- * Type of data for storing the MCT data
+ * FIXME DOC
  */
-typedef enum MCT_ELEMENT_TYPE
-{
-	MCT_TYPE_INT16 = 0,		/** MCT data is stored as signed shorts*/
-	MCT_TYPE_INT32 = 1,		/** MCT data is stored as signed integers*/
-	MCT_TYPE_FLOAT = 2,		/** MCT data is stored as floats*/
-	MCT_TYPE_DOUBLE = 3		/** MCT data is stored as doubles*/
-} J2K_MCT_ELEMENT_TYPE;
-
-/**
- * Type of data for storing the MCT data
- */
-typedef enum MCT_ARRAY_TYPE
-{
-	MCT_TYPE_DEPENDENCY = 0,
-	MCT_TYPE_DECORRELATION = 1,
-	MCT_TYPE_OFFSET = 2
-} J2K_MCT_ARRAY_TYPE;
-
 typedef struct opj_mct_data
 {
 	J2K_MCT_ELEMENT_TYPE m_element_type;
@@ -279,6 +278,9 @@ typedef struct opj_mct_data
 }
 opj_mct_data_t;
 
+/**
+ * FIXME DOC
+ */
 typedef struct opj_simple_mcc_decorrelation_data
 {
 	OPJ_UINT32			 m_index;

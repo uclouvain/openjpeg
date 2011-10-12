@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+October 12, 2011
++ [mickael] WIP: add a read MCT marker function (part 2) 
+
 October 11, 2011
 * [mickael] WIP: correct a segfault inside j2k_dump output
 * [mickael] WIP: correct some segfault with win platform and remove a aligned allocation which produce error when a realloc is done on this pointer.
