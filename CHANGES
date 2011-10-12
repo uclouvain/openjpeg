@@ -6,8 +6,9 @@ What's New for OpenJPEG
 + : added
 
 October 12, 2011
-+ [mickael] WIP: add a read MCC marker function (part 2) 
-+ [mickael] WIP: add a read MCT marker function (part 2) 
++ [mickael] WIP: add a read MCO marker function (JPEG2000 part 2) 
++ [mickael] WIP: add a read MCC marker function (JPEG2000 part 2) 
++ [mickael] WIP: add a read MCT marker function (JPEG2000 part 2) 
 
 October 11, 2011
 * [mickael] WIP: correct a segfault inside j2k_dump output

@@ -726,6 +726,38 @@ static opj_bool j2k_read_mcc (	opj_j2k_v2_t *p_j2k,
 							struct opj_event_mgr * p_manager );
 
 /**
+ * Reads a MCO marker (Multiple Component Transform Ordering)
+ *
+ * @param	p_header_data	the data contained in the MCO box.
+ * @param	p_j2k			the jpeg2000 codec.
+ * @param	p_header_size	the size of the data contained in the MCO marker.
+ * @param	p_manager		the user event manager.
+*/
+static opj_bool j2k_read_mco (	opj_j2k_v2_t *p_j2k,
+								OPJ_BYTE * p_header_data,
+								OPJ_UINT32 p_header_size,
+								struct opj_event_mgr * p_manager );
+
+static opj_bool j2k_add_mct(opj_tcp_v2_t * p_tcp, opj_image_t * p_image, OPJ_UINT32 p_index);
+
+static void  j2k_read_int16_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
+static void  j2k_read_int32_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
+static void  j2k_read_float32_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
+static void  j2k_read_float64_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
+
+static void  j2k_read_int16_to_int32 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
+static void  j2k_read_int32_to_int32 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
+static void  j2k_read_float32_to_int32 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
+static void  j2k_read_float64_to_int32 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
+
+static void  j2k_write_float_to_int16 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
+static void  j2k_write_float_to_int32 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
+static void  j2k_write_float_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
+static void  j2k_write_float_to_float64 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
+
+
+
+/**
  * Copy the image header from the jpeg2000 codec into an external image_header
  *
  * @param	p_j2k			the jpeg2000 codec.
@@ -770,6 +802,32 @@ const OPJ_UINT32 MCT_ELEMENT_SIZE [] =
 	4,
 	4,
 	8
+};
+
+typedef void (* j2k_mct_function) (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
+
+const j2k_mct_function j2k_mct_read_functions_to_float [] =
+{
+	j2k_read_int16_to_float,
+	j2k_read_int32_to_float,
+	j2k_read_float32_to_float,
+	j2k_read_float64_to_float
+};
+
+const j2k_mct_function j2k_mct_read_functions_to_int32 [] =
+{
+	j2k_read_int16_to_int32,
+	j2k_read_int32_to_int32,
+	j2k_read_float32_to_int32,
+	j2k_read_float64_to_int32
+};
+
+const j2k_mct_function j2k_mct_write_functions_from_float [] =
+{
+	j2k_write_float_to_int16,
+	j2k_write_float_to_int32,
+	j2k_write_float_to_float,
+	j2k_write_float_to_float64
 };
 
 typedef struct opj_dec_memory_marker_handler
@@ -830,8 +888,8 @@ const opj_dec_memory_marker_handler_t j2k_memory_marker_handler_tab [] =
   {J2K_MS_COM, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_com_v2},
   {J2K_MS_MCT, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_mct},
  /*FIXME MSD  {J2K_MS_CBD, J2K_STATE_MH , j2k_read_cbd},
-  */{J2K_MS_MCC, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_mcc},/*
-  {J2K_MS_MCO, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_mco}, */
+  */{J2K_MS_MCC, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_mcc},
+  {J2K_MS_MCO, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_mco},
 #ifdef USE_JPWL
 #ifdef TODO_MS /* FIXME */
   {J2K_MS_EPC, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_epc},
@@ -849,11 +907,211 @@ const opj_dec_memory_marker_handler_t j2k_memory_marker_handler_tab [] =
 
 
 
+void  j2k_read_int16_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
+{
+	OPJ_BYTE * l_src_data = (OPJ_BYTE *) p_src_data;
+	OPJ_FLOAT32 * l_dest_data = (OPJ_FLOAT32 *) p_dest_data;
+	OPJ_UINT32 i;
+	OPJ_UINT32 l_temp;
+
+	for (i=0;i<p_nb_elem;++i) {
+		opj_read_bytes(l_src_data,&l_temp,2);
+
+		l_src_data+=sizeof(OPJ_INT16);
+
+		*(l_dest_data++) = (OPJ_FLOAT32) l_temp;
+	}
+}
+
+void  j2k_read_int32_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
+{
+	OPJ_BYTE * l_src_data = (OPJ_BYTE *) p_src_data;
+	OPJ_FLOAT32 * l_dest_data = (OPJ_FLOAT32 *) p_dest_data;
+	OPJ_UINT32 i;
+	OPJ_UINT32 l_temp;
+
+	for (i=0;i<p_nb_elem;++i) {
+		opj_read_bytes(l_src_data,&l_temp,4);
+
+		l_src_data+=sizeof(OPJ_INT32);
+
+		*(l_dest_data++) = (OPJ_FLOAT32) l_temp;
+	}
+}
+
+void  j2k_read_float32_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
+{
+	OPJ_BYTE * l_src_data = (OPJ_BYTE *) p_src_data;
+	OPJ_FLOAT32 * l_dest_data = (OPJ_FLOAT32 *) p_dest_data;
+	OPJ_UINT32 i;
+	OPJ_FLOAT32 l_temp;
+
+	for (i=0;i<p_nb_elem;++i) {
+		opj_read_float(l_src_data,&l_temp);
+
+		l_src_data+=sizeof(OPJ_FLOAT32);
+
+		*(l_dest_data++) = l_temp;
+	}
+}
+
+void  j2k_read_float64_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
+{
+	OPJ_BYTE * l_src_data = (OPJ_BYTE *) p_src_data;
+	OPJ_FLOAT32 * l_dest_data = (OPJ_FLOAT32 *) p_dest_data;
+	OPJ_UINT32 i;
+	OPJ_FLOAT64 l_temp;
+
+	for (i=0;i<p_nb_elem;++i) {
+		opj_read_double(l_src_data,&l_temp);
+
+		l_src_data+=sizeof(OPJ_FLOAT64);
+
+		*(l_dest_data++) = (OPJ_FLOAT32) l_temp;
+	}
+}
+
+void  j2k_read_int16_to_int32 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
+{
+	OPJ_BYTE * l_src_data = (OPJ_BYTE *) p_src_data;
+	OPJ_INT32 * l_dest_data = (OPJ_INT32 *) p_dest_data;
+	OPJ_UINT32 i;
+	OPJ_UINT32 l_temp;
+
+	for (i=0;i<p_nb_elem;++i) {
+		opj_read_bytes(l_src_data,&l_temp,2);
+
+		l_src_data+=sizeof(OPJ_INT16);
+
+		*(l_dest_data++) = (OPJ_INT32) l_temp;
+	}
+}
+
+void  j2k_read_int32_to_int32 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
+{
+	OPJ_BYTE * l_src_data = (OPJ_BYTE *) p_src_data;
+	OPJ_INT32 * l_dest_data = (OPJ_INT32 *) p_dest_data;
+	OPJ_UINT32 i;
+	OPJ_UINT32 l_temp;
+
+	for (i=0;i<p_nb_elem;++i) {
+		opj_read_bytes(l_src_data,&l_temp,4);
+
+		l_src_data+=sizeof(OPJ_INT32);
+
+		*(l_dest_data++) = (OPJ_INT32) l_temp;
+	}
+}
+
+void  j2k_read_float32_to_int32 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
+{
+	OPJ_BYTE * l_src_data = (OPJ_BYTE *) p_src_data;
+	OPJ_INT32 * l_dest_data = (OPJ_INT32 *) p_dest_data;
+	OPJ_UINT32 i;
+	OPJ_FLOAT32 l_temp;
+
+	for (i=0;i<p_nb_elem;++i) {
+		opj_read_float(l_src_data,&l_temp);
+
+		l_src_data+=sizeof(OPJ_FLOAT32);
+
+		*(l_dest_data++) = (OPJ_INT32) l_temp;
+	}
+}
+
+void  j2k_read_float64_to_int32 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
+{
+	OPJ_BYTE * l_src_data = (OPJ_BYTE *) p_src_data;
+	OPJ_INT32 * l_dest_data = (OPJ_INT32 *) p_dest_data;
+	OPJ_UINT32 i;
+	OPJ_FLOAT64 l_temp;
+
+	for (i=0;i<p_nb_elem;++i) {
+		opj_read_double(l_src_data,&l_temp);
+
+		l_src_data+=sizeof(OPJ_FLOAT64);
+
+		*(l_dest_data++) = (OPJ_INT32) l_temp;
+	}
+}
+
+void  j2k_write_float_to_int16 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
+{
+	OPJ_BYTE * l_dest_data = (OPJ_BYTE *) p_dest_data;
+	OPJ_FLOAT32 * l_src_data = (OPJ_FLOAT32 *) p_src_data;
+	OPJ_UINT32 i;
+	OPJ_UINT32 l_temp;
+
+	for (i=0;i<p_nb_elem;++i) {
+		l_temp = (OPJ_UINT32) *(l_src_data++);
+
+		opj_write_bytes(l_dest_data,l_temp,sizeof(OPJ_INT16));
+
+		l_dest_data+=sizeof(OPJ_INT16);
+	}
+}
+
+void  j2k_write_float_to_int32 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
+{
+	OPJ_BYTE * l_dest_data = (OPJ_BYTE *) p_dest_data;
+	OPJ_FLOAT32 * l_src_data = (OPJ_FLOAT32 *) p_src_data;
+	OPJ_UINT32 i;
+	OPJ_UINT32 l_temp;
+
+	for (i=0;i<p_nb_elem;++i) {
+		l_temp = (OPJ_UINT32) *(l_src_data++);
+
+		opj_write_bytes(l_dest_data,l_temp,sizeof(OPJ_INT32));
+
+		l_dest_data+=sizeof(OPJ_INT32);
+	}
+}
+
+void  j2k_write_float_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
+{
+	OPJ_BYTE * l_dest_data = (OPJ_BYTE *) p_dest_data;
+	OPJ_FLOAT32 * l_src_data = (OPJ_FLOAT32 *) p_src_data;
+	OPJ_UINT32 i;
+	OPJ_FLOAT32 l_temp;
+
+	for (i=0;i<p_nb_elem;++i) {
+		l_temp = (OPJ_FLOAT32) *(l_src_data++);
+
+		opj_write_float(l_dest_data,l_temp);
+
+		l_dest_data+=sizeof(OPJ_FLOAT32);
+	}
+}
+
+void  j2k_write_float_to_float64 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
+{
+	OPJ_BYTE * l_dest_data = (OPJ_BYTE *) p_dest_data;
+	OPJ_FLOAT32 * l_src_data = (OPJ_FLOAT32 *) p_src_data;
+	OPJ_UINT32 i;
+	OPJ_FLOAT64 l_temp;
+
+	for (i=0;i<p_nb_elem;++i) {
+		l_temp = (OPJ_FLOAT64) *(l_src_data++);
+
+		opj_write_double(l_dest_data,l_temp);
+
+		l_dest_data+=sizeof(OPJ_FLOAT64);
+	}
+}
+
+
+/**
+ * Converts an enum type progression order to string type.
+ *
+ * @param prg_order		the progression order to get.
+ *
+ * @return	the string representation of the given progression order.
+ */
 char *j2k_convert_progression_order(OPJ_PROG_ORDER prg_order){
 	j2k_prog_order_t *po;
 	for(po = j2k_prog_order_list; po->enum_prog != -1; po++ ){
 		if(po->enum_prog == prg_order){
-			break;
+			return po->str_prog;
 		}
 	}
 	return po->str_prog;
@@ -4393,6 +4651,163 @@ opj_bool j2k_read_mcc (	opj_j2k_v2_t *p_j2k,
 
 	return OPJ_TRUE;
 }
+
+/**
+ * Reads a MCO marker (Multiple Component Transform Ordering)
+ *
+ * @param	p_header_data	the data contained in the MCO box.
+ * @param	p_j2k			the jpeg2000 codec.
+ * @param	p_header_size	the size of the data contained in the MCO marker.
+ * @param	p_manager		the user event manager.
+*/
+opj_bool j2k_read_mco (	opj_j2k_v2_t *p_j2k,
+						OPJ_BYTE * p_header_data,
+						OPJ_UINT32 p_header_size,
+						struct opj_event_mgr * p_manager )
+{
+	OPJ_UINT32 l_tmp, i;
+	OPJ_UINT32 l_nb_stages;
+	opj_tcp_v2_t * l_tcp;
+	opj_tccp_t * l_tccp;
+	opj_image_t * l_image;
+	opj_image_comp_t * l_img_comp;
+
+	/* preconditions */
+	assert(p_header_data != 00);
+	assert(p_j2k != 00);
+	assert(p_manager != 00);
+
+	l_image = p_j2k->m_image;
+	l_tcp = p_j2k->m_specific_param.m_decoder.m_state == J2K_STATE_TPH ?
+			&p_j2k->m_cp.tcps[p_j2k->m_current_tile_number] :
+			p_j2k->m_specific_param.m_decoder.m_default_tcp;
+
+	if (p_header_size < 1) {
+		opj_event_msg_v2(p_manager, EVT_ERROR, "Error reading MCO marker\n");
+		return OPJ_FALSE;
+	}
+
+	opj_read_bytes(p_header_data,&l_nb_stages,1);				/* Nmco : only one tranform stage*/
+	++p_header_data;
+
+	if (l_nb_stages > 1) {
+		opj_event_msg_v2(p_manager, EVT_WARNING, "Cannot take in charge multiple transformation stages.\n");
+		return OPJ_TRUE;
+	}
+
+	if (p_header_size != l_nb_stages + 1) {
+		opj_event_msg_v2(p_manager, EVT_WARNING, "Error reading MCO marker\n");
+		return OPJ_FALSE;
+	}
+
+	l_tccp = l_tcp->tccps;
+	l_img_comp = l_image->comps;
+
+	for (i=0;i<l_image->numcomps;++i) {
+		l_tccp->m_dc_level_shift = 0;
+		++l_tccp;
+	}
+
+	if (l_tcp->m_mct_decoding_matrix) {
+		opj_free(l_tcp->m_mct_decoding_matrix);
+		l_tcp->m_mct_decoding_matrix = 00;
+	}
+
+	for (i=0;i<l_nb_stages;++i) {
+		opj_read_bytes(p_header_data,&l_tmp,1);
+		++p_header_data;
+
+		if (! j2k_add_mct(l_tcp,p_j2k->m_image,l_tmp)) {
+			return OPJ_FALSE;
+		}
+	}
+
+	return OPJ_TRUE;
+}
+
+opj_bool j2k_add_mct(opj_tcp_v2_t * p_tcp, opj_image_t * p_image, OPJ_UINT32 p_index)
+{
+	OPJ_UINT32 i;
+	opj_simple_mcc_decorrelation_data_t * l_mcc_record;
+	opj_mct_data_t * l_deco_array, * l_offset_array;
+	OPJ_UINT32 l_data_size,l_mct_size, l_offset_size;
+	OPJ_UINT32 l_nb_elem;
+	OPJ_UINT32 * l_offset_data, * l_current_offset_data;
+	opj_tccp_t * l_tccp;
+
+	/* preconditions */
+	assert(p_tcp != 00);
+
+	l_mcc_record = p_tcp->m_mcc_records;
+
+	for (i=0;i<p_tcp->m_nb_mcc_records;++i) {
+		if (l_mcc_record->m_index == p_index) {
+			break;
+		}
+	}
+
+	if (i==p_tcp->m_nb_mcc_records) {
+		/** element discarded **/
+		return OPJ_TRUE;
+	}
+
+	if (l_mcc_record->m_nb_comps != p_image->numcomps) {
+		/** do not support number of comps != image */
+		return OPJ_TRUE;
+	}
+
+	l_deco_array = l_mcc_record->m_decorrelation_array;
+
+	if (l_deco_array) {
+		l_data_size = MCT_ELEMENT_SIZE[l_deco_array->m_element_type] * p_image->numcomps * p_image->numcomps;
+		if (l_deco_array->m_data_size != l_data_size) {
+			return OPJ_FALSE;
+		}
+
+		l_nb_elem = p_image->numcomps * p_image->numcomps;
+		l_mct_size = l_nb_elem * sizeof(OPJ_FLOAT32);
+		p_tcp->m_mct_decoding_matrix = (OPJ_FLOAT32*)opj_malloc(l_mct_size);
+
+		if (! p_tcp->m_mct_decoding_matrix ) {
+			return OPJ_FALSE;
+		}
+
+		j2k_mct_read_functions_to_float[l_deco_array->m_element_type](l_deco_array->m_data,p_tcp->m_mct_decoding_matrix,l_nb_elem);
+	}
+
+	l_offset_array = l_mcc_record->m_offset_array;
+
+	if (l_offset_array) {
+		l_data_size = MCT_ELEMENT_SIZE[l_offset_array->m_element_type] * p_image->numcomps;
+		if (l_offset_array->m_data_size != l_data_size) {
+			return OPJ_FALSE;
+		}
+
+		l_nb_elem = p_image->numcomps;
+		l_offset_size = l_nb_elem * sizeof(OPJ_UINT32);
+		l_offset_data = (OPJ_UINT32*)opj_malloc(l_offset_size);
+
+		if (! l_offset_data ) {
+			return OPJ_FALSE;
+		}
+
+		j2k_mct_read_functions_to_int32[l_offset_array->m_element_type](l_offset_array->m_data,l_offset_data,l_nb_elem);
+
+		l_tccp = p_tcp->tccps;
+		l_current_offset_data = l_offset_data;
+
+		for (i=0;i<p_image->numcomps;++i) {
+			l_tccp->m_dc_level_shift = *(l_current_offset_data++);
+			++l_tccp;
+		}
+
+		opj_free(l_offset_data);
+	}
+
+	return OPJ_TRUE;
+}
+
+
 
 /* ----------------------------------------------------------------------- */
 /* J2K / JPT decoder interface                                             */
