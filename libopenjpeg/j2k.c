@@ -755,6 +755,17 @@ static void  j2k_write_float_to_int32 (const void * p_src_data, void * p_dest_da
 static void  j2k_write_float_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
 static void  j2k_write_float_to_float64 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
 
+/**
+ * Reads a CBD marker (Component bit depth definition)
+ * @param	p_header_data	the data contained in the CBD box.
+ * @param	p_j2k			the jpeg2000 codec.
+ * @param	p_header_size	the size of the data contained in the CBD marker.
+ * @param	p_manager		the user event manager.
+*/
+static opj_bool j2k_read_cbd (	opj_j2k_v2_t *p_j2k,
+							OPJ_BYTE * p_header_data,
+							OPJ_UINT32 p_header_size,
+							struct opj_event_mgr * p_manager);
 
 
 /**
@@ -887,8 +898,8 @@ const opj_dec_memory_marker_handler_t j2k_memory_marker_handler_tab [] =
   {J2K_MS_CRG, J2K_STATE_MH, j2k_read_crg_v2},
   {J2K_MS_COM, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_com_v2},
   {J2K_MS_MCT, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_mct},
- /*FIXME MSD  {J2K_MS_CBD, J2K_STATE_MH , j2k_read_cbd},
-  */{J2K_MS_MCC, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_mcc},
+  {J2K_MS_CBD, J2K_STATE_MH , j2k_read_cbd},
+  {J2K_MS_MCC, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_mcc},
   {J2K_MS_MCO, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_mco},
 #ifdef USE_JPWL
 #ifdef TODO_MS /* FIXME */
@@ -4807,6 +4818,54 @@ opj_bool j2k_add_mct(opj_tcp_v2_t * p_tcp, opj_image_t * p_image, OPJ_UINT32 p_i
 	return OPJ_TRUE;
 }
 
+/**
+ * Reads a CBD marker (Component bit depth definition)
+ * @param	p_header_data	the data contained in the CBD box.
+ * @param	p_j2k			the jpeg2000 codec.
+ * @param	p_header_size	the size of the data contained in the CBD marker.
+ * @param	p_manager		the user event manager.
+*/
+opj_bool j2k_read_cbd (	opj_j2k_v2_t *p_j2k,
+						OPJ_BYTE * p_header_data,
+						OPJ_UINT32 p_header_size,
+						struct opj_event_mgr * p_manager)
+{
+	OPJ_UINT32 l_nb_comp,l_num_comp;
+	OPJ_UINT32 l_comp_def;
+	OPJ_UINT32 i;
+	opj_image_comp_t * l_comp = 00;
+
+	/* preconditions */
+	assert(p_header_data != 00);
+	assert(p_j2k != 00);
+	assert(p_manager != 00);
+
+	l_num_comp = p_j2k->m_image->numcomps;
+
+	if (p_header_size != (p_j2k->m_image->numcomps + 2)) {
+		opj_event_msg_v2(p_manager, EVT_ERROR, "Crror reading CBD marker\n");
+		return OPJ_FALSE;
+	}
+
+	opj_read_bytes(p_header_data,&l_nb_comp,2);				/* Ncbd */
+	p_header_data+=2;
+
+	if (l_nb_comp != l_num_comp) {
+		opj_event_msg_v2(p_manager, EVT_ERROR, "Crror reading CBD marker\n");
+		return OPJ_FALSE;
+	}
+
+	l_comp = p_j2k->m_image->comps;
+	for (i=0;i<l_num_comp;++i) {
+		opj_read_bytes(p_header_data,&l_comp_def,1);			/* Component bit depth */
+		++p_header_data;
+        l_comp->sgnd = (l_comp_def>>7) & 1;
+		l_comp->prec = (l_comp_def&0x7f) + 1;
+		++l_comp;
+	}
+
+	return OPJ_TRUE;
+}
 
 
 /* ----------------------------------------------------------------------- */
