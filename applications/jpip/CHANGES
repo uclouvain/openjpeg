@@ -5,6 +5,9 @@ What's New for OpenJPIP
 ! : changed
 + : added
 
+October 12, 2011
++ [kaori] enable layers requests; restricting the number of codesream quality layers
+
 October 10, 2011
 - [antonin] removed obsolete indexer utility
 + [kaori]   enable JPT-stream request from client viewer option

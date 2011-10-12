@@ -222,6 +222,7 @@ Byte2_t modify_CODmkrstream( CODmarker_param_t COD, int numOfdecomp, Byte_t *COD
     newLcod = COD.Lcod;
     CODstream += 2;
   }
+  
   CODstream += 5; // skip Scod & SGcod
   
   // SPcod

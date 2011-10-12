@@ -116,6 +116,9 @@ void parse_query( char *query_string, query_param_t *query_param)
       else if( strcasecmp( fieldname, "rsiz") == 0)
 	sscanf( fieldval, "%d,%d", &query_param->rw, &query_param->rh);
       
+      else if( strcasecmp( fieldname, "layers") == 0)
+	sscanf( fieldval, "%d", &query_param->layers);
+      
       else if( strcasecmp( fieldname, "cid") == 0)
 	strcpy( query_param->cid, fieldval);
 
@@ -137,6 +140,9 @@ void parse_query( char *query_string, query_param_t *query_param)
 	else if( strncasecmp( fieldval, "jpt-stream", 10) == 0)
 	  query_param->return_type = JPTstream;
       }
+
+      else if( strcasecmp( fieldname, "len") == 0)
+	sscanf( fieldval, "%d", &query_param->len);
     }
   }
 }
@@ -145,18 +151,19 @@ void init_queryparam( query_param_t *query_param)
 {
   int i;
 
-  query_param->target[0]='\0';
-  query_param->tid[0]='\0';
-  query_param->fx=-1;
-  query_param->fy=-1;
-  query_param->rx=-1;
-  query_param->ry=-1;
-  query_param->rw=-1;
-  query_param->rh=-1;
+  query_param->target[0] = '\0';
+  query_param->tid[0] = '\0';
+  query_param->fx = -1;
+  query_param->fy = -1;
+  query_param->rx = -1;
+  query_param->ry = -1;
+  query_param->rw = -1;
+  query_param->rh = -1;
+  query_param->layers = -1;
   query_param->lastcomp = -1;
   query_param->comps = NULL;  
-  query_param->cid[0]='\0';
-  query_param->cnew=false;
+  query_param->cid[0] = '\0';
+  query_param->cnew = false;
   memset( query_param->cclose, 0, MAX_NUMOFCCLOSE*MAX_LENOFCID);
   memset( query_param->box_type, 0, MAX_NUMOFBOX*4);
   memset( query_param->limit, 0, MAX_NUMOFBOX*sizeof(int));
@@ -171,6 +178,7 @@ void init_queryparam( query_param_t *query_param)
   query_param->max_depth = -1;
   query_param->metadata_only = false;
   query_param->return_type = UNKNOWN;
+  query_param->len = -1;
 }
 
 
@@ -208,6 +216,7 @@ void print_queryparam( query_param_t query_param)
   fprintf( logstream, "\t tid: %s\n", query_param.tid);
   fprintf( logstream, "\t fx,fy: %d, %d\n", query_param.fx, query_param.fy);
   fprintf( logstream, "\t rx,ry: %d, %d \t rw,rh: %d, %d\n", query_param.rx, query_param.ry, query_param.rw, query_param.rh);
+  fprintf( logstream, "\t layers: %d\n", query_param.layers);
   fprintf( logstream, "\t components: ");
   if( query_param.lastcomp == -1)
     fprintf( logstream, "ALL\n");
@@ -234,6 +243,7 @@ void print_queryparam( query_param_t query_param)
   fprintf( logstream, "\t max-depth: %d\n", query_param.max_depth);
   fprintf( logstream, "\t metadata-only: %d\n", query_param.metadata_only);
   fprintf( logstream, "\t image return type: %d, [JPP-stream=0, JPT-stream=1, UNKNOWN=-1]\n", query_param.return_type);
+  fprintf( logstream, "\t len:  %d\n", query_param.len);
 }
 
 void str2cclose( char *src, char cclose[][MAX_LENOFCID])

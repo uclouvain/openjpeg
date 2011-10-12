@@ -101,7 +101,8 @@ void print_msgqueue( msgqueue_param_t *msgqueue)
     fprintf( logstream, "\t csn: %lld\n", ptr->csn );
     fprintf( logstream, "\t bin_offset: %#llx\n", ptr->bin_offset );
     fprintf( logstream, "\t length: %#llx\n", ptr->length );
-    fprintf( logstream, "\t aux: %lld\n", ptr->aux );
+    if( ptr->class_id%2)
+      fprintf( logstream, "\t aux: %lld\n", ptr->aux );
     fprintf( logstream, "\t last_byte: %d\n", ptr->last_byte );
     if( ptr->phld)
       print_placeholder( ptr->phld);
@@ -162,9 +163,9 @@ void enqueue_tileheader( int tile_id, msgqueue_param_t *msgqueue)
     msg->class_id = TILE_HEADER_MSG;
     msg->csn = target->csn;
     msg->bin_offset = 0;
-    msg->length = codeidx->tileheader[tile_id]->tlen;
+    msg->length = codeidx->tileheader[tile_id]->tlen-2; // SOT marker segment is removed
     msg->aux = 0; // non exist
-    msg->res_offset = codeidx->offset + get_elemOff( codeidx->tilepart, 0, tile_id);
+    msg->res_offset = codeidx->offset + get_elemOff( codeidx->tilepart, 0, tile_id) + 2; // skip SOT marker seg
     msg->phld = NULL;
     msg->next = NULL;
     
@@ -210,7 +211,7 @@ void enqueue_tile( int tile_id, int level, msgqueue_param_t *msgqueue)
     if( !tp_model[i]){
       msg = (message_param_t *)malloc( sizeof(message_param_t));
       
-      msg->last_byte = i==numOftparts-1? true : false;
+      msg->last_byte = (i==numOftparts-1);
       msg->in_class_id = tile_id;
       msg->class_id = class_id;
       msg->csn = target->csn;
@@ -229,35 +230,48 @@ void enqueue_tile( int tile_id, int level, msgqueue_param_t *msgqueue)
   }
 }
 
-void enqueue_precinct( int seq_id, int tile_id, int comp_id, msgqueue_param_t *msgqueue)
+void enqueue_precinct( int seq_id, int tile_id, int comp_id, int layers, msgqueue_param_t *msgqueue)
 {
   cachemodel_param_t *cachemodel;
   index_param_t *codeidx;
   faixbox_param_t *precpacket;
   message_param_t *msg;
-  Byte8_t nmax;
-
+  Byte8_t nmax, binOffset, binLength;
+  int layer_id, numOflayers;
+  
   cachemodel = msgqueue->cachemodel;
   codeidx = cachemodel->target->codeidx;
   precpacket = codeidx->precpacket[ comp_id];
+  numOflayers = codeidx->COD.numOflayers;
 
   nmax = get_nmax(precpacket);
-  
-  if( !cachemodel->pp_model[comp_id][ tile_id*nmax+seq_id]){
-    msg = (message_param_t *)malloc( sizeof(message_param_t));
-    msg->last_byte = true;
-    msg->in_class_id = comp_precinct_id( tile_id, comp_id, seq_id, codeidx->SIZ.Csiz, codeidx->SIZ.XTnum * codeidx->SIZ.YTnum);
-    msg->class_id = PRECINCT_MSG;
-    msg->csn = cachemodel->target->csn;
-    msg->bin_offset = 0;
-    msg->length = get_elemLen( precpacket, seq_id, tile_id);
-    msg->aux = 0;
-    msg->res_offset = codeidx->offset+get_elemOff( precpacket, seq_id, tile_id);
-    msg->phld = NULL;
-    msg->next = NULL;
+  if( layers < 0)
+    layers = numOflayers;
+    
+  binOffset = 0;
+  for( layer_id = 0; layer_id < layers; layer_id++){
 
-    enqueue_message( msg, msgqueue);
-    cachemodel->pp_model[comp_id][ tile_id*nmax+seq_id] = true;
+    binLength = get_elemLen( precpacket, seq_id*numOflayers+layer_id, tile_id);
+    
+    if( !cachemodel->pp_model[comp_id][ tile_id*nmax+seq_id*numOflayers+layer_id]){
+  
+      msg = (message_param_t *)malloc( sizeof(message_param_t));
+      msg->last_byte = (layer_id == (numOflayers-1));
+      msg->in_class_id = comp_precinct_id( tile_id, comp_id, seq_id, codeidx->SIZ.Csiz, codeidx->SIZ.XTnum * codeidx->SIZ.YTnum);
+      msg->class_id = PRECINCT_MSG;
+      msg->csn = cachemodel->target->csn;
+      msg->bin_offset = binOffset;
+      msg->length = binLength;
+      msg->aux = 0;
+      msg->res_offset = codeidx->offset+get_elemOff( precpacket, seq_id*numOflayers+layer_id, tile_id);
+      msg->phld = NULL;
+      msg->next = NULL;
+
+      enqueue_message( msg, msgqueue);
+      
+      cachemodel->pp_model[comp_id][ tile_id*nmax+seq_id*numOflayers+layer_id] = true;
+    }
+    binOffset += binLength;
   }
 }
 

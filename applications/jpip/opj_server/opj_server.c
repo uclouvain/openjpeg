@@ -407,20 +407,27 @@ bool gene_JPIPstream( query_param_t query_param,
     *msgqueue = gene_msgqueue( false, cachemodel);
   }
   
+  codeidx = target->codeidx;
+
   if( cachemodel->jppstream)
     fprintf( FCGI_stdout, "Content-type: image/jpp-stream\r\n");
   else
     fprintf( FCGI_stdout, "Content-type: image/jpt-stream\r\n");
-
-  codeidx = target->codeidx;
+  
+  if( query_param.layers != -1){
+    if( query_param.layers  > codeidx->COD.numOflayers){
+      fprintf( FCGI_stdout, "JPIP-layers: %d\r\n", codeidx->COD.numOflayers);
+      query_param.layers = codeidx->COD.numOflayers;
+    }
+  }
 
   //meta
-  if( query_param.box_type[0][0] != 0)
+  if( query_param.box_type[0][0] != 0  && query_param.len != 0)
     enqueue_metabins( query_param, codeidx->metadatalist, *msgqueue); 
 
   // image codestream
   if( query_param.fx > 0 && query_param.fy > 0){
-    if( !cachemodel->mhead_model)
+    if( !cachemodel->mhead_model && query_param.len != 0)
       enqueue_mainheader( *msgqueue);
     enqueue_imagedata( query_param, *msgqueue);
   }
@@ -439,10 +446,11 @@ bool gene_JPIPstream( query_param_t query_param,
  * @param[in] level     decomposition level
  * @param[in] lastcomp  last component number
  * @param[in] comps     pointer to the array that stores the requested components
+ * @param[in] layers    number of quality layers
  * @param[in] msgqueue  message queue
  * @return
  */
-void enqueue_precincts( int xmin, int xmax, int ymin, int ymax, int tile_id, int level, int lastcomp, bool *comps, msgqueue_param_t *msgqueue);
+void enqueue_precincts( int xmin, int xmax, int ymin, int ymax, int tile_id, int level, int lastcomp, bool *comps, int layers, msgqueue_param_t *msgqueue);
 
 /**
  * enqueue all precincts inside a tile into the queue
@@ -451,10 +459,11 @@ void enqueue_precincts( int xmin, int xmax, int ymin, int ymax, int tile_id, int
  * @param[in] level     decomposition level
  * @param[in] lastcomp  last component number
  * @param[in] comps     pointer to the array that stores the requested components
+ * @param[in] layers    number of quality layers
  * @param[in] msgqueue  message queue
  * @return
  */
-void enqueue_allprecincts( int tile_id, int level, int lastcomp, bool *comps, msgqueue_param_t *msgqueue);
+void enqueue_allprecincts( int tile_id, int level, int lastcomp, bool *comps, int layers, msgqueue_param_t *msgqueue);
 
 void enqueue_imagedata( query_param_t query_param, msgqueue_param_t *msgqueue)
 {
@@ -476,6 +485,9 @@ void enqueue_imagedata( query_param_t query_param, msgqueue_param_t *msgqueue)
 			       query_param.rx, query_param.ry, query_param.rw, query_param.rh,
 			       codeidx->SIZ.XOsiz, codeidx->SIZ.YOsiz, codeidx->SIZ.Xsiz, codeidx->SIZ.Ysiz, 
 			       numOfreslev );
+
+  if( query_param.len == 0)
+    return;
 
   for( u=0, tile_id=0; u<codeidx->SIZ.YTnum; u++){
     tile_Yrange = get_tile_Yrange( codeidx->SIZ, tile_id, imgreg.level);
@@ -500,7 +512,7 @@ void enqueue_imagedata( query_param_t query_param, msgqueue_param_t *msgqueue)
 	  //printf("Tile completely contained within view-window %d\n", tile_id);
 	  if( msgqueue->cachemodel->jppstream){
 	    enqueue_tileheader( tile_id, msgqueue);
-	    enqueue_allprecincts( tile_id, imgreg.level, query_param.lastcomp, query_param.comps, msgqueue);
+	    enqueue_allprecincts( tile_id, imgreg.level, query_param.lastcomp, query_param.comps, query_param.layers, msgqueue);
 	  }
 	  else
 	    enqueue_tile( tile_id, imgreg.level, msgqueue);
@@ -516,7 +528,7 @@ void enqueue_imagedata( query_param_t query_param, msgqueue_param_t *msgqueue)
 	    xmax = tile_Xrange.maxvalue <= imgreg.xosiz + imgreg.ox + imgreg.sx ? tile_Xrange.maxvalue - tile_Xrange.minvalue -1 : imgreg.xosiz + imgreg.ox + imgreg.sx - tile_Xrange.minvalue -1;
 	    ymin = tile_Yrange.minvalue >= imgreg.yosiz + imgreg.oy ? 0 : imgreg.yosiz + imgreg.oy - tile_Yrange.minvalue;
 	    ymax = tile_Yrange.maxvalue <= imgreg.yosiz + imgreg.oy + imgreg.sy ? tile_Yrange.maxvalue - tile_Yrange.minvalue -1 : imgreg.yosiz + imgreg.oy + imgreg.sy - tile_Yrange.minvalue -1;
-	    enqueue_precincts( xmin, xmax, ymin, ymax, tile_id, imgreg.level, query_param.lastcomp, query_param.comps, msgqueue);
+	    enqueue_precincts( xmin, xmax, ymin, ymax, tile_id, imgreg.level, query_param.lastcomp, query_param.comps, query_param.layers, msgqueue);
 	  }
 	  else
 	    enqueue_tile( tile_id, imgreg.level, msgqueue);
@@ -527,7 +539,7 @@ void enqueue_imagedata( query_param_t query_param, msgqueue_param_t *msgqueue)
 }
 
 
-void enqueue_precincts( int xmin, int xmax, int ymin, int ymax, int tile_id, int level, int lastcomp, bool *comps, msgqueue_param_t *msgqueue)
+void enqueue_precincts( int xmin, int xmax, int ymin, int ymax, int tile_id, int level, int lastcomp, bool *comps, int layers, msgqueue_param_t *msgqueue)
 {
   index_param_t *codeidx;
   int c, u, v, res_lev, dec_lev;
@@ -567,12 +579,12 @@ void enqueue_precincts( int xmin, int xmax, int ymin, int ymax, int tile_id, int
 	    else if( xminP >= xmin && xmaxP <= xmax && yminP >= ymin && ymaxP <= ymax){
 	      // Precinct completely contained within view-window
 	      // high priority
-	      enqueue_precinct( seq_id, tile_id, c, msgqueue);
+	      enqueue_precinct( seq_id, tile_id, c, (dec_lev>level)?-1:layers, msgqueue);
 	    }
 	    else{
 	      // Precinct partially overlaps view-window
 	      // low priority
-	      enqueue_precinct( seq_id, tile_id, c, msgqueue);
+	      enqueue_precinct( seq_id, tile_id, c, (dec_lev>level)?-1:layers, msgqueue);
 	    }
 	  }
 	}
@@ -580,7 +592,7 @@ void enqueue_precincts( int xmin, int xmax, int ymin, int ymax, int tile_id, int
     }
 }
 
-void enqueue_allprecincts( int tile_id, int level, int lastcomp, bool *comps, msgqueue_param_t *msgqueue)
+void enqueue_allprecincts( int tile_id, int level, int lastcomp, bool *comps, int layers, msgqueue_param_t *msgqueue)
 {
   index_param_t *codeidx;
   int c, i, res_lev, dec_lev;
@@ -602,7 +614,7 @@ void enqueue_allprecincts( int tile_id, int level, int lastcomp, bool *comps, ms
 	YPsiz = ( codeidx->COD.Scod & 0x01) ? codeidx->COD.YPsiz[ res_lev] : YTsiz;
 	
 	for( i=0; i<ceil((double)YTsiz/(double)YPsiz)*ceil((double)XTsiz/(double)XPsiz); i++, seq_id++)
-	  enqueue_precinct( seq_id, tile_id, c, msgqueue);
+	  enqueue_precinct( seq_id, tile_id, c, (dec_lev>level)?-1:layers, msgqueue);
       }
     }
 }

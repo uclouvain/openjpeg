@@ -221,6 +221,8 @@ Byte_t * recons_codestream_from_JPTstream( msgqueue_param_t *msgqueue, Byte_t *j
   return j2kstream;
 }
 
+Byte_t * add_SOTmkr( Byte_t *j2kstream, Byte8_t *j2klen);
+
 Byte_t * recons_RPCLbitstream( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte_t *j2kstream, Byte8_t csn, 
 			       Byte8_t tileID, SIZmarker_param_t SIZ, CODmarker_param_t COD, int mindeclev, 
 			       int *max_reslev, Byte8_t *j2klen);
@@ -265,6 +267,7 @@ Byte_t * recons_codestream_from_JPPstream( msgqueue_param_t *msgqueue, Byte_t *j
     SOToffset = *j2klen;
     while(( ptr = search_message( TILE_HEADER_MSG, tileID, csn, ptr))!=NULL){
       if( ptr->bin_offset == binOffset){
+	j2kstream = add_SOTmkr( j2kstream, j2klen);
 	j2kstream = add_msgstream( ptr, jpipstream, j2kstream, j2klen);
 	foundTH = true;
 	binOffset += ptr->length;
@@ -304,6 +307,23 @@ Byte_t * add_mainhead_msgstream( msgqueue_param_t *msgqueue, Byte_t *origstream,
     ptr = ptr->next;
   }
   return j2kstream;
+}
+
+Byte_t * add_SOTmkr( Byte_t *j2kstream, Byte8_t *j2klen)
+{
+  Byte_t *buf;
+  const Byte2_t SOT = 0x90ff;
+
+  buf = (Byte_t *)malloc(( *j2klen)+2);
+
+  memcpy( buf, j2kstream, *j2klen);
+  memcpy( buf+(*j2klen), &SOT, 2);
+  
+  *j2klen += 2;
+
+  if(j2kstream) free(j2kstream);
+
+  return buf;
 }
 
 Byte_t * add_padding( Byte8_t padding, Byte_t *j2kstream, Byte8_t *j2klen);
