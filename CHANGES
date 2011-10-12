@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 October 12, 2011
+* [mickael] WIP: resolve heap corruption with p0_07.j2k (credit to Winfried)
 * [mickael] WIP: correct some memory leaks in applications functions 
 + [mickael] WIP: add a read CBD marker function (JPEG2000 part 2)
 + [mickael] WIP: add a read MCO marker function (JPEG2000 part 2) 

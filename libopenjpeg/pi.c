@@ -680,7 +680,7 @@ opj_pi_iterator_t *pi_create_decode_v2(	opj_image_t *p_image,
 	l_current_pi = l_pi;
 
 	// memory allocation for include
-	l_current_pi->include = (OPJ_INT16*) opj_calloc(l_tcp->numlayers * l_step_l, sizeof(OPJ_INT16));
+	l_current_pi->include = (OPJ_INT16*) opj_calloc((l_tcp->numlayers +1) * l_step_l, sizeof(OPJ_INT16));
 	if
 		(!l_current_pi->include)
 	{
@@ -689,7 +689,7 @@ opj_pi_iterator_t *pi_create_decode_v2(	opj_image_t *p_image,
 		pi_destroy_v2(l_pi, l_bound);
 		return 00;
 	}
-	memset(l_current_pi->include,0,l_tcp->numlayers * l_step_l* sizeof(OPJ_INT16));
+	memset(l_current_pi->include,0, (l_tcp->numlayers + 1) * l_step_l* sizeof(OPJ_INT16));
 
 	// special treatment for the first packet iterator
 	l_current_comp = l_current_pi->comps;
