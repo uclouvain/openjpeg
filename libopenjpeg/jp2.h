@@ -293,10 +293,10 @@ opj_image_t* opj_jp2_decode(opj_jp2_t *jp2, opj_cio_t *cio, opj_codestream_info_
  * @param cstr_info Codestream information structure if required, NULL otherwise
  * @return Returns a decoded image if successful, returns NULL otherwise
 */
-opj_bool opj_jp2_decode_v2(	opj_jp2_v2_t *jp2,
-							struct opj_stream_private *cio,
-							opj_image_t* p_image,
-							struct opj_event_mgr * p_manager);
+opj_bool jp2_decode_v2(	opj_jp2_v2_t *jp2,
+						struct opj_stream_private *cio,
+						opj_image_t* p_image,
+						struct opj_event_mgr * p_manager);
 
 
 /**
@@ -348,7 +348,7 @@ opj_bool jp2_end_decompress(opj_jp2_v2_t *jp2, struct opj_stream_private *cio, s
  */
 opj_bool jp2_read_header(	struct opj_stream_private *p_stream,
 							opj_jp2_v2_t *jp2,
-							opj_image_t * p_img_header,
+							opj_image_t ** p_img_header,
 							struct opj_event_mgr * p_manager
 							);
 
@@ -378,7 +378,7 @@ opj_bool jp2_read_tile_header (
  * @param	p_stream			the stream to write data to.
  * @param	p_manager	the user event manager.
  */
-opj_bool opj_jp2_decode_tile (
+opj_bool jp2_decode_tile (
 					opj_jp2_v2_t * p_jp2,
 					OPJ_UINT32 p_tile_index,
 					OPJ_BYTE * p_data,

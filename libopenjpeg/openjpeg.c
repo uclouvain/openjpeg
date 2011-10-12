@@ -40,7 +40,7 @@ typedef struct opj_decompression
 	/** Main header reading function handler*/
 	opj_bool (* opj_read_header) (	struct opj_stream_private * cio,
 									void * p_codec,
-									opj_image_t *p_image,
+									opj_image_t **p_image,
 									struct opj_event_mgr * p_manager);
 	/** FIXME DOC */
 	opj_bool (* opj_decode) (	void * p_codec,
@@ -259,7 +259,7 @@ opj_codec_t* OPJ_CALLCONV opj_create_decompress_v2(OPJ_CODEC_FORMAT p_format)
 			l_info->m_codec_data.m_decompression.opj_read_header =
 					(opj_bool (*) (	struct opj_stream_private *,
 									void *,
-									opj_image_t *,
+									opj_image_t **,
 									struct opj_event_mgr * )) j2k_read_header;
 
 			l_info->m_codec_data.m_decompression.opj_destroy =
@@ -306,14 +306,14 @@ opj_codec_t* OPJ_CALLCONV opj_create_decompress_v2(OPJ_CODEC_FORMAT p_format)
 					(opj_bool (*) (	void *,
 									struct opj_stream_private *,
 									opj_image_t*,
-									struct opj_event_mgr * )) opj_jp2_decode_v2;
+									struct opj_event_mgr * )) jp2_decode_v2;
 
 			l_info->m_codec_data.m_decompression.opj_end_decompress =  (opj_bool (*) (void *,struct opj_stream_private *,struct opj_event_mgr *)) jp2_end_decompress;
 
 			l_info->m_codec_data.m_decompression.opj_read_header =  (opj_bool (*) (
 					struct opj_stream_private *,
 					void *,
-					opj_image_t *,
+					opj_image_t **,
 					struct opj_event_mgr * )) jp2_read_header;
 
 			l_info->m_codec_data.m_decompression.opj_read_tile_header = ( opj_bool (*) (
@@ -329,7 +329,7 @@ opj_codec_t* OPJ_CALLCONV opj_create_decompress_v2(OPJ_CODEC_FORMAT p_format)
 					struct opj_stream_private *,
 					struct opj_event_mgr * )) jp2_read_tile_header;
 
-			l_info->m_codec_data.m_decompression.opj_decode_tile_data = (opj_bool (*) (void *,OPJ_UINT32,OPJ_BYTE*,OPJ_UINT32,struct opj_stream_private *,	struct opj_event_mgr * )) opj_jp2_decode_tile;
+			l_info->m_codec_data.m_decompression.opj_decode_tile_data = (opj_bool (*) (void *,OPJ_UINT32,OPJ_BYTE*,OPJ_UINT32,struct opj_stream_private *,	struct opj_event_mgr * )) jp2_decode_tile;
 
 			l_info->m_codec_data.m_decompression.opj_destroy = (void (*) (void *))jp2_destroy;
 
@@ -663,27 +663,6 @@ void OPJ_CALLCONV opj_destroy_cstr_info(opj_codestream_info_t *cstr_info) {
 	}
 }
 
-void OPJ_CALLCONV opj_destroy_cstr_info_v2(opj_codestream_info_v2_t *cstr_info) {
-	if (cstr_info) {
-		int tileno, compno;
-
-		if (cstr_info->tile_info){
-			for (tileno = 0; tileno < cstr_info->tw * cstr_info->th; tileno++) {
-				for (compno = 0; compno < cstr_info->nbcomps; compno++){
-					opj_free(cstr_info->tile_info[tileno].tccp_info);
-				}
-			}
-			opj_free(cstr_info->tile_info);
-		}
-
-		if (cstr_info->m_default_tile_info.tccp_info){
-			opj_free(cstr_info->m_default_tile_info.tccp_info);
-		}
-
-		opj_free(cstr_info);
-	}
-}
-
 
 
 #ifdef OLD_WAY_MS
@@ -724,7 +703,7 @@ opj_bool OPJ_CALLCONV opj_read_header (
 
 opj_bool OPJ_CALLCONV opj_read_header (	opj_stream_t *p_cio,
 										opj_codec_t *p_codec,
-										opj_image_t *p_image )
+										opj_image_t **p_image )
 {
 	if (p_codec && p_cio) {
 		opj_codec_private_t* l_info = (opj_codec_private_t*) p_codec;
@@ -927,6 +906,26 @@ opj_codestream_info_v2_t* OPJ_CALLCONV opj_get_cstr_info(opj_codec_t *p_codec)
  *
  *
  */
+void OPJ_CALLCONV opj_destroy_cstr_info_v2(opj_codestream_info_v2_t **cstr_info) {
+	if (cstr_info) {
+
+		if ((*cstr_info)->m_default_tile_info.tccp_info){
+			opj_free((*cstr_info)->m_default_tile_info.tccp_info);
+		}
+
+		if ((*cstr_info)->tile_info){
+			/* FIXME not used for the moment*/
+		}
+
+		opj_free((*cstr_info));
+		(*cstr_info) = NULL;
+	}
+}
+
+/*
+ *
+ *
+ */
 opj_codestream_index_t * OPJ_CALLCONV opj_get_cstr_index(opj_codec_t *p_codec)
 {
 	if (p_codec) {
@@ -937,6 +936,30 @@ opj_codestream_index_t * OPJ_CALLCONV opj_get_cstr_index(opj_codec_t *p_codec)
 
 	return NULL;
 }
+
+/*
+ *
+ *
+ */
+void OPJ_CALLCONV opj_destroy_cstr_index(opj_codestream_index_t **p_cstr_index)
+{
+	if (*p_cstr_index){
+
+		if((*p_cstr_index)->marker){
+			opj_free((*p_cstr_index)->marker);
+			(*p_cstr_index)->marker = NULL;
+		}
+
+		if((*p_cstr_index)->tile_index) {
+			/* FIXME not used for the moment*/
+		}
+
+		opj_free((*p_cstr_index));
+		(*p_cstr_index) = NULL;
+
+	}
+}
+
 
 opj_bool OPJ_CALLCONV opj_decode_v2(opj_codec_t *p_info,
 									opj_stream_t *cio,

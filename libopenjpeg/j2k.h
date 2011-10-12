@@ -899,7 +899,7 @@ opj_bool j2k_end_decompress(opj_j2k_v2_t *j2k, struct opj_stream_private *cio, s
  */
 opj_bool j2k_read_header(	struct opj_stream_private *p_stream,
 							opj_j2k_v2_t* p_j2k,
-							opj_image_t* p_image,
+							opj_image_t** p_image,
 							struct opj_event_mgr* p_manager );
 
 

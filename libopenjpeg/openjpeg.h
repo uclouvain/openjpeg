@@ -1262,6 +1262,7 @@ Destroy Codestream information after compression or decompression
 */
 OPJ_API void OPJ_CALLCONV opj_destroy_cstr_info(opj_codestream_info_t *cstr_info);
 
+OPJ_API void OPJ_CALLCONV opj_destroy_cstr_info_v2(opj_codestream_info_v2_t **cstr_info);
 
 /**
  * Decodes an image header.
@@ -1274,7 +1275,7 @@ OPJ_API void OPJ_CALLCONV opj_destroy_cstr_info(opj_codestream_info_t *cstr_info
  */
 OPJ_API opj_bool OPJ_CALLCONV opj_read_header (	opj_stream_t *p_cio,
 												opj_codec_t *p_codec,
-												opj_image_t *p_image);
+												opj_image_t **p_image);
 
 /**
  * Destroy a decompressor handle
@@ -1385,6 +1386,9 @@ OPJ_API opj_codestream_info_v2_t* OPJ_CALLCONV opj_get_cstr_info(opj_codec_t *p_
  *
  */
 OPJ_API opj_codestream_index_t * OPJ_CALLCONV opj_get_cstr_index(opj_codec_t *p_codec);
+
+OPJ_API void OPJ_CALLCONV opj_destroy_cstr_index(opj_codestream_index_t **p_cstr_index);
+
 
 /**
  * Get the JP2 file information from the codec FIXME

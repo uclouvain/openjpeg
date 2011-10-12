@@ -1484,11 +1484,14 @@ opj_image_t* opj_jp2_decode(opj_jp2_t *jp2, opj_cio_t *cio,
 
 }/* opj_jp2_decode() */
 
-opj_bool opj_jp2_decode_v2(	opj_jp2_v2_t *jp2,
-							struct opj_stream_private *cio,
-							opj_image_t* p_image,
-							struct opj_event_mgr * p_manager)
+opj_bool jp2_decode_v2(	opj_jp2_v2_t *jp2,
+						struct opj_stream_private *cio,
+						opj_image_t* p_image,
+						struct opj_event_mgr * p_manager)
 {
+	if (!p_image)
+		return OPJ_FALSE;
+
 	/* J2K decoding */
 	if( ! j2k_decode_v2(jp2->j2k, cio, p_image, p_manager) ) {
 		opj_event_msg_v2(p_manager, EVT_ERROR, "Failed to decode the codestream in the JP2 file\n");
@@ -2438,7 +2441,7 @@ static opj_bool jp2_read_boxhdr_char(
  */
 opj_bool jp2_read_header(	struct opj_stream_private *p_stream,
 							opj_jp2_v2_t *jp2,
-							opj_image_t* p_image,
+							opj_image_t** p_image,
 							struct opj_event_mgr * p_manager
 							)
 {
@@ -2527,7 +2530,7 @@ opj_bool jp2_read_tile_header(	opj_jp2_v2_t * p_jp2,
  * @param	p_stream			the stream to write data to.
  * @param	p_manager	the user event manager.
  */
-opj_bool opj_jp2_decode_tile (
+opj_bool jp2_decode_tile (
 					opj_jp2_v2_t * p_jp2,
 					OPJ_UINT32 p_tile_index,
 					OPJ_BYTE * p_data,

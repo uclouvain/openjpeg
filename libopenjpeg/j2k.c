@@ -776,7 +776,7 @@ static opj_bool j2k_read_cbd (	opj_j2k_v2_t *p_j2k,
  *
  * @return	true			if the image header is correctly copy.
  */
-static opj_bool j2k_copy_img_header(opj_j2k_v2_t* p_j2k, opj_image_t* p_image);
+static opj_bool j2k_copy_img_header(opj_j2k_v2_t* p_j2k, opj_image_t** p_image);
 
 
 static void j2k_dump_MH_info(opj_j2k_v2_t* p_j2k, FILE* out_stream);
@@ -5796,13 +5796,12 @@ opj_bool j2k_end_decompress(
  */
 opj_bool j2k_read_header(	struct opj_stream_private *p_stream,
 							opj_j2k_v2_t* p_j2k,
-							opj_image_t* p_image,
+							opj_image_t** p_image,
 							struct opj_event_mgr* p_manager )
 {
 	/* preconditions */
 	assert(p_j2k != 00);
 	assert(p_stream != 00);
-	assert(p_image != 00);
 	assert(p_manager != 00);
 
 	/* create an empty image header */
@@ -5831,6 +5830,11 @@ opj_bool j2k_read_header(	struct opj_stream_private *p_stream,
 		return OPJ_FALSE;
 	}
 
+	*p_image = opj_image_create0();
+	if (! (*p_image)) {
+		return OPJ_FALSE;
+	}
+
 	if (! j2k_copy_img_header(p_j2k, p_image)){
 		opj_image_destroy(p_j2k->m_image);
 		p_j2k->m_image = NULL;
@@ -5841,42 +5845,41 @@ opj_bool j2k_read_header(	struct opj_stream_private *p_stream,
 	return OPJ_TRUE;
 }
 
-opj_bool j2k_copy_img_header(opj_j2k_v2_t* p_j2k, opj_image_t* p_image)
+opj_bool j2k_copy_img_header(opj_j2k_v2_t* p_j2k, opj_image_t** p_image)
 {
 	OPJ_UINT16 compno;
 
 	/* preconditions */
 	assert(p_j2k != 00);
-	assert(p_image != 00);
 
-	p_image->x0 = p_j2k->m_image->x0;
-	p_image->y0 = p_j2k->m_image->y0;
-	p_image->x1 = p_j2k->m_image->x1;
-	p_image->y1 = p_j2k->m_image->y1;
+	(*p_image)->x0 = p_j2k->m_image->x0;
+	(*p_image)->y0 = p_j2k->m_image->y0;
+	(*p_image)->x1 = p_j2k->m_image->x1;
+	(*p_image)->y1 = p_j2k->m_image->y1;
 
-	p_image->numcomps = p_j2k->m_image->numcomps;
-	p_image->comps = (opj_image_comp_t*)opj_malloc(p_image->numcomps * sizeof(opj_image_comp_t));
-	if (!p_image->comps)
+	(*p_image)->numcomps = p_j2k->m_image->numcomps;
+	(*p_image)->comps = (opj_image_comp_t*)opj_malloc((*p_image)->numcomps * sizeof(opj_image_comp_t));
+	if (!(*p_image)->comps)
 		return OPJ_FALSE;
-	for (compno=0; compno < p_image->numcomps; compno++){
-		memcpy( &(p_image->comps[compno]),
+	for (compno=0; compno < (*p_image)->numcomps; compno++){
+		memcpy( &((*p_image)->comps[compno]),
 				&(p_j2k->m_image->comps[compno]),
 				sizeof(opj_image_comp_t));
 	}
 
-	p_image->color_space = p_j2k->m_image->color_space;
-	p_image->icc_profile_len = p_j2k->m_image->icc_profile_len;
-	if (!p_image->icc_profile_len) {
+	(*p_image)->color_space = p_j2k->m_image->color_space;
+	(*p_image)->icc_profile_len = p_j2k->m_image->icc_profile_len;
+	if (!(*p_image)->icc_profile_len) {
 
-		p_image->icc_profile_buf = (unsigned char*)opj_malloc(p_image->icc_profile_len);
-		if (!p_image->icc_profile_buf)
+		(*p_image)->icc_profile_buf = (unsigned char*)opj_malloc((*p_image)->icc_profile_len);
+		if (!(*p_image)->icc_profile_buf)
 			return OPJ_FALSE;
-		memcpy( p_image->icc_profile_buf,
+		memcpy( (*p_image)->icc_profile_buf,
 				p_j2k->m_image->icc_profile_buf,
 				p_j2k->m_image->icc_profile_len);
 	}
 	else
-		p_image->icc_profile_buf = NULL;
+		(*p_image)->icc_profile_buf = NULL;
 
 	return OPJ_TRUE;
 }
@@ -6327,7 +6330,7 @@ void j2k_destroy (opj_j2k_v2_t *p_j2k)
 	tcd_destroy_v2(p_j2k->m_tcd);
 
 	j2k_cp_destroy(&(p_j2k->m_cp));
-	memset(&(p_j2k->m_cp),0,sizeof(opj_cp_t));
+	memset(&(p_j2k->m_cp),0,sizeof(opj_cp_v2_t));
 
 	opj_procedure_list_destroy(p_j2k->m_procedure_list);
 	p_j2k->m_procedure_list = 00;
@@ -6338,22 +6341,26 @@ void j2k_destroy (opj_j2k_v2_t *p_j2k)
 	j2k_destroy_cstr_index(p_j2k->cstr_index);
 	p_j2k->cstr_index = NULL;
 
+	opj_image_destroy(p_j2k->m_image);
+	p_j2k->m_image = NULL;
+
 	opj_free(p_j2k);
 }
 
 void j2k_destroy_cstr_index (opj_codestream_index_t *p_cstr_ind)
 {
-	if (!p_cstr_ind) {
-		return;
-	}
+	if (p_cstr_ind) {
 
-	if (p_cstr_ind->marker) {
-		opj_free(p_cstr_ind->marker);
-		p_cstr_ind->marker = NULL;
-	}
+		if (p_cstr_ind->marker) {
+			opj_free(p_cstr_ind->marker);
+			p_cstr_ind->marker = NULL;
+		}
 
-	if (p_cstr_ind->tile_index) {
-		// FIXME
+		if (p_cstr_ind->tile_index) {
+			// FIXME not used for the moment
+		}
+
+		opj_free(p_cstr_ind);
 	}
 }
 
@@ -7597,6 +7604,8 @@ opj_codestream_info_v2_t* j2k_get_cstr_info(opj_j2k_v2_t* p_j2k)
 	cstr_info->tw = p_j2k->m_cp.tw;
 	cstr_info->th = p_j2k->m_cp.th;
 
+	cstr_info->tile_info = NULL; /* Not fill from the main header*/
+
 	l_default_tile = p_j2k->m_specific_param.m_decoder.m_default_tcp;
 
 	cstr_info->m_default_tile_info.csty = l_default_tile->csty;
@@ -7670,6 +7679,7 @@ opj_codestream_index_t* j2k_get_cstr_index(opj_j2k_v2_t* p_j2k)
 
 	memcpy(l_cstr_index->marker, p_j2k->cstr_index->marker, l_cstr_index->marknum * sizeof(opj_marker_info_t) );
 
+	l_cstr_index->tile_index = NULL; /* FIXME not used for the moment*/
 
 	return l_cstr_index;
 }
@@ -7765,20 +7775,24 @@ opj_bool j2k_decode_v2(	opj_j2k_v2_t * p_j2k,
 {
 	OPJ_UINT32 compno;
 
+	if (!p_image)
+		return OPJ_FALSE;
+
 	/* customization of the decoding */
 	j2k_setup_decoding(p_j2k);
 
-	/* write header */
+	/* Decode the codestream */
 	if (! j2k_exec (p_j2k,p_j2k->m_procedure_list,p_stream,p_manager)) {
 		opj_image_destroy(p_j2k->m_image);
 		p_j2k->m_image = NULL;
 		return OPJ_FALSE;
 	}
 
+	/* Copy data from codec to output image*/
 	for (compno = 0; compno < p_image->numcomps; compno++) {
 		p_image->comps[compno].data = p_j2k->m_image->comps[compno].data;
 		p_j2k->m_image->comps[compno].data = NULL;
 	}
 
-	return OPJ_TRUE /*p_j2k->m_image*/;
+	return OPJ_TRUE;
 }

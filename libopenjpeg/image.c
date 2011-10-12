@@ -74,6 +74,7 @@ void OPJ_CALLCONV opj_image_destroy(opj_image_t *image) {
 	if(image) {
 		if(image->comps) {
 			OPJ_UINT32 compno;
+
 			/* image components */
 			for(compno = 0; compno < image->numcomps; compno++) {
 				opj_image_comp_t *image_comp = &(image->comps[compno]);
@@ -87,7 +88,8 @@ void OPJ_CALLCONV opj_image_destroy(opj_image_t *image) {
 		if(image->icc_profile_buf) {
 			opj_free(image->icc_profile_buf);
 		}
-		//FIXME opj_free(image);
+
+		opj_free(image);
 	}
 }
 

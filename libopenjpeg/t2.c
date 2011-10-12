@@ -970,7 +970,7 @@ opj_t2_v2_t* t2_create_v2(	opj_image_t *p_image,
 	if (!l_t2) {
 		return NULL;
 	}
-	memset(l_t2,0,sizeof(opj_t2_t));
+	memset(l_t2,0,sizeof(opj_t2_v2_t));
 
 	l_t2->image = p_image;
 	l_t2->cp = p_cp;

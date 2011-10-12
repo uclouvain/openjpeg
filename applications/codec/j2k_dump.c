@@ -372,19 +372,21 @@ int main(int argc, char *argv[])
 
 	opj_dparameters_t parameters;			/* Decompression parameters */
 	opj_event_mgr_t event_mgr;				/* Event manager */
-	opj_image_t image;					/* Image structure */
+	opj_image_t* image = NULL;					/* Image structure */
 	opj_codec_t* dinfo = NULL;				/* Handle to a decompressor */
 	opj_stream_t *cio = NULL;				/* Stream */
-	opj_codestream_info_v2_t* cstr_info;
-	opj_codestream_index_t* cstr_index;
+	opj_codestream_info_v2_t* cstr_info = NULL;
+	opj_codestream_index_t* cstr_index = NULL;
 
 	OPJ_INT32 num_images, imageno;
 	img_fol_t img_fol;
 	dircnt_t *dirptr = NULL;
 
+#ifdef MSD
 	opj_bool l_go_on = OPJ_TRUE;
 	OPJ_UINT32 l_max_data_size = 1000;
 	OPJ_BYTE * l_data = (OPJ_BYTE *) malloc(1000);
+#endif
 
 	/* Set decoding parameters to default values */
 	opj_set_default_decoder_parameters(&parameters);
@@ -512,6 +514,7 @@ int main(int argc, char *argv[])
 			opj_stream_destroy(cio);
 			fclose(fsrc);
 			opj_destroy_codec(dinfo);
+			opj_image_destroy(image);
 			fclose(fout);
 			return EXIT_FAILURE;
 		}
@@ -603,7 +606,13 @@ int main(int argc, char *argv[])
 		}
 
 		/* destroy the image header */
-		opj_image_destroy(&image);
+		opj_image_destroy(image);
+
+		/* destroy the codestream index */
+		opj_destroy_cstr_index(&cstr_index);
+
+		/* destroy the codestream info */
+		opj_destroy_cstr_info_v2(&cstr_info);
 
 	}
 

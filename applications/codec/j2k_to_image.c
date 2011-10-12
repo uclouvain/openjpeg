@@ -576,7 +576,7 @@ int main(int argc, char **argv)
 
 	opj_dparameters_t parameters;			/* decompression parameters */
 	opj_event_mgr_t event_mgr;				/* event manager */
-	opj_image_t image;
+	opj_image_t* image = NULL;
 	opj_stream_t *cio = NULL;				/* Stream */
 	opj_codec_t* dinfo = NULL;				/* Handle to a decompressor */
 
@@ -712,7 +712,7 @@ int main(int argc, char **argv)
 		}
 
 		/* Get the decoded image */
-		if ( !( opj_decode_v2(dinfo, cio, &image) && opj_end_decompress(dinfo,cio) ) ) {
+		if ( !( opj_decode_v2(dinfo, cio, image) && opj_end_decompress(dinfo,cio) ) ) {
 			fprintf(stderr, "ERROR -> j2k_to_image: failed to decode image!\n");
 			opj_destroy_codec(dinfo);
 			opj_stream_destroy(cio);
@@ -725,23 +725,23 @@ int main(int argc, char **argv)
 		fclose(fsrc);
 
 
-		if(image.color_space == CLRSPC_SYCC){
-			color_sycc_to_rgb(&image); /* FIXME */
+		if(image->color_space == CLRSPC_SYCC){
+			color_sycc_to_rgb(image); /* FIXME */
 		}
 
-		if(image.icc_profile_buf) {
+		if(image->icc_profile_buf) {
 #if defined(HAVE_LIBLCMS1) || defined(HAVE_LIBLCMS2)
-			color_apply_icc_profile(&image); /* FIXME */
+			color_apply_icc_profile(image); /* FIXME */
 #endif
-			free(image.icc_profile_buf);
-			image.icc_profile_buf = NULL; image.icc_profile_len = 0;
+			free(image->icc_profile_buf);
+			image->icc_profile_buf = NULL; image->icc_profile_len = 0;
 		}
 
 		/* create output image */
 		/* ------------------- */
 		switch (parameters.cod_format) {
 		case PXM_DFMT:			/* PNM PGM PPM */
-			if (imagetopnm(&image, parameters.outfile)) {
+			if (imagetopnm(image, parameters.outfile)) {
 				fprintf(stdout,"Outfile %s not generated\n",parameters.outfile);
 			}
 			else {
@@ -750,7 +750,7 @@ int main(int argc, char **argv)
 			break;
 
 		case PGX_DFMT:			/* PGX */
-			if(imagetopgx(&image, parameters.outfile)){
+			if(imagetopgx(image, parameters.outfile)){
 				fprintf(stdout,"Outfile %s not generated\n",parameters.outfile);
 			}
 			else {
@@ -759,7 +759,7 @@ int main(int argc, char **argv)
 			break;
 
 		case BMP_DFMT:			/* BMP */
-			if(imagetobmp(&image, parameters.outfile)){
+			if(imagetobmp(image, parameters.outfile)){
 				fprintf(stdout,"Outfile %s not generated\n",parameters.outfile);
 			}
 			else {
@@ -768,7 +768,7 @@ int main(int argc, char **argv)
 			break;
 #ifdef HAVE_LIBTIFF
 		case TIF_DFMT:			/* TIFF */
-			if(imagetotif(&image, parameters.outfile)){
+			if(imagetotif(image, parameters.outfile)){
 				fprintf(stdout,"Outfile %s not generated\n",parameters.outfile);
 			}
 			else {
@@ -777,7 +777,7 @@ int main(int argc, char **argv)
 			break;
 #endif /* HAVE_LIBTIFF */
 		case RAW_DFMT:			/* RAW */
-			if(imagetoraw(&image, parameters.outfile)){
+			if(imagetoraw(image, parameters.outfile)){
 				fprintf(stdout,"Error generating raw file. Outfile %s not generated\n",parameters.outfile);
 			}
 			else {
@@ -786,7 +786,7 @@ int main(int argc, char **argv)
 			break;
 
 		case TGA_DFMT:			/* TGA */
-			if(imagetotga(&image, parameters.outfile)){
+			if(imagetotga(image, parameters.outfile)){
 				fprintf(stdout,"Error generating tga file. Outfile %s not generated\n",parameters.outfile);
 			}
 			else {
@@ -795,7 +795,7 @@ int main(int argc, char **argv)
 			break;
 #ifdef HAVE_LIBPNG
 		case PNG_DFMT:			/* PNG */
-			if(imagetopng(&image, parameters.outfile)){
+			if(imagetopng(image, parameters.outfile)){
 				fprintf(stdout,"Error generating png file. Outfile %s not generated\n",parameters.outfile);
 			}
 			else {
@@ -817,10 +817,10 @@ int main(int argc, char **argv)
 
 
 		/* free image data structure */
-		opj_image_destroy(&image);
+		opj_image_destroy(image);
 
 	}
-	return 0;
+	return EXIT_SUCCESS;
 }
 //end main
 
