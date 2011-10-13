@@ -39,6 +39,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "query_parser.h"
 
 #ifdef SERVER
