@@ -162,8 +162,7 @@ bool modify_mainheader( Byte_t *j2kstream, int numOfdecomp, SIZmarker_param_t SI
   if( !(newLcod = modify_CODmkrstream( COD, numOfdecomp, j2kstream)))
     return false;
 
-  // memmove( j2kstream+2+newLcod, j2kstream+2+COD.Lcod, (*j2klen)-(SIZ.Lsiz+newLcod+6));// new->oldLcod
-   memmove( j2kstream+2+newLcod, j2kstream+2+COD.Lcod, (*j2klen)-(SIZ.Lsiz+COD.Lcod+6));
+  memmove( j2kstream+2+newLcod, j2kstream+2+COD.Lcod, (*j2klen)-(SIZ.Lsiz+COD.Lcod+6));
   *j2klen -= ( COD.Lcod - newLcod);
   
   return true;

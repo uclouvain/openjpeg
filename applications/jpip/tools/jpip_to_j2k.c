@@ -89,6 +89,7 @@ int main(int argc,char *argv[])
   
   //print_msgqueue( msgqueue);
   
+  // arguments fw, fh need to be set for LRCP, PCRL, CPRL
   j2kstream = recons_j2k( msgqueue, jpipstream, msgqueue->first->csn, 0, 0, &j2klen);
     
   delete_msgqueue( &msgqueue);
