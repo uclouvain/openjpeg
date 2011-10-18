@@ -6,6 +6,9 @@ What's New for OpenJPIP
 + : added
 
 October 14, 2011
+! [kaori] rearranged opj_server, opj_dec_server directory
+
+October 14, 2011
 + [kaori] enable all progression orders
 
 October 12, 2011
