@@ -60,7 +60,7 @@ typedef struct query_param{
   int rx, ry, rw, rh;                         //!< roi region
   int layers;                                 //!< quality layers
   int lastcomp;                               //!< last component number
-  bool *comps;                                //!< components for jpp-stream, null means all components
+  bool *comps;                                //!< components (dynamic array) for jpp-stream, null means all components
   char cid[MAX_LENOFCID];                     //!< channel identifier
   bool cnew;                                  //!< if there is new channel request(true) or not (false)
   char cclose[MAX_NUMOFCCLOSE][MAX_LENOFCID]; //!< closing channel identifiers
@@ -83,9 +83,9 @@ typedef struct query_param{
  * parse query
  *
  * @param[in]  query_string request query string
- * @param[out] query_param  query parameters
+ * @return     pointer to query parameters
  */
-void parse_query( char *query_string, query_param_t *query_param);
+query_param_t * parse_query( char *query_string);
 
 /**
  * print query parameters
@@ -93,5 +93,13 @@ void parse_query( char *query_string, query_param_t *query_param);
  * @param[in] query_param  query parameters
  */
 void print_queryparam( query_param_t query_param);
+
+
+/**
+ * delete query
+ *
+ * @param[in] query address of the deleting query pointer
+ */
+void delete_query( query_param_t **query);
 
 #endif 	    /* !QUERY_PARSER_H_ */

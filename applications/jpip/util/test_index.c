@@ -42,87 +42,27 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include <stdlib.h>
-#include <string.h>
-#include "index_manager.h"
-
-
-#ifdef SERVER
-#include "fcgi_stdio.h"
-#define logstream FCGI_stdout
-#else
-#define FCGI_stdout stdout
-#define FCGI_stderr stderr
-#define logstream stderr
-#endif //SERVER
-
-
-/**
- * Open JP2 file with the check of JP2 header
- *
- * @param[in] filename file name string
- * @return             file descriptor
- */
-int myopen_jp2file( char filename[]);
-
+#include "openjpip.h"
 
 int
 main(int argc, char *argv[])
 {
   int fd;
-  index_param_t *jp2idx;
+  index_t *jp2idx;
   
-  if((fd = myopen_jp2file( argv[1])) == -1){
-    fprintf( stderr, "jp2 file open error\n"); 
+  if( (fd = open( argv[1], O_RDONLY)) == -1){
+    fprintf( stderr, "Error: Target %s not found\n", argv[1]);
     return -1;
   }
 
-  if( !(jp2idx = parse_jp2file( fd))){
-    fprintf( FCGI_stdout, "Status: 501\r\n");
+  if( !(jp2idx = get_index_from_JP2file( fd))){
+    fprintf( stderr, "JP2 file broken\n");
     return -1;
   }
   
-  print_index( *jp2idx);
-
-  delete_index( &jp2idx);
+  output_index( jp2idx);
+  destroy_index( &jp2idx);
+  close(fd);
 
   return 0;
 } /* main */
-
-
-
-int myopen_jp2file( char filename[])
-{
-  int fd;
-  char *data;
-
-  if( (fd = open( filename, O_RDONLY)) == -1){
-    fprintf( FCGI_stdout, "Reason: Target %s not found\r\n", filename);
-    return -1;
-  }
-  // Check resource is a JP family file.
-  if( lseek( fd, 0, SEEK_SET)==-1){
-    close(fd);
-    fprintf( FCGI_stdout, "Reason: Target %s broken (lseek error)\r\n", filename);
-    return -1;
-  }
-  
-  data = (char *)malloc( 12); // size of header
-  if( read( fd, data, 12) != 12){
-    free( data);
-    close(fd);
-    fprintf( FCGI_stdout, "Reason: Target %s broken (read error)\r\n", filename);
-    return -1;
-  }
-    
-  if( *data || *(data + 1) || *(data + 2) ||
-      *(data + 3) != 12 || strncmp (data + 4, "jP  \r\n\x87\n", 8)){
-    free( data);
-    close(fd);
-    fprintf( FCGI_stdout, "Reason: No JPEG 2000 Signature box in target %s\r\n", filename);
-    return -1;
-  } 
-  free( data);
-  return fd;
-}
-

@@ -7,10 +7,6 @@ INCLUDE_DIRECTORIES(
 
 SET(OPJ_SERVER_SRCS
 ${CMAKE_CURRENT_SOURCE_DIR}/opj_server.c
-${CMAKE_CURRENT_SOURCE_DIR}/query_parser.c
-${CMAKE_CURRENT_SOURCE_DIR}/channel_manager.c
-${CMAKE_CURRENT_SOURCE_DIR}/session_manager.c
-${CMAKE_CURRENT_SOURCE_DIR}/jpip_parser.c
 )
 
 # Build executable

@@ -5,7 +5,11 @@ What's New for OpenJPIP
 ! : changed
 + : added
 
-October 14, 2011
+October 20, 2011
++ [added] API style in openJPIP library
+! [kaori] rearranged directories, applications are all under util/ directory, currently only 'make -f Makefile.nix' works
+
+October 18, 2011
 ! [kaori] rearranged opj_server, opj_dec_server directory
 
 October 14, 2011

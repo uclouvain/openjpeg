@@ -74,8 +74,11 @@ Byte_t * j2k_to_pnm( Byte_t *j2kstream, Byte8_t j2klen, ihdrbox_param_t **ihdrbo
   /* open a byte stream */
   cio = opj_cio_open((opj_common_ptr)dinfo, j2kstream, j2klen);
 
+  fprintf( stderr, "opj_decode dinfo:%p cio:%p\n", dinfo, cio);
   /* decode the stream and fill the image structure */
   image = opj_decode(dinfo, cio);
+
+  fprintf( stderr, "done\n");
   if(!image) {
     fprintf(stderr, "ERROR -> jp2_to_image: failed to decode image!\n");
     opj_destroy_decompress(dinfo);
@@ -95,9 +98,10 @@ Byte_t * j2k_to_pnm( Byte_t *j2kstream, Byte8_t j2klen, ihdrbox_param_t **ihdrbo
   if(dinfo) {
     opj_destroy_decompress(dinfo);
   }
+
   /* free image data structure */
   opj_image_destroy(image);
-
+  
   return pnmstream;
 }
 

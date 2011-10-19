@@ -53,11 +53,11 @@
 
 
 /**
- * initialize query parameters
+ * Get initialized query parameters
  *
- * @param[in,out] query_param  query parameters
+ * @return initial query parameters
  */
-void init_queryparam( query_param_t *query_param);
+query_param_t * get_initquery();
 
 /*
  * get a pair of field name and value from the string starting fieldname=fieldval&... format
@@ -89,11 +89,12 @@ void parse_comps( char *field, query_param_t *query_param);
 //! maximum length of field value
 #define MAX_LENOFFIELDVAL 128
 
-void parse_query( char *query_string, query_param_t *query_param)
+query_param_t * parse_query( char *query_string)
 {
+  query_param_t *query_param;
   char *pquery, fieldname[MAX_LENOFFIELDNAME], fieldval[MAX_LENOFFIELDVAL];
 
-  init_queryparam( query_param);
+  query_param = get_initquery();
   
   pquery = query_string;
 
@@ -146,40 +147,46 @@ void parse_query( char *query_string, query_param_t *query_param)
 	sscanf( fieldval, "%d", &query_param->len);
     }
   }
+  return query_param;
 }
 
-void init_queryparam( query_param_t *query_param)
+query_param_t * get_initquery()
 {
+  query_param_t *query;
   int i;
 
-  query_param->target[0] = '\0';
-  query_param->tid[0] = '\0';
-  query_param->fx = -1;
-  query_param->fy = -1;
-  query_param->rx = -1;
-  query_param->ry = -1;
-  query_param->rw = -1;
-  query_param->rh = -1;
-  query_param->layers = -1;
-  query_param->lastcomp = -1;
-  query_param->comps = NULL;  
-  query_param->cid[0] = '\0';
-  query_param->cnew = false;
-  memset( query_param->cclose, 0, MAX_NUMOFCCLOSE*MAX_LENOFCID);
-  memset( query_param->box_type, 0, MAX_NUMOFBOX*4);
-  memset( query_param->limit, 0, MAX_NUMOFBOX*sizeof(int));
+  query = (query_param_t *)malloc( sizeof(query_param_t));
+
+  query->target[0] = '\0';
+  query->tid[0] = '\0';
+  query->fx = -1;
+  query->fy = -1;
+  query->rx = -1;
+  query->ry = -1;
+  query->rw = -1;
+  query->rh = -1;
+  query->layers = -1;
+  query->lastcomp = -1;
+  query->comps = NULL;  
+  query->cid[0] = '\0';
+  query->cnew = false;
+  memset( query->cclose, 0, MAX_NUMOFCCLOSE*MAX_LENOFCID);
+  memset( query->box_type, 0, MAX_NUMOFBOX*4);
+  memset( query->limit, 0, MAX_NUMOFBOX*sizeof(int));
   for( i=0; i<MAX_NUMOFBOX; i++){
-    query_param->w[i] = false;
-    query_param->s[i] = false;
-    query_param->g[i] = false;
-    query_param->a[i] = false;
-    query_param->priority[i] = false;
+    query->w[i] = false;
+    query->s[i] = false;
+    query->g[i] = false;
+    query->a[i] = false;
+    query->priority[i] = false;
   }
-  query_param->root_bin = 0;
-  query_param->max_depth = -1;
-  query_param->metadata_only = false;
-  query_param->return_type = UNKNOWN;
-  query_param->len = -1;
+  query->root_bin = 0;
+  query->max_depth = -1;
+  query->metadata_only = false;
+  query->return_type = UNKNOWN;
+  query->len = -1;
+
+  return query;
 }
 
 
@@ -375,4 +382,10 @@ void parse_comps( char *field, query_param_t *query_param)
   
   if(aux!=-1)
     query_param->comps[aux] = true;
+}
+
+void delete_query( query_param_t **query)
+{
+  free((*query)->comps);
+  free( *query);
 }

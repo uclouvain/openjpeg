@@ -41,124 +41,6 @@
 //! maximum length of channel identifier
 #define MAX_LENOFCID 30
 
-/**
- * handle JPT- JPP- stream message
- *
- * @param[in]     connected_socket socket descriptor
- * @param[in]     cachelist        cache list pointer
- * @param[in,out] jpipstream       address of JPT- JPP- stream pointer
- * @param[in,out] streamlen        address of stream length
- * @param[in,out] msgqueue         message queue pointer
- */
-void handle_JPIPstreamMSG( SOCKET connected_socket, cachelist_param_t *cachelist, Byte_t **jpipstream, int *streamlen, msgqueue_param_t *msgqueue);
-
-/**
- * handle PNM request message
- *
- * @param[in] connected_socket socket descriptor
- * @param[in] jpipstream       jpipstream pointer
- * @param[in] msgqueue         message queue pointer
- * @param[in] cachelist        cache list pointer
- */
-void handle_PNMreqMSG( SOCKET connected_socket, Byte_t *jpipstream, msgqueue_param_t *msgqueue, cachelist_param_t *cachelist);
-
-/**
- * handle XML request message
- *
- * @param[in] connected_socket socket descriptor
- * @param[in] jpipstream       address of caching jpipstream pointer
- * @param[in] cachelist        cache list pointer
- */
-void handle_XMLreqMSG( SOCKET connected_socket, Byte_t *jpipstream, cachelist_param_t *cachelist);
-
-/**
- * handle TargetID request message
- *
- * @param[in] connected_socket socket descriptor
- * @param[in] cachelist        cache list pointer
- */
-void handle_TIDreqMSG( SOCKET connected_socket, cachelist_param_t *cachelist);
-
-/**
- * handle ChannelID request message
- *
- * @param[in] connected_socket socket descriptor
- * @param[in] cachelist        cache list pointer
- */
-void handle_CIDreqMSG( SOCKET connected_socket, cachelist_param_t *cachelist);
-
-/**
- * handle distroy ChannelID message
- *
- * @param[in]     connected_socket socket descriptor
- * @param[in,out] cachelist        cache list pointer
- */
-void handle_dstCIDreqMSG( SOCKET connected_socket, cachelist_param_t *cachelist);
-
-/**
- * handle saving JP2 file request message
- *
- * @param[in] connected_socket socket descriptor
- * @param[in] cachelist        cache list pointer
- * @param[in] msgqueue         message queue pointer
- * @param[in] jpipstream       address of caching jpipstream pointer
- */
-void handle_JP2saveMSG( SOCKET connected_socket, cachelist_param_t *cachelist, msgqueue_param_t *msgqueue, Byte_t *jpipstream);
-
-bool handle_clientmsg( SOCKET connected_socket, cachelist_param_t *cachelist, Byte_t **jpipstream, int *streamlen, msgqueue_param_t *msgqueue)
-{
-  bool quit = false;
-  msgtype_t msgtype = identify_clientmsg( connected_socket);
-  
-  switch( msgtype){
-  case JPIPSTREAM:
-    handle_JPIPstreamMSG( connected_socket, cachelist, jpipstream, streamlen, msgqueue);
-    break;
-      
-  case PNMREQ:
-    handle_PNMreqMSG( connected_socket, *jpipstream, msgqueue, cachelist);
-    break;
-    
-  case XMLREQ:
-    handle_XMLreqMSG( connected_socket, *jpipstream, cachelist);
-    break;
-
-  case TIDREQ:
-    handle_TIDreqMSG( connected_socket, cachelist);
-    break;
-						
-  case CIDREQ:
-    handle_CIDreqMSG( connected_socket, cachelist);
-    break;
-
-  case CIDDST:
-    handle_dstCIDreqMSG( connected_socket, cachelist);
-    break;
-
-  case JP2SAVE:
-    handle_JP2saveMSG( connected_socket, cachelist, msgqueue, *jpipstream);
-    break;
-
-  case QUIT:
-    quit = true;
-    save_codestream( *jpipstream, *streamlen, "jpt");
-    break;
-  case MSGERROR:
-    break;
-  }
-        
-  printf("\t end of the connection\n\n");
-  if( close_socket(connected_socket) != 0){
-    perror("close");
-    return false;
-  }
-  if( quit)
-    return false;
-
-  return true;
-}
-
-
 void handle_JPIPstreamMSG( SOCKET connected_socket, cachelist_param_t *cachelist,
 			   Byte_t **jpipstream, int *streamlen, msgqueue_param_t *msgqueue)
 {
@@ -216,7 +98,7 @@ void handle_PNMreqMSG( SOCKET connected_socket, Byte_t *jpipstream, msgqueue_par
 
   receive_line( connected_socket, tmp);
   fw = atoi( tmp);
-  
+
   receive_line( connected_socket, tmp);
   fh = atoi( tmp);
 

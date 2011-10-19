@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: opj_dec_server.c 54 2011-05-10 13:22:47Z kaori $
  *
  * Copyright (c) 2002-2011, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
  * Copyright (c) 2002-2011, Professor Benoit Macq
@@ -28,56 +28,57 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+/*! \file
+ *  \brief opj_dec_server is a server to decode JPT-stream and communicate locally with JPIP client, which is coded in java.
+ *
+ *  \section impinst Implementing instructions
+ *  Launch opj_dec_server from a terminal in the same machine as JPIP client image viewers. \n
+ *   % ./opj_dec_server \n
+ *  Keep it alive as long as image viewers are open.\n
+ *
+ *  To quite the opj_dec_server, send a message "quit" through the telnet.\n
+ *   % telnet localhost 5000\n
+ *     quit\n
+ *  Be sure all image viewers are closed.\n
+ *  Cache file in JPT format is stored in the working directly before it quites.
+ *  
+ */
+
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include "jpipstream_manager.h"
-#include "jp2k_encoder.h"
-#include "jp2k_decoder.h"
+#include "openjpip.h"
 
-Byte_t * update_JPIPstream( Byte_t *newstream, int newstreamlen, Byte_t *cache_stream, int *streamlen)
-{
-  Byte_t *stream = (Byte_t *)malloc( (*streamlen)+newstreamlen);
-  if( *streamlen > 0)
-    memcpy( stream, cache_stream, *streamlen);
-  memcpy( stream+(*streamlen), newstream, newstreamlen);
-  *streamlen += newstreamlen;
+#ifdef _WIN32
+WSADATA initialisation_win32;
+#endif
 
-  if(cache_stream)
-    free( cache_stream);
+int main(int argc, char *argv[]){
   
-  return stream;
-}
+  dec_server_record_t *server_record;
+  client_t client;
 
-void save_codestream( Byte_t *codestream, Byte8_t streamlen, char *fmt)
-{
-  time_t timer;
-  struct tm *t_st;
-  char filename[20];
-  FILE *fp;
-
-  time(&timer);
-  t_st = localtime( &timer);
+#ifdef _WIN32
+  int erreur = WSAStartup(MAKEWORD(2,2),&initialisation_win32);
+  if( erreur!=0)
+    fprintf( stderr, "Erreur initialisation Winsock error : %d %d\n",erreur,WSAGetLastError());
+  else
+    printf( "Initialisation Winsock\n");
+#endif //_WIN32
   
-  sprintf( filename, "%4d%02d%02d%02d%02d%02d.%.3s", t_st->tm_year+1900, t_st->tm_mon+1, t_st->tm_mday, t_st->tm_hour, t_st->tm_min, t_st->tm_sec, fmt);
-
-  fp = fopen( filename, "wb");
-  fwrite( codestream, streamlen, 1, fp);
-  fclose( fp);
-}
-
-
-Byte_t * jpipstream_to_pnm( Byte_t *jpipstream, msgqueue_param_t *msgqueue, Byte8_t csn, int fw, int fh, ihdrbox_param_t **ihdrbox)
-{
-  Byte_t *pnmstream;
-  Byte_t *j2kstream; // j2k or jp2 codestream
-  Byte8_t j2klen;
+  server_record = init_dec_server(); 
   
-  j2kstream = recons_j2k( msgqueue, jpipstream, csn, fw, fh, &j2klen);
+  while(( client = accept_connection( server_record)) != -1 )
+    if(!handle_clientreq( client, server_record))
+      break;
   
-  pnmstream = j2k_to_pnm( j2kstream, j2klen, ihdrbox);
-  free( j2kstream);
+  terminate_dec_server( &server_record);
 
-  return pnmstream;
+#ifdef _WIN32
+  if( WSACleanup() != 0){
+    printf("\nError in WSACleanup : %d %d",erreur,WSAGetLastError());
+  }else{
+    printf("\nWSACleanup OK\n");
+  }
+#endif
+
+  return 0;
 }

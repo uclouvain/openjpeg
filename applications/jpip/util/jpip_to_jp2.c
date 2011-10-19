@@ -29,86 +29,44 @@
  */
 
 /*! \file
- *  \brief jpip_to_j2k is a program to convert JPT- JPP- stream to J2K file
+ *  \brief jpip_to_jp2 is a program to convert JPT- JPP- stream to JP2 file
  *
  *  \section impinst Implementing instructions
  *  This program takes two arguments. \n
- *   -# Input  JPT or JPP file
- *   -# Output J2K file\n
- *   % ./jpip_to_j2k input.jpt output.j2k
+ *   -# Input JPT or JPP file
+ *   -# Output JP2 file\n
+ *   % ./jpip_to_jp2 input.jpt output.jp2
  *   or
- *   % ./jpip_to_j2k input.jpp output.j2k
+ *   % ./jpip_to_jp2 input.jpp output.jp2
  */
 
 #include <stdio.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include "msgqueue_manager.h"
-#include "jp2k_encoder.h"
+#include "openjpip.h"
 
 int main(int argc,char *argv[])
 {
-  msgqueue_param_t *msgqueue;
-  int infd, outfd;
-  Byte8_t jpiplen, j2klen;
-  struct stat sb;
-  Byte_t *jpipstream, *j2kstream;
-  
+  jpip_dec_param_t *dec;
+    
   if( argc < 3){
     fprintf( stderr, "Too few arguments:\n");
     fprintf( stderr, " - input  jpt or jpp file\n");
-    fprintf( stderr, " - output j2k file\n");
-    return -1;
-  }
-
-  if(( infd = open( argv[1], O_RDONLY)) == -1){
-    fprintf( stderr, "file %s not exist\n", argv[1]);
+    fprintf( stderr, " - output jp2 file\n");
     return -1;
   }
   
-  if( fstat( infd, &sb) == -1){
-    fprintf( stderr, "input file stream is broken\n");
-    return -1;
-  }
-  jpiplen = (Byte8_t)sb.st_size;
-
-  jpipstream = (Byte_t *)malloc( jpiplen);
-
-  if( read( infd, jpipstream, jpiplen) != jpiplen){
-    fprintf( stderr, "file reading error\n");
-    free( jpipstream);
-    return -1;
-  }
-  close(infd);
-
-  msgqueue = gene_msgqueue( true, NULL);
-  parse_JPIPstream( jpipstream, jpiplen, 0, msgqueue);
+  dec = init_jpipdecoder( true);
   
-  //print_msgqueue( msgqueue);
-  
-  // arguments fw, fh need to be set for LRCP, PCRL, CPRL
-  j2kstream = recons_j2k( msgqueue, jpipstream, msgqueue->first->csn, 0, 0, &j2klen);
-    
-  delete_msgqueue( &msgqueue);
-  free( jpipstream);
-
-#ifdef _WIN32
-  if(( outfd = open( argv[2], O_WRONLY|O_CREAT, _S_IREAD | _S_IWRITE)) == -1){
-#else
-  if(( outfd = open( argv[2], O_WRONLY|O_CREAT, S_IRWXU|S_IRWXG)) == -1){
-#endif
-    fprintf( stderr, "file %s open error\n", argv[2]);
+  if(!( fread_jpip( argv[1], dec)))
     return -1;
-  }
   
-  if( write( outfd, j2kstream, j2klen) != j2klen)
-    fprintf( stderr, "j2k file write error\n");
+  decode_jpip( dec);
+  
+  if(!(fwrite_jp2k( argv[2], dec)))
+    return -1;
 
-  free( j2kstream);
-  close(outfd);
+  output_log( true, false, true, dec);
+
+  destroy_jpipdecoder( &dec);
 
   return 0;
 }

@@ -48,36 +48,18 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <math.h>
-
-#include "query_parser.h"
-#include "jpip_parser.h"
-#include "session_manager.h"
-#include "target_manager.h"
-#include "msgqueue_manager.h"
+#include "openjpip.h"
 
 #ifndef QUIT_SIGNAL
 #define QUIT_SIGNAL "quitJPIP"
 #endif
 
-#ifdef SERVER
-#include "fcgi_stdio.h"
-#define logstream FCGI_stdout
-#else
-#define FCGI_stdout stdout
-#define FCGI_stderr stderr
-#define logstream stderr
-#endif //SERVER
-
 int main(void)
 { 
-  sessionlist_param_t *sessionlist;
-  targetlist_param_t *targetlist;
-  bool parse_status;
-  
-  sessionlist = gene_sessionlist();
-  targetlist  = gene_targetlist();
-  
+  server_record_t *server_record;
+
+  server_record = init_JPIPserver();
+
 #ifdef SERVER
 
   char *query_string;
@@ -95,37 +77,29 @@ int main(void)
 
       if( strcmp( query_string, QUIT_SIGNAL) == 0)
 	break;
-           
-      query_param_t query_param;
-      msgqueue_param_t *msgqueue;
-
-      parse_query( query_string, &query_param); 
+      
+      QR_t *qr;
+      bool parse_status;
+      
+      qr = parse_querystring( query_string);
+      
+      if( !(parse_status = process_JPIPrequest( server_record, qr)))
+	fprintf( FCGI_stderr, "Error: JPIP request failed\n");
 
 #ifndef SERVER
-      print_queryparam( query_param);
+      local_log( true, true, parse_status, false, qr, server_record);
 #endif
-      
-      msgqueue = NULL;
-      if( !(parse_status = parse_JPIPrequest( query_param, sessionlist, targetlist, &msgqueue)))
-	fprintf( FCGI_stderr, "Error: JPIP request failed\n");
             
       fprintf( FCGI_stdout, "\r\n");
 
-#ifndef SERVER
-      //      if( parse_status)
-      // 	print_allsession( sessionlist);
-      print_msgqueue( msgqueue);
-#endif
+      send_responsedata( qr);
 
-      emit_stream_from_msgqueue( msgqueue);
-
-      delete_msgqueue( &msgqueue);
+      end_QRprocess( server_record, &qr);
     }
   
   fprintf( FCGI_stderr, "JPIP server terminated by a client request\n");
 
-  delete_sessionlist( &sessionlist);
-  delete_targetlist( &targetlist);
+  terminate_JPIPserver( &server_record);
 
   return 0;
 }
