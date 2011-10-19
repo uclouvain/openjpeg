@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+October 19, 2011
+* [mickael] WIP: resolve some memory leak in compare functions
+
 October 12, 2011
 * [mickael] WIP: resolve heap corruption with p0_07.j2k (credit to Winfried)
 * [mickael] WIP: correct some memory leaks in applications functions 

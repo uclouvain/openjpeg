@@ -127,18 +127,52 @@ int main(int argc, char **argv)
 	if (parse_cmdline_cmp(argc, argv, &inParam) == EXIT_FAILURE)
 	{
 		compareRAWimages_help_display();
+
+		/* Free Memory */
+		if (inParam.base_filename){
+			free(inParam.base_filename);
+			inParam.base_filename = NULL;
+		}
+		if (inParam.test_filename){
+			free(inParam.test_filename);
+			inParam.test_filename = NULL;
+		}
+
 		return EXIT_FAILURE;
 	}
 
 	file_test = fopen(inParam.test_filename, "rb");
 	if (!file_test) {
 		fprintf(stderr, "Failed to open %s for reading !!\n", inParam.test_filename);
+
+		/* Free Memory */
+		if (inParam.base_filename){
+			free(inParam.base_filename);
+			inParam.base_filename = NULL;
+		}
+		if (inParam.test_filename){
+			free(inParam.test_filename);
+			inParam.test_filename = NULL;
+		}
+
 		return EXIT_FAILURE;
 	}
 
 	file_base = fopen(inParam.base_filename, "rb");
 	if (!file_base) {
 		fprintf(stderr, "Failed to open %s for reading !!\n", inParam.base_filename);
+
+		/* Free Memory */
+		if (inParam.base_filename){
+			free(inParam.base_filename);
+			inParam.base_filename = NULL;
+		}
+		if (inParam.test_filename){
+			free(inParam.test_filename);
+			inParam.test_filename = NULL;
+		}
+
+		fclose(file_test);
 		return EXIT_FAILURE;
 	}
 
@@ -177,6 +211,16 @@ int main(int argc, char **argv)
 			fprintf(stdout,"Binary values read in the file are different.\n");
 			equal = 0;
 		}
+	}
+
+	/* Free Memory */
+	if (inParam.base_filename){
+		free(inParam.base_filename);
+		inParam.base_filename = NULL;
+	}
+	if (inParam.test_filename){
+		free(inParam.test_filename);
+		inParam.test_filename = NULL;
 	}
 
 	fclose(file_test);
