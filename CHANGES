@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+October 19, 2011
+* [mickael] backport rev 1013-1014 from trunk
+
 October 10, 2011
 * [vincent] fix 'distcheck' rule
 * [antonin] modified indexer for JPIP, JPP-stream

@@ -389,7 +389,7 @@ opj_image_t* tgatoimage(const char *filename, opj_cparameters_t *parameters) {
 int imagetotga(opj_image_t * image, const char *outfile) {
 	int width, height, bpp, x, y;
 	opj_bool write_alpha;
-	int i;
+	int i, adjustR, adjustG, adjustB;
 	unsigned int alpha_channel;
 	float r,g,b,a;
 	unsigned char value;
@@ -426,15 +426,19 @@ int imagetotga(opj_image_t * image, const char *outfile) {
 
 	scale = 255.0f / (float)((1<<image->comps[0].prec)-1);
 
+	adjustR = (image->comps[0].sgnd ? 1 << (image->comps[0].prec - 1) : 0);
+	adjustG = (image->comps[1].sgnd ? 1 << (image->comps[1].prec - 1) : 0);
+	adjustB = (image->comps[2].sgnd ? 1 << (image->comps[2].prec - 1) : 0);
+
 	for (y=0; y < height; y++) {
 		unsigned int index=y*width;
 
 		for (x=0; x < width; x++, index++)	{
-			r = (float)(image->comps[0].data[index]);
+			r = (float)(image->comps[0].data[index] + adjustR);
 
 			if (image->numcomps>2) {
-				g = (float)(image->comps[1].data[index]);
-				b = (float)(image->comps[2].data[index]);
+				g = (float)(image->comps[1].data[index] + adjustG);
+				b = (float)(image->comps[2].data[index] + adjustB);
 			}
 			else  {// Greyscale ...
 				g = r;

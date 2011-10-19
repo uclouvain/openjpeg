@@ -321,7 +321,10 @@ double* parseToleranceValues( char* inArg, const int nbcomp)
     }
 
   if (it_comp != nbcomp)
+  {
+	free(outArgs);
     return NULL;
+  }
   else
     return outArgs;
 }
@@ -407,10 +410,21 @@ opj_image_t* readImageFromFilePGX(char* filename, int nbFilenamePGX, char *separ
     // Read the pgx file corresponding to the component
     image_read = pgxtoimage(filenameComponentPGX, &parameters);
     if (!image_read)
-      {
-      fprintf(stderr, "Unable to load pgx file\n");
-      return NULL;
-      }
+    {
+    	int it_free_data;
+		fprintf(stderr, "Unable to load pgx file\n");
+
+		free(param_image_read);
+
+		for (it_free_data = 0; it_free_data < it_file; it_free_data++) {
+			free(data[it_free_data]);
+		}
+		free(data);
+
+		free(filenameComponentPGX);
+
+		return NULL;
+	}
 
     // Set the image_read parameters
     param_image_read[it_file].x0 = 0;
@@ -498,10 +512,10 @@ int main(int argc, char **argv)
   if( parse_cmdline_cmp(argc, argv, &inParam) == EXIT_FAILURE )
     {
     comparePGXimages_help_display();
-    if (!inParam.tabMSEvalues) free(inParam.tabMSEvalues);
-    if (!inParam.tabPEAKvalues) free(inParam.tabPEAKvalues);
-    if (!inParam.base_filename) free(inParam.base_filename);
-    if (!inParam.test_filename) free(inParam.test_filename);
+    if (inParam.tabMSEvalues) free(inParam.tabMSEvalues);
+    if (inParam.tabPEAKvalues) free(inParam.tabPEAKvalues);
+    if (inParam.base_filename) free(inParam.base_filename);
+    if (inParam.test_filename) free(inParam.test_filename);
     return EXIT_FAILURE;
     }
 
@@ -560,10 +574,10 @@ int main(int argc, char **argv)
     }
   else
     {
-    if (!inParam.tabMSEvalues) free(inParam.tabMSEvalues);
-    if (!inParam.tabPEAKvalues) free(inParam.tabPEAKvalues);
-    if (!inParam.base_filename) free(inParam.base_filename);
-    if (!inParam.test_filename) free(inParam.test_filename);
+    if (inParam.tabMSEvalues) free(inParam.tabMSEvalues);
+    if (inParam.tabPEAKvalues) free(inParam.tabPEAKvalues);
+    if (inParam.base_filename) free(inParam.base_filename);
+    if (inParam.test_filename) free(inParam.test_filename);
     return EXIT_FAILURE;
     }
 
@@ -582,10 +596,10 @@ int main(int argc, char **argv)
     }
   else
     {
-    if (!inParam.tabMSEvalues) free(inParam.tabMSEvalues);
-    if (!inParam.tabPEAKvalues) free(inParam.tabPEAKvalues);
-    if (!inParam.base_filename) free(inParam.base_filename);
-    if (!inParam.test_filename) free(inParam.test_filename);
+    if (inParam.tabMSEvalues) free(inParam.tabMSEvalues);
+    if (inParam.tabPEAKvalues) free(inParam.tabPEAKvalues);
+    if (inParam.base_filename) free(inParam.base_filename);
+    if (inParam.test_filename) free(inParam.test_filename);
     free(filenamePNGbase);
     return EXIT_FAILURE;
     }
