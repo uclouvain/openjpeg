@@ -7716,6 +7716,7 @@ opj_bool j2k_decode_tiles (	opj_j2k_v2_t *p_j2k,
 									&l_go_on,
 									p_stream,
 									p_manager)) {
+			opj_free(l_current_data);
 			return OPJ_FALSE;
 		}
 

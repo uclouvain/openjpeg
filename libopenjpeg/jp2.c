@@ -2570,11 +2570,33 @@ void jp2_destroy(opj_jp2_v2_t *jp2)
 		}
 
 		if (jp2->color.jp2_cdef) {
+			if (jp2->color.jp2_cdef->info) {
+				opj_free(jp2->color.jp2_cdef->info);
+				jp2->color.jp2_cdef->info = NULL;
+			}
+
 			opj_free(jp2->color.jp2_cdef);
 			jp2->color.jp2_cdef = 00;
 		}
 
 		if (jp2->color.jp2_pclr) {
+			if (jp2->color.jp2_pclr->cmap) {
+				opj_free(jp2->color.jp2_pclr->cmap);
+				jp2->color.jp2_pclr->cmap = NULL;
+			}
+			if (jp2->color.jp2_pclr->channel_sign) {
+				opj_free(jp2->color.jp2_pclr->channel_sign);
+				jp2->color.jp2_pclr->channel_sign = NULL;
+			}
+			if (jp2->color.jp2_pclr->channel_size) {
+				opj_free(jp2->color.jp2_pclr->channel_size);
+				jp2->color.jp2_pclr->channel_size = NULL;
+			}
+			if (jp2->color.jp2_pclr->entries) {
+				opj_free(jp2->color.jp2_pclr->entries);
+				jp2->color.jp2_pclr->entries = NULL;
+			}
+
 			opj_free(jp2->color.jp2_pclr);
 			jp2->color.jp2_pclr = 00;
 		}
