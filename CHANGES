@@ -5,8 +5,11 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
-October 19, 2011
+October 20, 2011
+* [mickael] WIP: remove previous commit about memory leak with ppm read function
 * [mickael] WIP: solve memory leak with ppm read function
+
+October 19, 2011
 * [mickael] WIP: solve problem with writing of tga image from an image with signd=1 (credit to Winfried)
 * [mickael] WIP: resolve some memory leak in compare functions
 
