@@ -418,6 +418,7 @@ int main(int argc, char *argv[])
 		{
 			free(src);
 			fclose(fsrc);
+			fclose(fout);
 			fprintf(stderr, "\nERROR: fread return a number of element different from the expected.\n");
 			return 1;
 		}
@@ -452,6 +453,8 @@ int main(int argc, char *argv[])
 				fprintf(stderr, "ERROR -> j2k_to_image: failed to decode image!\n");
 				opj_destroy_decompress(dinfo);
 				opj_cio_close(cio);
+				fclose(fout);
+				free(src);
 				return 1;
 			}
 			/* dump image */
@@ -499,6 +502,8 @@ int main(int argc, char *argv[])
 				fprintf(stderr, "ERROR -> j2k_to_image: failed to decode image!\n");
 				opj_destroy_decompress(dinfo);
 				opj_cio_close(cio);
+				fclose(fout);
+				free(src);
 				return 1;
 			}
 			/* dump image */
@@ -550,6 +555,8 @@ int main(int argc, char *argv[])
 				fprintf(stderr, "ERROR -> j2k_to_image: failed to decode image!\n");
 				opj_destroy_decompress(dinfo);
 				opj_cio_close(cio);
+				fclose(fout);
+				free(src);
 				return 1;
 			}
 

@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+October 20, 2011
+* [mickael] remove obvious memory leak from applications
+
 October 19, 2011
 * [mickael] backport rev 1013-1014 from trunk
 

@@ -633,6 +633,7 @@ int main(int argc, char **argv) {
 				fprintf(stderr, "ERROR -> j2k_to_image: failed to decode image!\n");
 				opj_destroy_decompress(dinfo);
 				opj_cio_close(cio);
+				free(src);
 				return 1;
 			}
 
@@ -675,6 +676,7 @@ int main(int argc, char **argv) {
 				fprintf(stderr, "ERROR -> j2k_to_image: failed to decode image!\n");
 				opj_destroy_decompress(dinfo);
 				opj_cio_close(cio);
+				free(src);
 				return 1;
 			}
 
@@ -717,6 +719,7 @@ int main(int argc, char **argv) {
 				fprintf(stderr, "ERROR -> j2k_to_image: failed to decode image!\n");
 				opj_destroy_decompress(dinfo);
 				opj_cio_close(cio);
+				free(src);
 				return 1;
 			}
 
