@@ -3154,9 +3154,6 @@ opj_bool j2k_read_ppm_v3 (
 		}
 		memset(l_cp->ppm_data,0,l_cp->ppm_len);
 
-		l_cp->ppm_data_current = l_cp->ppm_data;
-
-		//l_cp->ppm_data = l_cp->ppm_buffer;
 	}
 	else {
 		if (p_header_size < 4) {
@@ -3167,7 +3164,7 @@ opj_bool j2k_read_ppm_v3 (
 			// Uncompleted Ippm series in the previous PPM marker?
 			if (l_cp->ppm_data_read < l_cp->ppm_len) {
 				// Get the place where add the remaining Ippm series
-				l_cp->ppm_data_current = &(l_cp->ppm_data[l_cp->ppm_data_read]);
+				//l_cp->ppm_data_current = &(l_cp->ppm_data[l_cp->ppm_data_read]);
 				l_N_ppm = l_cp->ppm_len - l_cp->ppm_data_read;
 			}
 			else {
@@ -3175,11 +3172,13 @@ opj_bool j2k_read_ppm_v3 (
 				p_header_data+=4;
 				p_header_size-=4;
 
+
+
 				// Increase the size of ppm_data to add the new Ippm series
 				l_cp->ppm_data = (OPJ_BYTE *) opj_realloc(l_cp->ppm_data, l_cp->ppm_len + l_N_ppm);
 
 				// Keep the position of the place where concatenate the new series
-				l_cp->ppm_data_current = &(l_cp->ppm_data[l_cp->ppm_len]);
+				l_cp->ppm_data += l_cp->ppm_len;
 				l_cp->ppm_len += l_N_ppm;
 			}
 		}
@@ -3189,15 +3188,16 @@ opj_bool j2k_read_ppm_v3 (
 
 	while (l_remaining_data >= l_N_ppm) {
 		// read a complete Ippm series
-		memcpy(l_cp->ppm_data_current, p_header_data, l_N_ppm);
+		memcpy(l_cp->ppm_data, p_header_data, l_N_ppm);
 		p_header_size -= l_N_ppm;
 		p_header_data += l_N_ppm;
 
+		l_cp->ppm_data -= l_cp->ppm_len - l_N_ppm;
+
 		l_cp->ppm_data_read += l_N_ppm; // Increase the number of data read
 
-		if (p_header_size)
-		{
-			opj_read_bytes(p_header_data,&l_N_ppm,4);		/* N_ppm^i */
+		if (p_header_size) {
+			opj_read_bytes(p_header_data, &l_N_ppm, 4);		/* N_ppm^i */
 			p_header_data+=4;
 			p_header_size-=4;
 		}
@@ -3214,7 +3214,7 @@ opj_bool j2k_read_ppm_v3 (
 			l_cp->ppm_data = (OPJ_BYTE *) opj_realloc(l_cp->ppm_data, l_cp->ppm_len + l_N_ppm);
 
 			// Keep the position of the place where concatenate the new series
-			l_cp->ppm_data_current = &(l_cp->ppm_data[l_cp->ppm_len]);
+			l_cp->ppm_data += l_cp->ppm_len;
 			l_cp->ppm_len += l_N_ppm;
 		}
 
@@ -3225,59 +3225,20 @@ opj_bool j2k_read_ppm_v3 (
 		l_cp->ppm_data = (OPJ_BYTE *) opj_realloc(l_cp->ppm_data, l_cp->ppm_len + l_N_ppm);
 
 		// Keep the position of the place where concatenate the new series
-		l_cp->ppm_data_current = &(l_cp->ppm_data[l_cp->ppm_len]);
+		l_cp->ppm_data += l_cp->ppm_len;
 		l_cp->ppm_len += l_N_ppm;
 
 		// Read incomplete Ippm series
-		memcpy(l_cp->ppm_data_current, p_header_data, l_remaining_data);
+		memcpy(l_cp->ppm_data, p_header_data, l_remaining_data);
 		p_header_size -= l_remaining_data;
 		p_header_data += l_remaining_data;
+
+		l_cp->ppm_data -= l_cp->ppm_len - l_N_ppm;
 
 		l_cp->ppm_data_read += l_remaining_data; // Increase the number of data read
 	}
 
-#ifdef CLEAN_MSD
 
-		if (l_cp->ppm_data_size == l_cp->ppm_len) {
-			if (p_header_size >= 4) {
-				// read a N_ppm
-				opj_read_bytes(p_header_data,&l_N_ppm,4);		/* N_ppm */
-				p_header_data+=4;
-				p_header_size-=4;
-				l_cp->ppm_len += l_N_ppm ;
-
-				l_cp->ppm_buffer = (OPJ_BYTE *) opj_realloc(l_cp->ppm_buffer, l_cp->ppm_len);
-				if (l_cp->ppm_buffer == 00) {
-					opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory reading ppm marker\n");
-					return OPJ_FALSE;
-				}
-				memset(l_cp->ppm_buffer+l_cp->ppm_data_size,0,l_N_ppm);
-
-				l_cp->ppm_data = l_cp->ppm_buffer;
-			}
-			else {
-				return OPJ_FALSE;
-			}
-		}
-
-		l_remaining_data = l_cp->ppm_len - l_cp->ppm_data_size;
-
-		if (l_remaining_data <= p_header_size) {
-			/* we must store less information than available in the packet */
-			memcpy(l_cp->ppm_buffer + l_cp->ppm_data_size , p_header_data , l_remaining_data);
-			l_cp->ppm_data_size = l_cp->ppm_len;
-			p_header_size -= l_remaining_data;
-			p_header_data += l_remaining_data;
-		}
-		else {
-			memcpy(l_cp->ppm_buffer + l_cp->ppm_data_size , p_header_data , p_header_size);
-			l_cp->ppm_data_size += p_header_size;
-			p_header_data += p_header_size;
-			p_header_size = 0;
-			break;
-		}
-	}
-#endif
 	return OPJ_TRUE;
 }
 
@@ -6470,6 +6431,13 @@ void j2k_cp_destroy (opj_cp_v2_t *p_cp)
 		opj_free(p_cp->ppm_buffer);
 		p_cp->ppm_buffer = 00;
 	}
+
+
+	if (p_cp->ppm_data) {
+		opj_free(p_cp->ppm_data);
+		p_cp->ppm_data = 00;
+	}
+
 	if
 		(p_cp->comment != 00)
 	{

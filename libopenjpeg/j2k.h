@@ -540,8 +540,6 @@ typedef struct opj_cp_v2
 	/** size of the ppm_data*/
 	OPJ_UINT32 ppm_data_read;
 
-	OPJ_BYTE *ppm_data_current;
-
 	/** packet header storage original buffer */
 	OPJ_BYTE *ppm_buffer;
 	/** pointer remaining on the first byte of the first header if ppm is used */
