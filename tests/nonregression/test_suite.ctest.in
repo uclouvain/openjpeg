@@ -62,3 +62,20 @@ j2k_to_image -i  @INPUT_NR_PATH@/relax.jp2 -o @TEMP_PATH@/relax.jp2.pgx
 j2k_to_image -i  @INPUT_NR_PATH@/test_lossless.j2k -o @TEMP_PATH@/test_lossless.j2k.pgx
 # text_GBR.jp2 file exhibt a error about a tile part with a index > of the number of tile-part in this tile.
 !j2k_to_image -i  @INPUT_NR_PATH@/text_GBR.jp2 -o @TEMP_PATH@/text_GBR.jp2.pgx
+
+# decode with specific area
+# commented for the moment
+#j2k_to_image -i @INPUT_CONF_PATH@/p1_04.j2k -o @TEMP_PATH@/p1_04.j2k.png -d 0,0,1024,1024
+#j2k_to_image -i @INPUT_CONF_PATH@/p1_04.j2k -o @TEMP_PATH@/p1_04_1.j2k.png -d 512,640,640,768
+#j2k_to_image -i @INPUT_CONF_PATH@/p1_04.j2k -o @TEMP_PATH@/p1_04_2.j2k.png -d 896,896,1024,1024
+#j2k_to_image -i @INPUT_CONF_PATH@/p1_04.j2k -o @TEMP_PATH@/p1_04_3.j2k.png -d 100,500,300,800
+#j2k_to_image -i @INPUT_CONF_PATH@/p1_04.j2k -o @TEMP_PATH@/p1_04_4.j2k.png -d 260,520,360,600
+#j2k_to_image -i @INPUT_CONF_PATH@/p1_04.j2k -o @TEMP_PATH@/p1_04_5.j2k.png -d 260,520,360,660
+#j2k_to_image -i @INPUT_CONF_PATH@/p1_04.j2k -o @TEMP_PATH@/p1_04_6.j2k.png -d 360,520,400,600
+#j2k_to_image -i @INPUT_CONF_PATH@/p1_04.j2k -o @TEMP_PATH@/p1_04_10.j2k.png -d 0,0,1024,1024 -r 2
+#j2k_to_image -i @INPUT_CONF_PATH@/p1_04.j2k -o @TEMP_PATH@/p1_04_11.j2k.png -d 512,640,640,768 -r 2
+#j2k_to_image -i @INPUT_CONF_PATH@/p1_04.j2k -o @TEMP_PATH@/p1_04_12.j2k.png -d 896,896,1024,1024 -r 2
+#j2k_to_image -i @INPUT_CONF_PATH@/p1_04.j2k -o @TEMP_PATH@/p1_04_13.j2k.png -d 100,500,300,800 -r 2
+#j2k_to_image -i @INPUT_CONF_PATH@/p1_04.j2k -o @TEMP_PATH@/p1_04_14.j2k.png -d 260,520,360,600 -r 2
+#j2k_to_image -i @INPUT_CONF_PATH@/p1_04.j2k -o @TEMP_PATH@/p1_04_15.j2k.png -d 260,520,360,660 -r 2
+#j2k_to_image -i @INPUT_CONF_PATH@/p1_04.j2k -o @TEMP_PATH@/p1_04_16.j2k.png -d 360,520,400,600 -r 2

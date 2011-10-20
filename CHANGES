@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 October 20, 2011
+* [mickael] WIP: isolate dump test suite
 * [mickael] WIP: remove memory leak about new jp2_read_marker function
 * [mickael] WIP: remove previous commit about memory leak with ppm read function
 * [mickael] WIP: solve memory leak with ppm read function

@@ -6,8 +6,10 @@ SET(TEMP ${CMAKE_CURRENT_BINARY_DIR}/Temporary)
 SET(BASELINE_NR ${OPJ_DATA_ROOT}/baseline/nonregression)
 SET(INPUT_NR ${OPJ_DATA_ROOT}/input/nonregression)
 
+
 SET(INPUT_NR_PATH ${INPUT_NR})
 SET(TEMP_PATH ${TEMP})
+SET(INPUT_CONF_PATH ${OPJ_DATA_ROOT}/input/conformance)
 
 # FIXME: should be corectly manage with a find kakadu
 IF (NOT WIN32)
@@ -21,8 +23,61 @@ IF (REF_DECODER_NOTFOUND)
   MESSAGE(STATUS "REF_DECODER_BIN_PATH not found, if you want all the encoding tests suite please provide a regular path")  
 ENDIF (REF_DECODER_NOTFOUND)
 
+
+
+
 #########################################################################
-# GENERATION OF THE TEST SUITE
+# GENERATION OF THE TEST SUITE (DUMP)
+# Dump all files with the selected extension inside the input directory
+
+# Define a list of file which should be gracefully rejected:
+SET(BLACKLIST_JPEG2000 
+    empty
+   )
+
+FILE(GLOB_RECURSE OPJ_DATA_NR_LIST
+     "${INPUT_NR}/*.j2k"
+     "${INPUT_NR}/*.j2c"
+     "${INPUT_NR}/*.jp2"
+     #"${INPUT_NR}/*.jpx"
+     )
+ 
+FOREACH(INPUT_FILENAME ${OPJ_DATA_NR_LIST})
+  GET_FILENAME_COMPONENT(INPUT_FILENAME_NAME ${INPUT_FILENAME} NAME)
+  GET_FILENAME_COMPONENT(INPUT_FILENAME_NAME_WE ${INPUT_FILENAME_NAME} NAME_WE)
+  STRING(REGEX MATCH ${INPUT_FILENAME_NAME} bad_jpeg2000 ${BLACKLIST_JPEG2000})
+  
+  # Dump the input image
+  ADD_TEST(NR-${INPUT_FILENAME_NAME}-dump
+           ${EXECUTABLE_OUTPUT_PATH}/j2k_dump
+  	       -i ${INPUT_FILENAME}
+  	       -o ${TEMP}/${INPUT_FILENAME_NAME}.txt
+  	       -v
+  	       )
+  	       
+  IF(bad_jpeg2000)
+    SET_TESTS_PROPERTIES(NR-${INPUT_FILENAME_NAME}-dump
+                         PROPERTIES WILL_FAIL TRUE)
+  
+  ELSE(bad_jpeg2000)
+  	       
+    # Compare the dump output with the baseline
+    ADD_TEST(NR-${INPUT_FILENAME_NAME}-compare_dump2base
+  	        ${EXECUTABLE_OUTPUT_PATH}/compare_dump_files
+            -b ${BASELINE_NR}/opj_v2_${INPUT_FILENAME_NAME_WE}.txt 
+            -t ${TEMP}/${INPUT_FILENAME_NAME}.txt
+            )
+          
+    SET_TESTS_PROPERTIES(NR-${INPUT_FILENAME_NAME}-compare_dump2base
+                         PROPERTIES DEPENDS
+                         NR-${INPUT_FILENAME_NAME}-dump)
+  ENDIF(bad_jpeg2000)
+
+ENDFOREACH(INPUT_FILENAME)
+
+
+#########################################################################
+# GENERATION OF THE TEST SUITE (DECODE AND ENCODE)
 # Read one and more input file(s) (located in ${OPJ_DATA_ROOT}/input/nonregression) 
 # to know which files processed and with which options.
 
@@ -270,25 +325,6 @@ FOREACH(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
 #  SET_TESTS_PROPERTIES(NR-${filename}-compare2base  
 #                       PROPERTIES DEPENDS 
 #                       NR-${filename}-decode)  
-    
-        # Dump the input image
-        ADD_TEST(NR-DEC-${INPUT_FILENAME_NAME}-${IT_TEST_DEC}-dump
-          ${EXECUTABLE_OUTPUT_PATH}/j2k_dump
-          -i ${INPUT_FILENAME}
-          -o ${TEMP}/${INPUT_FILENAME_NAME}.txt
-        )
-     
-        # Compare the dump output with the baseline
-        ADD_TEST(NR-DEC-${INPUT_FILENAME_NAME}-${IT_TEST_DEC}-compare_dump2base
-          ${EXECUTABLE_OUTPUT_PATH}/compare_dump_files
-         -b ${BASELINE_NR}/opj_v2_${INPUT_FILENAME_NAME_WE}.txt
-         -t ${TEMP}/${INPUT_FILENAME_NAME}.txt
-        )
-     
-        SET_TESTS_PROPERTIES(NR-DEC-${INPUT_FILENAME_NAME}-${IT_TEST_DEC}-compare_dump2base  
-                             PROPERTIES DEPENDS 
-                             NR-DEC-${INPUT_FILENAME_NAME}-${IT_TEST_DEC}-dump)     
-  
 
       ENDIF(FAILED_TEST_FOUND)    
   
