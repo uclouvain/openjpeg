@@ -139,6 +139,10 @@ void decode_help_display(void) {
 	fprintf(stdout,"    are decoded.\n");
 	fprintf(stdout,"  -x  \n"); 
 	fprintf(stdout,"    Create an index file *.Idx (-x index_name.Idx) \n");
+	fprintf(stdout,"  -d <x0,x1,y0,y1>\n");
+	fprintf(stdout,"    OPTIONAL\n");
+	fprintf(stdout,"    Decoding area\n");
+	fprintf(stdout,"    By default all tiles header are read.\n");
 	fprintf(stdout,"\n");
 /* UniPG>> */
 #ifdef USE_JPWL
@@ -261,7 +265,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 		{"OutFor",REQ_ARG, NULL ,'O'},
 	};
 
-	const char optlist[] = "i:o:r:l:x:"
+	const char optlist[] = "i:o:r:l:x:d:"
 
 /* UniPG>> */
 #ifdef USE_JPWL
@@ -398,7 +402,24 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 					img_fol->set_imgdir=1;
 				}
 				break;
+
+				/* ----------------------------------------------------- */
+
+			case 'd':     		/* Input decode ROI */
+			{
+				int size_optarg = (int)strlen(opj_optarg) + 1;
+				char *ROI_values = (char*) malloc(size_optarg);
+				ROI_values[0] = '\0';
+				strncpy(ROI_values, opj_optarg, strlen(opj_optarg));
+				ROI_values[strlen(opj_optarg)] = '\0';
+				/*printf("ROI_values = %s [%d / %d]\n", ROI_values, strlen(ROI_values), size_optarg ); */
+				parse_DA_values( ROI_values, &parameters->DA_x0, &parameters->DA_y0, &parameters->DA_x1, &parameters->DA_y1);
+
+				free(ROI_values);
+			}
+
 				/* ----------------------------------------------------- */								
+
 			case 'x':			/* Creation of index file */
 				{
 					char *index = opj_optarg;
@@ -705,25 +726,39 @@ int main(int argc, char **argv)
 
 		/* Read the main header of the codestream and if necessary the JP2 boxes*/
 		if(! opj_read_header(cio, dinfo, &image)){
-			fprintf(stderr, "ERROR -> j2k_dump: failed to read the header\n");
+			fprintf(stderr, "ERROR -> j2k_to_image: failed to read the header\n");
 			opj_stream_destroy(cio);
 			fclose(fsrc);
 			opj_destroy_codec(dinfo);
+			opj_image_destroy(image);
 			return EXIT_FAILURE;
 		}
+
+		if (! opj_set_decode_area(	dinfo, image,
+									parameters.DA_x0, parameters.DA_y0, parameters.DA_x1, parameters.DA_y1)){
+			fprintf(stderr, "ERROR -> j2k_to_image: failed to set the decoded area\n");
+			opj_stream_destroy(cio);
+			opj_destroy_codec(dinfo);
+			opj_image_destroy(image);
+			fclose(fsrc);
+			return EXIT_FAILURE;
+			}
 
 		/* Get the decoded image */
 		if ( !( opj_decode_v2(dinfo, cio, image) && opj_end_decompress(dinfo,cio) ) ) {
 			fprintf(stderr, "ERROR -> j2k_to_image: failed to decode image!\n");
 			opj_destroy_codec(dinfo);
 			opj_stream_destroy(cio);
+			opj_image_destroy(image);
 			fclose(fsrc);
 			return EXIT_FAILURE;
 		}
 
-		opj_dump_codec(dinfo, OPJ_J2K_MH_IND, stdout );
+		/*opj_dump_codec(dinfo, OPJ_J2K_MH_IND, stdout );
 
-		cstr_index = opj_get_cstr_index(dinfo);
+		cstr_index = opj_get_cstr_index(dinfo);*/
+
+		fprintf(stderr, "image is decoded!\n");
 
 		/* Close the byte stream */
 		opj_stream_destroy(cio);

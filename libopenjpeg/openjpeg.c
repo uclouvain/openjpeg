@@ -74,6 +74,7 @@ typedef struct opj_decompression
 	void (*opj_setup_decoder) (void * p_codec, opj_dparameters_t * p_param);
 	/** Set decode area function handler */
 	opj_bool (*opj_set_decode_area) (	void * p_codec,
+										opj_image_t* p_image,
 										OPJ_INT32 p_start_x, OPJ_INT32 p_end_x,
 										OPJ_INT32 p_start_y, OPJ_INT32 p_end_y,
 										struct opj_event_mgr * p_manager);
@@ -283,7 +284,7 @@ opj_codec_t* OPJ_CALLCONV opj_create_decompress_v2(OPJ_CODEC_FORMAT p_format)
 					(opj_bool (*) (void *, OPJ_UINT32, OPJ_BYTE*, OPJ_UINT32, struct opj_stream_private *, struct opj_event_mgr *)) j2k_decode_tile;
 
 			l_info->m_codec_data.m_decompression.opj_set_decode_area =
-					(opj_bool (*) (void *, OPJ_INT32, OPJ_INT32, OPJ_INT32, OPJ_INT32, struct opj_event_mgr *)) j2k_set_decode_area;
+					(opj_bool (*) (void *, opj_image_t*, OPJ_INT32, OPJ_INT32, OPJ_INT32, OPJ_INT32, struct opj_event_mgr *)) j2k_set_decode_area;
 
 			l_info->m_codec = j2k_create_decompress_v2();
 
@@ -335,7 +336,7 @@ opj_codec_t* OPJ_CALLCONV opj_create_decompress_v2(OPJ_CODEC_FORMAT p_format)
 
 			l_info->m_codec_data.m_decompression.opj_setup_decoder = (void (*) (void * ,opj_dparameters_t * )) jp2_setup_decoder_v2;
 
-			l_info->m_codec_data.m_decompression.opj_set_decode_area = (opj_bool (*) (void *,OPJ_INT32,OPJ_INT32,OPJ_INT32,OPJ_INT32, struct opj_event_mgr * )) jp2_set_decode_area;
+			l_info->m_codec_data.m_decompression.opj_set_decode_area = (opj_bool (*) (void *,opj_image_t*, OPJ_INT32,OPJ_INT32,OPJ_INT32,OPJ_INT32, struct opj_event_mgr * )) jp2_set_decode_area;
 
 			l_info->m_codec = jp2_create(OPJ_TRUE);
 
@@ -755,6 +756,7 @@ void OPJ_CALLCONV opj_destroy_codec(opj_codec_t *p_info)
  * @return	true			if the area could be set.
  */
 opj_bool OPJ_CALLCONV opj_set_decode_area(	opj_codec_t *p_codec,
+											opj_image_t* p_image,
 											OPJ_INT32 p_start_x, OPJ_INT32 p_start_y,
 											OPJ_INT32 p_end_x, OPJ_INT32 p_end_y
 											)
@@ -765,13 +767,11 @@ opj_bool OPJ_CALLCONV opj_set_decode_area(	opj_codec_t *p_codec,
 			return OPJ_FALSE;
 		}
 
-		return  l_info->m_codec_data.m_decompression.opj_set_decode_area(
-				l_info->m_codec,
-				p_start_x,
-				p_start_y,
-				p_end_x,
-				p_end_y,
-				l_info->m_event_mgr);
+		return  l_info->m_codec_data.m_decompression.opj_set_decode_area(	l_info->m_codec,
+																			p_image,
+																			p_start_x, p_start_y,
+																			p_end_x, p_end_y,
+																			l_info->m_event_mgr);
 
 	}
 	return OPJ_FALSE;

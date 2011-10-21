@@ -6,7 +6,8 @@ What's New for OpenJPEG
 + : added
 
 October 21, 2011
-* [mickael] WIP: enhance codestream index generation
++ [mickael] WIP: manage output image with area correponding to the set decoded area
++ [mickael] WIP: enhance codestream index generation
 
 October 20, 2011
 * [mickael] WIP: isolate dump test suite

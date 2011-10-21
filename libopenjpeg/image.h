@@ -55,6 +55,8 @@ opj_image_t* opj_image_create0(void);
  */
 void opj_image_comp_header_update(opj_image_t * p_image, const struct opj_cp_v2* p_cp);
 
+void opj_copy_image_header(const opj_image_t* p_image_src, opj_image_t* p_image_dest);
+
 /*@}*/
 
 #endif /* __IMAGE_H */

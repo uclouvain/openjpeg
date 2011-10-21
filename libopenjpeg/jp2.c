@@ -2627,11 +2627,12 @@ void jp2_destroy(opj_jp2_v2_t *jp2)
  * @return	true			if the area could be set.
  */
 opj_bool jp2_set_decode_area(	opj_jp2_v2_t *p_jp2,
+								opj_image_t* p_image,
 								OPJ_INT32 p_start_x, OPJ_INT32 p_start_y,
 								OPJ_INT32 p_end_x, OPJ_INT32 p_end_y,
 								struct opj_event_mgr * p_manager )
 {
-	return j2k_set_decode_area(p_jp2->j2k, p_start_x, p_start_y, p_end_x, p_end_y, p_manager);
+	return j2k_set_decode_area(p_jp2->j2k, p_image, p_start_x, p_start_y, p_end_x, p_end_y, p_manager);
 }
 
 /* ----------------------------------------------------------------------- */

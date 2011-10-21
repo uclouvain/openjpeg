@@ -412,14 +412,11 @@ void jp2_destroy(opj_jp2_v2_t *jp2);
  *
  * @return	true			if the area could be set.
  */
-opj_bool jp2_set_decode_area(
-			opj_jp2_v2_t *p_jp2,
-			OPJ_INT32 p_start_x,
-			OPJ_INT32 p_start_y,
-			OPJ_INT32 p_end_x,
-			OPJ_INT32 p_end_y,
-			struct opj_event_mgr * p_manager
-			);
+opj_bool jp2_set_decode_area(	opj_jp2_v2_t *p_jp2,
+								opj_image_t* p_image,
+								OPJ_INT32 p_start_x, OPJ_INT32 p_start_y,
+								OPJ_INT32 p_end_x, OPJ_INT32 p_end_y,
+								struct opj_event_mgr * p_manager );
 
 
 /**

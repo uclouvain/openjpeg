@@ -635,6 +635,13 @@ typedef struct opj_j2k_dec
 	OPJ_UINT32 m_end_tile_x;
 	OPJ_UINT32 m_end_tile_y;
 	/**
+	 * Decoded area set by the user
+	 */
+	OPJ_UINT32 m_DA_x0;
+	OPJ_UINT32 m_DA_y0;
+	OPJ_UINT32 m_DA_x1;
+	OPJ_UINT32 m_DA_y1;
+	/**
 	 * Indicate that the current tile-part is assume as the last tile part of the codestream.
 	 * It is useful in the case of PSot is equal to zero. The sot length will be compute in the
 	 * SOD reader function. FIXME NOT USED for the moment
@@ -765,9 +772,11 @@ typedef struct opj_j2k_v2
 	}
 	m_specific_param;
 
-	/** pointer to the encoded / decoded image */
-	//opj_image_t *m_image;
-	opj_image_t* m_image;
+	/** pointer to the internal/private encoded / decoded image */
+	opj_image_t* m_private_image;
+
+	/* pointer to the output image (decoded)*/
+	opj_image_t* m_output_image;
 
 	/** Coding parameters */
 	opj_cp_v2_t m_cp;
@@ -966,6 +975,7 @@ opj_bool j2k_read_tile_header (
  * @return	true			if the area could be set.
  */
 opj_bool j2k_set_decode_area(	opj_j2k_v2_t *p_j2k,
+								opj_image_t* p_image,
 								OPJ_INT32 p_start_x, OPJ_INT32 p_start_y,
 								OPJ_INT32 p_end_x, OPJ_INT32 p_end_y,
 								struct opj_event_mgr * p_manager );

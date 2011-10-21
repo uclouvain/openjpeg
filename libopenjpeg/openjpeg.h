@@ -1319,6 +1319,7 @@ OPJ_API void OPJ_CALLCONV opj_destroy_codec(opj_codec_t * p_codec);
  * @return	true			if the area could be set.
  */
 OPJ_API opj_bool OPJ_CALLCONV opj_set_decode_area(	opj_codec_t *p_codec,
+													opj_image_t* p_image,
 													OPJ_INT32 p_start_x, OPJ_INT32 p_start_y,
 													OPJ_INT32 p_end_x, OPJ_INT32 p_end_y );
 
