@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+October 21, 2011
+* [mickael] remove one obvious memory leak from test functions
+
 October 20, 2011
 * [mickael] remove obvious memory leak from applications
 

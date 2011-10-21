@@ -596,6 +596,7 @@ int main(int argc, char **argv)
     }
   else
     {
+	if (imageBase) opj_image_destroy(imageBase);
     if (inParam.tabMSEvalues) free(inParam.tabMSEvalues);
     if (inParam.tabPEAKvalues) free(inParam.tabPEAKvalues);
     if (inParam.base_filename) free(inParam.base_filename);
