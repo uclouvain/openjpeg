@@ -873,24 +873,50 @@ typedef struct opj_codestream_info_v2 {
 
 } opj_codestream_info_v2_t;
 
+
+/**
+ * Index structure about a tile part
+ */
+typedef struct opj_tp_index {
+	/** start position */
+	OPJ_UINT32 start_pos;
+	/** end position of the header */
+	OPJ_UINT32 end_header;
+	/** end position */
+	OPJ_UINT32 end_pos;
+
+
+
+
+} opj_tp_index_t;
+
 /**
  * Index structure about a tile
  */
 typedef struct opj_tile_index {
-	/** number (index) of tile */
-	int tileno;
-	/** start position */
-	int start_pos;
-	/** end position of the header */
-	int end_header;
-	/** end position */
-	int end_pos;
+	/** tile index */
+	OPJ_UINT32 tileno;
 
 	/** number of tile parts */
-	int num_tps;
+	OPJ_UINT32 nb_tps;
+	/** current nb of tile part (allocated)*/
+	OPJ_UINT32 current_nb_tps;
+	/** current tile-part index */
+	OPJ_UINT32 current_tpsno;
 	/** information concerning tile parts */
-	opj_tp_info_t *tp_index;
+	opj_tp_index_t *tp_index;
 
+	/* UniPG>> */
+		/** number of markers */
+		OPJ_UINT32 marknum;
+		/** list of markers */
+		opj_marker_info_t *marker;
+		/** actual size of markers array */
+		OPJ_UINT32 maxmarknum;
+	/* <<UniPG */
+
+	/** packet number */
+	OPJ_UINT32 nb_packet;
 	/** information concerning packets inside tile */
 	opj_packet_info_t *packet_index;
 
@@ -901,27 +927,24 @@ typedef struct opj_tile_index {
  */
 typedef struct opj_codestream_index_ {
 	/** main header start position (SOC position) */
-	int main_head_start;
+	OPJ_UINT32 main_head_start;
 	/** main header end position (first SOT position) */
-	int main_head_end;
+	OPJ_UINT32 main_head_end;
 
 	/** codestream's size */
-	int codestream_size;
+	OPJ_UINT32 codestream_size;
 
 /* UniPG>> */
 	/** number of markers */
-	int marknum;
+	OPJ_UINT32 marknum;
 	/** list of markers */
 	opj_marker_info_t *marker;
 	/** actual size of markers array */
-	int maxmarknum;
+	OPJ_UINT32 maxmarknum;
 /* <<UniPG */
 
-	/** packet number */
-	int packno;
-
 	/** */
-	int nb_of_tiles;
+	OPJ_UINT32 nb_of_tiles;
 	/** */
 	opj_tile_index_t *tile_index; /* FIXME not used for the moment */
 

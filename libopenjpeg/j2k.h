@@ -911,6 +911,13 @@ opj_bool j2k_read_header(	struct opj_stream_private *p_stream,
 void j2k_destroy (opj_j2k_v2_t *p_j2k);
 
 /**
+ * Destroys a codestream index structure.
+ *
+ * @param	p_cstr_ind	the codestream index parameter to destroy.
+ */
+void j2k_destroy_cstr_index (opj_codestream_index_t *p_cstr_ind);
+
+/**
  * Decode tile data.
  * @param	p_j2k		the jpeg2000 codec.
  * @param	p_stream			the stream to write data to.

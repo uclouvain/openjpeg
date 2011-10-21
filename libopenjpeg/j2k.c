@@ -123,12 +123,6 @@ static const struct opj_dec_memory_marker_handler * j2k_get_marker_handler (OPJ_
  */
 static void j2k_tcp_destroy (opj_tcp_v2_t *p_tcp);
 
-/**
- * Destroys a codestream index structure.
- *
- * @param	p_cstr_ind	the codestream index parameter to destroy.
- */
-static void j2k_destroy_cstr_index (opj_codestream_index_t* p_cstr_ind);
 
 /**
  * Destroys a coding parameter structure.
@@ -684,6 +678,7 @@ Add tile header marker information
  */
 static void j2k_add_tlmarker( int tileno, opj_codestream_info_t *cstr_info, unsigned short int type, int pos, int len);
 
+static void j2k_add_tlmarker_v2(OPJ_UINT32 tileno, opj_codestream_index_t *cstr_index, OPJ_UINT32 type, OPJ_UINT32 pos, OPJ_UINT32 len);
 
 /**
  * Reads an unknown marker
@@ -803,6 +798,8 @@ j2k_prog_order_t j2k_prog_order_list[] = {
 	{RPCL, "RPCL"},
 	{(OPJ_PROG_ORDER)-1, ""}
 };
+
+
 
 /**
  * FIXME DOC
@@ -3707,6 +3704,48 @@ opj_bool j2k_read_sot_v2 (
 		||	(l_tile_y >= p_j2k->m_specific_param.m_decoder.m_end_tile_y);
 
 	/* Index */
+	if (p_j2k->cstr_index)
+	{
+		p_j2k->cstr_index->tile_index[p_j2k->m_current_tile_number].tileno = p_j2k->m_current_tile_number;
+		p_j2k->cstr_index->tile_index[p_j2k->m_current_tile_number].current_tpsno = l_current_part;
+
+		if (l_num_parts != 0){
+			p_j2k->cstr_index->tile_index[p_j2k->m_current_tile_number].nb_tps = l_num_parts;
+			p_j2k->cstr_index->tile_index[p_j2k->m_current_tile_number].current_nb_tps = l_num_parts;
+
+
+			if (!p_j2k->cstr_index->tile_index[p_j2k->m_current_tile_number].tp_index)
+				p_j2k->cstr_index->tile_index[p_j2k->m_current_tile_number].tp_index =
+					(opj_tp_index_t*)opj_calloc(l_num_parts, sizeof(opj_tp_index_t));
+			else
+				p_j2k->cstr_index->tile_index[p_j2k->m_current_tile_number].tp_index =
+					(opj_tp_index_t*)opj_realloc(
+							p_j2k->cstr_index->tile_index[p_j2k->m_current_tile_number].tp_index,
+							l_num_parts* sizeof(opj_tp_index_t));
+		}
+		else{
+			/*if (!p_j2k->cstr_index->tile_index[p_j2k->m_current_tile_number].tp_index)*/ {
+
+				if (!p_j2k->cstr_index->tile_index[p_j2k->m_current_tile_number].tp_index) {
+					p_j2k->cstr_index->tile_index[p_j2k->m_current_tile_number].current_nb_tps = 10;
+					p_j2k->cstr_index->tile_index[p_j2k->m_current_tile_number].tp_index =
+						(opj_tp_index_t*)opj_calloc( p_j2k->cstr_index->tile_index[p_j2k->m_current_tile_number].current_nb_tps,
+													 sizeof(opj_tp_index_t));
+				}
+
+				if ( l_current_part >= p_j2k->cstr_index->tile_index[p_j2k->m_current_tile_number].current_nb_tps ){
+					p_j2k->cstr_index->tile_index[p_j2k->m_current_tile_number].current_nb_tps += 10;
+					p_j2k->cstr_index->tile_index[p_j2k->m_current_tile_number].tp_index =
+						(opj_tp_index_t*)opj_realloc( p_j2k->cstr_index->tile_index[p_j2k->m_current_tile_number].tp_index,
+													  p_j2k->cstr_index->tile_index[p_j2k->m_current_tile_number].current_nb_tps
+													  * sizeof(opj_tp_index_t));
+				}
+			}
+
+		}
+
+	}
+
 
 	/* FIXME move this onto a separate method to call before reading any SOT, remove part about main_end header, use a index struct inside p_j2k */
 	/* if (p_j2k->cstr_info) {
@@ -3899,17 +3938,31 @@ opj_bool j2k_read_sod_v2 (
 		return OPJ_FALSE;
 	}
 
-#ifdef TODO_MSD /* FIXME */
-	l_cstr_index = p_j2k->cstr_index;
 
 	/* Index */
+	l_cstr_index = p_j2k->cstr_index;
 	if (l_cstr_index) {
-		OPJ_SIZE_T l_current_pos = opj_stream_tell(p_stream)-1;
-		l_cstr_index->tile_index[p_j2k->m_current_tile_number].tp_index[p_j2k->m_specific_param.m_encoder.m_current_tile_part_number].tp_end_header = l_current_pos;
+		OPJ_SIZE_T l_current_pos = opj_stream_tell(p_stream) - 2;
+		OPJ_UINT32 l_current_tile_part =l_cstr_index->tile_index[p_j2k->m_current_tile_number].current_tpsno;
+		l_cstr_index->tile_index[p_j2k->m_current_tile_number].tp_index[l_current_tile_part].end_header =
+				l_current_pos;
+		l_cstr_index->tile_index[p_j2k->m_current_tile_number].tp_index[l_current_tile_part].end_pos =
+				l_current_pos + p_j2k->m_specific_param.m_decoder.m_sot_length + 2;
 
-		l_cstr_index->packno = 0;
+		j2k_add_tlmarker_v2(p_j2k->m_current_tile_number,
+							l_cstr_index,
+							J2K_MS_SOD,
+							l_current_pos,
+							p_j2k->m_specific_param.m_decoder.m_sot_length + 2);
+
+		/*l_cstr_index->packno = 0;*/
 	}
-#endif
+
+
+
+
+
+
 
 	l_current_read_size = opj_stream_read_data(	p_stream,
 												*l_current_data + *l_tile_len,
@@ -5763,6 +5816,38 @@ static void j2k_add_tlmarker( int tileno, opj_codestream_info_t *cstr_info, unsi
 	cstr_info->tile[tileno].marknum++;
 }
 
+static void j2k_add_tlmarker_v2(OPJ_UINT32 tileno, opj_codestream_index_t *cstr_index, OPJ_UINT32 type, OPJ_UINT32 pos, OPJ_UINT32 len)
+{
+
+	if (!cstr_index)
+		return;
+
+	if (!cstr_index->tile_index)
+
+	/* expand the list? */
+	if ((cstr_index->tile_index[tileno].marknum + 1) > cstr_index->tile_index[tileno].maxmarknum) {
+		cstr_index->tile_index[tileno].maxmarknum = 100 + (int) ((float) cstr_index->tile_index[tileno].maxmarknum * 1.0F);
+		cstr_index->tile_index[tileno].marker =
+				(opj_marker_info_t*)opj_realloc(cstr_index->tile_index[tileno].marker,
+												cstr_index->tile_index[tileno].maxmarknum *sizeof(opj_marker_info_t));
+	}
+
+	/* add the marker */
+	cstr_index->tile_index[tileno].marker[cstr_index->tile_index[tileno].marknum].type = (OPJ_UINT16)type;
+	cstr_index->tile_index[tileno].marker[cstr_index->tile_index[tileno].marknum].pos = (OPJ_INT32)pos;
+	cstr_index->tile_index[tileno].marker[cstr_index->tile_index[tileno].marknum].len = (OPJ_INT32)len;
+	cstr_index->tile_index[tileno].marknum++;
+
+	if (type == J2K_MS_SOT) {
+		OPJ_UINT32 l_current_tile_part = cstr_index->tile_index[tileno].current_tpsno;
+
+		if (cstr_index->tile_index[tileno].tp_index)
+			cstr_index->tile_index[tileno].tp_index[l_current_tile_part].start_pos = pos;
+
+	}
+
+}
+
 
 
 
@@ -6357,7 +6442,29 @@ void j2k_destroy_cstr_index (opj_codestream_index_t *p_cstr_ind)
 		}
 
 		if (p_cstr_ind->tile_index) {
-			// FIXME not used for the moment
+			OPJ_UINT32 it_tile = 0;
+
+			for (it_tile=0; it_tile < p_cstr_ind->nb_of_tiles; it_tile++) {
+
+				if(p_cstr_ind->tile_index[it_tile].packet_index) {
+					opj_free(p_cstr_ind->tile_index[it_tile].packet_index);
+					p_cstr_ind->tile_index[it_tile].packet_index = NULL;
+				}
+
+				if(p_cstr_ind->tile_index[it_tile].tp_index){
+					opj_free(p_cstr_ind->tile_index[it_tile].tp_index);
+					p_cstr_ind->tile_index[it_tile].tp_index = NULL;
+				}
+
+				if(p_cstr_ind->tile_index[it_tile].marker){
+					opj_free(p_cstr_ind->tile_index[it_tile].marker);
+					p_cstr_ind->tile_index[it_tile].marker = NULL;
+
+				}
+			}
+
+			opj_free( p_cstr_ind->tile_index);
+			p_cstr_ind->tile_index = NULL;
 		}
 
 		opj_free(p_cstr_ind);
@@ -6579,6 +6686,16 @@ opj_bool j2k_read_tile_header(	opj_j2k_v2_t * p_j2k,
 				return OPJ_FALSE;
 			}
 
+/*			if (l_current_marker == J2K_MS_SOT)
+				j2k_add_tlmarker();*/
+
+			/* Add the marker to the codestream index*/
+			j2k_add_tlmarker_v2(p_j2k->m_current_tile_number,
+								p_j2k->cstr_index,
+								l_marker_handler->id,
+								(OPJ_UINT32) opj_stream_tell(p_stream) - l_marker_size - 4,
+								l_marker_size + 4 );
+
 			if (p_j2k->m_specific_param.m_decoder.m_skip_data) {
 				/* Skip the rest of the tile part header*/
 				if (opj_stream_skip(p_stream,p_j2k->m_specific_param.m_decoder.m_sot_length,p_manager) != p_j2k->m_specific_param.m_decoder.m_sot_length) {
@@ -6604,6 +6721,8 @@ opj_bool j2k_read_tile_header(	opj_j2k_v2_t * p_j2k,
 			if (! j2k_read_sod_v2(p_j2k, p_stream, p_manager)) {
 				return OPJ_FALSE;
 			}
+
+
 
 			if (! p_j2k->m_specific_param.m_decoder.m_can_decode){
 				/* Try to read 2 bytes (the next marker ID) from stream and copy them into the buffer */
@@ -7426,7 +7545,7 @@ void j2k_dump (opj_j2k_v2_t* p_j2k, OPJ_INT32 flag, FILE* out_stream)
 void j2k_dump_MH_index(opj_j2k_v2_t* p_j2k, FILE* out_stream)
 {
 	opj_codestream_index_t* cstr_index = p_j2k->cstr_index;
-	OPJ_UINT32 it_marker;
+	OPJ_UINT32 it_marker, it_tile, it_tile_part;
 
 	fprintf(out_stream, "Codestream index from main header: {\n");
 
@@ -7435,14 +7554,49 @@ void j2k_dump_MH_index(opj_j2k_v2_t* p_j2k, FILE* out_stream)
 
 	fprintf(out_stream, "\t Marker list: {\n");
 
-	for (it_marker=0; it_marker < cstr_index->marknum ; it_marker++){
-		fprintf(out_stream, "\t\t type=%#x, pos=%d, len=%d\n",
-				cstr_index->marker[it_marker].type,
-				cstr_index->marker[it_marker].pos,
-				cstr_index->marker[it_marker].len );
+	if (cstr_index->marker){
+		for (it_marker=0; it_marker < cstr_index->marknum ; it_marker++){
+			fprintf(out_stream, "\t\t type=%#x, pos=%d, len=%d\n",
+					cstr_index->marker[it_marker].type,
+					cstr_index->marker[it_marker].pos,
+					cstr_index->marker[it_marker].len );
+		}
 	}
 
-	fprintf(out_stream, "\t }\n}\n");
+	fprintf(out_stream, "\t }\n");
+
+
+	if (cstr_index->tile_index){
+		fprintf(out_stream, "\t Tile index: {\n");
+
+		for (it_tile=0; it_tile < cstr_index->nb_of_tiles ; it_tile++){
+			OPJ_UINT32 nb_of_tile_part = cstr_index->tile_index[it_tile].nb_tps;
+
+			fprintf(out_stream, "\t\t nb of tile-part in tile [%d]=%d\n", it_tile, nb_of_tile_part);
+
+			if (cstr_index->tile_index[it_tile].tp_index){
+				for (it_tile_part =0; it_tile_part < nb_of_tile_part; it_tile_part++){
+					fprintf(out_stream, "\t\t\t tile-part[%d]: star_pos=%d, end_header=%d, end_pos=%d.\n",
+							it_tile_part,
+							cstr_index->tile_index[it_tile].tp_index[it_tile_part].start_pos,
+							cstr_index->tile_index[it_tile].tp_index[it_tile_part].end_header,
+							cstr_index->tile_index[it_tile].tp_index[it_tile_part].end_pos);
+				}
+			}
+
+			if (cstr_index->tile_index[it_tile].marker){
+				for (it_marker=0; it_marker < cstr_index->tile_index[it_tile].marknum ; it_marker++){
+					fprintf(out_stream, "\t\t type=%#x, pos=%d, len=%d\n",
+							cstr_index->tile_index[it_tile].marker[it_marker].type,
+							cstr_index->tile_index[it_tile].marker[it_marker].pos,
+							cstr_index->tile_index[it_tile].marker[it_marker].len );
+				}
+			}
+		}
+		fprintf(out_stream,"\t }\n");
+	}
+
+	fprintf(out_stream,"}\n");
 
 }
 
@@ -7671,20 +7825,124 @@ opj_codestream_index_t* j2k_get_cstr_index(opj_j2k_v2_t* p_j2k)
 	l_cstr_index->main_head_end = p_j2k->cstr_index->main_head_end;
 	l_cstr_index->codestream_size = p_j2k->cstr_index->codestream_size;
 
-	l_cstr_index->maxmarknum = p_j2k->cstr_index->maxmarknum;
 	l_cstr_index->marknum = p_j2k->cstr_index->marknum;
 	l_cstr_index->marker = (opj_marker_info_t*)opj_malloc(l_cstr_index->marknum*sizeof(opj_marker_info_t));
-	if (!l_cstr_index->marker)
+	if (!l_cstr_index->marker){
+		opj_free( l_cstr_index);
 		return NULL;
+	}
 
-	memcpy(l_cstr_index->marker, p_j2k->cstr_index->marker, l_cstr_index->marknum * sizeof(opj_marker_info_t) );
+	if (p_j2k->cstr_index->marker)
+		memcpy(l_cstr_index->marker, p_j2k->cstr_index->marker, l_cstr_index->marknum * sizeof(opj_marker_info_t) );
+	else{
+		opj_free(l_cstr_index->marker);
+		l_cstr_index->marker = NULL;
+	}
 
-	l_cstr_index->tile_index = NULL; /* FIXME not used for the moment*/
+	l_cstr_index->nb_of_tiles = p_j2k->cstr_index->nb_of_tiles;
+	l_cstr_index->tile_index = (opj_tile_index_t*)opj_calloc(l_cstr_index->nb_of_tiles, sizeof(opj_tile_index_t) );
+	if (!l_cstr_index->tile_index){
+		opj_free( l_cstr_index->marker);
+		opj_free( l_cstr_index);
+		return NULL;
+	}
+
+	if (!p_j2k->cstr_index->tile_index){
+		opj_free(l_cstr_index->tile_index);
+		l_cstr_index->tile_index = NULL;
+	}
+	else {
+		OPJ_UINT32 it_tile = 0;
+		for (it_tile = 0; it_tile < l_cstr_index->nb_of_tiles; it_tile++ ){
+
+			/* Tile Marker*/
+			l_cstr_index->tile_index[it_tile].marknum = p_j2k->cstr_index->tile_index[it_tile].marknum;
+
+			l_cstr_index->tile_index[it_tile].marker =
+				(opj_marker_info_t*)opj_malloc(l_cstr_index->tile_index[it_tile].marknum*sizeof(opj_marker_info_t));
+
+			if (!l_cstr_index->tile_index[it_tile].marker) {
+				OPJ_UINT32 it_tile_free;
+
+				for (it_tile_free=0; it_tile_free < it_tile; it_tile_free++){
+					opj_free(l_cstr_index->tile_index[it_tile_free].marker);
+				}
+
+				opj_free( l_cstr_index->tile_index);
+				opj_free( l_cstr_index->marker);
+				opj_free( l_cstr_index);
+				return NULL;
+			}
+
+			if (p_j2k->cstr_index->tile_index[it_tile].marker)
+				memcpy(	l_cstr_index->tile_index[it_tile].marker,
+						p_j2k->cstr_index->tile_index[it_tile].marker,
+						l_cstr_index->tile_index[it_tile].marknum * sizeof(opj_marker_info_t) );
+			else{
+				opj_free(l_cstr_index->tile_index[it_tile].marker);
+				l_cstr_index->tile_index[it_tile].marker = NULL;
+			}
+
+			/* Tile part index*/
+			l_cstr_index->tile_index[it_tile].nb_tps = p_j2k->cstr_index->tile_index[it_tile].nb_tps;
+
+			l_cstr_index->tile_index[it_tile].tp_index =
+				(opj_tp_index_t*)opj_malloc(l_cstr_index->tile_index[it_tile].nb_tps*sizeof(opj_tp_index_t));
+
+			if(!l_cstr_index->tile_index[it_tile].tp_index){
+				OPJ_UINT32 it_tile_free;
+
+				for (it_tile_free=0; it_tile_free < it_tile; it_tile_free++){
+					opj_free(l_cstr_index->tile_index[it_tile_free].marker);
+					opj_free(l_cstr_index->tile_index[it_tile_free].tp_index);
+				}
+
+				opj_free( l_cstr_index->tile_index);
+				opj_free( l_cstr_index->marker);
+				opj_free( l_cstr_index);
+				return NULL;
+			}
+
+			if (p_j2k->cstr_index->tile_index[it_tile].tp_index){
+				memcpy(	l_cstr_index->tile_index[it_tile].tp_index,
+						p_j2k->cstr_index->tile_index[it_tile].tp_index,
+						l_cstr_index->tile_index[it_tile].nb_tps * sizeof(opj_tp_index_t) );
+			}
+			else{
+				opj_free(l_cstr_index->tile_index[it_tile].tp_index);
+				l_cstr_index->tile_index[it_tile].tp_index = NULL;
+			}
+
+			/* Packet index (NOT USED)*/
+			l_cstr_index->tile_index[it_tile].nb_packet = 0;
+			l_cstr_index->tile_index[it_tile].packet_index = NULL;
+
+		}
+	}
 
 	return l_cstr_index;
 }
 
+opj_bool j2k_allocate_tile_element_cstr_index(opj_j2k_v2_t *p_j2k)
+{
+	OPJ_UINT32 it_tile=0;
 
+	p_j2k->cstr_index->nb_of_tiles = p_j2k->m_cp.tw * p_j2k->m_cp.tw;
+	p_j2k->cstr_index->tile_index = (opj_tile_index_t*)opj_calloc(p_j2k->cstr_index->nb_of_tiles, sizeof(opj_tile_index_t));
+	if (!p_j2k->cstr_index->tile_index)
+		return OPJ_FALSE;
+
+	for (it_tile=0; it_tile < p_j2k->cstr_index->nb_of_tiles; it_tile++){
+		p_j2k->cstr_index->tile_index[it_tile].maxmarknum = 100;
+		p_j2k->cstr_index->tile_index[it_tile].marknum = 0;
+		p_j2k->cstr_index->tile_index[it_tile].marker = (opj_marker_info_t*)
+				opj_calloc(p_j2k->cstr_index->tile_index[it_tile].maxmarknum, sizeof(opj_marker_info_t));
+		if (!p_j2k->cstr_index->tile_index[it_tile].marker)
+			return OPJ_FALSE;
+	}
+
+	return OPJ_TRUE;
+}
 
 /**
  * Reads the tiles.
@@ -7705,6 +7963,12 @@ opj_bool j2k_decode_tiles (	opj_j2k_v2_t *p_j2k,
 		return OPJ_FALSE;
 	}
 	l_max_data_size = 1000;
+
+	/*Allocate and initialize some elements of codestrem index*/
+	if (!j2k_allocate_tile_element_cstr_index(p_j2k))
+		return OPJ_FALSE;
+
+
 
 	while (OPJ_TRUE) {
 		if (! j2k_read_tile_header(	p_j2k,

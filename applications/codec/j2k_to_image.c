@@ -579,6 +579,7 @@ int main(int argc, char **argv)
 	opj_image_t* image = NULL;
 	opj_stream_t *cio = NULL;				/* Stream */
 	opj_codec_t* dinfo = NULL;				/* Handle to a decompressor */
+	opj_codestream_index_t* cstr_index = NULL;
 
 	char indexfilename[OPJ_PATH_LEN];	/* index file name */
 
@@ -720,6 +721,10 @@ int main(int argc, char **argv)
 			return EXIT_FAILURE;
 		}
 
+		opj_dump_codec(dinfo, OPJ_J2K_MH_IND, stdout );
+
+		cstr_index = opj_get_cstr_index(dinfo);
+
 		/* Close the byte stream */
 		opj_stream_destroy(cio);
 		fclose(fsrc);
@@ -818,6 +823,9 @@ int main(int argc, char **argv)
 
 		/* free image data structure */
 		opj_image_destroy(image);
+
+		/* destroy the codestream index */
+		opj_destroy_cstr_index(&cstr_index);
 
 	}
 	return EXIT_SUCCESS;

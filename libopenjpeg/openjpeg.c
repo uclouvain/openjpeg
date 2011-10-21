@@ -945,18 +945,8 @@ void OPJ_CALLCONV opj_destroy_cstr_index(opj_codestream_index_t **p_cstr_index)
 {
 	if (*p_cstr_index){
 
-		if((*p_cstr_index)->marker){
-			opj_free((*p_cstr_index)->marker);
-			(*p_cstr_index)->marker = NULL;
-		}
-
-		if((*p_cstr_index)->tile_index) {
-			/* FIXME not used for the moment*/
-		}
-
-		opj_free((*p_cstr_index));
+		j2k_destroy_cstr_index(*p_cstr_index);
 		(*p_cstr_index) = NULL;
-
 	}
 }
 
