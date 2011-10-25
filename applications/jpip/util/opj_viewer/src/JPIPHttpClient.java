@@ -178,7 +178,9 @@ public class JPIPHttpClient
 	    if( !status.contains("OK"))
 		System.err.println( headers.get("Reason"));
 	    
-	    hvalueline = headers.get("Content-type").get(0);
+	    if(( hvaluelist = headers.get("Content-type")) == null)
+		hvaluelist = headers.get("Content-Type");
+	    hvalueline = hvaluelist.get(0);
 	    System.err.println( hvalueline);
 
 	    if( hvalueline.endsWith("jpt-stream"))
