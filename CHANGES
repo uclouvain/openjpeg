@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+October 25, 2011
+* [mickael] WIP: solve problems with reading of elements outside the tilec->data buffer in dwt
+
 October 21, 2011
 + [mickael] WIP: manage output image with area correponding to the set decoded area
 + [mickael] WIP: enhance codestream index generation

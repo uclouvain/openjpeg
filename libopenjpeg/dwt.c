@@ -766,8 +766,7 @@ static void v4dwt_interleave_h(v4dwt_t* restrict w, float* restrict a, int x, in
 	int i, k;
 
 	for(k = 0; k < 2; ++k){
-		if (count + 3 * x < size && ((size_t) a & 0x0f) == 0 &&
-				((size_t) bi & 0x0f) == 0 && (x & 0x0f) == 0) {
+		if ( count + 3 * x < size && ((size_t) a & 0x0f) == 0 && ((size_t) bi & 0x0f) == 0 && (x & 0x0f) == 0 ) {
 			/* Fast code path */
 			for(i = 0; i < count; ++i){
 				int j = i;
@@ -786,14 +785,14 @@ static void v4dwt_interleave_h(v4dwt_t* restrict w, float* restrict a, int x, in
 				int j = i;
 				bi[i*8    ] = a[j];
 				j += x;
-				if(j > size) continue;
+				if(j >= size) continue;
 				bi[i*8 + 1] = a[j];
 				j += x;
-				if(j > size) continue;
+				if(j >= size) continue;
 				bi[i*8 + 2] = a[j];
 				j += x;
-				if(j > size) continue;
-				bi[i*8 + 3] = a[j];
+				if(j >= size) continue;
+				bi[i*8 + 3] = a[j]; /* This one*/
 			}
 		}
 
@@ -804,16 +803,19 @@ static void v4dwt_interleave_h(v4dwt_t* restrict w, float* restrict a, int x, in
 	}
 }
 
-static void v4dwt_interleave_v(v4dwt_t* restrict v , float* restrict a , int x){
+static void v4dwt_interleave_v(v4dwt_t* restrict v , float* restrict a , int x, int nb_elts_read){
 	v4* restrict bi = v->wavelet + v->cas;
 	int i;
+
 	for(i = 0; i < v->sn; ++i){
-		memcpy(&bi[i*2], &a[i*x], 4 * sizeof(float));
+		memcpy(&bi[i*2], &a[i*x], nb_elts_read * sizeof(float));
 	}
+
 	a += v->sn * x;
 	bi = v->wavelet + 1 - v->cas;
+
 	for(i = 0; i < v->dn; ++i){
-		memcpy(&bi[i*2], &a[i*x], 4 * sizeof(float));
+		memcpy(&bi[i*2], &a[i*x], nb_elts_read * sizeof(float));
 	}
 }
 
@@ -1037,7 +1039,7 @@ opj_bool dwt_decode_real(opj_tcd_tilecomp_t* restrict tilec, int numres){
 		aj = (float*) tilec->data;
 		for(j = rw; j > 3; j -= 4){
 			int k;
-			v4dwt_interleave_v(&v, aj, w);
+			v4dwt_interleave_v(&v, aj, w, 4);
 			v4dwt_decode(&v);
 				for(k = 0; k < rh; ++k){
 					memcpy(&aj[k*w], &v.wavelet[k], 4 * sizeof(float));
@@ -1047,7 +1049,7 @@ opj_bool dwt_decode_real(opj_tcd_tilecomp_t* restrict tilec, int numres){
 		if (rw & 0x03){
 				int k;
 			j = rw & 0x03;
-			v4dwt_interleave_v(&v, aj, w);
+			v4dwt_interleave_v(&v, aj, w, j);
 			v4dwt_decode(&v);
 				for(k = 0; k < rh; ++k){
 					memcpy(&aj[k*w], &v.wavelet[k], j * sizeof(float));
@@ -1130,7 +1132,7 @@ opj_bool dwt_decode_real_v2(opj_tcd_tilecomp_v2_t* restrict tilec, OPJ_UINT32 nu
 		for(j = rw; j > 3; j -= 4){
 			OPJ_INT32 k;
 
-			v4dwt_interleave_v(&v, aj, w);
+			v4dwt_interleave_v(&v, aj, w, 4);
 			v4dwt_decode(&v);
 
 			for(k = 0; k < rh; ++k){
@@ -1144,7 +1146,7 @@ opj_bool dwt_decode_real_v2(opj_tcd_tilecomp_v2_t* restrict tilec, OPJ_UINT32 nu
 
 			j = rw & 0x03;
 
-			v4dwt_interleave_v(&v, aj, w);
+			v4dwt_interleave_v(&v, aj, w, j);
 			v4dwt_decode(&v);
 
 			for(k = 0; k < rh; ++k){
