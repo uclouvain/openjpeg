@@ -6,6 +6,11 @@ includes_HEADERS =
 lib_LTLIBRARIES = libopenjpip_server.la libopenjpip_local.la
 
 JPIP_SRC = \
+openjpip.c \
+query_parser.c \
+channel_manager.c \
+session_manager.c \
+jpip_parser.c \
 boxheader_manager.c \
 codestream_manager.c \
 imgreg_manager.c \
@@ -42,7 +47,21 @@ placeholder_manager.h \
 target_manager.h \
 cachemodel_manager.h \
 j2kheader_manager.h \
-jp2k_encoder.h
+jp2k_encoder.h \
+query_parser.h \
+channel_manager.h \
+session_manager.h \
+jpip_parser.h
+
+LOCAL_SRC = jp2k_decoder.c \
+imgsock_manager.c \
+jpipstream_manager.c \
+cache_manager.c \
+dec_clientmsg_handler.c \
+imgsock_manager.h \
+jpipstream_manager.h \
+cache_manager.h \
+dec_clientmsg_handler.h
 
 libopenjpip_server_la_CPPFLAGS = \
 -I. \
@@ -62,7 +81,7 @@ libopenjpip_local_la_CPPFLAGS = \
 libopenjpip_local_la_CFLAGS =
 libopenjpip_local_la_LIBADD = -lm
 libopenjpip_local_la_LDFLAGS = -no-undefined -version-info @lt_version@
-libopenjpip_local_la_SOURCES = $(JPIP_SRC)
+libopenjpip_local_la_SOURCES = $(JPIP_SRC) $(LOCAL_SRC)
 
 install-data-hook:
 	@echo -e " (LA)\t$(libdir)/libopenjpip_server.la" >> $(top_builddir)/report.txt

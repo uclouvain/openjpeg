@@ -85,13 +85,11 @@ int write_phix( int coff, opj_codestream_info_t cstr_info, opj_bool EPHused, int
 
 int write_phixfaix( int coff, int compno, opj_codestream_info_t cstr_info, opj_bool EPHused, int j2klen, opj_cio_t *cio)
 {
-  int len, lenp;
-  int size_of_coding; // 4 or 8
-  int version;
-  int tileno, resno, precno, layno, num_packet=0;
-  int i,nmax=0;
+  int len, lenp, tileno, version, i, nmax, size_of_coding; // 4 or 8
   opj_tile_info_t *tile_Idx;
   opj_packet_info_t packet;
+  int resno, precno, layno, num_packet;
+  int numOfres, numOfprec, numOflayers;
 
   if( j2klen > pow( 2, 32)){
     size_of_coding =  8;
@@ -106,7 +104,8 @@ int write_phixfaix( int coff, int compno, opj_codestream_info_t cstr_info, opj_b
   cio_skip( cio, 4);              /* L [at the end]      */
   cio_write( cio, JPIP_FAIX, 4);  /* FAIX                */ 
   cio_write( cio, version,1);     /* Version 0 = 4 bytes */
-  
+
+  nmax = 0;
   for( i=0; i<=cstr_info.numdecompos[compno]; i++)
     nmax += cstr_info.tile[0].ph[i] * cstr_info.tile[0].pw[i] * cstr_info.numlayers;
   
@@ -114,16 +113,38 @@ int write_phixfaix( int coff, int compno, opj_codestream_info_t cstr_info, opj_b
   cio_write( cio, cstr_info.tw*cstr_info.th, size_of_coding);      /* M    */
   
   for( tileno=0; tileno<cstr_info.tw*cstr_info.th; tileno++){
-    
     tile_Idx = &cstr_info.tile[ tileno];
-    //    int correction = EPHused ? 3 : 1;
+    
     num_packet = 0;
+    numOfres = cstr_info.numdecompos[compno] + 1;
 
-    for( resno=0; resno<=cstr_info.numdecompos[compno]; resno++){
-      for( precno=0; precno<tile_Idx->pw[resno]*tile_Idx->ph[resno]; precno++){
-	for( layno=0; layno<cstr_info.numlayers; layno++){
-	  packet = tile_Idx->packet[num_packet * cstr_info.numcomps + compno];
-	  cio_write( cio, packet.start_pos-coff, size_of_coding);                                   /* start position */
+    for( resno=0; resno<numOfres ; resno++){
+      numOfprec = tile_Idx->pw[resno]*tile_Idx->ph[resno];
+      for( precno=0; precno<numOfprec; precno++){
+	numOflayers = cstr_info.numlayers;
+	for( layno=0; layno<numOflayers; layno++){
+	  
+	  switch ( cstr_info.prog){
+	  case LRCP:
+	    packet = tile_Idx->packet[ ((layno*numOfres+resno)*cstr_info.numcomps+compno)*numOfprec+precno];
+	    break;
+	  case RLCP:
+	    packet = tile_Idx->packet[ ((resno*numOflayers+layno)*cstr_info.numcomps+compno)*numOfprec+precno];
+	    break;
+	  case RPCL:
+	    packet = tile_Idx->packet[ ((resno*numOfprec+precno)*cstr_info.numcomps+compno)*numOflayers+layno];
+	    break;
+	  case PCRL:
+	    packet = tile_Idx->packet[ ((precno*cstr_info.numcomps+compno)*numOfres+resno)*numOflayers + layno];
+	    break;
+	  case CPRL:
+	    packet = tile_Idx->packet[ ((compno*numOfprec+precno)*numOfres+resno)*numOflayers + layno];
+	    break;
+	  default:
+	    fprintf( stderr, "failed to ppix indexing\n");
+	  }
+
+	  cio_write( cio, packet.start_pos-coff, size_of_coding);                /* start position */
 	  cio_write( cio, packet.end_ph_pos-packet.start_pos+1, size_of_coding); /* length         */
 	  
 	  num_packet++;

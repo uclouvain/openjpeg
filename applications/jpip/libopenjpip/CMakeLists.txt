@@ -24,10 +24,23 @@ ${CMAKE_CURRENT_SOURCE_DIR}/target_manager.c
 ${CMAKE_CURRENT_SOURCE_DIR}/cachemodel_manager.c
 ${CMAKE_CURRENT_SOURCE_DIR}/j2kheader_manager.c
 ${CMAKE_CURRENT_SOURCE_DIR}/jp2k_encoder.c
+${CMAKE_CURRENT_SOURCE_DIR}/openjpip.c
+${CMAKE_CURRENT_SOURCE_DIR}/query_parser.c
+${CMAKE_CURRENT_SOURCE_DIR}/channel_manager.c
+${CMAKE_CURRENT_SOURCE_DIR}/session_manager.c
+${CMAKE_CURRENT_SOURCE_DIR}/jpip_parser.c
+)
+
+SET(LOCAL_SRCS
+${CMAKE_CURRENT_SOURCE_DIR}/jp2k_decoder.c
+${CMAKE_CURRENT_SOURCE_DIR}/imgsock_manager.c
+${CMAKE_CURRENT_SOURCE_DIR}/jpipstream_manager.c
+${CMAKE_CURRENT_SOURCE_DIR}/cache_manager.c
+${CMAKE_CURRENT_SOURCE_DIR}/dec_clientmsg_handler.c
 )
 
 # Build the library
-ADD_LIBRARY(openjpip_local STATIC ${OPENJPIP_SRCS})
+ADD_LIBRARY(openjpip_local STATIC ${OPENJPIP_SRCS} ${LOCAL_SRCS})
 
 ADD_LIBRARY(openjpip_server STATIC ${OPENJPIP_SRCS})
 TARGET_LINK_LIBRARIES(openjpip_server ${FCGI_LIBNAME})
@@ -36,12 +49,12 @@ SET_TARGET_PROPERTIES(openjpip_server
 
 
 # Install library
-INSTALL(TARGETS openjpip_local
-  EXPORT OpenJPEGTargets
-  DESTINATION ${OPENJPEG_INSTALL_LIB_DIR} COMPONENT Libraries
-)
+ INSTALL(TARGETS openjpip_local
+   EXPORT OpenJPEGTargets
+   DESTINATION ${OPENJPEG_INSTALL_LIB_DIR} COMPONENT Libraries
+ )
 
-INSTALL(TARGETS openjpip_server
-  EXPORT OpenJPEGTargets
-  DESTINATION ${OPENJPEG_INSTALL_LIB_DIR} COMPONENT Libraries
-)
+ INSTALL(TARGETS openjpip_server
+   EXPORT OpenJPEGTargets
+   DESTINATION ${OPENJPEG_INSTALL_LIB_DIR} COMPONENT Libraries
+ )

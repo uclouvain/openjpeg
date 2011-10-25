@@ -5,6 +5,9 @@ What's New for OpenJPIP
 ! : changed
 + : added
 
+October 25, 2011
+* [kaori] patches for cmake and autotool are applied
+
 October 20, 2011
 + [added] API style in openJPIP library
 ! [kaori] rearranged directories, applications are all under util/ directory, currently only 'make -f Makefile.nix' works
