@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 October 25, 2011
++ [mickael] WIP: add a file to exclude some valgrind errors (detected with ctest_memcheck) related to png lib found with ubuntu10.04 platform 
 * [mickael] WIP: solve problems with reading of elements outside the tilec->data buffer in dwt
 
 October 21, 2011
