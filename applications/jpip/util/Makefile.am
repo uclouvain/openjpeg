@@ -52,8 +52,8 @@ test_index_LDADD = $(top_builddir)/applications/jpip/libopenjpip/libopenjpip_loc
 test_index_SOURCES = test_index.c
 #-------------
 install-data-hook:
-       @echo -e " (B)\t$(bindir)/opj_server$(EXEEXT)" >> $(top_builddir)/report.txt
-       @echo -e " (B)\t$(bindir)/opj_dec_server$(EXEEXT)" >> $(top_builddir)/report.txt
-       @echo -e " (B)\t$(bindir)/jpip_to_jp2$(EXEEXT)" >> $(top_builddir)/report.txt
-       @echo -e " (B)\t$(bindir)/jpip_to_j2k$(EXEEXT)" >> $(top_builddir)/report.txt
-       @echo -e " (B)\t$(bindir)/test_index$(EXEEXT)" >> $(top_builddir)/report.txt
+	@echo -e " (B)\t$(bindir)/opj_server$(EXEEXT)" >> $(top_builddir)/report.txt
+	@echo -e " (B)\t$(bindir)/opj_dec_server$(EXEEXT)" >> $(top_builddir)/report.txt
+	@echo -e " (B)\t$(bindir)/jpip_to_jp2$(EXEEXT)" >> $(top_builddir)/report.txt
+	@echo -e " (B)\t$(bindir)/jpip_to_j2k$(EXEEXT)" >> $(top_builddir)/report.txt
+	@echo -e " (B)\t$(bindir)/test_index$(EXEEXT)" >> $(top_builddir)/report.txt

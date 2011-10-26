@@ -5,6 +5,9 @@ What's New for OpenJPIP
 ! : changed
 + : added
 
+October 26, 2011
+* [kaori] additional patches for autotool are applied
+
 October 25, 2011
 * [kaori] patches for cmake and autotool are applied
 * [kaori] fixed client viewer to be compatible with server response header both Content-type and Content-Type
