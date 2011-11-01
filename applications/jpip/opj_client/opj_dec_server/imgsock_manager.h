@@ -38,7 +38,6 @@
 #include <winsock2.h>
 #else
 typedef int SOCKET;
-#define closesocket close
 #endif //_WIN32
 
 /**
@@ -47,6 +46,15 @@ typedef int SOCKET;
  * @return new socket
  */
 SOCKET open_listeningsocket();
+
+/**
+ * accept a new connection to the listenning socket
+ *
+ * @param listening_socket listenning socket
+ * @return                 connected socket (-1 if error occurs)
+ */
+SOCKET accept_socket( SOCKET listening_socket);
+
 
 #define NUM_OF_MSGTYPES 8
 typedef enum eMSGTYPE{ JPIPSTREAM, PNMREQ, XMLREQ, TIDREQ, CIDREQ, CIDDST, JP2SAVE, QUIT, MSGERROR} msgtype_t;
@@ -125,8 +133,16 @@ void response_signal( SOCKET connected_socket, bool succeed);
  * @param [out] buf              string to be stored
  * @return                       red size
  */
-
 int receive_line(SOCKET connected_socket, char *buf);
+
+/**
+ * close socket
+ *
+ * @param [in] sock closing socket
+ * @return     0 if succeed, -1 if failed
+ */
+int close_socket( SOCKET sock);
+
 #endif /* !IMGSOCK_MANAGER_H_ */
 
 /*! \file

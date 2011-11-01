@@ -221,10 +221,11 @@ Byte_t * recons_codestream_from_JPTstream( msgqueue_param_t *msgqueue, Byte_t *j
   return j2kstream;
 }
 
-Byte_t * recons_RPCLbitstream( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte_t *j2kstream, Byte8_t csn, 
-			       Byte8_t tileID, SIZmarker_param_t SIZ, CODmarker_param_t COD, int mindeclev, 
-			       int *max_reslev, Byte8_t *j2klen);
+Byte_t * add_SOTmkr( Byte_t *j2kstream, Byte8_t *j2klen);
 
+Byte_t * recons_bitstream( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte_t *j2kstream, Byte8_t csn, 
+			   Byte8_t tileID, SIZmarker_param_t SIZ, CODmarker_param_t COD, int mindeclev, 
+			   int *max_reslev, Byte8_t *j2klen);
 
 Byte_t * recons_codestream_from_JPPstream( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte8_t csn, int fw, int fh, Byte8_t *j2klen)
 {
@@ -244,11 +245,6 @@ Byte_t * recons_codestream_from_JPPstream( msgqueue_param_t *msgqueue, Byte_t *j
   if( !get_mainheader_from_j2kstream( j2kstream, &SIZ, &COD))
     return j2kstream;
 
-  if( COD.prog_order != RPCL){
-    fprintf( FCGI_stderr, "Error, Only RPCL order supported\n");
-    return j2kstream;
-  }
-
   if( fw == 0 || fh == 0)
     mindeclev = 0;
   else
@@ -265,6 +261,7 @@ Byte_t * recons_codestream_from_JPPstream( msgqueue_param_t *msgqueue, Byte_t *j
     SOToffset = *j2klen;
     while(( ptr = search_message( TILE_HEADER_MSG, tileID, csn, ptr))!=NULL){
       if( ptr->bin_offset == binOffset){
+	j2kstream = add_SOTmkr( j2kstream, j2klen);
 	j2kstream = add_msgstream( ptr, jpipstream, j2kstream, j2klen);
 	foundTH = true;
 	binOffset += ptr->length;
@@ -273,17 +270,17 @@ Byte_t * recons_codestream_from_JPPstream( msgqueue_param_t *msgqueue, Byte_t *j
     }
 
     if( foundTH){
-      j2kstream = recons_RPCLbitstream( msgqueue, jpipstream, j2kstream, csn, tileID, SIZ, COD, mindeclev, &max_reslev, j2klen);
+      j2kstream = recons_bitstream( msgqueue, jpipstream, j2kstream, csn, tileID, SIZ, COD, mindeclev, &max_reslev, j2klen);     
       modify_tileheader( j2kstream, SOToffset, (max_reslev<COD.numOfdecomp ? max_reslev : -1), SIZ.Csiz, j2klen);
     }
     else
       j2kstream = add_emptytilestream( tileID, j2kstream, j2klen);
   }
-  
+
   if( max_reslev < COD.numOfdecomp)
     if( !modify_mainheader( j2kstream, max_reslev, SIZ, COD, j2klen))
       return j2kstream;
-  
+
   j2kstream = add_EOC( j2kstream, j2klen);
   return j2kstream;
 }
@@ -306,53 +303,298 @@ Byte_t * add_mainhead_msgstream( msgqueue_param_t *msgqueue, Byte_t *origstream,
   return j2kstream;
 }
 
-Byte_t * add_padding( Byte8_t padding, Byte_t *j2kstream, Byte8_t *j2klen);
+Byte_t * add_SOTmkr( Byte_t *j2kstream, Byte8_t *j2klen)
+{
+  Byte_t *buf;
+  const Byte2_t SOT = 0x90ff;
+
+  buf = (Byte_t *)malloc(( *j2klen)+2);
+
+  memcpy( buf, j2kstream, *j2klen);
+  memcpy( buf+(*j2klen), &SOT, 2);
+  
+  *j2klen += 2;
+
+  if(j2kstream) free(j2kstream);
+
+  return buf;
+}
+
+Byte_t * recons_LRCPbitstream( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte_t *j2kstream, Byte8_t csn, 
+			       Byte8_t tileID, SIZmarker_param_t SIZ, CODmarker_param_t COD, int mindeclev, 
+			       int *max_reslev, Byte8_t *j2klen);
+
+Byte_t * recons_RLCPbitstream( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte_t *j2kstream, Byte8_t csn, 
+			       Byte8_t tileID, SIZmarker_param_t SIZ, CODmarker_param_t COD, int mindeclev, 
+			       int *max_reslev, Byte8_t *j2klen);
+
+Byte_t * recons_RPCLbitstream( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte_t *j2kstream, Byte8_t csn, 
+			       Byte8_t tileID, SIZmarker_param_t SIZ, CODmarker_param_t COD, int mindeclev, 
+			       int *max_reslev, Byte8_t *j2klen);
+
+Byte_t * recons_PCRLbitstream( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte_t *j2kstream, Byte8_t csn, 
+			       Byte8_t tileID, SIZmarker_param_t SIZ, CODmarker_param_t COD, int mindeclev, 
+			       int *max_reslev, Byte8_t *j2klen);
+
+Byte_t * recons_CPRLbitstream( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte_t *j2kstream, Byte8_t csn, 
+			       Byte8_t tileID, SIZmarker_param_t SIZ, CODmarker_param_t COD, int mindeclev, 
+			       int *max_reslev, Byte8_t *j2klen);
+
+Byte_t * recons_bitstream( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte_t *j2kstream, Byte8_t csn, 
+			   Byte8_t tileID, SIZmarker_param_t SIZ, CODmarker_param_t COD, int mindeclev, 
+			   int *max_reslev, Byte8_t *j2klen)
+{
+  switch( COD.prog_order){
+  case LRCP:
+    return recons_LRCPbitstream( msgqueue, jpipstream, j2kstream, csn, tileID, SIZ, COD, mindeclev, max_reslev, j2klen);
+  case RLCP:
+    return recons_RLCPbitstream( msgqueue, jpipstream, j2kstream, csn, tileID, SIZ, COD, mindeclev, max_reslev, j2klen);
+  case RPCL:
+    return recons_RPCLbitstream( msgqueue, jpipstream, j2kstream, csn, tileID, SIZ, COD, mindeclev, max_reslev, j2klen);
+  case PCRL:
+    return recons_PCRLbitstream( msgqueue, jpipstream, j2kstream, csn, tileID, SIZ, COD, mindeclev, max_reslev, j2klen);
+  case CPRL:
+    return recons_CPRLbitstream( msgqueue, jpipstream, j2kstream, csn, tileID, SIZ, COD, mindeclev, max_reslev, j2klen);
+  default:
+    fprintf( FCGI_stderr, "Error, progression order not supported\n");
+  }
+  return j2kstream;
+}
+
+int comp_numOfprcts( Byte8_t tileID, SIZmarker_param_t SIZ, CODmarker_param_t COD, int r);
+Byte8_t comp_seqID( Byte8_t tileID, SIZmarker_param_t SIZ, CODmarker_param_t COD, int r, int p);
+
+Byte_t * recons_packet( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte_t *j2kstream, Byte8_t csn, 
+			Byte8_t tileID, SIZmarker_param_t SIZ, CODmarker_param_t COD, int *max_reslev, 
+			int comp_idx, int res_idx, int prct_idx, int lay_idx, Byte8_t *j2klen);
+
+Byte_t * recons_LRCPbitstream( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte_t *j2kstream, Byte8_t csn, 
+			       Byte8_t tileID, SIZmarker_param_t SIZ, CODmarker_param_t COD, int mindeclev, 
+			       int *max_reslev, Byte8_t *j2klen)
+{
+  int r, p, c, l, numOfprcts;
+
+  for( l=0; l<COD.numOflayers; l++)
+    for( r=0; r<=(COD.numOfdecomp-mindeclev); r++){
+      if( COD.Scod & 0x01)
+	numOfprcts = comp_numOfprcts( tileID, SIZ, COD, r);
+      else
+	numOfprcts = 1;
+      
+      for( c=0; c<SIZ.Csiz; c++)
+	for( p=0; p<numOfprcts; p++)
+	  j2kstream = recons_packet( msgqueue, jpipstream, j2kstream, csn, tileID, SIZ, COD, max_reslev, c, r, p, l, j2klen);
+    }
+  
+  return j2kstream;
+}
+
+Byte_t * recons_RLCPbitstream( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte_t *j2kstream, Byte8_t csn, 
+			       Byte8_t tileID, SIZmarker_param_t SIZ, CODmarker_param_t COD, int mindeclev, 
+			       int *max_reslev, Byte8_t *j2klen)
+{
+  int r, p, c, l, numOfprcts;
+  
+  for( r=0; r<=(COD.numOfdecomp-mindeclev); r++){
+    if( COD.Scod & 0x01)
+      numOfprcts = comp_numOfprcts( tileID, SIZ, COD, r);
+    else
+      numOfprcts = 1;
+
+    for( l=0; l<COD.numOflayers; l++)
+      for( c=0; c<SIZ.Csiz; c++)
+	for( p=0; p<numOfprcts; p++)
+	  j2kstream = recons_packet( msgqueue, jpipstream, j2kstream, csn, tileID, SIZ, COD, max_reslev, c, r, p, l, j2klen);
+  }
+      
+  return j2kstream;
+}
+
+Byte_t * recons_precinct( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte_t *j2kstream, Byte8_t csn, 
+			  Byte8_t tileID, SIZmarker_param_t SIZ, CODmarker_param_t COD, int *max_reslev, 
+			  int comp_idx, int res_idx, Byte8_t seqID, Byte8_t *j2klen);
 
 Byte_t * recons_RPCLbitstream( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte_t *j2kstream, Byte8_t csn, 
 			       Byte8_t tileID, SIZmarker_param_t SIZ, CODmarker_param_t COD, int mindeclev, 
 			       int *max_reslev, Byte8_t *j2klen)
 {
   int r, p, c, numOfprcts;
-  bool foundPrec;
-  Byte8_t binOffset, precID, seqID;
-  Byte4_t XTsiz, YTsiz;
-  message_param_t *ptr;
+  Byte8_t seqID;
   
   for( r=0, seqID=0; r<=(COD.numOfdecomp-mindeclev); r++){
     
-    if( COD.Scod & 0x01){
-      XTsiz = get_tile_XSiz( SIZ, tileID, COD.numOfdecomp-r);
-      YTsiz = get_tile_YSiz( SIZ, tileID, COD.numOfdecomp-r);
-      numOfprcts = ceil((double)XTsiz/(double)COD.XPsiz[r])*ceil((double)YTsiz/(double)COD.YPsiz[r]);
-    }
+    if( COD.Scod & 0x01)
+      numOfprcts = comp_numOfprcts( tileID, SIZ, COD, r);
     else
       numOfprcts = 1;
     
-    for( p=0; p<numOfprcts; p++, seqID++){      
-      for( c=0; c<SIZ.Csiz; c++){
+    for( p=0; p<numOfprcts; p++, seqID++)
+      for( c=0; c<SIZ.Csiz; c++)
+	j2kstream = recons_precinct( msgqueue, jpipstream, j2kstream, csn, tileID, SIZ, COD, max_reslev, c, r, seqID, j2klen);
+  }
+      
+  return j2kstream;
+}
 
-	precID = comp_precinct_id( tileID, c, seqID, SIZ.Csiz, SIZ.XTnum*SIZ.YTnum);
+Byte_t * recons_PCRLbitstream( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte_t *j2kstream, Byte8_t csn, 
+			       Byte8_t tileID, SIZmarker_param_t SIZ, CODmarker_param_t COD, int mindeclev, 
+			       int *max_reslev, Byte8_t *j2klen)
+{
+  int r, p, c, min_numOfprcts, numOfprcts, min_numOfres;
+  Byte8_t seqID;
+  
+  min_numOfres = COD.numOfdecomp-mindeclev + 1;
 
-	ptr = msgqueue->first;
-	binOffset = 0;
-	foundPrec = false;
-	while(( ptr = search_message( PRECINCT_MSG, precID, csn, ptr))!=NULL){
-	  if( ptr->bin_offset == binOffset){
-	    j2kstream = add_msgstream( ptr, jpipstream, j2kstream, j2klen);
-	    
-	    foundPrec = true;
-	    binOffset += ptr->length;
-	    if( *max_reslev < r)
-	      *max_reslev = r;
-	  }
-	  ptr = ptr->next;
-	}
-	if(!foundPrec && COD.Scod & 0x01)
-	  j2kstream = add_padding( 1, j2kstream, j2klen);
-      }
+  if( COD.Scod & 0x01){
+    min_numOfprcts = 0;
+    for( r=0; r<min_numOfres; r++){
+      numOfprcts = comp_numOfprcts( tileID, SIZ, COD, r);
+      
+      if( numOfprcts < min_numOfprcts || min_numOfprcts == 0)
+	min_numOfprcts = numOfprcts;
     }
   }
+  else
+    min_numOfprcts = 1;
+  
+  for( p=0; p<min_numOfprcts; p++)
+    for( c=0; c<SIZ.Csiz; c++)
+      for( r=0; r<min_numOfres; r++){
+	seqID = comp_seqID( tileID, SIZ, COD, r, p);
+	j2kstream = recons_precinct( msgqueue, jpipstream, j2kstream, csn, tileID, SIZ, COD, max_reslev, c, r, seqID, j2klen);
+      }
+    
   return j2kstream;
+}
+
+
+Byte_t * recons_CPRLbitstream( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte_t *j2kstream, Byte8_t csn, 
+			       Byte8_t tileID, SIZmarker_param_t SIZ, CODmarker_param_t COD, int mindeclev, 
+			       int *max_reslev, Byte8_t *j2klen)
+{
+  int r, p, c, min_numOfprcts, numOfprcts, min_numOfres;
+  Byte8_t seqID;
+  
+  min_numOfres = COD.numOfdecomp-mindeclev + 1;
+
+  if( COD.Scod & 0x01){
+    min_numOfprcts = 0;
+    for( r=0; r<min_numOfres; r++){
+      numOfprcts = comp_numOfprcts( tileID, SIZ, COD, r);
+      
+      if( numOfprcts < min_numOfprcts || min_numOfprcts == 0)
+	min_numOfprcts = numOfprcts;
+    }
+  }
+  else
+    min_numOfprcts = 1;
+  
+  for( c=0; c<SIZ.Csiz; c++)
+    for( p=0; p<min_numOfprcts; p++)
+      for( r=0; r<min_numOfres; r++){
+	seqID = comp_seqID( tileID, SIZ, COD, r, p);
+	j2kstream = recons_precinct( msgqueue, jpipstream, j2kstream, csn, tileID, SIZ, COD, max_reslev, c, r, seqID, j2klen);
+      }
+  
+  return j2kstream;
+}
+
+int comp_numOfprcts( Byte8_t tileID, SIZmarker_param_t SIZ, CODmarker_param_t COD, int r)
+{  
+  Byte4_t XTsiz, YTsiz;
+  
+  XTsiz = get_tile_XSiz( SIZ, tileID, COD.numOfdecomp-r);
+  YTsiz = get_tile_YSiz( SIZ, tileID, COD.numOfdecomp-r);
+  
+  return ceil((double)XTsiz/(double)COD.XPsiz[r])*ceil((double)YTsiz/(double)COD.YPsiz[r]);    
+}
+
+Byte_t * add_padding( Byte8_t padding, Byte_t *j2kstream, Byte8_t *j2klen);
+
+Byte_t * recons_packet( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte_t *j2kstream, Byte8_t csn, 
+			Byte8_t tileID, SIZmarker_param_t SIZ, CODmarker_param_t COD, int *max_reslev, 
+			int comp_idx, int res_idx, int prct_idx, int lay_idx, Byte8_t *j2klen)
+{
+  Byte8_t seqID, precID, binOffset;
+  message_param_t *ptr;
+  bool foundPrec;
+  int l;
+
+  seqID = comp_seqID( tileID, SIZ, COD, res_idx, prct_idx);
+  precID = comp_precinct_id( tileID, comp_idx, seqID, SIZ.Csiz, SIZ.XTnum*SIZ.YTnum);
+	  	  
+  ptr = msgqueue->first;
+  binOffset = 0;
+  foundPrec = false;
+  l = 0;
+	  
+  while(( ptr = search_message( PRECINCT_MSG, precID, csn, ptr))!=NULL){
+    if( ptr->bin_offset == binOffset){
+      if( lay_idx == l){
+	j2kstream = add_msgstream( ptr, jpipstream, j2kstream, j2klen);
+	foundPrec = true;
+	if( *max_reslev < res_idx)
+	  *max_reslev = res_idx;
+		
+	break;
+      }
+      binOffset += ptr->length;
+      l++;
+    }
+    ptr = ptr->next;
+  }
+  if( !foundPrec && COD.Scod & 0x01)
+    j2kstream = add_padding( 1, j2kstream, j2klen);
+  
+  return j2kstream;
+}
+
+
+Byte_t * recons_precinct( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte_t *j2kstream, Byte8_t csn, 
+			  Byte8_t tileID, SIZmarker_param_t SIZ, CODmarker_param_t COD, int *max_reslev, 
+			  int comp_idx, int res_idx, Byte8_t seqID, Byte8_t *j2klen)
+{
+  Byte8_t precID, binOffset;
+  message_param_t *ptr;
+  bool foundPrec;
+
+  precID = comp_precinct_id( tileID, comp_idx, seqID, SIZ.Csiz, SIZ.XTnum*SIZ.YTnum);
+  
+  ptr = msgqueue->first;
+  binOffset = 0;
+  foundPrec = false;
+
+  while(( ptr = search_message( PRECINCT_MSG, precID, csn, ptr))!=NULL){
+    if( ptr->bin_offset == binOffset){
+      j2kstream = add_msgstream( ptr, jpipstream, j2kstream, j2klen);
+      
+      foundPrec = true;
+      binOffset += ptr->length;
+      if( *max_reslev < res_idx)
+	*max_reslev = res_idx;
+
+      if( ptr->last_byte)
+	break;
+    }
+    ptr = ptr->next;
+  }
+  if(!foundPrec && COD.Scod & 0x01)
+    j2kstream = add_padding( COD.numOflayers, j2kstream, j2klen);
+
+  return j2kstream;
+}
+
+Byte8_t comp_seqID( Byte8_t tileID, SIZmarker_param_t SIZ, CODmarker_param_t COD, int r, int p)
+{
+  Byte8_t seqID = 0;
+  int rr;
+  
+  for( rr=0; rr<r; rr++)
+    seqID += comp_numOfprcts( tileID, SIZ, COD, rr);
+  
+  seqID += p;
+  
+  return seqID;
 }
 
 Byte8_t get_last_tileID( msgqueue_param_t *msgqueue, Byte8_t csn, bool isJPPstream)

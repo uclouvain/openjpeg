@@ -5,6 +5,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/opj_dec_server.c
 ${CMAKE_CURRENT_SOURCE_DIR}/jp2k_decoder.c
 ${CMAKE_CURRENT_SOURCE_DIR}/imgsock_manager.c
 ${CMAKE_CURRENT_SOURCE_DIR}/jpipstream_manager.c
+${CMAKE_CURRENT_SOURCE_DIR}/dec_clientmsg_handler.c
 )
 
 INCLUDE_DIRECTORIES(

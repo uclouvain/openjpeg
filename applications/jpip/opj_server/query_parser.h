@@ -58,6 +58,7 @@ typedef struct query_param{
   char tid[MAX_LENOFTID];                     //!< target identifier
   int fx, fy;                                 //!< frame size (fx,fy)
   int rx, ry, rw, rh;                         //!< roi region
+  int layers;                                 //!< quality layers
   int lastcomp;                               //!< last component number
   bool *comps;                                //!< components for jpp-stream, null means all components
   char cid[MAX_LENOFCID];                     //!< channel identifier
@@ -74,6 +75,7 @@ typedef struct query_param{
   int max_depth;                              //!< max-depth
   bool metadata_only;                         //!< metadata-only request
   image_return_t return_type;                 //!< image return type
+  int len;                                    //!< maximum response length
 } query_param_t;
 
 

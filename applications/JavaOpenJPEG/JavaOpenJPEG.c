@@ -204,6 +204,8 @@ void encode_help_display() {
 	fprintf(stdout,"                 Indicate multiple modes by adding their values. \n");
 	fprintf(stdout,"                 ex: RESTART(4) + RESET(2) + SEGMARK(32) = -M 38\n");
 	fprintf(stdout,"\n");
+	fprintf(stdout,"-TP          : devide packets of every tile into tile-parts (-TP R) [R, L, C]\n");
+	fprintf(stdout,"\n");
 	fprintf(stdout,"-x           : create an index file *.Idx (-x index_name.Idx) \n");
 	fprintf(stdout,"\n");
 	fprintf(stdout,"-ROI         : c=%%d,U=%%d : quantization indices upshifted \n");
@@ -499,7 +501,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 		{"cinema2K",REQ_ARG, NULL ,'w'},
 		{"cinema4K",NO_ARG, NULL ,'y'},
 		{"ImgDir",REQ_ARG, NULL ,'z'},
-		{"TP",REQ_ARG, NULL ,'v'},
+		{"TP",REQ_ARG, NULL ,'u'},
 		{"SOP",NO_ARG, NULL ,'S'},
 		{"EPH",NO_ARG, NULL ,'E'},
 		{"OutFor",REQ_ARG, NULL ,'O'},
@@ -510,7 +512,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 
 	/* parse the command line */
 /* UniPG>> */
-	const char optlist[] = "i:o:hr:q:n:b:c:t:p:s:SEM:x:R:d:T:If:P:C:F:"
+	const char optlist[] = "i:o:hr:q:n:b:c:t:p:s:SEM:x:R:d:T:If:P:C:F:u:J"
 #ifdef USE_JPWL
 		"W:"
 #endif /* USE_JPWL */
@@ -871,7 +873,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 
 			/* ------------------------------------------------------ */
 			
-			case 'v':			/* Tile part generation*/
+			case 'u':			/* Tile part generation*/
 			{
 				parameters->tp_flag = opj_optarg[0];
 				parameters->tp_on = 1;

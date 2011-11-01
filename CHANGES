@@ -7,6 +7,7 @@ What's New for OpenJPEG
 
 October 21, 2011
 * [mickael] remove one obvious memory leak from test functions
+! [kaori]   change -v option was renamed to -u, which is equivalent to -TP long option
 
 October 20, 2011
 * [mickael] remove obvious memory leak from applications

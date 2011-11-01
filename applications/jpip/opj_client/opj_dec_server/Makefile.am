@@ -20,10 +20,12 @@ cache_manager.h \
 imgsock_manager.c \
 imgsock_manager.h \
 jp2k_decoder.c \
+dec_clientmsg_handler.c \
+dec_clientmsg_handler.h \
 jp2k_decoder.h \
 jpipstream_manager.c \
 jpipstream_manager.h \
-opj_dec_server.c
+opj_dec_server.c 
 
 
 install-data-hook:

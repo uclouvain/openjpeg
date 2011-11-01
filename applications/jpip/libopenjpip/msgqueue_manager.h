@@ -129,9 +129,10 @@ void enqueue_tile( int tile_id, int level, msgqueue_param_t *msgqueue);
  * @param[in]     seq_id   precinct sequence number within its tile
  * @param[in]     tile_id  tile index
  * @param[in]     comp_id  component number
+ * @param[in]     layers   num of layers
  * @param[in,out] msgqueue message queue
  */
-void enqueue_precinct( int seq_id, int tile_id, int comp_id, msgqueue_param_t *msgqueue);
+void enqueue_precinct( int seq_id, int tile_id, int comp_id, int layers, msgqueue_param_t *msgqueue);
 
 
 /**

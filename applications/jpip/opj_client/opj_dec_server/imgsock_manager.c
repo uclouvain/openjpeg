@@ -56,7 +56,7 @@ SOCKET open_listeningsocket()
   struct sockaddr_in sin;
   int sock_optval = 1;
   int port = 5000;
-
+  
   listening_socket = socket(AF_INET, SOCK_STREAM, 0);
   if ( listening_socket == -1 ){
     perror("socket");
@@ -76,18 +76,26 @@ SOCKET open_listeningsocket()
 
   if ( bind(listening_socket, (struct sockaddr *)&sin, sizeof(sin)) < 0 ){
     perror("bind");
-    closesocket(listening_socket);
+    close_socket(listening_socket);
     exit(1);
   }
 
   if( listen(listening_socket, SOMAXCONN) == -1){
     perror("listen");
-    closesocket(listening_socket);
+    close_socket(listening_socket);
     exit(1);
   }
   printf("port %d is listened\n", port);
 
   return listening_socket;
+}
+
+SOCKET accept_socket( SOCKET listening_socket)
+{
+  struct sockaddr_in peer_sin;
+  unsigned int addrlen = sizeof(peer_sin);
+
+  return accept( listening_socket, (struct sockaddr *)&peer_sin, &addrlen);
 }
 
 msgtype_t identify_clientmsg( SOCKET connected_socket)
@@ -284,4 +292,13 @@ void response_signal( SOCKET connected_socket, bool succeed)
 
   if( send( connected_socket, &code, 1, 0) != 1)
     fprintf( stderr, "Response signalling error\n");
+}
+
+int close_socket( SOCKET sock)
+{
+#ifdef _WIN32
+  return closesocket( sock);
+#else
+  return close( sock);
+#endif
 }
