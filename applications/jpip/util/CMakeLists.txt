@@ -30,7 +30,7 @@ REMOVE_DEFINITIONS(-DSERVER -DQUIT_SIGNAL="quitJPIP")
 FOREACH(exe opj_dec_server jpip_to_jp2 jpip_to_j2k test_index)
 #
  ADD_EXECUTABLE(${exe} ${exe}.c)
- TARGET_LINK_LIBRARIES(${exe} openjpip_local ${OPENJPEG_LIBRARY_NAME})
+ TARGET_LINK_LIBRARIES(${exe} openjpip_local)
   INSTALL(TARGETS ${exe}
    EXPORT OpenJPEGTargets
    DESTINATION ${OPENJPEG_INSTALL_BIN_DIR} COMPONENT Applications

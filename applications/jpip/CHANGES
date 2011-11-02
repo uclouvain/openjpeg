@@ -5,6 +5,9 @@ What's New for OpenJPIP
 ! : changed
 + : added
 
+November 2, 2011
+* [antonin] additional patches for autotools and cmake
+
 October 26, 2011
 * [kaori] additional patches for autotool are applied
 

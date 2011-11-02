@@ -76,10 +76,12 @@ libopenjpip_server_la_SOURCES = $(JPIP_SRC)
 
 libopenjpip_local_la_CPPFLAGS = \
 -I. \
+-I$(top_srcdir)/libopenjpeg \
+-I$(top_builddir)/libopenjpeg \
 -I$(top_srcdir)/applications/jpip/libopenjpip \
 -I$(top_builddir)/applications/jpip/libopenjpip
 libopenjpip_local_la_CFLAGS =
-libopenjpip_local_la_LIBADD = -lm
+libopenjpip_local_la_LIBADD = $(top_builddir)/libopenjpeg/libopenjpeg.la -lm
 libopenjpip_local_la_LDFLAGS = -no-undefined -version-info @lt_version@
 libopenjpip_local_la_SOURCES = $(JPIP_SRC) $(LOCAL_SRC)
 
