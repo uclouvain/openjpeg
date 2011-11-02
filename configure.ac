@@ -411,10 +411,7 @@ applications/codec/Makefile
 applications/mj2/Makefile
 applications/jpip/Makefile
 applications/jpip/libopenjpip/Makefile
-applications/jpip/opj_server/Makefile
-applications/jpip/opj_client/Makefile
-applications/jpip/opj_client/opj_dec_server/Makefile
-applications/jpip/tools/Makefile
+applications/jpip/util/Makefile
 doc/Makefile
 ])
 

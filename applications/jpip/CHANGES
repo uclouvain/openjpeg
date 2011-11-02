@@ -5,7 +5,21 @@ What's New for OpenJPIP
 ! : changed
 + : added
 
-October 14, 2011
+November 2, 2011
+* [antonin] additional patches for autotools and cmake
+
+October 26, 2011
+* [kaori] additional patches for autotool are applied
+
+October 25, 2011
+* [kaori] patches for cmake and autotool are applied
+* [kaori] fixed client viewer to be compatible with server response header both Content-type and Content-Type
+
+October 20, 2011
++ [added] API style in openJPIP library
+! [kaori] rearranged directories, applications are all under util/ directory, currently only 'make -f Makefile.nix' works
+
+October 18, 2011
 ! [kaori] rearranged opj_server, opj_dec_server directory
 
 October 14, 2011
