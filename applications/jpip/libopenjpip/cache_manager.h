@@ -34,16 +34,10 @@
 #include "metadata_manager.h"
 #include "ihdrbox_manager.h"
 
-//! maximum length of target name
-#define MAX_LENOFTARGET 128
-
-//! maximum length of target identifier
-#define MAX_LENOFTID 30
-
 //! cache parameters
 typedef struct cache_param{
-  char filename[MAX_LENOFTARGET];     //!< file name
-  char tid[MAX_LENOFTID];             //!< taregt identifier
+  char *filename;                     //!< file name
+  char *tid;                          //!< taregt identifier
   int csn;                            //!< codestream number
   char **cid;                         //!< dynamic array of channel identifiers
   int numOfcid;                       //!< number of cids

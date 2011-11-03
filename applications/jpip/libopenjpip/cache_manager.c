@@ -33,9 +33,6 @@
 #include <string.h>
 #include "cache_manager.h"
 
-//! maximum length of channel identifier
-#define MAX_LENOFCID 30
-
 cachelist_param_t * gene_cachelist()
 {
   cachelist_param_t *cachelist;
@@ -66,12 +63,11 @@ cache_param_t * gene_cache( char *targetname, int csn, char *tid, char *cid)
   cache_param_t *cache;
   
   cache = (cache_param_t *)malloc( sizeof(cache_param_t));
-  strcpy( cache->filename, targetname);
-  strcpy( cache->tid, tid);
+  cache->filename = strdup( targetname);
+  cache->tid = strdup( tid);
   cache->csn = csn;
   cache->cid = (char **)malloc( sizeof(char *));
-  *cache->cid = (char *)malloc( MAX_LENOFCID);
-  strcpy( *cache->cid, cid);
+  *cache->cid = strdup( cid);
   cache->numOfcid = 1;
 #if 1
   cache->metadatalist = NULL;
@@ -87,6 +83,9 @@ cache_param_t * gene_cache( char *targetname, int csn, char *tid, char *cid)
 void delete_cache( cache_param_t **cache)
 {
   int i;
+  
+  free( (*cache)->filename);
+  free( (*cache)->tid);
 
   delete_metadatalist( &(*cache)->metadatalist);
 
@@ -110,6 +109,9 @@ void insert_cache_into_list( cache_param_t *cache, cachelist_param_t *cachelist)
 cache_param_t * search_cache( char targetname[], cachelist_param_t *cachelist)
 {
   cache_param_t *foundcache;
+
+  if( !targetname)
+    return NULL;
 
   foundcache = cachelist->first;
   
@@ -143,6 +145,9 @@ cache_param_t * search_cacheBycid( char cid[], cachelist_param_t *cachelist)
   cache_param_t *foundcache;
   int i;
 
+  if( !cid)
+    return NULL;
+
   foundcache = cachelist->first;
   
   while( foundcache != NULL){
@@ -158,6 +163,9 @@ cache_param_t * search_cacheBytid( char tid[], cachelist_param_t *cachelist)
 {
   cache_param_t *foundcache;
 
+  if( !tid)
+    return NULL;
+
   foundcache = cachelist->first;
   
   while( foundcache != NULL){
@@ -170,31 +178,28 @@ cache_param_t * search_cacheBytid( char tid[], cachelist_param_t *cachelist)
 
 void add_cachecid( char *cid, cache_param_t *cache)
 {
-  char **tmp;
-  int i;
+  if( !cid)
+    return;
 
-  tmp = cache->cid;
-  
-  cache->cid = (char **)malloc( (cache->numOfcid+1)*sizeof(char *));
-
-  for( i=0; i<cache->numOfcid; i++){
-    cache->cid[i] = (char *)malloc( MAX_LENOFCID);
-    strcpy( cache->cid[i], tmp[i]);
-    free( tmp[i]);
+  if( realloc( cache->cid, (cache->numOfcid+1)*sizeof(char *)) == NULL){
+    fprintf( stderr, "failed to add new cid to cache table in add_cachecid()\n");
+    return;
   }
-  free( tmp);
-
-  cache->cid[ cache->numOfcid] = (char *)malloc( MAX_LENOFCID);
-  strcpy( cache->cid[ cache->numOfcid], cid);
+  
+  cache->cid[ cache->numOfcid] = strdup( cid);
 
   cache->numOfcid ++;
 }
 
 void update_cachetid( char *tid, cache_param_t *cache)
 {
+  if( !tid)
+    return;
+
   if( tid[0] != '0' && strcmp( tid, cache->tid) !=0){
     fprintf( stderr, "tid is updated to %s for %s\n", tid, cache->filename);
-    strcpy( cache->tid, tid);
+    free( cache->tid);
+    cache->tid = strdup( tid);
   }
 }
 
@@ -231,8 +236,7 @@ void remove_cidInCache( char *cid, cache_param_t *cache)
   
   for( i=0, j=0; i<cache->numOfcid; i++){
     if( i != idx){
-      cache->cid[j] = (char *)malloc( MAX_LENOFCID);
-      strcpy( cache->cid[j], tmp[i]);
+      cache->cid[j] = strdup( tmp[i]);
       j++;
     }
     free( tmp[i]);

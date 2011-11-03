@@ -5,6 +5,10 @@ What's New for OpenJPIP
 ! : changed
 + : added
 
+November 3, 2011
+* [kaori] solved memory leak of opj_server
+! [kaori] removed redundant defines
+
 November 2, 2011
 * [antonin] additional patches for autotools and cmake
 

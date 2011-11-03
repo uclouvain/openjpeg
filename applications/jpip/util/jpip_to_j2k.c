@@ -64,7 +64,7 @@ int main(int argc,char *argv[])
   if(!( fwrite_jp2k( argv[2], dec)))
     return -1;
   
-  output_log( true, false, false, dec);
+  //  output_log( true, false, false, dec);
   
   destroy_jpipdecoder( &dec);
 

@@ -71,13 +71,13 @@ msgtype_t identify_clientmsg( SOCKET connected_socket);
  * receive a JPT- JPP- stream from client
  *
  * @param [in]  connected_socket file descriptor of the connected socket
- * @param [out] target           received target file name (if not received, null string)
- * @param [out] tid              received target identifier (if not received, null string)
- * @param [out] cid              received channel identifier (if not received, null string)
+ * @param [out] target           address of received target file name string pointer ( malloced, if not received, NULL)
+ * @param [out] tid              address of received target identifier string pointer ( malloced, if not received, null string)
+ * @param [out] cid              address of received channel identifier string pointer ( malloced, if not received, null string)
  * @param [out] streamlen        length of the received codestream
  * @return                       JPT- JPP- codestream
  */
-Byte_t * receive_JPIPstream( SOCKET connected_socket, char *target, char *tid, char *cid, int *streamlen);
+Byte_t * receive_JPIPstream( SOCKET connected_socket, char **target, char **tid, char **cid, int *streamlen);
 
 /**
  * send PGM/PPM image stream to the client
@@ -134,6 +134,14 @@ void response_signal( SOCKET connected_socket, bool succeed);
  * @return                       red size
  */
 int receive_line(SOCKET connected_socket, char *buf);
+
+/**
+ * receive a string line (ending with '\n') from client, return malloc string
+ *
+ * @param [in]  connected_socket file descriptor of the connected socket
+ * @return                       pointer to the string (memory allocated)
+ */
+char * receive_string( SOCKET connected_socket);
 
 /**
  * close socket

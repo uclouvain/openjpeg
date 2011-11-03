@@ -69,19 +69,19 @@ targetlist_param_t * gene_targetlist()
  */
 int open_jp2file( char filename[]);
 
-target_param_t * gene_target( targetlist_param_t *targetlist, char *targetname)
+target_param_t * gene_target( targetlist_param_t *targetlist, char *targetpath)
 {
   target_param_t *target;
   int fd;
   index_param_t *jp2idx;
   static int last_csn = 0;
 
-  if( targetname[0]=='\0'){
-    fprintf( FCGI_stderr, "Error: exception, no targetname in gene_target()\n");
+  if( targetpath[0]=='\0'){
+    fprintf( FCGI_stderr, "Error: exception, no targetpath in gene_target()\n");
     return NULL;
   }
 
-  if((fd = open_jp2file( targetname)) == -1){
+  if((fd = open_jp2file( targetpath)) == -1){
     fprintf( FCGI_stdout, "Status: 404\r\n"); 
     return NULL;
   }
@@ -93,7 +93,7 @@ target_param_t * gene_target( targetlist_param_t *targetlist, char *targetname)
 
   target = (target_param_t *)malloc( sizeof(target_param_t));
   snprintf( target->tid, MAX_LENOFTID, "%x-%x", (unsigned int)time(NULL), (unsigned int)rand());
-  strcpy( target->filename, targetname); 
+  target->filename = strdup( targetpath); 
   target->fd = fd;
   target->csn = last_csn++;
   target->codeidx = jp2idx;
@@ -109,7 +109,7 @@ target_param_t * gene_target( targetlist_param_t *targetlist, char *targetname)
   targetlist->last = target;
 
 #ifndef SERVER
-  fprintf( logstream, "local log: target %s generated\n", targetname);
+  fprintf( logstream, "local log: target %s generated\n", targetpath);
 #endif
   
   return target;
@@ -129,11 +129,16 @@ void unrefer_target( target_param_t *target)
 void delete_target( target_param_t **target)
 {
   close( (*target)->fd);
-  delete_index ( &(*target)->codeidx);
+  
+  if( (*target)->codeidx)
+    delete_index ( &(*target)->codeidx);
 
 #ifndef SERVER
   fprintf( logstream, "local log: target: %s deleted\n", (*target)->filename);
 #endif
+
+  free( (*target)->filename);
+
   free(*target);
 }
 

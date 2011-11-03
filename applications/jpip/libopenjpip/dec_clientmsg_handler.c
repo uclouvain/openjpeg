@@ -37,20 +37,16 @@
 #include "jpipstream_manager.h"
 #include "jp2k_encoder.h"
 
-
-//! maximum length of channel identifier
-#define MAX_LENOFCID 30
-
 void handle_JPIPstreamMSG( SOCKET connected_socket, cachelist_param_t *cachelist,
 			   Byte_t **jpipstream, int *streamlen, msgqueue_param_t *msgqueue)
 {
   Byte_t *newjpipstream;
   int newstreamlen = 0;
   cache_param_t *cache;
-  char target[MAX_LENOFTARGET], tid[MAX_LENOFTID], cid[MAX_LENOFCID];
+  char *target, *tid, *cid;
   metadatalist_param_t *metadatalist;
   
-  newjpipstream = receive_JPIPstream( connected_socket, target, tid, cid, &newstreamlen);
+  newjpipstream = receive_JPIPstream( connected_socket, &target, &tid, &cid, &newstreamlen);
 
   parse_JPIPstream( newjpipstream, newstreamlen, *streamlen, msgqueue);
 
@@ -61,11 +57,11 @@ void handle_JPIPstreamMSG( SOCKET connected_socket, cachelist_param_t *cachelist
   parse_metamsg( msgqueue, *jpipstream, *streamlen, metadatalist);
 
   // cid registration
-  if( target[0] != 0){
+  if( target != NULL){
     if((cache = search_cache( target, cachelist))){
-      if( tid[0] != 0)
+      if( tid != NULL)
 	update_cachetid( tid, cache);
-      if( cid[0] != 0)
+      if( cid != NULL)
 	add_cachecid( cid, cache);
     }
     else{
@@ -80,6 +76,10 @@ void handle_JPIPstreamMSG( SOCKET connected_socket, cachelist_param_t *cachelist
     delete_metadatalist( &cache->metadatalist);
   cache->metadatalist = metadatalist;
 
+  if( target)    free( target);
+  if( tid)    free( tid);
+  if( cid)    free( cid);
+
   response_signal( connected_socket, true);
 }
 
@@ -87,14 +87,19 @@ void handle_PNMreqMSG( SOCKET connected_socket, Byte_t *jpipstream, msgqueue_par
 {
   Byte_t *pnmstream;
   ihdrbox_param_t *ihdrbox;
-  char cid[MAX_LENOFCID], tmp[10];
+  char *CIDorTID, tmp[10];
   cache_param_t *cache;
   int fw, fh;
 
-  receive_line( connected_socket, cid);
-  if(!(cache = search_cacheBycid( cid, cachelist)))
-    if(!(cache = search_cacheBytid( cid, cachelist)))
+  CIDorTID = receive_string( connected_socket);
+  
+  if(!(cache = search_cacheBycid( CIDorTID, cachelist)))
+    if(!(cache = search_cacheBytid( CIDorTID, cachelist))){
+      free( CIDorTID);
       return;
+    }
+  
+  free( CIDorTID);
 
   receive_line( connected_socket, tmp);
   fw = atoi( tmp);
@@ -112,12 +117,17 @@ void handle_PNMreqMSG( SOCKET connected_socket, Byte_t *jpipstream, msgqueue_par
 
 void handle_XMLreqMSG( SOCKET connected_socket, Byte_t *jpipstream, cachelist_param_t *cachelist)
 {
-  char cid[MAX_LENOFCID];
+  char *cid;
   cache_param_t *cache;
 
-  receive_line( connected_socket, cid);
-  if(!(cache = search_cacheBycid( cid, cachelist)))
+  cid = receive_string( connected_socket);
+
+  if(!(cache = search_cacheBycid( cid, cachelist))){
+    free( cid);
     return;
+  }
+
+  free( cid);
   
   boxcontents_param_t *boxcontents = cache->metadatalist->last->boxcontents;
   Byte_t *xmlstream = (Byte_t *)malloc( boxcontents->length);
@@ -128,12 +138,14 @@ void handle_XMLreqMSG( SOCKET connected_socket, Byte_t *jpipstream, cachelist_pa
 
 void handle_TIDreqMSG( SOCKET connected_socket, cachelist_param_t *cachelist)
 {
-  char target[MAX_LENOFTARGET], *tid = NULL;
+  char *target, *tid = NULL;
   cache_param_t *cache;
   int tidlen = 0;
 
-  receive_line( connected_socket, target);
+  target = receive_string( connected_socket);
   cache = search_cache( target, cachelist);
+
+  free( target);
   
   if( cache){
     tid = cache->tid;
@@ -144,13 +156,15 @@ void handle_TIDreqMSG( SOCKET connected_socket, cachelist_param_t *cachelist)
 
 void handle_CIDreqMSG( SOCKET connected_socket, cachelist_param_t *cachelist)
 {
-  char target[MAX_LENOFTARGET], *cid = NULL;
+  char *target, *cid = NULL;
   cache_param_t *cache;
   int cidlen = 0;
 
-  receive_line( connected_socket, target);
+  target = receive_string( connected_socket);
   cache = search_cache( target, cachelist);
   
+  free( target);
+
   if( cache){
     if( cache->numOfcid > 0){
       cid = cache->cid[ cache->numOfcid-1];
@@ -162,23 +176,29 @@ void handle_CIDreqMSG( SOCKET connected_socket, cachelist_param_t *cachelist)
 
 void handle_dstCIDreqMSG( SOCKET connected_socket, cachelist_param_t *cachelist)
 {
-  char cid[MAX_LENOFCID];
+  char *cid;
 
-  receive_line( connected_socket, cid);
+  cid = receive_string( connected_socket);
   remove_cachecid( cid, cachelist);
   response_signal( connected_socket, true);
+  
+  free( cid);
 }
 
 void handle_JP2saveMSG( SOCKET connected_socket, cachelist_param_t *cachelist, msgqueue_param_t *msgqueue, Byte_t *jpipstream)
 {
-  char cid[MAX_LENOFCID];
+  char *cid;
   cache_param_t *cache;
   Byte_t *jp2stream;
   Byte8_t jp2len;
 
-  receive_line( connected_socket, cid);
-  if(!(cache = search_cacheBycid( cid, cachelist)))
+  cid = receive_string( connected_socket);
+  if(!(cache = search_cacheBycid( cid, cachelist))){
+    free( cid);
     return;
+  }
+  
+  free( cid);
   
   jp2stream = recons_jp2( msgqueue, jpipstream, cache->csn, &jp2len);
 

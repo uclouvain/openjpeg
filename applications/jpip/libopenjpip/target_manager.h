@@ -37,13 +37,10 @@
 //! maximum length of target identifier
 #define MAX_LENOFTID 30
 
-//! maximum length of target name
-#define MAX_LENOFTARGET 128
-
 //! target parameters
 typedef struct target_param{
   char tid[MAX_LENOFTID];         //!< taregt identifier
-  char filename[MAX_LENOFTARGET]; //!< file name
+  char *filename;                 //!< file name
   int fd;                         //!< file descriptor
   int csn;                        //!< codestream number
   index_param_t *codeidx;         //!< index information of codestream
@@ -74,10 +71,10 @@ targetlist_param_t * gene_targetlist();
  * generate a target
  *
  * @param[in] targetlist target list to insert the generated target
- * @param[in] targetname target file name
+ * @param[in] targetpath file path or URL of the target
  * @return               pointer to the generated target
  */
-target_param_t * gene_target( targetlist_param_t *targetlist, char *targetname);
+target_param_t * gene_target( targetlist_param_t *targetlist, char *targetpath);
 
 
 /**

@@ -75,12 +75,12 @@ void delete_manfbox( manfbox_param_t **manf)
   
   bhPtr = (*manf)->first;
   while( bhPtr != NULL){
-    bhNext=bhPtr->next;
+    bhNext = bhPtr->next;
 #ifndef SERVER
     //      fprintf( logstream, "local log: boxheader %.4s deleted!\n", bhPtr->type);
 #endif
       free(bhPtr);
-      bhPtr=bhNext;
+      bhPtr = bhNext;
   }
   free( *manf);
 }

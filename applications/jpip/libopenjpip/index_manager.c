@@ -564,7 +564,7 @@ bool set_ppixdata( box_param_t *cidx_box, index_param_t *jp2idx)
     free( faix_box);   
   }
   
-  free(manf);
+  delete_manfbox( &manf);
 
   return true;
 }
