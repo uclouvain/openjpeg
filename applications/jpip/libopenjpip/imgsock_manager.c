@@ -123,15 +123,13 @@ msgtype_t identify_clientmsg( SOCKET connected_socket)
   return MSGERROR;
 }
 
-Byte_t * receive_JPIPstream( SOCKET connected_socket, char *target, char *tid, char *cid, int *streamlen)
+Byte_t * receive_JPIPstream( SOCKET connected_socket, char **target, char **tid, char **cid, int *streamlen)
 {
   Byte_t *jpipstream=NULL, *ptr;
   char buf[BUF_LEN], versionstring[] = "version 1.2";
   int linelen, redlen, remlen;
   
-  target[0] = 0;
-  cid[0] = 0;
-  tid[0] = 0;
+  *target = *cid = *tid = NULL;
   
   if((linelen = receive_line( connected_socket, buf)) == 0)
     return NULL;
@@ -145,17 +143,17 @@ Byte_t * receive_JPIPstream( SOCKET connected_socket, char *target, char *tid, c
 
   if( strstr( buf, "jp2")){ 
     // register cid option
-    strcpy( target, buf);
+    *target = strdup( buf);
     
     if((linelen = receive_line( connected_socket, buf)) == 0)
       return NULL;
     if( strcmp( buf, "0") != 0)
-      strcpy( tid, buf);
+      *tid = strdup( buf);
 
     if((linelen = receive_line( connected_socket, buf)) == 0)
       return NULL;
     if( strcmp( buf, "0") != 0)
-      strcpy( cid, buf);
+      *cid = strdup( buf);
     
     if((linelen = receive_line( connected_socket, buf)) == 0)
       return NULL;
@@ -279,6 +277,15 @@ int receive_line(SOCKET connected_socket, char *p)
     fprintf( stderr, "Header receive error\n");
 
   return len;
+}
+
+char * receive_string( SOCKET connected_socket)
+{
+  char buf[BUF_LEN];
+  
+  receive_line( connected_socket, buf);
+    
+  return strdup(buf);
 }
 
 void response_signal( SOCKET connected_socket, bool succeed)

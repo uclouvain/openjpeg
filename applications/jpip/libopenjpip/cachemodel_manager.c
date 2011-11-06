@@ -184,9 +184,8 @@ void delete_cachemodel( cachemodel_param_t **cachemodel)
   free( (*cachemodel)->tp_model);
   free( (*cachemodel)->th_model);
   
-  if( (*cachemodel)->target->codeidx->SIZ.Csiz > 1)
-    for( i=0; i<(*cachemodel)->target->codeidx->SIZ.Csiz; i++)
-      free( (*cachemodel)->pp_model[i]);
+  for( i=0; i<(*cachemodel)->target->codeidx->SIZ.Csiz; i++)
+    free( (*cachemodel)->pp_model[i]);
   free( (*cachemodel)->pp_model);
 
 #ifndef SERVER

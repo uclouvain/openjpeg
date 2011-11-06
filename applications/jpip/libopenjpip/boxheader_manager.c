@@ -59,6 +59,7 @@ boxheader_param_t * gene_boxheader( int fd, Byte8_t offset)
     boxlen = fetch_8bytebigendian( fd, offset+8);
     headlen = 16;
   }
+
   boxheader = (boxheader_param_t *)malloc( sizeof( boxheader_param_t));
   boxheader->headlen = headlen;
   boxheader->length = boxlen;
