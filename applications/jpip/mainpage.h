@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*! \mainpage OpenJPIP v1.0 Documentation
+/*! \mainpage OpenJPIP v2.1 Documentation
  *
  * \section intro Introduction
  * This manual documents the low-level OpenJPIP C API.\n
@@ -36,12 +36,12 @@
  * ( For more info about JPIP, check the website: http://www.jpeg.org/jpeg2000/j2kpart9.html)\n
  *
  * This whole documents covers the following six programs.\n
- * - opj_server.c     JPIP server supporting HTTP connection and JPT-stream
- * - opj_dec_server.c Server to decode JPT-stream and communicate locally with JPIP client, which is coded in java
- * - addXMLinJP2.c  To Embed metadata into JP2 file
- * - jpip_to_jp2.c   To Convert JPT-stream to JP2
- * - jpip_to_j2k.c   To Convert JPT-stream to J2K
- * - test_index.c   To test index code format of a JP2 file
+ * - opj_server.c     JPIP server supporting HTTP connection and JPT/JPP-stream
+ * - opj_dec_server.c Server to decode JPT/JPP-stream and communicate locally with JPIP client, which is coded in java
+ * - addXMLinJP2.c    To Embed metadata into JP2 file
+ * - jpip_to_jp2.c    To Convert JPT/JPP-stream to JP2
+ * - jpip_to_j2k.c    To Convert JPT/JPP-stream to J2K
+ * - test_index.c     To test index code format of a JP2 file
  *
  * \section license License
  * This software is released under the BSD license, anybody can use or modify the library, even for commercial applications.\n
@@ -66,8 +66,8 @@
  * \section sysarchtect System Architecture
  * JPIP protocol is implimented between the JPIP server program (opj_server) and the JPIP client java program (opj_viewer).\n
  * Figure below represents the overview of our system architecture.\n
- * The JPIP server parses JPIP query and sends corresponding JPT-stream.
- * The JPIP client viewer is an image viewer with GUI to publish JPIP requests and receive JPT-stream.\n
+ * The JPIP server parses JPIP query and sends corresponding JPT/JPP-stream.
+ * The JPIP client viewer is an image viewer with GUI to publish JPIP requests and receive JPT/JPP-stream.\n
  * Particularly, our system has the image decoding module implemented on a server (opj_dec_server, Image decoding Server). 
  * Image decoding Server and JPIP client viewer communicate closely. 
  * This specific architecture enables sharing cache of image codestream data among all viewers connected to the same Image decoding Server not only locally but also remotely.
@@ -81,9 +81,9 @@
  * The Image decoding Server maintains the association between channel IDs and targets, and provides a reference channel ID to a Viewer on demand.\n
  * 
  * Typical requests and replies among JPIP server, JPIP client, and Image decoding server is presented below.\n
- * The JPIP server parses HTTP query and sends corresponding JPT-stream back to the JPIP client (Viewer).
- * JPT-stream is unreadable by JPIP client, and it is directly passed to Image decoding Server, and which provides the image in raw format (PGM or PPM) to the JPIP client.
- * The Image decoding Server handles the decoding and caching of JPT-stream.
+ * The JPIP server parses HTTP query and sends corresponding JPT/JPP-stream back to the JPIP client (Viewer).
+ * JPT/JPP-stream is unreadable by JPIP client, and it is directly passed to Image decoding Server, and which provides the image in raw format (PGM or PPM) to the JPIP client.
+ * The Image decoding Server handles the decoding and caching of JPT/JPP-stream.
  * JPIP client can read PGM and PPM images natively.
  * Before connecting to the JPIP server, every JPIP client checks local cache data of the requesting image with the image decoding server.
  * If its cache exists, the image decoding server provides ChannelID (CID), which identifies the image and its cache model on the JPIP server, and the whole system can continue the session using the CID.
