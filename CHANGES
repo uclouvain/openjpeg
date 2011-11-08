@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 November 8, 2011
++ [mickael] WIP: clean and enhance j2K file
 + [mickael] WIP: clean and enhance openjpeg.c
 + [mickael] WIP: clean and enhance openjpeg.h and add deprecated macro
 

@@ -6,6 +6,9 @@
  * Copyright (c) 2003-2007, Francois-Olivier Devaux and Antonin Descampe
  * Copyright (c) 2005, Herve Drolon, FreeImage Team
  * Copyright (c) 2006-2007, Parvatha Elangovan
+ * Copyright (c) 2008, Jerome Fimes, Communications & Systemes <jerome.fimes@c-s.fr>
+ * Copyright (c) 2011, Mickael Savinaud, Communications & Systemes <mickael.savinaud@c-s.fr>
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -97,15 +100,12 @@ The functions in J2K.C have for goal to read/write the several parts of the code
 #endif /* USE_JPSEC */
 /* <<UniPG */
 
-
-struct opj_stream_private;
-
 /* ----------------------------------------------------------------------- */
 
 /**
-Values that specify the status of the decoding process when decoding the main header. 
-These values may be combined with a | operator. 
-*/
+ * Values that specify the status of the decoding process when decoding the main header.
+ * These values may be combined with a | operator.
+ * */
 typedef enum J2K_STATUS {
 	J2K_STATE_MHSOC  = 0x0001, /**< a SOC marker is expected */
 	J2K_STATE_MHSIZ  = 0x0002, /**< a SIZ marker is expected */
@@ -115,8 +115,8 @@ typedef enum J2K_STATUS {
 	J2K_STATE_MT     = 0x0020, /**< the EOC marker has just been read */
 	J2K_STATE_NEOC   = 0x0040, /**< the decoding process must not expect a EOC marker because the codestream is truncated */
 
-	J2K_STATE_EOC	 = 0x0100,  /**< the decoding process has encountered the EOC marker */
-	J2K_STATE_ERR    = 0x8000 /**< the decoding process has encountered an error (FIXME warning V1 = 0x0080)*/
+	J2K_STATE_EOC	 = 0x0100, /**< the decoding process has encountered the EOC marker */
+	J2K_STATE_ERR    = 0x8000  /**< the decoding process has encountered an error (FIXME warning V1 = 0x0080)*/
 } J2K_STATUS;
 
 /**
@@ -151,44 +151,14 @@ typedef enum T2_MODE {
 }J2K_T2_MODE;
 
 /**
-Quantization stepsize
-*/
+ * Quantization stepsize
+ */
 typedef struct opj_stepsize {
 	/** exponent */
 	int expn;
 	/** mantissa */
 	int mant;
 } opj_stepsize_t;
-
-//OPJ_V1/**
-//Tile-component coding parameters
-//*/
-//typedef struct opj_tccp {
-//	/** coding style */
-//	int csty;
-//	/** number of resolutions */
-//	int numresolutions;
-//	/** code-blocks width */
-//	int cblkw;
-//	/** code-blocks height */
-//	int cblkh;
-//	/** code-block coding style */
-//	int cblksty;
-//	/** discrete wavelet transform identifier */
-//	int qmfbid;
-//	/** quantisation style */
-//	int qntsty;
-//	/** stepsizes used for quantization */
-//	opj_stepsize_t stepsizes[J2K_MAXBANDS];
-//	/** number of guard bits */
-//	int numgbits;
-//	/** Region Of Interest shift */
-//	int roishift;
-//	/** precinct width */
-//	int prcw[J2K_MAXRLVLS];
-//	/** precinct height */
-//	int prch[J2K_MAXRLVLS];
-//} opj_tccp_t;
 
 /**
 Tile-component coding parameters
@@ -225,7 +195,7 @@ typedef struct opj_tccp
 opj_tccp_t;
 
 
-/**
+/** V1 STYLE
 Tile coding parameters : 
 this structure is used to store coding/decoding parameters common to all
 tiles (information like COD, COC in main header)
@@ -351,7 +321,6 @@ typedef struct opj_tcp_v2
 	OPJ_UINT32 m_nb_max_mcc_records;
 
 
-
 	/***** FLAGS *******/
 	/** If ppt == 1 --> there was a PPT marker for the present tile */
 	OPJ_UINT32 ppt : 1;
@@ -363,7 +332,7 @@ typedef struct opj_tcp_v2
 
 
 
-/**
+/** V1 STYLE
 Coding parameters
 */
 typedef struct opj_cp {
@@ -507,8 +476,8 @@ opj_decoding_param_t;
 
 
 /**
-Coding parameters
-*/
+ * Coding parameters
+ */
 typedef struct opj_cp_v2
 {
 	/** Size of the image in bits*/
@@ -529,9 +498,6 @@ typedef struct opj_cp_v2
 	OPJ_UINT32 tw;
 	/** number of tiles in heigth */
 	OPJ_UINT32 th;
-
-
-
 
 	/** packet header store there for futur use in t2_decode_packet */
 	OPJ_BYTE *ppm_data;
@@ -795,9 +761,6 @@ typedef struct opj_j2k_v2
 
 	/** the current tile coder/decoder **/
 	struct opj_tcd_v2 *	m_tcd;
-	//opj_tcd_v2_t *	m_tcd;
-
-
 
 }
 opj_j2k_v2_t;
