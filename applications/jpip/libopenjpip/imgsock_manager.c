@@ -85,7 +85,7 @@ SOCKET open_listeningsocket()
     close_socket(listening_socket);
     exit(1);
   }
-  printf("port %d is listened\n", port);
+  fprintf( stderr, "port %d is listened\n", port);
 
   return listening_socket;
 }
@@ -114,7 +114,7 @@ msgtype_t identify_clientmsg( SOCKET connected_socket)
 
   for( i=0; i<NUM_OF_MSGTYPES; i++){
     if( strncasecmp( magicid[i], buf, strlen(magicid[i])) == 0){
-      printf("%s\n", magicid[i]);
+      fprintf( stderr, "%s\n", magicid[i]);
       return i;
     }
   }

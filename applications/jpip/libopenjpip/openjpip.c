@@ -218,7 +218,7 @@ bool handle_clientreq( client_t client, dec_server_record_t *rec)
     break;
   }
         
-  printf("\t end of the connection\n\n");
+  fprintf( stderr, "\t end of the connection\n\n");
   if( close_socket(client) != 0){
     perror("close");
     return false;

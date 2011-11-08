@@ -73,11 +73,20 @@ Byte_t * jpipstream_to_pnm( Byte_t *jpipstream, msgqueue_param_t *msgqueue, Byte
   Byte_t *pnmstream;
   Byte_t *j2kstream; // j2k or jp2 codestream
   Byte8_t j2klen;
+  FILE *fp;
+  char j2kfname[] = "tmp.j2k";
 
   j2kstream = recons_j2k( msgqueue, jpipstream, csn, fw, fh, &j2klen); 
-  pnmstream = j2k_to_pnm( j2kstream, j2klen, ihdrbox);
 
+  fp = fopen( j2kfname, "w+b");
+  fwrite( j2kstream, j2klen, 1, fp);
   free( j2kstream);
+  fseek( fp, 0, SEEK_SET);
+
+  pnmstream = j2k_to_pnm( fp, ihdrbox);
+
+  fclose( fp);
+  remove( j2kfname);
 
   return pnmstream;
 }

@@ -41,14 +41,14 @@ void info_callback(const char *msg, void *client_data);
 
 Byte_t * imagetopnm(opj_image_t *image, ihdrbox_param_t **ihdrbox);
 
-Byte_t * j2k_to_pnm( Byte_t *j2kstream, Byte8_t j2klen, ihdrbox_param_t **ihdrbox)
+Byte_t * j2k_to_pnm( FILE *fp, ihdrbox_param_t **ihdrbox)
 {
   Byte_t *pnmstream = NULL;
   opj_dparameters_t parameters;	/* decompression parameters */
   opj_event_mgr_t event_mgr;		/* event manager */
   opj_image_t *image = NULL;
-  opj_dinfo_t* dinfo = NULL;	/* handle to a decompressor */
-  opj_cio_t *cio = NULL;
+  opj_codec_t *dinfo = NULL;	/* handle to a decompressor */
+  opj_stream_t *cio = NULL;
 
   /* configure the event callbacks (not required) */
   memset(&event_mgr, 0, sizeof(opj_event_mgr_t));
@@ -59,35 +59,61 @@ Byte_t * j2k_to_pnm( Byte_t *j2kstream, Byte8_t j2klen, ihdrbox_param_t **ihdrbo
   /* set decoding parameters to default values */
   opj_set_default_decoder_parameters(&parameters);
 
+  /* Set default event mgr */
+  opj_initialize_default_event_handler(&event_mgr, 1);  
+
+  /* set a byte stream */
+  cio = opj_stream_create_default_file_stream( fp, 1);
+  if (!cio){
+    fprintf(stderr, "ERROR -> failed to create the stream from the file\n");
+    return NULL;
+  }
+  
   /* decode the code-stream */
   /* ---------------------- */
 
   /* JPEG-2000 codestream */
   /* get a decoder handle */
-  dinfo = opj_create_decompress( CODEC_J2K);
-
-  /* catch events using our callbacks and give a local context */
-  opj_set_event_mgr((opj_common_ptr)dinfo, &event_mgr, stderr);
+  dinfo = opj_create_decompress_v2(CODEC_J2K);
 
   /* setup the decoder decoding parameters using user parameters */
-  opj_setup_decoder(dinfo, &parameters);
-  /* open a byte stream */
-  cio = opj_cio_open((opj_common_ptr)dinfo, j2kstream, j2klen);
-
-  fprintf( stderr, "opj_decode dinfo:%p cio:%p\n", dinfo, cio);
-  /* decode the stream and fill the image structure */
-  image = opj_decode(dinfo, cio);
-
-  fprintf( stderr, "done\n");
-  if(!image) {
-    fprintf(stderr, "ERROR -> jp2_to_image: failed to decode image!\n");
-    opj_destroy_decompress(dinfo);
-    opj_cio_close(cio);
+  if ( !opj_setup_decoder_v2(dinfo, &parameters, &event_mgr) ){
+    fprintf(stderr, "ERROR -> j2k_dump: failed to setup the decoder\n");
     return NULL;
   }
 
+  /* Read the main header of the codestream and if necessary the JP2 boxes*/
+  if(! opj_read_header( cio, dinfo, &image)){
+    fprintf(stderr, "ERROR -> j2k_to_image: failed to read the header\n");
+    opj_stream_destroy(cio);
+    opj_destroy_codec(dinfo);
+    opj_image_destroy(image);
+    return NULL;
+  }
+  
+#ifdef TODO //decode area could be set from j2k_to_pnm call, modify the protocol between JPIP viewer and opj_dec_server
+  if (! opj_set_decode_area( dinfo, image, parameters.DA_x0, parameters.DA_y0, parameters.DA_x1, parameters.DA_y1)){
+    fprintf(stderr, "ERROR -> j2k_to_image: failed to set the decoded area\n");
+    opj_stream_destroy(cio);
+    opj_destroy_codec(dinfo);
+    opj_image_destroy(image);
+    return NULL;
+  }
+#endif //TODO
+
+  /* Get the decoded image */
+  if ( !( opj_decode_v2(dinfo, cio, image) && opj_end_decompress(dinfo,cio) ) ) {
+    fprintf(stderr, "ERROR -> j2k_to_image: failed to decode image!\n");
+    opj_stream_destroy(cio);
+    opj_destroy_codec(dinfo);
+    opj_image_destroy(image);
+    return NULL;
+  }
+
+  fprintf(stderr, "image is decoded!\n");
+
   /* close the byte stream */
-  opj_cio_close(cio);
+  opj_stream_destroy(cio);
   
   /* create output image */
   /* ------------------- */
@@ -96,7 +122,7 @@ Byte_t * j2k_to_pnm( Byte_t *j2kstream, Byte8_t j2klen, ihdrbox_param_t **ihdrbo
 
   /* free remaining structures */
   if(dinfo) {
-    opj_destroy_decompress(dinfo);
+    opj_destroy_codec(dinfo);
   }
 
   /* free image data structure */

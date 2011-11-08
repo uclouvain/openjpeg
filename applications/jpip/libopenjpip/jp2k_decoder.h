@@ -34,6 +34,6 @@
 #include "byte_manager.h"
 #include "ihdrbox_manager.h"
 
-Byte_t * j2k_to_pnm( Byte_t *j2kstream, Byte8_t j2klen, ihdrbox_param_t **ihdrbox);
+Byte_t * j2k_to_pnm( FILE *fp, ihdrbox_param_t **ihdrbox);
 
 #endif 	    /* !JP2K_DECODER_H_ */
