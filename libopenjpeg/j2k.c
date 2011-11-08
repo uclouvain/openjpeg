@@ -3687,12 +3687,17 @@ opj_bool j2k_read_sot_v2 (
 
 	p_j2k->m_specific_param.m_decoder.m_state = J2K_STATE_TPH;
 
-	/* Check if the current tile is outside the area we want decode (in tile index)*/
-	p_j2k->m_specific_param.m_decoder.m_skip_data =
-			(l_tile_x < p_j2k->m_specific_param.m_decoder.m_start_tile_x)
-		||	(l_tile_x >= p_j2k->m_specific_param.m_decoder.m_end_tile_x)
-		||  (l_tile_y < p_j2k->m_specific_param.m_decoder.m_start_tile_y)
-		||	(l_tile_y >= p_j2k->m_specific_param.m_decoder.m_end_tile_y);
+	/* Check if the current tile is outside the area we want decode or not corresponding to the tile index*/
+	if (p_j2k->m_specific_param.m_decoder.m_tile_ind_to_dec == -1) {
+		p_j2k->m_specific_param.m_decoder.m_skip_data =
+				(l_tile_x < p_j2k->m_specific_param.m_decoder.m_start_tile_x)
+			||	(l_tile_x >= p_j2k->m_specific_param.m_decoder.m_end_tile_x)
+			||  (l_tile_y < p_j2k->m_specific_param.m_decoder.m_start_tile_y)
+			||	(l_tile_y >= p_j2k->m_specific_param.m_decoder.m_end_tile_y);
+	}
+	else
+		p_j2k->m_specific_param.m_decoder.m_skip_data =
+			(p_j2k->m_current_tile_number != p_j2k->m_specific_param.m_decoder.m_tile_ind_to_dec);
 
 	/* Index */
 	if (p_j2k->cstr_index)
@@ -6636,15 +6641,22 @@ opj_bool j2k_read_tile_header(	opj_j2k_v2_t * p_j2k,
 				return OPJ_FALSE;
 			}
 
-/*			if (l_current_marker == J2K_MS_SOT)
-				j2k_add_tlmarker();*/
-
 			/* Add the marker to the codestream index*/
 			j2k_add_tlmarker_v2(p_j2k->m_current_tile_number,
 								p_j2k->cstr_index,
 								l_marker_handler->id,
 								(OPJ_UINT32) opj_stream_tell(p_stream) - l_marker_size - 4,
 								l_marker_size + 4 );
+
+			/* Keep the position of the last SOT marker read */
+			if ( l_marker_handler->id == J2K_MS_SOT ) {
+				OPJ_UINT32 sot_pos = (OPJ_UINT32) opj_stream_tell(p_stream) - l_marker_size - 4 ;
+				if (sot_pos > p_j2k->m_specific_param.m_decoder.m_last_sot_read_pos)
+				{
+					p_j2k->m_specific_param.m_decoder.m_last_sot_read_pos = sot_pos;
+				}
+			}
+
 
 			if (p_j2k->m_specific_param.m_decoder.m_skip_data) {
 				/* Skip the rest of the tile part header*/
@@ -6733,7 +6745,7 @@ opj_bool j2k_read_tile_header(	opj_j2k_v2_t * p_j2k,
 	}
 
 	opj_event_msg_v2(p_manager, EVT_INFO, "Header of tile %d / %d has been read.\n",
-			p_j2k->m_current_tile_number +1, p_j2k->m_cp.th * p_j2k->m_cp.tw);
+			p_j2k->m_current_tile_number, (p_j2k->m_cp.th * p_j2k->m_cp.tw) - 1);
 
 	*p_tile_index = p_j2k->m_current_tile_number;
 	*p_go_on = OPJ_TRUE;
@@ -6963,7 +6975,7 @@ opj_bool j2k_update_image_data (opj_tcd_v2_t * p_tcd, OPJ_BYTE * p_data, opj_ima
 		/* Move the output buffer to the first place where we will write*/
 		l_dest_ptr = l_img_comp_dest->data + l_start_offset_dest;
 
-		if (i == 0) {
+		/*if (i == 0) {
 			fprintf(stdout, "COMPO[%d]:\n",i);
 			fprintf(stdout, "SRC: l_start_x_src=%d, l_start_y_src=%d, l_width_src=%d, l_height_src=%d\n"
 					"\t tile offset:%d, %d, %d, %d\n"
@@ -6975,7 +6987,7 @@ opj_bool j2k_update_image_data (opj_tcd_v2_t * p_tcd, OPJ_BYTE * p_data, opj_ima
 			fprintf(stdout, "DEST: l_start_x_dest=%d, l_start_y_dest=%d, l_width_dest=%d, l_height_dest=%d\n"
 					"\t start offset: %d, line offset= %d\n",
 					l_start_x_dest, l_start_y_dest, l_width_dest, l_height_dest, l_start_offset_dest, l_line_offset_dest);
-		}
+		}*/
 
 
 		switch (l_size_comp) {
@@ -7259,6 +7271,10 @@ opj_j2k_v2_t* j2k_create_decompress_v2()
 	}
 
 	l_j2k->m_specific_param.m_decoder.m_header_data_size = J2K_DEFAULT_HEADER_SIZE;
+
+	l_j2k->m_specific_param.m_decoder.m_tile_ind_to_dec = -1 ;
+
+	l_j2k->m_specific_param.m_decoder.m_last_sot_read_pos = 0 ;
 
 	/* codestream index creation */
 	l_j2k->cstr_index = j2k_create_cstr_index();
@@ -8161,6 +8177,133 @@ void j2k_setup_decoding (opj_j2k_v2_t *p_j2k)
 
 }
 
+/*
+ * Read and decode one tile.
+ */
+opj_bool j2k_decode_one_tile (	opj_j2k_v2_t *p_j2k,
+								opj_stream_private_t *p_stream,
+								opj_event_mgr_t * p_manager)
+{
+	opj_bool l_go_on = OPJ_TRUE;
+	OPJ_UINT32 l_current_tile_no;
+	OPJ_UINT32 l_tile_no_to_dec;
+	OPJ_UINT32 l_data_size,l_max_data_size;
+	OPJ_INT32 l_tile_x0,l_tile_y0,l_tile_x1,l_tile_y1;
+	OPJ_UINT32 l_nb_comps;
+	OPJ_BYTE * l_current_data;
+
+	l_current_data = (OPJ_BYTE*)opj_malloc(1000);
+	if (! l_current_data) {
+		return OPJ_FALSE;
+	}
+	l_max_data_size = 1000;
+
+	/*Allocate and initialize some elements of codestrem index if not already done*/
+	if( !p_j2k->cstr_index->tile_index)
+	{
+		if (!j2k_allocate_tile_element_cstr_index(p_j2k))
+			return OPJ_FALSE;
+	}
+
+	/* Move into the codestream to the first SOT used to decode the desired tile */
+	l_tile_no_to_dec = p_j2k->m_specific_param.m_decoder.m_tile_ind_to_dec;
+	if (p_j2k->cstr_index->tile_index)
+		if(p_j2k->cstr_index->tile_index->tp_index)
+		{
+			if ( ! p_j2k->cstr_index->tile_index[l_tile_no_to_dec].nb_tps) {
+				/* not build the index for this tile, so we will move to the last SOT read*/
+				if ( opj_stream_read_seek(p_stream, p_j2k->m_specific_param.m_decoder.m_last_sot_read_pos+2, p_manager) ){
+					opj_event_msg_v2(p_manager, EVT_ERROR, "Problem with seek function\n");
+					return OPJ_FALSE;
+				}
+			}
+			else{
+				if (opj_stream_read_seek(p_stream, p_j2k->cstr_index->tile_index[l_tile_no_to_dec].tp_index[0].start_pos+2, p_manager)) {
+					opj_event_msg_v2(p_manager, EVT_ERROR, "Problem with seek function\n");
+					return OPJ_FALSE;
+				}
+			}
+			/* Special case if we have previously read the EOC marker (if the previous tile getted is the last ) */
+			if(p_j2k->m_specific_param.m_decoder.m_state == J2K_STATE_EOC)
+				p_j2k->m_specific_param.m_decoder.m_state = J2K_STATE_TPHSOT;
+		}
+
+	while (OPJ_TRUE) {
+		if (! j2k_read_tile_header(	p_j2k,
+									&l_current_tile_no,
+									&l_data_size,
+									&l_tile_x0, &l_tile_y0,
+									&l_tile_x1, &l_tile_y1,
+									&l_nb_comps,
+									&l_go_on,
+									p_stream,
+									p_manager)) {
+			opj_free(l_current_data);
+			return OPJ_FALSE;
+		}
+
+
+		if (! l_go_on) {
+			break;
+		}
+
+		if (l_data_size > l_max_data_size) {
+			l_current_data = (OPJ_BYTE*)opj_realloc(l_current_data,l_data_size);
+			if (! l_current_data) {
+				return OPJ_FALSE;
+			}
+
+			l_max_data_size = l_data_size;
+		}
+
+
+
+		if (! j2k_decode_tile(p_j2k,l_current_tile_no,l_current_data,l_data_size,p_stream,p_manager)) {
+			opj_free(l_current_data);
+			return OPJ_FALSE;
+		}
+		opj_event_msg_v2(p_manager, EVT_INFO, "Tile %d/%d has been decode.\n", l_current_tile_no, (p_j2k->m_cp.th * p_j2k->m_cp.tw) - 1);
+
+		if (! j2k_update_image_data(p_j2k->m_tcd,l_current_data, p_j2k->m_output_image)) {
+			opj_free(l_current_data);
+			return OPJ_FALSE;
+		}
+		opj_event_msg_v2(p_manager, EVT_INFO, "Image data has been updated with tile %d.\n\n", l_current_tile_no);
+
+		if(l_current_tile_no == l_tile_no_to_dec)
+		{
+			/* move into the codestream to the the first SOT (FIXME or not move?)*/
+			if (opj_stream_read_seek(p_stream, p_j2k->cstr_index->main_head_end + 2, p_manager) ) {
+				opj_event_msg_v2(p_manager, EVT_ERROR, "Problem with seek function\n");
+				return OPJ_FALSE;
+			}
+			break;
+		}
+		else {
+			opj_event_msg_v2(p_manager, EVT_WARNING, "Tile read, decode and updated is not the desired (%d vs %d).\n", l_current_tile_no, l_tile_no_to_dec);
+		}
+
+	}
+
+	opj_free(l_current_data);
+
+	return OPJ_TRUE;
+}
+
+
+/**
+ * Sets up the procedures to do on decoding one tile. Developpers wanting to extend the library can add their own reading procedures.
+ */
+void j2k_setup_decoding_tile (opj_j2k_v2_t *p_j2k)
+{
+	// preconditions
+	assert(p_j2k != 00);
+
+	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(void*)j2k_decode_one_tile);
+	/* DEVELOPER CORNER, add your custom procedures */
+
+}
+
 
 /**
  * Decodes the tiles of the stream.
@@ -8195,6 +8338,101 @@ opj_bool j2k_decode_v2(	opj_j2k_v2_t * p_j2k,
 	for (compno = 0; compno < p_image->numcomps; compno++) {
 		p_image->comps[compno].resno_decoded = p_j2k->m_output_image->comps[compno].resno_decoded;
 		p_image->comps[compno].data = p_j2k->m_output_image->comps[compno].data;
+		p_j2k->m_output_image->comps[compno].data = NULL;
+	}
+
+	return OPJ_TRUE;
+}
+
+
+/**
+ * Get the decoded tile.
+ *
+ * @param	p_j2k			the jpeg2000 codestream codec.
+ * @param	p_stream		input_stream
+ * @param	p_image			output image.	.
+ * @param	p_manager		the user event manager
+ * @param	tile_index		index of the tile we want decode
+ *
+ * @return	true			if succeed.
+ */
+opj_bool j2k_get_tile(	opj_j2k_v2_t *p_j2k,
+						opj_stream_private_t *p_stream,
+						opj_image_t* p_image,
+						struct opj_event_mgr * p_manager,
+						OPJ_UINT32 tile_index )
+{
+	OPJ_UINT32 compno;
+	OPJ_UINT32 l_tile_x, l_tile_y;
+	opj_image_comp_t* l_img_comp;
+
+	if (!p_image) {
+		opj_event_msg_v2(p_manager, EVT_ERROR, "We need a image previously created.\n");
+		return OPJ_FALSE;
+	}
+
+	/* Compute the dimension of the desired tile*/
+	l_tile_x = tile_index % p_j2k->m_cp.tw;
+	l_tile_y = tile_index / p_j2k->m_cp.tw;
+
+	p_image->x0 = l_tile_x * p_j2k->m_cp.tdx + p_j2k->m_cp.tx0;
+	p_image->x1 = (l_tile_x + 1) * p_j2k->m_cp.tdx + p_j2k->m_cp.tx0;
+	p_image->y0 = l_tile_y * p_j2k->m_cp.tdy + p_j2k->m_cp.ty0;
+	p_image->y1 = (l_tile_y + 1) * p_j2k->m_cp.tdy + p_j2k->m_cp.ty0;
+
+	l_img_comp = p_image->comps;
+	for (compno=0; compno < p_image->numcomps; ++compno)
+	{
+		OPJ_INT32 l_comp_x1, l_comp_y1;
+
+		l_img_comp->x0 = int_ceildiv(p_image->x0, l_img_comp->dx);
+		l_img_comp->y0 = int_ceildiv(p_image->y0, l_img_comp->dy);
+		l_comp_x1 = int_ceildiv(p_image->x1, l_img_comp->dx);
+		l_comp_y1 = int_ceildiv(p_image->y1, l_img_comp->dy);
+
+		l_img_comp->w = int_ceildivpow2(l_comp_x1 - l_img_comp->x0, l_img_comp->factor);
+		l_img_comp->h = int_ceildivpow2(l_comp_y1 - l_img_comp->y0, l_img_comp->factor);
+
+		l_img_comp++;
+	}
+
+	/* Destroy the previous output image*/
+	if (p_j2k->m_output_image)
+		opj_image_destroy(p_j2k->m_output_image);
+
+	/* Create the ouput image from the information previously computed*/
+	p_j2k->m_output_image = opj_image_create0();
+	if (! (p_j2k->m_output_image)) {
+		return OPJ_FALSE;
+	}
+	opj_copy_image_header(p_image, p_j2k->m_output_image);
+
+	if ( (tile_index < 0) && (tile_index >= p_j2k->m_cp.tw * p_j2k->m_cp.th) ){
+		opj_event_msg_v2(p_manager, EVT_ERROR, "Tile index provided by the user is incorrect %d (max = %d) \n", tile_index, (p_j2k->m_cp.tw * p_j2k->m_cp.th) - 1);
+		return OPJ_FALSE;
+	}
+
+	p_j2k->m_specific_param.m_decoder.m_tile_ind_to_dec = tile_index;
+
+	/* customization of the decoding */
+	j2k_setup_decoding_tile(p_j2k);
+
+	/* Decode the codestream */
+	if (! j2k_exec (p_j2k,p_j2k->m_procedure_list,p_stream,p_manager)) {
+		opj_image_destroy(p_j2k->m_private_image);
+		p_j2k->m_private_image = NULL;
+		return OPJ_FALSE;
+	}
+
+	/* Move data and copy one information from codec to output image*/
+	for (compno = 0; compno < p_image->numcomps; compno++) {
+		p_image->comps[compno].resno_decoded = p_j2k->m_output_image->comps[compno].resno_decoded;
+
+		if (p_image->comps[compno].data)
+			opj_free(p_image->comps[compno].data);
+
+		p_image->comps[compno].data = p_j2k->m_output_image->comps[compno].data;
+
 		p_j2k->m_output_image->comps[compno].data = NULL;
 	}
 

@@ -2635,6 +2635,67 @@ opj_bool jp2_set_decode_area(	opj_jp2_v2_t *p_jp2,
 	return j2k_set_decode_area(p_jp2->j2k, p_image, p_start_x, p_start_y, p_end_x, p_end_y, p_manager);
 }
 
+/**
+ * Get the decoded tile.
+ *
+ * @param	p_jp2			the jpeg2000 codec.
+ * @param	p_stream		input_stream
+ * @param	p_image			output image.	.
+ * @param	p_manager		the user event manager
+ * @param	tile_index		index of the tile we want decode
+ *
+ * @return	true			if succeed.
+ */
+opj_bool jp2_get_tile(	opj_jp2_v2_t *jp2,
+						opj_stream_private_t *p_stream,
+						opj_image_t* p_image,
+						struct opj_event_mgr * p_manager,
+						OPJ_UINT32 tile_index )
+{
+	if (!p_image)
+		return OPJ_FALSE;
+
+	opj_event_msg_v2(p_manager, EVT_WARNING, "JP2 box which are after the codestream will not be read by this function.\n");
+
+	if (! j2k_get_tile(jp2->j2k, p_stream, p_image, p_manager, tile_index) ){
+		opj_event_msg_v2(p_manager, EVT_ERROR, "Failed to decode the codestream in the JP2 file\n");
+		return OPJ_FALSE;
+	}
+
+	/* Set Image Color Space */
+	if (jp2->enumcs == 16)
+		p_image->color_space = CLRSPC_SRGB;
+	else if (jp2->enumcs == 17)
+		p_image->color_space = CLRSPC_GRAY;
+	else if (jp2->enumcs == 18)
+		p_image->color_space = CLRSPC_SYCC;
+	else
+		p_image->color_space = CLRSPC_UNKNOWN;
+
+	/* Apply the color space if needed */
+	if(jp2->color.jp2_cdef) {
+		jp2_apply_cdef(p_image, &(jp2->color));
+	}
+
+	if(jp2->color.jp2_pclr) {
+		/* Part 1, I.5.3.4: Either both or none : */
+		if( !jp2->color.jp2_pclr->cmap)
+			jp2_free_pclr(&(jp2->color));
+		else
+			jp2_apply_pclr(p_image, &(jp2->color));
+	}
+
+	if(jp2->color.icc_profile_buf) {
+		p_image->icc_profile_buf = jp2->color.icc_profile_buf;
+		p_image->icc_profile_len = jp2->color.icc_profile_len;
+		jp2->color.icc_profile_buf = NULL;
+	}
+
+	return OPJ_TRUE;
+}
+
+
+
 /* ----------------------------------------------------------------------- */
 /* JP2 encoder interface                                             */
 /* ----------------------------------------------------------------------- */

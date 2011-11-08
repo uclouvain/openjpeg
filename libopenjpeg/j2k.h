@@ -607,6 +607,12 @@ typedef struct opj_j2k_dec
 	OPJ_UINT32 m_DA_y0;
 	OPJ_UINT32 m_DA_x1;
 	OPJ_UINT32 m_DA_y1;
+
+	/** Index of the tile to decode (used in get_tile) */
+	OPJ_INT32 m_tile_ind_to_dec;
+	/** Position of the last SOT marker read */
+	OPJ_UINT32 m_last_sot_read_pos;
+
 	/**
 	 * Indicate that the current tile-part is assume as the last tile part of the codestream.
 	 * It is useful in the case of PSot is equal to zero. The sot length will be compute in the
@@ -1007,6 +1013,13 @@ opj_codestream_index_t* j2k_get_cstr_index(opj_j2k_v2_t* p_j2k);
  * @return Returns a decoded image if successful, returns NULL otherwise
 */
 opj_bool j2k_decode_v2(opj_j2k_v2_t *j2k, struct opj_stream_private *cio, opj_image_t* p_image, opj_event_mgr_t * p_manager);
+
+
+opj_bool j2k_get_tile(	opj_j2k_v2_t *p_j2k,
+						opj_stream_private_t *p_stream,
+						opj_image_t* p_image,
+						struct opj_event_mgr * p_manager,
+						OPJ_UINT32 tile_index );
 
 
 #endif /* __J2K_H */

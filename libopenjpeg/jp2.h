@@ -418,6 +418,12 @@ opj_bool jp2_set_decode_area(	opj_jp2_v2_t *p_jp2,
 								OPJ_INT32 p_end_x, OPJ_INT32 p_end_y,
 								struct opj_event_mgr * p_manager );
 
+opj_bool jp2_get_tile(	opj_jp2_v2_t *p_jp2,
+						opj_stream_private_t *p_stream,
+						opj_image_t* p_image,
+						struct opj_event_mgr * p_manager,
+						OPJ_UINT32 tile_index );
+
 
 /**
  * Dump some elements from the JP2 decompression structure .

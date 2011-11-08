@@ -524,9 +524,7 @@ OPJ_API void OPJ_CALLCONV opj_stream_set_user_data_length(opj_stream_t* p_stream
 OPJ_UINT32 opj_stream_read_data (opj_stream_private_t * p_stream,OPJ_BYTE * p_buffer, OPJ_UINT32 p_size, opj_event_mgr_t * p_event_mgr)
 {
 	OPJ_UINT32 l_read_nb_bytes = 0;
-	if
-		(p_stream->m_bytes_in_buffer >= p_size)
-	{
+	if (p_stream->m_bytes_in_buffer >= p_size) {
 		memcpy(p_buffer,p_stream->m_current_data,p_size);
 		p_stream->m_current_data += p_size;
 		p_stream->m_bytes_in_buffer -= p_size;
@@ -535,10 +533,8 @@ OPJ_UINT32 opj_stream_read_data (opj_stream_private_t * p_stream,OPJ_BYTE * p_bu
 		return l_read_nb_bytes;
 	}
 
-	// we are now in the case when the remaining data if not sufficient
-	if
-		(p_stream->m_status & opj_stream_e_end)
-	{
+	/* we are now in the case when the remaining data if not sufficient */
+	if (p_stream->m_status & opj_stream_e_end) {
 		l_read_nb_bytes += p_stream->m_bytes_in_buffer;
 		memcpy(p_buffer,p_stream->m_current_data,p_stream->m_bytes_in_buffer);
 		p_stream->m_current_data += p_stream->m_bytes_in_buffer;
@@ -547,10 +543,8 @@ OPJ_UINT32 opj_stream_read_data (opj_stream_private_t * p_stream,OPJ_BYTE * p_bu
 		return l_read_nb_bytes ? l_read_nb_bytes : -1;
 	}
 
-	// the flag is not set, we copy data and then do an actual read on the stream
-	if
-		(p_stream->m_bytes_in_buffer)
-	{
+	/* the flag is not set, we copy data and then do an actual read on the stream */
+	if (p_stream->m_bytes_in_buffer) {
 		l_read_nb_bytes += p_stream->m_bytes_in_buffer;
 		memcpy(p_buffer,p_stream->m_current_data,p_stream->m_bytes_in_buffer);
 		p_stream->m_current_data = p_stream->m_stored_data;
@@ -559,37 +553,31 @@ OPJ_UINT32 opj_stream_read_data (opj_stream_private_t * p_stream,OPJ_BYTE * p_bu
 		p_stream->m_byte_offset += p_stream->m_bytes_in_buffer;
 		p_stream->m_bytes_in_buffer = 0;
 	}
-  else
-  {
+	else {
     /* case where we are already at the end of the buffer
        so reset the m_current_data to point to the start of the
        stored buffer to get ready to read from disk*/
-    p_stream->m_current_data = p_stream->m_stored_data;
-  }
+		p_stream->m_current_data = p_stream->m_stored_data;
+	}
 
 
 	while(1){
-		// we should read less than a chunk -> read a chunk
-		if
-			(p_size < p_stream->m_buffer_size)
-		{
-			// we should do an actual read on the media
+		/* we should read less than a chunk -> read a chunk */
+		if (p_size < p_stream->m_buffer_size) {
+			/* we should do an actual read on the media */
 			p_stream->m_bytes_in_buffer = p_stream->m_read_fn(p_stream->m_stored_data,p_stream->m_buffer_size,p_stream->m_user_data);
-			if
-				(p_stream->m_bytes_in_buffer == -1)
-			{
-				// end of stream
+
+			if (p_stream->m_bytes_in_buffer == -1) {
+				/* end of stream */
 				opj_event_msg_v2(p_event_mgr, EVT_INFO, "Stream reached its end !\n");
 
 				p_stream->m_bytes_in_buffer = 0;
 				p_stream->m_status |= opj_stream_e_end;
-				// end of stream
+				/* end of stream */
 				return l_read_nb_bytes ? l_read_nb_bytes : -1;
 			}
-			else if
-				(p_stream->m_bytes_in_buffer < p_size)
-			{
-				// not enough data
+			else if	(p_stream->m_bytes_in_buffer < p_size) {
+				/* not enough data */
 				l_read_nb_bytes += p_stream->m_bytes_in_buffer;
 				memcpy(p_buffer,p_stream->m_current_data,p_stream->m_bytes_in_buffer);
 				p_stream->m_current_data = p_stream->m_stored_data;
@@ -598,8 +586,7 @@ OPJ_UINT32 opj_stream_read_data (opj_stream_private_t * p_stream,OPJ_BYTE * p_bu
 				p_stream->m_byte_offset += p_stream->m_bytes_in_buffer;
 				p_stream->m_bytes_in_buffer = 0;
 			}
-			else
-			{
+			else {
 				l_read_nb_bytes += p_size;
 				memcpy(p_buffer,p_stream->m_current_data,p_size);
 				p_stream->m_current_data += p_size;
@@ -608,25 +595,21 @@ OPJ_UINT32 opj_stream_read_data (opj_stream_private_t * p_stream,OPJ_BYTE * p_bu
 				return l_read_nb_bytes;
 			}
 		}
-		else
-		{
-			// direct read on the dest buffer
+		else {
+			/* direct read on the dest buffer */
 			p_stream->m_bytes_in_buffer = p_stream->m_read_fn(p_buffer,p_size,p_stream->m_user_data);
-			if
-				(p_stream->m_bytes_in_buffer == -1)
-			{
-				// end of stream
+
+			if (p_stream->m_bytes_in_buffer == -1) {
+				/*  end of stream */
 				opj_event_msg_v2(p_event_mgr, EVT_INFO, "Stream reached its end !\n");
 
 				p_stream->m_bytes_in_buffer = 0;
 				p_stream->m_status |= opj_stream_e_end;
-				// end of stream
+				/* end of stream */
 				return l_read_nb_bytes ? l_read_nb_bytes : -1;
 			}
-			else if
-				(p_stream->m_bytes_in_buffer < p_size)
-			{
-				// not enough data
+			else if (p_stream->m_bytes_in_buffer < p_size) {
+				/* not enough data */
 				l_read_nb_bytes += p_stream->m_bytes_in_buffer;
 				p_stream->m_current_data = p_stream->m_stored_data;
 				p_buffer += p_stream->m_bytes_in_buffer;
@@ -634,9 +617,8 @@ OPJ_UINT32 opj_stream_read_data (opj_stream_private_t * p_stream,OPJ_BYTE * p_bu
 				p_stream->m_byte_offset += p_stream->m_bytes_in_buffer;
 				p_stream->m_bytes_in_buffer = 0;
 			}
-			else
-			{
-				// we have read the exact size
+			else {
+				/* we have read the exact size */
 				l_read_nb_bytes += p_stream->m_bytes_in_buffer;
 				p_stream->m_byte_offset += p_stream->m_bytes_in_buffer;
 				p_stream->m_current_data = p_stream->m_stored_data;
@@ -903,19 +885,18 @@ opj_bool opj_stream_read_seek (opj_stream_private_t * p_stream, OPJ_SIZE_T p_siz
 {
 	p_stream->m_current_data = p_stream->m_stored_data;
 	p_stream->m_bytes_in_buffer = 0;
-	if
-		(! p_stream->m_seek_fn(p_size,p_stream->m_user_data))
-	{
+
+	if( p_stream->m_seek_fn(p_size,p_stream->m_user_data)) {
 		p_stream->m_status |= opj_stream_e_end;
 		return EXIT_FAILURE;
 	}
-	else
-	{
+	else {
 		// reset stream status
 		p_stream->m_status &= (~opj_stream_e_end);
 		p_stream->m_byte_offset = p_size;
 
 	}
+
 	return EXIT_SUCCESS;
 }
 

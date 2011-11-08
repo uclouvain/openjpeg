@@ -78,6 +78,13 @@ typedef struct opj_decompression
 										OPJ_INT32 p_start_x, OPJ_INT32 p_end_x,
 										OPJ_INT32 p_start_y, OPJ_INT32 p_end_y,
 										struct opj_event_mgr * p_manager);
+
+	/** Get tile function */
+	opj_bool (*opj_get_decoded_tile) (	void *p_codec,
+										opj_stream_private_t *p_cio,
+										opj_image_t *p_image,
+										struct opj_event_mgr * p_manager,
+										OPJ_UINT32 tile_index);
 }opj_decompression_t;
 
 /**
@@ -286,6 +293,12 @@ opj_codec_t* OPJ_CALLCONV opj_create_decompress_v2(OPJ_CODEC_FORMAT p_format)
 			l_info->m_codec_data.m_decompression.opj_set_decode_area =
 					(opj_bool (*) (void *, opj_image_t*, OPJ_INT32, OPJ_INT32, OPJ_INT32, OPJ_INT32, struct opj_event_mgr *)) j2k_set_decode_area;
 
+			l_info->m_codec_data.m_decompression.opj_get_decoded_tile = (opj_bool (*) (	void *p_codec,
+																						opj_stream_private_t *p_cio,
+																						opj_image_t *p_image,
+																						struct opj_event_mgr * p_manager,
+																						OPJ_UINT32 tile_index)) j2k_get_tile;
+
 			l_info->m_codec = j2k_create_decompress_v2();
 
 			if (! l_info->m_codec) {
@@ -337,6 +350,12 @@ opj_codec_t* OPJ_CALLCONV opj_create_decompress_v2(OPJ_CODEC_FORMAT p_format)
 			l_info->m_codec_data.m_decompression.opj_setup_decoder = (void (*) (void * ,opj_dparameters_t * )) jp2_setup_decoder_v2;
 
 			l_info->m_codec_data.m_decompression.opj_set_decode_area = (opj_bool (*) (void *,opj_image_t*, OPJ_INT32,OPJ_INT32,OPJ_INT32,OPJ_INT32, struct opj_event_mgr * )) jp2_set_decode_area;
+
+			l_info->m_codec_data.m_decompression.opj_get_decoded_tile = (opj_bool (*) (	void *p_codec,
+																						opj_stream_private_t *p_cio,
+																						opj_image_t *p_image,
+																						struct opj_event_mgr * p_manager,
+																						OPJ_UINT32 tile_index)) jp2_get_tile;
 
 			l_info->m_codec = jp2_create(OPJ_TRUE);
 
@@ -937,6 +956,10 @@ opj_bool OPJ_CALLCONV opj_decode_v2(opj_codec_t *p_info,
 	return OPJ_FALSE;
 }
 
+/*
+ *
+ *
+ */
 opj_bool OPJ_CALLCONV opj_end_decompress (opj_codec_t *p_codec,opj_stream_t *p_cio)
 {
 	if (p_codec && p_cio) {
@@ -949,6 +972,32 @@ opj_bool OPJ_CALLCONV opj_end_decompress (opj_codec_t *p_codec,opj_stream_t *p_c
 		return l_info->m_codec_data.m_decompression.opj_end_decompress(	l_info->m_codec,
 																		l_cio,
 																		l_info->m_event_mgr);
+	}
+
+	return OPJ_FALSE;
+}
+
+/*
+ *
+ *
+ */
+opj_bool OPJ_CALLCONV opj_get_decoded_tile(	opj_codec_t *p_codec,
+											opj_stream_t *p_cio,
+											opj_image_t *p_image,
+											OPJ_UINT32 tile_index)
+{
+	if (p_codec && p_cio) {
+		opj_codec_private_t * l_codec = (opj_codec_private_t *) p_codec;
+		opj_stream_private_t * l_stream = (opj_stream_private_t *) p_cio;
+
+	if (! l_codec->is_decompressor) {
+		return OPJ_FALSE;
+		}
+		return l_codec->m_codec_data.m_decompression.opj_get_decoded_tile(	l_codec->m_codec,
+																			l_stream,
+																			p_image,
+																			l_codec->m_event_mgr,
+																			tile_index);
 	}
 
 	return OPJ_FALSE;
