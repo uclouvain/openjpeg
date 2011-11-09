@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+November 9, 2011
++ [jmalik] add some sanity check in CMakeLists to prevent STRING(REGEX..) call issues
+
 November 8, 2011
 + [mickael] WIP: add get_decoded_tile functionality
 + [mickael] WIP: clean and enhance j2K file
