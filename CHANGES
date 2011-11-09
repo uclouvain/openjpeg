@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 November 9, 2011
++ [mickael] enhance mj2 when read jp2h (credit to winfried)
 + [mickael] check if the file extension is the same as the infile format (credit to winfried)
 + [jmalik] add some sanity check in CMakeLists to prevent STRING(REGEX..) call issues
 

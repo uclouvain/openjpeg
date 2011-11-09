@@ -1096,8 +1096,9 @@ int mj2_read_smj2(opj_image_t * img, mj2_tk_t * tk, opj_cio_t *cio)
 {
   mj2_box_t box;
   mj2_box_t box2;
-  int i;
   opj_jp2_color_t color;
+  int i;
+  opj_bool ok;
 	
   mj2_read_boxhdr(&box, cio);
 	
@@ -1155,12 +1156,19 @@ int mj2_read_smj2(opj_image_t * img, mj2_tk_t * tk, opj_cio_t *cio)
   tk->or_fieldorder = 0;
 	
   cio_skip(cio,2);			/* Pre-defined = -1 */
+
   memset(&color, 0, sizeof(opj_jp2_color_t));
-	
-  if (!jp2_read_jp2h(&tk->jp2_struct, cio, &color)) {
-		opj_event_msg(tk->cinfo, EVT_ERROR, "Error reading JP2H Box\n");
+  tk->jp2_struct.cinfo = tk->cinfo;
+
+  ok = jp2_read_jp2h(&tk->jp2_struct, cio, &color);
+
+  tk->jp2_struct.cinfo = NULL; 
+
+  if(ok == OPJ_FALSE)
+ {
+	opj_event_msg(tk->cinfo, EVT_ERROR, "Error reading JP2H Box\n");
     return 1;
-  }
+ }
 
   tk->jp2_struct.comps = (opj_jp2_comps_t*) opj_malloc(tk->jp2_struct.numcomps * sizeof(opj_jp2_comps_t));
   tk->jp2_struct.cl = (unsigned int*) opj_malloc(sizeof(unsigned int));
@@ -2759,9 +2767,9 @@ void mj2_destroy_decompress(opj_mj2_t *movie) {
 			if (tk->name_size != 0)
 				opj_free(tk->name);
 			if (tk->track_type == 0)  {// Video track
-				if (tk->jp2_struct.comps != 0)
+				if (tk->jp2_struct.comps != NULL)
 					opj_free(tk->jp2_struct.comps);
-				if (tk->jp2_struct.cl != 0)
+				if (tk->jp2_struct.cl != NULL)
 					opj_free(tk->jp2_struct.cl);
 				if (tk->num_jp2x != 0)
 					opj_free(tk->jp2xdata);
@@ -2878,9 +2886,9 @@ void mj2_destroy_compress(opj_mj2_t *movie) {
 			if (tk->name_size != 0)
 				opj_free(tk->name);
 			if (tk->track_type == 0)  {// Video track
-				if (tk->jp2_struct.comps != 0)
+				if (tk->jp2_struct.comps != NULL)
 					opj_free(tk->jp2_struct.comps);
-				if (tk->jp2_struct.cl != 0)
+				if (tk->jp2_struct.cl != NULL)
 					opj_free(tk->jp2_struct.cl);
 				if (tk->num_jp2x != 0)
 					opj_free(tk->jp2xdata);
