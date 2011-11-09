@@ -8376,9 +8376,18 @@ opj_bool j2k_get_tile(	opj_j2k_v2_t *p_j2k,
 	l_tile_y = tile_index / p_j2k->m_cp.tw;
 
 	p_image->x0 = l_tile_x * p_j2k->m_cp.tdx + p_j2k->m_cp.tx0;
+	if (p_image->x0 < p_j2k->m_private_image->x0)
+		p_image->x0 = p_j2k->m_private_image->x0;
 	p_image->x1 = (l_tile_x + 1) * p_j2k->m_cp.tdx + p_j2k->m_cp.tx0;
+	if (p_image->x1 > p_j2k->m_private_image->x1)
+		p_image->x1 = p_j2k->m_private_image->x1;
+
 	p_image->y0 = l_tile_y * p_j2k->m_cp.tdy + p_j2k->m_cp.ty0;
+	if (p_image->y0 < p_j2k->m_private_image->y0)
+		p_image->y0 = p_j2k->m_private_image->y0;
 	p_image->y1 = (l_tile_y + 1) * p_j2k->m_cp.tdy + p_j2k->m_cp.ty0;
+	if (p_image->y1 > p_j2k->m_private_image->y1)
+		p_image->y1 = p_j2k->m_private_image->y1;
 
 	l_img_comp = p_image->comps;
 	for (compno=0; compno < p_image->numcomps; ++compno)
