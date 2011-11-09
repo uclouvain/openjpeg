@@ -89,8 +89,9 @@ typedef struct img_folder{
 /* Declarations                                                               */
 int get_num_images(char *imgdirpath);
 int load_images(dircnt_t *dirptr, char *imgdirpath);
-int get_file_format(char *filename);
+int get_file_format(const char *filename);
 char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_dparameters_t *parameters);
+static int infile_format(const char *fname);
 
 int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,img_fol_t *img_fol, char *indexfilename);
 int parse_DA_values( char* inArg, unsigned int *DA_x0, unsigned int *DA_y0, unsigned int *DA_x1, unsigned int *DA_y1);
@@ -207,7 +208,7 @@ int load_images(dircnt_t *dirptr, char *imgdirpath){
 }
 
 /* -------------------------------------------------------------------------- */
-int get_file_format(char *filename) {
+int get_file_format(const char *filename) {
 	unsigned int i;
 	static const char *extension[] = {"pgx", "pnm", "pgm", "ppm", "bmp","tif", "raw", "tga", "png", "j2k", "jp2", "jpt", "j2c", "jpc" };
 	static const int format[] = { PGX_DFMT, PXM_DFMT, PXM_DFMT, PXM_DFMT, BMP_DFMT, TIF_DFMT, RAW_DFMT, TGA_DFMT, PNG_DFMT, J2K_CFMT, JP2_CFMT, JPT_CFMT, J2K_CFMT, J2K_CFMT };
@@ -233,7 +234,7 @@ char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_dparamet
 
 	strcpy(image_filename,dirptr->filename[imageno]);
 	fprintf(stderr,"File Number %d \"%s\"\n",imageno,image_filename);
-	parameters->decod_format = get_file_format(image_filename);
+	parameters->decod_format = infile_format(image_filename);
 	if (parameters->decod_format == -1)
 		return 1;
 	sprintf(infilename,"%s/%s",img_fol->imgdirpath,image_filename);
@@ -250,6 +251,56 @@ char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_dparamet
 		strncpy(parameters->outfile, outfilename, sizeof(outfilename));
 	}
 	return 0;
+}
+
+#define JP2_RFC3745_MAGIC "\x00\x00\x00\x0c\x6a\x50\x20\x20\x0d\x0a\x87\x0a"
+#define JP2_MAGIC "\x0d\x0a\x87\x0a"
+/* position 45: "\xff\x52" */
+#define J2K_CODESTREAM_MAGIC "\xff\x4f\xff\x51"
+
+static int infile_format(const char *fname)
+{
+	FILE *reader;
+	const char *s, *magic_s;
+	int ext_format, magic_format;
+	unsigned char buf[12];
+
+	reader = fopen(fname, "rb");
+
+	if (reader == NULL)
+		return -1;
+
+	memset(buf, 0, 12);
+	fread(buf, 1, 12, reader);
+	fclose(reader);
+
+	ext_format = get_file_format(fname);
+
+	if (ext_format == JPT_CFMT)
+		return JPT_CFMT;
+
+	if (memcmp(buf, JP2_RFC3745_MAGIC, 12) == 0 || memcmp(buf, JP2_MAGIC, 4) == 0) {
+		magic_format = JP2_CFMT;
+		magic_s = ".jp2";
+	}
+	else if (memcmp(buf, J2K_CODESTREAM_MAGIC, 4) == 0) {
+		magic_format = J2K_CFMT;
+		magic_s = ".j2k or .jpc or .j2c";
+	}
+	else
+		return -1;
+
+	if (magic_format == ext_format)
+		return ext_format;
+
+	s = fname + strlen(fname) - 4;
+
+	fputs("\n===========================================\n", stderr);
+	fprintf(stderr, "The extension of this file is incorrect.\n"
+					"FOUND %s. SHOULD BE %s\n", s, magic_s);
+	fputs("===========================================\n", stderr);
+
+	return magic_format;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -283,7 +334,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 			case 'i':			/* input file */
 			{
 				char *infile = opj_optarg;
-				parameters->decod_format = get_file_format(infile);
+				parameters->decod_format = infile_format(infile);
 				switch(parameters->decod_format) {
 					case J2K_CFMT:
 						break;
