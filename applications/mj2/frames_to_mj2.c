@@ -31,9 +31,9 @@
 
 #include "openjpeg.h"
 #include "j2k_lib.h"
+#include "cio.h"
 #include "j2k.h"
 #include "jp2.h"
-#include "cio.h"
 #include "mj2.h"
 #include "mj2_convert.h"
 #include "opj_getopt.h"
