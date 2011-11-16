@@ -252,19 +252,15 @@ jpip_dec_param_t * init_jpipdecoder( bool jp2)
 bool fread_jpip( char fname[], jpip_dec_param_t *dec)
 {
   int infd;
-  struct stat sb;
 
   if(( infd = open( fname, O_RDONLY)) == -1){
     fprintf( stderr, "file %s not exist\n", fname);
     return false;
   }
   
-  if( fstat( infd, &sb) == -1){
-    fprintf( stderr, "input file stream is broken\n");
+  if(!(dec->jpiplen = get_filesize(infd)))
     return false;
-  }
-  dec->jpiplen = (Byte8_t)sb.st_size;
-
+  
   dec->jpipstream = (Byte_t *)malloc( dec->jpiplen);
 
   if( read( infd, dec->jpipstream, dec->jpiplen) != dec->jpiplen){

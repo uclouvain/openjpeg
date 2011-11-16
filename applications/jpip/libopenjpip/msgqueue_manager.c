@@ -494,15 +494,8 @@ void emit_body( message_param_t *msg, int fd)
 {
   Byte_t *data;
 
-  if( lseek( fd, msg->res_offset, SEEK_SET)==-1){
-    fprintf( FCGI_stderr, "Error: fseek in emit_body()\n");
-    return;
-  }
-  
-  data = (Byte_t *)malloc( msg->length);
-  if( read( fd, data, msg->length) != msg->length){
-    free( data);
-    fprintf( FCGI_stderr, "Error: fread in emit_body()\n");
+  if( !(data = fetch_bytes( fd, msg->res_offset, msg->length))){
+    fprintf( FCGI_stderr, "Error: fetch_bytes in emit_body()\n");
     return;
   }
 

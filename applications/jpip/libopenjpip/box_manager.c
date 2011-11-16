@@ -31,9 +31,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
 #include <ctype.h>
 #include "box_manager.h"
 
@@ -174,12 +171,8 @@ box_param_t * gene_boxbyType( int fd, Byte8_t offset, Byte8_t length, char TBox[
 
   
   if( length==0){ // set the max length
-    struct stat sb;
-    if( fstat( fd, &sb) == -1){
-      fprintf( FCGI_stdout, "Reason: Target broken (fstat error)\r\n");
+    if( (length = get_filesize( fd) - offset) <= 0)
       return NULL;
-    }
-    length = (Byte8_t)sb.st_size - offset;
   }
 
   pos = offset;

@@ -124,4 +124,12 @@ Byte8_t big8( Byte_t *buf);
  */
 void modify_4Bytecode( Byte4_t code, Byte_t *stream);
 
+/**
+ * Get file size
+ *
+ * @param[in] fd file discriptor
+ * @return       file size
+ */
+Byte8_t get_filesize( int fd);
+
 #endif 	    /* !BYTE_MANAGER_H_ */

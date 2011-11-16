@@ -31,9 +31,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
 #include <string.h>
 
 #include "bool.h"
@@ -79,14 +76,12 @@ index_param_t * parse_jp2file( int fd)
   box_param_t *cidx;
   metadatalist_param_t *metadatalist;
   boxlist_param_t *toplev_boxlist;
-  struct stat sb;
-  
-  if( fstat( fd, &sb) == -1){
-    fprintf( FCGI_stdout, "Reason: Target broken (fstat error)\r\n");
-    return NULL;
-  }
+  Byte8_t filesize;
 
-  if( !(toplev_boxlist = get_boxstructure( fd, 0, sb.st_size))){
+  if( !(filesize = get_filesize( fd)))
+    return NULL;
+  
+  if( !(toplev_boxlist = get_boxstructure( fd, 0, filesize))){
     fprintf( FCGI_stderr, "Error: Not correctl JP2 format\n");
     return NULL;
   }

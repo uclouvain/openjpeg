@@ -32,6 +32,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <sys/stat.h>
 #include "byte_manager.h"
 
 #ifdef SERVER
@@ -152,4 +153,16 @@ void modify_4Bytecode( Byte4_t code, Byte_t *stream)
   *(stream+1) = (Byte_t) ((Byte4_t)(code & 0x00ff0000) >> 16);
   *(stream+2) = (Byte_t) ((Byte4_t)(code & 0x0000ff00) >> 8);
   *(stream+3) = (Byte_t) (code & 0x000000ff);
+}
+
+Byte8_t get_filesize( int fd)
+{
+  struct stat sb;
+    
+  if( fstat( fd, &sb) == -1){
+    fprintf( FCGI_stdout, "Reason: Target broken (fstat error)\r\n");
+    fprintf( FCGI_stderr, "Error: error in get_filesize( %d)\n", fd);
+    return 0;
+  }
+  return (Byte8_t)sb.st_size;
 }
