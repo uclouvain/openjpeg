@@ -8,6 +8,7 @@ What's New for OpenJPIP
 November 16, 2011
 * [kaori] fixed Region of Interest option, and memory leak of opj_dec_server
 + [kaori] new feature to target JP2 files from www (libcurl required)
+* [kaori] fixed opj_server execusion error (instant terminating) with autotool, cmake still need to be fixed
 
 November 8, 2011
 ! [kaori] updated main page of doxygen
