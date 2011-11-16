@@ -278,10 +278,14 @@ Byte_t * recons_codestream_from_JPPstream( msgqueue_param_t *msgqueue, Byte_t *j
   }
 
   if( max_reslev < COD.numOfdecomp)
-    if( !modify_mainheader( j2kstream, max_reslev, SIZ, COD, j2klen))
+    if( !modify_mainheader( j2kstream, max_reslev, SIZ, COD, j2klen)){
+      delete_COD( COD);
       return j2kstream;
+    }
 
   j2kstream = add_EOC( j2kstream, j2klen);
+  delete_COD( COD);
+
   return j2kstream;
 }
 
@@ -784,4 +788,10 @@ Byte_t * gene_emptytilestream( const Byte8_t tileID, Byte8_t *length)
   memcpy( buf+12, &SOD, 2);
 
   return buf;
+}
+
+Byte_t * recons_j2kmainhead( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte8_t csn, Byte8_t *j2klen)
+{
+  *j2klen = 0;
+  return add_mainhead_msgstream( msgqueue, jpipstream, NULL, csn, j2klen);
 }

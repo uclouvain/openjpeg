@@ -5,6 +5,9 @@ What's New for OpenJPIP
 ! : changed
 + : added
 
+November 16, 2011
+* [kaori] fixed Region of Interest option, and memory leak of opj_dec_server
+
 November 8, 2011
 ! [kaori] updated main page of doxygen
 

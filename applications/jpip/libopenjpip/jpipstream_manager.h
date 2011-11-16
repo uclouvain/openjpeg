@@ -37,3 +37,5 @@ Byte_t * update_JPIPstream( Byte_t *newstream, int newstreamlen, Byte_t *cache_s
 void save_codestream( Byte_t *codestream, Byte8_t streamlen, char *fmt);
 
 Byte_t * jpipstream_to_pnm( Byte_t *jpipstream, msgqueue_param_t *msgqueue, Byte8_t csn, int fw, int fh, ihdrbox_param_t **ihdrbox);
+
+ihdrbox_param_t * get_SIZ_from_jpipstream( Byte_t *jpipstream, msgqueue_param_t *msgqueue, Byte8_t csn);

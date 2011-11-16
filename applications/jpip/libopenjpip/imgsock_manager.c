@@ -85,7 +85,7 @@ SOCKET open_listeningsocket()
     close_socket(listening_socket);
     exit(1);
   }
-  printf("port %d is listened\n", port);
+  fprintf( stderr, "port %d is listened\n", port);
 
   return listening_socket;
 }
@@ -102,7 +102,7 @@ msgtype_t identify_clientmsg( SOCKET connected_socket)
 {
   int receive_size;
   char buf[BUF_LEN];
-  char *magicid[] = { "JPIP-stream", "PNM request", "XML request", "TID request", "CID request", "CID destroy", "JP2 save", "QUIT"};
+  char *magicid[] = { "JPIP-stream", "PNM request", "XML request", "TID request", "CID request", "CID destroy", "SIZ request", "JP2 save", "QUIT"};
   int i;
   
   receive_size = receive_line( connected_socket, buf);
@@ -114,7 +114,7 @@ msgtype_t identify_clientmsg( SOCKET connected_socket)
 
   for( i=0; i<NUM_OF_MSGTYPES; i++){
     if( strncasecmp( magicid[i], buf, strlen(magicid[i])) == 0){
-      printf("%s\n", magicid[i]);
+      fprintf( stderr, "%s\n", magicid[i]);
       return i;
     }
   }
@@ -236,6 +236,23 @@ void send_PNMstream( SOCKET connected_socket, Byte_t *pnmstream, unsigned int wi
 
   send_stream( connected_socket, header, 7);
   send_stream( connected_socket, pnmstream, pnmlen);
+}
+
+void send_SIZstream( SOCKET connected_socket, unsigned int width, unsigned int height)
+{
+  Byte_t responce[9];
+  
+  responce[0] = 'S';
+  responce[1] = 'I';
+  responce[2] = 'Z';
+  responce[3] = (width >> 16) & 0xff;
+  responce[4] = (width >> 8) & 0xff;
+  responce[5] = width & 0xff;
+  responce[6] = (height >> 16) & 0xff;
+  responce[7] = (height >> 8) & 0xff;
+  responce[8] = height & 0xff;
+
+  send_stream( connected_socket, responce, 9);
 }
 
 void send_stream( SOCKET connected_socket, void *stream, int length)

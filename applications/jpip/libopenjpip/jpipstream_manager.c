@@ -35,6 +35,8 @@
 #include "jpipstream_manager.h"
 #include "jp2k_encoder.h"
 #include "jp2k_decoder.h"
+#include "ihdrbox_manager.h"
+#include "j2kheader_manager.h"
 
 Byte_t * update_JPIPstream( Byte_t *newstream, int newstreamlen, Byte_t *cache_stream, int *streamlen)
 {
@@ -80,4 +82,29 @@ Byte_t * jpipstream_to_pnm( Byte_t *jpipstream, msgqueue_param_t *msgqueue, Byte
   free( j2kstream);
 
   return pnmstream;
+}
+
+ihdrbox_param_t * get_SIZ_from_jpipstream( Byte_t *jpipstream, msgqueue_param_t *msgqueue, Byte8_t csn)
+{
+  ihdrbox_param_t *ihdrbox;
+  Byte_t *j2kstream;
+  Byte8_t j2klen;
+  SIZmarker_param_t SIZ;
+
+  j2kstream = recons_j2kmainhead( msgqueue, jpipstream, csn, &j2klen);
+  if( !get_mainheader_from_j2kstream( j2kstream, &SIZ, NULL)){
+    free( j2kstream);
+    return NULL;
+  }
+
+  ihdrbox = (ihdrbox_param_t *)malloc( sizeof(ihdrbox_param_t));
+
+  ihdrbox->width = SIZ.Xsiz;
+  ihdrbox->height = SIZ.Ysiz;
+  ihdrbox->nc = SIZ.Csiz;
+  ihdrbox->bpc = SIZ.Ssiz[0];
+  
+  free( j2kstream);
+
+  return ihdrbox;
 }

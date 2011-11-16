@@ -33,15 +33,32 @@ import java.awt.Image;
 public class ImageManager extends JPIPHttpClient
 {
     private PnmImage pnmimage;
+    private int origwidth;
+    private int origheight;
 
     public ImageManager( String uri)
     {
 	super( uri);
 	pnmimage = null;
+	origwidth = 0;
+	origheight = 0;
     }
     
-    public int getOrigWidth(){ return pnmimage.get_width();}
-    public int getOrigHeight(){ return pnmimage.get_height();}
+    public int getOrigWidth(){
+	if( origwidth == 0){
+	    if( cid != null || tid != null){
+		java.awt.Dimension dim = ImgdecClient.query_imagesize( cid, tid);
+		if( dim != null){
+		    origwidth = dim.width;
+		    origheight = dim.height;
+		}
+	    }
+	    else
+		System.err.println("Neither cid or tid obtained before to get Original Image Dimension");
+	}
+	return origwidth;
+    }
+    public int getOrigHeight(){ return origheight;}
     
     public Image getImage( String j2kfilename, int reqfw, int reqfh, boolean reqcnew, boolean reqJPP, boolean reqJPT)
     {
@@ -106,6 +123,7 @@ public class ImageManager extends JPIPHttpClient
 	}
 	return xmldata;
     }
+
     public void closeChannel()
     {
 	if( cid != null){

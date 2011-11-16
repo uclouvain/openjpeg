@@ -253,6 +253,49 @@ public class ImgdecClient{
 
 	return id;	
     }
+
+    public static java.awt.Dimension query_imagesize( String cid, String tid)
+    {
+	java.awt.Dimension dim = null;
+
+	try{
+	    Socket imgdecSocket = new Socket( "localhost", 5000);
+	    DataOutputStream os = new DataOutputStream( imgdecSocket.getOutputStream());
+	    DataInputStream is = new DataInputStream( imgdecSocket.getInputStream());
+	    byte []header = new byte[3];
+
+	    os.writeBytes( "SIZ request\n");
+	    if( tid == null)
+		os.writeBytes( "0\n");
+	    else
+		os.writeBytes( tid + "\n");
+	    if( cid == null)
+		os.writeBytes( "0\n");
+	    else
+		os.writeBytes( cid + "\n");
+
+	    read_stream( is, header, 3);
+	    
+	    if( header[0] == 83 && header[1] == 73 && header[2] == 90){
+		
+		byte []data = new byte[ 3];
+		read_stream( is, data, 3);
+		int w = (data[0]&0xff)<<16 | (data[1]&0xff)<<8 | (data[2]&0xff);
+		read_stream( is, data, 3);
+		int h = (data[0]&0xff)<<16 | (data[1]&0xff)<<8 | (data[2]&0xff);
+		dim = new java.awt.Dimension( w, h);
+	    }
+	    else
+		System.err.println("Error in query_imagesize("+ cid + ", " + tid + "), wrong to start with " + header);
+	}
+	catch (UnknownHostException e) {
+	    System.err.println("Trying to connect to unknown host: " + e);
+	} catch (IOException e) {
+	    System.err.println("IOException: " + e);
+	}
+
+	return dim;
+    }
   
     public static void read_stream( DataInputStream is, byte []stream, int length)
     {

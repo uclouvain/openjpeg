@@ -205,6 +205,10 @@ bool handle_clientreq( client_t client, dec_server_record_t *rec)
   case CIDDST:
     handle_dstCIDreqMSG( client, rec->cachelist);
     break;
+    
+  case SIZREQ:
+    handle_SIZreqMSG( client, rec->jpipstream, rec->msgqueue, rec->cachelist);
+    break;
 
   case JP2SAVE:
     handle_JP2saveMSG( client, rec->cachelist, rec->msgqueue, rec->jpipstream);
@@ -218,7 +222,7 @@ bool handle_clientreq( client_t client, dec_server_record_t *rec)
     break;
   }
         
-  printf("\t end of the connection\n\n");
+  fprintf( stderr, "\t end of the connection\n\n");
   if( close_socket(client) != 0){
     perror("close");
     return false;

@@ -188,8 +188,7 @@ void delete_index( index_param_t **index)
 
   delete_metadatalist( &((*index)->metadatalist));
 
-  free( (*index)->COD.XPsiz);
-  free( (*index)->COD.YPsiz);
+  delete_COD( (*index)->COD);
   
   delete_faixbox( &((*index)->tilepart));
 
@@ -202,6 +201,12 @@ void delete_index( index_param_t **index)
   free( (*index)->precpacket);
   
   free(*index);
+}
+
+void delete_COD( CODmarker_param_t COD)
+{
+  if( COD.XPsiz)    free( COD.XPsiz);
+  if( COD.YPsiz)    free( COD.YPsiz);
 }
 
 bool check_JP2boxidx( boxlist_param_t *toplev_boxlist)

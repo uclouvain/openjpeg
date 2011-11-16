@@ -129,6 +129,14 @@ void print_COD( CODmarker_param_t COD);
  */
 void delete_index( index_param_t **index);
 
+/**
+ * delete dynamic arrays in COD marker
+ *
+ * @param[in] COD COD marker information
+ */
+void delete_COD( CODmarker_param_t COD);
+
+
 //! 1-dimensional range parameters
 typedef struct range_param{
   Byte4_t minvalue; //!< minimal value
