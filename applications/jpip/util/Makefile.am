@@ -8,7 +8,7 @@ opj_server_CPPFLAGS = \
 -I$(top_srcdir)/applications/jpip/libopenjpip \
 -I$(top_builddir)/applications/jpip/libopenjpip
 #
-opj_server_CFLAGS = -DServer -DQUIT_SIGNAL=\"quitJPIP\"
+opj_server_CFLAGS = -DSERVER -DQUIT_SIGNAL=\"quitJPIP\"
 #
 opj_server_LDADD = $(top_builddir)/applications/jpip/libopenjpip/libopenjpip_server.la @FCGI_LIBS@ -lm
 #
