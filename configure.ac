@@ -351,6 +351,21 @@ if test "x${want_jpip}" = "xyes" ; then
 
 fi
 
+# libcurl
+
+if test "x${want_jpip}" = "xyes" ; then
+
+   PKG_CHECK_MODULES([LIBCURL], [libcurl],
+      [have_libcurl="yes"],
+      [have_libcurl="no"])
+
+   if ! test "x${have_libcurl}" = "xyes" ; then
+      AC_MSG_WARN([libcurl library not found. OpenJPIP will not be compiled.])
+      want_jpip="no"
+   fi
+
+fi
+
 if test "x${want_jpip}" = "xyes" ; then
    AC_DEFINE(USE_JPIP, [1], [define to 1 if you use jpip])
 fi

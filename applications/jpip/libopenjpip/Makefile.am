@@ -29,6 +29,7 @@ target_manager.c \
 cachemodel_manager.c \
 j2kheader_manager.c \
 jp2k_encoder.c \
+openjpip.h \
 bool.h \
 boxheader_manager.h \
 box_manager.h \
@@ -51,7 +52,8 @@ jp2k_encoder.h \
 query_parser.h \
 channel_manager.h \
 session_manager.h \
-jpip_parser.h
+jpip_parser.h \
+jp2k_decoder.h
 
 LOCAL_SRC = jp2k_decoder.c \
 imgsock_manager.c \
@@ -68,9 +70,10 @@ libopenjpip_server_la_CPPFLAGS = \
 -I$(top_srcdir)/applications/jpip/libopenjpip \
 -I$(top_builddir)/applications/jpip/libopenjpip \
 @FCGI_CFLAGS@ \
+@LIBCURL_CFLAGS@ \
 -DSERVER
 libopenjpip_server_la_CFLAGS =
-libopenjpip_server_la_LIBADD = @FCGI_LIBS@ -lm
+libopenjpip_server_la_LIBADD = @FCGI_LIBS@ @LIBCURL_LIBS@ -lm
 libopenjpip_server_la_LDFLAGS = -no-undefined -version-info @lt_version@
 libopenjpip_server_la_SOURCES = $(JPIP_SRC)
 
@@ -79,9 +82,10 @@ libopenjpip_local_la_CPPFLAGS = \
 -I$(top_srcdir)/libopenjpeg \
 -I$(top_builddir)/libopenjpeg \
 -I$(top_srcdir)/applications/jpip/libopenjpip \
--I$(top_builddir)/applications/jpip/libopenjpip
+-I$(top_builddir)/applications/jpip/libopenjpip \
+@LIBCURL_CFLAGS@
 libopenjpip_local_la_CFLAGS =
-libopenjpip_local_la_LIBADD = $(top_builddir)/libopenjpeg/libopenjpeg.la -lm
+libopenjpip_local_la_LIBADD = @LIBCURL_LIBS@ $(top_builddir)/libopenjpeg/libopenjpeg.la -lm
 libopenjpip_local_la_LDFLAGS = -no-undefined -version-info @lt_version@
 libopenjpip_local_la_SOURCES = $(JPIP_SRC) $(LOCAL_SRC)
 
