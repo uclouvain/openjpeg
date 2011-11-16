@@ -40,8 +40,9 @@
 //! target parameters
 typedef struct target_param{
   char tid[MAX_LENOFTID];         //!< taregt identifier
-  char *filename;                 //!< file name
+  char *targetname;               //!< local file path or URL
   int fd;                         //!< file descriptor
+  char *tmpfname;                 //!< temporal file name to download a remote target file
   int csn;                        //!< codestream number
   index_param_t *codeidx;         //!< index information of codestream
   int num_of_use;                 //!< numbers of sessions refering to this target
@@ -134,9 +135,9 @@ void print_alltarget( targetlist_param_t *targetlist);
 
 
 /**
- * search a target by filename
+ * search a target by target name
  *
- * @param[in] targetname target filename
+ * @param[in] targetname target name
  * @param[in] targetlist target list pointer
  * @return               found target pointer
  */

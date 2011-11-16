@@ -52,6 +52,7 @@
  * \section reqlibs Required libraries
  *  - OpenJPEG library
  *  - FastCGI development kit (C libraries) at server (http://www.fastcgi.com)
+ *  - libcURL library
  *
  *  We tested this software with a virtual server running on the same Linux machine as the clients.
  *

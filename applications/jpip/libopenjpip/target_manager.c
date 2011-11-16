@@ -36,6 +36,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <time.h>
+#include <curl/curl.h>
 #include "target_manager.h"
 
 #ifdef SERVER
@@ -64,24 +65,26 @@ targetlist_param_t * gene_targetlist()
 /**
  * open jp2 format image file
  *
- * @param[in] filename file name (.jp2)
- * @return             file descriptor
+ * @param[in]  filepath file name (.jp2)
+ * @param[out] tmpfname new file name if filepath is a URL
+ * @return              file descriptor
  */
-int open_jp2file( char filename[]);
+int open_jp2file( char filepath[], char tmpfname[]);
 
 target_param_t * gene_target( targetlist_param_t *targetlist, char *targetpath)
 {
   target_param_t *target;
   int fd;
   index_param_t *jp2idx;
+  char tmpfname[MAX_LENOFTID];
   static int last_csn = 0;
-
+  
   if( targetpath[0]=='\0'){
     fprintf( FCGI_stderr, "Error: exception, no targetpath in gene_target()\n");
     return NULL;
   }
 
-  if((fd = open_jp2file( targetpath)) == -1){
+  if((fd = open_jp2file( targetpath, tmpfname)) == -1){
     fprintf( FCGI_stdout, "Status: 404\r\n"); 
     return NULL;
   }
@@ -93,8 +96,12 @@ target_param_t * gene_target( targetlist_param_t *targetlist, char *targetpath)
 
   target = (target_param_t *)malloc( sizeof(target_param_t));
   snprintf( target->tid, MAX_LENOFTID, "%x-%x", (unsigned int)time(NULL), (unsigned int)rand());
-  target->filename = strdup( targetpath); 
+  target->targetname = strdup( targetpath); 
   target->fd = fd;
+  if( tmpfname[0])
+    target->tmpfname = strdup( tmpfname);
+  else
+    target->tmpfname = NULL;
   target->csn = last_csn++;
   target->codeidx = jp2idx;
   target->num_of_use = 0; 
@@ -129,15 +136,20 @@ void unrefer_target( target_param_t *target)
 void delete_target( target_param_t **target)
 {
   close( (*target)->fd);
-  
+
+  if( (*target)->tmpfname){
+    fprintf( FCGI_stderr, "Temporal file %s is deleted\n", (*target)->tmpfname);
+    remove( (*target)->tmpfname);
+  }
+
   if( (*target)->codeidx)
     delete_index ( &(*target)->codeidx);
-
+  
 #ifndef SERVER
-  fprintf( logstream, "local log: target: %s deleted\n", (*target)->filename);
+  fprintf( logstream, "local log: target: %s deleted\n", (*target)->targetname);
 #endif
 
-  free( (*target)->filename);
+  free( (*target)->targetname);
 
   free(*target);
 }
@@ -180,7 +192,7 @@ void print_target( target_param_t *target)
   fprintf( logstream, "target:\n");
   fprintf( logstream, "\t tid=%s\n", target->tid);
   fprintf( logstream, "\t csn=%d\n", target->csn);
-  fprintf( logstream, "\t target=%s\n\n", target->filename);
+  fprintf( logstream, "\t target=%s\n\n", target->targetname);
 }
 
 void print_alltarget( targetlist_param_t *targetlist)
@@ -202,7 +214,7 @@ target_param_t * search_target( char targetname[], targetlist_param_t *targetlis
   
   while( foundtarget != NULL){
     
-    if( strcmp( targetname, foundtarget->filename) == 0)
+    if( strcmp( targetname, foundtarget->targetname) == 0)
       return foundtarget;
       
     foundtarget = foundtarget->next;
@@ -227,27 +239,52 @@ target_param_t * search_targetBytid( char tid[], targetlist_param_t *targetlist)
   return NULL;
 }
 
-int open_jp2file( char filename[])
+static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream);
+
+int open_jp2file( char filepath[], char tmpfname[])
 {
   int fd;
   char *data;
-
-  if( (fd = open( filename, O_RDONLY)) == -1){
-    fprintf( FCGI_stdout, "Reason: Target %s not found\r\n", filename);
-    return -1;
+  CURL *curl_handle;
+  
+  // download remote target file to local storage
+  if( strncmp( filepath, "http://", 7) == 0){
+    curl_handle = curl_easy_init();
+    curl_easy_setopt(curl_handle, CURLOPT_URL, filepath);
+    curl_easy_setopt(curl_handle, CURLOPT_NOPROGRESS, 1L);
+    curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_data);
+    
+    snprintf( tmpfname, MAX_LENOFTID, "%x-%x.jp2", (unsigned int)time(NULL), (unsigned int)rand());
+    fprintf( FCGI_stderr, "%s is downloaded to a temporal new file %s\n", filepath, tmpfname);
+    if( (fd = open( tmpfname, O_RDWR|O_CREAT|O_EXCL, S_IRWXU)) == -1){
+      fprintf( FCGI_stdout, "Reason: File open error %s\r\n", tmpfname);
+      curl_easy_cleanup(curl_handle);
+      return -1;
+    }
+    curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, &fd);
+    curl_easy_perform(curl_handle);
+    curl_easy_cleanup(curl_handle);
+  }
+  else{
+    tmpfname[0] = 0;
+    if( (fd = open( filepath, O_RDONLY)) == -1){
+      fprintf( FCGI_stdout, "Reason: Target %s not found\r\n", filepath);
+      return -1;
+    }
   }
   // Check resource is a JP family file.
   if( lseek( fd, 0, SEEK_SET)==-1){
     close(fd);
-    fprintf( FCGI_stdout, "Reason: Target %s broken (lseek error)\r\n", filename);
+    fprintf( FCGI_stdout, "Reason: Target %s broken (lseek error)\r\n", filepath);
     return -1;
   }
   
   data = (char *)malloc( 12); // size of header
+
   if( read( fd, data, 12) != 12){
     free( data);
     close(fd);
-    fprintf( FCGI_stdout, "Reason: Target %s broken (read error)\r\n", filename);
+    fprintf( FCGI_stdout, "Reason: Target %s broken (read error)\r\n", filepath);
     return -1;
   }
     
@@ -255,9 +292,19 @@ int open_jp2file( char filename[])
       *(data + 3) != 12 || strncmp (data + 4, "jP  \r\n\x87\n", 8)){
     free( data);
     close(fd);
-    fprintf( FCGI_stdout, "Reason: No JPEG 2000 Signature box in target %s\r\n", filename);
+    fprintf( FCGI_stdout, "Reason: No JPEG 2000 Signature box in target %s\r\n", filepath);
     return -1;
   } 
+
   free( data);
+
   return fd;
+}
+
+static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream)
+{
+  int *fd = (int *)stream;
+  int written = write( *fd, ptr, size*nmemb);
+
+  return written;
 }

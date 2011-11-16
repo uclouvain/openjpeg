@@ -139,7 +139,7 @@ void print_allchannel( channellist_param_t *channellist)
 
   ptr = channellist->first;
   while( ptr != NULL){
-    fprintf( logstream,"channel-ID=%s \t target=%s\n", ptr->cid, ptr->cachemodel->target->filename);
+    fprintf( logstream,"channel-ID=%s \t target=%s\n", ptr->cid, ptr->cachemodel->target->targetname);
     ptr=ptr->next;
   }
 }

@@ -1,5 +1,5 @@
 ========================================================================
-                    OpenJPIP software 2.0 ReadMe
+                    OpenJPIP software 2.1 ReadMe
 
 OpenJPEG:
 http://www.openjpeg.org
@@ -26,13 +26,14 @@ OpenJPIP software is an implementation of JPEG 2000 Part9: Interactivity tools, 
 ( For more info about JPIP, check the website: http://www.jpeg.org/jpeg2000/j2kpart9.html)
 The current implementation uses some results from the 2KAN project (http://www.2kan.org).
 
-First Version 2.0 covers:
+Version 2.1 covers:
  - JPT-stream (Tile) and JPP-stream (Precinct) media types
  - Session, channels, cache model managements
  - JPIP over HTTP
  - Indexing JPEG 2000 files
  - Embedding XML formatted metadata
  - Region Of Interest (ROI) requests
+ - Access to JP2 files with their URL
 
 ----------
 2. License
@@ -46,8 +47,8 @@ Neither the author, nor the university accept any responsibility for any kind of
 3. System requirements
 ----------
 
- - OpenJPEG library (currently assumes it is installed on the system => will not use the one built higher in the directory structure)
  - FastCGI development kit (C libraries) at server (http://www.fastcgi.com)
+ - libcURL library
  - Java application launcher at client
 <Optional>
  - Xerces2 java XML parser on the client for accessing embedded image metadata (http://xerces.apache.org/xerces2-j)
@@ -103,10 +104,10 @@ Client:
     % ../opj_dec_server
 
  2. Open image viewers (as many as needed)
-    % java -jar opj_viewer.jar http://hostname/myFCGI JP2_filename.jp2 [stateless/session] [jptstream/jppstream]
+    % java -jar opj_viewer.jar http://hostname/myFCGI path/filename.jp2 [stateless/session] [jptstream/jppstream]
     ( The arguments 
       - http://hostname/myFCGI is the HTTP server URI (myFCGI refers to opj_server by the server setting)
-      - JP2_filename.jp2 is the name of a JP2 file available on the server.
+      - path/filename.jp2 is the server local path or URL of a JP2 file
       - request type stateless for no caching, session (default) for caching
       - return media type, JPT-stream tile based stream, or JPP-stream (default) precinct based stream  
     Image viewer GUI instructions:
