@@ -76,8 +76,9 @@ typedef struct img_folder{
 /* Declarations                                                               */
 int get_num_images(char *imgdirpath);
 int load_images(dircnt_t *dirptr, char *imgdirpath);
-int get_file_format(char *filename);
+int get_file_format(const char *filename);
 char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_dparameters_t *parameters);
+static int infile_format(const char *fname);
 
 int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,img_fol_t *img_fol);
 int parse_DA_values( char* inArg, unsigned int *DA_x0, unsigned int *DA_y0, unsigned int *DA_x1, unsigned int *DA_y1);
@@ -106,10 +107,6 @@ void decode_help_display(void) {
 	fprintf(stdout,"    OPTIONAL\n");
 	fprintf(stdout,"    Output file where file info will be dump.\n");
 	fprintf(stdout,"    By default it will be in the stdout.\n");
-	fprintf(stdout,"  -d <x0,x1,y0,y1>\n"); /* FIXME WIP_MSD */
-	fprintf(stdout,"    OPTIONAL\n");
-	fprintf(stdout,"    Decoding area\n");
-	fprintf(stdout,"    By default all tiles header are read.\n");
 	fprintf(stdout,"  -v "); /* FIXME WIP_MSD */
 	fprintf(stdout,"    OPTIONAL\n");
 	fprintf(stdout,"    Activate or not the verbose mode (display info and warning message)\n");
@@ -166,7 +163,7 @@ int load_images(dircnt_t *dirptr, char *imgdirpath){
 }
 
 /* -------------------------------------------------------------------------- */
-int get_file_format(char *filename) {
+int get_file_format(const char *filename) {
 	unsigned int i;
 	static const char *extension[] = {"pgx", "pnm", "pgm", "ppm", "bmp","tif", "raw", "tga", "png", "j2k", "jp2", "jpt", "j2c", "jpc"  };
 	static const int format[] = { PGX_DFMT, PXM_DFMT, PXM_DFMT, PXM_DFMT, BMP_DFMT, TIF_DFMT, RAW_DFMT, TGA_DFMT, PNG_DFMT, J2K_CFMT, JP2_CFMT, JPT_CFMT, J2K_CFMT, J2K_CFMT };
@@ -212,6 +209,60 @@ char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_dparamet
 }
 
 /* -------------------------------------------------------------------------- */
+#define JP2_RFC3745_MAGIC "\x00\x00\x00\x0c\x6a\x50\x20\x20\x0d\x0a\x87\x0a"
+#define JP2_MAGIC "\x0d\x0a\x87\x0a"
+/* position 45: "\xff\x52" */
+#define J2K_CODESTREAM_MAGIC "\xff\x4f\xff\x51"
+
+static int infile_format(const char *fname)
+{
+	FILE *reader;
+	const char *s, *magic_s;
+	int ext_format, magic_format;
+	unsigned char buf[12];
+
+	reader = fopen(fname, "rb");
+
+	if (reader == NULL)
+		return -1;
+
+	memset(buf, 0, 12);
+	unsigned int l_nb_read = fread(buf, 1, 12, reader);
+	fclose(reader);
+	if (l_nb_read != 12)
+		return -1;
+
+
+
+	ext_format = get_file_format(fname);
+
+	if (ext_format == JPT_CFMT)
+		return JPT_CFMT;
+
+	if (memcmp(buf, JP2_RFC3745_MAGIC, 12) == 0 || memcmp(buf, JP2_MAGIC, 4) == 0) {
+		magic_format = JP2_CFMT;
+		magic_s = ".jp2";
+	}
+	else if (memcmp(buf, J2K_CODESTREAM_MAGIC, 4) == 0) {
+		magic_format = J2K_CFMT;
+		magic_s = ".j2k or .jpc or .j2c";
+	}
+	else
+		return -1;
+
+	if (magic_format == ext_format)
+		return ext_format;
+
+	s = fname + strlen(fname) - 4;
+
+	fputs("\n===========================================\n", stderr);
+	fprintf(stderr, "The extension of this file is incorrect.\n"
+					"FOUND %s. SHOULD BE %s\n", s, magic_s);
+	fputs("===========================================\n", stderr);
+
+	return magic_format;
+}
+/* -------------------------------------------------------------------------- */
 /**
  * Parse the command line
  */
@@ -221,7 +272,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 	opj_option_t long_option[]={
 		{"ImgDir",REQ_ARG, NULL ,'y'},
 	};
-	const char optlist[] = "i:o:d:hv";
+	const char optlist[] = "i:o:hv";
 
 	totlen=sizeof(long_option);
 	img_fol->set_out_format = 0;
@@ -233,7 +284,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 			case 'i':			/* input file */
 			{
 				char *infile = opj_optarg;
-				parameters->decod_format = get_file_format(infile);
+				parameters->decod_format = infile_format(infile);
 				switch(parameters->decod_format) {
 					case J2K_CFMT:
 						break;
@@ -276,19 +327,6 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 			}
 			break;
 
-				/* ----------------------------------------------------- */
-
-			case 'd':     		/* Input decode ROI */
-			{
-				int size_optarg = (int)strlen(opj_optarg) + 1;
-				char *ROI_values = (char*) malloc(size_optarg);
-				ROI_values[0] = '\0';
-				strncpy(ROI_values, opj_optarg, strlen(opj_optarg));
-				ROI_values[strlen(opj_optarg)] = '\0';
-				/*printf("ROI_values = %s [%d / %d]\n", ROI_values, strlen(ROI_values), size_optarg ); */
-				parse_DA_values( ROI_values, &parameters->DA_x0, &parameters->DA_y0, &parameters->DA_x1, &parameters->DA_y1);
-			}
-			break;
 			/* ----------------------------------------------------- */
 
 			case 'v':     		/* Verbose mode */
@@ -329,37 +367,6 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 
 	return 0;
 }
-
-/* -------------------------------------------------------------------------- */
-/**
- * Parse decoding area input values
- * separator = ","
- */
-/* -------------------------------------------------------------------------- */
-int parse_DA_values( char* inArg, unsigned int *DA_x0, unsigned int *DA_y0, unsigned int *DA_x1, unsigned int *DA_y1)
-{
-	int it = 0;
-	int values[4];
-	char delims[] = ",";
-	char *result = NULL;
-	result = strtok( inArg, delims );
-
-	while( (result != NULL) && (it < 4 ) ) {
-		values[it] = atoi(result);
-		result = strtok( NULL, delims );
-		it++;
-	}
-
-	if (it != 4) {
-		return EXIT_FAILURE;
-	}
-	else{
-		*DA_x0 = values[0]; *DA_y0 = values[1];
-		*DA_x1 = values[2]; *DA_y1 = values[3];
-		return EXIT_SUCCESS;
-	}
-}
-
 
 /* -------------------------------------------------------------------------- */
 /**
