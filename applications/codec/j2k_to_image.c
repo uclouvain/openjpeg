@@ -143,7 +143,11 @@ void decode_help_display(void) {
 	fprintf(stdout,"  -d <x0,y0,x1,y1>\n");
 	fprintf(stdout,"    OPTIONAL\n");
 	fprintf(stdout,"    Decoding area\n");
-	fprintf(stdout,"    By default all tiles header are read.\n");
+	fprintf(stdout,"    By default all the image is decoded.\n");
+	fprintf(stdout,"  -t <tile_number>\n");
+	fprintf(stdout,"    OPTIONAL\n");
+	fprintf(stdout,"    Set the tile number of the decoded tile. Follow the JPEG2000 convention from left-up to bottom-up\n");
+	fprintf(stdout,"    By default all tiles are decoded.\n");
 	fprintf(stdout,"\n");
 /* UniPG>> */
 #ifdef USE_JPWL
@@ -271,8 +275,12 @@ static int infile_format(const char *fname)
 		return -1;
 
 	memset(buf, 0, 12);
-	fread(buf, 1, 12, reader);
+	unsigned int l_nb_read = fread(buf, 1, 12, reader);
 	fclose(reader);
+	if (l_nb_read != 12)
+		return -1;
+
+
 
 	ext_format = get_file_format(fname);
 
@@ -316,7 +324,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 		{"OutFor",REQ_ARG, NULL ,'O'},
 	};
 
-	const char optlist[] = "i:o:r:l:x:d:"
+	const char optlist[] = "i:o:r:l:x:d:t:"
 
 /* UniPG>> */
 #ifdef USE_JPWL
@@ -468,6 +476,16 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 
 				free(ROI_values);
 			}
+			break;
+
+			/* ----------------------------------------------------- */
+
+			case 't':     		/* Input tile index */
+			{
+				sscanf(opj_optarg, "%d", &parameters->tile_index);
+				parameters->nb_tile_to_decode = 1;
+			}
+			break;
 
 				/* ----------------------------------------------------- */								
 
@@ -785,36 +803,46 @@ int main(int argc, char **argv)
 			return EXIT_FAILURE;
 		}
 
-		if (! opj_set_decode_area(	dinfo, image,
-									parameters.DA_x0, parameters.DA_y0, parameters.DA_x1, parameters.DA_y1)){
-			fprintf(stderr, "ERROR -> j2k_to_image: failed to set the decoded area\n");
-			opj_stream_destroy(cio);
-			opj_destroy_codec(dinfo);
-			opj_image_destroy(image);
-			fclose(fsrc);
-			return EXIT_FAILURE;
+		if (!parameters.nb_tile_to_decode) {
+			// Optional if you want decode the entire image
+			if (!opj_set_decode_area(dinfo, image, parameters.DA_x0,
+					parameters.DA_y0, parameters.DA_x1, parameters.DA_y1)){
+				fprintf(stderr,
+						"ERROR -> j2k_to_image: failed to set the decoded area\n");
+				opj_stream_destroy(cio);
+				opj_destroy_codec(dinfo);
+				opj_image_destroy(image);
+				fclose(fsrc);
+				return EXIT_FAILURE;
 			}
 
-		/* Get the decoded image */
-		if ( !( opj_decode_v2(dinfo, cio, image) && opj_end_decompress(dinfo,cio) ) ) {
-			fprintf(stderr, "ERROR -> j2k_to_image: failed to decode image!\n");
-			opj_destroy_codec(dinfo);
-			opj_stream_destroy(cio);
-			opj_image_destroy(image);
-			fclose(fsrc);
-			return EXIT_FAILURE;
+			/* Get the decoded image */
+			if (!(opj_decode_v2(dinfo, cio, image) && opj_end_decompress(dinfo,
+					cio))) {
+				fprintf(stderr,
+						"ERROR -> j2k_to_image: failed to decode image!\n");
+				opj_destroy_codec(dinfo);
+				opj_stream_destroy(cio);
+				opj_image_destroy(image);
+				fclose(fsrc);
+				return EXIT_FAILURE;
+			}
 		}
-
-		/*opj_dump_codec(dinfo, OPJ_J2K_MH_IND, stdout );
-
-		cstr_index = opj_get_cstr_index(dinfo);*/
-
-		fprintf(stderr, "image is decoded!\n");
+		else {
+			if (!opj_get_decoded_tile(dinfo, cio, image, parameters.tile_index)) {
+				fprintf(stderr, "ERROR -> j2k_to_image: failed to decode tile!\n");
+				opj_destroy_codec(dinfo);
+				opj_stream_destroy(cio);
+				opj_image_destroy(image);
+				fclose(fsrc);
+				return EXIT_FAILURE;
+			}
+			fprintf(stdout, "tile %d is decoded!\n\n", parameters.tile_index);
+		}
 
 		/* Close the byte stream */
 		opj_stream_destroy(cio);
 		fclose(fsrc);
-
 
 		if(image->color_space == CLRSPC_SYCC){
 			color_sycc_to_rgb(image); /* FIXME */

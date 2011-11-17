@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 November 17, 2011
++ [mickael] WIP: enhance j2k_to_image with new get_decoded_tile functionality
 + [mickael] WIP: clean j2k_dump and enhance j2k_dump with commit 1052.
 + [mickael] WIP: add a set decoded resolution factor function and update j2k_to_image help about decoded region.
 

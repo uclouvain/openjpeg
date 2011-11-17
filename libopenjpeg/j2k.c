@@ -8371,6 +8371,12 @@ opj_bool j2k_get_tile(	opj_j2k_v2_t *p_j2k,
 		return OPJ_FALSE;
 	}
 
+	if (tile_index >= p_j2k->m_cp.th * p_j2k->m_cp.tw) {
+		opj_event_msg_v2(p_manager, EVT_ERROR, "Decoded tile index is "
+				"inconsistent with the number of tiles in the codestream (%d vs %d).\n", tile_index, p_j2k->m_cp.th * p_j2k->m_cp.tw );
+		return OPJ_FALSE;
+	}
+
 	/* Compute the dimension of the desired tile*/
 	l_tile_x = tile_index % p_j2k->m_cp.tw;
 	l_tile_y = tile_index / p_j2k->m_cp.tw;

@@ -439,6 +439,11 @@ typedef struct opj_dparameters {
 	/** Verbose mode */
 	opj_bool m_verbose;
 
+	/** tile number ot the decoded tile*/
+	OPJ_UINT32 tile_index;
+	/** Nb of tile to decode */
+	OPJ_UINT32 nb_tile_to_decode;
+
 	/*@}*/
 
 /* UniPG>> */
