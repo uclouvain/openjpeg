@@ -2764,3 +2764,8 @@ opj_codestream_info_v2_t* jp2_get_cstr_info(opj_jp2_v2_t* p_jp2)
 	return j2k_get_cstr_info(p_jp2->j2k);
 }
 
+opj_bool jp2_set_decoded_resolution_factor(opj_jp2_v2_t *p_jp2, OPJ_UINT32 res_factor, opj_event_mgr_t * p_manager)
+{
+	return j2k_set_decoded_resolution_factor(p_jp2->j2k, res_factor, p_manager);
+}
+

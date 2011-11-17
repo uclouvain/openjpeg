@@ -8447,3 +8447,21 @@ opj_bool j2k_get_tile(	opj_j2k_v2_t *p_j2k,
 
 	return OPJ_TRUE;
 }
+
+opj_bool j2k_set_decoded_resolution_factor(opj_j2k_v2_t *p_j2k, OPJ_UINT32 res_factor, opj_event_mgr_t * p_manager)
+{
+	OPJ_UINT32 it_comp;
+
+	p_j2k->m_cp.m_specific_param.m_dec.m_reduce = res_factor;
+
+	if (!p_j2k->m_private_image)
+
+
+	for (it_comp = 0 ; it_comp < p_j2k->m_private_image->numcomps; it_comp++)
+	{
+		p_j2k->m_private_image->comps[it_comp].factor = res_factor;
+	}
+
+
+	return OPJ_TRUE;
+}

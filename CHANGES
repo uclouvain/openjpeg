@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+November 17, 2011
++ [mickael] WIP: add a set decoded resolution factor function and update j2k_to_image help about decoded region.
+
 November 9, 2011
 * [mickael] WIP: fix tests/nonregresion/CMakeList.txt
 

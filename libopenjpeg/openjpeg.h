@@ -1277,12 +1277,24 @@ OPJ_API opj_bool OPJ_CALLCONV opj_decode_v2(opj_codec_t *p_decompressor,
  * @param	p_image			output image
  * @param	tile_index		index of the tile which will be decode
  *
- * @return					a pointer to a JP2 index structure.
+ * @return					opj_true if all is ok.
  */
 OPJ_API opj_bool OPJ_CALLCONV opj_get_decoded_tile(	opj_codec_t *p_codec,
 													opj_stream_t *p_cio,
 													opj_image_t *p_image,
 													OPJ_UINT32 tile_index);
+
+
+/**
+ * Set the resolution factor of the decoded image
+ * @param	p_codec			the jpeg2000 codec.
+ * @param	res_factor		resolution factor to set
+ *
+ * @return					opj_true if all is ok.
+ */
+OPJ_API opj_bool OPJ_CALLCONV opj_set_decoded_resolution_factor(opj_codec_t *p_codec, OPJ_UINT32 res_factor);
+
+
 
 /**
  * Reads a tile header. This function is compulsory and allows one to know the size of the tile thta will be decoded.

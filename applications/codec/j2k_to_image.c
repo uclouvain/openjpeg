@@ -140,7 +140,7 @@ void decode_help_display(void) {
 	fprintf(stdout,"    are decoded.\n");
 	fprintf(stdout,"  -x  \n"); 
 	fprintf(stdout,"    Create an index file *.Idx (-x index_name.Idx) \n");
-	fprintf(stdout,"  -d <x0,x1,y0,y1>\n");
+	fprintf(stdout,"  -d <x0,y0,x1,y1>\n");
 	fprintf(stdout,"    OPTIONAL\n");
 	fprintf(stdout,"    Decoding area\n");
 	fprintf(stdout,"    By default all tiles header are read.\n");
