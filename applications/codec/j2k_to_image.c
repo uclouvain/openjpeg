@@ -257,6 +257,7 @@ char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_dparamet
 	return 0;
 }
 
+/* -------------------------------------------------------------------------- */
 #define JP2_RFC3745_MAGIC "\x00\x00\x00\x0c\x6a\x50\x20\x20\x0d\x0a\x87\x0a"
 #define JP2_MAGIC "\x0d\x0a\x87\x0a"
 /* position 45: "\xff\x52" */
@@ -807,8 +808,7 @@ int main(int argc, char **argv)
 			// Optional if you want decode the entire image
 			if (!opj_set_decode_area(dinfo, image, parameters.DA_x0,
 					parameters.DA_y0, parameters.DA_x1, parameters.DA_y1)){
-				fprintf(stderr,
-						"ERROR -> j2k_to_image: failed to set the decoded area\n");
+				fprintf(stderr,	"ERROR -> j2k_to_image: failed to set the decoded area\n");
 				opj_stream_destroy(cio);
 				opj_destroy_codec(dinfo);
 				opj_image_destroy(image);
@@ -817,10 +817,8 @@ int main(int argc, char **argv)
 			}
 
 			/* Get the decoded image */
-			if (!(opj_decode_v2(dinfo, cio, image) && opj_end_decompress(dinfo,
-					cio))) {
-				fprintf(stderr,
-						"ERROR -> j2k_to_image: failed to decode image!\n");
+			if (!(opj_decode_v2(dinfo, cio, image) && opj_end_decompress(dinfo,	cio))) {
+				fprintf(stderr,"ERROR -> j2k_to_image: failed to decode image!\n");
 				opj_destroy_codec(dinfo);
 				opj_stream_destroy(cio);
 				opj_image_destroy(image);
@@ -829,6 +827,17 @@ int main(int argc, char **argv)
 			}
 		}
 		else {
+
+			// It is just here to illustrate how to use the resolution after set parameters
+			/*if (!opj_set_decoded_resolution_factor(dinfo, 5)) {
+				fprintf(stderr, "ERROR -> j2k_to_image: failed to set the resolution factor tile!\n");
+				opj_destroy_codec(dinfo);
+				opj_stream_destroy(cio);
+				opj_image_destroy(image);
+				fclose(fsrc);
+				return EXIT_FAILURE;
+			}*/
+
 			if (!opj_get_decoded_tile(dinfo, cio, image, parameters.tile_index)) {
 				fprintf(stderr, "ERROR -> j2k_to_image: failed to decode tile!\n");
 				opj_destroy_codec(dinfo);

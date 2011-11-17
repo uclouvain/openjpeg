@@ -878,11 +878,22 @@ opj_bool t2_decode_packets_v2(
 
 	for	(pino = 0; pino <= l_tcp->numpocs; ++pino) {
 
+		/* if the resolution needed is to low, one dim of the tilec could be equal to zero
+		 * and no packets are used to encode this resolution and
+		 * l_current_pi->resno is always >= p_tile->comps[l_current_pi->compno].minimum_num_resolutions
+		 * and no l_img_comp->resno_decoded are computed
+		 */
+		opj_bool* first_pass_failed = (opj_bool*)opj_malloc(l_image->numcomps * sizeof(opj_bool));
+		memset(first_pass_failed, OPJ_TRUE, l_image->numcomps * sizeof(opj_bool));
+
 		while (pi_next(l_current_pi)) {
+
 
 			if (l_tcp->num_layers_to_decode > l_current_pi->layno
 					&& l_current_pi->resno < p_tile->comps[l_current_pi->compno].minimum_num_resolutions) {
 				l_nb_bytes_read = 0;
+
+				first_pass_failed[l_current_pi->compno] = OPJ_FALSE;
 
 				if (! t2_decode_packet_v2(p_t2,p_tile,l_tcp,l_current_pi,l_current_data,&l_nb_bytes_read,p_max_len,l_pack_info)) {
 					pi_destroy_v2(l_pi,l_nb_pocs);
@@ -898,6 +909,12 @@ opj_bool t2_decode_packets_v2(
 					pi_destroy_v2(l_pi,l_nb_pocs);
 					return OPJ_FALSE;
 				}
+			}
+
+			if (first_pass_failed[l_current_pi->compno]) {
+				l_img_comp = &(l_image->comps[l_current_pi->compno]);
+				if (l_img_comp->resno_decoded == 0)
+					l_img_comp->resno_decoded = p_tile->comps[l_current_pi->compno].minimum_num_resolutions - 1;
 			}
 
 			l_current_data += l_nb_bytes_read;
@@ -926,6 +943,8 @@ opj_bool t2_decode_packets_v2(
 			/* << INDEX */
 		}
 		++l_current_pi;
+
+		opj_free(first_pass_failed);
 	}
 	/* INDEX >> */
 #ifdef TODO_MSD

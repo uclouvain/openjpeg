@@ -80,6 +80,11 @@ j2k_to_image -i @INPUT_CONF_PATH@/p1_04.j2k -o @TEMP_PATH@/p1_04_14.j2k.png -d 2
 j2k_to_image -i @INPUT_CONF_PATH@/p1_04.j2k -o @TEMP_PATH@/p1_04_15.j2k.png -d 260,520,360,660 -r 2
 j2k_to_image -i @INPUT_CONF_PATH@/p1_04.j2k -o @TEMP_PATH@/p1_04_16.j2k.png -d 360,520,400,600 -r 2
 
+j2k_to_image -i @INPUT_CONF_PATH@/p1_04.j2k -o @TEMP_PATH@/p1_04_17_t63.j2k.png -t 63 
+j2k_to_image -i @INPUT_CONF_PATH@/p1_04.j2k -o @TEMP_PATH@/p1_04_17_t63_r2.j2k.png -t 63 -r 2
+j2k_to_image -i @INPUT_CONF_PATH@/p1_04.j2k -o @TEMP_PATH@/p1_04_18.t12.j2k.png -t 12 
+j2k_to_image -i @INPUT_CONF_PATH@/p1_04.j2k -o @TEMP_PATH@/p1_04_19_t12_r1.j2k.png -t 12 -r 1
+
 # prec=8; nb_c=3 
 j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06.j2k.png -d 0,0,12,12
 j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_1.j2k.png -d 1,8,8,11
@@ -96,10 +101,17 @@ j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_4.j2k.png -d 3,
 j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_5.j2k.png -d 4,4,7,7 -r 1
 j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_6.j2k.png -d 4,4,5,5 -r 1
 
-j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06.j2k_0.png -t 0
-j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_1.j2k_5.png -t 5
-j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_2.j2k_9.png -t 9
-j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_3.j2k_15.png -t 15
+j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_6.j2k.png -d 9,9,12,12 -r 2
+
+j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06.j2k_t0.png -t 0
+j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_1.j2k_t5.png -t 5
+j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_2.j2k_t9.png -t 9
+j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_3.j2k_t15.png -t 15
+
+j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06.j2k_t0.png -t 0 -r 2
+j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_1.j2k_t5.png -t 5 -r 2
+j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_2.j2k_t9.png -t 9 -r 2
+j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_3.j2k_t15.png -t 15 -r 2
 
 # prec=4; nb_c=3 ; signd=yes
 j2k_to_image -i @INPUT_CONF_PATH@/p0_04.j2k -o @TEMP_PATH@/p0_04.j2k.png -d 0,0,256,256

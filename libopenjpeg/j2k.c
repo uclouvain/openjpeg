@@ -6888,6 +6888,11 @@ opj_bool j2k_update_image_data (opj_tcd_v2_t * p_tcd, OPJ_BYTE * p_data, opj_ima
 		/*-----*/
 
 		/* Current tile component size*/
+		/*if (i == 0) {
+		fprintf(stdout, "SRC: l_res_x0=%d, l_res_x1=%d, l_res_y0=%d, l_res_y1=%d\n",
+				l_res->x0, l_res->x1, l_res->y0, l_res->y1);
+		}*/
+
 		l_width_src = (l_res->x1 - l_res->x0);
 		l_height_src = (l_res->y1 - l_res->y0);
 
@@ -6896,6 +6901,11 @@ opj_bool j2k_update_image_data (opj_tcd_v2_t * p_tcd, OPJ_BYTE * p_data, opj_ima
 		l_y0_dest = int_ceildivpow2(l_img_comp_dest->y0, l_img_comp_dest->factor);
 		l_x1_dest = l_x0_dest + l_img_comp_dest->w;
 		l_y1_dest = l_y0_dest + l_img_comp_dest->h;
+
+		/*if (i == 0) {
+		fprintf(stdout, "DEST: l_x0_dest=%d, l_x1_dest=%d, l_y0_dest=%d, l_y1_dest=%d (%d)\n",
+				l_x0_dest, l_x1_dest, l_y0_dest, l_y1_dest, l_img_comp_dest->factor );
+		}*/
 
 		/*-----*/
 		/* Compute the area (l_offset_x0_src, l_offset_y0_src, l_offset_x1_src, l_offset_y1_src)
@@ -7206,26 +7216,32 @@ opj_bool j2k_set_decode_area(	opj_j2k_v2_t *p_j2k,
 	l_img_comp = p_image->comps;
 	for (it_comp=0; it_comp < p_image->numcomps; ++it_comp)
 	{
+		OPJ_INT32 l_h,l_w;
+
 		l_img_comp->x0 = int_ceildiv(p_image->x0, l_img_comp->dx);
 		l_img_comp->y0 = int_ceildiv(p_image->y0, l_img_comp->dy);
 		l_comp_x1 = int_ceildiv(p_image->x1, l_img_comp->dx);
 		l_comp_y1 = int_ceildiv(p_image->y1, l_img_comp->dy);
 
-		l_img_comp->w = int_ceildivpow2(l_comp_x1 - l_img_comp->x0, l_img_comp->factor);
-		if (l_img_comp->w <= 0){
+		l_w = int_ceildivpow2(l_comp_x1, l_img_comp->factor)
+				- int_ceildivpow2(l_img_comp->x0, l_img_comp->factor);
+		if (l_w < 0){
 			opj_event_msg_v2(p_manager, EVT_ERROR,
 				"Size x of the decoded component image is incorrect (comp[%d].w=%d).\n",
-				it_comp, l_img_comp->w);
+				it_comp, l_w);
 			return OPJ_FALSE;
 		}
+		l_img_comp->w = l_w;
 
-		l_img_comp->h = int_ceildivpow2(l_comp_y1 - l_img_comp->y0, l_img_comp->factor);
-		if (l_img_comp->h <= 0){
+		l_h = int_ceildivpow2(l_comp_y1, l_img_comp->factor)
+				- int_ceildivpow2(l_img_comp->y0, l_img_comp->factor);
+		if (l_h < 0){
 			opj_event_msg_v2(p_manager, EVT_ERROR,
 				"Size y of the decoded component image is incorrect (comp[%d].h=%d).\n",
-				it_comp, l_img_comp->h);
+				it_comp, l_h);
 			return OPJ_FALSE;
 		}
+		l_img_comp->h = l_h;
 
 		l_img_comp++;
 	}
@@ -8371,9 +8387,8 @@ opj_bool j2k_get_tile(	opj_j2k_v2_t *p_j2k,
 		return OPJ_FALSE;
 	}
 
-	if (tile_index >= p_j2k->m_cp.th * p_j2k->m_cp.tw) {
-		opj_event_msg_v2(p_manager, EVT_ERROR, "Decoded tile index is "
-				"inconsistent with the number of tiles in the codestream (%d vs %d).\n", tile_index, p_j2k->m_cp.th * p_j2k->m_cp.tw );
+	if ( (tile_index < 0) && (tile_index >= p_j2k->m_cp.tw * p_j2k->m_cp.th) ){
+		opj_event_msg_v2(p_manager, EVT_ERROR, "Tile index provided by the user is incorrect %d (max = %d) \n", tile_index, (p_j2k->m_cp.tw * p_j2k->m_cp.th) - 1);
 		return OPJ_FALSE;
 	}
 
@@ -8400,13 +8415,15 @@ opj_bool j2k_get_tile(	opj_j2k_v2_t *p_j2k,
 	{
 		OPJ_INT32 l_comp_x1, l_comp_y1;
 
+		l_img_comp->factor = p_j2k->m_private_image->comps[compno].factor;
+
 		l_img_comp->x0 = int_ceildiv(p_image->x0, l_img_comp->dx);
 		l_img_comp->y0 = int_ceildiv(p_image->y0, l_img_comp->dy);
 		l_comp_x1 = int_ceildiv(p_image->x1, l_img_comp->dx);
 		l_comp_y1 = int_ceildiv(p_image->y1, l_img_comp->dy);
 
-		l_img_comp->w = int_ceildivpow2(l_comp_x1 - l_img_comp->x0, l_img_comp->factor);
-		l_img_comp->h = int_ceildivpow2(l_comp_y1 - l_img_comp->y0, l_img_comp->factor);
+		l_img_comp->w = int_ceildivpow2(l_comp_x1, l_img_comp->factor) - int_ceildivpow2(l_img_comp->x0, l_img_comp->factor);
+		l_img_comp->h = int_ceildivpow2(l_comp_y1, l_img_comp->factor) - int_ceildivpow2(l_img_comp->y0, l_img_comp->factor);
 
 		l_img_comp++;
 	}
@@ -8421,11 +8438,6 @@ opj_bool j2k_get_tile(	opj_j2k_v2_t *p_j2k,
 		return OPJ_FALSE;
 	}
 	opj_copy_image_header(p_image, p_j2k->m_output_image);
-
-	if ( (tile_index < 0) && (tile_index >= p_j2k->m_cp.tw * p_j2k->m_cp.th) ){
-		opj_event_msg_v2(p_manager, EVT_ERROR, "Tile index provided by the user is incorrect %d (max = %d) \n", tile_index, (p_j2k->m_cp.tw * p_j2k->m_cp.th) - 1);
-		return OPJ_FALSE;
-	}
 
 	p_j2k->m_specific_param.m_decoder.m_tile_ind_to_dec = tile_index;
 
@@ -8460,14 +8472,23 @@ opj_bool j2k_set_decoded_resolution_factor(opj_j2k_v2_t *p_j2k, OPJ_UINT32 res_f
 
 	p_j2k->m_cp.m_specific_param.m_dec.m_reduce = res_factor;
 
-	if (!p_j2k->m_private_image)
-
-
-	for (it_comp = 0 ; it_comp < p_j2k->m_private_image->numcomps; it_comp++)
-	{
-		p_j2k->m_private_image->comps[it_comp].factor = res_factor;
+	if (p_j2k->m_private_image) {
+		if (p_j2k->m_private_image->comps) {
+			if (p_j2k->m_specific_param.m_decoder.m_default_tcp) {
+				if (p_j2k->m_specific_param.m_decoder.m_default_tcp->tccps) {
+					for (it_comp = 0 ; it_comp < p_j2k->m_private_image->numcomps; it_comp++) {
+						OPJ_UINT32 max_res = p_j2k->m_specific_param.m_decoder.m_default_tcp->tccps[it_comp].numresolutions;
+						if ( res_factor >= max_res){
+							opj_event_msg_v2(p_manager, EVT_ERROR, "Resolution factor is superior to the maximum resolution in the component.\n");
+							return OPJ_FALSE;
+						}
+						p_j2k->m_private_image->comps[it_comp].factor = res_factor;
+					}
+					return OPJ_TRUE;
+				}
+			}
+		}
 	}
 
-
-	return OPJ_TRUE;
+	return OPJ_FALSE;
 }
