@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+November 18, 2011
+* [mickael] WIP: fix bug with windows platform and j2k_to_image
+
 November 17, 2011
 * [mickael] WIP: fix bug when decoding an area or a tile with special resolution
 + [mickael] WIP: enhance j2k_to_image with new get_decoded_tile functionality
