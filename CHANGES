@@ -5,8 +5,11 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+November 19, 2011
+* [vincent] fix compilation of libopenjpip (libcurl dependency) with CMake. Credit to Winfried.
+
 November 16, 2011
-* [vincent] fix compilation of libopenjpip (libcurl dependency) and fix 'distcheck' rule
+* [vincent] fix compilation of libopenjpip (libcurl dependency) with the autotools and fix 'distcheck' rule
 
 October 21, 2011
 * [mickael] remove one obvious memory leak from test functions
