@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+November 21, 2011
+* [mickael] WIP: fix bug with windows platform and j2k_dump
+
 November 18, 2011
 * [mickael] WIP: fix bug with windows platform and j2k_to_image
 

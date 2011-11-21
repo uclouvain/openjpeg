@@ -220,6 +220,7 @@ static int infile_format(const char *fname)
 	const char *s, *magic_s;
 	int ext_format, magic_format;
 	unsigned char buf[12];
+	unsigned int l_nb_read; 
 
 	reader = fopen(fname, "rb");
 
@@ -227,7 +228,7 @@ static int infile_format(const char *fname)
 		return -1;
 
 	memset(buf, 0, 12);
-	unsigned int l_nb_read = fread(buf, 1, 12, reader);
+	l_nb_read = fread(buf, 1, 12, reader);
 	fclose(reader);
 	if (l_nb_read != 12)
 		return -1;
