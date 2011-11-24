@@ -47,16 +47,18 @@ TARGET_LINK_LIBRARIES(openjpip_local ${OPENJPEG_LIBRARY_NAME})
 ADD_LIBRARY(openjpip_server STATIC ${OPENJPIP_SRCS})
 TARGET_LINK_LIBRARIES(openjpip_server ${FCGI_LIBNAME})
 SET_TARGET_PROPERTIES(openjpip_server
-  PROPERTIES COMPILE_FLAGS "-DSERVER")
+  PROPERTIES COMPILE_FLAGS "-DSERVER"
+  )
 
-
+# As far as I understand the design openjpip_ libs do not have stable API
+# This is why they are build as static. Thus they should NOT be installed as of yet
 # Install library
- INSTALL(TARGETS openjpip_local
-   EXPORT OpenJPEGTargets
-   DESTINATION ${OPENJPEG_INSTALL_LIB_DIR} COMPONENT Libraries
- )
-
- INSTALL(TARGETS openjpip_server
-   EXPORT OpenJPEGTargets
-   DESTINATION ${OPENJPEG_INSTALL_LIB_DIR} COMPONENT Libraries
- )
+#INSTALL(TARGETS openjpip_local
+#  EXPORT OpenJPEGTargets
+#  DESTINATION ${OPENJPEG_INSTALL_LIB_DIR} COMPONENT Libraries
+#  )
+#
+#INSTALL(TARGETS openjpip_server
+#  EXPORT OpenJPEGTargets
+#  DESTINATION ${OPENJPEG_INSTALL_LIB_DIR} COMPONENT Libraries
+#  )
