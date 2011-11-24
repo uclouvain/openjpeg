@@ -20,8 +20,6 @@
 #cmakedefine HAVE_LCMS1_H
 #cmakedefine HAVE_LCMS2_H
 
-#cmakedefine OPJ_BIG_ENDIAN @CMAKE_WORDS_BIGENDIAN@
-
 /* Byte order.  */
 /* All compilers that support Mac OS X define either __BIG_ENDIAN__ or
 __LITTLE_ENDIAN__ to match the endianness of the architecture being
