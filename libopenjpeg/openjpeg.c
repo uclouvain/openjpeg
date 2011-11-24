@@ -165,7 +165,25 @@ OPJ_SIZE_T opj_skip_from_file (OPJ_SIZE_T p_nb_bytes, FILE * p_user_data)
 
 opj_bool opj_seek_from_file (OPJ_SIZE_T p_nb_bytes, FILE * p_user_data)
 {
-	if (fseek(p_user_data,p_nb_bytes,SEEK_SET)) {
+  /*
+   * p_nb_bytes is 'OPJ_SIZE_T' but fseek takes a 'signed long'
+   * 
+   * As such, fseek can seek to a maximum of 2^31-1 bytes (2 GB)
+   * To support seeking in files between 2 GB and 4 GB :
+   * - first, do a seek with the max supported by fseek
+   * - secondly, seek of the remaining bytes
+   */
+  if (p_nb_bytes > LONG_MAX) {
+    if (fseek(p_user_data,LONG_MAX,SEEK_SET)) {
+      return EXIT_FAILURE;
+    }
+    p_nb_bytes -= LONG_MAX;
+
+    if (fseek(p_user_data,p_nb_bytes,SEEK_CUR)) {
+      return EXIT_FAILURE;
+    }
+  }
+  else if (fseek(p_user_data,p_nb_bytes,SEEK_SET)) {
 		return EXIT_FAILURE;
 	}
 

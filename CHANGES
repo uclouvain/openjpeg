@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+November 24, 2011
+* [jmalik] support seeking in files larger than 2 GB
+
 November 21, 2011
 * [mickael] WIP: fix bug with windows platform and j2k_dump
 
