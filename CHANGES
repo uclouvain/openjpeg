@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+November 27, 2011
+* [jmalik] reverted changeset 1091 (see issue #103)
+
 November 24, 2011
 * [jmalik] support seeking in files larger than 2 GB
 
