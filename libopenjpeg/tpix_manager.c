@@ -33,7 +33,6 @@
  *  \brief Modification of jpip.c from 2KAN indexer
  */
 
-#include <math.h>
 #include "opj_includes.h"
 
 #define MAX(a,b) ((a)>(b)?(a):(b))

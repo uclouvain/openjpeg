@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 November 27, 2011
+* [jmalik] clean up redundant includes already handled in opj_includes.h
 * [jmalik] reverted changeset 1091 (see issue #103)
 
 November 24, 2011

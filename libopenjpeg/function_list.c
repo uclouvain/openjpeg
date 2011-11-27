@@ -24,10 +24,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-//#include "function_list.h"
-//#include "opj_includes.h"
-//#include "opj_malloc.h"
-
 #include "opj_includes.h"
 
 /**
