@@ -18,7 +18,7 @@
 #cmakedefine _LARGEFILE_SOURCE
 #cmakedefine _LARGEFILE64_SOURCE
 #cmakedefine _LARGE_FILES
-#cmakedefine _FILE_OFFSET_BITS
+#cmakedefine _FILE_OFFSET_BITS @_FILE_OFFSET_BITS@
 #cmakedefine HAVE_FSEEKO
 #cmakedefine HAVE__FSEEKI64
 
