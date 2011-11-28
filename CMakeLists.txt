@@ -168,6 +168,10 @@ CHECK_INCLUDE_FILE("sys/stat.h"       HAVE_SYS_STAT_H)
 CHECK_INCLUDE_FILE("sys/types.h"       HAVE_SYS_TYPES_H)
 CHECK_INCLUDE_FILE("unistd.h"       HAVE_UNISTD_H)
 
+# Enable Large file support
+INCLUDE(TestLargeFiles)
+OPJ_TEST_LARGE_FILES(OPJ_HAVE_LARGEFILES)
+
 #-----------------------------------------------------------------------------
 # Build Library
 INCLUDE_DIRECTORIES(BEFORE ${OPENJPEG_BINARY_DIR})

@@ -13,7 +13,15 @@
 #cmakedefine HAVE_LIBPNG 
 #cmakedefine HAVE_PNG_H 
 #cmakedefine HAVE_LIBTIFF
-#cmakedefine HAVE_TIFF_H 
+#cmakedefine HAVE_TIFF_H
+
+#cmakedefine _LARGEFILE_SOURCE
+#cmakedefine _LARGEFILE64_SOURCE
+#cmakedefine _LARGE_FILES
+#cmakedefine _FILE_OFFSET_BITS
+#cmakedefine HAVE_FSEEKO
+#cmakedefine HAVE__FSEEKI64
+
 
 #cmakedefine HAVE_LIBLCMS1
 #cmakedefine HAVE_LIBLCMS2
