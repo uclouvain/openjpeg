@@ -76,6 +76,7 @@ typedef int opj_bool; /*FIXME it should be to follow the name of others OPJ_TYPE
 #define OPJ_TRUE 1
 #define OPJ_FALSE 0
 
+// FIXME : should be better defined by configure/CMake test
 typedef unsigned int	OPJ_UINT32;
 typedef int				OPJ_INT32;
 typedef unsigned short	OPJ_UINT16;
@@ -85,6 +86,17 @@ typedef unsigned char	OPJ_BYTE;
 typedef unsigned int	OPJ_SIZE_T;
 typedef double			OPJ_FLOAT64;
 typedef float			OPJ_FLOAT32;
+
+#if (defined(WIN32) || defined(WIN64)) && !defined(__MINGW32__)
+typedef signed __int64     OPJ_INT64;
+typedef unsigned __int64   OPJ_UINT64;
+#else
+typedef long long          OPJ_INT64;
+typedef unsigned long long OPJ_UINT64;
+#endif
+
+/* 64-bit file and blob offset type */
+typedef OPJ_INT64 OPJ_OFF_T;
 
 // Avoid compile-time warning because parameter is not used
 #define OPJ_ARG_NOT_USED(x) (void)(x)
