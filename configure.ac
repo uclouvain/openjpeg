@@ -60,6 +60,14 @@ AM_CONDITIONAL([HAVE_WIN32], [test "x${have_win32}" = "xyes"])
 AM_CONDITIONAL([HAVE_DARWIN], [test "x${have_darwin}" = "xyes"])
 
 
+# Define the necessary macros to make off_t a 64 bits type
+AC_SYS_LARGEFILE
+
+# If the `fseeko' function is available, define `HAVE_FSEEKO'. Define
+# `_LARGEFILE_SOURCE' if necessary.
+AC_FUNC_FSEEKO
+
+
 ### Additional options to configure
 
 # debug
