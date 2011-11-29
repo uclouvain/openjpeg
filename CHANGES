@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+November 29, 2011
+* [mickael] fix error with new way to detect kdu_expand
+
 November 27, 2011
 * [jmalik] clean up redundant includes already handled in opj_includes.h
 * [jmalik] reverted changeset 1091 (see issue #103)

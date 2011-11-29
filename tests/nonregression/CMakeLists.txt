@@ -263,7 +263,7 @@ FOREACH(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
                                NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-dump) 
     
           # Decode the encoding file with kakadu expand command
-          IF (NOT REF_DECODER_NOTFOUND)
+          IF (REF_DECODER_BIN_PATH)
             IF (NOT WIN32)
               # Need a bash script to export the path of the kakadu library into PATH  
               ADD_TEST( NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-decode-ref
@@ -294,7 +294,7 @@ FOREACH(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
                                  PROPERTIES DEPENDS 
                                  NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-decode-ref)
         
-          ENDIF(NOT REF_DECODER_NOTFOUND)
+          ENDIF(REF_DECODER_BIN_PATH)
       ENDIF(FAILED_TEST_FOUND)     
     
     # DECODER TEST SUITE
