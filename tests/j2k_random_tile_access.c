@@ -259,7 +259,7 @@ int main(int argc, char **argv)
 	if(!opj_get_decoded_tile(dinfo, cio, image, tile_index )){ \
 		fprintf(stderr, "ERROR -> j2k_to_image: failed to decode tile %d\n", tile_index); \
 		opj_stream_destroy(cio); \
-		opj_destroy_cstr_info_v2(cstr_info); \
+		opj_destroy_cstr_info_v2(&cstr_info); \
 		opj_destroy_codec(dinfo); \
 		opj_image_destroy(image); \
 		fclose(fsrc); \
@@ -278,7 +278,7 @@ int main(int argc, char **argv)
 	opj_stream_destroy(cio);
 
 	/* Destroy code stream info */
-	opj_destroy_cstr_info_v2(cstr_info);
+	opj_destroy_cstr_info_v2(&cstr_info);
 
 	/* Free remaining structures */
 	opj_destroy_codec(dinfo);
