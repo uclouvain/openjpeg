@@ -29,7 +29,7 @@ The current implementation uses some results from the 2KAN project (http://www.2
 Version 2.1 covers:
  - JPT-stream (Tile) and JPP-stream (Precinct) media types
  - Session, channels, cache model managements
- - JPIP over HTTP
+ - JPIP over HTTP, HTTP requests and TCP return
  - Indexing JPEG 2000 files
  - Embedding XML formatted metadata
  - Region Of Interest (ROI) requests
@@ -104,12 +104,13 @@ Client:
     % ../opj_dec_server
 
  2. Open image viewers (as many as needed)
-    % java -jar opj_viewer.jar http://hostname/myFCGI path/filename.jp2 [stateless/session] [jptstream/jppstream]
+    % java -jar opj_viewer.jar http://hostname/myFCGI path/filename.jp2 [stateless/session] [jptstream/jppstream] [tcp/udp]
     ( The arguments 
       - http://hostname/myFCGI is the HTTP server URI (myFCGI refers to opj_server by the server setting)
       - path/filename.jp2 is the server local path or URL of a JP2 file
       - request type stateless for no caching, session (default) for caching
-      - return media type, JPT-stream tile based stream, or JPP-stream (default) precinct based stream  
+      - return media type, JPT-stream tile based stream, or JPP-stream (default) precinct based stream
+      - auxiliary return protocol, tcp or udp (udp is not implemented yet), if not given, return data is filled in http chunk
     Image viewer GUI instructions:
       Scale up request: Enlarge the window
       ROI request:      Select a region by mouse click and drag, then click inside the red frame of the selected region
@@ -119,7 +120,7 @@ Client:
       Open a new window presenting an aligned image with a locally stored image: Click button "Image Registration" (Under Construction)
 
  3. Quit the image decoding server through the telnet, be sure all image viewers are closed
-    % telnet localhost 5000
+    % telnet localhost 50000
       quit
 
 ----------

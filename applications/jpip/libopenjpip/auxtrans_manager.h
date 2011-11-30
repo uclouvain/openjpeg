@@ -1,5 +1,5 @@
 /*
- * $Id: opj_dec_server.c 54 2011-05-10 13:22:47Z kaori $
+ * $Id$
  *
  * Copyright (c) 2002-2011, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
  * Copyright (c) 2002-2011, Professor Benoit Macq
@@ -28,57 +28,45 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*! \file
- *  \brief opj_dec_server is a server to decode JPT-stream and communicate locally with JPIP client, which is coded in java.
+#ifndef         AUXTRANS_MANAGER_H_
+# define        AUXTRANS_MANAGER_H_
+
+#include "sock_manager.h"
+
+//! auxiliary transport setting parameters
+typedef struct auxtrans_param{
+  int tcpauxport;       //!< tcp port
+  int udpauxport;       //!< udp port
+  SOCKET tcplistensock; //!< listenning socket for aux tcp (-1 if not open)
+  SOCKET udplistensock; //!< listenning socket for aux udp (-1 if not open)
+} auxtrans_param_t;
+
+/**
+ * Initialize auxiliary transport server of JPIP server
  *
- *  \section impinst Implementing instructions
- *  Launch opj_dec_server from a terminal in the same machine as JPIP client image viewers. \n
- *   % ./opj_dec_server \n
- *  Keep it alive as long as image viewers are open.\n
- *
- *  To quite the opj_dec_server, send a message "quit" through the telnet.\n
- *   % telnet localhost 5000\n
- *     quit\n
- *  Be sure all image viewers are closed.\n
- *  Cache file in JPT format is stored in the working directly before it quites.
- *  
+ * @param[in] tcp_auxport opening tcp auxiliary port ( 0 not to open, valid No. 49152–65535)
+ * @param[in] udp_auxport opening udp auxiliary port ( 0 not to open, valid No. 49152–65535)
+ * @return                intialized transport parameters
  */
+auxtrans_param_t init_aux_transport( int tcp_auxport, int udp_auxport);
 
-#include <stdio.h>
-#include "openjpip.h"
+/**
+ * Close auxiliary transport server of JPIP server
+ *
+ * @param[in] auxtrans closing transport server
+ */
+void close_aux_transport( auxtrans_param_t auxtrans);
 
-#ifdef _WIN32
-WSADATA initialisation_win32;
-#endif
+/**
+ * Send response data on aux transport
+ *
+ * @param[in] istcp          true if tcp, false if udp
+ * @param[in] auxtrans       available transport parameters
+ * @param[in] cid            channel ID
+ * @param[in] data           sending data
+ * @param[in] length         length of data
+ * @param[in] maxlenPerFrame maximum data length to send per frame
+ */
+void send_responsedata_on_aux( bool istcp, auxtrans_param_t auxtrans, char cid[], void *data, int length, int maxlenPerFrame);
 
-int main(int argc, char *argv[]){
-  
-  dec_server_record_t *server_record;
-  client_t client;
-
-#ifdef _WIN32
-  int erreur = WSAStartup(MAKEWORD(2,2),&initialisation_win32);
-  if( erreur!=0)
-    fprintf( stderr, "Erreur initialisation Winsock error : %d %d\n",erreur,WSAGetLastError());
-  else
-    printf( "Initialisation Winsock\n");
-#endif //_WIN32
-  
-  server_record = init_dec_server( 50000);
-  
-  while(( client = accept_connection( server_record)) != -1 )
-    if(!handle_clientreq( client, server_record))
-      break;
-  
-  terminate_dec_server( &server_record);
-
-#ifdef _WIN32
-  if( WSACleanup() != 0){
-    printf("\nError in WSACleanup : %d %d",erreur,WSAGetLastError());
-  }else{
-    printf("\nWSACleanup OK\n");
-  }
-#endif
-
-  return 0;
-}
+#endif /* !AUXTRANS_MANAGER_H_ */

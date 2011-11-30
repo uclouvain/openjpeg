@@ -383,13 +383,12 @@ void enqueue_message( message_param_t *msg, msgqueue_param_t *msgqueue)
   msgqueue->last = msg;
 }
 
+void add_bin_id_vbas_stream( Byte_t bb, Byte_t c, Byte8_t in_class_id, int tmpfd);
+void add_vbas_stream( Byte8_t code, int tmpfd);
+void add_body_stream( message_param_t *msg, int fd, int tmpfd);
+void add_placeholder_stream( placeholder_param_t *phld, int tmpfd);
 
-void emit_bin_id_vbas( Byte_t bb, Byte_t c, Byte8_t in_class_id);
-void emit_vbas( Byte8_t code);
-void emit_body( message_param_t *msg, int fd);
-void emit_placeholder( placeholder_param_t *phld);
-
-void emit_stream_from_msgqueue( msgqueue_param_t *msgqueue)
+void recons_stream_from_msgqueue( msgqueue_param_t *msgqueue, int tmpfd)
 {
   message_param_t *msg;
   Byte8_t class_id, csn;
@@ -417,33 +416,33 @@ void emit_stream_from_msgqueue( msgqueue_param_t *msgqueue)
     }
 
     c = msg->last_byte ? 1 : 0;
-      
-    emit_bin_id_vbas( bb, c, msg->in_class_id);
+    
+    add_bin_id_vbas_stream( bb, c, msg->in_class_id, tmpfd);
     
     if( bb >= 2)
-      emit_vbas( class_id);
+      add_vbas_stream( class_id, tmpfd);
     if (bb == 3)
-      emit_vbas( csn);
+      add_vbas_stream( csn, tmpfd);
     
-    emit_vbas( msg->bin_offset);
-    emit_vbas (msg->length);
+    add_vbas_stream( msg->bin_offset, tmpfd);
+    add_vbas_stream (msg->length, tmpfd);
     
     if( msg->class_id%2) // Aux is present only if the id is odd
-      emit_vbas( msg->aux);
+      add_vbas_stream( msg->aux, tmpfd);
 
     if( msg->phld)
-      emit_placeholder( msg->phld);
+      add_placeholder_stream( msg->phld, tmpfd);
     else
-      emit_body( msg, msgqueue->cachemodel->target->fd);
+      add_body_stream( msg, msgqueue->cachemodel->target->fd, tmpfd);
 
     msg = msg->next;
   }
 }
 
-void emit_vbas_with_bytelen( Byte8_t code, int bytelength);
+void add_vbas_with_bytelen_stream( Byte8_t code, int bytelength, int tmpfd);
 void print_binarycode( Byte8_t n, int segmentlen);
 
-void emit_bin_id_vbas( Byte_t bb, Byte_t c, Byte8_t in_class_id)
+void add_bin_id_vbas_stream( Byte_t bb, Byte_t c, Byte8_t in_class_id, int tmpfd)
 {
   int bytelength;
   Byte8_t tmp;
@@ -459,10 +458,10 @@ void emit_bin_id_vbas( Byte_t bb, Byte_t c, Byte8_t in_class_id)
 
   in_class_id |= (((bb & 3) << 5) | (c & 1) << 4) << ((bytelength-1)*7);
   
-  emit_vbas_with_bytelen( in_class_id, bytelength);
+  add_vbas_with_bytelen_stream( in_class_id, bytelength, tmpfd);
 }
 
-void emit_vbas( Byte8_t code)
+void add_vbas_stream( Byte8_t code, int tmpfd)
 {
   int bytelength;
   Byte8_t tmp;
@@ -472,10 +471,10 @@ void emit_vbas( Byte8_t code)
   while( tmp >>= 7)
     bytelength ++;
 
-  emit_vbas_with_bytelen( code, bytelength);
+  add_vbas_with_bytelen_stream( code, bytelength, tmpfd);
 }
 
-void emit_vbas_with_bytelen( Byte8_t code, int bytelength)
+void add_vbas_with_bytelen_stream( Byte8_t code, int bytelength, int tmpfd)
 {
   int n;
   Byte8_t seg;
@@ -485,47 +484,47 @@ void emit_vbas_with_bytelen( Byte8_t code, int bytelength)
     seg = ( code >> (n*7)) & 0x7f;
     if( n)
       seg |= 0x80;
-    fputc(( Byte4_t)seg, FCGI_stdout);
+    write( tmpfd, ( Byte4_t *)&seg, 1);
     n--;
   }
 }
 
-void emit_body( message_param_t *msg, int fd)
+void add_body_stream( message_param_t *msg, int fd, int tmpfd)
 {
   Byte_t *data;
 
   if( !(data = fetch_bytes( fd, msg->res_offset, msg->length))){
-    fprintf( FCGI_stderr, "Error: fetch_bytes in emit_body()\n");
+    fprintf( FCGI_stderr, "Error: fetch_bytes in add_body_stream()\n");
     return;
   }
 
-  if( fwrite( data, msg->length, 1, FCGI_stdout) < 1){
+  if( write( tmpfd, data, msg->length) < 1){
     free( data);
-    fprintf( FCGI_stderr, "Error: fwrite in emit_body()\n");
+    fprintf( FCGI_stderr, "Error: fwrite in add_body_stream()\n");
     return;
   }
   free(data);
 }
 
-void emit_bigendian_bytes( Byte8_t code, int bytelength);
+void add_bigendian_bytestream( Byte8_t code, int bytelength, int tmpfd);
 
-void emit_placeholder( placeholder_param_t *phld)
+void add_placeholder_stream( placeholder_param_t *phld, int tmpfd)
 {
-  emit_bigendian_bytes( phld->LBox, 4);
-  if( fwrite( phld->TBox, 4, 1, FCGI_stdout) < 1){
-    fprintf( FCGI_stderr, "Error: fwrite in emit_placeholder()\n");
+  add_bigendian_bytestream( phld->LBox, 4, tmpfd);
+  if( write( tmpfd, phld->TBox, 4) < 1){
+    fprintf( FCGI_stderr, "Error: fwrite in add_placeholder_stream()\n");
     return;
   }
-  emit_bigendian_bytes( phld->Flags, 4);
-  emit_bigendian_bytes( phld->OrigID, 8);
+  add_bigendian_bytestream( phld->Flags, 4, tmpfd);
+  add_bigendian_bytestream( phld->OrigID, 8, tmpfd);
 
-  if( fwrite( phld->OrigBH, phld->OrigBHlen, 1, FCGI_stdout) < 1){
-    fprintf( FCGI_stderr, "Error: fwrite in emit_placeholder()\n");
+  if( write( tmpfd, phld->OrigBH, phld->OrigBHlen) < 1){
+    fprintf( FCGI_stderr, "Error: fwrite in add_placeholder_stream()\n");
     return;
   }
 }
 
-void emit_bigendian_bytes( Byte8_t code, int bytelength)
+void add_bigendian_bytestream( Byte8_t code, int bytelength, int tmpfd)
 {
   int n;
   Byte8_t seg;
@@ -533,7 +532,7 @@ void emit_bigendian_bytes( Byte8_t code, int bytelength)
   n = bytelength - 1;
   while( n >= 0) {
     seg = ( code >> (n*8)) & 0xff;
-    fputc(( Byte4_t)seg, FCGI_stdout);
+    write( tmpfd, ( Byte4_t *)&seg, 1);
     n--;
   }
 }

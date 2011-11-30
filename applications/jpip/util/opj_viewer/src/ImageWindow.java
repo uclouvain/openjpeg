@@ -37,13 +37,13 @@ public class ImageWindow extends JFrame
     private ImageViewer imgviewer;
     private ImageManager imgmanager;
     
-    public ImageWindow( String uri, String j2kfilename, boolean session, boolean jppstream)
+    public ImageWindow( String uri, String j2kfilename, boolean session, boolean jppstream, int aux)
     {
 	super( j2kfilename);
 
 	imgmanager = new ImageManager( uri);
-    
-	imgviewer = new ImageViewer( j2kfilename, imgmanager, session, jppstream);
+	
+	imgviewer = new ImageViewer( j2kfilename, imgmanager, session, jppstream, aux);
 	imgviewer.setOpaque(true); //content panes must be opaque
 
 	JPanel panel = new JPanel();
@@ -68,6 +68,7 @@ public class ImageWindow extends JFrame
     {
 	String j2kfilename, uri;
 	boolean session, jppstream;
+	int aux; // 0: none, 1: tcp, 2: udp
 
 	if(s.length >= 2){
 	    uri = s[0];
@@ -81,12 +82,21 @@ public class ImageWindow extends JFrame
 		jppstream = !s[3].equalsIgnoreCase( "JPT");
 	    else
 		jppstream = true;
+
+	    if( s.length > 4){
+		if( s[4].equalsIgnoreCase("udp"))
+		    aux = 2;
+		else
+		    aux = 1;
+	    }
+	    else
+		aux = 0;
 	}
 	else{
-	    System.out.println("Usage: java -jar opj_viewer.jar HTTP_server_URI imagefile.jp2 [stateless/session] [JPT/JPP]");
+	    System.out.println("Usage: java -jar opj_viewer.jar HTTP_server_URI imagefile.jp2 [stateless/session] [JPT/JPP] [tcp/udp]");
 	    return;
 	}
-	ImageWindow frame = new ImageWindow( uri, j2kfilename, session, jppstream);
+	ImageWindow frame = new ImageWindow( uri, j2kfilename, session, jppstream, aux);
     
 	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
    

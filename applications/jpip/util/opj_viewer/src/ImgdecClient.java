@@ -49,7 +49,7 @@ public class ImgdecClient{
     public static void send_JPIPstream( byte[] jpipstream)
     {
 	try{
-	    Socket imgdecSocket = new Socket( "localhost", 5000);
+	    Socket imgdecSocket = new Socket( "localhost", 50000);
 	    DataOutputStream os = new DataOutputStream( imgdecSocket.getOutputStream());
 	    DataInputStream  is = new DataInputStream( imgdecSocket.getInputStream());
       
@@ -74,7 +74,7 @@ public class ImgdecClient{
     public static void send_JPIPstream( byte[] jpipstream, String j2kfilename, String tid, String cid)
     {
 	try{
-	    Socket imgdecSocket = new Socket( "localhost", 5000);
+	    Socket imgdecSocket = new Socket( "localhost", 50000);
 	    DataOutputStream os = new DataOutputStream( imgdecSocket.getOutputStream());
 	    DataInputStream  is = new DataInputStream( imgdecSocket.getInputStream());
 	    int length = 0;
@@ -114,7 +114,7 @@ public class ImgdecClient{
 	PnmImage pnmstream = null;
 	
 	try {
-	    Socket imgdecSocket = new Socket( "localhost", 5000);
+	    Socket imgdecSocket = new Socket( "localhost", 50000);
 	    DataOutputStream os = new DataOutputStream( imgdecSocket.getOutputStream());
 	    DataInputStream is = new DataInputStream( imgdecSocket.getInputStream());
 	    byte []header = new byte[7];
@@ -171,7 +171,7 @@ public class ImgdecClient{
 	byte []xmldata = null;
 
 	try{
-	    Socket imgdecSocket = new Socket( "localhost", 5000);
+	    Socket imgdecSocket = new Socket( "localhost", 50000);
 	    DataOutputStream os = new DataOutputStream( imgdecSocket.getOutputStream());
 	    DataInputStream is = new DataInputStream( imgdecSocket.getInputStream());
 	    byte []header = new byte[5];
@@ -222,7 +222,7 @@ public class ImgdecClient{
 	String id = null;
 	
 	try{
-	    Socket imgdecSocket = new Socket( "localhost", 5000);
+	    Socket imgdecSocket = new Socket( "localhost", 50000);
 	    DataOutputStream os = new DataOutputStream( imgdecSocket.getOutputStream());
 	    DataInputStream is = new DataInputStream( imgdecSocket.getInputStream());
 	    byte []header = new byte[4];
@@ -259,7 +259,7 @@ public class ImgdecClient{
 	java.awt.Dimension dim = null;
 
 	try{
-	    Socket imgdecSocket = new Socket( "localhost", 5000);
+	    Socket imgdecSocket = new Socket( "localhost", 50000);
 	    DataOutputStream os = new DataOutputStream( imgdecSocket.getOutputStream());
 	    DataInputStream is = new DataInputStream( imgdecSocket.getInputStream());
 	    byte []header = new byte[3];
@@ -321,7 +321,7 @@ public class ImgdecClient{
     public static void destroy_cid( String cid)
     {
 	try{
-	    Socket imgdecSocket = new Socket( "localhost", 5000);
+	    Socket imgdecSocket = new Socket( "localhost", 50000);
 	    DataOutputStream os = new DataOutputStream( imgdecSocket.getOutputStream());
 	    DataInputStream  is = new DataInputStream( imgdecSocket.getInputStream());
 	    

@@ -68,6 +68,7 @@ bool associate_channel( query_param_t    query_param,
  *
  * @param[in]     query_param   structured query
  * @param[in]     sessionlist   session list pointer
+ * @param[in]     auxtrans      auxiliary transport
  * @param[in]     target        requested target pointer
  * @param[in,out] cursession    address of the associated/opened session pointer
  * @param[in,out] curchannel    address of the associated/opened channel pointer
@@ -75,6 +76,7 @@ bool associate_channel( query_param_t    query_param,
  */
 bool open_channel( query_param_t query_param, 
 		   sessionlist_param_t *sessionlist,
+		   auxtrans_param_t auxtrans,
 		   target_param_t *target,
 		   session_param_t **cursession, 
 		   channel_param_t **curchannel);

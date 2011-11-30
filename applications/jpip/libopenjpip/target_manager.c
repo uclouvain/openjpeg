@@ -36,10 +36,10 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <time.h>
-#include <curl/curl.h>
 #include "target_manager.h"
 
 #ifdef SERVER
+#include <curl/curl.h>
 #include "fcgi_stdio.h"
 #define logstream FCGI_stdout
 #else
@@ -47,7 +47,6 @@
 #define FCGI_stderr stderr
 #define logstream stderr
 #endif //SERVER
-
 
 targetlist_param_t * gene_targetlist()
 {
@@ -98,10 +97,12 @@ target_param_t * gene_target( targetlist_param_t *targetlist, char *targetpath)
   snprintf( target->tid, MAX_LENOFTID, "%x-%x", (unsigned int)time(NULL), (unsigned int)rand());
   target->targetname = strdup( targetpath); 
   target->fd = fd;
+#ifdef SERVER
   if( tmpfname[0])
     target->tmpfname = strdup( tmpfname);
   else
     target->tmpfname = NULL;
+#endif
   target->csn = last_csn++;
   target->codeidx = jp2idx;
   target->num_of_use = 0; 
@@ -137,10 +138,12 @@ void delete_target( target_param_t **target)
 {
   close( (*target)->fd);
 
+#ifdef SERVER
   if( (*target)->tmpfname){
     fprintf( FCGI_stderr, "Temporal file %s is deleted\n", (*target)->tmpfname);
     remove( (*target)->tmpfname);
   }
+#endif
 
   if( (*target)->codeidx)
     delete_index ( &(*target)->codeidx);
@@ -239,31 +242,17 @@ target_param_t * search_targetBytid( char tid[], targetlist_param_t *targetlist)
   return NULL;
 }
 
-static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream);
+int open_remotefile( char filepath[], char tmpfname[]);
 
 int open_jp2file( char filepath[], char tmpfname[])
 {
   int fd;
   char *data;
-  CURL *curl_handle;
   
   // download remote target file to local storage
   if( strncmp( filepath, "http://", 7) == 0){
-    curl_handle = curl_easy_init();
-    curl_easy_setopt(curl_handle, CURLOPT_URL, filepath);
-    curl_easy_setopt(curl_handle, CURLOPT_NOPROGRESS, 1L);
-    curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_data);
-    
-    snprintf( tmpfname, MAX_LENOFTID, "%x-%x.jp2", (unsigned int)time(NULL), (unsigned int)rand());
-    fprintf( FCGI_stderr, "%s is downloaded to a temporal new file %s\n", filepath, tmpfname);
-    if( (fd = open( tmpfname, O_RDWR|O_CREAT|O_EXCL, S_IRWXU)) == -1){
-      fprintf( FCGI_stdout, "Reason: File open error %s\r\n", tmpfname);
-      curl_easy_cleanup(curl_handle);
+    if( (fd = open_remotefile( filepath, tmpfname)) == -1)
       return -1;
-    }
-    curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, &fd);
-    curl_easy_perform(curl_handle);
-    curl_easy_cleanup(curl_handle);
   }
   else{
     tmpfname[0] = 0;
@@ -301,6 +290,43 @@ int open_jp2file( char filepath[], char tmpfname[])
   return fd;
 }
 
+#ifdef SERVER
+static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream);
+#endif
+
+int open_remotefile( char filepath[], char tmpfname[])
+{
+#ifndef SERVER
+
+  fprintf( FCGI_stderr, "Remote file can not be opened in local mode\n");
+  return -1;
+
+#else
+
+  CURL *curl_handle;
+  int fd;
+    
+  curl_handle = curl_easy_init();
+  curl_easy_setopt(curl_handle, CURLOPT_URL, filepath);
+  curl_easy_setopt(curl_handle, CURLOPT_NOPROGRESS, 1L);
+  curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_data);
+  
+  snprintf( tmpfname, MAX_LENOFTID, "%x-%x.jp2", (unsigned int)time(NULL), (unsigned int)rand());
+  fprintf( FCGI_stderr, "%s is downloaded to a temporal new file %s\n", filepath, tmpfname);
+  if( (fd = open( tmpfname, O_RDWR|O_CREAT|O_EXCL, S_IRWXU)) == -1){
+    fprintf( FCGI_stdout, "Reason: File open error %s\r\n", tmpfname);
+    curl_easy_cleanup(curl_handle);
+    return -1;
+  }
+  curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, &fd);
+  curl_easy_perform(curl_handle);
+  curl_easy_cleanup(curl_handle);
+
+  return fd;
+#endif //SERVER
+}
+
+#ifdef SERVER
 static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream)
 {
   int *fd = (int *)stream;
@@ -308,3 +334,4 @@ static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream)
 
   return written;
 }
+#endif //SERVER

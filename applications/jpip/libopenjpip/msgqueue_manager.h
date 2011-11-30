@@ -145,11 +145,12 @@ void enqueue_metadata( int meta_id, msgqueue_param_t *msgqueue);
 
 
 /**
- * emit stream from message queue
+ * reconstruct JPT/JPP-stream from message queue
  *
  * @param[in] msgqueue message queue pointer
+ * @param[in] tmpfd    file discriptor to write JPT/JPP-stream
  */
-void emit_stream_from_msgqueue( msgqueue_param_t *msgqueue);
+void recons_stream_from_msgqueue( msgqueue_param_t *msgqueue, int tmpfd);
 
 
 /**

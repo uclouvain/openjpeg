@@ -69,14 +69,7 @@ query_param_t * get_initquery();
  */
 char * get_fieldparam( char *stringptr, char *fieldname, char *fieldval);
 
-/**
- * parse string to string array
- *
- * @param[in]  src src string
- * @param[out] cclose parsed string array
- */
-void str2cclose( char *src, char cclose[][MAX_LENOFCID]);
-
+void parse_cclose( char *src, query_param_t *query_param);
 void parse_metareq( char *field, query_param_t *query_param);
 
 // parse the requested components (parses forms like:a; a,b; a-b; a-b,c;  a,b-c)
@@ -104,10 +97,10 @@ query_param_t * parse_query( char *query_string)
 
     if( fieldname[0] != '\0'){
       if( strcasecmp( fieldname, "target") == 0)
-	strcpy( query_param->target,fieldval);
+	query_param->target = strdup( fieldval);
       
       else if( strcasecmp( fieldname, "tid") == 0)
-	strcpy( query_param->tid, fieldval);
+	query_param->tid = strdup( fieldval);
 
       else if( strcasecmp( fieldname, "fsiz") == 0)
 	sscanf( fieldval, "%d,%d", &query_param->fx, &query_param->fy);
@@ -122,13 +115,17 @@ query_param_t * parse_query( char *query_string)
 	sscanf( fieldval, "%d", &query_param->layers);
       
       else if( strcasecmp( fieldname, "cid") == 0)
-	strcpy( query_param->cid, fieldval);
+	query_param->cid = strdup( fieldval);
 
-      else if( strcasecmp( fieldname, "cnew") == 0)
-	query_param->cnew = true;
+      else if( strcasecmp( fieldname, "cnew") == 0){
+	if( strncasecmp( fieldval, "http-tcp", 8) == 0)
+	  query_param->cnew = tcp;
+	else if( strncasecmp( fieldval, "http", 4) == 0)
+	  query_param->cnew = http;
+      }
       
       else if( strcasecmp( fieldname, "cclose") == 0)
-	str2cclose( fieldval, query_param->cclose);
+	parse_cclose( fieldval, query_param);
       
       else if( strcasecmp( fieldname, "metareq") == 0)
 	parse_metareq( fieldval, query_param);
@@ -157,8 +154,8 @@ query_param_t * get_initquery()
 
   query = (query_param_t *)malloc( sizeof(query_param_t));
 
-  query->target[0] = '\0';
-  query->tid[0] = '\0';
+  query->target = NULL;
+  query->tid = NULL;
   query->fx = -1;
   query->fy = -1;
   query->rx = -1;
@@ -168,9 +165,10 @@ query_param_t * get_initquery()
   query->layers = -1;
   query->lastcomp = -1;
   query->comps = NULL;  
-  query->cid[0] = '\0';
-  query->cnew = false;
-  memset( query->cclose, 0, MAX_NUMOFCCLOSE*MAX_LENOFCID);
+  query->cid = NULL;
+  query->cnew = non;
+  query->cclose = NULL;
+  query->numOfcclose = 0;
   memset( query->box_type, 0, MAX_NUMOFBOX*4);
   memset( query->limit, 0, MAX_NUMOFBOX*sizeof(int));
   for( i=0; i<MAX_NUMOFBOX; i++){
@@ -218,14 +216,21 @@ char * get_fieldparam( char *stringptr, char *fieldname, char *fieldval)
 void print_queryparam( query_param_t query_param)
 {
   int i;
+  char *cclose;
 
   fprintf( logstream, "query parameters:\n");
-  fprintf( logstream, "\t target: %s\n", query_param.target);
-  fprintf( logstream, "\t tid: %s\n", query_param.tid);
+  
+  if( query_param.target)
+    fprintf( logstream, "\t target: %s\n", query_param.target);
+  
+  if( query_param.tid)
+    fprintf( logstream, "\t tid: %s\n", query_param.tid);
+  
   fprintf( logstream, "\t fx,fy: %d, %d\n", query_param.fx, query_param.fy);
   fprintf( logstream, "\t rx,ry: %d, %d \t rw,rh: %d, %d\n", query_param.rx, query_param.ry, query_param.rw, query_param.rh);
   fprintf( logstream, "\t layers: %d\n", query_param.layers);
   fprintf( logstream, "\t components: ");
+  
   if( query_param.lastcomp == -1)
     fprintf( logstream, "ALL\n");
   else{
@@ -235,13 +240,20 @@ void print_queryparam( query_param_t query_param)
     fprintf( logstream, "\n");
   }
   fprintf( logstream, "\t cnew: %d\n", query_param.cnew);
-  fprintf( logstream, "\t cid: %s\n", query_param.cid);
   
-  fprintf( logstream, "\t cclose: ");
-  for( i=0; query_param.cclose[i][0]!=0 && i<MAX_NUMOFCCLOSE; i++)
-    fprintf( logstream, "%s ", query_param.cclose[i]);
-  fprintf(logstream, "\n");
+  if( query_param.cid)
+    fprintf( logstream, "\t cid: %s\n", query_param.cid);
   
+  if( query_param.cclose){
+    fprintf( logstream, "\t cclose: ");
+    
+    for( i=0, cclose=query_param.cclose; i<query_param.numOfcclose; i++){
+      fprintf( logstream, "%s ", cclose);
+      cclose += (strlen(cclose)+1);
+    }
+    fprintf(logstream, "\n");
+  }
+
   fprintf( logstream, "\t req-box-prop\n");
   for( i=0; query_param.box_type[i][0]!=0 && i<MAX_NUMOFBOX; i++){
     fprintf( logstream, "\t\t box_type: %.4s limit: %d w:%d s:%d g:%d a:%d priority:%d\n", query_param.box_type[i], query_param.limit[i], query_param.w[i], query_param.s[i], query_param.g[i], query_param.a[i], query_param.priority[i]);
@@ -254,20 +266,21 @@ void print_queryparam( query_param_t query_param)
   fprintf( logstream, "\t len:  %d\n", query_param.len);
 }
 
-void str2cclose( char *src, char cclose[][MAX_LENOFCID])
+void parse_cclose( char *src, query_param_t *query_param)
 {
-  int i, u, v;
-
-  size_t len = strlen( src);
+  int i;
+  size_t len;
   
-  for( i=0, u=0, v=0; i<len; i++){
-    if( src[i]==','){
-      u++;
-      v=0;
+  len = strlen( src);
+  query_param->cclose = strdup( src);
+  
+  for( i=0; i<len; i++)
+    if( query_param->cclose[i] == ','){
+      query_param->cclose[i] = '\0';
+      query_param->numOfcclose ++;
     }
-    else
-      cclose[u][v++] = src[i];
-  }
+  
+  query_param->numOfcclose ++;
 }
 
 void parse_req_box_prop( char *req_box_prop, int idx, query_param_t *query_param);
@@ -386,6 +399,20 @@ void parse_comps( char *field, query_param_t *query_param)
 
 void delete_query( query_param_t **query)
 {
-  free((*query)->comps);
+  if( (*query)->target)
+    free( (*query)->target);
+  
+  if( (*query)->tid)
+    free( (*query)->tid);
+  
+  if( (*query)->comps)
+    free((*query)->comps);
+  
+  if( (*query)->cid)
+    free( (*query)->cid);
+
+  if( (*query)->cclose)
+    free( (*query)->cclose);
+  
   free( *query);
 }

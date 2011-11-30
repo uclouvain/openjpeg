@@ -29,6 +29,8 @@ target_manager.c \
 cachemodel_manager.c \
 j2kheader_manager.c \
 jp2k_encoder.c \
+sock_manager.c \
+auxtrans_manager.c \
 openjpip.h \
 bool.h \
 boxheader_manager.h \
@@ -53,7 +55,9 @@ query_parser.h \
 channel_manager.h \
 session_manager.h \
 jpip_parser.h \
-jp2k_decoder.h
+jp2k_decoder.h \
+sock_manager.h \
+auxtrans_manager.h
 
 LOCAL_SRC = jp2k_decoder.c \
 imgsock_manager.c \
