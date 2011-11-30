@@ -5,6 +5,15 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+November 30, 2011
+* [jmalik] implement Large File support in the library :
+           - fix portability layer for windows (need WIN32)
+           - include opj_config.h before any system header (index)
+           - change types related to buffer size to OPJ_SIZE_T, for anything sent to memcpy, fread, fwrite
+           - change types related to index in stream to OPJ_OFF_T, thus resolving to a 64 bit signed integer
+           - change types related to size of stream to OPJ_UINT64_T
+           - change calls to fseek/ftell to LFS-capable OPJ_SEEK/OPJ_TELL
+
 November 29, 2011
 * [mickael] fix error with new way to detect kdu_expand
 

@@ -669,7 +669,7 @@ Add main header marker information
  */
 static void j2k_add_mhmarker(opj_codestream_info_t *cstr_info, unsigned short int type, int pos, int len);
 
-static void j2k_add_mhmarker_v2(opj_codestream_index_t *cstr_index, OPJ_UINT32 type, OPJ_UINT32 pos, OPJ_UINT32 len) ;
+static void j2k_add_mhmarker_v2(opj_codestream_index_t *cstr_index, OPJ_UINT32 type, OPJ_OFF_T pos, OPJ_UINT32 len) ;
 /**
 Add tile header marker information
 @param tileno tile index number
@@ -680,7 +680,7 @@ Add tile header marker information
  */
 static void j2k_add_tlmarker( int tileno, opj_codestream_info_t *cstr_info, unsigned short int type, int pos, int len);
 
-static void j2k_add_tlmarker_v2(OPJ_UINT32 tileno, opj_codestream_index_t *cstr_index, OPJ_UINT32 type, OPJ_UINT32 pos, OPJ_UINT32 len);
+static void j2k_add_tlmarker_v2(OPJ_UINT32 tileno, opj_codestream_index_t *cstr_index, OPJ_UINT32 type, OPJ_OFF_T pos, OPJ_UINT32 len);
 
 /**
  * Reads an unknown marker
@@ -1239,7 +1239,7 @@ static opj_bool j2k_read_soc_v2(	opj_j2k_v2_t *p_j2k,
 	p_j2k->m_specific_param.m_decoder.m_state = J2K_STATE_MHSIZ;
 
 	/* FIXME move it in a index structure included in p_j2k*/
-	p_j2k->cstr_index->main_head_start = (OPJ_UINT32) opj_stream_tell(p_stream) - 2;
+	p_j2k->cstr_index->main_head_start = opj_stream_tell(p_stream) - 2;
 
 	opj_event_msg_v2(p_manager, EVT_INFO, "Start to read j2k main header (%d).\n", p_j2k->cstr_index->main_head_start);
 
@@ -3914,8 +3914,13 @@ opj_bool j2k_read_sod_v2 (
 
 	l_tcp = &(p_j2k->m_cp.tcps[p_j2k->m_current_tile_number]);
 
-	if (p_j2k->m_specific_param.m_decoder.m_last_tile_part)
-		p_j2k->m_specific_param.m_decoder.m_sot_length = opj_stream_get_number_byte_left(p_stream) - 2;
+	if (p_j2k->m_specific_param.m_decoder.m_last_tile_part) {
+		// opj_stream_get_number_byte_left returns OPJ_OFF_T
+		// but we are in the last tile part,
+		// so its result will fit on OPJ_UINT32 unless we find
+		// a file with a single tile part of more than 4 GB...
+		p_j2k->m_specific_param.m_decoder.m_sot_length = (OPJ_UINT32)(opj_stream_get_number_byte_left(p_stream) - 2);
+	}
 	else
 		p_j2k->m_specific_param.m_decoder.m_sot_length -= 2;
 
@@ -3923,10 +3928,10 @@ opj_bool j2k_read_sod_v2 (
 	l_tile_len = &l_tcp->m_data_size;
 
 	if (! *l_current_data) {
-		*l_current_data = (OPJ_BYTE*) opj_malloc/*FIXME V2 -> my_opj_malloc*/(p_j2k->m_specific_param.m_decoder.m_sot_length);
+		*l_current_data = (OPJ_BYTE*) opj_malloc(p_j2k->m_specific_param.m_decoder.m_sot_length);
 	}
 	else {
-		*l_current_data = (OPJ_BYTE*) opj_realloc/*FIXME V2 -> my_opj_realloc*/(*l_current_data, *l_tile_len + p_j2k->m_specific_param.m_decoder.m_sot_length);
+		*l_current_data = (OPJ_BYTE*) opj_realloc(*l_current_data, *l_tile_len + p_j2k->m_specific_param.m_decoder.m_sot_length);
 	}
 
 	if (*l_current_data == 00) {
@@ -3938,8 +3943,9 @@ opj_bool j2k_read_sod_v2 (
 	/* Index */
 	l_cstr_index = p_j2k->cstr_index;
 	if (l_cstr_index) {
-		OPJ_SIZE_T l_current_pos = opj_stream_tell(p_stream) - 2;
-		OPJ_UINT32 l_current_tile_part =l_cstr_index->tile_index[p_j2k->m_current_tile_number].current_tpsno;
+		OPJ_OFF_T l_current_pos = opj_stream_tell(p_stream) - 2;
+
+		OPJ_UINT32 l_current_tile_part = l_cstr_index->tile_index[p_j2k->m_current_tile_number].current_tpsno;
 		l_cstr_index->tile_index[p_j2k->m_current_tile_number].tp_index[l_current_tile_part].end_header =
 				l_current_pos;
 		l_cstr_index->tile_index[p_j2k->m_current_tile_number].tp_index[l_current_tile_part].end_pos =
@@ -3953,12 +3959,6 @@ opj_bool j2k_read_sod_v2 (
 
 		/*l_cstr_index->packno = 0;*/
 	}
-
-
-
-
-
-
 
 	l_current_read_size = opj_stream_read_data(	p_stream,
 												*l_current_data + *l_tile_len,
@@ -5770,7 +5770,7 @@ static void j2k_add_mhmarker(opj_codestream_info_t *cstr_info, unsigned short in
 
 }
 
-static void j2k_add_mhmarker_v2(opj_codestream_index_t *cstr_index, OPJ_UINT32 type, OPJ_UINT32 pos, OPJ_UINT32 len) {
+static void j2k_add_mhmarker_v2(opj_codestream_index_t *cstr_index, OPJ_UINT32 type, OPJ_OFF_T pos, OPJ_UINT32 len) {
 
 	if (!cstr_index)
 		return;
@@ -5812,7 +5812,7 @@ static void j2k_add_tlmarker( int tileno, opj_codestream_info_t *cstr_info, unsi
 	cstr_info->tile[tileno].marknum++;
 }
 
-static void j2k_add_tlmarker_v2(OPJ_UINT32 tileno, opj_codestream_index_t *cstr_index, OPJ_UINT32 type, OPJ_UINT32 pos, OPJ_UINT32 len)
+static void j2k_add_tlmarker_v2(OPJ_UINT32 tileno, opj_codestream_index_t *cstr_index, OPJ_UINT32 type, OPJ_OFF_T pos, OPJ_UINT32 len)
 {
 
 	if (!cstr_index)
@@ -6307,7 +6307,7 @@ opj_bool j2k_copy_default_tcp_and_create_tcd
  *
  * @return	the handler associated with the id.
 */
-const opj_dec_memory_marker_handler_t * j2k_get_marker_handler (const OPJ_UINT32 p_id)
+const opj_dec_memory_marker_handler_t * j2k_get_marker_handler (OPJ_UINT32 p_id)
 {
 	const opj_dec_memory_marker_handler_t *e;
 	for (e = j2k_memory_marker_handler_tab; e->id != 0; ++e) {
@@ -6785,7 +6785,7 @@ opj_bool j2k_decode_tile (	opj_j2k_v2_t * p_j2k,
 
 	l_tcp = &(p_j2k->m_cp.tcps[p_tile_index]);
 	if (! l_tcp->m_data) {
-		j2k_tcp_destroy(&(p_j2k->m_cp.tcps[p_tile_index]));
+		j2k_tcp_destroy(&l_tcp);
 		return OPJ_FALSE;
 	}
 
@@ -8220,14 +8220,14 @@ opj_bool j2k_decode_one_tile (	opj_j2k_v2_t *p_j2k,
 		if (!j2k_allocate_tile_element_cstr_index(p_j2k))
 			return OPJ_FALSE;
 	}
-
 	/* Move into the codestream to the first SOT used to decode the desired tile */
 	l_tile_no_to_dec = p_j2k->m_specific_param.m_decoder.m_tile_ind_to_dec;
 	if (p_j2k->cstr_index->tile_index)
 		if(p_j2k->cstr_index->tile_index->tp_index)
 		{
 			if ( ! p_j2k->cstr_index->tile_index[l_tile_no_to_dec].nb_tps) {
-				/* not build the index for this tile, so we will move to the last SOT read*/
+				/* the index for this tile has not been built,
+				 *  so move to the last SOT read */
 				if ( opj_stream_read_seek(p_stream, p_j2k->m_specific_param.m_decoder.m_last_sot_read_pos+2, p_manager) ){
 					opj_event_msg_v2(p_manager, EVT_ERROR, "Problem with seek function\n");
 					return OPJ_FALSE;

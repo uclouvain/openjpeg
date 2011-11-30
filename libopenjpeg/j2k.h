@@ -611,7 +611,7 @@ typedef struct opj_j2k_dec
 	/** Index of the tile to decode (used in get_tile) */
 	OPJ_INT32 m_tile_ind_to_dec;
 	/** Position of the last SOT marker read */
-	OPJ_UINT32 m_last_sot_read_pos;
+	OPJ_OFF_T m_last_sot_read_pos;
 
 	/**
 	 * Indicate that the current tile-part is assume as the last tile part of the codestream.

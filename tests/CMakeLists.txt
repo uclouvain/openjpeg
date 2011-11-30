@@ -24,6 +24,9 @@ TARGET_LINK_LIBRARIES(comparePGXimages ${OPENJPEG_LIBRARY_NAME}
                                        
 ADD_EXECUTABLE(compare_dump_files ${compare_dump_files_SRCS})
 
+ADD_EXECUTABLE(j2k_random_tile_access j2k_random_tile_access.c)
+TARGET_LINK_LIBRARIES(j2k_random_tile_access ${OPENJPEG_LIBRARY_NAME})
+
 ADD_EXECUTABLE(compareRAWimages ${compareRAWimages_SRCS})
 
 # No image send to the dashboard if lib PNG is not available.

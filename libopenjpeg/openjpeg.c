@@ -132,40 +132,40 @@ opj_codec_private_t;
 /* ---------------------------------------------------------------------- */
 
 
-OPJ_UINT32 opj_read_from_file (void * p_buffer, OPJ_UINT32 p_nb_bytes, FILE * p_file)
+OPJ_SIZE_T opj_read_from_file (void * p_buffer, OPJ_SIZE_T p_nb_bytes, FILE * p_file)
 {
-	OPJ_UINT32 l_nb_read = fread(p_buffer,1,p_nb_bytes,p_file);
+	OPJ_SIZE_T l_nb_read = fread(p_buffer,1,p_nb_bytes,p_file);
 	return l_nb_read ? l_nb_read : -1;
 }
 
-OPJ_UINT32 opj_get_data_length_from_file (FILE * p_file)
+OPJ_UINT64 opj_get_data_length_from_file (FILE * p_file)
 {
-	OPJ_UINT32 file_length = 0;
+	OPJ_OFF_T file_length = 0;
 
-	fseek(p_file, 0, SEEK_END);
-	file_length = ftell(p_file);
-	fseek(p_file, 0, SEEK_SET);
+	OPJ_FSEEK(p_file, 0, SEEK_END);
+	file_length = (OPJ_UINT64)OPJ_FTELL(p_file);
+	OPJ_FSEEK(p_file, 0, SEEK_SET);
 
 	return file_length;
 }
 
-OPJ_UINT32 opj_write_from_file (void * p_buffer, OPJ_UINT32 p_nb_bytes, FILE * p_file)
+OPJ_SIZE_T opj_write_from_file (void * p_buffer, OPJ_SIZE_T p_nb_bytes, FILE * p_file)
 {
 	return fwrite(p_buffer,1,p_nb_bytes,p_file);
 }
 
-OPJ_SIZE_T opj_skip_from_file (OPJ_SIZE_T p_nb_bytes, FILE * p_user_data)
+OPJ_OFF_T opj_skip_from_file (OPJ_OFF_T p_nb_bytes, FILE * p_user_data)
 {
-	if (fseek(p_user_data,p_nb_bytes,SEEK_CUR)) {
+	if (OPJ_FSEEK(p_user_data,p_nb_bytes,SEEK_CUR)) {
 		return -1;
 	}
 
 	return p_nb_bytes;
 }
 
-opj_bool opj_seek_from_file (OPJ_SIZE_T p_nb_bytes, FILE * p_user_data)
+opj_bool opj_seek_from_file (OPJ_OFF_T p_nb_bytes, FILE * p_user_data)
 {
-	if (fseek(p_user_data,p_nb_bytes,SEEK_SET)) {
+	if (OPJ_FSEEK(p_user_data,p_nb_bytes,SEEK_SET)) {
 		return EXIT_FAILURE;
 	}
 
@@ -617,7 +617,7 @@ opj_stream_t* OPJ_CALLCONV opj_stream_create_default_file_stream (FILE * p_file,
 	return opj_stream_create_file_stream(p_file,J2K_STREAM_CHUNK_SIZE,p_is_read_stream);
 }
 
-opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream (FILE * p_file, OPJ_UINT32 p_size, opj_bool p_is_read_stream)
+opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream (FILE * p_file, OPJ_SIZE_T p_size, opj_bool p_is_read_stream)
 {
 	opj_stream_t* l_stream = 00;
 
