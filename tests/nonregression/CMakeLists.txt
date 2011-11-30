@@ -95,7 +95,8 @@ IF (TEST_SUITE_FILES)
     
     # Avoid to process the official test suite
     SET(FILE_ALREADY_READ 0)
-    STRING(REGEX MATCH "test_suite.ctest.in$" FILE_ALREADY_READ ${TEST_SUITE_FILE})
+    GET_FILENAME_COMPONENT(TEST_SUITE_FILENAME ${TEST_SUITE_FILE} NAME)
+    STRING(REGEX MATCH "^test_suite.ctest.in$" FILE_ALREADY_READ ${TEST_SUITE_FILENAME})
    
     IF(NOT FILE_ALREADY_READ) 
       # Configure the additional test suite file:

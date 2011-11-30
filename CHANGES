@@ -13,6 +13,7 @@ November 30, 2011
            - change types related to index in stream to OPJ_OFF_T, thus resolving to a 64 bit signed integer
            - change types related to size of stream to OPJ_UINT64_T
            - change calls to fseek/ftell to LFS-capable OPJ_SEEK/OPJ_TELL
+* [mickael] fix error about the way to detect the additional test suite
 
 November 29, 2011
 * [mickael] fix error with new way to detect kdu_expand
