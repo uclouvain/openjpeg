@@ -125,6 +125,12 @@ static const struct opj_dec_memory_marker_handler * j2k_get_marker_handler (OPJ_
  */
 static void j2k_tcp_destroy (opj_tcp_v2_t *p_tcp);
 
+/**
+ * Destroys the data inside a tile coding parameter structure.
+ *
+ * @param	p_tcp		the tile coding parameter which contain data to destroy.
+ */
+static void j2k_tcp_data_destroy (opj_tcp_v2_t *p_tcp);
 
 /**
  * Destroys a coding parameter structure.
@@ -6488,12 +6494,23 @@ void j2k_tcp_destroy (opj_tcp_v2_t *p_tcp)
 		p_tcp->mct_norms = 00;
 	}
 
-	if (p_tcp->m_data) {
-		opj_free(p_tcp->m_data);
-		p_tcp->m_data = 00;
-	}
+	j2k_tcp_data_destroy(p_tcp);
+
 }
 
+/**
+ * Destroys the data inside a tile coding parameter structure.
+ *
+ * @param	p_tcp		the tile coding parameter which contain data to destroy.
+ */
+void j2k_tcp_data_destroy (opj_tcp_v2_t *p_tcp)
+{
+	if (p_tcp->m_data) {
+		opj_free(p_tcp->m_data);
+		p_tcp->m_data = NULL;
+		p_tcp->m_data_size = 0;
+	}
+}
 
 /**
  * Destroys a coding parameter structure.
@@ -6803,8 +6820,11 @@ opj_bool j2k_decode_tile (	opj_j2k_v2_t * p_j2k,
 		return OPJ_FALSE;
 	}
 
-	j2k_tcp_destroy(l_tcp);
-	p_j2k->m_tcd->tcp = 0;
+	/* To avoid to destroy the tcp which can be useful when we try to decode a tile decoded before (cf j2k_random_tile_access)
+	 * we destroy just the data which will be re-read in read_tile_header*/
+	/*j2k_tcp_destroy(l_tcp);
+	p_j2k->m_tcd->tcp = 0;*/
+	j2k_tcp_data_destroy(l_tcp);
 
 	p_j2k->m_specific_param.m_decoder.m_can_decode = 0;
 	p_j2k->m_specific_param.m_decoder.m_state &= (~ (0x0080));// FIXME J2K_DEC_STATE_DATA);
