@@ -7,6 +7,7 @@ What's New for OpenJPEG
 
 December 1, 2011
 * [mickael] fix a warning about a recent commit (1104)
+* [jmalik]  fix warnings when printing large integers
 
 November 30, 2011
 * [jmalik] implement Large File support in the library :

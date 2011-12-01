@@ -7735,14 +7735,15 @@ void j2k_dump_MH_index(opj_j2k_v2_t* p_j2k, FILE* out_stream)
 
 	fprintf(out_stream, "Codestream index from main header: {\n");
 
-	fprintf(out_stream, "\t Main header start position=%d\n\t Main header end position=%d\n",
+	fprintf(out_stream, "\t Main header start position=%" OPJ_OFF_F "d\n"
+			            "\t Main header end position=%" OPJ_OFF_F "d\n",
 			cstr_index->main_head_start, cstr_index->main_head_end);
 
 	fprintf(out_stream, "\t Marker list: {\n");
 
 	if (cstr_index->marker){
 		for (it_marker=0; it_marker < cstr_index->marknum ; it_marker++){
-			fprintf(out_stream, "\t\t type=%#x, pos=%d, len=%d\n",
+			fprintf(out_stream, "\t\t type=%#x, pos=%" OPJ_OFF_F "d, len=%d\n",
 					cstr_index->marker[it_marker].type,
 					cstr_index->marker[it_marker].pos,
 					cstr_index->marker[it_marker].len );
@@ -7762,7 +7763,7 @@ void j2k_dump_MH_index(opj_j2k_v2_t* p_j2k, FILE* out_stream)
 
 			if (cstr_index->tile_index[it_tile].tp_index){
 				for (it_tile_part =0; it_tile_part < nb_of_tile_part; it_tile_part++){
-					fprintf(out_stream, "\t\t\t tile-part[%d]: star_pos=%d, end_header=%d, end_pos=%d.\n",
+					fprintf(out_stream, "\t\t\t tile-part[%d]: star_pos=%" OPJ_OFF_F "d, end_header=%" OPJ_OFF_F "d, end_pos=%" OPJ_OFF_F "d.\n",
 							it_tile_part,
 							cstr_index->tile_index[it_tile].tp_index[it_tile_part].start_pos,
 							cstr_index->tile_index[it_tile].tp_index[it_tile_part].end_header,
@@ -7772,7 +7773,7 @@ void j2k_dump_MH_index(opj_j2k_v2_t* p_j2k, FILE* out_stream)
 
 			if (cstr_index->tile_index[it_tile].marker){
 				for (it_marker=0; it_marker < cstr_index->tile_index[it_tile].marknum ; it_marker++){
-					fprintf(out_stream, "\t\t type=%#x, pos=%d, len=%d\n",
+					fprintf(out_stream, "\t\t type=%#x, pos=%" OPJ_OFF_F "d, len=%d\n",
 							cstr_index->tile_index[it_tile].marker[it_marker].type,
 							cstr_index->tile_index[it_tile].marker[it_marker].pos,
 							cstr_index->tile_index[it_tile].marker[it_marker].len );
