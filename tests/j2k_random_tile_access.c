@@ -164,6 +164,12 @@ int main(int argc, char **argv)
 	opj_codec_t* dinfo = NULL;				/* Handle to a decompressor */
 	opj_codestream_info_v2_t* cstr_info = NULL;
 
+	/* Index of corner tiles */
+	OPJ_UINT32 tile_ul = 0;
+	OPJ_UINT32 tile_ur = 0;
+	OPJ_UINT32 tile_lr = 0;
+	OPJ_UINT32 tile_ll = 0;
+
 	if (argc != 2) {
 		fprintf(stderr, "Usage: %s <input_file>\n", argv[0]);
 		return EXIT_FAILURE;
@@ -249,10 +255,10 @@ int main(int argc, char **argv)
 
 	fprintf(stdout, "The file contains %dx%d tiles\n", cstr_info->tw, cstr_info->th);
 
-	OPJ_UINT32 tile_ul = 0;
-	OPJ_UINT32 tile_ur = cstr_info->tw - 1;
-	OPJ_UINT32 tile_lr = cstr_info->tw * cstr_info->th - 1;
-	OPJ_UINT32 tile_ll = tile_lr - cstr_info->tw;
+	tile_ul = 0;
+	tile_ur = cstr_info->tw - 1;
+	tile_lr = cstr_info->tw * cstr_info->th - 1;
+	tile_ll = tile_lr - cstr_info->tw;
 
 #define TEST_TILE( tile_index ) \
 	fprintf(stdout, "Decoding tile %d ...\n", tile_index); \
