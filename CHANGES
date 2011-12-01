@@ -6,6 +6,7 @@ What's New for OpenJPEG
 + : added
 
 December 1, 2011
+* [mickael] fix a bug during the creation of the codestream index
 * [mickael] fix a warning about a recent commit (1104)
 * [jmalik]  fix warnings when printing large integers
 

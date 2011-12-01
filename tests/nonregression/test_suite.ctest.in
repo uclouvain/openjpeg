@@ -113,6 +113,8 @@ j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_1.j2k_t5.png -t
 j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_2.j2k_t9.png -t 9 -r 2
 j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_3.j2k_t15.png -t 15 -r 2
 
+j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06.j2k_r4.png -r 4
+
 # prec=4; nb_c=3 ; signd=yes
 j2k_to_image -i @INPUT_CONF_PATH@/p0_04.j2k -o @TEMP_PATH@/p0_04.j2k.png -d 0,0,256,256
 j2k_to_image -i @INPUT_CONF_PATH@/p0_04.j2k -o @TEMP_PATH@/p0_04_1.j2k.png -d 128,0,256,128
