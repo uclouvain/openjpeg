@@ -6802,7 +6802,7 @@ opj_bool j2k_decode_tile (	opj_j2k_v2_t * p_j2k,
 
 	l_tcp = &(p_j2k->m_cp.tcps[p_tile_index]);
 	if (! l_tcp->m_data) {
-		j2k_tcp_destroy(&l_tcp);
+		j2k_tcp_destroy(l_tcp);
 		return OPJ_FALSE;
 	}
 

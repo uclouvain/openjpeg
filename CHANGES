@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+December 1, 2011
+* [mickael] fix a warning about a recent commit (1104)
+
 November 30, 2011
 * [jmalik] implement Large File support in the library :
            - fix portability layer for windows (need WIN32)
