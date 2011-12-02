@@ -7,6 +7,7 @@ What's New for OpenJPEG
 
 December 2, 2011
 + [mathieu] Adding CPack mechanism
+* [mathieu] remove hack with bash around kdu_expand
 
 December 1, 2011
 * [mickael] fix a bug during the creation of the codestream index

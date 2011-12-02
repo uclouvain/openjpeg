@@ -1,12 +1,12 @@
 JPIPLIBDIR = ../libopenjpip
 
 SLIBFNAME = $(JPIPLIBDIR)/libopenjpip_server.a
-SCFLAGS  = -O3 -Wall -m32 -I$(JPIPLIBDIR) -DSERVER -DQUIT_SIGNAL=\"quitJPIP\"
+SCFLAGS  = -g -Wall -I$(JPIPLIBDIR) -DSERVER -DQUIT_SIGNAL=\"quitJPIP\"
 SLDFLAGS = -L$(JPIPLIBDIR) -lm -lfcgi -lopenjpip_server
 
 J2KINCDIR = ../../../libopenjpeg
-J2KLIBDIR = $(J2KINCDIR)/.libs
-LIBFNAME = $(JPIPLIBDIR)/libopenjpip_local.a $(J2KLIBDIR)/libopenjpeg.a
+J2KLIBDIR = $(J2KINCDIR)/../bin/bin
+LIBFNAME = $(JPIPLIBDIR)/libopenjpip_local.a $(J2KLIBDIR)/libopenjpeg.so
 CFLAGS  = -O3 -Wall -I$(JPIPLIBDIR)
 LDFLAGS = -L$(JPIPLIBDIR) -L$(J2KLIBDIR) -lm -lopenjpip_local
 

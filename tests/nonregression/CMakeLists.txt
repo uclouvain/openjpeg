@@ -11,19 +11,8 @@ SET(INPUT_NR_PATH ${INPUT_NR})
 SET(TEMP_PATH ${TEMP})
 SET(INPUT_CONF_PATH ${OPJ_DATA_ROOT}/input/conformance)
 
-# FIXME: should be corectly manage with a find kakadu
-IF (NOT WIN32)
-CONFIGURE_FILE("opj_ref_decode_cmd.sh.in"
-               "${CMAKE_CURRENT_BINARY_DIR}/opj_ref_decode_cmd.sh"
-               @ONLY)
-ENDIF (NOT WIN32)
-
-IF (NOT REF_DECODER_BIN_PATH)
-  MESSAGE(STATUS "REF_DECODER_BIN_PATH not set, if you want all the encoding tests suite provide the path to kdu_expand")  
-ENDIF (NOT REF_DECODER_BIN_PATH)
-
-
-
+# need kdu_expand if possible
+find_package(KAKADU)
 
 #########################################################################
 # GENERATION OF THE TEST SUITE (DUMP)
@@ -264,21 +253,12 @@ FOREACH(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
                                NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-dump) 
     
           # Decode the encoding file with kakadu expand command
-          IF (REF_DECODER_BIN_PATH)
-            IF (NOT WIN32)
-              # Need a bash script to export the path of the kakadu library into PATH  
-              ADD_TEST( NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-decode-ref
-                bash ${CMAKE_CURRENT_BINARY_DIR}/opj_ref_decode_cmd.sh
-                -i ${OUTPUT_FILENAME}
-                -o ${OUTPUT_FILENAME}.raw
+          IF (KDU_EXPAND_EXECUTABLE)
+            ADD_TEST(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-decode-ref
+              ${KDU_EXPAND_EXECUTABLE}
+              -i ${OUTPUT_FILENAME}
+              -o ${OUTPUT_FILENAME}.raw
               )
-            ELSE (NOT WIN32)
-              ADD_TEST(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-decode-ref
-                ${REF_DECODER_BIN_PATH}/kdu_expand
-                -i ${OUTPUT_FILENAME}
-                -o ${OUTPUT_FILENAME}.raw
-              )
-            ENDIF (NOT WIN32)
         
             SET_TESTS_PROPERTIES(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-decode-ref
                                  PROPERTIES DEPENDS 
@@ -295,7 +275,7 @@ FOREACH(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
                                  PROPERTIES DEPENDS 
                                  NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-decode-ref)
         
-          ENDIF(REF_DECODER_BIN_PATH)
+          ENDIF()
       ENDIF(FAILED_TEST_FOUND)     
     
     # DECODER TEST SUITE

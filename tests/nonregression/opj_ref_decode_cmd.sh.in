@@ -1,4 +1,0 @@
-#!/bin/bash
-export LD_LIBRARY_PATH="@REF_DECODER_BIN_PATH@"
-echo run following command: @REF_DECODER_BIN_PATH@/kdu_expand $@
-@REF_DECODER_BIN_PATH@/kdu_expand $@

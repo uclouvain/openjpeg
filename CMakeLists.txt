@@ -224,15 +224,6 @@ IF(BUILD_TESTING)
       ${CMAKE_SOURCE_DIR}/../data
       )
 
-    # For encoding tests we need the path to the ref decoder exe/lib (kakadu)     
-    FIND_PROGRAM(REF_DECODER_BIN
-                 NAMES kdu_expand
-                 DOC "Kakadu kdu_expand program used in encoder non-regression testing")
-    IF(REF_DECODER_BIN)
-      GET_FILENAME_COMPONENT(REF_DECODER_BIN_PATH ${REF_DECODER_BIN} PATH CACHE)
-      MARK_AS_ADVANCED(REF_DECODER_BIN_PATH)
-    ENDIF(REF_DECODER_BIN)
-    
     # Add repository where to find tests
     ADD_SUBDIRECTORY(tests)
     
