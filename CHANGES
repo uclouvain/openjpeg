@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+December 2, 2011
++ [mathieu] Adding CPack mechanism
+
 December 1, 2011
 * [mickael] fix a bug during the creation of the codestream index
 * [mickael] fix a warning about a recent commit (1104)
