@@ -34,8 +34,8 @@
 @file tcd.h
 @brief Implementation of a tile coder/decoder (TCD)
 
-The functions in TCD.C have for goal to encode or decode each tile independently from
-each other. The functions in TCD.C are used by some function in J2K.C.
+The functions in TCD.C encode or decode each tile independently from
+each other. The functions in TCD.C are used by other functions in J2K.C.
 */
 
 /** @defgroup TCD TCD - Implementation of a tile coder/decoder */
@@ -126,7 +126,7 @@ typedef struct opj_tcd_cblk_enc_v2 {
 
 typedef struct opj_tcd_cblk_dec {
   unsigned char* data;	/* Data */
-  opj_tcd_seg_t* segs;		/* segments informations */
+  opj_tcd_seg_t* segs;		/* segments information */
 	int x0, y0, x1, y1;		/* dimension of the code-blocks : left upper corner (x0, y0) right low corner (x1,y1) */
   int numbps;
   int numlenbits;
@@ -138,7 +138,7 @@ typedef struct opj_tcd_cblk_dec {
 
 typedef struct opj_tcd_cblk_dec_v2 {
 	OPJ_BYTE * data;				/* Data */
-	opj_tcd_seg_t* segs;			/* segments informations */
+	opj_tcd_seg_t* segs;			/* segments information */
 	OPJ_INT32 x0, y0, x1, y1;		/* dimension of the code-blocks : left upper corner (x0, y0) right low corner (x1,y1) */
 	OPJ_UINT32 numbps;
 	OPJ_UINT32 numlenbits;
@@ -154,8 +154,8 @@ FIXME: documentation
 */
 typedef struct opj_tcd_precinct {
   int x0, y0, x1, y1;		/* dimension of the precinct : left upper corner (x0, y0) right low corner (x1,y1) */
-  int cw, ch;			/* number of precinct in width and heigth */
-  union{		/* code-blocks informations */
+  int cw, ch;			/* number of precinct in width and height */
+  union{		/* code-blocks information */
 	  opj_tcd_cblk_enc_t* enc;
 	  opj_tcd_cblk_dec_t* dec;
   } cblks;
@@ -166,8 +166,8 @@ typedef struct opj_tcd_precinct {
 
 typedef struct opj_tcd_precinct_v2 {
 	OPJ_INT32 x0, y0, x1, y1;		/* dimension of the precinct : left upper corner (x0, y0) right low corner (x1,y1) */
-	OPJ_UINT32 cw, ch;				/* number of precinct in width and heigth */
-	union{							/* code-blocks informations */
+	OPJ_UINT32 cw, ch;				/* number of precinct in width and height */
+	union{							/* code-blocks information */
 		opj_tcd_cblk_enc_v2_t* enc;
 		opj_tcd_cblk_dec_v2_t* dec;
 	} cblks;
@@ -266,7 +266,7 @@ typedef struct opj_tcd_tile_v2 {
 FIXME: documentation
 */
 typedef struct opj_tcd_image {
-  int tw, th;			/* number of tiles in width and heigth */
+  int tw, th;			/* number of tiles in width and height */
   opj_tcd_tile_t *tiles;		/* Tiles information */
 } opj_tcd_image_t;
 
@@ -371,11 +371,10 @@ Destroy a previously created TCD handle
 void tcd_destroy_v2(opj_tcd_v2_t *tcd);
 
 /**
- * Initialize the tile coder and may reuse some meory.
+ * Initialize the tile coder and may reuse some memory.
  * @param	p_tcd		TCD handle.
  * @param	p_image		raw image.
  * @param	p_cp		coding parameters.
- * @param	p_tile_no	current tile index to encode.
  *
  * @return true if the encoding values could be set (false otherwise).
 */
@@ -388,13 +387,10 @@ opj_bool tcd_init_v2(	opj_tcd_v2_t *p_tcd,
  * Allocates memory for decoding a specific tile.
  *
  * @param	p_tcd		the tile decoder.
- * @param	p_image		the image to decode.
- * @param	p_cp		the decoding parameters.
- * @param	p_tile_no	the index of the tile received in sequence. This not necesseraly lead to the
+ * @param	p_tile_no	the index of the tile received in sequence. This not necessarily lead to the
  * tile at index p_tile_no.
- * @param	p_cstr_info	codestream info (if any).
  *
- * @return	true if the remaining data is sufficient.s
+ * @return	true if the remaining data is sufficient.
  */
 opj_bool tcd_init_decode_tile(
 							opj_tcd_v2_t *p_tcd,

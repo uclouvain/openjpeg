@@ -542,10 +542,9 @@ static opj_bool jp2_read_ihdr(opj_jp2_t *jp2, opj_cio_t *cio) {
 /**
  * Reads a IHDR box - Image Header box
  *
- * @param	p_image_header_data			pointer to actual data (already read from file)
  * @param	jp2							the jpeg2000 file codec.
+ * @param	p_image_header_data			pointer to actual data (already read from file)
  * @param	p_image_header_size			the size of the image header
- * @param	p_image_header_max_size		maximum size of the header, any size bigger than this value should result the function to output false.
  * @param	p_manager					the user event manager.
  *
  * @return	true if the image header is valid, fale else.
@@ -675,13 +674,12 @@ static opj_bool jp2_read_bpcc(opj_jp2_t *jp2, opj_cio_t *cio) {
 /**
  * Reads a Bit per Component box.
  *
- * @param	p_bpc_header_data			pointer to actual data (already read from file)
  * @param	jp2							the jpeg2000 file codec.
+ * @param	p_bpc_header_data			pointer to actual data (already read from file)
  * @param	p_bpc_header_size			pointer that will hold the size of the bpc header
- * @param	p_bpc_header_max_size		maximum size of the header, any size bigger than this value should result the function to output false.
  * @param	p_manager					the user event manager.
  *
- * @return	true if the bpc header is valid, fale else.
+ * @return	true if the bpc header is valid, false otherwise.
  */
 opj_bool jp2_read_bpcc_v2(	opj_jp2_v2_t *jp2,
 							unsigned char * p_bpc_header_data,
@@ -896,10 +894,9 @@ static opj_bool jp2_read_pclr(opj_jp2_t *jp2, opj_cio_t *cio,
 /**
  * Reads a palette box.
  *
- * @param	p_bpc_header_data			pointer to actual data (already read from file)
  * @param	jp2							the jpeg2000 file codec.
- * @param	p_bpc_header_size			pointer that will hold the size of the bpc header
- * @param	p_bpc_header_max_size		maximum size of the header, any size bigger than this value should result the function to output false.
+ * @param	p_pclr_header_data			pointer to actual data (already read from file)
+ * @param	p_pclr_header_size			pointer that will hold the size of the PCLR header
  * @param	p_manager					the user event manager.
  *
  * @return	true if the bpc header is valid, fale else.
@@ -2638,7 +2635,7 @@ opj_bool jp2_set_decode_area(	opj_jp2_v2_t *p_jp2,
 /**
  * Get the decoded tile.
  *
- * @param	p_jp2			the jpeg2000 codec.
+ * @param	jp2			the jpeg2000 codec.
  * @param	p_stream		input_stream
  * @param	p_image			output image.	.
  * @param	p_manager		the user event manager

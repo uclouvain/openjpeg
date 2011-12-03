@@ -83,22 +83,23 @@ static int t2_decode_packet(opj_t2_t* t2, unsigned char *src, int len, opj_tcd_t
 /**
 Decode a packet of a tile from a source buffer
 @param t2 T2 handle
-@param src Source buffer
-@param len Length of the source buffer
 @param tile Tile for which to write the packets
 @param tcp Tile coding parameters
 @param pi Packet identity
+@param src Source buffer
+@param pack_info Packet information
+
 @return
 */
 static opj_bool t2_decode_packet_v2(
-							 opj_t2_v2_t* p_t2,
-							 opj_tcd_tile_v2_t *p_tile,
-                             opj_tcp_v2_t *p_tcp,
-							 opj_pi_iterator_t *p_pi,
-							 OPJ_BYTE *p_src,
-							 OPJ_UINT32 * p_data_read,
-							 OPJ_UINT32 p_max_length,
-							 opj_packet_info_t *p_pack_info);
+							 opj_t2_v2_t* t2,
+							 opj_tcd_tile_v2_t *tile,
+                             opj_tcp_v2_t *tcp,
+							 opj_pi_iterator_t *pi,
+							 OPJ_BYTE *src,
+							 OPJ_UINT32 * data_read,
+							 OPJ_UINT32 max_length,
+							 opj_packet_info_t *pack_info);
 
 static opj_bool t2_skip_packet(
 							 opj_t2_v2_t* p_t2,
@@ -139,7 +140,8 @@ static opj_bool t2_skip_packet_data(
 							 opj_packet_info_t *pack_info);
 
 /**
-@param seg
+@param cblk
+@param index
 @param cblksty
 @param first
 */

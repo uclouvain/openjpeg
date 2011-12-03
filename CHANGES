@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+December 3, 2011
+* [mathieu] Doxygen fix (Brad Hards on mailing list)
+
 December 2, 2011
 + [mathieu] Adding CPack mechanism
 * [mathieu] remove hack with bash around kdu_expand

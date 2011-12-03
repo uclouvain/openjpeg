@@ -125,7 +125,7 @@ opj_procedure* opj_procedure_list_get_first_procedure (opj_procedure_list_t * p_
  *
  */
 void  opj_procedure_list_clear (opj_procedure_list_t * p_validation_list);
-
+/*@}*/
 
 #endif /* __FUNCTION_LIST_H */
 

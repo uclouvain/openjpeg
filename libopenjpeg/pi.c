@@ -87,8 +87,8 @@ static opj_bool pi_next_cprl(opj_pi_iterator_t * pi);
  * @param	p_ty1			pointer that will hold the Y1 parameter for the tile
  * @param	p_max_prec		pointer that will hold the the maximum precision for all the bands of the tile
  * @param	p_max_res		pointer that will hold the the maximum number of resolutions for all the poc inside the tile.
- * @param	dx_min			pointer that will hold the the minimum dx of all the components of all the resolutions for the tile.
- * @param	dy_min			pointer that will hold the the minimum dy of all the components of all the resolutions for the tile.
+ * @param	p_dx_min		pointer that will hold the the minimum dx of all the components of all the resolutions for the tile.
+ * @param	p_dy_min		pointer that will hold the the minimum dy of all the components of all the resolutions for the tile.
  * @param	p_resolutions	pointer to an area corresponding to the one described above.
  */
 void get_all_encoding_parameters(
@@ -111,9 +111,9 @@ void get_all_encoding_parameters(
  * Allocates memory for a packet iterator. Data and data sizes are set by this operation.
  * No other data is set. The include section of the packet  iterator is not allocated.
  *
- * @param	p_image		the image used to initialize the packet iterator (in fact only the number of components is relevant.
- * @param	p_cp		the coding parameters.
- * @param	p_tile_no	the index of the tile from which creating the packet iterator.
+ * @param	image		the image used to initialize the packet iterator (only the number of components is relevant).
+ * @param	cp		the coding parameters.
+ * @param	tileno		the index of the tile from which creating the packet iterator.
  */
 opj_pi_iterator_t * pi_create(	const opj_image_t *image,
 								const opj_cp_v2_t *cp,
@@ -1234,8 +1234,8 @@ opj_bool pi_create_encode( opj_pi_iterator_t *pi, opj_cp_t *cp,int tileno, int p
  * @param	p_ty1			pointer that will hold the Y1 parameter for the tile
  * @param	p_max_prec		pointer that will hold the the maximum precision for all the bands of the tile
  * @param	p_max_res		pointer that will hold the the maximum number of resolutions for all the poc inside the tile.
- * @param	dx_min			pointer that will hold the the minimum dx of all the components of all the resolutions for the tile.
- * @param	dy_min			pointer that will hold the the minimum dy of all the components of all the resolutions for the tile.
+ * @param	p_dx_min		pointer that will hold the the minimum dx of all the components of all the resolutions for the tile.
+ * @param	p_dy_min		pointer that will hold the the minimum dy of all the components of all the resolutions for the tile.
  * @param	p_resolutions	pointer to an area corresponding to the one described above.
  */
 void get_all_encoding_parameters(
@@ -1367,9 +1367,9 @@ void get_all_encoding_parameters(
  * Allocates memory for a packet iterator. Data and data sizes are set by this operation.
  * No other data is set. The include section of the packet  iterator is not allocated.
  *
- * @param	p_image		the image used to initialize the packet iterator (in fact only the number of components is relevant.
- * @param	p_cp		the coding parameters.
- * @param	p_tile_no	the index of the tile from which creating the packet iterator.
+ * @param	image		the image used to initialize the packet iterator (only the number of components is relevant.
+ * @param	cp		the coding parameters.
+ * @param	tileno		the index of the tile from which creating the packet iterator.
  */
 opj_pi_iterator_t * pi_create(	const opj_image_t *image,
 								const opj_cp_v2_t *cp,

@@ -1153,8 +1153,8 @@ OPJ_API void OPJ_CALLCONV opj_stream_set_user_data_length(opj_stream_t* p_stream
 /**
  * Helper function.
  * Sets the stream to be a file stream. The FILE must have been open previously.
- * @param		p_stream	the stream to modify
- * @param		p_file		handler to an already open file.
+ * @param p_file the file stream to operate on
+ * @param p_is_read_stream whether the stream is a read stream (true) or not (false)
 */
 OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_default_file_stream (FILE * p_file, opj_bool p_is_read_stream);
 OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream (FILE * p_file, OPJ_UINT32 p_buffer_size, opj_bool p_is_read_stream);
@@ -1285,9 +1285,10 @@ DEPRECATED( OPJ_API opj_image_t* OPJ_CALLCONV opj_decode(opj_dinfo_t *dinfo, opj
 
 /**
  * Decode an image from a JPEG-2000 codestream
- * @param dinfo decompressor handle
+ * @param p_decompressor decompressor handle
  * @param cio Input buffer stream
- * @return Returns a decoded image if successful, returns NULL otherwise
+ * @param p_image the decoded image
+ * @return Returns a true on success, otherwise false
  * */
 OPJ_API opj_bool OPJ_CALLCONV opj_decode_v2(opj_codec_t *p_decompressor,
 											opj_stream_t * cio,
@@ -1456,7 +1457,7 @@ OPJ_API void OPJ_CALLCONV opj_destroy_cstr_info_v2(opj_codestream_info_v2_t **cs
 /**
  * Destroy a decompressor handle
  *
- * @param	dinfo 			decompressor handle to destroy
+ * @param	p_codec			decompressor handle to destroy
  */
 OPJ_API void OPJ_CALLCONV opj_destroy_codec(opj_codec_t * p_codec);
 
