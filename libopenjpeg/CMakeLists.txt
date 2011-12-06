@@ -63,3 +63,20 @@ INSTALL(CODE
 INSTALL(
   FILES       ${OPENJPEG_SOURCE_DIR}/doc/man/man3/libopenjpeg.3
   DESTINATION ${OPENJPEG_INSTALL_MAN_DIR}/man3)
+
+# Experimental option; let's how cppcheck performs
+# Implementation details:
+# I could not figure out how to easily upload a file to CDash. Instead simply
+# pretend cppcheck is part of the Build step. Technically cppcheck can even
+# output gcc formatted error/warning report
+# Another implementation detail: I could not redirect error to the error
+# catching mechanism something is busted in cmake 2.8.5, I had to use the
+# warning regex to catch them.
+if(OPENJPEG_CPPCHECK)
+  find_package(CPPCHECK REQUIRED)
+  foreach(f ${OPENJPEG_SRCS})
+    # cppcheck complains about too many configuration, pretend to be WIN32:
+    add_custom_command(TARGET ${OPENJPEG_LIBRARY_NAME}
+      COMMAND ${CPPCHECK_EXECUTABLE} -DWIN32 ${f})
+  endforeach()
+endif()
