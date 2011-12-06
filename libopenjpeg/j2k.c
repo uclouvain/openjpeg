@@ -6124,7 +6124,7 @@ opj_bool j2k_read_header_procedure(	opj_j2k_v2_t *p_j2k,
 		opj_read_bytes(p_j2k->m_specific_param.m_decoder.m_header_data,&l_current_marker,2);
 	}
 
-	opj_event_msg_v2(p_manager, EVT_INFO, "Main header has been correctly decode.\n");
+	opj_event_msg_v2(p_manager, EVT_INFO, "Main header has been correctly decoded.\n");
 
 	/* Position of the last element if the main header */
 	p_j2k->cstr_index->main_head_end = (OPJ_UINT32) opj_stream_tell(p_stream) - 2;
@@ -7141,7 +7141,7 @@ opj_bool j2k_set_decode_area(	opj_j2k_v2_t *p_j2k,
 	}
 
 	if ( !p_start_x && !p_start_y && !p_end_x && !p_end_y){
-		opj_event_msg_v2(p_manager, EVT_INFO, "No decoded area parameters, set the decoded area to the all image\n");
+		opj_event_msg_v2(p_manager, EVT_INFO, "No decoded area parameters, set the decoded area to the whole image\n");
 
 		p_j2k->m_specific_param.m_decoder.m_start_tile_x = 0;
 		p_j2k->m_specific_param.m_decoder.m_start_tile_y = 0;
@@ -7214,7 +7214,7 @@ opj_bool j2k_set_decode_area(	opj_j2k_v2_t *p_j2k,
 	/* Bottom */
 	if (p_end_y < l_image->y0) {
 		opj_event_msg_v2(p_manager, EVT_ERROR,
-			"Right position of the decoded area (region_y1=%d) is outside the image area (YOsiz=%d).\n",
+			"Bottom position of the decoded area (region_y1=%d) is outside the image area (YOsiz=%d).\n",
 			p_end_y, l_image->y0);
 		return OPJ_FALSE;
 	}
@@ -7578,8 +7578,8 @@ opj_bool j2k_read_SQcd_SQcc(
 
 		if( l_num_band > J2K_MAXBANDS ) {
 			opj_event_msg_v2(p_manager, EVT_WARNING, "While reading CCP_QNTSTY element inside QCD or QCC marker segment, "
-				"number of subbands (%d) is greater to J2K_MAXBANDS (%d). So we limiting the number of elements stored to "
-				"J2K_MAXBANDS (%d) and skip the other. \n", l_num_band, J2K_MAXBANDS, J2K_MAXBANDS);
+				"number of subbands (%d) is greater to J2K_MAXBANDS (%d). So we limit the number of elements stored to "
+				"J2K_MAXBANDS (%d) and skip the rest. \n", l_num_band, J2K_MAXBANDS, J2K_MAXBANDS);
 			//return OPJ_FALSE;
 		}
 	}
@@ -7871,7 +7871,7 @@ void j2k_dump_image_header(opj_image_t* img_header, opj_bool dev_dump_flag, FILE
 	char tab[2];
 
 	if (dev_dump_flag){
-		fprintf(stdout, "[DEV] Dump a image_header struct {\n");
+		fprintf(stdout, "[DEV] Dump an image_header struct {\n");
 		tab[0] = '\0';
 	}
 	else {
@@ -7907,7 +7907,7 @@ void j2k_dump_image_comp_header(opj_image_comp_t* comp_header, opj_bool dev_dump
 	char tab[3];
 
 	if (dev_dump_flag){
-		fprintf(stdout, "[DEV] Dump a image_comp_header struct {\n");
+		fprintf(stdout, "[DEV] Dump an image_comp_header struct {\n");
 		tab[0] = '\0';
 	}	else {
 		tab[0] = '\t';tab[1] = '\t';tab[2] = '\0';
@@ -8186,7 +8186,7 @@ opj_bool j2k_decode_tiles (	opj_j2k_v2_t *p_j2k,
 			opj_free(l_current_data);
 			return OPJ_FALSE;
 		}
-		opj_event_msg_v2(p_manager, EVT_INFO, "Tile %d/%d has been decode.\n", l_current_tile_no +1, p_j2k->m_cp.th * p_j2k->m_cp.tw);
+		opj_event_msg_v2(p_manager, EVT_INFO, "Tile %d/%d has been decoded.\n", l_current_tile_no +1, p_j2k->m_cp.th * p_j2k->m_cp.tw);
 
 		if (! j2k_update_image_data(p_j2k->m_tcd,l_current_data, p_j2k->m_output_image)) {
 			opj_free(l_current_data);
@@ -8299,7 +8299,7 @@ opj_bool j2k_decode_one_tile (	opj_j2k_v2_t *p_j2k,
 			opj_free(l_current_data);
 			return OPJ_FALSE;
 		}
-		opj_event_msg_v2(p_manager, EVT_INFO, "Tile %d/%d has been decode.\n", l_current_tile_no, (p_j2k->m_cp.th * p_j2k->m_cp.tw) - 1);
+		opj_event_msg_v2(p_manager, EVT_INFO, "Tile %d/%d has been decoded.\n", l_current_tile_no, (p_j2k->m_cp.th * p_j2k->m_cp.tw) - 1);
 
 		if (! j2k_update_image_data(p_j2k->m_tcd,l_current_data, p_j2k->m_output_image)) {
 			opj_free(l_current_data);
@@ -8404,7 +8404,7 @@ opj_bool j2k_get_tile(	opj_j2k_v2_t *p_j2k,
 	opj_image_comp_t* l_img_comp;
 
 	if (!p_image) {
-		opj_event_msg_v2(p_manager, EVT_ERROR, "We need a image previously created.\n");
+		opj_event_msg_v2(p_manager, EVT_ERROR, "We need an image previously created.\n");
 		return OPJ_FALSE;
 	}
 
@@ -8500,7 +8500,7 @@ opj_bool j2k_set_decoded_resolution_factor(opj_j2k_v2_t *p_j2k, OPJ_UINT32 res_f
 					for (it_comp = 0 ; it_comp < p_j2k->m_private_image->numcomps; it_comp++) {
 						OPJ_UINT32 max_res = p_j2k->m_specific_param.m_decoder.m_default_tcp->tccps[it_comp].numresolutions;
 						if ( res_factor >= max_res){
-							opj_event_msg_v2(p_manager, EVT_ERROR, "Resolution factor is superior to the maximum resolution in the component.\n");
+							opj_event_msg_v2(p_manager, EVT_ERROR, "Resolution factor is greater than the maximum resolution in the component.\n");
 							return OPJ_FALSE;
 						}
 						p_j2k->m_private_image->comps[it_comp].factor = res_factor;
