@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+December 6, 2011
+* [mathieu] Typos fix (Brad Hards on mailing list)
+
 December 3, 2011
 * [mathieu] Doxygen fix (Brad Hards on mailing list)
 
