@@ -11,7 +11,9 @@ SET(INPUT_CONF ${OPJ_DATA_ROOT}/input/conformance)
 # List of components by file (normaly p0_13.j2k have 257 components but for this 
 #set of test we consider only 4)
 SET( CP0_nbC_list "not_used;1;1;1;3;4;4;3;3;1;3;1;1;4;3;1;1")
+SET( CP0_ignore_list "not_used;0;0;1;1;1;1;1;1;0;1;0;0;1;1;1;0")
 SET( CP1_nbC_list "not_used;1;3;4;1;3;3;2")
+SET( CP1_ignore_list "not_used;0;1;1;0;1;1;1")
 
 SET(COMMENTCODEVAR FALSE)
 
@@ -28,6 +30,9 @@ SET( C0P0_PEAK_list "not_used;0;0;0;33;54;109;10;7;4;10;0;0;0;0;0;0")
 SET( C0P0_MSE_list "not_used;0;0;0;55.8;68;743;0.34;6.72;1.47;2.84;0;0;0;0;0;0")
 
 FOREACH(numFileC0P0 RANGE 1 16) 
+
+list(GET CP0_ignore_list ${numFileC0P0}  ignore_test_value)
+IF(ignore_test_value EQUAL 0)
 
   # Build filenames
   IF(${numFileC0P0} LESS 10)
@@ -155,6 +160,8 @@ FOREACH(numFileC0P0 RANGE 1 16)
                          ETS-C0P0-${filenameInput}-decode)    
       
   ENDIF(numFileC0P0 EQUAL 3 OR numFileC0P0 EQUAL 15)
+  
+  ENDIF(ignore_test_value EQUAL 0)
 
 ENDFOREACH(numFileC0P0)
 
@@ -170,6 +177,9 @@ SET( C0P1_PEAK_list "not_used;0;35;28;2;128;128;0")
 SET( C0P1_MSE_list "not_used;0;74;18.8;0.550;16384;16384;0")
 
 FOREACH(numFileC0P1 RANGE 1 7) 
+
+list(GET CP1_ignore_list ${numFileC0P1}  ignore_test_value2)
+IF(ignore_test_value2 EQUAL 0)
 
   # Build filenames
   SET( filenameInput p1_0${numFileC0P1}.j2k )
@@ -292,6 +302,8 @@ FOREACH(numFileC0P1 RANGE 1 7)
                          ETS-C0P1-${filenameInput}-decode)
             
   ENDIF(numFileC0P1 EQUAL 4)
+  
+    ENDIF(ignore_test_value2 EQUAL 0)
 
 ENDFOREACH(numFileC0P1)
 
@@ -356,6 +368,8 @@ FOREACH(numFileC1P0 RANGE 1 16)
   SET_TESTS_PROPERTIES(NR-C1P0-${filenameInput}-compare2base  
                        PROPERTIES DEPENDS 
                        ETS-C1P0-${filenameInput}-decode)
+  
+
     
 ENDFOREACH(numFileC1P0)
 
