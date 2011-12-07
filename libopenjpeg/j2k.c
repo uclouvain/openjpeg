@@ -8152,8 +8152,10 @@ opj_bool j2k_decode_tiles (	opj_j2k_v2_t *p_j2k,
 	l_max_data_size = 1000;
 
 	/*Allocate and initialize some elements of codestrem index*/
-	if (!j2k_allocate_tile_element_cstr_index(p_j2k))
+	if (!j2k_allocate_tile_element_cstr_index(p_j2k)){
+		opj_free(l_current_data);
 		return OPJ_FALSE;
+	}
 
 	while (OPJ_TRUE) {
 		if (! j2k_read_tile_header(	p_j2k,
@@ -8176,6 +8178,7 @@ opj_bool j2k_decode_tiles (	opj_j2k_v2_t *p_j2k,
 		if (l_data_size > l_max_data_size) {
 			l_current_data = (OPJ_BYTE*)opj_realloc(l_current_data,l_data_size);
 			if (! l_current_data) {
+				opj_free(l_current_data);
 				return OPJ_FALSE;
 			}
 
@@ -8238,8 +8241,10 @@ opj_bool j2k_decode_one_tile (	opj_j2k_v2_t *p_j2k,
 	/*Allocate and initialize some elements of codestrem index if not already done*/
 	if( !p_j2k->cstr_index->tile_index)
 	{
-		if (!j2k_allocate_tile_element_cstr_index(p_j2k))
+		if (!j2k_allocate_tile_element_cstr_index(p_j2k)){
+			opj_free(l_current_data);
 			return OPJ_FALSE;
+		}
 	}
 	/* Move into the codestream to the first SOT used to decode the desired tile */
 	l_tile_no_to_dec = p_j2k->m_specific_param.m_decoder.m_tile_ind_to_dec;
@@ -8287,6 +8292,7 @@ opj_bool j2k_decode_one_tile (	opj_j2k_v2_t *p_j2k,
 		if (l_data_size > l_max_data_size) {
 			l_current_data = (OPJ_BYTE*)opj_realloc(l_current_data,l_data_size);
 			if (! l_current_data) {
+				opj_free(l_current_data);
 				return OPJ_FALSE;
 			}
 

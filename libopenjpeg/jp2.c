@@ -2047,6 +2047,10 @@ opj_bool jp2_read_header_procedure(
 		if (l_current_handler != 00) {
 			if (l_current_data_size > l_last_data_size) {
 				l_current_data = (unsigned char*)opj_realloc(l_current_data,l_current_data_size);
+				if (!l_current_data){
+					opj_free(l_current_data);
+					return OPJ_FALSE;
+				}
 				l_last_data_size = l_current_data_size;
 			}
 

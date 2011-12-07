@@ -5,8 +5,18 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+December 7, 2011
+* [mickael] remove some warnings detected by cppcheck
+
 December 6, 2011
 * [mathieu] Typos fix (Brad Hards on mailing list)
+
+December 3, 2011
+* [mathieu] Doxygen fix (Brad Hards on mailing list)
+
+December 2, 2011
++ [mathieu] Adding CPack mechanism
+* [mathieu] remove hack with bash around kdu_expand
 
 December 3, 2011
 * [mathieu] Doxygen fix (Brad Hards on mailing list)
