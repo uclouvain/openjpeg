@@ -92,6 +92,7 @@ int write_ppixfaix( int coff, int compno, opj_codestream_info_t cstr_info, opj_b
   opj_packet_info_t packet;
   int resno, precno, layno, num_packet;
   int numOfres, numOfprec, numOflayers;
+  packet.end_ph_pos = packet.start_pos = -1;
 
   if( j2klen > pow( 2, 32)){
     size_of_coding =  8;
