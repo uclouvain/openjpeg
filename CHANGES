@@ -7,6 +7,7 @@ What's New for OpenJPEG
 
 December 8, 2011
 * [Mathieu Malaterre] Remove 9 warnings (gcc)
+* [mathieu] remove hack with bash around kdu_expand
 
 December 7, 2011
 - [mickael] deactivate tests about class0 files with number of components greater to 1

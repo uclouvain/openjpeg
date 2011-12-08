@@ -9,12 +9,8 @@ SET(INPUT_NR ${OPJ_DATA_ROOT}/input/nonregression)
 SET(INPUT_NR_PATH ${INPUT_NR})
 SET(TEMP_PATH ${TEMP})
 
-# FIXME: should be corectly manage with a find kakadu
-IF (NOT WIN32)
-CONFIGURE_FILE("opj_ref_decode_cmd.sh.in"
-               "${CMAKE_CURRENT_BINARY_DIR}/opj_ref_decode_cmd.sh"
-               @ONLY)
-ENDIF (NOT WIN32)
+# need kdu_expand if possible
+find_package(KAKADU)
    
 STRING(COMPARE EQUAL ${REF_DECODER_BIN_PATH} "NOTFOUND" REF_DECODER_NOTFOUND)            
 IF (REF_DECODER_NOTFOUND)
@@ -206,21 +202,12 @@ FOREACH(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
                                NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-dump) 
     
           # Decode the encoding file with kakadu expand command
-          IF (NOT REF_DECODER_NOTFOUND)
-            IF (NOT WIN32)
-              # Need a bash script to export the path of the kakadu library into PATH  
-              ADD_TEST( NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-decode-ref
-                bash ${CMAKE_CURRENT_BINARY_DIR}/opj_ref_decode_cmd.sh
-                -i ${OUTPUT_FILENAME}
-                -o ${OUTPUT_FILENAME}.raw
+          IF (KDU_EXPAND_EXECUTABLE)
+            ADD_TEST(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-decode-ref
+              ${KDU_EXPAND_EXECUTABLE}
+              -i ${OUTPUT_FILENAME}
+              -o ${OUTPUT_FILENAME}.raw
               )
-            ELSE (NOT WIN32)
-              ADD_TEST(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-decode-ref
-                ${REF_DECODER_BIN_PATH}/kdu_expand
-                -i ${OUTPUT_FILENAME}
-                -o ${OUTPUT_FILENAME}.raw
-              )
-            ENDIF (NOT WIN32)
         
             SET_TESTS_PROPERTIES(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-decode-ref
                                  PROPERTIES DEPENDS 
@@ -237,7 +224,7 @@ FOREACH(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
                                  PROPERTIES DEPENDS 
                                  NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-decode-ref)
         
-          ENDIF(NOT REF_DECODER_NOTFOUND)
+          ENDIF()
       ENDIF(FAILED_TEST_FOUND)     
     
     # DECODER TEST SUITE

@@ -256,13 +256,12 @@ IF(BUILD_TESTING)
     # Search openjpeg data needed for the tests
     # They could be found via svn on the OpenJPEG google code project
     # svn checkout http://openjpeg.googlecode.com/svn/data (about 70 Mo) 
-    FIND_PATH(OPJ_DATA_ROOT README-OPJ-Data 
-              PATHS $ENV{OPJ_DATA_ROOT} ${CMAKE_SOURCE_DIR}/../data)
-  
-    # For encoding tests we need the path to the ref decoder exe/lib (kakadu)           
-    SET (REF_DECODER_BIN_PATH "NOTFOUND" CACHE PATH "Single directory where find the reference decoder binaries to enable encoding test suite.")
-    MARK_AS_ADVANCED(REF_DECODER_BIN_PATH)
-    
+    FIND_PATH(OPJ_DATA_ROOT README-OPJ-Data
+      PATHS
+      $ENV{OPJ_DATA_ROOT}
+      ${CMAKE_SOURCE_DIR}/../data
+      )
+
     # Add repository where to find tests
     ADD_SUBDIRECTORY(tests)
     
