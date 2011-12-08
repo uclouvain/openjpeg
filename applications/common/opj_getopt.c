@@ -65,7 +65,7 @@ void reset_options_reading(void) {
 int opj_getopt(int nargc, char *const *nargv, const char *ostr) {
 #  define __progname nargv[0]
   static char *place = EMSG;	/* option letter processing */
-  char *oli;			/* option letter list index */
+  char *oli = NULL;			/* option letter list index */
 
   if (opj_optreset || !*place) {	/* update scanning pointer */
     opj_optreset = 0;

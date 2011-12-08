@@ -58,6 +58,7 @@ int write_ppix( int coff, opj_codestream_info_t cstr_info, opj_bool EPHused, int
 
   //  printf("cstr_info.packno %d\n", cstr_info.packno); //NMAX?
 
+  lenp = -1;
   box = (opj_jp2_box_t *)opj_calloc( cstr_info.numcomps, sizeof(opj_jp2_box_t));
   
   for (i=0;i<2;i++){

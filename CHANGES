@@ -6,7 +6,7 @@ What's New for OpenJPEG
 + : added
 
 December 8, 2011
-* [Mathieu Malaterre] Remove 6 warnings (gcc)
+* [Mathieu Malaterre] Remove 9 warnings (gcc)
 
 December 7, 2011
 - [mickael] deactivate tests about class0 files with number of components greater to 1
