@@ -11,11 +11,6 @@ SET(TEMP_PATH ${TEMP})
 
 # need kdu_expand if possible
 find_package(KAKADU)
-   
-STRING(COMPARE EQUAL ${REF_DECODER_BIN_PATH} "NOTFOUND" REF_DECODER_NOTFOUND)            
-IF (REF_DECODER_NOTFOUND)
-  MESSAGE(STATUS "REF_DECODER_BIN_PATH not found, if you want all the encoding tests suite please provide a regular path")  
-ENDIF (REF_DECODER_NOTFOUND)
 
 #########################################################################
 # GENERATION OF THE TEST SUITE
