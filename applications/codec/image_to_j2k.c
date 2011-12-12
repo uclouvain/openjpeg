@@ -1681,6 +1681,7 @@ int main(int argc, char **argv) {
 
 			if (parameters.cod_format == J2K_CFMT) {	/* J2K format output */
 				int codestream_length;
+        size_t res;
 				opj_cio_t *cio = NULL;
 				FILE *f = NULL;
 
@@ -1715,7 +1716,11 @@ int main(int argc, char **argv) {
 					fprintf(stderr, "failed to open %s for writing\n", parameters.outfile);
 					return 1;
 				}
-				fwrite(cio->buffer, 1, codestream_length, f);
+				res = fwrite(cio->buffer, 1, codestream_length, f);
+        if( res < codestream_length ) {
+ 					fprintf(stderr, "failed to write %d (%s)\n", codestream_length, parameters.outfile);
+					return 1;
+         }
 				fclose(f);
 
 				fprintf(stderr,"Generated outfile %s\n",parameters.outfile);
@@ -1736,6 +1741,7 @@ int main(int argc, char **argv) {
 					opj_destroy_cstr_info(&cstr_info);
 			} else {			/* JP2 format output */
 				int codestream_length;
+        size_t res;
 				opj_cio_t *cio = NULL;
 				FILE *f = NULL;
 				opj_cinfo_t *cinfo = NULL;
@@ -1771,7 +1777,11 @@ int main(int argc, char **argv) {
 					fprintf(stderr, "failed to open %s for writing\n", parameters.outfile);
 					return 1;
 				}
-				fwrite(cio->buffer, 1, codestream_length, f);
+				res = fwrite(cio->buffer, 1, codestream_length, f);
+        if( res < codestream_length ) {
+ 					fprintf(stderr, "failed to write %d (%s)\n", codestream_length, parameters.outfile);
+					return 1;
+         }
 				fclose(f);
 				fprintf(stderr,"Generated outfile %s\n",parameters.outfile);
 				/* close and free the byte stream */
