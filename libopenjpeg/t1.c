@@ -123,20 +123,20 @@ static void t1_enc_refpass_step(
 /**
 Decode refinement pass
 */
-static void INLINE t1_dec_refpass_step_raw(
+static INLINE void t1_dec_refpass_step_raw(
 		opj_t1_t *t1,
 		flag_t *flagsp,
 		int *datap,
 		int poshalf,
 		int neghalf,
 		int vsc);
-static void INLINE t1_dec_refpass_step_mqc(
+static INLINE void t1_dec_refpass_step_mqc(
 		opj_t1_t *t1,
 		flag_t *flagsp,
 		int *datap,
 		int poshalf,
 		int neghalf);
-static void INLINE t1_dec_refpass_step_mqc_vsc(
+static INLINE void t1_dec_refpass_step_mqc_vsc(
 		opj_t1_t *t1,
 		flag_t *flagsp,
 		int *datap,
