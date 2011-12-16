@@ -102,7 +102,7 @@ int parse_cmdline_cmp(int argc, char **argv, test_cmp_parameters* param)
   const char optlist[] = "b:t:n:m:p:s:d";
   int c;
 
-  // Init parameters
+  /* Init parameters*/
   param->base_filename = NULL;
   param->test_filename = NULL;
   param->nbcomp = 0;
@@ -121,7 +121,7 @@ int parse_cmdline_cmp(int argc, char **argv, test_cmp_parameters* param)
         param->base_filename[0] = '\0';
         strncpy(param->base_filename, opj_optarg, strlen(opj_optarg));
         param->base_filename[strlen(opj_optarg)] = '\0';
-        //printf("param->base_filename = %s [%d / %d]\n", param->base_filename, strlen(param->base_filename), sizemembasefile );
+        /*printf("param->base_filename = %s [%d / %d]\n", param->base_filename, strlen(param->base_filename), sizemembasefile );*/
         break;
       case 't':
         sizememtestfile = (int) strlen(opj_optarg) + 1;
@@ -129,7 +129,7 @@ int parse_cmdline_cmp(int argc, char **argv, test_cmp_parameters* param)
         param->test_filename[0] = '\0';
         strncpy(param->test_filename, opj_optarg, strlen(opj_optarg));
         param->test_filename[strlen(opj_optarg)] = '\0';
-        //printf("param->test_filename = %s [%d / %d]\n", param->test_filename, strlen(param->test_filename), sizememtestfile);
+        /*printf("param->test_filename = %s [%d / %d]\n", param->test_filename, strlen(param->test_filename), sizememtestfile);*/
        break;
       case 'n':
         param->nbcomp = atoi(opj_optarg);
@@ -191,24 +191,24 @@ int parse_cmdline_cmp(int argc, char **argv, test_cmp_parameters* param)
       }*/
     }
 
-  // Get separators after corresponding letter (b or t)
+  /* Get separators after corresponding letter (b or t)*/
   if (separatorList != NULL)
     {
     if( (strlen(separatorList) ==2) || (strlen(separatorList) ==4) )
       {
-      // keep original string
+      /* keep original string*/
       int sizeseplist = (int)strlen(separatorList)+1;
       char* separatorList2 = (char*)malloc( sizeseplist );
       separatorList2[0] = '\0';
       strncpy(separatorList2, separatorList, strlen(separatorList));
       separatorList2[strlen(separatorList)] = '\0';
-      //printf("separatorList2 = %s [%d / %d]\n", separatorList2, strlen(separatorList2), sizeseplist);
+      /*printf("separatorList2 = %s [%d / %d]\n", separatorList2, strlen(separatorList2), sizeseplist);*/
 
-      if (strlen(separatorList) == 2) // one separator behind b or t
+      if (strlen(separatorList) == 2) /* one separator behind b or t*/
         {
         char *resultT = NULL;
         resultT = strtok(separatorList2, "t");
-        if (strlen(resultT) == strlen(separatorList)) // didn't find t character, try to find b
+        if (strlen(resultT) == strlen(separatorList)) /* didn't find t character, try to find b*/
           {
           char *resultB = NULL;
           resultB = strtok(resultT, "b");
@@ -217,48 +217,48 @@ int parse_cmdline_cmp(int argc, char **argv, test_cmp_parameters* param)
             param->separator_base[0] = separatorList[1];param->separator_base[1] = '\0';
             param->separator_test[0] ='\0';
             }
-          else // not found b
+          else /* not found b*/
             {
             free(separatorList2);
             return EXIT_FAILURE;
             }
           }
-        else // found t
+        else /* found t*/
           {
           param->separator_base[0] ='\0';
           param->separator_test[0] = separatorList[1];param->separator_test[1] = '\0';
           }
-        //printf("sep b = %s [%d] and sep t = %s [%d]\n",param->separator_base, strlen(param->separator_base), param->separator_test, strlen(param->separator_test) );
+        /*printf("sep b = %s [%d] and sep t = %s [%d]\n",param->separator_base, strlen(param->separator_base), param->separator_test, strlen(param->separator_test) );*/
         }
-      else // == 4 characters we must found t and b
+      else /* == 4 characters we must found t and b*/
         {
         char *resultT = NULL;
         resultT = strtok(separatorList2, "t");
-        if (strlen(resultT) == 3) // found t in first place
+        if (strlen(resultT) == 3) /* found t in first place*/
           {
           char *resultB = NULL;
           resultB = strtok(resultT, "b");
-          if (strlen(resultB) == 1) // found b after t
+          if (strlen(resultB) == 1) /* found b after t*/
             {
             param->separator_test[0] = separatorList[1];param->separator_test[1] = '\0';
             param->separator_base[0] = separatorList[3];param->separator_base[1] = '\0';
             }
-          else // didn't find b after t
+          else /* didn't find b after t*/
             {
             free(separatorList2);
             return EXIT_FAILURE;
             }
           }
-        else // == 2, didn't find t in first place
+        else /* == 2, didn't find t in first place*/
           {
           char *resultB = NULL;
           resultB = strtok(resultT, "b");
-          if (strlen(resultB) == 1) // found b in first place
+          if (strlen(resultB) == 1) /* found b in first place*/
             {
             param->separator_base[0] = separatorList[1]; param->separator_base[1] = '\0';
             param->separator_test[0] = separatorList[3]; param->separator_test[1] = '\0';
             }
-          else // didn't found b in first place => problem
+          else /* didn't found b in first place => problem*/
             {
             free(separatorList2);
             return EXIT_FAILURE;
@@ -267,7 +267,7 @@ int parse_cmdline_cmp(int argc, char **argv, test_cmp_parameters* param)
         }
       free(separatorList2);
       }
-    else // wrong number of argument after -s
+    else /* wrong number of argument after -s*/
       {
       return EXIT_FAILURE;
       }
@@ -339,21 +339,21 @@ char* createMultiComponentsFilename(const char* inFilename, const int indexF, co
   char token = '.';
   int posToken = 0;
 
-  //printf("inFilename = %s\n", inFilename);
+  /*printf("inFilename = %s\n", inFilename);*/
   if ((ptr = strrchr(inFilename, token)) != NULL)
     {
     posToken = (int) (strlen(inFilename) - strlen(ptr));
-    //printf("Position of %c character inside inFilename = %d\n", token, posToken);
+    /*printf("Position of %c character inside inFilename = %d\n", token, posToken);*/
     }
   else
     {
-    //printf("Token %c not found\n", token);
+    /*printf("Token %c not found\n", token);*/
     outFilename = (char*)malloc(1);
     outFilename[0] = '\0';
     return outFilename;
     }
 
-  outFilename = (char*)malloc((posToken + 7) * sizeof(char)); //6
+  outFilename = (char*)malloc((posToken + 7) * sizeof(char)); /*6*/
 
   strncpy(outFilename, inFilename, posToken);
 
@@ -366,7 +366,7 @@ char* createMultiComponentsFilename(const char* inFilename, const int indexF, co
 
   strcat(outFilename, ".pgx");
 
-  //printf("outfilename: %s\n", outFilename);
+  /*printf("outfilename: %s\n", outFilename);*/
   return outFilename;
 }
 /*******************************************************************************
@@ -381,7 +381,7 @@ opj_image_t* readImageFromFilePGX(char* filename, int nbFilenamePGX, char *separ
   opj_image_cmptparm_t* param_image_read;
   int** data;
 
-  // If separator is empty => nb file to read is equal to one
+  /* If separator is empty => nb file to read is equal to one*/
   if ( strlen(separator) == 0 )
       nbFilenamePGX = 1;
 
@@ -390,14 +390,14 @@ opj_image_t* readImageFromFilePGX(char* filename, int nbFilenamePGX, char *separ
   parameters.decod_format = PGX_DFMT;
   strncpy(parameters.infile, filename, sizeof(parameters.infile)-1);
 
-  // Allocate memory
+  /* Allocate memory*/
   param_image_read = malloc(nbFilenamePGX * sizeof(opj_image_cmptparm_t));
   data = malloc(nbFilenamePGX * sizeof(*data));
 
   it_file = 0;
   for (it_file = 0; it_file < nbFilenamePGX; it_file++)
     {
-    // Create the right filename
+    /* Create the right filename*/
     char *filenameComponentPGX;
     if (strlen(separator) == 0)
       {
@@ -407,7 +407,7 @@ opj_image_t* readImageFromFilePGX(char* filename, int nbFilenamePGX, char *separ
     else
       filenameComponentPGX = createMultiComponentsFilename(filename, it_file, separator);
 
-    // Read the pgx file corresponding to the component
+    /* Read the pgx file corresponding to the component */
     image_read = pgxtoimage(filenameComponentPGX, &parameters);
     if (!image_read)
     {
@@ -426,7 +426,7 @@ opj_image_t* readImageFromFilePGX(char* filename, int nbFilenamePGX, char *separ
 		return NULL;
 	}
 
-    // Set the image_read parameters
+    /* Set the image_read parameters*/
     param_image_read[it_file].x0 = 0;
     param_image_read[it_file].y0 = 0;
     param_image_read[it_file].dx = 0;
@@ -437,11 +437,11 @@ opj_image_t* readImageFromFilePGX(char* filename, int nbFilenamePGX, char *separ
     param_image_read[it_file].prec = image_read->comps->prec;
     param_image_read[it_file].sgnd = image_read->comps->sgnd;
 
-    // Copy data
+    /* Copy data*/
     data[it_file] = malloc(param_image_read[it_file].h * param_image_read[it_file].w * sizeof(int));
     memcpy(data[it_file], image_read->comps->data, image_read->comps->h * image_read->comps->w * sizeof(int));
 
-    // Free memory
+    /* Free memory*/
     opj_image_destroy(image_read);
     free(filenameComponentPGX);
     }
@@ -449,12 +449,12 @@ opj_image_t* readImageFromFilePGX(char* filename, int nbFilenamePGX, char *separ
   image = opj_image_create(nbFilenamePGX, param_image_read, CLRSPC_UNSPECIFIED);
   for (it_file = 0; it_file < nbFilenamePGX; it_file++)
     {
-    // Copy data into output image and free memory
+    /* Copy data into output image and free memory*/
     memcpy(image->comps[it_file].data, data[it_file], image->comps[it_file].h * image->comps[it_file].w * sizeof(int));
     free(data[it_file]);
     }
 
-  // Free memory
+  /* Free memory*/
   free(param_image_read);
   free(data);
 
@@ -504,11 +504,11 @@ int main(int argc, char **argv)
   int memsizebasefilename, memsizetestfilename, memsizedifffilename;
   int valueDiff = 0, nbPixelDiff = 0;
   double sumDiff = 0.0;
-  // Structures to store image parameters and data
+  /* Structures to store image parameters and data*/
   opj_image_t *imageBase = NULL, *imageTest = NULL, *imageDiff = NULL;
   opj_image_cmptparm_t* param_image_diff;
 
-  // Get parameters from command line
+  /* Get parameters from command line*/
   if( parse_cmdline_cmp(argc, argv, &inParam) == EXIT_FAILURE )
     {
     comparePGXimages_help_display();
@@ -519,7 +519,7 @@ int main(int argc, char **argv)
     return EXIT_FAILURE;
     }
 
-  // Display Parameters
+  /* Display Parameters*/
   printf("******Parameters********* \n");
   printf(" base_filename = %s\n"
          " test_filename = %s\n"
@@ -557,8 +557,7 @@ int main(int argc, char **argv)
   printf(" NbFilename to generate from test filename = %d\n", nbFilenamePGXtest);
   printf("************************* \n");
 
-  //----------BASELINE IMAGE--------
-  //
+  /*----------BASELINE IMAGE--------*/
   memsizebasefilename = (int)strlen(inParam.test_filename) + 1 + 5 + 2 + 4;
   memsizetestfilename = (int)strlen(inParam.test_filename) + 1 + 5 + 2 + 4;
 
@@ -570,7 +569,7 @@ int main(int argc, char **argv)
     strncpy(filenamePNGbase, inParam.test_filename, strlen(inParam.test_filename));
     filenamePNGbase[strlen(inParam.test_filename)] = '\0';
     strcat(filenamePNGbase, ".base");
-    //printf("filenamePNGbase = %s [%d / %d octets]\n",filenamePNGbase, strlen(filenamePNGbase),memsizebasefilename );
+    /*printf("filenamePNGbase = %s [%d / %d octets]\n",filenamePNGbase, strlen(filenamePNGbase),memsizebasefilename );*/
     }
   else
     {
@@ -581,8 +580,7 @@ int main(int argc, char **argv)
     return EXIT_FAILURE;
     }
 
-  //----------TEST IMAGE--------
-  //
+  /*----------TEST IMAGE--------*/
 
   imageTest = readImageFromFilePGX(inParam.test_filename, nbFilenamePGXtest, inParam.separator_test);
   if ( imageTest != NULL)
@@ -592,7 +590,7 @@ int main(int argc, char **argv)
     strncpy(filenamePNGtest, inParam.test_filename, strlen(inParam.test_filename));
     filenamePNGtest[strlen(inParam.test_filename)] = '\0';
     strcat(filenamePNGtest, ".test");
-    //printf("filenamePNGtest = %s [%d / %d octets]\n",filenamePNGtest, strlen(filenamePNGtest),memsizetestfilename );
+    /*printf("filenamePNGtest = %s [%d / %d octets]\n",filenamePNGtest, strlen(filenamePNGtest),memsizetestfilename );*/
     }
   else
     {
@@ -605,13 +603,12 @@ int main(int argc, char **argv)
     return EXIT_FAILURE;
     }
 
-  //----------DIFF IMAGE--------
-  //
+  /*----------DIFF IMAGE--------*/
 
-  // Allocate memory
+  /* Allocate memory*/
   param_image_diff = malloc( imageBase->numcomps * sizeof(opj_image_cmptparm_t));
 
-  // Comparison of header parameters
+  /* Comparison of header parameters*/
   printf("Step 1 -> Header comparison\n");
 
   for (it_comp = 0; it_comp < imageBase->numcomps; it_comp++)
@@ -662,7 +659,7 @@ int main(int argc, char **argv)
       param_image_diff[it_comp].w = imageBase->comps[it_comp].w ;
     }
 
-   // If only one parameter is different, we stop the test
+   /* If only one parameter is different, we stop the test*/
    if (failed)
      {
      free(inParam.tabMSEvalues);
@@ -682,10 +679,10 @@ int main(int argc, char **argv)
      }
 
    imageDiff = opj_image_create(imageBase->numcomps, param_image_diff, CLRSPC_UNSPECIFIED);
-   // Free memory
+   /* Free memory*/
    free(param_image_diff);
 
-   // Measurement computation
+   /* Measurement computation*/
    printf("Step 2 -> measurement comparison\n");
 
    memsizedifffilename = strlen(inParam.test_filename) + 1 + 5 + 2 + 4;
@@ -694,9 +691,9 @@ int main(int argc, char **argv)
    strncpy(filenamePNGdiff, inParam.test_filename, strlen(inParam.test_filename));
    filenamePNGdiff[strlen(inParam.test_filename)] = '\0';
    strcat(filenamePNGdiff, ".diff");
-   //printf("filenamePNGdiff = %s [%d / %d octets]\n",filenamePNGdiff, strlen(filenamePNGdiff),memsizedifffilename );
+   /*printf("filenamePNGdiff = %s [%d / %d octets]\n",filenamePNGdiff, strlen(filenamePNGdiff),memsizedifffilename );*/
 
-   // Compute pixel diff
+   /* Compute pixel diff*/
    for (it_comp = 0; it_comp < imageDiff->numcomps; it_comp++)
      {
      double SE=0,PEAK=0;
@@ -732,12 +729,12 @@ int main(int argc, char **argv)
          }
        else
          ((imageDiff->comps)[it_comp]).data[itpxl] = 0;
-       }// h*w loop
+       }/* h*w loop */
 
      MSE = SE / ( ((imageDiff->comps)[it_comp]).w * ((imageDiff->comps)[it_comp]).h );
 
      if (!inParam.nr_flag && (inParam.tabMSEvalues != NULL) && (inParam.tabPEAKvalues != NULL))
-       { // Conformance test
+       { /* Conformance test*/
        printf("<DartMeasurement name=\"PEAK_%d\" type=\"numeric/double\"> %f </DartMeasurement> \n", it_comp, PEAK);
        printf("<DartMeasurement name=\"MSE_%d\" type=\"numeric/double\"> %f </DartMeasurement> \n", it_comp, MSE);
 
@@ -749,7 +746,7 @@ int main(int argc, char **argv)
          failed = 1;
          }
        }
-     else  // Non regression-test
+     else  /* Non regression-test */
        {
        if ( nbPixelDiff > 0)
          {
@@ -763,11 +760,11 @@ int main(int argc, char **argv)
          sprintf(it_compc, "_%i", it_comp);
          strcat(it_compc,".png");
          strcat(filenamePNGbase_it_comp, it_compc);
-         //printf("filenamePNGbase_it = %s [%d / %d octets]\n",filenamePNGbase_it_comp, strlen(filenamePNGbase_it_comp),memsizebasefilename );
+         /*printf("filenamePNGbase_it = %s [%d / %d octets]\n",filenamePNGbase_it_comp, strlen(filenamePNGbase_it_comp),memsizebasefilename );*/
          strcat(filenamePNGtest_it_comp, it_compc);
-         //printf("filenamePNGtest_it = %s [%d / %d octets]\n",filenamePNGtest_it_comp, strlen(filenamePNGtest_it_comp),memsizetestfilename );
+         /*printf("filenamePNGtest_it = %s [%d / %d octets]\n",filenamePNGtest_it_comp, strlen(filenamePNGtest_it_comp),memsizetestfilename );*/
          strcat(filenamePNGdiff_it_comp, it_compc);
-         //printf("filenamePNGdiff_it = %s [%d / %d octets]\n",filenamePNGdiff_it_comp, strlen(filenamePNGdiff_it_comp),memsizedifffilename );
+         /*printf("filenamePNGdiff_it = %s [%d / %d octets]\n",filenamePNGdiff_it_comp, strlen(filenamePNGdiff_it_comp),memsizedifffilename );*/
 
          if ( imageToPNG(imageBase, filenamePNGbase_it_comp, it_comp) == EXIT_SUCCESS )
            {
@@ -790,10 +787,10 @@ int main(int argc, char **argv)
      free(filenamePNGbase_it_comp);
      free(filenamePNGtest_it_comp);
      free(filenamePNGdiff_it_comp);
-     } // it_comp loop
+     } /* it_comp loop */
 
-  //-----------------------------
-  // Free memory
+  /*-----------------------------*/
+  /* Free memory */
   opj_image_destroy(imageBase);
   opj_image_destroy(imageTest);
   opj_image_destroy(imageDiff);

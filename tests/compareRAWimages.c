@@ -69,7 +69,7 @@ int parse_cmdline_cmp(int argc, char **argv, test_cmp_parameters* param)
 	const char optlist[] = "b:t:";
 	int c;
 
-	// Init parameters
+	/* Init parameters*/
 	param->base_filename = NULL;
 	param->test_filename = NULL;
 
@@ -83,7 +83,7 @@ int parse_cmdline_cmp(int argc, char **argv, test_cmp_parameters* param)
 			param->base_filename[0] = '\0';
 			strncpy(param->base_filename, opj_optarg, strlen(opj_optarg));
 			param->base_filename[strlen(opj_optarg)] = '\0';
-			//printf("param->base_filename = %s [%d / %d]\n", param->base_filename, strlen(param->base_filename), sizemembasefile );
+			/*printf("param->base_filename = %s [%d / %d]\n", param->base_filename, strlen(param->base_filename), sizemembasefile );*/
 			break;
 		case 't':
 			sizememtestfile = (int) strlen(opj_optarg) + 1;
@@ -91,7 +91,7 @@ int parse_cmdline_cmp(int argc, char **argv, test_cmp_parameters* param)
 			param->test_filename[0] = '\0';
 			strncpy(param->test_filename, opj_optarg, strlen(opj_optarg));
 			param->test_filename[strlen(opj_optarg)] = '\0';
-			//printf("param->test_filename = %s [%d / %d]\n", param->test_filename, strlen(param->test_filename), sizememtestfile);
+			/*printf("param->test_filename = %s [%d / %d]\n", param->test_filename, strlen(param->test_filename), sizememtestfile);*/
 			break;
 		case '?':
 			if ((opj_optopt == 'b') || (opj_optopt == 't'))
@@ -123,7 +123,7 @@ int main(int argc, char **argv)
 	FILE *file_test=NULL, *file_base=NULL;
 	unsigned char equal = 1;
 
-	// Get parameters from command line
+	/* Get parameters from command line*/
 	if (parse_cmdline_cmp(argc, argv, &inParam) == EXIT_FAILURE)
 	{
 		compareRAWimages_help_display();
@@ -176,7 +176,7 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;
 	}
 
-	// Read simultaneously the two files
+	/* Read simultaneously the two files*/
 	while (equal)
 	{
 		unsigned char value_test = 0;
@@ -184,28 +184,28 @@ int main(int argc, char **argv)
 		unsigned char value_base = 0;
 		unsigned char eof_base = 0;
 
-		// Read one byte
+		/* Read one byte*/
 		if (!fread(&value_test, 1, 1, file_test)) {
 			eof_test = 1;
 		}
 
-		// Read one byte
+		/* Read one byte*/
 		if (!fread(&value_base, 1, 1, file_base)) {
 			eof_base = 1;;
 		}
 
-		// End of file reached by the two files?
+		/* End of file reached by the two files?*/
 		if (eof_test && eof_base)
 			break;
 
-		// End of file reached only by one file?
+		/* End of file reached only by one file?*/
 		if (eof_test || eof_base)
 		{
 			fprintf(stdout,"Files have different sizes.\n");
 			equal = 0;
 		}
 
-		// Binary values are equal?
+		/* Binary values are equal?*/
 		if (value_test != value_base)
 		{
 			fprintf(stdout,"Binary values read in the file are different.\n");
