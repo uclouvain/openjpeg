@@ -84,7 +84,7 @@ int write_tpixfaix( int coff, int compno, opj_codestream_info_t cstr_info, int j
   int i, j;
   int Aux;
   int num_max_tile_parts;
-  int size_of_coding; // 4 or 8
+  int size_of_coding; /* 4 or 8 */
   opj_tp_info_t tp;
   int version;
 
@@ -118,10 +118,10 @@ int write_tpixfaix( int coff, int compno, opj_codestream_info_t cstr_info, int j
 	  Aux = j + 1;
 		  
 	cio_write( cio, Aux,4);
-	//cio_write(img.tile[i].tile_parts[j].num_reso_AUX,4); /* Aux_i,j : Auxiliary value */
-	// fprintf(stderr,"AUX value %d\n",Aux);
+	/*cio_write(img.tile[i].tile_parts[j].num_reso_AUX,4);*/ /* Aux_i,j : Auxiliary value */
+	/* fprintf(stderr,"AUX value %d\n",Aux);*/
       }
-      //cio_write(0,4);
+      /*cio_write(0,4);*/
     }
     /* PADDING */
     while (j < num_max_tile_parts){

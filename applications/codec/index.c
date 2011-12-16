@@ -260,7 +260,7 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 			int x1 = x0 + cstr_info->tile_x;
 			int y1 = y0 + cstr_info->tile_y;
 
-			// Count the maximum number of precincts 
+			/* Count the maximum number of precincts */
 			int max_numprec = 0;
 			for (resno = 0; resno < max_numdecompos + 1; resno++) {
 				int numprec = cstr_info->tile[tileno].pw[resno] * cstr_info->tile[tileno].ph[resno];
@@ -311,7 +311,7 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 		} /* PCRL */
 
 		else {	/* CPRL */
-			// Count the maximum number of precincts 
+			/* Count the maximum number of precincts */
 			int max_numprec = 0;
 			for (resno = 0; resno < max_numdecompos + 1; resno++) {
 				int numprec = cstr_info->tile[tileno].pw[resno] * cstr_info->tile[tileno].ph[resno];

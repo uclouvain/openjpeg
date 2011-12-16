@@ -33,7 +33,7 @@
 #include "opj_includes.h"
 
 void tcd_dump(FILE *fd, opj_tcd_t *tcd, opj_tcd_image_t * img) {
-	int tileno, compno, resno, bandno, precno;//, cblkno;
+	int tileno, compno, resno, bandno, precno;/*, cblkno;*/
 
 	fprintf(fd, "image {\n");
 	fprintf(fd, "  tw=%d, th=%d x0=%d x1=%d y0=%d y1=%d\n", 

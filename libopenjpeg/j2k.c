@@ -678,7 +678,7 @@ static void j2k_read_cox(opj_j2k_t *j2k, int compno) {
 
 	tccp->numresolutions = cio_read(cio, 1) + 1;	/* SPcox (D) */
 
-	// If user wants to remove more resolutions than the codestream contains, return error
+	/* If user wants to remove more resolutions than the codestream contains, return error*/
 	if (cp->reduce >= tccp->numresolutions) {
 		opj_event_msg(j2k->cinfo, EVT_ERROR, "Error decoding component %d.\nThe number of resolutions to remove is higher than the number "
 					"of resolutions of this component\nModify the cp_reduce parameter.\n\n", compno);
@@ -1360,7 +1360,7 @@ static void j2k_read_sot(opj_j2k_t *j2k) {
     if (numparts)
       j2k->cstr_info->tile[tileno].tp = (opj_tp_info_t *) opj_realloc(j2k->cstr_info->tile[tileno].tp, numparts * sizeof(opj_tp_info_t));
     else
-      j2k->cstr_info->tile[tileno].tp = (opj_tp_info_t *) opj_realloc(j2k->cstr_info->tile[tileno].tp, 10 * sizeof(opj_tp_info_t)); // Fixme (10)
+      j2k->cstr_info->tile[tileno].tp = (opj_tp_info_t *) opj_realloc(j2k->cstr_info->tile[tileno].tp, 10 * sizeof(opj_tp_info_t)); /* Fixme (10)*/
 		j2k->cstr_info->tile[tileno].tp[partno].tp_start_pos = cio_tell(cio) - 12;
 		j2k->cstr_info->tile[tileno].tp[partno].tp_end_pos = 
 			j2k->cstr_info->tile[tileno].tp[partno].tp_start_pos + totlen - 1;
@@ -1861,13 +1861,13 @@ opj_image_t* j2k_decode(opj_j2k_t *j2k, opj_cio_t *cio, opj_codestream_info_t *c
 			return 0;
 		}
 		e = j2k_dec_mstab_lookup(id);
-		// Check if the marker is known
+		/* Check if the marker is known*/
 		if (!(j2k->state & e->states)) {
 			opj_image_destroy(image);
 			opj_event_msg(cinfo, EVT_ERROR, "%.8x: unexpected marker %x\n", cio_tell(cio) - 2, id);
 			return 0;
 		}
-		// Check if the decoding is limited to the main header
+		/* Check if the decoding is limited to the main header*/
 		if (e->id == J2K_MS_SOT && j2k->cp->limit_decoding == LIMIT_TO_MAIN_HEADER) {
 			opj_event_msg(cinfo, EVT_INFO, "Main Header decoded.\n");
 			return image;
@@ -2214,10 +2214,10 @@ void j2k_setup_encoder(opj_j2k_t *j2k, opj_cparameters_t *parameters, opj_image_
 
 			if(parameters->cp_cinema)
 			{
-				//Precinct size for lowest frequency subband=128
+				/*Precinct size for lowest frequency subband=128*/
 				tccp->prcw[0] = 7;
 				tccp->prch[0] = 7;
-				//Precinct size at all other resolutions = 256
+				/*Precinct size at all other resolutions = 256*/
 				for (j = 1; j < tccp->numresolutions; j++) {
 					tccp->prcw[j] = 8;
 					tccp->prch[j] = 8;
@@ -2259,7 +2259,7 @@ void j2k_setup_encoder(opj_j2k_t *j2k, opj_cparameters_t *parameters, opj_image_
 						}
 						p++;
 						/*printf("\nsize precinct for level %d : %d,%d\n", j,tccp->prcw[j], tccp->prch[j]); */
-					}	//end for
+					}	/*end for*/
 				} else {
 					for (j = 0; j < tccp->numresolutions; j++) {
 						tccp->prcw[j] = 15;

@@ -197,7 +197,7 @@ again:
 						return o->val;
 					return 0;
 				}
-			}//(end for)String not found in the list
+			}/*(end for)String not found in the list*/
 			fprintf(stderr,"Invalid option %s\n",arg);
 			++opj_optind;
 			return (BADCH);
@@ -244,11 +244,11 @@ found:
 				fprintf(stderr,"Invalid option %s\n",arg);
 				++opj_optind;
 				return (BADCH);
-			}//end of not found
+			}/*end of not found*/
 		
-		}// end of single character
-	}//end '-'
+		}/* end of single character*/
+	}/*end '-'*/
 	fprintf(stderr,"Invalid option\n");
 	++opj_optind;
 	return (BADCH);;
-}//end function
+}/*end function*/

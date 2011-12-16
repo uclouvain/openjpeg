@@ -37,7 +37,7 @@
 # define INDEXBOX_MANAGER_H_
 
 #include "openjpeg.h"
-#include "j2k.h" // needed to use jp2.h
+#include "j2k.h" /* needed to use jp2.h */
 #include "jp2.h"
 
 #define JPIP_CIDX 0x63696478   /* Codestream index                */

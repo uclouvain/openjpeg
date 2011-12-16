@@ -180,7 +180,7 @@ char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_dparamet
 	sprintf(infilename,"%s/%s",img_fol->imgdirpath,image_filename);
 	strncpy(parameters->infile, infilename, sizeof(infilename));
 
-	//Set output file
+	/*Set output file*/
 	strcpy(temp_ofname,strtok(image_filename,"."));
 	while((temp_p = strtok(NULL,".")) != NULL){
 		strcat(temp_ofname,temp1);
@@ -356,7 +356,7 @@ int main(int argc, char *argv[])
 
 		dirptr=(dircnt_t*)malloc(sizeof(dircnt_t));
 		if(dirptr){
-			dirptr->filename_buf = (char*)malloc(num_images*OPJ_PATH_LEN*sizeof(char));	// Stores at max 10 image file names
+			dirptr->filename_buf = (char*)malloc(num_images*OPJ_PATH_LEN*sizeof(char));	/* Stores at max 10 image file names*/
 			dirptr->filename = (char**) malloc(num_images*sizeof(char*));
 
 			if(!dirptr->filename_buf){
@@ -377,7 +377,7 @@ int main(int argc, char *argv[])
 		num_images=1;
 	}
 
-	//
+	/* */
 	if (parameters.outfile[0] != 0)
 	  {
 	  fout = fopen(parameters.outfile,"w");
@@ -445,7 +445,7 @@ int main(int argc, char *argv[])
 			cio = opj_cio_open((opj_common_ptr)dinfo, src, file_length);
 
 			/* decode the stream and fill the image structure */
-			if (*indexfilename)				// If need to extract codestream information
+			if (*indexfilename)				/* If need to extract codestream information*/
 				image = opj_decode_with_info(dinfo, cio, &cstr_info);
 			else
 				image = opj_decode(dinfo, cio);
@@ -494,7 +494,7 @@ int main(int argc, char *argv[])
 			cio = opj_cio_open((opj_common_ptr)dinfo, src, file_length);
 
 			/* decode the stream and fill the image structure */
-			if (*indexfilename)				// If need to extract codestream information
+			if (*indexfilename)				/* If need to extract codestream information*/
 				image = opj_decode_with_info(dinfo, cio, &cstr_info);
 			else
 				image = opj_decode(dinfo, cio);			
@@ -547,7 +547,7 @@ int main(int argc, char *argv[])
 			cio = opj_cio_open((opj_common_ptr)dinfo, src, file_length);
 
 			/* decode the stream and fill the image structure */
-			if (*indexfilename)				// If need to extract codestream information
+			if (*indexfilename)				/* If need to extract codestream information*/
 				image = opj_decode_with_info(dinfo, cio, &cstr_info);
 			else
 				image = opj_decode(dinfo, cio);
@@ -611,7 +611,7 @@ static void j2k_dump_image(FILE *fd, opj_image_t * img) {
 		fprintf(fd, "  comp %d {\n", compno);
 		fprintf(fd, "    dx=%d, dy=%d\n", comp->dx, comp->dy);
 		fprintf(fd, "    prec=%d\n", comp->prec);
-		//fprintf(fd, "    bpp=%d\n", comp->bpp);
+		/*fprintf(fd, "    bpp=%d\n", comp->bpp);*/
 		fprintf(fd, "    sgnd=%d\n", comp->sgnd);
 		fprintf(fd, "  }\n");
 	}
