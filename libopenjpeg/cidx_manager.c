@@ -73,6 +73,7 @@ int write_cidx( int offset, opj_cio_t *cio, opj_image_t *image, opj_codestream_i
   opj_jp2_box_t *box;
   int num_box = 0;
   opj_bool  EPHused;
+  (void)image; /* unused ? */
 
   lenp = -1;
   box = (opj_jp2_box_t *)opj_calloc( 32, sizeof(opj_jp2_box_t));
