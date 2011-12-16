@@ -1717,7 +1717,7 @@ int main(int argc, char **argv) {
 					return 1;
 				}
 				res = fwrite(cio->buffer, 1, codestream_length, f);
-        if( res < codestream_length ) {
+        if( res < (size_t)codestream_length ) { /* FIXME */
  					fprintf(stderr, "failed to write %d (%s)\n", codestream_length, parameters.outfile);
 					return 1;
          }
@@ -1778,7 +1778,7 @@ int main(int argc, char **argv) {
 					return 1;
 				}
 				res = fwrite(cio->buffer, 1, codestream_length, f);
-        if( res < codestream_length ) {
+        if( res < (size_t)codestream_length ) { /* FIXME */
  					fprintf(stderr, "failed to write %d (%s)\n", codestream_length, parameters.outfile);
 					return 1;
          }
