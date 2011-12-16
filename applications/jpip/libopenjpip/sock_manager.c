@@ -99,7 +99,7 @@ SOCKET accept_socket( SOCKET listening_socket)
 
 void send_stream( SOCKET connected_socket, void *stream, int length)
 {
-  void *ptr = stream;
+  char *ptr = (char*)stream;
   int remlen = length;
 
   while( remlen > 0){
@@ -115,7 +115,7 @@ void send_stream( SOCKET connected_socket, void *stream, int length)
 
 void * receive_stream( SOCKET connected_socket, int length)
 {
-  void *stream, *ptr;
+  char *stream, *ptr;
   int remlen, redlen;
 
   ptr = stream = malloc( length);
