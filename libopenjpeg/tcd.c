@@ -352,6 +352,7 @@ void tcd_malloc_encode(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp, int c
 					for (i = 0; i < res->pw * res->ph * 3; i++) {
 						band->precincts[i].imsbtree = NULL;
 						band->precincts[i].incltree = NULL;
+						band->precincts[i].cblks.enc = NULL;
 					}
 					
 					for (precno = 0; precno < res->pw * res->ph; precno++) {
