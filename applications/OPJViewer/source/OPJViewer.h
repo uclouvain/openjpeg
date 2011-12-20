@@ -214,8 +214,8 @@ class OPJViewerApp: public wxApp
 #ifdef USE_JPWL
 		bool m_enablejpwl, m_enablejpwle;
 		int m_expcomps, m_maxtiles;
-		int m_framewidth, m_frameheight;
 #endif // USE_JPWL
+		int m_framewidth, m_frameheight;
 
 		// encoding engine parameters
 		wxString m_subsampling, m_origin, m_rates, m_comment, m_index, m_quality;
@@ -782,9 +782,10 @@ public:
 #ifdef USE_JPWL
 	void OnEnableJPWL(wxCommandEvent& event);
     wxPanel* CreatePart11SettingsPage(wxWindow* parent);
-	wxSpinCtrl *m_expcompsCtrl, *m_framenumCtrl, *m_maxtilesCtrl;
+	wxSpinCtrl *m_expcompsCtrl, *m_maxtilesCtrl;
 	wxCheckBox *m_enablejpwlCheck;
 #endif // USE_JPWL
+	wxSpinCtrl *m_framenumCtrl;
 
 
 protected:

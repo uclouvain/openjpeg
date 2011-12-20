@@ -360,6 +360,22 @@ wxPanel* OPJDecoderDialog::CreatePart11SettingsPage(wxWindow* parent)
     return panel;
 }
 
+void OPJDecoderDialog::OnEnableJPWL(wxCommandEvent& event)
+{
+	if (event.IsChecked()) {
+		wxLogMessage(wxT("JPWL enabled"));
+		m_expcompsCtrl->Enable(true);
+		m_maxtilesCtrl->Enable(true);
+	} else {
+		wxLogMessage(wxT("JPWL disabled"));
+		m_expcompsCtrl->Enable(false);
+		m_maxtilesCtrl->Enable(false);
+	}
+
+}
+
+#endif // USE_JPWL
+
 void OPJDecoderDialog::OnEnableDeco(wxCommandEvent& event)
 {
 	size_t pp;
@@ -383,22 +399,6 @@ void OPJDecoderDialog::OnEnableDeco(wxCommandEvent& event)
 	}
 
 }
-
-void OPJDecoderDialog::OnEnableJPWL(wxCommandEvent& event)
-{
-	if (event.IsChecked()) {
-		wxLogMessage(wxT("JPWL enabled"));
-		m_expcompsCtrl->Enable(true);
-		m_maxtilesCtrl->Enable(true);
-	} else {
-		wxLogMessage(wxT("JPWL disabled"));
-		m_expcompsCtrl->Enable(false);
-		m_maxtilesCtrl->Enable(false);
-	}
-
-}
-
-#endif // USE_JPWL
 
 
 

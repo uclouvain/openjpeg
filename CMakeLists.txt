@@ -179,6 +179,8 @@ ADD_SUBDIRECTORY(libopenjpeg)
 OPTION(BUILD_CODEC "Build the CODEC executables" ON)
 OPTION(BUILD_MJ2 "Build the MJ2 executables." OFF)
 OPTION(BUILD_JPIP "Build the JPIP library and executables." OFF)
+OPTION(BUILD_VIEWER "Build the OPJViewer executable (C++)" OFF)
+MARK_AS_ADVANCED(BUILD_VIEWER)
 
 IF(BUILD_JPIP)
  FIND_PACKAGE(CURL)
