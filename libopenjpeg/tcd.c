@@ -718,7 +718,7 @@ void tcd_malloc_decode(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp) {
 			tilec->y1 = int_ceildiv(tile->y1, image->comps[i].dy);
 
 			x0 = j == 0 ? tilec->x0 : int_min(x0, (unsigned int) tilec->x0);
-			y0 = j == 0 ? tilec->y0 : int_min(y0,	(unsigned int) tilec->x0);
+			y0 = j == 0 ? tilec->y0 : int_min(y0,	(unsigned int) tilec->y0);
 			x1 = j == 0 ? tilec->x1 : int_max(x1,	(unsigned int) tilec->x1);
 			y1 = j == 0 ? tilec->y1 : int_max(y1,	(unsigned int) tilec->y1);
 		}
