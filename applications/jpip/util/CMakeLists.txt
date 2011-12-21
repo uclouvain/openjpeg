@@ -11,8 +11,10 @@ SET(OPJ_SERVER_SRCS
 # Build executable
 ADD_EXECUTABLE(opj_server ${OPJ_SERVER_SRCS})
 TARGET_LINK_LIBRARIES(opj_server openjpip_server ${FCGI_LIBNAME})
-SET_TARGET_PROPERTIES(opj_server
-  PROPERTIES COMPILE_FLAGS "-DSERVER -DQUIT_SIGNAL=\\\"quitJPIP\\\""
+SET_PROPERTY(
+  TARGET opj_server
+  APPEND PROPERTY
+  COMPILE_DEFINITIONS SERVER QUIT_SIGNAL="quitJPIP"
   )
 
 # On unix you need to link to the math library:
