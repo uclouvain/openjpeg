@@ -108,9 +108,6 @@ IF(NOT OPENJPEG_INSTALL_PACKAGE_DIR)
 ENDIF(NOT OPENJPEG_INSTALL_PACKAGE_DIR)
 
 #-----------------------------------------------------------------------------
-# Test for some required system information.
-INCLUDE (${CMAKE_ROOT}/Modules/CMakeBackwardCompatibilityC.cmake)
-
 # Big endian test:
 INCLUDE (${CMAKE_ROOT}/Modules/TestBigEndian.cmake)
 TEST_BIG_ENDIAN(OPJ_BIG_ENDIAN)
