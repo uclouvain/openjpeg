@@ -142,10 +142,15 @@ ENDIF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/openjpeg_mangle.h.in)
 
 #-----------------------------------------------------------------------------
 # pkgconfig support
-CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/libopenjpeg1.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/libopenjpeg1.pc @ONLY)
-INSTALL( FILES  ${CMAKE_CURRENT_BINARY_DIR}/libopenjpeg1.pc DESTINATION ${OPENJPEG_INSTALL_LIB_DIR}/pkgconfig )
-INSTALL( CODE
-  "EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E create_symlink \"libopenjpeg1.pc\" \"\$ENV{DESTDIR}${OPENJPEG_INSTALL_LIB_DIR}/pkgconfig/libopenjpeg.pc\")")
+IF(UNIX)
+  CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/libopenjpeg1.pc.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/libopenjpeg1.pc @ONLY)
+  INSTALL( FILES  ${CMAKE_CURRENT_BINARY_DIR}/libopenjpeg1.pc DESTINATION
+    ${OPENJPEG_INSTALL_LIB_DIR}/pkgconfig )
+  INSTALL( CODE "EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E create_symlink
+  \"libopenjpeg1.pc\"
+  \"\$ENV{DESTDIR}${OPENJPEG_INSTALL_LIB_DIR}/pkgconfig/libopenjpeg.pc\")")
+ENDIF(UNIX)
 
 #-----------------------------------------------------------------------------
 # Compiler specific flags:
