@@ -30,7 +30,14 @@ ENDIF(WIN32)
 FOREACH(exe j2k_to_image image_to_j2k j2k_dump)
   ADD_EXECUTABLE(${exe} ${exe}.c ${common_SRCS})
   TARGET_LINK_LIBRARIES(${exe} ${OPENJPEG_LIBRARY_NAME} 
-${Z_LIBNAME} ${PNG_LIBNAME} ${TIFF_LIBNAME} ${LCMS_LIBNAME} )
+    ${PNG_LIBNAME} ${TIFF_LIBNAME} ${LCMS_LIBNAME}
+    )
+  # To support universal exe:
+  IF(ZLIB_FOUND AND APPLE)
+    TARGET_LINK_LIBRARIES(${exe} z)
+  ELSe(ZLIB_FOUND AND APPLE)
+    TARGET_LINK_LIBRARIES(${exe} ${Z_LIBNAME})
+  ENDIF(ZLIB_FOUND AND APPLE)
 
   # On unix you need to link to the math library:
   IF(UNIX)

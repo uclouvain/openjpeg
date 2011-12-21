@@ -196,6 +196,9 @@ IF(NOT CURL_FOUND)
  SET(BUILD_JPIP OFF)
 ENDIF (NOT CURL_FOUND)
 
+# Try to find lib Z
+FIND_PACKAGE(ZLIB)
+
 IF(BUILD_CODEC OR BUILD_MJ2 OR BUILD_JPIP)
   OPTION(BUILD_THIRDPARTY "Build the thirdparty executables if it is needed" OFF)
   ADD_SUBDIRECTORY(thirdparty)

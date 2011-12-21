@@ -1,30 +1,14 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
-
-IF(UNIX OR CYGWIN)
-  SET(CMAKE_INCLUDE_PATH /usr/include /usr/local/include /opt/include 
-    /opt/local/include /usr/include/libpng /usr/include/libpng14
-	/usr/include/libpng12 /usr/local/include/libpng 
-	/usr/local/include/libpng14 /usr/local/include/libpng12
-	/opt/include/libpng /opt/include/libpng14 /opt/include/libpng12
-	/opt/local/include/libpng /opt/local/include/libpng14)
-  SET(CMAKE_LIBRARY_PATH /usr/lib /usr/local/lib /opt/lib /opt/local/lib)
-ENDIF(UNIX OR CYGWIN)
-
-#------------
-# Try to find lib Z
-FIND_PACKAGE(ZLIB)
-
 IF(ZLIB_FOUND)
 
   SET(Z_LIBNAME ${ZLIB_LIBRARIES} PARENT_SCOPE)
   SET(Z_INCLUDE_DIRNAME ${ZLIB_INCLUDE_DIRS} PARENT_SCOPE) 
-  message("Your system seems to have a Z lib available, we will use it to generate PNG lib")
+  message(STATUS "Your system seems to have a Z lib available, we will use it to generate PNG lib")
 
 ELSE (ZLIB_FOUND) # not found
   
   IF(BUILD_THIRDPARTY)
     # Try to build it
-    message("We will build Z lib from thirdparty")
+    message(STATUS "We will build Z lib from thirdparty")
     ADD_SUBDIRECTORY(libz)
     SET(Z_LIBNAME z PARENT_SCOPE)
     SET(Z_INCLUDE_DIRNAME ${OPENJPEG_SOURCE_DIR}/thirdparty/include PARENT_SCOPE)
