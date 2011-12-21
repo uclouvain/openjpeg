@@ -1,19 +1,21 @@
-# This file list all the input commands of the tests run by the ctest command which 
-# are not related to the conformance files.
+# This file list all the input commands of the tests run by the ctest command
+# which are not related to the conformance files.
 #
-# For each line of this file (exept line which begin with #) an image_to_j2k test or a 
-# j2k_to_image is run and its related tests.
-#   + For encoder related tests = dump, compare dump to base, decode the encoded file with 
-#     reference and compare the decoded file with the baseline decoded previously with 
-#     ref decoder.
-#   + For decoder related tests = dump, compare dump to base, (TODO: compare outpout decoding 
-#     image to base)
+# For each line of this file (exept line which begin with #) an image_to_j2k
+# test or a j2k_to_image is run and its related tests.
+#   + For encoder related tests = dump, compare dump to base, decode the
+#   encoded file with reference and compare the decoded file with the baseline
+#   decoded previously with ref decoder.
+#   + For decoder related tests = dump, compare dump to base, (TODO: compare
+#   outpout decoding image to base)
 #
-# Line begin with ! should failed (should be used for bad jpeg2000 file which should be 
-# gracefully rejected)
+# Line begining with ! should fail (use for bad jpeg2000 file which should
+# gracefully be rejected)
 #
-# You can use @INPUT_NR_PATH@ and @TEMP_PATH@ cmake variable which refers to OPJ_DATA_ROOT 
-# repository. However you can use relative path or absolute path.
+# You can use @INPUT_NR_PATH@ and @TEMP_PATH@ cmake variable which refers to
+# OPJ_DATA_ROOT repository. You can use either relative path or absolute path.
+# However you cannot have space in the path for neither INPUT_NR_PATH nor
+# TEMP_PATH
 
 # ENCODER TEST SUITE
 image_to_j2k -i @INPUT_NR_PATH@/Bretagne1.ppm -o @TEMP_PATH@/Bretagne1_0.j2k -r 200,50,10
