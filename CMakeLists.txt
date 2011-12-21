@@ -160,6 +160,7 @@ ENDIF(CMAKE_COMPILER_IS_GNUCC)
 
 #-----------------------------------------------------------------------------
 # opj_config.h generation (1/2)
+INCLUDE (${CMAKE_ROOT}/Modules/CheckIncludeFile.cmake)
 CHECK_INCLUDE_FILE("strings.h"       HAVE_STRINGS_H)
 CHECK_INCLUDE_FILE("inttypes.h"       HAVE_INTTYPES_H)
 CHECK_INCLUDE_FILE("memory.h"       HAVE_MEMORY_H)
