@@ -22,9 +22,16 @@ SET(compareRAWimages_SRCS compareRAWimages.c
 
 ADD_EXECUTABLE(comparePGXimages ${comparePGXimages_SRCS})
 TARGET_LINK_LIBRARIES(comparePGXimages
-  ${OPENJPEG_LIBRARY_NAME} ${Z_LIBNAME}
-  ${PNG_LIBNAME} ${TIFF_LIBNAME})
-                                       
+  ${OPENJPEG_LIBRARY_NAME}
+  ${PNG_LIBNAME} ${TIFF_LIBNAME}
+  )
+# To support universal exe:
+IF(ZLIB_FOUND AND APPLE)
+  TARGET_LINK_LIBRARIES(comparePGXimages z)
+ELSe(ZLIB_FOUND AND APPLE)
+  TARGET_LINK_LIBRARIES(comparePGXimages ${Z_LIBNAME})
+ENDIF(ZLIB_FOUND AND APPLE)
+
 ADD_EXECUTABLE(compare_dump_files ${compare_dump_files_SRCS})
 
 ADD_EXECUTABLE(compareRAWimages ${compareRAWimages_SRCS})
