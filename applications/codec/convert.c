@@ -1851,7 +1851,7 @@ int imagetopnm(opj_image_t * image, const char *outfile)
 	FILE *fdest = NULL;
 	const char *tmp = outfile;
 	char *destname;
-
+  alpha = NULL;
     if((prec = image->comps[0].prec) > 16)
    {
 	fprintf(stderr,"%s:%d:imagetopnm\n\tprecision %d is larger than 16"
@@ -1913,7 +1913,7 @@ int imagetopnm(opj_image_t * image, const char *outfile)
   {
 	fprintf(fdest, "P6\n# OpenJPEG-%s\n%d %d\n%d\n", 
 		opj_version(), wr, hr, max);
-	alpha = NULL; adjustA = 0;
+	adjustA = 0;
   }
     adjustR = (image->comps[0].sgnd ? 1 << (image->comps[0].prec - 1) : 0);
 
