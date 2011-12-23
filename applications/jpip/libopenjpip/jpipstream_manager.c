@@ -65,7 +65,8 @@ void save_codestream( Byte_t *codestream, Byte8_t streamlen, char *fmt)
   sprintf( filename, "%4d%02d%02d%02d%02d%02d.%.3s", t_st->tm_year+1900, t_st->tm_mon+1, t_st->tm_mday, t_st->tm_hour, t_st->tm_min, t_st->tm_sec, fmt);
 
   fp = fopen( filename, "wb");
-  fwrite( codestream, streamlen, 1, fp);
+  if( fwrite( codestream, streamlen, 1, fp) != 1)
+    fprintf( stderr, "Error: failed to write codestream to file %s\n", filename);
   fclose( fp);
 }
 

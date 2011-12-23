@@ -147,7 +147,9 @@ void send_responsedata( server_record_t *rec, QR_t *qr)
       return;
     }
   
-  fwrite( jpipstream, len_of_jpipstream, 1, FCGI_stdout);
+  if( fwrite( jpipstream, len_of_jpipstream, 1, FCGI_stdout) != 1)
+    fprintf( FCGI_stderr, "Error: failed to write jpipstream\n");
+
   free( jpipstream);
   return;
 }
@@ -160,7 +162,8 @@ void add_EORmsg( int fd, QR_t *qr)
     EOR[0] = 0x00;   
     EOR[1] = is_allsent( *(qr->channel->cachemodel)) ? 0x01 : 0x02;
     EOR[2] = 0x00;
-    write( fd, EOR, 3);
+    if( write( fd, EOR, 3) != 3)
+      fprintf( FCGI_stderr, "Error: failed to write EOR message\n");
   }
 }
 

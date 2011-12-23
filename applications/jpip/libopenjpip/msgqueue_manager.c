@@ -484,7 +484,10 @@ void add_vbas_with_bytelen_stream( Byte8_t code, int bytelength, int tmpfd)
     seg = ( code >> (n*7)) & 0x7f;
     if( n)
       seg |= 0x80;
-    write( tmpfd, ( Byte4_t *)&seg, 1);
+    if( write( tmpfd, ( Byte4_t *)&seg, 1) != 1){
+      fprintf( FCGI_stderr, "Error: failed to write vbas\n");
+      return;
+    }
     n--;
   }
 }
@@ -532,7 +535,10 @@ void add_bigendian_bytestream( Byte8_t code, int bytelength, int tmpfd)
   n = bytelength - 1;
   while( n >= 0) {
     seg = ( code >> (n*8)) & 0xff;
-    write( tmpfd, ( Byte4_t *)&seg, 1);
+    if( write( tmpfd, ( Byte4_t *)&seg, 1) != 1){
+      fprintf( FCGI_stderr, "ERROR: failed to write bigendian_bytestream\n");
+      return;
+    }
     n--;
   }
 }
