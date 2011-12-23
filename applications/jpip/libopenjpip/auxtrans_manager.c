@@ -33,10 +33,10 @@
 #include <stdlib.h>
 #include "auxtrans_manager.h"
 
-#ifdef __linux__
-#include <pthread.h>
-#else
+#ifdef _WIN32
 #include <process.h>
+#else
+#include <pthread.h>
 #endif
 
 #ifdef SERVER
@@ -94,20 +94,21 @@ aux_response_param_t * gene_auxresponse( bool istcp, auxtrans_param_t auxtrans, 
 
 void delete_auxresponse( aux_response_param_t **auxresponse);
 
-#ifdef __linux__
-void * aux_streaming( void *arg);
-#else
+
+#ifdef _WIN32
 unsigned __stdcall aux_streaming( void *arg);
+#else
+void * aux_streaming( void *arg);
 #endif
 
 void send_responsedata_on_aux( bool istcp, auxtrans_param_t auxtrans, char cid[], void *data, int datalen, int maxlenPerFrame)
 {
   aux_response_param_t *auxresponse;
-#ifdef __linux__
+#ifdef _WIN32
+  unsigned int threadId;
+#else
   pthread_t thread;
   int status;
-#else
-  unsigned int threadId;
 #endif
   
   if( istcp){
@@ -117,15 +118,15 @@ void send_responsedata_on_aux( bool istcp, auxtrans_param_t auxtrans, char cid[]
     }
 
     auxresponse = gene_auxresponse( istcp, auxtrans, cid, data, datalen, maxlenPerFrame);
-    
-#ifdef __linux__
-    status = pthread_create( &thread, NULL, &aux_streaming, auxresponse);
-    if( status != 0)
-      fprintf( FCGI_stderr,"ERROR: pthread_create() %s",strerror(status));
-#else
+
+#ifdef _WIN32
     auxresponse->hTh = (HANDLE)_beginthreadex( NULL, 0, &aux_streaming, auxresponse, 0, &threadId);
     if( auxresponse->hTh == 0)
       fprintf( FCGI_stderr,"ERRO: pthread_create() %s", strerror( (int)auxresponse->hTh));
+#else
+    status = pthread_create( &thread, NULL, &aux_streaming, auxresponse);
+    if( status != 0)
+      fprintf( FCGI_stderr,"ERROR: pthread_create() %s",strerror(status));
 #endif   
   }
   else
@@ -166,10 +167,10 @@ bool identify_cid( SOCKET connected_socket, char refcid[], FILE *fp);
 
 bool recv_ack( SOCKET connected_socket, void *data);
 
-#ifdef __linux__
-void * aux_streaming( void *arg)
-#else
+#ifdef _WIN32
 unsigned __stdcall aux_streaming( void *arg)
+#else
+void * aux_streaming( void *arg)
 #endif
 {
   SOCKET connected_socket;
@@ -179,10 +180,10 @@ unsigned __stdcall aux_streaming( void *arg)
   
   aux_response_param_t *auxresponse = (aux_response_param_t *)arg;
 
-#ifdef __linux__
-  pthread_detach( pthread_self());
-#else
+#ifdef _WIN32
   CloseHandle( auxresponse->hTh);
+#else
+  pthread_detach( pthread_self());
 #endif
 
   chunk = (unsigned char *)malloc( auxresponse->maxlenPerFrame);
@@ -219,10 +220,10 @@ unsigned __stdcall aux_streaming( void *arg)
 
   delete_auxresponse( &auxresponse);
   
-#ifdef __linux__
-  pthread_exit(0);
-#else
+#ifdef _WIN32
   _endthreadex(0);
+#else
+  pthread_exit(0);
 #endif
 
   return 0;

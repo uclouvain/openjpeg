@@ -5,6 +5,9 @@ What's New for OpenJPIP
 ! : changed
 + : added
 
+December 22, 2011
+* [kaori] fixed auxtrans_manager to enable MAC
+
 November 30, 2011
 + [kaori] TCP return (http-tcp) implemented
 
