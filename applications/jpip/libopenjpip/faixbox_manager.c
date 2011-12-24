@@ -51,7 +51,7 @@ faixbox_param_t * gene_faixbox( box_param_t *box)
   
   faix->version = fetch_DBox1byte( box, (pos+=1)-1);
   
-  if( faix->version < 0 || 3< faix->version){
+  if( 3< faix->version){
     fprintf( FCGI_stderr, "Error: version %d in faix box is reserved for ISO use.\n", faix->version);
     free(faix);
     return NULL;
