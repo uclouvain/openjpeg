@@ -43,3 +43,14 @@ ENDIF(NOT HAVE_LIBPNG)
 
 ADD_SUBDIRECTORY(conformance)
 ADD_SUBDIRECTORY(nonregression)
+
+IF(BUILD_JPIP)
+  IF(JPIP_SERVER)
+    #SET(s "http://jpip.example.com/myFCGI?target=16.jp2&fsiz=170,170&cnew=http&type=jpp-stream")
+    SET(s "${JPIP_SERVER}?target=16.jp2&fsiz=170,170&cnew=http&type=jpp-stream")
+    SET(p "${CMAKE_CURRENT_BINARY_DIR}/jpip.dat")
+    SET(md5 "62b00c620fb0a600c5ffd413cada4674")
+    ADD_TEST(TestJPIP1 ${CMAKE_COMMAND} -DD_URL:STRING=${s} -DD_FILE:PATH=${p}
+      -DEXPECTED_MD5=${md5} -P ${PROJECT_SOURCE_DIR}/CMake/JPIPTestDriver.cmake)
+  ENDIF(JPIP_SERVER)
+ENDIF(BUILD_JPIP)
