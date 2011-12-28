@@ -1,1 +1,0 @@
-../../opj_viewer/src/ImageManager.java
