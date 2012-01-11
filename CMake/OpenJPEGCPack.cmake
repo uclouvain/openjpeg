@@ -24,6 +24,10 @@ if(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
 
   set(MACOSX_BUNDLE_ICON_FILE opj_logo.icns)
   set(CPACK_BUNDLE_NAME "BundleGeneratorTest")
+  configure_file(${CMAKE_ROOT}/Templates/AppleInfo.plist
+    ${CMAKE_CURRENT_BINARY_DIR}/opj.plist)
+  SET(CPACK_BUNDLE_PLIST
+    ${CMAKE_CURRENT_BINARY_DIR}/opj.plist)
 
   include(CPack)
 endiF(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
