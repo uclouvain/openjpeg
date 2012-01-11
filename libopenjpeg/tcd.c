@@ -1352,7 +1352,7 @@ opj_bool tcd_decode_tile(opj_tcd_t *tcd, unsigned char *src, int len, int tileno
 				}
 				else {
 					cstr_info->tile[tileno].pdx[resno] = 15;
-					cstr_info->tile[tileno].pdx[resno] = 15;
+					cstr_info->tile[tileno].pdy[resno] = 15;
 				}
 			}
 		}

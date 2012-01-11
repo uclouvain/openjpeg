@@ -168,8 +168,8 @@ void j2k_add_marker(opj_codestream_info_t *cstr_info, unsigned short int type, i
 
 	/* expand the list? */
 	if ((cstr_info->marknum + 1) > cstr_info->maxmarknum) {
-		cstr_info->maxmarknum = 100 + (int) ((float) cstr_info->maxmarknum * 1.0F);
-		cstr_info->marker = (opj_marker_info_t*)opj_realloc(cstr_info->marker, cstr_info->maxmarknum);
+		cstr_info->maxmarknum += 100;
+		cstr_info->marker = (opj_marker_info_t*)opj_realloc(cstr_info->marker, cstr_info->maxmarknum * sizeof(opj_marker_info_t));
 	}
 
 	/* add the marker */
