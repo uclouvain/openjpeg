@@ -200,6 +200,8 @@ ENDIF (NOT CURL_FOUND)
 FIND_PACKAGE(ZLIB)
 
 IF(BUILD_CODEC OR BUILD_MJ2 OR BUILD_JPIP)
+  # OFF: It will only build 3rd party libs if they are not found on the system
+  # ON: 3rd party libs will ALWAYS be build, and used
   OPTION(BUILD_THIRDPARTY "Build the thirdparty executables if it is needed" OFF)
   ADD_SUBDIRECTORY(thirdparty)
   ADD_SUBDIRECTORY(applications)
