@@ -30,4 +30,5 @@ Misc:
      - results are submitted to the OpenJPEG dashboard (http://my.cdash.org/index.php?project=OPENJPEG)
      - images are located in 'http://openjpeg.googlecode.com/svn/data' folder.
      - configuration files and utilities are located in 'tests' folder.
+    * OPJViewer re-activated (need wxWidgets)
     * Many bug fixes. See CHANGES for details.
