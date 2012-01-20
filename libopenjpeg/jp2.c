@@ -94,7 +94,7 @@ Apply collected palette data
 @param color Collector for profile, cdef and pclr data
 @param image 
 */
-static void jp2_apply_pclr(opj_jp2_color_t *color, opj_image_t *image);
+static void jp2_apply_pclr(opj_jp2_color_t *color, opj_image_t *image, opj_common_ptr cinfo);
 /**
 Collect palette data
 @param jp2 JP2 handle
@@ -344,7 +344,7 @@ static void free_color_data(opj_jp2_color_t *color)
 	if(color->icc_profile_buf) opj_free(color->icc_profile_buf);
 }
 
-static void jp2_apply_pclr(opj_jp2_color_t *color, opj_image_t *image)
+static void jp2_apply_pclr(opj_jp2_color_t *color, opj_image_t *image, opj_common_ptr cinfo)
 {
 	opj_image_comp_t *old_comps, *new_comps;
 	unsigned char *channel_size, *channel_sign;
@@ -369,7 +369,10 @@ static void jp2_apply_pclr(opj_jp2_color_t *color, opj_image_t *image)
    {
 	pcol = cmap[i].pcol; cmp = cmap[i].cmp;
 
-	new_comps[pcol] = old_comps[cmp];
+  if( pcol < nr_channels )
+    new_comps[pcol] = old_comps[cmp];
+  else
+    opj_event_msg(cinfo, EVT_ERROR, "Error with pcol value. skipping\n");
 
 	if(cmap[i].mtyp == 0) /* Direct use */
   {
@@ -769,7 +772,7 @@ opj_image_t* opj_jp2_decode(opj_jp2_t *jp2, opj_cio_t *cio,
 	if( !color.jp2_pclr->cmap) 
 	 jp2_free_pclr(&color);
 	else
-	 jp2_apply_pclr(&color, image);
+	 jp2_apply_pclr(&color, image, cinfo);
    }
 	if(color.icc_profile_buf)
    {
