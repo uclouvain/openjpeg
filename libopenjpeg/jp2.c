@@ -372,7 +372,10 @@ static void jp2_apply_pclr(opj_jp2_color_t *color, opj_image_t *image, opj_commo
   if( pcol < nr_channels )
     new_comps[pcol] = old_comps[cmp];
   else
-    opj_event_msg(cinfo, EVT_ERROR, "Error with pcol value. skipping\n");
+    {
+    opj_event_msg(cinfo, EVT_ERROR, "Error with pcol value %d (max: %d). skipping\n", pcol, nr_channels);
+    continue;
+    }
 
 	if(cmap[i].mtyp == 0) /* Direct use */
   {
