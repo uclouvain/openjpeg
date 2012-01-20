@@ -380,7 +380,7 @@ static int initialise_4K_poc(opj_poc_t *POC, int numres){
 }
 
 void cinema_parameters(opj_cparameters_t *parameters){
-	parameters->tile_size_on = false;
+	parameters->tile_size_on = OPJ_FALSE;
 	parameters->cp_tdx=1;
 	parameters->cp_tdy=1;
 	
@@ -663,7 +663,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 			case 't':			/* tiles */
 			{
 				sscanf(opj_optarg, "%d,%d", &parameters->cp_tdx, &parameters->cp_tdy);
-				parameters->tile_size_on = true;
+				parameters->tile_size_on = OPJ_TRUE;
 			}
 			break;
 
@@ -1628,7 +1628,7 @@ opj_image_t* loadImage(opj_cparameters_t *parameters, JNIEnv *env, jobject obj, 
 	jbyte		*jbBody;
 	jshort		*jsBody;
 	jint		*jiBody;
-	boolean		isCopy;
+	jboolean		isCopy;
 
 	// Image width, height and depth
 	fid = (*env)->GetFieldID(env, cls,"width", "I");
@@ -1776,7 +1776,7 @@ opj_image_t* loadImage(opj_cparameters_t *parameters, JNIEnv *env, jobject obj, 
 JNIEXPORT jlong JNICALL Java_org_openJpeg_OpenJPEGJavaEncoder_internalEncodeImageToJ2K(JNIEnv *env, jobject obj, jobjectArray javaParameters) {
 	int argc;		/* To simulate the command line parameters (taken from the javaParameters variable) and be able to re-use the */
 	char **argv;	/*  'parse_cmdline_decoder' method taken from the j2k_to_image project */
-	bool bSuccess;
+	opj_bool bSuccess;
 	opj_cparameters_t parameters;	/* compression parameters */
 	img_fol_t img_fol;
 	opj_event_mgr_t event_mgr;		/* event manager */
