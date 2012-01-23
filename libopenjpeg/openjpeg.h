@@ -351,6 +351,8 @@ typedef struct opj_cparameters {
 	opj_bool jpip_on;
 } opj_cparameters_t;
 
+#define OPJ_DPARAMETERS_IGNORE_PCLR_CMAP_CDEF_FLAG	0x0001
+
 /**
 Decompression parameters
 */
@@ -403,6 +405,7 @@ typedef struct opj_dparameters {
 	*/
 	OPJ_LIMIT_DECODING cp_limit_decoding;
 
+	unsigned int flags;
 } opj_dparameters_t;
 
 /** Common fields between JPEG-2000 compression and decompression master structs. */

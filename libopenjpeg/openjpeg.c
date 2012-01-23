@@ -125,6 +125,7 @@ void OPJ_CALLCONV opj_set_default_decoder_parameters(opj_dparameters_t *paramete
 
 		parameters->decod_format = -1;
 		parameters->cod_format = -1;
+		parameters->flags = 0;		
 /* UniPG>> */
 #ifdef USE_JPWL
 		parameters->jpwl_correct = OPJ_FALSE;
