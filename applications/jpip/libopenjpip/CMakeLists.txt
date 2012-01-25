@@ -45,7 +45,7 @@ SET(LOCAL_SRCS
 
 # Build the library
 ADD_LIBRARY(openjpip_local STATIC ${OPENJPIP_SRCS} ${LOCAL_SRCS})
-TARGET_LINK_LIBRARIES(openjpip_local ${OPENJPEG_LIBRARY_NAME} ${CURL_LIBRARIES})
+TARGET_LINK_LIBRARIES(openjpip_local ${OPENJPEG_LIBRARY_NAME})
 
 # Install library
 INSTALL(TARGETS openjpip_local

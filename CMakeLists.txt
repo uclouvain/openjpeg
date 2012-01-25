@@ -184,6 +184,7 @@ ADD_SUBDIRECTORY(libopenjpeg)
 # Build Applications
 OPTION(BUILD_CODEC "Build the CODEC executables" ON)
 OPTION(BUILD_MJ2 "Build the MJ2 executables." OFF)
+OPTION(BUILD_JPWL "Build the JPWL library and executables" OFF)
 OPTION(BUILD_JPIP "Build the JPIP library and executables." OFF)
 IF(BUILD_JPIP)
   OPTION(BUILD_JPIP_SERVER "Build the JPIP server." OFF)
@@ -193,16 +194,13 @@ OPTION(BUILD_JAVA "Build the openjpeg jar (Java)" OFF)
 MARK_AS_ADVANCED(BUILD_VIEWER)
 MARK_AS_ADVANCED(BUILD_JAVA)
 
-# Try to find lib Z
-FIND_PACKAGE(ZLIB)
-
-IF(BUILD_CODEC OR BUILD_MJ2 OR BUILD_JPIP)
+IF(BUILD_CODEC OR BUILD_MJ2)
   # OFF: It will only build 3rd party libs if they are not found on the system
   # ON: 3rd party libs will ALWAYS be build, and used
   OPTION(BUILD_THIRDPARTY "Build the thirdparty executables if it is needed" OFF)
   ADD_SUBDIRECTORY(thirdparty)
   ADD_SUBDIRECTORY(applications)
-ENDIF (BUILD_CODEC OR BUILD_MJ2 OR BUILD_JPIP)
+ENDIF (BUILD_CODEC OR BUILD_MJ2)
 
 #-----------------------------------------------------------------------------
 # opj_config.h generation (2/2)
@@ -210,10 +208,6 @@ CONFIGURE_FILE("${OPENJPEG_SOURCE_DIR}/opj_config.h.cmake.in"
  "${OPENJPEG_BINARY_DIR}/opj_config.h"
  @ONLY
  )
-
-#-----------------------------------------------------------------------------
-# Build JPWL-flavoured library and executables
-OPTION(BUILD_JPWL "Build the JPWL library and executables" OFF)
 
 #-----------------------------------------------------------------------------
 # Build DOCUMENTATION (not in ALL target and only if Doxygen is found)

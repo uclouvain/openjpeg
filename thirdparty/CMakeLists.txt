@@ -1,5 +1,7 @@
 # 3rd party libs  
 
+#------------
+# Try to find lib Z
 IF(BUILD_THIRDPARTY)
   # Try to build it
   message(STATUS "We will build Z lib from thirdparty")
@@ -8,6 +10,8 @@ IF(BUILD_THIRDPARTY)
   SET(Z_INCLUDE_DIRNAME ${OPENJPEG_SOURCE_DIR}/thirdparty/include PARENT_SCOPE)
   SET(ZLIB_FOUND 1)
 ELSE (BUILD_THIRDPARTY)
+  # Try to find lib Z
+  FIND_PACKAGE(ZLIB)
   IF(ZLIB_FOUND)
     SET(Z_LIBNAME ${ZLIB_LIBRARIES} PARENT_SCOPE)
     SET(Z_INCLUDE_DIRNAME ${ZLIB_INCLUDE_DIRS} PARENT_SCOPE) 
@@ -19,7 +23,7 @@ ENDIF(BUILD_THIRDPARTY)
     
 
 #------------
-# Try to find lib PNG (which depends to zlib)
+# Try to find lib PNG (which depends on zlib)
 IF(BUILD_THIRDPARTY)
   # Try to build it
   message(STATUS "We will build PNG lib from thirdparty")

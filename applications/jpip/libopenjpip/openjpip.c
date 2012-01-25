@@ -46,6 +46,8 @@
 #include <unistd.h>
 #include "jp2k_encoder.h"
 
+#ifdef SERVER
+
 server_record_t * init_JPIPserver( int tcp_auxport, int udp_auxport)
 {
   server_record_t *record = (server_record_t *)malloc( sizeof(server_record_t));
@@ -176,6 +178,7 @@ void end_QRprocess( server_record_t *rec, QR_t **qr)
   free( *qr);
 }
 
+
 void local_log( bool query, bool messages, bool sessions, bool targets, QR_t *qr, server_record_t *rec)
 {
   if( query)
@@ -190,6 +193,8 @@ void local_log( bool query, bool messages, bool sessions, bool targets, QR_t *qr
   if( targets)
     print_alltarget( rec->targetlist);
 }
+
+#endif //SERVER
 
 #ifndef SERVER
 

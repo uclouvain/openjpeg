@@ -65,6 +65,8 @@
  * JPIP server API
  *==========================================================
  */
+ 
+ #ifdef SERVER
 
 //! Server static records
 typedef struct server_record{
@@ -128,8 +130,6 @@ void send_responsedata( server_record_t *rec, QR_t *qr);
  * @param[in]  qr  address of query/response data pointer
  */
 void end_QRprocess( server_record_t *rec, QR_t **qr);
-
-#ifndef SERVER
 
 /**
  * Option for local tests; print out parameter values to logstream (stderr)
