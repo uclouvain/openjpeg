@@ -348,41 +348,48 @@ fi
 
 # pthread
 
-if test "x${want_jpip}" = "xyes" && test "x${have_win32}" = "xno" ; then
+if test "x${want_jpip}" = "xyes" ; then
 
-   SAVE_CFLAGS=${CFLAGS}
-   CFLAGS="${CFLAGS} -pthread"
-   SAVE_LIBS=${LIBS}
-   LIBS="${LIBS} -pthread"
-   AC_LINK_IFELSE(
-      [AC_LANG_PROGRAM([[
+   if test "x${have_win32}" = "xno" ; then
+
+      SAVE_CFLAGS=${CFLAGS}
+      CFLAGS="${CFLAGS} -pthread"
+      SAVE_LIBS=${LIBS}
+      LIBS="${LIBS} -pthread"
+      AC_LINK_IFELSE(
+         [AC_LANG_PROGRAM([[
 #include <pthread.h>
-                       ]],
-                       [[
+                          ]],
+                          [[
 pthread_t id;
 id = pthread_self();
-                       ]])],
-      [have_pthread="yes"],
-      [have_pthread="no"])
-   CFLAGS=${SAVE_CFLAGS}
-   LIBS=${SAVE_LIBS}
+                          ]])],
+         [have_pthread="yes"],
+         [have_pthread="no"])
+      CFLAGS=${SAVE_CFLAGS}
+      LIBS=${SAVE_LIBS}
 
-   AC_MSG_CHECKING([whether Pthread library is available])
-   AC_MSG_RESULT([${have_pthread}])
+      AC_MSG_CHECKING([whether Pthread library is available])
+      AC_MSG_RESULT([${have_pthread}])
 
-   if ! test "x${have_pthread}" = "xyes" ; then
-      AC_MSG_WARN([Pthread library not found. OpenJPIP library will not be compiled.])
-      want_jpip="no"
+      if ! test "x${have_pthread}" = "xyes" ; then
+         AC_MSG_WARN([Pthread library not found. OpenJPIP library will not be compiled.])
+         want_jpip="no"
+      else
+         THREAD_CFLAGS="-pthread"
+         THREAD_LIBS="-pthread"
+      fi
+
    else
-      PTHREAD_CFLAGS="-pthread"
-      AC_ARG_VAR([PTHREAD_CFLAGS], [compiler flag for Pthread])
-      AC_SUBST([PTHREAD_CFLAGS])
-      PTHREAD_LIBS="-pthread"
-      AC_ARG_VAR([PTHREAD_LIBS], [linker flags for Pthread])
-      AC_SUBST([PTHREAD_LIBS])
+      THREAD_LIBS="-lws2_32"
    fi
 
 fi
+
+AC_ARG_VAR([THREAD_CFLAGS], [compiler flag for the thread library])
+AC_SUBST([THREAD_CFLAGS])
+AC_ARG_VAR([THREAD_LIBS], [linker flags for thread library])
+AC_SUBST([THREAD_LIBS])
 
 # libfcgi
 

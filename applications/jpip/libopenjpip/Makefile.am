@@ -84,8 +84,8 @@ libopenjpip_server_la_CPPFLAGS = \
 @FCGI_CFLAGS@ \
 @LIBCURL_CFLAGS@ \
 -DSERVER
-libopenjpip_server_la_CFLAGS = @PTHREAD_CFLAGS@
-libopenjpip_server_la_LIBADD = @FCGI_LIBS@ @LIBCURL_LIBS@ @PTHREAD_LIBS@ -lm
+libopenjpip_server_la_CFLAGS = @THREAD_CFLAGS@
+libopenjpip_server_la_LIBADD = @FCGI_LIBS@ @LIBCURL_LIBS@ @THREAD_LIBS@ -lm
 libopenjpip_server_la_LDFLAGS = -no-undefined -version-info @lt_version@
 libopenjpip_server_la_SOURCES = $(JPIP_SRC)
 
@@ -96,8 +96,8 @@ libopenjpip_local_la_CPPFLAGS = \
 -I$(top_srcdir)/applications/jpip/libopenjpip \
 -I$(top_builddir)/applications/jpip/libopenjpip \
 @LIBCURL_CFLAGS@
-libopenjpip_local_la_CFLAGS = @PTHREAD_CFLAGS@
-libopenjpip_local_la_LIBADD = @PTHREAD_LIBS@ $(top_builddir)/libopenjpeg/libopenjpeg.la -lm
+libopenjpip_local_la_CFLAGS = @THREAD_CFLAGS@
+libopenjpip_local_la_LIBADD = @THREAD_LIBS@ $(top_builddir)/libopenjpeg/libopenjpeg.la -lm
 libopenjpip_local_la_LDFLAGS = -no-undefined -version-info @lt_version@
 libopenjpip_local_la_SOURCES = $(JPIP_SRC) $(LOCAL_SRC)
 
