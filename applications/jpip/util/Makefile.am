@@ -1,6 +1,14 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-bin_PROGRAMS = opj_server opj_dec_server jpip_to_jp2 jpip_to_j2k test_index
+bin_PROGRAMS =
+
+if WANT_JPIP
+bin_PROGRAMS += opj_dec_server test_index jpip_to_j2k jpip_to_jp2
+endif
+
+if WANT_JPIP_SERVER
+bin_PROGRAMS += opj_server
+endif
 
 opj_server_CPPFLAGS = \
 @FCGI_CFLAGS@ \
@@ -56,8 +64,12 @@ test_index_SOURCES = test_index.c
 
 #-------------
 install-data-hook:
+if WANT_JPIP_SERVER
 	@echo -e " (B)\t$(bindir)/opj_server$(EXEEXT)" >> $(top_builddir)/report.txt
+endif
+if WANT_JPIP
 	@echo -e " (B)\t$(bindir)/opj_dec_server$(EXEEXT)" >> $(top_builddir)/report.txt
 	@echo -e " (B)\t$(bindir)/jpip_to_jp2$(EXEEXT)" >> $(top_builddir)/report.txt
 	@echo -e " (B)\t$(bindir)/jpip_to_j2k$(EXEEXT)" >> $(top_builddir)/report.txt
 	@echo -e " (B)\t$(bindir)/test_index$(EXEEXT)" >> $(top_builddir)/report.txt
+endif

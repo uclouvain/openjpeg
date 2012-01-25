@@ -1,4 +1,4 @@
-DISTCHECK_CONFIGURE_FLAGS = --enable-jpip=yes --enable-jpwl=yes --enable-mj2=yes
+DISTCHECK_CONFIGURE_FLAGS = --enable-jpip=yes --enable-jpip-server=yes --enable-jpwl=yes --enable-mj2=yes
 
 ACLOCAL_AMFLAGS = -I m4
 

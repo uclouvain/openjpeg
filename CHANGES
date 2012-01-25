@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+January 25, 2012
+* [vincent] follow latest JPIP changes in the autotools side (pthread dependency, conditional compilation of JPIP server and client)
+
 December 8, 2011
 * [Mathieu Malaterre] Remove 9 warnings (gcc)
 * [mathieu] remove hack with bash around kdu_expand

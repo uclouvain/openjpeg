@@ -6,7 +6,7 @@ if WANT_MJ2
 SUBDIRS += mj2
 endif
 
-if WANT_JPIP
+if WANT_JPIP_CODE
 SUBDIRS += jpip
 endif
 

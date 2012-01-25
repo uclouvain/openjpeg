@@ -26,21 +26,21 @@ AC_CONFIG_HEADERS([opj_config.h])
 AC_CANONICAL_SYSTEM
 AC_CANONICAL_HOST
 
-AM_INIT_AUTOMAKE([1.11 foreign dist-bzip2])
+AM_INIT_AUTOMAKE([1.11 foreign dist-bzip2 dist-xz dist-zip])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 MAJOR_NR=OPJ_MAJOR
 MINOR_NR=OPJ_MINOR
 MICRO_NR=OPJ_MICRO
-AC_SUBST(MAJOR_NR)
-AC_SUBST(MINOR_NR)
-AC_SUBST(MICRO_NR)
+AC_SUBST([MAJOR_NR])
+AC_SUBST([MINOR_NR])
+AC_SUBST([MICRO_NR])
 
 LT_PREREQ([2.0])
 LT_INIT([win32-dll])
 
 lt_version=lt_cur:lt_rev:lt_age
-AC_SUBST(lt_version)
+AC_SUBST([lt_version])
 
 
 ### Needed information
@@ -134,6 +134,20 @@ AC_ARG_ENABLE([jpip],
 AC_MSG_CHECKING([whether to build the JPIP library])
 AC_MSG_RESULT([${want_jpip}])
 
+AC_ARG_ENABLE([jpip-server],
+   [AC_HELP_STRING([--enable-jpip-server], [build jpip server @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_jpip_server="yes"
+    else
+       want_jpip_server="no"
+    fi
+   ],
+   [want_jpip_server="no"])
+
+AC_MSG_CHECKING([whether to build the JPIP server])
+AC_MSG_RESULT([${want_jpip_server}])
+
 
 ### Checks for programs
 
@@ -149,8 +163,8 @@ if $PKG_CONFIG --atleast-pkgconfig-version 0.22 ; then
 else
    pkgconfig_requires_private="Requires"
 fi
-AC_SUBST(pkgconfig_requires_private)
-AC_SUBST(requirements)
+AC_SUBST([pkgconfig_requires_private])
+AC_SUBST([requirements])
 
 # doxygen
 
@@ -332,9 +346,47 @@ if test "x${have_lcms2}" = "xno" ; then
 
 fi
 
+# pthread
+
+if test "x${want_jpip}" = "xyes" && test "x${have_win32}" = "xno" ; then
+
+   SAVE_CFLAGS=${CFLAGS}
+   CFLAGS="${CFLAGS} -pthread"
+   SAVE_LIBS=${LIBS}
+   LIBS="${LIBS} -pthread"
+   AC_LINK_IFELSE(
+      [AC_LANG_PROGRAM([[
+#include <pthread.h>
+                       ]],
+                       [[
+pthread_t id;
+id = pthread_self();
+                       ]])],
+      [have_pthread="yes"],
+      [have_pthread="no"])
+   CFLAGS=${SAVE_CFLAGS}
+   LIBS=${SAVE_LIBS}
+
+   AC_MSG_CHECKING([whether Pthread library is available])
+   AC_MSG_RESULT([${have_pthread}])
+
+   if ! test "x${have_pthread}" = "xyes" ; then
+      AC_MSG_WARN([Pthread library not found. OpenJPIP library will not be compiled.])
+      want_jpip="no"
+   else
+      PTHREAD_CFLAGS="-pthread"
+      AC_ARG_VAR([PTHREAD_CFLAGS], [compiler flag for Pthread])
+      AC_SUBST([PTHREAD_CFLAGS])
+      PTHREAD_LIBS="-pthread"
+      AC_ARG_VAR([PTHREAD_LIBS], [linker flags for Pthread])
+      AC_SUBST([PTHREAD_LIBS])
+   fi
+
+fi
+
 # libfcgi
 
-if test "x${want_jpip}" = "xyes" ; then
+if test "x${want_jpip_server}" = "xyes" ; then
 
    have_fcgi="no"
    OPJ_CHECK_LIB(
@@ -345,23 +397,23 @@ if test "x${want_jpip}" = "xyes" ; then
       [have_fcgi="no"])
 
    if ! test "x${have_fcgi}" = "xyes" ; then
-      AC_MSG_WARN([FastCGI library not found. OpenJPIP will not be compiled.])
-      want_jpip="no"
+      AC_MSG_WARN([FastCGI library not found. OpenJPIP server will not be compiled.])
+      want_jpip_server="no"
    fi
 
 fi
 
 # libcurl
 
-if test "x${want_jpip}" = "xyes" ; then
+if test "x${want_jpip_server}" = "xyes" ; then
 
    PKG_CHECK_MODULES([LIBCURL], [libcurl],
       [have_libcurl="yes"],
       [have_libcurl="no"])
 
    if ! test "x${have_libcurl}" = "xyes" ; then
-      AC_MSG_WARN([libcurl library not found. OpenJPIP will not be compiled.])
-      want_jpip="no"
+      AC_MSG_WARN([libcurl library not found. OpenJPIP server will not be compiled.])
+      want_jpip_server="no"
    fi
 
 fi
@@ -371,6 +423,14 @@ if test "x${want_jpip}" = "xyes" ; then
 fi
 
 AM_CONDITIONAL([WANT_JPIP], [test "x${want_jpip}" = "xyes"])
+
+if test "x${want_jpip_server}" = "xyes" ; then
+   AC_DEFINE(USE_JPIP_SERVER, [1], [define to 1 if you use jpip server])
+fi
+
+AM_CONDITIONAL([WANT_JPIP_SERVER], [test "x${want_jpip_server}" = "xyes"])
+
+AM_CONDITIONAL([WANT_JPIP_CODE], [test "x${want_jpip}" = "xyes" || test "x${want_jpip_server}" = "xyes"])
 
 ### Checks for header files
 
@@ -457,4 +517,5 @@ echo
 echo "  mj2.................: ${want_mj2}"
 echo "  jpwl................: ${want_jpwl}"
 echo "  jpip................: ${want_jpip}"
+echo "  jpip server.........: ${want_jpip_server}"
 echo
