@@ -108,15 +108,3 @@ ELSE (BUILD_THIRDPARTY)
     ENDIF (LCMS_FOUND)
   ENDIF(LCMS2_FOUND)
 ENDIF(BUILD_THIRDPARTY) 
-
-#------------
-# Try to find lib FCGI
-FIND_PACKAGE(FCGI)
-
-IF(FCGI_FOUND)
-  SET(FCGI_LIBNAME ${FCGI_LIBRARIES} PARENT_SCOPE)
-  SET(FCGI_INCLUDE_DIRNAME ${FCGI_INCLUDE_DIRS} PARENT_SCOPE) 
-  message(STATUS "Your system seems to have a FCGI lib available, we will use it to build JPIP")
-ELSE (FCGI_FOUND) # not found
-  message(STATUS "FCGI lib not found, JPIP will not be built as it requires FCGI")
-ENDIF(FCGI_FOUND)

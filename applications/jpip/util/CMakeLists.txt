@@ -1,7 +1,7 @@
 # Headers file are located here:
 INCLUDE_DIRECTORIES(
   ${OPENJPEG_SOURCE_DIR}/applications/jpip/libopenjpip
-  ${FCGI_INCLUDE_DIRNAME}
+  ${FCGI_INCLUDE_DIRS}
 )
 
 SET(OPJ_SERVER_SRCS
@@ -10,7 +10,7 @@ SET(OPJ_SERVER_SRCS
 
 # Build executable
 ADD_EXECUTABLE(opj_server ${OPJ_SERVER_SRCS})
-TARGET_LINK_LIBRARIES(opj_server openjpip_server ${FCGI_LIBNAME})
+TARGET_LINK_LIBRARIES(opj_server openjpip_server ${FCGI_LIBRARIES})
 SET_PROPERTY(
   TARGET opj_server
   APPEND PROPERTY
