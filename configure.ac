@@ -348,7 +348,7 @@ fi
 
 # pthread
 
-if test "x${want_jpip}" = "xyes" ; then
+if test "x${want_jpip_server}" = "xyes" ; then
 
    if test "x${have_win32}" = "xno" ; then
 
@@ -373,7 +373,7 @@ id = pthread_self();
       AC_MSG_RESULT([${have_pthread}])
 
       if ! test "x${have_pthread}" = "xyes" ; then
-         AC_MSG_WARN([Pthread library not found. OpenJPIP library will not be compiled.])
+         AC_MSG_WARN([Pthread library not found. OpenJPIP server will not be compiled.])
          want_jpip="no"
       else
          THREAD_CFLAGS="-pthread"
