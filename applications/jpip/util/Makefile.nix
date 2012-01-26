@@ -8,7 +8,7 @@ J2KINCDIR = ../../../libopenjpeg
 J2KLIBDIR = $(J2KINCDIR)/.libs
 LIBFNAME = $(JPIPLIBDIR)/libopenjpip_local.a $(J2KLIBDIR)/libopenjpeg.a
 CFLAGS  = -O3 -Wall -I$(JPIPLIBDIR)
-LDFLAGS = -L$(JPIPLIBDIR) -L$(J2KLIBDIR) -lm -lpthread -lopenjpip_local
+LDFLAGS = -L$(JPIPLIBDIR) -L$(J2KLIBDIR) -lm -lopenjpip_local
 
 ALL = opj_server opj_dec_server jpip_to_jp2 jpip_to_j2k test_index addXMLinJP2
 

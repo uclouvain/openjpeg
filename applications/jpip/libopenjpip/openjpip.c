@@ -33,7 +33,10 @@
 #include "jpip_parser.h"
 #include "channel_manager.h"
 #include "byte_manager.h"
+
+#ifdef SERVER
 #include "auxtrans_manager.h"
+#endif
 
 #include <stdio.h>
 #include "dec_clientmsg_handler.h"

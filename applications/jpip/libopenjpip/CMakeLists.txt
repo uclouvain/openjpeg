@@ -4,6 +4,7 @@ INCLUDE_DIRECTORIES(
   ${OPENJPEG_SOURCE_DIR}/libopenjpeg
   ${FCGI_INCLUDE_DIRS}
   ${CURL_INCLUDE_DIRS}
+  ${PTHREAD_INCLUDE_DIRS}
 )
 
 # Defines the source code for the library
@@ -32,6 +33,9 @@ SET(OPENJPIP_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/session_manager.c
   ${CMAKE_CURRENT_SOURCE_DIR}/jpip_parser.c
   ${CMAKE_CURRENT_SOURCE_DIR}/sock_manager.c
+  )
+
+SET(SERVER_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/auxtrans_manager.c
   )
 
@@ -54,8 +58,8 @@ INSTALL(TARGETS openjpip_local
   )
 
 IF(BUILD_JPIP_SERVER)
-  ADD_LIBRARY(openjpip_server STATIC ${OPENJPIP_SRCS})
-  TARGET_LINK_LIBRARIES(openjpip_server ${FCGI_LIBRARIES} ${CURL_LIBRARIES})
+  ADD_LIBRARY(openjpip_server STATIC ${OPENJPIP_SRCS} ${SERVER_SRCS})
+  TARGET_LINK_LIBRARIES(openjpip_server ${FCGI_LIBRARIES} ${CURL_LIBRARIES} ${PTHREAD_LIBRARIES})
   SET_TARGET_PROPERTIES(openjpip_server
     PROPERTIES COMPILE_FLAGS "-DSERVER")
   INSTALL(TARGETS openjpip_server

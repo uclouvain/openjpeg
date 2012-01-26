@@ -38,7 +38,6 @@ cachemodel_manager.c \
 j2kheader_manager.c \
 jp2k_encoder.c \
 sock_manager.c \
-auxtrans_manager.c \
 openjpip.h \
 bool.h \
 boxheader_manager.h \
@@ -64,7 +63,9 @@ channel_manager.h \
 session_manager.h \
 jpip_parser.h \
 jp2k_decoder.h \
-sock_manager.h \
+sock_manager.h 
+
+SERVER_SRC = auxtrans_manager.c \
 auxtrans_manager.h
 
 LOCAL_SRC = jp2k_decoder.c \
@@ -87,7 +88,7 @@ libopenjpip_server_la_CPPFLAGS = \
 libopenjpip_server_la_CFLAGS = @THREAD_CFLAGS@
 libopenjpip_server_la_LIBADD = @FCGI_LIBS@ @LIBCURL_LIBS@ @THREAD_LIBS@ -lm
 libopenjpip_server_la_LDFLAGS = -no-undefined -version-info @lt_version@
-libopenjpip_server_la_SOURCES = $(JPIP_SRC)
+libopenjpip_server_la_SOURCES = $(JPIP_SRC) $(SERVER_SRC)
 
 libopenjpip_local_la_CPPFLAGS = \
 -I. \
@@ -96,8 +97,8 @@ libopenjpip_local_la_CPPFLAGS = \
 -I$(top_srcdir)/applications/jpip/libopenjpip \
 -I$(top_builddir)/applications/jpip/libopenjpip \
 @LIBCURL_CFLAGS@
-libopenjpip_local_la_CFLAGS = @THREAD_CFLAGS@
-libopenjpip_local_la_LIBADD = @THREAD_LIBS@ $(top_builddir)/libopenjpeg/libopenjpeg.la -lm
+libopenjpip_local_la_CFLAGS = 
+libopenjpip_local_la_LIBADD = $(top_builddir)/libopenjpeg/libopenjpeg.la -lm
 libopenjpip_local_la_LDFLAGS = -no-undefined -version-info @lt_version@
 libopenjpip_local_la_SOURCES = $(JPIP_SRC) $(LOCAL_SRC)
 
