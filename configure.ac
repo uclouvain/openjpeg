@@ -346,7 +346,7 @@ if test "x${have_lcms2}" = "xno" ; then
 
 fi
 
-# pthread
+# threads
 
 if test "x${want_jpip_server}" = "xyes" ; then
 
@@ -374,7 +374,7 @@ id = pthread_self();
 
       if ! test "x${have_pthread}" = "xyes" ; then
          AC_MSG_WARN([Pthread library not found. OpenJPIP server will not be compiled.])
-         want_jpip="no"
+         want_jpip_server="no"
       else
          THREAD_CFLAGS="-pthread"
          THREAD_LIBS="-pthread"
