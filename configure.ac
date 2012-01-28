@@ -197,16 +197,16 @@ AC_MSG_RESULT([${want_png}])
 
 if test "x${want_png}" = "xyes" ; then
 
-   PKG_CHECK_MODULES([PNG], [libpng15],
+   PKG_CHECK_MODULES([PNG], [libpng15 zlib],
       [have_libpng="yes"],
       [
-       PKG_CHECK_MODULES([PNG], [libpng14],
+       PKG_CHECK_MODULES([PNG], [libpng14 zlib],
           [have_libpng="yes"],
           [
-           PKG_CHECK_MODULES([PNG], [libpng12],
+           PKG_CHECK_MODULES([PNG], [libpng12 zlib],
               [have_libpng="yes"],
               [
-               PKG_CHECK_MODULES([PNG], [libpng],
+               PKG_CHECK_MODULES([PNG], [libpng zlib],
                   [have_libpng="yes"],
                   [have_libpng="no"])
               ])
@@ -214,11 +214,23 @@ if test "x${want_png}" = "xyes" ; then
       ])
 
    if ! test "x${have_libpng}" = "xyes" ; then
-      OPJ_CHECK_LIB([png.h],
-         [png],
-         [png_create_write_struct],
-         [have_libpng="yes"],
+
+      OPJ_CHECK_LIB([zlib.h],
+         [z],
+         [zlibVersion],
+         [
+          OPJ_CHECK_LIB([png.h],
+             [png],
+             [png_access_version_number],
+             [
+              have_libpng="yes"
+              PNG_CFLAGS="${PNG_CFLAGS} ${Z_CFLAGS}"
+              PNG_LIBS="${PNG_LIBS} ${Z_LIBS}"
+             ],
+             [have_libpng="no"])
+         ],
          [have_libpng="no"])
+
    fi
 
    if test "x${have_libpng}" = "xno" ; then

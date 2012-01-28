@@ -5,6 +5,9 @@ What's New for OpenJPEG
 ! : changed
 + : added
 
+January 28, 2012
++ [vincent] Add zlib check when checking libpng
+
 January 25, 2012
 * [vincent] fix libopenjpip link on Windows
 * [vincent] follow latest JPIP changes in the autotools side (pthread dependency, conditional compilation of JPIP server and client)
