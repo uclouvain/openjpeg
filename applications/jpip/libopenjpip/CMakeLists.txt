@@ -50,6 +50,10 @@ SET(LOCAL_SRCS
 # Build the library
 ADD_LIBRARY(openjpip_local STATIC ${OPENJPIP_SRCS} ${LOCAL_SRCS})
 TARGET_LINK_LIBRARIES(openjpip_local ${OPENJPEG_LIBRARY_NAME})
+IF(WIN32)
+  # add Winsock on windows+mingw
+  TARGET_LINK_LIBRARIES(openjpip_local ws2_32)
+ENDIF(WIN32)
 
 # Install library
 INSTALL(TARGETS openjpip_local
