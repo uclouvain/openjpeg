@@ -50,7 +50,7 @@
 #define FCGI_stdout stdout
 #define FCGI_stderr stderr
 #define logstream stderr
-#endif //SERVER
+#endif /*SERVER*/
 
 /**
  * chekc JP2 box indexing
@@ -134,7 +134,7 @@ void print_index( index_param_t index)
   print_faixbox( index.tilepart);
 
   fprintf( logstream, "Tile header information: \n");
-  for( i=0; i<index.SIZ.XTnum*index.SIZ.YTnum ;i++)
+  for( i=0; i<(int)(index.SIZ.XTnum*index.SIZ.YTnum);i++)
     print_mhixbox( index.tileheader[i]);
 
   fprintf( logstream, "Precinct packet information: \n");
@@ -187,7 +187,7 @@ void delete_index( index_param_t **index)
   
   delete_faixbox( &((*index)->tilepart));
 
-  for( i=0; i< (*index)->SIZ.XTnum*(*index)->SIZ.YTnum ;i++)
+  for( i=0; i< (int)((*index)->SIZ.XTnum*(*index)->SIZ.YTnum);i++)
     delete_mhixbox( &((*index)->tileheader[i]));
   free( (*index)->tileheader);
   
@@ -208,6 +208,14 @@ bool check_JP2boxidx( boxlist_param_t *toplev_boxlist)
 {
   box_param_t *iptr, *fidx, *prxy;
   box_param_t *cidx, *jp2c;
+  Byte8_t off;
+  Byte8_t len;
+  int pos;
+  Byte8_t ooff;
+  boxheader_param_t *obh;
+  Byte_t ni;
+  Byte8_t ioff;
+  boxheader_param_t *ibh;
 
   iptr = search_box( "iptr", toplev_boxlist);
   fidx = search_box( "fidx", toplev_boxlist);
@@ -215,40 +223,39 @@ bool check_JP2boxidx( boxlist_param_t *toplev_boxlist)
   jp2c = search_box( "jp2c", toplev_boxlist);
   prxy = gene_childboxbyType( fidx, 0, "prxy");
 
-  Byte8_t off = fetch_DBox8bytebigendian( iptr, 0);
+  off = fetch_DBox8bytebigendian( iptr, 0);
   if( off != fidx->offset)
     fprintf( FCGI_stderr, "Reference File Index box offset in Index Finder box not correct\n");
 
-  Byte8_t len = fetch_DBox8bytebigendian( iptr, 8);
+  len = fetch_DBox8bytebigendian( iptr, 8);
   if( len != fidx->length)
     fprintf( FCGI_stderr, "Reference File Index box length in Index Finder box not correct\n");
 
- 
-  int pos = 0;
-  Byte8_t ooff = fetch_DBox8bytebigendian( prxy, pos);
+  pos = 0;
+  ooff = fetch_DBox8bytebigendian( prxy, pos);
   if( ooff != jp2c->offset)
     fprintf( FCGI_stderr, "Reference jp2c offset in prxy box not correct\n");
   pos += 8;
 
-  boxheader_param_t *obh = gene_childboxheader( prxy, pos);
+  obh = gene_childboxheader( prxy, pos);
   if( obh->length != jp2c->length || strncmp( obh->type, "jp2c",4)!=0)
     fprintf( FCGI_stderr, "Reference jp2c header in prxy box not correct\n");
   pos += obh->headlen;
   free(obh);
   
-  Byte_t ni = fetch_DBox1byte( prxy, pos);
+  ni = fetch_DBox1byte( prxy, pos);
   if( ni != 1){
     fprintf( FCGI_stderr, "Multiple indexes not supported\n");
     return false;
   }  
   pos += 1;
   
-  Byte8_t ioff = fetch_DBox8bytebigendian( prxy, pos);
+  ioff = fetch_DBox8bytebigendian( prxy, pos);
   if( ioff != cidx->offset)
     fprintf( FCGI_stderr, "Reference cidx offset in prxy box not correct\n");
   pos += 8;
 
-  boxheader_param_t *ibh = gene_childboxheader( prxy, pos);
+  ibh = gene_childboxheader( prxy, pos);
   if( ibh->length != cidx->length || strncmp( ibh->type, "cidx",4)!=0)
     fprintf( FCGI_stderr, "Reference cidx header in prxy box not correct\n");
   pos += ibh->headlen;
@@ -359,23 +366,23 @@ bool set_cidxdata( box_param_t *cidx_box, index_param_t *jp2idx)
 
 bool set_cptrdata( box_param_t *cidx_box, index_param_t *jp2idx)
 {
-  box_param_t *box;   //!< cptr box
+  box_param_t *box;   /**< cptr box*/
   Byte2_t dr, cont;
 
   if( !(box = gene_boxbyType( cidx_box->fd, get_DBoxoff( cidx_box), get_DBoxlen( cidx_box), "cptr")))
     return false;
   
-  // DR: Data Reference. 
-  // If 0, the codestream or its Fragment Table box exists in the current file
+  /* DR: Data Reference. */
+  /* If 0, the codestream or its Fragment Table box exists in the current file*/
   if(( dr = fetch_DBox2bytebigendian( box, 0))){
     fprintf( FCGI_stderr, "Error: Codestream not present in current file\n");
     free( box);
     return false;  
   }
   
-  // CONT: Container Type
-  // If 0, the entire codestream appears as a contiguous range of
-  // bytes within its file or resource.
+  /* CONT: Container Type*/
+  /* If 0, the entire codestream appears as a contiguous range of*/
+  /* bytes within its file or resource.*/
   if(( cont = fetch_DBox2bytebigendian( box, 2))){
     fprintf( FCGI_stderr, "Error: Can't cope with fragmented codestreams yet\n");
     free( box);
@@ -443,8 +450,8 @@ bool set_mainmhixdata( box_param_t *cidx_box, codestream_param_t codestream, ind
 
 bool set_tpixdata( box_param_t *cidx_box, index_param_t *jp2idx)
 {
-  box_param_t *tpix_box;   //!< tpix box
-  box_param_t *faix_box;   //!< faix box
+  box_param_t *tpix_box;   /**< tpix box*/
+  box_param_t *faix_box;   /**< faix box*/
   
   if( !(tpix_box = gene_boxbyType( cidx_box->fd, get_DBoxoff( cidx_box), get_DBoxlen( cidx_box), "tpix"))){
     fprintf( FCGI_stderr, "Error: tpix box not present in cidx box\n");
@@ -518,9 +525,9 @@ bool set_thixdata( box_param_t *cidx_box, index_param_t *jp2idx)
 bool set_ppixdata( box_param_t *cidx_box, index_param_t *jp2idx)
 {
   box_param_t *ppix_box, *faix_box, *manf_box;
-  manfbox_param_t *manf;     //!< manf
-  boxheader_param_t *bh;     //!< box headers
-  faixbox_param_t *faix;     //!< faix
+  manfbox_param_t *manf;     /**< manf*/
+  boxheader_param_t *bh;     /**< box headers*/
+  faixbox_param_t *faix;     /**< faix*/
   Byte8_t inbox_offset;
   int comp_idx;
 
@@ -630,7 +637,7 @@ bool set_CODmkrdata( markeridx_param_t *codmkidx, codestream_param_t codestream,
     COD->YPsiz = (Byte4_t *)malloc( (COD->numOfdecomp+1)*sizeof(Byte4_t));
 
     for( i=0; i<=COD->numOfdecomp; i++){
-      //precinct size
+      /*precinct size*/
       COD->XPsiz[i] = pow( 2, fetch_marker1byte( codmkr, 12+i) & 0x0F);
       COD->YPsiz[i] = pow( 2,(fetch_marker1byte( codmkr, 12+i) & 0xF0) >> 4);
     }
