@@ -33,6 +33,7 @@
 #ifdef _WIN32
 #include <windows.h>
 #define strcasecmp  _stricmp
+#define strncasecmp _strnicmp
 #else
 #include <strings.h>
 #endif
@@ -49,7 +50,7 @@
 #define FCGI_stdout stdout
 #define FCGI_stderr stderr
 #define logstream stderr
-#endif //SERVER
+#endif /*SERVER*/
 
 
 /**
@@ -72,14 +73,14 @@ char * get_fieldparam( char *stringptr, char *fieldname, char *fieldval);
 void parse_cclose( char *src, query_param_t *query_param);
 void parse_metareq( char *field, query_param_t *query_param);
 
-// parse the requested components (parses forms like:a; a,b; a-b; a-b,c;  a,b-c)
+/* parse the requested components (parses forms like:a; a,b; a-b; a-b,c;  a,b-c)*/
 void parse_comps( char *field, query_param_t *query_param);
 
 
-//! maximum length of field name
+/** maximum length of field name*/
 #define MAX_LENOFFIELDNAME 10
 
-//! maximum length of field value
+/** maximum length of field value*/
 #define MAX_LENOFFIELDVAL 128
 
 query_param_t * parse_query( char *query_string)
@@ -268,7 +269,7 @@ void print_queryparam( query_param_t query_param)
 
 void parse_cclose( char *src, query_param_t *query_param)
 {
-  int i;
+  size_t i;
   size_t len;
   
   len = strlen( src);
@@ -293,7 +294,7 @@ void parse_metareq( char *field, query_param_t *query_param)
   
   memset( req_box_prop, 0, 20);
 
-  // req-box-prop
+  /* req-box-prop*/
   ptr = strchr( field, '[');
   ptr++;
   src = ptr;
