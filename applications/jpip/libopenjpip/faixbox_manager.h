@@ -34,47 +34,47 @@
 #include "byte_manager.h"
 #include "box_manager.h"
 
-//! 4byte parameters of a faix element
+/** 4byte parameters of a faix element*/
 typedef struct faixelem4_param{
-  Byte4_t off; //!< offset
-  Byte4_t len; //!< length
+  Byte4_t off; /**< offset*/
+  Byte4_t len; /**< length*/
 } faixelem4_param_t;
 
-//! 8byte parameters of a faix element
+/** 8byte parameters of a faix element*/
 typedef struct faixelem8_param{
-  Byte8_t off; //!< offset
-  Byte8_t len; //!< length
+  Byte8_t off; /**< offset*/
+  Byte8_t len; /**< length*/
 } faixelem8_param_t;
 
-//! 4byte parameters of fragment array index box
+/** 4byte parameters of fragment array index box*/
 typedef struct subfaixbox4_param{
-  Byte4_t nmax;             //!< maximum number of valid elements in any row of the array
-  Byte4_t m;                //!< number of raws of the array
-  faixelem4_param_t *elem; //!< dynamic array pointer of faix elements
-  Byte4_t *aux;             //!< dynamic array pointer of auxiliary
-			   //!info in each element for version 2 or 3
+  Byte4_t nmax;             /**< maximum number of valid elements in any row of the array*/
+  Byte4_t m;                /**< number of raws of the array*/
+  faixelem4_param_t *elem;  /**< dynamic array pointer of faix elements*/
+  Byte4_t *aux;             /**< dynamic array pointer of auxiliary*/
+			                      /**info in each element for version 2 or 3*/
 } subfaixbox4_param_t;
 
-//! 8byte parameters of fragment array index box
+/** 8byte parameters of fragment array index box*/
 typedef struct subfaixbox8_param{
-  Byte8_t nmax;             //!< maximum number of valid elements in any row of the array
-  Byte8_t m;                //!< number of raws of the array
-  faixelem8_param_t *elem; //!< dynamic array pointer of faix elements
-  Byte4_t *aux;             //!< dynamic array pointer of auxiliary
-			   //!info in each element for version 2 or 3
+  Byte8_t nmax;             /**< maximum number of valid elements in any row of the array*/
+  Byte8_t m;                /**< number of raws of the array*/
+  faixelem8_param_t *elem;  /**< dynamic array pointer of faix elements*/
+  Byte4_t *aux;             /**< dynamic array pointer of auxiliary*/
+			                      /**info in each element for version 2 or 3*/
 } subfaixbox8_param_t;
 
-//! variable sized parameters in fragment array index box
+/** variable sized parameters in fragment array index box*/
 typedef union subfaixbox_param{
-  subfaixbox4_param_t *byte4_params; //!< parameters with 4byte codes for version 0 or 2
-  subfaixbox8_param_t *byte8_params; //!< parameters with 8byte codes for version 1 or 3
+  subfaixbox4_param_t *byte4_params; /**< parameters with 4byte codes for version 0 or 2*/
+  subfaixbox8_param_t *byte8_params; /**< parameters with 8byte codes for version 1 or 3*/
 } subfaixbox_param_t;
 
-//! fragment array index box parameters
-//! I.3.2.4.2 Fragment Array Index box
+/** fragment array index box parameters*/
+/** I.3.2.4.2 Fragment Array Index box*/
 typedef struct faixbox_param{
-  Byte_t version;                //!< Refer to the Table I.3 - Version values
-  subfaixbox_param_t subfaixbox; //!< rest information in faixbox
+  Byte_t version;                /**< Refer to the Table I.3 - Version values*/
+  subfaixbox_param_t subfaixbox; /**< rest information in faixbox*/
 } faixbox_param_t;
 
 

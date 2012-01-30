@@ -31,16 +31,16 @@
 #ifndef   	BYTE_MANAGER_H_
 # define   	BYTE_MANAGER_H_
 
-//! 1Byte parameter type
+/** 1Byte parameter type*/
 typedef unsigned char Byte_t;
 
-//! 2Byte parameter type
+/** 2Byte parameter type*/
 typedef unsigned short int Byte2_t;
 
-//! 4Byte parameter type
+/** 4Byte parameter type*/
 typedef unsigned int Byte4_t;
 
-//! 8Byte parameter type
+/** 8Byte parameter type*/
 typedef unsigned long long int Byte8_t;
 
 

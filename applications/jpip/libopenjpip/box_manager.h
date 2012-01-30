@@ -33,21 +33,21 @@
 
 #include "byte_manager.h"
 
-//! box parameters
+/** box parameters*/
 typedef struct box_param{
-  int fd;                 //!< file descriptor
-  Byte8_t offset;         //!< byte position of the whole Box (LBox) in the file
-  Byte_t  headlen;        //!< header length  8 or 16
-  Byte8_t length;         //!< length of the whole Box
-  char    type[4];        //!< type of information in the DBox
-  struct box_param *next; //!< pointer to the next box
+  int fd;                 /**< file descriptor*/
+  Byte8_t offset;         /**< byte position of the whole Box (LBox) in the file*/
+  Byte_t  headlen;        /**< header length  8 or 16*/
+  Byte8_t length;         /**< length of the whole Box*/
+  char    type[4];        /**< type of information in the DBox*/
+  struct box_param *next; /**< pointer to the next box*/
 } box_param_t;
 
 
-//! Box list parameters
+/** Box list parameters*/
 typedef struct boxlist_param{
-  box_param_t *first; //!< first box pointer of the list
-  box_param_t *last;  //!< last  box pointer of the list
+  box_param_t *first; /**< first box pointer of the list*/
+  box_param_t *last;  /**< last  box pointer of the list*/
 } boxlist_param_t;
 
 

@@ -37,7 +37,7 @@
 #include "mhixbox_manager.h"
 #include "bool.h"
 
-//! progression order 
+/** progression order */
 typedef enum porder {
   PROG_UNKNOWN = -1,      /**< place-holder */
   LRCP = 0,               /**< layer-resolution-component-precinct order */
@@ -47,48 +47,48 @@ typedef enum porder {
   CPRL = 4                /**< component-precinct-resolution-layer order */
 } porder_t;
 
-//! A.5.1 Image and tile size (SIZ)
+/** A.5.1 Image and tile size (SIZ)*/
 typedef struct SIZmarker_param{
-  Byte2_t Lsiz;              //!< length of marker segment excluding the marker
-  Byte2_t Rsiz;              //!< capabilities that a decoder needs
-  Byte4_t Xsiz;              //!< width of the reference grid
-  Byte4_t Ysiz;              //!< height of the reference grid
-  Byte4_t XOsiz;             //!< horizontal offset from the origin of the reference grid to the left side of the image area
-  Byte4_t YOsiz;             //!< vertical offset from the origin of the reference grid to the top side of the image area
-  Byte4_t XTsiz;             //!< width of one reference tile with respect to the reference grid
-  Byte4_t YTsiz;             //!< height of one reference tile with respect to the reference grid
-  Byte4_t XTOsiz;            //!< horizontal offset from the origin of the reference grid to the left side of the first tile
-  Byte4_t YTOsiz;            //!< vertical offset from the origin of the reference grid to the top side of the first tile
-  Byte4_t XTnum;             //!< number of tiles in horizontal direction
-  Byte4_t YTnum;             //!< number of tiles in vertical direction
-  Byte2_t Csiz;              //!< number of the components in the image
-  Byte_t  Ssiz[3];           //!< precision (depth) in bits and sign of the component samples
-  Byte_t  XRsiz[3];          //!< horizontal separation of a sample of component with respect to the reference grid
-  Byte_t  YRsiz[3];          //!< vertical separation of a sample of component with respect to the reference grid
+  Byte2_t Lsiz;              /**< length of marker segment excluding the marker*/
+  Byte2_t Rsiz;              /**< capabilities that a decoder needs*/
+  Byte4_t Xsiz;              /**< width of the reference grid*/
+  Byte4_t Ysiz;              /**< height of the reference grid*/
+  Byte4_t XOsiz;             /**< horizontal offset from the origin of the reference grid to the left side of the image area*/
+  Byte4_t YOsiz;             /**< vertical offset from the origin of the reference grid to the top side of the image area*/
+  Byte4_t XTsiz;             /**< width of one reference tile with respect to the reference grid*/
+  Byte4_t YTsiz;             /**< height of one reference tile with respect to the reference grid*/
+  Byte4_t XTOsiz;            /**< horizontal offset from the origin of the reference grid to the left side of the first tile*/
+  Byte4_t YTOsiz;            /**< vertical offset from the origin of the reference grid to the top side of the first tile*/
+  Byte4_t XTnum;             /**< number of tiles in horizontal direction*/
+  Byte4_t YTnum;             /**< number of tiles in vertical direction*/
+  Byte2_t Csiz;              /**< number of the components in the image*/
+  Byte_t  Ssiz[3];           /**< precision (depth) in bits and sign of the component samples*/
+  Byte_t  XRsiz[3];          /**< horizontal separation of a sample of component with respect to the reference grid*/
+  Byte_t  YRsiz[3];          /**< vertical separation of a sample of component with respect to the reference grid*/
 } SIZmarker_param_t;
 
-//! A.6.1 Coding style default (COD)
+/** A.6.1 Coding style default (COD)*/
 typedef struct CODmarker_param{
-  Byte2_t  Lcod;             //!< length of marker segment excluding the marker
-  Byte_t   Scod;             //!< Coding style for all components
-  porder_t prog_order;       //!< progression order
-  Byte2_t  numOflayers;      //!< number of layers
-  Byte_t   numOfdecomp;      //!< number of decompositions levels
-  Byte4_t  *XPsiz;           //!< dynamic array of precinct width  at successive resolution level in order
-  Byte4_t  *YPsiz;           //!< dynamic array of precinct height at successive resolution level in order
+  Byte2_t  Lcod;             /**< length of marker segment excluding the marker*/
+  Byte_t   Scod;             /**< Coding style for all components*/
+  porder_t prog_order;       /**< progression order*/
+  Byte2_t  numOflayers;      /**< number of layers*/
+  Byte_t   numOfdecomp;      /**< number of decompositions levels*/
+  Byte4_t  *XPsiz;           /**< dynamic array of precinct width  at successive resolution level in order*/
+  Byte4_t  *YPsiz;           /**< dynamic array of precinct height at successive resolution level in order*/
 } CODmarker_param_t;
 
-//! index parameters
+/** index parameters*/
 typedef struct index_param{
-  metadatalist_param_t *metadatalist; //!< metadata-bin list
-  Byte8_t offset;            //!< codestream offset
-  Byte8_t length;            //!< codestream length 
-  Byte8_t mhead_length;      //!< main header length  
-  SIZmarker_param_t SIZ;     // !< SIZ marker information
-  CODmarker_param_t COD;     // !< COD marker information
-  faixbox_param_t *tilepart;     //!< tile part information from tpix box
-  mhixbox_param_t **tileheader;  //!< dynamic array of tile header information from thix box
-  faixbox_param_t **precpacket;  //!< dynamic array of precint packet information from ppix box
+  metadatalist_param_t *metadatalist; /**< metadata-bin list*/
+  Byte8_t offset;                     /**< codestream offset*/
+  Byte8_t length;                     /**< codestream length */
+  Byte8_t mhead_length;               /**< main header length  */
+  SIZmarker_param_t SIZ;              /**< SIZ marker information*/
+  CODmarker_param_t COD;              /**< COD marker information*/
+  faixbox_param_t *tilepart;          /**< tile part information from tpix box*/
+  mhixbox_param_t **tileheader;       /**< dynamic array of tile header information from thix box*/
+  faixbox_param_t **precpacket;       /**< dynamic array of precint packet information from ppix box*/
 } index_param_t;
 
 
@@ -137,10 +137,10 @@ void delete_index( index_param_t **index);
 void delete_COD( CODmarker_param_t COD);
 
 
-//! 1-dimensional range parameters
+/** 1-dimensional range parameters*/
 typedef struct range_param{
-  Byte4_t minvalue; //!< minimal value
-  Byte4_t maxvalue; //!< maximal value
+  Byte4_t minvalue; /**< minimal value*/
+  Byte4_t maxvalue; /**< maximal value*/
 } range_param_t;
 
 /**

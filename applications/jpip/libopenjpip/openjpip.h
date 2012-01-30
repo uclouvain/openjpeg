@@ -58,7 +58,7 @@
 #include "ihdrbox_manager.h"
 #include "index_manager.h"
 
-#endif //SERVER
+#endif /*SERVER*/
 
 /* 
  *==========================================================
@@ -68,18 +68,18 @@
  
  #ifdef SERVER
 
-//! Server static records
+/** Server static records*/
 typedef struct server_record{
-  sessionlist_param_t *sessionlist; //!< list of session records
-  targetlist_param_t *targetlist;   //!< list of target records
+  sessionlist_param_t *sessionlist; /**< list of session records*/
+  targetlist_param_t *targetlist;   /**< list of target records*/
   auxtrans_param_t auxtrans;
 } server_record_t;
 
-//! Query/response data for each client
+/** Query/response data for each client*/
 typedef struct QR{
-  query_param_t *query;             //!< query parameters
-  msgqueue_param_t *msgqueue;       //!< message queue
-  channel_param_t *channel;         //!< channel, (NULL if stateless)
+  query_param_t *query;             /**< query parameters*/
+  msgqueue_param_t *msgqueue;       /**< message queue*/
+  channel_param_t *channel;         /**< channel, (NULL if stateless)*/
 } QR_t;
 
 /**
@@ -143,7 +143,7 @@ void end_QRprocess( server_record_t *rec, QR_t **qr);
  */
 void local_log( bool query, bool messages, bool sessions, bool targets, QR_t *qr, server_record_t *rec);
 
-#endif //SERVER
+#endif /*SERVER*/
 
 /* 
  *==========================================================
@@ -153,17 +153,17 @@ void local_log( bool query, bool messages, bool sessions, bool targets, QR_t *qr
 
 #ifndef SERVER
 
-//! Decoding server static records
+/** Decoding server static records*/
 typedef struct dec_server_record{
-  cachelist_param_t *cachelist; //!< cache list
-  Byte_t *jpipstream;           //!< JPT/JPP stream
-  int jpipstreamlen;            //!< length of jpipstream
-  msgqueue_param_t *msgqueue;   //!< parsed message queue of jpipstream
-  SOCKET listening_socket;      //!< listenning socket
+  cachelist_param_t *cachelist; /**< cache list*/
+  Byte_t *jpipstream;           /**< JPT/JPP stream*/
+  int jpipstreamlen;            /**< length of jpipstream*/
+  msgqueue_param_t *msgqueue;   /**< parsed message queue of jpipstream*/
+  SOCKET listening_socket;      /**< listenning socket*/
 } dec_server_record_t;
 
 
-//! Client socket identifier
+/** Client socket identifier*/
 typedef SOCKET client_t;
 
 /**
@@ -198,7 +198,7 @@ client_t accept_connection( dec_server_record_t *rec);
   */
 bool handle_clientreq( client_t client, dec_server_record_t *rec);
 
- #endif //SERVER
+#endif /*SERVER*/
 
 /* 
  *==========================================================
@@ -212,15 +212,15 @@ bool handle_clientreq( client_t client, dec_server_record_t *rec);
  * jpip to JP2 or J2K
  */
 
-//! JPIP decoding parameters
+/** JPIP decoding parameters*/
 typedef struct jpip_dec_param{
-  Byte_t *jpipstream;                 //!< JPT/JPP-stream
-  Byte8_t jpiplen;                    //!< length of jpipstream
-  msgqueue_param_t *msgqueue;         //!< message queue
-  metadatalist_param_t *metadatalist; //!< metadata list going into JP2 file
-  ihdrbox_param_t *ihdrbox;           //!< ihdr box going into JP2 file
-  Byte_t *jp2kstream;                 //!< J2K codestream or JP2 file codestream
-  Byte8_t jp2klen;                    //!< length of j2kstream or JP2 file
+  Byte_t *jpipstream;                 /**< JPT/JPP-stream*/
+  Byte8_t jpiplen;                    /**< length of jpipstream*/
+  msgqueue_param_t *msgqueue;         /**< message queue*/
+  metadatalist_param_t *metadatalist; /**< metadata list going into JP2 file*/
+  ihdrbox_param_t *ihdrbox;           /**< ihdr box going into JP2 file*/
+  Byte_t *jp2kstream;                 /**< J2K codestream or JP2 file codestream*/
+  Byte8_t jp2klen;                    /**< length of j2kstream or JP2 file*/
 } jpip_dec_param_t;
 
 /**
@@ -277,7 +277,7 @@ void output_log( bool messages, bool metadata, bool ihdrbox, jpip_dec_param_t *d
  *  test the format of index (cidx) box in JP2 file
  */
 
-//! Redefinition of index parameters
+/** Redefinition of index parameters*/
 typedef index_param_t index_t;
 
 /**
@@ -303,6 +303,6 @@ void destroy_index( index_t **idx);
  */
 void output_index( index_t *index);
 
-#endif //SERVER
+#endif /*SERVER*/
 
 #endif /* !OPENJPIP_H_ */

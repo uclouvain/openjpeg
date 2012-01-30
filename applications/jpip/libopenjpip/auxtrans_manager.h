@@ -33,12 +33,12 @@
 
 #include "sock_manager.h"
 
-//! auxiliary transport setting parameters
+/** auxiliary transport setting parameters*/
 typedef struct auxtrans_param{
-  int tcpauxport;       //!< tcp port
-  int udpauxport;       //!< udp port
-  SOCKET tcplistensock; //!< listenning socket for aux tcp (-1 if not open)
-  SOCKET udplistensock; //!< listenning socket for aux udp (-1 if not open)
+  int tcpauxport;       /**< tcp port*/
+  int udpauxport;       /**< udp port*/
+  SOCKET tcplistensock; /**< listenning socket for aux tcp (-1 if not open)*/
+  SOCKET udplistensock; /**< listenning socket for aux udp (-1 if not open)*/
 } auxtrans_param_t;
 
 /**

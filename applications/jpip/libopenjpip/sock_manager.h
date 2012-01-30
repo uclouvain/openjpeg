@@ -38,7 +38,7 @@
 #include <winsock2.h>
 #else
 typedef int SOCKET;
-#endif //_WIN32
+#endif /*_WIN32*/
 
 #define BUF_LEN 256
 

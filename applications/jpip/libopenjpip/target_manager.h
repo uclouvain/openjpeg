@@ -34,30 +34,30 @@
 #include "bool.h"
 #include "index_manager.h"
 
-//! maximum length of target identifier
+/** maximum length of target identifier*/
 #define MAX_LENOFTID 30
 
-//! target parameters
+/** target parameters*/
 typedef struct target_param{
-  char tid[MAX_LENOFTID];         //!< taregt identifier
-  char *targetname;               //!< local file path or URL ( URL is suported only with SERVER mode)
-  int fd;                         //!< file descriptor
+  char tid[MAX_LENOFTID];         /**< target identifier*/
+  char *targetname;               /**< local file path or URL ( URL is suported only with SERVER mode)*/
+  int fd;                         /**< file descriptor*/
 #ifdef SERVER
-  char *tmpfname;                 //!< temporal file name to download a remote target file
+  char *tmpfname;                 /**< temporal file name to download a remote target file*/
 #endif
-  int csn;                        //!< codestream number
-  index_param_t *codeidx;         //!< index information of codestream
-  int num_of_use;                 //!< numbers of sessions refering to this target
-  bool jppstream;                 //!< if this target can return JPP-stream
-  bool jptstream;                 //!< if this target can return JPP-stream
-  struct target_param *next;      //!< pointer to the next target
+  int csn;                        /**< codestream number                                  */
+  index_param_t *codeidx;         /**< index information of codestream                    */
+  int num_of_use;                 /**< numbers of sessions refering to this target        */
+  bool jppstream;                 /**< if this target can return JPP-stream               */
+  bool jptstream;                 /**< if this target can return JPP-stream               */
+  struct target_param *next;      /**< pointer to the next target                         */
 } target_param_t;
 
 
-//! Target list parameters
+/** Target list parameters*/
 typedef struct targetlist_param{
-  target_param_t *first; //!< first target pointer of the list
-  target_param_t *last;  //!< last  target pointer of the list
+  target_param_t *first; /**< first target pointer of the list*/
+  target_param_t *last;  /**< last  target pointer of the list*/
 } targetlist_param_t;
 
 
