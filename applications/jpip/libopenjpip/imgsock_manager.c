@@ -32,6 +32,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include "imgsock_manager.h"
+#if _WIN32
+#define strncasecmp _strnicmp
+#endif
 
 msgtype_t identify_clientmsg( SOCKET connected_socket)
 {
@@ -77,7 +80,7 @@ Byte_t * receive_JPIPstream( SOCKET connected_socket, char **target, char **tid,
     return NULL;
 
   if( strstr( buf, "jp2")){ 
-    // register cid option
+    /* register cid option*/
     *target = strdup( buf);
     
     if((linelen = receive_line( connected_socket, buf)) == 0)
@@ -99,7 +102,7 @@ Byte_t * receive_JPIPstream( SOCKET connected_socket, char **target, char **tid,
 
   jpipstream = receive_stream( connected_socket, datalen);
 
-  // check EOR
+  /* check EOR*/
   if( jpipstream[datalen-3] == 0x00 && ( jpipstream[datalen-2] == 0x01 || jpipstream[datalen-2] == 0x02))
     *streamlen = datalen -3;
   else
