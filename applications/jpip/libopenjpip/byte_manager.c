@@ -29,7 +29,12 @@
  */
 
 #include <stdio.h>
+#ifdef _WIN32
+#include <io.h>
+#else
 #include <sys/types.h>
+#include <unistd.h>
+#endif
 #include <stdlib.h>
 #include <sys/stat.h>
 #include "byte_manager.h"
@@ -41,7 +46,7 @@
 #define FCGI_stdout stdout
 #define FCGI_stderr stderr
 #define logstream stderr
-#endif //SERVER
+#endif /*SERVER*/
 
 
 Byte_t * fetch_bytes( int fd, long offset, int size)

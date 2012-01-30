@@ -31,7 +31,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#ifdef _WIN32
+#include <io.h>
+#else
 #include <sys/types.h>
+#include <unistd.h>
+#endif
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <time.h>
@@ -45,7 +50,7 @@
 #define FCGI_stdout stdout
 #define FCGI_stderr stderr
 #define logstream stderr
-#endif //SERVER
+#endif /*SERVER*/
 
 targetlist_param_t * gene_targetlist()
 {
@@ -109,9 +114,9 @@ target_param_t * gene_target( targetlist_param_t *targetlist, char *targetpath)
   target->jptstream = isJPTfeasible( *jp2idx);
   target->next=NULL;
 
-  if( targetlist->first) // there are one or more entries
+  if( targetlist->first) /* there are one or more entries*/
     targetlist->last->next = target;
-  else                   // first entry
+  else                   /* first entry*/
     targetlist->first = target;
   targetlist->last = target;
 
@@ -248,7 +253,7 @@ int open_jp2file( char filepath[], char tmpfname[])
   int fd;
   char *data;
   
-  // download remote target file to local storage
+  /* download remote target file to local storage*/
   if( strncmp( filepath, "http://", 7) == 0){
     if( (fd = open_remotefile( filepath, tmpfname)) == -1)
       return -1;
@@ -260,14 +265,14 @@ int open_jp2file( char filepath[], char tmpfname[])
       return -1;
     }
   }
-  // Check resource is a JP family file.
+  /* Check resource is a JP family file.*/
   if( lseek( fd, 0, SEEK_SET)==-1){
     close(fd);
     fprintf( FCGI_stdout, "Reason: Target %s broken (lseek error)\r\n", filepath);
     return -1;
   }
   
-  data = (char *)malloc( 12); // size of header
+  data = (char *)malloc( 12); /* size of header*/
 
   if( read( fd, data, 12) != 12){
     free( data);
@@ -296,7 +301,8 @@ static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream);
 int open_remotefile( char filepath[], char tmpfname[])
 {
 #ifndef SERVER
-
+  (void)filepath;
+  (void)tmpfname;
   fprintf( FCGI_stderr, "Remote file can not be opened in local mode\n");
   return -1;
 
@@ -322,7 +328,7 @@ int open_remotefile( char filepath[], char tmpfname[])
   curl_easy_cleanup(curl_handle);
 
   return fd;
-#endif //SERVER
+#endif /*SERVER*/
 }
 
 #ifdef SERVER
@@ -333,4 +339,4 @@ static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream)
 
   return written;
 }
-#endif //SERVER
+#endif /*SERVER*/
