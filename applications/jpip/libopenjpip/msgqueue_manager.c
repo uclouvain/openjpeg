@@ -658,8 +658,8 @@ void parse_metadata( metadata_param_t *metadata, message_param_t *msg, Byte_t *d
     insert_placeholder_into_list( phld, metadata->placeholderlist);
   }
   else if( isalpha(boxtype[0]) && isalpha(boxtype[1]) &&
-	   (isalnum(boxtype[2])||isblank(boxtype[2])) &&
-	   (isalpha(boxtype[3])||isblank(boxtype[3]))){
+	   (isalnum(boxtype[2])||isspace(boxtype[2])) &&
+	   (isalpha(boxtype[3])||isspace(boxtype[3]))){
     if( !metadata->boxlist)
       metadata->boxlist = gene_boxlist();
     
