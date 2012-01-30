@@ -652,6 +652,13 @@ bool set_CODmkrdata( markeridx_param_t *codmkidx, codestream_param_t codestream,
 }
 
 
+/* very very generic name see NOMINMAX */
+#ifdef min
+#undef min
+#endif
+#ifdef max
+#undef max
+#endif
 Byte4_t max( Byte4_t n1, Byte4_t n2);
 Byte4_t min( Byte4_t n1, Byte4_t n2);
 
@@ -698,6 +705,7 @@ Byte4_t get_tile_YSiz( SIZmarker_param_t SIZ, Byte4_t tile_id, int level)
   return tile_Yrange.maxvalue - tile_Yrange.minvalue;
 }
 
+/* TODO: what is this code doing ? will all compiler be able to optimize the following ? */
 Byte4_t max( Byte4_t n1, Byte4_t n2)
 {
   if( n1 < n2)
