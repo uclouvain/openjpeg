@@ -32,6 +32,7 @@
 #include <string.h>
 #include <stdio.h>
 #ifdef _WIN32
+#define _snprintf snprintf /* Visual Studio */
 #include <io.h>
 #else
 #include <sys/types.h>
