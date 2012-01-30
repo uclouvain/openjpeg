@@ -41,7 +41,11 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#ifdef _WIN32
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 #include "openjpip.h"
 
 int
@@ -49,6 +53,7 @@ main(int argc, char *argv[])
 {
   int fd;
   index_t *jp2idx;
+  if( argc < 2 ) return 1;
   
   if( (fd = open( argv[1], O_RDONLY)) == -1){
     fprintf( stderr, "Error: Target %s not found\n", argv[1]);
