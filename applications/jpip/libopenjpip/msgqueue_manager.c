@@ -35,6 +35,11 @@
 #include <sys/stat.h>
 #include <string.h>
 #include <ctype.h>
+#ifdef _WIN32
+#include <io.h>
+#else
+#include <unistd.h>
+#endif
 #include "msgqueue_manager.h"
 #include "metadata_manager.h"
 #include "index_manager.h"
@@ -196,7 +201,7 @@ void enqueue_tile( int tile_id, int level, msgqueue_param_t *msgqueue)
 
   class_id = (numOftparts==1) ? TILE_MSG : EXT_TILE_MSG;
   
-  if( tile_id < 0 || numOftiles <= tile_id){
+  if( tile_id < 0 || (int)numOftiles <= tile_id){
     fprintf( FCGI_stderr, "Error, Invalid tile-id %d\n", tile_id);
     return;
   }
@@ -204,13 +209,13 @@ void enqueue_tile( int tile_id, int level, msgqueue_param_t *msgqueue)
   tp_model = &cachemodel->tp_model[ tile_id*numOftparts];
 
   binOffset=0;
-  for( i=0; i<numOftparts-level; i++){
+  for( i=0; i<(int)numOftparts-level; i++){
     binLength = get_elemLen( tilepart, i, tile_id);
     
     if( !tp_model[i]){
       msg = (message_param_t *)malloc( sizeof(message_param_t));
       
-      msg->last_byte = (i==numOftparts-1);
+      msg->last_byte = (i==(int)numOftparts-1);
       msg->in_class_id = tile_id;
       msg->class_id = class_id;
       msg->csn = target->csn;
@@ -575,7 +580,7 @@ void parse_JPIPstream( Byte_t *JPIPstream, Byte8_t streamlen, Byte8_t offset, ms
   class_id = -1; /* dummy*/
   csn = -1;
   ptr = JPIPstream;
-  while( ptr-JPIPstream < streamlen){
+  while( (Byte8_t)(ptr-JPIPstream) < streamlen){
     msg = (message_param_t *)malloc( sizeof(message_param_t));
     
     ptr = parse_bin_id_vbas( ptr, &bb, &c, &msg->in_class_id);
@@ -618,6 +623,7 @@ void parse_metadata( metadata_param_t *metadata, message_param_t *msg, Byte_t *s
 void parse_metamsg( msgqueue_param_t *msgqueue, Byte_t *stream, Byte8_t streamlen, metadatalist_param_t *metadatalist)
 {
   message_param_t *msg;
+  (void)streamlen;
 
   if( metadatalist == NULL)
     return;
