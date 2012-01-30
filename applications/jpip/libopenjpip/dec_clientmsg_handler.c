@@ -31,7 +31,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 #include "dec_clientmsg_handler.h"
 #include "ihdrbox_manager.h"
 #include "jpipstream_manager.h"
