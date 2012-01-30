@@ -40,7 +40,9 @@ msgtype_t identify_clientmsg( SOCKET connected_socket)
 {
   int receive_size;
   char buf[BUF_LEN];
-  char *magicid[] = { "JPIP-stream", "PNM request", "XML request", "TID request", "CID request", "CID destroy", "SIZ request", "JP2 save", "QUIT"};
+  static const char *magicid[] = { "JPIP-stream", "PNM request", "XML request",
+    "TID request", "CID request", "CID destroy", "SIZ request", "JP2 save",
+    "QUIT"};
   int i;
   
   receive_size = receive_line( connected_socket, buf);
@@ -125,7 +127,7 @@ void send_XMLstream( SOCKET connected_socket, Byte_t *xmlstream, int length)
   send_stream( connected_socket, xmlstream, length);
 }
 
-void send_IDstream(  SOCKET connected_socket, char *id, int idlen, char *label);
+void send_IDstream(  SOCKET connected_socket, char *id, int idlen, const char *label);
 
 void send_CIDstream( SOCKET connected_socket, char *cid, int cidlen)
 {
@@ -137,7 +139,7 @@ void send_TIDstream( SOCKET connected_socket, char *tid, int tidlen)
   send_IDstream( connected_socket, tid, tidlen, "TID");
 }
 
-void send_IDstream(  SOCKET connected_socket, char *id, int idlen, char *label)
+void send_IDstream(  SOCKET connected_socket, char *id, int idlen, const char *label)
 {
   Byte_t header[4];
 
