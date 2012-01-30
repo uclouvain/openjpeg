@@ -41,7 +41,7 @@
 #define FCGI_stdout stdout
 #define FCGI_stderr stderr
 #define logstream stderr
-#endif //SERVER
+#endif /*SERVER*/
 
 boxlist_param_t * gene_boxlist()
 {
@@ -72,7 +72,7 @@ boxlist_param_t * get_boxstructure( int fd, Byte8_t offset, Byte8_t length)
     if( !boxlist)
       boxlist = gene_boxlist();
     insert_box_into_list( box, boxlist);
-  }while( pos < offset+length);
+  }while( pos < (int)(offset+length));
 
   return boxlist;
 }
@@ -84,7 +84,7 @@ box_param_t * gene_boxbyOffset( int fd, Byte8_t offset)
   char *boxtype;
   box_param_t *box;
 
-  // read LBox and TBox
+  /* read LBox and TBox*/
   if(!(data = fetch_bytes( fd, offset, 8))){
     fprintf( FCGI_stderr, "Error: error in gene_boxbyOffset( %d, %lld)\n", fd, offset);
     return NULL;
@@ -94,10 +94,10 @@ box_param_t * gene_boxbyOffset( int fd, Byte8_t offset)
   boxlen = (Byte8_t)big4(data);
   boxtype = (char *)(data+4);  
 
-  // box type constraint
+  /* box type constraint*/
   if( !isalpha(boxtype[0]) || !isalpha(boxtype[1]) ||
-      (!isalnum(boxtype[2])&&!isblank(boxtype[2])) ||
-      (!isalpha(boxtype[3])&&!isblank(boxtype[3]))){
+      (!isalnum(boxtype[2])&&!isspace(boxtype[2])) ||
+      (!isalpha(boxtype[3])&&!isspace(boxtype[3]))){
     free( data);
     return NULL;
   }
@@ -105,7 +105,7 @@ box_param_t * gene_boxbyOffset( int fd, Byte8_t offset)
   if( boxlen == 1){
     Byte_t *data2;
     headlen = 16;
-    // read XLBox
+    /* read XLBox*/
     if((data2 = fetch_bytes( fd, offset+8, 8))){
       boxlen = big8(data2);
       free(data2);
@@ -133,21 +133,21 @@ box_param_t * gene_boxbyOffinStream( Byte_t *stream, Byte8_t offset)
   char *boxtype;
   box_param_t *box;
 
-  // read LBox and TBox
+  /* read LBox and TBox*/
   headlen = 8;
   boxlen = (Byte8_t)big4( stream);
   boxtype = (char *)( stream+4);  
 
-  // box type constraint
+  /* box type constraint*/
   if( !isalpha(boxtype[0]) || !isalpha(boxtype[1]) ||
-      (!isalnum(boxtype[2])&&!isblank(boxtype[2])) ||
-      (!isalpha(boxtype[3])&&!isblank(boxtype[3]))){
+      (!isalnum(boxtype[2])&&!isspace(boxtype[2])) ||
+      (!isalpha(boxtype[3])&&!isspace(boxtype[3]))){
     return NULL;
   }
   
   if( boxlen == 1){
     headlen = 16;
-    boxlen = big8( stream+8); // read XLBox
+    boxlen = big8( stream+8); /* read XLBox*/
   }
   box = (box_param_t *)malloc( sizeof( box_param_t));
   box->fd = -1;
@@ -170,15 +170,15 @@ box_param_t * gene_boxbyType( int fd, Byte8_t offset, Byte8_t length, char TBox[
   box_param_t *foundbox;
 
   
-  if( length==0){ // set the max length
+  if( length==0){ /* set the max length*/
     if( (length = get_filesize( fd) - offset) <= 0)
       return NULL;
   }
 
   pos = offset;
-  while( pos < offset+length-7){ // LBox+TBox-1=7
+  while( pos < offset+length-7){ /* LBox+TBox-1=7*/
     
-    // read LBox and TBox
+    /* read LBox and TBox*/
     if((data = fetch_bytes( fd, pos, 8))){
       headlen = 8;
       boxlen = (Byte8_t)big4(data);
@@ -187,7 +187,7 @@ box_param_t * gene_boxbyType( int fd, Byte8_t offset, Byte8_t length, char TBox[
       if( boxlen == 1){
 	Byte_t *data2;
 	headlen = 16;
-	// read XLBox
+	/* read XLBox*/
 	if((data2 = fetch_bytes( fd, pos+8, 8))){
 	  boxlen = big8(data2);
 	  free(data2);
@@ -230,22 +230,22 @@ box_param_t * gene_boxbyTypeinStream( Byte_t *stream, Byte8_t offset, Byte8_t le
   box_param_t *foundbox;
 
   
-  if( length<=0){ // set the max length
+  if( length<=0){ /* set the max length*/
     fprintf( FCGI_stderr, "func gene_boxbyTypeinStream(), max length must be more than 0\n");
     return NULL;
   }
   
   pos = offset;
-  while( pos < offset+length-7){ // LBox+TBox-1=7
+  while( pos < offset+length-7){ /* LBox+TBox-1=7*/
     
-    // read LBox and TBox
+    /* read LBox and TBox*/
     data = stream + pos;
     headlen = 8;
     boxlen = (Byte8_t)big4(data);
     boxtype = (char *)(data+4);
    
     if( boxlen == 1){
-      // read XLBox
+      /* read XLBox*/
       headlen = 16;
       boxlen = big8( data+8);
     }
