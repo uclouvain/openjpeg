@@ -57,7 +57,7 @@ void handle_JPIPstreamMSG( SOCKET connected_socket, cachelist_param_t *cachelist
   metadatalist = gene_metadatalist();
   parse_metamsg( msgqueue, *jpipstream, *streamlen, metadatalist);
 
-  // cid registration
+  /* cid registration*/
   if( target != NULL){
     if((cache = search_cache( target, cachelist))){
       if( tid != NULL)
@@ -121,6 +121,8 @@ void handle_XMLreqMSG( SOCKET connected_socket, Byte_t *jpipstream, cachelist_pa
 {
   char *cid;
   cache_param_t *cache;
+  boxcontents_param_t *boxcontents;
+  Byte_t *xmlstream;
 
   cid = receive_string( connected_socket);
 
@@ -131,8 +133,8 @@ void handle_XMLreqMSG( SOCKET connected_socket, Byte_t *jpipstream, cachelist_pa
 
   free( cid);
   
-  boxcontents_param_t *boxcontents = cache->metadatalist->last->boxcontents;
-  Byte_t *xmlstream = (Byte_t *)malloc( boxcontents->length);
+  boxcontents = cache->metadatalist->last->boxcontents;
+  xmlstream = (Byte_t *)malloc( boxcontents->length);
   memcpy( xmlstream, jpipstream+boxcontents->offset, boxcontents->length);
   send_XMLstream( connected_socket, xmlstream, boxcontents->length);
   free( xmlstream);
