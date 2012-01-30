@@ -33,6 +33,11 @@
 #include "jpip_parser.h"
 #include "channel_manager.h"
 #include "byte_manager.h"
+#ifdef _WIN32
+#include <io.h>
+#else
+#include <unistd.h>
+#endif
 
 #ifdef SERVER
 #include "auxtrans_manager.h"
@@ -135,7 +140,7 @@ void send_responsedata( server_record_t *rec, QR_t *qr)
   
   recons_stream_from_msgqueue( qr->msgqueue, fd);
   
-  add_EORmsg( fd, qr); // needed at least for tcp and udp
+  add_EORmsg( fd, qr); /* needed at least for tcp and udp */
 
   len_of_jpipstream = get_filesize( fd);
   jpipstream = fetch_bytes( fd, 0, len_of_jpipstream);
@@ -147,7 +152,7 @@ void send_responsedata( server_record_t *rec, QR_t *qr)
 
   if( qr->channel)
     if( qr->channel->aux == tcp || qr->channel->aux == udp){
-      send_responsedata_on_aux( qr->channel->aux==tcp, rec->auxtrans, qr->channel->cid, jpipstream, len_of_jpipstream, 1000); // 1KB per frame
+      send_responsedata_on_aux( qr->channel->aux==tcp, rec->auxtrans, qr->channel->cid, jpipstream, len_of_jpipstream, 1000); /* 1KB per frame*/
       return;
     }
   
@@ -173,7 +178,7 @@ void add_EORmsg( int fd, QR_t *qr)
 
 void end_QRprocess( server_record_t *rec, QR_t **qr)
 {
-  // TODO: record client preferences if necessary
+  /* TODO: record client preferences if necessary*/
   
   delete_query( &((*qr)->query));
   delete_msgqueue( &((*qr)->msgqueue));
@@ -196,7 +201,7 @@ void local_log( bool query, bool messages, bool sessions, bool targets, QR_t *qr
     print_alltarget( rec->targetlist);
 }
 
-#endif //SERVER
+#endif /*SERVER*/
 
 #ifndef SERVER
 
@@ -326,7 +331,7 @@ bool fread_jpip( char fname[], jpip_dec_param_t *dec)
   
   dec->jpipstream = (Byte_t *)malloc( dec->jpiplen);
 
-  if( read( infd, dec->jpipstream, dec->jpiplen) != dec->jpiplen){
+  if( read( infd, dec->jpipstream, dec->jpiplen) != (int)dec->jpiplen){
     fprintf( stderr, "file reading error\n");
     free( dec->jpipstream);
     return false;
@@ -341,14 +346,14 @@ void decode_jpip( jpip_dec_param_t *dec)
 {
   parse_JPIPstream( dec->jpipstream, dec->jpiplen, 0, dec->msgqueue);
 
-  if( dec->metadatalist){ // JP2 encoding
+  if( dec->metadatalist){ /* JP2 encoding*/
     parse_metamsg( dec->msgqueue, dec->jpipstream, dec->jpiplen, dec->metadatalist);
     dec->ihdrbox = gene_ihdrbox( dec->metadatalist, dec->jpipstream);
     
     dec->jp2kstream = recons_jp2( dec->msgqueue, dec->jpipstream, dec->msgqueue->first->csn, &dec->jp2klen);
   }
-  else // J2k encoding  
-    // Notice: arguments fw, fh need to be set for LRCP, PCRL, CPRL
+  else /* J2k encoding  */
+    /* Notice: arguments fw, fh need to be set for LRCP, PCRL, CPRL*/
     dec->jp2kstream = recons_j2k( dec->msgqueue, dec->jpipstream, dec->msgqueue->first->csn, 0, 0, &dec->jp2klen);  
 }
 
@@ -365,7 +370,7 @@ bool fwrite_jp2k( char fname[], jpip_dec_param_t *dec)
    return false;
  }
   
- if( write( outfd, dec->jp2kstream, dec->jp2klen) != dec->jp2klen)
+ if( write( outfd, dec->jp2kstream, dec->jp2klen) != (int)dec->jp2klen)
    fprintf( stderr, "j2k file write error\n");
 
  close(outfd);
@@ -404,13 +409,13 @@ index_t * get_index_from_JP2file( int fd)
 {
   char *data;
  
-  // Check resource is a JP family file.
+  /* Check resource is a JP family file.*/
   if( lseek( fd, 0, SEEK_SET)==-1){
     fprintf( stderr, "Error: File broken (lseek error)\n");
     return NULL;
   }
   
-  data = (char *)malloc( 12); // size of header
+  data = (char *)malloc( 12); /* size of header*/
   if( read( fd, data, 12) != 12){
     free( data);
     fprintf( stderr, "Error: File broken (read error)\n");
@@ -438,4 +443,4 @@ void output_index( index_t *index)
   print_index( *index);
 }
 
-#endif //SERVER
+#endif /*SERVER*/
