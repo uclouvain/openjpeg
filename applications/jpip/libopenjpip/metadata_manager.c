@@ -28,10 +28,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "metadata_manager.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "metadata_manager.h"
 
 #ifdef SERVER
 #include "fcgi_stdio.h"
@@ -40,7 +40,7 @@
 #define FCGI_stdout stdout
 #define FCGI_stderr stderr
 #define logstream stderr
-#endif //SERVER
+#endif /*SERVER*/
 
 
 metadatalist_param_t * gene_metadatalist()
@@ -144,7 +144,7 @@ void delete_metadata( metadata_param_t **metadata)
   if((*metadata)->boxcontents)
     free((*metadata)->boxcontents);
 #ifndef SERVER
-  //  fprintf( logstream, "local log: Metadata-bin: %d deleted\n", (*metadata)->idx);
+  /*  fprintf( logstream, "local log: Metadata-bin: %d deleted\n", (*metadata)->idx);*/
 #endif
   free( *metadata);
 }
@@ -160,11 +160,12 @@ void insert_metadata_into_list( metadata_param_t *metabin, metadatalist_param_t 
 
 void print_metadata( metadata_param_t *metadata)
 {
+  boxcontents_param_t *boxcont;
   fprintf( logstream, "metadata-bin %d info:\n", metadata->idx);
   print_allbox( metadata->boxlist);
   print_allplaceholder( metadata->placeholderlist);
  
-  boxcontents_param_t *boxcont = metadata->boxcontents;
+  boxcont = metadata->boxcontents;
   if( boxcont)
       fprintf( logstream, "box contents:\n"
 	       "\t offset: %lld %#llx\n" 

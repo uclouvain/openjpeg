@@ -29,7 +29,7 @@
  */
 
 #ifndef   	METADATA_MANAGER_H_
-# define   	METADATA_MANAGER_H_
+#define   	METADATA_MANAGER_H_
 
 #include "box_manager.h"
 #include "placeholder_manager.h"
