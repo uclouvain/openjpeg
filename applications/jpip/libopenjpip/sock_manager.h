@@ -35,7 +35,7 @@
 #include "byte_manager.h"
 
 #ifdef _WIN32
-#include <winsock.h>
+#include <winsock2.h>
 #else
 typedef int SOCKET;
 #endif /*_WIN32*/
