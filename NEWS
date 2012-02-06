@@ -31,4 +31,4 @@ Misc:
      - images are located in 'http://openjpeg.googlecode.com/svn/data' folder.
      - configuration files and utilities are located in 'tests' folder.
     * OPJViewer re-activated (need wxWidgets)
-    * Many bug fixes. See CHANGES for details.
+    * Huge amount of bug fixes. See CHANGES for details.
