@@ -5,10 +5,10 @@
 #---------------------------------------------------------------------------
 DOXYFILE_ENCODING      = UTF-8
 PROJECT_NAME           = OpenJPEG
-PROJECT_NUMBER         =
+PROJECT_NUMBER         = @OPENJPEG_VERSION@
 PROJECT_BRIEF          =
 PROJECT_LOGO           =
-OUTPUT_DIRECTORY       = .
+OUTPUT_DIRECTORY       = @OPENJPEG_BINARY_DIR@/doc
 CREATE_SUBDIRS         = NO
 OUTPUT_LANGUAGE        = English
 BRIEF_MEMBER_DESC      = YES
@@ -100,8 +100,8 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = ../libopenjpeg \
-                         ../libopenjpeg/jpwl
+INPUT                  = @OPENJPEG_SOURCE_DIR@/libopenjpeg \
+                         @OPENJPEG_SOURCE_DIR@/libopenjpeg/jpwl
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          = *.h \
                          *.c
