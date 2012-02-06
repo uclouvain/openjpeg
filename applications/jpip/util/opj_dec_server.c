@@ -64,7 +64,7 @@ int main(int argc, char *argv[]){
     printf( "Initialisation Winsock\n");
 #endif //_WIN32
   
-  server_record = init_dec_server( 5000);
+  server_record = init_dec_server( 50000);
   
   while(( client = accept_connection( server_record)) != -1 )
     if(!handle_clientreq( client, server_record))
