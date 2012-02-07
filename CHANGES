@@ -1,0 +1,1371 @@
+2012-02-07  Antonin Descampe
+
+	* [r1384] CHANGES[DEL]: [1.5] delete CHANGES file as it will now be
+	  automatically generated when releasing the code
+	* [r1382] CMakeLists.txt, doc/CMakeLists.txt: [1.5] revert build
+	  documentation behaviour in cmake
+
+2012-02-06  Antonin Descampe
+
+	* [r1381] CMakeLists.txt, doc/CMakeLists.txt,
+	  doc/Doxyfile.dox[CPY], doc/Doxyfile.dox.cmake.in[CPY]: [1.5]
+	  fixes documentation generation with doxygen
+
+2012-02-06  Mathieu Malaterre
+
+	* [r1380] applications/jpip/util/opj_dec_server.c: Make opj 1.5 use
+	  port 50000, which is not compatible with trunk. But compatible
+	  with itself.
+	* [r1379] applications/jpip/Makefile.nix[DEL],
+	  applications/jpip/libopenjpip/Makefile.nix[DEL],
+	  applications/jpip/util/CMakeLists.txt,
+	  applications/jpip/util/Makefile.nix[DEL],
+	  applications/jpip/util/opj_viewer/build.xml[DEL],
+	  applications/jpip/util/opj_viewer/src/ImageManager.java,
+	  applications/jpip/util/opj_viewer/src/PnmImage.java,
+	  applications/jpip/util/opj_viewer/src/RegimViewer.java,
+	  applications/jpip/util/opj_viewer/src/ResizeListener.java,
+	  applications/jpip/util/opj_viewer_xerces/build.xml[DEL],
+	  applications/jpip/util/opj_viewer_xerces/dist/manifest.txt[DEL],
+	  applications/jpip/util/opj_viewer_xerces/dist/manifest.txt.in[CPY]:
+	  Re-build the jar files from the source code.
+	* [r1378] applications/jpip/util/opj_dec_server.c: For some reason
+	  rev 1103 change the default port number, which breaks openjpip
+	  documentation. Revert back to port 5000
+	* [r1374] doc/Doxyfile.dox: Fix doc generation
+
+2012-02-06  Antonin Descampe
+
+	* [r1373] LICENSE, NEWS, README, configure.ac: [1.5] update version
+	  in configure.ac and NEWS, README, LICENSE files
+
+2012-02-01  Mathieu Malaterre
+
+	* [r1369] applications/jpip/libopenjpip/sock_manager.h: revert (svn
+	  merge -c -1368 ). It does break compilation on windows
+
+2012-01-31  Vincent Torri
+
+	* [r1368] applications/jpip/libopenjpip/sock_manager.h: revert
+	  commit 1357, it could break linkage
+
+2012-01-30  Mathieu Malaterre
+
+	* [r1367] applications/jpip/libopenjpip/imgsock_manager.c: c-string
+	  are not writable
+	* [r1366] doc/CMakeLists.txt: Fix doc target in cmake
+	* [r1365] applications/jpip/libopenjpip/query_parser.c: Fix for
+	  strncasecmp
+	* [r1364] applications/jpip/libopenjpip/openjpip.c: Fix compilation
+	  with close and such
+	* [r1363] applications/jpip/libopenjpip/query_parser.h,
+	  applications/jpip/util/test_index.c: Remove unistd.h from win32
+	  compilation
+	* [r1362] applications/jpip/libopenjpip/target_manager.c: Another
+	  fix for snprintf
+	* [r1361] applications/jpip/libopenjpip/box_manager.c: isblank is
+	  C99, not isspace
+	* [r1360] applications/jpip/libopenjpip/msgqueue_manager.c: isblank
+	  is C99, not isspace
+	* [r1359] applications/jpip/libopenjpip/imgsock_manager.c:
+	  strncasecmp is C99
+	* [r1358] applications/jpip/libopenjpip/dec_clientmsg_handler.c:
+	  declarations after statement (C90)
+	* [r1357] applications/jpip/libopenjpip/sock_manager.h: As
+	  explained in the documentation cant be included multiple times.
+	* [r1356] applications/jpip/libopenjpip/target_manager.c: Fix
+	  snprintf for M$ compilers
+	* [r1355] applications/jpip/libopenjpip/byte_manager.c,
+	  applications/jpip/libopenjpip/target_manager.c: fix declarations
+	* [r1354] applications/jpip/libopenjpip/metadata_manager.c,
+	  applications/jpip/libopenjpip/metadata_manager.h: declarations
+	  after statement (C90)
+	* [r1353] applications/jpip/libopenjpip/index_manager.c: Another
+	  pass at getting this code to compile on windows
+	* [r1352] applications/jpip/libopenjpip/boxheader_manager.h,
+	  applications/jpip/libopenjpip/codestream_manager.h,
+	  applications/jpip/libopenjpip/index_manager.c,
+	  applications/jpip/libopenjpip/manfbox_manager.h,
+	  applications/jpip/libopenjpip/marker_manager.h: track all
+	  declarations after statement for C90 compilers (VS2005)
+	* [r1351] applications/jpip/libopenjpip/faixbox_manager.c: Fix
+	  compilation of C code. Remove warnings.
+	* [r1350] applications/jpip/libopenjpip/msgqueue_manager.c: Fix a
+	  couple of warnings
+	* [r1349] applications/jpip/libopenjpip/auxtrans_manager.h,
+	  applications/jpip/libopenjpip/box_manager.h,
+	  applications/jpip/libopenjpip/byte_manager.h,
+	  applications/jpip/libopenjpip/cache_manager.h,
+	  applications/jpip/libopenjpip/cachemodel_manager.h,
+	  applications/jpip/libopenjpip/channel_manager.h,
+	  applications/jpip/libopenjpip/faixbox_manager.h,
+	  applications/jpip/libopenjpip/ihdrbox_manager.h,
+	  applications/jpip/libopenjpip/index_manager.h,
+	  applications/jpip/libopenjpip/metadata_manager.h,
+	  applications/jpip/libopenjpip/mhixbox_manager.h,
+	  applications/jpip/libopenjpip/msgqueue_manager.c,
+	  applications/jpip/libopenjpip/msgqueue_manager.h,
+	  applications/jpip/libopenjpip/openjpip.h,
+	  applications/jpip/libopenjpip/placeholder_manager.h,
+	  applications/jpip/libopenjpip/session_manager.h,
+	  applications/jpip/libopenjpip/sock_manager.h,
+	  applications/jpip/libopenjpip/target_manager.h: trying to track
+	  issue with msgqueue_manager on win32. Use C-style comments
+	* [r1348] applications/jpip/libopenjpip/msgqueue_manager.c: Remove
+	  unistd.h include
+	* [r1347] applications/jpip/libopenjpip/byte_manager.c,
+	  applications/jpip/libopenjpip/dec_clientmsg_handler.c,
+	  applications/jpip/libopenjpip/openjpip.c,
+	  applications/jpip/libopenjpip/sock_manager.c,
+	  applications/jpip/libopenjpip/target_manager.c: Remove include of
+	  unistd.h. non-existant on win32
+
+2012-01-28  Mathieu Malaterre
+
+	* [r1345] applications/jpip/libopenjpip/CMakeLists.txt: missing
+	  ws2_32 linking
+
+2012-01-28  Vincent Torri
+
+	* [r1344] CHANGES, configure.ac: [1.5] Add zlib check when checking
+	  libpng
+
+2012-01-27  Vincent Torri
+
+	* [r1343] configure.ac: [1.5] missing change in a previous commit,
+	  no need for an entry in CHANGES
+
+2012-01-26  Antonin Descampe
+
+	* [r1341] configure.ac: [1.5] fix configure.ac to comply with
+	  recent change of PThread dependency
+	* [r1340] CMake/FindPTHREAD.cmake, applications/jpip/CHANGES,
+	  applications/jpip/CMakeLists.txt,
+	  applications/jpip/libopenjpip/CMakeLists.txt,
+	  applications/jpip/libopenjpip/Makefile.am,
+	  applications/jpip/libopenjpip/comMakefile.mk,
+	  applications/jpip/libopenjpip/openjpip.c,
+	  applications/jpip/util/Makefile.nix: [1.5] remove pthread
+	  dependency from jpip client utilities
+
+2012-01-25  Vincent Torri
+
+	* [r1339] CHANGES, applications/jpip/libopenjpip/Makefile.am,
+	  configure.ac: fix libopenjpip link on Windows
+	* [r1338] CHANGES, Makefile.am, applications/Makefile.am,
+	  applications/jpip/libopenjpip/Makefile.am,
+	  applications/jpip/util/Makefile.am, configure.ac: follow latest
+	  JPIP changes in the autotools side (pthread dependency,
+	  conditional compilation of JPIP server and client)
+
+2012-01-25  Antonin Descampe
+
+	* [r1337] CMakeLists.txt, applications/codec/CMakeLists.txt,
+	  applications/jpip/CMakeLists.txt,
+	  applications/jpip/libopenjpip/CMakeLists.txt,
+	  applications/jpip/libopenjpip/openjpip.c,
+	  applications/jpip/libopenjpip/openjpip.h,
+	  applications/jpip/util/CMakeLists.txt, thirdparty/CMakeLists.txt:
+	  [1.5] remove pthread dependency in JPIP client and tweak
+	  thirdparty stuff
+
+2012-01-25  Mathieu Malaterre
+
+	* [r1334] CMakeLists.txt, applications/CMakeLists.txt,
+	  applications/jpip/CMakeLists.txt,
+	  applications/jpip/libopenjpip/CMakeLists.txt,
+	  applications/jpip/util/CMakeLists.txt, thirdparty/CMakeLists.txt:
+	  Refactor code to split jpip client code from server side.
+
+2012-01-23  Antonin Descampe
+
+	* [r1333] libopenjpeg/jp2.c, libopenjpeg/jp2.h,
+	  libopenjpeg/openjpeg.c, libopenjpeg/openjpeg.h: [1.5] fix issue
+	  #104
+
+2012-01-20  Mathieu Malaterre
+
+	* [r1332] CMake/OpenJPEGCPack.cmake, CMake/opj_logo.icns[DEL]:
+	  Remove icns, not required for cpack PackageManager.
+	* [r1331] libopenjpeg/jp2.c: Make r1330 more robust. Display more
+	  info.
+	* [r1330] libopenjpeg/jp2.c: Fix: MSVR-11-117 - Vulnerability
+	  Report.
+	* [r1329] CMakeLists.txt, applications/CMakeLists.txt,
+	  applications/JavaOpenJPEG/CMakeLists.txt,
+	  applications/JavaOpenJPEG/JavaOpenJPEG.c,
+	  applications/JavaOpenJPEG/Makefile[DEL]: Build conditionally the
+	  java binding
+	* [r1328] NEWS, applications/OPJViewer/source/icon1.xpm,
+	  applications/OPJViewer/source/icon2.xpm,
+	  applications/OPJViewer/source/icon3.xpm,
+	  applications/OPJViewer/source/icon4.xpm,
+	  applications/OPJViewer/source/icon5.xpm,
+	  applications/OPJViewer/source/wxj2kparser.cpp: remove warnings
+	  about const string
+	* [r1327] CMakeLists.txt: Prefer share location over lib one.
+	* [r1326] CMake/CTestCustom.cmake.in: Remove warnings related to
+	  3rd party lib
+
+2012-01-11  Mathieu Malaterre
+
+	* [r1323] libopenjpeg/jpwl/jpwl.c, libopenjpeg/tcd.c: BUG: 4 Apply
+	  patch from stefan.
+	* [r1322] libopenjpeg/t2.c: BUG: 26 Fix issue with memory
+	  consumption.
+	* [r1317] CMake/OpenJPEGCPack.cmake: Fixing the PackageMaker
+	  generator
+	* [r1314] libopenjpeg/jpwl/CMakeLists.txt: Add the fno-common flag
+	  to work around an issue with ld: common symbols not allowed with
+	  MH_DYLIB output format with the -multi_module option
+	* [r1312] CMakeLists.txt, libopenjpeg/CMakeLists.txt,
+	  thirdparty/CMakeLists.txt: Redo the BUILD_THIRDPARTY properly.
+	  Remove openjpeg.h symlink.
+	* [r1309] CMake/OpenJPEGCPack.cmake: Fix full path to icns file
+
+2012-01-11  Antonin Descampe
+
+	* [r1308] CMake/opj_logo.icns: add opj_logo.icns for trunk and 1.5
+
+2012-01-11  Mathieu Malaterre
+
+	* [r1307] CMake/OpenJPEGCPack.cmake: Add missing plist file
+	* [r1305] CMake/OpenJPEGCPack.cmake: Start playing with bundle
+	  generator
+	* [r1301] tests/nonregression/test_suite.ctest.in: Adding
+	  explicitely the new test
+
+2012-01-01  Vincent Torri
+
+	* [r1299] ., applications, applications/codec, applications/jpip,
+	  applications/jpip/libopenjpip, applications/jpip/util,
+	  applications/mj2, doc, libopenjpeg, libopenjpeg/jpwl, m4:
+	  ignore++
+
+2011-12-28  Mathieu Malaterre
+
+	* [r1297] libopenjpeg/CMakeLists.txt: Fix for static libs
+	* [r1296] libopenjpeg/CMakeLists.txt: Install lib in /lib and dll
+	  in /bin
+	* [r1293] CMake/OpenJPEGCPack.cmake: Do not warn for VCExpress
+	  build
+
+2011-12-28  Mathieu Malaterre
+
+	* [r1289] applications/JavaOpenJPEG/java-jni[DEL]: Remove
+	  proprietary stuff from Sun.
+	* [r1288]
+	  applications/jpip/util/opj_viewer_xerces/src/ImageManager.java[DEL],
+	  applications/jpip/util/opj_viewer_xerces/src/ImgdecClient.java[DEL],
+	  applications/jpip/util/opj_viewer_xerces/src/JPIPHttpClient.java[DEL],
+	  applications/jpip/util/opj_viewer_xerces/src/MML.java[DEL],
+	  applications/jpip/util/opj_viewer_xerces/src/PnmImage.java[DEL],
+	  applications/jpip/util/opj_viewer_xerces/src/RegimViewer.java[DEL],
+	  applications/jpip/util/opj_viewer_xerces/src/ResizeListener.java[DEL]:
+	  remove symbolink links
+	* [r1287]
+	  applications/jpip/util/opj_viewer/dist/opj_viewer-20111130.jar[DEL],
+	  applications/jpip/util/opj_viewer/dist/opj_viewer.jar[DEL],
+	  applications/jpip/util/opj_viewer_xerces/dist/opj_viewer_xerces-20111130.jar[DEL],
+	  applications/jpip/util/opj_viewer_xerces/dist/opj_viewer_xerces.jar[DEL]:
+	  Remove binary jar from source dist.
+
+2011-12-27  Mathieu Malaterre
+
+	* [r1283] CMake/JPIPTestDriver.cmake, tests/CMakeLists.txt: Add a
+	  dummy test for JPIP
+
+2011-12-24  Kaori Hagihara
+
+	* [r1278] applications/jpip/CHANGES,
+	  applications/jpip/libopenjpip/faixbox_manager.c: [1.5][JPIP]
+	  additional modification for the warning
+
+2011-12-23  Mathieu Malaterre
+
+	* [r1270] applications/jpip/CHANGES,
+	  applications/jpip/libopenjpip/jpipstream_manager.c,
+	  applications/jpip/libopenjpip/msgqueue_manager.c,
+	  applications/jpip/libopenjpip/openjpip.c: Apply another patch
+	  from Kaori, about return value from write/fwrite. Thanks
+	* [r1269] applications/jpip/CHANGES,
+	  applications/jpip/libopenjpip/auxtrans_manager.c: Apply patch
+	  from Kaori. Thanks.
+
+2011-12-21  Mathieu Malaterre
+
+	* [r1263] tests/CMakeLists.txt: Another round of universal fixes
+	* [r1262] CMakeLists.txt, applications/codec/CMakeLists.txt,
+	  thirdparty/CMakeLists.txt: Attempt to fix building of universal
+	  exe
+	* [r1261] CMakeLists.txt: Need to include this file back
+	* [r1260] CMakeLists.txt: Remove old module which does not support
+	  universal binary
+	* [r1254] applications/codec/convert.c: hopefully fix a warning on
+	  VS2008 compiler
+	* [r1253] tests/CMakeLists.txt,
+	  tests/nonregression/test_suite.ctest.in: minor doc tweak
+	* [r1252] applications/jpip/libopenjpip/CMakeLists.txt,
+	  applications/jpip/util/CMakeLists.txt: Make sure to append the
+	  compile def
+	* [r1251] CMakeLists.txt: pc files are for UNIX.
+	* [r1250] applications/OPJViewer/CMakeLists.txt,
+	  applications/OPJViewer/Makefile[DEL],
+	  applications/OPJViewer/OPJViewer.dsp[DEL],
+	  applications/OPJViewer/OPJViewer.dsw[DEL],
+	  applications/OPJViewer/buildupdate.bat[DEL]: Remove old visual
+	  studio files
+
+2011-12-20  Mathieu Malaterre
+
+	* [r1246] libopenjpeg/cidx_manager.c, libopenjpeg/cidx_manager.h,
+	  libopenjpeg/indexbox_manager.h, libopenjpeg/jpwl/CMakeLists.txt,
+	  libopenjpeg/phix_manager.c, libopenjpeg/ppix_manager.c,
+	  libopenjpeg/thix_manager.c, libopenjpeg/tpix_manager.c: Remove
+	  exe bit
+	* [r1245] CMakeLists.txt, applications/CMakeLists.txt,
+	  applications/OPJViewer/CMakeLists.txt,
+	  applications/OPJViewer/source/OPJDialogs.cpp,
+	  applications/OPJViewer/source/OPJViewer.cpp,
+	  applications/OPJViewer/source/OPJViewer.h: Reactivate the
+	  opjviewer in cmake
+	* [r1243] libopenjpeg/tcd.c: Fix test NR-ENC-Bretagne2.ppm-4-encode
+	  on linux.
+	* [r1242] applications/mj2/mj2.c: Import patch from winfried on
+	  mailing list: patch for mj2.c in branch
+	* [r1240] libopenjpeg/tcd.c: Fix strange line, as reported by
+	  lockalsash (gmail.com)
+
+2011-12-16  Mathieu Malaterre
+
+	* [r1234] tests/comparePGXimages.c, tests/compareRAWimages.c,
+	  tests/compare_dump_files.c: Another set of change to remove
+	  warnings about c style comments
+	* [r1233] CMake/OpenJPEGCPack.cmake, CMakeLists.txt,
+	  opj_config.h.cmake.in: Import change from trunk to be able to
+	  generate dists.
+	* [r1232] libopenjpeg/ppix_manager.c: Fix a warning on MacOSX
+	* [r1231] applications/codec/image_to_j2k.c: Hide a warning. Since
+	  1.5 is not large file safe (>32bits) this should be ok
+	* [r1230] libopenjpeg/cidx_manager.c, libopenjpeg/phix_manager.c,
+	  libopenjpeg/ppix_manager.c: Remove warning about unused args
+	* [r1229] libopenjpeg/t1.c: Reorder static inline when extension is
+	  found (GNU)
+	* [r1228] applications/codec/image_to_j2k.c,
+	  applications/codec/index.c, applications/codec/j2k_dump.c,
+	  applications/codec/j2k_to_image.c,
+	  applications/common/opj_getopt.c, libopenjpeg/dwt.c,
+	  libopenjpeg/indexbox_manager.h, libopenjpeg/j2k.c,
+	  libopenjpeg/phix_manager.c, libopenjpeg/ppix_manager.c,
+	  libopenjpeg/t2.c, libopenjpeg/tcd.c, libopenjpeg/thix_manager.c,
+	  libopenjpeg/tpix_manager.c: Remove some simple warnings about
+	  comments
+	* [r1227] applications/jpip/libopenjpip/sock_manager.c: Remove
+	  warning about GNU void* extension
+	* [r1226] applications/common/format_defs.h: Fix warning about no
+	  newline at end of file
+
+2011-12-12  Mathieu Malaterre
+
+	* [r1220] applications/jpip/util/CMakeLists.txt: Sync with trunk
+	* [r1214] applications/codec/convert.c,
+	  applications/codec/image_to_j2k.c, libopenjpeg/openjpeg.h: Fix a
+	  bunch of warnings reported by gcc (unused results from fwrite)
+
+2011-12-09  Mathieu Malaterre
+
+	* [r1207] tests/nonregression/CMakeLists.txt: Missing part of
+	  import of rev 1148.
+
+2011-12-08  Mathieu Malaterre
+
+	* [r1205] ., CHANGES, CMake/FindKAKADU.cmake[CPY], CMakeLists.txt,
+	  tests/nonregression/CMakeLists.txt,
+	  tests/nonregression/opj_ref_decode_cmd.sh.in[DEL]: Import rev
+	  1148 from trunk.
+	* [r1199] CHANGES, applications/common/opj_getopt.c,
+	  libopenjpeg/cidx_manager.c, libopenjpeg/ppix_manager.c: Remove
+	  more warnings
+	* [r1197] CHANGES, libopenjpeg/jp2.c, libopenjpeg/phix_manager.c,
+	  libopenjpeg/ppix_manager.c: Remove warnings seen on the dashboard
+
+2011-12-07  Mickaël Savinaud
+
+	* [r1187] CHANGES, tests/conformance/CMakeLists.txt: [1.5]
+	  deactivate tests about class0 files with number of components
+	  greater to 1
+
+2011-11-30  Kaori Hagihara
+
+	* [r1103] applications/jpip/CHANGES, applications/jpip/README,
+	  applications/jpip/libopenjpip/CMakeLists.txt,
+	  applications/jpip/libopenjpip/Makefile.am,
+	  applications/jpip/libopenjpip/auxtrans_manager.c,
+	  applications/jpip/libopenjpip/auxtrans_manager.h,
+	  applications/jpip/libopenjpip/cachemodel_manager.c,
+	  applications/jpip/libopenjpip/cachemodel_manager.h,
+	  applications/jpip/libopenjpip/channel_manager.c,
+	  applications/jpip/libopenjpip/channel_manager.h,
+	  applications/jpip/libopenjpip/comMakefile.mk,
+	  applications/jpip/libopenjpip/dec_clientmsg_handler.c,
+	  applications/jpip/libopenjpip/imgsock_manager.c,
+	  applications/jpip/libopenjpip/imgsock_manager.h,
+	  applications/jpip/libopenjpip/jpip_parser.c,
+	  applications/jpip/libopenjpip/jpip_parser.h,
+	  applications/jpip/libopenjpip/msgqueue_manager.c,
+	  applications/jpip/libopenjpip/msgqueue_manager.h,
+	  applications/jpip/libopenjpip/openjpip.c,
+	  applications/jpip/libopenjpip/openjpip.h,
+	  applications/jpip/libopenjpip/query_parser.c,
+	  applications/jpip/libopenjpip/query_parser.h,
+	  applications/jpip/libopenjpip/sock_manager.c,
+	  applications/jpip/libopenjpip/sock_manager.h,
+	  applications/jpip/libopenjpip/target_manager.c,
+	  applications/jpip/libopenjpip/target_manager.h,
+	  applications/jpip/util/Makefile.nix,
+	  applications/jpip/util/opj_dec_server.c,
+	  applications/jpip/util/opj_server.c,
+	  applications/jpip/util/opj_viewer/dist/opj_viewer-20111116.jar[DEL],
+	  applications/jpip/util/opj_viewer/dist/opj_viewer-20111130.jar,
+	  applications/jpip/util/opj_viewer/dist/opj_viewer.jar,
+	  applications/jpip/util/opj_viewer/src/ImageManager.java,
+	  applications/jpip/util/opj_viewer/src/ImageViewer.java,
+	  applications/jpip/util/opj_viewer/src/ImageWindow.java,
+	  applications/jpip/util/opj_viewer/src/ImgdecClient.java,
+	  applications/jpip/util/opj_viewer/src/JPIPHttpClient.java,
+	  applications/jpip/util/opj_viewer_xerces/dist/opj_viewer_xerces-20111116.jar[DEL],
+	  applications/jpip/util/opj_viewer_xerces/dist/opj_viewer_xerces-20111130.jar,
+	  applications/jpip/util/opj_viewer_xerces/dist/opj_viewer_xerces.jar,
+	  applications/jpip/util/opj_viewer_xerces/src/ImageViewer.java,
+	  applications/jpip/util/opj_viewer_xerces/src/ImageWindow.java:
+	  [1.5][JPIP] TCP return (http-tcp) implemented
+
+2011-11-19  Vincent Torri
+
+	* [r1080] CHANGES, CMakeLists.txt,
+	  applications/jpip/libopenjpip/CMakeLists.txt: fix compilation of
+	  libopenjpip (libcurl dependency) with CMake. Credit to Winfried.
+
+2011-11-16  Kaori Hagihara
+
+	* [r1071] applications/jpip/CHANGES,
+	  applications/jpip/util/Makefile.am: [1.5][JPIP] fixed opj_server
+	  execusion error (instant terminating) with autotool, cmake still
+	  need to be fixed
+
+2011-11-16  Vincent Torri
+
+	* [r1069] CHANGES, applications/jpip/libopenjpip/Makefile.am,
+	  applications/jpip/util/Makefile.am, configure.ac: [1.5] libcurl
+	  dep, fix 'distcheck' rule.
+
+2011-11-16  Kaori Hagihara
+
+	* [r1068] applications/jpip/CHANGES, applications/jpip/README,
+	  applications/jpip/doc/jpip_architect.png,
+	  applications/jpip/libopenjpip/cachemodel_manager.c,
+	  applications/jpip/libopenjpip/channel_manager.c,
+	  applications/jpip/libopenjpip/target_manager.c,
+	  applications/jpip/libopenjpip/target_manager.h,
+	  applications/jpip/mainpage.h,
+	  applications/jpip/util/Makefile.nix,
+	  applications/jpip/util/opj_server.c: [1.5][JPIP] new feature to
+	  target JP2 files from www (libcurl required)
+	* [r1067] applications/jpip/libopenjpip/box_manager.c,
+	  applications/jpip/libopenjpip/byte_manager.c,
+	  applications/jpip/libopenjpip/byte_manager.h,
+	  applications/jpip/libopenjpip/index_manager.c,
+	  applications/jpip/libopenjpip/metadata_manager.c,
+	  applications/jpip/libopenjpip/msgqueue_manager.c,
+	  applications/jpip/libopenjpip/openjpip.c: [1.5][JPIP] added
+	  get_filesize()
+	* [r1066] applications/jpip/CHANGES,
+	  applications/jpip/libopenjpip/cache_manager.c,
+	  applications/jpip/libopenjpip/dec_clientmsg_handler.c,
+	  applications/jpip/libopenjpip/dec_clientmsg_handler.h,
+	  applications/jpip/libopenjpip/imgsock_manager.c,
+	  applications/jpip/libopenjpip/imgsock_manager.h,
+	  applications/jpip/libopenjpip/index_manager.c,
+	  applications/jpip/libopenjpip/index_manager.h,
+	  applications/jpip/libopenjpip/jp2k_decoder.c,
+	  applications/jpip/libopenjpip/jp2k_encoder.c,
+	  applications/jpip/libopenjpip/jp2k_encoder.h,
+	  applications/jpip/libopenjpip/jpipstream_manager.c,
+	  applications/jpip/libopenjpip/jpipstream_manager.h,
+	  applications/jpip/libopenjpip/openjpip.c,
+	  applications/jpip/util/opj_viewer/dist/opj_viewer-20111018.jar[DEL],
+	  applications/jpip/util/opj_viewer/dist/opj_viewer-20111026.jar[DEL],
+	  applications/jpip/util/opj_viewer/dist/opj_viewer-20111116.jar,
+	  applications/jpip/util/opj_viewer/dist/opj_viewer.jar,
+	  applications/jpip/util/opj_viewer/src/ImageManager.java,
+	  applications/jpip/util/opj_viewer/src/ImgdecClient.java,
+	  applications/jpip/util/opj_viewer_xerces/dist/opj_viewer_xerces-20111010.jar[DEL],
+	  applications/jpip/util/opj_viewer_xerces/dist/opj_viewer_xerces-20111026.jar[DEL],
+	  applications/jpip/util/opj_viewer_xerces/dist/opj_viewer_xerces-20111116.jar,
+	  applications/jpip/util/opj_viewer_xerces/dist/opj_viewer_xerces.jar:
+	  [1.5][JPIP] fixed Region of Interest option, and memory leak of
+	  opj_dec_server
+
+2011-11-08  Kaori Hagihara
+
+	* [r1043] applications/jpip/CHANGES,
+	  applications/jpip/doc/jpip_protocol.png,
+	  applications/jpip/mainpage.h: [1.5][JPIP] backport r1042 to
+	  branch 1.5
+
+2011-11-06  Antonin Descampe
+
+	* [r1038] ., applications/jpip/CHANGES,
+	  applications/jpip/libopenjpip/boxheader_manager.c,
+	  applications/jpip/libopenjpip/cache_manager.c,
+	  applications/jpip/libopenjpip/cache_manager.h,
+	  applications/jpip/libopenjpip/cachemodel_manager.c,
+	  applications/jpip/libopenjpip/dec_clientmsg_handler.c,
+	  applications/jpip/libopenjpip/imgsock_manager.c,
+	  applications/jpip/libopenjpip/imgsock_manager.h,
+	  applications/jpip/libopenjpip/index_manager.c,
+	  applications/jpip/libopenjpip/manfbox_manager.c,
+	  applications/jpip/libopenjpip/target_manager.c,
+	  applications/jpip/libopenjpip/target_manager.h,
+	  applications/jpip/util/jpip_to_j2k.c: [1.5][JPIP] backport r1037
+	  to branch 1.5
+
+2011-11-02  Antonin Descampe
+
+	* [r1035] ., applications/jpip/CHANGES,
+	  applications/jpip/CMakeLists.txt, applications/jpip/Makefile.am,
+	  applications/jpip/Makefile.nix,
+	  applications/jpip/libopenjpip/CMakeLists.txt,
+	  applications/jpip/libopenjpip/Makefile.am,
+	  applications/jpip/libopenjpip/cache_manager.c[CPY],
+	  applications/jpip/libopenjpip/cache_manager.h[CPY],
+	  applications/jpip/libopenjpip/channel_manager.c[CPY],
+	  applications/jpip/libopenjpip/channel_manager.h[CPY],
+	  applications/jpip/libopenjpip/comMakefile.mk,
+	  applications/jpip/libopenjpip/dec_clientmsg_handler.c[CPY],
+	  applications/jpip/libopenjpip/dec_clientmsg_handler.h[CPY],
+	  applications/jpip/libopenjpip/imgsock_manager.c[CPY],
+	  applications/jpip/libopenjpip/imgsock_manager.h[CPY],
+	  applications/jpip/libopenjpip/jp2k_decoder.c[CPY],
+	  applications/jpip/libopenjpip/jp2k_decoder.h[CPY],
+	  applications/jpip/libopenjpip/jpip_parser.c[CPY],
+	  applications/jpip/libopenjpip/jpip_parser.h[CPY],
+	  applications/jpip/libopenjpip/jpipstream_manager.c[CPY],
+	  applications/jpip/libopenjpip/jpipstream_manager.h[CPY],
+	  applications/jpip/libopenjpip/openjpip.c[CPY],
+	  applications/jpip/libopenjpip/openjpip.h[CPY],
+	  applications/jpip/libopenjpip/query_parser.c[CPY],
+	  applications/jpip/libopenjpip/query_parser.h[CPY],
+	  applications/jpip/libopenjpip/session_manager.c[CPY],
+	  applications/jpip/libopenjpip/session_manager.h[CPY],
+	  applications/jpip/opj_client[DEL],
+	  applications/jpip/opj_server[DEL], applications/jpip/tools[DEL],
+	  applications/jpip/util[CPY],
+	  applications/jpip/util/CMakeLists.txt[CPY],
+	  applications/jpip/util/Makefile.am[CPY],
+	  applications/jpip/util/Makefile.nix[CPY],
+	  applications/jpip/util/addXMLinJP2.c[CPY],
+	  applications/jpip/util/jpip_to_j2k.c[CPY],
+	  applications/jpip/util/jpip_to_jp2.c[CPY],
+	  applications/jpip/util/opj_dec_server.c[CPY],
+	  applications/jpip/util/opj_server.c[CPY],
+	  applications/jpip/util/opj_viewer[CPY],
+	  applications/jpip/util/opj_viewer/build.xml[CPY],
+	  applications/jpip/util/opj_viewer/dist[CPY],
+	  applications/jpip/util/opj_viewer/dist/manifest.txt[CPY],
+	  applications/jpip/util/opj_viewer/dist/opj_viewer-20111026.jar[CPY],
+	  applications/jpip/util/opj_viewer/dist/opj_viewer.jar[CPY],
+	  applications/jpip/util/opj_viewer/src[CPY],
+	  applications/jpip/util/opj_viewer/src/ImageManager.java[CPY],
+	  applications/jpip/util/opj_viewer/src/ImageViewer.java[CPY],
+	  applications/jpip/util/opj_viewer/src/ImageWindow.java[CPY],
+	  applications/jpip/util/opj_viewer/src/ImgdecClient.java[CPY],
+	  applications/jpip/util/opj_viewer/src/JPIPHttpClient.java[CPY],
+	  applications/jpip/util/opj_viewer/src/MML.java[CPY],
+	  applications/jpip/util/opj_viewer/src/PnmImage.java[CPY],
+	  applications/jpip/util/opj_viewer/src/RegimViewer.java[CPY],
+	  applications/jpip/util/opj_viewer/src/ResizeListener.java[CPY],
+	  applications/jpip/util/opj_viewer_xerces[CPY],
+	  applications/jpip/util/opj_viewer_xerces/build.xml[CPY],
+	  applications/jpip/util/opj_viewer_xerces/dist[CPY],
+	  applications/jpip/util/opj_viewer_xerces/dist/manifest.txt[CPY],
+	  applications/jpip/util/opj_viewer_xerces/dist/opj_viewer_xerces-20111026.jar[CPY],
+	  applications/jpip/util/opj_viewer_xerces/dist/opj_viewer_xerces.jar[CPY],
+	  applications/jpip/util/opj_viewer_xerces/src[CPY],
+	  applications/jpip/util/opj_viewer_xerces/src/ImageManager.java[CPY],
+	  applications/jpip/util/opj_viewer_xerces/src/ImageViewer.java[CPY],
+	  applications/jpip/util/opj_viewer_xerces/src/ImageWindow.java[CPY],
+	  applications/jpip/util/opj_viewer_xerces/src/ImgdecClient.java[CPY],
+	  applications/jpip/util/opj_viewer_xerces/src/JP2XMLparser.java[CPY],
+	  applications/jpip/util/opj_viewer_xerces/src/JPIPHttpClient.java[CPY],
+	  applications/jpip/util/opj_viewer_xerces/src/MML.java[CPY],
+	  applications/jpip/util/opj_viewer_xerces/src/OptionPanel.java[CPY],
+	  applications/jpip/util/opj_viewer_xerces/src/PnmImage.java[CPY],
+	  applications/jpip/util/opj_viewer_xerces/src/RegimViewer.java[CPY],
+	  applications/jpip/util/opj_viewer_xerces/src/ResizeListener.java[CPY],
+	  applications/jpip/util/test_index.c[CPY], configure.ac,
+	  libopenjpeg/phix_manager.c, libopenjpeg/ppix_manager.c: [1.5]
+	  backport r1017, r1030:1032 from trunk + additional fix for cmake
+	  and autotools
+
+2011-11-01  Antonin Descampe
+
+	* [r1034] ., CHANGES, applications/JavaOpenJPEG/JavaOpenJPEG.c,
+	  applications/codec/image_to_j2k.c, applications/jpip/CHANGES,
+	  applications/jpip/README,
+	  applications/jpip/libopenjpip/j2kheader_manager.c,
+	  applications/jpip/libopenjpip/jp2k_encoder.c,
+	  applications/jpip/libopenjpip/msgqueue_manager.c,
+	  applications/jpip/libopenjpip/msgqueue_manager.h,
+	  applications/jpip/opj_client/opj_dec_server/CMakeLists.txt,
+	  applications/jpip/opj_client/opj_dec_server/Makefile.am,
+	  applications/jpip/opj_client/opj_dec_server/Makefile.nix,
+	  applications/jpip/opj_client/opj_dec_server/dec_clientmsg_handler.c[CPY],
+	  applications/jpip/opj_client/opj_dec_server/dec_clientmsg_handler.h[CPY],
+	  applications/jpip/opj_client/opj_dec_server/imgsock_manager.c,
+	  applications/jpip/opj_client/opj_dec_server/imgsock_manager.h,
+	  applications/jpip/opj_client/opj_dec_server/opj_dec_server.c,
+	  applications/jpip/opj_client/opj_viewer/dist/opj_viewer-20111018.jar[CPY],
+	  applications/jpip/opj_client/opj_viewer/dist/opj_viewer.jar,
+	  applications/jpip/opj_server/CMakeLists.txt,
+	  applications/jpip/opj_server/Makefile.am,
+	  applications/jpip/opj_server/Makefile.nix,
+	  applications/jpip/opj_server/jpip_parser.c[CPY],
+	  applications/jpip/opj_server/jpip_parser.h[CPY],
+	  applications/jpip/opj_server/opj_server.c,
+	  applications/jpip/opj_server/query_parser.c,
+	  applications/jpip/opj_server/query_parser.h,
+	  applications/jpip/tools/jpip_to_j2k.c: [1.5] backport revisions
+	  996, 997, 1000, 1008-1012 from trunk (JPIP modifications)
+
+2011-10-21  Mickaël Savinaud
+
+	* [r1025] CHANGES, tests/comparePGXimages.c: [1.5] remove one
+	  obvious memory leak from test functions
+
+2011-10-20  Mickaël Savinaud
+
+	* [r1023] CHANGES, applications/codec/j2k_dump.c,
+	  applications/codec/j2k_to_image.c: [1.5] remove obvious memory
+	  leak from applications
+
+2011-10-19  Mickaël Savinaud
+
+	* [r1016] ., CHANGES, applications/codec/convert.c,
+	  tests/comparePGXimages.c, tests/compareRAWimages.c: backport rev
+	  1013-1014 from trunk
+
+2011-10-11  Antonin Descampe
+
+	* [r991] ., CHANGES, applications/codec/image_to_j2k.c,
+	  applications/jpip/CHANGES, applications/jpip/README,
+	  applications/jpip/libopenjpip/cachemodel_manager.c,
+	  applications/jpip/libopenjpip/cachemodel_manager.h,
+	  applications/jpip/libopenjpip/index_manager.c,
+	  applications/jpip/libopenjpip/index_manager.h,
+	  applications/jpip/libopenjpip/j2kheader_manager.c,
+	  applications/jpip/libopenjpip/jp2k_encoder.c,
+	  applications/jpip/libopenjpip/msgqueue_manager.c,
+	  applications/jpip/libopenjpip/msgqueue_manager.h,
+	  applications/jpip/libopenjpip/target_manager.c,
+	  applications/jpip/libopenjpip/target_manager.h,
+	  applications/jpip/opj_client/opj_viewer/dist/opj_viewer-20110930.jar[DEL],
+	  applications/jpip/opj_client/opj_viewer/dist/opj_viewer.jar,
+	  applications/jpip/opj_client/opj_viewer/src/ImageManager.java,
+	  applications/jpip/opj_client/opj_viewer/src/ImageViewer.java,
+	  applications/jpip/opj_client/opj_viewer/src/ImageWindow.java,
+	  applications/jpip/opj_client/opj_viewer/src/JPIPHttpClient.java,
+	  applications/jpip/opj_client/opj_viewer_xerces/dist/opj_viewer_xerces-20110930.jar[DEL],
+	  applications/jpip/opj_client/opj_viewer_xerces/dist/opj_viewer_xerces-20111010.jar[CPY],
+	  applications/jpip/opj_client/opj_viewer_xerces/dist/opj_viewer_xerces.jar,
+	  applications/jpip/opj_client/opj_viewer_xerces/src/ImageViewer.java,
+	  applications/jpip/opj_client/opj_viewer_xerces/src/ImageWindow.java,
+	  applications/jpip/opj_server/opj_server.c,
+	  applications/jpip/tools/Makefile.nix,
+	  applications/jpip/tools/jpip_to_j2k.c, configure.ac: [1.5]
+	  backport r987:990 to branch 1.5
+
+2011-10-10  Antonin Descampe
+
+	* [r985] applications/jpip/CHANGES,
+	  applications/jpip/tools/CMakeLists.txt,
+	  applications/jpip/tools/Makefile.am,
+	  applications/jpip/tools/Makefile.nix,
+	  applications/jpip/tools/indexer[DEL]: [1.5][JPIP]removed obsolete
+	  indexer utility
+	* [r984] ., CHANGES, applications/jpip/CHANGES,
+	  applications/jpip/README,
+	  applications/jpip/libopenjpip/CMakeLists.txt,
+	  applications/jpip/libopenjpip/Makefile.am,
+	  applications/jpip/libopenjpip/byte_manager.c,
+	  applications/jpip/libopenjpip/byte_manager.h,
+	  applications/jpip/libopenjpip/cachemodel_manager.c,
+	  applications/jpip/libopenjpip/cachemodel_manager.h,
+	  applications/jpip/libopenjpip/comMakefile.mk,
+	  applications/jpip/libopenjpip/ihdrbox_manager.c,
+	  applications/jpip/libopenjpip/ihdrbox_manager.h,
+	  applications/jpip/libopenjpip/imgreg_manager.c,
+	  applications/jpip/libopenjpip/imgreg_manager.h,
+	  applications/jpip/libopenjpip/index_manager.c,
+	  applications/jpip/libopenjpip/index_manager.h,
+	  applications/jpip/libopenjpip/j2kheader_manager.c[CPY],
+	  applications/jpip/libopenjpip/j2kheader_manager.h[CPY],
+	  applications/jpip/libopenjpip/jp2k_encoder.c[CPY],
+	  applications/jpip/libopenjpip/jp2k_encoder.h[CPY],
+	  applications/jpip/libopenjpip/metadata_manager.h,
+	  applications/jpip/libopenjpip/msgqueue_manager.c,
+	  applications/jpip/libopenjpip/msgqueue_manager.h,
+	  applications/jpip/opj_client/opj_dec_server/jp2k_decoder.c,
+	  applications/jpip/opj_client/opj_dec_server/jpipstream_manager.c,
+	  applications/jpip/opj_client/opj_dec_server/opj_dec_server.c,
+	  applications/jpip/opj_client/opj_viewer/dist/opj_viewer-20110916.jar[DEL],
+	  applications/jpip/opj_client/opj_viewer/dist/opj_viewer-20110930.jar[CPY],
+	  applications/jpip/opj_client/opj_viewer/dist/opj_viewer.jar,
+	  applications/jpip/opj_client/opj_viewer/src/ImageManager.java,
+	  applications/jpip/opj_client/opj_viewer/src/ImageViewer.java,
+	  applications/jpip/opj_client/opj_viewer/src/ImgdecClient.java,
+	  applications/jpip/opj_client/opj_viewer/src/JPIPHttpClient.java,
+	  applications/jpip/opj_client/opj_viewer/src/PnmImage.java,
+	  applications/jpip/opj_client/opj_viewer/src/RegimViewer.java,
+	  applications/jpip/opj_client/opj_viewer/src/ResizeListener.java,
+	  applications/jpip/opj_client/opj_viewer_xerces/dist/opj_viewer_xerces-20110916.jar[DEL],
+	  applications/jpip/opj_client/opj_viewer_xerces/dist/opj_viewer_xerces-20110930.jar[CPY],
+	  applications/jpip/opj_client/opj_viewer_xerces/dist/opj_viewer_xerces.jar,
+	  applications/jpip/opj_server/opj_server.c,
+	  applications/jpip/opj_server/query_parser.c,
+	  applications/jpip/opj_server/query_parser.h,
+	  applications/jpip/tools/jpip_to_j2k.c,
+	  applications/jpip/tools/jpip_to_jp2.c, libopenjpeg/jp2.c,
+	  libopenjpeg/phix_manager.c, libopenjpeg/ppix_manager.c: [1.5]
+	  enabled JPP stream in JPIP (result of GSoC program)
+	* [r982] ., applications/jpip/CHANGES, applications/jpip/README,
+	  applications/jpip/opj_client/opj_dec_server/cache_manager.c,
+	  applications/jpip/opj_client/opj_dec_server/cache_manager.h,
+	  applications/jpip/opj_client/opj_dec_server/imgsock_manager.c,
+	  applications/jpip/opj_client/opj_dec_server/imgsock_manager.h,
+	  applications/jpip/opj_client/opj_dec_server/opj_dec_server.c,
+	  applications/jpip/opj_client/opj_viewer/dist/opj_viewer-20110825.jar[DEL],
+	  applications/jpip/opj_client/opj_viewer/dist/opj_viewer-20110916.jar[CPY],
+	  applications/jpip/opj_client/opj_viewer/dist/opj_viewer.jar,
+	  applications/jpip/opj_client/opj_viewer/src/ImageManager.java,
+	  applications/jpip/opj_client/opj_viewer/src/ImageViewer.java,
+	  applications/jpip/opj_client/opj_viewer/src/ImageWindow.java,
+	  applications/jpip/opj_client/opj_viewer/src/ImgdecClient.java,
+	  applications/jpip/opj_client/opj_viewer/src/JPIPHttpClient.java,
+	  applications/jpip/opj_client/opj_viewer_xerces/dist/opj_viewer_xerces-20110825.jar[DEL],
+	  applications/jpip/opj_client/opj_viewer_xerces/dist/opj_viewer_xerces-20110916.jar[CPY],
+	  applications/jpip/opj_client/opj_viewer_xerces/dist/opj_viewer_xerces.jar,
+	  applications/jpip/opj_server/opj_server.c: [1.5] backport r909,
+	  r922-925 to branch 1.5 (terminating status of opj_server in
+	  debug/non-server mode and stateless requests)
+
+2011-10-10  Vincent Torri
+
+	* [r979] Makefile.am, applications/jpip/tools/indexer/Makefile.am:
+	  [1.5] add missing file in tarball, no need to change CHANGES
+	* [r977] CHANGES, Makefile.am, applications/mj2/Makefile.am,
+	  libopenjpeg/Makefile.am: [1.5] Fix 'distcheck' rule
+
+2011-10-07  Mickaël Savinaud
+
+	* [r969] CHANGES, tests/nonregression/CMakeLists.txt,
+	  tests/nonregression/encoder_test_suite.txt[DEL],
+	  tests/nonregression/test_suite.ctest.in[CPY]: [1.5] enhance non
+	  regression test suite generation (and some test names). It is
+	  based on a file as encoder previously
+	* [r968] CHANGES, tests/conformance/CMakeLists.txt: [1.5] add tests
+	  about jp2 conformance
+	* [r967] CHANGES, CMakeLists.txt, opj_config.h.cmake.in[CPY],
+	  opj_configh.cmake.in[DEL]: [1.5] rename opj_configh.cmake.in to
+	  opj_config.h.cmake.in and update CMakeLists.txt to be more clear
+
+2011-10-06  Mickaël Savinaud
+
+	* [r965] CHANGES, libopenjpeg/cidx_manager.c,
+	  libopenjpeg/opj_includes.h, libopenjpeg/phix_manager.c,
+	  libopenjpeg/ppix_manager.c, libopenjpeg/thix_manager.c,
+	  libopenjpeg/tpix_manager.c: [1.5] enhance some new JPIP files
+	  with opj_config inclusion and using of opj_free/opj_calloc
+	  functions (credit to Julien Malik)
+	* [r964] CHANGES, CMakeLists.txt, doc/CMakeLists.txt: [1.5] enhance
+	  html documentation generation with cmake and add a openjpeg
+	  mainpage to this doc
+
+2011-10-01  Vincent Torri
+
+	* [r955] CHANGES, applications/jpip/libopenjpip/Makefile.am,
+	  configure.ac, libopenjpeg/Makefile.am,
+	  libopenjpeg/jpwl/Makefile.am: [1.5] fix output when
+	  --disable-shared or --disable-static is
+	  passed to configure. Minor fix for jpwl compilation.
+
+2011-09-09  Antonin Descampe
+
+	* [r916] libopenjpeg/jpwl/Makefile.am: BRANCH-1.5: fixed autotools
+	  for new indexer option
+	* [r914] CHANGES, applications/JavaOpenJPEG/JavaOpenJPEG.c,
+	  applications/codec/image_to_j2k.c,
+	  applications/mj2/CMakeLists.txt, applications/mj2/Makefile.am,
+	  libopenjpeg/CMakeLists.txt, libopenjpeg/Makefile.am,
+	  libopenjpeg/cidx_manager.c, libopenjpeg/cidx_manager.h,
+	  libopenjpeg/cio.c, libopenjpeg/cio.h,
+	  libopenjpeg/indexbox_manager.h, libopenjpeg/j2k.c,
+	  libopenjpeg/jp2.c, libopenjpeg/jp2.h, libopenjpeg/openjpeg.c,
+	  libopenjpeg/openjpeg.h, libopenjpeg/opj_includes.h,
+	  libopenjpeg/phix_manager.c, libopenjpeg/ppix_manager.c,
+	  libopenjpeg/thix_manager.c, libopenjpeg/tpix_manager.c:
+	  BRANCH-1.5:added a new indexer functionality to the library. With
+	  the new -jpip option at encoding, the user can now generate a JP2
+	  file including an XML box with the index used when browsing the
+	  image with JPIP
+
+2011-09-02  Mickaël Savinaud
+
+	* [r911] CHANGES, tests/compareRAWimages.c,
+	  tests/nonregression/CMakeLists.txt: correct nightly crash on all
+	  platform linked to merge operation and missing opj_getopt command
+
+2011-09-01  Antonin Descampe
+
+	* [r908] ., CHANGES, CMake/CTestCustom.cmake.in,
+	  CMake/CheckHaveGetopt.cmake[DEL], CMakeLists.txt,
+	  applications/JavaOpenJPEG/CMakeLists.txt,
+	  applications/JavaOpenJPEG/JavaOpenJPEG.c,
+	  applications/JavaOpenJPEG/JavaOpenJPEGDecoder.c,
+	  applications/JavaOpenJPEG/Makefile, applications/Makefile.am,
+	  applications/codec/CMakeLists.txt,
+	  applications/codec/Makefile.am, applications/codec/convert.c,
+	  applications/codec/image_to_j2k.c, applications/codec/j2k_dump.c,
+	  applications/codec/j2k_to_image.c,
+	  applications/codec/windirent.h,
+	  applications/common/getopt.c[DEL],
+	  applications/common/getopt.h[DEL],
+	  applications/common/opj_getopt.c[CPY],
+	  applications/common/opj_getopt.h[CPY],
+	  applications/mj2/CMakeLists.txt, applications/mj2/Makefile.am,
+	  applications/mj2/frames_to_mj2.c,
+	  applications/mj2/mj2_to_metadata.c,
+	  applications/mj2/mj2_to_metadata.vcproj, tests/CMakeLists.txt,
+	  tests/comparePGXimages.c, tests/compareRAWimages.c[CPY],
+	  tests/compare_dump_files.c, tests/nonregression/CMakeLists.txt,
+	  tests/nonregression/encoder_test_suite.txt[CPY],
+	  tests/nonregression/opj_ref_decode_cmd.sh.in[CPY]: backport r898
+	  to r907 in openjpeg-1.5 branch
+
+2011-08-27  Antonin Descampe
+
+	* [r896] ., applications/jpip/CHANGES,
+	  applications/jpip/opj_client/opj_dec_server/CMakeLists.txt:
+	  backport r895 to openjpeg-1.5 branch
+	* [r894] ., Makefile.am, applications/jpip/CHANGES,
+	  applications/jpip/README,
+	  applications/jpip/libopenjpip/CMakeLists.txt,
+	  applications/jpip/libopenjpip/Makefile.am,
+	  applications/jpip/libopenjpip/box_manager.c,
+	  applications/jpip/libopenjpip/box_manager.h,
+	  applications/jpip/libopenjpip/boxheader_manager.c,
+	  applications/jpip/libopenjpip/byte_manager.c,
+	  applications/jpip/libopenjpip/byte_manager.h,
+	  applications/jpip/libopenjpip/cachemodel_manager.c[CPY],
+	  applications/jpip/libopenjpip/cachemodel_manager.h[CPY],
+	  applications/jpip/libopenjpip/codestream_manager.h,
+	  applications/jpip/libopenjpip/comMakefile.mk,
+	  applications/jpip/libopenjpip/index_manager.c,
+	  applications/jpip/libopenjpip/index_manager.h,
+	  applications/jpip/libopenjpip/metadata_manager.c,
+	  applications/jpip/libopenjpip/msgqueue_manager.c,
+	  applications/jpip/libopenjpip/msgqueue_manager.h,
+	  applications/jpip/libopenjpip/placeholder_manager.c,
+	  applications/jpip/libopenjpip/target_manager.c,
+	  applications/jpip/libopenjpip/target_manager.h,
+	  applications/jpip/opj_client/opj_dec_server/Makefile.nix,
+	  applications/jpip/opj_client/opj_dec_server/cache_manager.c,
+	  applications/jpip/opj_client/opj_dec_server/cache_manager.h,
+	  applications/jpip/opj_client/opj_dec_server/imgsock_manager.c,
+	  applications/jpip/opj_client/opj_dec_server/imgsock_manager.h,
+	  applications/jpip/opj_client/opj_dec_server/jp2k_decoder.c,
+	  applications/jpip/opj_client/opj_dec_server/opj_dec_server.c,
+	  applications/jpip/opj_client/opj_viewer/dist/opj_viewer-20110711.jar[DEL],
+	  applications/jpip/opj_client/opj_viewer/dist/opj_viewer-20110825.jar[CPY],
+	  applications/jpip/opj_client/opj_viewer/dist/opj_viewer.jar,
+	  applications/jpip/opj_client/opj_viewer/src/ImageManager.java,
+	  applications/jpip/opj_client/opj_viewer/src/ImgdecClient.java,
+	  applications/jpip/opj_client/opj_viewer/src/JPIPHttpClient.java,
+	  applications/jpip/opj_client/opj_viewer_xerces/dist/opj_viewer_xerces-20110711.jar[DEL],
+	  applications/jpip/opj_client/opj_viewer_xerces/dist/opj_viewer_xerces-20110825.jar[CPY],
+	  applications/jpip/opj_client/opj_viewer_xerces/dist/opj_viewer_xerces.jar,
+	  applications/jpip/opj_server/Makefile.am,
+	  applications/jpip/opj_server/Makefile.nix,
+	  applications/jpip/opj_server/channel_manager.c,
+	  applications/jpip/opj_server/channel_manager.h,
+	  applications/jpip/opj_server/opj_server.c,
+	  applications/jpip/opj_server/query_parser.c,
+	  applications/jpip/opj_server/query_parser.h,
+	  applications/jpip/opj_server/session_manager.c,
+	  applications/jpip/opj_server/session_manager.h,
+	  applications/jpip/tools/indexer/CMakeLists.txt[CPY],
+	  applications/jpip/tools/indexer/Makefile.am[CPY],
+	  applications/jpip/tools/indexer/Makefile.nix[CPY],
+	  applications/jpip/tools/indexer/bio.c[DEL],
+	  applications/jpip/tools/indexer/bio.h[DEL],
+	  applications/jpip/tools/indexer/cidx_manager.c[CPY],
+	  applications/jpip/tools/indexer/cidx_manager.h[CPY],
+	  applications/jpip/tools/indexer/cio.c[DEL],
+	  applications/jpip/tools/indexer/cio.h[DEL],
+	  applications/jpip/tools/indexer/cio_ext.c[CPY],
+	  applications/jpip/tools/indexer/cio_ext.h[CPY],
+	  applications/jpip/tools/indexer/event_mgr_handler.c[CPY],
+	  applications/jpip/tools/indexer/event_mgr_handler.h[CPY],
+	  applications/jpip/tools/indexer/idxjp2_manager.c[CPY],
+	  applications/jpip/tools/indexer/index_create.c[DEL],
+	  applications/jpip/tools/indexer/indexbox_manager.h[CPY],
+	  applications/jpip/tools/indexer/int.c[DEL],
+	  applications/jpip/tools/indexer/int.h[DEL],
+	  applications/jpip/tools/indexer/j2k.h[DEL],
+	  applications/jpip/tools/indexer/j2k_decoder.c[CPY],
+	  applications/jpip/tools/indexer/j2k_to_idxjp2.c[CPY],
+	  applications/jpip/tools/indexer/j2k_to_idxjp2.h[CPY],
+	  applications/jpip/tools/indexer/jp2.c[DEL],
+	  applications/jpip/tools/indexer/jp2.h[DEL],
+	  applications/jpip/tools/indexer/jpip.c[DEL],
+	  applications/jpip/tools/indexer/jpip.h[DEL],
+	  applications/jpip/tools/indexer/phix_manager.c[CPY],
+	  applications/jpip/tools/indexer/pi.c[DEL],
+	  applications/jpip/tools/indexer/pi.h[DEL],
+	  applications/jpip/tools/indexer/ppix_manager.c[CPY],
+	  applications/jpip/tools/indexer/t2.c[DEL],
+	  applications/jpip/tools/indexer/t2.h[DEL],
+	  applications/jpip/tools/indexer/tcd.c[DEL],
+	  applications/jpip/tools/indexer/tcd.h[DEL],
+	  applications/jpip/tools/indexer/tgt.c[DEL],
+	  applications/jpip/tools/indexer/tgt.h[DEL],
+	  applications/jpip/tools/indexer/thix_manager.c[CPY],
+	  applications/jpip/tools/indexer/tpix_manager.c[CPY],
+	  configure.ac: backport r882:893 to openjpeg-1.5 branch
+
+2011-08-22  Antonin Descampe
+
+	* [r877] CMakeLists.txt, INSTALL: updated INSTALL files, fixed a
+	  bug in CMakeLists.txt that prevented finding the data directory
+	* [r876] INSTALL, THANKS: INSTALL and THANKS files update
+
+2011-08-16  Antonin Descampe
+
+	* [r874] AUTHORS, CHANGES, LICENSE, NEWS, README, THANKS,
+	  applications/codec/Makefile.am, configure.ac: added NEWS, AUTHORS
+	  and THANKS files. Cosmetic changes in autotools files
+	* [r872] CHANGES, Makefile.nix[DEL],
+	  applications/codec/Makefile.nix[DEL],
+	  applications/mj2/Makefile.nix[DEL], config.nix[DEL],
+	  doc/Makefile.nix[DEL], libopenjpeg/jpwl/Makefile.nix[DEL],
+	  opj_config.h.in.user[DEL], testing[DEL]: removed obsolete testing
+	  directory and *.nix files
+	* [r871] ., CHANGES, CMake/FindFCGI.cmake,
+	  applications/jpip/CHANGES,
+	  applications/jpip/libopenjpip/CMakeLists.txt,
+	  applications/jpip/opj_server/CMakeLists.txt: backport r870 to
+	  branch openjpeg-1.5
+
+2011-08-15  Antonin Descampe
+
+	* [r869] ., CHANGES,
+	  applications/jpip/opj_client/opj_dec_server/Makefile.am,
+	  applications/jpip/tools/jpip_to_j2k.c,
+	  applications/jpip/tools/jpip_to_jp2.c, configure.ac,
+	  m4/opj_check_lib.m4: backport r868 to openjpeg-1.5 branch
+	* [r867] ., INSTALL: backport r866 to branch openjpeg-1.5
+
+2011-08-12  Antonin Descampe
+
+	* [r865] ., CHANGES, CMake/FindFCGI.cmake[CPY], CMakeLists.txt,
+	  applications/CMakeLists.txt, applications/jpip/CHANGES,
+	  applications/jpip/CMakeLists.txt[CPY],
+	  applications/jpip/libopenjpip/CMakeLists.txt[CPY],
+	  applications/jpip/opj_client/CMakeLists.txt[CPY],
+	  applications/jpip/opj_client/opj_dec_server/CMakeLists.txt[CPY],
+	  applications/jpip/opj_server/CMakeLists.txt[CPY],
+	  applications/jpip/tools/CMakeLists.txt[CPY],
+	  applications/jpip/tools/indexer/CMakeLists.txt[CPY],
+	  thirdparty/CMakeLists.txt: added cmake support to openjpip
+
+2011-08-11  Mickaël Savinaud
+
+	* [r862] CHANGES, thirdparty/CMakeLists.txt: Fixed issue #76
+	  (openjpeg-1.5)
+
+2011-08-11  Antonin Descampe
+
+	* [r861] CHANGES, configure.ac: minor bug fix in configure.ac
+	  (credit to Vincent Torri)
+
+2011-08-11  Mickaël Savinaud
+
+	* [r860] ., CHANGES, CMake/CTestCustom.cmake.in,
+	  CMake/FindLCMS.cmake[CPY], CMake/FindLCMS2.cmake[CPY],
+	  CMakeLists.txt, applications/CMakeLists.txt,
+	  applications/codec/CMakeLists.txt, applications/codec/convert.c,
+	  applications/codec/image_to_j2k.c, applications/codec/j2k_dump.c,
+	  applications/codec/j2k_to_image.c, applications/common/getopt.c,
+	  applications/common/getopt.h,
+	  applications/jpip/opj_client/opj_dec_server/opj_dec_server.c,
+	  applications/mj2/CMakeLists.txt,
+	  applications/mj2/frames_to_mj2.c, applications/mj2/mj2.c,
+	  applications/mj2/mj2.h, applications/mj2/mj2_convert.c,
+	  applications/mj2/mj2_convert.h, libopenjpeg/dwt.c,
+	  libopenjpeg/event.c, libopenjpeg/j2k.c, libopenjpeg/jp2.c,
+	  libopenjpeg/jpwl/jpwl.c, libopenjpeg/jpwl/jpwl_lib.c,
+	  libopenjpeg/openjpeg.c, libopenjpeg/openjpeg.h, libopenjpeg/t1.c,
+	  libopenjpeg/t2.c, libopenjpeg/tcd.c, opj_configh.cmake.in,
+	  tests[CPY], tests/CMakeLists.txt[CPY],
+	  tests/comparePGXimages.c[CPY], tests/compare_dump_files.c[CPY],
+	  tests/conformance[CPY], tests/conformance/CMakeLists.txt[CPY],
+	  tests/nonregression[CPY],
+	  tests/nonregression/CMakeLists.txt[CPY],
+	  thirdparty/CMakeLists.txt, thirdparty/FindLCMS.cmake[DEL],
+	  thirdparty/FindLCMS2.cmake[DEL],
+	  thirdparty/libtiff/CMakeLists.txt: backport rev[824-834] and
+	  rev[837-859] into the openjpeg-1.5 branch
+
+2011-08-09  Antonin Descampe
+
+	* [r851] CHANGES, openjpeg.xcodeproj[DEL]: removed xcode project
+	  files (cmake and autotools are now the only supported build
+	  methods)
+
+2011-07-23  Vincent Torri
+
+	* [r836] CHANGES, applications/codec/convert.c: Fixed issue #74.
+	* [r835] CHANGES, configure.ac: Added libpng 1.5 detection. Dropped
+	  libpng 1.0.* explicit detection (we are in 2011 !). Patch by
+	  Winfried.
+
+2011-07-13  Vincent Torri
+
+	* [r823] CHANGES: put comments after the creation of the branch
+	* [r822] CHANGES, Makefile.am, configure.ac,
+	  libopenjpeg-jpwl.pc.in, libopenjpeg/Makefile.am,
+	  libopenjpeg1.pc.in: * added 'libopenjpeg-jpwl.pc.in'
+	  * fixed substitution in libopenjpeg1.pc.in
+	  * increase micro version to 99. When released, set minor to 5 and
+	  micro to 0
+	  * added -lm to the linker for libopenjpeg and to the .pc file
+	  * removed useless LCMS flags from Makefile.am for libopenjpeg
+
+2011-07-13  Antonin Descampe
+
+	* [r821]
+	  applications/jpip/opj_client/opj_viewer/dist/opj_viewer-20110510.jar[DEL],
+	  applications/jpip/opj_client/opj_viewer/dist/opj_viewer-20110711.jar,
+	  applications/jpip/opj_client/opj_viewer/dist/opj_viewer.jar,
+	  applications/jpip/opj_client/opj_viewer_xerces/dist/opj_viewer_xerces-20110510.jar[DEL],
+	  applications/jpip/opj_client/opj_viewer_xerces/dist/opj_viewer_xerces-20110711.jar,
+	  applications/jpip/opj_client/opj_viewer_xerces/dist/opj_viewer_xerces.jar:
+	  [openjpeg-1.5] JPIP : updated opj_viewer* jar files
+
+2011-07-11  Antonin Descampe
+
+	* [r819] CHANGES: updated CHNAGES files after branch renaming
+	* [r818] .[CPY]: branch opj-v1-branch renamed to openjpeg-1.5
+
+2011-07-10  Antonin Descampe
+
+	* [r812] opj-v1-branch created
+
+2011-07-06  Kaori Hagihara
+
+	* [r810] bug fixed for error concerning parameter name
+	  modification, Makefile.nix also corrected
+
+2011-07-06  Antonin Descampe
+
+	* [r809] JPIP : fixed autotools to work with recent name changes
+
+2011-07-05  Kaori Hagihara
+
+	* [r808] additional changes of parameter names and message names
+	  for image_viewer and decoding_server from JPT to JPIP-stream
+	* [r806] add documentations
+	* [r805] changed program and parameter names from jpt to jpip
+	* [r804] changed func name parse_stream to parse_JPIPstream
+
+2011-07-04  Kaori Hagihara
+
+	* [r803] changed parameter and file names regarding JPT-stream to
+	  JPIP-stream, which handles also JPP-stream
+
+2011-07-03  Antonin Descampe
+
+	* [r797] fixed bmptoimage (see
+	  http://groups.google.com/group/openjpeg/browse_thread/thread/33a24c5896bf6391)
+	* [r795] fixed handling of "jp2->meth" value (Restricted ICC
+	  profile handling currently not implemented)
+
+2011-06-30  Antonin Descampe
+
+	* [r791] fixed CTest configuration files
+
+2011-06-27  Kaori Hagihara
+
+	* [r790] typo miss corrections for fx,fy
+
+2011-06-03  Mathieu Malaterre
+
+	* [r787] Fix some error with cmake
+	* [r786] adding partno and numpart info as part of the warning
+	  message (issue #69)
+
+2011-05-26  Antonin Descampe
+
+	* [r785] fixed paths in makefile.am
+	* [r784] changed Makefile to Makefile.nix to avoid having autotools
+	  overwrite them
+
+2011-05-25  Kaori Hagihara
+
+	* [r783] added system architecture description on the documentation
+
+2011-05-24  Antonin Descampe
+
+	* [r782] fixed a bug in autotools that prevented "make distcheck"
+	  to work properly (credit to Vincent Torri) ; added autotools for
+	  the "applications/jpip/tools" directory
+
+2011-05-23  Antonin Descampe
+
+	* [r780] forgot to add new Makefile.am in previous commit
+	* [r779] fixed autotools (broken since the new directory structure)
+	  and added autotools as a build method for jpip (credit to Vincent
+	  Torri)
+
+2011-05-18  Antonin Descampe
+
+	* [r778] defined new type "opj_bool", and new constants OPJ_FALSE
+	  and OPJ_TRUE, to avoid having to deal with "stdbool.h" (patch
+	  from Winfried)
+
+2011-05-16  Antonin Descampe
+
+	* [r777] fixed another bug related to the number of packets in a
+	  tile-part, not correctly taken into account when generating an
+	  index file during decoding
+	* [r776] fixed part of issue 69, when tile-part index is
+	  inconsistent with the total number of tile-parts
+
+2011-05-12  Antonin Descampe
+
+	* [r775] xcode project file updated (now integrates openjpip)
+	* [r774] subsequent jpip-related commits to be logged in
+	  "applications/jpip/CHANGES" rather than main CHANGES file
+
+2011-05-10  Kaori Hagihara
+
+	* [r773] opj_viewer removed the xml functions (for users without
+	  Xersus2), opj_viewer_xerces is the copy of the original viewer (
+	  needs Xersus2)
+	* [r772] temporal commit to resort the opj_viewer
+	* [r771] Modification of opj_dec_server to be portable to windows
+
+2011-05-09  Kaori Hagihara
+
+	* [r770] Removal of c99 from the compile option (to be compatible
+	  to win platform) and bool definition in libopenjpip/bool.h
+
+2011-05-09  Antonin Descampe
+
+	* [r769] OpenJPIP: small bug fixes to compile on win platform
+
+2011-05-08  Antonin Descampe
+
+	* [r768] OpenJPIP: fixed several bugs in opj_server (removal of
+	  strsep function, duplication of query string) + some changes to
+	  compile opj_server under windows (replacement of strcasecmp(),
+	  bzero()).
+
+2011-04-16  Antonin Descampe
+
+	* [r767] fixed a bug in mqc.c (see
+	  https://groups.google.com/d/topic/openjpeg/kQ1PbZUd19k/discussion,
+	  credit to Peter Wimmer)
+	* [r766] fixed wrong path in Doxyfile.dox
+
+2011-04-14  Antonin Descampe
+
+	* [r759] initial commit of OpenJPIP 1.0, a JPIP client-server
+	  architecture based on OpenJPEG (see README file in jpip directory
+	  for more details)
+	* [r753] fixed applications/codec/CMakeLists.txt that prevented
+	  JPWL executables to be built with JPWL functionalities ; changed
+	  make all behaviour : DOC target removed from ALL
+
+2011-04-13  Antonin Descampe
+
+	* [r752] changed the directory hierarchy of the whole project. See
+	  README files for details.
+	* [r751] re-organization of openjpeg directories hierarchy : step 1
+	* [r750] moved "openjpeg3d" directory from the trunk to the
+	  branches directory.
+	* [r749] renamed and reorganized "jp3d" directory to "openjpeg3d".
+	  Is now a standalone directory, with independent cmake files. Done
+	  as it uses its own version of the openjpeg library and does not
+	  depend on the one currently developped. Will be removed from the
+	  trunk and stored in a branch.
+
+2011-04-12  Antonin Descampe
+
+	* [r746] Fixed internal function names conflict with Jasper
+	  (http://code.google.com/p/openjpeg/issues/detail?id=30)
+	* [r745] convert.c: ENDIAN condition removed, tiftoimage and
+	  imagetotif updated (ALPHA added for RGB and GRAY, correct
+	  handling of 12-bit precision), small bugfixes (credit to
+	  Winfried)
+	* [r744] small fix in configure.ac (credit to Vincent Torri)
+
+2011-03-30  Rex Dieter
+
+	* [r743] openjpeg.pc.cmake rewrites wrong variables (issue 67)
+
+2011-03-24  Antonin Descampe
+
+	* [r742] name fixing in variables related to liblcms
+
+2011-03-21  Antonin Descampe
+
+	* [r741] added two files FindLCMS.cmake and FindLCMS2.cmake as they
+	  are not shipped by default with other cmake modules.
+	* [r740] fixed a bug that created a conflict between liblcms on the
+	  system and liblcms2 in the thirdparty directory
+
+2011-03-20  Antonin Descampe
+
+	* [r739] Removed the libs directory containing win32 compiled
+	  versions of libpng, libtiff and liblcms. Added a thirdparty
+	  directory to include main source files of libtiff, libpng, libz
+	  and liblcms to enable support of these formats in the codec
+	  executables. CMake will try to statically build these libraries
+	  if they are not found on the system. Note that these third party
+	  libraries are not required to build libopenjpeg (which has no
+	  dependencies).
+
+2011-03-10  Antonin Descampe
+
+	* [r738] fixed lt_version in configure.ac
+
+2011-03-05  Antonin Descampe
+
+	* [r737] cosmetic change for status report of ./configure
+
+2011-03-04  Antonin Descampe
+
+	* [r734] now assume MinGW does not have dirent.h (actually have it
+	  but without opendir function). Fixed also a WIN32 check in
+	  jp3d/libjp3dvm/openjpeg3d.h.
+	* [r733] small fix related to the formatting of the install report
+	  displayed at the end of install procedure
+	* [r732] updated autotools files to improve build and install
+	  procedures (credit to Vincent Torri)
+
+2011-02-17  Antonin Descampe
+
+	* [r731] replaced "long" by "size_t" in dwt.c to be sure to cast to
+	  a pointer size.
+	* [r730] now allows 16-bit precision for mj2 encoding and decoding
+	  (solves Issue 49 and Issue 63). Credit to Winfried.
+
+2011-02-16  Mathieu Malaterre
+
+	* [r729] Explicitly link to the math lib on UNIX as we use floor
+	  and such symbols
+	* [r728] Make sure to be able to compile index_create on UNIX.
+	  Install target
+
+2011-02-09  Antonin Descampe
+
+	* [r727] removed opj_config.h.in from svn, as it is automaticaly
+	  generated by autoheader when calling ./bootstrap.sh
+	* [r726] renamed "java sources" to "java-sources" to avoid blank
+	  space in directory name
+
+2011-02-06  Antonin Descampe
+
+	* [r725] cmake : fixed installed links to openjpeg.h and
+	  openjpeg3d.h
+
+2011-01-30  Antonin Descampe
+
+	* [r724] fixed warnings in jp2.c (signed compared to unsigned) and
+	  dwt.c (bad cast) ; removed depcomp file from trunk (automatically
+	  copied by automake in main folder)
+	* [r723] replaced en-dash with standard dash in jp2.c
+
+2011-01-29  Antonin Descampe
+
+	* [r722] license header: replaced Hervcalloc by Herve, I should
+	  learn to double-check my changes
+	* [r721] removed é in license header to prevent warning C4819 (see
+	  http://code.google.com/p/openjpeg/issues/detail?id=57)
+
+2011-01-27  Antonin Descampe
+
+	* [r720] removed other VS files
+
+2011-01-24  Antonin Descampe
+
+	* [r719] remove more obsolete VS files. Left only mj2_to_metadata
+	  VS files, as this is the only executable not yet handled by CMake
+
+2011-01-23  Antonin Descampe
+
+	* [r718] removed obsolete VS files
+	* [r717] MJ2 module: Add two components to mj2.h: meth, enumcs ;
+	  Define or reset all components of mj2_cparameters_t before its
+	  usage ; Add argument -D prec to frames_to_mj2.c and use the
+	  precision in mj2_convert.c (solves Issue 49)
+	* [r716] move KK definition from rs.h to rs.c to prevent duplicate
+	  symbol error when building jpwl with autotools
+
+2011-01-18  Rex Dieter
+
+	* [r715] cmake: SOVERSION change to 1 (from 1.4) to match
+	  auto-tools build
+
+2011-01-17  Rex Dieter
+
+	* [r714] remove (autotools) generated files
+
+2011-01-16  Antonin Descampe
+
+	* [r713] convert.c: inclusion of endian.h has to be different on
+	  APPLE platforms
+
+2011-01-13  Rex Dieter
+
+	* [r712] followup autotools fixes, adding DESTDIR support
+	* [r711] s/libopenjpeg.pc/libopenjpeg1.pc/
+	* [r710] fix symlink creation (cmake)
+	* [r709] adjust autotools pkg-config support to match
+	* [r708] add pkg-config support to cmake
+
+2011-01-11  Antonin Descampe
+
+	* [r707] removed forgotten debug info in imagetopnm()
+
+2011-01-09  Antonin Descampe
+
+	* [r706] imagetopnm() has been rewritten to allow 16-bits
+	  precision, and PAM (P7) support. See Netpbm for more info. (patch
+	  from szukw000).
+
+2011-01-07  Winfried Szukalski
+
+	* [r699] changed report code in Makefile.am
+
+2011-01-03  Antonin Descampe
+
+	* [r698] removed badly written tests from CTest in
+	  codec/CMakeLists.txt
+
+2011-01-02  Antonin Descampe
+
+	* [r697] bug fixes to enable cmake compilation on WIN32 platform
+	  (see CHANGES for details)
+
