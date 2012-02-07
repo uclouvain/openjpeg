@@ -11,7 +11,7 @@ IF(DOXYGEN_FOUND)
     ${CMAKE_BINARY_DIR}/doc/Doxyfile-html.dox @ONLY)
   
   # Generate new target to build the html documentation
-  ADD_CUSTOM_TARGET(doc
+  ADD_CUSTOM_TARGET(doc ALL
     ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/doc/Doxyfile-html.dox)
 
 ELSE(DOXYGEN_FOUND)

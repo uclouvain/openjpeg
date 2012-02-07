@@ -211,7 +211,7 @@ CONFIGURE_FILE("${OPENJPEG_SOURCE_DIR}/opj_config.h.cmake.in"
 
 #-----------------------------------------------------------------------------
 # Build DOCUMENTATION (not in ALL target and only if Doxygen is found)
-OPTION(BUILD_DOC "Build the HTML documentation (with doxygen if available)." ON)
+OPTION(BUILD_DOC "Build the HTML documentation (with doxygen if available)." OFF)
 IF(BUILD_DOC)
     ADD_SUBDIRECTORY(doc)
 ENDIF(BUILD_DOC)
