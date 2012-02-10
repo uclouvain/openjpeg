@@ -7,6 +7,7 @@ What's New for OpenJPIP
 
 February 9, 2012
 * [kaori] fixed Doxygen configuration file to document the utilities
++ [kaori] added execution argument to set port number for opj_dec_server, opj_viewer*
 
 January 26, 2012
 ! [kaori] unapplied auxtrans_manager to the local mode

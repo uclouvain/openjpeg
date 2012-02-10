@@ -38,11 +38,11 @@ public class ImageWindow extends JFrame
     private OptionPanel optpanel;
     private ImageManager imgmanager;
     
-    public ImageWindow( String uri, String j2kfilename, boolean session, boolean jppstream, int aux)
+    public ImageWindow( String uri, String j2kfilename, String host, int port, boolean session, boolean jppstream, int aux)
     {
 	super( j2kfilename);
 
-	imgmanager = new ImageManager( uri);
+	imgmanager = new ImageManager( uri, host, port);
 
 	imgviewer = new ImageViewer( j2kfilename, imgmanager, session, jppstream, aux);
 	imgviewer.setOpaque(true); //content panes must be opaque
@@ -70,25 +70,36 @@ public class ImageWindow extends JFrame
 
     public static void main(String s[])
     {
-	String j2kfilename, uri;
+	String j2kfilename, uri, host;
 	boolean session, jppstream;
-	int aux; // 0: none, 1: tcp, 2: udp
-
+	int port, aux; // 0: none, 1: tcp, 2: udp
+	
 	if(s.length >= 2){
 	    uri = s[0];
 	    j2kfilename = s[1];
+	    
 	    if( s.length > 2)
-		session = !s[2].equalsIgnoreCase( "stateless");
+		host = s[2];
+	    else
+		host = "localhost";
+	    
+	    if( s.length > 3)
+		port = Integer.valueOf( s[3]).intValue();
+	    else
+		port = 50000;
+	    
+	    if( s.length > 4)
+		session = !s[4].equalsIgnoreCase( "stateless");
 	    else
 		session = true;
-
-	    if( s.length > 3)
-		jppstream = !s[3].equalsIgnoreCase( "JPT");
+	    
+	    if( s.length > 5)
+		jppstream = !s[5].equalsIgnoreCase( "JPT");
 	    else
 		jppstream = true;
 	    
-	    if( s.length > 4){
-		if( s[4].equalsIgnoreCase("udp"))
+	    if( s.length > 6){
+		if( s[6].equalsIgnoreCase("udp"))
 		    aux = 2;
 		else
 		    aux = 1;
@@ -97,10 +108,10 @@ public class ImageWindow extends JFrame
 		aux = 0;
 	}
 	else{
-	    System.out.println("Usage: java -jar opj_viewer.jar HTTP_server_URI imagefile.jp2 [stateless/session] [JPT/JPP] [tcp/udp]");
+	    System.out.println("Usage: java -jar opj_viewer.jar HTTP_server_URI imagefile.jp2 [hostname] [portnumber] [stateless/session] [JPT/JPP] [tcp/udp]");
 	    return;
 	}
-	ImageWindow frame = new ImageWindow( uri, j2kfilename, session, jppstream, aux);
+	ImageWindow frame = new ImageWindow( uri, j2kfilename, host, port, session, jppstream, aux);
     
 	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
    

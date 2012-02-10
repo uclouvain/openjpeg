@@ -96,7 +96,7 @@ Server:
 
 Client:
  1. Launch image decoding server, and keep it alive as long as image viewers are open
-    % ./opj_dec_server
+    % ./opj_dec_server [portnumber (50000 by default)]
 
     You might prefer to implement this program from another directory since cache files are saved in the working directory.
     % mkdir cache
@@ -104,10 +104,12 @@ Client:
     % ../opj_dec_server
 
  2. Open image viewers (as many as needed)
-    % java -jar opj_viewer.jar http://hostname/myFCGI path/filename.jp2 [stateless/session] [jptstream/jppstream] [tcp/udp]
+    % java -jar opj_viewer.jar http://hostname/myFCGI path/filename.jp2 [hostname] [portnumber] [stateless/session] [jptstream/jppstream] [tcp/udp]
     ( The arguments 
       - http://hostname/myFCGI is the HTTP server URI (myFCGI refers to opj_server by the server setting)
       - path/filename.jp2 is the server local path or URL of a JP2 file
+      - host name of opj_dec_server, localhost by default
+      - portnumber of opj_dec_server, 50000 by default
       - request type stateless for no caching, session (default) for caching
       - return media type, JPT-stream tile based stream, or JPP-stream (default) precinct based stream
       - auxiliary return protocol, tcp or udp (udp is not implemented yet), if not given, return data is filled in http chunk
