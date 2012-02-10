@@ -5,7 +5,10 @@ What's New for OpenJPIP
 ! : changed
 + : added
 
-January 26, 2011
+February 9, 2012
+* [kaori] fixed Doxygen configuration file to document the utilities
+
+January 26, 2012
 ! [kaori] unapplied auxtrans_manager to the local mode
 
 December 24, 2011
