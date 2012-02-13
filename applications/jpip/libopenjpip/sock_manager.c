@@ -49,7 +49,7 @@
 #define FCGI_stdout stdout
 #define FCGI_stderr stderr
 #define logstream stderr
-#endif //SERVER
+#endif /*SERVER*/
 
 SOCKET open_listeningsocket( int port)
 {
