@@ -50,7 +50,7 @@ ENDFOREACH(exe)
 FIND_PACKAGE(Java 1.5 COMPONENTS Development) # javac, jar
 
 # Only build the java viewer if dev is found:
-if(Java_Development_FOUND)
+if(Java_Development_FOUND AND Java_JAVAC_EXECUTABLE)
   # 1. opj_viewer
   # build dep list:
   file(GLOB java1_srcs "opj_viewer/src/*.java")
