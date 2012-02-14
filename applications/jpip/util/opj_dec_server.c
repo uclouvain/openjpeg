@@ -58,17 +58,18 @@ int main(int argc, char *argv[]){
   dec_server_record_t *server_record;
   client_t client;
   int port = 50000;
+  int erreur;
 
   if( argc > 1)
     port = atoi( argv[1]);
 
 #ifdef _WIN32
-  int erreur = WSAStartup(MAKEWORD(2,2),&initialisation_win32);
+  erreur = WSAStartup(MAKEWORD(2,2),&initialisation_win32);
   if( erreur!=0)
     fprintf( stderr, "Erreur initialisation Winsock error : %d %d\n",erreur,WSAGetLastError());
   else
     printf( "Initialisation Winsock\n");
-#endif //_WIN32
+#endif /*_WIN32*/
   
   server_record = init_dec_server( port);
   
