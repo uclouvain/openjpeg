@@ -59,6 +59,7 @@ int main(int argc, char *argv[]){
   client_t client;
   int port = 50000;
   int erreur;
+  (void)erreur;
 
   if( argc > 1)
     port = atoi( argv[1]);
