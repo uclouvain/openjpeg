@@ -51,6 +51,7 @@ FIND_PACKAGE(Java 1.5 COMPONENTS Development) # javac, jar
 
 # Only build the java viewer if dev is found:
 if(Java_Development_FOUND AND Java_JAVAC_EXECUTABLE)
+  set(jflags $ENV{JFLAGS})
   # 1. opj_viewer
   # build dep list:
   file(GLOB java1_srcs "opj_viewer/src/*.java")
@@ -60,7 +61,7 @@ if(Java_Development_FOUND AND Java_JAVAC_EXECUTABLE)
   # Build java
   ADD_CUSTOM_COMMAND(
     OUTPUT ${LIBRARY_OUTPUT_PATH}/opj_viewer.jar
-    COMMAND ${Java_JAVAC_EXECUTABLE} 
+    COMMAND ${Java_JAVAC_EXECUTABLE} ${jflags}
     ${java1_srcs} -d ${CMAKE_CURRENT_BINARY_DIR}/classes1
     COMMAND ${Java_JAR_EXECUTABLE} cfm ${LIBRARY_OUTPUT_PATH}/opj_viewer.jar
     ${CMAKE_CURRENT_SOURCE_DIR}/opj_viewer/dist/manifest.txt -C
@@ -110,7 +111,7 @@ if(Java_Development_FOUND AND Java_JAVAC_EXECUTABLE)
     # Build java
     ADD_CUSTOM_COMMAND(
       OUTPUT ${LIBRARY_OUTPUT_PATH}/opj_viewer_xerces.jar
-      COMMAND ${Java_JAVAC_EXECUTABLE} 
+      COMMAND ${Java_JAVAC_EXECUTABLE} ${jflags}
       -classpath ${APACHE_XERCES_JAR}
       ${java2_srcs} -d ${CMAKE_CURRENT_BINARY_DIR}/classes2
       COMMAND ${Java_JAR_EXECUTABLE} cfm ${LIBRARY_OUTPUT_PATH}/opj_viewer_xerces.jar
