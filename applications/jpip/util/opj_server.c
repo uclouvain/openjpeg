@@ -103,8 +103,10 @@ int main(void)
             
       if( parse_status)
 	send_responsedata( server_record, qr);
-      else
+      else{
 	fprintf( FCGI_stderr, "Error: JPIP request failed\n");
+	fprintf( FCGI_stdout, "\r\n");
+      }
       
       end_QRprocess( server_record, &qr);
     }

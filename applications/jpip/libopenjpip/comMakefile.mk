@@ -2,7 +2,7 @@ ifdef jpipserver
 CFLAGS  = -O3 -Wall -m32 -DSERVER
 LIBNAME = libopenjpip_server.a
 else
-J2KINCDIR = ../../../libopenjpeg
+J2KINCDIR = ../../../bin
 CFLAGS  = -O3 -Wall  -I$(J2KINCDIR)
 LIBNAME = libopenjpip_local.a
 endif

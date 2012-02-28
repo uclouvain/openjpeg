@@ -141,8 +141,11 @@ query_param_t * parse_query( char *query_string)
 	  query_param->return_type = JPTstream;
       }
 
-      else if( strcasecmp( fieldname, "len") == 0)
+      else if( strcasecmp( fieldname, "len") == 0){
 	sscanf( fieldval, "%d", &query_param->len);
+	if( query_param->len = 2000) /* for kakadu client*/
+	  strncpy( query_param->box_type[0], "ftyp", 4);
+      }
     }
   }
   return query_param;
@@ -330,7 +333,7 @@ void parse_req_box_prop( char *req_box_prop, int idx, query_param_t *query_param
     query_param->box_type[idx][0]='*';
   else
     strncpy( query_param->box_type[idx], req_box_prop, 4);
-
+  
   if(( ptr = strchr( req_box_prop, ':'))){
     if( *(ptr+1)=='r')
       query_param->limit[idx] = -1;

@@ -181,8 +181,9 @@ void enqueue_imagedata( query_param_t query_param, msgqueue_param_t *msgqueue);
  * @param[in]     query_param  structured query
  * @param[in]     metadatalist pointer to metadata bin list
  * @param[in,out] msgqueue     message queue pointer  
+ * @return                     if succeeded (true) or failed (false)
  */
-void enqueue_metabins( query_param_t query_param, metadatalist_param_t *metadatalist, msgqueue_param_t *msgqueue);
+bool enqueue_metabins( query_param_t query_param, metadatalist_param_t *metadatalist, msgqueue_param_t *msgqueue);
 
 
 bool gene_JPIPstream( query_param_t query_param,
@@ -223,14 +224,20 @@ bool gene_JPIPstream( query_param_t query_param,
 
   //meta
   if( query_param.box_type[0][0] != 0  && query_param.len != 0)
-    enqueue_metabins( query_param, codeidx->metadatalist, *msgqueue); 
+    if( !enqueue_metabins( query_param, codeidx->metadatalist, *msgqueue))
+      return false;
+  
+  if( query_param.metadata_only)
+    return true;
+
+  // main header
+  if( !cachemodel->mhead_model && query_param.len != 0)
+      enqueue_mainheader( *msgqueue);
 
   // image codestream
-  if( query_param.fx > 0 && query_param.fy > 0){
-    if( !cachemodel->mhead_model && query_param.len != 0)
-      enqueue_mainheader( *msgqueue);
+  if( (query_param.fx > 0 && query_param.fy > 0))
     enqueue_imagedata( query_param, *msgqueue);
-  }
+  
   return true;
 }
 
@@ -419,18 +426,26 @@ void enqueue_allprecincts( int tile_id, int level, int lastcomp, bool *comps, in
     }
 }
 
-void enqueue_metabins( query_param_t query_param, metadatalist_param_t *metadatalist, msgqueue_param_t *msgqueue)
+bool enqueue_metabins( query_param_t query_param, metadatalist_param_t *metadatalist, msgqueue_param_t *msgqueue)
 {
   int i;
   for( i=0; query_param.box_type[i][0]!=0 && i<MAX_NUMOFBOX; i++){
     if( query_param.box_type[i][0] == '*'){
-      // not implemented
+      fprintf( FCGI_stdout, "Status: 501\r\n");
+      fprintf( FCGI_stdout, "Reason: metareq with all box-property * not implemented\r\n");
+      return false;
     }
     else{
       int idx = search_metadataidx( query_param.box_type[i], metadatalist);
 
       if( idx != -1)
 	enqueue_metadata( idx, msgqueue);
+      else{
+	fprintf( FCGI_stdout, "Status: 400\r\n");
+	fprintf( FCGI_stdout, "Reason: box-type %.4s not found\r\n", query_param.box_type[i]);
+	return false;
+      }
     }
   }
+  return true;
 }

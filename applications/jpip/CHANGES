@@ -5,6 +5,9 @@ What's New for OpenJPIP
 ! : changed
 + : added
 
+Feburary 28, 2012
++ [kaori] enabled the opj_server to reply the first query consisting with len request from kakadu client
+
 February 9, 2012
 * [kaori] fixed Doxygen configuration file to document the utilities
 + [kaori] added execution argument to set port number for opj_dec_server, opj_viewer*
