@@ -149,7 +149,7 @@ IF(UNIX)
     ${OPENJPEG_INSTALL_SHARE_DIR}/pkgconfig )
   INSTALL( CODE "EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E create_symlink
   \"libopenjpeg1.pc\"
-  \"\$ENV{DESTDIR}${OPENJPEG_INSTALL_LIB_DIR}/pkgconfig/libopenjpeg.pc\")")
+  \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${OPENJPEG_INSTALL_SHARE_DIR}/pkgconfig/libopenjpeg.pc\")")
 ENDIF(UNIX)
 
 #-----------------------------------------------------------------------------
