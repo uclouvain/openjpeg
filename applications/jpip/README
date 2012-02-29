@@ -133,7 +133,7 @@ An example to encode a TIF image "copenhague1.tif" at resolution 4780x4050, 8bit
    % ./image_to_j2k -i copenhague1.tif -o copenhague1.jp2 -p RPCL -c [64,64] -t 640,480 -jpip -TP R
 
  options
-  -jpip : embed index table box into the output JP2 file (obligation for JPIP)
+  -jpip : embed index table 'cidx' box into the output JP2 file (obligation for JPIP)
   -TP R : partition a tile into tile parts of different resolution levels (obligation for JPT-stream)
 
 <Option>
