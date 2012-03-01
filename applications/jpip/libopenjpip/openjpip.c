@@ -183,7 +183,7 @@ void add_EORmsg( int fd, QR_t *qr)
 void end_QRprocess( server_record_t *rec, QR_t **qr)
 {
   /* TODO: record client preferences if necessary*/
-  (void)res; /* unused */
+  (void)rec; /* unused */
   delete_query( &((*qr)->query));
   delete_msgqueue( &((*qr)->msgqueue));
   free( *qr);
