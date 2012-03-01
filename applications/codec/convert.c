@@ -104,7 +104,7 @@ static unsigned short get_ushort(unsigned short val) {
 
 #define TGA_HEADER_SIZE 18
 
-int tga_readheader(FILE *fp, unsigned int *bits_per_pixel, 
+static int tga_readheader(FILE *fp, unsigned int *bits_per_pixel, 
 	unsigned int *width, unsigned int *height, int *flip_image)
 {
 	int palette_size;
@@ -179,7 +179,7 @@ int tga_readheader(FILE *fp, unsigned int *bits_per_pixel,
 	return 1;
 }
 
-int tga_writeheader(FILE *fp, int bits_per_pixel, int width, int height, 
+static int tga_writeheader(FILE *fp, int bits_per_pixel, int width, int height, 
 	opj_bool flip_image)
 {
 	unsigned short image_w, image_h, us0;
@@ -993,6 +993,10 @@ int imagetobmp(opj_image_t * image, const char *outfile) {
 	FILE *fdest = NULL;
 	int adjustR, adjustG, adjustB;
 
+  if (image->comps[0].prec < 8) {
+    fprintf(stderr, "Unsupported number of components: %d\n", image->comps[0].prec);
+    return 1;
+  }
 	if (image->numcomps == 3 && image->comps[0].dx == image->comps[1].dx
 		&& image->comps[1].dx == image->comps[2].dx
 		&& image->comps[0].dy == image->comps[1].dy
@@ -1181,7 +1185,7 @@ PGX IMAGE FORMAT
 <<-- <<-- <<-- <<-- */
 
 
-unsigned char readuchar(FILE * f)
+static unsigned char readuchar(FILE * f)
 {
   unsigned char c1;
   if ( !fread(&c1, 1, 1, f) )
@@ -1192,7 +1196,7 @@ unsigned char readuchar(FILE * f)
   return c1;
 }
 
-unsigned short readushort(FILE * f, int bigendian)
+static unsigned short readushort(FILE * f, int bigendian)
 {
   unsigned char c1, c2;
   if ( !fread(&c1, 1, 1, f) )
@@ -1211,7 +1215,7 @@ unsigned short readushort(FILE * f, int bigendian)
     return (c2 << 8) + c1;
 }
 
-unsigned int readuint(FILE * f, int bigendian)
+static unsigned int readuint(FILE * f, int bigendian)
 {
   unsigned char c1, c2, c3, c4;
   if ( !fread(&c1, 1, 1, f) )
