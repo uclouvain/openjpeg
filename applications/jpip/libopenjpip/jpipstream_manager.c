@@ -52,7 +52,7 @@ Byte_t * update_JPIPstream( Byte_t *newstream, int newstreamlen, Byte_t *cache_s
   return stream;
 }
 
-void save_codestream( Byte_t *codestream, Byte8_t streamlen, char *fmt)
+void save_codestream( Byte_t *codestream, Byte8_t streamlen, const char *fmt)
 {
   time_t timer;
   struct tm *t_st;
@@ -74,7 +74,7 @@ void save_codestream( Byte_t *codestream, Byte8_t streamlen, char *fmt)
 Byte_t * jpipstream_to_pnm( Byte_t *jpipstream, msgqueue_param_t *msgqueue, Byte8_t csn, int fw, int fh, ihdrbox_param_t **ihdrbox)
 {
   Byte_t *pnmstream;
-  Byte_t *j2kstream; // j2k or jp2 codestream
+  Byte_t *j2kstream; /* j2k or jp2 codestream */
   Byte8_t j2klen;
 
   j2kstream = recons_j2k( msgqueue, jpipstream, csn, fw, fh, &j2klen); 
