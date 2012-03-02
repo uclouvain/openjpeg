@@ -29,7 +29,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#include "opj_config.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -50,6 +49,7 @@
 #define _strnicmp strncasecmp
 #endif /* _WIN32 */
 
+#include "opj_config.h"
 #include "openjpeg.h"
 #include "opj_getopt.h"
 #include "convert.h"
@@ -427,7 +427,7 @@ char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_cparamet
 	sprintf(infilename,"%s/%s",img_fol->imgdirpath,image_filename);
 	strncpy(parameters->infile, infilename, sizeof(infilename));
 
-	//Set output file
+	/*Set output file*/
 	strcpy(temp_ofname,get_file_name(image_filename));
 	while((temp_p = strtok(NULL,".")) != NULL){
 		strcat(temp_ofname,temp1);
@@ -1550,7 +1550,7 @@ int main(int argc, char **argv) {
 		num_images=get_num_images(img_fol.imgdirpath);
 		dirptr=(dircnt_t*)malloc(sizeof(dircnt_t));
 		if(dirptr){
-			dirptr->filename_buf = (char*)malloc(num_images*OPJ_PATH_LEN*sizeof(char));	// Stores at max 10 image file names
+			dirptr->filename_buf = (char*)malloc(num_images*OPJ_PATH_LEN*sizeof(char));	/* Stores at max 10 image file names*/
 			dirptr->filename = (char**) malloc(num_images*sizeof(char*));
 			if(!dirptr->filename_buf){
 				return 0;
@@ -1681,6 +1681,7 @@ int main(int argc, char **argv) {
 
 			if (parameters.cod_format == J2K_CFMT) {	/* J2K format output */
 				int codestream_length;
+        size_t res;
 				opj_cio_t *cio = NULL;
 				FILE *f = NULL;
 
@@ -1698,7 +1699,7 @@ int main(int argc, char **argv) {
 				cio = opj_cio_open((opj_common_ptr)cinfo, NULL, 0);
 
 				/* encode the image */
-				if (*indexfilename)					// If need to extract codestream information
+				if (*indexfilename)					/* If need to extract codestream information*/
 				  bSuccess = opj_encode_with_info(cinfo, cio, image, &cstr_info);
 				else
 					bSuccess = opj_encode(cinfo, cio, image, NULL);
@@ -1715,7 +1716,11 @@ int main(int argc, char **argv) {
 					fprintf(stderr, "failed to open %s for writing\n", parameters.outfile);
 					return 1;
 				}
-				fwrite(cio->buffer, 1, codestream_length, f);
+				res = fwrite(cio->buffer, 1, codestream_length, f);
+        if( res < (size_t)codestream_length ) { /* FIXME */
+ 					fprintf(stderr, "failed to write %d (%s)\n", codestream_length, parameters.outfile);
+					return 1;
+         }
 				fclose(f);
 
 				fprintf(stderr,"Generated outfile %s\n",parameters.outfile);
@@ -1736,6 +1741,7 @@ int main(int argc, char **argv) {
 					opj_destroy_cstr_info(&cstr_info);
 			} else {			/* JP2 format output */
 				int codestream_length;
+        size_t res;
 				opj_cio_t *cio = NULL;
 				FILE *f = NULL;
 				opj_cinfo_t *cinfo = NULL;
@@ -1754,7 +1760,7 @@ int main(int argc, char **argv) {
 				cio = opj_cio_open((opj_common_ptr)cinfo, NULL, 0);
 
 				/* encode the image */
-				if (*indexfilename || parameters.jpip_on) // If need to extract codestream information
+				if (*indexfilename || parameters.jpip_on) /* If need to extract codestream information*/
 				  bSuccess = opj_encode_with_info(cinfo, cio, image, &cstr_info);
 				else
 					bSuccess = opj_encode(cinfo, cio, image, NULL);
@@ -1771,7 +1777,11 @@ int main(int argc, char **argv) {
 					fprintf(stderr, "failed to open %s for writing\n", parameters.outfile);
 					return 1;
 				}
-				fwrite(cio->buffer, 1, codestream_length, f);
+				res = fwrite(cio->buffer, 1, codestream_length, f);
+        if( res < (size_t)codestream_length ) { /* FIXME */
+ 					fprintf(stderr, "failed to write %d (%s)\n", codestream_length, parameters.outfile);
+					return 1;
+         }
 				fclose(f);
 				fprintf(stderr,"Generated outfile %s\n",parameters.outfile);
 				/* close and free the byte stream */

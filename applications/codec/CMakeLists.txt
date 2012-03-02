@@ -30,8 +30,14 @@ ENDIF(WIN32)
 FOREACH(exe j2k_to_image image_to_j2k j2k_dump)
   ADD_EXECUTABLE(${exe} ${exe}.c ${common_SRCS})
   TARGET_LINK_LIBRARIES(${exe} ${OPENJPEG_LIBRARY_NAME} 
-    ${Z_LIBNAME} ${PNG_LIBNAME} ${TIFF_LIBNAME} ${LCMS_LIBNAME}
+    ${PNG_LIBNAME} ${TIFF_LIBNAME} ${LCMS_LIBNAME}
     )
+  # To support universal exe:
+  IF(ZLIB_FOUND AND APPLE)
+    TARGET_LINK_LIBRARIES(${exe} z)
+  ELSe(ZLIB_FOUND AND APPLE)
+    TARGET_LINK_LIBRARIES(${exe} ${Z_LIBNAME})
+  ENDIF(ZLIB_FOUND AND APPLE)
 
   # On unix you need to link to the math library:
   IF(UNIX)
@@ -50,6 +56,7 @@ INSTALL(
               ${OPENJPEG_SOURCE_DIR}/doc/man/man1/j2k_dump.1
               ${OPENJPEG_SOURCE_DIR}/doc/man/man1/j2k_to_image.1
   DESTINATION ${OPENJPEG_INSTALL_MAN_DIR}/man1)
+#
 
 IF(BUILD_JPWL)
   ADD_EXECUTABLE(JPWL_j2k_to_image
@@ -63,25 +70,38 @@ IF(BUILD_JPWL)
   )
 
   TARGET_LINK_LIBRARIES(JPWL_j2k_to_image ${OPENJPEG_LIBRARY_NAME}_JPWL
-    ${LCMS_LIBNAME} ${Z_LIBNAME} ${PNG_LIBNAME} ${TIFF_LIBNAME})
+    ${LCMS_LIBNAME} ${PNG_LIBNAME} ${TIFF_LIBNAME})
+    
+  # To support universal exe:
+  IF(ZLIB_FOUND AND APPLE)
+    TARGET_LINK_LIBRARIES(JPWL_j2k_to_image z)
+  ELSe(ZLIB_FOUND AND APPLE)
+    TARGET_LINK_LIBRARIES(JPWL_j2k_to_image ${Z_LIBNAME})
+  ENDIF(ZLIB_FOUND AND APPLE)
   
   IF(UNIX)
     TARGET_LINK_LIBRARIES(JPWL_j2k_to_image m)
   ENDIF(UNIX)
 
   ADD_EXECUTABLE(JPWL_image_to_j2k
-    image_to_j2k.c
-    ${common_SRCS}
-    )
+  image_to_j2k.c
+  ${common_SRCS}
+  )
   
   SET_PROPERTY(
-    TARGET JPWL_image_to_j2k
-    APPEND PROPERTY COMPILE_DEFINITIONS USE_JPWL
-    )
+     TARGET JPWL_image_to_j2k
+     APPEND PROPERTY COMPILE_DEFINITIONS USE_JPWL
+  )
 
   TARGET_LINK_LIBRARIES(JPWL_image_to_j2k ${OPENJPEG_LIBRARY_NAME}_JPWL 
-    ${LCMS_LIBNAME} ${Z_LIBNAME} ${PNG_LIBNAME} ${TIFF_LIBNAME}
-    )
+  	${LCMS_LIBNAME} ${PNG_LIBNAME} ${TIFF_LIBNAME})
+  	
+  # To support universal exe:
+  IF(ZLIB_FOUND AND APPLE)
+    TARGET_LINK_LIBRARIES(JPWL_image_to_j2k z)
+  ELSe(ZLIB_FOUND AND APPLE)
+    TARGET_LINK_LIBRARIES(JPWL_image_to_j2k ${Z_LIBNAME})
+  ENDIF(ZLIB_FOUND AND APPLE)
 
   IF(UNIX)
     TARGET_LINK_LIBRARIES(JPWL_image_to_j2k m)

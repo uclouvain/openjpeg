@@ -25,13 +25,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#include "opj_config.h"
 
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
-#include <stdlib.h>
-
 #include "openjpeg.h"
 #include "index.h"
 
@@ -263,7 +260,7 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 			int x1 = x0 + cstr_info->tile_x;
 			int y1 = y0 + cstr_info->tile_y;
 
-			// Count the maximum number of precincts 
+			/* Count the maximum number of precincts */
 			int max_numprec = 0;
 			for (resno = 0; resno < max_numdecompos + 1; resno++) {
 				int numprec = cstr_info->tile[tileno].pw[resno] * cstr_info->tile[tileno].ph[resno];
@@ -314,7 +311,7 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 		} /* PCRL */
 
 		else {	/* CPRL */
-			// Count the maximum number of precincts 
+			/* Count the maximum number of precincts */
 			int max_numprec = 0;
 			for (resno = 0; resno < max_numdecompos + 1; resno++) {
 				int numprec = cstr_info->tile[tileno].pw[resno] * cstr_info->tile[tileno].ph[resno];
@@ -383,7 +380,7 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 		fprintf(stream, "%d\n", cstr_info->marknum);
 		fprintf(stream, "type\tstart_pos    length\n");
 		for (x = 0; x < cstr_info->marknum; x++)
-			fprintf(stream, "%X\t%9" OPJ_OFF_F "d %9d\n", cstr_info->marker[x].type, cstr_info->marker[x].pos, cstr_info->marker[x].len);
+			fprintf(stream, "%X\t%9d %9d\n", cstr_info->marker[x].type, cstr_info->marker[x].pos, cstr_info->marker[x].len);
 	}
 /* <<UniPG */
 	fclose(stream);
@@ -392,5 +389,3 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 
 	return 0;
 }
-
-
