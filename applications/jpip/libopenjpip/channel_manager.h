@@ -36,24 +36,24 @@
 #include "cachemodel_manager.h"
 #include "auxtrans_manager.h"
 
-//! maximum length of channel identifier
+/** maximum length of channel identifier*/
 #define MAX_LENOFCID 30
 
-//! Channel parameters
+/** Channel parameters*/
 typedef struct channel_param{
-  cachemodel_param_t *cachemodel; //!< reference pointer to the cache model
-  char cid[MAX_LENOFCID];         //!< channel identifier
-  cnew_transport_t aux;           //!< auxiliary transport
-  // - a record of the client's capabilities and preferences to the extent that the server queues requests
-  time_t start_tm;                //!< starting time
-  struct channel_param *next;     //!< pointer to the next channel
+  cachemodel_param_t *cachemodel; /**< reference pointer to the cache model*/
+  char cid[MAX_LENOFCID];         /**< channel identifier*/
+  cnew_transport_t aux;           /**< auxiliary transport*/
+  /* - a record of the client's capabilities and preferences to the extent that the server queues requests*/
+  time_t start_tm;                /**< starting time*/
+  struct channel_param *next;     /**< pointer to the next channel*/
 } channel_param_t;
 
 
-//! Channel list parameters
+/** Channel list parameters*/
 typedef struct channellist_param{
-  channel_param_t *first; //!< first channel pointer of the list
-  channel_param_t *last;  //!< last  channel pointer of the list
+  channel_param_t *first; /**< first channel pointer of the list*/
+  channel_param_t *last;  /**< last  channel pointer of the list*/
 } channellist_param_t;
 
 

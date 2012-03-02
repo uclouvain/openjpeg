@@ -96,7 +96,7 @@ void print_manfbox( manfbox_param_t *manf)
   }
 }
 
-boxheader_param_t * search_boxheader( char type[], manfbox_param_t *manf)
+boxheader_param_t * search_boxheader( const char type[], manfbox_param_t *manf)
 {
   boxheader_param_t *found;
   

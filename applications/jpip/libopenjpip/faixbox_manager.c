@@ -39,7 +39,7 @@
 #define FCGI_stdout stdout
 #define FCGI_stderr stderr
 #define logstream stderr
-#endif //SERVER
+#endif /*SERVER*/
 
 faixbox_param_t * gene_faixbox( box_param_t *box)
 {
@@ -51,7 +51,7 @@ faixbox_param_t * gene_faixbox( box_param_t *box)
   
   faix->version = fetch_DBox1byte( box, (pos+=1)-1);
   
-  if( faix->version < 0 || 3< faix->version){
+  if( 3< faix->version){
     fprintf( FCGI_stderr, "Error: version %d in faix box is reserved for ISO use.\n", faix->version);
     free(faix);
     return NULL;
@@ -59,7 +59,7 @@ faixbox_param_t * gene_faixbox( box_param_t *box)
 
   if( faix->version%2){
     subfaixbox8_param_t *subfaixbox;
-    int i;
+    size_t i;
     
     faix->subfaixbox.byte8_params = (subfaixbox8_param_t *)malloc( sizeof(subfaixbox8_param_t));
     
@@ -83,7 +83,7 @@ faixbox_param_t * gene_faixbox( box_param_t *box)
   }
   else{
     subfaixbox4_param_t *subfaixbox;
-    int i;
+    size_t i;
 
     faix->subfaixbox.byte4_params = (subfaixbox4_param_t *)malloc( sizeof(subfaixbox4_param_t));
     
@@ -182,10 +182,11 @@ Byte8_t get_elemLen( faixbox_param_t *faix, Byte8_t elem_id, Byte8_t row_id)
 
 Byte4_t get_elemAux( faixbox_param_t *faix, Byte8_t elem_id, Byte8_t row_id)
 {
+  Byte8_t nmax;
   if( faix->version <2)
     return -1;
 
-  Byte8_t nmax = get_nmax( faix);
+  nmax = get_nmax( faix);
   if( faix->version%2)
     return faix->subfaixbox.byte8_params->aux[ row_id*nmax+elem_id];
   else

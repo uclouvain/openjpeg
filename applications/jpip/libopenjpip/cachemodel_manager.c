@@ -40,10 +40,10 @@
 #define FCGI_stdout stdout
 #define FCGI_stderr stderr
 #define logstream stderr
-#endif //SERVER
+#endif /*SERVER*/
 
 
-cachemodellist_param_t * gene_cachemodellist()
+cachemodellist_param_t * gene_cachemodellist(void)
 {
   cachemodellist_param_t *cachemodellist;
 
@@ -73,7 +73,7 @@ cachemodel_param_t * gene_cachemodel( cachemodellist_param_t *cachemodellist, ta
       cachemodel->jppstream = true;
     else
       cachemodel->jppstream = false;
-  } else{ // reqJPT
+  } else{ /* reqJPT */
     if( target->jptstream)
       cachemodel->jppstream = false;
     else
@@ -95,9 +95,9 @@ cachemodel_param_t * gene_cachemodel( cachemodellist_param_t *cachemodellist, ta
   cachemodel->next = NULL;
   
   if( cachemodellist){
-    if( cachemodellist->first) // there are one or more entries
+    if( cachemodellist->first) /* there are one or more entries */
       cachemodellist->last->next = cachemodel;
-    else                   // first entry
+    else                   /* first entry */
       cachemodellist->first = cachemodel;
     cachemodellist->last = cachemodel;
   }
@@ -112,9 +112,10 @@ cachemodel_param_t * gene_cachemodel( cachemodellist_param_t *cachemodellist, ta
 void print_cachemodel( cachemodel_param_t cachemodel)
 {
   target_param_t *target;
-  Byte8_t TPnum; // num of tile parts in each tile
-  Byte8_t Pmax; // max num of packets per tile
-  int i, j, k, n;
+  Byte8_t TPnum; /* num of tile parts in each tile */
+  Byte8_t Pmax; /* max num of packets per tile */
+  Byte8_t i, j, k;
+  int n; /* FIXME: Is this large enough ? */
 
   target = cachemodel.target;
   
@@ -135,9 +136,9 @@ void print_cachemodel( cachemodel_param_t cachemodel)
 
   fprintf( logstream, "\t tile header and precinct packet model:\n");
   for( i=0; i<target->codeidx->SIZ.XTnum*target->codeidx->SIZ.YTnum; i++){
-    fprintf( logstream, "\t  tile.%d  %d\n", i, cachemodel.th_model[i]);
+    fprintf( logstream, "\t  tile.%llud  %d\n", i, cachemodel.th_model[i]);
     for( j=0; j<target->codeidx->SIZ.Csiz; j++){
-      fprintf( logstream, "\t   compo.%d: ", j);
+      fprintf( logstream, "\t   compo.%llud: ", j);
       Pmax = get_nmax( target->codeidx->precpacket[j]);
       for( k=0; k<Pmax; k++)
 	fprintf( logstream, "%d", cachemodel.pp_model[j][i*Pmax+k]);
@@ -197,9 +198,10 @@ void delete_cachemodel( cachemodel_param_t **cachemodel)
 bool is_allsent( cachemodel_param_t cachemodel)
 {
   target_param_t *target;
-  Byte8_t TPnum; // num of tile parts in each tile
-  Byte8_t Pmax; // max num of packets per tile
-  int i, j, k, n;
+  Byte8_t TPnum; /* num of tile parts in each tile */
+  Byte8_t Pmax; /* max num of packets per tile */
+  Byte8_t i, j, k;
+  int n; /* FIXME: is this large enough ? */
 
   target = cachemodel.target;
   

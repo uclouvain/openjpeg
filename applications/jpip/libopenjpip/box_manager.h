@@ -33,21 +33,21 @@
 
 #include "byte_manager.h"
 
-//! box parameters
+/** box parameters*/
 typedef struct box_param{
-  int fd;                 //!< file descriptor
-  Byte8_t offset;         //!< byte position of the whole Box (LBox) in the file
-  Byte_t  headlen;        //!< header length  8 or 16
-  Byte8_t length;         //!< length of the whole Box
-  char    type[4];        //!< type of information in the DBox
-  struct box_param *next; //!< pointer to the next box
+  int fd;                 /**< file descriptor*/
+  Byte8_t offset;         /**< byte position of the whole Box (LBox) in the file*/
+  Byte_t  headlen;        /**< header length  8 or 16*/
+  Byte8_t length;         /**< length of the whole Box*/
+  char    type[4];        /**< type of information in the DBox*/
+  struct box_param *next; /**< pointer to the next box*/
 } box_param_t;
 
 
-//! Box list parameters
+/** Box list parameters*/
 typedef struct boxlist_param{
-  box_param_t *first; //!< first box pointer of the list
-  box_param_t *last;  //!< last  box pointer of the list
+  box_param_t *first; /**< first box pointer of the list*/
+  box_param_t *last;  /**< last  box pointer of the list*/
 } boxlist_param_t;
 
 
@@ -97,7 +97,7 @@ box_param_t * gene_boxbyOffinStream( Byte_t *stream, Byte8_t offset);
  * @param[in] TBox   Box Type
  * @return           pointer to the structure of generate/found box parameters
  */
-box_param_t * gene_boxbyType( int fd, Byte8_t offset, Byte8_t length, char TBox[]);
+box_param_t * gene_boxbyType( int fd, Byte8_t offset, Byte8_t length, const char TBox[]);
 
 /**
  * generate(search) box from code stream
@@ -108,7 +108,7 @@ box_param_t * gene_boxbyType( int fd, Byte8_t offset, Byte8_t length, char TBox[
  * @param[in] TBox   Box Type
  * @return           pointer to the structure of generate/found box parameters
  */
-box_param_t * gene_boxbyTypeinStream( Byte_t *stream, Byte8_t offset, Byte8_t length, char TBox[]);
+box_param_t * gene_boxbyTypeinStream( Byte_t *stream, Byte8_t offset, Byte8_t length, const char TBox[]);
 
 /**
  * generate child box from JP2 file at the given offset
@@ -127,7 +127,7 @@ box_param_t * gene_childboxbyOffset( box_param_t *superbox, Byte8_t offset);
  * @param[in] TBox     Box Type
  * @return             pointer to the structure of generate/found box parameters
  */
-box_param_t * gene_childboxbyType( box_param_t *superbox, Byte8_t offset, char TBox[]);
+box_param_t * gene_childboxbyType( box_param_t *superbox, Byte8_t offset, const char TBox[]);
 
 /**
  * get DBox offset
@@ -210,7 +210,7 @@ Byte8_t fetch_DBox8bytebigendian( box_param_t *box, long offset);
  * @param[in] boxlist box list pointer
  * @return            found box pointer
  */
-box_param_t * search_box( char type[], boxlist_param_t *boxlist);
+box_param_t * search_box( const char type[], boxlist_param_t *boxlist);
 
 /**
  * print box parameters

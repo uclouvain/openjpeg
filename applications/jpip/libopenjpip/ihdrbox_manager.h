@@ -35,12 +35,12 @@
 #include "box_manager.h"
 #include "metadata_manager.h"
 
-//! I.5.3.1 Image Header box
+/** I.5.3.1 Image Header box*/
 typedef struct ihdrbox_param{
   Byte4_t height;
   Byte4_t width;
-  Byte2_t nc;       //!< number of components
-  Byte_t  bpc;      //!< bits per component
+  Byte2_t nc;       /**< number of components*/
+  Byte_t  bpc;      /**< bits per component*/
 } ihdrbox_param_t;
 
 /**

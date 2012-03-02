@@ -33,11 +33,11 @@
 
 #include "byte_manager.h"
 
-//! codestream parameters
+/** codestream parameters*/
 typedef struct codestream_param{
-  int fd;         //!< file descriptor
-  Byte8_t offset; //!< byte position of DBox (Box Contents) in the file
-  Byte8_t length; //!< content length
+  int fd;         /**< file descriptor*/
+  Byte8_t offset; /**< byte position of DBox (Box Contents) in the file*/
+  Byte8_t length; /**< content length*/
 } codestream_param_t;
 
 

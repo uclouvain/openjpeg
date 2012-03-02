@@ -33,6 +33,7 @@
 #ifdef _WIN32
 #include <windows.h>
 #define strcasecmp  _stricmp
+#define strncasecmp _strnicmp
 #else
 #include <strings.h>
 #endif
@@ -49,7 +50,7 @@
 #define FCGI_stdout stdout
 #define FCGI_stderr stderr
 #define logstream stderr
-#endif //SERVER
+#endif /*SERVER*/
 
 
 /**
@@ -72,14 +73,14 @@ char * get_fieldparam( char *stringptr, char *fieldname, char *fieldval);
 void parse_cclose( char *src, query_param_t *query_param);
 void parse_metareq( char *field, query_param_t *query_param);
 
-// parse the requested components (parses forms like:a; a,b; a-b; a-b,c;  a,b-c)
+/* parse the requested components (parses forms like:a; a,b; a-b; a-b,c;  a,b-c)*/
 void parse_comps( char *field, query_param_t *query_param);
 
 
-//! maximum length of field name
+/** maximum length of field name*/
 #define MAX_LENOFFIELDNAME 10
 
-//! maximum length of field value
+/** maximum length of field value*/
 #define MAX_LENOFFIELDVAL 128
 
 query_param_t * parse_query( char *query_string)
@@ -140,8 +141,11 @@ query_param_t * parse_query( char *query_string)
 	  query_param->return_type = JPTstream;
       }
 
-      else if( strcasecmp( fieldname, "len") == 0)
+      else if( strcasecmp( fieldname, "len") == 0){
 	sscanf( fieldval, "%d", &query_param->len);
+	if( query_param->len = 2000) /* for kakadu client*/
+	  strncpy( query_param->box_type[0], "ftyp", 4);
+      }
     }
   }
   return query_param;
@@ -268,7 +272,7 @@ void print_queryparam( query_param_t query_param)
 
 void parse_cclose( char *src, query_param_t *query_param)
 {
-  int i;
+  size_t i;
   size_t len;
   
   len = strlen( src);
@@ -293,7 +297,7 @@ void parse_metareq( char *field, query_param_t *query_param)
   
   memset( req_box_prop, 0, 20);
 
-  // req-box-prop
+  /* req-box-prop*/
   ptr = strchr( field, '[');
   ptr++;
   src = ptr;
@@ -329,7 +333,7 @@ void parse_req_box_prop( char *req_box_prop, int idx, query_param_t *query_param
     query_param->box_type[idx][0]='*';
   else
     strncpy( query_param->box_type[idx], req_box_prop, 4);
-
+  
   if(( ptr = strchr( req_box_prop, ':'))){
     if( *(ptr+1)=='r')
       query_param->limit[idx] = -1;

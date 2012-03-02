@@ -45,26 +45,26 @@
 #define MAINHEADER_MSG 6
 #define METADATA_MSG 8
 
-//! message parameters
+/** message parameters */
 typedef struct message_param{
-  bool    last_byte;          //!< if message contains the last byte of the data-bin
-  Byte8_t in_class_id;        //!< in-class identifier A.2.3
-  Byte8_t class_id;           //!< class identifiers 
-  Byte8_t csn;                //!< index of the codestream
-  Byte8_t bin_offset;         //!< offset of the data in this message from the start of the data-bin
-  Byte8_t length;             //!< message byte length
-  Byte8_t aux;                //!<
-  Byte8_t res_offset;         //!< offset in the resource
-  placeholder_param_t *phld;  //!< placeholder pointer in index
-  struct message_param *next; //!< pointer to the next message
+  bool    last_byte;          /**< if message contains the last byte of the data-bin*/
+  Byte8_t in_class_id;        /**< in-class identifier A.2.3*/
+  Byte8_t class_id;           /**< class identifiers */
+  Byte8_t csn;                /**< index of the codestream*/
+  Byte8_t bin_offset;         /**< offset of the data in this message from the start of the data-bin*/
+  Byte8_t length;             /**< message byte length*/
+  Byte8_t aux;                /**<*/
+  Byte8_t res_offset;         /**< offset in the resource*/
+  placeholder_param_t *phld;  /**< placeholder pointer in index*/
+  struct message_param *next; /**< pointer to the next message*/
 } message_param_t;
 
-//! message queue parameters
+/** message queue parameters */
 typedef struct msgqueue_param{
-  message_param_t *first; //!< first message pointer of the list
-  message_param_t *last;  //!< last  message pointer of the list
-  bool stateless;         //!< if this is a stateless message queue
-  cachemodel_param_t *cachemodel; //!< reference cachemodel pointer
+  message_param_t *first;         /**< first message pointer of the list*/
+  message_param_t *last;          /**< last  message pointer of the list*/
+  bool stateless;                 /**< if this is a stateless message queue*/
+  cachemodel_param_t *cachemodel; /**< reference cachemodel pointer*/
 } msgqueue_param_t;
 
 /**

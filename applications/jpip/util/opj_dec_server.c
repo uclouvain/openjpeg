@@ -33,11 +33,12 @@
  *
  *  \section impinst Implementing instructions
  *  Launch opj_dec_server from a terminal in the same machine as JPIP client image viewers. \n
- *   % ./opj_dec_server \n
+ *   % ./opj_dec_server [portnumber]\n
+ *  ( portnumber=50000 by default)\n
  *  Keep it alive as long as image viewers are open.\n
  *
  *  To quite the opj_dec_server, send a message "quit" through the telnet.\n
- *   % telnet localhost 5000\n
+ *   % telnet localhost 50000\n
  *     quit\n
  *  Be sure all image viewers are closed.\n
  *  Cache file in JPT format is stored in the working directly before it quites.
@@ -45,6 +46,7 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "openjpip.h"
 
 #ifdef _WIN32
@@ -55,16 +57,22 @@ int main(int argc, char *argv[]){
   
   dec_server_record_t *server_record;
   client_t client;
+  int port = 50000;
+  int erreur;
+  (void)erreur;
+
+  if( argc > 1)
+    port = atoi( argv[1]);
 
 #ifdef _WIN32
-  int erreur = WSAStartup(MAKEWORD(2,2),&initialisation_win32);
+  erreur = WSAStartup(MAKEWORD(2,2),&initialisation_win32);
   if( erreur!=0)
     fprintf( stderr, "Erreur initialisation Winsock error : %d %d\n",erreur,WSAGetLastError());
   else
     printf( "Initialisation Winsock\n");
-#endif //_WIN32
+#endif /*_WIN32*/
   
-  server_record = init_dec_server( 50000);
+  server_record = init_dec_server( port);
   
   while(( client = accept_connection( server_record)) != -1 )
     if(!handle_clientreq( client, server_record))

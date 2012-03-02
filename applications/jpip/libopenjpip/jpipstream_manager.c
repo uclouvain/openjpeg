@@ -35,6 +35,8 @@
 #include "jpipstream_manager.h"
 #include "jp2k_encoder.h"
 #include "jp2k_decoder.h"
+#include "ihdrbox_manager.h"
+#include "j2kheader_manager.h"
 
 Byte_t * update_JPIPstream( Byte_t *newstream, int newstreamlen, Byte_t *cache_stream, int *streamlen)
 {
@@ -50,7 +52,7 @@ Byte_t * update_JPIPstream( Byte_t *newstream, int newstreamlen, Byte_t *cache_s
   return stream;
 }
 
-void save_codestream( Byte_t *codestream, Byte8_t streamlen, char *fmt)
+void save_codestream( Byte_t *codestream, Byte8_t streamlen, const char *fmt)
 {
   time_t timer;
   struct tm *t_st;
@@ -63,7 +65,8 @@ void save_codestream( Byte_t *codestream, Byte8_t streamlen, char *fmt)
   sprintf( filename, "%4d%02d%02d%02d%02d%02d.%.3s", t_st->tm_year+1900, t_st->tm_mon+1, t_st->tm_mday, t_st->tm_hour, t_st->tm_min, t_st->tm_sec, fmt);
 
   fp = fopen( filename, "wb");
-  fwrite( codestream, streamlen, 1, fp);
+  if( fwrite( codestream, streamlen, 1, fp) != 1)
+    fprintf( stderr, "Error: failed to write codestream to file %s\n", filename);
   fclose( fp);
 }
 
@@ -71,7 +74,7 @@ void save_codestream( Byte_t *codestream, Byte8_t streamlen, char *fmt)
 Byte_t * jpipstream_to_pnm( Byte_t *jpipstream, msgqueue_param_t *msgqueue, Byte8_t csn, int fw, int fh, ihdrbox_param_t **ihdrbox)
 {
   Byte_t *pnmstream;
-  Byte_t *j2kstream; // j2k or jp2 codestream
+  Byte_t *j2kstream; /* j2k or jp2 codestream */
   Byte8_t j2klen;
   FILE *fp;
   char j2kfname[] = "tmp.j2k";
@@ -89,4 +92,29 @@ Byte_t * jpipstream_to_pnm( Byte_t *jpipstream, msgqueue_param_t *msgqueue, Byte
   remove( j2kfname);
 
   return pnmstream;
+}
+
+ihdrbox_param_t * get_SIZ_from_jpipstream( Byte_t *jpipstream, msgqueue_param_t *msgqueue, Byte8_t csn)
+{
+  ihdrbox_param_t *ihdrbox;
+  Byte_t *j2kstream;
+  Byte8_t j2klen;
+  SIZmarker_param_t SIZ;
+
+  j2kstream = recons_j2kmainhead( msgqueue, jpipstream, csn, &j2klen);
+  if( !get_mainheader_from_j2kstream( j2kstream, &SIZ, NULL)){
+    free( j2kstream);
+    return NULL;
+  }
+
+  ihdrbox = (ihdrbox_param_t *)malloc( sizeof(ihdrbox_param_t));
+
+  ihdrbox->width = SIZ.Xsiz;
+  ihdrbox->height = SIZ.Ysiz;
+  ihdrbox->nc = SIZ.Csiz;
+  ihdrbox->bpc = SIZ.Ssiz[0];
+  
+  free( j2kstream);
+
+  return ihdrbox;
 }

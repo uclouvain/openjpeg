@@ -28,13 +28,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "metadata_manager.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
 #include <string.h>
-#include "metadata_manager.h"
 
 #ifdef SERVER
 #include "fcgi_stdio.h"
@@ -43,10 +40,10 @@
 #define FCGI_stdout stdout
 #define FCGI_stderr stderr
 #define logstream stderr
-#endif //SERVER
+#endif /*SERVER*/
 
 
-metadatalist_param_t * gene_metadatalist()
+metadatalist_param_t * gene_metadatalist(void)
 {
   metadatalist_param_t *list;
 
@@ -67,14 +64,12 @@ metadatalist_param_t * const_metadatalist( int fd)
   placeholderlist_param_t *phldlist;
   placeholder_param_t *phld;
   int idx;
-  struct stat sb;
-  
-  if( fstat( fd, &sb) == -1){
-    fprintf( FCGI_stdout, "Reason: Target broken (fstat error)\r\n");
-    return NULL;
-  }
+  Byte8_t filesize;
 
-  if( !(toplev_boxlist = get_boxstructure( fd, 0, sb.st_size))){
+  if(!(filesize = get_filesize( fd)))
+    return NULL;
+  
+  if( !(toplev_boxlist = get_boxstructure( fd, 0, filesize))){
     fprintf( FCGI_stderr, "Error: Not correctl JP2 format\n");
     return NULL;
   }
@@ -82,10 +77,6 @@ metadatalist_param_t * const_metadatalist( int fd)
   phldlist = gene_placeholderlist();
   metadatalist = gene_metadatalist();
 
-  delete_box_in_list_by_type( "iptr", toplev_boxlist);
-  delete_box_in_list_by_type( "cidx", toplev_boxlist);
-  delete_box_in_list_by_type( "fidx", toplev_boxlist);
-  
   box = toplev_boxlist->first;
   idx = 0;
   while( box){
@@ -149,7 +140,7 @@ void delete_metadata( metadata_param_t **metadata)
   if((*metadata)->boxcontents)
     free((*metadata)->boxcontents);
 #ifndef SERVER
-  //  fprintf( logstream, "local log: Metadata-bin: %d deleted\n", (*metadata)->idx);
+  /*  fprintf( logstream, "local log: Metadata-bin: %d deleted\n", (*metadata)->idx);*/
 #endif
   free( *metadata);
 }
@@ -165,11 +156,12 @@ void insert_metadata_into_list( metadata_param_t *metabin, metadatalist_param_t 
 
 void print_metadata( metadata_param_t *metadata)
 {
+  boxcontents_param_t *boxcont;
   fprintf( logstream, "metadata-bin %d info:\n", metadata->idx);
   print_allbox( metadata->boxlist);
   print_allplaceholder( metadata->placeholderlist);
  
-  boxcontents_param_t *boxcont = metadata->boxcontents;
+  boxcont = metadata->boxcontents;
   if( boxcont)
       fprintf( logstream, "box contents:\n"
 	       "\t offset: %lld %#llx\n" 

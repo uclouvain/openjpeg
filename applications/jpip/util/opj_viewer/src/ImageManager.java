@@ -33,15 +33,34 @@ import java.awt.Image;
 public class ImageManager extends JPIPHttpClient
 {
     private PnmImage pnmimage;
+    private int origwidth;
+    private int origheight;
+    private ImgdecClient imgdecoder;
 
-    public ImageManager( String uri)
+    public ImageManager( String uri, String host, int port)
     {
 	super( uri);
+	imgdecoder = new ImgdecClient( host, port);
 	pnmimage = null;
+	origwidth = 0;
+	origheight = 0;
     }
     
-    public int getOrigWidth(){ return pnmimage.get_width();}
-    public int getOrigHeight(){ return pnmimage.get_height();}
+    public int getOrigWidth(){
+	if( origwidth == 0){
+	    if( cid != null || tid != null){
+		java.awt.Dimension dim = imgdecoder.query_imagesize( cid, tid);
+		if( dim != null){
+		    origwidth = dim.width;
+		    origheight = dim.height;
+		}
+	    }
+	    else
+		System.err.println("Neither cid or tid obtained before to get Original Image Dimension");
+	}
+	return origwidth;
+    }
+    public int getOrigHeight(){ return origheight;}
     
     public Image getImage( String j2kfilename, int reqfw, int reqfh, boolean reqcnew, int reqaux, boolean reqJPP, boolean reqJPT)
     {
@@ -52,10 +71,10 @@ public class ImageManager extends JPIPHttpClient
 	
 	// Todo: check if the cid is for the same stream type
 	if( reqcnew)
-	    refcid = ImgdecClient.query_cid( j2kfilename);
+	    refcid = imgdecoder.query_cid( j2kfilename);
 	
 	if( refcid == null){
-	    String reftid = ImgdecClient.query_tid( j2kfilename);
+	    String reftid = imgdecoder.query_tid( j2kfilename);
 	    if( reftid == null)
 		jpipstream = super.requestViewWindow( j2kfilename, reqfw, reqfh, reqcnew, reqaux, reqJPP, reqJPT);
 	    else
@@ -65,7 +84,7 @@ public class ImageManager extends JPIPHttpClient
 	    jpipstream = super.requestViewWindow( reqfw, reqfh, refcid, reqcnew, reqaux, reqJPP, reqJPT);
 	
 	System.err.println( "decoding to PNM image");
-	if((pnmimage = ImgdecClient.decode_jpipstream( jpipstream, j2kfilename, tid, cid, fw, fh))!=null){
+	if((pnmimage = imgdecoder.decode_jpipstream( jpipstream, j2kfilename, tid, cid, fw, fh))!=null){
 	    System.err.println( "     done");
 	    return pnmimage.createROIImage( rx, ry, rw, rh);
 	}
@@ -82,7 +101,7 @@ public class ImageManager extends JPIPHttpClient
 	byte[] jpipstream = super.requestViewWindow( reqfw, reqfh, reqrx, reqry, reqrw, reqrh);
 
 	System.err.println( "decoding to PNM image");
-	if((pnmimage = ImgdecClient.decode_jpipstream( jpipstream, tid, cid, fw, fh)) != null){
+	if((pnmimage = imgdecoder.decode_jpipstream( jpipstream, tid, cid, fw, fh)) != null){
 	    System.err.println( "     done");
 	    return pnmimage.createROIImage( rx, ry, rw, rh);
 	}
@@ -100,16 +119,17 @@ public class ImageManager extends JPIPHttpClient
 	byte[] jpipstream = super.requestXML();
 	
 	if( jpipstream != null){
-	    ImgdecClient.send_JPIPstream( jpipstream);
+	    imgdecoder.send_JPIPstream( jpipstream);
       
-	    xmldata = ImgdecClient.get_XMLstream( cid);    
+	    xmldata = imgdecoder.get_XMLstream( cid);    
 	}
 	return xmldata;
     }
+
     public void closeChannel()
     {
 	if( cid != null){
-	    ImgdecClient.destroy_cid( cid);
+	    imgdecoder.destroy_cid( cid);
 	    super.closeChannel();
 	}
     }

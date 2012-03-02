@@ -60,5 +60,15 @@ Byte_t * recons_j2k( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte8_t csn
  */
 Byte_t * recons_jp2( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte8_t csn, Byte8_t *jp2len);
 
+/**
+ * reconstruct j2k codestream of mainheader from message queue
+ *
+ * @param[in]  msgqueue   message queue pointer
+ * @param[in]  jpipstream original jpt- jpp- stream
+ * @param[in]  csn        codestream number
+ * @param[out] j2klen     pointer to the j2k codestream length
+ * @return     generated  reconstructed j2k codestream
+ */
+Byte_t * recons_j2kmainhead( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte8_t csn, Byte8_t *j2klen);
 
 #endif 	    /* !JP2K_ENCODER_H_ */

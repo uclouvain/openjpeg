@@ -35,8 +35,8 @@
 #include "byte_manager.h"
 #include "sock_manager.h"
 
-#define NUM_OF_MSGTYPES 8
-typedef enum eMSGTYPE{ JPIPSTREAM, PNMREQ, XMLREQ, TIDREQ, CIDREQ, CIDDST, JP2SAVE, QUIT, MSGERROR} msgtype_t;
+#define NUM_OF_MSGTYPES 9
+typedef enum eMSGTYPE{ JPIPSTREAM, PNMREQ, XMLREQ, TIDREQ, CIDREQ, CIDDST, SIZREQ, JP2SAVE, QUIT, MSGERROR} msgtype_t;
 
 /**
  * indeitify client message type
@@ -63,8 +63,8 @@ Byte_t * receive_JPIPstream( SOCKET connected_socket, char **target, char **tid,
  *
  * @param [in]  connected_socket file descriptor of the connected socket
  * @param [in]  pnmstream        PGM/PPM image codestream
- * @param [in]  width            width  of the image
- * @param [in]  height           height of the image
+ * @param [in]  width            width  of the PGM/PPM image (different from the original image)
+ * @param [in]  height           height of the PGM/PPM image
  * @param [in]  numofcomp        number of components of the image
  * @param [in]  maxval           maximum value of the image (only 255 supported)
  */
@@ -96,6 +96,15 @@ void send_TIDstream( SOCKET connected_socket, char *tid, int tidlen);
  * @param [in]  cidlen           legnth of the cid string
  */
 void send_CIDstream( SOCKET connected_socket, char *cid, int cidlen);
+
+/**
+ * send SIZ data stream to the client
+ *
+ * @param [in]  connected_socket file descriptor of the connected socket
+ * @param [in]  width            original width  of the image
+ * @param [in]  height           original height of the image
+ */
+void send_SIZstream( SOCKET connected_socket, unsigned int width, unsigned int height);
 
 /**
  * send response signal to the client
@@ -146,13 +155,19 @@ void response_signal( SOCKET connected_socket, bool succeed);
  * client -> server: CID destroy\\n ciddata \n
  * server -> client: 1 or 0 (of 1Byte response signal)
  *
- *\section sec7 JP2 save
+ *\section sec7 SIZ request
+ * Get original size of image
+ *
+ * client -> server: SIZ request\\n  tidstring\\n  cidstring\\n \n
+ * server -> client: SIZ (3Byte) width (3Byte Big endian) height (3Byte Big endian)
+ *
+ *\section sec8 JP2 save
  * Save in JP2 file format
  *
  * client -> server: JP2 save\\n ciddata \n
  * server -> client: 1 or 0 (of 1Byte response signal)
  *
- *\section sec8 QUIT
+ *\section sec9 QUIT
  * Quit the opj_dec_server program
  *
  * client -> server: quit or QUIT

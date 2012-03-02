@@ -41,7 +41,7 @@
 #define FCGI_stdout stdout
 #define FCGI_stderr stderr
 #define logstream stderr
-#endif //SERVER
+#endif /*SERVER*/
 
 
 boxheader_param_t * gene_boxheader( int fd, Byte8_t offset)
@@ -55,7 +55,7 @@ boxheader_param_t * gene_boxheader( int fd, Byte8_t offset)
   boxtype = (char *)fetch_bytes( fd, offset+4, 4);
   headlen = 8;
     
-  if( boxlen == 1){ // read XLBox
+  if( boxlen == 1){ /* read XLBox */
     boxlen = fetch_8bytebigendian( fd, offset+8);
     headlen = 16;
   }

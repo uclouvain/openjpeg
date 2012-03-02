@@ -180,8 +180,8 @@ void add_cachecid( char *cid, cache_param_t *cache)
 {
   if( !cid)
     return;
-
-  if( realloc( cache->cid, (cache->numOfcid+1)*sizeof(char *)) == NULL){
+  
+  if( (cache->cid = realloc( cache->cid, (cache->numOfcid+1)*sizeof(char *))) == NULL){
     fprintf( stderr, "failed to add new cid to cache table in add_cachecid()\n");
     return;
   }

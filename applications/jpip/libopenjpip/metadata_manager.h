@@ -29,29 +29,29 @@
  */
 
 #ifndef   	METADATA_MANAGER_H_
-# define   	METADATA_MANAGER_H_
+#define   	METADATA_MANAGER_H_
 
 #include "box_manager.h"
 #include "placeholder_manager.h"
 
 typedef struct boxcontents_param{
-  Byte8_t offset; //!< byte position of the box contents in the file
-  Byte8_t length; //!< length of the box contents
+  Byte8_t offset; /**< byte position of the box contents in the file*/
+  Byte8_t length; /**< length of the box contents*/
 } boxcontents_param_t;
 
-//! metadata-bin parameters
+/** metadata-bin parameters*/
 typedef struct metadata_param{
-  int idx;                                  //!< index number
-  boxlist_param_t *boxlist;                 //!< box list
-  placeholderlist_param_t *placeholderlist; //!< placeholder box list
-  boxcontents_param_t *boxcontents;               //!< box contens in case of no boxlist and placeholderlist
-  struct metadata_param *next;              //!< pointer to the next metadata-bin
+  int idx;                                  /**< index number*/
+  boxlist_param_t *boxlist;                 /**< box list*/
+  placeholderlist_param_t *placeholderlist; /**< placeholder box list*/
+  boxcontents_param_t *boxcontents;         /**< box contens in case of no boxlist and placeholderlist*/
+  struct metadata_param *next;              /**< pointer to the next metadata-bin*/
 } metadata_param_t;
 
-//! metadata-bin list parameters
+/** metadata-bin list parameters*/
 typedef struct metadatalist_param{
-  metadata_param_t *first; //!< first metadata-bin pointer of the list
-  metadata_param_t *last;  //!< last metadata-bin pointer of the list
+  metadata_param_t *first; /**< first metadata-bin pointer of the list*/
+  metadata_param_t *last;  /**< last metadata-bin pointer of the list*/
 } metadatalist_param_t;
 
 
@@ -60,7 +60,7 @@ typedef struct metadatalist_param{
  *
  * @return pointer to the generated metadata list
  */
-metadatalist_param_t * gene_metadatalist();
+metadatalist_param_t * gene_metadatalist(void);
 
 
 /**

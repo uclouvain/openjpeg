@@ -34,30 +34,30 @@
 #include "byte_manager.h"
 #include "box_manager.h"
 
-//! A.3.6.3 Placeholder box format
-//! placeholder box parameters
+/** A.3.6.3 Placeholder box format*/
+/** placeholder box parameters*/
 typedef struct placeholder_param{
   Byte4_t LBox;
   char TBox[4];
   Byte4_t Flags;
   Byte8_t OrigID;
-  Byte_t *OrigBH;  //!< dynamic memory pointer
-  Byte_t OrigBHlen; //!< length of OrigBH
+  Byte_t *OrigBH;   /**< dynamic memory pointer*/
+  Byte_t OrigBHlen; /**< length of OrigBH*/
 #ifdef AAA
   Byte8_t EquivID;
-  Byte_t *EquivBH; //!< dynamic memory pointer
-  Byte_t EquivBHlen; //!< length of EquivBH
+  Byte_t *EquivBH;   /**< dynamic memory pointer*/
+  Byte_t EquivBHlen; /**< length of EquivBH*/
   Byte8_t CSID;
   Byte4_t NCS;
-#endif //AAA
-  struct placeholder_param *next; //!< pointer to the next placeholder
+#endif /*AAA*/
+  struct placeholder_param *next; /**< pointer to the next placeholder*/
 } placeholder_param_t;
 
 
-//! placeholder box list parameters
+/** placeholder box list parameters*/
 typedef struct placeholderlist_param{
-  placeholder_param_t *first; //!< first placeholder pointer of the list
-  placeholder_param_t *last;  //!< last  placeholder pointer of the list
+  placeholder_param_t *first; /**< first placeholder pointer of the list*/
+  placeholder_param_t *last;  /**< last  placeholder pointer of the list*/
 } placeholderlist_param_t;
 
 
@@ -66,7 +66,7 @@ typedef struct placeholderlist_param{
  *
  * @return pointer to the generated placeholder list
  */
-placeholderlist_param_t * gene_placeholderlist();
+placeholderlist_param_t * gene_placeholderlist(void);
 
 
 /**

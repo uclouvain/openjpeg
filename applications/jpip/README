@@ -92,11 +92,11 @@ Server:
  For shutting down JPIP server:
      %GET http://hostname/myFCGI?quitJPIP
      Notice, http://hostname/myFCGI is the HTTP server URI (myFCGI refers to opj_server by the server setting)
-     Request message "quitJPIP" can be changed in Makefile, modify -DQUIT_SIGNAL=\"quitJPIP\"
+     Requst message "quitJPIP" can be changed in Makfile, modify -DQUIT_SIGNAL=\"quitJPIP\"
 
 Client:
  1. Launch image decoding server, and keep it alive as long as image viewers are open
-    % ./opj_dec_server
+    % ./opj_dec_server [portnumber (50000 by default)]
 
     You might prefer to implement this program from another directory since cache files are saved in the working directory.
     % mkdir cache
@@ -104,10 +104,12 @@ Client:
     % ../opj_dec_server
 
  2. Open image viewers (as many as needed)
-    % java -jar opj_viewer.jar http://hostname/myFCGI path/filename.jp2 [stateless/session] [jptstream/jppstream] [tcp/udp]
+    % java -jar opj_viewer.jar http://hostname/myFCGI path/filename.jp2 [hostname] [portnumber] [stateless/session] [jptstream/jppstream] [tcp/udp]
     ( The arguments 
       - http://hostname/myFCGI is the HTTP server URI (myFCGI refers to opj_server by the server setting)
       - path/filename.jp2 is the server local path or URL of a JP2 file
+      - host name of opj_dec_server, localhost by default
+      - portnumber of opj_dec_server, 50000 by default
       - request type stateless for no caching, session (default) for caching
       - return media type, JPT-stream tile based stream, or JPP-stream (default) precinct based stream
       - auxiliary return protocol, tcp or udp (udp is not implemented yet), if not given, return data is filled in http chunk
@@ -131,7 +133,7 @@ An example to encode a TIF image "copenhague1.tif" at resolution 4780x4050, 8bit
    % ./image_to_j2k -i copenhague1.tif -o copenhague1.jp2 -p RPCL -c [64,64] -t 640,480 -jpip -TP R
 
  options
-  -jpip : embed index table box into the output JP2 file (obligation for JPIP)
+  -jpip : embed index table 'cidx' box into the output JP2 file (obligation for JPIP)
   -TP R : partition a tile into tile parts of different resolution levels (obligation for JPT-stream)
 
 <Option>

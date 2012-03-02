@@ -5,16 +5,33 @@ What's New for OpenJPIP
 ! : changed
 + : added
 
+Feburary 28, 2012
++ [kaori] enabled the opj_server to reply the first query consisting with len request from kakadu client
+
+February 9, 2012
+* [kaori] fixed Doxygen configuration file to document the utilities
++ [kaori] added execution argument to set port number for opj_dec_server, opj_viewer*
+
+January 26, 2012
+! [kaori] unapplied auxtrans_manager to the local mode
+
+December 24, 2011
+* [kaori] additional modification for the warning
+
+December 22, 2011
+* [kaori] fixed auxtrans_manager to enable MAC
+* [kaori] warnings due to disregarding return value are removed
+
 November 30, 2011
 + [kaori] TCP return (http-tcp) implemented
 
 November 16, 2011
-* [kaori] fixed opj_server execusion error (instant terminating) with autotool, cmake still need to be fixed
+* [kaori] fixed Region of Interest option, and memory leak of opj_dec_server
 + [kaori] new feature to target JP2 files from www (libcurl required)
+* [kaori] fixed opj_server execusion error (instant terminating) with autotool, cmake still need to be fixed
 
 November 8, 2011
 ! [kaori] updated main page of doxygen
-! [kaori] enabled OpenJPEG V2 API
 
 November 3, 2011
 * [kaori] solved memory leak of opj_server
@@ -43,12 +60,12 @@ October 14, 2011
 October 12, 2011
 + [kaori] enable layers requests; restricting the number of codesream quality layers
 
-October 10, 2011
-- [antonin] removed obsolete indexer utility
-+ [kaori]   enable JPT-stream request from client viewer option
+October 11, 2011
++ [antonin] enable JPT-stream request from client viewer option (credit to kaori)
 
-September 30, 2011
-+ [kaori] enabled JPP-stream
+October 10, 2011
+- [antonin] removed obsolete indexer utility (credit to kaori)
++ [antonin] enabled JPP-stream (credit to kaori)
 
 September 16, 2011
 + [kaori] enabled stateless requests from the opj_viewers

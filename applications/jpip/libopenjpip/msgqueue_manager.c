@@ -32,10 +32,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
-#include <unistd.h>
 #include <sys/stat.h>
 #include <string.h>
 #include <ctype.h>
+#ifdef _WIN32
+#include <io.h>
+#else
+#include <unistd.h>
+#endif
 #include "msgqueue_manager.h"
 #include "metadata_manager.h"
 #include "index_manager.h"
@@ -47,7 +51,7 @@
 #define FCGI_stdout stdout
 #define FCGI_stderr stderr
 #define logstream stderr
-#endif //SERVER
+#endif /*SERVER*/
 
 msgqueue_param_t * gene_msgqueue( bool stateless, cachemodel_param_t *cachemodel)
 {
@@ -135,7 +139,7 @@ void enqueue_mainheader( msgqueue_param_t *msgqueue)
   msg->csn = target->csn;
   msg->bin_offset = 0;
   msg->length = codeidx->mhead_length;
-  msg->aux = 0; // non exist
+  msg->aux = 0; /* non exist*/
   msg->res_offset = codeidx->offset;
   msg->phld = NULL;
   msg->next = NULL;
@@ -163,9 +167,9 @@ void enqueue_tileheader( int tile_id, msgqueue_param_t *msgqueue)
     msg->class_id = TILE_HEADER_MSG;
     msg->csn = target->csn;
     msg->bin_offset = 0;
-    msg->length = codeidx->tileheader[tile_id]->tlen-2; // SOT marker segment is removed
-    msg->aux = 0; // non exist
-    msg->res_offset = codeidx->offset + get_elemOff( codeidx->tilepart, 0, tile_id) + 2; // skip SOT marker seg
+    msg->length = codeidx->tileheader[tile_id]->tlen-2; /* SOT marker segment is removed*/
+    msg->aux = 0; /* non exist*/
+    msg->res_offset = codeidx->offset + get_elemOff( codeidx->tilepart, 0, tile_id) + 2; /* skip SOT marker seg*/
     msg->phld = NULL;
     msg->next = NULL;
     
@@ -179,7 +183,7 @@ void enqueue_tile( int tile_id, int level, msgqueue_param_t *msgqueue)
   cachemodel_param_t *cachemodel;
   target_param_t *target;
   bool *tp_model;
-  Byte8_t numOftparts; // num of tile parts par tile
+  Byte8_t numOftparts; /* num of tile parts par tile*/
   Byte8_t numOftiles;
   index_param_t *codeidx;
   faixbox_param_t *tilepart;
@@ -197,7 +201,7 @@ void enqueue_tile( int tile_id, int level, msgqueue_param_t *msgqueue)
 
   class_id = (numOftparts==1) ? TILE_MSG : EXT_TILE_MSG;
   
-  if( tile_id < 0 || numOftiles <= tile_id){
+  if( tile_id < 0 || (int)numOftiles <= tile_id){
     fprintf( FCGI_stderr, "Error, Invalid tile-id %d\n", tile_id);
     return;
   }
@@ -205,13 +209,13 @@ void enqueue_tile( int tile_id, int level, msgqueue_param_t *msgqueue)
   tp_model = &cachemodel->tp_model[ tile_id*numOftparts];
 
   binOffset=0;
-  for( i=0; i<numOftparts-level; i++){
+  for( i=0; i<(int)numOftparts-level; i++){
     binLength = get_elemLen( tilepart, i, tile_id);
     
     if( !tp_model[i]){
       msg = (message_param_t *)malloc( sizeof(message_param_t));
       
-      msg->last_byte = (i==numOftparts-1);
+      msg->last_byte = (i==(int)numOftparts-1);
       msg->in_class_id = tile_id;
       msg->class_id = class_id;
       msg->csn = target->csn;
@@ -365,7 +369,7 @@ message_param_t * gene_metamsg( int meta_id, Byte8_t binOffset, Byte8_t length, 
   msg->csn = csn;
   msg->bin_offset = binOffset;
   msg->length = length;
-  msg->aux = 0; // non exist
+  msg->aux = 0; /* non exist*/
   msg->res_offset = res_offset;
   msg->phld = phld;
   msg->next = NULL;
@@ -427,7 +431,7 @@ void recons_stream_from_msgqueue( msgqueue_param_t *msgqueue, int tmpfd)
     add_vbas_stream( msg->bin_offset, tmpfd);
     add_vbas_stream (msg->length, tmpfd);
     
-    if( msg->class_id%2) // Aux is present only if the id is odd
+    if( msg->class_id%2) /* Aux is present only if the id is odd*/
       add_vbas_stream( msg->aux, tmpfd);
 
     if( msg->phld)
@@ -447,8 +451,8 @@ void add_bin_id_vbas_stream( Byte_t bb, Byte_t c, Byte8_t in_class_id, int tmpfd
   int bytelength;
   Byte8_t tmp;
 
-  // A.2.3 In-class identifiers 
-  // 7k-3bits, where k is the number of bytes in the VBAS
+  /* A.2.3 In-class identifiers */
+  /* 7k-3bits, where k is the number of bytes in the VBAS*/
   bytelength = 1;
   tmp = in_class_id >> 4;
   while( tmp){
@@ -484,7 +488,10 @@ void add_vbas_with_bytelen_stream( Byte8_t code, int bytelength, int tmpfd)
     seg = ( code >> (n*7)) & 0x7f;
     if( n)
       seg |= 0x80;
-    write( tmpfd, ( Byte4_t *)&seg, 1);
+    if( write( tmpfd, ( Byte4_t *)&seg, 1) != 1){
+      fprintf( FCGI_stderr, "Error: failed to write vbas\n");
+      return;
+    }
     n--;
   }
 }
@@ -495,13 +502,6 @@ void add_body_stream( message_param_t *msg, int fd, int tmpfd)
 
   if( !(data = fetch_bytes( fd, msg->res_offset, msg->length))){
     fprintf( FCGI_stderr, "Error: fetch_bytes in add_body_stream()\n");
-    return;
-  }
-  
-  data = (Byte_t *)malloc( msg->length);
-  if( read( fd, data, msg->length) != msg->length){
-    free( data);
-    fprintf( FCGI_stderr, "Error: fread in emit_body()\n");
     return;
   }
 
@@ -539,7 +539,10 @@ void add_bigendian_bytestream( Byte8_t code, int bytelength, int tmpfd)
   n = bytelength - 1;
   while( n >= 0) {
     seg = ( code >> (n*8)) & 0xff;
-    write( tmpfd, ( Byte4_t *)&seg, 1);
+    if( write( tmpfd, ( Byte4_t *)&seg, 1) != 1){
+      fprintf( FCGI_stderr, "ERROR: failed to write bigendian_bytestream\n");
+      return;
+    }
     n--;
   }
 }
@@ -569,15 +572,15 @@ Byte_t * parse_vbas( Byte_t *streamptr, Byte8_t *elem);
 
 void parse_JPIPstream( Byte_t *JPIPstream, Byte8_t streamlen, Byte8_t offset, msgqueue_param_t *msgqueue)
 {
-  Byte_t *ptr;  // stream pointer
+  Byte_t *ptr;  /* stream pointer*/
   message_param_t *msg;
   Byte_t bb, c;
   Byte8_t class_id, csn;
 
-  class_id = -1; // dummy
+  class_id = -1; /* dummy*/
   csn = -1;
   ptr = JPIPstream;
-  while( ptr-JPIPstream < streamlen){
+  while( (Byte8_t)(ptr-JPIPstream) < streamlen){
     msg = (message_param_t *)malloc( sizeof(message_param_t));
     
     ptr = parse_bin_id_vbas( ptr, &bb, &c, &msg->in_class_id);
@@ -596,7 +599,7 @@ void parse_JPIPstream( Byte_t *JPIPstream, Byte8_t streamlen, Byte8_t offset, ms
     ptr = parse_vbas( ptr, &msg->bin_offset);
     ptr = parse_vbas( ptr, &msg->length);
     
-    if( msg->class_id%2) // Aux is present only if the id is odd
+    if( msg->class_id%2) /* Aux is present only if the id is odd*/
       ptr = parse_vbas( ptr, &msg->aux);
     else
       msg->aux = 0;
@@ -620,6 +623,7 @@ void parse_metadata( metadata_param_t *metadata, message_param_t *msg, Byte_t *s
 void parse_metamsg( msgqueue_param_t *msgqueue, Byte_t *stream, Byte8_t streamlen, metadatalist_param_t *metadatalist)
 {
   message_param_t *msg;
+  (void)streamlen;
 
   if( metadatalist == NULL)
     return;
@@ -639,6 +643,8 @@ placeholder_param_t * parse_phld( Byte_t *datastream, Byte8_t metalength);
 
 void parse_metadata( metadata_param_t *metadata, message_param_t *msg, Byte_t *datastream)
 {
+  box_param_t *box;
+  placeholder_param_t *phld;
   char *boxtype = (char *)(datastream+4);
 
   msg->phld = NULL;
@@ -647,17 +653,17 @@ void parse_metadata( metadata_param_t *metadata, message_param_t *msg, Byte_t *d
     if( !metadata->placeholderlist)
 	metadata->placeholderlist = gene_placeholderlist();
     
-    placeholder_param_t *phld = parse_phld( datastream, msg->length);
+    phld = parse_phld( datastream, msg->length);
     msg->phld = phld;
     insert_placeholder_into_list( phld, metadata->placeholderlist);
   }
   else if( isalpha(boxtype[0]) && isalpha(boxtype[1]) &&
-	   (isalnum(boxtype[2])||isblank(boxtype[2])) &&
-	   (isalpha(boxtype[3])||isblank(boxtype[3]))){
+	   (isalnum(boxtype[2])||isspace(boxtype[2])) &&
+	   (isalpha(boxtype[3])||isspace(boxtype[3]))){
     if( !metadata->boxlist)
       metadata->boxlist = gene_boxlist();
     
-    box_param_t *box = gene_boxbyOffinStream( datastream, msg->res_offset);
+    box = gene_boxbyOffinStream( datastream, msg->res_offset);
     insert_box_into_list( box, metadata->boxlist);
   }
   else

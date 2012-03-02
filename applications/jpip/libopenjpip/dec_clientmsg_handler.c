@@ -31,7 +31,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 #include "dec_clientmsg_handler.h"
 #include "ihdrbox_manager.h"
 #include "jpipstream_manager.h"
@@ -58,7 +57,7 @@ void handle_JPIPstreamMSG( SOCKET connected_socket, cachelist_param_t *cachelist
   metadatalist = gene_metadatalist();
   parse_metamsg( msgqueue, *jpipstream, *streamlen, metadatalist);
 
-  // cid registration
+  /* cid registration*/
   if( target != NULL){
     if((cache = search_cache( target, cachelist))){
       if( tid != NULL)
@@ -92,7 +91,7 @@ void handle_PNMreqMSG( SOCKET connected_socket, Byte_t *jpipstream, msgqueue_par
   char *CIDorTID, tmp[10];
   cache_param_t *cache;
   int fw, fh;
-
+  
   CIDorTID = receive_string( connected_socket);
   
   if(!(cache = search_cacheBycid( CIDorTID, cachelist)))
@@ -109,19 +108,21 @@ void handle_PNMreqMSG( SOCKET connected_socket, Byte_t *jpipstream, msgqueue_par
   receive_line( connected_socket, tmp);
   fh = atoi( tmp);
 
-  pnmstream = jpipstream_to_pnm( jpipstream, msgqueue, cache->csn, fw, fh, &cache->ihdrbox);
-  ihdrbox = cache->ihdrbox;
+  ihdrbox = NULL;
+  pnmstream = jpipstream_to_pnm( jpipstream, msgqueue, cache->csn, fw, fh, &ihdrbox);
 
   send_PNMstream( connected_socket, pnmstream, ihdrbox->width, ihdrbox->height, ihdrbox->nc, ihdrbox->bpc > 8 ? 255 : (1 << ihdrbox->bpc) - 1);
 
-  if( pnmstream)
-    free( pnmstream);
+  free( ihdrbox);
+  free( pnmstream);
 }
 
 void handle_XMLreqMSG( SOCKET connected_socket, Byte_t *jpipstream, cachelist_param_t *cachelist)
 {
   char *cid;
   cache_param_t *cache;
+  boxcontents_param_t *boxcontents;
+  Byte_t *xmlstream;
 
   cid = receive_string( connected_socket);
 
@@ -132,8 +133,8 @@ void handle_XMLreqMSG( SOCKET connected_socket, Byte_t *jpipstream, cachelist_pa
 
   free( cid);
   
-  boxcontents_param_t *boxcontents = cache->metadatalist->last->boxcontents;
-  Byte_t *xmlstream = (Byte_t *)malloc( boxcontents->length);
+  boxcontents = cache->metadatalist->last->boxcontents;
+  xmlstream = (Byte_t *)malloc( boxcontents->length);
   memcpy( xmlstream, jpipstream+boxcontents->offset, boxcontents->length);
   send_XMLstream( connected_socket, xmlstream, boxcontents->length);
   free( xmlstream);
@@ -186,6 +187,36 @@ void handle_dstCIDreqMSG( SOCKET connected_socket, cachelist_param_t *cachelist)
   response_signal( connected_socket, true);
   
   free( cid);
+}
+
+void handle_SIZreqMSG( SOCKET connected_socket, Byte_t *jpipstream, msgqueue_param_t *msgqueue, cachelist_param_t *cachelist)
+{
+  char *tid, *cid;
+  cache_param_t *cache;
+  Byte4_t width, height;
+  
+  tid = receive_string( connected_socket);
+  cid = receive_string( connected_socket);
+  
+  cache = NULL;
+
+  if( tid[0] != '0')
+    cache = search_cacheBytid( tid, cachelist);
+  
+  if( !cache && cid[0] != '0')
+    cache = search_cacheBycid( cid, cachelist);
+
+  free( tid);
+  free( cid);
+  
+  width = height = 0;
+  if( cache){
+    if( !cache->ihdrbox)
+      cache->ihdrbox = get_SIZ_from_jpipstream( jpipstream, msgqueue, cache->csn);
+    width  = cache->ihdrbox->width;
+    height = cache->ihdrbox->height;
+  }
+  send_SIZstream( connected_socket, width, height);
 }
 
 void handle_JP2saveMSG( SOCKET connected_socket, cachelist_param_t *cachelist, msgqueue_param_t *msgqueue, Byte_t *jpipstream)

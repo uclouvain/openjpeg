@@ -35,17 +35,17 @@
 #include "channel_manager.h"
 #include "cachemodel_manager.h"
 
-//! Session parameters
+/** Session parameters*/
 typedef struct session_param{
-  channellist_param_t *channellist;        //!< channel list pointer
-  cachemodellist_param_t *cachemodellist; //!< cache list pointer
-  struct session_param *next;              //!< pointer to the next session
+  channellist_param_t *channellist;        /**< channel list pointer*/
+  cachemodellist_param_t *cachemodellist;  /**< cache list pointer*/
+  struct session_param *next;              /**< pointer to the next session*/
 } session_param_t;
 
-//! Session list parameters
+/** Session list parameters*/
 typedef struct sessionlist_param{
-  session_param_t *first; //!< first session pointer of the list
-  session_param_t *last;  //!< last  session pointer of the list
+  session_param_t *first; /**< first session pointer of the list*/
+  session_param_t *last;  /**< last  session pointer of the list*/
 } sessionlist_param_t;
 
 

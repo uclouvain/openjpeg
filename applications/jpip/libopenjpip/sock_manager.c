@@ -34,12 +34,12 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <unistd.h>
 #endif
 
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include "sock_manager.h"
 
 #ifdef SERVER
@@ -49,7 +49,7 @@
 #define FCGI_stdout stdout
 #define FCGI_stderr stderr
 #define logstream stderr
-#endif //SERVER
+#endif /*SERVER*/
 
 SOCKET open_listeningsocket( int port)
 {
@@ -99,7 +99,7 @@ SOCKET accept_socket( SOCKET listening_socket)
 
 void send_stream( SOCKET connected_socket, void *stream, int length)
 {
-  void *ptr = stream;
+  char *ptr = (char*)stream;
   int remlen = length;
 
   while( remlen > 0){
@@ -115,7 +115,7 @@ void send_stream( SOCKET connected_socket, void *stream, int length)
 
 void * receive_stream( SOCKET connected_socket, int length)
 {
-  void *stream, *ptr;
+  char *stream, *ptr;
   int remlen, redlen;
 
   ptr = stream = malloc( length);

@@ -32,24 +32,33 @@ import java.io.*;
 import java.net.*;
 
 public class ImgdecClient{
+    
+    private String hostname;
+    private int portNo;
 
-    public static PnmImage decode_jpipstream( byte[] jpipstream, String tid, String cid, int fw, int fh)
+    public ImgdecClient( String host, int port)
+    {
+	hostname = host;
+	portNo = port;
+    }
+
+    public PnmImage decode_jpipstream( byte[] jpipstream, String tid, String cid, int fw, int fh)
     {
 	if( jpipstream != null)
 	    send_JPIPstream( jpipstream);
 	return get_PNMstream( cid, tid, fw, fh);
     }
 
-    public static PnmImage decode_jpipstream( byte[] jpipstream, String j2kfilename, String tid, String cid, int fw, int fh)
+    public PnmImage decode_jpipstream( byte[] jpipstream, String j2kfilename, String tid, String cid, int fw, int fh)
     {
 	send_JPIPstream( jpipstream, j2kfilename, tid, cid);
 	return get_PNMstream( cid, tid, fw, fh);
     }
     
-    public static void send_JPIPstream( byte[] jpipstream)
+    public void send_JPIPstream( byte[] jpipstream)
     {
 	try{
-	    Socket imgdecSocket = new Socket( "localhost", 50000);
+	    Socket imgdecSocket = new Socket( hostname, portNo);
 	    DataOutputStream os = new DataOutputStream( imgdecSocket.getOutputStream());
 	    DataInputStream  is = new DataInputStream( imgdecSocket.getInputStream());
       
@@ -71,10 +80,10 @@ public class ImgdecClient{
 	}
     }
 
-    public static void send_JPIPstream( byte[] jpipstream, String j2kfilename, String tid, String cid)
+    public void send_JPIPstream( byte[] jpipstream, String j2kfilename, String tid, String cid)
     {
 	try{
-	    Socket imgdecSocket = new Socket( "localhost", 50000);
+	    Socket imgdecSocket = new Socket( hostname, portNo);
 	    DataOutputStream os = new DataOutputStream( imgdecSocket.getOutputStream());
 	    DataInputStream  is = new DataInputStream( imgdecSocket.getInputStream());
 	    int length = 0;
@@ -109,12 +118,12 @@ public class ImgdecClient{
 	}
     }
     
-    public static PnmImage get_PNMstream( String cid, String tid, int fw, int fh)
+    public PnmImage get_PNMstream( String cid, String tid, int fw, int fh)
     {
 	PnmImage pnmstream = null;
 	
 	try {
-	    Socket imgdecSocket = new Socket( "localhost", 50000);
+	    Socket imgdecSocket = new Socket( hostname, portNo);
 	    DataOutputStream os = new DataOutputStream( imgdecSocket.getOutputStream());
 	    DataInputStream is = new DataInputStream( imgdecSocket.getInputStream());
 	    byte []header = new byte[7];
@@ -166,12 +175,12 @@ public class ImgdecClient{
 	return pnmstream;
     }
 
-    public static byte [] get_XMLstream( String cid)
+    public byte [] get_XMLstream( String cid)
     {
 	byte []xmldata = null;
 
 	try{
-	    Socket imgdecSocket = new Socket( "localhost", 50000);
+	    Socket imgdecSocket = new Socket( hostname, portNo);
 	    DataOutputStream os = new DataOutputStream( imgdecSocket.getOutputStream());
 	    DataInputStream is = new DataInputStream( imgdecSocket.getInputStream());
 	    byte []header = new byte[5];
@@ -197,7 +206,7 @@ public class ImgdecClient{
 	return xmldata;
     }
 
-    public static String query_cid( String j2kfilename)
+    public String query_cid( String j2kfilename)
     {
 	int []retmsglabel = new int[3];
 	retmsglabel[0] = 67;
@@ -207,7 +216,7 @@ public class ImgdecClient{
 	return query_id( "CID request", j2kfilename, retmsglabel);
     }
 
-    public static String query_tid( String j2kfilename)
+    public String query_tid( String j2kfilename)
     {
 	int []retmsglabel = new int[3];
 	retmsglabel[0] = 84;
@@ -217,12 +226,12 @@ public class ImgdecClient{
 	return query_id( "TID request", j2kfilename, retmsglabel);
     }
 
-    public static String query_id( String reqmsghead, String j2kfilename, int[] retmsglabel)
+    public String query_id( String reqmsghead, String j2kfilename, int[] retmsglabel)
     {
 	String id = null;
 	
 	try{
-	    Socket imgdecSocket = new Socket( "localhost", 50000);
+	    Socket imgdecSocket = new Socket( hostname, portNo);
 	    DataOutputStream os = new DataOutputStream( imgdecSocket.getOutputStream());
 	    DataInputStream is = new DataInputStream( imgdecSocket.getInputStream());
 	    byte []header = new byte[4];
@@ -254,12 +263,12 @@ public class ImgdecClient{
 	return id;	
     }
 
-    public static java.awt.Dimension query_imagesize( String cid, String tid)
+    public java.awt.Dimension query_imagesize( String cid, String tid)
     {
 	java.awt.Dimension dim = null;
 
 	try{
-	    Socket imgdecSocket = new Socket( "localhost", 50000);
+	    Socket imgdecSocket = new Socket( hostname, portNo);
 	    DataOutputStream os = new DataOutputStream( imgdecSocket.getOutputStream());
 	    DataInputStream is = new DataInputStream( imgdecSocket.getInputStream());
 	    byte []header = new byte[3];
@@ -297,7 +306,7 @@ public class ImgdecClient{
 	return dim;
     }
   
-    public static void read_stream( DataInputStream is, byte []stream, int length)
+    private static void read_stream( DataInputStream is, byte []stream, int length)
     {
 	int remlen = length;
 	int off = 0;
@@ -318,10 +327,10 @@ public class ImgdecClient{
 	}
     }
 
-    public static void destroy_cid( String cid)
+    public void destroy_cid( String cid)
     {
 	try{
-	    Socket imgdecSocket = new Socket( "localhost", 50000);
+	    Socket imgdecSocket = new Socket( hostname, portNo);
 	    DataOutputStream os = new DataOutputStream( imgdecSocket.getOutputStream());
 	    DataInputStream  is = new DataInputStream( imgdecSocket.getInputStream());
 	    

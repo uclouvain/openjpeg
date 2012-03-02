@@ -32,12 +32,17 @@
 #include <string.h>
 #include <stdlib.h>
 #include "imgsock_manager.h"
+#if _WIN32
+#define strncasecmp _strnicmp
+#endif
 
 msgtype_t identify_clientmsg( SOCKET connected_socket)
 {
   int receive_size;
   char buf[BUF_LEN];
-  char *magicid[] = { "JPIP-stream", "PNM request", "XML request", "TID request", "CID request", "CID destroy", "JP2 save", "QUIT"};
+  static const char *magicid[] = { "JPIP-stream", "PNM request", "XML request",
+    "TID request", "CID request", "CID destroy", "SIZ request", "JP2 save",
+    "QUIT"};
   int i;
   
   receive_size = receive_line( connected_socket, buf);
@@ -77,7 +82,7 @@ Byte_t * receive_JPIPstream( SOCKET connected_socket, char **target, char **tid,
     return NULL;
 
   if( strstr( buf, "jp2")){ 
-    // register cid option
+    /* register cid option*/
     *target = strdup( buf);
     
     if((linelen = receive_line( connected_socket, buf)) == 0)
@@ -99,7 +104,7 @@ Byte_t * receive_JPIPstream( SOCKET connected_socket, char **target, char **tid,
 
   jpipstream = receive_stream( connected_socket, datalen);
 
-  // check EOR
+  /* check EOR*/
   if( jpipstream[datalen-3] == 0x00 && ( jpipstream[datalen-2] == 0x01 || jpipstream[datalen-2] == 0x02))
     *streamlen = datalen -3;
   else
@@ -122,7 +127,7 @@ void send_XMLstream( SOCKET connected_socket, Byte_t *xmlstream, int length)
   send_stream( connected_socket, xmlstream, length);
 }
 
-void send_IDstream(  SOCKET connected_socket, char *id, int idlen, char *label);
+void send_IDstream(  SOCKET connected_socket, char *id, int idlen, const char *label);
 
 void send_CIDstream( SOCKET connected_socket, char *cid, int cidlen)
 {
@@ -134,7 +139,7 @@ void send_TIDstream( SOCKET connected_socket, char *tid, int tidlen)
   send_IDstream( connected_socket, tid, tidlen, "TID");
 }
 
-void send_IDstream(  SOCKET connected_socket, char *id, int idlen, char *label)
+void send_IDstream(  SOCKET connected_socket, char *id, int idlen, const char *label)
 {
   Byte_t header[4];
 
@@ -164,6 +169,23 @@ void send_PNMstream( SOCKET connected_socket, Byte_t *pnmstream, unsigned int wi
 
   send_stream( connected_socket, header, 7);
   send_stream( connected_socket, pnmstream, pnmlen);
+}
+
+void send_SIZstream( SOCKET connected_socket, unsigned int width, unsigned int height)
+{
+  Byte_t responce[9];
+  
+  responce[0] = 'S';
+  responce[1] = 'I';
+  responce[2] = 'Z';
+  responce[3] = (width >> 16) & 0xff;
+  responce[4] = (width >> 8) & 0xff;
+  responce[5] = width & 0xff;
+  responce[6] = (height >> 16) & 0xff;
+  responce[7] = (height >> 8) & 0xff;
+  responce[8] = height & 0xff;
+
+  send_stream( connected_socket, responce, 9);
 }
 
 void response_signal( SOCKET connected_socket, bool succeed)

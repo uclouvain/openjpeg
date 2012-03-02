@@ -34,40 +34,40 @@
 
 #include "bool.h"
 
-//! maximum number of meta request box
+/** maximum number of meta request box */
 #define MAX_NUMOFBOX 10
 
-//! cnew aux transport name
+/** cnew aux transport name */
 typedef enum cnew_transport { non, http, tcp, udp} cnew_transport_t;
 
-//! image return type
+/** image return type */
 typedef enum image_return { JPPstream, JPTstream, UNKNOWN=-1} image_return_t;
 
-//! Query parameters
+/** Query parameters */
 typedef struct query_param{
-  char *target;                               //!< target name
-  char *tid;                                  //!< target identifier
-  int fx, fy;                                 //!< frame size (fx,fy)
-  int rx, ry, rw, rh;                         //!< roi region
-  int layers;                                 //!< quality layers
-  int lastcomp;                               //!< last component number
-  bool *comps;                                //!< components (dynamic array) for jpp-stream, null means all components
-  char *cid;                                  //!< channel identifier
-  cnew_transport_t cnew;                      //!< transport name if there is new channel request, else non
-  char *cclose;                               //!< list of closing channel identifiers, separated by '\0'
-  int numOfcclose;                            //!< number of closing channels
-  char box_type[MAX_NUMOFBOX][4];             //!< interested box-types
-  int limit[MAX_NUMOFBOX];                    //!< limit value, -1: skeleton request "r", 0: entire contents
-  bool w[MAX_NUMOFBOX];                       //!< Metadata request qualifier flags
+  char *target;                               /**< target name */
+  char *tid;                                  /**< target identifier */
+  int fx, fy;                                 /**< frame size (fx,fy) */
+  int rx, ry, rw, rh;                         /**< roi region */
+  int layers;                                 /**< quality layers */
+  int lastcomp;                               /**< last component number */
+  bool *comps;                                /**< components (dynamic array) for jpp-stream, null means all components */
+  char *cid;                                  /**< channel identifier */
+  cnew_transport_t cnew;                      /**< transport name if there is new channel request, else non */
+  char *cclose;                               /**< list of closing channel identifiers, separated by '\0' */
+  int numOfcclose;                            /**< number of closing channels */
+  char box_type[MAX_NUMOFBOX][4];             /**< interested box-types */
+  int limit[MAX_NUMOFBOX];                    /**< limit value, -1: skeleton request "r", 0: entire contents */
+  bool w[MAX_NUMOFBOX];                       /**< Metadata request qualifier flags */
   bool s[MAX_NUMOFBOX];
   bool g[MAX_NUMOFBOX];
   bool a[MAX_NUMOFBOX];
-  bool priority[MAX_NUMOFBOX];                //!< priority flag
-  int root_bin;                               //!< root-bin
-  int max_depth;                              //!< max-depth
-  bool metadata_only;                         //!< metadata-only request
-  image_return_t return_type;                 //!< image return type
-  int len;                                    //!< maximum response length
+  bool priority[MAX_NUMOFBOX];                /**< priority flag */
+  int root_bin;                               /**< root-bin */
+  int max_depth;                              /**< max-depth */
+  bool metadata_only;                         /**< metadata-only request */
+  image_return_t return_type;                 /**< image return type */
+  int len;                                    /**< maximum response length */
 } query_param_t;
 
 
