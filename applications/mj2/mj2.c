@@ -1099,7 +1099,7 @@ int mj2_read_smj2(opj_image_t * img, mj2_tk_t * tk, opj_cio_t *cio)
   opj_jp2_color_t color;
   int i;
   opj_bool ok;
-	
+
   mj2_read_boxhdr(&box, cio);
 	
   if (MJ2_MJ2 != box.type) {
@@ -1156,13 +1156,12 @@ int mj2_read_smj2(opj_image_t * img, mj2_tk_t * tk, opj_cio_t *cio)
   tk->or_fieldorder = 0;
 	
   cio_skip(cio,2);			/* Pre-defined = -1 */
-
   memset(&color, 0, sizeof(opj_jp2_color_t));
   tk->jp2_struct.cinfo = tk->cinfo;
 
   ok = jp2_read_jp2h(&tk->jp2_struct, cio, &color);
 
-  tk->jp2_struct.cinfo = NULL; 
+  tk->jp2_struct.cinfo = NULL;
 
   if(ok == OPJ_FALSE)
  {
