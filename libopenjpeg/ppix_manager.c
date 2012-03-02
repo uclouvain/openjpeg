@@ -55,6 +55,7 @@ int write_ppix( int coff, opj_codestream_info_t cstr_info, opj_bool EPHused, int
 
   /*  printf("cstr_info.packno %d\n", cstr_info.packno); //NMAX? */
 
+  lenp = -1;
   box = (opj_jp2_box_t *)opj_calloc( cstr_info.numcomps, sizeof(opj_jp2_box_t));
   
   for (i=0;i<2;i++){
@@ -89,6 +90,8 @@ int write_ppixfaix( int coff, int compno, opj_codestream_info_t cstr_info, opj_b
   opj_packet_info_t packet;
   int resno, precno, layno, num_packet;
   int numOfres, numOfprec, numOflayers;
+  packet.end_pos = packet.end_ph_pos = packet.start_pos = -1;
+  (void)EPHused; /* unused ? */
 
   if( j2klen > pow( 2, 32)){
     size_of_coding =  8;
