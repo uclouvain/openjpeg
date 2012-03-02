@@ -1373,6 +1373,8 @@ void OPJFrame::OnFileSaveAs(wxCommandEvent& WXUNUSED(event))
 	wxT("JPEG 2000 codestream (*.j2k)|*.j2k")
 	wxT("|JPEG 2000 file format (*.jp2)|*.jp2");
 #endif
+#else
+	wxT("Houston we have a problem");
 #endif
 
     wxFileDialog dialog(this, _T("Save image file"),

@@ -93,7 +93,7 @@ unsigned short int marker_val[] = {
 };
 
 // Marker names
-char *marker_name[] = {
+static const char *marker_name[] = {
 	"SOC", "SOT", "SOD", "EOC",
 	"SIZ",
 	"COD", "COC", "RGN", "QCD", "QCC", "POD",
@@ -109,7 +109,7 @@ char *marker_name[] = {
 };
 
 // Marker descriptions
-char *marker_descr[] = {
+static const char *marker_descr[] = {
 	"Start of codestream", "Start of tile-part", "Start of data", "End of codestream",
 	"Image and tile size",
 	"Coding style default", "Coding style component", "Region-of-interest", "Quantization default",
