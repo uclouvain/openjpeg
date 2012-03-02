@@ -89,6 +89,15 @@ cachemodel_param_t * search_cachemodel( target_param_t *target, cachemodellist_p
 
 
 /**
+ * check if all data has been sent
+ *
+ * @param[in] cachemodel cache model
+ * @return               true if sent all, false otherwise
+ */
+bool is_allsent( cachemodel_param_t cachemodel);
+
+
+/**
  * delete a cache model
  *
  * @param[in] cachemodel     address of the cachemodel pointer

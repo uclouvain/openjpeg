@@ -5,6 +5,9 @@ What's New for OpenJPIP
 ! : changed
 + : added
 
+November 30, 2011
++ [kaori] TCP return (http-tcp) implemented
+
 November 16, 2011
 * [kaori] fixed opj_server execusion error (instant terminating) with autotool, cmake still need to be fixed
 

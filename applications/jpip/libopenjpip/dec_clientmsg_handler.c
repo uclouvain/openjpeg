@@ -48,6 +48,8 @@ void handle_JPIPstreamMSG( SOCKET connected_socket, cachelist_param_t *cachelist
   
   newjpipstream = receive_JPIPstream( connected_socket, &target, &tid, &cid, &newstreamlen);
 
+  fprintf( stderr, "newjpipstream length: %d\n", newstreamlen);
+  
   parse_JPIPstream( newjpipstream, newstreamlen, *streamlen, msgqueue);
 
   *jpipstream = update_JPIPstream( newjpipstream, newstreamlen, *jpipstream, streamlen);

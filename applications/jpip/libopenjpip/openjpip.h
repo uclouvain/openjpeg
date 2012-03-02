@@ -36,6 +36,19 @@
 #include "query_parser.h"
 #include "msgqueue_manager.h"
 #include "bool.h"
+#include "sock_manager.h"
+#include "auxtrans_manager.h"
+
+#ifdef SERVER
+
+#include "fcgi_stdio.h"
+#define logstream FCGI_stdout
+
+#else
+
+#define FCGI_stdout stdout
+#define FCGI_stderr stderr
+#define logstream stderr
 
 #include "cache_manager.h"
 #include "byte_manager.h"
@@ -45,13 +58,6 @@
 #include "ihdrbox_manager.h"
 #include "index_manager.h"
 
-#ifdef SERVER
-#include "fcgi_stdio.h"
-#define logstream FCGI_stdout
-#else
-#define FCGI_stdout stdout
-#define FCGI_stderr stderr
-#define logstream stderr
 #endif //SERVER
 
 /* 
@@ -64,20 +70,24 @@
 typedef struct server_record{
   sessionlist_param_t *sessionlist; //!< list of session records
   targetlist_param_t *targetlist;   //!< list of target records
+  auxtrans_param_t auxtrans;
 } server_record_t;
 
 //! Query/response data for each client
 typedef struct QR{
-  query_param_t *query;
-  msgqueue_param_t *msgqueue;
+  query_param_t *query;             //!< query parameters
+  msgqueue_param_t *msgqueue;       //!< message queue
+  channel_param_t *channel;         //!< channel, (NULL if stateless)
 } QR_t;
 
 /**
  * Initialize the JPIP server
  *
- * @return intialized server record pointer
+ * @param[in] tcp_auxport opening tcp auxiliary port ( 0 not to open, valid No. 49152–65535)
+ * @param[in] udp_auxport opening udp auxiliary port ( 0 not to open, valid No. 49152–65535)
+ * @return                intialized server record pointer
  */
-server_record_t * init_JPIPserver();
+server_record_t * init_JPIPserver( int tcp_auxport, int udp_auxport);
 
 /**
  * Terminate the JPIP server
@@ -106,9 +116,10 @@ bool process_JPIPrequest( server_record_t *rec, QR_t *qr);
 /**
  * 3rd process; send response data JPT/JPP-stream
  *
+ * @param[in]  rec server static record pointer
  * @param[in]  qr  query/response data pointer
  */
-void send_responsedata( QR_t *qr);
+void send_responsedata( server_record_t *rec, QR_t *qr);
 
 /**
  * 4th (last) process; 
@@ -158,9 +169,10 @@ typedef SOCKET client_t;
 /**
  * Initialize the image decoding server
  *
- * @return intialized decoding server record pointer
+ * @param[in] port opening tcp port (valid No. 49152–65535)
+ * @return         intialized decoding server record pointer
  */
-dec_server_record_t * init_dec_server();
+dec_server_record_t * init_dec_server( int port);
 
 /**
  * Terminate the  image decoding server

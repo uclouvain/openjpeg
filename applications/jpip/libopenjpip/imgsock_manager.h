@@ -33,28 +33,7 @@
 
 #include "bool.h"
 #include "byte_manager.h"
-
-#ifdef _WIN32
-#include <winsock2.h>
-#else
-typedef int SOCKET;
-#endif //_WIN32
-
-/**
- * open listening socket
- *
- * @return new socket
- */
-SOCKET open_listeningsocket();
-
-/**
- * accept a new connection to the listenning socket
- *
- * @param listening_socket listenning socket
- * @return                 connected socket (-1 if error occurs)
- */
-SOCKET accept_socket( SOCKET listening_socket);
-
+#include "sock_manager.h"
 
 #define NUM_OF_MSGTYPES 8
 typedef enum eMSGTYPE{ JPIPSTREAM, PNMREQ, XMLREQ, TIDREQ, CIDREQ, CIDDST, JP2SAVE, QUIT, MSGERROR} msgtype_t;
@@ -125,31 +104,6 @@ void send_CIDstream( SOCKET connected_socket, char *cid, int cidlen);
  * @param [in]  succeed          whether if the requested process succeeded
  */
 void response_signal( SOCKET connected_socket, bool succeed);
-
-/**
- * receive a string line (ending with '\n') from client
- *
- * @param [in]  connected_socket file descriptor of the connected socket
- * @param [out] buf              string to be stored
- * @return                       red size
- */
-int receive_line(SOCKET connected_socket, char *buf);
-
-/**
- * receive a string line (ending with '\n') from client, return malloc string
- *
- * @param [in]  connected_socket file descriptor of the connected socket
- * @return                       pointer to the string (memory allocated)
- */
-char * receive_string( SOCKET connected_socket);
-
-/**
- * close socket
- *
- * @param [in] sock closing socket
- * @return     0 if succeed, -1 if failed
- */
-int close_socket( SOCKET sock);
 
 #endif /* !IMGSOCK_MANAGER_H_ */
 

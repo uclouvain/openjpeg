@@ -43,7 +43,7 @@ public class ImageManager extends JPIPHttpClient
     public int getOrigWidth(){ return pnmimage.get_width();}
     public int getOrigHeight(){ return pnmimage.get_height();}
     
-    public Image getImage( String j2kfilename, int reqfw, int reqfh, boolean reqcnew, boolean reqJPP, boolean reqJPT)
+    public Image getImage( String j2kfilename, int reqfw, int reqfh, boolean reqcnew, int reqaux, boolean reqJPP, boolean reqJPT)
     {
 	System.err.println();
 	
@@ -52,17 +52,17 @@ public class ImageManager extends JPIPHttpClient
 	
 	// Todo: check if the cid is for the same stream type
 	if( reqcnew)
-	    refcid = ImgdecClient.query_cid( j2kfilename);	
+	    refcid = ImgdecClient.query_cid( j2kfilename);
 	
 	if( refcid == null){
 	    String reftid = ImgdecClient.query_tid( j2kfilename);
 	    if( reftid == null)
-		jpipstream = super.requestViewWindow( j2kfilename, reqfw, reqfh, reqcnew, reqJPP, reqJPT);
+		jpipstream = super.requestViewWindow( j2kfilename, reqfw, reqfh, reqcnew, reqaux, reqJPP, reqJPT);
 	    else
-		jpipstream = super.requestViewWindow( j2kfilename, reftid, reqfw, reqfh, reqcnew, reqJPP, reqJPT);
+		jpipstream = super.requestViewWindow( j2kfilename, reftid, reqfw, reqfh, reqcnew, reqaux, reqJPP, reqJPT);
 	}
 	else
-	    jpipstream = super.requestViewWindow( reqfw, reqfh, refcid, reqcnew, reqJPP, reqJPT);
+	    jpipstream = super.requestViewWindow( reqfw, reqfh, refcid, reqcnew, reqaux, reqJPP, reqJPT);
 	
 	System.err.println( "decoding to PNM image");
 	if((pnmimage = ImgdecClient.decode_jpipstream( jpipstream, j2kfilename, tid, cid, fw, fh))!=null){

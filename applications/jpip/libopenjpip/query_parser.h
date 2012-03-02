@@ -34,36 +34,28 @@
 
 #include "bool.h"
 
-//! maximum length of target name
-#define MAX_LENOFTARGET 128
- 
-//! maximum length of target identifier
-#define MAX_LENOFTID 30
-
-//! maximum length of channel identifier
-#define MAX_LENOFCID 30
-
-//! maximum number of closing channel
-#define MAX_NUMOFCCLOSE 10
-
 //! maximum number of meta request box
 #define MAX_NUMOFBOX 10
+
+//! cnew aux transport name
+typedef enum cnew_transport { non, http, tcp, udp} cnew_transport_t;
 
 //! image return type
 typedef enum image_return { JPPstream, JPTstream, UNKNOWN=-1} image_return_t;
 
 //! Query parameters
 typedef struct query_param{
-  char target[MAX_LENOFTARGET];               //!< target name
-  char tid[MAX_LENOFTID];                     //!< target identifier
+  char *target;                               //!< target name
+  char *tid;                                  //!< target identifier
   int fx, fy;                                 //!< frame size (fx,fy)
   int rx, ry, rw, rh;                         //!< roi region
   int layers;                                 //!< quality layers
   int lastcomp;                               //!< last component number
   bool *comps;                                //!< components (dynamic array) for jpp-stream, null means all components
-  char cid[MAX_LENOFCID];                     //!< channel identifier
-  bool cnew;                                  //!< if there is new channel request(true) or not (false)
-  char cclose[MAX_NUMOFCCLOSE][MAX_LENOFCID]; //!< closing channel identifiers
+  char *cid;                                  //!< channel identifier
+  cnew_transport_t cnew;                      //!< transport name if there is new channel request, else non
+  char *cclose;                               //!< list of closing channel identifiers, separated by '\0'
+  int numOfcclose;                            //!< number of closing channels
   char box_type[MAX_NUMOFBOX][4];             //!< interested box-types
   int limit[MAX_NUMOFBOX];                    //!< limit value, -1: skeleton request "r", 0: entire contents
   bool w[MAX_NUMOFBOX];                       //!< Metadata request qualifier flags

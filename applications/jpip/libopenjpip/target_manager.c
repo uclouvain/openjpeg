@@ -39,6 +39,7 @@
 #include "target_manager.h"
 
 #ifdef SERVER
+#include <curl/curl.h>
 #include "fcgi_stdio.h"
 #define logstream FCGI_stdout
 #else
@@ -46,7 +47,6 @@
 #define FCGI_stderr stderr
 #define logstream stderr
 #endif //SERVER
-
 
 targetlist_param_t * gene_targetlist()
 {
@@ -95,6 +95,12 @@ target_param_t * gene_target( targetlist_param_t *targetlist, char *targetpath)
   snprintf( target->tid, MAX_LENOFTID, "%x-%x", (unsigned int)time(NULL), (unsigned int)rand());
   target->filename = strdup( targetpath); 
   target->fd = fd;
+#ifdef SERVER
+  if( tmpfname[0])
+    target->tmpfname = strdup( tmpfname);
+  else
+    target->tmpfname = NULL;
+#endif
   target->csn = last_csn++;
   target->codeidx = jp2idx;
   target->num_of_use = 0; 
@@ -129,7 +135,18 @@ void unrefer_target( target_param_t *target)
 void delete_target( target_param_t **target)
 {
   close( (*target)->fd);
+<<<<<<< .working
   
+=======
+
+#ifdef SERVER
+  if( (*target)->tmpfname){
+    fprintf( FCGI_stderr, "Temporal file %s is deleted\n", (*target)->tmpfname);
+    remove( (*target)->tmpfname);
+  }
+#endif
+
+>>>>>>> .merge-right.r1103
   if( (*target)->codeidx)
     delete_index ( &(*target)->codeidx);
 
@@ -227,14 +244,28 @@ target_param_t * search_targetBytid( char tid[], targetlist_param_t *targetlist)
   return NULL;
 }
 
+<<<<<<< .working
 int open_jp2file( char filename[])
+=======
+int open_remotefile( char filepath[], char tmpfname[]);
+
+int open_jp2file( char filepath[], char tmpfname[])
+>>>>>>> .merge-right.r1103
 {
   int fd;
   char *data;
+<<<<<<< .working
 
   if( (fd = open( filename, O_RDONLY)) == -1){
     fprintf( FCGI_stdout, "Reason: Target %s not found\r\n", filename);
     return -1;
+=======
+  
+  // download remote target file to local storage
+  if( strncmp( filepath, "http://", 7) == 0){
+    if( (fd = open_remotefile( filepath, tmpfname)) == -1)
+      return -1;
+>>>>>>> .merge-right.r1103
   }
   // Check resource is a JP family file.
   if( lseek( fd, 0, SEEK_SET)==-1){
@@ -261,3 +292,52 @@ int open_jp2file( char filename[])
   free( data);
   return fd;
 }
+<<<<<<< .working
+=======
+
+#ifdef SERVER
+static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream);
+#endif
+
+int open_remotefile( char filepath[], char tmpfname[])
+{
+#ifndef SERVER
+
+  fprintf( FCGI_stderr, "Remote file can not be opened in local mode\n");
+  return -1;
+
+#else
+
+  CURL *curl_handle;
+  int fd;
+    
+  curl_handle = curl_easy_init();
+  curl_easy_setopt(curl_handle, CURLOPT_URL, filepath);
+  curl_easy_setopt(curl_handle, CURLOPT_NOPROGRESS, 1L);
+  curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_data);
+  
+  snprintf( tmpfname, MAX_LENOFTID, "%x-%x.jp2", (unsigned int)time(NULL), (unsigned int)rand());
+  fprintf( FCGI_stderr, "%s is downloaded to a temporal new file %s\n", filepath, tmpfname);
+  if( (fd = open( tmpfname, O_RDWR|O_CREAT|O_EXCL, S_IRWXU)) == -1){
+    fprintf( FCGI_stdout, "Reason: File open error %s\r\n", tmpfname);
+    curl_easy_cleanup(curl_handle);
+    return -1;
+  }
+  curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, &fd);
+  curl_easy_perform(curl_handle);
+  curl_easy_cleanup(curl_handle);
+
+  return fd;
+#endif //SERVER
+}
+
+#ifdef SERVER
+static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream)
+{
+  int *fd = (int *)stream;
+  int written = write( *fd, ptr, size*nmemb);
+
+  return written;
+}
+#endif //SERVER
+>>>>>>> .merge-right.r1103

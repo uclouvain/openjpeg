@@ -54,9 +54,10 @@ channellist_param_t * gene_channellist()
   return channellist;
 }
 
-channel_param_t * gene_channel( query_param_t query_param, cachemodel_param_t *cachemodel, channellist_param_t *channellist)
+channel_param_t * gene_channel( query_param_t query_param, auxtrans_param_t auxtrans, cachemodel_param_t *cachemodel, channellist_param_t *channellist)
 {
   channel_param_t *channel;
+  char transport[4][10] = { "non", "http", "http-tcp", "http-udp"};
   
   if( !cachemodel){
     fprintf( FCGI_stdout, "Status: 404\r\n"); 
@@ -70,6 +71,12 @@ channel_param_t * gene_channel( query_param_t query_param, cachemodel_param_t *c
   // set channel ID and get present time
   snprintf( channel->cid, MAX_LENOFCID, "%x%x", (unsigned int)time( &channel->start_tm), (unsigned int)rand());
   
+  channel->aux = query_param.cnew;
+  
+  // only tcp implemented for now
+  if( channel->aux == udp)
+    channel->aux = tcp;
+  
   channel->next=NULL;
 
   set_channel_variable_param( query_param, channel);
@@ -81,8 +88,12 @@ channel_param_t * gene_channel( query_param_t query_param, cachemodel_param_t *c
   channellist->last = channel;
   
   fprintf( FCGI_stdout, "JPIP-cnew: cid=%s", channel->cid);
-  // only http implemented for now
-  fprintf( FCGI_stdout, ",transport=http\r\n");
+  fprintf( FCGI_stdout, ",transport=%s", transport[channel->aux]);
+  
+  if( channel->aux == tcp || channel->aux == udp)
+    fprintf( FCGI_stdout, ",auxport=%d", channel->aux==tcp ? auxtrans.tcpauxport : auxtrans.udpauxport);
+
+  fprintf( FCGI_stdout, "\r\n");
 
   return channel;
 }

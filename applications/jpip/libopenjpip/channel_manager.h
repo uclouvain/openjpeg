@@ -34,11 +34,16 @@
 #include <time.h>
 #include "query_parser.h"
 #include "cachemodel_manager.h"
+#include "auxtrans_manager.h"
+
+//! maximum length of channel identifier
+#define MAX_LENOFCID 30
 
 //! Channel parameters
 typedef struct channel_param{
   cachemodel_param_t *cachemodel; //!< reference pointer to the cache model
   char cid[MAX_LENOFCID];         //!< channel identifier
+  cnew_transport_t aux;           //!< auxiliary transport
   // - a record of the client's capabilities and preferences to the extent that the server queues requests
   time_t start_tm;                //!< starting time
   struct channel_param *next;     //!< pointer to the next channel
@@ -64,11 +69,12 @@ channellist_param_t * gene_channellist();
  * generate a channel under the channel list
  *
  * @param[in] query_param query parameters
+ * @param[in] auxtrans    auxiliary transport
  * @param[in] cachemodel  reference cachemodel
  * @param[in] channellist channel list pointer
  * @return                pointer to the generated channel
  */
-channel_param_t * gene_channel( query_param_t query_param, cachemodel_param_t *cachemodel, channellist_param_t *channellist);
+channel_param_t * gene_channel( query_param_t query_param, auxtrans_param_t auxtrans, cachemodel_param_t *cachemodel, channellist_param_t *channellist);
 
 /**
  * set channel variable parameters

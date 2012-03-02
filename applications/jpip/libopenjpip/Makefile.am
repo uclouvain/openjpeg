@@ -38,6 +38,7 @@ cachemodel_manager.c \
 j2kheader_manager.c \
 jp2k_encoder.c \
 sock_manager.c \
+auxtrans_manager.c \
 openjpip.h \
 bool.h \
 boxheader_manager.h \
@@ -63,7 +64,8 @@ channel_manager.h \
 session_manager.h \
 jpip_parser.h \
 jp2k_decoder.h \
-sock_manager.h 
+sock_manager.h \
+auxtrans_manager.h
 
 SERVER_SRC = auxtrans_manager.c \
 auxtrans_manager.h

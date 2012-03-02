@@ -193,3 +193,41 @@ void delete_cachemodel( cachemodel_param_t **cachemodel)
 #endif
   free( *cachemodel);
 }
+
+bool is_allsent( cachemodel_param_t cachemodel)
+{
+  target_param_t *target;
+  Byte8_t TPnum; // num of tile parts in each tile
+  Byte8_t Pmax; // max num of packets per tile
+  int i, j, k, n;
+
+  target = cachemodel.target;
+  
+  if( !cachemodel.mhead_model)
+    return false;
+
+  TPnum = get_nmax( target->codeidx->tilepart);
+
+  if( cachemodel.jppstream){
+    for( i=0; i<target->codeidx->SIZ.XTnum*target->codeidx->SIZ.YTnum; i++){
+      if( !cachemodel.th_model[i])
+	return false;
+      
+      for( j=0; j<target->codeidx->SIZ.Csiz; j++){
+	Pmax = get_nmax( target->codeidx->precpacket[j]);
+	for( k=0; k<Pmax; k++)
+	  if( !cachemodel.pp_model[j][i*Pmax+k])
+	    return false;
+      }
+    }
+    return true;
+  }
+  else{
+    for( i=0, n=0; i<target->codeidx->SIZ.YTnum; i++)
+      for( j=0; j<target->codeidx->SIZ.XTnum; j++)
+	for( k=0; k<TPnum; k++)
+	  if( !cachemodel.tp_model[n++])
+	    return false;
+    return true;
+  }
+}

@@ -53,7 +53,7 @@ public class ImageViewer extends JPanel
     private Rectangle roirect[] = null;
     private String roiname[] = null;
       
-    public ImageViewer( String j2kfilename, ImageManager manager, boolean session, boolean jppstream)
+    public ImageViewer( String j2kfilename, ImageManager manager, boolean session, boolean jppstream, int aux)
     {
 	String str;
 	MML myMML;
@@ -69,8 +69,8 @@ public class ImageViewer extends JPanel
 
 	imgmanager = manager;
 
-	img = imgmanager.getImage( j2kfilename, vw, vh, session, jppstream, !jppstream);
-
+	img = imgmanager.getImage( j2kfilename, vw, vh, session, aux, jppstream, !jppstream);
+	
 	addMouseListener(myMML);
 	addMouseMotionListener(myMML);
 	addComponentListener( new ResizeListener(this));

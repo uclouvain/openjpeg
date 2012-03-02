@@ -40,8 +40,11 @@
 //! target parameters
 typedef struct target_param{
   char tid[MAX_LENOFTID];         //!< taregt identifier
-  char *filename;                 //!< file name
+  char *targetname;               //!< local file path or URL ( URL is suported only with SERVER mode)
   int fd;                         //!< file descriptor
+#ifdef SERVER
+  char *tmpfname;                 //!< temporal file name to download a remote target file
+#endif
   int csn;                        //!< codestream number
   index_param_t *codeidx;         //!< index information of codestream
   int num_of_use;                 //!< numbers of sessions refering to this target

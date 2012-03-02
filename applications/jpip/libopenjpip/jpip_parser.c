@@ -48,17 +48,19 @@
 
 bool identify_target( query_param_t query_param, targetlist_param_t *targetlist, target_param_t **target)
 {
-  if( query_param.tid[0] !='\0' && strcmp( query_param.tid, "0") != 0 ){
-    if( query_param.cid[0] != '\0'){
-      fprintf( FCGI_stdout, "Reason: Target can not be specified both through tid and cid\r\n");
-      fprintf( FCGI_stdout, "Status: 400\r\n");
-      return false;
+  if( query_param.tid){
+    if( strcmp( query_param.tid, "0") != 0 ){
+      if( query_param.cid[0] != '\0'){
+	fprintf( FCGI_stdout, "Reason: Target can not be specified both through tid and cid\r\n");
+	fprintf( FCGI_stdout, "Status: 400\r\n");
+	return false;
+      }
+      if( ( *target = search_targetBytid( query_param.tid, targetlist)))
+	return true;
     }
-    if( ( *target = search_targetBytid( query_param.tid, targetlist)))
-      return true;
   }
 
-  if( query_param.target[0] !='\0')
+  if( query_param.target)
     if( !( *target = search_target( query_param.target, targetlist)))
       if(!( *target = gene_target( targetlist, query_param.target)))
 	return false;
@@ -93,6 +95,7 @@ bool associate_channel( query_param_t    query_param,
 
 bool open_channel( query_param_t query_param, 
 		   sessionlist_param_t *sessionlist,
+		   auxtrans_param_t auxtrans,
 		   target_param_t *target,
 		   session_param_t **cursession, 
 		   channel_param_t **curchannel)
@@ -110,7 +113,7 @@ bool open_channel( query_param_t query_param,
     if( *curchannel)
       cachemodel = (*curchannel)->cachemodel;
 
-  *curchannel = gene_channel( query_param, cachemodel, (*cursession)->channellist);
+  *curchannel = gene_channel( query_param, auxtrans, cachemodel, (*cursession)->channellist);
   if( *curchannel == NULL)
     return false;
 
@@ -122,7 +125,10 @@ bool close_channel( query_param_t query_param,
 		    session_param_t **cursession, 
 		    channel_param_t **curchannel)
 {
-  if( query_param.cclose[0][0] =='*'){
+  char *cclose;
+  int i;
+  
+  if( query_param.cclose[0] =='*'){
 #ifndef SERVER
     fprintf( logstream, "local log: close all\n");
 #endif
@@ -132,28 +138,25 @@ bool close_channel( query_param_t query_param,
   }
   else{
     // check if all entry belonging to the same session
-    int i=0;
-    while( query_param.cclose[i][0] !='\0'){
+    
+    for( i=0, cclose=query_param.cclose; i<query_param.numOfcclose; i++, cclose += (strlen(cclose)+1)){
       
       // In case of the first entry of close cid
       if( *cursession == NULL){
-	if( !search_session_and_channel( query_param.cclose[i], sessionlist, cursession, curchannel))
+	if( !search_session_and_channel( cclose, sessionlist, cursession, curchannel))
 	  return false;
       }
       else // second or more entry of close cid
-	if( !(*curchannel=search_channel( query_param.cclose[i], (*cursession)->channellist))){
-	  fprintf( FCGI_stdout, "Reason: Cclose id %s is from another session\r\n", query_param.cclose[i]); 
+	if( !(*curchannel=search_channel( cclose, (*cursession)->channellist))){
+	  fprintf( FCGI_stdout, "Reason: Cclose id %s is from another session\r\n", cclose); 
 	  return false;
 	}
-      i++;
     }
+
     // delete channels
-    i=0;
-    while( query_param.cclose[i][0] !='\0'){
-      
-      *curchannel = search_channel( query_param.cclose[i], (*cursession)->channellist);
+    for( i=0, cclose=query_param.cclose; i<query_param.numOfcclose; i++, cclose += (strlen(cclose)+1)){
+      *curchannel = search_channel( cclose, (*cursession)->channellist);
       delete_channel( curchannel, (*cursession)->channellist);
-      i++;
     }
     
     if( (*cursession)->channellist->first == NULL || (*cursession)->channellist->last == NULL)
