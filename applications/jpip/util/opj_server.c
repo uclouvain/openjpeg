@@ -95,17 +95,18 @@ int main(void)
       
       qr = parse_querystring( query_string);
       
-      if( !(parse_status = process_JPIPrequest( server_record, qr)))
-	fprintf( FCGI_stderr, "Error: JPIP request failed\n");
-
+      parse_status = process_JPIPrequest( server_record, qr);
+      
 #ifndef SERVER
       local_log( true, true, parse_status, false, qr, server_record);
 #endif
             
       if( parse_status)
-	send_responsedata( server_record, qr);
-      else
+	send_responsedata( qr);
+      else{
 	fprintf( FCGI_stderr, "Error: JPIP request failed\n");
+  fprintf( FCGI_stdout, "\r\n");
+    }
       
       end_QRprocess( server_record, &qr);
     }

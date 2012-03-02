@@ -118,7 +118,7 @@ void print_cachemodel( cachemodel_param_t cachemodel)
 
   target = cachemodel.target;
   
-  fprintf( logstream, "target: %s\n", target->filename);
+  fprintf( logstream, "target: %s\n", target->targetname);
   fprintf( logstream, "\t main header model: %d\n", cachemodel.mhead_model);
 
   fprintf( logstream, "\t tile part model:\n");

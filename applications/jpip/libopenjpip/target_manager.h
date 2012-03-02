@@ -137,9 +137,9 @@ void print_alltarget( targetlist_param_t *targetlist);
 
 
 /**
- * search a target by filename
+ * search a target by target name
  *
- * @param[in] targetname target filename
+ * @param[in] targetname target name
  * @param[in] targetlist target list pointer
  * @return               found target pointer
  */

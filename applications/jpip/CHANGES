@@ -10,6 +10,7 @@ November 30, 2011
 
 November 16, 2011
 * [kaori] fixed opj_server execusion error (instant terminating) with autotool, cmake still need to be fixed
++ [kaori] new feature to target JP2 files from www (libcurl required)
 
 November 8, 2011
 ! [kaori] updated main page of doxygen
