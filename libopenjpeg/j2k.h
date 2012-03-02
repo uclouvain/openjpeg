@@ -485,9 +485,9 @@ typedef struct opj_cp_v2
 	/** Rsiz*/
 	OPJ_RSIZ_CAPABILITIES rsiz;
 	/** XTOsiz */
-	OPJ_UINT32 tx0; // MSD see norm
+	OPJ_UINT32 tx0; /* MSD see norm */
 	/** YTOsiz */
-	OPJ_UINT32 ty0; // MSD see norm
+	OPJ_UINT32 ty0; /* MSD see norm */
 	/** XTsiz */
 	OPJ_UINT32 tdx;
 	/** YTsiz */
@@ -629,10 +629,10 @@ typedef struct opj_j2k_dec
 typedef struct opj_j2k_enc
 {
 	/** Tile part number, regardless of poc, for each new poc, tp is reset to 1*/
-	OPJ_UINT32 m_current_poc_tile_part_number; // tp_num
+	OPJ_UINT32 m_current_poc_tile_part_number; /* tp_num */
 
 	/** Tile part number currently coding, taking into account POC. m_current_tile_part_number holds the total number of tile parts while encoding the last tile part.*/
-	OPJ_UINT32 m_current_tile_part_number; //cur_tp_num
+	OPJ_UINT32 m_current_tile_part_number; /*cur_tp_num */
 
 	/**
 	locate the start position of the TLM marker
@@ -650,7 +650,7 @@ typedef struct opj_j2k_enc
 
 	/** Total num of tile parts in whole image = num tiles* num tileparts in each tile*/
 	/** used in TLMmarker*/
-	OPJ_UINT32 m_total_tile_parts;	 // totnum_tp
+	OPJ_UINT32 m_total_tile_parts;	 /* totnum_tp */
 
 	/* encoded data for a tile */
 	OPJ_BYTE * m_encoded_tile_data;

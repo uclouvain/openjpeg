@@ -971,11 +971,11 @@ static void v4dwt_decode(v4dwt_t* restrict dwt){
 }
 
 
-// KEEP TRUNK VERSION + return type of v2 because rev557
+/* KEEP TRUNK VERSION + return type of v2 because rev557 */
 /* <summary>                             */
 /* Inverse 9-7 wavelet transform in 2-D. */
 /* </summary>                            */
-// V1 void dwt_decode_real(opj_tcd_tilecomp_t* restrict tilec, int numres){
+/* V1 void dwt_decode_real(opj_tcd_tilecomp_t* restrict tilec, int numres){ */
 opj_bool dwt_decode_real(opj_tcd_tilecomp_t* restrict tilec, int numres){
 	v4dwt_t h;
 	v4dwt_t v;

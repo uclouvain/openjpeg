@@ -1993,7 +1993,7 @@ opj_bool FUNCTION (	opj_tcd_v2_t *p_tcd,										\
 }																				\
 
 
-// V2 ENCODE MACRO_TCD_ALLOCATE(tcd_init_encode_tile,opj_tcd_cblk_enc_t,1.f,enc,tcd_code_block_enc_allocate)
+/* V2 ENCODE MACRO_TCD_ALLOCATE(tcd_init_encode_tile,opj_tcd_cblk_enc_t,1.f,enc,tcd_code_block_enc_allocate) */
 MACRO_TCD_ALLOCATE(tcd_init_decode_tile, opj_tcd_cblk_dec_v2_t, 0.5f, dec, tcd_code_block_dec_allocate)
 
 #undef MACRO_TCD_ALLOCATE
@@ -2068,51 +2068,51 @@ opj_bool tcd_decode_tile_v2(
 #endif
 
 	/*--------------TIER2------------------*/
-	// FIXME _ProfStart(PGROUP_T2);
+	/* FIXME _ProfStart(PGROUP_T2); */
 	l_data_read = 0;
 	if
 		(! tcd_t2_decode(p_tcd, p_src, &l_data_read, p_max_length, p_cstr_index))
 	{
 		return OPJ_FALSE;
 	}
-	// FIXME _ProfStop(PGROUP_T2);
+	/* FIXME _ProfStop(PGROUP_T2); */
 
 	/*------------------TIER1-----------------*/
 
-	// FIXME _ProfStart(PGROUP_T1);
+	/* FIXME _ProfStart(PGROUP_T1); */
 	if
 		(! tcd_t1_decode(p_tcd))
 	{
 		return OPJ_FALSE;
 	}
-	// FIXME _ProfStop(PGROUP_T1);
+	/* FIXME _ProfStop(PGROUP_T1); */
 
 	/*----------------DWT---------------------*/
 
-	// FIXME _ProfStart(PGROUP_DWT);
+	/* FIXME _ProfStart(PGROUP_DWT); */
 	if
 		(! tcd_dwt_decode(p_tcd))
 	{
 		return OPJ_FALSE;
 	}
-	// FIXME _ProfStop(PGROUP_DWT);
+	/* FIXME _ProfStop(PGROUP_DWT); */
 
 	/*----------------MCT-------------------*/
-	// FIXME _ProfStart(PGROUP_MCT);
+	/* FIXME _ProfStart(PGROUP_MCT); */
 	if
 		(! tcd_mct_decode(p_tcd))
 	{
 		return OPJ_FALSE;
 	}
-	// FIXME _ProfStop(PGROUP_MCT);
+	/* FIXME _ProfStop(PGROUP_MCT); */
 
-	// FIXME _ProfStart(PGROUP_DC_SHIFT);
+	/* FIXME _ProfStart(PGROUP_DC_SHIFT); */
 	if
 		(! tcd_dc_level_shift_decode(p_tcd))
 	{
 		return OPJ_FALSE;
 	}
-	// FIXME _ProfStop(PGROUP_DC_SHIFT);
+	/* FIXME _ProfStop(PGROUP_DC_SHIFT); */
 
 
 	/*---------------TILE-------------------*/
@@ -2258,7 +2258,7 @@ void tcd_free_tile(opj_tcd_v2_t *p_tcd)
 		l_tcd_code_block_deallocate = tcd_code_block_dec_deallocate;
 	}
 	else {
-		// FIXME l_tcd_code_block_deallocate = tcd_code_block_enc_deallocate;
+		/* FIXME l_tcd_code_block_deallocate = tcd_code_block_enc_deallocate; */
 	}
 
 	l_tile = p_tcd->tcd_image->tiles;
@@ -2341,8 +2341,8 @@ opj_bool tcd_code_block_dec_allocate (opj_tcd_cblk_dec_v2_t * p_code_block)
 		p_code_block->m_current_max_segs = J2K_DEFAULT_NB_SEGS;
 		/*fprintf(stderr, "m_current_max_segs of code_block->data = %d\n", p_code_block->m_current_max_segs);*/
 	}
-	// TODO
-	//p_code_block->numsegs = 0;
+	/* TODO */
+	/*p_code_block->numsegs = 0; */
 
 	return OPJ_TRUE;
 }
@@ -2478,15 +2478,15 @@ opj_bool tcd_mct_decode ( opj_tcd_v2_t *p_tcd )
 				++l_tile_comp;
 			}
 
-			if (! mct_decode_custom(// MCT data
+			if (! mct_decode_custom(/* MCT data */
 									(OPJ_BYTE*) l_tcp->m_mct_decoding_matrix,
-									// size of components
+									/* size of components */
 									l_samples,
-									// components
+									/* components */
 									l_data,
-									// nb of components (i.e. size of pData)
+									/* nb of components (i.e. size of pData) */
 									l_tile->numcomps,
-									// tells if the data is signed
+									/* tells if the data is signed */
 									p_tcd->image->comps->sgnd)) {
 				opj_free(l_data);
 				return OPJ_FALSE;

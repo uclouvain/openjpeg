@@ -929,8 +929,8 @@ opj_bool t2_decode_packets_v2(
 				opj_packet_info_t *info_PK = &info_TL->packet[p_cstr_info->packno];
 				if (!p_cstr_info->packno) {
 					info_PK->start_pos = info_TL->end_header + 1;
-				} else if (info_TL->packet[p_cstr_info->packno-1].end_pos >= (OPJ_INT32)p_cstr_info->tile[p_tile_no].tp[curtp].tp_end_pos){ // New tile part
-					info_TL->tp[curtp].tp_numpacks = p_cstr_info->packno - tp_start_packno; // Number of packets in previous tile-part
+				} else if (info_TL->packet[p_cstr_info->packno-1].end_pos >= (OPJ_INT32)p_cstr_info->tile[p_tile_no].tp[curtp].tp_end_pos){ /* New tile part */
+					info_TL->tp[curtp].tp_numpacks = p_cstr_info->packno - tp_start_packno; /* Number of packets in previous tile-part */
 					tp_start_packno = p_cstr_info->packno;
 					curtp++;
 					info_PK->start_pos = p_cstr_info->tile[p_tile_no].tp[curtp].tp_end_header+1;
@@ -938,7 +938,7 @@ opj_bool t2_decode_packets_v2(
 					info_PK->start_pos = (cp->m_specific_param.m_enc.m_tp_on && info_PK->start_pos) ? info_PK->start_pos : info_TL->packet[p_cstr_info->packno - 1].end_pos + 1;
 				}
 				info_PK->end_pos = info_PK->start_pos + l_nb_bytes_read - 1;
-				info_PK->end_ph_pos += info_PK->start_pos - 1;	// End of packet header which now only represents the distance
+				info_PK->end_ph_pos += info_PK->start_pos - 1;	/* End of packet header which now only represents the distance */
 				++p_cstr_info->packno;
 			}
 #endif
@@ -952,7 +952,7 @@ opj_bool t2_decode_packets_v2(
 #ifdef TODO_MSD
 	if
 		(p_cstr_info) {
-		p_cstr_info->tile[p_tile_no].tp[curtp].tp_numpacks = p_cstr_info->packno - tp_start_packno; // Number of packets in last tile-part
+		p_cstr_info->tile[p_tile_no].tp[curtp].tp_numpacks = p_cstr_info->packno - tp_start_packno; /* Number of packets in last tile-part */
 	}
 #endif
 	/* << INDEX */
@@ -1150,7 +1150,7 @@ static opj_bool t2_read_packet_header(
 
 	if (p_tcp->csty & J2K_CP_CSTY_SOP) {
 		if ((*l_current_data) != 0xff || (*(l_current_data + 1) != 0x91)) {
-			// TODO opj_event_msg(t2->cinfo->event_mgr, EVT_WARNING, "Expected SOP marker\n");
+			/* TODO opj_event_msg(t2->cinfo->event_mgr, EVT_WARNING, "Expected SOP marker\n"); */
 		} else {
 			l_current_data += 6;
 		}
@@ -1210,8 +1210,8 @@ static opj_bool t2_read_packet_header(
 		*l_header_data_start += l_header_length;
 
 		/* << INDEX */
-		// End of packet header position. Currently only represents the distance to start of packet
-		// Will be updated later by incrementing with packet start value
+		/* End of packet header position. Currently only represents the distance to start of packet
+		   Will be updated later by incrementing with packet start value */
 		if (p_pack_info) {
 			p_pack_info->end_ph_pos = (OPJ_INT32)(l_current_data - p_src_data);
 		}
@@ -1323,7 +1323,7 @@ static opj_bool t2_read_packet_header(
 	/* EPH markers */
 	if (p_tcp->csty & J2K_CP_CSTY_EPH) {
 		if ((*l_header_data) != 0xff || (*(l_header_data + 1) != 0x92)) {
-			// TODO opj_event_msg(t2->cinfo->event_mgr, EVT_ERROR, "Expected EPH marker\n");
+			/* TODO opj_event_msg(t2->cinfo->event_mgr, EVT_ERROR, "Expected EPH marker\n"); */
 		} else {
 			l_header_data += 2;
 		}
@@ -1334,8 +1334,8 @@ static opj_bool t2_read_packet_header(
 	*l_header_data_start += l_header_length;
 
 	/* << INDEX */
-	// End of packet header position. Currently only represents the distance to start of packet
-	// Will be updated later by incrementing with packet start value
+	/* End of packet header position. Currently only represents the distance to start of packet
+	 Will be updated later by incrementing with packet start value */
 	if (p_pack_info) {
 		p_pack_info->end_ph_pos = (OPJ_INT32)(l_current_data - p_src_data);
 	}

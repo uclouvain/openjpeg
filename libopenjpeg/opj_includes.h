@@ -178,7 +178,7 @@ static INLINE long lrintf(float f){
 #endif /* USE_JPWL */
 /* <<JPWL */
 
-// V2
+/* V2 */
 #include "function_list.h"
 
 #endif /* OPJ_INCLUDES_H */

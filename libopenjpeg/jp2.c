@@ -446,7 +446,7 @@ opj_bool jp2_read_boxhdr_v2(opj_jp2_box_t *box, OPJ_UINT32 * p_number_bytes_read
 	/* read header from file */
 	unsigned char l_data_header [8];
 
-	// preconditions
+	/* preconditions */
 	assert(cio != 00);
 	assert(box != 00);
 	assert(p_number_bytes_read != 00);
@@ -461,8 +461,8 @@ opj_bool jp2_read_boxhdr_v2(opj_jp2_box_t *box, OPJ_UINT32 * p_number_bytes_read
 	opj_read_bytes(l_data_header,&(box->length), 4);
 	opj_read_bytes(l_data_header+4,&(box->type), 4);
 
-	// do we have a "special very large box ?"
-	// read then the XLBox
+	/* do we have a "special very large box ?" */
+	/* read then the XLBox */
 	if (box->length == 1) {
 		OPJ_UINT32 l_xl_part_size;
 
@@ -556,7 +556,7 @@ opj_bool jp2_read_ihdr_v2(
 							opj_event_mgr_t * p_manager
 						  )
 {
-	// preconditions
+	/* preconditions */
 	assert(p_image_header_data != 00);
 	assert(jp2 != 00);
 	assert(p_manager != 00);
@@ -584,15 +584,15 @@ opj_bool jp2_read_ihdr_v2(
 	opj_read_bytes(p_image_header_data,&(jp2->bpc),1);			/* BPC */
 	++ p_image_header_data;
 
-	// if equal to 0 then need a BPC box (cf. chapter about image header box of the norm)
+	/* if equal to 0 then need a BPC box (cf. chapter about image header box of the norm) */
 	/*if (jp2->bpc == 0){
-			// indicate with a flag that we will wait a BPC box
+			 indicate with a flag that we will wait a BPC box 
 		}*/
 
 	opj_read_bytes(p_image_header_data,&(jp2->C),1);			/* C */
 	++ p_image_header_data;
 
-	// Should be equal to 7 cf. chapter about image header box of the norm
+	/* Should be equal to 7 cf. chapter about image header box of the norm */
 	if (jp2->C != 7){
 		opj_event_msg_v2(p_manager, EVT_INFO, "JP2 IHDR box: compression type indicate that the file is not a conforming JP2 file (%d) \n", jp2->C);
 	}
@@ -689,23 +689,23 @@ opj_bool jp2_read_bpcc_v2(	opj_jp2_v2_t *jp2,
 {
 	OPJ_UINT32 i;
 
-	// preconditions
+	/* preconditions */
 	assert(p_bpc_header_data != 00);
 	assert(jp2 != 00);
 	assert(p_manager != 00);
 
-	// TODO MSD
+	/* TODO MSD */
 	/*if (jp2->bpc != 0 ){
 		opj_event_msg_v2(p_manager, EVT_WARNING, "A BPCC header box is available although BPC is different to zero (%d)\n",jp2->bpc);
 	}*/
 
-	// and length is relevant
+	/* and length is relevant */
 	if (p_bpc_header_size != jp2->numcomps) {
 		opj_event_msg_v2(p_manager, EVT_ERROR, "Bad BPCC header box (bad size)\n");
 		return OPJ_FALSE;
 	}
 
-	// read info for each component
+	/* read info for each component */
 	for (i = 0; i < jp2->numcomps; ++i) {
 		opj_read_bytes(p_bpc_header_data,&jp2->comps[i].bpcc ,1);	/* read each BPCC component */
 		++p_bpc_header_data;
@@ -913,7 +913,7 @@ opj_bool jp2_read_pclr_v2(	opj_jp2_v2_t *jp2,
 	OPJ_UINT16 i, j;
 	OPJ_UINT32 l_value;
 
-	// preconditions
+	/* preconditions */
 	assert(p_pclr_header_data != 00);
 	assert(jp2 != 00);
 	assert(p_manager != 00);
@@ -953,7 +953,7 @@ opj_bool jp2_read_pclr_v2(	opj_jp2_v2_t *jp2,
 
 	for(j = 0; j < nr_entries; ++j) {
 		for(i = 0; i < nr_channels; ++i) {
-			//*entries++ = cio_read(cio, channel_size[i]>>3);
+			/**entries++ = cio_read(cio, channel_size[i]>>3); */
 			opj_read_bytes(p_pclr_header_data, &l_value , channel_size[i]>>3);	/* Cji */
 			p_pclr_header_data += channel_size[i]>>3;
 			*entries = (OPJ_UINT32) l_value;
@@ -1019,7 +1019,7 @@ static opj_bool jp2_read_cmap_v2(	opj_jp2_v2_t * jp2,
 	OPJ_BYTE i, nr_channels;
 	OPJ_UINT32 l_value;
 
-	// preconditions
+	/* preconditions */
 	assert(jp2 != 00);
 	assert(p_cmap_header_data != 00);
 	assert(p_manager != 00);
@@ -1149,7 +1149,7 @@ static opj_bool jp2_read_cdef_v2(	opj_jp2_v2_t * jp2,
 	unsigned short i;
 	OPJ_UINT32 l_value;
 
-	// preconditions
+	/* preconditions */
 	assert(jp2 != 00);
 	assert(p_cdef_header_data != 00);
 	assert(p_manager != 00);
@@ -1264,7 +1264,7 @@ static opj_bool jp2_read_colr_v2(	opj_jp2_v2_t * jp2,
 {
 	OPJ_UINT32 l_value;
 
-	// preconditions
+	/* preconditions */
 	assert(jp2 != 00);
 	assert(p_colr_header_data != 00);
 	assert(p_manager != 00);
@@ -1301,7 +1301,7 @@ static opj_bool jp2_read_colr_v2(	opj_jp2_v2_t * jp2,
 		opj_read_bytes(p_colr_header_data,&jp2->enumcs ,4);			/* EnumCS */
 	}
 	else if (jp2->meth == 2) {
-		// ICC profile
+		/* ICC profile */
 		int it_icc_value = 0;
 		int icc_len = p_colr_header_size - 3;
 
@@ -1318,7 +1318,7 @@ static opj_bool jp2_read_colr_v2(	opj_jp2_v2_t * jp2,
 		}
 
 	}
-	else // TODO MSD
+	else /* TODO MSD */
 		opj_event_msg_v2(p_manager, EVT_INFO, "COLR BOX meth value is not a regular value (%d), so we will skip the fields following the approx field.\n", jp2->meth);
 
 	jp2->color.jp2_has_colr = 1;
@@ -1964,7 +1964,7 @@ opj_bool opj_jp2_encode(opj_jp2_t *jp2, opj_cio_t *cio, opj_image_t *image, opj_
  */
 opj_bool jp2_end_decompress(opj_jp2_v2_t *jp2, opj_stream_private_t *cio, opj_event_mgr_t * p_manager)
 {
-	// preconditions
+	/* preconditions */
 	assert(jp2 != 00);
 	assert(cio != 00);
 	assert(p_manager != 00);
@@ -1986,7 +1986,7 @@ opj_bool jp2_end_decompress(opj_jp2_v2_t *jp2, opj_stream_private_t *cio, opj_ev
  */
 void jp2_setup_end_header_reading (opj_jp2_v2_t *jp2)
 {
-	// preconditions
+	/* preconditions */
 	assert(jp2 != 00);
 	opj_procedure_list_add_procedure(jp2->m_procedure_list,(void*)jp2_read_header_procedure );
 	/* DEVELOPER CORNER, add your custom procedures */
@@ -2014,7 +2014,7 @@ opj_bool jp2_read_header_procedure(
 	OPJ_UINT32 l_current_data_size;
 	unsigned char * l_current_data = 00;
 
-	// preconditions
+	/* preconditions */
 	assert(cio != 00);
 	assert(jp2 != 00);
 	assert(p_manager != 00);
@@ -2028,7 +2028,7 @@ opj_bool jp2_read_header_procedure(
 	memset(l_current_data, 0 , l_last_data_size);
 
 	while (jp2_read_boxhdr_v2(&box,&l_nb_bytes_read,cio,p_manager)) {
-		// is it the codestream box ?
+		/* is it the codestream box ? */
 		if (box.type == JP2_JP2C) {
 			if (jp2->jp2_state & JP2_STATE_HEADER) {
 				jp2->jp2_state |= JP2_STATE_CODESTREAM;
@@ -2107,7 +2107,7 @@ opj_bool jp2_exec (
 	opj_bool l_result = OPJ_TRUE;
 	OPJ_UINT32 l_nb_proc, i;
 
-	// preconditions
+	/* preconditions */
 	assert(p_procedure_list != 00);
 	assert(jp2 != 00);
 	assert(cio != 00);
@@ -2121,7 +2121,7 @@ opj_bool jp2_exec (
 		++l_procedure;
 	}
 
-	// and clear the procedure list at the end.
+	/* and clear the procedure list at the end. */
 	opj_procedure_list_clear(p_procedure_list);
 	return l_result;
 }
@@ -2188,7 +2188,7 @@ opj_bool jp2_read_jp_v2(
 {
 	unsigned int l_magic_number;
 
-	// preconditions
+	/* preconditions */
 	assert(p_header_data != 00);
 	assert(jp2 != 00);
 	assert(p_manager != 00);
@@ -2204,7 +2204,7 @@ opj_bool jp2_read_jp_v2(
 		return OPJ_FALSE;
 	}
 
-	// rearrange data
+	/* rearrange data */
 	opj_read_bytes(p_header_data,&l_magic_number,4);
 	if (l_magic_number != 0x0d0a870a ) {
 		opj_event_msg_v2(p_manager, EVT_ERROR, "Error with JP Signature : bad magic number\n");
@@ -2236,7 +2236,7 @@ opj_bool jp2_read_ftyp_v2(
 {
 	OPJ_UINT32 i, l_remaining_bytes;
 
-	// preconditions
+	/* preconditions */
 	assert(p_header_data != 00);
 	assert(jp2 != 00);
 	assert(p_manager != 00);
@@ -2310,7 +2310,7 @@ opj_bool jp2_read_jp2h_v2(
 	opj_jp2_box_t box;
 	const opj_jp2_header_handler_t * l_current_handler;
 
-	// preconditions
+	/* preconditions */
 	assert(p_header_data != 00);
 	assert(jp2 != 00);
 	assert(p_manager != 00);
@@ -2378,7 +2378,7 @@ static opj_bool jp2_read_boxhdr_char(
 {
 	OPJ_UINT32 l_value;
 
-	// preconditions
+	/* preconditions */
 	assert(p_data != 00);
 	assert(box != 00);
 	assert(p_number_bytes_read != 00);
@@ -2400,8 +2400,8 @@ static opj_bool jp2_read_boxhdr_char(
 
 	*p_number_bytes_read = 8;
 
-	// do we have a "special very large box ?"
-	// read then the XLBox
+	/* do we have a "special very large box ?" */
+	/* read then the XLBox */
 	if (box->length == 1) {
 		unsigned int l_xl_part_size;
 
@@ -2485,7 +2485,7 @@ opj_bool jp2_read_header(	struct opj_stream_private *p_stream,
  */
 void jp2_setup_decoding_validation (opj_jp2_v2_t *jp2)
 {
-	// preconditions
+	/* preconditions */
 	assert(jp2 != 00);
 	/* DEVELOPER CORNER, add your custom validation procedure */
 }
@@ -2496,7 +2496,7 @@ void jp2_setup_decoding_validation (opj_jp2_v2_t *jp2)
  */
 void jp2_setup_header_reading (opj_jp2_v2_t *jp2)
 {
-	// preconditions
+	/* preconditions */
 	assert(jp2 != 00);
 
 	opj_procedure_list_add_procedure(jp2->m_procedure_list,(void*)jp2_read_header_procedure );
@@ -2733,14 +2733,14 @@ opj_jp2_v2_t* jp2_create(opj_bool p_is_decoder)
 		jp2->color.jp2_pclr = NULL;
 		jp2->color.jp2_has_colr = 0;
 
-		// validation list creation
+		/* validation list creation */
 		jp2->m_validation_list = opj_procedure_list_create();
 		if (! jp2->m_validation_list) {
 			jp2_destroy(jp2);
 			return 00;
 		}
 
-		// execution list creation
+		/* execution list creation */
 		jp2->m_procedure_list = opj_procedure_list_create();
 		if (! jp2->m_procedure_list) {
 			jp2_destroy(jp2);

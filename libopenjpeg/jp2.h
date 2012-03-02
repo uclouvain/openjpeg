@@ -49,17 +49,17 @@
 #define 	JP2_PCLR 0x70636c72		/**< Palette box */
 #define 	JP2_CMAP 0x636d6170		/**< Component Mapping box */
 #define 	JP2_CDEF 0x63646566		/**< Channel Definition box */
-// For the future MSD
-// #define JP2_RES 0x72657320	/**< Resolution box (super-box) */
+/* For the future MSD */
+/* #define JP2_RES 0x72657320 */	/**< Resolution box (super-box) */
 
 #define JP2_JP2C 0x6a703263		/**< Contiguous codestream box */
 
-// For the future MSD
-// #define JP2_JP2I 0x6a703269	/**< Intellectual property box */
-// #define JP2_XML 0x786d6c20	/**< XML box */
-// #define JP2_UUID 0x75756994	/**< UUID box */
-// #define JP2_UINF 0x75696e66	/**< UUID info box (super-box) */
-// #define		JP2_ULST 0x756c7374	/**< UUID list box */
+/* For the future MSD */
+/* #define JP2_JP2I 0x6a703269 */	/**< Intellectual property box */
+/* #define JP2_XML  0x786d6c20 */	/**< XML box */
+/* #define JP2_UUID 0x75756994 */	/**< UUID box */
+/* #define JP2_UINF 0x75696e66 */	/**< UUID info box (super-box) */
+/* #define JP2_ULST 0x756c7374 */	/**< UUID list box */
 #define 	JP2_URL  0x75726c20		/**< Data entry URL box */
 
 #define JP2_DTBL 0x6474626c		/**< Data Reference box */

@@ -44,15 +44,15 @@ each other. The functions in TCD.C are used by other functions in J2K.C.
 /**
 FIXME: documentation
 */
-//typedef struct opj_tcd_seg {
-//  unsigned char** data;
-//  int dataindex;
-//  int numpasses;
-//  int len;
-//  int maxpasses;
-//  int numnewpasses;
-//  int newlen;
-//} opj_tcd_seg_t;
+/*typedef struct opj_tcd_seg { */
+/*  unsigned char** data; */
+/*  int dataindex; */
+/*  int numpasses; */
+/*  int len; */
+/*  int maxpasses; */
+/*  int numnewpasses; */
+/*  int newlen; */
+/*} opj_tcd_seg_t; */
 
 /**
 FIXME: documentation

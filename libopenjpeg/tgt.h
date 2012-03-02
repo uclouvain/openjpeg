@@ -53,16 +53,6 @@ typedef struct opj_tgt_node {
   OPJ_UINT32 known;
 } opj_tgt_node_t;
 
-///** OPJ_V1
-//Tag tree
-//*/
-//typedef struct opj_tgt_tree {
-//  int numleafsh;
-//  int numleafsv;
-//  int numnodes;
-//  opj_tgt_node_t *nodes;
-//} opj_tgt_tree_t;
-
 /**
 Tag tree
 */

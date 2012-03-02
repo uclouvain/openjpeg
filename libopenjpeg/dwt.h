@@ -94,7 +94,7 @@ Apply an irreversible inverse DWT transform to a component of an image.
 @param tilec Tile component information (current tile)
 @param numres Number of resolution levels to decode
 */
-// V1 void dwt_decode_real(opj_tcd_tilecomp_t* tilec, int numres);
+/* V1 void dwt_decode_real(opj_tcd_tilecomp_t* tilec, int numres); */
 opj_bool dwt_decode_real(opj_tcd_tilecomp_t* tilec, int numres);
 
 opj_bool dwt_decode_real_v2(opj_tcd_tilecomp_v2_t* restrict tilec, OPJ_UINT32 numres);

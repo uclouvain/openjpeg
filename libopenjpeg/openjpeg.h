@@ -208,7 +208,7 @@ typedef enum CODEC_FORMAT {
 	CODEC_UNKNOWN = -1,	/**< place-holder */
 	CODEC_J2K  = 0,		/**< JPEG-2000 codestream : read/write */
 	CODEC_JPT  = 1,		/**< JPT-stream (JPEG 2000, JPIP) : read only */
-	CODEC_JP2  = 2,		/**< JPEG-2000 file format : read/write */
+	CODEC_JP2  = 2 		/**< JPEG-2000 file format : read/write */
 } OPJ_CODEC_FORMAT;
 
 /** 
