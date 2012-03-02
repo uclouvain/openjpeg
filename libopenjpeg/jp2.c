@@ -1374,7 +1374,7 @@ opj_bool jp2_read_jp2h(opj_jp2_t *jp2, opj_cio_t *cio, opj_jp2_color_t *color)
     jp2_read_boxhdr(cinfo, cio, &box);
     continue;
   }
-    if(box.type == JP2_CDEF)
+    if(box.type == JP2_CDEF && !jp2->ignore_pclr_cmap_cdef)
   {
     if( !jp2_read_cdef(jp2, cio, &box, color))
  {
@@ -1384,7 +1384,7 @@ opj_bool jp2_read_jp2h(opj_jp2_t *jp2, opj_cio_t *cio, opj_jp2_color_t *color)
     jp2_read_boxhdr(cinfo, cio, &box);
     continue;
   }
-    if(box.type == JP2_PCLR)
+    if(box.type == JP2_PCLR && !jp2->ignore_pclr_cmap_cdef)
   {
     if( !jp2_read_pclr(jp2, cio, &box, color))
  {
@@ -1394,7 +1394,7 @@ opj_bool jp2_read_jp2h(opj_jp2_t *jp2, opj_cio_t *cio, opj_jp2_color_t *color)
     jp2_read_boxhdr(cinfo, cio, &box);
     continue;
   }
-    if(box.type == JP2_CMAP)
+    if(box.type == JP2_CMAP && !jp2->ignore_pclr_cmap_cdef)
   {
     if( !jp2_read_cmap(jp2, cio, &box, color))
  {
@@ -1448,8 +1448,10 @@ opj_image_t* opj_jp2_decode(opj_jp2_t *jp2, opj_cio_t *cio,
 	opj_event_msg(cinfo, EVT_ERROR, "Failed to decode J2K image\n");
 	return NULL;
    }
+   
+    if (!jp2->ignore_pclr_cmap_cdef){
 
-/* Set Image Color Space */
+    /* Set Image Color Space */
 	if (jp2->enumcs == 16)
 		image->color_space = CLRSPC_SRGB;
 	else if (jp2->enumcs == 17)
@@ -1477,6 +1479,8 @@ opj_image_t* opj_jp2_decode(opj_jp2_t *jp2, opj_cio_t *cio,
 	color.icc_profile_buf = NULL;
 	image->icc_profile_len = color.icc_profile_len;
    }
+   }
+   
 	return image;
 
 }/* opj_jp2_decode() */
@@ -1796,6 +1800,7 @@ void jp2_setup_decoder(opj_jp2_t *jp2, opj_dparameters_t *parameters) {
 	/* setup the J2K codec */
 	j2k_setup_decoder(jp2->j2k, parameters);
 	/* further JP2 initializations go here */
+	jp2->ignore_pclr_cmap_cdef = parameters->flags & OPJ_DPARAMETERS_IGNORE_PCLR_CMAP_CDEF_FLAG;
 }
 
 void jp2_setup_decoder_v2(opj_jp2_v2_t *jp2, opj_dparameters_t *parameters)

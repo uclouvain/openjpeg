@@ -175,6 +175,7 @@ typedef struct opj_jp2 {
 	unsigned int j2k_codestream_offset;
 	unsigned int j2k_codestream_length;
 	opj_bool jpip_on;
+	opj_bool ignore_pclr_cmap_cdef;
 } opj_jp2_t;
 
 /**
