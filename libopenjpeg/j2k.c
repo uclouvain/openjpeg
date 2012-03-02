@@ -5765,10 +5765,9 @@ opj_bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, opj_code
 	return OPJ_TRUE;
 }
 
-static void j2k_add_mhmarker(opj_codestream_info_t *cstr_info, unsigned short int type, int pos, int len) {
-
-	if (!cstr_info)
-		return;
+static void j2k_add_mhmarker(opj_codestream_info_t *cstr_info, unsigned short int type, int pos, int len)
+{
+	assert(cstr_info != 00);
 
 	/* expand the list? */
 	if ((cstr_info->marknum + 1) > cstr_info->maxmarknum) {
@@ -5784,10 +5783,9 @@ static void j2k_add_mhmarker(opj_codestream_info_t *cstr_info, unsigned short in
 
 }
 
-static void j2k_add_mhmarker_v2(opj_codestream_index_t *cstr_index, OPJ_UINT32 type, OPJ_OFF_T pos, OPJ_UINT32 len) {
-
-	if (!cstr_index)
-		return;
+static void j2k_add_mhmarker_v2(opj_codestream_index_t *cstr_index, OPJ_UINT32 type, OPJ_OFF_T pos, OPJ_UINT32 len)
+{
+	assert(cstr_index != 00);
 
 	/* expand the list? */
 	if ((cstr_index->marknum + 1) > cstr_index->maxmarknum) {
@@ -5803,13 +5801,11 @@ static void j2k_add_mhmarker_v2(opj_codestream_index_t *cstr_index, OPJ_UINT32 t
 
 }
 
-static void j2k_add_tlmarker( int tileno, opj_codestream_info_t *cstr_info, unsigned short int type, int pos, int len) {
+static void j2k_add_tlmarker( int tileno, opj_codestream_info_t *cstr_info, unsigned short int type, int pos, int len)
+{
+	opj_marker_info_t *marker;
 
-
-  opj_marker_info_t *marker;
-
-	if (!cstr_info)
-		return;
+	assert(cstr_info != 00);
 
 	/* expand the list? */
 	if ((cstr_info->tile[tileno].marknum + 1) > cstr_info->tile[tileno].maxmarknum) {
@@ -5828,11 +5824,8 @@ static void j2k_add_tlmarker( int tileno, opj_codestream_info_t *cstr_info, unsi
 
 static void j2k_add_tlmarker_v2(OPJ_UINT32 tileno, opj_codestream_index_t *cstr_index, OPJ_UINT32 type, OPJ_OFF_T pos, OPJ_UINT32 len)
 {
-
-	if (!cstr_index)
-		return;
-
-	if (!cstr_index->tile_index)
+	assert(cstr_index != 00);
+	assert(cstr_index->tile_index != 00);
 
 	/* expand the list? */
 	if ((cstr_index->tile_index[tileno].marknum + 1) > cstr_index->tile_index[tileno].maxmarknum) {
@@ -5855,10 +5848,7 @@ static void j2k_add_tlmarker_v2(OPJ_UINT32 tileno, opj_codestream_index_t *cstr_
 			cstr_index->tile_index[tileno].tp_index[l_current_tile_part].start_pos = pos;
 
 	}
-
 }
-
-
 
 
 /*
