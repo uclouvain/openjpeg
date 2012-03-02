@@ -65,7 +65,7 @@ void reset_options_reading(void) {
 int opj_getopt(int nargc, char *const *nargv, const char *ostr) {
 #  define __progname nargv[0]
   static char *place = EMSG;	/* option letter processing */
-  char *oli;			/* option letter list index */
+  char *oli = NULL;			/* option letter list index */
 
   if (opj_optreset || !*place) {	/* update scanning pointer */
     opj_optreset = 0;
@@ -197,7 +197,7 @@ again:
 						return o->val;
 					return 0;
 				}
-			}//(end for)String not found in the list
+			}/*(end for)String not found in the list*/
 			fprintf(stderr,"Invalid option %s\n",arg);
 			++opj_optind;
 			return (BADCH);
@@ -244,11 +244,11 @@ found:
 				fprintf(stderr,"Invalid option %s\n",arg);
 				++opj_optind;
 				return (BADCH);
-			}//end of not found
+			}/*end of not found*/
 		
-		}// end of single character
-	}//end '-'
+		}/* end of single character*/
+	}/*end '-'*/
 	fprintf(stderr,"Invalid option\n");
 	++opj_optind;
 	return (BADCH);;
-}//end function
+}/*end function*/
