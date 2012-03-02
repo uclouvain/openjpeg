@@ -3627,6 +3627,14 @@ opj_bool j2k_read_sot_v2 (
 	opj_read_bytes(p_header_data,&l_tot_len,4);		/* Psot */
 	p_header_data+=4;
 
+	/* PSot should be equal to zero or >=14 or <= 2^32-1 */
+	if ((l_tot_len !=0 ) && (l_tot_len < 14) )
+	{
+		opj_event_msg_v2(p_manager, EVT_ERROR, "Psot value (%d) is not correct regards to the JPEG2000 norm!\n", l_tot_len);
+		return OPJ_FALSE;
+	}
+
+
 #ifdef USE_JPWL
 	if (l_cp->correct) {
 
