@@ -32,6 +32,9 @@
 #include <string.h>
 #include <stdio.h>
 #include "channel_manager.h"
+#ifdef _WIN32
+#define snprintf _snprintf /* Visual Studio */
+#endif
 
 #ifdef SERVER
 #include "fcgi_stdio.h"
