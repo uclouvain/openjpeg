@@ -66,7 +66,7 @@ typedef struct placeholderlist_param{
  *
  * @return pointer to the generated placeholder list
  */
-placeholderlist_param_t * gene_placeholderlist();
+placeholderlist_param_t * gene_placeholderlist(void);
 
 
 /**

@@ -43,7 +43,7 @@
 #define FCGI_stdout stdout
 #define FCGI_stderr stderr
 #define logstream stderr
-#endif //SERVER
+#endif /*SERVER*/
 
 
 bool identify_target( query_param_t query_param, targetlist_param_t *targetlist, target_param_t **target)
@@ -132,35 +132,35 @@ bool close_channel( query_param_t query_param,
 #ifndef SERVER
     fprintf( logstream, "local log: close all\n");
 #endif
-    // all channels associatd with the session will be closed
+    /* all channels associatd with the session will be closed */
     if( !delete_session( cursession, sessionlist))
       return false;
   }
   else{
-    // check if all entry belonging to the same session
+    /* check if all entry belonging to the same session */
     
     for( i=0, cclose=query_param.cclose; i<query_param.numOfcclose; i++, cclose += (strlen(cclose)+1)){
       
-      // In case of the first entry of close cid
+      /* In case of the first entry of close cid */
       if( *cursession == NULL){
 	if( !search_session_and_channel( cclose, sessionlist, cursession, curchannel))
 	  return false;
       }
-      else // second or more entry of close cid
+      else /* second or more entry of close cid */
 	if( !(*curchannel=search_channel( cclose, (*cursession)->channellist))){
 	  fprintf( FCGI_stdout, "Reason: Cclose id %s is from another session\r\n", cclose); 
 	  return false;
 	}
     }
 
-    // delete channels
+    /* delete channels */
     for( i=0, cclose=query_param.cclose; i<query_param.numOfcclose; i++, cclose += (strlen(cclose)+1)){
       *curchannel = search_channel( cclose, (*cursession)->channellist);
       delete_channel( curchannel, (*cursession)->channellist);
     }
     
     if( (*cursession)->channellist->first == NULL || (*cursession)->channellist->last == NULL)
-      // In case of empty session
+      /* In case of empty session */
       delete_session( cursession, sessionlist);
   }
   return true;
@@ -195,14 +195,14 @@ bool gene_JPIPstream( query_param_t query_param,
   index_param_t *codeidx;
   cachemodel_param_t *cachemodel;
   
-  if( !cursession || !curchannel){ // stateless
+  if( !cursession || !curchannel){ /* stateless */
     if( !target)
       return false;
     if( !(cachemodel = gene_cachemodel( NULL, target, query_param.return_type==JPPstream)))
       return false;
     *msgqueue = gene_msgqueue( true, cachemodel);
   }
-  else{ // session
+  else{ /* session */
     cachemodel  = curchannel->cachemodel;
     target = cachemodel->target;
     *msgqueue = gene_msgqueue( false, cachemodel);
@@ -222,7 +222,7 @@ bool gene_JPIPstream( query_param_t query_param,
     }
   }
 
-  //meta
+  /*meta*/
   if( query_param.box_type[0][0] != 0  && query_param.len != 0)
     if( !enqueue_metabins( query_param, codeidx->metadatalist, *msgqueue))
       return false;
@@ -230,11 +230,11 @@ bool gene_JPIPstream( query_param_t query_param,
   if( query_param.metadata_only)
     return true;
 
-  // main header
+  /* main header */
   if( !cachemodel->mhead_model && query_param.len != 0)
       enqueue_mainheader( *msgqueue);
 
-  // image codestream
+  /* image codestream */
   if( (query_param.fx > 0 && query_param.fy > 0))
     enqueue_imagedata( query_param, *msgqueue);
   
@@ -277,13 +277,13 @@ void enqueue_imagedata( query_param_t query_param, msgqueue_param_t *msgqueue)
   index_param_t *codeidx;
   imgreg_param_t imgreg;
   range_param_t tile_Xrange, tile_Yrange;
-  int u, v, tile_id;
+  Byte4_t u, v, tile_id;
   int xmin, xmax, ymin, ymax;
   int numOfreslev;
 
   codeidx = msgqueue->cachemodel->target->codeidx;
 
-  if( !(msgqueue->cachemodel->jppstream)  &&  get_nmax( codeidx->tilepart) == 1) // normally not the case
+  if( !(msgqueue->cachemodel->jppstream)  &&  get_nmax( codeidx->tilepart) == 1) /* normally not the case */
     numOfreslev = 1;
   else
     numOfreslev = codeidx->COD.numOfdecomp+1;
@@ -303,20 +303,20 @@ void enqueue_imagedata( query_param_t query_param, msgqueue_param_t *msgqueue)
       tile_Xrange = get_tile_Xrange( codeidx->SIZ, tile_id, imgreg.level);
 	
       if( tile_Xrange.minvalue < tile_Xrange.maxvalue && tile_Yrange.minvalue < tile_Yrange.maxvalue){
-	if( tile_Xrange.maxvalue <= imgreg.xosiz + imgreg.ox || 
-	    tile_Xrange.minvalue >= imgreg.xosiz + imgreg.ox + imgreg.sx ||
-	    tile_Yrange.maxvalue <= imgreg.yosiz + imgreg.oy || 
-	    tile_Yrange.minvalue >= imgreg.yosiz + imgreg.oy + imgreg.sy) {
-	  //printf("Tile completely excluded from view-window %d\n", tile_id);
-	  // Tile completely excluded from view-window
+	if( tile_Xrange.maxvalue <= (Byte4_t)(imgreg.xosiz + imgreg.ox) || 
+	    tile_Xrange.minvalue >= (Byte4_t)(imgreg.xosiz + imgreg.ox + imgreg.sx) ||
+	    tile_Yrange.maxvalue <= (Byte4_t)(imgreg.yosiz + imgreg.oy) || 
+	    tile_Yrange.minvalue >= (Byte4_t)(imgreg.yosiz + imgreg.oy + imgreg.sy)) {
+	  /*printf("Tile completely excluded from view-window %d\n", tile_id);*/
+	  /* Tile completely excluded from view-window */
 	}
-	else if( tile_Xrange.minvalue >= imgreg.xosiz + imgreg.ox && 
-		 tile_Xrange.maxvalue <= imgreg.xosiz + imgreg.ox + imgreg.sx && 
-		 tile_Yrange.minvalue >= imgreg.yosiz + imgreg.oy && 
-		 tile_Yrange.maxvalue <= imgreg.yosiz + imgreg.oy + imgreg.sy) {
-	  // Tile completely contained within view-window
-	  // high priority
-	  //printf("Tile completely contained within view-window %d\n", tile_id);
+	else if( tile_Xrange.minvalue >= (Byte4_t)(imgreg.xosiz + imgreg.ox) && 
+		       tile_Xrange.maxvalue <= (Byte4_t)(imgreg.xosiz + imgreg.ox + imgreg.sx) && 
+		       tile_Yrange.minvalue >= (Byte4_t)(imgreg.yosiz + imgreg.oy) && 
+		       tile_Yrange.maxvalue <= (Byte4_t)(imgreg.yosiz + imgreg.oy + imgreg.sy)) {
+	  /* Tile completely contained within view-window */
+	  /* high priority */
+	  /*printf("Tile completely contained within view-window %d\n", tile_id);*/
 	  if( msgqueue->cachemodel->jppstream){
 	    enqueue_tileheader( tile_id, msgqueue);
 	    enqueue_allprecincts( tile_id, imgreg.level, query_param.lastcomp, query_param.comps, query_param.layers, msgqueue);
@@ -325,16 +325,17 @@ void enqueue_imagedata( query_param_t query_param, msgqueue_param_t *msgqueue)
 	    enqueue_tile( tile_id, imgreg.level, msgqueue);
 	}
 	else{
-	  // Tile partially overlaps view-window
-	  // low priority
-	  //printf("Tile partially overlaps view-window %d\n", tile_id);
+	  /* Tile partially overlaps view-window */
+	  /* low priority */
+	  /*printf("Tile partially overlaps view-window %d\n", tile_id);*/
 	  if( msgqueue->cachemodel->jppstream){
 	    enqueue_tileheader( tile_id, msgqueue);
 
-	    xmin = tile_Xrange.minvalue >= imgreg.xosiz + imgreg.ox ? 0 : imgreg.xosiz + imgreg.ox - tile_Xrange.minvalue;
-	    xmax = tile_Xrange.maxvalue <= imgreg.xosiz + imgreg.ox + imgreg.sx ? tile_Xrange.maxvalue - tile_Xrange.minvalue -1 : imgreg.xosiz + imgreg.ox + imgreg.sx - tile_Xrange.minvalue -1;
-	    ymin = tile_Yrange.minvalue >= imgreg.yosiz + imgreg.oy ? 0 : imgreg.yosiz + imgreg.oy - tile_Yrange.minvalue;
-	    ymax = tile_Yrange.maxvalue <= imgreg.yosiz + imgreg.oy + imgreg.sy ? tile_Yrange.maxvalue - tile_Yrange.minvalue -1 : imgreg.yosiz + imgreg.oy + imgreg.sy - tile_Yrange.minvalue -1;
+      /* FIXME: The following code is suspicious it implicitely cast an unsigned int to int, which truncates values */
+	    xmin = tile_Xrange.minvalue >= (Byte4_t)(imgreg.xosiz + imgreg.ox) ? 0 : imgreg.xosiz + imgreg.ox - tile_Xrange.minvalue;
+	    xmax = tile_Xrange.maxvalue <= (Byte4_t)(imgreg.xosiz + imgreg.ox + imgreg.sx) ? tile_Xrange.maxvalue - tile_Xrange.minvalue -1 : imgreg.xosiz + imgreg.ox + imgreg.sx - tile_Xrange.minvalue -1;
+	    ymin = tile_Yrange.minvalue >= (Byte4_t)(imgreg.yosiz + imgreg.oy) ? 0 : imgreg.yosiz + imgreg.oy - tile_Yrange.minvalue;
+	    ymax = tile_Yrange.maxvalue <= (Byte4_t)(imgreg.yosiz + imgreg.oy + imgreg.sy) ? tile_Yrange.maxvalue - tile_Yrange.minvalue -1 : imgreg.yosiz + imgreg.oy + imgreg.sy - tile_Yrange.minvalue -1;
 	    enqueue_precincts( xmin, xmax, ymin, ymax, tile_id, imgreg.level, query_param.lastcomp, query_param.comps, query_param.layers, msgqueue);
 	  }
 	  else
@@ -346,6 +347,7 @@ void enqueue_imagedata( query_param_t query_param, msgqueue_param_t *msgqueue)
 }
 
 
+/* MM: shouldnt xmin/xmax be Byte4_t instead ? */
 void enqueue_precincts( int xmin, int xmax, int ymin, int ymax, int tile_id, int level, int lastcomp, bool *comps, int layers, msgqueue_param_t *msgqueue)
 {
   index_param_t *codeidx;
@@ -381,16 +383,16 @@ void enqueue_precincts( int xmin, int xmax, int ymin, int ymax, int tile_id, int
 	      xmaxP = XTsiz-1;
 	    
 	    if( xmaxP < xmin || xminP > xmax || ymaxP < ymin || yminP > ymax){
-	      // Precinct completely excluded from view-window
+	      /* Precinct completely excluded from view-window */
 	    }
 	    else if( xminP >= xmin && xmaxP <= xmax && yminP >= ymin && ymaxP <= ymax){
-	      // Precinct completely contained within view-window
-	      // high priority
+	      /* Precinct completely contained within view-window
+	       high priority */
 	      enqueue_precinct( seq_id, tile_id, c, (dec_lev>level)?-1:layers, msgqueue);
 	    }
 	    else{
-	      // Precinct partially overlaps view-window
-	      // low priority
+	      /* Precinct partially overlaps view-window
+	       low priority */
 	      enqueue_precinct( seq_id, tile_id, c, (dec_lev>level)?-1:layers, msgqueue);
 	    }
 	  }

@@ -41,11 +41,11 @@
 #define FCGI_stdout stdout
 #define FCGI_stderr stderr
 #define logstream stderr
-#endif //SERVER
+#endif /*SERVER*/
 
 
 
-placeholderlist_param_t * gene_placeholderlist()
+placeholderlist_param_t * gene_placeholderlist(void)
 {
   placeholderlist_param_t *list;
 
@@ -81,7 +81,7 @@ placeholder_param_t * gene_placeholder( box_param_t *box, int origID)
   placeholder = (placeholder_param_t *)malloc( sizeof(placeholder_param_t));
   
   strncpy( placeholder->TBox, "phld", 4);
-  placeholder->Flags = 1; // only the access to the original contents of this box, for now
+  placeholder->Flags = 1; /* only the access to the original contents of this box, for now */
   placeholder->OrigID = origID;
   placeholder->OrigBH = fetch_headbytes( box);
   placeholder->OrigBHlen = box->headlen;

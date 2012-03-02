@@ -67,7 +67,7 @@ typedef struct targetlist_param{
  *
  * @return pointer to the generated target list
  */
-targetlist_param_t * gene_targetlist();
+targetlist_param_t * gene_targetlist(void);
 
 
 /**

@@ -60,7 +60,7 @@ typedef struct metadatalist_param{
  *
  * @return pointer to the generated metadata list
  */
-metadatalist_param_t * gene_metadatalist();
+metadatalist_param_t * gene_metadatalist(void);
 
 
 /**

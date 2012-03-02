@@ -38,7 +38,7 @@ typedef unsigned char Byte_t;
 typedef unsigned short int Byte2_t;
 
 /** 4Byte parameter type*/
-typedef unsigned int Byte4_t;
+typedef unsigned int Byte4_t; /* FIXME: Is this portable ? */
 
 /** 8Byte parameter type*/
 typedef unsigned long long int Byte8_t;

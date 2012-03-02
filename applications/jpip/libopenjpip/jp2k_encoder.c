@@ -45,7 +45,7 @@
 #define FCGI_stdout stdout
 #define FCGI_stderr stderr
 #define logstream stderr
-#endif //SERVER
+#endif /*SERVER*/
 
 
 /**
@@ -105,11 +105,11 @@ Byte_t * recons_jp2( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte8_t csn
     if( ptr->phld){
       if( strncmp( (char *)ptr->phld->OrigBH+4, "jp2c", 4) == 0){
 	jp2cDBoxOffset = *jp2len + ptr->phld->OrigBHlen;
-	jp2stream = add_emptyboxstream( ptr->phld, jp2stream, jp2len); // header only
+	jp2stream = add_emptyboxstream( ptr->phld, jp2stream, jp2len); /* header only */
 	jp2cDBoxlen = *jp2len - jp2cDBoxOffset;
       }
       else
-	jp2stream = add_emptyboxstream( ptr->phld, jp2stream, jp2len); // header only
+	jp2stream = add_emptyboxstream( ptr->phld, jp2stream, jp2len); /* header only */
     }
     jp2stream = add_msgstream( ptr, jpipstream, jp2stream, jp2len);
     ptr = ptr->next;
@@ -203,7 +203,7 @@ Byte_t * recons_codestream_from_JPTstream( msgqueue_param_t *msgqueue, Byte_t *j
     }
     ptr = msgqueue->first;
     while(( ptr = search_message( EXT_TILE_MSG, tileID, csn, ptr))!=NULL){
-      if( ptr->aux > mindeclev){
+      if( ptr->aux > mindeclev){ /* FIXME: pointer comparison ? */
 	if( ptr->bin_offset == binOffset){
 	  found = true;
 	  j2kstream = add_msgstream( ptr, jpipstream, j2kstream, j2klen);
@@ -625,7 +625,7 @@ Byte8_t get_last_tileID( msgqueue_param_t *msgqueue, Byte8_t csn, bool isJPPstre
 message_param_t * search_message( Byte8_t class_id, Byte8_t in_class_id, Byte8_t csn, message_param_t *msg)
 {
   while( msg != NULL){
-    if( in_class_id == -1){
+    if( in_class_id == (Byte8_t)-1){
       if( msg->class_id == class_id && msg->csn == csn)
 	return msg;
     }

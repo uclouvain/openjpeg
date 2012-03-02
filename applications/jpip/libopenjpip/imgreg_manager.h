@@ -31,14 +31,14 @@
 #ifndef   	IMGREG_MANAGER_H_
 # define   	IMGREG_MANAGER_H_
 
-//! image region parameters
+/** image region parameters */
 typedef struct imgreg_param{
-  int xosiz, yosiz; //!< offset from the origin of the reference grid
-		    //!at the decomposition level
-  int fx, fy;       //!< frame size (fsiz)
-  int ox, oy;       //!< offset (roff)
-  int sx, sy;       //!< region size (rsiz)
-  int level;        //!< decomposition level
+  int xosiz, yosiz; /** offset from the origin of the reference grid
+		    at the decomposition level */
+  int fx, fy;       /** frame size (fsiz) */
+  int ox, oy;       /** offset (roff) */
+  int sx, sy;       /** region size (rsiz) */
+  int level;        /** decomposition level */
 } imgreg_param_t;
 
 

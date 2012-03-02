@@ -57,7 +57,7 @@ typedef struct cachemodellist_param{
  *
  * @return pointer to the generated cache model list
  */
-cachemodellist_param_t * gene_cachemodellist();
+cachemodellist_param_t * gene_cachemodellist(void);
 
 /**
  * generate a cache model under a list

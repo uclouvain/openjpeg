@@ -53,7 +53,7 @@
 #define logstream stderr
 #endif /*SERVER*/
 
-targetlist_param_t * gene_targetlist()
+targetlist_param_t * gene_targetlist(void)
 {
   targetlist_param_t *targetlist;
 

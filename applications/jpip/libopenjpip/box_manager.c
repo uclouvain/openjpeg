@@ -161,7 +161,7 @@ box_param_t * gene_boxbyOffinStream( Byte_t *stream, Byte8_t offset)
 }
 
 
-box_param_t * gene_boxbyType( int fd, Byte8_t offset, Byte8_t length, char TBox[])
+box_param_t * gene_boxbyType( int fd, Byte8_t offset, Byte8_t length, const char TBox[])
 {
   Byte8_t pos;
   Byte_t *data;
@@ -221,7 +221,7 @@ box_param_t * gene_boxbyType( int fd, Byte8_t offset, Byte8_t length, char TBox[
   return NULL;
 }
 
-box_param_t * gene_boxbyTypeinStream( Byte_t *stream, Byte8_t offset, Byte8_t length, char TBox[])
+box_param_t * gene_boxbyTypeinStream( Byte_t *stream, Byte8_t offset, Byte8_t length, const char TBox[])
 {
   Byte8_t pos;
   Byte_t *data;
@@ -272,7 +272,7 @@ box_param_t * gene_childboxbyOffset( box_param_t *superbox, Byte8_t offset)
   return gene_boxbyOffset( superbox->fd, get_DBoxoff( superbox)+offset);
 }
 
-box_param_t * gene_childboxbyType( box_param_t *superbox, Byte8_t offset, char TBox[])
+box_param_t * gene_childboxbyType( box_param_t *superbox, Byte8_t offset, const char TBox[])
 {
   return gene_boxbyType( superbox->fd, get_DBoxoff( superbox)+offset, get_DBoxlen( superbox)-offset, TBox);
 }
@@ -317,7 +317,7 @@ Byte8_t fetch_DBox8bytebigendian( box_param_t *box, long offset)
   return fetch_8bytebigendian( box->fd, get_DBoxoff( box)+offset);
 }
 
-box_param_t * search_box( char type[], boxlist_param_t *boxlist)
+box_param_t * search_box( const char type[], boxlist_param_t *boxlist)
 {
   box_param_t *foundbox;
 

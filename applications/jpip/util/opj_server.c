@@ -56,11 +56,14 @@
 
 #ifdef _WIN32
 WSADATA initialisation_win32;
-#endif //_WIN32
+#endif /*_WIN32*/
 
 int main(void)
 { 
   server_record_t *server_record;
+#ifdef SERVER
+  char *query_string;
+#endif
 
 #ifdef _WIN32
   int erreur = WSAStartup(MAKEWORD(2,2),&initialisation_win32);
@@ -68,13 +71,11 @@ int main(void)
     fprintf( stderr, "Erreur initialisation Winsock error : %d %d\n",erreur,WSAGetLastError());
   else
     fprintf( stderr, "Initialisation Winsock\n");
-#endif //_WIN32
+#endif /*_WIN32*/
 
   server_record = init_JPIPserver( 60000, 0);
 
 #ifdef SERVER
-
-  char *query_string;
   while(FCGI_Accept() >= 0)
 #else
 
@@ -82,16 +83,15 @@ int main(void)
   while( fgets( query_string, 128, stdin) && query_string[0]!='\n')
 #endif
     {
+      QR_t *qr;
+      bool parse_status;
 
 #ifdef SERVER     
       query_string = getenv("QUERY_STRING");    
-#endif //SERVER
+#endif /*SERVER*/
 
       if( strcmp( query_string, QUIT_SIGNAL) == 0)
 	break;
-      
-      QR_t *qr;
-      bool parse_status;
       
       qr = parse_querystring( query_string);
       

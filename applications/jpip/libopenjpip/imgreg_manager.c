@@ -40,7 +40,7 @@
 #define FCGI_stdout stdout
 #define FCGI_stderr stderr
 #define logstream stderr
-#endif //SERVER
+#endif /*SERVER*/
 
 imgreg_param_t map_viewin2imgreg( const int fx,    const int fy, 
 				  const int rx,    const int ry,
@@ -106,13 +106,13 @@ void find_level( int maxlev, int *lev, int *fx, int *fy, int *xmin, int *ymin, i
   int xwidth = *xmax - *xmin;
   int ywidth = *ymax - *ymin;
 
-  /// Find smaller frame size for now (i.e. assume "round-down").
+  /* Find smaller frame size for now (i.e. assume "round-down"). */
   if ((*fx < 1 && xwidth != 0) || (*fy < 1 && ywidth != 0)){
     fprintf( FCGI_stderr, "Frame size must be strictly positive");
     exit(-1);
   }
   else if( *lev < maxlev-1 && ( *fx < xwidth || *fy < ywidth)) {
-    // Simulate the ceil function.
+    /* Simulate the ceil function. */
     *xmin = ceil((double)*xmin/(double)2.0);
     *ymin = ceil((double)*ymin/(double)2.0);
     *xmax = ceil((double)*xmax/(double)2.0);
@@ -149,5 +149,7 @@ void print_imgreg( imgreg_param_t imgreg)
   fprintf( logstream, "\t roff: %d, %d\n", imgreg.ox, imgreg.oy);
   fprintf( logstream, "\t rsiz: %d, %d\n", imgreg.sx, imgreg.sy);
   fprintf( logstream, "\t level: %d\n", imgreg.level);
+#else
+  (void)imgreg;
 #endif
 }

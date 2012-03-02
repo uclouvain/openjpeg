@@ -43,7 +43,7 @@
 #endif /*SERVER*/
 
 
-metadatalist_param_t * gene_metadatalist()
+metadatalist_param_t * gene_metadatalist(void)
 {
   metadatalist_param_t *list;
 
