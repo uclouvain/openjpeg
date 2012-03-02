@@ -1,12 +1,13 @@
 prefix=@prefix@
 exec_prefix=@exec_prefix@
 libdir=@libdir@
-includedir=@includedir@
+includedir=@includedir@/openjpeg-@MAJOR_NR@.@MINOR_NR@
 
 Name: openjpeg
-Description: JPEG2000 files library
+Description: JPEG2000 library
 URL: http://www.openjpeg.org/
 Version: @VERSION@
-pkgconfig_requires_private: @requirements@
+@pkgconfig_requires_private@: @requirements@
 Libs: -L${libdir} -lopenjpeg
+Libs.private: -lm
 Cflags: -I${includedir}

@@ -1,4 +1,4 @@
-DISTCHECK_CONFIGURE_FLAGS = --enable-jpip=yes --enable-jpwl=yes --enable-mj2=yes
+DISTCHECK_CONFIGURE_FLAGS = --enable-jpip=yes --enable-jpip-server=yes --enable-jpwl=yes --enable-mj2=yes
 
 ACLOCAL_AMFLAGS = -I m4
 
@@ -10,7 +10,6 @@ pkgconfig_DATA = libopenjpeg1.pc
 if WANT_JPWL
 pkgconfig_DATA += libopenjpeg-jpwl.pc
 endif
-
 
 
 MAINTAINERCLEANFILES = \
@@ -66,6 +65,9 @@ else
 endif
 	@echo -e " (PC)\t$(pkgconfigdir)/libopenjpeg1.pc" >> $(top_builddir)/report.txt
 	@echo -e " (LN)\t$(pkgconfigdir)/libopenjpeg.pc" >> $(top_builddir)/report.txt
+if WANT_JPWL
+	@echo -e " (PC)\t$(pkgconfigdir)/libopenjpeg-jpwl.pc" >> $(top_builddir)/report.txt
+endif
 	@cat $(top_builddir)/report.txt
 	@rm $(top_builddir)/report.txt
 

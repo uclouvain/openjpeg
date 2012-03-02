@@ -29,4 +29,6 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   ".*warning,.* is deprecated"
   # supress warnings caused by 3rd party libs:
   ".*/thirdparty/.*"
+  "libtiff.*has no symbols"
+  "libpng.*has no symbols"
   )
