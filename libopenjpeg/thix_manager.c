@@ -107,7 +107,7 @@ int write_tilemhix( int coff, opj_codestream_info_t cstr_info, int tileno, opj_c
     cio_write( cio, marker[i].len, 2);
   }
      
-  //  free( marker);
+  /*  free( marker);*/
 
   len = cio_tell( cio) - lenp;
   cio_seek( cio, lenp);
