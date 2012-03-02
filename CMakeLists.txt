@@ -107,7 +107,10 @@ IF(NOT OPENJPEG_INSTALL_DOC_DIR)
 ENDIF(NOT OPENJPEG_INSTALL_DOC_DIR)
 
 IF(NOT OPENJPEG_INSTALL_PACKAGE_DIR)
-  SET(OPENJPEG_INSTALL_PACKAGE_DIR "${OPENJPEG_INSTALL_SHARE_DIR}/${OPENJPEG_INSTALL_SUBDIR}")
+  # We could install *.cmake files in share/ however those files contains
+  # hardcoded path to libraries on a multi-arch system (fedora/debian) those
+  # path will be different (lib/i386-linux-gnu vs lib/x86_64-linux-gnu)
+  SET(OPENJPEG_INSTALL_PACKAGE_DIR "${OPENJPEG_INSTALL_LIB_DIR}/${OPENJPEG_INSTALL_SUBDIR}")
 ENDIF(NOT OPENJPEG_INSTALL_PACKAGE_DIR)
 
 #-----------------------------------------------------------------------------
@@ -143,10 +146,11 @@ ENDIF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/openjpeg_mangle.h.in)
 #-----------------------------------------------------------------------------
 # pkgconfig support
 IF(UNIX)
+  # install in lib and not share (see multi-arch note above)
   CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/libopenjpeg1.pc.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/libopenjpeg1.pc @ONLY)
   INSTALL( FILES  ${CMAKE_CURRENT_BINARY_DIR}/libopenjpeg1.pc DESTINATION
-    ${OPENJPEG_INSTALL_SHARE_DIR}/pkgconfig )
+    ${OPENJPEG_INSTALL_LIB_DIR}/pkgconfig )
   INSTALL( CODE "EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E create_symlink
   \"libopenjpeg1.pc\"
   \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${OPENJPEG_INSTALL_SHARE_DIR}/pkgconfig/libopenjpeg.pc\")")
