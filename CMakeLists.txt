@@ -86,12 +86,16 @@ IF(NOT OPENJPEG_INSTALL_LIB_DIR)
   SET(OPENJPEG_INSTALL_LIB_DIR "lib")
 ENDIF(NOT OPENJPEG_INSTALL_LIB_DIR)
 
+IF(NOT OPENJPEG_INSTALL_SHARE_DIR)
+  SET(OPENJPEG_INSTALL_SHARE_DIR "share")
+ENDIF(NOT OPENJPEG_INSTALL_SHARE_DIR)
+
 IF(NOT OPENJPEG_INSTALL_DATA_DIR)
-  SET(OPENJPEG_INSTALL_DATA_DIR "share/${OPENJPEG_INSTALL_SUBDIR}")
+  SET(OPENJPEG_INSTALL_DATA_DIR "${OPENJPEG_INSTALL_SHARE_DIR}/${OPENJPEG_INSTALL_SUBDIR}")
 ENDIF(NOT OPENJPEG_INSTALL_DATA_DIR)
 
 IF(NOT OPENJPEG_INSTALL_INCLUDE_DIR)
-  SET(OPENJPEG_INSTALL_INCLUDE_DIR "include/")
+  SET(OPENJPEG_INSTALL_INCLUDE_DIR "include/${OPENJPEG_INSTALL_SUBDIR}")
 ENDIF(NOT OPENJPEG_INSTALL_INCLUDE_DIR)
 
 IF(NOT OPENJPEG_INSTALL_MAN_DIR)
@@ -103,14 +107,13 @@ IF(NOT OPENJPEG_INSTALL_DOC_DIR)
 ENDIF(NOT OPENJPEG_INSTALL_DOC_DIR)
 
 IF(NOT OPENJPEG_INSTALL_PACKAGE_DIR)
-  SET(OPENJPEG_INSTALL_PACKAGE_DIR ${OPENJPEG_INSTALL_LIB_DIR}/${OPENJPEG_INSTALL_SUBDIR}
-    CACHE INTERNAL "")
+  # We could install *.cmake files in share/ however those files contains
+  # hardcoded path to libraries on a multi-arch system (fedora/debian) those
+  # path will be different (lib/i386-linux-gnu vs lib/x86_64-linux-gnu)
+  SET(OPENJPEG_INSTALL_PACKAGE_DIR "${OPENJPEG_INSTALL_LIB_DIR}/${OPENJPEG_INSTALL_SUBDIR}")
 ENDIF(NOT OPENJPEG_INSTALL_PACKAGE_DIR)
 
 #-----------------------------------------------------------------------------
-# Test for some required system information.
-INCLUDE (${CMAKE_ROOT}/Modules/CMakeBackwardCompatibilityC.cmake)
-
 # Big endian test:
 INCLUDE (${CMAKE_ROOT}/Modules/TestBigEndian.cmake)
 TEST_BIG_ENDIAN(OPJ_BIG_ENDIAN)
@@ -142,10 +145,16 @@ ENDIF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/openjpeg_mangle.h.in)
 
 #-----------------------------------------------------------------------------
 # pkgconfig support
-CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/libopenjpeg1.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/libopenjpeg1.pc @ONLY)
-INSTALL( FILES  ${CMAKE_CURRENT_BINARY_DIR}/libopenjpeg1.pc DESTINATION ${OPENJPEG_INSTALL_LIB_DIR}/pkgconfig )
-INSTALL( CODE
-  "EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E create_symlink \"libopenjpeg1.pc\" \"\$ENV{DESTDIR}${OPENJPEG_INSTALL_LIB_DIR}/pkgconfig/libopenjpeg.pc\")")
+IF(UNIX)
+  # install in lib and not share (see multi-arch note above)
+  CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/libopenjpeg1.pc.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/libopenjpeg1.pc @ONLY)
+  INSTALL( FILES  ${CMAKE_CURRENT_BINARY_DIR}/libopenjpeg1.pc DESTINATION
+    ${OPENJPEG_INSTALL_LIB_DIR}/pkgconfig )
+  INSTALL( CODE "EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E create_symlink
+  \"libopenjpeg1.pc\"
+  \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${OPENJPEG_INSTALL_SHARE_DIR}/pkgconfig/libopenjpeg.pc\")")
+ENDIF(UNIX)
 
 #-----------------------------------------------------------------------------
 # Compiler specific flags:
@@ -158,14 +167,15 @@ ENDIF(CMAKE_COMPILER_IS_GNUCC)
 
 #-----------------------------------------------------------------------------
 # opj_config.h generation (1/2)
-CHECK_INCLUDE_FILE("strings.h"       HAVE_STRINGS_H)
-CHECK_INCLUDE_FILE("inttypes.h"       HAVE_INTTYPES_H)
+INCLUDE (${CMAKE_ROOT}/Modules/CheckIncludeFile.cmake)
+CHECK_INCLUDE_FILE("strings.h"      HAVE_STRINGS_H)
+CHECK_INCLUDE_FILE("inttypes.h"     HAVE_INTTYPES_H)
 CHECK_INCLUDE_FILE("memory.h"       HAVE_MEMORY_H)
 CHECK_INCLUDE_FILE("stdint.h"       HAVE_STDINT_H)
 CHECK_INCLUDE_FILE("stdlib.h"       HAVE_STDLIB_H)
 CHECK_INCLUDE_FILE("string.h"       HAVE_STRING_H)
-CHECK_INCLUDE_FILE("sys/stat.h"       HAVE_SYS_STAT_H)
-CHECK_INCLUDE_FILE("sys/types.h"       HAVE_SYS_TYPES_H)
+CHECK_INCLUDE_FILE("sys/stat.h"     HAVE_SYS_STAT_H)
+CHECK_INCLUDE_FILE("sys/types.h"    HAVE_SYS_TYPES_H)
 CHECK_INCLUDE_FILE("unistd.h"       HAVE_UNISTD_H)
 
 # Enable Large file support
@@ -181,13 +191,23 @@ ADD_SUBDIRECTORY(libopenjpeg)
 # Build Applications
 OPTION(BUILD_CODEC "Build the CODEC executables" ON)
 OPTION(BUILD_MJ2 "Build the MJ2 executables." OFF)
+OPTION(BUILD_JPWL "Build the JPWL library and executables" OFF)
 OPTION(BUILD_JPIP "Build the JPIP library and executables." OFF)
+IF(BUILD_JPIP)
+  OPTION(BUILD_JPIP_SERVER "Build the JPIP server." OFF)
+ENDIF(BUILD_JPIP)
+OPTION(BUILD_VIEWER "Build the OPJViewer executable (C++)" OFF)
+OPTION(BUILD_JAVA "Build the openjpeg jar (Java)" OFF)
+MARK_AS_ADVANCED(BUILD_VIEWER)
+MARK_AS_ADVANCED(BUILD_JAVA)
 
-IF(BUILD_CODEC OR BUILD_MJ2 OR BUILD_JPIP)
+IF(BUILD_CODEC OR BUILD_MJ2)
+  # OFF: It will only build 3rd party libs if they are not found on the system
+  # ON: 3rd party libs will ALWAYS be build, and used
   OPTION(BUILD_THIRDPARTY "Build the thirdparty executables if it is needed" OFF)
   ADD_SUBDIRECTORY(thirdparty)
   ADD_SUBDIRECTORY(applications)
-ENDIF (BUILD_CODEC OR BUILD_MJ2 OR BUILD_JPIP)
+ENDIF (BUILD_CODEC OR BUILD_MJ2)
 
 #-----------------------------------------------------------------------------
 # opj_config.h generation (2/2)
@@ -195,10 +215,6 @@ CONFIGURE_FILE("${OPENJPEG_SOURCE_DIR}/opj_config.h.cmake.in"
  "${OPENJPEG_BINARY_DIR}/opj_config.h"
  @ONLY
  )
-
-#-----------------------------------------------------------------------------
-# Build JPWL-flavoured library and executables
-OPTION(BUILD_JPWL "Build the JPWL library and executables" OFF)
 
 #-----------------------------------------------------------------------------
 # Build DOCUMENTATION (not in ALL target and only if Doxygen is found)
@@ -245,9 +261,9 @@ INSTALL( FILES ${OPENJPEG_BINARY_DIR}/OpenJPEGConfig.cmake
 
 #-----------------------------------------------------------------------------
 # install CHANGES and LICENSE
-INSTALL(
-  FILES       CHANGES 
-              LICENSE
-  DESTINATION ${OPENJPEG_INSTALL_DOC_DIR})
+IF(EXISTS ${OPENJPEG_SOURCE_DIR}/CHANGES)
+  INSTALL(FILES CHANGES DESTINATION ${OPENJPEG_INSTALL_DOC_DIR})
+ENDIF(EXISTS ${OPENJPEG_SOURCE_DIR}/CHANGES)
+INSTALL(FILES LICENSE DESTINATION ${OPENJPEG_INSTALL_DOC_DIR})
 
 INCLUDE (CMake/OpenJPEGCPack.cmake)
