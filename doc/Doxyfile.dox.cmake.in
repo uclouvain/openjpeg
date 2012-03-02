@@ -104,7 +104,8 @@ INPUT                  = @OPENJPEG_SOURCE_DIR@/libopenjpeg \
                          @OPENJPEG_BINARY_DIR@/doc
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          = *.h \
-                         *.c
+                         *.c \
+                         *.dox
 RECURSIVE              = YES
 EXCLUDE                =
 EXCLUDE_SYMLINKS       = NO
