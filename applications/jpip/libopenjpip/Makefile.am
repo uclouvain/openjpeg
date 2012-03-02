@@ -3,7 +3,15 @@ MAINTAINERCLEANFILES = Makefile.in
 includesdir = $(includedir)/openjpeg-$(MAJOR_NR).$(MINOR_NR)
 includes_HEADERS = 
 
-lib_LTLIBRARIES = libopenjpip_server.la libopenjpip_local.la
+lib_LTLIBRARIES =
+
+if WANT_JPIP
+lib_LTLIBRARIES += libopenjpip_local.la
+endif
+
+if WANT_JPIP_SERVER
+lib_LTLIBRARIES += libopenjpip_server.la
+endif
 
 JPIP_SRC = \
 openjpip.c \
@@ -29,6 +37,8 @@ target_manager.c \
 cachemodel_manager.c \
 j2kheader_manager.c \
 jp2k_encoder.c \
+sock_manager.c \
+openjpip.h \
 bool.h \
 boxheader_manager.h \
 box_manager.h \
@@ -51,7 +61,12 @@ jp2k_encoder.h \
 query_parser.h \
 channel_manager.h \
 session_manager.h \
-jpip_parser.h
+jpip_parser.h \
+jp2k_decoder.h \
+sock_manager.h 
+
+SERVER_SRC = auxtrans_manager.c \
+auxtrans_manager.h
 
 LOCAL_SRC = jp2k_decoder.c \
 imgsock_manager.c \
@@ -68,24 +83,27 @@ libopenjpip_server_la_CPPFLAGS = \
 -I$(top_srcdir)/applications/jpip/libopenjpip \
 -I$(top_builddir)/applications/jpip/libopenjpip \
 @FCGI_CFLAGS@ \
+@LIBCURL_CFLAGS@ \
 -DSERVER
-libopenjpip_server_la_CFLAGS =
-libopenjpip_server_la_LIBADD = @FCGI_LIBS@ -lm
+libopenjpip_server_la_CFLAGS = @THREAD_CFLAGS@
+libopenjpip_server_la_LIBADD = @FCGI_LIBS@ @LIBCURL_LIBS@ @THREAD_LIBS@ -lm
 libopenjpip_server_la_LDFLAGS = -no-undefined -version-info @lt_version@
-libopenjpip_server_la_SOURCES = $(JPIP_SRC)
+libopenjpip_server_la_SOURCES = $(JPIP_SRC) $(SERVER_SRC)
 
 libopenjpip_local_la_CPPFLAGS = \
 -I. \
 -I$(top_srcdir)/libopenjpeg \
 -I$(top_builddir)/libopenjpeg \
 -I$(top_srcdir)/applications/jpip/libopenjpip \
--I$(top_builddir)/applications/jpip/libopenjpip
-libopenjpip_local_la_CFLAGS =
+-I$(top_builddir)/applications/jpip/libopenjpip \
+@LIBCURL_CFLAGS@
+libopenjpip_local_la_CFLAGS = 
 libopenjpip_local_la_LIBADD = $(top_builddir)/libopenjpeg/libopenjpeg.la -lm
 libopenjpip_local_la_LDFLAGS = -no-undefined -version-info @lt_version@
 libopenjpip_local_la_SOURCES = $(JPIP_SRC) $(LOCAL_SRC)
 
 install-data-hook:
+if WANT_JPIP_SERVER
 	@echo -e " (LA)\t$(libdir)/libopenjpip_server.la" >> $(top_builddir)/report.txt
 if BUILD_SHARED
 	@( $(call solist_s) ) >> $(top_builddir)/report.txt
@@ -93,12 +111,15 @@ endif
 if BUILD_STATIC
 	@echo -e " (A)\t$(base_s)/$(a_s)" >> $(top_builddir)/report.txt
 endif
+endif
+if WANT_JPIP
 	@echo -e " (LA)\t$(libdir)/libopenjpip_local.la" >> $(top_builddir)/report.txt
 if BUILD_SHARED
 	@( $(call solist_c) ) >> $(top_builddir)/report.txt
 endif
 if BUILD_STATIC
 	@echo -e " (A)\t$(base_c)/$(a_c)" >> $(top_builddir)/report.txt
+endif
 endif
 
 solist_s    = $(foreach f, $(dll_s) $(so_s), echo -e ' $(SO_PREFIX)\t$(base_s)/$(f)' ;)
