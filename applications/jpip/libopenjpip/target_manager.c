@@ -135,9 +135,6 @@ void unrefer_target( target_param_t *target)
 void delete_target( target_param_t **target)
 {
   close( (*target)->fd);
-<<<<<<< .working
-  
-=======
 
 #ifdef SERVER
   if( (*target)->tmpfname){
@@ -146,7 +143,6 @@ void delete_target( target_param_t **target)
   }
 #endif
 
->>>>>>> .merge-right.r1103
   if( (*target)->codeidx)
     delete_index ( &(*target)->codeidx);
 
@@ -244,28 +240,17 @@ target_param_t * search_targetBytid( char tid[], targetlist_param_t *targetlist)
   return NULL;
 }
 
-<<<<<<< .working
-int open_jp2file( char filename[])
-=======
 int open_remotefile( char filepath[], char tmpfname[]);
 
 int open_jp2file( char filepath[], char tmpfname[])
->>>>>>> .merge-right.r1103
 {
   int fd;
   char *data;
-<<<<<<< .working
-
-  if( (fd = open( filename, O_RDONLY)) == -1){
-    fprintf( FCGI_stdout, "Reason: Target %s not found\r\n", filename);
-    return -1;
-=======
   
   // download remote target file to local storage
   if( strncmp( filepath, "http://", 7) == 0){
     if( (fd = open_remotefile( filepath, tmpfname)) == -1)
       return -1;
->>>>>>> .merge-right.r1103
   }
   // Check resource is a JP family file.
   if( lseek( fd, 0, SEEK_SET)==-1){
@@ -292,8 +277,6 @@ int open_jp2file( char filepath[], char tmpfname[])
   free( data);
   return fd;
 }
-<<<<<<< .working
-=======
 
 #ifdef SERVER
 static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream);
@@ -340,4 +323,3 @@ static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream)
   return written;
 }
 #endif //SERVER
->>>>>>> .merge-right.r1103
