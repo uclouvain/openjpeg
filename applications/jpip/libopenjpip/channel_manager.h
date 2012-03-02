@@ -62,7 +62,7 @@ typedef struct channellist_param{
  *
  * @return pointer to the generated channel list
  */
-channellist_param_t * gene_channellist();
+channellist_param_t * gene_channellist(void);
 
 
 /**

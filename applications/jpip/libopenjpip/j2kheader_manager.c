@@ -42,7 +42,7 @@
 #define FCGI_stdout stdout
 #define FCGI_stderr stderr
 #define logstream stderr
-#endif //SERVER
+#endif /*SERVER */
 
 
 SIZmarker_param_t get_SIZmkrdata_from_j2kstream( Byte_t *SIZstream);
@@ -76,7 +76,7 @@ bool get_mainheader_from_j2kstream( Byte_t *j2kstream, SIZmarker_param_t *SIZ, C
 
 SIZmarker_param_t get_SIZmkrdata_from_j2kstream( Byte_t *SIZstream)
 {
-  SIZmarker_param_t SIZ ={0};
+  SIZmarker_param_t SIZ = {0};
   int i;
 
   if( *SIZstream++ != 0xff || *SIZstream++ != 0x51){
@@ -129,7 +129,7 @@ CODmarker_param_t get_CODmkrdata_from_j2kstream( Byte_t *CODstream)
     COD.YPsiz = (Byte4_t *)malloc( (COD.numOfdecomp+1)*sizeof(Byte4_t));
     
     for( i=0; i<=COD.numOfdecomp; i++){
-      //precinct size
+      /*precinct size */
       COD.XPsiz[i] = pow( 2, *( CODstream+12+i) & 0x0F);
       COD.YPsiz[i] = pow( 2, (*( CODstream+12+i) & 0xF0) >> 4);
     }
@@ -188,7 +188,7 @@ bool modify_SIZmkrstream( SIZmarker_param_t SIZ, int difOfdecomplev, Byte_t *SIZ
     SIZ.YTOsiz = ceil( (double)SIZ.YTOsiz/2.0);
   }
 
-  SIZstream += 4; // skip Lsiz + Rsiz
+  SIZstream += 4; /* skip Lsiz + Rsiz */
 
   modify_4Bytecode( SIZ.Xsiz,   SIZstream);
   modify_4Bytecode( SIZ.Ysiz,   SIZstream+4);
@@ -222,9 +222,9 @@ Byte2_t modify_CODmkrstream( CODmarker_param_t COD, int numOfdecomp, Byte_t *COD
     CODstream += 2;
   }
   
-  CODstream += 5; // skip Scod & SGcod
+  CODstream += 5; /* skip Scod & SGcod */
   
-  // SPcod
+  /* SPcod */
   *CODstream++ = (Byte_t) numOfdecomp;
   
   return newLcod;
@@ -234,7 +234,7 @@ bool modify_COCmkrstream( int numOfdecomp, Byte_t *COCstream, Byte2_t Csiz, Byte
 
 bool modify_tileheader( Byte_t *j2kstream, Byte8_t SOToffset, int numOfdecomp, Byte2_t Csiz, Byte8_t *j2klen)
 {
-  Byte4_t Psot; // tile part length ref A.4.2 Start of tile-part SOT
+  Byte4_t Psot; /* tile part length ref A.4.2 Start of tile-part SOT */
   Byte_t *thstream, *SOTstream, *Psot_stream;
   Byte2_t oldLcoc, newLcoc;
   
@@ -245,14 +245,14 @@ bool modify_tileheader( Byte_t *j2kstream, Byte8_t SOToffset, int numOfdecomp, B
     return false;
   }
 
-  SOTstream += 4; // skip Lsot & Isot
+  SOTstream += 4; /* skip Lsot & Isot */
   Psot = (SOTstream[0]<<24)+(SOTstream[1]<<16)+(SOTstream[2]<<8)+(SOTstream[3]);
   Psot_stream = SOTstream;
   
-  thstream += 12; // move to next marker (SOT always 12bytes)
+  thstream += 12; /* move to next marker (SOT always 12bytes) */
   
-  while( !( *thstream == 0xff && *(thstream+1) == 0x93)){ // search SOD
-    if( numOfdecomp != -1 && *thstream == 0xff && *(thstream+1) == 0x53){ // COC
+  while( !( *thstream == 0xff && *(thstream+1) == 0x93)){ /* search SOD */
+    if( numOfdecomp != -1 && *thstream == 0xff && *(thstream+1) == 0x53){ /* COC */
       if( !modify_COCmkrstream( numOfdecomp, thstream, Csiz, &oldLcoc, &newLcoc))
 	return false;
       
@@ -260,7 +260,7 @@ bool modify_tileheader( Byte_t *j2kstream, Byte8_t SOToffset, int numOfdecomp, B
       *j2klen -= ( oldLcoc - newLcoc);
     }
     thstream += 2;
-    thstream += ((thstream[0]<<8)+(thstream[1])); // marker length
+    thstream += ((thstream[0]<<8)+(thstream[1])); /* marker length */
   }
 
   if( (*j2klen)-SOToffset != Psot){
@@ -282,7 +282,7 @@ bool modify_COCmkrstream( int numOfdecomp, Byte_t *COCstream, Byte2_t Csiz, Byte
   *COCstream++ = (Byte_t)((Byte2_t)((*newLcoc) & 0xff00) >> 8);
   *COCstream++ = (Byte_t)((*newLcoc) & 0x00ff);
       
-  if( Csiz < 257) COCstream +=2; // skip Ccoc & Scoc
+  if( Csiz < 257) COCstream +=2; /* skip Ccoc & Scoc */
   else COCstream += 3;
       
   *COCstream = numOfdecomp;

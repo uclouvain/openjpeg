@@ -125,7 +125,8 @@ void warning_callback(const char *msg, void *client_data) {
 */
 void info_callback(const char *msg, void *client_data) {
   (void)client_data;
-  //  fprintf(stdout, "[INFO] %s", msg);
+  (void)msg;
+  /*  fprintf(stdout, "[INFO] %s", msg); */
 }
 
 
@@ -190,7 +191,7 @@ Byte_t * imagetopnm(opj_image_t *image, ihdrbox_param_t **ihdrbox)
     r = image->comps[0].data[i];
     r += (image->comps[0].sgnd ? 1 << (image->comps[0].prec - 1) : 0);
     
-    //    if( adjustR > 0)
+    /*    if( adjustR > 0) */
     *(ptr++) = (Byte_t) ((r >> adjustR)+((r >> (adjustR-1))%2));
 
     if( image->numcomps == 3){

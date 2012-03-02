@@ -40,9 +40,9 @@
 #define FCGI_stdout stdout
 #define FCGI_stderr stderr
 #define logstream stderr
-#endif //SERVER
+#endif /*SERVER */
 
-channellist_param_t * gene_channellist()
+channellist_param_t * gene_channellist(void)
 {
   channellist_param_t *channellist;
 
@@ -68,12 +68,12 @@ channel_param_t * gene_channel( query_param_t query_param, auxtrans_param_t auxt
   channel = (channel_param_t *)malloc( sizeof(channel_param_t));
   channel->cachemodel = cachemodel;
 
-  // set channel ID and get present time
+  /* set channel ID and get present time */
   snprintf( channel->cid, MAX_LENOFCID, "%x%x", (unsigned int)time( &channel->start_tm), (unsigned int)rand());
   
   channel->aux = query_param.cnew;
   
-  // only tcp implemented for now
+  /* only tcp implemented for now */
   if( channel->aux == udp)
     channel->aux = tcp;
   
@@ -101,7 +101,9 @@ channel_param_t * gene_channel( query_param_t query_param, auxtrans_param_t auxt
 
 void set_channel_variable_param( query_param_t query_param, channel_param_t *channel)
 {
-  // set roi information
+  /* set roi information */
+  (void)query_param;
+  (void)channel;
 }
 
 

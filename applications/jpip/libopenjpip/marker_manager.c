@@ -37,7 +37,7 @@
 #define FCGI_stdout stdout
 #define FCGI_stderr stderr
 #define logstream stderr
-#endif //SERVER
+#endif /*SERVER */
 
 marker_param_t set_marker( codestream_param_t cs, Byte2_t code, Byte8_t offset, Byte2_t length)
 {
