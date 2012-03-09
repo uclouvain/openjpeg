@@ -209,6 +209,11 @@ static opj_bool j2k_update_image_data (opj_tcd_v2_t * p_tcd, OPJ_BYTE * p_data, 
 
 static void j2k_get_tile_data (opj_tcd_v2_t * p_tcd, OPJ_BYTE * p_data);
 
+static opj_bool j2k_post_write_tile (opj_j2k_v2_t * p_j2k,
+					 	 	 	 	 OPJ_BYTE * p_data,
+					 	 	 	 	 OPJ_UINT32 p_data_size,
+					 	 	 	 	 opj_stream_private_t *p_stream,
+					 	 	 	 	 opj_event_mgr_t * p_manager );
 
 /*
  * -----------------------------------------------------------------------
@@ -8768,4 +8773,65 @@ void j2k_get_tile_data (opj_tcd_v2_t * p_tcd, OPJ_BYTE * p_data)
 		++l_img_comp;
 		++l_tilec;
 	}
+}
+
+
+/**
+ * Write a tile.
+ * @param	p_j2k		the jpeg2000 codec.
+ * @param	p_stream	the stream to write data to.
+ * @param	p_manager	the user event manager.
+ */
+opj_bool j2k_post_write_tile (	opj_j2k_v2_t * p_j2k,
+								OPJ_BYTE * p_data,
+								OPJ_UINT32 p_data_size,
+								opj_stream_private_t *p_stream,
+								opj_event_mgr_t * p_manager )
+{
+	opj_tcd_v2_t * l_tcd = 00;
+	opj_cp_v2_t * l_cp = 00;
+	opj_tcp_v2_t * l_tcp = 00;
+	OPJ_UINT32 l_nb_bytes_written;
+	OPJ_BYTE * l_current_data = 00;
+	OPJ_UINT32 l_tile_size = 0;
+	OPJ_UINT32 l_available_data;
+
+	/* preconditions */
+	assert(p_j2k->m_specific_param.m_encoder.m_encoded_tile_data);
+
+	l_tcd = p_j2k->m_tcd;
+	l_cp = &(p_j2k->m_cp);
+	l_tcp = l_cp->tcps + p_j2k->m_current_tile_number;
+
+	l_tile_size = p_j2k->m_specific_param.m_encoder.m_encoded_tile_size;
+	l_available_data = l_tile_size;
+	l_current_data = p_j2k->m_specific_param.m_encoder.m_encoded_tile_data;
+
+	if (! tcd_copy_tile_data(l_tcd,p_data,p_data_size)) {
+		opj_event_msg_v2(p_manager, EVT_ERROR, "Size mismtach between tile data and sent data." );
+		return OPJ_FALSE;
+	}
+
+	l_nb_bytes_written = 0;
+	if (! j2k_write_first_tile_part(p_j2k,l_current_data,&l_nb_bytes_written,l_available_data,p_stream,p_manager)) {
+		return OPJ_FALSE;
+	}
+	l_current_data += l_nb_bytes_written;
+	l_available_data -= l_nb_bytes_written;
+
+	l_nb_bytes_written = 0;
+	if (! j2k_write_all_tile_parts(p_j2k,l_current_data,&l_nb_bytes_written,l_available_data,p_stream,p_manager)) {
+		return OPJ_FALSE;
+	}
+
+	l_available_data -= l_nb_bytes_written;
+	l_nb_bytes_written = l_tile_size - l_available_data;
+
+	if (opj_stream_write_data(p_stream,p_j2k->m_specific_param.m_encoder.m_encoded_tile_data,l_nb_bytes_written,p_manager) != l_nb_bytes_written) {
+		return OPJ_FALSE;
+	}
+
+	++p_j2k->m_current_tile_number;
+
+	return OPJ_TRUE;
 }
