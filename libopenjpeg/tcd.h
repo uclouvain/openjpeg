@@ -486,11 +486,14 @@ opj_bool tcd_decode_tile_v2(opj_tcd_v2_t *tcd,
 /**
  * Copies tile data from the system onto the given memory block.
  */
-opj_bool tcd_update_tile_data (
-						 opj_tcd_v2_t *p_tcd,
-						 OPJ_BYTE * p_dest,
-						 OPJ_UINT32 p_dest_length
-						 );
+opj_bool tcd_update_tile_data (	opj_tcd_v2_t *p_tcd,
+								OPJ_BYTE * p_dest,
+								OPJ_UINT32 p_dest_length );
+
+/**
+ *
+ */
+OPJ_UINT32 tcd_get_encoded_tile_size ( opj_tcd_v2_t *p_tcd );
 
 /* ----------------------------------------------------------------------- */
 /*@}*/
