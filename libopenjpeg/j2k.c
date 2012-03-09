@@ -207,6 +207,8 @@ static opj_bool j2k_pre_write_tile ( opj_j2k_v2_t * p_j2k,
 
 static opj_bool j2k_update_image_data (opj_tcd_v2_t * p_tcd, OPJ_BYTE * p_data, opj_image_t* p_output_image);
 
+static void j2k_get_tile_data (opj_tcd_v2_t * p_tcd, OPJ_BYTE * p_data);
+
 
 /*
  * -----------------------------------------------------------------------
@@ -8660,4 +8662,110 @@ opj_bool j2k_pre_write_tile (	opj_j2k_v2_t * p_j2k,
 	}
 
 	return OPJ_TRUE;
+}
+
+/*
+ *
+ */
+void j2k_get_tile_data (opj_tcd_v2_t * p_tcd, OPJ_BYTE * p_data)
+{
+	OPJ_UINT32 i,j,k = 0;
+	OPJ_UINT32 l_width,l_height,l_stride, l_offset_x,l_offset_y, l_image_width;
+	opj_image_comp_t * l_img_comp = 00;
+	opj_tcd_tilecomp_t * l_tilec = 00;
+	opj_image_t * l_image = 00;
+	OPJ_UINT32 l_size_comp, l_remaining;
+	OPJ_INT32 * l_src_ptr;
+	l_tilec = p_tcd->tcd_image->tiles->comps;
+	l_image = p_tcd->image;
+	l_img_comp = l_image->comps;
+
+	for (i=0;i<p_tcd->image->numcomps;++i) {
+		l_size_comp = l_img_comp->prec >> 3; /* (/8) */
+		l_remaining = l_img_comp->prec & 7;  /* (%8) */
+		if (l_remaining) {
+			++l_size_comp;
+		}
+
+		if (l_size_comp == 3) {
+			l_size_comp = 4;
+		}
+
+		l_width = (l_tilec->x1 - l_tilec->x0);
+		l_height = (l_tilec->y1 - l_tilec->y0);
+		l_offset_x = int_ceildiv(l_image->x0, l_img_comp->dx);
+		l_offset_y = int_ceildiv(l_image->y0, l_img_comp->dy);
+		l_image_width = int_ceildiv(l_image->x1 - l_image->x0, l_img_comp->dx);
+		l_stride = l_image_width - l_width;
+		l_src_ptr = l_img_comp->data + (l_tilec->x0 - l_offset_x) + (l_tilec->y0 - l_offset_y) * l_image_width;
+
+		switch (l_size_comp) {
+			case 1:
+				{
+					OPJ_CHAR * l_dest_ptr = (OPJ_CHAR*) p_data;
+					if (l_img_comp->sgnd) {
+						for	(j=0;j<l_height;++j) {
+							for (k=0;k<l_width;++k) {
+								*(l_dest_ptr) = (OPJ_CHAR) (*l_src_ptr);
+								++l_dest_ptr;
+								++l_src_ptr;
+							}
+							l_src_ptr += l_stride;
+						}
+					}
+					else {
+						for (j=0;j<l_height;++j) {
+							for (k=0;k<l_width;++k) {
+								*(l_dest_ptr) = (*l_src_ptr)&0xff;
+								++l_dest_ptr;
+								++l_src_ptr;
+							}
+							l_src_ptr += l_stride;
+						}
+					}
+
+					p_data = (OPJ_BYTE*) l_dest_ptr;
+				}
+				break;
+			case 2:
+				{
+					OPJ_INT16 * l_dest_ptr = (OPJ_INT16 *) p_data;
+					if (l_img_comp->sgnd) {
+						for (j=0;j<l_height;++j) {
+							for (k=0;k<l_width;++k) {
+								*(l_dest_ptr++) = (OPJ_INT16) (*(l_src_ptr++));
+							}
+							l_src_ptr += l_stride;
+						}
+					}
+					else {
+						for (j=0;j<l_height;++j) {
+							for (k=0;k<l_width;++k) {
+								*(l_dest_ptr++) = (*(l_src_ptr++))&0xffff;
+							}
+							l_src_ptr += l_stride;
+						}
+					}
+
+					p_data = (OPJ_BYTE*) l_dest_ptr;
+				}
+				break;
+			case 4:
+				{
+					OPJ_INT32 * l_dest_ptr = (OPJ_INT32 *) p_data;
+					for (j=0;j<l_height;++j) {
+						for (k=0;k<l_width;++k) {
+							*(l_dest_ptr++) = *(l_src_ptr++);
+						}
+						l_src_ptr += l_stride;
+					}
+
+					p_data = (OPJ_BYTE*) l_dest_ptr;
+				}
+				break;
+		}
+
+		++l_img_comp;
+		++l_tilec;
+	}
 }
