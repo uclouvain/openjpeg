@@ -8517,3 +8517,114 @@ opj_bool j2k_set_decoded_resolution_factor(opj_j2k_v2_t *p_j2k, OPJ_UINT32 res_f
 
 	return OPJ_FALSE;
 }
+
+
+/**
+ * Encodes all the tiles in a row.
+ */
+opj_bool j2k_encode_v2(	opj_j2k_v2_t * p_j2k,
+						opj_stream_private_t *p_stream,
+						opj_event_mgr_t * p_manager )
+{
+	OPJ_UINT32 i;
+	OPJ_UINT32 l_nb_tiles;
+	OPJ_UINT32 l_max_tile_size, l_current_tile_size;
+	OPJ_BYTE * l_current_data;
+
+	/* preconditions */
+	assert(p_j2k != 00);
+	assert(p_stream != 00);
+	assert(p_manager != 00);
+
+	l_current_data = (OPJ_BYTE*)opj_malloc(1000);
+	if (! l_current_data) {
+		return OPJ_FALSE;
+	}
+	l_max_tile_size = 1000;
+
+	l_nb_tiles = p_j2k->m_cp.th * p_j2k->m_cp.tw;
+	for (i=0;i<l_nb_tiles;++i) {
+		if (! j2k_pre_write_tile(p_j2k,i,p_stream,p_manager)) {
+			opj_free(l_current_data);
+			return OPJ_FALSE;
+		}
+
+		l_current_tile_size = tcd_get_encoded_tile_size(p_j2k->m_tcd);
+		if (l_current_tile_size > l_max_tile_size) {
+			l_current_data = (OPJ_BYTE*)opj_realloc(l_current_data,l_current_tile_size);
+			if (! l_current_data) {
+				return OPJ_FALSE;
+			}
+			l_max_tile_size = l_current_tile_size;
+		}
+
+		j2k_get_tile_data(p_j2k->m_tcd,l_current_data);
+
+		if (! j2k_post_write_tile (p_j2k,l_current_data,l_current_tile_size,p_stream,p_manager)) {
+			return OPJ_FALSE;
+		}
+	}
+
+	opj_free(l_current_data);
+	return OPJ_TRUE;
+}
+
+/**
+ * Ends the compression procedures and possibility add data to be read after the
+ * codestream.
+ */
+opj_bool j2k_end_compress(	opj_j2k_v2_t *p_j2k,
+							opj_stream_private_t *p_stream,
+							struct opj_event_mgr * p_manager)
+{
+	/* customization of the encoding */
+	j2k_setup_end_compress(p_j2k);
+
+	if (! j2k_exec (p_j2k, p_j2k->m_procedure_list, p_stream, p_manager))
+	{
+		return OPJ_FALSE;
+	}
+
+	return OPJ_TRUE;
+}
+
+
+/**
+ * Starts a compression scheme, i.e. validates the codec parameters, writes the header.
+ *
+ * @param	p_j2k		the jpeg2000 codec.
+ * @param	p_stream	the stream object.
+ * @param	p_manager	the user event manager.
+ *
+ * @return true if the codec is valid.
+ */
+opj_bool j2k_start_compress(opj_j2k_v2_t *p_j2k,
+							opj_stream_private_t *p_stream,
+							opj_image_t * p_image,
+							opj_event_mgr_t * p_manager)
+{
+	// preconditions
+	assert(p_j2k != 00);
+	assert(p_stream != 00);
+	assert(p_manager != 00);
+
+	p_j2k->m_image = p_image;
+
+	/* customization of the validation */
+	j2k_setup_encoding_validation (p_j2k);
+
+	/* validation of the parameters codec */
+	if (! j2k_exec(p_j2k,p_j2k->m_validation_list,p_stream,p_manager)) {
+		return OPJ_FALSE;
+	}
+
+	/* customization of the encoding */
+	j2k_setup_header_writting(p_j2k);
+
+	/* write header */
+	if (! j2k_exec (p_j2k,p_j2k->m_procedure_list,p_stream,p_manager)) {
+		return OPJ_FALSE;
+	}
+
+	return OPJ_TRUE;
+}

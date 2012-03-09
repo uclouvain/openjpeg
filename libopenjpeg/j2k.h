@@ -1024,4 +1024,20 @@ opj_bool j2k_get_tile(	opj_j2k_v2_t *p_j2k,
 opj_bool j2k_set_decoded_resolution_factor(opj_j2k_v2_t *p_j2k, OPJ_UINT32 res_factor, opj_event_mgr_t * p_manager);
 
 
+/**
+ * Encodes an image into a JPEG-2000 codestream
+ */
+opj_bool j2k_encode_v2(	opj_j2k_v2_t * p_j2k,
+						opj_stream_private_t *cio,
+						struct opj_event_mgr * p_manager );
+
+/**
+ * Ends the compression procedures and possibiliy add data to be read after the
+ * codestream.
+ */
+opj_bool j2k_end_compress( 	opj_j2k_v2_t *p_j2k,
+							opj_stream_private_t *cio,
+							struct opj_event_mgr * p_manager);
+
+
 #endif /* __J2K_H */

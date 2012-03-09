@@ -165,7 +165,8 @@ typedef OPJ_INT64 OPJ_OFF_T;
 typedef enum RSIZ_CAPABILITIES {
 	STD_RSIZ = 0,		/** Standard JPEG2000 profile*/
 	CINEMA2K = 3,		/** Profile name for a 2K image*/
-	CINEMA4K = 4		/** Profile name for a 4K image*/
+	CINEMA4K = 4,		/** Profile name for a 4K image*/
+	MCT = 0x8100
 } OPJ_RSIZ_CAPABILITIES;
 
 /** 
@@ -417,6 +418,9 @@ typedef struct opj_cparameters {
 	char tcp_mct;
 	/** Enable JPIP indexing*/
 	opj_bool jpip_on;
+	/** Naive implementation of MCT restricted to a single reversible array based encoding without offset concerning all the components. */
+	void * mct_data;
+
 } opj_cparameters_t;
 
 #define OPJ_DPARAMETERS_IGNORE_PCLR_CMAP_CDEF_FLAG	0x0001
@@ -1391,6 +1395,15 @@ Creates a J2K/JP2 compression structure
 @return Returns a handle to a compressor if successful, returns NULL otherwise
 */
 OPJ_API opj_cinfo_t* OPJ_CALLCONV opj_create_compress(OPJ_CODEC_FORMAT format);
+
+/**
+Creates a J2K/JP2 compression structure
+@param format Coder to select
+@return Returns a handle to a compressor if successful, returns NULL otherwise
+*/
+OPJ_API opj_codec_t* OPJ_CALLCONV opj_create_compress_v2(OPJ_CODEC_FORMAT format);
+
+
 /**
 Destroy a compressor handle
 @param cinfo compressor handle to destroy
@@ -1529,6 +1542,26 @@ OPJ_API opj_jp2_metadata_t* OPJ_CALLCONV opj_get_jp2_metadata(opj_codec_t *p_cod
 OPJ_API opj_jp2_index_t* OPJ_CALLCONV opj_get_jp2_index(opj_codec_t *p_codec);
 
 
+/*
+==========================================================
+   new functions
+==========================================================
+*/
+
+/**
+ * Sets the MCT matrix to use.
+ *
+ * @param	parameters		the parameters to change.
+ * @param	pEncodingMatrix	the encoding matrix.
+ * @param	p_dc_shift		the dc shift coefficients to use.
+ * @param	pNbComp			the number of components of the image.
+ *
+ * @return	true if the parameters could be set.
+ */
+OPJ_API opj_bool OPJ_CALLCONV opj_set_MCT( opj_cparameters_t *parameters,
+		                               	   OPJ_FLOAT32 * pEncodingMatrix,
+		                               	   OPJ_INT32 * p_dc_shift,
+		                               	   OPJ_UINT32 pNbComp);
 
 
 
