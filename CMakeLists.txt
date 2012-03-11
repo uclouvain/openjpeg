@@ -158,14 +158,18 @@ IF(BUILD_TESTING)
 ENDIF(BUILD_TESTING)
 
 IF(BUILD_TESTING)
-SET(CMAKE_MODULE_PATH "${OPENJPEG_SOURCE_DIR}/CMake")
-FIND_PACKAGE(FreeImage REQUIRED)
-INCLUDE_DIRECTORIES( ${FREEIMAGE_INCLUDE_PATH} )
+  SET(CMAKE_MODULE_PATH "${OPENJPEG_SOURCE_DIR}/CMake")
+  FIND_PACKAGE(FreeImage)
 
   SUBDIRS(
     test_V2_tile_handling
-    test_Free_image_V2_tile_handling
-  )
+    )
+  if(FREEIMAGE_FOUND)
+    INCLUDE_DIRECTORIES( ${FREEIMAGE_INCLUDE_PATH} )
+    SUBDIRS(
+      test_Free_image_V2_tile_handling
+      )
+  endif(FREEIMAGE_FOUND)
 ENDIF(BUILD_TESTING)
 
 # Adding test with dataset from:
