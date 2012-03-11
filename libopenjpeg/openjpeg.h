@@ -76,32 +76,40 @@ typedef int opj_bool; /*FIXME it should be to follow the name of others OPJ_TYPE
 #define OPJ_TRUE 1
 #define OPJ_FALSE 0
 
-/* FIXME : should be better defined by configure/CMake test */
-typedef unsigned int	OPJ_UINT32;
-typedef int				OPJ_INT32;
-typedef unsigned short	OPJ_UINT16;
-typedef short			OPJ_INT16;
-typedef char			OPJ_CHAR;
+typedef char          OPJ_CHAR;
+typedef float         OPJ_FLOAT32;
+typedef double        OPJ_FLOAT64;
 typedef unsigned char	OPJ_BYTE;
-typedef unsigned int	OPJ_SIZE_T;
-typedef double			OPJ_FLOAT64;
-typedef float			OPJ_FLOAT32;
+typedef size_t        OPJ_SIZE_T;
 
-#if (defined(WIN32) || defined(WIN64)) && !defined(__MINGW32__)
-
-typedef signed __int64     OPJ_INT64;
-#define OPJ_INT64_F "I64"
-typedef unsigned __int64   OPJ_UINT64;
-#define OPJ_UINT64_F "I64"
-
-#else
-
-typedef long long          OPJ_INT64;
-#define OPJ_INT64_F "ll"
-
-typedef unsigned long long OPJ_UINT64;
+#include "opj_config.h"
+#ifdef HAVE_STDINT_H
+#include <stdint.h>
+typedef int8_t   OPJ_INT8;
+typedef uint8_t  OPJ_UINT8;
+typedef int16_t  OPJ_INT16;
+typedef uint16_t OPJ_UINT16;
+typedef int32_t  OPJ_INT32;
+typedef uint32_t OPJ_UINT32;
+typedef int64_t  OPJ_INT64;
+typedef uint64_t OPJ_UINT64;
+#define OPJ_INT64_F  "ll"
 #define OPJ_UINT64_F "ll"
-
+#else
+#if defined(_WIN32)
+typedef   signed __int8   OPJ_INT8;
+typedef unsigned __int8   OPJ_UINT8;
+typedef   signed __int16  OPJ_INT16;
+typedef unsigned __int16  OPJ_UINT16;
+typedef   signed __int32  OPJ_INT32;
+typedef unsigned __int32  OPJ_UINT32;
+typedef   signed __int64  OPJ_INT64;
+typedef unsigned __int64  OPJ_UINT64;
+#define OPJ_INT64_F  "I64"
+#define OPJ_UINT64_F "I64"
+#else
+#error unsupported platform
+#endif
 #endif
 
 /* 64-bit file offset type */
@@ -1160,7 +1168,7 @@ OPJ_API void OPJ_CALLCONV opj_stream_set_user_data_length(opj_stream_t* p_stream
  * @param p_is_read_stream whether the stream is a read stream (true) or not (false)
 */
 OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_default_file_stream (FILE * p_file, opj_bool p_is_read_stream);
-OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream (FILE * p_file, OPJ_UINT32 p_buffer_size, opj_bool p_is_read_stream);
+OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream (FILE * p_file, OPJ_SIZE_T p_buffer_size, opj_bool p_is_read_stream);
 
 /* -----------> */
 

@@ -9,7 +9,9 @@
 #cmakedefine HAVE_STRING_H
 #cmakedefine HAVE_SYS_STAT_H
 #cmakedefine HAVE_SYS_TYPES_H
+#ifndef HAVE_UNISTD_H
 #cmakedefine HAVE_UNISTD_H
+#endif /* HAVE_UNISTD_H */
 #cmakedefine HAVE_LIBPNG
 #cmakedefine HAVE_PNG_H
 #cmakedefine HAVE_LIBTIFF
@@ -18,7 +20,9 @@
 #cmakedefine _LARGEFILE_SOURCE
 #cmakedefine _LARGE_FILES
 #cmakedefine _FILE_OFFSET_BITS @_FILE_OFFSET_BITS@
+#ifndef HAVE_FSEEKO
 #cmakedefine HAVE_FSEEKO
+#endif /* HAVE_FSEEKO */
 
 
 #cmakedefine HAVE_LIBLCMS1
