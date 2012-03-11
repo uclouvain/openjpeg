@@ -38,7 +38,7 @@
 #define FCGI_stdout stdout
 #define FCGI_stderr stderr
 #define logstream stderr
-#endif //SERVER
+#endif /*SERVER */
 
 codestream_param_t set_codestream( int fd, Byte8_t offset, Byte8_t length)
 {

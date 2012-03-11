@@ -40,14 +40,14 @@
 #define FCGI_stdout stdout
 #define FCGI_stderr stderr
 #define logstream stderr
-#endif //SERVER
+#endif /*SERVER */
 
 manfbox_param_t * gene_manfbox( box_param_t *box)
 {
-  manfbox_param_t *manf;   // manifest parameters
-  boxheader_param_t *bh;   // current box pointer
-  boxheader_param_t *last; // last boxheader pointer of the list
-  int pos;                 // current position in manf_box contents;
+  manfbox_param_t *manf;   /* manifest parameters */
+  boxheader_param_t *bh;   /* current box pointer */
+  boxheader_param_t *last; /* last boxheader pointer of the list */
+  Byte8_t pos;                 /* current position in manf_box contents; */
   
   manf = ( manfbox_param_t *)malloc( sizeof( manfbox_param_t));
 
@@ -59,7 +59,7 @@ manfbox_param_t * gene_manfbox( box_param_t *box)
     bh = gene_childboxheader( box, pos);
     pos += bh->headlen;
     
-    // insert into the list
+    /* insert into the list */
     if( manf->first)
       last->next = bh;
     else
@@ -77,7 +77,7 @@ void delete_manfbox( manfbox_param_t **manf)
   while( bhPtr != NULL){
     bhNext = bhPtr->next;
 #ifndef SERVER
-    //      fprintf( logstream, "local log: boxheader %.4s deleted!\n", bhPtr->type);
+    /*      fprintf( logstream, "local log: boxheader %.4s deleted!\n", bhPtr->type); */
 #endif
       free(bhPtr);
       bhPtr = bhNext;

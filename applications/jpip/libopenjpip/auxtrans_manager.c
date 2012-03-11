@@ -46,7 +46,7 @@
 #define FCGI_stdout stdout
 #define FCGI_stderr stderr
 #define logstream stderr
-#endif //SERVER
+#endif /*SERVER */
 
 auxtrans_param_t init_aux_transport( int tcp_auxport, int udp_auxport)
 {
@@ -61,7 +61,7 @@ auxtrans_param_t init_aux_transport( int tcp_auxport, int udp_auxport)
     auxtrans.tcplistensock = -1;
 
   auxtrans.udplistensock = -1;
-  // open listening socket for udp later
+  /* open listening socket for udp later */
 
   return auxtrans;
 }
@@ -78,15 +78,15 @@ void close_aux_transport( auxtrans_param_t auxtrans)
 }
 
 
-//!< auxiliary response parameters
+/*!< auxiliary response parameters */
 typedef struct aux_response_param{
-  char *cid;            //!< channel ID
-  unsigned char *data;  //!< sending data
-  int datalen;          //!< length of data
-  int maxlenPerFrame;   //!< maximum data length to send per frame
-  SOCKET listensock;    //!< listeing socket
+  char *cid;            /*!< channel ID */
+  unsigned char *data;  /*!< sending data */
+  int datalen;          /*!< length of data */
+  int maxlenPerFrame;   /*!< maximum data length to send per frame */
+  SOCKET listensock;    /*!< listeing socket */
 #ifdef _WIN32
-  HANDLE hTh;           //!< thread handle
+  HANDLE hTh;           /*!< thread handle */
 #endif
 } aux_response_param_t;
 

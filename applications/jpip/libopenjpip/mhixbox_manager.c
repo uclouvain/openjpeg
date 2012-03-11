@@ -40,14 +40,14 @@
 #define FCGI_stdout stdout
 #define FCGI_stderr stderr
 #define logstream stderr
-#endif //SERVER
+#endif /*SERVER */
 
 
 mhixbox_param_t * gene_mhixbox( box_param_t *box)
 {
   mhixbox_param_t *mhix;
   markeridx_param_t  *mkridx, *lastmkidx;
-  long pos = 0;
+  Byte8_t pos = 0;
 
   mhix = ( mhixbox_param_t *)malloc( sizeof( mhixbox_param_t));
   
@@ -129,7 +129,7 @@ void delete_mhixbox( mhixbox_param_t **mhix)
   while( mkPtr != NULL){
     mkNext=mkPtr->next;
 #ifndef SERVER
-    //      fprintf( logstream, "local log: marker index %#x deleted!\n", mkPtr->code);
+    /*      fprintf( logstream, "local log: marker index %#x deleted!\n", mkPtr->code); */
 #endif
       free(mkPtr);
       mkPtr=mkNext;

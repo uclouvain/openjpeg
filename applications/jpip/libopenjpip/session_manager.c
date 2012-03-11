@@ -41,10 +41,10 @@
 #define FCGI_stdout stdout
 #define FCGI_stderr stderr
 #define logstream stderr
-#endif //SERVER
+#endif /*SERVER */
 
 
-sessionlist_param_t * gene_sessionlist()
+sessionlist_param_t * gene_sessionlist(void)
 {
   sessionlist_param_t *sessionlist;
 
@@ -67,9 +67,9 @@ session_param_t * gene_session( sessionlist_param_t *sessionlist)
 
   session->next = NULL;
   
-  if( sessionlist->first) // there are one or more entries
+  if( sessionlist->first) /* there are one or more entries */
     sessionlist->last->next = session;
-  else                   // first entry
+  else                   /* first entry */
     sessionlist->first = session;
   sessionlist->last = session;
   

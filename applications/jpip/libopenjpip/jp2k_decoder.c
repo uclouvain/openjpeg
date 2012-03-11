@@ -60,7 +60,7 @@ Byte_t * j2k_to_pnm( FILE *fp, ihdrbox_param_t **ihdrbox)
   opj_set_default_decoder_parameters(&parameters);
 
   /* Set default event mgr */
-  opj_initialize_default_event_handler(&event_mgr, 1);  
+  opj_initialize_default_event_handler(&event_mgr, 1);
 
   /* set a byte stream */
   cio = opj_stream_create_default_file_stream( fp, 1);
@@ -68,7 +68,7 @@ Byte_t * j2k_to_pnm( FILE *fp, ihdrbox_param_t **ihdrbox)
     fprintf(stderr, "ERROR -> failed to create the stream from the file\n");
     return NULL;
   }
-  
+
   /* decode the code-stream */
   /* ---------------------- */
 
@@ -90,7 +90,7 @@ Byte_t * j2k_to_pnm( FILE *fp, ihdrbox_param_t **ihdrbox)
     opj_image_destroy(image);
     return NULL;
   }
-  
+
 #ifdef TODO //decode area could be set from j2k_to_pnm call, modify the protocol between JPIP viewer and opj_dec_server
   if (! opj_set_decode_area( dinfo, image, parameters.DA_x0, parameters.DA_y0, parameters.DA_x1, parameters.DA_y1)){
     fprintf(stderr, "ERROR -> j2k_to_image: failed to set the decoded area\n");
@@ -151,7 +151,8 @@ void warning_callback(const char *msg, void *client_data) {
 */
 void info_callback(const char *msg, void *client_data) {
   (void)client_data;
-  //  fprintf(stdout, "[INFO] %s", msg);
+  (void)msg;
+  /*  fprintf(stdout, "[INFO] %s", msg); */
 }
 
 
@@ -216,7 +217,7 @@ Byte_t * imagetopnm(opj_image_t *image, ihdrbox_param_t **ihdrbox)
     r = image->comps[0].data[i];
     r += (image->comps[0].sgnd ? 1 << (image->comps[0].prec - 1) : 0);
     
-    //    if( adjustR > 0)
+    /*    if( adjustR > 0) */
     *(ptr++) = (Byte_t) ((r >> adjustR)+((r >> (adjustR-1))%2));
 
     if( image->numcomps == 3){

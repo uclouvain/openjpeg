@@ -54,7 +54,7 @@ typedef struct sessionlist_param{
  *
  * @return pointer to the generated session list
  */
-sessionlist_param_t * gene_sessionlist();
+sessionlist_param_t * gene_sessionlist(void);
 
 
 /**
