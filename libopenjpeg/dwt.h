@@ -52,6 +52,13 @@ Forward 5-3 wavelet tranform in 2-D.
 Apply a reversible DWT transform to a component of an image.
 @param tilec Tile component information (current tile)
 */
+opj_bool dwt_encode_v2(struct opj_tcd_tilecomp_v2 * tilec);
+
+/**
+Forward 5-3 wavelet tranform in 2-D.
+Apply a reversible DWT transform to a component of an image.
+@param tilec Tile component information (current tile)
+*/
 void dwt_encode(opj_tcd_tilecomp_t * tilec);
 /**
 Inverse 5-3 wavelet tranform in 2-D.
@@ -87,6 +94,7 @@ Apply an irreversible DWT transform to a component of an image.
 @param tilec Tile component information (current tile)
 */
 void dwt_encode_real(opj_tcd_tilecomp_t * tilec);
+opj_bool dwt_encode_real_v2(opj_tcd_tilecomp_v2_t * tilec);
 /**
 KEEP TRUNK VERSION + return type of v2 because rev557
 Inverse 9-7 wavelet transform in 2-D. 

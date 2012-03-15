@@ -330,6 +330,28 @@ Encode an image into a JPEG-2000 file stream
 opj_bool opj_jp2_encode(opj_jp2_t *jp2, opj_cio_t *cio, opj_image_t *image, opj_codestream_info_t *cstr_info);
 
 
+/**
+ * Starts a compression scheme, i.e. validates the codec parameters, writes the header.
+ *
+ * @param	jp2		the jpeg2000 file codec.
+ * @param	cio		the stream object.
+ *
+ * @return true if the codec is valid.
+ */
+opj_bool jp2_start_compress(opj_jp2_v2_t *jp2,
+							struct opj_stream_private *cio,
+							struct opj_image * p_image,
+							struct opj_event_mgr * p_manager);
+
+
+/**
+ * Ends the compression procedures and possibiliy add data to be read after the
+ * codestream.
+ */
+opj_bool jp2_end_compress(	opj_jp2_v2_t *jp2,
+							struct opj_stream_private *cio,
+							struct opj_event_mgr * p_manager);
+
 /* ----------------------------------------------------------------------- */
 
 /**
@@ -372,6 +394,21 @@ opj_bool jp2_read_tile_header (
 					 struct opj_stream_private *p_stream,
 					 struct opj_event_mgr * p_manager
 					);
+
+
+
+/**
+ * Writes a tile.
+ * @param	p_j2k		the jpeg2000 codec.
+ * @param	p_stream			the stream to write data to.
+ * @param	p_manager	the user event manager.
+ */
+opj_bool jp2_write_tile (	opj_jp2_v2_t *p_jp2,
+					 	 	OPJ_UINT32 p_tile_index,
+					 	 	OPJ_BYTE * p_data,
+					 	 	OPJ_UINT32 p_data_size,
+					 	 	struct opj_stream_private *p_stream,
+					 	 	struct opj_event_mgr * p_manager );
 
 /**
  * Decode tile data.

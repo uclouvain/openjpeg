@@ -132,6 +132,12 @@ Encode the code-blocks of a tile
 @param tcp Tile coding parameters
 */
 void t1_encode_cblks(opj_t1_t *t1, opj_tcd_tile_t *tile, opj_tcp_t *tcp);
+
+opj_bool t1_encode_cblks_v2(opj_t1_t *t1,
+							struct opj_tcd_tile_v2 *tile,
+							struct opj_tcp_v2 *tcp,
+							const OPJ_FLOAT64 * mct_norms);
+
 /**
 Decode the code-blocks of a tile
 @param t1 T1 handle

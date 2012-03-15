@@ -55,6 +55,19 @@ opj_bool j2k_read_header_procedure(
 								struct opj_event_mgr * p_manager);
 
 /**
+ * The default encoding validation procedure without any extension.
+ *
+ * @param	p_j2k			the jpeg2000 codec to validate.
+ * @param	p_stream				the input stream to validate.
+ * @param	p_manager		the user event manager.
+ *
+ * @return true if the parameters are correct.
+ */
+opj_bool j2k_encoding_validation (	opj_j2k_v2_t * p_j2k,
+									opj_stream_private_t *p_stream,
+									opj_event_mgr_t * p_manager );
+
+/**
  * The default decoding validation procedure without any extension.
  *
  * @param	p_j2k			the jpeg2000 codec to validate.
@@ -73,16 +86,56 @@ opj_bool j2k_decoding_validation (
  * Sets up the validation ,i.e. adds the procedures to lauch to make sure the codec parameters
  * are valid. Developpers wanting to extend the library can add their own validation procedures.
  */
+static void j2k_setup_encoding_validation (opj_j2k_v2_t *p_j2k);
+
+/**
+ * Sets up the validation ,i.e. adds the procedures to lauch to make sure the codec parameters
+ * are valid. Developpers wanting to extend the library can add their own validation procedures.
+ */
 static void j2k_setup_decoding_validation (opj_j2k_v2_t *p_j2k);
+
+/**
+ * Sets up the validation ,i.e. adds the procedures to lauch to make sure the codec parameters
+ * are valid. Developpers wanting to extend the library can add their own validation procedures.
+ */
+static void j2k_setup_end_compress (opj_j2k_v2_t *p_j2k);
+
+/**
+ * The mct encoding validation procedure.
+ *
+ * @param	p_j2k			the jpeg2000 codec to validate.
+ * @param	p_stream				the input stream to validate.
+ * @param	p_manager		the user event manager.
+ *
+ * @return true if the parameters are correct.
+ */
+opj_bool j2k_mct_validation (	opj_j2k_v2_t * p_j2k,
+								opj_stream_private_t *p_stream,
+								opj_event_mgr_t * p_manager );
 
 /**
  * Builds the tcd decoder to use to decode tile.
  */
-opj_bool j2k_build_decoder (
-						opj_j2k_v2_t * p_j2k,
-						opj_stream_private_t *p_stream,
-						opj_event_mgr_t * p_manager
-						);
+opj_bool j2k_build_decoder (opj_j2k_v2_t * p_j2k,
+							opj_stream_private_t *p_stream,
+							opj_event_mgr_t * p_manager );
+/**
+ * Builds the tcd encoder to use to encode tile.
+ */
+opj_bool j2k_build_encoder (opj_j2k_v2_t * p_j2k,
+							opj_stream_private_t *p_stream,
+							opj_event_mgr_t * p_manager );
+
+/**
+ * Creates a tile-coder decoder.
+ *
+ * @param	p_stream				the stream to write data to.
+ * @param	p_j2k				J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+static opj_bool j2k_create_tcd(	opj_j2k_v2_t *p_j2k,
+								struct opj_stream_private *p_stream,
+								struct opj_event_mgr * p_manager );
 
 /**
  * Excutes the given procedures on the given codec.
@@ -102,12 +155,30 @@ static opj_bool j2k_exec (
 				  );
 
 /**
+ * Updates the rates of the tcp.
+ *
+ * @param	p_stream				the stream to write data to.
+ * @param	p_j2k				J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+static opj_bool j2k_update_rates(	opj_j2k_v2_t *p_j2k,
+									struct opj_stream_private *p_stream,
+									struct opj_event_mgr * p_manager );
+
+/**
  * Copies the decoding tile parameters onto all the tile parameters.
  * Creates also the tile decoder.
  */
 opj_bool j2k_copy_default_tcp_and_create_tcd (	opj_j2k_v2_t * p_j2k,
 												opj_stream_private_t *p_stream,
 												opj_event_mgr_t * p_manager );
+
+/**
+ * Destroys the memory associated with the decoding of headers.
+ */
+opj_bool j2k_destroy_header_memory (opj_j2k_v2_t * p_j2k,
+									opj_stream_private_t *p_stream,
+									opj_event_mgr_t * p_manager );
 
 /**
  * Reads the lookup table containing all the marker, status and action, and returns the handler associated
@@ -141,6 +212,35 @@ static void j2k_cp_destroy (opj_cp_v2_t *p_cp);
 
 
 /**
+ * Writes a SPCod or SPCoc element, i.e. the coding style of a given component of a tile.
+ *
+ * @param	p_comp_no	the component number to output.
+ * @param	p_stream			the stream to write data to.
+ * @param	p_j2k			J2K codec.
+ * @param	p_manager	the user event manager.
+ *
+*/
+static opj_bool j2k_write_SPCod_SPCoc(	opj_j2k_v2_t *p_j2k,
+										OPJ_UINT32 p_tile_no,
+										OPJ_UINT32 p_comp_no,
+										OPJ_BYTE * p_data,
+										OPJ_UINT32 * p_header_size,
+										struct opj_event_mgr * p_manager );
+
+/**
+ * Gets the size taken by writing a SPCod or SPCoc for the given tile and component.
+ *
+ * @param	p_tile_no		the tile index.
+ * @param	p_comp_no		the component being outputted.
+ * @param	p_j2k			the J2K codec.
+ *
+ * @return	the number of bytes taken by the SPCod element.
+ */
+static OPJ_UINT32 j2k_get_SPCod_SPCoc_size (opj_j2k_v2_t *p_j2k,
+											OPJ_UINT32 p_tile_no,
+											OPJ_UINT32 p_comp_no );
+
+/**
  * Reads a SPCod or SPCoc element, i.e. the coding style of a given component of a tile.
  * @param	p_header_data	the data contained in the COM box.
  * @param	p_j2k			the jpeg2000 codec.
@@ -154,6 +254,43 @@ static opj_bool j2k_read_SPCod_SPCoc(
 							OPJ_UINT32 * p_header_size,
 							struct opj_event_mgr * p_manager
 							);
+
+/**
+ * Gets the size taken by writing SQcd or SQcc element, i.e. the quantization values of a band in the QCD or QCC.
+ *
+ * @param	p_tile_no		the tile index.
+ * @param	p_comp_no		the component being outputted.
+ * @param	p_j2k			the J2K codec.
+ *
+ * @return	the number of bytes taken by the SPCod element.
+ */
+static OPJ_UINT32 j2k_get_SQcd_SQcc_size (	opj_j2k_v2_t *p_j2k,
+								    		OPJ_UINT32 p_tile_no,
+								    		OPJ_UINT32 p_comp_no );
+
+/**
+ * Writes a SQcd or SQcc element, i.e. the quantization values of a band in the QCD or QCC.
+ *
+ * @param	p_tile_no		the tile to output.
+ * @param	p_comp_no		the component number to output.
+ * @param	p_data			the data buffer.
+ * @param	p_header_size	pointer to the size of the data buffer, it is changed by the function.
+ * @param	p_j2k			J2K codec.
+ * @param	p_manager		the user event manager.
+ *
+*/
+static opj_bool j2k_write_SQcd_SQcc(opj_j2k_v2_t *p_j2k,
+									OPJ_UINT32 p_tile_no,
+									OPJ_UINT32 p_comp_no,
+									OPJ_BYTE * p_data,
+									OPJ_UINT32 * p_header_size,
+									struct opj_event_mgr * p_manager
+									);
+
+/**
+ * Updates the Tile Length Marker.
+ */
+static void j2k_update_tlm ( opj_j2k_v2_t * p_j2k, OPJ_UINT32 p_tile_part_size);
 
 /**
  * Reads a SQcd or SQcc element, i.e. the quantization values of a band in the QCD or QCC.
@@ -195,12 +332,56 @@ static void j2k_copy_tile_quantization_parameters(
 /**
  * Reads the tiles.
  */
-opj_bool j2k_decode_tiles (		opj_j2k_v2_t *p_j2k,
-								opj_stream_private_t *p_stream,
-								opj_event_mgr_t * p_manager);
+opj_bool j2k_decode_tiles (	opj_j2k_v2_t *p_j2k,
+							opj_stream_private_t *p_stream,
+							opj_event_mgr_t * p_manager);
+
+
+static opj_bool j2k_pre_write_tile ( opj_j2k_v2_t * p_j2k,
+					 	 	 	 	 OPJ_UINT32 p_tile_index,
+					 	 	 	 	 opj_stream_private_t *p_stream,
+					 	 	 	 	 opj_event_mgr_t * p_manager );
 
 static opj_bool j2k_update_image_data (opj_tcd_v2_t * p_tcd, OPJ_BYTE * p_data, opj_image_t* p_output_image);
 
+static void j2k_get_tile_data (opj_tcd_v2_t * p_tcd, OPJ_BYTE * p_data);
+
+static opj_bool j2k_post_write_tile (opj_j2k_v2_t * p_j2k,
+					 	 	 	 	 OPJ_BYTE * p_data,
+					 	 	 	 	 OPJ_UINT32 p_data_size,
+					 	 	 	 	 opj_stream_private_t *p_stream,
+					 	 	 	 	 opj_event_mgr_t * p_manager );
+
+/**
+ * Sets up the procedures to do on writing header.
+ * Developers wanting to extend the library can add their own writing procedures.
+ */
+void j2k_setup_header_writting (opj_j2k_v2_t *p_j2k);
+
+static opj_bool j2k_write_first_tile_part(	opj_j2k_v2_t *p_j2k,
+											OPJ_BYTE * p_data,
+											OPJ_UINT32 * p_data_written,
+											OPJ_UINT32 p_total_data_size,
+											opj_stream_private_t *p_stream,
+											struct opj_event_mgr * p_manager );
+
+static opj_bool j2k_write_all_tile_parts(	opj_j2k_v2_t *p_j2k,
+											OPJ_BYTE * p_data,
+											OPJ_UINT32 * p_data_written,
+											OPJ_UINT32 p_total_data_size,
+											opj_stream_private_t *p_stream,
+											struct opj_event_mgr * p_manager );
+
+/**
+ * Gets the offset of the header.
+ *
+ * @param	p_stream		the stream to write data to.
+ * @param	p_j2k			J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+static opj_bool j2k_get_end_header(	opj_j2k_v2_t *p_j2k,
+									struct opj_stream_private *p_stream,
+									struct opj_event_mgr * p_manager );
 
 /*
  * -----------------------------------------------------------------------
@@ -213,6 +394,18 @@ Write the SOC marker (Start Of Codestream)
 @param j2k J2K handle
 */
 static void j2k_write_soc(opj_j2k_t *j2k);
+
+/**
+ * Writes the SOC marker (Start Of Codestream)
+ *
+ * @param	p_stream			the stream to write data to.
+ * @param	p_j2k			J2K codec.
+ * @param	p_manager	the user event manager.
+*/
+static opj_bool j2k_write_soc_v2(	opj_j2k_v2_t *p_j2k,
+									struct opj_stream_private *p_stream,
+									struct opj_event_mgr * p_manager );
+
 /**
 Read the SOC marker (Start of Codestream)
 @param j2k J2K handle
@@ -237,6 +430,18 @@ Write the SIZ marker (image and tile size)
 @param j2k J2K handle
 */
 static void j2k_write_siz(opj_j2k_t *j2k);
+
+/**
+ * Writes the SIZ marker (image and tile size)
+ *
+ * @param	p_stream			the stream to write data to.
+ * @param	p_j2k			J2K codec.
+ * @param	p_manager	the user event manager.
+*/
+static opj_bool j2k_write_siz_v2(	opj_j2k_v2_t *p_j2k,
+									struct opj_stream_private *p_stream,
+									struct opj_event_mgr * p_manager );
+
 /**
 Read the SIZ marker (image and tile size)
 @param j2k J2K handle
@@ -297,6 +502,18 @@ Write the COD marker (coding style default)
 @param j2k J2K handle
 */
 static void j2k_write_cod(opj_j2k_t *j2k);
+
+/**
+ * Writes the COD marker (Coding style default)
+ *
+ * @param	p_stream			the stream to write data to.
+ * @param	p_j2k			J2K codec.
+ * @param	p_manager	the user event manager.
+*/
+static opj_bool j2k_write_cod_v2(	opj_j2k_v2_t *p_j2k,
+									struct opj_stream_private *p_stream,
+									struct opj_event_mgr * p_manager );
+
 /**
 Read the COD marker (coding style default)
 @param j2k J2K handle
@@ -323,6 +540,41 @@ Write the COC marker (coding style component)
 @param compno Number of the component concerned by the information written
 */
 static void j2k_write_coc(opj_j2k_t *j2k, int compno);
+
+/**
+ * Writes the COC marker (Coding style component)
+ *
+ * @param	p_comp_number	the index of the component to output.
+ * @param	p_stream				the stream to write data to.
+ * @param	p_j2k				J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+static opj_bool j2k_write_coc_v2( opj_j2k_v2_t *p_j2k,
+							OPJ_UINT32 p_comp_number,
+							struct opj_stream_private *p_stream,
+							struct opj_event_mgr * p_manager
+						  );
+/**
+ * Writes the COC marker (Coding style component)
+ *
+ * @param	p_comp_no		the index of the component to output.
+ * @param	p_stream		the stream to write data to.
+ * @param	p_j2k			J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+static void j2k_write_coc_in_memory(opj_j2k_v2_t *p_j2k,
+									OPJ_UINT32 p_comp_no,
+									OPJ_BYTE * p_data,
+									OPJ_UINT32 * p_data_written,
+									struct opj_event_mgr * p_manager );
+
+/**
+ * Gets the maximum size taken by a coc.
+ *
+ * @param	p_j2k	the jpeg2000 codec to use.
+ */
+static OPJ_UINT32 j2k_get_max_coc_size(opj_j2k_v2_t *p_j2k);
+
 /**
 Read the COC marker (coding style component)
 @param j2k J2K handle
@@ -361,6 +613,19 @@ Write the QCD marker (quantization default)
 @param j2k J2K handle
 */
 static void j2k_write_qcd(opj_j2k_t *j2k);
+
+/**
+ * Writes the QCD marker (quantization default)
+ *
+ * @param	p_comp_number	the index of the component to output.
+ * @param	p_stream		the stream to write data to.
+ * @param	p_j2k			J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+static opj_bool j2k_write_qcd_v2(	opj_j2k_v2_t *p_j2k,
+									struct opj_stream_private *p_stream,
+									struct opj_event_mgr * p_manager );
+
 /**
 Read the QCD marker (quantization default)
 @param j2k J2K handle
@@ -387,6 +652,39 @@ Write the QCC marker (quantization component)
 @param compno Number of the component concerned by the information written
 */
 static void j2k_write_qcc(opj_j2k_t *j2k, int compno);
+
+/**
+ * Writes the QCC marker (quantization component)
+ *
+ * @param	p_comp_no	the index of the component to output.
+ * @param	p_stream		the stream to write data to.
+ * @param	p_j2k			J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+static opj_bool j2k_write_qcc_v2(	opj_j2k_v2_t *p_j2k,
+									OPJ_UINT32 p_comp_no,
+									struct opj_stream_private *p_stream,
+									struct opj_event_mgr * p_manager );
+
+/**
+ * Writes the QCC marker (quantization component)
+ *
+ * @param	p_comp_no	the index of the component to output.
+ * @param	p_stream		the stream to write data to.
+ * @param	p_j2k			J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+static void j2k_write_qcc_in_memory(opj_j2k_v2_t *p_j2k,
+									OPJ_UINT32 p_comp_no,
+									OPJ_BYTE * p_data,
+									OPJ_UINT32 * p_data_written,
+									struct opj_event_mgr * p_manager );
+
+/**
+ * Gets the maximum size taken by a qcc.
+ */
+static OPJ_UINT32 j2k_get_max_qcc_size (opj_j2k_v2_t *p_j2k);
+
 /**
 Read the QCC marker (quantization component)
 @param j2k J2K handle
@@ -410,6 +708,36 @@ Write the POC marker (progression order change)
 @param j2k J2K handle
 */
 static void j2k_write_poc(opj_j2k_t *j2k);
+
+/**
+ * Writes the POC marker (Progression Order Change)
+ *
+ * @param	p_stream		the stream to write data to.
+ * @param	p_j2k			J2K codec.
+ * @param	p_manager		the user event manager.
+ */
+static void j2k_write_poc_in_memory(opj_j2k_v2_t *p_j2k,
+									OPJ_BYTE * p_data,
+									OPJ_UINT32 * p_data_written,
+									struct opj_event_mgr * p_manager );
+
+/**
+ * Gets the maximum size taken by the writting of a POC.
+ */
+static OPJ_UINT32 j2k_get_max_poc_size(opj_j2k_v2_t *p_j2k);
+
+/**
+ * Gets the maximum size taken by the toc headers of all the tile parts of any given tile.
+ */
+static OPJ_UINT32 j2k_get_max_toc_size (opj_j2k_v2_t *p_j2k);
+
+/**
+ * Gets the maximum size taken by the headers of the SOT.
+ *
+ * @param	p_j2k	the jpeg2000 codec to use.
+ */
+static OPJ_UINT32 j2k_get_specific_header_sizes(opj_j2k_v2_t *p_j2k);
+
 /**
 Read the POC marker (progression order change)
 @param j2k J2K handle
@@ -429,6 +757,7 @@ static opj_bool j2k_read_poc_v2 (
 						OPJ_UINT32 p_header_size,
 						struct opj_event_mgr * p_manager
 					);
+
 /**
 Read the CRG marker (component registration)
 @param j2k J2K handle
@@ -467,6 +796,18 @@ static opj_bool j2k_read_tlm_v2 (
 						OPJ_UINT32 p_header_size,
 						struct opj_event_mgr * p_manager
 					);
+
+/**
+ * Writes the updated tlm.
+ *
+ * @param	p_stream		the stream to write data to.
+ * @param	p_j2k			J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+static opj_bool j2k_write_updated_tlm(	opj_j2k_v2_t *p_j2k,
+										struct opj_stream_private *p_stream,
+										struct opj_event_mgr * p_manager );
+
 /**
 Read the PLM marker (packet length, main header)
 @param j2k J2K handle
@@ -569,6 +910,19 @@ Read the SOT marker (start of tile-part)
 static void j2k_read_sot(opj_j2k_t *j2k);
 
 /**
+ * Writes the SOT marker (Start of tile-part)
+ *
+ * @param	p_stream		the stream to write data to.
+ * @param	p_j2k			J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+static opj_bool j2k_write_sot_v2(	opj_j2k_v2_t *p_j2k,
+									OPJ_BYTE * p_data,
+									OPJ_UINT32 * p_data_written,
+									const struct opj_stream_private *p_stream,
+									struct opj_event_mgr * p_manager );
+
+/**
  * Reads a PPT marker (Packed packet headers, tile-part header)
  *
  * @param	p_header_data	the data contained in the PPT box.
@@ -588,6 +942,22 @@ Write the SOD marker (start of data)
 @param tile_coder Pointer to a TCD handle
 */
 static void j2k_write_sod(opj_j2k_t *j2k, void *tile_coder);
+
+/**
+ * Writes the SOD marker (Start of data)
+ *
+ * @param	p_stream				the stream to write data to.
+ * @param	p_j2k				J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+static opj_bool j2k_write_sod_v2(	opj_j2k_v2_t *p_j2k,
+									struct opj_tcd_v2 * p_tile_coder,
+									OPJ_BYTE * p_data,
+									OPJ_UINT32 * p_data_written,
+									OPJ_UINT32 p_total_data_size,
+									const struct opj_stream_private *p_stream,
+									struct opj_event_mgr * p_manager );
+
 /**
 Read the SOD marker (start of data)
 @param j2k J2K handle
@@ -609,12 +979,40 @@ static opj_bool j2k_read_sod_v2 (
 					);
 
 /**
+ * Updates the Tile Length Marker.
+ */
+void j2k_update_tlm (opj_j2k_v2_t * p_j2k, OPJ_UINT32 p_tile_part_size )
+{
+	opj_write_bytes(p_j2k->m_specific_param.m_encoder.m_tlm_sot_offsets_current,p_j2k->m_current_tile_number,1);					/* PSOT */
+	++p_j2k->m_specific_param.m_encoder.m_tlm_sot_offsets_current;
+
+	opj_write_bytes(p_j2k->m_specific_param.m_encoder.m_tlm_sot_offsets_current,p_tile_part_size,4);					/* PSOT */
+	p_j2k->m_specific_param.m_encoder.m_tlm_sot_offsets_current += 4;
+}
+
+/**
 Write the RGN marker (region-of-interest)
 @param j2k J2K handle
 @param compno Number of the component concerned by the information written
 @param tileno Number of the tile concerned by the information written
 */
 static void j2k_write_rgn(opj_j2k_t *j2k, int compno, int tileno);
+
+/**
+ * Writes the RGN marker (Region Of Interest)
+ *
+ * @param	p_tile_no		the tile to output
+ * @param	p_comp_no		the component to output
+ * @param	p_stream				the stream to write data to.
+ * @param	p_j2k				J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+static opj_bool j2k_write_rgn_v2(	opj_j2k_v2_t *p_j2k,
+									OPJ_UINT32 p_tile_no,
+									OPJ_UINT32 p_comp_no,
+									struct opj_stream_private *p_stream,
+									struct opj_event_mgr * p_manager );
+
 /**
 Read the RGN marker (region-of-interest)
 @param j2k J2K handle
@@ -661,6 +1059,30 @@ static opj_bool j2k_read_eoc_v2 (
 						struct opj_event_mgr * p_manager
 					) ;
 
+
+
+/**
+ * Writes the CBD-MCT-MCC-MCO markers (Multi components transform)
+ *
+ * @param	p_stream			the stream to write data to.
+ * @param	p_j2k			J2K codec.
+ * @param	p_manager	the user event manager.
+*/
+static opj_bool j2k_write_mct_data_group(	opj_j2k_v2_t *p_j2k,
+											struct opj_stream_private *p_stream,
+											struct opj_event_mgr * p_manager );
+
+/**
+ * Inits the Info
+ *
+ * @param	p_stream		the stream to write data to.
+ * @param	p_j2k			J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+static opj_bool j2k_init_info(	opj_j2k_v2_t *p_j2k,
+								struct opj_stream_private *p_stream,
+								struct opj_event_mgr * p_manager );
+
 /**
 Read an unknown marker
 @param j2k J2K handle
@@ -703,6 +1125,18 @@ static opj_bool j2k_read_unk_v2 (	opj_j2k_v2_t *p_j2k,
 									struct opj_event_mgr * p_manager );
 
 /**
+ * Writes the MCT marker (Multiple Component Transform)
+ *
+ * @param	p_stream				the stream to write data to.
+ * @param	p_j2k				J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+static opj_bool j2k_write_mct_record(	opj_j2k_v2_t *p_j2k,
+										opj_mct_data_t * p_mct_record,
+										struct opj_stream_private *p_stream,
+										struct opj_event_mgr * p_manager );
+
+/**
  * Reads a MCT marker (Multiple Component Transform)
  *
  * @param	p_header_data	the data contained in the MCT box.
@@ -716,6 +1150,19 @@ static opj_bool j2k_read_mct (	opj_j2k_v2_t *p_j2k,
 								struct opj_event_mgr * p_manager );
 
 /**
+ * Writes the MCC marker (Multiple Component Collection)
+ *
+ * @param	p_stream		the stream to write data to.
+ * @param	p_j2k			J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+static opj_bool j2k_write_mcc_record(	opj_j2k_v2_t *p_j2k,
+										struct opj_simple_mcc_decorrelation_data * p_mcc_record,
+										struct opj_stream_private *p_stream,
+										struct opj_event_mgr * p_manager );
+
+
+/**
  * Reads a MCC marker (Multiple Component Collection)
  *
  * @param	p_header_data	the data contained in the MCC box.
@@ -724,9 +1171,20 @@ static opj_bool j2k_read_mct (	opj_j2k_v2_t *p_j2k,
  * @param	p_manager		the user event manager.
 */
 static opj_bool j2k_read_mcc (	opj_j2k_v2_t *p_j2k,
-							OPJ_BYTE * p_header_data,
-							OPJ_UINT32 p_header_size,
-							struct opj_event_mgr * p_manager );
+								OPJ_BYTE * p_header_data,
+								OPJ_UINT32 p_header_size,
+								struct opj_event_mgr * p_manager );
+
+/**
+ * Writes the MCO marker (Multiple component transformation ordering)
+ *
+ * @param	p_stream				the stream to write data to.
+ * @param	p_j2k				J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+static opj_bool j2k_write_mco(	opj_j2k_v2_t *p_j2k,
+								struct opj_stream_private *p_stream,
+								struct opj_event_mgr * p_manager );
 
 /**
  * Reads a MCO marker (Multiple Component Transform Ordering)
@@ -758,6 +1216,29 @@ static void  j2k_write_float_to_int32 (const void * p_src_data, void * p_dest_da
 static void  j2k_write_float_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
 static void  j2k_write_float_to_float64 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
 
+
+/**
+ * Ends the encoding, i.e. frees memory.
+ *
+ * @param	p_stream		the stream to write data to.
+ * @param	p_j2k			J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+static opj_bool j2k_end_encoding(	opj_j2k_v2_t *p_j2k,
+									struct opj_stream_private *p_stream,
+									struct opj_event_mgr * p_manager );
+
+/**
+ * Writes the CBD marker (Component bit depth definition)
+ *
+ * @param	p_stream				the stream to write data to.
+ * @param	p_j2k				J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+static opj_bool j2k_write_cbd(	opj_j2k_v2_t *p_j2k,
+								struct opj_stream_private *p_stream,
+								struct opj_event_mgr * p_manager );
+
 /**
  * Reads a CBD marker (Component bit depth definition)
  * @param	p_header_data	the data contained in the CBD box.
@@ -770,6 +1251,67 @@ static opj_bool j2k_read_cbd (	opj_j2k_v2_t *p_j2k,
 							OPJ_UINT32 p_header_size,
 							struct opj_event_mgr * p_manager);
 
+/**
+ * Writes the image components.
+ *
+ * @param	p_stream		the stream to write data to.
+ * @param	p_j2k			J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+static opj_bool j2k_write_image_components(	opj_j2k_v2_t *p_j2k,
+											struct opj_stream_private *p_stream,
+											struct opj_event_mgr * p_manager );
+
+/**
+ * Writes regions of interests.
+ *
+ * @param	p_stream		the stream to write data to.
+ * @param	p_j2k			J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+static opj_bool j2k_write_regions(	opj_j2k_v2_t *p_j2k,
+									struct opj_stream_private *p_stream,
+									struct opj_event_mgr * p_manager );
+
+/**
+ * Writes EPC ????
+ *
+ * @param	p_stream		the stream to write data to.
+ * @param	p_j2k			J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+static opj_bool j2k_write_epc( 	opj_j2k_v2_t *p_j2k,
+								struct opj_stream_private *p_stream,
+								struct opj_event_mgr * p_manager );
+
+/**
+ * Gets the number of tile parts used for the given change of progression (if any) and the given tile.
+ *
+ * @param		cp			the coding parameters.
+ * @param		pino		the offset of the given poc (i.e. its position in the coding parameter).
+ * @param		tileno		the given tile.
+ *
+ * @return		the number of tile parts.
+ */
+static OPJ_UINT32 j2k_get_num_tp_v2( opj_cp_v2_t *cp, OPJ_UINT32 pino, OPJ_UINT32 tileno);
+
+/**
+ * Calculates the total number of tile parts needed by the encoder to
+ * encode such an image. If not enough memory is available, then the function return false.
+ *
+ * @param	p_nb_tiles	pointer that will hold the number of tile parts.
+ * @param	cp			the coding parameters for the image.
+ * @param	image		the image to encode.
+ * @param	p_j2k			the p_j2k encoder.
+ * @param	p_manager	the user event manager.
+ *
+ * @return true if the function was successful, false else.
+ */
+static opj_bool j2k_calculate_tp_v2(opj_j2k_v2_t *p_j2k,
+									opj_cp_v2_t *cp,
+									OPJ_UINT32 * p_nb_tiles,
+									opj_image_t *image,
+									opj_event_mgr_t * p_manager);
 
 static void j2k_dump_MH_info(opj_j2k_v2_t* p_j2k, FILE* out_stream);
 
@@ -1158,6 +1700,73 @@ static int j2k_get_num_tp(opj_cp_t *cp,int pino,int tileno){
 	return tpnum;
 }
 
+/**
+ * Gets the number of tile parts used for the given change of progression (if any) and the given tile.
+ *
+ * @param		cp			the coding parameters.
+ * @param		pino		the offset of the given poc (i.e. its position in the coding parameter).
+ * @param		tileno		the given tile.
+ *
+ * @return		the number of tile parts.
+ */
+OPJ_UINT32 j2k_get_num_tp_v2(opj_cp_v2_t *cp, OPJ_UINT32 pino, OPJ_UINT32 tileno)
+{
+	const OPJ_CHAR *prog = 00;
+	OPJ_UINT32 i;
+	OPJ_UINT32 tpnum = 1;
+	opj_tcp_v2_t *tcp = 00;
+	opj_poc_t * l_current_poc = 00;
+
+	/*  preconditions */
+	assert(tileno < (cp->tw * cp->th));
+	assert(pino < (cp->tcps[tileno].numpocs + 1));
+
+	/* get the given tile coding parameter */
+	tcp = &cp->tcps[tileno];
+	assert(tcp != 00);
+
+	l_current_poc = &(tcp->pocs[pino]);
+	assert(l_current_poc != 0);
+
+	/* get the progression order as a character string */
+	prog = j2k_convert_progression_order(tcp->prg);
+	assert(strlen(prog) > 0);
+
+	if (cp->m_specific_param.m_enc.m_tp_on == 1) {
+		for (i=0;i<4;++i) {
+			switch (prog[i])
+			{
+				/* component wise */
+				case 'C':
+					tpnum *= l_current_poc->compE;
+					break;
+				/* resolution wise */
+				case 'R':
+					tpnum *= l_current_poc->resE;
+					break;
+				// precinct wise
+				case 'P':
+					tpnum *= l_current_poc->prcE;
+					break;
+				/* layer wise */
+				case 'L':
+					tpnum *= l_current_poc->layE;
+					break;
+			}
+			/* whould we split here ? */
+			if ( cp->m_specific_param.m_enc.m_tp_flag == prog[i] ) {
+				cp->m_specific_param.m_enc.m_tp_pos=i;
+				break;
+			}
+		}
+	}
+	else {
+		tpnum=1;
+	}
+
+	return tpnum;
+}
+
 /**	mem allocation for TLM marker*/
 int j2k_calculate_tp(opj_cp_t *cp,int img_numcomp,opj_image_t *image,opj_j2k_t *j2k ){
 	int pino,tileno,totnum_tp=0;
@@ -1188,6 +1797,95 @@ int j2k_calculate_tp(opj_cp_t *cp,int img_numcomp,opj_image_t *image,opj_j2k_t *
 	return totnum_tp;
 }
 
+/**
+ * Calculates the total number of tile parts needed by the encoder to
+ * encode such an image. If not enough memory is available, then the function return false.
+ *
+ * @param	p_nb_tiles	pointer that will hold the number of tile parts.
+ * @param	cp			the coding parameters for the image.
+ * @param	image		the image to encode.
+ * @param	p_j2k			the p_j2k encoder.
+ * @param	p_manager	the user event manager.
+ *
+ * @return true if the function was successful, false else.
+ */
+opj_bool j2k_calculate_tp_v2( opj_j2k_v2_t *p_j2k,
+					  	  	  opj_cp_v2_t *cp,
+					  	  	  OPJ_UINT32 * p_nb_tiles,
+					  	  	  opj_image_t *image,
+					  	  	  opj_event_mgr_t * p_manager)
+{
+	OPJ_UINT32 pino,tileno;
+	OPJ_UINT32 l_nb_tiles;
+	opj_tcp_v2_t *tcp;
+
+	/* preconditions */
+	assert(p_nb_tiles != 00);
+	assert(cp != 00);
+	assert(image != 00);
+	assert(p_j2k != 00);
+	assert(p_manager != 00);
+
+	l_nb_tiles = cp->tw * cp->th;
+	* p_nb_tiles = 0;
+	tcp = cp->tcps;
+
+	/* INDEX >> */
+	/* TODO mergeV2: check this part which use cstr_info */
+	/*if (p_j2k->cstr_info) {
+		opj_tile_info_t * l_info_tile_ptr = p_j2k->cstr_info->tile;
+
+		for (tileno = 0; tileno < l_nb_tiles; ++tileno) {
+			OPJ_UINT32 cur_totnum_tp = 0;
+
+			pi_update_encoding_parameters(image,cp,tileno);
+
+			for (pino = 0; pino <= tcp->numpocs; ++pino)
+			{
+				OPJ_UINT32 tp_num = j2k_get_num_tp_v2(cp,pino,tileno);
+
+				*p_nb_tiles = *p_nb_tiles + tp_num;
+
+				cur_totnum_tp += tp_num;
+			}
+
+			tcp->m_nb_tile_parts = cur_totnum_tp;
+
+			l_info_tile_ptr->tp = (opj_tp_info_t *) opj_malloc(cur_totnum_tp * sizeof(opj_tp_info_t));
+			if (l_info_tile_ptr->tp == 00) {
+				return OPJ_FALSE;
+			}
+
+			memset(l_info_tile_ptr->tp,0,cur_totnum_tp * sizeof(opj_tp_info_t));
+
+			l_info_tile_ptr->num_tps = cur_totnum_tp;
+
+			++l_info_tile_ptr;
+			++tcp;
+		}
+	}
+	else */{
+		for (tileno = 0; tileno < l_nb_tiles; ++tileno) {
+			OPJ_UINT32 cur_totnum_tp = 0;
+
+			pi_update_encoding_parameters(image,cp,tileno);
+
+			for (pino = 0; pino <= tcp->numpocs; ++pino) {
+				OPJ_UINT32 tp_num = j2k_get_num_tp_v2(cp,pino,tileno);
+
+				*p_nb_tiles = *p_nb_tiles + tp_num;
+
+				cur_totnum_tp += tp_num;
+			}
+			tcp->m_nb_tile_parts = cur_totnum_tp;
+
+			++tcp;
+		}
+	}
+
+	return OPJ_TRUE;
+}
+
 static void j2k_write_soc(opj_j2k_t *j2k) {
 	opj_cio_t *cio = j2k->cio;
 	cio_write(cio, J2K_MS_SOC, 2);
@@ -1202,6 +1900,44 @@ static void j2k_write_soc(opj_j2k_t *j2k) {
 	j2k_add_marker(j2k->cstr_info, J2K_MS_SOC, cio_tell(cio) - 2, 2);
 #endif /* USE_JPWL */
 /* <<UniPG */
+}
+
+/**
+ * Writes the SOC marker (Start Of Codestream)
+ *
+ * @param	p_stream			the stream to write data to.
+ * @param	p_j2k			J2K codec.
+ * @param	p_manager	the user event manager.
+*/
+opj_bool j2k_write_soc_v2(	opj_j2k_v2_t *p_j2k,
+							struct opj_stream_private *p_stream,
+							struct opj_event_mgr * p_manager )
+{
+	/* 2 bytes will be written */
+	OPJ_BYTE * l_start_stream = 00;
+
+	/* preconditions */
+	assert(p_stream != 00);
+	assert(p_j2k != 00);
+	assert(p_manager != 00);
+
+	l_start_stream = p_j2k->m_specific_param.m_encoder.m_header_tile_data;
+
+	/* write SOC identifier */
+	opj_write_bytes(l_start_stream,J2K_MS_SOC,2);
+
+	if (opj_stream_write_data(p_stream,l_start_stream,2,p_manager) != 2) {
+		return OPJ_FALSE;
+	}
+
+/* UniPG>> */
+#ifdef USE_JPWL
+	/* update markers struct */
+	j2k_add_marker(p_j2k->cstr_info, J2K_MS_SOC, p_stream_tell(p_stream) - 2, 2);
+#endif /* USE_JPWL */
+/* <<UniPG */
+
+	return OPJ_TRUE;
 }
 
 static void j2k_read_soc(opj_j2k_t *j2k) {	
@@ -1288,6 +2024,107 @@ static void j2k_write_siz(opj_j2k_t *j2k) {
 	
 	if(j2k->cstr_info)
 	  j2k_add_mhmarker(j2k->cstr_info, J2K_MS_SIZ, lenp, len);
+}
+
+/**
+ * Writes the SIZ marker (image and tile size)
+ *
+ * @param	p_stream			the stream to write data to.
+ * @param	p_j2k			J2K codec.
+ * @param	p_manager	the user event manager.
+*/
+opj_bool j2k_write_siz_v2(	opj_j2k_v2_t *p_j2k,
+							struct opj_stream_private *p_stream,
+							struct opj_event_mgr * p_manager )
+{
+	OPJ_UINT32 i;
+	OPJ_UINT32 l_size_len;
+	OPJ_BYTE * l_current_ptr;
+	opj_image_t * l_image = 00;
+	opj_cp_v2_t *cp = 00;
+	opj_image_comp_t * l_img_comp = 00;
+
+	/* preconditions */
+	assert(p_stream != 00);
+	assert(p_j2k != 00);
+	assert(p_manager != 00);
+
+	l_image = p_j2k->m_private_image;
+	cp = &(p_j2k->m_cp);
+	l_size_len = 40 + 3 * l_image->numcomps;
+	l_img_comp = l_image->comps;
+
+	if (l_size_len > p_j2k->m_specific_param.m_encoder.m_header_tile_data_size) {
+
+		p_j2k->m_specific_param.m_encoder.m_header_tile_data
+			= (OPJ_BYTE*)opj_realloc(
+				p_j2k->m_specific_param.m_encoder.m_header_tile_data,
+				l_size_len);
+		if (! p_j2k->m_specific_param.m_encoder.m_header_tile_data) {
+			return OPJ_FALSE;
+		}
+
+		p_j2k->m_specific_param.m_encoder.m_header_tile_data_size = l_size_len;
+	}
+
+	l_current_ptr = p_j2k->m_specific_param.m_encoder.m_header_tile_data;
+
+	/* write SOC identifier */
+	opj_write_bytes(l_current_ptr,J2K_MS_SIZ,2);	/* SIZ */
+	l_current_ptr+=2;
+
+	opj_write_bytes(l_current_ptr,l_size_len-2,2); /* L_SIZ */
+	l_current_ptr+=2;
+
+	opj_write_bytes(l_current_ptr, cp->rsiz, 2);	/* Rsiz (capabilities) */
+	l_current_ptr+=2;
+
+	opj_write_bytes(l_current_ptr, l_image->x1, 4);	/* Xsiz */
+	l_current_ptr+=4;
+
+	opj_write_bytes(l_current_ptr, l_image->y1, 4);	/* Ysiz */
+	l_current_ptr+=4;
+
+	opj_write_bytes(l_current_ptr, l_image->x0, 4);	/* X0siz */
+	l_current_ptr+=4;
+
+	opj_write_bytes(l_current_ptr, l_image->y0, 4);	/* Y0siz */
+	l_current_ptr+=4;
+
+	opj_write_bytes(l_current_ptr, cp->tdx, 4);		/* XTsiz */
+	l_current_ptr+=4;
+
+	opj_write_bytes(l_current_ptr, cp->tdy, 4);		/* YTsiz */
+	l_current_ptr+=4;
+
+	opj_write_bytes(l_current_ptr, cp->tx0, 4);		/* XT0siz */
+	l_current_ptr+=4;
+
+	opj_write_bytes(l_current_ptr, cp->ty0, 4);		/* YT0siz */
+	l_current_ptr+=4;
+
+	opj_write_bytes(l_current_ptr, l_image->numcomps, 2);	/* Csiz */
+	l_current_ptr+=2;
+
+	for (i = 0; i < l_image->numcomps; ++i) {
+		// TODO here with MCT ?
+		opj_write_bytes(l_current_ptr, l_img_comp->prec - 1 + (l_img_comp->sgnd << 7), 1);	/* Ssiz_i */
+		++l_current_ptr;
+
+		opj_write_bytes(l_current_ptr, l_img_comp->dx, 1);	/* XRsiz_i */
+		++l_current_ptr;
+
+		opj_write_bytes(l_current_ptr, l_img_comp->dy, 1);	/* YRsiz_i */
+		++l_current_ptr;
+
+		++l_img_comp;
+	}
+
+	if (opj_stream_write_data(p_stream,p_j2k->m_specific_param.m_encoder.m_header_tile_data,l_size_len,p_manager) != l_size_len) {
+		return OPJ_FALSE;
+	}
+
+	return OPJ_TRUE;
 }
 
 static void j2k_read_siz(opj_j2k_t *j2k) {
@@ -1971,6 +2808,84 @@ static void j2k_write_cod(opj_j2k_t *j2k) {
 
 }
 
+/**
+ * Writes the COD marker (Coding style default)
+ *
+ * @param	p_stream			the stream to write data to.
+ * @param	p_j2k			J2K codec.
+ * @param	p_manager	the user event manager.
+*/
+opj_bool j2k_write_cod_v2(	opj_j2k_v2_t *p_j2k,
+							struct opj_stream_private *p_stream,
+							struct opj_event_mgr * p_manager )
+{
+	opj_cp_v2_t *l_cp = 00;
+	opj_tcp_v2_t *l_tcp = 00;
+	OPJ_UINT32 l_code_size,l_remaining_size;
+	OPJ_BYTE * l_current_data = 00;
+
+	/* preconditions */
+	assert(p_j2k != 00);
+	assert(p_manager != 00);
+	assert(p_stream != 00);
+
+	l_cp = &(p_j2k->m_cp);
+	l_tcp = &l_cp->tcps[p_j2k->m_current_tile_number];
+	l_code_size = 9 + j2k_get_SPCod_SPCoc_size(p_j2k,p_j2k->m_current_tile_number,0);
+	l_remaining_size = l_code_size;
+
+	if (l_code_size > p_j2k->m_specific_param.m_encoder.m_header_tile_data_size) {
+		p_j2k->m_specific_param.m_encoder.m_header_tile_data
+			= (OPJ_BYTE*)opj_realloc(
+				p_j2k->m_specific_param.m_encoder.m_header_tile_data,
+				l_code_size);
+
+		if (! p_j2k->m_specific_param.m_encoder.m_header_tile_data) {
+			return OPJ_FALSE;
+		}
+
+		p_j2k->m_specific_param.m_encoder.m_header_tile_data_size = l_code_size;
+	}
+
+	l_current_data = p_j2k->m_specific_param.m_encoder.m_header_tile_data;
+
+	opj_write_bytes(l_current_data,J2K_MS_COD,2);		/* COD */
+	l_current_data += 2;
+
+	opj_write_bytes(l_current_data,l_code_size-2,2);	/* L_COD */
+	l_current_data += 2;
+
+	opj_write_bytes(l_current_data,l_tcp->csty,1);		/* Scod */
+	++l_current_data;
+
+	opj_write_bytes(l_current_data,l_tcp->prg,1);		/* SGcod (A) */
+	++l_current_data;
+
+	opj_write_bytes(l_current_data,l_tcp->numlayers,2);	/* SGcod (B) */
+	l_current_data+=2;
+
+	opj_write_bytes(l_current_data,l_tcp->mct,1);		/* SGcod (C) */
+	++l_current_data;
+
+	l_remaining_size -= 9;
+
+	if (! j2k_write_SPCod_SPCoc(p_j2k,p_j2k->m_current_tile_number,0,l_current_data,&l_remaining_size,p_manager)) {
+		opj_event_msg_v2(p_manager, EVT_ERROR, "Error writting COD marker\n");
+		return OPJ_FALSE;
+	}
+
+	if (l_remaining_size != 0) {
+		opj_event_msg_v2(p_manager, EVT_ERROR, "Error writting COD marker\n");
+		return OPJ_FALSE;
+	}
+
+	if (opj_stream_write_data(p_stream,p_j2k->m_specific_param.m_encoder.m_header_tile_data,l_code_size,p_manager) != l_code_size) {
+		return OPJ_FALSE;
+	}
+
+	return OPJ_TRUE;
+}
+
 static void j2k_read_cod(opj_j2k_t *j2k) {
 	int len, i, pos;
 	
@@ -2115,6 +3030,130 @@ static void j2k_write_coc(opj_j2k_t *j2k, int compno) {
 	cio_seek(cio, lenp);
 	cio_write(cio, len, 2);			/* Lcoc */
 	cio_seek(cio, lenp + len);
+}
+
+/**
+ * Writes the COC marker (Coding style component)
+ *
+ * @param	p_comp_no		the index of the component to output.
+ * @param	p_stream				the stream to write data to.
+ * @param	p_j2k				J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+opj_bool j2k_write_coc_v2(	opj_j2k_v2_t *p_j2k,
+							OPJ_UINT32 p_comp_no,
+							struct opj_stream_private *p_stream,
+							struct opj_event_mgr * p_manager )
+{
+	OPJ_UINT32 l_coc_size,l_remaining_size;
+	OPJ_UINT32 l_comp_room;
+
+	/* preconditions */
+	assert(p_j2k != 00);
+	assert(p_manager != 00);
+	assert(p_stream != 00);
+
+	l_comp_room = (p_j2k->m_private_image->numcomps <= 256) ? 1 : 2;
+
+	l_coc_size = 5 + l_comp_room + j2k_get_SPCod_SPCoc_size(p_j2k,p_j2k->m_current_tile_number,p_comp_no);
+
+	if (l_coc_size > p_j2k->m_specific_param.m_encoder.m_header_tile_data_size) {
+		p_j2k->m_specific_param.m_encoder.m_header_tile_data
+			= (OPJ_BYTE*)opj_realloc(
+				p_j2k->m_specific_param.m_encoder.m_header_tile_data,
+				l_coc_size);
+		if (! p_j2k->m_specific_param.m_encoder.m_header_tile_data) {
+			return OPJ_FALSE;
+		}
+
+		p_j2k->m_specific_param.m_encoder.m_header_tile_data_size = l_coc_size;
+	}
+
+	j2k_write_coc_in_memory(p_j2k,p_comp_no,p_j2k->m_specific_param.m_encoder.m_header_tile_data,&l_remaining_size,p_manager);
+
+	if (opj_stream_write_data(p_stream,p_j2k->m_specific_param.m_encoder.m_header_tile_data,l_coc_size,p_manager) != l_coc_size) {
+		return OPJ_FALSE;
+	}
+
+	return OPJ_TRUE;
+}
+
+/**
+ * Writes the COC marker (Coding style component)
+ *
+ * @param	p_comp_no		the index of the component to output.
+ * @param	p_stream				the stream to write data to.
+ * @param	p_j2k				J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+void j2k_write_coc_in_memory(	opj_j2k_v2_t *p_j2k,
+								OPJ_UINT32 p_comp_no,
+								OPJ_BYTE * p_data,
+								OPJ_UINT32 * p_data_written,
+								struct opj_event_mgr * p_manager )
+{
+	opj_cp_v2_t *l_cp = 00;
+	opj_tcp_v2_t *l_tcp = 00;
+	OPJ_UINT32 l_coc_size,l_remaining_size;
+	OPJ_BYTE * l_current_data = 00;
+	opj_image_t *l_image = 00;
+	OPJ_UINT32 l_comp_room;
+
+	/* preconditions */
+	assert(p_j2k != 00);
+	assert(p_manager != 00);
+
+	l_cp = &(p_j2k->m_cp);
+	l_tcp = &l_cp->tcps[p_j2k->m_current_tile_number];
+	l_image = p_j2k->m_private_image;
+	l_comp_room = (l_image->numcomps <= 256) ? 1 : 2;
+
+	l_coc_size = 5 + l_comp_room + j2k_get_SPCod_SPCoc_size(p_j2k,p_j2k->m_current_tile_number,p_comp_no);
+	l_remaining_size = l_coc_size;
+
+	l_current_data = p_data;
+
+	opj_write_bytes(l_current_data,J2K_MS_COC,2);				/* COC */
+	l_current_data += 2;
+
+	opj_write_bytes(l_current_data,l_coc_size-2,2);				/* L_COC */
+	l_current_data += 2;
+
+	opj_write_bytes(l_current_data,p_comp_no, l_comp_room);		/* Ccoc */
+	l_current_data+=l_comp_room;
+
+	opj_write_bytes(l_current_data, l_tcp->tccps[p_comp_no].csty, 1);		/* Scoc */
+	++l_current_data;
+
+	l_remaining_size -= (5 + l_comp_room);
+	j2k_write_SPCod_SPCoc(p_j2k,p_j2k->m_current_tile_number,0,l_current_data,&l_remaining_size,p_manager);
+	* p_data_written = l_coc_size;
+}
+
+/**
+ * Gets the maximum size taken by a coc.
+ *
+ * @param	p_j2k	the jpeg2000 codec to use.
+ */
+OPJ_UINT32 j2k_get_max_coc_size(opj_j2k_v2_t *p_j2k)
+{
+	OPJ_UINT32 i,j;
+	OPJ_UINT32 l_nb_comp;
+	OPJ_UINT32 l_nb_tiles;
+	OPJ_UINT32 l_max = 0;
+
+	/* preconditions */
+
+	l_nb_tiles = p_j2k->m_cp.tw * p_j2k->m_cp.th ;
+	l_nb_comp = p_j2k->m_private_image->numcomps;
+
+	for (i=0;i<l_nb_tiles;++i) {
+		for (j=0;j<l_nb_comp;++j) {
+			l_max = uint_max(l_max,j2k_get_SPCod_SPCoc_size(p_j2k,i,j));
+		}
+	}
+
+	return 6 + l_max;
 }
 
 static void j2k_read_coc(opj_j2k_t *j2k) {
@@ -2309,6 +3348,74 @@ static void j2k_write_qcd(opj_j2k_t *j2k) {
 	  j2k_add_mhmarker(j2k->cstr_info, J2K_MS_QCD, lenp, len);
 }
 
+/**
+ * Writes the QCD marker (quantization default)
+ *
+ * @param	p_comp_number	the index of the component to output.
+ * @param	p_stream				the stream to write data to.
+ * @param	p_j2k				J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+opj_bool j2k_write_qcd_v2(	opj_j2k_v2_t *p_j2k,
+							struct opj_stream_private *p_stream,
+							struct opj_event_mgr * p_manager )
+{
+	opj_cp_v2_t *l_cp = 00;
+	opj_tcp_v2_t *l_tcp = 00;
+	OPJ_UINT32 l_qcd_size,l_remaining_size;
+	OPJ_BYTE * l_current_data = 00;
+
+	/* preconditions */
+	assert(p_j2k != 00);
+	assert(p_manager != 00);
+	assert(p_stream != 00);
+
+	l_cp = &(p_j2k->m_cp);
+	l_tcp = &l_cp->tcps[p_j2k->m_current_tile_number];
+	l_qcd_size = 4 + j2k_get_SQcd_SQcc_size(p_j2k,p_j2k->m_current_tile_number,0);
+	l_remaining_size = l_qcd_size;
+
+	if (l_qcd_size > p_j2k->m_specific_param.m_encoder.m_header_tile_data_size) {
+		p_j2k->m_specific_param.m_encoder.m_header_tile_data
+			= (OPJ_BYTE*)opj_realloc(
+				p_j2k->m_specific_param.m_encoder.m_header_tile_data,
+				l_qcd_size);
+
+		if (! p_j2k->m_specific_param.m_encoder.m_header_tile_data) {
+			return OPJ_FALSE;
+		}
+
+		p_j2k->m_specific_param.m_encoder.m_header_tile_data_size = l_qcd_size;
+	}
+
+	l_current_data = p_j2k->m_specific_param.m_encoder.m_header_tile_data;
+
+	opj_write_bytes(l_current_data,J2K_MS_QCD,2);		/* QCD */
+	l_current_data += 2;
+
+	opj_write_bytes(l_current_data,l_qcd_size-2,2);		/* L_QCD */
+	l_current_data += 2;
+
+	l_remaining_size -= 4;
+
+	if (! j2k_write_SQcd_SQcc(p_j2k,p_j2k->m_current_tile_number,0,l_current_data,&l_remaining_size,p_manager)) {
+		opj_event_msg_v2(p_manager, EVT_ERROR, "Error writting QCD marker\n");
+		return OPJ_FALSE;
+	}
+
+	if (l_remaining_size != 0) {
+		opj_event_msg_v2(p_manager, EVT_ERROR, "Error writting QCD marker\n");
+		return OPJ_FALSE;
+	}
+
+	if (opj_stream_write_data(p_stream, p_j2k->m_specific_param.m_encoder.m_header_tile_data,l_qcd_size,p_manager) != l_qcd_size) {
+		return OPJ_FALSE;
+	}
+
+	return OPJ_TRUE;
+}
+
+
 static void j2k_read_qcd(opj_j2k_t *j2k) {
 	int len, i, pos;
 
@@ -2372,6 +3479,114 @@ static void j2k_write_qcc(opj_j2k_t *j2k, int compno) {
 	cio_seek(cio, lenp);
 	cio_write(cio, len, 2);			/* Lqcc */
 	cio_seek(cio, lenp + len);
+}
+
+/**
+ * Writes the QCC marker (quantization component)
+ *
+ * @param	p_comp_no	the index of the component to output.
+ * @param	p_stream				the stream to write data to.
+ * @param	p_j2k				J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+opj_bool j2k_write_qcc_v2(	opj_j2k_v2_t *p_j2k,
+							OPJ_UINT32 p_comp_no,
+							struct opj_stream_private *p_stream,
+							struct opj_event_mgr * p_manager )
+{
+	OPJ_UINT32 l_qcc_size,l_remaining_size;
+
+	/* preconditions */
+	assert(p_j2k != 00);
+	assert(p_manager != 00);
+	assert(p_stream != 00);
+
+	l_qcc_size = 6 + j2k_get_SQcd_SQcc_size(p_j2k,p_j2k->m_current_tile_number,p_comp_no);
+	l_remaining_size = l_qcc_size;
+
+	if (l_qcc_size > p_j2k->m_specific_param.m_encoder.m_header_tile_data_size) {
+		p_j2k->m_specific_param.m_encoder.m_header_tile_data
+			= (OPJ_BYTE*)opj_realloc(
+				p_j2k->m_specific_param.m_encoder.m_header_tile_data,
+				l_qcc_size);
+		if (! p_j2k->m_specific_param.m_encoder.m_header_tile_data) {
+			return OPJ_FALSE;
+		}
+
+		p_j2k->m_specific_param.m_encoder.m_header_tile_data_size = l_qcc_size;
+	}
+
+	j2k_write_qcc_in_memory(p_j2k,p_comp_no,p_j2k->m_specific_param.m_encoder.m_header_tile_data,&l_remaining_size,p_manager);
+
+	if (opj_stream_write_data(p_stream,p_j2k->m_specific_param.m_encoder.m_header_tile_data,l_qcc_size,p_manager) != l_qcc_size) {
+		return OPJ_FALSE;
+	}
+
+	return OPJ_TRUE;
+}
+
+/**
+ * Writes the QCC marker (quantization component)
+ *
+ * @param	p_comp_no	the index of the component to output.
+ * @param	p_stream				the stream to write data to.
+ * @param	p_j2k				J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+void j2k_write_qcc_in_memory(	opj_j2k_v2_t *p_j2k,
+								OPJ_UINT32 p_comp_no,
+								OPJ_BYTE * p_data,
+								OPJ_UINT32 * p_data_written,
+								struct opj_event_mgr * p_manager )
+{
+	OPJ_UINT32 l_qcc_size,l_remaining_size;
+	OPJ_BYTE * l_current_data = 00;
+
+	/* preconditions */
+	assert(p_j2k != 00);
+	assert(p_manager != 00);
+
+	l_qcc_size = 6 + j2k_get_SQcd_SQcc_size(p_j2k,p_j2k->m_current_tile_number,p_comp_no);
+	l_remaining_size = l_qcc_size;
+
+	l_current_data = p_data;
+
+	opj_write_bytes(l_current_data,J2K_MS_QCC,2);		/* QCC */
+	l_current_data += 2;
+
+	if (p_j2k->m_private_image->numcomps <= 256) {
+		--l_qcc_size;
+
+		opj_write_bytes(l_current_data,l_qcc_size-2,2);		/* L_QCC */
+		l_current_data += 2;
+
+		opj_write_bytes(l_current_data, p_comp_no, 1);	/* Cqcc */
+		++l_current_data;
+
+		/* in the case only one byte is sufficient the last byte allocated is useless -> still do -6 for available */
+		l_remaining_size -= 6;
+	}
+	else {
+		opj_write_bytes(l_current_data,l_qcc_size-2,2);		/* L_QCC */
+		l_current_data += 2;
+
+		opj_write_bytes(l_current_data, p_comp_no, 2);	/* Cqcc */
+		l_current_data+=2;
+
+		l_remaining_size -= 6;
+	}
+
+	j2k_write_SQcd_SQcc(p_j2k,p_j2k->m_current_tile_number,p_comp_no,l_current_data,&l_remaining_size,p_manager);
+
+	*p_data_written = l_qcc_size;
+}
+
+/**
+ * Gets the maximum size taken by a qcc.
+ */
+OPJ_UINT32 j2k_get_max_qcc_size (opj_j2k_v2_t *p_j2k)
+{
+	return j2k_get_max_coc_size(p_j2k);
 }
 
 static void j2k_read_qcc(opj_j2k_t *j2k) {
@@ -2517,6 +3732,162 @@ static void j2k_write_poc(opj_j2k_t *j2k) {
 		poc->compno1 = int_min(poc->compno1, numcomps);
 		cio_write(cio, poc->prg, 1);	/* Ppoc_i */
 	}
+}
+
+/**
+ * Writes the POC marker (Progression Order Change)
+ *
+ * @param	p_stream				the stream to write data to.
+ * @param	p_j2k				J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+void j2k_write_poc_in_memory(	opj_j2k_v2_t *p_j2k,
+								OPJ_BYTE * p_data,
+								OPJ_UINT32 * p_data_written,
+								struct opj_event_mgr * p_manager )
+{
+	OPJ_UINT32 i;
+	OPJ_BYTE * l_current_data = 00;
+	OPJ_UINT32 l_nb_comp;
+	OPJ_UINT32 l_nb_poc;
+	OPJ_UINT32 l_poc_size;
+	opj_image_t *l_image = 00;
+	opj_tcp_v2_t *l_tcp = 00;
+	opj_tccp_t *l_tccp = 00;
+	opj_poc_t *l_current_poc = 00;
+	OPJ_UINT32 l_poc_room;
+
+	/* preconditions */
+	assert(p_j2k != 00);
+	assert(p_manager != 00);
+
+	l_tcp = &p_j2k->m_cp.tcps[p_j2k->m_current_tile_number];
+	l_tccp = &l_tcp->tccps[0];
+	l_image = p_j2k->m_private_image;
+	l_nb_comp = l_image->numcomps;
+	l_nb_poc = 1 + l_tcp->numpocs;
+
+	if (l_nb_comp <= 256) {
+		l_poc_room = 1;
+	}
+	else {
+		l_poc_room = 2;
+	}
+
+	l_poc_size = 4 + (5 + 2 * l_poc_room) * l_nb_poc;
+
+	l_current_data = p_data;
+
+	opj_write_bytes(l_current_data,J2K_MS_POC,2);					/* POC  */
+	l_current_data += 2;
+
+	opj_write_bytes(l_current_data,l_poc_size-2,2);					/* Lpoc */
+	l_current_data += 2;
+
+	l_current_poc =  l_tcp->pocs;
+	for (i = 0; i < l_nb_poc; ++i) {
+		opj_write_bytes(l_current_data,l_current_poc->resno0,1);				/* RSpoc_i */
+		++l_current_data;
+
+		opj_write_bytes(l_current_data,l_current_poc->compno0,l_poc_room);		/* CSpoc_i */
+		l_current_data+=l_poc_room;
+
+		opj_write_bytes(l_current_data,l_current_poc->layno1,2);				/* LYEpoc_i */
+		l_current_data+=2;
+
+		opj_write_bytes(l_current_data,l_current_poc->resno1,1);				/* REpoc_i */
+		++l_current_data;
+
+		opj_write_bytes(l_current_data,l_current_poc->compno1,l_poc_room);		/* CEpoc_i */
+		l_current_data+=l_poc_room;
+
+		opj_write_bytes(l_current_data,l_current_poc->prg,1);					/* Ppoc_i */
+		++l_current_data;
+
+		/* change the value of the max layer according to the actual number of layers in the file, components and resolutions*/
+		l_current_poc->layno1 = int_min(l_current_poc->layno1, l_tcp->numlayers);
+		l_current_poc->resno1 = int_min(l_current_poc->resno1, l_tccp->numresolutions);
+		l_current_poc->compno1 = int_min(l_current_poc->compno1, l_nb_comp);
+
+		++l_current_poc;
+	}
+
+	*p_data_written = l_poc_size;
+}
+
+/**
+ * Gets the maximum size taken by the writing of a POC.
+ */
+OPJ_UINT32 j2k_get_max_poc_size(opj_j2k_v2_t *p_j2k)
+{
+	opj_tcp_v2_t * l_tcp = 00;
+	OPJ_UINT32 l_nb_tiles = 0;
+	OPJ_UINT32 l_max_poc = 0;
+	OPJ_UINT32 i;
+
+	l_tcp = p_j2k->m_cp.tcps;
+	l_nb_tiles = p_j2k->m_cp.th * p_j2k->m_cp.tw;
+
+	for (i=0;i<l_nb_tiles;++i) {
+		l_max_poc = uint_max(l_max_poc,l_tcp->numpocs);
+		++l_tcp;
+	}
+
+	++l_max_poc;
+
+	return 4 + 9 * l_max_poc;
+}
+
+/**
+ * Gets the maximum size taken by the toc headers of all the tile parts of any given tile.
+ */
+OPJ_UINT32 j2k_get_max_toc_size (opj_j2k_v2_t *p_j2k)
+{
+	OPJ_UINT32 i;
+	OPJ_UINT32 l_nb_tiles;
+	OPJ_UINT32 l_max = 0;
+	opj_tcp_v2_t * l_tcp = 00;
+
+	l_tcp = p_j2k->m_cp.tcps;
+	l_nb_tiles = p_j2k->m_cp.tw * p_j2k->m_cp.th ;
+
+	for (i=0;i<l_nb_tiles;++i) {
+		l_max = uint_max(l_max,l_tcp->m_nb_tile_parts);
+
+		++l_tcp;
+	}
+
+	return 12 * l_max;
+}
+
+
+/**
+ * Gets the maximum size taken by the headers of the SOT.
+ *
+ * @param	p_j2k	the jpeg2000 codec to use.
+ */
+OPJ_UINT32 j2k_get_specific_header_sizes(opj_j2k_v2_t *p_j2k)
+{
+	OPJ_UINT32 l_nb_bytes = 0;
+	OPJ_UINT32 l_nb_comps;
+	OPJ_UINT32 l_coc_bytes,l_qcc_bytes;
+
+	l_nb_comps = p_j2k->m_private_image->numcomps - 1;
+	l_nb_bytes += j2k_get_max_toc_size(p_j2k);
+
+	if (p_j2k->m_cp.m_specific_param.m_enc.m_cinema == 0) {
+		l_coc_bytes = j2k_get_max_coc_size(p_j2k);
+		l_nb_bytes += l_nb_comps * l_coc_bytes;
+
+		l_qcc_bytes = j2k_get_max_qcc_size(p_j2k);
+		l_nb_bytes += l_nb_comps * l_qcc_bytes;
+	}
+
+	l_nb_bytes += j2k_get_max_poc_size(p_j2k);
+
+	/*** DEVELOPER CORNER, Add room for your headers ***/
+
+	return l_nb_bytes;
 }
 
 static void j2k_read_poc(opj_j2k_t *j2k) {
@@ -3422,6 +4793,54 @@ static void j2k_write_sot(opj_j2k_t *j2k) {
 	}
 }
 
+/**
+ * Writes the SOT marker (Start of tile-part)
+ *
+ * @param	p_stream				the stream to write data to.
+ * @param	p_j2k				J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+opj_bool j2k_write_sot_v2(	opj_j2k_v2_t *p_j2k,
+							OPJ_BYTE * p_data,
+							OPJ_UINT32 * p_data_written,
+							const struct opj_stream_private *p_stream,
+							struct opj_event_mgr * p_manager )
+{
+	/* preconditions */
+	assert(p_j2k != 00);
+	assert(p_manager != 00);
+	assert(p_stream != 00);
+
+	opj_write_bytes(p_data,J2K_MS_SOT,2);					/* SOT */
+	p_data += 2;
+
+	opj_write_bytes(p_data,10,2);							/* Lsot */
+	p_data += 2;
+
+	opj_write_bytes(p_data, p_j2k->m_current_tile_number,2);			/* Isot */
+	p_data += 2;
+
+	/* Psot  */
+	p_data += 4;
+
+	opj_write_bytes(p_data, p_j2k->m_specific_param.m_encoder.m_current_tile_part_number,1);			/* TPsot */
+	++p_data;
+
+	opj_write_bytes(p_data, p_j2k->m_cp.tcps[p_j2k->m_current_tile_number].m_nb_tile_parts,1);			/* TNsot */
+	++p_data;
+
+	/* UniPG>> */
+#ifdef USE_JPWL
+	/* update markers struct */
+	j2k_add_marker(p_j2k->cstr_info, J2K_MS_SOT, p_j2k->sot_start, len + 2);
+#endif /* USE_JPWL */
+
+	* p_data_written = 12;
+
+	return OPJ_TRUE;
+}
+
+
 static void j2k_read_sot(opj_j2k_t *j2k) {
 	int len, tileno, totlen, partno, numparts, i;
 	opj_tcp_t *tcp = NULL;
@@ -3860,6 +5279,95 @@ static void j2k_write_sod(opj_j2k_t *j2k, void *tile_coder) {
 	cio_seek(cio, j2k->sot_start + totlen);
 }
 
+/**
+ * Writes the SOD marker (Start of data)
+ *
+ * @param	p_stream				the stream to write data to.
+ * @param	p_j2k				J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+opj_bool j2k_write_sod_v2(	opj_j2k_v2_t *p_j2k,
+							struct opj_tcd_v2 * p_tile_coder,
+							OPJ_BYTE * p_data,
+							OPJ_UINT32 * p_data_written,
+							OPJ_UINT32 p_total_data_size,
+							const struct opj_stream_private *p_stream,
+							struct opj_event_mgr * p_manager )
+{
+	opj_tcp_v2_t *l_tcp = 00;
+	opj_codestream_info_t *l_cstr_info = 00;
+	opj_cp_v2_t *l_cp = 00;
+
+	OPJ_UINT32 l_size_tile;
+	OPJ_UINT32 l_remaining_data;
+
+	/* preconditions */
+	assert(p_j2k != 00);
+	assert(p_manager != 00);
+	assert(p_stream != 00);
+
+	opj_write_bytes(p_data,J2K_MS_SOD,2);					/* SOD */
+	p_data += 2;
+
+	/* make room for the EOF marker */
+	l_remaining_data =  p_total_data_size - 4;
+
+	l_cp = &(p_j2k->m_cp);
+	l_tcp = &l_cp->tcps[p_j2k->m_current_tile_number];
+
+
+	/* update tile coder */
+	p_tile_coder->tp_num = p_j2k->m_specific_param.m_encoder.m_current_poc_tile_part_number ;
+	p_tile_coder->cur_tp_num = p_j2k->m_specific_param.m_encoder.m_current_tile_part_number;
+
+	l_size_tile = l_cp->th * l_cp->tw;
+
+	/* INDEX >> */
+	/* TODO mergeV2: check this part which use cstr_info */
+	/*l_cstr_info = p_j2k->cstr_info;
+	if (l_cstr_info) {
+		if (!p_j2k->m_specific_param.m_encoder.m_current_tile_part_number ) {
+			//TODO cstr_info->tile[p_j2k->m_current_tile_number].end_header = p_stream_tell(p_stream) + p_j2k->pos_correction - 1;
+			l_cstr_info->tile[p_j2k->m_current_tile_number].tileno = p_j2k->m_current_tile_number;
+		}
+		else {*/
+			/*
+			TODO
+			if
+				(cstr_info->tile[p_j2k->m_current_tile_number].packet[cstr_info->packno - 1].end_pos < p_stream_tell(p_stream))
+			{
+				cstr_info->tile[p_j2k->m_current_tile_number].packet[cstr_info->packno].start_pos = p_stream_tell(p_stream);
+			}*/
+		/*}*/
+		/* UniPG>> */
+#ifdef USE_JPWL
+		/* update markers struct */
+		j2k_add_marker(p_j2k->cstr_info, J2K_MS_SOD, p_j2k->sod_start, 2);
+#endif /* USE_JPWL */
+		/* <<UniPG */
+	/*}*/
+	/* << INDEX */
+
+	if (p_j2k->m_specific_param.m_encoder.m_current_tile_part_number == 0) {
+		p_tile_coder->tcd_image->tiles->packno = 0;
+		if (l_cstr_info) {
+			l_cstr_info->packno = 0;
+		}
+	}
+
+	*p_data_written = 0;
+
+	if (! tcd_encode_tile_v2(p_tile_coder, p_j2k->m_current_tile_number, p_data, p_data_written, l_remaining_data , l_cstr_info)) {
+		opj_event_msg_v2(p_manager, EVT_ERROR, "Cannot encode tile\n");
+		return OPJ_FALSE;
+	}
+
+	*p_data_written += 2;
+
+	return OPJ_TRUE;
+}
+
+
 static void j2k_read_sod(opj_j2k_t *j2k) {
 	int len, truncate = 0, i;
 	unsigned char *data = NULL, *data_ptr = NULL;
@@ -4005,6 +5513,74 @@ static void j2k_write_rgn(opj_j2k_t *j2k, int compno, int tileno) {
 	cio_write(cio, tcp->tccps[compno].roishift, 1);		/* SPrgn */
 }
 
+/**
+ * Writes the RGN marker (Region Of Interest)
+ *
+ * @param	p_tile_no		the tile to output
+ * @param	p_comp_no		the component to output
+ * @param	p_stream				the stream to write data to.
+ * @param	p_j2k				J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+opj_bool j2k_write_rgn_v2(	opj_j2k_v2_t *p_j2k,
+							OPJ_UINT32 p_tile_no,
+							OPJ_UINT32 p_comp_no,
+							struct opj_stream_private *p_stream,
+							struct opj_event_mgr * p_manager )
+{
+	OPJ_BYTE * l_current_data = 00;
+	OPJ_UINT32 l_nb_comp;
+	OPJ_UINT32 l_rgn_size;
+	opj_image_t *l_image = 00;
+	opj_cp_v2_t *l_cp = 00;
+	opj_tcp_v2_t *l_tcp = 00;
+	opj_tccp_t *l_tccp = 00;
+	OPJ_UINT32 l_comp_room;
+
+	/* preconditions */
+	assert(p_j2k != 00);
+	assert(p_manager != 00);
+	assert(p_stream != 00);
+
+	l_cp = &(p_j2k->m_cp);
+	l_tcp = &l_cp->tcps[p_tile_no];
+	l_tccp = &l_tcp->tccps[p_comp_no];
+
+	l_nb_comp = l_image->numcomps;
+
+	if (l_nb_comp <= 256) {
+		l_comp_room = 1;
+	}
+	else {
+		l_comp_room = 2;
+	}
+
+	l_rgn_size = 6 + l_comp_room;
+
+	l_current_data = p_j2k->m_specific_param.m_encoder.m_header_tile_data;
+
+	opj_write_bytes(l_current_data,J2K_MS_RGN,2);					/* RGN  */
+	l_current_data += 2;
+
+	opj_write_bytes(l_current_data,l_rgn_size-2,2);					/* Lrgn */
+	l_current_data += 2;
+
+	opj_write_bytes(l_current_data,p_comp_no,l_comp_room);			/* Crgn */
+	l_current_data+=l_comp_room;
+
+	opj_write_bytes(l_current_data, 0,1);							/* Srgn */
+	++l_current_data;
+
+	opj_write_bytes(l_current_data, l_tccp->roishift,1);			/* SPrgn */
+	++l_current_data;
+
+	if (opj_stream_write_data(p_stream,p_j2k->m_specific_param.m_encoder.m_header_tile_data,l_rgn_size,p_manager) != l_rgn_size) {
+		return OPJ_FALSE;
+	}
+
+	return OPJ_TRUE;
+}
+
 static void j2k_read_rgn(opj_j2k_t *j2k) {
 	int len, compno, roisty;
 
@@ -4120,6 +5696,186 @@ opj_bool j2k_read_rgn_v2 (
 
 }
 
+OPJ_FLOAT32 get_tp_stride (opj_tcp_v2_t * p_tcp)
+{
+	return (OPJ_FLOAT32) ((p_tcp->m_nb_tile_parts - 1) * 14);
+}
+
+OPJ_FLOAT32 get_default_stride (opj_tcp_v2_t * p_tcp)
+{
+	return 0;
+}
+
+/**
+ * Updates the rates of the tcp.
+ *
+ * @param	p_stream		the stream to write data to.
+ * @param	p_j2k			J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+opj_bool j2k_update_rates(	opj_j2k_v2_t *p_j2k,
+							struct opj_stream_private *p_stream,
+							struct opj_event_mgr * p_manager )
+{
+	opj_cp_v2_t * l_cp = 00;
+	opj_image_t * l_image = 00;
+	opj_tcp_v2_t * l_tcp = 00;
+	opj_image_comp_t * l_img_comp = 00;
+
+	OPJ_UINT32 i,j,k;
+	OPJ_INT32 l_x0,l_y0,l_x1,l_y1;
+	OPJ_FLOAT32 * l_rates = 0;
+	OPJ_FLOAT32 l_sot_remove;
+	OPJ_UINT32 l_bits_empty, l_size_pixel;
+	OPJ_UINT32 l_tile_size = 0;
+	OPJ_UINT32 l_last_res;
+	OPJ_FLOAT32 (* l_tp_stride_func)(opj_tcp_v2_t *) = 00;
+
+	/* preconditions */
+	assert(p_j2k != 00);
+	assert(p_manager != 00);
+	assert(p_stream != 00);
+
+
+	l_cp = &(p_j2k->m_cp);
+	l_image = p_j2k->m_private_image;
+	l_tcp = l_cp->tcps;
+
+	l_bits_empty = 8 * l_image->comps->dx * l_image->comps->dy;
+	l_size_pixel = l_image->numcomps * l_image->comps->prec;
+	l_sot_remove = ((OPJ_FLOAT32) opj_stream_tell(p_stream)) / (l_cp->th * l_cp->tw);
+
+	if (l_cp->m_specific_param.m_enc.m_tp_on) {
+		l_tp_stride_func = get_tp_stride;
+	}
+	else {
+		l_tp_stride_func = get_default_stride;
+	}
+
+	for (i=0;i<l_cp->th;++i) {
+		for (j=0;j<l_cp->tw;++j) {
+			OPJ_FLOAT32 l_offset = ((*l_tp_stride_func)(l_tcp)) / l_tcp->numlayers;
+
+			/* 4 borders of the tile rescale on the image if necessary */
+			l_x0 = int_max(l_cp->tx0 + j * l_cp->tdx, l_image->x0);
+			l_y0 = int_max(l_cp->ty0 + i * l_cp->tdy, l_image->y0);
+			l_x1 = int_min(l_cp->tx0 + (j + 1) * l_cp->tdx, l_image->x1);
+			l_y1 = int_min(l_cp->ty0 + (i + 1) * l_cp->tdy, l_image->y1);
+
+			l_rates = l_tcp->rates;
+
+			/* Modification of the RATE >> */
+			if (*l_rates) {
+				*l_rates = 		(( (float) (l_size_pixel * (l_x1 - l_x0) * (l_y1 - l_y0)))
+								/
+								((*l_rates) * l_bits_empty)
+								)
+								-
+								l_offset;
+			}
+
+			++l_rates;
+
+			for (k = 1; k < l_tcp->numlayers; ++k) {
+				if (*l_rates) {
+					*l_rates = 		(( (OPJ_FLOAT32) (l_size_pixel * (l_x1 - l_x0) * (l_y1 - l_y0)))
+									/
+										((*l_rates) * l_bits_empty)
+									)
+									-
+									l_offset;
+				}
+
+				++l_rates;
+			}
+
+			++l_tcp;
+
+		}
+	}
+
+	l_tcp = l_cp->tcps;
+
+	for (i=0;i<l_cp->th;++i) {
+		for	(j=0;j<l_cp->tw;++j) {
+			l_rates = l_tcp->rates;
+
+			if (*l_rates) {
+				*l_rates -= l_sot_remove;
+
+				if (*l_rates < 30) {
+					*l_rates = 30;
+				}
+			}
+
+			++l_rates;
+
+			l_last_res = l_tcp->numlayers - 1;
+
+			for (k = 1; k < l_last_res; ++k) {
+
+				if (*l_rates) {
+					*l_rates -= l_sot_remove;
+
+					if (*l_rates < *(l_rates - 1) + 10) {
+						*l_rates  = (*(l_rates - 1)) + 20;
+					}
+				}
+
+				++l_rates;
+			}
+
+			if (*l_rates) {
+				*l_rates -= (l_sot_remove + 2.f);
+
+				if (*l_rates < *(l_rates - 1) + 10) {
+					*l_rates  = (*(l_rates - 1)) + 20;
+				}
+			}
+
+			++l_tcp;
+		}
+	}
+
+	l_img_comp = l_image->comps;
+	l_tile_size = 0;
+
+	for (i=0;i<l_image->numcomps;++i) {
+		l_tile_size += (	uint_ceildiv(l_cp->tdx,l_img_comp->dx)
+					   	   	*
+							uint_ceildiv(l_cp->tdy,l_img_comp->dy)
+							*
+							l_img_comp->prec
+						);
+
+		++l_img_comp;
+	}
+
+	l_tile_size = (OPJ_UINT32) (l_tile_size * 0.1625); /* 1.3/8 = 0.1625 */
+
+	l_tile_size += j2k_get_specific_header_sizes(p_j2k);
+
+	p_j2k->m_specific_param.m_encoder.m_encoded_tile_size = l_tile_size;
+	p_j2k->m_specific_param.m_encoder.m_encoded_tile_data =
+			(OPJ_BYTE *) opj_malloc(p_j2k->m_specific_param.m_encoder.m_encoded_tile_size);
+	if (p_j2k->m_specific_param.m_encoder.m_encoded_tile_data == 00) {
+		return OPJ_FALSE;
+	}
+
+	if (l_cp->m_specific_param.m_enc.m_cinema) {
+		p_j2k->m_specific_param.m_encoder.m_tlm_sot_offsets_buffer =
+				(OPJ_BYTE *) opj_malloc(5*p_j2k->m_specific_param.m_encoder.m_total_tile_parts);
+		if (! p_j2k->m_specific_param.m_encoder.m_tlm_sot_offsets_buffer) {
+			return OPJ_FALSE;
+		}
+
+		p_j2k->m_specific_param.m_encoder.m_tlm_sot_offsets_current =
+				p_j2k->m_specific_param.m_encoder.m_tlm_sot_offsets_buffer;
+	}
+
+	return OPJ_TRUE;
+}
+
 static void j2k_read_eoc(opj_j2k_t *j2k) {
 	int i, tileno;
 	opj_bool success;
@@ -4211,6 +5967,191 @@ opj_bool j2k_read_eoc_v2 (	opj_j2k_v2_t *p_j2k,
 	}
 
 	tcd_destroy_v2(l_tcd);
+	return OPJ_TRUE;
+}
+
+/**
+ * Gets the offset of the header.
+ *
+ * @param	p_stream				the stream to write data to.
+ * @param	p_j2k				J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+opj_bool j2k_get_end_header(opj_j2k_v2_t *p_j2k,
+							struct opj_stream_private *p_stream,
+							struct opj_event_mgr * p_manager )
+{
+	/* preconditions */
+	assert(p_j2k != 00);
+	assert(p_manager != 00);
+	assert(p_stream != 00);
+
+	p_j2k->cstr_index->main_head_end = opj_stream_tell(p_stream);
+
+	return OPJ_TRUE;
+}
+
+/**
+ * Writes the MCT marker (Multiple Component Transform)
+ *
+ * @param	p_stream				the stream to write data to.
+ * @param	p_j2k				J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+opj_bool j2k_write_mct_data_group(	opj_j2k_v2_t *p_j2k,
+									struct opj_stream_private *p_stream,
+									struct opj_event_mgr * p_manager )
+{
+	OPJ_UINT32 i;
+	opj_simple_mcc_decorrelation_data_t * l_mcc_record;
+	opj_mct_data_t * l_mct_record;
+	opj_tcp_v2_t * l_tcp;
+
+	/* preconditions */
+	assert(p_j2k != 00);
+	assert(p_stream != 00);
+	assert(p_manager != 00);
+
+	if (! j2k_write_cbd(p_j2k,p_stream,p_manager)) {
+		return OPJ_FALSE;
+	}
+
+	l_tcp = &(p_j2k->m_cp.tcps[p_j2k->m_current_tile_number]);
+	l_mct_record = l_tcp->m_mct_records;
+
+	for (i=0;i<l_tcp->m_nb_mct_records;++i) {
+
+		if (! j2k_write_mct_record(p_j2k,l_mct_record,p_stream,p_manager)) {
+			return OPJ_FALSE;
+		}
+
+		++l_mct_record;
+	}
+
+	l_mcc_record = l_tcp->m_mcc_records;
+
+	for	(i=0;i<l_tcp->m_nb_mcc_records;++i) {
+
+		if (! j2k_write_mcc_record(p_j2k,l_mcc_record,p_stream,p_manager)) {
+			return OPJ_FALSE;
+		}
+
+		++l_mcc_record;
+	}
+
+	if (! j2k_write_mco(p_j2k,p_stream,p_manager)) {
+		return OPJ_FALSE;
+	}
+
+	return OPJ_TRUE;
+}
+
+/**
+ * Writes the image components.
+ *
+ * @param	p_stream				the stream to write data to.
+ * @param	p_j2k				J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+opj_bool j2k_write_image_components(opj_j2k_v2_t *p_j2k,
+									struct opj_stream_private *p_stream,
+									struct opj_event_mgr * p_manager )
+{
+	OPJ_UINT32 compno;
+
+	/* preconditions */
+	assert(p_j2k != 00);
+	assert(p_manager != 00);
+	assert(p_stream != 00);
+
+	for (compno = 1; compno < p_j2k->m_private_image->numcomps; ++compno)
+	{
+		if (! j2k_write_coc_v2(p_j2k,compno,p_stream, p_manager)) {
+			return OPJ_FALSE;
+		}
+
+		if (! j2k_write_qcc_v2(p_j2k,compno,p_stream, p_manager)) {
+			return OPJ_FALSE;
+		}
+	}
+
+	return OPJ_TRUE;
+}
+
+/**
+ * Writes regions of interests.
+ *
+ * @param	p_stream				the stream to write data to.
+ * @param	p_j2k				J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+opj_bool j2k_write_regions(	opj_j2k_v2_t *p_j2k,
+							struct opj_stream_private *p_stream,
+							struct opj_event_mgr * p_manager )
+{
+	OPJ_UINT32 compno;
+	const opj_tccp_t *l_tccp = 00;
+
+	/* preconditions */
+	assert(p_j2k != 00);
+	assert(p_manager != 00);
+	assert(p_stream != 00);
+
+	l_tccp = p_j2k->m_cp.tcps->tccps;
+
+	for	(compno = 0; compno < p_j2k->m_private_image->numcomps; ++compno)  {
+		if (l_tccp->roishift) {
+
+			if (! j2k_write_rgn_v2(p_j2k,0,compno,p_stream,p_manager)) {
+				return OPJ_FALSE;
+			}
+		}
+
+		++l_tccp;
+	}
+
+	return OPJ_TRUE;
+}
+
+/**
+ * Writes EPC ????
+ *
+ * @param	p_stream		the stream to write data to.
+ * @param	p_j2k			J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+opj_bool j2k_write_epc(	opj_j2k_v2_t *p_j2k,
+						struct opj_stream_private *p_stream,
+						struct opj_event_mgr * p_manager )
+{
+	opj_codestream_index_t * l_cstr_index = 00;
+
+	/* preconditions */
+	assert(p_j2k != 00);
+	assert(p_manager != 00);
+	assert(p_stream != 00);
+
+	l_cstr_index = p_j2k->cstr_index;
+	if (l_cstr_index) {
+		l_cstr_index->codestream_size = opj_stream_tell(p_stream);
+		/* UniPG>> */
+		/* The following adjustment is done to adjust the codestream size */
+		/* if SOD is not at 0 in the buffer. Useful in case of JP2, where */
+		/* the first bunch of bytes is not in the codestream              */
+		l_cstr_index->codestream_size -= l_cstr_index->main_head_start;
+		/* <<UniPG */
+	}
+
+#ifdef USE_JPWL
+	/* preparation of JPWL marker segments */
+	if(cp->epc_on) {
+
+		/* encode according to JPWL */
+		jpwl_encode(p_j2k, p_stream, image);
+
+	}
+#endif /* USE_JPWL */
+
 	return OPJ_TRUE;
 }
 
@@ -4399,6 +6340,70 @@ static opj_dec_mstabent_t *j2k_dec_mstab_lookup(int id) {
 	return e;
 }
 
+/**
+ * Writes the MCT marker (Multiple Component Transform)
+ *
+ * @param	p_stream				the stream to write data to.
+ * @param	p_j2k				J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+opj_bool j2k_write_mct_record(	opj_j2k_v2_t *p_j2k,
+								opj_mct_data_t * p_mct_record,
+								struct opj_stream_private *p_stream,
+								struct opj_event_mgr * p_manager )
+{
+	OPJ_UINT32 l_mct_size;
+	OPJ_BYTE * l_current_data = 00;
+	OPJ_UINT32 l_tmp;
+
+	/* preconditions */
+	assert(p_j2k != 00);
+	assert(p_manager != 00);
+	assert(p_stream != 00);
+
+	l_mct_size = 10 + p_mct_record->m_data_size;
+
+	if (l_mct_size > p_j2k->m_specific_param.m_encoder.m_header_tile_data_size) {
+		p_j2k->m_specific_param.m_encoder.m_header_tile_data
+			= (OPJ_BYTE*)opj_realloc(
+				p_j2k->m_specific_param.m_encoder.m_header_tile_data,
+				l_mct_size);
+
+		if (! p_j2k->m_specific_param.m_encoder.m_header_tile_data) {
+			return OPJ_FALSE;
+		}
+
+		p_j2k->m_specific_param.m_encoder.m_header_tile_data_size = l_mct_size;
+	}
+
+	l_current_data = p_j2k->m_specific_param.m_encoder.m_header_tile_data;
+
+	opj_write_bytes(l_current_data,J2K_MS_MCT,2);					/* MCT */
+	l_current_data += 2;
+
+	opj_write_bytes(l_current_data,l_mct_size-2,2);					/* Lmct */
+	l_current_data += 2;
+
+	opj_write_bytes(l_current_data,0,2);							/* Zmct */
+	l_current_data += 2;
+
+	/* only one marker atm */
+	l_tmp = (p_mct_record->m_index & 0xff) | (p_mct_record->m_array_type << 8) | (p_mct_record->m_element_type << 10);
+
+	opj_write_bytes(l_current_data,l_tmp,2);
+	l_current_data += 2;
+
+	opj_write_bytes(l_current_data,0,2);							/* Ymct */
+	l_current_data+=2;
+
+	memcpy(l_current_data,p_mct_record->m_data,p_mct_record->m_data_size);
+
+	if (opj_stream_write_data(p_stream,p_j2k->m_specific_param.m_encoder.m_header_tile_data,l_mct_size,p_manager) != l_mct_size) {
+		return OPJ_FALSE;
+	}
+
+	return OPJ_TRUE;
+}
 
 /**
  * Reads a MCT marker (Multiple Component Transform)
@@ -4504,6 +6509,115 @@ opj_bool j2k_read_mct (	opj_j2k_v2_t *p_j2k,
 
 	l_mct_data->m_data_size = p_header_size;
 	++l_tcp->m_nb_mct_records;
+
+	return OPJ_TRUE;
+}
+
+/**
+ * Writes the MCC marker (Multiple Component Collection)
+ *
+ * @param	p_stream		the stream to write data to.
+ * @param	p_j2k			J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+opj_bool j2k_write_mcc_record(	opj_j2k_v2_t *p_j2k,
+								struct opj_simple_mcc_decorrelation_data * p_mcc_record,
+								struct opj_stream_private *p_stream,
+								struct opj_event_mgr * p_manager )
+{
+	OPJ_UINT32 i;
+	OPJ_UINT32 l_mcc_size;
+	OPJ_BYTE * l_current_data = 00;
+	OPJ_UINT32 l_nb_bytes_for_comp;
+	OPJ_UINT32 l_mask;
+	OPJ_UINT32 l_tmcc;
+
+	/* preconditions */
+	assert(p_j2k != 00);
+	assert(p_manager != 00);
+	assert(p_stream != 00);
+
+	if (p_mcc_record->m_nb_comps > 255 ) {
+        l_nb_bytes_for_comp = 2;
+		l_mask = 0x8000;
+	}
+	else {
+		l_nb_bytes_for_comp = 1;
+		l_mask = 0;
+	}
+
+	l_mcc_size = p_mcc_record->m_nb_comps * 2 * l_nb_bytes_for_comp + 19;
+	if (l_mcc_size > p_j2k->m_specific_param.m_encoder.m_header_tile_data_size)
+	{
+		p_j2k->m_specific_param.m_encoder.m_header_tile_data
+			= (OPJ_BYTE*)opj_realloc(
+				p_j2k->m_specific_param.m_encoder.m_header_tile_data,
+				l_mcc_size);
+		if (! p_j2k->m_specific_param.m_encoder.m_header_tile_data) {
+			return OPJ_FALSE;
+		}
+
+		p_j2k->m_specific_param.m_encoder.m_header_tile_data_size = l_mcc_size;
+	}
+
+	l_current_data = p_j2k->m_specific_param.m_encoder.m_header_tile_data;
+
+	opj_write_bytes(l_current_data,J2K_MS_MCC,2);					/* MCC */
+	l_current_data += 2;
+
+	opj_write_bytes(l_current_data,l_mcc_size-2,2);					/* Lmcc */
+	l_current_data += 2;
+
+	/* first marker */
+	opj_write_bytes(l_current_data,0,2);					/* Zmcc */
+	l_current_data += 2;
+
+	opj_write_bytes(l_current_data,p_mcc_record->m_index,1);					/* Imcc -> no need for other values, take the first */
+	++l_current_data;
+
+	/* only one marker atm */
+	opj_write_bytes(l_current_data,0,2);					/* Ymcc */
+	l_current_data+=2;
+
+	opj_write_bytes(l_current_data,1,2);					/* Qmcc -> number of collections -> 1 */
+	l_current_data+=2;
+
+	opj_write_bytes(l_current_data,0x1,1);					/* Xmcci type of component transformation -> array based decorrelation */
+	++l_current_data;
+
+	opj_write_bytes(l_current_data,p_mcc_record->m_nb_comps | l_mask,2);	/* Nmcci number of input components involved and size for each component offset = 8 bits */
+	l_current_data+=2;
+
+	for (i=0;i<p_mcc_record->m_nb_comps;++i) {
+		opj_write_bytes(l_current_data,i,l_nb_bytes_for_comp);				/* Cmccij Component offset*/
+		l_current_data+=l_nb_bytes_for_comp;
+	}
+
+	opj_write_bytes(l_current_data,p_mcc_record->m_nb_comps|l_mask,2);	/* Mmcci number of output components involved and size for each component offset = 8 bits */
+	l_current_data+=2;
+
+	for (i=0;i<p_mcc_record->m_nb_comps;++i)
+	{
+		opj_write_bytes(l_current_data,i,l_nb_bytes_for_comp);				/* Wmccij Component offset*/
+		l_current_data+=l_nb_bytes_for_comp;
+	}
+
+	l_tmcc = ((!p_mcc_record->m_is_irreversible)&1)<<16;
+
+	if (p_mcc_record->m_decorrelation_array) {
+		l_tmcc |= p_mcc_record->m_decorrelation_array->m_index;
+	}
+
+	if (p_mcc_record->m_offset_array) {
+		l_tmcc |= ((p_mcc_record->m_offset_array->m_index)<<8);
+	}
+
+	opj_write_bytes(l_current_data,l_tmcc,3);	/* Tmcci : use MCT defined as number 1 and irreversible array based. */
+	l_current_data+=3;
+
+	if (opj_stream_write_data(p_stream,p_j2k->m_specific_param.m_encoder.m_header_tile_data,l_mcc_size,p_manager) != l_mcc_size) {
+		return OPJ_FALSE;
+	}
 
 	return OPJ_TRUE;
 }
@@ -4726,6 +6840,72 @@ opj_bool j2k_read_mcc (	opj_j2k_v2_t *p_j2k,
 	return OPJ_TRUE;
 }
 
+
+/**
+ * Writes the MCO marker (Multiple component transformation ordering)
+ *
+ * @param	p_stream				the stream to write data to.
+ * @param	p_j2k				J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+opj_bool j2k_write_mco(	opj_j2k_v2_t *p_j2k,
+						struct opj_stream_private *p_stream,
+						struct opj_event_mgr * p_manager
+				  )
+{
+	OPJ_BYTE * l_current_data = 00;
+	OPJ_UINT32 l_mco_size;
+	opj_tcp_v2_t * l_tcp = 00;
+	opj_simple_mcc_decorrelation_data_t * l_mcc_record;
+	OPJ_UINT32 i;
+
+	/* preconditions */
+	assert(p_j2k != 00);
+	assert(p_manager != 00);
+	assert(p_stream != 00);
+
+	l_tcp =&(p_j2k->m_cp.tcps[p_j2k->m_current_tile_number]);
+	l_current_data = p_j2k->m_specific_param.m_encoder.m_header_tile_data;
+
+	l_mco_size = 5 + l_tcp->m_nb_mcc_records;
+	if (l_mco_size > p_j2k->m_specific_param.m_encoder.m_header_tile_data_size) {
+
+		p_j2k->m_specific_param.m_encoder.m_header_tile_data
+			= (OPJ_BYTE*)opj_realloc(
+				p_j2k->m_specific_param.m_encoder.m_header_tile_data,
+				l_mco_size);
+		if (! p_j2k->m_specific_param.m_encoder.m_header_tile_data)
+		{
+			return OPJ_FALSE;
+		}
+
+		p_j2k->m_specific_param.m_encoder.m_header_tile_data_size = l_mco_size;
+	}
+
+	opj_write_bytes(l_current_data,J2K_MS_MCO,2);			/* MCO */
+	l_current_data += 2;
+
+	opj_write_bytes(l_current_data,l_mco_size-2,2);					/* Lmco */
+	l_current_data += 2;
+
+	opj_write_bytes(l_current_data,l_tcp->m_nb_mcc_records,1);					/* Nmco : only one tranform stage*/
+	++l_current_data;
+
+	l_mcc_record = l_tcp->m_mcc_records;
+	for	(i=0;i<l_tcp->m_nb_mcc_records;++i) {
+		opj_write_bytes(l_current_data,l_mcc_record->m_index,1);					/* Imco -> use the mcc indicated by 1*/
+		++l_current_data;
+
+		++l_mcc_record;
+	}
+
+	if (opj_stream_write_data(p_stream,p_j2k->m_specific_param.m_encoder.m_header_tile_data,l_mco_size,p_manager) != l_mco_size) {
+		return OPJ_FALSE;
+	}
+
+	return OPJ_TRUE;
+}
+
 /**
  * Reads a MCO marker (Multiple Component Transform Ordering)
  *
@@ -4876,6 +7056,71 @@ opj_bool j2k_add_mct(opj_tcp_v2_t * p_tcp, opj_image_t * p_image, OPJ_UINT32 p_i
 		}
 
 		opj_free(l_offset_data);
+	}
+
+	return OPJ_TRUE;
+}
+
+/**
+ * Writes the CBD marker (Component bit depth definition)
+ *
+ * @param	p_stream				the stream to write data to.
+ * @param	p_j2k				J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+opj_bool j2k_write_cbd( opj_j2k_v2_t *p_j2k,
+						struct opj_stream_private *p_stream,
+						struct opj_event_mgr * p_manager )
+{
+	OPJ_UINT32 i;
+	OPJ_UINT32 l_cbd_size;
+	OPJ_BYTE * l_current_data = 00;
+	opj_image_t *l_image = 00;
+	opj_image_comp_t * l_comp = 00;
+
+	/* preconditions */
+	assert(p_j2k != 00);
+	assert(p_manager != 00);
+	assert(p_stream != 00);
+
+	l_image = p_j2k->m_private_image;
+	l_cbd_size = 6 + p_j2k->m_private_image->numcomps;
+
+	if (l_cbd_size > p_j2k->m_specific_param.m_encoder.m_header_tile_data_size) {
+		p_j2k->m_specific_param.m_encoder.m_header_tile_data
+			= (OPJ_BYTE*)opj_realloc(
+				p_j2k->m_specific_param.m_encoder.m_header_tile_data,
+				l_cbd_size);
+
+		if (! p_j2k->m_specific_param.m_encoder.m_header_tile_data) {
+			return OPJ_FALSE;
+		}
+
+		p_j2k->m_specific_param.m_encoder.m_header_tile_data_size = l_cbd_size;
+	}
+
+	l_current_data = p_j2k->m_specific_param.m_encoder.m_header_tile_data;
+
+	opj_write_bytes(l_current_data,J2K_MS_CBD,2);					/* CBD */
+	l_current_data += 2;
+
+	opj_write_bytes(l_current_data,l_cbd_size-2,2);					/* L_CBD */
+	l_current_data += 2;
+
+	opj_write_bytes(l_current_data,l_image->numcomps, 2);		/* Ncbd */
+	l_current_data+=2;
+
+	l_comp = l_image->comps;
+
+	for (i=0;i<l_image->numcomps;++i) {
+		opj_write_bytes(l_current_data, (l_comp->sgnd << 7) | (l_comp->prec - 1), 1);		/* Component bit depth */
+		++l_current_data;
+
+		++l_comp;
+	}
+
+	if (opj_stream_write_data(p_stream,p_j2k->m_specific_param.m_encoder.m_header_tile_data,l_cbd_size,p_manager) != l_cbd_size) {
+		return OPJ_FALSE;
 	}
 
 	return OPJ_TRUE;
@@ -5957,18 +8202,115 @@ void j2k_setup_decoding_validation (opj_j2k_v2_t *p_j2k)
 
 }
 
+
+/**
+ * The mct encoding validation procedure.
+ *
+ * @param	p_j2k			the jpeg2000 codec to validate.
+ * @param	p_stream				the input stream to validate.
+ * @param	p_manager		the user event manager.
+ *
+ * @return true if the parameters are correct.
+ */
+opj_bool j2k_mct_validation (	opj_j2k_v2_t * p_j2k,
+								opj_stream_private_t *p_stream,
+								opj_event_mgr_t * p_manager )
+{
+	opj_bool l_is_valid = OPJ_TRUE;
+	OPJ_UINT32 i,j;
+
+	/* preconditions */
+	assert(p_j2k != 00);
+	assert(p_stream != 00);
+	assert(p_manager != 00);
+
+	if ((p_j2k->m_cp.rsiz & 0x8200) == 0x8200) {
+		OPJ_UINT32 l_nb_tiles = p_j2k->m_cp.th * p_j2k->m_cp.tw;
+		opj_tcp_v2_t * l_tcp = p_j2k->m_cp.tcps;
+
+		for (i=0;i<l_nb_tiles;++i) {
+			if (l_tcp->mct == 2) {
+				opj_tccp_t * l_tccp = l_tcp->tccps;
+				l_is_valid &= (l_tcp->m_mct_coding_matrix != 00);
+
+				for (j=0;j<p_j2k->m_private_image->numcomps;++j) {
+					l_is_valid &= ! (l_tccp->qmfbid & 1);
+					++l_tccp;
+				}
+			}
+			++l_tcp;
+		}
+	}
+
+	return l_is_valid;
+}
+
 /**
  * Builds the cp decoder parameters to use to decode tile.
  */
-opj_bool j2k_build_decoder (
-						opj_j2k_v2_t * p_j2k,
-						opj_stream_private_t *p_stream,
-						opj_event_mgr_t * p_manager
-						)
+opj_bool j2k_build_decoder (opj_j2k_v2_t * p_j2k,
+							opj_stream_private_t *p_stream,
+							opj_event_mgr_t * p_manager )
 {
 	/* add here initialization of cp
-	// copy paste of setup_decoder*/
+	   copy paste of setup_decoder */
 	return OPJ_TRUE;
+}
+
+/**
+ * Builds the cp encoder parameters to use to encode tile.
+ */
+opj_bool j2k_build_encoder (opj_j2k_v2_t * p_j2k,
+							opj_stream_private_t *p_stream,
+							opj_event_mgr_t * p_manager )
+{
+	/* add here initialization of cp
+	   copy paste of setup_encoder */
+	return OPJ_TRUE;
+}
+
+/**
+ * The default encoding validation procedure without any extension.
+ *
+ * @param	p_j2k			the jpeg2000 codec to validate.
+ * @param	p_stream				the input stream to validate.
+ * @param	p_manager		the user event manager.
+ *
+ * @return true if the parameters are correct.
+ */
+opj_bool j2k_encoding_validation (	opj_j2k_v2_t * p_j2k,
+									opj_stream_private_t *p_stream,
+									opj_event_mgr_t * p_manager )
+{
+	opj_bool l_is_valid = OPJ_TRUE;
+
+	/* preconditions */
+	assert(p_j2k != 00);
+	assert(p_stream != 00);
+	assert(p_manager != 00);
+
+	/* STATE checking */
+	/* make sure the state is at 0 */
+	l_is_valid &= (p_j2k->m_specific_param.m_decoder.m_state == J2K_STATE_NONE);
+
+	/* POINTER validation */
+	/* make sure a p_j2k codec is present */
+	l_is_valid &= (p_j2k->m_procedure_list != 00);
+	/* make sure a validation list is present */
+	l_is_valid &= (p_j2k->m_validation_list != 00);
+
+	if ((p_j2k->m_cp.tdx) < (OPJ_UINT32) (1 << p_j2k->m_cp.tcps->tccps->numresolutions)) {
+		opj_event_msg_v2(p_manager, EVT_ERROR, "Number of resolutions is too high in comparison to the size of tiles\n");
+		return OPJ_FALSE;
+	}
+
+	if ((p_j2k->m_cp.tdy) < (OPJ_UINT32) (1 << p_j2k->m_cp.tcps->tccps->numresolutions)) {
+		opj_event_msg_v2(p_manager, EVT_ERROR, "Number of resolutions is too high in comparison to the size of tiles\n");
+		return OPJ_FALSE;
+	}
+
+	/* PARAMETER VALIDATION */
+	return l_is_valid;
 }
 
 /**
@@ -7359,6 +9701,118 @@ opj_codestream_index_t* j2k_create_cstr_index(void)
 	return cstr_index;
 }
 
+
+/**
+ * Gets the size taken by writing a SPCod or SPCoc for the given tile and component.
+ *
+ * @param	p_tile_no		the tile index.
+ * @param	p_comp_no		the component being outputted.
+ * @param	p_j2k			the J2K codec.
+ *
+ * @return	the number of bytes taken by the SPCod element.
+ */
+OPJ_UINT32 j2k_get_SPCod_SPCoc_size (	opj_j2k_v2_t *p_j2k,
+										OPJ_UINT32 p_tile_no,
+										OPJ_UINT32 p_comp_no )
+{
+	opj_cp_v2_t *l_cp = 00;
+	opj_tcp_v2_t *l_tcp = 00;
+	opj_tccp_t *l_tccp = 00;
+
+	/* preconditions */
+	assert(p_j2k != 00);
+
+	l_cp = &(p_j2k->m_cp);
+	l_tcp = &l_cp->tcps[p_tile_no];
+	l_tccp = &l_tcp->tccps[p_comp_no];
+
+	/* preconditions again */
+	assert(p_tile_no < (l_cp->tw * l_cp->th));
+	assert(p_comp_no < p_j2k->m_private_image->numcomps);
+
+	if (l_tccp->csty & J2K_CCP_CSTY_PRT) {
+		return 5 + l_tccp->numresolutions;
+	}
+	else {
+		return 5;
+	}
+}
+
+/**
+ * Writes a SPCod or SPCoc element, i.e. the coding style of a given component of a tile.
+ *
+ * @param	p_comp_no	the component number to output.
+ * @param	p_stream			the stream to write data to.
+ * @param	p_j2k			J2K codec.
+ * @param	p_manager	the user event manager.
+ *
+*/
+opj_bool j2k_write_SPCod_SPCoc(	opj_j2k_v2_t *p_j2k,
+								OPJ_UINT32 p_tile_no,
+								OPJ_UINT32 p_comp_no,
+								OPJ_BYTE * p_data,
+								OPJ_UINT32 * p_header_size,
+								struct opj_event_mgr * p_manager )
+{
+	OPJ_UINT32 i;
+	opj_cp_v2_t *l_cp = 00;
+	opj_tcp_v2_t *l_tcp = 00;
+	opj_tccp_t *l_tccp = 00;
+
+	/* preconditions */
+	assert(p_j2k != 00);
+	assert(p_header_size != 00);
+	assert(p_manager != 00);
+	assert(p_data != 00);
+
+	l_cp = &(p_j2k->m_cp);
+	l_tcp = &l_cp->tcps[p_tile_no];
+	l_tccp = &l_tcp->tccps[p_comp_no];
+
+	/* preconditions again */
+	assert(p_tile_no < (l_cp->tw * l_cp->th));
+	assert(p_comp_no <(p_j2k->m_private_image->numcomps));
+
+	if (*p_header_size < 5) {
+		opj_event_msg_v2(p_manager, EVT_ERROR, "Error writing SPCod SPCoc element\n");
+		return OPJ_FALSE;
+	}
+
+	opj_write_bytes(p_data,l_tccp->numresolutions - 1, 1);	/* SPcoc (D) */
+	++p_data;
+
+	opj_write_bytes(p_data,l_tccp->cblkw - 2, 1);			/* SPcoc (E) */
+	++p_data;
+
+	opj_write_bytes(p_data,l_tccp->cblkh - 2, 1);			/* SPcoc (F) */
+	++p_data;
+
+	opj_write_bytes(p_data,l_tccp->cblksty, 1);				/* SPcoc (G) */
+	++p_data;
+
+	opj_write_bytes(p_data,l_tccp->qmfbid, 1);				/* SPcoc (H) */
+	++p_data;
+
+	*p_header_size = *p_header_size - 5;
+
+	if (l_tccp->csty & J2K_CCP_CSTY_PRT) {
+
+		if (*p_header_size < l_tccp->numresolutions) {
+			opj_event_msg_v2(p_manager, EVT_ERROR, "Error writting SPCod SPCoc element\n");
+			return OPJ_FALSE;
+		}
+
+		for (i = 0; i < l_tccp->numresolutions; ++i) {
+			opj_write_bytes(p_data,l_tccp->prcw[i] + (l_tccp->prch[i] << 4), 1);	/* SPcoc (I_i) */
+			++p_data;
+		}
+
+		*p_header_size = *p_header_size - l_tccp->numresolutions;
+	}
+
+	return OPJ_TRUE;
+}
+
 /**
  * Reads a SPCod or SPCoc element, i.e. the coding style of a given component of a tile.
  * @param	p_header_data	the data contained in the COM box.
@@ -7511,6 +9965,130 @@ void j2k_copy_tile_component_parameters( opj_j2k_v2_t *p_j2k )
 		memcpy(l_copied_tccp->prch,l_ref_tccp->prch,l_prc_size);
 		++l_copied_tccp;
 	}
+}
+
+/**
+ * Gets the size taken by writing SQcd or SQcc element, i.e. the quantization values of a band in the QCD or QCC.
+ *
+ * @param	p_tile_no		the tile index.
+ * @param	p_comp_no		the component being outputted.
+ * @param	p_j2k			the J2K codec.
+ *
+ * @return	the number of bytes taken by the SPCod element.
+ */
+OPJ_UINT32 j2k_get_SQcd_SQcc_size (	opj_j2k_v2_t *p_j2k,
+									OPJ_UINT32 p_tile_no,
+									OPJ_UINT32 p_comp_no )
+{
+	OPJ_UINT32 l_num_bands;
+
+	opj_cp_v2_t *l_cp = 00;
+	opj_tcp_v2_t *l_tcp = 00;
+	opj_tccp_t *l_tccp = 00;
+
+	/* preconditions */
+	assert(p_j2k != 00);
+
+	l_cp = &(p_j2k->m_cp);
+	l_tcp = &l_cp->tcps[p_tile_no];
+	l_tccp = &l_tcp->tccps[p_comp_no];
+
+	/* preconditions again */
+	assert(p_tile_no < l_cp->tw * l_cp->th);
+	assert(p_comp_no < p_j2k->m_private_image->numcomps);
+
+	l_num_bands = (l_tccp->qntsty == J2K_CCP_QNTSTY_SIQNT) ? 1 : (l_tccp->numresolutions * 3 - 2);
+
+	if (l_tccp->qntsty == J2K_CCP_QNTSTY_NOQNT)  {
+		return 1 + l_num_bands;
+	}
+	else {
+		return 1 + 2*l_num_bands;
+	}
+}
+
+/**
+ * Writes a SQcd or SQcc element, i.e. the quantization values of a band.
+ *
+ * @param	p_tile_no		the tile to output.
+ * @param	p_comp_no		the component number to output.
+ * @param	p_data			the data buffer.
+ * @param	p_header_size	pointer to the size of the data buffer, it is changed by the function.
+ * @param	p_j2k				J2K codec.
+ * @param	p_manager		the user event manager.
+ *
+*/
+opj_bool j2k_write_SQcd_SQcc(	opj_j2k_v2_t *p_j2k,
+								OPJ_UINT32 p_tile_no,
+								OPJ_UINT32 p_comp_no,
+								OPJ_BYTE * p_data,
+								OPJ_UINT32 * p_header_size,
+								struct opj_event_mgr * p_manager )
+{
+	OPJ_UINT32 l_header_size;
+	OPJ_UINT32 l_band_no, l_num_bands;
+	OPJ_UINT32 l_expn,l_mant;
+
+	opj_cp_v2_t *l_cp = 00;
+	opj_tcp_v2_t *l_tcp = 00;
+	opj_tccp_t *l_tccp = 00;
+
+	/* preconditions */
+	assert(p_j2k != 00);
+	assert(p_header_size != 00);
+	assert(p_manager != 00);
+	assert(p_data != 00);
+
+	l_cp = &(p_j2k->m_cp);
+	l_tcp = &l_cp->tcps[p_tile_no];
+	l_tccp = &l_tcp->tccps[p_comp_no];
+
+	/* preconditions again */
+	assert(p_tile_no < l_cp->tw * l_cp->th);
+	assert(p_comp_no <p_j2k->m_private_image->numcomps);
+
+	l_num_bands = (l_tccp->qntsty == J2K_CCP_QNTSTY_SIQNT) ? 1 : (l_tccp->numresolutions * 3 - 2);
+
+	if (l_tccp->qntsty == J2K_CCP_QNTSTY_NOQNT)  {
+		l_header_size = 1 + l_num_bands;
+
+		if (*p_header_size < l_header_size) {
+			opj_event_msg_v2(p_manager, EVT_ERROR, "Error writing SQcd SQcc element\n");
+			return OPJ_FALSE;
+		}
+
+		opj_write_bytes(p_data,l_tccp->qntsty + (l_tccp->numgbits << 5), 1);	/* Sqcx */
+		++p_data;
+
+		for (l_band_no = 0; l_band_no < l_num_bands; ++l_band_no) {
+			l_expn = l_tccp->stepsizes[l_band_no].expn;
+			opj_write_bytes(p_data, l_expn << 3, 1);	/* SPqcx_i */
+			++p_data;
+		}
+	}
+	else {
+		l_header_size = 1 + 2*l_num_bands;
+
+		if (*p_header_size < l_header_size) {
+			opj_event_msg_v2(p_manager, EVT_ERROR, "Error writing SQcd SQcc element\n");
+			return OPJ_FALSE;
+		}
+
+		opj_write_bytes(p_data,l_tccp->qntsty + (l_tccp->numgbits << 5), 1);	/* Sqcx */
+		++p_data;
+
+		for (l_band_no = 0; l_band_no < l_num_bands; ++l_band_no) {
+			l_expn = l_tccp->stepsizes[l_band_no].expn;
+			l_mant = l_tccp->stepsizes[l_band_no].mant;
+
+			opj_write_bytes(p_data, (l_expn << 11) + l_mant, 2);	/* SPqcx_i */
+			p_data += 2;
+		}
+	}
+
+	*p_header_size = *p_header_size - l_header_size;
+
+	return OPJ_TRUE;
 }
 
 /**
@@ -8516,4 +11094,795 @@ opj_bool j2k_set_decoded_resolution_factor(opj_j2k_v2_t *p_j2k, OPJ_UINT32 res_f
 	}
 
 	return OPJ_FALSE;
+}
+
+
+/**
+ * Encodes all the tiles in a row.
+ */
+opj_bool j2k_encode_v2(	opj_j2k_v2_t * p_j2k,
+						opj_stream_private_t *p_stream,
+						opj_event_mgr_t * p_manager )
+{
+	OPJ_UINT32 i;
+	OPJ_UINT32 l_nb_tiles;
+	OPJ_UINT32 l_max_tile_size, l_current_tile_size;
+	OPJ_BYTE * l_current_data;
+
+	/* preconditions */
+	assert(p_j2k != 00);
+	assert(p_stream != 00);
+	assert(p_manager != 00);
+
+	l_current_data = (OPJ_BYTE*)opj_malloc(1000);
+	if (! l_current_data) {
+		return OPJ_FALSE;
+	}
+	l_max_tile_size = 1000;
+
+	l_nb_tiles = p_j2k->m_cp.th * p_j2k->m_cp.tw;
+	for (i=0;i<l_nb_tiles;++i) {
+		if (! j2k_pre_write_tile(p_j2k,i,p_stream,p_manager)) {
+			opj_free(l_current_data);
+			return OPJ_FALSE;
+		}
+
+		l_current_tile_size = tcd_get_encoded_tile_size(p_j2k->m_tcd);
+		if (l_current_tile_size > l_max_tile_size) {
+			l_current_data = (OPJ_BYTE*)opj_realloc(l_current_data,l_current_tile_size);
+			if (! l_current_data) {
+				return OPJ_FALSE;
+			}
+			l_max_tile_size = l_current_tile_size;
+		}
+
+		j2k_get_tile_data(p_j2k->m_tcd,l_current_data);
+
+		if (! j2k_post_write_tile (p_j2k,l_current_data,l_current_tile_size,p_stream,p_manager)) {
+			return OPJ_FALSE;
+		}
+	}
+
+	opj_free(l_current_data);
+	return OPJ_TRUE;
+}
+
+/**
+ * Ends the compression procedures and possibility add data to be read after the
+ * codestream.
+ */
+opj_bool j2k_end_compress(	opj_j2k_v2_t *p_j2k,
+							opj_stream_private_t *p_stream,
+							struct opj_event_mgr * p_manager)
+{
+	/* customization of the encoding */
+	j2k_setup_end_compress(p_j2k);
+
+	if (! j2k_exec (p_j2k, p_j2k->m_procedure_list, p_stream, p_manager))
+	{
+		return OPJ_FALSE;
+	}
+
+	return OPJ_TRUE;
+}
+
+
+/**
+ * Starts a compression scheme, i.e. validates the codec parameters, writes the header.
+ *
+ * @param	p_j2k		the jpeg2000 codec.
+ * @param	p_stream	the stream object.
+ * @param	p_manager	the user event manager.
+ *
+ * @return true if the codec is valid.
+ */
+opj_bool j2k_start_compress(opj_j2k_v2_t *p_j2k,
+							opj_stream_private_t *p_stream,
+							opj_image_t * p_image,
+							opj_event_mgr_t * p_manager)
+{
+	// preconditions
+	assert(p_j2k != 00);
+	assert(p_stream != 00);
+	assert(p_manager != 00);
+
+	p_j2k->m_private_image = p_image;
+
+	/* customization of the validation */
+	j2k_setup_encoding_validation (p_j2k);
+
+	/* validation of the parameters codec */
+	if (! j2k_exec(p_j2k,p_j2k->m_validation_list,p_stream,p_manager)) {
+		return OPJ_FALSE;
+	}
+
+	/* customization of the encoding */
+	j2k_setup_header_writting(p_j2k);
+
+	/* write header */
+	if (! j2k_exec (p_j2k,p_j2k->m_procedure_list,p_stream,p_manager)) {
+		return OPJ_FALSE;
+	}
+
+	return OPJ_TRUE;
+}
+
+/*
+ *
+ */
+opj_bool j2k_pre_write_tile (	opj_j2k_v2_t * p_j2k,
+								OPJ_UINT32 p_tile_index,
+								opj_stream_private_t *p_stream,
+								opj_event_mgr_t * p_manager )
+{
+	if (p_tile_index != p_j2k->m_current_tile_number) {
+		opj_event_msg_v2(p_manager, EVT_ERROR, "The given tile index does not match." );
+		return OPJ_FALSE;
+	}
+
+	opj_event_msg_v2(p_manager, EVT_INFO, "tile number %d / %d\n", p_j2k->m_current_tile_number + 1, p_j2k->m_cp.tw * p_j2k->m_cp.th);
+
+	p_j2k->m_specific_param.m_encoder.m_current_tile_part_number = 0;
+	p_j2k->m_tcd->cur_totnum_tp = p_j2k->m_cp.tcps[p_tile_index].m_nb_tile_parts;
+	p_j2k->m_specific_param.m_encoder.m_current_poc_tile_part_number = 0;
+
+	/* initialisation before tile encoding  */
+	if (! tcd_init_encode_tile(p_j2k->m_tcd, p_j2k->m_current_tile_number)) {
+		return OPJ_FALSE;
+	}
+
+	return OPJ_TRUE;
+}
+
+/*
+ *
+ */
+void j2k_get_tile_data (opj_tcd_v2_t * p_tcd, OPJ_BYTE * p_data)
+{
+	OPJ_UINT32 i,j,k = 0;
+	OPJ_UINT32 l_width,l_height,l_stride, l_offset_x,l_offset_y, l_image_width;
+	opj_image_comp_t * l_img_comp = 00;
+	opj_tcd_tilecomp_v2_t * l_tilec = 00;
+	opj_image_t * l_image = 00;
+	OPJ_UINT32 l_size_comp, l_remaining;
+	OPJ_INT32 * l_src_ptr;
+	l_tilec = p_tcd->tcd_image->tiles->comps;
+	l_image = p_tcd->image;
+	l_img_comp = l_image->comps;
+
+	for (i=0;i<p_tcd->image->numcomps;++i) {
+		l_size_comp = l_img_comp->prec >> 3; /* (/8) */
+		l_remaining = l_img_comp->prec & 7;  /* (%8) */
+		if (l_remaining) {
+			++l_size_comp;
+		}
+
+		if (l_size_comp == 3) {
+			l_size_comp = 4;
+		}
+
+		l_width = (l_tilec->x1 - l_tilec->x0);
+		l_height = (l_tilec->y1 - l_tilec->y0);
+		l_offset_x = int_ceildiv(l_image->x0, l_img_comp->dx);
+		l_offset_y = int_ceildiv(l_image->y0, l_img_comp->dy);
+		l_image_width = int_ceildiv(l_image->x1 - l_image->x0, l_img_comp->dx);
+		l_stride = l_image_width - l_width;
+		l_src_ptr = l_img_comp->data + (l_tilec->x0 - l_offset_x) + (l_tilec->y0 - l_offset_y) * l_image_width;
+
+		switch (l_size_comp) {
+			case 1:
+				{
+					OPJ_CHAR * l_dest_ptr = (OPJ_CHAR*) p_data;
+					if (l_img_comp->sgnd) {
+						for	(j=0;j<l_height;++j) {
+							for (k=0;k<l_width;++k) {
+								*(l_dest_ptr) = (OPJ_CHAR) (*l_src_ptr);
+								++l_dest_ptr;
+								++l_src_ptr;
+							}
+							l_src_ptr += l_stride;
+						}
+					}
+					else {
+						for (j=0;j<l_height;++j) {
+							for (k=0;k<l_width;++k) {
+								*(l_dest_ptr) = (*l_src_ptr)&0xff;
+								++l_dest_ptr;
+								++l_src_ptr;
+							}
+							l_src_ptr += l_stride;
+						}
+					}
+
+					p_data = (OPJ_BYTE*) l_dest_ptr;
+				}
+				break;
+			case 2:
+				{
+					OPJ_INT16 * l_dest_ptr = (OPJ_INT16 *) p_data;
+					if (l_img_comp->sgnd) {
+						for (j=0;j<l_height;++j) {
+							for (k=0;k<l_width;++k) {
+								*(l_dest_ptr++) = (OPJ_INT16) (*(l_src_ptr++));
+							}
+							l_src_ptr += l_stride;
+						}
+					}
+					else {
+						for (j=0;j<l_height;++j) {
+							for (k=0;k<l_width;++k) {
+								*(l_dest_ptr++) = (*(l_src_ptr++))&0xffff;
+							}
+							l_src_ptr += l_stride;
+						}
+					}
+
+					p_data = (OPJ_BYTE*) l_dest_ptr;
+				}
+				break;
+			case 4:
+				{
+					OPJ_INT32 * l_dest_ptr = (OPJ_INT32 *) p_data;
+					for (j=0;j<l_height;++j) {
+						for (k=0;k<l_width;++k) {
+							*(l_dest_ptr++) = *(l_src_ptr++);
+						}
+						l_src_ptr += l_stride;
+					}
+
+					p_data = (OPJ_BYTE*) l_dest_ptr;
+				}
+				break;
+		}
+
+		++l_img_comp;
+		++l_tilec;
+	}
+}
+
+
+/**
+ * Write a tile.
+ * @param	p_j2k		the jpeg2000 codec.
+ * @param	p_stream	the stream to write data to.
+ * @param	p_manager	the user event manager.
+ */
+opj_bool j2k_post_write_tile (	opj_j2k_v2_t * p_j2k,
+								OPJ_BYTE * p_data,
+								OPJ_UINT32 p_data_size,
+								opj_stream_private_t *p_stream,
+								opj_event_mgr_t * p_manager )
+{
+	opj_tcd_v2_t * l_tcd = 00;
+	opj_cp_v2_t * l_cp = 00;
+	opj_tcp_v2_t * l_tcp = 00;
+	OPJ_UINT32 l_nb_bytes_written;
+	OPJ_BYTE * l_current_data = 00;
+	OPJ_UINT32 l_tile_size = 0;
+	OPJ_UINT32 l_available_data;
+
+	/* preconditions */
+	assert(p_j2k->m_specific_param.m_encoder.m_encoded_tile_data);
+
+	l_tcd = p_j2k->m_tcd;
+	l_cp = &(p_j2k->m_cp);
+	l_tcp = l_cp->tcps + p_j2k->m_current_tile_number;
+
+	l_tile_size = p_j2k->m_specific_param.m_encoder.m_encoded_tile_size;
+	l_available_data = l_tile_size;
+	l_current_data = p_j2k->m_specific_param.m_encoder.m_encoded_tile_data;
+
+	if (! tcd_copy_tile_data(l_tcd,p_data,p_data_size)) {
+		opj_event_msg_v2(p_manager, EVT_ERROR, "Size mismtach between tile data and sent data." );
+		return OPJ_FALSE;
+	}
+
+	l_nb_bytes_written = 0;
+	if (! j2k_write_first_tile_part(p_j2k,l_current_data,&l_nb_bytes_written,l_available_data,p_stream,p_manager)) {
+		return OPJ_FALSE;
+	}
+	l_current_data += l_nb_bytes_written;
+	l_available_data -= l_nb_bytes_written;
+
+	l_nb_bytes_written = 0;
+	if (! j2k_write_all_tile_parts(p_j2k,l_current_data,&l_nb_bytes_written,l_available_data,p_stream,p_manager)) {
+		return OPJ_FALSE;
+	}
+
+	l_available_data -= l_nb_bytes_written;
+	l_nb_bytes_written = l_tile_size - l_available_data;
+
+	if (opj_stream_write_data(p_stream,p_j2k->m_specific_param.m_encoder.m_encoded_tile_data,l_nb_bytes_written,p_manager) != l_nb_bytes_written) {
+		return OPJ_FALSE;
+	}
+
+	++p_j2k->m_current_tile_number;
+
+	return OPJ_TRUE;
+}
+
+
+/**
+ * Sets up the validation ,i.e. adds the procedures to lauch to make sure the codec parameters
+ * are valid. Developers wanting to extend the library can add their own validation procedures.
+ */
+void j2k_setup_end_compress (opj_j2k_v2_t *p_j2k)
+{
+	/* preconditions */
+	assert(p_j2k != 00);
+
+	/* DEVELOPER CORNER, insert your custom procedures */
+	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(void*)j2k_write_eoc );
+
+	if (p_j2k->m_cp.m_specific_param.m_enc.m_cinema) {
+		opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(void*)j2k_write_updated_tlm);
+	}
+
+	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(void*)j2k_write_epc );
+	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(void*)j2k_end_encoding );
+	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(void*)j2k_destroy_header_memory);
+}
+
+/**
+ * Sets up the validation ,i.e. adds the procedures to lauch to make sure the codec parameters
+ * are valid. Developers wanting to extend the library can add their own validation procedures.
+ */
+void j2k_setup_encoding_validation (opj_j2k_v2_t *p_j2k)
+{
+	/* preconditions */
+	assert(p_j2k != 00);
+
+	opj_procedure_list_add_procedure(p_j2k->m_validation_list, (void*)j2k_build_encoder);
+	opj_procedure_list_add_procedure(p_j2k->m_validation_list, (void*)j2k_encoding_validation);
+
+	/* DEVELOPER CORNER, add your custom validation procedure */
+	opj_procedure_list_add_procedure(p_j2k->m_validation_list, (void*)j2k_mct_validation);
+}
+
+
+/**
+ * Sets up the procedures to do on writing header.
+ * Developers wanting to extend the library can add their own writing procedures.
+ */
+void j2k_setup_header_writting (opj_j2k_v2_t *p_j2k)
+{
+	/* preconditions */
+	assert(p_j2k != 00);
+
+	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(void*)j2k_init_info );
+	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(void*)j2k_write_soc_v2 );
+	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(void*)j2k_write_siz_v2 );
+	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(void*)j2k_write_cod_v2 );
+	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(void*)j2k_write_qcd_v2 );
+
+
+	if (p_j2k->m_cp.m_specific_param.m_enc.m_cinema) {
+		opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(void*)j2k_write_image_components );
+		opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(void*)j2k_write_tlm );
+
+		if (p_j2k->m_cp.m_specific_param.m_enc.m_cinema == CINEMA4K_24) {
+			opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(void*)j2k_write_poc );
+		}
+	}
+
+	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(void*)j2k_write_regions);
+
+	if (p_j2k->m_cp.comment != 00)  {
+		opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(void*)j2k_write_com);
+	}
+
+	/* DEVELOPER CORNER, insert your custom procedures */
+	if (p_j2k->m_cp.rsiz & MCT) {
+		opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(void*)j2k_write_mct_data_group );
+	}
+	/* End of Developer Corner */
+
+	if (p_j2k->cstr_index) {
+		opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(void*)j2k_get_end_header );
+	}
+
+	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(void*)j2k_create_tcd);
+	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(void*)j2k_update_rates);
+}
+
+
+opj_bool j2k_write_first_tile_part (opj_j2k_v2_t *p_j2k,
+									OPJ_BYTE * p_data,
+									OPJ_UINT32 * p_data_written,
+									OPJ_UINT32 p_total_data_size,
+									opj_stream_private_t *p_stream,
+									struct opj_event_mgr * p_manager )
+{
+	OPJ_UINT32 compno;
+	OPJ_UINT32 l_nb_bytes_written = 0;
+	OPJ_UINT32 l_current_nb_bytes_written;
+	OPJ_BYTE * l_begin_data = 00;
+
+	opj_tcp_v2_t *l_tcp = 00;
+	opj_tcd_v2_t * l_tcd = 00;
+	opj_cp_v2_t * l_cp = 00;
+
+	l_tcd = p_j2k->m_tcd;
+	l_cp = &(p_j2k->m_cp);
+	l_tcp = l_cp->tcps + p_j2k->m_current_tile_number;
+
+	l_tcd->cur_pino = 0;
+
+	/*Get number of tile parts*/
+	p_j2k->m_specific_param.m_encoder.m_current_poc_tile_part_number = 0;
+
+	/* INDEX >> */
+	/* << INDEX */
+
+	l_current_nb_bytes_written = 0;
+	l_begin_data = p_data;
+	if (! j2k_write_sot_v2(p_j2k,p_data,&l_current_nb_bytes_written,p_stream,p_manager))
+	{
+		return OPJ_FALSE;
+	}
+
+	l_nb_bytes_written += l_current_nb_bytes_written;
+	p_data += l_current_nb_bytes_written;
+	p_total_data_size -= l_current_nb_bytes_written;
+
+	if (l_cp->m_specific_param.m_enc.m_cinema == 0) {
+		for (compno = 1; compno < p_j2k->m_private_image->numcomps; compno++) {
+			l_current_nb_bytes_written = 0;
+			j2k_write_coc_in_memory(p_j2k,compno,p_data,&l_current_nb_bytes_written,p_manager);
+			l_nb_bytes_written += l_current_nb_bytes_written;
+			p_data += l_current_nb_bytes_written;
+			p_total_data_size -= l_current_nb_bytes_written;
+
+			l_current_nb_bytes_written = 0;
+			j2k_write_qcc_in_memory(p_j2k,compno,p_data,&l_current_nb_bytes_written,p_manager);
+			l_nb_bytes_written += l_current_nb_bytes_written;
+			p_data += l_current_nb_bytes_written;
+			p_total_data_size -= l_current_nb_bytes_written;
+		}
+
+		if (l_cp->tcps[p_j2k->m_current_tile_number].numpocs) {
+			l_current_nb_bytes_written = 0;
+			j2k_write_poc_in_memory(p_j2k,p_data,&l_current_nb_bytes_written,p_manager);
+			l_nb_bytes_written += l_current_nb_bytes_written;
+			p_data += l_current_nb_bytes_written;
+			p_total_data_size -= l_current_nb_bytes_written;
+		}
+	}
+
+	l_current_nb_bytes_written = 0;
+	if (! j2k_write_sod_v2(p_j2k,l_tcd,p_data,&l_current_nb_bytes_written,p_total_data_size,p_stream,p_manager)) {
+		return OPJ_FALSE;
+	}
+
+	l_nb_bytes_written += l_current_nb_bytes_written;
+	* p_data_written = l_nb_bytes_written;
+
+	/* Writing Psot in SOT marker */
+	opj_write_bytes(l_begin_data + 6,l_nb_bytes_written,4);					/* PSOT */
+
+	if (l_cp->m_specific_param.m_enc.m_cinema){
+		j2k_update_tlm(p_j2k,l_nb_bytes_written);
+	}
+
+	return OPJ_TRUE;
+}
+
+opj_bool j2k_write_all_tile_parts(	opj_j2k_v2_t *p_j2k,
+									OPJ_BYTE * p_data,
+									OPJ_UINT32 * p_data_written,
+									OPJ_UINT32 p_total_data_size,
+									opj_stream_private_t *p_stream,
+									struct opj_event_mgr * p_manager
+								)
+{
+	OPJ_UINT32 tilepartno=0;
+	OPJ_UINT32 l_nb_bytes_written = 0;
+	OPJ_UINT32 l_current_nb_bytes_written;
+	OPJ_UINT32 l_part_tile_size;
+	OPJ_UINT32 tot_num_tp;
+	OPJ_UINT32 pino;
+
+	OPJ_BYTE * l_begin_data;
+	opj_tcp_v2_t *l_tcp = 00;
+	opj_tcd_v2_t * l_tcd = 00;
+	opj_cp_v2_t * l_cp = 00;
+
+
+	l_tcd = p_j2k->m_tcd;
+	l_cp = &(p_j2k->m_cp);
+	l_tcp = l_cp->tcps + p_j2k->m_current_tile_number;
+
+	/*Get number of tile parts*/
+	tot_num_tp = j2k_get_num_tp_v2(l_cp,0,p_j2k->m_current_tile_number);
+
+	for (tilepartno = 1; tilepartno < tot_num_tp ; ++tilepartno) {
+		p_j2k->m_specific_param.m_encoder.m_current_poc_tile_part_number = tilepartno;
+		l_current_nb_bytes_written = 0;
+		l_part_tile_size = 0;
+		l_begin_data = p_data;
+
+		if (! j2k_write_sot_v2(p_j2k,p_data,&l_current_nb_bytes_written,p_stream,p_manager)) {
+			return OPJ_FALSE;
+		}
+
+		l_nb_bytes_written += l_current_nb_bytes_written;
+		p_data += l_current_nb_bytes_written;
+		p_total_data_size -= l_current_nb_bytes_written;
+		l_part_tile_size += l_nb_bytes_written;
+
+		l_current_nb_bytes_written = 0;
+		if (! j2k_write_sod_v2(p_j2k,l_tcd,p_data,&l_current_nb_bytes_written,p_total_data_size,p_stream,p_manager)) {
+			return OPJ_FALSE;
+		}
+
+		p_data += l_current_nb_bytes_written;
+		l_nb_bytes_written += l_current_nb_bytes_written;
+		p_total_data_size -= l_current_nb_bytes_written;
+		l_part_tile_size += l_nb_bytes_written;
+
+		/* Writing Psot in SOT marker */
+		opj_write_bytes(l_begin_data + 6,l_part_tile_size,4);					/* PSOT */
+
+		if (l_cp->m_specific_param.m_enc.m_cinema) {
+			j2k_update_tlm(p_j2k,l_part_tile_size);
+		}
+
+		++p_j2k->m_specific_param.m_encoder.m_current_tile_part_number;
+	}
+
+	for (pino = 1; pino <= l_tcp->numpocs; ++pino) {
+		l_tcd->cur_pino = pino;
+
+		/*Get number of tile parts*/
+		tot_num_tp = j2k_get_num_tp_v2(l_cp,pino,p_j2k->m_current_tile_number);
+		for (tilepartno = 0; tilepartno < tot_num_tp ; ++tilepartno) {
+			p_j2k->m_specific_param.m_encoder.m_current_poc_tile_part_number = tilepartno;
+			l_current_nb_bytes_written = 0;
+			l_part_tile_size = 0;
+			l_begin_data = p_data;
+
+			if (! j2k_write_sot_v2(p_j2k,p_data,&l_current_nb_bytes_written,p_stream,p_manager)) {
+				return OPJ_FALSE;
+			}
+
+			l_nb_bytes_written += l_current_nb_bytes_written;
+			p_data += l_current_nb_bytes_written;
+			p_total_data_size -= l_current_nb_bytes_written;
+			l_part_tile_size += l_current_nb_bytes_written;
+
+			l_current_nb_bytes_written = 0;
+
+			if (! j2k_write_sod_v2(p_j2k,l_tcd,p_data,&l_current_nb_bytes_written,p_total_data_size,p_stream,p_manager)) {
+				return OPJ_FALSE;
+			}
+
+			l_nb_bytes_written += l_current_nb_bytes_written;
+			p_data += l_current_nb_bytes_written;
+			p_total_data_size -= l_current_nb_bytes_written;
+			l_part_tile_size += l_current_nb_bytes_written;
+
+			/* Writing Psot in SOT marker */
+			opj_write_bytes(l_begin_data + 6,l_part_tile_size,4);					/* PSOT */
+
+			if (l_cp->m_specific_param.m_enc.m_cinema) {
+				j2k_update_tlm(p_j2k,l_part_tile_size);
+			}
+
+			++p_j2k->m_specific_param.m_encoder.m_current_tile_part_number;
+		}
+	}
+
+	*p_data_written = l_nb_bytes_written;
+
+	return OPJ_TRUE;
+}
+
+/**
+ * Writes the updated tlm.
+ *
+ * @param	p_stream		the stream to write data to.
+ * @param	p_j2k			J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+opj_bool j2k_write_updated_tlm( opj_j2k_v2_t *p_j2k,
+								struct opj_stream_private *p_stream,
+								struct opj_event_mgr * p_manager )
+{
+	OPJ_UINT32 l_tlm_size;
+	OPJ_SIZE_T l_tlm_position, l_current_position;
+
+	/* preconditions */
+	assert(p_j2k != 00);
+	assert(p_manager != 00);
+	assert(p_stream != 00);
+
+	l_tlm_size = 5 * p_j2k->m_specific_param.m_encoder.m_total_tile_parts;
+	l_tlm_position = 6 + p_j2k->m_specific_param.m_encoder.m_tlm_start;
+	l_current_position = opj_stream_tell(p_stream);
+
+	if (! opj_stream_seek(p_stream,l_tlm_position,p_manager)) {
+		return OPJ_FALSE;
+	}
+
+	if (opj_stream_write_data(p_stream,p_j2k->m_specific_param.m_encoder.m_tlm_sot_offsets_buffer,l_tlm_size,p_manager) != l_tlm_size) {
+		return OPJ_FALSE;
+	}
+
+	if (! opj_stream_seek(p_stream,l_current_position,p_manager)) {
+		return OPJ_FALSE;
+	}
+
+	return OPJ_TRUE;
+}
+
+
+/**
+ * Ends the encoding, i.e. frees memory.
+ *
+ * @param	p_stream				the stream to write data to.
+ * @param	p_j2k				J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+opj_bool j2k_end_encoding(	opj_j2k_v2_t *p_j2k,
+							struct opj_stream_private *p_stream,
+							struct opj_event_mgr * p_manager )
+{
+	/* preconditions */
+	assert(p_j2k != 00);
+	assert(p_manager != 00);
+	assert(p_stream != 00);
+
+	tcd_destroy_v2(p_j2k->m_tcd);
+	p_j2k->m_tcd = 00;
+
+	if (p_j2k->m_specific_param.m_encoder.m_tlm_sot_offsets_buffer) {
+		opj_free(p_j2k->m_specific_param.m_encoder.m_tlm_sot_offsets_buffer);
+		p_j2k->m_specific_param.m_encoder.m_tlm_sot_offsets_buffer = 0;
+		p_j2k->m_specific_param.m_encoder.m_tlm_sot_offsets_current = 0;
+	}
+
+	if (p_j2k->m_specific_param.m_encoder.m_encoded_tile_data) {
+		opj_free(p_j2k->m_specific_param.m_encoder.m_encoded_tile_data);
+		p_j2k->m_specific_param.m_encoder.m_encoded_tile_data = 0;
+	}
+
+	p_j2k->m_specific_param.m_encoder.m_encoded_tile_size = 0;
+
+	return OPJ_TRUE;
+}
+
+/**
+ * Destroys the memory associated with the decoding of headers.
+ */
+opj_bool j2k_destroy_header_memory (opj_j2k_v2_t * p_j2k,
+									opj_stream_private_t *p_stream,
+									opj_event_mgr_t * p_manager )
+{
+	/* preconditions */
+	assert(p_j2k != 00);
+	assert(p_stream != 00);
+	assert(p_manager != 00);
+
+	if (p_j2k->m_specific_param.m_encoder.m_header_tile_data) {
+		opj_free(p_j2k->m_specific_param.m_encoder.m_header_tile_data);
+		p_j2k->m_specific_param.m_encoder.m_header_tile_data = 0;
+	}
+
+	p_j2k->m_specific_param.m_encoder.m_header_tile_data_size = 0;
+
+	return OPJ_TRUE;
+}
+
+
+/**
+ * Inits the Info
+ *
+ * @param	p_stream				the stream to write data to.
+ * @param	p_j2k				J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+opj_bool j2k_init_info(	opj_j2k_v2_t *p_j2k,
+						struct opj_stream_private *p_stream,
+						struct opj_event_mgr * p_manager )
+{
+	opj_codestream_info_t * l_cstr_info = 00;
+
+	/* preconditions */
+	assert(p_j2k != 00);
+	assert(p_manager != 00);
+	assert(p_stream != 00);
+
+	/* TODO mergeV2: check this part which use cstr_info */
+	/*l_cstr_info = p_j2k->cstr_info;
+
+	if (l_cstr_info)  {
+		OPJ_UINT32 compno;
+		l_cstr_info->tile = (opj_tile_info_t *) opj_malloc(p_j2k->m_cp.tw * p_j2k->m_cp.th * sizeof(opj_tile_info_t));
+
+		l_cstr_info->image_w = p_j2k->m_image->x1 - p_j2k->m_image->x0;
+		l_cstr_info->image_h = p_j2k->m_image->y1 - p_j2k->m_image->y0;
+
+		l_cstr_info->prog = (&p_j2k->m_cp.tcps[0])->prg;
+
+		l_cstr_info->tw = p_j2k->m_cp.tw;
+		l_cstr_info->th = p_j2k->m_cp.th;
+
+		l_cstr_info->tile_x = p_j2k->m_cp.tdx;*/	/* new version parser */
+		/*l_cstr_info->tile_y = p_j2k->m_cp.tdy;*/	/* new version parser */
+		/*l_cstr_info->tile_Ox = p_j2k->m_cp.tx0;*/	/* new version parser */
+		/*l_cstr_info->tile_Oy = p_j2k->m_cp.ty0;*/	/* new version parser */
+
+		/*l_cstr_info->numcomps = p_j2k->m_image->numcomps;
+
+		l_cstr_info->numlayers = (&p_j2k->m_cp.tcps[0])->numlayers;
+
+		l_cstr_info->numdecompos = (OPJ_INT32*) opj_malloc(p_j2k->m_image->numcomps * sizeof(OPJ_INT32));
+
+		for (compno=0; compno < p_j2k->m_image->numcomps; compno++) {
+			l_cstr_info->numdecompos[compno] = (&p_j2k->m_cp.tcps[0])->tccps->numresolutions - 1;
+		}
+
+		l_cstr_info->D_max = 0.0;	*/	/* ADD Marcela */
+
+		/*l_cstr_info->main_head_start = opj_stream_tell(p_stream);*/ /* position of SOC */
+
+		/*l_cstr_info->maxmarknum = 100;
+		l_cstr_info->marker = (opj_marker_info_t *) opj_malloc(l_cstr_info->maxmarknum * sizeof(opj_marker_info_t));
+		l_cstr_info->marknum = 0;
+	}*/
+
+	return j2k_calculate_tp_v2(p_j2k,&(p_j2k->m_cp),&p_j2k->m_specific_param.m_encoder.m_total_tile_parts,p_j2k->m_private_image,p_manager);
+}
+
+/**
+ * Creates a tile-coder decoder.
+ *
+ * @param	p_stream		the stream to write data to.
+ * @param	p_j2k			J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+opj_bool j2k_create_tcd(opj_j2k_v2_t *p_j2k,
+						struct opj_stream_private *p_stream,
+						struct opj_event_mgr * p_manager )
+{
+	/* preconditions */
+	assert(p_j2k != 00);
+	assert(p_manager != 00);
+	assert(p_stream != 00);
+
+	p_j2k->m_tcd = tcd_create_v2(OPJ_FALSE);
+
+	if (! p_j2k->m_tcd) {
+		opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory to create Tile Coder\n");
+		return OPJ_FALSE;
+	}
+
+	if (! tcd_init_v2(p_j2k->m_tcd,p_j2k->m_private_image,&p_j2k->m_cp)) {
+		tcd_destroy_v2(p_j2k->m_tcd);
+		p_j2k->m_tcd = 00;
+		return OPJ_FALSE;
+	}
+
+	return OPJ_TRUE;
+}
+
+
+/**
+ * Writes a tile.
+ * @param	p_j2k		the jpeg2000 codec.
+ * @param	p_stream			the stream to write data to.
+ * @param	p_manager	the user event manager.
+ */
+opj_bool j2k_write_tile (opj_j2k_v2_t * p_j2k,
+					 	 OPJ_UINT32 p_tile_index,
+					 	 OPJ_BYTE * p_data,
+					 	 OPJ_UINT32 p_data_size,
+					 	 opj_stream_private_t *p_stream,
+					 	 opj_event_mgr_t * p_manager )
+{
+	if (! j2k_pre_write_tile(p_j2k,p_tile_index,p_stream,p_manager)) {
+		return OPJ_FALSE;
+	}
+
+	return j2k_post_write_tile(p_j2k,p_data,p_data_size,p_stream,p_manager);
 }

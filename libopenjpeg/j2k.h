@@ -107,6 +107,7 @@ The functions in J2K.C have for goal to read/write the several parts of the code
  * These values may be combined with a | operator.
  * */
 typedef enum J2K_STATUS {
+	J2K_STATE_NONE  =  0x0000, /**< a SOC marker is expected */
 	J2K_STATE_MHSOC  = 0x0001, /**< a SOC marker is expected */
 	J2K_STATE_MHSIZ  = 0x0002, /**< a SIZ marker is expected */
 	J2K_STATE_MH     = 0x0004, /**< the decoding process is in the main header */
@@ -1022,6 +1023,49 @@ opj_bool j2k_get_tile(	opj_j2k_v2_t *p_j2k,
 						OPJ_UINT32 tile_index );
 
 opj_bool j2k_set_decoded_resolution_factor(opj_j2k_v2_t *p_j2k, OPJ_UINT32 res_factor, opj_event_mgr_t * p_manager);
+
+
+/**
+ * Writes a tile.
+ * @param	p_j2k		the jpeg2000 codec.
+ * @param	p_stream			the stream to write data to.
+ * @param	p_manager	the user event manager.
+ */
+opj_bool j2k_write_tile (	opj_j2k_v2_t * p_j2k,
+							OPJ_UINT32 p_tile_index,
+							OPJ_BYTE * p_data,
+							OPJ_UINT32 p_data_size,
+							struct opj_stream_private *p_stream,
+							struct opj_event_mgr * p_manager );
+
+/**
+ * Encodes an image into a JPEG-2000 codestream
+ */
+opj_bool j2k_encode_v2(	opj_j2k_v2_t * p_j2k,
+						opj_stream_private_t *cio,
+						struct opj_event_mgr * p_manager );
+
+/**
+ * Starts a compression scheme, i.e. validates the codec parameters, writes the header.
+ *
+ * @param	p_j2k		the jpeg2000 codec.
+ * @param	cio			the stream object.
+ * @param	p_manager	the user event manager.
+ *
+ * @return true if the codec is valid.
+ */
+opj_bool j2k_start_compress(opj_j2k_v2_t *p_j2k,
+							struct opj_stream_private *cio,
+							struct opj_image * p_image,
+							struct opj_event_mgr * p_manager );
+
+/**
+ * Ends the compression procedures and possibiliy add data to be read after the
+ * codestream.
+ */
+opj_bool j2k_end_compress( 	opj_j2k_v2_t *p_j2k,
+							opj_stream_private_t *cio,
+							struct opj_event_mgr * p_manager);
 
 
 #endif /* __J2K_H */

@@ -104,6 +104,15 @@ Divide an integer and round upwards
 static INLINE int int_ceildiv(int a, int b) {
 	return (a + b - 1) / b;
 }
+
+/**
+Divide an integer and round upwards
+@return Returns a divided by b
+*/
+static INLINE OPJ_UINT32  uint_ceildiv(OPJ_UINT32  a, OPJ_UINT32  b) {
+	return (a + b - 1) / b;
+}
+
 /**
 Divide an integer by a power of 2 and round upwards
 @return Returns a divided by 2^b

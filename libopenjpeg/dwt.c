@@ -128,6 +128,12 @@ Inverse wavelet transform in 2-D.
 */
 static opj_bool dwt_decode_tile_v2(opj_tcd_tilecomp_v2_t* tilec, OPJ_UINT32 i, DWT1DFN fn);
 
+static opj_bool dwt_encode_procedure(	opj_tcd_tilecomp_v2_t * tilec,
+										void (*p_function)(OPJ_INT32 *, OPJ_INT32,OPJ_INT32,OPJ_INT32) );
+
+static OPJ_UINT32 dwt_max_resolution_v2(opj_tcd_resolution_v2_t* restrict r, OPJ_UINT32 i);
+
+
 /*@}*/
 
 /*@}*/
@@ -383,6 +389,95 @@ void dwt_encode(opj_tcd_tilecomp_t * tilec) {
 	}
 }
 
+/* <summary>                            */
+/* Forward 5-3 wavelet transform in 2-D. */
+/* </summary>                           */
+INLINE opj_bool dwt_encode_procedure(opj_tcd_tilecomp_v2_t * tilec,void (*p_function)(OPJ_INT32 *, OPJ_INT32,OPJ_INT32,OPJ_INT32) )
+{
+	OPJ_INT32 i, j, k;
+	OPJ_INT32 *a = 00;
+	OPJ_INT32 *aj = 00;
+	OPJ_INT32 *bj = 00;
+	OPJ_INT32 w, l;
+
+	OPJ_INT32 rw;			/* width of the resolution level computed   */
+	OPJ_INT32 rh;			/* height of the resolution level computed  */
+	OPJ_INT32 l_data_size;
+
+	opj_tcd_resolution_v2_t * l_cur_res = 0;
+	opj_tcd_resolution_v2_t * l_last_res = 0;
+
+	w = tilec->x1-tilec->x0;
+	l = tilec->numresolutions-1;
+	a = tilec->data;
+
+	l_cur_res = tilec->resolutions + l;
+	l_last_res = l_cur_res - 1;
+
+	rw = l_cur_res->x1 - l_cur_res->x0;
+	rh = l_cur_res->y1 - l_cur_res->y0;
+
+	l_data_size = dwt_max_resolution_v2( tilec->resolutions,tilec->numresolutions) * sizeof(OPJ_INT32);
+	bj = (OPJ_INT32*)opj_malloc(l_data_size);
+	if (! bj) {
+		return OPJ_FALSE;
+	}
+	i = l;
+
+	while (i--) {
+		OPJ_INT32 rw1;		/* width of the resolution level once lower than computed one                                       */
+		OPJ_INT32 rh1;		/* height of the resolution level once lower than computed one                                      */
+		OPJ_INT32 cas_col;	/* 0 = non inversion on horizontal filtering 1 = inversion between low-pass and high-pass filtering */
+		OPJ_INT32 cas_row;	/* 0 = non inversion on vertical filtering 1 = inversion between low-pass and high-pass filtering   */
+		OPJ_INT32 dn, sn;
+
+		rw  = l_cur_res->x1 - l_cur_res->x0;
+		rh  = l_cur_res->y1 - l_cur_res->y0;
+		rw1 = l_last_res->x1 - l_last_res->x0;
+		rh1 = l_last_res->y1 - l_last_res->y0;
+
+		cas_row = l_cur_res->x0 & 1;
+		cas_col = l_cur_res->y0 & 1;
+
+		sn = rh1;
+		dn = rh - rh1;
+		for (j = 0; j < rw; ++j) {
+			aj = a + j;
+			for (k = 0; k < rh; ++k) {
+				bj[k] = aj[k*w];
+			}
+
+			(*p_function) (bj, dn, sn, cas_col);
+
+			dwt_deinterleave_v(bj, aj, dn, sn, w, cas_col);
+		}
+
+		sn = rw1;
+		dn = rw - rw1;
+
+		for (j = 0; j < rh; j++) {
+			aj = a + j * w;
+			for (k = 0; k < rw; k++)  bj[k] = aj[k];
+			(*p_function) (bj, dn, sn, cas_row);
+			dwt_deinterleave_h(bj, aj, dn, sn, cas_row);
+		}
+
+		l_cur_res = l_last_res;
+
+		--l_last_res;
+	}
+
+	opj_free(bj);
+	return OPJ_TRUE;
+}
+
+/* Forward 5-3 wavelet transform in 2-D. */
+/* </summary>                           */
+opj_bool dwt_encode_v2(opj_tcd_tilecomp_v2_t * tilec)
+{
+	return dwt_encode_procedure(tilec,dwt_encode_1);
+}
+
 #ifdef OPJ_V1
 /* <summary>                            */
 /* Inverse 5-3 wavelet transform in 2-D. */
@@ -492,6 +587,13 @@ void dwt_encode_real(opj_tcd_tilecomp_t * tilec) {
 	}
 }
 
+/* <summary>                             */
+/* Forward 9-7 wavelet transform in 2-D. */
+/* </summary>                            */
+opj_bool dwt_encode_real_v2(opj_tcd_tilecomp_v2_t * tilec)
+{
+	return dwt_encode_procedure(tilec,dwt_encode_1_real);
+}
 
 /* <summary>                          */
 /* Get gain of 9-7 wavelet transform. */

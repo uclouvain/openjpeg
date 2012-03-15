@@ -110,6 +110,33 @@ Create a packet iterator for Encoder
 @see pi_destroy
 */
 opj_pi_iterator_t *pi_initialise_encode(opj_image_t *image, opj_cp_t *cp, int tileno,J2K_T2_MODE t2_mode);
+
+/**
+ * Creates a packet iterator for encoding.
+ *
+ * @param	p_image		the image being encoded.
+ * @param	p_cp		the coding parameters.
+ * @param	p_tile_no	index of the tile being encoded.
+ * @param	p_t2_mode	the type of pass for generating the packet iterator
+ * @return	a list of packet iterator that points to the first packet of the tile (not true).
+*/
+opj_pi_iterator_t *pi_initialise_encode_v2(	const struct opj_image *image,
+											struct opj_cp_v2 *cp,
+											OPJ_UINT32 tileno,
+											J2K_T2_MODE t2_mode);
+
+
+/**
+ * Updates the encoding parameters of the codec.
+ *
+ * @param	p_image		the image being encoded.
+ * @param	p_cp		the coding parameters.
+ * @param	p_tile_no	index of the tile being encoded.
+*/
+void pi_update_encoding_parameters(	const struct opj_image *p_image,
+									struct opj_cp_v2 *p_cp,
+									OPJ_UINT32 p_tile_no );
+
 /**
 Modify the packet iterator for enabling tile part generation
 @param pi Handle to the packet iterator generated in pi_initialise_encode  
@@ -123,6 +150,19 @@ Modify the packet iterator for enabling tile part generation
 @return Returns true if an error is detected 
 */
 opj_bool pi_create_encode(opj_pi_iterator_t *pi, opj_cp_t *cp,int tileno, int pino,int tpnum, int tppos, J2K_T2_MODE t2_mode,int cur_totnum_tp);
+
+/**
+Modify the packet iterator for enabling tile part generation
+@param pi Handle to the packet iterator generated in pi_initialise_encode
+@param cp Coding parameters
+@param tileno Number that identifies the tile for which to list the packets
+@param tpnum Tile part number of the current tile
+@param tppos The position of the tile part flag in the progression order
+*/
+void pi_create_encode_v2( opj_pi_iterator_t *pi, struct opj_cp_v2 *cp,OPJ_UINT32 tileno, OPJ_UINT32 pino,OPJ_UINT32 tpnum, OPJ_INT32 tppos, J2K_T2_MODE t2_mode);
+
+
+
 /**
 Create a packet iterator for Decoder
 @param image Raw image for which the packets will be listed

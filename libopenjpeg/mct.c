@@ -45,6 +45,16 @@ static const double mct_norms[3] = { 1.732, .8292, .8292 };
 /* </summary> */
 static const double mct_norms_real[3] = { 1.732, 1.805, 1.573 };
 
+const OPJ_FLOAT64 * get_mct_norms ()
+{
+	return mct_norms;
+}
+
+const OPJ_FLOAT64 * get_mct_norms_real ()
+{
+	return mct_norms_real;
+}
+
 /* <summary> */
 /* Foward reversible MCT. */
 /* </summary> */
@@ -189,6 +199,62 @@ double mct_getnorm_real(int compno) {
 	return mct_norms_real[compno];
 }
 
+
+opj_bool mct_encode_custom(
+					   // MCT data
+					   OPJ_BYTE * pCodingdata,
+					   // size of components
+					   OPJ_UINT32 n,
+					   // components
+					   OPJ_BYTE ** pData,
+					   // nb of components (i.e. size of pData)
+					   OPJ_UINT32 pNbComp,
+					   // tells if the data is signed
+					   OPJ_UINT32 isSigned)
+{
+	OPJ_FLOAT32 * lMct = (OPJ_FLOAT32 *) pCodingdata;
+	OPJ_UINT32 i;
+	OPJ_UINT32 j;
+	OPJ_UINT32 k;
+	OPJ_UINT32 lNbMatCoeff = pNbComp * pNbComp;
+	OPJ_INT32 * lCurrentData = 00;
+	OPJ_INT32 * lCurrentMatrix = 00;
+	OPJ_INT32 ** lData = (OPJ_INT32 **) pData;
+	OPJ_UINT32 lMultiplicator = 1 << 13;
+	OPJ_INT32 * lMctPtr;
+
+	lCurrentData = (OPJ_INT32 *) opj_malloc((pNbComp + lNbMatCoeff) * sizeof(OPJ_INT32));
+	if (! lCurrentData) {
+		return OPJ_FALSE;
+	}
+
+	lCurrentMatrix = lCurrentData + pNbComp;
+
+	for (i =0;i<lNbMatCoeff;++i) {
+		lCurrentMatrix[i] = (OPJ_INT32) (*(lMct++) * lMultiplicator);
+	}
+
+	for (i = 0; i < n; ++i)  {
+		lMctPtr = lCurrentMatrix;
+		for (j=0;j<pNbComp;++j) {
+			lCurrentData[j] = (*(lData[j]));
+		}
+
+		for (j=0;j<pNbComp;++j) {
+			*(lData[j]) = 0;
+			for (k=0;k<pNbComp;++k) {
+				*(lData[j]) += fix_mul(*lMctPtr, lCurrentData[k]);
+				++lMctPtr;
+			}
+
+			++lData[j];
+		}
+	}
+
+	opj_free(lCurrentData);
+
+	return OPJ_TRUE;
+}
 
 opj_bool mct_decode_custom(
 					   /* MCT data */

@@ -133,6 +133,19 @@ static opj_bool jp2_read_ftyp_v2(
 						);
 
 /**
+ * Skips the Jpeg2000 Codestream Header box - JP2C Header box.
+ *
+ * @param	cio			the stream to write data to.
+ * @param	jp2			the jpeg2000 file codec.
+ * @param	p_manager	user event manager.
+ *
+ * @return true if writting was successful.
+*/
+opj_bool jp2_skip_jp2c(	opj_jp2_v2_t *jp2,
+						struct opj_stream_private *cio,
+						struct opj_event_mgr * p_manager );
+
+/**
  * Reads the Jpeg2000 file Header box - JP2 Header box (warning, this is a super box).
  *
  * @param	p_header_data	the data contained in the file header box.
@@ -287,6 +300,13 @@ static void write_prxy( int offset_jp2c, int length_jp2c, int offset_idx, int le
 /*@}*/
 
 /**
+ * Sets up the procedures to do on writting header after the codestream.
+ * Developpers wanting to extend the library can add their own writting procedures.
+ */
+static void jp2_setup_end_header_writting (opj_jp2_v2_t *jp2);
+
+
+/**
  * Sets up the procedures to do on reading header after the codestream.
  * Developpers wanting to extend the library can add their own writting procedures.
  */
@@ -349,6 +369,31 @@ static opj_bool jp2_read_boxhdr_v2(
  * @return	the given handler or NULL if it could not be found.
  */
 static const opj_jp2_header_handler_t * jp2_find_handler (int p_id );
+
+/**
+ * Sets up the validation ,i.e. adds the procedures to lauch to make sure the codec parameters
+ * are valid. Developpers wanting to extend the library can add their own validation procedures.
+ */
+static void jp2_setup_encoding_validation (opj_jp2_v2_t *jp2);
+
+
+/**
+ * Sets up the procedures to do on writting header. Developpers wanting to extend the library can add their own writting procedures.
+ */
+static void jp2_setup_header_writting (opj_jp2_v2_t *jp2);
+
+/**
+ * The default validation procedure without any extension.
+ *
+ * @param	jp2				the jpeg2000 codec to validate.
+ * @param	cio				the input stream to validate.
+ * @param	p_manager		the user event manager.
+ *
+ * @return true if the parameters are correct.
+ */
+opj_bool jp2_default_validation (	opj_jp2_v2_t * jp2,
+									struct opj_stream_private *cio,
+									struct opj_event_mgr * p_manager );
 
 /**
  * Finds the image execution function related to the given box id.
@@ -1981,8 +2026,46 @@ opj_bool jp2_end_decompress(opj_jp2_v2_t *jp2, opj_stream_private_t *cio, opj_ev
 }
 
 /**
+ * Ends the compression procedures and possibility add data to be read after the
+ * codestream.
+ */
+opj_bool jp2_end_compress(	opj_jp2_v2_t *jp2,
+							opj_stream_private_t *cio,
+							opj_event_mgr_t * p_manager)
+{
+	/* preconditions */
+	assert(jp2 != 00);
+	assert(cio != 00);
+	assert(p_manager != 00);
+
+	/* customization of the end encoding */
+	jp2_setup_end_header_writting(jp2);
+
+	if (! j2k_end_compress(jp2->j2k,cio,p_manager)) {
+		return OPJ_FALSE;
+	}
+
+	/* write header */
+	return jp2_exec(jp2,jp2->m_procedure_list,cio,p_manager);
+}
+
+
+/**
+ * Sets up the procedures to do on writing header after the codestream.
+ * Developers wanting to extend the library can add their own writing procedures.
+ */
+void jp2_setup_end_header_writting (opj_jp2_v2_t *jp2)
+{
+	/* preconditions */
+	assert(jp2 != 00);
+
+	opj_procedure_list_add_procedure(jp2->m_procedure_list,(void*)jp2_write_jp2c );
+	/* DEVELOPER CORNER, add your custom procedures */
+}
+
+/**
  * Sets up the procedures to do on reading header after the codestream.
- * Developpers wanting to extend the library can add their own writting procedures.
+ * Developers wanting to extend the library can add their own writing procedures.
  */
 void jp2_setup_end_header_reading (opj_jp2_v2_t *jp2)
 {
@@ -1992,6 +2075,68 @@ void jp2_setup_end_header_reading (opj_jp2_v2_t *jp2)
 	/* DEVELOPER CORNER, add your custom procedures */
 }
 
+/**
+ * The default validation procedure without any extension.
+ *
+ * @param	jp2				the jpeg2000 codec to validate.
+ * @param	cio				the input stream to validate.
+ * @param	p_manager		the user event manager.
+ *
+ * @return true if the parameters are correct.
+ */
+opj_bool jp2_default_validation (	opj_jp2_v2_t * jp2,
+									opj_stream_private_t *cio,
+									opj_event_mgr_t * p_manager )
+{
+	opj_bool l_is_valid = OPJ_TRUE;
+	unsigned int i;
+
+	/* preconditions */
+	assert(jp2 != 00);
+	assert(cio != 00);
+	assert(p_manager != 00);
+
+	/* JPEG2000 codec validation */
+	/*TODO*/
+
+	/* STATE checking */
+	/* make sure the state is at 0 */
+	l_is_valid &= (jp2->jp2_state == JP2_STATE_NONE);
+
+	/* make sure not reading a jp2h ???? WEIRD */
+	l_is_valid &= (jp2->jp2_img_state == JP2_IMG_STATE_NONE);
+
+	/* POINTER validation */
+	/* make sure a j2k codec is present */
+	l_is_valid &= (jp2->j2k != 00);
+
+	/* make sure a procedure list is present */
+	l_is_valid &= (jp2->m_procedure_list != 00);
+
+	/* make sure a validation list is present */
+	l_is_valid &= (jp2->m_validation_list != 00);
+
+	/* PARAMETER VALIDATION */
+	/* number of components */
+	l_is_valid &= (jp2->numcl > 0);
+	/* width */
+	l_is_valid &= (jp2->h > 0);
+	/* height */
+	l_is_valid &= (jp2->w > 0);
+	/* precision */
+	for (i = 0; i < jp2->numcomps; ++i)	{
+		l_is_valid &= (jp2->comps[i].bpcc > 0);
+	}
+
+	/* METH */
+	l_is_valid &= ((jp2->meth > 0) && (jp2->meth < 3));
+
+	/* stream validation */
+	/* back and forth is needed */
+	l_is_valid &= opj_stream_has_seek(cio);
+
+	return l_is_valid;
+}
 
 /**
  * Reads a jpeg2000 file header structure.
@@ -2126,6 +2271,42 @@ opj_bool jp2_exec (
 	return l_result;
 }
 
+/**
+ * Starts a compression scheme, i.e. validates the codec parameters, writes the header.
+ *
+ * @param	jp2		the jpeg2000 file codec.
+ * @param	cio		the stream object.
+ *
+ * @return true if the codec is valid.
+ */
+opj_bool jp2_start_compress(opj_jp2_v2_t *jp2,
+							struct opj_stream_private *cio,
+							opj_image_t * p_image,
+							struct opj_event_mgr * p_manager)
+{
+	/* preconditions */
+	assert(jp2 != 00);
+	assert(cio != 00);
+	assert(p_manager != 00);
+
+	/* customization of the validation */
+	jp2_setup_encoding_validation (jp2);
+
+	/* validation of the parameters codec */
+	if (! jp2_exec(jp2,jp2->m_validation_list,cio,p_manager)) {
+		return OPJ_FALSE;
+	}
+
+	/* customization of the encoding */
+	jp2_setup_header_writting(jp2);
+
+	/* write header */
+	if (! jp2_exec (jp2,jp2->m_procedure_list,cio,p_manager)) {
+		return OPJ_FALSE;
+	}
+
+	return j2k_start_compress(jp2->j2k,cio,p_image,p_manager);
+}
 
 /**
  * Finds the execution function related to the given box id.
@@ -2288,6 +2469,32 @@ opj_bool jp2_read_ftyp_v2(
 	return OPJ_TRUE;
 }
 
+/**
+ * Skips the Jpeg2000 Codestream Header box - JP2C Header box.
+ *
+ * @param	cio			the stream to write data to.
+ * @param	jp2			the jpeg2000 file codec.
+ * @param	p_manager	user event manager.
+ *
+ * @return true if writting was successful.
+*/
+opj_bool jp2_skip_jp2c(	opj_jp2_v2_t *jp2,
+						struct opj_stream_private *cio,
+						struct opj_event_mgr * p_manager )
+{
+	/* preconditions */
+	assert(jp2 != 00);
+	assert(cio != 00);
+	assert(p_manager != 00);
+
+	jp2->j2k_codestream_offset = opj_stream_tell(cio);
+
+	if (opj_stream_skip(cio,8,p_manager) != 8) {
+		return OPJ_FALSE;
+	}
+
+	return OPJ_TRUE;
+}
 
 /**
  * Reads the Jpeg2000 file Header box - JP2 Header box (warning, this is a super box).
@@ -2480,6 +2687,19 @@ opj_bool jp2_read_header(	struct opj_stream_private *p_stream,
 }
 
 /**
+ * Sets up the validation ,i.e. adds the procedures to launch to make sure the codec parameters
+ * are valid. Developers wanting to extend the library can add their own validation procedures.
+ */
+void jp2_setup_encoding_validation (opj_jp2_v2_t *jp2)
+{
+	/* preconditions */
+	assert(jp2 != 00);
+
+	opj_procedure_list_add_procedure(jp2->m_validation_list, (void*)jp2_default_validation);
+	/* DEVELOPER CORNER, add your custom validation procedure */
+}
+
+/**
  * Sets up the validation ,i.e. adds the procedures to lauch to make sure the codec parameters
  * are valid. Developpers wanting to extend the library can add their own validation procedures.
  */
@@ -2488,6 +2708,24 @@ void jp2_setup_decoding_validation (opj_jp2_v2_t *jp2)
 	/* preconditions */
 	assert(jp2 != 00);
 	/* DEVELOPER CORNER, add your custom validation procedure */
+}
+
+/**
+ * Sets up the procedures to do on writting header.
+ * Developers wanting to extend the library can add their own writing procedures.
+ */
+void jp2_setup_header_writting (opj_jp2_v2_t *jp2)
+{
+	/* preconditions */
+	assert(jp2 != 00);
+
+	opj_procedure_list_add_procedure(jp2->m_procedure_list,(void*)jp2_write_jp );
+	opj_procedure_list_add_procedure(jp2->m_procedure_list,(void*)jp2_write_ftyp );
+	opj_procedure_list_add_procedure(jp2->m_procedure_list,(void*)jp2_write_jp2h );
+	opj_procedure_list_add_procedure(jp2->m_procedure_list,(void*)jp2_skip_jp2c );
+
+	/* DEVELOPER CORNER, insert your custom procedures */
+
 }
 
 /**
@@ -2529,6 +2767,22 @@ opj_bool jp2_read_tile_header(	opj_jp2_v2_t * p_jp2,
 								p_go_on,
 								p_stream,
 								p_manager);
+}
+
+/**
+ * Writes a tile.
+ * @param	p_j2k		the jpeg2000 codec.
+ * @param	p_stream			the stream to write data to.
+ * @param	p_manager	the user event manager.
+ */
+opj_bool jp2_write_tile (	opj_jp2_v2_t *p_jp2,
+							OPJ_UINT32 p_tile_index,
+							OPJ_BYTE * p_data,
+							OPJ_UINT32 p_data_size,
+							struct opj_stream_private *p_stream,
+							struct opj_event_mgr * p_manager )
+{
+	return j2k_write_tile (p_jp2->j2k,p_tile_index,p_data,p_data_size,p_stream,p_manager);
 }
 
 /**
