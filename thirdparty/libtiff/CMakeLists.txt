@@ -207,6 +207,10 @@ set(VERSION "\"4.0.1\"")
 set(PACKAGE_VERSION ${VERSION})
 set(PACKAGE "\"tiff\"")
 
+# universal build ?
+if(APPLE)
+  set(AC_APPLE_UNIVERSAL_BUILD 1)
+endif()
 if(UNIX)
   set(CMAKE_REQUIRED_LIBRARIES m)
   set(HAVE_LIBM 1)
