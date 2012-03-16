@@ -34,7 +34,6 @@
 #include <string.h>
 #ifdef WIN32
 #include "../libs/libtiff/tiffio.h"
-#include "../libs/libpng/png.h"
 #else
 #include <tiffio.h>
 #include <png.h>
