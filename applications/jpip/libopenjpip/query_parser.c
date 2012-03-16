@@ -58,7 +58,7 @@
  *
  * @return initial query parameters
  */
-query_param_t * get_initquery();
+query_param_t * get_initquery(void);
 
 /*
  * get a pair of field name and value from the string starting fieldname=fieldval&... format
@@ -151,7 +151,7 @@ query_param_t * parse_query( char *query_string)
   return query_param;
 }
 
-query_param_t * get_initquery()
+query_param_t * get_initquery(void)
 {
   query_param_t *query;
   int i;

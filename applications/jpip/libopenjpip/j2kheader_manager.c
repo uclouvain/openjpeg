@@ -115,6 +115,13 @@ CODmarker_param_t get_CODmkrdata_from_j2kstream( Byte_t *CODstream)
 
   if( *CODstream++ != 0xff || *CODstream++ != 0x52){
     fprintf( FCGI_stderr, "Error, COD marker not found in the reconstructed j2kstream\n");
+    COD.Lcod = 0;
+    COD.Scod = 0;
+    COD.prog_order = 0;
+    COD.numOflayers = 0;
+    COD.numOfdecomp = 0;
+    COD.XPsiz = 0;
+    COD.YPsiz = 0;
     return COD;
   }
   
