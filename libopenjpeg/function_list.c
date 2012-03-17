@@ -48,7 +48,7 @@ opj_procedure_list_t *  opj_procedure_list_create()
 	/* initialization */
 	memset(l_validation,0,sizeof(opj_procedure_list_t));
 	l_validation->m_nb_max_procedures = OPJ_VALIDATION_SIZE;
-	l_validation->m_procedures = (void**)opj_malloc(
+	l_validation->m_procedures = (opj_procedure*)opj_malloc(
 		OPJ_VALIDATION_SIZE * sizeof(opj_procedure));
 	if
 		(! l_validation->m_procedures)
@@ -95,7 +95,7 @@ opj_bool  opj_procedure_list_add_procedure (opj_procedure_list_t * p_validation_
 		(p_validation_list->m_nb_max_procedures == p_validation_list->m_nb_procedures)
 	{
 		p_validation_list->m_nb_max_procedures += OPJ_VALIDATION_SIZE;
-		p_validation_list->m_procedures = (void**)opj_realloc(
+		p_validation_list->m_procedures = (opj_procedure*)opj_realloc(
 		p_validation_list->m_procedures,p_validation_list->m_nb_max_procedures * sizeof(opj_procedure));
 		if
 			(! p_validation_list->m_procedures)

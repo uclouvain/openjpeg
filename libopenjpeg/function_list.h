@@ -44,12 +44,9 @@
 struct opj_jp2;
 
 /**
- * ARGGGG, when will the template be added to the C language ???
- * in order not to have to duplicate the code in a vast number of times, use void * and downcast
- * it after => UGLY but faster and easier
- * TODO : make the class template in C++, use STL vector or duplicate code for each procedure type.
+ * declare a function pointer
  */
-typedef void * opj_procedure;
+typedef void (*opj_procedure)(void);
 
 /**
  * A list of procedures.
@@ -95,7 +92,7 @@ void  opj_procedure_list_destroy(opj_procedure_list_t * p_list);
  *
  * @return	true if the procedure could ne added.
  */
-opj_bool  opj_procedure_list_add_procedure (opj_procedure_list_t * p_validation_list, opj_procedure p_procedure);
+opj_bool opj_procedure_list_add_procedure (opj_procedure_list_t * p_validation_list, opj_procedure p_procedure);
 
 /**
  * Gets the number of validation procedures.

@@ -827,7 +827,7 @@ Creates a J2K compression structure
 @param cinfo Codec context info
 @return Returns a handle to a J2K compressor if successful, returns NULL otherwise
 */
-opj_j2k_v2_t* j2k_create_compress_v2();
+opj_j2k_v2_t* j2k_create_compress_v2(void);
 
 /**
 Destroy a J2K compressor handle
@@ -955,7 +955,7 @@ opj_bool j2k_set_decode_area(	opj_j2k_v2_t *p_j2k,
  *
  * @return a handle to a J2K decompressor if successful, NULL otherwise.
  */
-opj_j2k_v2_t* j2k_create_decompress_v2();
+opj_j2k_v2_t* j2k_create_decompress_v2(void);
 
 
 /**
