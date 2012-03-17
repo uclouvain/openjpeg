@@ -1933,7 +1933,10 @@ opj_bool j2k_write_soc_v2(	opj_j2k_v2_t *p_j2k,
 /* UniPG>> */
 #ifdef USE_JPWL
 	/* update markers struct */
+/*
 	j2k_add_marker(p_j2k->cstr_info, J2K_MS_SOC, p_stream_tell(p_stream) - 2, 2);
+*/
+  assert( 0 && "TODO" );
 #endif /* USE_JPWL */
 /* <<UniPG */
 
@@ -4832,7 +4835,10 @@ opj_bool j2k_write_sot_v2(	opj_j2k_v2_t *p_j2k,
 	/* UniPG>> */
 #ifdef USE_JPWL
 	/* update markers struct */
+/*
 	j2k_add_marker(p_j2k->cstr_info, J2K_MS_SOT, p_j2k->sot_start, len + 2);
+*/
+  assert( 0 && "TODO" );
 #endif /* USE_JPWL */
 
 	* p_data_written = 12;
@@ -5342,7 +5348,9 @@ opj_bool j2k_write_sod_v2(	opj_j2k_v2_t *p_j2k,
 		/* UniPG>> */
 #ifdef USE_JPWL
 		/* update markers struct */
-		j2k_add_marker(p_j2k->cstr_info, J2K_MS_SOD, p_j2k->sod_start, 2);
+		/*j2k_add_marker(p_j2k->cstr_info, J2K_MS_SOD, p_j2k->sod_start, 2);
+*/
+  assert( 0 && "TODO" );
 #endif /* USE_JPWL */
 		/* <<UniPG */
 	/*}*/
@@ -6144,12 +6152,15 @@ opj_bool j2k_write_epc(	opj_j2k_v2_t *p_j2k,
 
 #ifdef USE_JPWL
 	/* preparation of JPWL marker segments */
+#if 0
 	if(cp->epc_on) {
 
 		/* encode according to JPWL */
 		jpwl_encode(p_j2k, p_stream, image);
 
 	}
+#endif
+  assert( 0 && "TODO" );
 #endif /* USE_JPWL */
 
 	return OPJ_TRUE;

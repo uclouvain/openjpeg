@@ -243,7 +243,9 @@ as a possible value, mening that the information is not available) and the infor
 are not yet implemented
 @param j2k J2K handle
 */
+#if 0
 void j2k_write_epc(opj_j2k_t *j2k);
+#endif
 
 /**
 Read the EPB marker (Error Protection Block)

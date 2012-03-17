@@ -955,6 +955,7 @@ void j2k_read_epc(opj_j2k_t *j2k) {
 	cio_seek(cio, Lepcp + Lepc);  
 }
 
+#if 0
 void j2k_write_epc(opj_j2k_t *j2k) {
 
 	unsigned long int DL, Lepcp, Pcrcp, l;
@@ -1015,6 +1016,7 @@ void j2k_write_epc(opj_j2k_t *j2k) {
 	j2k_add_marker(j2k->cstr_info, J2K_MS_EPC, Lepcp - 2, Lepc + 2);
 
 }
+#endif
 
 void j2k_read_epb(opj_j2k_t *j2k) {
 	unsigned long int LDPepb, Pepb;
