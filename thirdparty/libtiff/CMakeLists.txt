@@ -77,6 +77,9 @@ if(HAVE_JPEGLIB_H)
   set(JPEG_SUPPORT 1)
 endif()
 if(HAVE_ZLIB_H)
+  include_directories(
+    ${ZLIB_INCLUDE_DIR}
+    )
   set(ZIP_SUPPORT 1)
   set(PIXARLOG_SUPPORT 1) # require zlib
 endif()
