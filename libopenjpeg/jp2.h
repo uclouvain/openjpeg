@@ -77,14 +77,14 @@ typedef enum
 	JP2_STATE_HEADER		= 0x4,
 	JP2_STATE_CODESTREAM	= 0x8,
 	JP2_STATE_END_CODESTREAM	= 0x10,
-	JP2_STATE_UNKNOWN		= 0x80000000
+	JP2_STATE_UNKNOWN		= 0x7fffffff /* ISO C restricts enumerator values to range of 'int' */
 }
 JP2_STATE;
 
 typedef enum
 {
 	JP2_IMG_STATE_NONE			= 0x0,
-	JP2_IMG_STATE_UNKNOWN		= 0x80000000
+	JP2_IMG_STATE_UNKNOWN		= 0x7fffffff
 }
 JP2_IMG_STATE;
 
