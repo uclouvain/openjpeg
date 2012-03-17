@@ -1456,11 +1456,11 @@ Setup the encoder parameters using the current image and using user parameters.
 OPJ_API opj_bool OPJ_CALLCONV opj_setup_encoder_v2(opj_codec_t *cinfo, opj_cparameters_t *parameters, opj_image_t *image);
 
 
-opj_bool OPJ_CALLCONV opj_start_compress (	opj_codec_t *p_codec,
+OPJ_API opj_bool OPJ_CALLCONV opj_start_compress (	opj_codec_t *p_codec,
 											opj_image_t * p_image,
 											opj_stream_t *p_cio);
 
-opj_bool OPJ_CALLCONV opj_end_compress (opj_codec_t *p_codec,opj_stream_t *p_cio);
+OPJ_API opj_bool OPJ_CALLCONV opj_end_compress (opj_codec_t *p_codec,opj_stream_t *p_cio);
 
 /**
 Encode an image into a JPEG-2000 codestream
