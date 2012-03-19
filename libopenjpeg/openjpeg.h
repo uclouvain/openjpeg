@@ -93,8 +93,6 @@ typedef int32_t  OPJ_INT32;
 typedef uint32_t OPJ_UINT32;
 typedef int64_t  OPJ_INT64;
 typedef uint64_t OPJ_UINT64;
-#define OPJ_INT64_F  "ll"
-#define OPJ_UINT64_F "ll"
 #else
 #if defined(_WIN32)
 typedef   signed __int8   OPJ_INT8;
@@ -105,8 +103,6 @@ typedef   signed __int32  OPJ_INT32;
 typedef unsigned __int32  OPJ_UINT32;
 typedef   signed __int64  OPJ_INT64;
 typedef unsigned __int64  OPJ_UINT64;
-#define OPJ_INT64_F  "I64"
-#define OPJ_UINT64_F "I64"
 #else
 #error unsupported platform
 #endif
@@ -114,7 +110,6 @@ typedef unsigned __int64  OPJ_UINT64;
 
 /* 64-bit file offset type */
 typedef OPJ_INT64 OPJ_OFF_T;
-#define OPJ_OFF_F OPJ_INT64_F
 
 /* Avoid compile-time warning because parameter is not used */
 #define OPJ_ARG_NOT_USED(x) (void)(x)

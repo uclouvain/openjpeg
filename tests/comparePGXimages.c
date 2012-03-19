@@ -93,7 +93,7 @@ void comparePGXimages_help_display(void) {
 /*******************************************************************************
  * Parse command line
  *******************************************************************************/
-int parse_cmdline_cmp(int argc, char **argv, test_cmp_parameters* param)
+static int parse_cmdline_cmp(int argc, char **argv, test_cmp_parameters* param)
 {
   char *MSElistvalues = NULL;  char *PEAKlistvalues= NULL;
   char *separatorList = NULL;
@@ -332,7 +332,7 @@ double* parseToleranceValues( char* inArg, const int nbcomp)
  * Create filenames from a filename by used separator and nb components
  * (begin to 0)
  *******************************************************************************/
-char* createMultiComponentsFilename(const char* inFilename, const int indexF, const char* separator)
+static char* createMultiComponentsFilename(const char* inFilename, const int indexF, const char* separator)
 {
   char s[255];
   char *outFilename, *ptr;
@@ -497,7 +497,7 @@ int imageToPNG(const opj_image_t* image, const char* filename, int num_comp_sele
 int main(int argc, char **argv)
 {
   test_cmp_parameters inParam;
-  int it_comp, itpxl;
+  OPJ_UINT32 it_comp, itpxl;
   int failed = 0;
   int nbFilenamePGXbase, nbFilenamePGXtest;
   char *filenamePNGtest= NULL, *filenamePNGbase = NULL, *filenamePNGdiff = NULL;
@@ -531,7 +531,8 @@ int main(int argc, char **argv)
          inParam.nr_flag, inParam.separator_base, inParam.separator_test);
 
   if ( (inParam.tabMSEvalues != NULL) && (inParam.tabPEAKvalues != NULL))
-  {
+    {
+    int it_comp;
     printf(" MSE values = [");
     for (it_comp = 0; it_comp < inParam.nbcomp; it_comp++)
       printf(" %f ", inParam.tabMSEvalues[it_comp]);
