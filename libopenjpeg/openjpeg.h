@@ -82,9 +82,8 @@ typedef double        OPJ_FLOAT64;
 typedef unsigned char	OPJ_BYTE;
 typedef size_t        OPJ_SIZE_T;
 
-#include "opj_config.h"
-#ifdef HAVE_STDINT_H
-#include <stdint.h>
+#include "opj_stdint.h"
+
 typedef int8_t   OPJ_INT8;
 typedef uint8_t  OPJ_UINT8;
 typedef int16_t  OPJ_INT16;
@@ -93,20 +92,6 @@ typedef int32_t  OPJ_INT32;
 typedef uint32_t OPJ_UINT32;
 typedef int64_t  OPJ_INT64;
 typedef uint64_t OPJ_UINT64;
-#else
-#if defined(_WIN32)
-typedef   signed __int8   OPJ_INT8;
-typedef unsigned __int8   OPJ_UINT8;
-typedef   signed __int16  OPJ_INT16;
-typedef unsigned __int16  OPJ_UINT16;
-typedef   signed __int32  OPJ_INT32;
-typedef unsigned __int32  OPJ_UINT32;
-typedef   signed __int64  OPJ_INT64;
-typedef unsigned __int64  OPJ_UINT64;
-#else
-#error unsupported platform
-#endif
-#endif
 
 /* 64-bit file offset type */
 typedef OPJ_INT64 OPJ_OFF_T;

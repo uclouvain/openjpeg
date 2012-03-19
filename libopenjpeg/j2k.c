@@ -34,11 +34,6 @@
  */
 
 #include "opj_includes.h"
-#ifdef HAVE_INTTYPES_H
-#include <inttypes.h> /* PRIi64 */
-#else
-#define PRIi64 "I64i"
-#endif
 
 /** @defgroup J2K J2K - JPEG-2000 codestream reader/writer */
 /*@{*/
