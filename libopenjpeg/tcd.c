@@ -3241,15 +3241,15 @@ opj_bool tcd_mct_encode ( opj_tcd_v2_t *p_tcd )
 			++l_tile_comp;
 		}
 
-		if (! mct_encode_custom(// MCT data
+		if (! mct_encode_custom(/* MCT data */
 					(OPJ_BYTE*) p_tcd->tcp->m_mct_coding_matrix,
-					// size of components
+					/* size of components */
 					samples,
-					// components
+					/* components */
 					l_data,
-					// nb of components (i.e. size of pData)
+					/* nb of components (i.e. size of pData) */
 					l_tile->numcomps,
-					// tells if the data is signed
+					/* tells if the data is signed */
 					p_tcd->image->comps->sgnd) )
 		{
             opj_free(l_data);
@@ -3306,7 +3306,7 @@ opj_bool tcd_t1_encode ( opj_tcd_v2_t *p_tcd )
 	}
 
 	if (l_tcp->mct == 1) {
-		// irreversible encoding
+		/* irreversible encoding */
 		if (l_tcp->tccps->qmfbid == 0) {
 			l_mct_norms = get_mct_norms_real();
 		}

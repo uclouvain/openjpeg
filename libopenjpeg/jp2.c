@@ -2059,7 +2059,7 @@ void jp2_setup_end_header_writting (opj_jp2_v2_t *jp2)
 	/* preconditions */
 	assert(jp2 != 00);
 
-	opj_procedure_list_add_procedure(jp2->m_procedure_list,(void*)jp2_write_jp2c );
+	opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)jp2_write_jp2c );
 	/* DEVELOPER CORNER, add your custom procedures */
 }
 
@@ -2071,7 +2071,7 @@ void jp2_setup_end_header_reading (opj_jp2_v2_t *jp2)
 {
 	/* preconditions */
 	assert(jp2 != 00);
-	opj_procedure_list_add_procedure(jp2->m_procedure_list,(void*)jp2_read_header_procedure );
+	opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)jp2_read_header_procedure );
 	/* DEVELOPER CORNER, add your custom procedures */
 }
 
@@ -2695,7 +2695,7 @@ void jp2_setup_encoding_validation (opj_jp2_v2_t *jp2)
 	/* preconditions */
 	assert(jp2 != 00);
 
-	opj_procedure_list_add_procedure(jp2->m_validation_list, (void*)jp2_default_validation);
+	opj_procedure_list_add_procedure(jp2->m_validation_list, (opj_procedure)jp2_default_validation);
 	/* DEVELOPER CORNER, add your custom validation procedure */
 }
 
@@ -2719,10 +2719,10 @@ void jp2_setup_header_writting (opj_jp2_v2_t *jp2)
 	/* preconditions */
 	assert(jp2 != 00);
 
-	opj_procedure_list_add_procedure(jp2->m_procedure_list,(void*)jp2_write_jp );
-	opj_procedure_list_add_procedure(jp2->m_procedure_list,(void*)jp2_write_ftyp );
-	opj_procedure_list_add_procedure(jp2->m_procedure_list,(void*)jp2_write_jp2h );
-	opj_procedure_list_add_procedure(jp2->m_procedure_list,(void*)jp2_skip_jp2c );
+	opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)jp2_write_jp );
+	opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)jp2_write_ftyp );
+	opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)jp2_write_jp2h );
+	opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)jp2_skip_jp2c );
 
 	/* DEVELOPER CORNER, insert your custom procedures */
 
@@ -2737,7 +2737,7 @@ void jp2_setup_header_reading (opj_jp2_v2_t *jp2)
 	/* preconditions */
 	assert(jp2 != 00);
 
-	opj_procedure_list_add_procedure(jp2->m_procedure_list,(void*)jp2_read_header_procedure );
+	opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)jp2_read_header_procedure );
 	/* DEVELOPER CORNER, add your custom procedures */
 }
 

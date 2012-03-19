@@ -650,7 +650,7 @@ OPJ_SIZE_T opj_stream_write_data (opj_stream_private_t * p_stream,const OPJ_BYTE
 	while(1)
 	{
 		l_remaining_bytes = p_stream->m_buffer_size - p_stream->m_bytes_in_buffer;
-		// we have more memory than required
+		/* we have more memory than required */
 		if
 			(l_remaining_bytes >= p_size)
 		{
@@ -662,7 +662,7 @@ OPJ_SIZE_T opj_stream_write_data (opj_stream_private_t * p_stream,const OPJ_BYTE
 			return l_write_nb_bytes;
 		}
 
-		// we copy data and then do an actual read on the stream
+		/* we copy data and then do an actual read on the stream */
 		if
 			(l_remaining_bytes)
 		{

@@ -59,6 +59,12 @@ Get pointer to the current position in the stream
 */
 unsigned char *cio_getbp(opj_cio_t *cio);
 /**
+*/
+opj_bool cio_byteout(opj_cio_t *cio, unsigned char v);
+/**
+*/
+unsigned char cio_bytein(opj_cio_t *cio);
+/**
 Write some bytes
 @param cio CIO handle
 @param v Value to write
