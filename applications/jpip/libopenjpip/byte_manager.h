@@ -31,28 +31,11 @@
 #ifndef   	BYTE_MANAGER_H_
 #define   	BYTE_MANAGER_H_
 
-#include "opj_config.h"
-#ifdef HAVE_STDINT_H
-#include <stdint.h>
+#include "opj_stdint.h"
 typedef uint8_t Byte_t;
 typedef uint16_t Byte2_t;
 typedef uint32_t Byte4_t;
 typedef uint64_t Byte8_t;
-#else
-#if defined(_WIN32)
-/** 1Byte parameter type*/
-typedef unsigned __int8   Byte_t;
-/** 2Byte parameter type*/
-typedef unsigned __int16  Byte2_t;
-/** 4Byte parameter type*/
-typedef unsigned __int32  Byte4_t;
-/** 8Byte parameter type*/
-typedef unsigned __int64  Byte8_t;
-#else
-#error unsupported platform
-#endif
-#endif
-
 
 /**
  * fetch bytes of data in file stream

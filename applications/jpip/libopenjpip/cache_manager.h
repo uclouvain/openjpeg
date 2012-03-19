@@ -58,7 +58,7 @@ typedef struct cachelist_param{
  *
  * @return pointer to the generated cache list
  */
-cachelist_param_t * gene_cachelist();
+cachelist_param_t * gene_cachelist(void);
 
 /**
  * delete cache list

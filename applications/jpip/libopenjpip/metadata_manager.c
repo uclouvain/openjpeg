@@ -29,6 +29,7 @@
  */
 
 #include "metadata_manager.h"
+#include "opj_inttypes.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -164,8 +165,9 @@ void print_metadata( metadata_param_t *metadata)
   boxcont = metadata->boxcontents;
   if( boxcont)
       fprintf( logstream, "box contents:\n"
-	       "\t offset: %lld %#llx\n" 
-	       "\t length: %lld %#llx\n", boxcont->offset, boxcont->offset, boxcont->length, boxcont->length);
+	       "\t offset: %" PRId64 " %#" PRIx64 "\n" 
+         "\t length: %" PRId64 " %#" PRIx64 "\n", boxcont->offset,
+         boxcont->offset, boxcont->length, boxcont->length);
 }
 
 void print_allmetadata( metadatalist_param_t *list)

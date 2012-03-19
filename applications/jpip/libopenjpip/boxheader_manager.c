@@ -33,6 +33,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "boxheader_manager.h"
+#include "opj_inttypes.h"
 
 #ifdef SERVER
 #include "fcgi_stdio.h"
@@ -79,5 +80,5 @@ void print_boxheader( boxheader_param_t *boxheader)
 {
   fprintf( logstream, "boxheader info:\n"
 	   "\t type: %.4s\n"
-	   "\t length:%lld %#llx\n", boxheader->type, boxheader->length, boxheader->length);
+	   "\t length:%" PRId64 " %#" PRIx64 "\n", boxheader->type, boxheader->length, boxheader->length);
 }

@@ -32,6 +32,7 @@
 #include <stdlib.h>
 #include "cachemodel_manager.h"
 #include "faixbox_manager.h"
+#include "opj_inttypes.h"
 
 #ifdef SERVER
 #include "fcgi_stdio.h"
@@ -136,9 +137,9 @@ void print_cachemodel( cachemodel_param_t cachemodel)
 
   fprintf( logstream, "\t tile header and precinct packet model:\n");
   for( i=0; i<target->codeidx->SIZ.XTnum*target->codeidx->SIZ.YTnum; i++){
-    fprintf( logstream, "\t  tile.%llud  %d\n", i, cachemodel.th_model[i]);
+    fprintf( logstream, "\t  tile.%" PRIu64 "  %d\n", i, cachemodel.th_model[i]);
     for( j=0; j<target->codeidx->SIZ.Csiz; j++){
-      fprintf( logstream, "\t   compo.%llud: ", j);
+      fprintf( logstream, "\t   compo.%" PRIu64 ": ", j);
       Pmax = get_nmax( target->codeidx->precpacket[j]);
       for( k=0; k<Pmax; k++)
 	fprintf( logstream, "%d", cachemodel.pp_model[j][i*Pmax+k]);

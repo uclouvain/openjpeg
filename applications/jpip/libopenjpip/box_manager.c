@@ -33,6 +33,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include "box_manager.h"
+#include "opj_inttypes.h"
 
 #ifdef SERVER
 #include "fcgi_stdio.h"
@@ -43,7 +44,7 @@
 #define logstream stderr
 #endif /*SERVER*/
 
-boxlist_param_t * gene_boxlist()
+boxlist_param_t * gene_boxlist(void)
 {
   boxlist_param_t *boxlist;
 
@@ -86,7 +87,7 @@ box_param_t * gene_boxbyOffset( int fd, Byte8_t offset)
 
   /* read LBox and TBox*/
   if(!(data = fetch_bytes( fd, offset, 8))){
-    fprintf( FCGI_stderr, "Error: error in gene_boxbyOffset( %d, %lld)\n", fd, offset);
+    fprintf( FCGI_stderr, "Error: error in gene_boxbyOffset( %d, %" PRId64 ")\n", fd, offset);
     return NULL;
   }
   
@@ -111,7 +112,7 @@ box_param_t * gene_boxbyOffset( int fd, Byte8_t offset)
       free(data2);
     }
     else{
-      fprintf( FCGI_stderr, "Error: error in gene_boxbyOffset( %d, %lld)\n", fd, offset);
+      fprintf( FCGI_stderr, "Error: error in gene_boxbyOffset( %d, %" PRId64 ")\n", fd, offset);
       free( data);
       return NULL;
     }
@@ -193,7 +194,7 @@ box_param_t * gene_boxbyType( int fd, Byte8_t offset, Byte8_t length, const char
 	  free(data2);
 	}
 	else{
-	  fprintf( FCGI_stderr, "Error: error in gene_boxbyType( %d, %lld, %lld, %s)\n", fd, offset, length, TBox);
+	  fprintf( FCGI_stderr, "Error: error in gene_boxbyType( %d, %" PRId64 ", %" PRId64 ", %s)\n", fd, offset, length, TBox);
 	  return NULL;
 	}
       }
@@ -211,7 +212,7 @@ box_param_t * gene_boxbyType( int fd, Byte8_t offset, Byte8_t length, const char
       free( data);
     }
     else{
-      fprintf( FCGI_stderr, "Error: error in gene_boxbyType( %d, %lld, %lld, %s)\n", fd, offset, length, TBox);
+      fprintf( FCGI_stderr, "Error: error in gene_boxbyType( %d, %" PRId64 ", %" PRId64 ", %s)\n", fd, offset, length, TBox);
       return NULL;
     }
     pos+= boxlen;
@@ -339,9 +340,10 @@ void print_box( box_param_t *box)
 {
   fprintf( logstream, "box info:\n"
 	   "\t type: %.4s\n"
-	   "\t offset: %lld %#llx\n" 
+	   "\t offset: %" PRId64 " %#" PRIx64 "\n" 
 	   "\t header length: %d\n"
-	   "\t length: %lld %#llx\n", box->type, box->offset, box->offset, box->headlen, box->length, box->length);
+     "\t length: %" PRId64 " %#" PRIx64 "\n", box->type, box->offset, 
+     box->offset, box->headlen, box->length, box->length);
 }
 
 void print_allbox( boxlist_param_t *boxlist)

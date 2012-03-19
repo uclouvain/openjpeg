@@ -31,6 +31,7 @@
 #include <string.h>
 #include "openjpeg.h"
 #include "index.h"
+#include "opj_inttypes.h"
 
 /* ------------------------------------------------------------------------------------ */
 
@@ -380,7 +381,7 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 		fprintf(stream, "%d\n", cstr_info->marknum);
 		fprintf(stream, "type\tstart_pos    length\n");
 		for (x = 0; x < cstr_info->marknum; x++)
-			fprintf(stream, "%X\t%9d %9d\n", cstr_info->marker[x].type, cstr_info->marker[x].pos, cstr_info->marker[x].len);
+			fprintf(stream, "%X\t%9" PRId64 " %9d\n", cstr_info->marker[x].type, cstr_info->marker[x].pos, cstr_info->marker[x].len);
 	}
 /* <<UniPG */
 	fclose(stream);

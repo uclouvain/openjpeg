@@ -30,6 +30,7 @@
 
 #include <stdio.h>
 #include "codestream_manager.h"
+#include "opj_inttypes.h"
 
 #ifdef SERVER
 #include "fcgi_stdio.h"
@@ -75,6 +76,6 @@ void print_codestream( codestream_param_t cs)
 {
   fprintf( logstream, "codestream info:\n"
 	   "\t fd: %d\n"
-	   "\t offset: %#llx\n"
-	   "\t length: %#llx\n", cs.fd, cs.offset, cs.length);
+	   "\t offset: %#" PRIx64 "\n"
+	   "\t length: %#" PRIx64 "\n", cs.fd, cs.offset, cs.length);
 }

@@ -32,6 +32,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "mhixbox_manager.h"
+#include "opj_inttypes.h"
 
 #ifdef SERVER
 #include "fcgi_stdio.h"
@@ -97,14 +98,14 @@ void print_mhixbox( mhixbox_param_t *mhix)
   markeridx_param_t *ptr;
 
   fprintf( logstream, "mhix box info:\n");
-  fprintf( logstream, "\t tlen: %#llx\n", mhix->tlen);
+  fprintf( logstream, "\t tlen: %#" PRIx64 "\n", mhix->tlen);
 
   ptr = mhix->first;
   while( ptr != NULL){
     fprintf( logstream, "marker index info:\n"
 	     "\t code: %#x\n"
 	     "\t num_remain: %#x\n"
-	     "\t offset: %#llx\n"
+	     "\t offset: %#" PRIx64 "\n"
 	     "\t length: %#x\n", ptr->code, ptr->num_remain, ptr->offset, ptr->length);
     ptr=ptr->next;
   }
@@ -116,7 +117,7 @@ void print_markeridx( markeridx_param_t *markeridx)
   fprintf( logstream, "marker index info:\n"
 	   "\t code: %#x\n"
 	   "\t num_remain: %#x\n"
-	   "\t offset: %#llx\n"
+	   "\t offset: %#" PRIx64 "\n"
 	   "\t length: %#x\n", markeridx->code, markeridx->num_remain, markeridx->offset, markeridx->length);
 }
 

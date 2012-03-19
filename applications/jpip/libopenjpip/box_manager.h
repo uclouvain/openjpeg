@@ -56,7 +56,7 @@ typedef struct boxlist_param{
  *
  * @return pointer to the generated box list
  */
-boxlist_param_t * gene_boxlist();
+boxlist_param_t * gene_boxlist(void);
 
 /**
  * get box structure of JP2 file

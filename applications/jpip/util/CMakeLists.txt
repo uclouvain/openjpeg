@@ -1,5 +1,6 @@
 # Headers file are located here:
 INCLUDE_DIRECTORIES(
+  ${OPENJPEG_SOURCE_DIR}/libopenjpeg
   ${OPENJPEG_SOURCE_DIR}/applications/jpip/libopenjpip
   ${FCGI_INCLUDE_DIRS}
 )

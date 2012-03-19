@@ -43,6 +43,7 @@
 #include "msgqueue_manager.h"
 #include "metadata_manager.h"
 #include "index_manager.h"
+#include "opj_inttypes.h"
 
 #ifdef SERVER
 #include "fcgi_stdio.h"
@@ -91,7 +92,8 @@ void delete_msgqueue( msgqueue_param_t **msgqueue)
 void print_msgqueue( msgqueue_param_t *msgqueue)
 {
   message_param_t *ptr;
-  char *message_class[] = { "Precinct", "Ext-Prec", "TileHead", "non", "Tile", "Ext-Tile", "Main", "non", "Meta"};
+  static const char *message_class[] = { "Precinct", "Ext-Prec", "TileHead", "non",
+    "Tile", "Ext-Tile", "Main", "non", "Meta"};
 
   if( !msgqueue)
     return;
@@ -100,18 +102,18 @@ void print_msgqueue( msgqueue_param_t *msgqueue)
   ptr = msgqueue->first;
 
   while( ptr){
-    fprintf( logstream, "\t class_id: %lld %s\n", ptr->class_id, message_class[ptr->class_id]);
-    fprintf( logstream, "\t in_class_id: %lld\n", ptr->in_class_id );
-    fprintf( logstream, "\t csn: %lld\n", ptr->csn );
-    fprintf( logstream, "\t bin_offset: %#llx\n", ptr->bin_offset );
-    fprintf( logstream, "\t length: %#llx\n", ptr->length );
+    fprintf( logstream, "\t class_id: %" PRId64 " %s\n", ptr->class_id, message_class[ptr->class_id]);
+    fprintf( logstream, "\t in_class_id: %" PRId64 "\n", ptr->in_class_id );
+    fprintf( logstream, "\t csn: %" PRId64 "\n", ptr->csn );
+    fprintf( logstream, "\t bin_offset: %#" PRIx64 "\n", ptr->bin_offset );
+    fprintf( logstream, "\t length: %#" PRIx64 "\n", ptr->length );
     if( ptr->class_id%2)
-      fprintf( logstream, "\t aux: %lld\n", ptr->aux );
+      fprintf( logstream, "\t aux: %" PRId64 "\n", ptr->aux );
     fprintf( logstream, "\t last_byte: %d\n", ptr->last_byte );
     if( ptr->phld)
       print_placeholder( ptr->phld);
     else
-      fprintf( logstream, "\t res_offset: %#llx\n", ptr->res_offset );
+      fprintf( logstream, "\t res_offset: %#" PRIx64 "\n", ptr->res_offset );
     fprintf( logstream, "\n");
 
     ptr = ptr->next;

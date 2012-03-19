@@ -91,7 +91,7 @@ Byte_t * j2k_to_pnm( FILE *fp, ihdrbox_param_t **ihdrbox)
     return NULL;
   }
 
-#ifdef TODO //decode area could be set from j2k_to_pnm call, modify the protocol between JPIP viewer and opj_dec_server
+#ifdef TODO /*decode area could be set from j2k_to_pnm call, modify the protocol between JPIP viewer and opj_dec_server*/
   if (! opj_set_decode_area( dinfo, image, parameters.DA_x0, parameters.DA_y0, parameters.DA_x1, parameters.DA_y1)){
     fprintf(stderr, "ERROR -> j2k_to_image: failed to set the decoded area\n");
     opj_stream_destroy(cio);
@@ -99,7 +99,7 @@ Byte_t * j2k_to_pnm( FILE *fp, ihdrbox_param_t **ihdrbox)
     opj_image_destroy(image);
     return NULL;
   }
-#endif //TODO
+#endif /*TODO*/
 
   /* Get the decoded image */
   if ( !( opj_decode_v2(dinfo, cio, image) && opj_end_decompress(dinfo,cio) ) ) {
@@ -161,7 +161,7 @@ Byte_t * imagetopnm(opj_image_t *image, ihdrbox_param_t **ihdrbox)
   int adjustR, adjustG=0, adjustB=0;
   int datasize;
   Byte_t *pix=NULL, *ptr=NULL;
-  int i;
+  OPJ_UINT32 i;
   
   if(*ihdrbox){
     if( (*ihdrbox)->nc != image->numcomps)

@@ -33,7 +33,7 @@
 #include <string.h>
 #include "cache_manager.h"
 
-cachelist_param_t * gene_cachelist()
+cachelist_param_t * gene_cachelist(void)
 {
   cachelist_param_t *cachelist;
   

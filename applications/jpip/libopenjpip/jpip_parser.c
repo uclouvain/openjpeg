@@ -347,7 +347,6 @@ void enqueue_imagedata( query_param_t query_param, msgqueue_param_t *msgqueue)
 }
 
 
-/* MM: shouldnt xmin/xmax be Byte4_t instead ? */
 void enqueue_precincts( int xmin, int xmax, int ymin, int ymax, int tile_id, int level, int lastcomp, bool *comps, int layers, msgqueue_param_t *msgqueue)
 {
   index_param_t *codeidx;
@@ -358,6 +357,9 @@ void enqueue_precincts( int xmin, int xmax, int ymin, int ymax, int tile_id, int
   Byte4_t xminP, xmaxP, yminP, ymaxP;
 
   codeidx  = msgqueue->cachemodel->target->codeidx;
+  /* MM: shouldnt xmin/xmax be Byte4_t instead ? */
+  if( xmin < 0 || xmax < 0 || ymin < 0 || ymax < 0)
+    return;
 
   for( c=0; c<codeidx->SIZ.Csiz; c++)
     if( lastcomp == -1 /*all*/ || ( c<=lastcomp && comps[c])){
@@ -382,10 +384,10 @@ void enqueue_precincts( int xmin, int xmax, int ymin, int ymax, int tile_id, int
 	    if( XTsiz <= xmaxP)
 	      xmaxP = XTsiz-1;
 	    
-	    if( xmaxP < xmin || xminP > xmax || ymaxP < ymin || yminP > ymax){
+	    if( xmaxP < (Byte4_t)xmin || xminP > (Byte4_t)xmax || ymaxP < (Byte4_t)ymin || yminP > (Byte4_t)ymax){
 	      /* Precinct completely excluded from view-window */
 	    }
-	    else if( xminP >= xmin && xmaxP <= xmax && yminP >= ymin && ymaxP <= ymax){
+	    else if( xminP >= (Byte4_t)xmin && xmaxP <= (Byte4_t)xmax && yminP >= (Byte4_t)ymin && ymaxP <= (Byte4_t)ymax){
 	      /* Precinct completely contained within view-window
 	       high priority */
 	      enqueue_precinct( seq_id, tile_id, c, (dec_lev>level)?-1:layers, msgqueue);

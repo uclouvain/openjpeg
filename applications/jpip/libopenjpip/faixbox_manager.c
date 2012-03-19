@@ -31,6 +31,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "faixbox_manager.h"
+#include "opj_inttypes.h"
 
 #ifdef SERVER
 #include "fcgi_stdio.h"
@@ -115,12 +116,12 @@ void print_faixbox( faixbox_param_t *faix)
   fprintf( logstream, "faix box info\n");
   fprintf( logstream, "\tversion: %d\n", faix->version);
   
-  fprintf( logstream, "\t nmax: %#llx = %lld\n", get_nmax( faix), get_nmax( faix));
-  fprintf( logstream, "\t m: %#llx = %lld\n", get_m( faix), get_m( faix));
+  fprintf( logstream, "\t nmax: %#" PRIx64 " = %" PRId64 "\n", get_nmax( faix), get_nmax( faix));
+  fprintf( logstream, "\t m: %#" PRIx64 " = %" PRId64 "\n", get_m( faix), get_m( faix));
 
   for( i=0; i<get_m( faix); i++){
     for( j=0; j<get_nmax( faix); j++){
-      fprintf( logstream, "\t off = %#llx, len = %#llx", get_elemOff( faix, j, i), get_elemLen( faix, j, i));
+      fprintf( logstream, "\t off = %#" PRIx64 ", len = %#" PRIx64 "", get_elemOff( faix, j, i), get_elemLen( faix, j, i));
       if( 2 <= faix->version)
 	fprintf( logstream, ", aux = %#x", get_elemAux( faix, j, i));
       fprintf( logstream, "\n");

@@ -36,6 +36,7 @@
 #include "jp2k_encoder.h"
 #include "j2kheader_manager.h"
 #include "imgreg_manager.h"
+#include "opj_inttypes.h"
 
 
 #ifdef SERVER
@@ -156,7 +157,7 @@ bool isJPPstream( Byte8_t csn, msgqueue_param_t *msgqueue)
     msg = msg->next;
   }
   
-  fprintf( FCGI_stderr, "Error, message of csn %lld not found\n", csn);
+  fprintf( FCGI_stderr, "Error, message of csn %" PRId64 " not found\n", csn);
 
   return false;
 }

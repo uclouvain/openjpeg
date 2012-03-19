@@ -34,6 +34,7 @@
 #include <string.h>
 
 #include "bool.h"
+#include "opj_inttypes.h"
 #include "index_manager.h"
 #include "box_manager.h"
 #include "manfbox_manager.h"
@@ -123,9 +124,9 @@ void print_index( index_param_t index)
   int i;
 
   fprintf( logstream, "index info:\n");
-  fprintf( logstream, "\tCodestream  Offset: %#llx\n", index.offset);
-  fprintf( logstream, "\t            Length: %#llx\n", index.length);
-  fprintf( logstream, "\tMain header Length: %#llx\n", index.mhead_length);
+  fprintf( logstream, "\tCodestream  Offset: %#" PRIx64 "\n", index.offset);
+  fprintf( logstream, "\t            Length: %#" PRIx64 "\n", index.length);
+  fprintf( logstream, "\tMain header Length: %#" PRIx64 "\n", index.mhead_length);
   
   print_SIZ( index.SIZ);
   print_COD( index.COD);
