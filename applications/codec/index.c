@@ -121,7 +121,7 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 	}
 		
 	for (tileno = 0; tileno < cstr_info->tw * cstr_info->th; tileno++) {
-		int start_pos, end_ph_pos, end_pos;
+		OPJ_OFF_T start_pos, end_ph_pos, end_pos;
 		double disto = 0;
 		int max_numdecompos = 0;
 		pack_nb = 0;
@@ -161,7 +161,7 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 							end_ph_pos = cstr_info->tile[tileno].packet[pack_nb].end_ph_pos;
 							end_pos = cstr_info->tile[tileno].packet[pack_nb].end_pos;
 							disto = cstr_info->tile[tileno].packet[pack_nb].disto;
-							fprintf(stream, "%4d %6d %7d %5d %6d  %6d    %6d     %6d %7d",
+							fprintf(stream, "%4d %6d %7d %5d %6d  %6d    %6" PRId64 "     %6" PRId64 " %7" PRId64,
 								pack_nb, tileno, layno, resno, compno, precno, start_pos, end_ph_pos, end_pos);
 							if (disto_on)
 								fprintf(stream, " %8e", disto);
@@ -192,7 +192,7 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 							end_ph_pos = cstr_info->tile[tileno].packet[pack_nb].end_ph_pos;
 							end_pos = cstr_info->tile[tileno].packet[pack_nb].end_pos;
 							disto = cstr_info->tile[tileno].packet[pack_nb].disto;
-							fprintf(stream, "%4d %6d %5d %7d %6d %6d %9d   %9d %7d",
+							fprintf(stream, "%4d %6d %5d %7d %6d %6d %9" PRId64 "   %9" PRId64 " %7" PRId64,
 								pack_nb, tileno, resno, layno, compno, precno, start_pos, end_ph_pos, end_pos);
 							if (disto_on)
 								fprintf(stream, " %8e", disto);
@@ -237,7 +237,7 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 											end_ph_pos = cstr_info->tile[tileno].packet[pack_nb].end_ph_pos;
 											end_pos = cstr_info->tile[tileno].packet[pack_nb].end_pos;
 											disto = cstr_info->tile[tileno].packet[pack_nb].disto;
-											fprintf(stream, "%4d %6d %5d %6d %6d %7d %9d   %9d %7d",
+											fprintf(stream, "%4d %6d %5d %6d %6d %7d %9" PRId64 "   %9" PRId64 " %7" PRId64,
 												pack_nb, tileno, resno, precno, compno, layno, start_pos, end_ph_pos, end_pos); 
 											if (disto_on)
 												fprintf(stream, " %8e", disto);
@@ -294,7 +294,7 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 											end_ph_pos = cstr_info->tile[tileno].packet[pack_nb].end_ph_pos;
 											end_pos = cstr_info->tile[tileno].packet[pack_nb].end_pos;
 											disto = cstr_info->tile[tileno].packet[pack_nb].disto;
-											fprintf(stream, "%4d %6d %6d %6d %5d %7d %9d   %9d %7d",
+											fprintf(stream, "%4d %6d %6d %6d %5d %7d %9" PRId64 "   %9" PRId64 " %7" PRId64,
 												pack_nb, tileno, precno, compno, resno, layno, start_pos, end_ph_pos, end_pos); 
 											if (disto_on)
 												fprintf(stream, " %8e", disto);
@@ -352,7 +352,7 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 											end_ph_pos = cstr_info->tile[tileno].packet[pack_nb].end_ph_pos;
 											end_pos = cstr_info->tile[tileno].packet[pack_nb].end_pos;
 											disto = cstr_info->tile[tileno].packet[pack_nb].disto;
-											fprintf(stream, "%4d %6d %6d %6d %5d %7d %9d   %9d %7d",
+											fprintf(stream, "%4d %6d %6d %6d %5d %7d %9" PRId64 "   %9" PRId64 " %7" PRId64,
 												pack_nb, tileno, compno, precno, resno, layno, start_pos, end_ph_pos, end_pos); 
 											if (disto_on)
 												fprintf(stream, " %8e", disto);
