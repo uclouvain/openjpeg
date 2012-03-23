@@ -1042,6 +1042,18 @@ OPJ_API opj_image_t* OPJ_CALLCONV opj_image_create(int numcmpts, opj_image_cmptp
 OPJ_API void OPJ_CALLCONV opj_image_destroy(opj_image_t *image);
 
 
+/**
+ * Creates an image without allocating memory for the image (used in the new version of the library).
+ *
+ * @param	p_num_cmpts			the number of components
+ * @param	p_cmpt_parms		the components parameters
+ * @param	p_clr_spc			the image color space
+ *
+ * @return	a new image structure if successful, NULL otherwise.
+*/
+OPJ_API opj_image_t* OPJ_CALLCONV opj_image_tile_create(OPJ_UINT32 numcmpts, opj_image_cmptparm_t *cmptparms, OPJ_COLOR_SPACE clrspc);
+
+
 /* 
 ==========================================================
    stream functions definitions
@@ -1313,6 +1325,25 @@ OPJ_API opj_bool OPJ_CALLCONV opj_get_decoded_tile(	opj_codec_t *p_codec,
  * @return					opj_true if all is ok.
  */
 OPJ_API opj_bool OPJ_CALLCONV opj_set_decoded_resolution_factor(opj_codec_t *p_codec, OPJ_UINT32 res_factor);
+
+
+/**
+ * Writes a tile with the given data.
+ *
+ * @param	p_compressor		the jpeg2000 codec.
+ * @param	p_tile_index		the index of the tile to write. At the moment, the tiles must be written from 0 to n-1 in sequence.
+ * @param	p_data				pointer to the data to write. Data is arranged in sequence, data_comp0, then data_comp1, then ... NO INTERLEAVING should be set.
+ * @param	p_data_size			this value os used to make sure the data being written is correct. The size must be equal to the sum for each component of tile_width * tile_height * component_size. component_size can be 1,2 or 4 bytes,
+ *								depending on the precision of the given component.
+ * @param	p_stream			the stream to write data to.
+ *
+ * @return	true if the data could be written.
+ */
+OPJ_API opj_bool OPJ_CALLCONV opj_write_tile (	opj_codec_t *p_codec,
+												OPJ_UINT32 p_tile_index,
+												OPJ_BYTE * p_data,
+												OPJ_UINT32 p_data_size,
+												opj_stream_t *p_stream );
 
 
 

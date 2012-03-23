@@ -842,6 +842,12 @@ Coding parameters are returned in j2k->cp.
 @param image input filled image
 */
 void j2k_setup_encoder(opj_j2k_t *j2k, opj_cparameters_t *parameters, opj_image_t *image);
+
+void j2k_setup_encoder_v2(	opj_j2k_v2_t *p_j2k,
+							opj_cparameters_t *parameters,
+							opj_image_t *image,
+							struct opj_event_mgr * p_manager);
+
 /**
 Converts an enum type progression order to string type
 */
@@ -1066,6 +1072,8 @@ opj_bool j2k_start_compress(opj_j2k_v2_t *p_j2k,
 opj_bool j2k_end_compress( 	opj_j2k_v2_t *p_j2k,
 							opj_stream_private_t *cio,
 							struct opj_event_mgr * p_manager);
+
+opj_bool j2k_setup_mct_encoding (opj_tcp_v2_t * p_tcp, opj_image_t * p_image);
 
 
 #endif /* __J2K_H */

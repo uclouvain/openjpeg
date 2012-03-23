@@ -309,3 +309,25 @@ opj_bool mct_decode_custom(
 	opj_free(lCurrentData);
 	return OPJ_TRUE;
 }
+
+void opj_calculate_norms(	OPJ_FLOAT64 * pNorms,
+							OPJ_UINT32 pNbComps,
+							OPJ_FLOAT32 * pMatrix)
+{
+	OPJ_UINT32 i,j,lIndex;
+	OPJ_FLOAT32 lCurrentValue;
+	OPJ_FLOAT64 * lNorms = (OPJ_FLOAT64 *) pNorms;
+	OPJ_FLOAT32 * lMatrix = (OPJ_FLOAT32 *) pMatrix;
+
+	for	(i=0;i<pNbComps;++i) {
+		lNorms[i] = 0;
+		lIndex = i;
+
+		for	(j=0;j<pNbComps;++j) {
+			lCurrentValue = lMatrix[lIndex];
+			lIndex += pNbComps;
+			lNorms[i] += lCurrentValue * lCurrentValue;
+		}
+		lNorms[i] = sqrt(lNorms[i]);
+	}
+}

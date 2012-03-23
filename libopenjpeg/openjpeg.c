@@ -589,7 +589,7 @@ opj_codec_t* OPJ_CALLCONV opj_create_compress_v2(OPJ_CODEC_FORMAT p_format)
 			l_info->m_codec_data.m_compression.opj_setup_encoder = (void (*) (	void *,
 																				opj_cparameters_t *,
 																				struct opj_image *,
-																				struct opj_event_mgr * )) j2k_setup_encoder;
+																				struct opj_event_mgr * )) j2k_setup_encoder_v2;
 
 			l_info->m_codec = j2k_create_compress_v2();
 			if (! l_info->m_codec) {
@@ -1239,5 +1239,34 @@ opj_bool OPJ_CALLCONV opj_set_MCT(opj_cparameters_t *parameters,OPJ_FLOAT32 * pE
 	return OPJ_TRUE;
 }
 
+/**
+ * Writes a tile with the given data.
+ *
+ * @param	p_compressor		the jpeg2000 codec.
+ * @param	p_tile_index		the index of the tile to write. At the moment, the tiles must be written from 0 to n-1 in sequence.
+ * @param	p_data				pointer to the data to write. Data is arranged in sequence, data_comp0, then data_comp1, then ... NO INTERLEAVING should be set.
+ * @param	p_data_size			this value os used to make sure the data being written is correct. The size must be equal to the sum for each component of tile_width * tile_height * component_size. component_size can be 1,2 or 4 bytes,
+ *								depending on the precision of the given component.
+ * @param	p_stream			the stream to write data to.
+ */
+opj_bool OPJ_CALLCONV opj_write_tile (	opj_codec_t *p_codec,
+										OPJ_UINT32 p_tile_index,
+										OPJ_BYTE * p_data,
+										OPJ_UINT32 p_data_size,
+										opj_stream_t *p_stream )
+{
+	if (p_codec && p_stream && p_data) {
+		opj_codec_private_t * l_info = (opj_codec_private_t *) p_codec;
+		opj_stream_private_t * l_cio = (opj_stream_private_t *) p_stream;
+
+		if (l_info->is_decompressor) {
+			return OPJ_FALSE;
+		}
+
+		return l_info->m_codec_data.m_compression.opj_write_tile(l_info->m_codec,p_tile_index,p_data,p_data_size,l_cio,l_info->m_event_mgr);
+	}
+
+	return OPJ_FALSE;
+}
 
 

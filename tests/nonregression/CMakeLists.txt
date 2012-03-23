@@ -317,3 +317,8 @@ FOREACH(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
 
 ENDFOREACH(OPJ_TEST_CMD_LINE)
 
+
+# Encode an image into the jpeg2000 format
+ADD_TEST(test_tile_encoder
+         ${EXECUTABLE_OUTPUT_PATH}/test_tile_encoder
+        )

@@ -116,6 +116,8 @@ opj_bool mct_decode_custom(
 					   /* tells if the data is signed */
 					   OPJ_UINT32 isSigned);
 
+void opj_calculate_norms(OPJ_FLOAT64 * pNorms,OPJ_UINT32 p_nb_comps,OPJ_FLOAT32 * pMatrix);
+
 const OPJ_FLOAT64 * get_mct_norms ();
 const OPJ_FLOAT64 * get_mct_norms_real ();
 /* ----------------------------------------------------------------------- */
