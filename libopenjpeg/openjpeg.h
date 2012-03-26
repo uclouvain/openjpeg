@@ -653,23 +653,23 @@ typedef struct opj_image {
  * */
 typedef struct opj_image_comptparm {
 	/** XRsiz: horizontal separation of a sample of ith component with respect to the reference grid */
-	int dx;
+	OPJ_UINT32 dx;
 	/** YRsiz: vertical separation of a sample of ith component with respect to the reference grid */
-	int dy;
+	OPJ_UINT32 dy;
 	/** data width */
-	int w;
+	OPJ_UINT32 w;
 	/** data height */
-	int h;
+	OPJ_UINT32 h;
 	/** x component offset compared to the whole image */
-	int x0;
+	OPJ_UINT32 x0;
 	/** y component offset compared to the whole image */
-	int y0;
+	OPJ_UINT32 y0;
 	/** precision */
-	int prec;
+	OPJ_UINT32 prec;
 	/** image depth in bits */
-	int bpp;
+	OPJ_UINT32 bpp;
 	/** signed (1) / unsigned (0) */
-	int sgnd;
+	OPJ_UINT32 sgnd;
 } opj_image_cmptparm_t;
 
 
@@ -1033,7 +1033,7 @@ OPJ_API const char * OPJ_CALLCONV opj_version(void);
  * @param clrspc image color space
  * @return returns a new image structure if successful, returns NULL otherwise
  * */
-OPJ_API opj_image_t* OPJ_CALLCONV opj_image_create(int numcmpts, opj_image_cmptparm_t *cmptparms, OPJ_COLOR_SPACE clrspc);
+OPJ_API opj_image_t* OPJ_CALLCONV opj_image_create(OPJ_UINT32 numcmpts, opj_image_cmptparm_t *cmptparms, OPJ_COLOR_SPACE clrspc);
 
 /**
  * Deallocate any resources associated with an image

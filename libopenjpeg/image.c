@@ -31,7 +31,7 @@ opj_image_t* opj_image_create0(void) {
 	return image;
 }
 
-opj_image_t* OPJ_CALLCONV opj_image_create(int numcmpts, opj_image_cmptparm_t *cmptparms, OPJ_COLOR_SPACE clrspc) {
+opj_image_t* OPJ_CALLCONV opj_image_create(OPJ_UINT32 numcmpts, opj_image_cmptparm_t *cmptparms, OPJ_COLOR_SPACE clrspc) {
 	int compno;
 	opj_image_t *image = NULL;
 
