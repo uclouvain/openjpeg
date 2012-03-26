@@ -63,7 +63,7 @@ msgtype_t identify_clientmsg( SOCKET connected_socket)
   return MSGERROR;
 }
 
-Byte_t * receive_JPIPstream( SOCKET connected_socket, char **target, char **tid, char **cid, int *streamlen)
+Byte_t * receive_JPIPstream( SOCKET connected_socket, char **target, char **tid, char **cid, OPJ_SIZE_T *streamlen)
 {
   char buf[BUF_LEN], versionstring[] = "version 1.2";
   int linelen, datalen;
@@ -134,7 +134,7 @@ void send_CIDstream( SOCKET connected_socket, char *cid, int cidlen)
   send_IDstream( connected_socket, cid, cidlen, "CID");
 }
 
-void send_TIDstream( SOCKET connected_socket, char *tid, int tidlen)
+void send_TIDstream( SOCKET connected_socket, char *tid, OPJ_SIZE_T tidlen)
 {
   send_IDstream( connected_socket, tid, tidlen, "TID");
 }

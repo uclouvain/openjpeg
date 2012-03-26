@@ -142,7 +142,7 @@ void send_responsedata( server_record_t *rec, QR_t *qr)
   
   add_EORmsg( fd, qr); /* needed at least for tcp and udp */
   
-  len_of_jpipstream = get_filesize( fd);
+  len_of_jpipstream = (Byte8_t)get_filesize( fd);
   jpipstream = fetch_bytes( fd, 0, len_of_jpipstream);
   
   close( fd);
@@ -217,7 +217,7 @@ dec_server_record_t * init_dec_server( int port)
   record->jpipstream = NULL;
   record->jpipstreamlen = 0;
   record->msgqueue = gene_msgqueue( true, NULL);
-  record->listening_socket = open_listeningsocket( port);
+  record->listening_socket = open_listeningsocket( (uint16_t)port);
 
   return record;
 }
@@ -330,7 +330,7 @@ bool fread_jpip( char fname[], jpip_dec_param_t *dec)
     return false;
   }
   
-  if(!(dec->jpiplen = get_filesize(infd)))
+  if(!(dec->jpiplen = (Byte8_t)get_filesize(infd)))
     return false;
   
   dec->jpipstream = (Byte_t *)malloc( dec->jpiplen);

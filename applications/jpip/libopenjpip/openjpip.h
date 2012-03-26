@@ -157,7 +157,7 @@ void local_log( bool query, bool messages, bool sessions, bool targets, QR_t *qr
 typedef struct dec_server_record{
   cachelist_param_t *cachelist; /**< cache list*/
   Byte_t *jpipstream;           /**< JPT/JPP stream*/
-  int jpipstreamlen;            /**< length of jpipstream*/
+  OPJ_SIZE_T jpipstreamlen;            /**< length of jpipstream*/
   msgqueue_param_t *msgqueue;   /**< parsed message queue of jpipstream*/
   SOCKET listening_socket;      /**< listenning socket*/
 } dec_server_record_t;

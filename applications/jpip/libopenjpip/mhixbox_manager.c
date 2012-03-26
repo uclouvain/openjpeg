@@ -48,19 +48,19 @@ mhixbox_param_t * gene_mhixbox( box_param_t *box)
 {
   mhixbox_param_t *mhix;
   markeridx_param_t  *mkridx, *lastmkidx;
-  Byte8_t pos = 0;
+  OPJ_OFF_T pos = 0;
 
   mhix = ( mhixbox_param_t *)malloc( sizeof( mhixbox_param_t));
   
   mhix->tlen = fetch_DBox8bytebigendian( box, (pos+=8)-8);
  
   mhix->first = lastmkidx = NULL;
-  while( pos < get_DBoxlen( box)){
+  while( (OPJ_SIZE_T)pos < get_DBoxlen( box)){
     
     mkridx = ( markeridx_param_t *)malloc( sizeof( markeridx_param_t));
     mkridx->code       = fetch_DBox2bytebigendian( box, (pos+=2)-2);
     mkridx->num_remain = fetch_DBox2bytebigendian( box, (pos+=2)-2);
-    mkridx->offset     = fetch_DBox8bytebigendian( box, (pos+=8)-8);
+    mkridx->offset     = (OPJ_OFF_T)fetch_DBox8bytebigendian( box, (pos+=8)-8);
     mkridx->length     = fetch_DBox2bytebigendian( box, (pos+=2)-2);
     mkridx->next = NULL;
     

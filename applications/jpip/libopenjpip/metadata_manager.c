@@ -160,7 +160,7 @@ void insert_metadata_into_list( metadata_param_t *metabin, metadatalist_param_t 
 void print_metadata( metadata_param_t *metadata)
 {
   boxcontents_param_t *boxcont;
-  fprintf( logstream, "metadata-bin %d info:\n", metadata->idx);
+  fprintf( logstream, "metadata-bin %" PRIu64 " info:\n", metadata->idx);
   print_allbox( metadata->boxlist);
   print_allplaceholder( metadata->placeholderlist);
  

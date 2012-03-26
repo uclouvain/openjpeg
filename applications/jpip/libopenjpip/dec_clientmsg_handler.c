@@ -35,19 +35,20 @@
 #include "ihdrbox_manager.h"
 #include "jpipstream_manager.h"
 #include "jp2k_encoder.h"
+#include "opj_inttypes.h"
 
 void handle_JPIPstreamMSG( SOCKET connected_socket, cachelist_param_t *cachelist,
-			   Byte_t **jpipstream, int *streamlen, msgqueue_param_t *msgqueue)
+			   Byte_t **jpipstream, OPJ_SIZE_T *streamlen, msgqueue_param_t *msgqueue)
 {
   Byte_t *newjpipstream;
-  int newstreamlen = 0;
+  OPJ_SIZE_T newstreamlen = 0;
   cache_param_t *cache;
   char *target, *tid, *cid;
   metadatalist_param_t *metadatalist;
   
   newjpipstream = receive_JPIPstream( connected_socket, &target, &tid, &cid, &newstreamlen);
 
-  fprintf( stderr, "newjpipstream length: %d\n", newstreamlen);
+  fprintf( stderr, "newjpipstream length: %" PRIu64 "\n", newstreamlen);
   
   parse_JPIPstream( newjpipstream, newstreamlen, *streamlen, msgqueue);
 
@@ -144,7 +145,7 @@ void handle_TIDreqMSG( SOCKET connected_socket, cachelist_param_t *cachelist)
 {
   char *target, *tid = NULL;
   cache_param_t *cache;
-  int tidlen = 0;
+  OPJ_SIZE_T tidlen = 0;
 
   target = receive_string( connected_socket);
   cache = search_cache( target, cachelist);

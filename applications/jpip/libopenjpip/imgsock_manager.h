@@ -56,7 +56,7 @@ msgtype_t identify_clientmsg( SOCKET connected_socket);
  * @param [out] streamlen        length of the received codestream
  * @return                       JPT- JPP- codestream
  */
-Byte_t * receive_JPIPstream( SOCKET connected_socket, char **target, char **tid, char **cid, int *streamlen);
+Byte_t * receive_JPIPstream( SOCKET connected_socket, char **target, char **tid, char **cid, OPJ_SIZE_T *streamlen);
 
 /**
  * send PGM/PPM image stream to the client
@@ -86,7 +86,7 @@ void send_XMLstream( SOCKET connected_socket, Byte_t *xmlstream, int length);
  * @param [in]  tid              tid string
  * @param [in]  tidlen           legnth of the tid string
  */
-void send_TIDstream( SOCKET connected_socket, char *tid, int tidlen);
+void send_TIDstream( SOCKET connected_socket, char *tid, OPJ_SIZE_T tidlen);
 
 /**
  * send CID data stream to the client

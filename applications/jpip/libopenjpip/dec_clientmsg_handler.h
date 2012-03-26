@@ -46,7 +46,7 @@
  * @param[in,out] streamlen        address of stream length
  * @param[in,out] msgqueue         message queue pointer
  */
-void handle_JPIPstreamMSG( SOCKET connected_socket, cachelist_param_t *cachelist, Byte_t **jpipstream, int *streamlen, msgqueue_param_t *msgqueue);
+void handle_JPIPstreamMSG( SOCKET connected_socket, cachelist_param_t *cachelist, Byte_t **jpipstream, OPJ_SIZE_T *streamlen, msgqueue_param_t *msgqueue);
 
 /**
  * handle PNM request message
