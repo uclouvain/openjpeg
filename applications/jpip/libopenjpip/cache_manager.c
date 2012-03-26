@@ -58,7 +58,7 @@ void delete_cachelist(cachelist_param_t **cachelist)
   free( *cachelist);
 }
 
-cache_param_t * gene_cache( char *targetname, int csn, char *tid, char *cid)
+cache_param_t * gene_cache( const char *targetname, int csn, char *tid, char *cid)
 {
   cache_param_t *cache;
   
@@ -106,7 +106,7 @@ void insert_cache_into_list( cache_param_t *cache, cachelist_param_t *cachelist)
   cachelist->last = cache;
 }
 
-cache_param_t * search_cache( char targetname[], cachelist_param_t *cachelist)
+cache_param_t * search_cache( const char targetname[], cachelist_param_t *cachelist)
 {
   cache_param_t *foundcache;
 
@@ -140,7 +140,7 @@ cache_param_t * search_cacheBycsn( int csn, cachelist_param_t *cachelist)
   return NULL;
 }
 
-cache_param_t * search_cacheBycid( char cid[], cachelist_param_t *cachelist)
+cache_param_t * search_cacheBycid( const char cid[], cachelist_param_t *cachelist)
 {
   cache_param_t *foundcache;
   int i;
@@ -159,7 +159,7 @@ cache_param_t * search_cacheBycid( char cid[], cachelist_param_t *cachelist)
   return NULL;
 }
 
-cache_param_t * search_cacheBytid( char tid[], cachelist_param_t *cachelist)
+cache_param_t * search_cacheBytid( const char tid[], cachelist_param_t *cachelist)
 {
   cache_param_t *foundcache;
 
@@ -176,12 +176,12 @@ cache_param_t * search_cacheBytid( char tid[], cachelist_param_t *cachelist)
   return NULL;
 }
 
-void add_cachecid( char *cid, cache_param_t *cache)
+void add_cachecid( const char *cid, cache_param_t *cache)
 {
   if( !cid)
     return;
   
-  if( (cache->cid = realloc( cache->cid, (cache->numOfcid+1)*sizeof(char *))) == NULL){
+  if( (cache->cid = realloc( cache->cid, (OPJ_SIZE_T)(cache->numOfcid+1)*sizeof(char *))) == NULL){
     fprintf( stderr, "failed to add new cid to cache table in add_cachecid()\n");
     return;
   }
@@ -191,7 +191,7 @@ void add_cachecid( char *cid, cache_param_t *cache)
   cache->numOfcid ++;
 }
 
-void update_cachetid( char *tid, cache_param_t *cache)
+void update_cachetid( const char *tid, cache_param_t *cache)
 {
   if( !tid)
     return;
@@ -203,9 +203,9 @@ void update_cachetid( char *tid, cache_param_t *cache)
   }
 }
 
-void remove_cidInCache( char *cid, cache_param_t *cache);
+void remove_cidInCache( const char *cid, cache_param_t *cache);
 
-void remove_cachecid( char *cid, cachelist_param_t *cachelist)
+void remove_cachecid( const char *cid, cachelist_param_t *cachelist)
 {
   cache_param_t *cache;
 
@@ -213,7 +213,7 @@ void remove_cachecid( char *cid, cachelist_param_t *cachelist)
   remove_cidInCache( cid, cache);
 }
 
-void remove_cidInCache( char *cid, cache_param_t *cache)
+void remove_cidInCache( const char *cid, cache_param_t *cache)
 {
   int idx = -1;
   char **tmp;
@@ -232,7 +232,7 @@ void remove_cidInCache( char *cid, cache_param_t *cache)
   
   tmp = cache->cid;
 
-  cache->cid = (char **)malloc( (cache->numOfcid-1)*sizeof(char *));
+  cache->cid = (char **)malloc( (OPJ_SIZE_T)(cache->numOfcid-1)*sizeof(char *));
   
   for( i=0, j=0; i<cache->numOfcid; i++){
     if( i != idx){

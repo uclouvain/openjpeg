@@ -31,6 +31,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <assert.h>
 #ifdef _WIN32
 #define snprintf _snprintf /* Visual Studio */
 #include <io.h>
@@ -336,8 +337,9 @@ int open_remotefile( char filepath[], char tmpfname[])
 static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream)
 {
   int *fd = (int *)stream;
-  int written = write( *fd, ptr, size*nmemb);
+  ssize_t written = write( *fd, ptr, size*nmemb);
+  assert( written >= 0 );
 
-  return written;
+  return (size_t)written;
 }
 #endif /*SERVER*/

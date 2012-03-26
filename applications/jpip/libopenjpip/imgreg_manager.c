@@ -31,6 +31,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
+#include <assert.h>
 #include "imgreg_manager.h"
 
 #ifdef SERVER
@@ -138,6 +139,7 @@ int comp_decomplev( int fw, int fh, int Xsiz, int Ysiz)
   
   find_level( 1000, &level, &fw, &fh, &xmin, &ymin, &xmax, &ymax);
 
+  assert( level >= 0 );
   return level;
 }
 

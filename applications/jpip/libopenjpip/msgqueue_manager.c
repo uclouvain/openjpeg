@@ -281,6 +281,7 @@ void enqueue_precinct( int seq_id, int tile_id, int comp_id, int layers, msgqueu
   }
 }
 
+/* MM FIXME: each params is coded on int, this is really not clear from the specs what it should be */
 Byte8_t comp_precinct_id( int t, int c, int s, int num_components, int num_tiles)
 {
   return t + (c + s * num_components ) * num_tiles;
