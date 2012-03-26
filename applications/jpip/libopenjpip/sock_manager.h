@@ -67,7 +67,7 @@ SOCKET accept_socket( SOCKET listening_socket);
  * @param [out] buf              string to be stored
  * @return                       red size
  */
-int receive_line(SOCKET connected_socket, char *buf);
+OPJ_SIZE_T receive_line(SOCKET connected_socket, char *buf);
 
 /**
  * receive a string line (ending with '\n') from client, return malloc string

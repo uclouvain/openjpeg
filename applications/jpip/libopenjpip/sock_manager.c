@@ -135,9 +135,9 @@ void * receive_stream( SOCKET connected_socket, OPJ_SIZE_T length)
   return stream;
 }
 
-int receive_line(SOCKET connected_socket, char *p)
+OPJ_SIZE_T receive_line(SOCKET connected_socket, char *p)
 {
-  int len = 0;
+  OPJ_SIZE_T len = 0;
   while (1){
     ssize_t ret;
     ret = recv( connected_socket, p, 1, 0);
