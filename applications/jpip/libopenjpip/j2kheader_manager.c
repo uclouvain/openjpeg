@@ -33,6 +33,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <assert.h>
 #include "j2kheader_manager.h"
 
 #ifdef SERVER
@@ -76,11 +77,12 @@ bool get_mainheader_from_j2kstream( Byte_t *j2kstream, SIZmarker_param_t *SIZ, C
 
 SIZmarker_param_t get_SIZmkrdata_from_j2kstream( Byte_t *SIZstream)
 {
-  SIZmarker_param_t SIZ = {0};
+  SIZmarker_param_t SIZ;
   int i;
 
   if( *SIZstream++ != 0xff || *SIZstream++ != 0x51){
     fprintf( FCGI_stderr, "Error, SIZ marker not found in the reconstructed j2kstream\n");
+    memset( &SIZ, 0, sizeof( SIZ ) );
     return SIZ;
   }
 
@@ -125,13 +127,13 @@ CODmarker_param_t get_CODmkrdata_from_j2kstream( Byte_t *CODstream)
   COD.numOfdecomp = *( CODstream+7);
 
   if(COD.Scod & 0x01){
-    COD.XPsiz = (Byte4_t *)malloc( (COD.numOfdecomp+1)*sizeof(Byte4_t));
-    COD.YPsiz = (Byte4_t *)malloc( (COD.numOfdecomp+1)*sizeof(Byte4_t));
+    COD.XPsiz = (Byte4_t *)malloc( (OPJ_SIZE_T)(COD.numOfdecomp+1)*sizeof(Byte4_t));
+    COD.YPsiz = (Byte4_t *)malloc( (OPJ_SIZE_T)(COD.numOfdecomp+1)*sizeof(Byte4_t));
     
     for( i=0; i<=COD.numOfdecomp; i++){
       /*precinct size */
-      COD.XPsiz[i] = pow( 2, *( CODstream+12+i) & 0x0F);
-      COD.YPsiz[i] = pow( 2, (*( CODstream+12+i) & 0xF0) >> 4);
+      COD.XPsiz[i] = (Byte4_t)pow( 2, *( CODstream+12+i) & 0x0F);
+      COD.YPsiz[i] = (Byte4_t)pow( 2, (*( CODstream+12+i) & 0xF0) >> 4);
     }
   }
   else{
@@ -162,8 +164,8 @@ bool modify_mainheader( Byte_t *j2kstream, int numOfdecomp, SIZmarker_param_t SI
   if( !(newLcod = modify_CODmkrstream( COD, numOfdecomp, j2kstream)))
     return false;
 
-  memmove( j2kstream+2+newLcod, j2kstream+2+COD.Lcod, (*j2klen)-(SIZ.Lsiz+COD.Lcod+6));
-  *j2klen -= ( COD.Lcod - newLcod);
+  memmove( j2kstream+2+newLcod, j2kstream+2+COD.Lcod, *j2klen - (Byte8_t)(SIZ.Lsiz+COD.Lcod+6));
+  *j2klen -= (Byte8_t)( COD.Lcod - newLcod);
   
   return true;
 }
@@ -178,14 +180,14 @@ bool modify_SIZmkrstream( SIZmarker_param_t SIZ, int difOfdecomplev, Byte_t *SIZ
   }
     
   for( i=0; i<difOfdecomplev; i++){
-    SIZ.Xsiz   = ceil( (double)SIZ.Xsiz/2.0);
-    SIZ.Ysiz   = ceil( (double)SIZ.Ysiz/2.0);
-    SIZ.XOsiz  = ceil( (double)SIZ.XOsiz/2.0);
-    SIZ.YOsiz  = ceil( (double)SIZ.YOsiz/2.0);
-    SIZ.XTsiz  = ceil( (double)SIZ.XTsiz/2.0);
-    SIZ.YTsiz  = ceil( (double)SIZ.YTsiz/2.0);
-    SIZ.XTOsiz = ceil( (double)SIZ.XTOsiz/2.0);
-    SIZ.YTOsiz = ceil( (double)SIZ.YTOsiz/2.0);
+    SIZ.Xsiz   = (Byte4_t)ceil( (double)SIZ.Xsiz/2.0);
+    SIZ.Ysiz   = (Byte4_t)ceil( (double)SIZ.Ysiz/2.0);
+    SIZ.XOsiz  = (Byte4_t)ceil( (double)SIZ.XOsiz/2.0);
+    SIZ.YOsiz  = (Byte4_t)ceil( (double)SIZ.YOsiz/2.0);
+    SIZ.XTsiz  = (Byte4_t)ceil( (double)SIZ.XTsiz/2.0);
+    SIZ.YTsiz  = (Byte4_t)ceil( (double)SIZ.YTsiz/2.0);
+    SIZ.XTOsiz = (Byte4_t)ceil( (double)SIZ.XTOsiz/2.0);
+    SIZ.YTOsiz = (Byte4_t)ceil( (double)SIZ.YTOsiz/2.0);
   }
 
   SIZstream += 4; /* skip Lsiz + Rsiz */
@@ -206,13 +208,14 @@ Byte2_t modify_CODmkrstream( CODmarker_param_t COD, int numOfdecomp, Byte_t *COD
 {
   Byte2_t newLcod;
 
+  assert( numOfdecomp >= 0 || numOfdecomp <= 255 );
   if( *CODstream++ != 0xff || *CODstream++ != 0x52){
     fprintf( FCGI_stderr, "Error, COD marker not found in the reconstructed j2kstream\n");
     return 0;
   }
   
   if( COD.Scod & 0x01){
-    newLcod  = 13+numOfdecomp;
+    newLcod  = (Byte2_t)(13+numOfdecomp);
 
     *CODstream++ = (Byte_t)((Byte2_t)(newLcod & 0xff00) >> 8);
     *CODstream++ = (Byte_t)(newLcod & 0x00ff);
@@ -246,7 +249,7 @@ bool modify_tileheader( Byte_t *j2kstream, Byte8_t SOToffset, int numOfdecomp, B
   }
 
   SOTstream += 4; /* skip Lsot & Isot */
-  Psot = (SOTstream[0]<<24)+(SOTstream[1]<<16)+(SOTstream[2]<<8)+(SOTstream[3]);
+  Psot = (Byte4_t)((SOTstream[0]<<24)+(SOTstream[1]<<16)+(SOTstream[2]<<8)+(SOTstream[3]));
   Psot_stream = SOTstream;
   
   thstream += 12; /* move to next marker (SOT always 12bytes) */
@@ -256,15 +259,15 @@ bool modify_tileheader( Byte_t *j2kstream, Byte8_t SOToffset, int numOfdecomp, B
       if( !modify_COCmkrstream( numOfdecomp, thstream, Csiz, &oldLcoc, &newLcoc))
 	return false;
       
-      memmove( thstream+newLcoc+2, thstream+oldLcoc+2, (*j2klen)-(thstream-j2kstream+oldLcoc+2));
-      *j2klen -= ( oldLcoc - newLcoc);
+      memmove( thstream+newLcoc+2, thstream+oldLcoc+2, *j2klen - (Byte8_t)(thstream-j2kstream+oldLcoc+2));
+      *j2klen -= (Byte8_t)( oldLcoc - newLcoc);
     }
     thstream += 2;
     thstream += ((thstream[0]<<8)+(thstream[1])); /* marker length */
   }
 
   if( (*j2klen)-SOToffset != Psot){
-    Psot = (*j2klen)-SOToffset;
+    Psot = (Byte4_t)((*j2klen)-SOToffset);
     modify_4Bytecode( Psot, Psot_stream);
   }
   return true;
@@ -272,20 +275,21 @@ bool modify_tileheader( Byte_t *j2kstream, Byte8_t SOToffset, int numOfdecomp, B
 
 bool modify_COCmkrstream( int numOfdecomp, Byte_t *COCstream, Byte2_t Csiz, Byte2_t *oldLcoc, Byte2_t *newLcoc)
 {
+  if( numOfdecomp < 0 || numOfdecomp > 255 ) return false;
   if( *COCstream++ != 0xff || *COCstream++ != 0x53){
     fprintf( FCGI_stderr, "Error, COC marker not found in the reconstructed j2kstream\n");
     return false;
   }
   
   *oldLcoc = big2( COCstream);
-  *newLcoc = (Csiz < 257 ? 10 : 11) + numOfdecomp;
+  *newLcoc = (Byte2_t)((Csiz < 257 ? 10 : 11) + numOfdecomp);
   *COCstream++ = (Byte_t)((Byte2_t)((*newLcoc) & 0xff00) >> 8);
   *COCstream++ = (Byte_t)((*newLcoc) & 0x00ff);
       
   if( Csiz < 257) COCstream +=2; /* skip Ccoc & Scoc */
   else COCstream += 3;
       
-  *COCstream = numOfdecomp;
+  *COCstream = (Byte_t)numOfdecomp;
   
   return true;
 }
