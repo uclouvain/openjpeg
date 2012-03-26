@@ -43,5 +43,9 @@ typedef unsigned __int64  uint64_t;
 #error unsupported platform
 #endif
 #endif
+typedef size_t        OPJ_SIZE_T;
+
+/* 64-bit file offset type */
+typedef int64_t OPJ_OFF_T;
 
 #endif /* OPJ_STDINT_H */

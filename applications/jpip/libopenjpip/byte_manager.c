@@ -49,28 +49,28 @@
 #endif /*SERVER*/
 
 
-Byte_t * fetch_bytes( int fd, long offset, int size)
+Byte_t * fetch_bytes( int fd, OPJ_OFF_T offset, OPJ_SIZE_T size)
 {
   Byte_t *data;
 
   if( lseek( fd, offset, SEEK_SET)==-1){
     fprintf( FCGI_stdout, "Reason: Target broken (fseek error)\r\n");
-    fprintf( FCGI_stderr, "Error: error in fetch_bytes( %d, %ld, %d)\n", fd, offset, size);
+    fprintf( FCGI_stderr, "Error: error in fetch_bytes( %d, %ld, %lu)\n", fd, offset, size);
     return NULL;
   }
   
   data = (Byte_t *)malloc( size);
 
-  if( read( fd, data, size) != size){
+  if( (OPJ_SIZE_T)read( fd, data, size) != size){
     free( data);
     fprintf( FCGI_stdout, "Reason: Target broken (read error)\r\n");
-    fprintf( FCGI_stderr, "Error: error in fetch_bytes( %d, %ld, %d)\n", fd, offset, size);
+    fprintf( FCGI_stderr, "Error: error in fetch_bytes( %d, %ld, %lu)\n", fd, offset, size);
     return NULL;
   }
   return data;
 }
 
-Byte_t fetch_1byte( int fd, long offset)
+Byte_t fetch_1byte( int fd, OPJ_OFF_T offset)
 {
   Byte_t code;
 
@@ -88,7 +88,7 @@ Byte_t fetch_1byte( int fd, long offset)
   return code;
 }
 
-Byte2_t fetch_2bytebigendian( int fd, long offset)
+Byte2_t fetch_2bytebigendian( int fd, OPJ_OFF_T offset)
 {
   Byte_t *data;
   Byte2_t code;
@@ -103,7 +103,7 @@ Byte2_t fetch_2bytebigendian( int fd, long offset)
   return code;
 }
 
-Byte4_t fetch_4bytebigendian( int fd, long offset)
+Byte4_t fetch_4bytebigendian( int fd, OPJ_OFF_T offset)
 {
   Byte_t *data;
   Byte4_t code;
@@ -118,7 +118,7 @@ Byte4_t fetch_4bytebigendian( int fd, long offset)
   return code;
 }
 
-Byte8_t fetch_8bytebigendian( int fd, long offset)
+Byte8_t fetch_8bytebigendian( int fd, OPJ_OFF_T offset)
 {
   Byte_t *data;
   Byte8_t code;
@@ -136,7 +136,7 @@ Byte8_t fetch_8bytebigendian( int fd, long offset)
 
 Byte2_t big2( Byte_t *buf)
 {
-  return (((Byte2_t) buf[0]) << 8) + ((Byte2_t) buf[1]);
+  return (Byte2_t)((((Byte2_t) buf[0]) << 8) + ((Byte2_t) buf[1]));
 }
 
 Byte4_t big4( Byte_t *buf)
@@ -159,7 +159,7 @@ void modify_4Bytecode( Byte4_t code, Byte_t *stream)
   *(stream+3) = (Byte_t) (code & 0x000000ff);
 }
 
-Byte8_t get_filesize( int fd)
+OPJ_OFF_T get_filesize( int fd)
 {
   struct stat sb;
     
@@ -168,5 +168,5 @@ Byte8_t get_filesize( int fd)
     fprintf( FCGI_stderr, "Error: error in get_filesize( %d)\n", fd);
     return 0;
   }
-  return (Byte8_t)sb.st_size;
+  return sb.st_size;
 }

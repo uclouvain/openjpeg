@@ -31,6 +31,7 @@
 #ifndef   	BYTE_MANAGER_H_
 #define   	BYTE_MANAGER_H_
 
+#include <stddef.h>
 #include "opj_stdint.h"
 typedef uint8_t Byte_t;
 typedef uint16_t Byte2_t;
@@ -45,7 +46,7 @@ typedef uint64_t Byte8_t;
  * @param[in] size   Byte length
  * @return           pointer to the fetched data
  */
-Byte_t * fetch_bytes( int fd, long offset, int size);
+Byte_t * fetch_bytes( int fd, OPJ_OFF_T offset, OPJ_SIZE_T size);
 
 
 /**
@@ -55,7 +56,7 @@ Byte_t * fetch_bytes( int fd, long offset, int size);
  * @param[in] offset start Byte position
  * @return           fetched codes
  */
-Byte_t fetch_1byte( int fd, long offset);
+Byte_t fetch_1byte( int fd, OPJ_OFF_T offset);
 
 /**
  * fetch a 2-byte big endian Byte codes in file stream
@@ -64,7 +65,7 @@ Byte_t fetch_1byte( int fd, long offset);
  * @param[in] offset start Byte position
  * @return           fetched codes
  */
-Byte2_t fetch_2bytebigendian( int fd, long offset);
+Byte2_t fetch_2bytebigendian( int fd, OPJ_OFF_T offset);
 
 /**
  * fetch a 4-byte big endian Byte codes in file stream
@@ -73,7 +74,7 @@ Byte2_t fetch_2bytebigendian( int fd, long offset);
  * @param[in] offset start Byte position
  * @return           fetched codes
  */
-Byte4_t fetch_4bytebigendian( int fd, long offset);
+Byte4_t fetch_4bytebigendian( int fd, OPJ_OFF_T offset);
 
 /**
  * fetch a 8-byte big endian Byte codes in file stream
@@ -82,7 +83,7 @@ Byte4_t fetch_4bytebigendian( int fd, long offset);
  * @param[in] offset start Byte position
  * @return           fetched codes
  */
-Byte8_t fetch_8bytebigendian( int fd, long offset);
+Byte8_t fetch_8bytebigendian( int fd, OPJ_OFF_T offset);
 
 
 /**
@@ -123,6 +124,6 @@ void modify_4Bytecode( Byte4_t code, Byte_t *stream);
  * @param[in] fd file discriptor
  * @return       file size
  */
-Byte8_t get_filesize( int fd);
+OPJ_OFF_T get_filesize( int fd);
 
 #endif 	    /* !BYTE_MANAGER_H_ */

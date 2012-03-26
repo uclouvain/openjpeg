@@ -80,7 +80,6 @@ typedef char          OPJ_CHAR;
 typedef float         OPJ_FLOAT32;
 typedef double        OPJ_FLOAT64;
 typedef unsigned char	OPJ_BYTE;
-typedef size_t        OPJ_SIZE_T;
 
 #include "opj_stdint.h"
 
@@ -92,9 +91,6 @@ typedef int32_t  OPJ_INT32;
 typedef uint32_t OPJ_UINT32;
 typedef int64_t  OPJ_INT64;
 typedef uint64_t OPJ_UINT64;
-
-/* 64-bit file offset type */
-typedef OPJ_INT64 OPJ_OFF_T;
 
 /* Avoid compile-time warning because parameter is not used */
 #define OPJ_ARG_NOT_USED(x) (void)(x)
