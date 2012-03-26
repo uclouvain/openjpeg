@@ -39,9 +39,11 @@
 #endif
 
 #include <stdio.h>
+#include <assert.h>
 #include <string.h>
 #include <stdlib.h>
 #include "query_parser.h"
+#include "opj_stdint.h"
 
 #ifdef SERVER
 #include "fcgi_stdio.h"
@@ -58,7 +60,7 @@
  *
  * @return initial query parameters
  */
-query_param_t * get_initquery();
+query_param_t * get_initquery(void);
 
 /*
  * get a pair of field name and value from the string starting fieldname=fieldval&... format
@@ -151,7 +153,7 @@ query_param_t * parse_query( char *query_string)
   return query_param;
 }
 
-query_param_t * get_initquery()
+query_param_t * get_initquery(void)
 {
   query_param_t *query;
   int i;
@@ -209,9 +211,11 @@ char * get_fieldparam( char *stringptr, char *fieldname, char *fieldval)
   else
     nexfieldptr = andp+1;
 
-  strncpy( fieldname, stringptr, eqp-stringptr);
+  assert( (size_t)(eqp-stringptr));
+  strncpy( fieldname, stringptr, (size_t)(eqp-stringptr));
   fieldname[eqp-stringptr]='\0';
-  strncpy( fieldval, eqp+1, andp-eqp-1);
+  assert( andp-eqp-1 >= 0);
+  strncpy( fieldval, eqp+1, (size_t)(andp-eqp-1));
   fieldval[andp-eqp-1]='\0';
 
   return nexfieldptr;
@@ -303,7 +307,8 @@ void parse_metareq( char *field, query_param_t *query_param)
   src = ptr;
   while( *ptr != ']'){
     if( *ptr == ';'){
-      strncpy( req_box_prop, src, ptr-src);
+      assert( ptr-src >= 0);
+      strncpy( req_box_prop, src, (size_t)(ptr-src));
       parse_req_box_prop( req_box_prop, numofboxreq++, query_param);
       ptr++;
       src = ptr;
@@ -311,7 +316,8 @@ void parse_metareq( char *field, query_param_t *query_param)
     }
     ptr++;
   }
-  strncpy( req_box_prop, src, ptr-src);
+  assert(ptr-src>=0);
+  strncpy( req_box_prop, src, (size_t)(ptr-src));
 
   parse_req_box_prop( req_box_prop, numofboxreq++, query_param);
 
@@ -392,7 +398,7 @@ void parse_comps( char *field, query_param_t *query_param)
     }
   
   query_param->lastcomp = stop > aux ? stop : aux;
-  query_param->comps = (bool *)calloc( 1, (query_param->lastcomp+1)*sizeof(bool));
+  query_param->comps = (bool *)calloc( 1, (OPJ_SIZE_T)(query_param->lastcomp+1)*sizeof(bool));
 
   for( i=start; i<=stop; i++)
     query_param->comps[i]=true;
