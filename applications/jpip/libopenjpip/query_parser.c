@@ -145,7 +145,7 @@ query_param_t * parse_query( char *query_string)
 
       else if( strcasecmp( fieldname, "len") == 0){
 	sscanf( fieldval, "%d", &query_param->len);
-	if( query_param->len = 2000) /* for kakadu client*/
+	if( query_param->len == 2000) /* for kakadu client*/
 	  strncpy( query_param->box_type[0], "ftyp", 4);
       }
     }
