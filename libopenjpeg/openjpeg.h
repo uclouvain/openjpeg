@@ -644,7 +644,7 @@ typedef struct opj_image {
 	/** 'restricted' ICC profile */
 	OPJ_BYTE *icc_profile_buf;
 	/** size of ICC profile */
-	OPJ_INT32 icc_profile_len;
+	OPJ_UINT32 icc_profile_len;
 } opj_image_t;
 
 
