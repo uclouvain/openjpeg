@@ -38,7 +38,7 @@
 typedef struct marker_param{
   codestream_param_t cs; /**< corresponding codestream*/
   Byte2_t code;          /**< marker code*/
-  Byte8_t offset;        /**< offset relative to the start of the codestream ( including the length parameter but not the marker itself)*/
+  OPJ_OFF_T offset;        /**< offset relative to the start of the codestream ( including the length parameter but not the marker itself)*/
   Byte2_t length;        /**< marker segment length*/
 } marker_param_t;
 
@@ -52,7 +52,7 @@ typedef struct marker_param{
  * @param[in] length marker segment length
  * @return           structure of generated marker parameters
  */
-marker_param_t set_marker( codestream_param_t cs, Byte2_t code, Byte8_t offset, Byte2_t length);
+marker_param_t set_marker( codestream_param_t cs, Byte2_t code, OPJ_OFF_T offset, Byte2_t length);
 
 
 /**
@@ -63,7 +63,7 @@ marker_param_t set_marker( codestream_param_t cs, Byte2_t code, Byte8_t offset, 
  * @param[in] size   Byte length
  * @return           fetched code
  */
-Byte_t fetch_marker1byte( marker_param_t marker, long offset);
+Byte_t fetch_marker1byte( marker_param_t marker, OPJ_OFF_T offset);
 
 /**
  * fetch marker content 2-byte big endian Byte codes in file stream
@@ -72,7 +72,7 @@ Byte_t fetch_marker1byte( marker_param_t marker, long offset);
  * @param[in] offset start Byte position in marker
  * @return           fetched code
  */
-Byte2_t fetch_marker2bytebigendian( marker_param_t marker, long offset);
+Byte2_t fetch_marker2bytebigendian( marker_param_t marker, OPJ_OFF_T offset);
 
 /**
  * fetch marker content 4-byte big endian Byte codes in file stream
@@ -81,7 +81,7 @@ Byte2_t fetch_marker2bytebigendian( marker_param_t marker, long offset);
  * @param[in] offset start Byte position in marker
  * @return           fetched code
  */
-Byte4_t fetch_marker4bytebigendian( marker_param_t marker, long offset);
+Byte4_t fetch_marker4bytebigendian( marker_param_t marker, OPJ_OFF_T offset);
 
 
 #endif 	    /* !MARKER_MANAGER_H_ */
