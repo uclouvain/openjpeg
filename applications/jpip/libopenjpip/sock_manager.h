@@ -92,7 +92,7 @@ void * receive_stream( SOCKET connected_socket, int length);
  * @param [in]  stream           data stream
  * @param [in]  length           length of data stream
  */
-void send_stream( SOCKET connected_socket, void *stream, int length);
+void send_stream( SOCKET connected_socket, void *stream, OPJ_SIZE_T length);
 
 /**
  * close socket

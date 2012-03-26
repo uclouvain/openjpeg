@@ -67,6 +67,6 @@ void close_aux_transport( auxtrans_param_t auxtrans);
  * @param[in] length         length of data
  * @param[in] maxlenPerFrame maximum data length to send per frame
  */
-void send_responsedata_on_aux( bool istcp, auxtrans_param_t auxtrans, char cid[], void *data, int length, int maxlenPerFrame);
+void send_responsedata_on_aux( bool istcp, auxtrans_param_t auxtrans, char cid[], void *data, OPJ_SIZE_T length, OPJ_SIZE_T maxlenPerFrame);
 
 #endif /* !AUXTRANS_MANAGER_H_ */

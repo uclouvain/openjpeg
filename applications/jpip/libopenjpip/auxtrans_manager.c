@@ -82,15 +82,15 @@ void close_aux_transport( auxtrans_param_t auxtrans)
 typedef struct aux_response_param{
   char *cid;            /*!< channel ID */
   unsigned char *data;  /*!< sending data */
-  int datalen;          /*!< length of data */
-  int maxlenPerFrame;   /*!< maximum data length to send per frame */
+  OPJ_SIZE_T datalen;          /*!< length of data */
+  OPJ_SIZE_T maxlenPerFrame;   /*!< maximum data length to send per frame */
   SOCKET listensock;    /*!< listeing socket */
 #ifdef _WIN32
   HANDLE hTh;           /*!< thread handle */
 #endif
 } aux_response_param_t;
 
-aux_response_param_t * gene_auxresponse( bool istcp, auxtrans_param_t auxtrans, char cid[], void *data, int datalen, int maxlenPerFrame);
+aux_response_param_t * gene_auxresponse( bool istcp, auxtrans_param_t auxtrans, char cid[], void *data, OPJ_SIZE_T datalen, OPJ_SIZE_T maxlenPerFrame);
 
 void delete_auxresponse( aux_response_param_t **auxresponse);
 
@@ -101,7 +101,7 @@ unsigned __stdcall aux_streaming( void *arg);
 void * aux_streaming( void *arg);
 #endif
 
-void send_responsedata_on_aux( bool istcp, auxtrans_param_t auxtrans, char cid[], void *data, int datalen, int maxlenPerFrame)
+void send_responsedata_on_aux( bool istcp, auxtrans_param_t auxtrans, char cid[], void *data, OPJ_SIZE_T datalen, OPJ_SIZE_T maxlenPerFrame)
 {
   aux_response_param_t *auxresponse;
 #ifdef _WIN32
@@ -133,7 +133,7 @@ void send_responsedata_on_aux( bool istcp, auxtrans_param_t auxtrans, char cid[]
     fprintf( FCGI_stderr, "Error: error in send_responsedata_on_aux(), udp not implemented\n");
 }
 
-aux_response_param_t * gene_auxresponse( bool istcp, auxtrans_param_t auxtrans, char cid[], void *data, int datalen, int maxlenPerFrame)
+aux_response_param_t * gene_auxresponse( bool istcp, auxtrans_param_t auxtrans, char cid[], void *data, OPJ_SIZE_T datalen, OPJ_SIZE_T maxlenPerFrame)
 {
   aux_response_param_t *auxresponse;
 
@@ -175,8 +175,8 @@ void * aux_streaming( void *arg)
 {
   SOCKET connected_socket;
   unsigned char *chunk, *ptr;
-  int maxLenOfBody, remlen, chunklen;
-  const int headlen = 8;
+  OPJ_SIZE_T maxLenOfBody, remlen, chunklen;
+  const OPJ_SIZE_T headlen = 8;
   
   aux_response_param_t *auxresponse = (aux_response_param_t *)arg;
 
@@ -194,25 +194,25 @@ void * aux_streaming( void *arg)
     if( identify_cid( connected_socket, auxresponse->cid, FCGI_stderr)){
       ptr = auxresponse->data;
       while( 0 < remlen){
-	memset( chunk, 0, auxresponse->maxlenPerFrame);
+        memset( chunk, 0, auxresponse->maxlenPerFrame);
 
-	chunklen = remlen<maxLenOfBody?remlen:maxLenOfBody;
-	chunklen += headlen;
-	
-	chunk[0] = (chunklen >> 8) & 0xff;
-	chunk[1] = chunklen & 0xff;
+        chunklen = remlen<maxLenOfBody?remlen:maxLenOfBody;
+        chunklen += headlen;
 
-	memcpy( chunk+headlen, ptr, chunklen-headlen);
+        chunk[0] = (chunklen >> 8) & 0xff;
+        chunk[1] = chunklen & 0xff;
 
-	do{
-	  send_stream( connected_socket, chunk, chunklen);
-	}while( !recv_ack( connected_socket, chunk));
+        memcpy( chunk+headlen, ptr, chunklen-headlen);
 
-	remlen -= maxLenOfBody;
-	ptr += maxLenOfBody;
+        do{
+          send_stream( connected_socket, chunk, chunklen);
+        }while( !recv_ack( connected_socket, chunk));
+
+        remlen -= maxLenOfBody;
+        ptr += maxLenOfBody;
       }
       if( close_socket( connected_socket) != 0)
-	perror("close");
+        perror("close");
       break;
     }
   }

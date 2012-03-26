@@ -97,7 +97,7 @@ SOCKET accept_socket( SOCKET listening_socket)
   return accept( listening_socket, (struct sockaddr *)&peer_sin, &addrlen);
 }
 
-void send_stream( SOCKET connected_socket, void *stream, int length)
+void send_stream( SOCKET connected_socket, void *stream, OPJ_SIZE_T length)
 {
   char *ptr = (char*)stream;
   int remlen = length;
