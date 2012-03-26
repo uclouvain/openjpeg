@@ -36,7 +36,7 @@
 /** box parameters*/
 typedef struct box_param{
   int fd;                 /**< file descriptor*/
-  Byte8_t offset;         /**< byte position of the whole Box (LBox) in the file*/
+  OPJ_OFF_T offset;         /**< byte position of the whole Box (LBox) in the file*/
   Byte_t  headlen;        /**< header length  8 or 16*/
   Byte8_t length;         /**< length of the whole Box*/
   char    type[4];        /**< type of information in the DBox*/
@@ -66,7 +66,7 @@ boxlist_param_t * gene_boxlist(void);
  * @param[in]  length length of the decomposing region
  * @return            pointer to the generated boxlist
  */
-boxlist_param_t * get_boxstructure( int fd, Byte8_t offset, Byte8_t length);
+boxlist_param_t * get_boxstructure( int fd, OPJ_OFF_T offset, OPJ_SIZE_T length);
 
 
 /**
@@ -76,7 +76,7 @@ boxlist_param_t * get_boxstructure( int fd, Byte8_t offset, Byte8_t length);
  * @param[in] offset Box offset
  * @return           pointer to the structure of generate box parameters
  */
-box_param_t * gene_boxbyOffset( int fd, Byte8_t offset);
+box_param_t * gene_boxbyOffset( int fd, OPJ_OFF_T offset);
 
 
 /**
@@ -86,7 +86,7 @@ box_param_t * gene_boxbyOffset( int fd, Byte8_t offset);
  * @param[in] offset Box offset of the whole stream
  * @return           pointer to the structure of generate box parameters
  */
-box_param_t * gene_boxbyOffinStream( Byte_t *stream, Byte8_t offset);
+box_param_t * gene_boxbyOffinStream( Byte_t *stream, OPJ_OFF_T offset);
 
 /**
  * generate(search) box from JP2 file
@@ -97,7 +97,7 @@ box_param_t * gene_boxbyOffinStream( Byte_t *stream, Byte8_t offset);
  * @param[in] TBox   Box Type
  * @return           pointer to the structure of generate/found box parameters
  */
-box_param_t * gene_boxbyType( int fd, Byte8_t offset, Byte8_t length, const char TBox[]);
+box_param_t * gene_boxbyType( int fd, OPJ_OFF_T offset, OPJ_SIZE_T length, const char TBox[]);
 
 /**
  * generate(search) box from code stream
@@ -108,7 +108,7 @@ box_param_t * gene_boxbyType( int fd, Byte8_t offset, Byte8_t length, const char
  * @param[in] TBox   Box Type
  * @return           pointer to the structure of generate/found box parameters
  */
-box_param_t * gene_boxbyTypeinStream( Byte_t *stream, Byte8_t offset, Byte8_t length, const char TBox[]);
+box_param_t * gene_boxbyTypeinStream( Byte_t *stream, OPJ_OFF_T offset, OPJ_SIZE_T length, const char TBox[]);
 
 /**
  * generate child box from JP2 file at the given offset
@@ -117,7 +117,7 @@ box_param_t * gene_boxbyTypeinStream( Byte_t *stream, Byte8_t offset, Byte8_t le
  * @param[in] offset   offset from DBox first byte of superbox
  * @return             pointer to the structure of generate box parameters
  */
-box_param_t * gene_childboxbyOffset( box_param_t *superbox, Byte8_t offset);
+box_param_t * gene_childboxbyOffset( box_param_t *superbox, OPJ_OFF_T offset);
 
 /**
  * generate(search) box from JP2 file
@@ -127,7 +127,7 @@ box_param_t * gene_childboxbyOffset( box_param_t *superbox, Byte8_t offset);
  * @param[in] TBox     Box Type
  * @return             pointer to the structure of generate/found box parameters
  */
-box_param_t * gene_childboxbyType( box_param_t *superbox, Byte8_t offset, const char TBox[]);
+box_param_t * gene_childboxbyType( box_param_t *superbox, OPJ_OFF_T offset, const char TBox[]);
 
 /**
  * get DBox offset
@@ -135,7 +135,7 @@ box_param_t * gene_childboxbyType( box_param_t *superbox, Byte8_t offset, const 
  * @param[in] box box pointer
  * @return        DBox offset (byte position) in the file
  */
-Byte8_t get_DBoxoff( box_param_t *box);
+OPJ_OFF_T get_DBoxoff( box_param_t *box);
 
 
 /**
@@ -144,7 +144,7 @@ Byte8_t get_DBoxoff( box_param_t *box);
  * @param[in] box box pointer
  * @return        DBox length ( content length)
  */
-Byte8_t get_DBoxlen( box_param_t *box);
+OPJ_SIZE_T get_DBoxlen( box_param_t *box);
 
 
 /**
@@ -164,7 +164,7 @@ Byte_t * fetch_headbytes( box_param_t *box);
  * @param[in] size   Byte length
  * @return           pointer to the fetched data
  */
-Byte_t * fetch_DBoxbytes( box_param_t *box, long offset, int size);
+Byte_t * fetch_DBoxbytes( box_param_t *box, OPJ_OFF_T offset, OPJ_SIZE_T size);
 
 /**
  * fetch DBox (Box Contents) 1-byte Byte codes in file stream
@@ -173,7 +173,7 @@ Byte_t * fetch_DBoxbytes( box_param_t *box, long offset, int size);
  * @param[in] offset start Byte position in DBox
  * @return           fetched code
  */
-Byte_t fetch_DBox1byte( box_param_t *box, long offset);
+Byte_t fetch_DBox1byte( box_param_t *box, OPJ_OFF_T offset);
 
 /**
  * fetch DBox (Box Contents) 2-byte big endian Byte codes in file stream
@@ -182,7 +182,7 @@ Byte_t fetch_DBox1byte( box_param_t *box, long offset);
  * @param[in] offset start Byte position in DBox
  * @return           fetched code
  */
-Byte2_t fetch_DBox2bytebigendian( box_param_t *box, long offset);
+Byte2_t fetch_DBox2bytebigendian( box_param_t *box, OPJ_OFF_T offset);
 
 /**
  * fetch DBox (Box Contents) 4-byte big endian Byte codes in file stream
@@ -191,7 +191,7 @@ Byte2_t fetch_DBox2bytebigendian( box_param_t *box, long offset);
  * @param[in] offset start Byte position in DBox
  * @return           fetched code
  */
-Byte4_t fetch_DBox4bytebigendian( box_param_t *box, long offset);
+Byte4_t fetch_DBox4bytebigendian( box_param_t *box, OPJ_OFF_T offset);
 
 /**
  * fetch DBox (Box Contents) 8-byte big endian Byte codes in file stream
@@ -200,7 +200,7 @@ Byte4_t fetch_DBox4bytebigendian( box_param_t *box, long offset);
  * @param[in] offset start Byte position in DBox
  * @return           fetched code
  */
-Byte8_t fetch_DBox8bytebigendian( box_param_t *box, long offset);
+Byte8_t fetch_DBox8bytebigendian( box_param_t *box, OPJ_OFF_T offset);
 
 
 /**
@@ -242,7 +242,7 @@ void delete_box_in_list( box_param_t **box, boxlist_param_t *boxlist);
  * @param[in,out] type    box type
  * @param[in]     boxlist box list pointer
  */
-void delete_box_in_list_by_type( char type[], boxlist_param_t *boxlist);
+void delete_box_in_list_by_type( const char type[], boxlist_param_t *boxlist);
 
 
 /**

@@ -45,7 +45,7 @@
 #endif /*SERVER*/
 
 
-boxheader_param_t * gene_boxheader( int fd, Byte8_t offset)
+boxheader_param_t * gene_boxheader( int fd, OPJ_OFF_T offset)
 {
   Byte8_t boxlen;
   Byte_t headlen;
@@ -71,9 +71,9 @@ boxheader_param_t * gene_boxheader( int fd, Byte8_t offset)
   return boxheader;
 }
 
-boxheader_param_t * gene_childboxheader( box_param_t *superbox, Byte8_t offset)
+boxheader_param_t * gene_childboxheader( box_param_t *superbox, OPJ_OFF_T offset)
 {
-  return gene_boxheader( superbox->fd, get_DBoxoff( superbox)+offset);
+  return gene_boxheader( superbox->fd, get_DBoxoff(superbox)+offset);
 }
 
 void print_boxheader( boxheader_param_t *boxheader)

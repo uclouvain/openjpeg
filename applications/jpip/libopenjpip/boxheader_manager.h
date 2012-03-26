@@ -50,7 +50,7 @@ typedef struct boxheader_param{
  * @param[in] offset Box offset
  * @return           pointer to the structure of generate box header parameters
  */
-boxheader_param_t * gene_boxheader( int fd, Byte8_t offset);
+boxheader_param_t * gene_boxheader( int fd, OPJ_OFF_T offset);
 
 /**
  * generate a child box header at the given offset
@@ -59,7 +59,7 @@ boxheader_param_t * gene_boxheader( int fd, Byte8_t offset);
  * @param[in] offset   offset from DBox first byte of superbox
  * @return             pointer to the structure of generate box header parameters
  */
-boxheader_param_t * gene_childboxheader( box_param_t *superbox, Byte8_t offset);
+boxheader_param_t * gene_childboxheader( box_param_t *superbox, OPJ_OFF_T offset);
 
 /**
  * print box header parameters
