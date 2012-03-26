@@ -31,6 +31,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <assert.h>
+#include <limits.h>
 #include "jp2k_decoder.h"
 #include "openjpeg.h"
 
@@ -158,8 +160,8 @@ void info_callback(const char *msg, void *client_data) {
 
 Byte_t * imagetopnm(opj_image_t *image, ihdrbox_param_t **ihdrbox)
 {
-  int adjustR, adjustG=0, adjustB=0;
-  int datasize;
+  OPJ_UINT32 adjustR, adjustG=0, adjustB=0;
+  OPJ_SIZE_T datasize;
   Byte_t *pix=NULL, *ptr=NULL;
   OPJ_UINT32 i;
   
@@ -180,8 +182,10 @@ Byte_t * imagetopnm(opj_image_t *image, ihdrbox_param_t **ihdrbox)
     *ihdrbox = (ihdrbox_param_t *)malloc( sizeof(ihdrbox_param_t));
     (*ihdrbox)->width  = image->comps[0].w;
     (*ihdrbox)->height = image->comps[0].h;
-    (*ihdrbox)->bpc    = image->comps[0].prec;
-    (*ihdrbox)->nc     = image->numcomps;
+    assert( image->comps[0].prec < 256 );
+    (*ihdrbox)->bpc    = (Byte_t)image->comps[0].prec;
+    assert( image->numcomps < USHRT_MAX );
+    (*ihdrbox)->nc     = (Byte2_t)image->numcomps;
   }
   
   datasize = (image->numcomps)*(image->comps[0].w)*(image->comps[0].h);
