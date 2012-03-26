@@ -77,8 +77,8 @@ imgreg_param_t map_viewin2imgreg( const int fx,    const int fy,
     imgreg.sy = imgreg.fy;
   }
   else{
-    px = ceil((double)((rx+rw)*imgreg.fx)/(double)fx);
-    py = ceil((double)((ry+rh)*imgreg.fy)/(double)fy);
+    px = (int)ceil((double)((rx+rw)*imgreg.fx)/(double)fx);
+    py = (int)ceil((double)((ry+rh)*imgreg.fy)/(double)fy);
     
     if( imgreg.fx < px)
       px = imgreg.fx;
@@ -113,10 +113,10 @@ void find_level( int maxlev, int *lev, int *fx, int *fy, int *xmin, int *ymin, i
   }
   else if( *lev < maxlev-1 && ( *fx < xwidth || *fy < ywidth)) {
     /* Simulate the ceil function. */
-    *xmin = ceil((double)*xmin/(double)2.0);
-    *ymin = ceil((double)*ymin/(double)2.0);
-    *xmax = ceil((double)*xmax/(double)2.0);
-    *ymax = ceil((double)*ymax/(double)2.0);
+    *xmin = (int)ceil((double)*xmin/(double)2.0);
+    *ymin = (int)ceil((double)*ymin/(double)2.0);
+    *xmax = (int)ceil((double)*xmax/(double)2.0);
+    *ymax = (int)ceil((double)*ymax/(double)2.0);
     
     (*lev) ++;
     find_level ( maxlev, lev, fx, fy, xmin, ymin, xmax, ymax);
