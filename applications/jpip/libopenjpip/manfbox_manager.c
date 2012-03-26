@@ -47,14 +47,14 @@ manfbox_param_t * gene_manfbox( box_param_t *box)
   manfbox_param_t *manf;   /* manifest parameters */
   boxheader_param_t *bh;   /* current box pointer */
   boxheader_param_t *last; /* last boxheader pointer of the list */
-  Byte8_t pos;                 /* current position in manf_box contents; */
+  OPJ_OFF_T pos;                 /* current position in manf_box contents; */
   
   manf = ( manfbox_param_t *)malloc( sizeof( manfbox_param_t));
 
   pos = 0;
   manf->first = last = NULL;
 
-  while( pos < get_DBoxlen( box)){
+  while( (OPJ_SIZE_T)pos < get_DBoxlen( box)){
 
     bh = gene_childboxheader( box, pos);
     pos += bh->headlen;
