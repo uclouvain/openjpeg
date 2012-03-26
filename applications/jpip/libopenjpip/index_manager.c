@@ -79,7 +79,7 @@ index_param_t * parse_jp2file( int fd)
   boxlist_param_t *toplev_boxlist;
   Byte8_t filesize;
 
-  if( !(filesize = get_filesize( fd)))
+  if( !(filesize = (Byte8_t)get_filesize( fd)))
     return NULL;
   
   if( !(toplev_boxlist = get_boxstructure( fd, 0, filesize))){
@@ -225,7 +225,7 @@ bool check_JP2boxidx( boxlist_param_t *toplev_boxlist)
   prxy = gene_childboxbyType( fidx, 0, "prxy");
 
   off = fetch_DBox8bytebigendian( iptr, 0);
-  if( off != fidx->offset)
+  if( off != (Byte8_t)fidx->offset)
     fprintf( FCGI_stderr, "Reference File Index box offset in Index Finder box not correct\n");
 
   len = fetch_DBox8bytebigendian( iptr, 8);
@@ -234,7 +234,7 @@ bool check_JP2boxidx( boxlist_param_t *toplev_boxlist)
 
   pos = 0;
   ooff = fetch_DBox8bytebigendian( prxy, pos);
-  if( ooff != jp2c->offset)
+  if( ooff != (Byte8_t)jp2c->offset)
     fprintf( FCGI_stderr, "Reference jp2c offset in prxy box not correct\n");
   pos += 8;
 
@@ -252,7 +252,7 @@ bool check_JP2boxidx( boxlist_param_t *toplev_boxlist)
   pos += 1;
   
   ioff = fetch_DBox8bytebigendian( prxy, pos);
-  if( ioff != cidx->offset)
+  if( ioff != (Byte8_t)cidx->offset)
     fprintf( FCGI_stderr, "Reference cidx offset in prxy box not correct\n");
   pos += 8;
 
@@ -390,7 +390,7 @@ bool set_cptrdata( box_param_t *cidx_box, index_param_t *jp2idx)
     return false;  
   }
     
-  jp2idx->offset = fetch_DBox8bytebigendian( box, 4);
+  jp2idx->offset = (OPJ_OFF_T)fetch_DBox8bytebigendian( box, 4);
   jp2idx->length = fetch_DBox8bytebigendian( box, 12);
 
   free( box);
@@ -478,7 +478,8 @@ bool set_thixdata( box_param_t *cidx_box, index_param_t *jp2idx)
   manfbox_param_t *manf;
   boxheader_param_t *ptr;
   mhixbox_param_t *mhix;
-  Byte8_t pos, mhixseqoff;
+  Byte8_t pos;
+  OPJ_OFF_T mhixseqoff;
   Byte2_t tile_no;
   
   if( !(thix_box = gene_boxbyType( cidx_box->fd, get_DBoxoff( cidx_box), get_DBoxlen( cidx_box), "thix"))){
@@ -494,13 +495,13 @@ bool set_thixdata( box_param_t *cidx_box, index_param_t *jp2idx)
   
   manf = gene_manfbox( manf_box);
   ptr = manf->first;
-  mhixseqoff = manf_box->offset+manf_box->length;
+  mhixseqoff = manf_box->offset+(OPJ_OFF_T)manf_box->length;
   pos = 0;
   tile_no = 0;
   jp2idx->tileheader = (mhixbox_param_t **)malloc( jp2idx->SIZ.XTnum*jp2idx->SIZ.YTnum*sizeof(mhixbox_param_t *));
     
   while( ptr){
-    if( !(mhix_box = gene_boxbyType( thix_box->fd, mhixseqoff+pos, get_DBoxlen( thix_box)-manf_box->length-pos, "mhix"))){
+    if( !(mhix_box = gene_boxbyType( thix_box->fd, mhixseqoff+(OPJ_OFF_T)pos, get_DBoxlen( thix_box)-manf_box->length-pos, "mhix"))){
       fprintf( FCGI_stderr, "Error: mhix box not present in thix box\n");
       delete_manfbox( &manf);
       free( manf_box);
@@ -529,7 +530,7 @@ bool set_ppixdata( box_param_t *cidx_box, index_param_t *jp2idx)
   manfbox_param_t *manf;     /**< manf*/
   boxheader_param_t *bh;     /**< box headers*/
   faixbox_param_t *faix;     /**< faix*/
-  Byte8_t inbox_offset;
+  OPJ_OFF_T inbox_offset;
   int comp_idx;
 
   if( !(ppix_box = gene_boxbyType( cidx_box->fd, get_DBoxoff( cidx_box), get_DBoxlen( cidx_box), "ppix"))){
@@ -548,7 +549,7 @@ bool set_ppixdata( box_param_t *cidx_box, index_param_t *jp2idx)
 
   manf = gene_manfbox( manf_box);
   bh = search_boxheader( "faix", manf);
-  inbox_offset = manf_box->offset + manf_box->length;
+  inbox_offset = manf_box->offset + (OPJ_OFF_T)manf_box->length;
   
   free( manf_box);
 
@@ -568,7 +569,7 @@ bool set_ppixdata( box_param_t *cidx_box, index_param_t *jp2idx)
     faix = gene_faixbox( faix_box);
     jp2idx->precpacket[comp_idx] = faix;
 
-    inbox_offset = faix_box->offset + faix_box->length;
+    inbox_offset = faix_box->offset + (OPJ_OFF_T)faix_box->length;
     free( faix_box);   
   }
   
@@ -576,7 +577,6 @@ bool set_ppixdata( box_param_t *cidx_box, index_param_t *jp2idx)
 
   return true;
 }
-
 
 bool set_SIZmkrdata( markeridx_param_t *sizmkidx, codestream_param_t codestream, SIZmarker_param_t *SIZ)
 {
@@ -634,13 +634,13 @@ bool set_CODmkrdata( markeridx_param_t *codmkidx, codestream_param_t codestream,
   COD->numOfdecomp = fetch_marker1byte( codmkr, 7);
   
   if(COD->Scod & 0x01){
-    COD->XPsiz = (Byte4_t *)malloc( (COD->numOfdecomp+1)*sizeof(Byte4_t));
-    COD->YPsiz = (Byte4_t *)malloc( (COD->numOfdecomp+1)*sizeof(Byte4_t));
+    COD->XPsiz = (Byte4_t *)malloc( (OPJ_SIZE_T)(COD->numOfdecomp+1)*sizeof(Byte4_t));
+    COD->YPsiz = (Byte4_t *)malloc( (OPJ_SIZE_T)(COD->numOfdecomp+1)*sizeof(Byte4_t));
 
     for( i=0; i<=COD->numOfdecomp; i++){
       /*precinct size*/
-      COD->XPsiz[i] = pow( 2, fetch_marker1byte( codmkr, 12+i) & 0x0F);
-      COD->YPsiz[i] = pow( 2,(fetch_marker1byte( codmkr, 12+i) & 0xF0) >> 4);
+      COD->XPsiz[i] = (Byte2_t)pow( 2, fetch_marker1byte( codmkr, 12+i) & 0x0F);
+      COD->YPsiz[i] = (Byte2_t)pow( 2,(fetch_marker1byte( codmkr, 12+i) & 0xF0) >> 4);
     }
   }
   else{
@@ -684,8 +684,8 @@ range_param_t get_tile_range( Byte4_t Osiz, Byte4_t siz, Byte4_t TOsiz, Byte4_t 
   range.maxvalue = min( siz,  TOsiz+(tile_XYid+1)*Tsiz);
 
   for( n=0; n<level; n++){
-    range.minvalue = ceil(range.minvalue/2.0);
-    range.maxvalue = ceil(range.maxvalue/2.0);
+    range.minvalue = (Byte4_t)ceil(range.minvalue/2.0);
+    range.maxvalue = (Byte4_t)ceil(range.maxvalue/2.0);
   }
   return range;
 }

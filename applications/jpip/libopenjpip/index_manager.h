@@ -81,7 +81,7 @@ typedef struct CODmarker_param{
 /** index parameters*/
 typedef struct index_param{
   metadatalist_param_t *metadatalist; /**< metadata-bin list*/
-  Byte8_t offset;                     /**< codestream offset*/
+  OPJ_OFF_T offset;                     /**< codestream offset*/
   Byte8_t length;                     /**< codestream length */
   Byte8_t mhead_length;               /**< main header length  */
   SIZmarker_param_t SIZ;              /**< SIZ marker information*/

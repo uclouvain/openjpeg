@@ -38,7 +38,7 @@
 typedef struct markeridx_param{
   Byte2_t code;                 /**< marker code*/
   Byte2_t num_remain;           /**< remining number of the same marker index segments listed immediately*/
-  Byte8_t offset;               /**< offset relative to the start of the*/
+  OPJ_OFF_T offset;               /**< offset relative to the start of the*/
 			                          /**codestream ( including the length*/
 			                          /**parameter but not the marker itself)*/
   Byte2_t length;               /**< marker segment length*/
