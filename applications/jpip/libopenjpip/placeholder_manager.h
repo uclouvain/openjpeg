@@ -84,7 +84,7 @@ void delete_placeholderlist( placeholderlist_param_t **list);
  * @param[in] origID metadata-bin ID of the bin containing the contents of the original box
  * @return           pointer to the generated placeholder
  */
-placeholder_param_t * gene_placeholder( box_param_t *box, int origID);
+placeholder_param_t * gene_placeholder( box_param_t *box, Byte8_t origID);
 
 
 /**

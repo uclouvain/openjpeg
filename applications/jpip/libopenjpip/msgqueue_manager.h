@@ -54,7 +54,7 @@ typedef struct message_param{
   Byte8_t bin_offset;         /**< offset of the data in this message from the start of the data-bin*/
   Byte8_t length;             /**< message byte length*/
   Byte8_t aux;                /**<*/
-  Byte8_t res_offset;         /**< offset in the resource*/
+  OPJ_OFF_T res_offset;         /**< offset in the resource*/
   placeholder_param_t *phld;  /**< placeholder pointer in index*/
   struct message_param *next; /**< pointer to the next message*/
 } message_param_t;
@@ -121,7 +121,7 @@ void enqueue_tileheader( int tile_id, msgqueue_param_t *msgqueue);
  * @param[in]     level    decomposition level
  * @param[in,out] msgqueue message queue pointer
  */
-void enqueue_tile( int tile_id, int level, msgqueue_param_t *msgqueue);
+void enqueue_tile( Byte4_t tile_id, int level, msgqueue_param_t *msgqueue);
 
 /**
  * enqueue precinct data-bin into message queue

@@ -74,7 +74,7 @@ void delete_placeholderlist( placeholderlist_param_t **list)
   free( *list);
 }
 
-placeholder_param_t * gene_placeholder( box_param_t *box, int origID)
+placeholder_param_t * gene_placeholder( box_param_t *box, Byte8_t origID)
 {
   placeholder_param_t *placeholder;
 
@@ -85,7 +85,7 @@ placeholder_param_t * gene_placeholder( box_param_t *box, int origID)
   placeholder->OrigID = origID;
   placeholder->OrigBH = fetch_headbytes( box);
   placeholder->OrigBHlen = box->headlen;
-  placeholder->LBox = 20+box->headlen;
+  placeholder->LBox = 20+(Byte4_t)box->headlen;
   placeholder->next = NULL;
 
   return placeholder;

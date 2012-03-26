@@ -180,7 +180,7 @@ void enqueue_tileheader( int tile_id, msgqueue_param_t *msgqueue)
   }
 }
 
-void enqueue_tile( int tile_id, int level, msgqueue_param_t *msgqueue)
+void enqueue_tile( Byte4_t tile_id, int level, msgqueue_param_t *msgqueue)
 {
   cachemodel_param_t *cachemodel;
   target_param_t *target;
@@ -682,7 +682,7 @@ placeholder_param_t * parse_phld( Byte_t *datastream, Byte8_t metalength)
   strcpy( phld->TBox, "phld");
   phld->Flags = big4( datastream+8);
   phld->OrigID = big8( datastream+12);
-  phld->OrigBHlen = metalength - 20;
+  phld->OrigBHlen = (Byte_t)(metalength - 20);
   phld->OrigBH = (Byte_t *)malloc(phld->OrigBHlen);
   memcpy( phld->OrigBH, datastream+20, phld->OrigBHlen);
   phld->next = NULL;

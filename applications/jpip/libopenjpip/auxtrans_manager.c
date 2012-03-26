@@ -56,7 +56,7 @@ auxtrans_param_t init_aux_transport( int tcp_auxport, int udp_auxport)
   auxtrans.udpauxport = udp_auxport;
 
   if( 49152 <= tcp_auxport && tcp_auxport <= 65535)
-    auxtrans.tcplistensock = open_listeningsocket( tcp_auxport);
+    auxtrans.tcplistensock = open_listeningsocket( (uint16_t)tcp_auxport);
   else
     auxtrans.tcplistensock = -1;
 

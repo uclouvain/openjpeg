@@ -360,27 +360,30 @@ void enqueue_precincts( int xmin, int xmax, int ymin, int ymax, int tile_id, int
   /* MM: shouldnt xmin/xmax be Byte4_t instead ? */
   if( xmin < 0 || xmax < 0 || ymin < 0 || ymax < 0)
     return;
+  /* MM: I think the API should not really be int should it ? */
+  if( tile_id < 0 )
+    return;
 
   for( c=0; c<codeidx->SIZ.Csiz; c++)
     if( lastcomp == -1 /*all*/ || ( c<=lastcomp && comps[c])){
       seq_id = 0;
       for( res_lev=0, dec_lev=codeidx->COD.numOfdecomp; dec_lev>=level; res_lev++, dec_lev--){
 	
-	XTsiz = get_tile_XSiz( codeidx->SIZ, tile_id, dec_lev);
-	YTsiz = get_tile_YSiz( codeidx->SIZ, tile_id, dec_lev);
+	XTsiz = get_tile_XSiz( codeidx->SIZ, (Byte4_t)tile_id, dec_lev);
+	YTsiz = get_tile_YSiz( codeidx->SIZ, (Byte4_t)tile_id, dec_lev);
 	
 	XPsiz = ( codeidx->COD.Scod & 0x01) ? codeidx->COD.XPsiz[ res_lev] : XTsiz;
 	YPsiz = ( codeidx->COD.Scod & 0x01) ? codeidx->COD.YPsiz[ res_lev] : YTsiz;
 	  
 	for( u=0; u<ceil((double)YTsiz/(double)YPsiz); u++){
-	  yminP = u*YPsiz;
-	  ymaxP = (u+1)*YPsiz-1;
+	  yminP = (Byte4_t)u*YPsiz;
+	  ymaxP = (Byte4_t)(u+1)*YPsiz-1;
 	  if( YTsiz <= ymaxP)
 	    ymaxP = YTsiz-1;
 	  
 	  for( v=0; v<ceil((double)XTsiz/(double)XPsiz); v++, seq_id++){
-	    xminP = v*XPsiz;
-	    xmaxP = (v+1)*XPsiz-1;
+	    xminP = (Byte4_t)v*XPsiz;
+	    xmaxP = (Byte4_t)(v+1)*XPsiz-1;
 	    if( XTsiz <= xmaxP)
 	      xmaxP = XTsiz-1;
 	    
@@ -412,14 +415,16 @@ void enqueue_allprecincts( int tile_id, int level, int lastcomp, bool *comps, in
   Byte4_t XPsiz, YPsiz;
 
   codeidx  = msgqueue->cachemodel->target->codeidx;
+  if( tile_id < 0 )
+    return;
 
   for( c=0; c<codeidx->SIZ.Csiz; c++)
     if( lastcomp == -1 /*all*/ || ( c<=lastcomp && comps[c])){
       seq_id = 0;
       for( res_lev=0, dec_lev=codeidx->COD.numOfdecomp; dec_lev>=level; res_lev++, dec_lev--){
 	
-	XTsiz = get_tile_XSiz( codeidx->SIZ, tile_id, dec_lev);
-	YTsiz = get_tile_YSiz( codeidx->SIZ, tile_id, dec_lev);
+	XTsiz = get_tile_XSiz( codeidx->SIZ, (Byte4_t)tile_id, dec_lev);
+	YTsiz = get_tile_YSiz( codeidx->SIZ, (Byte4_t)tile_id, dec_lev);
 	
 	XPsiz = ( codeidx->COD.Scod & 0x01) ? codeidx->COD.XPsiz[ res_lev] : XTsiz;
 	YPsiz = ( codeidx->COD.Scod & 0x01) ? codeidx->COD.YPsiz[ res_lev] : YTsiz;

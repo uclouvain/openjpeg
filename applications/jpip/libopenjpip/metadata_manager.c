@@ -33,6 +33,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
+#include <assert.h>
 
 #ifdef SERVER
 #include "fcgi_stdio.h"
@@ -64,7 +66,7 @@ metadatalist_param_t * const_metadatalist( int fd)
   box_param_t *box, *next;
   placeholderlist_param_t *phldlist;
   placeholder_param_t *phld;
-  int idx;
+  Byte8_t idx;
   Byte8_t filesize;
 
   if(!(filesize = (Byte8_t)get_filesize( fd)))
@@ -120,7 +122,7 @@ void delete_metadatalist( metadatalist_param_t **list)
   free( *list);
 }
 
-metadata_param_t * gene_metadata( int idx, boxlist_param_t *boxlist, placeholderlist_param_t *phldlist, boxcontents_param_t *boxcontents)
+metadata_param_t * gene_metadata( Byte8_t idx, boxlist_param_t *boxlist, placeholderlist_param_t *phldlist, boxcontents_param_t *boxcontents)
 {
   metadata_param_t *bin;
   
@@ -194,7 +196,7 @@ boxcontents_param_t * gene_boxcontents( OPJ_OFF_T offset, OPJ_SIZE_T length)
   return contents;
 }
 
-metadata_param_t * search_metadata( int idx, metadatalist_param_t *list)
+metadata_param_t * search_metadata( Byte8_t idx, metadatalist_param_t *list)
 { 
   metadata_param_t *found;
 
@@ -227,7 +229,7 @@ Byte8_t search_metadataidx( char boxtype[4], metadatalist_param_t *list)
       box_param_t *box = ptr->boxlist->first;
       while( box){
 	if( strncmp ( boxtype, box->type, 4) == 0)
-	  return (Byte8_t)ptr->idx;
+	  return ptr->idx;
 	box = box->next;
       }
     }
