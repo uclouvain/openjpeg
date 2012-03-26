@@ -33,6 +33,7 @@
 
 #include "bool.h"
 #include "byte_manager.h"
+#include "opj_stdint.h"
 
 #ifdef _WIN32
 #include <winsock.h>
@@ -48,7 +49,7 @@ typedef int SOCKET;
  * @param  port opening port number
  * @return      new socket
  */
-SOCKET open_listeningsocket( int port);
+SOCKET open_listeningsocket( uint16_t port);
 
 /**
  * accept a new connection to the listenning socket
@@ -83,7 +84,7 @@ char * receive_string( SOCKET connected_socket);
  * @param [in]  length           length of the receiving stream
  * @return                       pointer to the data stream (memory allocated), NULL if failed
  */
-void * receive_stream( SOCKET connected_socket, int length);
+void * receive_stream( SOCKET connected_socket, OPJ_SIZE_T length);
 
 /**
  * send data stream to client

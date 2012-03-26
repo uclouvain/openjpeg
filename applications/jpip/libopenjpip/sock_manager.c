@@ -51,7 +51,7 @@
 #define logstream stderr
 #endif /*SERVER*/
 
-SOCKET open_listeningsocket( int port)
+SOCKET open_listeningsocket( uint16_t port)
 {
   SOCKET listening_socket;
   struct sockaddr_in sin;
@@ -100,36 +100,36 @@ SOCKET accept_socket( SOCKET listening_socket)
 void send_stream( SOCKET connected_socket, void *stream, OPJ_SIZE_T length)
 {
   char *ptr = (char*)stream;
-  int remlen = length;
+  OPJ_SIZE_T remlen = length;
 
   while( remlen > 0){
-    int sentlen = send( connected_socket, ptr, remlen, 0);
+    ssize_t sentlen = send( connected_socket, ptr, remlen, 0);
     if( sentlen == -1){
       fprintf( FCGI_stderr, "sending stream error\n");
       break;
     }
-    remlen = remlen - sentlen;
+    remlen = remlen - (OPJ_SIZE_T)sentlen;
     ptr = ptr + sentlen;
   }
 }
 
-void * receive_stream( SOCKET connected_socket, int length)
+void * receive_stream( SOCKET connected_socket, OPJ_SIZE_T length)
 {
   char *stream, *ptr;
-  int remlen, redlen;
+  OPJ_SIZE_T remlen;
 
   ptr = stream = malloc( length);
   remlen = length;
 
   while( remlen > 0){
-    redlen = recv( connected_socket, ptr, remlen, 0);
+    ssize_t redlen = recv( connected_socket, ptr, remlen, 0);
     if( redlen == -1){
       fprintf( FCGI_stderr, "receive stream error\n");
       free( stream);
       stream = NULL;
       break;
     }
-    remlen -= redlen;
+    remlen -= (OPJ_SIZE_T)redlen;
     ptr = ptr + redlen;
   }
   return stream;
@@ -139,7 +139,7 @@ int receive_line(SOCKET connected_socket, char *p)
 {
   int len = 0;
   while (1){
-    int ret;
+    ssize_t ret;
     ret = recv( connected_socket, p, 1, 0);
     if ( ret == -1 ){
       perror("receive");
@@ -164,6 +164,8 @@ char * receive_string( SOCKET connected_socket)
 {
   char buf[BUF_LEN];
   
+  /* MM FIXME: there is a nasty bug here, size of buf if BUF_LEN which is never
+  indicated to downstream receive_line */
   receive_line( connected_socket, buf);
     
   return strdup(buf);
