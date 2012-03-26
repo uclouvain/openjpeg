@@ -67,7 +67,7 @@ metadatalist_param_t * const_metadatalist( int fd)
   int idx;
   Byte8_t filesize;
 
-  if(!(filesize = get_filesize( fd)))
+  if(!(filesize = (Byte8_t)get_filesize( fd)))
     return NULL;
   
   if( !(toplev_boxlist = get_boxstructure( fd, 0, filesize))){
@@ -182,7 +182,7 @@ void print_allmetadata( metadatalist_param_t *list)
   }
 }
 
-boxcontents_param_t * gene_boxcontents( Byte8_t offset, Byte8_t length)
+boxcontents_param_t * gene_boxcontents( OPJ_OFF_T offset, OPJ_SIZE_T length)
 {
   boxcontents_param_t *contents;
 
@@ -210,8 +210,10 @@ metadata_param_t * search_metadata( int idx, metadatalist_param_t *list)
   return NULL;
 }
 
-int search_metadataidx( char boxtype[4], metadatalist_param_t *list)
+Byte8_t search_metadataidx( char boxtype[4], metadatalist_param_t *list)
 {
+  /* MM FIXME: what is the return type of this function ?
+   Byte8_t or int ? */
   metadata_param_t *ptr;
   int i;
 
@@ -225,7 +227,7 @@ int search_metadataidx( char boxtype[4], metadatalist_param_t *list)
       box_param_t *box = ptr->boxlist->first;
       while( box){
 	if( strncmp ( boxtype, box->type, 4) == 0)
-	  return ptr->idx;
+	  return (Byte8_t)ptr->idx;
 	box = box->next;
       }
     }
@@ -245,5 +247,5 @@ int search_metadataidx( char boxtype[4], metadatalist_param_t *list)
     }
     ptr = ptr->next;
   }
-  return -1;
+  return (Byte8_t)-1;
 }

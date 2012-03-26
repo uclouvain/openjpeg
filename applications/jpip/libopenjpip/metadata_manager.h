@@ -35,7 +35,7 @@
 #include "placeholder_manager.h"
 
 typedef struct boxcontents_param{
-  Byte8_t offset; /**< byte position of the box contents in the file*/
+  OPJ_OFF_T offset; /**< byte position of the box contents in the file*/
   Byte8_t length; /**< length of the box contents*/
 } boxcontents_param_t;
 
@@ -103,7 +103,7 @@ void delete_metadata( metadata_param_t **metadata);
  *
  * @return pointer to the box contents
  */
-boxcontents_param_t * gene_boxcontents( Byte8_t offset, Byte8_t length);
+boxcontents_param_t * gene_boxcontents( OPJ_OFF_T offset, OPJ_SIZE_T length);
 
 /**
  * print metadata-bin parameters
@@ -137,7 +137,7 @@ metadata_param_t * search_metadata( int idx, metadatalist_param_t *list);
  * @param[in] list    metadata-bin list pointer
  * @return            found metadata-bin index, if not found, -1
  */
-int search_metadataidx( char boxtype[4], metadatalist_param_t *list);
+Byte8_t search_metadataidx( char boxtype[4], metadatalist_param_t *list);
 
 
 /**
