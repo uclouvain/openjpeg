@@ -31,6 +31,9 @@
 
 #ifndef __BIO_H
 #define __BIO_H
+
+#include <stddef.h> /* ptrdiff_t */
+
 /** 
 @file bio.h
 @brief Implementation of an individual bit input-output (BIO)
@@ -75,7 +78,7 @@ Number of bytes written.
 @param bio BIO handle
 @return Returns the number of bytes written
 */
-int bio_numbytes(opj_bio_t *bio);
+ptrdiff_t bio_numbytes(opj_bio_t *bio);
 /**
 Init encoder
 @param bio BIO handle

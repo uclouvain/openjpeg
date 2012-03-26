@@ -125,7 +125,7 @@ void bio_destroy(opj_bio_t *bio) {
 	}
 }
 
-int bio_numbytes(opj_bio_t *bio) {
+ptrdiff_t bio_numbytes(opj_bio_t *bio) {
 	return (bio->bp - bio->start);
 }
 
