@@ -141,7 +141,7 @@ void enqueue_precinct( int seq_id, int tile_id, int comp_id, int layers, msgqueu
  * @param[in]     meta_id  metadata-bin id
  * @param[in,out] msgqueue message queue pointer
  */
-void enqueue_metadata( int meta_id, msgqueue_param_t *msgqueue);
+void enqueue_metadata( Byte8_t meta_id, msgqueue_param_t *msgqueue);
 
 
 /**

@@ -290,7 +290,7 @@ void enqueue_box(  int meta_id, boxlist_param_t *boxlist, msgqueue_param_t *msgq
 void enqueue_phld( int meta_id, placeholderlist_param_t *phldlist, msgqueue_param_t *msgqueue, Byte8_t *binOffset);
 void enqueue_boxcontents( int meta_id, boxcontents_param_t *boxcontents, msgqueue_param_t *msgqueue, Byte8_t *binOffset);
 
-void enqueue_metadata( int meta_id, msgqueue_param_t *msgqueue)
+void enqueue_metadata( Byte8_t meta_id, msgqueue_param_t *msgqueue)
 {
   metadatalist_param_t *metadatalist;
   metadata_param_t *metadata;
