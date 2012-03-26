@@ -52,7 +52,7 @@ void handle_JPIPstreamMSG( SOCKET connected_socket, cachelist_param_t *cachelist
 
   fprintf( stderr, "newjpipstream length: %" PRIu64 "\n", newstreamlen);
   
-  parse_JPIPstream( newjpipstream, newstreamlen, *streamlen, msgqueue);
+  parse_JPIPstream( newjpipstream, newstreamlen, (OPJ_OFF_T)*streamlen, msgqueue);
 
   *jpipstream = update_JPIPstream( newjpipstream, newstreamlen, *jpipstream, streamlen);
   free( newjpipstream);

@@ -35,6 +35,8 @@
 #include <sys/stat.h>
 #include <string.h>
 #include <ctype.h>
+#include <assert.h>
+#include <limits.h>
 #ifdef _WIN32
 #include <io.h>
 #else
@@ -138,7 +140,8 @@ void enqueue_mainheader( msgqueue_param_t *msgqueue)
   msg->last_byte = true;
   msg->in_class_id = 0;
   msg->class_id = MAINHEADER_MSG;
-  msg->csn = target->csn;
+  assert( target->csn >= 0 );
+  msg->csn = (Byte8_t)target->csn;
   msg->bin_offset = 0;
   msg->length = codeidx->mhead_length;
   msg->aux = 0; /* non exist*/
@@ -165,13 +168,15 @@ void enqueue_tileheader( int tile_id, msgqueue_param_t *msgqueue)
   if( !cachemodel->th_model[ tile_id]){
     msg = (message_param_t *)malloc( sizeof(message_param_t));
     msg->last_byte = true;
-    msg->in_class_id = tile_id;
+    assert( tile_id >= 0 );
+    msg->in_class_id = (Byte8_t)tile_id;
     msg->class_id = TILE_HEADER_MSG;
-    msg->csn = target->csn;
+    assert( target->csn >= 0 );
+    msg->csn = (Byte8_t)target->csn;
     msg->bin_offset = 0;
     msg->length = codeidx->tileheader[tile_id]->tlen-2; /* SOT marker segment is removed*/
     msg->aux = 0; /* non exist*/
-    msg->res_offset = codeidx->offset + get_elemOff( codeidx->tilepart, 0, tile_id) + 2; /* skip SOT marker seg*/
+    msg->res_offset = codeidx->offset + (OPJ_OFF_T)get_elemOff(codeidx->tilepart, 0, (Byte8_t)tile_id) + 2; /* skip SOT marker seg*/
     msg->phld = NULL;
     msg->next = NULL;
     
@@ -191,7 +196,7 @@ void enqueue_tile( Byte4_t tile_id, int level, msgqueue_param_t *msgqueue)
   faixbox_param_t *tilepart;
   message_param_t *msg;
   Byte8_t binOffset, binLength, class_id;
-  int i;
+  Byte8_t i;
 
   cachemodel = msgqueue->cachemodel;
   target = cachemodel->target;
@@ -203,7 +208,7 @@ void enqueue_tile( Byte4_t tile_id, int level, msgqueue_param_t *msgqueue)
 
   class_id = (numOftparts==1) ? TILE_MSG : EXT_TILE_MSG;
   
-  if( tile_id < 0 || (int)numOftiles <= tile_id){
+  if( /*tile_id < 0 ||*/ numOftiles <= (Byte8_t)tile_id){
     fprintf( FCGI_stderr, "Error, Invalid tile-id %d\n", tile_id);
     return;
   }
@@ -211,20 +216,21 @@ void enqueue_tile( Byte4_t tile_id, int level, msgqueue_param_t *msgqueue)
   tp_model = &cachemodel->tp_model[ tile_id*numOftparts];
 
   binOffset=0;
-  for( i=0; i<(int)numOftparts-level; i++){
+  for( i=0; i<numOftparts-(Byte8_t)level; i++){
     binLength = get_elemLen( tilepart, i, tile_id);
     
     if( !tp_model[i]){
       msg = (message_param_t *)malloc( sizeof(message_param_t));
       
-      msg->last_byte = (i==(int)numOftparts-1);
+      msg->last_byte = (i==numOftparts-1);
       msg->in_class_id = tile_id;
       msg->class_id = class_id;
-      msg->csn = target->csn;
+      assert( target->csn >= 0 );
+      msg->csn = (Byte8_t)target->csn;
       msg->bin_offset = binOffset;
       msg->length = binLength;
       msg->aux = numOftparts-i;
-      msg->res_offset = codeidx->offset+get_elemOff( tilepart, i, tile_id)/*-1*/;
+      msg->res_offset = codeidx->offset+(OPJ_OFF_T)get_elemOff( tilepart, i, tile_id)/*-1*/;
       msg->phld = NULL;
       msg->next = NULL;
 
@@ -251,31 +257,33 @@ void enqueue_precinct( int seq_id, int tile_id, int comp_id, int layers, msgqueu
   numOflayers = codeidx->COD.numOflayers;
 
   nmax = get_nmax(precpacket);
+  assert( nmax < INT_MAX );
   if( layers < 0)
     layers = numOflayers;
+  assert( tile_id >= 0 );
     
   binOffset = 0;
   for( layer_id = 0; layer_id < layers; layer_id++){
 
-    binLength = get_elemLen( precpacket, seq_id*numOflayers+layer_id, tile_id);
+    binLength = get_elemLen( precpacket, (Byte8_t)(seq_id*numOflayers+layer_id), (Byte8_t)tile_id);
     
-    if( !cachemodel->pp_model[comp_id][ tile_id*nmax+seq_id*numOflayers+layer_id]){
+    if( !cachemodel->pp_model[comp_id][tile_id*(int)nmax+seq_id*numOflayers+layer_id]){
   
       msg = (message_param_t *)malloc( sizeof(message_param_t));
       msg->last_byte = (layer_id == (numOflayers-1));
-      msg->in_class_id = comp_precinct_id( tile_id, comp_id, seq_id, codeidx->SIZ.Csiz, codeidx->SIZ.XTnum * codeidx->SIZ.YTnum);
+      msg->in_class_id = comp_precinct_id( tile_id, comp_id, seq_id, codeidx->SIZ.Csiz, (int)codeidx->SIZ.XTnum * (int) codeidx->SIZ.YTnum);
       msg->class_id = PRECINCT_MSG;
-      msg->csn = cachemodel->target->csn;
+      msg->csn = (Byte8_t)cachemodel->target->csn;
       msg->bin_offset = binOffset;
       msg->length = binLength;
       msg->aux = 0;
-      msg->res_offset = codeidx->offset+get_elemOff( precpacket, seq_id*numOflayers+layer_id, tile_id);
+      msg->res_offset = codeidx->offset+(OPJ_OFF_T)get_elemOff( precpacket, (Byte8_t)(seq_id*numOflayers+layer_id), (Byte8_t)tile_id);
       msg->phld = NULL;
       msg->next = NULL;
 
       enqueue_message( msg, msgqueue);
       
-      cachemodel->pp_model[comp_id][ tile_id*nmax+seq_id*numOflayers+layer_id] = true;
+      cachemodel->pp_model[comp_id][tile_id*(int)nmax+seq_id*numOflayers+layer_id] = true;
     }
     binOffset += binLength;
   }
@@ -284,12 +292,12 @@ void enqueue_precinct( int seq_id, int tile_id, int comp_id, int layers, msgqueu
 /* MM FIXME: each params is coded on int, this is really not clear from the specs what it should be */
 Byte8_t comp_precinct_id( int t, int c, int s, int num_components, int num_tiles)
 {
-  return t + (c + s * num_components ) * num_tiles;
+  return (Byte8_t)(t + (c + s * num_components ) * num_tiles);
 }
 
-void enqueue_box(  int meta_id, boxlist_param_t *boxlist, msgqueue_param_t *msgqueue, Byte8_t *binOffset);
-void enqueue_phld( int meta_id, placeholderlist_param_t *phldlist, msgqueue_param_t *msgqueue, Byte8_t *binOffset);
-void enqueue_boxcontents( int meta_id, boxcontents_param_t *boxcontents, msgqueue_param_t *msgqueue, Byte8_t *binOffset);
+void enqueue_box(  Byte8_t meta_id, boxlist_param_t *boxlist, msgqueue_param_t *msgqueue, Byte8_t *binOffset);
+void enqueue_phld( Byte8_t meta_id, placeholderlist_param_t *phldlist, msgqueue_param_t *msgqueue, Byte8_t *binOffset);
+void enqueue_boxcontents( Byte8_t meta_id, boxcontents_param_t *boxcontents, msgqueue_param_t *msgqueue, Byte8_t *binOffset);
 
 void enqueue_metadata( Byte8_t meta_id, msgqueue_param_t *msgqueue)
 {
@@ -301,7 +309,7 @@ void enqueue_metadata( Byte8_t meta_id, msgqueue_param_t *msgqueue)
   metadata = search_metadata( meta_id, metadatalist);
   
   if( !metadata){
-    fprintf( FCGI_stderr, "Error: metadata-bin %d not found\n", meta_id);
+    fprintf( FCGI_stderr, "Error: metadata-bin %" PRIu64 " not found\n", meta_id);
     return;
   }
   binOffset = 0;
@@ -318,16 +326,17 @@ void enqueue_metadata( Byte8_t meta_id, msgqueue_param_t *msgqueue)
   msgqueue->last->last_byte = true;
 }
 
-message_param_t * gene_metamsg( int meta_id, Byte8_t binoffset, Byte8_t length, Byte8_t res_offset, placeholder_param_t *phld, Byte8_t csn);
+message_param_t * gene_metamsg( Byte8_t meta_id, Byte8_t binoffset, Byte8_t length, OPJ_OFF_T res_offset, placeholder_param_t *phld, Byte8_t csn);
 
-void enqueue_box( int meta_id, boxlist_param_t *boxlist, msgqueue_param_t *msgqueue, Byte8_t *binOffset)
+void enqueue_box( Byte8_t meta_id, boxlist_param_t *boxlist, msgqueue_param_t *msgqueue, Byte8_t *binOffset)
 {
   box_param_t *box;
   message_param_t *msg;
   
   box = boxlist->first;
+  assert( msgqueue->cachemodel->target->csn >= 0);
   while( box){
-    msg = gene_metamsg( meta_id, *binOffset, box->length, box->offset, NULL, msgqueue->cachemodel->target->csn);
+    msg = gene_metamsg( meta_id, *binOffset, box->length, box->offset, NULL, (Byte8_t)msgqueue->cachemodel->target->csn);
     enqueue_message( msg, msgqueue);
 
     *binOffset += box->length;
@@ -335,14 +344,15 @@ void enqueue_box( int meta_id, boxlist_param_t *boxlist, msgqueue_param_t *msgqu
   }
 }
 
-void enqueue_phld( int meta_id, placeholderlist_param_t *phldlist, msgqueue_param_t *msgqueue, Byte8_t *binOffset)
+void enqueue_phld( Byte8_t meta_id, placeholderlist_param_t *phldlist, msgqueue_param_t *msgqueue, Byte8_t *binOffset)
 {
   placeholder_param_t *phld;
   message_param_t *msg;
   
   phld = phldlist->first;
+  assert( msgqueue->cachemodel->target->csn >= 0);
   while( phld){
-    msg = gene_metamsg( meta_id, *binOffset, phld->LBox, 0, phld, msgqueue->cachemodel->target->csn);
+    msg = gene_metamsg( meta_id, *binOffset, phld->LBox, 0, phld, (Byte8_t)msgqueue->cachemodel->target->csn);
     enqueue_message( msg, msgqueue);
 
     *binOffset += phld->LBox;
@@ -350,17 +360,19 @@ void enqueue_phld( int meta_id, placeholderlist_param_t *phldlist, msgqueue_para
   }
 }
 
-void enqueue_boxcontents( int meta_id, boxcontents_param_t *boxcontents, msgqueue_param_t *msgqueue, Byte8_t *binOffset)
+void enqueue_boxcontents( Byte8_t meta_id, boxcontents_param_t *boxcontents, msgqueue_param_t *msgqueue, Byte8_t *binOffset)
 {
   message_param_t *msg;
 
-  msg = gene_metamsg( meta_id, *binOffset, boxcontents->length, boxcontents->offset, NULL, msgqueue->cachemodel->target->csn);
+  assert(msgqueue->cachemodel->target->csn >= 0);
+  msg = gene_metamsg( meta_id, *binOffset, boxcontents->length,
+    boxcontents->offset, NULL, (Byte8_t)msgqueue->cachemodel->target->csn);
   enqueue_message( msg, msgqueue);
   
   *binOffset += boxcontents->length;
 }
 
-message_param_t * gene_metamsg( int meta_id, Byte8_t binOffset, Byte8_t length, Byte8_t res_offset, placeholder_param_t *phld, Byte8_t csn)
+message_param_t * gene_metamsg( Byte8_t meta_id, Byte8_t binOffset, Byte8_t length, OPJ_OFF_T res_offset, placeholder_param_t *phld, Byte8_t csn)
 {
   message_param_t *msg;
 
@@ -405,8 +417,8 @@ void recons_stream_from_msgqueue( msgqueue_param_t *msgqueue, int tmpfd)
     return;
 
   msg = msgqueue->first;
-  class_id = -1;
-  csn = -1;
+  class_id = (Byte8_t)-1;
+  csn = (Byte8_t)-1;
   while( msg){
     if( msg->csn == csn){
       if( msg->class_id == class_id)
@@ -463,7 +475,7 @@ void add_bin_id_vbas_stream( Byte_t bb, Byte_t c, Byte8_t in_class_id, int tmpfd
     tmp >>= 7;
   }
 
-  in_class_id |= (((bb & 3) << 5) | (c & 1) << 4) << ((bytelength-1)*7);
+  in_class_id |= (Byte8_t)((((bb & 3) << 5) | (c & 1) << 4) << ((bytelength-1)*7));
   
   add_vbas_with_bytelen_stream( in_class_id, bytelength, tmpfd);
 }
@@ -573,15 +585,15 @@ void print_binarycode( Byte8_t n, int segmentlen)
 Byte_t * parse_bin_id_vbas( Byte_t *streamptr, Byte_t *bb, Byte_t *c, Byte8_t *in_class_id);
 Byte_t * parse_vbas( Byte_t *streamptr, Byte8_t *elem);
 
-void parse_JPIPstream( Byte_t *JPIPstream, Byte8_t streamlen, Byte8_t offset, msgqueue_param_t *msgqueue)
+void parse_JPIPstream( Byte_t *JPIPstream, Byte8_t streamlen, OPJ_OFF_T offset, msgqueue_param_t *msgqueue)
 {
   Byte_t *ptr;  /* stream pointer*/
   message_param_t *msg;
   Byte_t bb, c;
   Byte8_t class_id, csn;
 
-  class_id = -1; /* dummy*/
-  csn = -1;
+  class_id = (Byte8_t)-1; /* dummy*/
+  csn = (Byte8_t)-1;
   ptr = JPIPstream;
   while( (Byte8_t)(ptr-JPIPstream) < streamlen){
     msg = (message_param_t *)malloc( sizeof(message_param_t));
@@ -607,7 +619,7 @@ void parse_JPIPstream( Byte_t *JPIPstream, Byte8_t streamlen, Byte8_t offset, ms
     else
       msg->aux = 0;
     
-    msg->res_offset = ptr-JPIPstream+offset;   
+    msg->res_offset = ptr-JPIPstream+offset;
     msg->phld = NULL;
     msg->next = NULL;
 

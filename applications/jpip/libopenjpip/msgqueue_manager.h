@@ -161,7 +161,7 @@ void recons_stream_from_msgqueue( msgqueue_param_t *msgqueue, int tmpfd);
  * @param[in]     offset       offset of the stream from the whole beginning
  * @param[in,out] msgqueue     adding message queue pointer
  */
-void parse_JPIPstream( Byte_t *JPIPstream, Byte8_t streamlen, Byte8_t offset, msgqueue_param_t *msgqueue);
+void parse_JPIPstream( Byte_t *JPIPstream, Byte8_t streamlen, OPJ_OFF_T offset, msgqueue_param_t *msgqueue);
 
 /**
  * parse JPT- JPP- stream to message queue
