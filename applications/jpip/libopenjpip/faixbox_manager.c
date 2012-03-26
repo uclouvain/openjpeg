@@ -185,7 +185,7 @@ Byte4_t get_elemAux( faixbox_param_t *faix, Byte8_t elem_id, Byte8_t row_id)
 {
   Byte8_t nmax;
   if( faix->version <2)
-    return -1;
+    return (Byte4_t)-1;
 
   nmax = get_nmax( faix);
   if( faix->version%2)
