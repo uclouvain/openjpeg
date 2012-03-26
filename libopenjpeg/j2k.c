@@ -8045,12 +8045,12 @@ void j2k_setup_encoder_v2(	opj_j2k_v2_t *p_j2k,
 		OPJ_INT32 i;
 
 		/* set JPWL on */
-		cp->epc_on = true;
-		cp->info_on = false; /* no informative technique */
+		cp->epc_on = OPJ_TRUE;
+		cp->info_on = OPJ_FALSE; /* no informative technique */
 
 		/* set EPB on */
 		if ((parameters->jpwl_hprot_MH > 0) || (parameters->jpwl_hprot_TPH[0] > 0)) {
-			cp->epb_on = true;
+			cp->epb_on = OPJ_TRUE;
 
 			cp->hprot_MH = parameters->jpwl_hprot_MH;
 			for (i = 0; i < JPWL_MAX_NO_TILESPECS; i++) {
@@ -8071,7 +8071,7 @@ void j2k_setup_encoder_v2(	opj_j2k_v2_t *p_j2k,
 
 		/* set ESD writing */
 		if ((parameters->jpwl_sens_size == 1) || (parameters->jpwl_sens_size == 2)) {
-			cp->esd_on = true;
+			cp->esd_on = OPJ_TRUE;
 
 			cp->sens_size = parameters->jpwl_sens_size;
 			cp->sens_addr = parameters->jpwl_sens_addr;
@@ -8085,10 +8085,10 @@ void j2k_setup_encoder_v2(	opj_j2k_v2_t *p_j2k,
 		}
 
 		/* always set RED writing to false: we are at the encoder */
-		cp->red_on = false;
+		cp->red_on = OPJ_FALSE;
 
 	} else {
-		cp->epc_on = false;
+		cp->epc_on = OPJ_FALSE;
 	}
 #endif /* USE_JPWL */
 
