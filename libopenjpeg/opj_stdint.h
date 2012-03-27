@@ -48,4 +48,9 @@ typedef size_t        OPJ_SIZE_T;
 /* 64-bit file offset type */
 typedef int64_t OPJ_OFF_T;
 
+#ifndef HAVE_SSIZE_T
+#include <BaseTsd.h>
+typedef SSIZE_T ssize_t;
+#endif
+
 #endif /* OPJ_STDINT_H */

@@ -209,6 +209,9 @@ IF(BUILD_CODEC OR BUILD_MJ2)
   ADD_SUBDIRECTORY(applications)
 ENDIF (BUILD_CODEC OR BUILD_MJ2)
 
+include(CheckTypeSize)
+CHECK_TYPE_SIZE(ssize_t     SSIZE_T)
+
 #-----------------------------------------------------------------------------
 # opj_config.h generation (2/2)
 CONFIGURE_FILE("${OPENJPEG_SOURCE_DIR}/opj_config.h.cmake.in"
