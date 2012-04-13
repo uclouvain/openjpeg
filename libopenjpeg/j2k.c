@@ -10132,8 +10132,8 @@ opj_bool j2k_set_decode_area(	opj_j2k_v2_t *p_j2k,
 	/* Check if the positions provided by the user are correct */
 
 	/* Left */
-	assert(p_start_x > 0 );
-	assert(p_start_y > 0 );
+	assert(p_start_x >= 0 );
+	assert(p_start_y >= 0 );
 
 	if ((OPJ_UINT32)p_start_x > l_image->x1 ) {
 		opj_event_msg_v2(p_manager, EVT_ERROR,
