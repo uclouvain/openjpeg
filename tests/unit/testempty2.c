@@ -23,7 +23,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-
 #include <openjpeg.h>
 #include <assert.h>
 #include <string.h>
@@ -32,20 +31,29 @@
 
 #define J2K_CFMT 0
 
+void error_callback(const char *msg, void *v);
+void warning_callback(const char *msg, void *v);
+void info_callback(const char *msg, void *v);
+
 void error_callback(const char *msg, void *v) {
+(void)msg;
+(void)v;
 assert(0);
 }
 void warning_callback(const char *msg, void *v) {
+(void)msg;
+(void)v;
 puts(msg);
 }
 void info_callback(const char *msg, void *v) {
+(void)msg;
+(void)v;
 puts(msg);
 }
 
 int main(int argc, char *argv[])
 {
   const char * v = opj_version();
-  puts(v);
 
   const OPJ_COLOR_SPACE color_space = CLRSPC_GRAY;
   int numcomps = 1;
@@ -54,13 +62,25 @@ int main(int argc, char *argv[])
   int image_height = 256;
 
   opj_cparameters_t parameters;
-  opj_set_default_encoder_parameters(&parameters);
-  parameters.cod_format = J2K_CFMT;
 
   int subsampling_dx = parameters.subsampling_dx;
   int subsampling_dy = parameters.subsampling_dy;
+  const char outputfile[] = "testempty2.j2k";
 
   opj_image_cmptparm_t cmptparm;
+  opj_image_t *image;
+  opj_event_mgr_t event_mgr;
+  opj_cinfo_t* cinfo;
+  opj_cio_t *cio;
+  opj_bool bSuccess;
+  size_t codestream_length;
+  FILE *f;
+  (void)argc;
+  (void)argv;
+
+  opj_set_default_encoder_parameters(&parameters);
+  parameters.cod_format = J2K_CFMT;
+  puts(v);
   cmptparm.prec = 8;
   cmptparm.bpp = 8;
   cmptparm.sgnd = 0;
@@ -69,7 +89,7 @@ int main(int argc, char *argv[])
   cmptparm.w = image_width;
   cmptparm.h = image_height;
 
-  opj_image_t *image = opj_image_create(numcomps, &cmptparm, color_space);
+  image = opj_image_create(numcomps, &cmptparm, color_space);
   assert( image );
 
   for (i = 0; i < image_width * image_height; i++)
@@ -81,27 +101,25 @@ int main(int argc, char *argv[])
       }
     }
 
-  opj_event_mgr_t event_mgr;
   event_mgr.error_handler = error_callback;
   event_mgr.warning_handler = warning_callback;
   event_mgr.info_handler = info_callback;
 
-  opj_cinfo_t* cinfo = opj_create_compress(CODEC_J2K);
+  cinfo = opj_create_compress(CODEC_J2K);
   opj_set_event_mgr((opj_common_ptr)cinfo, &event_mgr, stderr);
 
   opj_setup_encoder(cinfo, &parameters, image);
 
-  opj_cio_t *cio = opj_cio_open((opj_common_ptr)cinfo, NULL, 0);
+  cio = opj_cio_open((opj_common_ptr)cinfo, NULL, 0);
   assert( cio );
-  opj_bool bSuccess = opj_encode(cinfo, cio, image, NULL);
+  bSuccess = opj_encode(cinfo, cio, image, NULL);
   assert( bSuccess );
 
-  size_t codestream_length = cio_tell(cio);
+  codestream_length = (size_t)cio_tell(cio);
   assert( codestream_length );
 
-  const char outputfile[] = "testempty2.j2k";
   strcpy(parameters.outfile, outputfile);
-  FILE *f = fopen(parameters.outfile, "wb");
+  f = fopen(parameters.outfile, "wb");
   assert( f );
   fwrite(cio->buffer, 1, codestream_length, f);
   fclose(f);
@@ -111,13 +129,17 @@ int main(int argc, char *argv[])
   opj_image_destroy(image);
 
   /* read back the generated file */
+{
   size_t file_length;
   FILE *fsrc = fopen(outputfile, "rb");
+  unsigned char *src;
+	opj_dinfo_t* dinfo = NULL;	/* handle to a decompressor */
+	opj_dparameters_t dparameters;
   assert( fsrc );
   fseek(fsrc, 0, SEEK_END);
-  file_length = ftell(fsrc);
+  file_length = (size_t)ftell(fsrc);
   fseek(fsrc, 0, SEEK_SET);
-  unsigned char *src = (unsigned char *) malloc(file_length);
+  src = (unsigned char *) malloc(file_length);
   if (fread(src, 1, file_length, fsrc) != file_length)
     {
     free(src);
@@ -126,24 +148,23 @@ int main(int argc, char *argv[])
     }
   fclose(fsrc);
 
-	opj_dinfo_t* dinfo = NULL;	/* handle to a decompressor */
   dinfo = opj_create_decompress(CODEC_J2K);
 
   opj_set_event_mgr((opj_common_ptr)dinfo, &event_mgr, stderr);
 
-	opj_dparameters_t dparameters;
 	opj_set_default_decoder_parameters(&dparameters);
   opj_setup_decoder(dinfo, &dparameters);
 
-  cio = opj_cio_open((opj_common_ptr)dinfo, src, file_length);
+  cio = opj_cio_open((opj_common_ptr)dinfo, src, (int)file_length);
   image = opj_decode(dinfo, cio);
   if(!image) {
     opj_destroy_decompress(dinfo);
     opj_cio_close(cio);
     return 1;
   }
-    opj_destroy_decompress(dinfo);
-    opj_cio_close(cio);
+  opj_destroy_decompress(dinfo);
+  opj_cio_close(cio);
+}
 
 
   puts( "end" );

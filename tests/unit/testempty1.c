@@ -30,20 +30,29 @@
 
 #define J2K_CFMT 0
 
+void error_callback(const char *msg, void *v);
+void warning_callback(const char *msg, void *v);
+void info_callback(const char *msg, void *v);
+
 void error_callback(const char *msg, void *v) {
+(void)msg;
+(void)v;
 assert(0);
 }
 void warning_callback(const char *msg, void *v) {
+(void)msg;
+(void)v;
 puts(msg);
 }
 void info_callback(const char *msg, void *v) {
+(void)msg;
+(void)v;
 puts(msg);
 }
 
 int main(int argc, char *argv[])
 {
   const char * v = opj_version();
-  puts(v);
 
   const OPJ_COLOR_SPACE color_space = CLRSPC_GRAY;
   int numcomps = 1;
@@ -52,13 +61,24 @@ int main(int argc, char *argv[])
   int image_height = 256;
 
   opj_cparameters_t parameters;
-  opj_set_default_encoder_parameters(&parameters);
-  parameters.cod_format = J2K_CFMT;
 
   int subsampling_dx = 0;
   int subsampling_dy = 0;
 
   opj_image_cmptparm_t cmptparm;
+  opj_image_t *image;
+  opj_event_mgr_t event_mgr;
+  opj_cinfo_t* cinfo;
+  opj_cio_t *cio;
+  opj_bool bSuccess;
+  size_t codestream_length;
+  FILE *f;
+  (void)argc;
+  (void)argv;
+
+  opj_set_default_encoder_parameters(&parameters);
+  parameters.cod_format = J2K_CFMT;
+  puts(v);
   cmptparm.prec = 8;
   cmptparm.bpp = 8;
   cmptparm.sgnd = 0;
@@ -67,7 +87,7 @@ int main(int argc, char *argv[])
   cmptparm.w = image_width;
   cmptparm.h = image_height;
 
-  opj_image_t *image = opj_image_create(numcomps, &cmptparm, color_space);
+  image = opj_image_create(numcomps, &cmptparm, color_space);
   assert( image );
 
   for (i = 0; i < image_width * image_height; i++)
@@ -79,26 +99,25 @@ int main(int argc, char *argv[])
       }
     }
 
-  opj_event_mgr_t event_mgr;
   event_mgr.error_handler = error_callback;
   event_mgr.warning_handler = warning_callback;
   event_mgr.info_handler = info_callback;
 
-  opj_cinfo_t* cinfo = opj_create_compress(CODEC_J2K);
+  cinfo = opj_create_compress(CODEC_J2K);
   opj_set_event_mgr((opj_common_ptr)cinfo, &event_mgr, stderr);
 
   opj_setup_encoder(cinfo, &parameters, image);
 
-  opj_cio_t *cio = opj_cio_open((opj_common_ptr)cinfo, NULL, 0);
+  cio = opj_cio_open((opj_common_ptr)cinfo, NULL, 0);
   assert( cio );
-  opj_bool bSuccess = opj_encode(cinfo, cio, image, NULL);
+  bSuccess = opj_encode(cinfo, cio, image, NULL);
   assert( bSuccess );
 
-  size_t codestream_length = cio_tell(cio);
+  codestream_length = (size_t)cio_tell(cio);
   assert( codestream_length );
 
   strcpy(parameters.outfile, "testempty1.j2k");
-  FILE *f = fopen(parameters.outfile, "wb");
+  f = fopen(parameters.outfile, "wb");
   assert( f );
   fwrite(cio->buffer, 1, codestream_length, f);
   fclose(f);
