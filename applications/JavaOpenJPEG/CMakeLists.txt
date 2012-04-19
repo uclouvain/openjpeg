@@ -4,8 +4,10 @@
 SET(openjpegjni_SRCS
   JavaOpenJPEGDecoder.c
   JavaOpenJPEG.c
-  ../codec/index.c
-  ../codec/convert.c
+  ${OPENJPEG_SOURCE_DIR}/applications/codec/index.c
+  ${OPENJPEG_SOURCE_DIR}/applications/codec/convert.c
+  #${OPENJPEG_SOURCE_DIR}/applications/common/color.c
+  ${OPENJPEG_SOURCE_DIR}/applications/common/opj_getopt.c
   )
 
 # JNI binding:
