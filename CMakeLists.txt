@@ -103,6 +103,18 @@ IF(NOT OPENJPEG_INSTALL_LIB_DIR)
   SET(OPENJPEG_INSTALL_LIB_DIR "lib")
 ENDIF(NOT OPENJPEG_INSTALL_LIB_DIR)
 
+# The following will compute the amount of parent dir to go
+# from include to lib. it works nicely with 
+# OPENJPEG_INSTALL_LIB_DIR=lib
+# OPENJPEG_INSTALL_LIB_DIR=lib/
+# OPENJPEG_INSTALL_LIB_DIR=/lib
+# OPENJPEG_INSTALL_LIB_DIR=lib/gnu-linux-x64
+STRING(REPLACE "/" ";" relative_to_lib ${OPENJPEG_INSTALL_LIB_DIR})
+set(relative_parent "..")
+foreach( elem ${relative_to_lib})
+  set( relative_parent "${relative_parent}/.." )
+endforeach()
+
 IF(NOT OPENJPEG_INSTALL_SHARE_DIR)
   SET(OPENJPEG_INSTALL_SHARE_DIR "share")
 ENDIF(NOT OPENJPEG_INSTALL_SHARE_DIR)
