@@ -20,6 +20,7 @@ include_directories(
 add_library(openjpegjni MODULE
   ${openjpegjni_SRCS}
   )
+TARGET_LINK_LIBRARIES(openjpegjni ${OPENJPEG_LIBRARY_NAME})
 
 IF(WIN32)
   SET(OPENJPEG_INSTALL_JNI_DIR ${OPENJPEG_INSTALL_BIN_DIR})
