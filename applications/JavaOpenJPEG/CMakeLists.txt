@@ -4,6 +4,8 @@
 SET(openjpegjni_SRCS
   JavaOpenJPEGDecoder.c
   JavaOpenJPEG.c
+  ../codec/index.c
+  ../codec/convert.c
   )
 
 # JNI binding:
