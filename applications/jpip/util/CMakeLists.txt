@@ -77,6 +77,10 @@ if(Java_Development_FOUND AND Java_JAVAC_EXECUTABLE)
     COMMENT "building opj_viewer.jar"
     )
 
+  INSTALL(FILES ${LIBRARY_OUTPUT_PATH}/opj_viewer.jar
+    DESTINATION ${OPENJPEG_INSTALL_LIB_DIR} COMPONENT JavaModule
+    )
+
   # 2. opj_viewer_xerces
   # search for package org.apache.xerces.parsers
   find_file(APACHE_XERCES_JAR
@@ -126,6 +130,10 @@ if(Java_Development_FOUND AND Java_JAVAC_EXECUTABLE)
     ADD_CUSTOM_TARGET(OPJViewerXercesJar ALL
       DEPENDS ${LIBRARY_OUTPUT_PATH}/opj_viewer_xerces.jar
       COMMENT "building opj_viewer_xerces.jar"
+      )
+
+    INSTALL(FILES ${LIBRARY_OUTPUT_PATH}/opj_viewer_xerces.jar
+      DESTINATION ${OPENJPEG_INSTALL_LIB_DIR} COMPONENT JavaModule
       )
   endif()
 else(Java_Development_FOUND)
