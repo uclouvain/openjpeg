@@ -78,7 +78,7 @@ if(Java_Development_FOUND AND Java_JAVAC_EXECUTABLE)
     )
 
   INSTALL(FILES ${LIBRARY_OUTPUT_PATH}/opj_viewer.jar
-    DESTINATION ${OPENJPEG_INSTALL_LIB_DIR} COMPONENT JavaModule
+    DESTINATION ${OPENJPEG_INSTALL_SHARE_DIR} COMPONENT JavaModule
     )
 
   # 2. opj_viewer_xerces
@@ -133,7 +133,7 @@ if(Java_Development_FOUND AND Java_JAVAC_EXECUTABLE)
       )
 
     INSTALL(FILES ${LIBRARY_OUTPUT_PATH}/opj_viewer_xerces.jar
-      DESTINATION ${OPENJPEG_INSTALL_LIB_DIR} COMPONENT JavaModule
+      DESTINATION ${OPENJPEG_INSTALL_SHARE_DIR} COMPONENT JavaModule
       )
   endif()
 else(Java_Development_FOUND)
