@@ -73,15 +73,15 @@ char * read_xmlfile( char filename[], long *fsize);
 
 int main(int argc, char *argv[])
 {
+  FILE *fp;
+  char *xmldata, type[]="xml ";
+  long fsize, boxsize;
+
   if( argc<3){
     fprintf( stderr, "USAGE: ./addXMLinJP2 modifing.jp2 adding.xml\n");
     return -1;
   }
   
-  FILE *fp;
-  char *xmldata, type[]="xml ";
-  long fsize, boxsize;
-
   fp = open_jp2file( argv[1]);
   if( !fp)
     return -1;
@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
   fputc( (boxsize>>8)&0xff, fp);
   fputc( boxsize&0xff, fp);
   fwrite( type, 4, 1, fp);
-  fwrite( xmldata, fsize, 1, fp);
+  fwrite( xmldata, (size_t)fsize, 1, fp);
   
   free( xmldata);
   fclose(fp);
@@ -111,14 +111,14 @@ FILE * open_jp2file( char filename[])
     fprintf( stderr, "Original JP2 %s not found\n", filename);
     return NULL;
   }
-  // Check resource is a JP family file.
+  /* Check resource is a JP family file. */
   if( fseek( fp, 0, SEEK_SET)==-1){
     fclose(fp);
     fprintf( stderr, "Original JP2 %s broken (fseek error)\n", filename);
     return NULL;
   }
   
-  data = (char *)malloc( 12); // size of header
+  data = (char *)malloc( 12); /* size of header */
   if( fread( data, 12, 1, fp) != 1){
     free( data);
     fclose(fp);
@@ -142,7 +142,7 @@ char * read_xmlfile( char filename[], long *fsize)
   FILE *fp;
   char *data;
   
-  //  fprintf( stderr, "open %s\n", filename);
+  /*  fprintf( stderr, "open %s\n", filename); */
   if(!(fp = fopen( filename, "r"))){
     fprintf( stderr, "XML file %s not found\n", filename);
     return NULL;
@@ -166,9 +166,9 @@ char * read_xmlfile( char filename[], long *fsize)
     return NULL;
   }
 
-  data = (char *)malloc( *fsize);
+  data = (char *)malloc( (size_t)*fsize);
   
-  if( fread( data, *fsize, 1, fp) != 1){
+  if( fread( data, (size_t)*fsize, 1, fp) != 1){
     fprintf( stderr, "XML file %s broken (read error)\n", filename);
     free( data);
     fclose(fp);
