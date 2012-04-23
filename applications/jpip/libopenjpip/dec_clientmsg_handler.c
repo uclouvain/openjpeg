@@ -60,6 +60,7 @@ void handle_JPIPstreamMSG( SOCKET connected_socket, cachelist_param_t *cachelist
   metadatalist = gene_metadatalist();
   parse_metamsg( msgqueue, *jpipstream, *streamlen, metadatalist);
 
+  assert( msgqueue->last );
   assert( msgqueue->last->csn < INT_MAX );
   /* cid registration*/
   if( target != NULL){
