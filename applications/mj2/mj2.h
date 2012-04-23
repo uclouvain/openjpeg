@@ -137,7 +137,7 @@ typedef struct mj2_url {
 URN
 */
 typedef struct mj2_urn {		
-  int name[2];
+  int name[4];
   int location[4];
 } mj2_urn_t;
 

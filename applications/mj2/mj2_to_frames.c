@@ -69,45 +69,67 @@ void info_callback(const char *msg, void *client_data) {
 }
 
 /* -------------------------------------------------------------------------- */
-
+#define JP2_RFC3745_MAGIC "\x00\x00\x00\x0c\x6a\x50\x20\x20\x0d\x0a\x87\x0a"
 
 int main(int argc, char *argv[]) {
 	mj2_dparameters_t mj2_parameters;			/* decompression parameters */
 	opj_dinfo_t* dinfo; 
 	opj_event_mgr_t event_mgr;		/* event manager */	
 	opj_cio_t *cio = NULL;
-  unsigned int tnum, snum;
+  unsigned int tnum, snum, failed;
   opj_mj2_t *movie;
   mj2_tk_t *track;
   mj2_sample_t *sample;
   unsigned char* frame_codestream;
-  FILE *file, *outfile;
-  char outfilename[50];
+  FILE *infile, *outfile;
   opj_image_t *img = NULL;
 	unsigned int max_codstrm_size = 0;
 	double total_time = 0;
 	unsigned int numframes = 0;
 			
   if (argc != 3) {
-    printf("Usage: %s inputfile.mj2 outputfile.yuv\n",argv[0]); 
+    printf("\nUsage: %s inputfile.mj2 outputfile.yuv\n\n",argv[0]); 
     return 1;
   }
   
-  file = fopen(argv[1], "rb");
+  infile = fopen(argv[1], "rb");
   
-  if (!file) {
+  if (!infile) {
     fprintf(stderr, "failed to open %s for reading\n", argv[1]);
     return 1;
   }
-	
-  // Checking output file
-  outfile = fopen(argv[2], "w");
-  if (!file) {
-    fprintf(stderr, "failed to open %s for writing\n", argv[2]);
-    return 1;
+   {
+	unsigned char buf[28];
+	size_t n;
+
+	memset(buf, 0, 28);
+	n = fread(buf, 1, 24, infile);
+
+	if(memcmp(buf, JP2_RFC3745_MAGIC, 12) == 0
+	&& memcmp(buf+20, "\x6d\x6a\x70\x32", 4) == 0)
+  {
+	rewind(infile);
   }
-  fclose(outfile);
-	
+	else
+  {
+	fclose(infile);
+	fprintf(stderr,"%s:%d: %s\n\tThis file is not an MJ2 file."
+	"Quitting\n",__FILE__,__LINE__,argv[0]);
+	return 1;
+  }
+   }
+/* Checking output file: */
+  outfile = fopen(argv[2], "w");
+
+  if (!outfile) {
+    fprintf(stderr, "failed to open %s for writing\n", argv[2]);
+    fclose(infile);
+	return 1;
+  }
+  fclose(outfile); remove(argv[2]);
+
+	frame_codestream = NULL;
+	failed = 1;
 	/*
 	configure the event callbacks (not required)
 	setting of each callback is optionnal
@@ -119,6 +141,8 @@ int main(int argc, char *argv[]) {
 	
 	/* get a MJ2 decompressor handle */
 	dinfo = mj2_create_decompress();
+	if(dinfo == NULL) goto fin;
+
 	movie = (opj_mj2_t*)dinfo->mj2_handle;
 	
 	/* catch events using our callbacks and give a local context */
@@ -130,11 +154,12 @@ int main(int argc, char *argv[]) {
 	
 	/* setup the decoder decoding parameters using user parameters */
 	mj2_setup_decoder(movie, &mj2_parameters);
-			
-  if (mj2_read_struct(file, movie)) // Creating the movie structure
-    return 1;	
+
+/* Create the movie structure: */			
+  if (mj2_read_struct(infile, movie))
+    goto fin;
 	
-  // Decode first video track 
+/* Decode first video track */
 	for (tnum=0; tnum < (unsigned int)(movie->num_htk + movie->num_stk + movie->num_vtk); tnum++) {
 		if (movie->tk[tnum].track_type == 0) 
 			break;
@@ -142,24 +167,34 @@ int main(int argc, char *argv[]) {
 	
 	if (movie->tk[tnum].track_type != 0) {
 		printf("Error. Movie does not contain any video track\n");
-		return 1;
+		goto fin;
 	}
 	
   track = &movie->tk[tnum];
-	
-  // Output info on first video tracl
+
+	if(track->jp2_struct.enumcs != ENUMCS_SYCC)
+   {
+	fprintf(stderr,"%s:%d: %s\n"
+	 "\tERROR: this MJ2 file does not contain YUV frames.\n"
+	 "\tPlease try extract_j2k_from_mj2 for this file.\n",
+	 __FILE__,__LINE__,argv[0]);
+	goto fin;
+   }
+/* Output info on first video track: */
   fprintf(stdout,"The first video track contains %d frames.\nWidth: %d, Height: %d \n\n",
     track->num_samples, track->w, track->h);
 	
 	max_codstrm_size = track->sample[0].sample_size-8;
-	frame_codestream = (unsigned char*) malloc(max_codstrm_size * sizeof(unsigned char)); 
+	frame_codestream = (unsigned char*) 
+	 malloc(max_codstrm_size * sizeof(unsigned char)); 
+	if(frame_codestream == NULL) goto fin;
 
 	numframes = track->num_samples;
 	
   for (snum=0; snum < numframes; snum++)
   {
-		double init_time = opj_clock();
-		double elapsed_time;
+	double init_time = opj_clock();
+	double elapsed_time;
 
     sample = &track->sample[snum];
 		if (sample->sample_size-8 > max_codstrm_size) {
@@ -167,85 +202,54 @@ int main(int argc, char *argv[]) {
 			if ((frame_codestream = (unsigned char*)
 				realloc(frame_codestream, max_codstrm_size)) == NULL) {
 				printf("Error reallocation memory\n");
-				return 1;
+				goto fin;
 			}; 		
 		}
-    fseek(file,sample->offset+8,SEEK_SET);
-    fread(frame_codestream, sample->sample_size-8, 1, file);  // Assuming that jp and ftyp markers size do
+    fseek(infile,sample->offset+8,SEEK_SET);
+/* Assuming that jp and ftyp markers size do: */
+    fread(frame_codestream, sample->sample_size-8, 1, infile);
 		
 		/* open a byte stream */
-		cio = opj_cio_open((opj_common_ptr)dinfo, frame_codestream, sample->sample_size-8);
+	cio = opj_cio_open((opj_common_ptr)dinfo, frame_codestream, sample->sample_size-8);
+
+	if(cio == NULL) goto fin;
+
+	img = opj_decode(dinfo, cio);
+
+	if(img == NULL) goto fin;
+
+/* Convert frame to YUV: */
+	if (!imagetoyuv(img, argv[2]))
+				goto fin;
+
+	opj_cio_close(cio);	
+
+	opj_image_destroy(img);
+
+	elapsed_time = opj_clock()-init_time;
+	fprintf(stderr, "Frame number %d/%d decoded in %.2f mseconds\n", 
+	 snum + 1, numframes, elapsed_time*1000);
+	total_time += elapsed_time;
+
+   }/* for (snum */
+
+	fprintf(stdout, "%d frame(s) correctly decompressed\n", snum);
+	fprintf(stdout,"Total decoding time: %.2f seconds (%.1f fps)\n", 
+	 total_time, (float)numframes/total_time);
 		
-		img = opj_decode(dinfo, cio); // Decode J2K to image
+	failed = 0;
 
-#ifdef WANT_SYCC_TO_RGB
-	if(img->color_space == CLRSPC_SYCC)
-  {
-	color_sycc_to_rgb(img);
-  }
-#endif
+fin:
+	fclose(infile);	
 
-	if(img->icc_profile_buf)
-  {
-#if defined(HAVE_LIBLCMS1) || defined(HAVE_LIBLCMS2)
-	color_apply_icc_profile(img);
-#endif
-
-	free(img->icc_profile_buf);
-	img->icc_profile_buf = NULL; img->icc_profile_len = 0;
-  }
-
-    if (((img->numcomps == 3) && (img->comps[0].dx == img->comps[1].dx / 2) 
-      && (img->comps[0].dx == img->comps[2].dx / 2 ) && (img->comps[0].dx == 1)) 
-      || (img->numcomps == 1)) {
-      
-      if (!imagetoyuv(img, argv[2]))	// Convert image to YUV
-				return 1;
-    }
-    else if ((img->numcomps == 3) && 
-      (img->comps[0].dx == 1) && (img->comps[1].dx == 1)&&
-      (img->comps[2].dx == 1))// If YUV 4:4:4 input --> to bmp
-    {
-      fprintf(stdout,"The frames will be output in a bmp format (output_1.bmp, ...)\n");
-      sprintf(outfilename,"output_%d.bmp",snum);
-      if (imagetobmp(img, outfilename))	// Convert image to BMP
-				return 1;
-      
-    }
-    else {
-      fprintf(stdout,"Image component dimensions are unknown. Unable to output image\n");
-      fprintf(stdout,"The frames will be output in a j2k file (output_1.j2k, ...)\n");
-			
-      sprintf(outfilename,"output_%d.j2k",snum);
-      outfile = fopen(outfilename, "wb");
-      if (!outfile) {
-				fprintf(stderr, "failed to open %s for writing\n",outfilename);
-				return 1;
-      }
-      fwrite(frame_codestream,sample->sample_size-8,1,outfile);
-      fclose(outfile);
-    }
-		/* close the byte stream */
-		opj_cio_close(cio);	
-		/* free image data structure */
-		opj_image_destroy(img);
-		elapsed_time = opj_clock()-init_time;
-		fprintf(stderr, "Frame number %d/%d decoded in %.2f mseconds\n", snum + 1, numframes, elapsed_time*1000);
-		total_time += elapsed_time;
-
-  }
-	
-	free(frame_codestream);	
-  fclose(file);	
+	if(frame_codestream) free(frame_codestream);	
 
 	/* free remaining structures */
-	if(dinfo) {
-		mj2_destroy_decompress((opj_mj2_t*)dinfo->mj2_handle);
-	}
+	if(dinfo) 
+   {
+	mj2_destroy_decompress(movie);
 	free(dinfo);
+   }
 	
-	fprintf(stdout, "%d frame(s) correctly decompressed\n", snum);
-	fprintf(stdout,"Total decoding time: %.2f seconds (%.1f fps)\n", total_time, (float)numframes/total_time);
-		
-  return 0;
-}
+  return failed;
+}/* main() */
