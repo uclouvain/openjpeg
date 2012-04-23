@@ -264,6 +264,7 @@ IF(BUILD_TESTING)
       PATHS
       $ENV{OPJ_DATA_ROOT}
       ${CMAKE_SOURCE_DIR}/../data
+      ${CMAKE_SOURCE_DIR}/../../data
       )
 
     # Add repository where to find tests
