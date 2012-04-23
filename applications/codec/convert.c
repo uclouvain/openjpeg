@@ -1011,7 +1011,7 @@ int imagetobmp(opj_image_t * image, const char *outfile) {
 	int adjustR, adjustG, adjustB;
 
   if (image->comps[0].prec < 8) {
-    fprintf(stderr, "Unsupported number of components: %d\n", image->comps[0].prec);
+    fprintf(stderr, "Unsupported precision: %d\n", image->comps[0].prec);
     return 1;
   }
 	if (image->numcomps >= 3 && image->comps[0].dx == image->comps[1].dx
@@ -2484,16 +2484,19 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
 	w= tiWidth;
 	h= tiHeight;
 
-	if(tiBps != 8 && tiBps != 16 && tiBps != 12) tiBps = 0;
-	if(tiPhoto != 1 && tiPhoto != 2) tiPhoto = 0;
-
-    if( !tiBps || !tiPhoto)
    {
-	if( !tiBps)
+	unsigned short b = tiBps, p = tiPhoto;
+
+	if(tiBps != 8 && tiBps != 16 && tiBps != 12) b = 0;
+	if(tiPhoto != 1 && tiPhoto != 2) p = 0;
+
+    if( !b || !p)
+  {
+	if( !b)
      fprintf(stderr,"imagetotif: Bits=%d, Only 8 and 16 bits"
       " implemented\n",tiBps);
 	else
-	if( !tiPhoto)
+	if( !p)
      fprintf(stderr,"tiftoimage: Bad color format %d.\n\tOnly RGB(A)"
       " and GRAY(A) has been implemented\n",(int) tiPhoto);
 
@@ -2501,8 +2504,8 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
 	TIFFClose(tif);
 
     return NULL;
+  }
    }
-
    {/* From: tiff-4.0.x/libtiff/tif_getimage.c : */
 	uint16* sampleinfo;
 	uint16 extrasamples;
