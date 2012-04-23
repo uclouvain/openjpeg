@@ -559,6 +559,7 @@ typedef struct opj_cio {
 	/** pointer to the start of the buffer */
 	unsigned char *buffer;
 	/** buffer size in bytes */
+  /* FIXME: MM length is 'int' ?? */
 	int length;
 
 	/** pointer to the start of the stream */
@@ -1080,7 +1081,7 @@ Get position in byte stream
 @param cio CIO handle
 @return Returns the position in bytes
 */
-OPJ_API int OPJ_CALLCONV cio_tell(opj_cio_t *cio);
+OPJ_API OPJ_OFF_T OPJ_CALLCONV cio_tell(opj_cio_t *cio);
 /**
 Set position in byte stream
 @param cio CIO handle

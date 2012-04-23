@@ -51,7 +51,7 @@ Number of bytes left before the end of the stream
 @param cio CIO handle
 @return Returns the number of bytes before the end of the stream
 */
-int cio_numbytesleft(opj_cio_t *cio);
+OPJ_SIZE_T cio_numbytesleft(opj_cio_t *cio);
 /**
 Get pointer to the current position in the stream
 @param cio CIO handle
@@ -114,6 +114,7 @@ void cio_skip(opj_cio_t *cio, int n);
 
 typedef enum
 {
+	opj_signed_sentinel		= -1, /* do not use in code */
 	opj_stream_e_output		= 0x1,
 	opj_stream_e_input		= 0x2,
 	opj_stream_e_end		= 0x4,
@@ -193,7 +194,7 @@ typedef struct opj_stream_private
 	/**
 	 * Flags to tell the status of the stream.
 	 */
-	OPJ_UINT32			m_status;
+	opj_stream_flag m_status;
 
 }
 opj_stream_private_t;
