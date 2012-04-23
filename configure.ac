@@ -59,7 +59,11 @@ esac
 AM_CONDITIONAL([HAVE_WIN32], [test "x${have_win32}" = "xyes"])
 AM_CONDITIONAL([HAVE_DARWIN], [test "x${have_darwin}" = "xyes"])
 
-
+AC_TYPE_SSIZE_T
+if test "x$ac_cv_type_ssize_t" = xyes; then
+AC_DEFINE([HAVE_SSIZE_T], [1],[Define to 1 if you have ssize_t.],
+ [AC_MSG([ssize_t not found])])
+fi
 ### Additional options to configure
 
 # debug

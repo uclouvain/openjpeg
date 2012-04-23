@@ -49,8 +49,12 @@ typedef size_t        OPJ_SIZE_T;
 typedef int64_t OPJ_OFF_T;
 
 #ifndef HAVE_SSIZE_T
+#if defined(_WIN32)
 #include <BaseTsd.h>
 typedef SSIZE_T ssize_t;
+#else
+#error SSIZE_T is undefined
+#endif /* _WIN32 */
 #endif
 
 #endif /* OPJ_STDINT_H */

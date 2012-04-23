@@ -7,7 +7,7 @@ SUBDIRS += jpwl
 endif
 
 includesdir = $(includedir)/openjpeg-$(MAJOR_NR).$(MINOR_NR)
-includes_HEADERS = openjpeg.h
+includes_HEADERS = openjpeg.h opj_stdint.h
 
 lib_LTLIBRARIES = libopenjpeg.la
 

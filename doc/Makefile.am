@@ -34,7 +34,7 @@ doc:
 endif
 
 docsdir = $(docdir)-$(MAJOR_NR).$(MINOR_NR)
-docs_DATA = $(top_builddir)/LICENSE $(top_builddir)/CHANGES
+docs_DATA = $(top_builddir)/LICENSE
 
 dist_man1_MANS = \
 man/man1/image_to_j2k.1 \

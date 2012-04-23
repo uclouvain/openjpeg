@@ -34,7 +34,6 @@ CMake/OpenJPEGConfig.cmake.in \
 CMakeLists.txt \
 CTestConfig.cmake \
 AUTHORS \
-CHANGES \
 INSTALL \
 LICENSE \
 NEWS \

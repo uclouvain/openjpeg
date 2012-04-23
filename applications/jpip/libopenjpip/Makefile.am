@@ -80,6 +80,8 @@ dec_clientmsg_handler.h
 
 libopenjpip_server_la_CPPFLAGS = \
 -I. \
+-I$(top_srcdir)/libopenjpeg \
+-I$(top_builddir)/libopenjpeg \
 -I$(top_srcdir)/applications/jpip/libopenjpip \
 -I$(top_builddir)/applications/jpip/libopenjpip \
 @FCGI_CFLAGS@ \

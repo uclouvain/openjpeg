@@ -13,6 +13,8 @@ endif
 opj_server_CPPFLAGS = \
 @FCGI_CFLAGS@ \
 -I. \
+-I$(top_srcdir)/libopenjpeg \
+-I$(top_builddir)/libopenjpeg \
 -I$(top_srcdir)/applications/jpip/libopenjpip \
 -I$(top_builddir)/applications/jpip/libopenjpip \
 -DSERVER \
@@ -25,6 +27,8 @@ opj_server_SOURCES = opj_server.c
 #-------------
 opj_dec_server_CPPFLAGS = \
 -I. \
+-I$(top_srcdir)/libopenjpeg \
+-I$(top_builddir)/libopenjpeg \
 -I$(top_srcdir)/applications/jpip/libopenjpip \
 -I$(top_builddir)/applications/jpip/libopenjpip
 #
@@ -35,6 +39,8 @@ opj_dec_server_SOURCES = opj_dec_server.c
 #-------------
 jpip_to_jp2_CPPFLAGS = \
 -I. \
+-I$(top_srcdir)/libopenjpeg \
+-I$(top_builddir)/libopenjpeg \
 -I$(top_srcdir)/applications/jpip/libopenjpip \
 -I$(top_builddir)/applications/jpip/libopenjpip
 #
@@ -45,6 +51,8 @@ jpip_to_jp2_SOURCES = jpip_to_jp2.c
 #-------------
 jpip_to_j2k_CPPFLAGS = \
 -I. \
+-I$(top_srcdir)/libopenjpeg \
+-I$(top_builddir)/libopenjpeg \
 -I$(top_srcdir)/applications/jpip/libopenjpip \
 -I$(top_builddir)/applications/jpip/libopenjpip
 #
@@ -55,6 +63,8 @@ jpip_to_j2k_SOURCES = jpip_to_j2k.c
 #-------------
 test_index_CPPFLAGS = \
 -I. \
+-I$(top_srcdir)/libopenjpeg \
+-I$(top_builddir)/libopenjpeg \
 -I$(top_srcdir)/applications/jpip/libopenjpip \
 -I$(top_builddir)/applications/jpip/libopenjpip
 #
