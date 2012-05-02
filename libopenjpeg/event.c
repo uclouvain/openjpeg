@@ -122,32 +122,36 @@ opj_bool opj_event_msg(opj_common_ptr cinfo, int event_type, const char *fmt, ..
 }
 
 /* ----------------------------------------------------------------------- */
-opj_bool opj_event_msg_v2(opj_event_mgr_t* event_mgr, int event_type, const char *fmt, ...) {
+opj_bool opj_event_msg_v2(opj_event_mgr_t* p_event_mgr, int event_type, const char *fmt, ...) {
 #define MSG_SIZE 512 /* 512 bytes should be more than enough for a short message */
-	opj_msg_callback msg_handler = NULL;
+	opj_msg_callback msg_handler = 00;
+	void * l_data = 00;
 
-	if(event_mgr != NULL) {
+	if(p_event_mgr != 00) {
 		switch(event_type) {
 			case EVT_ERROR:
-				msg_handler = event_mgr->error_handler;
+				msg_handler = p_event_mgr->error_handler;
+				l_data = p_event_mgr->m_error_data;
 				break;
 			case EVT_WARNING:
-				msg_handler = event_mgr->warning_handler;
+				msg_handler = p_event_mgr->warning_handler;
+				l_data = p_event_mgr->m_warning_data;
 				break;
 			case EVT_INFO:
-				msg_handler = event_mgr->info_handler;
+				msg_handler = p_event_mgr->info_handler;
+				l_data = p_event_mgr->m_info_data;
 				break;
 			default:
 				break;
 		}
-		if(msg_handler == NULL) {
+		if(msg_handler == 00) {
 			return OPJ_FALSE;
 		}
 	} else {
 		return OPJ_FALSE;
 	}
 
-	if ((fmt != NULL) && (event_mgr != NULL)) {
+	if ((fmt != 00) && (p_event_mgr != 00)) {
 		va_list arg;
 		int str_length/*, i, j*/; /* UniPG */
 		char message[MSG_SIZE];
@@ -162,72 +166,8 @@ opj_bool opj_event_msg_v2(opj_event_mgr_t* event_mgr, int event_type, const char
 		va_end(arg);
 
 		/* output the message to the user program */
-		msg_handler(message, event_mgr->client_data);
+		msg_handler(message, l_data);
 	}
 
 	return OPJ_TRUE;
-}
-
-/* ----------------------------------------------------------------------- */
-void OPJ_CALLCONV opj_initialize_default_event_handler(opj_event_mgr_t * p_event, opj_bool verbose)
-{
-	if (! p_event){
-		fprintf(stderr, "[ERROR] Event structure provided to the opj_set_default_event_handler is equal to null pointer.\n");
-		return;
-	}
-
-	p_event->client_data = NULL;
-	p_event->error_handler = opj_error_default_callback;
-
-	if (verbose) {
-		p_event->info_handler = opj_info_default_callback;
-		p_event->warning_handler = opj_warning_default_callback;
-	}
-	else {
-		/* FIXME (MSD) This message should be remove when the documentation will be updated */
-		fprintf(stdout, "[INFO] Verbose mode = OFF => no other info/warning output.\n");
-		p_event->info_handler = opj_default_callback ;
-		p_event->warning_handler = opj_default_callback ;
-	}
-}
-
-/* ---------------------------------------------------------------------- */
-/* Default callback functions                                             */
-
-/**
- * Default callback function.
- * Do nothing.
- */
-void opj_default_callback (const char *msg, void *client_data)
-{
-}
-
-/**
- * Default info callback function.
- * Output = stdout.
- */
-void opj_info_default_callback (const char *msg, void *client_data)
-{
-	(void)client_data;
-	fprintf(stdout, "[INFO] %s", msg);
-}
-
-/**
- * Default warning callback function.
- * Output = stderr.
- */
-void opj_warning_default_callback (const char *msg, void *client_data)
-{
-	(void)client_data;
-	fprintf(stderr, "[WARNING] %s", msg);
-}
-
-/**
- * Default error callback function.
- * Output = stderr.
- */
-void opj_error_default_callback (const char *msg, void *client_data)
-{
-	(void)client_data;
-	fprintf(stderr, "[ERROR] %s", msg);
 }

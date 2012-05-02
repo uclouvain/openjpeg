@@ -79,7 +79,7 @@ typedef int opj_bool; /*FIXME it should be to follow the name of others OPJ_TYPE
 typedef char          OPJ_CHAR;
 typedef float         OPJ_FLOAT32;
 typedef double        OPJ_FLOAT64;
-typedef unsigned char	OPJ_BYTE;
+typedef unsigned char OPJ_BYTE;
 
 #include "opj_stdint.h"
 
@@ -219,17 +219,25 @@ typedef enum LIMIT_DECODING {
  * */
 typedef void (*opj_msg_callback) (const char *msg, void *client_data);
 
-/**
- * Message handler object used for
- * <ul>
- * <li>Error messages
- * <li>Warning messages
- * <li>Debugging messages
- * </ul>
- * */
-typedef struct opj_event_mgr {
-	/** FIXME DOC */
-	void* client_data;
+
+
+/** SHOULD BE MOVE IN EVET.H when we remove old functions
+Message handler object
+used for 
+<ul>
+<li>Error messages
+<li>Warning messages
+<li>Debugging messages
+</ul>
+*/
+typedef struct opj_event_mgr 
+{
+	/** Data to call the event manager upon */
+	void *			m_error_data;
+	/** Data to call the event manager upon */
+	void *			m_warning_data;
+	/** Data to call the event manager upon */
+	void *			m_info_data;
 	/** Error message callback if available, NULL otherwise */
 	opj_msg_callback error_handler;
 	/** Warning message callback if available, NULL otherwise */
@@ -237,7 +245,6 @@ typedef struct opj_event_mgr {
 	/** Debug message callback if available, NULL otherwise */
 	opj_msg_callback info_handler;
 } opj_event_mgr_t;
-
 
 /* 
 ==========================================================
@@ -247,7 +254,8 @@ typedef struct opj_event_mgr {
 
 /**
  * Progression order changes
- * */
+ * 
+ */
 typedef struct opj_poc {
 	/** Resolution num start, Component num start, given by POC */
 	OPJ_UINT32 resno0, compno0;
@@ -549,6 +557,7 @@ typedef void * opj_codec_t;
 
 /**
 Byte input-output stream (CIO)
+DEPRECATED 
 */
 typedef struct opj_cio {
 	/** codec context */
@@ -568,7 +577,7 @@ typedef struct opj_cio {
 	unsigned char *end;
 	/** pointer to the current position */
 	unsigned char *bp;
-} opj_cio_t;
+} opj_cio_t; 
 
 
 /*
@@ -951,7 +960,7 @@ typedef struct opj_tile_index {
 /**
  * Index structure of the codestream (FIXME should be expand and enhance)
  */
-typedef struct opj_codestream_index_ {
+typedef struct opj_codestream_index {
 	/** main header start position (SOC position) */
 	OPJ_OFF_T main_head_start;
 	/** main header end position (first SOT position) */
@@ -1056,7 +1065,7 @@ OPJ_API opj_image_t* OPJ_CALLCONV opj_image_tile_create(OPJ_UINT32 numcmpts, opj
    stream functions definitions
 ==========================================================
 */
-
+/* CIO functions are DEPRECATED see following stream functions */
 /**
 Open and allocate a memory stream for read / write. 
 On reading, the user must provide a buffer containing encoded data. The buffer will be 
@@ -1138,7 +1147,6 @@ OPJ_API void OPJ_CALLCONV opj_stream_set_skip_function(opj_stream_t* p_stream, o
 */
 OPJ_API void OPJ_CALLCONV opj_stream_set_seek_function(opj_stream_t* p_stream, opj_stream_seek_fn p_function);
 
-
 /**
  * Sets the given data to be used as a user data for the stream.
  * @param		p_stream	the stream to modify
@@ -1152,7 +1160,6 @@ OPJ_API void OPJ_CALLCONV opj_stream_set_user_data (opj_stream_t* p_stream, void
  * @param		data_length		length of the user_data.
 */
 OPJ_API void OPJ_CALLCONV opj_stream_set_user_data_length(opj_stream_t* p_stream, OPJ_UINT64 data_length);
-
 
 /**
  * Helper function.
@@ -1170,22 +1177,13 @@ OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream (FILE * p_file,
    event manager functions definitions
 ==========================================================
 */
+OPJ_API opj_bool OPJ_CALLCONV opj_set_info_handler(opj_codec_t * p_codec, opj_msg_callback p_callback,void * p_user_data);
+OPJ_API opj_bool OPJ_CALLCONV opj_set_warning_handler(opj_codec_t * p_codec, opj_msg_callback p_callback,void * p_user_data);
+OPJ_API opj_bool OPJ_CALLCONV opj_set_error_handler(opj_codec_t * p_codec, opj_msg_callback p_callback,void * p_user_data);
 
 /**
  */
 DEPRECATED( OPJ_API opj_event_mgr_t* OPJ_CALLCONV opj_set_event_mgr(opj_common_ptr cinfo, opj_event_mgr_t *event_mgr, void *context));
-
-/**
- * Initialize a default event handler. This function set the output of message event to be stderr for warning and error output
- * and stdout for info output in the verbose mode. In the case of the non-verbose mode only the error message are displayed.
- * You can initialize your own event handler struct when you fill the field of the event structure. If you provide a null
- * structure to the opj_setup_decoder function, no output will be displayed.
- *
- * @param	p_manager		a opj_event_mgr structure which will be pass to the codec.
- *
- */
-OPJ_API void OPJ_CALLCONV opj_initialize_default_event_handler(opj_event_mgr_t * p_manager, opj_bool verbose);
-
 
 /* 
 ==========================================================
@@ -1215,16 +1213,25 @@ Destroy a decompressor handle
 DEPRECATED( OPJ_API void OPJ_CALLCONV opj_destroy_decompress(opj_dinfo_t *dinfo) );
 
 /**
+ * Destroy a decompressor handle
+ *
+ * @param	p_codec			decompressor handle to destroy
+ */
+OPJ_API void OPJ_CALLCONV opj_destroy_codec(opj_codec_t * p_codec);
+
+/**
  * Read after the codestream if necessary
+ * @param	p_codec			the JPEG2000 codec to read.
+ * @param	p_stream		the JPEG2000 stream.
  */
 OPJ_API opj_bool OPJ_CALLCONV opj_end_decompress (	opj_codec_t *p_codec,
-													opj_stream_t *p_cio);
+													opj_stream_t *p_stream);
 
 
 /**
-Set decoding parameters to default values
-@param parameters Decompression parameters
-*/
+ * Set decoding parameters to default values
+ * @param parameters Decompression parameters
+ */
 OPJ_API void OPJ_CALLCONV opj_set_default_decoder_parameters(opj_dparameters_t *parameters);
 
 /**
@@ -1240,26 +1247,24 @@ DEPRECATED( OPJ_API void OPJ_CALLCONV opj_setup_decoder(opj_dinfo_t *dinfo, opj_
  * Setup the decoder with decompression parameters provided by the user and with the message handler
  * provided by the user.
  *
- * @param dinfo 		decompressor handlers
+ * @param p_codec 		decompressor handler
  * @param parameters 	decompression parameters
- * @param event_mgr		message handler
  *
  * @return true			if the decoder is correctly set
  */
-OPJ_API opj_bool OPJ_CALLCONV opj_setup_decoder_v2(	opj_codec_t *p_info,
-													opj_dparameters_t *parameters,
-													opj_event_mgr_t* event_mgr);
+OPJ_API opj_bool OPJ_CALLCONV opj_setup_decoder_v2(	opj_codec_t *p_codec,
+													opj_dparameters_t *parameters );
 
 /**
  * Decodes an image header.
  *
- * @param	p_cio			the jpeg2000 stream.
+ * @param	p_stream		the jpeg2000 stream.
  * @param	p_codec			the jpeg2000 codec to read.
  * @param	p_image			the image structure initialized with the characteristics of encoded image.
  *
  * @return true				if the main header of the codestream and the JP2 header is correctly read.
  */
-OPJ_API opj_bool OPJ_CALLCONV opj_read_header (	opj_stream_t *p_cio,
+OPJ_API opj_bool OPJ_CALLCONV opj_read_header (	opj_stream_t *p_stream,
 												opj_codec_t *p_codec,
 												opj_image_t **p_image);
 
@@ -1289,40 +1294,37 @@ DEPRECATED( OPJ_API opj_image_t* OPJ_CALLCONV opj_decode(opj_dinfo_t *dinfo, opj
 
 /**
  * Decode an image from a JPEG-2000 codestream
- * @param p_decompressor decompressor handle
- * @param cio Input buffer stream
- * @param p_image the decoded image
- * @return Returns a true on success, otherwise false
+ * @param p_decompressor 	decompressor handle
+ * @param p_stream			Input buffer stream
+ * @param p_image 			the decoded image
+ * @return 					true if success, otherwise false
  * */
 OPJ_API opj_bool OPJ_CALLCONV opj_decode_v2(opj_codec_t *p_decompressor,
-											opj_stream_t * cio,
+											opj_stream_t *p_stream,
 											opj_image_t *p_image);
-
 
 /**
  * Get the decoded tile from the codec
  * @param	p_codec			the jpeg2000 codec.
- * @param	p_cio			input streamm
+ * @param	p_stream		input streamm
  * @param	p_image			output image
  * @param	tile_index		index of the tile which will be decode
  *
- * @return					opj_true if all is ok.
+ * @return					true if success, otherwise false
  */
 OPJ_API opj_bool OPJ_CALLCONV opj_get_decoded_tile(	opj_codec_t *p_codec,
-													opj_stream_t *p_cio,
+													opj_stream_t *p_stream,
 													opj_image_t *p_image,
 													OPJ_UINT32 tile_index);
-
 
 /**
  * Set the resolution factor of the decoded image
  * @param	p_codec			the jpeg2000 codec.
  * @param	res_factor		resolution factor to set
  *
- * @return					opj_true if all is ok.
+ * @return					true if success, otherwise false
  */
 OPJ_API opj_bool OPJ_CALLCONV opj_set_decoded_resolution_factor(opj_codec_t *p_codec, OPJ_UINT32 res_factor);
-
 
 /**
  * Writes a tile with the given data.
@@ -1341,8 +1343,6 @@ OPJ_API opj_bool OPJ_CALLCONV opj_write_tile (	opj_codec_t *p_codec,
 												OPJ_BYTE * p_data,
 												OPJ_UINT32 p_data_size,
 												opj_stream_t *p_stream );
-
-
 
 /**
  * Reads a tile header. This function is compulsory and allows one to know the size of the tile thta will be decoded.
@@ -1374,7 +1374,6 @@ OPJ_API opj_bool OPJ_CALLCONV opj_read_tile_header(	opj_codec_t *p_codec,
 												OPJ_UINT32 * p_nb_comps,
 												opj_bool * p_should_go_on );
 
-
 /**
  * Reads a tile data. This function is compulsory and allows one to decode tile data. opj_read_tile_header should be called before.
  * The user may need to refer to the image got by opj_read_header to understand the size being taken by the tile.
@@ -1393,7 +1392,6 @@ OPJ_API opj_bool OPJ_CALLCONV opj_decode_tile_data(	opj_codec_t *p_codec,
 													OPJ_UINT32 p_data_size,
 													opj_stream_t *p_stream );
 
-
 /**
 Decode an image from a JPEG-2000 codestream and extract the codestream information
 @param dinfo decompressor handle
@@ -1410,21 +1408,21 @@ Creates a J2K/JP2 compression structure
 @param format Coder to select
 @return Returns a handle to a compressor if successful, returns NULL otherwise
 */
-OPJ_API opj_cinfo_t* OPJ_CALLCONV opj_create_compress(OPJ_CODEC_FORMAT format);
+DEPRECATED( OPJ_API opj_cinfo_t* OPJ_CALLCONV opj_create_compress(OPJ_CODEC_FORMAT format));
 
 /**
-Creates a J2K/JP2 compression structure
-@param format Coder to select
-@return Returns a handle to a compressor if successful, returns NULL otherwise
-*/
+ * Creates a J2K/JP2 compression structure
+ * @param 	format 		Coder to select
+ * @return 				Returns a handle to a compressor if successful, returns NULL otherwise
+ */
 OPJ_API opj_codec_t* OPJ_CALLCONV opj_create_compress_v2(OPJ_CODEC_FORMAT format);
-
 
 /**
 Destroy a compressor handle
 @param cinfo compressor handle to destroy
 */
-OPJ_API void OPJ_CALLCONV opj_destroy_compress(opj_cinfo_t *cinfo);
+DEPRECATED(OPJ_API void OPJ_CALLCONV opj_destroy_compress(opj_cinfo_t *cinfo) );
+
 /**
 Set encoding parameters to default values, that means : 
 <ul>
@@ -1447,38 +1445,46 @@ Set encoding parameters to default values, that means :
 @param parameters Compression parameters
 */
 OPJ_API void OPJ_CALLCONV opj_set_default_encoder_parameters(opj_cparameters_t *parameters);
+
 /**
 Setup the encoder parameters using the current image and using user parameters. 
 @param cinfo Compressor handle
 @param parameters Compression parameters
 @param image Input filled image
 */
-OPJ_API void OPJ_CALLCONV opj_setup_encoder(opj_cinfo_t *cinfo, opj_cparameters_t *parameters, opj_image_t *image);
+DEPRECATED(OPJ_API void OPJ_CALLCONV opj_setup_encoder(opj_cinfo_t *cinfo, opj_cparameters_t *parameters, opj_image_t *image) );
 
 /**
-Setup the encoder parameters using the current image and using user parameters.
-@param cinfo Compressor handle
-@param parameters Compression parameters
-@param image Input filled image
-*/
-OPJ_API opj_bool OPJ_CALLCONV opj_setup_encoder_v2(opj_codec_t *cinfo, opj_cparameters_t *parameters, opj_image_t *image);
+ * Setup the encoder parameters using the current image and using user parameters.
+ * @param p_codec 		Compressor handle
+ * @param parameters 	Compression parameters
+ * @param image 		Input filled image
+ */
+OPJ_API opj_bool OPJ_CALLCONV opj_setup_encoder_v2(	opj_codec_t *p_codec, 
+													opj_cparameters_t *parameters, 
+													opj_image_t *image);
 
-
+/**
+ */
 OPJ_API opj_bool OPJ_CALLCONV opj_start_compress (	opj_codec_t *p_codec,
-											opj_image_t * p_image,
-											opj_stream_t *p_cio);
-
-OPJ_API opj_bool OPJ_CALLCONV opj_end_compress (opj_codec_t *p_codec,opj_stream_t *p_cio);
+													opj_image_t * p_image,
+													opj_stream_t *p_cio);
 
 /**
-Encode an image into a JPEG-2000 codestream
-@param cinfo compressor handle
-@param cio Output buffer stream
-@param image Image to encode
-@param index Depreacted -> Set to NULL. To extract index, used opj_encode_wci()
-@return Returns true if successful, returns false otherwise
-*/
-OPJ_API opj_bool OPJ_CALLCONV opj_encode_v2(opj_codec_t *cinfo, opj_stream_t * cio);
+ */
+OPJ_API opj_bool OPJ_CALLCONV opj_end_compress (opj_codec_t *p_codec,
+												opj_stream_t *p_stream);
+
+/**
+ * Encode an image into a JPEG-2000 codestream
+ * @param p_codec 		compressor handle
+ * @param p_stream 		Output buffer stream
+ * @param image 		Image to encode
+ *
+ * @return 				Returns true if successful, returns false otherwise
+ */
+OPJ_API opj_bool OPJ_CALLCONV opj_encode_v2(opj_codec_t *p_codec, 
+											opj_stream_t *p_stream);
 
 /**
 Encode an image into a JPEG-2000 codestream
@@ -1488,7 +1494,7 @@ Encode an image into a JPEG-2000 codestream
 @param index Depreacted -> Set to NULL. To extract index, used opj_encode_wci()
 @return Returns true if successful, returns false otherwise
 */
-OPJ_API opj_bool OPJ_CALLCONV opj_encode(opj_cinfo_t *cinfo, opj_cio_t *cio, opj_image_t *image, char *index);
+DEPRECATED( OPJ_API opj_bool OPJ_CALLCONV opj_encode(opj_cinfo_t *cinfo, opj_cio_t *cio, opj_image_t *image, char *index) );
 /**
 Encode an image into a JPEG-2000 codestream and extract the codestream information
 @param cinfo compressor handle
@@ -1497,9 +1503,7 @@ Encode an image into a JPEG-2000 codestream and extract the codestream informati
 @param cstr_info Codestream information structure if needed afterwards, NULL otherwise
 @return Returns true if successful, returns false otherwise
 */
-OPJ_API opj_bool OPJ_CALLCONV opj_encode_with_info(opj_cinfo_t *cinfo, opj_cio_t *cio, opj_image_t *image, opj_codestream_info_t *cstr_info);
-
-
+DEPRECATED( OPJ_API opj_bool OPJ_CALLCONV opj_encode_with_info(opj_cinfo_t *cinfo, opj_cio_t *cio, opj_image_t *image, opj_codestream_info_t *cstr_info) );
 
 
 /**
@@ -1509,16 +1513,6 @@ Destroy Codestream information after compression or decompression
 OPJ_API void OPJ_CALLCONV opj_destroy_cstr_info(opj_codestream_info_t *cstr_info);
 
 OPJ_API void OPJ_CALLCONV opj_destroy_cstr_info_v2(opj_codestream_info_v2_t **cstr_info);
-
-
-
-/**
- * Destroy a decompressor handle
- *
- * @param	p_codec			decompressor handle to destroy
- */
-OPJ_API void OPJ_CALLCONV opj_destroy_codec(opj_codec_t * p_codec);
-
 
 
 
@@ -1612,5 +1606,3 @@ OPJ_API opj_bool OPJ_CALLCONV opj_set_MCT( opj_cparameters_t *parameters,
 #endif
 
 #endif /* OPENJPEG_H */
-
-

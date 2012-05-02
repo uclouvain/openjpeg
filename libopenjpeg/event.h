@@ -31,6 +31,30 @@
 
 The functions in EVENT.C have for goal to send output messages (errors, warnings, debug) to the user.
 */
+/**
+Message handler object
+used for 
+<ul>
+<li>Error messages
+<li>Warning messages
+<li>Debugging messages
+</ul>
+*/
+//typedef struct opj_event_mgr 
+//{
+//	/** Data to call the event manager upon */
+//	void *			m_error_data;
+//	/** Data to call the event manager upon */
+//	void *			m_warning_data;
+//	/** Data to call the event manager upon */
+//	void *			m_info_data;
+//	/** Error message callback if available, NULL otherwise */
+//	opj_msg_callback error_handler;
+//	/** Warning message callback if available, NULL otherwise */
+//	opj_msg_callback warning_handler;
+//	/** Debug message callback if available, NULL otherwise */
+//	opj_msg_callback info_handler;
+//} opj_event_mgr_t;
 
 #define EVT_ERROR	1	/**< Error event type */
 #define EVT_WARNING	2	/**< Warning event type */
@@ -53,7 +77,6 @@ Write formatted data to a string and send the string to a user callback.
 opj_bool opj_event_msg(opj_common_ptr cinfo, int event_type, const char *fmt, ...);
 
 /* ----------------------------------------------------------------------- */
-/*@}*/
 
 /**
  * Write formatted data to a string and send the string to a user callback.
@@ -65,27 +88,8 @@ opj_bool opj_event_msg(opj_common_ptr cinfo, int event_type, const char *fmt, ..
  * @return Returns true if successful, returns false otherwise
  */
 opj_bool opj_event_msg_v2(opj_event_mgr_t* event_mgr, int event_type, const char *fmt, ...);
-
-/**
- * Default callback function. No message sent to output.
- */
-void opj_default_callback (const char *msg, void *client_data);
-
-/**
- * Default info callback function, message is sent to the stdout output.
- */
-void opj_info_default_callback (const char *msg, void *client_data);
-
-/**
- * Default warning callback function, message is sent to stderr output.
- */
-void opj_warning_default_callback (const char *msg, void *client_data);
-
-/**
- * Default error callback function, message is sent to stderr output.
- */
-void opj_error_default_callback (const char *msg, void *client_data);
-
+/* ----------------------------------------------------------------------- */
+/*@}*/
 
 /*@}*/
 

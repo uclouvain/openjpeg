@@ -1536,23 +1536,45 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 /**
 sample error callback expecting a FILE* client object
 */
-void error_callback(const char *msg, void *client_data) {
+void error_file_callback(const char *msg, void *client_data) {
 	FILE *stream = (FILE*)client_data;
 	fprintf(stream, "[ERROR] %s", msg);
 }
 /**
 sample warning callback expecting a FILE* client object
 */
-void warning_callback(const char *msg, void *client_data) {
+void warning_file_callback(const char *msg, void *client_data) {
 	FILE *stream = (FILE*)client_data;
 	fprintf(stream, "[WARNING] %s", msg);
 }
 /**
 sample debug callback expecting a FILE* client object
 */
-void info_callback(const char *msg, void *client_data) {
+void info_file_callback(const char *msg, void *client_data) {
 	FILE *stream = (FILE*)client_data;
 	fprintf(stream, "[INFO] %s", msg);
+}
+
+/**
+sample error debug callback expecting no client object
+*/
+void error_callback(const char *msg, void *client_data) {
+	(void)client_data;
+	fprintf(stdout, "[ERROR] %s", msg);
+}
+/**
+sample warning debug callback expecting no client object
+*/
+void warning_callback(const char *msg, void *client_data) {
+	(void)client_data;
+	fprintf(stdout, "[WARNING] %s", msg);
+}
+/**
+sample debug callback expecting no client object
+*/
+void info_callback(const char *msg, void *client_data) {
+	(void)client_data;
+	fprintf(stdout, "[INFO] %s", msg);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -1561,13 +1583,12 @@ void info_callback(const char *msg, void *client_data) {
  */
 /* -------------------------------------------------------------------------- */
 int main(int argc, char **argv) {
-	FILE *f = NULL;
+	FILE *fout = NULL;
 
 	opj_cparameters_t parameters;	/* compression parameters */
-	opj_event_mgr_t event_mgr;		/* event manager */
 
-	opj_stream_t *cio = 00;
-	opj_codec_t* cinfo = 00;
+	opj_stream_t *l_stream = 00;
+	opj_codec_t* l_codec = 00;
 	opj_image_t *image = NULL;
 	raw_cparameters_t raw_cp;
 	opj_codestream_info_t cstr_info;		/* Codestream information structure */
@@ -1579,15 +1600,6 @@ int main(int argc, char **argv) {
 	dircnt_t *dirptr = NULL;
 
 	opj_bool bSuccess;
-
-	/*
-	configure the event callbacks (not required)
-	setting of each callback is optionnal
-	*/
-	memset(&event_mgr, 0, sizeof(opj_event_mgr_t));
-	event_mgr.error_handler = error_callback;
-	event_mgr.warning_handler = warning_callback;
-	event_mgr.info_handler = info_callback;
 
 	/* set encoding parameters to default values */
 	opj_set_default_encoder_parameters(&parameters);
@@ -1768,56 +1780,61 @@ int main(int argc, char **argv) {
 			case J2K_CFMT:	/* JPEG-2000 codestream */
 			{
 				/* Get a decoder handle */
-				cinfo = opj_create_compress_v2(CODEC_J2K);
+				l_codec = opj_create_compress_v2(CODEC_J2K);
 				break;
 			}
 			case JP2_CFMT:	/* JPEG 2000 compressed image data */
 			{
 				/* Get a decoder handle */
-				cinfo = opj_create_compress_v2(CODEC_JP2);
+				l_codec = opj_create_compress_v2(CODEC_JP2);
 				break;
 			}
 			default:
 				fprintf(stderr, "skipping file..\n");
-				opj_stream_destroy(cio);
+				opj_stream_destroy(l_stream);
 				continue;
 		}
+		
+		/* catch events using our callbacks and give a local context */		
+		opj_set_info_handler(l_codec, info_callback,00);
+		opj_set_warning_handler(l_codec, warning_callback,00);
+		opj_set_error_handler(l_codec, error_callback,00);
 
-		opj_setup_encoder_v2(cinfo, &parameters, image);
+		opj_setup_encoder_v2(l_codec, &parameters, image);
 
 		/* Open the output file*/
-		f = fopen(parameters.outfile, "wb");
-		if (! f) {
+		fout = fopen(parameters.outfile, "wb");
+		if (! fout) {
 			fprintf(stderr, "Not enable to create output file!\n");
-			opj_stream_destroy(cio);
+			opj_stream_destroy(l_stream);
 			return 1;
 		}
 
 		/* open a byte stream for writing and allocate memory for all tiles */
-		cio = opj_stream_create_default_file_stream(f,OPJ_FALSE);
-		if (! cio){
+		l_stream = opj_stream_create_default_file_stream(fout,OPJ_FALSE);
+		if (! l_stream){
 			return 1;
 		}
 
 		/* encode the image */
-		bSuccess = opj_start_compress(cinfo,image,cio);
-		bSuccess = bSuccess && opj_encode_v2(cinfo, cio);
-		bSuccess = bSuccess && opj_end_compress(cinfo, cio);
+		bSuccess = opj_start_compress(l_codec,image,l_stream);
+		bSuccess = bSuccess && opj_encode_v2(l_codec, l_stream);
+		bSuccess = bSuccess && opj_end_compress(l_codec, l_stream);
 
 		if (!bSuccess)  {
-			opj_stream_destroy(cio);
-			fclose(f);
+			opj_stream_destroy(l_stream);
+			fclose(fout);
 			fprintf(stderr, "failed to encode image\n");
 			return 1;
 		}
 
 		fprintf(stderr,"Generated outfile %s\n",parameters.outfile);
 		/* close and free the byte stream */
-		opj_stream_destroy(cio);
-		fclose(f);
+		opj_stream_destroy(l_stream);
+		fclose(fout);
 
 		/* free remaining compression structures */
-		opj_destroy_codec(cinfo);
+		opj_destroy_codec(l_codec);
 
 		/* free image data */
 		opj_image_destroy(image);

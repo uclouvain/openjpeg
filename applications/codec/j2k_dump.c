@@ -370,6 +370,30 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 }
 
 /* -------------------------------------------------------------------------- */
+
+/**
+sample error debug callback expecting no client object
+*/
+void error_callback(const char *msg, void *client_data) {
+	(void)client_data;
+	fprintf(stdout, "[ERROR] %s", msg);
+}
+/**
+sample warning debug callback expecting no client object
+*/
+void warning_callback(const char *msg, void *client_data) {
+	(void)client_data;
+	fprintf(stdout, "[WARNING] %s", msg);
+}
+/**
+sample debug callback expecting no client object
+*/
+void info_callback(const char *msg, void *client_data) {
+	(void)client_data;
+	fprintf(stdout, "[INFO] %s", msg);
+}
+
+/* -------------------------------------------------------------------------- */
 /**
  * J2K_DUMP MAIN
  */
@@ -379,10 +403,9 @@ int main(int argc, char *argv[])
 	FILE *fsrc = NULL, *fout = NULL;
 
 	opj_dparameters_t parameters;			/* Decompression parameters */
-	opj_event_mgr_t event_mgr;				/* Event manager */
 	opj_image_t* image = NULL;					/* Image structure */
-	opj_codec_t* dinfo = NULL;				/* Handle to a decompressor */
-	opj_stream_t *cio = NULL;				/* Stream */
+	opj_codec_t* l_codec = NULL;				/* Handle to a decompressor */
+	opj_stream_t *l_stream = NULL;				/* Stream */
 	opj_codestream_info_v2_t* cstr_info = NULL;
 	opj_codestream_index_t* cstr_index = NULL;
 
@@ -406,9 +429,6 @@ int main(int argc, char *argv[])
 	if(parse_cmdline_decoder(argc, argv, &parameters,&img_fol) == 1) {
 		return EXIT_FAILURE;
 	}
-
-	/* Set default event mgr */
-	opj_initialize_default_event_handler(&event_mgr, parameters.m_verbose);
 
 	/* Initialize reading of directory */
 	if(img_fol.set_imgdir==1){	
@@ -471,8 +491,8 @@ int main(int argc, char *argv[])
 			return EXIT_FAILURE;
 		}
 
-		cio = opj_stream_create_default_file_stream(fsrc,1);
-		if (!cio){
+		l_stream = opj_stream_create_default_file_stream(fsrc,1);
+		if (!l_stream){
 			fclose(fsrc);
 			fprintf(stderr, "ERROR -> failed to create the stream from the file\n");
 			return EXIT_FAILURE;
@@ -485,61 +505,66 @@ int main(int argc, char *argv[])
 			case J2K_CFMT:	/* JPEG-2000 codestream */
 			{
 				/* Get a decoder handle */
-				dinfo = opj_create_decompress_v2(CODEC_J2K);
+				l_codec = opj_create_decompress_v2(CODEC_J2K);
 				break;
 			}
 			case JP2_CFMT:	/* JPEG 2000 compressed image data */
 			{
 				/* Get a decoder handle */
-				dinfo = opj_create_decompress_v2(CODEC_JP2);
+				l_codec = opj_create_decompress_v2(CODEC_JP2);
 				break;
 			}
 			case JPT_CFMT:	/* JPEG 2000, JPIP */
 			{
 				/* Get a decoder handle */
-				dinfo = opj_create_decompress_v2(CODEC_JPT);
+				l_codec = opj_create_decompress_v2(CODEC_JPT);
 				break;
 			}
 			default:
 				fprintf(stderr, "skipping file..\n");
-				opj_stream_destroy(cio);
+				opj_stream_destroy(l_stream);
 				continue;
 		}
 
+		/* catch events using our callbacks and give a local context */		
+		opj_set_info_handler(l_codec, info_callback,00);
+		opj_set_warning_handler(l_codec, warning_callback,00);
+		opj_set_error_handler(l_codec, error_callback,00);
+
 		/* Setup the decoder decoding parameters using user parameters */
-		if ( !opj_setup_decoder_v2(dinfo, &parameters, &event_mgr) ){
+		if ( !opj_setup_decoder_v2(l_codec, &parameters) ){
 			fprintf(stderr, "ERROR -> j2k_dump: failed to setup the decoder\n");
-			opj_stream_destroy(cio);
+			opj_stream_destroy(l_stream);
 			fclose(fsrc);
-			opj_destroy_codec(dinfo);
+			opj_destroy_codec(l_codec);
 			fclose(fout);
 			return EXIT_FAILURE;
 		}
 
 		/* Read the main header of the codestream and if necessary the JP2 boxes*/
-		if(! opj_read_header(cio, dinfo, &image)){
+		if(! opj_read_header(l_stream, l_codec, &image)){
 			fprintf(stderr, "ERROR -> j2k_dump: failed to read the header\n");
-			opj_stream_destroy(cio);
+			opj_stream_destroy(l_stream);
 			fclose(fsrc);
-			opj_destroy_codec(dinfo);
+			opj_destroy_codec(l_codec);
 			opj_image_destroy(image);
 			fclose(fout);
 			return EXIT_FAILURE;
 		}
 
-		opj_dump_codec(dinfo, OPJ_IMG_INFO | OPJ_J2K_MH_INFO | OPJ_J2K_MH_IND, fout );
+		opj_dump_codec(l_codec, OPJ_IMG_INFO | OPJ_J2K_MH_INFO | OPJ_J2K_MH_IND, fout );
 
-		cstr_info = opj_get_cstr_info(dinfo);
+		cstr_info = opj_get_cstr_info(l_codec);
 
-		cstr_index = opj_get_cstr_index(dinfo);
+		cstr_index = opj_get_cstr_index(l_codec);
 
 		/* close the byte stream */
-		opj_stream_destroy(cio);
+		opj_stream_destroy(l_stream);
 		fclose(fsrc);
 
 		/* free remaining structures */
-		if (dinfo) {
-			opj_destroy_codec(dinfo);
+		if (l_codec) {
+			opj_destroy_codec(l_codec);
 		}
 
 		/* destroy the image header */

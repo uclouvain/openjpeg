@@ -667,10 +667,9 @@ int main(int argc, char **argv)
 	FILE *fsrc = NULL;
 
 	opj_dparameters_t parameters;			/* decompression parameters */
-	opj_event_mgr_t event_mgr;				/* event manager */
 	opj_image_t* image = NULL;
-	opj_stream_t *cio = NULL;				/* Stream */
-	opj_codec_t* dinfo = NULL;				/* Handle to a decompressor */
+	opj_stream_t *l_stream = NULL;				/* Stream */
+	opj_codec_t* l_codec = NULL;				/* Handle to a decompressor */
 	opj_codestream_index_t* cstr_index = NULL;
 
 	char indexfilename[OPJ_PATH_LEN];	/* index file name */
@@ -678,12 +677,6 @@ int main(int argc, char **argv)
 	OPJ_INT32 num_images, imageno;
 	img_fol_t img_fol;
 	dircnt_t *dirptr = NULL;
-
-	/* configure the event callbacks (not required) */
-	memset(&event_mgr, 0, sizeof(opj_event_mgr_t));
-	event_mgr.error_handler = error_callback;
-	event_mgr.warning_handler = warning_callback;
-	event_mgr.info_handler = info_callback;
 
 	/* set decoding parameters to default values */
 	opj_set_default_decoder_parameters(&parameters);
@@ -698,9 +691,6 @@ int main(int argc, char **argv)
 	if(parse_cmdline_decoder(argc, argv, &parameters,&img_fol, indexfilename) == 1) {
 		return EXIT_FAILURE;
 	}
-
-	/* Set default event mgr */
-	opj_initialize_default_event_handler(&event_mgr, 1);
 
 	/* Initialize reading of directory */
 	if(img_fol.set_imgdir==1){	
@@ -750,8 +740,8 @@ int main(int argc, char **argv)
 			return EXIT_FAILURE;
 		}
 
-		cio = opj_stream_create_default_file_stream(fsrc,1);
-		if (!cio){
+		l_stream = opj_stream_create_default_file_stream(fsrc,1);
+		if (!l_stream){
 			fclose(fsrc);
 			fprintf(stderr, "ERROR -> failed to create the stream from the file\n");
 			return EXIT_FAILURE;
@@ -764,64 +754,69 @@ int main(int argc, char **argv)
 			case J2K_CFMT:	/* JPEG-2000 codestream */
 			{
 				/* Get a decoder handle */
-				dinfo = opj_create_decompress_v2(CODEC_J2K);
+				l_codec = opj_create_decompress_v2(CODEC_J2K);
 				break;
 			}
 			case JP2_CFMT:	/* JPEG 2000 compressed image data */
 			{
 				/* Get a decoder handle */
-				dinfo = opj_create_decompress_v2(CODEC_JP2);
+				l_codec = opj_create_decompress_v2(CODEC_JP2);
 				break;
 			}
 			case JPT_CFMT:	/* JPEG 2000, JPIP */
 			{
 				/* Get a decoder handle */
-				dinfo = opj_create_decompress_v2(CODEC_JPT);
+				l_codec = opj_create_decompress_v2(CODEC_JPT);
 				break;
 			}
 			default:
 				fprintf(stderr, "skipping file..\n");
-				opj_stream_destroy(cio);
+				opj_stream_destroy(l_stream);
 				continue;
 		}
 
+		/* catch events using our callbacks and give a local context */		
+		opj_set_info_handler(l_codec, info_callback,00);
+		opj_set_warning_handler(l_codec, warning_callback,00);
+		opj_set_error_handler(l_codec, error_callback,00);
+
 		/* Setup the decoder decoding parameters using user parameters */
-		if ( !opj_setup_decoder_v2(dinfo, &parameters, &event_mgr) ){
+		if ( !opj_setup_decoder_v2(l_codec, &parameters) ){
 			fprintf(stderr, "ERROR -> j2k_dump: failed to setup the decoder\n");
-			opj_stream_destroy(cio);
+			opj_stream_destroy(l_stream);
 			fclose(fsrc);
-			opj_destroy_codec(dinfo);
+			opj_destroy_codec(l_codec);
 			return EXIT_FAILURE;
 		}
 
 
 		/* Read the main header of the codestream and if necessary the JP2 boxes*/
-		if(! opj_read_header(cio, dinfo, &image)){
+		if(! opj_read_header(l_stream, l_codec, &image)){
 			fprintf(stderr, "ERROR -> j2k_to_image: failed to read the header\n");
-			opj_stream_destroy(cio);
+			opj_stream_destroy(l_stream);
 			fclose(fsrc);
-			opj_destroy_codec(dinfo);
+			opj_destroy_codec(l_codec);
 			opj_image_destroy(image);
 			return EXIT_FAILURE;
 		}
 
 		if (!parameters.nb_tile_to_decode) {
 			// Optional if you want decode the entire image
-			if (!opj_set_decode_area(dinfo, image, parameters.DA_x0,
+			if (!opj_set_decode_area(l_codec, image, parameters.DA_x0,
 					parameters.DA_y0, parameters.DA_x1, parameters.DA_y1)){
 				fprintf(stderr,	"ERROR -> j2k_to_image: failed to set the decoded area\n");
-				opj_stream_destroy(cio);
-				opj_destroy_codec(dinfo);
+				opj_stream_destroy(l_stream);
+				opj_destroy_codec(l_codec);
 				opj_image_destroy(image);
 				fclose(fsrc);
 				return EXIT_FAILURE;
 			}
 
 			/* Get the decoded image */
-			if (!(opj_decode_v2(dinfo, cio, image) && opj_end_decompress(dinfo,	cio))) {
+			if (!(opj_decode_v2(l_codec, l_stream, image) && opj_end_decompress(l_codec,	l_stream))) {
 				fprintf(stderr,"ERROR -> j2k_to_image: failed to decode image!\n");
-				opj_destroy_codec(dinfo);
-				opj_stream_destroy(cio);
+				opj_destroy_codec(l_codec);
+				opj_stream_destroy(l_stream);
 				opj_image_destroy(image);
 				fclose(fsrc);
 				return EXIT_FAILURE;
@@ -830,19 +825,19 @@ int main(int argc, char **argv)
 		else {
 
 			// It is just here to illustrate how to use the resolution after set parameters
-			/*if (!opj_set_decoded_resolution_factor(dinfo, 5)) {
+			/*if (!opj_set_decoded_resolution_factor(l_codec, 5)) {
 				fprintf(stderr, "ERROR -> j2k_to_image: failed to set the resolution factor tile!\n");
-				opj_destroy_codec(dinfo);
-				opj_stream_destroy(cio);
+				opj_destroy_codec(l_codec);
+				opj_stream_destroy(l_stream);
 				opj_image_destroy(image);
 				fclose(fsrc);
 				return EXIT_FAILURE;
 			}*/
 
-			if (!opj_get_decoded_tile(dinfo, cio, image, parameters.tile_index)) {
+			if (!opj_get_decoded_tile(l_codec, l_stream, image, parameters.tile_index)) {
 				fprintf(stderr, "ERROR -> j2k_to_image: failed to decode tile!\n");
-				opj_destroy_codec(dinfo);
-				opj_stream_destroy(cio);
+				opj_destroy_codec(l_codec);
+				opj_stream_destroy(l_stream);
 				opj_image_destroy(image);
 				fclose(fsrc);
 				return EXIT_FAILURE;
@@ -851,7 +846,7 @@ int main(int argc, char **argv)
 		}
 
 		/* Close the byte stream */
-		opj_stream_destroy(cio);
+		opj_stream_destroy(l_stream);
 		fclose(fsrc);
 
 		if(image->color_space == CLRSPC_SYCC){
@@ -940,8 +935,8 @@ int main(int argc, char **argv)
 		}
 
 		/* free remaining structures */
-		if (dinfo) {
-			opj_destroy_codec(dinfo);
+		if (l_codec) {
+			opj_destroy_codec(l_codec);
 		}
 
 
