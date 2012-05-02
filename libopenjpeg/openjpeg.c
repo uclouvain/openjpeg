@@ -1333,7 +1333,7 @@ opj_bool OPJ_CALLCONV opj_write_tile (	opj_codec_t *p_codec,
 {
 	if (p_codec && p_stream && p_data) {
 		opj_codec_private_t * l_codec = (opj_codec_private_t *) p_codec;
-		opj_stream_private_t * l_cio = (opj_stream_private_t *) p_stream;
+		opj_stream_private_t * l_stream = (opj_stream_private_t *) p_stream;
 
 		if (l_codec->is_decompressor) {
 			return OPJ_FALSE;
@@ -1343,7 +1343,7 @@ opj_bool OPJ_CALLCONV opj_write_tile (	opj_codec_t *p_codec,
 																	p_tile_index,
 																	p_data,
 																	p_data_size,
-																	l_cio,
+																	l_stream,
 																	&(l_codec->m_event_mgr) );
 	}
 
