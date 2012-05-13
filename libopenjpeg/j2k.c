@@ -467,6 +467,18 @@ Write the COM marker (comment)
 @param j2k J2K handle
 */
 static void j2k_write_com(opj_j2k_t *j2k);
+
+/**
+ * Writes the COM marker (comment)
+ * 
+ * @param	p_stream			the stream to write data to.
+ * @param	p_j2k			J2K codec.
+ * @param	p_manager	the user event manager.
+*/
+static opj_bool j2k_write_com_v2(	opj_j2k_v2_t *p_j2k,
+									struct opj_stream_private *p_stream,
+									struct opj_event_mgr * p_manager );
+
 /**
 Read the COM marker (comment)
 @param j2k J2K handle
@@ -711,6 +723,17 @@ static void j2k_write_poc(opj_j2k_t *j2k);
 
 /**
  * Writes the POC marker (Progression Order Change)
+ * 
+ * @param	p_stream				the stream to write data to.
+ * @param	p_j2k				J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+static opj_bool j2k_write_poc_v2(	opj_j2k_v2_t *p_j2k,
+									struct opj_stream_private *p_stream,
+									struct opj_event_mgr * p_manager );
+
+/**
+ * Writes the POC marker (Progression Order Change)
  *
  * @param	p_stream		the stream to write data to.
  * @param	p_j2k			J2K codec.
@@ -900,6 +923,18 @@ Write the TLM marker (Mainheader)
 @param j2k J2K handle
 */
 static void j2k_write_tlm(opj_j2k_t *j2k);
+
+/**
+ * Writes the TLM marker (Tile Length Marker)
+ * 
+ * @param	p_stream				the stream to write data to.
+ * @param	p_j2k				J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+static opj_bool j2k_write_tlm_v2(	opj_j2k_v2_t *p_j2k,
+									struct opj_stream_private *p_stream,
+									struct opj_event_mgr * p_manager );
+
 /**
 Write the SOT marker (start of tile-part)
 @param j2k J2K handle
@@ -1035,6 +1070,17 @@ static opj_bool j2k_read_rgn_v2 (
 						OPJ_UINT32 p_header_size,
 						struct opj_event_mgr * p_manager
 					) ;
+
+/**
+ * Writes the EOC marker (End of Codestream)
+ * 
+ * @param	p_stream		the stream to write data to.
+ * @param	p_j2k			J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+static opj_bool j2k_write_eoc_v2(	opj_j2k_t *p_j2k,
+									struct opj_stream_private *p_stream,
+									struct opj_event_mgr * p_manager );
 
 /**
 Write the EOC marker (end of codestream)
@@ -2830,6 +2876,63 @@ static void j2k_write_com(opj_j2k_t *j2k) {
 	}
 }
 
+/**
+ * Writes the COM marker (comment)
+ * 
+ * @param	p_stream			the stream to write data to.
+ * @param	p_j2k			J2K codec.
+ * @param	p_manager	the user event manager.
+*/
+opj_bool j2k_write_com_v2(	opj_j2k_v2_t *p_j2k,
+							struct opj_stream_private *p_stream,
+							struct opj_event_mgr * p_manager )
+{
+	OPJ_UINT32 l_comment_size;
+	OPJ_UINT32 l_total_com_size;
+	const OPJ_CHAR *l_comment;
+	OPJ_BYTE * l_current_ptr = 00;
+
+	// preconditions
+	assert(p_j2k != 00);
+	assert(p_stream != 00);
+	assert(p_manager != 00);
+	
+	l_comment = p_j2k->m_cp.comment;
+	l_comment_size = strlen(l_comment);
+	l_total_com_size = l_comment_size + 6;
+
+	if (l_total_com_size > p_j2k->m_specific_param.m_encoder.m_header_tile_data_size) {
+		p_j2k->m_specific_param.m_encoder.m_header_tile_data 
+			= (OPJ_BYTE*)opj_realloc(	p_j2k->m_specific_param.m_encoder.m_header_tile_data,
+										l_total_com_size);
+		
+		if(! p_j2k->m_specific_param.m_encoder.m_header_tile_data) {
+			return OPJ_FALSE;
+		}
+
+		p_j2k->m_specific_param.m_encoder.m_header_tile_data_size = l_total_com_size;
+	}
+
+	l_current_ptr = p_j2k->m_specific_param.m_encoder.m_header_tile_data;
+	
+	opj_write_bytes(l_current_ptr,J2K_MS_COM , 2);	/* COM */
+	l_current_ptr+=2;
+	
+	opj_write_bytes(l_current_ptr,l_total_com_size - 2 , 2);	/* L_COM */
+	l_current_ptr+=2;
+	
+	opj_write_bytes(l_current_ptr,1 , 2);	/* General use (IS 8859-15:1999 (Latin) values) */
+	l_current_ptr+=2;
+	
+	memcpy(	l_current_ptr,l_comment,l_comment_size);
+	
+	if (opj_stream_write_data(p_stream,p_j2k->m_specific_param.m_encoder.m_header_tile_data,l_total_com_size,p_manager) != l_total_com_size) {
+		return OPJ_FALSE;
+	}
+
+	return OPJ_TRUE;
+}
+
 static void j2k_read_com(opj_j2k_t *j2k) {
 	int len;
 	
@@ -3889,6 +3992,66 @@ static void j2k_write_poc(opj_j2k_t *j2k) {
 
 /**
  * Writes the POC marker (Progression Order Change)
+ * 
+ * @param	p_stream				the stream to write data to.
+ * @param	p_j2k				J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+opj_bool j2k_write_poc_v2(	opj_j2k_v2_t *p_j2k,
+							struct opj_stream_private *p_stream,
+							struct opj_event_mgr * p_manager )
+{
+	OPJ_UINT32 l_nb_comp;
+	OPJ_UINT32 l_nb_poc;
+	OPJ_UINT32 l_poc_size;
+	OPJ_UINT32 l_written_size = 0;
+	opj_tcp_v2_t *l_tcp = 00;
+	opj_tccp_t *l_tccp = 00;
+	OPJ_UINT32 l_poc_room;
+
+	// preconditions
+	assert(p_j2k != 00);
+	assert(p_manager != 00);
+	assert(p_stream != 00);
+
+	l_tcp = &p_j2k->m_cp.tcps[p_j2k->m_current_tile_number];
+	l_tccp = &l_tcp->tccps[0];
+	l_nb_comp = p_j2k->m_private_image->numcomps;
+	l_nb_poc = 1 + l_tcp->numpocs;
+	
+	if (l_nb_comp <= 256) {
+		l_poc_room = 1;
+	}
+	else {
+		l_poc_room = 2;
+	}
+	l_poc_size = 4 + (5 + 2 * l_poc_room) * l_nb_poc;
+	
+	if (l_poc_size > p_j2k->m_specific_param.m_encoder.m_header_tile_data_size) {
+		p_j2k->m_specific_param.m_encoder.m_header_tile_data 
+			= (OPJ_BYTE*)opj_realloc(
+				p_j2k->m_specific_param.m_encoder.m_header_tile_data,
+				l_poc_size);
+		
+		if (! p_j2k->m_specific_param.m_encoder.m_header_tile_data) {
+			return OPJ_FALSE;
+		}
+
+		p_j2k->m_specific_param.m_encoder.m_header_tile_data_size = l_poc_size;
+	}
+
+	j2k_write_poc_in_memory(p_j2k,p_j2k->m_specific_param.m_encoder.m_header_tile_data,&l_written_size,p_manager);
+
+	if (opj_stream_write_data(p_stream,p_j2k->m_specific_param.m_encoder.m_header_tile_data,l_poc_size,p_manager) != l_poc_size) {
+		return OPJ_FALSE;
+	}
+
+	return OPJ_TRUE;
+}
+
+
+/**
+ * Writes the POC marker (Progression Order Change)
  *
  * @param	p_stream				the stream to write data to.
  * @param	p_j2k				J2K codec.
@@ -4906,6 +5069,66 @@ opj_bool j2k_read_ppt_v2 (	opj_j2k_v2_t *p_j2k,
 	return OPJ_TRUE;
 }
 
+/**
+ * Writes the TLM marker (Tile Length Marker)
+ * 
+ * @param	p_stream				the stream to write data to.
+ * @param	p_j2k				J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+opj_bool j2k_write_tlm_v2(	opj_j2k_v2_t *p_j2k,
+							struct opj_stream_private *p_stream,
+							struct opj_event_mgr * p_manager )
+{
+	OPJ_BYTE * l_current_data = 00;
+	OPJ_UINT32 l_tlm_size;
+
+	// preconditions
+	assert(p_j2k != 00);
+	assert(p_manager != 00);
+	assert(p_stream != 00);
+
+	l_tlm_size = 6 + (5*p_j2k->m_specific_param.m_encoder.m_total_tile_parts);
+	
+	if (l_tlm_size > p_j2k->m_specific_param.m_encoder.m_header_tile_data_size) {
+		p_j2k->m_specific_param.m_encoder.m_header_tile_data 
+			= (OPJ_BYTE*)opj_realloc(
+				p_j2k->m_specific_param.m_encoder.m_header_tile_data,
+				l_tlm_size);
+		
+		if (! p_j2k->m_specific_param.m_encoder.m_header_tile_data) {
+			return OPJ_FALSE;
+		}
+
+		p_j2k->m_specific_param.m_encoder.m_header_tile_data_size = l_tlm_size;
+	}
+
+	l_current_data = p_j2k->m_specific_param.m_encoder.m_header_tile_data;
+
+	/* change the way data is written to avoid seeking if possible */
+	// TODO
+	p_j2k->m_specific_param.m_encoder.m_tlm_start = opj_stream_tell(p_stream);
+	
+	opj_write_bytes(l_current_data,J2K_MS_TLM,2);					/* TLM */
+	l_current_data += 2;
+	
+	opj_write_bytes(l_current_data,l_tlm_size-2,2);					/* Lpoc */
+	l_current_data += 2;
+	
+	opj_write_bytes(l_current_data,0,1);							/* Ztlm=0*/
+	++l_current_data;
+	
+	opj_write_bytes(l_current_data,0x50,1);							/* Stlm ST=1(8bits-255 tiles max),SP=1(Ptlm=32bits) */
+	++l_current_data;
+	
+	/* do nothing on the 5 * l_j2k->m_specific_param.m_encoder.m_total_tile_parts remaining data */
+	if (opj_stream_write_data(p_stream,p_j2k->m_specific_param.m_encoder.m_header_tile_data,l_tlm_size,p_manager) != l_tlm_size) {
+		return OPJ_FALSE;
+	}
+
+	return OPJ_TRUE;
+}
+
 static void j2k_write_tlm(opj_j2k_t *j2k){
 	int lenp;
 	opj_cio_t *cio = j2k->cio;
@@ -5787,6 +6010,43 @@ static void j2k_write_eoc(opj_j2k_t *j2k) {
 #endif /* USE_JPWL */
 /* <<UniPG */
 }
+
+/**
+ * Writes the EOC marker (End of Codestream)
+ * 
+ * @param	p_stream		the stream to write data to.
+ * @param	p_j2k			J2K codec.
+ * @param	p_manager		the user event manager.
+*/
+opj_bool j2k_write_eoc_v2(	opj_j2k_v2_t *p_j2k,
+							struct opj_stream_private *p_stream,
+							struct opj_event_mgr * p_manager )
+{
+	/* preconditions */
+	assert(p_j2k != 00);
+	assert(p_manager != 00);
+	assert(p_stream != 00);
+	
+	opj_write_bytes(p_j2k->m_specific_param.m_encoder.m_header_tile_data,J2K_MS_EOC,2);					/* EOC */
+	
+
+/* UniPG>> */
+#ifdef USE_JPWL
+	/* update markers struct */
+	j2k_add_marker(p_j2k->cstr_info, J2K_MS_EOC, p_stream_tell(p_stream) - 2, 2);
+#endif /* USE_JPWL */
+
+	if ( opj_stream_write_data(p_stream,p_j2k->m_specific_param.m_encoder.m_header_tile_data,2,p_manager) != 2) {
+		return OPJ_FALSE;
+	}
+
+	if ( opj_stream_flush(p_stream,p_manager) == EXIT_FAILURE) {
+		return OPJ_FALSE;
+	}
+
+	return OPJ_TRUE;
+}
+
 
 /**
  * Reads a RGN marker (Region Of Interest)
@@ -11829,7 +12089,20 @@ opj_bool j2k_start_compress(opj_j2k_v2_t *p_j2k,
 	assert(p_stream != 00);
 	assert(p_manager != 00);
 
-	p_j2k->m_private_image = p_image;
+	p_j2k->m_private_image = opj_image_create0();
+	opj_copy_image_header(p_image, p_j2k->m_private_image);
+
+	// TODO_MSD: Find a better way
+	if (p_image->comps) {
+		OPJ_UINT32 it_comp;
+		for (it_comp = 0 ; it_comp < p_image->numcomps; it_comp++) {
+			if (p_image->comps[it_comp].data) {
+				p_j2k->m_private_image->comps[it_comp].data =p_image->comps[it_comp].data;
+				p_image->comps[it_comp].data = NULL;
+
+			}
+		}
+	}
 
 	/* customization of the validation */
 	j2k_setup_encoding_validation (p_j2k);
@@ -12036,7 +12309,9 @@ opj_bool j2k_post_write_tile (	opj_j2k_v2_t * p_j2k,
 	l_available_data -= l_nb_bytes_written;
 	l_nb_bytes_written = l_tile_size - l_available_data;
 
-	if (opj_stream_write_data(p_stream,p_j2k->m_specific_param.m_encoder.m_encoded_tile_data,l_nb_bytes_written,p_manager) != l_nb_bytes_written) {
+	if ( opj_stream_write_data(	p_stream,
+								p_j2k->m_specific_param.m_encoder.m_encoded_tile_data,
+								l_nb_bytes_written,p_manager) != l_nb_bytes_written) {
 		return OPJ_FALSE;
 	}
 
@@ -12056,7 +12331,7 @@ void j2k_setup_end_compress (opj_j2k_v2_t *p_j2k)
 	assert(p_j2k != 00);
 
 	/* DEVELOPER CORNER, insert your custom procedures */
-	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)j2k_write_eoc );
+	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)j2k_write_eoc_v2 );
 
 	if (p_j2k->m_cp.m_specific_param.m_enc.m_cinema) {
 		opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)j2k_write_updated_tlm);
@@ -12102,17 +12377,17 @@ void j2k_setup_header_writting (opj_j2k_v2_t *p_j2k)
 
 	if (p_j2k->m_cp.m_specific_param.m_enc.m_cinema) {
 		opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)j2k_write_image_components );
-		opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)j2k_write_tlm );
+		opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)j2k_write_tlm_v2 );
 
 		if (p_j2k->m_cp.m_specific_param.m_enc.m_cinema == CINEMA4K_24) {
-			opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)j2k_write_poc );
+			opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)j2k_write_poc_v2 );
 		}
 	}
 
 	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)j2k_write_regions);
 
 	if (p_j2k->m_cp.comment != 00)  {
-		opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)j2k_write_com);
+		opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)j2k_write_com_v2);
 	}
 
 	/* DEVELOPER CORNER, insert your custom procedures */
@@ -12526,8 +12801,15 @@ opj_bool j2k_write_tile (opj_j2k_v2_t * p_j2k,
 					 	 opj_event_mgr_t * p_manager )
 {
 	if (! j2k_pre_write_tile(p_j2k,p_tile_index,p_stream,p_manager)) {
+		opj_event_msg_v2(p_manager, EVT_ERROR, "Error while j2k_pre_write_tile with tile index = %d\n", p_tile_index);
 		return OPJ_FALSE;
 	}
+	else {
+		if (! j2k_post_write_tile(p_j2k,p_data,p_data_size,p_stream,p_manager)) {
+			opj_event_msg_v2(p_manager, EVT_ERROR, "Error while j2k_post_write_tile with tile index = %d\n", p_tile_index);
+			return OPJ_FALSE;
+		}
+	}
 
-	return j2k_post_write_tile(p_j2k,p_data,p_data_size,p_stream,p_manager);
+	return OPJ_TRUE;
 }

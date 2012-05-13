@@ -1776,7 +1776,7 @@ int main(int argc, char **argv) {
 		/* encode the destination image */
 		/* ---------------------------- */
 
-		switch(parameters.decod_format) {
+		switch(parameters.cod_format) {
 			case J2K_CFMT:	/* JPEG-2000 codestream */
 			{
 				/* Get a decoder handle */

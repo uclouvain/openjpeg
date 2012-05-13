@@ -242,6 +242,7 @@ int main ()
 	l_image->color_space = CLRSPC_SRGB;
 
 	if (! opj_setup_encoder_v2(l_codec,&l_param,l_image)) {
+		fprintf(stderr, "ERROR -> test_tile_encoder: failed to setup the codec!\n");
 		opj_destroy_codec(l_codec);
 		opj_image_destroy(l_image);
 		return 1;
@@ -249,6 +250,7 @@ int main ()
 
 	l_file = fopen(OUTPUT_FILE,"wb");
 	if (! l_file) {
+		fprintf(stderr, "ERROR -> test_tile_encoder: failed to create the output file!\n");
 		opj_destroy_codec(l_codec);
 		opj_image_destroy(l_image);
 		return 1;
@@ -257,6 +259,7 @@ int main ()
 	l_stream = opj_stream_create_default_file_stream(l_file, OPJ_FALSE);
 
 	if (! opj_start_compress(l_codec,l_image,l_stream)) {
+		fprintf(stderr, "ERROR -> test_tile_encoder: failed to start compress!\n");
 		opj_stream_destroy(l_stream);
 		fclose(l_file);
 		opj_destroy_codec(l_codec);
@@ -266,6 +269,7 @@ int main ()
 
 	for (i=0;i<l_nb_tiles;++i) {
 		if (! opj_write_tile(l_codec,i,l_data,l_data_size,l_stream)) {
+			fprintf(stderr, "ERROR -> test_tile_encoder: failed to write the tile %d!\n",i);
 			opj_stream_destroy(l_stream);
 			fclose(l_file);
 			opj_destroy_codec(l_codec);
@@ -275,6 +279,7 @@ int main ()
 	}
 
 	if (! opj_end_compress(l_codec,l_stream)) {
+		fprintf(stderr, "ERROR -> test_tile_encoder: failed to end compress!\n");
 		opj_stream_destroy(l_stream);
 		fclose(l_file);
 		opj_destroy_codec(l_codec);

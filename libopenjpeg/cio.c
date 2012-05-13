@@ -640,47 +640,48 @@ OPJ_SIZE_T opj_stream_read_data (opj_stream_private_t * p_stream,OPJ_BYTE * p_bu
  * @param		p_event_mgr	the user event manager to be notified of special events.
  * @return		the number of bytes writtent, or -1 if an error occured.
  */
-OPJ_SIZE_T opj_stream_write_data (opj_stream_private_t * p_stream,const OPJ_BYTE * p_buffer,OPJ_SIZE_T p_size, opj_event_mgr_t * p_event_mgr)
+OPJ_SIZE_T opj_stream_write_data (opj_stream_private_t * p_stream,
+								  const OPJ_BYTE * p_buffer,
+								  OPJ_SIZE_T p_size, 
+								  opj_event_mgr_t * p_event_mgr)
 {
 	OPJ_SIZE_T l_remaining_bytes = 0;
 	OPJ_SIZE_T l_write_nb_bytes = 0;
 
-	if
-		(p_stream->m_status & opj_stream_e_error)
-	{
+	if (p_stream->m_status & opj_stream_e_error) {
 		return (OPJ_SIZE_T)-1;
 	}
 
-	while(1)
-	{
+	while(1) {
 		l_remaining_bytes = p_stream->m_buffer_size - p_stream->m_bytes_in_buffer;
+		
 		/* we have more memory than required */
-		if
-			(l_remaining_bytes >= p_size)
-		{
-			memcpy(p_stream->m_current_data,p_buffer,p_size);
+		if (l_remaining_bytes >= p_size) {
+			memcpy(p_stream->m_current_data, p_buffer, p_size);
+			
 			p_stream->m_current_data += p_size;
 			p_stream->m_bytes_in_buffer += p_size;
 			l_write_nb_bytes += p_size;
 			p_stream->m_byte_offset += (OPJ_OFF_T)p_size;
+			
 			return l_write_nb_bytes;
 		}
 
 		/* we copy data and then do an actual read on the stream */
-		if
-			(l_remaining_bytes)
-		{
+		if (l_remaining_bytes) {
 			l_write_nb_bytes += l_remaining_bytes;
+			
 			memcpy(p_stream->m_current_data,p_buffer,l_remaining_bytes);
+			
 			p_stream->m_current_data = p_stream->m_stored_data;
+			
 			p_buffer += l_remaining_bytes;
 			p_size -= l_remaining_bytes;
 			p_stream->m_bytes_in_buffer += l_remaining_bytes;
 			p_stream->m_byte_offset += (OPJ_OFF_T)l_remaining_bytes;
 		}
-		if
-			(! opj_stream_flush(p_stream, p_event_mgr))
-		{
+
+		if (opj_stream_flush(p_stream, p_event_mgr) == EXIT_FAILURE) {
 			return (OPJ_SIZE_T)-1;
 		}
 	}
@@ -697,25 +698,28 @@ opj_bool opj_stream_flush (opj_stream_private_t * p_stream, opj_event_mgr_t * p_
 {
 	/* the number of bytes written on the media. */
 	OPJ_SIZE_T l_current_write_nb_bytes = 0;
+
 	p_stream->m_current_data = p_stream->m_stored_data;
 
-	while
-		(p_stream->m_bytes_in_buffer)
-	{
+	while (p_stream->m_bytes_in_buffer) {
 		/* we should do an actual write on the media */
-		l_current_write_nb_bytes = p_stream->m_write_fn(p_stream->m_current_data,p_stream->m_bytes_in_buffer,p_stream->m_user_data);
-		if
-			(l_current_write_nb_bytes == (OPJ_SIZE_T)-1)
-		{
+		l_current_write_nb_bytes = p_stream->m_write_fn(p_stream->m_current_data,
+														p_stream->m_bytes_in_buffer,
+														p_stream->m_user_data);
+		
+		if (l_current_write_nb_bytes == (OPJ_SIZE_T)-1) {
 			p_stream->m_status |= opj_stream_e_error;
 			opj_event_msg_v2(p_event_mgr, EVT_INFO, "Error on writting stream!\n");
 
 			return EXIT_FAILURE;
 		}
+
 		p_stream->m_current_data += l_current_write_nb_bytes;
 		p_stream->m_bytes_in_buffer -= l_current_write_nb_bytes;
 	}
+
 	p_stream->m_current_data = p_stream->m_stored_data;
+	
 	return EXIT_SUCCESS;
 }
 
