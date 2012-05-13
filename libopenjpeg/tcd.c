@@ -120,9 +120,19 @@ void tcd_dump(FILE *fd, opj_tcd_t *tcd, opj_tcd_image_t * img) {
 static opj_bool tcd_code_block_dec_allocate (opj_tcd_cblk_dec_v2_t * p_code_block);
 
 /**
+ * Deallocates the decoding data of the given precinct.
+ */
+static void tcd_code_block_dec_deallocate (opj_tcd_precinct_v2_t * p_precinct);
+
+/**
  * Allocates memory for an encoding code block.
  */
 static opj_bool tcd_code_block_enc_allocate (opj_tcd_cblk_enc_v2_t * p_code_block);
+
+/**
+ * Deallocates the encoding data of the given precinct.
+ */
+static void tcd_code_block_enc_deallocate (opj_tcd_precinct_v2_t * p_precinct);
 
 
 /**
@@ -156,7 +166,7 @@ opj_bool tcd_dc_level_shift_decode (
 						 opj_tcd_v2_t *p_tcd
 						 );
 
-void tcd_code_block_dec_deallocate (opj_tcd_precinct_v2_t * p_precinct);
+
 /* ----------------------------------------------------------------------- */
 
 /**
@@ -2809,7 +2819,7 @@ void tcd_free_tile(opj_tcd_v2_t *p_tcd)
 		l_tcd_code_block_deallocate = tcd_code_block_dec_deallocate;
 	}
 	else {
-		/* FIXME l_tcd_code_block_deallocate = tcd_code_block_enc_deallocate; */
+		l_tcd_code_block_deallocate = tcd_code_block_enc_deallocate;
 	}
 
 	l_tile = p_tcd->tcd_image->tiles;
@@ -3139,6 +3149,41 @@ void tcd_code_block_dec_deallocate (opj_tcd_precinct_v2_t * p_precinct)
 
 		opj_free(p_precinct->cblks.dec);
 		p_precinct->cblks.dec = 00;
+	}
+}
+
+/**
+ * Deallocates the encoding data of the given precinct.
+ */
+void tcd_code_block_enc_deallocate (opj_tcd_precinct_v2_t * p_precinct)
+{	
+	OPJ_UINT32 cblkno , l_nb_code_blocks;
+
+	opj_tcd_cblk_enc_v2_t * l_code_block = p_precinct->cblks.enc;
+	if (l_code_block) {
+		l_nb_code_blocks = p_precinct->block_size / sizeof(opj_tcd_cblk_enc_t);
+		
+		for	(cblkno = 0; cblkno < l_nb_code_blocks; ++cblkno)  {
+			if (l_code_block->data) {
+				opj_free(l_code_block->data-1);
+				l_code_block->data = 00;
+			}
+
+			if (l_code_block->layers) {
+				opj_free(l_code_block->layers );
+				l_code_block->layers = 00;
+			}
+
+			if (l_code_block->passes) {
+				opj_free(l_code_block->passes );
+				l_code_block->passes = 00;
+			}
+			++l_code_block;
+		}
+
+		opj_free(p_precinct->cblks.enc);
+		
+		p_precinct->cblks.enc = 00;
 	}
 }
 
