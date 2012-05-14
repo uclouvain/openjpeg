@@ -1178,6 +1178,7 @@ opj_bool jp2_read_pclr_v2(	opj_jp2_v2_t *jp2,
 	assert(p_pclr_header_data != 00);
 	assert(jp2 != 00);
 	assert(p_manager != 00);
+  (void)p_pclr_header_size;
 
 	if(jp2->color.jp2_pclr)
 		return OPJ_FALSE;
@@ -1284,6 +1285,7 @@ static opj_bool jp2_read_cmap_v2(	opj_jp2_v2_t * jp2,
 	assert(jp2 != 00);
 	assert(p_cmap_header_data != 00);
 	assert(p_manager != 00);
+  (void)p_cmap_header_size;
 
 	/* Need nr_channels: */
 	if(jp2->color.jp2_pclr == NULL) {
@@ -1414,6 +1416,7 @@ static opj_bool jp2_read_cdef_v2(	opj_jp2_v2_t * jp2,
 	assert(jp2 != 00);
 	assert(p_cdef_header_data != 00);
 	assert(p_manager != 00);
+  (void)p_cdef_header_size;
 
 	/* Part 1, I.5.3.6: 'The shall be at most one Channel Definition box
 	 * inside a JP2 Header box.'*/
@@ -1890,7 +1893,7 @@ opj_bool jp2_write_jp2h_v2(	opj_jp2_v2_t *jp2,
 	
 	/* write super box data on stream */
 	if (opj_stream_write_data(cio,l_jp2h_data,8,p_manager) != 8) {
-		opj_event_msg(p_manager, EVT_ERROR, "Stream error while writting JP2 Header box\n");
+		opj_event_msg_v2(p_manager, EVT_ERROR, "Stream error while writing JP2 Header box\n");
 		l_result = OPJ_FALSE;
 	}
 	
@@ -1898,7 +1901,7 @@ opj_bool jp2_write_jp2h_v2(	opj_jp2_v2_t *jp2,
 		l_current_writer = l_writers;
 		for (i=0;i<l_nb_pass;++i) {
 			if (opj_stream_write_data(cio,l_current_writer->m_data,l_current_writer->m_size,p_manager) != l_current_writer->m_size) {
-				opj_event_msg(p_manager, EVT_ERROR, "Stream error while writting JP2 Header box\n");
+				opj_event_msg_v2(p_manager, EVT_ERROR, "Stream error while writting JP2 Header box\n");
 				l_result = OPJ_FALSE;
 				break;
 			}
@@ -1993,7 +1996,7 @@ opj_bool jp2_write_ftyp_v2(	opj_jp2_v2_t *jp2,
 	l_result = (opj_stream_write_data(cio,l_ftyp_data,l_ftyp_size,p_manager) == l_ftyp_size);
 	if (! l_result)
 	{
-		opj_event_msg(p_manager, EVT_ERROR, "Error while writting ftyp data to stream\n");
+		opj_event_msg_v2(p_manager, EVT_ERROR, "Error while writting ftyp data to stream\n");
 	}
 
 	opj_free(l_ftyp_data);
