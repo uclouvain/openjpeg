@@ -236,6 +236,18 @@ typedef struct opj_jp2_header_handler
 }
 opj_jp2_header_handler_t;
 
+
+typedef struct opj_jp2_img_header_writer_handler 
+{
+	/* action to perform */
+	unsigned char* (*handler) (opj_jp2_v2_t *jp2,	unsigned int * p_data_size);
+	/* result of the action : data */
+	unsigned char *			m_data;
+	/* size of data */
+	unsigned int			m_size;
+} 
+opj_jp2_img_header_writer_handler_t;
+
 /** @name Exported functions */
 /*@{*/
 /* ----------------------------------------------------------------------- */
@@ -245,6 +257,20 @@ Write the JP2H box - JP2 Header box (used in MJ2)
 @param cio Output buffer stream
 */
 void jp2_write_jp2h(opj_jp2_t *jp2, opj_cio_t *cio);
+
+/**
+ * Writes the Jpeg2000 file Header box - JP2 Header box (warning, this is a super box).
+ *
+ * @param	cio			the stream to write data to.
+ * @param	jp2			the jpeg2000 file codec.
+ * @param	p_manager	user event manager.
+ *
+ * @return true if writting was successful.
+*/
+opj_bool jp2_write_jp2h_v2( opj_jp2_v2_t *jp2,
+							struct opj_stream_private *cio,
+							struct opj_event_mgr * p_manager );
+
 /**
 Read the JP2H box - JP2 Header box (used in MJ2)
 @param jp2 JP2 handle
@@ -318,7 +344,10 @@ Coding parameters are returned in jp2->j2k->cp.
 @param parameters compression parameters
 @param image input filled image
 */
-void jp2_setup_encoder(opj_jp2_t *jp2, opj_cparameters_t *parameters, opj_image_t *image);
+void jp2_setup_encoder(	opj_jp2_v2_t *jp2, 
+						opj_cparameters_t *parameters, 
+						opj_image_t *image, 
+						struct opj_event_mgr * p_manager);
 /**
 Encode an image into a JPEG-2000 file stream
 @param jp2 JP2 compressor handle

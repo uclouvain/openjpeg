@@ -826,7 +826,7 @@ void OPJ_CALLCONV opj_setup_encoder(opj_cinfo_t *cinfo, opj_cparameters_t *param
 				j2k_setup_encoder((opj_j2k_t*)cinfo->j2k_handle, parameters, image);
 				break;
 			case CODEC_JP2:
-				jp2_setup_encoder((opj_jp2_t*)cinfo->jp2_handle, parameters, image);
+				jp2_setup_encoder((opj_jp2_t*)cinfo->jp2_handle, parameters, image, NULL);
 				break;
 			case CODEC_JPT:
 			case CODEC_UNKNOWN:

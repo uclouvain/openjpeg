@@ -1818,8 +1818,17 @@ int main(int argc, char **argv) {
 
 		/* encode the image */
 		bSuccess = opj_start_compress(l_codec,image,l_stream);
+		if (!bSuccess)  {
+			fprintf(stderr, "failed to encode image: opj_start_compress\n");
+		}
 		bSuccess = bSuccess && opj_encode_v2(l_codec, l_stream);
+		if (!bSuccess)  {
+			fprintf(stderr, "failed to encode image: opj_encode_v2\n");
+		}
 		bSuccess = bSuccess && opj_end_compress(l_codec, l_stream);
+		if (!bSuccess)  {
+			fprintf(stderr, "failed to encode image: opj_end_compress\n");
+		}
 
 		if (!bSuccess)  {
 			opj_stream_destroy(l_stream);

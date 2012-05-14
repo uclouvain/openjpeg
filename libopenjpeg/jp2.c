@@ -74,7 +74,31 @@ static opj_bool jp2_read_ihdr_v2(
 						  );
 
 static void jp2_write_ihdr(opj_jp2_t *jp2, opj_cio_t *cio);
+
+/**
+ * Writes the Image Header box - Image Header box.
+ *
+ * @param jp2					jpeg2000 file codec.
+ * @param p_nb_bytes_written	pointer to store the nb of bytes written by the function.
+ * 
+ * @return	the data being copied.
+*/
+static unsigned char * jp2_write_ihdr_v2(	opj_jp2_v2_t *jp2, 
+											unsigned int * p_nb_bytes_written );
+
 static void jp2_write_bpcc(opj_jp2_t *jp2, opj_cio_t *cio);
+
+/**
+ * Writes the Bit per Component box.
+ *
+ * @param	jp2						jpeg2000 file codec.
+ * @param	p_nb_bytes_written		pointer to store the nb of bytes written by the function.
+ * 
+ * @return	the data being copied.
+*/
+static unsigned char * jp2_write_bpcc_v2(	opj_jp2_v2_t *jp2, 
+											unsigned int * p_nb_bytes_written );
+
 static opj_bool jp2_read_bpcc(opj_jp2_t *jp2, opj_cio_t *cio);
 
 /**
@@ -106,6 +130,18 @@ Write the FTYP box - File type box
 @param jp2 JP2 handle
 @param cio Output buffer stream
 */
+
+/**
+ * Writes the Colour Specification box.
+ *
+ * @param jp2					jpeg2000 file codec.
+ * @param p_nb_bytes_written	pointer to store the nb of bytes written by the function.
+ * 
+ * @return	the data being copied.
+*/
+static unsigned char *jp2_write_colr_v2(opj_jp2_v2_t *jp2, 
+										unsigned int * p_nb_bytes_written );
+
 static void jp2_write_ftyp(opj_jp2_t *jp2, opj_cio_t *cio);
 /**
 Read the FTYP box - File type box
@@ -114,6 +150,19 @@ Read the FTYP box - File type box
 @return Returns true if successful, returns false otherwise
 */
 static opj_bool jp2_read_ftyp(opj_jp2_t *jp2, opj_cio_t *cio);
+
+/**
+ * Writes a FTYP box - File type box
+ *
+ * @param	cio			the stream to write data to.
+ * @param	jp2			the jpeg2000 file codec.
+ * @param	p_manager	the user event manager.
+ * 
+ * @return	true if writting was successful.
+ */
+static opj_bool jp2_write_ftyp_v2(	opj_jp2_v2_t *jp2,
+									struct opj_stream_private *cio,
+									struct opj_event_mgr * p_manager );
 
 /**
  * Reads a a FTYP box - File type box
@@ -125,12 +174,10 @@ static opj_bool jp2_read_ftyp(opj_jp2_t *jp2, opj_cio_t *cio);
  *
  * @return true if the FTYP box is valid.
  */
-static opj_bool jp2_read_ftyp_v2(
-							opj_jp2_v2_t *jp2,
-							unsigned char * p_header_data,
-							unsigned int p_header_size,
-							struct opj_event_mgr * p_manager
-						);
+static opj_bool jp2_read_ftyp_v2(	opj_jp2_v2_t *jp2,
+									unsigned char * p_header_data,
+									OPJ_UINT32 p_header_size,
+									struct opj_event_mgr * p_manager );
 
 /**
  * Skips the Jpeg2000 Codestream Header box - JP2C Header box.
@@ -673,6 +720,64 @@ static void jp2_write_ihdr(opj_jp2_t *jp2, opj_cio_t *cio) {
 	cio_seek(cio, box.init_pos + box.length);
 }
 
+/**
+ * Writes the Image Header box - Image Header box.
+ *
+ * @param jp2					jpeg2000 file codec.
+ * @param p_nb_bytes_written	pointer to store the nb of bytes written by the function.
+ * 
+ * @return	the data being copied.
+*/
+static unsigned char * jp2_write_ihdr_v2(	opj_jp2_v2_t *jp2, 
+											unsigned int * p_nb_bytes_written )
+{
+	unsigned char * l_ihdr_data,* l_current_ihdr_ptr;
+	
+	// preconditions
+	assert(jp2 != 00);
+	assert(p_nb_bytes_written != 00);
+
+	/* default image header is 22 bytes wide */
+	l_ihdr_data = (unsigned char *) opj_malloc(22);
+	if (l_ihdr_data == 00) {
+		return 00;
+	}
+	memset(l_ihdr_data,0,22);
+
+	l_current_ihdr_ptr = l_ihdr_data;
+	
+	opj_write_bytes(l_current_ihdr_ptr,22,4);				/* write box size */
+	l_current_ihdr_ptr+=4;
+
+	opj_write_bytes(l_current_ihdr_ptr,JP2_IHDR, 4);		/* IHDR */
+	l_current_ihdr_ptr+=4;
+	
+	opj_write_bytes(l_current_ihdr_ptr,jp2->h, 4);		/* HEIGHT */
+	l_current_ihdr_ptr+=4;
+	
+	opj_write_bytes(l_current_ihdr_ptr, jp2->w, 4);		/* WIDTH */
+	l_current_ihdr_ptr+=4;
+	
+	opj_write_bytes(l_current_ihdr_ptr, jp2->numcomps, 2);		/* NC */
+	l_current_ihdr_ptr+=2;
+	
+	opj_write_bytes(l_current_ihdr_ptr, jp2->bpc, 1);		/* BPC */
+	++l_current_ihdr_ptr;
+	
+	opj_write_bytes(l_current_ihdr_ptr, jp2->C, 1);		/* C : Always 7 */
+	++l_current_ihdr_ptr;
+	
+	opj_write_bytes(l_current_ihdr_ptr, jp2->UnkC, 1);		/* UnkC, colorspace unknown */
+	++l_current_ihdr_ptr;
+	
+	opj_write_bytes(l_current_ihdr_ptr, jp2->IPR, 1);		/* IPR, no intellectual property */
+	++l_current_ihdr_ptr;
+	
+	*p_nb_bytes_written = 22;
+	
+	return l_ihdr_data;
+}
+
 static void jp2_write_bpcc(opj_jp2_t *jp2, opj_cio_t *cio) {
 	unsigned int i;
 	opj_jp2_box_t box;
@@ -690,6 +795,52 @@ static void jp2_write_bpcc(opj_jp2_t *jp2, opj_cio_t *cio) {
 	cio_write(cio, box.length, 4);	/* L */
 	cio_seek(cio, box.init_pos + box.length);
 }
+
+
+/**
+ * Writes the Bit per Component box.
+ *
+ * @param	jp2						jpeg2000 file codec.
+ * @param	p_nb_bytes_written		pointer to store the nb of bytes written by the function.
+ * 
+ * @return	the data being copied.
+*/
+unsigned char * jp2_write_bpcc_v2(	opj_jp2_t *jp2, 
+									unsigned int * p_nb_bytes_written )
+{
+	unsigned int i;
+	/* room for 8 bytes for box and 1 byte for each component */
+	int l_bpcc_size = 8 + jp2->numcomps;
+	unsigned char * l_bpcc_data,* l_current_bpcc_ptr;
+	
+	// preconditions
+	assert(jp2 != 00);
+	assert(p_nb_bytes_written != 00);
+
+	l_bpcc_data = (unsigned char *) opj_malloc(l_bpcc_size);
+	if (l_bpcc_data == 00) {
+		return 00;
+	}
+	memset(l_bpcc_data,0,l_bpcc_size);
+
+	l_current_bpcc_ptr = l_bpcc_data;
+
+	opj_write_bytes(l_current_bpcc_ptr,l_bpcc_size,4);				/* write box size */
+	l_current_bpcc_ptr += 4;
+	
+	opj_write_bytes(l_current_bpcc_ptr,JP2_BPCC,4);					/* BPCC */
+	l_current_bpcc_ptr += 4;
+
+	for (i = 0; i < jp2->numcomps; ++i)  {
+		opj_write_bytes(l_current_bpcc_ptr, jp2->comps[i].bpcc, 1); /* write each component information */
+		++l_current_bpcc_ptr;
+	}
+
+	*p_nb_bytes_written = l_bpcc_size;
+	
+	return l_bpcc_data;
+}
+
 
 
 static opj_bool jp2_read_bpcc(opj_jp2_t *jp2, opj_cio_t *cio) {
@@ -779,6 +930,71 @@ static void jp2_write_colr(opj_jp2_t *jp2, opj_cio_t *cio) {
 	cio_seek(cio, box.init_pos);
 	cio_write(cio, box.length, 4);	/* L */
 	cio_seek(cio, box.init_pos + box.length);
+}
+
+/**
+ * Writes the Colour Specification box.
+ *
+ * @param jp2					jpeg2000 file codec.
+ * @param p_nb_bytes_written	pointer to store the nb of bytes written by the function.
+ * 
+ * @return	the data being copied.
+*/
+unsigned char *jp2_write_colr_v2(	opj_jp2_v2_t *jp2, 
+									unsigned int * p_nb_bytes_written )
+{
+	/* room for 8 bytes for box 3 for common data and variable upon profile*/
+	unsigned int l_colr_size = 11;
+	unsigned char * l_colr_data,* l_current_colr_ptr;
+	
+	// preconditions
+	assert(jp2 != 00);
+	assert(p_nb_bytes_written != 00);
+
+	switch (jp2->meth) {
+		case 1 :
+			l_colr_size += 4;
+			break;
+		case 2 :
+			++l_colr_size;
+			break;
+		default :
+			return 00;
+	}
+
+	l_colr_data = (unsigned char *) opj_malloc(l_colr_size);
+	if (l_colr_data == 00) {
+		return 00;
+	}
+	memset(l_colr_data,0,l_colr_size);
+	
+	l_current_colr_ptr = l_colr_data;
+
+	opj_write_bytes(l_current_colr_ptr,l_colr_size,4);				/* write box size */
+	l_current_colr_ptr += 4;
+	
+	opj_write_bytes(l_current_colr_ptr,JP2_COLR,4);					/* BPCC */
+	l_current_colr_ptr += 4;
+	
+	opj_write_bytes(l_current_colr_ptr, jp2->meth,1);				/* METH */
+	++l_current_colr_ptr;
+	
+	opj_write_bytes(l_current_colr_ptr, jp2->precedence,1);			/* PRECEDENCE */
+	++l_current_colr_ptr;
+	
+	opj_write_bytes(l_current_colr_ptr, jp2->approx,1);				/* APPROX */
+	++l_current_colr_ptr;
+	
+	if (jp2->meth == 1) {
+		opj_write_bytes(l_current_colr_ptr, jp2->enumcs,4);			/* EnumCS */
+	} 
+	else {
+		opj_write_bytes(l_current_colr_ptr, 0, 1);					/* PROFILE (??) */
+	}
+
+	*p_nb_bytes_written = l_colr_size;
+	
+	return l_colr_data;
 }
 
 static void jp2_free_pclr(opj_jp2_color_t *color)
@@ -1597,6 +1813,112 @@ void jp2_write_jp2h(opj_jp2_t *jp2, opj_cio_t *cio) {
 	cio_seek(cio, box.init_pos + box.length);
 }
 
+/**
+ * Writes the Jpeg2000 file Header box - JP2 Header box (warning, this is a super box).
+ *
+ * @param cio			the stream to write data to.
+ * @param jp2			the jpeg2000 file codec.
+ * @param p_manager		user event manager.
+ *
+ * @return true if writting was successful.
+*/
+opj_bool jp2_write_jp2h_v2(	opj_jp2_v2_t *jp2,
+							opj_stream_private_t *cio,
+							opj_event_mgr_t * p_manager )
+{
+	opj_jp2_img_header_writer_handler_t l_writers [3];
+	opj_jp2_img_header_writer_handler_t * l_current_writer;
+
+	int i, l_nb_pass;
+	/* size of data for super box*/
+	int l_jp2h_size = 8;
+	opj_bool l_result = OPJ_TRUE;
+
+	/* to store the data of the super box */
+	unsigned char l_jp2h_data [8];
+	
+	// preconditions
+	assert(cio != 00);
+	assert(jp2 != 00);
+	assert(p_manager != 00);
+
+	memset(l_writers,0,sizeof(l_writers));
+
+	if (jp2->bpc == 255) {
+		l_nb_pass = 3;
+		l_writers[0].handler = jp2_write_ihdr_v2;
+		l_writers[1].handler = jp2_write_bpcc_v2;
+		l_writers[2].handler = jp2_write_colr_v2;
+	}
+	else {
+		l_nb_pass = 2;
+		l_writers[0].handler = jp2_write_ihdr_v2;
+		l_writers[1].handler = jp2_write_colr_v2;
+	}
+	
+	/* write box header */
+	/* write JP2H type */
+	opj_write_bytes(l_jp2h_data+4,JP2_JP2H,4);
+
+	l_current_writer = l_writers;
+	for (i=0;i<l_nb_pass;++i) {
+		l_current_writer->m_data = l_current_writer->handler(jp2,&(l_current_writer->m_size));
+		if (l_current_writer->m_data == 00) {
+			opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory to hold JP2 Header data\n");
+			l_result = OPJ_FALSE;
+			break;
+		}
+
+		l_jp2h_size += l_current_writer->m_size;
+		++l_current_writer;
+	}
+
+	if (! l_result) {
+		l_current_writer = l_writers;
+		for (i=0;i<l_nb_pass;++i) {
+			if (l_current_writer->m_data != 00) {
+				opj_free(l_current_writer->m_data );
+			}
+			++l_current_writer;
+		}
+
+		return OPJ_FALSE;
+	}
+
+	/* write super box size */
+	opj_write_bytes(l_jp2h_data,l_jp2h_size,4);
+	
+	/* write super box data on stream */
+	if (opj_stream_write_data(cio,l_jp2h_data,8,p_manager) != 8) {
+		opj_event_msg(p_manager, EVT_ERROR, "Stream error while writting JP2 Header box\n");
+		l_result = OPJ_FALSE;
+	}
+	
+	if (l_result) {
+		l_current_writer = l_writers;
+		for (i=0;i<l_nb_pass;++i) {
+			if (opj_stream_write_data(cio,l_current_writer->m_data,l_current_writer->m_size,p_manager) != l_current_writer->m_size) {
+				opj_event_msg(p_manager, EVT_ERROR, "Stream error while writting JP2 Header box\n");
+				l_result = OPJ_FALSE;
+				break;
+			}
+			++l_current_writer;
+		}
+	}
+
+	l_current_writer = l_writers;
+	
+	/* cleanup */
+	for (i=0;i<l_nb_pass;++i) {
+		if (l_current_writer->m_data != 00) {
+			opj_free(l_current_writer->m_data );
+		}
+		++l_current_writer;
+	}
+
+	return l_result;
+}
+
 static void jp2_write_ftyp(opj_jp2_t *jp2, opj_cio_t *cio) {
 	unsigned int i;
 	opj_jp2_box_t box;
@@ -1616,6 +1938,67 @@ static void jp2_write_ftyp(opj_jp2_t *jp2, opj_cio_t *cio) {
 	cio_seek(cio, box.init_pos);
 	cio_write(cio, box.length, 4);	/* L */
 	cio_seek(cio, box.init_pos + box.length);
+}
+
+/**
+ * Writes a FTYP box - File type box
+ *
+ * @param	cio			the stream to write data to.
+ * @param	jp2			the jpeg2000 file codec.
+ * @param	p_manager	the user event manager.
+ * 
+ * @return	true if writting was successful.
+ */
+opj_bool jp2_write_ftyp_v2(	opj_jp2_v2_t *jp2,
+							opj_stream_private_t *cio,
+							opj_event_mgr_t * p_manager )
+{
+	unsigned int i;
+	unsigned int l_ftyp_size = 16 + 4 * jp2->numcl;
+	unsigned char * l_ftyp_data, * l_current_data_ptr;
+	opj_bool l_result;
+
+	// preconditions
+	assert(cio != 00);
+	assert(jp2 != 00);
+	assert(p_manager != 00);
+
+	l_ftyp_data = (unsigned char *) opj_malloc(l_ftyp_size);
+	
+	if (l_ftyp_data == 00) {
+		opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory to handle ftyp data\n");
+		return OPJ_FALSE;
+	}
+
+	memset(l_ftyp_data,0,l_ftyp_size);
+
+	l_current_data_ptr = l_ftyp_data;
+
+	opj_write_bytes(l_current_data_ptr, l_ftyp_size,4); /* box size */
+	l_current_data_ptr += 4;
+
+	opj_write_bytes(l_current_data_ptr, JP2_FTYP,4); /* FTYP */
+	l_current_data_ptr += 4;
+
+	opj_write_bytes(l_current_data_ptr, jp2->brand,4); /* BR */
+	l_current_data_ptr += 4;
+
+	opj_write_bytes(l_current_data_ptr, jp2->minversion,4); /* MinV */
+	l_current_data_ptr += 4;
+
+	for (i = 0; i < jp2->numcl; i++)  {
+		opj_write_bytes(l_current_data_ptr, jp2->cl[i],4);	/* CL */
+	}
+	
+	l_result = (opj_stream_write_data(cio,l_ftyp_data,l_ftyp_size,p_manager) == l_ftyp_size);
+	if (! l_result)
+	{
+		opj_event_msg(p_manager, EVT_ERROR, "Error while writting ftyp data to stream\n");
+	}
+
+	opj_free(l_ftyp_data);
+	
+	return l_result;
 }
 
 static opj_bool jp2_read_ftyp(opj_jp2_t *jp2, opj_cio_t *cio) {
@@ -1708,6 +2091,41 @@ static void jp2_write_jp(opj_cio_t *cio) {
 	cio_seek(cio, box.init_pos);
 	cio_write(cio, box.length, 4);	/* L */
 	cio_seek(cio, box.init_pos + box.length);
+}
+
+/**
+ * Writes a jpeg2000 file signature box.
+ *
+ * @param cio the stream to write data to.
+ * @param	jp2			the jpeg2000 file codec.
+ * @param p_manager the user event manager.
+ * 
+ * @return true if writting was successful.
+ */
+opj_bool jp2_write_jp_v2(	opj_jp2_v2_t *jp2,
+							opj_stream_private_t *cio,
+							opj_event_mgr_t * p_manager ) 
+{
+	/* 12 bytes will be read */
+	unsigned char l_signature_data [12];
+
+	// preconditions
+	assert(cio != 00);
+	assert(jp2 != 00);
+	assert(p_manager != 00);
+
+	/* write box length */
+	opj_write_bytes(l_signature_data,12,4);
+	/* writes box type */
+	opj_write_bytes(l_signature_data+4,JP2_JP,4);
+	/* writes magic number*/
+	opj_write_bytes(l_signature_data+8,0x0d0a870a,4);
+	
+	if (opj_stream_write_data(cio,l_signature_data,12,p_manager) != 12) {
+		return OPJ_FALSE;
+	}
+
+	return OPJ_TRUE;
 }
 
 static opj_bool jp2_read_jp(opj_jp2_t *jp2, opj_cio_t *cio) {
@@ -1891,7 +2309,10 @@ void jp2_destroy_compress(opj_jp2_t *jp2) {
 	}
 }
 
-void jp2_setup_encoder(opj_jp2_t *jp2, opj_cparameters_t *parameters, opj_image_t *image) {
+void jp2_setup_encoder(	opj_jp2_v2_t *jp2, 
+						opj_cparameters_t *parameters, 
+						opj_image_t *image, 
+						opj_event_mgr_t * p_manager) {
 	int i;
 	int depth_0, sign;
 
@@ -1903,11 +2324,11 @@ void jp2_setup_encoder(opj_jp2_t *jp2, opj_cparameters_t *parameters, opj_image_
 
 	/* Check if number of components respects standard */
 	if (image->numcomps < 1 || image->numcomps > 16384) {
-		opj_event_msg(jp2->cinfo, EVT_ERROR, "Invalid number of components specified while setting up JP2 encoder\n");
+		opj_event_msg_v2(p_manager, EVT_ERROR, "Invalid number of components specified while setting up JP2 encoder\n");
 		return;
 	}
 
-	j2k_setup_encoder(jp2->j2k, parameters, image);
+	j2k_setup_encoder_v2(jp2->j2k, parameters, image, p_manager );
 
 	/* setup the JP2 codec */
 	/* ------------------- */
@@ -1941,21 +2362,30 @@ void jp2_setup_encoder(opj_jp2_t *jp2, opj_cparameters_t *parameters, opj_image_
 	jp2->IPR = 0;		/* IPR, no intellectual property */
 	
 	/* BitsPerComponent box */
-
 	for (i = 0; i < image->numcomps; i++) {
 		jp2->comps[i].bpcc = image->comps[i].prec - 1 + (image->comps[i].sgnd << 7);
 	}
-	jp2->meth = 1;
-	if (image->color_space == 1)
-		jp2->enumcs = 16;	/* sRGB as defined by IEC 61966-2.1 */
-	else if (image->color_space == 2)
-		jp2->enumcs = 17;	/* greyscale */
-	else if (image->color_space == 3)
-		jp2->enumcs = 18;	/* YUV */
+
+	/* Colour Specification box */
+	if ((image->numcomps == 1 || image->numcomps == 3) && (jp2->bpc != 255)) {
+		jp2->meth = 1;	/* METH: Enumerated colourspace */
+	} else {
+		jp2->meth = 2;	/* METH: Restricted ICC profile */
+	}
+	if (jp2->meth == 1) {
+		if (image->color_space == 1)
+			jp2->enumcs = 16;	/* sRGB as defined by IEC 61966𣇻 */
+		else if (image->color_space == 2)
+			jp2->enumcs = 17;	/* greyscale */
+		else if (image->color_space == 3)
+			jp2->enumcs = 18;	/* YUV */
+	} else {
+		jp2->enumcs = 0;		/* PROFILE (??) */
+	}
 	jp2->precedence = 0;	/* PRECEDENCE */
 	jp2->approx = 0;		/* APPROX */
 	
-	jp2->jpip_on = parameters->jpip_on;
+	// jp2->jpip_on = parameters->jpip_on;
 }
 
 opj_bool opj_jp2_encode(opj_jp2_t *jp2, opj_cio_t *cio, opj_image_t *image, opj_codestream_info_t *cstr_info) {
@@ -2719,9 +3149,9 @@ void jp2_setup_header_writting (opj_jp2_v2_t *jp2)
 	/* preconditions */
 	assert(jp2 != 00);
 
-	opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)jp2_write_jp );
-	opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)jp2_write_ftyp );
-	opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)jp2_write_jp2h );
+	opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)jp2_write_jp_v2 );
+	opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)jp2_write_ftyp_v2 );
+	opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)jp2_write_jp2h_v2 );
 	opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)jp2_skip_jp2c );
 
 	/* DEVELOPER CORNER, insert your custom procedures */
