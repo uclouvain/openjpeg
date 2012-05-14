@@ -42,6 +42,9 @@ ADD_EXECUTABLE(compareRAWimages ${compareRAWimages_SRCS})
 ADD_EXECUTABLE(test_tile_encoder test_tile_encoder.c)
 TARGET_LINK_LIBRARIES(test_tile_encoder ${OPENJPEG_LIBRARY_NAME})
 
+ADD_EXECUTABLE(test_tile_decoder test_tile_decoder.c)
+TARGET_LINK_LIBRARIES(test_tile_decoder ${OPENJPEG_LIBRARY_NAME})
+
 # No image send to the dashboard if lib PNG is not available.
 IF(NOT HAVE_LIBPNG)
   MESSAGE(WARNING "Lib PNG seems to be not available: if you want run the non-regression tests with images reported to the dashboard, you need it (try BUILD_THIRDPARTY)") 
