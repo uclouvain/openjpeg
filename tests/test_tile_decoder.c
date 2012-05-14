@@ -125,7 +125,7 @@ int main ()
 	/* to decode only a part of the image data */
 	//opj_restrict_decoding(&l_param,0,0,1000,1000);
 	
-	l_codec = opj_create_decompress(CODEC_J2K);
+	l_codec = opj_create_decompress_v2(CODEC_J2K);
 	if
 		(! l_codec)
 	{
@@ -140,7 +140,7 @@ int main ()
   opj_event_mgr_t l_event_mgr;
 	
 	if
-		(! opj_setup_decoder_v2(l_codec,&l_param,&l_event_mgr))
+		(! opj_setup_decoder_v2(l_codec,&l_param))
 	{
 		free(l_data);
 		opj_destroy_codec(l_codec);
