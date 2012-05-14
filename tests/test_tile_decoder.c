@@ -105,7 +105,7 @@ int main ()
 	OPJ_UINT32 l_tile_width,l_tile_height,l_nb_tiles_x,l_nb_tiles_y,l_nb_comps;
 	OPJ_INT32 l_current_tile_x0,l_current_tile_y0,l_current_tile_x1,l_current_tile_y1;
 	
-	PROFINIT();
+	//PROFINIT();
 
 
 	if
@@ -159,15 +159,7 @@ int main ()
 	l_stream = opj_stream_create_default_file_stream(l_file,OPJ_TRUE);
 
 	if
-		(! opj_read_header(l_codec,
-							&l_image,
-							&l_tile_x0,
-							&l_tile_y0,
-							&l_tile_width,
-							&l_tile_height,
-							&l_nb_tiles_x,
-							&l_nb_tiles_y,
-							l_stream))
+		(! opj_read_header(l_stream, l_codec, &l_image))
 	{
 		free(l_data);
 		opj_stream_destroy(l_stream);
@@ -176,7 +168,7 @@ int main ()
 		return 1;
 	}
 	printf("Setting decoding area to %d,%d,%d,%d\n", DA_X0, DA_Y0, DA_X1, DA_Y1);
-	opj_set_decode_area(l_codec, DA_X0, DA_Y0, DA_X1, DA_Y1);
+	opj_set_decode_area(l_codec, l_image, DA_X0, DA_Y0, DA_X1, DA_Y1);
 	while
 		(l_go_on)
 	{
@@ -249,7 +241,7 @@ int main ()
 	opj_image_destroy(l_image);
 
 	// Print profiling
-	PROFPRINT();
+	//PROFPRINT();
 
 	return 0;
 }
