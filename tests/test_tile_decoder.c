@@ -137,7 +137,6 @@ int main ()
 	opj_set_info_handler(l_codec, info_callback,00);
 	opj_set_warning_handler(l_codec, warning_callback,00);
 	opj_set_error_handler(l_codec, error_callback,00);
-  opj_event_mgr_t l_event_mgr;
 	
 	if
 		(! opj_setup_decoder_v2(l_codec,&l_param))
