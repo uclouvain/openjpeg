@@ -428,6 +428,7 @@ opj_stream_t* OPJ_CALLCONV opj_stream_default_create(opj_bool l_is_input)
 OPJ_API void OPJ_CALLCONV opj_stream_destroy(opj_stream_t* p_stream)
 {
 	opj_stream_private_t* l_stream = (opj_stream_private_t*) p_stream;
+	
 	if (l_stream) {
 		opj_free(l_stream->m_stored_data);
 		l_stream->m_stored_data = 00;
@@ -454,9 +455,8 @@ OPJ_API void OPJ_CALLCONV opj_stream_set_read_function(opj_stream_t* p_stream, o
 OPJ_API void OPJ_CALLCONV opj_stream_set_seek_function(opj_stream_t* p_stream, opj_stream_seek_fn p_function)
 {
 	opj_stream_private_t* l_stream = (opj_stream_private_t*) p_stream;
-	if
-		(!l_stream)
-	{
+	
+	if (!l_stream) {
 		return;
 	}
 	l_stream->m_seek_fn = p_function;
@@ -470,11 +470,11 @@ OPJ_API void OPJ_CALLCONV opj_stream_set_seek_function(opj_stream_t* p_stream, o
 OPJ_API void OPJ_CALLCONV opj_stream_set_write_function(opj_stream_t* p_stream, opj_stream_write_fn p_function)
 {
 	opj_stream_private_t* l_stream = (opj_stream_private_t*) p_stream;
-	if
-		((!l_stream )|| (! (l_stream->m_status & opj_stream_e_output)))
-	{
+	
+	if ((!l_stream )|| (! (l_stream->m_status & opj_stream_e_output))) {
 		return;
 	}
+
 	l_stream->m_write_fn = p_function;
 }
 
@@ -486,11 +486,11 @@ OPJ_API void OPJ_CALLCONV opj_stream_set_write_function(opj_stream_t* p_stream, 
 OPJ_API void OPJ_CALLCONV opj_stream_set_skip_function(opj_stream_t* p_stream, opj_stream_skip_fn p_function)
 {
 	opj_stream_private_t* l_stream = (opj_stream_private_t*) p_stream;
-	if
-		(! l_stream)
-	{
+	
+	if (! l_stream) {
 		return;
 	}
+
 	l_stream->m_skip_fn = p_function;
 }
 
@@ -681,7 +681,7 @@ OPJ_SIZE_T opj_stream_write_data (opj_stream_private_t * p_stream,
 			p_stream->m_byte_offset += (OPJ_OFF_T)l_remaining_bytes;
 		}
 
-		if (opj_stream_flush(p_stream, p_event_mgr) == EXIT_FAILURE) {
+		if (! opj_stream_flush(p_stream, p_event_mgr)) {
 			return (OPJ_SIZE_T)-1;
 		}
 	}
@@ -711,7 +711,7 @@ opj_bool opj_stream_flush (opj_stream_private_t * p_stream, opj_event_mgr_t * p_
 			p_stream->m_status |= opj_stream_e_error;
 			opj_event_msg_v2(p_event_mgr, EVT_INFO, "Error on writting stream!\n");
 
-			return EXIT_FAILURE;
+			return OPJ_FALSE;
 		}
 
 		p_stream->m_current_data += l_current_write_nb_bytes;
@@ -720,7 +720,7 @@ opj_bool opj_stream_flush (opj_stream_private_t * p_stream, opj_event_mgr_t * p_
 
 	p_stream->m_current_data = p_stream->m_stored_data;
 	
-	return EXIT_SUCCESS;
+	return OPJ_TRUE;
 }
 
 /**
@@ -734,14 +734,13 @@ OPJ_OFF_T opj_stream_read_skip (opj_stream_private_t * p_stream, OPJ_OFF_T p_siz
 {
 	OPJ_OFF_T l_skip_nb_bytes = 0;
 	OPJ_OFF_T l_current_skip_nb_bytes = 0;
-
-  assert( p_size >= 0 );
-	if
-		(p_stream->m_bytes_in_buffer >= (OPJ_SIZE_T)p_size)
-	{
+	
+	assert( p_size >= 0 );
+	
+	if (p_stream->m_bytes_in_buffer >= (OPJ_SIZE_T)p_size) {
 		p_stream->m_current_data += p_size;
-    /* it is safe to cast p_size to OPJ_SIZE_T since it is <= m_bytes_in_buffer
-       which is of type OPJ_SIZE_T */
+		/* it is safe to cast p_size to OPJ_SIZE_T since it is <= m_bytes_in_buffer
+		which is of type OPJ_SIZE_T */
 		p_stream->m_bytes_in_buffer -= (OPJ_SIZE_T)p_size;
 		l_skip_nb_bytes += p_size;
 		p_stream->m_byte_offset += l_skip_nb_bytes;
@@ -749,9 +748,7 @@ OPJ_OFF_T opj_stream_read_skip (opj_stream_private_t * p_stream, OPJ_OFF_T p_siz
 	}
 
 	/* we are now in the case when the remaining data if not sufficient */
-	if
-		(p_stream->m_status & opj_stream_e_end)
-	{
+	if (p_stream->m_status & opj_stream_e_end) {
 		l_skip_nb_bytes += (OPJ_OFF_T)p_stream->m_bytes_in_buffer;
 		p_stream->m_current_data += p_stream->m_bytes_in_buffer;
 		p_stream->m_bytes_in_buffer = 0;
@@ -760,23 +757,17 @@ OPJ_OFF_T opj_stream_read_skip (opj_stream_private_t * p_stream, OPJ_OFF_T p_siz
 	}
 
 	/* the flag is not set, we copy data and then do an actual skip on the stream */
-	if
-		(p_stream->m_bytes_in_buffer)
-	{
+	if (p_stream->m_bytes_in_buffer) {
 		l_skip_nb_bytes += (OPJ_OFF_T)p_stream->m_bytes_in_buffer;
 		p_stream->m_current_data = p_stream->m_stored_data;
 		p_size -= (OPJ_OFF_T)p_stream->m_bytes_in_buffer;
 		p_stream->m_bytes_in_buffer = 0;
 	}
 
-	while
-		(p_size > 0)
-	{
+	while (p_size > 0) {
 		/* we should do an actual skip on the media */
 		l_current_skip_nb_bytes = p_stream->m_skip_fn(p_size, p_stream->m_user_data);
-		if
-			(l_current_skip_nb_bytes == (OPJ_OFF_T) -1)
-		{
+		if (l_current_skip_nb_bytes == (OPJ_OFF_T) -1) {
 			opj_event_msg_v2(p_event_mgr, EVT_INFO, "Stream reached its end !\n");
 
 			p_stream->m_status |= opj_stream_e_end;
@@ -787,7 +778,9 @@ OPJ_OFF_T opj_stream_read_skip (opj_stream_private_t * p_stream, OPJ_OFF_T p_siz
 		p_size -= l_current_skip_nb_bytes;
 		l_skip_nb_bytes += l_current_skip_nb_bytes;
 	}
+
 	p_stream->m_byte_offset += l_skip_nb_bytes;
+	
 	return l_skip_nb_bytes;
 }
 
@@ -804,17 +797,13 @@ OPJ_OFF_T opj_stream_write_skip (opj_stream_private_t * p_stream, OPJ_OFF_T p_si
 	OPJ_OFF_T l_current_skip_nb_bytes = 0;
 	OPJ_OFF_T l_skip_nb_bytes = 0;
 
-	if
-		(p_stream->m_status & opj_stream_e_error)
-	{
+	if (p_stream->m_status & opj_stream_e_error) {
 		return (OPJ_OFF_T) -1;
 	}
 
 	/* we should flush data */
 	l_is_written = opj_stream_flush (p_stream, p_event_mgr);
-	if
-		(! l_is_written)
-	{
+	if (! l_is_written) {
 		p_stream->m_status |= opj_stream_e_error;
 		p_stream->m_bytes_in_buffer = 0;
 		p_stream->m_current_data = p_stream->m_current_data;
@@ -822,14 +811,11 @@ OPJ_OFF_T opj_stream_write_skip (opj_stream_private_t * p_stream, OPJ_OFF_T p_si
 	}
 	/* then skip */
 
-	while
-		(p_size > 0)
-	{
+	while (p_size > 0) {
 		/* we should do an actual skip on the media */
 		l_current_skip_nb_bytes = p_stream->m_skip_fn(p_size, p_stream->m_user_data);
-		if
-			(l_current_skip_nb_bytes == (OPJ_OFF_T)-1)
-		{
+		
+		if (l_current_skip_nb_bytes == (OPJ_OFF_T)-1) {
 			opj_event_msg_v2(p_event_mgr, EVT_INFO, "Stream error!\n");
 
 			p_stream->m_status |= opj_stream_e_error;
@@ -840,7 +826,9 @@ OPJ_OFF_T opj_stream_write_skip (opj_stream_private_t * p_stream, OPJ_OFF_T p_si
 		p_size -= l_current_skip_nb_bytes;
 		l_skip_nb_bytes += l_current_skip_nb_bytes;
 	}
+
 	p_stream->m_byte_offset += l_skip_nb_bytes;
+	
 	return l_skip_nb_bytes;
 }
 
@@ -923,27 +911,23 @@ opj_bool opj_stream_read_seek (opj_stream_private_t * p_stream, OPJ_OFF_T p_size
  */
 opj_bool opj_stream_write_seek (opj_stream_private_t * p_stream, OPJ_OFF_T p_size, opj_event_mgr_t * p_event_mgr)
 {
-	if
-		(! opj_stream_flush(p_stream,p_event_mgr))
-	{
+	if (! opj_stream_flush(p_stream,p_event_mgr)) {
 		p_stream->m_status |= opj_stream_e_error;
-		return EXIT_FAILURE;
+		return OPJ_FALSE;
 	}
 
 	p_stream->m_current_data = p_stream->m_stored_data;
 	p_stream->m_bytes_in_buffer = 0;
 
-	if
-		(! p_stream->m_seek_fn(p_size,p_stream->m_user_data))
-	{
+	if (! p_stream->m_seek_fn(p_size,p_stream->m_user_data)) {
 		p_stream->m_status |= opj_stream_e_error;
-		return EXIT_FAILURE;
+		return OPJ_FALSE;
 	}
-	else
-	{
+	else {
 		p_stream->m_byte_offset = p_size;
 	}
-	return EXIT_SUCCESS;
+
+	return OPJ_TRUE;
 }
 
 

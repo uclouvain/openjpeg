@@ -805,7 +805,7 @@ static void jp2_write_bpcc(opj_jp2_t *jp2, opj_cio_t *cio) {
  * 
  * @return	the data being copied.
 */
-unsigned char * jp2_write_bpcc_v2(	opj_jp2_t *jp2, 
+unsigned char * jp2_write_bpcc_v2(	opj_jp2_v2_t *jp2, 
 									unsigned int * p_nb_bytes_written )
 {
 	unsigned int i;
@@ -2909,17 +2909,17 @@ opj_bool jp2_read_ftyp_v2(
  * @return true if writting was successful.
 */
 opj_bool jp2_skip_jp2c(	opj_jp2_v2_t *jp2,
-						struct opj_stream_private *cio,
+						struct opj_stream_private *stream,
 						struct opj_event_mgr * p_manager )
 {
 	/* preconditions */
 	assert(jp2 != 00);
-	assert(cio != 00);
+	assert(stream != 00);
 	assert(p_manager != 00);
 
-	jp2->j2k_codestream_offset = opj_stream_tell(cio);
+	jp2->j2k_codestream_offset = opj_stream_tell(stream);
 
-	if (opj_stream_skip(cio,8,p_manager) != 8) {
+	if (opj_stream_skip(stream,8,p_manager) != 8) {
 		return OPJ_FALSE;
 	}
 
