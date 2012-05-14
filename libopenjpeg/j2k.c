@@ -6040,7 +6040,7 @@ opj_bool j2k_write_eoc_v2(	opj_j2k_v2_t *p_j2k,
 		return OPJ_FALSE;
 	}
 
-	if ( opj_stream_flush(p_stream,p_manager) == EXIT_FAILURE) {
+	if ( ! opj_stream_flush(p_stream,p_manager) ) {
 		return OPJ_FALSE;
 	}
 

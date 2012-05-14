@@ -2388,6 +2388,14 @@ void jp2_setup_encoder(	opj_jp2_v2_t *jp2,
 	// jp2->jpip_on = parameters->jpip_on;
 }
 
+
+opj_bool opj_jp2_encode_v2(	opj_jp2_v2_t *jp2, 
+							opj_stream_private_t *stream, 
+							opj_event_mgr_t * p_manager)
+{
+	return j2k_encode_v2(jp2->j2k, stream, p_manager);
+}
+
 opj_bool opj_jp2_encode(opj_jp2_t *jp2, opj_cio_t *cio, opj_image_t *image, opj_codestream_info_t *cstr_info) {
 
 	int pos_iptr, pos_cidx, pos_jp2c, len_jp2c, len_cidx, end_pos, pos_fidx, len_fidx;

@@ -358,6 +358,17 @@ Encode an image into a JPEG-2000 file stream
 */
 opj_bool opj_jp2_encode(opj_jp2_t *jp2, opj_cio_t *cio, opj_image_t *image, opj_codestream_info_t *cstr_info);
 
+/**
+Encode an image into a JPEG-2000 file stream
+@param jp2			JP2 compressor handle
+@param stream		Output buffer stream
+@param p_manager	event manager
+@return Returns true if successful, returns false otherwise
+*/
+opj_bool opj_jp2_encode_v2(	opj_jp2_v2_t *jp2, 
+							opj_stream_private_t *stream, 
+							opj_event_mgr_t * p_manager);
+
 
 /**
  * Starts a compression scheme, i.e. validates the codec parameters, writes the header.
