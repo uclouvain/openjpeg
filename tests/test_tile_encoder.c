@@ -93,6 +93,7 @@ int main (int argc, char *argv[])
 	opj_stream_t * l_stream;
 	OPJ_UINT32 l_nb_tiles;
 	OPJ_UINT32 l_data_size;
+	unsigned char len;
 
 #ifdef USING_MCT
 	const OPJ_FLOAT32 l_mct [] =
@@ -246,7 +247,7 @@ int main (int argc, char *argv[])
 	}
 
   // should we do j2k or jp2 ?
-  size_t len = strlen( output_file );
+  len = strlen( output_file );
   if( strcmp( output_file + len - 4, ".jp2" ) == 0 )
     {
     l_codec = opj_create_compress_v2(CODEC_JP2);
