@@ -1078,7 +1078,7 @@ static opj_bool j2k_read_rgn_v2 (
  * @param	p_j2k			J2K codec.
  * @param	p_manager		the user event manager.
 */
-static opj_bool j2k_write_eoc_v2(	opj_j2k_t *p_j2k,
+static opj_bool j2k_write_eoc_v2(	opj_j2k_v2_t *p_j2k,
 									struct opj_stream_private *p_stream,
 									struct opj_event_mgr * p_manager );
 
