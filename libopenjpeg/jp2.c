@@ -3403,7 +3403,7 @@ opj_jp2_v2_t* jp2_create(opj_bool p_is_decoder)
 {
 	opj_jp2_v2_t *jp2 = (opj_jp2_v2_t*)opj_malloc(sizeof(opj_jp2_v2_t));
 	if (jp2) {
-		memset(jp2,0,sizeof(opj_jp2_t));
+		memset(jp2,0,sizeof(opj_jp2_v2_t));
 
 		/* create the J2K codec */
 		if (! p_is_decoder) {
