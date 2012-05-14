@@ -888,9 +888,9 @@ opj_bool opj_stream_read_seek (opj_stream_private_t * p_stream, OPJ_OFF_T p_size
 	p_stream->m_current_data = p_stream->m_stored_data;
 	p_stream->m_bytes_in_buffer = 0;
 
-	if( p_stream->m_seek_fn(p_size,p_stream->m_user_data)) {
+	if( !(p_stream->m_seek_fn(p_size,p_stream->m_user_data)) ) {
 		p_stream->m_status |= opj_stream_e_end;
-		return EXIT_FAILURE;
+		return OPJ_FALSE;
 	}
 	else {
 		/* reset stream status */
@@ -899,7 +899,7 @@ opj_bool opj_stream_read_seek (opj_stream_private_t * p_stream, OPJ_OFF_T p_size
 
 	}
 
-	return EXIT_SUCCESS;
+	return OPJ_TRUE;
 }
 
 /**
@@ -979,5 +979,5 @@ opj_bool opj_stream_default_seek (OPJ_OFF_T p_nb_bytes, void * p_user_data)
 {
 	OPJ_ARG_NOT_USED(p_nb_bytes);
 	OPJ_ARG_NOT_USED(p_user_data);
-	return EXIT_FAILURE;
+	return OPJ_FALSE;
 }

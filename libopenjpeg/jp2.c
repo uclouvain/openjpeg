@@ -210,6 +210,21 @@ static opj_bool jp2_read_jp2h_v2(
 					);
 
 static int jp2_write_jp2c(opj_jp2_t *jp2, opj_cio_t *cio, opj_image_t *image, opj_codestream_info_t *cstr_info);
+
+
+/**
+ * Writes the Jpeg2000 codestream Header box - JP2C Header box. This function must be called AFTER the coding has been done.
+ *
+ * @param	cio			the stream to write data to.
+ * @param	jp2			the jpeg2000 file codec.
+ * @param	p_manager	user event manager.
+ *
+ * @return true if writting was successful.
+*/
+static opj_bool jp2_write_jp2c_v2(	opj_jp2_v2_t *jp2,
+								struct opj_stream_private *cio,
+								struct opj_event_mgr * p_manager );
+
 static opj_bool jp2_read_jp2c(opj_jp2_t *jp2, opj_cio_t *cio, unsigned int *j2k_codestream_length, unsigned int *j2k_codestream_offset);
 static void jp2_write_jp(opj_cio_t *cio);
 /**
@@ -2063,6 +2078,50 @@ static int jp2_write_jp2c(opj_jp2_t *jp2, opj_cio_t *cio, opj_image_t *image, op
 	return box.length;
 }
 
+/**
+ * Writes the Jpeg2000 codestream Header box - JP2C Header box.
+ *
+ * @param	cio			the stream to write data to.
+ * @param	jp2			the jpeg2000 file codec.
+ * @param	p_manager	user event manager.
+ *
+ * @return true if writting was successful.
+*/
+opj_bool jp2_write_jp2c_v2(	opj_jp2_v2_t *jp2,
+							opj_stream_private_t *cio,
+							opj_event_mgr_t * p_manager ) 
+{
+	unsigned int j2k_codestream_exit;
+	unsigned char l_data_header [8];
+	
+	// preconditions
+	assert(jp2 != 00);
+	assert(cio != 00);
+	assert(p_manager != 00);
+	assert(opj_stream_has_seek(cio));
+	
+	j2k_codestream_exit = opj_stream_tell(cio);
+	opj_write_bytes(l_data_header,j2k_codestream_exit - jp2->j2k_codestream_offset,4); /* size of codestream */
+	opj_write_bytes(l_data_header + 4,JP2_JP2C,4);									   /* JP2C */
+
+	if (! opj_stream_seek(cio,jp2->j2k_codestream_offset,p_manager)) {
+		opj_event_msg_v2(p_manager, EVT_ERROR, "Failed to seek in the stream.\n");
+		return OPJ_FALSE;
+	}
+	
+	if (opj_stream_write_data(cio,l_data_header,8,p_manager) != 8) {
+		opj_event_msg_v2(p_manager, EVT_ERROR, "Failed to seek in the stream.\n");
+		return OPJ_FALSE;
+	}
+
+	if (! opj_stream_seek(cio,j2k_codestream_exit,p_manager)) {
+		opj_event_msg_v2(p_manager, EVT_ERROR, "Failed to seek in the stream.\n");
+		return OPJ_FALSE;
+	}
+
+	return OPJ_TRUE;
+}
+
 static opj_bool jp2_read_jp2c(opj_jp2_t *jp2, opj_cio_t *cio, unsigned int *j2k_codestream_length, unsigned int *j2k_codestream_offset) {
 	opj_jp2_box_t box;
 
@@ -2500,7 +2559,7 @@ void jp2_setup_end_header_writting (opj_jp2_v2_t *jp2)
 	/* preconditions */
 	assert(jp2 != 00);
 
-	opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)jp2_write_jp2c );
+	opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)jp2_write_jp2c_v2 );
 	/* DEVELOPER CORNER, add your custom procedures */
 }
 

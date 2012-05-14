@@ -248,10 +248,10 @@ OPJ_OFF_T opj_skip_from_file (OPJ_OFF_T p_nb_bytes, FILE * p_user_data)
 opj_bool opj_seek_from_file (OPJ_OFF_T p_nb_bytes, FILE * p_user_data)
 {
 	if (OPJ_FSEEK(p_user_data,p_nb_bytes,SEEK_SET)) {
-		return EXIT_FAILURE;
+		return OPJ_FALSE;
 	}
 
-	return EXIT_SUCCESS;
+	return OPJ_TRUE;
 }
 
 /* ---------------------------------------------------------------------- */
@@ -660,7 +660,7 @@ opj_codec_t* OPJ_CALLCONV opj_create_compress_v2(OPJ_CODEC_FORMAT p_format)
 			/* get a JP2 decoder handle */
 			l_codec->m_codec_data.m_compression.opj_encode = (opj_bool (*) (void *,
 																			struct opj_stream_private *,
-																			struct opj_event_mgr * )) opj_jp2_encode;
+																			struct opj_event_mgr * )) opj_jp2_encode_v2;
 
 			l_codec->m_codec_data.m_compression.opj_end_compress = (opj_bool (*) (	void *,
 																					struct opj_stream_private *,

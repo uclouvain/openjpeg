@@ -11795,7 +11795,7 @@ static opj_bool j2k_decode_one_tile (	opj_j2k_v2_t *p_j2k,
 		if(l_current_tile_no == l_tile_no_to_dec)
 		{
 			/* move into the codestream to the the first SOT (FIXME or not move?)*/
-			if (opj_stream_read_seek(p_stream, p_j2k->cstr_index->main_head_end + 2, p_manager) ) {
+			if (!(opj_stream_read_seek(p_stream, p_j2k->cstr_index->main_head_end + 2, p_manager) ) ) {
 				opj_event_msg_v2(p_manager, EVT_ERROR, "Problem with seek function\n");
 				return OPJ_FALSE;
 			}
