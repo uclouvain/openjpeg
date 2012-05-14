@@ -12290,7 +12290,7 @@ opj_bool j2k_post_write_tile (	opj_j2k_v2_t * p_j2k,
 	l_current_data = p_j2k->m_specific_param.m_encoder.m_encoded_tile_data;
 
 	if (! tcd_copy_tile_data(l_tcd,p_data,p_data_size)) {
-		opj_event_msg_v2(p_manager, EVT_ERROR, "Size mismtach between tile data and sent data." );
+		opj_event_msg_v2(p_manager, EVT_ERROR, "Size mismatch between tile data and sent data." );
 		return OPJ_FALSE;
 	}
 
