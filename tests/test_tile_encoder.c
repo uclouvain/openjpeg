@@ -42,16 +42,6 @@
 #include "openjpeg.h"
 #include "stdlib.h"
 
-
-
-#define NUM_COMPS			3
-#define IMAGE_WIDTH			2000
-#define IMAGE_HEIGHT		2000
-#define TILE_WIDTH			1000
-#define TILE_HEIGHT			1000
-#define COMP_PREC			8
-#define OUTPUT_FILE			"test.j2k"
-
 /* -------------------------------------------------------------------------- */
 
 /**
@@ -92,16 +82,17 @@ void info_callback(const char *msg, void *client_data) {
 
 /* -------------------------------------------------------------------------- */
 
-int main ()
+#define NUM_COMPS_MAX 4
+int main (int argc, char *argv[])
 {
 	opj_cparameters_t l_param;
 	opj_codec_t * l_codec;
 	opj_image_t * l_image;
-	opj_image_cmptparm_t l_params [NUM_COMPS];
+	opj_image_cmptparm_t l_params [NUM_COMPS_MAX];
 	FILE * l_file;
 	opj_stream_t * l_stream;
-	OPJ_UINT32 l_nb_tiles = (IMAGE_WIDTH/TILE_WIDTH) * (IMAGE_HEIGHT/TILE_HEIGHT);
-	OPJ_UINT32 l_data_size = TILE_WIDTH * TILE_HEIGHT * NUM_COMPS * (COMP_PREC/8);
+	OPJ_UINT32 l_nb_tiles;
+	OPJ_UINT32 l_data_size;
 
 #ifdef USING_MCT
 	const OPJ_FLOAT32 l_mct [] =
@@ -121,12 +112,47 @@ int main ()
 	OPJ_UINT32 i;
 	OPJ_BYTE *l_data;
 
-	//PROFINIT();
-	l_data = (OPJ_BYTE*) malloc(TILE_WIDTH * TILE_HEIGHT * NUM_COMPS * (COMP_PREC/8) * sizeof(OPJ_BYTE));
+  OPJ_UINT32 num_comps;
+  int image_width;
+  int image_height;
+  int tile_width;
+  int tile_height;
+  int comp_prec;
+  char output_file[64];
+
+  /* should be test_tile_encoder 3 2000 2000 1000 1000 8 tte1.j2k */
+  if( argc == 8 )
+    {
+    num_comps = atoi( argv[1] );
+    image_width = atoi( argv[2] );
+    image_height = atoi( argv[3] );
+    tile_width = atoi( argv[4] );
+    tile_height = atoi( argv[5] );
+    comp_prec = atoi( argv[6] );
+    strcpy(output_file, argv[7] );
+    }
+  else
+    {
+    num_comps = 3;
+    image_width = 2000;
+    image_height = 2000;
+    tile_width = 1000;
+    tile_height = 1000;
+    comp_prec = 8;
+    strcpy(output_file, "test.j2k" );
+    }
+  if( num_comps > NUM_COMPS_MAX )
+    {
+    return 1;
+    }
+	l_nb_tiles = (image_width/tile_width) * (image_height/tile_height);
+	l_data_size = tile_width * tile_height * num_comps * (comp_prec/8);
+
+	l_data = (OPJ_BYTE*) malloc(tile_width * tile_height * num_comps * (comp_prec/8) * sizeof(OPJ_BYTE));
 
 	fprintf(stdout, "Encoding random values -> keep in mind that this is very hard to compress\n");
 	for (i=0;i<l_data_size;++i)	{
-		l_data[i] = rand();
+		l_data[i] = i; //rand();
 	}
 
 	opj_set_default_encoder_parameters(&l_param);
@@ -147,8 +173,8 @@ int main ()
 	l_param.cp_ty0 = 0;
 	/* tile size, we are using tile based encoding */
 	l_param.tile_size_on = OPJ_TRUE;
-	l_param.cp_tdx = TILE_WIDTH;
-	l_param.cp_tdy = TILE_HEIGHT;
+	l_param.cp_tdx = tile_width;
+	l_param.cp_tdy = tile_height;
 
 	/* use irreversible encoding ?*/
 	l_param.irreversible = 1;
@@ -201,17 +227,17 @@ int main ()
 
 	/* image definition */
 	l_current_param_ptr = l_params;
-	for (i=0;i<NUM_COMPS;++i) {
+	for (i=0;i<num_comps;++i) {
 		/* do not bother bpp useless */
 		/*l_current_param_ptr->bpp = COMP_PREC;*/
 		l_current_param_ptr->dx = 1;
 		l_current_param_ptr->dy = 1;
 
-		l_current_param_ptr->h = IMAGE_HEIGHT;
-		l_current_param_ptr->w = IMAGE_WIDTH;
+		l_current_param_ptr->h = image_height;
+		l_current_param_ptr->w = image_width;
 
 		l_current_param_ptr->sgnd = 0;
-		l_current_param_ptr->prec = COMP_PREC;
+		l_current_param_ptr->prec = comp_prec;
 
 		l_current_param_ptr->x0 = 0;
 		l_current_param_ptr->y0 = 0;
@@ -219,7 +245,16 @@ int main ()
 		++l_current_param_ptr;
 	}
 
-	l_codec = opj_create_compress_v2(CODEC_J2K);
+  // should we do j2k or jp2 ?
+  size_t len = strlen( output_file );
+  if( strcmp( output_file + len - 4, ".jp2" ) == 0 )
+    {
+    l_codec = opj_create_compress_v2(CODEC_JP2);
+    }
+  else
+    {
+    l_codec = opj_create_compress_v2(CODEC_J2K);
+    }
 	if (!l_codec) {
 		return 1;
 	}
@@ -229,7 +264,7 @@ int main ()
 	opj_set_warning_handler(l_codec, warning_callback,00);
 	opj_set_error_handler(l_codec, error_callback,00);
 
-	l_image = opj_image_tile_create(NUM_COMPS,l_params,CLRSPC_SRGB);
+	l_image = opj_image_tile_create(num_comps,l_params,CLRSPC_SRGB);
 	if (! l_image) {
 		opj_destroy_codec(l_codec);
 		return 1;
@@ -237,8 +272,8 @@ int main ()
 
 	l_image->x0 = 0;
 	l_image->y0 = 0;
-	l_image->x1 = IMAGE_WIDTH;
-	l_image->y1 = IMAGE_HEIGHT;
+	l_image->x1 = image_width;
+	l_image->y1 = image_height;
 	l_image->color_space = CLRSPC_SRGB;
 
 	if (! opj_setup_encoder_v2(l_codec,&l_param,l_image)) {
@@ -248,7 +283,7 @@ int main ()
 		return 1;
 	}
 
-	l_file = fopen(OUTPUT_FILE,"wb");
+	l_file = fopen(output_file,"wb");
 	if (! l_file) {
 		fprintf(stderr, "ERROR -> test_tile_encoder: failed to create the output file!\n");
 		opj_destroy_codec(l_codec);
