@@ -43,12 +43,6 @@
 #include "openjpeg.h"
 #include "stdlib.h"
 
-#define DA_X0 0
-#define DA_Y0 0
-#define DA_X1 1000
-#define DA_Y1 1000
-#define INPUT_FILE			"test.j2k"
-
 /* -------------------------------------------------------------------------- */
 
 /**
@@ -89,7 +83,7 @@ void info_callback(const char *msg, void *client_data) {
 
 /* -------------------------------------------------------------------------- */
 
-int main ()
+int main (int argc, char *argv[])
 {
 	opj_dparameters_t l_param;
 	opj_codec_t * l_codec;
@@ -104,9 +98,30 @@ int main ()
 	OPJ_INT32 l_tile_x0,l_tile_y0;
 	OPJ_UINT32 l_tile_width,l_tile_height,l_nb_tiles_x,l_nb_tiles_y,l_nb_comps;
 	OPJ_INT32 l_current_tile_x0,l_current_tile_y0,l_current_tile_x1,l_current_tile_y1;
-	
-	//PROFINIT();
 
+  int da_x0=0;
+  int da_y0=0;
+  int da_x1=1000;
+  int da_y1=1000;
+  char input_file[64];
+	
+  /* should be test_tile_decoder 0 0 1000 1000 tte1.j2k */
+  if( argc == 6 )
+    {
+    da_x0=atoi(argv[1]);
+    da_y0=atoi(argv[2]);
+    da_x1=atoi(argv[3]);
+    da_y1=atoi(argv[4]);
+    strcpy(input_file,argv[5]);
+    }
+  else
+    {
+    da_x0=0;
+    da_y0=0;
+    da_x1=1000;
+    da_y1=1000;
+    strcpy(input_file,"test.j2k");
+    }
 
 	if
 		(! l_data)
@@ -146,7 +161,7 @@ int main ()
 		return 1;
 	}
 	
-	l_file = fopen(INPUT_FILE,"rb");
+	l_file = fopen(input_file,"rb");
 	if
 		(! l_file)
 	{
@@ -167,14 +182,15 @@ int main ()
 		opj_destroy_codec(l_codec);
 		return 1;
 	}
-	printf("Setting decoding area to %d,%d,%d,%d\n", DA_X0, DA_Y0, DA_X1, DA_Y1);
-	opj_set_decode_area(l_codec, l_image, DA_X0, DA_Y0, DA_X1, DA_Y1);
+	printf("Setting decoding area to %d,%d,%d,%d\n", da_x0, da_y0, da_x1, da_y1);
+	opj_set_decode_area(l_codec, l_image, da_x0, da_y0, da_x1, da_y1);
 	while
 		(l_go_on)
 	{
 		if
 			(! opj_read_tile_header(
 						l_codec,
+            l_stream,
 						&l_tile_index,
 						&l_data_size,
 						&l_current_tile_x0,
@@ -182,8 +198,7 @@ int main ()
 						&l_current_tile_x1,
 						&l_current_tile_y1,
 						&l_nb_comps,
-						&l_go_on,
-						l_stream))
+						&l_go_on))
 		{
 			free(l_data);
 			opj_stream_destroy(l_stream);
