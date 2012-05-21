@@ -6033,7 +6033,9 @@ opj_bool j2k_write_eoc_v2(	opj_j2k_v2_t *p_j2k,
 /* UniPG>> */
 #ifdef USE_JPWL
 	/* update markers struct */
+	/*
 	j2k_add_marker(p_j2k->cstr_info, J2K_MS_EOC, p_stream_tell(p_stream) - 2, 2);
+*/
 #endif /* USE_JPWL */
 
 	if ( opj_stream_write_data(p_stream,p_j2k->m_specific_param.m_encoder.m_header_tile_data,2,p_manager) != 2) {
