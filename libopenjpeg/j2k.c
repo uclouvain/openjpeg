@@ -5520,6 +5520,7 @@ opj_bool j2k_read_sot_v2 (
 	/* Index */
 	if (p_j2k->cstr_index)
 	{
+    assert(p_j2k->cstr_index->tile_index != 00);
 		p_j2k->cstr_index->tile_index[p_j2k->m_current_tile_number].tileno = p_j2k->m_current_tile_number;
 		p_j2k->cstr_index->tile_index[p_j2k->m_current_tile_number].current_tpsno = l_current_part;
 
