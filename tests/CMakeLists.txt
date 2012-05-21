@@ -50,11 +50,11 @@ ADD_TEST(tte2 ${EXECUTABLE_OUTPUT_PATH}/test_tile_encoder 3 2048 2048 1024 1024 
 ADD_EXECUTABLE(test_tile_decoder test_tile_decoder.c)
 TARGET_LINK_LIBRARIES(test_tile_decoder ${OPENJPEG_LIBRARY_NAME})
 
-ADD_TEST(ttd0 ${EXECUTABLE_OUTPUT_PATH}/test_tile_encoder)
+ADD_TEST(ttd0 ${EXECUTABLE_OUTPUT_PATH}/test_tile_decoder)
 set_property(TEST ttd0 APPEND PROPERTY DEPENDS tte0)
-ADD_TEST(ttd1 ${EXECUTABLE_OUTPUT_PATH}/test_tile_encoder 0 0 1024 1024 tte1.j2k)
+ADD_TEST(ttd1 ${EXECUTABLE_OUTPUT_PATH}/test_tile_decoder 0 0 1024 1024 tte1.j2k)
 set_property(TEST ttd1 APPEND PROPERTY DEPENDS tte1)
-ADD_TEST(ttd2 ${EXECUTABLE_OUTPUT_PATH}/test_tile_encoder 0 0 1024 1024 tte1.jp2)
+ADD_TEST(ttd2 ${EXECUTABLE_OUTPUT_PATH}/test_tile_decoder 0 0 1024 1024 tte1.jp2)
 set_property(TEST ttd2 APPEND PROPERTY DEPENDS tte2)
 
 # No image send to the dashboard if lib PNG is not available.
