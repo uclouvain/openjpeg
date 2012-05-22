@@ -4582,7 +4582,7 @@ opj_bool j2k_read_plt_v2 (
 	assert(p_manager != 00);
 
 	if (p_header_size < 1) {
-		opj_event_msg_v2(p_manager, EVT_ERROR, "Error reading PLM marker\n");
+		opj_event_msg_v2(p_manager, EVT_ERROR, "Error reading PLT marker\n");
 		return OPJ_FALSE;
 	}
 
@@ -4605,7 +4605,7 @@ opj_bool j2k_read_plt_v2 (
 	}
 
 	if (l_packet_len != 0) {
-		opj_event_msg_v2(p_manager, EVT_ERROR, "Error reading PLM marker\n");
+		opj_event_msg_v2(p_manager, EVT_ERROR, "Error reading PLT marker\n");
 		return OPJ_FALSE;
 	}
 
