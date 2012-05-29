@@ -44,8 +44,11 @@ TARGET_LINK_LIBRARIES(test_tile_encoder ${OPENJPEG_LIBRARY_NAME})
 
 # Let's try a couple of possibilities:
 ADD_TEST(tte0 ${EXECUTABLE_OUTPUT_PATH}/test_tile_encoder)
-ADD_TEST(tte1 ${EXECUTABLE_OUTPUT_PATH}/test_tile_encoder 3 2048 2048 1024 1024 8 tte1.j2k)
-ADD_TEST(tte2 ${EXECUTABLE_OUTPUT_PATH}/test_tile_encoder 3 2048 2048 1024 1024 8 tte1.jp2)
+ADD_TEST(tte1 ${EXECUTABLE_OUTPUT_PATH}/test_tile_encoder 3 2048 2048 1024 1024 8 1 tte1.j2k)
+ADD_TEST(tte2 ${EXECUTABLE_OUTPUT_PATH}/test_tile_encoder 3 2048 2048 1024 1024 8 1 tte2.jp2)
+ADD_TEST(tte3 ${EXECUTABLE_OUTPUT_PATH}/test_tile_encoder 1 2048 2048 1024 1024 8 1 tte3.j2k)
+ADD_TEST(tte4 ${EXECUTABLE_OUTPUT_PATH}/test_tile_encoder 1  256  256  128  128 8 0 tte4.j2k)
+ADD_TEST(tte5 ${EXECUTABLE_OUTPUT_PATH}/test_tile_encoder 1  512  512  256  256 8 0 tte5.j2k)
 
 ADD_EXECUTABLE(test_tile_decoder test_tile_decoder.c)
 TARGET_LINK_LIBRARIES(test_tile_decoder ${OPENJPEG_LIBRARY_NAME})

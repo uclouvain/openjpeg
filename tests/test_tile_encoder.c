@@ -29,15 +29,6 @@
 #include <stdlib.h>
 #include <math.h>
 
-
-#ifdef _WIN32
-#include <windows.h>
-#else
-#include <strings.h>
-#define _stricmp strcasecmp
-#define _strnicmp strncasecmp
-#endif /* _WIN32 */
-
 #include "opj_config.h"
 #include "openjpeg.h"
 #include "stdlib.h"
@@ -119,10 +110,11 @@ int main (int argc, char *argv[])
   int tile_width;
   int tile_height;
   int comp_prec;
+  int irreversible;
   char output_file[64];
 
   /* should be test_tile_encoder 3 2000 2000 1000 1000 8 tte1.j2k */
-  if( argc == 8 )
+  if( argc == 9 )
     {
     num_comps = atoi( argv[1] );
     image_width = atoi( argv[2] );
@@ -130,7 +122,8 @@ int main (int argc, char *argv[])
     tile_width = atoi( argv[4] );
     tile_height = atoi( argv[5] );
     comp_prec = atoi( argv[6] );
-    strcpy(output_file, argv[7] );
+    irreversible = atoi( argv[7] );
+    strcpy(output_file, argv[8] );
     }
   else
     {
@@ -140,6 +133,7 @@ int main (int argc, char *argv[])
     tile_width = 1000;
     tile_height = 1000;
     comp_prec = 8;
+    irreversible = 1;
     strcpy(output_file, "test.j2k" );
     }
   if( num_comps > NUM_COMPS_MAX )
@@ -178,7 +172,7 @@ int main (int argc, char *argv[])
 	l_param.cp_tdy = tile_height;
 
 	/* use irreversible encoding ?*/
-	l_param.irreversible = 1;
+	l_param.irreversible = irreversible;
 
 	/* do not bother with mct, the rsiz is set when calling opj_set_MCT*/
 	/*l_param.cp_rsiz = STD_RSIZ;*/
