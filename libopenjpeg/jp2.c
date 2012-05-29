@@ -1160,7 +1160,7 @@ static opj_bool jp2_read_pclr(opj_jp2_t *jp2, opj_cio_t *cio,
 	for(i = 0; i < nr_channels; ++i)
   {
 /* Cji */
-	*entries++ = cio_read(cio, channel_size[i]>>3);
+	*entries++ = cio_read(cio, (channel_size[i]+7)>>3);
   }
    }
 
@@ -1230,9 +1230,10 @@ opj_bool jp2_read_pclr_v2(	opj_jp2_v2_t *jp2,
 
 	for(j = 0; j < nr_entries; ++j) {
 		for(i = 0; i < nr_channels; ++i) {
-			/**entries++ = cio_read(cio, channel_size[i]>>3); */
-			opj_read_bytes(p_pclr_header_data, &l_value , channel_size[i]>>3);	/* Cji */
-			p_pclr_header_data += channel_size[i]>>3;
+			int bytes_to_read = (channel_size[i]+7)>>3;
+
+			opj_read_bytes(p_pclr_header_data, &l_value , bytes_to_read);	/* Cji */
+			p_pclr_header_data += bytes_to_read;
 			*entries = (OPJ_UINT32) l_value;
 			entries++;
 		}
