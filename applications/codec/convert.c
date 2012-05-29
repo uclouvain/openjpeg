@@ -2540,6 +2540,7 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
 	numcomps = 3 + has_alpha;
 	color_space = CLRSPC_SRGB;
 
+/*#define USETILEMODE*/
 	for(j = 0; j < numcomps; j++) 
   {
 	if(parameters->cp_cinema) 
@@ -2556,9 +2557,17 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
 	cmptparm[j].dy = subsampling_dy;
 	cmptparm[j].w = w;
 	cmptparm[j].h = h;
+#ifdef USETILEMODE
+  cmptparm[j].x0 = 0;
+  cmptparm[j].y0 = 0;
+#endif
   }
 
+#ifdef USETILEMODE
+	image = opj_image_tile_create(numcomps,&cmptparm[0],color_space);
+#else
 	image = opj_image_create(numcomps, &cmptparm[0], color_space);
+#endif
 
 	if(!image) 
   {
@@ -2632,21 +2641,25 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
 	   {
 		if(index < imgsize)
 	  {
+#ifndef USETILEMODE
 		image->comps[0].data[index] = dat8[i+0];/* R */
 		image->comps[1].data[index] = dat8[i+1];/* G */
 		image->comps[2].data[index] = dat8[i+2];/* B */
 		if(has_alpha)
 		 image->comps[3].data[index] = dat8[i+3];
+#endif
 
 		if(parameters->cp_cinema)
 	 {
 /* Rounding 8 to 12 bits
 */
+#ifndef USETILEMODE
 		image->comps[0].data[index] = image->comps[0].data[index] << 4 ;
 		image->comps[1].data[index] = image->comps[1].data[index] << 4 ;
 		image->comps[2].data[index] = image->comps[2].data[index] << 4 ;
 		if(has_alpha)
 		 image->comps[3].data[index] = image->comps[3].data[index] << 4 ;
+#endif
 	 }
 		index++;
 	  }/*if(index*/
@@ -2700,7 +2713,11 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
 	cmptparm[j].w = w;
 	cmptparm[j].h = h;
   }
+#ifdef USETILEMODE
+	image = opj_image_tile_create(numcomps,&cmptparm[0],color_space);
+#else
 	image = opj_image_create(numcomps, &cmptparm[0], color_space);
+#endif
 
 	if(!image) 
   {
