@@ -336,6 +336,8 @@ void tcd_malloc_encode(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp, int c
 							cblk->y1 = int_min(cblkyend, prc->y1);
 							cblk->data = (unsigned char*) opj_calloc(8192+2, sizeof(unsigned char));
 							/* FIXME: mqc_init_enc and mqc_byteout underrun the buffer if we don't do this. Why? */
+							cblk->data[0] = 0;
+							cblk->data[1] = 0;
 							cblk->data += 2;
 							cblk->layers = (opj_tcd_layer_t*) opj_calloc(100, sizeof(opj_tcd_layer_t));
 							cblk->passes = (opj_tcd_pass_t*) opj_calloc(100, sizeof(opj_tcd_pass_t));
@@ -595,6 +597,8 @@ void tcd_init_encode(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp, int cur
 							cblk->y1 = int_min(cblkyend, prc->y1);
 							cblk->data = (unsigned char*) opj_calloc(8192+2, sizeof(unsigned char));
 							/* FIXME: mqc_init_enc and mqc_byteout underrun the buffer if we don't do this. Why? */
+							cblk->data[0] = 0;
+							cblk->data[1] = 0;
 							cblk->data += 2;
 							cblk->layers = (opj_tcd_layer_t*) opj_calloc(100, sizeof(opj_tcd_layer_t));
 							cblk->passes = (opj_tcd_pass_t*) opj_calloc(100, sizeof(opj_tcd_pass_t));
