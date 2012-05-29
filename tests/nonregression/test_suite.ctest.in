@@ -47,7 +47,7 @@ j2k_to_image -i  @INPUT_NR_PATH@/buxR.j2k -o @TEMP_PATH@/buxR.j2k.pgx
 j2k_to_image -i  @INPUT_NR_PATH@/Cannotreaddatawithnosizeknown.j2k -o @TEMP_PATH@/Cannotreaddatawithnosizeknown.j2k.pgx
 j2k_to_image -i  @INPUT_NR_PATH@/cthead1.j2k -o @TEMP_PATH@/cthead1.j2k.pgx
 j2k_to_image -i  @INPUT_NR_PATH@/CT_Phillips_JPEG2K_Decompr_Problem.j2k -o @TEMP_PATH@/CT_Phillips_JPEG2K_Decompr_Problem.j2k.pgx
-!j2k_to_image -i  @INPUT_NR_PATH@/illegalcolortransform.j2k -o @TEMP_PATH@/illegalcolortransform.j2k.pgx
+j2k_to_image -i  @INPUT_NR_PATH@/illegalcolortransform.j2k -o @TEMP_PATH@/illegalcolortransform.j2k.pgx
 j2k_to_image -i  @INPUT_NR_PATH@/j2k32.j2k -o @TEMP_PATH@/j2k32.j2k.pgx
 j2k_to_image -i  @INPUT_NR_PATH@/kakadu_v4-4_openjpegv2_broken.j2k -o @TEMP_PATH@/kakadu_v4-4_openjpegv2_broken.j2k.pgx
 j2k_to_image -i  @INPUT_NR_PATH@/MarkerIsNotCompliant.j2k -o @TEMP_PATH@/MarkerIsNotCompliant.j2k.pgx

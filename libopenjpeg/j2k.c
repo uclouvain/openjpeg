@@ -1487,6 +1487,24 @@ static void j2k_read_sod(opj_j2k_t *j2k) {
 		truncate = 1;		/* Case of a truncate codestream */
 	}	
 
+   {/* chop padding bytes: */
+    unsigned char *s, *e; 
+
+    s = cio_getbp(cio);
+    e = s + len;
+
+  if(len > 8) s = e - 8;
+
+  if(e[-2] == 0x00 && e[-1] == 0x00) /* padding bytes */
+  {
+	while(e > s)
+ {
+	if(e[-2] == 0xff && e[-1] == 0xd9)	break;
+  --len; --e; truncate = 1;
+ }
+  }
+   }
+
 	data = j2k->tile_data[curtileno];
 	data = (unsigned char*) opj_realloc(data, (j2k->tile_len[curtileno] + len) * sizeof(unsigned char));
 
@@ -1874,9 +1892,15 @@ opj_image_t* j2k_decode(opj_j2k_t *j2k, opj_cio_t *cio, opj_codestream_info_t *c
 #endif /* USE_JPWL */
 
 		if (id >> 8 != 0xff) {
-			opj_image_destroy(image);
-			opj_event_msg(cinfo, EVT_ERROR, "%.8x: expected a marker instead of %x\n", cio_tell(cio) - 2, id);
-			return 0;
+		if(cio_numbytesleft(cio) != 0) /* not end of file reached and no EOC */
+	   {
+		opj_event_msg(cinfo, EVT_ERROR, "%.8x: expected a marker instead of %x\n", cio_tell(cio) - 2, id);
+		opj_image_destroy(image);
+		return 0;
+	   }
+		opj_event_msg(cinfo, EVT_WARNING, "%.8x: expected a marker instead of %x\n", cio_tell(cio) - 2, id);
+		j2k->state = J2K_STATE_NEOC;
+		break;
 		}
 		e = j2k_dec_mstab_lookup(id);
 		/* Check if the marker is known*/
@@ -1970,9 +1994,15 @@ opj_image_t* j2k_decode_jpt_stream(opj_j2k_t *j2k, opj_cio_t *cio,  opj_codestre
 		
 		id = cio_read(cio, 2);
 		if (id >> 8 != 0xff) {
-			opj_image_destroy(image);
-			opj_event_msg(cinfo, EVT_ERROR, "%.8x: expected a marker instead of %x\n", cio_tell(cio) - 2, id);
-			return 0;
+        if(cio_numbytesleft(cio) != 0) /* no end of file reached and no EOC */
+	  {
+		opj_event_msg(cinfo, EVT_ERROR, "%.8x: expected a marker instead of %x\n", cio_tell(cio) - 2, id);
+		opj_image_destroy(image);
+		return 0;
+	  }
+		opj_event_msg(cinfo, EVT_WARNING, "%.8x: expected a marker instead of %x\n", cio_tell(cio) - 2, id);
+		j2k->state = J2K_STATE_NEOC;
+		break;
 		}
 		e = j2k_dec_mstab_lookup(id);
 		if (!(j2k->state & e->states)) {
