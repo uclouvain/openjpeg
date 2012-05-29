@@ -2802,8 +2802,7 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
 	RAW IMAGE FORMAT
 
  <<-- <<-- <<-- <<-- */
-
-opj_image_t* rawtoimage(const char *filename, opj_cparameters_t *parameters, raw_cparameters_t *raw_cp) {
+static opj_image_t* rawtoimage_common(const char *filename, opj_cparameters_t *parameters, raw_cparameters_t *raw_cp, opj_bool big_endian) {
 	int subsampling_dx = parameters->subsampling_dx;
 	int subsampling_dy = parameters->subsampling_dy;
 
@@ -2877,17 +2876,26 @@ opj_image_t* rawtoimage(const char *filename, opj_cparameters_t *parameters, raw
 		unsigned short value;
 		for(compno = 0; compno < numcomps; compno++) {
 			for (i = 0; i < w * h; i++) {
-				unsigned char temp;
-				if (!fread(&temp, 1, 1, f)) {
+				unsigned char temp1;
+				unsigned char temp2;
+				if (!fread(&temp1, 1, 1, f)) {
 					fprintf(stderr,"Error reading raw file. End of file probably reached.\n");
 					return NULL;
 				}
-				value = temp << 8;
-				if (!fread(&temp, 1, 1, f)) {
+				if (!fread(&temp2, 1, 1, f)) {
 					fprintf(stderr,"Error reading raw file. End of file probably reached.\n");
 					return NULL;
 				}
-				value += temp;
+        if( big_endian )
+          {
+          value = temp1 << 8;
+          value += temp2;
+          }
+        else
+          {
+          value = temp2 << 8;
+          value += temp1;
+          }
 				image->comps[compno].data[i] = raw_cp->rawSigned?(short)value:value;
 			}
 		}
@@ -2905,7 +2913,15 @@ opj_image_t* rawtoimage(const char *filename, opj_cparameters_t *parameters, raw
 	return image;
 }
 
-int imagetoraw(opj_image_t * image, const char *outfile)
+opj_image_t* rawltoimage(const char *filename, opj_cparameters_t *parameters, raw_cparameters_t *raw_cp) {
+  return rawtoimage_common(filename, parameters, raw_cp, OPJ_FALSE);
+}
+
+opj_image_t* rawtoimage(const char *filename, opj_cparameters_t *parameters, raw_cparameters_t *raw_cp) {
+  return rawtoimage_common(filename, parameters, raw_cp, OPJ_TRUE);
+}
+
+int imagetoraw_common(opj_image_t * image, const char *outfile, opj_bool big_endian)
 {
 	FILE *rawFile = NULL;
   size_t res;
@@ -2982,16 +2998,17 @@ int imagetoraw(opj_image_t * image, const char *outfile)
 				ptr = image->comps[compno].data;
 				for (line = 0; line < h; line++) {
 					for(row = 0; row < w; row++)	{					
-						unsigned char temp;
+						unsigned char temp1;
+						unsigned char temp2;
 						curr = (signed short int) (*ptr & mask);
-						temp = (unsigned char) (curr >> 8);
-						res = fwrite(&temp, 1, 1, rawFile);
+						temp1 = (unsigned char) (curr >> 8);
+						temp2 = (unsigned char) curr;
+						res = fwrite(&temp1, 1, 1, rawFile);
             if( res < 1 ) {
               fprintf(stderr, "failed to write 1 byte for %s\n", outfile);
               return 1;
             }
-						temp = (unsigned char) curr;
-						res = fwrite(&temp, 1, 1, rawFile);
+						res = fwrite(&temp2, 1, 1, rawFile);
             if( res < 1 ) {
               fprintf(stderr, "failed to write 1 byte for %s\n", outfile);
               return 1;
@@ -3007,16 +3024,25 @@ int imagetoraw(opj_image_t * image, const char *outfile)
 				ptr = image->comps[compno].data;
 				for (line = 0; line < h; line++) {
 					for(row = 0; row < w; row++)	{				
-						unsigned char temp;
+						unsigned char temp1;
+						unsigned char temp2;
 						curr = (unsigned short int) (*ptr & mask);
-						temp = (unsigned char) (curr >> 8);
-						res = fwrite(&temp, 1, 1, rawFile);
+            if( big_endian )
+              {
+              temp1 = (unsigned char) (curr >> 8);
+              temp2 = (unsigned char) curr;
+              }
+            else
+              {
+              temp2 = (unsigned char) (curr >> 8);
+              temp1 = (unsigned char) curr;
+              }
+            res = fwrite(&temp1, 1, 1, rawFile);
             if( res < 1 ) {
               fprintf(stderr, "failed to write 1 byte for %s\n", outfile);
               return 1;
             }
-						temp = (unsigned char) curr;
-						res = fwrite(&temp, 1, 1, rawFile);
+						res = fwrite(&temp2, 1, 1, rawFile);
             if( res < 1 ) {
               fprintf(stderr, "failed to write 1 byte for %s\n", outfile);
               return 1;
@@ -3039,6 +3065,16 @@ int imagetoraw(opj_image_t * image, const char *outfile)
 	}
 	fclose(rawFile);
 	return 0;
+}
+
+int imagetoraw(opj_image_t * image, const char *outfile)
+{
+  return imagetoraw_common(image, outfile, OPJ_TRUE);
+}
+
+int imagetorawl(opj_image_t * image, const char *outfile)
+{
+  return imagetoraw_common(image, outfile, OPJ_FALSE);
 }
 
 #ifdef HAVE_LIBPNG

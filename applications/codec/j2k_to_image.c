@@ -44,10 +44,10 @@
 
 #ifdef _WIN32
 #include <windows.h>
+#define strcasecmp _stricmp
+#define strncasecmp _strnicmp
 #else
 #include <strings.h>
-#define _stricmp strcasecmp
-#define _strnicmp strncasecmp
 #endif /* _WIN32 */
 
 #include "openjpeg.h"
@@ -214,15 +214,15 @@ int load_images(dircnt_t *dirptr, char *imgdirpath){
 /* -------------------------------------------------------------------------- */
 int get_file_format(const char *filename) {
 	unsigned int i;
-	static const char *extension[] = {"pgx", "pnm", "pgm", "ppm", "bmp","tif", "raw", "tga", "png", "j2k", "jp2", "jpt", "j2c", "jpc" };
-	static const int format[] = { PGX_DFMT, PXM_DFMT, PXM_DFMT, PXM_DFMT, BMP_DFMT, TIF_DFMT, RAW_DFMT, TGA_DFMT, PNG_DFMT, J2K_CFMT, JP2_CFMT, JPT_CFMT, J2K_CFMT, J2K_CFMT };
+	static const char *extension[] = {"pgx", "pnm", "pgm", "ppm", "bmp","tif", "raw", "rawl", "tga", "png", "j2k", "jp2", "jpt", "j2c", "jpc" };
+	static const int format[] = { PGX_DFMT, PXM_DFMT, PXM_DFMT, PXM_DFMT, BMP_DFMT, TIF_DFMT, RAW_DFMT, RAWL_DFMT, TGA_DFMT, PNG_DFMT, J2K_CFMT, JP2_CFMT, JPT_CFMT, J2K_CFMT, J2K_CFMT };
 	char * ext = strrchr(filename, '.');
 	if (ext == NULL)
 		return -1;
 	ext++;
 	if(ext) {
 		for(i = 0; i < sizeof(format)/sizeof(*format); i++) {
-			if(_strnicmp(ext, extension[i], 3) == 0) {
+			if(strcasecmp(ext, extension[i]) == 0) {
 				return format[i];
 			}
 		}
@@ -379,6 +379,8 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 						break;
 					case RAW_DFMT:
 						break;
+					case RAWL_DFMT:
+						break;
 					case TGA_DFMT:
 						break;
 					case PNG_DFMT:
@@ -415,6 +417,9 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 						break;
 					case RAW_DFMT:
 						img_fol->out_format = "raw";
+						break;
+					case RAWL_DFMT:
+						img_fol->out_format = "rawl";
 						break;
 					case TGA_DFMT:
 						img_fol->out_format = "raw";
@@ -903,6 +908,15 @@ int main(int argc, char **argv)
 		case RAW_DFMT:			/* RAW */
 			if(imagetoraw(image, parameters.outfile)){
 				fprintf(stdout,"Error generating raw file. Outfile %s not generated\n",parameters.outfile);
+			}
+			else {
+				fprintf(stdout,"Successfully generated Outfile %s\n",parameters.outfile);
+			}
+			break;
+
+		case RAWL_DFMT:			/* RAWL */
+			if(imagetorawl(image, parameters.outfile)){
+				fprintf(stdout,"Error generating rawl file. Outfile %s not generated\n",parameters.outfile);
 			}
 			else {
 				fprintf(stdout,"Successfully generated Outfile %s\n",parameters.outfile);

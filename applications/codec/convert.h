@@ -72,7 +72,9 @@ int imagetopnm(opj_image_t *image, const char *outfile);
 
 /* RAW conversion */
 int imagetoraw(opj_image_t * image, const char *outfile);
+int imagetorawl(opj_image_t * image, const char *outfile);
 opj_image_t* rawtoimage(const char *filename, opj_cparameters_t *parameters, raw_cparameters_t *raw_cp);
+opj_image_t* rawltoimage(const char *filename, opj_cparameters_t *parameters, raw_cparameters_t *raw_cp);
 
 /* PNG conversion*/
 extern int imagetopng(opj_image_t *image, const char *write_idf);

@@ -35,6 +35,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+#include <assert.h>
 
 #ifdef _WIN32
 #include "windirent.h"
@@ -44,10 +45,10 @@
 
 #ifdef _WIN32
 #include <windows.h>
+#define strcasecmp _stricmp
+#define strncasecmp _strnicmp
 #else
 #include <strings.h>
-#define _stricmp strcasecmp
-#define _strnicmp strncasecmp
 #endif /* _WIN32 */
 
 #include "opj_config.h"
@@ -137,7 +138,7 @@ void encode_help_display(void) {
 	fprintf(stdout,"-OutFor \n");
 	fprintf(stdout,"    REQUIRED only if -ImgDir is used\n");
 	fprintf(stdout,"	  Need to specify only format without filename <BMP>  \n");
-	fprintf(stdout,"    Currently accepts PBM, PGM, PPM, PNM, PAM, PGX, PNG, BMP, TIF, RAW and TGA formats\n");
+	fprintf(stdout,"    Currently accepts PBM, PGM, PPM, PNM, PAM, PGX, PNG, BMP, TIF, RAW, RAWL and TGA formats\n");
 	fprintf(stdout,"\n");
 	fprintf(stdout,"-i           : source file  (-i source.pnm also *pbm, *.pgm, *.ppm, *.pam, *.pgx, *png, *.bmp, *.tif, *.raw, *.tga) \n");
 	fprintf(stdout,"    When using this option -o must be used\n");
@@ -394,17 +395,17 @@ int load_images(dircnt_t *dirptr, char *imgdirpath){
 int get_file_format(char *filename) {
 	unsigned int i;
 	static const char *extension[] = {
-    "pgx", "pnm", "pgm", "ppm", "pbm", "pam", "bmp", "tif", "raw", "tga", "png", "j2k", "jp2", "j2c", "jpc"
+    "pgx", "pnm", "pgm", "ppm", "pbm", "pam", "bmp", "tif", "raw", "rawl", "tga", "png", "j2k", "jp2", "j2c", "jpc"
     };
 	static const int format[] = {
-    PGX_DFMT, PXM_DFMT, PXM_DFMT, PXM_DFMT, PXM_DFMT, PXM_DFMT, BMP_DFMT, TIF_DFMT, RAW_DFMT, TGA_DFMT, PNG_DFMT, J2K_CFMT, JP2_CFMT, J2K_CFMT, J2K_CFMT
+    PGX_DFMT, PXM_DFMT, PXM_DFMT, PXM_DFMT, PXM_DFMT, PXM_DFMT, BMP_DFMT, TIF_DFMT, RAW_DFMT, RAWL_DFMT, TGA_DFMT, PNG_DFMT, J2K_CFMT, JP2_CFMT, J2K_CFMT, J2K_CFMT
     };
 	char * ext = strrchr(filename, '.');
 	if (ext == NULL)
 		return -1;
 	ext++;
 	for(i = 0; i < sizeof(format)/sizeof(*format); i++) {
-		if(_strnicmp(ext, extension[i], 3) == 0) {
+		if(strcasecmp(ext, extension[i]) == 0) {
 			return format[i];
 		}
 	}
@@ -621,6 +622,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 					case BMP_DFMT:
 					case TIF_DFMT:
 					case RAW_DFMT:
+					case RAWL_DFMT:
 					case TGA_DFMT:
 					case PNG_DFMT:
 						break;
@@ -1491,7 +1493,8 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 		}
 	}
 
-	if (parameters->decod_format == RAW_DFMT && raw_cp->rawWidth == 0) {
+	if ( (parameters->decod_format == RAW_DFMT && raw_cp->rawWidth == 0)
+	|| (parameters->decod_format == RAWL_DFMT && raw_cp->rawWidth == 0)) {
 			fprintf(stderr,"\nError: invalid raw image parameters\n");
 			fprintf(stderr,"Please use the Format option -F:\n");
 			fprintf(stderr,"-F rawWidth,rawHeight,rawComp,rawBitDepth,s/u (Signed/Unsigned)\n");
@@ -1600,6 +1603,8 @@ int main(int argc, char **argv) {
 	dircnt_t *dirptr = NULL;
 
 	opj_bool bSuccess;
+  opj_bool bUseTiles = OPJ_FALSE; /* OPJ_TRUE */
+	OPJ_UINT32 l_nb_tiles = 4;
 
 	/* set encoding parameters to default values */
 	opj_set_default_encoder_parameters(&parameters);
@@ -1683,6 +1688,7 @@ int main(int argc, char **argv) {
 			case TIF_DFMT:
 				break;
 			case RAW_DFMT:
+			case RAWL_DFMT:
 				break;
 			case TGA_DFMT:
 				break;
@@ -1733,6 +1739,14 @@ int main(int argc, char **argv) {
 
 			case RAW_DFMT:
 				image = rawtoimage(parameters.infile, &parameters, &raw_cp);
+				if (!image) {
+					fprintf(stderr, "Unable to load raw file\n");
+					return 1;
+				}
+			break;
+
+			case RAWL_DFMT:
+				image = rawltoimage(parameters.infile, &parameters, &raw_cp);
 				if (!image) {
 					fprintf(stderr, "Unable to load raw file\n");
 					return 1;
@@ -1800,6 +1814,13 @@ int main(int argc, char **argv) {
 		opj_set_warning_handler(l_codec, warning_callback,00);
 		opj_set_error_handler(l_codec, error_callback,00);
 
+    if( bUseTiles ) {
+      parameters.cp_tx0 = 0;
+      parameters.cp_ty0 = 0;
+      parameters.tile_size_on = OPJ_TRUE;
+      parameters.cp_tdx = 512;
+      parameters.cp_tdy = 512;
+    }
 		opj_setup_encoder_v2(l_codec, &parameters, image);
 
 		/* Open the output file*/
@@ -1817,14 +1838,34 @@ int main(int argc, char **argv) {
 		}
 
 		/* encode the image */
-		bSuccess = opj_start_compress(l_codec,image,l_stream);
-		if (!bSuccess)  {
-			fprintf(stderr, "failed to encode image: opj_start_compress\n");
-		}
-		bSuccess = bSuccess && opj_encode_v2(l_codec, l_stream);
-		if (!bSuccess)  {
-			fprintf(stderr, "failed to encode image: opj_encode_v2\n");
-		}
+    bSuccess = opj_start_compress(l_codec,image,l_stream);
+    if (!bSuccess)  {
+      fprintf(stderr, "failed to encode image: opj_start_compress\n");
+    }
+    if( bUseTiles ) {
+      OPJ_BYTE *l_data;
+      OPJ_UINT32 l_data_size = 512*512*3;
+      l_data = (OPJ_BYTE*) malloc( l_data_size * sizeof(OPJ_BYTE));
+      memset(l_data, 0, l_data_size );
+      assert( l_data );
+      for (i=0;i<l_nb_tiles;++i) {
+        if (! opj_write_tile(l_codec,i,l_data,l_data_size,l_stream)) {
+          fprintf(stderr, "ERROR -> test_tile_encoder: failed to write the tile %d!\n",i);
+          opj_stream_destroy(l_stream);
+          fclose(fout);
+          opj_destroy_codec(l_codec);
+          opj_image_destroy(image);
+          return 1;
+        }
+      }
+      free(l_data);
+    }
+    else {
+      bSuccess = bSuccess && opj_encode_v2(l_codec, l_stream);
+      if (!bSuccess)  {
+        fprintf(stderr, "failed to encode image: opj_encode_v2\n");
+      }
+    }
 		bSuccess = bSuccess && opj_end_compress(l_codec, l_stream);
 		if (!bSuccess)  {
 			fprintf(stderr, "failed to encode image: opj_end_compress\n");
@@ -1833,6 +1874,8 @@ int main(int argc, char **argv) {
 		if (!bSuccess)  {
 			opj_stream_destroy(l_stream);
 			fclose(fout);
+      opj_destroy_codec(l_codec);
+      opj_image_destroy(image);
 			fprintf(stderr, "failed to encode image\n");
 			return 1;
 		}
