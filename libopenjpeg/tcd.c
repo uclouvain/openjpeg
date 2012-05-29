@@ -615,7 +615,7 @@ void tcd_malloc_decode(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp) {
 	tcd->image = image;
 	tcd->tcd_image->tw = cp->tw;
 	tcd->tcd_image->th = cp->th;
-	tcd->tcd_image->tiles = (opj_tcd_tile_t *) opj_malloc(cp->tw * cp->th * sizeof(opj_tcd_tile_t));
+    tcd->tcd_image->tiles = (opj_tcd_tile_t *) opj_calloc(cp->tw * cp->th, sizeof(opj_tcd_tile_t));
 
 	/* 
 	Allocate place to store the decoded data = final image
@@ -1377,10 +1377,23 @@ opj_bool tcd_decode_tile(opj_tcd_t *tcd, unsigned char *src, int len, int tileno
 	
 	t1_time = opj_clock();	/* time needed to decode a tile */
 	t1 = t1_create(tcd->cinfo);
+    if (t1 == NULL)
+    {
+        opj_event_msg(tcd->cinfo, EVT_ERROR, "Out of memory\n");
+        t1_destroy(t1);
+        return OPJ_FALSE;
+    }
+
 	for (compno = 0; compno < tile->numcomps; ++compno) {
 		opj_tcd_tilecomp_t* tilec = &tile->comps[compno];
 		/* The +3 is headroom required by the vectorized DWT */
 		tilec->data = (int*) opj_aligned_malloc((((tilec->x1 - tilec->x0) * (tilec->y1 - tilec->y0))+3) * sizeof(int));
+        if (tilec->data == NULL)
+        {
+            opj_event_msg(tcd->cinfo, EVT_ERROR, "Out of memory\n");
+            return OPJ_FALSE;
+        }
+
 		t1_decode_cblks(t1, tilec, &tcd->tcp->tccps[compno]);
 	}
 	t1_destroy(t1);
@@ -1460,6 +1473,11 @@ opj_bool tcd_decode_tile(opj_tcd_t *tcd, unsigned char *src, int len, int tileno
 		if(!imagec->data){
 			imagec->data = (int*) opj_malloc(imagec->w * imagec->h * sizeof(int));
 		}
+        if (!imagec->data)
+        {
+            opj_event_msg(tcd->cinfo, EVT_ERROR, "Out of memory\n");
+            return OPJ_FALSE;
+        }
 		if(tcd->tcp->tccps[compno].qmfbid == 1) {
 			for(j = res->y0; j < res->y1; ++j) {
 				for(i = res->x0; i < res->x1; ++i) {
@@ -1493,32 +1511,51 @@ opj_bool tcd_decode_tile(opj_tcd_t *tcd, unsigned char *src, int len, int tileno
 
 void tcd_free_decode(opj_tcd_t *tcd) {
 	opj_tcd_image_t *tcd_image = tcd->tcd_image;	
+    int i = 0;
+    for (i = 0; i < tcd_image->tw * tcd_image->th; i++)
+    {
+        tcd_free_decode_tile(tcd, i);
+    }
+
 	opj_free(tcd_image->tiles);
 }
 
 void tcd_free_decode_tile(opj_tcd_t *tcd, int tileno) {
-	int compno,resno,bandno,precno;
+    int compno,resno,bandno,precno,cblkno;
 
 	opj_tcd_image_t *tcd_image = tcd->tcd_image;
 
 	opj_tcd_tile_t *tile = &tcd_image->tiles[tileno];
-	for (compno = 0; compno < tile->numcomps; compno++) {
-		opj_tcd_tilecomp_t *tilec = &tile->comps[compno];
-		for (resno = 0; resno < tilec->numresolutions; resno++) {
-			opj_tcd_resolution_t *res = &tilec->resolutions[resno];
-			for (bandno = 0; bandno < res->numbands; bandno++) {
-				opj_tcd_band_t *band = &res->bands[bandno];
-				for (precno = 0; precno < res->ph * res->pw; precno++) {
-					opj_tcd_precinct_t *prec = &band->precincts[precno];
-					if (prec->imsbtree != NULL) tgt_destroy(prec->imsbtree);
-					if (prec->incltree != NULL) tgt_destroy(prec->incltree);
+    if (tile->comps != NULL) {
+        for (compno = 0; compno < tile->numcomps; compno++) {
+            opj_tcd_tilecomp_t *tilec = &tile->comps[compno];
+            for (resno = 0; resno < tilec->numresolutions; resno++) {
+                opj_tcd_resolution_t *res = &tilec->resolutions[resno];
+                for (bandno = 0; bandno < res->numbands; bandno++) {
+                    opj_tcd_band_t *band = &res->bands[bandno];
+                    for (precno = 0; precno < res->ph * res->pw; precno++) {
+                        opj_tcd_precinct_t *prec = &band->precincts[precno];
+                        if (prec->cblks.dec != NULL) {
+                            for (cblkno = 0; cblkno < prec->cw * prec->ch; ++cblkno) {
+                                opj_tcd_cblk_dec_t* cblk = &prec->cblks.dec[cblkno];
+                                opj_free(cblk->data);
+                                opj_free(cblk->segs);
+                            }
+                            opj_free(prec->cblks.dec);
+                        }
+                        if (prec->imsbtree != NULL) tgt_destroy(prec->imsbtree);
+                        if (prec->incltree != NULL) tgt_destroy(prec->incltree);
+
+
+                    }
+                    opj_free(band->precincts);
 				}
-				opj_free(band->precincts);
 			}
+            opj_free(tilec->resolutions);
 		}
-		opj_free(tilec->resolutions);
+        opj_free(tile->comps);
+        tile->comps = NULL;
 	}
-	opj_free(tile->comps);
 }
 
 

@@ -558,7 +558,17 @@ static void j2k_read_siz(opj_j2k_t *j2k) {
 #endif /* USE_JPWL */
 
 	cp->tcps = (opj_tcp_t*) opj_calloc(cp->tw * cp->th, sizeof(opj_tcp_t));
+    if (cp->tcps == NULL)
+    {
+        opj_event_msg(j2k->cinfo, EVT_ERROR, "Out of memory\n");
+        return;
+    }
 	cp->tileno = (int*) opj_malloc(cp->tw * cp->th * sizeof(int));
+    if (cp->tileno == NULL)
+    {
+        opj_event_msg(j2k->cinfo, EVT_ERROR, "Out of memory\n");
+        return;
+    }
 	cp->tileno_size = 0;
 	
 #ifdef USE_JPWL
@@ -1737,6 +1747,14 @@ void j2k_destroy_decompress(opj_j2k_t *j2k) {
 		opj_free(j2k->tile_len);
 	}
 	if(j2k->tile_data != NULL) {
+        if(j2k->cp != NULL) {
+            for (i = 0; i < j2k->cp->tileno_size; i++) {
+                int tileno = j2k->cp->tileno[i];
+                opj_free(j2k->tile_data[tileno]);
+                j2k->tile_data[tileno] = NULL;
+            }
+        }
+
 		opj_free(j2k->tile_data);
 	}
 	if(j2k->default_tcp != NULL) {
@@ -1877,7 +1895,10 @@ opj_image_t* j2k_decode(opj_j2k_t *j2k, opj_cio_t *cio, opj_codestream_info_t *c
 			(*e->handler)(j2k);
 		}
 		if (j2k->state & J2K_STATE_ERR) 
+        {
+            opj_image_destroy(image);
 			return NULL;	
+        }
 
 		if (j2k->state == J2K_STATE_MT) {
 			break;
