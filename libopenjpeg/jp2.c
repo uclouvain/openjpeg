@@ -469,7 +469,7 @@ static opj_bool jp2_read_pclr(opj_jp2_t *jp2, opj_cio_t *cio,
 	for(i = 0; i < nr_channels; ++i)
   {
 /* Cji */
-	*entries++ = cio_read(cio, channel_size[i]>>3);
+	*entries++ = cio_read(cio, (channel_size[i]+7)>>3);
   }
    }
 

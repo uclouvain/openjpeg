@@ -3219,18 +3219,27 @@ int imagetopng(opj_image_t * image, const char *write_idf)
 	int *red, *green, *blue, *alpha;
 	unsigned char *row_buf, *d;
 	int has_alpha, width, height, nr_comp, color_type;
-	int adjustR, adjustG, adjustB, x, y, fails, is16, force16;
-  int opj_prec, prec, ushift, dshift;
+	int adjustR, adjustG, adjustB, adjustA, x, y, fails;
+	int prec, ushift, dshift, is16, force16, force8;
 	unsigned short mask = 0xffff;
 	png_color_8 sig_bit;
 
-	is16 = force16 = ushift = dshift = 0; fails = 1;
-	prec = opj_prec = image->comps[0].prec;
+	is16 = force16 = force8 = ushift = dshift = 0; fails = 1;
+	prec = image->comps[0].prec;
+	nr_comp = image->numcomps;
 
 	if(prec > 8 && prec < 16)
    {
-	 prec = 16; force16 = 1;
+	ushift = 16 - prec; dshift = prec - ushift;
+	prec = 16; force16 = 1;
    }
+	else
+	if(prec < 8 && nr_comp > 1)/* GRAY_ALPHA, RGB, RGB_ALPHA */
+   {
+	ushift = 8 - prec; dshift = 8 - ushift;
+	prec = 8; force8 = 1;
+   }
+
 	if(prec != 1 && prec != 2 && prec != 4 && prec != 8 && prec != 16)
    {
 	fprintf(stderr,"imagetopng: can not create %s"
@@ -3278,6 +3287,14 @@ int imagetopng(opj_image_t * image, const char *write_idf)
  * PNG_INTERLACE_ADAM7, and the compression_type and filter_type MUST
  * currently be PNG_COMPRESSION_TYPE_BASE and PNG_FILTER_TYPE_BASE. 
  * REQUIRED
+ *
+ * ERRORS:
+ *
+ * color_type == PNG_COLOR_TYPE_PALETTE && bit_depth > 8
+ * color_type == PNG_COLOR_TYPE_RGB && bit_depth < 8
+ * color_type == PNG_COLOR_TYPE_GRAY_ALPHA && bit_depth < 8
+ * color_type == PNG_COLOR_TYPE_RGB_ALPHA) && bit_depth < 8
+ * 
 */
 	png_set_compression_level(png, Z_BEST_COMPRESSION);
 
@@ -3290,8 +3307,6 @@ int imagetopng(opj_image_t * image, const char *write_idf)
 	if(prec == 2) mask = 0x0003;
 	else
 	if(prec == 1) mask = 0x0001;
-
-	nr_comp = image->numcomps;
 
 	if(nr_comp >= 3
     && image->comps[0].dx == image->comps[1].dx
@@ -3321,11 +3336,13 @@ int imagetopng(opj_image_t * image, const char *write_idf)
 	sig_bit.alpha = prec;
 	alpha = image->comps[3].data; 
 	color_type = PNG_COLOR_TYPE_RGB_ALPHA;
+	adjustA = (image->comps[3].sgnd ? 1 << (image->comps[3].prec - 1) : 0);
   }
 	else 
   {
 	sig_bit.alpha = 0; alpha = NULL;
 	color_type = PNG_COLOR_TYPE_RGB;
+	adjustA = 0;
   }
 	png_set_sBIT(png, info, &sig_bit);
 
@@ -3333,17 +3350,12 @@ int imagetopng(opj_image_t * image, const char *write_idf)
 	 color_type,
 	 PNG_INTERLACE_NONE,
 	 PNG_COMPRESSION_TYPE_BASE,  PNG_FILTER_TYPE_BASE);
-
 /*=============================*/
 	png_write_info(png, info);
 /*=============================*/
-	if(opj_prec < 8)
+	if(prec < 8)
   {
 	png_set_packing(png);
-  }
-	if(force16)
-  {
-	ushift = 16 - opj_prec; dshift = opj_prec - ushift;	
   }
     adjustR = (image->comps[0].sgnd ? 1 << (image->comps[0].prec - 1) : 0);
     adjustG = (image->comps[1].sgnd ? 1 << (image->comps[1].prec - 1) : 0);
@@ -3379,21 +3391,40 @@ int imagetopng(opj_image_t * image, const char *write_idf)
 
 		if(has_alpha)
 	  {
-		v = *alpha++;
+		v = *alpha + adjustA; ++alpha;
 		
 		if(force16) { v = (v<<ushift) + (v>>dshift); }
 
 		*d++ = (unsigned char)(v>>8); *d++ = (unsigned char)v;
 	  }
 		continue;
-	   }
-		*d++ = (unsigned char)((*red + adjustR) & mask); ++red;
-		*d++ = (unsigned char)((*green + adjustG) & mask); ++green;
-		*d++ = (unsigned char)((*blue + adjustB) & mask); ++blue;
+	   }/* if(is16) */
+
+		v = *red + adjustR; ++red;
+
+		if(force8) { v = (v<<ushift) + (v>>dshift); }
+
+		*d++ = (unsigned char)(v & mask);
+
+		v = *green + adjustG; ++green;
+
+		if(force8) { v = (v<<ushift) + (v>>dshift); }
+
+		*d++ = (unsigned char)(v & mask);
+
+		v = *blue + adjustB; ++blue;
+
+		if(force8) { v = (v<<ushift) + (v>>dshift); }
+
+		*d++ = (unsigned char)(v & mask);
 
 		if(has_alpha)
 	   {
-		*d++ = (unsigned char)(*alpha & mask); ++alpha;
+		v = *alpha + adjustA; ++alpha;
+
+		if(force8) { v = (v<<ushift) + (v>>dshift); }
+
+		*d++ = (unsigned char)(v & mask);
 	   }
  }	/* for(x) */
 
@@ -3414,13 +3445,9 @@ int imagetopng(opj_image_t * image, const char *write_idf)
 
 	red = image->comps[0].data;
 
-    if(force16)
-  {
-    ushift = 16 - opj_prec; dshift = opj_prec - ushift;
-  }
     sig_bit.gray = prec;
     sig_bit.red = sig_bit.green = sig_bit.blue = sig_bit.alpha = 0;
-	alpha = NULL;
+	alpha = NULL; adjustA = 0;
 	color_type = PNG_COLOR_TYPE_GRAY;
 
     if(nr_comp == 2) 
@@ -3428,6 +3455,7 @@ int imagetopng(opj_image_t * image, const char *write_idf)
 	has_alpha = 1; sig_bit.alpha = prec;
 	alpha = image->comps[1].data;
 	color_type = PNG_COLOR_TYPE_GRAY_ALPHA;
+	adjustA = (image->comps[1].sgnd ? 1 << (image->comps[1].prec - 1) : 0);
   }
     width = image->comps[0].w;
     height = image->comps[0].h;
@@ -3443,7 +3471,7 @@ int imagetopng(opj_image_t * image, const char *write_idf)
 /*=============================*/
 	adjustR = (image->comps[0].sgnd ? 1 << (image->comps[0].prec - 1) : 0);
 
-	if(opj_prec < 8)
+	if(prec < 8)
   {
 	png_set_packing(png);
   }
@@ -3489,11 +3517,19 @@ int imagetopng(opj_image_t * image, const char *write_idf)
 
 		for(x = 0; x < width; ++x)
 	   {
-		*d++ = (unsigned char)((*red + adjustR) & mask); ++red;
+		v = *red + adjustR; ++red;
+
+		if(force8) { v = (v<<ushift) + (v>>dshift); }
+
+		*d++ = (unsigned char)(v & mask);
 
 		if(has_alpha)
 	  {
-		*d++ = (unsigned char)(*alpha & mask); ++alpha;
+		v = *alpha + adjustA; ++alpha;
+
+		if(force8) { v = (v<<ushift) + (v>>dshift); }
+
+		*d++ = (unsigned char)(v & mask);
 	  }
 	   }/* for(x) */
 
