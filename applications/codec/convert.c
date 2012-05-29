@@ -3001,9 +3001,17 @@ int imagetoraw_common(opj_image_t * image, const char *outfile, opj_bool big_end
 						unsigned char temp1;
 						unsigned char temp2;
 						curr = (signed short int) (*ptr & mask);
-						temp1 = (unsigned char) (curr >> 8);
-						temp2 = (unsigned char) curr;
-						res = fwrite(&temp1, 1, 1, rawFile);
+            if( big_endian )
+              {
+              temp1 = (unsigned char) (curr >> 8);
+              temp2 = (unsigned char) curr;
+              }
+            else
+              {
+              temp2 = (unsigned char) (curr >> 8);
+              temp1 = (unsigned char) curr;
+              }
+            res = fwrite(&temp1, 1, 1, rawFile);
             if( res < 1 ) {
               fprintf(stderr, "failed to write 1 byte for %s\n", outfile);
               return 1;
