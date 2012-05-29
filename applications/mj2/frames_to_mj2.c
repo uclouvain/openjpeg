@@ -698,7 +698,7 @@ int main(int argc, char **argv)
 		goto fin;
 	}
 
-  // One sample per chunk
+  /* One sample per chunk */
 	movie->tk[0].chunk = (mj2_chunk_t*) 
 	 malloc(movie->tk[0].num_samples * sizeof(mj2_chunk_t));     
 	movie->tk[0].sample = (mj2_sample_t*) 
@@ -712,8 +712,8 @@ int main(int argc, char **argv)
 	goto fin;
 	}    
   
-// Writing JP, FTYP and MDAT boxes 
-// Assuming that the JP and FTYP boxes won't be longer than 300 bytes:
+/* Writing JP, FTYP and MDAT boxes */
+/* Assuming that the JP and FTYP boxes won't be longer than 300 bytes:*/
 	buf = (unsigned char*) 
 	 malloc (300 * sizeof(unsigned char));
 	if(buf == NULL) goto fin;
@@ -810,7 +810,7 @@ int main(int argc, char **argv)
 
 	track->sample[sampleno].sample_size = len+8;				
 	track->sample[sampleno].offset = offset;
-	track->chunk[sampleno].offset = offset;	// There is one sample per chunk 
+	track->chunk[sampleno].offset = offset;	/* There is one sample per chunk */
 	fwrite(buf, 1, len+8, mj2file);				
 	offset += len+8;				
 

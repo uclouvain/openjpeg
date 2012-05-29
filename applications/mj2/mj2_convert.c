@@ -67,12 +67,12 @@ unsigned int yuv_num_frames(mj2_tk_t * tk, char *infile)
   return (unsigned int)(end_of_f / frame_size);
 }
 
-//  -----------------------
-//
-//
-//  YUV to IMAGE
-//
-//  -----------------------
+/* -----------------------
+
+
+  YUV to IMAGE
+
+  -----------------------*/
 
 opj_image_t *mj2_image_create(mj2_tk_t * tk, opj_cparameters_t *parameters)
 {
@@ -169,12 +169,12 @@ char yuvtoimage(mj2_tk_t * tk, opj_image_t * img, int frame_num, opj_cparameters
 
 
 
-//  -----------------------
-//
-//
-//  IMAGE to YUV
-//
-//  -----------------------
+/*  -----------------------
+
+
+  IMAGE to YUV
+
+  -----------------------*/
 
 
 opj_bool imagetoyuv(opj_image_t * img, char *outfile)
@@ -263,12 +263,12 @@ opj_bool imagetoyuv(opj_image_t * img, char *outfile)
   return OPJ_TRUE;
 }
 
-//  -----------------------
-//
-//
-//  IMAGE to BMP
-//
-//  -----------------------
+/*  -----------------------
+
+
+  IMAGE to BMP
+
+  -----------------------*/
 
 int imagetobmp(opj_image_t * img, char *outfile) {
   int w,wr,h,hr,i,pad;
@@ -353,11 +353,11 @@ int imagetobmp(opj_image_t * img, char *outfile) {
     for (i = 0; i < wr * hr; i++) {
       unsigned char R, G, B;
       /* a modifier */
-      // R = img->comps[0].data[w * h - ((i) / (w) + 1) * w + (i) % (w)];
+      /* R = img->comps[0].data[w * h - ((i) / (w) + 1) * w + (i) % (w)];*/
       R = img->comps[0].data[w * hr - ((i) / (wr) + 1) * w + (i) % (wr)];
-      // G = img->comps[1].data[w * h - ((i) / (w) + 1) * w + (i) % (w)];
+      /* G = img->comps[1].data[w * h - ((i) / (w) + 1) * w + (i) % (w)];*/
       G = img->comps[1].data[w * hr - ((i) / (wr) + 1) * w + (i) % (wr)];
-      // B = img->comps[2].data[w * h - ((i) / (w) + 1) * w + (i) % (w)];
+      /* B = img->comps[2].data[w * h - ((i) / (w) + 1) * w + (i) % (w)];*/
       B = img->comps[2].data[w * hr - ((i) / (wr) + 1) * w + (i) % (wr)];
       fprintf(f, "%c%c%c", B, G, R);
       
