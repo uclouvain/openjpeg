@@ -322,6 +322,8 @@ int main (int argc, char *argv[])
 	opj_destroy_codec(l_codec);
 	opj_image_destroy(l_image);
 
+	free(l_data);
+
 	// Print profiling
 	//PROFPRINT();
 
