@@ -218,7 +218,9 @@ CONFIGURE_FILE("${OPENJPEG_SOURCE_DIR}/opj_config.h.cmake.in"
  "${OPENJPEG_BINARY_DIR}/opj_config.h"
  @ONLY
  )
-
+#
+INSTALL( FILES  ${CMAKE_CURRENT_BINARY_DIR}/opj_config.h
+ DESTINATION ${OPENJPEG_INSTALL_INCLUDE_DIR} COMPONENT Headers)
 #-----------------------------------------------------------------------------
 # Build DOCUMENTATION (not in ALL target and only if Doxygen is found)
 OPTION(BUILD_DOC "Build the HTML documentation (with doxygen if available)." OFF)

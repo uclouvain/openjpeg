@@ -7,7 +7,7 @@ SUBDIRS += jpwl
 endif
 
 includesdir = $(includedir)/openjpeg-$(MAJOR_NR).$(MINOR_NR)
-includes_HEADERS = openjpeg.h opj_stdint.h
+includes_HEADERS = openjpeg.h opj_stdint.h $(top_builddir)/opj_config.h
 
 lib_LTLIBRARIES = libopenjpeg.la
 
@@ -75,10 +75,7 @@ EXTRA_DIST = \
 CMakeLists.txt
 
 install-data-hook:
-	cd $(DESTDIR)$(includedir) && \
-	  rm -f openjpeg.h && \
-	  $(LN_S) openjpeg-$(MAJOR_NR).$(MINOR_NR)/openjpeg.h \
-	          openjpeg.h
+	cd $(DESTDIR)$(includedir) && rm -f openjpeg.h
 	@rm -rf $(top_builddir)/report.txt
 	@echo -e " (LA)\t$(libdir)/libopenjpeg.la" >> $(top_builddir)/report.txt
 if BUILD_SHARED
@@ -88,7 +85,6 @@ if BUILD_STATIC
 	@echo -e " (A)\t$(base)/$(a)" >> $(top_builddir)/report.txt
 endif
 	@echo -e " (H)\t$(includedir)/openjpeg-$(MAJOR_NR).$(MINOR_NR)/openjpeg.h" >> $(top_builddir)/report.txt
-	@echo -e " (LN)\t$(includedir)/openjpeg.h" >> $(top_builddir)/report.txt
 
 uninstall-hook:
 	rm -f $(DESTDIR)$(includedir)/openjpeg.h

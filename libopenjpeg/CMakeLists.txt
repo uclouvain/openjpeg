@@ -55,7 +55,7 @@ INSTALL(TARGETS ${OPENJPEG_LIBRARY_NAME}
 )
 
 # Install includes files
-INSTALL(FILES openjpeg.h
+INSTALL(FILES openjpeg.h opj_stdint.h
   DESTINATION ${OPENJPEG_INSTALL_INCLUDE_DIR} COMPONENT Headers
 )
 
