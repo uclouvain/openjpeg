@@ -244,7 +244,7 @@ FOREACH(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
           # Compare the dump file with the baseline 
           ADD_TEST(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-compare_dump2base
             ${EXECUTABLE_OUTPUT_PATH}/compare_dump_files
-            -b ${BASELINE_NR}/opj_${OUTPUT_FILENAME_NAME_WE}-ENC-${IT_TEST_ENC}.txt
+            -b ${BASELINE_NR}/opj_v2_${OUTPUT_FILENAME_NAME_WE}-ENC-${IT_TEST_ENC}.txt
             -t ${OUTPUT_FILENAME}-ENC-${IT_TEST_ENC}.txt
           )
         
