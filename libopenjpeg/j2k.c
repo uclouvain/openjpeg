@@ -5240,7 +5240,7 @@ static void j2k_read_sot(opj_j2k_t *j2k) {
 		static int backup_tileno = 0;
 
 		/* tileno is negative or larger than the number of tiles!!! */
-		if ((tileno < 0) || (tileno > (cp->tw * cp->th))) {
+		if ((tileno < 0) || (tileno >= (cp->tw * cp->th))) {
 			opj_event_msg(j2k->cinfo, EVT_ERROR,
 				"JPWL: bad tile number (%d out of a maximum of %d)\n",
 				tileno, (cp->tw * cp->th));
@@ -5257,8 +5257,18 @@ static void j2k_read_sot(opj_j2k_t *j2k) {
 
 		/* keep your private count of tiles */
 		backup_tileno++;
-	};
+	}
+  else
 #endif /* USE_JPWL */
+  {
+    /* tileno is negative or larger than the number of tiles!!! */
+    if ((tileno < 0) || (tileno >= (cp->tw * cp->th))) {
+      opj_event_msg(j2k->cinfo, EVT_ERROR,
+        "JPWL: bad tile number (%d out of a maximum of %d)\n",
+        tileno, (cp->tw * cp->th));
+      return;
+    }
+  }
 	
 	if (cp->tileno_size == 0) {
 		cp->tileno[cp->tileno_size] = tileno;
@@ -5297,8 +5307,18 @@ static void j2k_read_sot(opj_j2k_t *j2k) {
 				totlen);
 		}
 
-	};
+	}
+  else
 #endif /* USE_JPWL */
+  {
+    /* totlen is negative or larger than the bytes left!!! */
+    if ((totlen < 0) || (totlen > (cio_numbytesleft(cio) + 8))) {
+      opj_event_msg(j2k->cinfo, EVT_ERROR,
+        "JPWL: bad tile byte size (%d bytes against %d bytes left)\n",
+        totlen, cio_numbytesleft(cio) + 8);
+      return;
+    }
+  }
 
 	if (!totlen)
 		totlen = cio_numbytesleft(cio) + 8;
