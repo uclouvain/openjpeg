@@ -6326,7 +6326,7 @@ opj_bool j2k_update_rates(	opj_j2k_v2_t *p_j2k,
 
 static void j2k_read_eoc(opj_j2k_t *j2k) {
 	int i, tileno;
-	opj_bool success = false;
+	opj_bool success = OPJ_FALSE;
 
 	/* if packets should be decoded */
 	if (j2k->cp->limit_decoding != DECODE_ALL_BUT_PACKETS) {
@@ -6343,7 +6343,7 @@ static void j2k_read_eoc(opj_j2k_t *j2k) {
 				tcd_free_decode_tile(tcd, i);
 			}
 			else
-				success = false;
+				success = OPJ_FALSE;
 			if (success == OPJ_FALSE) {
 				j2k->state |= J2K_STATE_ERR;
 				break;
