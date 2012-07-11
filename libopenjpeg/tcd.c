@@ -695,6 +695,12 @@ void tcd_malloc_decode_tile(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp, 
 		opj_tccp_t *tccp = &tcp->tccps[compno];
 		opj_tcd_tilecomp_t *tilec = &tile->comps[compno];
 		
+		if (tccp->numresolutions <= 0)
+		{
+			cp->tileno[tileno] = -1;
+			return;
+		}
+
 		/* border of each tile component (global) */
 		tilec->x0 = int_ceildiv(tile->x0, image->comps[compno].dx);
 		tilec->y0 = int_ceildiv(tile->y0, image->comps[compno].dy);
