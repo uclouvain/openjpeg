@@ -1,9 +1,17 @@
 # Headers file are located here:
 INCLUDE_DIRECTORIES(
-  ${OPENJPEG_SOURCE_DIR}/libopenjpeg
+  ${OPENJPEG_SOURCE_DIR}/libopenjpeg # opj_stdint.h
   ${OPENJPEG_SOURCE_DIR}/applications/jpip/libopenjpip
   ${FCGI_INCLUDE_DIRS}
 )
+
+# Tool to embed metadata into JP2 file
+ADD_EXECUTABLE(addXMLinJP2 addXMLinJP2.c)
+# Install exe
+INSTALL(TARGETS addXMLinJP2
+  EXPORT OpenJPEGTargets
+  DESTINATION ${OPENJPEG_INSTALL_BIN_DIR} COMPONENT Applications
+  )
 
 IF(BUILD_JPIP_SERVER)
   
@@ -78,6 +86,10 @@ if(Java_Development_FOUND AND Java_JAVAC_EXECUTABLE)
     COMMENT "building opj_viewer.jar"
     )
 
+  INSTALL(FILES ${LIBRARY_OUTPUT_PATH}/opj_viewer.jar
+    DESTINATION ${OPENJPEG_INSTALL_SHARE_DIR} COMPONENT JavaModule
+    )
+
   # 2. opj_viewer_xerces
   # search for package org.apache.xerces.parsers
   find_file(APACHE_XERCES_JAR
@@ -127,6 +139,10 @@ if(Java_Development_FOUND AND Java_JAVAC_EXECUTABLE)
     ADD_CUSTOM_TARGET(OPJViewerXercesJar ALL
       DEPENDS ${LIBRARY_OUTPUT_PATH}/opj_viewer_xerces.jar
       COMMENT "building opj_viewer_xerces.jar"
+      )
+
+    INSTALL(FILES ${LIBRARY_OUTPUT_PATH}/opj_viewer_xerces.jar
+      DESTINATION ${OPENJPEG_INSTALL_SHARE_DIR} COMPONENT JavaModule
       )
   endif()
 else(Java_Development_FOUND)
