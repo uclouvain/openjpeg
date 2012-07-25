@@ -77,7 +77,7 @@ typedef struct query_param{
  * @param[in]  query_string request query string
  * @return     pointer to query parameters
  */
-query_param_t * parse_query( char *query_string);
+query_param_t * parse_query( const char *query_string);
 
 /**
  * print query parameters

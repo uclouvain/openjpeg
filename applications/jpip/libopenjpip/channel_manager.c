@@ -60,7 +60,7 @@ channellist_param_t * gene_channellist(void)
 channel_param_t * gene_channel( query_param_t query_param, auxtrans_param_t auxtrans, cachemodel_param_t *cachemodel, channellist_param_t *channellist)
 {
   channel_param_t *channel;
-  char transport[4][10] = { "non", "http", "http-tcp", "http-udp"};
+  const char transport[4][10] = { "non", "http", "http-tcp", "http-udp"};
   
   if( !cachemodel){
     fprintf( FCGI_stdout, "Status: 404\r\n"); 
@@ -160,7 +160,7 @@ void print_allchannel( channellist_param_t *channellist)
   }
 }
 
-channel_param_t * search_channel( char cid[], channellist_param_t *channellist)
+channel_param_t * search_channel( const char cid[], channellist_param_t *channellist)
 {
   channel_param_t *foundchannel;
 

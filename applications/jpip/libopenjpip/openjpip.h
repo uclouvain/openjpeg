@@ -104,7 +104,7 @@ void terminate_JPIPserver( server_record_t **rec);
  * @param[in]  query_string request query string
  * @return     initialized query/response data pointer
  */
-QR_t * parse_querystring( char *query_string);
+QR_t * parse_querystring( const char *query_string);
 
 /**
  * 2nd process; process JPIP request and construct message queue
@@ -245,7 +245,7 @@ void destroy_jpipdecoder( jpip_dec_param_t **dec);
  * @param[in]  dec   JPIP decoding parameters pointer
  * @return           true if succeed
  */
-bool fread_jpip( char fname[], jpip_dec_param_t *dec);
+bool fread_jpip( const char fname[], jpip_dec_param_t *dec);
 
 /**
  * Decode jpip codestream
@@ -261,7 +261,7 @@ void decode_jpip( jpip_dec_param_t *dec);
  * @param[in]  dec   JPIP decoding parameters pointer
  * @return           true if succeed
  */
-bool fwrite_jp2k( char fname[], jpip_dec_param_t *dec);
+bool fwrite_jp2k( const char fname[], jpip_dec_param_t *dec);
 
 /**
  * Option; print out parameter values to stderr

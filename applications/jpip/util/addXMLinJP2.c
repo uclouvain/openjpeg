@@ -59,7 +59,7 @@
  * @param[in] filename file name string
  * @return             file descriptor
  */
-FILE * open_jp2file( char filename[]);
+FILE * open_jp2file( const char filename[]);
 
 
 /**
@@ -69,7 +69,7 @@ FILE * open_jp2file( char filename[]);
  * @param[out] fsize    file byte size
  * @return              pointer to the xml file content buffer
  */
-char * read_xmlfile( char filename[], long *fsize);
+char * read_xmlfile( const char filename[], long *fsize);
 
 int main(int argc, char *argv[])
 {
@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
   return 0;
 }
 
-FILE * open_jp2file( char filename[])
+FILE * open_jp2file( const char filename[])
 {
   FILE *fp;
   char *data;
@@ -137,7 +137,7 @@ FILE * open_jp2file( char filename[])
   return fp;
 }
 
-char * read_xmlfile( char filename[], long *fsize)
+char * read_xmlfile( const char filename[], long *fsize)
 {
   FILE *fp;
   char *data;

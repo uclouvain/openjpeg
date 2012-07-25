@@ -65,7 +65,8 @@ msgtype_t identify_clientmsg( SOCKET connected_socket)
 
 Byte_t * receive_JPIPstream( SOCKET connected_socket, char **target, char **tid, char **cid, OPJ_SIZE_T *streamlen)
 {
-  char buf[BUF_LEN], versionstring[] = "version 1.2";
+  char buf[BUF_LEN];
+  const char versionstring[] = "version 1.2";
   int idatalen;
   OPJ_SIZE_T linelen, datalen;
   Byte_t *jpipstream;

@@ -143,7 +143,7 @@ void print_alltarget( targetlist_param_t *targetlist);
  * @param[in] targetlist target list pointer
  * @return               found target pointer
  */
-target_param_t * search_target( char targetname[], targetlist_param_t *targetlist);
+target_param_t * search_target( const char targetname[], targetlist_param_t *targetlist);
 
 
 /**
@@ -153,7 +153,7 @@ target_param_t * search_target( char targetname[], targetlist_param_t *targetlis
  * @param[in] targetlist target list pointer
  * @return               found target pointer
  */
-target_param_t * search_targetBytid( char tid[], targetlist_param_t *targetlist);
+target_param_t * search_targetBytid( const char tid[], targetlist_param_t *targetlist);
 
 #endif 	    /* !TARGET_MANAGER_H_ */
 

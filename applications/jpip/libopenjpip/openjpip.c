@@ -75,7 +75,7 @@ void terminate_JPIPserver( server_record_t **rec)
   free( *rec);
 }
 
-QR_t * parse_querystring( char *query_string)
+QR_t * parse_querystring( const char *query_string)
 {
   QR_t *qr;
 
@@ -127,7 +127,7 @@ void add_EORmsg( int fd, QR_t *qr);
 void send_responsedata( server_record_t *rec, QR_t *qr)
 {
   int fd;
-  char tmpfname[] = "tmpjpipstream.jpp";
+  const char tmpfname[] = "tmpjpipstream.jpp";
   Byte_t *jpipstream;
   Byte8_t len_of_jpipstream;
 
@@ -321,7 +321,7 @@ jpip_dec_param_t * init_jpipdecoder( bool jp2)
 }
 
 
-bool fread_jpip( char fname[], jpip_dec_param_t *dec)
+bool fread_jpip( const char fname[], jpip_dec_param_t *dec)
 {
   int infd;
 
@@ -361,7 +361,7 @@ void decode_jpip( jpip_dec_param_t *dec)
     dec->jp2kstream = recons_j2k( dec->msgqueue, dec->jpipstream, dec->msgqueue->first->csn, 0, 0, &dec->jp2klen);  
 }
 
-bool fwrite_jp2k( char fname[], jpip_dec_param_t *dec)
+bool fwrite_jp2k( const char fname[], jpip_dec_param_t *dec)
 {
   int outfd;
   

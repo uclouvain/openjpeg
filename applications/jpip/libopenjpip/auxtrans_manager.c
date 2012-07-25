@@ -90,7 +90,7 @@ typedef struct aux_response_param{
 #endif
 } aux_response_param_t;
 
-aux_response_param_t * gene_auxresponse( bool istcp, auxtrans_param_t auxtrans, char cid[], void *data, OPJ_SIZE_T datalen, OPJ_SIZE_T maxlenPerFrame);
+aux_response_param_t * gene_auxresponse( bool istcp, auxtrans_param_t auxtrans, const char cid[], void *data, OPJ_SIZE_T datalen, OPJ_SIZE_T maxlenPerFrame);
 
 void delete_auxresponse( aux_response_param_t **auxresponse);
 
@@ -101,7 +101,7 @@ unsigned __stdcall aux_streaming( void *arg);
 void * aux_streaming( void *arg);
 #endif
 
-void send_responsedata_on_aux( bool istcp, auxtrans_param_t auxtrans, char cid[], void *data, OPJ_SIZE_T datalen, OPJ_SIZE_T maxlenPerFrame)
+void send_responsedata_on_aux( bool istcp, auxtrans_param_t auxtrans, const char cid[], void *data, OPJ_SIZE_T datalen, OPJ_SIZE_T maxlenPerFrame)
 {
   aux_response_param_t *auxresponse;
 #ifdef _WIN32
@@ -133,7 +133,7 @@ void send_responsedata_on_aux( bool istcp, auxtrans_param_t auxtrans, char cid[]
     fprintf( FCGI_stderr, "Error: error in send_responsedata_on_aux(), udp not implemented\n");
 }
 
-aux_response_param_t * gene_auxresponse( bool istcp, auxtrans_param_t auxtrans, char cid[], void *data, OPJ_SIZE_T datalen, OPJ_SIZE_T maxlenPerFrame)
+aux_response_param_t * gene_auxresponse( bool istcp, auxtrans_param_t auxtrans, const char cid[], void *data, OPJ_SIZE_T datalen, OPJ_SIZE_T maxlenPerFrame)
 {
   aux_response_param_t *auxresponse;
 

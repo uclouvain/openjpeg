@@ -77,7 +77,7 @@ Byte_t * jpipstream_to_pnm( Byte_t *jpipstream, msgqueue_param_t *msgqueue, Byte
   Byte_t *j2kstream; /* j2k or jp2 codestream */
   Byte8_t j2klen;
   FILE *fp;
-  char j2kfname[] = "tmp.j2k";
+  const char j2kfname[] = "tmp.j2k";
 
   j2kstream = recons_j2k( msgqueue, jpipstream, csn, fw, fh, &j2klen); 
 

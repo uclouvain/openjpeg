@@ -70,7 +70,7 @@ query_param_t * get_initquery(void);
  * @param[out] fieldval string to copy the field value, if not found, NULL
  * @return pointer to the next field string, if there is none, NULL
  */
-char * get_fieldparam( char *stringptr, char *fieldname, char *fieldval);
+char * get_fieldparam( const char *stringptr, char *fieldname, char *fieldval);
 
 void parse_cclose( char *src, query_param_t *query_param);
 void parse_metareq( char *field, query_param_t *query_param);
@@ -85,10 +85,11 @@ void parse_comps( char *field, query_param_t *query_param);
 /** maximum length of field value*/
 #define MAX_LENOFFIELDVAL 128
 
-query_param_t * parse_query( char *query_string)
+query_param_t * parse_query( const char *query_string)
 {
   query_param_t *query_param;
-  char *pquery, fieldname[MAX_LENOFFIELDNAME], fieldval[MAX_LENOFFIELDVAL];
+  const char *pquery;
+  char fieldname[MAX_LENOFFIELDNAME], fieldval[MAX_LENOFFIELDVAL];
 
   query_param = get_initquery();
   
@@ -194,7 +195,7 @@ query_param_t * get_initquery(void)
 }
 
 
-char * get_fieldparam( char *stringptr, char *fieldname, char *fieldval)
+char * get_fieldparam( const char *stringptr, char *fieldname, char *fieldval)
 {
   char *eqp, *andp, *nexfieldptr;
 

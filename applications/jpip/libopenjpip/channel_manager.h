@@ -116,5 +116,5 @@ void print_allchannel( channellist_param_t *channellist);
  * @param[in] channellist channel list pointer
  * @return                found channel pointer
  */
-channel_param_t * search_channel( char cid[], channellist_param_t *channellist);
+channel_param_t * search_channel( const char cid[], channellist_param_t *channellist);
 #endif 	    /* !CHANNEL_MANAGER_H_ */
