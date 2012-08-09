@@ -8,7 +8,7 @@
  * Copyright (c) 2008, Jerome Fimes, Communications & Systemes <jerome.fimes@c-s.fr>
  * Copyright (c) 2006-2007, Parvatha Elangovan
  * Copyright (c) 2010-2011, Kaori Hagihara
- * Copyright (c) 2011, Mickael Savinaud, Communications & Systemes <mickael.savinaud@c-s.fr>
+ * Copyright (c) 2011-2012, Mickael Savinaud, Communications & Systemes <mickael.savinaud@c-s.fr>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -49,23 +49,22 @@ void j2k_setup_header_reading (opj_j2k_v2_t *p_j2k);
 /**
  * The read header procedure.
  */
-opj_bool j2k_read_header_procedure(
-							    opj_j2k_v2_t *p_j2k,
-								struct opj_stream_private *p_stream,
-								struct opj_event_mgr * p_manager);
+static opj_bool j2k_read_header_procedure(  opj_j2k_v2_t *p_j2k,
+                                            opj_stream_private_t *p_stream,
+                                            opj_event_mgr_t * p_manager);
 
 /**
  * The default encoding validation procedure without any extension.
  *
  * @param	p_j2k			the jpeg2000 codec to validate.
- * @param	p_stream				the input stream to validate.
+ * @param	p_stream		the input stream to validate.
  * @param	p_manager		the user event manager.
  *
  * @return true if the parameters are correct.
  */
-opj_bool j2k_encoding_validation (	opj_j2k_v2_t * p_j2k,
-									opj_stream_private_t *p_stream,
-									opj_event_mgr_t * p_manager );
+static opj_bool j2k_encoding_validation (   opj_j2k_v2_t * p_j2k,
+                                            opj_stream_private_t *p_stream,
+                                            opj_event_mgr_t * p_manager );
 
 /**
  * The default decoding validation procedure without any extension.
@@ -76,11 +75,9 @@ opj_bool j2k_encoding_validation (	opj_j2k_v2_t * p_j2k,
  *
  * @return true if the parameters are correct.
  */
-opj_bool j2k_decoding_validation (
-								opj_j2k_v2_t * p_j2k,
-								opj_stream_private_t *p_stream,
-								opj_event_mgr_t * p_manager
-							);
+static opj_bool j2k_decoding_validation (   opj_j2k_v2_t * p_j2k,
+                                            opj_stream_private_t *p_stream,
+                                            opj_event_mgr_t * p_manager );
 
 /**
  * Sets up the validation ,i.e. adds the procedures to lauch to make sure the codec parameters
@@ -109,29 +106,29 @@ static void j2k_setup_end_compress (opj_j2k_v2_t *p_j2k);
  *
  * @return true if the parameters are correct.
  */
-opj_bool j2k_mct_validation (	opj_j2k_v2_t * p_j2k,
-								opj_stream_private_t *p_stream,
-								opj_event_mgr_t * p_manager );
+static opj_bool j2k_mct_validation (opj_j2k_v2_t * p_j2k,
+                                    opj_stream_private_t *p_stream,
+                                    opj_event_mgr_t * p_manager );
 
 /**
  * Builds the tcd decoder to use to decode tile.
  */
-opj_bool j2k_build_decoder (opj_j2k_v2_t * p_j2k,
-							opj_stream_private_t *p_stream,
-							opj_event_mgr_t * p_manager );
+static opj_bool j2k_build_decoder ( opj_j2k_v2_t * p_j2k,
+                                    opj_stream_private_t *p_stream,
+                                    opj_event_mgr_t * p_manager );
 /**
  * Builds the tcd encoder to use to encode tile.
  */
-opj_bool j2k_build_encoder (opj_j2k_v2_t * p_j2k,
-							opj_stream_private_t *p_stream,
-							opj_event_mgr_t * p_manager );
+static opj_bool j2k_build_encoder ( opj_j2k_v2_t * p_j2k,
+                                    opj_stream_private_t *p_stream,
+                                    opj_event_mgr_t * p_manager );
 
 /**
  * Creates a tile-coder decoder.
  *
- * @param	p_stream				the stream to write data to.
+ * @param	p_stream			the stream to write data to.
  * @param	p_j2k				J2K codec.
- * @param	p_manager		the user event manager.
+ * @param	p_manager		    the user event manager.
 */
 static opj_bool j2k_create_tcd(	opj_j2k_v2_t *p_j2k,
 								struct opj_stream_private *p_stream,
@@ -141,18 +138,16 @@ static opj_bool j2k_create_tcd(	opj_j2k_v2_t *p_j2k,
  * Excutes the given procedures on the given codec.
  *
  * @param	p_procedure_list	the list of procedures to execute
- * @param	p_j2k					the jpeg2000 codec to execute the procedures on.
- * @param	p_stream					the stream to execute the procedures on.
+ * @param	p_j2k				the jpeg2000 codec to execute the procedures on.
+ * @param	p_stream			the stream to execute the procedures on.
  * @param	p_manager			the user manager.
  *
  * @return	true				if all the procedures were successfully executed.
  */
-static opj_bool j2k_exec (
-					opj_j2k_v2_t * p_j2k,
-					opj_procedure_list_t * p_procedure_list,
-					opj_stream_private_t *p_stream,
-					opj_event_mgr_t * p_manager
-				  );
+static opj_bool j2k_exec (  opj_j2k_v2_t * p_j2k,
+                            opj_procedure_list_t * p_procedure_list,
+                            opj_stream_private_t *p_stream,
+                            opj_event_mgr_t * p_manager);
 
 /**
  * Updates the rates of the tcp.
@@ -162,23 +157,23 @@ static opj_bool j2k_exec (
  * @param	p_manager		the user event manager.
 */
 static opj_bool j2k_update_rates(	opj_j2k_v2_t *p_j2k,
-									struct opj_stream_private *p_stream,
-									struct opj_event_mgr * p_manager );
+									opj_stream_private_t *p_stream,
+									opj_event_mgr_t * p_manager );
 
 /**
  * Copies the decoding tile parameters onto all the tile parameters.
  * Creates also the tile decoder.
  */
-opj_bool j2k_copy_default_tcp_and_create_tcd (	opj_j2k_v2_t * p_j2k,
-												opj_stream_private_t *p_stream,
-												opj_event_mgr_t * p_manager );
+static opj_bool j2k_copy_default_tcp_and_create_tcd (	opj_j2k_v2_t * p_j2k,
+                                                        opj_stream_private_t *p_stream,
+                                                        opj_event_mgr_t * p_manager );
 
 /**
  * Destroys the memory associated with the decoding of headers.
  */
-opj_bool j2k_destroy_header_memory (opj_j2k_v2_t * p_j2k,
-									opj_stream_private_t *p_stream,
-									opj_event_mgr_t * p_manager );
+static opj_bool j2k_destroy_header_memory ( opj_j2k_v2_t * p_j2k,
+                                            opj_stream_private_t *p_stream,
+                                            opj_event_mgr_t * p_manager );
 
 /**
  * Reads the lookup table containing all the marker, status and action, and returns the handler associated
@@ -247,13 +242,11 @@ static OPJ_UINT32 j2k_get_SPCod_SPCoc_size (opj_j2k_v2_t *p_j2k,
  * @param	p_header_size	the size of the data contained in the COM marker.
  * @param	p_manager		the user event manager.
 */
-static opj_bool j2k_read_SPCod_SPCoc(
-							opj_j2k_v2_t *p_j2k,
-							OPJ_UINT32 compno,
-							OPJ_BYTE * p_header_data,
-							OPJ_UINT32 * p_header_size,
-							struct opj_event_mgr * p_manager
-							);
+static opj_bool j2k_read_SPCod_SPCoc(   opj_j2k_v2_t *p_j2k,
+                                        OPJ_UINT32 compno,
+                                        OPJ_BYTE * p_header_data,
+                                        OPJ_UINT32 * p_header_size,
+                                        opj_event_mgr_t * p_manager );
 
 /**
  * Gets the size taken by writing SQcd or SQcc element, i.e. the quantization values of a band in the QCD or QCC.
@@ -284,8 +277,7 @@ static opj_bool j2k_write_SQcd_SQcc(opj_j2k_v2_t *p_j2k,
 									OPJ_UINT32 p_comp_no,
 									OPJ_BYTE * p_data,
 									OPJ_UINT32 * p_header_size,
-									struct opj_event_mgr * p_manager
-									);
+									opj_event_mgr_t * p_manager);
 
 /**
  * Updates the Tile Length Marker.
@@ -303,38 +295,32 @@ static void j2k_update_tlm ( opj_j2k_v2_t * p_j2k, OPJ_UINT32 p_tile_part_size);
  * @param	p_manager		the user event manager.
  *
 */
-static opj_bool j2k_read_SQcd_SQcc(
-							opj_j2k_v2_t *p_j2k,
-							OPJ_UINT32 compno,
-							OPJ_BYTE * p_header_data,
-							OPJ_UINT32 * p_header_size,
-							struct opj_event_mgr * p_manager
-					);
+static opj_bool j2k_read_SQcd_SQcc( opj_j2k_v2_t *p_j2k,
+                                    OPJ_UINT32 compno,
+                                    OPJ_BYTE * p_header_data,
+                                    OPJ_UINT32 * p_header_size,
+                                    opj_event_mgr_t * p_manager );
 
 /**
  * Copies the tile component parameters of all the component from the first tile component.
  *
  * @param		p_j2k		the J2k codec.
  */
-static void j2k_copy_tile_component_parameters(
-							opj_j2k_v2_t *p_j2k
-							);
+static void j2k_copy_tile_component_parameters( opj_j2k_v2_t *p_j2k );
 
 /**
  * Copies the tile quantization parameters of all the component from the first tile component.
  *
  * @param		p_j2k		the J2k codec.
  */
-static void j2k_copy_tile_quantization_parameters(
-							opj_j2k_v2_t *p_j2k
-							);
+static void j2k_copy_tile_quantization_parameters( opj_j2k_v2_t *p_j2k );
 
 /**
  * Reads the tiles.
  */
-opj_bool j2k_decode_tiles (	opj_j2k_v2_t *p_j2k,
-							opj_stream_private_t *p_stream,
-							opj_event_mgr_t * p_manager);
+static opj_bool j2k_decode_tiles (	opj_j2k_v2_t *p_j2k,
+                                    opj_stream_private_t *p_stream,
+                                    opj_event_mgr_t * p_manager);
 
 
 static opj_bool j2k_pre_write_tile ( opj_j2k_v2_t * p_j2k,
@@ -356,7 +342,7 @@ static opj_bool j2k_post_write_tile (opj_j2k_v2_t * p_j2k,
  * Sets up the procedures to do on writing header.
  * Developers wanting to extend the library can add their own writing procedures.
  */
-void j2k_setup_header_writting (opj_j2k_v2_t *p_j2k);
+static void j2k_setup_header_writting (opj_j2k_v2_t *p_j2k);
 
 static opj_bool j2k_write_first_tile_part(	opj_j2k_v2_t *p_j2k,
 											OPJ_BYTE * p_data,
