@@ -1775,35 +1775,38 @@ opj_bool jp2_decode_v2(	opj_jp2_v2_t *jp2,
 		opj_event_msg_v2(p_manager, EVT_ERROR, "Failed to decode the codestream in the JP2 file\n");
 		return OPJ_FALSE;
 	}
+    
+    if (!jp2->ignore_pclr_cmap_cdef){
 
-	/* Set Image Color Space */
-	if (jp2->enumcs == 16)
-		p_image->color_space = CLRSPC_SRGB;
-	else if (jp2->enumcs == 17)
-		p_image->color_space = CLRSPC_GRAY;
-	else if (jp2->enumcs == 18)
-		p_image->color_space = CLRSPC_SYCC;
-	else
-		p_image->color_space = CLRSPC_UNKNOWN;
+	    /* Set Image Color Space */
+	    if (jp2->enumcs == 16)
+		    p_image->color_space = CLRSPC_SRGB;
+	    else if (jp2->enumcs == 17)
+		    p_image->color_space = CLRSPC_GRAY;
+	    else if (jp2->enumcs == 18)
+		    p_image->color_space = CLRSPC_SYCC;
+	    else
+		    p_image->color_space = CLRSPC_UNKNOWN;
 
-	/* Apply the color space if needed */
-	if(jp2->color.jp2_cdef) {
-		jp2_apply_cdef(p_image, &(jp2->color));
-	}
+	    /* Apply the color space if needed */
+	    if(jp2->color.jp2_cdef) {
+		    jp2_apply_cdef(p_image, &(jp2->color));
+	    }
 
-	if(jp2->color.jp2_pclr) {
-		/* Part 1, I.5.3.4: Either both or none : */
-		if( !jp2->color.jp2_pclr->cmap)
-			jp2_free_pclr(&(jp2->color));
-		else
-			jp2_apply_pclr(p_image, &(jp2->color));
-	}
+	    if(jp2->color.jp2_pclr) {
+		    /* Part 1, I.5.3.4: Either both or none : */
+		    if( !jp2->color.jp2_pclr->cmap)
+			    jp2_free_pclr(&(jp2->color));
+		    else
+			    jp2_apply_pclr(p_image, &(jp2->color));
+	    }
 
-	if(jp2->color.icc_profile_buf) {
-		p_image->icc_profile_buf = jp2->color.icc_profile_buf;
-		p_image->icc_profile_len = jp2->color.icc_profile_len;
-		jp2->color.icc_profile_buf = NULL;
-	}
+	    if(jp2->color.icc_profile_buf) {
+		    p_image->icc_profile_buf = jp2->color.icc_profile_buf;
+		    p_image->icc_profile_len = jp2->color.icc_profile_len;
+		    jp2->color.icc_profile_buf = NULL;
+	    }
+    }
 
 	return OPJ_TRUE;
 }
@@ -2319,12 +2322,6 @@ void jp2_destroy_decompress(opj_jp2_t *jp2) {
 	}
 }
 
-void jp2_setup_decoder(opj_jp2_t *jp2, opj_dparameters_t *parameters) {
-	/* setup the J2K codec */
-	j2k_setup_decoder(jp2->j2k, parameters);
-	/* further JP2 initializations go here */
-	jp2->ignore_pclr_cmap_cdef = parameters->flags & OPJ_DPARAMETERS_IGNORE_PCLR_CMAP_CDEF_FLAG;
-}
 
 void jp2_setup_decoder_v2(opj_jp2_v2_t *jp2, opj_dparameters_t *parameters)
 {
@@ -2333,6 +2330,7 @@ void jp2_setup_decoder_v2(opj_jp2_v2_t *jp2, opj_dparameters_t *parameters)
 
 	/* further JP2 initializations go here */
 	jp2->color.jp2_has_colr = 0;
+    jp2->ignore_pclr_cmap_cdef = parameters->flags & OPJ_DPARAMETERS_IGNORE_PCLR_CMAP_CDEF_FLAG;
 }
 
 

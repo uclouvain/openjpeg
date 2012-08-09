@@ -214,7 +214,8 @@ typedef struct opj_jp2_v2
 	OPJ_UINT32 jp2_img_state;
 
 	opj_jp2_color_t color;
-
+    
+    opj_bool ignore_pclr_cmap_cdef;
 }
 opj_jp2_v2_t;
 
