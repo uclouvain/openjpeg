@@ -477,29 +477,6 @@ opj_bool OPJ_CALLCONV opj_setup_decoder(opj_codec_t *p_codec,
 }
 
 /* DEPRECATED */
-opj_image_t* OPJ_CALLCONV opj_decode(opj_dinfo_t *dinfo, opj_cio_t *cio) {
-	return opj_decode_with_info(dinfo, cio, NULL);
-}
-
-/* DEPRECATED */
-opj_image_t* OPJ_CALLCONV opj_decode_with_info(opj_dinfo_t *dinfo, opj_cio_t *cio, opj_codestream_info_t *cstr_info) {
-	if(dinfo && cio) {
-		switch(dinfo->codec_format) {
-			case CODEC_J2K:
-				return j2k_decode((opj_j2k_t*)dinfo->j2k_handle, cio, cstr_info);
-			case CODEC_JPT:
-				return j2k_decode_jpt_stream((opj_j2k_t*)dinfo->j2k_handle, cio, cstr_info);
-			case CODEC_JP2:
-				return opj_jp2_decode((opj_jp2_t*)dinfo->jp2_handle, cio, cstr_info);
-			case CODEC_UNKNOWN:
-			default:
-				break;
-		}
-	}
-	return NULL;
-}
-
-/* DEPRECATED */
 opj_cinfo_t* OPJ_CALLCONV opj_create_compress(OPJ_CODEC_FORMAT format) {
 	opj_cinfo_t *cinfo = (opj_cinfo_t*)opj_calloc(1, sizeof(opj_cinfo_t));
 	if(!cinfo) return NULL;

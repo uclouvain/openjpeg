@@ -1263,14 +1263,6 @@ OPJ_API opj_bool OPJ_CALLCONV opj_set_decode_area(	opj_codec_t *p_codec,
 													OPJ_INT32 p_end_x, OPJ_INT32 p_end_y );
 
 /**
-Decode an image from a JPEG-2000 codestream 
-@param dinfo decompressor handle
-@param cio Input buffer stream
-@return Returns a decoded image if successful, returns NULL otherwise
-*/
-DEPRECATED( OPJ_API opj_image_t* OPJ_CALLCONV opj_decode(opj_dinfo_t *dinfo, opj_cio_t *cio) );
-
-/**
  * Decode an image from a JPEG-2000 codestream
  * @param p_decompressor 	decompressor handle
  * @param p_stream			Input buffer stream
@@ -1369,15 +1361,6 @@ OPJ_API opj_bool OPJ_CALLCONV opj_decode_tile_data(	opj_codec_t *p_codec,
 													OPJ_BYTE * p_data,
 													OPJ_UINT32 p_data_size,
 													opj_stream_t *p_stream );
-
-/**
-Decode an image from a JPEG-2000 codestream and extract the codestream information
-@param dinfo decompressor handle
-@param cio Input buffer stream
-@param cstr_info Codestream information structure if needed afterwards, NULL otherwise
-@return Returns a decoded image if successful, returns NULL otherwise
-*/
-DEPRECATED( OPJ_API opj_image_t* OPJ_CALLCONV opj_decode_with_info(opj_dinfo_t *dinfo, opj_cio_t *cio, opj_codestream_info_t *cstr_info) );
 
 /* COMPRESSION FUNCTIONS*/
 
