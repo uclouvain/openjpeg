@@ -1191,12 +1191,6 @@ DEPRECATED( OPJ_API opj_event_mgr_t* OPJ_CALLCONV opj_set_event_mgr(opj_common_p
 ==========================================================
 */
 
-/**
-Creates a J2K/JPT/JP2 decompression structure
-@param format Decoder to select
-@return Returns a handle to a decompressor if successful, returns NULL otherwise
-*/
-DEPRECATED( OPJ_API opj_dinfo_t* OPJ_CALLCONV opj_create_decompress(OPJ_CODEC_FORMAT format) );
 
 /**
  * Creates a J2K/JP2 decompression structure
@@ -1204,7 +1198,7 @@ DEPRECATED( OPJ_API opj_dinfo_t* OPJ_CALLCONV opj_create_decompress(OPJ_CODEC_FO
  *
  * @return Returns a handle to a decompressor if successful, returns NULL otherwise
  * */
-OPJ_API opj_codec_t* OPJ_CALLCONV opj_create_decompress_v2(OPJ_CODEC_FORMAT format);
+OPJ_API opj_codec_t* OPJ_CALLCONV opj_create_decompress(OPJ_CODEC_FORMAT format);
 
 /**
 Destroy a decompressor handle

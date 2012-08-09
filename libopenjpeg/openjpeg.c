@@ -131,9 +131,10 @@ typedef struct opj_compression
 typedef struct opj_codec_private
 {
 	/** FIXME DOC */
-	union {
-		opj_decompression_t m_decompression;
-		opj_compression_t m_compression;
+	union 
+    {
+        opj_decompression_t m_decompression;
+        opj_compression_t m_compression;
     } m_codec_data;
     /** FIXME DOC*/
 	void * m_codec;
@@ -286,39 +287,7 @@ const char* OPJ_CALLCONV opj_version(void) {
 }
 
 
-/* DEPRECATED */
-opj_dinfo_t* OPJ_CALLCONV opj_create_decompress(OPJ_CODEC_FORMAT format) {
-	opj_dinfo_t *dinfo = (opj_dinfo_t*)opj_calloc(1, sizeof(opj_dinfo_t));
-	if(!dinfo) return NULL;
-	dinfo->is_decompressor = OPJ_TRUE;
-	switch(format) {
-		case CODEC_J2K:
-		case CODEC_JPT:
-			/* get a J2K decoder handle */
-			dinfo->j2k_handle = (void*)j2k_create_decompress((opj_common_ptr)dinfo);
-			if(!dinfo->j2k_handle) {
-				opj_free(dinfo);
-				return NULL;
-			}
-			break;
-		case CODEC_JP2:
-			/* get a JP2 decoder handle */
-			dinfo->jp2_handle = (void*)jp2_create_decompress((opj_common_ptr)dinfo);
-			if(!dinfo->jp2_handle) {
-				opj_free(dinfo);
-				return NULL;
-			}
-			break;
-		case CODEC_UNKNOWN:
-		default:
-			opj_free(dinfo);
-			return NULL;
-	}
 
-	dinfo->codec_format = format;
-
-	return dinfo;
-}
 
 opj_codec_t* OPJ_CALLCONV opj_create_decompress_v2(OPJ_CODEC_FORMAT p_format)
 {
