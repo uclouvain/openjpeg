@@ -1372,12 +1372,6 @@ OPJ_API opj_bool OPJ_CALLCONV opj_decode_tile_data(	opj_codec_t *p_codec,
 OPJ_API opj_codec_t* OPJ_CALLCONV opj_create_compress(OPJ_CODEC_FORMAT format);
 
 /**
-Destroy a compressor handle
-@param cinfo compressor handle to destroy
-*/
-DEPRECATED(OPJ_API void OPJ_CALLCONV opj_destroy_compress(opj_cinfo_t *cinfo) );
-
-/**
 Set encoding parameters to default values, that means : 
 <ul>
 <li>Lossless
@@ -1399,14 +1393,6 @@ Set encoding parameters to default values, that means :
 @param parameters Compression parameters
 */
 OPJ_API void OPJ_CALLCONV opj_set_default_encoder_parameters(opj_cparameters_t *parameters);
-
-/**
-Setup the encoder parameters using the current image and using user parameters. 
-@param cinfo Compressor handle
-@param parameters Compression parameters
-@param image Input filled image
-*/
-DEPRECATED(OPJ_API void OPJ_CALLCONV opj_setup_encoder(opj_cinfo_t *cinfo, opj_cparameters_t *parameters, opj_image_t *image) );
 
 /**
  * Setup the encoder parameters using the current image and using user parameters.

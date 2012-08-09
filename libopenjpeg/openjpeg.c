@@ -579,27 +579,6 @@ opj_codec_t* OPJ_CALLCONV opj_create_compress(OPJ_CODEC_FORMAT p_format)
 	return (opj_codec_t*) l_codec;
 }
 
-/* DEPRECATED */
-void OPJ_CALLCONV opj_destroy_compress(opj_cinfo_t *cinfo) {
-	if(cinfo) {
-		/* destroy the codec */
-		switch(cinfo->codec_format) {
-			case CODEC_J2K:
-				j2k_destroy_compress((opj_j2k_t*)cinfo->j2k_handle);
-				break;
-			case CODEC_JP2:
-				jp2_destroy_compress((opj_jp2_t*)cinfo->jp2_handle);
-				break;
-			case CODEC_JPT:
-			case CODEC_UNKNOWN:
-			default:
-				break;
-		}
-		/* destroy the decompressor */
-		opj_free(cinfo);
-	}
-}
-
 void OPJ_CALLCONV opj_set_default_encoder_parameters(opj_cparameters_t *parameters) {
 	if(parameters) {
 		memset(parameters, 0, sizeof(opj_cparameters_t));
@@ -692,23 +671,6 @@ opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream (	FILE * p_file,
 	opj_stream_set_seek_function(l_stream, (opj_stream_seek_fn) opj_seek_from_file);
 
 	return l_stream;
-}
-/* DEPRECATED */
-void OPJ_CALLCONV opj_setup_encoder(opj_cinfo_t *cinfo, opj_cparameters_t *parameters, opj_image_t *image) {
-	if(cinfo && parameters && image) {
-		switch(cinfo->codec_format) {
-			case CODEC_J2K:
-				j2k_setup_encoder((opj_j2k_t*)cinfo->j2k_handle, parameters, image);
-				break;
-			case CODEC_JP2:
-				jp2_setup_encoder((opj_jp2_v2_t*)cinfo->jp2_handle, parameters, image, NULL);
-				break;
-			case CODEC_JPT:
-			case CODEC_UNKNOWN:
-			default:
-				break;
-		}
-	}
 }
 
 opj_bool OPJ_CALLCONV opj_setup_encoder_v2(	opj_codec_t *p_codec, 
