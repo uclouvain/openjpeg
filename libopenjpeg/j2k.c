@@ -393,12 +393,6 @@ static opj_bool j2k_write_soc_v2(	opj_j2k_v2_t *p_j2k,
 									struct opj_event_mgr * p_manager );
 
 /**
-Read the SOC marker (Start of Codestream)
-@param j2k J2K handle
-*/
-static void j2k_read_soc(opj_j2k_t *j2k);
-
-/**
  * Reads a SOC marker (Start of Codestream)
  * @param	p_header_data	the data contained in the SOC box.
  * @param	jp2				the jpeg2000 file codec.
@@ -2115,14 +2109,7 @@ opj_bool j2k_write_soc_v2(	opj_j2k_v2_t *p_j2k,
 	return OPJ_TRUE;
 }
 
-static void j2k_read_soc(opj_j2k_t *j2k) {	
-	j2k->state = J2K_STATE_MHSIZ;
-	/* Index */
-	if (j2k->cstr_info) {
-		j2k->cstr_info->main_head_start = cio_tell(j2k->cio) - 2;
-		j2k->cstr_info->codestream_size = cio_numbytesleft(j2k->cio) + 2 - j2k->cstr_info->main_head_start;
-	}
-}
+
 
 /**
  * Reads a SOC marker (Start of Codestream)
@@ -6609,7 +6596,7 @@ typedef struct opj_dec_mstabent {
 } opj_dec_mstabent_t;
 
 opj_dec_mstabent_t j2k_dec_mstab[] = {
-  {J2K_MS_SOC, J2K_STATE_MHSOC, j2k_read_soc},
+  /*{J2K_MS_SOC, J2K_STATE_MHSOC, j2k_read_soc},*/
   {J2K_MS_SOT, J2K_STATE_MH | J2K_STATE_TPHSOT, j2k_read_sot},
   {J2K_MS_SOD, J2K_STATE_TPH, j2k_read_sod},
   {J2K_MS_EOC, J2K_STATE_TPHSOT, j2k_read_eoc},
