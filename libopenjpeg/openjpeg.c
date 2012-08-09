@@ -637,42 +637,6 @@ void OPJ_CALLCONV opj_set_default_encoder_parameters(opj_cparameters_t *paramete
 	}
 }
 
-/**
- * Helper function.
- * Sets the stream to be a file stream. The FILE must have been open previously.
- * @param		p_stream	the stream to modify
- * @param		p_file		handler to an already open file.
-*/
-opj_stream_t* OPJ_CALLCONV opj_stream_create_default_file_stream (FILE * p_file, opj_bool p_is_read_stream)
-{
-	return opj_stream_create_file_stream(p_file,J2K_STREAM_CHUNK_SIZE,p_is_read_stream);
-}
-
-opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream (	FILE * p_file, 
-															OPJ_SIZE_T p_size, 
-															opj_bool p_is_read_stream)
-{
-	opj_stream_t* l_stream = 00;
-
-	if (! p_file) {
-		return NULL;
-	}
-
-	l_stream = opj_stream_create(p_size,p_is_read_stream);
-	if (! l_stream) {
-		return NULL;
-	}
-
-	opj_stream_set_user_data(l_stream, p_file);
-	opj_stream_set_user_data_length(l_stream, opj_get_data_length_from_file(p_file));
-	opj_stream_set_read_function(l_stream, (opj_stream_read_fn) opj_read_from_file);
-	opj_stream_set_write_function(l_stream, (opj_stream_write_fn) opj_write_from_file);
-	opj_stream_set_skip_function(l_stream, (opj_stream_skip_fn) opj_skip_from_file);
-	opj_stream_set_seek_function(l_stream, (opj_stream_seek_fn) opj_seek_from_file);
-
-	return l_stream;
-}
-
 opj_bool OPJ_CALLCONV opj_setup_encoder(opj_codec_t *p_codec, 
 										opj_cparameters_t *parameters, 
 										opj_image_t *p_image)
@@ -746,31 +710,7 @@ opj_bool OPJ_CALLCONV opj_end_compress (opj_codec_t *p_codec,
 
 }
 
-/* DEPRECATED */
-opj_bool OPJ_CALLCONV opj_encode(opj_cinfo_t *cinfo, opj_cio_t *cio, opj_image_t *image, char *index) {
-	if (index != NULL)
-		opj_event_msg((opj_common_ptr)cinfo, EVT_WARNING, "Set index to NULL when calling the opj_encode function.\n"
-		"To extract the index, use the opj_encode_with_info() function.\n"
-		"No index will be generated during this encoding\n");
-	return opj_encode_with_info(cinfo, cio, image, NULL);
-}
 
-/* DEPRECATED */
-opj_bool OPJ_CALLCONV opj_encode_with_info(opj_cinfo_t *cinfo, opj_cio_t *cio, opj_image_t *image, opj_codestream_info_t *cstr_info) {
-	if(cinfo && cio && image) {
-		switch(cinfo->codec_format) {
-			case CODEC_J2K:
-				return j2k_encode((opj_j2k_t*)cinfo->j2k_handle, cio, image, cstr_info);
-			case CODEC_JP2:
-				return opj_jp2_encode((opj_jp2_t*)cinfo->jp2_handle, cio, image, cstr_info);	    
-			case CODEC_JPT:
-			case CODEC_UNKNOWN:
-			default:
-				break;
-		}
-	}
-	return OPJ_FALSE;
-}
 
 /* DEPRECATED */
 void OPJ_CALLCONV opj_destroy_cstr_info(opj_codestream_info_t *cstr_info) {
@@ -1185,4 +1125,41 @@ opj_bool OPJ_CALLCONV opj_write_tile (	opj_codec_t *p_codec,
 	}
 
 	return OPJ_FALSE;
+}
+
+/* ---------------------------------------------------------------------- */
+/**
+ * Helper function.
+ * Sets the stream to be a file stream. The FILE must have been open previously.
+ * @param		p_stream	the stream to modify
+ * @param		p_file		handler to an already open file.
+*/
+opj_stream_t* OPJ_CALLCONV opj_stream_create_default_file_stream (FILE * p_file, opj_bool p_is_read_stream)
+{
+	return opj_stream_create_file_stream(p_file,J2K_STREAM_CHUNK_SIZE,p_is_read_stream);
+}
+
+opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream (	FILE * p_file, 
+															OPJ_SIZE_T p_size, 
+															opj_bool p_is_read_stream)
+{
+	opj_stream_t* l_stream = 00;
+
+	if (! p_file) {
+		return NULL;
+	}
+
+	l_stream = opj_stream_create(p_size,p_is_read_stream);
+	if (! l_stream) {
+		return NULL;
+	}
+
+	opj_stream_set_user_data(l_stream, p_file);
+	opj_stream_set_user_data_length(l_stream, opj_get_data_length_from_file(p_file));
+	opj_stream_set_read_function(l_stream, (opj_stream_read_fn) opj_read_from_file);
+	opj_stream_set_write_function(l_stream, (opj_stream_write_fn) opj_write_from_file);
+	opj_stream_set_skip_function(l_stream, (opj_stream_skip_fn) opj_skip_from_file);
+	opj_stream_set_seek_function(l_stream, (opj_stream_seek_fn) opj_seek_from_file);
+
+	return l_stream;
 }

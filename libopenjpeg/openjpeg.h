@@ -1426,25 +1426,6 @@ OPJ_API opj_bool OPJ_CALLCONV opj_end_compress (opj_codec_t *p_codec,
 OPJ_API opj_bool OPJ_CALLCONV opj_encode_v2(opj_codec_t *p_codec, 
 											opj_stream_t *p_stream);
 
-/**
-Encode an image into a JPEG-2000 codestream
-3@param cinfo compressor handle
-@param cio Output buffer stream
-@param image Image to encode
-@param index Depreacted -> Set to NULL. To extract index, used opj_encode_wci()
-@return Returns true if successful, returns false otherwise
-*/
-DEPRECATED( OPJ_API opj_bool OPJ_CALLCONV opj_encode(opj_cinfo_t *cinfo, opj_cio_t *cio, opj_image_t *image, char *index) );
-/**
-Encode an image into a JPEG-2000 codestream and extract the codestream information
-@param cinfo compressor handle
-@param cio Output buffer stream
-@param image Image to encode
-@param cstr_info Codestream information structure if needed afterwards, NULL otherwise
-@return Returns true if successful, returns false otherwise
-*/
-DEPRECATED( OPJ_API opj_bool OPJ_CALLCONV opj_encode_with_info(opj_cinfo_t *cinfo, opj_cio_t *cio, opj_image_t *image, opj_codestream_info_t *cstr_info) );
-
 
 /**
 Destroy Codestream information after compression or decompression
