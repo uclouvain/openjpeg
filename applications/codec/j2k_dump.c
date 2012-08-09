@@ -574,7 +574,7 @@ int main(int argc, char *argv[])
 		opj_destroy_cstr_index(&cstr_index);
 
 		/* destroy the codestream info */
-		opj_destroy_cstr_info_v2(&cstr_info);
+		opj_destroy_cstr_info(&cstr_info);
 
 	}
 

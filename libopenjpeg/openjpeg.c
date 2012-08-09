@@ -1067,7 +1067,7 @@ opj_codestream_info_v2_t* OPJ_CALLCONV opj_get_cstr_info(opj_codec_t *p_codec)
  *
  *
  */
-void OPJ_CALLCONV opj_destroy_cstr_info_v2(opj_codestream_info_v2_t **cstr_info) {
+void OPJ_CALLCONV opj_destroy_cstr_info(opj_codestream_info_v2_t **cstr_info) {
 	if (cstr_info) {
 
 		if ((*cstr_info)->m_default_tile_info.tccp_info){
