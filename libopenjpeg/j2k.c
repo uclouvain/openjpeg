@@ -977,11 +977,9 @@ static opj_bool j2k_write_sod_v2(	opj_j2k_v2_t *p_j2k,
  * @param	p_header_size	the size of the data contained in the SOD marker.
  * @param	p_manager		the user event manager.
 */
-static opj_bool j2k_read_sod_v2 (
-						opj_j2k_v2_t *p_j2k,
-						struct opj_stream_private *p_stream,
-						struct opj_event_mgr * p_manager
-					);
+static opj_bool opj_j2k_read_sod(   opj_j2k_v2_t *p_j2k,
+                                    opj_stream_private_t *p_stream,
+                                    opj_event_mgr_t * p_manager );
 
 /**
  * Updates the Tile Length Marker.
@@ -5594,11 +5592,10 @@ opj_bool j2k_write_sod_v2(	opj_j2k_v2_t *p_j2k,
  * @param	p_header_size	the size of the data contained in the SOD marker.
  * @param	p_manager		the user event manager.
 */
-opj_bool j2k_read_sod_v2 (
-						opj_j2k_v2_t *p_j2k,
-						struct opj_stream_private *p_stream,
-						struct opj_event_mgr * p_manager
-					)
+opj_bool opj_j2k_read_sod (opj_j2k_v2_t *p_j2k,
+                           opj_stream_private_t *p_stream,
+						   opj_event_mgr_t * p_manager
+                           )
 {
 	OPJ_UINT32 l_current_read_size;
 	opj_codestream_index_t * l_cstr_index = 00;
@@ -9602,7 +9599,7 @@ opj_bool j2k_read_tile_header(	opj_j2k_v2_t * p_j2k,
 		/* If we didn't skip data before, we need to read the SOD marker*/
 		if (! p_j2k->m_specific_param.m_decoder.m_skip_data) {
 			/* Try to read the SOD marker and skip data ? FIXME */
-			if (! j2k_read_sod_v2(p_j2k, p_stream, p_manager)) {
+			if (! opj_j2k_read_sod(p_j2k, p_stream, p_manager)) {
 				return OPJ_FALSE;
 			}
 
