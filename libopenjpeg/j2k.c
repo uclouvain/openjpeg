@@ -731,11 +731,6 @@ static opj_bool j2k_read_crg_v2 (
 						struct opj_event_mgr * p_manager
 					);
 /**
-Read the TLM marker (tile-part lengths)
-@param j2k J2K handle
-*/
-static void j2k_read_tlm(opj_j2k_t *j2k);
-/**
  * Reads a TLM marker (Tile Length Marker)
  *
  * @param	p_header_data	the data contained in the TLM box.
@@ -3854,24 +3849,6 @@ opj_bool j2k_read_crg_v2 (
 	return OPJ_TRUE;
 }
 
-static void j2k_read_tlm(opj_j2k_t *j2k) {
-	int len, Ztlm, Stlm, ST, SP, tile_tlm, i;
-	long int Ttlm_i, Ptlm_i;
-
-	opj_cio_t *cio = j2k->cio;
-	
-	len = cio_read(cio, 2);		/* Ltlm */
-	Ztlm = cio_read(cio, 1);	/* Ztlm */
-	Stlm = cio_read(cio, 1);	/* Stlm */
-	ST = ((Stlm >> 4) & 0x01) + ((Stlm >> 4) & 0x02);
-	SP = (Stlm >> 6) & 0x01;
-	tile_tlm = (len - 4) / ((SP + 1) * 2 + ST);
-	for (i = 0; i < tile_tlm; i++) {
-		Ttlm_i = cio_read(cio, ST);	/* Ttlm_i */
-		Ptlm_i = cio_read(cio, SP ? 4 : 2);	/* Ptlm_i */
-	}
-}
-
 /**
  * Reads a TLM marker (Tile Length Marker)
  *
@@ -5895,7 +5872,7 @@ opj_dec_mstabent_t j2k_dec_mstab[] = {
   /*{J2K_MS_QCD, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_qcd},*/
   /*{J2K_MS_QCC, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_qcc},*/
   /*{J2K_MS_POC, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_poc},*/
-  {J2K_MS_TLM, J2K_STATE_MH, j2k_read_tlm},
+  /*{J2K_MS_TLM, J2K_STATE_MH, j2k_read_tlm},*/
   {J2K_MS_PLM, J2K_STATE_MH, j2k_read_plm},
   {J2K_MS_PLT, J2K_STATE_TPH, j2k_read_plt},
   {J2K_MS_PPM, J2K_STATE_MH, j2k_read_ppm},
