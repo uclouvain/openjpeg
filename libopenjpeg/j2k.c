@@ -653,11 +653,10 @@ static OPJ_UINT32 j2k_get_max_qcc_size (opj_j2k_v2_t *p_j2k);
  * @param	p_header_size	the size of the data contained in the QCC marker.
  * @param	p_manager		the user event manager.
 */
-static opj_bool j2k_read_qcc_v2(
-							opj_j2k_v2_t *p_j2k,
-							OPJ_BYTE * p_header_data,
-							OPJ_UINT32 p_header_size,
-							struct opj_event_mgr * p_manager);
+static opj_bool opj_j2k_read_qcc(   opj_j2k_v2_t *p_j2k,
+                                    OPJ_BYTE * p_header_data,
+                                    OPJ_UINT32 p_header_size,
+                                    opj_event_mgr_t * p_manager);
 
 /**
 Write the POC marker (progression order change)
@@ -1416,7 +1415,7 @@ const opj_dec_memory_marker_handler_t j2k_memory_marker_handler_tab [] =
   {J2K_MS_COC, J2K_STATE_MH | J2K_STATE_TPH, opj_j2k_read_coc},
   {J2K_MS_RGN, J2K_STATE_MH | J2K_STATE_TPH, opj_j2k_read_rgn},
   {J2K_MS_QCD, J2K_STATE_MH | J2K_STATE_TPH, opj_j2k_read_qcd},
-  {J2K_MS_QCC, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_qcc_v2},
+  {J2K_MS_QCC, J2K_STATE_MH | J2K_STATE_TPH, opj_j2k_read_qcc},
   {J2K_MS_POC, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_poc_v2},
   {J2K_MS_SIZ, J2K_STATE_MHSIZ , opj_j2k_read_siz},
   {J2K_MS_TLM, J2K_STATE_MH, j2k_read_tlm_v2},
@@ -3487,10 +3486,11 @@ OPJ_UINT32 j2k_get_max_qcc_size (opj_j2k_v2_t *p_j2k)
  * @param	p_header_size	the size of the data contained in the QCC marker.
  * @param	p_manager		the user event manager.
 */
-opj_bool j2k_read_qcc_v2(	opj_j2k_v2_t *p_j2k,
-							OPJ_BYTE * p_header_data,
-							OPJ_UINT32 p_header_size,
-							struct opj_event_mgr * p_manager)
+static opj_bool opj_j2k_read_qcc(   opj_j2k_v2_t *p_j2k,
+                                    OPJ_BYTE * p_header_data,
+                                    OPJ_UINT32 p_header_size,
+                                    opj_event_mgr_t * p_manager
+                                    )
 {
 	OPJ_UINT32 l_num_comp,l_comp_no;
 
