@@ -1694,73 +1694,7 @@ opj_bool jp2_read_jp2h(opj_jp2_t *jp2, opj_cio_t *cio, opj_jp2_color_t *color)
 
 }/* jp2_read_jp2h() */
 
-opj_image_t* opj_jp2_decode(opj_jp2_t *jp2, opj_cio_t *cio, 
-	opj_codestream_info_t *cstr_info) 
-{
-	opj_common_ptr cinfo;
-	opj_image_t *image = NULL;
-	opj_jp2_color_t color;
 
-	if(!jp2 || !cio) 
-   {
-	return NULL;
-   }
-	memset(&color, 0, sizeof(opj_jp2_color_t));
-	cinfo = jp2->cinfo;
-
-/* JP2 decoding */
-	if(!jp2_read_struct(jp2, cio, &color)) 
-   {
-	free_color_data(&color);
-	opj_event_msg(cinfo, EVT_ERROR, "Failed to decode jp2 structure\n");
-	return NULL;
-   }
-
-/* J2K decoding */
-	image = j2k_decode(jp2->j2k, cio, cstr_info);
-
-	if(!image) 
-   {
-	free_color_data(&color);
-	opj_event_msg(cinfo, EVT_ERROR, "Failed to decode J2K image\n");
-	return NULL;
-   }
-   
-    if (!jp2->ignore_pclr_cmap_cdef){
-
-    /* Set Image Color Space */
-	if (jp2->enumcs == 16)
-		image->color_space = CLRSPC_SRGB;
-	else if (jp2->enumcs == 17)
-		image->color_space = CLRSPC_GRAY;
-	else if (jp2->enumcs == 18)
-		image->color_space = CLRSPC_SYCC;
-	else
-		image->color_space = CLRSPC_UNKNOWN;
-
-	if(color.jp2_cdef)
-   {
-	jp2_apply_cdef(image, &color);
-   }
-	if(color.jp2_pclr)
-   {
-/* Part 1, I.5.3.4: Either both or none : */
-	if( !color.jp2_pclr->cmap) 
-	 jp2_free_pclr(&color);
-	else
-	 jp2_apply_pclr(image, &color);
-   }
-	if(color.icc_profile_buf)
-   {
-	image->icc_profile_buf = color.icc_profile_buf;
-	color.icc_profile_buf = NULL;
-	image->icc_profile_len = color.icc_profile_len;
-   }
-   }
-   
-	return image;
-
-}/* opj_jp2_decode() */
 
 opj_bool jp2_decode_v2(	opj_jp2_v2_t *jp2,
 						struct opj_stream_private *cio,

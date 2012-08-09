@@ -299,14 +299,6 @@ Decoding parameters are returned in jp2->j2k->cp.
 @param parameters decompression parameters
 */
 void opj_jp2_setup_decoder(opj_jp2_v2_t *jp2, opj_dparameters_t *parameters);
-/**
-Decode an image from a JPEG-2000 file stream
-@param jp2 JP2 decompressor handle
-@param cio Input buffer stream
-@param cstr_info Codestream information structure if required, NULL otherwise
-@return Returns a decoded image if successful, returns NULL otherwise
-*/
-opj_image_t* opj_jp2_decode(opj_jp2_t *jp2, opj_cio_t *cio, opj_codestream_info_t *cstr_info);
 
 /**
  * Decode an image from a JPEG-2000 file stream
