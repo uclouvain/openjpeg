@@ -7674,7 +7674,7 @@ void j2k_destroy_decompress(opj_j2k_t *j2k) {
 }
 
 
-void j2k_setup_decoder_v2(opj_j2k_v2_t *j2k, opj_dparameters_t *parameters)
+void opj_j2k_setup_decoder(opj_j2k_v2_t *j2k, opj_dparameters_t *parameters)
 {
 	if(j2k && parameters) {
 		j2k->m_cp.m_specific_param.m_dec.m_layer = parameters->cp_layer;

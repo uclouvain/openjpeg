@@ -2246,7 +2246,7 @@ void jp2_destroy_decompress(opj_jp2_t *jp2) {
 void opj_jp2_setup_decoder(opj_jp2_v2_t *jp2, opj_dparameters_t *parameters)
 {
 	/* setup the J2K codec */
-	j2k_setup_decoder_v2(jp2->j2k, parameters);
+	opj_j2k_setup_decoder(jp2->j2k, parameters);
 
 	/* further JP2 initializations go here */
 	jp2->color.jp2_has_colr = 0;
