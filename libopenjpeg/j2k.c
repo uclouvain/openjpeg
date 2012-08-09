@@ -779,11 +779,7 @@ static opj_bool opj_j2k_read_plt (  opj_j2k_v2_t *p_j2k,
                                     OPJ_UINT32 p_header_size,
                                     opj_event_mgr_t * p_manager );
 
-/**
-Read the PPM marker (packet packet headers, main header)
-@param j2k J2K handle
-*/
-static void j2k_read_ppm(opj_j2k_t *j2k);
+
 /**
  * Reads a PPM marker (Packed packet headers, main header)
  *
@@ -4013,63 +4009,7 @@ static opj_bool opj_j2k_read_plt (  opj_j2k_v2_t *p_j2k,
 	return OPJ_TRUE;
 }
 
-static void j2k_read_ppm(opj_j2k_t *j2k) {
-	int len, Z_ppm, i, j;
-	int N_ppm;
 
-	opj_cp_t *cp = j2k->cp;
-	opj_cio_t *cio = j2k->cio;
-	
-	len = cio_read(cio, 2);
-	cp->ppm = 1;
-	
-	Z_ppm = cio_read(cio, 1);	/* Z_ppm */
-	len -= 3;
-	while (len > 0) {
-		if (cp->ppm_previous == 0) {
-			N_ppm = cio_read(cio, 4);	/* N_ppm */
-			len -= 4;
-		} else {
-			N_ppm = cp->ppm_previous;
-		}
-		j = cp->ppm_store;
-		if (Z_ppm == 0) {	/* First PPM marker */
-			cp->ppm_data = (unsigned char *) opj_malloc(N_ppm * sizeof(unsigned char));
-			cp->ppm_data_first = cp->ppm_data;
-			cp->ppm_len = N_ppm;
-		} else {			/* NON-first PPM marker */
-			cp->ppm_data = (unsigned char *) opj_realloc(cp->ppm_data, (N_ppm +	cp->ppm_store) * sizeof(unsigned char));
-
-#ifdef USE_JPWL
-			/* this memory allocation check could be done even in non-JPWL cases */
-			if (cp->correct) {
-				if (!cp->ppm_data) {
-					opj_event_msg(j2k->cinfo, EVT_ERROR,
-						"JPWL: failed memory allocation during PPM marker parsing (pos. %x)\n",
-						cio_tell(cio));
-					if (!JPWL_ASSUME || JPWL_ASSUME) {
-						opj_free(cp->ppm_data);
-						opj_event_msg(j2k->cinfo, EVT_ERROR, "JPWL: giving up\n");
-						return;
-					}
-				}
-			}
-#endif
-
-			cp->ppm_data_first = cp->ppm_data;
-			cp->ppm_len = N_ppm + cp->ppm_store;
-		}
-		for (i = N_ppm; i > 0; i--) {	/* Read packet header */
-			cp->ppm_data[j] = cio_read(cio, 1);
-			j++;
-			len--;
-			if (len == 0)
-				break;			/* Case of non-finished packet header in present marker but finished in next one */
-		}
-		cp->ppm_previous = i - 1;
-		cp->ppm_store = j;
-	}
-}
 /**
  * Reads a PPM marker (Packed packet headers, main header)
  *
@@ -5815,7 +5755,7 @@ opj_dec_mstabent_t j2k_dec_mstab[] = {
   /*{J2K_MS_TLM, J2K_STATE_MH, j2k_read_tlm},*/
   /*{J2K_MS_PLM, J2K_STATE_MH, j2k_read_plm},*/
   /*{J2K_MS_PLT, J2K_STATE_TPH, j2k_read_plt},*/
-  {J2K_MS_PPM, J2K_STATE_MH, j2k_read_ppm},
+  /*{J2K_MS_PPM, J2K_STATE_MH, j2k_read_ppm},*/
   {J2K_MS_PPT, J2K_STATE_TPH, j2k_read_ppt},
   {J2K_MS_SOP, 0, 0},
   {J2K_MS_CRG, J2K_STATE_MH, j2k_read_crg},
