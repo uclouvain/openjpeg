@@ -95,39 +95,55 @@ int main (int argc, char *argv[])
 	OPJ_UINT32 l_tile_index;
 	OPJ_BYTE * l_data = (OPJ_BYTE *) malloc(1000);
 	opj_bool l_go_on = OPJ_TRUE;
-	OPJ_INT32 l_tile_x0,l_tile_y0;
-	OPJ_UINT32 l_tile_width,l_tile_height,l_nb_tiles_x,l_nb_tiles_y,l_nb_comps;
+	OPJ_INT32 l_tile_x0=0, l_tile_y0=0 ;
+	OPJ_UINT32 l_tile_width=0, l_tile_height=0, l_nb_tiles_x=0, l_nb_tiles_y=0, l_nb_comps=0 ;
 	OPJ_INT32 l_current_tile_x0,l_current_tile_y0,l_current_tile_x1,l_current_tile_y1;
 
-  int da_x0=0;
-  int da_y0=0;
-  int da_x1=1000;
-  int da_y1=1000;
-  char input_file[64];
+    int da_x0=0;
+    int da_y0=0;
+    int da_x1=1000;
+    int da_y1=1000;
+    char input_file[64];
 	
-  /* should be test_tile_decoder 0 0 1000 1000 tte1.j2k */
-  if( argc == 6 )
+    /* should be test_tile_decoder 0 0 1000 1000 tte1.j2k */
+	if( argc == 6 )
     {
-    da_x0=atoi(argv[1]);
-    da_y0=atoi(argv[2]);
-    da_x1=atoi(argv[3]);
-    da_y1=atoi(argv[4]);
-    strcpy(input_file,argv[5]);
+	    da_x0=atoi(argv[1]);
+	    da_y0=atoi(argv[2]);
+        da_x1=atoi(argv[3]);
+        da_y1=atoi(argv[4]);
+        strcpy(input_file,argv[5]);
     }
-  else
+    else
     {
-    da_x0=0;
-    da_y0=0;
-    da_x1=1000;
-    da_y1=1000;
-    strcpy(input_file,"test.j2k");
+        da_x0=0;
+        da_y0=0;
+        da_x1=1000;
+        da_y1=1000;
+        strcpy(input_file,"test.j2k");
     }
 
-	if
-		(! l_data)
-	{
-		return 1;
+	if (! l_data) {
+        return EXIT_FAILURE;
 	}
+
+	l_file = fopen(input_file,"rb");
+	if (! l_file)
+	{
+	    fprintf(stdout, "ERROR while opening input file\n");
+	    free(l_data);
+		return EXIT_FAILURE;
+	}
+
+    l_stream = opj_stream_create_default_file_stream(l_file,OPJ_TRUE);
+    if (!l_stream){
+	    fclose(l_file);
+        free(l_data);
+	    fprintf(stderr, "ERROR -> failed to create the stream from the file\n");
+		return EXIT_FAILURE;
+	}
+
+    /* Set the default decoding parameters */
 	opj_set_default_decoder_parameters(&l_param);
 
 	/** you may here add custom decoding parameters */
@@ -141,11 +157,12 @@ int main (int argc, char *argv[])
 	//opj_restrict_decoding(&l_param,0,0,1000,1000);
 	
 	l_codec = opj_create_decompress_v2(CODEC_J2K);
-	if
-		(! l_codec)
-	{
-		free(l_data);
-		return 1;
+	if (! l_codec) 
+    {
+        fclose(l_file);
+	    free(l_data);
+        opj_stream_destroy(l_stream);
+	    return EXIT_FAILURE;
 	}
 
 	/* catch events using our callbacks and give a local context */		
@@ -153,110 +170,108 @@ int main (int argc, char *argv[])
 	opj_set_warning_handler(l_codec, warning_callback,00);
 	opj_set_error_handler(l_codec, error_callback,00);
 	
-	if
-		(! opj_setup_decoder_v2(l_codec,&l_param))
+    /* Setup the decoder decoding parameters using user parameters */
+	if (! opj_setup_decoder_v2(l_codec, &l_param))
 	{
-		free(l_data);
-		opj_destroy_codec(l_codec);
-		return 1;
+        fprintf(stderr, "ERROR -> j2k_dump: failed to setup the decoder\n");
+        fclose(l_file);
+        free(l_data);
+        opj_stream_destroy(l_stream);
+        opj_destroy_codec(l_codec);
+        return EXIT_FAILURE;
 	}
 	
-	l_file = fopen(input_file,"rb");
-	if
-		(! l_file)
-	{
-		fprintf(stdout, "Error opening input file\n");
-		free(l_data);
-		opj_destroy_codec(l_codec);
-		return 1;
-	}
-
-	l_stream = opj_stream_create_default_file_stream(l_file,OPJ_TRUE);
-
-	if
-		(! opj_read_header(l_stream, l_codec, &l_image))
-	{
-		free(l_data);
-		opj_stream_destroy(l_stream);
+    /* Read the main header of the codestream and if necessary the JP2 boxes*/
+	if (! opj_read_header(l_stream, l_codec, &l_image))
+    {
+        fprintf(stderr, "ERROR -> j2k_to_image: failed to read the header\n");
 		fclose(l_file);
+        free(l_data);
+		opj_stream_destroy(l_stream);
 		opj_destroy_codec(l_codec);
-		return 1;
+		return EXIT_FAILURE;
 	}
-	printf("Setting decoding area to %d,%d,%d,%d\n", da_x0, da_y0, da_x1, da_y1);
-	opj_set_decode_area(l_codec, l_image, da_x0, da_y0, da_x1, da_y1);
-	while
-		(l_go_on)
+
+    if (!opj_set_decode_area(l_codec, l_image, da_x0, da_y0,da_x1, da_y1)){
+        fprintf(stderr,	"ERROR -> j2k_to_image: failed to set the decoded area\n");
+        fclose(l_file);
+        free(l_data);
+        opj_stream_destroy(l_stream);
+        opj_destroy_codec(l_codec);
+        opj_image_destroy(l_image);
+        return EXIT_FAILURE;
+    }
+
+
+	while (l_go_on)
 	{
-		if
-			(! opj_read_tile_header(
-						l_codec,
-            l_stream,
-						&l_tile_index,
-						&l_data_size,
-						&l_current_tile_x0,
-						&l_current_tile_y0,
-						&l_current_tile_x1,
-						&l_current_tile_y1,
-						&l_nb_comps,
-						&l_go_on))
-		{
-			free(l_data);
-			opj_stream_destroy(l_stream);
-			fclose(l_file);
-			opj_destroy_codec(l_codec);
-			opj_image_destroy(l_image);
-			return 1;
+		if (! opj_read_tile_header( l_codec,
+                                    l_stream,
+                                    &l_tile_index,
+                                    &l_data_size,
+                                    &l_current_tile_x0,
+                                    &l_current_tile_y0,
+                                    &l_current_tile_x1,
+                                    &l_current_tile_y1,
+                                    &l_nb_comps,
+                                    &l_go_on))
+        {
+            fclose(l_file);
+            free(l_data);
+            opj_stream_destroy(l_stream);
+            opj_destroy_codec(l_codec);
+            opj_image_destroy(l_image);
+            return EXIT_FAILURE;
 		}
-		if
-			(l_go_on)
-		{
-			if
-				(l_data_size > l_max_data_size)
-			{
+
+		if (l_go_on)
+        {
+			if (l_data_size > l_max_data_size)
+            {
 				l_data = (OPJ_BYTE *) realloc(l_data,l_data_size);
-				if
-					(! l_data)
-				{
-					opj_stream_destroy(l_stream);
-					fclose(l_file);
+				if (! l_data)
+                {
+                    fclose(l_file);
+				    opj_stream_destroy(l_stream);
 					opj_destroy_codec(l_codec);
 					opj_image_destroy(l_image);
-					return 1;
+					return EXIT_FAILURE;
 				}
 				l_max_data_size = l_data_size;
 			}
 
-			if
-				(! opj_decode_tile_data(l_codec,l_tile_index,l_data,l_data_size,l_stream))
+			if (! opj_decode_tile_data(l_codec,l_tile_index,l_data,l_data_size,l_stream))
 			{
+                fclose(l_file);
 				free(l_data);
 				opj_stream_destroy(l_stream);
-				fclose(l_file);
 				opj_destroy_codec(l_codec);
 				opj_image_destroy(l_image);
-				return 1;
+				return EXIT_FAILURE;
 			}
 			/** now should inspect image to know the reduction factor and then how to behave with data */
 		}
 	}
-	if
-		(! opj_end_decompress(l_codec,l_stream))
-	{
+
+	if (! opj_end_decompress(l_codec,l_stream))
+    {
+        fclose(l_file);
 		free(l_data);
 		opj_stream_destroy(l_stream);
-		fclose(l_file);
 		opj_destroy_codec(l_codec);
 		opj_image_destroy(l_image);
-		return 1;
+		return EXIT_FAILURE;
 	}
+
+    /* Free memory */
+    fclose(l_file);
 	free(l_data);
 	opj_stream_destroy(l_stream);
-	fclose(l_file);
 	opj_destroy_codec(l_codec);
 	opj_image_destroy(l_image);
 
 	// Print profiling
 	//PROFPRINT();
 
-	return 0;
+	return EXIT_SUCCESS;
 }
