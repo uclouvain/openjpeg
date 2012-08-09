@@ -1004,7 +1004,10 @@ opj_codestream_index_t* j2k_get_cstr_index(opj_j2k_v2_t* p_j2k);
  * @param cstr_info Codestream information structure if required, NULL otherwise
  * @return Returns a decoded image if successful, returns NULL otherwise
 */
-opj_bool j2k_decode_v2(opj_j2k_v2_t *j2k, struct opj_stream_private *cio, opj_image_t* p_image, opj_event_mgr_t * p_manager);
+opj_bool opj_j2k_decode(opj_j2k_v2_t *j2k, 
+                        opj_stream_private_t *p_stream, 
+                        opj_image_t *p_image, 
+                        opj_event_mgr_t *p_manager);
 
 
 opj_bool j2k_get_tile(	opj_j2k_v2_t *p_j2k,

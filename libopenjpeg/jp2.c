@@ -1705,7 +1705,7 @@ opj_bool opj_jp2_decode(opj_jp2_v2_t *jp2,
 		return OPJ_FALSE;
 
 	/* J2K decoding */
-	if( ! j2k_decode_v2(jp2->j2k, p_stream, p_image, p_manager) ) {
+	if( ! opj_j2k_decode(jp2->j2k, p_stream, p_image, p_manager) ) {
 		opj_event_msg_v2(p_manager, EVT_ERROR, "Failed to decode the codestream in the JP2 file\n");
 		return OPJ_FALSE;
 	}

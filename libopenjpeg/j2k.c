@@ -11723,7 +11723,7 @@ static void j2k_setup_decoding_tile (opj_j2k_v2_t *p_j2k)
 /**
  * Decodes the tiles of the stream.
  */
-opj_bool j2k_decode_v2(	opj_j2k_v2_t * p_j2k,
+opj_bool opj_j2k_decode(opj_j2k_v2_t * p_j2k,
 						opj_stream_private_t * p_stream,
 						opj_image_t * p_image,
 						opj_event_mgr_t * p_manager)
