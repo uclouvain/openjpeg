@@ -1821,7 +1821,7 @@ int main(int argc, char **argv) {
       parameters.cp_tdx = 512;
       parameters.cp_tdy = 512;
     }
-		opj_setup_encoder_v2(l_codec, &parameters, image);
+		opj_setup_encoder(l_codec, &parameters, image);
 
 		/* Open the output file*/
 		fout = fopen(parameters.outfile, "wb");

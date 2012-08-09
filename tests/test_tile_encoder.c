@@ -271,7 +271,7 @@ int main (int argc, char *argv[])
 	l_image->y1 = image_height;
 	l_image->color_space = CLRSPC_SRGB;
 
-	if (! opj_setup_encoder_v2(l_codec,&l_param,l_image)) {
+	if (! opj_setup_encoder(l_codec,&l_param,l_image)) {
 		fprintf(stderr, "ERROR -> test_tile_encoder: failed to setup the codec!\n");
 		opj_destroy_codec(l_codec);
 		opj_image_destroy(l_image);

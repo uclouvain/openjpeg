@@ -1400,9 +1400,9 @@ OPJ_API void OPJ_CALLCONV opj_set_default_encoder_parameters(opj_cparameters_t *
  * @param parameters 	Compression parameters
  * @param image 		Input filled image
  */
-OPJ_API opj_bool OPJ_CALLCONV opj_setup_encoder_v2(	opj_codec_t *p_codec, 
-													opj_cparameters_t *parameters, 
-													opj_image_t *image);
+OPJ_API opj_bool OPJ_CALLCONV opj_setup_encoder(opj_codec_t *p_codec, 
+												opj_cparameters_t *parameters, 
+												opj_image_t *image);
 
 /**
  */

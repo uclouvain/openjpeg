@@ -673,9 +673,9 @@ opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream (	FILE * p_file,
 	return l_stream;
 }
 
-opj_bool OPJ_CALLCONV opj_setup_encoder_v2(	opj_codec_t *p_codec, 
-											opj_cparameters_t *parameters, 
-											opj_image_t *p_image)
+opj_bool OPJ_CALLCONV opj_setup_encoder(opj_codec_t *p_codec, 
+										opj_cparameters_t *parameters, 
+										opj_image_t *p_image)
 {
 	if (p_codec && parameters && p_image) {
 		opj_codec_private_t * l_codec = (opj_codec_private_t *) p_codec;
