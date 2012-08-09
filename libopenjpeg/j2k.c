@@ -647,11 +647,6 @@ static void j2k_write_qcc_in_memory(opj_j2k_v2_t *p_j2k,
 static OPJ_UINT32 j2k_get_max_qcc_size (opj_j2k_v2_t *p_j2k);
 
 /**
-Read the QCC marker (quantization component)
-@param j2k J2K handle
-*/
-static void j2k_read_qcc(opj_j2k_t *j2k);
-/**
  * Reads a QCC marker (Quantization component)
  * @param	p_header_data	the data contained in the QCC box.
  * @param	p_j2k			the jpeg2000 codec.
@@ -3485,43 +3480,6 @@ OPJ_UINT32 j2k_get_max_qcc_size (opj_j2k_v2_t *p_j2k)
 	return j2k_get_max_coc_size(p_j2k);
 }
 
-static void j2k_read_qcc(opj_j2k_t *j2k) {
-	int len, compno;
-	int numcomp = j2k->image->numcomps;
-	opj_cio_t *cio = j2k->cio;
-
-	len = cio_read(cio, 2);	/* Lqcc */
-	compno = cio_read(cio, numcomp <= 256 ? 1 : 2);	/* Cqcc */
-
-#ifdef USE_JPWL
-	if (j2k->cp->correct) {
-
-		static int backup_compno = 0;
-
-		/* compno is negative or larger than the number of components!!! */
-		if ((compno < 0) || (compno >= numcomp)) {
-			opj_event_msg(j2k->cinfo, EVT_ERROR,
-				"JPWL: bad component number in QCC (%d out of a maximum of %d)\n",
-				compno, numcomp);
-			if (!JPWL_ASSUME) {
-				opj_event_msg(j2k->cinfo, EVT_ERROR, "JPWL: giving up\n");
-				return;
-			}
-			/* we try to correct */
-			compno = backup_compno % numcomp;
-			opj_event_msg(j2k->cinfo, EVT_WARNING, "- trying to adjust this\n"
-				"- setting component number to %d\n",
-				compno);
-		}
-
-		/* keep your private count of tiles */
-		backup_compno++;
-	};
-#endif /* USE_JPWL */
-
-	j2k_read_qcx(j2k, compno, len - 2 - (numcomp <= 256 ? 1 : 2));
-}
-
 /**
  * Reads a QCC marker (Quantization component)
  * @param	p_header_data	the data contained in the QCC box.
@@ -6049,7 +6007,7 @@ opj_dec_mstabent_t j2k_dec_mstab[] = {
   /*{J2K_MS_COC, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_coc},*/
   /*{J2K_MS_RGN, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_rgn},*/
   /*{J2K_MS_QCD, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_qcd},*/
-  {J2K_MS_QCC, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_qcc},
+  /*{J2K_MS_QCC, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_qcc},*/
   {J2K_MS_POC, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_poc},
   {J2K_MS_TLM, J2K_STATE_MH, j2k_read_tlm},
   {J2K_MS_PLM, J2K_STATE_MH, j2k_read_plm},
