@@ -244,11 +244,11 @@ int main (int argc, char *argv[])
   len = strlen( output_file );
   if( strcmp( output_file + len - 4, ".jp2" ) == 0 )
     {
-    l_codec = opj_create_compress_v2(CODEC_JP2);
+    l_codec = opj_create_compress(CODEC_JP2);
     }
   else
     {
-    l_codec = opj_create_compress_v2(CODEC_J2K);
+    l_codec = opj_create_compress(CODEC_J2K);
     }
 	if (!l_codec) {
 		return 1;

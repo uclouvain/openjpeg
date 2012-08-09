@@ -482,7 +482,7 @@ opj_bool OPJ_CALLCONV opj_setup_decoder(opj_codec_t *p_codec,
 /* ---------------------------------------------------------------------- */
 /* COMPRESSION FUNCTIONS*/
 
-opj_codec_t* OPJ_CALLCONV opj_create_compress_v2(OPJ_CODEC_FORMAT p_format)
+opj_codec_t* OPJ_CALLCONV opj_create_compress(OPJ_CODEC_FORMAT p_format)
 {
 	opj_codec_private_t *l_codec = 00;
 

@@ -1369,7 +1369,7 @@ OPJ_API opj_bool OPJ_CALLCONV opj_decode_tile_data(	opj_codec_t *p_codec,
  * @param 	format 		Coder to select
  * @return 				Returns a handle to a compressor if successful, returns NULL otherwise
  */
-OPJ_API opj_codec_t* OPJ_CALLCONV opj_create_compress_v2(OPJ_CODEC_FORMAT format);
+OPJ_API opj_codec_t* OPJ_CALLCONV opj_create_compress(OPJ_CODEC_FORMAT format);
 
 /**
 Destroy a compressor handle
