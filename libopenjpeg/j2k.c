@@ -994,12 +994,6 @@ static opj_bool j2k_write_rgn_v2(	opj_j2k_v2_t *p_j2k,
 									struct opj_event_mgr * p_manager );
 
 /**
-Read the RGN marker (region-of-interest)
-@param j2k J2K handle
-*/
-static void j2k_read_rgn(opj_j2k_t *j2k);
-
-/**
  * Reads a RGN marker (Region Of Interest)
  *
  * @param	p_header_data	the data contained in the POC box.
@@ -5469,35 +5463,6 @@ opj_bool j2k_write_rgn_v2(	opj_j2k_v2_t *p_j2k,
 	return OPJ_TRUE;
 }
 
-static void j2k_read_rgn(opj_j2k_t *j2k) {
-	int len, compno, roisty;
-
-	opj_cp_t *cp = j2k->cp;
-	opj_tcp_t *tcp = j2k->state == J2K_STATE_TPH ? &cp->tcps[j2k->curtileno] : j2k->default_tcp;
-	opj_cio_t *cio = j2k->cio;
-	int numcomps = j2k->image->numcomps;
-
-	len = cio_read(cio, 2);										/* Lrgn */
-	compno = cio_read(cio, numcomps <= 256 ? 1 : 2);			/* Crgn */
-	roisty = cio_read(cio, 1);									/* Srgn */
-
-#ifdef USE_JPWL
-	if (j2k->cp->correct) {
-		/* totlen is negative or larger than the bytes left!!! */
-		if (compno >= numcomps) {
-			opj_event_msg(j2k->cinfo, EVT_ERROR,
-				"JPWL: bad component number in RGN (%d when there are only %d)\n",
-				compno, numcomps);
-			if (!JPWL_ASSUME || JPWL_ASSUME) {
-				opj_event_msg(j2k->cinfo, EVT_ERROR, "JPWL: giving up\n");
-				return;
-			}
-		}
-	};
-#endif /* USE_JPWL */
-
-	tcp->tccps[compno].roishift = cio_read(cio, 1);				/* SPrgn */
-}
 
 static void j2k_write_eoc(opj_j2k_t *j2k) {
 	opj_cio_t *cio = j2k->cio;
@@ -6110,7 +6075,7 @@ opj_dec_mstabent_t j2k_dec_mstab[] = {
   /*{J2K_MS_SIZ, J2K_STATE_MHSIZ, j2k_read_siz},*/
   /*{J2K_MS_COD, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_cod},*/
   /*{J2K_MS_COC, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_coc},*/
-  {J2K_MS_RGN, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_rgn},
+  /*{J2K_MS_RGN, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_rgn},*/
   {J2K_MS_QCD, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_qcd},
   {J2K_MS_QCC, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_qcc},
   {J2K_MS_POC, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_poc},
