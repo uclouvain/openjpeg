@@ -818,7 +818,7 @@ int main(int argc, char **argv)
 			}
 
 			/* Get the decoded image */
-			if (!(opj_decode_v2(l_codec, l_stream, image) && opj_end_decompress(l_codec,	l_stream))) {
+			if (!(opj_decode(l_codec, l_stream, image) && opj_end_decompress(l_codec,	l_stream))) {
 				fprintf(stderr,"ERROR -> j2k_to_image: failed to decode image!\n");
 				opj_destroy_codec(l_codec);
 				opj_stream_destroy(l_stream);

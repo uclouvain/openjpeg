@@ -1269,9 +1269,9 @@ OPJ_API opj_bool OPJ_CALLCONV opj_set_decode_area(	opj_codec_t *p_codec,
  * @param p_image 			the decoded image
  * @return 					true if success, otherwise false
  * */
-OPJ_API opj_bool OPJ_CALLCONV opj_decode_v2(opj_codec_t *p_decompressor,
-											opj_stream_t *p_stream,
-											opj_image_t *p_image);
+OPJ_API opj_bool OPJ_CALLCONV opj_decode(   opj_codec_t *p_decompressor,
+                                            opj_stream_t *p_stream,
+                                            opj_image_t *p_image);
 
 /**
  * Get the decoded tile from the codec
@@ -1363,13 +1363,6 @@ OPJ_API opj_bool OPJ_CALLCONV opj_decode_tile_data(	opj_codec_t *p_codec,
 													opj_stream_t *p_stream );
 
 /* COMPRESSION FUNCTIONS*/
-
-/**
-Creates a J2K/JP2 compression structure
-@param format Coder to select
-@return Returns a handle to a compressor if successful, returns NULL otherwise
-*/
-DEPRECATED( OPJ_API opj_cinfo_t* OPJ_CALLCONV opj_create_compress(OPJ_CODEC_FORMAT format));
 
 /**
  * Creates a J2K/JP2 compression structure

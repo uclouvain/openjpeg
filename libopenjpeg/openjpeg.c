@@ -286,6 +286,9 @@ const char* OPJ_CALLCONV opj_version(void) {
     return PACKAGE_VERSION;
 }
 
+/* ---------------------------------------------------------------------- */
+/* DECOMPRESSION FUNCTIONS*/
+
 opj_codec_t* OPJ_CALLCONV opj_create_decompress(OPJ_CODEC_FORMAT p_format)
 {
 	opj_codec_private_t *l_codec = 00;
@@ -476,40 +479,8 @@ opj_bool OPJ_CALLCONV opj_setup_decoder(opj_codec_t *p_codec,
 	return OPJ_FALSE;
 }
 
-/* DEPRECATED */
-opj_cinfo_t* OPJ_CALLCONV opj_create_compress(OPJ_CODEC_FORMAT format) {
-	opj_cinfo_t *cinfo = (opj_cinfo_t*)opj_calloc(1, sizeof(opj_cinfo_t));
-	if(!cinfo) return NULL;
-	cinfo->is_decompressor = OPJ_FALSE;
-	switch(format) {
-		case CODEC_J2K:
-			/* get a J2K coder handle */
-			cinfo->j2k_handle = (void*)j2k_create_compress((opj_common_ptr)cinfo);
-			if(!cinfo->j2k_handle) {
-				opj_free(cinfo);
-				return NULL;
-			}
-			break;
-		case CODEC_JP2:
-			/* get a JP2 coder handle */
-			cinfo->jp2_handle = (void*)jp2_create_compress((opj_common_ptr)cinfo);
-			if(!cinfo->jp2_handle) {
-				opj_free(cinfo);
-				return NULL;
-			}
-			break;
-		case CODEC_JPT:
-		case CODEC_UNKNOWN:
-		default:
-			opj_free(cinfo);
-			return NULL;
-	}
-
-	cinfo->codec_format = format;
-
-	return cinfo;
-}
-
+/* ---------------------------------------------------------------------- */
+/* COMPRESSION FUNCTIONS*/
 
 opj_codec_t* OPJ_CALLCONV opj_create_compress_v2(OPJ_CODEC_FORMAT p_format)
 {
@@ -1103,9 +1074,9 @@ void OPJ_CALLCONV opj_destroy_cstr_index(opj_codestream_index_t **p_cstr_index)
  *
  *
  */
-opj_bool OPJ_CALLCONV opj_decode_v2(opj_codec_t *p_codec,
-									opj_stream_t *p_stream,
-									opj_image_t* p_image)
+opj_bool OPJ_CALLCONV opj_decode(   opj_codec_t *p_codec,
+                                    opj_stream_t *p_stream,
+                                    opj_image_t* p_image)
 {
 	if (p_codec && p_stream) {
 		opj_codec_private_t * l_codec = (opj_codec_private_t *) p_codec;
