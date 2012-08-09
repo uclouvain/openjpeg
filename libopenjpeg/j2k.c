@@ -920,11 +920,6 @@ Write the SOT marker (start of tile-part)
 @param j2k J2K handle
 */
 static void j2k_write_sot(opj_j2k_t *j2k);
-/**
-Read the SOT marker (start of tile-part)
-@param j2k J2K handle
-*/
-static void j2k_read_sot(opj_j2k_t *j2k);
 
 /**
  * Writes the SOT marker (Start of tile-part)
@@ -5195,157 +5190,7 @@ opj_bool j2k_write_sot_v2(	opj_j2k_v2_t *p_j2k,
 }
 
 
-static void j2k_read_sot(opj_j2k_t *j2k) {
-	int len, tileno, totlen, partno, numparts;
-  OPJ_UINT32 i;
-	opj_tcp_t *tcp = NULL;
-	char status = 0;
 
-	opj_cp_t *cp = j2k->cp;
-	opj_cio_t *cio = j2k->cio;
-
-	len = cio_read(cio, 2);
-	tileno = cio_read(cio, 2);
-
-#ifdef USE_JPWL
-	if (j2k->cp->correct) {
-
-		static int backup_tileno = 0;
-
-		/* tileno is negative or larger than the number of tiles!!! */
-		if ((tileno < 0) || (tileno >= (cp->tw * cp->th))) {
-			opj_event_msg(j2k->cinfo, EVT_ERROR,
-				"JPWL: bad tile number (%d out of a maximum of %d)\n",
-				tileno, (cp->tw * cp->th));
-			if (!JPWL_ASSUME) {
-				opj_event_msg(j2k->cinfo, EVT_ERROR, "JPWL: giving up\n");
-				return;
-			}
-			/* we try to correct */
-			tileno = backup_tileno;
-			opj_event_msg(j2k->cinfo, EVT_WARNING, "- trying to adjust this\n"
-				"- setting tile number to %d\n",
-				tileno);
-		}
-
-		/* keep your private count of tiles */
-		backup_tileno++;
-	}
-  else
-#endif /* USE_JPWL */
-  {
-    /* tileno is negative or larger than the number of tiles!!! */
-    if ((tileno < 0) || (tileno >= (cp->tw * cp->th))) {
-      opj_event_msg(j2k->cinfo, EVT_ERROR,
-        "JPWL: bad tile number (%d out of a maximum of %d)\n",
-        tileno, (cp->tw * cp->th));
-      return;
-    }
-  }
-	
-	if (cp->tileno_size == 0) {
-		cp->tileno[cp->tileno_size] = tileno;
-		cp->tileno_size++;
-	} else {
-		i = 0;
-		assert(cp->tileno_size >= 0);
-		while (i < (OPJ_UINT32)cp->tileno_size && status == 0) {
-			status = cp->tileno[i] == tileno ? 1 : 0;
-			i++;
-		}
-		if (status == 0) {
-			cp->tileno[cp->tileno_size] = tileno;
-			cp->tileno_size++;
-		}
-	}
-	
-	totlen = cio_read(cio, 4);
-
-#ifdef USE_JPWL
-	if (j2k->cp->correct) {
-
-		/* totlen is negative or larger than the bytes left!!! */
-		if ((totlen < 0) || (totlen > (cio_numbytesleft(cio) + 8))) {
-			opj_event_msg(j2k->cinfo, EVT_ERROR,
-				"JPWL: bad tile byte size (%d bytes against %d bytes left)\n",
-				totlen, cio_numbytesleft(cio) + 8);
-			if (!JPWL_ASSUME) {
-				opj_event_msg(j2k->cinfo, EVT_ERROR, "JPWL: giving up\n");
-				return;
-			}
-			/* we try to correct */
-			totlen = 0;
-			opj_event_msg(j2k->cinfo, EVT_WARNING, "- trying to adjust this\n"
-				"- setting Psot to %d => assuming it is the last tile\n",
-				totlen);
-		}
-
-	}
-  else
-#endif /* USE_JPWL */
-  {
-    /* totlen is negative or larger than the bytes left!!! */
-    if ((totlen < 0) || (totlen > (cio_numbytesleft(cio) + 8))) {
-      opj_event_msg(j2k->cinfo, EVT_ERROR,
-        "JPWL: bad tile byte size (%d bytes against %d bytes left)\n",
-        totlen, cio_numbytesleft(cio) + 8);
-      return;
-    }
-  }
-
-	if (!totlen)
-		totlen = cio_numbytesleft(cio) + 8;
-	
-	partno = cio_read(cio, 1);
-	numparts = cio_read(cio, 1);
-  
-  if (partno >= numparts) {
-    opj_event_msg(j2k->cinfo, EVT_WARNING, "SOT marker inconsistency in tile %d: tile-part index greater (%d) than number of tile-parts (%d)\n", tileno, partno, numparts);
-    numparts = partno+1;
-  }
-	
-	j2k->curtileno = tileno;
-	j2k->cur_tp_num = partno;
-	j2k->eot = cio_getbp(cio) - 12 + totlen;
-	j2k->state = J2K_STATE_TPH;
-	tcp = &cp->tcps[j2k->curtileno];
-
-	/* Index */
-	if (j2k->cstr_info) {
-		if (tcp->first) {
-			if (tileno == 0) 
-				j2k->cstr_info->main_head_end = cio_tell(cio) - 13;
-			j2k->cstr_info->tile[tileno].tileno = tileno;
-			j2k->cstr_info->tile[tileno].start_pos = cio_tell(cio) - 12;
-			j2k->cstr_info->tile[tileno].end_pos = j2k->cstr_info->tile[tileno].start_pos + totlen - 1;				
-    } else {
-			j2k->cstr_info->tile[tileno].end_pos += totlen;
-		}
-    j2k->cstr_info->tile[tileno].num_tps = numparts;
-    if (numparts)
-      j2k->cstr_info->tile[tileno].tp = (opj_tp_info_t *) opj_realloc(j2k->cstr_info->tile[tileno].tp, numparts * sizeof(opj_tp_info_t));
-    else
-      j2k->cstr_info->tile[tileno].tp = (opj_tp_info_t *) opj_realloc(j2k->cstr_info->tile[tileno].tp, 10 * sizeof(opj_tp_info_t)); /* Fixme (10)*/
-		j2k->cstr_info->tile[tileno].tp[partno].tp_start_pos = cio_tell(cio) - 12;
-		j2k->cstr_info->tile[tileno].tp[partno].tp_end_pos = 
-			j2k->cstr_info->tile[tileno].tp[partno].tp_start_pos + totlen - 1;
-	}
-	
-	if (tcp->first == 1) {		
-		/* Initialization PPT */
-		opj_tccp_t *tmp = tcp->tccps;
-		memcpy(tcp, j2k->default_tcp, sizeof(opj_tcp_t));
-		tcp->ppt = 0;
-		tcp->ppt_data = NULL;
-		tcp->ppt_data_first = NULL;
-		tcp->tccps = tmp;
-
-		for (i = 0; i < j2k->image->numcomps; i++) {
-			tcp->tccps[i] = j2k->default_tcp->tccps[i];
-		}
-		cp->tcps[j2k->curtileno].first = 0;
-	}
-}
 
 /**
  * Reads a PPT marker (Packed packet headers, tile-part header)
@@ -6597,7 +6442,7 @@ typedef struct opj_dec_mstabent {
 
 opj_dec_mstabent_t j2k_dec_mstab[] = {
   /*{J2K_MS_SOC, J2K_STATE_MHSOC, j2k_read_soc},*/
-  {J2K_MS_SOT, J2K_STATE_MH | J2K_STATE_TPHSOT, j2k_read_sot},
+  /*{J2K_MS_SOT, J2K_STATE_MH | J2K_STATE_TPHSOT, j2k_read_sot},*/
   {J2K_MS_SOD, J2K_STATE_TPH, j2k_read_sod},
   {J2K_MS_EOC, J2K_STATE_TPHSOT, j2k_read_eoc},
   {J2K_MS_SIZ, J2K_STATE_MHSIZ, j2k_read_siz},
