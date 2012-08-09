@@ -298,7 +298,7 @@ Decoding parameters are returned in jp2->j2k->cp.
 @param jp2 JP2 decompressor handle
 @param parameters decompression parameters
 */
-void jp2_setup_decoder_v2(opj_jp2_v2_t *jp2, opj_dparameters_t *parameters);
+void opj_jp2_setup_decoder(opj_jp2_v2_t *jp2, opj_dparameters_t *parameters);
 /**
 Decode an image from a JPEG-2000 file stream
 @param jp2 JP2 decompressor handle

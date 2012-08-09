@@ -2323,7 +2323,7 @@ void jp2_destroy_decompress(opj_jp2_t *jp2) {
 }
 
 
-void jp2_setup_decoder_v2(opj_jp2_v2_t *jp2, opj_dparameters_t *parameters)
+void opj_jp2_setup_decoder(opj_jp2_v2_t *jp2, opj_dparameters_t *parameters)
 {
 	/* setup the J2K codec */
 	j2k_setup_decoder_v2(jp2->j2k, parameters);
