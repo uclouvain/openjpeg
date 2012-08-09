@@ -778,12 +778,7 @@ opj_j2k_v2_t;
 /** @name Exported functions */
 /*@{*/
 /* ----------------------------------------------------------------------- */
-/**
-Creates a J2K decompression structure
-@param cinfo Codec context info
-@return Returns a handle to a J2K decompressor if successful, returns NULL otherwise
-*/
-opj_j2k_t* j2k_create_decompress(opj_common_ptr cinfo);
+
 /**
 Destroy a J2K decompressor handle
 @param j2k J2K decompressor handle to destroy

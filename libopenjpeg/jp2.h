@@ -280,12 +280,7 @@ Read the JP2H box - JP2 Header box (used in MJ2)
 @return Returns true if successful, returns false otherwise
 */
 opj_bool jp2_read_jp2h(opj_jp2_t *jp2, opj_cio_t *cio, opj_jp2_color_t *color);
-/**
-Creates a JP2 decompression structure
-@param cinfo Codec context info
-@return Returns a handle to a JP2 decompressor if successful, returns NULL otherwise
-*/
-opj_jp2_t* jp2_create_decompress(opj_common_ptr cinfo);
+
 /**
 Destroy a JP2 decompressor handle
 @param jp2 JP2 decompressor handle to destroy

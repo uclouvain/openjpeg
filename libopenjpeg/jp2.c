@@ -2227,20 +2227,6 @@ static void write_iptr( int offset, int length, opj_cio_t *cio)
 /* JP2 decoder interface                                             */
 /* ----------------------------------------------------------------------- */
 
-opj_jp2_t* jp2_create_decompress(opj_common_ptr cinfo) {
-	opj_jp2_t *jp2 = (opj_jp2_t*) opj_calloc(1, sizeof(opj_jp2_t));
-	if(jp2) {
-		jp2->cinfo = cinfo;
-		/* create the J2K codec */
-		jp2->j2k = j2k_create_decompress(cinfo);
-		if(jp2->j2k == NULL) {
-			jp2_destroy_decompress(jp2);
-			return NULL;
-		}
-	}
-	return jp2;
-}
-
 void jp2_destroy_decompress(opj_jp2_t *jp2) {
 	if(jp2) {
 		/* destroy the J2K codec */

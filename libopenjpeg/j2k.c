@@ -7624,22 +7624,7 @@ opj_bool j2k_read_cbd (	opj_j2k_v2_t *p_j2k,
 /* J2K / JPT decoder interface                                             */
 /* ----------------------------------------------------------------------- */
 
-opj_j2k_t* j2k_create_decompress(opj_common_ptr cinfo) {
-	opj_j2k_t *j2k = (opj_j2k_t*) opj_calloc(1, sizeof(opj_j2k_t));
-	if(!j2k)
-		return NULL;
 
-	j2k->default_tcp = (opj_tcp_t*) opj_calloc(1, sizeof(opj_tcp_t));
-	if(!j2k->default_tcp) {
-		opj_free(j2k);
-		return NULL;
-	}
-
-	j2k->cinfo = cinfo;
-	j2k->tile_data = NULL;
-
-	return j2k;
-}
 
 void j2k_destroy_decompress(opj_j2k_t *j2k) {
 	int i = 0;
