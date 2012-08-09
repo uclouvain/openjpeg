@@ -767,11 +767,6 @@ static opj_bool opj_j2k_read_plm (  opj_j2k_v2_t *p_j2k,
                                     OPJ_UINT32 p_header_size,
                                     opj_event_mgr_t * p_manager);
 /**
-Read the PLT marker (packet length, tile-part header)
-@param j2k J2K handle
-*/
-static void j2k_read_plt(opj_j2k_t *j2k);
-/**
  * Reads a PLT marker (Packet length, tile-part header)
  *
  * @param	p_header_data	the data contained in the PLT box.
@@ -779,7 +774,7 @@ static void j2k_read_plt(opj_j2k_t *j2k);
  * @param	p_header_size	the size of the data contained in the PLT marker.
  * @param	p_manager		the user event manager.
 */
-static opj_bool j2k_read_plt_v2 (
+static opj_bool opj_j2k_read_plt (
 						opj_j2k_v2_t *p_j2k,
 						OPJ_BYTE * p_header_data,
 						OPJ_UINT32 p_header_size,
@@ -3967,23 +3962,6 @@ static opj_bool opj_j2k_read_plm (  opj_j2k_v2_t *p_j2k,
 	return OPJ_TRUE;
 }
 
-static void j2k_read_plt(opj_j2k_t *j2k) {
-	int len, i, Zplt, packet_len = 0, add;
-	
-	opj_cio_t *cio = j2k->cio;
-	
-	len = cio_read(cio, 2);		/* Lplt */
-	Zplt = cio_read(cio, 1);	/* Zplt */
-	for (i = len - 3; i > 0; i--) {
-		add = cio_read(cio, 1);
-		packet_len = (packet_len << 7) + add;	/* Iplt_i */
-		if ((add & 0x80) == 0) {
-			/* New packet */
-			packet_len = 0;
-		}
-	}
-}
-
 /**
  * Reads a PLT marker (Packet length, tile-part header)
  *
@@ -5838,7 +5816,7 @@ opj_dec_mstabent_t j2k_dec_mstab[] = {
   /*{J2K_MS_POC, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_poc},*/
   /*{J2K_MS_TLM, J2K_STATE_MH, j2k_read_tlm},*/
   /*{J2K_MS_PLM, J2K_STATE_MH, j2k_read_plm},*/
-  {J2K_MS_PLT, J2K_STATE_TPH, j2k_read_plt},
+  /*{J2K_MS_PLT, J2K_STATE_TPH, j2k_read_plt},*/
   {J2K_MS_PPM, J2K_STATE_MH, j2k_read_ppm},
   {J2K_MS_PPT, J2K_STATE_TPH, j2k_read_ppt},
   {J2K_MS_SOP, 0, 0},
