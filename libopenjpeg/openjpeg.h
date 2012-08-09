@@ -1222,15 +1222,6 @@ OPJ_API opj_bool OPJ_CALLCONV opj_end_decompress (	opj_codec_t *p_codec,
 OPJ_API void OPJ_CALLCONV opj_set_default_decoder_parameters(opj_dparameters_t *parameters);
 
 /**
-Setup the decoder decoding parameters using user parameters.
-Decoding parameters are returned in j2k->cp. 
-@param dinfo decompressor handle
-@param parameters decompression parameters
-*/
-DEPRECATED( OPJ_API void OPJ_CALLCONV opj_setup_decoder(opj_dinfo_t *dinfo, opj_dparameters_t *parameters) );
-
-
-/**
  * Setup the decoder with decompression parameters provided by the user and with the message handler
  * provided by the user.
  *
