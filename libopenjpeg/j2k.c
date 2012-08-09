@@ -551,11 +551,6 @@ static void j2k_write_coc_in_memory(opj_j2k_v2_t *p_j2k,
  */
 static OPJ_UINT32 j2k_get_max_coc_size(opj_j2k_v2_t *p_j2k);
 
-/**
-Read the COC marker (coding style component)
-@param j2k J2K handle
-*/
-static void j2k_read_coc(opj_j2k_t *j2k);
 
 /**
  * Reads a COC marker (Coding Style Component)
@@ -3105,19 +3100,6 @@ OPJ_UINT32 j2k_get_max_coc_size(opj_j2k_v2_t *p_j2k)
 	return 6 + l_max;
 }
 
-static void j2k_read_coc(opj_j2k_t *j2k) {
-	int len, compno;
-
-	opj_cp_t *cp = j2k->cp;
-	opj_tcp_t *tcp = j2k->state == J2K_STATE_TPH ? &cp->tcps[j2k->curtileno] : j2k->default_tcp;
-	opj_image_t *image = j2k->image;
-	opj_cio_t *cio = j2k->cio;
-	
-	len = cio_read(cio, 2);		/* Lcoc */
-	compno = cio_read(cio, image->numcomps <= 256 ? 1 : 2);	/* Ccoc */
-	tcp->tccps[compno].csty = cio_read(cio, 1);	/* Scoc */
-	j2k_read_cox(j2k, compno);
-}
 
 /**
  * Reads a COC marker (Coding Style Component)
@@ -6130,7 +6112,7 @@ opj_dec_mstabent_t j2k_dec_mstab[] = {
   {J2K_MS_EOC, J2K_STATE_TPHSOT, j2k_read_eoc},
   /*{J2K_MS_SIZ, J2K_STATE_MHSIZ, j2k_read_siz},*/
   /*{J2K_MS_COD, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_cod},*/
-  {J2K_MS_COC, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_coc},
+  /*{J2K_MS_COC, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_coc},*/
   {J2K_MS_RGN, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_rgn},
   {J2K_MS_QCD, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_qcd},
   {J2K_MS_QCC, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_qcc},
