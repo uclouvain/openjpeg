@@ -57,7 +57,7 @@ ADD_TEST(ttd0 ${EXECUTABLE_OUTPUT_PATH}/test_tile_decoder)
 set_property(TEST ttd0 APPEND PROPERTY DEPENDS tte0)
 ADD_TEST(ttd1 ${EXECUTABLE_OUTPUT_PATH}/test_tile_decoder 0 0 1024 1024 tte1.j2k)
 set_property(TEST ttd1 APPEND PROPERTY DEPENDS tte1)
-ADD_TEST(ttd2 ${EXECUTABLE_OUTPUT_PATH}/test_tile_decoder 0 0 1024 1024 tte1.jp2)
+ADD_TEST(ttd2 ${EXECUTABLE_OUTPUT_PATH}/test_tile_decoder 0 0 1024 1024 tte2.jp2)
 set_property(TEST ttd2 APPEND PROPERTY DEPENDS tte2)
 
 # No image send to the dashboard if lib PNG is not available.
