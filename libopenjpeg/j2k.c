@@ -505,12 +505,10 @@ static opj_bool j2k_write_cod_v2(	opj_j2k_v2_t *p_j2k,
  * @param	p_header_size	the size of the data contained in the COD marker.
  * @param	p_manager		the user event manager.
 */
-static opj_bool opj_j2k_read_cod (
-					opj_j2k_v2_t *p_j2k,
-					OPJ_BYTE * p_header_data,
-					OPJ_UINT32 p_header_size,
-					struct opj_event_mgr * p_manager
-					);
+static opj_bool opj_j2k_read_cod (  opj_j2k_v2_t *p_j2k,
+                                    OPJ_BYTE * p_header_data,
+                                    OPJ_UINT32 p_header_size,
+                                    opj_event_mgr_t * p_manager);
 
 /**
 Write the COC marker (coding style component)
@@ -1442,7 +1440,7 @@ const opj_dec_memory_marker_handler_t j2k_memory_marker_handler_tab [] =
   {J2K_MS_MCO, J2K_DEC_STATE_MH | J2K_DEC_STATE_TPH, j2k_read_mco},
 #endif
   {J2K_MS_SOT, J2K_STATE_MH | J2K_STATE_TPHSOT, opj_j2k_read_sot},
-  {J2K_MS_COD, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_cod_v2},
+  {J2K_MS_COD, J2K_STATE_MH | J2K_STATE_TPH, opj_j2k_read_cod},
   {J2K_MS_COC, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_coc_v2},
   {J2K_MS_RGN, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_rgn_v2},
   {J2K_MS_QCD, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_qcd_v2},
@@ -2878,12 +2876,11 @@ opj_bool j2k_write_cod_v2(	opj_j2k_v2_t *p_j2k,
  * @param	p_header_size	the size of the data contained in the COD marker.
  * @param	p_manager		the user event manager.
 */
-opj_bool j2k_read_cod_v2 (
-					opj_j2k_v2_t *p_j2k,
-					OPJ_BYTE * p_header_data,
-					OPJ_UINT32 p_header_size,
-					struct opj_event_mgr * p_manager
-					)
+static opj_bool opj_j2k_read_cod (  opj_j2k_v2_t *p_j2k,
+                                    OPJ_BYTE * p_header_data,
+                                    OPJ_UINT32 p_header_size,
+                                    opj_event_mgr_t * p_manager
+                                    )
 {
 	/* loop */
 	OPJ_UINT32 i;
