@@ -291,13 +291,7 @@ Destroy a JP2 decompressor handle
 @param jp2 JP2 decompressor handle to destroy
 */
 void jp2_destroy_decompress(opj_jp2_t *jp2);
-/**
-Setup the decoder decoding parameters using user parameters.
-Decoding parameters are returned in jp2->j2k->cp. 
-@param jp2 JP2 decompressor handle
-@param parameters decompression parameters
-*/
-void jp2_setup_decoder(opj_jp2_t *jp2, opj_dparameters_t *parameters);
+
 /**
 Setup the decoder decoding parameters using user parameters.
 Decoding parameters are returned in jp2->j2k->cp.
