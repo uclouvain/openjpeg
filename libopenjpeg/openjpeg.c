@@ -675,7 +675,7 @@ opj_bool OPJ_CALLCONV opj_start_compress (	opj_codec_t *p_codec,
 	return OPJ_FALSE;
 }
 
-opj_bool OPJ_CALLCONV opj_encode_v2(opj_codec_t *p_info, opj_stream_t *p_stream)
+opj_bool OPJ_CALLCONV opj_encode(opj_codec_t *p_info, opj_stream_t *p_stream)
 {
 	if (p_info && p_stream) {
 		opj_codec_private_t * l_codec = (opj_codec_private_t *) p_info;

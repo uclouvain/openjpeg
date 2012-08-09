@@ -1423,8 +1423,8 @@ OPJ_API opj_bool OPJ_CALLCONV opj_end_compress (opj_codec_t *p_codec,
  *
  * @return 				Returns true if successful, returns false otherwise
  */
-OPJ_API opj_bool OPJ_CALLCONV opj_encode_v2(opj_codec_t *p_codec, 
-											opj_stream_t *p_stream);
+OPJ_API opj_bool OPJ_CALLCONV opj_encode(opj_codec_t *p_codec, 
+                                         opj_stream_t *p_stream);
 
 
 /**

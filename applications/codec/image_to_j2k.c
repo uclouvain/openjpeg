@@ -1861,9 +1861,9 @@ int main(int argc, char **argv) {
       free(l_data);
     }
     else {
-      bSuccess = bSuccess && opj_encode_v2(l_codec, l_stream);
+      bSuccess = bSuccess && opj_encode(l_codec, l_stream);
       if (!bSuccess)  {
-        fprintf(stderr, "failed to encode image: opj_encode_v2\n");
+        fprintf(stderr, "failed to encode image: opj_encode\n");
       }
     }
 		bSuccess = bSuccess && opj_end_compress(l_codec, l_stream);
