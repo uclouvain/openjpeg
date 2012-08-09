@@ -1431,8 +1431,6 @@ OPJ_API opj_bool OPJ_CALLCONV opj_encode(opj_codec_t *p_codec,
 Destroy Codestream information after compression or decompression
 @param cstr_info Codestream information structure
 */
-OPJ_API void OPJ_CALLCONV opj_destroy_cstr_info(opj_codestream_info_t *cstr_info);
-
 OPJ_API void OPJ_CALLCONV opj_destroy_cstr_info_v2(opj_codestream_info_v2_t **cstr_info);
 
 

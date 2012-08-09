@@ -1010,27 +1010,6 @@ opj_bool OPJ_CALLCONV opj_write_tile (	opj_codec_t *p_codec,
 }
 
 
-/* DEPRECATED */
-void OPJ_CALLCONV opj_destroy_cstr_info(opj_codestream_info_t *cstr_info) {
-	if (cstr_info) {
-		int tileno;
-		for (tileno = 0; tileno < cstr_info->tw * cstr_info->th; tileno++) {
-			opj_tile_info_t *tile_info = &cstr_info->tile[tileno];
-			opj_free(tile_info->thresh);
-			opj_free(tile_info->packet);
-			opj_free(tile_info->tp);
-			opj_free(tile_info->marker);
-		}
-		opj_free(cstr_info->tile);
-		opj_free(cstr_info->marker);
-		opj_free(cstr_info->numdecompos);
-	}
-}
-
-
-
-
-
 void OPJ_CALLCONV opj_destroy_codec(opj_codec_t *p_codec)
 {
 	if (p_codec) {
