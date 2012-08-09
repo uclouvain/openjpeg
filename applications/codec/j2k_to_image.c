@@ -786,7 +786,7 @@ int main(int argc, char **argv)
 		opj_set_error_handler(l_codec, error_callback,00);
 
 		/* Setup the decoder decoding parameters using user parameters */
-		if ( !opj_setup_decoder_v2(l_codec, &parameters) ){
+		if ( !opj_setup_decoder(l_codec, &parameters) ){
 			fprintf(stderr, "ERROR -> j2k_dump: failed to setup the decoder\n");
 			opj_stream_destroy(l_stream);
 			fclose(fsrc);

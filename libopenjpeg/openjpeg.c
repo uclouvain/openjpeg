@@ -457,9 +457,9 @@ void OPJ_CALLCONV opj_set_default_decoder_parameters(opj_dparameters_t *paramete
 	}
 }
 
-opj_bool OPJ_CALLCONV opj_setup_decoder_v2(	opj_codec_t *p_codec, 
-											opj_dparameters_t *parameters 
-											)
+opj_bool OPJ_CALLCONV opj_setup_decoder(opj_codec_t *p_codec,
+                                        opj_dparameters_t *parameters 
+										)
 {
 	if (p_codec && parameters) { 
 		opj_codec_private_t * l_codec = (opj_codec_private_t *) p_codec;

@@ -1230,8 +1230,8 @@ OPJ_API void OPJ_CALLCONV opj_set_default_decoder_parameters(opj_dparameters_t *
  *
  * @return true			if the decoder is correctly set
  */
-OPJ_API opj_bool OPJ_CALLCONV opj_setup_decoder_v2(	opj_codec_t *p_codec,
-													opj_dparameters_t *parameters );
+OPJ_API opj_bool OPJ_CALLCONV opj_setup_decoder(opj_codec_t *p_codec,
+												opj_dparameters_t *parameters );
 
 /**
  * Decodes an image header.
