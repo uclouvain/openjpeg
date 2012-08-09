@@ -149,23 +149,7 @@ typedef struct opj_codec_private
 opj_codec_private_t;
 
 /* ---------------------------------------------------------------------- */
-/**
- * Default callback function.
- * Do nothing.
- */
-void opj_default_callback (const char *msg, void *client_data)
-{
-}
-
-void set_default_event_handler(opj_event_mgr_t * p_manager)
-{
-	p_manager->m_error_data = 00;
-	p_manager->m_warning_data = 00;
-	p_manager->m_info_data = 00;
-	p_manager->error_handler = opj_default_callback;
-	p_manager->info_handler = opj_default_callback;
-	p_manager->warning_handler = opj_default_callback;
-}
+/* Functions to set info_handler */
 
 opj_bool OPJ_CALLCONV opj_set_info_handler(	opj_codec_t * p_codec, 
 											opj_msg_callback p_callback,
@@ -435,7 +419,7 @@ opj_codec_t* OPJ_CALLCONV opj_create_decompress(OPJ_CODEC_FORMAT p_format)
 			return 00;
 	}
 
-	set_default_event_handler(&(l_codec->m_event_mgr));
+	opj_set_default_event_handler(&(l_codec->m_event_mgr));
 	return (opj_codec_t*) l_codec;
 }
 
@@ -791,7 +775,7 @@ opj_codec_t* OPJ_CALLCONV opj_create_compress(OPJ_CODEC_FORMAT p_format)
 			return 00;
 	}
 
-	set_default_event_handler(&(l_codec->m_event_mgr));
+	opj_set_default_event_handler(&(l_codec->m_event_mgr));
 	return (opj_codec_t*) l_codec;
 }
 

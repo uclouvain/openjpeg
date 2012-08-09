@@ -62,16 +62,11 @@ _itoa(int i, char *a, int r) {
 #endif
 
 /* ----------------------------------------------------------------------- */
-opj_event_mgr_t* OPJ_CALLCONV opj_set_event_mgr(opj_common_ptr cinfo, opj_event_mgr_t *event_mgr, void *context) {
-	if(cinfo) {
-		opj_event_mgr_t *previous = cinfo->event_mgr;
-		cinfo->event_mgr = event_mgr;
-		cinfo->client_data = context;
-		return previous;
-	}
-
-	return NULL;
-}
+/**
+ * Default callback function.
+ * Do nothing.
+ */
+static void opj_default_callback (const char *msg, void *client_data){};
 
 /* ----------------------------------------------------------------------- */
 opj_bool opj_event_msg(opj_common_ptr cinfo, int event_type, const char *fmt, ...) {
@@ -171,3 +166,14 @@ opj_bool opj_event_msg_v2(opj_event_mgr_t* p_event_mgr, int event_type, const ch
 
 	return OPJ_TRUE;
 }
+
+void opj_set_default_event_handler(opj_event_mgr_t * p_manager)
+{
+	p_manager->m_error_data = 00;
+	p_manager->m_warning_data = 00;
+	p_manager->m_info_data = 00;
+	p_manager->error_handler = opj_default_callback;
+	p_manager->info_handler = opj_default_callback;
+	p_manager->warning_handler = opj_default_callback;
+}
+

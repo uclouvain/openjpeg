@@ -221,7 +221,7 @@ typedef void (*opj_msg_callback) (const char *msg, void *client_data);
 
 
 
-/** SHOULD BE MOVE IN EVET.H when we remove old functions
+/** SHOULD BE MOVE IN EVET.H when we remove old functions TODO MSD
 Message handler object
 used for 
 <ul>
@@ -1180,10 +1180,6 @@ OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream (FILE * p_file,
 OPJ_API opj_bool OPJ_CALLCONV opj_set_info_handler(opj_codec_t * p_codec, opj_msg_callback p_callback,void * p_user_data);
 OPJ_API opj_bool OPJ_CALLCONV opj_set_warning_handler(opj_codec_t * p_codec, opj_msg_callback p_callback,void * p_user_data);
 OPJ_API opj_bool OPJ_CALLCONV opj_set_error_handler(opj_codec_t * p_codec, opj_msg_callback p_callback,void * p_user_data);
-
-/**
- */
-DEPRECATED( OPJ_API opj_event_mgr_t* OPJ_CALLCONV opj_set_event_mgr(opj_common_ptr cinfo, opj_event_mgr_t *event_mgr, void *context));
 
 /* 
 ==========================================================
