@@ -755,12 +755,6 @@ static opj_bool j2k_write_updated_tlm(	opj_j2k_v2_t *p_j2k,
 										struct opj_event_mgr * p_manager );
 
 /**
-Read the PLM marker (packet length, main header)
-@param j2k J2K handle
-*/
-static void j2k_read_plm(opj_j2k_t *j2k);
-
-/**
  * Reads a PLM marker (Packet length, main header marker)
  *
  * @param	p_header_data	the data contained in the TLM box.
@@ -768,12 +762,10 @@ static void j2k_read_plm(opj_j2k_t *j2k);
  * @param	p_header_size	the size of the data contained in the TLM marker.
  * @param	p_manager		the user event manager.
 */
-static opj_bool j2k_read_plm_v2 (
-						opj_j2k_v2_t *p_j2k,
-						OPJ_BYTE * p_header_data,
-						OPJ_UINT32 p_header_size,
-						struct opj_event_mgr * p_manager
-					);
+static opj_bool opj_j2k_read_plm (  opj_j2k_v2_t *p_j2k,
+                                    OPJ_BYTE * p_header_data,
+                                    OPJ_UINT32 p_header_size,
+                                    opj_event_mgr_t * p_manager);
 /**
 Read the PLT marker (packet length, tile-part header)
 @param j2k J2K handle
@@ -1399,7 +1391,7 @@ const opj_dec_memory_marker_handler_t j2k_memory_marker_handler_tab [] =
   {J2K_MS_POC, J2K_STATE_MH | J2K_STATE_TPH, opj_j2k_read_poc},
   {J2K_MS_SIZ, J2K_STATE_MHSIZ, opj_j2k_read_siz},
   {J2K_MS_TLM, J2K_STATE_MH, opj_j2k_read_tlm},
-  {J2K_MS_PLM, J2K_STATE_MH, j2k_read_plm_v2},
+  {J2K_MS_PLM, J2K_STATE_MH, opj_j2k_read_plm},
   {J2K_MS_PLT, J2K_STATE_TPH, j2k_read_plt_v2},
   {J2K_MS_PPM, J2K_STATE_MH, j2k_read_ppm_v3},
   {J2K_MS_PPT, J2K_STATE_TPH, j2k_read_ppt_v2},
@@ -3904,30 +3896,6 @@ static opj_bool opj_j2k_read_tlm (  opj_j2k_v2_t *p_j2k,
 	return OPJ_TRUE;
 }
 
-static void j2k_read_plm(opj_j2k_t *j2k) {
-	int len, i, Zplm, Nplm, add, packet_len = 0;
-	
-	opj_cio_t *cio = j2k->cio;
-
-	len = cio_read(cio, 2);		/* Lplm */
-	Zplm = cio_read(cio, 1);	/* Zplm */
-	len -= 3;
-	while (len > 0) {
-		Nplm = cio_read(cio, 4);		/* Nplm */
-		len -= 4;
-		for (i = Nplm; i > 0; i--) {
-			add = cio_read(cio, 1);
-			len--;
-			packet_len = (packet_len << 7) + add;	/* Iplm_ij */
-			if ((add & 0x80) == 0) {
-				/* New packet */
-				packet_len = 0;
-			}
-			if (len <= 0)
-				break;
-		}
-	}
-}
 
 /**
  * Reads a PLM marker (Packet length, main header marker)
@@ -3937,12 +3905,11 @@ static void j2k_read_plm(opj_j2k_t *j2k) {
  * @param	p_header_size	the size of the data contained in the TLM marker.
  * @param	p_manager		the user event manager.
 */
-opj_bool j2k_read_plm_v2 (
-						opj_j2k_v2_t *p_j2k,
-						OPJ_BYTE * p_header_data,
-						OPJ_UINT32 p_header_size,
-						struct opj_event_mgr * p_manager
-					)
+static opj_bool opj_j2k_read_plm (  opj_j2k_v2_t *p_j2k,
+                                    OPJ_BYTE * p_header_data,
+                                    OPJ_UINT32 p_header_size,
+                                    opj_event_mgr_t * p_manager
+                                    )
 {
 	/* preconditions */
 	assert(p_header_data != 00);
@@ -5870,7 +5837,7 @@ opj_dec_mstabent_t j2k_dec_mstab[] = {
   /*{J2K_MS_QCC, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_qcc},*/
   /*{J2K_MS_POC, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_poc},*/
   /*{J2K_MS_TLM, J2K_STATE_MH, j2k_read_tlm},*/
-  {J2K_MS_PLM, J2K_STATE_MH, j2k_read_plm},
+  /*{J2K_MS_PLM, J2K_STATE_MH, j2k_read_plm},*/
   {J2K_MS_PLT, J2K_STATE_TPH, j2k_read_plt},
   {J2K_MS_PPM, J2K_STATE_MH, j2k_read_ppm},
   {J2K_MS_PPT, J2K_STATE_TPH, j2k_read_ppt},
