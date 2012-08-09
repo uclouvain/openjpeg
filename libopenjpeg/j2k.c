@@ -970,12 +970,6 @@ static opj_bool j2k_write_sod_v2(	opj_j2k_v2_t *p_j2k,
 									struct opj_event_mgr * p_manager );
 
 /**
-Read the SOD marker (start of data)
-@param j2k J2K handle
-*/
-static void j2k_read_sod(opj_j2k_t *j2k);
-
-/**
  * Reads a SOD marker (Start Of Data)
  *
  * @param	p_header_data	the data contained in the SOD box.
@@ -5590,46 +5584,7 @@ opj_bool j2k_write_sod_v2(	opj_j2k_v2_t *p_j2k,
 }
 
 
-static void j2k_read_sod(opj_j2k_t *j2k) {
-	int len, truncate = 0, i;
-	unsigned char *data = NULL, *data_ptr = NULL;
 
-	opj_cio_t *cio = j2k->cio;
-	int curtileno = j2k->curtileno;
-
-	/* Index */
-	if (j2k->cstr_info) {
-		j2k->cstr_info->tile[j2k->curtileno].tp[j2k->cur_tp_num].tp_end_header =
-			cio_tell(cio) + j2k->pos_correction - 1;
-		if (j2k->cur_tp_num == 0)
-			j2k->cstr_info->tile[j2k->curtileno].end_header = cio_tell(cio) + j2k->pos_correction - 1;
-		j2k->cstr_info->packno = 0;
-	}
-	
-	len = int_min(j2k->eot - cio_getbp(cio), cio_numbytesleft(cio) + 1);
-
-	if (len == cio_numbytesleft(cio) + 1) {
-		truncate = 1;		/* Case of a truncate codestream */
-	}	
-
-	data = j2k->tile_data[curtileno];
-	data = (unsigned char*) opj_realloc(data, (j2k->tile_len[curtileno] + len) * sizeof(unsigned char));
-
-	data_ptr = data + j2k->tile_len[curtileno];
-	for (i = 0; i < len; i++) {
-		data_ptr[i] = cio_read(cio, 1);
-	}
-
-	j2k->tile_len[curtileno] += len;
-	j2k->tile_data[curtileno] = data;
-	
-	if (!truncate) {
-		j2k->state = J2K_STATE_TPHSOT;
-	} else {
-		j2k->state = J2K_STATE_NEOC;	/* RAJOUTE !! */
-	}
-	j2k->cur_tp_num++;
-}
 
 /**
  * Reads a SOD marker (Start Of Data)
@@ -6439,7 +6394,7 @@ typedef struct opj_dec_mstabent {
 opj_dec_mstabent_t j2k_dec_mstab[] = {
   /*{J2K_MS_SOC, J2K_STATE_MHSOC, j2k_read_soc},*/
   /*{J2K_MS_SOT, J2K_STATE_MH | J2K_STATE_TPHSOT, j2k_read_sot},*/
-  {J2K_MS_SOD, J2K_STATE_TPH, j2k_read_sod},
+  /*{J2K_MS_SOD, J2K_STATE_TPH, j2k_read_sod},*/
   {J2K_MS_EOC, J2K_STATE_TPHSOT, j2k_read_eoc},
   {J2K_MS_SIZ, J2K_STATE_MHSIZ, j2k_read_siz},
   {J2K_MS_COD, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_cod},
