@@ -479,6 +479,222 @@ opj_bool OPJ_CALLCONV opj_setup_decoder(opj_codec_t *p_codec,
 	return OPJ_FALSE;
 }
 
+opj_bool OPJ_CALLCONV opj_read_header (	opj_stream_t *p_stream,
+										opj_codec_t *p_codec,
+										opj_image_t **p_image )
+{
+	if (p_codec && p_stream) {
+		opj_codec_private_t* l_codec = (opj_codec_private_t*) p_codec;
+		opj_stream_private_t* l_stream = (opj_stream_private_t*) p_stream;
+
+		if(! l_codec->is_decompressor) {
+			opj_event_msg_v2(&(l_codec->m_event_mgr), EVT_ERROR, "Codec provided to the opj_read_header function is not a decompressor handler.\n");
+			return OPJ_FALSE;
+		}
+
+		return l_codec->m_codec_data.m_decompression.opj_read_header(	l_stream,
+																		l_codec->m_codec,
+																		p_image,
+																		&(l_codec->m_event_mgr) );
+	}
+
+	return OPJ_FALSE;
+}
+
+/*
+ *
+ *
+ */
+opj_bool OPJ_CALLCONV opj_decode(   opj_codec_t *p_codec,
+                                    opj_stream_t *p_stream,
+                                    opj_image_t* p_image)
+{
+	if (p_codec && p_stream) {
+		opj_codec_private_t * l_codec = (opj_codec_private_t *) p_codec;
+		opj_stream_private_t * l_stream = (opj_stream_private_t *) p_stream;
+
+		if (! l_codec->is_decompressor) {
+			return OPJ_FALSE;
+		}
+
+		return l_codec->m_codec_data.m_decompression.opj_decode(l_codec->m_codec,
+																l_stream,
+																p_image,
+																&(l_codec->m_event_mgr) );
+	}
+
+	return OPJ_FALSE;
+}
+
+
+/**
+ * Sets the given area to be decoded. This function should be called right after opj_read_header and before any tile header reading.
+ *
+ * @param	p_codec			the jpeg2000 codec.
+ * @param	p_start_x		the left position of the rectangle to decode (in image coordinates).
+ * @param	p_end_x			the right position of the rectangle to decode (in image coordinates).
+ * @param	p_start_y		the up position of the rectangle to decode (in image coordinates).
+ * @param	p_end_y			the bottom position of the rectangle to decode (in image coordinates).
+ *
+ * @return	true			if the area could be set.
+ */
+opj_bool OPJ_CALLCONV opj_set_decode_area(	opj_codec_t *p_codec,
+											opj_image_t* p_image,
+											OPJ_INT32 p_start_x, OPJ_INT32 p_start_y,
+											OPJ_INT32 p_end_x, OPJ_INT32 p_end_y
+											)
+{
+	if (p_codec) {
+		opj_codec_private_t * l_codec = (opj_codec_private_t *) p_codec;
+		
+		if (! l_codec->is_decompressor) {
+			return OPJ_FALSE;
+		}
+
+		return  l_codec->m_codec_data.m_decompression.opj_set_decode_area(	l_codec->m_codec,
+																			p_image,
+																			p_start_x, p_start_y,
+																			p_end_x, p_end_y,
+																			&(l_codec->m_event_mgr) );
+	}
+	return OPJ_FALSE;
+}
+
+/**
+ * Reads a tile header. This function is compulsory and allows one to know the size of the tile thta will be decoded.
+ * The user may need to refer to the image got by opj_read_header to understand the size being taken by the tile.
+ *
+ * @param	p_codec			the jpeg2000 codec.
+ * @param	p_tile_index	pointer to a value that will hold the index of the tile being decoded, in case of success.
+ * @param	p_data_size		pointer to a value that will hold the maximum size of the decoded data, in case of success. In case
+ *							of truncated codestreams, the actual number of bytes decoded may be lower. The computation of the size is the same
+ *							as depicted in opj_write_tile.
+ * @param	p_tile_x0		pointer to a value that will hold the x0 pos of the tile (in the image).
+ * @param	p_tile_y0		pointer to a value that will hold the y0 pos of the tile (in the image).
+ * @param	p_tile_x1		pointer to a value that will hold the x1 pos of the tile (in the image).
+ * @param	p_tile_y1		pointer to a value that will hold the y1 pos of the tile (in the image).
+ * @param	p_nb_comps		pointer to a value that will hold the number of components in the tile.
+ * @param	p_should_go_on	pointer to a boolean that will hold the fact that the decoding should go on. In case the
+ *							codestream is over at the time of the call, the value will be set to false. The user should then stop
+ *							the decoding.
+ * @param	p_stream		the stream to decode.
+ * @return	true			if the tile header could be decoded. In case the decoding should end, the returned value is still true.
+ *							returning false may be the result of a shortage of memory or an internal error.
+ */
+opj_bool OPJ_CALLCONV opj_read_tile_header(	opj_codec_t *p_codec,
+											opj_stream_t * p_stream,
+											OPJ_UINT32 * p_tile_index,
+											OPJ_UINT32 * p_data_size,
+											OPJ_INT32 * p_tile_x0, OPJ_INT32 * p_tile_y0,
+											OPJ_INT32 * p_tile_x1, OPJ_INT32 * p_tile_y1,
+											OPJ_UINT32 * p_nb_comps,
+											opj_bool * p_should_go_on)
+{
+	if (p_codec && p_stream && p_data_size && p_tile_index) {
+		opj_codec_private_t * l_codec = (opj_codec_private_t *) p_codec;
+		opj_stream_private_t * l_stream = (opj_stream_private_t *) p_stream;
+
+		if (! l_codec->is_decompressor) {
+			return OPJ_FALSE;
+		}
+
+		return l_codec->m_codec_data.m_decompression.opj_read_tile_header(	l_codec->m_codec,
+																			p_tile_index,
+																			p_data_size,
+																			p_tile_x0, p_tile_y0,
+																			p_tile_x1, p_tile_y1,
+																			p_nb_comps,
+																			p_should_go_on,
+																			l_stream,
+																			&(l_codec->m_event_mgr));
+	}
+	return OPJ_FALSE;
+}
+
+/**
+ * Reads a tile data. This function is compulsory and allows one to decode tile data. opj_read_tile_header should be called before.
+ * The user may need to refer to the image got by opj_read_header to understand the size being taken by the tile.
+ *
+ * @param	p_codec			the jpeg2000 codec.
+ * @param	p_tile_index	the index of the tile being decoded, this should be the value set by opj_read_tile_header.
+ * @param	p_data			pointer to a memory block that will hold the decoded data.
+ * @param	p_data_size		size of p_data. p_data_size should be bigger or equal to the value set by opj_read_tile_header.
+ * @param	p_stream		the stream to decode.
+ *
+ * @return	true			if the data could be decoded.
+ */
+opj_bool OPJ_CALLCONV opj_decode_tile_data(	opj_codec_t *p_codec,
+											OPJ_UINT32 p_tile_index,
+											OPJ_BYTE * p_data,
+											OPJ_UINT32 p_data_size,
+											opj_stream_t *p_stream
+											)
+{
+	if (p_codec && p_data && p_stream) {
+		opj_codec_private_t * l_codec = (opj_codec_private_t *) p_codec;
+		opj_stream_private_t * l_stream = (opj_stream_private_t *) p_stream;
+
+		if (! l_codec->is_decompressor) {
+			return OPJ_FALSE;
+		}
+
+		return l_codec->m_codec_data.m_decompression.opj_decode_tile_data(	l_codec->m_codec,
+																			p_tile_index,
+																			p_data,
+																			p_data_size,
+																			l_stream,
+																			&(l_codec->m_event_mgr) );
+	}
+	return OPJ_FALSE;
+}
+
+/*
+ *
+ *
+ */
+opj_bool OPJ_CALLCONV opj_get_decoded_tile(	opj_codec_t *p_codec,
+											opj_stream_t *p_stream,
+											opj_image_t *p_image,
+											OPJ_UINT32 tile_index)
+{
+	if (p_codec && p_stream) {
+		opj_codec_private_t * l_codec = (opj_codec_private_t *) p_codec;
+		opj_stream_private_t * l_stream = (opj_stream_private_t *) p_stream;
+
+		if (! l_codec->is_decompressor) {
+			return OPJ_FALSE;
+		}
+		
+		return l_codec->m_codec_data.m_decompression.opj_get_decoded_tile(	l_codec->m_codec,
+																			l_stream,
+																			p_image,
+																			&(l_codec->m_event_mgr),
+																			tile_index);
+	}
+
+	return OPJ_FALSE;
+}
+
+/*
+ *
+ *
+ */
+opj_bool OPJ_CALLCONV opj_set_decoded_resolution_factor(opj_codec_t *p_codec, 
+														OPJ_UINT32 res_factor )
+{
+	opj_codec_private_t * l_codec = (opj_codec_private_t *) p_codec;
+
+	if ( !l_codec ){
+		fprintf(stderr, "[ERROR] Input parameters of the setup_decoder function are incorrect.\n");
+		return OPJ_FALSE;
+	}
+
+	l_codec->m_codec_data.m_decompression.opj_set_decoded_resolution_factor(l_codec->m_codec, 
+																			res_factor,
+																			&(l_codec->m_event_mgr) );
+	return OPJ_TRUE;
+}
+
 /* ---------------------------------------------------------------------- */
 /* COMPRESSION FUNCTIONS*/
 
@@ -710,6 +926,88 @@ opj_bool OPJ_CALLCONV opj_end_compress (opj_codec_t *p_codec,
 
 }
 
+/*
+ *
+ *
+ */
+opj_bool OPJ_CALLCONV opj_end_decompress (	opj_codec_t *p_codec,
+											opj_stream_t *p_stream)
+{
+	if (p_codec && p_stream) {
+		opj_codec_private_t * l_codec = (opj_codec_private_t *) p_codec;
+		opj_stream_private_t * l_stream = (opj_stream_private_t *) p_stream;
+
+		if (! l_codec->is_decompressor) {
+			return OPJ_FALSE;
+		}
+		
+		return l_codec->m_codec_data.m_decompression.opj_end_decompress(l_codec->m_codec,
+																		l_stream,
+																		&(l_codec->m_event_mgr) );
+	}
+
+	return OPJ_FALSE;
+}
+
+
+opj_bool OPJ_CALLCONV opj_set_MCT(opj_cparameters_t *parameters,OPJ_FLOAT32 * pEncodingMatrix,OPJ_INT32 * p_dc_shift,OPJ_UINT32 pNbComp)
+{
+	OPJ_UINT32 l_matrix_size = pNbComp * pNbComp * sizeof(OPJ_FLOAT32);
+	OPJ_UINT32 l_dc_shift_size = pNbComp * sizeof(OPJ_INT32);
+	OPJ_UINT32 l_mct_total_size = l_matrix_size + l_dc_shift_size;
+
+	/* add MCT capability */
+	int rsiz = (int)parameters->cp_rsiz | (int)MCT;
+	parameters->cp_rsiz = (OPJ_RSIZ_CAPABILITIES)rsiz;
+	parameters->irreversible = 1;
+
+	/* use array based MCT */
+	parameters->tcp_mct = 2;
+	parameters->mct_data = opj_malloc(l_mct_total_size);
+	if (! parameters->mct_data) {
+		return OPJ_FALSE;
+	}
+
+	memcpy(parameters->mct_data,pEncodingMatrix,l_matrix_size);
+	memcpy(((OPJ_BYTE *) parameters->mct_data) +  l_matrix_size,p_dc_shift,l_dc_shift_size);
+
+	return OPJ_TRUE;
+}
+
+/**
+ * Writes a tile with the given data.
+ *
+ * @param	p_compressor		the jpeg2000 codec.
+ * @param	p_tile_index		the index of the tile to write. At the moment, the tiles must be written from 0 to n-1 in sequence.
+ * @param	p_data				pointer to the data to write. Data is arranged in sequence, data_comp0, then data_comp1, then ... NO INTERLEAVING should be set.
+ * @param	p_data_size			this value os used to make sure the data being written is correct. The size must be equal to the sum for each component of tile_width * tile_height * component_size. component_size can be 1,2 or 4 bytes,
+ *								depending on the precision of the given component.
+ * @param	p_stream			the stream to write data to.
+ */
+opj_bool OPJ_CALLCONV opj_write_tile (	opj_codec_t *p_codec,
+										OPJ_UINT32 p_tile_index,
+										OPJ_BYTE * p_data,
+										OPJ_UINT32 p_data_size,
+										opj_stream_t *p_stream )
+{
+	if (p_codec && p_stream && p_data) {
+		opj_codec_private_t * l_codec = (opj_codec_private_t *) p_codec;
+		opj_stream_private_t * l_stream = (opj_stream_private_t *) p_stream;
+
+		if (l_codec->is_decompressor) {
+			return OPJ_FALSE;
+		}
+
+		return l_codec->m_codec_data.m_compression.opj_write_tile(	l_codec->m_codec,
+																	p_tile_index,
+																	p_data,
+																	p_data_size,
+																	l_stream,
+																	&(l_codec->m_event_mgr) );
+	}
+
+	return OPJ_FALSE;
+}
 
 
 /* DEPRECATED */
@@ -730,27 +1028,7 @@ void OPJ_CALLCONV opj_destroy_cstr_info(opj_codestream_info_t *cstr_info) {
 }
 
 
-opj_bool OPJ_CALLCONV opj_read_header (	opj_stream_t *p_stream,
-										opj_codec_t *p_codec,
-										opj_image_t **p_image )
-{
-	if (p_codec && p_stream) {
-		opj_codec_private_t* l_codec = (opj_codec_private_t*) p_codec;
-		opj_stream_private_t* l_stream = (opj_stream_private_t*) p_stream;
 
-		if(! l_codec->is_decompressor) {
-			opj_event_msg_v2(&(l_codec->m_event_mgr), EVT_ERROR, "Codec provided to the opj_read_header function is not a decompressor handler.\n");
-			return OPJ_FALSE;
-		}
-
-		return l_codec->m_codec_data.m_decompression.opj_read_header(	l_stream,
-																		l_codec->m_codec,
-																		p_image,
-																		&(l_codec->m_event_mgr) );
-	}
-
-	return OPJ_FALSE;
-}
 
 
 void OPJ_CALLCONV opj_destroy_codec(opj_codec_t *p_codec)
@@ -770,126 +1048,7 @@ void OPJ_CALLCONV opj_destroy_codec(opj_codec_t *p_codec)
 	}
 }
 
-/**
- * Sets the given area to be decoded. This function should be called right after opj_read_header and before any tile header reading.
- *
- * @param	p_codec			the jpeg2000 codec.
- * @param	p_start_x		the left position of the rectangle to decode (in image coordinates).
- * @param	p_end_x			the right position of the rectangle to decode (in image coordinates).
- * @param	p_start_y		the up position of the rectangle to decode (in image coordinates).
- * @param	p_end_y			the bottom position of the rectangle to decode (in image coordinates).
- *
- * @return	true			if the area could be set.
- */
-opj_bool OPJ_CALLCONV opj_set_decode_area(	opj_codec_t *p_codec,
-											opj_image_t* p_image,
-											OPJ_INT32 p_start_x, OPJ_INT32 p_start_y,
-											OPJ_INT32 p_end_x, OPJ_INT32 p_end_y
-											)
-{
-	if (p_codec) {
-		opj_codec_private_t * l_codec = (opj_codec_private_t *) p_codec;
-		
-		if (! l_codec->is_decompressor) {
-			return OPJ_FALSE;
-		}
 
-		return  l_codec->m_codec_data.m_decompression.opj_set_decode_area(	l_codec->m_codec,
-																			p_image,
-																			p_start_x, p_start_y,
-																			p_end_x, p_end_y,
-																			&(l_codec->m_event_mgr) );
-	}
-	return OPJ_FALSE;
-}
-
-/**
- * Reads a tile header. This function is compulsory and allows one to know the size of the tile thta will be decoded.
- * The user may need to refer to the image got by opj_read_header to understand the size being taken by the tile.
- *
- * @param	p_codec			the jpeg2000 codec.
- * @param	p_tile_index	pointer to a value that will hold the index of the tile being decoded, in case of success.
- * @param	p_data_size		pointer to a value that will hold the maximum size of the decoded data, in case of success. In case
- *							of truncated codestreams, the actual number of bytes decoded may be lower. The computation of the size is the same
- *							as depicted in opj_write_tile.
- * @param	p_tile_x0		pointer to a value that will hold the x0 pos of the tile (in the image).
- * @param	p_tile_y0		pointer to a value that will hold the y0 pos of the tile (in the image).
- * @param	p_tile_x1		pointer to a value that will hold the x1 pos of the tile (in the image).
- * @param	p_tile_y1		pointer to a value that will hold the y1 pos of the tile (in the image).
- * @param	p_nb_comps		pointer to a value that will hold the number of components in the tile.
- * @param	p_should_go_on	pointer to a boolean that will hold the fact that the decoding should go on. In case the
- *							codestream is over at the time of the call, the value will be set to false. The user should then stop
- *							the decoding.
- * @param	p_stream		the stream to decode.
- * @return	true			if the tile header could be decoded. In case the decoding should end, the returned value is still true.
- *							returning false may be the result of a shortage of memory or an internal error.
- */
-opj_bool OPJ_CALLCONV opj_read_tile_header(	opj_codec_t *p_codec,
-											opj_stream_t * p_stream,
-											OPJ_UINT32 * p_tile_index,
-											OPJ_UINT32 * p_data_size,
-											OPJ_INT32 * p_tile_x0, OPJ_INT32 * p_tile_y0,
-											OPJ_INT32 * p_tile_x1, OPJ_INT32 * p_tile_y1,
-											OPJ_UINT32 * p_nb_comps,
-											opj_bool * p_should_go_on)
-{
-	if (p_codec && p_stream && p_data_size && p_tile_index) {
-		opj_codec_private_t * l_codec = (opj_codec_private_t *) p_codec;
-		opj_stream_private_t * l_stream = (opj_stream_private_t *) p_stream;
-
-		if (! l_codec->is_decompressor) {
-			return OPJ_FALSE;
-		}
-
-		return l_codec->m_codec_data.m_decompression.opj_read_tile_header(	l_codec->m_codec,
-																			p_tile_index,
-																			p_data_size,
-																			p_tile_x0, p_tile_y0,
-																			p_tile_x1, p_tile_y1,
-																			p_nb_comps,
-																			p_should_go_on,
-																			l_stream,
-																			&(l_codec->m_event_mgr));
-	}
-	return OPJ_FALSE;
-}
-
-/**
- * Reads a tile data. This function is compulsory and allows one to decode tile data. opj_read_tile_header should be called before.
- * The user may need to refer to the image got by opj_read_header to understand the size being taken by the tile.
- *
- * @param	p_codec			the jpeg2000 codec.
- * @param	p_tile_index	the index of the tile being decoded, this should be the value set by opj_read_tile_header.
- * @param	p_data			pointer to a memory block that will hold the decoded data.
- * @param	p_data_size		size of p_data. p_data_size should be bigger or equal to the value set by opj_read_tile_header.
- * @param	p_stream		the stream to decode.
- *
- * @return	true			if the data could be decoded.
- */
-opj_bool OPJ_CALLCONV opj_decode_tile_data(	opj_codec_t *p_codec,
-											OPJ_UINT32 p_tile_index,
-											OPJ_BYTE * p_data,
-											OPJ_UINT32 p_data_size,
-											opj_stream_t *p_stream
-											)
-{
-	if (p_codec && p_data && p_stream) {
-		opj_codec_private_t * l_codec = (opj_codec_private_t *) p_codec;
-		opj_stream_private_t * l_stream = (opj_stream_private_t *) p_stream;
-
-		if (! l_codec->is_decompressor) {
-			return OPJ_FALSE;
-		}
-
-		return l_codec->m_codec_data.m_decompression.opj_decode_tile_data(	l_codec->m_codec,
-																			p_tile_index,
-																			p_data,
-																			p_data_size,
-																			l_stream,
-																			&(l_codec->m_event_mgr) );
-	}
-	return OPJ_FALSE;
-}
 
 /*
  *
@@ -972,160 +1131,9 @@ void OPJ_CALLCONV opj_destroy_cstr_index(opj_codestream_index_t **p_cstr_index)
 	}
 }
 
-/*
- *
- *
- */
-opj_bool OPJ_CALLCONV opj_decode(   opj_codec_t *p_codec,
-                                    opj_stream_t *p_stream,
-                                    opj_image_t* p_image)
-{
-	if (p_codec && p_stream) {
-		opj_codec_private_t * l_codec = (opj_codec_private_t *) p_codec;
-		opj_stream_private_t * l_stream = (opj_stream_private_t *) p_stream;
-
-		if (! l_codec->is_decompressor) {
-			return OPJ_FALSE;
-		}
-
-		return l_codec->m_codec_data.m_decompression.opj_decode(l_codec->m_codec,
-																l_stream,
-																p_image,
-																&(l_codec->m_event_mgr) );
-	}
-
-	return OPJ_FALSE;
-}
-
-/*
- *
- *
- */
-opj_bool OPJ_CALLCONV opj_end_decompress (	opj_codec_t *p_codec,
-											opj_stream_t *p_stream)
-{
-	if (p_codec && p_stream) {
-		opj_codec_private_t * l_codec = (opj_codec_private_t *) p_codec;
-		opj_stream_private_t * l_stream = (opj_stream_private_t *) p_stream;
-
-		if (! l_codec->is_decompressor) {
-			return OPJ_FALSE;
-		}
-		
-		return l_codec->m_codec_data.m_decompression.opj_end_decompress(l_codec->m_codec,
-																		l_stream,
-																		&(l_codec->m_event_mgr) );
-	}
-
-	return OPJ_FALSE;
-}
-
-/*
- *
- *
- */
-opj_bool OPJ_CALLCONV opj_get_decoded_tile(	opj_codec_t *p_codec,
-											opj_stream_t *p_stream,
-											opj_image_t *p_image,
-											OPJ_UINT32 tile_index)
-{
-	if (p_codec && p_stream) {
-		opj_codec_private_t * l_codec = (opj_codec_private_t *) p_codec;
-		opj_stream_private_t * l_stream = (opj_stream_private_t *) p_stream;
-
-		if (! l_codec->is_decompressor) {
-			return OPJ_FALSE;
-		}
-		
-		return l_codec->m_codec_data.m_decompression.opj_get_decoded_tile(	l_codec->m_codec,
-																			l_stream,
-																			p_image,
-																			&(l_codec->m_event_mgr),
-																			tile_index);
-	}
-
-	return OPJ_FALSE;
-}
-
-/*
- *
- *
- */
-opj_bool OPJ_CALLCONV opj_set_decoded_resolution_factor(opj_codec_t *p_codec, 
-														OPJ_UINT32 res_factor )
-{
-	opj_codec_private_t * l_codec = (opj_codec_private_t *) p_codec;
-
-	if ( !l_codec ){
-		fprintf(stderr, "[ERROR] Input parameters of the setup_decoder function are incorrect.\n");
-		return OPJ_FALSE;
-	}
-
-	l_codec->m_codec_data.m_decompression.opj_set_decoded_resolution_factor(l_codec->m_codec, 
-																			res_factor,
-																			&(l_codec->m_event_mgr) );
-	return OPJ_TRUE;
-}
 
 
-opj_bool OPJ_CALLCONV opj_set_MCT(opj_cparameters_t *parameters,OPJ_FLOAT32 * pEncodingMatrix,OPJ_INT32 * p_dc_shift,OPJ_UINT32 pNbComp)
-{
-	OPJ_UINT32 l_matrix_size = pNbComp * pNbComp * sizeof(OPJ_FLOAT32);
-	OPJ_UINT32 l_dc_shift_size = pNbComp * sizeof(OPJ_INT32);
-	OPJ_UINT32 l_mct_total_size = l_matrix_size + l_dc_shift_size;
 
-	/* add MCT capability */
-	int rsiz = (int)parameters->cp_rsiz | (int)MCT;
-	parameters->cp_rsiz = (OPJ_RSIZ_CAPABILITIES)rsiz;
-	parameters->irreversible = 1;
-
-	/* use array based MCT */
-	parameters->tcp_mct = 2;
-	parameters->mct_data = opj_malloc(l_mct_total_size);
-	if (! parameters->mct_data) {
-		return OPJ_FALSE;
-	}
-
-	memcpy(parameters->mct_data,pEncodingMatrix,l_matrix_size);
-	memcpy(((OPJ_BYTE *) parameters->mct_data) +  l_matrix_size,p_dc_shift,l_dc_shift_size);
-
-	return OPJ_TRUE;
-}
-
-/**
- * Writes a tile with the given data.
- *
- * @param	p_compressor		the jpeg2000 codec.
- * @param	p_tile_index		the index of the tile to write. At the moment, the tiles must be written from 0 to n-1 in sequence.
- * @param	p_data				pointer to the data to write. Data is arranged in sequence, data_comp0, then data_comp1, then ... NO INTERLEAVING should be set.
- * @param	p_data_size			this value os used to make sure the data being written is correct. The size must be equal to the sum for each component of tile_width * tile_height * component_size. component_size can be 1,2 or 4 bytes,
- *								depending on the precision of the given component.
- * @param	p_stream			the stream to write data to.
- */
-opj_bool OPJ_CALLCONV opj_write_tile (	opj_codec_t *p_codec,
-										OPJ_UINT32 p_tile_index,
-										OPJ_BYTE * p_data,
-										OPJ_UINT32 p_data_size,
-										opj_stream_t *p_stream )
-{
-	if (p_codec && p_stream && p_data) {
-		opj_codec_private_t * l_codec = (opj_codec_private_t *) p_codec;
-		opj_stream_private_t * l_stream = (opj_stream_private_t *) p_stream;
-
-		if (l_codec->is_decompressor) {
-			return OPJ_FALSE;
-		}
-
-		return l_codec->m_codec_data.m_compression.opj_write_tile(	l_codec->m_codec,
-																	p_tile_index,
-																	p_data,
-																	p_data_size,
-																	l_stream,
-																	&(l_codec->m_event_mgr) );
-	}
-
-	return OPJ_FALSE;
-}
 
 /* ---------------------------------------------------------------------- */
 /**
