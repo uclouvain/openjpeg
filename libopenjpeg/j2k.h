@@ -790,8 +790,6 @@ Decoding parameters are returned in j2k->cp.
 @param j2k J2K decompressor handle
 @param parameters decompression parameters
 */
-void j2k_setup_decoder(opj_j2k_t *j2k, opj_dparameters_t *parameters);
-
 void j2k_setup_decoder_v2(opj_j2k_v2_t *j2k, opj_dparameters_t *parameters);
 
 /**

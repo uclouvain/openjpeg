@@ -7673,25 +7673,6 @@ void j2k_destroy_decompress(opj_j2k_t *j2k) {
 	opj_free(j2k);
 }
 
-void j2k_setup_decoder(opj_j2k_t *j2k, opj_dparameters_t *parameters) {
-	if(j2k && parameters) {
-		/* create and initialize the coding parameters structure */
-		opj_cp_t *cp = (opj_cp_t*) opj_calloc(1, sizeof(opj_cp_t));
-		cp->reduce = parameters->cp_reduce;	
-		cp->layer = parameters->cp_layer;
-		cp->limit_decoding = parameters->cp_limit_decoding;
-
-#ifdef USE_JPWL
-		cp->correct = parameters->jpwl_correct;
-		cp->exp_comps = parameters->jpwl_exp_comps;
-		cp->max_tiles = parameters->jpwl_max_tiles;
-#endif /* USE_JPWL */
-
-
-		/* keep a link to cp so that we can destroy it later in j2k_destroy_decompress */
-		j2k->cp = cp;
-	}
-}
 
 void j2k_setup_decoder_v2(opj_j2k_v2_t *j2k, opj_dparameters_t *parameters)
 {
