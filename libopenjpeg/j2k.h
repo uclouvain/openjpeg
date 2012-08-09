@@ -956,7 +956,7 @@ opj_bool j2k_set_decode_area(	opj_j2k_v2_t *p_j2k,
  *
  * @return a handle to a J2K decompressor if successful, NULL otherwise.
  */
-opj_j2k_v2_t* j2k_create_decompress_v2(void);
+opj_j2k_v2_t* opj_j2k_create_decompress(void);
 
 
 /**

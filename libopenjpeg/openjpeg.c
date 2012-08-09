@@ -342,7 +342,7 @@ opj_codec_t* OPJ_CALLCONV opj_create_decompress(OPJ_CODEC_FORMAT p_format)
 																									OPJ_UINT32 res_factor,
 																									struct opj_event_mgr * p_manager)) j2k_set_decoded_resolution_factor;
 
-			l_codec->m_codec = j2k_create_decompress_v2();
+			l_codec->m_codec = opj_j2k_create_decompress();
 
 			if (! l_codec->m_codec) {
 				opj_free(l_codec);

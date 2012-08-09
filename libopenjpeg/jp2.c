@@ -3388,7 +3388,7 @@ opj_jp2_v2_t* jp2_create(opj_bool p_is_decoder)
 			jp2->j2k = j2k_create_compress_v2();
 		}
 		else {
-			jp2->j2k = j2k_create_decompress_v2();
+			jp2->j2k = opj_j2k_create_decompress();
 		}
 
 		if (jp2->j2k == 00) {
