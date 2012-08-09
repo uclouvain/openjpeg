@@ -942,12 +942,11 @@ static opj_bool j2k_write_sot_v2(	opj_j2k_v2_t *p_j2k,
  * @param	p_header_size	the size of the data contained in the PPT marker.
  * @param	p_manager		the user event manager.
 */
-static opj_bool j2k_read_sot_v2 (
-						opj_j2k_v2_t *p_j2k,
-						OPJ_BYTE * p_header_data,
-						OPJ_UINT32 p_header_size,
-						struct opj_event_mgr * p_manager
-					);
+static opj_bool opj_j2k_read_sot (  opj_j2k_v2_t *p_j2k,
+                                    OPJ_BYTE * p_header_data,
+                                    OPJ_UINT32 p_header_size,
+                                    opj_event_mgr_t * p_manager );
+
 /**
 Write the SOD marker (start of data)
 @param j2k J2K handle
@@ -1464,7 +1463,7 @@ const opj_dec_memory_marker_handler_t j2k_memory_marker_handler_tab [] =
   {J2K_MS_MCC, J2K_DEC_STATE_MH | J2K_DEC_STATE_TPH, j2k_read_mcc},
   {J2K_MS_MCO, J2K_DEC_STATE_MH | J2K_DEC_STATE_TPH, j2k_read_mco},
 #endif
-  {J2K_MS_SOT, J2K_STATE_MH | J2K_STATE_TPHSOT, j2k_read_sot_v2},
+  {J2K_MS_SOT, J2K_STATE_MH | J2K_STATE_TPHSOT, opj_j2k_read_sot},
   {J2K_MS_COD, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_cod_v2},
   {J2K_MS_COC, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_coc_v2},
   {J2K_MS_RGN, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_rgn_v2},
@@ -5200,14 +5199,11 @@ opj_bool j2k_write_sot_v2(	opj_j2k_v2_t *p_j2k,
  * @param	p_header_size	the size of the data contained in the PPT marker.
  * @param	p_manager		the user event manager.
 */
-opj_bool j2k_read_sot_v2 (
-						opj_j2k_v2_t *p_j2k,
-						OPJ_BYTE * p_header_data,
-						OPJ_UINT32 p_header_size,
-						struct opj_event_mgr * p_manager
-					)
+opj_bool opj_j2k_read_sot ( opj_j2k_v2_t *p_j2k,
+                            OPJ_BYTE * p_header_data,
+                            OPJ_UINT32 p_header_size,
+                            opj_event_mgr_t * p_manager )
 {
-
 	opj_cp_v2_t *l_cp = 00;
 	opj_tcp_v2_t *l_tcp = 00;
 	OPJ_UINT32 l_tot_len, l_num_parts = 0;
