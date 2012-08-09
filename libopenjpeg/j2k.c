@@ -499,19 +499,13 @@ static opj_bool j2k_write_cod_v2(	opj_j2k_v2_t *p_j2k,
 									struct opj_event_mgr * p_manager );
 
 /**
-Read the COD marker (coding style default)
-@param j2k J2K handle
-*/
-static void j2k_read_cod(opj_j2k_t *j2k);
-
-/**
  * Reads a COD marker (Coding Styke defaults)
  * @param	p_header_data	the data contained in the COD box.
  * @param	p_j2k			the jpeg2000 codec.
  * @param	p_header_size	the size of the data contained in the COD marker.
  * @param	p_manager		the user event manager.
 */
-static opj_bool j2k_read_cod_v2 (
+static opj_bool opj_j2k_read_cod (
 					opj_j2k_v2_t *p_j2k,
 					OPJ_BYTE * p_header_data,
 					OPJ_UINT32 p_header_size,
@@ -2876,39 +2870,6 @@ opj_bool j2k_write_cod_v2(	opj_j2k_v2_t *p_j2k,
 	return OPJ_TRUE;
 }
 
-static void j2k_read_cod(opj_j2k_t *j2k) {
-	int len, pos;
-  OPJ_UINT32 i;
-	
-	opj_cio_t *cio = j2k->cio;
-	opj_cp_t *cp = j2k->cp;
-	opj_tcp_t *tcp = j2k->state == J2K_STATE_TPH ? &cp->tcps[j2k->curtileno] : j2k->default_tcp;
-	opj_image_t *image = j2k->image;
-	
-	len = cio_read(cio, 2);				/* Lcod */
-	tcp->csty = cio_read(cio, 1);		/* Scod */
-	tcp->prg = (OPJ_PROG_ORDER)cio_read(cio, 1);		/* SGcod (A) */
-	tcp->numlayers = cio_read(cio, 2);	/* SGcod (B) */
-	tcp->mct = cio_read(cio, 1);		/* SGcod (C) */
-	
-	pos = cio_tell(cio);
-	for (i = 0; i < image->numcomps; i++) {
-		tcp->tccps[i].csty = tcp->csty & J2K_CP_CSTY_PRT;
-		cio_seek(cio, pos);
-		j2k_read_cox(j2k, i);
-	}
-
-	/* Index */
-	if (j2k->cstr_info) {
-		opj_codestream_info_t *cstr_info = j2k->cstr_info;
-		cstr_info->prog = tcp->prg;
-		cstr_info->numlayers = tcp->numlayers;
-		cstr_info->numdecompos = (int*) opj_malloc(image->numcomps * sizeof(int));
-		for (i = 0; i < image->numcomps; i++) {
-			cstr_info->numdecompos[i] = tcp->tccps[i].numresolutions - 1;
-		}
-	}
-}
 
 /**
  * Reads a COD marker (Coding Styke defaults)
@@ -6171,7 +6132,7 @@ opj_dec_mstabent_t j2k_dec_mstab[] = {
   /*{J2K_MS_SOD, J2K_STATE_TPH, j2k_read_sod},*/
   {J2K_MS_EOC, J2K_STATE_TPHSOT, j2k_read_eoc},
   /*{J2K_MS_SIZ, J2K_STATE_MHSIZ, j2k_read_siz},*/
-  {J2K_MS_COD, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_cod},
+  /*{J2K_MS_COD, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_cod},*/
   {J2K_MS_COC, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_coc},
   {J2K_MS_RGN, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_rgn},
   {J2K_MS_QCD, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_qcd},
