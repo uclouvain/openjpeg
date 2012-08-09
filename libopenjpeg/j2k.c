@@ -596,12 +596,6 @@ static opj_bool j2k_write_qcd_v2(	opj_j2k_v2_t *p_j2k,
 									struct opj_event_mgr * p_manager );
 
 /**
-Read the QCD marker (quantization default)
-@param j2k J2K handle
-*/
-static void j2k_read_qcd(opj_j2k_t *j2k);
-
-/**
  * Reads a QCD marker (Quantization defaults)
  * @param	p_header_data	the data contained in the QCD box.
  * @param	p_j2k			the jpeg2000 codec.
@@ -3335,22 +3329,6 @@ opj_bool j2k_write_qcd_v2(	opj_j2k_v2_t *p_j2k,
 	return OPJ_TRUE;
 }
 
-
-static void j2k_read_qcd(opj_j2k_t *j2k) {
-	int len, pos;
-  OPJ_UINT32 i;
-
-	opj_cio_t *cio = j2k->cio;
-	opj_image_t *image = j2k->image;
-	
-	len = cio_read(cio, 2);		/* Lqcd */
-	pos = cio_tell(cio);
-	for (i = 0; i < image->numcomps; i++) {
-		cio_seek(cio, pos);
-		j2k_read_qcx(j2k, i, len - 2);
-	}
-}
-
 /**
  * Reads a QCD marker (Quantization defaults)
  * @param	p_header_data	the data contained in the QCD box.
@@ -6073,7 +6051,7 @@ opj_dec_mstabent_t j2k_dec_mstab[] = {
   /*{J2K_MS_COD, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_cod},*/
   /*{J2K_MS_COC, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_coc},*/
   /*{J2K_MS_RGN, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_rgn},*/
-  {J2K_MS_QCD, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_qcd},
+  /*{J2K_MS_QCD, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_qcd},*/
   {J2K_MS_QCC, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_qcc},
   {J2K_MS_POC, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_poc},
   {J2K_MS_TLM, J2K_STATE_MH, j2k_read_tlm},
