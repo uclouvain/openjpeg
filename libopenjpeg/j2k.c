@@ -399,7 +399,7 @@ static opj_bool j2k_write_soc_v2(	opj_j2k_v2_t *p_j2k,
  * @param	p_header_size	the size of the data contained in the SOC marker.
  * @param	p_manager		the user event manager.
 */
-static opj_bool j2k_read_soc_v2(
+static opj_bool opj_j2k_read_soc(
 					opj_j2k_v2_t *p_j2k,
 					struct opj_stream_private *p_stream,
 					struct opj_event_mgr * p_manager
@@ -2118,7 +2118,7 @@ opj_bool j2k_write_soc_v2(	opj_j2k_v2_t *p_j2k,
  * @param	p_header_size	the size of the data contained in the SOC marker.
  * @param	p_manager		the user event manager.
 */
-static opj_bool j2k_read_soc_v2(	opj_j2k_v2_t *p_j2k,
+static opj_bool opj_j2k_read_soc(	opj_j2k_v2_t *p_j2k,
 									struct opj_stream_private *p_stream,
 									struct opj_event_mgr * p_manager )
 {
@@ -9140,7 +9140,7 @@ opj_bool j2k_read_header_procedure(	opj_j2k_v2_t *p_j2k,
 	p_j2k->m_specific_param.m_decoder.m_state = J2K_STATE_MHSOC;
 
 	/* Try to read the SOC marker, the codestream must begin with SOC marker */
-	if (! j2k_read_soc_v2(p_j2k,p_stream,p_manager)) {
+	if (! opj_j2k_read_soc(p_j2k,p_stream,p_manager)) {
 		opj_event_msg_v2(p_manager, EVT_ERROR, "Expected a SOC marker \n");
 		return OPJ_FALSE;
 	}
