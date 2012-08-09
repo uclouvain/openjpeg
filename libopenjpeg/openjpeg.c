@@ -436,27 +436,6 @@ opj_codec_t* OPJ_CALLCONV opj_create_decompress(OPJ_CODEC_FORMAT p_format)
 	return (opj_codec_t*) l_codec;
 }
 
-/* DEPRECATED */
-void OPJ_CALLCONV opj_destroy_decompress(opj_dinfo_t *dinfo) {
-	if(dinfo) {
-		/* destroy the codec */
-		switch(dinfo->codec_format) {
-			case CODEC_J2K:
-			case CODEC_JPT:
-				j2k_destroy_decompress((opj_j2k_t*)dinfo->j2k_handle);
-				break;
-			case CODEC_JP2:
-				jp2_destroy_decompress((opj_jp2_t*)dinfo->jp2_handle);
-				break;
-			case CODEC_UNKNOWN:
-			default:
-				break;
-		}
-		/* destroy the decompressor */
-		opj_free(dinfo);
-	}
-}
-
 void OPJ_CALLCONV opj_set_default_decoder_parameters(opj_dparameters_t *parameters) {
 	if(parameters) {
 		memset(parameters, 0, sizeof(opj_dparameters_t));

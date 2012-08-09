@@ -1200,12 +1200,6 @@ DEPRECATED( OPJ_API opj_event_mgr_t* OPJ_CALLCONV opj_set_event_mgr(opj_common_p
 OPJ_API opj_codec_t* OPJ_CALLCONV opj_create_decompress(OPJ_CODEC_FORMAT format);
 
 /**
-Destroy a decompressor handle
-@param dinfo decompressor handle to destroy
-*/
-DEPRECATED( OPJ_API void OPJ_CALLCONV opj_destroy_decompress(opj_dinfo_t *dinfo) );
-
-/**
  * Destroy a decompressor handle
  *
  * @param	p_codec			decompressor handle to destroy
