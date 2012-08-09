@@ -363,7 +363,7 @@ opj_codec_t* OPJ_CALLCONV opj_create_decompress(OPJ_CODEC_FORMAT p_format)
 					(opj_bool (*) (	void *,
 									struct opj_stream_private *,
 									opj_image_t*,
-									struct opj_event_mgr * )) jp2_decode_v2;
+									struct opj_event_mgr * )) opj_jp2_decode;
 
 			l_codec->m_codec_data.m_decompression.opj_end_decompress =  (opj_bool (*) (void *,struct opj_stream_private *,struct opj_event_mgr *)) jp2_end_decompress;
 

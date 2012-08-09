@@ -307,10 +307,10 @@ void opj_jp2_setup_decoder(opj_jp2_v2_t *jp2, opj_dparameters_t *parameters);
  * @param cstr_info Codestream information structure if required, NULL otherwise
  * @return Returns a decoded image if successful, returns NULL otherwise
 */
-opj_bool jp2_decode_v2(	opj_jp2_v2_t *jp2,
-						struct opj_stream_private *cio,
+opj_bool opj_jp2_decode(opj_jp2_v2_t *jp2,
+                        opj_stream_private_t *p_stream,
 						opj_image_t* p_image,
-						struct opj_event_mgr * p_manager);
+						opj_event_mgr_t * p_manager);
 
 
 /**

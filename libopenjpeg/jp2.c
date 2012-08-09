@@ -1696,16 +1696,16 @@ opj_bool jp2_read_jp2h(opj_jp2_t *jp2, opj_cio_t *cio, opj_jp2_color_t *color)
 
 
 
-opj_bool jp2_decode_v2(	opj_jp2_v2_t *jp2,
-						struct opj_stream_private *cio,
-						opj_image_t* p_image,
-						struct opj_event_mgr * p_manager)
+opj_bool opj_jp2_decode(opj_jp2_v2_t *jp2,
+                        opj_stream_private_t *p_stream,
+                        opj_image_t* p_image,
+                        opj_event_mgr_t * p_manager)
 {
 	if (!p_image)
 		return OPJ_FALSE;
 
 	/* J2K decoding */
-	if( ! j2k_decode_v2(jp2->j2k, cio, p_image, p_manager) ) {
+	if( ! j2k_decode_v2(jp2->j2k, p_stream, p_image, p_manager) ) {
 		opj_event_msg_v2(p_manager, EVT_ERROR, "Failed to decode the codestream in the JP2 file\n");
 		return OPJ_FALSE;
 	}
