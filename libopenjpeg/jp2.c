@@ -64,14 +64,12 @@ static opj_bool jp2_read_ihdr(opj_jp2_t *jp2, opj_cio_t *cio);
  * @param	p_image_header_size			the size of the image header
  * @param	p_manager					the user event manager.
  *
- * @return	true if the image header is valid, fale else.
+ * @return	true if the image header is valid, false else.
  */
-static opj_bool jp2_read_ihdr_v2(
-							opj_jp2_v2_t *jp2,
-							unsigned char * p_image_header_data,
-							unsigned int p_image_header_size,
-							struct opj_event_mgr * p_manager
-						  );
+static opj_bool jp2_read_ihdr_v2(   opj_jp2_v2_t *jp2,
+                                    OPJ_BYTE *p_image_header_data,
+                                    OPJ_INT32 p_image_header_size,
+                                    opj_event_mgr_t * p_manager );
 
 static void jp2_write_ihdr(opj_jp2_t *jp2, opj_cio_t *cio);
 
@@ -656,11 +654,10 @@ static opj_bool jp2_read_ihdr(opj_jp2_t *jp2, opj_cio_t *cio) {
  *
  * @return	true if the image header is valid, fale else.
  */
-opj_bool jp2_read_ihdr_v2(
-							opj_jp2_v2_t *jp2,
-							unsigned char * p_image_header_data,
-							unsigned int p_image_header_size,
-							opj_event_mgr_t * p_manager
+opj_bool jp2_read_ihdr_v2(  opj_jp2_v2_t *jp2,
+                            OPJ_BYTE *p_image_header_data,
+                            OPJ_INT32 p_image_header_size,
+                            opj_event_mgr_t * p_manager
 						  )
 {
 	/* preconditions */
@@ -677,7 +674,7 @@ opj_bool jp2_read_ihdr_v2(
 	p_image_header_data += 4;
 	opj_read_bytes(p_image_header_data,&(jp2->w),4);			/* WIDTH */
 	p_image_header_data += 4;
-	opj_read_bytes(p_image_header_data,&(jp2->numcomps),2);			/* NC */
+	opj_read_bytes(p_image_header_data,&(jp2->numcomps),2);		/* NC */
 	p_image_header_data += 2;
 
 	/* allocate memory for components */

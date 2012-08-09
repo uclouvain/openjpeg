@@ -1009,6 +1009,7 @@ opj_bool OPJ_CALLCONV opj_write_tile (	opj_codec_t *p_codec,
 	return OPJ_FALSE;
 }
 
+/* ---------------------------------------------------------------------- */
 
 void OPJ_CALLCONV opj_destroy_codec(opj_codec_t *p_codec)
 {
@@ -1027,7 +1028,7 @@ void OPJ_CALLCONV opj_destroy_codec(opj_codec_t *p_codec)
 	}
 }
 
-
+/* ---------------------------------------------------------------------- */
 
 /*
  *
@@ -1109,10 +1110,6 @@ void OPJ_CALLCONV opj_destroy_cstr_index(opj_codestream_index_t **p_cstr_index)
 		(*p_cstr_index) = NULL;
 	}
 }
-
-
-
-
 
 /* ---------------------------------------------------------------------- */
 /**
