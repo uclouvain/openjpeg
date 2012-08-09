@@ -40,8 +40,99 @@
 #endif
 
 #include "opj_config.h"
+#include <stdlib.h>
+
+#ifdef _WIN32
+#include <windows.h>
+#define strcasecmp _stricmp
+#define strncasecmp _strnicmp
+#else
+#include <strings.h>
+#endif /* _WIN32 */
+
 #include "openjpeg.h"
-#include "stdlib.h"
+#include "format_defs.h"
+
+
+/* -------------------------------------------------------------------------- */
+/* Declarations                                                               */ 
+int get_file_format(const char *filename);
+static int infile_format(const char *fname);
+
+/* -------------------------------------------------------------------------- */
+int get_file_format(const char *filename) {
+	unsigned int i;
+	static const char *extension[] = {"pgx", "pnm", "pgm", "ppm", "bmp","tif", "raw", "rawl", "tga", "png", "j2k", "jp2", "jpt", "j2c", "jpc" };
+	static const int format[] = { PGX_DFMT, PXM_DFMT, PXM_DFMT, PXM_DFMT, BMP_DFMT, TIF_DFMT, RAW_DFMT, RAWL_DFMT, TGA_DFMT, PNG_DFMT, J2K_CFMT, JP2_CFMT, JPT_CFMT, J2K_CFMT, J2K_CFMT };
+	char * ext = strrchr(filename, '.');
+	if (ext == NULL)
+		return -1;
+	ext++;
+	if(ext) {
+		for(i = 0; i < sizeof(format)/sizeof(*format); i++) {
+			if(strcasecmp(ext, extension[i]) == 0) {
+				return format[i];
+			}
+		}
+	}
+
+	return -1;
+}
+
+/* -------------------------------------------------------------------------- */
+#define JP2_RFC3745_MAGIC "\x00\x00\x00\x0c\x6a\x50\x20\x20\x0d\x0a\x87\x0a"
+#define JP2_MAGIC "\x0d\x0a\x87\x0a"
+/* position 45: "\xff\x52" */
+#define J2K_CODESTREAM_MAGIC "\xff\x4f\xff\x51"
+
+static int infile_format(const char *fname)
+{
+	FILE *reader;
+	const char *s, *magic_s;
+	int ext_format, magic_format;
+	unsigned char buf[12];
+	unsigned int l_nb_read;
+
+	reader = fopen(fname, "rb");
+
+	if (reader == NULL)
+		return -1;
+
+	memset(buf, 0, 12);
+	l_nb_read = fread(buf, 1, 12, reader);
+	fclose(reader);
+	if (l_nb_read != 12)
+		return -1;
+
+	ext_format = get_file_format(fname);
+
+	if (ext_format == JPT_CFMT)
+		return JPT_CFMT;
+
+	if (memcmp(buf, JP2_RFC3745_MAGIC, 12) == 0 || memcmp(buf, JP2_MAGIC, 4) == 0) {
+		magic_format = JP2_CFMT;
+		magic_s = ".jp2";
+	}
+	else if (memcmp(buf, J2K_CODESTREAM_MAGIC, 4) == 0) {
+		magic_format = J2K_CFMT;
+		magic_s = ".j2k or .jpc or .j2c";
+	}
+	else
+		return -1;
+
+	if (magic_format == ext_format)
+		return ext_format;
+
+	s = fname + strlen(fname) - 4;
+
+	fputs("\n===========================================\n", stderr);
+	fprintf(stderr, "The extension of this file is incorrect.\n"
+					"FOUND %s. SHOULD BE %s\n", s, magic_s);
+	fputs("===========================================\n", stderr);
+
+	return magic_format;
+}
+
 
 /* -------------------------------------------------------------------------- */
 
@@ -113,6 +204,7 @@ int main (int argc, char *argv[])
         da_x1=atoi(argv[3]);
         da_y1=atoi(argv[4]);
         strcpy(input_file,argv[5]);
+
     }
     else
     {
@@ -146,6 +238,9 @@ int main (int argc, char *argv[])
     /* Set the default decoding parameters */
 	opj_set_default_decoder_parameters(&l_param);
 
+    /* */
+    l_param.decod_format = infile_format(input_file);
+
 	/** you may here add custom decoding parameters */
 	/* do not use layer decoding limitations */
 	l_param.cp_layer = 0;
@@ -156,14 +251,29 @@ int main (int argc, char *argv[])
 	/* to decode only a part of the image data */
 	//opj_restrict_decoding(&l_param,0,0,1000,1000);
 	
-	l_codec = opj_create_decompress_v2(CODEC_J2K);
-	if (! l_codec) 
-    {
-        fclose(l_file);
-	    free(l_data);
-        opj_stream_destroy(l_stream);
-	    return EXIT_FAILURE;
-	}
+
+    switch(l_param.decod_format) {
+        case J2K_CFMT:	/* JPEG-2000 codestream */
+        {
+            /* Get a decoder handle */
+            l_codec = opj_create_decompress_v2(CODEC_J2K);
+            break;
+        }
+        case JP2_CFMT:	/* JPEG 2000 compressed image data */
+        {
+            /* Get a decoder handle */
+            l_codec = opj_create_decompress_v2(CODEC_JP2);
+            break;
+        }
+        default:
+        {    
+            fprintf(stderr, "ERROR -> Not a valid JPEG2000 file!\n");
+            fclose(l_file);
+            free(l_data);
+            opj_stream_destroy(l_stream);
+            return EXIT_FAILURE;
+        }
+    }
 
 	/* catch events using our callbacks and give a local context */		
 	opj_set_info_handler(l_codec, info_callback,00);
