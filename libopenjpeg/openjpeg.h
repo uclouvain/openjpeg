@@ -1191,7 +1191,6 @@ DEPRECATED( OPJ_API opj_event_mgr_t* OPJ_CALLCONV opj_set_event_mgr(opj_common_p
 ==========================================================
 */
 
-
 /**
  * Creates a J2K/JP2 decompression structure
  * @param format 		Decoder to select

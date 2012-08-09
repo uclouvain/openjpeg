@@ -286,10 +286,7 @@ const char* OPJ_CALLCONV opj_version(void) {
     return PACKAGE_VERSION;
 }
 
-
-
-
-opj_codec_t* OPJ_CALLCONV opj_create_decompress_v2(OPJ_CODEC_FORMAT p_format)
+opj_codec_t* OPJ_CALLCONV opj_create_decompress(OPJ_CODEC_FORMAT p_format)
 {
 	opj_codec_private_t *l_codec = 00;
 
