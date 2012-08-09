@@ -699,11 +699,6 @@ static OPJ_UINT32 j2k_get_max_toc_size (opj_j2k_v2_t *p_j2k);
 static OPJ_UINT32 j2k_get_specific_header_sizes(opj_j2k_v2_t *p_j2k);
 
 /**
-Read the POC marker (progression order change)
-@param j2k J2K handle
-*/
-static void j2k_read_poc(opj_j2k_t *j2k);
-/**
  * Reads a POC marker (Progression Order Change)
  *
  * @param	p_header_data	the data contained in the POC box.
@@ -3725,34 +3720,6 @@ OPJ_UINT32 j2k_get_specific_header_sizes(opj_j2k_v2_t *p_j2k)
 	return l_nb_bytes;
 }
 
-static void j2k_read_poc(opj_j2k_t *j2k) {
-	int len, numpchgs, i, old_poc;
-
-	int numcomps = j2k->image->numcomps;
-	
-	opj_cp_t *cp = j2k->cp;
-	opj_tcp_t *tcp = j2k->state == J2K_STATE_TPH ? &cp->tcps[j2k->curtileno] : j2k->default_tcp;
-	opj_cio_t *cio = j2k->cio;
-	
-	old_poc = tcp->POC ? tcp->numpocs + 1 : 0;
-	tcp->POC = 1;
-	len = cio_read(cio, 2);		/* Lpoc */
-	numpchgs = (len - 2) / (5 + 2 * (numcomps <= 256 ? 1 : 2));
-	
-	for (i = old_poc; i < numpchgs + old_poc; i++) {
-		opj_poc_t *poc;
-		poc = &tcp->pocs[i];
-		poc->resno0 = cio_read(cio, 1);	/* RSpoc_i */
-		poc->compno0 = cio_read(cio, numcomps <= 256 ? 1 : 2);	/* CSpoc_i */
-		poc->layno1 = cio_read(cio, 2);    /* LYEpoc_i */
-		poc->resno1 = cio_read(cio, 1);    /* REpoc_i */
-		poc->compno1 = int_min(
-			cio_read(cio, numcomps <= 256 ? 1 : 2), (unsigned int) numcomps);	/* CEpoc_i */
-		poc->prg = (OPJ_PROG_ORDER)cio_read(cio, 1);	/* Ppoc_i */
-	}
-	
-	tcp->numpocs = numpchgs + old_poc - 1;
-}
 
 /**
  * Reads a POC marker (Progression Order Change)
@@ -5929,7 +5896,7 @@ opj_dec_mstabent_t j2k_dec_mstab[] = {
   /*{J2K_MS_RGN, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_rgn},*/
   /*{J2K_MS_QCD, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_qcd},*/
   /*{J2K_MS_QCC, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_qcc},*/
-  {J2K_MS_POC, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_poc},
+  /*{J2K_MS_POC, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_poc},*/
   {J2K_MS_TLM, J2K_STATE_MH, j2k_read_tlm},
   {J2K_MS_PLM, J2K_STATE_MH, j2k_read_plm},
   {J2K_MS_PLT, J2K_STATE_TPH, j2k_read_plt},
