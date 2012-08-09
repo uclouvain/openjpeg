@@ -774,12 +774,11 @@ static opj_bool opj_j2k_read_plm (  opj_j2k_v2_t *p_j2k,
  * @param	p_header_size	the size of the data contained in the PLT marker.
  * @param	p_manager		the user event manager.
 */
-static opj_bool opj_j2k_read_plt (
-						opj_j2k_v2_t *p_j2k,
-						OPJ_BYTE * p_header_data,
-						OPJ_UINT32 p_header_size,
-						struct opj_event_mgr * p_manager
-					);
+static opj_bool opj_j2k_read_plt (  opj_j2k_v2_t *p_j2k,
+                                    OPJ_BYTE * p_header_data,
+                                    OPJ_UINT32 p_header_size,
+                                    opj_event_mgr_t * p_manager );
+
 /**
 Read the PPM marker (packet packet headers, main header)
 @param j2k J2K handle
@@ -1387,7 +1386,7 @@ const opj_dec_memory_marker_handler_t j2k_memory_marker_handler_tab [] =
   {J2K_MS_SIZ, J2K_STATE_MHSIZ, opj_j2k_read_siz},
   {J2K_MS_TLM, J2K_STATE_MH, opj_j2k_read_tlm},
   {J2K_MS_PLM, J2K_STATE_MH, opj_j2k_read_plm},
-  {J2K_MS_PLT, J2K_STATE_TPH, j2k_read_plt_v2},
+  {J2K_MS_PLT, J2K_STATE_TPH, opj_j2k_read_plt},
   {J2K_MS_PPM, J2K_STATE_MH, j2k_read_ppm_v3},
   {J2K_MS_PPT, J2K_STATE_TPH, j2k_read_ppt_v2},
   {J2K_MS_SOP, 0, 0},
@@ -3970,12 +3969,11 @@ static opj_bool opj_j2k_read_plm (  opj_j2k_v2_t *p_j2k,
  * @param	p_header_size	the size of the data contained in the PLT marker.
  * @param	p_manager		the user event manager.
 */
-opj_bool j2k_read_plt_v2 (
-						opj_j2k_v2_t *p_j2k,
-						OPJ_BYTE * p_header_data,
-						OPJ_UINT32 p_header_size,
-						struct opj_event_mgr * p_manager
-					)
+static opj_bool opj_j2k_read_plt (  opj_j2k_v2_t *p_j2k,
+                                    OPJ_BYTE * p_header_data,
+                                    OPJ_UINT32 p_header_size,
+                                    opj_event_mgr_t * p_manager
+                                    )
 {
 	OPJ_UINT32 l_Zplt, l_tmp, l_packet_len = 0, i;
 
