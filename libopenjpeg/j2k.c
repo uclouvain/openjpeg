@@ -709,11 +709,6 @@ static opj_bool opj_j2k_read_poc (  opj_j2k_v2_t *p_j2k,
                                     opj_event_mgr_t * p_manager );
 
 /**
-Read the CRG marker (component registration)
-@param j2k J2K handle
-*/
-static void j2k_read_crg(opj_j2k_t *j2k);
-/**
  * Reads a CRG marker (Component registration)
  *
  * @param	p_header_data	the data contained in the TLM box.
@@ -3721,19 +3716,6 @@ static opj_bool opj_j2k_read_poc (  opj_j2k_v2_t *p_j2k,
 	return OPJ_TRUE;
 }
 
-static void j2k_read_crg(opj_j2k_t *j2k) {
-	int len, i, Xcrg_i, Ycrg_i;
-	
-	opj_cio_t *cio = j2k->cio;
-	int numcomps = j2k->image->numcomps;
-	
-	len = cio_read(cio, 2);			/* Lcrg */
-	for (i = 0; i < numcomps; i++) {
-		Xcrg_i = cio_read(cio, 2);	/* Xcrg_i */
-		Ycrg_i = cio_read(cio, 2);	/* Ycrg_i */
-	}
-}
-
 /**
  * Reads a CRG marker (Component registration)
  *
@@ -5677,7 +5659,7 @@ opj_dec_mstabent_t j2k_dec_mstab[] = {
   /*{J2K_MS_PPM, J2K_STATE_MH, j2k_read_ppm},*/
   /*{J2K_MS_PPT, J2K_STATE_TPH, j2k_read_ppt},*/
   {J2K_MS_SOP, 0, 0},
-  {J2K_MS_CRG, J2K_STATE_MH, j2k_read_crg},
+  /*{J2K_MS_CRG, J2K_STATE_MH, j2k_read_crg},*/
   {J2K_MS_COM, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_com},
 
 #ifdef USE_JPWL
