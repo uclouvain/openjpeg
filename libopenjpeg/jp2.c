@@ -39,14 +39,7 @@
 /** @name Local static functions */
 /*@{*/
 
-/**
-Read box headers
-@param cinfo Codec context info
-@param cio Input stream
-@param box
-@return Returns true if successful, returns false otherwise
-*/
-static opj_bool jp2_read_boxhdr(opj_common_ptr cinfo, opj_cio_t *cio, opj_jp2_box_t *box);
+
 /*static void jp2_write_url(opj_cio_t *cio, char *Idx_file);*/
 
 /**
@@ -448,26 +441,6 @@ static void opj_jp2_setup_header_reading (opj_jp2_v2_t *jp2);
 
 
 /* ----------------------------------------------------------------------- */
-
-static opj_bool jp2_read_boxhdr(opj_common_ptr cinfo, opj_cio_t *cio, opj_jp2_box_t *box) {
-	box->init_pos = cio_tell(cio);
-	box->length = cio_read(cio, 4);
-	box->type = cio_read(cio, 4);
-	if (box->length == 1) {
-		if (cio_read(cio, 4) != 0) {
-			opj_event_msg(cinfo, EVT_ERROR, "Cannot handle box sizes higher than 2^32\n");
-			return OPJ_FALSE;
-		}
-		box->length = cio_read(cio, 4);
-		if (box->length == 0) 
-			box->length = cio_numbytesleft(cio) + 12;
-	}
-	else if (box->length == 0) {
-		box->length = cio_numbytesleft(cio) + 8;
-	}
-	
-	return OPJ_TRUE;
-}
 
 /**
  * Reads a box header. The box is the way data is packed inside a jpeg2000 file structure.
