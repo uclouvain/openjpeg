@@ -95,15 +95,20 @@ opj_bool  opj_procedure_list_add_procedure (opj_procedure_list_t * p_validation_
 		(p_validation_list->m_nb_max_procedures == p_validation_list->m_nb_procedures)
 	{
 		p_validation_list->m_nb_max_procedures += OPJ_VALIDATION_SIZE;
-		p_validation_list->m_procedures = (opj_procedure*)opj_realloc(
+                opj_procedure * new_procedures = (opj_procedure*)opj_realloc(
 		p_validation_list->m_procedures,p_validation_list->m_nb_max_procedures * sizeof(opj_procedure));
 		if
-			(! p_validation_list->m_procedures)
+			(! new_procedures)
 		{
+			opj_free(p_validation_list->m_procedures);
 			p_validation_list->m_nb_max_procedures = 0;
 			p_validation_list->m_nb_procedures = 0;
 			return OPJ_FALSE;
 		}
+                else
+                {
+			p_validation_list->m_procedures = new_procedures;
+                }
 	}
 	p_validation_list->m_procedures[p_validation_list->m_nb_procedures] = p_procedure;
 	++p_validation_list->m_nb_procedures;
