@@ -260,9 +260,6 @@ Collect palette data
 @param color Collector for profile, cdef and pclr data
 @return Returns true if successful, returns false otherwise
 */
-static opj_bool jp2_read_pclr(opj_jp2_t *jp2, opj_cio_t *cio,
-    opj_jp2_box_t *box, opj_jp2_color_t *color);
-
 static opj_bool jp2_read_pclr_v2(	opj_jp2_v2_t *jp2,
 							unsigned char * p_pclr_header_data,
 							OPJ_UINT32 p_pclr_header_size,
@@ -277,26 +274,12 @@ Collect component mapping data
 @param color Collector for profile, cdef and pclr data
 @return Returns true if successful, returns false otherwise
 */
-static opj_bool jp2_read_cmap(opj_jp2_t *jp2, opj_cio_t *cio,
-    opj_jp2_box_t *box, opj_jp2_color_t *color);
-
 
 static opj_bool jp2_read_cmap_v2(	opj_jp2_v2_t * jp2,
 							unsigned char * p_cmap_header_data,
 							OPJ_UINT32 p_cmap_header_size,
 							opj_event_mgr_t * p_manager
 						  );
-
-/**
-Collect colour specification data
-@param jp2 JP2 handle
-@param cio Input buffer stream
-@param box
-@param color Collector for profile, cdef and pclr data
-@return Returns true if successful, returns false otherwise
-*/
-static opj_bool jp2_read_colr(opj_jp2_t *jp2, opj_cio_t *cio,
-    opj_jp2_box_t *box, opj_jp2_color_t *color);
 
 /**
  * Reads the Color Specification box.
@@ -1040,62 +1023,6 @@ static void jp2_apply_pclr(opj_image_t *image, opj_jp2_color_t *color)
 
 }/* apply_pclr() */
 
-
-static opj_bool jp2_read_pclr(opj_jp2_t *jp2, opj_cio_t *cio,
-	opj_jp2_box_t *box, opj_jp2_color_t *color)
-{
-	opj_jp2_pclr_t *jp2_pclr;
-	unsigned char *channel_size, *channel_sign;
-	unsigned int *entries;
-	unsigned short nr_entries, nr_channels;
-	unsigned short i, j;
-	unsigned char uc;
-
-	OPJ_ARG_NOT_USED(box);
-	OPJ_ARG_NOT_USED(jp2);
-
-/* Part 1, I.5.3.4: 'There shall be at most one Palette box inside
- * a JP2 Header box' :
-*/
-	if(color->jp2_pclr) return OPJ_FALSE;
-
-	nr_entries = (unsigned short)cio_read(cio, 2); /* NE */
-	nr_channels = (unsigned short)cio_read(cio, 1);/* NPC */
-
-	entries = (unsigned int*)
-	 opj_malloc(nr_channels * nr_entries * sizeof(unsigned int));
-	channel_size = (unsigned char*)opj_malloc(nr_channels);
-	channel_sign = (unsigned char*)opj_malloc(nr_channels);
-
-	jp2_pclr = (opj_jp2_pclr_t*)opj_malloc(sizeof(opj_jp2_pclr_t));
-	jp2_pclr->channel_sign = channel_sign;
-	jp2_pclr->channel_size = channel_size;
-	jp2_pclr->entries = entries;
-	jp2_pclr->nr_entries = nr_entries;
-	jp2_pclr->nr_channels = nr_channels;
-	jp2_pclr->cmap = NULL;
-
-	color->jp2_pclr = jp2_pclr;
-
-	for(i = 0; i < nr_channels; ++i)
-   {
-	uc = cio_read(cio, 1); /* Bi */
-	channel_size[i] = (uc & 0x7f) + 1;
-	channel_sign[i] = (uc & 0x80)?1:0;
-   }
-
-	for(j = 0; j < nr_entries; ++j)
-   {
-	for(i = 0; i < nr_channels; ++i)
-  {
-/* Cji */
-	*entries++ = cio_read(cio, (channel_size[i]+7)>>3);
-  }
-   }
-
-	return OPJ_TRUE;
-}/* jp2_read_pclr() */
-
 /**
  * Reads a palette box.
  *
@@ -1170,41 +1097,6 @@ opj_bool jp2_read_pclr_v2(	opj_jp2_v2_t *jp2,
 
 	return OPJ_TRUE;
 }
-
-
-static opj_bool jp2_read_cmap(opj_jp2_t *jp2, opj_cio_t *cio,
-	opj_jp2_box_t *box, opj_jp2_color_t *color)
-{
-	opj_jp2_cmap_comp_t *cmap;
-	unsigned short i, nr_channels;
-
-	OPJ_ARG_NOT_USED(box);
-	OPJ_ARG_NOT_USED(jp2);
-
-/* Need nr_channels: */
-	if(color->jp2_pclr == NULL) return OPJ_FALSE;
-
-/* Part 1, I.5.3.5: 'There shall be at most one Component Mapping box
- * inside a JP2 Header box' :
-*/
-	if(color->jp2_pclr->cmap) return OPJ_FALSE;
-
-	nr_channels = color->jp2_pclr->nr_channels;
-	cmap = (opj_jp2_cmap_comp_t*)
-	 opj_malloc(nr_channels * sizeof(opj_jp2_cmap_comp_t));
-
-	for(i = 0; i < nr_channels; ++i)
-   {
-	cmap[i].cmp = (unsigned short)cio_read(cio, 2);
-	cmap[i].mtyp = cio_read(cio, 1);
-	cmap[i].pcol = cio_read(cio, 1);
-
-   }
-	color->jp2_pclr->cmap = cmap;
-
-	return OPJ_TRUE;
-
-}/* jp2_read_cmap() */
 
 /**
  * Reads the Component Mapping box.
@@ -1304,39 +1196,6 @@ static void jp2_apply_cdef(opj_image_t *image, opj_jp2_color_t *color)
 
 }/* jp2_apply_cdef() */
 
-static opj_bool jp2_read_cdef(opj_jp2_t *jp2, opj_cio_t *cio,
-	opj_jp2_box_t *box, opj_jp2_color_t *color)
-{
-	opj_jp2_cdef_info_t *info;
-	unsigned short i, n;
-
-	OPJ_ARG_NOT_USED(box);
-	OPJ_ARG_NOT_USED(jp2);
-
-/* Part 1, I.5.3.6: 'The shall be at most one Channel Definition box
- * inside a JP2 Header box.' 
-*/
-	if(color->jp2_cdef) return OPJ_FALSE;
-
-	if((n = (unsigned short)cio_read(cio, 2)) == 0) return OPJ_FALSE; /* szukw000: FIXME */
-
-	info = (opj_jp2_cdef_info_t*)
-	 opj_malloc(n * sizeof(opj_jp2_cdef_info_t));
-
-	color->jp2_cdef = (opj_jp2_cdef_t*)opj_malloc(sizeof(opj_jp2_cdef_t));
-	color->jp2_cdef->info = info;
-	color->jp2_cdef->n = n;
-
-	for(i = 0; i < n; ++i)
-   {
-	info[i].cn = (unsigned short)cio_read(cio, 2);
-	info[i].typ = (unsigned short)cio_read(cio, 2);
-	info[i].asoc = (unsigned short)cio_read(cio, 2);
-
-   }
-	return OPJ_TRUE;
-}/* jp2_read_cdef() */
-
 /**
  * Reads the Component Definition box.
  *
@@ -1397,62 +1256,6 @@ static opj_bool jp2_read_cdef_v2(	opj_jp2_v2_t * jp2,
 
 	return OPJ_TRUE;
 }
-
-
-static opj_bool jp2_read_colr(opj_jp2_t *jp2, opj_cio_t *cio,
-	opj_jp2_box_t *box, opj_jp2_color_t *color) 
-{
-	int skip_len;
-    opj_common_ptr cinfo;
-
-/* Part 1, I.5.3.3 : 'A conforming JP2 reader shall ignore all Colour
- * Specification boxes after the first.' 
-*/
-	if(color->jp2_has_colr) return OPJ_FALSE;
-
-	cinfo = jp2->cinfo;
-
-	jp2->meth = cio_read(cio, 1);		/* METH */
-	jp2->precedence = cio_read(cio, 1);	/* PRECEDENCE */
-	jp2->approx = cio_read(cio, 1);		/* APPROX */
-
-	if (jp2->meth == 1) 
-   {
-	jp2->enumcs = cio_read(cio, 4);	/* EnumCS */
-   } 
-	else
-	if (jp2->meth == 2) 
-   {
-/* skip PROFILE */
-	skip_len = box->init_pos + box->length - cio_tell(cio);
-	if (skip_len < 0) 
-  {
-	opj_event_msg(cinfo, EVT_ERROR, "Error with COLR box size\n");
-	return OPJ_FALSE;
-  }
-	if(skip_len > 0)
-  {
-	unsigned char *start;
-
-	start = cio_getbp(cio);
-	color->icc_profile_buf = (unsigned char*)opj_malloc(skip_len);
-	color->icc_profile_len = skip_len;
-
-	cio_skip(cio, box->init_pos + box->length - cio_tell(cio));
-
-	memcpy(color->icc_profile_buf, start, skip_len);
-  }
-   }
-
-	if (cio_tell(cio) - box->init_pos != box->length) 
-   {
-	opj_event_msg(cinfo, EVT_ERROR, "Error with COLR Box\n");
-	return OPJ_FALSE;
-   }
-	color->jp2_has_colr = 1;
-
-	return OPJ_TRUE;
-}/* jp2_read_colr() */
 
 /**
  * Reads the Colour Specification box.

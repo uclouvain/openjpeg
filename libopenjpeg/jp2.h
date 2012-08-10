@@ -223,17 +223,20 @@ opj_jp2_v2_t;
 JP2 Box
 */
 typedef struct opj_jp2_box {
-  OPJ_UINT32 length;
-  OPJ_UINT32 type;
-  OPJ_INT32 init_pos;
+    OPJ_UINT32 length;
+    OPJ_UINT32 type;
+    OPJ_INT32 init_pos;
 } opj_jp2_box_t;
 
 typedef struct opj_jp2_header_handler
 {
 	/* marker value */
-	int id;
+	OPJ_UINT32 id;
 	/* action linked to the marker */
-	opj_bool (*handler) (opj_jp2_v2_t *jp2, unsigned char * p_header_data, OPJ_UINT32 p_header_size, struct opj_event_mgr * p_manager);
+	opj_bool (*handler) (   opj_jp2_v2_t *jp2, 
+                            OPJ_BYTE *p_header_data, 
+                            OPJ_UINT32 p_header_size, 
+                            opj_event_mgr_t * p_manager);
 }
 opj_jp2_header_handler_t;
 
