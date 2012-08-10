@@ -369,6 +369,8 @@ static opj_bool j2k_get_end_header(	opj_j2k_v2_t *p_j2k,
 									struct opj_stream_private *p_stream,
 									struct opj_event_mgr * p_manager );
 
+static opj_bool j2k_allocate_tile_element_cstr_index(opj_j2k_v2_t *p_j2k);
+
 /*
  * -----------------------------------------------------------------------
  * -----------------------------------------------------------------------
@@ -10618,7 +10620,7 @@ opj_codestream_index_t* j2k_get_cstr_index(opj_j2k_v2_t* p_j2k)
 	return l_cstr_index;
 }
 
-static opj_bool j2k_allocate_tile_element_cstr_index(opj_j2k_v2_t *p_j2k)
+opj_bool j2k_allocate_tile_element_cstr_index(opj_j2k_v2_t *p_j2k)
 {
 	OPJ_UINT32 it_tile=0;
 
