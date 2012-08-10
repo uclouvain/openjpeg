@@ -61,7 +61,7 @@ static opj_bool jp2_read_boxhdr(opj_common_ptr cinfo, opj_cio_t *cio, opj_jp2_bo
  */
 static opj_bool opj_jp2_read_ihdr(  opj_jp2_v2_t *jp2,
                                     OPJ_BYTE *p_image_header_data,
-                                    OPJ_INT32 p_image_header_size,
+                                    OPJ_UINT32 p_image_header_size,
                                     opj_event_mgr_t * p_manager );
 
 static void jp2_write_ihdr(opj_jp2_t *jp2, opj_cio_t *cio);
@@ -102,7 +102,7 @@ static unsigned char * jp2_write_bpcc_v2(	opj_jp2_v2_t *jp2,
  */
 static opj_bool opj_jp2_read_bpcc(  opj_jp2_v2_t *jp2,
                                     OPJ_BYTE * p_bpc_header_data,
-                                    OPJ_INT32 p_bpc_header_size,
+                                    OPJ_UINT32 p_bpc_header_size,
                                     opj_event_mgr_t * p_manager );
 
 static opj_bool opj_jp2_read_cdef(	opj_jp2_v2_t * jp2,
@@ -203,13 +203,6 @@ static opj_bool jp2_write_jp2c_v2(	opj_jp2_v2_t *jp2,
 								struct opj_event_mgr * p_manager );
 
 static void jp2_write_jp(opj_cio_t *cio);
-/**
-Read the JP box - JPEG 2000 signature
-@param jp2 JP2 handle
-@param cio Input buffer stream
-@return Returns true if successful, returns false otherwise
-*/
-static opj_bool jp2_read_jp(opj_jp2_t *jp2, opj_cio_t *cio);
 
 /**
  * Reads a jpeg2000 file signature box.
@@ -221,13 +214,10 @@ static opj_bool jp2_read_jp(opj_jp2_t *jp2, opj_cio_t *cio);
  *
  * @return true if the file signature box is valid.
  */
-static opj_bool jp2_read_jp_v2(
-					opj_jp2_v2_t *jp2,
-					unsigned char * p_header_data,
-					unsigned int p_header_size,
-					struct opj_event_mgr * p_manager
-				 );
-
+static opj_bool opj_jp2_read_jp(opj_jp2_v2_t *jp2,
+                                OPJ_BYTE * p_header_data,
+                                OPJ_UINT32 p_header_size,
+                                opj_event_mgr_t * p_manager);
 
 /**
 Apply collected palette data
@@ -415,7 +405,7 @@ static const opj_jp2_header_handler_t * jp2_img_find_handler (int p_id);
 
 const opj_jp2_header_handler_t jp2_header [] =
 {
-	{JP2_JP,jp2_read_jp_v2},
+	{JP2_JP,opj_jp2_read_jp},
 	{JP2_FTYP,opj_jp2_read_ftyp},
 	{JP2_JP2H,opj_jp2_read_jp2h}
 };
@@ -576,7 +566,7 @@ static void jp2_write_url(opj_cio_t *cio, char *Idx_file) {
  */
 opj_bool opj_jp2_read_ihdr( opj_jp2_v2_t *jp2,
                             OPJ_BYTE *p_image_header_data,
-                            OPJ_INT32 p_image_header_size,
+                            OPJ_UINT32 p_image_header_size,
                             opj_event_mgr_t * p_manager )
 {
 	/* preconditions */
@@ -785,7 +775,7 @@ unsigned char * jp2_write_bpcc_v2(	opj_jp2_v2_t *jp2,
  */
 static opj_bool opj_jp2_read_bpcc(  opj_jp2_v2_t *jp2,
                                     OPJ_BYTE * p_bpc_header_data,
-                                    OPJ_INT32 p_bpc_header_size,
+                                    OPJ_UINT32 p_bpc_header_size,
                                     opj_event_mgr_t * p_manager 
                                     )
 {
@@ -1699,28 +1689,6 @@ opj_bool jp2_write_jp_v2(	opj_jp2_v2_t *jp2,
 	return OPJ_TRUE;
 }
 
-static opj_bool jp2_read_jp(opj_jp2_t *jp2, opj_cio_t *cio) {
-	opj_jp2_box_t box;
-
-	opj_common_ptr cinfo = jp2->cinfo;
-
-	jp2_read_boxhdr(cinfo, cio, &box);
-	if (JP2_JP != box.type) {
-		opj_event_msg(cinfo, EVT_ERROR, "Expected JP Marker\n");
-		return OPJ_FALSE;
-	}
-	if (0x0d0a870a != cio_read(cio, 4)) {
-		opj_event_msg(cinfo, EVT_ERROR, "Error with JP Marker\n");
-		return OPJ_FALSE;
-	}
-	if (cio_tell(cio) - box.init_pos != box.length) {
-		opj_event_msg(cinfo, EVT_ERROR, "Error with JP Box size\n");
-		return OPJ_FALSE;
-	}
-
-	return OPJ_TRUE;
-}
-
 static int write_fidx( int offset_jp2c, int length_jp2c, int offset_idx, int length_idx, opj_cio_t *cio)
 {  
   int len, lenp;
@@ -2319,12 +2287,12 @@ static const opj_jp2_header_handler_t * jp2_img_find_handler (
  *
  * @return true if the file signature box is valid.
  */
-opj_bool jp2_read_jp_v2(
-					opj_jp2_v2_t *jp2,
-					unsigned char * p_header_data,
-					unsigned int p_header_size,
-					opj_event_mgr_t * p_manager
-				 )
+static opj_bool opj_jp2_read_jp(opj_jp2_v2_t *jp2,
+                                OPJ_BYTE * p_header_data,
+                                OPJ_UINT32 p_header_size,
+                                opj_event_mgr_t * p_manager
+                                )
+
 {
 	unsigned int l_magic_number;
 
