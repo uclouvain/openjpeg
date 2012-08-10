@@ -44,14 +44,14 @@
 /**
  * Sets up the procedures to do on reading header. Developpers wanting to extend the library can add their own reading procedures.
  */
-void j2k_setup_header_reading (opj_j2k_v2_t *p_j2k);
+static void opj_j2k_setup_header_reading (opj_j2k_v2_t *p_j2k);
 
 /**
  * The read header procedure.
  */
-static opj_bool j2k_read_header_procedure(  opj_j2k_v2_t *p_j2k,
-                                            opj_stream_private_t *p_stream,
-                                            opj_event_mgr_t * p_manager);
+static opj_bool opj_j2k_read_header_procedure(  opj_j2k_v2_t *p_j2k,
+                                                opj_stream_private_t *p_stream,
+                                                opj_event_mgr_t * p_manager);
 
 /**
  * The default encoding validation procedure without any extension.
@@ -75,9 +75,9 @@ static opj_bool j2k_encoding_validation (   opj_j2k_v2_t * p_j2k,
  *
  * @return true if the parameters are correct.
  */
-static opj_bool j2k_decoding_validation (   opj_j2k_v2_t * p_j2k,
-                                            opj_stream_private_t *p_stream,
-                                            opj_event_mgr_t * p_manager );
+static opj_bool opj_j2k_decoding_validation (   opj_j2k_v2_t * p_j2k,
+                                                opj_stream_private_t *p_stream,
+                                                opj_event_mgr_t * p_manager );
 
 /**
  * Sets up the validation ,i.e. adds the procedures to lauch to make sure the codec parameters
@@ -89,7 +89,7 @@ static void j2k_setup_encoding_validation (opj_j2k_v2_t *p_j2k);
  * Sets up the validation ,i.e. adds the procedures to lauch to make sure the codec parameters
  * are valid. Developpers wanting to extend the library can add their own validation procedures.
  */
-static void j2k_setup_decoding_validation (opj_j2k_v2_t *p_j2k);
+static void opj_j2k_setup_decoding_validation (opj_j2k_v2_t *p_j2k);
 
 /**
  * Sets up the validation ,i.e. adds the procedures to lauch to make sure the codec parameters
@@ -113,9 +113,9 @@ static opj_bool j2k_mct_validation (opj_j2k_v2_t * p_j2k,
 /**
  * Builds the tcd decoder to use to decode tile.
  */
-static opj_bool j2k_build_decoder ( opj_j2k_v2_t * p_j2k,
-                                    opj_stream_private_t *p_stream,
-                                    opj_event_mgr_t * p_manager );
+static opj_bool opj_j2k_build_decoder ( opj_j2k_v2_t * p_j2k,
+                                        opj_stream_private_t *p_stream,
+                                        opj_event_mgr_t * p_manager );
 /**
  * Builds the tcd encoder to use to encode tile.
  */
@@ -7731,7 +7731,7 @@ opj_bool j2k_read_header(	struct opj_stream_private *p_stream,
 	}
 
 	/* customization of the validation */
-	j2k_setup_decoding_validation(p_j2k);
+	opj_j2k_setup_decoding_validation(p_j2k);
 
 	/* validation of the parameters codec */
 	if (! j2k_exec(p_j2k, p_j2k->m_validation_list, p_stream,p_manager)) {
@@ -7741,7 +7741,7 @@ opj_bool j2k_read_header(	struct opj_stream_private *p_stream,
 	}
 
 	/* customization of the encoding */
-	j2k_setup_header_reading(p_j2k);
+	opj_j2k_setup_header_reading(p_j2k);
 
 	/* read header */
 	if (! j2k_exec (p_j2k,p_j2k->m_procedure_list,p_stream,p_manager)) {
@@ -7769,12 +7769,12 @@ opj_bool j2k_read_header(	struct opj_stream_private *p_stream,
 /**
  * Sets up the procedures to do on reading header. Developpers wanting to extend the library can add their own reading procedures.
  */
-void j2k_setup_header_reading (opj_j2k_v2_t *p_j2k)
+void opj_j2k_setup_header_reading (opj_j2k_v2_t *p_j2k)
 {
 	/* preconditions*/
 	assert(p_j2k != 00);
 
-	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)j2k_read_header_procedure);
+	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_read_header_procedure);
 
 	/* DEVELOPER CORNER, add your custom procedures */
 	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)j2k_copy_default_tcp_and_create_tcd);
@@ -7785,13 +7785,13 @@ void j2k_setup_header_reading (opj_j2k_v2_t *p_j2k)
  * Sets up the validation ,i.e. adds the procedures to lauch to make sure the codec parameters
  * are valid. Developpers wanting to extend the library can add their own validation procedures.
  */
-void j2k_setup_decoding_validation (opj_j2k_v2_t *p_j2k)
+void opj_j2k_setup_decoding_validation (opj_j2k_v2_t *p_j2k)
 {
 	/* preconditions*/
 	assert(p_j2k != 00);
 
-	opj_procedure_list_add_procedure(p_j2k->m_validation_list, (opj_procedure)j2k_build_decoder);
-	opj_procedure_list_add_procedure(p_j2k->m_validation_list, (opj_procedure)j2k_decoding_validation);
+	opj_procedure_list_add_procedure(p_j2k->m_validation_list, (opj_procedure)opj_j2k_build_decoder);
+	opj_procedure_list_add_procedure(p_j2k->m_validation_list, (opj_procedure)opj_j2k_decoding_validation);
 	/* DEVELOPER CORNER, add your custom validation procedure */
 
 }
@@ -7976,9 +7976,9 @@ opj_bool j2k_setup_mct_encoding(opj_tcp_v2_t * p_tcp, opj_image_t * p_image)
 /**
  * Builds the cp decoder parameters to use to decode tile.
  */
-opj_bool j2k_build_decoder (opj_j2k_v2_t * p_j2k,
-							opj_stream_private_t *p_stream,
-							opj_event_mgr_t * p_manager )
+opj_bool opj_j2k_build_decoder (opj_j2k_v2_t * p_j2k,
+							    opj_stream_private_t *p_stream,
+							    opj_event_mgr_t * p_manager )
 {
 	/* add here initialization of cp
 	   copy paste of setup_decoder */
@@ -8056,11 +8056,10 @@ opj_bool j2k_encoding_validation (	opj_j2k_v2_t * p_j2k,
  *
  * @return true if the parameters are correct.
  */
-opj_bool j2k_decoding_validation (
-								opj_j2k_v2_t *p_j2k,
-								opj_stream_private_t *p_stream,
-								opj_event_mgr_t * p_manager
-							  )
+opj_bool opj_j2k_decoding_validation (  opj_j2k_v2_t *p_j2k,
+                                        opj_stream_private_t *p_stream,
+                                        opj_event_mgr_t * p_manager
+                                        )
 {
 	opj_bool l_is_valid = OPJ_TRUE;
 
@@ -8088,9 +8087,9 @@ opj_bool j2k_decoding_validation (
 	return l_is_valid;
 }
 
-opj_bool j2k_read_header_procedure(	opj_j2k_v2_t *p_j2k,
-									struct opj_stream_private *p_stream,
-									struct opj_event_mgr * p_manager)
+opj_bool opj_j2k_read_header_procedure(	opj_j2k_v2_t *p_j2k,
+									    opj_stream_private_t *p_stream,
+									    opj_event_mgr_t * p_manager)
 {
 	OPJ_UINT32 l_current_marker;
 	OPJ_UINT32 l_marker_size;
@@ -10531,7 +10530,7 @@ opj_bool j2k_decode_tiles (	opj_j2k_v2_t *p_j2k,
 /**
  * Sets up the procedures to do on decoding data. Developpers wanting to extend the library can add their own reading procedures.
  */
-static void j2k_setup_decoding (opj_j2k_v2_t *p_j2k)
+static void opj_j2k_setup_decoding (opj_j2k_v2_t *p_j2k)
 {
 	/* preconditions*/
 	assert(p_j2k != 00);
@@ -10544,9 +10543,9 @@ static void j2k_setup_decoding (opj_j2k_v2_t *p_j2k)
 /*
  * Read and decode one tile.
  */
-static opj_bool j2k_decode_one_tile (	opj_j2k_v2_t *p_j2k,
-								opj_stream_private_t *p_stream,
-								opj_event_mgr_t * p_manager)
+static opj_bool opj_j2k_decode_one_tile (	opj_j2k_v2_t *p_j2k,
+								            opj_stream_private_t *p_stream,
+								            opj_event_mgr_t * p_manager)
 {
 	opj_bool l_go_on = OPJ_TRUE;
 	OPJ_UINT32 l_current_tile_no;
@@ -10661,12 +10660,12 @@ static opj_bool j2k_decode_one_tile (	opj_j2k_v2_t *p_j2k,
 /**
  * Sets up the procedures to do on decoding one tile. Developpers wanting to extend the library can add their own reading procedures.
  */
-static void j2k_setup_decoding_tile (opj_j2k_v2_t *p_j2k)
+static void opj_j2k_setup_decoding_tile (opj_j2k_v2_t *p_j2k)
 {
 	/* preconditions*/
 	assert(p_j2k != 00);
 
-	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)j2k_decode_one_tile);
+	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_decode_one_tile);
 	/* DEVELOPER CORNER, add your custom procedures */
 
 }
@@ -10692,7 +10691,7 @@ opj_bool opj_j2k_decode(opj_j2k_v2_t * p_j2k,
 	opj_copy_image_header(p_image, p_j2k->m_output_image);
 
 	/* customization of the decoding */
-	j2k_setup_decoding(p_j2k);
+	opj_j2k_setup_decoding(p_j2k);
 
 	/* Decode the codestream */
 	if (! j2k_exec (p_j2k,p_j2k->m_procedure_list,p_stream,p_manager)) {
@@ -10726,7 +10725,7 @@ opj_bool opj_j2k_decode(opj_j2k_v2_t * p_j2k,
 opj_bool j2k_get_tile(	opj_j2k_v2_t *p_j2k,
 						opj_stream_private_t *p_stream,
 						opj_image_t* p_image,
-						struct opj_event_mgr * p_manager,
+						opj_event_mgr_t * p_manager,
 						OPJ_UINT32 tile_index )
 {
 	OPJ_UINT32 compno;
@@ -10793,7 +10792,7 @@ opj_bool j2k_get_tile(	opj_j2k_v2_t *p_j2k,
 	p_j2k->m_specific_param.m_decoder.m_tile_ind_to_dec = tile_index;
 
 	/* customization of the decoding */
-	j2k_setup_decoding_tile(p_j2k);
+	opj_j2k_setup_decoding_tile(p_j2k);
 
 	/* Decode the codestream */
 	if (! j2k_exec (p_j2k,p_j2k->m_procedure_list,p_stream,p_manager)) {
