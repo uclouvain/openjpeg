@@ -153,7 +153,7 @@ static opj_bool jp2_write_ftyp_v2(	opj_jp2_v2_t *jp2,
  *
  * @return true if the FTYP box is valid.
  */
-static opj_bool jp2_read_ftyp_v2(	opj_jp2_v2_t *jp2,
+static opj_bool opj_jp2_read_ftyp(	opj_jp2_v2_t *jp2,
 									OPJ_BYTE * p_header_data,
 									OPJ_UINT32 p_header_size,
 									opj_event_mgr_t * p_manager );
@@ -425,7 +425,7 @@ static const opj_jp2_header_handler_t * jp2_img_find_handler (int p_id);
 const opj_jp2_header_handler_t jp2_header [] =
 {
 	{JP2_JP,jp2_read_jp_v2},
-	{JP2_FTYP,jp2_read_ftyp_v2},
+	{JP2_FTYP,opj_jp2_read_ftyp},
 	{JP2_JP2H,opj_jp2_read_jp2h}
 };
 
@@ -2411,12 +2411,11 @@ opj_bool jp2_read_jp_v2(
  *
  * @return true if the FTYP box is valid.
  */
-opj_bool jp2_read_ftyp_v2(
-							opj_jp2_v2_t *jp2,
-							unsigned char * p_header_data,
-							unsigned int p_header_size,
-							opj_event_mgr_t * p_manager
-						)
+static opj_bool opj_jp2_read_ftyp(	opj_jp2_v2_t *jp2,
+									OPJ_BYTE * p_header_data,
+									OPJ_UINT32 p_header_size,
+									opj_event_mgr_t * p_manager 
+                                    )
 {
 	OPJ_UINT32 i, l_remaining_bytes;
 
