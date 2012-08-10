@@ -994,11 +994,6 @@ static opj_bool j2k_init_info(	opj_j2k_v2_t *p_j2k,
 								struct opj_event_mgr * p_manager );
 
 /**
-Read an unknown marker
-@param j2k J2K handle
-*/
-static void j2k_read_unk(opj_j2k_t *j2k);
-/**
 Add main header marker information
 @param cstr_info Codestream information structure
 @param type marker type
@@ -5654,70 +5649,10 @@ opj_dec_mstabent_t j2k_dec_mstab[] = {
   {J2K_MS_INSEC, 0, j2k_read_insec},
 #endif /* USE_JPSEC */
 
-  {0, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_unk}
+  /*{0, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_unk}*/
 };
 
-static void j2k_read_unk(opj_j2k_t *j2k) {
-	opj_event_msg(j2k->cinfo, EVT_WARNING, "Unknown marker\n");
 
-#ifdef USE_JPWL
-	if (j2k->cp->correct) {
-		int m = 0, id, i;
-		int min_id = 0, min_dist = 17, cur_dist = 0, tmp_id;
-		cio_seek(j2k->cio, cio_tell(j2k->cio) - 2);
-		id = cio_read(j2k->cio, 2);
-		opj_event_msg(j2k->cinfo, EVT_ERROR,
-			"JPWL: really don't know this marker %x\n",
-			id);
-		if (!JPWL_ASSUME) {
-			opj_event_msg(j2k->cinfo, EVT_ERROR,
-				"- possible synch loss due to uncorrectable codestream errors => giving up\n");
-			return;
-		}
-		/* OK, activate this at your own risk!!! */
-		/* we look for the marker at the minimum hamming distance from this */
-		while (j2k_dec_mstab[m].id) {
-			
-			/* 1's where they differ */
-			tmp_id = j2k_dec_mstab[m].id ^ id;
-
-			/* compute the hamming distance between our id and the current */
-			cur_dist = 0;
-			for (i = 0; i < 16; i++) {
-				if ((tmp_id >> i) & 0x0001) {
-					cur_dist++;
-				}
-			}
-
-			/* if current distance is smaller, set the minimum */
-			if (cur_dist < min_dist) {
-				min_dist = cur_dist;
-				min_id = j2k_dec_mstab[m].id;
-			}
-			
-			/* jump to the next marker */
-			m++;
-		}
-
-		/* do we substitute the marker? */
-		if (min_dist < JPWL_MAXIMUM_HAMMING) {
-			opj_event_msg(j2k->cinfo, EVT_ERROR,
-				"- marker %x is at distance %d from the read %x\n",
-				min_id, min_dist, id);
-			opj_event_msg(j2k->cinfo, EVT_ERROR,
-				"- trying to substitute in place and crossing fingers!\n");
-			cio_seek(j2k->cio, cio_tell(j2k->cio) - 2);
-			cio_write(j2k->cio, min_id, 2);
-
-			/* rewind */
-			cio_seek(j2k->cio, cio_tell(j2k->cio) - 2);
-
-		}
-
-	};
-#endif /* USE_JPWL */
-
-}
 
 /**
  * Reads an unknown marker
