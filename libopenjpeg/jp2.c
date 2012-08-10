@@ -59,7 +59,7 @@ static opj_bool jp2_read_boxhdr(opj_common_ptr cinfo, opj_cio_t *cio, opj_jp2_bo
  *
  * @return	true if the image header is valid, false else.
  */
-static opj_bool jp2_read_ihdr_v2(   opj_jp2_v2_t *jp2,
+static opj_bool opj_jp2_read_ihdr(  opj_jp2_v2_t *jp2,
                                     OPJ_BYTE *p_image_header_data,
                                     OPJ_INT32 p_image_header_size,
                                     opj_event_mgr_t * p_manager );
@@ -464,7 +464,7 @@ const opj_jp2_header_handler_t jp2_header [] =
 
 const opj_jp2_header_handler_t jp2_img_header [] =
 {
-	{JP2_IHDR,jp2_read_ihdr_v2},
+	{JP2_IHDR,opj_jp2_read_ihdr},
 	{JP2_COLR,jp2_read_colr_v2},
 	{JP2_BPCC,jp2_read_bpcc_v2},
 	{JP2_PCLR,jp2_read_pclr_v2},
@@ -616,11 +616,10 @@ static void jp2_write_url(opj_cio_t *cio, char *Idx_file) {
  *
  * @return	true if the image header is valid, fale else.
  */
-opj_bool jp2_read_ihdr_v2(  opj_jp2_v2_t *jp2,
+opj_bool opj_jp2_read_ihdr( opj_jp2_v2_t *jp2,
                             OPJ_BYTE *p_image_header_data,
                             OPJ_INT32 p_image_header_size,
-                            opj_event_mgr_t * p_manager
-						  )
+                            opj_event_mgr_t * p_manager )
 {
 	/* preconditions */
 	assert(p_image_header_data != 00);
