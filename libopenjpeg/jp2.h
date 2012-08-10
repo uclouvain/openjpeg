@@ -282,12 +282,6 @@ Read the JP2H box - JP2 Header box (used in MJ2)
 opj_bool jp2_read_jp2h(opj_jp2_t *jp2, opj_cio_t *cio, opj_jp2_color_t *color);
 
 /**
-Destroy a JP2 decompressor handle
-@param jp2 JP2 decompressor handle to destroy
-*/
-void jp2_destroy_decompress(opj_jp2_t *jp2);
-
-/**
 Setup the decoder decoding parameters using user parameters.
 Decoding parameters are returned in jp2->j2k->cp.
 @param jp2 JP2 decompressor handle
