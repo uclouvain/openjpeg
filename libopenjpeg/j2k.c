@@ -1106,20 +1106,20 @@ static opj_bool opj_j2k_read_mco (	opj_j2k_v2_t *p_j2k,
 
 static opj_bool j2k_add_mct(opj_tcp_v2_t * p_tcp, opj_image_t * p_image, OPJ_UINT32 p_index);
 
-static void  j2k_read_int16_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
-static void  j2k_read_int32_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
-static void  j2k_read_float32_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
-static void  j2k_read_float64_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
+static void  opj_j2k_read_int16_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
+static void  opj_j2k_read_int32_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
+static void  opj_j2k_read_float32_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
+static void  opj_j2k_read_float64_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
 
-static void  j2k_read_int16_to_int32 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
-static void  j2k_read_int32_to_int32 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
-static void  j2k_read_float32_to_int32 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
-static void  j2k_read_float64_to_int32 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
+static void  opj_j2k_read_int16_to_int32 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
+static void  opj_j2k_read_int32_to_int32 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
+static void  opj_j2k_read_float32_to_int32 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
+static void  opj_j2k_read_float64_to_int32 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
 
-static void  j2k_write_float_to_int16 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
-static void  j2k_write_float_to_int32 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
-static void  j2k_write_float_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
-static void  j2k_write_float_to_float64 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
+static void  opj_j2k_write_float_to_int16 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
+static void  opj_j2k_write_float_to_int32 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
+static void  opj_j2k_write_float_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
+static void  opj_j2k_write_float_to_float64 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
 
 
 /**
@@ -1278,30 +1278,30 @@ const OPJ_UINT32 MCT_ELEMENT_SIZE [] =
 	8
 };
 
-typedef void (* j2k_mct_function) (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
+typedef void (* opj_j2k_mct_function) (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
 
-const j2k_mct_function j2k_mct_read_functions_to_float [] =
+const opj_j2k_mct_function j2k_mct_read_functions_to_float [] =
 {
-	j2k_read_int16_to_float,
-	j2k_read_int32_to_float,
-	j2k_read_float32_to_float,
-	j2k_read_float64_to_float
+	opj_j2k_read_int16_to_float,
+	opj_j2k_read_int32_to_float,
+	opj_j2k_read_float32_to_float,
+	opj_j2k_read_float64_to_float
 };
 
-const j2k_mct_function j2k_mct_read_functions_to_int32 [] =
+const opj_j2k_mct_function j2k_mct_read_functions_to_int32 [] =
 {
-	j2k_read_int16_to_int32,
-	j2k_read_int32_to_int32,
-	j2k_read_float32_to_int32,
-	j2k_read_float64_to_int32
+	opj_j2k_read_int16_to_int32,
+	opj_j2k_read_int32_to_int32,
+	opj_j2k_read_float32_to_int32,
+	opj_j2k_read_float64_to_int32
 };
 
-const j2k_mct_function j2k_mct_write_functions_from_float [] =
+const opj_j2k_mct_function j2k_mct_write_functions_from_float [] =
 {
-	j2k_write_float_to_int16,
-	j2k_write_float_to_int32,
-	j2k_write_float_to_float,
-	j2k_write_float_to_float64
+	opj_j2k_write_float_to_int16,
+	opj_j2k_write_float_to_int32,
+	opj_j2k_write_float_to_float,
+	opj_j2k_write_float_to_float64
 };
 
 typedef struct opj_dec_memory_marker_handler
@@ -1381,7 +1381,7 @@ const opj_dec_memory_marker_handler_t j2k_memory_marker_handler_tab [] =
 
 
 
-void  j2k_read_int16_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
+void  opj_j2k_read_int16_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
 {
 	OPJ_BYTE * l_src_data = (OPJ_BYTE *) p_src_data;
 	OPJ_FLOAT32 * l_dest_data = (OPJ_FLOAT32 *) p_dest_data;
@@ -1397,7 +1397,7 @@ void  j2k_read_int16_to_float (const void * p_src_data, void * p_dest_data, OPJ_
 	}
 }
 
-void  j2k_read_int32_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
+void  opj_j2k_read_int32_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
 {
 	OPJ_BYTE * l_src_data = (OPJ_BYTE *) p_src_data;
 	OPJ_FLOAT32 * l_dest_data = (OPJ_FLOAT32 *) p_dest_data;
@@ -1413,7 +1413,7 @@ void  j2k_read_int32_to_float (const void * p_src_data, void * p_dest_data, OPJ_
 	}
 }
 
-void  j2k_read_float32_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
+void  opj_j2k_read_float32_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
 {
 	OPJ_BYTE * l_src_data = (OPJ_BYTE *) p_src_data;
 	OPJ_FLOAT32 * l_dest_data = (OPJ_FLOAT32 *) p_dest_data;
@@ -1429,7 +1429,7 @@ void  j2k_read_float32_to_float (const void * p_src_data, void * p_dest_data, OP
 	}
 }
 
-void  j2k_read_float64_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
+void  opj_j2k_read_float64_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
 {
 	OPJ_BYTE * l_src_data = (OPJ_BYTE *) p_src_data;
 	OPJ_FLOAT32 * l_dest_data = (OPJ_FLOAT32 *) p_dest_data;
@@ -1445,7 +1445,7 @@ void  j2k_read_float64_to_float (const void * p_src_data, void * p_dest_data, OP
 	}
 }
 
-void  j2k_read_int16_to_int32 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
+void  opj_j2k_read_int16_to_int32 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
 {
 	OPJ_BYTE * l_src_data = (OPJ_BYTE *) p_src_data;
 	OPJ_INT32 * l_dest_data = (OPJ_INT32 *) p_dest_data;
@@ -1461,7 +1461,7 @@ void  j2k_read_int16_to_int32 (const void * p_src_data, void * p_dest_data, OPJ_
 	}
 }
 
-void  j2k_read_int32_to_int32 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
+void  opj_j2k_read_int32_to_int32 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
 {
 	OPJ_BYTE * l_src_data = (OPJ_BYTE *) p_src_data;
 	OPJ_INT32 * l_dest_data = (OPJ_INT32 *) p_dest_data;
@@ -1477,7 +1477,7 @@ void  j2k_read_int32_to_int32 (const void * p_src_data, void * p_dest_data, OPJ_
 	}
 }
 
-void  j2k_read_float32_to_int32 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
+void  opj_j2k_read_float32_to_int32 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
 {
 	OPJ_BYTE * l_src_data = (OPJ_BYTE *) p_src_data;
 	OPJ_INT32 * l_dest_data = (OPJ_INT32 *) p_dest_data;
@@ -1493,7 +1493,7 @@ void  j2k_read_float32_to_int32 (const void * p_src_data, void * p_dest_data, OP
 	}
 }
 
-void  j2k_read_float64_to_int32 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
+void  opj_j2k_read_float64_to_int32 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
 {
 	OPJ_BYTE * l_src_data = (OPJ_BYTE *) p_src_data;
 	OPJ_INT32 * l_dest_data = (OPJ_INT32 *) p_dest_data;
@@ -1509,7 +1509,7 @@ void  j2k_read_float64_to_int32 (const void * p_src_data, void * p_dest_data, OP
 	}
 }
 
-void  j2k_write_float_to_int16 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
+void  opj_j2k_write_float_to_int16 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
 {
 	OPJ_BYTE * l_dest_data = (OPJ_BYTE *) p_dest_data;
 	OPJ_FLOAT32 * l_src_data = (OPJ_FLOAT32 *) p_src_data;
@@ -1525,7 +1525,7 @@ void  j2k_write_float_to_int16 (const void * p_src_data, void * p_dest_data, OPJ
 	}
 }
 
-void  j2k_write_float_to_int32 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
+void opj_j2k_write_float_to_int32 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
 {
 	OPJ_BYTE * l_dest_data = (OPJ_BYTE *) p_dest_data;
 	OPJ_FLOAT32 * l_src_data = (OPJ_FLOAT32 *) p_src_data;
@@ -1541,7 +1541,7 @@ void  j2k_write_float_to_int32 (const void * p_src_data, void * p_dest_data, OPJ
 	}
 }
 
-void  j2k_write_float_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
+void  opj_j2k_write_float_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
 {
 	OPJ_BYTE * l_dest_data = (OPJ_BYTE *) p_dest_data;
 	OPJ_FLOAT32 * l_src_data = (OPJ_FLOAT32 *) p_src_data;
@@ -1557,7 +1557,7 @@ void  j2k_write_float_to_float (const void * p_src_data, void * p_dest_data, OPJ
 	}
 }
 
-void  j2k_write_float_to_float64 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
+void  opj_j2k_write_float_to_float64 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
 {
 	OPJ_BYTE * l_dest_data = (OPJ_BYTE *) p_dest_data;
 	OPJ_FLOAT32 * l_src_data = (OPJ_FLOAT32 *) p_src_data;
