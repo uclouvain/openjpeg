@@ -342,12 +342,10 @@ static opj_bool opj_jp2_exec (  opj_jp2_v2_t * jp2,
  *
  * @return	true if the box is reconized, false otherwise
 */
-static opj_bool jp2_read_boxhdr_v2(
-								opj_jp2_box_t *box,
-								OPJ_UINT32 * p_number_bytes_read,
-								struct opj_stream_private *cio,
-								struct opj_event_mgr * p_manager
-							);
+static opj_bool opj_jp2_read_boxhdr(opj_jp2_box_t *box,
+                                    OPJ_UINT32 * p_number_bytes_read,
+                                    opj_stream_private_t *cio,
+                                    opj_event_mgr_t * p_manager);
 
 /**
  * Sets up the validation ,i.e. adds the procedures to lauch to make sure the codec parameters
@@ -452,7 +450,11 @@ static void opj_jp2_setup_header_reading (opj_jp2_v2_t *jp2);
  *
  * @return	true if the box is reconized, false otherwise
 */
-opj_bool jp2_read_boxhdr_v2(opj_jp2_box_t *box, OPJ_UINT32 * p_number_bytes_read, opj_stream_private_t *cio, opj_event_mgr_t * p_manager)
+ opj_bool opj_jp2_read_boxhdr(opj_jp2_box_t *box,
+                                    OPJ_UINT32 * p_number_bytes_read,
+                                    opj_stream_private_t *cio,
+                                    opj_event_mgr_t * p_manager
+                                    )
 {
 	/* read header from file */
 	unsigned char l_data_header [8];
@@ -2067,7 +2069,7 @@ static opj_bool opj_jp2_read_header_procedure(  opj_jp2_v2_t *jp2,
 	}
 	memset(l_current_data, 0 , l_last_data_size);
 
-	while (jp2_read_boxhdr_v2(&box,&l_nb_bytes_read,stream,p_manager)) {
+	while (opj_jp2_read_boxhdr(&box,&l_nb_bytes_read,stream,p_manager)) {
 		/* is it the codestream box ? */
 		if (box.type == JP2_JP2C) {
 			if (jp2->jp2_state & JP2_STATE_HEADER) {
