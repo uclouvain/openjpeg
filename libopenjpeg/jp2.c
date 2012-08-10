@@ -90,8 +90,6 @@ static void jp2_write_bpcc(opj_jp2_t *jp2, opj_cio_t *cio);
 static unsigned char * jp2_write_bpcc_v2(	opj_jp2_v2_t *jp2, 
 											unsigned int * p_nb_bytes_written );
 
-static opj_bool jp2_read_bpcc(opj_jp2_t *jp2, opj_cio_t *cio);
-
 /**
  * Reads a Bit per Component box.
  *
@@ -814,31 +812,6 @@ unsigned char * jp2_write_bpcc_v2(	opj_jp2_v2_t *jp2,
 	return l_bpcc_data;
 }
 
-
-
-static opj_bool jp2_read_bpcc(opj_jp2_t *jp2, opj_cio_t *cio) {
-	unsigned int i;
-	opj_jp2_box_t box;
-
-	opj_common_ptr cinfo = jp2->cinfo;
-
-	jp2_read_boxhdr(cinfo, cio, &box);
-	if (JP2_BPCC != box.type) {
-		opj_event_msg(cinfo, EVT_ERROR, "Expected BPCC Marker\n");
-		return OPJ_FALSE;
-	}
-
-	for (i = 0; i < jp2->numcomps; i++) {
-		jp2->comps[i].bpcc = cio_read(cio, 1);
-	}
-
-	if (cio_tell(cio) - box.init_pos != box.length) {
-		opj_event_msg(cinfo, EVT_ERROR, "Error with BPCC Box\n");
-		return OPJ_FALSE;
-	}
-
-	return OPJ_TRUE;
-}
 
 /**
  * Reads a Bit per Component box.
