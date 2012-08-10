@@ -1024,10 +1024,10 @@ static void j2k_add_tlmarker_v2(OPJ_UINT32 tileno, opj_codestream_index_t *cstr_
  *
  * @return	true			if the marker could be deduced.
 */
-static opj_bool j2k_read_unk_v2 (	opj_j2k_v2_t *p_j2k,
-									struct opj_stream_private *p_stream,
+static opj_bool opj_j2k_read_unk (	opj_j2k_v2_t *p_j2k,
+									opj_stream_private_t *p_stream,
 									OPJ_UINT32 *output_marker,
-									struct opj_event_mgr * p_manager );
+									opj_event_mgr_t * p_manager );
 
 /**
  * Writes the MCT marker (Multiple Component Transform)
@@ -5663,10 +5663,10 @@ opj_dec_mstabent_t j2k_dec_mstab[] = {
  *
  * @return	true			if the marker could be deduced.
 */
-opj_bool j2k_read_unk_v2 (	opj_j2k_v2_t *p_j2k,
-							struct opj_stream_private *p_stream,
+opj_bool opj_j2k_read_unk (	opj_j2k_v2_t *p_j2k,
+							opj_stream_private_t *p_stream,
 							OPJ_UINT32 *output_marker,
-							struct opj_event_mgr * p_manager
+							opj_event_mgr_t * p_manager
 							)
 {
 	OPJ_UINT32 l_unknown_marker;
@@ -8130,7 +8130,7 @@ opj_bool j2k_read_header_procedure(	opj_j2k_v2_t *p_j2k,
 
 		/* Manage case where marker is unknown */
 		if (l_marker_handler->id == J2K_MS_UNK) {
-			if (! j2k_read_unk_v2(p_j2k, p_stream, &l_current_marker, p_manager)){
+			if (! opj_j2k_read_unk(p_j2k, p_stream, &l_current_marker, p_manager)){
 				opj_event_msg_v2(p_manager, EVT_ERROR, "Unknow marker have been detected and generated error.\n");
 				return OPJ_FALSE;
 			}
