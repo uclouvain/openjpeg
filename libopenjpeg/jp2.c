@@ -202,7 +202,6 @@ static opj_bool jp2_write_jp2c_v2(	opj_jp2_v2_t *jp2,
 								struct opj_stream_private *cio,
 								struct opj_event_mgr * p_manager );
 
-static opj_bool jp2_read_jp2c(opj_jp2_t *jp2, opj_cio_t *cio, unsigned int *j2k_codestream_length, unsigned int *j2k_codestream_offset);
 static void jp2_write_jp(opj_cio_t *cio);
 /**
 Read the JP box - JPEG 2000 signature
@@ -229,15 +228,7 @@ static opj_bool jp2_read_jp_v2(
 					struct opj_event_mgr * p_manager
 				 );
 
-/**
-Decode the structure of a JP2 file
-@param jp2 JP2 handle
-@param cio Input buffer stream
-@param color Collector for profile, cdef and pclr data
-@return Returns true if successful, returns false otherwise
-*/
-static opj_bool jp2_read_struct(opj_jp2_t *jp2, opj_cio_t *cio,
-	opj_jp2_color_t *color);
+
 /**
 Apply collected palette data
 @param color Collector for profile, cdef and pclr data
@@ -1659,25 +1650,6 @@ opj_bool jp2_write_jp2c_v2(	opj_jp2_v2_t *jp2,
 	return OPJ_TRUE;
 }
 
-static opj_bool jp2_read_jp2c(opj_jp2_t *jp2, opj_cio_t *cio, unsigned int *j2k_codestream_length, unsigned int *j2k_codestream_offset) {
-	opj_jp2_box_t box;
-
-	opj_common_ptr cinfo = jp2->cinfo;
-
-	jp2_read_boxhdr(cinfo, cio, &box);
-	do {
-		if(JP2_JP2C != box.type) {
-			cio_skip(cio, box.length - 8);
-			jp2_read_boxhdr(cinfo, cio, &box);
-		}
-	} while(JP2_JP2C != box.type);
-
-	*j2k_codestream_offset = cio_tell(cio);
-	*j2k_codestream_length = box.length - 8;
-
-	return OPJ_TRUE;
-}
-
 static void jp2_write_jp(opj_cio_t *cio) {
 	opj_jp2_box_t box;
 
@@ -1748,22 +1720,6 @@ static opj_bool jp2_read_jp(opj_jp2_t *jp2, opj_cio_t *cio) {
 
 	return OPJ_TRUE;
 }
-
-
-static opj_bool jp2_read_struct(opj_jp2_t *jp2, opj_cio_t *cio,
-	opj_jp2_color_t *color) {
-	if (!jp2_read_jp(jp2, cio))
-		return OPJ_FALSE;
-	if (!jp2_read_ftyp(jp2, cio))
-		return OPJ_FALSE;
-	if (!jp2_read_jp2h(jp2, cio, color))
-		return OPJ_FALSE;
-	if (!jp2_read_jp2c(jp2, cio, &jp2->j2k_codestream_length, &jp2->j2k_codestream_offset))
-		return OPJ_FALSE;
-	
-	return OPJ_TRUE;
-}
-
 
 static int write_fidx( int offset_jp2c, int length_jp2c, int offset_idx, int length_idx, opj_cio_t *cio)
 {  
