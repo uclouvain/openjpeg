@@ -100,12 +100,10 @@ static unsigned char * jp2_write_bpcc_v2(	opj_jp2_v2_t *jp2,
  *
  * @return	true if the bpc header is valid, fale else.
  */
-static opj_bool jp2_read_bpcc_v2(
-							opj_jp2_v2_t *jp2,
-							unsigned char * p_bpc_header_data,
-							unsigned int p_bpc_header_size,
-							struct opj_event_mgr * p_manager
-						  );
+static opj_bool opj_jp2_read_bpcc(  opj_jp2_v2_t *jp2,
+                                    OPJ_BYTE * p_bpc_header_data,
+                                    OPJ_INT32 p_bpc_header_size,
+                                    opj_event_mgr_t * p_manager );
 
 static opj_bool jp2_read_cdef_v2(	opj_jp2_v2_t * jp2,
 									unsigned char * p_cdef_header_data,
@@ -464,7 +462,7 @@ const opj_jp2_header_handler_t jp2_img_header [] =
 {
 	{JP2_IHDR,opj_jp2_read_ihdr},
 	{JP2_COLR,jp2_read_colr_v2},
-	{JP2_BPCC,jp2_read_bpcc_v2},
+	{JP2_BPCC,opj_jp2_read_bpcc},
 	{JP2_PCLR,jp2_read_pclr_v2},
 	{JP2_CMAP,jp2_read_cmap_v2},
 	{JP2_CDEF,jp2_read_cdef_v2}
@@ -823,11 +821,11 @@ unsigned char * jp2_write_bpcc_v2(	opj_jp2_v2_t *jp2,
  *
  * @return	true if the bpc header is valid, false otherwise.
  */
-opj_bool jp2_read_bpcc_v2(	opj_jp2_v2_t *jp2,
-							unsigned char * p_bpc_header_data,
-							unsigned int p_bpc_header_size,
-							opj_event_mgr_t * p_manager
-						  )
+static opj_bool opj_jp2_read_bpcc(  opj_jp2_v2_t *jp2,
+                                    OPJ_BYTE * p_bpc_header_data,
+                                    OPJ_INT32 p_bpc_header_size,
+                                    opj_event_mgr_t * p_manager 
+                                    )
 {
 	OPJ_UINT32 i;
 
