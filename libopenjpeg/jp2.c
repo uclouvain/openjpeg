@@ -112,12 +112,6 @@ static opj_bool opj_jp2_read_cdef(	opj_jp2_v2_t * jp2,
 
 static void jp2_write_colr(opj_jp2_t *jp2, opj_cio_t *cio);
 /**
-Write the FTYP box - File type box
-@param jp2 JP2 handle
-@param cio Output buffer stream
-*/
-
-/**
  * Writes the Colour Specification box.
  *
  * @param jp2					jpeg2000 file codec.
@@ -128,14 +122,13 @@ Write the FTYP box - File type box
 static unsigned char *jp2_write_colr_v2(opj_jp2_v2_t *jp2, 
 										unsigned int * p_nb_bytes_written );
 
-static void jp2_write_ftyp(opj_jp2_t *jp2, opj_cio_t *cio);
 /**
-Read the FTYP box - File type box
+Write the FTYP box - File type box
 @param jp2 JP2 handle
-@param cio Input buffer stream
-@return Returns true if successful, returns false otherwise
+@param cio Output buffer stream
 */
-static opj_bool jp2_read_ftyp(opj_jp2_t *jp2, opj_cio_t *cio);
+static void jp2_write_ftyp(opj_jp2_t *jp2, opj_cio_t *cio);
+
 
 /**
  * Writes a FTYP box - File type box
@@ -161,9 +154,9 @@ static opj_bool jp2_write_ftyp_v2(	opj_jp2_v2_t *jp2,
  * @return true if the FTYP box is valid.
  */
 static opj_bool jp2_read_ftyp_v2(	opj_jp2_v2_t *jp2,
-									unsigned char * p_header_data,
+									OPJ_BYTE * p_header_data,
 									OPJ_UINT32 p_header_size,
-									struct opj_event_mgr * p_manager );
+									opj_event_mgr_t * p_manager );
 
 /**
  * Skips the Jpeg2000 Codestream Header box - JP2C Header box.
@@ -1591,36 +1584,6 @@ opj_bool jp2_write_ftyp_v2(	opj_jp2_v2_t *jp2,
 	opj_free(l_ftyp_data);
 	
 	return l_result;
-}
-
-static opj_bool jp2_read_ftyp(opj_jp2_t *jp2, opj_cio_t *cio) {
-	int i;
-	opj_jp2_box_t box;
-
-	opj_common_ptr cinfo = jp2->cinfo;
-
-	jp2_read_boxhdr(cinfo, cio, &box);
-
-	if (JP2_FTYP != box.type) {
-		opj_event_msg(cinfo, EVT_ERROR, "Expected FTYP Marker\n");
-		return OPJ_FALSE;
-	}
-
-	jp2->brand = cio_read(cio, 4);		/* BR */
-	jp2->minversion = cio_read(cio, 4);	/* MinV */
-	jp2->numcl = (box.length - 16) / 4;
-	jp2->cl = (unsigned int *) opj_malloc(jp2->numcl * sizeof(unsigned int));
-
-	for (i = 0; i < (int)jp2->numcl; i++) {
-		jp2->cl[i] = cio_read(cio, 4);	/* CLi */
-	}
-
-	if (cio_tell(cio) - box.init_pos != box.length) {
-		opj_event_msg(cinfo, EVT_ERROR, "Error with FTYP Box\n");
-		return OPJ_FALSE;
-	}
-
-	return OPJ_TRUE;
 }
 
 static int jp2_write_jp2c(opj_jp2_t *jp2, opj_cio_t *cio, opj_image_t *image, opj_codestream_info_t *cstr_info) {
