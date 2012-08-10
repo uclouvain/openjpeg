@@ -716,12 +716,10 @@ static opj_bool opj_j2k_read_poc (  opj_j2k_v2_t *p_j2k,
  * @param	p_header_size	the size of the data contained in the TLM marker.
  * @param	p_manager		the user event manager.
 */
-static opj_bool j2k_read_crg_v2 (
-						opj_j2k_v2_t *p_j2k,
-						OPJ_BYTE * p_header_data,
-						OPJ_UINT32 p_header_size,
-						struct opj_event_mgr * p_manager
-					);
+static opj_bool opj_j2k_read_crg (  opj_j2k_v2_t *p_j2k,
+                                    OPJ_BYTE * p_header_data,
+                                    OPJ_UINT32 p_header_size,
+                                    opj_event_mgr_t * p_manager );
 /**
  * Reads a TLM marker (Tile Length Marker)
  *
@@ -1372,7 +1370,7 @@ const opj_dec_memory_marker_handler_t j2k_memory_marker_handler_tab [] =
   {J2K_MS_PPM, J2K_STATE_MH, j2k_read_ppm_v3},
   {J2K_MS_PPT, J2K_STATE_TPH, opj_j2k_read_ppt},
   {J2K_MS_SOP, 0, 0},
-  {J2K_MS_CRG, J2K_STATE_MH, j2k_read_crg_v2},
+  {J2K_MS_CRG, J2K_STATE_MH, opj_j2k_read_crg},
   {J2K_MS_COM, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_com_v2},
   {J2K_MS_MCT, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_mct},
   {J2K_MS_CBD, J2K_STATE_MH , j2k_read_cbd},
@@ -3724,12 +3722,11 @@ static opj_bool opj_j2k_read_poc (  opj_j2k_v2_t *p_j2k,
  * @param	p_header_size	the size of the data contained in the TLM marker.
  * @param	p_manager		the user event manager.
 */
-opj_bool j2k_read_crg_v2 (
-						opj_j2k_v2_t *p_j2k,
-						OPJ_BYTE * p_header_data,
-						OPJ_UINT32 p_header_size,
-						struct opj_event_mgr * p_manager
-					)
+static opj_bool opj_j2k_read_crg (  opj_j2k_v2_t *p_j2k,
+                                    OPJ_BYTE * p_header_data,
+                                    OPJ_UINT32 p_header_size,
+                                    opj_event_mgr_t * p_manager 
+                                    )
 {
 	OPJ_UINT32 l_nb_comp;
 	/* preconditions */
