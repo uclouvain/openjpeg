@@ -477,12 +477,7 @@ Write the value concerning the specified component in the marker COD and COC
 @param compno Number of the component concerned by the information written
 */
 static void j2k_write_cox(opj_j2k_t *j2k, int compno);
-/**
-Read the value concerning the specified component in the marker COD and COC
-@param j2k J2K handle
-@param compno Number of the component concerned by the information read
-*/
-static void j2k_read_cox(opj_j2k_t *j2k, int compno);
+
 /**
 Write the COD marker (coding style default)
 @param j2k J2K handle
@@ -2648,51 +2643,6 @@ static void j2k_write_cox(opj_j2k_t *j2k, int compno) {
 	}
 }
 
-static void j2k_read_cox(opj_j2k_t *j2k, int compno) {
-	OPJ_UINT32 i;
-
-	opj_cp_t *cp = j2k->cp;
-	opj_tcp_t *tcp = j2k->state == J2K_STATE_TPH ? &cp->tcps[j2k->curtileno] : j2k->default_tcp;
-	opj_tccp_t *tccp = &tcp->tccps[compno];
-	opj_cio_t *cio = j2k->cio;
-
-	tccp->numresolutions = cio_read(cio, 1) + 1;	/* SPcox (D) */
-
-	/* If user wants to remove more resolutions than the codestream contains, return error*/
-	assert(cp->reduce >= 0);
-	if ((OPJ_UINT32)cp->reduce >= tccp->numresolutions) {
-		opj_event_msg(j2k->cinfo, EVT_ERROR, "Error decoding component %d.\nThe number of resolutions to remove is higher than the number "
-					"of resolutions of this component\nModify the cp_reduce parameter.\n\n", compno);
-		j2k->state |= J2K_STATE_ERR;
-	}
-
-	tccp->cblkw = cio_read(cio, 1) + 2;	/* SPcox (E) */
-	tccp->cblkh = cio_read(cio, 1) + 2;	/* SPcox (F) */
-	tccp->cblksty = cio_read(cio, 1);	/* SPcox (G) */
-	tccp->qmfbid = cio_read(cio, 1);	/* SPcox (H) */
-	if (tccp->csty & J2K_CP_CSTY_PRT) {
-		for (i = 0; i < tccp->numresolutions; i++) {
-			int tmp = cio_read(cio, 1);	/* SPcox (I_i) */
-			tccp->prcw[i] = tmp & 0xf;
-			tccp->prch[i] = tmp >> 4;
-		}
-	}
-
-	/* INDEX >> */
-	if(j2k->cstr_info && compno == 0) {
-		for (i = 0; i < tccp->numresolutions; i++) {
-			if (tccp->csty & J2K_CP_CSTY_PRT) {
-				j2k->cstr_info->tile[j2k->curtileno].pdx[i] = tccp->prcw[i];
-				j2k->cstr_info->tile[j2k->curtileno].pdy[i] = tccp->prch[i];
-			}
-			else {
-				j2k->cstr_info->tile[j2k->curtileno].pdx[i] = 15;
-				j2k->cstr_info->tile[j2k->curtileno].pdx[i] = 15;
-			}
-		}
-	}
-	/* << INDEX */
-}
 
 static void j2k_write_cod(opj_j2k_t *j2k) {
 	opj_cp_t *cp = NULL;
