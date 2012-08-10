@@ -105,11 +105,10 @@ static opj_bool opj_jp2_read_bpcc(  opj_jp2_v2_t *jp2,
                                     OPJ_INT32 p_bpc_header_size,
                                     opj_event_mgr_t * p_manager );
 
-static opj_bool jp2_read_cdef_v2(	opj_jp2_v2_t * jp2,
-									unsigned char * p_cdef_header_data,
+static opj_bool opj_jp2_read_cdef(	opj_jp2_v2_t * jp2,
+                                    OPJ_BYTE * p_cdef_header_data,
 									OPJ_UINT32 p_cdef_header_size,
-									opj_event_mgr_t * p_manager
-									);
+									opj_event_mgr_t * p_manager );
 
 static void jp2_write_colr(opj_jp2_t *jp2, opj_cio_t *cio);
 /**
@@ -260,11 +259,10 @@ Collect palette data
 @param color Collector for profile, cdef and pclr data
 @return Returns true if successful, returns false otherwise
 */
-static opj_bool jp2_read_pclr_v2(	opj_jp2_v2_t *jp2,
-							unsigned char * p_pclr_header_data,
-							OPJ_UINT32 p_pclr_header_size,
-							opj_event_mgr_t * p_manager
-						  );
+static opj_bool opj_jp2_read_pclr(	opj_jp2_v2_t *jp2,
+                                    OPJ_BYTE * p_pclr_header_data,
+                                    OPJ_UINT32 p_pclr_header_size,
+                                    opj_event_mgr_t * p_manager );
 
 /**
 Collect component mapping data
@@ -275,11 +273,10 @@ Collect component mapping data
 @return Returns true if successful, returns false otherwise
 */
 
-static opj_bool jp2_read_cmap_v2(	opj_jp2_v2_t * jp2,
-							unsigned char * p_cmap_header_data,
-							OPJ_UINT32 p_cmap_header_size,
-							opj_event_mgr_t * p_manager
-						  );
+static opj_bool opj_jp2_read_cmap(	opj_jp2_v2_t * jp2,
+                                    OPJ_BYTE * p_cmap_header_data,
+                                    OPJ_UINT32 p_cmap_header_size,
+                                    opj_event_mgr_t * p_manager );
 
 /**
  * Reads the Color Specification box.
@@ -291,12 +288,10 @@ static opj_bool jp2_read_cmap_v2(	opj_jp2_v2_t * jp2,
  *
  * @return	true if the bpc header is valid, fale else.
 */
-static opj_bool jp2_read_colr_v2(
-							opj_jp2_v2_t *jp2,
-							unsigned char * p_colr_header_data,
-							OPJ_UINT32 p_colr_header_size,
-							struct opj_event_mgr * p_manager
-						  );
+static opj_bool opj_jp2_read_colr(  opj_jp2_v2_t *jp2,
+                                    OPJ_BYTE * p_colr_header_data,
+                                    OPJ_UINT32 p_colr_header_size,
+                                    opj_event_mgr_t * p_manager );
 
 /**
 Write file Index (superbox)
@@ -444,11 +439,11 @@ const opj_jp2_header_handler_t jp2_header [] =
 const opj_jp2_header_handler_t jp2_img_header [] =
 {
 	{JP2_IHDR,opj_jp2_read_ihdr},
-	{JP2_COLR,jp2_read_colr_v2},
+	{JP2_COLR,opj_jp2_read_colr},
 	{JP2_BPCC,opj_jp2_read_bpcc},
-	{JP2_PCLR,jp2_read_pclr_v2},
-	{JP2_CMAP,jp2_read_cmap_v2},
-	{JP2_CDEF,jp2_read_cdef_v2}
+	{JP2_PCLR,opj_jp2_read_pclr},
+	{JP2_CMAP,opj_jp2_read_cmap},
+	{JP2_CDEF,opj_jp2_read_cdef}
 
 };
 
@@ -1033,11 +1028,12 @@ static void jp2_apply_pclr(opj_image_t *image, opj_jp2_color_t *color)
  *
  * @return	true if the bpc header is valid, fale else.
  */
-opj_bool jp2_read_pclr_v2(	opj_jp2_v2_t *jp2,
-							unsigned char * p_pclr_header_data,
-							OPJ_UINT32 p_pclr_header_size,
-							opj_event_mgr_t * p_manager
-						  ){
+static opj_bool opj_jp2_read_pclr(	opj_jp2_v2_t *jp2,
+                                    OPJ_BYTE * p_pclr_header_data,
+                                    OPJ_UINT32 p_pclr_header_size,
+                                    opj_event_mgr_t * p_manager 
+                                    )
+{
 	opj_jp2_pclr_t *jp2_pclr;
 	OPJ_BYTE *channel_size, *channel_sign;
 	OPJ_UINT32 *entries;
@@ -1108,11 +1104,11 @@ opj_bool jp2_read_pclr_v2(	opj_jp2_v2_t *jp2,
  *
  * @return	true if the cdef header is valid, false else.
 */
-static opj_bool jp2_read_cmap_v2(	opj_jp2_v2_t * jp2,
-							unsigned char * p_cmap_header_data,
-							OPJ_UINT32 p_cmap_header_size,
-							opj_event_mgr_t * p_manager
-						  )
+static opj_bool opj_jp2_read_cmap(	opj_jp2_v2_t * jp2,
+                                    OPJ_BYTE * p_cmap_header_data,
+                                    OPJ_UINT32 p_cmap_header_size,
+                                    opj_event_mgr_t * p_manager 
+                                    )
 {
 	opj_jp2_cmap_comp_t *cmap;
 	OPJ_BYTE i, nr_channels;
@@ -1206,11 +1202,11 @@ static void jp2_apply_cdef(opj_image_t *image, opj_jp2_color_t *color)
  *
  * @return	true if the cdef header is valid, false else.
 */
-static opj_bool jp2_read_cdef_v2(	opj_jp2_v2_t * jp2,
-							unsigned char * p_cdef_header_data,
-							OPJ_UINT32 p_cdef_header_size,
-							opj_event_mgr_t * p_manager
-						  )
+static opj_bool opj_jp2_read_cdef(	opj_jp2_v2_t * jp2,
+                                    OPJ_BYTE * p_cdef_header_data,
+									OPJ_UINT32 p_cdef_header_size,
+									opj_event_mgr_t * p_manager 
+                                    )
 {
 	opj_jp2_cdef_info_t *cdef_info;
 	unsigned short i;
@@ -1268,11 +1264,11 @@ static opj_bool jp2_read_cdef_v2(	opj_jp2_v2_t * jp2,
  *
  * @return	true if the bpc header is valid, fale else.
 */
-static opj_bool jp2_read_colr_v2(	opj_jp2_v2_t * jp2,
-							unsigned char * p_colr_header_data,
-							OPJ_UINT32 p_colr_header_size,
-							opj_event_mgr_t * p_manager
-						  )
+static opj_bool opj_jp2_read_colr(  opj_jp2_v2_t *jp2,
+                                    OPJ_BYTE * p_colr_header_data,
+                                    OPJ_UINT32 p_colr_header_size,
+                                    opj_event_mgr_t * p_manager 
+                                    )
 {
 	OPJ_UINT32 l_value;
 
