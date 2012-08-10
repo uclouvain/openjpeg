@@ -801,11 +801,7 @@ static opj_bool j2k_read_ppm_v3 (
 						struct opj_event_mgr * p_manager
 					);
 
-/**
-Read the PPT marker (packet packet headers, tile-part header)
-@param j2k J2K handle
-*/
-static void j2k_read_ppt(opj_j2k_t *j2k);
+
 /**
  * Reads a PPT marker (Packed packet headers, tile-part header)
  *
@@ -4257,34 +4253,6 @@ opj_bool j2k_read_ppm_v3 (
 	return OPJ_TRUE;
 }
 
-static void j2k_read_ppt(opj_j2k_t *j2k) {
-	int len, Z_ppt, i, j = 0;
-
-	opj_cp_t *cp = j2k->cp;
-	opj_tcp_t *tcp = cp->tcps + j2k->curtileno;
-	opj_cio_t *cio = j2k->cio;
-
-	len = cio_read(cio, 2);
-	Z_ppt = cio_read(cio, 1);
-	tcp->ppt = 1;
-	if (Z_ppt == 0) {		/* First PPT marker */
-		tcp->ppt_data = (unsigned char *) opj_malloc((len - 3) * sizeof(unsigned char));
-		tcp->ppt_data_first = tcp->ppt_data;
-		tcp->ppt_store = 0;
-		tcp->ppt_len = len - 3;
-	} else {			/* NON-first PPT marker */
-		tcp->ppt_data =	(unsigned char *) opj_realloc(tcp->ppt_data, (len - 3 + tcp->ppt_store) * sizeof(unsigned char));
-		tcp->ppt_data_first = tcp->ppt_data;
-		tcp->ppt_len = len - 3 + tcp->ppt_store;
-	}
-	j = tcp->ppt_store;
-	for (i = len - 3; i > 0; i--) {
-		tcp->ppt_data[j] = cio_read(cio, 1);
-		j++;
-	}
-	tcp->ppt_store = j;
-}
-
 /**
  * Reads a PPT marker (Packed packet headers, tile-part header)
  *
@@ -5708,7 +5676,7 @@ opj_dec_mstabent_t j2k_dec_mstab[] = {
   /*{J2K_MS_PLM, J2K_STATE_MH, j2k_read_plm},*/
   /*{J2K_MS_PLT, J2K_STATE_TPH, j2k_read_plt},*/
   /*{J2K_MS_PPM, J2K_STATE_MH, j2k_read_ppm},*/
-  {J2K_MS_PPT, J2K_STATE_TPH, j2k_read_ppt},
+  /*{J2K_MS_PPT, J2K_STATE_TPH, j2k_read_ppt},*/
   {J2K_MS_SOP, 0, 0},
   {J2K_MS_CRG, J2K_STATE_MH, j2k_read_crg},
   {J2K_MS_COM, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_com},
