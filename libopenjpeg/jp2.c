@@ -200,12 +200,10 @@ opj_bool jp2_skip_jp2c(	opj_jp2_v2_t *jp2,
  *
  * @return true if the JP2 Header box was successfully reconized.
 */
-static opj_bool jp2_read_jp2h_v2(
-						opj_jp2_v2_t *jp2,
-						unsigned char * p_header_data,
-						unsigned int p_header_size,
-						struct opj_event_mgr * p_manager
-					);
+static opj_bool opj_jp2_read_jp2h(  opj_jp2_v2_t *jp2,
+                                    OPJ_BYTE *p_header_data,
+                                    OPJ_UINT32 p_header_size,
+                                    opj_event_mgr_t * p_manager );
 
 static int jp2_write_jp2c(opj_jp2_t *jp2, opj_cio_t *cio, opj_image_t *image, opj_codestream_info_t *cstr_info);
 
@@ -468,7 +466,7 @@ const opj_jp2_header_handler_t jp2_header [] =
 {
 	{JP2_JP,jp2_read_jp_v2},
 	{JP2_FTYP,jp2_read_ftyp_v2},
-	{JP2_JP2H,jp2_read_jp2h_v2}
+	{JP2_JP2H,opj_jp2_read_jp2h}
 };
 
 const opj_jp2_header_handler_t jp2_img_header [] =
@@ -2815,12 +2813,11 @@ opj_bool jp2_skip_jp2c(	opj_jp2_v2_t *jp2,
  *
  * @return true if the JP2 Header box was successfully reconized.
 */
-opj_bool jp2_read_jp2h_v2(
-						opj_jp2_v2_t *jp2,
-						unsigned char * p_header_data,
-						unsigned int p_header_size,
-						opj_event_mgr_t * p_manager
-					)
+static opj_bool opj_jp2_read_jp2h(  opj_jp2_v2_t *jp2,
+                                    OPJ_BYTE *p_header_data,
+                                    OPJ_UINT32 p_header_size,
+                                    opj_event_mgr_t * p_manager 
+                                    )
 {
 	OPJ_UINT32 l_box_size=0, l_current_data_size = 0;
 	opj_jp2_box_t box;
