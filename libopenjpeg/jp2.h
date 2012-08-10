@@ -272,14 +272,6 @@ opj_bool jp2_write_jp2h_v2( opj_jp2_v2_t *jp2,
 							struct opj_stream_private *cio,
 							struct opj_event_mgr * p_manager );
 
-/**
-Read the JP2H box - JP2 Header box (used in MJ2)
-@param jp2 JP2 handle
-@param cio Input buffer stream
-@param ext Collector for profile, cdef and pclr data
-@return Returns true if successful, returns false otherwise
-*/
-opj_bool jp2_read_jp2h(opj_jp2_t *jp2, opj_cio_t *cio, opj_jp2_color_t *color);
 
 /**
 Setup the decoder decoding parameters using user parameters.
