@@ -93,7 +93,7 @@ Channel description: channel index, type, assocation
 */
 typedef struct opj_jp2_cdef_info
 {
-    unsigned short cn, typ, asoc;
+    OPJ_UINT16 cn, typ, asoc;
 } opj_jp2_cdef_info_t;
 
 /** 
@@ -102,7 +102,7 @@ Channel descriptions and number of descriptions
 typedef struct opj_jp2_cdef
 {
     opj_jp2_cdef_info_t *info;
-    unsigned short n;
+    OPJ_UINT16 n;
 } opj_jp2_cdef_t;
 
 /** 
@@ -110,8 +110,8 @@ Component mappings: channel index, mapping type, palette index
 */
 typedef struct opj_jp2_cmap_comp
 {
-    unsigned short cmp;
-    unsigned char mtyp, pcol;
+    OPJ_UINT16 cmp;
+    OPJ_BYTE mtyp, pcol;
 } opj_jp2_cmap_comp_t;
 
 /** 
@@ -119,11 +119,12 @@ Palette data: table entries, palette columns
 */
 typedef struct opj_jp2_pclr
 {
-    unsigned int *entries;
-    unsigned char *channel_sign;
-    unsigned char *channel_size;
+    OPJ_INT32 *entries;
+    OPJ_BYTE *channel_sign;
+    OPJ_BYTE *channel_size;
     opj_jp2_cmap_comp_t *cmap;
-    unsigned short nr_entries, nr_channels;
+    OPJ_UINT16 nr_entries;
+    OPJ_BYTE nr_channels;
 } opj_jp2_pclr_t;
 
 /** 
@@ -131,12 +132,12 @@ Collector for ICC profile, palette, component mapping, channel description
 */
 typedef struct opj_jp2_color
 {
-    unsigned char *icc_profile_buf;
-    int icc_profile_len;
+    OPJ_BYTE *icc_profile_buf;
+    OPJ_UINT32 icc_profile_len;
 
     opj_jp2_cdef_t *jp2_cdef;
     opj_jp2_pclr_t *jp2_pclr;
-    unsigned char jp2_has_colr;
+    OPJ_BYTE jp2_has_colr;
 } opj_jp2_color_t;
 
 /** 
@@ -209,7 +210,7 @@ typedef struct opj_jp2_v2
 	OPJ_UINT32 numcl;
 	OPJ_UINT32 *cl;
 	opj_jp2_comps_t *comps;
-	OPJ_UINT32 j2k_codestream_offset;
+    OPJ_OFF_T j2k_codestream_offset;
 	OPJ_UINT32 jp2_state;
 	OPJ_UINT32 jp2_img_state;
 

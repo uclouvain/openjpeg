@@ -1010,7 +1010,7 @@ opj_bool opj_jp2_read_pclr(	opj_jp2_v2_t *jp2,
 	jp2_pclr->channel_size = channel_size;
 	jp2_pclr->entries = entries;
 	jp2_pclr->nr_entries = nr_entries;
-	jp2_pclr->nr_channels = nr_channels;
+	jp2_pclr->nr_channels = (OPJ_BYTE) l_value;
 	jp2_pclr->cmap = NULL;
 
 	jp2->color.jp2_pclr = jp2_pclr;
@@ -1578,8 +1578,8 @@ opj_bool jp2_write_jp2c_v2(	opj_jp2_v2_t *jp2,
 							opj_stream_private_t *cio,
 							opj_event_mgr_t * p_manager ) 
 {
-	unsigned int j2k_codestream_exit;
-	unsigned char l_data_header [8];
+	OPJ_OFF_T j2k_codestream_exit;
+	OPJ_BYTE l_data_header [8];
 	
 	// preconditions
 	assert(jp2 != 00);
@@ -1588,7 +1588,9 @@ opj_bool jp2_write_jp2c_v2(	opj_jp2_v2_t *jp2,
 	assert(opj_stream_has_seek(cio));
 	
 	j2k_codestream_exit = opj_stream_tell(cio);
-	opj_write_bytes(l_data_header,j2k_codestream_exit - jp2->j2k_codestream_offset,4); /* size of codestream */
+	opj_write_bytes(l_data_header,
+                    (OPJ_UINT32) (j2k_codestream_exit - jp2->j2k_codestream_offset),
+                    4); /* size of codestream */
 	opj_write_bytes(l_data_header + 4,JP2_JP2C,4);									   /* JP2C */
 
 	if (! opj_stream_seek(cio,jp2->j2k_codestream_offset,p_manager)) {
@@ -1770,8 +1772,9 @@ void jp2_destroy_compress(opj_jp2_t *jp2) {
 void jp2_setup_encoder(	opj_jp2_v2_t *jp2, 
 						opj_cparameters_t *parameters, 
 						opj_image_t *image, 
-						opj_event_mgr_t * p_manager) {
-	int i;
+						opj_event_mgr_t * p_manager) 
+{                           
+    OPJ_UINT32 i;
 	int depth_0, sign;
 
 	if(!jp2 || !parameters || !image)
