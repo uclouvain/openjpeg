@@ -146,9 +146,9 @@ static opj_bool opj_jp2_read_ftyp(	opj_jp2_v2_t *jp2,
  *
  * @return true if writting was successful.
 */
-opj_bool jp2_skip_jp2c(	opj_jp2_v2_t *jp2,
-						struct opj_stream_private *cio,
-						struct opj_event_mgr * p_manager );
+opj_bool opj_jp2_skip_jp2c(	opj_jp2_v2_t *jp2,
+						    opj_stream_private_t *cio,
+						    opj_event_mgr_t * p_manager );
 
 /**
  * Reads the Jpeg2000 file Header box - JP2 Header box (warning, this is a super box).
@@ -281,7 +281,7 @@ static void write_prxy( int offset_jp2c, int length_jp2c, int offset_idx, int le
  * Sets up the procedures to do on writting header after the codestream.
  * Developpers wanting to extend the library can add their own writting procedures.
  */
-static void jp2_setup_end_header_writting (opj_jp2_v2_t *jp2);
+static void opj_jp2_setup_end_header_writting (opj_jp2_v2_t *jp2);
 
 
 /**
@@ -337,13 +337,13 @@ static opj_bool opj_jp2_read_boxhdr(opj_jp2_box_t *box,
  * Sets up the validation ,i.e. adds the procedures to lauch to make sure the codec parameters
  * are valid. Developpers wanting to extend the library can add their own validation procedures.
  */
-static void jp2_setup_encoding_validation (opj_jp2_v2_t *jp2);
+static void opj_jp2_setup_encoding_validation (opj_jp2_v2_t *jp2);
 
 
 /**
  * Sets up the procedures to do on writting header. Developpers wanting to extend the library can add their own writting procedures.
  */
-static void jp2_setup_header_writting (opj_jp2_v2_t *jp2);
+static void opj_jp2_setup_header_writting (opj_jp2_v2_t *jp2);
 
 /**
  * The default validation procedure without any extension.
@@ -1754,7 +1754,7 @@ opj_bool opj_jp2_end_compress(	opj_jp2_v2_t *jp2,
 	assert(p_manager != 00);
 
 	/* customization of the end encoding */
-	jp2_setup_end_header_writting(jp2);
+	opj_jp2_setup_end_header_writting(jp2);
 
 	if (! j2k_end_compress(jp2->j2k,cio,p_manager)) {
 		return OPJ_FALSE;
@@ -1769,7 +1769,7 @@ opj_bool opj_jp2_end_compress(	opj_jp2_v2_t *jp2,
  * Sets up the procedures to do on writing header after the codestream.
  * Developers wanting to extend the library can add their own writing procedures.
  */
-void jp2_setup_end_header_writting (opj_jp2_v2_t *jp2)
+void opj_jp2_setup_end_header_writting (opj_jp2_v2_t *jp2)
 {
 	/* preconditions */
 	assert(jp2 != 00);
@@ -2007,7 +2007,7 @@ opj_bool opj_jp2_start_compress(opj_jp2_v2_t *jp2,
 	assert(p_manager != 00);
 
 	/* customization of the validation */
-	jp2_setup_encoding_validation (jp2);
+	opj_jp2_setup_encoding_validation (jp2);
 
 	/* validation of the parameters codec */
 	if (! opj_jp2_exec(jp2,jp2->m_validation_list,stream,p_manager)) {
@@ -2015,7 +2015,7 @@ opj_bool opj_jp2_start_compress(opj_jp2_v2_t *jp2,
 	}
 
 	/* customization of the encoding */
-	jp2_setup_header_writting(jp2);
+	opj_jp2_setup_header_writting(jp2);
 
 	/* write header */
 	if (! opj_jp2_exec (jp2,jp2->m_procedure_list,stream,p_manager)) {
@@ -2192,9 +2192,9 @@ static opj_bool opj_jp2_read_ftyp(	opj_jp2_v2_t *jp2,
  *
  * @return true if writting was successful.
 */
-opj_bool jp2_skip_jp2c(	opj_jp2_v2_t *jp2,
-						struct opj_stream_private *stream,
-						struct opj_event_mgr * p_manager )
+opj_bool opj_jp2_skip_jp2c(	opj_jp2_v2_t *jp2,
+					    	opj_stream_private_t *stream,
+					    	opj_event_mgr_t * p_manager )
 {
 	/* preconditions */
 	assert(jp2 != 00);
@@ -2402,7 +2402,7 @@ opj_bool opj_jp2_read_header(	opj_stream_private_t *p_stream,
  * Sets up the validation ,i.e. adds the procedures to launch to make sure the codec parameters
  * are valid. Developers wanting to extend the library can add their own validation procedures.
  */
-void jp2_setup_encoding_validation (opj_jp2_v2_t *jp2)
+void opj_jp2_setup_encoding_validation (opj_jp2_v2_t *jp2)
 {
 	/* preconditions */
 	assert(jp2 != 00);
@@ -2426,7 +2426,7 @@ void opj_jp2_setup_decoding_validation (opj_jp2_v2_t *jp2)
  * Sets up the procedures to do on writting header.
  * Developers wanting to extend the library can add their own writing procedures.
  */
-void jp2_setup_header_writting (opj_jp2_v2_t *jp2)
+void opj_jp2_setup_header_writting (opj_jp2_v2_t *jp2)
 {
 	/* preconditions */
 	assert(jp2 != 00);
@@ -2434,7 +2434,7 @@ void jp2_setup_header_writting (opj_jp2_v2_t *jp2)
 	opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)jp2_write_jp_v2 );
 	opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)opj_jp2_write_ftyp );
 	opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)opj_jp2_write_jp2h );
-	opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)jp2_skip_jp2c );
+	opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)opj_jp2_skip_jp2c );
 
 	/* DEVELOPER CORNER, insert your custom procedures */
 
