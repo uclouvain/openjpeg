@@ -76,8 +76,8 @@ static OPJ_BYTE * opj_jp2_write_ihdr(opj_jp2_v2_t *jp2,
  * 
  * @return	the data being copied.
 */
-static OPJ_BYTE * jp2_write_bpcc(	opj_jp2_v2_t *jp2, 
-											unsigned int * p_nb_bytes_written );
+static OPJ_BYTE * opj_jp2_write_bpcc(	opj_jp2_v2_t *jp2, 
+								        OPJ_UINT32 * p_nb_bytes_written );
 
 /**
  * Reads a Bit per Component box.
@@ -650,8 +650,8 @@ OPJ_BYTE * opj_jp2_write_ihdr(opj_jp2_v2_t *jp2,
  * 
  * @return	the data being copied.
 */
-unsigned char * jp2_write_bpcc_v2(	opj_jp2_v2_t *jp2, 
-									unsigned int * p_nb_bytes_written )
+OPJ_BYTE * opj_jp2_write_bpcc(	opj_jp2_v2_t *jp2, 
+						        OPJ_UINT32 * p_nb_bytes_written );
 {
 	unsigned int i;
 	/* room for 8 bytes for box and 1 byte for each component */
@@ -1318,7 +1318,7 @@ opj_bool opj_jp2_write_jp2h(opj_jp2_v2_t *jp2,
 	if (jp2->bpc == 255) {
 		l_nb_pass = 3;
 		l_writers[0].handler = opj_jp2_write_ihdr;
-		l_writers[1].handler = jp2_write_bpcc_v2;
+		l_writers[1].handler = opj_jp2_write_bpcc;
 		l_writers[2].handler = jp2_write_colr_v2;
 	}
 	else {
