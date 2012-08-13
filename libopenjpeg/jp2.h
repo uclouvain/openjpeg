@@ -250,12 +250,6 @@ opj_jp2_img_header_writer_handler_t;
 /** @name Exported functions */
 /*@{*/
 /* ----------------------------------------------------------------------- */
-/**
-Write the JP2H box - JP2 Header box (used in MJ2)
-@param jp2 JP2 handle
-@param cio Output buffer stream
-*/
-void jp2_write_jp2h(opj_jp2_t *jp2, opj_cio_t *cio);
 
 /**
  * Writes the Jpeg2000 file Header box - JP2 Header box (warning, this is a super box).

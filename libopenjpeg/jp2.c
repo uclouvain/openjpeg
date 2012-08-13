@@ -1328,26 +1328,6 @@ opj_bool opj_jp2_decode(opj_jp2_v2_t *jp2,
 }
 
 
-void jp2_write_jp2h(opj_jp2_t *jp2, opj_cio_t *cio) {
-	opj_jp2_box_t box;
-
-	box.init_pos = cio_tell(cio);
-	cio_skip(cio, 4);
-	cio_write(cio, JP2_JP2H, 4);	/* JP2H */
-
-	jp2_write_ihdr(jp2, cio);
-
-	if (jp2->bpc == 255) {
-		jp2_write_bpcc(jp2, cio);
-	}
-	jp2_write_colr(jp2, cio);
-
-	box.length = cio_tell(cio) - box.init_pos;
-	cio_seek(cio, box.init_pos);
-	cio_write(cio, box.length, 4);	/* L */
-	cio_seek(cio, box.init_pos + box.length);
-}
-
 /**
  * Writes the Jpeg2000 file Header box - JP2 Header box (warning, this is a super box).
  *
