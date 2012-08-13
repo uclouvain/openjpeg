@@ -68,8 +68,6 @@ static opj_bool opj_jp2_read_ihdr(  opj_jp2_v2_t *jp2,
 static OPJ_BYTE * opj_jp2_write_ihdr(opj_jp2_v2_t *jp2, 
                                      OPJ_UINT32 * p_nb_bytes_written );
 
-static void jp2_write_bpcc(opj_jp2_t *jp2, opj_cio_t *cio);
-
 /**
  * Writes the Bit per Component box.
  *
@@ -78,7 +76,7 @@ static void jp2_write_bpcc(opj_jp2_t *jp2, opj_cio_t *cio);
  * 
  * @return	the data being copied.
 */
-static unsigned char * jp2_write_bpcc_v2(	opj_jp2_v2_t *jp2, 
+static OPJ_BYTE * jp2_write_bpcc(	opj_jp2_v2_t *jp2, 
 											unsigned int * p_nb_bytes_written );
 
 /**
@@ -643,25 +641,6 @@ OPJ_BYTE * opj_jp2_write_ihdr(opj_jp2_v2_t *jp2,
 	
 	return l_ihdr_data;
 }
-
-static void jp2_write_bpcc(opj_jp2_t *jp2, opj_cio_t *cio) {
-	unsigned int i;
-	opj_jp2_box_t box;
-
-	box.init_pos = cio_tell(cio);
-	cio_skip(cio, 4);
-	cio_write(cio, JP2_BPCC, 4);	/* BPCC */
-
-	for (i = 0; i < jp2->numcomps; i++) {
-		cio_write(cio, jp2->comps[i].bpcc, 1);
-	}
-
-	box.length = cio_tell(cio) - box.init_pos;
-	cio_seek(cio, box.init_pos);
-	cio_write(cio, box.length, 4);	/* L */
-	cio_seek(cio, box.init_pos + box.length);
-}
-
 
 /**
  * Writes the Bit per Component box.
