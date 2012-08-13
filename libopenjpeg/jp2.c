@@ -98,6 +98,9 @@ static opj_bool opj_jp2_read_cdef(	opj_jp2_v2_t * jp2,
                                     OPJ_BYTE * p_cdef_header_data,
 									OPJ_UINT32 p_cdef_header_size,
 									opj_event_mgr_t * p_manager );
+
+static void opj_jp2_apply_cdef(opj_image_t *image, opj_jp2_color_t *color);
+
 /**
  * Writes the Colour Specification box.
  *
@@ -211,7 +214,10 @@ Apply collected palette data
 @param color Collector for profile, cdef and pclr data
 @param image 
 */
-static void jp2_apply_pclr(opj_image_t *image, opj_jp2_color_t *color);
+static void opj_jp2_apply_pclr(opj_image_t *image, opj_jp2_color_t *color);
+
+static void opj_jp2_free_pclr(opj_jp2_color_t *color);
+
 /**
 Collect palette data
 @param jp2 JP2 handle
@@ -795,7 +801,7 @@ OPJ_BYTE * opj_jp2_write_colr(  opj_jp2_v2_t *jp2,
 	return l_colr_data;
 }
 
-static void jp2_free_pclr(opj_jp2_color_t *color)
+void opj_jp2_free_pclr(opj_jp2_color_t *color)
 {
     opj_free(color->jp2_pclr->channel_sign);
     opj_free(color->jp2_pclr->channel_size);
@@ -821,7 +827,7 @@ static void free_color_data(opj_jp2_color_t *color)
 }
 
 
-static void jp2_apply_pclr(opj_image_t *image, opj_jp2_color_t *color)
+void opj_jp2_apply_pclr(opj_image_t *image, opj_jp2_color_t *color)
 {
 	opj_image_comp_t *old_comps, *new_comps;
 	OPJ_BYTE *channel_size, *channel_sign;
@@ -890,7 +896,7 @@ static void jp2_apply_pclr(opj_image_t *image, opj_jp2_color_t *color)
 	image->comps = new_comps;
 	image->numcomps = nr_channels;
 
-	jp2_free_pclr(color);
+	opj_jp2_free_pclr(color);
 
 }/* apply_pclr() */
 
@@ -1032,7 +1038,7 @@ opj_bool opj_jp2_read_cmap(	opj_jp2_v2_t * jp2,
 	return OPJ_TRUE;
 }
 
-static void jp2_apply_cdef(opj_image_t *image, opj_jp2_color_t *color)
+void opj_jp2_apply_cdef(opj_image_t *image, opj_jp2_color_t *color)
 {
 	opj_jp2_cdef_info_t *info;
 	OPJ_INT32 color_space;
@@ -1239,15 +1245,15 @@ opj_bool opj_jp2_decode(opj_jp2_v2_t *jp2,
 
 	    /* Apply the color space if needed */
 	    if(jp2->color.jp2_cdef) {
-		    jp2_apply_cdef(p_image, &(jp2->color));
+		    opj_jp2_apply_cdef(p_image, &(jp2->color));
 	    }
 
 	    if(jp2->color.jp2_pclr) {
 		    /* Part 1, I.5.3.4: Either both or none : */
 		    if( !jp2->color.jp2_pclr->cmap)
-			    jp2_free_pclr(&(jp2->color));
+			    opj_jp2_free_pclr(&(jp2->color));
 		    else
-			    jp2_apply_pclr(p_image, &(jp2->color));
+			    opj_jp2_apply_pclr(p_image, &(jp2->color));
 	    }
 
 	    if(jp2->color.icc_profile_buf) {
@@ -2618,15 +2624,15 @@ opj_bool opj_jp2_get_tile(	opj_jp2_v2_t *p_jp2,
 
 	/* Apply the color space if needed */
 	if(p_jp2->color.jp2_cdef) {
-		jp2_apply_cdef(p_image, &(p_jp2->color));
+		opj_jp2_apply_cdef(p_image, &(p_jp2->color));
 	}
 
 	if(p_jp2->color.jp2_pclr) {
 		/* Part 1, I.5.3.4: Either both or none : */
 		if( !p_jp2->color.jp2_pclr->cmap)
-			jp2_free_pclr(&(p_jp2->color));
+			opj_jp2_free_pclr(&(p_jp2->color));
 		else
-			jp2_apply_pclr(p_image, &(p_jp2->color));
+			opj_jp2_apply_pclr(p_image, &(p_jp2->color));
 	}
 
 	if(p_jp2->color.icc_profile_buf) {
