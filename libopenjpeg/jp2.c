@@ -106,8 +106,8 @@ static opj_bool opj_jp2_read_cdef(	opj_jp2_v2_t * jp2,
  * 
  * @return	the data being copied.
 */
-static unsigned char *jp2_write_colr_v2(opj_jp2_v2_t *jp2, 
-										unsigned int * p_nb_bytes_written );
+static OPJ_BYTE * opj_jp2_write_colr(   opj_jp2_v2_t *jp2, 
+									    OPJ_UINT32 * p_nb_bytes_written );
 
 /**
 Write the FTYP box - File type box
@@ -737,8 +737,9 @@ opj_bool opj_jp2_read_bpcc( opj_jp2_v2_t *jp2,
  * 
  * @return	the data being copied.
 */
-unsigned char *jp2_write_colr_v2(	opj_jp2_v2_t *jp2, 
-									unsigned int * p_nb_bytes_written )
+OPJ_BYTE * opj_jp2_write_colr(  opj_jp2_v2_t *jp2, 
+							    OPJ_UINT32 * p_nb_bytes_written 
+                                )
 {
 	/* room for 8 bytes for box 3 for common data and variable upon profile*/
 	unsigned int l_colr_size = 11;
@@ -1296,12 +1297,12 @@ opj_bool opj_jp2_write_jp2h(opj_jp2_v2_t *jp2,
 		l_nb_pass = 3;
 		l_writers[0].handler = opj_jp2_write_ihdr;
 		l_writers[1].handler = opj_jp2_write_bpcc;
-		l_writers[2].handler = jp2_write_colr_v2;
+		l_writers[2].handler = opj_jp2_write_colr;
 	}
 	else {
 		l_nb_pass = 2;
 		l_writers[0].handler = opj_jp2_write_ihdr;
-		l_writers[1].handler = jp2_write_colr_v2;
+		l_writers[1].handler = opj_jp2_write_colr;
 	}
 	
 	/* write box header */
