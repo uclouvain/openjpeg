@@ -165,9 +165,6 @@ static opj_bool opj_jp2_read_jp2h(  opj_jp2_v2_t *jp2,
                                     OPJ_UINT32 p_header_size,
                                     opj_event_mgr_t * p_manager );
 
-static int jp2_write_jp2c(opj_jp2_t *jp2, opj_cio_t *cio, opj_image_t *image, opj_codestream_info_t *cstr_info);
-
-
 /**
  * Writes the Jpeg2000 codestream Header box - JP2C Header box. This function must be called AFTER the coding has been done.
  *
@@ -1419,35 +1416,6 @@ opj_bool opj_jp2_write_ftyp(opj_jp2_v2_t *jp2,
 	opj_free(l_ftyp_data);
 	
 	return l_result;
-}
-
-static int jp2_write_jp2c(opj_jp2_t *jp2, opj_cio_t *cio, opj_image_t *image, opj_codestream_info_t *cstr_info) {
-	unsigned int j2k_codestream_offset, j2k_codestream_length;
-	opj_jp2_box_t box;
-
-	opj_j2k_t *j2k = jp2->j2k;
-
-	box.init_pos = cio_tell(cio);
-	cio_skip(cio, 4);
-	cio_write(cio, JP2_JP2C, 4);	/* JP2C */
-
-	/* J2K encoding */
-	j2k_codestream_offset = cio_tell(cio);
-	if(!j2k_encode(j2k, cio, image, cstr_info)) {
-		opj_event_msg(j2k->cinfo, EVT_ERROR, "Failed to encode image\n");
-		return 0;
-	}
-	j2k_codestream_length = cio_tell(cio) - j2k_codestream_offset;
-
-	jp2->j2k_codestream_offset = j2k_codestream_offset;
-	jp2->j2k_codestream_length = j2k_codestream_length;
-
-	box.length = 8 + jp2->j2k_codestream_length;
-	cio_seek(cio, box.init_pos);
-	cio_write(cio, box.length, 4);	/* L */
-	cio_seek(cio, box.init_pos + box.length);
-
-	return box.length;
 }
 
 /**
