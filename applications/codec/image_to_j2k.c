@@ -1594,7 +1594,6 @@ int main(int argc, char **argv) {
 	opj_codec_t* l_codec = 00;
 	opj_image_t *image = NULL;
 	raw_cparameters_t raw_cp;
-	opj_codestream_info_t cstr_info;		/* Codestream information structure */
 
 	char indexfilename[OPJ_PATH_LEN];	/* index file name */
 

@@ -119,7 +119,7 @@ Palette data: table entries, palette columns
 */
 typedef struct opj_jp2_pclr
 {
-    OPJ_INT32 *entries;
+    OPJ_UINT32 *entries;
     OPJ_BYTE *channel_sign;
     OPJ_BYTE *channel_size;
     opj_jp2_cmap_comp_t *cmap;
