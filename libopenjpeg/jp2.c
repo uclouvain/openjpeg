@@ -194,6 +194,19 @@ static opj_bool opj_jp2_read_jp(opj_jp2_v2_t *jp2,
                                 opj_event_mgr_t * p_manager);
 
 /**
+ * Writes a jpeg2000 file signature box.
+ *
+ * @param cio the stream to write data to.
+ * @param	jp2			the jpeg2000 file codec.
+ * @param p_manager the user event manager.
+ * 
+ * @return true if writting was successful.
+ */
+static opj_bool opj_jp2_write_jp(	opj_jp2_v2_t *jp2,
+			    	        	    opj_stream_private_t *cio,
+				            		opj_event_mgr_t * p_manager );
+
+/**
 Apply collected palette data
 @param color Collector for profile, cdef and pclr data
 @param image 
@@ -1471,9 +1484,9 @@ opj_bool opj_jp2_write_jp2c(opj_jp2_v2_t *jp2,
  * 
  * @return true if writting was successful.
  */
-opj_bool jp2_write_jp_v2(	opj_jp2_v2_t *jp2,
-							opj_stream_private_t *cio,
-							opj_event_mgr_t * p_manager ) 
+opj_bool opj_jp2_write_jp(	opj_jp2_v2_t *jp2,
+			    		    opj_stream_private_t *cio,
+				    		opj_event_mgr_t * p_manager ) 
 {
 	/* 12 bytes will be read */
 	unsigned char l_signature_data [12];
@@ -2383,7 +2396,7 @@ void opj_jp2_setup_header_writting (opj_jp2_v2_t *jp2)
 	/* preconditions */
 	assert(jp2 != 00);
 
-	opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)jp2_write_jp_v2 );
+	opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)opj_jp2_write_jp );
 	opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)opj_jp2_write_ftyp );
 	opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)opj_jp2_write_jp2h );
 	opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)opj_jp2_skip_jp2c );
