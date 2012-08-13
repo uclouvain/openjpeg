@@ -94,8 +94,10 @@ opj_bool  opj_procedure_list_add_procedure (opj_procedure_list_t * p_validation_
 	if
 		(p_validation_list->m_nb_max_procedures == p_validation_list->m_nb_procedures)
 	{
+         opj_procedure * new_procedures;
+
 		p_validation_list->m_nb_max_procedures += OPJ_VALIDATION_SIZE;
-                opj_procedure * new_procedures = (opj_procedure*)opj_realloc(
+                new_procedures = (opj_procedure*)opj_realloc(
 		p_validation_list->m_procedures,p_validation_list->m_nb_max_procedures * sizeof(opj_procedure));
 		if
 			(! new_procedures)
