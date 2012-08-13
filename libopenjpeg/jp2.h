@@ -39,33 +39,27 @@
 
 #define JPIP_JPIP 0x6a706970
 
-#define JP2_JP   0x6a502020		/**< JPEG 2000 signature box */
-#define JP2_FTYP 0x66747970		/**< File type box */
-
-#define JP2_JP2H 0x6a703268		/**< JP2 header box (super-box) */
+#define     JP2_JP   0x6a502020		/**< JPEG 2000 signature box */
+#define     JP2_FTYP 0x66747970		/**< File type box */
+#define     JP2_JP2H 0x6a703268		/**< JP2 header box (super-box) */
 #define 	JP2_IHDR 0x69686472		/**< Image header box */
-#define 	JP2_BPCC 0x62706363		/**< Bits per component box */
 #define 	JP2_COLR 0x636f6c72		/**< Colour specification box */
+#define     JP2_JP2C 0x6a703263		/**< Contiguous codestream box */
+#define 	JP2_URL  0x75726c20		/**< Data entry URL box */
 #define 	JP2_PCLR 0x70636c72		/**< Palette box */
 #define 	JP2_CMAP 0x636d6170		/**< Component Mapping box */
 #define 	JP2_CDEF 0x63646566		/**< Channel Definition box */
-/* For the future MSD */
+#define     JP2_DTBL 0x6474626c		/**< Data Reference box */
+#define 	JP2_BPCC 0x62706363		/**< Bits per component box */
+#define     JP2_JP2  0x6a703220		/**< File type fields */
+
+/* For the future */
 /* #define JP2_RES 0x72657320 */	/**< Resolution box (super-box) */
-
-#define JP2_JP2C 0x6a703263		/**< Contiguous codestream box */
-
-/* For the future MSD */
 /* #define JP2_JP2I 0x6a703269 */	/**< Intellectual property box */
 /* #define JP2_XML  0x786d6c20 */	/**< XML box */
 /* #define JP2_UUID 0x75756994 */	/**< UUID box */
 /* #define JP2_UINF 0x75696e66 */	/**< UUID info box (super-box) */
 /* #define JP2_ULST 0x756c7374 */	/**< UUID list box */
-#define 	JP2_URL  0x75726c20		/**< Data entry URL box */
-
-#define JP2_DTBL 0x6474626c		/**< Data Reference box */
-
-#define JP2_JP2  0x6a703220		/**< File type fields */
-
 
 /* ----------------------------------------------------------------------- */
 
@@ -298,17 +292,7 @@ opj_bool opj_jp2_decode(opj_jp2_v2_t *jp2,
 						opj_event_mgr_t * p_manager);
 
 
-/**
-Creates a JP2 compression structure
-@param cinfo Codec context info
-@return Returns a handle to a JP2 compressor if successful, returns NULL otherwise
-*/
-opj_jp2_t* jp2_create_compress(opj_common_ptr cinfo);
-/**
-Destroy a JP2 compressor handle
-@param jp2 JP2 compressor handle to destroy
-*/
-void jp2_destroy_compress(opj_jp2_t *jp2);
+
 /**
 Setup the encoder parameters using the current image and using user parameters. 
 Coding parameters are returned in jp2->j2k->cp. 
@@ -320,15 +304,6 @@ void jp2_setup_encoder(	opj_jp2_v2_t *jp2,
 						opj_cparameters_t *parameters, 
 						opj_image_t *image, 
 						struct opj_event_mgr * p_manager);
-/**
-Encode an image into a JPEG-2000 file stream
-@param jp2 JP2 compressor handle
-@param cio Output buffer stream
-@param image Image to encode
-@param cstr_info Codestream information structure if required, NULL otherwise
-@return Returns true if successful, returns false otherwise
-*/
-opj_bool opj_jp2_encode(opj_jp2_t *jp2, opj_cio_t *cio, opj_image_t *image, opj_codestream_info_t *cstr_info);
 
 /**
 Encode an image into a JPEG-2000 file stream
@@ -468,6 +443,9 @@ opj_bool jp2_set_decode_area(	opj_jp2_v2_t *p_jp2,
 								OPJ_INT32 p_end_x, OPJ_INT32 p_end_y,
 								struct opj_event_mgr * p_manager );
 
+ /**
+ * 
+ */
 opj_bool jp2_get_tile(	opj_jp2_v2_t *p_jp2,
 						opj_stream_private_t *p_stream,
 						opj_image_t* p_image,

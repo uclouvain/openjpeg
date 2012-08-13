@@ -1740,35 +1740,6 @@ void opj_jp2_setup_decoder(opj_jp2_v2_t *jp2, opj_dparameters_t *parameters)
 /* JP2 encoder interface                                             */
 /* ----------------------------------------------------------------------- */
 
-opj_jp2_t* jp2_create_compress(opj_common_ptr cinfo) {
-	opj_jp2_t *jp2 = (opj_jp2_t*)opj_malloc(sizeof(opj_jp2_t));
-	if(jp2) {
-		jp2->cinfo = cinfo;
-		/* create the J2K codec */
-		jp2->j2k = j2k_create_compress(cinfo);
-		if(jp2->j2k == NULL) {
-			jp2_destroy_compress(jp2);
-			return NULL;
-		}
-	}
-	return jp2;
-}
-
-void jp2_destroy_compress(opj_jp2_t *jp2) {
-	if(jp2) {
-		/* destroy the J2K codec */
-		j2k_destroy_compress(jp2->j2k);
-
-		if(jp2->comps) {
-			opj_free(jp2->comps);
-		}
-		if(jp2->cl) {
-			opj_free(jp2->cl);
-		}
-		opj_free(jp2);
-	}
-}
-
 void jp2_setup_encoder(	opj_jp2_v2_t *jp2, 
 						opj_cparameters_t *parameters, 
 						opj_image_t *image, 
@@ -1857,50 +1828,6 @@ opj_bool opj_jp2_encode_v2(	opj_jp2_v2_t *jp2,
 	return j2k_encode_v2(jp2->j2k, stream, p_manager);
 }
 
-opj_bool opj_jp2_encode(opj_jp2_t *jp2, opj_cio_t *cio, opj_image_t *image, opj_codestream_info_t *cstr_info) {
-
-	int pos_iptr, pos_cidx, pos_jp2c, len_jp2c, len_cidx, end_pos, pos_fidx, len_fidx;
-	pos_jp2c = pos_iptr = -1; /* remove a warning */
-
-	/* JP2 encoding */
-
-	/* JPEG 2000 Signature box */
-	jp2_write_jp(cio);
-	/* File Type box */
-	jp2_write_ftyp(jp2, cio);
-	/* JP2 Header box */
-	jp2_write_jp2h(jp2, cio);
-
-	if( jp2->jpip_on){
-	  pos_iptr = cio_tell( cio);
-	  cio_skip( cio, 24); /* IPTR further ! */
-	  
-	  pos_jp2c = cio_tell( cio);
-	}
-
-	/* J2K encoding */
-	if(!(len_jp2c = jp2_write_jp2c( jp2, cio, image, cstr_info))){
-	    opj_event_msg(jp2->cinfo, EVT_ERROR, "Failed to encode image\n");
-	    return OPJ_FALSE;
-	}
-
-	if( jp2->jpip_on){
-	  pos_cidx = cio_tell( cio);
-	  
-	  len_cidx = write_cidx( pos_jp2c+8, cio, image, *cstr_info, len_jp2c-8);
-	  
-	  pos_fidx = cio_tell( cio);
-	  len_fidx = write_fidx( pos_jp2c, len_jp2c, pos_cidx, len_cidx, cio);
-	  
-	  end_pos = cio_tell( cio);
-	  
-	  cio_seek( cio, pos_iptr);
-	  write_iptr( pos_fidx, len_fidx, cio);
-	  	  cio_seek( cio, end_pos);
-	}
-
-	return OPJ_TRUE;
-}
 
 /**
  * Ends the decompression procedures and possibiliy add data to be read after the
