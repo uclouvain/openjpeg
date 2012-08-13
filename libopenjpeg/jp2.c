@@ -65,8 +65,8 @@ static opj_bool opj_jp2_read_ihdr(  opj_jp2_v2_t *jp2,
  * 
  * @return	the data being copied.
 */
-static unsigned char * jp2_write_ihdr_v2(	opj_jp2_v2_t *jp2, 
-											unsigned int * p_nb_bytes_written );
+static OPJ_BYTE * opj_jp2_write_ihdr(opj_jp2_v2_t *jp2, 
+                                     OPJ_UINT32 * p_nb_bytes_written );
 
 static void jp2_write_bpcc(opj_jp2_t *jp2, opj_cio_t *cio);
 
@@ -593,8 +593,9 @@ opj_bool opj_jp2_read_ihdr( opj_jp2_v2_t *jp2,
  * 
  * @return	the data being copied.
 */
-static unsigned char * opj_jp2_write_ihdr(	opj_jp2_v2_t *jp2, 
-											unsigned int * p_nb_bytes_written )
+OPJ_BYTE * opj_jp2_write_ihdr(opj_jp2_v2_t *jp2, 
+                              OPJ_UINT32 * p_nb_bytes_written 
+                              )
 {
 	unsigned char * l_ihdr_data,* l_current_ihdr_ptr;
 	
@@ -1337,13 +1338,13 @@ opj_bool opj_jp2_write_jp2h(opj_jp2_v2_t *jp2,
 
 	if (jp2->bpc == 255) {
 		l_nb_pass = 3;
-		l_writers[0].handler = jp2_write_ihdr_v2;
+		l_writers[0].handler = opj_jp2_write_ihdr;
 		l_writers[1].handler = jp2_write_bpcc_v2;
 		l_writers[2].handler = jp2_write_colr_v2;
 	}
 	else {
 		l_nb_pass = 2;
-		l_writers[0].handler = jp2_write_ihdr_v2;
+		l_writers[0].handler = opj_jp2_write_ihdr;
 		l_writers[1].handler = jp2_write_colr_v2;
 	}
 	
