@@ -98,8 +98,6 @@ static opj_bool opj_jp2_read_cdef(	opj_jp2_v2_t * jp2,
                                     OPJ_BYTE * p_cdef_header_data,
 									OPJ_UINT32 p_cdef_header_size,
 									opj_event_mgr_t * p_manager );
-
-static void jp2_write_colr(opj_jp2_t *jp2, opj_cio_t *cio);
 /**
  * Writes the Colour Specification box.
  *
@@ -651,7 +649,8 @@ OPJ_BYTE * opj_jp2_write_ihdr(opj_jp2_v2_t *jp2,
  * @return	the data being copied.
 */
 OPJ_BYTE * opj_jp2_write_bpcc(	opj_jp2_v2_t *jp2, 
-						        OPJ_UINT32 * p_nb_bytes_written );
+						        OPJ_UINT32 * p_nb_bytes_written 
+                                )
 {
 	unsigned int i;
 	/* room for 8 bytes for box and 1 byte for each component */
@@ -728,28 +727,6 @@ opj_bool opj_jp2_read_bpcc( opj_jp2_v2_t *jp2,
 	}
 
 	return OPJ_TRUE;
-}
-
-static void jp2_write_colr(opj_jp2_t *jp2, opj_cio_t *cio) {
-	opj_jp2_box_t box;
-
-	box.init_pos = cio_tell(cio);
-	cio_skip(cio, 4);
-	cio_write(cio, JP2_COLR, 4);		/* COLR */
-
-	cio_write(cio, jp2->meth, 1);		/* METH */
-	cio_write(cio, jp2->precedence, 1);	/* PRECEDENCE */
-	cio_write(cio, jp2->approx, 1);		/* APPROX */
-
-	if(jp2->meth == 2)
-	 jp2->enumcs = 0;
-
-	cio_write(cio, jp2->enumcs, 4);	/* EnumCS */
-
-	box.length = cio_tell(cio) - box.init_pos;
-	cio_seek(cio, box.init_pos);
-	cio_write(cio, box.length, 4);	/* L */
-	cio_seek(cio, box.init_pos + box.length);
 }
 
 /**
