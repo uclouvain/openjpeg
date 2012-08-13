@@ -57,8 +57,6 @@ static opj_bool opj_jp2_read_ihdr(  opj_jp2_v2_t *jp2,
                                     OPJ_UINT32 p_image_header_size,
                                     opj_event_mgr_t * p_manager );
 
-static void jp2_write_ihdr(opj_jp2_t *jp2, opj_cio_t *cio);
-
 /**
  * Writes the Image Header box - Image Header box.
  *
@@ -587,29 +585,6 @@ opj_bool opj_jp2_read_ihdr( opj_jp2_v2_t *jp2,
 	return OPJ_TRUE;
 }
 
-static void jp2_write_ihdr(opj_jp2_t *jp2, opj_cio_t *cio) {
-	opj_jp2_box_t box;
-
-	box.init_pos = cio_tell(cio);
-	cio_skip(cio, 4);
-	cio_write(cio, JP2_IHDR, 4);		/* IHDR */
-
-	cio_write(cio, jp2->h, 4);			/* HEIGHT */
-	cio_write(cio, jp2->w, 4);			/* WIDTH */
-	cio_write(cio, jp2->numcomps, 2);	/* NC */
-
-	cio_write(cio, jp2->bpc, 1);		/* BPC */
-
-	cio_write(cio, jp2->C, 1);			/* C : Always 7 */
-	cio_write(cio, jp2->UnkC, 1);		/* UnkC, colorspace unknown */
-	cio_write(cio, jp2->IPR, 1);		/* IPR, no intellectual property */
-
-	box.length = cio_tell(cio) - box.init_pos;
-	cio_seek(cio, box.init_pos);
-	cio_write(cio, box.length, 4);	/* L */
-	cio_seek(cio, box.init_pos + box.length);
-}
-
 /**
  * Writes the Image Header box - Image Header box.
  *
@@ -618,7 +593,7 @@ static void jp2_write_ihdr(opj_jp2_t *jp2, opj_cio_t *cio) {
  * 
  * @return	the data being copied.
 */
-static unsigned char * jp2_write_ihdr_v2(	opj_jp2_v2_t *jp2, 
+static unsigned char * opj_jp2_write_ihdr(	opj_jp2_v2_t *jp2, 
 											unsigned int * p_nb_bytes_written )
 {
 	unsigned char * l_ihdr_data,* l_current_ihdr_ptr;
