@@ -110,14 +110,6 @@ static OPJ_BYTE * opj_jp2_write_colr(   opj_jp2_v2_t *jp2,
 									    OPJ_UINT32 * p_nb_bytes_written );
 
 /**
-Write the FTYP box - File type box
-@param jp2 JP2 handle
-@param cio Output buffer stream
-*/
-static void jp2_write_ftyp(opj_jp2_t *jp2, opj_cio_t *cio);
-
-
-/**
  * Writes a FTYP box - File type box
  *
  * @param	cio			the stream to write data to.
@@ -1366,27 +1358,6 @@ opj_bool opj_jp2_write_jp2h(opj_jp2_v2_t *jp2,
 	}
 
 	return l_result;
-}
-
-static void jp2_write_ftyp(opj_jp2_t *jp2, opj_cio_t *cio) {
-	unsigned int i;
-	opj_jp2_box_t box;
-
-	box.init_pos = cio_tell(cio);
-	cio_skip(cio, 4);
-	cio_write(cio, JP2_FTYP, 4);		/* FTYP */
-
-	cio_write(cio, jp2->brand, 4);		/* BR */
-	cio_write(cio, jp2->minversion, 4);	/* MinV */
-
-	for (i = 0; i < jp2->numcl; i++) {
-		cio_write(cio, jp2->cl[i], 4);	/* CL */
-	}
-
-	box.length = cio_tell(cio) - box.init_pos;
-	cio_seek(cio, box.init_pos);
-	cio_write(cio, box.length, 4);	/* L */
-	cio_seek(cio, box.init_pos + box.length);
 }
 
 /**
