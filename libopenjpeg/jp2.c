@@ -178,8 +178,6 @@ static opj_bool opj_jp2_write_jp2c(	opj_jp2_v2_t *jp2,
 								    opj_stream_private_t *cio,
 								    opj_event_mgr_t * p_manager );
 
-static void jp2_write_jp(opj_cio_t *cio);
-
 /**
  * Reads a jpeg2000 file signature box.
  *
@@ -1462,20 +1460,6 @@ opj_bool opj_jp2_write_jp2c(opj_jp2_v2_t *jp2,
 	}
 
 	return OPJ_TRUE;
-}
-
-static void jp2_write_jp(opj_cio_t *cio) {
-	opj_jp2_box_t box;
-
-	box.init_pos = cio_tell(cio);
-	cio_skip(cio, 4);
-	cio_write(cio, JP2_JP, 4);		/* JP2 signature */
-	cio_write(cio, 0x0d0a870a, 4);
-
-	box.length = cio_tell(cio) - box.init_pos;
-	cio_seek(cio, box.init_pos);
-	cio_write(cio, box.length, 4);	/* L */
-	cio_seek(cio, box.init_pos + box.length);
 }
 
 /**
