@@ -579,13 +579,6 @@ static opj_bool opj_j2k_read_qcc(   opj_j2k_v2_t *p_j2k,
                                     OPJ_BYTE * p_header_data,
                                     OPJ_UINT32 p_header_size,
                                     opj_event_mgr_t * p_manager);
-
-/**
-Write the POC marker (progression order change)
-@param j2k J2K handle
-*/
-static void j2k_write_poc(opj_j2k_t *j2k);
-
 /**
  * Writes the POC marker (Progression Order Change)
  * 
@@ -593,9 +586,9 @@ static void j2k_write_poc(opj_j2k_t *j2k);
  * @param	p_j2k				J2K codec.
  * @param	p_manager		the user event manager.
 */
-static opj_bool j2k_write_poc_v2(	opj_j2k_v2_t *p_j2k,
-									struct opj_stream_private *p_stream,
-									struct opj_event_mgr * p_manager );
+static opj_bool opj_j2k_write_poc(	opj_j2k_v2_t *p_j2k,
+									opj_stream_private_t *p_stream,
+									opj_event_mgr_t * p_manager );
 
 /**
  * Writes the POC marker (Progression Order Change)
@@ -604,15 +597,15 @@ static opj_bool j2k_write_poc_v2(	opj_j2k_v2_t *p_j2k,
  * @param	p_j2k			J2K codec.
  * @param	p_manager		the user event manager.
  */
-static void j2k_write_poc_in_memory(opj_j2k_v2_t *p_j2k,
-									OPJ_BYTE * p_data,
-									OPJ_UINT32 * p_data_written,
-									struct opj_event_mgr * p_manager );
+static void opj_j2k_write_poc_in_memory(opj_j2k_v2_t *p_j2k,
+									    OPJ_BYTE * p_data,
+									    OPJ_UINT32 * p_data_written,
+									    opj_event_mgr_t * p_manager );
 
 /**
  * Gets the maximum size taken by the writting of a POC.
  */
-static OPJ_UINT32 j2k_get_max_poc_size(opj_j2k_v2_t *p_j2k);
+static OPJ_UINT32 opj_j2k_get_max_poc_size(opj_j2k_v2_t *p_j2k);
 
 /**
  * Gets the maximum size taken by the toc headers of all the tile parts of any given tile.
@@ -3099,35 +3092,6 @@ static opj_bool opj_j2k_read_qcc(   opj_j2k_v2_t *p_j2k,
 	return OPJ_TRUE;
 }
 
-
-static void j2k_write_poc(opj_j2k_t *j2k) {
-	int len, numpchgs, i;
-
-	int numcomps = j2k->image->numcomps;
-	
-	opj_cp_t *cp = j2k->cp;
-	opj_tcp_t *tcp = &cp->tcps[j2k->curtileno];
-	opj_tccp_t *tccp = &tcp->tccps[0];
-	opj_cio_t *cio = j2k->cio;
-
-	numpchgs = 1 + tcp->numpocs;
-	cio_write(cio, J2K_MS_POC, 2);	/* POC  */
-	len = 2 + (5 + 2 * (numcomps <= 256 ? 1 : 2)) * numpchgs;
-	cio_write(cio, len, 2);		/* Lpoc */
-	for (i = 0; i < numpchgs; i++) {
-		opj_poc_t *poc = &tcp->pocs[i];
-		cio_write(cio, poc->resno0, 1);	/* RSpoc_i */
-		cio_write(cio, poc->compno0, (numcomps <= 256 ? 1 : 2));	/* CSpoc_i */
-		cio_write(cio, poc->layno1, 2);	/* LYEpoc_i */
-		poc->layno1 = int_min(poc->layno1, tcp->numlayers);
-		cio_write(cio, poc->resno1, 1);	/* REpoc_i */
-		poc->resno1 = int_min(poc->resno1, tccp->numresolutions);
-		cio_write(cio, poc->compno1, (numcomps <= 256 ? 1 : 2));	/* CEpoc_i */
-		poc->compno1 = int_min(poc->compno1, numcomps);
-		cio_write(cio, poc->prg, 1);	/* Ppoc_i */
-	}
-}
-
 /**
  * Writes the POC marker (Progression Order Change)
  * 
@@ -3135,9 +3099,10 @@ static void j2k_write_poc(opj_j2k_t *j2k) {
  * @param	p_j2k				J2K codec.
  * @param	p_manager		the user event manager.
 */
-opj_bool j2k_write_poc_v2(	opj_j2k_v2_t *p_j2k,
-							struct opj_stream_private *p_stream,
-							struct opj_event_mgr * p_manager )
+opj_bool opj_j2k_write_poc(	opj_j2k_v2_t *p_j2k,
+							opj_stream_private_t *p_stream,
+							opj_event_mgr_t * p_manager 
+                            )
 {
 	OPJ_UINT32 l_nb_comp;
 	OPJ_UINT32 l_nb_poc;
@@ -3178,7 +3143,7 @@ opj_bool j2k_write_poc_v2(	opj_j2k_v2_t *p_j2k,
 		p_j2k->m_specific_param.m_encoder.m_header_tile_data_size = l_poc_size;
 	}
 
-	j2k_write_poc_in_memory(p_j2k,p_j2k->m_specific_param.m_encoder.m_header_tile_data,&l_written_size,p_manager);
+	opj_j2k_write_poc_in_memory(p_j2k,p_j2k->m_specific_param.m_encoder.m_header_tile_data,&l_written_size,p_manager);
 
 	if (opj_stream_write_data(p_stream,p_j2k->m_specific_param.m_encoder.m_header_tile_data,l_poc_size,p_manager) != l_poc_size) {
 		return OPJ_FALSE;
@@ -3195,10 +3160,11 @@ opj_bool j2k_write_poc_v2(	opj_j2k_v2_t *p_j2k,
  * @param	p_j2k				J2K codec.
  * @param	p_manager		the user event manager.
 */
-void j2k_write_poc_in_memory(	opj_j2k_v2_t *p_j2k,
-								OPJ_BYTE * p_data,
-								OPJ_UINT32 * p_data_written,
-								struct opj_event_mgr * p_manager )
+void opj_j2k_write_poc_in_memory(   opj_j2k_v2_t *p_j2k,
+							        OPJ_BYTE * p_data,
+							        OPJ_UINT32 * p_data_written,
+							        opj_event_mgr_t * p_manager 
+                                    )
 {
 	OPJ_UINT32 i;
 	OPJ_BYTE * l_current_data = 00;
@@ -3272,7 +3238,7 @@ void j2k_write_poc_in_memory(	opj_j2k_v2_t *p_j2k,
 /**
  * Gets the maximum size taken by the writing of a POC.
  */
-OPJ_UINT32 j2k_get_max_poc_size(opj_j2k_v2_t *p_j2k)
+OPJ_UINT32 opj_j2k_get_max_poc_size(opj_j2k_v2_t *p_j2k)
 {
 	opj_tcp_v2_t * l_tcp = 00;
 	OPJ_UINT32 l_nb_tiles = 0;
@@ -3337,7 +3303,7 @@ OPJ_UINT32 j2k_get_specific_header_sizes(opj_j2k_v2_t *p_j2k)
 		l_nb_bytes += l_nb_comps * l_qcc_bytes;
 	}
 
-	l_nb_bytes += j2k_get_max_poc_size(p_j2k);
+	l_nb_bytes += opj_j2k_get_max_poc_size(p_j2k);
 
 	/*** DEVELOPER CORNER, Add room for your headers ***/
 
@@ -10578,7 +10544,7 @@ void opj_j2k_setup_header_writting (opj_j2k_v2_t *p_j2k)
 		opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)j2k_write_tlm_v2 );
 
 		if (p_j2k->m_cp.m_specific_param.m_enc.m_cinema == CINEMA4K_24) {
-			opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)j2k_write_poc_v2 );
+			opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_poc );
 		}
 	}
 
@@ -10659,7 +10625,7 @@ opj_bool opj_j2k_write_first_tile_part (opj_j2k_v2_t *p_j2k,
 
 		if (l_cp->tcps[p_j2k->m_current_tile_number].numpocs) {
 			l_current_nb_bytes_written = 0;
-			j2k_write_poc_in_memory(p_j2k,p_data,&l_current_nb_bytes_written,p_manager);
+			opj_j2k_write_poc_in_memory(p_j2k,p_data,&l_current_nb_bytes_written,p_manager);
 			l_nb_bytes_written += l_current_nb_bytes_written;
 			p_data += l_current_nb_bytes_written;
 			p_total_data_size -= l_current_nb_bytes_written;
