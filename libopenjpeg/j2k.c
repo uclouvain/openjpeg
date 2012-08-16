@@ -839,7 +839,7 @@ static opj_bool opj_j2k_read_rgn (opj_j2k_v2_t *p_j2k,
  * @param	p_j2k			J2K codec.
  * @param	p_manager		the user event manager.
 */
-static opj_bool j2k_write_eoc_v2(	opj_j2k_v2_t *p_j2k,
+static opj_bool opj_j2k_write_eoc(	opj_j2k_v2_t *p_j2k,
                                     opj_stream_private_t *p_stream,
                                     opj_event_mgr_t * p_manager );
 
@@ -4449,20 +4449,6 @@ opj_bool opj_j2k_read_sod (opj_j2k_v2_t *p_j2k,
 	return OPJ_TRUE;
 }
 
-
-static void j2k_write_eoc(opj_j2k_t *j2k) {
-	opj_cio_t *cio = j2k->cio;
-	/* opj_event_msg(j2k->cinfo, "%.8x: EOC\n", cio_tell(cio) + j2k->pos_correction); */
-	cio_write(cio, J2K_MS_EOC, 2);
-
-/* UniPG>> */
-#ifdef USE_JPWL
-	/* update markers struct */
-	j2k_add_marker(j2k->cstr_info, J2K_MS_EOC, cio_tell(cio) - 2, 2);
-#endif /* USE_JPWL */
-/* <<UniPG */
-}
-
 /**
  * Writes the EOC marker (End of Codestream)
  * 
@@ -4470,9 +4456,10 @@ static void j2k_write_eoc(opj_j2k_t *j2k) {
  * @param	p_j2k			J2K codec.
  * @param	p_manager		the user event manager.
 */
-opj_bool j2k_write_eoc_v2(	opj_j2k_v2_t *p_j2k,
-							struct opj_stream_private *p_stream,
-							struct opj_event_mgr * p_manager )
+opj_bool opj_j2k_write_eoc(	opj_j2k_v2_t *p_j2k,
+                            opj_stream_private_t *p_stream,
+                            opj_event_mgr_t * p_manager 
+                            )
 {
 	/* preconditions */
 	assert(p_j2k != 00);
@@ -9822,7 +9809,7 @@ void opj_j2k_setup_end_compress (opj_j2k_v2_t *p_j2k)
 	assert(p_j2k != 00);
 
 	/* DEVELOPER CORNER, insert your custom procedures */
-	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)j2k_write_eoc_v2 );
+	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_eoc );
 
 	if (p_j2k->m_cp.m_specific_param.m_enc.m_cinema) {
 		opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_updated_tlm);
