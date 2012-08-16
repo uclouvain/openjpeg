@@ -806,14 +806,6 @@ void opj_j2k_update_tlm (opj_j2k_v2_t * p_j2k, OPJ_UINT32 p_tile_part_size )
 }
 
 /**
-Write the RGN marker (region-of-interest)
-@param j2k J2K handle
-@param compno Number of the component concerned by the information written
-@param tileno Number of the tile concerned by the information written
-*/
-static void j2k_write_rgn(opj_j2k_t *j2k, int compno, int tileno);
-
-/**
  * Writes the RGN marker (Region Of Interest)
  *
  * @param	p_tile_no		the tile to output
@@ -822,11 +814,11 @@ static void j2k_write_rgn(opj_j2k_t *j2k, int compno, int tileno);
  * @param	p_j2k				J2K codec.
  * @param	p_manager		the user event manager.
 */
-static opj_bool j2k_write_rgn_v2(	opj_j2k_v2_t *p_j2k,
+static opj_bool opj_j2k_write_rgn(	opj_j2k_v2_t *p_j2k,
 									OPJ_UINT32 p_tile_no,
 									OPJ_UINT32 p_comp_no,
-									struct opj_stream_private *p_stream,
-									struct opj_event_mgr * p_manager );
+									opj_stream_private_t *p_stream,
+									opj_event_mgr_t * p_manager );
 
 /**
  * Reads a RGN marker (Region Of Interest)
@@ -4498,20 +4490,6 @@ opj_bool opj_j2k_read_sod (opj_j2k_v2_t *p_j2k,
 	return OPJ_TRUE;
 }
 
-
-static void j2k_write_rgn(opj_j2k_t *j2k, int compno, int tileno) {
-	opj_cp_t *cp = j2k->cp;
-	opj_tcp_t *tcp = &cp->tcps[tileno];
-	opj_cio_t *cio = j2k->cio;
-	int numcomps = j2k->image->numcomps;
-	
-	cio_write(cio, J2K_MS_RGN, 2);						/* RGN  */
-	cio_write(cio, numcomps <= 256 ? 5 : 6, 2);			/* Lrgn */
-	cio_write(cio, compno, numcomps <= 256 ? 1 : 2);	/* Crgn */
-	cio_write(cio, 0, 1);								/* Srgn */
-	cio_write(cio, tcp->tccps[compno].roishift, 1);		/* SPrgn */
-}
-
 /**
  * Writes the RGN marker (Region Of Interest)
  *
@@ -4521,11 +4499,12 @@ static void j2k_write_rgn(opj_j2k_t *j2k, int compno, int tileno) {
  * @param	p_j2k				J2K codec.
  * @param	p_manager		the user event manager.
 */
-opj_bool j2k_write_rgn_v2(	opj_j2k_v2_t *p_j2k,
+ opj_bool opj_j2k_write_rgn(opj_j2k_v2_t *p_j2k,
 							OPJ_UINT32 p_tile_no,
 							OPJ_UINT32 p_comp_no,
-							struct opj_stream_private *p_stream,
-							struct opj_event_mgr * p_manager )
+							opj_stream_private_t *p_stream,
+							opj_event_mgr_t * p_manager 
+                            )
 {
 	OPJ_BYTE * l_current_data = 00;
 	OPJ_UINT32 l_nb_comp;
@@ -5118,7 +5097,7 @@ opj_bool j2k_write_regions(	opj_j2k_v2_t *p_j2k,
 	for	(compno = 0; compno < p_j2k->m_private_image->numcomps; ++compno)  {
 		if (l_tccp->roishift) {
 
-			if (! j2k_write_rgn_v2(p_j2k,0,compno,p_stream,p_manager)) {
+			if (! opj_j2k_write_rgn(p_j2k,0,compno,p_stream,p_manager)) {
 				return OPJ_FALSE;
 			}
 		}
