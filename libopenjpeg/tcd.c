@@ -2418,8 +2418,8 @@ opj_bool FUNCTION (	opj_tcd_v2_t *p_tcd,										\
 }																				\
 
 
-MACRO_TCD_ALLOCATE(tcd_init_encode_tile, opj_tcd_cblk_enc_v2_t, 1.f, enc, tcd_code_block_enc_allocate)
-MACRO_TCD_ALLOCATE(tcd_init_decode_tile, opj_tcd_cblk_dec_v2_t, 0.5f, dec, tcd_code_block_dec_allocate)
+MACRO_TCD_ALLOCATE(opj_tcd_init_encode_tile, opj_tcd_cblk_enc_v2_t, 1.f, enc, tcd_code_block_enc_allocate)
+MACRO_TCD_ALLOCATE(opj_tcd_init_decode_tile, opj_tcd_cblk_dec_v2_t, 0.5f, dec, tcd_code_block_dec_allocate)
 
 #undef MACRO_TCD_ALLOCATE
 
@@ -2488,7 +2488,7 @@ opj_bool tcd_code_block_dec_allocate (opj_tcd_cblk_dec_v2_t * p_code_block)
 	return OPJ_TRUE;
 }
 
-OPJ_UINT32 tcd_get_decoded_tile_size ( opj_tcd_v2_t *p_tcd )
+OPJ_UINT32 opj_tcd_get_decoded_tile_size ( opj_tcd_v2_t *p_tcd )
 {
 	OPJ_UINT32 i;
 	OPJ_UINT32 l_data_size = 0;
@@ -2691,11 +2691,10 @@ opj_bool tcd_decode_tile_v2(
 	return OPJ_TRUE;
 }
 
-opj_bool tcd_update_tile_data (
-						 opj_tcd_v2_t *p_tcd,
-						 OPJ_BYTE * p_dest,
-						 OPJ_UINT32 p_dest_length
-						 )
+opj_bool opj_tcd_update_tile_data ( opj_tcd_v2_t *p_tcd,
+                                    OPJ_BYTE * p_dest,
+                                    OPJ_UINT32 p_dest_length
+                                    )
 {
 	OPJ_UINT32 i,j,k,l_data_size = 0;
 	opj_image_comp_t * l_img_comp = 00;
@@ -2704,7 +2703,7 @@ opj_bool tcd_update_tile_data (
 	OPJ_UINT32 l_size_comp, l_remaining;
 	OPJ_UINT32 l_stride, l_width,l_height;
 
-	l_data_size = tcd_get_decoded_tile_size(p_tcd);
+	l_data_size = opj_tcd_get_decoded_tile_size(p_tcd);
 	if (l_data_size > p_dest_length) {
 		return OPJ_FALSE;
 	}
@@ -3198,7 +3197,7 @@ void tcd_code_block_enc_deallocate (opj_tcd_precinct_v2_t * p_precinct)
 	}
 }
 
-OPJ_UINT32 tcd_get_encoded_tile_size ( opj_tcd_v2_t *p_tcd )
+OPJ_UINT32 opj_tcd_get_encoded_tile_size ( opj_tcd_v2_t *p_tcd )
 {
 	OPJ_UINT32 i,l_data_size = 0;
 	opj_image_comp_t * l_img_comp = 00;
@@ -3450,9 +3449,9 @@ opj_bool tcd_rate_allocate_encode(	opj_tcd_v2_t *p_tcd,
 }
 
 
-opj_bool tcd_copy_tile_data ( 	opj_tcd_v2_t *p_tcd,
-								OPJ_BYTE * p_src,
-								OPJ_UINT32 p_src_length )
+opj_bool opj_tcd_copy_tile_data ( 	opj_tcd_v2_t *p_tcd,
+								    OPJ_BYTE * p_src,
+								    OPJ_UINT32 p_src_length )
 {
 	OPJ_UINT32 i,j,l_data_size = 0;
 	opj_image_comp_t * l_img_comp = 00;
@@ -3460,7 +3459,7 @@ opj_bool tcd_copy_tile_data ( 	opj_tcd_v2_t *p_tcd,
 	OPJ_UINT32 l_size_comp, l_remaining;
 	OPJ_UINT32 l_nb_elem;
 
-	l_data_size = tcd_get_encoded_tile_size(p_tcd);
+	l_data_size = opj_tcd_get_encoded_tile_size(p_tcd);
 	if (l_data_size != p_src_length) {
 		return OPJ_FALSE;
 	}

@@ -4776,7 +4776,7 @@ opj_bool opj_j2k_read_eoc (	opj_j2k_v2_t *p_j2k,
 
 	for (i = 0; i < l_nb_tiles; ++i) {
 		if (l_tcp->m_data) {
-			if (! tcd_init_decode_tile(l_tcd, i)) {
+			if (! opj_tcd_init_decode_tile(l_tcd, i)) {
 				tcd_destroy_v2(l_tcd);
 				opj_event_msg_v2(p_manager, EVT_ERROR, "Cannot decode tile, memory error\n");
 				return OPJ_FALSE;
@@ -7464,7 +7464,7 @@ opj_bool opj_j2k_read_tile_header(	opj_j2k_v2_t * p_j2k,
 	}
 
 	/*FIXME ???*/
-	if (! tcd_init_decode_tile(p_j2k->m_tcd, p_j2k->m_current_tile_number)) {
+	if (! opj_tcd_init_decode_tile(p_j2k->m_tcd, p_j2k->m_current_tile_number)) {
 		opj_event_msg_v2(p_manager, EVT_ERROR, "Cannot decode tile, memory error\n");
 		return OPJ_FALSE;
 	}
@@ -7474,7 +7474,7 @@ opj_bool opj_j2k_read_tile_header(	opj_j2k_v2_t * p_j2k,
 
 	*p_tile_index = p_j2k->m_current_tile_number;
 	*p_go_on = OPJ_TRUE;
-	*p_data_size = tcd_get_decoded_tile_size(p_j2k->m_tcd);
+	*p_data_size = opj_tcd_get_decoded_tile_size(p_j2k->m_tcd);
 	*p_tile_x0 = p_j2k->m_tcd->tcd_image->tiles->x0;
 	*p_tile_y0 = p_j2k->m_tcd->tcd_image->tiles->y0;
 	*p_tile_x1 = p_j2k->m_tcd->tcd_image->tiles->x1;
@@ -7524,7 +7524,7 @@ opj_bool opj_j2k_decode_tile (	opj_j2k_v2_t * p_j2k,
 		return OPJ_FALSE;
 	}
 
-	if (! tcd_update_tile_data(p_j2k->m_tcd,p_data,p_data_size)) {
+	if (! opj_tcd_update_tile_data(p_j2k->m_tcd,p_data,p_data_size)) {
 		return OPJ_FALSE;
 	}
 
@@ -9508,7 +9508,7 @@ opj_bool opj_j2k_encode_v2(	opj_j2k_v2_t * p_j2k,
 			return OPJ_FALSE;
 		}
 
-		l_current_tile_size = tcd_get_encoded_tile_size(p_j2k->m_tcd);
+		l_current_tile_size = opj_tcd_get_encoded_tile_size(p_j2k->m_tcd);
 		if (l_current_tile_size > l_max_tile_size) {
 			l_current_data = (OPJ_BYTE*)opj_realloc(l_current_data,l_current_tile_size);
 			if (! l_current_data) {
@@ -9622,7 +9622,7 @@ opj_bool opj_j2k_pre_write_tile (	opj_j2k_v2_t * p_j2k,
 	p_j2k->m_specific_param.m_encoder.m_current_poc_tile_part_number = 0;
 
 	/* initialisation before tile encoding  */
-	if (! tcd_init_encode_tile(p_j2k->m_tcd, p_j2k->m_current_tile_number)) {
+	if (! opj_tcd_init_encode_tile(p_j2k->m_tcd, p_j2k->m_current_tile_number)) {
 		return OPJ_FALSE;
 	}
 
@@ -9767,7 +9767,7 @@ opj_bool opj_j2k_post_write_tile (	opj_j2k_v2_t * p_j2k,
 	l_available_data = l_tile_size;
 	l_current_data = p_j2k->m_specific_param.m_encoder.m_encoded_tile_data;
 
-	if (! tcd_copy_tile_data(l_tcd,p_data,p_data_size)) {
+	if (! opj_tcd_copy_tile_data(l_tcd,p_data,p_data_size)) {
 		opj_event_msg_v2(p_manager, EVT_ERROR, "Size mismatch between tile data and sent data." );
 		return OPJ_FALSE;
 	}
