@@ -1893,8 +1893,9 @@ int main(int argc, char **argv) {
 	}
 
 	/* free user parameters structure */
-	if(parameters.cp_comment) free(parameters.cp_comment);
-	if(parameters.cp_matrice) free(parameters.cp_matrice);
+	if(parameters.cp_comment)   free(parameters.cp_comment);
+	if(parameters.cp_matrice)   free(parameters.cp_matrice);
+    if(parameters.cp_cinema)    free(img_fol.rates);
 
 	return 0;
 }
