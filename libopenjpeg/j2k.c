@@ -514,19 +514,6 @@ static opj_bool opj_j2k_read_coc (  opj_j2k_v2_t *p_j2k,
                                     opj_event_mgr_t * p_manager );
 
 /**
-Write the value concerning the specified component in the marker QCD and QCC
-@param j2k J2K handle
-@param compno Number of the component concerned by the information written
-*/
-static void j2k_write_qcx(opj_j2k_t *j2k, int compno);
-
-/**
-Write the QCD marker (quantization default)
-@param j2k J2K handle
-*/
-static void j2k_write_qcd(opj_j2k_t *j2k);
-
-/**
  * Writes the QCD marker (quantization default)
  *
  * @param	p_comp_number	the index of the component to output.
@@ -534,9 +521,9 @@ static void j2k_write_qcd(opj_j2k_t *j2k);
  * @param	p_j2k			J2K codec.
  * @param	p_manager		the user event manager.
 */
-static opj_bool j2k_write_qcd_v2(	opj_j2k_v2_t *p_j2k,
-									struct opj_stream_private *p_stream,
-									struct opj_event_mgr * p_manager );
+static opj_bool opj_j2k_write_qcd(	opj_j2k_v2_t *p_j2k,
+									opj_stream_private_t *p_stream,
+									opj_event_mgr_t * p_manager );
 
 /**
  * Reads a QCD marker (Quantization defaults)
@@ -549,13 +536,18 @@ static opj_bool opj_j2k_read_qcd (  opj_j2k_v2_t *p_j2k,
                                     OPJ_BYTE * p_header_data,
                                     OPJ_UINT32 p_header_size,
                                     opj_event_mgr_t * p_manager );
-
 /**
-Write the QCC marker (quantization component)
-@param j2k J2K handle
-@param compno Number of the component concerned by the information written
+ * Writes the QCC marker (quantization component)
+ *
+ * @param	p_comp_no	the index of the component to output.
+ * @param	p_stream		the stream to write data to.
+ * @param	p_j2k			J2K codec.
+ * @param	p_manager		the user event manager.
 */
-static void j2k_write_qcc(opj_j2k_t *j2k, int compno);
+static opj_bool opj_j2k_write_qcc(	opj_j2k_v2_t *p_j2k,
+									OPJ_UINT32 p_comp_no,
+									opj_stream_private_t *p_stream,
+									opj_event_mgr_t * p_manager );
 
 /**
  * Writes the QCC marker (quantization component)
@@ -565,29 +557,16 @@ static void j2k_write_qcc(opj_j2k_t *j2k, int compno);
  * @param	p_j2k			J2K codec.
  * @param	p_manager		the user event manager.
 */
-static opj_bool j2k_write_qcc_v2(	opj_j2k_v2_t *p_j2k,
-									OPJ_UINT32 p_comp_no,
-									struct opj_stream_private *p_stream,
-									struct opj_event_mgr * p_manager );
-
-/**
- * Writes the QCC marker (quantization component)
- *
- * @param	p_comp_no	the index of the component to output.
- * @param	p_stream		the stream to write data to.
- * @param	p_j2k			J2K codec.
- * @param	p_manager		the user event manager.
-*/
-static void j2k_write_qcc_in_memory(opj_j2k_v2_t *p_j2k,
-									OPJ_UINT32 p_comp_no,
-									OPJ_BYTE * p_data,
-									OPJ_UINT32 * p_data_written,
-									struct opj_event_mgr * p_manager );
+static void opj_j2k_write_qcc_in_memory(opj_j2k_v2_t *p_j2k,
+									    OPJ_UINT32 p_comp_no,
+									    OPJ_BYTE * p_data,
+									    OPJ_UINT32 * p_data_written,
+									    opj_event_mgr_t * p_manager );
 
 /**
  * Gets the maximum size taken by a qcc.
  */
-static OPJ_UINT32 j2k_get_max_qcc_size (opj_j2k_v2_t *p_j2k);
+static OPJ_UINT32 opj_j2k_get_max_qcc_size (opj_j2k_v2_t *p_j2k);
 
 /**
  * Reads a QCC marker (Quantization component)
@@ -2828,49 +2807,6 @@ static opj_bool opj_j2k_read_coc (  opj_j2k_v2_t *p_j2k,
 	return OPJ_TRUE;
 }
 
-static void j2k_write_qcx(opj_j2k_t *j2k, int compno) {
-	int bandno, numbands;
-	int expn, mant;
-	
-	opj_cp_t *cp = j2k->cp;
-	opj_tcp_t *tcp = &cp->tcps[j2k->curtileno];
-	opj_tccp_t *tccp = &tcp->tccps[compno];
-	opj_cio_t *cio = j2k->cio;
-	
-	cio_write(cio, tccp->qntsty + (tccp->numgbits << 5), 1);	/* Sqcx */
-	numbands = tccp->qntsty == J2K_CCP_QNTSTY_SIQNT ? 1 : tccp->numresolutions * 3 - 2;
-	
-	for (bandno = 0; bandno < numbands; bandno++) {
-		expn = tccp->stepsizes[bandno].expn;
-		mant = tccp->stepsizes[bandno].mant;
-		
-		if (tccp->qntsty == J2K_CCP_QNTSTY_NOQNT) {
-			cio_write(cio, expn << 3, 1);	/* SPqcx_i */
-		} else {
-			cio_write(cio, (expn << 11) + mant, 2);	/* SPqcx_i */
-		}
-	}
-}
-
-
-static void j2k_write_qcd(opj_j2k_t *j2k) {
-	int lenp, len;
-
-	opj_cio_t *cio = j2k->cio;
-	
-	cio_write(cio, J2K_MS_QCD, 2);	/* QCD */
-	lenp = cio_tell(cio);
-	cio_skip(cio, 2);
-	j2k_write_qcx(j2k, 0);
-	len = cio_tell(cio) - lenp;
-	cio_seek(cio, lenp);
-	cio_write(cio, len, 2);			/* Lqcd */
-	cio_seek(cio, lenp + len);
-
-	if(j2k->cstr_info)
-	  j2k_add_mhmarker(j2k->cstr_info, J2K_MS_QCD, lenp, len);
-}
-
 /**
  * Writes the QCD marker (quantization default)
  *
@@ -2879,9 +2815,10 @@ static void j2k_write_qcd(opj_j2k_t *j2k) {
  * @param	p_j2k				J2K codec.
  * @param	p_manager		the user event manager.
 */
-opj_bool j2k_write_qcd_v2(	opj_j2k_v2_t *p_j2k,
-							struct opj_stream_private *p_stream,
-							struct opj_event_mgr * p_manager )
+opj_bool opj_j2k_write_qcd(	opj_j2k_v2_t *p_j2k,
+							opj_stream_private_t *p_stream,
+							opj_event_mgr_t * p_manager 
+                            )
 {
 	opj_cp_v2_t *l_cp = 00;
 	opj_tcp_v2_t *l_tcp = 00;
@@ -2972,22 +2909,6 @@ static opj_bool opj_j2k_read_qcd (  opj_j2k_v2_t *p_j2k,
 	return OPJ_TRUE;
 }
 
-static void j2k_write_qcc(opj_j2k_t *j2k, int compno) {
-	int lenp, len;
-
-	opj_cio_t *cio = j2k->cio;
-	
-	cio_write(cio, J2K_MS_QCC, 2);	/* QCC */
-	lenp = cio_tell(cio);
-	cio_skip(cio, 2);
-	cio_write(cio, compno, j2k->image->numcomps <= 256 ? 1 : 2);	/* Cqcc */
-	j2k_write_qcx(j2k, compno);
-	len = cio_tell(cio) - lenp;
-	cio_seek(cio, lenp);
-	cio_write(cio, len, 2);			/* Lqcc */
-	cio_seek(cio, lenp + len);
-}
-
 /**
  * Writes the QCC marker (quantization component)
  *
@@ -2996,10 +2917,11 @@ static void j2k_write_qcc(opj_j2k_t *j2k, int compno) {
  * @param	p_j2k				J2K codec.
  * @param	p_manager		the user event manager.
 */
-opj_bool j2k_write_qcc_v2(	opj_j2k_v2_t *p_j2k,
-							OPJ_UINT32 p_comp_no,
-							struct opj_stream_private *p_stream,
-							struct opj_event_mgr * p_manager )
+opj_bool opj_j2k_write_qcc(	opj_j2k_v2_t *p_j2k,
+					        OPJ_UINT32 p_comp_no,
+					        opj_stream_private_t *p_stream,
+					        opj_event_mgr_t * p_manager 
+                            )
 {
 	OPJ_UINT32 l_qcc_size,l_remaining_size;
 
@@ -3023,7 +2945,7 @@ opj_bool j2k_write_qcc_v2(	opj_j2k_v2_t *p_j2k,
 		p_j2k->m_specific_param.m_encoder.m_header_tile_data_size = l_qcc_size;
 	}
 
-	j2k_write_qcc_in_memory(p_j2k,p_comp_no,p_j2k->m_specific_param.m_encoder.m_header_tile_data,&l_remaining_size,p_manager);
+	opj_j2k_write_qcc_in_memory(p_j2k,p_comp_no,p_j2k->m_specific_param.m_encoder.m_header_tile_data,&l_remaining_size,p_manager);
 
 	if (opj_stream_write_data(p_stream,p_j2k->m_specific_param.m_encoder.m_header_tile_data,l_qcc_size,p_manager) != l_qcc_size) {
 		return OPJ_FALSE;
@@ -3040,11 +2962,12 @@ opj_bool j2k_write_qcc_v2(	opj_j2k_v2_t *p_j2k,
  * @param	p_j2k				J2K codec.
  * @param	p_manager		the user event manager.
 */
-void j2k_write_qcc_in_memory(	opj_j2k_v2_t *p_j2k,
-								OPJ_UINT32 p_comp_no,
-								OPJ_BYTE * p_data,
-								OPJ_UINT32 * p_data_written,
-								struct opj_event_mgr * p_manager )
+void opj_j2k_write_qcc_in_memory(   opj_j2k_v2_t *p_j2k,
+							        OPJ_UINT32 p_comp_no,
+							        OPJ_BYTE * p_data,
+							        OPJ_UINT32 * p_data_written,
+							        opj_event_mgr_t * p_manager
+                                    )
 {
 	OPJ_UINT32 l_qcc_size,l_remaining_size;
 	OPJ_BYTE * l_current_data = 00;
@@ -3091,7 +3014,7 @@ void j2k_write_qcc_in_memory(	opj_j2k_v2_t *p_j2k,
 /**
  * Gets the maximum size taken by a qcc.
  */
-OPJ_UINT32 j2k_get_max_qcc_size (opj_j2k_v2_t *p_j2k)
+OPJ_UINT32 opj_j2k_get_max_qcc_size (opj_j2k_v2_t *p_j2k)
 {
 	return opj_j2k_get_max_coc_size(p_j2k);
 }
@@ -3410,7 +3333,7 @@ OPJ_UINT32 j2k_get_specific_header_sizes(opj_j2k_v2_t *p_j2k)
 		l_coc_bytes = opj_j2k_get_max_coc_size(p_j2k);
 		l_nb_bytes += l_nb_comps * l_coc_bytes;
 
-		l_qcc_bytes = j2k_get_max_qcc_size(p_j2k);
+		l_qcc_bytes = opj_j2k_get_max_qcc_size(p_j2k);
 		l_nb_bytes += l_nb_comps * l_qcc_bytes;
 	}
 
@@ -5330,7 +5253,7 @@ opj_bool j2k_write_image_components(opj_j2k_v2_t *p_j2k,
 			return OPJ_FALSE;
 		}
 
-		if (! j2k_write_qcc_v2(p_j2k,compno,p_stream, p_manager)) {
+		if (! opj_j2k_write_qcc(p_j2k,compno,p_stream, p_manager)) {
 			return OPJ_FALSE;
 		}
 	}
@@ -10647,7 +10570,7 @@ void opj_j2k_setup_header_writting (opj_j2k_v2_t *p_j2k)
 	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_soc );
 	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_siz );
 	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_cod );
-	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)j2k_write_qcd_v2 );
+	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_qcd );
 
 
 	if (p_j2k->m_cp.m_specific_param.m_enc.m_cinema) {
@@ -10728,7 +10651,7 @@ opj_bool opj_j2k_write_first_tile_part (opj_j2k_v2_t *p_j2k,
 			p_total_data_size -= l_current_nb_bytes_written;
 
 			l_current_nb_bytes_written = 0;
-			j2k_write_qcc_in_memory(p_j2k,compno,p_data,&l_current_nb_bytes_written,p_manager);
+			opj_j2k_write_qcc_in_memory(p_j2k,compno,p_data,&l_current_nb_bytes_written,p_manager);
 			l_nb_bytes_written += l_current_nb_bytes_written;
 			p_data += l_current_nb_bytes_written;
 			p_total_data_size -= l_current_nb_bytes_written;
