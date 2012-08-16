@@ -780,11 +780,6 @@ opj_j2k_v2_t;
 /* ----------------------------------------------------------------------- */
 
 /**
-Destroy a J2K decompressor handle
-@param j2k J2K decompressor handle to destroy
-*/
-void j2k_destroy_decompress(opj_j2k_t *j2k);
-/**
 Setup the decoder decoding parameters using user parameters.
 Decoding parameters are returned in j2k->cp. 
 @param j2k J2K decompressor handle
@@ -792,14 +787,6 @@ Decoding parameters are returned in j2k->cp.
 */
 void opj_j2k_setup_decoder(opj_j2k_v2_t *j2k, opj_dparameters_t *parameters);
 
-/**
-Decode an image form a JPT-stream (JPEG 2000, JPIP)
-@param j2k J2K decompressor handle
-@param cio Input buffer stream
-@param cstr_info Codestream information structure if required, NULL otherwise
-@return Returns a decoded image if successful, returns NULL otherwise
-*/
-opj_image_t* j2k_decode_jpt_stream(opj_j2k_t *j2k, opj_cio_t *cio, opj_codestream_info_t *cstr_info);
 /**
 Creates a J2K compression structure
 @param cinfo Codec context info
@@ -814,11 +801,6 @@ Creates a J2K compression structure
 */
 opj_j2k_v2_t* opj_j2k_create_compress_v2(void);
 
-/**
-Destroy a J2K compressor handle
-@param j2k J2K compressor handle to destroy
-*/
-void j2k_destroy_compress(opj_j2k_t *j2k);
 /**
 Setup the encoder parameters using the current image and using user parameters. 
 Coding parameters are returned in j2k->cp. 
@@ -837,15 +819,6 @@ void opj_j2k_setup_encoder_v2(	opj_j2k_v2_t *p_j2k,
 Converts an enum type progression order to string type
 */
 char *j2k_convert_progression_order(OPJ_PROG_ORDER prg_order);
-/**
-Encode an image into a JPEG-2000 codestream
-@param j2k J2K compressor handle
-@param cio Output buffer stream
-@param image Image to encode
-@param cstr_info Codestream information structure if required, NULL otherwise
-@return Returns true if successful, returns false otherwise
-*/
-opj_bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, opj_codestream_info_t *cstr_info);
 
 /* ----------------------------------------------------------------------- */
 /*@}*/
