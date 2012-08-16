@@ -742,23 +742,17 @@ static opj_bool opj_j2k_write_tlm(	opj_j2k_v2_t *p_j2k,
 									opj_event_mgr_t * p_manager );
 
 /**
-Write the SOT marker (start of tile-part)
-@param j2k J2K handle
-*/
-static void j2k_write_sot(opj_j2k_t *j2k);
-
-/**
  * Writes the SOT marker (Start of tile-part)
  *
  * @param	p_stream		the stream to write data to.
  * @param	p_j2k			J2K codec.
  * @param	p_manager		the user event manager.
 */
-static opj_bool j2k_write_sot_v2(	opj_j2k_v2_t *p_j2k,
+static opj_bool opj_j2k_write_sot(	opj_j2k_v2_t *p_j2k,
 									OPJ_BYTE * p_data,
 									OPJ_UINT32 * p_data_written,
-									const struct opj_stream_private *p_stream,
-									struct opj_event_mgr * p_manager );
+									const opj_stream_private_t *p_stream,
+									opj_event_mgr_t * p_manager );
 
 /**
  * Reads a PPT marker (Packed packet headers, tile-part header)
@@ -4040,36 +4034,6 @@ opj_bool opj_j2k_write_tlm(	opj_j2k_v2_t *p_j2k,
 	return OPJ_TRUE;
 }
 
-static void j2k_write_sot(opj_j2k_t *j2k) {
-	int lenp, len;
-
-	opj_cio_t *cio = j2k->cio;
-
-	j2k->sot_start = cio_tell(cio);
-	cio_write(cio, J2K_MS_SOT, 2);		/* SOT */
-	lenp = cio_tell(cio);
-	cio_skip(cio, 2);					/* Lsot (further) */
-	cio_write(cio, j2k->curtileno, 2);	/* Isot */
-	cio_skip(cio, 4);					/* Psot (further in j2k_write_sod) */
-	cio_write(cio, j2k->cur_tp_num , 1);	/* TPsot */
-	cio_write(cio, j2k->cur_totnum_tp[j2k->curtileno], 1);		/* TNsot */
-	len = cio_tell(cio) - lenp;
-	cio_seek(cio, lenp);
-	cio_write(cio, len, 2);				/* Lsot */
-	cio_seek(cio, lenp + len);
-
-	/* UniPG>> */
-#ifdef USE_JPWL
-	/* update markers struct */
-	j2k_add_marker(j2k->cstr_info, J2K_MS_SOT, j2k->sot_start, len + 2);
-#endif /* USE_JPWL */
-	/* <<UniPG */
-
-	if( j2k->cstr_info && j2k->cur_tp_num==0){
-	  j2k_add_tlmarker( j2k->curtileno, j2k->cstr_info, J2K_MS_SOT, lenp, len);
-	}
-}
-
 /**
  * Writes the SOT marker (Start of tile-part)
  *
@@ -4077,11 +4041,12 @@ static void j2k_write_sot(opj_j2k_t *j2k) {
  * @param	p_j2k				J2K codec.
  * @param	p_manager		the user event manager.
 */
-opj_bool j2k_write_sot_v2(	opj_j2k_v2_t *p_j2k,
+opj_bool opj_j2k_write_sot(	opj_j2k_v2_t *p_j2k,
 							OPJ_BYTE * p_data,
 							OPJ_UINT32 * p_data_written,
-							const struct opj_stream_private *p_stream,
-							struct opj_event_mgr * p_manager )
+							const opj_stream_private_t *p_stream,
+							opj_event_mgr_t * p_manager 
+                            )
 {
 	/* preconditions */
 	assert(p_j2k != 00);
@@ -10581,7 +10546,7 @@ opj_bool opj_j2k_write_first_tile_part (opj_j2k_v2_t *p_j2k,
 
 	l_current_nb_bytes_written = 0;
 	l_begin_data = p_data;
-	if (! j2k_write_sot_v2(p_j2k,p_data,&l_current_nb_bytes_written,p_stream,p_manager))
+	if (! opj_j2k_write_sot(p_j2k,p_data,&l_current_nb_bytes_written,p_stream,p_manager))
 	{
 		return OPJ_FALSE;
 	}
@@ -10666,7 +10631,7 @@ opj_bool opj_j2k_write_all_tile_parts(	opj_j2k_v2_t *p_j2k,
 		l_part_tile_size = 0;
 		l_begin_data = p_data;
 
-		if (! j2k_write_sot_v2(p_j2k,p_data,&l_current_nb_bytes_written,p_stream,p_manager)) {
+		if (! opj_j2k_write_sot(p_j2k,p_data,&l_current_nb_bytes_written,p_stream,p_manager)) {
 			return OPJ_FALSE;
 		}
 
@@ -10706,7 +10671,7 @@ opj_bool opj_j2k_write_all_tile_parts(	opj_j2k_v2_t *p_j2k,
 			l_part_tile_size = 0;
 			l_begin_data = p_data;
 
-			if (! j2k_write_sot_v2(p_j2k,p_data,&l_current_nb_bytes_written,p_stream,p_manager)) {
+			if (! opj_j2k_write_sot(p_j2k,p_data,&l_current_nb_bytes_written,p_stream,p_manager)) {
 				return OPJ_FALSE;
 			}
 
