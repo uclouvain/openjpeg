@@ -1517,7 +1517,7 @@ void opj_jp2_setup_encoder(	opj_jp2_v2_t *jp2,
 		return;
 	}
 
-	opj_j2k_setup_encoder_v2(jp2->j2k, parameters, image, p_manager );
+	opj_j2k_setup_encoder(jp2->j2k, parameters, image, p_manager );
 
 	/* setup the JP2 codec */
 	/* ------------------- */

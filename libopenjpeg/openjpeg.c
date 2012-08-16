@@ -749,7 +749,7 @@ opj_codec_t* OPJ_CALLCONV opj_create_compress(OPJ_CODEC_FORMAT p_format)
 			l_codec->m_codec_data.m_compression.opj_setup_encoder = (void (*) (	void *,
 																				opj_cparameters_t *,
 																				struct opj_image *,
-																				struct opj_event_mgr * )) opj_j2k_setup_encoder_v2;
+																				struct opj_event_mgr * )) opj_j2k_setup_encoder;
 
 			l_codec->m_codec = opj_j2k_create_compress_v2();
 			if (! l_codec->m_codec) {

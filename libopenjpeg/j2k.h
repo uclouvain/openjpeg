@@ -801,19 +801,11 @@ Creates a J2K compression structure
 */
 opj_j2k_v2_t* opj_j2k_create_compress_v2(void);
 
-/**
-Setup the encoder parameters using the current image and using user parameters. 
-Coding parameters are returned in j2k->cp. 
-@param j2k J2K compressor handle
-@param parameters compression parameters
-@param image input filled image
-*/
-void j2k_setup_encoder(opj_j2k_t *j2k, opj_cparameters_t *parameters, opj_image_t *image);
 
-void opj_j2k_setup_encoder_v2(	opj_j2k_v2_t *p_j2k,
-							    opj_cparameters_t *parameters,
-							    opj_image_t *image,
-							    struct opj_event_mgr * p_manager);
+void opj_j2k_setup_encoder(	opj_j2k_v2_t *p_j2k,
+						    opj_cparameters_t *parameters,
+						    opj_image_t *image,
+						    opj_event_mgr_t * p_manager);
 
 /**
 Converts an enum type progression order to string type
