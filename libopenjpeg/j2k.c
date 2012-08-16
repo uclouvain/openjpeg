@@ -4278,7 +4278,7 @@ opj_bool opj_j2k_write_sod(	opj_j2k_v2_t *p_j2k,
 
 	*p_data_written = 0;
 
-	if (! tcd_encode_tile_v2(p_tile_coder, p_j2k->m_current_tile_number, p_data, p_data_written, l_remaining_data , l_cstr_info)) {
+	if (! opj_tcd_encode_tile(p_tile_coder, p_j2k->m_current_tile_number, p_data, p_data_written, l_remaining_data , l_cstr_info)) {
 		opj_event_msg_v2(p_manager, EVT_ERROR, "Cannot encode tile\n");
 		return OPJ_FALSE;
 	}
@@ -4777,7 +4777,7 @@ opj_bool opj_j2k_read_eoc (	opj_j2k_v2_t *p_j2k,
 	for (i = 0; i < l_nb_tiles; ++i) {
 		if (l_tcp->m_data) {
 			if (! opj_tcd_init_decode_tile(l_tcd, i)) {
-				tcd_destroy_v2(l_tcd);
+				opj_tcd_destroy(l_tcd);
 				opj_event_msg_v2(p_manager, EVT_ERROR, "Cannot decode tile, memory error\n");
 				return OPJ_FALSE;
 			}
@@ -4795,7 +4795,7 @@ opj_bool opj_j2k_read_eoc (	opj_j2k_v2_t *p_j2k,
 		++l_tcp;
 	}
 
-	tcd_destroy_v2(l_tcd);
+	opj_tcd_destroy(l_tcd);
 	return OPJ_TRUE;
 }
 
@@ -7004,8 +7004,8 @@ static opj_bool opj_j2k_copy_default_tcp_and_create_tcd (	opj_j2k_v2_t * p_j2k,
 		return OPJ_FALSE;
 	}
 
-	if ( !tcd_init_v2(p_j2k->m_tcd, l_image, &(p_j2k->m_cp)) ) {
-		tcd_destroy_v2(p_j2k->m_tcd);
+	if ( !opj_tcd_init(p_j2k->m_tcd, l_image, &(p_j2k->m_cp)) ) {
+		opj_tcd_destroy(p_j2k->m_tcd);
 		p_j2k->m_tcd = 00;
 		opj_event_msg_v2(p_manager, EVT_ERROR, "Cannot decode tile, memory error\n");
 		return OPJ_FALSE;
@@ -7078,7 +7078,7 @@ void opj_j2k_destroy (opj_j2k_v2_t *p_j2k)
 		}
 	}
 
-	tcd_destroy_v2(p_j2k->m_tcd);
+	opj_tcd_destroy(p_j2k->m_tcd);
 
 	opj_j2k_cp_destroy(&(p_j2k->m_cp));
 	memset(&(p_j2k->m_cp),0,sizeof(opj_cp_v2_t));
@@ -10129,7 +10129,7 @@ opj_bool opj_j2k_end_encoding(	opj_j2k_v2_t *p_j2k,
 	assert(p_manager != 00);
 	assert(p_stream != 00);
 
-	tcd_destroy_v2(p_j2k->m_tcd);
+	opj_tcd_destroy(p_j2k->m_tcd);
 	p_j2k->m_tcd = 00;
 
 	if (p_j2k->m_specific_param.m_encoder.m_tlm_sot_offsets_buffer) {
@@ -10257,8 +10257,8 @@ static opj_bool opj_j2k_create_tcd(	opj_j2k_v2_t *p_j2k,
 		return OPJ_FALSE;
 	}
 
-	if (! tcd_init_v2(p_j2k->m_tcd,p_j2k->m_private_image,&p_j2k->m_cp)) {
-		tcd_destroy_v2(p_j2k->m_tcd);
+	if (!opj_tcd_init(p_j2k->m_tcd,p_j2k->m_private_image,&p_j2k->m_cp)) {
+		opj_tcd_destroy(p_j2k->m_tcd);
 		p_j2k->m_tcd = 00;
 		return OPJ_FALSE;
 	}

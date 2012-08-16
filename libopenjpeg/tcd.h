@@ -359,7 +359,7 @@ opj_tcd_v2_t* opj_tcd_create(opj_bool p_is_decoder);
 Destroy a previously created TCD handle
 @param tcd TCD handle to destroy
 */
-void tcd_destroy_v2(opj_tcd_v2_t *tcd);
+void opj_tcd_destroy(opj_tcd_v2_t *tcd);
 
 /**
  * Initialize the tile coder and may reuse some memory.
@@ -369,10 +369,9 @@ void tcd_destroy_v2(opj_tcd_v2_t *tcd);
  *
  * @return true if the encoding values could be set (false otherwise).
 */
-opj_bool tcd_init_v2(	opj_tcd_v2_t *p_tcd,
+opj_bool opj_tcd_init(	opj_tcd_v2_t *p_tcd,
 						opj_image_t * p_image,
-						opj_cp_v2_t * p_cp
-					);
+						opj_cp_v2_t * p_cp );
 
 /**
  * Allocates memory for decoding a specific tile.
@@ -385,72 +384,21 @@ opj_bool tcd_init_v2(	opj_tcd_v2_t *p_tcd,
  */
 opj_bool opj_tcd_init_decode_tile(opj_tcd_v2_t *p_tcd, OPJ_UINT32 p_tile_no);
 
-/**
-Destroy a previously created TCD handle
-@param tcd TCD handle to destroy
-*/
-void tcd_destroy(opj_tcd_t *tcd);
-/**
-Initialize the tile coder (allocate the memory)
-@param tcd TCD handle
-@param image Raw image
-@param cp Coding parameters
-@param curtileno Number that identifies the tile that will be encoded
-*/
-void tcd_malloc_encode(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp, int curtileno);
-/**
-Free the memory allocated for encoding
-@param tcd TCD handle
-*/
-void tcd_free_encode(opj_tcd_t *tcd);
-/**
-Initialize the tile coder (reuses the memory allocated by tcd_malloc_encode)
-@param tcd TCD handle
-@param image Raw image
-@param cp Coding parameters
-@param curtileno Number that identifies the tile that will be encoded
-*/
-void tcd_init_encode(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp, int curtileno);
-/**
-Initialize the tile decoder
-@param tcd TCD handle
-@param image Raw image
-@param cp Coding parameters
-*/
-void tcd_malloc_decode(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp);
-void tcd_malloc_decode_tile(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp, int tileno, opj_codestream_info_t *cstr_info);
+void opj_tcd_makelayer_fixed(opj_tcd_v2_t *tcd, OPJ_UINT32 layno, OPJ_UINT32 final);
 
-void tcd_makelayer_fixed(opj_tcd_t *tcd, int layno, int final);
-void tcd_makelayer_fixed_v2(opj_tcd_v2_t *tcd, OPJ_UINT32 layno, OPJ_UINT32 final);
+void opj_tcd_rateallocate_fixed(opj_tcd_v2_t *tcd);
 
-void tcd_rateallocate_fixed(opj_tcd_t *tcd);
-void tcd_rateallocate_fixed_v2(opj_tcd_v2_t *tcd);
-
-void tcd_makelayer(opj_tcd_t *tcd, int layno, double thresh, int final);
-
-void tcd_makelayer_v2(	opj_tcd_v2_t *tcd,
+void opj_tcd_makelayer(	opj_tcd_v2_t *tcd,
 						OPJ_UINT32 layno,
 						OPJ_FLOAT64 thresh,
 						OPJ_UINT32 final);
 
-opj_bool tcd_rateallocate(opj_tcd_t *tcd, unsigned char *dest, int len, opj_codestream_info_t *cstr_info);
-
-opj_bool tcd_rateallocate_v2(	opj_tcd_v2_t *tcd,
+opj_bool opj_tcd_rateallocate(	opj_tcd_v2_t *tcd,
 								OPJ_BYTE *dest,
 								OPJ_UINT32 * p_data_written,
 								OPJ_UINT32 len,
 								opj_codestream_info_t *cstr_info);
 
-/**
-Encode a tile from the raw image into a buffer
-@param tcd TCD handle
-@param tileno Number that identifies one of the tiles to be encoded
-@param dest Destination buffer
-@param len Length of destination buffer
-@param cstr_info Codestream information structure 
-@return 
-*/
-int tcd_encode_tile(opj_tcd_t *tcd, int tileno, unsigned char *dest, int len, opj_codestream_info_t *cstr_info);
 /**
 Decode a tile from a buffer into a raw image
 @param tcd TCD handle
@@ -483,12 +431,12 @@ OPJ_UINT32 opj_tcd_get_decoded_tile_size (opj_tcd_v2_t *p_tcd );
  * @param	p_cstr_info		Codestream information structure
  * @return  true if the coding is successfull.
 */
-opj_bool tcd_encode_tile_v2(opj_tcd_v2_t *p_tcd,
-							OPJ_UINT32 p_tile_no,
-							OPJ_BYTE *p_dest,
-							OPJ_UINT32 * p_data_written,
-							OPJ_UINT32 p_len,
-							struct opj_codestream_info *p_cstr_info);
+opj_bool opj_tcd_encode_tile(   opj_tcd_v2_t *p_tcd,
+							    OPJ_UINT32 p_tile_no,
+							    OPJ_BYTE *p_dest,
+							    OPJ_UINT32 * p_data_written,
+							    OPJ_UINT32 p_len,
+							    struct opj_codestream_info *p_cstr_info);
 
 
 /**
