@@ -384,9 +384,9 @@ static opj_bool opj_j2k_allocate_tile_element_cstr_index(opj_j2k_v2_t *p_j2k);
  * @param	p_j2k			J2K codec.
  * @param	p_manager	the user event manager.
 */
-static opj_bool j2k_write_soc_v2(	opj_j2k_v2_t *p_j2k,
-									struct opj_stream_private *p_stream,
-									struct opj_event_mgr * p_manager );
+static opj_bool opj_j2k_write_soc(	opj_j2k_v2_t *p_j2k,
+					                opj_stream_private_t *p_stream,
+						            opj_event_mgr_t * p_manager );
 
 /**
  * Reads a SOC marker (Start of Codestream)
@@ -10811,7 +10811,7 @@ void opj_j2k_setup_header_writting (opj_j2k_v2_t *p_j2k)
 	assert(p_j2k != 00);
 
 	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)j2k_init_info );
-	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)j2k_write_soc_v2 );
+	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_soc );
 	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)j2k_write_siz_v2 );
 	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)j2k_write_cod_v2 );
 	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)j2k_write_qcd_v2 );
