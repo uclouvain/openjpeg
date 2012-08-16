@@ -663,9 +663,9 @@ static opj_bool opj_j2k_read_tlm (  opj_j2k_v2_t *p_j2k,
  * @param	p_j2k			J2K codec.
  * @param	p_manager		the user event manager.
 */
-static opj_bool j2k_write_updated_tlm(	opj_j2k_v2_t *p_j2k,
-										struct opj_stream_private *p_stream,
-										struct opj_event_mgr * p_manager );
+static opj_bool opj_j2k_write_updated_tlm(	opj_j2k_v2_t *p_j2k,
+										    struct opj_stream_private *p_stream,
+										    struct opj_event_mgr * p_manager );
 
 /**
  * Reads a PLM marker (Packet length, main header marker)
@@ -10497,7 +10497,7 @@ void opj_j2k_setup_end_compress (opj_j2k_v2_t *p_j2k)
 	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)j2k_write_eoc_v2 );
 
 	if (p_j2k->m_cp.m_specific_param.m_enc.m_cinema) {
-		opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)j2k_write_updated_tlm);
+		opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_updated_tlm);
 	}
 
 	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)j2k_write_epc );
@@ -10766,9 +10766,9 @@ opj_bool opj_j2k_write_all_tile_parts(	opj_j2k_v2_t *p_j2k,
  * @param	p_j2k			J2K codec.
  * @param	p_manager		the user event manager.
 */
-opj_bool j2k_write_updated_tlm( opj_j2k_v2_t *p_j2k,
-								struct opj_stream_private *p_stream,
-								struct opj_event_mgr * p_manager )
+opj_bool opj_j2k_write_updated_tlm( opj_j2k_v2_t *p_j2k,
+								    struct opj_stream_private *p_stream,
+								    struct opj_event_mgr * p_manager )
 {
 	OPJ_UINT32 l_tlm_size;
 	OPJ_SIZE_T l_tlm_position, l_current_position;
