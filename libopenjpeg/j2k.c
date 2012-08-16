@@ -1145,6 +1145,10 @@ static void opj_j2k_dump_MH_index(opj_j2k_v2_t* p_j2k, FILE* out_stream);
 
 static opj_codestream_index_t* opj_j2k_create_cstr_index(void);
 
+static OPJ_FLOAT32 opj_get_tp_stride (opj_tcp_v2_t * p_tcp);
+
+static OPJ_FLOAT32 opj_get_default_stride (opj_tcp_v2_t * p_tcp);
+
 /*@}*/
 
 /*@}*/
@@ -1480,7 +1484,7 @@ void  opj_j2k_write_float_to_float64 (const void * p_src_data, void * p_dest_dat
  *
  * @return	the string representation of the given progression order.
  */
-char *j2k_convert_progression_order(OPJ_PROG_ORDER prg_order){
+char *opj_j2k_convert_progression_order(OPJ_PROG_ORDER prg_order){
 	j2k_prog_order_t *po;
 	for(po = j2k_prog_order_list; po->enum_prog != -1; po++ ){
 		if(po->enum_prog == prg_order){
@@ -1635,7 +1639,7 @@ OPJ_UINT32 opj_j2k_get_num_tp(opj_cp_v2_t *cp, OPJ_UINT32 pino, OPJ_UINT32 tilen
 	assert(l_current_poc != 0);
 
 	/* get the progression order as a character string */
-	prog = j2k_convert_progression_order(tcp->prg);
+	prog = opj_j2k_convert_progression_order(tcp->prg);
 	assert(strlen(prog) > 0);
 
 	if (cp->m_specific_param.m_enc.m_tp_on == 1) {
@@ -4617,15 +4621,15 @@ static opj_bool opj_j2k_read_rgn (opj_j2k_v2_t *p_j2k,
 
 }
 
-static OPJ_FLOAT32 get_tp_stride (opj_tcp_v2_t * p_tcp)
+OPJ_FLOAT32 opj_get_tp_stride (opj_tcp_v2_t * p_tcp)
 {
 	return (OPJ_FLOAT32) ((p_tcp->m_nb_tile_parts - 1) * 14);
 }
 
-static OPJ_FLOAT32 get_default_stride (opj_tcp_v2_t * p_tcp)
+OPJ_FLOAT32 opj_get_default_stride (opj_tcp_v2_t * p_tcp)
 {
-  (void)p_tcp;
-	return 0;
+    (void)p_tcp;
+    return 0;
 }
 
 /**
@@ -4636,8 +4640,8 @@ static OPJ_FLOAT32 get_default_stride (opj_tcp_v2_t * p_tcp)
  * @param	p_manager		the user event manager.
 */
 opj_bool opj_j2k_update_rates(	opj_j2k_v2_t *p_j2k,
-							struct opj_stream_private *p_stream,
-							struct opj_event_mgr * p_manager )
+							    opj_stream_private_t *p_stream,
+							    opj_event_mgr_t * p_manager )
 {
 	opj_cp_v2_t * l_cp = 00;
 	opj_image_t * l_image = 00;
@@ -4668,10 +4672,10 @@ opj_bool opj_j2k_update_rates(	opj_j2k_v2_t *p_j2k,
 	l_sot_remove = ((OPJ_FLOAT32) opj_stream_tell(p_stream)) / (l_cp->th * l_cp->tw);
 
 	if (l_cp->m_specific_param.m_enc.m_tp_on) {
-		l_tp_stride_func = get_tp_stride;
+		l_tp_stride_func = opj_get_tp_stride;
 	}
 	else {
-		l_tp_stride_func = get_default_stride;
+		l_tp_stride_func = opj_get_default_stride;
 	}
 
 	for (i=0;i<l_cp->th;++i) {
@@ -5196,20 +5200,6 @@ opj_bool opj_j2k_read_unk (	opj_j2k_v2_t *p_j2k,
 	*output_marker = l_marker_handler->id ;
 
 	return OPJ_TRUE;
-}
-
-/**
-Read the lookup table containing all the marker, status and action
-@param id Marker value
-*/
-static opj_dec_mstabent_t *j2k_dec_mstab_lookup(int id) {
-	opj_dec_mstabent_t *e;
-	for (e = j2k_dec_mstab; e->id != 0; e++) {
-		if (e->id == id) {
-			break;
-		}
-	}
-	return e;
 }
 
 /**

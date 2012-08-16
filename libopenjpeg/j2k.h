@@ -810,7 +810,7 @@ void opj_j2k_setup_encoder(	opj_j2k_v2_t *p_j2k,
 /**
 Converts an enum type progression order to string type
 */
-char *j2k_convert_progression_order(OPJ_PROG_ORDER prg_order);
+char *opj_j2k_convert_progression_order(OPJ_PROG_ORDER prg_order);
 
 /* ----------------------------------------------------------------------- */
 /*@}*/

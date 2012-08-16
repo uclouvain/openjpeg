@@ -2177,7 +2177,7 @@ void pi_create_encode_v2( 	opj_pi_iterator_t *pi,
 	opj_tcp_v2_t *tcps =&cp->tcps[tileno];
 	opj_poc_t *tcp= &tcps->pocs[pino];
 
-	prog = j2k_convert_progression_order(tcp->prg);
+	prog = opj_j2k_convert_progression_order(tcp->prg);
 
 	pi[pino].first = 1;
 	pi[pino].poc.prg = tcp->prg;
