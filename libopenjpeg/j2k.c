@@ -445,28 +445,15 @@ static opj_bool opj_j2k_read_com (  opj_j2k_v2_t *p_j2k,
                                     OPJ_UINT32 p_header_size,
                                     opj_event_mgr_t * p_manager );
 /**
-Write the value concerning the specified component in the marker COD and COC
-@param j2k J2K handle
-@param compno Number of the component concerned by the information written
-*/
-static void j2k_write_cox(opj_j2k_t *j2k, int compno);
-
-/**
-Write the COD marker (coding style default)
-@param j2k J2K handle
-*/
-static void j2k_write_cod(opj_j2k_t *j2k);
-
-/**
  * Writes the COD marker (Coding style default)
  *
  * @param	p_stream			the stream to write data to.
  * @param	p_j2k			J2K codec.
  * @param	p_manager	the user event manager.
 */
-static opj_bool j2k_write_cod_v2(	opj_j2k_v2_t *p_j2k,
-									struct opj_stream_private *p_stream,
-									struct opj_event_mgr * p_manager );
+static opj_bool opj_j2k_write_cod(	opj_j2k_v2_t *p_j2k,
+									opj_stream_private_t *p_stream,
+									opj_event_mgr_t * p_manager );
 
 /**
  * Reads a COD marker (Coding Styke defaults)
@@ -481,13 +468,6 @@ static opj_bool opj_j2k_read_cod (  opj_j2k_v2_t *p_j2k,
                                     opj_event_mgr_t * p_manager);
 
 /**
-Write the COC marker (coding style component)
-@param j2k J2K handle
-@param compno Number of the component concerned by the information written
-*/
-static void j2k_write_coc(opj_j2k_t *j2k, int compno);
-
-/**
  * Writes the COC marker (Coding style component)
  *
  * @param	p_comp_number	the index of the component to output.
@@ -495,11 +475,10 @@ static void j2k_write_coc(opj_j2k_t *j2k, int compno);
  * @param	p_j2k				J2K codec.
  * @param	p_manager		the user event manager.
 */
-static opj_bool j2k_write_coc_v2( opj_j2k_v2_t *p_j2k,
-							OPJ_UINT32 p_comp_number,
-							struct opj_stream_private *p_stream,
-							struct opj_event_mgr * p_manager
-						  );
+static opj_bool opj_j2k_write_coc(  opj_j2k_v2_t *p_j2k,
+							        OPJ_UINT32 p_comp_no,
+							        opj_stream_private_t *p_stream,
+							        opj_event_mgr_t * p_manager );
 /**
  * Writes the COC marker (Coding style component)
  *
@@ -508,11 +487,11 @@ static opj_bool j2k_write_coc_v2( opj_j2k_v2_t *p_j2k,
  * @param	p_j2k			J2K codec.
  * @param	p_manager		the user event manager.
 */
-static void j2k_write_coc_in_memory(opj_j2k_v2_t *p_j2k,
-									OPJ_UINT32 p_comp_no,
-									OPJ_BYTE * p_data,
-									OPJ_UINT32 * p_data_written,
-									struct opj_event_mgr * p_manager );
+static void opj_j2k_write_coc_in_memory(opj_j2k_v2_t *p_j2k,
+									    OPJ_UINT32 p_comp_no,
+									    OPJ_BYTE * p_data,
+									    OPJ_UINT32 * p_data_written,
+									    opj_event_mgr_t * p_manager );
 
 /**
  * Gets the maximum size taken by a coc.
@@ -2491,59 +2470,6 @@ static opj_bool opj_j2k_read_com (  opj_j2k_v2_t *p_j2k,
 	return OPJ_TRUE;
 }
 
-static void j2k_write_cox(opj_j2k_t *j2k, int compno) {
-	OPJ_UINT32 i;
-
-	opj_cp_t *cp = j2k->cp;
-	opj_tcp_t *tcp = &cp->tcps[j2k->curtileno];
-	opj_tccp_t *tccp = &tcp->tccps[compno];
-	opj_cio_t *cio = j2k->cio;
-	
-	cio_write(cio, tccp->numresolutions - 1, 1);	/* SPcox (D) */
-	cio_write(cio, tccp->cblkw - 2, 1);				/* SPcox (E) */
-	cio_write(cio, tccp->cblkh - 2, 1);				/* SPcox (F) */
-	cio_write(cio, tccp->cblksty, 1);				/* SPcox (G) */
-	cio_write(cio, tccp->qmfbid, 1);				/* SPcox (H) */
-	
-	if (tccp->csty & J2K_CCP_CSTY_PRT) {
-		for (i = 0; i < tccp->numresolutions; i++) {
-			cio_write(cio, tccp->prcw[i] + (tccp->prch[i] << 4), 1);	/* SPcox (I_i) */
-		}
-	}
-}
-
-
-static void j2k_write_cod(opj_j2k_t *j2k) {
-	opj_cp_t *cp = NULL;
-	opj_tcp_t *tcp = NULL;
-	int lenp, len;
-
-	opj_cio_t *cio = j2k->cio;
-	
-	cio_write(cio, J2K_MS_COD, 2);	/* COD */
-	
-	lenp = cio_tell(cio);
-	cio_skip(cio, 2);
-	
-	cp = j2k->cp;
-	tcp = &cp->tcps[j2k->curtileno];
-
-	cio_write(cio, tcp->csty, 1);		/* Scod */
-	cio_write(cio, tcp->prg, 1);		/* SGcod (A) */
-	cio_write(cio, tcp->numlayers, 2);	/* SGcod (B) */
-	cio_write(cio, tcp->mct, 1);		/* SGcod (C) */
-	
-	j2k_write_cox(j2k, 0);
-	len = cio_tell(cio) - lenp;
-	cio_seek(cio, lenp);
-	cio_write(cio, len, 2);		/* Lcod */
-	cio_seek(cio, lenp + len);
-
-	if(j2k->cstr_info)
-	  j2k_add_mhmarker(j2k->cstr_info, J2K_MS_COD, lenp, len);
-
-}
-
 /**
  * Writes the COD marker (Coding style default)
  *
@@ -2551,9 +2477,9 @@ static void j2k_write_cod(opj_j2k_t *j2k) {
  * @param	p_j2k			J2K codec.
  * @param	p_manager	the user event manager.
 */
-opj_bool j2k_write_cod_v2(	opj_j2k_v2_t *p_j2k,
-							struct opj_stream_private *p_stream,
-							struct opj_event_mgr * p_manager )
+opj_bool opj_j2k_write_cod(	opj_j2k_v2_t *p_j2k,
+							opj_stream_private_t *p_stream,
+							opj_event_mgr_t * p_manager )
 {
 	opj_cp_v2_t *l_cp = 00;
 	opj_tcp_v2_t *l_tcp = 00;
@@ -2715,26 +2641,6 @@ static opj_bool opj_j2k_read_cod (  opj_j2k_v2_t *p_j2k,
 	return OPJ_TRUE;
 }
 
-static void j2k_write_coc(opj_j2k_t *j2k, int compno) {
-	int lenp, len;
-
-	opj_cp_t *cp = j2k->cp;
-	opj_tcp_t *tcp = &cp->tcps[j2k->curtileno];
-	opj_image_t *image = j2k->image;
-	opj_cio_t *cio = j2k->cio;
-	
-	cio_write(cio, J2K_MS_COC, 2);	/* COC */
-	lenp = cio_tell(cio);
-	cio_skip(cio, 2);
-	cio_write(cio, compno, image->numcomps <= 256 ? 1 : 2);	/* Ccoc */
-	cio_write(cio, tcp->tccps[compno].csty, 1);	/* Scoc */
-	j2k_write_cox(j2k, compno);
-	len = cio_tell(cio) - lenp;
-	cio_seek(cio, lenp);
-	cio_write(cio, len, 2);			/* Lcoc */
-	cio_seek(cio, lenp + len);
-}
-
 /**
  * Writes the COC marker (Coding style component)
  *
@@ -2743,10 +2649,10 @@ static void j2k_write_coc(opj_j2k_t *j2k, int compno) {
  * @param	p_j2k				J2K codec.
  * @param	p_manager		the user event manager.
 */
-opj_bool j2k_write_coc_v2(	opj_j2k_v2_t *p_j2k,
-							OPJ_UINT32 p_comp_no,
-							struct opj_stream_private *p_stream,
-							struct opj_event_mgr * p_manager )
+opj_bool opj_j2k_write_coc( opj_j2k_v2_t *p_j2k,
+					        OPJ_UINT32 p_comp_no,
+					        opj_stream_private_t *p_stream,
+					        opj_event_mgr_t * p_manager )
 {
 	OPJ_UINT32 l_coc_size,l_remaining_size;
 	OPJ_UINT32 l_comp_room;
@@ -2772,7 +2678,7 @@ opj_bool j2k_write_coc_v2(	opj_j2k_v2_t *p_j2k,
 		p_j2k->m_specific_param.m_encoder.m_header_tile_data_size = l_coc_size;
 	}
 
-	j2k_write_coc_in_memory(p_j2k,p_comp_no,p_j2k->m_specific_param.m_encoder.m_header_tile_data,&l_remaining_size,p_manager);
+	opj_j2k_write_coc_in_memory(p_j2k,p_comp_no,p_j2k->m_specific_param.m_encoder.m_header_tile_data,&l_remaining_size,p_manager);
 
 	if (opj_stream_write_data(p_stream,p_j2k->m_specific_param.m_encoder.m_header_tile_data,l_coc_size,p_manager) != l_coc_size) {
 		return OPJ_FALSE;
@@ -2789,11 +2695,12 @@ opj_bool j2k_write_coc_v2(	opj_j2k_v2_t *p_j2k,
  * @param	p_j2k				J2K codec.
  * @param	p_manager		the user event manager.
 */
-void j2k_write_coc_in_memory(	opj_j2k_v2_t *p_j2k,
-								OPJ_UINT32 p_comp_no,
-								OPJ_BYTE * p_data,
-								OPJ_UINT32 * p_data_written,
-								struct opj_event_mgr * p_manager )
+void opj_j2k_write_coc_in_memory(   opj_j2k_v2_t *p_j2k,
+			                        OPJ_UINT32 p_comp_no,
+			                        OPJ_BYTE * p_data,
+			                        OPJ_UINT32 * p_data_written,
+			                        opj_event_mgr_t * p_manager 
+                                    )
 {
 	opj_cp_v2_t *l_cp = 00;
 	opj_tcp_v2_t *l_tcp = 00;
@@ -5419,7 +5326,7 @@ opj_bool j2k_write_image_components(opj_j2k_v2_t *p_j2k,
 
 	for (compno = 1; compno < p_j2k->m_private_image->numcomps; ++compno)
 	{
-		if (! j2k_write_coc_v2(p_j2k,compno,p_stream, p_manager)) {
+		if (! opj_j2k_write_coc(p_j2k,compno,p_stream, p_manager)) {
 			return OPJ_FALSE;
 		}
 
@@ -10739,7 +10646,7 @@ void opj_j2k_setup_header_writting (opj_j2k_v2_t *p_j2k)
 	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)j2k_init_info );
 	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_soc );
 	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_siz );
-	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)j2k_write_cod_v2 );
+	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_cod );
 	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)j2k_write_qcd_v2 );
 
 
@@ -10815,7 +10722,7 @@ opj_bool opj_j2k_write_first_tile_part (opj_j2k_v2_t *p_j2k,
 	if (l_cp->m_specific_param.m_enc.m_cinema == 0) {
 		for (compno = 1; compno < p_j2k->m_private_image->numcomps; compno++) {
 			l_current_nb_bytes_written = 0;
-			j2k_write_coc_in_memory(p_j2k,compno,p_data,&l_current_nb_bytes_written,p_manager);
+			opj_j2k_write_coc_in_memory(p_j2k,compno,p_data,&l_current_nb_bytes_written,p_manager);
 			l_nb_bytes_written += l_current_nb_bytes_written;
 			p_data += l_current_nb_bytes_written;
 			p_total_data_size -= l_current_nb_bytes_written;
