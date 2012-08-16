@@ -766,14 +766,6 @@ static opj_bool opj_j2k_read_sot (  opj_j2k_v2_t *p_j2k,
                                     OPJ_BYTE * p_header_data,
                                     OPJ_UINT32 p_header_size,
                                     opj_event_mgr_t * p_manager );
-
-/**
-Write the SOD marker (start of data)
-@param j2k J2K handle
-@param tile_coder Pointer to a TCD handle
-*/
-static void j2k_write_sod(opj_j2k_t *j2k, void *tile_coder);
-
 /**
  * Writes the SOD marker (Start of data)
  *
@@ -781,13 +773,13 @@ static void j2k_write_sod(opj_j2k_t *j2k, void *tile_coder);
  * @param	p_j2k				J2K codec.
  * @param	p_manager		the user event manager.
 */
-static opj_bool j2k_write_sod_v2(	opj_j2k_v2_t *p_j2k,
-									struct opj_tcd_v2 * p_tile_coder,
+static opj_bool opj_j2k_write_sod(	opj_j2k_v2_t *p_j2k,
+									opj_tcd_v2_t * p_tile_coder,
 									OPJ_BYTE * p_data,
 									OPJ_UINT32 * p_data_written,
 									OPJ_UINT32 p_total_data_size,
-									const struct opj_stream_private *p_stream,
-									struct opj_event_mgr * p_manager );
+									const opj_stream_private_t *p_stream,
+									opj_event_mgr_t * p_manager );
 
 /**
  * Reads a SOD marker (Start Of Data)
@@ -4323,79 +4315,6 @@ opj_bool opj_j2k_read_sot ( opj_j2k_v2_t *p_j2k,
 	return OPJ_TRUE;
 }
 
-static void j2k_write_sod(opj_j2k_t *j2k, void *tile_coder) {
-	int l, layno;
-	int totlen;
-	opj_tcp_t *tcp = NULL;
-	opj_codestream_info_t *cstr_info = NULL;
-	
-	opj_tcd_t *tcd = (opj_tcd_t*)tile_coder;	/* cast is needed because of conflicts in header inclusions */
-	opj_cp_t *cp = j2k->cp;
-	opj_cio_t *cio = j2k->cio;
-
-	tcd->tp_num = j2k->tp_num ;
-	tcd->cur_tp_num = j2k->cur_tp_num;
-	
-	cio_write(cio, J2K_MS_SOD, 2);
-
-	if( j2k->cstr_info && j2k->cur_tp_num==0){
-	  j2k_add_tlmarker( j2k->curtileno, j2k->cstr_info, J2K_MS_SOD, cio_tell(cio), 0);
-	}
-
-	if (j2k->curtileno == 0) {
-		j2k->sod_start = cio_tell(cio) + j2k->pos_correction;
-	}
-
-	/* INDEX >> */
-	cstr_info = j2k->cstr_info;
-	if (cstr_info) {
-		if (!j2k->cur_tp_num ) {
-			cstr_info->tile[j2k->curtileno].end_header = cio_tell(cio) + j2k->pos_correction - 1;
-			j2k->cstr_info->tile[j2k->curtileno].tileno = j2k->curtileno;
-		}
-		else{
-			if(cstr_info->tile[j2k->curtileno].packet[cstr_info->packno - 1].end_pos < cio_tell(cio))
-				cstr_info->tile[j2k->curtileno].packet[cstr_info->packno].start_pos = cio_tell(cio);
-		}
-		/* UniPG>> */
-#ifdef USE_JPWL
-		/* update markers struct */
-		j2k_add_marker(j2k->cstr_info, J2K_MS_SOD, j2k->sod_start, 2);
-#endif /* USE_JPWL */
-		/* <<UniPG */
-	}
-	/* << INDEX */
-	
-	tcp = &cp->tcps[j2k->curtileno];
-	for (layno = 0; layno < tcp->numlayers; layno++) {
-		if (tcp->rates[layno]>(j2k->sod_start / (cp->th * cp->tw))) {
-			tcp->rates[layno]-=(j2k->sod_start / (cp->th * cp->tw));
-		} else if (tcp->rates[layno]) {
-			tcp->rates[layno]=1;
-		}
-	}
-	if(j2k->cur_tp_num == 0){
-		tcd->tcd_image->tiles->packno = 0;
-		if(cstr_info)
-			cstr_info->packno = 0;
-	}
-	
-	l = tcd_encode_tile(tcd, j2k->curtileno, cio_getbp(cio), cio_numbytesleft(cio) - 2, cstr_info);
-	
-	/* Writing Psot in SOT marker */
-	totlen = cio_tell(cio) + l - j2k->sot_start;
-	cio_seek(cio, j2k->sot_start + 6);
-	cio_write(cio, totlen, 4);
-	cio_seek(cio, j2k->sot_start + totlen);
-	/* Writing Ttlm and Ptlm in TLM marker */
-	if(cp->cinema){
-		cio_seek(cio, j2k->tlm_start + 6 + (5*j2k->cur_tp_num));
-		cio_write(cio, j2k->curtileno, 1);
-		cio_write(cio, totlen, 4);
-	}
-	cio_seek(cio, j2k->sot_start + totlen);
-}
-
 /**
  * Writes the SOD marker (Start of data)
  *
@@ -4403,13 +4322,14 @@ static void j2k_write_sod(opj_j2k_t *j2k, void *tile_coder) {
  * @param	p_j2k				J2K codec.
  * @param	p_manager		the user event manager.
 */
-opj_bool j2k_write_sod_v2(	opj_j2k_v2_t *p_j2k,
-							struct opj_tcd_v2 * p_tile_coder,
+opj_bool opj_j2k_write_sod(	opj_j2k_v2_t *p_j2k,
+							opj_tcd_v2_t * p_tile_coder,
 							OPJ_BYTE * p_data,
 							OPJ_UINT32 * p_data_written,
 							OPJ_UINT32 p_total_data_size,
-							const struct opj_stream_private *p_stream,
-							struct opj_event_mgr * p_manager )
+							const opj_stream_private_t *p_stream,
+							opj_event_mgr_t * p_manager 
+                            )
 {
 	opj_tcp_v2_t *l_tcp = 00;
 	opj_codestream_info_t *l_cstr_info = 00;
@@ -10580,7 +10500,7 @@ opj_bool opj_j2k_write_first_tile_part (opj_j2k_v2_t *p_j2k,
 	}
 
 	l_current_nb_bytes_written = 0;
-	if (! j2k_write_sod_v2(p_j2k,l_tcd,p_data,&l_current_nb_bytes_written,p_total_data_size,p_stream,p_manager)) {
+	if (! opj_j2k_write_sod(p_j2k,l_tcd,p_data,&l_current_nb_bytes_written,p_total_data_size,p_stream,p_manager)) {
 		return OPJ_FALSE;
 	}
 
@@ -10641,7 +10561,7 @@ opj_bool opj_j2k_write_all_tile_parts(	opj_j2k_v2_t *p_j2k,
 		l_part_tile_size += l_nb_bytes_written;
 
 		l_current_nb_bytes_written = 0;
-		if (! j2k_write_sod_v2(p_j2k,l_tcd,p_data,&l_current_nb_bytes_written,p_total_data_size,p_stream,p_manager)) {
+		if (! opj_j2k_write_sod(p_j2k,l_tcd,p_data,&l_current_nb_bytes_written,p_total_data_size,p_stream,p_manager)) {
 			return OPJ_FALSE;
 		}
 
@@ -10682,7 +10602,7 @@ opj_bool opj_j2k_write_all_tile_parts(	opj_j2k_v2_t *p_j2k,
 
 			l_current_nb_bytes_written = 0;
 
-			if (! j2k_write_sod_v2(p_j2k,l_tcd,p_data,&l_current_nb_bytes_written,p_total_data_size,p_stream,p_manager)) {
+			if (! opj_j2k_write_sod(p_j2k,l_tcd,p_data,&l_current_nb_bytes_written,p_total_data_size,p_stream,p_manager)) {
 				return OPJ_FALSE;
 			}
 
