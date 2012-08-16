@@ -880,7 +880,7 @@ static opj_bool j2k_read_eoc_v2 (
  * @param	p_j2k			J2K codec.
  * @param	p_manager	the user event manager.
 */
-static opj_bool j2k_write_mct_data_group(	opj_j2k_v2_t *p_j2k,
+static opj_bool opj_j2k_write_mct_data_group(	opj_j2k_v2_t *p_j2k,
 											struct opj_stream_private *p_stream,
 											struct opj_event_mgr * p_manager );
 
@@ -891,7 +891,7 @@ static opj_bool j2k_write_mct_data_group(	opj_j2k_v2_t *p_j2k,
  * @param	p_j2k			J2K codec.
  * @param	p_manager		the user event manager.
 */
-static opj_bool j2k_init_info(	opj_j2k_v2_t *p_j2k,
+static opj_bool opj_j2k_init_info(	opj_j2k_v2_t *p_j2k,
 								struct opj_stream_private *p_stream,
 								struct opj_event_mgr * p_manager );
 
@@ -938,7 +938,7 @@ static opj_bool opj_j2k_read_unk (	opj_j2k_v2_t *p_j2k,
  * @param	p_j2k				J2K codec.
  * @param	p_manager		the user event manager.
 */
-static opj_bool j2k_write_mct_record(	opj_j2k_v2_t *p_j2k,
+static opj_bool opj_j2k_write_mct_record(	opj_j2k_v2_t *p_j2k,
 										opj_mct_data_t * p_mct_record,
 										struct opj_stream_private *p_stream,
 										struct opj_event_mgr * p_manager );
@@ -963,7 +963,7 @@ static opj_bool opj_j2k_read_mct (	opj_j2k_v2_t *p_j2k,
  * @param	p_j2k			J2K codec.
  * @param	p_manager		the user event manager.
 */
-static opj_bool j2k_write_mcc_record(	opj_j2k_v2_t *p_j2k,
+static opj_bool opj_j2k_write_mcc_record(	opj_j2k_v2_t *p_j2k,
 										struct opj_simple_mcc_decorrelation_data * p_mcc_record,
 										struct opj_stream_private *p_stream,
 										struct opj_event_mgr * p_manager );
@@ -989,7 +989,7 @@ static opj_bool opj_j2k_read_mcc (	opj_j2k_v2_t *p_j2k,
  * @param	p_j2k				J2K codec.
  * @param	p_manager		the user event manager.
 */
-static opj_bool j2k_write_mco(	opj_j2k_v2_t *p_j2k,
+static opj_bool opj_j2k_write_mco(	opj_j2k_v2_t *p_j2k,
 								struct opj_stream_private *p_stream,
 								struct opj_event_mgr * p_manager );
 
@@ -1006,7 +1006,7 @@ static opj_bool opj_j2k_read_mco (	opj_j2k_v2_t *p_j2k,
 								    OPJ_UINT32 p_header_size,
 								    opj_event_mgr_t * p_manager );
 
-static opj_bool j2k_add_mct(opj_tcp_v2_t * p_tcp, opj_image_t * p_image, OPJ_UINT32 p_index);
+static opj_bool opj_j2k_add_mct(opj_tcp_v2_t * p_tcp, opj_image_t * p_image, OPJ_UINT32 p_index);
 
 static void  opj_j2k_read_int16_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
 static void  opj_j2k_read_int32_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
@@ -1031,7 +1031,7 @@ static void  opj_j2k_write_float_to_float64 (const void * p_src_data, void * p_d
  * @param	p_j2k			J2K codec.
  * @param	p_manager		the user event manager.
 */
-static opj_bool j2k_end_encoding(	opj_j2k_v2_t *p_j2k,
+static opj_bool opj_j2k_end_encoding(	opj_j2k_v2_t *p_j2k,
 									struct opj_stream_private *p_stream,
 									struct opj_event_mgr * p_manager );
 
@@ -1042,7 +1042,7 @@ static opj_bool j2k_end_encoding(	opj_j2k_v2_t *p_j2k,
  * @param	p_j2k				J2K codec.
  * @param	p_manager		the user event manager.
 */
-static opj_bool j2k_write_cbd(	opj_j2k_v2_t *p_j2k,
+static opj_bool opj_j2k_write_cbd(	opj_j2k_v2_t *p_j2k,
 								struct opj_stream_private *p_stream,
 								struct opj_event_mgr * p_manager );
 
@@ -1065,9 +1065,9 @@ static opj_bool opj_j2k_read_cbd (	opj_j2k_v2_t *p_j2k,
  * @param	p_j2k			J2K codec.
  * @param	p_manager		the user event manager.
 */
-static opj_bool j2k_write_image_components(	opj_j2k_v2_t *p_j2k,
-											struct opj_stream_private *p_stream,
-											struct opj_event_mgr * p_manager );
+static opj_bool opj_j2k_write_image_components(	opj_j2k_v2_t *p_j2k,
+						                        opj_stream_private_t *p_stream,
+						                        opj_event_mgr_t * p_manager );
 
 /**
  * Writes regions of interests.
@@ -1076,9 +1076,9 @@ static opj_bool j2k_write_image_components(	opj_j2k_v2_t *p_j2k,
  * @param	p_j2k			J2K codec.
  * @param	p_manager		the user event manager.
 */
-static opj_bool j2k_write_regions(	opj_j2k_v2_t *p_j2k,
-									struct opj_stream_private *p_stream,
-									struct opj_event_mgr * p_manager );
+static opj_bool opj_j2k_write_regions(	opj_j2k_v2_t *p_j2k,
+								        opj_stream_private_t *p_stream,
+								        opj_event_mgr_t * p_manager );
 
 /**
  * Writes EPC ????
@@ -1087,9 +1087,9 @@ static opj_bool j2k_write_regions(	opj_j2k_v2_t *p_j2k,
  * @param	p_j2k			J2K codec.
  * @param	p_manager		the user event manager.
 */
-static opj_bool j2k_write_epc( 	opj_j2k_v2_t *p_j2k,
-								struct opj_stream_private *p_stream,
-								struct opj_event_mgr * p_manager );
+static opj_bool opj_j2k_write_epc( 	opj_j2k_v2_t *p_j2k,
+								    opj_stream_private_t *p_stream,
+								    opj_event_mgr_t * p_manager );
 
 /**
  * Checks the progression order changes values. Tells of the poc given as input are valid.
@@ -1103,12 +1103,12 @@ static opj_bool j2k_write_epc( 	opj_j2k_v2_t *p_j2k,
  *
  * @return	true if the pocs are valid.
  */
-static opj_bool j2k_check_poc_val(	const opj_poc_t *p_pocs,
-									OPJ_UINT32 p_nb_pocs,
-									OPJ_UINT32 p_nb_resolutions,
-									OPJ_UINT32 numcomps,
-									OPJ_UINT32 numlayers,
-									opj_event_mgr_t * p_manager);
+static opj_bool opj_j2k_check_poc_val(	const opj_poc_t *p_pocs,
+									    OPJ_UINT32 p_nb_pocs,
+									    OPJ_UINT32 p_nb_resolutions,
+									    OPJ_UINT32 numcomps,
+									    OPJ_UINT32 numlayers,
+									    opj_event_mgr_t * p_manager);
 
 /**
  * Gets the number of tile parts used for the given change of progression (if any) and the given tile.
@@ -1505,7 +1505,7 @@ char *j2k_convert_progression_order(OPJ_PROG_ORDER prg_order){
  *
  * @return	true if the pocs are valid.
  */
-opj_bool j2k_check_poc_val(	const opj_poc_t *p_pocs,
+opj_bool opj_j2k_check_poc_val(	const opj_poc_t *p_pocs,
 							OPJ_UINT32 p_nb_pocs,
 							OPJ_UINT32 p_nb_resolutions,
 							OPJ_UINT32 p_num_comps,
@@ -4993,7 +4993,7 @@ opj_bool opj_j2k_get_end_header(opj_j2k_v2_t *p_j2k,
  * @param	p_j2k				J2K codec.
  * @param	p_manager		the user event manager.
 */
-opj_bool j2k_write_mct_data_group(	opj_j2k_v2_t *p_j2k,
+opj_bool opj_j2k_write_mct_data_group(	opj_j2k_v2_t *p_j2k,
 									struct opj_stream_private *p_stream,
 									struct opj_event_mgr * p_manager )
 {
@@ -5007,7 +5007,7 @@ opj_bool j2k_write_mct_data_group(	opj_j2k_v2_t *p_j2k,
 	assert(p_stream != 00);
 	assert(p_manager != 00);
 
-	if (! j2k_write_cbd(p_j2k,p_stream,p_manager)) {
+	if (! opj_j2k_write_cbd(p_j2k,p_stream,p_manager)) {
 		return OPJ_FALSE;
 	}
 
@@ -5016,7 +5016,7 @@ opj_bool j2k_write_mct_data_group(	opj_j2k_v2_t *p_j2k,
 
 	for (i=0;i<l_tcp->m_nb_mct_records;++i) {
 
-		if (! j2k_write_mct_record(p_j2k,l_mct_record,p_stream,p_manager)) {
+		if (! opj_j2k_write_mct_record(p_j2k,l_mct_record,p_stream,p_manager)) {
 			return OPJ_FALSE;
 		}
 
@@ -5027,14 +5027,14 @@ opj_bool j2k_write_mct_data_group(	opj_j2k_v2_t *p_j2k,
 
 	for	(i=0;i<l_tcp->m_nb_mcc_records;++i) {
 
-		if (! j2k_write_mcc_record(p_j2k,l_mcc_record,p_stream,p_manager)) {
+		if (! opj_j2k_write_mcc_record(p_j2k,l_mcc_record,p_stream,p_manager)) {
 			return OPJ_FALSE;
 		}
 
 		++l_mcc_record;
 	}
 
-	if (! j2k_write_mco(p_j2k,p_stream,p_manager)) {
+	if (! opj_j2k_write_mco(p_j2k,p_stream,p_manager)) {
 		return OPJ_FALSE;
 	}
 
@@ -5048,7 +5048,7 @@ opj_bool j2k_write_mct_data_group(	opj_j2k_v2_t *p_j2k,
  * @param	p_j2k				J2K codec.
  * @param	p_manager		the user event manager.
 */
-opj_bool j2k_write_image_components(opj_j2k_v2_t *p_j2k,
+opj_bool opj_j2k_write_image_components(opj_j2k_v2_t *p_j2k,
 									struct opj_stream_private *p_stream,
 									struct opj_event_mgr * p_manager )
 {
@@ -5080,7 +5080,7 @@ opj_bool j2k_write_image_components(opj_j2k_v2_t *p_j2k,
  * @param	p_j2k				J2K codec.
  * @param	p_manager		the user event manager.
 */
-opj_bool j2k_write_regions(	opj_j2k_v2_t *p_j2k,
+opj_bool opj_j2k_write_regions(	opj_j2k_v2_t *p_j2k,
 							struct opj_stream_private *p_stream,
 							struct opj_event_mgr * p_manager )
 {
@@ -5115,7 +5115,7 @@ opj_bool j2k_write_regions(	opj_j2k_v2_t *p_j2k,
  * @param	p_j2k			J2K codec.
  * @param	p_manager		the user event manager.
 */
-opj_bool j2k_write_epc(	opj_j2k_v2_t *p_j2k,
+opj_bool opj_j2k_write_epc(	opj_j2k_v2_t *p_j2k,
 						struct opj_stream_private *p_stream,
 						struct opj_event_mgr * p_manager )
 {
@@ -5285,7 +5285,7 @@ static opj_dec_mstabent_t *j2k_dec_mstab_lookup(int id) {
  * @param	p_j2k				J2K codec.
  * @param	p_manager		the user event manager.
 */
-opj_bool j2k_write_mct_record(	opj_j2k_v2_t *p_j2k,
+opj_bool opj_j2k_write_mct_record(	opj_j2k_v2_t *p_j2k,
 								opj_mct_data_t * p_mct_record,
 								struct opj_stream_private *p_stream,
 								struct opj_event_mgr * p_manager )
@@ -5459,7 +5459,7 @@ static opj_bool opj_j2k_read_mct (	opj_j2k_v2_t *p_j2k,
  * @param	p_j2k			J2K codec.
  * @param	p_manager		the user event manager.
 */
-opj_bool j2k_write_mcc_record(	opj_j2k_v2_t *p_j2k,
+opj_bool opj_j2k_write_mcc_record(	opj_j2k_v2_t *p_j2k,
 								struct opj_simple_mcc_decorrelation_data * p_mcc_record,
 								struct opj_stream_private *p_stream,
 								struct opj_event_mgr * p_manager )
@@ -5787,7 +5787,7 @@ opj_bool opj_j2k_read_mcc (	opj_j2k_v2_t *p_j2k,
  * @param	p_j2k				J2K codec.
  * @param	p_manager		the user event manager.
 */
-opj_bool j2k_write_mco(	opj_j2k_v2_t *p_j2k,
+opj_bool opj_j2k_write_mco(	opj_j2k_v2_t *p_j2k,
 						struct opj_stream_private *p_stream,
 						struct opj_event_mgr * p_manager
 				  )
@@ -5911,7 +5911,7 @@ static opj_bool opj_j2k_read_mco (	opj_j2k_v2_t *p_j2k,
 		opj_read_bytes(p_header_data,&l_tmp,1);
 		++p_header_data;
 
-		if (! j2k_add_mct(l_tcp,p_j2k->m_private_image,l_tmp)) {
+		if (! opj_j2k_add_mct(l_tcp,p_j2k->m_private_image,l_tmp)) {
 			return OPJ_FALSE;
 		}
 	}
@@ -5919,7 +5919,7 @@ static opj_bool opj_j2k_read_mco (	opj_j2k_v2_t *p_j2k,
 	return OPJ_TRUE;
 }
 
-opj_bool j2k_add_mct(opj_tcp_v2_t * p_tcp, opj_image_t * p_image, OPJ_UINT32 p_index)
+opj_bool opj_j2k_add_mct(opj_tcp_v2_t * p_tcp, opj_image_t * p_image, OPJ_UINT32 p_index)
 {
 	OPJ_UINT32 i;
 	opj_simple_mcc_decorrelation_data_t * l_mcc_record;
@@ -6008,7 +6008,7 @@ opj_bool j2k_add_mct(opj_tcp_v2_t * p_tcp, opj_image_t * p_image, OPJ_UINT32 p_i
  * @param	p_j2k				J2K codec.
  * @param	p_manager		the user event manager.
 */
-opj_bool j2k_write_cbd( opj_j2k_v2_t *p_j2k,
+opj_bool opj_j2k_write_cbd( opj_j2k_v2_t *p_j2k,
 						struct opj_stream_private *p_stream,
 						struct opj_event_mgr * p_manager )
 {
@@ -6580,7 +6580,7 @@ void opj_j2k_setup_encoder_v2(	opj_j2k_v2_t *p_j2k,
 	cp->tcps = (opj_tcp_v2_t*) opj_calloc(cp->tw * cp->th, sizeof(opj_tcp_v2_t));
 	if (parameters->numpocs) {
 		/* initialisation of POC */
-		l_res = j2k_check_poc_val(parameters->POC,parameters->numpocs, parameters->numresolution, image->numcomps, parameters->tcp_numlayers, p_manager);
+		l_res = opj_j2k_check_poc_val(parameters->POC,parameters->numpocs, parameters->numresolution, image->numcomps, parameters->tcp_numlayers, p_manager);
 		// TODO
 	}
 
@@ -10347,8 +10347,8 @@ void opj_j2k_setup_end_compress (opj_j2k_v2_t *p_j2k)
 		opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_updated_tlm);
 	}
 
-	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)j2k_write_epc );
-	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)j2k_end_encoding );
+	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_epc );
+	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_end_encoding );
 	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_destroy_header_memory);
 }
 
@@ -10378,7 +10378,7 @@ void opj_j2k_setup_header_writting (opj_j2k_v2_t *p_j2k)
 	/* preconditions */
 	assert(p_j2k != 00);
 
-	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)j2k_init_info );
+	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_init_info );
 	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_soc );
 	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_siz );
 	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_cod );
@@ -10386,7 +10386,7 @@ void opj_j2k_setup_header_writting (opj_j2k_v2_t *p_j2k)
 
 
 	if (p_j2k->m_cp.m_specific_param.m_enc.m_cinema) {
-		opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)j2k_write_image_components );
+		opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_image_components );
 		opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_tlm );
 
 		if (p_j2k->m_cp.m_specific_param.m_enc.m_cinema == CINEMA4K_24) {
@@ -10394,7 +10394,7 @@ void opj_j2k_setup_header_writting (opj_j2k_v2_t *p_j2k)
 		}
 	}
 
-	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)j2k_write_regions);
+	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_regions);
 
 	if (p_j2k->m_cp.comment != 00)  {
 		opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_com);
@@ -10402,7 +10402,7 @@ void opj_j2k_setup_header_writting (opj_j2k_v2_t *p_j2k)
 
 	/* DEVELOPER CORNER, insert your custom procedures */
 	if (p_j2k->m_cp.rsiz & MCT) {
-		opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)j2k_write_mct_data_group );
+		opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_mct_data_group );
 	}
 	/* End of Developer Corner */
 
@@ -10652,7 +10652,7 @@ opj_bool opj_j2k_write_updated_tlm( opj_j2k_v2_t *p_j2k,
  * @param	p_j2k				J2K codec.
  * @param	p_manager		the user event manager.
 */
-opj_bool j2k_end_encoding(	opj_j2k_v2_t *p_j2k,
+opj_bool opj_j2k_end_encoding(	opj_j2k_v2_t *p_j2k,
 							struct opj_stream_private *p_stream,
 							struct opj_event_mgr * p_manager )
 {
@@ -10711,7 +10711,7 @@ static opj_bool opj_j2k_destroy_header_memory ( opj_j2k_v2_t * p_j2k,
  * @param	p_j2k				J2K codec.
  * @param	p_manager		the user event manager.
 */
-opj_bool j2k_init_info(	opj_j2k_v2_t *p_j2k,
+opj_bool opj_j2k_init_info(	opj_j2k_v2_t *p_j2k,
 						struct opj_stream_private *p_stream,
 						struct opj_event_mgr * p_manager )
 {
