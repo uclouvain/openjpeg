@@ -220,7 +220,7 @@ static opj_bool opj_j2k_write_SPCod_SPCoc(	opj_j2k_v2_t *p_j2k,
 										    OPJ_UINT32 p_comp_no,
 										    OPJ_BYTE * p_data,
 										    OPJ_UINT32 * p_header_size,
-										    struct opj_event_mgr * p_manager );
+										    opj_event_mgr_t * p_manager );
 
 /**
  * Gets the size taken by writing a SPCod or SPCoc for the given tile and component.
@@ -366,8 +366,8 @@ static opj_bool opj_j2k_write_all_tile_parts(	opj_j2k_v2_t *p_j2k,
  * @param	p_manager		the user event manager.
 */
 static opj_bool opj_j2k_get_end_header(	opj_j2k_v2_t *p_j2k,
-									struct opj_stream_private *p_stream,
-									struct opj_event_mgr * p_manager );
+                                        opj_stream_private_t *p_stream,
+                                        opj_event_mgr_t * p_manager );
 
 static opj_bool opj_j2k_allocate_tile_element_cstr_index(opj_j2k_v2_t *p_j2k);
 
@@ -664,8 +664,8 @@ static opj_bool opj_j2k_read_tlm (  opj_j2k_v2_t *p_j2k,
  * @param	p_manager		the user event manager.
 */
 static opj_bool opj_j2k_write_updated_tlm(	opj_j2k_v2_t *p_j2k,
-										    struct opj_stream_private *p_stream,
-										    struct opj_event_mgr * p_manager );
+                                            opj_stream_private_t *p_stream,
+                                            opj_event_mgr_t * p_manager );
 
 /**
  * Reads a PLM marker (Packet length, main header marker)
@@ -714,8 +714,7 @@ static opj_bool j2k_read_ppm_v3 (
 						opj_j2k_v2_t *p_j2k,
 						OPJ_BYTE * p_header_data,
 						OPJ_UINT32 p_header_size,
-						struct opj_event_mgr * p_manager
-					);
+						opj_event_mgr_t * p_manager );
 
 
 /**
@@ -841,8 +840,8 @@ static opj_bool opj_j2k_read_rgn (opj_j2k_v2_t *p_j2k,
  * @param	p_manager		the user event manager.
 */
 static opj_bool j2k_write_eoc_v2(	opj_j2k_v2_t *p_j2k,
-									struct opj_stream_private *p_stream,
-									struct opj_event_mgr * p_manager );
+                                    opj_stream_private_t *p_stream,
+                                    opj_event_mgr_t * p_manager );
 
 /**
 Write the EOC marker (end of codestream)
@@ -881,8 +880,8 @@ static opj_bool j2k_read_eoc_v2 (
  * @param	p_manager	the user event manager.
 */
 static opj_bool opj_j2k_write_mct_data_group(	opj_j2k_v2_t *p_j2k,
-											struct opj_stream_private *p_stream,
-											struct opj_event_mgr * p_manager );
+                                                opj_stream_private_t *p_stream,
+                                                opj_event_mgr_t * p_manager );
 
 /**
  * Inits the Info
@@ -892,8 +891,8 @@ static opj_bool opj_j2k_write_mct_data_group(	opj_j2k_v2_t *p_j2k,
  * @param	p_manager		the user event manager.
 */
 static opj_bool opj_j2k_init_info(	opj_j2k_v2_t *p_j2k,
-								struct opj_stream_private *p_stream,
-								struct opj_event_mgr * p_manager );
+                                    opj_stream_private_t *p_stream,
+                                    opj_event_mgr_t * p_manager );
 
 /**
 Add main header marker information
@@ -935,9 +934,9 @@ static opj_bool opj_j2k_read_unk (	opj_j2k_v2_t *p_j2k,
  * @param	p_manager		the user event manager.
 */
 static opj_bool opj_j2k_write_mct_record(	opj_j2k_v2_t *p_j2k,
-										opj_mct_data_t * p_mct_record,
-										struct opj_stream_private *p_stream,
-										struct opj_event_mgr * p_manager );
+										    opj_mct_data_t * p_mct_record,
+                                            opj_stream_private_t *p_stream,
+                                            opj_event_mgr_t * p_manager );
 
 /**
  * Reads a MCT marker (Multiple Component Transform)
@@ -960,9 +959,9 @@ static opj_bool opj_j2k_read_mct (	opj_j2k_v2_t *p_j2k,
  * @param	p_manager		the user event manager.
 */
 static opj_bool opj_j2k_write_mcc_record(	opj_j2k_v2_t *p_j2k,
-										struct opj_simple_mcc_decorrelation_data * p_mcc_record,
-										struct opj_stream_private *p_stream,
-										struct opj_event_mgr * p_manager );
+										    opj_simple_mcc_decorrelation_data_t * p_mcc_record,
+                                            opj_stream_private_t *p_stream,
+                                            opj_event_mgr_t * p_manager );
 
 
 /**
@@ -986,8 +985,8 @@ static opj_bool opj_j2k_read_mcc (	opj_j2k_v2_t *p_j2k,
  * @param	p_manager		the user event manager.
 */
 static opj_bool opj_j2k_write_mco(	opj_j2k_v2_t *p_j2k,
-								struct opj_stream_private *p_stream,
-								struct opj_event_mgr * p_manager );
+                                    opj_stream_private_t *p_stream,
+                                    opj_event_mgr_t * p_manager );
 
 /**
  * Reads a MCO marker (Multiple Component Transform Ordering)
@@ -1028,8 +1027,8 @@ static void  opj_j2k_write_float_to_float64 (const void * p_src_data, void * p_d
  * @param	p_manager		the user event manager.
 */
 static opj_bool opj_j2k_end_encoding(	opj_j2k_v2_t *p_j2k,
-									struct opj_stream_private *p_stream,
-									struct opj_event_mgr * p_manager );
+									    opj_stream_private_t *p_stream,
+									    opj_event_mgr_t * p_manager );
 
 /**
  * Writes the CBD marker (Component bit depth definition)
@@ -1039,8 +1038,8 @@ static opj_bool opj_j2k_end_encoding(	opj_j2k_v2_t *p_j2k,
  * @param	p_manager		the user event manager.
 */
 static opj_bool opj_j2k_write_cbd(	opj_j2k_v2_t *p_j2k,
-								struct opj_stream_private *p_stream,
-								struct opj_event_mgr * p_manager );
+								    opj_stream_private_t *p_stream,
+									opj_event_mgr_t * p_manager );
 
 /**
  * Reads a CBD marker (Component bit depth definition)
@@ -1210,39 +1209,15 @@ typedef struct opj_dec_memory_marker_handler
 	/** value of the state when the marker can appear */
 	OPJ_UINT32 states;
 	/** action linked to the marker */
-	opj_bool (*handler) (
-					opj_j2k_v2_t *p_j2k,
-					OPJ_BYTE * p_header_data,
-					OPJ_UINT32 p_header_size,
-					struct opj_event_mgr * p_manager
-						);
+	opj_bool (*handler) (   opj_j2k_v2_t *p_j2k,
+                            OPJ_BYTE * p_header_data,
+                            OPJ_UINT32 p_header_size,
+                            opj_event_mgr_t * p_manager );
 }
 opj_dec_memory_marker_handler_t;
 
 const opj_dec_memory_marker_handler_t j2k_memory_marker_handler_tab [] =
 {
-#ifdef TODO_MS
-  {J2K_MS_SOT, J2K_DEC_STATE_MH | J2K_DEC_STATE_TPHSOT, j2k_read_sot},
-  {J2K_MS_COD, J2K_DEC_STATE_MH | J2K_DEC_STATE_TPH, j2k_read_cod},
-  {J2K_MS_COC, J2K_DEC_STATE_MH | J2K_DEC_STATE_TPH, j2k_read_coc},
-  {J2K_MS_RGN, J2K_DEC_STATE_MH | J2K_DEC_STATE_TPH, j2k_read_rgn},
-  {J2K_MS_QCD, J2K_DEC_STATE_MH | J2K_DEC_STATE_TPH, j2k_read_qcd},
-  {J2K_MS_QCC, J2K_DEC_STATE_MH | J2K_DEC_STATE_TPH, j2k_read_qcc},
-  {J2K_MS_POC, J2K_DEC_STATE_MH | J2K_DEC_STATE_TPH, j2k_read_poc},
-  {J2K_MS_SIZ, J2K_DEC_STATE_MHSIZ , j2k_read_siz},
-  {J2K_MS_TLM, J2K_DEC_STATE_MH, j2k_read_tlm},
-  {J2K_MS_PLM, J2K_DEC_STATE_MH, j2k_read_plm},
-  {J2K_MS_PLT, J2K_DEC_STATE_TPH, j2k_read_plt},
-  {J2K_MS_PPM, J2K_DEC_STATE_MH, j2k_read_ppm},
-  {J2K_MS_PPT, J2K_DEC_STATE_TPH, j2k_read_ppt},
-  {J2K_MS_SOP, 0, 0},
-  {J2K_MS_CRG, J2K_DEC_STATE_MH, j2k_read_crg},
-  {J2K_MS_COM, J2K_DEC_STATE_MH | J2K_DEC_STATE_TPH, j2k_read_com},
-  {J2K_MS_MCT, J2K_DEC_STATE_MH | J2K_DEC_STATE_TPH, j2k_read_mct},
-  {J2K_MS_CBD, J2K_DEC_STATE_MH , j2k_read_cbd},
-  {J2K_MS_MCC, J2K_DEC_STATE_MH | J2K_DEC_STATE_TPH, j2k_read_mcc},
-  {J2K_MS_MCO, J2K_DEC_STATE_MH | J2K_DEC_STATE_TPH, j2k_read_mco},
-#endif
   {J2K_MS_SOT, J2K_STATE_MH | J2K_STATE_TPHSOT, opj_j2k_read_sot},
   {J2K_MS_COD, J2K_STATE_MH | J2K_STATE_TPH, opj_j2k_read_cod},
   {J2K_MS_COC, J2K_STATE_MH | J2K_STATE_TPH, opj_j2k_read_coc},
@@ -1264,7 +1239,7 @@ const opj_dec_memory_marker_handler_t j2k_memory_marker_handler_tab [] =
   {J2K_MS_MCC, J2K_STATE_MH | J2K_STATE_TPH, opj_j2k_read_mcc},
   {J2K_MS_MCO, J2K_STATE_MH | J2K_STATE_TPH, opj_j2k_read_mco},
 #ifdef USE_JPWL
-#ifdef TODO_MS /* FIXME */
+#ifdef TODO_MS /* remove these functions which are not commpatible with the v2 API */
   {J2K_MS_EPC, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_epc},
   {J2K_MS_EPB, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_epb},
   {J2K_MS_ESD, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_esd},
@@ -1275,10 +1250,8 @@ const opj_dec_memory_marker_handler_t j2k_memory_marker_handler_tab [] =
   {J2K_MS_SEC, J2K_DEC_STATE_MH, j2k_read_sec},
   {J2K_MS_INSEC, 0, j2k_read_insec}
 #endif /* USE_JPSEC */
-  {J2K_MS_UNK, J2K_STATE_MH | J2K_STATE_TPH, 0}/*j2k_read_unk_v2}*/
+  {J2K_MS_UNK, J2K_STATE_MH | J2K_STATE_TPH, 0}/*opj_j2k_read_unk is directly used*/
 };
-
-
 
 void  opj_j2k_read_int16_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
 {
@@ -5087,49 +5060,7 @@ opj_bool opj_j2k_write_epc(	opj_j2k_v2_t *p_j2k,
 	return OPJ_TRUE;
 }
 
-typedef struct opj_dec_mstabent {
-	/** marker value */
-	int id;
-	/** value of the state when the marker can appear */
-	int states;
-	/** action linked to the marker */
-	void (*handler) (opj_j2k_t *j2k);
-} opj_dec_mstabent_t;
 
-opj_dec_mstabent_t j2k_dec_mstab[] = {
-  /*{J2K_MS_SOC, J2K_STATE_MHSOC, j2k_read_soc},*/
-  /*{J2K_MS_SOT, J2K_STATE_MH | J2K_STATE_TPHSOT, j2k_read_sot},*/
-  /*{J2K_MS_SOD, J2K_STATE_TPH, j2k_read_sod},*/
-  {J2K_MS_EOC, J2K_STATE_TPHSOT, j2k_read_eoc},
-  /*{J2K_MS_SIZ, J2K_STATE_MHSIZ, j2k_read_siz},*/
-  /*{J2K_MS_COD, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_cod},*/
-  /*{J2K_MS_COC, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_coc},*/
-  /*{J2K_MS_RGN, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_rgn},*/
-  /*{J2K_MS_QCD, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_qcd},*/
-  /*{J2K_MS_QCC, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_qcc},*/
-  /*{J2K_MS_POC, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_poc},*/
-  /*{J2K_MS_TLM, J2K_STATE_MH, j2k_read_tlm},*/
-  /*{J2K_MS_PLM, J2K_STATE_MH, j2k_read_plm},*/
-  /*{J2K_MS_PLT, J2K_STATE_TPH, j2k_read_plt},*/
-  /*{J2K_MS_PPM, J2K_STATE_MH, j2k_read_ppm},*/
-  /*{J2K_MS_PPT, J2K_STATE_TPH, j2k_read_ppt},*/
-  {J2K_MS_SOP, 0, 0},
-  /*{J2K_MS_CRG, J2K_STATE_MH, j2k_read_crg},*/
-  /*{J2K_MS_COM, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_com},*/
-
-#ifdef USE_JPWL
-  {J2K_MS_EPC, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_epc},
-  {J2K_MS_EPB, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_epb},
-  {J2K_MS_ESD, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_esd},
-  {J2K_MS_RED, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_red},
-#endif /* USE_JPWL */
-#ifdef USE_JPSEC
-  {J2K_MS_SEC, J2K_STATE_MH, j2k_read_sec},
-  {J2K_MS_INSEC, 0, j2k_read_insec},
-#endif /* USE_JPSEC */
-
-  /*{0, J2K_STATE_MH | J2K_STATE_TPH, j2k_read_unk}*/
-};
 
 
 
