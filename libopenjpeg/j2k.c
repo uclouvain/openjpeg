@@ -4782,7 +4782,7 @@ opj_bool opj_j2k_read_eoc (	opj_j2k_v2_t *p_j2k,
 				return OPJ_FALSE;
 			}
 
-			l_success = tcd_decode_tile_v2(l_tcd, l_tcp->m_data, l_tcp->m_data_size, i, p_j2k->cstr_index);
+			l_success = opj_tcd_decode_tile(l_tcd, l_tcp->m_data, l_tcp->m_data_size, i, p_j2k->cstr_index);
 			/* cleanup */
 
 			if (! l_success) {
@@ -7514,7 +7514,7 @@ opj_bool opj_j2k_decode_tile (	opj_j2k_v2_t * p_j2k,
 		return OPJ_FALSE;
 	}
 
-	if (! tcd_decode_tile_v2(	p_j2k->m_tcd,
+	if (! opj_tcd_decode_tile(	p_j2k->m_tcd,
 								l_tcp->m_data,
 								l_tcp->m_data_size,
 								p_tile_index,

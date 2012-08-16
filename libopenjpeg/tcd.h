@@ -400,23 +400,6 @@ opj_bool opj_tcd_rateallocate(	opj_tcd_v2_t *tcd,
 								opj_codestream_info_t *cstr_info);
 
 /**
-Decode a tile from a buffer into a raw image
-@param tcd TCD handle
-@param src Source buffer
-@param len Length of source buffer
-@param tileno Number that identifies one of the tiles to be decoded
-@param cstr_info Codestream information structure
-*/
-opj_bool tcd_decode_tile(opj_tcd_t *tcd, unsigned char *src, int len, int tileno, opj_codestream_info_t *cstr_info);
-/**
-Free the memory allocated for decoding
-@param tcd TCD handle
-*/
-void tcd_free_decode(opj_tcd_t *tcd);
-void tcd_free_decode_tile(opj_tcd_t *tcd, int tileno);
-
-
-/**
  * Gets the maximum tile size that will be taken by the tile once decoded.
  */
 OPJ_UINT32 opj_tcd_get_decoded_tile_size (opj_tcd_v2_t *p_tcd );
@@ -446,11 +429,11 @@ Decode a tile from a buffer into a raw image
 @param len Length of source buffer
 @param tileno Number that identifies one of the tiles to be decoded
 */
-opj_bool tcd_decode_tile_v2(opj_tcd_v2_t *tcd,
-							OPJ_BYTE *src,
-							OPJ_UINT32 len,
-							OPJ_UINT32 tileno,
-							opj_codestream_index_t *cstr_info);
+opj_bool opj_tcd_decode_tile(   opj_tcd_v2_t *tcd,
+							    OPJ_BYTE *src,
+							    OPJ_UINT32 len,
+							    OPJ_UINT32 tileno,
+							    opj_codestream_index_t *cstr_info);
 
 
 /**
