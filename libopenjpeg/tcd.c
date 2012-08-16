@@ -172,24 +172,7 @@ opj_bool tcd_dc_level_shift_decode (
 /**
 Create a new TCD handle
 */
-opj_tcd_t* tcd_create(opj_common_ptr cinfo) {
-	/* create the tcd structure */
-	opj_tcd_t *tcd = (opj_tcd_t*)opj_malloc(sizeof(opj_tcd_t));
-	if(!tcd) return NULL;
-	tcd->cinfo = cinfo;
-	tcd->tcd_image = (opj_tcd_image_t*)opj_malloc(sizeof(opj_tcd_image_t));
-	if(!tcd->tcd_image) {
-		opj_free(tcd);
-		return NULL;
-	}
-
-	return tcd;
-}
-
-/**
-Create a new TCD handle
-*/
-opj_tcd_v2_t* tcd_create_v2(opj_bool p_is_decoder)
+opj_tcd_v2_t* opj_tcd_create(opj_bool p_is_decoder)
 {
 	opj_tcd_v2_t *l_tcd = 00;
 

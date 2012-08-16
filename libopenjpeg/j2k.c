@@ -4768,7 +4768,7 @@ opj_bool opj_j2k_read_eoc (	opj_j2k_v2_t *p_j2k,
 	l_nb_tiles = p_j2k->m_cp.th * p_j2k->m_cp.tw;
 	l_tcp = p_j2k->m_cp.tcps;
 
-	l_tcd = tcd_create_v2(OPJ_TRUE);
+	l_tcd = opj_tcd_create(OPJ_TRUE);
 	if (l_tcd == 00) {
 		opj_event_msg_v2(p_manager, EVT_ERROR, "Cannot decode tile, memory error\n");
 		return OPJ_FALSE;
@@ -6999,7 +6999,7 @@ static opj_bool opj_j2k_copy_default_tcp_and_create_tcd (	opj_j2k_v2_t * p_j2k,
 	}
 
 	/* Create the current tile decoder*/
-	p_j2k->m_tcd = (opj_tcd_v2_t*)tcd_create_v2(OPJ_TRUE); /* FIXME why a cast ? */
+	p_j2k->m_tcd = (opj_tcd_v2_t*)opj_tcd_create(OPJ_TRUE); /* FIXME why a cast ? */
 	if (! p_j2k->m_tcd ) {
 		return OPJ_FALSE;
 	}
@@ -10250,7 +10250,7 @@ static opj_bool opj_j2k_create_tcd(	opj_j2k_v2_t *p_j2k,
 	assert(p_manager != 00);
 	assert(p_stream != 00);
 
-	p_j2k->m_tcd = tcd_create_v2(OPJ_FALSE);
+	p_j2k->m_tcd = opj_tcd_create(OPJ_FALSE);
 
 	if (! p_j2k->m_tcd) {
 		opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory to create Tile Coder\n");
