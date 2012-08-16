@@ -378,12 +378,6 @@ static opj_bool opj_j2k_allocate_tile_element_cstr_index(opj_j2k_v2_t *p_j2k);
  */
 
 /**
-Write the SOC marker (Start Of Codestream)
-@param j2k J2K handle
-*/
-static void j2k_write_soc(opj_j2k_t *j2k);
-
-/**
  * Writes the SOC marker (Start Of Codestream)
  *
  * @param	p_stream			the stream to write data to.
@@ -1925,22 +1919,6 @@ opj_bool j2k_calculate_tp_v2( opj_j2k_v2_t *p_j2k,
 	return OPJ_TRUE;
 }
 
-static void j2k_write_soc(opj_j2k_t *j2k) {
-	opj_cio_t *cio = j2k->cio;
-	cio_write(cio, J2K_MS_SOC, 2);
-
-	if(j2k->cstr_info)
-	  j2k_add_mhmarker(j2k->cstr_info, J2K_MS_SOC, cio_tell(cio), 0);
-
-/* UniPG>> */
-#ifdef USE_JPWL
-
-	/* update markers struct */
-	j2k_add_marker(j2k->cstr_info, J2K_MS_SOC, cio_tell(cio) - 2, 2);
-#endif /* USE_JPWL */
-/* <<UniPG */
-}
-
 /**
  * Writes the SOC marker (Start Of Codestream)
  *
@@ -1948,9 +1926,9 @@ static void j2k_write_soc(opj_j2k_t *j2k) {
  * @param	p_j2k			J2K codec.
  * @param	p_manager	the user event manager.
 */
-opj_bool j2k_write_soc_v2(	opj_j2k_v2_t *p_j2k,
-							struct opj_stream_private *p_stream,
-							struct opj_event_mgr * p_manager )
+opj_bool opj_j2k_write_soc(	opj_j2k_v2_t *p_j2k,
+					        opj_stream_private_t *p_stream,
+						    opj_event_mgr_t * p_manager )
 {
 	/* 2 bytes will be written */
 	OPJ_BYTE * l_start_stream = 00;
