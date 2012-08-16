@@ -86,23 +86,23 @@ typedef void (*DWT1DFN)(dwt_t* v);
 /**
 Forward lazy transform (horizontal)
 */
-static void dwt_deinterleave_h(int *a, int *b, int dn, int sn, int cas);
+static void opj_dwt_deinterleave_h(OPJ_INT32 *a, OPJ_INT32 *b, OPJ_INT32 dn, OPJ_INT32 sn, OPJ_INT32 cas);
 /**
 Forward lazy transform (vertical)
 */
-static void dwt_deinterleave_v(int *a, int *b, int dn, int sn, int x, int cas);
+static void dwt_deinterleave_v(OPJ_INT32 *a, OPJ_INT32 *b, OPJ_INT32 dn, OPJ_INT32 sn, OPJ_INT32 x, OPJ_INT32 cas);
 /**
 Inverse lazy transform (horizontal)
 */
-static void dwt_interleave_h(dwt_t* h, int *a);
+static void dwt_interleave_h(dwt_t* h, OPJ_INT32 *a);
 /**
 Inverse lazy transform (vertical)
 */
-static void dwt_interleave_v(dwt_t* v, int *a, int x);
+static void dwt_interleave_v(dwt_t* v, OPJ_INT32 *a, OPJ_INT32 x);
 /**
 Forward 5-3 wavelet transform in 1-D
 */
-static void dwt_encode_1(int *a, int dn, int sn, int cas);
+static void dwt_encode_1(OPJ_INT32 *a, OPJ_INT32 dn, OPJ_INT32 sn, OPJ_INT32 cas);
 /**
 Inverse 5-3 wavelet transform in 1-D
 */
@@ -110,17 +110,14 @@ static void dwt_decode_1(dwt_t *v);
 /**
 Forward 9-7 wavelet transform in 1-D
 */
-static void dwt_encode_1_real(int *a, int dn, int sn, int cas);
+static void dwt_encode_1_real(OPJ_INT32 *a, OPJ_INT32 dn, OPJ_INT32 sn, OPJ_INT32 cas);
 /**
 Explicit calculation of the Quantization Stepsizes 
 */
-static void dwt_encode_stepsize(int stepsize, int numbps, opj_stepsize_t *bandno_stepsize);
+static void dwt_encode_stepsize(OPJ_INT32 stepsize, OPJ_INT32 numbps, opj_stepsize_t *bandno_stepsize);
 /**
-Inverse wavelet transform in 2-D.
+Inverse wavelet transform in 2-D (remark: in V1 i parameter was a int) 
 */
-#ifdef OPJ_V1
-static void dwt_decode_tile(opj_tcd_tilecomp_t* tilec, int i, DWT1DFN fn);
-#endif
 static opj_bool dwt_decode_tile(opj_tcd_tilecomp_t* tilec, OPJ_UINT32 i, DWT1DFN fn);
 
 /**
@@ -175,28 +172,57 @@ static const double dwt_norms_real[4][10] = {
 /* <summary>			                 */
 /* Forward lazy transform (horizontal).  */
 /* </summary>                            */ 
-static void dwt_deinterleave_h(int *a, int *b, int dn, int sn, int cas) {
-	int i;
-    for (i=0; i<sn; i++) b[i]=a[2*i+cas];
-    for (i=0; i<dn; i++) b[sn+i]=a[(2*i+1-cas)];
+void opj_dwt_deinterleave_h(OPJ_INT32 *a, OPJ_INT32 *b, OPJ_INT32 dn, OPJ_INT32 sn, OPJ_INT32 cas) {
+	OPJ_INT32 i;
+	OPJ_INT32 * l_dest = b;
+	OPJ_INT32 * l_src = a+cas;
+
+    for (i=0; i<sn; ++i) {
+		*l_dest++ = *l_src;
+		l_src += 2;
+	}
+	
+    l_dest = b + sn;
+	l_src = a + 1 - cas;
+
+    for	(i=0; i<dn; ++i)  {
+		*l_dest++=*l_src;
+		l_src += 2;
+	}
 }
 
 /* <summary>                             */  
 /* Forward lazy transform (vertical).    */
 /* </summary>                            */ 
-static void dwt_deinterleave_v(int *a, int *b, int dn, int sn, int x, int cas) {
-    int i;
-    for (i=0; i<sn; i++) b[i*x]=a[2*i+cas];
-    for (i=0; i<dn; i++) b[(sn+i)*x]=a[(2*i+1-cas)];
+void dwt_deinterleave_v(OPJ_INT32 *a, OPJ_INT32 *b, OPJ_INT32 dn, OPJ_INT32 sn, OPJ_INT32 x, OPJ_INT32 cas) {
+    OPJ_INT32 i = sn;
+	OPJ_INT32 * l_dest = b;
+	OPJ_INT32 * l_src = a+cas;
+
+    while (i--) {
+		*l_dest = *l_src;
+		l_dest += x;
+		l_src += 2;
+		} /* b[i*x]=a[2*i+cas]; */
+
+	l_dest = b + sn * x;
+	l_src = a + 1 - cas;
+	
+	i = dn;
+    while (i--) {
+		*l_dest = *l_src;
+		l_dest += x;
+		l_src += 2;
+        } /*b[(sn+i)*x]=a[(2*i+1-cas)];*/
 }
 
 /* <summary>                             */
 /* Inverse lazy transform (horizontal).  */
 /* </summary>                            */
-static void dwt_interleave_h(dwt_t* h, int *a) {
-    int *ai = a;
-    int *bi = h->mem + h->cas;
-    int  i	= h->sn;
+void dwt_interleave_h(dwt_t* h, OPJ_INT32 *a) {
+    OPJ_INT32 *ai = a;
+    OPJ_INT32 *bi = h->mem + h->cas;
+    OPJ_INT32  i	= h->sn;
     while( i-- ) {
       *bi = *(ai++);
 	  bi += 2;
@@ -213,10 +239,10 @@ static void dwt_interleave_h(dwt_t* h, int *a) {
 /* <summary>                             */  
 /* Inverse lazy transform (vertical).    */
 /* </summary>                            */ 
-static void dwt_interleave_v(dwt_t* v, int *a, int x) {
-    int *ai = a;
-    int *bi = v->mem + v->cas;
-    int  i = v->sn;
+void dwt_interleave_v(dwt_t* v, OPJ_INT32 *a, OPJ_INT32 x) {
+    OPJ_INT32 *ai = a;
+    OPJ_INT32 *bi = v->mem + v->cas;
+    OPJ_INT32  i = v->sn;
     while( i-- ) {
       *bi = *ai;
 	  bi += 2;
@@ -236,8 +262,8 @@ static void dwt_interleave_v(dwt_t* v, int *a, int x) {
 /* <summary>                            */
 /* Forward 5-3 wavelet transform in 1-D. */
 /* </summary>                           */
-static void dwt_encode_1(int *a, int dn, int sn, int cas) {
-	int i;
+void dwt_encode_1(OPJ_INT32 *a, OPJ_INT32 dn, OPJ_INT32 sn, OPJ_INT32 cas) {
+	OPJ_INT32 i;
 	
 	if (!cas) {
 		if ((dn > 0) || (sn > 1)) {	/* NEW :  CASE ONE ELEMENT */
@@ -257,8 +283,8 @@ static void dwt_encode_1(int *a, int dn, int sn, int cas) {
 /* <summary>                            */
 /* Inverse 5-3 wavelet transform in 1-D. */
 /* </summary>                           */ 
-static void dwt_decode_1_(int *a, int dn, int sn, int cas) {
-	int i;
+static void dwt_decode_1_(OPJ_INT32 *a, OPJ_INT32 dn, OPJ_INT32 sn, OPJ_INT32 cas) {
+	OPJ_INT32 i;
 	
 	if (!cas) {
 		if ((dn > 0) || (sn > 1)) { /* NEW :  CASE ONE ELEMENT */
@@ -285,8 +311,8 @@ static void dwt_decode_1(dwt_t *v) {
 /* <summary>                             */
 /* Forward 9-7 wavelet transform in 1-D. */
 /* </summary>                            */
-static void dwt_encode_1_real(int *a, int dn, int sn, int cas) {
-	int i;
+static void dwt_encode_1_real(OPJ_INT32 *a, OPJ_INT32 dn, OPJ_INT32 sn, OPJ_INT32 cas) {
+	OPJ_INT32 i;
 	if (!cas) {
 		if ((dn > 0) || (sn > 1)) {	/* NEW :  CASE ONE ELEMENT */
 			for (i = 0; i < dn; i++)
@@ -320,8 +346,8 @@ static void dwt_encode_1_real(int *a, int dn, int sn, int cas) {
 	}
 }
 
-static void dwt_encode_stepsize(int stepsize, int numbps, opj_stepsize_t *bandno_stepsize) {
-	int p, n;
+static void dwt_encode_stepsize(OPJ_INT32 stepsize, OPJ_INT32 numbps, opj_stepsize_t *bandno_stepsize) {
+	OPJ_INT32 p, n;
 	p = int_floorlog2(stepsize) - 13;
 	n = 11 - int_floorlog2(stepsize);
 	bandno_stepsize->mant = (n < 0 ? stepsize >> -n : stepsize << n) & 0x7ff;
@@ -383,7 +409,7 @@ void dwt_encode(opj_tcd_tilecomp_t * tilec) {
 			aj = a + j * w;
 			for (k = 0; k < rw; k++)  bj[k] = aj[k];
 			dwt_encode_1(bj, dn, sn, cas_row);
-			dwt_deinterleave_h(bj, aj, dn, sn, cas_row);
+			opj_dwt_deinterleave_h(bj, aj, dn, sn, cas_row);
 		}
 		opj_free(bj);
 	}
@@ -459,7 +485,7 @@ INLINE opj_bool dwt_encode_procedure(opj_tcd_tilecomp_v2_t * tilec,void (*p_func
 			aj = a + j * w;
 			for (k = 0; k < rw; k++)  bj[k] = aj[k];
 			(*p_function) (bj, dn, sn, cas_row);
-			dwt_deinterleave_h(bj, aj, dn, sn, cas_row);
+			opj_dwt_deinterleave_h(bj, aj, dn, sn, cas_row);
 		}
 
 		l_cur_res = l_last_res;
@@ -581,7 +607,7 @@ void dwt_encode_real(opj_tcd_tilecomp_t * tilec) {
 			aj = a + j * w;
 			for (k = 0; k < rw; k++)  bj[k] = aj[k];
 			dwt_encode_1_real(bj, dn, sn, cas_row);
-			dwt_deinterleave_h(bj, aj, dn, sn, cas_row);
+			opj_dwt_deinterleave_h(bj, aj, dn, sn, cas_row);
 		}
 		opj_free(bj);
 	}
