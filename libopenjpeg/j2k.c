@@ -423,21 +423,15 @@ static opj_bool opj_j2k_read_siz(opj_j2k_v2_t *p_j2k,
                                  opj_event_mgr_t * p_manager);
 
 /**
-Write the COM marker (comment)
-@param j2k J2K handle
-*/
-static void j2k_write_com(opj_j2k_t *j2k);
-
-/**
  * Writes the COM marker (comment)
  * 
  * @param	p_stream			the stream to write data to.
  * @param	p_j2k			J2K codec.
  * @param	p_manager	the user event manager.
 */
-static opj_bool j2k_write_com_v2(	opj_j2k_v2_t *p_j2k,
-									struct opj_stream_private *p_stream,
-									struct opj_event_mgr * p_manager );
+static opj_bool opj_j2k_write_com(	opj_j2k_v2_t *p_j2k,
+									opj_stream_private_t *p_stream,
+									opj_event_mgr_t * p_manager );
 
 /**
  * Reads a COM marker (comments)
@@ -2417,35 +2411,6 @@ static opj_bool opj_j2k_read_siz(opj_j2k_v2_t *p_j2k,
 	return OPJ_TRUE;
 }
 
-
-
-static void j2k_write_com(opj_j2k_t *j2k) {
-	unsigned int i;
-	int lenp, len;
-
-	if(j2k->cp->comment) {
-		opj_cio_t *cio = j2k->cio;
-		char *comment = j2k->cp->comment;
-
-		cio_write(cio, J2K_MS_COM, 2);
-		lenp = cio_tell(cio);
-		cio_skip(cio, 2);
-		cio_write(cio, 1, 2);		/* General use (IS 8859-15:1999 (Latin) values) */
-		for (i = 0; i < strlen(comment); i++) {
-			cio_write(cio, comment[i], 1);
-		}
-		len = cio_tell(cio) - lenp;
-		cio_seek(cio, lenp);
-		cio_write(cio, len, 2);
-		cio_seek(cio, lenp + len);
-
-		
-		if(j2k->cstr_info)
-		  j2k_add_mhmarker(j2k->cstr_info, J2K_MS_COM, lenp, len);
-
-	}
-}
-
 /**
  * Writes the COM marker (comment)
  * 
@@ -2453,9 +2418,10 @@ static void j2k_write_com(opj_j2k_t *j2k) {
  * @param	p_j2k			J2K codec.
  * @param	p_manager	the user event manager.
 */
-opj_bool j2k_write_com_v2(	opj_j2k_v2_t *p_j2k,
-							struct opj_stream_private *p_stream,
-							struct opj_event_mgr * p_manager )
+opj_bool opj_j2k_write_com(	opj_j2k_v2_t *p_j2k,
+							opj_stream_private_t *p_stream,
+							opj_event_mgr_t * p_manager 
+                            )
 {
 	OPJ_UINT32 l_comment_size;
 	OPJ_UINT32 l_total_com_size;
@@ -10789,7 +10755,7 @@ void opj_j2k_setup_header_writting (opj_j2k_v2_t *p_j2k)
 	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)j2k_write_regions);
 
 	if (p_j2k->m_cp.comment != 00)  {
-		opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)j2k_write_com_v2);
+		opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_com);
 	}
 
 	/* DEVELOPER CORNER, insert your custom procedures */
