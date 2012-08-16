@@ -1121,9 +1121,6 @@ static opj_bool opj_j2k_check_poc_val(	const opj_poc_t *p_pocs,
  */
 static OPJ_UINT32 j2k_get_num_tp_v2( opj_cp_v2_t *cp, OPJ_UINT32 pino, OPJ_UINT32 tileno);
 
-/**	mem allocation for TLM marker*/
-static int j2k_calculate_tp(opj_cp_t *cp,int img_numcomp,opj_image_t *image,opj_j2k_t *j2k );
-
 /**
  * Calculates the total number of tile parts needed by the encoder to
  * encode such an image. If not enough memory is available, then the function return false.
@@ -1136,11 +1133,11 @@ static int j2k_calculate_tp(opj_cp_t *cp,int img_numcomp,opj_image_t *image,opj_
  *
  * @return true if the function was successful, false else.
  */
-static opj_bool j2k_calculate_tp_v2(opj_j2k_v2_t *p_j2k,
-									opj_cp_v2_t *cp,
-									OPJ_UINT32 * p_nb_tiles,
-									opj_image_t *image,
-									opj_event_mgr_t * p_manager);
+static opj_bool opj_j2k_calculate_tp(   opj_j2k_v2_t *p_j2k,
+									    opj_cp_v2_t *cp,
+									    OPJ_UINT32 * p_nb_tiles,
+									    opj_image_t *image,
+									    opj_event_mgr_t * p_manager);
 
 static void opj_j2k_dump_MH_info(opj_j2k_v2_t* p_j2k, FILE* out_stream);
 
@@ -1710,36 +1707,6 @@ OPJ_UINT32 j2k_get_num_tp_v2(opj_cp_v2_t *cp, OPJ_UINT32 pino, OPJ_UINT32 tileno
 	return tpnum;
 }
 
-/**	mem allocation for TLM marker*/
-int j2k_calculate_tp(opj_cp_t *cp,int img_numcomp,opj_image_t *image,opj_j2k_t *j2k ){
-	int pino,tileno,totnum_tp=0;
-
-	OPJ_ARG_NOT_USED(img_numcomp);
-
-	j2k->cur_totnum_tp = (int *) opj_malloc(cp->tw * cp->th * sizeof(int));
-	for (tileno = 0; tileno < cp->tw * cp->th; tileno++) {
-		int cur_totnum_tp = 0;
-		opj_tcp_t *tcp = &cp->tcps[tileno];
-		for(pino = 0; pino <= tcp->numpocs; pino++) {
-			int tp_num=0;
-			opj_pi_iterator_t *pi = pi_initialise_encode(image, cp, tileno,FINAL_PASS);
-			if(!pi) { return -1;}
-			tp_num = j2k_get_num_tp(cp,pino,tileno);
-			totnum_tp = totnum_tp + tp_num;
-			cur_totnum_tp = cur_totnum_tp + tp_num;
-			pi_destroy(pi, cp, tileno);
-		}
-		j2k->cur_totnum_tp[tileno] = cur_totnum_tp;
-		/* INDEX >> */
-		if (j2k->cstr_info) {
-			j2k->cstr_info->tile[tileno].num_tps = cur_totnum_tp;
-			j2k->cstr_info->tile[tileno].tp = (opj_tp_info_t *) opj_malloc(cur_totnum_tp * sizeof(opj_tp_info_t));
-		}
-		/* << INDEX */
-	}
-	return totnum_tp;
-}
-
 /**
  * Calculates the total number of tile parts needed by the encoder to
  * encode such an image. If not enough memory is available, then the function return false.
@@ -1752,11 +1719,12 @@ int j2k_calculate_tp(opj_cp_t *cp,int img_numcomp,opj_image_t *image,opj_j2k_t *
  *
  * @return true if the function was successful, false else.
  */
-opj_bool j2k_calculate_tp_v2( opj_j2k_v2_t *p_j2k,
-					  	  	  opj_cp_v2_t *cp,
-					  	  	  OPJ_UINT32 * p_nb_tiles,
-					  	  	  opj_image_t *image,
-					  	  	  opj_event_mgr_t * p_manager)
+opj_bool opj_j2k_calculate_tp(  opj_j2k_v2_t *p_j2k,
+						        opj_cp_v2_t *cp,
+						        OPJ_UINT32 * p_nb_tiles,
+						        opj_image_t *image,
+						        opj_event_mgr_t * p_manager
+                                )
 {
 	OPJ_UINT32 pino,tileno;
 	OPJ_UINT32 l_nb_tiles;
@@ -10762,7 +10730,7 @@ opj_bool opj_j2k_init_info(	opj_j2k_v2_t *p_j2k,
 		l_cstr_info->marknum = 0;
 	}*/
 
-	return j2k_calculate_tp_v2(p_j2k,&(p_j2k->m_cp),&p_j2k->m_specific_param.m_encoder.m_total_tile_parts,p_j2k->m_private_image,p_manager);
+	return opj_j2k_calculate_tp(p_j2k,&(p_j2k->m_cp),&p_j2k->m_specific_param.m_encoder.m_total_tile_parts,p_j2k->m_private_image,p_manager);
 }
 
 /**
