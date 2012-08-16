@@ -589,7 +589,6 @@ static opj_bool opj_j2k_read_qcc(   opj_j2k_v2_t *p_j2k,
 static opj_bool opj_j2k_write_poc(	opj_j2k_v2_t *p_j2k,
 									opj_stream_private_t *p_stream,
 									opj_event_mgr_t * p_manager );
-
 /**
  * Writes the POC marker (Progression Order Change)
  *
@@ -601,23 +600,10 @@ static void opj_j2k_write_poc_in_memory(opj_j2k_v2_t *p_j2k,
 									    OPJ_BYTE * p_data,
 									    OPJ_UINT32 * p_data_written,
 									    opj_event_mgr_t * p_manager );
-
 /**
  * Gets the maximum size taken by the writting of a POC.
  */
 static OPJ_UINT32 opj_j2k_get_max_poc_size(opj_j2k_v2_t *p_j2k);
-
-/**
- * Gets the maximum size taken by the toc headers of all the tile parts of any given tile.
- */
-static OPJ_UINT32 j2k_get_max_toc_size (opj_j2k_v2_t *p_j2k);
-
-/**
- * Gets the maximum size taken by the headers of the SOT.
- *
- * @param	p_j2k	the jpeg2000 codec to use.
- */
-static OPJ_UINT32 j2k_get_specific_header_sizes(opj_j2k_v2_t *p_j2k);
 
 /**
  * Reads a POC marker (Progression Order Change)
@@ -631,6 +617,19 @@ static opj_bool opj_j2k_read_poc (  opj_j2k_v2_t *p_j2k,
                                     OPJ_BYTE * p_header_data,
                                     OPJ_UINT32 p_header_size,
                                     opj_event_mgr_t * p_manager );
+
+/**
+ * Gets the maximum size taken by the toc headers of all the tile parts of any given tile.
+ */
+static OPJ_UINT32 opj_j2k_get_max_toc_size (opj_j2k_v2_t *p_j2k);
+
+/**
+ * Gets the maximum size taken by the headers of the SOT.
+ *
+ * @param	p_j2k	the jpeg2000 codec to use.
+ */
+static OPJ_UINT32 opj_j2k_get_specific_header_sizes(opj_j2k_v2_t *p_j2k);
+
 
 /**
  * Reads a CRG marker (Component registration)
@@ -3261,7 +3260,7 @@ OPJ_UINT32 opj_j2k_get_max_poc_size(opj_j2k_v2_t *p_j2k)
 /**
  * Gets the maximum size taken by the toc headers of all the tile parts of any given tile.
  */
-OPJ_UINT32 j2k_get_max_toc_size (opj_j2k_v2_t *p_j2k)
+OPJ_UINT32 opj_j2k_get_max_toc_size (opj_j2k_v2_t *p_j2k)
 {
 	OPJ_UINT32 i;
 	OPJ_UINT32 l_nb_tiles;
@@ -3286,14 +3285,14 @@ OPJ_UINT32 j2k_get_max_toc_size (opj_j2k_v2_t *p_j2k)
  *
  * @param	p_j2k	the jpeg2000 codec to use.
  */
-OPJ_UINT32 j2k_get_specific_header_sizes(opj_j2k_v2_t *p_j2k)
+OPJ_UINT32 opj_j2k_get_specific_header_sizes(opj_j2k_v2_t *p_j2k)
 {
 	OPJ_UINT32 l_nb_bytes = 0;
 	OPJ_UINT32 l_nb_comps;
 	OPJ_UINT32 l_coc_bytes,l_qcc_bytes;
 
 	l_nb_comps = p_j2k->m_private_image->numcomps - 1;
-	l_nb_bytes += j2k_get_max_toc_size(p_j2k);
+	l_nb_bytes += opj_j2k_get_max_toc_size(p_j2k);
 
 	if (p_j2k->m_cp.m_specific_param.m_enc.m_cinema == 0) {
 		l_coc_bytes = opj_j2k_get_max_coc_size(p_j2k);
@@ -4995,7 +4994,7 @@ opj_bool opj_j2k_update_rates(	opj_j2k_v2_t *p_j2k,
 
 	l_tile_size = (OPJ_UINT32) (l_tile_size * 0.1625); /* 1.3/8 = 0.1625 */
 
-	l_tile_size += j2k_get_specific_header_sizes(p_j2k);
+	l_tile_size += opj_j2k_get_specific_header_sizes(p_j2k);
 
 	p_j2k->m_specific_param.m_encoder.m_encoded_tile_size = l_tile_size;
 	p_j2k->m_specific_param.m_encoder.m_encoded_tile_data =
