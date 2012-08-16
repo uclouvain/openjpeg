@@ -844,17 +844,6 @@ static opj_bool j2k_write_eoc_v2(	opj_j2k_v2_t *p_j2k,
                                     opj_event_mgr_t * p_manager );
 
 /**
-Write the EOC marker (end of codestream)
-@param j2k J2K handle
-*/
-static void j2k_write_eoc(opj_j2k_t *j2k);
-/**
-Read the EOC marker (end of codestream)
-@param j2k J2K handle
-*/
-static void j2k_read_eoc(opj_j2k_t *j2k);
-
-/**
  * Reads a EOC marker (End Of Codestream)
  *
  * @param	p_header_data	the data contained in the SOD box.
@@ -862,15 +851,9 @@ static void j2k_read_eoc(opj_j2k_t *j2k);
  * @param	p_header_size	the size of the data contained in the SOD marker.
  * @param	p_manager		the user event manager.
 */
-#if 0
-static opj_bool j2k_read_eoc_v2 (
-					    opj_j2k_v2_t *p_j2k,
-						struct opj_stream_private *p_stream,
-						struct opj_event_mgr * p_manager
-					) ;
-#endif
-
-
+static opj_bool opj_j2k_read_eoc (	opj_j2k_v2_t *p_j2k,
+							        opj_stream_private_t *p_stream,
+							        opj_event_mgr_t * p_manager );
 
 /**
  * Writes the CBD-MCT-MCC-MCO markers (Multi components transform)
@@ -4771,47 +4754,6 @@ opj_bool opj_j2k_update_rates(	opj_j2k_v2_t *p_j2k,
 	return OPJ_TRUE;
 }
 
-static void j2k_read_eoc(opj_j2k_t *j2k) {
-	int i, tileno;
-	opj_bool success = OPJ_FALSE;
-
-	/* if packets should be decoded */
-	if (j2k->cp->limit_decoding != DECODE_ALL_BUT_PACKETS) {
-		opj_tcd_t *tcd = tcd_create(j2k->cinfo);
-		tcd_malloc_decode(tcd, j2k->image, j2k->cp);
-		for (i = 0; i < j2k->cp->tileno_size; i++) {
-			tcd_malloc_decode_tile(tcd, j2k->image, j2k->cp, i, j2k->cstr_info);
-			if (j2k->cp->tileno[i] != -1)
-			{
-				tileno = j2k->cp->tileno[i];
-				success = tcd_decode_tile(tcd, j2k->tile_data[tileno], j2k->tile_len[tileno], tileno, j2k->cstr_info);
-				opj_free(j2k->tile_data[tileno]);
-				j2k->tile_data[tileno] = NULL;
-				tcd_free_decode_tile(tcd, i);
-			}
-			else
-				success = OPJ_FALSE;
-			if (success == OPJ_FALSE) {
-				j2k->state |= J2K_STATE_ERR;
-				break;
-			}
-		}
-		tcd_free_decode(tcd);
-		tcd_destroy(tcd);
-	}
-	/* if packets should not be decoded  */
-	else {
-		for (i = 0; i < j2k->cp->tileno_size; i++) {
-			tileno = j2k->cp->tileno[i];
-			opj_free(j2k->tile_data[tileno]);
-			j2k->tile_data[tileno] = NULL;
-		}
-	}	
-	if (j2k->state & J2K_STATE_ERR)
-		j2k->state = J2K_STATE_MT + J2K_STATE_ERR;
-	else
-		j2k->state = J2K_STATE_MT; 
-}
 
 /**
  * Reads a EOC marker (End Of Codestream)
@@ -4821,10 +4763,9 @@ static void j2k_read_eoc(opj_j2k_t *j2k) {
  * @param	p_header_size	the size of the data contained in the SOD marker.
  * @param	p_manager		the user event manager.
 */
-#if 0
-opj_bool j2k_read_eoc_v2 (	opj_j2k_v2_t *p_j2k,
-							struct opj_stream_private *p_stream,
-							struct opj_event_mgr * p_manager )
+opj_bool opj_j2k_read_eoc (	opj_j2k_v2_t *p_j2k,
+							opj_stream_private_t *p_stream,
+							opj_event_mgr_t * p_manager )
 {
 	OPJ_UINT32 i;
 	opj_tcd_v2_t * l_tcd = 00;
@@ -4870,7 +4811,6 @@ opj_bool j2k_read_eoc_v2 (	opj_j2k_v2_t *p_j2k,
 	tcd_destroy_v2(l_tcd);
 	return OPJ_TRUE;
 }
-#endif
 
 /**
  * Gets the offset of the header.
