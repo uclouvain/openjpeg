@@ -572,7 +572,7 @@ typedef struct opj_cp_v2
 	/** expected number of components at the decoder */
 	int exp_comps;
 	/** maximum number of tiles at the decoder */
-	int max_tiles;
+	OPJ_UINT32 max_tiles;
 #endif /* USE_JPWL */
 
 	/******** FLAGS *********/
@@ -639,7 +639,7 @@ typedef struct opj_j2k_enc
 	locate the start position of the TLM marker
 	after encoding the tilepart, a jump (in j2k_write_sod) is done to the TLM marker to store the value of its length.
 	*/
-	OPJ_SIZE_T m_tlm_start;
+    OPJ_OFF_T m_tlm_start;
 	/**
 	 * Stores the sizes of the tlm.
 	 */

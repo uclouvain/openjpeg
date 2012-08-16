@@ -1123,9 +1123,9 @@ static void opj_j2k_dump_MH_index(opj_j2k_v2_t* p_j2k, FILE* out_stream);
 
 static opj_codestream_index_t* opj_j2k_create_cstr_index(void);
 
-static OPJ_FLOAT32 opj_get_tp_stride (opj_tcp_v2_t * p_tcp);
+static OPJ_FLOAT32 opj_j2k_get_tp_stride (opj_tcp_v2_t * p_tcp);
 
-static OPJ_FLOAT32 opj_get_default_stride (opj_tcp_v2_t * p_tcp);
+static OPJ_FLOAT32 opj_j2k_get_default_stride (opj_tcp_v2_t * p_tcp);
 
 /*@}*/
 
@@ -4003,8 +4003,8 @@ opj_bool opj_j2k_read_sot ( opj_j2k_v2_t *p_j2k,
 #ifdef USE_JPWL
 	if (l_cp->correct) {
 
-		int tileno = p_j2k->m_current_tile_number;
-		static int backup_tileno = 0;
+		OPJ_UINT32 tileno = p_j2k->m_current_tile_number;
+		static OPJ_UINT32 backup_tileno = 0;
 
 		/* tileno is negative or larger than the number of tiles!!! */
 		if ((tileno < 0) || (tileno > (l_cp->tw * l_cp->th))) {
@@ -4560,12 +4560,12 @@ static opj_bool opj_j2k_read_rgn (opj_j2k_v2_t *p_j2k,
 
 }
 
-OPJ_FLOAT32 opj_get_tp_stride (opj_tcp_v2_t * p_tcp)
+OPJ_FLOAT32 opj_j2k_get_tp_stride (opj_tcp_v2_t * p_tcp)
 {
 	return (OPJ_FLOAT32) ((p_tcp->m_nb_tile_parts - 1) * 14);
 }
 
-OPJ_FLOAT32 opj_get_default_stride (opj_tcp_v2_t * p_tcp)
+OPJ_FLOAT32 opj_j2k_get_default_stride (opj_tcp_v2_t * p_tcp)
 {
     (void)p_tcp;
     return 0;
@@ -4611,10 +4611,10 @@ opj_bool opj_j2k_update_rates(	opj_j2k_v2_t *p_j2k,
 	l_sot_remove = ((OPJ_FLOAT32) opj_stream_tell(p_stream)) / (l_cp->th * l_cp->tw);
 
 	if (l_cp->m_specific_param.m_enc.m_tp_on) {
-		l_tp_stride_func = opj_get_tp_stride;
+		l_tp_stride_func = opj_j2k_get_tp_stride;
 	}
 	else {
-		l_tp_stride_func = opj_get_default_stride;
+		l_tp_stride_func = opj_j2k_get_default_stride;
 	}
 
 	for (i=0;i<l_cp->th;++i) {
@@ -10086,7 +10086,7 @@ opj_bool opj_j2k_write_updated_tlm( opj_j2k_v2_t *p_j2k,
 								    struct opj_event_mgr * p_manager )
 {
 	OPJ_UINT32 l_tlm_size;
-	OPJ_SIZE_T l_tlm_position, l_current_position;
+	OPJ_OFF_T l_tlm_position, l_current_position;
 
 	/* preconditions */
 	assert(p_j2k != 00);
