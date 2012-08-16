@@ -792,14 +792,7 @@ Creates a J2K compression structure
 @param cinfo Codec context info
 @return Returns a handle to a J2K compressor if successful, returns NULL otherwise
 */
-opj_j2k_t* j2k_create_compress(opj_common_ptr cinfo);
-
-/**
-Creates a J2K compression structure
-@param cinfo Codec context info
-@return Returns a handle to a J2K compressor if successful, returns NULL otherwise
-*/
-opj_j2k_v2_t* opj_j2k_create_compress_v2(void);
+opj_j2k_v2_t* opj_j2k_create_compress(void);
 
 
 void opj_j2k_setup_encoder(	opj_j2k_v2_t *p_j2k,

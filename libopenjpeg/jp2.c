@@ -2559,7 +2559,7 @@ opj_jp2_v2_t* opj_jp2_create(opj_bool p_is_decoder)
 
 		/* create the J2K codec */
 		if (! p_is_decoder) {
-			jp2->j2k = opj_j2k_create_compress_v2();
+			jp2->j2k = opj_j2k_create_compress();
 		}
 		else {
 			jp2->j2k = opj_j2k_create_decompress();

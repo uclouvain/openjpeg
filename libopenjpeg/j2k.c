@@ -6064,15 +6064,7 @@ void opj_j2k_setup_decoder(opj_j2k_v2_t *j2k, opj_dparameters_t *parameters)
 /* J2K encoder interface                                                       */
 /* ----------------------------------------------------------------------- */
 
-opj_j2k_t* j2k_create_compress(opj_common_ptr cinfo) {
-	opj_j2k_t *j2k = (opj_j2k_t*) opj_calloc(1, sizeof(opj_j2k_t));
-	if(j2k) {
-		j2k->cinfo = cinfo;
-	}
-	return j2k;
-}
-
-opj_j2k_v2_t* opj_j2k_create_compress_v2(void)
+opj_j2k_v2_t* opj_j2k_create_compress(void)
 {
 	opj_j2k_v2_t *l_j2k = (opj_j2k_v2_t*) opj_malloc(sizeof(opj_j2k_v2_t));
 	if (!l_j2k) {
