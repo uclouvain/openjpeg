@@ -731,21 +731,15 @@ static opj_bool opj_j2k_read_ppt (  opj_j2k_v2_t *p_j2k,
                                     OPJ_UINT32 p_header_size,
                                     opj_event_mgr_t * p_manager );
 /**
-Write the TLM marker (Mainheader)
-@param j2k J2K handle
-*/
-static void j2k_write_tlm(opj_j2k_t *j2k);
-
-/**
  * Writes the TLM marker (Tile Length Marker)
  * 
  * @param	p_stream				the stream to write data to.
  * @param	p_j2k				J2K codec.
  * @param	p_manager		the user event manager.
 */
-static opj_bool j2k_write_tlm_v2(	opj_j2k_v2_t *p_j2k,
-									struct opj_stream_private *p_stream,
-									struct opj_event_mgr * p_manager );
+static opj_bool opj_j2k_write_tlm(	opj_j2k_v2_t *p_j2k,
+									opj_stream_private_t *p_stream,
+									opj_event_mgr_t * p_manager );
 
 /**
 Write the SOT marker (start of tile-part)
@@ -3992,9 +3986,10 @@ static opj_bool opj_j2k_read_ppt (  opj_j2k_v2_t *p_j2k,
  * @param	p_j2k				J2K codec.
  * @param	p_manager		the user event manager.
 */
-opj_bool j2k_write_tlm_v2(	opj_j2k_v2_t *p_j2k,
-							struct opj_stream_private *p_stream,
-							struct opj_event_mgr * p_manager )
+opj_bool opj_j2k_write_tlm(	opj_j2k_v2_t *p_j2k,
+							opj_stream_private_t *p_stream,
+							opj_event_mgr_t * p_manager 
+                            )
 {
 	OPJ_BYTE * l_current_data = 00;
 	OPJ_UINT32 l_tlm_size;
@@ -4043,18 +4038,6 @@ opj_bool j2k_write_tlm_v2(	opj_j2k_v2_t *p_j2k,
 	}
 
 	return OPJ_TRUE;
-}
-
-static void j2k_write_tlm(opj_j2k_t *j2k){
-	int lenp;
-	opj_cio_t *cio = j2k->cio;
-	j2k->tlm_start = cio_tell(cio);
-	cio_write(cio, J2K_MS_TLM, 2);/* TLM */
-	lenp = 4 + (5*j2k->totnum_tp);
-	cio_write(cio,lenp,2);				/* Ltlm */
-	cio_write(cio, 0,1);					/* Ztlm=0*/
-	cio_write(cio,80,1);					/* Stlm ST=1(8bits-255 tiles max),SP=1(Ptlm=32bits) */
-	cio_skip(cio,5*j2k->totnum_tp);
 }
 
 static void j2k_write_sot(opj_j2k_t *j2k) {
@@ -10540,7 +10523,7 @@ void opj_j2k_setup_header_writting (opj_j2k_v2_t *p_j2k)
 
 	if (p_j2k->m_cp.m_specific_param.m_enc.m_cinema) {
 		opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)j2k_write_image_components );
-		opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)j2k_write_tlm_v2 );
+		opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_tlm );
 
 		if (p_j2k->m_cp.m_specific_param.m_enc.m_cinema == CINEMA4K_24) {
 			opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_poc );
