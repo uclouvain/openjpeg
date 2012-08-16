@@ -1517,7 +1517,7 @@ void opj_jp2_setup_encoder(	opj_jp2_v2_t *jp2,
 		return;
 	}
 
-	j2k_setup_encoder_v2(jp2->j2k, parameters, image, p_manager );
+	opj_j2k_setup_encoder_v2(jp2->j2k, parameters, image, p_manager );
 
 	/* setup the JP2 codec */
 	/* ------------------- */
@@ -1582,7 +1582,7 @@ opj_bool opj_jp2_encode(opj_jp2_v2_t *jp2,
 						opj_stream_private_t *stream, 
 						opj_event_mgr_t * p_manager)
 {
-	return j2k_encode_v2(jp2->j2k, stream, p_manager);
+	return opj_j2k_encode_v2(jp2->j2k, stream, p_manager);
 }
 
 
@@ -1608,7 +1608,7 @@ opj_bool opj_jp2_end_decompress(opj_jp2_v2_t *jp2,
 		return OPJ_FALSE;
 	}
 
-	return j2k_end_decompress(jp2->j2k, cio, p_manager);
+	return opj_j2k_end_decompress(jp2->j2k, cio, p_manager);
 }
 
 /**
@@ -1628,7 +1628,7 @@ opj_bool opj_jp2_end_compress(	opj_jp2_v2_t *jp2,
 	/* customization of the end encoding */
 	opj_jp2_setup_end_header_writting(jp2);
 
-	if (! j2k_end_compress(jp2->j2k,cio,p_manager)) {
+	if (! opj_j2k_end_compress(jp2->j2k,cio,p_manager)) {
 		return OPJ_FALSE;
 	}
 
@@ -1894,7 +1894,7 @@ opj_bool opj_jp2_start_compress(opj_jp2_v2_t *jp2,
 		return OPJ_FALSE;
 	}
 
-	return j2k_start_compress(jp2->j2k,stream,p_image,p_manager);
+	return opj_j2k_start_compress(jp2->j2k,stream,p_image,p_manager);
 }
 
 /**
@@ -2264,7 +2264,7 @@ opj_bool opj_jp2_read_header(	opj_stream_private_t *p_stream,
 		return OPJ_FALSE;
 	}
 
-	return j2k_read_header(	p_stream,
+	return opj_j2k_read_header(	p_stream,
 							jp2->j2k,
 							p_image,
 							p_manager);
@@ -2345,7 +2345,7 @@ opj_bool opj_jp2_read_tile_header ( opj_jp2_v2_t * p_jp2,
                                     opj_event_mgr_t * p_manager 
                                     )
 {
-	return j2k_read_tile_header(p_jp2->j2k,
+	return opj_j2k_read_tile_header(p_jp2->j2k,
 								p_tile_index,
 								p_data_size,
 								p_tile_x0, p_tile_y0,
@@ -2371,7 +2371,7 @@ opj_bool opj_jp2_write_tile (	opj_jp2_v2_t *p_jp2,
                                 )
                                 
 {
-	return j2k_write_tile (p_jp2->j2k,p_tile_index,p_data,p_data_size,p_stream,p_manager);
+	return opj_j2k_write_tile (p_jp2->j2k,p_tile_index,p_data,p_data_size,p_stream,p_manager);
 }
 
 /**
@@ -2388,7 +2388,7 @@ opj_bool opj_jp2_decode_tile (  opj_jp2_v2_t * p_jp2,
                                 opj_event_mgr_t * p_manager 
                                 )
 {
-	return j2k_decode_tile (p_jp2->j2k,p_tile_index,p_data,p_data_size,p_stream,p_manager);
+	return opj_j2k_decode_tile (p_jp2->j2k,p_tile_index,p_data,p_data_size,p_stream,p_manager);
 }
 
 /**
@@ -2400,7 +2400,7 @@ void opj_jp2_destroy(opj_jp2_v2_t *jp2)
 {
 	if (jp2) {
 		/* destroy the J2K codec */
-		j2k_destroy(jp2->j2k);
+		opj_j2k_destroy(jp2->j2k);
 		jp2->j2k = 00;
 
 		if (jp2->comps) {
@@ -2482,7 +2482,7 @@ opj_bool opj_jp2_set_decode_area(	opj_jp2_v2_t *p_jp2,
 								    opj_event_mgr_t * p_manager 
                                     )
 {
-	return j2k_set_decode_area(p_jp2->j2k, p_image, p_start_x, p_start_y, p_end_x, p_end_y, p_manager);
+	return opj_j2k_set_decode_area(p_jp2->j2k, p_image, p_start_x, p_start_y, p_end_x, p_end_y, p_manager);
 }
 
 /**
@@ -2508,7 +2508,7 @@ opj_bool opj_jp2_get_tile(	opj_jp2_v2_t *p_jp2,
 
 	opj_event_msg_v2(p_manager, EVT_WARNING, "JP2 box which are after the codestream will not be read by this function.\n");
 
-	if (! j2k_get_tile(p_jp2->j2k, p_stream, p_image, p_manager, tile_index) ){
+	if (! opj_j2k_get_tile(p_jp2->j2k, p_stream, p_image, p_manager, tile_index) ){
 		opj_event_msg_v2(p_manager, EVT_ERROR, "Failed to decode the codestream in the JP2 file\n");
 		return OPJ_FALSE;
 	}
@@ -2559,7 +2559,7 @@ opj_jp2_v2_t* opj_jp2_create(opj_bool p_is_decoder)
 
 		/* create the J2K codec */
 		if (! p_is_decoder) {
-			jp2->j2k = j2k_create_compress_v2();
+			jp2->j2k = opj_j2k_create_compress_v2();
 		}
 		else {
 			jp2->j2k = opj_j2k_create_decompress();
@@ -2619,6 +2619,6 @@ opj_bool opj_jp2_set_decoded_resolution_factor(opj_jp2_v2_t *p_jp2,
                                                OPJ_UINT32 res_factor, 
                                                opj_event_mgr_t * p_manager)
 {
-	return j2k_set_decoded_resolution_factor(p_jp2->j2k, res_factor, p_manager);
+	return opj_j2k_set_decoded_resolution_factor(p_jp2->j2k, res_factor, p_manager);
 }
 
