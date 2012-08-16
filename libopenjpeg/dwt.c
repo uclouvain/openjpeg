@@ -1214,7 +1214,7 @@ opj_bool dwt_decode_real_v2(opj_tcd_tilecomp_v2_t* restrict tilec, OPJ_UINT32 nu
 		}
 
 		if (rh & 0x03) {
-			int k;
+			OPJ_INT32 k;
 			j = rh & 0x03;
 			v4dwt_interleave_h(&h, aj, w, bufsize);
 			v4dwt_decode(&h);
@@ -1232,7 +1232,7 @@ opj_bool dwt_decode_real_v2(opj_tcd_tilecomp_v2_t* restrict tilec, OPJ_UINT32 nu
 
 		aj = (OPJ_FLOAT32*) tilec->data;
 		for(j = rw; j > 3; j -= 4){
-			OPJ_INT32 k;
+			OPJ_UINT32 k;
 
 			v4dwt_interleave_v(&v, aj, w, 4);
 			v4dwt_decode(&v);
@@ -1244,7 +1244,7 @@ opj_bool dwt_decode_real_v2(opj_tcd_tilecomp_v2_t* restrict tilec, OPJ_UINT32 nu
 		}
 
 		if (rw & 0x03){
-			OPJ_INT32 k;
+			OPJ_UINT32 k;
 
 			j = rw & 0x03;
 
