@@ -400,21 +400,15 @@ static opj_bool opj_j2k_read_soc(   opj_j2k_v2_t *p_j2k,
                                     opj_event_mgr_t * p_manager );
 
 /**
-Write the SIZ marker (image and tile size)
-@param j2k J2K handle
-*/
-static void j2k_write_siz(opj_j2k_t *j2k);
-
-/**
  * Writes the SIZ marker (image and tile size)
  *
  * @param	p_stream			the stream to write data to.
  * @param	p_j2k			J2K codec.
  * @param	p_manager	the user event manager.
 */
-static opj_bool j2k_write_siz_v2(	opj_j2k_v2_t *p_j2k,
-									struct opj_stream_private *p_stream,
-									struct opj_event_mgr * p_manager );
+static opj_bool opj_j2k_write_siz(	opj_j2k_v2_t *p_j2k,
+							        opj_stream_private_t *p_stream,
+							        opj_event_mgr_t * p_manager );
 
 /**
  * Reads a SIZ marker (image and tile size)
@@ -2005,40 +1999,6 @@ static opj_bool opj_j2k_read_soc(   opj_j2k_v2_t *p_j2k,
 	return OPJ_TRUE;
 }
 
-static void j2k_write_siz(opj_j2k_t *j2k) {
-	OPJ_UINT32 i;
-	int lenp, len;
-
-	opj_cio_t *cio = j2k->cio;
-	opj_image_t *image = j2k->image;
-	opj_cp_t *cp = j2k->cp;
-
-	cio_write(cio, J2K_MS_SIZ, 2);	/* SIZ */
-	lenp = cio_tell(cio);
-	cio_skip(cio, 2);
-	cio_write(cio, cp->rsiz, 2);			/* Rsiz (capabilities) */
-	cio_write(cio, image->x1, 4);	/* Xsiz */
-	cio_write(cio, image->y1, 4);	/* Ysiz */
-	cio_write(cio, image->x0, 4);	/* X0siz */
-	cio_write(cio, image->y0, 4);	/* Y0siz */
-	cio_write(cio, cp->tdx, 4);		/* XTsiz */
-	cio_write(cio, cp->tdy, 4);		/* YTsiz */
-	cio_write(cio, cp->tx0, 4);		/* XT0siz */
-	cio_write(cio, cp->ty0, 4);		/* YT0siz */
-	cio_write(cio, image->numcomps, 2);	/* Csiz */
-	for (i = 0; i < image->numcomps; i++) {
-		cio_write(cio, image->comps[i].prec - 1 + (image->comps[i].sgnd << 7), 1);	/* Ssiz_i */
-		cio_write(cio, image->comps[i].dx, 1);	/* XRsiz_i */
-		cio_write(cio, image->comps[i].dy, 1);	/* YRsiz_i */
-	}
-	len = cio_tell(cio) - lenp;
-	cio_seek(cio, lenp);
-	cio_write(cio, len, 2);		/* Lsiz */
-	cio_seek(cio, lenp + len);
-	
-	if(j2k->cstr_info)
-	  j2k_add_mhmarker(j2k->cstr_info, J2K_MS_SIZ, lenp, len);
-}
 
 /**
  * Writes the SIZ marker (image and tile size)
@@ -2047,9 +2007,9 @@ static void j2k_write_siz(opj_j2k_t *j2k) {
  * @param	p_j2k			J2K codec.
  * @param	p_manager	the user event manager.
 */
-opj_bool j2k_write_siz_v2(	opj_j2k_v2_t *p_j2k,
-							struct opj_stream_private *p_stream,
-							struct opj_event_mgr * p_manager )
+opj_bool opj_j2k_write_siz(	opj_j2k_v2_t *p_j2k,
+							opj_stream_private_t *p_stream,
+							opj_event_mgr_t * p_manager )
 {
 	OPJ_UINT32 i;
 	OPJ_UINT32 l_size_len;
@@ -10812,7 +10772,7 @@ void opj_j2k_setup_header_writting (opj_j2k_v2_t *p_j2k)
 
 	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)j2k_init_info );
 	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_soc );
-	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)j2k_write_siz_v2 );
+	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_siz );
 	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)j2k_write_cod_v2 );
 	opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)j2k_write_qcd_v2 );
 
