@@ -371,7 +371,7 @@ OPJ_OFF_T opj_stream_read_skip (opj_stream_private_t * p_stream, OPJ_OFF_T p_siz
  * @param		p_stream	the stream to skip data from.
  * @param		p_size		the number of bytes to skip.
  * @param		p_event_mgr	the user event manager to be notified of special events.
- * @return		the number of bytes skipped, or -1 if an error occured.
+ * @return		OPJ_TRUE if success, or OPJ_FALSE if an error occured.
  */
 opj_bool opj_stream_read_seek (opj_stream_private_t * p_stream, OPJ_OFF_T p_size, struct opj_event_mgr * p_event_mgr);
 
