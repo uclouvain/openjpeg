@@ -34,27 +34,6 @@
 
 /* ----------------------------------------------------------------------- */
 
-static opj_bool tcd_dc_level_shift_encode ( opj_tcd_v2_t *p_tcd );
-
-static opj_bool tcd_mct_encode ( opj_tcd_v2_t *p_tcd );
-
-static opj_bool tcd_dwt_encode ( opj_tcd_v2_t *p_tcd );
-
-static opj_bool tcd_t1_encode ( opj_tcd_v2_t *p_tcd );
-
-static opj_bool tcd_t2_encode (	opj_tcd_v2_t *p_tcd,
-								OPJ_BYTE * p_dest_data,
-								OPJ_UINT32 * p_data_written,
-								OPJ_UINT32 p_max_dest_size,
-								opj_codestream_info_t *p_cstr_info );
-
-static opj_bool tcd_rate_allocate_encode(	opj_tcd_v2_t *p_tcd,
-											OPJ_BYTE * p_dest_data,
-											OPJ_UINT32 p_max_dest_size,
-											opj_codestream_info_t *p_cstr_info );
-
-/* ----------------------------------------------------------------------- */
-
 
 void tcd_dump(FILE *fd, opj_tcd_t *tcd, opj_tcd_image_t * img) {
 	int tileno, compno, resno, bandno, precno;/*, cblkno;*/
@@ -117,55 +96,64 @@ void tcd_dump(FILE *fd, opj_tcd_t *tcd, opj_tcd_image_t * img) {
 /**
 * Allocates memory for a decoding code block.
 */
-static opj_bool tcd_code_block_dec_allocate (opj_tcd_cblk_dec_v2_t * p_code_block);
+static opj_bool opj_tcd_code_block_dec_allocate (opj_tcd_cblk_dec_v2_t * p_code_block);
 
 /**
  * Deallocates the decoding data of the given precinct.
  */
-static void tcd_code_block_dec_deallocate (opj_tcd_precinct_v2_t * p_precinct);
+static void opj_tcd_code_block_dec_deallocate (opj_tcd_precinct_v2_t * p_precinct);
 
 /**
  * Allocates memory for an encoding code block.
  */
-static opj_bool tcd_code_block_enc_allocate (opj_tcd_cblk_enc_v2_t * p_code_block);
+static opj_bool opj_tcd_code_block_enc_allocate (opj_tcd_cblk_enc_v2_t * p_code_block);
 
 /**
  * Deallocates the encoding data of the given precinct.
  */
-static void tcd_code_block_enc_deallocate (opj_tcd_precinct_v2_t * p_precinct);
+static void opj_tcd_code_block_enc_deallocate (opj_tcd_precinct_v2_t * p_precinct);
 
 
 /**
 Free the memory allocated for encoding
 @param tcd TCD handle
 */
-static void tcd_free_tile(opj_tcd_v2_t *tcd);
+static void opj_tcd_free_tile(opj_tcd_v2_t *tcd);
 
 
-opj_bool tcd_t2_decode (
-					opj_tcd_v2_t *p_tcd,
-					OPJ_BYTE * p_src_data,
-					OPJ_UINT32 * p_data_read,
-					OPJ_UINT32 p_max_src_size,
-					opj_codestream_index_t *p_cstr_index
-					);
+static opj_bool opj_tcd_t2_decode ( opj_tcd_v2_t *p_tcd,
+                                    OPJ_BYTE * p_src_data,
+                                    OPJ_UINT32 * p_data_read,
+                                    OPJ_UINT32 p_max_src_size,
+                                    opj_codestream_index_t *p_cstr_index );
 
-opj_bool tcd_t1_decode (
-					  opj_tcd_v2_t *p_tcd
-					 );
+static opj_bool opj_tcd_t1_decode (opj_tcd_v2_t *p_tcd);
 
-opj_bool tcd_dwt_decode (
-					  opj_tcd_v2_t *p_tcd
-					 );
+static opj_bool opj_tcd_dwt_decode (opj_tcd_v2_t *p_tcd);
 
-opj_bool tcd_mct_decode (
-					  opj_tcd_v2_t *p_tcd
-					 );
+static opj_bool opj_tcd_mct_decode (opj_tcd_v2_t *p_tcd);
 
-opj_bool tcd_dc_level_shift_decode (
-						 opj_tcd_v2_t *p_tcd
-						 );
+static opj_bool opj_tcd_dc_level_shift_decode (opj_tcd_v2_t *p_tcd);
 
+
+static opj_bool opj_tcd_dc_level_shift_encode ( opj_tcd_v2_t *p_tcd );
+
+static opj_bool opj_tcd_mct_encode ( opj_tcd_v2_t *p_tcd );
+
+static opj_bool opj_tcd_dwt_encode ( opj_tcd_v2_t *p_tcd );
+
+static opj_bool opj_tcd_t1_encode ( opj_tcd_v2_t *p_tcd );
+
+static opj_bool opj_tcd_t2_encode (	opj_tcd_v2_t *p_tcd,
+								    OPJ_BYTE * p_dest_data,
+								    OPJ_UINT32 * p_data_written,
+								    OPJ_UINT32 p_max_dest_size,
+								    opj_codestream_info_t *p_cstr_info );
+
+static opj_bool opj_tcd_rate_allocate_encode(	opj_tcd_v2_t *p_tcd,
+											OPJ_BYTE * p_dest_data,
+											OPJ_UINT32 p_max_dest_size,
+											opj_codestream_info_t *p_cstr_info );
 
 /* ----------------------------------------------------------------------- */
 
@@ -606,7 +594,7 @@ Destroy a previously created TCD handle
 */
 void opj_tcd_destroy(opj_tcd_v2_t *tcd) {
 	if (tcd) {
-		tcd_free_tile(tcd);
+		opj_tcd_free_tile(tcd);
 
 		if (tcd->tcd_image) {
 			opj_free(tcd->tcd_image);
@@ -983,15 +971,15 @@ opj_bool FUNCTION (	opj_tcd_v2_t *p_tcd,										\
 }																				\
 
 
-MACRO_TCD_ALLOCATE(opj_tcd_init_encode_tile, opj_tcd_cblk_enc_v2_t, 1.f, enc, tcd_code_block_enc_allocate)
-MACRO_TCD_ALLOCATE(opj_tcd_init_decode_tile, opj_tcd_cblk_dec_v2_t, 0.5f, dec, tcd_code_block_dec_allocate)
+MACRO_TCD_ALLOCATE(opj_tcd_init_encode_tile, opj_tcd_cblk_enc_v2_t, 1.f, enc, opj_tcd_code_block_enc_allocate)
+MACRO_TCD_ALLOCATE(opj_tcd_init_decode_tile, opj_tcd_cblk_dec_v2_t, 0.5f, dec, opj_tcd_code_block_dec_allocate)
 
 #undef MACRO_TCD_ALLOCATE
 
 /**
  * Allocates memory for an encoding code block.
  */
-opj_bool tcd_code_block_enc_allocate (opj_tcd_cblk_enc_v2_t * p_code_block)
+opj_bool opj_tcd_code_block_enc_allocate (opj_tcd_cblk_enc_v2_t * p_code_block)
 {
 	if (! p_code_block->data) {
 
@@ -1024,7 +1012,7 @@ opj_bool tcd_code_block_enc_allocate (opj_tcd_cblk_enc_v2_t * p_code_block)
 /**
  * Allocates memory for a decoding code block.
  */
-opj_bool tcd_code_block_dec_allocate (opj_tcd_cblk_dec_v2_t * p_code_block)
+opj_bool opj_tcd_code_block_dec_allocate (opj_tcd_cblk_dec_v2_t * p_code_block)
 {
 	OPJ_UINT32 l_seg_size;
 
@@ -1122,31 +1110,31 @@ opj_bool opj_tcd_encode_tile(   opj_tcd_v2_t *p_tcd,
 
 		/* FIXME _ProfStart(PGROUP_DC_SHIFT); */
 		/*---------------TILE-------------------*/
-		if (! tcd_dc_level_shift_encode(p_tcd)) {
+		if (! opj_tcd_dc_level_shift_encode(p_tcd)) {
 			return OPJ_FALSE;
 		}
 		/* FIXME _ProfStop(PGROUP_DC_SHIFT); */
 
 		/* FIXME _ProfStart(PGROUP_MCT); */
-		if (! tcd_mct_encode(p_tcd)) {
+		if (! opj_tcd_mct_encode(p_tcd)) {
 			return OPJ_FALSE;
 		}
 		/* FIXME _ProfStop(PGROUP_MCT); */
 
 		/* FIXME _ProfStart(PGROUP_DWT); */
-		if (! tcd_dwt_encode(p_tcd)) {
+		if (! opj_tcd_dwt_encode(p_tcd)) {
 			return OPJ_FALSE;
 		}
 		/* FIXME  _ProfStop(PGROUP_DWT); */
 
 		/* FIXME  _ProfStart(PGROUP_T1); */
-		if (! tcd_t1_encode(p_tcd)) {
+		if (! opj_tcd_t1_encode(p_tcd)) {
 			return OPJ_FALSE;
 		}
 		/* FIXME _ProfStop(PGROUP_T1); */
 
 		/* FIXME _ProfStart(PGROUP_RATE); */
-		if (! tcd_rate_allocate_encode(p_tcd,p_dest,p_max_length,p_cstr_info)) {
+		if (! opj_tcd_rate_allocate_encode(p_tcd,p_dest,p_max_length,p_cstr_info)) {
 			return OPJ_FALSE;
 		}
 		/* FIXME _ProfStop(PGROUP_RATE); */
@@ -1160,7 +1148,7 @@ opj_bool opj_tcd_encode_tile(   opj_tcd_v2_t *p_tcd,
 	}
 	/* FIXME _ProfStart(PGROUP_T2); */
 
-	if (! tcd_t2_encode(p_tcd,p_dest,p_data_written,p_max_length,p_cstr_info)) {
+	if (! opj_tcd_t2_encode(p_tcd,p_dest,p_data_written,p_max_length,p_cstr_info)) {
 		return OPJ_FALSE;
 	}
 	/* FIXME _ProfStop(PGROUP_T2); */
@@ -1208,7 +1196,7 @@ opj_bool opj_tcd_decode_tile(   opj_tcd_v2_t *p_tcd,
 	/* FIXME _ProfStart(PGROUP_T2); */
 	l_data_read = 0;
 	if
-		(! tcd_t2_decode(p_tcd, p_src, &l_data_read, p_max_length, p_cstr_index))
+		(! opj_tcd_t2_decode(p_tcd, p_src, &l_data_read, p_max_length, p_cstr_index))
 	{
 		return OPJ_FALSE;
 	}
@@ -1218,7 +1206,7 @@ opj_bool opj_tcd_decode_tile(   opj_tcd_v2_t *p_tcd,
 
 	/* FIXME _ProfStart(PGROUP_T1); */
 	if
-		(! tcd_t1_decode(p_tcd))
+		(! opj_tcd_t1_decode(p_tcd))
 	{
 		return OPJ_FALSE;
 	}
@@ -1228,7 +1216,7 @@ opj_bool opj_tcd_decode_tile(   opj_tcd_v2_t *p_tcd,
 
 	/* FIXME _ProfStart(PGROUP_DWT); */
 	if
-		(! tcd_dwt_decode(p_tcd))
+		(! opj_tcd_dwt_decode(p_tcd))
 	{
 		return OPJ_FALSE;
 	}
@@ -1237,7 +1225,7 @@ opj_bool opj_tcd_decode_tile(   opj_tcd_v2_t *p_tcd,
 	/*----------------MCT-------------------*/
 	/* FIXME _ProfStart(PGROUP_MCT); */
 	if
-		(! tcd_mct_decode(p_tcd))
+		(! opj_tcd_mct_decode(p_tcd))
 	{
 		return OPJ_FALSE;
 	}
@@ -1245,7 +1233,7 @@ opj_bool opj_tcd_decode_tile(   opj_tcd_v2_t *p_tcd,
 
 	/* FIXME _ProfStart(PGROUP_DC_SHIFT); */
 	if
-		(! tcd_dc_level_shift_decode(p_tcd))
+		(! opj_tcd_dc_level_shift_decode(p_tcd))
 	{
 		return OPJ_FALSE;
 	}
@@ -1371,7 +1359,7 @@ opj_bool opj_tcd_update_tile_data ( opj_tcd_v2_t *p_tcd,
 
 
 
-void tcd_free_tile(opj_tcd_v2_t *p_tcd)
+void opj_tcd_free_tile(opj_tcd_v2_t *p_tcd)
 {
 	OPJ_UINT32 compno, resno, bandno, precno;
 	opj_tcd_tile_v2_t *l_tile = 00;
@@ -1391,10 +1379,10 @@ void tcd_free_tile(opj_tcd_v2_t *p_tcd)
 	}
 
 	if (p_tcd->m_is_decoder) {
-		l_tcd_code_block_deallocate = tcd_code_block_dec_deallocate;
+		l_tcd_code_block_deallocate = opj_tcd_code_block_dec_deallocate;
 	}
 	else {
-		l_tcd_code_block_deallocate = tcd_code_block_enc_deallocate;
+		l_tcd_code_block_deallocate = opj_tcd_code_block_enc_deallocate;
 	}
 
 	l_tile = p_tcd->tcd_image->tiles;
@@ -1451,13 +1439,12 @@ void tcd_free_tile(opj_tcd_v2_t *p_tcd)
 }
 
 
-opj_bool tcd_t2_decode (
-					opj_tcd_v2_t *p_tcd,
-					OPJ_BYTE * p_src_data,
-					OPJ_UINT32 * p_data_read,
-					OPJ_UINT32 p_max_src_size,
-					opj_codestream_index_t *p_cstr_index
-					)
+opj_bool opj_tcd_t2_decode (opj_tcd_v2_t *p_tcd,
+                            OPJ_BYTE * p_src_data,
+                            OPJ_UINT32 * p_data_read,
+                            OPJ_UINT32 p_max_src_size,
+                            opj_codestream_index_t *p_cstr_index
+                            )
 {
 	opj_t2_v2_t * l_t2;
 
@@ -1484,7 +1471,7 @@ opj_bool tcd_t2_decode (
 	return OPJ_TRUE;
 }
 
-opj_bool tcd_t1_decode ( opj_tcd_v2_t *p_tcd )
+opj_bool opj_tcd_t1_decode ( opj_tcd_v2_t *p_tcd )
 {
 	OPJ_UINT32 compno;
 	opj_t1_t * l_t1;
@@ -1511,7 +1498,7 @@ opj_bool tcd_t1_decode ( opj_tcd_v2_t *p_tcd )
 }
 
 
-opj_bool tcd_dwt_decode ( opj_tcd_v2_t *p_tcd )
+opj_bool opj_tcd_dwt_decode ( opj_tcd_v2_t *p_tcd )
 {
 	OPJ_UINT32 compno;
 	opj_tcd_tile_v2_t * l_tile = p_tcd->tcd_image->tiles;
@@ -1551,7 +1538,7 @@ opj_bool tcd_dwt_decode ( opj_tcd_v2_t *p_tcd )
 
 	return OPJ_TRUE;
 }
-opj_bool tcd_mct_decode ( opj_tcd_v2_t *p_tcd )
+opj_bool opj_tcd_mct_decode ( opj_tcd_v2_t *p_tcd )
 {
 	opj_tcd_tile_v2_t * l_tile = p_tcd->tcd_image->tiles;
 	opj_tcp_v2_t * l_tcp = p_tcd->tcp;
@@ -1622,7 +1609,7 @@ opj_bool tcd_mct_decode ( opj_tcd_v2_t *p_tcd )
 }
 
 
-opj_bool tcd_dc_level_shift_decode ( opj_tcd_v2_t *p_tcd )
+opj_bool opj_tcd_dc_level_shift_decode ( opj_tcd_v2_t *p_tcd )
 {
 	OPJ_UINT32 compno;
 	opj_tcd_tilecomp_v2_t * l_tile_comp = 00;
@@ -1692,7 +1679,7 @@ opj_bool tcd_dc_level_shift_decode ( opj_tcd_v2_t *p_tcd )
 /**
  * Deallocates the encoding data of the given precinct.
  */
-void tcd_code_block_dec_deallocate (opj_tcd_precinct_v2_t * p_precinct)
+void opj_tcd_code_block_dec_deallocate (opj_tcd_precinct_v2_t * p_precinct)
 {
 	OPJ_UINT32 cblkno , l_nb_code_blocks;
 
@@ -1730,7 +1717,7 @@ void tcd_code_block_dec_deallocate (opj_tcd_precinct_v2_t * p_precinct)
 /**
  * Deallocates the encoding data of the given precinct.
  */
-void tcd_code_block_enc_deallocate (opj_tcd_precinct_v2_t * p_precinct)
+void opj_tcd_code_block_enc_deallocate (opj_tcd_precinct_v2_t * p_precinct)
 {	
 	OPJ_UINT32 cblkno , l_nb_code_blocks;
 
@@ -1791,7 +1778,7 @@ OPJ_UINT32 opj_tcd_get_encoded_tile_size ( opj_tcd_v2_t *p_tcd )
 	return l_data_size;
 }
 		
-opj_bool tcd_dc_level_shift_encode ( opj_tcd_v2_t *p_tcd )
+opj_bool opj_tcd_dc_level_shift_encode ( opj_tcd_v2_t *p_tcd )
 {
 	OPJ_UINT32 compno;
 	opj_tcd_tilecomp_v2_t * l_tile_comp = 00;
@@ -1833,7 +1820,7 @@ opj_bool tcd_dc_level_shift_encode ( opj_tcd_v2_t *p_tcd )
 	return OPJ_TRUE;
 }
 
-opj_bool tcd_mct_encode ( opj_tcd_v2_t *p_tcd )
+opj_bool opj_tcd_mct_encode ( opj_tcd_v2_t *p_tcd )
 {
 	opj_tcd_tile_v2_t * l_tile = p_tcd->tcd_image->tiles;
 	opj_tcd_tilecomp_v2_t * l_tile_comp = p_tcd->tcd_image->tiles->comps;
@@ -1888,7 +1875,7 @@ opj_bool tcd_mct_encode ( opj_tcd_v2_t *p_tcd )
 	return OPJ_TRUE;
 }
 
-opj_bool tcd_dwt_encode ( opj_tcd_v2_t *p_tcd )
+opj_bool opj_tcd_dwt_encode ( opj_tcd_v2_t *p_tcd )
 {
 	opj_tcd_tile_v2_t * l_tile = p_tcd->tcd_image->tiles;
 	opj_tcd_tilecomp_v2_t * l_tile_comp = p_tcd->tcd_image->tiles->comps;
@@ -1914,7 +1901,7 @@ opj_bool tcd_dwt_encode ( opj_tcd_v2_t *p_tcd )
 	return OPJ_TRUE;
 }
 
-opj_bool tcd_t1_encode ( opj_tcd_v2_t *p_tcd )
+opj_bool opj_tcd_t1_encode ( opj_tcd_v2_t *p_tcd )
 {
 	opj_t1_t * l_t1;
 	const OPJ_FLOAT64 * l_mct_norms;
@@ -1948,7 +1935,7 @@ opj_bool tcd_t1_encode ( opj_tcd_v2_t *p_tcd )
 	return OPJ_TRUE;
 }
 
-opj_bool tcd_t2_encode (opj_tcd_v2_t *p_tcd,
+opj_bool opj_tcd_t2_encode (opj_tcd_v2_t *p_tcd,
 						OPJ_BYTE * p_dest_data,
 						OPJ_UINT32 * p_data_written,
 						OPJ_UINT32 p_max_dest_size,
@@ -1986,10 +1973,10 @@ opj_bool tcd_t2_encode (opj_tcd_v2_t *p_tcd,
 }
 
 
-opj_bool tcd_rate_allocate_encode(	opj_tcd_v2_t *p_tcd,
-									OPJ_BYTE * p_dest_data,
-									OPJ_UINT32 p_max_dest_size,
-									opj_codestream_info_t *p_cstr_info )
+opj_bool opj_tcd_rate_allocate_encode(	opj_tcd_v2_t *p_tcd,
+									    OPJ_BYTE * p_dest_data,
+									    OPJ_UINT32 p_max_dest_size,
+									    opj_codestream_info_t *p_cstr_info )
 {
 	opj_cp_v2_t * l_cp = p_tcd->cp;
 	OPJ_UINT32 l_nb_written = 0;
