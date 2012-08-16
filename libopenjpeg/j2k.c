@@ -1119,7 +1119,7 @@ static opj_bool opj_j2k_check_poc_val(	const opj_poc_t *p_pocs,
  *
  * @return		the number of tile parts.
  */
-static OPJ_UINT32 j2k_get_num_tp_v2( opj_cp_v2_t *cp, OPJ_UINT32 pino, OPJ_UINT32 tileno);
+static OPJ_UINT32 opj_j2k_get_num_tp( opj_cp_v2_t *cp, OPJ_UINT32 pino, OPJ_UINT32 tileno);
 
 /**
  * Calculates the total number of tile parts needed by the encoder to
@@ -1605,40 +1605,6 @@ opj_bool opj_j2k_check_poc_val(	const opj_poc_t *p_pocs,
 }
 
 /* ----------------------------------------------------------------------- */
-static int j2k_get_num_tp(opj_cp_t *cp,int pino,int tileno){
-	char *prog;
-	int i;
-	int tpnum=1,tpend=0;
-	opj_tcp_t *tcp = &cp->tcps[tileno];
-	prog = j2k_convert_progression_order(tcp->prg);
-	
-	if(cp->tp_on == 1){
-		for(i=0;i<4;i++){
-			if(tpend!=1){
-				if( cp->tp_flag == prog[i] ){
-					tpend=1;cp->tp_pos=i;
-				}
-				switch(prog[i]){
-				case 'C':
-					tpnum= tpnum * tcp->pocs[pino].compE;
-					break;
-				case 'R':
-					tpnum= tpnum * tcp->pocs[pino].resE;
-					break;
-				case 'P':
-					tpnum= tpnum * tcp->pocs[pino].prcE;
-					break;
-				case 'L':
-					tpnum= tpnum * tcp->pocs[pino].layE;
-					break;
-				}
-			}
-		}
-	}else{
-		tpnum=1;
-	}
-	return tpnum;
-}
 
 /**
  * Gets the number of tile parts used for the given change of progression (if any) and the given tile.
@@ -1649,7 +1615,7 @@ static int j2k_get_num_tp(opj_cp_t *cp,int pino,int tileno){
  *
  * @return		the number of tile parts.
  */
-OPJ_UINT32 j2k_get_num_tp_v2(opj_cp_v2_t *cp, OPJ_UINT32 pino, OPJ_UINT32 tileno)
+OPJ_UINT32 opj_j2k_get_num_tp(opj_cp_v2_t *cp, OPJ_UINT32 pino, OPJ_UINT32 tileno)
 {
 	const OPJ_CHAR *prog = 00;
 	OPJ_UINT32 i;
@@ -1753,7 +1719,7 @@ opj_bool opj_j2k_calculate_tp(  opj_j2k_v2_t *p_j2k,
 
 			for (pino = 0; pino <= tcp->numpocs; ++pino)
 			{
-				OPJ_UINT32 tp_num = j2k_get_num_tp_v2(cp,pino,tileno);
+				OPJ_UINT32 tp_num = opj_j2k_get_num_tp(cp,pino,tileno);
 
 				*p_nb_tiles = *p_nb_tiles + tp_num;
 
@@ -1782,7 +1748,7 @@ opj_bool opj_j2k_calculate_tp(  opj_j2k_v2_t *p_j2k,
 			pi_update_encoding_parameters(image,cp,tileno);
 
 			for (pino = 0; pino <= tcp->numpocs; ++pino) {
-				OPJ_UINT32 tp_num = j2k_get_num_tp_v2(cp,pino,tileno);
+				OPJ_UINT32 tp_num = opj_j2k_get_num_tp(cp,pino,tileno);
 
 				*p_nb_tiles = *p_nb_tiles + tp_num;
 
@@ -10490,7 +10456,7 @@ opj_bool opj_j2k_write_all_tile_parts(	opj_j2k_v2_t *p_j2k,
 	l_tcp = l_cp->tcps + p_j2k->m_current_tile_number;
 
 	/*Get number of tile parts*/
-	tot_num_tp = j2k_get_num_tp_v2(l_cp,0,p_j2k->m_current_tile_number);
+	tot_num_tp = opj_j2k_get_num_tp(l_cp,0,p_j2k->m_current_tile_number);
 
 	for (tilepartno = 1; tilepartno < tot_num_tp ; ++tilepartno) {
 		p_j2k->m_specific_param.m_encoder.m_current_poc_tile_part_number = tilepartno;
@@ -10531,7 +10497,7 @@ opj_bool opj_j2k_write_all_tile_parts(	opj_j2k_v2_t *p_j2k,
 		l_tcd->cur_pino = pino;
 
 		/*Get number of tile parts*/
-		tot_num_tp = j2k_get_num_tp_v2(l_cp,pino,p_j2k->m_current_tile_number);
+		tot_num_tp = opj_j2k_get_num_tp(l_cp,pino,p_j2k->m_current_tile_number);
 		for (tilepartno = 0; tilepartno < tot_num_tp ; ++tilepartno) {
 			p_j2k->m_specific_param.m_encoder.m_current_poc_tile_part_number = tilepartno;
 			l_current_nb_bytes_written = 0;
