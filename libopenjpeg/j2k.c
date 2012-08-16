@@ -498,7 +498,7 @@ static void opj_j2k_write_coc_in_memory(opj_j2k_v2_t *p_j2k,
  *
  * @param	p_j2k	the jpeg2000 codec to use.
  */
-static OPJ_UINT32 j2k_get_max_coc_size(opj_j2k_v2_t *p_j2k);
+static OPJ_UINT32 opj_j2k_get_max_coc_size(opj_j2k_v2_t *p_j2k);
 
 
 /**
@@ -2745,7 +2745,7 @@ void opj_j2k_write_coc_in_memory(   opj_j2k_v2_t *p_j2k,
  *
  * @param	p_j2k	the jpeg2000 codec to use.
  */
-OPJ_UINT32 j2k_get_max_coc_size(opj_j2k_v2_t *p_j2k)
+OPJ_UINT32 opj_j2k_get_max_coc_size(opj_j2k_v2_t *p_j2k)
 {
 	OPJ_UINT32 i,j;
 	OPJ_UINT32 l_nb_comp;
@@ -3093,7 +3093,7 @@ void j2k_write_qcc_in_memory(	opj_j2k_v2_t *p_j2k,
  */
 OPJ_UINT32 j2k_get_max_qcc_size (opj_j2k_v2_t *p_j2k)
 {
-	return j2k_get_max_coc_size(p_j2k);
+	return opj_j2k_get_max_coc_size(p_j2k);
 }
 
 /**
@@ -3407,7 +3407,7 @@ OPJ_UINT32 j2k_get_specific_header_sizes(opj_j2k_v2_t *p_j2k)
 	l_nb_bytes += j2k_get_max_toc_size(p_j2k);
 
 	if (p_j2k->m_cp.m_specific_param.m_enc.m_cinema == 0) {
-		l_coc_bytes = j2k_get_max_coc_size(p_j2k);
+		l_coc_bytes = opj_j2k_get_max_coc_size(p_j2k);
 		l_nb_bytes += l_nb_comps * l_coc_bytes;
 
 		l_qcc_bytes = j2k_get_max_qcc_size(p_j2k);
