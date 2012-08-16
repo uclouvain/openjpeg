@@ -897,25 +897,21 @@ static opj_bool opj_j2k_init_info(	opj_j2k_v2_t *p_j2k,
 
 /**
 Add main header marker information
-@param cstr_info Codestream information structure
-@param type marker type
-@param pos byte offset of marker segment
-@param len length of marker segment
+@param cstr_info    Codestream information structure
+@param type         marker type
+@param pos          byte offset of marker segment
+@param len          length of marker segment
  */
-static void j2k_add_mhmarker(opj_codestream_info_t *cstr_info, unsigned short int type, int pos, int len);
-
-static void j2k_add_mhmarker_v2(opj_codestream_index_t *cstr_index, OPJ_UINT32 type, OPJ_OFF_T pos, OPJ_UINT32 len) ;
+static void opj_j2k_add_mhmarker(opj_codestream_index_t *cstr_index, OPJ_UINT32 type, OPJ_OFF_T pos, OPJ_UINT32 len) ;
 /**
 Add tile header marker information
-@param tileno tile index number
-@param cstr_info Codestream information structure
-@param type marker type
-@param pos byte offset of marker segment
-@param len length of marker segment
+@param tileno       tile index number
+@param cstr_info    Codestream information structure
+@param type         marker type
+@param pos          byte offset of marker segment
+@param len          length of marker segment
  */
-static void j2k_add_tlmarker( int tileno, opj_codestream_info_t *cstr_info, unsigned short int type, int pos, int len);
-
-static void j2k_add_tlmarker_v2(OPJ_UINT32 tileno, opj_codestream_index_t *cstr_index, OPJ_UINT32 type, OPJ_OFF_T pos, OPJ_UINT32 len);
+static void opj_j2k_add_tlmarker(OPJ_UINT32 tileno, opj_codestream_index_t *cstr_index, OPJ_UINT32 type, OPJ_OFF_T pos, OPJ_UINT32 len);
 
 /**
  * Reads an unknown marker
@@ -1848,7 +1844,7 @@ static opj_bool opj_j2k_read_soc(   opj_j2k_v2_t *p_j2k,
 	opj_event_msg_v2(p_manager, EVT_INFO, "Start to read j2k main header (%d).\n", p_j2k->cstr_index->main_head_start);
 
 	/* Add the marker to the codestream index*/
-	j2k_add_mhmarker_v2(p_j2k->cstr_index, J2K_MS_SOC, p_j2k->cstr_index->main_head_start, 2);
+	opj_j2k_add_mhmarker(p_j2k->cstr_index, J2K_MS_SOC, p_j2k->cstr_index->main_head_start, 2);
 
 	return OPJ_TRUE;
 }
@@ -4402,7 +4398,7 @@ opj_bool opj_j2k_read_sod (opj_j2k_v2_t *p_j2k,
 		l_cstr_index->tile_index[p_j2k->m_current_tile_number].tp_index[l_current_tile_part].end_pos =
 				l_current_pos + p_j2k->m_specific_param.m_decoder.m_sot_length + 2;
 
-		j2k_add_tlmarker_v2(p_j2k->m_current_tile_number,
+		opj_j2k_add_tlmarker(p_j2k->m_current_tile_number,
 							l_cstr_index,
 							J2K_MS_SOD,
 							l_current_pos,
@@ -5186,7 +5182,7 @@ opj_bool opj_j2k_read_unk (	opj_j2k_v2_t *p_j2k,
 				if (l_marker_handler->id != J2K_MS_UNK) {
 					/* Add the marker to the codestream index*/
 					if (l_marker_handler->id != J2K_MS_SOT)
-						j2k_add_mhmarker_v2(p_j2k->cstr_index, J2K_MS_UNK,
+						opj_j2k_add_mhmarker(p_j2k->cstr_index, J2K_MS_UNK,
 											(OPJ_UINT32) opj_stream_tell(p_stream) - l_size_unk,
 											l_size_unk);
 					break; /* next marker is known and well located */
@@ -6419,26 +6415,7 @@ void opj_j2k_setup_encoder(	opj_j2k_v2_t *p_j2k,
 
 
 
-
-static void j2k_add_mhmarker(opj_codestream_info_t *cstr_info, unsigned short int type, int pos, int len)
-{
-	assert(cstr_info != 00);
-
-	/* expand the list? */
-	if ((cstr_info->marknum + 1) > cstr_info->maxmarknum) {
-		cstr_info->maxmarknum = 100 + (int) ((float) cstr_info->maxmarknum * 1.0F);
-		cstr_info->marker = (opj_marker_info_t*)opj_realloc(cstr_info->marker, cstr_info->maxmarknum);
-	}
-
-	/* add the marker */
-	cstr_info->marker[cstr_info->marknum].type = type;
-	cstr_info->marker[cstr_info->marknum].pos = pos;
-	cstr_info->marker[cstr_info->marknum].len = len;
-	cstr_info->marknum++;
-
-}
-
-static void j2k_add_mhmarker_v2(opj_codestream_index_t *cstr_index, OPJ_UINT32 type, OPJ_OFF_T pos, OPJ_UINT32 len)
+static void opj_j2k_add_mhmarker(opj_codestream_index_t *cstr_index, OPJ_UINT32 type, OPJ_OFF_T pos, OPJ_UINT32 len)
 {
 	assert(cstr_index != 00);
 
@@ -6456,28 +6433,7 @@ static void j2k_add_mhmarker_v2(opj_codestream_index_t *cstr_index, OPJ_UINT32 t
 
 }
 
-static void j2k_add_tlmarker( int tileno, opj_codestream_info_t *cstr_info, unsigned short int type, int pos, int len)
-{
-	opj_marker_info_t *marker;
-
-	assert(cstr_info != 00);
-
-	/* expand the list? */
-	if ((cstr_info->tile[tileno].marknum + 1) > cstr_info->tile[tileno].maxmarknum) {
-		cstr_info->tile[tileno].maxmarknum = 100 + (int) ((float) cstr_info->tile[tileno].maxmarknum * 1.0F);
-		cstr_info->tile[tileno].marker = (opj_marker_info_t*)opj_realloc(cstr_info->tile[tileno].marker, cstr_info->maxmarknum);
-	}
-
-	marker = &(cstr_info->tile[tileno].marker[cstr_info->tile[tileno].marknum]);
-
-	/* add the marker */
-	marker->type = type;
-	marker->pos = pos;
-	marker->len = len;
-	cstr_info->tile[tileno].marknum++;
-}
-
-static void j2k_add_tlmarker_v2(OPJ_UINT32 tileno, opj_codestream_index_t *cstr_index, OPJ_UINT32 type, OPJ_OFF_T pos, OPJ_UINT32 len)
+static void opj_j2k_add_tlmarker(OPJ_UINT32 tileno, opj_codestream_index_t *cstr_index, OPJ_UINT32 type, OPJ_OFF_T pos, OPJ_UINT32 len)
 {
 	assert(cstr_index != 00);
 	assert(cstr_index->tile_index != 00);
@@ -7005,7 +6961,7 @@ opj_bool opj_j2k_read_header_procedure(	opj_j2k_v2_t *p_j2k,
 		}
 
 		/* Add the marker to the codestream index*/
-		j2k_add_mhmarker_v2(p_j2k->cstr_index,
+		opj_j2k_add_mhmarker(p_j2k->cstr_index,
 							l_marker_handler->id,
 							(OPJ_UINT32) opj_stream_tell(p_stream) - l_marker_size - 4,
 							l_marker_size + 4 );
@@ -7553,7 +7509,7 @@ opj_bool opj_j2k_read_tile_header(	opj_j2k_v2_t * p_j2k,
 			}
 
 			/* Add the marker to the codestream index*/
-			j2k_add_tlmarker_v2(p_j2k->m_current_tile_number,
+			opj_j2k_add_tlmarker(p_j2k->m_current_tile_number,
 								p_j2k->cstr_index,
 								l_marker_handler->id,
 								(OPJ_UINT32) opj_stream_tell(p_stream) - l_marker_size - 4,
