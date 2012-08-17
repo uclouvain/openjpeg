@@ -85,14 +85,14 @@ in T1.C are used by some function in TCD.C.
 
 /* ----------------------------------------------------------------------- */
 
-typedef short flag_t;
+typedef OPJ_INT16 flag_t;
 
 /**
 Tier-1 coding (coding of code-block coefficients)
 */
 typedef struct opj_t1 {
 	/** codec context */
-	opj_common_ptr cinfo;
+	opj_common_ptr cinfo; // TODO MSD : TO BE REMOVED
 
 	/** MQC component */
 	opj_mqc_t *mqc;
@@ -113,30 +113,17 @@ typedef struct opj_t1 {
 /** @name Exported functions */
 /*@{*/
 /* ----------------------------------------------------------------------- */
-/**
-Create a new T1 handle 
-and initialize the look-up tables of the Tier-1 coder/decoder
-@return Returns a new T1 handle if successful, returns NULL otherwise
-@see t1_init_luts
-*/
-opj_t1_t* t1_create(opj_common_ptr cinfo);
-/**
-Destroy a previously created T1 handle
-@param t1 T1 handle to destroy
-*/
-void t1_destroy(opj_t1_t *t1);
+
 /**
 Encode the code-blocks of a tile
 @param t1 T1 handle
 @param tile The tile to encode
 @param tcp Tile coding parameters
 */
-void t1_encode_cblks(opj_t1_t *t1, opj_tcd_tile_t *tile, opj_tcp_t *tcp);
-
-opj_bool t1_encode_cblks_v2(opj_t1_t *t1,
-							struct opj_tcd_tile_v2 *tile,
-							struct opj_tcp_v2 *tcp,
-							const OPJ_FLOAT64 * mct_norms);
+opj_bool opj_t1_encode_cblks(   opj_t1_t *t1,
+                                opj_tcd_tile_v2_t *tile,
+                                opj_tcp_v2_t *tcp,
+                                const OPJ_FLOAT64 * mct_norms);
 
 /**
 Decode the code-blocks of a tile
@@ -144,13 +131,9 @@ Decode the code-blocks of a tile
 @param tilec The tile to decode
 @param tccp Tile coding parameters
 */
-void t1_decode_cblks(opj_t1_t* t1, opj_tcd_tilecomp_t* tilec, opj_tccp_t* tccp);
-
-
-void t1_decode_cblks_v2(
-		opj_t1_t* t1,
-		opj_tcd_tilecomp_v2_t* tilec,
-		opj_tccp_t* tccp);
+void opj_t1_decode_cblks(   opj_t1_t* t1,
+                            opj_tcd_tilecomp_v2_t* tilec,
+                            opj_tccp_t* tccp);
 
 
 
@@ -159,14 +142,14 @@ void t1_decode_cblks_v2(
  * and initializes the look-up tables of the Tier-1 coder/decoder
  * @return a new T1 handle if successful, returns NULL otherwise
 */
-opj_t1_t* t1_create_v2();
+opj_t1_t* opj_t1_create();
 
 /**
  * Destroys a previously created T1 handle
  *
  * @param p_t1 Tier 1 handle to destroy
 */
-void t1_destroy_v2(opj_t1_t *p_t1);
+void opj_t1_destroy(opj_t1_t *p_t1);
 /* ----------------------------------------------------------------------- */
 /*@}*/
 

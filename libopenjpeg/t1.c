@@ -1482,35 +1482,6 @@ static void t1_decode_cblk(
 
 /* ----------------------------------------------------------------------- */
 
-opj_t1_t* t1_create(opj_common_ptr cinfo) {
-	opj_t1_t *t1 = (opj_t1_t*) opj_malloc(sizeof(opj_t1_t));
-	if(!t1)
-		return NULL;
-
-	t1->cinfo = cinfo;
-	/* create MQC and RAW handles */
-	t1->mqc = mqc_create();
-	t1->raw = raw_create();
-
-	t1->data=NULL;
-	t1->flags=NULL;
-	t1->datasize=0;
-	t1->flagssize=0;
-
-	return t1;
-}
-
-void t1_destroy(opj_t1_t *t1) {
-	if(t1) {
-		/* destroy MQC and RAW handles */
-		mqc_destroy(t1->mqc);
-		raw_destroy(t1->raw);
-		opj_aligned_free(t1->data);
-		opj_aligned_free(t1->flags);
-		opj_free(t1);
-	}
-}
-
 void t1_encode_cblks(
 		opj_t1_t *t1,
 		opj_tcd_tile_t *tile,
@@ -1606,96 +1577,6 @@ void t1_encode_cblks(
 	} /* compno  */
 }
 
-void t1_decode_cblks(
-		opj_t1_t* t1,
-		opj_tcd_tilecomp_t* tilec,
-		opj_tccp_t* tccp)
-{
-	int resno, bandno, precno, cblkno;
-
-	int tile_w = tilec->x1 - tilec->x0;
-
-	for (resno = 0; resno < tilec->numresolutions; ++resno) {
-		opj_tcd_resolution_t* res = &tilec->resolutions[resno];
-
-		for (bandno = 0; bandno < res->numbands; ++bandno) {
-			opj_tcd_band_t* restrict band = &res->bands[bandno];
-
-			for (precno = 0; precno < res->pw * res->ph; ++precno) {
-				opj_tcd_precinct_t* precinct = &band->precincts[precno];
-
-				for (cblkno = 0; cblkno < precinct->cw * precinct->ch; ++cblkno) {
-					opj_tcd_cblk_dec_t* cblk = &precinct->cblks.dec[cblkno];
-					int* restrict datap;
-					int cblk_w, cblk_h;
-					int x, y;
-					int i, j;
-
-					t1_decode_cblk(
-							t1,
-							cblk,
-							band->bandno,
-							tccp->roishift,
-							tccp->cblksty);
-
-					x = cblk->x0 - band->x0;
-					y = cblk->y0 - band->y0;
-					if (band->bandno & 1) {
-						opj_tcd_resolution_t* pres = &tilec->resolutions[resno - 1];
-						x += pres->x1 - pres->x0;
-					}
-					if (band->bandno & 2) {
-						opj_tcd_resolution_t* pres = &tilec->resolutions[resno - 1];
-						y += pres->y1 - pres->y0;
-					}
-
-					datap=t1->data;
-					cblk_w = t1->w;
-					cblk_h = t1->h;
-
-					if (tccp->roishift) {
-						int thresh = 1 << tccp->roishift;
-						for (j = 0; j < cblk_h; ++j) {
-							for (i = 0; i < cblk_w; ++i) {
-								int val = datap[(j * cblk_w) + i];
-								int mag = abs(val);
-								if (mag >= thresh) {
-									mag >>= tccp->roishift;
-									datap[(j * cblk_w) + i] = val < 0 ? -mag : mag;
-								}
-							}
-						}
-					}
-
-					if (tccp->qmfbid == 1) {
-						int* restrict tiledp = &tilec->data[(y * tile_w) + x];
-						for (j = 0; j < cblk_h; ++j) {
-							for (i = 0; i < cblk_w; ++i) {
-								int tmp = datap[(j * cblk_w) + i];
-								((int*)tiledp)[(j * tile_w) + i] = tmp / 2;
-							}
-						}
-					} else {		/* if (tccp->qmfbid == 0) */
-						float* restrict tiledp = (float*) &tilec->data[(y * tile_w) + x];
-						for (j = 0; j < cblk_h; ++j) {
-							float* restrict tiledp2 = tiledp;
-							for (i = 0; i < cblk_w; ++i) {
-								float tmp = *datap * band->stepsize;
-								*tiledp2 = tmp;
-								datap++;
-								tiledp2++;
-							}
-							tiledp += tile_w;
-						}
-					}
-					opj_free(cblk->data);
-					opj_free(cblk->segs);
-				} /* cblkno */
-				opj_free(precinct->cblks.dec);
-			} /* precno */
-		} /* bandno */
-	} /* resno */
-}
 
 
 
@@ -1705,7 +1586,7 @@ void t1_decode_cblks(
  * and initializes the look-up tables of the Tier-1 coder/decoder
  * @return a new T1 handle if successful, returns NULL otherwise
 */
-opj_t1_t* t1_create_v2()
+opj_t1_t* opj_t1_create()
 {
 	opj_t1_t *l_t1 = 00;
 
@@ -1718,13 +1599,13 @@ opj_t1_t* t1_create_v2()
 	/* create MQC and RAW handles */
 	l_t1->mqc = mqc_create();
 	if (! l_t1->mqc) {
-		t1_destroy(l_t1);
+		opj_t1_destroy(l_t1);
 		return 00;
 	}
 
 	l_t1->raw = raw_create();
 	if (! l_t1->raw) {
-		t1_destroy(l_t1);
+		opj_t1_destroy(l_t1);
 		return 00;
 	}
 
@@ -1737,11 +1618,9 @@ opj_t1_t* t1_create_v2()
  *
  * @param p_t1 Tier 1 handle to destroy
 */
-void t1_destroy_v2(opj_t1_t *p_t1)
+void opj_t1_destroy(opj_t1_t *p_t1)
 {
-	if
-		(! p_t1)
-	{
+	if (! p_t1) {
 		return;
 	}
 
@@ -1750,25 +1629,24 @@ void t1_destroy_v2(opj_t1_t *p_t1)
 	p_t1->mqc = 00;
 	raw_destroy(p_t1->raw);
 	p_t1->raw = 00;
-	if
-		(p_t1->data)
-	{
+	
+    if (p_t1->data) {
 		opj_aligned_free(p_t1->data);
 		p_t1->data = 00;
 	}
-	if
-		(p_t1->flags)
-	{
+
+	if (p_t1->flags) {
 		opj_aligned_free(p_t1->flags);
 		p_t1->flags = 00;
 	}
+
 	opj_free(p_t1);
 }
 
-void t1_decode_cblks_v2(
-		opj_t1_t* t1,
-		opj_tcd_tilecomp_v2_t* tilec,
-		opj_tccp_t* tccp)
+void opj_t1_decode_cblks(   opj_t1_t* t1,
+                            opj_tcd_tilecomp_v2_t* tilec,
+                            opj_tccp_t* tccp
+                            )
 {
 	OPJ_UINT32 resno, bandno, precno, cblkno;
 	OPJ_UINT32 tile_w = tilec->x1 - tilec->x0;
@@ -1924,11 +1802,11 @@ static void t1_decode_cblk_v2(
 	}
 }
 
-opj_bool t1_encode_cblks_v2(
-		opj_t1_t *t1,
-		opj_tcd_tile_v2_t *tile,
-		opj_tcp_v2_t *tcp,
-		const OPJ_FLOAT64 * mct_norms)
+opj_bool opj_t1_encode_cblks(   opj_t1_t *t1,
+                                opj_tcd_tile_v2_t *tile,
+                                opj_tcp_v2_t *tcp,
+                                const OPJ_FLOAT64 * mct_norms
+                                )
 {
 	OPJ_UINT32 compno, resno, bandno, precno, cblkno;
 
@@ -1944,6 +1822,7 @@ opj_bool t1_encode_cblks_v2(
 
 			for (bandno = 0; bandno < res->numbands; ++bandno) {
 				opj_tcd_band_v2_t* restrict band = &res->bands[bandno];
+                OPJ_INT32 bandconst = 8192 * 8192 / ((OPJ_INT32) floor(band->stepsize * 8192));
 
 				for (precno = 0; precno < res->pw * res->ph; ++precno) {
 					opj_tcd_precinct_v2_t *prc = &band->precincts[precno];
@@ -1994,7 +1873,7 @@ opj_bool t1_encode_cblks_v2(
 									datap[(j * cblk_w) + i] =
 										fix_mul(
 										tmp,
-										8192 * 8192 / ((OPJ_INT32) floor(band->stepsize * 8192))) >> (11 - T1_NMSEDEC_FRACBITS);
+										bandconst) >> (11 - T1_NMSEDEC_FRACBITS);
 								}
 							}
 						}

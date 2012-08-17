@@ -1480,19 +1480,19 @@ opj_bool opj_tcd_t1_decode ( opj_tcd_v2_t *p_tcd )
 	opj_tccp_t * l_tccp = p_tcd->tcp->tccps;
 
 
-	l_t1 = t1_create_v2();
+	l_t1 = opj_t1_create();
 	if (l_t1 == 00) {
 		return OPJ_FALSE;
 	}
 
 	for (compno = 0; compno < l_tile->numcomps; ++compno) {
 		/* The +3 is headroom required by the vectorized DWT */
-		t1_decode_cblks_v2(l_t1, l_tile_comp, l_tccp);
+		opj_t1_decode_cblks(l_t1, l_tile_comp, l_tccp);
 		++l_tile_comp;
 		++l_tccp;
 	}
 
-	t1_destroy_v2(l_t1);
+	opj_t1_destroy(l_t1);
 
 	return OPJ_TRUE;
 }
@@ -1907,7 +1907,7 @@ opj_bool opj_tcd_t1_encode ( opj_tcd_v2_t *p_tcd )
 	const OPJ_FLOAT64 * l_mct_norms;
 	opj_tcp_v2_t * l_tcp = p_tcd->tcp;
 
-	l_t1 = t1_create_v2();
+	l_t1 = opj_t1_create();
 	if (l_t1 == 00) {
 		return OPJ_FALSE;
 	}
@@ -1925,12 +1925,12 @@ opj_bool opj_tcd_t1_encode ( opj_tcd_v2_t *p_tcd )
 		l_mct_norms = (const OPJ_FLOAT64 *) (l_tcp->mct_norms);
 	}
 
-	if (! t1_encode_cblks_v2(l_t1, p_tcd->tcd_image->tiles , l_tcp, l_mct_norms)) {
-        t1_destroy_v2(l_t1);
+	if (! opj_t1_encode_cblks(l_t1, p_tcd->tcd_image->tiles , l_tcp, l_mct_norms)) {
+        opj_t1_destroy(l_t1);
 		return OPJ_FALSE;
 	}
 
-	t1_destroy_v2(l_t1);
+	opj_t1_destroy(l_t1);
 
 	return OPJ_TRUE;
 }
