@@ -49,16 +49,15 @@ static void t1_updateflags(flag_t *flagsp, int s, int stride);
 /**
 Encode significant pass
 */
-static void t1_enc_sigpass_step(
-		opj_t1_t *t1,
-		flag_t *flagsp,
-		int *datap,
-		int orient,
-		int bpno,
-		int one,
-		int *nmsedec,
-		char type,
-		int vsc);
+static void opj_t1_enc_sigpass_step(opj_t1_t *t1,
+                                    flag_t *flagsp,
+                                    OPJ_INT32 *datap,
+                                    OPJ_UINT32 orient,
+                                    OPJ_INT32 bpno,
+                                    OPJ_INT32 one,
+                                    OPJ_INT32 *nmsedec,
+                                    OPJ_BYTE type,
+                                    OPJ_UINT32 vsc);
 
 /**
 Decode significant pass
@@ -97,13 +96,12 @@ static INLINE void t1_dec_sigpass_step_mqc_vsc(
 /**
 Encode significant pass
 */
-static void t1_enc_sigpass(
-		opj_t1_t *t1,
-		int bpno,
-		int orient,
-		int *nmsedec,
-		char type,
-		int cblksty);
+static void opj_t1_enc_sigpass( opj_t1_t *t1,
+                                OPJ_INT32 bpno,
+                                OPJ_UINT32 orient,
+                                OPJ_INT32 *nmsedec,
+                                OPJ_BYTE type,
+                                OPJ_UINT32 cblksty);
 
 /**
 Decode significant pass
@@ -419,18 +417,19 @@ static void t1_updateflags(flag_t *flagsp, int s, int stride) {
 	sp[1]  |= T1_SIG_NW;
 }
 
-static void t1_enc_sigpass_step(
-		opj_t1_t *t1,
-		flag_t *flagsp,
-		int *datap,
-		int orient,
-		int bpno,
-		int one,
-		int *nmsedec,
-		char type,
-		int vsc)
+void opj_t1_enc_sigpass_step(   opj_t1_t *t1,
+                                flag_t *flagsp,
+                                OPJ_INT32 *datap,
+                                OPJ_UINT32 orient,
+                                OPJ_INT32 bpno,
+                                OPJ_INT32 one,
+                                OPJ_INT32 *nmsedec,
+                                OPJ_BYTE type,
+                                OPJ_UINT32 vsc
+                                )
 {
-	int v, flag;
+	OPJ_INT32 v;
+    OPJ_UINT32 flag;
 	
 	opj_mqc_t *mqc = t1->mqc;	/* MQC component */
 	
@@ -531,22 +530,24 @@ static INLINE void t1_dec_sigpass_step_mqc_vsc(
 	}
 }				/* VSC and  BYPASS by Antonin */
 
-static void t1_enc_sigpass(
-		opj_t1_t *t1,
-		int bpno,
-		int orient,
-		int *nmsedec,
-		char type,
-		int cblksty)
+void opj_t1_enc_sigpass(opj_t1_t *t1,
+                        OPJ_INT32 bpno,
+                        OPJ_UINT32 orient,
+                        OPJ_INT32 *nmsedec,
+                        OPJ_BYTE type,
+                        OPJ_UINT32 cblksty
+                        )
 {
-	int i, j, k, one, vsc;
+	OPJ_UINT32 i, j, k, vsc; 
+    OPJ_INT32 one;
+
 	*nmsedec = 0;
 	one = 1 << (bpno + T1_NMSEDEC_FRACBITS);
 	for (k = 0; k < t1->h; k += 4) {
 		for (i = 0; i < t1->w; ++i) {
 			for (j = k; j < k + 4 && j < t1->h; ++j) {
 				vsc = ((cblksty & J2K_CCP_CBLKSTY_VSC) && (j == k + 3 || j == t1->h - 1)) ? 1 : 0;
-				t1_enc_sigpass_step(
+				opj_t1_enc_sigpass_step(
 						t1,
 						&t1->flags[((j+1) * t1->flags_stride) + i + 1],
 						&t1->data[(j * t1->w) + i],
@@ -1305,7 +1306,7 @@ static void t1_encode_cblk(
 		
 		switch (passtype) {
 			case 0:
-				t1_enc_sigpass(t1, bpno, orient, &nmsedec, type, cblksty);
+				opj_t1_enc_sigpass(t1, bpno, orient, &nmsedec, type, cblksty);
 				break;
 			case 1:
 				t1_enc_refpass(t1, bpno, &nmsedec, type, cblksty);
@@ -1950,7 +1951,7 @@ static void t1_encode_cblk_v2(
 
 		switch (passtype) {
 			case 0:
-				t1_enc_sigpass(t1, bpno, orient, &nmsedec, type, cblksty);
+				opj_t1_enc_sigpass(t1, bpno, orient, &nmsedec, type, cblksty);
 				break;
 			case 1:
 				t1_enc_refpass(t1, bpno, &nmsedec, type, cblksty);

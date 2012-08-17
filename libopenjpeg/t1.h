@@ -99,13 +99,13 @@ typedef struct opj_t1 {
 	/** RAW component */
 	opj_raw_t *raw;
 
-	int *data;
+    OPJ_INT32 *data;
 	flag_t *flags;
-	int w;
-	int h;
-	int datasize;
-	int flagssize;
-	int flags_stride;
+	OPJ_UINT32 w;
+	OPJ_UINT32 h;
+	OPJ_UINT32 datasize;
+	OPJ_UINT32 flagssize;
+	OPJ_UINT32 flags_stride;
 } opj_t1_t;
 
 #define MACRO_t1_flags(x,y) t1->flags[((x)*(t1->flags_stride))+(y)]
