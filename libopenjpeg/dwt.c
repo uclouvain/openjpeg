@@ -137,7 +137,7 @@ static void opj_v4dwt_interleave_v(v4dwt_t* restrict v , OPJ_FLOAT32* restrict a
 #ifdef __SSE__
 static void opj_v4dwt_decode_step1_sse(v4* w, OPJ_INT32 count, const __m128 c);
 
-static void opj_v4dwt_decode_step2_sse(v4* l, v4* w, OPJ_INT32 k, OPJ_INT32 m, __m128 c){
+static void opj_v4dwt_decode_step2_sse(v4* l, v4* w, OPJ_INT32 k, OPJ_INT32 m, __m128 c);
 #endif
 
 static void opj_v4dwt_decode_step1(v4* w, OPJ_INT32 count, const OPJ_FLOAT32 c);
@@ -296,7 +296,7 @@ void opj_dwt_encode_1(OPJ_INT32 *a, OPJ_INT32 dn, OPJ_INT32 sn, OPJ_INT32 cas) {
 /* <summary>                            */
 /* Inverse 5-3 wavelet transform in 1-D. */
 /* </summary>                           */ 
-static void opj_dwt_decode_1_(OPJ_INT32 *a, OPJ_INT32 dn, OPJ_INT32 sn, OPJ_INT32 cas) {
+void opj_dwt_decode_1_(OPJ_INT32 *a, OPJ_INT32 dn, OPJ_INT32 sn, OPJ_INT32 cas) {
 	OPJ_INT32 i;
 	
 	if (!cas) {
@@ -317,14 +317,14 @@ static void opj_dwt_decode_1_(OPJ_INT32 *a, OPJ_INT32 dn, OPJ_INT32 sn, OPJ_INT3
 /* <summary>                            */
 /* Inverse 5-3 wavelet transform in 1-D. */
 /* </summary>                           */ 
-static void opj_dwt_decode_1(dwt_t *v) {
+void opj_dwt_decode_1(dwt_t *v) {
 	opj_dwt_decode_1_(v->mem, v->dn, v->sn, v->cas);
 }
 
 /* <summary>                             */
 /* Forward 9-7 wavelet transform in 1-D. */
 /* </summary>                            */
-static void opj_dwt_encode_1_real(OPJ_INT32 *a, OPJ_INT32 dn, OPJ_INT32 sn, OPJ_INT32 cas) {
+void opj_dwt_encode_1_real(OPJ_INT32 *a, OPJ_INT32 dn, OPJ_INT32 sn, OPJ_INT32 cas) {
 	OPJ_INT32 i;
 	if (!cas) {
 		if ((dn > 0) || (sn > 1)) {	/* NEW :  CASE ONE ELEMENT */
@@ -359,7 +359,7 @@ static void opj_dwt_encode_1_real(OPJ_INT32 *a, OPJ_INT32 dn, OPJ_INT32 sn, OPJ_
 	}
 }
 
-static void opj_dwt_encode_stepsize(OPJ_INT32 stepsize, OPJ_INT32 numbps, opj_stepsize_t *bandno_stepsize) {
+void opj_dwt_encode_stepsize(OPJ_INT32 stepsize, OPJ_INT32 numbps, opj_stepsize_t *bandno_stepsize) {
 	OPJ_INT32 p, n;
 	p = int_floorlog2(stepsize) - 13;
 	n = 11 - int_floorlog2(stepsize);
@@ -583,7 +583,7 @@ static OPJ_UINT32 dwt_max_resolution(opj_tcd_resolution_t* restrict r, OPJ_UINT3
 /* <summary>                             */
 /* Determine maximum computed resolution level for inverse wavelet transform */
 /* </summary>                            */
-static OPJ_UINT32 opj_dwt_max_resolution(opj_tcd_resolution_v2_t* restrict r, OPJ_UINT32 i) {
+OPJ_UINT32 opj_dwt_max_resolution(opj_tcd_resolution_v2_t* restrict r, OPJ_UINT32 i) {
 	OPJ_UINT32 mr	= 0;
 	OPJ_UINT32 w;
 	while( --i ) {
@@ -599,7 +599,7 @@ static OPJ_UINT32 opj_dwt_max_resolution(opj_tcd_resolution_v2_t* restrict r, OP
 /* <summary>                            */
 /* Inverse wavelet transform in 2-D.     */
 /* </summary>                           */
-static opj_bool opj_dwt_decode_tile(opj_tcd_tilecomp_v2_t* tilec, OPJ_UINT32 numres, DWT1DFN dwt_1D) {
+opj_bool opj_dwt_decode_tile(opj_tcd_tilecomp_v2_t* tilec, OPJ_UINT32 numres, DWT1DFN dwt_1D) {
 	dwt_t h;
 	dwt_t v;
 
@@ -766,7 +766,8 @@ void opj_v4dwt_decode_step2_sse(v4* l, v4* w, int k, int m, __m128 c){
 
 #else
 
-void opj_v4dwt_decode_step1(v4* w, OPJ_INT32 count, const OPJ_FLOAT32 c){
+void opj_v4dwt_decode_step1(v4* w, OPJ_INT32 count, const OPJ_FLOAT32 c)
+{
 	OPJ_FLOAT32* restrict fw = (OPJ_FLOAT32*) w;
 	OPJ_INT32 i;
 	for(i = 0; i < count; ++i){
@@ -781,7 +782,8 @@ void opj_v4dwt_decode_step1(v4* w, OPJ_INT32 count, const OPJ_FLOAT32 c){
 	}
 }
 
-void opj_v4dwt_decode_step2(v4* l, v4* w, OPJ_INT32 k, OPJ_INT32 m, OPJ_FLOAT32 c){
+void opj_v4dwt_decode_step2(v4* l, v4* w, OPJ_INT32 k, OPJ_INT32 m, OPJ_FLOAT32 c)
+{
 	OPJ_FLOAT32* restrict fl = (OPJ_FLOAT32*) l;
 	OPJ_FLOAT32* restrict fw = (OPJ_FLOAT32*) w;
 	int i;
@@ -834,7 +836,8 @@ void opj_v4dwt_decode_step2(v4* l, v4* w, OPJ_INT32 k, OPJ_INT32 m, OPJ_FLOAT32 
 /* <summary>                             */
 /* Inverse 9-7 wavelet transform in 1-D. */
 /* </summary>                            */
-void opj_v4dwt_decode(v4dwt_t* restrict dwt){
+void opj_v4dwt_decode(v4dwt_t* restrict dwt)
+{
 	int a, b;
 	if(dwt->cas == 0) {
 		if(!((dwt->dn > 0) || (dwt->sn > 1))){
@@ -872,7 +875,8 @@ void opj_v4dwt_decode(v4dwt_t* restrict dwt){
 /* Inverse 9-7 wavelet transform in 2-D. */
 /* </summary>                            */
 /* V1 void dwt_decode_real(opj_tcd_tilecomp_t* restrict tilec, int numres){ */
-opj_bool dwt_decode_real(opj_tcd_tilecomp_t* restrict tilec, int numres){
+opj_bool dwt_decode_real(opj_tcd_tilecomp_t* restrict tilec, int numres)
+{
 	v4dwt_t h;
 	v4dwt_t v;
 
@@ -961,7 +965,8 @@ opj_bool dwt_decode_real(opj_tcd_tilecomp_t* restrict tilec, int numres){
 /* <summary>                             */
 /* Inverse 9-7 wavelet transform in 2-D. */
 /* </summary>                            */
-opj_bool dwt_decode_real_v2(opj_tcd_tilecomp_v2_t* restrict tilec, OPJ_UINT32 numres){
+opj_bool dwt_decode_real_v2(opj_tcd_tilecomp_v2_t* restrict tilec, OPJ_UINT32 numres)
+{
 	v4dwt_t h;
 	v4dwt_t v;
 
