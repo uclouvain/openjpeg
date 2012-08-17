@@ -360,60 +360,6 @@ static void dwt_encode_stepsize(OPJ_INT32 stepsize, OPJ_INT32 numbps, opj_stepsi
 ==========================================================
 */
 
-/* <summary>                            */
-/* Forward 5-3 wavelet transform in 2-D. */
-/* </summary>                           */
-void dwt_encode(opj_tcd_tilecomp_t * tilec) {
-	int i, j, k;
-	int *a = NULL;
-	int *aj = NULL;
-	int *bj = NULL;
-	int w, l;
-	
-	w = tilec->x1-tilec->x0;
-	l = tilec->numresolutions-1;
-	a = tilec->data;
-	
-	for (i = 0; i < l; i++) {
-		int rw;			/* width of the resolution level computed                                                           */
-		int rh;			/* height of the resolution level computed                                                          */
-		int rw1;		/* width of the resolution level once lower than computed one                                       */
-		int rh1;		/* height of the resolution level once lower than computed one                                      */
-		int cas_col;	/* 0 = non inversion on horizontal filtering 1 = inversion between low-pass and high-pass filtering */
-		int cas_row;	/* 0 = non inversion on vertical filtering 1 = inversion between low-pass and high-pass filtering   */
-		int dn, sn;
-		
-		rw = tilec->resolutions[l - i].x1 - tilec->resolutions[l - i].x0;
-		rh = tilec->resolutions[l - i].y1 - tilec->resolutions[l - i].y0;
-		rw1= tilec->resolutions[l - i - 1].x1 - tilec->resolutions[l - i - 1].x0;
-		rh1= tilec->resolutions[l - i - 1].y1 - tilec->resolutions[l - i - 1].y0;
-		
-		cas_row = tilec->resolutions[l - i].x0 % 2;
-		cas_col = tilec->resolutions[l - i].y0 % 2;
-        
-		sn = rh1;
-		dn = rh - rh1;
-		bj = (int*)opj_malloc(rh * sizeof(int));
-		for (j = 0; j < rw; j++) {
-			aj = a + j;
-			for (k = 0; k < rh; k++)  bj[k] = aj[k*w];
-			dwt_encode_1(bj, dn, sn, cas_col);
-			dwt_deinterleave_v(bj, aj, dn, sn, w, cas_col);
-		}
-		opj_free(bj);
-		
-		sn = rw1;
-		dn = rw - rw1;
-		bj = (int*)opj_malloc(rw * sizeof(int));
-		for (j = 0; j < rh; j++) {
-			aj = a + j * w;
-			for (k = 0; k < rw; k++)  bj[k] = aj[k];
-			dwt_encode_1(bj, dn, sn, cas_row);
-			opj_dwt_deinterleave_h(bj, aj, dn, sn, cas_row);
-		}
-		opj_free(bj);
-	}
-}
 
 /* <summary>                            */
 /* Forward 5-3 wavelet transform in 2-D. */
@@ -499,31 +445,15 @@ INLINE opj_bool dwt_encode_procedure(opj_tcd_tilecomp_v2_t * tilec,void (*p_func
 
 /* Forward 5-3 wavelet transform in 2-D. */
 /* </summary>                           */
-opj_bool dwt_encode_v2(opj_tcd_tilecomp_v2_t * tilec)
+opj_bool opj_dwt_encode(opj_tcd_tilecomp_v2_t * tilec)
 {
 	return dwt_encode_procedure(tilec,dwt_encode_1);
 }
 
-#ifdef OPJ_V1
 /* <summary>                            */
 /* Inverse 5-3 wavelet transform in 2-D. */
 /* </summary>                           */
-void dwt_decode(opj_tcd_tilecomp_t* tilec, int numres) {
-	dwt_decode_tile(tilec, numres, &dwt_decode_1);
-}
-#endif
-
-/* <summary>                            */
-/* Inverse 5-3 wavelet transform in 2-D. */
-/* </summary>                           */
-opj_bool dwt_decode(opj_tcd_tilecomp_t* tilec, OPJ_UINT32 numres) {
-	return dwt_decode_tile(tilec, numres, &dwt_decode_1);
-}
-
-/* <summary>                            */
-/* Inverse 5-3 wavelet transform in 2-D. */
-/* </summary>                           */
-opj_bool dwt_decode_v2(opj_tcd_tilecomp_v2_t* tilec, OPJ_UINT32 numres) {
+opj_bool opj_dwt_decode(opj_tcd_tilecomp_v2_t* tilec, OPJ_UINT32 numres) {
 	return dwt_decode_tile_v2(tilec, numres, &dwt_decode_1);
 }
 
@@ -531,18 +461,7 @@ opj_bool dwt_decode_v2(opj_tcd_tilecomp_v2_t* tilec, OPJ_UINT32 numres) {
 /* <summary>                          */
 /* Get gain of 5-3 wavelet transform. */
 /* </summary>                         */
-int dwt_getgain(int orient) {
-	if (orient == 0)
-		return 0;
-	if (orient == 1 || orient == 2)
-		return 1;
-	return 2;
-}
-
-/* <summary>                          */
-/* Get gain of 5-3 wavelet transform. */
-/* </summary>                         */
-OPJ_UINT32 dwt_getgain_v2(OPJ_UINT32 orient) {
+OPJ_UINT32 opj_dwt_getgain(OPJ_UINT32 orient) {
 	if (orient == 0)
 		return 0;
 	if (orient == 1 || orient == 2)
@@ -557,66 +476,17 @@ double dwt_getnorm(int level, int orient) {
 	return dwt_norms[orient][level];
 }
 
-/* <summary>                             */
-/* Forward 9-7 wavelet transform in 2-D. */
-/* </summary>                            */
-
-void dwt_encode_real(opj_tcd_tilecomp_t * tilec) {
-	int i, j, k;
-	int *a = NULL;
-	int *aj = NULL;
-	int *bj = NULL;
-	int w, l;
-	
-	w = tilec->x1-tilec->x0;
-	l = tilec->numresolutions-1;
-	a = tilec->data;
-	
-	for (i = 0; i < l; i++) {
-		int rw;			/* width of the resolution level computed                                                     */
-		int rh;			/* height of the resolution level computed                                                    */
-		int rw1;		/* width of the resolution level once lower than computed one                                 */
-		int rh1;		/* height of the resolution level once lower than computed one                                */
-		int cas_col;	/* 0 = non inversion on horizontal filtering 1 = inversion between low-pass and high-pass filtering */
-		int cas_row;	/* 0 = non inversion on vertical filtering 1 = inversion between low-pass and high-pass filtering   */
-		int dn, sn;
-		
-		rw = tilec->resolutions[l - i].x1 - tilec->resolutions[l - i].x0;
-		rh = tilec->resolutions[l - i].y1 - tilec->resolutions[l - i].y0;
-		rw1= tilec->resolutions[l - i - 1].x1 - tilec->resolutions[l - i - 1].x0;
-		rh1= tilec->resolutions[l - i - 1].y1 - tilec->resolutions[l - i - 1].y0;
-		
-		cas_row = tilec->resolutions[l - i].x0 % 2;
-		cas_col = tilec->resolutions[l - i].y0 % 2;
-		
-		sn = rh1;
-		dn = rh - rh1;
-		bj = (int*)opj_malloc(rh * sizeof(int));
-		for (j = 0; j < rw; j++) {
-			aj = a + j;
-			for (k = 0; k < rh; k++)  bj[k] = aj[k*w];
-			dwt_encode_1_real(bj, dn, sn, cas_col);
-			dwt_deinterleave_v(bj, aj, dn, sn, w, cas_col);
-		}
-		opj_free(bj);
-		
-		sn = rw1;
-		dn = rw - rw1;
-		bj = (int*)opj_malloc(rw * sizeof(int));
-		for (j = 0; j < rh; j++) {
-			aj = a + j * w;
-			for (k = 0; k < rw; k++)  bj[k] = aj[k];
-			dwt_encode_1_real(bj, dn, sn, cas_row);
-			opj_dwt_deinterleave_h(bj, aj, dn, sn, cas_row);
-		}
-		opj_free(bj);
-	}
+/* <summary>                */
+/* Get norm of 5-3 wavelet. */
+/* </summary>               */
+OPJ_FLOAT64 opj_dwt_getnorm(OPJ_UINT32 level, OPJ_UINT32 orient) {
+	return dwt_norms[orient][level];
 }
 
 /* <summary>                             */
 /* Forward 9-7 wavelet transform in 2-D. */
 /* </summary>                            */
-opj_bool dwt_encode_real_v2(opj_tcd_tilecomp_v2_t * tilec)
+opj_bool opj_dwt_encode_real(opj_tcd_tilecomp_v2_t * tilec)
 {
 	return dwt_encode_procedure(tilec,dwt_encode_1_real);
 }
@@ -624,15 +494,7 @@ opj_bool dwt_encode_real_v2(opj_tcd_tilecomp_v2_t * tilec)
 /* <summary>                          */
 /* Get gain of 9-7 wavelet transform. */
 /* </summary>                         */
-int dwt_getgain_real(int orient) {
-	(void)orient;
-	return 0;
-}
-
-/* <summary>                          */
-/* Get gain of 9-7 wavelet transform. */
-/* </summary>                         */
-OPJ_UINT32 dwt_getgain_real_v2(OPJ_UINT32 orient) {
+OPJ_UINT32 opj_dwt_getgain_real(OPJ_UINT32 orient) {
 	(void)orient;
 	return 0;
 }
@@ -644,12 +506,19 @@ double dwt_getnorm_real(int level, int orient) {
 	return dwt_norms_real[orient][level];
 }
 
-void dwt_calc_explicit_stepsizes(opj_tccp_t * tccp, int prec) {
-	int numbands, bandno;
+/* <summary>                */
+/* Get norm of 9-7 wavelet. */
+/* </summary>               */
+OPJ_FLOAT64 opj_dwt_getnorm_real(OPJ_UINT32 level, OPJ_UINT32 orient) {
+	return dwt_norms_real[orient][level];
+}
+
+void opj_dwt_calc_explicit_stepsizes(opj_tccp_t * tccp, OPJ_UINT32 prec) {
+	OPJ_UINT32 numbands, bandno;
 	numbands = 3 * tccp->numresolutions - 2;
 	for (bandno = 0; bandno < numbands; bandno++) {
-		double stepsize;
-		int resno, level, orient, gain;
+		OPJ_FLOAT64 stepsize;
+		OPJ_UINT32 resno, level, orient, gain;
 
 		resno = (bandno == 0) ? 0 : ((bandno - 1) / 3 + 1);
 		orient = (bandno == 0) ? 0 : ((bandno - 1) % 3 + 1);
@@ -658,10 +527,10 @@ void dwt_calc_explicit_stepsizes(opj_tccp_t * tccp, int prec) {
 		if (tccp->qntsty == J2K_CCP_QNTSTY_NOQNT) {
 			stepsize = 1.0;
 		} else {
-			double norm = dwt_norms_real[orient][level];
+			OPJ_FLOAT64 norm = dwt_norms_real[orient][level];
 			stepsize = (1 << (gain)) / norm;
 		}
-		dwt_encode_stepsize((int) floor(stepsize * 8192.0), prec + gain, &tccp->stepsizes[bandno]);
+		dwt_encode_stepsize((OPJ_INT32) floor(stepsize * 8192.0), prec + gain, &tccp->stepsizes[bandno]);
 	}
 }
 

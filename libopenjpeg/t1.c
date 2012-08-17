@@ -1209,9 +1209,9 @@ static OPJ_FLOAT64 t1_getwmsedec_v2(
 	}
 
 	if (qmfbid == 1) {
-		w2 = dwt_getnorm(level, orient);
+		w2 = opj_dwt_getnorm(level, orient);
 	} else {	/* if (qmfbid == 0) */
-		w2 = dwt_getnorm_real(level, orient);
+		w2 = opj_dwt_getnorm_real(level, orient);
 	}
 
 	wmsedec = w1 * w2 * stepsize * (1 << bpno);

@@ -735,10 +735,10 @@ opj_bool FUNCTION (	opj_tcd_v2_t *p_tcd,										\
 		l_res = l_tilec->resolutions;											\
 		l_step_size = l_tccp->stepsizes;										\
 		if (l_tccp->qmfbid == 0) {												\
-			l_gain_ptr = &dwt_getgain_real_v2;									\
+			l_gain_ptr = &opj_dwt_getgain_real;									\
 		}																		\
 		else {																	\
-			l_gain_ptr  = &dwt_getgain_v2;										\
+			l_gain_ptr  = &opj_dwt_getgain;										\
 		}																		\
 		/*fprintf(stderr, "\tlevel_no=%d\n",l_level_no);*/						\
 																				\
@@ -1521,7 +1521,7 @@ opj_bool opj_tcd_dwt_decode ( opj_tcd_v2_t *p_tcd )
 		*/
 
 		if (l_tccp->qmfbid == 1) {
-			if (! dwt_decode_v2(l_tile_comp, l_img_comp->resno_decoded+1)) {
+			if (! opj_dwt_decode(l_tile_comp, l_img_comp->resno_decoded+1)) {
 				return OPJ_FALSE;
 			}
 		}
@@ -1884,12 +1884,12 @@ opj_bool opj_tcd_dwt_encode ( opj_tcd_v2_t *p_tcd )
 
 	for (compno = 0; compno < l_tile->numcomps; ++compno) {
 		if (l_tccp->qmfbid == 1) {
-			if (! dwt_encode_v2(l_tile_comp)) {
+			if (! opj_dwt_encode(l_tile_comp)) {
 				return OPJ_FALSE;
 			}
 		}
 		else if	(l_tccp->qmfbid == 0) {
-			if (! dwt_encode_real_v2(l_tile_comp)) {
+			if (! opj_dwt_encode_real(l_tile_comp)) {
 				return OPJ_FALSE;
 			}
 		}

@@ -6261,7 +6261,7 @@ void opj_j2k_setup_encoder(	opj_j2k_v2_t *p_j2k,
 				}
 			}
 
-			dwt_calc_explicit_stepsizes(tccp, image->comps[i].prec);
+			opj_dwt_calc_explicit_stepsizes(tccp, image->comps[i].prec);
 		}
 	}
 
