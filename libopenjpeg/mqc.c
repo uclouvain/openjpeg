@@ -363,7 +363,7 @@ opj_mqc_t* mqc_create(void) {
 void mqc_destroy(opj_mqc_t *mqc) {
 	if(mqc) {
 #ifdef MQC_PERF_OPT
-		if (mqc->buffer) {
+		if (mqc->buffer) { // TODO: LH: this test is pointless as free() is a no-op on 0
 			opj_free(mqc->buffer);
 		}
 #endif
@@ -508,7 +508,7 @@ void mqc_segmark_enc(opj_mqc_t *mqc) {
 	}
 }
 
-void mqc_init_dec(opj_mqc_t *mqc, unsigned char *bp, int len) {
+opj_bool mqc_init_dec(opj_mqc_t *mqc, unsigned char *bp, int len) {
 	mqc_setcurctx(mqc, 0);
 	mqc->start = bp;
 	mqc->end = bp + len;
@@ -521,7 +521,13 @@ void mqc_init_dec(opj_mqc_t *mqc, unsigned char *bp, int len) {
 		unsigned int c;
 		unsigned int *ip;
 		unsigned char *end = mqc->end - 1;
-		mqc->buffer = opj_realloc(mqc->buffer, (len + 1) * sizeof(unsigned int));
+                void* new_buffer = opj_realloc(mqc->buffer, (len + 1) * sizeof(unsigned int));
+                if (! new_buffer) {
+                        opj_free(mqc->buffer);
+                        mqc->buffer = NULL;
+                        return OPJ_FALSE;
+                }
+                mqc->buffer = new_buffer;
 		ip = (unsigned int *) mqc->buffer;
 
 		while (bp < end) {
@@ -557,6 +563,7 @@ void mqc_init_dec(opj_mqc_t *mqc, unsigned char *bp, int len) {
 	mqc->c <<= 7;
 	mqc->ct -= 7;
 	mqc->a = 0x8000;
+        return OPJ_TRUE;
 }
 
 int mqc_decode(opj_mqc_t *const mqc) {

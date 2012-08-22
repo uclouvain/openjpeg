@@ -475,10 +475,17 @@ int main(int argc, char *argv[]) {
     // Ending loop
     fclose(j2kfile);
     snum++;
-    movie->tk[0].sample = (mj2_sample_t*)
+    mj2_sample_t * new_sample = (mj2_sample_t*)
 		realloc(movie->tk[0].sample, (snum+1) * sizeof(mj2_sample_t));
-    movie->tk[0].chunk = (mj2_chunk_t*)
+    mj2_chunk_t * new_chunk = (mj2_chunk_t*)
 		realloc(movie->tk[0].chunk, (snum+1) * sizeof(mj2_chunk_t));
+    if (new_sample && new_chunk) {
+        movie->tk[0].sample = new_sample;
+        movie->tk[0].chunk = new_chunk;
+    } else {
+       fprintf(stderr, "Failed to allocate enough memory to read %s\n", j2kfilename);
+       return 1;
+    }
     free(frame_codestream);
   }
   

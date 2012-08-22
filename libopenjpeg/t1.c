@@ -330,8 +330,9 @@ Decode 1 code-block
 @param orient
 @param roishift Region of interest shifting value
 @param cblksty Code-block style
+@deprecated ?
 */
-static void t1_decode_cblk(
+static opj_bool t1_decode_cblk(
 		opj_t1_t *t1,
 		opj_tcd_cblk_dec_t* cblk,
 		int orient,
@@ -346,7 +347,7 @@ Decode 1 code-block
 @param roishift Region of interest shifting value
 @param cblksty Code-block style
 */
-static void t1_decode_cblk_v2(
+static opj_bool t1_decode_cblk_v2(
 		opj_t1_t *t1,
 		opj_tcd_cblk_dec_v2_t* cblk,
 		OPJ_UINT32 orient,
@@ -1393,7 +1394,7 @@ static void t1_encode_cblk(
 	}
 }
 
-static void t1_decode_cblk(
+static opj_bool t1_decode_cblk(
 		opj_t1_t *t1,
 		opj_tcd_cblk_dec_t* cblk,
 		int orient,
@@ -1435,7 +1436,9 @@ static void t1_decode_cblk(
 		if (type == T1_TYPE_RAW) {
 			raw_init_dec(raw, (*seg->data) + seg->dataindex, seg->len);
 		} else {
-			mqc_init_dec(mqc, (*seg->data) + seg->dataindex, seg->len);
+                        if (OPJ_FALSE == mqc_init_dec(mqc, (*seg->data) + seg->dataindex, seg->len)) {
+                                return OPJ_FALSE;
+                        }
 		}
 		
 		for (passno = 0; passno < seg->numpasses; ++passno) {
@@ -1479,6 +1482,7 @@ static void t1_decode_cblk(
 			}
 		}
 	}
+        return OPJ_TRUE;
 }
 
 /* ----------------------------------------------------------------------- */
@@ -1644,7 +1648,7 @@ void opj_t1_destroy(opj_t1_t *p_t1)
 	opj_free(p_t1);
 }
 
-void opj_t1_decode_cblks(   opj_t1_t* t1,
+opj_bool opj_t1_decode_cblks(   opj_t1_t* t1,
                             opj_tcd_tilecomp_v2_t* tilec,
                             opj_tccp_t* tccp
                             )
@@ -1669,12 +1673,14 @@ void opj_t1_decode_cblks(   opj_t1_t* t1,
 					OPJ_INT32 x, y;
 					OPJ_UINT32 i, j;
 
-					t1_decode_cblk_v2(
-							t1,
-							cblk,
-							band->bandno,
-							tccp->roishift,
-							tccp->cblksty);
+                                        if (OPJ_FALSE == t1_decode_cblk_v2(
+                                                                t1,
+                                                                cblk,
+                                                                band->bandno,
+                                                                tccp->roishift,
+                                                                tccp->cblksty)) {
+                                                return OPJ_FALSE;
+                                        }
 
 					x = cblk->x0 - band->x0;
 					y = cblk->y0 - band->y0;
@@ -1727,10 +1733,11 @@ void opj_t1_decode_cblks(   opj_t1_t* t1,
 			} /* precno */
 		} /* bandno */
 	} /* resno */
+        return OPJ_TRUE;
 }
 
 
-static void t1_decode_cblk_v2(
+static opj_bool t1_decode_cblk_v2(
 		opj_t1_t *t1,
 		opj_tcd_cblk_dec_v2_t* cblk,
 		OPJ_UINT32 orient,
@@ -1773,7 +1780,9 @@ static void t1_decode_cblk_v2(
 		if (type == T1_TYPE_RAW) {
 			raw_init_dec(raw, (*seg->data) + seg->dataindex, seg->len);
 		} else {
-			mqc_init_dec(mqc, (*seg->data) + seg->dataindex, seg->len);
+                        if (OPJ_FALSE == mqc_init_dec(mqc, (*seg->data) + seg->dataindex, seg->len)) {
+                                return OPJ_FALSE;
+                        }
 		}
 
 		for (passno = 0; passno < seg->real_num_passes; ++passno) {
@@ -1801,6 +1810,7 @@ static void t1_decode_cblk_v2(
 			}
 		}
 	}
+        return OPJ_TRUE;
 }
 
 opj_bool opj_t1_encode_cblks(   opj_t1_t *t1,

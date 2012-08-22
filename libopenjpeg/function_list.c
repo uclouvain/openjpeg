@@ -34,30 +34,30 @@
 /**
  * Creates a validation list.
  *
- * @return	the newly created validation list.
+ * @return      the newly created validation list.
  */
 opj_procedure_list_t *  opj_procedure_list_create()
 {
-	/* memory allocation */
-	opj_procedure_list_t * l_validation = (opj_procedure_list_t *) opj_malloc(sizeof(opj_procedure_list_t));
-	if
-		(! l_validation)
-	{
-		return 00;
-	}
-	/* initialization */
-	memset(l_validation,0,sizeof(opj_procedure_list_t));
-	l_validation->m_nb_max_procedures = OPJ_VALIDATION_SIZE;
-	l_validation->m_procedures = (opj_procedure*)opj_malloc(
-		OPJ_VALIDATION_SIZE * sizeof(opj_procedure));
-	if
-		(! l_validation->m_procedures)
-	{
-		opj_free(l_validation);
-		return 00;
-	}
-	memset(l_validation->m_procedures,0,OPJ_VALIDATION_SIZE * sizeof(opj_procedure));
-	return l_validation;
+        /* memory allocation */
+        opj_procedure_list_t * l_validation = (opj_procedure_list_t *) opj_malloc(sizeof(opj_procedure_list_t));
+        if
+                (! l_validation)
+        {
+                return 00;
+        }
+        /* initialization */
+        memset(l_validation,0,sizeof(opj_procedure_list_t));
+        l_validation->m_nb_max_procedures = OPJ_VALIDATION_SIZE;
+        l_validation->m_procedures = (opj_procedure*)opj_malloc(
+                OPJ_VALIDATION_SIZE * sizeof(opj_procedure));
+        if
+                (! l_validation->m_procedures)
+        {
+                opj_free(l_validation);
+                return 00;
+        }
+        memset(l_validation->m_procedures,0,OPJ_VALIDATION_SIZE * sizeof(opj_procedure));
+        return l_validation;
 }
 
 
@@ -69,64 +69,66 @@ opj_procedure_list_t *  opj_procedure_list_create()
  */
 void  opj_procedure_list_destroy(opj_procedure_list_t * p_list)
 {
-	if
-		(! p_list)
-	{
-		return;
-	}
-	/* initialization */
-	if
-		(p_list->m_procedures)
-	{
-		opj_free(p_list->m_procedures);
-	}
-	opj_free(p_list);
+        if
+                (! p_list)
+        {
+                return;
+        }
+        /* initialization */
+        if
+                (p_list->m_procedures)
+        {
+                opj_free(p_list->m_procedures);
+        }
+        opj_free(p_list);
 }
 
 /**
  * Adds a new validation procedure.
  *
- * @param	p_validation_list the list of procedure to modify.
- * @param	p_procedure		the procedure to add.
+ * @param       p_validation_list the list of procedure to modify.
+ * @param       p_procedure             the procedure to add.
  */
 opj_bool  opj_procedure_list_add_procedure (opj_procedure_list_t * p_validation_list, opj_procedure p_procedure)
 {
-	if
-		(p_validation_list->m_nb_max_procedures == p_validation_list->m_nb_procedures)
-	{
-         opj_procedure * new_procedures;
+        if
+                (p_validation_list->m_nb_max_procedures == p_validation_list->m_nb_procedures)
+        {
+                opj_procedure * new_procedures;
 
-		p_validation_list->m_nb_max_procedures += OPJ_VALIDATION_SIZE;
+                p_validation_list->m_nb_max_procedures += OPJ_VALIDATION_SIZE;
                 new_procedures = (opj_procedure*)opj_realloc(
-		p_validation_list->m_procedures,p_validation_list->m_nb_max_procedures * sizeof(opj_procedure));
-		if
-			(! new_procedures)
-		{
-			opj_free(p_validation_list->m_procedures);
-			p_validation_list->m_nb_max_procedures = 0;
-			p_validation_list->m_nb_procedures = 0;
-			return OPJ_FALSE;
-		}
+                p_validation_list->m_procedures,p_validation_list->m_nb_max_procedures * sizeof(opj_procedure));
+                if
+                        (! new_procedures)
+                {
+                        opj_free(p_validation_list->m_procedures);
+                        p_validation_list->m_nb_max_procedures = 0;
+                        p_validation_list->m_nb_procedures = 0;
+                        /* opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory to add a new validation procedure\n"); */
+                        fprintf(stderr, "Not enough memory to add a new validation procedure\n");
+                        return OPJ_FALSE;
+                }
                 else
                 {
-			p_validation_list->m_procedures = new_procedures;
+                        p_validation_list->m_procedures = new_procedures;
                 }
-	}
-	p_validation_list->m_procedures[p_validation_list->m_nb_procedures] = p_procedure;
-	++p_validation_list->m_nb_procedures;
-	return OPJ_TRUE;
+        }
+        p_validation_list->m_procedures[p_validation_list->m_nb_procedures] = p_procedure;
+        ++p_validation_list->m_nb_procedures;
+        return OPJ_TRUE;
 }
 
 /**
  * Gets the number of validation procedures.
  *
- * @param	p_validation_list the list of procedure to modify.
+ * @param       p_validation_list the list of procedure to modify.
  *
  * @return the number of validation procedures.
  */
 OPJ_UINT32 opj_procedure_list_get_nb_procedures (opj_procedure_list_t * p_validation_list)
 {
-	return p_validation_list->m_nb_procedures;
+        return p_validation_list->m_nb_procedures;
 }
 
 /**
@@ -134,22 +136,22 @@ OPJ_UINT32 opj_procedure_list_get_nb_procedures (opj_procedure_list_t * p_valida
  * iterator class to iterate through all the procedures inside the validation list.
  * the caller does not take ownership of the pointer.
  *
- * @param	p_validation_list the list of procedure to get the first procedure from.
+ * @param       p_validation_list the list of procedure to get the first procedure from.
  *
- * @return	a pointer to the first procedure.
+ * @return      a pointer to the first procedure.
  */
 opj_procedure* opj_procedure_list_get_first_procedure (opj_procedure_list_t * p_validation_list)
 {
-	return p_validation_list->m_procedures;
+        return p_validation_list->m_procedures;
 }
 
 /**
  * Clears the list of validation procedures.
  *
- * @param	p_validation_list the list of procedure to clear.
+ * @param       p_validation_list the list of procedure to clear.
  *
  */
 void  opj_procedure_list_clear (opj_procedure_list_t * p_validation_list)
 {
-	p_validation_list->m_nb_procedures = 0;
+        p_validation_list->m_nb_procedures = 0;
 }

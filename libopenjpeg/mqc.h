@@ -185,7 +185,7 @@ Initialize the decoder
 @param bp Pointer to the start of the buffer from which the bytes will be read
 @param len Length of the input buffer
 */
-void mqc_init_dec(opj_mqc_t *mqc, unsigned char *bp, int len);
+opj_bool mqc_init_dec(opj_mqc_t *mqc, unsigned char *bp, int len);
 /**
 Decode a symbol
 @param mqc MQC handle

@@ -1765,7 +1765,7 @@ static opj_bool opj_jp2_read_header_procedure(  opj_jp2_v2_t *jp2,
 		if (box.type == JP2_JP2C) {
 			if (jp2->jp2_state & JP2_STATE_HEADER) {
 				jp2->jp2_state |= JP2_STATE_CODESTREAM;
-                opj_free(l_current_data);
+                                opj_free(l_current_data);
 				return OPJ_TRUE;
 			}
 			else {
@@ -1785,17 +1785,22 @@ static opj_bool opj_jp2_read_header_procedure(  opj_jp2_v2_t *jp2,
 
 		if (l_current_handler != 00) {
 			if (l_current_data_size > l_last_data_size) {
-				l_current_data = (unsigned char*)opj_realloc(l_current_data,l_current_data_size);
+				unsigned char* new_current_data = (unsigned char*)opj_realloc(l_current_data,l_current_data_size);
 				if (!l_current_data){
 					opj_free(l_current_data);
+                                        opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory to handle jpeg2000 box\n");
 					return OPJ_FALSE;
 				}
+                                l_current_data = new_current_data;
 				l_last_data_size = l_current_data_size;
 			}
 
 			l_nb_bytes_read = opj_stream_read_data(stream,l_current_data,l_current_data_size,p_manager);
 			if (l_nb_bytes_read != l_current_data_size) {
 				opj_event_msg_v2(p_manager, EVT_ERROR, "Problem with reading JPEG2000 box, stream error\n");
+                                // TODO: LH: why nothing is freed here (as
+                                // all other returns imply a free, even
+                                // in the nominal case)?
 				return OPJ_FALSE;
 			}
 
