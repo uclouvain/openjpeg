@@ -274,7 +274,7 @@ static int infile_format(const char *fname)
 	reader = fopen(fname, "rb");
 
 	if (reader == NULL)
-		return -1;
+		return -2;
 
 	memset(buf, 0, 12);
 	l_nb_read = fread(buf, 1, 12, reader);
@@ -352,9 +352,14 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 						break;
 					case JPT_CFMT:
 						break;
+                                        case -2:
+						fprintf(stderr, 
+							"!! infile cannot be read: %s !!\n\n", 
+							infile);
+						return 1;
 					default:
 						fprintf(stderr, 
-							"!! Unrecognized format for infile : %s [accept only *.j2k, *.jp2, *.jpc or *.jpt] !!\n\n", 
+							"!! Unrecognized format for infile: %s [accept only *.j2k, *.jp2, *.jpc or *.jpt] !!\n\n", 
 							infile);
 						return 1;
 				}
