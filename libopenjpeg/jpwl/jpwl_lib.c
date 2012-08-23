@@ -1581,7 +1581,7 @@ opj_bool jpwl_esd_fill(opj_j2k_t *j2k, jpwl_esd_ms_t *esd, unsigned char *buf) {
 	return OPJ_TRUE;
 }
 
-void jpwl_esd_write(opj_j2k_t *j2k, jpwl_esd_ms_t *esd, unsigned char *buf) {
+opj_bool jpwl_esd_write(opj_j2k_t *j2k, jpwl_esd_ms_t *esd, unsigned char *buf) {
 
 	/* Marker */
 	*(buf++) = (unsigned char) (J2K_MS_ESD >> 8); 

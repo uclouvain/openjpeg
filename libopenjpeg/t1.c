@@ -1413,7 +1413,7 @@ static opj_bool t1_decode_cblk(
 				cblk->x1 - cblk->x0,
 				cblk->y1 - cblk->y0))
 	{
-		return;
+		return OPJ_FALSE;
 	}
 
 	bpno = roishift + cblk->numbps - 1;
@@ -1757,7 +1757,7 @@ static opj_bool t1_decode_cblk_v2(
 				cblk->x1 - cblk->x0,
 				cblk->y1 - cblk->y0))
 	{
-		return;
+		return OPJ_FALSE;
 	}
 
 	bpno = roishift + cblk->numbps - 1;

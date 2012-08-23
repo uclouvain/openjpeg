@@ -164,7 +164,7 @@ void jpwl_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 opj_bool j2k_add_marker(opj_codestream_info_t *cstr_info, unsigned short int type, int pos, int len) {
 
         if (!cstr_info)
-                return;
+                return OPJ_FALSE;
 
         /* expand the list? */
         if ((cstr_info->marknum + 1) > cstr_info->maxmarknum) {
@@ -177,8 +177,8 @@ opj_bool j2k_add_marker(opj_codestream_info_t *cstr_info, unsigned short int typ
                         cstr_info->marker = 0;
                         cstr_info->marknum = 0;
                         cstr_info->maxmarknum = 0;
-                        opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory to add a marker\n"); // TODO: find a better error message
-                        TODO_test_add_marker_result;
+                        /* opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory to add a marker\n"); */
+                        // TODO_test_add_marker_result;
                         return OPJ_FALSE;
                 }
                 cstr_info->marker = new_marker;
