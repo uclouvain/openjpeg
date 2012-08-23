@@ -1751,7 +1751,7 @@ opj_bool opj_j2k_write_soc(     opj_j2k_v2_t *p_j2k,
 #ifdef USE_JPWL
         /* update markers struct */
 /*
-        j2k_add_marker(p_j2k->cstr_info, J2K_MS_SOC, p_stream_tell(p_stream) - 2, 2);
+        opj_bool res = j2k_add_marker(p_j2k->cstr_info, J2K_MS_SOC, p_stream_tell(p_stream) - 2, 2);
 */
   assert( 0 && "TODO" );
 #endif /* USE_JPWL */
@@ -3651,8 +3651,9 @@ opj_bool j2k_read_ppm_v3 (
                 l_cp->ppm_data_read = 0;
 
                 l_cp->ppm_data = (OPJ_BYTE *) opj_malloc(l_cp->ppm_len);
+                l_cp->ppm_buffer = l_cp->ppm_data; 
                 if (l_cp->ppm_data == 00) {
-                        opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory reading ppm marker\n");
+                        opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory to read ppm marker\n");
                         return OPJ_FALSE;
                 }
                 memset(l_cp->ppm_data,0,l_cp->ppm_len);
@@ -3679,15 +3680,18 @@ opj_bool j2k_read_ppm_v3 (
                                 p_header_size-=4;
 
                                 /* Increase the size of ppm_data to add the new Ippm series*/
+                                assert(l_cp->ppm_data == l_cp->ppm_buffer && "We need ppm_data and ppm_buffer to be the same when reallocating");
                                 OPJ_BYTE *new_ppm_data = (OPJ_BYTE *) opj_realloc(l_cp->ppm_data, l_cp->ppm_len + l_N_ppm);
                                 if (! new_ppm_data) {
                                         opj_free(l_cp->ppm_data);
                                         l_cp->ppm_data = NULL;
+                                        l_cp->ppm_buffer = NULL;  /* TODO: no need for a new local variable: ppm_buffer and ppm_data are enough */
                                         l_cp->ppm_len = 0;
                                         opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory to increase the size of ppm_data to add the new Ippm series\n");
                                         return OPJ_FALSE;
                                 }
                                 l_cp->ppm_data = new_ppm_data;
+                                l_cp->ppm_buffer = l_cp->ppm_data; 
 
                                 /* Keep the position of the place where concatenate the new series*/
                                 l_cp->ppm_data_current = &(l_cp->ppm_data[l_cp->ppm_len]);
@@ -3722,15 +3726,18 @@ opj_bool j2k_read_ppm_v3 (
                 /* Next Ippm series is a complete series ?*/
                 if (l_remaining_data > l_N_ppm) {
                         /* Increase the size of ppm_data to add the new Ippm series*/
+                        assert(l_cp->ppm_data == l_cp->ppm_buffer && "We need ppm_data and ppm_buffer to be the same when reallocating");
                         OPJ_BYTE *new_ppm_data = (OPJ_BYTE *) opj_realloc(l_cp->ppm_data, l_cp->ppm_len + l_N_ppm);
                         if (! new_ppm_data) {
                                 opj_free(l_cp->ppm_data);
                                 l_cp->ppm_data = NULL;
+                                l_cp->ppm_buffer = NULL;  /* TODO: no need for a new local variable: ppm_buffer and ppm_data are enough */
                                 l_cp->ppm_len = 0;
                                 opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory to increase the size of ppm_data to add the new (complete) Ippm series\n");
                                 return OPJ_FALSE;
                         }
                         l_cp->ppm_data = new_ppm_data;
+                        l_cp->ppm_buffer = l_cp->ppm_data; 
 
                         /* Keep the position of the place where concatenate the new series */
                         l_cp->ppm_data_current = &(l_cp->ppm_data[l_cp->ppm_len]);
@@ -3741,15 +3748,18 @@ opj_bool j2k_read_ppm_v3 (
 
         /* Need to read an incomplete Ippm series*/
         if (l_remaining_data) {
+                assert(l_cp->ppm_data == l_cp->ppm_buffer && "We need ppm_data and ppm_buffer to be the same when reallocating");
                 OPJ_BYTE *new_ppm_data = (OPJ_BYTE *) opj_realloc(l_cp->ppm_data, l_cp->ppm_len + l_N_ppm);
                 if (! new_ppm_data) {
                         opj_free(l_cp->ppm_data);
                         l_cp->ppm_data = NULL;
+                        l_cp->ppm_buffer = NULL;  /* TODO: no need for a new local variable: ppm_buffer and ppm_data are enough */
                         l_cp->ppm_len = 0;
                         opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory to increase the size of ppm_data to add the new (incomplete) Ippm series\n");
                         return OPJ_FALSE;
                 }
                 l_cp->ppm_data = new_ppm_data;
+                l_cp->ppm_buffer = l_cp->ppm_data; 
 
                 /* Keep the position of the place where concatenate the new series*/
                 l_cp->ppm_data_current = &(l_cp->ppm_data[l_cp->ppm_len]);
@@ -3996,7 +4006,7 @@ opj_bool opj_j2k_write_sot(     opj_j2k_v2_t *p_j2k,
 #ifdef USE_JPWL
         /* update markers struct */
 /*
-        j2k_add_marker(p_j2k->cstr_info, J2K_MS_SOT, p_j2k->sot_start, len + 2);
+        opj_bool res = j2k_add_marker(p_j2k->cstr_info, J2K_MS_SOT, p_j2k->sot_start, len + 2);
 */
   assert( 0 && "TODO" );
 #endif /* USE_JPWL */
@@ -4322,7 +4332,7 @@ opj_bool opj_j2k_write_sod(     opj_j2k_v2_t *p_j2k,
                 /* UniPG>> */
 #ifdef USE_JPWL
                 /* update markers struct */
-                /*j2k_add_marker(p_j2k->cstr_info, J2K_MS_SOD, p_j2k->sod_start, 2);
+                /*opj_bool res = j2k_add_marker(p_j2k->cstr_info, J2K_MS_SOD, p_j2k->sod_start, 2);
 */
   assert( 0 && "TODO" );
 #endif /* USE_JPWL */
@@ -4549,7 +4559,7 @@ opj_bool opj_j2k_write_eoc(     opj_j2k_v2_t *p_j2k,
 #ifdef USE_JPWL
         /* update markers struct */
         /*
-        j2k_add_marker(p_j2k->cstr_info, J2K_MS_EOC, p_stream_tell(p_stream) - 2, 2);
+        opj_bool res = j2k_add_marker(p_j2k->cstr_info, J2K_MS_EOC, p_stream_tell(p_stream) - 2, 2);
 */
 #endif /* USE_JPWL */
 
@@ -7366,19 +7376,16 @@ void opj_j2k_cp_destroy (opj_cp_v2_t *p_cp)
         opj_tcp_v2_t * l_current_tile = 00;
         OPJ_UINT32 i;
 
-        if
-                (p_cp == 00)
+        if (p_cp == 00)
         {
                 return;
         }
-        if
-                (p_cp->tcps != 00)
+        if (p_cp->tcps != 00)
         {
                 l_current_tile = p_cp->tcps;
                 l_nb_tiles = p_cp->th * p_cp->tw;
 
-                for
-                        (i = 0; i < l_nb_tiles; ++i)
+                for (i = 0; i < l_nb_tiles; ++i)
                 {
                         opj_j2k_tcp_destroy(l_current_tile);
                         ++l_current_tile;
@@ -7386,27 +7393,15 @@ void opj_j2k_cp_destroy (opj_cp_v2_t *p_cp)
                 opj_free(p_cp->tcps);
                 p_cp->tcps = 00;
         }
-        if
-                (p_cp->ppm_buffer != 00)
+        opj_free(p_cp->ppm_buffer);
+        p_cp->ppm_buffer = 00;
+        p_cp->ppm_data = NULL; /* ppm_data belongs to the allocated buffer pointed by ppm_buffer */
+        opj_free(p_cp->comment);
+        p_cp->comment = 00;
+        if (! p_cp->m_is_decoder)
         {
-                opj_free(p_cp->ppm_buffer);
-                p_cp->ppm_buffer = 00;
-        }
-        if
-                (p_cp->comment != 00)
-        {
-                opj_free(p_cp->comment);
-                p_cp->comment = 00;
-        }
-        if
-                (! p_cp->m_is_decoder)
-        {
-                if
-                        (p_cp->m_specific_param.m_enc.m_matrice)
-                {
-                        opj_free(p_cp->m_specific_param.m_enc.m_matrice);
-                        p_cp->m_specific_param.m_enc.m_matrice = 00;
-                }
+                opj_free(p_cp->m_specific_param.m_enc.m_matrice);
+                p_cp->m_specific_param.m_enc.m_matrice = 00;
         }
 }
 
