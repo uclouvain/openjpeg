@@ -677,7 +677,7 @@ opj_bool jpwl_correct(opj_j2k_t *j2k) {
 		id = cio_read(cio, 2);
 
 		/* details */
-		printf("Marker@%d: %X\n", cio_tell(cio) - 2, id);
+		printf("Marker@%lld: %X\n", cio_tell(cio) - 2, id);
 
 		/* do an action in response to the read marker */
 		switch (id) {

@@ -1418,13 +1418,15 @@ opj_bool tcd_decode_tile(opj_tcd_t *tcd, unsigned char *src, int len, int tileno
 		int numres2decode;
 
 		if (tcd->cp->reduce != 0) {
-			tcd->image->comps[compno].resno_decoded =
-				tile->comps[compno].numresolutions - tcd->cp->reduce - 1;
-			if (tcd->image->comps[compno].resno_decoded < 0) {				
+			if ( tile->comps[compno].numresolutions < ( tcd->cp->reduce - 1 ) ) {				
 				opj_event_msg(tcd->cinfo, EVT_ERROR, "Error decoding tile. The number of resolutions to remove [%d+1] is higher than the number "
 					" of resolutions in the original codestream [%d]\nModify the cp_reduce parameter.\n", tcd->cp->reduce, tile->comps[compno].numresolutions);
 				return OPJ_FALSE;
 			}
+      else {
+		  	tcd->image->comps[compno].resno_decoded =
+				tile->comps[compno].numresolutions - tcd->cp->reduce - 1;
+      }
 		}
 
 		numres2decode = tcd->image->comps[compno].resno_decoded + 1;
