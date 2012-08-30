@@ -4064,7 +4064,7 @@ opj_bool opj_j2k_read_sot ( opj_j2k_v2_t *p_j2k,
                 static OPJ_UINT32 backup_tileno = 0;
 
                 /* tileno is negative or larger than the number of tiles!!! */
-                if ((tileno < 0) || (tileno > (l_cp->tw * l_cp->th))) {
+                if (tileno > (l_cp->tw * l_cp->th)) {
                         opj_event_msg_v2(p_manager, EVT_ERROR,
                                         "JPWL: bad tile number (%d out of a maximum of %d)\n",
                                         tileno, (l_cp->tw * l_cp->th));
