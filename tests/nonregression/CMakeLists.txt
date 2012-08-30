@@ -1,15 +1,15 @@
 # NON-REGRESSION TESTS ON THIS DATASET LOCATED ${OPJ_DATA_ROOT}/input/nonregression
 
-FILE(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/Temporary)
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/Temporary)
 
-SET(TEMP ${CMAKE_CURRENT_BINARY_DIR}/Temporary)
-SET(BASELINE_NR ${OPJ_DATA_ROOT}/baseline/nonregression)
-SET(INPUT_NR ${OPJ_DATA_ROOT}/input/nonregression)
+set(TEMP ${CMAKE_CURRENT_BINARY_DIR}/Temporary)
+set(BASELINE_NR ${OPJ_DATA_ROOT}/baseline/nonregression)
+set(INPUT_NR ${OPJ_DATA_ROOT}/input/nonregression)
 
 
-SET(INPUT_NR_PATH ${INPUT_NR})
-SET(TEMP_PATH ${TEMP})
-SET(INPUT_CONF_PATH ${OPJ_DATA_ROOT}/input/conformance)
+set(INPUT_NR_PATH ${INPUT_NR})
+set(TEMP_PATH ${TEMP})
+set(INPUT_CONF_PATH ${OPJ_DATA_ROOT}/input/conformance)
 
 # need kdu_expand if possible
 find_package(KAKADU)
@@ -19,49 +19,49 @@ find_package(KAKADU)
 # Dump all files with the selected extension inside the input directory
 
 # Define a list of file which should be gracefully rejected:
-SET(BLACKLIST_JPEG2000 
+set(BLACKLIST_JPEG2000 
     empty
    )
 
-FILE(GLOB_RECURSE OPJ_DATA_NR_LIST
+file(GLOB_RECURSE OPJ_DATA_NR_LIST
      "${INPUT_NR}/*.j2k"
      "${INPUT_NR}/*.j2c"
      "${INPUT_NR}/*.jp2"
      #"${INPUT_NR}/*.jpx"
      )
  
-FOREACH(INPUT_FILENAME ${OPJ_DATA_NR_LIST})
-  GET_FILENAME_COMPONENT(INPUT_FILENAME_NAME ${INPUT_FILENAME} NAME)
-  GET_FILENAME_COMPONENT(INPUT_FILENAME_NAME_WE ${INPUT_FILENAME_NAME} NAME_WE)
-  STRING(REGEX MATCH ${INPUT_FILENAME_NAME} bad_jpeg2000 ${BLACKLIST_JPEG2000})
+foreach(INPUT_FILENAME ${OPJ_DATA_NR_LIST})
+  get_filename_component(INPUT_FILENAME_NAME ${INPUT_FILENAME} NAME)
+  get_filename_component(INPUT_FILENAME_NAME_WE ${INPUT_FILENAME_NAME} NAME_WE)
+  string(REGEX MATCH ${INPUT_FILENAME_NAME} bad_jpeg2000 ${BLACKLIST_JPEG2000})
   
   # Dump the input image
-  ADD_TEST(NR-${INPUT_FILENAME_NAME}-dump
+  add_test(NR-${INPUT_FILENAME_NAME}-dump
            ${EXECUTABLE_OUTPUT_PATH}/j2k_dump
   	       -i ${INPUT_FILENAME}
   	       -o ${TEMP}/${INPUT_FILENAME_NAME}.txt
   	       -v
   	       )
   	       
-  IF(bad_jpeg2000)
-    SET_TESTS_PROPERTIES(NR-${INPUT_FILENAME_NAME}-dump
+  if(bad_jpeg2000)
+    set_tests_properties(NR-${INPUT_FILENAME_NAME}-dump
                          PROPERTIES WILL_FAIL TRUE)
   
-  ELSE(bad_jpeg2000)
+  else(bad_jpeg2000)
   	       
     # Compare the dump output with the baseline
-    ADD_TEST(NR-${INPUT_FILENAME_NAME}-compare_dump2base
+    add_test(NR-${INPUT_FILENAME_NAME}-compare_dump2base
   	        ${EXECUTABLE_OUTPUT_PATH}/compare_dump_files
             -b ${BASELINE_NR}/opj_v2_${INPUT_FILENAME_NAME_WE}.txt 
             -t ${TEMP}/${INPUT_FILENAME_NAME}.txt
             )
           
-    SET_TESTS_PROPERTIES(NR-${INPUT_FILENAME_NAME}-compare_dump2base
+    set_tests_properties(NR-${INPUT_FILENAME_NAME}-compare_dump2base
                          PROPERTIES DEPENDS
                          NR-${INPUT_FILENAME_NAME}-dump)
-  ENDIF(bad_jpeg2000)
+  endif(bad_jpeg2000)
 
-ENDFOREACH(INPUT_FILENAME)
+endforeach(INPUT_FILENAME)
 
 
 #########################################################################
@@ -70,233 +70,233 @@ ENDFOREACH(INPUT_FILENAME)
 # to know which files processed and with which options.
 
 # Configure the test suite file:
-CONFIGURE_FILE("test_suite.ctest.in"
+configure_file("test_suite.ctest.in"
                "${CMAKE_CURRENT_BINARY_DIR}/test_suite.ctest"
                @ONLY)
 
 # Read the file into a list
-FILE(STRINGS ${CMAKE_CURRENT_BINARY_DIR}/test_suite.ctest OPJ_TEST_CMD_LINE_LIST)
+file(STRINGS ${CMAKE_CURRENT_BINARY_DIR}/test_suite.ctest OPJ_TEST_CMD_LINE_LIST)
 
 # Try to find and configure and read another test suite file
-FILE(GLOB TEST_SUITE_FILES *.ctest.in)
-IF (TEST_SUITE_FILES)
-  FOREACH(TEST_SUITE_FILE ${TEST_SUITE_FILES})
+file(GLOB TEST_SUITE_FILES *.ctest.in)
+if (TEST_SUITE_FILES)
+  foreach(TEST_SUITE_FILE ${TEST_SUITE_FILES})
     
     # Avoid to process the official test suite
-    SET(FILE_ALREADY_READ 0)
-    GET_FILENAME_COMPONENT(TEST_SUITE_FILENAME ${TEST_SUITE_FILE} NAME)
-    STRING(REGEX MATCH "^test_suite.ctest.in$" FILE_ALREADY_READ ${TEST_SUITE_FILENAME})
+    set(FILE_ALREADY_READ 0)
+    get_filename_component(TEST_SUITE_FILENAME ${TEST_SUITE_FILE} NAME)
+    string(REGEX MATCH "^test_suite.ctest.in$" FILE_ALREADY_READ ${TEST_SUITE_FILENAME})
    
-    IF(NOT FILE_ALREADY_READ) 
+    if(NOT FILE_ALREADY_READ) 
       # Configure the additional test suite file:
-      GET_FILENAME_COMPONENT(TEST_SUITE_FILE_SUB ${TEST_SUITE_FILE} NAME_WE)
-      CONFIGURE_FILE("${TEST_SUITE_FILE}"
+      get_filename_component(TEST_SUITE_FILE_SUB ${TEST_SUITE_FILE} NAME_WE)
+      configure_file("${TEST_SUITE_FILE}"
                      "${CMAKE_CURRENT_BINARY_DIR}/${TEST_SUITE_FILE_SUB}.ctest"
                      @ONLY)
       # Read the additional file into a list
-      FILE(STRINGS ${CMAKE_CURRENT_BINARY_DIR}/${TEST_SUITE_FILE_SUB}.ctest OPJ_TEST_CMD_LINE_LIST_TEMP)
+      file(STRINGS ${CMAKE_CURRENT_BINARY_DIR}/${TEST_SUITE_FILE_SUB}.ctest OPJ_TEST_CMD_LINE_LIST_TEMP)
       # Append the list of command
-      SET(OPJ_TEST_CMD_LINE_LIST ${OPJ_TEST_CMD_LINE_LIST} ${OPJ_TEST_CMD_LINE_LIST_TEMP}) 
+      set(OPJ_TEST_CMD_LINE_LIST ${OPJ_TEST_CMD_LINE_LIST} ${OPJ_TEST_CMD_LINE_LIST_TEMP}) 
     
-    ENDIF(NOT FILE_ALREADY_READ) 
+    endif(NOT FILE_ALREADY_READ) 
 
-  ENDFOREACH(TEST_SUITE_FILE)
+  endforeach(TEST_SUITE_FILE)
   
-ELSE(TEST_SUITE_FILES)
+else(TEST_SUITE_FILES)
 
-  MESSAGE(FATAL_ERROR "One test suite should be available (test_suite.ctest.in) !!!")
+  message(FATAL_ERROR "One test suite should be available (test_suite.ctest.in) !!!")
   
-ENDIF(TEST_SUITE_FILES)
+endif(TEST_SUITE_FILES)
 
 
 # Parse the command line found in the file(s)
-SET(IT_TEST_ENC 0)
-SET(IT_TEST_DEC 0)
-FOREACH(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
+set(IT_TEST_ENC 0)
+set(IT_TEST_DEC 0)
+foreach(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
 
-  SET(IGNORE_LINE_FOUND 0)
+  set(IGNORE_LINE_FOUND 0)
 
   # Replace space by ; to generate a list
-  STRING(REPLACE " " ";" CMD_ARG_LIST ${OPJ_TEST_CMD_LINE})
+  string(REPLACE " " ";" CMD_ARG_LIST ${OPJ_TEST_CMD_LINE})
 
   # Check if the first argument begin by the comment sign
-  LIST(GET CMD_ARG_LIST 0 EXE_NAME)
+  list(GET CMD_ARG_LIST 0 EXE_NAME)
   
-  IF(EXE_NAME)
-    STRING(REGEX MATCH "^#" IGNORE_LINE_FOUND ${EXE_NAME})
-  ENDIF(EXE_NAME)
+  if(EXE_NAME)
+    string(REGEX MATCH "^#" IGNORE_LINE_FOUND ${EXE_NAME})
+  endif(EXE_NAME)
 
-  IF(IGNORE_LINE_FOUND OR NOT EXE_NAME) 
+  if(IGNORE_LINE_FOUND OR NOT EXE_NAME) 
     
-    #MESSAGE( STATUS "Current line is ignored: ${OPJ_TEST_CMD_LINE}")
+    #message( STATUS "Current line is ignored: ${OPJ_TEST_CMD_LINE}")
    
-  ELSE(IGNORE_LINE_FOUND OR NOT EXE_NAME)
+  else(IGNORE_LINE_FOUND OR NOT EXE_NAME)
   
     # Check if the first argument begin by the failed sign
-    SET(FAILED_TEST_FOUND 0)
-    STRING(REGEX MATCH "^!" FAILED_TEST_FOUND ${EXE_NAME})
+    set(FAILED_TEST_FOUND 0)
+    string(REGEX MATCH "^!" FAILED_TEST_FOUND ${EXE_NAME})
    
-    IF (FAILED_TEST_FOUND)
+    if (FAILED_TEST_FOUND)
       # Manage the different cases with the failed sign to remove the first argument which must be image_to_j2k
-      SET(FAILED_TEST_FOUND_1 0)
-      STRING(REGEX MATCH "^!image_to_j2k$|^!j2k_to_image$" FAILED_TEST_FOUND_1 ${EXE_NAME})
+      set(FAILED_TEST_FOUND_1 0)
+      string(REGEX MATCH "^!image_to_j2k$|^!j2k_to_image$" FAILED_TEST_FOUND_1 ${EXE_NAME})
       
-      IF (FAILED_TEST_FOUND_1)
+      if (FAILED_TEST_FOUND_1)
         
-        LIST(REMOVE_AT CMD_ARG_LIST 0)
+        list(REMOVE_AT CMD_ARG_LIST 0)
       
-      ELSE (FAILED_TEST_FOUND_1)
+      else (FAILED_TEST_FOUND_1)
         
-        SET(FAILED_TEST_FOUND_2 0)
-        LIST(GET CMD_ARG_LIST 1 EXE_NAME)
-        STRING(REGEX MATCH "^image_to_j2k$|^j2k_to_image$" FAILED_TEST_FOUND_2 ${EXE_NAME})
+        set(FAILED_TEST_FOUND_2 0)
+        list(GET CMD_ARG_LIST 1 EXE_NAME)
+        string(REGEX MATCH "^image_to_j2k$|^j2k_to_image$" FAILED_TEST_FOUND_2 ${EXE_NAME})
       
-        IF (FAILED_TEST_FOUND_2)
+        if (FAILED_TEST_FOUND_2)
         
-          LIST(REMOVE_AT CMD_ARG_LIST 0)
-          LIST(REMOVE_AT CMD_ARG_LIST 0)
+          list(REMOVE_AT CMD_ARG_LIST 0)
+          list(REMOVE_AT CMD_ARG_LIST 0)
       
-        ELSE (FAILED_TEST_FOUND_2)
+        else (FAILED_TEST_FOUND_2)
         
-          MESSAGE( FATAL_ERROR "${EXE_NAME} is not the right executable name to encode file (try to use image_to_j2k or j2k_to_image)")
+          message( FATAL_ERROR "${EXE_NAME} is not the right executable name to encode file (try to use image_to_j2k or j2k_to_image)")
           
-        ENDIF (FAILED_TEST_FOUND_2)
-      ENDIF (FAILED_TEST_FOUND_1)
+        endif (FAILED_TEST_FOUND_2)
+      endif (FAILED_TEST_FOUND_1)
       
-    ELSE (FAILED_TEST_FOUND)
+    else (FAILED_TEST_FOUND)
       # Check if the first argument is equal to image_to_j2k
-      STRING(REGEX MATCH "^image_to_j2k$|^j2k_to_image$" EXE_NAME_FOUND ${EXE_NAME})
+      string(REGEX MATCH "^image_to_j2k$|^j2k_to_image$" EXE_NAME_FOUND ${EXE_NAME})
       
-      IF(EXE_NAME_FOUND)
+      if(EXE_NAME_FOUND)
       
-        STRING(REGEX MATCH "image_to_j2k" ENC_TEST_FOUND ${EXE_NAME})
+        string(REGEX MATCH "image_to_j2k" ENC_TEST_FOUND ${EXE_NAME})
      
-      ELSE(EXE_NAME_FOUND)
+      else(EXE_NAME_FOUND)
         
-        MESSAGE( FATAL_ERROR "${EXE_NAME} is not the right executable name to encode file (try to use image_to_j2k)")
+        message( FATAL_ERROR "${EXE_NAME} is not the right executable name to encode file (try to use image_to_j2k)")
         
-      ENDIF(EXE_NAME_FOUND)
+      endif(EXE_NAME_FOUND)
       
-      LIST(REMOVE_AT CMD_ARG_LIST 0)
+      list(REMOVE_AT CMD_ARG_LIST 0)
       
-    ENDIF (FAILED_TEST_FOUND)
+    endif (FAILED_TEST_FOUND)
   
     # Parse the argument list to find the input filename and output filename
-    SET(CMD_ARG_LIST_2 "")
-    SET(ARG_POS 0)
-    SET(INPUT_ARG_POS 0)
-    SET(OUTPUT_ARG_POS 0)
+    set(CMD_ARG_LIST_2 "")
+    set(ARG_POS 0)
+    set(INPUT_ARG_POS 0)
+    set(OUTPUT_ARG_POS 0)
         
-    FOREACH(CMD_ARG_ELT ${CMD_ARG_LIST})
+    foreach(CMD_ARG_ELT ${CMD_ARG_LIST})
       
       math(EXPR ARG_POS "${ARG_POS}+1" ) 
 
-      STRING(COMPARE EQUAL ${CMD_ARG_ELT} "-i" INPUT_ARG_FOUND)
-      IF(INPUT_ARG_FOUND)
-        SET(INPUT_ARG_POS ${ARG_POS})
-        SET(INPUT_ARG_FOUND 0)
-      ENDIF(INPUT_ARG_FOUND)
+      string(COMPARE EQUAL ${CMD_ARG_ELT} "-i" INPUT_ARG_FOUND)
+      if(INPUT_ARG_FOUND)
+        set(INPUT_ARG_POS ${ARG_POS})
+        set(INPUT_ARG_FOUND 0)
+      endif(INPUT_ARG_FOUND)
       
-      STRING(COMPARE EQUAL ${CMD_ARG_ELT} "-o" OUTPUT_ARG_FOUND)
-      IF(OUTPUT_ARG_FOUND)
-        SET(OUTPUT_ARG_POS ${ARG_POS})
-        SET(OUTPUT_ARG_FOUND 0)
-      ENDIF(OUTPUT_ARG_FOUND)
+      string(COMPARE EQUAL ${CMD_ARG_ELT} "-o" OUTPUT_ARG_FOUND)
+      if(OUTPUT_ARG_FOUND)
+        set(OUTPUT_ARG_POS ${ARG_POS})
+        set(OUTPUT_ARG_FOUND 0)
+      endif(OUTPUT_ARG_FOUND)
       
-      LIST (APPEND CMD_ARG_LIST_2 ${CMD_ARG_ELT})
+      list (APPEND CMD_ARG_LIST_2 ${CMD_ARG_ELT})
   
-    ENDFOREACH(CMD_ARG_ELT)
+    endforeach(CMD_ARG_ELT)
   
-    LIST(GET CMD_ARG_LIST_2 ${INPUT_ARG_POS} INPUT_FILENAME)
-    GET_FILENAME_COMPONENT(INPUT_FILENAME_NAME ${INPUT_FILENAME} NAME)
-    GET_FILENAME_COMPONENT(INPUT_FILENAME_NAME_WE ${INPUT_FILENAME_NAME} NAME_WE)
-    LIST(GET CMD_ARG_LIST_2 ${OUTPUT_ARG_POS} OUTPUT_FILENAME)
-    GET_FILENAME_COMPONENT(OUTPUT_FILENAME_NAME_WE ${OUTPUT_FILENAME} NAME_WE)
+    list(GET CMD_ARG_LIST_2 ${INPUT_ARG_POS} INPUT_FILENAME)
+    get_filename_component(INPUT_FILENAME_NAME ${INPUT_FILENAME} NAME)
+    get_filename_component(INPUT_FILENAME_NAME_WE ${INPUT_FILENAME_NAME} NAME_WE)
+    list(GET CMD_ARG_LIST_2 ${OUTPUT_ARG_POS} OUTPUT_FILENAME)
+    get_filename_component(OUTPUT_FILENAME_NAME_WE ${OUTPUT_FILENAME} NAME_WE)
     
     #-----
     # Now we can add the test suite corresponding to a line command in the file
     #-----
     
     # ENCODER TEST SUITE
-    IF(ENC_TEST_FOUND)
+    if(ENC_TEST_FOUND)
         math(EXPR IT_TEST_ENC "${IT_TEST_ENC}+1" )
         
         # Encode an image into the jpeg2000 format
-        ADD_TEST(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-encode
+        add_test(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-encode
           ${EXECUTABLE_OUTPUT_PATH}/image_to_j2k
           ${CMD_ARG_LIST_2}
         )
         
-        IF(FAILED_TEST_FOUND)
-            SET_TESTS_PROPERTIES(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-encode PROPERTIES WILL_FAIL TRUE)
-        ELSE(FAILED_TEST_FOUND)
+        if(FAILED_TEST_FOUND)
+            set_tests_properties(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-encode PROPERTIES WILL_FAIL TRUE)
+        else(FAILED_TEST_FOUND)
           
           # Dump the encoding file 
-          ADD_TEST(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-dump
+          add_test(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-dump
             ${EXECUTABLE_OUTPUT_PATH}/j2k_dump
             -i ${OUTPUT_FILENAME}
             -o ${OUTPUT_FILENAME}-ENC-${IT_TEST_ENC}.txt
           )
-          SET_TESTS_PROPERTIES(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-dump
+          set_tests_properties(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-dump
                                PROPERTIES DEPENDS 
                                NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-encode) 
         
           # Compare the dump file with the baseline 
-          ADD_TEST(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-compare_dump2base
+          add_test(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-compare_dump2base
             ${EXECUTABLE_OUTPUT_PATH}/compare_dump_files
             -b ${BASELINE_NR}/opj_v2_${OUTPUT_FILENAME_NAME_WE}-ENC-${IT_TEST_ENC}.txt
             -t ${OUTPUT_FILENAME}-ENC-${IT_TEST_ENC}.txt
           )
         
-          SET_TESTS_PROPERTIES(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-compare_dump2base
+          set_tests_properties(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-compare_dump2base
                                PROPERTIES DEPENDS 
                                NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-dump) 
     
           # Decode the encoding file with kakadu expand command
-          IF (KDU_EXPAND_EXECUTABLE)
-            ADD_TEST(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-decode-ref
+          if (KDU_EXPAND_EXECUTABLE)
+            add_test(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-decode-ref
               ${KDU_EXPAND_EXECUTABLE}
               -i ${OUTPUT_FILENAME}
               -o ${OUTPUT_FILENAME}.raw
               )
         
-            SET_TESTS_PROPERTIES(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-decode-ref
+            set_tests_properties(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-decode-ref
                                  PROPERTIES DEPENDS 
                                  NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-encode) 
         
             # Compare the decoding file with baseline generated from the kdu_expand and baseline.j2k 
-            ADD_TEST(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-compare_dec-ref-out2base
+            add_test(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-compare_dec-ref-out2base
               ${EXECUTABLE_OUTPUT_PATH}/compareRAWimages
               -b ${BASELINE_NR}/opj_${OUTPUT_FILENAME_NAME_WE}-ENC-${IT_TEST_ENC}.raw
               -t ${OUTPUT_FILENAME}.raw
             )
         
-            SET_TESTS_PROPERTIES(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-compare_dec-ref-out2base
+            set_tests_properties(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-compare_dec-ref-out2base
                                  PROPERTIES DEPENDS 
                                  NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-decode-ref)
         
-          ENDIF()
-      ENDIF(FAILED_TEST_FOUND)     
+          endif()
+      endif(FAILED_TEST_FOUND)     
     
     # DECODER TEST SUITE
-    ELSE(ENC_TEST_FOUND)
+    else(ENC_TEST_FOUND)
       math(EXPR IT_TEST_DEC "${IT_TEST_DEC}+1" )
       
       # Decode the input image
-      ADD_TEST(NR-DEC-${INPUT_FILENAME_NAME}-${IT_TEST_DEC}-decode
+      add_test(NR-DEC-${INPUT_FILENAME_NAME}-${IT_TEST_DEC}-decode
         ${EXECUTABLE_OUTPUT_PATH}/j2k_to_image 
         ${CMD_ARG_LIST_2}
       )
       
-      IF(FAILED_TEST_FOUND)
+      if(FAILED_TEST_FOUND)
       
-        SET_TESTS_PROPERTIES(NR-DEC-${INPUT_FILENAME_NAME}-${IT_TEST_DEC}-decode PROPERTIES WILL_FAIL TRUE)
+        set_tests_properties(NR-DEC-${INPUT_FILENAME_NAME}-${IT_TEST_DEC}-decode PROPERTIES WILL_FAIL TRUE)
      
-      ELSE(FAILED_TEST_FOUND)
+      else(FAILED_TEST_FOUND)
   
 # FIXME: add a compare2base function base on raw which 
 # can output png diff files if necesary 
-#  ADD_TEST(NR-${filename}-compare2base
+#  add_test(NR-${filename}-compare2base
 #      ${EXECUTABLE_OUTPUT_PATH}/comparePGXimages
 #     -b ${BASELINE_NR}/opj_${filenameRef}
 #     -t ${TEMP}/${filename}.pgx
@@ -305,14 +305,14 @@ FOREACH(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
 #     -s b_t_
 #     )
 #
-#  SET_TESTS_PROPERTIES(NR-${filename}-compare2base  
+#  set_tests_properties(NR-${filename}-compare2base  
 #                       PROPERTIES DEPENDS 
 #                       NR-${filename}-decode)  
 
-      ENDIF(FAILED_TEST_FOUND)    
+      endif(FAILED_TEST_FOUND)    
   
-    ENDIF(ENC_TEST_FOUND)
+    endif(ENC_TEST_FOUND)
    
-  ENDIF(IGNORE_LINE_FOUND OR NOT EXE_NAME)
+  endif(IGNORE_LINE_FOUND OR NOT EXE_NAME)
 
-ENDFOREACH(OPJ_TEST_CMD_LINE)
+endforeach(OPJ_TEST_CMD_LINE)

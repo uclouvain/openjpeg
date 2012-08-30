@@ -12,20 +12,20 @@
 #=============================================================================
 #=============================================================================
 
-FIND_PATH(LCMS2_INCLUDE_DIR lcms2.h PATHS /usr/include /usr/local/include /opt/include /opt/local/include)
+find_path(LCMS2_INCLUDE_DIR lcms2.h PATHS /usr/include /usr/local/include /opt/include /opt/local/include)
 
-SET(LCMS2_NAMES ${LCMS2_NAMES} lcms2 liblcms2 liblcms2_static)
+set(LCMS2_NAMES ${LCMS2_NAMES} lcms2 liblcms2 liblcms2_static)
 
-FIND_LIBRARY(LCMS2_LIBRARY NAMES ${LCMS2_NAMES} )
+find_library(LCMS2_LIBRARY NAMES ${LCMS2_NAMES} )
 
-MARK_AS_ADVANCED(LCMS2_INCLUDE_DIR LCMS2_LIBRARY)
+mark_as_advanced(LCMS2_INCLUDE_DIR LCMS2_LIBRARY)
 
 # handle the QUIETLY and REQUIRED arguments and set LCMS2_FOUND to TRUE if 
 # all listed variables are TRUE
-INCLUDE(FindPackageHandleStandardArgs)
+include(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(LCMS2  DEFAULT_MSG  LCMS2_LIBRARY  LCMS2_INCLUDE_DIR)
 
-IF(LCMS2_FOUND)
-  SET( LCMS2_INCLUDE_DIRS ${LCMS2_INCLUDE_DIR})
-  SET( LCMS2_LIBRARIES ${LCMS2_LIBRARY} )
-ENDIF(LCMS2_FOUND)
+if(LCMS2_FOUND)
+  set( LCMS2_INCLUDE_DIRS ${LCMS2_INCLUDE_DIR})
+  set( LCMS2_LIBRARIES ${LCMS2_LIBRARY} )
+endif(LCMS2_FOUND)

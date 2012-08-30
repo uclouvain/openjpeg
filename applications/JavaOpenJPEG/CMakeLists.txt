@@ -1,7 +1,7 @@
 #JavaOpenJPEG/CMakeLists.txt
 
 # First thing define the common source:
-SET(openjpegjni_SRCS
+set(openjpegjni_SRCS
   JavaOpenJPEGDecoder.c
   JavaOpenJPEG.c
   )
@@ -22,7 +22,7 @@ add_library(openjpegjni MODULE
   )
 
 # build jar:
-FIND_PACKAGE(Java 1.5 REQUIRED) # javac, jar
+find_package(Java 1.5 REQUIRED) # javac, jar
 
 # build dep list:
 file(GLOB java_srcs "java-sources/org/openJpeg/*.java")
@@ -30,7 +30,7 @@ file(GLOB java_srcs "java-sources/org/openJpeg/*.java")
 # make sure target javac dir exists:
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/classes)
 # Build java
-ADD_CUSTOM_COMMAND(
+add_custom_command(
   OUTPUT ${LIBRARY_OUTPUT_PATH}/openjpeg.jar
   COMMAND ${Java_JAVAC_EXECUTABLE} -sourcepath  "${CMAKE_CURRENT_SOURCE_DIR}/java-sources"
   ${java_srcs} -d ${CMAKE_CURRENT_BINARY_DIR}/classes
@@ -41,7 +41,7 @@ ADD_CUSTOM_COMMAND(
 )
 
 # name the target
-ADD_CUSTOM_TARGET(OpenJPEGJavaJar ALL
+add_custom_target(OpenJPEGJavaJar ALL
   DEPENDS ${LIBRARY_OUTPUT_PATH}/openjpeg.jar
   COMMENT "building openjpeg.jar"
 )

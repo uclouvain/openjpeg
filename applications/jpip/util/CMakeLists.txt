@@ -1,62 +1,62 @@
 # Headers file are located here:
-INCLUDE_DIRECTORIES(
+include_directories(
   ${OPENJPEG_SOURCE_DIR}/libopenjpeg # opj_stdint.h
   ${OPENJPEG_SOURCE_DIR}/applications/jpip/libopenjpip
   ${FCGI_INCLUDE_DIRS}
 )
 
 # Tool to embed metadata into JP2 file
-ADD_EXECUTABLE(addXMLinJP2 addXMLinJP2.c)
+add_executable(addXMLinJP2 addXMLinJP2.c)
 # Install exe
-INSTALL(TARGETS addXMLinJP2
+install(TARGETS addXMLinJP2
   EXPORT OpenJPEGTargets
   DESTINATION ${OPENJPEG_INSTALL_BIN_DIR} COMPONENT Applications
   )
 
-IF(BUILD_JPIP_SERVER)
+if(BUILD_JPIP_SERVER)
   
-  SET(OPJ_SERVER_SRCS
+  set(OPJ_SERVER_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/opj_server.c
   )
   
   # Build executable
-  ADD_EXECUTABLE(opj_server ${OPJ_SERVER_SRCS})
-  TARGET_LINK_LIBRARIES(opj_server openjpip_server)
-  SET_PROPERTY(
+  add_executable(opj_server ${OPJ_SERVER_SRCS})
+  target_link_libraries(opj_server openjpip_server)
+  set_property(
     TARGET opj_server
     APPEND PROPERTY
     COMPILE_DEFINITIONS SERVER QUIT_SIGNAL="quitJPIP"
     )
 
   # On unix you need to link to the math library:
-  IF(UNIX)
-    TARGET_LINK_LIBRARIES(opj_server m)
-  ENDIF(UNIX)
+  if(UNIX)
+    target_link_libraries(opj_server m)
+  endif(UNIX)
 
   # Install exe
-  INSTALL(TARGETS opj_server
+  install(TARGETS opj_server
     EXPORT OpenJPEGTargets
     DESTINATION ${OPENJPEG_INSTALL_BIN_DIR} COMPONENT Applications
     )
-ENDIF(BUILD_JPIP_SERVER)
+endif(BUILD_JPIP_SERVER)
 
-SET(EXES
+set(EXES
   opj_dec_server
   jpip_to_jp2
   jpip_to_j2k
   test_index
   )
-FOREACH(exe ${EXES})
-  ADD_EXECUTABLE(${exe} ${exe}.c)
-  TARGET_LINK_LIBRARIES(${exe} openjpip_local)
-  INSTALL(TARGETS ${exe}
+foreach(exe ${EXES})
+  add_executable(${exe} ${exe}.c)
+  target_link_libraries(${exe} openjpip_local)
+  install(TARGETS ${exe}
     EXPORT OpenJPEGTargets
     DESTINATION ${OPENJPEG_INSTALL_BIN_DIR} COMPONENT Applications
     )
-ENDFOREACH(exe)
+endforeach(exe)
 
 # Build the two java clients:
-FIND_PACKAGE(Java 1.5 COMPONENTS Development) # javac, jar
+find_package(Java 1.5 COMPONENTS Development) # javac, jar
 
 # Only build the java viewer if dev is found:
 if(Java_Development_FOUND AND Java_JAVAC_EXECUTABLE)
@@ -68,7 +68,7 @@ if(Java_Development_FOUND AND Java_JAVAC_EXECUTABLE)
   # make sure target javac dir exists:
   file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/classes1)
   # Build java
-  ADD_CUSTOM_COMMAND(
+  add_custom_command(
     OUTPUT ${LIBRARY_OUTPUT_PATH}/opj_viewer.jar
     COMMAND ${Java_JAVAC_EXECUTABLE} ${jflags}
     ${java1_srcs} -d ${CMAKE_CURRENT_BINARY_DIR}/classes1
@@ -81,12 +81,12 @@ if(Java_Development_FOUND AND Java_JAVAC_EXECUTABLE)
     )
 
   # name the target
-  ADD_CUSTOM_TARGET(OPJViewerJar ALL
+  add_custom_target(OPJViewerJar ALL
     DEPENDS ${LIBRARY_OUTPUT_PATH}/opj_viewer.jar
     COMMENT "building opj_viewer.jar"
     )
 
-  INSTALL(FILES ${LIBRARY_OUTPUT_PATH}/opj_viewer.jar
+  install(FILES ${LIBRARY_OUTPUT_PATH}/opj_viewer.jar
     DESTINATION ${OPENJPEG_INSTALL_SHARE_DIR} COMPONENT JavaModule
     )
 
@@ -122,7 +122,7 @@ if(Java_Development_FOUND AND Java_JAVAC_EXECUTABLE)
     # make sure target javac dir exists:
     file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/classes2)
     # Build java
-    ADD_CUSTOM_COMMAND(
+    add_custom_command(
       OUTPUT ${LIBRARY_OUTPUT_PATH}/opj_viewer_xerces.jar
       COMMAND ${Java_JAVAC_EXECUTABLE} ${jflags}
       -classpath ${APACHE_XERCES_JAR}
@@ -136,12 +136,12 @@ if(Java_Development_FOUND AND Java_JAVAC_EXECUTABLE)
       )
 
     # name the target
-    ADD_CUSTOM_TARGET(OPJViewerXercesJar ALL
+    add_custom_target(OPJViewerXercesJar ALL
       DEPENDS ${LIBRARY_OUTPUT_PATH}/opj_viewer_xerces.jar
       COMMENT "building opj_viewer_xerces.jar"
       )
 
-    INSTALL(FILES ${LIBRARY_OUTPUT_PATH}/opj_viewer_xerces.jar
+    install(FILES ${LIBRARY_OUTPUT_PATH}/opj_viewer_xerces.jar
       DESTINATION ${OPENJPEG_INSTALL_SHARE_DIR} COMPONENT JavaModule
       )
   endif()

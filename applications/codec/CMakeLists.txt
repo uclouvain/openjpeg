@@ -1,7 +1,7 @@
 # Build the demo app, small examples
 
 # First thing define the common source:
-SET(common_SRCS
+set(common_SRCS
   convert.c
   index.c
   ${OPENJPEG_SOURCE_DIR}/applications/common/color.c
@@ -9,7 +9,7 @@ SET(common_SRCS
   )
 
 # Headers file are located here:
-INCLUDE_DIRECTORIES(
+include_directories(
   ${OPENJPEG_SOURCE_DIR}/libopenjpeg
   ${LCMS_INCLUDE_DIRNAME}
   ${OPENJPEG_SOURCE_DIR}/applications/common
@@ -18,96 +18,96 @@ INCLUDE_DIRECTORIES(
   ${TIFF_INCLUDE_DIRNAME}
   )
 
-IF(WIN32)
-  IF(BUILD_SHARED_LIBS)
-    ADD_DEFINITIONS(-DOPJ_EXPORTS)
-  ELSE(BUILD_SHARED_LIBS)
-    ADD_DEFINITIONS(-DOPJ_STATIC)
-  ENDIF(BUILD_SHARED_LIBS)
-ENDIF(WIN32)
+if(WIN32)
+  if(BUILD_SHARED_LIBS)
+    add_definitions(-DOPJ_EXPORTS)
+  else(BUILD_SHARED_LIBS)
+    add_definitions(-DOPJ_STATIC)
+  endif(BUILD_SHARED_LIBS)
+endif(WIN32)
 
 # Loop over all executables:
-FOREACH(exe j2k_to_image image_to_j2k j2k_dump)
-  ADD_EXECUTABLE(${exe} ${exe}.c ${common_SRCS})
-  TARGET_LINK_LIBRARIES(${exe} ${OPENJPEG_LIBRARY_NAME} 
+foreach(exe j2k_to_image image_to_j2k j2k_dump)
+  add_executable(${exe} ${exe}.c ${common_SRCS})
+  target_link_libraries(${exe} ${OPENJPEG_LIBRARY_NAME} 
     ${PNG_LIBNAME} ${TIFF_LIBNAME} ${LCMS_LIBNAME}
     )
   # To support universal exe:
-  IF(ZLIB_FOUND AND APPLE)
-    TARGET_LINK_LIBRARIES(${exe} z)
+  if(ZLIB_FOUND AND APPLE)
+    target_link_libraries(${exe} z)
   ELSe(ZLIB_FOUND AND APPLE)
-    TARGET_LINK_LIBRARIES(${exe} ${Z_LIBNAME})
-  ENDIF(ZLIB_FOUND AND APPLE)
+    target_link_libraries(${exe} ${Z_LIBNAME})
+  endif(ZLIB_FOUND AND APPLE)
 
   # On unix you need to link to the math library:
-  IF(UNIX)
-    TARGET_LINK_LIBRARIES(${exe} m)
-  ENDIF(UNIX)
+  if(UNIX)
+    target_link_libraries(${exe} m)
+  endif(UNIX)
   # Install exe
-  INSTALL(TARGETS ${exe}
+  install(TARGETS ${exe}
     EXPORT OpenJPEGTargets
     DESTINATION ${OPENJPEG_INSTALL_BIN_DIR} COMPONENT Applications
   )
-ENDFOREACH(exe)
+endforeach(exe)
 
 # Install man pages
-INSTALL(
+install(
   FILES       ${OPENJPEG_SOURCE_DIR}/doc/man/man1/image_to_j2k.1
               ${OPENJPEG_SOURCE_DIR}/doc/man/man1/j2k_dump.1
               ${OPENJPEG_SOURCE_DIR}/doc/man/man1/j2k_to_image.1
   DESTINATION ${OPENJPEG_INSTALL_MAN_DIR}/man1)
 #
 
-IF(BUILD_JPWL)
-  ADD_EXECUTABLE(JPWL_j2k_to_image
+if(BUILD_JPWL)
+  add_executable(JPWL_j2k_to_image
   j2k_to_image.c
   ${common_SRCS}
   )
   
-  SET_PROPERTY(
+  set_property(
      TARGET JPWL_j2k_to_image
      APPEND PROPERTY COMPILE_DEFINITIONS USE_JPWL
   )
 
-  TARGET_LINK_LIBRARIES(JPWL_j2k_to_image ${OPENJPEG_LIBRARY_NAME}_JPWL
+  target_link_libraries(JPWL_j2k_to_image ${OPENJPEG_LIBRARY_NAME}_JPWL
     ${LCMS_LIBNAME} ${PNG_LIBNAME} ${TIFF_LIBNAME})
     
   # To support universal exe:
-  IF(ZLIB_FOUND AND APPLE)
-    TARGET_LINK_LIBRARIES(JPWL_j2k_to_image z)
+  if(ZLIB_FOUND AND APPLE)
+    target_link_libraries(JPWL_j2k_to_image z)
   ELSe(ZLIB_FOUND AND APPLE)
-    TARGET_LINK_LIBRARIES(JPWL_j2k_to_image ${Z_LIBNAME})
-  ENDIF(ZLIB_FOUND AND APPLE)
+    target_link_libraries(JPWL_j2k_to_image ${Z_LIBNAME})
+  endif(ZLIB_FOUND AND APPLE)
   
-  IF(UNIX)
-    TARGET_LINK_LIBRARIES(JPWL_j2k_to_image m)
-  ENDIF(UNIX)
+  if(UNIX)
+    target_link_libraries(JPWL_j2k_to_image m)
+  endif(UNIX)
 
-  ADD_EXECUTABLE(JPWL_image_to_j2k
+  add_executable(JPWL_image_to_j2k
   image_to_j2k.c
   ${common_SRCS}
   )
   
-  SET_PROPERTY(
+  set_property(
      TARGET JPWL_image_to_j2k
      APPEND PROPERTY COMPILE_DEFINITIONS USE_JPWL
   )
 
-  TARGET_LINK_LIBRARIES(JPWL_image_to_j2k ${OPENJPEG_LIBRARY_NAME}_JPWL 
+  target_link_libraries(JPWL_image_to_j2k ${OPENJPEG_LIBRARY_NAME}_JPWL 
   	${LCMS_LIBNAME} ${PNG_LIBNAME} ${TIFF_LIBNAME})
   	
   # To support universal exe:
-  IF(ZLIB_FOUND AND APPLE)
-    TARGET_LINK_LIBRARIES(JPWL_image_to_j2k z)
+  if(ZLIB_FOUND AND APPLE)
+    target_link_libraries(JPWL_image_to_j2k z)
   ELSe(ZLIB_FOUND AND APPLE)
-    TARGET_LINK_LIBRARIES(JPWL_image_to_j2k ${Z_LIBNAME})
-  ENDIF(ZLIB_FOUND AND APPLE)
+    target_link_libraries(JPWL_image_to_j2k ${Z_LIBNAME})
+  endif(ZLIB_FOUND AND APPLE)
 
-  IF(UNIX)
-    TARGET_LINK_LIBRARIES(JPWL_image_to_j2k m)
-  ENDIF(UNIX)
+  if(UNIX)
+    target_link_libraries(JPWL_image_to_j2k m)
+  endif(UNIX)
 
-  INSTALL(TARGETS JPWL_image_to_j2k JPWL_j2k_to_image
+  install(TARGETS JPWL_image_to_j2k JPWL_j2k_to_image
     DESTINATION ${OPENJPEG_INSTALL_BIN_DIR} COMPONENT Applications
   )
-ENDIF(BUILD_JPWL)
+endif(BUILD_JPWL)

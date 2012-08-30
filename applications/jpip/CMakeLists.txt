@@ -1,16 +1,16 @@
 # required dep for server:
-IF(BUILD_JPIP_SERVER)
-  FIND_PACKAGE(CURL REQUIRED)
-  FIND_PACKAGE(FCGI REQUIRED)
-  FIND_PACKAGE(Threads REQUIRED)
-  IF(NOT CMAKE_USE_PTHREADS_INIT)
-    MESSAGE(FATAL_ERROR "Only pthread are supported")
-  ENDIF(NOT CMAKE_USE_PTHREADS_INIT)
-ENDIF(BUILD_JPIP_SERVER)
+if(BUILD_JPIP_SERVER)
+  find_package(CURL REQUIRED)
+  find_package(FCGI REQUIRED)
+  find_package(Threads REQUIRED)
+  if(NOT CMAKE_USE_PTHREADS_INIT)
+    message(FATAL_ERROR "Only pthread are supported")
+  endif(NOT CMAKE_USE_PTHREADS_INIT)
+endif(BUILD_JPIP_SERVER)
 
 # JPIP library:
-ADD_SUBDIRECTORY(libopenjpip)
+add_subdirectory(libopenjpip)
 
 # JPIP binaries:
-ADD_SUBDIRECTORY(util)
+add_subdirectory(util)
 

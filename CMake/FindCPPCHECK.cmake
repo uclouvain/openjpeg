@@ -7,10 +7,10 @@
 #  For details see the accompanying COPYING-CMAKE-SCRIPTS file.
 #
 
-FIND_PROGRAM(CPPCHECK_EXECUTABLE
+find_program(CPPCHECK_EXECUTABLE
   cppcheck
   )
 
-MARK_AS_ADVANCED(
+mark_as_advanced(
   CPPCHECK_EXECUTABLE
   )

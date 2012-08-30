@@ -3,24 +3,24 @@
 # to generate the html documentation in the doc/html repository of the build folder.
 
 # Try to find the doxygen tool
-FIND_PACKAGE(Doxygen)
+find_package(Doxygen)
 
-IF(DOXYGEN_FOUND)
+if(DOXYGEN_FOUND)
   # Configure the doxygen config file with variable from CMake and move it
-  CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.dox.cmake.in
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.dox.cmake.in
     ${CMAKE_BINARY_DIR}/doc/Doxyfile-html.dox @ONLY)
 
   # Configure the html mainpage file of the doxygen documentation with variable
   # from CMake and move it  
-  CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/mainpage.dox.cmake
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/mainpage.dox.cmake
     ${CMAKE_BINARY_DIR}/doc/mainpage.dox @ONLY)
 
   # Generate new target to build the html documentation
-  ADD_CUSTOM_TARGET(doc ALL
+  add_custom_target(doc ALL
     ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/doc/Doxyfile-html.dox)
 
-ELSE(DOXYGEN_FOUND)
+else(DOXYGEN_FOUND)
 
-  MESSAGE(STATUS "Doxygen not found, we cannot generate the documentation")
+  message(STATUS "Doxygen not found, we cannot generate the documentation")
 
-ENDIF(DOXYGEN_FOUND)
+endif(DOXYGEN_FOUND)
