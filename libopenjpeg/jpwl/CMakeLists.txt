@@ -8,7 +8,7 @@ if(APPLE)
     rs.c
     PROPERTIES
     COMPILE_FLAGS -fno-common)
-endif(APPLE)
+endif()
 
 include_directories(
   ${OPENJPEG_SOURCE_DIR}/libopenjpeg
@@ -18,12 +18,12 @@ include_directories(
 if(WIN32)
   if(BUILD_SHARED_LIBS)
     add_definitions(-DOPJ_EXPORTS)
-  else(BUILD_SHARED_LIBS)
+  else()
     add_definitions(-DOPJ_STATIC)
-  endif(BUILD_SHARED_LIBS)
-endif(WIN32)
+  endif()
+endif()
 add_library(${OPENJPEG_LIBRARY_NAME}_JPWL ${JPWL_SRCS} ${OPENJPEG_SRCS})
-set_target_properties(${OPENJPEG_LIBRARY_NAME}_JPWL 
+set_target_properties(${OPENJPEG_LIBRARY_NAME}_JPWL
   PROPERTIES ${OPENJPEG_LIBRARY_PROPERTIES})
 
 # Install library

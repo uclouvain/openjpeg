@@ -52,7 +52,7 @@ target_link_libraries(openjpip_local ${OPENJPEG_LIBRARY_NAME})
 if(WIN32)
   # add Winsock on windows+mingw
   target_link_libraries(openjpip_local ws2_32)
-endif(WIN32)
+endif()
 
 # Install library
 install(TARGETS openjpip_local
@@ -69,4 +69,4 @@ if(BUILD_JPIP_SERVER)
     EXPORT OpenJPEGTargets
     DESTINATION ${OPENJPEG_INSTALL_LIB_DIR} COMPONENT Libraries
     )
-endif(BUILD_JPIP_SERVER)
+endif()

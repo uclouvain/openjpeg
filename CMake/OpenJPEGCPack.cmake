@@ -7,7 +7,7 @@ if(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
       set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_NO_WARNINGS ON)
     endif()
     include(${CMAKE_ROOT}/Modules/InstallRequiredSystemLibraries.cmake)
-  endif(EXISTS "${CMAKE_ROOT}/Modules/InstallRequiredSystemLibraries.cmake")
+  endif()
 
   set(OPJ_PACKAGE_DESCRIPTION_SUMMARY "OpenJPEG - OpenJPEG a JPEG 2000 implementation.")
   set(OPJ_PACKAGE_CONTACT "openjpeg users <openjpeg@googlegroups.com>")
@@ -35,29 +35,29 @@ if(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
     # cygwin is good for the system name
     if("${CMAKE_SYSTEM_NAME}" STREQUAL "CYGWIN")
       set(CPACK_SYSTEM_NAME Cygwin)
-    else("${CMAKE_SYSTEM_NAME}" STREQUAL "CYGWIN")
+    else()
       set(CPACK_SYSTEM_NAME ${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR})
-    endif("${CMAKE_SYSTEM_NAME}" STREQUAL "CYGWIN")
-  endif(NOT DEFINED CPACK_SYSTEM_NAME)
+    endif()
+  endif()
   if(${CPACK_SYSTEM_NAME} MATCHES Windows)
     if(CMAKE_CL_64)
       set(CPACK_SYSTEM_NAME win64-x64)
-    else(CMAKE_CL_64)
+    else()
       set(CPACK_SYSTEM_NAME win32-x86)
-    endif(CMAKE_CL_64)
-  endif(${CPACK_SYSTEM_NAME} MATCHES Windows)
+    endif()
+  endif()
 
   if(NOT DEFINED CPACK_PACKAGE_FILE_NAME)
     # if the CPACK_PACKAGE_FILE_NAME is not defined by the cache
-    # default to source package - system, on cygwin system is not 
+    # default to source package - system, on cygwin system is not
     # needed
     if(CYGWIN)
       set(CPACK_PACKAGE_FILE_NAME "${CPACK_SOURCE_PACKAGE_FILE_NAME}")
-    else(CYGWIN)
-      set(CPACK_PACKAGE_FILE_NAME 
+    else()
+      set(CPACK_PACKAGE_FILE_NAME
         "${CPACK_SOURCE_PACKAGE_FILE_NAME}-${CPACK_SYSTEM_NAME}")
-    endif(CYGWIN)
-  endif(NOT DEFINED CPACK_PACKAGE_FILE_NAME)
+    endif()
+  endif()
 
   set(CPACK_BUNDLE_NAME "OpenJPEG ${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}")
   configure_file(${CMAKE_ROOT}/Templates/AppleInfo.plist

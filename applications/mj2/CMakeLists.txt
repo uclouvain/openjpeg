@@ -34,7 +34,7 @@ set(MJ2_SRCS mj2.c mj2_convert.c)
 
 if(WIN32)
   add_definitions(-DOPJ_STATIC)
-endif(WIN32)
+endif()
 
 # Headers file are located here:
 include_directories(
@@ -53,7 +53,7 @@ target_link_libraries(frames_to_mj2 ${LCMS_LIBNAME})
 
 if(UNIX)
   target_link_libraries(frames_to_mj2 m)
-endif(UNIX)
+endif()
 
 add_executable(mj2_to_frames
     mj2_to_frames.c
@@ -66,7 +66,7 @@ target_link_libraries(mj2_to_frames ${LCMS_LIBNAME})
 
 if(UNIX)
   target_link_libraries(mj2_to_frames m)
-endif(UNIX)
+endif()
 
 add_executable(extract_j2k_from_mj2
     extract_j2k_from_mj2.c
@@ -77,7 +77,7 @@ target_link_libraries(extract_j2k_from_mj2 ${LCMS_LIBNAME})
 
 if(UNIX)
   target_link_libraries(extract_j2k_from_mj2 m)
-endif(UNIX)
+endif()
 
 add_executable(wrap_j2k_in_mj2
     wrap_j2k_in_mj2.c
@@ -88,7 +88,7 @@ target_link_libraries(wrap_j2k_in_mj2 ${LCMS_LIBNAME})
 
 if(UNIX)
   target_link_libraries(wrap_j2k_in_mj2 m)
-endif(UNIX)
+endif()
 
 install(TARGETS frames_to_mj2 mj2_to_frames extract_j2k_from_mj2 wrap_j2k_in_mj2
 	DESTINATION ${OPENJPEG_INSTALL_BIN_DIR})

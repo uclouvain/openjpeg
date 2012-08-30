@@ -30,7 +30,7 @@ if(ZLIB_FOUND AND APPLE)
   target_link_libraries(comparePGXimages z)
 ELSe(ZLIB_FOUND AND APPLE)
   target_link_libraries(comparePGXimages ${Z_LIBNAME})
-endif(ZLIB_FOUND AND APPLE)
+endif()
 
 add_executable(compare_dump_files ${compare_dump_files_SRCS})
 
@@ -62,8 +62,8 @@ set_property(TEST ttd2 APPEND PROPERTY DEPENDS tte2)
 
 # No image send to the dashboard if lib PNG is not available.
 if(NOT HAVE_LIBPNG)
-  message(WARNING "Lib PNG seems to be not available: if you want run the non-regression tests with images reported to the dashboard, you need it (try BUILD_THIRDPARTY)") 
-endif(NOT HAVE_LIBPNG)
+  message(WARNING "Lib PNG seems to be not available: if you want run the non-regression tests with images reported to the dashboard, you need it (try BUILD_THIRDPARTY)")
+endif()
 
 add_subdirectory(conformance)
 add_subdirectory(nonregression)
@@ -76,5 +76,5 @@ if(BUILD_JPIP)
     set(md5 "62b00c620fb0a600c5ffd413cada4674")
     add_test(TestJPIP1 ${CMAKE_COMMAND} -DD_URL:STRING=${s} -DD_FILE:PATH=${p}
       -DEXPECTED_MD5=${md5} -P ${PROJECT_SOURCE_DIR}/CMake/JPIPTestDriver.cmake)
-  endif(JPIP_SERVER)
-endif(BUILD_JPIP)
+  endif()
+endif()

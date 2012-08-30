@@ -5,8 +5,8 @@ if(BUILD_JPIP_SERVER)
   find_package(Threads REQUIRED)
   if(NOT CMAKE_USE_PTHREADS_INIT)
     message(FATAL_ERROR "Only pthread are supported")
-  endif(NOT CMAKE_USE_PTHREADS_INIT)
-endif(BUILD_JPIP_SERVER)
+  endif()
+endif()
 
 # JPIP library:
 add_subdirectory(libopenjpip)

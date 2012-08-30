@@ -31,20 +31,20 @@ set(OPENJPEG_SRCS
 if(WIN32)
   if(BUILD_SHARED_LIBS)
     add_definitions(-DOPJ_EXPORTS)
-  else(BUILD_SHARED_LIBS)
+  else()
     add_definitions(-DOPJ_STATIC)
-  endif(BUILD_SHARED_LIBS)
-endif(WIN32)
+  endif()
+endif()
 add_library(${OPENJPEG_LIBRARY_NAME} ${OPENJPEG_SRCS})
 if(UNIX)
   target_link_libraries(${OPENJPEG_LIBRARY_NAME} m)
-endif(UNIX)
+endif()
 set_target_properties(${OPENJPEG_LIBRARY_NAME} PROPERTIES ${OPENJPEG_LIBRARY_PROPERTIES})
 
 # Build the JPWL library ?
 if(BUILD_JPWL)
  add_subdirectory(jpwl)
-endif(BUILD_JPWL)
+endif()
 
 # Install library
 install(TARGETS ${OPENJPEG_LIBRARY_NAME}

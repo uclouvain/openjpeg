@@ -11,7 +11,7 @@ if(DOXYGEN_FOUND)
     ${CMAKE_BINARY_DIR}/doc/Doxyfile-html.dox @ONLY)
 
   # Configure the html mainpage file of the doxygen documentation with variable
-  # from CMake and move it  
+  # from CMake and move it
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/mainpage.dox.cmake
     ${CMAKE_BINARY_DIR}/doc/mainpage.dox @ONLY)
 
@@ -19,8 +19,8 @@ if(DOXYGEN_FOUND)
   add_custom_target(doc ALL
     ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/doc/Doxyfile-html.dox)
 
-else(DOXYGEN_FOUND)
+else()
 
   message(STATUS "Doxygen not found, we cannot generate the documentation")
 
-endif(DOXYGEN_FOUND)
+endif()

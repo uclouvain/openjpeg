@@ -26,30 +26,30 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
- 
+
 /*! \mainpage OpenJPEG v@OPENJPEG_VERSION@ Documentation
 *
 * \section intro Introduction
 * This manual documents the low-level OpenJPEG C API.\n
 * The OpenJPEG library is an open-source JPEG 2000 library developed in order to promote the use of JPEG 2000.\n
-* This documents is focused on the main part of the library which try to implement Part 1 and Part 2 of the JPEG2000 norm.\n 
+* This documents is focused on the main part of the library which try to implement Part 1 and Part 2 of the JPEG2000 norm.\n
 *
 * \section home Home page
 *
 * The Home Page of the OpenJPEG library can be found at:
 *
 * http://code.google.com/p/openjpeg/
-* 
+*
 * More information about the OpenJPEG library is available here:
 *
 * http://www.openjpeg.org/
-* 
+*
 * The OpenJPEG mailing list is located here:
-* 
+*
 * http://groups.google.com/group/openjpeg
-* 
+*
 * All the source code is online and can be retrieved using svn from here:
-* 
+*
 * http://openjpeg.googlecode.com/svn/
 *
 * \section license License

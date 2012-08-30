@@ -14,11 +14,11 @@ install(TARGETS addXMLinJP2
   )
 
 if(BUILD_JPIP_SERVER)
-  
+
   set(OPJ_SERVER_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/opj_server.c
   )
-  
+
   # Build executable
   add_executable(opj_server ${OPJ_SERVER_SRCS})
   target_link_libraries(opj_server openjpip_server)
@@ -31,14 +31,14 @@ if(BUILD_JPIP_SERVER)
   # On unix you need to link to the math library:
   if(UNIX)
     target_link_libraries(opj_server m)
-  endif(UNIX)
+  endif()
 
   # Install exe
   install(TARGETS opj_server
     EXPORT OpenJPEGTargets
     DESTINATION ${OPENJPEG_INSTALL_BIN_DIR} COMPONENT Applications
     )
-endif(BUILD_JPIP_SERVER)
+endif()
 
 set(EXES
   opj_dec_server
@@ -53,7 +53,7 @@ foreach(exe ${EXES})
     EXPORT OpenJPEGTargets
     DESTINATION ${OPENJPEG_INSTALL_BIN_DIR} COMPONENT Applications
     )
-endforeach(exe)
+endforeach()
 
 # Build the two java clients:
 find_package(Java 1.5 COMPONENTS Development) # javac, jar
@@ -128,7 +128,7 @@ if(Java_Development_FOUND AND Java_JAVAC_EXECUTABLE)
       -classpath ${APACHE_XERCES_JAR}
       ${java2_srcs} -d ${CMAKE_CURRENT_BINARY_DIR}/classes2
       COMMAND ${Java_JAR_EXECUTABLE} cfm ${LIBRARY_OUTPUT_PATH}/opj_viewer_xerces.jar
-      ${CMAKE_CURRENT_BINARY_DIR}/opj_viewer_xerces/dist/manifest.txt 
+      ${CMAKE_CURRENT_BINARY_DIR}/opj_viewer_xerces/dist/manifest.txt
       -C ${CMAKE_CURRENT_BINARY_DIR}/classes2 .
       DEPENDS ${java2_srcs}
       ${CMAKE_CURRENT_SOURCE_DIR}/opj_viewer_xerces/dist/manifest.txt.in
@@ -145,6 +145,6 @@ if(Java_Development_FOUND AND Java_JAVAC_EXECUTABLE)
       DESTINATION ${OPENJPEG_INSTALL_SHARE_DIR} COMPONENT JavaModule
       )
   endif()
-else(Java_Development_FOUND)
+else()
   message(WARNING "No java compiler found. Wont be able to build java viewer")
 endif()

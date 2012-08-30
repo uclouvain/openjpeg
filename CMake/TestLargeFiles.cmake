@@ -6,7 +6,7 @@
 #  This macro will also defines the necessary variable enable large file support, for instance
 #  _LARGE_FILES
 #  _LARGEFILE_SOURCE
-#  _FILE_OFFSET_BITS 64  
+#  _FILE_OFFSET_BITS 64
 #  HAVE_FSEEKO
 #
 #  However, it is YOUR job to make sure these defines are set in a #cmakedefine so they
@@ -14,7 +14,7 @@
 #
 #  Adapted from Gromacs project (http://www.gromacs.org/)
 #  by Julien Malik
-#  
+#
 
 macro(OPJ_TEST_LARGE_FILES VARIABLE)
     if("${VARIABLE}" MATCHES "^${VARIABLE}$")
@@ -30,7 +30,7 @@ macro(OPJ_TEST_LARGE_FILES VARIABLE)
                     "${PROJECT_SOURCE_DIR}/CMake/TestFileOffsetBits.c")
         if(FILE64_OK)
           message(STATUS "Checking for 64-bit off_t - present")
-       	endif(FILE64_OK)
+       	endif()
 
         if(NOT FILE64_OK)
             # Test with _FILE_OFFSET_BITS=64
@@ -40,8 +40,8 @@ macro(OPJ_TEST_LARGE_FILES VARIABLE)
             if(FILE64_OK)
                 message(STATUS "Checking for 64-bit off_t - present with _FILE_OFFSET_BITS=64")
                 set(_FILE_OFFSET_BITS 64)
-            endif(FILE64_OK)
-        endif(NOT FILE64_OK)
+            endif()
+        endif()
 
         if(NOT FILE64_OK)
             # Test with _LARGE_FILES
@@ -51,8 +51,8 @@ macro(OPJ_TEST_LARGE_FILES VARIABLE)
             if(FILE64_OK)
                 message(STATUS "Checking for 64-bit off_t - present with _LARGE_FILES")
                 set(_LARGE_FILES 1)
-            endif(FILE64_OK)
-        endif(NOT FILE64_OK)
+            endif()
+        endif()
 	
         if(NOT FILE64_OK)
             # Test with _LARGEFILE_SOURCE
@@ -62,8 +62,8 @@ macro(OPJ_TEST_LARGE_FILES VARIABLE)
             if(FILE64_OK)
                 message(STATUS "Checking for 64-bit off_t - present with _LARGEFILE_SOURCE")
                 set(_LARGEFILE_SOURCE 1)
-            endif(FILE64_OK)
-        endif(NOT FILE64_OK)
+            endif()
+        endif()
 
 
         #if(NOT FILE64_OK)
@@ -73,31 +73,31 @@ macro(OPJ_TEST_LARGE_FILES VARIABLE)
         #    if(FILE64_OK)
         #        message(STATUS "Checking for 64-bit off_t - present with _fseeki64")
         #        set(HAVE__FSEEKI64 1)
-        #    endif(FILE64_OK)
-        #endif(NOT FILE64_OK)
+        #    endif()
+        #endif()
 
         if(NOT FILE64_OK)
             message(STATUS "Checking for 64-bit off_t - not present")
-        endif(NOT FILE64_OK)
-        
+        endif()
+
         set(_FILE_OFFSET_BITS ${_FILE_OFFSET_BITS} CACHE INTERNAL "Result of test for needed _FILE_OFFSET_BITS=64")
         set(_LARGE_FILES      ${_LARGE_FILES}      CACHE INTERNAL "Result of test for needed _LARGE_FILES")
         set(_LARGEFILE_SOURCE ${_LARGEFILE_SOURCE} CACHE INTERNAL "Result of test for needed _LARGEFILE_SOURCE")
 
         # Set the flags we might have determined to be required above
-        configure_file("${PROJECT_SOURCE_DIR}/CMake/TestLargeFiles.c.cmake.in" 
+        configure_file("${PROJECT_SOURCE_DIR}/CMake/TestLargeFiles.c.cmake.in"
                        "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/TestLargeFiles.c")
 
         message(STATUS "Checking for fseeko/ftello")
-        
+
 	    # Test if ftello/fseeko are	available
 	    try_compile(FSEEKO_COMPILE_OK
 	                "${PROJECT_BINARY_DIR}"
                     "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/TestLargeFiles.c")
-	    
+	
 	    if(FSEEKO_COMPILE_OK)
             message(STATUS "Checking for fseeko/ftello - present")
-        endif(FSEEKO_COMPILE_OK)
+        endif()
 
         if(NOT FSEEKO_COMPILE_OK)
                 # glibc 2.2 needs _LARGEFILE_SOURCE for fseeko (but not for 64-bit off_t...)
@@ -105,30 +105,30 @@ macro(OPJ_TEST_LARGE_FILES VARIABLE)
                             "${PROJECT_BINARY_DIR}"
                             "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/TestLargeFiles.c"
                             COMPILE_DEFINITIONS "-D_LARGEFILE_SOURCE" )
-                
+
                 if(FSEEKO_COMPILE_OK)
                     message(STATUS "Checking for fseeko/ftello - present with _LARGEFILE_SOURCE")
                     set(_LARGEFILE_SOURCE ${_LARGEFILE_SOURCE} CACHE INTERNAL "Result of test for needed _LARGEFILE_SOURCE")
-                endif(FSEEKO_COMPILE_OK)
-        endif(NOT FSEEKO_COMPILE_OK)
+                endif()
+        endif()
 
 	    if(FSEEKO_COMPILE_OK)
                 set(HAVE_FSEEKO ON CACHE INTERNAL "Result of test for fseeko/ftello")
-        else(FSEEKO_COMPILE_OK)
+        else()
                 message(STATUS "Checking for fseeko/ftello - not found")
                 set(HAVE_FSEEKO OFF CACHE INTERNAL "Result of test for fseeko/ftello")
-        endif(FSEEKO_COMPILE_OK)
+        endif()
 
 	    if(FILE64_OK AND FSEEKO_COMPILE_OK)
                 message(STATUS "Large File support - found")
                 set(${VARIABLE} ON CACHE INTERNAL "Result of test for large file support")
-        else(FILE64_OK AND FSEEKO_COMPILE_OK)
+        else()
                 message(STATUS "Large File support - not found")
                 set(${VARIABLE} OFF CACHE INTERNAL "Result of test for large file support")
-        endif(FILE64_OK AND FSEEKO_COMPILE_OK)
+        endif()
 
-    endif("${VARIABLE}" MATCHES "^${VARIABLE}$")
-endmacro(OPJ_TEST_LARGE_FILES VARIABLE)
+    endif()
+endmacro()
 
 
 
