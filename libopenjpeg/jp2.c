@@ -1563,7 +1563,7 @@ void opj_jp2_setup_encoder(	opj_jp2_v2_t *jp2,
 	}
 	if (jp2->meth == 1) {
 		if (image->color_space == 1)
-			jp2->enumcs = 16;	/* sRGB as defined by IEC 61966𣇻 */
+			jp2->enumcs = 16;	/* sRGB as defined by IEC 61966-2-1 */
 		else if (image->color_space == 2)
 			jp2->enumcs = 17;	/* greyscale */
 		else if (image->color_space == 3)

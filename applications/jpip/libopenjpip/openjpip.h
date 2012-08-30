@@ -85,8 +85,8 @@ typedef struct QR{
 /**
  * Initialize the JPIP server
  *
- * @param[in] tcp_auxport opening tcp auxiliary port ( 0 not to open, valid No. 49152–65535)
- * @param[in] udp_auxport opening udp auxiliary port ( 0 not to open, valid No. 49152–65535)
+ * @param[in] tcp_auxport opening tcp auxiliary port ( 0 not to open, valid No. 49152-65535)
+ * @param[in] udp_auxport opening udp auxiliary port ( 0 not to open, valid No. 49152-65535)
  * @return                intialized server record pointer
  */
 server_record_t * init_JPIPserver( int tcp_auxport, int udp_auxport);
@@ -169,7 +169,7 @@ typedef SOCKET client_t;
 /**
  * Initialize the image decoding server
  *
- * @param[in] port opening tcp port (valid No. 49152–65535)
+ * @param[in] port opening tcp port (valid No. 49152-65535)
  * @return         intialized decoding server record pointer
  */
 dec_server_record_t * init_dec_server( int port);

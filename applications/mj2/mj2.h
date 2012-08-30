@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2003-2004, François-Olivier Devaux
+* Copyright (c) 2003-2004, Francois-Olivier Devaux
 * Copyright (c) 2003-2004,  Communications and remote sensing Laboratory, Universite catholique de Louvain, Belgium
 * All rights reserved.
  *

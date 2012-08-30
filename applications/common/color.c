@@ -46,7 +46,7 @@
 #endif
 
 /*--------------------------------------------------------
-Matrix für sYCC, Amendment 1 to IEC 61966-2-1
+Matrix for sYCC, Amendment 1 to IEC 61966-2-1
 
 Y :   0.299   0.587    0.114   :R
 Cb:  -0.1687 -0.3312   0.5     :G
