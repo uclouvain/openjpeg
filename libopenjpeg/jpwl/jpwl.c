@@ -102,9 +102,10 @@ void jpwl_epb_write(opj_j2k_t *j2k, jpwl_epb_ms_t *epbmark, unsigned char *buf);
 */
 void jpwl_epc_write(opj_j2k_t *j2k, jpwl_epc_ms_t *epcmark, unsigned char *buf);
 
-/** write an ESD MS to a buffer
+/**
+ * write an ESD MS to a buffer
 @param j2k J2K compressor handle
-@param esdmark pointer to the ESD MS
+@param esd pointer to the ESD MS
 @param buf pointer to the memory buffer
 */
 void jpwl_esd_write(opj_j2k_t *j2k, jpwl_esd_ms_t *esdmark, unsigned char *buf);

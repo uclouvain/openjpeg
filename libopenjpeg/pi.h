@@ -61,8 +61,8 @@ typedef struct opj_pi_comp {
   opj_pi_resolution_t *resolutions;
 } opj_pi_comp_t;
 
-/** 
-Packet iterator 
+/**
+Packet iterator
 */
 typedef struct opj_pi_iterator {
 	/** Enabling Tile part generation*/
@@ -84,7 +84,7 @@ typedef struct opj_pi_iterator {
 	/** precinct that identify the packet */
 	int precno;
 	/** layer that identify the packet */
-	int layno;   
+	int layno;
 	/** 0 if the first packet */
 	int first;
 	/** progression order change information */
@@ -114,17 +114,17 @@ opj_pi_iterator_t *pi_initialise_encode(opj_image_t *image, opj_cp_t *cp, int ti
 /**
  * Creates a packet iterator for encoding.
  *
- * @param	p_image		the image being encoded.
- * @param	p_cp		the coding parameters.
- * @param	p_tile_no	index of the tile being encoded.
- * @param	p_t2_mode	the type of pass for generating the packet iterator
+ * @param	image		the image being encoded.
+ * @param	cp		the coding parameters.
+ * @param	tileno	index of the tile being encoded.
+ * @param	t2_mode	the type of pass for generating the packet iterator
+ *
  * @return	a list of packet iterator that points to the first packet of the tile (not true).
 */
 opj_pi_iterator_t *pi_initialise_encode_v2(	const struct opj_image *image,
 											struct opj_cp_v2 *cp,
 											OPJ_UINT32 tileno,
 											J2K_T2_MODE t2_mode);
-
 
 /**
  * Updates the encoding parameters of the codec.
@@ -139,7 +139,7 @@ void pi_update_encoding_parameters(	const struct opj_image *p_image,
 
 /**
 Modify the packet iterator for enabling tile part generation
-@param pi Handle to the packet iterator generated in pi_initialise_encode  
+@param pi Handle to the packet iterator generated in pi_initialise_encode
 @param cp Coding parameters
 @param tileno Number that identifies the tile for which to list the packets
 @param pino Iterator index for pi
@@ -147,7 +147,7 @@ Modify the packet iterator for enabling tile part generation
 @param tppos The position of the tile part flag in the progression order
 @param t2_mode If == 0 In Threshold calculation ,If == 1 Final pass
 @param cur_totnum_tp The total number of tile parts in the current tile
-@return Returns true if an error is detected 
+@return Returns true if an error is detected
 */
 opj_bool pi_create_encode(opj_pi_iterator_t *pi, opj_cp_t *cp,int tileno, int pino,int tpnum, int tppos, J2K_T2_MODE t2_mode,int cur_totnum_tp);
 
@@ -156,12 +156,12 @@ Modify the packet iterator for enabling tile part generation
 @param pi Handle to the packet iterator generated in pi_initialise_encode
 @param cp Coding parameters
 @param tileno Number that identifies the tile for which to list the packets
+@param pino   FIXME DOC
 @param tpnum Tile part number of the current tile
 @param tppos The position of the tile part flag in the progression order
+@param t2_mode FIXME DOC
 */
 void pi_create_encode_v2( opj_pi_iterator_t *pi, struct opj_cp_v2 *cp,OPJ_UINT32 tileno, OPJ_UINT32 pino,OPJ_UINT32 tpnum, OPJ_INT32 tppos, J2K_T2_MODE t2_mode);
-
-
 
 /**
 Create a packet iterator for Decoder
@@ -173,7 +173,6 @@ Create a packet iterator for Decoder
 */
 opj_pi_iterator_t *pi_create_decode(opj_image_t * image, opj_cp_t * cp, int tileno);
 
-
 /**
 Create a packet iterator for Decoder
 @param image Raw image for which the packets will be listed
@@ -184,7 +183,6 @@ Create a packet iterator for Decoder
 */
 opj_pi_iterator_t *pi_create_decode_v2(struct opj_image * image, struct opj_cp_v2 * cp, OPJ_UINT32 tileno);
 
-
 /**
 Destroy a packet iterator
 @param pi Previously created packet iterator
@@ -193,7 +191,6 @@ Destroy a packet iterator
 @see pi_create
 */
 void pi_destroy(opj_pi_iterator_t *pi, opj_cp_t *cp, int tileno);
-
 
 /**
  * Destroys a packet iterator array.
@@ -208,7 +205,7 @@ void pi_destroy_v2(
 /**
 Modify the packet iterator to point to the next packet
 @param pi Packet iterator to modify
-@return Returns false if pi pointed to the last packet or else returns true 
+@return Returns false if pi pointed to the last packet or else returns true
 */
 opj_bool pi_next(opj_pi_iterator_t * pi);
 /* ----------------------------------------------------------------------- */

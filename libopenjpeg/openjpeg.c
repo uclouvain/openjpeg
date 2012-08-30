@@ -31,7 +31,6 @@
 #include "opj_config.h"
 #include "opj_includes.h"
 
-
 /**
  * Decompression handler.
  */
@@ -200,7 +199,6 @@ opj_bool OPJ_CALLCONV opj_set_error_handler(opj_codec_t * p_codec,
 
 /* ---------------------------------------------------------------------- */
 
-
 OPJ_SIZE_T opj_read_from_file (void * p_buffer, OPJ_SIZE_T p_nb_bytes, FILE * p_file)
 {
 	OPJ_SIZE_T l_nb_read = fread(p_buffer,1,p_nb_bytes,p_file);
@@ -266,7 +264,6 @@ DllMain(HANDLE hModule, DWORD ul_reason_for_call, LPVOID lpReserved) {
 #endif /* _WIN32 */
 
 /* ---------------------------------------------------------------------- */
-
 
 const char* OPJ_CALLCONV opj_version(void) {
     return PACKAGE_VERSION;
@@ -513,10 +510,6 @@ opj_bool OPJ_CALLCONV opj_read_header (	opj_stream_t *p_stream,
 	return OPJ_FALSE;
 }
 
-/*
- *
- *
- */
 opj_bool OPJ_CALLCONV opj_decode(   opj_codec_t *p_codec,
                                     opj_stream_t *p_stream,
                                     opj_image_t* p_image)
@@ -538,18 +531,6 @@ opj_bool OPJ_CALLCONV opj_decode(   opj_codec_t *p_codec,
 	return OPJ_FALSE;
 }
 
-
-/**
- * Sets the given area to be decoded. This function should be called right after opj_read_header and before any tile header reading.
- *
- * @param	p_codec			the jpeg2000 codec.
- * @param	p_start_x		the left position of the rectangle to decode (in image coordinates).
- * @param	p_end_x			the right position of the rectangle to decode (in image coordinates).
- * @param	p_start_y		the up position of the rectangle to decode (in image coordinates).
- * @param	p_end_y			the bottom position of the rectangle to decode (in image coordinates).
- *
- * @return	true			if the area could be set.
- */
 opj_bool OPJ_CALLCONV opj_set_decode_area(	opj_codec_t *p_codec,
 											opj_image_t* p_image,
 											OPJ_INT32 p_start_x, OPJ_INT32 p_start_y,
@@ -572,27 +553,6 @@ opj_bool OPJ_CALLCONV opj_set_decode_area(	opj_codec_t *p_codec,
 	return OPJ_FALSE;
 }
 
-/**
- * Reads a tile header. This function is compulsory and allows one to know the size of the tile thta will be decoded.
- * The user may need to refer to the image got by opj_read_header to understand the size being taken by the tile.
- *
- * @param	p_codec			the jpeg2000 codec.
- * @param	p_tile_index	pointer to a value that will hold the index of the tile being decoded, in case of success.
- * @param	p_data_size		pointer to a value that will hold the maximum size of the decoded data, in case of success. In case
- *							of truncated codestreams, the actual number of bytes decoded may be lower. 
- *                          The computation of the size is the same as depicted in opj_write_tile.
- * @param	p_tile_x0		pointer to a value that will hold the x0 pos of the tile (in the image).
- * @param	p_tile_y0		pointer to a value that will hold the y0 pos of the tile (in the image).
- * @param	p_tile_x1		pointer to a value that will hold the x1 pos of the tile (in the image).
- * @param	p_tile_y1		pointer to a value that will hold the y1 pos of the tile (in the image).
- * @param	p_nb_comps		pointer to a value that will hold the number of components in the tile.
- * @param	p_should_go_on	pointer to a boolean that will hold the fact that the decoding should go on. In case the
- *							codestream is over at the time of the call, the value will be set to false. The user should then stop
- *							the decoding.
- * @param	p_stream		the stream to decode.
- * @return	true			if the tile header could be decoded. In case the decoding should end, the returned value is still true.
- *							returning false may be the result of a shortage of memory or an internal error.
- */
 opj_bool OPJ_CALLCONV opj_read_tile_header(	opj_codec_t *p_codec,
 											opj_stream_t * p_stream,
 											OPJ_UINT32 * p_tile_index,
@@ -623,18 +583,6 @@ opj_bool OPJ_CALLCONV opj_read_tile_header(	opj_codec_t *p_codec,
 	return OPJ_FALSE;
 }
 
-/**
- * Reads a tile data. This function is compulsory and allows one to decode tile data. opj_read_tile_header should be called before.
- * The user may need to refer to the image got by opj_read_header to understand the size being taken by the tile.
- *
- * @param	p_codec			the jpeg2000 codec.
- * @param	p_tile_index	the index of the tile being decoded, this should be the value set by opj_read_tile_header.
- * @param	p_data			pointer to a memory block that will hold the decoded data.
- * @param	p_data_size		size of p_data. p_data_size should be bigger or equal to the value set by opj_read_tile_header.
- * @param	p_stream		the stream to decode.
- *
- * @return	true			if the data could be decoded.
- */
 opj_bool OPJ_CALLCONV opj_decode_tile_data(	opj_codec_t *p_codec,
 											OPJ_UINT32 p_tile_index,
 											OPJ_BYTE * p_data,
@@ -660,10 +608,6 @@ opj_bool OPJ_CALLCONV opj_decode_tile_data(	opj_codec_t *p_codec,
 	return OPJ_FALSE;
 }
 
-/*
- *
- *
- */
 opj_bool OPJ_CALLCONV opj_get_decoded_tile(	opj_codec_t *p_codec,
 											opj_stream_t *p_stream,
 											opj_image_t *p_image,
@@ -687,10 +631,6 @@ opj_bool OPJ_CALLCONV opj_get_decoded_tile(	opj_codec_t *p_codec,
 	return OPJ_FALSE;
 }
 
-/*
- *
- *
- */
 opj_bool OPJ_CALLCONV opj_set_decoded_resolution_factor(opj_codec_t *p_codec, 
 														OPJ_UINT32 res_factor )
 {
@@ -938,10 +878,6 @@ opj_bool OPJ_CALLCONV opj_end_compress (opj_codec_t *p_codec,
 
 }
 
-/*
- *
- *
- */
 opj_bool OPJ_CALLCONV opj_end_decompress (	opj_codec_t *p_codec,
 											opj_stream_t *p_stream)
 {
@@ -960,7 +896,6 @@ opj_bool OPJ_CALLCONV opj_end_decompress (	opj_codec_t *p_codec,
 
 	return OPJ_FALSE;
 }
-
 
 opj_bool OPJ_CALLCONV opj_set_MCT(opj_cparameters_t *parameters,
                                   OPJ_FLOAT32 * pEncodingMatrix,
@@ -988,18 +923,6 @@ opj_bool OPJ_CALLCONV opj_set_MCT(opj_cparameters_t *parameters,
 	return OPJ_TRUE;
 }
 
-/**
- * Writes a tile with the given data.
- *
- * @param	p_compressor		the jpeg2000 codec.
- * @param	p_tile_index		the index of the tile to write. At the moment, the tiles must be written from 0 to n-1 in sequence.
- * @param	p_data				pointer to the data to write. Data is arranged in sequence, data_comp0, then data_comp1, 
- *                               then ... NO INTERLEAVING should be set.
- * @param	p_data_size			this value os used to make sure the data being written is correct. The size must be 
- *                               equal to the sum for each component of tile_width * tile_height * component_size. 
- *                               component_size can be 1,2 or 4 bytes, depending on the precision of the given component.
- * @param	p_stream			the stream to write data to.
- */
 opj_bool OPJ_CALLCONV opj_write_tile (	opj_codec_t *p_codec,
 										OPJ_UINT32 p_tile_index,
 										OPJ_BYTE * p_data,
@@ -1046,10 +969,6 @@ void OPJ_CALLCONV opj_destroy_codec(opj_codec_t *p_codec)
 
 /* ---------------------------------------------------------------------- */
 
-/*
- *
- *
- */
 void OPJ_CALLCONV opj_dump_codec(	opj_codec_t *p_codec,
 									OPJ_INT32 info_flag,
 									FILE* output_stream)
@@ -1065,10 +984,6 @@ void OPJ_CALLCONV opj_dump_codec(	opj_codec_t *p_codec,
 	return;
 }
 
-/*
- *
- *
- */
 opj_codestream_info_v2_t* OPJ_CALLCONV opj_get_cstr_info(opj_codec_t *p_codec)
 {
 	if (p_codec) {
@@ -1080,10 +995,6 @@ opj_codestream_info_v2_t* OPJ_CALLCONV opj_get_cstr_info(opj_codec_t *p_codec)
 	return NULL;
 }
 
-/*
- *
- *
- */
 void OPJ_CALLCONV opj_destroy_cstr_info(opj_codestream_info_v2_t **cstr_info) {
 	if (cstr_info) {
 
@@ -1100,10 +1011,6 @@ void OPJ_CALLCONV opj_destroy_cstr_info(opj_codestream_info_v2_t **cstr_info) {
 	}
 }
 
-/*
- *
- *
- */
 opj_codestream_index_t * OPJ_CALLCONV opj_get_cstr_index(opj_codec_t *p_codec)
 {
 	if (p_codec) {
@@ -1115,10 +1022,6 @@ opj_codestream_index_t * OPJ_CALLCONV opj_get_cstr_index(opj_codec_t *p_codec)
 	return NULL;
 }
 
-/*
- *
- *
- */
 void OPJ_CALLCONV opj_destroy_cstr_index(opj_codestream_index_t **p_cstr_index)
 {
 	if (*p_cstr_index){
@@ -1128,12 +1031,6 @@ void OPJ_CALLCONV opj_destroy_cstr_index(opj_codestream_index_t **p_cstr_index)
 }
 
 /* ---------------------------------------------------------------------- */
-/**
- * Helper function.
- * Sets the stream to be a file stream. The FILE must have been open previously.
- * @param		p_stream	the stream to modify
- * @param		p_file		handler to an already open file.
-*/
 opj_stream_t* OPJ_CALLCONV opj_stream_create_default_file_stream (FILE * p_file, opj_bool p_is_read_stream)
 {
 	return opj_stream_create_file_stream(p_file,J2K_STREAM_CHUNK_SIZE,p_is_read_stream);

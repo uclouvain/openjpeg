@@ -1051,9 +1051,9 @@ OPJ_API void OPJ_CALLCONV opj_image_destroy(opj_image_t *image);
 /**
  * Creates an image without allocating memory for the image (used in the new version of the library).
  *
- * @param	p_num_cmpts			the number of components
- * @param	p_cmpt_parms		the components parameters
- * @param	p_clr_spc			the image color space
+ * @param	numcmpts			the number of components
+ * @param	cmptparms		the components parameters
+ * @param	clrspc			the image color space
  *
  * @return	a new image structure if successful, NULL otherwise.
 */
@@ -1104,11 +1104,20 @@ OPJ_API void OPJ_CALLCONV cio_seek(opj_cio_t *cio, int pos);
 /**
  * Creates an abstract stream. This function does nothing except allocating memory and initializing the abstract stream.
  *
- * @param	l_is_reader		if set to true then the stream will be an input stream, an output stream else.
+ * @param	p_is_input		if set to true then the stream will be an input stream, an output stream else.
  *
  * @return	a stream object.
 */
 OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_default_create(opj_bool p_is_input);
+
+/**
+ * Creates an abstract stream. This function does nothing except allocating memory and initializing the abstract stream.
+ *
+ * @param	p_buffer_size  FIXME DOC
+ * @param	p_is_input		if set to true then the stream will be an input stream, an output stream else.
+ *
+ * @return	a stream object.
+*/
 OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create(OPJ_SIZE_T p_buffer_size, opj_bool p_is_input);
 
 /**
@@ -1156,8 +1165,9 @@ OPJ_API void OPJ_CALLCONV opj_stream_set_user_data (opj_stream_t* p_stream, void
 
 /**
  * Sets the length of the user data for the stream.
- * @param		p_stream		the stream to modify
- * @param		data_length		length of the user_data.
+ *
+ * @param p_stream    the stream to modify
+ * @param data_length length of the user_data.
 */
 OPJ_API void OPJ_CALLCONV opj_stream_set_user_data_length(opj_stream_t* p_stream, OPJ_UINT64 data_length);
 
@@ -1168,6 +1178,13 @@ OPJ_API void OPJ_CALLCONV opj_stream_set_user_data_length(opj_stream_t* p_stream
  * @param p_is_read_stream whether the stream is a read stream (true) or not (false)
 */
 OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_default_file_stream (FILE * p_file, opj_bool p_is_read_stream);
+
+/**
+ * FIXME DOC
+ * @param p_file           the file stream to operate on
+ * @param p_buffer_size    FIXME DOC
+ * @param p_is_read_stream FIXME DOC
+*/
 OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream (FILE * p_file, OPJ_SIZE_T p_buffer_size, opj_bool p_is_read_stream);
 
 /* -----------> */
@@ -1246,6 +1263,7 @@ OPJ_API opj_bool OPJ_CALLCONV opj_read_header (	opj_stream_t *p_stream,
  * Sets the given area to be decoded. This function should be called right after opj_read_header and before any tile header reading.
  *
  * @param	p_codec			the jpeg2000 codec.
+ * @param	p_image     FIXME DOC
  * @param	p_start_x		the left position of the rectangle to decode (in image coordinates).
  * @param	p_end_x			the right position of the rectangle to decode (in image coordinates).
  * @param	p_start_y		the up position of the rectangle to decode (in image coordinates).
@@ -1295,11 +1313,10 @@ OPJ_API opj_bool OPJ_CALLCONV opj_set_decoded_resolution_factor(opj_codec_t *p_c
 /**
  * Writes a tile with the given data.
  *
- * @param	p_compressor		the jpeg2000 codec.
+ * @param	p_codec		the jpeg2000 codec.
  * @param	p_tile_index		the index of the tile to write. At the moment, the tiles must be written from 0 to n-1 in sequence.
  * @param	p_data				pointer to the data to write. Data is arranged in sequence, data_comp0, then data_comp1, then ... NO INTERLEAVING should be set.
- * @param	p_data_size			this value os used to make sure the data being written is correct. The size must be equal to the sum for each component of tile_width * tile_height * component_size. component_size can be 1,2 or 4 bytes,
- *								depending on the precision of the given component.
+ * @param	p_data_size			this value os used to make sure the data being written is correct. The size must be equal to the sum for each component of tile_width * tile_height * component_size. component_size can be 1,2 or 4 bytes, depending on the precision of the given component.
  * @param	p_stream			the stream to write data to.
  *
  * @return	true if the data could be written.
@@ -1415,11 +1432,10 @@ OPJ_API opj_bool OPJ_CALLCONV opj_end_compress (opj_codec_t *p_codec,
  * Encode an image into a JPEG-2000 codestream
  * @param p_codec 		compressor handle
  * @param p_stream 		Output buffer stream
- * @param image 		Image to encode
  *
  * @return 				Returns true if successful, returns false otherwise
  */
-OPJ_API opj_bool OPJ_CALLCONV opj_encode(opj_codec_t *p_codec, 
+OPJ_API opj_bool OPJ_CALLCONV opj_encode(opj_codec_t *p_codec,
                                          opj_stream_t *p_stream);
 
 

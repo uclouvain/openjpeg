@@ -605,154 +605,145 @@ void opj_tcd_destroy(opj_tcd_v2_t *tcd) {
 }
 
 /* ----------------------------------------------------------------------- */
-/**
- * Initialize the tile coder and may reuse some meory.
- * @param       p_tcd           TCD handle.
- * @param       p_image         raw image.
- * @param       p_cp            coding parameters.
- * @param       p_tile_no       current tile index to encode.
- *
- * @return true if the encoding values could be set (false otherwise).
-*/
 #define MACRO_TCD_ALLOCATE(FUNCTION,TYPE,FRACTION,ELEMENT,FUNCTION_ELEMENT)                                                                                                                                       \
-        opj_bool FUNCTION (     opj_tcd_v2_t *p_tcd,                                                                                                                                                              \
-                        OPJ_UINT32 p_tile_no                                                                                                                                                                      \
-                        )                                                                                                                                                                                         \
-{                                                                                                                                                                                                                 \
-        OPJ_UINT32 (*l_gain_ptr)(OPJ_UINT32) = 00;                                                                                                                                                                \
-        OPJ_UINT32 compno, resno, bandno, precno, cblkno;                                                                                                                                                         \
-        opj_tcp_v2_t * l_tcp = 00;                                                                                                                                                                                \
-        opj_cp_v2_t * l_cp = 00;                                                                                                                                                                                  \
-        opj_tcd_tile_v2_t * l_tile = 00;                                                                                                                                                                          \
-        opj_tccp_t *l_tccp = 00;                                                                                                                                                                                  \
-        opj_tcd_tilecomp_v2_t *l_tilec = 00;                                                                                                                                                                      \
-        opj_image_comp_t * l_image_comp = 00;                                                                                                                                                                     \
-        opj_tcd_resolution_v2_t *l_res = 00;                                                                                                                                                                      \
-        opj_tcd_band_v2_t *l_band = 00;                                                                                                                                                                           \
-        opj_stepsize_t * l_step_size = 00;                                                                                                                                                                        \
-        opj_tcd_precinct_v2_t *l_current_precinct = 00;                                                                                                                                                           \
-        TYPE* l_code_block = 00;                                                                                                                                                                                  \
-        opj_image_t *l_image = 00;                                                                                                                                                                                \
-        OPJ_UINT32 p,q;                                                                                                                                                                                           \
-        OPJ_UINT32 l_level_no;                                                                                                                                                                                    \
-        OPJ_UINT32 l_pdx, l_pdy;                                                                                                                                                                                  \
-        OPJ_UINT32 l_gain;                                                                                                                                                                                        \
-        OPJ_INT32 l_x0b, l_y0b;                                                                                                                                                                                   \
-        /* extent of precincts , top left, bottom right**/                                                                                                                                                        \
+opj_bool FUNCTION (     opj_tcd_v2_t *p_tcd,                        \
+                        OPJ_UINT32 p_tile_no                        \
+                        )                                           \
+{                                                                   \
+        OPJ_UINT32 (*l_gain_ptr)(OPJ_UINT32) = 00;                  \
+        OPJ_UINT32 compno, resno, bandno, precno, cblkno;           \
+        opj_tcp_v2_t * l_tcp = 00;                                  \
+        opj_cp_v2_t * l_cp = 00;                                    \
+        opj_tcd_tile_v2_t * l_tile = 00;                            \
+        opj_tccp_t *l_tccp = 00;                                    \
+        opj_tcd_tilecomp_v2_t *l_tilec = 00;                        \
+        opj_image_comp_t * l_image_comp = 00;                       \
+        opj_tcd_resolution_v2_t *l_res = 00;                        \
+        opj_tcd_band_v2_t *l_band = 00;                             \
+        opj_stepsize_t * l_step_size = 00;                          \
+        opj_tcd_precinct_v2_t *l_current_precinct = 00;             \
+        TYPE* l_code_block = 00;                                    \
+        opj_image_t *l_image = 00;                                  \
+        OPJ_UINT32 p,q;                                             \
+        OPJ_UINT32 l_level_no;                                      \
+        OPJ_UINT32 l_pdx, l_pdy;                                    \
+        OPJ_UINT32 l_gain;                                          \
+        OPJ_INT32 l_x0b, l_y0b;                                     \
+        /* extent of precincts , top left, bottom right**/          \
         OPJ_INT32 l_tl_prc_x_start, l_tl_prc_y_start, l_br_prc_x_end, l_br_prc_y_end;                                                                                                                             \
-        /* number of precinct for a resolution */                                                                                                                                                                 \
-        OPJ_UINT32 l_nb_precincts;                                                                                                                                                                                \
+        /* number of precinct for a resolution */                   \
+        OPJ_UINT32 l_nb_precincts;                                  \
         /* room needed to store l_nb_precinct precinct for a resolution */                                                                                                                                        \
-        OPJ_UINT32 l_nb_precinct_size;                                                                                                                                                                            \
-        /* number of code blocks for a precinct*/                                                                                                                                                                 \
-        OPJ_UINT32 l_nb_code_blocks;                                                                                                                                                                              \
+        OPJ_UINT32 l_nb_precinct_size;                              \
+        /* number of code blocks for a precinct*/                   \
+        OPJ_UINT32 l_nb_code_blocks;                                \
         /* room needed to store l_nb_code_blocks code blocks for a precinct*/                                                                                                                                     \
-        OPJ_UINT32 l_nb_code_blocks_size;                                                                                                                                                                         \
-        /* size of data for a tile */                                                                                                                                                                             \
-        OPJ_UINT32 l_data_size;                                                                                                                                                                                   \
-                                                                                                                                                                                                                  \
-        l_cp = p_tcd->cp;                                                                                                                                                                                         \
-        l_tcp = &(l_cp->tcps[p_tile_no]);                                                                                                                                                                         \
-        l_tile = p_tcd->tcd_image->tiles;                                                                                                                                                                         \
-        l_tccp = l_tcp->tccps;                                                                                                                                                                                    \
-        l_tilec = l_tile->comps;                                                                                                                                                                                  \
-        l_image = p_tcd->image;                                                                                                                                                                                   \
-        l_image_comp = p_tcd->image->comps;                                                                                                                                                                       \
-                                                                                                                                                                                                                  \
-        p = p_tile_no % l_cp->tw;       /* tile coordinates */                                                                                                                                                    \
-        q = p_tile_no / l_cp->tw;                                                                                                                                                                                 \
-        /*fprintf(stderr, "Tile coordinate = %d,%d\n", p, q);*/                                                                                                                                                   \
-                                                                                                                                                                                                                  \
+        OPJ_UINT32 l_nb_code_blocks_size;                           \
+        /* size of data for a tile */                               \
+        OPJ_UINT32 l_data_size;                                     \
+                                                                    \
+        l_cp = p_tcd->cp;                                           \
+        l_tcp = &(l_cp->tcps[p_tile_no]);                           \
+        l_tile = p_tcd->tcd_image->tiles;                           \
+        l_tccp = l_tcp->tccps;                                      \
+        l_tilec = l_tile->comps;                                    \
+        l_image = p_tcd->image;                                     \
+        l_image_comp = p_tcd->image->comps;                         \
+                                                                    \
+        p = p_tile_no % l_cp->tw;       /* tile coordinates */      \
+        q = p_tile_no / l_cp->tw;                                   \
+        /*fprintf(stderr, "Tile coordinate = %d,%d\n", p, q);*/     \
+                                                                    \
         /* 4 borders of the tile rescale on the image if necessary */                                                                                                                                             \
         l_tile->x0 = int_max(l_cp->tx0 + p * l_cp->tdx, l_image->x0);                                                                                                                                             \
         l_tile->y0 = int_max(l_cp->ty0 + q * l_cp->tdy, l_image->y0);                                                                                                                                             \
         l_tile->x1 = int_min(l_cp->tx0 + (p + 1) * l_cp->tdx, l_image->x1);                                                                                                                                       \
         l_tile->y1 = int_min(l_cp->ty0 + (q + 1) * l_cp->tdy, l_image->y1);                                                                                                                                       \
         /*fprintf(stderr, "Tile border = %d,%d,%d,%d\n", l_tile->x0, l_tile->y0,l_tile->x1,l_tile->y1);*/                                                                                                         \
-                                                                                                                                                                                                                  \
-        /*tile->numcomps = image->numcomps; */                                                                                                                                                                    \
-        for(compno = 0; compno < l_tile->numcomps; ++compno) {                                                                                                                                                    \
+                                                                    \
+        /*tile->numcomps = image->numcomps; */                      \
+        for(compno = 0; compno < l_tile->numcomps; ++compno) {      \
                 /*fprintf(stderr, "compno = %d/%d\n", compno, l_tile->numcomps);*/                                                                                                                                \
-                                                                                                                                                                                                                  \
-                /* border of each l_tile component (global) */                                                                                                                                                    \
+                                                                    \
+                /* border of each l_tile component (global) */      \
                 l_tilec->x0 = int_ceildiv(l_tile->x0, l_image_comp->dx);                                                                                                                                          \
                 l_tilec->y0 = int_ceildiv(l_tile->y0, l_image_comp->dy);                                                                                                                                          \
                 l_tilec->x1 = int_ceildiv(l_tile->x1, l_image_comp->dx);                                                                                                                                          \
                 l_tilec->y1 = int_ceildiv(l_tile->y1, l_image_comp->dy);                                                                                                                                          \
                 /*fprintf(stderr, "\tTile compo border = %d,%d,%d,%d\n", l_tilec->x0, l_tilec->y0,l_tilec->x1,l_tilec->y1);*/                                                                                     \
-                                                                                                                                                                                                                  \
-                l_data_size = (l_tilec->x1 - l_tilec->x0)                                                                                                                                                         \
-                * (l_tilec->y1 - l_tilec->y0) * sizeof(OPJ_UINT32 );                                                                                                                                              \
-                l_tilec->numresolutions = l_tccp->numresolutions;                                                                                                                                                 \
+                                                                    \
+                l_data_size = (l_tilec->x1 - l_tilec->x0)           \
+                * (l_tilec->y1 - l_tilec->y0) * sizeof(OPJ_UINT32 );\
+                l_tilec->numresolutions = l_tccp->numresolutions;   \
                 if (l_tccp->numresolutions < l_cp->m_specific_param.m_dec.m_reduce) {                                                                                                                             \
-                        l_tilec->minimum_num_resolutions = 1;                                                                                                                                                     \
-                }                                                                                                                                                                                                 \
-                else {                                                                                                                                                                                            \
+                        l_tilec->minimum_num_resolutions = 1;       \
+                }                                                   \
+                else {                                              \
                         l_tilec->minimum_num_resolutions = l_tccp->numresolutions                                                                                                                                 \
-                        - l_cp->m_specific_param.m_dec.m_reduce;                                                                                                                                                  \
-                }                                                                                                                                                                                                 \
-                                                                                                                                                                                                                  \
-                if (l_tilec->data == 00) {                                                                                                                                                                        \
+                        - l_cp->m_specific_param.m_dec.m_reduce;    \
+                }                                                   \
+                                                                    \
+                if (l_tilec->data == 00) {                          \
                         l_tilec->data = (OPJ_INT32 *) opj_malloc(l_data_size);                                                                                                                                    \
-                        if (! l_tilec->data ) {                                                                                                                                                                   \
-                                return OPJ_FALSE;                                                                                                                                                                 \
-                        }                                                                                                                                                                                         \
+                        if (! l_tilec->data ) {                     \
+                                return OPJ_FALSE;                   \
+                        }                                           \
                         /*fprintf(stderr, "\tAllocate data of tilec (int): %d x OPJ_UINT32\n",l_data_size);*/                                                                                                     \
-                                                                                                                                                                                                                  \
-                        l_tilec->data_size = l_data_size;                                                                                                                                                         \
-                }                                                                                                                                                                                                 \
-                else if (l_data_size > l_tilec->data_size) {                                                                                                                                                      \
+                                                                    \
+                        l_tilec->data_size = l_data_size;           \
+                }                                                   \
+                else if (l_data_size > l_tilec->data_size) {        \
                         OPJ_INT32 * new_data = (OPJ_INT32 *) opj_realloc(l_tilec->data, l_data_size);                                                                                                             \
                         /* opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory to handle tile data\n");                                                                                                 */  \
                         fprintf(stderr, "Not enough memory to handle tile data\n");                                                                                                                               \
-                        if (! new_data) {                                                                                                                                                                         \
-                                opj_free(l_tilec->data);                                                                                                                                                          \
-                                l_tilec->data = NULL;                                                                                                                                                             \
-                                l_tilec->data_size = 0;                                                                                                                                                           \
-                                return OPJ_FALSE;                                                                                                                                                                 \
-                        }                                                                                                                                                                                         \
-                        l_tilec->data = new_data;                                                                                                                                                                 \
+                        if (! new_data) {                           \
+                                opj_free(l_tilec->data);            \
+                                l_tilec->data = NULL;               \
+                                l_tilec->data_size = 0;             \
+                                return OPJ_FALSE;                   \
+                        }                                           \
+                        l_tilec->data = new_data;                   \
                         /*fprintf(stderr, "\tReallocate data of tilec (int): from %d to %d x OPJ_UINT32\n", l_tilec->data_size, l_data_size);*/                                                                   \
-                        l_tilec->data_size = l_data_size;                                                                                                                                                         \
-                }                                                                                                                                                                                                 \
-                                                                                                                                                                                                                  \
+                        l_tilec->data_size = l_data_size;           \
+                }                                                   \
+                                                                    \
                 l_data_size = l_tilec->numresolutions * sizeof(opj_tcd_resolution_v2_t);                                                                                                                          \
-                                                                                                                                                                                                                  \
-                if (l_tilec->resolutions == 00) {                                                                                                                                                                 \
+                                                                    \
+                if (l_tilec->resolutions == 00) {                   \
                         l_tilec->resolutions = (opj_tcd_resolution_v2_t *) opj_malloc(l_data_size);                                                                                                               \
-                        if (! l_tilec->resolutions ) {                                                                                                                                                            \
-                                return OPJ_FALSE;                                                                                                                                                                 \
-                        }                                                                                                                                                                                         \
+                        if (! l_tilec->resolutions ) {              \
+                                return OPJ_FALSE;                   \
+                        }                                           \
                         /*fprintf(stderr, "\tAllocate resolutions of tilec (opj_tcd_resolution_v2_t): %d\n",l_data_size);*/                                                                                       \
-                        l_tilec->resolutions_size = l_data_size;                                                                                                                                                  \
-                        memset(l_tilec->resolutions,0,l_data_size);                                                                                                                                               \
-                }                                                                                                                                                                                                 \
-                else if (l_data_size > l_tilec->resolutions_size) {                                                                                                                                               \
+                        l_tilec->resolutions_size = l_data_size;    \
+                        memset(l_tilec->resolutions,0,l_data_size); \
+                }                                                   \
+                else if (l_data_size > l_tilec->resolutions_size) { \
                         opj_tcd_resolution_v2_t* new_resolutions = (opj_tcd_resolution_v2_t *) opj_realloc(l_tilec->resolutions, l_data_size);                                                                    \
-                        if (! new_resolutions) {                                                                                                                                                                  \
+                        if (! new_resolutions) {                    \
                                 /* opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory to tile resolutions\n");                                                                                         */  \
                                 fprintf(stderr, "Not enough memory to tile resolutions\n");                                                                                                                       \
-                                opj_free(l_tilec->resolutions);                                                                                                                                                   \
-                                l_tilec->resolutions = NULL;                                                                                                                                                      \
-                                l_tilec->resolutions_size = 0;                                                                                                                                                    \
-                                return OPJ_FALSE;                                                                                                                                                                 \
-                        }                                                                                                                                                                                         \
-                        l_tilec->resolutions = new_resolutions;                                                                                                                                                   \
+                                opj_free(l_tilec->resolutions);     \
+                                l_tilec->resolutions = NULL;        \
+                                l_tilec->resolutions_size = 0;      \
+                                return OPJ_FALSE;                   \
+                        }                                           \
+                        l_tilec->resolutions = new_resolutions;     \
                         /*fprintf(stderr, "\tReallocate data of tilec (int): from %d to %d x OPJ_UINT32\n", l_tilec->resolutions_size, l_data_size);*/                                                            \
                         memset(((OPJ_BYTE*) l_tilec->resolutions)+l_tilec->resolutions_size,0,l_data_size - l_tilec->resolutions_size);                                                                           \
-                        l_tilec->resolutions_size = l_data_size;                                                                                                                                                  \
-                }                                                                                                                                                                                                 \
-                                                                                                                                                                                                                  \
-                l_level_no = l_tilec->numresolutions - 1;                                                                                                                                                         \
-                l_res = l_tilec->resolutions;                                                                                                                                                                     \
-                l_step_size = l_tccp->stepsizes;                                                                                                                                                                  \
-                if (l_tccp->qmfbid == 0) {                                                                                                                                                                        \
-                        l_gain_ptr = &opj_dwt_getgain_real;                                                                                                                                                       \
-                }                                                                                                                                                                                                 \
-                else {                                                                                                                                                                                            \
-                        l_gain_ptr  = &opj_dwt_getgain;                                                                                                                                                           \
-                }                                                                                                                                                                                                 \
-                /*fprintf(stderr, "\tlevel_no=%d\n",l_level_no);*/                                                                                                                                                \
+                        l_tilec->resolutions_size = l_data_size;    \
+                }                                                   \
+                                                                    \
+                l_level_no = l_tilec->numresolutions - 1;           \
+                l_res = l_tilec->resolutions;                       \
+                l_step_size = l_tccp->stepsizes;                    \
+                if (l_tccp->qmfbid == 0) {                          \
+                        l_gain_ptr = &opj_dwt_getgain_real;         \
+                }                                                   \
+                else {                                              \
+                        l_gain_ptr  = &opj_dwt_getgain;             \
+                }                                                   \
+                /*fprintf(stderr, "\tlevel_no=%d\n",l_level_no);*/  \
                                                                                                                                                                                                                   \
                 for(resno = 0; resno < l_tilec->numresolutions; ++resno) {                                                                                                                                        \
                         /*fprintf(stderr, "\t\tresno = %d/%d\n", resno, l_tilec->numresolutions);*/                                                                                                               \

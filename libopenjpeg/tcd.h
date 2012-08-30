@@ -350,7 +350,7 @@ void tcd_dump(FILE *fd, opj_tcd_t *tcd, opj_tcd_image_t *img);
 
 /**
 Create a new TCD handle
-@param FIXME
+@param p_is_decoder FIXME DOC
 @return Returns a new TCD handle if successful returns NULL otherwise
 */
 opj_tcd_v2_t* opj_tcd_create(opj_bool p_is_decoder);
@@ -428,6 +428,7 @@ Decode a tile from a buffer into a raw image
 @param src Source buffer
 @param len Length of source buffer
 @param tileno Number that identifies one of the tiles to be decoded
+@param cstr_info  FIXME DOC
 */
 opj_bool opj_tcd_decode_tile(   opj_tcd_v2_t *tcd,
 							    OPJ_BYTE *src,
@@ -450,9 +451,8 @@ OPJ_UINT32 opj_tcd_get_encoded_tile_size ( opj_tcd_v2_t *p_tcd );
 
 /**
  * Initialize the tile coder and may reuse some meory.
+ *
  * @param	p_tcd		TCD handle.
- * @param	p_image		raw image.
- * @param	p_cp		coding parameters.
  * @param	p_tile_no	current tile index to encode.
  *
  * @return true if the encoding values could be set (false otherwise).

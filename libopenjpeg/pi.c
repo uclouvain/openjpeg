@@ -41,31 +41,31 @@
 /**
 Get next packet in layer-resolution-component-precinct order.
 @param pi packet iterator to modify
-@return returns false if pi pointed to the last packet or else returns true 
+@return returns false if pi pointed to the last packet or else returns true
 */
 static opj_bool pi_next_lrcp(opj_pi_iterator_t * pi);
 /**
 Get next packet in resolution-layer-component-precinct order.
 @param pi packet iterator to modify
-@return returns false if pi pointed to the last packet or else returns true 
+@return returns false if pi pointed to the last packet or else returns true
 */
 static opj_bool pi_next_rlcp(opj_pi_iterator_t * pi);
 /**
 Get next packet in resolution-precinct-component-layer order.
 @param pi packet iterator to modify
-@return returns false if pi pointed to the last packet or else returns true 
+@return returns false if pi pointed to the last packet or else returns true
 */
 static opj_bool pi_next_rpcl(opj_pi_iterator_t * pi);
 /**
 Get next packet in precinct-component-resolution-layer order.
 @param pi packet iterator to modify
-@return returns false if pi pointed to the last packet or else returns true 
+@return returns false if pi pointed to the last packet or else returns true
 */
 static opj_bool pi_next_pcrl(opj_pi_iterator_t * pi);
 /**
 Get next packet in component-precinct-resolution-layer order.
 @param pi packet iterator to modify
-@return returns false if pi pointed to the last packet or else returns true 
+@return returns false if pi pointed to the last packet or else returns true
 */
 static opj_bool pi_next_cprl(opj_pi_iterator_t * pi);
 
@@ -80,10 +80,10 @@ static opj_bool pi_next_cprl(opj_pi_iterator_t * pi);
  * @param	p_ty1		Y1 parameter for the tile
  * @param	p_max_prec	the maximum precision for all the bands of the tile
  * @param	p_max_res	the maximum number of resolutions for all the poc inside the tile.
- * @param	dx_min		the minimum dx of all the components of all the resolutions for the tile.
- * @param	dy_min		the minimum dy of all the components of all the resolutions for the tile.
+ * @param	p_dx_min		the minimum dx of all the components of all the resolutions for the tile.
+ * @param	p_dy_min		the minimum dy of all the components of all the resolutions for the tile.
  */
-void pi_update_encode_poc_and_final (opj_cp_v2_t *p_cp,
+static void pi_update_encode_poc_and_final (opj_cp_v2_t *p_cp,
 									 OPJ_UINT32 p_tileno,
 									 OPJ_INT32 p_tx0,
 									 OPJ_INT32 p_tx1,
@@ -94,20 +94,6 @@ void pi_update_encode_poc_and_final (opj_cp_v2_t *p_cp,
                                      OPJ_UINT32 p_dx_min,
 									 OPJ_UINT32 p_dy_min);
 
-/**
- * Updates the coding parameters if the encoding is not used with Progression order changes and final (and cinema parameters are used).
- *
- * @param	p_cp		the coding parameters to modify
- * @param	p_tileno	the tile index being concerned.
- * @param	p_tx0		X0 parameter for the tile
- * @param	p_tx1		X1 parameter for the tile
- * @param	p_ty0		Y0 parameter for the tile
- * @param	p_ty1		Y1 parameter for the tile
- * @param	p_max_prec	the maximum precision for all the bands of the tile
- * @param	p_max_res	the maximum number of resolutions for all the poc inside the tile.
- * @param	dx_min		the minimum dx of all the components of all the resolutions for the tile.
- * @param	dy_min		the minimum dy of all the components of all the resolutions for the tile.
- */
 void pi_update_encode_not_poc ( opj_cp_v2_t *p_cp,
 								OPJ_UINT32 p_num_comps,
 								OPJ_UINT32 p_tileno,
@@ -120,21 +106,6 @@ void pi_update_encode_not_poc ( opj_cp_v2_t *p_cp,
                                 OPJ_UINT32 p_dx_min,
 								OPJ_UINT32 p_dy_min);
 
-/**
- * Gets the encoding parameters needed to update the coding parameters and all the pocs.
- *
- * @param	p_image			the image being encoded.
- * @param	p_cp			the coding parameters.
- * @param	tileno			the tile index of the tile being encoded.
- * @param	p_tx0			pointer that will hold the X0 parameter for the tile
- * @param	p_tx1			pointer that will hold the X1 parameter for the tile
- * @param	p_ty0			pointer that will hold the Y0 parameter for the tile
- * @param	p_ty1			pointer that will hold the Y1 parameter for the tile
- * @param	p_max_prec		pointer that will hold the the maximum precision for all the bands of the tile
- * @param	p_max_res		pointer that will hold the the maximum number of resolutions for all the poc inside the tile.
- * @param	dx_min			pointer that will hold the the minimum dx of all the components of all the resolutions for the tile.
- * @param	dy_min			pointer that will hold the the minimum dy of all the components of all the resolutions for the tile.
- */
 void get_encoding_parameters(	const opj_image_t *p_image,
 								const opj_cp_v2_t *p_cp,
 								OPJ_UINT32  tileno,
@@ -147,26 +118,6 @@ void get_encoding_parameters(	const opj_image_t *p_image,
 								OPJ_UINT32 * p_max_prec,
 								OPJ_UINT32 * p_max_res );
 
-/**
- * Gets the encoding parameters needed to update the coding parameters and all the pocs.
- * The precinct widths, heights, dx and dy for each component at each resolution will be stored as well.
- * the last parameter of the function should be an array of pointers of size nb components, each pointer leading
- * to an area of size 4 * max_res. The data is stored inside this area with the following pattern :
- * dx_compi_res0 , dy_compi_res0 , w_compi_res0, h_compi_res0 , dx_compi_res1 , dy_compi_res1 , w_compi_res1, h_compi_res1 , ...
- *
- * @param	p_image			the image being encoded.
- * @param	p_cp			the coding parameters.
- * @param	tileno			the tile index of the tile being encoded.
- * @param	p_tx0			pointer that will hold the X0 parameter for the tile
- * @param	p_tx1			pointer that will hold the X1 parameter for the tile
- * @param	p_ty0			pointer that will hold the Y0 parameter for the tile
- * @param	p_ty1			pointer that will hold the Y1 parameter for the tile
- * @param	p_max_prec		pointer that will hold the the maximum precision for all the bands of the tile
- * @param	p_max_res		pointer that will hold the the maximum number of resolutions for all the poc inside the tile.
- * @param	p_dx_min		pointer that will hold the the minimum dx of all the components of all the resolutions for the tile.
- * @param	p_dy_min		pointer that will hold the the minimum dy of all the components of all the resolutions for the tile.
- * @param	p_resolutions	pointer to an area corresponding to the one described above.
- */
 void get_all_encoding_parameters(
 								const opj_image_t *p_image,
 								const opj_cp_v2_t *p_cp,
@@ -182,22 +133,12 @@ void get_all_encoding_parameters(
 								OPJ_UINT32 ** p_resolutions
 							);
 
-
-/**
- * Allocates memory for a packet iterator. Data and data sizes are set by this operation.
- * No other data is set. The include section of the packet  iterator is not allocated.
- *
- * @param	image		the image used to initialize the packet iterator (only the number of components is relevant).
- * @param	cp		the coding parameters.
- * @param	tileno		the index of the tile from which creating the packet iterator.
- */
 opj_pi_iterator_t * pi_create(	const opj_image_t *image,
 								const opj_cp_v2_t *cp,
 								OPJ_UINT32 tileno );
 
 void pi_update_decode_not_poc (opj_pi_iterator_t * p_pi,opj_tcp_v2_t * p_tcp,OPJ_UINT32 p_max_precision,OPJ_UINT32 p_max_res);
 void pi_update_decode_poc (opj_pi_iterator_t * p_pi,opj_tcp_v2_t * p_tcp,OPJ_UINT32 p_max_precision,OPJ_UINT32 p_max_res);
-
 
 OPJ_INT32 pi_check_next_level(	OPJ_INT32 pos,
 								opj_cp_v2_t *cp,
@@ -209,7 +150,7 @@ OPJ_INT32 pi_check_next_level(	OPJ_INT32 pos,
 
 /*@}*/
 
-/* 
+/*
 ==========================================================
    local functions
 ==========================================================
@@ -349,16 +290,16 @@ if (!pi->tp_on){
 						continue;	
 					}
 					if (!((pi->x % (comp->dx << rpx) == 0) || ((pi->x == pi->tx0) && ((trx0 << levelno) % (1 << rpx))))){
-						continue; 
+						continue;
 					}
 					
 					if ((res->pw==0)||(res->ph==0)) continue;
 					
 					if ((trx0==trx1)||(try0==try1)) continue;
 					
-					prci = int_floordivpow2(int_ceildiv(pi->x, comp->dx << levelno), res->pdx) 
+					prci = int_floordivpow2(int_ceildiv(pi->x, comp->dx << levelno), res->pdx)
 						 - int_floordivpow2(trx0, res->pdx);
-					prcj = int_floordivpow2(int_ceildiv(pi->y, comp->dy << levelno), res->pdy) 
+					prcj = int_floordivpow2(int_ceildiv(pi->y, comp->dy << levelno), res->pdy)
 						 - int_floordivpow2(try0, res->pdy);
 					pi->precno = prci + prcj * res->pw;
 					for (pi->layno = pi->poc.layno0; pi->layno < pi->poc.layno1; pi->layno++) {
@@ -430,16 +371,16 @@ static opj_bool pi_next_pcrl(opj_pi_iterator_t * pi) {
 						continue;	
 					}
 					if (!((pi->x % (comp->dx << rpx) == 0) || ((pi->x == pi->tx0) && ((trx0 << levelno) % (1 << rpx))))){
-						continue; 
+						continue;
 					}
 					
 					if ((res->pw==0)||(res->ph==0)) continue;
 					
 					if ((trx0==trx1)||(try0==try1)) continue;
 					
-					prci = int_floordivpow2(int_ceildiv(pi->x, comp->dx << levelno), res->pdx) 
+					prci = int_floordivpow2(int_ceildiv(pi->x, comp->dx << levelno), res->pdx)
 						 - int_floordivpow2(trx0, res->pdx);
-					prcj = int_floordivpow2(int_ceildiv(pi->y, comp->dy << levelno), res->pdy) 
+					prcj = int_floordivpow2(int_ceildiv(pi->y, comp->dy << levelno), res->pdy)
 						 - int_floordivpow2(try0, res->pdy);
 					pi->precno = prci + prcj * res->pw;
 					for (pi->layno = pi->poc.layno0; pi->layno < pi->poc.layno1; pi->layno++) {
@@ -509,16 +450,16 @@ static opj_bool pi_next_cprl(opj_pi_iterator_t * pi) {
 						continue;	
 					}
 					if (!((pi->x % (comp->dx << rpx) == 0) || ((pi->x == pi->tx0) && ((trx0 << levelno) % (1 << rpx))))){
-						continue; 
+						continue;
 					}
 					
 					if ((res->pw==0)||(res->ph==0)) continue;
 					
 					if ((trx0==trx1)||(try0==try1)) continue;
 					
-					prci = int_floordivpow2(int_ceildiv(pi->x, comp->dx << levelno), res->pdx) 
+					prci = int_floordivpow2(int_ceildiv(pi->x, comp->dx << levelno), res->pdx)
 						 - int_floordivpow2(trx0, res->pdx);
-					prcj = int_floordivpow2(int_ceildiv(pi->y, comp->dy << levelno), res->pdy) 
+					prcj = int_floordivpow2(int_ceildiv(pi->y, comp->dy << levelno), res->pdy)
 						 - int_floordivpow2(try0, res->pdy);
 					pi->precno = prci + prcj * res->pw;
 					for (pi->layno = pi->poc.layno0; pi->layno < pi->poc.layno1; pi->layno++) {
@@ -537,7 +478,7 @@ LABEL_SKIP:;
 	return OPJ_FALSE;
 }
 
-/* 
+/*
 ==========================================================
    Packet iterator interface
 ==========================================================
@@ -667,14 +608,13 @@ opj_pi_iterator_t *pi_create_decode(opj_image_t *image, opj_cp_t *cp, int tileno
 			pi[pino].poc.prg = tcp->pocs[pino].prg;
 		}
 		pi[pino].poc.layno0  = 0;
-		pi[pino].poc.precno0 = 0; 
+		pi[pino].poc.precno0 = 0;
 		pi[pino].poc.precno1 = maxprec;
 			
 	}
 	
 	return pi;
 }
-
 
 opj_pi_iterator_t *pi_create_decode_v2(	opj_image_t *p_image,
 										opj_cp_v2_t *p_cp,
@@ -877,7 +817,7 @@ opj_pi_iterator_t *pi_create_decode_v2(	opj_image_t *p_image,
 	return l_pi;
 }
 
-opj_pi_iterator_t *pi_initialise_encode(opj_image_t *image, opj_cp_t *cp, int tileno, J2K_T2_MODE t2_mode){ 
+opj_pi_iterator_t *pi_initialise_encode(opj_image_t *image, opj_cp_t *cp, int tileno, J2K_T2_MODE t2_mode){
 	int p, q, pino;
 	int compno, resno;
 	int maxres = 0;
@@ -1020,15 +960,6 @@ opj_pi_iterator_t *pi_initialise_encode(opj_image_t *image, opj_cp_t *cp, int ti
 			return pi;
 	}
 
-/**
- * Creates a packet iterator for encoding.
- *
- * @param	p_image		the image being encoded.
- * @param	p_cp		the coding parameters.
- * @param	p_tile_no	index of the tile being encoded.
- * @param	p_t2_mode	the type of pass for generating the packet iterator
- * @return	a list of packet iterator that points to the first packet of the tile (not true).
-*/
 opj_pi_iterator_t *pi_initialise_encode_v2(
 										const opj_image_t *p_image,
 										opj_cp_v2_t *p_cp,
@@ -1217,7 +1148,6 @@ opj_pi_iterator_t *pi_initialise_encode_v2(
 	return l_pi;
 }
 
-
 void pi_destroy(opj_pi_iterator_t *pi, opj_cp_t *cp, int tileno) {
 	int compno, pino;
 	opj_tcp_t *tcp = &cp->tcps[tileno];
@@ -1280,7 +1210,7 @@ opj_bool pi_create_encode( opj_pi_iterator_t *pi, opj_cp_t *cp,int tileno, int p
 			break;
 		case RPCL: strncpy(prog, "RPCL",4);
 			break;
-		case PROG_UNKNOWN: 
+		case PROG_UNKNOWN:
 			return OPJ_TRUE;
 	}
 
@@ -1409,7 +1339,7 @@ opj_bool pi_create_encode( opj_pi_iterator_t *pi, opj_cp_t *cp,int tileno, int p
 									tcp->prc_t = tcp->prcS;
 									pi[pino].poc.precno0 = tcp->prc_t;
 									pi[pino].poc.precno1 = tcp->prc_t+1;
-									tcp->prc_t+=1; 
+									tcp->prc_t+=1;
 								}else{
 									if (incr_top == 1){
 										if(tcp->prc_t == tcp->prcE){
@@ -1488,19 +1418,12 @@ opj_bool pi_create_encode( opj_pi_iterator_t *pi, opj_cp_t *cp,int tileno, int p
 						}
 						break;
 				}		
-			} 
+			}
 		}
 	}	
 	return OPJ_FALSE;
 }
 
-/**
- * Updates the encoding parameters of the codec.
- *
- * @param	p_image		the image being encoded.
- * @param	p_cp		the coding parameters.
- * @param	p_tile_no	index of the tile being encoded.
-*/
 void pi_update_encoding_parameters(	const opj_image_t *p_image,
 									opj_cp_v2_t *p_cp,
 									OPJ_UINT32 p_tile_no )
@@ -1533,21 +1456,6 @@ void pi_update_encoding_parameters(	const opj_image_t *p_image,
 
 }
 
-/**
- * Gets the encoding parameters needed to update the coding parameters and all the pocs.
- *
- * @param	p_image			the image being encoded.
- * @param	p_cp			the coding parameters.
- * @param	p_tileno			the tile index of the tile being encoded.
- * @param	p_tx0			pointer that will hold the X0 parameter for the tile
- * @param	p_tx1			pointer that will hold the X1 parameter for the tile
- * @param	p_ty0			pointer that will hold the Y0 parameter for the tile
- * @param	p_ty1			pointer that will hold the Y1 parameter for the tile
- * @param	p_max_prec		pointer that will hold the the maximum precision for all the bands of the tile
- * @param	p_max_res		pointer that will hold the the maximum number of resolutions for all the poc inside the tile.
- * @param	dx_min			pointer that will hold the the minimum dx of all the components of all the resolutions for the tile.
- * @param	dy_min			pointer that will hold the the minimum dy of all the components of all the resolutions for the tile.
- */
 void get_encoding_parameters(	const opj_image_t *p_image,
 								const opj_cp_v2_t *p_cp,
 								OPJ_UINT32 p_tileno,
@@ -1806,14 +1714,6 @@ void get_all_encoding_parameters(
 	}
 }
 
-/**
- * Allocates memory for a packet iterator. Data and data sizes are set by this operation.
- * No other data is set. The include section of the packet  iterator is not allocated.
- *
- * @param	image		the image used to initialize the packet iterator (only the number of components is relevant.
- * @param	cp		the coding parameters.
- * @param	tileno		the index of the tile from which creating the packet iterator.
- */
 opj_pi_iterator_t * pi_create(	const opj_image_t *image,
 								const opj_cp_v2_t *cp,
 								OPJ_UINT32 tileno )
@@ -1878,20 +1778,6 @@ opj_pi_iterator_t * pi_create(	const opj_image_t *image,
 	return l_pi;
 }
 
-/**
- * Updates the coding parameters if the encoding is used with Progression order changes and final (or cinema parameters are used).
- *
- * @param	p_cp		the coding parameters to modify
- * @param	p_tileno	the tile index being concerned.
- * @param	p_tx0		X0 parameter for the tile
- * @param	p_tx1		X1 parameter for the tile
- * @param	p_ty0		Y0 parameter for the tile
- * @param	p_ty1		Y1 parameter for the tile
- * @param	p_max_prec	the maximum precision for all the bands of the tile
- * @param	p_max_res	the maximum number of resolutions for all the poc inside the tile.
- * @param	dx_min		the minimum dx of all the components of all the resolutions for the tile.
- * @param	dy_min		the minimum dy of all the components of all the resolutions for the tile.
- */
 void pi_update_encode_poc_and_final (opj_cp_v2_t *p_cp,
 									 OPJ_UINT32 p_tileno,
 									 OPJ_INT32 p_tx0,
@@ -1968,20 +1854,6 @@ void pi_update_encode_poc_and_final (opj_cp_v2_t *p_cp,
 	}
 }
 
-/**
- * Updates the coding parameters if the encoding is not used with Progression order changes and final (and cinema parameters are used).
- *
- * @param	p_cp		the coding parameters to modify
- * @param	p_tileno	the tile index being concerned.
- * @param	p_tx0		X0 parameter for the tile
- * @param	p_tx1		X1 parameter for the tile
- * @param	p_ty0		Y0 parameter for the tile
- * @param	p_ty1		Y1 parameter for the tile
- * @param	p_max_prec	the maximum precision for all the bands of the tile
- * @param	p_max_res	the maximum number of resolutions for all the poc inside the tile.
- * @param	dx_min		the minimum dx of all the components of all the resolutions for the tile.
- * @param	dy_min		the minimum dy of all the components of all the resolutions for the tile.
- */
 void pi_update_encode_not_poc (	opj_cp_v2_t *p_cp,
 								OPJ_UINT32 p_num_comps,
 								OPJ_UINT32 p_tileno,
@@ -2037,12 +1909,6 @@ void pi_update_encode_not_poc (	opj_cp_v2_t *p_cp,
 	}
 }
 
-/**
- * Destroys a packet iterator array.
- *
- * @param	p_pi			the packet iterator array to destroy.
- * @param	p_nb_elements	the number of elements in the array.
- */
 void pi_destroy_v2(
 				opj_pi_iterator_t *p_pi,
 				OPJ_UINT32 p_nb_elements)
@@ -2086,8 +1952,6 @@ void pi_destroy_v2(
 	}
 }
 
-
-
 void pi_update_decode_poc (opj_pi_iterator_t * p_pi,opj_tcp_v2_t * p_tcp,OPJ_UINT32 p_max_precision,OPJ_UINT32 p_max_res)
 {
 	// loop
@@ -2127,7 +1991,6 @@ void pi_update_decode_poc (opj_pi_iterator_t * p_pi,opj_tcp_v2_t * p_tcp,OPJ_UIN
 	}
 }
 
-
 void pi_update_decode_not_poc (opj_pi_iterator_t * p_pi,opj_tcp_v2_t * p_tcp,OPJ_UINT32 p_max_precision,OPJ_UINT32 p_max_res)
 {
 	// loop
@@ -2161,7 +2024,6 @@ void pi_update_decode_not_poc (opj_pi_iterator_t * p_pi,opj_tcp_v2_t * p_tcp,OPJ
 		++l_current_pi;
 	}
 }
-
 
 void pi_create_encode_v2( 	opj_pi_iterator_t *pi,
 							opj_cp_v2_t *cp,

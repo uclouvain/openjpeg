@@ -61,13 +61,14 @@ static int t2_encode_packet(opj_tcd_tile_t *tile, opj_tcp_t *tcp, opj_pi_iterato
 
 /**
 Encode a packet of a tile to a destination buffer
+@param tileno Number of the tile encoded
 @param tile Tile for which to write the packets
 @param tcp Tile coding parameters
 @param pi Packet identity
 @param dest Destination buffer
+@param p_data_written   FIXME DOC
 @param len Length of the destination buffer
 @param cstr_info Codestream information structure
-@param tileno Number of the tile encoded
 @return
 */
 static opj_bool t2_encode_packet_v2(
@@ -109,19 +110,21 @@ Decode a packet of a tile from a source buffer
 @param tcp Tile coding parameters
 @param pi Packet identity
 @param src Source buffer
+@param data_read   FIXME DOC
+@param max_length  FIXME DOC
 @param pack_info Packet information
 
-@return
+@return  FIXME DOC
 */
 static opj_bool t2_decode_packet_v2(
-                                                         opj_t2_v2_t* t2,
-                                                         opj_tcd_tile_v2_t *tile,
+                             opj_t2_v2_t* t2,
+                             opj_tcd_tile_v2_t *tile,
                              opj_tcp_v2_t *tcp,
-                                                         opj_pi_iterator_t *pi,
-                                                         OPJ_BYTE *src,
-                                                         OPJ_UINT32 * data_read,
-                                                         OPJ_UINT32 max_length,
-                                                         opj_packet_info_t *pack_info);
+                             opj_pi_iterator_t *pi,
+                             OPJ_BYTE *src,
+                             OPJ_UINT32 * data_read,
+                             OPJ_UINT32 max_length,
+                             opj_packet_info_t *pack_info);
 
 static opj_bool t2_skip_packet(
                                                          opj_t2_v2_t* p_t2,

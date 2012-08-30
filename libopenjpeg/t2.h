@@ -93,10 +93,12 @@ Encode the packets of a tile to a destination buffer
 @param tile the tile for which to write the packets
 @param maxlayers maximum number of layers
 @param dest the destination buffer
+@param p_data_written    FIXME DOC
 @param len the length of the destination buffer
 @param cstr_info Codestream information structure
 @param tpnum Tile part number of the current tile
 @param tppos The position of the tile part flag in the progression order
+@param pino   FIXME DOC
 @param t2_mode If == 0 In Threshold calculation ,If == 1 Final pass
 */
 opj_bool t2_encode_packets_v2(	opj_t2_v2_t* t2,
@@ -126,15 +128,20 @@ int t2_decode_packets(opj_t2_t *t2, unsigned char *src, int len, int tileno, opj
 /**
 Decode the packets of a tile from a source buffer
 @param t2 T2 handle
-@param src the source buffer
-@param len length of the source buffer
 @param tileno number that identifies the tile for which to decode the packets
 @param tile tile for which to decode the packets
+@param src         FIXME DOC
+@param p_data_read the source buffer
+@param len length of the source buffer
+@param cstr_info   FIXME DOC
+
+@return FIXME DOC
  */
 opj_bool t2_decode_packets_v2(	opj_t2_v2_t *t2,
 								OPJ_UINT32 tileno,
 								struct opj_tcd_tile_v2 *tile,
-								OPJ_BYTE *src, OPJ_UINT32 * p_data_read,
+								OPJ_BYTE *src,
+                OPJ_UINT32 * p_data_read,
 								OPJ_UINT32 len,
 								opj_codestream_index_t *cstr_info);
 

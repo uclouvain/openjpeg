@@ -788,9 +788,9 @@ Decoding parameters are returned in j2k->cp.
 void opj_j2k_setup_decoder(opj_j2k_v2_t *j2k, opj_dparameters_t *parameters);
 
 /**
-Creates a J2K compression structure
-@param cinfo Codec context info
-@return Returns a handle to a J2K compressor if successful, returns NULL otherwise
+ * Creates a J2K compression structure
+ *
+ * @return Returns a handle to a J2K compressor if successful, returns NULL otherwise
 */
 opj_j2k_v2_t* opj_j2k_create_compress(void);
 
@@ -821,8 +821,9 @@ opj_bool opj_j2k_end_decompress(opj_j2k_v2_t *j2k,
 /**
  * Reads a jpeg2000 codestream header structure.
  *
- * @param cio the stream to read data from.
+ * @param p_stream the stream to read data from.
  * @param p_j2k the jpeg2000 codec.
+ * @param p_image FIXME DOC
  * @param p_manager the user event manager.
  *
  * @return true if the box is valid.
@@ -850,6 +851,9 @@ void j2k_destroy_cstr_index (opj_codestream_index_t *p_cstr_ind);
 /**
  * Decode tile data.
  * @param	p_j2k		the jpeg2000 codec.
+ * @param	p_tile_index
+ * @param p_data       FIXME DOC
+ * @param p_data_size  FIXME DOC
  * @param	p_stream			the stream to write data to.
  * @param	p_manager	the user event manager.
  */
@@ -863,6 +867,14 @@ opj_bool opj_j2k_decode_tile (  opj_j2k_v2_t * p_j2k,
 /**
  * Reads a tile header.
  * @param	p_j2k		the jpeg2000 codec.
+ * @param	p_tile_index FIXME DOC
+ * @param	p_data_size FIXME DOC
+ * @param	p_tile_x0 FIXME DOC
+ * @param	p_tile_y0 FIXME DOC
+ * @param	p_tile_x1 FIXME DOC
+ * @param	p_tile_y1 FIXME DOC
+ * @param	p_nb_comps FIXME DOC
+ * @param	p_go_on FIXME DOC
  * @param	p_stream			the stream to write data to.
  * @param	p_manager	the user event manager.
  */
@@ -883,9 +895,10 @@ opj_bool opj_j2k_read_tile_header ( opj_j2k_v2_t * p_j2k,
  * Sets the given area to be decoded. This function should be called right after opj_read_header and before any tile header reading.
  *
  * @param	p_j2k			the jpeg2000 codec.
+ * @param	p_image     FIXME DOC
  * @param	p_start_x		the left position of the rectangle to decode (in image coordinates).
- * @param	p_end_x			the right position of the rectangle to decode (in image coordinates).
  * @param	p_start_y		the up position of the rectangle to decode (in image coordinates).
+ * @param	p_end_x			the right position of the rectangle to decode (in image coordinates).
  * @param	p_end_y			the bottom position of the rectangle to decode (in image coordinates).
  * @param	p_manager		the user event manager
  *
@@ -920,7 +933,7 @@ void j2k_dump (opj_j2k_v2_t* p_j2k, OPJ_INT32 flag, FILE* out_stream);
 /**
  * Dump an image header structure.
  *
- *@param img_header			the image header to dump.
+ *@param image			the image header to dump.
  *@param dev_dump_flag		flag to describe if we are in the case of this function is use outside j2k_dump function
  *@param out_stream			output stream where dump the elements.
  */
@@ -929,7 +942,7 @@ void j2k_dump_image_header(opj_image_t* image, opj_bool dev_dump_flag, FILE* out
 /**
  * Dump a component image header structure.
  *
- *@param comp_header		the component image header to dump.
+ *@param comp		the component image header to dump.
  *@param dev_dump_flag		flag to describe if we are in the case of this function is use outside j2k_dump function
  *@param out_stream			output stream where dump the elements.
  */
@@ -956,13 +969,14 @@ opj_codestream_index_t* j2k_get_cstr_index(opj_j2k_v2_t* p_j2k);
 /**
  * Decode an image from a JPEG-2000 codestream
  * @param j2k J2K decompressor handle
- * @param cio Input buffer stream
- * @param cstr_info Codestream information structure if required, NULL otherwise
- * @return Returns a decoded image if successful, returns NULL otherwise
+ * @param p_stream  FIXME DOC
+ * @param p_image   FIXME DOC
+ * @param p_manager FIXME DOC
+ * @return FIXME DOC
 */
-opj_bool opj_j2k_decode(opj_j2k_v2_t *j2k, 
-                        opj_stream_private_t *p_stream, 
-                        opj_image_t *p_image, 
+opj_bool opj_j2k_decode(opj_j2k_v2_t *j2k,
+                        opj_stream_private_t *p_stream,
+                        opj_image_t *p_image,
                         opj_event_mgr_t *p_manager);
 
 
@@ -980,6 +994,9 @@ opj_bool opj_j2k_set_decoded_resolution_factor(opj_j2k_v2_t *p_j2k,
 /**
  * Writes a tile.
  * @param	p_j2k		the jpeg2000 codec.
+ * @param p_tile_index FIXME DOC
+ * @param p_data FIXME DOC
+ * @param p_data_size FIXME DOC
  * @param	p_stream			the stream to write data to.
  * @param	p_manager	the user event manager.
  */
@@ -1001,7 +1018,8 @@ opj_bool opj_j2k_encode_v2(	opj_j2k_v2_t * p_j2k,
  * Starts a compression scheme, i.e. validates the codec parameters, writes the header.
  *
  * @param	p_j2k		the jpeg2000 codec.
- * @param	cio			the stream object.
+ * @param	p_stream			the stream object.
+ * @param	p_image FIXME DOC
  * @param	p_manager	the user event manager.
  *
  * @return true if the codec is valid.

@@ -119,6 +119,7 @@ Encode the code-blocks of a tile
 @param t1 T1 handle
 @param tile The tile to encode
 @param tcp Tile coding parameters
+@param mct_norms  FIXME DOC
 */
 opj_bool opj_t1_encode_cblks(   opj_t1_t *t1,
                                 opj_tcd_tile_v2_t *tile,

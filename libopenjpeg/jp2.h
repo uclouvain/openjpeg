@@ -254,8 +254,8 @@ opj_jp2_img_header_writer_handler_t;
 /**
  * Writes the Jpeg2000 file Header box - JP2 Header box (warning, this is a super box).
  *
- * @param	cio			the stream to write data to.
  * @param	jp2			the jpeg2000 file codec.
+ * @param	stream			the stream to write data to.
  * @param	p_manager	user event manager.
  *
  * @return true if writting was successful.
@@ -275,8 +275,10 @@ void opj_jp2_setup_decoder(opj_jp2_v2_t *jp2, opj_dparameters_t *parameters);
 /**
  * Decode an image from a JPEG-2000 file stream
  * @param jp2 JP2 decompressor handle
- * @param cio Input buffer stream
- * @param cstr_info Codestream information structure if required, NULL otherwise
+ * @param p_stream  FIXME DOC
+ * @param p_image   FIXME DOC
+ * @param p_manager FIXME DOC
+ *
  * @return Returns a decoded image if successful, returns NULL otherwise
 */
 opj_bool opj_jp2_decode(opj_jp2_v2_t *jp2,
@@ -285,11 +287,13 @@ opj_bool opj_jp2_decode(opj_jp2_v2_t *jp2,
 						opj_event_mgr_t * p_manager);
 
 /**
-Setup the encoder parameters using the current image and using user parameters. 
-Coding parameters are returned in jp2->j2k->cp. 
-@param jp2 JP2 compressor handle
-@param parameters compression parameters
-@param image input filled image
+ * Setup the encoder parameters using the current image and using user parameters. 
+ * Coding parameters are returned in jp2->j2k->cp. 
+ *
+ * @param jp2 JP2 compressor handle
+ * @param parameters compression parameters
+ * @param image input filled image
+ * @param p_manager  FIXME DOC
 */
 void opj_jp2_setup_encoder(	opj_jp2_v2_t *jp2, 
                             opj_cparameters_t *parameters, 
@@ -312,7 +316,9 @@ opj_bool opj_jp2_encode(	opj_jp2_v2_t *jp2,
  * Starts a compression scheme, i.e. validates the codec parameters, writes the header.
  *
  * @param	jp2		the jpeg2000 file codec.
- * @param	cio		the stream object.
+ * @param	stream		the stream object.
+ * @param	p_image   FIXME DOC
+ * @param p_manager FIXME DOC
  *
  * @return true if the codec is valid.
  */
@@ -343,8 +349,9 @@ opj_bool opj_jp2_end_decompress(opj_jp2_v2_t *jp2,
 /**
  * Reads a jpeg2000 file header structure.
  *
- * @param cio the stream to read data from.
+ * @param p_stream the stream to read data from.
  * @param jp2 the jpeg2000 file header structure.
+ * @param p_image   FIXME DOC
  * @param p_manager the user event manager.
  *
  * @return true if the box is valid.
@@ -356,9 +363,17 @@ opj_bool opj_jp2_read_header(	opj_stream_private_t *p_stream,
 
 /**
  * Reads a tile header.
- * @param	p_j2k		the jpeg2000 codec.
- * @param	p_stream			the stream to write data to.
- * @param	p_manager	the user event manager.
+ * @param	p_jp2         the jpeg2000 codec.
+ * @param	p_tile_index  FIXME DOC
+ * @param	p_data_size   FIXME DOC
+ * @param	p_tile_x0     FIXME DOC
+ * @param	p_tile_y0     FIXME DOC
+ * @param	p_tile_x1     FIXME DOC
+ * @param	p_tile_y1     FIXME DOC
+ * @param	p_nb_comps    FIXME DOC
+ * @param	p_go_on       FIXME DOC
+ * @param	p_stream      the stream to write data to.
+ * @param	p_manager     the user event manager.
  */
 opj_bool opj_jp2_read_tile_header ( opj_jp2_v2_t * p_jp2,
                                     OPJ_UINT32 * p_tile_index,
@@ -374,7 +389,11 @@ opj_bool opj_jp2_read_tile_header ( opj_jp2_v2_t * p_jp2,
 
 /**
  * Writes a tile.
- * @param	p_j2k		the jpeg2000 codec.
+ *
+ * @param	p_jp2		the jpeg2000 codec.
+ * @param p_tile_index  FIXME DOC
+ * @param p_data        FIXME DOC
+ * @param p_data_size   FIXME DOC
  * @param	p_stream			the stream to write data to.
  * @param	p_manager	the user event manager.
  */
@@ -387,9 +406,14 @@ opj_bool opj_jp2_write_tile (	opj_jp2_v2_t *p_jp2,
 
 /**
  * Decode tile data.
- * @param	p_j2k		the jpeg2000 codec.
+ * @param	p_jp2		the jpeg2000 codec.
+ * @param	p_tile_index FIXME DOC
+ * @param	p_data       FIXME DOC
+ * @param	p_data_size  FIXME DOC
  * @param	p_stream			the stream to write data to.
  * @param	p_manager	the user event manager.
+ *
+ * @return FIXME DOC
  */
 opj_bool opj_jp2_decode_tile (  opj_jp2_v2_t * p_jp2,
                                 OPJ_UINT32 p_tile_index,
@@ -416,8 +440,10 @@ void opj_jp2_destroy(opj_jp2_v2_t *jp2);
  * Sets the given area to be decoded. This function should be called right after opj_read_header and before any tile header reading.
  *
  * @param	p_jp2			the jpeg2000 codec.
- * @param	p_end_x			the right position of the rectangle to decode (in image coordinates).
+ * @param	p_image     FIXME DOC
+ * @param	p_start_x   the left position of the rectangle to decode (in image coordinates).
  * @param	p_start_y		the up position of the rectangle to decode (in image coordinates).
+ * @param	p_end_x			the right position of the rectangle to decode (in image coordinates).
  * @param	p_end_y			the bottom position of the rectangle to decode (in image coordinates).
  * @param	p_manager		the user event manager
  *
