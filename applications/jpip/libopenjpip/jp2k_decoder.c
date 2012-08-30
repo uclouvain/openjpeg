@@ -68,7 +68,7 @@ Byte_t * j2k_to_pnm( FILE *fp, ihdrbox_param_t **ihdrbox)
 
   /* JPEG-2000 codestream */
   /* get a decoder handle */
-  l_codec = opj_create_decompress_v2(CODEC_J2K);
+  l_codec = opj_create_decompress(CODEC_J2K);
 
   /* catch events using our callbacks and give a local context */
   opj_set_info_handler(l_codec, info_callback,00);
@@ -76,7 +76,7 @@ Byte_t * j2k_to_pnm( FILE *fp, ihdrbox_param_t **ihdrbox)
   opj_set_error_handler(l_codec, error_callback,00);
 
   /* setup the decoder decoding parameters using user parameters */
-  if ( !opj_setup_decoder_v2(l_codec, &parameters) ){
+  if ( !opj_setup_decoder(l_codec, &parameters) ){
     fprintf(stderr, "ERROR -> j2k_dump: failed to setup the decoder\n");
     return NULL;
   }
@@ -101,7 +101,7 @@ Byte_t * j2k_to_pnm( FILE *fp, ihdrbox_param_t **ihdrbox)
 #endif /*TODO*/
 
   /* Get the decoded image */
-  if ( !( opj_decode_v2(l_codec, l_stream, image) && opj_end_decompress(l_codec,l_stream) ) ) {
+  if ( !( opj_decode(l_codec, l_stream, image) && opj_end_decompress(l_codec,l_stream) ) ) {
     fprintf(stderr, "ERROR -> j2k_to_image: failed to decode image!\n");
     opj_stream_destroy(l_stream);
     opj_destroy_codec(l_codec);
