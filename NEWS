@@ -2,33 +2,23 @@
 OpenJPEG NEWS - user visible changes
 ====================================
 
-Changes from OpenJPEG 1.4.0 to OpenJPEG 1.5.0
+Changes from OpenJPEG 1.5.1 to OpenJPEG 1.5.0
 ----------------------------------------------
+
+Security:
+
+    * Fixes: CVE-2012-3535
+    * Fixes: CVE-2012-3358
 
 New Features:
 
-    * openjpip: 
-     - complete client-server architecture for remote browsing of jpeg 2000 images. 
-     - located in 'applications/jpip'.
-     - see corresponding README for more details.
+    * Use a new API scheme and solve the SOVERSIONing in OpenJPEG
+    * Allow better integration with multi-arch system
+    * Compile & Install Java bindings (CMake)
+    * Install required addXMLinJP2 (JPIP)
 
-API modifications:
-
-    * 'bool' type has been replaced by 'opj_bool' type. 'stdbool.h' is no more required.
-    
 Misc:
 
-    * added this NEWS file.
-    * improved cmake and autotools build methods.
-    * removed manual makefiles, VS project files and XCode project files.
-    * added a 'thirdparty' directory to contain all dependencies.
-     - These libraries will be build only if there are not found on the system.
-     - Note that libopenjpeg itself does not have any dependency.
-    * changed the directory hierarchy of the whole project. See README files for details.
-    * tests : a complete test suite has been setup.
-     - both JPEG 2000 conformance tests and non-regressions tests are configured.
-     - results are submitted to the OpenJPEG dashboard (http://my.cdash.org/index.php?project=OPENJPEG)
-     - images are located in 'http://openjpeg.googlecode.com/svn/data' folder.
-     - configuration files and utilities are located in 'tests' folder.
-    * OPJViewer re-activated (need wxWidgets)
+    * fix linker error by resolving all symbols (eg. missing -lm)
+    * fix some man page typos
     * Huge amount of bug fixes. See CHANGES for details.
