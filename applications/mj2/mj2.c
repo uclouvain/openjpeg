@@ -1236,10 +1236,10 @@ void mj2_write_stsd(mj2_tk_t * tk, opj_cio_t *cio)
   if (tk->track_type == 0) {
     mj2_write_smj2(tk, cio);
   } else if (tk->track_type == 1) {
-    // Not implemented
+    /* Not implemented*/
   }
   if (tk->track_type == 2) {
-    // Not implemented
+    /* Not implemented*/
   }
 	
 	
@@ -1287,10 +1287,10 @@ int mj2_read_stsd(mj2_tk_t * tk, opj_image_t * img, opj_cio_t *cio)
 				return 1;
     }
   } else if (tk->track_type == 1) {
-    len_2skip = cio_read(cio, 4);	// Not implemented -> skipping box
+    len_2skip = cio_read(cio, 4);	/* Not implemented -> skipping box*/
     cio_skip(cio,len_2skip - 4);
   } else if (tk->track_type == 2) {
-    len_2skip = cio_read(cio, 4);	// Not implemented -> skipping box
+    len_2skip = cio_read(cio, 4);	/* Not implemented -> skipping box*/
     cio_skip(cio,len_2skip - 4);
   }
 	
@@ -2111,7 +2111,7 @@ int mj2_read_mdhd(mj2_tk_t * tk, opj_cio_t *cio)
   mj2_box_t box;
 	
   mj2_read_boxhdr(&box, cio);
-  if (!(MJ2_MHDR == box.type || MJ2_MDHD == box.type)) {	// Kakadu writes MHDR instead of MDHD
+  if (!(MJ2_MHDR == box.type || MJ2_MDHD == box.type)) {	/* Kakadu writes MHDR instead of MDHD*/
     opj_event_msg(cio->cinfo, EVT_ERROR, "Error: Expected MDHD Marker\n");
     return 1;
   }
@@ -2765,7 +2765,7 @@ void mj2_destroy_decompress(opj_mj2_t *movie) {
 			tk = &movie->tk[i];
 			if (tk->name_size != 0)
 				opj_free(tk->name);
-			if (tk->track_type == 0)  {// Video track
+			if (tk->track_type == 0)  {/* Video track*/
 				if (tk->jp2_struct.comps != NULL)
 					opj_free(tk->jp2_struct.comps);
 				if (tk->jp2_struct.cl != NULL)
@@ -2821,20 +2821,20 @@ void mj2_setup_encoder(opj_mj2_t *movie, mj2_cparameters_t *parameters) {
 	if(movie && parameters) {
 		opj_jp2_t *jp2_struct;
 			
-		movie->num_htk = 0;	  // No hint tracks
-		movie->num_stk = 0;	  // No sound tracks
-		movie->num_vtk = 1;	  // One video track  
+		movie->num_htk = 0;	  /* No hint tracks*/
+		movie->num_stk = 0;	  /* No sound tracks*/
+		movie->num_vtk = 1;	  /* One video track*/
 
-		movie->brand = MJ2_MJ2;  // One brand: MJ2
-		movie->num_cl = 2;	  // Two compatible brands: MJ2 and MJ2S
+		movie->brand = MJ2_MJ2;  /* One brand: MJ2*/
+		movie->num_cl = 2;	  /* Two compatible brands: MJ2 and MJ2S*/
 		movie->cl = (unsigned int*) opj_malloc(movie->num_cl * sizeof(unsigned int));
 		movie->cl[0] = MJ2_MJ2;
 		movie->cl[1] = MJ2_MJ2S;
-		movie->minversion = 0;	  // Minimum version: 0		
+		movie->minversion = 0;	  /* Minimum version: 0	*/
 
-		movie->tk = (mj2_tk_t*) opj_malloc(sizeof(mj2_tk_t)); //Memory allocation for the video track
-		movie->tk[0].track_ID = 1;	  // Track ID = 1 
-		movie->tk[0].track_type = 0;	  // Video track
+		movie->tk = (mj2_tk_t*) opj_malloc(sizeof(mj2_tk_t)); /*Memory allocation for the video track*/
+		movie->tk[0].track_ID = 1;	  /* Track ID = 1 */
+		movie->tk[0].track_type = 0;	  /* Video track */
 		movie->tk[0].Dim[0] = parameters->Dim[0];
 		movie->tk[0].Dim[1] = parameters->Dim[1];
 		movie->tk[0].w = parameters->w;
@@ -2848,7 +2848,7 @@ void mj2_setup_encoder(opj_mj2_t *movie, mj2_cparameters_t *parameters) {
 		movie->tk[0].depth = parameters->prec;
 
 		jp2_struct = &movie->tk[0].jp2_struct;
-		jp2_struct->numcomps = parameters->numcomps;	// NC  		
+		jp2_struct->numcomps = parameters->numcomps;	/* NC */
 		jp2_struct->comps = (opj_jp2_comps_t*) opj_malloc(jp2_struct->numcomps * sizeof(opj_jp2_comps_t));
 		jp2_struct->precedence = 0;   /* PRECEDENCE*/
 		jp2_struct->approx = 0;   /* APPROX*/		
@@ -2884,7 +2884,7 @@ void mj2_destroy_compress(opj_mj2_t *movie) {
 			tk = &movie->tk[i];
 			if (tk->name_size != 0)
 				opj_free(tk->name);
-			if (tk->track_type == 0)  {// Video track
+			if (tk->track_type == 0)  {/* Video track*/
 				if (tk->jp2_struct.comps != NULL)
 					opj_free(tk->jp2_struct.comps);
 				if (tk->jp2_struct.cl != NULL)

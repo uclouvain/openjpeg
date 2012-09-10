@@ -109,10 +109,10 @@ int main(int argc, char *argv[]) {
 	movie = (opj_mj2_t*) dinfo->mj2_handle;
 	mj2_setup_decoder(movie, &parameters);
 
-  if (mj2_read_struct(file, movie)) // Creating the movie structure
+  if (mj2_read_struct(file, movie)) /* Creating the movie structure*/
     return 1;
 
-  // Decode first video track 
+  /* Decode first video track */
   tnum = 0;
   while (movie->tk[tnum].track_type != 0)
     tnum ++;
@@ -124,9 +124,9 @@ int main(int argc, char *argv[]) {
   for (snum=0; snum < track->num_samples; snum++)
   {
     sample = &track->sample[snum];
-    frame_codestream = (unsigned char*) malloc (sample->sample_size-8); // Skipping JP2C marker
+    frame_codestream = (unsigned char*) malloc (sample->sample_size-8); /* Skipping JP2C marker*/
     fseek(file,sample->offset+8,SEEK_SET);
-    fread(frame_codestream,sample->sample_size-8,1, file);  // Assuming that jp and ftyp markers size do
+    fread(frame_codestream,sample->sample_size-8,1, file);  /* Assuming that jp and ftyp markers size do*/
 
     sprintf(outfilename,"%s_%05d.j2k",argv[2],snum);
     outfile = fopen(outfilename, "wb");

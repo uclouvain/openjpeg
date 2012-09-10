@@ -179,7 +179,7 @@ opj_bool j2k_add_marker(opj_codestream_info_t *cstr_info, unsigned short int typ
                         cstr_info->marknum = 0;
                         cstr_info->maxmarknum = 0;
                         /* opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory to add a marker\n"); */
-                        // TODO_test_add_marker_result;
+                        /* TODO_test_add_marker_result;*/
                         return OPJ_FALSE;
                 }
                 cstr_info->marker = new_marker;
