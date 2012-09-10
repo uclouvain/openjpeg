@@ -1826,6 +1826,10 @@ static opj_bool t2_read_packet_data(
 
 #endif /* USE_JPWL */
 
+                                if ((l_cblk->len + l_seg->newlen) > 8192) {
+                                        return OPJ_FALSE;
+                                }
+                               
                                 memcpy(l_cblk->data + l_cblk->len, l_current_data, l_seg->newlen);
 
                                 if (l_seg->numpasses == 0) {
