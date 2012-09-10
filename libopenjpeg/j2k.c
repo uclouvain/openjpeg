@@ -694,6 +694,12 @@ static void j2k_read_cox(opj_j2k_t *j2k, int compno) {
 					"of resolutions of this component\nModify the cp_reduce parameter.\n\n", compno);
 		j2k->state |= J2K_STATE_ERR;
 	}
+  if( tccp->numresolutions > J2K_MAXRLVLS ) {
+    opj_event_msg(j2k->cinfo, EVT_ERROR, "Error decoding component %d.\nThe number of resolutions is too big: %d vs max= %d. Truncating.\n\n",
+      compno, tccp->numresolutions, J2K_MAXRLVLS);
+		j2k->state |= J2K_STATE_ERR;
+    tccp->numresolutions = J2K_MAXRLVLS;
+ }
 
 	tccp->cblkw = cio_read(cio, 1) + 2;	/* SPcox (E) */
 	tccp->cblkh = cio_read(cio, 1) + 2;	/* SPcox (F) */
