@@ -201,15 +201,15 @@ double mct_getnorm_real(int compno) {
 
 
 opj_bool mct_encode_custom(
-					   // MCT data
+					   /* MCT data */
 					   OPJ_BYTE * pCodingdata,
-					   // size of components
+					   /* size of components */
 					   OPJ_UINT32 n,
-					   // components
+					   /* components */
 					   OPJ_BYTE ** pData,
-					   // nb of components (i.e. size of pData)
+					   /* nb of components (i.e. size of pData) */
 					   OPJ_UINT32 pNbComp,
-					   // tells if the data is signed
+					   /* tells if the data is signed */
 					   OPJ_UINT32 isSigned)
 {
 	OPJ_FLOAT32 * lMct = (OPJ_FLOAT32 *) pCodingdata;

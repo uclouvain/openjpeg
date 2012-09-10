@@ -363,7 +363,7 @@ opj_mqc_t* mqc_create(void) {
 void mqc_destroy(opj_mqc_t *mqc) {
 	if(mqc) {
 #ifdef MQC_PERF_OPT
-		if (mqc->buffer) { // TODO: LH: this test is pointless as free() is a no-op on 0
+		if (mqc->buffer) { /* TODO: LH: this test is pointless as free() is a no-op on 0 */
 			opj_free(mqc->buffer);
 		}
 #endif

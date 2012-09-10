@@ -40,21 +40,23 @@ used for
 <li>Debugging messages
 </ul>
 */
-//typedef struct opj_event_mgr 
-//{
-//	/** Data to call the event manager upon */
-//	void *			m_error_data;
-//	/** Data to call the event manager upon */
-//	void *			m_warning_data;
-//	/** Data to call the event manager upon */
-//	void *			m_info_data;
-//	/** Error message callback if available, NULL otherwise */
-//	opj_msg_callback error_handler;
-//	/** Warning message callback if available, NULL otherwise */
-//	opj_msg_callback warning_handler;
-//	/** Debug message callback if available, NULL otherwise */
-//	opj_msg_callback info_handler;
-//} opj_event_mgr_t;
+#if 0
+typedef struct opj_event_mgr 
+{
+	/** Data to call the event manager upon */
+	void *			m_error_data;
+	/** Data to call the event manager upon */
+	void *			m_warning_data;
+	/** Data to call the event manager upon */
+	void *			m_info_data;
+	/** Error message callback if available, NULL otherwise */
+	opj_msg_callback error_handler;
+	/** Warning message callback if available, NULL otherwise */
+	opj_msg_callback warning_handler;
+	/** Debug message callback if available, NULL otherwise */
+	opj_msg_callback info_handler;
+} opj_event_mgr_t;
+#endif
 
 #define EVT_ERROR	1	/**< Error event type */
 #define EVT_WARNING	2	/**< Warning event type */

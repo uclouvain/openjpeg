@@ -1727,8 +1727,8 @@ opj_bool opj_t1_decode_cblks(   opj_t1_t* t1,
 							}
 						}
 					}
-					//opj_free(cblk->segs);
-					//cblk->segs = 00;
+					/*opj_free(cblk->segs);*/
+					/*cblk->segs = 00;*/
 				} /* cblkno */
 			} /* precno */
 		} /* bandno */

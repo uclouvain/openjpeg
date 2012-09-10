@@ -811,7 +811,7 @@ int main(int argc, char **argv)
 		}
 
 		if (!parameters.nb_tile_to_decode) {
-			// Optional if you want decode the entire image
+			/* Optional if you want decode the entire image */
 			if (!opj_set_decode_area(l_codec, image, parameters.DA_x0,
 					parameters.DA_y0, parameters.DA_x1, parameters.DA_y1)){
 				fprintf(stderr,	"ERROR -> j2k_to_image: failed to set the decoded area\n");
@@ -834,7 +834,7 @@ int main(int argc, char **argv)
 		}
 		else {
 
-			// It is just here to illustrate how to use the resolution after set parameters
+			/* It is just here to illustrate how to use the resolution after set parameters */
 			/*if (!opj_set_decoded_resolution_factor(l_codec, 5)) {
 				fprintf(stderr, "ERROR -> j2k_to_image: failed to set the resolution factor tile!\n");
 				opj_destroy_codec(l_codec);

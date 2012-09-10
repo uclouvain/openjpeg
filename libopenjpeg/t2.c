@@ -397,7 +397,7 @@ static opj_bool t2_init_seg(opj_tcd_cblk_dec_t* cblk, int index, int cblksty, in
         opj_tcd_seg_t* new_segs = (opj_tcd_seg_t*) opj_realloc(cblk->segs, (index + 1) * sizeof(opj_tcd_seg_t));
         if (!new_segs) {
                 /* opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory to init segment #%d\n", index); */
-                // TODO: tell cblk has no segment (in order to update the range of valid indices)
+                /* TODO: tell cblk has no segment (in order to update the range of valid indices)*/
                 cblk->segs = NULL;
                 return OPJ_FALSE;
         }
@@ -567,7 +567,7 @@ static int t2_decode_packet(opj_t2_t* t2, unsigned char *src, int len, opj_tcd_t
                         segno = 0;
                         if (!cblk->numsegs) {
                                 if (OPJ_FALSE == t2_init_seg(cblk, segno, tcp->tccps[compno].cblksty, 1)) {
-                                        // TODO: LH: shall we destroy bio here ?
+                                        /* TODO: LH: shall we destroy bio here ?*/
                                         opj_event_msg(t2->cinfo, EVT_WARNING, "Not enough memory to init segment #%d\n", segno);
                                         return -999;
                                 }
@@ -576,7 +576,7 @@ static int t2_decode_packet(opj_t2_t* t2, unsigned char *src, int len, opj_tcd_t
                                 if (cblk->segs[segno].numpasses == cblk->segs[segno].maxpasses) {
                                         ++segno;
                                         if (OPJ_FALSE == t2_init_seg(cblk, segno, tcp->tccps[compno].cblksty, 0)) {
-                                                // TODO: LH: shall we destroy bio here ?
+                                                /* TODO: LH: shall we destroy bio here ?*/
                                                 opj_event_msg(t2->cinfo, EVT_WARNING, "Not enough memory to init segment #%d\n", segno);
                                                 return -999;
                                         }
@@ -591,7 +591,7 @@ static int t2_decode_packet(opj_t2_t* t2, unsigned char *src, int len, opj_tcd_t
                                 if (n > 0) {
                                         ++segno;
                                         if (OPJ_FALSE == t2_init_seg(cblk, segno, tcp->tccps[compno].cblksty, 0)) {
-                                                // TODO: LH: shall we destroy bio here ?
+                                                /* TODO: LH: shall we destroy bio here ? */
                                                 opj_event_msg(t2->cinfo, EVT_WARNING, "Not enough memory to init segment #%d\n", segno);
                                                 return -999;
                                         }
@@ -660,6 +660,7 @@ static int t2_decode_packet(opj_t2_t* t2, unsigned char *src, int len, opj_tcd_t
                         }
                         
                         do {
+                                unsigned char * new_data;
                                 if (c + seg->newlen > src + len) {
                                         return -999;
                                 }
@@ -684,12 +685,12 @@ static int t2_decode_packet(opj_t2_t* t2, unsigned char *src, int len, opj_tcd_t
 
 #endif /* USE_JPWL */
                                 
-                                unsigned char * new_data = (unsigned char*) opj_realloc(cblk->data, (cblk->len + seg->newlen) * sizeof(unsigned char));
+                                new_data = (unsigned char*) opj_realloc(cblk->data, (cblk->len + seg->newlen) * sizeof(unsigned char));
                                 if (! new_data) {
                                         opj_event_msg(t2->cinfo, EVT_ERROR, "JPWL: Not enough memory for codeblock data %d (p=%d, b=%d, r=%d, c=%d)\n",
                                                         seg->newlen, cblkno, precno, bandno, resno, compno);
                                         cblk->data = 0;
-                                        cblk->len  = 0; // TODO: LH: other things to reset ?
+                                        cblk->len  = 0; /* TODO: LH: other things to reset ?*/
                                         opj_free(cblk->data);
                                         return -999;
                                 }
@@ -912,8 +913,8 @@ opj_bool t2_encode_packets_v2(
                                                         info_PK->start_pos = ((l_cp->m_specific_param.m_enc.m_tp_on | l_tcp->POC)&& info_PK->start_pos) ? info_PK->start_pos : info_TL->packet[cstr_info->packno - 1].end_pos + 1;
                                                 }
                                                 info_PK->end_pos = info_PK->start_pos + l_nb_bytes - 1;
-                                                info_PK->end_ph_pos += info_PK->start_pos - 1;  // End of packet header which now only represents the distance
-                                                                                                                                                                                                                                                // to start of packet is incremented by value of start of packet
+                                                info_PK->end_ph_pos += info_PK->start_pos - 1;  /* End of packet header which now only represents the distance
+                                                                                                                                                                                                                                                   to start of packet is incremented by value of start of packet*/
                                         }
 
                                         cstr_info->packno++;
@@ -1401,8 +1402,8 @@ static opj_bool t2_encode_packet_v2(
         /* </EPH> */
 
         /* << INDEX */
-        // End of packet header position. Currently only represents the distance to start of packet
-        // Will be updated later by incrementing with packet start value
+        /* End of packet header position. Currently only represents the distance to start of packet
+           Will be updated later by incrementing with packet start value*/
         if(cstr_info && cstr_info->index_write) {
                 opj_packet_info_t *info_PK = &cstr_info->tile[tileno].packet[cstr_info->packno];
                 info_PK->end_ph_pos = (OPJ_INT32)(c - dest);
@@ -1960,9 +1961,10 @@ static opj_bool t2_init_seg_v2(opj_tcd_cblk_dec_v2_t* cblk, OPJ_UINT32 index, OP
         OPJ_UINT32 l_nb_segs = index + 1;
 
         if (l_nb_segs > cblk->m_current_max_segs) {
+                opj_tcd_seg_t* new_segs;
                 cblk->m_current_max_segs += J2K_DEFAULT_NB_SEGS;
 
-                opj_tcd_seg_t* new_segs = (opj_tcd_seg_t*) opj_realloc(cblk->segs, cblk->m_current_max_segs * sizeof(opj_tcd_seg_t));
+                new_segs = (opj_tcd_seg_t*) opj_realloc(cblk->segs, cblk->m_current_max_segs * sizeof(opj_tcd_seg_t));
                 if(! new_segs) {
                         opj_free(cblk->segs);
                         cblk->segs = NULL;

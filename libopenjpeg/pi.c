@@ -621,15 +621,15 @@ opj_pi_iterator_t *pi_create_decode_v2(	opj_image_t *p_image,
 										OPJ_UINT32 p_tile_no
 										)
 {
-	// loop
+	/* loop */
 	OPJ_UINT32 pino;
 	OPJ_UINT32 compno, resno;
 
-	// to store w, h, dx and dy fro all components and resolutions
+	/* to store w, h, dx and dy fro all components and resolutions */
 	OPJ_UINT32 * l_tmp_data;
 	OPJ_UINT32 ** l_tmp_ptr;
 
-	// encoding prameters to set
+	/* encoding prameters to set */
 	OPJ_UINT32 l_max_res;
 	OPJ_UINT32 l_max_prec;
 	OPJ_INT32 l_tx0,l_tx1,l_ty0,l_ty1;
@@ -638,7 +638,7 @@ opj_pi_iterator_t *pi_create_decode_v2(	opj_image_t *p_image,
 	OPJ_UINT32 l_step_p , l_step_c , l_step_r , l_step_l ;
 	OPJ_UINT32 l_data_stride;
 
-	// pointers
+	/* pointers */
 	opj_pi_iterator_t *l_pi = 00;
 	opj_tcp_v2_t *l_tcp = 00;
 	const opj_tccp_t *l_tccp = 00;
@@ -647,12 +647,12 @@ opj_pi_iterator_t *pi_create_decode_v2(	opj_image_t *p_image,
 	opj_pi_iterator_t * l_current_pi = 00;
 	OPJ_UINT32 * l_encoding_value_ptr = 00;
 
-	// preconditions in debug
+	/* preconditions in debug */
 	assert(p_cp != 00);
 	assert(p_image != 00);
 	assert(p_tile_no < p_cp->tw * p_cp->th);
 
-	// initializations
+	/* initializations */
 	l_tcp = &p_cp->tcps[p_tile_no];
 	l_bound = l_tcp->numpocs+1;
 
@@ -673,7 +673,7 @@ opj_pi_iterator_t *pi_create_decode_v2(	opj_image_t *p_image,
 		return 00;
 	}
 
-	// memory allocation for pi
+	/* memory allocation for pi */
 	l_pi = pi_create(p_image, p_cp, p_tile_no);
 	if (!l_pi) {
 		opj_free(l_tmp_data);
@@ -682,26 +682,26 @@ opj_pi_iterator_t *pi_create_decode_v2(	opj_image_t *p_image,
 	}
 
 	l_encoding_value_ptr = l_tmp_data;
-	// update pointer array
+	/* update pointer array */
 	for
 		(compno = 0; compno < p_image->numcomps; ++compno)
 	{
 		l_tmp_ptr[compno] = l_encoding_value_ptr;
 		l_encoding_value_ptr += l_data_stride;
 	}
-	// get encoding parameters
+	/* get encoding parameters */
 	get_all_encoding_parameters(p_image,p_cp,p_tile_no,&l_tx0,&l_tx1,&l_ty0,&l_ty1,&l_dx_min,&l_dy_min,&l_max_prec,&l_max_res,l_tmp_ptr);
 
-	// step calculations
+	/* step calculations */
 	l_step_p = 1;
 	l_step_c = l_max_prec * l_step_p;
 	l_step_r = p_image->numcomps * l_step_c;
 	l_step_l = l_max_res * l_step_r;
 
-	// set values for first packet iterator
+	/* set values for first packet iterator */
 	l_current_pi = l_pi;
 
-	// memory allocation for include
+	/* memory allocation for include */
 	l_current_pi->include = (OPJ_INT16*) opj_calloc((l_tcp->numlayers +1) * l_step_l, sizeof(OPJ_INT16));
 	if
 		(!l_current_pi->include)
@@ -713,7 +713,7 @@ opj_pi_iterator_t *pi_create_decode_v2(	opj_image_t *p_image,
 	}
 	memset(l_current_pi->include,0, (l_tcp->numlayers + 1) * l_step_l* sizeof(OPJ_INT16));
 
-	// special treatment for the first packet iterator
+	/* special treatment for the first packet iterator */
 	l_current_comp = l_current_pi->comps;
 	l_img_comp = p_image->comps;
 	l_tccp = l_tcp->tccps;
@@ -723,8 +723,8 @@ opj_pi_iterator_t *pi_create_decode_v2(	opj_image_t *p_image,
 	l_current_pi->tx1 = l_tx1;
 	l_current_pi->ty1 = l_ty1;
 
-	//l_current_pi->dx = l_img_comp->dx;
-	//l_current_pi->dy = l_img_comp->dy;
+	/*l_current_pi->dx = l_img_comp->dx;*/
+	/*l_current_pi->dy = l_img_comp->dy;*/
 
 	l_current_pi->step_p = l_step_p;
 	l_current_pi->step_c = l_step_c;
@@ -767,8 +767,8 @@ opj_pi_iterator_t *pi_create_decode_v2(	opj_image_t *p_image,
 		l_current_pi->ty0 = l_ty0;
 		l_current_pi->tx1 = l_tx1;
 		l_current_pi->ty1 = l_ty1;
-		//l_current_pi->dx = l_dx_min;
-		//l_current_pi->dy = l_dy_min;
+		/*l_current_pi->dx = l_dx_min;*/
+		/*l_current_pi->dy = l_dy_min;*/
 		l_current_pi->step_p = l_step_p;
 		l_current_pi->step_c = l_step_c;
 		l_current_pi->step_r = l_step_r;
@@ -797,7 +797,7 @@ opj_pi_iterator_t *pi_create_decode_v2(	opj_image_t *p_image,
 			++l_img_comp;
 			++l_tccp;
 		}
-		// special treatment
+		/* special treatment*/
 		l_current_pi->include = (l_current_pi-1)->include;
 		++l_current_pi;
 	}
@@ -967,15 +967,15 @@ opj_pi_iterator_t *pi_initialise_encode_v2(
 										J2K_T2_MODE p_t2_mode
 										)
 {
-	// loop
+	/* loop*/
 	OPJ_UINT32 pino;
 	OPJ_UINT32 compno, resno;
 
-	// to store w, h, dx and dy fro all components and resolutions
+	/* to store w, h, dx and dy fro all components and resolutions*/
 	OPJ_UINT32 * l_tmp_data;
 	OPJ_UINT32 ** l_tmp_ptr;
 
-	// encoding prameters to set
+	/* encoding prameters to set*/
 	OPJ_UINT32 l_max_res;
 	OPJ_UINT32 l_max_prec;
 	OPJ_INT32 l_tx0,l_tx1,l_ty0,l_ty1;
@@ -984,7 +984,7 @@ opj_pi_iterator_t *pi_initialise_encode_v2(
 	OPJ_UINT32 l_step_p , l_step_c , l_step_r , l_step_l ;
 	OPJ_UINT32 l_data_stride;
 
-	// pointers
+	/* pointers*/
 	opj_pi_iterator_t *l_pi = 00;
 	opj_tcp_v2_t *l_tcp = 00;
 	const opj_tccp_t *l_tccp = 00;
@@ -993,12 +993,12 @@ opj_pi_iterator_t *pi_initialise_encode_v2(
 	opj_pi_iterator_t * l_current_pi = 00;
 	OPJ_UINT32 * l_encoding_value_ptr = 00;
 
-	// preconditions in debug
+	/* preconditions in debug*/
 	assert(p_cp != 00);
 	assert(p_image != 00);
 	assert(p_tile_no < p_cp->tw * p_cp->th);
 
-	// initializations
+	/* initializations*/
 	l_tcp = &p_cp->tcps[p_tile_no];
 	l_bound = l_tcp->numpocs+1;
 
@@ -1016,7 +1016,7 @@ opj_pi_iterator_t *pi_initialise_encode_v2(
 		return 00;
 	}
 
-	// memory allocation for pi
+	/* memory allocation for pi*/
 	l_pi = pi_create(p_image,p_cp,p_tile_no);
 	if (!l_pi) {
 		opj_free(l_tmp_data);
@@ -1025,26 +1025,26 @@ opj_pi_iterator_t *pi_initialise_encode_v2(
 	}
 
 	l_encoding_value_ptr = l_tmp_data;
-	// update pointer array
+	/* update pointer array*/
 	for (compno = 0; compno < p_image->numcomps; ++compno) {
 		l_tmp_ptr[compno] = l_encoding_value_ptr;
 		l_encoding_value_ptr += l_data_stride;
 	}
 
-	// get encoding parameters
+	/* get encoding parameters*/
 	get_all_encoding_parameters(p_image,p_cp,p_tile_no,&l_tx0,&l_tx1,&l_ty0,&l_ty1,&l_dx_min,&l_dy_min,&l_max_prec,&l_max_res,l_tmp_ptr);
 
-	// step calculations
+	/* step calculations*/
 	l_step_p = 1;
 	l_step_c = l_max_prec * l_step_p;
 	l_step_r = p_image->numcomps * l_step_c;
 	l_step_l = l_max_res * l_step_r;
 
-	// set values for first packet iterator
+	/* set values for first packet iterator*/
 	l_pi->tp_on = p_cp->m_specific_param.m_enc.m_tp_on;
 	l_current_pi = l_pi;
 
-	// memory allocation for include
+	/* memory allocation for include*/
 	l_current_pi->include = (OPJ_INT16*) opj_calloc(l_tcp->numlayers * l_step_l, sizeof(OPJ_INT16));
 	if (!l_current_pi->include) {
 		opj_free(l_tmp_data);
@@ -1054,7 +1054,7 @@ opj_pi_iterator_t *pi_initialise_encode_v2(
 	}
 	memset(l_current_pi->include,0,l_tcp->numlayers * l_step_l* sizeof(OPJ_INT16));
 
-	// special treatment for the first packet iterator
+	/* special treatment for the first packet iterator*/
 	l_current_comp = l_current_pi->comps;
 	l_img_comp = p_image->comps;
 	l_tccp = l_tcp->tccps;
@@ -1128,7 +1128,7 @@ opj_pi_iterator_t *pi_initialise_encode_v2(
 			++l_tccp;
 		}
 
-		// special treatment
+		/* special treatment*/
 		l_current_pi->include = (l_current_pi-1)->include;
 		++l_current_pi;
 	}
@@ -1604,31 +1604,31 @@ void get_all_encoding_parameters(
 								OPJ_UINT32 ** p_resolutions
 							)
 {
-	// loop
+	/* loop*/
 	OPJ_UINT32 compno, resno;
 
-	// pointers
+	/* pointers*/
 	const opj_tcp_v2_t *tcp = 00;
 	const opj_tccp_t * l_tccp = 00;
 	const opj_image_comp_t * l_img_comp = 00;
 
-	// to store l_dx, l_dy, w and h for each resolution and component.
+	/* to store l_dx, l_dy, w and h for each resolution and component.*/
 	OPJ_UINT32 * lResolutionPtr;
 
-	// position in x and y of tile
+	/* position in x and y of tile*/
 	OPJ_UINT32 p, q;
 
-	// preconditions in debug
+	/* preconditions in debug*/
 	assert(p_cp != 00);
 	assert(p_image != 00);
 	assert(tileno < p_cp->tw * p_cp->th);
 
-	// initializations
+	/* initializations*/
 	tcp = &p_cp->tcps [tileno];
 	l_tccp = tcp->tccps;
 	l_img_comp = p_image->comps;
 
-	// position in x and y of tile
+	/* position in x and y of tile*/
 
 	p = tileno % p_cp->tw;
 	q = tileno / p_cp->tw;
@@ -1639,18 +1639,18 @@ void get_all_encoding_parameters(
 	*p_ty0 = int_max(p_cp->ty0 + q * p_cp->tdy, p_image->y0);
 	*p_ty1 = int_min(p_cp->ty0 + (q + 1) * p_cp->tdy, p_image->y1);
 
-	// max precision and resolution is 0 (can only grow)
+	/* max precision and resolution is 0 (can only grow)*/
 	*p_max_prec = 0;
 	*p_max_res = 0;
 
-	// take the largest value for dx_min and dy_min
+	/* take the largest value for dx_min and dy_min*/
 	*p_dx_min = 0x7fffffff;
 	*p_dy_min  = 0x7fffffff;
 
 	for
 		(compno = 0; compno < p_image->numcomps; ++compno)
 	{
-		// aritmetic variables to calculate
+		/* aritmetic variables to calculate*/
 		OPJ_UINT32 l_level_no;
 		OPJ_INT32 l_rx0, l_ry0, l_rx1, l_ry1;
 		OPJ_INT32 l_px0, l_py0, l_px1, py1;
@@ -1670,23 +1670,23 @@ void get_all_encoding_parameters(
 			*p_max_res = l_tccp->numresolutions;
 		}
 
-		// use custom size for precincts
+		/* use custom size for precincts*/
 		l_level_no = l_tccp->numresolutions - 1;
 		for
 			(resno = 0; resno < l_tccp->numresolutions; ++resno)
 		{
 			OPJ_UINT32 l_dx, l_dy;
-			// precinct width and height
+			/* precinct width and height*/
 			l_pdx = l_tccp->prcw[resno];
 			l_pdy = l_tccp->prch[resno];
 			*lResolutionPtr++ = l_pdx;
 			*lResolutionPtr++ = l_pdy;
 			l_dx = l_img_comp->dx * (1 << (l_pdx + l_level_no));
 			l_dy = l_img_comp->dy * (1 << (l_pdy + l_level_no));
-			// take the minimum size for l_dx for each comp and resolution
+			/* take the minimum size for l_dx for each comp and resolution*/
 			*p_dx_min = int_min(*p_dx_min, l_dx);
 			*p_dy_min = int_min(*p_dy_min, l_dy);
-			// various calculations of extents
+			/* various calculations of extents*/
 
 			l_rx0 = int_ceildivpow2(l_tcx0, l_level_no);
 			l_ry0 = int_ceildivpow2(l_tcy0, l_level_no);
@@ -1701,7 +1701,7 @@ void get_all_encoding_parameters(
 			*lResolutionPtr++ = l_pw;
 			*lResolutionPtr++ = l_ph;
 			l_product = l_pw * l_ph;
-			// update precision
+			/* update precision*/
 			if
 				(l_product > *p_max_prec)
 			{
@@ -1718,29 +1718,29 @@ opj_pi_iterator_t * pi_create(	const opj_image_t *image,
 								const opj_cp_v2_t *cp,
 								OPJ_UINT32 tileno )
 {
-	// loop
+	/* loop*/
 	OPJ_UINT32 pino, compno;
-	// number of poc in the p_pi
+	/* number of poc in the p_pi*/
 	OPJ_UINT32 l_poc_bound;
 
-	// pointers to tile coding parameters and components.
+	/* pointers to tile coding parameters and components.*/
 	opj_pi_iterator_t *l_pi = 00;
 	opj_tcp_v2_t *tcp = 00;
 	const opj_tccp_t *tccp = 00;
 
-	// current packet iterator being allocated
+	/* current packet iterator being allocated*/
 	opj_pi_iterator_t *l_current_pi = 00;
 
-	// preconditions in debug
+	/* preconditions in debug*/
 	assert(cp != 00);
 	assert(image != 00);
 	assert(tileno < cp->tw * cp->th);
 
-	// initializations
+	/* initializations*/
 	tcp = &cp->tcps[tileno];
 	l_poc_bound = tcp->numpocs+1;
 
-	// memory allocations
+	/* memory allocations*/
 	l_pi = (opj_pi_iterator_t*) opj_calloc((l_poc_bound), sizeof(opj_pi_iterator_t));
 	if (!l_pi) {
 		return NULL;
@@ -1789,27 +1789,27 @@ void pi_update_encode_poc_and_final (opj_cp_v2_t *p_cp,
                                      OPJ_UINT32 p_dx_min,
 									 OPJ_UINT32 p_dy_min)
 {
-	// loop
+	/* loop*/
 	OPJ_UINT32 pino;
-	// tile coding parameter
+	/* tile coding parameter*/
 	opj_tcp_v2_t *l_tcp = 00;
-	// current poc being updated
+	/* current poc being updated*/
 	opj_poc_t * l_current_poc = 00;
 
-	// number of pocs
+	/* number of pocs*/
 	OPJ_UINT32 l_poc_bound;
 
-	// preconditions in debug
+	/* preconditions in debug*/
 	assert(p_cp != 00);
 	assert(p_tileno < p_cp->tw * p_cp->th);
 
-	// initializations
+	/* initializations*/
 	l_tcp = &p_cp->tcps [p_tileno];
 	/* number of iterations in the loop */
 	l_poc_bound = l_tcp->numpocs+1;
 
-	// start at first element, and to make sure the compiler will not make a calculation each time in the loop
-	// store a pointer to the current element to modify rather than l_tcp->pocs[i]
+	/* start at first element, and to make sure the compiler will not make a calculation each time in the loop
+	   store a pointer to the current element to modify rather than l_tcp->pocs[i]*/
 	l_current_poc = l_tcp->pocs;
 
 	l_current_poc->compS = l_current_poc->compno0;
@@ -1818,7 +1818,7 @@ void pi_update_encode_poc_and_final (opj_cp_v2_t *p_cp,
 	l_current_poc->resE = l_current_poc->resno1;
 	l_current_poc->layE = l_current_poc->layno1;
 
-	// special treatment for the first element
+	/* special treatment for the first element*/
 	l_current_poc->layS = 0;
 	l_current_poc->prg  = l_current_poc->prg1;
 	l_current_poc->prcS = 0;
@@ -1840,7 +1840,7 @@ void pi_update_encode_poc_and_final (opj_cp_v2_t *p_cp,
 		l_current_poc->layE = l_current_poc->layno1;
 		l_current_poc->prg  = l_current_poc->prg1;
 		l_current_poc->prcS = 0;
-		// special treatment here different from the first element
+		/* special treatment here different from the first element*/
 		l_current_poc->layS = (l_current_poc->layE > (l_current_poc-1)->layE) ? l_current_poc->layE : 0;
 
 		l_current_poc->prcE = p_max_prec;
@@ -1866,27 +1866,27 @@ void pi_update_encode_not_poc (	opj_cp_v2_t *p_cp,
                                 OPJ_UINT32 p_dx_min,
 								OPJ_UINT32 p_dy_min)
 {
-	// loop
+	/* loop*/
 	OPJ_UINT32 pino;
-	// tile coding parameter
+	/* tile coding parameter*/
 	opj_tcp_v2_t *l_tcp = 00;
-	// current poc being updated
+	/* current poc being updated*/
 	opj_poc_t * l_current_poc = 00;
-	// number of pocs
+	/* number of pocs*/
 	OPJ_UINT32 l_poc_bound;
 
-	// preconditions in debug
+	/* preconditions in debug*/
 	assert(p_cp != 00);
 	assert(p_tileno < p_cp->tw * p_cp->th);
 
-	// initializations
+	/* initializations*/
 	l_tcp = &p_cp->tcps [p_tileno];
 
 	/* number of iterations in the loop */
 	l_poc_bound = l_tcp->numpocs+1;
 
-	// start at first element, and to make sure the compiler will not make a calculation each time in the loop
-	// store a pointer to the current element to modify rather than l_tcp->pocs[i]
+	/* start at first element, and to make sure the compiler will not make a calculation each time in the loop
+	   store a pointer to the current element to modify rather than l_tcp->pocs[i]*/
 	l_current_poc = l_tcp->pocs;
 
 	for (pino = 0; pino < l_poc_bound ; ++pino) {
@@ -1924,7 +1924,7 @@ void pi_destroy_v2(
 			opj_free(p_pi->include);
 			p_pi->include = 00;
 		}
-		// TODO
+		/* TODO*/
 		for
 			(pino = 0; pino < p_nb_elements; ++pino)
 		{
@@ -1954,20 +1954,20 @@ void pi_destroy_v2(
 
 void pi_update_decode_poc (opj_pi_iterator_t * p_pi,opj_tcp_v2_t * p_tcp,OPJ_UINT32 p_max_precision,OPJ_UINT32 p_max_res)
 {
-	// loop
+	/* loop*/
 	OPJ_UINT32 pino;
 
-	// encoding prameters to set
+	/* encoding prameters to set*/
 	OPJ_UINT32 l_bound;
 
 	opj_pi_iterator_t * l_current_pi = 00;
 	opj_poc_t* l_current_poc = 0;
 
-	// preconditions in debug
+	/* preconditions in debug*/
 	assert(p_pi != 00);
 	assert(p_tcp != 00);
 
-	// initializations
+	/* initializations*/
 	l_bound = p_tcp->numpocs+1;
 	l_current_pi = p_pi;
 	l_current_poc = p_tcp->pocs;
@@ -1993,18 +1993,18 @@ void pi_update_decode_poc (opj_pi_iterator_t * p_pi,opj_tcp_v2_t * p_tcp,OPJ_UIN
 
 void pi_update_decode_not_poc (opj_pi_iterator_t * p_pi,opj_tcp_v2_t * p_tcp,OPJ_UINT32 p_max_precision,OPJ_UINT32 p_max_res)
 {
-	// loop
+	/* loop*/
 	OPJ_UINT32 pino;
 
-	// encoding prameters to set
+	/* encoding prameters to set*/
 	OPJ_UINT32 l_bound;
 
 	opj_pi_iterator_t * l_current_pi = 00;
-	// preconditions in debug
+	/* preconditions in debug*/
 	assert(p_tcp != 00);
 	assert(p_pi != 00);
 
-	// initializations
+	/* initializations*/
 	l_bound = p_tcp->numpocs+1;
 	l_current_pi = p_pi;
 
@@ -2353,7 +2353,7 @@ OPJ_INT32 pi_check_next_level(	OPJ_INT32 pos,
 					break;
 			default:
 				if(tcp->tx0_t == tcp->txE){
-					//TY
+					/*TY*/
 					if(tcp->ty0_t == tcp->tyE){
 						l=pi_check_next_level(i-1,cp,tileno,pino,prog);
 						if(l==1){
@@ -2363,14 +2363,14 @@ OPJ_INT32 pi_check_next_level(	OPJ_INT32 pos,
 						}
 					}else{
 						return 1;
-					}//TY
+					}/*TY*/
 				}else{
 					return 1;
 				}
 				break;
-			}//end case P
-		}//end switch
-		}//end for
-	}//end if
+			}/*end case P*/
+		}/*end switch*/
+		}/*end for*/
+	}/*end if*/
 	return 0;
 }

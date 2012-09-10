@@ -527,7 +527,7 @@ OPJ_BYTE * opj_jp2_write_ihdr(opj_jp2_v2_t *jp2,
 {
 	unsigned char * l_ihdr_data,* l_current_ihdr_ptr;
 	
-	// preconditions
+	/* preconditions */
 	assert(jp2 != 00);
 	assert(p_nb_bytes_written != 00);
 
@@ -581,7 +581,7 @@ OPJ_BYTE * opj_jp2_write_bpcc(	opj_jp2_v2_t *jp2,
 	int l_bpcc_size = 8 + jp2->numcomps;
 	unsigned char * l_bpcc_data,* l_current_bpcc_ptr;
 	
-	// preconditions
+	/* preconditions */
 	assert(jp2 != 00);
 	assert(p_nb_bytes_written != 00);
 
@@ -650,7 +650,7 @@ OPJ_BYTE * opj_jp2_write_colr(  opj_jp2_v2_t *jp2,
 	unsigned int l_colr_size = 11;
 	unsigned char * l_colr_data,* l_current_colr_ptr;
 	
-	// preconditions
+	/* preconditions */
 	assert(jp2 != 00);
 	assert(p_nb_bytes_written != 00);
 
@@ -1124,7 +1124,7 @@ opj_bool opj_jp2_write_jp2h(opj_jp2_v2_t *jp2,
 	/* to store the data of the super box */
 	unsigned char l_jp2h_data [8];
 	
-	// preconditions
+	/* preconditions */
 	assert(stream != 00);
 	assert(jp2 != 00);
 	assert(p_manager != 00);
@@ -1215,7 +1215,7 @@ opj_bool opj_jp2_write_ftyp(opj_jp2_v2_t *jp2,
 	unsigned char * l_ftyp_data, * l_current_data_ptr;
 	opj_bool l_result;
 
-	// preconditions
+	/* preconditions */
 	assert(cio != 00);
 	assert(jp2 != 00);
 	assert(p_manager != 00);
@@ -1265,7 +1265,7 @@ opj_bool opj_jp2_write_jp2c(opj_jp2_v2_t *jp2,
 	OPJ_OFF_T j2k_codestream_exit;
 	OPJ_BYTE l_data_header [8];
 	
-	// preconditions
+	/* preconditions */
 	assert(jp2 != 00);
 	assert(cio != 00);
 	assert(p_manager != 00);
@@ -1302,7 +1302,7 @@ opj_bool opj_jp2_write_jp(	opj_jp2_v2_t *jp2,
 	/* 12 bytes will be read */
 	unsigned char l_signature_data [12];
 
-	// preconditions
+	/* preconditions */
 	assert(cio != 00);
 	assert(jp2 != 00);
 	assert(p_manager != 00);
@@ -1416,7 +1416,7 @@ void opj_jp2_setup_encoder(	opj_jp2_v2_t *jp2,
 	jp2->precedence = 0;	/* PRECEDENCE */
 	jp2->approx = 0;		/* APPROX */
 	
-	// jp2->jpip_on = parameters->jpip_on;
+	/* jp2->jpip_on = parameters->jpip_on; */
 }
 
 opj_bool opj_jp2_encode(opj_jp2_v2_t *jp2,
@@ -1603,9 +1603,9 @@ opj_bool opj_jp2_read_header_procedure(  opj_jp2_v2_t *jp2,
 			l_nb_bytes_read = opj_stream_read_data(stream,l_current_data,l_current_data_size,p_manager);
 			if (l_nb_bytes_read != l_current_data_size) {
 				opj_event_msg_v2(p_manager, EVT_ERROR, "Problem with reading JPEG2000 box, stream error\n");
-                                // TODO: LH: why nothing is freed here (as
-                                // all other returns imply a free, even
-                                // in the nominal case)?
+                                /* TODO: LH: why nothing is freed here (as
+                                   all other returns imply a free, even
+                                   in the nominal case)? */
 				return OPJ_FALSE;
 			}
 
