@@ -1150,7 +1150,7 @@ j2k_prog_order_t j2k_prog_order_list[] = {
 /**
  * FIXME DOC
  */
-const OPJ_UINT32 MCT_ELEMENT_SIZE [] =
+static const OPJ_UINT32 MCT_ELEMENT_SIZE [] =
 {
         2,
         4,
