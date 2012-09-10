@@ -26,7 +26,7 @@
 #define USE_OPJ_DEPRECATED
 /* set this macro to enable profiling for the given test */
 /* warning : in order to be effective, openjpeg must have been built with profiling enabled !! */
-//#define _PROFILE
+/*#define _PROFILE*/
 
 #include <stdio.h>
 #include <string.h>
@@ -249,7 +249,7 @@ int main (int argc, char *argv[])
         l_param.cp_reduce = 0;
 
         /* to decode only a part of the image data */
-        //opj_restrict_decoding(&l_param,0,0,1000,1000);
+        /*opj_restrict_decoding(&l_param,0,0,1000,1000);*/
 
 
         switch(l_param.decod_format) {
@@ -382,8 +382,8 @@ int main (int argc, char *argv[])
         opj_destroy_codec(l_codec);
         opj_image_destroy(l_image);
 
-        // Print profiling
-        //PROFPRINT();
+        /* Print profiling*/
+        /*PROFPRINT();*/
 
         return EXIT_SUCCESS;
 }
