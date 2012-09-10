@@ -53,7 +53,14 @@
 #endif
 
 #if defined(OPJ_STATIC) || !defined(_WIN32)
+/* http://gcc.gnu.org/wiki/Visibility */
+#if __GNUC__ >= 4
+#define OPJ_API    __attribute__ ((visibility ("default")))
+#define OPJ_LOCAL  __attribute__ ((visibility ("hidden")))
+#else
 #define OPJ_API
+#define OPJ_LOCAL
+#endif
 #define OPJ_CALLCONV
 #else
 #define OPJ_CALLCONV __stdcall
