@@ -7052,6 +7052,11 @@ opj_bool opj_j2k_read_tile_header(      opj_j2k_v2_t * p_j2k,
                                 return OPJ_FALSE;
                         }
 
+                        if (!l_marker_handler->handler) {
+                                /* See issue #175 */
+                                opj_event_msg_v2(p_manager, EVT_ERROR, "Not sure how that happened.\n");
+                                return OPJ_FALSE;
+                        }
                         /* Read the marker segment with the correct marker handler */
                         if (! (*(l_marker_handler->handler))(p_j2k,p_j2k->m_specific_param.m_decoder.m_header_data,l_marker_size,p_manager)) {
                                 opj_event_msg_v2(p_manager, EVT_ERROR, "Fail to read the current marker segment (%#x)\n", l_current_marker);
