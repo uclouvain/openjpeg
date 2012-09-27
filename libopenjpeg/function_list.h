@@ -88,7 +88,7 @@ void  opj_procedure_list_destroy(opj_procedure_list_t * p_list);
  * @param	p_validation_list the list of procedure to modify.
  * @param	p_procedure		the procedure to add.
  *
- * @return	true if the procedure could ne added.
+ * @return	OPJ_FALSE if the procedure could ne added.
  */
 opj_bool opj_procedure_list_add_procedure (opj_procedure_list_t * p_validation_list, opj_procedure p_procedure);
 

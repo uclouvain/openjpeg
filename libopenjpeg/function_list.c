@@ -31,17 +31,11 @@
  */
 #define OPJ_VALIDATION_SIZE 10
 
-/**
- * Creates a validation list.
- *
- * @return      the newly created validation list.
- */
 opj_procedure_list_t *  opj_procedure_list_create()
 {
         /* memory allocation */
         opj_procedure_list_t * l_validation = (opj_procedure_list_t *) opj_malloc(sizeof(opj_procedure_list_t));
-        if
-                (! l_validation)
+        if (! l_validation)
         {
                 return 00;
         }
@@ -50,8 +44,7 @@ opj_procedure_list_t *  opj_procedure_list_create()
         l_validation->m_nb_max_procedures = OPJ_VALIDATION_SIZE;
         l_validation->m_procedures = (opj_procedure*)opj_malloc(
                 OPJ_VALIDATION_SIZE * sizeof(opj_procedure));
-        if
-                (! l_validation->m_procedures)
+        if (! l_validation->m_procedures)
         {
                 opj_free(l_validation);
                 return 00;
@@ -60,53 +53,38 @@ opj_procedure_list_t *  opj_procedure_list_create()
         return l_validation;
 }
 
-
-
-/**
- * Destroys a validation list.
- *
- * @param p_list the list to destroy.
- */
 void  opj_procedure_list_destroy(opj_procedure_list_t * p_list)
 {
-        if
-                (! p_list)
+        if (! p_list)
         {
                 return;
         }
         /* initialization */
-        if
-                (p_list->m_procedures)
+        if (p_list->m_procedures)
         {
                 opj_free(p_list->m_procedures);
         }
         opj_free(p_list);
 }
 
-/**
- * Adds a new validation procedure.
- *
- * @param       p_validation_list the list of procedure to modify.
- * @param       p_procedure             the procedure to add.
- */
 opj_bool  opj_procedure_list_add_procedure (opj_procedure_list_t * p_validation_list, opj_procedure p_procedure)
 {
-        if
-                (p_validation_list->m_nb_max_procedures == p_validation_list->m_nb_procedures)
+        if (p_validation_list->m_nb_max_procedures == p_validation_list->m_nb_procedures)
         {
                 opj_procedure * new_procedures;
 
                 p_validation_list->m_nb_max_procedures += OPJ_VALIDATION_SIZE;
                 new_procedures = (opj_procedure*)opj_realloc(
-                p_validation_list->m_procedures,p_validation_list->m_nb_max_procedures * sizeof(opj_procedure));
-                if
-                        (! new_procedures)
+                        p_validation_list->m_procedures,
+                        p_validation_list->m_nb_max_procedures * sizeof(opj_procedure));
+                if (! new_procedures)
                 {
                         opj_free(p_validation_list->m_procedures);
                         p_validation_list->m_nb_max_procedures = 0;
                         p_validation_list->m_nb_procedures = 0;
                         /* opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory to add a new validation procedure\n"); */
                         fprintf(stderr, "Not enough memory to add a new validation procedure\n");
+                        
                         return OPJ_FALSE;
                 }
                 else
@@ -116,41 +94,20 @@ opj_bool  opj_procedure_list_add_procedure (opj_procedure_list_t * p_validation_
         }
         p_validation_list->m_procedures[p_validation_list->m_nb_procedures] = p_procedure;
         ++p_validation_list->m_nb_procedures;
+
         return OPJ_TRUE;
 }
 
-/**
- * Gets the number of validation procedures.
- *
- * @param       p_validation_list the list of procedure to modify.
- *
- * @return the number of validation procedures.
- */
 OPJ_UINT32 opj_procedure_list_get_nb_procedures (opj_procedure_list_t * p_validation_list)
 {
         return p_validation_list->m_nb_procedures;
 }
 
-/**
- * Gets the pointer on the first validation procedure. This function is similar to the C++
- * iterator class to iterate through all the procedures inside the validation list.
- * the caller does not take ownership of the pointer.
- *
- * @param       p_validation_list the list of procedure to get the first procedure from.
- *
- * @return      a pointer to the first procedure.
- */
 opj_procedure* opj_procedure_list_get_first_procedure (opj_procedure_list_t * p_validation_list)
 {
         return p_validation_list->m_procedures;
 }
 
-/**
- * Clears the list of validation procedures.
- *
- * @param       p_validation_list the list of procedure to clear.
- *
- */
 void  opj_procedure_list_clear (opj_procedure_list_t * p_validation_list)
 {
         p_validation_list->m_nb_procedures = 0;
