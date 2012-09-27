@@ -39,12 +39,12 @@
 /** @name Local static functions */
 /*@{*/
 
-static INLINE char t1_getctxno_zc(int f, int orient);
-static char t1_getctxno_sc(int f);
-static INLINE int t1_getctxno_mag(int f);
-static char t1_getspb(int f);
-static short t1_getnmsedec_sig(int x, int bitpos);
-static short t1_getnmsedec_ref(int x, int bitpos);
+static INLINE OPJ_BYTE opj_t1_getctxno_zc(OPJ_UINT32 f, OPJ_UINT32 orient);
+static OPJ_BYTE opj_t1_getctxno_sc(OPJ_UINT32 f);
+static INLINE OPJ_UINT32 opj_t1_getctxno_mag(OPJ_UINT32 f);
+static OPJ_BYTE opj_t1_getspb(OPJ_UINT32 f);
+static OPJ_INT16 opj_t1_getnmsedec_sig(OPJ_UINT32 x, OPJ_UINT32 bitpos);
+static OPJ_INT16 opj_t1_getnmsedec_ref(OPJ_UINT32 x, OPJ_UINT32 bitpos);
 static void opj_t1_updateflags(flag_t *flagsp, OPJ_UINT32 s, OPJ_UINT32 stride);
 /**
 Encode significant pass
@@ -242,25 +242,25 @@ opj_bool opj_t1_allocate_buffers(   opj_t1_t *t1,
 
 /* ----------------------------------------------------------------------- */
 
-static char t1_getctxno_zc(int f, int orient) {
+OPJ_BYTE opj_t1_getctxno_zc(OPJ_UINT32 f, OPJ_UINT32 orient) {
 	return lut_ctxno_zc[(orient << 8) | (f & T1_SIG_OTH)];
 }
 
-static char t1_getctxno_sc(int f) {
+OPJ_BYTE opj_t1_getctxno_sc(OPJ_UINT32 f) {
 	return lut_ctxno_sc[(f & (T1_SIG_PRIM | T1_SGN)) >> 4];
 }
 
-static int t1_getctxno_mag(int f) {
-	int tmp1 = (f & T1_SIG_OTH) ? T1_CTXNO_MAG + 1 : T1_CTXNO_MAG;
-	int tmp2 = (f & T1_REFINE) ? T1_CTXNO_MAG + 2 : tmp1;
+OPJ_UINT32 opj_t1_getctxno_mag(OPJ_UINT32 f) {
+	OPJ_UINT32 tmp1 = (f & T1_SIG_OTH) ? T1_CTXNO_MAG + 1 : T1_CTXNO_MAG;
+	OPJ_UINT32 tmp2 = (f & T1_REFINE) ? T1_CTXNO_MAG + 2 : tmp1;
 	return (tmp2);
 }
 
-static char t1_getspb(int f) {
+OPJ_BYTE opj_t1_getspb(OPJ_UINT32 f) {
 	return lut_spb[(f & (T1_SIG_PRIM | T1_SGN)) >> 4];
 }
 
-static short t1_getnmsedec_sig(int x, int bitpos) {
+OPJ_INT16 opj_t1_getnmsedec_sig(OPJ_UINT32 x, OPJ_UINT32 bitpos) {
 	if (bitpos > T1_NMSEDEC_FRACBITS) {
 		return lut_nmsedec_sig[(x >> (bitpos - T1_NMSEDEC_FRACBITS)) & ((1 << T1_NMSEDEC_BITS) - 1)];
 	}
@@ -268,7 +268,7 @@ static short t1_getnmsedec_sig(int x, int bitpos) {
 	return lut_nmsedec_sig0[x & ((1 << T1_NMSEDEC_BITS) - 1)];
 }
 
-static short t1_getnmsedec_ref(int x, int bitpos) {
+OPJ_INT16 opj_t1_getnmsedec_ref(OPJ_UINT32 x, OPJ_UINT32 bitpos) {
 	if (bitpos > T1_NMSEDEC_FRACBITS) {
 		return lut_nmsedec_ref[(x >> (bitpos - T1_NMSEDEC_FRACBITS)) & ((1 << T1_NMSEDEC_BITS) - 1)];
 	}
@@ -319,7 +319,7 @@ void opj_t1_enc_sigpass_step(   opj_t1_t *t1,
 	flag = vsc ? ((*flagsp) & (~(T1_SIG_S | T1_SIG_SE | T1_SIG_SW | T1_SGN_S))) : (*flagsp);
 	if ((flag & T1_SIG_OTH) && !(flag & (T1_SIG | T1_VISIT))) {
 		v = int_abs(*datap) & one ? 1 : 0;
-		mqc_setcurctx(mqc, t1_getctxno_zc(flag, orient));	/* ESSAI */
+		mqc_setcurctx(mqc, opj_t1_getctxno_zc(flag, orient));	/* ESSAI */
 		if (type == T1_TYPE_RAW) {	/* BYPASS/LAZY MODE */
 			mqc_bypass_enc(mqc, v);
 		} else {
@@ -327,12 +327,12 @@ void opj_t1_enc_sigpass_step(   opj_t1_t *t1,
 		}
 		if (v) {
 			v = *datap < 0 ? 1 : 0;
-			*nmsedec +=	t1_getnmsedec_sig(int_abs(*datap), bpno + T1_NMSEDEC_FRACBITS);
-			mqc_setcurctx(mqc, t1_getctxno_sc(flag));	/* ESSAI */
+			*nmsedec +=	opj_t1_getnmsedec_sig(int_abs(*datap), bpno + T1_NMSEDEC_FRACBITS);
+			mqc_setcurctx(mqc, opj_t1_getctxno_sc(flag));	/* ESSAI */
 			if (type == T1_TYPE_RAW) {	/* BYPASS/LAZY MODE */
 				mqc_bypass_enc(mqc, v);
 			} else {
-				mqc_encode(mqc, v ^ t1_getspb(flag));
+				mqc_encode(mqc, v ^ opj_t1_getspb(flag));
 			}
 			opj_t1_updateflags(flagsp, v, t1->flags_stride);
 		}
@@ -388,9 +388,9 @@ void opj_t1_enc_refpass_step(   opj_t1_t *t1,
 	
 	flag = vsc ? ((*flagsp) & (~(T1_SIG_S | T1_SIG_SE | T1_SIG_SW | T1_SGN_S))) : (*flagsp);
 	if ((flag & (T1_SIG | T1_VISIT)) == T1_SIG) {
-		*nmsedec += t1_getnmsedec_ref(int_abs(*datap), bpno + T1_NMSEDEC_FRACBITS);
+		*nmsedec += opj_t1_getnmsedec_ref(int_abs(*datap), bpno + T1_NMSEDEC_FRACBITS);
 		v = int_abs(*datap) & one ? 1 : 0;
-		mqc_setcurctx(mqc, t1_getctxno_mag(flag));	/* ESSAI */
+		mqc_setcurctx(mqc, opj_t1_getctxno_mag(flag));	/* ESSAI */
 		if (type == T1_TYPE_RAW) {	/* BYPASS/LAZY MODE */
 			mqc_bypass_enc(mqc, v);
 		} else {
@@ -453,15 +453,15 @@ void opj_t1_enc_clnpass_step(
 		goto LABEL_PARTIAL;
 	}
 	if (!(*flagsp & (T1_SIG | T1_VISIT))) {
-		mqc_setcurctx(mqc, t1_getctxno_zc(flag, orient));
+		mqc_setcurctx(mqc, opj_t1_getctxno_zc(flag, orient));
 		v = int_abs(*datap) & one ? 1 : 0;
 		mqc_encode(mqc, v);
 		if (v) {
 LABEL_PARTIAL:
-			*nmsedec += t1_getnmsedec_sig(int_abs(*datap), bpno + T1_NMSEDEC_FRACBITS);
-			mqc_setcurctx(mqc, t1_getctxno_sc(flag));
+			*nmsedec += opj_t1_getnmsedec_sig(int_abs(*datap), bpno + T1_NMSEDEC_FRACBITS);
+			mqc_setcurctx(mqc, opj_t1_getctxno_sc(flag));
 			v = *datap < 0 ? 1 : 0;
-			mqc_encode(mqc, v ^ t1_getspb(flag));
+			mqc_encode(mqc, v ^ opj_t1_getspb(flag));
 			opj_t1_updateflags(flagsp, v, t1->flags_stride);
 		}
 	}
@@ -481,8 +481,8 @@ static void t1_dec_clnpass_step_partial(
 	OPJ_ARG_NOT_USED(orient);
 	
 	flag = *flagsp;
-	mqc_setcurctx(mqc, t1_getctxno_sc(flag));
-	v = mqc_decode(mqc) ^ t1_getspb(flag);
+	mqc_setcurctx(mqc, opj_t1_getctxno_sc(flag));
+	v = mqc_decode(mqc) ^ opj_t1_getspb(flag);
 	*datap = v ? -oneplushalf : oneplushalf;
 	opj_t1_updateflags(flagsp, v, t1->flags_stride);
 	*flagsp &= ~T1_VISIT;
@@ -501,10 +501,10 @@ static void t1_dec_clnpass_step(
 	
 	flag = *flagsp;
 	if (!(flag & (T1_SIG | T1_VISIT))) {
-		mqc_setcurctx(mqc, t1_getctxno_zc(flag, orient));
+		mqc_setcurctx(mqc, opj_t1_getctxno_zc(flag, orient));
 		if (mqc_decode(mqc)) {
-			mqc_setcurctx(mqc, t1_getctxno_sc(flag));
-			v = mqc_decode(mqc) ^ t1_getspb(flag);
+			mqc_setcurctx(mqc, opj_t1_getctxno_sc(flag));
+			v = mqc_decode(mqc) ^ opj_t1_getspb(flag);
 			*datap = v ? -oneplushalf : oneplushalf;
 			opj_t1_updateflags(flagsp, v, t1->flags_stride);
 		}
@@ -530,11 +530,11 @@ static void t1_dec_clnpass_step_vsc(
 		goto LABEL_PARTIAL;
 	}
 	if (!(flag & (T1_SIG | T1_VISIT))) {
-		mqc_setcurctx(mqc, t1_getctxno_zc(flag, orient));
+		mqc_setcurctx(mqc, opj_t1_getctxno_zc(flag, orient));
 		if (mqc_decode(mqc)) {
 LABEL_PARTIAL:
-			mqc_setcurctx(mqc, t1_getctxno_sc(flag));
-			v = mqc_decode(mqc) ^ t1_getspb(flag);
+			mqc_setcurctx(mqc, opj_t1_getctxno_sc(flag));
+			v = mqc_decode(mqc) ^ opj_t1_getspb(flag);
 			*datap = v ? -oneplushalf : oneplushalf;
 			opj_t1_updateflags(flagsp, v, t1->flags_stride);
 		}
@@ -1334,7 +1334,7 @@ void opj_t1_dec_refpass_step(   opj_t1_t *t1,
 
 	flag = vsc ? ((*flagsp) & (~(T1_SIG_S | T1_SIG_SE | T1_SIG_SW | T1_SGN_S))) : (*flagsp);
 	if ((flag & (T1_SIG | T1_VISIT)) == T1_SIG) {
-		mqc_setcurctx(mqc, t1_getctxno_mag(flag));	/* ESSAI */
+		mqc_setcurctx(mqc, opj_t1_getctxno_mag(flag));	/* ESSAI */
 		if (type == T1_TYPE_RAW) {
 			v = raw_decode(raw);
 		} else {
@@ -1396,10 +1396,10 @@ void opj_t1_dec_sigpass_step(   opj_t1_t *t1,
 				opj_t1_updateflags(flagsp, v, t1->flags_stride);
 			}
 		} else {
-			mqc_setcurctx(mqc, t1_getctxno_zc(flag, orient));
+			mqc_setcurctx(mqc, opj_t1_getctxno_zc(flag, orient));
 			if (mqc_decode(mqc)) {
-				mqc_setcurctx(mqc, t1_getctxno_sc(flag));
-				v = mqc_decode(mqc) ^ t1_getspb(flag);
+				mqc_setcurctx(mqc, opj_t1_getctxno_sc(flag));
+				v = mqc_decode(mqc) ^ opj_t1_getspb(flag);
 				*datap = v ? -oneplushalf : oneplushalf;
 				opj_t1_updateflags(flagsp, v, t1->flags_stride);
 			}
