@@ -38,7 +38,8 @@
 /*@{*/
 
 static void t2_putcommacode(opj_bio_t *bio, int n);
-static int t2_getcommacode(opj_bio_t *bio);
+
+static OPJ_UINT32 t2_getcommacode(opj_bio_t *bio); 
 /**
 Variable length code for signalling delta Zil (truncation point)
 @param bio Bit Input/Output component
@@ -186,12 +187,13 @@ static void t2_putcommacode(opj_bio_t *bio, int n) {
         bio_write(bio, 0, 1);
 }
 
-static int t2_getcommacode(opj_bio_t *bio) {
-        int n;
-        for (n = 0; bio_read(bio, 1); n++) {
-                ;
-        }
-        return n;
+static OPJ_UINT32 t2_getcommacode(opj_bio_t *bio) 
+{
+    OPJ_UINT32 n = 0;
+    while (bio_read(bio, 1)) {
+	    ++n;
+    }
+    return n;
 }
 
 static void t2_putnumpasses(opj_bio_t *bio, int n) {
