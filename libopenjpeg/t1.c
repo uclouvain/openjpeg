@@ -134,16 +134,16 @@ static void opj_t1_dec_refpass_step(opj_t1_t *t1,
 /**
 Encode clean-up pass
 */
-static void t1_enc_clnpass_step(
+static void opj_t1_enc_clnpass_step(
 		opj_t1_t *t1,
 		flag_t *flagsp,
-		int *datap,
-		int orient,
-		int bpno,
-		int one,
-		int *nmsedec,
-		int partial,
-		int vsc);
+		OPJ_INT32 *datap,
+		OPJ_UINT32 orient,
+		OPJ_INT32 bpno,
+		OPJ_INT32 one,
+		OPJ_INT32 *nmsedec,
+		OPJ_UINT32 partial,
+		OPJ_UINT32 vsc);
 /**
 Decode clean-up pass
 */
@@ -170,12 +170,12 @@ static void t1_dec_clnpass_step_vsc(
 /**
 Encode clean-up pass
 */
-static void t1_enc_clnpass(
+static void opj_t1_enc_clnpass(
 		opj_t1_t *t1,
-		int bpno,
-		int orient,
-		int *nmsedec,
-		int cblksty);
+		OPJ_INT32 bpno,
+		OPJ_UINT32 orient,
+		OPJ_INT32 *nmsedec,
+		OPJ_UINT32 cblksty);
 /**
 Decode clean-up pass
 */
@@ -432,18 +432,19 @@ void opj_t1_enc_refpass(
 }
 
 
-static void t1_enc_clnpass_step(
+void opj_t1_enc_clnpass_step(
 		opj_t1_t *t1,
 		flag_t *flagsp,
-		int *datap,
-		int orient,
-		int bpno,
-		int one,
-		int *nmsedec,
-		int partial,
-		int vsc)
+		OPJ_INT32 *datap,
+		OPJ_UINT32 orient,
+		OPJ_INT32 bpno,
+		OPJ_INT32 one,
+		OPJ_INT32 *nmsedec,
+		OPJ_UINT32 partial,
+		OPJ_UINT32 vsc)
 {
-	int v, flag;
+	OPJ_INT32 v;
+	OPJ_UINT32 flag;
 	
 	opj_mqc_t *mqc = t1->mqc;	/* MQC component */
 	
@@ -541,14 +542,16 @@ LABEL_PARTIAL:
 	*flagsp &= ~T1_VISIT;
 }
 
-static void t1_enc_clnpass(
+void opj_t1_enc_clnpass(
 		opj_t1_t *t1,
-		int bpno,
-		int orient,
-		int *nmsedec,
-		int cblksty)
+		OPJ_INT32 bpno,
+		OPJ_UINT32 orient,
+		OPJ_INT32 *nmsedec,
+		OPJ_UINT32 cblksty)
 {
-	int i, j, k, one, agg, runlen, vsc;
+	OPJ_UINT32 i, j, k;
+	OPJ_INT32 one;
+	OPJ_UINT32 agg, runlen, vsc;
 	
 	opj_mqc_t *mqc = t1->mqc;	/* MQC component */
 	
@@ -590,7 +593,7 @@ static void t1_enc_clnpass(
 			}
 			for (j = k + runlen; j < k + 4 && j < t1->h; ++j) {
 				vsc = ((cblksty & J2K_CCP_CBLKSTY_VSC) && (j == k + 3 || j == t1->h - 1)) ? 1 : 0;
-				t1_enc_clnpass_step(
+				opj_t1_enc_clnpass_step(
 						t1,
 						&t1->flags[((j+1) * t1->flags_stride) + i + 1],
 						&t1->data[(j * t1->w) + i],
@@ -1205,7 +1208,7 @@ void opj_t1_encode_cblk(opj_t1_t *t1,
 				opj_t1_enc_refpass(t1, bpno, &nmsedec, type, cblksty);
 				break;
 			case 2:
-				t1_enc_clnpass(t1, bpno, orient, &nmsedec, cblksty);
+				opj_t1_enc_clnpass(t1, bpno, orient, &nmsedec, cblksty);
 				/* code switch SEGMARK (i.e. SEGSYM) */
 				if (cblksty & J2K_CCP_CBLKSTY_SEGSYM)
 					mqc_segmark_enc(mqc);
