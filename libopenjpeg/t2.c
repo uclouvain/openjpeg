@@ -46,7 +46,7 @@ Variable length code for signalling delta Zil (truncation point)
 @param n    delta Zil
 */
 static void opj_t2_putnumpasses(opj_bio_t *bio, OPJ_UINT32 n);
-static int t2_getnumpasses(opj_bio_t *bio);
+static OPJ_UINT32 opj_t2_getnumpasses(opj_bio_t *bio);
 /**
 Encode a packet of a tile to a destination buffer
 @param tile Tile for which to write the packets
@@ -210,8 +210,8 @@ void opj_t2_putnumpasses(opj_bio_t *bio, OPJ_UINT32 n) {
         }
 }
 
-static int t2_getnumpasses(opj_bio_t *bio) {
-        int n;
+OPJ_UINT32 opj_t2_getnumpasses(opj_bio_t *bio) {
+        OPJ_UINT32 n;
         if (!bio_read(bio, 1))
                 return 1;
         if (!bio_read(bio, 1))
@@ -558,7 +558,7 @@ static int t2_decode_packet(opj_t2_t* t2, unsigned char *src, int len, opj_tcd_t
                                 cblk->numlenbits = 3;
                         }
                         /* number of coding passes */
-                        cblk->numnewpasses = t2_getnumpasses(bio);
+                        cblk->numnewpasses = opj_t2_getnumpasses(bio);
                         increment = opj_t2_getcommacode(bio);
                         /* length indicator increment */
                         cblk->numlenbits += increment;
@@ -1666,7 +1666,7 @@ opj_bool opj_t2_read_packet_header( opj_t2_v2_t* p_t2,
                         }
 
                         /* number of coding passes */
-                        l_cblk->numnewpasses = t2_getnumpasses(l_bio);
+                        l_cblk->numnewpasses = opj_t2_getnumpasses(l_bio);
                         l_increment = opj_t2_getcommacode(l_bio);
 
                         /* length indicator increment */
