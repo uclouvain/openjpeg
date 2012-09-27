@@ -870,17 +870,6 @@ opj_bool t2_decode_packets_v2(
 
 /* ----------------------------------------------------------------------- */
 
-opj_t2_t* t2_create(opj_common_ptr cinfo, opj_image_t *image, opj_cp_t *cp) {
-        /* create the tcd structure */
-        opj_t2_t *t2 = (opj_t2_t*)opj_malloc(sizeof(opj_t2_t));
-        if(!t2) return NULL;
-        t2->cinfo = cinfo;
-        t2->image = image;
-        t2->cp = cp;
-
-        return t2;
-}
-
 /**
  * Creates a Tier 2 handle
  *
@@ -888,10 +877,9 @@ opj_t2_t* t2_create(opj_common_ptr cinfo, opj_image_t *image, opj_cp_t *cp) {
  * @param       p_cp            Image coding parameters.
  * @return              a new T2 handle if successful, NULL otherwise.
 */
-opj_t2_v2_t* t2_create_v2(      opj_image_t *p_image,
-                                                        opj_cp_v2_t *p_cp)
+opj_t2_v2_t* opj_t2_create(opj_image_t *p_image, opj_cp_v2_t *p_cp)
 {
-        /* create the tcd structure */
+        /* create the t2 structure */
         opj_t2_v2_t *l_t2 = (opj_t2_v2_t*)opj_malloc(sizeof(opj_t2_v2_t));
         if (!l_t2) {
                 return NULL;

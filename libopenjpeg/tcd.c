@@ -477,7 +477,7 @@ opj_bool opj_tcd_rateallocate(  opj_tcd_v2_t *tcd,
                   -q xx,yy,zz,0   (fixed_quality == 1 and distoratio == 0)
                   ==> possible to have some lossy layers and the last layer for sure lossless */
                 if ( ((cp->m_specific_param.m_enc.m_disto_alloc==1) && (tcd_tcp->rates[layno]>0)) || ((cp->m_specific_param.m_enc.m_fixed_quality==1) && (tcd_tcp->distoratio[layno]>0))) {
-                        opj_t2_v2_t*t2 = t2_create_v2(tcd->image, cp);
+                        opj_t2_v2_t*t2 = opj_t2_create(tcd->image, cp);
                         OPJ_FLOAT64 thresh = 0;
 
                         if (t2 == 00) {
@@ -1462,7 +1462,7 @@ opj_bool opj_tcd_t2_decode (opj_tcd_v2_t *p_tcd,
 {
         opj_t2_v2_t * l_t2;
 
-        l_t2 = t2_create_v2(p_tcd->image, p_tcd->cp);
+        l_t2 = opj_t2_create(p_tcd->image, p_tcd->cp);
         if (l_t2 == 00) {
                 return OPJ_FALSE;
         }
@@ -1960,7 +1960,7 @@ opj_bool opj_tcd_t2_encode (opj_tcd_v2_t *p_tcd,
 {
         opj_t2_v2_t * l_t2;
 
-        l_t2 = t2_create_v2(p_tcd->image, p_tcd->cp);
+        l_t2 = opj_t2_create(p_tcd->image, p_tcd->cp);
         if (l_t2 == 00) {
                 return OPJ_FALSE;
         }
