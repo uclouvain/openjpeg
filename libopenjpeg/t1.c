@@ -93,26 +93,24 @@ static void opj_t1_dec_sigpass( opj_t1_t *t1,
 /**
 Encode refinement pass
 */
-static void t1_enc_refpass_step(
-		opj_t1_t *t1,
-		flag_t *flagsp,
-		int *datap,
-		int bpno,
-		int one,
-		int *nmsedec,
-		char type,
-		int vsc);
+static void opj_t1_enc_refpass_step(opj_t1_t *t1,
+                                    flag_t *flagsp,
+                                    OPJ_INT32 *datap,
+                                    OPJ_INT32 bpno,
+                                    OPJ_INT32 one,
+                                    OPJ_INT32 *nmsedec,
+                                    OPJ_BYTE type,
+                                    OPJ_UINT32 vsc);
 
 
 /**
 Encode refinement pass
 */
-static void t1_enc_refpass(
-		opj_t1_t *t1,
-		int bpno,
-		int *nmsedec,
-		char type,
-		int cblksty);
+static void opj_t1_enc_refpass( opj_t1_t *t1,
+                                OPJ_INT32 bpno,
+                                OPJ_INT32 *nmsedec,
+                                OPJ_BYTE type,
+                                OPJ_UINT32 cblksty);
 
 /**
 Decode refinement pass
@@ -374,17 +372,17 @@ void opj_t1_enc_sigpass(opj_t1_t *t1,
 }
 
 
-static void t1_enc_refpass_step(
-		opj_t1_t *t1,
-		flag_t *flagsp,
-		int *datap,
-		int bpno,
-		int one,
-		int *nmsedec,
-		char type,
-		int vsc)
+void opj_t1_enc_refpass_step(   opj_t1_t *t1,
+                                flag_t *flagsp,
+                                OPJ_INT32 *datap,
+                                OPJ_INT32 bpno,
+                                OPJ_INT32 one,
+                                OPJ_INT32 *nmsedec,
+                                OPJ_BYTE type,
+                                OPJ_UINT32 vsc)
 {
-	int v, flag;
+	OPJ_INT32 v;
+	OPJ_UINT32 flag;
 	
 	opj_mqc_t *mqc = t1->mqc;	/* MQC component */
 	
@@ -403,21 +401,23 @@ static void t1_enc_refpass_step(
 }
 
 
-static void t1_enc_refpass(
+void opj_t1_enc_refpass(
 		opj_t1_t *t1,
-		int bpno,
-		int *nmsedec,
-		char type,
-		int cblksty)
+		OPJ_INT32 bpno,
+		OPJ_INT32 *nmsedec,
+		OPJ_BYTE type,
+		OPJ_UINT32 cblksty)
 {
-	int i, j, k, one, vsc;
+	OPJ_UINT32 i, j, k, vsc;
+    OPJ_INT32 one;
+
 	*nmsedec = 0;
 	one = 1 << (bpno + T1_NMSEDEC_FRACBITS);
 	for (k = 0; k < t1->h; k += 4) {
 		for (i = 0; i < t1->w; ++i) {
 			for (j = k; j < k + 4 && j < t1->h; ++j) {
 				vsc = ((cblksty & J2K_CCP_CBLKSTY_VSC) && (j == k + 3 || j == t1->h - 1)) ? 1 : 0;
-				t1_enc_refpass_step(
+				opj_t1_enc_refpass_step(
 						t1,
 						&t1->flags[((j+1) * t1->flags_stride) + i + 1],
 						&t1->data[(j * t1->w) + i],
@@ -1202,7 +1202,7 @@ void opj_t1_encode_cblk(opj_t1_t *t1,
 				opj_t1_enc_sigpass(t1, bpno, orient, &nmsedec, type, cblksty);
 				break;
 			case 1:
-				t1_enc_refpass(t1, bpno, &nmsedec, type, cblksty);
+				opj_t1_enc_refpass(t1, bpno, &nmsedec, type, cblksty);
 				break;
 			case 2:
 				t1_enc_clnpass(t1, bpno, orient, &nmsedec, cblksty);
