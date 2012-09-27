@@ -33,7 +33,7 @@
 #endif /* _WIN32 */
 #include "opj_includes.h"
 
-double opj_clock(void) {
+OPJ_FLOAT64 opj_clock(void) {
 #ifdef _WIN32
 	/* _WIN32: use QueryPerformance (very accurate) */
     LARGE_INTEGER freq , t ;
