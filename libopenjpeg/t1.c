@@ -207,45 +207,18 @@ static OPJ_FLOAT64 t1_getwmsedec_v2(
 		OPJ_FLOAT64 stepsize,
 		OPJ_UINT32 numcomps,
 		const OPJ_FLOAT64 * mct_norms);
-/**
-Encode 1 code-block
-@param t1 T1 handle
-@param cblk Code-block coding parameters
-@param orient
-@param compno Component number
-@param level
-@param qmfbid
-@param stepsize
-@param cblksty Code-block style
-@param numcomps
-@param mct
-@param tile
-*/
-static void t1_encode_cblk(
-		opj_t1_t *t1,
-		opj_tcd_cblk_enc_t* cblk,
-		int orient,
-		int compno,
-		int level,
-		int qmfbid,
-		double stepsize,
-		int cblksty,
-		int numcomps,
-		int mct,
-		opj_tcd_tile_t * tile);
 
-static void t1_encode_cblk_v2(
-		opj_t1_t *t1,
-		opj_tcd_cblk_enc_v2_t* cblk,
-		OPJ_UINT32 orient,
-		OPJ_UINT32 compno,
-		OPJ_UINT32 level,
-		OPJ_UINT32 qmfbid,
-		OPJ_FLOAT64 stepsize,
-		OPJ_UINT32 cblksty,
-		OPJ_UINT32 numcomps,
-		opj_tcd_tile_v2_t * tile,
-		const OPJ_FLOAT64 * mct_norms);
+static void opj_t1_encode_cblk( opj_t1_t *t1,
+                                opj_tcd_cblk_enc_v2_t* cblk,
+                                OPJ_UINT32 orient,
+                                OPJ_UINT32 compno,
+                                OPJ_UINT32 level,
+                                OPJ_UINT32 qmfbid,
+                                OPJ_FLOAT64 stepsize,
+                                OPJ_UINT32 cblksty,
+                                OPJ_UINT32 numcomps,
+                                opj_tcd_tile_v2_t * tile,
+                                const OPJ_FLOAT64 * mct_norms);
 
 /**
 Decode 1 code-block
@@ -850,142 +823,6 @@ opj_bool opj_t1_allocate_buffers(
 	return OPJ_TRUE;
 }
 
-/** mod fixed_quality */
-static void t1_encode_cblk(
-		opj_t1_t *t1,
-		opj_tcd_cblk_enc_t* cblk,
-		int orient,
-		int compno,
-		int level,
-		int qmfbid,
-		double stepsize,
-		int cblksty,
-		int numcomps,
-		int mct,
-		opj_tcd_tile_t * tile)
-{
-	double cumwmsedec = 0.0;
-
-	opj_mqc_t *mqc = t1->mqc;	/* MQC component */
-
-	int passno, bpno, passtype;
-	int nmsedec = 0;
-	int i, max;
-	char type = T1_TYPE_MQ;
-	double tempwmsedec;
-
-	max = 0;
-	for (i = 0; i < t1->w * t1->h; ++i) {
-		int tmp = abs(t1->data[i]);
-		max = int_max(max, tmp);
-	}
-
-	cblk->numbps = max ? (int_floorlog2(max) + 1) - T1_NMSEDEC_FRACBITS : 0;
-	
-	bpno = cblk->numbps - 1;
-	passtype = 2;
-	
-	mqc_resetstates(mqc);
-	mqc_setstate(mqc, T1_CTXNO_UNI, 0, 46);
-	mqc_setstate(mqc, T1_CTXNO_AGG, 0, 3);
-	mqc_setstate(mqc, T1_CTXNO_ZC, 0, 4);
-	mqc_init_enc(mqc, cblk->data);
-	
-	for (passno = 0; bpno >= 0; ++passno) {
-		opj_tcd_pass_t *pass = &cblk->passes[passno];
-		int correction = 3;
-		type = ((bpno < (cblk->numbps - 4)) && (passtype < 2) && (cblksty & J2K_CCP_CBLKSTY_LAZY)) ? T1_TYPE_RAW : T1_TYPE_MQ;
-		
-		switch (passtype) {
-			case 0:
-				opj_t1_enc_sigpass(t1, bpno, orient, &nmsedec, type, cblksty);
-				break;
-			case 1:
-				t1_enc_refpass(t1, bpno, &nmsedec, type, cblksty);
-				break;
-			case 2:
-				t1_enc_clnpass(t1, bpno, orient, &nmsedec, cblksty);
-				/* code switch SEGMARK (i.e. SEGSYM) */
-				if (cblksty & J2K_CCP_CBLKSTY_SEGSYM)
-					mqc_segmark_enc(mqc);
-				break;
-		}
-		
-		/* fixed_quality */
-		tempwmsedec = t1_getwmsedec(nmsedec, compno, level, orient, bpno, qmfbid, stepsize, numcomps, mct);
-		cumwmsedec += tempwmsedec;
-		tile->distotile += tempwmsedec;
-		
-		/* Code switch "RESTART" (i.e. TERMALL) */
-		if ((cblksty & J2K_CCP_CBLKSTY_TERMALL)	&& !((passtype == 2) && (bpno - 1 < 0))) {
-			if (type == T1_TYPE_RAW) {
-				mqc_flush(mqc);
-				correction = 1;
-				/* correction = mqc_bypass_flush_enc(); */
-			} else {			/* correction = mqc_restart_enc(); */
-				mqc_flush(mqc);
-				correction = 1;
-			}
-			pass->term = 1;
-		} else {
-			if (((bpno < (cblk->numbps - 4) && (passtype > 0)) 
-				|| ((bpno == (cblk->numbps - 4)) && (passtype == 2))) && (cblksty & J2K_CCP_CBLKSTY_LAZY)) {
-				if (type == T1_TYPE_RAW) {
-					mqc_flush(mqc);
-					correction = 1;
-					/* correction = mqc_bypass_flush_enc(); */
-				} else {		/* correction = mqc_restart_enc(); */
-					mqc_flush(mqc);
-					correction = 1;
-				}
-				pass->term = 1;
-			} else {
-				pass->term = 0;
-			}
-		}
-		
-		if (++passtype == 3) {
-			passtype = 0;
-			bpno--;
-		}
-		
-		if (pass->term && bpno > 0) {
-			type = ((bpno < (cblk->numbps - 4)) && (passtype < 2) && (cblksty & J2K_CCP_CBLKSTY_LAZY)) ? T1_TYPE_RAW : T1_TYPE_MQ;
-			if (type == T1_TYPE_RAW)
-				mqc_bypass_init_enc(mqc);
-			else
-				mqc_restart_init_enc(mqc);
-		}
-		
-		pass->distortiondec = cumwmsedec;
-		pass->rate = mqc_numbytes(mqc) + correction;	/* FIXME */
-		
-		/* Code-switch "RESET" */
-		if (cblksty & J2K_CCP_CBLKSTY_RESET)
-			mqc_reset_enc(mqc);
-	}
-	
-	/* Code switch "ERTERM" (i.e. PTERM) */
-	if (cblksty & J2K_CCP_CBLKSTY_PTERM)
-		mqc_erterm_enc(mqc);
-	else /* Default coding */ if (!(cblksty & J2K_CCP_CBLKSTY_LAZY))
-		mqc_flush(mqc);
-	
-	cblk->totalpasses = passno;
-
-	for (passno = 0; passno<cblk->totalpasses; passno++) {
-		opj_tcd_pass_t *pass = &cblk->passes[passno];
-		if (pass->rate > mqc_numbytes(mqc))
-			pass->rate = mqc_numbytes(mqc);
-		/*Preventing generation of FF as last data byte of a pass*/
-		if((pass->rate>1) && (cblk->data[pass->rate - 1] == 0xFF)){
-			pass->rate--;
-		}
-		pass->len = pass->rate - (passno == 0 ? 0 : cblk->passes[passno - 1].rate);		
-	}
-}
-
-
 /* ----------------------------------------------------------------------- */
 
 /* ----------------------------------------------------------------------- */
@@ -1291,7 +1128,7 @@ opj_bool opj_t1_encode_cblks(   opj_t1_t *t1,
 							}
 						}
 
-						t1_encode_cblk_v2(
+						opj_t1_encode_cblk(
 								t1,
 								cblk,
 								band->bandno,
@@ -1313,18 +1150,17 @@ opj_bool opj_t1_encode_cblks(   opj_t1_t *t1,
 }
 
 /** mod fixed_quality */
-static void t1_encode_cblk_v2(
-		opj_t1_t *t1,
-		opj_tcd_cblk_enc_v2_t* cblk,
-		OPJ_UINT32 orient,
-		OPJ_UINT32 compno,
-		OPJ_UINT32 level,
-		OPJ_UINT32 qmfbid,
-		OPJ_FLOAT64 stepsize,
-		OPJ_UINT32 cblksty,
-		OPJ_UINT32 numcomps,
-		opj_tcd_tile_v2_t * tile,
-		const OPJ_FLOAT64 * mct_norms)
+void opj_t1_encode_cblk(opj_t1_t *t1,
+                        opj_tcd_cblk_enc_v2_t* cblk,
+                        OPJ_UINT32 orient,
+                        OPJ_UINT32 compno,
+                        OPJ_UINT32 level,
+                        OPJ_UINT32 qmfbid,
+                        OPJ_FLOAT64 stepsize,
+                        OPJ_UINT32 cblksty,
+                        OPJ_UINT32 numcomps,
+                        opj_tcd_tile_v2_t * tile,
+                        const OPJ_FLOAT64 * mct_norms)
 {
 	OPJ_FLOAT64 cumwmsedec = 0.0;
 
