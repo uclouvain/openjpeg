@@ -133,8 +133,8 @@ Decode the code-blocks of a tile
 @param tccp Tile coding parameters
 */
 opj_bool opj_t1_decode_cblks(   opj_t1_t* t1,
-                            opj_tcd_tilecomp_v2_t* tilec,
-                            opj_tccp_t* tccp);
+                                opj_tcd_tilecomp_v2_t* tilec,
+                                opj_tccp_t* tccp);
 
 
 
