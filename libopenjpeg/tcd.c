@@ -538,7 +538,7 @@ opj_bool opj_tcd_rateallocate(  opj_tcd_v2_t *tcd,
                         success = OPJ_TRUE;
                         goodthresh = stable_thresh == 0? thresh : stable_thresh;
 
-                        t2_destroy_v2(t2);
+                        opj_t2_destroy(t2);
                 } else {
                         success = OPJ_TRUE;
                         goodthresh = min;
@@ -1467,7 +1467,7 @@ opj_bool opj_tcd_t2_decode (opj_tcd_v2_t *p_tcd,
                 return OPJ_FALSE;
         }
 
-        if (! t2_decode_packets_v2(
+        if (! opj_t2_decode_packets(
                                         l_t2,
                                         p_tcd->tcd_tileno,
                                         p_tcd->tcd_image->tiles,
@@ -1475,11 +1475,11 @@ opj_bool opj_tcd_t2_decode (opj_tcd_v2_t *p_tcd,
                                         p_data_read,
                                         p_max_src_size,
                                         p_cstr_index)) {
-                t2_destroy_v2(l_t2);
+                opj_t2_destroy(l_t2);
                 return OPJ_FALSE;
         }
 
-        t2_destroy_v2(l_t2);
+        opj_t2_destroy(l_t2);
 
         /*---------------CLEAN-------------------*/
         return OPJ_TRUE;
@@ -1979,11 +1979,11 @@ opj_bool opj_tcd_t2_encode (opj_tcd_v2_t *p_tcd,
                                         p_tcd->cur_pino,
                                         FINAL_PASS))
         {
-                t2_destroy_v2(l_t2);
+                opj_t2_destroy(l_t2);
                 return OPJ_FALSE;
         }
 
-        t2_destroy_v2(l_t2);
+        opj_t2_destroy(l_t2);
 
         /*---------------CLEAN-------------------*/
         return OPJ_TRUE;

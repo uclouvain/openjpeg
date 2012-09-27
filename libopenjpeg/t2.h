@@ -100,17 +100,6 @@ opj_bool opj_t2_encode_packets(	opj_t2_v2_t* t2,
 /**
 Decode the packets of a tile from a source buffer
 @param t2 T2 handle
-@param src the source buffer
-@param len length of the source buffer
-@param tileno number that identifies the tile for which to decode the packets
-@param tile tile for which to decode the packets
-@param cstr_info Codestream information structure
- */
-int t2_decode_packets(opj_t2_t *t2, unsigned char *src, int len, int tileno, opj_tcd_tile_t *tile, opj_codestream_info_t *cstr_info);
-
-/**
-Decode the packets of a tile from a source buffer
-@param t2 T2 handle
 @param tileno number that identifies the tile for which to decode the packets
 @param tile tile for which to decode the packets
 @param src         FIXME DOC
@@ -120,13 +109,13 @@ Decode the packets of a tile from a source buffer
 
 @return FIXME DOC
  */
-opj_bool t2_decode_packets_v2(	opj_t2_v2_t *t2,
-								OPJ_UINT32 tileno,
-								struct opj_tcd_tile_v2 *tile,
-								OPJ_BYTE *src,
-                OPJ_UINT32 * p_data_read,
-								OPJ_UINT32 len,
-								opj_codestream_index_t *cstr_info);
+opj_bool opj_t2_decode_packets(	opj_t2_v2_t *t2,
+                                OPJ_UINT32 tileno,
+                                opj_tcd_tile_v2_t *tile,
+                                OPJ_BYTE *src,
+                                OPJ_UINT32 * p_data_read,
+                                OPJ_UINT32 len,
+                                opj_codestream_index_t *cstr_info);
 
 /**
  * Creates a Tier 2 handle
@@ -141,13 +130,7 @@ opj_t2_v2_t* opj_t2_create_(opj_image_t *p_image, opj_cp_v2_t *p_cp);
 Destroy a T2 handle
 @param t2 T2 handle to destroy
 */
-void t2_destroy(opj_t2_t *t2);
-
-/**
-Destroy a T2 handle
-@param t2 T2 handle to destroy
-*/
-void t2_destroy_v2(opj_t2_v2_t *t2);
+void opj_t2_destroy(opj_t2_v2_t *t2);
 
 /* ----------------------------------------------------------------------- */
 /*@}*/

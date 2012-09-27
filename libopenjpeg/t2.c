@@ -77,20 +77,6 @@ static opj_bool t2_encode_packet_v2(
 @param first
 */
 static opj_bool t2_init_seg(opj_tcd_cblk_dec_t* cblk, int index, int cblksty, int first);
-/**
-Decode a packet of a tile from a source buffer
-@param t2 T2 handle
-@param src Source buffer
-@param len Length of the source buffer
-@param tile Tile for which to write the packets
-@param tcp Tile coding parameters
-@param pi Packet identity
-@param pack_info Packet information
-@return 
-*/
-static int t2_decode_packet(opj_t2_t* t2, unsigned char *src, int len, opj_tcd_tile_t *tile, 
-                                                                                                                opj_tcp_t *tcp, opj_pi_iterator_t *pi, opj_packet_info_t *pack_info);
-
 
 /**
 Decode a packet of a tile from a source buffer
@@ -105,15 +91,14 @@ Decode a packet of a tile from a source buffer
 
 @return  FIXME DOC
 */
-static opj_bool t2_decode_packet_v2(
-                             opj_t2_v2_t* t2,
-                             opj_tcd_tile_v2_t *tile,
-                             opj_tcp_v2_t *tcp,
-                             opj_pi_iterator_t *pi,
-                             OPJ_BYTE *src,
-                             OPJ_UINT32 * data_read,
-                             OPJ_UINT32 max_length,
-                             opj_packet_info_t *pack_info);
+static opj_bool opj_t2_decode_packet(   opj_t2_v2_t* t2,
+                                        opj_tcd_tile_v2_t *tile,
+                                        opj_tcp_v2_t *tcp,
+                                        opj_pi_iterator_t *pi,
+                                        OPJ_BYTE *src,
+                                        OPJ_UINT32 * data_read,
+                                        OPJ_UINT32 max_length,
+                                        opj_packet_info_t *pack_info);
 
 static opj_bool opj_t2_skip_packet( opj_t2_v2_t* p_t2,
                                     opj_tcd_tile_v2_t *p_tile,
@@ -241,299 +226,6 @@ static opj_bool t2_init_seg(opj_tcd_cblk_dec_t* cblk, int index, int cblksty, in
         return OPJ_TRUE;
 }
 
-static int t2_decode_packet(opj_t2_t* t2, unsigned char *src, int len, opj_tcd_tile_t *tile, 
-                opj_tcp_t *tcp, opj_pi_iterator_t *pi, opj_packet_info_t *pack_info) {
-        int bandno, cblkno;
-        unsigned char *c = src;
-
-        opj_cp_t *cp = t2->cp;
-
-        int compno = pi->compno;        /* component value */
-        int resno  = pi->resno;         /* resolution level value */
-        int precno = pi->precno;        /* precinct value */
-        int layno  = pi->layno;         /* quality layer value */
-
-        opj_tcd_resolution_t* res = &tile->comps[compno].resolutions[resno];
-
-        unsigned char *hd = NULL;
-        int present;
-        
-        opj_bio_t *bio = NULL;  /* BIO component */
-        
-        if (layno == 0) {
-                for (bandno = 0; bandno < res->numbands; bandno++) {
-                        opj_tcd_band_t *band = &res->bands[bandno];
-                        opj_tcd_precinct_t *prc = &band->precincts[precno];
-                        
-                        if ((band->x1-band->x0 == 0)||(band->y1-band->y0 == 0)) continue;
-                        
-                        tgt_reset(prc->incltree);
-                        tgt_reset(prc->imsbtree);
-                        for (cblkno = 0; cblkno < prc->cw * prc->ch; cblkno++) {
-                                opj_tcd_cblk_dec_t* cblk = &prc->cblks.dec[cblkno];
-                                cblk->numsegs = 0;
-                        }
-                }
-        }
-        
-        /* SOP markers */
-        
-        if (tcp->csty & J2K_CP_CSTY_SOP) {
-                if ((*c) != 0xff || (*(c + 1) != 0x91)) {
-                        opj_event_msg(t2->cinfo, EVT_WARNING, "Expected SOP marker\n");
-                } else {
-                        c += 6;
-                }
-                
-                /** TODO : check the Nsop value */
-        }
-        
-        /* 
-        When the marker PPT/PPM is used the packet header are store in PPT/PPM marker
-        This part deal with this caracteristic
-        step 1: Read packet header in the saved structure
-        step 2: Return to codestream for decoding 
-        */
-
-        bio = bio_create();
-        
-        if (cp->ppm == 1) {             /* PPM */
-                hd = cp->ppm_data;
-                bio_init_dec(bio, hd, cp->ppm_len);
-        } else if (tcp->ppt == 1) {     /* PPT */
-                hd = tcp->ppt_data;
-                bio_init_dec(bio, hd, tcp->ppt_len);
-        } else {                        /* Normal Case */
-                hd = c;
-                bio_init_dec(bio, hd, src+len-hd);
-        }
-        
-        present = bio_read(bio, 1);
-        
-        if (!present) {
-                bio_inalign(bio);
-                hd += bio_numbytes(bio);
-                bio_destroy(bio);
-                
-                /* EPH markers */
-                
-                if (tcp->csty & J2K_CP_CSTY_EPH) {
-                        if ((*hd) != 0xff || (*(hd + 1) != 0x92)) {
-                                printf("Error : expected EPH marker\n");
-                        } else {
-                                hd += 2;
-                        }
-                }
-
-                /* << INDEX */
-                /* End of packet header position. Currently only represents the distance to start of packet
-                // Will be updated later by incrementing with packet start value*/
-                if(pack_info) {
-                        pack_info->end_ph_pos = (int)(c - src);
-                }
-                /* INDEX >> */
-                
-                if (cp->ppm == 1) {             /* PPM case */
-                        cp->ppm_len += cp->ppm_data-hd;
-                        cp->ppm_data = hd;
-                        return (c - src);
-                }
-                if (tcp->ppt == 1) {    /* PPT case */
-                        tcp->ppt_len+=tcp->ppt_data-hd;
-                        tcp->ppt_data = hd;
-                        return (c - src);
-                }
-                
-                return (hd - src);
-        }
-        
-        for (bandno = 0; bandno < res->numbands; bandno++) {
-                opj_tcd_band_t *band = &res->bands[bandno];
-                opj_tcd_precinct_t *prc = &band->precincts[precno];
-                
-                if ((band->x1-band->x0 == 0)||(band->y1-band->y0 == 0)) continue;
-                
-                for (cblkno = 0; cblkno < prc->cw * prc->ch; cblkno++) {
-                        int included, increment, n, segno;
-                        opj_tcd_cblk_dec_t* cblk = &prc->cblks.dec[cblkno];
-                        /* if cblk not yet included before --> inclusion tagtree */
-                        if (!cblk->numsegs) {
-                                included = tgt_decode(bio, prc->incltree, cblkno, layno + 1);
-                                /* else one bit */
-                        } else {
-                                included = bio_read(bio, 1);
-                        }
-                        /* if cblk not included */
-                        if (!included) {
-                                cblk->numnewpasses = 0;
-                                continue;
-                        }
-                        /* if cblk not yet included --> zero-bitplane tagtree */
-                        if (!cblk->numsegs) {
-                                int i, numimsbs;
-                                for (i = 0; !tgt_decode(bio, prc->imsbtree, cblkno, i); i++) {
-                                        ;
-                                }
-                                numimsbs = i - 1;
-                                cblk->numbps = band->numbps - numimsbs;
-                                cblk->numlenbits = 3;
-                        }
-                        /* number of coding passes */
-                        cblk->numnewpasses = opj_t2_getnumpasses(bio);
-                        increment = opj_t2_getcommacode(bio);
-                        /* length indicator increment */
-                        cblk->numlenbits += increment;
-                        segno = 0;
-                        if (!cblk->numsegs) {
-                                if (OPJ_FALSE == t2_init_seg(cblk, segno, tcp->tccps[compno].cblksty, 1)) {
-                                        /* TODO: LH: shall we destroy bio here ?*/
-                                        opj_event_msg(t2->cinfo, EVT_WARNING, "Not enough memory to init segment #%d\n", segno);
-                                        return -999;
-                                }
-                        } else {
-                                segno = cblk->numsegs - 1;
-                                if (cblk->segs[segno].numpasses == cblk->segs[segno].maxpasses) {
-                                        ++segno;
-                                        if (OPJ_FALSE == t2_init_seg(cblk, segno, tcp->tccps[compno].cblksty, 0)) {
-                                                /* TODO: LH: shall we destroy bio here ?*/
-                                                opj_event_msg(t2->cinfo, EVT_WARNING, "Not enough memory to init segment #%d\n", segno);
-                                                return -999;
-                                        }
-                                }
-                        }
-                        n = cblk->numnewpasses;
-                        
-                        do {
-                                cblk->segs[segno].numnewpasses = int_min(cblk->segs[segno].maxpasses - cblk->segs[segno].numpasses, n);
-                                cblk->segs[segno].newlen = bio_read(bio, cblk->numlenbits + int_floorlog2(cblk->segs[segno].numnewpasses));
-                                n -= cblk->segs[segno].numnewpasses;
-                                if (n > 0) {
-                                        ++segno;
-                                        if (OPJ_FALSE == t2_init_seg(cblk, segno, tcp->tccps[compno].cblksty, 0)) {
-                                                /* TODO: LH: shall we destroy bio here ? */
-                                                opj_event_msg(t2->cinfo, EVT_WARNING, "Not enough memory to init segment #%d\n", segno);
-                                                return -999;
-                                        }
-                                }
-                        } while (n > 0);
-                }
-        }
-        
-        if (bio_inalign(bio)) {
-                bio_destroy(bio);
-                return -999;
-        }
-        
-        hd += bio_numbytes(bio);
-        bio_destroy(bio);
-        
-        /* EPH markers */
-        if (tcp->csty & J2K_CP_CSTY_EPH) {
-                if ((*hd) != 0xff || (*(hd + 1) != 0x92)) {
-                        opj_event_msg(t2->cinfo, EVT_ERROR, "Expected EPH marker\n");
-                        return -999;
-                } else {
-                        hd += 2;
-                }
-        }
-
-        /* << INDEX */
-        /* End of packet header position. Currently only represents the distance to start of packet
-        // Will be updated later by incrementing with packet start value*/
-        if(pack_info) {
-                pack_info->end_ph_pos = (int)(hd - src);
-        }
-        /* INDEX >> */
-        
-        if (cp->ppm==1) {
-                cp->ppm_len+=cp->ppm_data-hd;
-                cp->ppm_data = hd;
-        } else if (tcp->ppt == 1) {
-                tcp->ppt_len+=tcp->ppt_data-hd;
-                tcp->ppt_data = hd;
-        } else {
-                c=hd;
-        }
-        
-        for (bandno = 0; bandno < res->numbands; bandno++) {
-                opj_tcd_band_t *band = &res->bands[bandno];
-                opj_tcd_precinct_t *prc = &band->precincts[precno];
-                
-                if ((band->x1-band->x0 == 0)||(band->y1-band->y0 == 0)) continue;
-                
-                for (cblkno = 0; cblkno < prc->cw * prc->ch; cblkno++) {
-                        opj_tcd_cblk_dec_t* cblk = &prc->cblks.dec[cblkno];
-                        opj_tcd_seg_t *seg = NULL;
-                        if (!cblk->numnewpasses)
-                                continue;
-                        if (!cblk->numsegs) {
-                                seg = &cblk->segs[0];
-                                cblk->numsegs++;
-                                cblk->len = 0;
-                        } else {
-                                seg = &cblk->segs[cblk->numsegs - 1];
-                                if (seg->numpasses == seg->maxpasses) {
-                                        seg++;
-                                        cblk->numsegs++;
-                                }
-                        }
-                        
-                        do {
-                                unsigned char * new_data;
-                                if (c + seg->newlen > src + len) {
-                                        return -999;
-                                }
-
-#ifdef USE_JPWL
-                        /* we need here a j2k handle to verify if making a check to
-                        the validity of cblocks parameters is selected from user (-W) */
-
-                                /* let's check that we are not exceeding */
-                                if ((cblk->len + seg->newlen) > 8192) {
-                                        opj_event_msg(t2->cinfo, EVT_WARNING,
-                                                "JPWL: segment too long (%d) for codeblock %d (p=%d, b=%d, r=%d, c=%d)\n",
-                                                seg->newlen, cblkno, precno, bandno, resno, compno);
-                                        if (!JPWL_ASSUME) {
-                                                opj_event_msg(t2->cinfo, EVT_ERROR, "JPWL: giving up\n");
-                                                return -999;
-                                        }
-                                        seg->newlen = 8192 - cblk->len;
-                                        opj_event_msg(t2->cinfo, EVT_WARNING, "      - truncating segment to %d\n", seg->newlen);
-                                        break;
-                                };
-
-#endif /* USE_JPWL */
-                                
-                                new_data = (unsigned char*) opj_realloc(cblk->data, (cblk->len + seg->newlen) * sizeof(unsigned char));
-                                if (! new_data) {
-                                        opj_event_msg(t2->cinfo, EVT_ERROR, "JPWL: Not enough memory for codeblock data %d (p=%d, b=%d, r=%d, c=%d)\n",
-                                                        seg->newlen, cblkno, precno, bandno, resno, compno);
-                                        cblk->data = 0;
-                                        cblk->len  = 0; /* TODO: LH: other things to reset ?*/
-                                        opj_free(cblk->data);
-                                        return -999;
-                                }
-                                cblk->data = new_data;
-                                memcpy(cblk->data + cblk->len, c, seg->newlen);
-                                if (seg->numpasses == 0) {
-                                        seg->data = &cblk->data;
-                                        seg->dataindex = cblk->len;
-                                }
-                                c += seg->newlen;
-                                cblk->len += seg->newlen;
-                                seg->len += seg->newlen;
-                                seg->numpasses += seg->numnewpasses;
-                                cblk->numnewpasses -= seg->numnewpasses;
-                                if (cblk->numnewpasses > 0) {
-                                        seg++;
-                                        cblk->numsegs++;
-                                }
-                        } while (cblk->numnewpasses > 0);
-                }
-        }
-        
-        return (c - src);
-}
 
 /* ----------------------------------------------------------------------- */
 
@@ -658,100 +350,13 @@ opj_bool opj_t2_encode_packets( opj_t2_v2_t* p_t2,
         return OPJ_TRUE;
 }
 
-
-int t2_decode_packets(opj_t2_t *t2, unsigned char *src, int len, int tileno, opj_tcd_tile_t *tile, opj_codestream_info_t *cstr_info) {
-        unsigned char *c = src;
-        opj_pi_iterator_t *pi;
-        int pino, e = 0;
-        int n = 0, curtp = 0;
-        int tp_start_packno;
-
-        opj_image_t *image = t2->image;
-        opj_cp_t *cp = t2->cp;
-        
-        /* create a packet iterator */
-        pi = pi_create_decode(image, cp, tileno);
-        if(!pi) {
-                /* TODO: throw an error */
-                return -999;
-        }
-
-        tp_start_packno = 0;
-        
-        for (pino = 0; pino <= cp->tcps[tileno].numpocs; pino++) {
-                while (pi_next(&pi[pino])) {
-                        if ((cp->layer==0) || (cp->layer>=((pi[pino].layno)+1))) {
-                                opj_packet_info_t *pack_info;
-                                if (cstr_info)
-                                        pack_info = &cstr_info->tile[tileno].packet[cstr_info->packno];
-                                else
-                                        pack_info = NULL;
-                                e = t2_decode_packet(t2, c, src + len - c, tile, &cp->tcps[tileno], &pi[pino], pack_info);
-                        } else {
-                                e = 0;
-                        }
-                        if(e == -999) return -999;
-                        /* progression in resolution */
-                        image->comps[pi[pino].compno].resno_decoded =   
-                                (e > 0) ? 
-                                int_max(pi[pino].resno, image->comps[pi[pino].compno].resno_decoded) 
-                                : image->comps[pi[pino].compno].resno_decoded;
-                        n++;
-
-                        /* INDEX >> */
-                        if(cstr_info) {
-                                opj_tile_info_t *info_TL = &cstr_info->tile[tileno];
-                                opj_packet_info_t *info_PK = &info_TL->packet[cstr_info->packno];
-                                if (!cstr_info->packno) {
-                                        info_PK->start_pos = info_TL->end_header + 1;
-                                } else if (info_TL->packet[cstr_info->packno-1].end_pos >= (int)cstr_info->tile[tileno].tp[curtp].tp_end_pos){ /* New tile part*/
-                                        info_TL->tp[curtp].tp_numpacks = cstr_info->packno - tp_start_packno; /* Number of packets in previous tile-part*/
-          info_TL->tp[curtp].tp_start_pack = tp_start_packno;
-                                        tp_start_packno = cstr_info->packno;
-                                        curtp++;
-                                        info_PK->start_pos = cstr_info->tile[tileno].tp[curtp].tp_end_header+1;
-                                } else {
-                                        info_PK->start_pos = (cp->tp_on && info_PK->start_pos) ? info_PK->start_pos : info_TL->packet[cstr_info->packno - 1].end_pos + 1;
-                                }
-                                info_PK->end_pos = info_PK->start_pos + e - 1;
-                                info_PK->end_ph_pos += info_PK->start_pos - 1;  /* End of packet header which now only represents the distance 
-                                                                                                                                                                                                                                // to start of packet is incremented by value of start of packet*/
-                                cstr_info->packno++;
-                        }
-                        /* << INDEX */
-                        
-                        if (e == -999) {                /* ADD */
-                                break;
-                        } else {
-                                c += e;
-                        }                       
-                }
-        }
-        /* INDEX >> */
-        if(cstr_info) {
-                cstr_info->tile[tileno].tp[curtp].tp_numpacks = cstr_info->packno - tp_start_packno; /* Number of packets in last tile-part*/
-    cstr_info->tile[tileno].tp[curtp].tp_start_pack = tp_start_packno;
-        }
-        /* << INDEX */
-
-        /* don't forget to release pi */
-        pi_destroy(pi, cp, tileno);
-        
-        if (e == -999) {
-                return e;
-        }
-        
-        return (c - src);
-}
-
-opj_bool t2_decode_packets_v2(
-                                                opj_t2_v2_t *p_t2,
-                                                OPJ_UINT32 p_tile_no,
-                                                struct opj_tcd_tile_v2 *p_tile,
-                                                OPJ_BYTE *p_src,
-                                                OPJ_UINT32 * p_data_read,
-                                                OPJ_UINT32 p_max_len,
-                                                opj_codestream_index_t *p_cstr_index)
+opj_bool opj_t2_decode_packets( opj_t2_v2_t *p_t2,
+                                OPJ_UINT32 p_tile_no,
+                                opj_tcd_tile_v2_t *p_tile,
+                                OPJ_BYTE *p_src,
+                                OPJ_UINT32 * p_data_read,
+                                OPJ_UINT32 p_max_len,
+                                opj_codestream_index_t *p_cstr_index)
 {
         OPJ_BYTE *l_current_data = p_src;
         opj_pi_iterator_t *l_pi = 00;
@@ -802,7 +407,7 @@ opj_bool t2_decode_packets_v2(
 
                                 first_pass_failed[l_current_pi->compno] = OPJ_FALSE;
 
-                                if (! t2_decode_packet_v2(p_t2,p_tile,l_tcp,l_current_pi,l_current_data,&l_nb_bytes_read,p_max_len,l_pack_info)) {
+                                if (! opj_t2_decode_packet(p_t2,p_tile,l_tcp,l_current_pi,l_current_data,&l_nb_bytes_read,p_max_len,l_pack_info)) {
                                         pi_destroy_v2(l_pi,l_nb_pocs);
                                         return OPJ_FALSE;
                                 }
@@ -892,28 +497,20 @@ opj_t2_v2_t* opj_t2_create(opj_image_t *p_image, opj_cp_v2_t *p_cp)
         return l_t2;
 }
 
-void t2_destroy(opj_t2_t *t2) {
+void opj_t2_destroy(opj_t2_v2_t *t2) {
         if(t2) {
                 opj_free(t2);
         }
 }
 
-void t2_destroy_v2(opj_t2_v2_t *t2) {
-        if(t2) {
-                opj_free(t2);
-        }
-}
-
-
-static opj_bool t2_decode_packet_v2(
-                                                         opj_t2_v2_t* p_t2,
-                                                         opj_tcd_tile_v2_t *p_tile,
-                             opj_tcp_v2_t *p_tcp,
-                                                         opj_pi_iterator_t *p_pi,
-                                                         OPJ_BYTE *p_src,
-                                                         OPJ_UINT32 * p_data_read,
-                                                         OPJ_UINT32 p_max_length,
-                                                         opj_packet_info_t *p_pack_info)
+opj_bool opj_t2_decode_packet(  opj_t2_v2_t* p_t2,
+                                opj_tcd_tile_v2_t *p_tile,
+                                opj_tcp_v2_t *p_tcp,
+                                opj_pi_iterator_t *p_pi,
+                                OPJ_BYTE *p_src,
+                                OPJ_UINT32 * p_data_read,
+                                OPJ_UINT32 p_max_length,
+                                opj_packet_info_t *p_pack_info)
 {
         opj_bool l_read_data;
         OPJ_UINT32 l_nb_bytes_read = 0;
