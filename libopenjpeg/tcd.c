@@ -493,7 +493,7 @@ opj_bool opj_tcd_rateallocate(  opj_tcd_v2_t *tcd,
 
                                 if (cp->m_specific_param.m_enc.m_fixed_quality) {       /* fixed_quality */
                                         if(cp->m_specific_param.m_enc.m_cinema){
-                                                if (! t2_encode_packets_v2(t2,tcd->tcd_tileno, tcd_tile, layno + 1, dest, p_data_written, maxlen, cstr_info,tcd->cur_tp_num,tcd->tp_pos,tcd->cur_pino,THRESH_CALC)) {
+                                                if (! opj_t2_encode_packets(t2,tcd->tcd_tileno, tcd_tile, layno + 1, dest, p_data_written, maxlen, cstr_info,tcd->cur_tp_num,tcd->tp_pos,tcd->cur_pino,THRESH_CALC)) {
 
                                                         lo = thresh;
                                                         continue;
@@ -522,7 +522,7 @@ opj_bool opj_tcd_rateallocate(  opj_tcd_v2_t *tcd,
                                                 lo = thresh;
                                         }
                                 } else {
-                                        if (! t2_encode_packets_v2(t2, tcd->tcd_tileno, tcd_tile, layno + 1, dest,p_data_written, maxlen, cstr_info,tcd->cur_tp_num,tcd->tp_pos,tcd->cur_pino,THRESH_CALC))
+                                        if (! opj_t2_encode_packets(t2, tcd->tcd_tileno, tcd_tile, layno + 1, dest,p_data_written, maxlen, cstr_info,tcd->cur_tp_num,tcd->tp_pos,tcd->cur_pino,THRESH_CALC))
                                         {
                                                 /* TODO: what to do with l ??? seek / tell ??? */
                                                 /* opj_event_msg(tcd->cinfo, EVT_INFO, "rate alloc: len=%d, max=%d\n", l, maxlen); */
@@ -1965,7 +1965,7 @@ opj_bool opj_tcd_t2_encode (opj_tcd_v2_t *p_tcd,
                 return OPJ_FALSE;
         }
 
-        if (! t2_encode_packets_v2(
+        if (! opj_t2_encode_packets(
                                         l_t2,
                                         p_tcd->tcd_tileno,
                                         p_tcd->tcd_image->tiles,

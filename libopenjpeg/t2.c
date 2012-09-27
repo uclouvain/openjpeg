@@ -47,18 +47,6 @@ Variable length code for signalling delta Zil (truncation point)
 */
 static void opj_t2_putnumpasses(opj_bio_t *bio, OPJ_UINT32 n);
 static OPJ_UINT32 opj_t2_getnumpasses(opj_bio_t *bio);
-/**
-Encode a packet of a tile to a destination buffer
-@param tile Tile for which to write the packets
-@param tcp Tile coding parameters
-@param pi Packet identity
-@param dest Destination buffer
-@param len Length of the destination buffer
-@param cstr_info Codestream information structure 
-@param tileno Number of the tile encoded
-@return 
-*/
-static int t2_encode_packet(opj_tcd_tile_t *tile, opj_tcp_t *tcp, opj_pi_iterator_t *pi, unsigned char *dest, int len, opj_codestream_info_t *cstr_info, int tileno);
 
 /**
 Encode a packet of a tile to a destination buffer
@@ -221,173 +209,6 @@ OPJ_UINT32 opj_t2_getnumpasses(opj_bio_t *bio) {
         if ((n = bio_read(bio, 5)) != 31)
                 return (6 + n);
         return (37 + bio_read(bio, 7));
-}
-
-static int t2_encode_packet(opj_tcd_tile_t * tile, opj_tcp_t * tcp, opj_pi_iterator_t *pi, unsigned char *dest, int length, opj_codestream_info_t *cstr_info, int tileno) {
-        int bandno, cblkno;
-        unsigned char *c = dest;
-
-        int compno = pi->compno;        /* component value */
-        int resno  = pi->resno;         /* resolution level value */
-        int precno = pi->precno;        /* precinct value */
-        int layno  = pi->layno;         /* quality layer value */
-
-        opj_tcd_tilecomp_t *tilec = &tile->comps[compno];
-        opj_tcd_resolution_t *res = &tilec->resolutions[resno];
-        
-        opj_bio_t *bio = NULL;  /* BIO component */
-        
-        /* <SOP 0xff91> */
-        if (tcp->csty & J2K_CP_CSTY_SOP) {
-                c[0] = 255;
-                c[1] = 145;
-                c[2] = 0;
-                c[3] = 4;
-                c[4] = (unsigned char)((tile->packno % 65536) / 256);
-                c[5] = (unsigned char)((tile->packno % 65536) % 256);
-                c += 6;
-        }
-        /* </SOP> */
-        
-        if (!layno) {
-                for (bandno = 0; bandno < res->numbands; bandno++) {
-                        opj_tcd_band_t *band = &res->bands[bandno];
-                        opj_tcd_precinct_t *prc = &band->precincts[precno];
-                        tgt_reset(prc->incltree);
-                        tgt_reset(prc->imsbtree);
-                        for (cblkno = 0; cblkno < prc->cw * prc->ch; cblkno++) {
-                                opj_tcd_cblk_enc_t* cblk = &prc->cblks.enc[cblkno];
-                                cblk->numpasses = 0;
-                                tgt_setvalue(prc->imsbtree, cblkno, band->numbps - cblk->numbps);
-                        }
-                }
-        }
-        
-        bio = bio_create();
-        bio_init_enc(bio, c, length);
-        bio_write(bio, 1, 1);           /* Empty header bit */
-        
-        /* Writing Packet header */
-        for (bandno = 0; bandno < res->numbands; bandno++) {
-                opj_tcd_band_t *band = &res->bands[bandno];
-                opj_tcd_precinct_t *prc = &band->precincts[precno];
-                for (cblkno = 0; cblkno < prc->cw * prc->ch; cblkno++) {
-                        opj_tcd_cblk_enc_t* cblk = &prc->cblks.enc[cblkno];
-                        opj_tcd_layer_t *layer = &cblk->layers[layno];
-                        if (!cblk->numpasses && layer->numpasses) {
-                                tgt_setvalue(prc->incltree, cblkno, layno);
-                        }
-                }
-                for (cblkno = 0; cblkno < prc->cw * prc->ch; cblkno++) {
-                        opj_tcd_cblk_enc_t* cblk = &prc->cblks.enc[cblkno];
-                        opj_tcd_layer_t *layer = &cblk->layers[layno];
-                        int increment = 0;
-                        int nump = 0;
-                        int len = 0, passno;
-                        /* cblk inclusion bits */
-                        if (!cblk->numpasses) {
-                                tgt_encode(bio, prc->incltree, cblkno, layno + 1);
-                        } else {
-                                bio_write(bio, layer->numpasses != 0, 1);
-                        }
-                        /* if cblk not included, go to the next cblk  */
-                        if (!layer->numpasses) {
-                                continue;
-                        }
-                        /* if first instance of cblk --> zero bit-planes information */
-                        if (!cblk->numpasses) {
-                                cblk->numlenbits = 3;
-                                tgt_encode(bio, prc->imsbtree, cblkno, 999);
-                        }
-                        /* number of coding passes included */
-                        opj_t2_putnumpasses(bio, layer->numpasses);
-                        
-                        /* computation of the increase of the length indicator and insertion in the header     */
-                        for (passno = cblk->numpasses; passno < cblk->numpasses + layer->numpasses; passno++) {
-                                opj_tcd_pass_t *pass = &cblk->passes[passno];
-                                nump++;
-                                len += pass->len;
-                                if (pass->term || passno == (cblk->numpasses + layer->numpasses) - 1) {
-                                        increment = int_max(increment, int_floorlog2(len) + 1 - (cblk->numlenbits + int_floorlog2(nump)));
-                                        len = 0;
-                                        nump = 0;
-                                }
-                        }
-                        t2_putcommacode(bio, increment);
-
-                        /* computation of the new Length indicator */
-                        cblk->numlenbits += increment;
-
-                        /* insertion of the codeword segment length */
-                        for (passno = cblk->numpasses; passno < cblk->numpasses + layer->numpasses; passno++) {
-                                opj_tcd_pass_t *pass = &cblk->passes[passno];
-                                nump++;
-                                len += pass->len;
-                                if (pass->term || passno == (cblk->numpasses + layer->numpasses) - 1) {
-                                        bio_write(bio, len, cblk->numlenbits + int_floorlog2(nump));
-                                        len = 0;
-                                        nump = 0;
-                                }
-                        }
-                }
-        }
-
-        if (bio_flush(bio)) {
-                bio_destroy(bio);
-                return -999;            /* modified to eliminate longjmp !! */
-        }
-
-        c += bio_numbytes(bio);
-        bio_destroy(bio);
-        
-        /* <EPH 0xff92> */
-        if (tcp->csty & J2K_CP_CSTY_EPH) {
-                c[0] = 255;
-                c[1] = 146;
-                c += 2;
-        }
-        /* </EPH> */
-
-        /* << INDEX */
-        /* End of packet header position. Currently only represents the distance to start of packet
-        // Will be updated later by incrementing with packet start value */
-        if(cstr_info && cstr_info->index_write) {
-                opj_packet_info_t *info_PK = &cstr_info->tile[tileno].packet[cstr_info->packno];
-                info_PK->end_ph_pos = (int)(c - dest);
-        }
-        /* INDEX >> */
-        
-        /* Writing the packet body */
-        
-        for (bandno = 0; bandno < res->numbands; bandno++) {
-                opj_tcd_band_t *band = &res->bands[bandno];
-                opj_tcd_precinct_t *prc = &band->precincts[precno];
-                for (cblkno = 0; cblkno < prc->cw * prc->ch; cblkno++) {
-                        opj_tcd_cblk_enc_t* cblk = &prc->cblks.enc[cblkno];
-                        opj_tcd_layer_t *layer = &cblk->layers[layno];
-                        if (!layer->numpasses) {
-                                continue;
-                        }
-                        if (c + layer->len > dest + length) {
-                                return -999;
-                        }
-                        
-                        memcpy(c, layer->data, layer->len);
-                        cblk->numpasses += layer->numpasses;
-                        c += layer->len;
-                        /* << INDEX */ 
-                        if(cstr_info && cstr_info->index_write) {
-                                opj_packet_info_t *info_PK = &cstr_info->tile[tileno].packet[cstr_info->packno];
-                                info_PK->disto += layer->disto;
-                                if (cstr_info->D_max < info_PK->disto) {
-                                        cstr_info->D_max = info_PK->disto;
-                                }
-                        }
-                        /* INDEX >> */
-                }
-        }
-        
-        return (c - dest);
 }
 
 static opj_bool t2_init_seg(opj_tcd_cblk_dec_t* cblk, int index, int cblksty, int first) {
@@ -716,110 +537,18 @@ static int t2_decode_packet(opj_t2_t* t2, unsigned char *src, int len, opj_tcd_t
 
 /* ----------------------------------------------------------------------- */
 
-int t2_encode_packets(opj_t2_t* t2,int tileno, opj_tcd_tile_t *tile, int maxlayers, unsigned char *dest, int len, opj_codestream_info_t *cstr_info,int tpnum, int tppos,int pino, J2K_T2_MODE t2_mode, int cur_totnum_tp){
-        unsigned char *c = dest;
-        int e = 0;
-        int compno;
-        opj_pi_iterator_t *pi = NULL;
-        int poc;
-        opj_image_t *image = t2->image;
-        opj_cp_t *cp = t2->cp;
-        opj_tcp_t *tcp = &cp->tcps[tileno];
-        int pocno = cp->cinema == CINEMA4K_24? 2: 1;
-        int maxcomp = cp->max_comp_size > 0 ? image->numcomps : 1;
-        
-        pi = pi_initialise_encode(image, cp, tileno, t2_mode);
-        if(!pi) {
-                /* TODO: throw an error */
-                return -999;
-        }
-        
-        if(t2_mode == THRESH_CALC ){ /* Calculating threshold */
-                for(compno = 0; compno < maxcomp; compno++ ){
-                        for(poc = 0; poc < pocno ; poc++){
-                                int comp_len = 0;
-                                int tpnum = compno;
-                                if (pi_create_encode(pi, cp,tileno,poc,tpnum,tppos,t2_mode,cur_totnum_tp)) {
-                                        opj_event_msg(t2->cinfo, EVT_ERROR, "Error initializing Packet Iterator\n");
-                                        pi_destroy(pi, cp, tileno);
-                                        return -999;
-                                }
-                                while (pi_next(&pi[poc])) {
-                                        if (pi[poc].layno < maxlayers) {
-                                                e = t2_encode_packet(tile, &cp->tcps[tileno], &pi[poc], c, dest + len - c, cstr_info, tileno);
-                                                comp_len = comp_len + e;
-                                                if (e == -999) {
-                                                        break;
-                                                } else {
-                                                        c += e;
-                                                }
-                                        }
-                                }
-                                if (e == -999) break;
-                                if (cp->max_comp_size){
-                                        if (comp_len > cp->max_comp_size){
-                                                e = -999;
-                                                break;
-                                        }
-                                }
-                        }
-                        if (e == -999)  break;
-                }
-        }else{  /* t2_mode == FINAL_PASS  */
-                pi_create_encode(pi, cp,tileno,pino,tpnum,tppos,t2_mode,cur_totnum_tp);
-                while (pi_next(&pi[pino])) {
-                        if (pi[pino].layno < maxlayers) {
-                                e = t2_encode_packet(tile, &cp->tcps[tileno], &pi[pino], c, dest + len - c, cstr_info, tileno);
-                                if (e == -999) {
-                                        break;
-                                } else {
-                                        c += e;
-                                }
-                                /* INDEX >> */
-                                if(cstr_info) {
-                                        if(cstr_info->index_write) {
-                                                opj_tile_info_t *info_TL = &cstr_info->tile[tileno];
-                                                opj_packet_info_t *info_PK = &info_TL->packet[cstr_info->packno];
-                                                if (!cstr_info->packno) {
-                                                        info_PK->start_pos = info_TL->end_header + 1;
-                                                } else {
-                                                        info_PK->start_pos = ((cp->tp_on | tcp->POC)&& info_PK->start_pos) ? info_PK->start_pos : info_TL->packet[cstr_info->packno - 1].end_pos + 1;
-                                                }
-                                                info_PK->end_pos = info_PK->start_pos + e - 1;
-                                                info_PK->end_ph_pos += info_PK->start_pos - 1;  /* End of packet header which now only represents the distance 
-                                                                                                                                                                                                                                                // to start of packet is incremented by value of start of packet*/
-                                        }
-                                        
-                                        cstr_info->packno++;
-                                }
-                                /* << INDEX */
-                                tile->packno++;
-                        }
-                }
-        }
-        
-        pi_destroy(pi, cp, tileno);
-        
-        if (e == -999) {
-                return e;
-        }
-        
-  return (c - dest);
-}
-
-opj_bool t2_encode_packets_v2(
-                                           opj_t2_v2_t* p_t2,
-                                           OPJ_UINT32 p_tile_no,
-                                           opj_tcd_tile_v2_t *p_tile,
-                                           OPJ_UINT32 p_maxlayers,
-                                           OPJ_BYTE *p_dest,
-                                           OPJ_UINT32 * p_data_written,
-                                           OPJ_UINT32 p_max_len,
-                                           opj_codestream_info_t *cstr_info,
-                                           OPJ_UINT32 p_tp_num,
-                                           OPJ_INT32 p_tp_pos,
-                                           OPJ_UINT32 p_pino,
-                                           J2K_T2_MODE p_t2_mode)
+opj_bool opj_t2_encode_packets( opj_t2_v2_t* p_t2,
+                                OPJ_UINT32 p_tile_no,
+                                opj_tcd_tile_v2_t *p_tile,
+                                OPJ_UINT32 p_maxlayers,
+                                OPJ_BYTE *p_dest,
+                                OPJ_UINT32 * p_data_written,
+                                OPJ_UINT32 p_max_len,
+                                opj_codestream_info_t *cstr_info,
+                                OPJ_UINT32 p_tp_num,
+                                OPJ_INT32 p_tp_pos,
+                                OPJ_UINT32 p_pino,
+                                J2K_T2_MODE p_t2_mode)
 {
         OPJ_BYTE *l_current_data = p_dest;
         OPJ_UINT32 l_nb_bytes = 0;
@@ -851,6 +580,7 @@ opj_bool t2_encode_packets_v2(
                         for (poc = 0; poc < pocno ; ++poc) {
                                 OPJ_UINT32 l_tp_num = compno;
 
+                                // TODO MSD : check why this function cannot fail (cf. v1)
                                 pi_create_encode_v2(l_pi, l_cp,p_tile_no,poc,l_tp_num,p_tp_pos,p_t2_mode);
 
                                 while (pi_next(l_current_pi)) {
