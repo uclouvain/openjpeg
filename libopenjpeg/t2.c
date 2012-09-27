@@ -561,7 +561,7 @@ opj_bool opj_t2_encode_packet(  OPJ_UINT32 tileno,
                 }
         }
 
-        bio = bio_create();
+        bio = opj_bio_create();
         bio_init_enc(bio, c, length);
         bio_write(bio, 1, 1);           /* Empty header bit */
 
@@ -654,7 +654,7 @@ opj_bool opj_t2_encode_packet(  OPJ_UINT32 tileno,
         }
 
         if (bio_flush(bio)) {
-                bio_destroy(bio);
+                opj_bio_destroy(bio);
                 return OPJ_FALSE;               /* modified to eliminate longjmp !! */
         }
 
@@ -662,7 +662,7 @@ opj_bool opj_t2_encode_packet(  OPJ_UINT32 tileno,
         c += l_nb_bytes;
         length -= l_nb_bytes;
 
-        bio_destroy(bio);
+        opj_bio_destroy(bio);
 
         /* <EPH 0xff92> */
         if (tcp->csty & J2K_CP_CSTY_EPH) {
@@ -839,7 +839,7 @@ opj_bool opj_t2_read_packet_header( opj_t2_v2_t* p_t2,
         step 2: Return to codestream for decoding
         */
 
-        l_bio = bio_create();
+        l_bio = opj_bio_create();
         if (! l_bio) {
                 return OPJ_FALSE;
         }
@@ -868,7 +868,7 @@ opj_bool opj_t2_read_packet_header( opj_t2_v2_t* p_t2,
         if (!l_present) {
                 bio_inalign(l_bio);
                 l_header_data += bio_numbytes(l_bio);
-                bio_destroy(l_bio);
+                opj_bio_destroy(l_bio);
 
                 /* EPH markers */
                 if (p_tcp->csty & J2K_CP_CSTY_EPH) {
@@ -949,7 +949,7 @@ opj_bool opj_t2_read_packet_header( opj_t2_v2_t* p_t2,
 
                         if (!l_cblk->numsegs) {
                                 if (! opj_t2_init_seg(l_cblk, l_segno, p_tcp->tccps[p_pi->compno].cblksty, 1)) {
-                                        bio_destroy(l_bio);
+                                        opj_bio_destroy(l_bio);
                                         return OPJ_FALSE;
                                 }
                         }
@@ -958,7 +958,7 @@ opj_bool opj_t2_read_packet_header( opj_t2_v2_t* p_t2,
                                 if (l_cblk->segs[l_segno].numpasses == l_cblk->segs[l_segno].maxpasses) {
                                         ++l_segno;
                                         if (! opj_t2_init_seg(l_cblk, l_segno, p_tcp->tccps[p_pi->compno].cblksty, 0)) {
-                                                bio_destroy(l_bio);
+                                                opj_bio_destroy(l_bio);
                                                 return OPJ_FALSE;
                                         }
                                 }
@@ -974,7 +974,7 @@ opj_bool opj_t2_read_packet_header( opj_t2_v2_t* p_t2,
                                         ++l_segno;
 
                                         if (! opj_t2_init_seg(l_cblk, l_segno, p_tcp->tccps[p_pi->compno].cblksty, 0)) {
-                                                bio_destroy(l_bio);
+                                                opj_bio_destroy(l_bio);
                                                 return OPJ_FALSE;
                                         }
                                 }
@@ -987,12 +987,12 @@ opj_bool opj_t2_read_packet_header( opj_t2_v2_t* p_t2,
         }
 
         if (bio_inalign(l_bio)) {
-                bio_destroy(l_bio);
+                opj_bio_destroy(l_bio);
                 return OPJ_FALSE;
         }
 
         l_header_data += bio_numbytes(l_bio);
-        bio_destroy(l_bio);
+        opj_bio_destroy(l_bio);
 
         /* EPH markers */
         if (p_tcp->csty & J2K_CP_CSTY_EPH) {

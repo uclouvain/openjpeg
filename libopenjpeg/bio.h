@@ -67,12 +67,12 @@ typedef struct opj_bio {
 Create a new BIO handle 
 @return Returns a new BIO handle if successful, returns NULL otherwise
 */
-opj_bio_t* bio_create(void);
+opj_bio_t* opj_bio_create(void);
 /**
 Destroy a previously created BIO handle
 @param bio BIO handle to destroy
 */
-void bio_destroy(opj_bio_t *bio);
+void opj_bio_destroy(opj_bio_t *bio);
 /**
 Number of bytes written.
 @param bio BIO handle
