@@ -60,23 +60,14 @@ Encode a packet of a tile to a destination buffer
 @param cstr_info Codestream information structure
 @return
 */
-static opj_bool t2_encode_packet_v2(
-                                                         OPJ_UINT32 tileno,
-                                                         opj_tcd_tile_v2_t *tile,
-                                                         opj_tcp_v2_t *tcp,
-                                                         opj_pi_iterator_t *pi,
-                                                         OPJ_BYTE *dest,
-                                                         OPJ_UINT32 * p_data_written,
-                                                         OPJ_UINT32 len,
-                                                         opj_codestream_info_t *cstr_info);
-
-/**
-@param cblk
-@param index
-@param cblksty
-@param first
-*/
-static opj_bool t2_init_seg(opj_tcd_cblk_dec_t* cblk, int index, int cblksty, int first);
+static opj_bool opj_t2_encode_packet(   OPJ_UINT32 tileno,
+                                        opj_tcd_tile_v2_t *tile,
+                                        opj_tcp_v2_t *tcp,
+                                        opj_pi_iterator_t *pi,
+                                        OPJ_BYTE *dest,
+                                        OPJ_UINT32 * p_data_written,
+                                        OPJ_UINT32 len,
+                                        opj_codestream_info_t *cstr_info);
 
 /**
 Decode a packet of a tile from a source buffer
@@ -140,10 +131,10 @@ static opj_bool opj_t2_skip_packet_data(opj_t2_v2_t* p_t2,
 @param cblksty
 @param first
 */
-static opj_bool t2_init_seg_v2( opj_tcd_cblk_dec_v2_t* cblk,
-                                                                OPJ_UINT32 index,
-                                                                OPJ_UINT32 cblksty,
-                                                                OPJ_UINT32 first);
+static opj_bool opj_t2_init_seg(    opj_tcd_cblk_dec_v2_t* cblk,
+                                    OPJ_UINT32 index,
+                                    OPJ_UINT32 cblksty,
+                                    OPJ_UINT32 first);
 
 /*@}*/
 
@@ -195,37 +186,6 @@ OPJ_UINT32 opj_t2_getnumpasses(opj_bio_t *bio) {
                 return (6 + n);
         return (37 + bio_read(bio, 7));
 }
-
-static opj_bool t2_init_seg(opj_tcd_cblk_dec_t* cblk, int index, int cblksty, int first) {
-        opj_tcd_seg_t* seg;
-        opj_tcd_seg_t* new_segs = (opj_tcd_seg_t*) opj_realloc(cblk->segs, (index + 1) * sizeof(opj_tcd_seg_t));
-        if (!new_segs) {
-                /* opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory to init segment #%d\n", index); */
-                /* TODO: tell cblk has no segment (in order to update the range of valid indices)*/
-                cblk->segs = NULL;
-                return OPJ_FALSE;
-        }
-        cblk->segs = new_segs;
-        seg = &cblk->segs[index];
-        seg->data = NULL;
-        seg->dataindex = 0;
-        seg->numpasses = 0;
-        seg->len = 0;
-        if (cblksty & J2K_CCP_CBLKSTY_TERMALL) {
-                seg->maxpasses = 1;
-        }
-        else if (cblksty & J2K_CCP_CBLKSTY_LAZY) {
-                if (first) {
-                        seg->maxpasses = 10;
-                } else {
-                        seg->maxpasses = (((seg - 1)->maxpasses == 1) || ((seg - 1)->maxpasses == 10)) ? 2 : 1;
-                }
-        } else {
-                seg->maxpasses = 109;
-        }
-        return OPJ_TRUE;
-}
-
 
 /* ----------------------------------------------------------------------- */
 
@@ -279,7 +239,7 @@ opj_bool opj_t2_encode_packets( opj_t2_v2_t* p_t2,
                                         if (l_current_pi->layno < p_maxlayers) {
                                                 l_nb_bytes = 0;
 
-                                                if (! t2_encode_packet_v2(p_tile_no,p_tile, l_tcp, l_current_pi, l_current_data, &l_nb_bytes, p_max_len, cstr_info)) {
+                                                if (! opj_t2_encode_packet(p_tile_no,p_tile, l_tcp, l_current_pi, l_current_data, &l_nb_bytes, p_max_len, cstr_info)) {
                                                         pi_destroy_v2(l_pi, l_nb_pocs);
                                                         return OPJ_FALSE;
                                                 }
@@ -312,7 +272,7 @@ opj_bool opj_t2_encode_packets( opj_t2_v2_t* p_t2,
                         if (l_current_pi->layno < p_maxlayers) {
                                 l_nb_bytes=0;
 
-                                if (! t2_encode_packet_v2(p_tile_no,p_tile, l_tcp, l_current_pi, l_current_data, &l_nb_bytes, p_max_len, cstr_info)) {
+                                if (! opj_t2_encode_packet(p_tile_no,p_tile, l_tcp, l_current_pi, l_current_data, &l_nb_bytes, p_max_len, cstr_info)) {
                                         pi_destroy_v2(l_pi, l_nb_pocs);
                                         return OPJ_FALSE;
                                 }
@@ -542,15 +502,14 @@ opj_bool opj_t2_decode_packet(  opj_t2_v2_t* p_t2,
         return OPJ_TRUE;
 }
 
-static opj_bool t2_encode_packet_v2(
-                                                         OPJ_UINT32 tileno,
-                                                         opj_tcd_tile_v2_t * tile,
-                                                         opj_tcp_v2_t * tcp,
-                                                         opj_pi_iterator_t *pi,
-                                                         OPJ_BYTE *dest,
-                                                         OPJ_UINT32 * p_data_written,
-                                                         OPJ_UINT32 length,
-                                                         opj_codestream_info_t *cstr_info)
+opj_bool opj_t2_encode_packet(  OPJ_UINT32 tileno,
+                                opj_tcd_tile_v2_t * tile,
+                                opj_tcp_v2_t * tcp,
+                                opj_pi_iterator_t *pi,
+                                OPJ_BYTE *dest,
+                                OPJ_UINT32 * p_data_written,
+                                OPJ_UINT32 length,
+                                opj_codestream_info_t *cstr_info)
 {
         OPJ_UINT32 bandno, cblkno;
         OPJ_BYTE *c = dest;
@@ -989,7 +948,7 @@ opj_bool opj_t2_read_packet_header( opj_t2_v2_t* p_t2,
                         l_segno = 0;
 
                         if (!l_cblk->numsegs) {
-                                if (! t2_init_seg_v2(l_cblk, l_segno, p_tcp->tccps[p_pi->compno].cblksty, 1)) {
+                                if (! opj_t2_init_seg(l_cblk, l_segno, p_tcp->tccps[p_pi->compno].cblksty, 1)) {
                                         bio_destroy(l_bio);
                                         return OPJ_FALSE;
                                 }
@@ -998,7 +957,7 @@ opj_bool opj_t2_read_packet_header( opj_t2_v2_t* p_t2,
                                 l_segno = l_cblk->numsegs - 1;
                                 if (l_cblk->segs[l_segno].numpasses == l_cblk->segs[l_segno].maxpasses) {
                                         ++l_segno;
-                                        if (! t2_init_seg_v2(l_cblk, l_segno, p_tcp->tccps[p_pi->compno].cblksty, 0)) {
+                                        if (! opj_t2_init_seg(l_cblk, l_segno, p_tcp->tccps[p_pi->compno].cblksty, 0)) {
                                                 bio_destroy(l_bio);
                                                 return OPJ_FALSE;
                                         }
@@ -1014,7 +973,7 @@ opj_bool opj_t2_read_packet_header( opj_t2_v2_t* p_t2,
                                 if (n > 0) {
                                         ++l_segno;
 
-                                        if (! t2_init_seg_v2(l_cblk, l_segno, p_tcp->tccps[p_pi->compno].cblksty, 0)) {
+                                        if (! opj_t2_init_seg(l_cblk, l_segno, p_tcp->tccps[p_pi->compno].cblksty, 0)) {
                                                 bio_destroy(l_bio);
                                                 return OPJ_FALSE;
                                         }
@@ -1269,7 +1228,10 @@ opj_bool opj_t2_skip_packet_data(   opj_t2_v2_t* p_t2,
 }
 
 
-static opj_bool t2_init_seg_v2(opj_tcd_cblk_dec_v2_t* cblk, OPJ_UINT32 index, OPJ_UINT32 cblksty, OPJ_UINT32 first)
+opj_bool opj_t2_init_seg(   opj_tcd_cblk_dec_v2_t* cblk,
+                            OPJ_UINT32 index, 
+                            OPJ_UINT32 cblksty, 
+                            OPJ_UINT32 first)
 {
         opj_tcd_seg_t* seg = 00;
         OPJ_UINT32 l_nb_segs = index + 1;

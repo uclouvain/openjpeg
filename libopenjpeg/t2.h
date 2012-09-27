@@ -124,7 +124,7 @@ opj_bool opj_t2_decode_packets(	opj_t2_v2_t *t2,
  * @param	p_cp		Image coding parameters.
  * @return		a new T2 handle if successful, NULL otherwise.
 */
-opj_t2_v2_t* opj_t2_create_(opj_image_t *p_image, opj_cp_v2_t *p_cp);
+opj_t2_v2_t* opj_t2_create(opj_image_t *p_image, opj_cp_v2_t *p_cp);
 
 /**
 Destroy a T2 handle
