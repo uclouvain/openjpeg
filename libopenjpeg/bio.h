@@ -49,13 +49,13 @@ Individual bit input-output stream (BIO)
 */
 typedef struct opj_bio {
 	/** pointer to the start of the buffer */
-	unsigned char *start;
+	OPJ_BYTE *start;
 	/** pointer to the end of the buffer */
-	unsigned char *end;
+	OPJ_BYTE *end;
 	/** pointer to the present position in the buffer */
-	unsigned char *bp;
+	OPJ_BYTE *bp;
 	/** temporary place where each byte is read or written */
-	unsigned int buf;
+	OPJ_UINT32 buf;
 	/** coder : number of bits free to write. decoder : number of bits read */
 	int ct;
 } opj_bio_t;
