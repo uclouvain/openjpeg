@@ -39,7 +39,7 @@
 
 static void t2_putcommacode(opj_bio_t *bio, int n);
 
-static OPJ_UINT32 t2_getcommacode(opj_bio_t *bio); 
+static OPJ_UINT32 opj_t2_getcommacode(opj_bio_t *bio); 
 /**
 Variable length code for signalling delta Zil (truncation point)
 @param bio Bit Input/Output component
@@ -179,7 +179,7 @@ static opj_bool t2_init_seg_v2( opj_tcd_cblk_dec_v2_t* cblk,
 /* ----------------------------------------------------------------------- */
 
 /* #define RESTART 0x04 */
-
+// TODO MSD->LHE
 static void t2_putcommacode(opj_bio_t *bio, int n) {
         while (--n >= 0) {
                 bio_write(bio, 1, 1);
@@ -187,7 +187,7 @@ static void t2_putcommacode(opj_bio_t *bio, int n) {
         bio_write(bio, 0, 1);
 }
 
-static OPJ_UINT32 t2_getcommacode(opj_bio_t *bio) 
+static OPJ_UINT32 opj_t2_getcommacode(opj_bio_t *bio) 
 {
     OPJ_UINT32 n = 0;
     while (bio_read(bio, 1)) {
@@ -559,7 +559,7 @@ static int t2_decode_packet(opj_t2_t* t2, unsigned char *src, int len, opj_tcd_t
                         }
                         /* number of coding passes */
                         cblk->numnewpasses = t2_getnumpasses(bio);
-                        increment = t2_getcommacode(bio);
+                        increment = opj_t2_getcommacode(bio);
                         /* length indicator increment */
                         cblk->numlenbits += increment;
                         segno = 0;
@@ -1667,7 +1667,7 @@ opj_bool opj_t2_read_packet_header( opj_t2_v2_t* p_t2,
 
                         /* number of coding passes */
                         l_cblk->numnewpasses = t2_getnumpasses(l_bio);
-                        l_increment = t2_getcommacode(l_bio);
+                        l_increment = opj_t2_getcommacode(l_bio);
 
                         /* length indicator increment */
                         l_cblk->numlenbits += l_increment;
