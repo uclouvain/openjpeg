@@ -42,10 +42,10 @@ static void t2_putcommacode(opj_bio_t *bio, int n);
 static OPJ_UINT32 opj_t2_getcommacode(opj_bio_t *bio); 
 /**
 Variable length code for signalling delta Zil (truncation point)
-@param bio Bit Input/Output component
-@param n delta Zil
+@param bio  Bit Input/Output component
+@param n    delta Zil
 */
-static void t2_putnumpasses(opj_bio_t *bio, int n);
+static void opj_t2_putnumpasses(opj_bio_t *bio, OPJ_UINT32 n);
 static int t2_getnumpasses(opj_bio_t *bio);
 /**
 Encode a packet of a tile to a destination buffer
@@ -187,7 +187,7 @@ static void t2_putcommacode(opj_bio_t *bio, int n) {
         bio_write(bio, 0, 1);
 }
 
-static OPJ_UINT32 opj_t2_getcommacode(opj_bio_t *bio) 
+OPJ_UINT32 opj_t2_getcommacode(opj_bio_t *bio) 
 {
     OPJ_UINT32 n = 0;
     while (bio_read(bio, 1)) {
@@ -196,7 +196,7 @@ static OPJ_UINT32 opj_t2_getcommacode(opj_bio_t *bio)
     return n;
 }
 
-static void t2_putnumpasses(opj_bio_t *bio, int n) {
+void opj_t2_putnumpasses(opj_bio_t *bio, OPJ_UINT32 n) {
         if (n == 1) {
                 bio_write(bio, 0, 1);
         } else if (n == 2) {
@@ -300,7 +300,7 @@ static int t2_encode_packet(opj_tcd_tile_t * tile, opj_tcp_t * tcp, opj_pi_itera
                                 tgt_encode(bio, prc->imsbtree, cblkno, 999);
                         }
                         /* number of coding passes included */
-                        t2_putnumpasses(bio, layer->numpasses);
+                        opj_t2_putnumpasses(bio, layer->numpasses);
                         
                         /* computation of the increase of the length indicator and insertion in the header     */
                         for (passno = cblk->numpasses; passno < cblk->numpasses + layer->numpasses; passno++) {
@@ -1337,7 +1337,7 @@ static opj_bool t2_encode_packet_v2(
                         }
 
                         /* number of coding passes included */
-                        t2_putnumpasses(bio, layer->numpasses);
+                        opj_t2_putnumpasses(bio, layer->numpasses);
                         l_nb_passes = cblk->numpasses + layer->numpasses;
                         pass = cblk->passes +  cblk->numpasses;
 
