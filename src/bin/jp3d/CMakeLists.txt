@@ -24,7 +24,7 @@ IF(WIN32)
 ENDIF(WIN32)
 
 # Loop over all executables:
-FOREACH(exe jp3d_to_volume volume_to_jp3d)
+FOREACH(exe opj_jp3d_compress opj_jp3d_decompress)
   ADD_EXECUTABLE(${exe} ${exe}.c ${common_SRCS})
   TARGET_LINK_LIBRARIES(${exe} openjp3d)
   # On unix you need to link to the math library:
