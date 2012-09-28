@@ -5,7 +5,7 @@ add_subdirectory(jp2)
 
 # optionals components:
 if(BUILD_JPWL)
-#  add_subdirectory(jpwl)
+  add_subdirectory(jpwl)
 endif()
 if(BUILD_MJ2)
   add_subdirectory(mj2)

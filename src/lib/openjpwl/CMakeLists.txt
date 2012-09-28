@@ -50,12 +50,12 @@ if(WIN32)
     add_definitions(-DOPJ_STATIC)
   endif()
 endif()
-add_library(${OPENJPEG_LIBRARY_NAME}_JPWL ${JPWL_SRCS} ${OPENJPEG_SRCS})
-set_target_properties(${OPENJPEG_LIBRARY_NAME}_JPWL
+add_library(openjpwl ${JPWL_SRCS} ${OPENJPEG_SRCS})
+set_target_properties(openjpwl
   PROPERTIES ${OPENJPEG_LIBRARY_PROPERTIES})
 
 # Install library
-install(TARGETS ${OPENJPEG_LIBRARY_NAME}_JPWL
+install(TARGETS openjpwl
   EXPORT OpenJPEGTargets
   RUNTIME DESTINATION ${OPENJPEG_INSTALL_BIN_DIR} COMPONENT Applications
   LIBRARY DESTINATION ${OPENJPEG_INSTALL_LIB_DIR} COMPONENT Libraries
