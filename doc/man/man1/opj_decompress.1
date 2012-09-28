@@ -29,10 +29,10 @@
 .SP
 .fi
 ..
-.TH j2k_to_image 1 "Version 1.4.0" "j2k_to_image" "converts jpeg2000 files"
+.TH opj_decompress 1 "Version 1.4.0" "opj_decompress" "converts jpeg2000 files"
 .P
 .SH NAME
-j2k_to_image - 
+opj_decompress - 
 This program reads in a jpeg2000 image and converts it to another 
 image type. It is part of the OpenJPEG library.
 .SP
@@ -43,11 +43,11 @@ Valid output image extensions are
 .B .bmp, .pgm, .pgx, .png, .pnm, .ppm, .raw, .tga, .tif \fR. For PNG resp. TIF it needs libpng resp. libtiff .
 .SH SYNOPSIS
 .P
-.B j2k_to_image -i \fRinfile.j2k \fB-o \fRoutfile.png
+.B opj_decompress -i \fRinfile.j2k \fB-o \fRoutfile.png
 .P
-.B j2k_to_image -ImgDir \fRimages/ \fB-OutFor \fRbmp
+.B opj_decompress -ImgDir \fRimages/ \fB-OutFor \fRbmp
 .P
-.B j2k_to_image -h  \fRPrint help message and exit
+.B opj_decompress -h  \fRPrint help message and exit
 .P
 .R See JPWL OPTIONS for special options
 .SH OPTIONS
@@ -106,4 +106,4 @@ Copyright (c) 2005, Herve Drolon, FreeImage Team
 Copyright (c) 2006-2007, Parvatha Elangovan
 .P
 .SH "SEE ALSO"
-image_to_j2k(1) j2k_dump(1)
+opj_compress(1) opj_dump(1)

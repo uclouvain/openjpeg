@@ -29,10 +29,10 @@
 .SP
 .fi
 ..
-.TH image_to_j2k 1 "Version 1.4.0" "image_to_j2k" "converts to jpeg2000 files"
+.TH opj_compress 1 "Version 1.4.0" "opj_compress" "converts to jpeg2000 files"
 .P
 .SH NAME
-image_to_j2k - 
+opj_compress - 
 This program reads in an image of a certain type and converts it to a
 jpeg2000 file. It is part of the OpenJPEG library.
 .SP
@@ -43,11 +43,11 @@ Valid output image extensions are
 .B .j2k, .jp2
 .SH SYNOPSIS
 .P
-.B image_to_j2k -i \fRinfile.bmp \fB-o \fRoutfile.j2k
+.B opj_compress -i \fRinfile.bmp \fB-o \fRoutfile.j2k
 .P
-.B image_to_j2k -ImgDir \fRdirectory_name \fB-OutFor \fRjp2
+.B opj_compress -ImgDir \fRdirectory_name \fB-OutFor \fRjp2
 .P
-.B image_to_j2k -h \fRPrint a help message and exit.
+.B opj_compress -h \fRPrint a help message and exit.
 .P
 .R See JPWL OPTIONS for special options
 .SH OPTIONS
@@ -194,13 +194,13 @@ Options usable only if the library has been compiled with \fB-DUSE_JPWL\fR
 .P
 .SH EXAMPLES
 .P
-.B image_to_j2k -i \fRfile.bmp \fB-o \fRfile.j2k \fB-r \fR20,10,1 (compress 20x, then 10x, then lossless).
+.B opj_compress -i \fRfile.bmp \fB-o \fRfile.j2k \fB-r \fR20,10,1 (compress 20x, then 10x, then lossless).
 .P
-.B image_to_j2k -i \fRfile.ppm \fB-o \fRfile.j2k \fB-q \fR30,40,50
+.B opj_compress -i \fRfile.ppm \fB-o \fRfile.j2k \fB-q \fR30,40,50
 .P
-.B image_to_j2k -i \fRfile.pgx \fB-o \fRfile.j2k \fB-POC \fRT1=0,0,1,5,3,CPRL
+.B opj_compress -i \fRfile.pgx \fB-o \fRfile.j2k \fB-POC \fRT1=0,0,1,5,3,CPRL
 .P
-.B image_to_j2k -i \fRlena.raw \fB-o \fRlena.j2k \fB-F \fR512,512,3,8,u
+.B opj_compress -i \fRlena.raw \fB-o \fRlena.j2k \fB-F \fR512,512,3,8,u
 .P
 .SH AUTHORS
 Copyright (c) 2002-2007, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
@@ -218,5 +218,5 @@ Copyright (c) 2005, Herve Drolon, FreeImage Team
 Copyright (c) 2006-2007, Parvatha Elangovan
 .P
 .SH "SEE ALSO"
-j2k_to_image(1) j2k_dump(1)
+opj_decompress(1) opj_dump(1)
 

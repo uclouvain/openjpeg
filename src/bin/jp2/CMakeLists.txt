@@ -27,7 +27,7 @@ if(WIN32)
 endif()
 
 # Loop over all executables:
-foreach(exe j2k_to_image image_to_j2k j2k_dump)
+foreach(exe opj_decompress opj_compress opj_dump)
   add_executable(${exe} ${exe}.c ${common_SRCS})
   target_link_libraries(${exe} ${OPENJPEG_LIBRARY_NAME}
     ${PNG_LIBNAME} ${TIFF_LIBNAME} ${LCMS_LIBNAME}
@@ -52,9 +52,9 @@ endforeach()
 
 # Install man pages
 install(
-  FILES       ${OPENJPEG_SOURCE_DIR}/doc/man/man1/image_to_j2k.1
-              ${OPENJPEG_SOURCE_DIR}/doc/man/man1/j2k_dump.1
-              ${OPENJPEG_SOURCE_DIR}/doc/man/man1/j2k_to_image.1
+  FILES       ${OPENJPEG_SOURCE_DIR}/doc/man/man1/opj_compress.1
+              ${OPENJPEG_SOURCE_DIR}/doc/man/man1/opj_decompress.1
+              ${OPENJPEG_SOURCE_DIR}/doc/man/man1/opj_dump.1
   DESTINATION ${OPENJPEG_INSTALL_MAN_DIR}/man1)
 #
 
