@@ -198,8 +198,10 @@ if(BUILD_JPIP)
 endif()
 option(BUILD_VIEWER "Build the OPJViewer executable (C++)" OFF)
 option(BUILD_JAVA "Build the openjpeg jar (Java)" OFF)
+option(BUILD_JP3D "Build the JP3D comp" OFF)
 mark_as_advanced(BUILD_VIEWER)
 mark_as_advanced(BUILD_JAVA)
+mark_as_advanced(BUILD_JP3D)
 
 if(BUILD_CODEC OR BUILD_MJ2)
   # OFF: It will only build 3rd party libs if they are not found on the system
