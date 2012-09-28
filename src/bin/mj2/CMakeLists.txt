@@ -30,7 +30,7 @@ ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/tpix_manager.c
 ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/function_list.c
 )
 
-set(MJ2_SRCS mj2.c mj2_convert.c)
+#set(MJ2_SRCS mj2.c mj2_convert.c)
 
 if(WIN32)
   add_definitions(-DOPJ_STATIC)
@@ -39,6 +39,7 @@ endif()
 # Headers file are located here:
 include_directories(
   ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2
+  ${OPENJPEG_SOURCE_DIR}/src/lib/openmj2
   ${OPENJPEG_SOURCE_DIR}/src/bin/common
   ${LCMS_INCLUDE_DIRNAME}
   )
@@ -49,7 +50,7 @@ add_executable(frames_to_mj2
   ${OPJ_SRCS}
   ${MJ2_SRCS}
   )
-target_link_libraries(frames_to_mj2 ${LCMS_LIBNAME})
+target_link_libraries(frames_to_mj2 ${LCMS_LIBNAME} openmj2)
 
 if(UNIX)
   target_link_libraries(frames_to_mj2 m)
@@ -73,7 +74,7 @@ add_executable(extract_j2k_from_mj2
     ${OPJ_SRCS}
     ${MJ2_SRCS}
     )
-target_link_libraries(extract_j2k_from_mj2 ${LCMS_LIBNAME})
+target_link_libraries(extract_j2k_from_mj2 ${LCMS_LIBNAME} openmj2)
 
 if(UNIX)
   target_link_libraries(extract_j2k_from_mj2 m)
