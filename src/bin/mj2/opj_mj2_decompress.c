@@ -177,7 +177,9 @@ int main(int argc, char *argv[]) {
 		/* open a byte stream */
 		cio = opj_cio_open((opj_common_ptr)dinfo, frame_codestream, sample->sample_size-8);
 		
+#if 0 /* MM: FIXME */
 		img = opj_decode(dinfo, cio); // Decode J2K to image
+#endif
 
 #ifdef WANT_SYCC_TO_RGB
 	if(img->color_space == CLRSPC_SYCC)

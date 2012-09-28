@@ -43,7 +43,7 @@
 #include <stdio.h>
 #include "openjpip.h"
 
-int main(int argc,char *argv[])
+int jpip_to_jp2(int argc,char *argv[])
 {
   jpip_dec_param_t *dec;
     

@@ -1,6 +1,7 @@
 set(OPENMJ2_LIBRARY_NAME openmj2)
 set(OPENMJ2_SRCS
   mj2.c
+  mj2_convert.c
 )
 
 # Build the library
