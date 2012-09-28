@@ -6,6 +6,9 @@ include(${wxWidgets_USE_FILE})
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/../..
   ${CMAKE_CURRENT_SOURCE_DIR}/..
+  ${OPENJPEG_SOURCE_DIR}/src/lib
+  ${OPENJPEG_SOURCE_DIR}/src/bin
+  ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2
   )
 
 # original flags:
@@ -19,7 +22,7 @@ set(OPJV_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/source/OPJDialogs.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/source/OPJThreads.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/source/OPJAbout.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/../codec/index.c
+  ${OPENJPEG_SOURCE_DIR}/src/bin/jp2/index.c
   )
 add_executable(opjviewer ${OPJV_SRCS})
 target_link_libraries(opjviewer ${wxWidgets_LIBRARIES} openjpeg)

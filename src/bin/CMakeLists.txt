@@ -17,6 +17,5 @@ if(BUILD_JP3D)
   add_subdirectory(jp3d)
 endif()
 
-if(BUILD_VIEWER)
-  add_subdirectory(wx)
-endif()
+# wx apps:
+add_subdirectory(wx)

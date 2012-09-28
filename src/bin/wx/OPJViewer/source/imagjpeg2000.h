@@ -44,8 +44,8 @@
 #if wxUSE_LIBOPENJPEG
 
 #include "wx/image.h"
-#include "libopenjpeg/openjpeg.h"
-#include "codec/index.h"
+#include "openjp2/openjpeg.h"
+#include "jp2/index.h"
 
 #define wxBITMAP_TYPE_JPEG2000	50
 

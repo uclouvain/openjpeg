@@ -101,7 +101,7 @@
 #include "wx/toolbar.h"
 #include "wx/artprov.h"
 
-#include "libopenjpeg/openjpeg.h"
+#include "openjp2/openjpeg.h"
 
 //#include "imagj2k.h"
 //#include "imagjp2.h"
