@@ -208,6 +208,7 @@ if(BUILD_CODEC OR BUILD_MJ2)
   add_subdirectory(thirdparty)
   add_subdirectory(src/bin)
 endif ()
+add_subdirectory(wrapping)
 
 include(CheckTypeSize)
 CHECK_TYPE_SIZE(ssize_t     SSIZE_T)
