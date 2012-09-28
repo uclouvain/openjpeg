@@ -175,7 +175,7 @@ static INLINE long lrintf(float f){
 
 /* JPWL>> */
 #ifdef USE_JPWL
-#include "./jpwl/jpwl.h"
+#include "openjpwl/jpwl.h"
 #endif /* USE_JPWL */
 /* <<JPWL */
 

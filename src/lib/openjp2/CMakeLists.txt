@@ -41,11 +41,6 @@ if(UNIX)
 endif()
 set_target_properties(${OPENJPEG_LIBRARY_NAME} PROPERTIES ${OPENJPEG_LIBRARY_PROPERTIES})
 
-# Build the JPWL library ?
-if(BUILD_JPWL)
- add_subdirectory(jpwl)
-endif()
-
 # Install library
 install(TARGETS ${OPENJPEG_LIBRARY_NAME}
   EXPORT OpenJPEGTargets

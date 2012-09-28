@@ -4,15 +4,15 @@
 set(common_SRCS
   convert.c
   index.c
-  ${OPENJPEG_SOURCE_DIR}/applications/common/color.c
-  ${OPENJPEG_SOURCE_DIR}/applications/common/opj_getopt.c
+  ${OPENJPEG_SOURCE_DIR}/src/bin/common/color.c
+  ${OPENJPEG_SOURCE_DIR}/src/bin/common/opj_getopt.c
   )
 
 # Headers file are located here:
 include_directories(
-  ${OPENJPEG_SOURCE_DIR}/libopenjpeg
+  ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2
   ${LCMS_INCLUDE_DIRNAME}
-  ${OPENJPEG_SOURCE_DIR}/applications/common
+  ${OPENJPEG_SOURCE_DIR}/src/bin/common
   ${Z_INCLUDE_DIRNAME}
   ${PNG_INCLUDE_DIRNAME}
   ${TIFF_INCLUDE_DIRNAME}

@@ -42,7 +42,7 @@ set(OPENJPEG_LIBRARY_PROPERTIES
 # --------------------------------------------------------------------------
 # Path to additional CMake modules
 set(CMAKE_MODULE_PATH
-    ${CMAKE_SOURCE_DIR}/CMake
+    ${CMAKE_SOURCE_DIR}/cmake
     ${CMAKE_MODULE_PATH})
 
 # --------------------------------------------------------------------------
@@ -121,7 +121,7 @@ TEST_BIG_ENDIAN(OPJ_BIG_ENDIAN)
 #-----------------------------------------------------------------------------
 # Setup file for setting custom ctest vars
 configure_file(
-  ${CMAKE_SOURCE_DIR}/CMake/CTestCustom.cmake.in
+  ${CMAKE_SOURCE_DIR}/cmake/CTestCustom.cmake.in
   ${CMAKE_BINARY_DIR}/CTestCustom.cmake
   @ONLY
   )
@@ -185,7 +185,7 @@ OPJ_TEST_LARGE_FILES(OPJ_HAVE_LARGEFILES)
 #-----------------------------------------------------------------------------
 # Build Library
 include_directories(BEFORE ${OPENJPEG_BINARY_DIR})
-add_subdirectory(libopenjpeg)
+add_subdirectory(src)
 
 #-----------------------------------------------------------------------------
 # Build Applications
@@ -206,7 +206,7 @@ if(BUILD_CODEC OR BUILD_MJ2)
   # ON: 3rd party libs will ALWAYS be build, and used
   option(BUILD_THIRDPARTY "Build the thirdparty executables if it is needed" OFF)
   add_subdirectory(thirdparty)
-  add_subdirectory(applications)
+  add_subdirectory(src/bin)
 endif ()
 
 include(CheckTypeSize)
@@ -225,7 +225,7 @@ install( FILES  ${CMAKE_CURRENT_BINARY_DIR}/opj_config.h
 # Build DOCUMENTATION (not in ALL target and only if Doxygen is found)
 option(BUILD_DOC "Build the HTML documentation (with doxygen if available)." OFF)
 if(BUILD_DOC)
-    add_subdirectory(doc)
+  add_subdirectory(doc)
 endif()
 
 #-----------------------------------------------------------------------------
@@ -256,7 +256,7 @@ endif()
 #-----------------------------------------------------------------------------
 # install all targets referenced as OPENJPEGTargets
 install(EXPORT OpenJPEGTargets DESTINATION ${OPENJPEG_INSTALL_PACKAGE_DIR})
-configure_file( ${OPENJPEG_SOURCE_DIR}/CMake/OpenJPEGConfig.cmake.in
+configure_file( ${OPENJPEG_SOURCE_DIR}/cmake/OpenJPEGConfig.cmake.in
   ${OPENJPEG_BINARY_DIR}/OpenJPEGConfig.cmake
   @ONLY
 )
@@ -271,4 +271,4 @@ if(EXISTS ${OPENJPEG_SOURCE_DIR}/CHANGES)
 endif()
 install(FILES LICENSE DESTINATION ${OPENJPEG_INSTALL_DOC_DIR})
 
-include (CMake/OpenJPEGCPack.cmake)
+include (cmake/OpenJPEGCPack.cmake)

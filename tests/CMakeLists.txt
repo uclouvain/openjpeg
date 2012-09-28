@@ -1,8 +1,8 @@
 # Tests
 include_directories(
-  ${OPENJPEG_SOURCE_DIR}/libopenjpeg
-  ${OPENJPEG_SOURCE_DIR}/applications/codec
-  ${OPENJPEG_SOURCE_DIR}/applications/common
+  ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2
+  ${OPENJPEG_SOURCE_DIR}/src/bin/jp2
+  ${OPENJPEG_SOURCE_DIR}/src/bin/common
   ${Z_INCLUDE_DIRNAME}
   ${PNG_INCLUDE_DIRNAME}
   ${TIFF_INCLUDE_DIRNAME}
@@ -10,15 +10,15 @@ include_directories(
 
 # First thing define the common source:
 set(comparePGXimages_SRCS comparePGXimages.c
-  ${OPENJPEG_SOURCE_DIR}/applications/codec/convert.c
-  ${OPENJPEG_SOURCE_DIR}/applications/common/opj_getopt.c
+  ${OPENJPEG_SOURCE_DIR}/src/bin/jp2/convert.c
+  ${OPENJPEG_SOURCE_DIR}/src/bin/common/opj_getopt.c
   )
 
 set(compare_dump_files_SRCS compare_dump_files.c
-  ${OPENJPEG_SOURCE_DIR}/applications/common/opj_getopt.c)
+  ${OPENJPEG_SOURCE_DIR}/src/bin/common/opj_getopt.c)
 
 set(compareRAWimages_SRCS compareRAWimages.c
-  ${OPENJPEG_SOURCE_DIR}/applications/common/opj_getopt.c)
+  ${OPENJPEG_SOURCE_DIR}/src/bin/common/opj_getopt.c)
 
 add_executable(comparePGXimages ${comparePGXimages_SRCS})
 target_link_libraries(comparePGXimages
