@@ -37,7 +37,7 @@ foreach(INPUT_FILENAME ${OPJ_DATA_NR_LIST})
 
   # Dump the input image
   add_test(NR-${INPUT_FILENAME_NAME}-dump
-           ${EXECUTABLE_OUTPUT_PATH}/j2k_dump
+           ${EXECUTABLE_OUTPUT_PATH}/opj_dump
   	       -i ${INPUT_FILENAME}
   	       -o ${TEMP}/${INPUT_FILENAME_NAME}.txt
   	       -v
@@ -137,9 +137,9 @@ foreach(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
     string(REGEX MATCH "^!" FAILED_TEST_FOUND ${EXE_NAME})
 
     if (FAILED_TEST_FOUND)
-      # Manage the different cases with the failed sign to remove the first argument which must be image_to_j2k
+      # Manage the different cases with the failed sign to remove the first argument which must be opj_compress
       set(FAILED_TEST_FOUND_1 0)
-      string(REGEX MATCH "^!image_to_j2k$|^!j2k_to_image$" FAILED_TEST_FOUND_1 ${EXE_NAME})
+      string(REGEX MATCH "^!opj_compress$|^!opj_decompress$" FAILED_TEST_FOUND_1 ${EXE_NAME})
 
       if (FAILED_TEST_FOUND_1)
 
@@ -149,7 +149,7 @@ foreach(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
 
         set(FAILED_TEST_FOUND_2 0)
         list(GET CMD_ARG_LIST 1 EXE_NAME)
-        string(REGEX MATCH "^image_to_j2k$|^j2k_to_image$" FAILED_TEST_FOUND_2 ${EXE_NAME})
+        string(REGEX MATCH "^opj_compress$|^opj_decompress$" FAILED_TEST_FOUND_2 ${EXE_NAME})
 
         if (FAILED_TEST_FOUND_2)
 
@@ -158,22 +158,22 @@ foreach(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
 
         else ()
 
-          message( FATAL_ERROR "${EXE_NAME} is not the right executable name to encode file (try to use image_to_j2k or j2k_to_image)")
+          message( FATAL_ERROR "${EXE_NAME} is not the right executable name to encode file (try to use opj_compress or opj_decompress)")
 
         endif ()
       endif ()
 
     else ()
-      # Check if the first argument is equal to image_to_j2k
-      string(REGEX MATCH "^image_to_j2k$|^j2k_to_image$" EXE_NAME_FOUND ${EXE_NAME})
+      # Check if the first argument is equal to opj_compress
+      string(REGEX MATCH "^opj_compress$|^opj_decompress$" EXE_NAME_FOUND ${EXE_NAME})
 
       if(EXE_NAME_FOUND)
 
-        string(REGEX MATCH "image_to_j2k" ENC_TEST_FOUND ${EXE_NAME})
+        string(REGEX MATCH "opj_compress" ENC_TEST_FOUND ${EXE_NAME})
 
       else()
 
-        message( FATAL_ERROR "${EXE_NAME} is not the right executable name to encode file (try to use image_to_j2k)")
+        message( FATAL_ERROR "${EXE_NAME} is not the right executable name to encode file (try to use opj_compress)")
 
       endif()
 
@@ -223,7 +223,7 @@ foreach(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
 
         # Encode an image into the jpeg2000 format
         add_test(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-encode
-          ${EXECUTABLE_OUTPUT_PATH}/image_to_j2k
+          ${EXECUTABLE_OUTPUT_PATH}/opj_compress
           ${CMD_ARG_LIST_2}
         )
 
@@ -233,7 +233,7 @@ foreach(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
 
           # Dump the encoding file
           add_test(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-dump
-            ${EXECUTABLE_OUTPUT_PATH}/j2k_dump
+            ${EXECUTABLE_OUTPUT_PATH}/opj_dump
             -i ${OUTPUT_FILENAME}
             -o ${OUTPUT_FILENAME}-ENC-${IT_TEST_ENC}.txt
           )
@@ -284,7 +284,7 @@ foreach(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
 
       # Decode the input image
       add_test(NR-DEC-${INPUT_FILENAME_NAME}-${IT_TEST_DEC}-decode
-        ${EXECUTABLE_OUTPUT_PATH}/j2k_to_image
+        ${EXECUTABLE_OUTPUT_PATH}/opj_decompress
         ${CMD_ARG_LIST_2}
       )
 
