@@ -266,7 +266,7 @@ DllMain(HANDLE hModule, DWORD ul_reason_for_call, LPVOID lpReserved) {
 /* ---------------------------------------------------------------------- */
 
 const char* OPJ_CALLCONV opj_version(void) {
-    return PACKAGE_VERSION;
+    return OPJ_PACKAGE_VERSION;
 }
 
 /* ---------------------------------------------------------------------- */
