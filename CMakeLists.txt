@@ -29,7 +29,7 @@ INCLUDE_REGULAR_EXPRESSION("^.*$")
 # OPENJPEG version number, useful for packaging and doxygen doc:
 SET(OPENJPEG_VERSION_MAJOR 1)
 SET(OPENJPEG_VERSION_MINOR 5)
-SET(OPENJPEG_VERSION_BUILD 0)
+SET(OPENJPEG_VERSION_BUILD 2)
 SET(OPENJPEG_VERSION
   "${OPENJPEG_VERSION_MAJOR}.${OPENJPEG_VERSION_MINOR}.${OPENJPEG_VERSION_BUILD}")
 SET(PACKAGE_VERSION
@@ -44,6 +44,7 @@ SET(PACKAGE_VERSION
 #   1.3   |  3
 #   1.4   |  4
 #   1.5   |  5
+#   1.5.1 |  5
 #   2.0   |  6
 # above is the recommendation by the OPJ team. If you really need to override this default,
 # you can specify your own OPENJPEG_SOVERSION at cmake configuration time:
