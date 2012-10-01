@@ -51,6 +51,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 
 /**
@@ -78,7 +79,7 @@ int main(int argc, char *argv[])
   long fsize, boxsize;
 
   if( argc<3){
-    fprintf( stderr, "USAGE: ./addXMLinJP2 modifing.jp2 adding.xml\n");
+    fprintf( stderr, "USAGE: %s modifing.jp2 adding.xml\n", argv[0] );
     return -1;
   }
 
@@ -87,6 +88,7 @@ int main(int argc, char *argv[])
     return -1;
   
   xmldata = read_xmlfile( argv[2], &fsize);
+  if( fsize < 0 ) return -1;
   boxsize = fsize + 8;
 
   fputc( (boxsize>>24)&0xff, fp);
@@ -94,7 +96,7 @@ int main(int argc, char *argv[])
   fputc( (boxsize>>8)&0xff, fp);
   fputc( boxsize&0xff, fp);
   fwrite( type, 4, 1, fp);
-  fwrite( xmldata, fsize, 1, fp);
+  fwrite( xmldata, (size_t)fsize, 1, fp);
   
   free( xmldata);
   fclose(fp);
@@ -159,6 +161,7 @@ char * read_xmlfile( const char filename[], long *fsize)
     fclose( fp);
     return NULL;
   }
+  assert( *fsize >= 0 );
 
   if( fseek( fp, 0, SEEK_SET) == -1){
     fprintf( stderr, "XML file %s broken (seek error)\n", filename);
@@ -166,9 +169,9 @@ char * read_xmlfile( const char filename[], long *fsize)
     return NULL;
   }
 
-  data = (char *)malloc( *fsize);
+  data = (char *)malloc( (size_t)*fsize);
   
-  if( fread( data, *fsize, 1, fp) != 1){
+  if( fread( data, (size_t)*fsize, 1, fp) != 1){
     fprintf( stderr, "XML file %s broken (read error)\n", filename);
     free( data);
     fclose(fp);

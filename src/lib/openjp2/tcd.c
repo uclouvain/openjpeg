@@ -919,7 +919,7 @@ opj_bool FUNCTION (     opj_tcd_v2_t *p_tcd,                        \
                                         }                                                                                                                                                                         \
                                                                                                                                                                                                                   \
                                         if (! l_current_precinct->incltree) {                                                                                                                                     \
-                                                l_current_precinct->incltree = tgt_create_v2(l_current_precinct->cw,                                                                                              \
+                                                l_current_precinct->incltree = tgt_create(l_current_precinct->cw,                                                                                              \
                                                                 l_current_precinct->ch);                                                                                                                          \
                                         }                                                                                                                                                                         \
                                         else{                                                                                                                                                                     \
@@ -934,7 +934,7 @@ opj_bool FUNCTION (     opj_tcd_v2_t *p_tcd,                        \
                                         }                                                                                                                                                                         \
                                                                                                                                                                                                                   \
                                         if (! l_current_precinct->imsbtree) {                                                                                                                                     \
-                                                l_current_precinct->imsbtree = tgt_create_v2(                                                                                                                     \
+                                                l_current_precinct->imsbtree = tgt_create(                                                                                                                     \
                                                                 l_current_precinct->cw,                                                                                                                           \
                                                                 l_current_precinct->ch);                                                                                                                          \
                                         }                                                                                                                                                                         \

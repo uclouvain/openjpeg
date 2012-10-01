@@ -75,8 +75,7 @@ Create a tag-tree
 @param numleafsv Height of the array of leafs of the tree
 @return Returns a new tag-tree if successful, returns NULL otherwise
 */
-opj_tgt_tree_t *tgt_create(int numleafsh, int numleafsv);
-opj_tgt_tree_t *tgt_create_v2(OPJ_UINT32 numleafsh, OPJ_UINT32 numleafsv);
+opj_tgt_tree_t *tgt_create(OPJ_UINT32 numleafsh, OPJ_UINT32 numleafsv);
 
 /**
  * Reinitialises a tag-tree from an exixting one.
