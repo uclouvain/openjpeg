@@ -145,19 +145,6 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/openjpeg_mangle.h.in
 endif()
 
 #-----------------------------------------------------------------------------
-# pkgconfig support
-if(UNIX)
-  # install in lib and not share (see multi-arch note above)
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/libopenjpeg1.pc.cmake
-    ${CMAKE_CURRENT_BINARY_DIR}/libopenjpeg1.pc @ONLY)
-  install( FILES  ${CMAKE_CURRENT_BINARY_DIR}/libopenjpeg1.pc DESTINATION
-    ${OPENJPEG_INSTALL_LIB_DIR}/pkgconfig )
-  install( CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink
-  \"libopenjpeg1.pc\"
-  \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${OPENJPEG_INSTALL_SHARE_DIR}/pkgconfig/libopenjpeg.pc\")")
-endif()
-
-#-----------------------------------------------------------------------------
 # Compiler specific flags:
 if(CMAKE_COMPILER_IS_GNUCC)
   # For all builds, make sure openjpeg is std99 compliant:
