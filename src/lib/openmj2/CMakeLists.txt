@@ -20,7 +20,7 @@ include_directories(
 
 # build mj2 lib:
 add_library(${OPENMJ2_LIBRARY_NAME} ${OPENMJ2_SRCS})
-target_link_libraries(${OPENMJ2_LIBRARY_NAME} openjpeg)
+target_link_libraries(${OPENMJ2_LIBRARY_NAME} openjp2)
 if(UNIX)
   target_link_libraries(${OPENMJ2_LIBRARY_NAME} m)
 endif()
