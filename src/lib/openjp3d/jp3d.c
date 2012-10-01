@@ -2326,3 +2326,8 @@ bool j3d_encode(opj_j3d_t *j3d, opj_cio_t *cio, opj_volume_t *volume, char *inde
 	return true;
 }
 
+/* ----------------------------------------------------------------------- */
+/*@}*/
+
+/*@}*/
+

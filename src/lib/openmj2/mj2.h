@@ -327,7 +327,7 @@ void mj2_destroy_decompress(opj_mj2_t *movie);
 Setup the decoder decoding parameters using user parameters.
 Decoding parameters are returned in mj2->j2k->cp. 
 @param movie MJ2 decompressor handle
-@param parameters decompression parameters
+@param mj2_parameters decompression parameters
 */
 void mj2_setup_decoder(opj_mj2_t *movie, mj2_dparameters_t *mj2_parameters);
 /**
@@ -372,8 +372,8 @@ Init a Standard MJ2 movie
 int mj2_init_stdmovie(opj_mj2_t *movie);
 /**
 Read the structure of an MJ2 file
-@param File MJ2 input File
-@param movie J2 movie structure 
+@param file MJ2 input File
+@param mj2 J2 movie structure 
 @return Returns 0 if successful, returns 1 otherwise
 */
 int mj2_read_struct(FILE *file, opj_mj2_t *mj2);

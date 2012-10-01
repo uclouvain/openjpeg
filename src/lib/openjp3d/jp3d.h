@@ -31,13 +31,13 @@
 #ifndef __J3D_H
 #define __J3D_H
 /**
-@file j3d.h
+@file jp3d.h
 @brief The JPEG-2000 Codestream Reader/Writer (J3D)
 
 The functions in J3D.C have for goal to read/write the several parts of the codestream: markers and data.
 */
 
-/** @defgroup J3D J3D - JPEG-2000 codestream reader/writer */
+/** @defgroup J3D J3D - JPEG-2000 PART 10 codestream reader/writer */
 /*@{*/
 
 #define J3D_CP_CSTY_PRT 0x01

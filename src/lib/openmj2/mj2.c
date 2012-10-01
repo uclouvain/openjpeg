@@ -2913,3 +2913,8 @@ void mj2_destroy_compress(opj_mj2_t *movie) {
 	}	
 	opj_free(movie);
 }
+
+/*@}*/
+
+/*@}*/
+

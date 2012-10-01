@@ -96,5 +96,6 @@ Calcula el valor del escalón de cuantificación correspondiente a cada subbanda.
 */
 void dwt_calc_explicit_stepsizes(opj_tccp_t * tccp, int prec);
 /*@}*/
+/*@}*/
 
 #endif /* __DWT_H */

@@ -120,5 +120,6 @@ int tgt_decode(opj_bio_t *bio, opj_tgt_tree_t *tree, int leafno, int threshold);
 /*@}*/
 /* ----------------------------------------------------------------------- */
 void tgt_tree_dump (FILE *fd, opj_tgt_tree_t * tree);
+/*@}*/
 
 #endif /* __TGT_H */
