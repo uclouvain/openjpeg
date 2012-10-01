@@ -1,5 +1,5 @@
 /*
- * $Id: metadata_manager.c 53 2011-05-09 16:55:39Z kaori $
+ * $Id$
  *
  * Copyright (c) 2002-2011, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
  * Copyright (c) 2002-2011, Professor Benoit Macq

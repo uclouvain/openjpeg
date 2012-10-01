@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2002-2011, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
  * Copyright (c) 2002-2011, Professor Benoit Macq
- * Copyright (c) 2012, Mathieu Malaterre
+ * Copyright (c) 2010-2011, Kaori Hagihara
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,19 +28,86 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <stdio.h>
+#include "openjpip.h"
+
 /*! \file
- *  \brief opj_jpip_transcode is a program to convert JPT- JPP- stream to J2K/JP2 file
+ *  \brief jpip_to_jp2 is a program to convert JPT- JPP- stream to JP2 file
+ *
+ *  \section impinst Implementing instructions
+ *  This program takes two arguments. \n
+ *   -# Input JPT or JPP file
+ *   -# Output JP2 file\n
+ *   % ./jpip_to_jp2 input.jpt output.jp2
+ *   or
+ *   % ./jpip_to_jp2 input.jpp output.jp2
+ */
+static int jpip_to_jp2(int argc,char *argv[])
+{
+  jpip_dec_param_t *dec;
+    
+  if( argc < 3){
+    fprintf( stderr, "Too few arguments:\n");
+    fprintf( stderr, " - input  jpt or jpp file\n");
+    fprintf( stderr, " - output jp2 file\n");
+    return -1;
+  }
+  
+  dec = init_jpipdecoder( true);
+  
+  if(!( fread_jpip( argv[1], dec)))
+    return -1;
+  
+  decode_jpip( dec);
+  
+  if(!(fwrite_jp2k( argv[2], dec)))
+    return -1;
+
+  output_log( true, false, true, dec);
+
+  destroy_jpipdecoder( &dec);
+
+  return 0;
+}
+
+/*! \file
+ *  \brief jpip_to_j2k is a program to convert JPT- JPP- stream to J2K file
  *
  *  \section impinst Implementing instructions
  *  This program takes two arguments. \n
  *   -# Input  JPT or JPP file
  *   -# Output J2K file\n
- *   % ./opj_jpip_transcode input.jpt output.j2k
+ *   % ./jpip_to_j2k input.jpt output.j2k
  *   or
  *   % ./jpip_to_j2k input.jpp output.j2k
  */
-extern int jpip_to_j2k(int argc,char *argv[]);
-extern int jpip_to_jp2(int argc,char *argv[]);
+static int jpip_to_j2k(int argc,char *argv[])
+{
+  jpip_dec_param_t *dec;
+  
+  if( argc < 3){
+    fprintf( stderr, "Too few arguments:\n");
+    fprintf( stderr, " - input  jpt or jpp file\n");
+    fprintf( stderr, " - output j2k file\n");
+    return -1;
+  }
+  
+  dec = init_jpipdecoder( false);
+  
+  if(!( fread_jpip( argv[1], dec)))
+    return -1;
+  
+  decode_jpip( dec);
+  
+  if(!( fwrite_jp2k( argv[2], dec)))
+    return -1;
+  
+  /*  output_log( true, false, false, dec); */
+  
+  destroy_jpipdecoder( &dec);
+
+  return 0;
+}
 
 int main(int argc,char *argv[])
 {

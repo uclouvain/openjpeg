@@ -1,5 +1,5 @@
 /*
- * $Id: box_manager.c 44 2011-02-15 12:32:29Z kaori $
+ * $Id$
  *
  * Copyright (c) 2002-2011, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
  * Copyright (c) 2002-2011, Professor Benoit Macq

@@ -1,5 +1,5 @@
 /*
- * $Id: mainpage.h 47 2011-02-17 16:57:49Z kaori $
+ * $Id$
  *
  * Copyright (c) 2002-2011, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
  * Copyright (c) 2002-2011, Professor Benoit Macq
@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*! \page openjpippage OpenJPIP v2.1 Documentation
+/*! \page openjpippage OpenJPIP v@OPENJPEG_VERSION@ Documentation
  *
  * \section intro Introduction
  * This manual documents the low-level OpenJPIP C API.\n
@@ -36,12 +36,11 @@
  * ( For more info about JPIP, check the website: http://www.jpeg.org/jpeg2000/j2kpart9.html)\n
  *
  * This whole documents covers the following six programs.\n
- * - opj_server.c     JPIP server supporting HTTP connection and JPT/JPP-stream
- * - opj_dec_server.c Server to decode JPT/JPP-stream and communicate locally with JPIP client, which is coded in java
- * - addXMLinJP2.c    To Embed metadata into JP2 file
- * - jpip_to_jp2.c    To Convert JPT/JPP-stream to JP2
- * - jpip_to_j2k.c    To Convert JPT/JPP-stream to J2K
- * - test_index.c     To test index code format of a JP2 file
+ * - opj_server.c          JPIP server supporting HTTP connection and JPT/JPP-stream
+ * - opj_dec_server.c      Server to decode JPT/JPP-stream and communicate locally with JPIP client, which is coded in java
+ * - opj_jpip_addxml.c     To Embed metadata into JP2 file
+ * - opj_jpip_transcode.c  To Convert JPT/JPP-stream to JP2 or J2K
+ * - opj_jpip_test.c       To test index code format of a JP2 file
  *
  * \section license License
  * This software is released under the BSD license, anybody can use or modify the library, even for commercial applications.\n

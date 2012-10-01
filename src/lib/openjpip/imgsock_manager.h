@@ -1,5 +1,5 @@
 /*
- * $Id: imgsock_manager.h 54 2011-05-10 13:22:47Z kaori $
+ * $Id$
  *
  * Copyright (c) 2002-2011, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
  * Copyright (c) 2002-2011, Professor Benoit Macq

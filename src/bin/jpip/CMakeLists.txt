@@ -47,14 +47,7 @@ set(EXES
   opj_jpip_test
   )
 foreach(exe ${EXES})
-  if(${exe} STREQUAL "opj_jpip_transcode")
-    add_executable(${exe} ${exe}.c
-      jpip_to_jp2.c
-      jpip_to_j2k.c
-    )
-  else()
-    add_executable(${exe} ${exe}.c)
-  endif()
+  add_executable(${exe} ${exe}.c)
   target_link_libraries(${exe} openjpip_local)
   install(TARGETS ${exe}
     EXPORT OpenJPEGTargets
