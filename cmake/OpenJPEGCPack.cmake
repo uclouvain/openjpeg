@@ -60,11 +60,13 @@ if(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
   endif()
 
   set(CPACK_BUNDLE_NAME "OpenJPEG ${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}")
-  configure_file(${CMAKE_ROOT}/Templates/AppleInfo.plist
-    ${CMAKE_CURRENT_BINARY_DIR}/opj.plist)
-  set(CPACK_BUNDLE_PLIST
-    ${CMAKE_CURRENT_BINARY_DIR}/opj.plist)
-  #include(BundleUtilities)
+  if(APPLE)
+    configure_file(${CMAKE_ROOT}/Templates/AppleInfo.plist
+      ${CMAKE_CURRENT_BINARY_DIR}/opj.plist)
+    set(CPACK_BUNDLE_PLIST
+      ${CMAKE_CURRENT_BINARY_DIR}/opj.plist)
+    #include(BundleUtilities)
+  endif()
 
   include(CPack)
 endiF(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
