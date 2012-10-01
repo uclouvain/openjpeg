@@ -203,6 +203,14 @@ endif ()
 add_subdirectory(wrapping)
 
 #-----------------------------------------------------------------------------
+# opj_config.h generation (2/2)
+configure_file(
+ ${CMAKE_CURRENT_SOURCE_DIR}/src/lib/openjp2/opj_config.h.cmake.in
+ ${CMAKE_CURRENT_BINARY_DIR}/src/lib/openjp2/opj_config.h
+ @ONLY
+ )
+
+#-----------------------------------------------------------------------------
 # Build DOCUMENTATION (not in ALL target and only if Doxygen is found)
 option(BUILD_DOC "Build the HTML documentation (with doxygen if available)." OFF)
 if(BUILD_DOC)
