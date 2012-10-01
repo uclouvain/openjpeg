@@ -68,6 +68,7 @@ endif()
 
 add_subdirectory(conformance)
 add_subdirectory(nonregression)
+add_subdirectory(unit)
 
 if(BUILD_JPIP)
   if(JPIP_SERVER)
