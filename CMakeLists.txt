@@ -172,7 +172,6 @@ OPJ_TEST_LARGE_FILES(OPJ_HAVE_LARGEFILES)
 
 #-----------------------------------------------------------------------------
 # Build Library
-include_directories(BEFORE ${OPENJPEG_BINARY_DIR})
 add_subdirectory(src)
 
 #-----------------------------------------------------------------------------
@@ -203,15 +202,6 @@ add_subdirectory(wrapping)
 include(CheckTypeSize)
 CHECK_TYPE_SIZE(ssize_t     SSIZE_T)
 
-#-----------------------------------------------------------------------------
-# opj_config.h generation (2/2)
-configure_file("${OPENJPEG_SOURCE_DIR}/opj_config.h.cmake.in"
- "${OPENJPEG_BINARY_DIR}/opj_config.h"
- @ONLY
- )
-#
-install( FILES  ${CMAKE_CURRENT_BINARY_DIR}/opj_config.h
- DESTINATION ${OPENJPEG_INSTALL_INCLUDE_DIR} COMPONENT Headers)
 #-----------------------------------------------------------------------------
 # Build DOCUMENTATION (not in ALL target and only if Doxygen is found)
 option(BUILD_DOC "Build the HTML documentation (with doxygen if available)." OFF)

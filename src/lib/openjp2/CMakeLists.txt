@@ -1,4 +1,20 @@
 include_regular_expression("^.*$")
+
+#-----------------------------------------------------------------------------
+# opj_config.h generation (2/2)
+configure_file(
+ ${CMAKE_CURRENT_SOURCE_DIR}/opj_config.h.cmake.in
+ ${CMAKE_CURRENT_BINARY_DIR}/opj_config.h
+ @ONLY
+ )
+#
+install( FILES  ${CMAKE_CURRENT_BINARY_DIR}/opj_config.h
+ DESTINATION ${OPENJPEG_INSTALL_INCLUDE_DIR} COMPONENT Headers)
+
+include_directories(
+  ${OPENJPEG_BINARY_DIR}/src/lib/openjp2 # opj_config.h
+)
+
 # Defines the source code for the library
 set(OPENJPEG_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/bio.c

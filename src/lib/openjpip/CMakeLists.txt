@@ -1,6 +1,7 @@
 include_regular_expression("^.*$")
 
 include_directories(
+  ${OPENJPEG_BINARY_DIR}/src/lib/openjp2 # opj_config.h
   ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2
   ${FCGI_INCLUDE_DIRS}
   ${CURL_INCLUDE_DIRS}

@@ -12,6 +12,7 @@ include_directories(${JNI_INCLUDE_DIRS})
 
 # required header file:
 include_directories(
+  ${OPENJPEG_BINARY_DIR}/src/lib/openjp2 # opj_config.h
   ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2
   ${OPENJPEG_SOURCE_DIR}/src/bin/common
   ${OPENJPEG_SOURCE_DIR}/src/bin/jp2

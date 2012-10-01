@@ -14,6 +14,7 @@ if(WIN32)
 endif(WIN32)
 
 include_directories(
+  ${OPENJPEG_BINARY_DIR}/src/lib/openjp2 # opj_config.h
   ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2
   )
 
