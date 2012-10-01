@@ -36,7 +36,7 @@ foreach(exe opj_decompress opj_compress opj_dump)
   # To support universal exe:
   if(ZLIB_FOUND AND APPLE)
     target_link_libraries(${exe} z)
-  ELSe(ZLIB_FOUND AND APPLE)
+  else(ZLIB_FOUND AND APPLE)
     target_link_libraries(${exe} ${Z_LIBNAME})
   endif()
 

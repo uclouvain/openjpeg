@@ -45,7 +45,7 @@ foreach(exe decompress compress)
   # To support universal exe:
   if(ZLIB_FOUND AND APPLE)
     target_link_libraries(${jpwl_exe} z)
-  ELSe(ZLIB_FOUND AND APPLE)
+  else(ZLIB_FOUND AND APPLE)
     target_link_libraries(${jpwl_exe} ${Z_LIBNAME})
   endif()
   

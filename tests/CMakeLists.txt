@@ -29,7 +29,7 @@ target_link_libraries(comparePGXimages
 # To support universal exe:
 if(ZLIB_FOUND AND APPLE)
   target_link_libraries(comparePGXimages z)
-ELSe(ZLIB_FOUND AND APPLE)
+else(ZLIB_FOUND AND APPLE)
   target_link_libraries(comparePGXimages ${Z_LIBNAME})
 endif()
 
