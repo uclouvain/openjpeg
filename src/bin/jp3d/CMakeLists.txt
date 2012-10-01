@@ -3,6 +3,7 @@
 # First thing define the common source:
 SET(common_SRCS
   convert.c
+  ${OPENJPEG_SOURCE_DIR}/src/bin/common/opj_getopt.c
   )
 
 # Headers file are located here:
