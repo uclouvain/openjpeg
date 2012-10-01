@@ -20,7 +20,6 @@ set(CTEST_CUSTOM_COVERAGE_EXCLUDE
 
   # Exclude files from the ThirdParty Utilities directories
   ".*/thirdparty/.*"
-  ".*libtiff.*"
   )
 
 set(CTEST_CUSTOM_WARNING_EXCEPTION
@@ -29,7 +28,7 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   # Suppress warning caused by intentional messages about deprecation
   ".*warning,.* is deprecated"
   # supress warnings caused by 3rd party libs:
-  ".*/thirdparty/.*"
+  ".*thirdparty.*"
   "libtiff.*has no symbols"
   "libpng.*has no symbols"
   )
