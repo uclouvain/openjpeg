@@ -28,7 +28,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*! \mainpage OpenJPIP v2.1 Documentation
+/*! \page openjpippage OpenJPIP v2.1 Documentation
  *
  * \section intro Introduction
  * This manual documents the low-level OpenJPIP C API.\n

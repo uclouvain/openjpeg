@@ -12,8 +12,14 @@ if(DOXYGEN_FOUND)
 
   # Configure the html mainpage file of the doxygen documentation with variable
   # from CMake and move it
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/mainpage.dox.cmake
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/mainpage.dox.in
     ${CMAKE_BINARY_DIR}/doc/mainpage.dox @ONLY)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/openjpip.dox.in
+    ${CMAKE_BINARY_DIR}/doc/openjpip.dox @ONLY)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/jpip_architect.png
+    ${CMAKE_BINARY_DIR}/doc/html/jpip_architect.png COPYONLY)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/jpip_protocol.png
+    ${CMAKE_BINARY_DIR}/doc/html/jpip_protocol.png COPYONLY)
 
   # Generate new target to build the html documentation
   add_custom_target(doc ALL

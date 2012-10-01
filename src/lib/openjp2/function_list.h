@@ -34,7 +34,7 @@
  * The functions in validation.c aims to have access to a list of procedures.
 */
 
-/** @defgroup validation validation procedure*/
+/** @defgroup VAL VAL - validation procedure*/
 /*@{*/
 
 /**************************************************************************************************

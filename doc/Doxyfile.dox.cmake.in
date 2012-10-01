@@ -100,7 +100,7 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = @OPENJPEG_SOURCE_DIR@/libopenjpeg \
+INPUT                  = @OPENJPEG_SOURCE_DIR@/src/lib \
                          @OPENJPEG_BINARY_DIR@/doc
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          = *.h \
