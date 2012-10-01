@@ -143,7 +143,7 @@ static opj_bool opj_t2_init_seg(    opj_tcd_cblk_dec_v2_t* cblk,
 /* ----------------------------------------------------------------------- */
 
 /* #define RESTART 0x04 */
-// TODO MSD->LHE
+/* TODO MSD->LHE */
 static void t2_putcommacode(opj_bio_t *bio, int n) {
         while (--n >= 0) {
                 bio_write(bio, 1, 1);
@@ -232,7 +232,7 @@ opj_bool opj_t2_encode_packets( opj_t2_v2_t* p_t2,
                         for (poc = 0; poc < pocno ; ++poc) {
                                 OPJ_UINT32 l_tp_num = compno;
 
-                                // TODO MSD : check why this function cannot fail (cf. v1)
+                                /* TODO MSD : check why this function cannot fail (cf. v1) */
                                 pi_create_encode_v2(l_pi, l_cp,p_tile_no,poc,l_tp_num,p_tp_pos,p_t2_mode);
 
                                 while (pi_next(l_current_pi)) {

@@ -115,7 +115,7 @@ typedef struct opj_tcd_cblk {
   opj_tcd_pass_t passes[100];	
 /* Data */
   unsigned char data[524288];		
-  //unsigned char *data;
+  /*unsigned char *data;*/
 } opj_tcd_cblk_t;
 
 /**

@@ -75,7 +75,4 @@
 #include "int.h"
 #include "fix.h"
 
-//#include "pred.h"
-//#include "golomb.h"
-
 #endif /* OPJ_INCLUDES_H */

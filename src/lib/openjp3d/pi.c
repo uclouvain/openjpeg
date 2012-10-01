@@ -99,7 +99,7 @@ static bool pi_next_lrcp(opj_pi_iterator_t * pi) {
 					continue;
 				}
 				res = &comp->resolutions[pi->resno];
-				//for (pi->precno = 0; pi->precno < (res->prctno[0] * res->prctno[1]); pi->precno++) {
+				/*for (pi->precno = 0; pi->precno < (res->prctno[0] * res->prctno[1]); pi->precno++) {*/
 				for (pi->precno = 0; pi->precno < (res->prctno[0] * res->prctno[1] * res->prctno[2]); pi->precno++) {
 					index = pi->layno * pi->step_l 
 						+ pi->resno * pi->step_r 
@@ -140,7 +140,7 @@ static bool pi_next_rlcp(opj_pi_iterator_t * pi) {
 					continue;
 				}
 				res = &comp->resolutions[pi->resno];
-				//for (pi->precno = 0; pi->precno < (res->prctno[0] * res->prctno[1]); pi->precno++) {
+				/*for (pi->precno = 0; pi->precno < (res->prctno[0] * res->prctno[1]); pi->precno++) {*/
 				for (pi->precno = 0; pi->precno < (res->prctno[0] * res->prctno[1] * res->prctno[2]); pi->precno++) {
 					index = pi->layno * pi->step_l + pi->resno * pi->step_r + pi->compno * pi->step_c + pi->precno * pi->step_p;
 					if (!pi->include[index]) {

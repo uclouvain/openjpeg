@@ -257,10 +257,10 @@ int main(int argc, char **argv)
 	memset(&mj2_parameters, 0, sizeof(mj2_cparameters_t));
   /* default value */
   /* ------------- */
-	mj2_parameters.w = 352;			// CIF default value
-	mj2_parameters.h = 288;			// CIF default value
-	mj2_parameters.CbCr_subsampling_dx = 2;	// CIF default value
-	mj2_parameters.CbCr_subsampling_dy = 2;	// CIF default value
+	mj2_parameters.w = 352;			/* CIF default value*/
+	mj2_parameters.h = 288;			/* CIF default value*/
+	mj2_parameters.CbCr_subsampling_dx = 2;	/* CIF default value*/
+	mj2_parameters.CbCr_subsampling_dy = 2;	/* CIF default value*/
 	mj2_parameters.frame_rate = 25;
 	mj2_parameters.prec = 8; /* DEFAULT */
 	mj2_parameters.enumcs = ENUMCS_SYCC; /* FIXME: ENUMCS_YUV420 */
@@ -700,7 +700,7 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-  // One sample per chunk
+  /* One sample per chunk*/
 	movie->tk[0].chunk = (mj2_chunk_t*) 
 	 malloc(movie->tk[0].num_samples * sizeof(mj2_chunk_t));     
 	movie->tk[0].sample = (mj2_sample_t*) 
@@ -711,8 +711,8 @@ int main(int argc, char **argv)
     return 1;
 	}    
   
-// Writing JP, FTYP and MDAT boxes 
-// Assuming that the JP and FTYP boxes won't be longer than 300 bytes:
+/* Writing JP, FTYP and MDAT boxes */
+/* Assuming that the JP and FTYP boxes won't be longer than 300 bytes:*/
 	buf = (unsigned char*) 
 	 malloc (300 * sizeof(unsigned char));
 
@@ -773,7 +773,7 @@ int main(int argc, char **argv)
 	cio = opj_cio_open((opj_common_ptr)movie->cinfo, buf, buflen);
 								
 	cio_skip(cio, 4);
-	cio_write(cio, JP2_JP2C, 4);	// JP2C
+	cio_write(cio, JP2_JP2C, 4);	/* JP2C*/
 
 /* encode the image */
 #if 0 /* MM: FIXME */
@@ -793,7 +793,7 @@ int main(int argc, char **argv)
 
 	tk->sample[sampleno].sample_size = len+8;				
 	tk->sample[sampleno].offset = offset;
-	tk->chunk[sampleno].offset = offset;	// There is one sample per chunk 
+	tk->chunk[sampleno].offset = offset;	/* There is one sample per chunk */
 	fwrite(buf, 1, len+8, mj2file);				
 	offset += len+8;				
 
@@ -812,14 +812,14 @@ int main(int argc, char **argv)
 	
 	buf = (unsigned char*) malloc(4*sizeof(unsigned char));
 
-// Init a cio to write box length variable in a little endian way 
+/* Init a cio to write box length variable in a little endian way */
 	cio = opj_cio_open(NULL, buf, 4);
 	cio_write(cio, offset - mdat_initpos, 4);
 	fwrite(buf, 4, 1, mj2file);
 	fseek(mj2file,0,SEEK_END);
 	free(buf);
 
-// Writing MOOV box 
+/* Writing MOOV box */
 	buf = (unsigned char*) 
 	 malloc ((TEMP_BUF+numframes*20) * sizeof(unsigned char));
 	cio = opj_cio_open(movie->cinfo, buf, (TEMP_BUF+numframes*20));
@@ -830,7 +830,7 @@ int main(int argc, char **argv)
 	fprintf(stdout,"Total encoding time: %.2f s for %d frames (%.1f fps)\n",
 	 total_time, numframes, (float)numframes/total_time);
 
-  // Ending program 
+  /* Ending program */
   
 	fclose(mj2file);
 /* free remaining compression structures */

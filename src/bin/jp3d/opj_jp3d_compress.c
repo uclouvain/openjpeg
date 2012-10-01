@@ -709,10 +709,10 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters) 
 
 	if(parameters->numresolution[2] != 1) {
 		parameters->transform_format = TRF_3D_DWT;
-		//fprintf(stdout, "[Warning] Resolution level in axial dim > 1 : 3D-DWT will be performed... \n");
+		/*fprintf(stdout, "[Warning] Resolution level in axial dim > 1 : 3D-DWT will be performed... \n");*/
 	} else if (parameters->numresolution[2] == 1) {
 		parameters->transform_format = TRF_2D_DWT;
-		//fprintf(stdout, "[Warning] Resolution level in axial dim == 1 : 2D-DWT will be performed... \n");
+		/*fprintf(stdout, "[Warning] Resolution level in axial dim == 1 : 2D-DWT will be performed... \n");*/
 	}
 	
 	if ((parameters->cod_format == J2K_CFMT) && (parameters->transform_format != TRF_2D_DWT || parameters->encoding_format != ENCOD_2EB)) {
@@ -860,7 +860,7 @@ int main(int argc, char **argv) {
 		cio = opj_cio_open((opj_common_ptr)cinfo, NULL, 0);
 
 		/* encode the volume */
-		//fprintf(stdout, "[INFO] Encode the volume\n");
+		/*fprintf(stdout, "[INFO] Encode the volume\n");*/
 		bSuccess = opj_encode(cinfo, cio, volume, parameters.index);
 		if (!bSuccess) {
 			opj_cio_close(cio);

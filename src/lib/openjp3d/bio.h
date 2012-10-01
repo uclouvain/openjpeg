@@ -121,7 +121,7 @@ Read a bit
 @return Returns the read bit
 */
 /* MOD antonin */
-//int bio_getbit(opj_bio_t *bio);
+/*int bio_getbit(opj_bio_t *bio);*/
 /* DOM */
 /* ----------------------------------------------------------------------- */
 /*@}*/

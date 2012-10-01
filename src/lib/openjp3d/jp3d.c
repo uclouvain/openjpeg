@@ -471,7 +471,7 @@ static void j3d_read_zsi(opj_j3d_t *j3d) {
 		volume->comps[i].dz = cio_read(cio, 1);	/* ZRsiz_i */
 	}
 	
-	//Initialization of volume
+	/*Initialization of volume*/
 	cp->tw = int_ceildiv(volume->x1 - cp->tx0, cp->tdx);
 	cp->th = int_ceildiv(volume->y1 - cp->ty0, cp->tdy);
 	cp->tl = int_ceildiv(volume->z1 - cp->tz0, cp->tdz);
@@ -538,7 +538,7 @@ static void j3d_read_dco(opj_j3d_t *j3d){
 	opj_cp_t *cp = j3d->cp;
 	
 	len = cio_read(cio, 2);			/* Lsiz */
-	dcotype = cio_read(cio, 1); //offset 8bit unsigned / 16bit signed integers
+	dcotype = cio_read(cio, 1); /*offset 8bit unsigned / 16bit signed integers*/
 	if (dcotype == 0) {
 		for (i = 0; i < volume->numcomps; i++) {
 			volume->comps[i].dcoffset = cio_read(cio, 1);
@@ -660,7 +660,7 @@ static void j3d_write_siz(opj_j3d_t *j3d) {
 	cio_write(cio, J3D_MS_SIZ, 2);	/* SIZ */
 	lenp = cio_tell(cio);
 	cio_skip(cio, 2);
-	//cio_write(cio, 0, 2);			/* Rsiz (capabilities of 15444-1 only) */
+	/*cio_write(cio, 0, 2);*/			/* Rsiz (capabilities of 15444-1 only) */
 	Rsiz = J3D_RSIZ_DCO | J3D_RSIZ_ATK; /** | J3D_RSIZ_MCT | J3D_RSIZ_NONLT (not implemented yet)*/
 	cio_write(cio, Rsiz, 2); /* capabilities of WDv5.2*/
 	cio_write(cio, volume->x1, 4);	/* Xsiz */
@@ -725,7 +725,7 @@ static void j3d_read_siz(opj_j3d_t *j3d) {
 		for (i = 0; i < volume->numcomps; i++) 
 			volume->comps[i].dz = 1;
 
-		//Initialization of volume
+		/*Initialization of volume*/
 		cp->tw = int_ceildiv(volume->x1 - cp->tx0, cp->tdx);
 		cp->th = int_ceildiv(volume->y1 - cp->ty0, cp->tdy);
 		cp->tl = int_ceildiv(volume->z1 - cp->tz0, cp->tdz);
@@ -767,10 +767,10 @@ static void j3d_write_com(opj_j3d_t *j3d) {
 	cio_write(cio, J3D_MS_COM, 2);
 	lenp = cio_tell(cio);
 	cio_skip(cio, 2);
-	//cio_write(cio, 0, 2);
+	/*cio_write(cio, 0, 2);*/
 	cio_write(cio, j3d->cp->transform_format,1);
 	cio_write(cio, j3d->cp->encoding_format,1);
-	//opj_event_msg(j3d->cinfo, EVT_INFO, "TRF %D ENCOD %d\n",j3d->cp->transform_format,j3d->cp->encoding_format);
+	/*opj_event_msg(j3d->cinfo, EVT_INFO, "TRF %D ENCOD %d\n",j3d->cp->transform_format,j3d->cp->encoding_format);*/
 	if (j3d->cp->comment != NULL) {
 		char *comment = j3d->cp->comment;
 		for (i = 0; i < strlen(comment); i++) {
@@ -791,9 +791,9 @@ static void j3d_read_com(opj_j3d_t *j3d) {
 	
 	j3d->cp->transform_format = (OPJ_TRANSFORM) cio_read(cio, 1);
 	j3d->cp->encoding_format = (OPJ_ENTROPY_CODING) cio_read(cio, 1);
-	//opj_event_msg(j3d->cinfo, EVT_INFO, "TRF %D ENCOD %d\n",j3d->cp->transform_format,j3d->cp->encoding_format);
+	/*opj_event_msg(j3d->cinfo, EVT_INFO, "TRF %D ENCOD %d\n",j3d->cp->transform_format,j3d->cp->encoding_format);*/
 
-	cio_skip(cio, len - 4);  //posible comments
+	cio_skip(cio, len - 4);  /*posible comments*/
 }
 
 static void j3d_write_cox(opj_j3d_t *j3d, int compno) {
@@ -871,7 +871,7 @@ static void j3d_read_cox(opj_j3d_t *j3d, int compno) {
 		tccp->dwtid[1] = tccp->dwtid[0];	/* SPcox (L) */
 		tccp->dwtid[2] = tccp->dwtid[0];	/* SPcox (M) */
 	}
-	tccp->reversible = (tccp->dwtid[0]>=1 && tccp->dwtid[1]>=1 && tccp->dwtid[2]>=1); //TODO: only valid for irreversible 9x7 WTs
+	tccp->reversible = (tccp->dwtid[0]>=1 && tccp->dwtid[1]>=1 && tccp->dwtid[2]>=1); /*TODO: only valid for irreversible 9x7 WTs*/
 	if (tccp->csty & J3D_CP_CSTY_PRT) {
 		for (i = 0; i < tccp->numresolution[0]; i++) {
 			int tmp = cio_read(cio, 2);	/* SPcox (N_i) */
@@ -1494,7 +1494,7 @@ static void j3d_read_eoc(opj_j3d_t *j3d) {
 	j3d_dump_cp(stdout, tcd->volume, tcd->cp);*/
 	for (i = 0; i < j3d->cp->tileno_size; i++) {
 		tileno = j3d->cp->tileno[i];
-		//opj_event_msg(j3d->cinfo, EVT_INFO, "tcd_decode_tile \n");
+		/*opj_event_msg(j3d->cinfo, EVT_INFO, "tcd_decode_tile \n");*/
 		tcd_decode_tile(tcd, j3d->tile_data[tileno], j3d->tile_len[tileno], tileno);
 		opj_free(j3d->tile_data[tileno]);
 		j3d->tile_data[tileno] = NULL;
@@ -1696,7 +1696,7 @@ opj_volume_t* j3d_decode(opj_j3d_t *j3d, opj_cio_t *cio) {
 			return 0;
 		}
 		e = j3d_dec_mstab_lookup(id);
-		//opj_event_msg(cinfo, EVT_INFO, "MARKER %x PREVSTATE %d E->STATE %d\n",e->id,j3d->state,e->states);
+		/*opj_event_msg(cinfo, EVT_INFO, "MARKER %x PREVSTATE %d E->STATE %d\n",e->id,j3d->state,e->states);*/
 		if (!(j3d->state & e->states)) {
 			opj_volume_destroy(volume);
 			opj_event_msg(cinfo, EVT_ERROR, "%.8x: unexpected marker %x\n", cio_tell(cio) - 2, id);
@@ -1705,7 +1705,7 @@ opj_volume_t* j3d_decode(opj_j3d_t *j3d, opj_cio_t *cio) {
 		if (e->handler) {
 			(*e->handler)(j3d);
 		}
-		//opj_event_msg(cinfo, EVT_INFO, "POSTSTATE %d\n",j3d->state);
+		/*opj_event_msg(cinfo, EVT_INFO, "POSTSTATE %d\n",j3d->state);*/
 		if (j3d->state == J3D_STATE_MT) {
 			break;
 		}
@@ -1898,7 +1898,7 @@ void j3d_setup_encoder(opj_j3d_t *j3d, opj_cparameters_t *parameters, opj_volume
 			tccp->cblk[1] = int_floorlog2(parameters->cblock_init[1]); 
 			tccp->cblk[2] = int_floorlog2(parameters->cblock_init[2]); 
 						assert (tccp->cblk[0]+tccp->cblk[1]+tccp->cblk[1] <= T1_MAXWHD);
-			tccp->cblksty = parameters->mode; //Codeblock style --> Table A.19 (default 0)
+			tccp->cblksty = parameters->mode; /*Codeblock style --> Table A.19 (default 0)*/
 
 			/*ATK / transform */
 			tccp->reversible = parameters->irreversible ? 0 : 1; /* 0 => DWT 9-7 || 1 => DWT 5-3  */
@@ -1946,7 +1946,7 @@ void j3d_setup_encoder(opj_j3d_t *j3d, opj_cparameters_t *parameters, opj_volume
 					}
 				}
 			}
-			//Calcular stepsize for each subband (if NOQNT -->stepsize = 1.0)
+			/*Calcular stepsize for each subband (if NOQNT -->stepsize = 1.0)*/
 			dwt_calc_explicit_stepsizes(tccp, volume->comps[i].prec);
 		}
 	}
@@ -2051,8 +2051,8 @@ static int j3d_create_index(opj_j3d_t *j3d, opj_cio_t *cio, opj_volume_info_t *v
 			*/
 			for (resno = 0; resno < volume_info->decomposition[0] + 1; resno++) {
 				/* I suppose components have same XRsiz, YRsiz */
-				//int x0 = volume_info->tile_Ox + tileno - (int)floor( (float)tileno/(float)volume_info->tw ) * volume_info->tw * volume_info->tile_x;
-				//int y0 = volume_info->tile_Ox + (int)floor( (float)tileno/(float)volume_info->tw ) * volume_info->tile_y;
+				/*int x0 = volume_info->tile_Ox + tileno - (int)floor( (float)tileno/(float)volume_info->tw ) * volume_info->tw * volume_info->tile_x;*/
+				/*int y0 = volume_info->tile_Ox + (int)floor( (float)tileno/(float)volume_info->tw ) * volume_info->tile_y;*/
 				int x0 = volume_info->tile_Ox + (int)floor( (float)tileno/(float)volume_info->tw ) * volume_info->tile_x;
 				int y0 = volume_info->tile_Oy + (int)floor( (float)tileno/(float)volume_info->th ) * volume_info->tile_y;
 				int z0 = volume_info->tile_Ox + (int)floor( (float)tileno/(float)volume_info->tl ) * volume_info->tile_z;
@@ -2300,7 +2300,7 @@ bool j3d_encode(opj_j3d_t *j3d, opj_cio_t *cio, opj_volume_t *volume, char *inde
 		if (cp->tcps[tileno].numpocs) {
 			j3d_write_poc(j3d);
 		}
-		j3d_write_sod(j3d, tcd); //--> tcd_encode_tile
+		j3d_write_sod(j3d, tcd); /*--> tcd_encode_tile*/
 
 		/* INDEX >> */
 		if(volume_info && volume_info->index_on) {

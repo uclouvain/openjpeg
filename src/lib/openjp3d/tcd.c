@@ -156,7 +156,7 @@ void tcd_destroy(opj_tcd_t *tcd) {
 
 /* ----------------------------------------------------------------------- */
 void tcd_malloc_encode(opj_tcd_t *tcd, opj_volume_t * volume, opj_cp_t * cp, int curtileno) {
-	int compno, resno, bandno, precno, cblkno, i, j;//, k;
+	int compno, resno, bandno, precno, cblkno, i, j;/*, k;*/
 
 	opj_tcd_tile_t		*tile = NULL;		/* pointer to tcd->tile */
 	opj_tcd_tilecomp_t	*tilec = NULL;		/* pointer to tcd->tilec */
@@ -239,7 +239,7 @@ void tcd_malloc_encode(opj_tcd_t *tcd, opj_volume_t * volume, opj_cp_t * cp, int
 		res_max = 0;
 		for (i = 0;i < 3; i++){
 			tilec->numresolution[i] = tccp->numresolution[i];
-			//Greater of 3 resolutions contains all information
+			/*Greater of 3 resolutions contains all information*/
 			res_max = (tilec->numresolution[i] > res_max) ? tilec->numresolution[i] : res_max;
 		}
 		
@@ -272,7 +272,7 @@ void tcd_malloc_encode(opj_tcd_t *tcd, opj_volume_t * volume, opj_cp_t * cp, int
 			res->x1 = int_ceildivpow2(tilec->x1, levelnox);
 			res->y1 = int_ceildivpow2(tilec->y1, levelnoy);
 			res->z1 = int_ceildivpow2(tilec->z1, levelnoz);
-			//if (res->z1 < 0)fprintf(stdout,"Res: %d       %d/%d --> %d\n",resno,tilec->z1, levelnoz, int_ceildivpow2(tilec->z1, levelnoz));
+			/*if (res->z1 < 0)fprintf(stdout,"Res: %d       %d/%d --> %d\n",resno,tilec->z1, levelnoz, int_ceildivpow2(tilec->z1, levelnoz));*/
 
 			res->numbands = (resno == 0) ? 1 : (resno <= diff) ? 3 : 7; /* --> 3D */
 
@@ -323,9 +323,9 @@ void tcd_malloc_encode(opj_tcd_t *tcd, opj_volume_t * volume, opj_cp_t * cp, int
 				cbglengthexpn = pdz - 1;
 			}
 			
-			cblkwidthexpn = int_min(tccp->cblk[0], cbgwidthexpn); //6
-			cblkheightexpn = int_min(tccp->cblk[1], cbgheightexpn); //6
-			cblklengthexpn = int_min(tccp->cblk[2], cbglengthexpn); //6
+			cblkwidthexpn = int_min(tccp->cblk[0], cbgwidthexpn); /*6*/
+			cblkheightexpn = int_min(tccp->cblk[1], cbgheightexpn); /*6*/
+			cblklengthexpn = int_min(tccp->cblk[2], cbglengthexpn); /*6*/
 			
 			res->bands = (opj_tcd_band_t *) opj_malloc(res->numbands * sizeof(opj_tcd_band_t));
 			for (bandno = 0; bandno < res->numbands; bandno++) {
@@ -414,7 +414,7 @@ void tcd_malloc_encode(opj_tcd_t *tcd, opj_volume_t * volume, opj_cp_t * cp, int
 					prc->cblks = (opj_tcd_cblk_t *) opj_malloc((prc->cblkno[0] * prc->cblkno[1] * prc->cblkno[2]) * sizeof(opj_tcd_cblk_t));
 					prc->incltree = tgt_create(prc->cblkno[0], prc->cblkno[1], prc->cblkno[2]);
 					prc->imsbtree = tgt_create(prc->cblkno[0], prc->cblkno[1], prc->cblkno[2]);
-					//tgt_tree_dump(stdout,prc->incltree);
+					/*tgt_tree_dump(stdout,prc->incltree);*/
 					for (cblkno = 0; cblkno < (prc->cblkno[0] * prc->cblkno[1] * prc->cblkno[2]); cblkno++) {
 						int cblkxstart = tlcblkxstart + (cblkno % prc->cblkno[0]) * (1 << cblkwidthexpn);
 						int cblkystart = tlcblkystart + ((cblkno % (prc->cblkno[0] * prc->cblkno[1])) / prc->cblkno[0]) * (1 << cblkheightexpn);
@@ -439,7 +439,7 @@ void tcd_malloc_encode(opj_tcd_t *tcd, opj_volume_t * volume, opj_cp_t * cp, int
 			}
 		}
 	}
-	//tcd_dump(stdout, tcd, tcd->tcd_volume);
+	/*tcd_dump(stdout, tcd, tcd->tcd_volume);*/
 
 }
 void tcd_init_encode(opj_tcd_t *tcd, opj_volume_t * volume, opj_cp_t * cp, int curtileno) {
@@ -518,7 +518,7 @@ void tcd_init_encode(opj_tcd_t *tcd, opj_volume_t * volume, opj_cp_t * cp, int c
 		res_max = 0;
 		for (i = 0;i < 3; i++){
 			tilec->numresolution[i] = tccp->numresolution[i];
-			//Greater of 3 resolutions contains all information
+			/*Greater of 3 resolutions contains all information*/
 			res_max = (tilec->numresolution[i] > res_max) ? tilec->numresolution[i] : res_max;
 		}
 
@@ -547,7 +547,8 @@ void tcd_init_encode(opj_tcd_t *tcd, opj_volume_t * volume, opj_cp_t * cp, int c
 			res->y1 = int_ceildivpow2(tilec->y1, levelnoy);
 			res->z1 = int_ceildivpow2(tilec->z1, levelnoz);
 
-			// res->numbands = resno == 0 ? 1 : 3; /* --> 2D */
+			/* res->numbands = resno == 0 ? 1 : 3; *//* --> 2D */
+
 			res->numbands = (resno == 0) ? 1 : (resno <= diff) ? 3 : 7; /* --> 3D */
 
 			/* p. 30, table A-13, ISO/IEC IS154444-1 : 2002 */			
@@ -707,7 +708,7 @@ void tcd_init_encode(opj_tcd_t *tcd, opj_volume_t * volume, opj_cp_t * cp, int c
 			} /* bandno */
 		} /* resno */
 	} /* compno */
-	//tcd_dump(stdout, tcd, tcd->tcd_volume);
+	/*tcd_dump(stdout, tcd, tcd->tcd_volume);*/
 }
 
 
@@ -715,7 +716,7 @@ void tcd_free_encode(opj_tcd_t *tcd) {
 	int tileno, compno, resno, bandno, precno;
 
 	opj_tcd_tile_t *tile = NULL;		/* pointer to tcd->tile		*/
-//	opj_tcd_slice_t *slice = NULL;		/* pointer to tcd->slice */
+/*	opj_tcd_slice_t *slice = NULL; */		/* pointer to tcd->slice */
 	opj_tcd_tilecomp_t *tilec = NULL;	/* pointer to tcd->tilec	*/
 	opj_tcd_resolution_t *res = NULL;	/* pointer to tcd->res		*/
 	opj_tcd_band_t *band = NULL;		/* pointer to tcd->band		*/
@@ -821,7 +822,7 @@ void tcd_malloc_decode(opj_tcd_t *tcd, opj_volume_t * volume, opj_cp_t * cp) {
 			res_max = 0;
 			for (i = 0;i < 3; i++){
 				tilec->numresolution[i] = tccp->numresolution[i];
-				//Greater of 3 resolutions contains all information
+				/*Greater of 3 resolutions contains all information*/
 				res_max = (tilec->numresolution[i] > res_max) ? tilec->numresolution[i] : res_max;
 			}
 
@@ -874,13 +875,13 @@ void tcd_malloc_decode(opj_tcd_t *tcd, opj_volume_t * volume, opj_cp_t * cp) {
 				
 				/* p. 67, B.17 & B.18, ISO/IEC IS15444-1 : 2002  */
 				if (resno == 0) {
-					tlcbgxstart = tlprcxstart;//0
+					tlcbgxstart = tlprcxstart;/*0*/
 					tlcbgystart = tlprcystart;
 					tlcbgzstart = tlprczstart;
-					brcbgxend = brprcxend;//1
+					brcbgxend = brprcxend;/*1*/
 					brcbgyend = brprcyend;
 					brcbgzend = brprczend;
-					cbgwidthexpn = pdx; //15
+					cbgwidthexpn = pdx; /*15*/
 					cbgheightexpn = pdy;
 					cbglengthexpn = pdz;
 				} else {
@@ -895,9 +896,9 @@ void tcd_malloc_decode(opj_tcd_t *tcd, opj_volume_t * volume, opj_cp_t * cp) {
 					cbglengthexpn = pdz - 1;
 				}
 				
-				cblkwidthexpn = int_min(tccp->cblk[0], cbgwidthexpn); //6
-				cblkheightexpn = int_min(tccp->cblk[1], cbgheightexpn); //6
-				cblklengthexpn = int_min(tccp->cblk[2], cbglengthexpn); //6
+				cblkwidthexpn = int_min(tccp->cblk[0], cbgwidthexpn); /*6*/
+				cblkheightexpn = int_min(tccp->cblk[1], cbgheightexpn); /*6*/
+				cblklengthexpn = int_min(tccp->cblk[2], cbglengthexpn); /*6*/
 
 				res->bands = (opj_tcd_band_t *) opj_malloc(res->numbands * sizeof(opj_tcd_band_t));
 				for (bandno = 0; bandno < res->numbands; bandno++) {
@@ -1003,7 +1004,7 @@ void tcd_malloc_decode(opj_tcd_t *tcd, opj_volume_t * volume, opj_cp_t * cp) {
 		} /* compno */
 	} /* i = 0..cp->tileno_size */
 
-	//tcd_dump(stdout, tcd, tcd->tcd_volume);
+	/*tcd_dump(stdout, tcd, tcd->tcd_volume);*/
 
 	/* 
 	Allocate place to store the decoded data = final volume
@@ -1234,7 +1235,7 @@ void tcd_makelayer(opj_tcd_t *tcd, int layno, double thresh, int final) {
 						if (final)
 							cblk->numpassesinlayers = n;
 
-					//	fprintf(stdout,"MakeLayer : %d %f %d %d \n",layer->len, layer->disto, layer->numpasses, n);
+					/*	fprintf(stdout,"MakeLayer : %d %f %d %d \n",layer->len, layer->disto, layer->numpasses, n);*/
 					}
 				}
 			}
@@ -1346,7 +1347,7 @@ bool tcd_rateallocate(opj_tcd_t *tcd, unsigned char *dest, int len, opj_volume_i
 					lo = thresh;
 				} else {		/* disto_alloc -r, fixed_alloc -f */
 					l = t2_encode_packets(t2, tcd->tcd_tileno, tcd_tile, layno + 1, dest, maxlen, volume_info);
-					//fprintf(stdout, "layno %d i %d len=%d max=%d \n",layno,i,l,maxlen);
+					/*fprintf(stdout, "layno %d i %d len=%d max=%d \n",layno,i,l,maxlen);*/
 					if (l == -999) {
 						lo = thresh; 
 						continue;
@@ -1433,7 +1434,7 @@ int tcd_encode_tile(opj_tcd_t *tcd, int tileno, unsigned char *dest, int len, op
 		opj_tcd_tilecomp_t *tilec = &tile->comps[compno];
 		
 		int adjust;
-		int offset_x = int_ceildiv(volume->x0, volume->comps[compno].dx); //ceil(x0 / subsampling_dx)
+		int offset_x = int_ceildiv(volume->x0, volume->comps[compno].dx); /*ceil(x0 / subsampling_dx)*/
 		int offset_y = int_ceildiv(volume->y0, volume->comps[compno].dy);
 		int offset_z = int_ceildiv(volume->z0, volume->comps[compno].dz);
 		
@@ -1447,18 +1448,18 @@ int tcd_encode_tile(opj_tcd_t *tcd, int tileno, unsigned char *dest, int len, op
 		
 		
 		/* extract tile data from volume.comps[0].data to tile.comps[0].data */
-		//fprintf(stdout,"[INFO] Extract tile data\n");
+		/*fprintf(stdout,"[INFO] Extract tile data\n");*/
 		if (tcd->cp->transform_format == TRF_3D_RLS || tcd->cp->transform_format == TRF_3D_LSE) {
 			adjust = 0;
 		} else {
-            adjust = volume->comps[compno].sgnd ? 0 : 1 << (volume->comps[compno].prec - 1); //sign=='+' --> 2^(prec-1)
+            adjust = volume->comps[compno].sgnd ? 0 : 1 << (volume->comps[compno].prec - 1); /*sign=='+' --> 2^(prec-1)*/
 			if (volume->comps[compno].dcoffset != 0){
 				adjust += volume->comps[compno].dcoffset;
 				fprintf(stdout,"[INFO] DC Offset applied: DCO = %d -> adjust = %d\n",volume->comps[compno].dcoffset,adjust);
 			}
 		}		
 
-		if (tcd_tcp->tccps[compno].reversible == 1) { //IF perfect reconstruction (DWT.5-3)
+		if (tcd_tcp->tccps[compno].reversible == 1) { /*IF perfect reconstruction (DWT.5-3)*/
 			for (z = tilec->z0; z < tilec->z1; z++) {
 				for (y = tilec->y0; y < tilec->y1; y++) {
 					/* start of the src tile scanline */
@@ -1470,7 +1471,7 @@ int tcd_encode_tile(opj_tcd_t *tcd, int tileno, unsigned char *dest, int len, op
 					}
 				}
 			}
-		} else if (tcd_tcp->tccps[compno].reversible == 0) { //IF not (DWT.9-7)
+		} else if (tcd_tcp->tccps[compno].reversible == 0) { /*IF not (DWT.9-7)*/
 			for (z = tilec->z0; z < tilec->z1; z++) {
 				for (y = tilec->y0; y < tilec->y1; y++) {
 					/* start of the src tile scanline */
@@ -1694,7 +1695,7 @@ bool tcd_decode_tile(opj_tcd_t *tcd, unsigned char *src, int len, int tileno) {
 		if (tcd->cp->transform_format == TRF_3D_RLS || tcd->cp->transform_format == TRF_3D_LSE) {
 			adjust = 0;
 		} else {
-            adjust = tcd->volume->comps[compno].sgnd ? 0 : 1 << (tcd->volume->comps[compno].prec - 1); //sign=='+' --> 2^(prec-1)
+            adjust = tcd->volume->comps[compno].sgnd ? 0 : 1 << (tcd->volume->comps[compno].prec - 1); /*sign=='+' --> 2^(prec-1)*/
 			if (tcd->volume->comps[compno].dcoffset != 0){
 				adjust += tcd->volume->comps[compno].dcoffset;
 				fprintf(stdout,"[INFO] DC Offset applied: DCO = %d -> adjust = %d\n",tcd->volume->comps[compno].dcoffset,adjust);

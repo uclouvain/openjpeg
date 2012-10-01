@@ -117,9 +117,9 @@ typedef struct opj_t1 {
 	int lut_nmsedec_ref[1 << T1_NMSEDEC_BITS];
 	int lut_nmsedec_ref0[1 << T1_NMSEDEC_BITS];
 	/** Codeblock data */
-	int data[T1_CBLKD][T1_CBLKH][T1_CBLKW];//int ***data;
+	int data[T1_CBLKD][T1_CBLKH][T1_CBLKW];/*int ***data;*/
 	/** Context information for each voxel in codeblock */
-	int flags[T1_CBLKD + 2][T1_CBLKH + 2][T1_CBLKH + 2];//int ***flags;
+	int flags[T1_CBLKD + 2][T1_CBLKH + 2][T1_CBLKH + 2];/*int ***flags;*/
 } opj_t1_t;
 
 /** @name Exported functions */

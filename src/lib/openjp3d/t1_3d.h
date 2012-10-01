@@ -79,9 +79,9 @@ The functions in T1_3D.C are used by some function in TCD.C.
 #define T1_3D_SGN_B		0x8000
 #define T1_3D_SGN		(T1_3D_SGN_N|T1_3D_SGN_E|T1_3D_SGN_S|T1_3D_SGN_W|T1_3D_SGN_F|T1_3D_SGN_B)
 
-#define T1_3D_SIG		0x0001  //Significance state
-#define T1_3D_REFINE	0x0002  //Delayed significance
-#define T1_3D_VISIT		0x0004  //First-pass membership
+#define T1_3D_SIG		0x0001  /*Significance state*/
+#define T1_3D_REFINE	0x0002  /*Delayed significance*/
+#define T1_3D_VISIT		0x0004  /*First-pass membership*/
 
 #define T1_3D_NUMCTXS_AGG	1
 #define T1_3D_NUMCTXS_ZC	16
@@ -90,11 +90,11 @@ The functions in T1_3D.C are used by some function in TCD.C.
 #define T1_3D_NUMCTXS_UNI	1
 
 #define T1_3D_CTXNO_AGG 0
-#define T1_3D_CTXNO_ZC	(T1_3D_CTXNO_AGG+T1_3D_NUMCTXS_AGG) //1
-#define T1_3D_CTXNO_MAG (T1_3D_CTXNO_ZC+T1_3D_NUMCTXS_ZC)	//17
-#define T1_3D_CTXNO_SC	(T1_3D_CTXNO_MAG+T1_3D_NUMCTXS_MAG)	//20
-#define T1_3D_CTXNO_UNI (T1_3D_CTXNO_SC+T1_3D_NUMCTXS_SC)	//26
-#define T1_3D_NUMCTXS	(T1_3D_CTXNO_UNI+T1_3D_NUMCTXS_UNI) //27
+#define T1_3D_CTXNO_ZC	(T1_3D_CTXNO_AGG+T1_3D_NUMCTXS_AGG) /*1*/
+#define T1_3D_CTXNO_MAG (T1_3D_CTXNO_ZC+T1_3D_NUMCTXS_ZC)	/*17*/
+#define T1_3D_CTXNO_SC	(T1_3D_CTXNO_MAG+T1_3D_NUMCTXS_MAG)	/*20*/
+#define T1_3D_CTXNO_UNI (T1_3D_CTXNO_SC+T1_3D_NUMCTXS_SC)	/*26*/
+#define T1_3D_NUMCTXS	(T1_3D_CTXNO_UNI+T1_3D_NUMCTXS_UNI) /*27*/
 
 
 /* ----------------------------------------------------------------------- */

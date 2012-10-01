@@ -711,7 +711,7 @@ typedef struct opj_packet_info {
 /**
  * Marker structure
  * */
-typedef struct opj_marker_info_t {
+typedef struct opj_marker_info {
 	/** marker type */
 	unsigned short int type;
 	/** position in codestream */

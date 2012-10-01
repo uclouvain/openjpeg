@@ -110,9 +110,9 @@ static int test_image(const char *fname, mj2_cparameters_t *cp)
 	&& (image->comps[2].dx == 2)
 	&& (image->comps[0].dy == 1)
 	&& (image->comps[1].dy == 2)
-	&& (image->comps[2].dy == 2))// horizontal and vertical
+	&& (image->comps[2].dy == 2))/* horizontal and vertical*/
   {
-//   Y420
+/*   Y420*/
 	cp->enumcs = ENUMCS_SYCC;
 	cp->CbCr_subsampling_dx = 2;
 	cp->CbCr_subsampling_dy = 2;
@@ -123,9 +123,9 @@ static int test_image(const char *fname, mj2_cparameters_t *cp)
 	&& (image->comps[2].dx == 2)
 	&& (image->comps[0].dy == 1)
 	&& (image->comps[1].dy == 1)
-	&& (image->comps[2].dy == 1))// horizontal only
+	&& (image->comps[2].dy == 1))/* horizontal only*/
   {
-//   Y422
+/*   Y422*/
 	cp->enumcs = ENUMCS_SYCC;
 	cp->CbCr_subsampling_dx = 2;
 	cp->CbCr_subsampling_dy = 1;
@@ -138,14 +138,14 @@ static int test_image(const char *fname, mj2_cparameters_t *cp)
 	&& (image->comps[1].dy == 1)
 	&& (image->comps[2].dy == 1))
   {
-//   Y444 or RGB
+/*   Y444 or RGB */
 
 	if(image->color_space ==  CLRSPC_SRGB)
  {
 	cp->enumcs = ENUMCS_SRGB;
 
-//    cp->CbCr_subsampling_dx = 0;
-//    cp->CbCr_subsampling_dy = 0;
+/*    cp->CbCr_subsampling_dx = 0; */
+/*    cp->CbCr_subsampling_dy = 0; */
  }
 	else
  {
@@ -163,8 +163,8 @@ static int test_image(const char *fname, mj2_cparameters_t *cp)
 	else
    {
 	cp->enumcs = ENUMCS_GRAY;
-//  cp->CbCr_subsampling_dx = 0;
-//  cp->CbCr_subsampling_dy = 0;
+/*  cp->CbCr_subsampling_dx = 0; */
+/*  cp->CbCr_subsampling_dy = 0; */
    }
 	if(image->icc_profile_buf)
    {
@@ -295,7 +295,7 @@ static void setparams(opj_mj2_t *movie, opj_image_t *image) {
   
   movie->tk[0].sample_rate = 25;
   
-  movie->tk[0].jp2_struct.numcomps = image->numcomps;	// NC  
+  movie->tk[0].jp2_struct.numcomps = image->numcomps;	/* NC */
 	
 	/* Init Standard jp2 structure */
 	
@@ -336,7 +336,7 @@ static void setparams(opj_mj2_t *movie, opj_image_t *image) {
     movie->tk[0].jp2_struct.meth = 2;
 	
     if (image->numcomps == 1)
-     movie->tk[0].jp2_struct.enumcs = 17;  // Grayscale
+     movie->tk[0].jp2_struct.enumcs = 17;  /* Grayscale */
   
     else   
 	if ((image->comps[0].dx == 1) 
@@ -345,7 +345,7 @@ static void setparams(opj_mj2_t *movie, opj_image_t *image) {
     && (image->comps[0].dy == 1) 
 	&& (image->comps[1].dy == 1) 
 	&& (image->comps[2].dy == 1)) 
-     movie->tk[0].jp2_struct.enumcs = 16;    // RGB
+     movie->tk[0].jp2_struct.enumcs = 16;    /* RGB */
   
     else   
 	if ((image->comps[0].dx == 1) 
@@ -354,10 +354,10 @@ static void setparams(opj_mj2_t *movie, opj_image_t *image) {
     && (image->comps[0].dy == 1) 
 	&& (image->comps[1].dy == 2) 
 	&& (image->comps[2].dy == 2)) 
-     movie->tk[0].jp2_struct.enumcs = 18;  // YUV
+     movie->tk[0].jp2_struct.enumcs = 18;  /* YUV */
   
   else
-    movie->tk[0].jp2_struct.enumcs = 0;	// Unkown profile */
+    movie->tk[0].jp2_struct.enumcs = 0;	/* Unkown profile */
 }
 
 int main(int argc, char *argv[]) {
@@ -430,56 +430,58 @@ int main(int argc, char *argv[]) {
   fwrite(buf,cio_tell(cio),1,mj2file);
   free(buf);
 	
-  // Insert each j2k codestream in a JP2C box  
+  /* Insert each j2k codestream in a JP2C box */
   snum=0;
   offset = 0;  
   while(1)
   {
+    mj2_sample_t * new_sample;
+    mj2_chunk_t * new_chunk;
     sample = &movie->tk[0].sample[snum];
     sprintf(j2kfilename,"%s_%05d.j2k",argv[1],snum);
     j2kfile = fopen(j2kfilename, "rb");
     if (!j2kfile) {
-      if (snum==0) {  // Could not open a single codestream
+      if (snum==0) {  /* Could not open a single codestream */
 				fprintf(stderr, "failed to open %s for reading\n",j2kfilename);
 				return 1;
       }
-      else {	      // Tried to open a inexistant codestream
+      else {	      /* Tried to open a inexistant codestream */
 				fprintf(stdout,"%d frames are being added to the MJ2 file\n",snum);
 				break;
       }
     }
 
-    // Calculating offset for samples and chunks
+    /* Calculating offset for samples and chunks */
     offset += cio_tell(cio);     
     sample->offset = offset;
-    movie->tk[0].chunk[snum].offset = offset;  // There will be one sample per chunk
+    movie->tk[0].chunk[snum].offset = offset;  /* There will be one sample per chunk */
     
-    // Calculating sample size
+    /* Calculating sample size */
     fseek(j2kfile,0,SEEK_END);	
-    sample->sample_size = ftell(j2kfile) + 8; // Sample size is codestream + JP2C box header
+    sample->sample_size = ftell(j2kfile) + 8; /* Sample size is codestream + JP2C box header */
     fseek(j2kfile,0,SEEK_SET);
     
-    // Reading siz marker of j2k image for the first codestream
+    /* Reading siz marker of j2k image for the first codestream */
     if (snum==0)	      
       read_siz_marker(j2kfile, &img);
     
-    // Writing JP2C box header			    
+    /* Writing JP2C box header */
     frame_codestream = (unsigned char*) malloc (sample->sample_size+8); 
 		cio = opj_cio_open(movie->cinfo, frame_codestream, sample->sample_size);    
-    cio_write(cio,sample->sample_size, 4);  // Sample size
-    cio_write(cio,JP2_JP2C, 4);	// JP2C
+    cio_write(cio,sample->sample_size, 4);  /* Sample size */
+    cio_write(cio,JP2_JP2C, 4);	/* JP2C */
     
-    // Writing codestream from J2K file to MJ2 file
+    /* Writing codestream from J2K file to MJ2 file */
     fread(frame_codestream+8,sample->sample_size-8,1,j2kfile);
     fwrite(frame_codestream,sample->sample_size,1,mj2file);
     cio_skip(cio, sample->sample_size-8);
     
-    // Ending loop
+    /* Ending loop */
     fclose(j2kfile);
     snum++;
-    mj2_sample_t * new_sample = (mj2_sample_t*)
+    new_sample = (mj2_sample_t*)
 		realloc(movie->tk[0].sample, (snum+1) * sizeof(mj2_sample_t));
-    mj2_chunk_t * new_chunk = (mj2_chunk_t*)
+    new_chunk = (mj2_chunk_t*)
 		realloc(movie->tk[0].chunk, (snum+1) * sizeof(mj2_chunk_t));
     if (new_sample && new_chunk) {
         movie->tk[0].sample = new_sample;
@@ -491,7 +493,7 @@ int main(int argc, char *argv[]) {
     free(frame_codestream);
   }
   
-  // Writing the MDAT box length in header
+  /* Writing the MDAT box length in header */
   offset += cio_tell(cio);
   buf = (unsigned char*) malloc (4 * sizeof(unsigned char));
 	cio = opj_cio_open(movie->cinfo, buf, 4);
@@ -501,18 +503,18 @@ int main(int argc, char *argv[]) {
   fseek(mj2file,0,SEEK_END);
   free(buf);
 	
-  // Setting movie parameters
+  /* Setting movie parameters */
   movie->tk[0].num_samples=snum;
   movie->tk[0].num_chunks=snum;
   setparams(movie, &img);
 	
-  // Writing MOOV box 
+  /* Writing MOOV box */
 	buf = (unsigned char*) malloc ((TEMP_BUF+snum*20) * sizeof(unsigned char));
 	cio = opj_cio_open(movie->cinfo, buf, (TEMP_BUF+snum*20));
 	mj2_write_moov(movie, cio);
   fwrite(buf,cio_tell(cio),1,mj2file);
 	
-  // Ending program
+  /* Ending program */
   free(img.comps);
   opj_cio_close(cio);
 

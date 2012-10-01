@@ -81,7 +81,7 @@ The functions in J3D.C have for goal to read/write the several parts of the code
 #define J3D_MS_EPH 0xff92	/**< EPH marker value */
 #define J3D_MS_CRG 0xff63	/**< CRG marker value */
 #define J3D_MS_COM 0xff64	/**< COM marker value */
-//15444-2
+/*15444-2*/
 #define J3D_MS_DCO 0xff70	/**< DCO marker value */
 #define J3D_MS_VMS 0xff71   /**< VMS marker value */
 #define J3D_MS_DFS 0xff72	/**< DFS marker value */

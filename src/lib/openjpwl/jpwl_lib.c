@@ -1610,6 +1610,7 @@ opj_bool jpwl_esd_write(opj_j2k_t *j2k, jpwl_esd_ms_t *esd, unsigned char *buf) 
 	/* update markers struct */
 	j2k_add_marker(j2k->cstr_info, J2K_MS_ESD, -1, esd->Lesd + 2);
 
+	return OPJ_TRUE;
 }
 
 unsigned short int jpwl_double_to_pfp(double V, int bytes) {
