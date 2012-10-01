@@ -33,8 +33,9 @@
 #include <stdlib.h>
 #include <math.h>
 
+#include "opj_config.h"
 #include "openjp3d.h"
-#include "getopt.h"
+#include "opj_getopt.h"
 #include "convert.h"
 
 #ifdef _WIN32
@@ -87,7 +88,7 @@ static double calc_PSNR(opj_volume_t *original, opj_volume_t *decoded)
 		return -1.0;
 	
 	return total;
-	//return 20 * log10((max - 1) / sqrt(sum));
+	/*return 20 * log10((max - 1) / sqrt(sum));*/
 }
 
 static double calc_SSIM(opj_volume_t *original, opj_volume_t *decoded)
@@ -95,29 +96,29 @@ static double calc_SSIM(opj_volume_t *original, opj_volume_t *decoded)
 	int max, i, compno = 0, size, sizeM;
 	double sum;
 	double mux = 0.0, muy = 0.0, sigmax = 0.0, sigmay = 0.0,
-		sigmaxy = 0.0, structx = 0.0, structy = 0.0;
+		sigmaxy = 0.0/*, structx = 0.0, structy = 0.0*/;
 	double lcomp,ccomp,scomp;
 	double C1,C2,C3;
 
 	max = (original->comps[compno].prec <= 8) ? 255 : (1 << original->comps[compno].prec) - 1;
 	size = (original->x1 - original->x0) * (original->y1 - original->y0) * (original->z1 - original->z0);
 
-	//MSSIM
+	/*MSSIM*/
 
-//	sizeM = size / (original->z1 - original->z0);
+/*	sizeM = size / (original->z1 - original->z0);*/
 
 	sizeM = size;	
 	for(sum = 0, i = 0; i < sizeM; ++i) {
-		// First, the luminance of each signal is compared.
+		/* First, the luminance of each signal is compared.*/
 		mux += original->comps[compno].data[i];
 		muy += decoded->comps[compno].data[i];
 	}
 	mux /= sizeM;
 	muy /= sizeM;
 	
-	//We use the standard deviation (the square root of variance) as an estimate of the signal contrast.
+	/*We use the standard deviation (the square root of variance) as an estimate of the signal contrast.*/
     for(sum = 0, i = 0; i < sizeM; ++i) {
-		// First, the luminance of each signal is compared.
+		/* First, the luminance of each signal is compared.*/
 		sigmax += (original->comps[compno].data[i] - mux) * (original->comps[compno].data[i] - mux);
 		sigmay += (decoded->comps[compno].data[i] - muy) * (decoded->comps[compno].data[i] - muy);
 		sigmaxy += (original->comps[compno].data[i] - mux) * (decoded->comps[compno].data[i] - muy);
@@ -130,19 +131,19 @@ static double calc_SSIM(opj_volume_t *original, opj_volume_t *decoded)
 	sigmay = sqrt(sigmay);
 	sigmaxy = sqrt(sigmaxy);
 
-	//Third, the signal is normalized (divided) by its own standard deviation, 
-	//so that the two signals being compared have unit standard deviation.
+	/*Third, the signal is normalized (divided) by its own standard deviation, */
+	/*so that the two signals being compared have unit standard deviation.*/
 
-	//Luminance comparison
+	/*Luminance comparison*/
 	C1 = (0.01 * max) * (0.01 * max);
 	lcomp = ((2 * mux * muy) + C1)/((mux*mux) + (muy*mux) + C1);
-	//Constrast comparison
+	/*Constrast comparison*/
 	C2 = (0.03 * max) * (0.03 * max);
 	ccomp = ((2 * sigmax * sigmay) + C2)/((sigmax*sigmax) + (sigmay*sigmay) + C2);
-	//Structure comparison
+	/*Structure comparison*/
 	C3 = C2 / 2;
 	scomp = (sigmaxy + C3) / (sigmax * sigmay + C3);
-	//Similarity measure
+	/*Similarity measure*/
 
 	sum = lcomp * ccomp * scomp;
 	return sum;
@@ -217,13 +218,13 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters) 
 	/* parse the command line */
 
 	while (1) {
-		int c = getopt(argc, argv, "i:o:O:r:l:B:m:h");
+		int c = opj_getopt(argc, argv, "i:o:O:r:l:B:m:h");
 		if (c == -1)			  
 			break;
 		switch (c) {
 			case 'i':			/* input file */
 			{
-				char *infile = optarg;
+				char *infile = opj_optarg;
 				parameters->decod_format = get_file_format(infile);
 				switch(parameters->decod_format) {
 					case J3D_CFMT:
@@ -242,7 +243,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters) 
 
 			case 'm':			/* img file */
 			{
-				char *imgfile = optarg;
+				char *imgfile = opj_optarg;
 				int imgformat = get_file_format(imgfile);
 				switch(imgformat) {
 					case IMG_DFMT:
@@ -261,7 +262,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters) 
 
 			case 'o':			/* output file */
 			{
-				char *outfile = optarg;
+				char *outfile = opj_optarg;
 				parameters->cod_format = get_file_format(outfile);
 				switch(parameters->cod_format) {
 					case PGX_DFMT:
@@ -282,7 +283,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters) 
 
 			case 'O':		/* Original image for PSNR computing */
 			{
-				char *original = optarg;
+				char *original = opj_optarg;
 				parameters->orig_format = get_file_format(original);
 				switch(parameters->orig_format) {
 					case PGX_DFMT:
@@ -302,9 +303,9 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters) 
 	    
 			case 'r':		/* reduce option */
 			{
-				//sscanf(optarg, "%d, %d, %d", &parameters->cp_reduce[0], &parameters->cp_reduce[1], &parameters->cp_reduce[2]);
+				/*sscanf(opj_optarg, "%d, %d, %d", &parameters->cp_reduce[0], &parameters->cp_reduce[1], &parameters->cp_reduce[2]);*/
 				int aux;
-				aux = sscanf(optarg, "%d,%d,%d", &parameters->cp_reduce[0], &parameters->cp_reduce[1], &parameters->cp_reduce[2]);
+				aux = sscanf(opj_optarg, "%d,%d,%d", &parameters->cp_reduce[0], &parameters->cp_reduce[1], &parameters->cp_reduce[2]);
 				if (aux == 2) 
 					parameters->cp_reduce[2] = 0;
 				else if (aux == 1) {
@@ -322,7 +323,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters) 
 
 			case 'l':		/* layering option */
 			{
-				sscanf(optarg, "%d", &parameters->cp_layer);
+				sscanf(opj_optarg, "%d", &parameters->cp_layer);
 			}
 			break;
 
@@ -354,7 +355,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters) 
 				/* ----------------------------------------------------- */
 			
 			default:
-				fprintf(stdout,"[WARNING] This option is not valid \"-%c %s\"\n",c, optarg);
+				fprintf(stdout,"[WARNING] This option is not valid \"-%c %s\"\n",c, opj_optarg);
 				break;
 		}
 	}

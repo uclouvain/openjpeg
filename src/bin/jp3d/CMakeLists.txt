@@ -8,6 +8,7 @@ SET(common_SRCS
 
 # Headers file are located here:
 include_directories(
+  ${OPENJPEG_BINARY_DIR}/src/lib/openjp2 # opj_config.h
   ${OPENJPEG_SOURCE_DIR}/src/lib/openjp3d
   ${LCMS_INCLUDE_DIRNAME}
   ${OPENJPEG_SOURCE_DIR}/src/bin/common
