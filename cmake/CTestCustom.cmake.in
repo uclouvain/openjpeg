@@ -20,6 +20,7 @@ set(CTEST_CUSTOM_COVERAGE_EXCLUDE
 
   # Exclude files from the ThirdParty Utilities directories
   ".*/thirdparty/.*"
+  ".*libtiff.*"
   )
 
 set(CTEST_CUSTOM_WARNING_EXCEPTION
