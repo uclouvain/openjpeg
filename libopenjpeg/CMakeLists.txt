@@ -62,3 +62,10 @@ INSTALL(FILES openjpeg.h
 INSTALL(
   FILES       ${OPENJPEG_SOURCE_DIR}/doc/man/man3/libopenjpeg.3
   DESTINATION ${OPENJPEG_INSTALL_MAN_DIR}/man3)
+
+# internal utilities to generate t1_luts.h
+# no need to install:
+ADD_EXECUTABLE(t1_generate_luts t1_generate_luts.c)
+IF(UNIX)
+  TARGET_LINK_LIBRARIES(t1_generate_luts m)
+ENDIF()
