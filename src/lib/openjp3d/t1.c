@@ -558,7 +558,7 @@ static void t1_encode_cblk(opj_t1_t *t1, opj_tcd_cblk_t * cblk, int orient, int 
 		int correction = 3;
 		double tmpwmsedec;
 		type = ((bpno < (cblk->numbps - 4)) && (passtype < 2) && (cblksty & J3D_CCP_CBLKSTY_LAZY)) ? T1_TYPE_RAW : T1_TYPE_MQ;
-		//fprintf(stdout,"passno %d passtype %d w %d h %d l %d bpno %d orient %d type %d cblksty %d\n",passno,passtype,w,h,l,bpno,orient,type,cblksty);
+		/*fprintf(stdout,"passno %d passtype %d w %d h %d l %d bpno %d orient %d type %d cblksty %d\n",passno,passtype,w,h,l,bpno,orient,type,cblksty);*/
 
 		switch (passtype) {
 			case 0:
@@ -568,7 +568,7 @@ static void t1_encode_cblk(opj_t1_t *t1, opj_tcd_cblk_t * cblk, int orient, int 
 				t1_enc_refpass(t1, w, h, l, bpno, &nmsedec, type, cblksty);
 				break;
 			case 2:
-				//fprintf(stdout,"w %d h %d l %d bpno %d orient %d \n",w,h,l,bpno,orient);
+				/*fprintf(stdout,"w %d h %d l %d bpno %d orient %d \n",w,h,l,bpno,orient);*/
 				t1_enc_clnpass(t1, w, h, l, bpno, orient, &nmsedec, cblksty);
 				/* code switch SEGMARK (i.e. SEGSYM) */
 				if (cblksty & J3D_CCP_CBLKSTY_SEGSYM)
@@ -923,8 +923,8 @@ void t1_destroy(opj_t1_t *t1) {
 		/* destroy MQC and RAW handles */
 		mqc_destroy(t1->mqc);
 		raw_destroy(t1->raw);
-		//opj_free(t1->data);
-		//opj_free(t1->flags);
+		/*opj_free(t1->data);*/
+		/*opj_free(t1->flags);*/
 		opj_free(t1);
 	}
 }
@@ -935,7 +935,7 @@ void t1_encode_cblks(opj_t1_t *t1, opj_tcd_tile_t *tile, opj_tcp_t *tcp) {
 	int n=0;
 	int level[3];
 	FILE *fid = NULL;
-//	char filename[10];
+/*	char filename[10];*/
 	tile->distotile = 0;		/* fixed_quality */
 	
 	for (compno = 0; compno < tile->numcomps; compno++) {
@@ -959,7 +959,7 @@ void t1_encode_cblks(opj_t1_t *t1, opj_tcd_tile_t *tile, opj_tcp_t *tcp) {
 					for (cblkno = 0; cblkno < prc->cblkno[0] * prc->cblkno[1] * prc->cblkno[2]; cblkno++) {
 						opj_tcd_cblk_t *cblk = &prc->cblks[cblkno];
 
-						//fprintf(stdout,"Precno %d Cblkno %d \n",precno,cblkno);
+						/*fprintf(stdout,"Precno %d Cblkno %d \n",precno,cblkno);*/
 						if (band->bandno == 0) {
 							x = cblk->x0 - band->x0;
 							y = cblk->y0 - band->y0;
@@ -1007,7 +1007,7 @@ void t1_encode_cblks(opj_t1_t *t1, opj_tcd_tile_t *tile, opj_tcp_t *tcp) {
                                     for (i = 0; i < cblk->x1 - cblk->x0; i++) {
                                         t1->data[k][j][i] = 
 										tilec->data[(x + i) + (y + j) * (tilec->x1 - tilec->x0) + (z + k) * (tilec->x1 - tilec->x0) * (tilec->y1 - tilec->y0)] << T1_NMSEDEC_FRACBITS;
-//fprintf(fid," %d",t1->data[k][j][i]);
+/*fprintf(fid," %d",t1->data[k][j][i]);*/
 									}
 								}
 							}
@@ -1031,14 +1031,14 @@ void t1_encode_cblks(opj_t1_t *t1, opj_tcd_tile_t *tile, opj_tcp_t *tcp) {
 						}
 						for (i = 0; i < 3; i++) 
 							level[i] = tilec->numresolution[i] - 1 - resno;
-						//fprintf(stdout,"t1_encode_cblk(t1, cblk, %d, %d, %d %d %d, %d, %f, %d, %d, tile);\n", orient, compno, level[0], level[1], level[2], tcp->tccps[compno].reversible, band->stepsize, tcp->tccps[compno].cblksty, tile->numcomps);
+						/*fprintf(stdout,"t1_encode_cblk(t1, cblk, %d, %d, %d %d %d, %d, %f, %d, %d, tile);\n", orient, compno, level[0], level[1], level[2], tcp->tccps[compno].reversible, band->stepsize, tcp->tccps[compno].cblksty, tile->numcomps);*/
 						t1_encode_cblk(t1, cblk, orient, compno, level, tcp->tccps[compno].dwtid, band->stepsize, tcp->tccps[compno].cblksty, tile->numcomps, tile);
 							
 					} /* cblkno */
 				} /* precno */
-//fprintf(fid,"\n");
+/*fprintf(fid,"\n");*/
 			} /* bandno */
-//fclose(fid);
+/*fclose(fid);*/
 		} /* resno  */
 	} /* compno  */
 }
@@ -1172,7 +1172,7 @@ double t1_getwmsedec(int nmsedec, int compno, int level[3], int orient, int bpno
 	}
 	w2 = dwt_getnorm(orient, level, dwtid);
 
-	//fprintf(stdout,"nmsedec %d level %d %d %d orient %d bpno %d stepsize %f \n",nmsedec ,level[0],level[1],level[2],orient,bpno,stepsize);
+	/*fprintf(stdout,"nmsedec %d level %d %d %d orient %d bpno %d stepsize %f \n",nmsedec ,level[0],level[1],level[2],orient,bpno,stepsize);*/
 	wmsedec = w1 * w2 * stepsize * (1 << bpno);
 	wmsedec *= wmsedec * nmsedec / 8192.0;
 	

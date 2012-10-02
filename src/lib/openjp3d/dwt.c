@@ -335,15 +335,15 @@ static void dwt_encode_53(int *a, int dn, int sn, int cas) {
 
 	if (!cas) {
 		if ((dn > 0) || (sn > 1)) {	/* NEW :  CASE ONE ELEMENT */
-			//for (i = 0; i < dn; i++) D(i) -= (S_(i) + S_(i + 1)) >> 1;
-			//for (i = 0; i < sn; i++) S(i) += (D_(i - 1) + D_(i) + 2) >> 2;
+			/*for (i = 0; i < dn; i++) D(i) -= (S_(i) + S_(i + 1)) >> 1;*/
+			/*for (i = 0; i < sn; i++) S(i) += (D_(i - 1) + D_(i) + 2) >> 2;*/
 			for (i = 0; i < dn; i++){
 				D(i) -= (S_(i) + S_(i + 1)) >> 1;
-				//ops += 2;
+				/*ops += 2;*/
 			}
 			for (i = 0; i < sn; i++){
 				S(i) += (D_(i - 1) + D_(i) + 2) >> 2;
-				//ops += 3;
+				/*ops += 3;*/
 			}
 		}
 	} else {
@@ -355,15 +355,15 @@ static void dwt_encode_53(int *a, int dn, int sn, int cas) {
 		}*/
 		if (!sn && dn == 1){
 			S(0) *= 2;
-			//ops++;
+			/*ops++;*/
 		} else {
 			for (i = 0; i < dn; i++){
 				S(i) -= (DD_(i) + DD_(i - 1)) >> 1;
-			//	ops += 2;
+			/*	ops += 2;*/
 			}
 			for (i = 0; i < sn; i++){
 				D(i) += (SS_(i) + SS_(i + 1) + 2) >> 2;
-			//	ops += 3;
+			/*	ops += 3;*/
 			}
 		}
 	}
@@ -466,17 +466,17 @@ static int upandconv(double *nXPS, double *LPS, int lenXPS, int lenLPS) {
 	/* Perform the convolution of the vectors. */
 	int i,j;
 	double *tmp = (double *)opj_malloc(2*lenXPS * sizeof(double));
-	//Upsample
+	/*Upsample*/
 	memset(tmp, 0, 2*lenXPS*sizeof(double));
 	for (i = 0; i < lenXPS; i++) {
 		*(tmp + 2*i) = *(nXPS + i);
 		*(nXPS + i) = 0;
 	}
-	//Convolution
+	/*Convolution*/
 	for (i = 0; i < 2*lenXPS; i++) {
 		for (j = 0; j < lenLPS; j++) {
 			*(nXPS+i+j) = *(nXPS+i+j) + *(tmp + i) * *(LPS + j);
-			//fprintf(stdout,"*(tmp + %d) * *(LPS + %d) = %f * %f \n",i,j,*(tmp + i),*(LPS + j));
+			/*fprintf(stdout,"*(tmp + %d) * *(LPS + %d) = %f * %f \n",i,j,*(tmp + i),*(LPS + j));*/
 		}
 	}
 	free(tmp);
@@ -493,7 +493,7 @@ static double dwt_calc_wtnorms(int orient, int level[3], int dwtid[3], opj_wtfil
 	levely = (orient == 0) ? level[1]-1 : level[1];
 	levelz = (orient == 0) ? level[2]-1 : level[2];
 	
-	//X axis
+	/*X axis*/
 	lenLPS = wtfiltX->lenLPS;
 	lenHPS = wtfiltX->lenHPS;
 	for (i = 0; i < levelx; i++) {
@@ -522,7 +522,7 @@ static double dwt_calc_wtnorms(int orient, int level[3], int dwtid[3], opj_wtfil
 	free(nLPSx);
 	free(nHPSx);
 	
-	//Y axis
+	/*Y axis*/
 	if (dwtid[0] != dwtid[1] || level[0] != level[1]){
 		lenLPS = wtfiltY->lenLPS;
 		lenHPS = wtfiltY->lenHPS;
@@ -555,7 +555,7 @@ static double dwt_calc_wtnorms(int orient, int level[3], int dwtid[3], opj_wtfil
 		Ly = Lx;
 		Hy = Hx;
 	}
-	//Z axis
+	/*Z axis*/
 	if (levelz >= 0) { 
 		lenLPS = wtfiltZ->lenLPS;
 		lenHPS = wtfiltZ->lenHPS;
@@ -610,7 +610,7 @@ static double dwt_calc_wtnorms(int orient, int level[3], int dwtid[3], opj_wtfil
 	
 }
 static void dwt_getwtfilters(opj_wtfilt_t *wtfilt, int dwtid) {
-	if (dwtid == 0) { //DWT 9-7 
+	if (dwtid == 0) { /*DWT 9-7 */
 			wtfilt->lenLPS = 7;		wtfilt->lenHPS = 9;
 			wtfilt->LPS = (double *)opj_malloc(wtfilt->lenLPS * sizeof(double));
 			wtfilt->HPS = (double *)opj_malloc(wtfilt->lenHPS * sizeof(double));
@@ -623,7 +623,7 @@ static void dwt_getwtfilters(opj_wtfilt_t *wtfilt, int dwtid) {
 			wtfilt->LPS[6] = -0.091271763114;	wtfilt->HPS[6] = -0.078223266529;
 												wtfilt->HPS[7] = 0.016864118443;
 												wtfilt->HPS[8] = 0.026748757411;			
-	} else if (dwtid == 1) { //DWT 5-3 
+	} else if (dwtid == 1) { /*DWT 5-3 */
 			wtfilt->lenLPS = 3;		wtfilt->lenHPS = 5;
 			wtfilt->LPS = (double *)opj_malloc(wtfilt->lenLPS * sizeof(double));
 			wtfilt->HPS = (double *)opj_malloc(wtfilt->lenHPS * sizeof(double));
@@ -646,8 +646,8 @@ static void dwt_encode_stepsize(int stepsize, int numbps, opj_stepsize_t *bandno
 	n = 11 - int_floorlog2(stepsize);
 	bandno_stepsize->mant = (n < 0 ? stepsize >> -n : stepsize << n) & 0x7ff;
 	bandno_stepsize->expn = numbps - p;
-	//if J3D_CCP_QNTSTY_NOQNT --> stepsize = 8192.0 --> p = 0, n = -2 --> mant = 0; expn = (prec+gain)
-	//else --> bandno_stepsize = (1<<(numbps - expn)) + (1<<(numbps - expn - 11)) * Ub
+	/*if J3D_CCP_QNTSTY_NOQNT --> stepsize = 8192.0 --> p = 0, n = -2 --> mant = 0; expn = (prec+gain)*/
+	/*else --> bandno_stepsize = (1<<(numbps - expn)) + (1<<(numbps - expn - 11)) * Ub*/
 }
 
 /* 
@@ -715,7 +715,7 @@ void dwt_encode(opj_tcd_tilecomp_t * tilec, int dwtid[3]) {
 			
 			cj = a + (i * wh);
 			
-			//Horizontal
+			/*Horizontal*/
 			sn = rw1;
 			dn = rw - rw1;
 			bj = (int*)opj_malloc(rw * sizeof(int));
@@ -736,7 +736,7 @@ void dwt_encode(opj_tcd_tilecomp_t * tilec, int dwtid[3]) {
 			} 
 			opj_free(bj);
 
-			//Vertical
+			/*Vertical*/
 			sn = rh1;
 			dn = rh - rh1;
 			bj = (int*)opj_malloc(rh * sizeof(int));
@@ -759,7 +759,7 @@ void dwt_encode(opj_tcd_tilecomp_t * tilec, int dwtid[3]) {
 		}
 
 		if (z < levelz){
-			//Axial fprintf(stdout,"Axial DWT Transform %d %d %d\n",z,rd,rd1);
+			/*Axial fprintf(stdout,"Axial DWT Transform %d %d %d\n",z,rd,rd1);*/
 			sn = rd1;
 			dn = rd - rd1;
 			bj = (int*)opj_malloc(rd * sizeof(int));
@@ -782,7 +782,7 @@ void dwt_encode(opj_tcd_tilecomp_t * tilec, int dwtid[3]) {
 		}
 	}
 
-	//fprintf(stdout,"[INFO] Ops: %d \n",ops);
+	/*fprintf(stdout,"[INFO] Ops: %d \n",ops);*/
 }
 
 
@@ -842,7 +842,7 @@ void dwt_decode(opj_tcd_tilecomp_t * tilec, int stops[3], int dwtid[3]) {
 		fprintf(stdout,"IDWT Transform %d %d %d %d\n",level, z, rd,rd1);*/
 
 		if (z >= stops[2] && rd != rd1) {
-			//fprintf(stdout,"Axial Transform %d %d %d %d\n",levelz, z, rd,rd1);
+			/*fprintf(stdout,"Axial Transform %d %d %d %d\n",levelz, z, rd,rd1);*/
 			sn = rd1;
 			dn = rd - rd1;
 			bj = (int*)opj_malloc(rd * sizeof(int));
@@ -865,10 +865,10 @@ void dwt_decode(opj_tcd_tilecomp_t * tilec, int stops[3], int dwtid[3]) {
 		}
 
 		for (i = 0; i < rd; i++) {
-			//Fetch corresponding slice for doing DWT-2D
+			/*Fetch corresponding slice for doing DWT-2D*/
  			cj = tilec->data + (i * wh);
 			
-			//Vertical
+			/*Vertical*/
 			sn = rh1;
 			dn = rh - rh1;
 			bj = (int*)opj_malloc(rh * sizeof(int));
@@ -889,7 +889,7 @@ void dwt_decode(opj_tcd_tilecomp_t * tilec, int stops[3], int dwtid[3]) {
 			} 
 			opj_free(bj);
 
-			//Horizontal
+			/*Horizontal*/
 			sn = rw1;
 			dn = rw - rw1;
 			bj = (int*)opj_malloc(rw * sizeof(int));
@@ -931,7 +931,7 @@ int dwt_getgain(int orient, int reversible) {
 		else 
 			return 3;
 	}
-	//else if (reversible == 0){
+	/*else if (reversible == 0){*/
 	return 0;
 }
 
@@ -946,25 +946,25 @@ double dwt_getnorm(int orient, int level[3], int dwtid[3]) {
 
 	if (flagnorm[levelx][levely][levelz][orient] == 1) {
 		norm = dwt_norm[levelx][levely][levelz][orient];
-		//fprintf(stdout,"[INFO] Level: %d %d %d Orient %d Dwt_norm: %f \n",level[0],level[1],level[2],orient,norm);
+		/*fprintf(stdout,"[INFO] Level: %d %d %d Orient %d Dwt_norm: %f \n",level[0],level[1],level[2],orient,norm);*/
 	} else {
 		opj_wtfilt_t *wtfiltx =(opj_wtfilt_t *) opj_malloc(sizeof(opj_wtfilt_t));
 		opj_wtfilt_t *wtfilty =(opj_wtfilt_t *) opj_malloc(sizeof(opj_wtfilt_t));
 		opj_wtfilt_t *wtfiltz =(opj_wtfilt_t *) opj_malloc(sizeof(opj_wtfilt_t));
-		//Fetch equivalent filters for each dimension
+		/*Fetch equivalent filters for each dimension*/
 		dwt_getwtfilters(wtfiltx, dwtid[0]);
 		dwt_getwtfilters(wtfilty, dwtid[1]);
 		dwt_getwtfilters(wtfiltz, dwtid[2]);
-		//Calculate the corresponding norm 
+		/*Calculate the corresponding norm */
 		norm = dwt_calc_wtnorms(orient, level, dwtid, wtfiltx, wtfilty, wtfiltz);
-		//Save norm in array (no recalculation)
+		/*Save norm in array (no recalculation)*/
 		dwt_norm[levelx][levely][levelz][orient] = norm;
 		flagnorm[levelx][levely][levelz][orient] = 1;
-		//Free reserved space
+		/*Free reserved space*/
 		opj_free(wtfiltx->LPS);	opj_free(wtfilty->LPS);	opj_free(wtfiltz->LPS);
 		opj_free(wtfiltx->HPS);	opj_free(wtfilty->HPS);	opj_free(wtfiltz->HPS);
 		opj_free(wtfiltx);		opj_free(wtfilty);		opj_free(wtfiltz);
-		//fprintf(stdout,"[INFO] Dwtid: %d %d %d Level: %d %d %d Orient %d Norm: %f \n",dwtid[0],dwtid[1],dwtid[2],level[0],level[1],level[2],orient,norm);
+		/*fprintf(stdout,"[INFO] Dwtid: %d %d %d Level: %d %d %d Orient %d Norm: %f \n",dwtid[0],dwtid[1],dwtid[2],level[0],level[1],level[2],orient,norm);*/
 	} 
 	return norm;
 }
@@ -1004,10 +1004,10 @@ void dwt_calc_explicit_stepsizes(opj_tccp_t * tccp, int prec) {
 		if (tccp->qntsty == J3D_CCP_QNTSTY_NOQNT) {
 			stepsize = 1.0;
 		} else {
-			double norm = dwt_getnorm(orient,level,tccp->dwtid); //Fetch norms if irreversible transform (by the moment only I9.7)
+			double norm = dwt_getnorm(orient,level,tccp->dwtid); /*Fetch norms if irreversible transform (by the moment only I9.7)*/
 			stepsize = (1 << (gain + 1)) / norm;
 		}
-		//fprintf(stdout,"[INFO] Bandno: %d Orient: %d Level: %d %d %d Stepsize: %f\n",bandno,orient,level[0],level[1],level[2],stepsize);
+		/*fprintf(stdout,"[INFO] Bandno: %d Orient: %d Level: %d %d %d Stepsize: %f\n",bandno,orient,level[0],level[1],level[2],stepsize);*/
 		dwt_encode_stepsize((int) floor(stepsize * 8192.0), prec + gain, &tccp->stepsizes[bandno]);
 	}
 }

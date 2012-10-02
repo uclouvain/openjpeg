@@ -568,7 +568,7 @@ int t2_encode_packets(opj_t2_t* t2, int tileno, opj_tcd_tile_t *tile, int maxlay
 		while (pi_next(&pi[pino])) {
 			if (pi[pino].layno < maxlayers) {
 				e = t2_encode_packet(tile, &cp->tcps[tileno], &pi[pino], c, dest + len - c, volume_info, tileno, cp);
-				//opj_event_msg(t2->cinfo, EVT_INFO, "  t2_encode_packet: %d bytes coded\n",e);
+				/*opj_event_msg(t2->cinfo, EVT_INFO, "  t2_encode_packet: %d bytes coded\n",e);*/
 				if (e == -999) {
 					break;
 				} else {

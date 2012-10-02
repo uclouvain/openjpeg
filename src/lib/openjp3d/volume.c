@@ -63,7 +63,7 @@ opj_volume_t* OPJ_CALLCONV opj_volume_create(int numcmpts, opj_volume_cmptparm_t
 				opj_volume_destroy(volume);
 				return NULL;
 			}
-			//fprintf(stdout,"%d %d %d %d %d %d %d %d %d", comp->w,comp->h, comp->l, comp->dx, comp->dy, comp->dz, comp->prec, comp->bpp, comp->sgnd);
+			/*fprintf(stdout,"%d %d %d %d %d %d %d %d %d", comp->w,comp->h, comp->l, comp->dx, comp->dy, comp->dz, comp->prec, comp->bpp, comp->sgnd);*/
 		}
 	}
 

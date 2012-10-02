@@ -153,7 +153,7 @@ opj_volume_t* pgxtovolume(char *relpath, opj_cparameters_t *parameters) {
 	int i, s, numcomps, maxvalue, sliceno, slicepos, maxslice = 0;
 	
 	OPJ_COLOR_SPACE color_space;
-	opj_volume_cmptparm_t cmptparm;	// maximum of 1 component 
+	opj_volume_cmptparm_t cmptparm;	/* maximum of 1 component */
 	opj_volume_t * volume = NULL;
 
 	char endian1,endian2,sign;
@@ -182,13 +182,13 @@ opj_volume_t* pgxtovolume(char *relpath, opj_cparameters_t *parameters) {
 	
 	/* Separación del caso de un único slice frente al de muchos */
 	if ((tmp = strrchr(relpath,'-')) == NULL){ 
-		//fprintf(stdout,"[INFO] A volume of only one slice....\n");
+		/*fprintf(stdout,"[INFO] A volume of only one slice....\n");*/
 		sliceno = 1;
 		maxslice = 1;
 		strcpy(pgxfiles[0],relpath);
 	
 	} else {
-		//Fetch only the path 
+		/*Fetch only the path */
 		strcpy(tmpdirpath,relpath);
 		if ((tmp = strrchr(tmpdirpath,'/')) != NULL){
 			tmp++; *tmp='\0';
@@ -197,7 +197,7 @@ opj_volume_t* pgxtovolume(char *relpath, opj_cparameters_t *parameters) {
 			strcpy(dirpath,"./");
 		}
 
-		//Fetch the pattern of the volume slices
+		/*Fetch the pattern of the volume slices*/
 		if ((tmp = strrchr (relpath,'/')) != NULL) 
 			tmp++;	
 		else 
@@ -228,7 +228,7 @@ opj_volume_t* pgxtovolume(char *relpath, opj_cparameters_t *parameters) {
 				strcpy(tmp,dirpath);
 				tmp = strcat(tmp,direntp->d_name);
 						
-				//Obtenemos el index de la secuencia de slices
+				/*Obtenemos el index de la secuencia de slices*/
 				if ((tmp2 = strpbrk (direntp->d_name, "0123456789")) == NULL) 
 					continue;
 				i = 0;
@@ -238,18 +238,18 @@ opj_volume_t* pgxtovolume(char *relpath, opj_cparameters_t *parameters) {
 					tmp2 = strpbrk (tmp2+1,"0123456789");
 				}tmpno[i]='\0';
 
-				//Comprobamos que no estamos leyendo algo raro como pattern.jp3d
+				/*Comprobamos que no estamos leyendo algo raro como pattern.jp3d*/
 				if ((point = strpbrk (point,".")) == NULL){
 					break;
 				}
-				//Slicepos --> index de slice; Sliceno --> no de slices hasta el momento
+				/*Slicepos --> index de slice; Sliceno --> no de slices hasta el momento*/
 				slicepos = atoi(tmpno);
 				pgxslicepos[sliceno] = slicepos - 1;
 				sliceno++;
 				if (slicepos>maxslice)
 					maxslice = slicepos;
 				
-				//Colocamos el slices en su posicion correspondiente
+				/*Colocamos el slices en su posicion correspondiente*/
 				strcpy(pgxfiles[slicepos-1],tmp);
 			}
 		}
@@ -334,7 +334,7 @@ opj_volume_t* pgxtovolume(char *relpath, opj_cparameters_t *parameters) {
 				/* set volume data :only one component, that is a volume*/
 				comp = &volume->comps[0];
 			
-			}//if sliceno==1
+			}/*if sliceno==1*/
 			
 			offset = w * h * s;
 			
@@ -365,11 +365,11 @@ opj_volume_t* pgxtovolume(char *relpath, opj_cparameters_t *parameters) {
 				
 			}
 			fclose(f);
-	} // for s --> sliceno
+	} /* for s --> sliceno*/
 	comp->bpp = int_floorlog2(maxvalue) + 1;
 	if (sliceno != 1)
 		closedir( dirp );
-	//dump_volume(stdout, volume);
+	/*dump_volume(stdout, volume);*/
 	return volume;
 }
 
@@ -432,7 +432,7 @@ int volumetopgx(opj_volume_t * volume, char *outfile) {
 
 			offset = (sliceno / lrr * l) + (sliceno % lrr);
 			offset = wrr * hrr * offset;
-			//fprintf(stdout,"%d %d %d %d\n",offset,wrr*hrr,wrr,w);
+			/*fprintf(stdout,"%d %d %d %d\n",offset,wrr*hrr,wrr,w);*/
 			for (i = 0; i < wrr * hrr; i++) {
 				int v = volume->comps[0].data[(i / wrr * w) + (i % wrr) + offset];
 				if (volume->comps[0].bigendian) {
@@ -449,8 +449,8 @@ int volumetopgx(opj_volume_t * volume, char *outfile) {
 			}
 
 			fclose(fdest);
-		}//for sliceno
-	}//for compno
+		}/*for sliceno*/
+	}/*for compno*/
 
 	return 0;
 }
@@ -469,7 +469,7 @@ opj_volume_t* bintovolume(char *filename, char *fileimg, opj_cparameters_t *para
 	int i, compno, w, h, l, numcomps = 1;
 	int prec, max = 0;
 
-//	char temp[32];
+/*	char temp[32];*/
 	char line[100];
 	int bigendian;
 	
@@ -492,7 +492,7 @@ opj_volume_t* bintovolume(char *filename, char *fileimg, opj_cparameters_t *para
 	fseek(fimg, 0, SEEK_SET);
 	while (!feof(fimg)) {
         fgets(line,100,fimg);
-		//fprintf(stdout,"%s %d \n",line,feof(fimg));
+		/*fprintf(stdout,"%s %d \n",line,feof(fimg));*/
 		if (strncmp(line,"Bpp",3) == 0){
 			sscanf(line,"%*s%*[ \t]%d",&prec);
 		} else if (strncmp(line,"Color",5) == 0){
@@ -501,9 +501,9 @@ opj_volume_t* bintovolume(char *filename, char *fileimg, opj_cparameters_t *para
 			sscanf(line, "%*s%*[ \t]%d%*[ \t]%d%*[ \t]%d",&w,&h,&l);
 		}
 	}
-	//fscanf(fimg, "Bpp%[ \t]%d%[ \t\n]",temp,&prec,temp);
-	//fscanf(fimg, "Color Map%[ \t]%d%[ \n\t]Dimensions%[ \t]%d%[ \t]%d%[ \t]%d%[ \n\t]",temp,&color_space,temp,temp,&w,temp,&h,temp,&l,temp);
-	//fscanf(fimg, "Resolution(mm)%[ \t]%d%[ \t]%d%[ \t]%d%[ \n\t]",temp,&subsampling_dx,temp,&subsampling_dy,temp,&subsampling_dz,temp);
+	/*fscanf(fimg, "Bpp%[ \t]%d%[ \t\n]",temp,&prec,temp);*/
+	/*fscanf(fimg, "Color Map%[ \t]%d%[ \n\t]Dimensions%[ \t]%d%[ \t]%d%[ \t]%d%[ \n\t]",temp,&color_space,temp,temp,&w,temp,&h,temp,&l,temp);*/
+	/*fscanf(fimg, "Resolution(mm)%[ \t]%d%[ \t]%d%[ \t]%d%[ \n\t]",temp,&subsampling_dx,temp,&subsampling_dy,temp,&subsampling_dz,temp);*/
 
 	#ifdef VERBOSE
 		fprintf(stdout, "[INFO] %d \t %d %d %d \t %3.2f %2.2f %2.2f \t %d \n",color_space,w,h,l,subsampling_dx,subsampling_dy,subsampling_dz,prec);
@@ -679,10 +679,10 @@ int volumetobin(opj_volume_t * volume, char *outfile) {
 	int offset, sliceno;
 	FILE *fdest = NULL;
 	FILE *fimgdest = NULL;
-//	char *imgtemp;
+/*	char *imgtemp;*/
 	char name[256];
 
-	for (compno = 0; compno < 1; compno++) { //Only one component
+	for (compno = 0; compno < 1; compno++) { /*Only one component*/
 		
 		fdest = fopen(outfile, "wb");
 		if (!fdest) {
@@ -717,7 +717,7 @@ int volumetobin(opj_volume_t * volume, char *outfile) {
 			nbytes = 4;
 		}
 
-		//fprintf(stdout,"w %d wr %d wrr %d h %d hr %d hrr %d l %d lr %d lrr %d max %d nbytes %d\n Factor %d %d %d",w,wr,wrr,h,hr,hrr,l,lr,lrr,max,nbytes,volume->comps[compno].factor[0],volume->comps[compno].factor[1],volume->comps[compno].factor[2]);
+		/*fprintf(stdout,"w %d wr %d wrr %d h %d hr %d hrr %d l %d lr %d lrr %d max %d nbytes %d\n Factor %d %d %d",w,wr,wrr,h,hr,hrr,l,lr,lrr,max,nbytes,volume->comps[compno].factor[0],volume->comps[compno].factor[1],volume->comps[compno].factor[2]);*/
 
 		for(sliceno = 0; sliceno < lrr; sliceno++) {
 			offset = (sliceno / lrr * l) + (sliceno % lrr);
@@ -787,7 +787,7 @@ opj_volume_t* imgtovolume(char *fileimg, opj_cparameters_t *parameters) {
 		return 0;
 	}
 
-	//Fetch only the path 
+	/*Fetch only the path */
 	strcpy(tmpdirpath,fileimg);
 	if ((tmp = strrchr(tmpdirpath,'/')) != NULL){
 		tmp++; *tmp='\0';
@@ -799,7 +799,7 @@ opj_volume_t* imgtovolume(char *fileimg, opj_cparameters_t *parameters) {
 	fseek(fimg, 0, SEEK_SET);
 	while (!feof(fimg)) {
         fgets(line,100,fimg);
-		//fprintf(stdout,"%s %d \n",line,feof(fimg));
+		/*fprintf(stdout,"%s %d \n",line,feof(fimg));*/
 		if (strncmp(line,"Image",5) == 0){
 			sscanf(line,"%*s%*[ \t]%s",datatype);
 		} else if (strncmp(line,"File",4) == 0){

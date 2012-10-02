@@ -132,7 +132,7 @@ static int t1_3d_getctxno_zc(unsigned int f, int orient) {
 
 static int t1_3d_getctxno_sc(unsigned int f) {
 	return t1_3d_init_ctxno_sc((f & T1_3D_SIG_PRIM) | ((f >> 16) & T1_3D_SGN));
-	//return t1->lut_ctxno_sc[((f & T1_3D_SIG_PRIM) | ((f >> 16) & T1_3D_SGN)) >> 4];
+	/*return t1->lut_ctxno_sc[((f & T1_3D_SIG_PRIM) | ((f >> 16) & T1_3D_SGN)) >> 4];*/
 }
 
 static int t1_3d_getctxno_mag(unsigned int f, int fsvr) {
@@ -141,7 +141,7 @@ static int t1_3d_getctxno_mag(unsigned int f, int fsvr) {
 
 static int t1_3d_getspb(unsigned int f) {
 	return t1_3d_init_spb((f & T1_3D_SIG_PRIM) | ((f >> 16) & T1_3D_SGN));
-	//return t1->lut_spb[((f & T1_3D_SIG_PRIM) | ((f >> 16) & T1_3D_SGN)) >> 4];
+	/*return t1->lut_spb[((f & T1_3D_SIG_PRIM) | ((f >> 16) & T1_3D_SGN)) >> 4];*/
 }
 
 static int t1_3d_getnmsedec_sig(opj_t1_3d_t *t1, int x, int bitpos) {
@@ -773,8 +773,8 @@ static int t1_3d_init_ctxno_zc(unsigned int f, int orient) {
 		+ ((f & T1_3D_SIG_BNW) != 0) + ((f & T1_3D_SIG_BNE) != 0) + ((f & T1_3D_SIG_BSE) != 0) + ((f & T1_3D_SIG_BSW) != 0);
 	
 	switch (orient) {
-		case 0: //LLL
-		case 7: //HHH
+		case 0: /*LLL*/
+		case 7: /*HHH*/
 			hvc = h + v + c;
 			d2 = d2xy + d2xz + d2yz;
 			if (!hvc) {
@@ -805,7 +805,7 @@ static int t1_3d_init_ctxno_zc(unsigned int f, int orient) {
 				n = 15;
 			}
 			break;
-		//LHL, HLL, LLH
+		/*LHL, HLL, LLH*/
 		case 1:
 		case 2:
 		case 4:
@@ -817,19 +817,19 @@ static int t1_3d_init_ctxno_zc(unsigned int f, int orient) {
 						n = (!d2xy2yz) ? ((!d3) ? 0 : 1) : ((!d3) ? 2 : 3);	
 					} else if (d2xy == 1) {
 						n = (!d2xy2yz) ? ((!d3) ? 4 : 5) : 6;	
-					} else { //>=2
+					} else { /*>=2*/
                         n = 7;
 					}
 				} else {
-					n = (v == 1) ? 8 : 9; // =1 or =2
+					n = (v == 1) ? 8 : 9; /* =1 or =2*/
 				} 
 			} else if (hc == 1) {
 				n = (!v) ? ( (!d2xy) ? ( (!d2xy2yz) ? ( (!d3) ? 10 : 11) : (12) ) : (13) ) : (14);
-			} else { //if (hc >= 2)
+			} else { /*if (hc >= 2)*/
 				n = 15;
 			}
 			break;
-		//HLH, HHL, LHH
+		/*HLH, HHL, LHH*/
 		case 3:
 		case 5:
 		case 6:
@@ -841,7 +841,7 @@ static int t1_3d_init_ctxno_zc(unsigned int f, int orient) {
 						n = (!d3) ? 0 : 1;
 					} else if (hc == 1) {
 						n = (!d2xy2xz) ?  2 : 3;
-					} else { //if >= 2
+					} else { /*if >= 2*/
 						n = 4;
 					}
 				} else if ( d2xz>=1 && !hc ) {
@@ -856,7 +856,7 @@ static int t1_3d_init_ctxno_zc(unsigned int f, int orient) {
 					n = (!hc) ? 10 : 11;
 				} else if (d2xz == 2) {
 					n = (!hc) ? 12 : 13;
-				} else { // if (d2xz >= 3) {
+				} else { /* if (d2xz >= 3) {*/
 					n = 14;
 				}
 			} else if (v == 2) {
@@ -920,7 +920,7 @@ static int t1_3d_init_ctxno_sc(unsigned int f) {
 
 static int t1_3d_init_ctxno_mag(unsigned int f, int f2) {
 	int n;
-	if (!(f2 & T1_3D_REFINE))	//First refinement for this coefficient (no previous refinement)
+	if (!(f2 & T1_3D_REFINE))	/*First refinement for this coefficient (no previous refinement)*/
 		n = (f & (T1_3D_SIG_PRIM)) ? 1 : 0;
 	else
 		n = 2;
@@ -1137,7 +1137,7 @@ void t1_3d_decode_cblks(opj_t1_3d_t *t1, opj_tcd_tile_t *tile, opj_tcp_t *tcp) {
 
 						orient = band->bandno;	/* FIXME */
 
-						//fprintf(stdout,"[INFO] t1_3d_decode_cblk(t1, cblk, orient(%d), tcp->tccps[compno].roishift (%d), tcp->tccps[compno].cblksty (%d));\n",orient,tcp->tccps[compno].roishift, tcp->tccps[compno].cblksty);
+						/*fprintf(stdout,"[INFO] t1_3d_decode_cblk(t1, cblk, orient(%d), tcp->tccps[compno].roishift (%d), tcp->tccps[compno].cblksty (%d));\n",orient,tcp->tccps[compno].roishift, tcp->tccps[compno].cblksty);*/
 						t1_3d_decode_cblk(t1, cblk, orient, tcp->tccps[compno].roishift, tcp->tccps[compno].cblksty);
 
 						if (band->bandno == 0) {
