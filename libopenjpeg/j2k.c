@@ -468,6 +468,12 @@ static void j2k_read_siz(opj_j2k_t *j2k) {
 	}
 #endif /* USE_JPWL */
 
+  /* prevent division by zero */
+  if (!(cp->tdx * cp->tdy)) {
+    opj_event_msg(j2k->cinfo, EVT_ERROR, "JPWL: invalid tile size (tdx: %d, tdy: %d)\n", cp->tdx, cp->tdy);
+    return;
+  }
+
 	image->comps = (opj_image_comp_t*) opj_calloc(image->numcomps, sizeof(opj_image_comp_t));
 	for (i = 0; i < image->numcomps; i++) {
 		int tmp, w, h;
@@ -505,6 +511,12 @@ static void j2k_read_siz(opj_j2k_t *j2k) {
 			
 		}
 #endif /* USE_JPWL */
+
+    /* prevent division by zero */
+    if (!(image->comps[i].dx * image->comps[i].dy)) {
+      opj_event_msg(j2k->cinfo, EVT_ERROR, "JPWL: invalid component size (dx: %d, dy: %d)\n", image->comps[i].dx, image->comps[i].dy);
+      return;
+    }
 
 		/* TODO: unused ? */
 		w = int_ceildiv(image->x1 - image->x0, image->comps[i].dx);
