@@ -18,7 +18,6 @@ OPJ_SRC = \
 ../pi.c \
 ../raw.c \
 ../t1.c \
-../t1_generate_luts.c \
 ../t2.c \
 ../tcd.c \
 ../tgt.c \
