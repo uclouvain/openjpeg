@@ -1586,7 +1586,7 @@ opj_bool opj_tcd_mct_decode ( opj_tcd_v2_t *p_tcd )
                                 ++l_tile_comp;
                         }
 
-                        if (! mct_decode_custom(/* MCT data */
+                        if (! opj_mct_decode_custom(/* MCT data */
                                                                         (OPJ_BYTE*) l_tcp->m_mct_decoding_matrix,
                                                                         /* size of components */
                                                                         l_samples,
@@ -1604,13 +1604,13 @@ opj_bool opj_tcd_mct_decode ( opj_tcd_v2_t *p_tcd )
                 }
                 else {
                         if (l_tcp->tccps->qmfbid == 1) {
-                                mct_decode(     l_tile->comps[0].data,
+                                opj_mct_decode(     l_tile->comps[0].data,
                                                         l_tile->comps[1].data,
                                                         l_tile->comps[2].data,
                                                         l_samples);
                         }
                         else {
-                                mct_decode_real(        (float*)l_tile->comps[0].data,
+                                opj_mct_decode_real(        (float*)l_tile->comps[0].data,
                                                                         (float*)l_tile->comps[1].data,
                                                                         (float*)l_tile->comps[2].data,
                                                                         l_samples);
@@ -1865,7 +1865,7 @@ opj_bool opj_tcd_mct_encode ( opj_tcd_v2_t *p_tcd )
                         ++l_tile_comp;
                 }
 
-                if (! mct_encode_custom(/* MCT data */
+                if (! opj_mct_encode_custom(/* MCT data */
                                         (OPJ_BYTE*) p_tcd->tcp->m_mct_coding_matrix,
                                         /* size of components */
                                         samples,
@@ -1883,10 +1883,10 @@ opj_bool opj_tcd_mct_encode ( opj_tcd_v2_t *p_tcd )
                 opj_free(l_data);
         }
         else if (l_tcp->tccps->qmfbid == 0) {
-                mct_encode_real(l_tile->comps[0].data, l_tile->comps[1].data, l_tile->comps[2].data, samples);
+                opj_mct_encode_real(l_tile->comps[0].data, l_tile->comps[1].data, l_tile->comps[2].data, samples);
         }
         else {
-                mct_encode(l_tile->comps[0].data, l_tile->comps[1].data, l_tile->comps[2].data, samples);
+                opj_mct_encode(l_tile->comps[0].data, l_tile->comps[1].data, l_tile->comps[2].data, samples);
         }
 
         return OPJ_TRUE;
@@ -1932,10 +1932,10 @@ opj_bool opj_tcd_t1_encode ( opj_tcd_v2_t *p_tcd )
         if (l_tcp->mct == 1) {
                 /* irreversible encoding */
                 if (l_tcp->tccps->qmfbid == 0) {
-                        l_mct_norms = get_mct_norms_real();
+                        l_mct_norms = opj_mct_get_mct_norms_real();
                 }
                 else {
-                        l_mct_norms = get_mct_norms();
+                        l_mct_norms = opj_mct_get_mct_norms();
                 }
         }
         else {

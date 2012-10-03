@@ -747,10 +747,10 @@ static double t1_getwmsedec(
 {
 	double w1, w2, wmsedec;
 	if (qmfbid == 1) {
-		w1 = (mct && numcomps==3) ? mct_getnorm(compno) : 1.0;
+		w1 = (mct && numcomps==3) ? opj_mct_getnorm(compno) : 1.0;
 		w2 = dwt_getnorm(level, orient);
 	} else {			/* if (qmfbid == 0) */
-		w1 = (mct && numcomps==3) ? mct_getnorm_real(compno) : 1.0;
+		w1 = (mct && numcomps==3) ? opj_mct_getnorm_real(compno) : 1.0;
 		w2 = dwt_getnorm_real(level, orient);
 	}
 	wmsedec = w1 * w2 * stepsize * (1 << bpno);

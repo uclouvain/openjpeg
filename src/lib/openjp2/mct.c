@@ -38,40 +38,40 @@
 /* <summary> */
 /* This table contains the norms of the basis function of the reversible MCT. */
 /* </summary> */
-static const double mct_norms[3] = { 1.732, .8292, .8292 };
+static const OPJ_FLOAT64 opj_mct_norms[3] = { 1.732, .8292, .8292 };
 
 /* <summary> */
 /* This table contains the norms of the basis function of the irreversible MCT. */
 /* </summary> */
-static const double mct_norms_real[3] = { 1.732, 1.805, 1.573 };
+static const OPJ_FLOAT64 opj_mct_norms_real[3] = { 1.732, 1.805, 1.573 };
 
-const OPJ_FLOAT64 * get_mct_norms ()
+const OPJ_FLOAT64 * opj_mct_get_mct_norms ()
 {
-	return mct_norms;
+	return opj_mct_norms;
 }
 
-const OPJ_FLOAT64 * get_mct_norms_real ()
+const OPJ_FLOAT64 * opj_mct_get_mct_norms_real ()
 {
-	return mct_norms_real;
+	return opj_mct_norms_real;
 }
 
 /* <summary> */
 /* Foward reversible MCT. */
 /* </summary> */
-void mct_encode(
-		int* restrict c0,
-		int* restrict c1,
-		int* restrict c2,
-		int n)
+void opj_mct_encode(
+		OPJ_INT32* restrict c0,
+		OPJ_INT32* restrict c1,
+		OPJ_INT32* restrict c2,
+		OPJ_UINT32 n)
 {
-	int i;
+	OPJ_UINT32 i;
 	for(i = 0; i < n; ++i) {
-		int r = c0[i];
-		int g = c1[i];
-		int b = c2[i];
-		int y = (r + (g * 2) + b) >> 2;
-		int u = b - g;
-		int v = r - g;
+		OPJ_INT32 r = c0[i];
+		OPJ_INT32 g = c1[i];
+		OPJ_INT32 b = c2[i];
+		OPJ_INT32 y = (r + (g * 2) + b) >> 2;
+		OPJ_INT32 u = b - g;
+		OPJ_INT32 v = r - g;
 		c0[i] = y;
 		c1[i] = u;
 		c2[i] = v;
@@ -81,20 +81,20 @@ void mct_encode(
 /* <summary> */
 /* Inverse reversible MCT. */
 /* </summary> */
-void mct_decode(
-		int* restrict c0,
-		int* restrict c1, 
-		int* restrict c2, 
-		int n)
+void opj_mct_decode(
+		OPJ_INT32* restrict c0,
+		OPJ_INT32* restrict c1, 
+		OPJ_INT32* restrict c2, 
+		OPJ_UINT32 n)
 {
-	int i;
+	OPJ_UINT32 i;
 	for (i = 0; i < n; ++i) {
-		int y = c0[i];
-		int u = c1[i];
-		int v = c2[i];
-		int g = y - ((u + v) >> 2);
-		int r = v + g;
-		int b = u + g;
+		OPJ_INT32 y = c0[i];
+		OPJ_INT32 u = c1[i];
+		OPJ_INT32 v = c2[i];
+		OPJ_INT32 g = y - ((u + v) >> 2);
+		OPJ_INT32 r = v + g;
+		OPJ_INT32 b = u + g;
 		c0[i] = r;
 		c1[i] = g;
 		c2[i] = b;
@@ -104,27 +104,27 @@ void mct_decode(
 /* <summary> */
 /* Get norm of basis function of reversible MCT. */
 /* </summary> */
-double mct_getnorm(int compno) {
-	return mct_norms[compno];
+OPJ_FLOAT64 opj_mct_getnorm(OPJ_UINT32 compno) {
+	return opj_mct_norms[compno];
 }
 
 /* <summary> */
 /* Foward irreversible MCT. */
 /* </summary> */
-void mct_encode_real(
-		int* restrict c0,
-		int* restrict c1,
-		int* restrict c2,
-		int n)
+void opj_mct_encode_real(
+		OPJ_INT32* restrict c0,
+		OPJ_INT32* restrict c1,
+		OPJ_INT32* restrict c2,
+		OPJ_UINT32 n)
 {
-	int i;
+	OPJ_UINT32 i;
 	for(i = 0; i < n; ++i) {
-		int r = c0[i];
-		int g = c1[i];
-		int b = c2[i];
-		int y =  fix_mul(r, 2449) + fix_mul(g, 4809) + fix_mul(b, 934);
-		int u = -fix_mul(r, 1382) - fix_mul(g, 2714) + fix_mul(b, 4096);
-		int v =  fix_mul(r, 4096) - fix_mul(g, 3430) - fix_mul(b, 666);
+		OPJ_INT32 r = c0[i];
+		OPJ_INT32 g = c1[i];
+		OPJ_INT32 b = c2[i];
+		OPJ_INT32 y =  fix_mul(r, 2449) + fix_mul(g, 4809) + fix_mul(b, 934);
+		OPJ_INT32 u = -fix_mul(r, 1382) - fix_mul(g, 2714) + fix_mul(b, 4096);
+		OPJ_INT32 v =  fix_mul(r, 4096) - fix_mul(g, 3430) - fix_mul(b, 666);
 		c0[i] = y;
 		c1[i] = u;
 		c2[i] = v;
@@ -134,13 +134,13 @@ void mct_encode_real(
 /* <summary> */
 /* Inverse irreversible MCT. */
 /* </summary> */
-void mct_decode_real(
-		float* restrict c0,
-		float* restrict c1,
-		float* restrict c2,
-		int n)
+void opj_mct_decode_real(
+		OPJ_FLOAT32* restrict c0,
+		OPJ_FLOAT32* restrict c1,
+		OPJ_FLOAT32* restrict c2,
+		OPJ_UINT32 n)
 {
-	int i;
+	OPJ_UINT32 i;
 #ifdef __SSE__
 	__m128 vrv, vgu, vgv, vbu;
 	vrv = _mm_set1_ps(1.402f);
@@ -180,12 +180,12 @@ void mct_decode_real(
 	n &= 7;
 #endif
 	for(i = 0; i < n; ++i) {
-		float y = c0[i];
-		float u = c1[i];
-		float v = c2[i];
-		float r = y + (v * 1.402f);
-		float g = y - (u * 0.34413f) - (v * (0.71414f));
-		float b = y + (u * 1.772f);
+		OPJ_FLOAT32 y = c0[i];
+		OPJ_FLOAT32 u = c1[i];
+		OPJ_FLOAT32 v = c2[i];
+		OPJ_FLOAT32 r = y + (v * 1.402f);
+		OPJ_FLOAT32 g = y - (u * 0.34413f) - (v * (0.71414f));
+		OPJ_FLOAT32 b = y + (u * 1.772f);
 		c0[i] = r;
 		c1[i] = g;
 		c2[i] = b;
@@ -195,21 +195,16 @@ void mct_decode_real(
 /* <summary> */
 /* Get norm of basis function of irreversible MCT. */
 /* </summary> */
-double mct_getnorm_real(int compno) {
-	return mct_norms_real[compno];
+OPJ_FLOAT64 opj_mct_getnorm_real(OPJ_UINT32 compno) {
+	return opj_mct_norms_real[compno];
 }
 
 
-opj_bool mct_encode_custom(
-					   /* MCT data */
+opj_bool opj_mct_encode_custom(
 					   OPJ_BYTE * pCodingdata,
-					   /* size of components */
 					   OPJ_UINT32 n,
-					   /* components */
 					   OPJ_BYTE ** pData,
-					   /* nb of components (i.e. size of pData) */
 					   OPJ_UINT32 pNbComp,
-					   /* tells if the data is signed */
 					   OPJ_UINT32 isSigned)
 {
 	OPJ_FLOAT32 * lMct = (OPJ_FLOAT32 *) pCodingdata;
@@ -256,16 +251,11 @@ opj_bool mct_encode_custom(
 	return OPJ_TRUE;
 }
 
-opj_bool mct_decode_custom(
-					   /* MCT data */
+opj_bool opj_mct_decode_custom(
 					   OPJ_BYTE * pDecodingData,
-					   /* size of components */
 					   OPJ_UINT32 n,
-					   /* components */
 					   OPJ_BYTE ** pData,
-					   /* nb of components (i.e. size of pData) */
 					   OPJ_UINT32 pNbComp,
-					   /* tells if the data is signed */
 					   OPJ_UINT32 isSigned)
 {
 	OPJ_FLOAT32 * lMct;
@@ -278,29 +268,19 @@ opj_bool mct_decode_custom(
 	OPJ_FLOAT32 ** lData = (OPJ_FLOAT32 **) pData;
 
 	lCurrentData = (OPJ_FLOAT32 *) opj_malloc (2 * pNbComp * sizeof(OPJ_FLOAT32));
-	if
-		(! lCurrentData)
-	{
+	if (! lCurrentData) {
 		return OPJ_FALSE;
 	}
 	lCurrentResult = lCurrentData + pNbComp;
 
-	for
-		(i = 0; i < n; ++i)
-	{
+	for (i = 0; i < n; ++i) {
 		lMct = (OPJ_FLOAT32 *) pDecodingData;
-		for
-			(j=0;j<pNbComp;++j)
-		{
+		for (j=0;j<pNbComp;++j) {
 			lCurrentData[j] = (OPJ_FLOAT32) (*(lData[j]));
 		}
-		for
-			(j=0;j<pNbComp;++j)
-		{
+		for (j=0;j<pNbComp;++j) {
 			lCurrentResult[j] = 0;
-			for
-				(k=0;k<pNbComp;++k)
-			{
+			for	(k=0;k<pNbComp;++k)	{
 				lCurrentResult[j] += *(lMct++) * lCurrentData[k];
 			}
 			*(lData[j]++) = (OPJ_FLOAT32) (lCurrentResult[j]);

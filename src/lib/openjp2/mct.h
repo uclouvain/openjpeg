@@ -52,7 +52,7 @@ Apply a reversible multi-component transform to an image
 @param c2 Samples blue component
 @param n Number of samples for each component
 */
-void mct_encode(int *c0, int *c1, int *c2, int n);
+void opj_mct_encode(OPJ_INT32 *c0, OPJ_INT32 *c1, OPJ_INT32 *c2, OPJ_UINT32 n);
 /**
 Apply a reversible multi-component inverse transform to an image
 @param c0 Samples for luminance component
@@ -60,13 +60,13 @@ Apply a reversible multi-component inverse transform to an image
 @param c2 Samples for blue chrominance component
 @param n Number of samples for each component
 */
-void mct_decode(int *c0, int *c1, int *c2, int n);
+void opj_mct_decode(OPJ_INT32 *c0, OPJ_INT32 *c1, OPJ_INT32 *c2, OPJ_UINT32 n);
 /**
 Get norm of the basis function used for the reversible multi-component transform
 @param compno Number of the component (0->Y, 1->U, 2->V)
 @return 
 */
-double mct_getnorm(int compno);
+OPJ_FLOAT64 opj_mct_getnorm(OPJ_UINT32 compno);
 
 /**
 Apply an irreversible multi-component transform to an image
@@ -75,7 +75,7 @@ Apply an irreversible multi-component transform to an image
 @param c2 Samples blue component
 @param n Number of samples for each component
 */
-void mct_encode_real(int *c0, int *c1, int *c2, int n);
+void opj_mct_encode_real(OPJ_INT32 *c0, OPJ_INT32 *c1, OPJ_INT32 *c2, OPJ_UINT32 n);
 /**
 Apply an irreversible multi-component inverse transform to an image
 @param c0 Samples for luminance component
@@ -83,43 +83,62 @@ Apply an irreversible multi-component inverse transform to an image
 @param c2 Samples for blue chrominance component
 @param n Number of samples for each component
 */
-void mct_decode_real(float* c0, float* c1, float* c2, int n);
+void opj_mct_decode_real(OPJ_FLOAT32* c0, OPJ_FLOAT32* c1, OPJ_FLOAT32* c2, OPJ_UINT32 n);
 /**
 Get norm of the basis function used for the irreversible multi-component transform
 @param compno Number of the component (0->Y, 1->U, 2->V)
 @return 
 */
-double mct_getnorm_real(int compno);
+OPJ_FLOAT64 opj_mct_getnorm_real(OPJ_UINT32 compno);
 
-
-opj_bool mct_encode_custom(
-					   /* MCT data */
+/**
+FIXME DOC
+@param p_coding_data    MCT data
+@param n                size of components
+@param p_data           components
+@param p_nb_comp        nb of components (i.e. size of p_data)
+@param is_signed        tells if the data is signed
+@return OPJ_FALSE if function encounter a problem, OPJ_TRUE otherwise
+*/
+opj_bool opj_mct_encode_custom(
 					   OPJ_BYTE * p_coding_data,
-					   /* size of components */
 					   OPJ_UINT32 n,
-					   /* components */
 					   OPJ_BYTE ** p_data,
-					   /* nb of components (i.e. size of p_data) */
 					   OPJ_UINT32 p_nb_comp,
-					   /* tells if the data is signed */
 					   OPJ_UINT32 is_signed);
-
-opj_bool mct_decode_custom(
-					   /* MCT data */
+/**
+FIXME DOC
+@param pDecodingData    MCT data
+@param n                size of components
+@param pDataa           components
+@param pNbComp          nb of components (i.e. size of p_data)
+@param isSigneda        tells if the data is signed
+@return OPJ_FALSE if function encounter a problem, OPJ_TRUE otherwise
+*/
+opj_bool opj_mct_decode_custom(
 					   OPJ_BYTE * pDecodingData,
-					   /* size of components */
 					   OPJ_UINT32 n,
-					   /* components */
 					   OPJ_BYTE ** pData,
-					   /* nb of components (i.e. size of pData) */
 					   OPJ_UINT32 pNbComp,
-					   /* tells if the data is signed */
 					   OPJ_UINT32 isSigned);
-
-void opj_calculate_norms(OPJ_FLOAT64 * pNorms,OPJ_UINT32 p_nb_comps,OPJ_FLOAT32 * pMatrix);
-
-const OPJ_FLOAT64 * get_mct_norms ();
-const OPJ_FLOAT64 * get_mct_norms_real ();
+/**
+FIXME DOC
+@param pNorms           MCT data
+@param p_nb_comps       size of components
+@param pMatrix          components
+@return 
+*/
+void opj_calculate_norms(   OPJ_FLOAT64 * pNorms,
+                            OPJ_UINT32 p_nb_comps,
+                            OPJ_FLOAT32 * pMatrix);
+/**
+FIXME DOC 
+*/
+const OPJ_FLOAT64 * opj_mct_get_mct_norms ();
+/**
+FIXME DOC 
+*/
+const OPJ_FLOAT64 * opj_mct_get_mct_norms_real ();
 /* ----------------------------------------------------------------------- */
 /*@}*/
 
