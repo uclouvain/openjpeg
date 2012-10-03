@@ -140,7 +140,7 @@ opj_pi_iterator_t * pi_create(	const opj_image_t *image,
 void pi_update_decode_not_poc (opj_pi_iterator_t * p_pi,opj_tcp_v2_t * p_tcp,OPJ_UINT32 p_max_precision,OPJ_UINT32 p_max_res);
 void pi_update_decode_poc (opj_pi_iterator_t * p_pi,opj_tcp_v2_t * p_tcp,OPJ_UINT32 p_max_precision,OPJ_UINT32 p_max_res);
 
-OPJ_INT32 pi_check_next_level(	OPJ_INT32 pos,
+opj_bool opj_pi_check_next_level(	OPJ_INT32 pos,
 								opj_cp_v2_t *cp,
 								OPJ_UINT32 tileno,
 								OPJ_UINT32 pino,
@@ -2034,7 +2034,7 @@ void pi_create_encode_v2( 	opj_pi_iterator_t *pi,
 							J2K_T2_MODE t2_mode)
 {
 	const OPJ_CHAR *prog;
-	OPJ_INT32 i,l;
+	OPJ_INT32 i;
 	OPJ_UINT32 incr_top=1,resetX=0;
 	opj_tcp_v2_t *tcps =&cp->tcps[tileno];
 	opj_poc_t *tcp= &tcps->pocs[pino];
@@ -2170,8 +2170,7 @@ void pi_create_encode_v2( 	opj_pi_iterator_t *pi,
 					switch(prog[i]){
 							case 'R':
 								if(tcp->res_t==tcp->resE){
-									l=pi_check_next_level(i-1,cp,tileno,pino,prog);
-									if(l==1){
+									if(opj_pi_check_next_level(i-1,cp,tileno,pino,prog)){
 										tcp->res_t = tcp->resS;
 										pi[pino].poc.resno0 = tcp->res_t;
 										pi[pino].poc.resno1 = tcp->res_t+1;
@@ -2189,8 +2188,7 @@ void pi_create_encode_v2( 	opj_pi_iterator_t *pi,
 								break;
 							case 'C':
 								if(tcp->comp_t ==tcp->compE){
-									l=pi_check_next_level(i-1,cp,tileno,pino,prog);
-									if(l==1){
+									if(opj_pi_check_next_level(i-1,cp,tileno,pino,prog)){
 										tcp->comp_t = tcp->compS;
 										pi[pino].poc.compno0 = tcp->comp_t;
 										pi[pino].poc.compno1 = tcp->comp_t+1;
@@ -2208,8 +2206,7 @@ void pi_create_encode_v2( 	opj_pi_iterator_t *pi,
 								break;
 							case 'L':
 								if(tcp->lay_t == tcp->layE){
-									l=pi_check_next_level(i-1,cp,tileno,pino,prog);
-									if(l==1){
+									if(opj_pi_check_next_level(i-1,cp,tileno,pino,prog)){
 										tcp->lay_t = tcp->layS;
 										pi[pino].poc.layno0 = tcp->lay_t;
 										pi[pino].poc.layno1 = tcp->lay_t+1;
@@ -2230,8 +2227,7 @@ void pi_create_encode_v2( 	opj_pi_iterator_t *pi,
 									case LRCP:
 									case RLCP:
 										if(tcp->prc_t == tcp->prcE){
-											l=pi_check_next_level(i-1,cp,tileno,pino,prog);
-											if(l==1){
+											if(opj_pi_check_next_level(i-1,cp,tileno,pino,prog)){
 												tcp->prc_t = tcp->prcS;
 												pi[pino].poc.precno0 = tcp->prc_t;
 												pi[pino].poc.precno1 = tcp->prc_t+1;
@@ -2250,8 +2246,7 @@ void pi_create_encode_v2( 	opj_pi_iterator_t *pi,
 									default:
 										if(tcp->tx0_t >= tcp->txE){
 											if(tcp->ty0_t >= tcp->tyE){
-												l=pi_check_next_level(i-1,cp,tileno,pino,prog);
-												if(l==1){
+												if(opj_pi_check_next_level(i-1,cp,tileno,pino,prog)){
 													tcp->ty0_t = tcp->tyS;
 													pi[pino].poc.ty0 = tcp->ty0_t;
 													pi[pino].poc.ty1 = tcp->ty0_t + tcp->dy - (tcp->ty0_t % tcp->dy);
@@ -2288,89 +2283,84 @@ void pi_create_encode_v2( 	opj_pi_iterator_t *pi,
 	}
 }
 
-OPJ_INT32 pi_check_next_level(	OPJ_INT32 pos,
+opj_bool opj_pi_check_next_level(	OPJ_INT32 pos,
 								opj_cp_v2_t *cp,
 								OPJ_UINT32 tileno,
 								OPJ_UINT32 pino,
 								const OPJ_CHAR *prog)
 {
-	OPJ_INT32 i,l;
+	OPJ_INT32 i;
 	opj_tcp_v2_t *tcps =&cp->tcps[tileno];
 	opj_poc_t *tcp = &tcps->pocs[pino];
 
 	if(pos>=0){
 		for(i=pos;pos>=0;i--){
 			switch(prog[i]){
-		case 'R':
-			if(tcp->res_t==tcp->resE){
-				l=pi_check_next_level(pos-1,cp,tileno,pino,prog);
-				if(l==1){
-					return 1;
-				}else{
-					return 0;
-				}
-			}else{
-				return 1;
-			}
-			break;
-		case 'C':
-			if(tcp->comp_t==tcp->compE){
-				l=pi_check_next_level(pos-1,cp,tileno,pino,prog);
-				if(l==1){
-					return 1;
-				}else{
-					return 0;
-				}
-			}else{
-				return 1;
-			}
-			break;
-		case 'L':
-			if(tcp->lay_t==tcp->layE){
-				l=pi_check_next_level(pos-1,cp,tileno,pino,prog);
-				if(l==1){
-					return 1;
-				}else{
-					return 0;
-				}
-			}else{
-				return 1;
-			}
-			break;
-		case 'P':
-			switch(tcp->prg){
-				case LRCP||RLCP:
-					if(tcp->prc_t == tcp->prcE){
-						l=pi_check_next_level(i-1,cp,tileno,pino,prog);
-						if(l==1){
-							return 1;
-						}else{
-							return 0;
-						}
-					}else{
-						return 1;
-					}
-					break;
-			default:
-				if(tcp->tx0_t == tcp->txE){
-					/*TY*/
-					if(tcp->ty0_t == tcp->tyE){
-						l=pi_check_next_level(i-1,cp,tileno,pino,prog);
-						if(l==1){
-							return 1;
-						}else{
-							return 0;
-						}
-					}else{
-						return 1;
-					}/*TY*/
-				}else{
-					return 1;
-				}
-				break;
-			}/*end case P*/
-		}/*end switch*/
+		    case 'R':
+			    if(tcp->res_t==tcp->resE){
+				    if(opj_pi_check_next_level(pos-1,cp,tileno,pino,prog)){
+					    return OPJ_TRUE;
+				    }else{
+					    return OPJ_FALSE;
+				    }
+			    }else{
+				    return OPJ_TRUE;
+			    }
+			    break;
+		    case 'C':
+			    if(tcp->comp_t==tcp->compE){
+				    if(opj_pi_check_next_level(pos-1,cp,tileno,pino,prog)){
+					    return OPJ_TRUE;
+				    }else{
+					    return OPJ_FALSE;
+				    }
+			    }else{
+				    return OPJ_TRUE;
+			    }
+			    break;
+		    case 'L':
+			    if(tcp->lay_t==tcp->layE){
+				    if(opj_pi_check_next_level(pos-1,cp,tileno,pino,prog)){
+					    return OPJ_TRUE;
+				    }else{
+					    return OPJ_FALSE;
+				    }
+			    }else{
+				    return OPJ_TRUE;
+			    }
+			    break;
+		    case 'P':
+			    switch(tcp->prg){
+				    case LRCP||RLCP:
+					    if(tcp->prc_t == tcp->prcE){
+						    if(opj_pi_check_next_level(i-1,cp,tileno,pino,prog)){
+							    return OPJ_TRUE;
+						    }else{
+							    return OPJ_FALSE;
+						    }
+					    }else{
+						    return OPJ_TRUE;
+					    }
+					    break;
+			    default:
+				    if(tcp->tx0_t == tcp->txE){
+					    /*TY*/
+					    if(tcp->ty0_t == tcp->tyE){
+						    if(opj_pi_check_next_level(i-1,cp,tileno,pino,prog)){
+							    return OPJ_TRUE;
+						    }else{
+							    return OPJ_FALSE;
+						    }
+					    }else{
+						    return OPJ_TRUE;
+					    }/*TY*/
+				    }else{
+					    return OPJ_TRUE;
+				    }
+				    break;
+			    }/*end case P*/
+		    }/*end switch*/
 		}/*end for*/
 	}/*end if*/
-	return 0;
+	return OPJ_FALSE;
 }
