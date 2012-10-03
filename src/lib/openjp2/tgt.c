@@ -37,7 +37,7 @@
 ==========================================================
 */
 
-opj_tgt_tree_t *tgt_create(OPJ_UINT32 numleafsh, OPJ_UINT32 numleafsv) {
+opj_tgt_tree_t *opj_tgt_create(OPJ_UINT32 numleafsh, OPJ_UINT32 numleafsv) {
         OPJ_INT32 nplh[32];
         OPJ_INT32 nplv[32];
         opj_tgt_node_t *node = 00;
@@ -112,7 +112,7 @@ opj_tgt_tree_t *tgt_create(OPJ_UINT32 numleafsh, OPJ_UINT32 numleafsv) {
                 }
         }
         node->parent = 0;
-        tgt_reset(tree);
+        opj_tgt_reset(tree);
         return tree;
 }
 
@@ -124,7 +124,7 @@ opj_tgt_tree_t *tgt_create(OPJ_UINT32 numleafsh, OPJ_UINT32 numleafsv) {
  * @param       p_num_leafs_v           the height of the array of leafs of the tree
  * @return      a new tag-tree if successful, NULL otherwise
 */
-opj_tgt_tree_t *tgt_init(opj_tgt_tree_t * p_tree,OPJ_UINT32 p_num_leafs_h, OPJ_UINT32 p_num_leafs_v)
+opj_tgt_tree_t *opj_tgt_init(opj_tgt_tree_t * p_tree,OPJ_UINT32 p_num_leafs_h, OPJ_UINT32 p_num_leafs_v)
 {
         OPJ_INT32 l_nplh[32];
         OPJ_INT32 l_nplv[32];
@@ -137,14 +137,11 @@ opj_tgt_tree_t *tgt_init(opj_tgt_tree_t * p_tree,OPJ_UINT32 p_num_leafs_h, OPJ_U
         OPJ_UINT32 n;
         OPJ_UINT32 l_node_size;
 
-        if
-                (! p_tree)
-        {
+        if (! p_tree){
                 return 00;
         }
-        if
-                ((p_tree->numleafsh != p_num_leafs_h) || (p_tree->numleafsv != p_num_leafs_v))
-        {
+
+        if ((p_tree->numleafsh != p_num_leafs_h) || (p_tree->numleafsv != p_num_leafs_v)) {
                 p_tree->numleafsh = p_num_leafs_h;
                 p_tree->numleafsv = p_num_leafs_v;
 
@@ -163,22 +160,17 @@ opj_tgt_tree_t *tgt_init(opj_tgt_tree_t * p_tree,OPJ_UINT32 p_num_leafs_h, OPJ_U
                 while (n > 1);
 
                 /* ADD */
-                if
-                        (p_tree->numnodes == 0)
-                {
-                        tgt_destroy(p_tree);
+                if (p_tree->numnodes == 0) {
+                        opj_tgt_destroy(p_tree);
                         return 00;
                 }
                 l_node_size = p_tree->numnodes * sizeof(opj_tgt_node_t);
-                if
-                        (l_node_size > p_tree->nodes_size)
-                {
+                
+                if (l_node_size > p_tree->nodes_size) {
                         opj_tgt_node_t* new_nodes = (opj_tgt_node_t*) opj_realloc(p_tree->nodes, l_node_size);
-                        if
-                                (! p_tree->nodes)
-                        {
-                                fprintf(stderr, "Not enough memory to reinitialize the tag tree\n");
-                                tgt_destroy(p_tree);
+                        if (! p_tree->nodes) {
+                                fprintf(stderr, "ERROR Not enough memory to reinitialize the tag tree\n");
+                                opj_tgt_destroy(p_tree);
                                 return 00;
                         }
                         p_tree->nodes = new_nodes;
@@ -189,20 +181,13 @@ opj_tgt_tree_t *tgt_init(opj_tgt_tree_t * p_tree,OPJ_UINT32 p_num_leafs_h, OPJ_U
                 l_parent_node = &p_tree->nodes[p_tree->numleafsh * p_tree->numleafsv];
                 l_parent_node0 = l_parent_node;
 
-                for
-                        (i = 0; i < l_num_levels - 1; ++i)
-                {
-                        for
-                                (j = 0; j < l_nplv[i]; ++j)
-                        {
+                for (i = 0; i < l_num_levels - 1; ++i) {
+                        for (j = 0; j < l_nplv[i]; ++j) {
                                 k = l_nplh[i];
-                                while
-                                        (--k >= 0)
-                                {
+                                while (--k >= 0) {
                                         l_node->parent = l_parent_node;
                                         ++l_node;
-                                        if (--k >= 0)
-                                        {
+                                        if (--k >= 0) {
                                                 l_node->parent = l_parent_node;
                                                 ++l_node;
                                         }
@@ -221,17 +206,12 @@ opj_tgt_tree_t *tgt_init(opj_tgt_tree_t * p_tree,OPJ_UINT32 p_num_leafs_h, OPJ_U
                 }
                 l_node->parent = 0;
         }
-        tgt_reset(p_tree);
+        opj_tgt_reset(p_tree);
 
         return p_tree;
 }
 
-/*void tgt_destroy(opj_tgt_tree_t *tree) {
-        opj_free(tree->nodes);
-        opj_free(tree);
-}*/
-
-void tgt_destroy(opj_tgt_tree_t *p_tree)
+void opj_tgt_destroy(opj_tgt_tree_t *p_tree)
 {
         if (! p_tree) {
                 return;
@@ -244,20 +224,7 @@ void tgt_destroy(opj_tgt_tree_t *p_tree)
         opj_free(p_tree);
 }
 
-/*void tgt_reset(opj_tgt_tree_t *tree) {
-        int i;
-
-        if (NULL == tree)
-                return;
-        
-        for (i = 0; i < tree->numnodes; i++) {
-                tree->nodes[i].value = 999;
-                tree->nodes[i].low = 0;
-                tree->nodes[i].known = 0;
-        }
-}*/
-
-void tgt_reset(opj_tgt_tree_t *p_tree) {
+void opj_tgt_reset(opj_tgt_tree_t *p_tree) {
         OPJ_UINT32 i;
         opj_tgt_node_t * l_current_node = 00;;
 
@@ -275,7 +242,7 @@ void tgt_reset(opj_tgt_tree_t *p_tree) {
         }
 }
 
-void tgt_setvalue(opj_tgt_tree_t *tree, OPJ_UINT32 leafno, OPJ_INT32 value) {
+void opj_tgt_setvalue(opj_tgt_tree_t *tree, OPJ_UINT32 leafno, OPJ_INT32 value) {
         opj_tgt_node_t *node;
         node = &tree->nodes[leafno];
         while (node && node->value > value) {
@@ -284,7 +251,7 @@ void tgt_setvalue(opj_tgt_tree_t *tree, OPJ_UINT32 leafno, OPJ_INT32 value) {
         }
 }
 
-void tgt_encode(opj_bio_t *bio, opj_tgt_tree_t *tree, OPJ_UINT32 leafno, OPJ_INT32 threshold) {
+void opj_tgt_encode(opj_bio_t *bio, opj_tgt_tree_t *tree, OPJ_UINT32 leafno, OPJ_INT32 threshold) {
         opj_tgt_node_t *stk[31];
         opj_tgt_node_t **stkptr;
         opj_tgt_node_t *node;
@@ -324,7 +291,7 @@ void tgt_encode(opj_bio_t *bio, opj_tgt_tree_t *tree, OPJ_UINT32 leafno, OPJ_INT
         }
 }
 
-OPJ_UINT32 tgt_decode(opj_bio_t *bio, opj_tgt_tree_t *tree, OPJ_UINT32 leafno, OPJ_INT32 threshold) {
+OPJ_UINT32 opj_tgt_decode(opj_bio_t *bio, opj_tgt_tree_t *tree, OPJ_UINT32 leafno, OPJ_INT32 threshold) {
         opj_tgt_node_t *stk[31];
         opj_tgt_node_t **stkptr;
         opj_tgt_node_t *node;

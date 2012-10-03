@@ -47,10 +47,10 @@ are used by some function in T2.C.
 Tag node
 */
 typedef struct opj_tgt_node {
-  struct opj_tgt_node *parent;
-  OPJ_INT32 value;
-  OPJ_INT32 low;
-  OPJ_UINT32 known;
+    struct opj_tgt_node *parent;
+    OPJ_INT32 value;
+    OPJ_INT32 low;
+    OPJ_UINT32 known;
 } opj_tgt_node_t;
 
 /**
@@ -75,7 +75,7 @@ Create a tag-tree
 @param numleafsv Height of the array of leafs of the tree
 @return Returns a new tag-tree if successful, returns NULL otherwise
 */
-opj_tgt_tree_t *tgt_create(OPJ_UINT32 numleafsh, OPJ_UINT32 numleafsv);
+opj_tgt_tree_t *opj_tgt_create(OPJ_UINT32 numleafsh, OPJ_UINT32 numleafsv);
 
 /**
  * Reinitialises a tag-tree from an exixting one.
@@ -85,26 +85,28 @@ opj_tgt_tree_t *tgt_create(OPJ_UINT32 numleafsh, OPJ_UINT32 numleafsv);
  * @param	p_num_leafs_v		the height of the array of leafs of the tree
  * @return	a new tag-tree if successful, NULL otherwise
 */
-opj_tgt_tree_t *tgt_init(opj_tgt_tree_t * p_tree, OPJ_UINT32  p_num_leafs_h, OPJ_UINT32  p_num_leafs_v);
-
-
+opj_tgt_tree_t *opj_tgt_init(opj_tgt_tree_t * p_tree, 
+                             OPJ_UINT32  p_num_leafs_h, 
+                             OPJ_UINT32  p_num_leafs_v);
 /**
 Destroy a tag-tree, liberating memory
 @param tree Tag-tree to destroy
 */
-void tgt_destroy(opj_tgt_tree_t *tree);
+void opj_tgt_destroy(opj_tgt_tree_t *tree);
 /**
 Reset a tag-tree (set all leaves to 0)
 @param tree Tag-tree to reset
 */
-void tgt_reset(opj_tgt_tree_t *tree);
+void opj_tgt_reset(opj_tgt_tree_t *tree);
 /**
 Set the value of a leaf of a tag-tree
 @param tree Tag-tree to modify
 @param leafno Number that identifies the leaf to modify
 @param value New value of the leaf
 */
-void tgt_setvalue(opj_tgt_tree_t *tree, OPJ_UINT32 leafno, OPJ_INT32 value);
+void opj_tgt_setvalue(opj_tgt_tree_t *tree, 
+                      OPJ_UINT32 leafno, 
+                      OPJ_INT32 value);
 /**
 Encode the value of a leaf of the tag-tree up to a given threshold
 @param bio Pointer to a BIO handle
@@ -112,7 +114,10 @@ Encode the value of a leaf of the tag-tree up to a given threshold
 @param leafno Number that identifies the leaf to encode
 @param threshold Threshold to use when encoding value of the leaf
 */
-void tgt_encode(opj_bio_t *bio, opj_tgt_tree_t *tree, OPJ_UINT32 leafno, OPJ_INT32 threshold);
+void opj_tgt_encode(opj_bio_t *bio, 
+                    opj_tgt_tree_t *tree, 
+                    OPJ_UINT32 leafno, 
+                    OPJ_INT32 threshold);
 /**
 Decode the value of a leaf of the tag-tree up to a given threshold
 @param bio Pointer to a BIO handle
@@ -121,7 +126,10 @@ Decode the value of a leaf of the tag-tree up to a given threshold
 @param threshold Threshold to use when decoding value of the leaf
 @return Returns 1 if the node's value < threshold, returns 0 otherwise
 */
-OPJ_UINT32 tgt_decode(opj_bio_t *bio, opj_tgt_tree_t *tree, OPJ_UINT32 leafno, OPJ_INT32 threshold);
+OPJ_UINT32 opj_tgt_decode(opj_bio_t *bio, 
+                          opj_tgt_tree_t *tree, 
+                          OPJ_UINT32 leafno, 
+                          OPJ_INT32 threshold);
 /* ----------------------------------------------------------------------- */
 /*@}*/
 

@@ -547,15 +547,15 @@ opj_bool opj_t2_encode_packet(  OPJ_UINT32 tileno,
                 for(bandno = 0; bandno < res->numbands; ++bandno) {
                         opj_tcd_precinct_v2_t *prc = &band->precincts[precno];
 
-                        tgt_reset(prc->incltree);
-                        tgt_reset(prc->imsbtree);
+                        opj_tgt_reset(prc->incltree);
+                        opj_tgt_reset(prc->imsbtree);
 
                         l_nb_blocks = prc->cw * prc->ch;
                         for     (cblkno = 0; cblkno < l_nb_blocks; ++cblkno) {
                                 opj_tcd_cblk_enc_v2_t* cblk = &prc->cblks.enc[cblkno];
 
                                 cblk->numpasses = 0;
-                                tgt_setvalue(prc->imsbtree, cblkno, band->numbps - cblk->numbps);
+                                opj_tgt_setvalue(prc->imsbtree, cblkno, band->numbps - cblk->numbps);
                         }
                         ++band;
                 }
@@ -577,7 +577,7 @@ opj_bool opj_t2_encode_packet(  OPJ_UINT32 tileno,
                         opj_tcd_layer_t *layer = &cblk->layers[layno];
 
                         if (!cblk->numpasses && layer->numpasses) {
-                                tgt_setvalue(prc->incltree, cblkno, layno);
+                                opj_tgt_setvalue(prc->incltree, cblkno, layno);
                         }
 
                         ++cblk;
@@ -593,7 +593,7 @@ opj_bool opj_t2_encode_packet(  OPJ_UINT32 tileno,
 
                         /* cblk inclusion bits */
                         if (!cblk->numpasses) {
-                                tgt_encode(bio, prc->incltree, cblkno, layno + 1);
+                                opj_tgt_encode(bio, prc->incltree, cblkno, layno + 1);
                         } else {
                                 opj_bio_write(bio, layer->numpasses != 0, 1);
                         }
@@ -607,7 +607,7 @@ opj_bool opj_t2_encode_packet(  OPJ_UINT32 tileno,
                         /* if first instance of cblk --> zero bit-planes information */
                         if (!cblk->numpasses) {
                                 cblk->numlenbits = 3;
-                                tgt_encode(bio, prc->imsbtree, cblkno, 999);
+                                opj_tgt_encode(bio, prc->imsbtree, cblkno, 999);
                         }
 
                         /* number of coding passes included */
@@ -804,8 +804,8 @@ opj_bool opj_t2_read_packet_header( opj_t2_v2_t* p_t2,
                         opj_tcd_precinct_v2_t *l_prc = &l_band->precincts[p_pi->precno];
 
                         if ( ! ((l_band->x1-l_band->x0 == 0)||(l_band->y1-l_band->y0 == 0)) ) {
-                                tgt_reset(l_prc->incltree);
-                                tgt_reset(l_prc->imsbtree);
+                                opj_tgt_reset(l_prc->incltree);
+                                opj_tgt_reset(l_prc->imsbtree);
                                 l_cblk = l_prc->cblks.dec;
 
                                 l_nb_code_blocks = l_prc->cw * l_prc->ch;
@@ -914,7 +914,7 @@ opj_bool opj_t2_read_packet_header( opj_t2_v2_t* p_t2,
 
                         /* if cblk not yet included before --> inclusion tagtree */
                         if (!l_cblk->numsegs) {
-                                l_included = tgt_decode(l_bio, l_prc->incltree, cblkno, p_pi->layno + 1);
+                                l_included = opj_tgt_decode(l_bio, l_prc->incltree, cblkno, p_pi->layno + 1);
                                 /* else one bit */
                         }
                         else {
@@ -932,7 +932,7 @@ opj_bool opj_t2_read_packet_header( opj_t2_v2_t* p_t2,
                         if (!l_cblk->numsegs) {
                                 OPJ_UINT32 i = 0;
 
-                                while (!tgt_decode(l_bio, l_prc->imsbtree, cblkno, i)) {
+                                while (!opj_tgt_decode(l_bio, l_prc->imsbtree, cblkno, i)) {
                                         ++i;
                                 }
 

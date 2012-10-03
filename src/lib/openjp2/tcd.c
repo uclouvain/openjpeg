@@ -919,11 +919,11 @@ opj_bool FUNCTION (     opj_tcd_v2_t *p_tcd,                        \
                                         }                                                                                                                                                                         \
                                                                                                                                                                                                                   \
                                         if (! l_current_precinct->incltree) {                                                                                                                                     \
-                                                l_current_precinct->incltree = tgt_create(l_current_precinct->cw,                                                                                              \
+                                                l_current_precinct->incltree = opj_tgt_create(l_current_precinct->cw,                                                                                              \
                                                                 l_current_precinct->ch);                                                                                                                          \
                                         }                                                                                                                                                                         \
                                         else{                                                                                                                                                                     \
-                                                l_current_precinct->incltree = tgt_init(l_current_precinct->incltree,                                                                                             \
+                                                l_current_precinct->incltree = opj_tgt_init(l_current_precinct->incltree,                                                                                             \
                                                                 l_current_precinct->cw,                                                                                                                           \
                                                                 l_current_precinct->ch);                                                                                                                          \
                                         }                                                                                                                                                                         \
@@ -934,12 +934,12 @@ opj_bool FUNCTION (     opj_tcd_v2_t *p_tcd,                        \
                                         }                                                                                                                                                                         \
                                                                                                                                                                                                                   \
                                         if (! l_current_precinct->imsbtree) {                                                                                                                                     \
-                                                l_current_precinct->imsbtree = tgt_create(                                                                                                                     \
+                                                l_current_precinct->imsbtree = opj_tgt_create(                                                                                                                     \
                                                                 l_current_precinct->cw,                                                                                                                           \
                                                                 l_current_precinct->ch);                                                                                                                          \
                                         }                                                                                                                                                                         \
                                         else {                                                                                                                                                                    \
-                                                l_current_precinct->imsbtree = tgt_init(                                                                                                                          \
+                                                l_current_precinct->imsbtree = opj_tgt_init(                                                                                                                          \
                                                                 l_current_precinct->imsbtree,                                                                                                                     \
                                                                 l_current_precinct->cw,                                                                                                                           \
                                                                 l_current_precinct->ch);                                                                                                                          \
@@ -1419,9 +1419,9 @@ void opj_tcd_free_tile(opj_tcd_v2_t *p_tcd)
 
                                                 l_nb_precincts = l_band->precincts_data_size / sizeof(opj_tcd_precinct_v2_t);
                                                 for (precno = 0; precno < l_nb_precincts; ++precno) {
-                                                        tgt_destroy(l_precinct->incltree);
+                                                        opj_tgt_destroy(l_precinct->incltree);
                                                         l_precinct->incltree = 00;
-                                                        tgt_destroy(l_precinct->imsbtree);
+                                                        opj_tgt_destroy(l_precinct->imsbtree);
                                                         l_precinct->imsbtree = 00;
                                                         (*l_tcd_code_block_deallocate) (l_precinct);
                                                         ++l_precinct;
