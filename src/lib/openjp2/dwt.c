@@ -138,11 +138,13 @@ static void opj_v4dwt_interleave_v(v4dwt_t* restrict v , OPJ_FLOAT32* restrict a
 static void opj_v4dwt_decode_step1_sse(v4* w, OPJ_INT32 count, const __m128 c);
 
 static void opj_v4dwt_decode_step2_sse(v4* l, v4* w, OPJ_INT32 k, OPJ_INT32 m, __m128 c);
-#endif
 
+#else
 static void opj_v4dwt_decode_step1(v4* w, OPJ_INT32 count, const OPJ_FLOAT32 c);
+
 static void opj_v4dwt_decode_step2(v4* l, v4* w, OPJ_INT32 k, OPJ_INT32 m, OPJ_FLOAT32 c);
 
+#endif
 
 /*@}*/
 
