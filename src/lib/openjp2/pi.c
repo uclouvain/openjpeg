@@ -43,31 +43,31 @@ Get next packet in layer-resolution-component-precinct order.
 @param pi packet iterator to modify
 @return returns false if pi pointed to the last packet or else returns true
 */
-static opj_bool pi_next_lrcp(opj_pi_iterator_t * pi);
+static opj_bool opj_pi_next_lrcp(opj_pi_iterator_t * pi);
 /**
 Get next packet in resolution-layer-component-precinct order.
 @param pi packet iterator to modify
 @return returns false if pi pointed to the last packet or else returns true
 */
-static opj_bool pi_next_rlcp(opj_pi_iterator_t * pi);
+static opj_bool opj_pi_next_rlcp(opj_pi_iterator_t * pi);
 /**
 Get next packet in resolution-precinct-component-layer order.
 @param pi packet iterator to modify
 @return returns false if pi pointed to the last packet or else returns true
 */
-static opj_bool pi_next_rpcl(opj_pi_iterator_t * pi);
+static opj_bool opj_pi_next_rpcl(opj_pi_iterator_t * pi);
 /**
 Get next packet in precinct-component-resolution-layer order.
 @param pi packet iterator to modify
 @return returns false if pi pointed to the last packet or else returns true
 */
-static opj_bool pi_next_pcrl(opj_pi_iterator_t * pi);
+static opj_bool opj_pi_next_pcrl(opj_pi_iterator_t * pi);
 /**
 Get next packet in component-precinct-resolution-layer order.
 @param pi packet iterator to modify
 @return returns false if pi pointed to the last packet or else returns true
 */
-static opj_bool pi_next_cprl(opj_pi_iterator_t * pi);
+static opj_bool opj_pi_next_cprl(opj_pi_iterator_t * pi);
 
 /**
  * Updates the coding parameters if the encoding is used with Progression order changes and final (or cinema parameters are used).
@@ -156,10 +156,10 @@ OPJ_INT32 pi_check_next_level(	OPJ_INT32 pos,
 ==========================================================
 */
 
-static opj_bool pi_next_lrcp(opj_pi_iterator_t * pi) {
+opj_bool opj_pi_next_lrcp(opj_pi_iterator_t * pi) {
 	opj_pi_comp_t *comp = NULL;
 	opj_pi_resolution_t *res = NULL;
-	long index = 0;
+	OPJ_UINT32 index = 0;
 	
 	if (!pi->first) {
 		comp = &pi->comps[pi->compno];
@@ -196,10 +196,10 @@ LABEL_SKIP:;
 	return OPJ_FALSE;
 }
 
-static opj_bool pi_next_rlcp(opj_pi_iterator_t * pi) {
+opj_bool opj_pi_next_rlcp(opj_pi_iterator_t * pi) {
 	opj_pi_comp_t *comp = NULL;
 	opj_pi_resolution_t *res = NULL;
-	long index = 0;
+	OPJ_UINT32 index = 0;
 
 	if (!pi->first) {
 		comp = &pi->comps[pi->compno];
@@ -235,22 +235,22 @@ LABEL_SKIP:;
 	return OPJ_FALSE;
 }
 
-static opj_bool pi_next_rpcl(opj_pi_iterator_t * pi) {
+opj_bool opj_pi_next_rpcl(opj_pi_iterator_t * pi) {
 	opj_pi_comp_t *comp = NULL;
 	opj_pi_resolution_t *res = NULL;
-	long index = 0;
+	OPJ_UINT32 index = 0;
 
 	if (!pi->first) {
 		goto LABEL_SKIP;
 	} else {
-		int compno, resno;
+		OPJ_UINT32 compno, resno;
 		pi->first = 0;
 		pi->dx = 0;
 		pi->dy = 0;
 		for (compno = 0; compno < pi->numcomps; compno++) {
 			comp = &pi->comps[compno];
 			for (resno = 0; resno < comp->numresolutions; resno++) {
-				int dx, dy;
+				OPJ_UINT32 dx, dy;
 				res = &comp->resolutions[resno];
 				dx = comp->dx * (1 << (res->pdx + comp->numresolutions - 1 - resno));
 				dy = comp->dy * (1 << (res->pdy + comp->numresolutions - 1 - resno));
@@ -269,11 +269,11 @@ if (!pi->tp_on){
 		for (pi->y = pi->poc.ty0; pi->y < pi->poc.ty1; pi->y += pi->dy - (pi->y % pi->dy)) {
 			for (pi->x = pi->poc.tx0; pi->x < pi->poc.tx1; pi->x += pi->dx - (pi->x % pi->dx)) {
 				for (pi->compno = pi->poc.compno0; pi->compno < pi->poc.compno1; pi->compno++) {
-					int levelno;
-					int trx0, try0;
-					int trx1, try1;
-					int rpx, rpy;
-					int prci, prcj;
+					OPJ_UINT32 levelno;
+					OPJ_INT32 trx0, try0;
+					OPJ_INT32  trx1, try1;
+					OPJ_UINT32  rpx, rpy;
+					OPJ_INT32  prci, prcj;
 					comp = &pi->comps[pi->compno];
 					if (pi->resno >= comp->numresolutions) {
 						continue;
@@ -318,23 +318,23 @@ LABEL_SKIP:;
 	return OPJ_FALSE;
 }
 
-static opj_bool pi_next_pcrl(opj_pi_iterator_t * pi) {
+opj_bool opj_pi_next_pcrl(opj_pi_iterator_t * pi) {
 	opj_pi_comp_t *comp = NULL;
 	opj_pi_resolution_t *res = NULL;
-	long index = 0;
+	OPJ_UINT32 index = 0;
 
 	if (!pi->first) {
 		comp = &pi->comps[pi->compno];
 		goto LABEL_SKIP;
 	} else {
-		int compno, resno;
+		OPJ_UINT32 compno, resno;
 		pi->first = 0;
 		pi->dx = 0;
 		pi->dy = 0;
 		for (compno = 0; compno < pi->numcomps; compno++) {
 			comp = &pi->comps[compno];
 			for (resno = 0; resno < comp->numresolutions; resno++) {
-				int dx, dy;
+				OPJ_UINT32 dx, dy;
 				res = &comp->resolutions[resno];
 				dx = comp->dx * (1 << (res->pdx + comp->numresolutions - 1 - resno));
 				dy = comp->dy * (1 << (res->pdy + comp->numresolutions - 1 - resno));
@@ -353,12 +353,12 @@ static opj_bool pi_next_pcrl(opj_pi_iterator_t * pi) {
 		for (pi->x = pi->poc.tx0; pi->x < pi->poc.tx1; pi->x += pi->dx - (pi->x % pi->dx)) {
 			for (pi->compno = pi->poc.compno0; pi->compno < pi->poc.compno1; pi->compno++) {
 				comp = &pi->comps[pi->compno];
-				for (pi->resno = pi->poc.resno0; pi->resno < int_min(pi->poc.resno1, comp->numresolutions); pi->resno++) {
-					int levelno;
-					int trx0, try0;
-					int trx1, try1;
-					int rpx, rpy;
-					int prci, prcj;
+				for (pi->resno = pi->poc.resno0; pi->resno < uint_min(pi->poc.resno1, comp->numresolutions); pi->resno++) {
+					OPJ_UINT32 levelno;
+					OPJ_INT32 trx0, try0;
+					OPJ_INT32 trx1, try1;
+					OPJ_UINT32 rpx, rpy;
+					OPJ_INT32 prci, prcj;
 					res = &comp->resolutions[pi->resno];
 					levelno = comp->numresolutions - 1 - pi->resno;
 					trx0 = int_ceildiv(pi->tx0, comp->dx << levelno);
@@ -399,10 +399,10 @@ LABEL_SKIP:;
 	return OPJ_FALSE;
 }
 
-static opj_bool pi_next_cprl(opj_pi_iterator_t * pi) {
+opj_bool opj_pi_next_cprl(opj_pi_iterator_t * pi) {
 	opj_pi_comp_t *comp = NULL;
 	opj_pi_resolution_t *res = NULL;
-	long index = 0;
+	OPJ_UINT32 index = 0;
 
 	if (!pi->first) {
 		comp = &pi->comps[pi->compno];
@@ -412,12 +412,12 @@ static opj_bool pi_next_cprl(opj_pi_iterator_t * pi) {
 	}
 
 	for (pi->compno = pi->poc.compno0; pi->compno < pi->poc.compno1; pi->compno++) {
-		int resno;
+		OPJ_UINT32 resno;
 		comp = &pi->comps[pi->compno];
 		pi->dx = 0;
 		pi->dy = 0;
 		for (resno = 0; resno < comp->numresolutions; resno++) {
-			int dx, dy;
+			OPJ_UINT32 dx, dy;
 			res = &comp->resolutions[resno];
 			dx = comp->dx * (1 << (res->pdx + comp->numresolutions - 1 - resno));
 			dy = comp->dy * (1 << (res->pdy + comp->numresolutions - 1 - resno));
@@ -432,12 +432,12 @@ static opj_bool pi_next_cprl(opj_pi_iterator_t * pi) {
 		}
 		for (pi->y = pi->poc.ty0; pi->y < pi->poc.ty1; pi->y += pi->dy - (pi->y % pi->dy)) {
 			for (pi->x = pi->poc.tx0; pi->x < pi->poc.tx1; pi->x += pi->dx - (pi->x % pi->dx)) {
-				for (pi->resno = pi->poc.resno0; pi->resno < int_min(pi->poc.resno1, comp->numresolutions); pi->resno++) {
-					int levelno;
-					int trx0, try0;
-					int trx1, try1;
-					int rpx, rpy;
-					int prci, prcj;
+				for (pi->resno = pi->poc.resno0; pi->resno < uint_min(pi->poc.resno1, comp->numresolutions); pi->resno++) {
+					OPJ_UINT32 levelno;
+					OPJ_INT32 trx0, try0;
+					OPJ_INT32 trx1, try1;
+					OPJ_UINT32 rpx, rpy;
+					OPJ_INT32 prci, prcj;
 					res = &comp->resolutions[pi->resno];
 					levelno = comp->numresolutions - 1 - pi->resno;
 					trx0 = int_ceildiv(pi->tx0, comp->dx << levelno);
@@ -1173,15 +1173,15 @@ void pi_destroy(opj_pi_iterator_t *pi, opj_cp_t *cp, int tileno) {
 opj_bool pi_next(opj_pi_iterator_t * pi) {
 	switch (pi->poc.prg) {
 		case LRCP:
-			return pi_next_lrcp(pi);
+			return opj_pi_next_lrcp(pi);
 		case RLCP:
-			return pi_next_rlcp(pi);
+			return opj_pi_next_rlcp(pi);
 		case RPCL:
-			return pi_next_rpcl(pi);
+			return opj_pi_next_rpcl(pi);
 		case PCRL:
-			return pi_next_pcrl(pi);
+			return opj_pi_next_pcrl(pi);
 		case CPRL:
-			return pi_next_cprl(pi);
+			return opj_pi_next_cprl(pi);
 		case PROG_UNKNOWN:
 			return OPJ_FALSE;
 	}

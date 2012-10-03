@@ -44,7 +44,7 @@ by some function in T2.C.
 /*@{*/
 
 /**
-FIXME: documentation
+FIXME DOC
 */
 typedef struct opj_pi_resolution {
   int pdx, pdy;
@@ -52,7 +52,7 @@ typedef struct opj_pi_resolution {
 } opj_pi_resolution_t;
 
 /**
-FIXME: documentation
+FIXME DOC
 */
 typedef struct opj_pi_comp {
   int dx, dy;
