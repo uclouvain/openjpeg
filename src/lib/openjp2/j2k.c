@@ -1629,7 +1629,7 @@ opj_bool opj_j2k_calculate_tp(  opj_j2k_v2_t *p_j2k,
                 for (tileno = 0; tileno < l_nb_tiles; ++tileno) {
                         OPJ_UINT32 cur_totnum_tp = 0;
 
-                        pi_update_encoding_parameters(image,cp,tileno);
+                        opj_pi_update_encoding_parameters(image,cp,tileno);
 
                         for (pino = 0; pino <= tcp->numpocs; ++pino)
                         {
@@ -1659,7 +1659,7 @@ opj_bool opj_j2k_calculate_tp(  opj_j2k_v2_t *p_j2k,
                 for (tileno = 0; tileno < l_nb_tiles; ++tileno) {
                         OPJ_UINT32 cur_totnum_tp = 0;
 
-                        pi_update_encoding_parameters(image,cp,tileno);
+                        opj_pi_update_encoding_parameters(image,cp,tileno);
 
                         for (pino = 0; pino <= tcp->numpocs; ++pino) {
                                 OPJ_UINT32 tp_num = opj_j2k_get_num_tp(cp,pino,tileno);

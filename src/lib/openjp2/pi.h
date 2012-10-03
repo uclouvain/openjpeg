@@ -133,9 +133,9 @@ opj_pi_iterator_t *pi_initialise_encode_v2(	const struct opj_image *image,
  * @param	p_cp		the coding parameters.
  * @param	p_tile_no	index of the tile being encoded.
 */
-void pi_update_encoding_parameters(	const struct opj_image *p_image,
-									struct opj_cp_v2 *p_cp,
-									OPJ_UINT32 p_tile_no );
+void opj_pi_update_encoding_parameters(	const opj_image_t *p_image,
+                                        opj_cp_v2_t *p_cp,
+                                        OPJ_UINT32 p_tile_no );
 
 /**
 Modify the packet iterator for enabling tile part generation

@@ -1424,9 +1424,9 @@ opj_bool pi_create_encode( opj_pi_iterator_t *pi, opj_cp_t *cp,int tileno, int p
 	return OPJ_FALSE;
 }
 
-void pi_update_encoding_parameters(	const opj_image_t *p_image,
-									opj_cp_v2_t *p_cp,
-									OPJ_UINT32 p_tile_no )
+void opj_pi_update_encoding_parameters(	const opj_image_t *p_image,
+                                        opj_cp_v2_t *p_cp,
+                                        OPJ_UINT32 p_tile_no )
 {
 	/* encoding parameters to set */
 	OPJ_UINT32 l_max_res;
