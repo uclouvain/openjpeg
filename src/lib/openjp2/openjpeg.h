@@ -269,23 +269,23 @@ typedef struct opj_poc {
 	/** Layer num end,Resolution num end, Component num end, given by POC */
 	OPJ_UINT32 layno1, resno1, compno1;
 	/** Layer num start,Precinct num start, Precinct num end */
-	int layno0, precno0, precno1;
+	OPJ_UINT32 layno0, precno0, precno1;
 	/** Progression order enum*/
 	OPJ_PROG_ORDER prg1,prg;
 	/** Progression order string*/
-	char progorder[5];
+	OPJ_CHAR progorder[5];
 	/** Tile number */
-	int tile;
+	OPJ_UINT32 tile;
 	/** Start and end values for Tile width and height*/
-	int tx0,tx1,ty0,ty1;
+	OPJ_INT32 tx0,tx1,ty0,ty1;
 	/** Start value, initialised in pi_initialise_encode*/
-	int layS, resS, compS, prcS;
+	OPJ_UINT32 layS, resS, compS, prcS;
 	/** End value, initialised in pi_initialise_encode */
-	int layE, resE, compE, prcE;
+	OPJ_UINT32 layE, resE, compE, prcE;
 	/** Start and end values of Tile width and height, initialised in pi_initialise_encode*/
-	int txS,txE,tyS,tyE,dx,dy;
+	OPJ_UINT32 txS,txE,tyS,tyE,dx,dy;
 	/** Temporary values for Tile parts, initialised in pi_create_encode */
-	int lay_t, res_t, comp_t, prc_t,tx0_t,ty0_t;
+	OPJ_UINT32 lay_t, res_t, comp_t, prc_t,tx0_t,ty0_t;
 } opj_poc_t;
 
 /**

@@ -479,12 +479,12 @@ opj_bool opj_pi_next_cprl(opj_pi_iterator_t * pi) {
 	}
 
 	for (pi->compno = pi->poc.compno0; pi->compno < pi->poc.compno1; pi->compno++) {
-		int resno;
+		OPJ_UINT32 resno;
 		comp = &pi->comps[pi->compno];
 		pi->dx = 0;
 		pi->dy = 0;
 		for (resno = 0; resno < comp->numresolutions; resno++) {
-			int dx, dy;
+			OPJ_UINT32 dx, dy;
 			res = &comp->resolutions[resno];
 			dx = comp->dx * (1 << (res->pdx + comp->numresolutions - 1 - resno));
 			dy = comp->dy * (1 << (res->pdy + comp->numresolutions - 1 - resno));
@@ -499,12 +499,12 @@ opj_bool opj_pi_next_cprl(opj_pi_iterator_t * pi) {
 		}
 		for (pi->y = pi->poc.ty0; pi->y < pi->poc.ty1; pi->y += pi->dy - (pi->y % pi->dy)) {
 			for (pi->x = pi->poc.tx0; pi->x < pi->poc.tx1; pi->x += pi->dx - (pi->x % pi->dx)) {
-				for (pi->resno = pi->poc.resno0; pi->resno < int_min(pi->poc.resno1, comp->numresolutions); pi->resno++) {
-					int levelno;
-					int trx0, try0;
-					int trx1, try1;
-					int rpx, rpy;
-					int prci, prcj;
+				for (pi->resno = pi->poc.resno0; pi->resno < uint_min(pi->poc.resno1, comp->numresolutions); pi->resno++) {
+					OPJ_UINT32 levelno;
+					OPJ_INT32 trx0, try0;
+					OPJ_INT32 trx1, try1;
+					OPJ_UINT32 rpx, rpy;
+					OPJ_INT32 prci, prcj;
 					res = &comp->resolutions[pi->resno];
 					levelno = comp->numresolutions - 1 - pi->resno;
 					trx0 = int_ceildiv(pi->tx0, comp->dx << levelno);

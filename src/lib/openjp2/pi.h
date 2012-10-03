@@ -47,17 +47,17 @@ by some function in T2.C.
 FIXME DOC
 */
 typedef struct opj_pi_resolution {
-  int pdx, pdy;
-  int pw, ph;
+  OPJ_UINT32 pdx, pdy;
+  OPJ_UINT32 pw, ph;
 } opj_pi_resolution_t;
 
 /**
 FIXME DOC
 */
 typedef struct opj_pi_comp {
-  int dx, dy;
+  OPJ_UINT32 dx, dy;
   /** number of resolution levels */
-  int numresolutions;
+  OPJ_UINT32 numresolutions;
   opj_pi_resolution_t *resolutions;
 } opj_pi_comp_t;
 
@@ -66,35 +66,39 @@ Packet iterator
 */
 typedef struct opj_pi_iterator {
 	/** Enabling Tile part generation*/
-	char tp_on;
+	OPJ_BYTE tp_on;
 	/** precise if the packet has been already used (usefull for progression order change) */
-	short int *include;
+	OPJ_INT16 *include;
 	/** layer step used to localize the packet in the include vector */
-	int step_l;
+	OPJ_UINT32 step_l;
 	/** resolution step used to localize the packet in the include vector */
-	int step_r;	
+	OPJ_UINT32 step_r;	
 	/** component step used to localize the packet in the include vector */
-	int step_c;	
+	OPJ_UINT32 step_c;	
 	/** precinct step used to localize the packet in the include vector */
-	int step_p;	
+	OPJ_UINT32 step_p;	
 	/** component that identify the packet */
-	int compno;
+	OPJ_UINT32 compno;
 	/** resolution that identify the packet */
-	int resno;
+	OPJ_UINT32 resno;
 	/** precinct that identify the packet */
-	int precno;
+	OPJ_UINT32 precno;
 	/** layer that identify the packet */
-	int layno;
-	/** 0 if the first packet */
-	int first;
+	OPJ_UINT32 layno;
+	/** 0 if the first packet TODO MSD xhange to opj_bool*/
+	int first; 
 	/** progression order change information */
 	opj_poc_t poc;
 	/** number of components in the image */
-	int numcomps;
+	OPJ_UINT32 numcomps;
 	/** Components*/
 	opj_pi_comp_t *comps;
-	int tx0, ty0, tx1, ty1;
-	int x, y, dx, dy;
+    /** FIXME DOC*/
+	OPJ_INT32 tx0, ty0, tx1, ty1;
+    /** FIXME DOC*/
+	OPJ_INT32 x, y;
+    /** FIXME DOC*/
+    OPJ_UINT32 dx, dy;
 } opj_pi_iterator_t;
 
 /** @name Exported functions */
