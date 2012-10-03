@@ -545,452 +545,6 @@ LABEL_SKIP:;
 	return OPJ_FALSE;
 }
 
-/*
-==========================================================
-   Packet iterator interface
-==========================================================
-*/
-opj_pi_iterator_t *opj_pi_create_decode(opj_image_t *p_image,
-										opj_cp_v2_t *p_cp,
-										OPJ_UINT32 p_tile_no)
-{
-	/* loop */
-	OPJ_UINT32 pino;
-	OPJ_UINT32 compno, resno;
-
-	/* to store w, h, dx and dy fro all components and resolutions */
-	OPJ_UINT32 * l_tmp_data;
-	OPJ_UINT32 ** l_tmp_ptr;
-
-	/* encoding prameters to set */
-	OPJ_UINT32 l_max_res;
-	OPJ_UINT32 l_max_prec;
-	OPJ_INT32 l_tx0,l_tx1,l_ty0,l_ty1;
-	OPJ_UINT32 l_dx_min,l_dy_min;
-	OPJ_UINT32 l_bound;
-	OPJ_UINT32 l_step_p , l_step_c , l_step_r , l_step_l ;
-	OPJ_UINT32 l_data_stride;
-
-	/* pointers */
-	opj_pi_iterator_t *l_pi = 00;
-	opj_tcp_v2_t *l_tcp = 00;
-	const opj_tccp_t *l_tccp = 00;
-	opj_pi_comp_t *l_current_comp = 00;
-	opj_image_comp_t * l_img_comp = 00;
-	opj_pi_iterator_t * l_current_pi = 00;
-	OPJ_UINT32 * l_encoding_value_ptr = 00;
-
-	/* preconditions in debug */
-	assert(p_cp != 00);
-	assert(p_image != 00);
-	assert(p_tile_no < p_cp->tw * p_cp->th);
-
-	/* initializations */
-	l_tcp = &p_cp->tcps[p_tile_no];
-	l_bound = l_tcp->numpocs+1;
-
-	l_data_stride = 4 * J2K_MAXRLVLS;
-	l_tmp_data = (OPJ_UINT32*)opj_malloc(
-		l_data_stride * p_image->numcomps * sizeof(OPJ_UINT32));
-	if
-		(! l_tmp_data)
-	{
-		return 00;
-	}
-	l_tmp_ptr = (OPJ_UINT32**)opj_malloc(
-		p_image->numcomps * sizeof(OPJ_UINT32 *));
-	if
-		(! l_tmp_ptr)
-	{
-		opj_free(l_tmp_data);
-		return 00;
-	}
-
-	/* memory allocation for pi */
-	l_pi = opj_pi_create(p_image, p_cp, p_tile_no);
-	if (!l_pi) {
-		opj_free(l_tmp_data);
-		opj_free(l_tmp_ptr);
-		return 00;
-	}
-
-	l_encoding_value_ptr = l_tmp_data;
-	/* update pointer array */
-	for
-		(compno = 0; compno < p_image->numcomps; ++compno)
-	{
-		l_tmp_ptr[compno] = l_encoding_value_ptr;
-		l_encoding_value_ptr += l_data_stride;
-	}
-	/* get encoding parameters */
-	opj_get_all_encoding_parameters(p_image,p_cp,p_tile_no,&l_tx0,&l_tx1,&l_ty0,&l_ty1,&l_dx_min,&l_dy_min,&l_max_prec,&l_max_res,l_tmp_ptr);
-
-	/* step calculations */
-	l_step_p = 1;
-	l_step_c = l_max_prec * l_step_p;
-	l_step_r = p_image->numcomps * l_step_c;
-	l_step_l = l_max_res * l_step_r;
-
-	/* set values for first packet iterator */
-	l_current_pi = l_pi;
-
-	/* memory allocation for include */
-	l_current_pi->include = (OPJ_INT16*) opj_calloc((l_tcp->numlayers +1) * l_step_l, sizeof(OPJ_INT16));
-	if
-		(!l_current_pi->include)
-	{
-		opj_free(l_tmp_data);
-		opj_free(l_tmp_ptr);
-		opj_pi_destroy(l_pi, l_bound);
-		return 00;
-	}
-	memset(l_current_pi->include,0, (l_tcp->numlayers + 1) * l_step_l* sizeof(OPJ_INT16));
-
-	/* special treatment for the first packet iterator */
-	l_current_comp = l_current_pi->comps;
-	l_img_comp = p_image->comps;
-	l_tccp = l_tcp->tccps;
-
-	l_current_pi->tx0 = l_tx0;
-	l_current_pi->ty0 = l_ty0;
-	l_current_pi->tx1 = l_tx1;
-	l_current_pi->ty1 = l_ty1;
-
-	/*l_current_pi->dx = l_img_comp->dx;*/
-	/*l_current_pi->dy = l_img_comp->dy;*/
-
-	l_current_pi->step_p = l_step_p;
-	l_current_pi->step_c = l_step_c;
-	l_current_pi->step_r = l_step_r;
-	l_current_pi->step_l = l_step_l;
-
-	/* allocation for components and number of components has already been calculated by opj_pi_create */
-	for
-		(compno = 0; compno < l_current_pi->numcomps; ++compno)
-	{
-		opj_pi_resolution_t *l_res = l_current_comp->resolutions;
-		l_encoding_value_ptr = l_tmp_ptr[compno];
-
-		l_current_comp->dx = l_img_comp->dx;
-		l_current_comp->dy = l_img_comp->dy;
-		/* resolutions have already been initialized */
-		for
-			(resno = 0; resno < l_current_comp->numresolutions; resno++)
-		{
-			l_res->pdx = *(l_encoding_value_ptr++);
-			l_res->pdy = *(l_encoding_value_ptr++);
-			l_res->pw =  *(l_encoding_value_ptr++);
-			l_res->ph =  *(l_encoding_value_ptr++);
-			++l_res;
-		}
-		++l_current_comp;
-		++l_img_comp;
-		++l_tccp;
-	}
-	++l_current_pi;
-
-	for
-		(pino = 1 ; pino<l_bound ; ++pino )
-	{
-		opj_pi_comp_t *l_current_comp = l_current_pi->comps;
-		opj_image_comp_t * l_img_comp = p_image->comps;
-		l_tccp = l_tcp->tccps;
-
-		l_current_pi->tx0 = l_tx0;
-		l_current_pi->ty0 = l_ty0;
-		l_current_pi->tx1 = l_tx1;
-		l_current_pi->ty1 = l_ty1;
-		/*l_current_pi->dx = l_dx_min;*/
-		/*l_current_pi->dy = l_dy_min;*/
-		l_current_pi->step_p = l_step_p;
-		l_current_pi->step_c = l_step_c;
-		l_current_pi->step_r = l_step_r;
-		l_current_pi->step_l = l_step_l;
-
-		/* allocation for components and number of components has already been calculated by opj_pi_create */
-		for
-			(compno = 0; compno < l_current_pi->numcomps; ++compno)
-		{
-			opj_pi_resolution_t *l_res = l_current_comp->resolutions;
-			l_encoding_value_ptr = l_tmp_ptr[compno];
-
-			l_current_comp->dx = l_img_comp->dx;
-			l_current_comp->dy = l_img_comp->dy;
-			/* resolutions have already been initialized */
-			for
-				(resno = 0; resno < l_current_comp->numresolutions; resno++)
-			{
-				l_res->pdx = *(l_encoding_value_ptr++);
-				l_res->pdy = *(l_encoding_value_ptr++);
-				l_res->pw =  *(l_encoding_value_ptr++);
-				l_res->ph =  *(l_encoding_value_ptr++);
-				++l_res;
-			}
-			++l_current_comp;
-			++l_img_comp;
-			++l_tccp;
-		}
-		/* special treatment*/
-		l_current_pi->include = (l_current_pi-1)->include;
-		++l_current_pi;
-	}
-	opj_free(l_tmp_data);
-	l_tmp_data = 00;
-	opj_free(l_tmp_ptr);
-	l_tmp_ptr = 00;
-	if
-		(l_tcp->POC)
-	{
-		opj_pi_update_decode_poc (l_pi,l_tcp,l_max_prec,l_max_res);
-	}
-	else
-	{
-		opj_pi_update_decode_not_poc(l_pi,l_tcp,l_max_prec,l_max_res);
-	}
-	return l_pi;
-}
-
-
-
-opj_pi_iterator_t *opj_pi_initialise_encode(const opj_image_t *p_image,
-                                            opj_cp_v2_t *p_cp,
-                                            OPJ_UINT32 p_tile_no,
-                                            J2K_T2_MODE p_t2_mode )
-{
-	/* loop*/
-	OPJ_UINT32 pino;
-	OPJ_UINT32 compno, resno;
-
-	/* to store w, h, dx and dy fro all components and resolutions*/
-	OPJ_UINT32 * l_tmp_data;
-	OPJ_UINT32 ** l_tmp_ptr;
-
-	/* encoding prameters to set*/
-	OPJ_UINT32 l_max_res;
-	OPJ_UINT32 l_max_prec;
-	OPJ_INT32 l_tx0,l_tx1,l_ty0,l_ty1;
-	OPJ_UINT32 l_dx_min,l_dy_min;
-	OPJ_UINT32 l_bound;
-	OPJ_UINT32 l_step_p , l_step_c , l_step_r , l_step_l ;
-	OPJ_UINT32 l_data_stride;
-
-	/* pointers*/
-	opj_pi_iterator_t *l_pi = 00;
-	opj_tcp_v2_t *l_tcp = 00;
-	const opj_tccp_t *l_tccp = 00;
-	opj_pi_comp_t *l_current_comp = 00;
-	opj_image_comp_t * l_img_comp = 00;
-	opj_pi_iterator_t * l_current_pi = 00;
-	OPJ_UINT32 * l_encoding_value_ptr = 00;
-
-	/* preconditions in debug*/
-	assert(p_cp != 00);
-	assert(p_image != 00);
-	assert(p_tile_no < p_cp->tw * p_cp->th);
-
-	/* initializations*/
-	l_tcp = &p_cp->tcps[p_tile_no];
-	l_bound = l_tcp->numpocs+1;
-
-	l_data_stride = 4 * J2K_MAXRLVLS;
-	l_tmp_data = (OPJ_UINT32*)opj_malloc(
-		l_data_stride * p_image->numcomps * sizeof(OPJ_UINT32));
-	if (! l_tmp_data) {
-		return 00;
-	}
-
-	l_tmp_ptr = (OPJ_UINT32**)opj_malloc(
-		p_image->numcomps * sizeof(OPJ_UINT32 *));
-	if (! l_tmp_ptr) {
-		opj_free(l_tmp_data);
-		return 00;
-	}
-
-	/* memory allocation for pi*/
-	l_pi = opj_pi_create(p_image,p_cp,p_tile_no);
-	if (!l_pi) {
-		opj_free(l_tmp_data);
-		opj_free(l_tmp_ptr);
-		return 00;
-	}
-
-	l_encoding_value_ptr = l_tmp_data;
-	/* update pointer array*/
-	for (compno = 0; compno < p_image->numcomps; ++compno) {
-		l_tmp_ptr[compno] = l_encoding_value_ptr;
-		l_encoding_value_ptr += l_data_stride;
-	}
-
-	/* get encoding parameters*/
-	opj_get_all_encoding_parameters(p_image,p_cp,p_tile_no,&l_tx0,&l_tx1,&l_ty0,&l_ty1,&l_dx_min,&l_dy_min,&l_max_prec,&l_max_res,l_tmp_ptr);
-
-	/* step calculations*/
-	l_step_p = 1;
-	l_step_c = l_max_prec * l_step_p;
-	l_step_r = p_image->numcomps * l_step_c;
-	l_step_l = l_max_res * l_step_r;
-
-	/* set values for first packet iterator*/
-	l_pi->tp_on = p_cp->m_specific_param.m_enc.m_tp_on;
-	l_current_pi = l_pi;
-
-	/* memory allocation for include*/
-	l_current_pi->include = (OPJ_INT16*) opj_calloc(l_tcp->numlayers * l_step_l, sizeof(OPJ_INT16));
-	if (!l_current_pi->include) {
-		opj_free(l_tmp_data);
-		opj_free(l_tmp_ptr);
-		opj_pi_destroy(l_pi, l_bound);
-		return 00;
-	}
-	memset(l_current_pi->include,0,l_tcp->numlayers * l_step_l* sizeof(OPJ_INT16));
-
-	/* special treatment for the first packet iterator*/
-	l_current_comp = l_current_pi->comps;
-	l_img_comp = p_image->comps;
-	l_tccp = l_tcp->tccps;
-	l_current_pi->tx0 = l_tx0;
-	l_current_pi->ty0 = l_ty0;
-	l_current_pi->tx1 = l_tx1;
-	l_current_pi->ty1 = l_ty1;
-	l_current_pi->dx = l_dx_min;
-	l_current_pi->dy = l_dy_min;
-	l_current_pi->step_p = l_step_p;
-	l_current_pi->step_c = l_step_c;
-	l_current_pi->step_r = l_step_r;
-	l_current_pi->step_l = l_step_l;
-
-	/* allocation for components and number of components has already been calculated by opj_pi_create */
-	for (compno = 0; compno < l_current_pi->numcomps; ++compno) {
-		opj_pi_resolution_t *l_res = l_current_comp->resolutions;
-		l_encoding_value_ptr = l_tmp_ptr[compno];
-
-		l_current_comp->dx = l_img_comp->dx;
-		l_current_comp->dy = l_img_comp->dy;
-
-		/* resolutions have already been initialized */
-		for (resno = 0; resno < l_current_comp->numresolutions; resno++) {
-			l_res->pdx = *(l_encoding_value_ptr++);
-			l_res->pdy = *(l_encoding_value_ptr++);
-			l_res->pw =  *(l_encoding_value_ptr++);
-			l_res->ph =  *(l_encoding_value_ptr++);
-			++l_res;
-		}
-
-		++l_current_comp;
-		++l_img_comp;
-		++l_tccp;
-	}
-	++l_current_pi;
-
-	for (pino = 1 ; pino<l_bound ; ++pino ) {
-		opj_pi_comp_t *l_current_comp = l_current_pi->comps;
-		opj_image_comp_t * l_img_comp = p_image->comps;
-		l_tccp = l_tcp->tccps;
-
-		l_current_pi->tx0 = l_tx0;
-		l_current_pi->ty0 = l_ty0;
-		l_current_pi->tx1 = l_tx1;
-		l_current_pi->ty1 = l_ty1;
-		l_current_pi->dx = l_dx_min;
-		l_current_pi->dy = l_dy_min;
-		l_current_pi->step_p = l_step_p;
-		l_current_pi->step_c = l_step_c;
-		l_current_pi->step_r = l_step_r;
-		l_current_pi->step_l = l_step_l;
-
-		/* allocation for components and number of components has already been calculated by opj_pi_create */
-		for (compno = 0; compno < l_current_pi->numcomps; ++compno) {
-			opj_pi_resolution_t *l_res = l_current_comp->resolutions;
-			l_encoding_value_ptr = l_tmp_ptr[compno];
-
-			l_current_comp->dx = l_img_comp->dx;
-			l_current_comp->dy = l_img_comp->dy;
-			/* resolutions have already been initialized */
-			for (resno = 0; resno < l_current_comp->numresolutions; resno++) {
-				l_res->pdx = *(l_encoding_value_ptr++);
-				l_res->pdy = *(l_encoding_value_ptr++);
-				l_res->pw =  *(l_encoding_value_ptr++);
-				l_res->ph =  *(l_encoding_value_ptr++);
-				++l_res;
-			}
-			++l_current_comp;
-			++l_img_comp;
-			++l_tccp;
-		}
-
-		/* special treatment*/
-		l_current_pi->include = (l_current_pi-1)->include;
-		++l_current_pi;
-	}
-
-	opj_free(l_tmp_data);
-	l_tmp_data = 00;
-	opj_free(l_tmp_ptr);
-	l_tmp_ptr = 00;
-
-	if (l_tcp->POC && ( p_cp->m_specific_param.m_enc.m_cinema || p_t2_mode == FINAL_PASS)) {
-		opj_pi_update_encode_poc_and_final(p_cp,p_tile_no,l_tx0,l_tx1,l_ty0,l_ty1,l_max_prec,l_max_res,l_dx_min,l_dy_min);
-	}
-	else {
-		opj_pi_update_encode_not_poc(p_cp,p_image->numcomps,p_tile_no,l_tx0,l_tx1,l_ty0,l_ty1,l_max_prec,l_max_res,l_dx_min,l_dy_min);
-	}
-
-	return l_pi;
-}
-
-opj_bool opj_pi_next(opj_pi_iterator_t * pi) {
-	switch (pi->poc.prg) {
-		case LRCP:
-			return opj_pi_next_lrcp(pi);
-		case RLCP:
-			return opj_pi_next_rlcp(pi);
-		case RPCL:
-			return opj_pi_next_rpcl(pi);
-		case PCRL:
-			return opj_pi_next_pcrl(pi);
-		case CPRL:
-			return opj_pi_next_cprl(pi);
-		case PROG_UNKNOWN:
-			return OPJ_FALSE;
-	}
-	
-	return OPJ_FALSE;
-}
-
-
-
-void opj_pi_update_encoding_parameters(	const opj_image_t *p_image,
-                                        opj_cp_v2_t *p_cp,
-                                        OPJ_UINT32 p_tile_no )
-{
-	/* encoding parameters to set */
-	OPJ_UINT32 l_max_res;
-	OPJ_UINT32 l_max_prec;
-	OPJ_INT32 l_tx0,l_tx1,l_ty0,l_ty1;
-	OPJ_UINT32 l_dx_min,l_dy_min;
-
-	/* pointers */
-	opj_tcp_v2_t *l_tcp = 00;
-
-	/* preconditions */
-	assert(p_cp != 00);
-	assert(p_image != 00);
-	assert(p_tile_no < p_cp->tw * p_cp->th);
-
-	l_tcp = &(p_cp->tcps[p_tile_no]);
-
-	/* get encoding parameters */
-	opj_get_encoding_parameters(p_image,p_cp,p_tile_no,&l_tx0,&l_tx1,&l_ty0,&l_ty1,&l_dx_min,&l_dy_min,&l_max_prec,&l_max_res);
-
-	if (l_tcp->POC) {
-		opj_pi_update_encode_poc_and_final(p_cp,p_tile_no,l_tx0,l_tx1,l_ty0,l_ty1,l_max_prec,l_max_res,l_dx_min,l_dy_min);
-	}
-	else {
-		opj_pi_update_encode_not_poc(p_cp,p_image->numcomps,p_tile_no,l_tx0,l_tx1,l_ty0,l_ty1,l_max_prec,l_max_res,l_dx_min,l_dy_min);
-	}
-
-}
-
 void opj_get_encoding_parameters(	const opj_image_t *p_image,
                                     const opj_cp_v2_t *p_cp,
                                     OPJ_UINT32 p_tileno,
@@ -1418,48 +972,6 @@ void opj_pi_update_encode_not_poc (	opj_cp_v2_t *p_cp,
 	}
 }
 
-void opj_pi_destroy(opj_pi_iterator_t *p_pi,
-                    OPJ_UINT32 p_nb_elements)
-{
-	OPJ_UINT32 compno, pino;
-	opj_pi_iterator_t *l_current_pi = p_pi;
-	if
-		(p_pi)
-	{
-		if
-			(p_pi->include)
-		{
-			opj_free(p_pi->include);
-			p_pi->include = 00;
-		}
-		/* TODO*/
-		for
-			(pino = 0; pino < p_nb_elements; ++pino)
-		{
-			if
-				(l_current_pi->comps)
-			{
-				opj_pi_comp_t *l_current_component = l_current_pi->comps;
-				for
-					(compno = 0; compno < l_current_pi->numcomps; compno++)
-				{
-					if
-						(l_current_component->resolutions)
-					{
-						opj_free(l_current_component->resolutions);
-						l_current_component->resolutions = 00;
-					}
-					++l_current_component;
-				}
-				opj_free(l_current_pi->comps);
-				l_current_pi->comps = 0;
-			}
-			++l_current_pi;
-		}
-		opj_free(p_pi);
-	}
-}
-
 void opj_pi_update_decode_poc (opj_pi_iterator_t * p_pi,
                                opj_tcp_v2_t * p_tcp,
                                OPJ_UINT32 p_max_precision,
@@ -1483,9 +995,7 @@ void opj_pi_update_decode_poc (opj_pi_iterator_t * p_pi,
 	l_current_pi = p_pi;
 	l_current_poc = p_tcp->pocs;
 
-	for
-		(pino = 0;pino<l_bound;++pino)
-	{
+	for	(pino = 0;pino<l_bound;++pino) {
 		l_current_pi->poc.prg = l_current_poc->prg;
 		l_current_pi->first = 1;
 
@@ -1522,9 +1032,7 @@ void opj_pi_update_decode_not_poc (opj_pi_iterator_t * p_pi,
 	l_bound = p_tcp->numpocs+1;
 	l_current_pi = p_pi;
 
-	for
-		(pino = 0;pino<l_bound;++pino)
-	{
+	for (pino = 0;pino<l_bound;++pino) {
 		l_current_pi->poc.prg = p_tcp->prg;
 		l_current_pi->first = 1;
 		l_current_pi->poc.resno0 = 0;
@@ -1539,263 +1047,7 @@ void opj_pi_update_decode_not_poc (opj_pi_iterator_t * p_pi,
 	}
 }
 
-void opj_pi_create_encode( 	opj_pi_iterator_t *pi,
-							opj_cp_v2_t *cp,
-							OPJ_UINT32 tileno,
-							OPJ_UINT32 pino,
-							OPJ_UINT32 tpnum,
-							OPJ_INT32 tppos,
-							J2K_T2_MODE t2_mode)
-{
-	const OPJ_CHAR *prog;
-	OPJ_INT32 i;
-	OPJ_UINT32 incr_top=1,resetX=0;
-	opj_tcp_v2_t *tcps =&cp->tcps[tileno];
-	opj_poc_t *tcp= &tcps->pocs[pino];
 
-	prog = opj_j2k_convert_progression_order(tcp->prg);
-
-	pi[pino].first = 1;
-	pi[pino].poc.prg = tcp->prg;
-
-	if(!(cp->m_specific_param.m_enc.m_tp_on&& ((!cp->m_specific_param.m_enc.m_cinema && (t2_mode == FINAL_PASS)) || cp->m_specific_param.m_enc.m_cinema))){
-		pi[pino].poc.resno0 = tcp->resS;
-		pi[pino].poc.resno1 = tcp->resE;
-		pi[pino].poc.compno0 = tcp->compS;
-		pi[pino].poc.compno1 = tcp->compE;
-		pi[pino].poc.layno0 = tcp->layS;
-		pi[pino].poc.layno1 = tcp->layE;
-		pi[pino].poc.precno0 = tcp->prcS;
-		pi[pino].poc.precno1 = tcp->prcE;
-		pi[pino].poc.tx0 = tcp->txS;
-		pi[pino].poc.ty0 = tcp->tyS;
-		pi[pino].poc.tx1 = tcp->txE;
-		pi[pino].poc.ty1 = tcp->tyE;
-	}else {
-		for(i=tppos+1;i<4;i++){
-			switch(prog[i]){
-			case 'R':
-				pi[pino].poc.resno0 = tcp->resS;
-				pi[pino].poc.resno1 = tcp->resE;
-				break;
-			case 'C':
-				pi[pino].poc.compno0 = tcp->compS;
-				pi[pino].poc.compno1 = tcp->compE;
-				break;
-			case 'L':
-				pi[pino].poc.layno0 = tcp->layS;
-				pi[pino].poc.layno1 = tcp->layE;
-				break;
-			case 'P':
-				switch(tcp->prg){
-					case LRCP:
-					case RLCP:
-						pi[pino].poc.precno0 = tcp->prcS;
-						pi[pino].poc.precno1 = tcp->prcE;
-						break;
-					default:
-						pi[pino].poc.tx0 = tcp->txS;
-						pi[pino].poc.ty0 = tcp->tyS;
-						pi[pino].poc.tx1 = tcp->txE;
-						pi[pino].poc.ty1 = tcp->tyE;
-						break;
-				}
-				break;
-			}
-		}
-
-		if(tpnum==0){
-			for(i=tppos;i>=0;i--){
-				switch(prog[i]){
-						case 'C':
-							tcp->comp_t = tcp->compS;
-							pi[pino].poc.compno0 = tcp->comp_t;
-							pi[pino].poc.compno1 = tcp->comp_t+1;
-							tcp->comp_t+=1;
-							break;
-						case 'R':
-							tcp->res_t = tcp->resS;
-							pi[pino].poc.resno0 = tcp->res_t;
-							pi[pino].poc.resno1 = tcp->res_t+1;
-							tcp->res_t+=1;
-							break;
-						case 'L':
-							tcp->lay_t = tcp->layS;
-							pi[pino].poc.layno0 = tcp->lay_t;
-							pi[pino].poc.layno1 = tcp->lay_t+1;
-							tcp->lay_t+=1;
-							break;
-						case 'P':
-							switch(tcp->prg){
-								case LRCP:
-								case RLCP:
-									tcp->prc_t = tcp->prcS;
-									pi[pino].poc.precno0 = tcp->prc_t;
-									pi[pino].poc.precno1 = tcp->prc_t+1;
-									tcp->prc_t+=1;
-									break;
-								default:
-									tcp->tx0_t = tcp->txS;
-									tcp->ty0_t = tcp->tyS;
-									pi[pino].poc.tx0 = tcp->tx0_t;
-									pi[pino].poc.tx1 = tcp->tx0_t + tcp->dx - (tcp->tx0_t % tcp->dx);
-									pi[pino].poc.ty0 = tcp->ty0_t;
-									pi[pino].poc.ty1 = tcp->ty0_t + tcp->dy - (tcp->ty0_t % tcp->dy);
-									tcp->tx0_t = pi[pino].poc.tx1;
-									tcp->ty0_t = pi[pino].poc.ty1;
-									break;
-							}
-							break;
-				}
-			}
-			incr_top=1;
-		}else{
-			for(i=tppos;i>=0;i--){
-				switch(prog[i]){
-						case 'C':
-							pi[pino].poc.compno0 = tcp->comp_t-1;
-							pi[pino].poc.compno1 = tcp->comp_t;
-							break;
-						case 'R':
-							pi[pino].poc.resno0 = tcp->res_t-1;
-							pi[pino].poc.resno1 = tcp->res_t;
-							break;
-						case 'L':
-							pi[pino].poc.layno0 = tcp->lay_t-1;
-							pi[pino].poc.layno1 = tcp->lay_t;
-							break;
-						case 'P':
-							switch(tcp->prg){
-								case LRCP:
-								case RLCP:
-									pi[pino].poc.precno0 = tcp->prc_t-1;
-									pi[pino].poc.precno1 = tcp->prc_t;
-									break;
-								default:
-									pi[pino].poc.tx0 = tcp->tx0_t - tcp->dx - (tcp->tx0_t % tcp->dx);
-									pi[pino].poc.tx1 = tcp->tx0_t ;
-									pi[pino].poc.ty0 = tcp->ty0_t - tcp->dy - (tcp->ty0_t % tcp->dy);
-									pi[pino].poc.ty1 = tcp->ty0_t ;
-									break;
-							}
-							break;
-				}
-				if(incr_top==1){
-					switch(prog[i]){
-							case 'R':
-								if(tcp->res_t==tcp->resE){
-									if(opj_pi_check_next_level(i-1,cp,tileno,pino,prog)){
-										tcp->res_t = tcp->resS;
-										pi[pino].poc.resno0 = tcp->res_t;
-										pi[pino].poc.resno1 = tcp->res_t+1;
-										tcp->res_t+=1;
-										incr_top=1;
-									}else{
-										incr_top=0;
-									}
-								}else{
-									pi[pino].poc.resno0 = tcp->res_t;
-									pi[pino].poc.resno1 = tcp->res_t+1;
-									tcp->res_t+=1;
-									incr_top=0;
-								}
-								break;
-							case 'C':
-								if(tcp->comp_t ==tcp->compE){
-									if(opj_pi_check_next_level(i-1,cp,tileno,pino,prog)){
-										tcp->comp_t = tcp->compS;
-										pi[pino].poc.compno0 = tcp->comp_t;
-										pi[pino].poc.compno1 = tcp->comp_t+1;
-										tcp->comp_t+=1;
-										incr_top=1;
-									}else{
-										incr_top=0;
-									}
-								}else{
-									pi[pino].poc.compno0 = tcp->comp_t;
-									pi[pino].poc.compno1 = tcp->comp_t+1;
-									tcp->comp_t+=1;
-									incr_top=0;
-								}
-								break;
-							case 'L':
-								if(tcp->lay_t == tcp->layE){
-									if(opj_pi_check_next_level(i-1,cp,tileno,pino,prog)){
-										tcp->lay_t = tcp->layS;
-										pi[pino].poc.layno0 = tcp->lay_t;
-										pi[pino].poc.layno1 = tcp->lay_t+1;
-										tcp->lay_t+=1;
-										incr_top=1;
-									}else{
-										incr_top=0;
-									}
-								}else{
-									pi[pino].poc.layno0 = tcp->lay_t;
-									pi[pino].poc.layno1 = tcp->lay_t+1;
-									tcp->lay_t+=1;
-									incr_top=0;
-								}
-								break;
-							case 'P':
-								switch(tcp->prg){
-									case LRCP:
-									case RLCP:
-										if(tcp->prc_t == tcp->prcE){
-											if(opj_pi_check_next_level(i-1,cp,tileno,pino,prog)){
-												tcp->prc_t = tcp->prcS;
-												pi[pino].poc.precno0 = tcp->prc_t;
-												pi[pino].poc.precno1 = tcp->prc_t+1;
-												tcp->prc_t+=1;
-												incr_top=1;
-											}else{
-												incr_top=0;
-											}
-										}else{
-											pi[pino].poc.precno0 = tcp->prc_t;
-											pi[pino].poc.precno1 = tcp->prc_t+1;
-											tcp->prc_t+=1;
-											incr_top=0;
-										}
-										break;
-									default:
-										if(tcp->tx0_t >= tcp->txE){
-											if(tcp->ty0_t >= tcp->tyE){
-												if(opj_pi_check_next_level(i-1,cp,tileno,pino,prog)){
-													tcp->ty0_t = tcp->tyS;
-													pi[pino].poc.ty0 = tcp->ty0_t;
-													pi[pino].poc.ty1 = tcp->ty0_t + tcp->dy - (tcp->ty0_t % tcp->dy);
-													tcp->ty0_t = pi[pino].poc.ty1;
-													incr_top=1;resetX=1;
-												}else{
-													incr_top=0;resetX=0;
-												}
-											}else{
-												pi[pino].poc.ty0 = tcp->ty0_t;
-												pi[pino].poc.ty1 = tcp->ty0_t + tcp->dy - (tcp->ty0_t % tcp->dy);
-												tcp->ty0_t = pi[pino].poc.ty1;
-												incr_top=0;resetX=1;
-											}
-											if(resetX==1){
-												tcp->tx0_t = tcp->txS;
-												pi[pino].poc.tx0 = tcp->tx0_t;
-												pi[pino].poc.tx1 = tcp->tx0_t + tcp->dx- (tcp->tx0_t % tcp->dx);
-												tcp->tx0_t = pi[pino].poc.tx1;
-											}
-										}else{
-											pi[pino].poc.tx0 = tcp->tx0_t;
-											pi[pino].poc.tx1 = tcp->tx0_t + tcp->dx- (tcp->tx0_t % tcp->dx);
-											tcp->tx0_t = pi[pino].poc.tx1;
-											incr_top=0;
-										}
-										break;
-								}
-								break;
-					}
-				}
-			}
-		}
-	}
-}
 
 opj_bool opj_pi_check_next_level(	OPJ_INT32 pos,
 								opj_cp_v2_t *cp,
@@ -1876,5 +1128,739 @@ opj_bool opj_pi_check_next_level(	OPJ_INT32 pos,
 		    }/*end switch*/
 		}/*end for*/
 	}/*end if*/
+	return OPJ_FALSE;
+}
+
+
+/*
+==========================================================
+   Packet iterator interface
+==========================================================
+*/
+opj_pi_iterator_t *opj_pi_create_decode(opj_image_t *p_image,
+										opj_cp_v2_t *p_cp,
+										OPJ_UINT32 p_tile_no)
+{
+	/* loop */
+	OPJ_UINT32 pino;
+	OPJ_UINT32 compno, resno;
+
+	/* to store w, h, dx and dy fro all components and resolutions */
+	OPJ_UINT32 * l_tmp_data;
+	OPJ_UINT32 ** l_tmp_ptr;
+
+	/* encoding prameters to set */
+	OPJ_UINT32 l_max_res;
+	OPJ_UINT32 l_max_prec;
+	OPJ_INT32 l_tx0,l_tx1,l_ty0,l_ty1;
+	OPJ_UINT32 l_dx_min,l_dy_min;
+	OPJ_UINT32 l_bound;
+	OPJ_UINT32 l_step_p , l_step_c , l_step_r , l_step_l ;
+	OPJ_UINT32 l_data_stride;
+
+	/* pointers */
+	opj_pi_iterator_t *l_pi = 00;
+	opj_tcp_v2_t *l_tcp = 00;
+	const opj_tccp_t *l_tccp = 00;
+	opj_pi_comp_t *l_current_comp = 00;
+	opj_image_comp_t * l_img_comp = 00;
+	opj_pi_iterator_t * l_current_pi = 00;
+	OPJ_UINT32 * l_encoding_value_ptr = 00;
+
+	/* preconditions in debug */
+	assert(p_cp != 00);
+	assert(p_image != 00);
+	assert(p_tile_no < p_cp->tw * p_cp->th);
+
+	/* initializations */
+	l_tcp = &p_cp->tcps[p_tile_no];
+	l_bound = l_tcp->numpocs+1;
+
+	l_data_stride = 4 * J2K_MAXRLVLS;
+	l_tmp_data = (OPJ_UINT32*)opj_malloc(
+		l_data_stride * p_image->numcomps * sizeof(OPJ_UINT32));
+	if
+		(! l_tmp_data)
+	{
+		return 00;
+	}
+	l_tmp_ptr = (OPJ_UINT32**)opj_malloc(
+		p_image->numcomps * sizeof(OPJ_UINT32 *));
+	if
+		(! l_tmp_ptr)
+	{
+		opj_free(l_tmp_data);
+		return 00;
+	}
+
+	/* memory allocation for pi */
+	l_pi = opj_pi_create(p_image, p_cp, p_tile_no);
+	if (!l_pi) {
+		opj_free(l_tmp_data);
+		opj_free(l_tmp_ptr);
+		return 00;
+	}
+
+	l_encoding_value_ptr = l_tmp_data;
+	/* update pointer array */
+	for
+		(compno = 0; compno < p_image->numcomps; ++compno)
+	{
+		l_tmp_ptr[compno] = l_encoding_value_ptr;
+		l_encoding_value_ptr += l_data_stride;
+	}
+	/* get encoding parameters */
+	opj_get_all_encoding_parameters(p_image,p_cp,p_tile_no,&l_tx0,&l_tx1,&l_ty0,&l_ty1,&l_dx_min,&l_dy_min,&l_max_prec,&l_max_res,l_tmp_ptr);
+
+	/* step calculations */
+	l_step_p = 1;
+	l_step_c = l_max_prec * l_step_p;
+	l_step_r = p_image->numcomps * l_step_c;
+	l_step_l = l_max_res * l_step_r;
+
+	/* set values for first packet iterator */
+	l_current_pi = l_pi;
+
+	/* memory allocation for include */
+	l_current_pi->include = (OPJ_INT16*) opj_calloc((l_tcp->numlayers +1) * l_step_l, sizeof(OPJ_INT16));
+	if
+		(!l_current_pi->include)
+	{
+		opj_free(l_tmp_data);
+		opj_free(l_tmp_ptr);
+		opj_pi_destroy(l_pi, l_bound);
+		return 00;
+	}
+	memset(l_current_pi->include,0, (l_tcp->numlayers + 1) * l_step_l* sizeof(OPJ_INT16));
+
+	/* special treatment for the first packet iterator */
+	l_current_comp = l_current_pi->comps;
+	l_img_comp = p_image->comps;
+	l_tccp = l_tcp->tccps;
+
+	l_current_pi->tx0 = l_tx0;
+	l_current_pi->ty0 = l_ty0;
+	l_current_pi->tx1 = l_tx1;
+	l_current_pi->ty1 = l_ty1;
+
+	/*l_current_pi->dx = l_img_comp->dx;*/
+	/*l_current_pi->dy = l_img_comp->dy;*/
+
+	l_current_pi->step_p = l_step_p;
+	l_current_pi->step_c = l_step_c;
+	l_current_pi->step_r = l_step_r;
+	l_current_pi->step_l = l_step_l;
+
+	/* allocation for components and number of components has already been calculated by opj_pi_create */
+	for
+		(compno = 0; compno < l_current_pi->numcomps; ++compno)
+	{
+		opj_pi_resolution_t *l_res = l_current_comp->resolutions;
+		l_encoding_value_ptr = l_tmp_ptr[compno];
+
+		l_current_comp->dx = l_img_comp->dx;
+		l_current_comp->dy = l_img_comp->dy;
+		/* resolutions have already been initialized */
+		for
+			(resno = 0; resno < l_current_comp->numresolutions; resno++)
+		{
+			l_res->pdx = *(l_encoding_value_ptr++);
+			l_res->pdy = *(l_encoding_value_ptr++);
+			l_res->pw =  *(l_encoding_value_ptr++);
+			l_res->ph =  *(l_encoding_value_ptr++);
+			++l_res;
+		}
+		++l_current_comp;
+		++l_img_comp;
+		++l_tccp;
+	}
+	++l_current_pi;
+
+	for
+		(pino = 1 ; pino<l_bound ; ++pino )
+	{
+		opj_pi_comp_t *l_current_comp = l_current_pi->comps;
+		opj_image_comp_t * l_img_comp = p_image->comps;
+		l_tccp = l_tcp->tccps;
+
+		l_current_pi->tx0 = l_tx0;
+		l_current_pi->ty0 = l_ty0;
+		l_current_pi->tx1 = l_tx1;
+		l_current_pi->ty1 = l_ty1;
+		/*l_current_pi->dx = l_dx_min;*/
+		/*l_current_pi->dy = l_dy_min;*/
+		l_current_pi->step_p = l_step_p;
+		l_current_pi->step_c = l_step_c;
+		l_current_pi->step_r = l_step_r;
+		l_current_pi->step_l = l_step_l;
+
+		/* allocation for components and number of components has already been calculated by opj_pi_create */
+		for
+			(compno = 0; compno < l_current_pi->numcomps; ++compno)
+		{
+			opj_pi_resolution_t *l_res = l_current_comp->resolutions;
+			l_encoding_value_ptr = l_tmp_ptr[compno];
+
+			l_current_comp->dx = l_img_comp->dx;
+			l_current_comp->dy = l_img_comp->dy;
+			/* resolutions have already been initialized */
+			for
+				(resno = 0; resno < l_current_comp->numresolutions; resno++)
+			{
+				l_res->pdx = *(l_encoding_value_ptr++);
+				l_res->pdy = *(l_encoding_value_ptr++);
+				l_res->pw =  *(l_encoding_value_ptr++);
+				l_res->ph =  *(l_encoding_value_ptr++);
+				++l_res;
+			}
+			++l_current_comp;
+			++l_img_comp;
+			++l_tccp;
+		}
+		/* special treatment*/
+		l_current_pi->include = (l_current_pi-1)->include;
+		++l_current_pi;
+	}
+	opj_free(l_tmp_data);
+	l_tmp_data = 00;
+	opj_free(l_tmp_ptr);
+	l_tmp_ptr = 00;
+	if
+		(l_tcp->POC)
+	{
+		opj_pi_update_decode_poc (l_pi,l_tcp,l_max_prec,l_max_res);
+	}
+	else
+	{
+		opj_pi_update_decode_not_poc(l_pi,l_tcp,l_max_prec,l_max_res);
+	}
+	return l_pi;
+}
+
+
+
+opj_pi_iterator_t *opj_pi_initialise_encode(const opj_image_t *p_image,
+                                            opj_cp_v2_t *p_cp,
+                                            OPJ_UINT32 p_tile_no,
+                                            J2K_T2_MODE p_t2_mode )
+{
+	/* loop*/
+	OPJ_UINT32 pino;
+	OPJ_UINT32 compno, resno;
+
+	/* to store w, h, dx and dy fro all components and resolutions*/
+	OPJ_UINT32 * l_tmp_data;
+	OPJ_UINT32 ** l_tmp_ptr;
+
+	/* encoding prameters to set*/
+	OPJ_UINT32 l_max_res;
+	OPJ_UINT32 l_max_prec;
+	OPJ_INT32 l_tx0,l_tx1,l_ty0,l_ty1;
+	OPJ_UINT32 l_dx_min,l_dy_min;
+	OPJ_UINT32 l_bound;
+	OPJ_UINT32 l_step_p , l_step_c , l_step_r , l_step_l ;
+	OPJ_UINT32 l_data_stride;
+
+	/* pointers*/
+	opj_pi_iterator_t *l_pi = 00;
+	opj_tcp_v2_t *l_tcp = 00;
+	const opj_tccp_t *l_tccp = 00;
+	opj_pi_comp_t *l_current_comp = 00;
+	opj_image_comp_t * l_img_comp = 00;
+	opj_pi_iterator_t * l_current_pi = 00;
+	OPJ_UINT32 * l_encoding_value_ptr = 00;
+
+	/* preconditions in debug*/
+	assert(p_cp != 00);
+	assert(p_image != 00);
+	assert(p_tile_no < p_cp->tw * p_cp->th);
+
+	/* initializations*/
+	l_tcp = &p_cp->tcps[p_tile_no];
+	l_bound = l_tcp->numpocs+1;
+
+	l_data_stride = 4 * J2K_MAXRLVLS;
+	l_tmp_data = (OPJ_UINT32*)opj_malloc(
+		l_data_stride * p_image->numcomps * sizeof(OPJ_UINT32));
+	if (! l_tmp_data) {
+		return 00;
+	}
+
+	l_tmp_ptr = (OPJ_UINT32**)opj_malloc(
+		p_image->numcomps * sizeof(OPJ_UINT32 *));
+	if (! l_tmp_ptr) {
+		opj_free(l_tmp_data);
+		return 00;
+	}
+
+	/* memory allocation for pi*/
+	l_pi = opj_pi_create(p_image,p_cp,p_tile_no);
+	if (!l_pi) {
+		opj_free(l_tmp_data);
+		opj_free(l_tmp_ptr);
+		return 00;
+	}
+
+	l_encoding_value_ptr = l_tmp_data;
+	/* update pointer array*/
+	for (compno = 0; compno < p_image->numcomps; ++compno) {
+		l_tmp_ptr[compno] = l_encoding_value_ptr;
+		l_encoding_value_ptr += l_data_stride;
+	}
+
+	/* get encoding parameters*/
+	opj_get_all_encoding_parameters(p_image,p_cp,p_tile_no,&l_tx0,&l_tx1,&l_ty0,&l_ty1,&l_dx_min,&l_dy_min,&l_max_prec,&l_max_res,l_tmp_ptr);
+
+	/* step calculations*/
+	l_step_p = 1;
+	l_step_c = l_max_prec * l_step_p;
+	l_step_r = p_image->numcomps * l_step_c;
+	l_step_l = l_max_res * l_step_r;
+
+	/* set values for first packet iterator*/
+	l_pi->tp_on = p_cp->m_specific_param.m_enc.m_tp_on;
+	l_current_pi = l_pi;
+
+	/* memory allocation for include*/
+	l_current_pi->include = (OPJ_INT16*) opj_calloc(l_tcp->numlayers * l_step_l, sizeof(OPJ_INT16));
+	if (!l_current_pi->include) {
+		opj_free(l_tmp_data);
+		opj_free(l_tmp_ptr);
+		opj_pi_destroy(l_pi, l_bound);
+		return 00;
+	}
+	memset(l_current_pi->include,0,l_tcp->numlayers * l_step_l* sizeof(OPJ_INT16));
+
+	/* special treatment for the first packet iterator*/
+	l_current_comp = l_current_pi->comps;
+	l_img_comp = p_image->comps;
+	l_tccp = l_tcp->tccps;
+	l_current_pi->tx0 = l_tx0;
+	l_current_pi->ty0 = l_ty0;
+	l_current_pi->tx1 = l_tx1;
+	l_current_pi->ty1 = l_ty1;
+	l_current_pi->dx = l_dx_min;
+	l_current_pi->dy = l_dy_min;
+	l_current_pi->step_p = l_step_p;
+	l_current_pi->step_c = l_step_c;
+	l_current_pi->step_r = l_step_r;
+	l_current_pi->step_l = l_step_l;
+
+	/* allocation for components and number of components has already been calculated by opj_pi_create */
+	for (compno = 0; compno < l_current_pi->numcomps; ++compno) {
+		opj_pi_resolution_t *l_res = l_current_comp->resolutions;
+		l_encoding_value_ptr = l_tmp_ptr[compno];
+
+		l_current_comp->dx = l_img_comp->dx;
+		l_current_comp->dy = l_img_comp->dy;
+
+		/* resolutions have already been initialized */
+		for (resno = 0; resno < l_current_comp->numresolutions; resno++) {
+			l_res->pdx = *(l_encoding_value_ptr++);
+			l_res->pdy = *(l_encoding_value_ptr++);
+			l_res->pw =  *(l_encoding_value_ptr++);
+			l_res->ph =  *(l_encoding_value_ptr++);
+			++l_res;
+		}
+
+		++l_current_comp;
+		++l_img_comp;
+		++l_tccp;
+	}
+	++l_current_pi;
+
+	for (pino = 1 ; pino<l_bound ; ++pino ) {
+		opj_pi_comp_t *l_current_comp = l_current_pi->comps;
+		opj_image_comp_t * l_img_comp = p_image->comps;
+		l_tccp = l_tcp->tccps;
+
+		l_current_pi->tx0 = l_tx0;
+		l_current_pi->ty0 = l_ty0;
+		l_current_pi->tx1 = l_tx1;
+		l_current_pi->ty1 = l_ty1;
+		l_current_pi->dx = l_dx_min;
+		l_current_pi->dy = l_dy_min;
+		l_current_pi->step_p = l_step_p;
+		l_current_pi->step_c = l_step_c;
+		l_current_pi->step_r = l_step_r;
+		l_current_pi->step_l = l_step_l;
+
+		/* allocation for components and number of components has already been calculated by opj_pi_create */
+		for (compno = 0; compno < l_current_pi->numcomps; ++compno) {
+			opj_pi_resolution_t *l_res = l_current_comp->resolutions;
+			l_encoding_value_ptr = l_tmp_ptr[compno];
+
+			l_current_comp->dx = l_img_comp->dx;
+			l_current_comp->dy = l_img_comp->dy;
+			/* resolutions have already been initialized */
+			for (resno = 0; resno < l_current_comp->numresolutions; resno++) {
+				l_res->pdx = *(l_encoding_value_ptr++);
+				l_res->pdy = *(l_encoding_value_ptr++);
+				l_res->pw =  *(l_encoding_value_ptr++);
+				l_res->ph =  *(l_encoding_value_ptr++);
+				++l_res;
+			}
+			++l_current_comp;
+			++l_img_comp;
+			++l_tccp;
+		}
+
+		/* special treatment*/
+		l_current_pi->include = (l_current_pi-1)->include;
+		++l_current_pi;
+	}
+
+	opj_free(l_tmp_data);
+	l_tmp_data = 00;
+	opj_free(l_tmp_ptr);
+	l_tmp_ptr = 00;
+
+	if (l_tcp->POC && ( p_cp->m_specific_param.m_enc.m_cinema || p_t2_mode == FINAL_PASS)) {
+		opj_pi_update_encode_poc_and_final(p_cp,p_tile_no,l_tx0,l_tx1,l_ty0,l_ty1,l_max_prec,l_max_res,l_dx_min,l_dy_min);
+	}
+	else {
+		opj_pi_update_encode_not_poc(p_cp,p_image->numcomps,p_tile_no,l_tx0,l_tx1,l_ty0,l_ty1,l_max_prec,l_max_res,l_dx_min,l_dy_min);
+	}
+
+	return l_pi;
+}
+
+void opj_pi_create_encode( 	opj_pi_iterator_t *pi,
+							opj_cp_v2_t *cp,
+							OPJ_UINT32 tileno,
+							OPJ_UINT32 pino,
+							OPJ_UINT32 tpnum,
+							OPJ_INT32 tppos,
+							J2K_T2_MODE t2_mode)
+{
+	const OPJ_CHAR *prog;
+	OPJ_INT32 i;
+	OPJ_UINT32 incr_top=1,resetX=0;
+	opj_tcp_v2_t *tcps =&cp->tcps[tileno];
+	opj_poc_t *tcp= &tcps->pocs[pino];
+
+	prog = opj_j2k_convert_progression_order(tcp->prg);
+
+	pi[pino].first = 1;
+	pi[pino].poc.prg = tcp->prg;
+
+	if(!(cp->m_specific_param.m_enc.m_tp_on && ((!cp->m_specific_param.m_enc.m_cinema && (t2_mode == FINAL_PASS)) || cp->m_specific_param.m_enc.m_cinema))){
+		pi[pino].poc.resno0 = tcp->resS;
+		pi[pino].poc.resno1 = tcp->resE;
+		pi[pino].poc.compno0 = tcp->compS;
+		pi[pino].poc.compno1 = tcp->compE;
+		pi[pino].poc.layno0 = tcp->layS;
+		pi[pino].poc.layno1 = tcp->layE;
+		pi[pino].poc.precno0 = tcp->prcS;
+		pi[pino].poc.precno1 = tcp->prcE;
+		pi[pino].poc.tx0 = tcp->txS;
+		pi[pino].poc.ty0 = tcp->tyS;
+		pi[pino].poc.tx1 = tcp->txE;
+		pi[pino].poc.ty1 = tcp->tyE;
+	}else {
+		for(i=tppos+1;i<4;i++){
+			switch(prog[i]){
+			case 'R':
+				pi[pino].poc.resno0 = tcp->resS;
+				pi[pino].poc.resno1 = tcp->resE;
+				break;
+			case 'C':
+				pi[pino].poc.compno0 = tcp->compS;
+				pi[pino].poc.compno1 = tcp->compE;
+				break;
+			case 'L':
+				pi[pino].poc.layno0 = tcp->layS;
+				pi[pino].poc.layno1 = tcp->layE;
+				break;
+			case 'P':
+				switch(tcp->prg){
+				case LRCP:
+				case RLCP:
+					pi[pino].poc.precno0 = tcp->prcS;
+					pi[pino].poc.precno1 = tcp->prcE;
+					break;
+				default:
+					pi[pino].poc.tx0 = tcp->txS;
+					pi[pino].poc.ty0 = tcp->tyS;
+					pi[pino].poc.tx1 = tcp->txE;
+					pi[pino].poc.ty1 = tcp->tyE;
+					break;
+				}
+				break;
+			}
+		}
+
+		if(tpnum==0){
+			for(i=tppos;i>=0;i--){
+				switch(prog[i]){
+				case 'C':
+					tcp->comp_t = tcp->compS;
+					pi[pino].poc.compno0 = tcp->comp_t;
+					pi[pino].poc.compno1 = tcp->comp_t+1;
+					tcp->comp_t+=1;
+					break;
+				case 'R':
+					tcp->res_t = tcp->resS;
+					pi[pino].poc.resno0 = tcp->res_t;
+					pi[pino].poc.resno1 = tcp->res_t+1;
+					tcp->res_t+=1;
+					break;
+				case 'L':
+					tcp->lay_t = tcp->layS;
+					pi[pino].poc.layno0 = tcp->lay_t;
+					pi[pino].poc.layno1 = tcp->lay_t+1;
+					tcp->lay_t+=1;
+					break;
+				case 'P':
+					switch(tcp->prg){
+					case LRCP:
+					case RLCP:
+						tcp->prc_t = tcp->prcS;
+						pi[pino].poc.precno0 = tcp->prc_t;
+						pi[pino].poc.precno1 = tcp->prc_t+1;
+						tcp->prc_t+=1;
+						break;
+					default:
+						tcp->tx0_t = tcp->txS;
+						tcp->ty0_t = tcp->tyS;
+						pi[pino].poc.tx0 = tcp->tx0_t;
+						pi[pino].poc.tx1 = tcp->tx0_t + tcp->dx - (tcp->tx0_t % tcp->dx);
+						pi[pino].poc.ty0 = tcp->ty0_t;
+						pi[pino].poc.ty1 = tcp->ty0_t + tcp->dy - (tcp->ty0_t % tcp->dy);
+						tcp->tx0_t = pi[pino].poc.tx1;
+						tcp->ty0_t = pi[pino].poc.ty1;
+						break;
+					}
+					break;
+				}
+			}
+			incr_top=1;
+		}else{
+			for(i=tppos;i>=0;i--){
+				switch(prog[i]){
+				case 'C':
+					pi[pino].poc.compno0 = tcp->comp_t-1;
+					pi[pino].poc.compno1 = tcp->comp_t;
+					break;
+				case 'R':
+					pi[pino].poc.resno0 = tcp->res_t-1;
+					pi[pino].poc.resno1 = tcp->res_t;
+					break;
+				case 'L':
+					pi[pino].poc.layno0 = tcp->lay_t-1;
+					pi[pino].poc.layno1 = tcp->lay_t;
+					break;
+				case 'P':
+					switch(tcp->prg){
+					case LRCP:
+					case RLCP:
+						pi[pino].poc.precno0 = tcp->prc_t-1;
+						pi[pino].poc.precno1 = tcp->prc_t;
+						break;
+					default:
+						pi[pino].poc.tx0 = tcp->tx0_t - tcp->dx - (tcp->tx0_t % tcp->dx);
+						pi[pino].poc.tx1 = tcp->tx0_t ;
+						pi[pino].poc.ty0 = tcp->ty0_t - tcp->dy - (tcp->ty0_t % tcp->dy);
+						pi[pino].poc.ty1 = tcp->ty0_t ;
+						break;
+					}
+					break;
+				}
+				if(incr_top==1){
+					switch(prog[i]){
+					case 'R':
+						if(tcp->res_t==tcp->resE){
+							if(opj_pi_check_next_level(i-1,cp,tileno,pino,prog)){
+								tcp->res_t = tcp->resS;
+								pi[pino].poc.resno0 = tcp->res_t;
+								pi[pino].poc.resno1 = tcp->res_t+1;
+								tcp->res_t+=1;
+								incr_top=1;
+							}else{
+								incr_top=0;
+							}
+						}else{
+							pi[pino].poc.resno0 = tcp->res_t;
+							pi[pino].poc.resno1 = tcp->res_t+1;
+							tcp->res_t+=1;
+							incr_top=0;
+						}
+						break;
+					case 'C':
+						if(tcp->comp_t ==tcp->compE){
+							if(opj_pi_check_next_level(i-1,cp,tileno,pino,prog)){
+								tcp->comp_t = tcp->compS;
+								pi[pino].poc.compno0 = tcp->comp_t;
+								pi[pino].poc.compno1 = tcp->comp_t+1;
+								tcp->comp_t+=1;
+								incr_top=1;
+							}else{
+								incr_top=0;
+							}
+						}else{
+							pi[pino].poc.compno0 = tcp->comp_t;
+							pi[pino].poc.compno1 = tcp->comp_t+1;
+							tcp->comp_t+=1;
+							incr_top=0;
+						}
+						break;
+					case 'L':
+						if(tcp->lay_t == tcp->layE){
+							if(opj_pi_check_next_level(i-1,cp,tileno,pino,prog)){
+								tcp->lay_t = tcp->layS;
+								pi[pino].poc.layno0 = tcp->lay_t;
+								pi[pino].poc.layno1 = tcp->lay_t+1;
+								tcp->lay_t+=1;
+								incr_top=1;
+							}else{
+								incr_top=0;
+							}
+						}else{
+							pi[pino].poc.layno0 = tcp->lay_t;
+							pi[pino].poc.layno1 = tcp->lay_t+1;
+							tcp->lay_t+=1;
+							incr_top=0;
+						}
+						break;
+					case 'P':
+						switch(tcp->prg){
+						case LRCP:
+						case RLCP:
+							if(tcp->prc_t == tcp->prcE){
+								if(opj_pi_check_next_level(i-1,cp,tileno,pino,prog)){
+									tcp->prc_t = tcp->prcS;
+									pi[pino].poc.precno0 = tcp->prc_t;
+									pi[pino].poc.precno1 = tcp->prc_t+1;
+									tcp->prc_t+=1;
+									incr_top=1;
+								}else{
+									incr_top=0;
+								}
+							}else{
+								pi[pino].poc.precno0 = tcp->prc_t;
+								pi[pino].poc.precno1 = tcp->prc_t+1;
+								tcp->prc_t+=1;
+								incr_top=0;
+							}
+							break;
+						default:
+							if(tcp->tx0_t >= tcp->txE){
+								if(tcp->ty0_t >= tcp->tyE){
+									if(opj_pi_check_next_level(i-1,cp,tileno,pino,prog)){
+										tcp->ty0_t = tcp->tyS;
+										pi[pino].poc.ty0 = tcp->ty0_t;
+										pi[pino].poc.ty1 = tcp->ty0_t + tcp->dy - (tcp->ty0_t % tcp->dy);
+										tcp->ty0_t = pi[pino].poc.ty1;
+										incr_top=1;resetX=1;
+									}else{
+										incr_top=0;resetX=0;
+									}
+								}else{
+									pi[pino].poc.ty0 = tcp->ty0_t;
+									pi[pino].poc.ty1 = tcp->ty0_t + tcp->dy - (tcp->ty0_t % tcp->dy);
+									tcp->ty0_t = pi[pino].poc.ty1;
+									incr_top=0;resetX=1;
+								}
+								if(resetX==1){
+									tcp->tx0_t = tcp->txS;
+									pi[pino].poc.tx0 = tcp->tx0_t;
+									pi[pino].poc.tx1 = tcp->tx0_t + tcp->dx- (tcp->tx0_t % tcp->dx);
+									tcp->tx0_t = pi[pino].poc.tx1;
+								}
+							}else{
+								pi[pino].poc.tx0 = tcp->tx0_t;
+								pi[pino].poc.tx1 = tcp->tx0_t + tcp->dx- (tcp->tx0_t % tcp->dx);
+								tcp->tx0_t = pi[pino].poc.tx1;
+								incr_top=0;
+							}
+							break;
+						}
+						break;
+					}
+				}
+			}
+		}
+	}
+}
+
+void opj_pi_destroy(opj_pi_iterator_t *p_pi,
+                    OPJ_UINT32 p_nb_elements)
+{
+	OPJ_UINT32 compno, pino;
+	opj_pi_iterator_t *l_current_pi = p_pi;
+    if (p_pi) {
+		if (p_pi->include) {
+			opj_free(p_pi->include);
+			p_pi->include = 00;
+		}
+		for (pino = 0; pino < p_nb_elements; ++pino){
+			if(l_current_pi->comps) {
+				opj_pi_comp_t *l_current_component = l_current_pi->comps;
+                for (compno = 0; compno < l_current_pi->numcomps; compno++){
+                    if(l_current_component->resolutions) {
+						opj_free(l_current_component->resolutions);
+						l_current_component->resolutions = 00;
+					}
+
+					++l_current_component;
+				}
+				opj_free(l_current_pi->comps);
+				l_current_pi->comps = 0;
+			}
+			++l_current_pi;
+		}
+		opj_free(p_pi);
+	}
+}
+
+
+
+void opj_pi_update_encoding_parameters(	const opj_image_t *p_image,
+                                        opj_cp_v2_t *p_cp,
+                                        OPJ_UINT32 p_tile_no )
+{
+	/* encoding parameters to set */
+	OPJ_UINT32 l_max_res;
+	OPJ_UINT32 l_max_prec;
+	OPJ_INT32 l_tx0,l_tx1,l_ty0,l_ty1;
+	OPJ_UINT32 l_dx_min,l_dy_min;
+
+	/* pointers */
+	opj_tcp_v2_t *l_tcp = 00;
+
+	/* preconditions */
+	assert(p_cp != 00);
+	assert(p_image != 00);
+	assert(p_tile_no < p_cp->tw * p_cp->th);
+
+	l_tcp = &(p_cp->tcps[p_tile_no]);
+
+	/* get encoding parameters */
+	opj_get_encoding_parameters(p_image,p_cp,p_tile_no,&l_tx0,&l_tx1,&l_ty0,&l_ty1,&l_dx_min,&l_dy_min,&l_max_prec,&l_max_res);
+
+	if (l_tcp->POC) {
+		opj_pi_update_encode_poc_and_final(p_cp,p_tile_no,l_tx0,l_tx1,l_ty0,l_ty1,l_max_prec,l_max_res,l_dx_min,l_dy_min);
+	}
+	else {
+		opj_pi_update_encode_not_poc(p_cp,p_image->numcomps,p_tile_no,l_tx0,l_tx1,l_ty0,l_ty1,l_max_prec,l_max_res,l_dx_min,l_dy_min);
+	}
+}
+
+opj_bool opj_pi_next(opj_pi_iterator_t * pi) {
+	switch (pi->poc.prg) {
+		case LRCP:
+			return opj_pi_next_lrcp(pi);
+		case RLCP:
+			return opj_pi_next_rlcp(pi);
+		case RPCL:
+			return opj_pi_next_rpcl(pi);
+		case PCRL:
+			return opj_pi_next_pcrl(pi);
+		case CPRL:
+			return opj_pi_next_cprl(pi);
+		case PROG_UNKNOWN:
+			return OPJ_FALSE;
+	}
+	
 	return OPJ_FALSE;
 }
