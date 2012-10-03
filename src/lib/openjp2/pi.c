@@ -83,63 +83,130 @@ static opj_bool opj_pi_next_cprl(opj_pi_iterator_t * pi);
  * @param	p_dx_min		the minimum dx of all the components of all the resolutions for the tile.
  * @param	p_dy_min		the minimum dy of all the components of all the resolutions for the tile.
  */
-static void pi_update_encode_poc_and_final (opj_cp_v2_t *p_cp,
-									 OPJ_UINT32 p_tileno,
-									 OPJ_INT32 p_tx0,
-									 OPJ_INT32 p_tx1,
-									 OPJ_INT32 p_ty0,
-									 OPJ_INT32 p_ty1,
-									 OPJ_UINT32 p_max_prec,
-									 OPJ_UINT32 p_max_res,
-                                     OPJ_UINT32 p_dx_min,
-									 OPJ_UINT32 p_dy_min);
+static void opj_pi_update_encode_poc_and_final ( opj_cp_v2_t *p_cp,
+                                                 OPJ_UINT32 p_tileno,
+                                                 OPJ_INT32 p_tx0,
+                                                 OPJ_INT32 p_tx1,
+                                                 OPJ_INT32 p_ty0,
+                                                 OPJ_INT32 p_ty1,
+                                                 OPJ_UINT32 p_max_prec,
+                                                 OPJ_UINT32 p_max_res,
+                                                 OPJ_UINT32 p_dx_min,
+                                                 OPJ_UINT32 p_dy_min);
 
-void pi_update_encode_not_poc ( opj_cp_v2_t *p_cp,
-								OPJ_UINT32 p_num_comps,
-								OPJ_UINT32 p_tileno,
-								OPJ_INT32 p_tx0,
-								OPJ_INT32 p_tx1,
-								OPJ_INT32 p_ty0,
-								OPJ_INT32 p_ty1,
-								OPJ_UINT32 p_max_prec,
-								OPJ_UINT32 p_max_res,
-                                OPJ_UINT32 p_dx_min,
-								OPJ_UINT32 p_dy_min);
+/**
+ * Updates the coding parameters if the encoding is not used with Progression order changes and final (and cinema parameters are used).
+ *
+ * @param	p_cp		the coding parameters to modify
+ * @param	p_tileno	the tile index being concerned.
+ * @param	p_tx0		X0 parameter for the tile
+ * @param	p_tx1		X1 parameter for the tile
+ * @param	p_ty0		Y0 parameter for the tile
+ * @param	p_ty1		Y1 parameter for the tile
+ * @param	p_max_prec	the maximum precision for all the bands of the tile
+ * @param	p_max_res	the maximum number of resolutions for all the poc inside the tile.
+ * @param	dx_min		the minimum dx of all the components of all the resolutions for the tile.
+ * @param	dy_min		the minimum dy of all the components of all the resolutions for the tile.
+ */
+static void opj_pi_update_encode_not_poc (  opj_cp_v2_t *p_cp,
+                                            OPJ_UINT32 p_num_comps,
+                                            OPJ_UINT32 p_tileno,
+                                            OPJ_INT32 p_tx0,
+                                            OPJ_INT32 p_tx1,
+                                            OPJ_INT32 p_ty0,
+                                            OPJ_INT32 p_ty1,
+                                            OPJ_UINT32 p_max_prec,
+                                            OPJ_UINT32 p_max_res,
+                                            OPJ_UINT32 p_dx_min,
+                                            OPJ_UINT32 p_dy_min);
+/**
+ * Gets the encoding parameters needed to update the coding parameters and all the pocs.
+ * 
+ * @param	p_image			the image being encoded.
+ * @param	p_cp			the coding parameters.
+ * @param	p_tileno			the tile index of the tile being encoded.
+ * @param	p_tx0			pointer that will hold the X0 parameter for the tile
+ * @param	p_tx1			pointer that will hold the X1 parameter for the tile
+ * @param	p_ty0			pointer that will hold the Y0 parameter for the tile
+ * @param	p_ty1			pointer that will hold the Y1 parameter for the tile
+ * @param	p_max_prec		pointer that will hold the the maximum precision for all the bands of the tile
+ * @param	p_max_res		pointer that will hold the the maximum number of resolutions for all the poc inside the tile.
+ * @param	dx_min			pointer that will hold the the minimum dx of all the components of all the resolutions for the tile.
+ * @param	dy_min			pointer that will hold the the minimum dy of all the components of all the resolutions for the tile.
+ */
+static void opj_get_encoding_parameters(const opj_image_t *p_image,
+                                        const opj_cp_v2_t *p_cp,
+                                        OPJ_UINT32  tileno,
+                                        OPJ_INT32  * p_tx0,
+                                        OPJ_INT32 * p_tx1,
+                                        OPJ_INT32 * p_ty0,
+                                        OPJ_INT32 * p_ty1,
+                                        OPJ_UINT32 * p_dx_min,
+                                        OPJ_UINT32 * p_dy_min,
+                                        OPJ_UINT32 * p_max_prec,
+                                        OPJ_UINT32 * p_max_res );
 
-void get_encoding_parameters(	const opj_image_t *p_image,
-								const opj_cp_v2_t *p_cp,
-								OPJ_UINT32  tileno,
-								OPJ_INT32  * p_tx0,
-								OPJ_INT32 * p_tx1,
-								OPJ_INT32 * p_ty0,
-								OPJ_INT32 * p_ty1,
-								OPJ_UINT32 * p_dx_min,
-								OPJ_UINT32 * p_dy_min,
-								OPJ_UINT32 * p_max_prec,
-								OPJ_UINT32 * p_max_res );
+/**
+ * Gets the encoding parameters needed to update the coding parameters and all the pocs.
+ * The precinct widths, heights, dx and dy for each component at each resolution will be stored as well.
+ * the last parameter of the function should be an array of pointers of size nb components, each pointer leading
+ * to an area of size 4 * max_res. The data is stored inside this area with the following pattern :
+ * dx_compi_res0 , dy_compi_res0 , w_compi_res0, h_compi_res0 , dx_compi_res1 , dy_compi_res1 , w_compi_res1, h_compi_res1 , ...
+ *
+ * @param	p_image			the image being encoded.
+ * @param	p_cp			the coding parameters.
+ * @param	tileno			the tile index of the tile being encoded.
+ * @param	p_tx0			pointer that will hold the X0 parameter for the tile
+ * @param	p_tx1			pointer that will hold the X1 parameter for the tile
+ * @param	p_ty0			pointer that will hold the Y0 parameter for the tile
+ * @param	p_ty1			pointer that will hold the Y1 parameter for the tile
+ * @param	p_max_prec		pointer that will hold the the maximum precision for all the bands of the tile
+ * @param	p_max_res		pointer that will hold the the maximum number of resolutions for all the poc inside the tile.
+ * @param	p_dx_min		pointer that will hold the the minimum dx of all the components of all the resolutions for the tile.
+ * @param	p_dy_min		pointer that will hold the the minimum dy of all the components of all the resolutions for the tile.
+ * @param	p_resolutions	pointer to an area corresponding to the one described above.
+ */
+static void opj_get_all_encoding_parameters(const opj_image_t *p_image,
+                                            const opj_cp_v2_t *p_cp,
+                                            OPJ_UINT32 tileno,
+                                            OPJ_INT32 * p_tx0,
+                                            OPJ_INT32 * p_tx1,
+                                            OPJ_INT32 * p_ty0,
+                                            OPJ_INT32 * p_ty1,
+                                            OPJ_UINT32 * p_dx_min,
+                                            OPJ_UINT32 * p_dy_min,
+                                            OPJ_UINT32 * p_max_prec,
+                                            OPJ_UINT32 * p_max_res,
+                                            OPJ_UINT32 ** p_resolutions );
+/**
+ * Allocates memory for a packet iterator. Data and data sizes are set by this operation.
+ * No other data is set. The include section of the packet  iterator is not allocated.
+ * 
+ * @param	p_image		the image used to initialize the packet iterator (in fact only the number of components is relevant.
+ * @param	p_cp		the coding parameters.
+ * @param	p_tile_no	the index of the tile from which creating the packet iterator.
+ */
+static opj_pi_iterator_t * opj_pi_create(	const opj_image_t *image,
+                                            const opj_cp_v2_t *cp,
+                                            OPJ_UINT32 tileno );
+/**
+ * FIXME DOC
+ */
+static void opj_pi_update_decode_not_poc (opj_pi_iterator_t * p_pi,
+                                          opj_tcp_v2_t * p_tcp,
+                                          OPJ_UINT32 p_max_precision,
+                                          OPJ_UINT32 p_max_res);
+/**
+ * FIXME DOC
+ */
+static void opj_pi_update_decode_poc (  opj_pi_iterator_t * p_pi,
+                                        opj_tcp_v2_t * p_tcp,
+                                        OPJ_UINT32 p_max_precision,
+                                        OPJ_UINT32 p_max_res);
 
-void get_all_encoding_parameters(
-								const opj_image_t *p_image,
-								const opj_cp_v2_t *p_cp,
-								OPJ_UINT32 tileno,
-								OPJ_INT32 * p_tx0,
-								OPJ_INT32 * p_tx1,
-								OPJ_INT32 * p_ty0,
-								OPJ_INT32 * p_ty1,
-								OPJ_UINT32 * p_dx_min,
-								OPJ_UINT32 * p_dy_min,
-								OPJ_UINT32 * p_max_prec,
-								OPJ_UINT32 * p_max_res,
-								OPJ_UINT32 ** p_resolutions
-							);
-
-opj_pi_iterator_t * pi_create(	const opj_image_t *image,
-								const opj_cp_v2_t *cp,
-								OPJ_UINT32 tileno );
-
-void pi_update_decode_not_poc (opj_pi_iterator_t * p_pi,opj_tcp_v2_t * p_tcp,OPJ_UINT32 p_max_precision,OPJ_UINT32 p_max_res);
-void pi_update_decode_poc (opj_pi_iterator_t * p_pi,opj_tcp_v2_t * p_tcp,OPJ_UINT32 p_max_precision,OPJ_UINT32 p_max_res);
-
+/**
+ * FIXME DOC
+ */
 opj_bool opj_pi_check_next_level(	OPJ_INT32 pos,
 								opj_cp_v2_t *cp,
 								OPJ_UINT32 tileno,
@@ -483,143 +550,9 @@ LABEL_SKIP:;
    Packet iterator interface
 ==========================================================
 */
-
-opj_pi_iterator_t *pi_create_decode(opj_image_t *image, opj_cp_t *cp, int tileno) {
-	int p, q;
-	int compno, resno, pino;
-	opj_pi_iterator_t *pi = NULL;
-	opj_tcp_t *tcp = NULL;
-	opj_tccp_t *tccp = NULL;
-
-	tcp = &cp->tcps[tileno];
-
-	pi = (opj_pi_iterator_t*) opj_calloc((tcp->numpocs + 1), sizeof(opj_pi_iterator_t));
-	if(!pi) {
-		/* TODO: throw an error */
-		return NULL;
-	}
-
-	for (pino = 0; pino < tcp->numpocs + 1; pino++) {	/* change */
-		int maxres = 0;
-		int maxprec = 0;
-		p = tileno % cp->tw;
-		q = tileno / cp->tw;
-
-		pi[pino].tx0 = int_max(cp->tx0 + p * cp->tdx, image->x0);
-		pi[pino].ty0 = int_max(cp->ty0 + q * cp->tdy, image->y0);
-		pi[pino].tx1 = int_min(cp->tx0 + (p + 1) * cp->tdx, image->x1);
-		pi[pino].ty1 = int_min(cp->ty0 + (q + 1) * cp->tdy, image->y1);
-		pi[pino].numcomps = image->numcomps;
-
-		pi[pino].comps = (opj_pi_comp_t*) opj_calloc(image->numcomps, sizeof(opj_pi_comp_t));
-		if(!pi[pino].comps) {
-			/* TODO: throw an error */
-			pi_destroy(pi, cp, tileno);
-			return NULL;
-		}
-		
-		for (compno = 0; compno < pi->numcomps; compno++) {
-			int tcx0, tcy0, tcx1, tcy1;
-			opj_pi_comp_t *comp = &pi[pino].comps[compno];
-			tccp = &tcp->tccps[compno];
-			comp->dx = image->comps[compno].dx;
-			comp->dy = image->comps[compno].dy;
-			comp->numresolutions = tccp->numresolutions;
-
-			comp->resolutions = (opj_pi_resolution_t*) opj_calloc(comp->numresolutions, sizeof(opj_pi_resolution_t));
-			if(!comp->resolutions) {
-				/* TODO: throw an error */
-				pi_destroy(pi, cp, tileno);
-				return NULL;
-			}
-
-			tcx0 = int_ceildiv(pi->tx0, comp->dx);
-			tcy0 = int_ceildiv(pi->ty0, comp->dy);
-			tcx1 = int_ceildiv(pi->tx1, comp->dx);
-			tcy1 = int_ceildiv(pi->ty1, comp->dy);
-			if (comp->numresolutions > maxres) {
-				maxres = comp->numresolutions;
-			}
-
-			for (resno = 0; resno < comp->numresolutions; resno++) {
-				int levelno;
-				int rx0, ry0, rx1, ry1;
-				int px0, py0, px1, py1;
-				opj_pi_resolution_t *res = &comp->resolutions[resno];
-				if (tccp->csty & J2K_CCP_CSTY_PRT) {
-					res->pdx = tccp->prcw[resno];
-					res->pdy = tccp->prch[resno];
-				} else {
-					res->pdx = 15;
-					res->pdy = 15;
-				}
-				levelno = comp->numresolutions - 1 - resno;
-				rx0 = int_ceildivpow2(tcx0, levelno);
-				ry0 = int_ceildivpow2(tcy0, levelno);
-				rx1 = int_ceildivpow2(tcx1, levelno);
-				ry1 = int_ceildivpow2(tcy1, levelno);
-				px0 = int_floordivpow2(rx0, res->pdx) << res->pdx;
-				py0 = int_floordivpow2(ry0, res->pdy) << res->pdy;
-				px1 = int_ceildivpow2(rx1, res->pdx) << res->pdx;
-				py1 = int_ceildivpow2(ry1, res->pdy) << res->pdy;
-				res->pw = (rx0==rx1)?0:((px1 - px0) >> res->pdx);
-				res->ph = (ry0==ry1)?0:((py1 - py0) >> res->pdy);
-				
-				if (res->pw*res->ph > maxprec) {
-					maxprec = res->pw*res->ph;
-				}
-				
-			}
-		}
-		
-		tccp = &tcp->tccps[0];
-		pi[pino].step_p = 1;
-		pi[pino].step_c = maxprec * pi[pino].step_p;
-		pi[pino].step_r = image->numcomps * pi[pino].step_c;
-		pi[pino].step_l = maxres * pi[pino].step_r;
-		
-		if (pino == 0) {
-			pi[pino].include = (short int*) opj_calloc(image->numcomps * maxres * tcp->numlayers * maxprec, sizeof(short int));
-			if(!pi[pino].include) {
-				/* TODO: throw an error */
-				pi_destroy(pi, cp, tileno);
-				return NULL;
-			}
-		}
-		else {
-			pi[pino].include = pi[pino - 1].include;
-		}
-		
-		if (tcp->POC == 0) {
-			pi[pino].first = 1;
-			pi[pino].poc.resno0 = 0;
-			pi[pino].poc.compno0 = 0;
-			pi[pino].poc.layno1 = tcp->numlayers;
-			pi[pino].poc.resno1 = maxres;
-			pi[pino].poc.compno1 = image->numcomps;
-			pi[pino].poc.prg = tcp->prg;
-		} else {
-			pi[pino].first = 1;
-			pi[pino].poc.resno0 = tcp->pocs[pino].resno0;
-			pi[pino].poc.compno0 = tcp->pocs[pino].compno0;
-			pi[pino].poc.layno1 = tcp->pocs[pino].layno1;
-			pi[pino].poc.resno1 = tcp->pocs[pino].resno1;
-			pi[pino].poc.compno1 = tcp->pocs[pino].compno1;
-			pi[pino].poc.prg = tcp->pocs[pino].prg;
-		}
-		pi[pino].poc.layno0  = 0;
-		pi[pino].poc.precno0 = 0;
-		pi[pino].poc.precno1 = maxprec;
-			
-	}
-	
-	return pi;
-}
-
-opj_pi_iterator_t *pi_create_decode_v2(	opj_image_t *p_image,
+opj_pi_iterator_t *opj_pi_create_decode(opj_image_t *p_image,
 										opj_cp_v2_t *p_cp,
-										OPJ_UINT32 p_tile_no
-										)
+										OPJ_UINT32 p_tile_no)
 {
 	/* loop */
 	OPJ_UINT32 pino;
@@ -674,7 +607,7 @@ opj_pi_iterator_t *pi_create_decode_v2(	opj_image_t *p_image,
 	}
 
 	/* memory allocation for pi */
-	l_pi = pi_create(p_image, p_cp, p_tile_no);
+	l_pi = opj_pi_create(p_image, p_cp, p_tile_no);
 	if (!l_pi) {
 		opj_free(l_tmp_data);
 		opj_free(l_tmp_ptr);
@@ -690,7 +623,7 @@ opj_pi_iterator_t *pi_create_decode_v2(	opj_image_t *p_image,
 		l_encoding_value_ptr += l_data_stride;
 	}
 	/* get encoding parameters */
-	get_all_encoding_parameters(p_image,p_cp,p_tile_no,&l_tx0,&l_tx1,&l_ty0,&l_ty1,&l_dx_min,&l_dy_min,&l_max_prec,&l_max_res,l_tmp_ptr);
+	opj_get_all_encoding_parameters(p_image,p_cp,p_tile_no,&l_tx0,&l_tx1,&l_ty0,&l_ty1,&l_dx_min,&l_dy_min,&l_max_prec,&l_max_res,l_tmp_ptr);
 
 	/* step calculations */
 	l_step_p = 1;
@@ -708,7 +641,7 @@ opj_pi_iterator_t *pi_create_decode_v2(	opj_image_t *p_image,
 	{
 		opj_free(l_tmp_data);
 		opj_free(l_tmp_ptr);
-		pi_destroy_v2(l_pi, l_bound);
+		opj_pi_destroy(l_pi, l_bound);
 		return 00;
 	}
 	memset(l_current_pi->include,0, (l_tcp->numlayers + 1) * l_step_l* sizeof(OPJ_INT16));
@@ -731,7 +664,7 @@ opj_pi_iterator_t *pi_create_decode_v2(	opj_image_t *p_image,
 	l_current_pi->step_r = l_step_r;
 	l_current_pi->step_l = l_step_l;
 
-	/* allocation for components and number of components has already been calculated by pi_create */
+	/* allocation for components and number of components has already been calculated by opj_pi_create */
 	for
 		(compno = 0; compno < l_current_pi->numcomps; ++compno)
 	{
@@ -774,7 +707,7 @@ opj_pi_iterator_t *pi_create_decode_v2(	opj_image_t *p_image,
 		l_current_pi->step_r = l_step_r;
 		l_current_pi->step_l = l_step_l;
 
-		/* allocation for components and number of components has already been calculated by pi_create */
+		/* allocation for components and number of components has already been calculated by opj_pi_create */
 		for
 			(compno = 0; compno < l_current_pi->numcomps; ++compno)
 		{
@@ -808,164 +741,21 @@ opj_pi_iterator_t *pi_create_decode_v2(	opj_image_t *p_image,
 	if
 		(l_tcp->POC)
 	{
-		pi_update_decode_poc (l_pi,l_tcp,l_max_prec,l_max_res);
+		opj_pi_update_decode_poc (l_pi,l_tcp,l_max_prec,l_max_res);
 	}
 	else
 	{
-		pi_update_decode_not_poc(l_pi,l_tcp,l_max_prec,l_max_res);
+		opj_pi_update_decode_not_poc(l_pi,l_tcp,l_max_prec,l_max_res);
 	}
 	return l_pi;
 }
 
-opj_pi_iterator_t *pi_initialise_encode(opj_image_t *image, opj_cp_t *cp, int tileno, J2K_T2_MODE t2_mode){
-	int p, q, pino;
-	int compno, resno;
-	int maxres = 0;
-	int maxprec = 0;
-	opj_pi_iterator_t *pi = NULL;
-	opj_tcp_t *tcp = NULL;
-	opj_tccp_t *tccp = NULL;
-	
-	tcp = &cp->tcps[tileno];
 
-	pi = (opj_pi_iterator_t*) opj_calloc((tcp->numpocs + 1), sizeof(opj_pi_iterator_t));
-	if(!pi) {	return NULL;}
-	pi->tp_on = cp->tp_on;
 
-	for(pino = 0;pino < tcp->numpocs+1 ; pino ++){
-		p = tileno % cp->tw;
-		q = tileno / cp->tw;
-
-		pi[pino].tx0 = int_max(cp->tx0 + p * cp->tdx, image->x0);
-		pi[pino].ty0 = int_max(cp->ty0 + q * cp->tdy, image->y0);
-		pi[pino].tx1 = int_min(cp->tx0 + (p + 1) * cp->tdx, image->x1);
-		pi[pino].ty1 = int_min(cp->ty0 + (q + 1) * cp->tdy, image->y1);
-		pi[pino].numcomps = image->numcomps;
-		
-		pi[pino].comps = (opj_pi_comp_t*) opj_calloc(image->numcomps, sizeof(opj_pi_comp_t));
-		if(!pi[pino].comps) {
-			pi_destroy(pi, cp, tileno);
-			return NULL;
-		}
-		
-		for (compno = 0; compno < pi[pino].numcomps; compno++) {
-			int tcx0, tcy0, tcx1, tcy1;
-			opj_pi_comp_t *comp = &pi[pino].comps[compno];
-			tccp = &tcp->tccps[compno];
-			comp->dx = image->comps[compno].dx;
-			comp->dy = image->comps[compno].dy;
-			comp->numresolutions = tccp->numresolutions;
-
-			comp->resolutions = (opj_pi_resolution_t*) opj_malloc(comp->numresolutions * sizeof(opj_pi_resolution_t));
-			if(!comp->resolutions) {
-				pi_destroy(pi, cp, tileno);
-				return NULL;
-			}
-
-			tcx0 = int_ceildiv(pi[pino].tx0, comp->dx);
-			tcy0 = int_ceildiv(pi[pino].ty0, comp->dy);
-			tcx1 = int_ceildiv(pi[pino].tx1, comp->dx);
-			tcy1 = int_ceildiv(pi[pino].ty1, comp->dy);
-			if (comp->numresolutions > maxres) {
-				maxres = comp->numresolutions;
-			}
-
-			for (resno = 0; resno < comp->numresolutions; resno++) {
-				int levelno;
-				int rx0, ry0, rx1, ry1;
-				int px0, py0, px1, py1;
-				opj_pi_resolution_t *res = &comp->resolutions[resno];
-				if (tccp->csty & J2K_CCP_CSTY_PRT) {
-					res->pdx = tccp->prcw[resno];
-					res->pdy = tccp->prch[resno];
-				} else {
-					res->pdx = 15;
-					res->pdy = 15;
-				}
-				levelno = comp->numresolutions - 1 - resno;
-				rx0 = int_ceildivpow2(tcx0, levelno);
-				ry0 = int_ceildivpow2(tcy0, levelno);
-				rx1 = int_ceildivpow2(tcx1, levelno);
-				ry1 = int_ceildivpow2(tcy1, levelno);
-				px0 = int_floordivpow2(rx0, res->pdx) << res->pdx;
-				py0 = int_floordivpow2(ry0, res->pdy) << res->pdy;
-				px1 = int_ceildivpow2(rx1, res->pdx) << res->pdx;
-				py1 = int_ceildivpow2(ry1, res->pdy) << res->pdy;
-				res->pw = (rx0==rx1)?0:((px1 - px0) >> res->pdx);
-				res->ph = (ry0==ry1)?0:((py1 - py0) >> res->pdy);
-
-				if (res->pw*res->ph > maxprec) {
-					maxprec = res->pw * res->ph;
-				}
-			}
-		}
-		
-		tccp = &tcp->tccps[0];
-		pi[pino].step_p = 1;
-		pi[pino].step_c = maxprec * pi[pino].step_p;
-		pi[pino].step_r = image->numcomps * pi[pino].step_c;
-		pi[pino].step_l = maxres * pi[pino].step_r;
-		
-		for (compno = 0; compno < pi->numcomps; compno++) {
-			opj_pi_comp_t *comp = &pi->comps[compno];
-			for (resno = 0; resno < comp->numresolutions; resno++) {
-				int dx, dy;
-				opj_pi_resolution_t *res = &comp->resolutions[resno];
-				dx = comp->dx * (1 << (res->pdx + comp->numresolutions - 1 - resno));
-				dy = comp->dy * (1 << (res->pdy + comp->numresolutions - 1 - resno));
-				pi[pino].dx = !pi->dx ? dx : int_min(pi->dx, dx);
-				pi[pino].dy = !pi->dy ? dy : int_min(pi->dy, dy);
-			}
-		}
-
-		if (pino == 0) {
-			pi[pino].include = (short int*) opj_calloc(tcp->numlayers * pi[pino].step_l, sizeof(short int));
-			if(!pi[pino].include) {
-				pi_destroy(pi, cp, tileno);
-				return NULL;
-			}
-		}
-		else {
-			pi[pino].include = pi[pino - 1].include;
-		}
-		
-		/* Generation of boundaries for each prog flag*/
-			if(tcp->POC && ( cp->cinema || ((!cp->cinema) && (t2_mode == FINAL_PASS)))){
-				tcp->pocs[pino].compS= tcp->pocs[pino].compno0;
-				tcp->pocs[pino].compE= tcp->pocs[pino].compno1;
-				tcp->pocs[pino].resS = tcp->pocs[pino].resno0;
-				tcp->pocs[pino].resE = tcp->pocs[pino].resno1;
-				tcp->pocs[pino].layE = tcp->pocs[pino].layno1;
-				tcp->pocs[pino].prg  = tcp->pocs[pino].prg1;
-				if (pino > 0)
-					tcp->pocs[pino].layS = (tcp->pocs[pino].layE > tcp->pocs[pino - 1].layE) ? tcp->pocs[pino - 1].layE : 0;
-			}else {
-				tcp->pocs[pino].compS= 0;
-				tcp->pocs[pino].compE= image->numcomps;
-				tcp->pocs[pino].resS = 0;
-				tcp->pocs[pino].resE = maxres;
-				tcp->pocs[pino].layS = 0;
-				tcp->pocs[pino].layE = tcp->numlayers;
-				tcp->pocs[pino].prg  = tcp->prg;
-			}
-			tcp->pocs[pino].prcS = 0;
-			tcp->pocs[pino].prcE = maxprec;;
-			tcp->pocs[pino].txS = pi[pino].tx0;
-			tcp->pocs[pino].txE = pi[pino].tx1;
-			tcp->pocs[pino].tyS = pi[pino].ty0;
-			tcp->pocs[pino].tyE = pi[pino].ty1;
-			tcp->pocs[pino].dx = pi[pino].dx;
-			tcp->pocs[pino].dy = pi[pino].dy;
-		}
-			return pi;
-	}
-
-opj_pi_iterator_t *pi_initialise_encode_v2(
-										const opj_image_t *p_image,
-										opj_cp_v2_t *p_cp,
-										OPJ_UINT32 p_tile_no,
-										J2K_T2_MODE p_t2_mode
-										)
+opj_pi_iterator_t *opj_pi_initialise_encode(const opj_image_t *p_image,
+                                            opj_cp_v2_t *p_cp,
+                                            OPJ_UINT32 p_tile_no,
+                                            J2K_T2_MODE p_t2_mode )
 {
 	/* loop*/
 	OPJ_UINT32 pino;
@@ -1017,7 +807,7 @@ opj_pi_iterator_t *pi_initialise_encode_v2(
 	}
 
 	/* memory allocation for pi*/
-	l_pi = pi_create(p_image,p_cp,p_tile_no);
+	l_pi = opj_pi_create(p_image,p_cp,p_tile_no);
 	if (!l_pi) {
 		opj_free(l_tmp_data);
 		opj_free(l_tmp_ptr);
@@ -1032,7 +822,7 @@ opj_pi_iterator_t *pi_initialise_encode_v2(
 	}
 
 	/* get encoding parameters*/
-	get_all_encoding_parameters(p_image,p_cp,p_tile_no,&l_tx0,&l_tx1,&l_ty0,&l_ty1,&l_dx_min,&l_dy_min,&l_max_prec,&l_max_res,l_tmp_ptr);
+	opj_get_all_encoding_parameters(p_image,p_cp,p_tile_no,&l_tx0,&l_tx1,&l_ty0,&l_ty1,&l_dx_min,&l_dy_min,&l_max_prec,&l_max_res,l_tmp_ptr);
 
 	/* step calculations*/
 	l_step_p = 1;
@@ -1049,7 +839,7 @@ opj_pi_iterator_t *pi_initialise_encode_v2(
 	if (!l_current_pi->include) {
 		opj_free(l_tmp_data);
 		opj_free(l_tmp_ptr);
-		pi_destroy_v2(l_pi, l_bound);
+		opj_pi_destroy(l_pi, l_bound);
 		return 00;
 	}
 	memset(l_current_pi->include,0,l_tcp->numlayers * l_step_l* sizeof(OPJ_INT16));
@@ -1069,7 +859,7 @@ opj_pi_iterator_t *pi_initialise_encode_v2(
 	l_current_pi->step_r = l_step_r;
 	l_current_pi->step_l = l_step_l;
 
-	/* allocation for components and number of components has already been calculated by pi_create */
+	/* allocation for components and number of components has already been calculated by opj_pi_create */
 	for (compno = 0; compno < l_current_pi->numcomps; ++compno) {
 		opj_pi_resolution_t *l_res = l_current_comp->resolutions;
 		l_encoding_value_ptr = l_tmp_ptr[compno];
@@ -1108,7 +898,7 @@ opj_pi_iterator_t *pi_initialise_encode_v2(
 		l_current_pi->step_r = l_step_r;
 		l_current_pi->step_l = l_step_l;
 
-		/* allocation for components and number of components has already been calculated by pi_create */
+		/* allocation for components and number of components has already been calculated by opj_pi_create */
 		for (compno = 0; compno < l_current_pi->numcomps; ++compno) {
 			opj_pi_resolution_t *l_res = l_current_comp->resolutions;
 			l_encoding_value_ptr = l_tmp_ptr[compno];
@@ -1139,35 +929,13 @@ opj_pi_iterator_t *pi_initialise_encode_v2(
 	l_tmp_ptr = 00;
 
 	if (l_tcp->POC && ( p_cp->m_specific_param.m_enc.m_cinema || p_t2_mode == FINAL_PASS)) {
-		pi_update_encode_poc_and_final(p_cp,p_tile_no,l_tx0,l_tx1,l_ty0,l_ty1,l_max_prec,l_max_res,l_dx_min,l_dy_min);
+		opj_pi_update_encode_poc_and_final(p_cp,p_tile_no,l_tx0,l_tx1,l_ty0,l_ty1,l_max_prec,l_max_res,l_dx_min,l_dy_min);
 	}
 	else {
-		pi_update_encode_not_poc(p_cp,p_image->numcomps,p_tile_no,l_tx0,l_tx1,l_ty0,l_ty1,l_max_prec,l_max_res,l_dx_min,l_dy_min);
+		opj_pi_update_encode_not_poc(p_cp,p_image->numcomps,p_tile_no,l_tx0,l_tx1,l_ty0,l_ty1,l_max_prec,l_max_res,l_dx_min,l_dy_min);
 	}
 
 	return l_pi;
-}
-
-void pi_destroy(opj_pi_iterator_t *pi, opj_cp_t *cp, int tileno) {
-	int compno, pino;
-	opj_tcp_t *tcp = &cp->tcps[tileno];
-	if(pi) {
-		for (pino = 0; pino < tcp->numpocs + 1; pino++) {	
-			if(pi[pino].comps) {
-				for (compno = 0; compno < pi->numcomps; compno++) {
-					opj_pi_comp_t *comp = &pi[pino].comps[compno];
-					if(comp->resolutions) {
-						opj_free(comp->resolutions);
-					}
-				}
-				opj_free(pi[pino].comps);
-			}
-		}
-		if(pi->include) {
-			opj_free(pi->include);
-		}
-		opj_free(pi);
-	}
 }
 
 opj_bool opj_pi_next(opj_pi_iterator_t * pi) {
@@ -1189,240 +957,7 @@ opj_bool opj_pi_next(opj_pi_iterator_t * pi) {
 	return OPJ_FALSE;
 }
 
-opj_bool pi_create_encode( opj_pi_iterator_t *pi, opj_cp_t *cp,int tileno, int pino,int tpnum, int tppos, J2K_T2_MODE t2_mode,int cur_totnum_tp){
-	char prog[4];
-	int i;
-	int incr_top=1,resetX=0;
-	opj_tcp_t *tcps =&cp->tcps[tileno];
-	opj_poc_t *tcp= &tcps->pocs[pino];
 
-	pi[pino].first = 1;
-	pi[pino].poc.prg = tcp->prg;
-
-	switch(tcp->prg){
-		case CPRL: strncpy(prog, "CPRL",4);
-			break;
-		case LRCP: strncpy(prog, "LRCP",4);
-			break;
-		case PCRL: strncpy(prog, "PCRL",4);
-			break;
-		case RLCP: strncpy(prog, "RLCP",4);
-			break;
-		case RPCL: strncpy(prog, "RPCL",4);
-			break;
-		case PROG_UNKNOWN:
-			return OPJ_TRUE;
-	}
-
-	if(!(cp->tp_on && ((!cp->cinema && (t2_mode == FINAL_PASS)) || cp->cinema))){
-		pi[pino].poc.resno0 = tcp->resS;
-		pi[pino].poc.resno1 = tcp->resE;
-		pi[pino].poc.compno0 = tcp->compS;
-		pi[pino].poc.compno1 = tcp->compE;
-		pi[pino].poc.layno0 = tcp->layS;
-		pi[pino].poc.layno1 = tcp->layE;
-		pi[pino].poc.precno0 = tcp->prcS;
-		pi[pino].poc.precno1 = tcp->prcE;
-		pi[pino].poc.tx0 = tcp->txS;
-		pi[pino].poc.ty0 = tcp->tyS;
-		pi[pino].poc.tx1 = tcp->txE;
-		pi[pino].poc.ty1 = tcp->tyE;
-	}else {
-		if( tpnum < cur_totnum_tp){
-			for(i=3;i>=0;i--){
-				switch(prog[i]){
-				case 'C':
-					if (i > tppos){
-						pi[pino].poc.compno0 = tcp->compS;
-						pi[pino].poc.compno1 = tcp->compE;
-					}else{
-						if (tpnum == 0){
-							tcp->comp_t = tcp->compS;
-							pi[pino].poc.compno0 = tcp->comp_t;
-							pi[pino].poc.compno1 = tcp->comp_t+1;
-							tcp->comp_t+=1;
-						}else{
-							if (incr_top == 1){
-								if(tcp->comp_t ==tcp->compE){
-									tcp->comp_t = tcp->compS;
-									pi[pino].poc.compno0 = tcp->comp_t;
-									pi[pino].poc.compno1 = tcp->comp_t+1;
-									tcp->comp_t+=1;
-									incr_top=1;
-								}else{
-									pi[pino].poc.compno0 = tcp->comp_t;
-									pi[pino].poc.compno1 = tcp->comp_t+1;
-									tcp->comp_t+=1;
-									incr_top=0;
-								}
-							}else{
-								pi[pino].poc.compno0 = tcp->comp_t-1;
-								pi[pino].poc.compno1 = tcp->comp_t;
-							}
-						}
-					}
-					break;
-
-				case 'R':
-					if (i > tppos){
-						pi[pino].poc.resno0 = tcp->resS;
-						pi[pino].poc.resno1 = tcp->resE;
-					}else{
-						if (tpnum == 0){
-							tcp->res_t = tcp->resS;
-							pi[pino].poc.resno0 = tcp->res_t;
-							pi[pino].poc.resno1 = tcp->res_t+1;
-							tcp->res_t+=1;
-						}else{
-							if (incr_top == 1){
-								if(tcp->res_t==tcp->resE){
-									tcp->res_t = tcp->resS;
-									pi[pino].poc.resno0 = tcp->res_t;
-									pi[pino].poc.resno1 = tcp->res_t+1;
-									tcp->res_t+=1;
-									incr_top=1;
-								}else{
-									pi[pino].poc.resno0 = tcp->res_t;
-									pi[pino].poc.resno1 = tcp->res_t+1;
-									tcp->res_t+=1;
-									incr_top=0;
-								}
-							}else{
-								pi[pino].poc.resno0 = tcp->res_t - 1;
-								pi[pino].poc.resno1 = tcp->res_t;
-							}
-						}
-					}
-					break;
-
-				case 'L':
-					if (i > tppos){
-						pi[pino].poc.layno0 = tcp->layS;
-						pi[pino].poc.layno1 = tcp->layE;
-					}else{
-						if (tpnum == 0){
-							tcp->lay_t = tcp->layS;
-							pi[pino].poc.layno0 = tcp->lay_t;
-							pi[pino].poc.layno1 = tcp->lay_t+1;
-							tcp->lay_t+=1;
-						}else{
-							if (incr_top == 1){
-								if(tcp->lay_t == tcp->layE){
-									tcp->lay_t = tcp->layS;
-									pi[pino].poc.layno0 = tcp->lay_t;
-									pi[pino].poc.layno1 = tcp->lay_t+1;
-									tcp->lay_t+=1;
-									incr_top=1;
-								}else{
-									pi[pino].poc.layno0 = tcp->lay_t;
-									pi[pino].poc.layno1 = tcp->lay_t+1;
-									tcp->lay_t+=1;
-									incr_top=0;
-								}
-							}else{
-								pi[pino].poc.layno0 = tcp->lay_t - 1;
-								pi[pino].poc.layno1 = tcp->lay_t;
-							}
-						}
-					}
-					break;
-
-				case 'P':
-					switch(tcp->prg){
-						case LRCP:
-						case RLCP:
-							if (i > tppos){
-								pi[pino].poc.precno0 = tcp->prcS;
-								pi[pino].poc.precno1 = tcp->prcE;
-							}else{
-								if (tpnum == 0){
-									tcp->prc_t = tcp->prcS;
-									pi[pino].poc.precno0 = tcp->prc_t;
-									pi[pino].poc.precno1 = tcp->prc_t+1;
-									tcp->prc_t+=1;
-								}else{
-									if (incr_top == 1){
-										if(tcp->prc_t == tcp->prcE){
-											tcp->prc_t = tcp->prcS;
-											pi[pino].poc.precno0 = tcp->prc_t;
-											pi[pino].poc.precno1 = tcp->prc_t+1;
-											tcp->prc_t+=1;
-											incr_top=1;
-										}else{
-											pi[pino].poc.precno0 = tcp->prc_t;
-											pi[pino].poc.precno1 = tcp->prc_t+1;
-											tcp->prc_t+=1;
-											incr_top=0;
-										}
-									}else{
-										pi[pino].poc.precno0 = tcp->prc_t - 1;
-										pi[pino].poc.precno1 = tcp->prc_t;
-									}
-								}
-							}
-						break;
-						default:
-							if (i > tppos){
-								pi[pino].poc.tx0 = tcp->txS;
-								pi[pino].poc.ty0 = tcp->tyS;
-								pi[pino].poc.tx1 = tcp->txE;
-								pi[pino].poc.ty1 = tcp->tyE;
-							}else{
-								if (tpnum == 0){
-									tcp->tx0_t = tcp->txS;
-									tcp->ty0_t = tcp->tyS;
-									pi[pino].poc.tx0 = tcp->tx0_t;
-									pi[pino].poc.tx1 = tcp->tx0_t + tcp->dx - (tcp->tx0_t % tcp->dx);
-									pi[pino].poc.ty0 = tcp->ty0_t;
-									pi[pino].poc.ty1 = tcp->ty0_t + tcp->dy - (tcp->ty0_t % tcp->dy);
-									tcp->tx0_t = pi[pino].poc.tx1;
-									tcp->ty0_t = pi[pino].poc.ty1;
-								}else{
-									if (incr_top == 1){
-										if(tcp->tx0_t >= tcp->txE){
-											if(tcp->ty0_t >= tcp->tyE){
-												tcp->ty0_t = tcp->tyS;
-												pi[pino].poc.ty0 = tcp->ty0_t;
-												pi[pino].poc.ty1 = tcp->ty0_t + tcp->dy - (tcp->ty0_t % tcp->dy);
-												tcp->ty0_t = pi[pino].poc.ty1;
-												incr_top=1;resetX=1;
-											}else{
-												pi[pino].poc.ty0 = tcp->ty0_t;
-												pi[pino].poc.ty1 = tcp->ty0_t + tcp->dy - (tcp->ty0_t % tcp->dy);
-												tcp->ty0_t = pi[pino].poc.ty1;
-												incr_top=0;resetX=1;
-											}
-											if(resetX==1){
-												tcp->tx0_t = tcp->txS;
-												pi[pino].poc.tx0 = tcp->tx0_t;
-												pi[pino].poc.tx1 = tcp->tx0_t + tcp->dx- (tcp->tx0_t % tcp->dx);
-												tcp->tx0_t = pi[pino].poc.tx1;
-											}
-										}else{
-											pi[pino].poc.tx0 = tcp->tx0_t;
-											pi[pino].poc.tx1 = tcp->tx0_t + tcp->dx- (tcp->tx0_t % tcp->dx);
-											tcp->tx0_t = pi[pino].poc.tx1;
-											pi[pino].poc.ty0 = tcp->ty0_t - tcp->dy - (tcp->ty0_t % tcp->dy);
-											pi[pino].poc.ty1 = tcp->ty0_t ;
-											incr_top=0;
-										}
-									}else{
-										pi[pino].poc.tx0 = tcp->tx0_t - tcp->dx - (tcp->tx0_t % tcp->dx);
-										pi[pino].poc.tx1 = tcp->tx0_t ;
-										pi[pino].poc.ty0 = tcp->ty0_t - tcp->dy - (tcp->ty0_t % tcp->dy);
-										pi[pino].poc.ty1 = tcp->ty0_t ;
-									}
-								}
-							}
-						break;
-						}
-						break;
-				}		
-			}
-		}
-	}	
-	return OPJ_FALSE;
-}
 
 void opj_pi_update_encoding_parameters(	const opj_image_t *p_image,
                                         opj_cp_v2_t *p_cp,
@@ -1445,28 +980,28 @@ void opj_pi_update_encoding_parameters(	const opj_image_t *p_image,
 	l_tcp = &(p_cp->tcps[p_tile_no]);
 
 	/* get encoding parameters */
-	get_encoding_parameters(p_image,p_cp,p_tile_no,&l_tx0,&l_tx1,&l_ty0,&l_ty1,&l_dx_min,&l_dy_min,&l_max_prec,&l_max_res);
+	opj_get_encoding_parameters(p_image,p_cp,p_tile_no,&l_tx0,&l_tx1,&l_ty0,&l_ty1,&l_dx_min,&l_dy_min,&l_max_prec,&l_max_res);
 
 	if (l_tcp->POC) {
-		pi_update_encode_poc_and_final(p_cp,p_tile_no,l_tx0,l_tx1,l_ty0,l_ty1,l_max_prec,l_max_res,l_dx_min,l_dy_min);
+		opj_pi_update_encode_poc_and_final(p_cp,p_tile_no,l_tx0,l_tx1,l_ty0,l_ty1,l_max_prec,l_max_res,l_dx_min,l_dy_min);
 	}
 	else {
-		pi_update_encode_not_poc(p_cp,p_image->numcomps,p_tile_no,l_tx0,l_tx1,l_ty0,l_ty1,l_max_prec,l_max_res,l_dx_min,l_dy_min);
+		opj_pi_update_encode_not_poc(p_cp,p_image->numcomps,p_tile_no,l_tx0,l_tx1,l_ty0,l_ty1,l_max_prec,l_max_res,l_dx_min,l_dy_min);
 	}
 
 }
 
-void get_encoding_parameters(	const opj_image_t *p_image,
-								const opj_cp_v2_t *p_cp,
-								OPJ_UINT32 p_tileno,
-								OPJ_INT32 * p_tx0,
-								OPJ_INT32  * p_tx1,
-								OPJ_INT32  * p_ty0,
-								OPJ_INT32  * p_ty1,
-								OPJ_UINT32 * p_dx_min,
-								OPJ_UINT32 * p_dy_min,
-								OPJ_UINT32 * p_max_prec,
-								OPJ_UINT32 * p_max_res )
+void opj_get_encoding_parameters(	const opj_image_t *p_image,
+                                    const opj_cp_v2_t *p_cp,
+                                    OPJ_UINT32 p_tileno,
+                                    OPJ_INT32 * p_tx0,
+                                    OPJ_INT32  * p_tx1,
+                                    OPJ_INT32  * p_ty0,
+                                    OPJ_INT32  * p_ty1,
+                                    OPJ_UINT32 * p_dx_min,
+                                    OPJ_UINT32 * p_dy_min,
+                                    OPJ_UINT32 * p_max_prec,
+                                    OPJ_UINT32 * p_max_res )
 {
 	/* loop */
 	OPJ_UINT32  compno, resno;
@@ -1569,40 +1104,19 @@ void get_encoding_parameters(	const opj_image_t *p_image,
 	}
 }
 
-/**
- * Gets the encoding parameters needed to update the coding parameters and all the pocs.
- * The precinct widths, heights, dx and dy for each component at each resolution will be stored as well.
- * the last parameter of the function should be an array of pointers of size nb components, each pointer leading
- * to an area of size 4 * max_res. The data is stored inside this area with the following pattern :
- * dx_compi_res0 , dy_compi_res0 , w_compi_res0, h_compi_res0 , dx_compi_res1 , dy_compi_res1 , w_compi_res1, h_compi_res1 , ...
- *
- * @param	p_image			the image being encoded.
- * @param	p_cp			the coding parameters.
- * @param	tileno			the tile index of the tile being encoded.
- * @param	p_tx0			pointer that will hold the X0 parameter for the tile
- * @param	p_tx1			pointer that will hold the X1 parameter for the tile
- * @param	p_ty0			pointer that will hold the Y0 parameter for the tile
- * @param	p_ty1			pointer that will hold the Y1 parameter for the tile
- * @param	p_max_prec		pointer that will hold the the maximum precision for all the bands of the tile
- * @param	p_max_res		pointer that will hold the the maximum number of resolutions for all the poc inside the tile.
- * @param	p_dx_min		pointer that will hold the the minimum dx of all the components of all the resolutions for the tile.
- * @param	p_dy_min		pointer that will hold the the minimum dy of all the components of all the resolutions for the tile.
- * @param	p_resolutions	pointer to an area corresponding to the one described above.
- */
-void get_all_encoding_parameters(
-								const opj_image_t *p_image,
-								const opj_cp_v2_t *p_cp,
-								OPJ_UINT32 tileno,
-								OPJ_INT32 * p_tx0,
-								OPJ_INT32 * p_tx1,
-								OPJ_INT32 * p_ty0,
-								OPJ_INT32 * p_ty1,
-								OPJ_UINT32 * p_dx_min,
-								OPJ_UINT32 * p_dy_min,
-								OPJ_UINT32 * p_max_prec,
-								OPJ_UINT32 * p_max_res,
-								OPJ_UINT32 ** p_resolutions
-							)
+
+void opj_get_all_encoding_parameters(   const opj_image_t *p_image,
+                                        const opj_cp_v2_t *p_cp,
+                                        OPJ_UINT32 tileno,
+                                        OPJ_INT32 * p_tx0,
+                                        OPJ_INT32 * p_tx1,
+                                        OPJ_INT32 * p_ty0,
+                                        OPJ_INT32 * p_ty1,
+                                        OPJ_UINT32 * p_dx_min,
+                                        OPJ_UINT32 * p_dy_min,
+                                        OPJ_UINT32 * p_max_prec,
+                                        OPJ_UINT32 * p_max_res,
+                                        OPJ_UINT32 ** p_resolutions )
 {
 	/* loop*/
 	OPJ_UINT32 compno, resno;
@@ -1629,7 +1143,6 @@ void get_all_encoding_parameters(
 	l_img_comp = p_image->comps;
 
 	/* position in x and y of tile*/
-
 	p = tileno % p_cp->tw;
 	q = tileno / p_cp->tw;
 
@@ -1645,11 +1158,9 @@ void get_all_encoding_parameters(
 
 	/* take the largest value for dx_min and dy_min*/
 	*p_dx_min = 0x7fffffff;
-	*p_dy_min  = 0x7fffffff;
+	*p_dy_min = 0x7fffffff;
 
-	for
-		(compno = 0; compno < p_image->numcomps; ++compno)
-	{
+	for (compno = 0; compno < p_image->numcomps; ++compno) {
 		/* aritmetic variables to calculate*/
 		OPJ_UINT32 l_level_no;
 		OPJ_INT32 l_rx0, l_ry0, l_rx1, l_ry1;
@@ -1664,18 +1175,16 @@ void get_all_encoding_parameters(
 		l_tcy0 = int_ceildiv(*p_ty0, l_img_comp->dy);
 		l_tcx1 = int_ceildiv(*p_tx1, l_img_comp->dx);
 		l_tcy1 = int_ceildiv(*p_ty1, l_img_comp->dy);
-		if
-			(l_tccp->numresolutions > *p_max_res)
-		{
+
+		if (l_tccp->numresolutions > *p_max_res) {
 			*p_max_res = l_tccp->numresolutions;
 		}
 
 		/* use custom size for precincts*/
 		l_level_no = l_tccp->numresolutions - 1;
-		for
-			(resno = 0; resno < l_tccp->numresolutions; ++resno)
-		{
+		for (resno = 0; resno < l_tccp->numresolutions; ++resno) {
 			OPJ_UINT32 l_dx, l_dy;
+
 			/* precinct width and height*/
 			l_pdx = l_tccp->prcw[resno];
 			l_pdy = l_tccp->prch[resno];
@@ -1686,8 +1195,8 @@ void get_all_encoding_parameters(
 			/* take the minimum size for l_dx for each comp and resolution*/
 			*p_dx_min = int_min(*p_dx_min, l_dx);
 			*p_dy_min = int_min(*p_dy_min, l_dy);
-			/* various calculations of extents*/
 
+			/* various calculations of extents*/
 			l_rx0 = int_ceildivpow2(l_tcx0, l_level_no);
 			l_ry0 = int_ceildivpow2(l_tcy0, l_level_no);
 			l_rx1 = int_ceildivpow2(l_tcx1, l_level_no);
@@ -1701,12 +1210,12 @@ void get_all_encoding_parameters(
 			*lResolutionPtr++ = l_pw;
 			*lResolutionPtr++ = l_ph;
 			l_product = l_pw * l_ph;
-			/* update precision*/
-			if
-				(l_product > *p_max_prec)
-			{
+			
+            /* update precision*/
+			if (l_product > *p_max_prec) {
 				*p_max_prec = l_product;
 			}
+
 			--l_level_no;
 		}
 		++l_tccp;
@@ -1714,9 +1223,9 @@ void get_all_encoding_parameters(
 	}
 }
 
-opj_pi_iterator_t * pi_create(	const opj_image_t *image,
-								const opj_cp_v2_t *cp,
-								OPJ_UINT32 tileno )
+opj_pi_iterator_t * opj_pi_create(	const opj_image_t *image,
+                                    const opj_cp_v2_t *cp,
+                                    OPJ_UINT32 tileno )
 {
 	/* loop*/
 	OPJ_UINT32 pino, compno;
@@ -1752,7 +1261,7 @@ opj_pi_iterator_t * pi_create(	const opj_image_t *image,
 
 		l_current_pi->comps = (opj_pi_comp_t*) opj_calloc(image->numcomps, sizeof(opj_pi_comp_t));
 		if (! l_current_pi->comps) {
-			pi_destroy_v2(l_pi, l_poc_bound);
+			opj_pi_destroy(l_pi, l_poc_bound);
 			return NULL;
 		}
 
@@ -1766,7 +1275,7 @@ opj_pi_iterator_t * pi_create(	const opj_image_t *image,
 
 			comp->resolutions = (opj_pi_resolution_t*) opj_malloc(tccp->numresolutions * sizeof(opj_pi_resolution_t));
 			if (!comp->resolutions) {
-				pi_destroy_v2(l_pi, l_poc_bound);
+				opj_pi_destroy(l_pi, l_poc_bound);
 				return 00;
 			}
 
@@ -1778,16 +1287,16 @@ opj_pi_iterator_t * pi_create(	const opj_image_t *image,
 	return l_pi;
 }
 
-void pi_update_encode_poc_and_final (opj_cp_v2_t *p_cp,
-									 OPJ_UINT32 p_tileno,
-									 OPJ_INT32 p_tx0,
-									 OPJ_INT32 p_tx1,
-									 OPJ_INT32 p_ty0,
-									 OPJ_INT32 p_ty1,
-									 OPJ_UINT32 p_max_prec,
-									 OPJ_UINT32 p_max_res,
-                                     OPJ_UINT32 p_dx_min,
-									 OPJ_UINT32 p_dy_min)
+void opj_pi_update_encode_poc_and_final (   opj_cp_v2_t *p_cp,
+                                            OPJ_UINT32 p_tileno,
+                                            OPJ_INT32 p_tx0,
+                                            OPJ_INT32 p_tx1,
+                                            OPJ_INT32 p_ty0,
+                                            OPJ_INT32 p_ty1,
+                                            OPJ_UINT32 p_max_prec,
+                                            OPJ_UINT32 p_max_res,
+                                            OPJ_UINT32 p_dx_min,
+                                            OPJ_UINT32 p_dy_min)
 {
 	/* loop*/
 	OPJ_UINT32 pino;
@@ -1854,17 +1363,17 @@ void pi_update_encode_poc_and_final (opj_cp_v2_t *p_cp,
 	}
 }
 
-void pi_update_encode_not_poc (	opj_cp_v2_t *p_cp,
-								OPJ_UINT32 p_num_comps,
-								OPJ_UINT32 p_tileno,
-								OPJ_INT32 p_tx0,
-								OPJ_INT32 p_tx1,
-								OPJ_INT32 p_ty0,
-								OPJ_INT32 p_ty1,
-								OPJ_UINT32 p_max_prec,
-								OPJ_UINT32 p_max_res,
-                                OPJ_UINT32 p_dx_min,
-								OPJ_UINT32 p_dy_min)
+void opj_pi_update_encode_not_poc (	opj_cp_v2_t *p_cp,
+                                    OPJ_UINT32 p_num_comps,
+                                    OPJ_UINT32 p_tileno,
+                                    OPJ_INT32 p_tx0,
+                                    OPJ_INT32 p_tx1,
+                                    OPJ_INT32 p_ty0,
+                                    OPJ_INT32 p_ty1,
+                                    OPJ_UINT32 p_max_prec,
+                                    OPJ_UINT32 p_max_res,
+                                    OPJ_UINT32 p_dx_min,
+                                    OPJ_UINT32 p_dy_min)
 {
 	/* loop*/
 	OPJ_UINT32 pino;
@@ -1909,9 +1418,8 @@ void pi_update_encode_not_poc (	opj_cp_v2_t *p_cp,
 	}
 }
 
-void pi_destroy_v2(
-				opj_pi_iterator_t *p_pi,
-				OPJ_UINT32 p_nb_elements)
+void opj_pi_destroy(opj_pi_iterator_t *p_pi,
+                    OPJ_UINT32 p_nb_elements)
 {
 	OPJ_UINT32 compno, pino;
 	opj_pi_iterator_t *l_current_pi = p_pi;
@@ -1952,7 +1460,10 @@ void pi_destroy_v2(
 	}
 }
 
-void pi_update_decode_poc (opj_pi_iterator_t * p_pi,opj_tcp_v2_t * p_tcp,OPJ_UINT32 p_max_precision,OPJ_UINT32 p_max_res)
+void opj_pi_update_decode_poc (opj_pi_iterator_t * p_pi,
+                               opj_tcp_v2_t * p_tcp,
+                               OPJ_UINT32 p_max_precision,
+                               OPJ_UINT32 p_max_res)
 {
 	/* loop*/
 	OPJ_UINT32 pino;
@@ -1991,7 +1502,10 @@ void pi_update_decode_poc (opj_pi_iterator_t * p_pi,opj_tcp_v2_t * p_tcp,OPJ_UIN
 	}
 }
 
-void pi_update_decode_not_poc (opj_pi_iterator_t * p_pi,opj_tcp_v2_t * p_tcp,OPJ_UINT32 p_max_precision,OPJ_UINT32 p_max_res)
+void opj_pi_update_decode_not_poc (opj_pi_iterator_t * p_pi,
+                                   opj_tcp_v2_t * p_tcp,
+                                   OPJ_UINT32 p_max_precision,
+                                   OPJ_UINT32 p_max_res)
 {
 	/* loop*/
 	OPJ_UINT32 pino;
@@ -2025,7 +1539,7 @@ void pi_update_decode_not_poc (opj_pi_iterator_t * p_pi,opj_tcp_v2_t * p_tcp,OPJ
 	}
 }
 
-void pi_create_encode_v2( 	opj_pi_iterator_t *pi,
+void opj_pi_create_encode( 	opj_pi_iterator_t *pi,
 							opj_cp_v2_t *cp,
 							OPJ_UINT32 tileno,
 							OPJ_UINT32 pino,

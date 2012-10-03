@@ -215,7 +215,7 @@ opj_bool opj_t2_encode_packets( opj_t2_v2_t* p_t2,
         OPJ_UINT32 l_max_comp = l_cp->m_specific_param.m_enc.m_max_comp_size > 0 ? l_image->numcomps : 1;
         OPJ_UINT32 l_nb_pocs = l_tcp->numpocs + 1;
 
-        l_pi = pi_initialise_encode_v2(l_image, l_cp, p_tile_no, p_t2_mode);
+        l_pi = opj_pi_initialise_encode(l_image, l_cp, p_tile_no, p_t2_mode);
         if (!l_pi) {
                 return OPJ_FALSE;
         }
@@ -233,14 +233,14 @@ opj_bool opj_t2_encode_packets( opj_t2_v2_t* p_t2,
                                 OPJ_UINT32 l_tp_num = compno;
 
                                 /* TODO MSD : check why this function cannot fail (cf. v1) */
-                                pi_create_encode_v2(l_pi, l_cp,p_tile_no,poc,l_tp_num,p_tp_pos,p_t2_mode);
+                                opj_pi_create_encode(l_pi, l_cp,p_tile_no,poc,l_tp_num,p_tp_pos,p_t2_mode);
 
                                 while (opj_pi_next(l_current_pi)) {
                                         if (l_current_pi->layno < p_maxlayers) {
                                                 l_nb_bytes = 0;
 
                                                 if (! opj_t2_encode_packet(p_tile_no,p_tile, l_tcp, l_current_pi, l_current_data, &l_nb_bytes, p_max_len, cstr_info)) {
-                                                        pi_destroy_v2(l_pi, l_nb_pocs);
+                                                        opj_pi_destroy(l_pi, l_nb_pocs);
                                                         return OPJ_FALSE;
                                                 }
 
@@ -254,7 +254,7 @@ opj_bool opj_t2_encode_packets( opj_t2_v2_t* p_t2,
 
                                 if (l_cp->m_specific_param.m_enc.m_max_comp_size) {
                                         if (l_comp_len > l_cp->m_specific_param.m_enc.m_max_comp_size) {
-                                                pi_destroy_v2(l_pi, l_nb_pocs);
+                                                opj_pi_destroy(l_pi, l_nb_pocs);
                                                 return OPJ_FALSE;
                                         }
                                 }
@@ -264,7 +264,7 @@ opj_bool opj_t2_encode_packets( opj_t2_v2_t* p_t2,
                 }
         }
         else {  /* t2_mode == FINAL_PASS  */
-                pi_create_encode_v2(l_pi, l_cp,p_tile_no,p_pino,p_tp_num,p_tp_pos,p_t2_mode);
+                opj_pi_create_encode(l_pi, l_cp,p_tile_no,p_pino,p_tp_num,p_tp_pos,p_t2_mode);
 
                 l_current_pi = &l_pi[p_pino];
 
@@ -273,7 +273,7 @@ opj_bool opj_t2_encode_packets( opj_t2_v2_t* p_t2,
                                 l_nb_bytes=0;
 
                                 if (! opj_t2_encode_packet(p_tile_no,p_tile, l_tcp, l_current_pi, l_current_data, &l_nb_bytes, p_max_len, cstr_info)) {
-                                        pi_destroy_v2(l_pi, l_nb_pocs);
+                                        opj_pi_destroy(l_pi, l_nb_pocs);
                                         return OPJ_FALSE;
                                 }
 
@@ -305,7 +305,7 @@ opj_bool opj_t2_encode_packets( opj_t2_v2_t* p_t2,
                 }
         }
 
-        pi_destroy_v2(l_pi, l_nb_pocs);
+        opj_pi_destroy(l_pi, l_nb_pocs);
 
         return OPJ_TRUE;
 }
@@ -340,7 +340,7 @@ opj_bool opj_t2_decode_packets( opj_t2_v2_t *p_t2,
 #endif
 
         /* create a packet iterator */
-        l_pi = pi_create_decode_v2(l_image, l_cp, p_tile_no);
+        l_pi = opj_pi_create_decode(l_image, l_cp, p_tile_no);
         if (!l_pi) {
                 return OPJ_FALSE;
         }
@@ -368,7 +368,7 @@ opj_bool opj_t2_decode_packets( opj_t2_v2_t *p_t2,
                                 first_pass_failed[l_current_pi->compno] = OPJ_FALSE;
 
                                 if (! opj_t2_decode_packet(p_t2,p_tile,l_tcp,l_current_pi,l_current_data,&l_nb_bytes_read,p_max_len,l_pack_info)) {
-                                        pi_destroy_v2(l_pi,l_nb_pocs);
+                                        opj_pi_destroy(l_pi,l_nb_pocs);
                                         return OPJ_FALSE;
                                 }
 
@@ -378,7 +378,7 @@ opj_bool opj_t2_decode_packets( opj_t2_v2_t *p_t2,
                         else {
                                 l_nb_bytes_read = 0;
                                 if (! opj_t2_skip_packet(p_t2,p_tile,l_tcp,l_current_pi,l_current_data,&l_nb_bytes_read,p_max_len,l_pack_info)) {
-                                        pi_destroy_v2(l_pi,l_nb_pocs);
+                                        opj_pi_destroy(l_pi,l_nb_pocs);
                                         return OPJ_FALSE;
                                 }
                         }
@@ -428,7 +428,7 @@ opj_bool opj_t2_decode_packets( opj_t2_v2_t *p_t2,
         /* << INDEX */
 
         /* don't forget to release pi */
-        pi_destroy_v2(l_pi,l_nb_pocs);
+        opj_pi_destroy(l_pi,l_nb_pocs);
         *p_data_read = l_current_data - p_src;
         return OPJ_TRUE;
 }

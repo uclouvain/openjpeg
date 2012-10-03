@@ -101,17 +101,6 @@ typedef struct opj_pi_iterator {
 /*@{*/
 /* ----------------------------------------------------------------------- */
 /**
-Create a packet iterator for Encoder
-@param image Raw image for which the packets will be listed
-@param cp Coding parameters
-@param tileno Number that identifies the tile for which to list the packets
-@param t2_mode If == 0 In Threshold calculation ,If == 1 Final pass
-@return Returns a packet iterator that points to the first packet of the tile
-@see pi_destroy
-*/
-opj_pi_iterator_t *pi_initialise_encode(opj_image_t *image, opj_cp_t *cp, int tileno,J2K_T2_MODE t2_mode);
-
-/**
  * Creates a packet iterator for encoding.
  *
  * @param	image		the image being encoded.
@@ -121,10 +110,10 @@ opj_pi_iterator_t *pi_initialise_encode(opj_image_t *image, opj_cp_t *cp, int ti
  *
  * @return	a list of packet iterator that points to the first packet of the tile (not true).
 */
-opj_pi_iterator_t *pi_initialise_encode_v2(	const struct opj_image *image,
-											struct opj_cp_v2 *cp,
-											OPJ_UINT32 tileno,
-											J2K_T2_MODE t2_mode);
+opj_pi_iterator_t *opj_pi_initialise_encode(const opj_image_t *image,
+                                            opj_cp_v2_t *cp,
+                                            OPJ_UINT32 tileno,
+                                            J2K_T2_MODE t2_mode);
 
 /**
  * Updates the encoding parameters of the codec.
@@ -142,26 +131,18 @@ Modify the packet iterator for enabling tile part generation
 @param pi Handle to the packet iterator generated in pi_initialise_encode
 @param cp Coding parameters
 @param tileno Number that identifies the tile for which to list the packets
-@param pino Iterator index for pi
-@param tpnum Tile part number of the current tile
-@param tppos The position of the tile part flag in the progression order
-@param t2_mode If == 0 In Threshold calculation ,If == 1 Final pass
-@param cur_totnum_tp The total number of tile parts in the current tile
-@return Returns true if an error is detected
-*/
-opj_bool pi_create_encode(opj_pi_iterator_t *pi, opj_cp_t *cp,int tileno, int pino,int tpnum, int tppos, J2K_T2_MODE t2_mode,int cur_totnum_tp);
-
-/**
-Modify the packet iterator for enabling tile part generation
-@param pi Handle to the packet iterator generated in pi_initialise_encode
-@param cp Coding parameters
-@param tileno Number that identifies the tile for which to list the packets
 @param pino   FIXME DOC
 @param tpnum Tile part number of the current tile
 @param tppos The position of the tile part flag in the progression order
 @param t2_mode FIXME DOC
 */
-void pi_create_encode_v2( opj_pi_iterator_t *pi, struct opj_cp_v2 *cp,OPJ_UINT32 tileno, OPJ_UINT32 pino,OPJ_UINT32 tpnum, OPJ_INT32 tppos, J2K_T2_MODE t2_mode);
+void opj_pi_create_encode(  opj_pi_iterator_t *pi, 
+                            opj_cp_v2_t *cp,
+                            OPJ_UINT32 tileno, 
+                            OPJ_UINT32 pino,
+                            OPJ_UINT32 tpnum, 
+                            OPJ_INT32 tppos, 
+                            J2K_T2_MODE t2_mode);
 
 /**
 Create a packet iterator for Decoder
@@ -169,38 +150,19 @@ Create a packet iterator for Decoder
 @param cp Coding parameters
 @param tileno Number that identifies the tile for which to list the packets
 @return Returns a packet iterator that points to the first packet of the tile
-@see pi_destroy
+@see opj_pi_destroy
 */
-opj_pi_iterator_t *pi_create_decode(opj_image_t * image, opj_cp_t * cp, int tileno);
-
-/**
-Create a packet iterator for Decoder
-@param image Raw image for which the packets will be listed
-@param cp Coding parameters
-@param tileno Number that identifies the tile for which to list the packets
-@return Returns a packet iterator that points to the first packet of the tile
-@see pi_destroy
-*/
-opj_pi_iterator_t *pi_create_decode_v2(struct opj_image * image, struct opj_cp_v2 * cp, OPJ_UINT32 tileno);
-
-/**
-Destroy a packet iterator
-@param pi Previously created packet iterator
-@param cp Coding parameters
-@param tileno Number that identifies the tile for which the packets were listed
-@see pi_create
-*/
-void pi_destroy(opj_pi_iterator_t *pi, opj_cp_t *cp, int tileno);
-
+opj_pi_iterator_t *opj_pi_create_decode(opj_image_t * image, 
+                                        opj_cp_v2_t * cp,
+                                        OPJ_UINT32 tileno);
 /**
  * Destroys a packet iterator array.
  *
  * @param	p_pi			the packet iterator array to destroy.
  * @param	p_nb_elements	the number of elements in the array.
  */
-void pi_destroy_v2(
-				opj_pi_iterator_t *p_pi,
-				OPJ_UINT32 p_nb_elements);
+void opj_pi_destroy(opj_pi_iterator_t *p_pi,
+                    OPJ_UINT32 p_nb_elements);
 
 /**
 Modify the packet iterator to point to the next packet
