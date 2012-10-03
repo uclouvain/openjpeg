@@ -125,11 +125,11 @@ void opj_bio_destroy(opj_bio_t *bio) {
 	}
 }
 
-ptrdiff_t bio_numbytes(opj_bio_t *bio) {
+ptrdiff_t opj_bio_numbytes(opj_bio_t *bio) {
 	return (bio->bp - bio->start);
 }
 
-void bio_init_enc(opj_bio_t *bio, unsigned char *bp, int len) {
+void opj_bio_init_enc(opj_bio_t *bio, OPJ_BYTE *bp, OPJ_UINT32 len) {
 	bio->start = bp;
 	bio->end = bp + len;
 	bio->bp = bp;
@@ -137,7 +137,7 @@ void bio_init_enc(opj_bio_t *bio, unsigned char *bp, int len) {
 	bio->ct = 8;
 }
 
-void bio_init_dec(opj_bio_t *bio, unsigned char *bp, int len) {
+void opj_bio_init_dec(opj_bio_t *bio, OPJ_BYTE *bp, OPJ_UINT32 len) {
 	bio->start = bp;
 	bio->end = bp + len;
 	bio->bp = bp;
@@ -145,15 +145,16 @@ void bio_init_dec(opj_bio_t *bio, unsigned char *bp, int len) {
 	bio->ct = 0;
 }
 
-void bio_write(opj_bio_t *bio, int v, int n) {
-	int i;
+void opj_bio_write(opj_bio_t *bio, OPJ_UINT32 v, OPJ_UINT32 n) {
+	OPJ_INT32 i;
 	for (i = n - 1; i >= 0; i--) {
 		opj_bio_putbit(bio, (v >> i) & 1);
 	}
 }
 
-int bio_read(opj_bio_t *bio, int n) {
-	int i, v;
+OPJ_UINT32 opj_bio_read(opj_bio_t *bio, OPJ_UINT32 n) {
+	OPJ_INT32 i;
+    OPJ_UINT32 v;
 	v = 0;
 	for (i = n - 1; i >= 0; i--) {
 		v += opj_bio_getbit(bio) << i;
@@ -161,27 +162,27 @@ int bio_read(opj_bio_t *bio, int n) {
 	return v;
 }
 
-int bio_flush(opj_bio_t *bio) {
+opj_bool opj_bio_flush(opj_bio_t *bio) {
 	bio->ct = 0;
 	if (! opj_bio_byteout(bio)) {
-		return 1;
+		return OPJ_FALSE;
 	}
 	if (bio->ct == 7) {
 		bio->ct = 0;
 		if (! opj_bio_byteout(bio)) {
-			return 1;
+			return OPJ_FALSE;
 		}
 	}
-	return 0;
+	return OPJ_TRUE;
 }
 
-int bio_inalign(opj_bio_t *bio) {
+opj_bool opj_bio_inalign(opj_bio_t *bio) {
 	bio->ct = 0;
 	if ((bio->buf & 0xff) == 0xff) {
 		if (! opj_bio_bytein(bio)) {
-			return 1;
+			return OPJ_FALSE;
 		}
 		bio->ct = 0;
 	}
-	return 0;
+	return OPJ_TRUE;
 }

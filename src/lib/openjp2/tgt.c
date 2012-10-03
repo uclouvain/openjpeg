@@ -308,12 +308,12 @@ void tgt_encode(opj_bio_t *bio, opj_tgt_tree_t *tree, OPJ_UINT32 leafno, OPJ_INT
                 while (low < threshold) {
                         if (low >= node->value) {
                                 if (!node->known) {
-                                        bio_write(bio, 1, 1);
+                                        opj_bio_write(bio, 1, 1);
                                         node->known = 1;
                                 }
                                 break;
                         }
-                        bio_write(bio, 0, 1);
+                        opj_bio_write(bio, 0, 1);
                         ++low;
                 }
                 
@@ -345,7 +345,7 @@ OPJ_UINT32 tgt_decode(opj_bio_t *bio, opj_tgt_tree_t *tree, OPJ_UINT32 leafno, O
                         low = node->low;
                 }
                 while (low < threshold && low < node->value) {
-                        if (bio_read(bio, 1)) {
+                        if (opj_bio_read(bio, 1)) {
                                 node->value = low;
                         } else {
                                 ++low;

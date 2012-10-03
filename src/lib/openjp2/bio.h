@@ -78,47 +78,47 @@ Number of bytes written.
 @param bio BIO handle
 @return Returns the number of bytes written
 */
-ptrdiff_t bio_numbytes(opj_bio_t *bio);
+ptrdiff_t opj_bio_numbytes(opj_bio_t *bio);
 /**
 Init encoder
 @param bio BIO handle
 @param bp Output buffer
 @param len Output buffer length 
 */
-void bio_init_enc(opj_bio_t *bio, unsigned char *bp, int len);
+void opj_bio_init_enc(opj_bio_t *bio, OPJ_BYTE *bp, OPJ_UINT32 len);
 /**
 Init decoder
 @param bio BIO handle
 @param bp Input buffer
 @param len Input buffer length 
 */
-void bio_init_dec(opj_bio_t *bio, unsigned char *bp, int len);
+void opj_bio_init_dec(opj_bio_t *bio, OPJ_BYTE *bp, OPJ_UINT32 len);
 /**
 Write bits
 @param bio BIO handle
 @param v Value of bits
 @param n Number of bits to write
 */
-void bio_write(opj_bio_t *bio, int v, int n);
+void opj_bio_write(opj_bio_t *bio, OPJ_UINT32 v, OPJ_UINT32 n);
 /**
 Read bits
 @param bio BIO handle
 @param n Number of bits to read 
 @return Returns the corresponding read number
 */
-int bio_read(opj_bio_t *bio, int n);
+OPJ_UINT32 opj_bio_read(opj_bio_t *bio, OPJ_UINT32 n);
 /**
 Flush bits
 @param bio BIO handle
-@return Returns 1 if successful, returns 0 otherwise
+@return Returns OPJ_TRUE if successful, returns OPJ_FALSE otherwise
 */
-int bio_flush(opj_bio_t *bio);
+opj_bool opj_bio_flush(opj_bio_t *bio);
 /**
 Passes the ending bits (coming from flushing)
 @param bio BIO handle
-@return Returns 1 if successful, returns 0 otherwise
+@return Returns OPJ_TRUE if successful, returns OPJ_FALSE otherwise
 */
-int bio_inalign(opj_bio_t *bio);
+opj_bool opj_bio_inalign(opj_bio_t *bio);
 /* ----------------------------------------------------------------------- */
 /*@}*/
 

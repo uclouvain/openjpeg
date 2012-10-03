@@ -146,15 +146,15 @@ static opj_bool opj_t2_init_seg(    opj_tcd_cblk_dec_v2_t* cblk,
 /* TODO MSD->LHE */
 static void t2_putcommacode(opj_bio_t *bio, int n) {
         while (--n >= 0) {
-                bio_write(bio, 1, 1);
+                opj_bio_write(bio, 1, 1);
         }
-        bio_write(bio, 0, 1);
+        opj_bio_write(bio, 0, 1);
 }
 
 OPJ_UINT32 opj_t2_getcommacode(opj_bio_t *bio) 
 {
     OPJ_UINT32 n = 0;
-    while (bio_read(bio, 1)) {
+    while (opj_bio_read(bio, 1)) {
 	    ++n;
     }
     return n;
@@ -162,29 +162,29 @@ OPJ_UINT32 opj_t2_getcommacode(opj_bio_t *bio)
 
 void opj_t2_putnumpasses(opj_bio_t *bio, OPJ_UINT32 n) {
         if (n == 1) {
-                bio_write(bio, 0, 1);
+                opj_bio_write(bio, 0, 1);
         } else if (n == 2) {
-                bio_write(bio, 2, 2);
+                opj_bio_write(bio, 2, 2);
         } else if (n <= 5) {
-                bio_write(bio, 0xc | (n - 3), 4);
+                opj_bio_write(bio, 0xc | (n - 3), 4);
         } else if (n <= 36) {
-                bio_write(bio, 0x1e0 | (n - 6), 9);
+                opj_bio_write(bio, 0x1e0 | (n - 6), 9);
         } else if (n <= 164) {
-                bio_write(bio, 0xff80 | (n - 37), 16);
+                opj_bio_write(bio, 0xff80 | (n - 37), 16);
         }
 }
 
 OPJ_UINT32 opj_t2_getnumpasses(opj_bio_t *bio) {
         OPJ_UINT32 n;
-        if (!bio_read(bio, 1))
+        if (!opj_bio_read(bio, 1))
                 return 1;
-        if (!bio_read(bio, 1))
+        if (!opj_bio_read(bio, 1))
                 return 2;
-        if ((n = bio_read(bio, 2)) != 3)
+        if ((n = opj_bio_read(bio, 2)) != 3)
                 return (3 + n);
-        if ((n = bio_read(bio, 5)) != 31)
+        if ((n = opj_bio_read(bio, 5)) != 31)
                 return (6 + n);
-        return (37 + bio_read(bio, 7));
+        return (37 + opj_bio_read(bio, 7));
 }
 
 /* ----------------------------------------------------------------------- */
@@ -562,8 +562,8 @@ opj_bool opj_t2_encode_packet(  OPJ_UINT32 tileno,
         }
 
         bio = opj_bio_create();
-        bio_init_enc(bio, c, length);
-        bio_write(bio, 1, 1);           /* Empty header bit */
+        opj_bio_init_enc(bio, c, length);
+        opj_bio_write(bio, 1, 1);           /* Empty header bit */
 
         /* Writing Packet header */
         band = res->bands;
@@ -595,7 +595,7 @@ opj_bool opj_t2_encode_packet(  OPJ_UINT32 tileno,
                         if (!cblk->numpasses) {
                                 tgt_encode(bio, prc->incltree, cblkno, layno + 1);
                         } else {
-                                bio_write(bio, layer->numpasses != 0, 1);
+                                opj_bio_write(bio, layer->numpasses != 0, 1);
                         }
 
                         /* if cblk not included, go to the next cblk  */
@@ -640,7 +640,7 @@ opj_bool opj_t2_encode_packet(  OPJ_UINT32 tileno,
                                 len += pass->len;
 
                                 if (pass->term || passno == (cblk->numpasses + layer->numpasses) - 1) {
-                                        bio_write(bio, len, cblk->numlenbits + int_floorlog2(nump));
+                                        opj_bio_write(bio, len, cblk->numlenbits + int_floorlog2(nump));
                                         len = 0;
                                         nump = 0;
                                 }
@@ -653,12 +653,12 @@ opj_bool opj_t2_encode_packet(  OPJ_UINT32 tileno,
                 ++band;
         }
 
-        if (bio_flush(bio)) {
+        if (!opj_bio_flush(bio)) {
                 opj_bio_destroy(bio);
                 return OPJ_FALSE;               /* modified to eliminate longjmp !! */
         }
 
-        l_nb_bytes = bio_numbytes(bio);
+        l_nb_bytes = opj_bio_numbytes(bio);
         c += l_nb_bytes;
         length -= l_nb_bytes;
 
@@ -862,12 +862,13 @@ opj_bool opj_t2_read_packet_header( opj_t2_v2_t* p_t2,
                 l_modified_length_ptr = &(l_remaining_length);
         }
 
-        bio_init_dec(l_bio, l_header_data,*l_modified_length_ptr);
+        opj_bio_init_dec(l_bio, l_header_data,*l_modified_length_ptr);
 
-        l_present = bio_read(l_bio, 1);
+        l_present = opj_bio_read(l_bio, 1);
         if (!l_present) {
-                bio_inalign(l_bio);
-                l_header_data += bio_numbytes(l_bio);
+            /* TODO MSD: no test to control the output of this function*/
+                opj_bio_inalign(l_bio);
+                l_header_data += opj_bio_numbytes(l_bio);
                 opj_bio_destroy(l_bio);
 
                 /* EPH markers */
@@ -917,7 +918,7 @@ opj_bool opj_t2_read_packet_header( opj_t2_v2_t* p_t2,
                                 /* else one bit */
                         }
                         else {
-                                l_included = bio_read(l_bio, 1);
+                                l_included = opj_bio_read(l_bio, 1);
                         }
 
                         /* if cblk not included */
@@ -967,7 +968,7 @@ opj_bool opj_t2_read_packet_header( opj_t2_v2_t* p_t2,
 
                         do {
                                 l_cblk->segs[l_segno].numnewpasses = int_min(l_cblk->segs[l_segno].maxpasses - l_cblk->segs[l_segno].numpasses, n);
-                                l_cblk->segs[l_segno].newlen = bio_read(l_bio, l_cblk->numlenbits + uint_floorlog2(l_cblk->segs[l_segno].numnewpasses));
+                                l_cblk->segs[l_segno].newlen = opj_bio_read(l_bio, l_cblk->numlenbits + uint_floorlog2(l_cblk->segs[l_segno].numnewpasses));
 
                                 n -= l_cblk->segs[l_segno].numnewpasses;
                                 if (n > 0) {
@@ -986,12 +987,12 @@ opj_bool opj_t2_read_packet_header( opj_t2_v2_t* p_t2,
                 ++l_band;
         }
 
-        if (bio_inalign(l_bio)) {
+        if (!opj_bio_inalign(l_bio)) {
                 opj_bio_destroy(l_bio);
                 return OPJ_FALSE;
         }
 
-        l_header_data += bio_numbytes(l_bio);
+        l_header_data += opj_bio_numbytes(l_bio);
         opj_bio_destroy(l_bio);
 
         /* EPH markers */
