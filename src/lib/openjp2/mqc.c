@@ -377,6 +377,7 @@ OPJ_UINT32 mqc_numbytes(opj_mqc_t *mqc) {
 }
 
 void mqc_init_enc(opj_mqc_t *mqc, OPJ_BYTE *bp) {
+    /* TODO MSD: need to take a look to the v2 version */
 	mqc_setcurctx(mqc, 0);
 	mqc->a = 0x8000;
 	mqc->c = 0;
@@ -517,19 +518,20 @@ opj_bool mqc_init_dec(opj_mqc_t *mqc, OPJ_BYTE *bp, OPJ_UINT32 len) {
 	if (len==0) mqc->c = 0xff << 16;
 	else mqc->c = *mqc->bp << 16;
 
-#ifdef MQC_PERF_OPT
+#ifdef MQC_PERF_OPT /* TODO_MSD: check this option and put in experimental */
 	{
-		unsigned int c;
-		unsigned int *ip;
-		unsigned char *end = mqc->end - 1;
-                void* new_buffer = opj_realloc(mqc->buffer, (len + 1) * sizeof(unsigned int));
-                if (! new_buffer) {
-                        opj_free(mqc->buffer);
-                        mqc->buffer = NULL;
-                        return OPJ_FALSE;
-                }
-                mqc->buffer = new_buffer;
-		ip = (unsigned int *) mqc->buffer;
+        OPJ_UINT32 c;
+		OPJ_UINT32 *ip;
+		OPJ_BYTE *end = mqc->end - 1;
+        void* new_buffer = opj_realloc(mqc->buffer, (len + 1) * sizeof(OPJ_UINT32));
+        if (! new_buffer) {
+            opj_free(mqc->buffer);
+            mqc->buffer = NULL;
+            return OPJ_FALSE;
+        }
+        mqc->buffer = new_buffer;
+		
+        ip = (OPJ_UINT32 *) mqc->buffer;
 
 		while (bp < end) {
 			c = *(bp + 1);
