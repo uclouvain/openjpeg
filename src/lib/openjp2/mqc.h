@@ -83,24 +83,24 @@ typedef struct opj_mqc {
 Create a new MQC handle 
 @return Returns a new MQC handle if successful, returns NULL otherwise
 */
-opj_mqc_t* mqc_create(void);
+opj_mqc_t* opj_mqc_create(void);
 /**
 Destroy a previously created MQC handle
 @param mqc MQC handle to destroy
 */
-void mqc_destroy(opj_mqc_t *mqc);
+void opj_mqc_destroy(opj_mqc_t *mqc);
 /**
 Return the number of bytes written/read since initialisation
 @param mqc MQC handle
 @return Returns the number of bytes already encoded
 */
-OPJ_UINT32 mqc_numbytes(opj_mqc_t *mqc);
+OPJ_UINT32 opj_mqc_numbytes(opj_mqc_t *mqc);
 /**
 Reset the states of all the context of the coder/decoder 
 (each context is set to a state where 0 and 1 are more or less equiprobable)
 @param mqc MQC handle
 */
-void mqc_resetstates(opj_mqc_t *mqc);
+void opj_mqc_resetstates(opj_mqc_t *mqc);
 /**
 Set the state of a particular context
 @param mqc MQC handle
@@ -108,37 +108,37 @@ Set the state of a particular context
 @param msb The MSB of the new state of the context
 @param prob Number that identifies the probability of the symbols for the new state of the context
 */
-void mqc_setstate(opj_mqc_t *mqc, OPJ_UINT32 ctxno, OPJ_UINT32 msb, OPJ_INT32 prob);
+void opj_mqc_setstate(opj_mqc_t *mqc, OPJ_UINT32 ctxno, OPJ_UINT32 msb, OPJ_INT32 prob);
 /**
 Initialize the encoder
 @param mqc MQC handle
 @param bp Pointer to the start of the buffer where the bytes will be written
 */
-void mqc_init_enc(opj_mqc_t *mqc, OPJ_BYTE *bp);
+void opj_mqc_init_enc(opj_mqc_t *mqc, OPJ_BYTE *bp);
 /**
 Set the current context used for coding/decoding
 @param mqc MQC handle
 @param ctxno Number that identifies the context
 */
-#define mqc_setcurctx(mqc, ctxno)	(mqc)->curctx = &(mqc)->ctxs[(OPJ_UINT32)(ctxno)]
+#define opj_mqc_setcurctx(mqc, ctxno)	(mqc)->curctx = &(mqc)->ctxs[(OPJ_UINT32)(ctxno)]
 /**
 Encode a symbol using the MQ-coder
 @param mqc MQC handle
 @param d The symbol to be encoded (0 or 1)
 */
-void mqc_encode(opj_mqc_t *mqc, OPJ_UINT32 d);
+void opj_mqc_encode(opj_mqc_t *mqc, OPJ_UINT32 d);
 /**
 Flush the encoder, so that all remaining data is written
 @param mqc MQC handle
 */
-void mqc_flush(opj_mqc_t *mqc);
+void opj_mqc_flush(opj_mqc_t *mqc);
 /**
 BYPASS mode switch, initialization operation. 
 JPEG 2000 p 505. 
 <h2>Not fully implemented and tested !!</h2>
 @param mqc MQC handle
 */
-void mqc_bypass_init_enc(opj_mqc_t *mqc);
+void opj_mqc_bypass_init_enc(opj_mqc_t *mqc);
 /**
 BYPASS mode switch, coding operation. 
 JPEG 2000 p 505. 
@@ -146,53 +146,53 @@ JPEG 2000 p 505.
 @param mqc MQC handle
 @param d The symbol to be encoded (0 or 1)
 */
-void mqc_bypass_enc(opj_mqc_t *mqc, OPJ_UINT32 d);
+void opj_mqc_bypass_enc(opj_mqc_t *mqc, OPJ_UINT32 d);
 /**
 BYPASS mode switch, flush operation
 <h2>Not fully implemented and tested !!</h2>
 @param mqc MQC handle
 @return Returns 1 (always)
 */
-OPJ_UINT32 mqc_bypass_flush_enc(opj_mqc_t *mqc);
+OPJ_UINT32 opj_mqc_bypass_flush_enc(opj_mqc_t *mqc);
 /**
 RESET mode switch
 @param mqc MQC handle
 */
-void mqc_reset_enc(opj_mqc_t *mqc);
+void opj_mqc_reset_enc(opj_mqc_t *mqc);
 /**
 RESTART mode switch (TERMALL)
 @param mqc MQC handle
 @return Returns 1 (always)
 */
-OPJ_UINT32 mqc_restart_enc(opj_mqc_t *mqc);
+OPJ_UINT32 opj_mqc_restart_enc(opj_mqc_t *mqc);
 /**
 RESTART mode switch (TERMALL) reinitialisation
 @param mqc MQC handle
 */
-void mqc_restart_init_enc(opj_mqc_t *mqc);
+void opj_mqc_restart_init_enc(opj_mqc_t *mqc);
 /**
 ERTERM mode switch (PTERM)
 @param mqc MQC handle
 */
-void mqc_erterm_enc(opj_mqc_t *mqc);
+void opj_mqc_erterm_enc(opj_mqc_t *mqc);
 /**
 SEGMARK mode switch (SEGSYM)
 @param mqc MQC handle
 */
-void mqc_segmark_enc(opj_mqc_t *mqc);
+void opj_mqc_segmark_enc(opj_mqc_t *mqc);
 /**
 Initialize the decoder
 @param mqc MQC handle
 @param bp Pointer to the start of the buffer from which the bytes will be read
 @param len Length of the input buffer
 */
-opj_bool mqc_init_dec(opj_mqc_t *mqc, OPJ_BYTE *bp, OPJ_UINT32 len);
+opj_bool opj_mqc_init_dec(opj_mqc_t *mqc, OPJ_BYTE *bp, OPJ_UINT32 len);
 /**
 Decode a symbol
 @param mqc MQC handle
 @return Returns the decoded symbol (0 or 1)
 */
-OPJ_INT32 mqc_decode(opj_mqc_t * const mqc);
+OPJ_INT32 opj_mqc_decode(opj_mqc_t * const mqc);
 /* ----------------------------------------------------------------------- */
 /*@}*/
 
