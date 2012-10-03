@@ -207,7 +207,7 @@ Modify the packet iterator to point to the next packet
 @param pi Packet iterator to modify
 @return Returns false if pi pointed to the last packet or else returns true
 */
-opj_bool pi_next(opj_pi_iterator_t * pi);
+opj_bool opj_pi_next(opj_pi_iterator_t * pi);
 /* ----------------------------------------------------------------------- */
 /*@}*/
 

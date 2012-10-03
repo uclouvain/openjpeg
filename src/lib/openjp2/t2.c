@@ -235,7 +235,7 @@ opj_bool opj_t2_encode_packets( opj_t2_v2_t* p_t2,
                                 /* TODO MSD : check why this function cannot fail (cf. v1) */
                                 pi_create_encode_v2(l_pi, l_cp,p_tile_no,poc,l_tp_num,p_tp_pos,p_t2_mode);
 
-                                while (pi_next(l_current_pi)) {
+                                while (opj_pi_next(l_current_pi)) {
                                         if (l_current_pi->layno < p_maxlayers) {
                                                 l_nb_bytes = 0;
 
@@ -268,7 +268,7 @@ opj_bool opj_t2_encode_packets( opj_t2_v2_t* p_t2,
 
                 l_current_pi = &l_pi[p_pino];
 
-                while (pi_next(l_current_pi)) {
+                while (opj_pi_next(l_current_pi)) {
                         if (l_current_pi->layno < p_maxlayers) {
                                 l_nb_bytes=0;
 
@@ -358,7 +358,7 @@ opj_bool opj_t2_decode_packets( opj_t2_v2_t *p_t2,
                 opj_bool* first_pass_failed = (opj_bool*)opj_malloc(l_image->numcomps * sizeof(opj_bool));
                 memset(first_pass_failed, OPJ_TRUE, l_image->numcomps * sizeof(opj_bool));
 
-                while (pi_next(l_current_pi)) {
+                while (opj_pi_next(l_current_pi)) {
 
 
                         if (l_tcp->num_layers_to_decode > l_current_pi->layno
