@@ -5,6 +5,7 @@
  * Copyright (c) 2002-2003, Yannick Verschueren
  * Copyright (c) 2003-2007, Francois-Olivier Devaux and Antonin Descampe
  * Copyright (c) 2005, Herve Drolon, FreeImage Team
+ * Copyright (c) 2008, Jerome Fimes, Communications & Systemes <jerome.fimes@c-s.fr>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -47,9 +48,9 @@ This struct defines the state of a context.
 */
 typedef struct opj_mqc_state {
 	/** the probability of the Least Probable Symbol (0.75->0x8000, 1.5->0xffff) */
-	unsigned int qeval;
+	OPJ_UINT32 qeval;
 	/** the Most Probable Symbol (0 or 1) */
-	int mps;
+	OPJ_INT32 mps;
 	/** next state if the next encoded symbol is the MPS */
 	struct opj_mqc_state *nmps;
 	/** next state if the next encoded symbol is the LPS */
@@ -62,12 +63,12 @@ typedef struct opj_mqc_state {
 MQ coder
 */
 typedef struct opj_mqc {
-	unsigned int c;
-	unsigned int a;
-	unsigned int ct;
-	unsigned char *bp;
-	unsigned char *start;
-	unsigned char *end;
+	OPJ_UINT32 c;
+	OPJ_UINT32 a;
+	OPJ_UINT32 ct;
+	OPJ_BYTE *bp;
+	OPJ_BYTE *start;
+	OPJ_BYTE *end;
 	opj_mqc_state_t *ctxs[MQC_NUMCTXS];
 	opj_mqc_state_t **curctx;
 #ifdef MQC_PERF_OPT
@@ -93,7 +94,7 @@ Return the number of bytes written/read since initialisation
 @param mqc MQC handle
 @return Returns the number of bytes already encoded
 */
-int mqc_numbytes(opj_mqc_t *mqc);
+OPJ_UINT32 mqc_numbytes(opj_mqc_t *mqc);
 /**
 Reset the states of all the context of the coder/decoder 
 (each context is set to a state where 0 and 1 are more or less equiprobable)
@@ -107,25 +108,25 @@ Set the state of a particular context
 @param msb The MSB of the new state of the context
 @param prob Number that identifies the probability of the symbols for the new state of the context
 */
-void mqc_setstate(opj_mqc_t *mqc, int ctxno, int msb, int prob);
+void mqc_setstate(opj_mqc_t *mqc, OPJ_UINT32 ctxno, OPJ_UINT32 msb, OPJ_INT32 prob);
 /**
 Initialize the encoder
 @param mqc MQC handle
 @param bp Pointer to the start of the buffer where the bytes will be written
 */
-void mqc_init_enc(opj_mqc_t *mqc, unsigned char *bp);
+void mqc_init_enc(opj_mqc_t *mqc, OPJ_BYTE *bp);
 /**
 Set the current context used for coding/decoding
 @param mqc MQC handle
 @param ctxno Number that identifies the context
 */
-#define mqc_setcurctx(mqc, ctxno)	(mqc)->curctx = &(mqc)->ctxs[(int)(ctxno)]
+#define mqc_setcurctx(mqc, ctxno)	(mqc)->curctx = &(mqc)->ctxs[(OPJ_UINT32)(ctxno)]
 /**
 Encode a symbol using the MQ-coder
 @param mqc MQC handle
 @param d The symbol to be encoded (0 or 1)
 */
-void mqc_encode(opj_mqc_t *mqc, int d);
+void mqc_encode(opj_mqc_t *mqc, OPJ_UINT32 d);
 /**
 Flush the encoder, so that all remaining data is written
 @param mqc MQC handle
@@ -145,14 +146,14 @@ JPEG 2000 p 505.
 @param mqc MQC handle
 @param d The symbol to be encoded (0 or 1)
 */
-void mqc_bypass_enc(opj_mqc_t *mqc, int d);
+void mqc_bypass_enc(opj_mqc_t *mqc, OPJ_UINT32 d);
 /**
 BYPASS mode switch, flush operation
 <h2>Not fully implemented and tested !!</h2>
 @param mqc MQC handle
 @return Returns 1 (always)
 */
-int mqc_bypass_flush_enc(opj_mqc_t *mqc);
+OPJ_UINT32 mqc_bypass_flush_enc(opj_mqc_t *mqc);
 /**
 RESET mode switch
 @param mqc MQC handle
@@ -163,7 +164,7 @@ RESTART mode switch (TERMALL)
 @param mqc MQC handle
 @return Returns 1 (always)
 */
-int mqc_restart_enc(opj_mqc_t *mqc);
+OPJ_UINT32 mqc_restart_enc(opj_mqc_t *mqc);
 /**
 RESTART mode switch (TERMALL) reinitialisation
 @param mqc MQC handle
@@ -185,13 +186,13 @@ Initialize the decoder
 @param bp Pointer to the start of the buffer from which the bytes will be read
 @param len Length of the input buffer
 */
-opj_bool mqc_init_dec(opj_mqc_t *mqc, unsigned char *bp, int len);
+opj_bool mqc_init_dec(opj_mqc_t *mqc, OPJ_BYTE *bp, OPJ_UINT32 len);
 /**
 Decode a symbol
 @param mqc MQC handle
 @return Returns the decoded symbol (0 or 1)
 */
-int mqc_decode(opj_mqc_t *const mqc);
+OPJ_INT32 mqc_decode(opj_mqc_t * const mqc);
 /* ----------------------------------------------------------------------- */
 /*@}*/
 
