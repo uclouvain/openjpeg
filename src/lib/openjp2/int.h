@@ -47,7 +47,7 @@ The functions in INT.H have for goal to realize operations on integers.
 Get the minimum of two integers
 @return Returns a if a < b else b
 */
-static INLINE int int_min(int a, int b) {
+static INLINE OPJ_INT32 int_min(OPJ_INT32 a, OPJ_INT32 b) {
 	return a < b ? a : b;
 }
 
@@ -63,7 +63,7 @@ static INLINE OPJ_UINT32 uint_min(OPJ_UINT32 a, OPJ_UINT32 b) {
 Get the maximum of two integers
 @return Returns a if a > b else b
 */
-static INLINE int int_max(int a, int b) {
+static INLINE OPJ_INT32 int_max(OPJ_INT32 a, OPJ_INT32 b) {
 	return (a > b) ? a : b;
 }
 
@@ -84,7 +84,7 @@ Clamp an integer inside an interval
 <li>Returns min if (a < min) 
 </ul>
 */
-static INLINE int int_clamp(int a, int min, int max) {
+static INLINE OPJ_INT32 int_clamp(OPJ_INT32 a, OPJ_INT32 min, OPJ_INT32 max) {
 	if (a < min)
 		return min;
 	if (a > max)
@@ -94,14 +94,14 @@ static INLINE int int_clamp(int a, int min, int max) {
 /**
 @return Get absolute value of integer
 */
-static INLINE int int_abs(int a) {
+static INLINE OPJ_INT32 int_abs(OPJ_INT32 a) {
 	return a < 0 ? -a : a;
 }
 /**
 Divide an integer and round upwards
 @return Returns a divided by b
 */
-static INLINE int int_ceildiv(int a, int b) {
+static INLINE OPJ_INT32 int_ceildiv(OPJ_INT32 a, OPJ_INT32 b) {
 	return (a + b - 1) / b;
 }
 
@@ -117,22 +117,22 @@ static INLINE OPJ_UINT32  uint_ceildiv(OPJ_UINT32  a, OPJ_UINT32  b) {
 Divide an integer by a power of 2 and round upwards
 @return Returns a divided by 2^b
 */
-static INLINE int int_ceildivpow2(int a, int b) {
+static INLINE OPJ_INT32 int_ceildivpow2(OPJ_INT32 a, OPJ_INT32 b) {
 	return (a + (1 << b) - 1) >> b;
 }
 /**
 Divide an integer by a power of 2 and round downwards
 @return Returns a divided by 2^b
 */
-static INLINE int int_floordivpow2(int a, int b) {
+static INLINE OPJ_INT32 int_floordivpow2(OPJ_INT32 a, OPJ_INT32 b) {
 	return a >> b;
 }
 /**
 Get logarithm of an integer and round downwards
 @return Returns log2(a)
 */
-static INLINE int int_floorlog2(int a) {
-	int l;
+static INLINE OPJ_INT32 int_floorlog2(OPJ_INT32 a) {
+	OPJ_INT32 l;
 	for (l = 0; a > 1; l++) {
 		a >>= 1;
 	}
@@ -149,6 +149,18 @@ static INLINE OPJ_UINT32  uint_floorlog2(OPJ_UINT32  a) {
 		a >>= 1;
 	}
 	return l;
+}
+
+/**
+Multiply two fixed-precision rational numbers.
+@param a
+@param b
+@return Returns a * b
+*/
+static INLINE OPJ_INT32 fix_mul(OPJ_INT32 a, OPJ_INT32 b) {
+    OPJ_INT64 temp = (OPJ_INT64) a * (OPJ_INT64) b ;
+    temp += temp & 4096;
+    return (int) (temp >> 13) ;
 }
 
 /* ----------------------------------------------------------------------- */

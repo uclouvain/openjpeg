@@ -168,7 +168,6 @@ static INLINE long lrintf(float f){
 #include "t2.h"
 #include "mct.h"
 #include "int.h"
-#include "fix.h"
 
 #include "cidx_manager.h"
 #include "indexbox_manager.h"
