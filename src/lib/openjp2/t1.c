@@ -318,7 +318,7 @@ void opj_t1_enc_sigpass_step(   opj_t1_t *t1,
 	
 	flag = vsc ? ((*flagsp) & (~(T1_SIG_S | T1_SIG_SE | T1_SIG_SW | T1_SGN_S))) : (*flagsp);
 	if ((flag & T1_SIG_OTH) && !(flag & (T1_SIG | T1_VISIT))) {
-		v = int_abs(*datap) & one ? 1 : 0;
+		v = opj_int_abs(*datap) & one ? 1 : 0;
 		opj_mqc_setcurctx(mqc, opj_t1_getctxno_zc(flag, orient));	/* ESSAI */
 		if (type == T1_TYPE_RAW) {	/* BYPASS/LAZY MODE */
 			opj_mqc_bypass_enc(mqc, v);
@@ -327,7 +327,7 @@ void opj_t1_enc_sigpass_step(   opj_t1_t *t1,
 		}
 		if (v) {
 			v = *datap < 0 ? 1 : 0;
-			*nmsedec +=	opj_t1_getnmsedec_sig(int_abs(*datap), bpno + T1_NMSEDEC_FRACBITS);
+			*nmsedec +=	opj_t1_getnmsedec_sig(opj_int_abs(*datap), bpno + T1_NMSEDEC_FRACBITS);
 			opj_mqc_setcurctx(mqc, opj_t1_getctxno_sc(flag));	/* ESSAI */
 			if (type == T1_TYPE_RAW) {	/* BYPASS/LAZY MODE */
 				opj_mqc_bypass_enc(mqc, v);
@@ -388,8 +388,8 @@ void opj_t1_enc_refpass_step(   opj_t1_t *t1,
 	
 	flag = vsc ? ((*flagsp) & (~(T1_SIG_S | T1_SIG_SE | T1_SIG_SW | T1_SGN_S))) : (*flagsp);
 	if ((flag & (T1_SIG | T1_VISIT)) == T1_SIG) {
-		*nmsedec += opj_t1_getnmsedec_ref(int_abs(*datap), bpno + T1_NMSEDEC_FRACBITS);
-		v = int_abs(*datap) & one ? 1 : 0;
+		*nmsedec += opj_t1_getnmsedec_ref(opj_int_abs(*datap), bpno + T1_NMSEDEC_FRACBITS);
+		v = opj_int_abs(*datap) & one ? 1 : 0;
 		opj_mqc_setcurctx(mqc, opj_t1_getctxno_mag(flag));	/* ESSAI */
 		if (type == T1_TYPE_RAW) {	/* BYPASS/LAZY MODE */
 			opj_mqc_bypass_enc(mqc, v);
@@ -454,11 +454,11 @@ void opj_t1_enc_clnpass_step(
 	}
 	if (!(*flagsp & (T1_SIG | T1_VISIT))) {
 		opj_mqc_setcurctx(mqc, opj_t1_getctxno_zc(flag, orient));
-		v = int_abs(*datap) & one ? 1 : 0;
+		v = opj_int_abs(*datap) & one ? 1 : 0;
 		opj_mqc_encode(mqc, v);
 		if (v) {
 LABEL_PARTIAL:
-			*nmsedec += opj_t1_getnmsedec_sig(int_abs(*datap), bpno + T1_NMSEDEC_FRACBITS);
+			*nmsedec += opj_t1_getnmsedec_sig(opj_int_abs(*datap), bpno + T1_NMSEDEC_FRACBITS);
 			opj_mqc_setcurctx(mqc, opj_t1_getctxno_sc(flag));
 			v = *datap < 0 ? 1 : 0;
 			opj_mqc_encode(mqc, v ^ opj_t1_getspb(flag));
@@ -577,7 +577,7 @@ void opj_t1_enc_clnpass(
 			}
 			if (agg) {
 				for (runlen = 0; runlen < 4; ++runlen) {
-					if (int_abs(t1->data[((k + runlen)*t1->w) + i]) & one)
+					if (opj_int_abs(t1->data[((k + runlen)*t1->w) + i]) & one)
 						break;
 				}
 				opj_mqc_setcurctx(mqc, T1_CTXNO_AGG);
@@ -1124,7 +1124,7 @@ opj_bool opj_t1_encode_cblks(   opj_t1_t *t1,
 								for (i = 0; i < cblk_w; ++i) {
 									OPJ_INT32 tmp = tiledp[(j * tile_w) + i];
 									datap[(j * cblk_w) + i] =
-										fix_mul(
+										opj_int_fix_mul(
 										tmp,
 										bandconst) >> (11 - T1_NMSEDEC_FRACBITS);
 								}
@@ -1181,10 +1181,10 @@ void opj_t1_encode_cblk(opj_t1_t *t1,
 	max = 0;
 	for (i = 0; i < t1->w * t1->h; ++i) {
 		OPJ_INT32 tmp = abs(t1->data[i]);
-		max = int_max(max, tmp);
+		max = opj_int_max(max, tmp);
 	}
 
-	cblk->numbps = max ? (int_floorlog2(max) + 1) - T1_NMSEDEC_FRACBITS : 0;
+	cblk->numbps = max ? (opj_int_floorlog2(max) + 1) - T1_NMSEDEC_FRACBITS : 0;
 
 	bpno = cblk->numbps - 1;
 	passtype = 2;

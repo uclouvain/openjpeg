@@ -331,40 +331,40 @@ void opj_dwt_encode_1_real(OPJ_INT32 *a, OPJ_INT32 dn, OPJ_INT32 sn, OPJ_INT32 c
 	if (!cas) {
 		if ((dn > 0) || (sn > 1)) {	/* NEW :  CASE ONE ELEMENT */
 			for (i = 0; i < dn; i++)
-				D(i) -= fix_mul(S_(i) + S_(i + 1), 12993);
+				D(i) -= opj_int_fix_mul(S_(i) + S_(i + 1), 12993);
 			for (i = 0; i < sn; i++)
-				S(i) -= fix_mul(D_(i - 1) + D_(i), 434);
+				S(i) -= opj_int_fix_mul(D_(i - 1) + D_(i), 434);
 			for (i = 0; i < dn; i++)
-				D(i) += fix_mul(S_(i) + S_(i + 1), 7233);
+				D(i) += opj_int_fix_mul(S_(i) + S_(i + 1), 7233);
 			for (i = 0; i < sn; i++)
-				S(i) += fix_mul(D_(i - 1) + D_(i), 3633);
+				S(i) += opj_int_fix_mul(D_(i - 1) + D_(i), 3633);
 			for (i = 0; i < dn; i++)
-				D(i) = fix_mul(D(i), 5038);	/*5038 */
+				D(i) = opj_int_fix_mul(D(i), 5038);	/*5038 */
 			for (i = 0; i < sn; i++)
-				S(i) = fix_mul(S(i), 6659);	/*6660 */
+				S(i) = opj_int_fix_mul(S(i), 6659);	/*6660 */
 		}
 	} else {
 		if ((sn > 0) || (dn > 1)) {	/* NEW :  CASE ONE ELEMENT */
 			for (i = 0; i < dn; i++)
-				S(i) -= fix_mul(DD_(i) + DD_(i - 1), 12993);
+				S(i) -= opj_int_fix_mul(DD_(i) + DD_(i - 1), 12993);
 			for (i = 0; i < sn; i++)
-				D(i) -= fix_mul(SS_(i) + SS_(i + 1), 434);
+				D(i) -= opj_int_fix_mul(SS_(i) + SS_(i + 1), 434);
 			for (i = 0; i < dn; i++)
-				S(i) += fix_mul(DD_(i) + DD_(i - 1), 7233);
+				S(i) += opj_int_fix_mul(DD_(i) + DD_(i - 1), 7233);
 			for (i = 0; i < sn; i++)
-				D(i) += fix_mul(SS_(i) + SS_(i + 1), 3633);
+				D(i) += opj_int_fix_mul(SS_(i) + SS_(i + 1), 3633);
 			for (i = 0; i < dn; i++)
-				S(i) = fix_mul(S(i), 5038);	/*5038 */
+				S(i) = opj_int_fix_mul(S(i), 5038);	/*5038 */
 			for (i = 0; i < sn; i++)
-				D(i) = fix_mul(D(i), 6659);	/*6660 */
+				D(i) = opj_int_fix_mul(D(i), 6659);	/*6660 */
 		}
 	}
 }
 
 void opj_dwt_encode_stepsize(OPJ_INT32 stepsize, OPJ_INT32 numbps, opj_stepsize_t *bandno_stepsize) {
 	OPJ_INT32 p, n;
-	p = int_floorlog2(stepsize) - 13;
-	n = 11 - int_floorlog2(stepsize);
+	p = opj_int_floorlog2(stepsize) - 13;
+	n = 11 - opj_int_floorlog2(stepsize);
 	bandno_stepsize->mant = (n < 0 ? stepsize >> -n : stepsize << n) & 0x7ff;
 	bandno_stepsize->expn = numbps - p;
 }
@@ -857,17 +857,17 @@ void opj_v4dwt_decode(v4dwt_t* restrict dwt)
 #ifdef __SSE__
 	opj_v4dwt_decode_step1_sse(dwt->wavelet+a, dwt->sn, _mm_set1_ps(opj_K));
 	opj_v4dwt_decode_step1_sse(dwt->wavelet+b, dwt->dn, _mm_set1_ps(opj_c13318));
-	opj_v4dwt_decode_step2_sse(dwt->wavelet+b, dwt->wavelet+a+1, dwt->sn, int_min(dwt->sn, dwt->dn-a), _mm_set1_ps(opj_dwt_delta));
-	opj_v4dwt_decode_step2_sse(dwt->wavelet+a, dwt->wavelet+b+1, dwt->dn, int_min(dwt->dn, dwt->sn-b), _mm_set1_ps(opj_dwt_gamma));
-	opj_v4dwt_decode_step2_sse(dwt->wavelet+b, dwt->wavelet+a+1, dwt->sn, int_min(dwt->sn, dwt->dn-a), _mm_set1_ps(opj_dwt_beta));
-	opj_v4dwt_decode_step2_sse(dwt->wavelet+a, dwt->wavelet+b+1, dwt->dn, int_min(dwt->dn, dwt->sn-b), _mm_set1_ps(opj_dwt_alpha));
+	opj_v4dwt_decode_step2_sse(dwt->wavelet+b, dwt->wavelet+a+1, dwt->sn, opj_int_min(dwt->sn, dwt->dn-a), _mm_set1_ps(opj_dwt_delta));
+	opj_v4dwt_decode_step2_sse(dwt->wavelet+a, dwt->wavelet+b+1, dwt->dn, opj_int_min(dwt->dn, dwt->sn-b), _mm_set1_ps(opj_dwt_gamma));
+	opj_v4dwt_decode_step2_sse(dwt->wavelet+b, dwt->wavelet+a+1, dwt->sn, opj_int_min(dwt->sn, dwt->dn-a), _mm_set1_ps(opj_dwt_beta));
+	opj_v4dwt_decode_step2_sse(dwt->wavelet+a, dwt->wavelet+b+1, dwt->dn, opj_int_min(dwt->dn, dwt->sn-b), _mm_set1_ps(opj_dwt_alpha));
 #else
 	opj_v4dwt_decode_step1(dwt->wavelet+a, dwt->sn, opj_K);
 	opj_v4dwt_decode_step1(dwt->wavelet+b, dwt->dn, opj_c13318);
-	opj_v4dwt_decode_step2(dwt->wavelet+b, dwt->wavelet+a+1, dwt->sn, int_min(dwt->sn, dwt->dn-a), opj_dwt_delta);
-	opj_v4dwt_decode_step2(dwt->wavelet+a, dwt->wavelet+b+1, dwt->dn, int_min(dwt->dn, dwt->sn-b), opj_dwt_gamma);
-	opj_v4dwt_decode_step2(dwt->wavelet+b, dwt->wavelet+a+1, dwt->sn, int_min(dwt->sn, dwt->dn-a), opj_dwt_beta);
-	opj_v4dwt_decode_step2(dwt->wavelet+a, dwt->wavelet+b+1, dwt->dn, int_min(dwt->dn, dwt->sn-b), opj_dwt_alpha);
+	opj_v4dwt_decode_step2(dwt->wavelet+b, dwt->wavelet+a+1, dwt->sn, opj_int_min(dwt->sn, dwt->dn-a), opj_dwt_delta);
+	opj_v4dwt_decode_step2(dwt->wavelet+a, dwt->wavelet+b+1, dwt->dn, opj_int_min(dwt->dn, dwt->sn-b), opj_dwt_gamma);
+	opj_v4dwt_decode_step2(dwt->wavelet+b, dwt->wavelet+a+1, dwt->sn, opj_int_min(dwt->sn, dwt->dn-a), opj_dwt_beta);
+	opj_v4dwt_decode_step2(dwt->wavelet+a, dwt->wavelet+b+1, dwt->dn, opj_int_min(dwt->dn, dwt->sn-b), opj_dwt_alpha);
 #endif
 }
 

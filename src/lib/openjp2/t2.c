@@ -373,7 +373,7 @@ opj_bool opj_t2_decode_packets( opj_t2_v2_t *p_t2,
                                 }
 
                                 l_img_comp = &(l_image->comps[l_current_pi->compno]);
-                                l_img_comp->resno_decoded = uint_max(l_current_pi->resno, l_img_comp->resno_decoded);
+                                l_img_comp->resno_decoded = opj_uint_max(l_current_pi->resno, l_img_comp->resno_decoded);
                         }
                         else {
                                 l_nb_bytes_read = 0;
@@ -621,7 +621,7 @@ opj_bool opj_t2_encode_packet(  OPJ_UINT32 tileno,
                                 len += pass->len;
 
                                 if (pass->term || passno == (cblk->numpasses + layer->numpasses) - 1) {
-                                        increment = int_max(increment, int_floorlog2(len) + 1 - (cblk->numlenbits + int_floorlog2(nump)));
+                                        increment = opj_int_max(increment, opj_int_floorlog2(len) + 1 - (cblk->numlenbits + opj_int_floorlog2(nump)));
                                         len = 0;
                                         nump = 0;
                                 }
@@ -640,7 +640,7 @@ opj_bool opj_t2_encode_packet(  OPJ_UINT32 tileno,
                                 len += pass->len;
 
                                 if (pass->term || passno == (cblk->numpasses + layer->numpasses) - 1) {
-                                        opj_bio_write(bio, len, cblk->numlenbits + int_floorlog2(nump));
+                                        opj_bio_write(bio, len, cblk->numlenbits + opj_int_floorlog2(nump));
                                         len = 0;
                                         nump = 0;
                                 }
@@ -967,8 +967,8 @@ opj_bool opj_t2_read_packet_header( opj_t2_v2_t* p_t2,
                         n = l_cblk->numnewpasses;
 
                         do {
-                                l_cblk->segs[l_segno].numnewpasses = int_min(l_cblk->segs[l_segno].maxpasses - l_cblk->segs[l_segno].numpasses, n);
-                                l_cblk->segs[l_segno].newlen = opj_bio_read(l_bio, l_cblk->numlenbits + uint_floorlog2(l_cblk->segs[l_segno].numnewpasses));
+                                l_cblk->segs[l_segno].numnewpasses = opj_int_min(l_cblk->segs[l_segno].maxpasses - l_cblk->segs[l_segno].numpasses, n);
+                                l_cblk->segs[l_segno].newlen = opj_bio_read(l_bio, l_cblk->numlenbits + opj_uint_floorlog2(l_cblk->segs[l_segno].numnewpasses));
 
                                 n -= l_cblk->segs[l_segno].numnewpasses;
                                 if (n > 0) {

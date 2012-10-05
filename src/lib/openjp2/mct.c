@@ -122,9 +122,9 @@ void opj_mct_encode_real(
 		OPJ_INT32 r = c0[i];
 		OPJ_INT32 g = c1[i];
 		OPJ_INT32 b = c2[i];
-		OPJ_INT32 y =  fix_mul(r, 2449) + fix_mul(g, 4809) + fix_mul(b, 934);
-		OPJ_INT32 u = -fix_mul(r, 1382) - fix_mul(g, 2714) + fix_mul(b, 4096);
-		OPJ_INT32 v =  fix_mul(r, 4096) - fix_mul(g, 3430) - fix_mul(b, 666);
+		OPJ_INT32 y =  opj_int_fix_mul(r, 2449) + opj_int_fix_mul(g, 4809) + opj_int_fix_mul(b, 934);
+		OPJ_INT32 u = -opj_int_fix_mul(r, 1382) - opj_int_fix_mul(g, 2714) + opj_int_fix_mul(b, 4096);
+		OPJ_INT32 v =  opj_int_fix_mul(r, 4096) - opj_int_fix_mul(g, 3430) - opj_int_fix_mul(b, 666);
 		c0[i] = y;
 		c1[i] = u;
 		c2[i] = v;
@@ -238,7 +238,7 @@ opj_bool opj_mct_encode_custom(
 		for (j=0;j<pNbComp;++j) {
 			*(lData[j]) = 0;
 			for (k=0;k<pNbComp;++k) {
-				*(lData[j]) += fix_mul(*lMctPtr, lCurrentData[k]);
+				*(lData[j]) += opj_int_fix_mul(*lMctPtr, lCurrentData[k]);
 				++lMctPtr;
 			}
 

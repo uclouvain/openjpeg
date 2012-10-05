@@ -108,16 +108,16 @@ static int t1_init_ctxno_sc(int f) {
 	int hc, vc, n;
 	n = 0;
 
-	hc = int_min(((f & (T1_SIG_E | T1_SGN_E)) ==
+	hc = opj_int_min(((f & (T1_SIG_E | T1_SGN_E)) ==
 				T1_SIG_E) + ((f & (T1_SIG_W | T1_SGN_W)) == T1_SIG_W),
-			1) - int_min(((f & (T1_SIG_E | T1_SGN_E)) ==
+			1) - opj_int_min(((f & (T1_SIG_E | T1_SGN_E)) ==
 					(T1_SIG_E | T1_SGN_E)) +
 				((f & (T1_SIG_W | T1_SGN_W)) ==
 				 (T1_SIG_W | T1_SGN_W)), 1);
 
-	vc = int_min(((f & (T1_SIG_N | T1_SGN_N)) ==
+	vc = opj_int_min(((f & (T1_SIG_N | T1_SGN_N)) ==
 				T1_SIG_N) + ((f & (T1_SIG_S | T1_SGN_S)) == T1_SIG_S),
-			1) - int_min(((f & (T1_SIG_N | T1_SGN_N)) ==
+			1) - opj_int_min(((f & (T1_SIG_N | T1_SGN_N)) ==
 					(T1_SIG_N | T1_SGN_N)) +
 				((f & (T1_SIG_S | T1_SGN_S)) ==
 				 (T1_SIG_S | T1_SGN_S)), 1);
@@ -148,16 +148,16 @@ static int t1_init_ctxno_sc(int f) {
 static int t1_init_spb(int f) {
 	int hc, vc, n;
 
-	hc = int_min(((f & (T1_SIG_E | T1_SGN_E)) ==
+	hc = opj_int_min(((f & (T1_SIG_E | T1_SGN_E)) ==
 				T1_SIG_E) + ((f & (T1_SIG_W | T1_SGN_W)) == T1_SIG_W),
-			1) - int_min(((f & (T1_SIG_E | T1_SGN_E)) ==
+			1) - opj_int_min(((f & (T1_SIG_E | T1_SGN_E)) ==
 					(T1_SIG_E | T1_SGN_E)) +
 				((f & (T1_SIG_W | T1_SGN_W)) ==
 				 (T1_SIG_W | T1_SGN_W)), 1);
 
-	vc = int_min(((f & (T1_SIG_N | T1_SGN_N)) ==
+	vc = opj_int_min(((f & (T1_SIG_N | T1_SGN_N)) ==
 				T1_SIG_N) + ((f & (T1_SIG_S | T1_SGN_S)) == T1_SIG_S),
-			1) - int_min(((f & (T1_SIG_N | T1_SGN_N)) ==
+			1) - opj_int_min(((f & (T1_SIG_N | T1_SGN_N)) ==
 					(T1_SIG_N | T1_SGN_N)) +
 				((f & (T1_SIG_S | T1_SGN_S)) ==
 				 (T1_SIG_S | T1_SGN_S)), 1);
@@ -239,10 +239,10 @@ int main(){
 		u = t;
 		v = t - 1.5;
 		lut_nmsedec_sig[i] = 
-			int_max(0, 
+			opj_int_max(0, 
 					(int) (floor((u * u - v * v) * pow(2, T1_NMSEDEC_FRACBITS) + 0.5) / pow(2, T1_NMSEDEC_FRACBITS) * 8192.0));
 		lut_nmsedec_sig0[i] =
-			int_max(0,
+			opj_int_max(0,
 					(int) (floor((u * u) * pow(2, T1_NMSEDEC_FRACBITS) + 0.5) / pow(2, T1_NMSEDEC_FRACBITS) * 8192.0));
 		u = t - 1.0;
 		if (i & (1 << (T1_NMSEDEC_BITS - 1))) {
@@ -251,10 +251,10 @@ int main(){
 			v = t - 0.5;
 		}
 		lut_nmsedec_ref[i] =
-			int_max(0,
+			opj_int_max(0,
 					(int) (floor((u * u - v * v) * pow(2, T1_NMSEDEC_FRACBITS) + 0.5) / pow(2, T1_NMSEDEC_FRACBITS) * 8192.0));
 		lut_nmsedec_ref0[i] =
-			int_max(0,
+			opj_int_max(0,
 					(int) (floor((u * u) * pow(2, T1_NMSEDEC_FRACBITS) + 0.5) / pow(2, T1_NMSEDEC_FRACBITS) * 8192.0));
 	}
 

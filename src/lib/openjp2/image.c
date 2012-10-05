@@ -106,19 +106,19 @@ void opj_image_comp_header_update(opj_image_t * p_image_header, const struct opj
 	OPJ_INT32 l_comp_x0, l_comp_y0, l_comp_x1, l_comp_y1;
 	opj_image_comp_t* l_img_comp = NULL;
 
-	l_x0 = int_max(p_cp->tx0 , p_image_header->x0);
-	l_y0 = int_max(p_cp->ty0 , p_image_header->y0);
-	l_x1 = int_min(p_cp->tx0 + p_cp->tw * p_cp->tdx, p_image_header->x1);
-	l_y1 = int_min(p_cp->ty0 + p_cp->th * p_cp->tdy, p_image_header->y1);
+	l_x0 = opj_int_max(p_cp->tx0 , p_image_header->x0);
+	l_y0 = opj_int_max(p_cp->ty0 , p_image_header->y0);
+	l_x1 = opj_int_min(p_cp->tx0 + p_cp->tw * p_cp->tdx, p_image_header->x1);
+	l_y1 = opj_int_min(p_cp->ty0 + p_cp->th * p_cp->tdy, p_image_header->y1);
 
 	l_img_comp = p_image_header->comps;
 	for	(i = 0; i < p_image_header->numcomps; ++i) {
-		l_comp_x0 = int_ceildiv(l_x0, l_img_comp->dx);
-		l_comp_y0 = int_ceildiv(l_y0, l_img_comp->dy);
-		l_comp_x1 = int_ceildiv(l_x1, l_img_comp->dx);
-		l_comp_y1 = int_ceildiv(l_y1, l_img_comp->dy);
-		l_width = int_ceildivpow2(l_comp_x1 - l_comp_x0, l_img_comp->factor);
-		l_height = int_ceildivpow2(l_comp_y1 - l_comp_y0, l_img_comp->factor);
+		l_comp_x0 = opj_int_ceildiv(l_x0, l_img_comp->dx);
+		l_comp_y0 = opj_int_ceildiv(l_y0, l_img_comp->dy);
+		l_comp_x1 = opj_int_ceildiv(l_x1, l_img_comp->dx);
+		l_comp_y1 = opj_int_ceildiv(l_y1, l_img_comp->dy);
+		l_width = opj_int_ceildivpow2(l_comp_x1 - l_comp_x0, l_img_comp->factor);
+		l_height = opj_int_ceildivpow2(l_comp_y1 - l_comp_y0, l_img_comp->factor);
 		l_img_comp->w = l_width;
 		l_img_comp->h = l_height;
 		l_img_comp->x0 = l_comp_x0/*l_x0*/;

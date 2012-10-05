@@ -2031,16 +2031,16 @@ static opj_bool opj_j2k_read_siz(opj_j2k_v2_t *p_j2k,
         }
 
         /* Compute the number of tiles */
-        l_cp->tw = int_ceildiv(l_image->x1 - l_cp->tx0, l_cp->tdx);
-        l_cp->th = int_ceildiv(l_image->y1 - l_cp->ty0, l_cp->tdy);
+        l_cp->tw = opj_int_ceildiv(l_image->x1 - l_cp->tx0, l_cp->tdx);
+        l_cp->th = opj_int_ceildiv(l_image->y1 - l_cp->ty0, l_cp->tdy);
         l_nb_tiles = l_cp->tw * l_cp->th;
 
         /* Define the tiles which will be decoded */
         if (p_j2k->m_specific_param.m_decoder.m_discard_tiles) {
                 p_j2k->m_specific_param.m_decoder.m_start_tile_x = (p_j2k->m_specific_param.m_decoder.m_start_tile_x - l_cp->tx0) / l_cp->tdx;
                 p_j2k->m_specific_param.m_decoder.m_start_tile_y = (p_j2k->m_specific_param.m_decoder.m_start_tile_y - l_cp->ty0) / l_cp->tdy;
-                p_j2k->m_specific_param.m_decoder.m_end_tile_x = int_ceildiv((p_j2k->m_specific_param.m_decoder.m_end_tile_x - l_cp->tx0), l_cp->tdx);
-                p_j2k->m_specific_param.m_decoder.m_end_tile_y = int_ceildiv((p_j2k->m_specific_param.m_decoder.m_end_tile_y - l_cp->ty0), l_cp->tdy);
+                p_j2k->m_specific_param.m_decoder.m_end_tile_x = opj_int_ceildiv((p_j2k->m_specific_param.m_decoder.m_end_tile_x - l_cp->tx0), l_cp->tdx);
+                p_j2k->m_specific_param.m_decoder.m_end_tile_y = opj_int_ceildiv((p_j2k->m_specific_param.m_decoder.m_end_tile_y - l_cp->ty0), l_cp->tdy);
         }
         else {
                 p_j2k->m_specific_param.m_decoder.m_start_tile_x = 0;
@@ -2505,7 +2505,7 @@ OPJ_UINT32 opj_j2k_get_max_coc_size(opj_j2k_v2_t *p_j2k)
 
         for (i=0;i<l_nb_tiles;++i) {
                 for (j=0;j<l_nb_comp;++j) {
-                        l_max = uint_max(l_max,opj_j2k_get_SPCod_SPCoc_size(p_j2k,i,j));
+                        l_max = opj_uint_max(l_max,opj_j2k_get_SPCod_SPCoc_size(p_j2k,i,j));
                 }
         }
 
@@ -2957,9 +2957,9 @@ void opj_j2k_write_poc_in_memory(   opj_j2k_v2_t *p_j2k,
                 ++l_current_data;
 
                 /* change the value of the max layer according to the actual number of layers in the file, components and resolutions*/
-                l_current_poc->layno1 = int_min(l_current_poc->layno1, l_tcp->numlayers);
-                l_current_poc->resno1 = int_min(l_current_poc->resno1, l_tccp->numresolutions);
-                l_current_poc->compno1 = int_min(l_current_poc->compno1, l_nb_comp);
+                l_current_poc->layno1 = opj_int_min(l_current_poc->layno1, l_tcp->numlayers);
+                l_current_poc->resno1 = opj_int_min(l_current_poc->resno1, l_tccp->numresolutions);
+                l_current_poc->compno1 = opj_int_min(l_current_poc->compno1, l_nb_comp);
 
                 ++l_current_poc;
         }
@@ -2978,7 +2978,7 @@ OPJ_UINT32 opj_j2k_get_max_poc_size(opj_j2k_v2_t *p_j2k)
         l_nb_tiles = p_j2k->m_cp.th * p_j2k->m_cp.tw;
 
         for (i=0;i<l_nb_tiles;++i) {
-                l_max_poc = uint_max(l_max_poc,l_tcp->numpocs);
+                l_max_poc = opj_uint_max(l_max_poc,l_tcp->numpocs);
                 ++l_tcp;
         }
 
@@ -2998,7 +2998,7 @@ OPJ_UINT32 opj_j2k_get_max_toc_size (opj_j2k_v2_t *p_j2k)
         l_nb_tiles = p_j2k->m_cp.tw * p_j2k->m_cp.th ;
 
         for (i=0;i<l_nb_tiles;++i) {
-                l_max = uint_max(l_max,l_tcp->m_nb_tile_parts);
+                l_max = opj_uint_max(l_max,l_tcp->m_nb_tile_parts);
 
                 ++l_tcp;
         }
@@ -3103,7 +3103,7 @@ static opj_bool opj_j2k_read_poc (  opj_j2k_v2_t *p_j2k,
                 ++p_header_data;
                 l_current_poc->prg = (OPJ_PROG_ORDER) l_tmp;
                 /* make sure comp is in acceptable bounds */
-                l_current_poc->compno1 = uint_min(l_current_poc->compno1, l_nb_comp);
+                l_current_poc->compno1 = opj_uint_min(l_current_poc->compno1, l_nb_comp);
                 ++l_current_poc;
         }
 
@@ -4466,10 +4466,10 @@ opj_bool opj_j2k_update_rates(  opj_j2k_v2_t *p_j2k,
                         OPJ_FLOAT32 l_offset = ((*l_tp_stride_func)(l_tcp)) / l_tcp->numlayers;
 
                         /* 4 borders of the tile rescale on the image if necessary */
-                        l_x0 = int_max(l_cp->tx0 + j * l_cp->tdx, l_image->x0);
-                        l_y0 = int_max(l_cp->ty0 + i * l_cp->tdy, l_image->y0);
-                        l_x1 = int_min(l_cp->tx0 + (j + 1) * l_cp->tdx, l_image->x1);
-                        l_y1 = int_min(l_cp->ty0 + (i + 1) * l_cp->tdy, l_image->y1);
+                        l_x0 = opj_int_max(l_cp->tx0 + j * l_cp->tdx, l_image->x0);
+                        l_y0 = opj_int_max(l_cp->ty0 + i * l_cp->tdy, l_image->y0);
+                        l_x1 = opj_int_min(l_cp->tx0 + (j + 1) * l_cp->tdx, l_image->x1);
+                        l_y1 = opj_int_min(l_cp->ty0 + (i + 1) * l_cp->tdy, l_image->y1);
 
                         l_rates = l_tcp->rates;
 
@@ -4550,9 +4550,9 @@ opj_bool opj_j2k_update_rates(  opj_j2k_v2_t *p_j2k,
         l_tile_size = 0;
 
         for (i=0;i<l_image->numcomps;++i) {
-                l_tile_size += (        uint_ceildiv(l_cp->tdx,l_img_comp->dx)
+                l_tile_size += (        opj_uint_ceildiv(l_cp->tdx,l_img_comp->dx)
                                                         *
-                                                        uint_ceildiv(l_cp->tdy,l_img_comp->dy)
+                                                        opj_uint_ceildiv(l_cp->tdy,l_img_comp->dy)
                                                         *
                                                         l_img_comp->prec
                                                 );
@@ -5778,8 +5778,8 @@ void opj_j2k_setup_encoder(     opj_j2k_v2_t *p_j2k,
         */
 
         if (parameters->tile_size_on) {
-                cp->tw = int_ceildiv(image->x1 - cp->tx0, cp->tdx);
-                cp->th = int_ceildiv(image->y1 - cp->ty0, cp->tdy);
+                cp->tw = opj_int_ceildiv(image->x1 - cp->tx0, cp->tdx);
+                cp->th = opj_int_ceildiv(image->y1 - cp->ty0, cp->tdy);
         } else {
                 cp->tdx = image->x1 - cp->tx0;
                 cp->tdy = image->y1 - cp->ty0;
@@ -5956,8 +5956,8 @@ void opj_j2k_setup_encoder(     opj_j2k_v2_t *p_j2k,
 
                         tccp->csty = parameters->csty & 0x01;   /* 0 => one precinct || 1 => custom precinct  */
                         tccp->numresolutions = parameters->numresolution;
-                        tccp->cblkw = int_floorlog2(parameters->cblockw_init);
-                        tccp->cblkh = int_floorlog2(parameters->cblockh_init);
+                        tccp->cblkw = opj_int_floorlog2(parameters->cblockw_init);
+                        tccp->cblkh = opj_int_floorlog2(parameters->cblockh_init);
                         tccp->cblksty = parameters->mode;
                         tccp->qmfbid = parameters->irreversible ? 0 : 1;
                         tccp->qntsty = parameters->irreversible ? J2K_CCP_QNTSTY_SEQNT : J2K_CCP_QNTSTY_NOQNT;
@@ -5987,13 +5987,13 @@ void opj_j2k_setup_encoder(     opj_j2k_v2_t *p_j2k,
                                                         if (parameters->prcw_init[p] < 1) {
                                                                 tccp->prcw[it_res] = 1;
                                                         } else {
-                                                                tccp->prcw[it_res] = int_floorlog2(parameters->prcw_init[p]);
+                                                                tccp->prcw[it_res] = opj_int_floorlog2(parameters->prcw_init[p]);
                                                         }
 
                                                         if (parameters->prch_init[p] < 1) {
                                                                 tccp->prch[it_res] = 1;
                                                         }else {
-                                                                tccp->prch[it_res] = int_floorlog2(parameters->prch_init[p]);
+                                                                tccp->prch[it_res] = opj_int_floorlog2(parameters->prch_init[p]);
                                                         }
 
                                                 } else {
@@ -6004,13 +6004,13 @@ void opj_j2k_setup_encoder(     opj_j2k_v2_t *p_j2k,
                                                         if (size_prcw < 1) {
                                                                 tccp->prcw[it_res] = 1;
                                                         } else {
-                                                                tccp->prcw[it_res] = int_floorlog2(size_prcw);
+                                                                tccp->prcw[it_res] = opj_int_floorlog2(size_prcw);
                                                         }
 
                                                         if (size_prch < 1) {
                                                                 tccp->prch[it_res] = 1;
                                                         } else {
-                                                                tccp->prch[it_res] = int_floorlog2(size_prch);
+                                                                tccp->prch[it_res] = opj_int_floorlog2(size_prch);
                                                         }
                                                 }
                                                 p++;
@@ -7320,8 +7320,8 @@ opj_bool opj_j2k_update_image_data (opj_tcd_v2_t * p_tcd, OPJ_BYTE * p_data, opj
                 l_height_src = (l_res->y1 - l_res->y0);
 
                 /* Border of the current output component*/
-                l_x0_dest = int_ceildivpow2(l_img_comp_dest->x0, l_img_comp_dest->factor);
-                l_y0_dest = int_ceildivpow2(l_img_comp_dest->y0, l_img_comp_dest->factor);
+                l_x0_dest = opj_int_ceildivpow2(l_img_comp_dest->x0, l_img_comp_dest->factor);
+                l_y0_dest = opj_int_ceildivpow2(l_img_comp_dest->y0, l_img_comp_dest->factor);
                 l_x1_dest = l_x0_dest + l_img_comp_dest->w;
                 l_y1_dest = l_y0_dest + l_img_comp_dest->h;
 
@@ -7604,7 +7604,7 @@ opj_bool opj_j2k_set_decode_area(       opj_j2k_v2_t *p_j2k,
                 p_image->x1 = l_image->x1;
         }
         else {
-                p_j2k->m_specific_param.m_decoder.m_end_tile_x = int_ceildiv((p_end_x - l_cp->tx0), l_cp->tdx);
+                p_j2k->m_specific_param.m_decoder.m_end_tile_x = opj_int_ceildiv((p_end_x - l_cp->tx0), l_cp->tdx);
                 p_image->x1 = p_end_x;
         }
 
@@ -7623,7 +7623,7 @@ opj_bool opj_j2k_set_decode_area(       opj_j2k_v2_t *p_j2k,
                 p_image->y1 = l_image->y1;
         }
         else{
-                p_j2k->m_specific_param.m_decoder.m_end_tile_y = int_ceildiv((p_end_y - l_cp->ty0), l_cp->tdy);
+                p_j2k->m_specific_param.m_decoder.m_end_tile_y = opj_int_ceildiv((p_end_y - l_cp->ty0), l_cp->tdy);
                 p_image->y1 = p_end_y;
         }
         /* ----- */
@@ -7635,13 +7635,13 @@ opj_bool opj_j2k_set_decode_area(       opj_j2k_v2_t *p_j2k,
         {
                 OPJ_INT32 l_h,l_w;
 
-                l_img_comp->x0 = int_ceildiv(p_image->x0, l_img_comp->dx);
-                l_img_comp->y0 = int_ceildiv(p_image->y0, l_img_comp->dy);
-                l_comp_x1 = int_ceildiv(p_image->x1, l_img_comp->dx);
-                l_comp_y1 = int_ceildiv(p_image->y1, l_img_comp->dy);
+                l_img_comp->x0 = opj_int_ceildiv(p_image->x0, l_img_comp->dx);
+                l_img_comp->y0 = opj_int_ceildiv(p_image->y0, l_img_comp->dy);
+                l_comp_x1 = opj_int_ceildiv(p_image->x1, l_img_comp->dx);
+                l_comp_y1 = opj_int_ceildiv(p_image->y1, l_img_comp->dy);
 
-                l_w = int_ceildivpow2(l_comp_x1, l_img_comp->factor)
-                                - int_ceildivpow2(l_img_comp->x0, l_img_comp->factor);
+                l_w = opj_int_ceildivpow2(l_comp_x1, l_img_comp->factor)
+                                - opj_int_ceildivpow2(l_img_comp->x0, l_img_comp->factor);
                 if (l_w < 0){
                         opj_event_msg_v2(p_manager, EVT_ERROR,
                                 "Size x of the decoded component image is incorrect (comp[%d].w=%d).\n",
@@ -7650,8 +7650,8 @@ opj_bool opj_j2k_set_decode_area(       opj_j2k_v2_t *p_j2k,
                 }
                 l_img_comp->w = l_w;
 
-                l_h = int_ceildivpow2(l_comp_y1, l_img_comp->factor)
-                                - int_ceildivpow2(l_img_comp->y0, l_img_comp->factor);
+                l_h = opj_int_ceildivpow2(l_comp_y1, l_img_comp->factor)
+                                - opj_int_ceildivpow2(l_img_comp->y0, l_img_comp->factor);
                 if (l_h < 0){
                         opj_event_msg_v2(p_manager, EVT_ERROR,
                                 "Size y of the decoded component image is incorrect (comp[%d].h=%d).\n",
@@ -8932,13 +8932,13 @@ opj_bool opj_j2k_get_tile(      opj_j2k_v2_t *p_j2k,
 
                 l_img_comp->factor = p_j2k->m_private_image->comps[compno].factor;
 
-                l_img_comp->x0 = int_ceildiv(p_image->x0, l_img_comp->dx);
-                l_img_comp->y0 = int_ceildiv(p_image->y0, l_img_comp->dy);
-                l_comp_x1 = int_ceildiv(p_image->x1, l_img_comp->dx);
-                l_comp_y1 = int_ceildiv(p_image->y1, l_img_comp->dy);
+                l_img_comp->x0 = opj_int_ceildiv(p_image->x0, l_img_comp->dx);
+                l_img_comp->y0 = opj_int_ceildiv(p_image->y0, l_img_comp->dy);
+                l_comp_x1 = opj_int_ceildiv(p_image->x1, l_img_comp->dx);
+                l_comp_y1 = opj_int_ceildiv(p_image->y1, l_img_comp->dy);
 
-                l_img_comp->w = int_ceildivpow2(l_comp_x1, l_img_comp->factor) - int_ceildivpow2(l_img_comp->x0, l_img_comp->factor);
-                l_img_comp->h = int_ceildivpow2(l_comp_y1, l_img_comp->factor) - int_ceildivpow2(l_img_comp->y0, l_img_comp->factor);
+                l_img_comp->w = opj_int_ceildivpow2(l_comp_x1, l_img_comp->factor) - opj_int_ceildivpow2(l_img_comp->x0, l_img_comp->factor);
+                l_img_comp->h = opj_int_ceildivpow2(l_comp_y1, l_img_comp->factor) - opj_int_ceildivpow2(l_img_comp->y0, l_img_comp->factor);
 
                 l_img_comp++;
         }
@@ -9171,9 +9171,9 @@ void opj_j2k_get_tile_data (opj_tcd_v2_t * p_tcd, OPJ_BYTE * p_data)
 
                 l_width = (l_tilec->x1 - l_tilec->x0);
                 l_height = (l_tilec->y1 - l_tilec->y0);
-                l_offset_x = int_ceildiv(l_image->x0, l_img_comp->dx);
-                l_offset_y = int_ceildiv(l_image->y0, l_img_comp->dy);
-                l_image_width = int_ceildiv(l_image->x1 - l_image->x0, l_img_comp->dx);
+                l_offset_x = opj_int_ceildiv(l_image->x0, l_img_comp->dx);
+                l_offset_y = opj_int_ceildiv(l_image->y0, l_img_comp->dy);
+                l_image_width = opj_int_ceildiv(l_image->x1 - l_image->x0, l_img_comp->dx);
                 l_stride = l_image_width - l_width;
                 l_src_ptr = l_img_comp->data + (l_tilec->x0 - l_offset_x) + (l_tilec->y0 - l_offset_y) * l_image_width;
 
