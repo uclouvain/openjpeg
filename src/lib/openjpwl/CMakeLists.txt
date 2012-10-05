@@ -21,12 +21,7 @@ set(OPENJPEG_SRCS
   ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/t2.c
   ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/tcd.c
   ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/tgt.c
-  ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/cidx_manager.c
-  ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/phix_manager.c
-  ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/ppix_manager.c
-  ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/thix_manager.c
-  ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/tpix_manager.c
-  ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/function_list.c
+ ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/function_list.c
 )
 
 set(JPWL_SRCS crc.c jpwl.c jpwl_lib.c rs.c)

@@ -169,8 +169,10 @@ static INLINE long lrintf(float f){
 #include "mct.h"
 #include "opj_intmath.h"
 
+#ifdef USE_JPIP
 #include "cidx_manager.h"
 #include "indexbox_manager.h"
+#endif
 
 /* JPWL>> */
 #ifdef USE_JPWL
