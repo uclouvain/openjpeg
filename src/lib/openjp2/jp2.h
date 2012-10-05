@@ -258,7 +258,7 @@ opj_jp2_img_header_writer_handler_t;
  * @param	stream			the stream to write data to.
  * @param	p_manager	user event manager.
  *
- * @return true if writting was successful.
+ * @return true if writing was successful.
 */
 opj_bool opj_jp2_write_jp2h(opj_jp2_v2_t *jp2,
                             opj_stream_private_t *stream,

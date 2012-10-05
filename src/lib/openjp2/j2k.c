@@ -343,7 +343,7 @@ static opj_bool opj_j2k_post_write_tile (opj_j2k_v2_t * p_j2k,
  * Sets up the procedures to do on writing header.
  * Developers wanting to extend the library can add their own writing procedures.
  */
-static void opj_j2k_setup_header_writting (opj_j2k_v2_t *p_j2k);
+static void opj_j2k_setup_header_writing (opj_j2k_v2_t *p_j2k);
 
 static opj_bool opj_j2k_write_first_tile_part(  opj_j2k_v2_t *p_j2k,
                                                                                             OPJ_BYTE * p_data,
@@ -602,7 +602,7 @@ static void opj_j2k_write_poc_in_memory(opj_j2k_v2_t *p_j2k,
                                                                             OPJ_UINT32 * p_data_written,
                                                                             opj_event_mgr_t * p_manager );
 /**
- * Gets the maximum size taken by the writting of a POC.
+ * Gets the maximum size taken by the writing of a POC.
  */
 static OPJ_UINT32 opj_j2k_get_max_poc_size(opj_j2k_v2_t *p_j2k);
 
@@ -2293,12 +2293,12 @@ opj_bool opj_j2k_write_cod(     opj_j2k_v2_t *p_j2k,
         l_remaining_size -= 9;
 
         if (! opj_j2k_write_SPCod_SPCoc(p_j2k,p_j2k->m_current_tile_number,0,l_current_data,&l_remaining_size,p_manager)) {
-                opj_event_msg_v2(p_manager, EVT_ERROR, "Error writting COD marker\n");
+                opj_event_msg_v2(p_manager, EVT_ERROR, "Error writing COD marker\n");
                 return OPJ_FALSE;
         }
 
         if (l_remaining_size != 0) {
-                opj_event_msg_v2(p_manager, EVT_ERROR, "Error writting COD marker\n");
+                opj_event_msg_v2(p_manager, EVT_ERROR, "Error writing COD marker\n");
                 return OPJ_FALSE;
         }
 
@@ -2617,12 +2617,12 @@ opj_bool opj_j2k_write_qcd(     opj_j2k_v2_t *p_j2k,
         l_remaining_size -= 4;
 
         if (! opj_j2k_write_SQcd_SQcc(p_j2k,p_j2k->m_current_tile_number,0,l_current_data,&l_remaining_size,p_manager)) {
-                opj_event_msg_v2(p_manager, EVT_ERROR, "Error writting QCD marker\n");
+                opj_event_msg_v2(p_manager, EVT_ERROR, "Error writing QCD marker\n");
                 return OPJ_FALSE;
         }
 
         if (l_remaining_size != 0) {
-                opj_event_msg_v2(p_manager, EVT_ERROR, "Error writting QCD marker\n");
+                opj_event_msg_v2(p_manager, EVT_ERROR, "Error writing QCD marker\n");
                 return OPJ_FALSE;
         }
 
@@ -7825,7 +7825,7 @@ opj_bool opj_j2k_write_SPCod_SPCoc(     opj_j2k_v2_t *p_j2k,
         if (l_tccp->csty & J2K_CCP_CSTY_PRT) {
 
                 if (*p_header_size < l_tccp->numresolutions) {
-                        opj_event_msg_v2(p_manager, EVT_ERROR, "Error writting SPCod SPCoc element\n");
+                        opj_event_msg_v2(p_manager, EVT_ERROR, "Error writing SPCod SPCoc element\n");
                         return OPJ_FALSE;
                 }
 
@@ -9110,7 +9110,7 @@ opj_bool opj_j2k_start_compress(opj_j2k_v2_t *p_j2k,
         }
 
         /* customization of the encoding */
-        opj_j2k_setup_header_writting(p_j2k);
+        opj_j2k_setup_header_writing(p_j2k);
 
         /* write header */
         if (! opj_j2k_exec (p_j2k,p_j2k->m_procedure_list,p_stream,p_manager)) {
@@ -9333,7 +9333,7 @@ void opj_j2k_setup_encoding_validation (opj_j2k_v2_t *p_j2k)
         opj_procedure_list_add_procedure(p_j2k->m_validation_list, (opj_procedure)opj_j2k_mct_validation);
 }
 
-void opj_j2k_setup_header_writting (opj_j2k_v2_t *p_j2k)
+void opj_j2k_setup_header_writing (opj_j2k_v2_t *p_j2k)
 {
         /* preconditions */
         assert(p_j2k != 00);

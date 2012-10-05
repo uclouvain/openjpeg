@@ -574,7 +574,7 @@ opj_bool opj_stream_flush (opj_stream_private_t * p_stream, opj_event_mgr_t * p_
 		
 		if (l_current_write_nb_bytes == (OPJ_SIZE_T)-1) {
 			p_stream->m_status |= opj_stream_e_error;
-			opj_event_msg_v2(p_event_mgr, EVT_INFO, "Error on writting stream!\n");
+			opj_event_msg_v2(p_event_mgr, EVT_INFO, "Error on writing stream!\n");
 
 			return OPJ_FALSE;
 		}
