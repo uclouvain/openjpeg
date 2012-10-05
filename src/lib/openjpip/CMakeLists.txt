@@ -56,17 +56,28 @@ set(LOCAL_SRCS
   )
 
 # Build the library
-add_library(openjpip_local STATIC ${OPENJPIP_SRCS} ${LOCAL_SRCS})
-target_link_libraries(openjpip_local ${OPENJPEG_LIBRARY_NAME})
+if(WIN32)
+  if(BUILD_SHARED_LIBS)
+    add_definitions(-DOPJ_EXPORTS)
+  else()
+    add_definitions(-DOPJ_STATIC)
+  endif()
+endif()
+add_library(openjpip ${OPENJPIP_SRCS} ${LOCAL_SRCS})
+set_target_properties(openjpip
+  PROPERTIES ${OPENJPEG_LIBRARY_PROPERTIES})
+target_link_libraries(openjpip ${OPENJPEG_LIBRARY_NAME})
 if(WIN32)
   # add Winsock on windows+mingw
-  target_link_libraries(openjpip_local ws2_32)
+  target_link_libraries(openjpip ws2_32)
 endif()
 
 # Install library
-install(TARGETS openjpip_local
+install(TARGETS openjpip
   EXPORT OpenJPEGTargets
-  DESTINATION ${OPENJPEG_INSTALL_LIB_DIR} COMPONENT Libraries
+  RUNTIME DESTINATION ${OPENJPEG_INSTALL_BIN_DIR} COMPONENT Applications
+  LIBRARY DESTINATION ${OPENJPEG_INSTALL_LIB_DIR} COMPONENT Libraries
+  ARCHIVE DESTINATION ${OPENJPEG_INSTALL_LIB_DIR} COMPONENT Libraries
   )
 
 if(BUILD_JPIP_SERVER)

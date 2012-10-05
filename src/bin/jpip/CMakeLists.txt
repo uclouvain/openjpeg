@@ -48,7 +48,7 @@ set(EXES
   )
 foreach(exe ${EXES})
   add_executable(${exe} ${exe}.c)
-  target_link_libraries(${exe} openjpip_local)
+  target_link_libraries(${exe} openjpip)
   install(TARGETS ${exe}
     EXPORT OpenJPEGTargets
     DESTINATION ${OPENJPEG_INSTALL_BIN_DIR} COMPONENT Applications
