@@ -73,9 +73,7 @@ int main(int argc, char *argv[])
   opj_image_t *image;
   opj_event_mgr_t event_mgr;
   opj_codec_t* l_codec = 00;
-  opj_cio_t *cio;
   opj_bool bSuccess;
-  size_t codestream_length;
   FILE *f;
 	opj_stream_t *l_stream = 00;
   (void)argc;
@@ -138,9 +136,7 @@ int main(int argc, char *argv[])
 
   /* read back the generated file */
 {
-  size_t file_length;
   FILE *fsrc = fopen(outputfile, "rb");
-  unsigned char *src;
   opj_codec_t* d_codec = 00;
 	opj_dparameters_t dparameters;
   assert( fsrc );

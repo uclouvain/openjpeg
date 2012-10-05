@@ -345,10 +345,10 @@ OPJ_PROG_ORDER give_progression(char progression[4]) {
 	return PROG_UNKNOWN;
 }
 
-int get_num_images(char *imgdirpath){
+unsigned int get_num_images(char *imgdirpath){
 	DIR *dir;
 	struct dirent* content;
-	int num_images = 0;
+	unsigned int num_images = 0;
 
 	/*Reading the input images from given input directory*/
 
@@ -1597,7 +1597,7 @@ int main(int argc, char **argv) {
 
 	char indexfilename[OPJ_PATH_LEN];	/* index file name */
 
-	int i, num_images, imageno;
+	unsigned int i, num_images, imageno;
 	img_fol_t img_fol;
 	dircnt_t *dirptr = NULL;
 
