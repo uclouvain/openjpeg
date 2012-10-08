@@ -2,6 +2,8 @@
 include_directories(
   ${OPENJPEG_BINARY_DIR}/src/lib/openjp2 # opj_config.h
   ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2
+  ${OPENJPEG_SOURCE_DIR}/src/bin/common # opj_getopt.h
+  ${OPENJPEG_SOURCE_DIR}/src/bin/jp2 # convert.h
   ${OPENJPEG_SOURCE_DIR}/src/lib/openjpip
   ${FCGI_INCLUDE_DIRS}
 )
@@ -15,7 +17,6 @@ install(TARGETS opj_jpip_addxml
   )
 
 if(BUILD_JPIP_SERVER)
-
   set(OPJ_SERVER_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/opj_server.c
   )
@@ -45,9 +46,20 @@ set(EXES
   opj_dec_server
   opj_jpip_transcode
   opj_jpip_test
+  opj_jpip_compress
   )
 foreach(exe ${EXES})
-  add_executable(${exe} ${exe}.c)
+  if(${exe} STREQUAL "opj_jpip_compress")
+    add_executable(${exe} ${exe}.c
+      ${OPENJPEG_SOURCE_DIR}/src/bin/common/opj_getopt.c
+      ${OPENJPEG_SOURCE_DIR}/src/bin/jp2/convert.c
+    )
+    target_link_libraries(${exe}
+      ${PNG_LIBNAME} ${TIFF_LIBNAME} ${LCMS_LIBNAME}
+    )
+  else()
+    add_executable(${exe} ${exe}.c)
+  endif()
   target_link_libraries(${exe} openjpip)
   install(TARGETS ${exe}
     EXPORT OpenJPEGTargets

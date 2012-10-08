@@ -99,11 +99,11 @@ index_param_t * parse_jp2file( int fd)
     return NULL;
   }
 
-  jp2idx = (index_param_t *)malloc( sizeof(index_param_t));
+  jp2idx = (index_param_t *)opj_malloc( sizeof(index_param_t));
   
   if( !set_cidxdata( cidx, jp2idx)){
     fprintf( FCGI_stderr, "Error: Not correctl format in cidx box\n");
-    free(jp2idx);
+    opj_free(jp2idx);
     delete_boxlist( &toplev_boxlist);
     return NULL;
   }
@@ -190,19 +190,19 @@ void delete_index( index_param_t **index)
 
   for( i=0; i< (int)((*index)->SIZ.XTnum*(*index)->SIZ.YTnum);i++)
     delete_mhixbox( &((*index)->tileheader[i]));
-  free( (*index)->tileheader);
+  opj_free( (*index)->tileheader);
   
   for( i=0; i<(*index)->SIZ.Csiz; i++)
     delete_faixbox( &((*index)->precpacket[i]));
-  free( (*index)->precpacket);
+  opj_free( (*index)->precpacket);
   
-  free(*index);
+  opj_free(*index);
 }
 
 void delete_COD( CODmarker_param_t COD)
 {
-  if( COD.XPsiz)    free( COD.XPsiz);
-  if( COD.YPsiz)    free( COD.YPsiz);
+  if( COD.XPsiz)    opj_free( COD.XPsiz);
+  if( COD.YPsiz)    opj_free( COD.YPsiz);
 }
 
 bool check_JP2boxidx( boxlist_param_t *toplev_boxlist)
@@ -242,7 +242,7 @@ bool check_JP2boxidx( boxlist_param_t *toplev_boxlist)
   if( obh->length != jp2c->length || strncmp( obh->type, "jp2c",4)!=0)
     fprintf( FCGI_stderr, "Reference jp2c header in prxy box not correct\n");
   pos += obh->headlen;
-  free(obh);
+  opj_free(obh);
   
   ni = fetch_DBox1byte( prxy, pos);
   if( ni != 1){
@@ -260,9 +260,9 @@ bool check_JP2boxidx( boxlist_param_t *toplev_boxlist)
   if( ibh->length != cidx->length || strncmp( ibh->type, "cidx",4)!=0)
     fprintf( FCGI_stderr, "Reference cidx header in prxy box not correct\n");
   pos += ibh->headlen;
-  free(ibh);
+  opj_free(ibh);
   
-  free(prxy);
+  opj_free(prxy);
 
   return true;
 }
@@ -333,34 +333,34 @@ bool set_cidxdata( box_param_t *cidx_box, index_param_t *jp2idx)
 
   if( !search_boxheader( "mhix", manf)){
     fprintf( FCGI_stderr, "Error: mhix box not present in manfbox\n");
-    free(jp2idx);
+    opj_free(jp2idx);
     return false;
   }
   set_mainmhixdata( cidx_box, codestream, jp2idx);
 
   if( !search_boxheader( "tpix", manf)){
     fprintf( FCGI_stderr, "Error: tpix box not present in manfbox\n");
-    free(jp2idx);
+    opj_free(jp2idx);
     return false;
   }
   set_tpixdata( cidx_box, jp2idx);
 
   if( !search_boxheader( "thix", manf)){
     fprintf( FCGI_stderr, "Error: thix box not present in manfbox\n");
-    free(jp2idx);
+    opj_free(jp2idx);
     return false;
   }
   set_thixdata( cidx_box, jp2idx);
 
   if( !search_boxheader( "ppix", manf)){
     fprintf( FCGI_stderr, "Error: ppix box not present in manfbox\n");
-    free(jp2idx);
+    opj_free(jp2idx);
     return false;
   }
   set_ppixdata( cidx_box, jp2idx);
 
   delete_manfbox( &manf);
-  free( manf_box);
+  opj_free( manf_box);
 
   return true;
 }
@@ -377,7 +377,7 @@ bool set_cptrdata( box_param_t *cidx_box, index_param_t *jp2idx)
   /* If 0, the codestream or its Fragment Table box exists in the current file*/
   if(( dr = fetch_DBox2bytebigendian( box, 0))){
     fprintf( FCGI_stderr, "Error: Codestream not present in current file\n");
-    free( box);
+    opj_free( box);
     return false;  
   }
   
@@ -386,14 +386,14 @@ bool set_cptrdata( box_param_t *cidx_box, index_param_t *jp2idx)
   /* bytes within its file or resource.*/
   if(( cont = fetch_DBox2bytebigendian( box, 2))){
     fprintf( FCGI_stderr, "Error: Can't cope with fragmented codestreams yet\n");
-    free( box);
+    opj_free( box);
     return false;  
   }
     
   jp2idx->offset = (OPJ_OFF_T)fetch_DBox8bytebigendian( box, 4);
   jp2idx->length = fetch_DBox8bytebigendian( box, 12);
 
-  free( box);
+  opj_free( box);
 
   return true;
 }
@@ -436,7 +436,7 @@ bool set_mainmhixdata( box_param_t *cidx_box, codestream_param_t codestream, ind
   jp2idx->mhead_length = fetch_DBox8bytebigendian( mhix_box, 0);
 
   mhix = gene_mhixbox( mhix_box);
-  free( mhix_box);
+  opj_free( mhix_box);
 
   sizmkidx = search_markeridx( 0xff51, mhix);
   set_SIZmkrdata( sizmkidx, codestream, &(jp2idx->SIZ));
@@ -466,8 +466,8 @@ bool set_tpixdata( box_param_t *cidx_box, index_param_t *jp2idx)
 
   jp2idx->tilepart = gene_faixbox( faix_box);
   
-  free( tpix_box);
-  free( faix_box);
+  opj_free( tpix_box);
+  opj_free( faix_box);
 
   return true;
 }
@@ -489,7 +489,7 @@ bool set_thixdata( box_param_t *cidx_box, index_param_t *jp2idx)
   
   if( !(manf_box = gene_boxbyType( thix_box->fd, get_DBoxoff( thix_box), get_DBoxlen( thix_box), "manf"))){
     fprintf( FCGI_stderr, "Error: manf box not present in thix box\n");
-    free( thix_box);
+    opj_free( thix_box);
     return false;
   }
   
@@ -498,14 +498,14 @@ bool set_thixdata( box_param_t *cidx_box, index_param_t *jp2idx)
   mhixseqoff = manf_box->offset+(OPJ_OFF_T)manf_box->length;
   pos = 0;
   tile_no = 0;
-  jp2idx->tileheader = (mhixbox_param_t **)malloc( jp2idx->SIZ.XTnum*jp2idx->SIZ.YTnum*sizeof(mhixbox_param_t *));
+  jp2idx->tileheader = (mhixbox_param_t **)opj_malloc( jp2idx->SIZ.XTnum*jp2idx->SIZ.YTnum*sizeof(mhixbox_param_t *));
     
   while( ptr){
     if( !(mhix_box = gene_boxbyType( thix_box->fd, mhixseqoff+(OPJ_OFF_T)pos, get_DBoxlen( thix_box)-manf_box->length-pos, "mhix"))){
       fprintf( FCGI_stderr, "Error: mhix box not present in thix box\n");
       delete_manfbox( &manf);
-      free( manf_box);
-      free( thix_box);
+      opj_free( manf_box);
+      opj_free( thix_box);
       return false;
     }
     mhix = gene_mhixbox( mhix_box);
@@ -513,13 +513,13 @@ bool set_thixdata( box_param_t *cidx_box, index_param_t *jp2idx)
     pos += mhix_box->length;
     ptr = ptr->next;
 
-    free( mhix_box);
+    opj_free( mhix_box);
     jp2idx->tileheader[tile_no++] = mhix;
   }
 
   delete_manfbox( &manf);
-  free( manf_box);
-  free( thix_box);
+  opj_free( manf_box);
+  opj_free( thix_box);
 
   return true;
 }
@@ -541,19 +541,19 @@ bool set_ppixdata( box_param_t *cidx_box, index_param_t *jp2idx)
   inbox_offset = get_DBoxoff( ppix_box);
   if( !(manf_box = gene_boxbyType( ppix_box->fd, inbox_offset, get_DBoxlen( ppix_box), "manf"))){
     fprintf( FCGI_stderr, "Error: manf box not present in ppix box\n");
-    free( ppix_box);
+    opj_free( ppix_box);
     return false;
   }
 
-  free( ppix_box);
+  opj_free( ppix_box);
 
   manf = gene_manfbox( manf_box);
   bh = search_boxheader( "faix", manf);
   inbox_offset = manf_box->offset + (OPJ_OFF_T)manf_box->length;
   
-  free( manf_box);
+  opj_free( manf_box);
 
-  jp2idx->precpacket = (faixbox_param_t **)malloc( jp2idx->SIZ.Csiz*sizeof(faixbox_param_t *));
+  jp2idx->precpacket = (faixbox_param_t **)opj_malloc( jp2idx->SIZ.Csiz*sizeof(faixbox_param_t *));
 
   for( comp_idx=0; bh!=NULL; bh=bh->next, comp_idx++){
     if( jp2idx->SIZ.Csiz <= comp_idx ){
@@ -570,7 +570,7 @@ bool set_ppixdata( box_param_t *cidx_box, index_param_t *jp2idx)
     jp2idx->precpacket[comp_idx] = faix;
 
     inbox_offset = faix_box->offset + (OPJ_OFF_T)faix_box->length;
-    free( faix_box);   
+    opj_free( faix_box);   
   }
   
   delete_manfbox( &manf);
@@ -634,8 +634,8 @@ bool set_CODmkrdata( markeridx_param_t *codmkidx, codestream_param_t codestream,
   COD->numOfdecomp = fetch_marker1byte( codmkr, 7);
   
   if(COD->Scod & 0x01){
-    COD->XPsiz = (Byte4_t *)malloc( (OPJ_SIZE_T)(COD->numOfdecomp+1)*sizeof(Byte4_t));
-    COD->YPsiz = (Byte4_t *)malloc( (OPJ_SIZE_T)(COD->numOfdecomp+1)*sizeof(Byte4_t));
+    COD->XPsiz = (Byte4_t *)opj_malloc( (OPJ_SIZE_T)(COD->numOfdecomp+1)*sizeof(Byte4_t));
+    COD->YPsiz = (Byte4_t *)opj_malloc( (OPJ_SIZE_T)(COD->numOfdecomp+1)*sizeof(Byte4_t));
 
     for( i=0; i<=COD->numOfdecomp; i++){
       /*precinct size*/
@@ -644,8 +644,8 @@ bool set_CODmkrdata( markeridx_param_t *codmkidx, codestream_param_t codestream,
     }
   }
   else{
-    COD->XPsiz = (Byte4_t *)malloc( sizeof(Byte4_t));
-    COD->YPsiz = (Byte4_t *)malloc( sizeof(Byte4_t));
+    COD->XPsiz = (Byte4_t *)opj_malloc( sizeof(Byte4_t));
+    COD->YPsiz = (Byte4_t *)opj_malloc( sizeof(Byte4_t));
 
     COD->XPsiz[0] = COD->YPsiz[0] = pow(2,15);
   }

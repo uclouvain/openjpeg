@@ -48,7 +48,7 @@ cachemodellist_param_t * gene_cachemodellist(void)
 {
   cachemodellist_param_t *cachemodellist;
 
-  cachemodellist = (cachemodellist_param_t *)malloc( sizeof(cachemodellist_param_t));
+  cachemodellist = (cachemodellist_param_t *)opj_malloc( sizeof(cachemodellist_param_t));
   
   cachemodellist->first = NULL;
   cachemodellist->last  = NULL;
@@ -65,7 +65,7 @@ cachemodel_param_t * gene_cachemodel( cachemodellist_param_t *cachemodellist, ta
   Byte8_t numOftiles;
   int i;
 
-  cachemodel = (cachemodel_param_t *)malloc( sizeof(cachemodel_param_t));
+  cachemodel = (cachemodel_param_t *)opj_malloc( sizeof(cachemodel_param_t));
 
   refer_target( target, &cachemodel->target);
   
@@ -86,12 +86,12 @@ cachemodel_param_t * gene_cachemodel( cachemodellist_param_t *cachemodellist, ta
   tilepart = target->codeidx->tilepart;
   numOftiles = get_m( tilepart);
   numOfelem = get_nmax( tilepart)*numOftiles;
-  cachemodel->tp_model = (bool *)calloc( 1, numOfelem*sizeof(bool));
-  cachemodel->th_model = (bool *)calloc( 1, numOftiles*sizeof(bool));
-  cachemodel->pp_model = (bool **)malloc( target->codeidx->SIZ.Csiz*sizeof(bool *));
+  cachemodel->tp_model = (bool *)opj_calloc( 1, numOfelem*sizeof(bool));
+  cachemodel->th_model = (bool *)opj_calloc( 1, numOftiles*sizeof(bool));
+  cachemodel->pp_model = (bool **)opj_malloc( target->codeidx->SIZ.Csiz*sizeof(bool *));
   for( i=0; i<target->codeidx->SIZ.Csiz; i++){
     precpacket = target->codeidx->precpacket[i];
-    cachemodel->pp_model[i] = (bool *)calloc( 1, get_nmax(precpacket)*get_m(precpacket)*sizeof(bool));
+    cachemodel->pp_model[i] = (bool *)opj_calloc( 1, get_nmax(precpacket)*get_m(precpacket)*sizeof(bool));
   }
   cachemodel->next = NULL;
   
@@ -174,7 +174,7 @@ void delete_cachemodellist( cachemodellist_param_t **cachemodellist)
     delete_cachemodel( &cachemodelPtr);
     cachemodelPtr=cachemodelNext;
   }
-  free(*cachemodellist);
+  opj_free(*cachemodellist);
 }
 
 void delete_cachemodel( cachemodel_param_t **cachemodel)
@@ -183,17 +183,17 @@ void delete_cachemodel( cachemodel_param_t **cachemodel)
 
   unrefer_target( (*cachemodel)->target);
   
-  free( (*cachemodel)->tp_model);
-  free( (*cachemodel)->th_model);
+  opj_free( (*cachemodel)->tp_model);
+  opj_free( (*cachemodel)->th_model);
   
   for( i=0; i<(*cachemodel)->target->codeidx->SIZ.Csiz; i++)
-    free( (*cachemodel)->pp_model[i]);
-  free( (*cachemodel)->pp_model);
+    opj_free( (*cachemodel)->pp_model[i]);
+  opj_free( (*cachemodel)->pp_model);
 
 #ifndef SERVER
   fprintf( logstream, "local log: cachemodel deleted\n");
 #endif
-  free( *cachemodel);
+  opj_free( *cachemodel);
 }
 
 bool is_allsent( cachemodel_param_t cachemodel)

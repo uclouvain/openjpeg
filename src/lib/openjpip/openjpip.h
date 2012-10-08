@@ -303,6 +303,8 @@ void destroy_index( index_t **idx);
  */
 void output_index( index_t *index);
 
+OPJ_API opj_codec_t* OPJ_CALLCONV opj_jpip_create_compress(OPJ_CODEC_FORMAT format);
+
 #endif /*SERVER*/
 
 #endif /* !OPENJPIP_H_ */

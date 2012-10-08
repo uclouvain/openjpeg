@@ -48,7 +48,7 @@ sessionlist_param_t * gene_sessionlist(void)
 {
   sessionlist_param_t *sessionlist;
 
-  sessionlist = (sessionlist_param_t *)malloc( sizeof(sessionlist_param_t));
+  sessionlist = (sessionlist_param_t *)opj_malloc( sizeof(sessionlist_param_t));
   
   sessionlist->first = NULL;
   sessionlist->last  = NULL;
@@ -60,7 +60,7 @@ session_param_t * gene_session( sessionlist_param_t *sessionlist)
 {
   session_param_t *session;
   
-  session = (session_param_t *)malloc( sizeof(session_param_t));
+  session = (session_param_t *)opj_malloc( sizeof(session_param_t));
 
   session->channellist = gene_channellist();
   session->cachemodellist = gene_cachemodellist();
@@ -144,7 +144,7 @@ bool delete_session( session_param_t **session, sessionlist_param_t *sessionlist
 #ifndef SERVER
   fprintf( logstream, "local log: session: %p deleted!\n", (void *)(*session));
 #endif
-  free( *session);
+  opj_free( *session);
 
   return true;
 }
@@ -163,7 +163,7 @@ void delete_sessionlist( sessionlist_param_t **sessionlist)
 #ifndef SERVER
     fprintf( logstream, "local log: session: %p deleted!\n", (void *)sessionPtr);
 #endif
-    free( sessionPtr);
+    opj_free( sessionPtr);
 
     sessionPtr=sessionNext;
   }
@@ -171,7 +171,7 @@ void delete_sessionlist( sessionlist_param_t **sessionlist)
   (*sessionlist)->first = NULL;
   (*sessionlist)->last  = NULL;
 
-  free(*sessionlist);
+  opj_free(*sessionlist);
 }
 
 void print_allsession( sessionlist_param_t *sessionlist)

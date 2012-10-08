@@ -49,7 +49,7 @@ channellist_param_t * gene_channellist(void)
 {
   channellist_param_t *channellist;
 
-  channellist = (channellist_param_t *)malloc( sizeof(channellist_param_t));
+  channellist = (channellist_param_t *)opj_malloc( sizeof(channellist_param_t));
   
   channellist->first = NULL;
   channellist->last  = NULL;
@@ -68,7 +68,7 @@ channel_param_t * gene_channel( query_param_t query_param, auxtrans_param_t auxt
     return NULL;
   }
 
-  channel = (channel_param_t *)malloc( sizeof(channel_param_t));
+  channel = (channel_param_t *)opj_malloc( sizeof(channel_param_t));
   channel->cachemodel = cachemodel;
 
   /* set channel ID and get present time */
@@ -130,7 +130,7 @@ void delete_channel( channel_param_t **channel, channellist_param_t *channellist
 #ifndef SERVER
   fprintf( logstream, "local log: channel: %s deleted\n", (*channel)->cid);
 #endif
-  free(*channel);
+  opj_free(*channel);
 }
 
 void delete_channellist( channellist_param_t **channellist)
@@ -143,10 +143,10 @@ void delete_channellist( channellist_param_t **channellist)
 #ifndef SERVER
       fprintf( logstream, "local log: channel %s deleted!\n", channelPtr->cid);
 #endif
-      free(channelPtr);
+      opj_free(channelPtr);
       channelPtr=channelNext;
   }
-  free( *channellist);
+  opj_free( *channellist);
 }
 
 void print_allchannel( channellist_param_t *channellist)

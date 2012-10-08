@@ -31,6 +31,9 @@
 #ifndef   	INDEX_MANAGER_H_
 # define   	INDEX_MANAGER_H_
 
+#include "opj_config.h"
+#include "opj_includes.h"
+
 #include "byte_manager.h"
 #include "faixbox_manager.h"
 #include "metadata_manager.h"
@@ -38,6 +41,7 @@
 #include "bool.h"
 
 /** progression order */
+#if 0
 typedef enum porder {
   PROG_UNKNOWN = -1,      /**< place-holder */
   LRCP = 0,               /**< layer-resolution-component-precinct order */
@@ -46,6 +50,7 @@ typedef enum porder {
   PCRL = 3,               /**< precinct-component-resolution-layer order */
   CPRL = 4                /**< component-precinct-resolution-layer order */
 } porder_t;
+#endif
 
 /** A.5.1 Image and tile size (SIZ)*/
 typedef struct SIZmarker_param{
@@ -71,7 +76,7 @@ typedef struct SIZmarker_param{
 typedef struct CODmarker_param{
   Byte2_t  Lcod;             /**< length of marker segment excluding the marker*/
   Byte_t   Scod;             /**< Coding style for all components*/
-  porder_t prog_order;       /**< progression order*/
+  OPJ_PROG_ORDER prog_order;       /**< progression order*/
   Byte2_t  numOflayers;      /**< number of layers*/
   Byte_t   numOfdecomp;      /**< number of decompositions levels*/
   Byte4_t  *XPsiz;           /**< dynamic array of precinct width  at successive resolution level in order*/

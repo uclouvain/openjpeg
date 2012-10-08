@@ -122,7 +122,7 @@ Byte_t * recons_jp2( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte8_t csn
   if( jp2cDBoxOffset != 0 && codelen <= jp2cDBoxlen)
     memcpy( jp2stream+jp2cDBoxOffset, codestream, codelen);
 
-  free( codestream);
+  opj_free( codestream);
   
   return jp2stream;
 }
@@ -314,14 +314,14 @@ Byte_t * add_SOTmkr( Byte_t *j2kstream, Byte8_t *j2klen)
   Byte_t *buf;
   const Byte2_t SOT = 0x90ff;
 
-  buf = (Byte_t *)malloc(( *j2klen)+2);
+  buf = (Byte_t *)opj_malloc(( *j2klen)+2);
 
   memcpy( buf, j2kstream, *j2klen);
   memcpy( buf+(*j2klen), &SOT, 2);
   
   *j2klen += 2;
 
-  if(j2kstream) free(j2kstream);
+  if(j2kstream) opj_free(j2kstream);
 
   return buf;
 }
@@ -660,15 +660,15 @@ Byte_t * add_msgstream( message_param_t *message, Byte_t *origstream, Byte_t *j2
 
   newstream = gene_msgstream( message, origstream, &newlen);
 
-  buf = (Byte_t *)malloc(( *j2klen)+newlen);
+  buf = (Byte_t *)opj_malloc(( *j2klen)+newlen);
 
   memcpy( buf, j2kstream, *j2klen);
   memcpy( buf+(*j2klen), newstream, newlen);
   
   *j2klen += newlen;
   
-  free( newstream);
-  if(j2kstream) free(j2kstream);
+  opj_free( newstream);
+  if(j2kstream) opj_free(j2kstream);
 
   return buf;
 }
@@ -685,19 +685,19 @@ Byte_t * add_emptyboxstream( placeholder_param_t *phld, Byte_t *jp2stream, Byte8
   else
     newlen = big8(phld->OrigBH+8);
 
-  newstream = (Byte_t *)malloc( newlen);
+  newstream = (Byte_t *)opj_malloc( newlen);
   memset( newstream, 0, newlen);
   memcpy( newstream, phld->OrigBH, phld->OrigBHlen);
 
-  buf = (Byte_t *)malloc(( *jp2len)+newlen);
+  buf = (Byte_t *)opj_malloc(( *jp2len)+newlen);
 
   memcpy( buf, jp2stream, *jp2len);
   memcpy( buf+(*jp2len), newstream, newlen);
   
   *jp2len += newlen;
   
-  free( newstream);
-  if(jp2stream) free(jp2stream);
+  opj_free( newstream);
+  if(jp2stream) opj_free(jp2stream);
 
   return buf;
 }
@@ -710,15 +710,15 @@ Byte_t * add_emptytilestream( const Byte8_t tileID, Byte_t *j2kstream, Byte8_t *
 
   newstream = gene_emptytilestream( tileID, &newlen);
 
-  buf = (Byte_t *)malloc(( *j2klen)+newlen);
+  buf = (Byte_t *)opj_malloc(( *j2klen)+newlen);
 
   memcpy( buf, j2kstream, *j2klen);
   memcpy( buf+(*j2klen), newstream, newlen);
   
   *j2klen += newlen;
 
-  free( newstream);
-  if(j2kstream) free(j2kstream);
+  opj_free( newstream);
+  if(j2kstream) opj_free(j2kstream);
 
   return buf;
 }
@@ -727,14 +727,14 @@ Byte_t * add_padding( Byte8_t padding, Byte_t *j2kstream, Byte8_t *j2klen)
 {
   Byte_t *buf;
 
-  buf = (Byte_t *)malloc(( *j2klen)+padding);
+  buf = (Byte_t *)opj_malloc(( *j2klen)+padding);
 
   memcpy( buf, j2kstream, *j2klen);
   memset( buf+(*j2klen), 0, padding);
   
   *j2klen += padding;
 
-  if(j2kstream) free(j2kstream);
+  if(j2kstream) opj_free(j2kstream);
 
   return buf;
 }
@@ -745,14 +745,14 @@ Byte_t * add_EOC( Byte_t *j2kstream, Byte8_t *j2klen)
 
   Byte_t *buf;
 
-  buf = (Byte_t *)malloc(( *j2klen)+2);
+  buf = (Byte_t *)opj_malloc(( *j2klen)+2);
 
   memcpy( buf, j2kstream, *j2klen);
   memcpy( buf+(*j2klen), &EOC, 2);
 
   *j2klen += 2;
 
-  if(j2kstream) free(j2kstream);
+  if(j2kstream) opj_free(j2kstream);
 
   return buf;
 }
@@ -765,7 +765,7 @@ Byte_t * gene_msgstream( message_param_t *message, Byte_t *stream, Byte8_t *leng
     return NULL;
 
   *length = message->length;
-  buf = (Byte_t *)malloc( *length);
+  buf = (Byte_t *)opj_malloc( *length);
   memcpy( buf, stream+message->res_offset,  *length);
 
   return buf;
@@ -782,7 +782,7 @@ Byte_t * gene_emptytilestream( const Byte8_t tileID, Byte8_t *length)
   const Byte2_t SOD = 0x93ff;
 
   *length = 14;
-  buf = (Byte_t *)malloc(*length);
+  buf = (Byte_t *)opj_malloc(*length);
 
   Isot = (Byte2_t)((((Byte2_t)tileID) << 8) | ((((Byte2_t)tileID) & 0xf0) >> 8));
   

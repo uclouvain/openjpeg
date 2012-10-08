@@ -80,6 +80,61 @@ int write_thix( int coff, opj_codestream_info_t cstr_info, opj_cio_t *cio)
   return len;
 }
 
+int write_thix_v2( int coff, opj_codestream_info_t cstr_info, opj_stream_private_t *cio,
+              opj_event_mgr_t * p_manager )
+{
+  OPJ_BYTE l_data_header [4];
+  int len, lenp, i;
+  int tileno;
+  opj_jp2_box_t *box;
+
+  lenp = 0;
+  box = (opj_jp2_box_t *)opj_calloc( cstr_info.tw*cstr_info.th, sizeof(opj_jp2_box_t));
+
+  for ( i = 0; i < 2 ; i++ ){
+    if (i)
+#if 0
+      cio_seek( cio, lenp);
+#else
+      opj_stream_seek( cio, lenp, p_manager);
+#endif
+
+#if 0
+    lenp = cio_tell( cio);
+    cio_skip( cio, 4);              /* L [at the end] */
+    cio_write( cio, JPIP_THIX, 4);  /* THIX           */
+#else
+    lenp = opj_stream_tell(cio);
+    opj_stream_skip(cio, 4, p_manager);             /* L [at the end] */
+    opj_write_bytes(l_data_header,JPIP_THIX,4); /* THIX */
+    opj_stream_write_data(cio,l_data_header,4,p_manager);
+#endif
+    write_manf_v2( i, cstr_info.tw*cstr_info.th, box, cio);
+    
+    for (tileno = 0; tileno < cstr_info.tw*cstr_info.th; tileno++){
+      box[tileno].length = write_tilemhix_v2( coff, cstr_info, tileno, cio);
+      box[tileno].type = JPIP_MHIX;
+    }
+ 
+#if 0
+    len = cio_tell( cio)-lenp;
+    cio_seek( cio, lenp);
+    cio_write( cio, len, 4);        /* L              */
+    cio_seek( cio, lenp+len);
+#else
+    len = opj_stream_tell(cio)-lenp;
+    opj_stream_seek(cio, lenp, p_manager);
+    opj_write_bytes(l_data_header,len,4); /* L              */
+    opj_stream_write_data(cio,l_data_header,4,p_manager);
+    opj_stream_seek( cio, lenp+len,p_manager);
+#endif
+  }
+
+  opj_free(box);
+
+  return len;
+}
+
 int write_tilemhix( int coff, opj_codestream_info_t cstr_info, int tileno, opj_cio_t *cio)
 {
   int i;
@@ -113,6 +168,75 @@ int write_tilemhix( int coff, opj_codestream_info_t cstr_info, int tileno, opj_c
   cio_seek( cio, lenp);
   cio_write( cio, len, 4);        /* L           */
   cio_seek( cio, lenp+len);
+
+  return len;
+}
+
+int write_tilemhix_v2( int coff, opj_codestream_info_t cstr_info, int tileno, opj_stream_private_t *cio,
+              opj_event_mgr_t * p_manager )
+{
+  OPJ_BYTE l_data_header [8];
+  int i;
+  opj_tile_info_t tile;
+  opj_tp_info_t tp;
+  int marknum;
+  int len, lenp;
+  opj_marker_info_t *marker;
+
+#if 0
+  lenp = cio_tell( cio);
+  cio_skip( cio, 4);                               /* L [at the end]                    */
+  cio_write( cio, JPIP_MHIX, 4);                   /* MHIX                              */
+#else
+  lenp = opj_stream_tell (cio);
+  opj_stream_skip(cio, 4, p_manager);               /* L [at the end]                    */
+  opj_write_bytes(l_data_header,JPIP_MHIX,4);       /* MHIX                              */
+  opj_stream_write_data(cio,l_data_header,4,p_manager);
+#endif
+
+  tile = cstr_info.tile[tileno];
+  tp = tile.tp[0];
+
+#if 0
+  cio_write( cio, tp.tp_end_header-tp.tp_start_pos+1, 8);  /* TLEN                              */ 
+#else
+  opj_write_bytes(l_data_header,tp.tp_end_header-tp.tp_start_pos+1, 8);        /* TLEN                              */
+  opj_stream_write_data(cio,l_data_header,8,p_manager);
+#endif
+
+  marker = cstr_info.tile[tileno].marker;
+
+  for( i=0; i<cstr_info.tile[tileno].marknum; i++){             /* Marker restricted to 1 apparition */
+#if 0
+    cio_write( cio, marker[i].type, 2);
+    cio_write( cio, 0, 2);
+    cio_write( cio, marker[i].pos-coff, 8);
+    cio_write( cio, marker[i].len, 2);
+#else
+    opj_write_bytes( l_data_header, marker[i].type, 2);
+    opj_write_bytes( l_data_header+2, 0, 2);
+    opj_stream_write_data(cio,l_data_header,4,p_manager);
+    opj_write_bytes( l_data_header, marker[i].pos-coff, 8);
+    opj_stream_write_data(cio,l_data_header,8,p_manager);
+    opj_write_bytes( l_data_header, marker[i].len, 2);
+    opj_stream_write_data(cio,l_data_header,2,p_manager);
+#endif
+  }
+     
+  /*  free( marker);*/
+
+#if 0
+  len = cio_tell( cio) - lenp;
+  cio_seek( cio, lenp);
+  cio_write( cio, len, 4);        /* L           */
+  cio_seek( cio, lenp+len);
+#else
+  len = opj_stream_tell(cio)-lenp;
+  opj_stream_seek(cio, lenp,p_manager);
+  opj_write_bytes(l_data_header,len,4);/* L  */
+  opj_stream_write_data(cio,l_data_header,4,p_manager);
+  opj_stream_seek(cio, lenp+len,p_manager);
+#endif
 
   return len;
 }

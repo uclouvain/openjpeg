@@ -58,7 +58,7 @@ targetlist_param_t * gene_targetlist(void)
 {
   targetlist_param_t *targetlist;
 
-  targetlist = (targetlist_param_t *)malloc( sizeof(targetlist_param_t));
+  targetlist = (targetlist_param_t *)opj_malloc( sizeof(targetlist_param_t));
   
   targetlist->first = NULL;
   targetlist->last  = NULL;
@@ -99,7 +99,7 @@ target_param_t * gene_target( targetlist_param_t *targetlist, char *targetpath)
     return NULL;
   }
 
-  target = (target_param_t *)malloc( sizeof(target_param_t));
+  target = (target_param_t *)opj_malloc( sizeof(target_param_t));
   snprintf( target->tid, MAX_LENOFTID, "%x-%x", (unsigned int)time(NULL), (unsigned int)rand());
   target->targetname = strdup( targetpath); 
   target->fd = fd;
@@ -158,9 +158,9 @@ void delete_target( target_param_t **target)
   fprintf( logstream, "local log: target: %s deleted\n", (*target)->targetname);
 #endif
 
-  free( (*target)->targetname);
+  opj_free( (*target)->targetname);
 
-  free(*target);
+  opj_free(*target);
 }
 
 void delete_target_in_list( target_param_t **target, targetlist_param_t *targetlist)
@@ -193,7 +193,7 @@ void delete_targetlist(targetlist_param_t **targetlist)
     delete_target( &targetPtr);
     targetPtr=targetNext;
   }
-  free( *targetlist);
+  opj_free( *targetlist);
 }
 
 void print_target( target_param_t *target)
@@ -274,10 +274,10 @@ int open_jp2file( const char filepath[], char tmpfname[])
     return -1;
   }
   
-  data = (char *)malloc( 12); /* size of header*/
+  data = (char *)opj_malloc( 12); /* size of header*/
 
   if( read( fd, data, 12) != 12){
-    free( data);
+    opj_free( data);
     close(fd);
     fprintf( FCGI_stdout, "Reason: Target %s broken (read error)\r\n", filepath);
     return -1;
@@ -285,13 +285,13 @@ int open_jp2file( const char filepath[], char tmpfname[])
     
   if( *data || *(data + 1) || *(data + 2) ||
       *(data + 3) != 12 || strncmp (data + 4, "jP  \r\n\x87\n", 8)){
-    free( data);
+    opj_free( data);
     close(fd);
     fprintf( FCGI_stdout, "Reason: No JPEG 2000 Signature box in target %s\r\n", filepath);
     return -1;
   } 
 
-  free( data);
+  opj_free( data);
 
   return fd;
 }

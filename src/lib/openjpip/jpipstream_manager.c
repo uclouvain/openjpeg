@@ -40,14 +40,14 @@
 
 Byte_t * update_JPIPstream( Byte_t *newstream, OPJ_SIZE_T newstreamlen, Byte_t *cache_stream, OPJ_SIZE_T *streamlen)
 {
-  Byte_t *stream = (Byte_t *)malloc( (*streamlen)+newstreamlen);
+  Byte_t *stream = (Byte_t *)opj_malloc( (*streamlen)+newstreamlen);
   if( *streamlen > 0)
     memcpy( stream, cache_stream, *streamlen);
   memcpy( stream+(*streamlen), newstream, newstreamlen);
   *streamlen += newstreamlen;
 
   if(cache_stream)
-    free( cache_stream);
+    opj_free( cache_stream);
   
   return stream;
 }
@@ -83,7 +83,7 @@ Byte_t * jpipstream_to_pnm( Byte_t *jpipstream, msgqueue_param_t *msgqueue, Byte
 
   fp = fopen( j2kfname, "w+b");
   fwrite( j2kstream, j2klen, 1, fp);
-  free( j2kstream);
+  opj_free( j2kstream);
   fseek( fp, 0, SEEK_SET);
 
   pnmstream = j2k_to_pnm( fp, ihdrbox);
@@ -103,18 +103,18 @@ ihdrbox_param_t * get_SIZ_from_jpipstream( Byte_t *jpipstream, msgqueue_param_t 
 
   j2kstream = recons_j2kmainhead( msgqueue, jpipstream, csn, &j2klen);
   if( !get_mainheader_from_j2kstream( j2kstream, &SIZ, NULL)){
-    free( j2kstream);
+    opj_free( j2kstream);
     return NULL;
   }
 
-  ihdrbox = (ihdrbox_param_t *)malloc( sizeof(ihdrbox_param_t));
+  ihdrbox = (ihdrbox_param_t *)opj_malloc( sizeof(ihdrbox_param_t));
 
   ihdrbox->width = SIZ.Xsiz;
   ihdrbox->height = SIZ.Ysiz;
   ihdrbox->nc = SIZ.Csiz;
   ihdrbox->bpc = SIZ.Ssiz[0];
   
-  free( j2kstream);
+  opj_free( j2kstream);
 
   return ihdrbox;
 }

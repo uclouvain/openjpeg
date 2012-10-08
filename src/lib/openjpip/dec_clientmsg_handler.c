@@ -55,7 +55,7 @@ void handle_JPIPstreamMSG( SOCKET connected_socket, cachelist_param_t *cachelist
   parse_JPIPstream( newjpipstream, newstreamlen, (OPJ_OFF_T)*streamlen, msgqueue);
 
   *jpipstream = update_JPIPstream( newjpipstream, newstreamlen, *jpipstream, streamlen);
-  free( newjpipstream);
+  opj_free( newjpipstream);
 
   metadatalist = gene_metadatalist();
   parse_metamsg( msgqueue, *jpipstream, *streamlen, metadatalist);
@@ -82,9 +82,9 @@ void handle_JPIPstreamMSG( SOCKET connected_socket, cachelist_param_t *cachelist
     delete_metadatalist( &cache->metadatalist);
   cache->metadatalist = metadatalist;
 
-  if( target)    free( target);
-  if( tid)    free( tid);
-  if( cid)    free( cid);
+  if( target)    opj_free( target);
+  if( tid)    opj_free( tid);
+  if( cid)    opj_free( cid);
 
   response_signal( connected_socket, true);
 }
@@ -102,11 +102,11 @@ void handle_PNMreqMSG( SOCKET connected_socket, Byte_t *jpipstream, msgqueue_par
   
   if(!(cache = search_cacheBycid( CIDorTID, cachelist)))
     if(!(cache = search_cacheBytid( CIDorTID, cachelist))){
-      free( CIDorTID);
+      opj_free( CIDorTID);
       return;
     }
   
-  free( CIDorTID);
+  opj_free( CIDorTID);
 
   receive_line( connected_socket, tmp);
   fw = atoi( tmp);
@@ -121,8 +121,8 @@ void handle_PNMreqMSG( SOCKET connected_socket, Byte_t *jpipstream, msgqueue_par
   maxval = ihdrbox->bpc > 8 ? 255 : (1 << ihdrbox->bpc) - 1;
   send_PNMstream( connected_socket, pnmstream, ihdrbox->width, ihdrbox->height, ihdrbox->nc, (Byte_t)maxval );
 
-  free( ihdrbox);
-  free( pnmstream);
+  opj_free( ihdrbox);
+  opj_free( pnmstream);
 }
 
 void handle_XMLreqMSG( SOCKET connected_socket, Byte_t *jpipstream, cachelist_param_t *cachelist)
@@ -135,17 +135,17 @@ void handle_XMLreqMSG( SOCKET connected_socket, Byte_t *jpipstream, cachelist_pa
   cid = receive_string( connected_socket);
 
   if(!(cache = search_cacheBycid( cid, cachelist))){
-    free( cid);
+    opj_free( cid);
     return;
   }
 
-  free( cid);
+  opj_free( cid);
   
   boxcontents = cache->metadatalist->last->boxcontents;
-  xmlstream = (Byte_t *)malloc( boxcontents->length);
+  xmlstream = (Byte_t *)opj_malloc( boxcontents->length);
   memcpy( xmlstream, jpipstream+boxcontents->offset, boxcontents->length);
   send_XMLstream( connected_socket, xmlstream, boxcontents->length);
-  free( xmlstream);
+  opj_free( xmlstream);
 }
 
 void handle_TIDreqMSG( SOCKET connected_socket, cachelist_param_t *cachelist)
@@ -157,7 +157,7 @@ void handle_TIDreqMSG( SOCKET connected_socket, cachelist_param_t *cachelist)
   target = receive_string( connected_socket);
   cache = search_cache( target, cachelist);
 
-  free( target);
+  opj_free( target);
   
   if( cache){
     tid = cache->tid;
@@ -175,7 +175,7 @@ void handle_CIDreqMSG( SOCKET connected_socket, cachelist_param_t *cachelist)
   target = receive_string( connected_socket);
   cache = search_cache( target, cachelist);
   
-  free( target);
+  opj_free( target);
 
   if( cache){
     if( cache->numOfcid > 0){
@@ -194,7 +194,7 @@ void handle_dstCIDreqMSG( SOCKET connected_socket, cachelist_param_t *cachelist)
   remove_cachecid( cid, cachelist);
   response_signal( connected_socket, true);
   
-  free( cid);
+  opj_free( cid);
 }
 
 void handle_SIZreqMSG( SOCKET connected_socket, Byte_t *jpipstream, msgqueue_param_t *msgqueue, cachelist_param_t *cachelist)
@@ -214,8 +214,8 @@ void handle_SIZreqMSG( SOCKET connected_socket, Byte_t *jpipstream, msgqueue_par
   if( !cache && cid[0] != '0')
     cache = search_cacheBycid( cid, cachelist);
 
-  free( tid);
-  free( cid);
+  opj_free( tid);
+  opj_free( cid);
   
   width = height = 0;
   if( cache){
@@ -237,17 +237,17 @@ void handle_JP2saveMSG( SOCKET connected_socket, cachelist_param_t *cachelist, m
 
   cid = receive_string( connected_socket);
   if(!(cache = search_cacheBycid( cid, cachelist))){
-    free( cid);
+    opj_free( cid);
     return;
   }
   
-  free( cid);
+  opj_free( cid);
   
   assert( cache->csn >= 0);
   jp2stream = recons_jp2( msgqueue, jpipstream, (Byte8_t)cache->csn, &jp2len);
 
   if( jp2stream){
     save_codestream( jp2stream, jp2len, "jp2");
-    free( jp2stream);
+    opj_free( jp2stream);
   }
 }

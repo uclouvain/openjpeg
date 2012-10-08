@@ -60,7 +60,7 @@ msgqueue_param_t * gene_msgqueue( bool stateless, cachemodel_param_t *cachemodel
 {
   msgqueue_param_t *msgqueue;
 
-  msgqueue = (msgqueue_param_t *)malloc( sizeof(msgqueue_param_t));
+  msgqueue = (msgqueue_param_t *)opj_malloc( sizeof(msgqueue_param_t));
 
   msgqueue->first = NULL;
   msgqueue->last  = NULL;
@@ -82,13 +82,13 @@ void delete_msgqueue( msgqueue_param_t **msgqueue)
 
   while( ptr){
     next = ptr->next;
-    free( ptr);
+    opj_free( ptr);
     ptr = next;
   }
   if( (*msgqueue)->stateless && (*msgqueue)->cachemodel)
     delete_cachemodel( &((*msgqueue)->cachemodel));
 
-  free(*msgqueue); 
+  opj_free(*msgqueue); 
 }
 
 void print_msgqueue( msgqueue_param_t *msgqueue)
@@ -135,7 +135,7 @@ void enqueue_mainheader( msgqueue_param_t *msgqueue)
   target = cachemodel->target;
   codeidx = target->codeidx;
   
-  msg = (message_param_t *)malloc( sizeof(message_param_t));
+  msg = (message_param_t *)opj_malloc( sizeof(message_param_t));
 
   msg->last_byte = true;
   msg->in_class_id = 0;
@@ -166,7 +166,7 @@ void enqueue_tileheader( int tile_id, msgqueue_param_t *msgqueue)
   codeidx = target->codeidx;
 
   if( !cachemodel->th_model[ tile_id]){
-    msg = (message_param_t *)malloc( sizeof(message_param_t));
+    msg = (message_param_t *)opj_malloc( sizeof(message_param_t));
     msg->last_byte = true;
     assert( tile_id >= 0 );
     msg->in_class_id = (Byte8_t)tile_id;
@@ -220,7 +220,7 @@ void enqueue_tile( Byte4_t tile_id, int level, msgqueue_param_t *msgqueue)
     binLength = get_elemLen( tilepart, i, tile_id);
     
     if( !tp_model[i]){
-      msg = (message_param_t *)malloc( sizeof(message_param_t));
+      msg = (message_param_t *)opj_malloc( sizeof(message_param_t));
       
       msg->last_byte = (i==numOftparts-1);
       msg->in_class_id = tile_id;
@@ -269,7 +269,7 @@ void enqueue_precinct( int seq_id, int tile_id, int comp_id, int layers, msgqueu
     
     if( !cachemodel->pp_model[comp_id][tile_id*(int)nmax+seq_id*numOflayers+layer_id]){
   
-      msg = (message_param_t *)malloc( sizeof(message_param_t));
+      msg = (message_param_t *)opj_malloc( sizeof(message_param_t));
       msg->last_byte = (layer_id == (numOflayers-1));
       msg->in_class_id = comp_precinct_id( tile_id, comp_id, seq_id, codeidx->SIZ.Csiz, (int)codeidx->SIZ.XTnum * (int) codeidx->SIZ.YTnum);
       msg->class_id = PRECINCT_MSG;
@@ -376,7 +376,7 @@ message_param_t * gene_metamsg( Byte8_t meta_id, Byte8_t binOffset, Byte8_t leng
 {
   message_param_t *msg;
 
-  msg = (message_param_t *)malloc( sizeof(message_param_t));
+  msg = (message_param_t *)opj_malloc( sizeof(message_param_t));
     
   msg->last_byte = false;
   msg->in_class_id = meta_id;
@@ -521,11 +521,11 @@ void add_body_stream( message_param_t *msg, int fd, int tmpfd)
   }
 
   if( write( tmpfd, data, msg->length) < 1){
-    free( data);
+    opj_free( data);
     fprintf( FCGI_stderr, "Error: fwrite in add_body_stream()\n");
     return;
   }
-  free(data);
+  opj_free(data);
 }
 
 void add_bigendian_bytestream( Byte8_t code, int bytelength, int tmpfd);
@@ -596,7 +596,7 @@ void parse_JPIPstream( Byte_t *JPIPstream, Byte8_t streamlen, OPJ_OFF_T offset, 
   csn = (Byte8_t)-1;
   ptr = JPIPstream;
   while( (Byte8_t)(ptr-JPIPstream) < streamlen){
-    msg = (message_param_t *)malloc( sizeof(message_param_t));
+    msg = (message_param_t *)opj_malloc( sizeof(message_param_t));
     
     ptr = parse_bin_id_vbas( ptr, &bb, &c, &msg->in_class_id);
     
@@ -689,14 +689,14 @@ placeholder_param_t * parse_phld( Byte_t *datastream, Byte8_t metalength)
 {
   placeholder_param_t *phld;
 
-  phld = (placeholder_param_t *)malloc( sizeof(placeholder_param_t));
+  phld = (placeholder_param_t *)opj_malloc( sizeof(placeholder_param_t));
   
   phld->LBox = big4( datastream);
   strcpy( phld->TBox, "phld");
   phld->Flags = big4( datastream+8);
   phld->OrigID = big8( datastream+12);
   phld->OrigBHlen = (Byte_t)(metalength - 20);
-  phld->OrigBH = (Byte_t *)malloc(phld->OrigBHlen);
+  phld->OrigBH = (Byte_t *)opj_malloc(phld->OrigBHlen);
   memcpy( phld->OrigBH, datastream+20, phld->OrigBHlen);
   phld->next = NULL;
 
@@ -758,5 +758,5 @@ void delete_message_in_msgqueue( message_param_t **msg, msgqueue_param_t *msgque
     if( *msg == msgqueue->last)
       msgqueue->last = ptr;
   }
-  free( *msg);
+  opj_free( *msg);
 }

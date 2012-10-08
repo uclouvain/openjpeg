@@ -127,8 +127,8 @@ CODmarker_param_t get_CODmkrdata_from_j2kstream( Byte_t *CODstream)
   COD.numOfdecomp = *( CODstream+7);
 
   if(COD.Scod & 0x01){
-    COD.XPsiz = (Byte4_t *)malloc( (OPJ_SIZE_T)(COD.numOfdecomp+1)*sizeof(Byte4_t));
-    COD.YPsiz = (Byte4_t *)malloc( (OPJ_SIZE_T)(COD.numOfdecomp+1)*sizeof(Byte4_t));
+    COD.XPsiz = (Byte4_t *)opj_malloc( (OPJ_SIZE_T)(COD.numOfdecomp+1)*sizeof(Byte4_t));
+    COD.YPsiz = (Byte4_t *)opj_malloc( (OPJ_SIZE_T)(COD.numOfdecomp+1)*sizeof(Byte4_t));
     
     for( i=0; i<=COD.numOfdecomp; i++){
       /*precinct size */
@@ -137,8 +137,8 @@ CODmarker_param_t get_CODmkrdata_from_j2kstream( Byte_t *CODstream)
     }
   }
   else{
-    COD.XPsiz = (Byte4_t *)malloc( sizeof(Byte4_t));
-    COD.YPsiz = (Byte4_t *)malloc( sizeof(Byte4_t));
+    COD.XPsiz = (Byte4_t *)opj_malloc( sizeof(Byte4_t));
+    COD.YPsiz = (Byte4_t *)opj_malloc( sizeof(Byte4_t));
     COD.XPsiz[0] = COD.YPsiz[0] = pow(2,15);
   }
   return COD;

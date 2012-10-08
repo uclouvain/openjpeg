@@ -205,6 +205,7 @@ typedef struct opj_jp2_v2
 	OPJ_UINT32 *cl;
 	opj_jp2_comps_t *comps;
     OPJ_OFF_T j2k_codestream_offset;
+    OPJ_OFF_T jpip_iptr_offset;
 	OPJ_UINT32 jp2_state;
 	OPJ_UINT32 jp2_img_state;
 
