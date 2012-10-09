@@ -22,11 +22,6 @@ ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/t1.c
 ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/t2.c
 ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/tcd.c
 ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/tgt.c
-${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/cidx_manager.c
-${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/phix_manager.c
-${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/ppix_manager.c
-${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/thix_manager.c
-${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/tpix_manager.c
 ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/function_list.c
 )
 
