@@ -54,6 +54,7 @@
 
 #include "opj_config.h"
 #include "openjpeg.h"
+#include "openjpip.h"
 #include "opj_getopt.h"
 #include "convert.h"
 #include "index.h"
@@ -415,7 +416,7 @@ int get_file_format(char *filename) {
 
 char * get_file_name(char *name){
 	char *fname;
-	fname= (char*)malloc(OPJ_PATH_LEN*sizeof(char));
+	fname= (char*)opj_malloc(OPJ_PATH_LEN*sizeof(char));
 	fname= strtok(name,".");
 	return fname;
 }
@@ -767,7 +768,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 				parameters->tcp_numlayers = numlayers;
 				numresolution = parameters->numresolution;
 				matrix_width = numresolution * 3;
-				parameters->cp_matrice = (int *) malloc(numlayers * matrix_width * sizeof(int));
+				parameters->cp_matrice = (int *) opj_malloc(numlayers * matrix_width * sizeof(int));
 				s = s + 2;
 
 				for (i = 0; i < numlayers; i++) {
@@ -995,7 +996,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 
 			case 'C':			/* add a comment */
 			{
-				parameters->cp_comment = (char*)malloc(strlen(opj_optarg) + 1);
+				parameters->cp_comment = (char*)opj_malloc(strlen(opj_optarg) + 1);
 				if(parameters->cp_comment) {
 					strcpy(parameters->cp_comment, opj_optarg);
 				}
@@ -1024,7 +1025,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 
 			case 'z':			/* Image Directory path */
 			{
-				img_fol->imgdirpath = (char*)malloc(strlen(opj_optarg) + 1);
+				img_fol->imgdirpath = (char*)opj_malloc(strlen(opj_optarg) + 1);
 				strcpy(img_fol->imgdirpath,opj_optarg);
 				img_fol->set_imgdir=1;
 			}
@@ -1081,7 +1082,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 				fseek(lFile,0,SEEK_END);
 				lStrLen = ftell(lFile);
 				fseek(lFile,0,SEEK_SET);
-				lMatrix = (char *) malloc(lStrLen + 1);
+				lMatrix = (char *) opj_malloc(lStrLen + 1);
 				fread(lMatrix, lStrLen, 1, lFile);
 				fclose(lFile);
 
@@ -1102,7 +1103,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 				lNbComp = (int) (sqrt(4*lNbComp + 1)/2. - 0.5);
 				lMctComp = lNbComp * lNbComp;
 				lTotalComp = lMctComp + lNbComp;
-				lSpace = (float *) malloc(lTotalComp * sizeof(float));
+				lSpace = (float *) opj_malloc(lTotalComp * sizeof(float));
 				lCurrentDoublePtr = lSpace;
 				for (i=0;i<lMctComp;++i) {
 					lStrLen = strlen(lCurrentPtr) + 1;
@@ -1121,8 +1122,8 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 				opj_set_MCT(parameters, lSpace, (int *)(lSpace + lMctComp), lNbComp);
 
 				/* Free memory*/
-				free(lSpace);
-				free(lMatrix);
+				opj_free(lSpace);
+				opj_free(lMatrix);
 			}
 			break;
 
@@ -1619,7 +1620,7 @@ int main(int argc, char **argv) {
 	}
 
 	if (parameters.cp_cinema){
-		img_fol.rates = (float*)malloc(parameters.tcp_numlayers * sizeof(float));
+		img_fol.rates = (float*)opj_malloc(parameters.tcp_numlayers * sizeof(float));
 		for(i=0; i< parameters.tcp_numlayers; i++){
 			img_fol.rates[i] = parameters.tcp_rates[i];
 		}
@@ -1633,10 +1634,10 @@ int main(int argc, char **argv) {
     const char *version = opj_version();
 /* UniPG>> */
 #ifdef USE_JPWL
-		parameters.cp_comment = (char*)malloc(clen+strlen(version)+11);
+		parameters.cp_comment = (char*)opj_malloc(clen+strlen(version)+11);
 		sprintf(parameters.cp_comment,"%s%s with JPWL", comment, version);
 #else
-		parameters.cp_comment = (char*)malloc(clen+strlen(version)+1);
+		parameters.cp_comment = (char*)opj_malloc(clen+strlen(version)+1);
 		sprintf(parameters.cp_comment,"%s%s", comment, version);
 #endif
 /* <<UniPG */
@@ -1645,10 +1646,10 @@ int main(int argc, char **argv) {
 	/* Read directory if necessary */
 	if(img_fol.set_imgdir==1){
 		num_images=get_num_images(img_fol.imgdirpath);
-		dirptr=(dircnt_t*)malloc(sizeof(dircnt_t));
+		dirptr=(dircnt_t*)opj_malloc(sizeof(dircnt_t));
 		if(dirptr){
-			dirptr->filename_buf = (char*)malloc(num_images*OPJ_PATH_LEN*sizeof(char));	/* Stores at max 10 image file names*/
-			dirptr->filename = (char**) malloc(num_images*sizeof(char*));
+			dirptr->filename_buf = (char*)opj_malloc(num_images*OPJ_PATH_LEN*sizeof(char));	/* Stores at max 10 image file names*/
+			dirptr->filename = (char**) opj_malloc(num_images*sizeof(char*));
 			if(!dirptr->filename_buf){
 				return 0;
 			}
@@ -1839,7 +1840,7 @@ int main(int argc, char **argv) {
     if( bUseTiles ) {
       OPJ_BYTE *l_data;
       OPJ_UINT32 l_data_size = 512*512*3;
-      l_data = (OPJ_BYTE*) malloc( l_data_size * sizeof(OPJ_BYTE));
+      l_data = (OPJ_BYTE*) opj_malloc( l_data_size * sizeof(OPJ_BYTE));
       memset(l_data, 0, l_data_size );
       assert( l_data );
       for (i=0;i<l_nb_tiles;++i) {
@@ -1852,7 +1853,7 @@ int main(int argc, char **argv) {
           return 1;
         }
       }
-      free(l_data);
+      opj_free(l_data);
     }
     else {
       bSuccess = bSuccess && opj_encode(l_codec, l_stream);
@@ -1888,9 +1889,9 @@ int main(int argc, char **argv) {
 	}
 
 	/* free user parameters structure */
-	if(parameters.cp_comment)   free(parameters.cp_comment);
-	if(parameters.cp_matrice)   free(parameters.cp_matrice);
-    if(parameters.cp_cinema)    free(img_fol.rates);
+	if(parameters.cp_comment)   opj_free(parameters.cp_comment);
+	if(parameters.cp_matrice)   opj_free(parameters.cp_matrice);
+    if(parameters.cp_cinema)    opj_free(img_fol.rates);
 
 	return 0;
 }
