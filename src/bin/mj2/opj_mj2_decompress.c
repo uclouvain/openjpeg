@@ -101,7 +101,7 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 	
-  // Checking output file
+  /* Checking output file */
   outfile = fopen(argv[2], "w");
   if (!file) {
     fprintf(stderr, "failed to open %s for writing\n", argv[2]);
@@ -132,10 +132,10 @@ int main(int argc, char *argv[]) {
 	/* setup the decoder decoding parameters using user parameters */
 	mj2_setup_decoder(movie, &mj2_parameters);
 			
-  if (mj2_read_struct(file, movie)) // Creating the movie structure
+  if (mj2_read_struct(file, movie)) /* Creating the movie structure */
     return 1;	
 	
-  // Decode first video track 
+  /* Decode first video track */
 	for (tnum=0; tnum < (unsigned int)(movie->num_htk + movie->num_stk + movie->num_vtk); tnum++) {
 		if (movie->tk[tnum].track_type == 0) 
 			break;
@@ -148,7 +148,7 @@ int main(int argc, char *argv[]) {
 	
   track = &movie->tk[tnum];
 	
-  // Output info on first video tracl
+  /* Output info on first video tracl */
   fprintf(stdout,"The first video track contains %d frames.\nWidth: %d, Height: %d \n\n",
     track->num_samples, track->w, track->h);
 	
@@ -172,14 +172,12 @@ int main(int argc, char *argv[]) {
 			}; 		
 		}
     fseek(file,sample->offset+8,SEEK_SET);
-    fread(frame_codestream, sample->sample_size-8, 1, file);  // Assuming that jp and ftyp markers size do
+    fread(frame_codestream, sample->sample_size-8, 1, file);  /* Assuming that jp and ftyp markers size do */
 		
 		/* open a byte stream */
 		cio = opj_cio_open((opj_common_ptr)dinfo, frame_codestream, sample->sample_size-8);
 		
-#if 0 /* MM: FIXME */
-		img = opj_decode(dinfo, cio); // Decode J2K to image
-#endif
+		img = opj_decode(dinfo, cio); /* Decode J2K to image */
 
 #ifdef WANT_SYCC_TO_RGB
 	if(img->color_space == CLRSPC_SYCC)
@@ -202,16 +200,16 @@ int main(int argc, char *argv[]) {
       && (img->comps[0].dx == img->comps[2].dx / 2 ) && (img->comps[0].dx == 1)) 
       || (img->numcomps == 1)) {
       
-      if (!imagetoyuv(img, argv[2]))	// Convert image to YUV
+      if (!imagetoyuv(img, argv[2]))	/* Convert image to YUV */
 				return 1;
     }
     else if ((img->numcomps == 3) && 
       (img->comps[0].dx == 1) && (img->comps[1].dx == 1)&&
-      (img->comps[2].dx == 1))// If YUV 4:4:4 input --> to bmp
+      (img->comps[2].dx == 1))/* If YUV 4:4:4 input --> to bmp */
     {
       fprintf(stdout,"The frames will be output in a bmp format (output_1.bmp, ...)\n");
       sprintf(outfilename,"output_%d.bmp",snum);
-      if (imagetobmp(img, outfilename))	// Convert image to BMP
+      if (imagetobmp(img, outfilename))	/* Convert image to BMP */
 				return 1;
       
     }

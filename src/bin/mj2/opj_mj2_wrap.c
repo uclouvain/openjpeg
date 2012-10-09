@@ -45,10 +45,6 @@ Size of memory first allocated for MOOV box
 */
 #define TEMP_BUF 10000 
 
-#define ENUMCS_GRAY 16
-#define ENUMCS_SRGB 17
-#define ENUMCS_SYCC 18
-
 #define J2K_CODESTREAM_MAGIC "\xff\x4f\xff\x51"
 
 /* -------------------------------------------------------------------------- */

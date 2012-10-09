@@ -2,6 +2,20 @@ set(OPENMJ2_LIBRARY_NAME openmj2)
 set(OPENMJ2_SRCS
   mj2.c
   mj2_convert.c
+# FIXME: legacy
+  jp2.c
+  j2k.c
+  tcd.c
+  mct.c
+  t1.c
+  t2.c
+  pi.c
+  bio.c
+  mqc.c
+  tgt.c
+  dwt.c
+  event.c
+  openjpeg.c
 )
 
 # Build the library
@@ -15,12 +29,13 @@ endif(WIN32)
 
 include_directories(
   ${OPENJPEG_BINARY_DIR}/src/lib/openjp2 # opj_config.h
-  ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2
+  #${OPENJPEG_SOURCE_DIR}/src/lib/openjp2
   )
 
 # build mj2 lib:
 add_library(${OPENMJ2_LIBRARY_NAME} ${OPENMJ2_SRCS})
-target_link_libraries(${OPENMJ2_LIBRARY_NAME} openjp2)
+# FIXME: We are using an openjpeg 1.5 copy:
+#target_link_libraries(${OPENMJ2_LIBRARY_NAME} openjp2)
 if(UNIX)
   target_link_libraries(${OPENMJ2_LIBRARY_NAME} m)
 endif()

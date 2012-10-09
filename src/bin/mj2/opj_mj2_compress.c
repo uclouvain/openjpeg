@@ -43,9 +43,6 @@ Size of memory first allocated for MOOV box
 */
 #define TEMP_BUF 10000 
 
-#define ENUMCS_GRAY 16
-#define ENUMCS_SRGB 17
-#define ENUMCS_SYCC 18
 
 /* -------------------------------------------------------------------------- */
 
@@ -776,9 +773,7 @@ int main(int argc, char **argv)
 	cio_write(cio, JP2_JP2C, 4);	/* JP2C*/
 
 /* encode the image */
-#if 0 /* MM: FIXME */
 	bSuccess = opj_encode(cinfo, cio, img, NULL);
-#endif
 
 	if (!bSuccess) {
 	opj_cio_close(cio);
