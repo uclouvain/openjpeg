@@ -57,7 +57,7 @@
 
 extern int get_file_format(char *filename);
 extern void error_callback(const char *msg, void *client_data);
-extern warning_callback(const char *msg, void *client_data);
+extern void warning_callback(const char *msg, void *client_data);
 extern void info_callback(const char *msg, void *client_data);
 
 typedef struct callback_variables {
@@ -350,9 +350,9 @@ OPJ_PROG_ORDER give_progression(char progression[4]) {
 }
 
 
-/// <summary>
-/// Get logarithm of an integer and round downwards.
-/// </summary>
+/** <summary>
+    Get logarithm of an integer and round downwards.
+    </summary> */
 int int_floorlog2(int a) {
     int l;
     for (l=0; a>1; l++) {
@@ -1352,7 +1352,7 @@ char* create_index_into_byte_array(opj_codestream_info_t *cstr_info, int* buffer
 		}
 	}
 
-	// Compute the size of the index buffer, in number of bytes*/
+	/* Compute the size of the index buffer, in number of bytes*/
 	*buffer_size = 
 		  1 /* version */
 		+ (10 /* image_w until decomposition */
@@ -1361,18 +1361,18 @@ char* create_index_into_byte_array(opj_codestream_info_t *cstr_info, int* buffer
 		+ cstr_info->tw * cstr_info->th * 4 /* tile info, without distorsion info */
 		+ cstr_info->tw*cstr_info->th * cstr_info->numlayers * (cstr_info->numdecompos[0] + 1) * cstr_info->numcomps * prec_max *8
 		  ) * sizeof(int);
-	//printf("C: index buffer size = %d bytes\n", *buffer_size);
+	/*printf("C: index buffer size = %d bytes\n", *buffer_size);*/
 	buffer = (char*) malloc(*buffer_size);
 
 	if (!buffer) {
-		//opj_event_msg(j2k->cinfo, EVT_ERROR, "failed to allocate index buffer for writing %d int\n", *buffer_size);
+		/*opj_event_msg(j2k->cinfo, EVT_ERROR, "failed to allocate index buffer for writing %d int\n", *buffer_size);*/
 		fprintf(stderr, "failed to allocate index buffer for writing %d int\n", *buffer_size);
 		return 0;
 	}
 	
-	buffer[0] = 1;	// Version stored on a byte
+	buffer[0] = 1;	/* Version stored on a byte*/
 	buffer++;
-	// Remaining informations are stored on a int.
+	/* Remaining informations are stored on a int.*/
 	((int*)buffer)[buffer_pos++] = cstr_info->image_w;
 	((int*)buffer)[buffer_pos++] = cstr_info->image_h;
 	((int*)buffer)[buffer_pos++] = cstr_info->prog;
@@ -1597,7 +1597,7 @@ char* create_index_into_byte_array(opj_codestream_info_t *cstr_info, int* buffer
 	} /* tileno */
 
 	if (buffer_pos > *buffer_size) {
-		//opj_event_msg(j2k->cinfo, EVT_ERROR, "index creation: buffer_pos (%d) > buffer_size (%d)!\n", buffer_pos, *buffer_size);
+		/*opj_event_msg(j2k->cinfo, EVT_ERROR, "index creation: buffer_pos (%d) > buffer_size (%d)!\n", buffer_pos, *buffer_size);*/
 		fprintf(stderr, "index creation: buffer_pos (%d) > buffer_size (%d)!\n", buffer_pos, *buffer_size);
 		return 0;
 	}
@@ -1630,7 +1630,7 @@ opj_image_t* loadImage(opj_cparameters_t *parameters, JNIEnv *env, jobject obj, 
 	jint		*jiBody;
 	jboolean		isCopy;
 
-	// Image width, height and depth
+	/* Image width, height and depth*/
 	fid = (*env)->GetFieldID(env, cls,"width", "I");
 	ji = (*env)->GetIntField(env, obj, fid);
 	w = ji;
@@ -1643,7 +1643,7 @@ opj_image_t* loadImage(opj_cparameters_t *parameters, JNIEnv *env, jobject obj, 
 	ji = (*env)->GetIntField(env, obj, fid);
 	depth = ji;
 
-	// Read the image
+	/* Read the image*/
 	if (depth <=16) {
 		numcomps = 1;
 		color_space = CLRSPC_GRAY;
@@ -1658,8 +1658,8 @@ opj_image_t* loadImage(opj_cparameters_t *parameters, JNIEnv *env, jobject obj, 
 		cmptparm[0].y0 = parameters->image_offset_y0;
 		cmptparm[0].w = !cmptparm[0].x0 ? (w - 1) * parameters->subsampling_dx + 1 : cmptparm[0].x0 + (w - 1) * parameters->subsampling_dx + 1;
 		cmptparm[0].h = !cmptparm[0].y0 ? (h - 1) * parameters->subsampling_dy + 1 : cmptparm[0].y0 + (h - 1) * parameters->subsampling_dy + 1;
-		// Java types are always signed but we use them as unsigned types (shift of the negative part of 
-		// the pixels of the images in Telemis before entering the encoder).
+		/* Java types are always signed but we use them as unsigned types (shift of the negative part of 
+		   the pixels of the images in Telemis before entering the encoder).*/
 		cmptparm[0].sgnd = 0;
 		if (depth<=16) 
 			cmptparm[0].prec=depth;
@@ -1705,12 +1705,12 @@ opj_image_t* loadImage(opj_cparameters_t *parameters, JNIEnv *env, jobject obj, 
 		comp = &image->comps[compno];
 		max = -100000;
 		if (depth == 8) {
-			fid = (*env)->GetFieldID(env, cls,"image8", "[B");	// byteArray []
+			fid = (*env)->GetFieldID(env, cls,"image8", "[B");	/* byteArray []*/
 			jba = (*env)->GetObjectField(env, obj, fid);
 			len = (*env)->GetArrayLength(env, jba);
 			
 			jbBody = (*env)->GetPrimitiveArrayCritical(env, jba, &isCopy);
-			//printf("C: before transfering 8 bpp image\n");
+			/*printf("C: before transfering 8 bpp image\n");*/
 			if (comp->sgnd) {
 				for(i=0; i< len;i++) {
 					comp->data[i] = (char) jbBody[i];
@@ -1724,13 +1724,13 @@ opj_image_t* loadImage(opj_cparameters_t *parameters, JNIEnv *env, jobject obj, 
 			}
 			(*env)->ReleasePrimitiveArrayCritical(env, jba, jbBody, 0);
 		} else if(depth == 16) {
-			fid = (*env)->GetFieldID(env, cls,"image16", "[S");	// shortArray []
+			fid = (*env)->GetFieldID(env, cls,"image16", "[S");	/* shortArray []*/
 			jsa = (*env)->GetObjectField(env, obj, fid);
 			len = (*env)->GetArrayLength(env, jsa);
 			
 			jsBody = (*env)->GetPrimitiveArrayCritical(env, jsa, &isCopy);
-			//printf("C: before transfering 16 bpp image\n");
-			if (comp->sgnd) {	// Special behaviour to deal with signed elements ??
+			/*printf("C: before transfering 16 bpp image\n");*/
+			if (comp->sgnd) {	/* Special behaviour to deal with signed elements ??*/
 				comp->data[i] = (short) jsBody[i];
 				for(i=0; i< len;i++) {
 					if (comp->data[i] > max) max = comp->data[i];
@@ -1743,14 +1743,14 @@ opj_image_t* loadImage(opj_cparameters_t *parameters, JNIEnv *env, jobject obj, 
 			}
 			(*env)->ReleasePrimitiveArrayCritical(env, jsa, jsBody, 0);
 		} else if (depth == 24) {
-			fid = (*env)->GetFieldID(env, cls,"image24", "[I");	// intArray []
+			fid = (*env)->GetFieldID(env, cls,"image24", "[I");	/* intArray []*/
 			jia = (*env)->GetObjectField(env, obj, fid);
 			len = (*env)->GetArrayLength(env, jia);
 			shift = compno*8;
 
 			jiBody = (*env)->GetPrimitiveArrayCritical(env, jia, &isCopy);
-			//printf("C: before transfering 24 bpp image (component %d, signed = %d)\n", compno, comp->sgnd);
-			if (comp->sgnd) {	// Special behaviour to deal with signed elements ?? XXXXX
+			/*printf("C: before transfering 24 bpp image (component %d, signed = %d)\n", compno, comp->sgnd);*/
+			if (comp->sgnd) {	/* Special behaviour to deal with signed elements ?? XXXXX*/
 				for(i=0; i< len;i++) {
 					comp->data[i] = ( ((int) jiBody[i]) & (0xFF << shift) ) >> shift;
 					if (comp->data[i] > max) max = comp->data[i];
@@ -1765,7 +1765,7 @@ opj_image_t* loadImage(opj_cparameters_t *parameters, JNIEnv *env, jobject obj, 
 		}
 		comp->bpp = int_floorlog2(max)+1;
 		comp->prec = comp->bpp;
-		//printf("C: component %d: max  %d, real bpp = %d\n", compno, max, comp->bpp);
+		/*printf("C: component %d: max  %d, real bpp = %d\n", compno, max, comp->bpp);*/
 	}
 	return image;
 }
@@ -1786,9 +1786,9 @@ JNIEXPORT jlong JNICALL Java_org_openJpeg_OpenJPEGJavaEncoder_internalEncodeImag
 	opj_codestream_info_t cstr_info;		/* Codestream information structure */
 	char indexfilename[OPJ_PATH_LEN];	/* index file name */
 
-	int* compressed_index = NULL;
+	char* compressed_index = NULL;
 	int compressed_index_size=-1;
-	// ==> Access variables to the Java member variables
+	/* ==> Access variables to the Java member variables*/
 	jsize		arraySize;
 	jclass		cls;
 	jobject		object;
@@ -1797,18 +1797,18 @@ JNIEXPORT jlong JNICALL Java_org_openJpeg_OpenJPEGJavaEncoder_internalEncodeImag
 	jbyteArray	jba;
 	jbyte		*jbBody;
 	callback_variables_t msgErrorCallback_vars;
-	// <== access variable to the Java member variables.
+	/* <== access variable to the Java member variables.*/
 
-	// For the encoding and storage into the file
+	/* For the encoding and storage into the file*/
 	opj_cinfo_t* cinfo;
 	int codestream_length;
 	opj_cio_t *cio = NULL;
 	FILE *f = NULL;
 
-	// JNI reference to the calling class
+	/* JNI reference to the calling class*/
 	cls = (*env)->GetObjectClass(env, obj);
 	
-	// Pointers to be able to call a Java method for all the info and error messages
+	/* Pointers to be able to call a Java method for all the info and error messages*/
 	msgErrorCallback_vars.env = env;
 	msgErrorCallback_vars.jobj = &obj;
 	msgErrorCallback_vars.message_mid = (*env)->GetMethodID(env, cls, "logMessage", "(Ljava/lang/String;)V");
@@ -1817,11 +1817,11 @@ JNIEXPORT jlong JNICALL Java_org_openJpeg_OpenJPEGJavaEncoder_internalEncodeImag
 	arraySize = (*env)->GetArrayLength(env, javaParameters);
 	argc = (int) arraySize +1;
 	argv = malloc(argc*sizeof(char*));
-	argv[0] = "ProgramName.exe";	// The program name: useless
+	argv[0] = "ProgramName.exe";	/* The program name: useless*/
 	j=0;
 	for (i=1; i<argc; i++) {
 		object = (*env)->GetObjectArrayElement(env, javaParameters, i-1);
-		argv[i] = (*env)->GetStringUTFChars(env, object, &isCopy);
+		argv[i] = (char*)(*env)->GetStringUTFChars(env, object, &isCopy);
 	}
 
 	/*printf("C: ");
@@ -1841,7 +1841,7 @@ JNIEXPORT jlong JNICALL Java_org_openJpeg_OpenJPEGJavaEncoder_internalEncodeImag
 	/* set encoding parameters to default values */
 	opj_set_default_encoder_parameters(&parameters);
 	parameters.cod_format = J2K_CFMT;
-	//parameters.index_on = 1;
+	/*parameters.index_on = 1;*/
 
 	/* Initialize indexfilename and img_fol */
 	*indexfilename = 0;
@@ -1849,13 +1849,13 @@ JNIEXPORT jlong JNICALL Java_org_openJpeg_OpenJPEGJavaEncoder_internalEncodeImag
 
 	/* parse input and get user encoding parameters */
 	if (parse_cmdline_encoder(argc, argv, &parameters,&img_fol, indexfilename) == 1) {
-		// Release the Java arguments array
+		/* Release the Java arguments array*/
 		for (i=1; i<argc; i++)
 			(*env)->ReleaseStringUTFChars(env, (*env)->GetObjectArrayElement(env, javaParameters, i-1), argv[i]);
 		return -1;
 	}
 
-	// Release the Java arguments array
+	/* Release the Java arguments array*/
 	for (i=1; i<argc; i++)
 		(*env)->ReleaseStringUTFChars(env, (*env)->GetObjectArrayElement(env, javaParameters, i-1), argv[i]);
 
@@ -1891,7 +1891,7 @@ JNIEXPORT jlong JNICALL Java_org_openJpeg_OpenJPEGJavaEncoder_internalEncodeImag
 		fprintf(stderr,"\n");
 
 		image = loadImage(&parameters, env, obj, cls);
-		//printf("C: after load image: image = %d\n", image);
+		/*printf("C: after load image: image = %d\n", image);*/
 		if (!image) {
 			fprintf(stderr, "Unable to load image\n");
 			return -1; 

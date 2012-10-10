@@ -508,7 +508,7 @@ JNIEXPORT jint JNICALL Java_org_openJpeg_OpenJPEGJavaDecoder_internalDecodeJ2Kto
 	int w,h;
 	long min_value, max_value;
 	short tempS; unsigned char tempUC, tempUC1, tempUC2;
-	// ==> Access variables to the Java member variables
+	/* ==> Access variables to the Java member variables*/
 	jsize		arraySize;
 	jclass		cls;
 	jobject		object;
@@ -521,8 +521,8 @@ JNIEXPORT jint JNICALL Java_org_openJpeg_OpenJPEGJavaDecoder_internalDecodeJ2Kto
 	jshort		*jsBody, *ptrSBody;
 	jint		*jiBody, *ptrIBody;
 	callback_variables_t msgErrorCallback_vars;
-	// <=== access variable to Java member variables */
-	int *ptr, *ptr1, *ptr2;				// <== To transfer the decoded image to Java
+	/* <=== access variable to Java member variables */
+	int *ptr, *ptr1, *ptr2;				/* <== To transfer the decoded image to Java*/
 
 	/* configure the event callbacks */
 	memset(&event_mgr, 0, sizeof(opj_event_mgr_t));	
@@ -530,24 +530,24 @@ JNIEXPORT jint JNICALL Java_org_openJpeg_OpenJPEGJavaDecoder_internalDecodeJ2Kto
 	event_mgr.warning_handler = warning_callback;
 	event_mgr.info_handler = info_callback;
 
-	// JNI reference to the calling class
+	/* JNI reference to the calling class*/
 	cls = (*env)->GetObjectClass(env, obj);
 
-	// Pointers to be able to call a Java method for all the info and error messages
+	/* Pointers to be able to call a Java method for all the info and error messages*/
 	msgErrorCallback_vars.env = env;
 	msgErrorCallback_vars.jobj = &obj;
 	msgErrorCallback_vars.message_mid = (*env)->GetMethodID(env, cls, "logMessage", "(Ljava/lang/String;)V");
 	msgErrorCallback_vars.error_mid = (*env)->GetMethodID(env, cls, "logError", "(Ljava/lang/String;)V");
 
-	// Get the String[] containing the parameters, and converts it into a char** to simulate command line arguments.
+	/* Get the String[] containing the parameters, and converts it into a char** to simulate command line arguments.*/
 	arraySize = (*env)->GetArrayLength(env, javaParameters);
 	argc = (int) arraySize +1;
 	argv = malloc(argc*sizeof(char*));
-	argv[0] = "ProgramName.exe";	// The program name: useless
+	argv[0] = "ProgramName.exe";	/* The program name: useless*/
 	j=0;
 	for (i=1; i<argc; i++) {
 		object = (*env)->GetObjectArrayElement(env, javaParameters, i-1);
-		argv[i] = (*env)->GetStringUTFChars(env, object, &isCopy);
+		argv[i] = (char*)(*env)->GetStringUTFChars(env, object, &isCopy);
 	}
 
 	/*printf("C: decoder params = ");
@@ -562,18 +562,18 @@ JNIEXPORT jint JNICALL Java_org_openJpeg_OpenJPEGJavaDecoder_internalDecodeJ2Kto
 
 	/* parse input and get user encoding parameters */
 	if(parse_cmdline_decoder(argc, argv, &parameters,&img_fol) == 1) {
-		// Release the Java arguments array
+		/* Release the Java arguments array*/
 		for (i=1; i<argc; i++)
 			(*env)->ReleaseStringUTFChars(env, (*env)->GetObjectArrayElement(env, javaParameters, i-1), argv[i]);
 		return -1;
 	}
-	// Release the Java arguments array
+	/* Release the Java arguments array*/
 	for (i=1; i<argc; i++)
 		(*env)->ReleaseStringUTFChars(env, (*env)->GetObjectArrayElement(env, javaParameters, i-1), argv[i]);
 
 	num_images=1;
 
-	// Get additional information from the Java object variables
+	/* Get additional information from the Java object variables*/
 	fid = (*env)->GetFieldID(env, cls,"skippedResolutions", "I");
 	parameters.cp_reduce = (short) (*env)->GetIntField(env, obj, fid);
 
@@ -587,7 +587,7 @@ JNIEXPORT jint JNICALL Java_org_openJpeg_OpenJPEGJavaDecoder_internalDecodeJ2Kto
 		   Implemented for debug purpose. */
 		/* -------------------------------------------------------------- */
 		if (parameters.infile && parameters.infile[0]!='\0') {
-			//printf("C: opening [%s]\n", parameters.infile);
+			/*printf("C: opening [%s]\n", parameters.infile);*/
 			fsrc = fopen(parameters.infile, "rb");
 			if (!fsrc) {
 				fprintf(stderr, "ERROR -> failed to open %s for reading\n", parameters.infile);
@@ -599,10 +599,10 @@ JNIEXPORT jint JNICALL Java_org_openJpeg_OpenJPEGJavaDecoder_internalDecodeJ2Kto
 			src = (unsigned char *) malloc(file_length);
 			fread(src, 1, file_length, fsrc);
 			fclose(fsrc);
-			//printf("C: %d bytes read from file\n",file_length);
+			/*printf("C: %d bytes read from file\n",file_length);*/
 		} else {
-			// Preparing the transfer of the codestream from Java to C
-			//printf("C: before transfering codestream\n");
+			/* Preparing the transfer of the codestream from Java to C*/
+			/*printf("C: before transfering codestream\n");*/
 			fid = (*env)->GetFieldID(env, cls,"compressedStream", "[B");
 			jba = (*env)->GetObjectField(env, obj, fid);
 			file_length = (*env)->GetArrayLength(env, jba);
@@ -752,17 +752,17 @@ JNIEXPORT jint JNICALL Java_org_openJpeg_OpenJPEGJavaDecoder_internalDecodeJ2Kto
 
 		}
 
-		// ========= Return the image to the Java structure ===============
+		/* ========= Return the image to the Java structure ===============*/
 #ifdef CHECK_THRESHOLDS
 		printf("C: checking thresholds\n");
 #endif
-		// First compute the real with and height, in function of the resolutions decoded.
-		//wr = (image->comps[0].w + (1 << image->comps[0].factor) -1) >> image->comps[0].factor;
-		//hr = (image->comps[0].h + (1 << image->comps[0].factor) -1) >> image->comps[0].factor;
+		/* First compute the real with and height, in function of the resolutions decoded.*/
+		/*wr = (image->comps[0].w + (1 << image->comps[0].factor) -1) >> image->comps[0].factor;*/
+		/*hr = (image->comps[0].h + (1 << image->comps[0].factor) -1) >> image->comps[0].factor;*/
 		w = image->comps[0].w;
 		h = image->comps[0].h;
 
-		if (image->numcomps==3) {	// 3 components color image
+		if (image->numcomps==3) {	/* 3 components color image*/
 			ptr = image->comps[0].data;
 			ptr1 = image->comps[1].data;
 			ptr2 = image->comps[2].data;
@@ -775,7 +775,7 @@ JNIEXPORT jint JNICALL Java_org_openJpeg_OpenJPEGJavaDecoder_internalDecodeJ2Kto
 				max_value = 255;
 			}
 #endif			
-			// Get the pointer to the Java structure where the data must be copied
+			/* Get the pointer to the Java structure where the data must be copied*/
 			fid = (*env)->GetFieldID(env, cls,"image24", "[I");
 			jia = (*env)->GetObjectField(env, obj, fid);
 			jiBody = (*env)->GetIntArrayElements(env, jia, 0);
@@ -804,7 +804,7 @@ JNIEXPORT jint JNICALL Java_org_openJpeg_OpenJPEGJavaDecoder_internalDecodeJ2Kto
 			}
 			(*env)->ReleaseIntArrayElements(env, jia, jiBody, 0);
 
-		} else {	// 1 component 8 or 16 bpp image
+		} else {	/* 1 component 8 or 16 bpp image*/
 			ptr = image->comps[0].data;
 			printf("C: before transfering a %d bpp image to java (length = %d)\n",image->comps[0].prec ,w*h);
 			if (image->comps[0].prec<=8) {
@@ -821,7 +821,7 @@ JNIEXPORT jint JNICALL Java_org_openJpeg_OpenJPEGJavaDecoder_internalDecodeJ2Kto
 					max_value = 255;
 				}
 #endif								
-				//printf("C: transfering %d shorts to Java image8 pointer = %d\n", wr*hr,ptrSBody);
+				/*printf("C: transfering %d shorts to Java image8 pointer = %d\n", wr*hr,ptrSBody);*/
 				for (i=0; i<w*h; i++) {
 					tempUC = (unsigned char) (ptr[i]);
 #ifdef CHECK_THRESHOLDS
@@ -879,5 +879,5 @@ JNIEXPORT jint JNICALL Java_org_openJpeg_OpenJPEGJavaDecoder_internalDecodeJ2Kto
 	}
 	return 1; /* OK */
 }
-//end main
+/*end main*/
 
