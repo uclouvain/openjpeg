@@ -43,7 +43,7 @@ The functions in JP3D_LIB.C are internal utilities mainly used for memory manage
 Difference in successive opj_clock() calls tells you the elapsed time
 @return Returns time in seconds
 */
-double opj_clock();
+double opj_clock(void);
 
 /**
 Allocate a memory block with elements initialized to 0

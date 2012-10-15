@@ -134,11 +134,11 @@ void opj_calculate_norms(   OPJ_FLOAT64 * pNorms,
 /**
 FIXME DOC 
 */
-const OPJ_FLOAT64 * opj_mct_get_mct_norms ();
+const OPJ_FLOAT64 * opj_mct_get_mct_norms (void);
 /**
 FIXME DOC 
 */
-const OPJ_FLOAT64 * opj_mct_get_mct_norms_real ();
+const OPJ_FLOAT64 * opj_mct_get_mct_norms_real (void);
 /* ----------------------------------------------------------------------- */
 /*@}*/
 

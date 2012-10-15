@@ -199,13 +199,13 @@ opj_bool OPJ_CALLCONV opj_set_error_handler(opj_codec_t * p_codec,
 
 /* ---------------------------------------------------------------------- */
 
-OPJ_SIZE_T opj_read_from_file (void * p_buffer, OPJ_SIZE_T p_nb_bytes, FILE * p_file)
+static OPJ_SIZE_T opj_read_from_file (void * p_buffer, OPJ_SIZE_T p_nb_bytes, FILE * p_file)
 {
 	OPJ_SIZE_T l_nb_read = fread(p_buffer,1,p_nb_bytes,p_file);
 	return l_nb_read ? l_nb_read : -1;
 }
 
-OPJ_UINT64 opj_get_data_length_from_file (FILE * p_file)
+static OPJ_UINT64 opj_get_data_length_from_file (FILE * p_file)
 {
 	OPJ_OFF_T file_length = 0;
 
@@ -216,12 +216,12 @@ OPJ_UINT64 opj_get_data_length_from_file (FILE * p_file)
 	return file_length;
 }
 
-OPJ_SIZE_T opj_write_from_file (void * p_buffer, OPJ_SIZE_T p_nb_bytes, FILE * p_file)
+static OPJ_SIZE_T opj_write_from_file (void * p_buffer, OPJ_SIZE_T p_nb_bytes, FILE * p_file)
 {
 	return fwrite(p_buffer,1,p_nb_bytes,p_file);
 }
 
-OPJ_OFF_T opj_skip_from_file (OPJ_OFF_T p_nb_bytes, FILE * p_user_data)
+static OPJ_OFF_T opj_skip_from_file (OPJ_OFF_T p_nb_bytes, FILE * p_user_data)
 {
 	if (OPJ_FSEEK(p_user_data,p_nb_bytes,SEEK_CUR)) {
 		return -1;
@@ -230,7 +230,7 @@ OPJ_OFF_T opj_skip_from_file (OPJ_OFF_T p_nb_bytes, FILE * p_user_data)
 	return p_nb_bytes;
 }
 
-opj_bool opj_seek_from_file (OPJ_OFF_T p_nb_bytes, FILE * p_user_data)
+static opj_bool opj_seek_from_file (OPJ_OFF_T p_nb_bytes, FILE * p_user_data)
 {
 	if (OPJ_FSEEK(p_user_data,p_nb_bytes,SEEK_SET)) {
 		return OPJ_FALSE;

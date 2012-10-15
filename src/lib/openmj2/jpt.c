@@ -34,7 +34,7 @@
  * Store information (7 bits) in value
  *
  */
-unsigned int jpt_read_VBAS_info(opj_cio_t *cio, unsigned int value) {
+static unsigned int jpt_read_VBAS_info(opj_cio_t *cio, unsigned int value) {
 	unsigned char elmt;
 
 	elmt = cio_read(cio, 1);
@@ -69,7 +69,7 @@ void jpt_init_msg_header(opj_jpt_msg_header_t * header) {
  * Only parameters always present in message header
  *
  */
-void jpt_reinit_msg_header(opj_jpt_msg_header_t * header) {
+static void jpt_reinit_msg_header(opj_jpt_msg_header_t * header) {
 	header->Id = 0;		/* In-class Identifier    */
 	header->last_byte = 0;	/* Last byte information  */
 	header->Msg_offset = 0;	/* Message offset         */

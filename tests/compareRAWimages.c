@@ -62,7 +62,7 @@ void compareRAWimages_help_display(void) {
 /*******************************************************************************
  * Parse command line
  *******************************************************************************/
-int parse_cmdline_cmp(int argc, char **argv, test_cmp_parameters* param)
+static int parse_cmdline_cmp(int argc, char **argv, test_cmp_parameters* param)
 {
 	int sizemembasefile, sizememtestfile;
 	int index;

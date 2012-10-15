@@ -122,7 +122,7 @@ unsigned char *cio_getbp(opj_cio_t *cio) {
 /*
  * Write a byte.
  */
-bool cio_byteout(opj_cio_t *cio, unsigned char v) {
+static bool cio_byteout(opj_cio_t *cio, unsigned char v) {
 	if (cio->bp >= cio->end) {
 		opj_event_msg(cio->cinfo, EVT_ERROR, "write error\n");
 		return false;
@@ -134,7 +134,7 @@ bool cio_byteout(opj_cio_t *cio, unsigned char v) {
 /*
  * Read a byte.
  */
-unsigned char cio_bytein(opj_cio_t *cio) {
+static unsigned char cio_bytein(opj_cio_t *cio) {
 	if (cio->bp >= cio->end) {
 		opj_event_msg(cio->cinfo, EVT_ERROR, "read error\n");
 		return 0;

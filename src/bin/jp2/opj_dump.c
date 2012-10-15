@@ -84,8 +84,8 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 int parse_DA_values( char* inArg, unsigned int *DA_x0, unsigned int *DA_y0, unsigned int *DA_x1, unsigned int *DA_y1);
 
 /* -------------------------------------------------------------------------- */
-void decode_help_display(void) {
-	fprintf(stdout,"HELP for j2k_dump\n----\n\n");
+static void decode_help_display(void) {
+	fprintf(stdout,"HELP for opj_dump\n----\n\n");
 	fprintf(stdout,"- the -h option displays this help information on screen\n\n");
 
 /* UniPG>> */
@@ -374,28 +374,28 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 /**
 sample error debug callback expecting no client object
 */
-void error_callback(const char *msg, void *client_data) {
+static void error_callback(const char *msg, void *client_data) {
 	(void)client_data;
 	fprintf(stdout, "[ERROR] %s", msg);
 }
 /**
 sample warning debug callback expecting no client object
 */
-void warning_callback(const char *msg, void *client_data) {
+static void warning_callback(const char *msg, void *client_data) {
 	(void)client_data;
 	fprintf(stdout, "[WARNING] %s", msg);
 }
 /**
 sample debug callback expecting no client object
 */
-void info_callback(const char *msg, void *client_data) {
+static void info_callback(const char *msg, void *client_data) {
 	(void)client_data;
 	fprintf(stdout, "[INFO] %s", msg);
 }
 
 /* -------------------------------------------------------------------------- */
 /**
- * J2K_DUMP MAIN
+ * OPJ_DUMP MAIN
  */
 /* -------------------------------------------------------------------------- */
 int main(int argc, char *argv[])
@@ -533,7 +533,7 @@ int main(int argc, char *argv[])
 
 		/* Setup the decoder decoding parameters using user parameters */
 		if ( !opj_setup_decoder(l_codec, &parameters) ){
-			fprintf(stderr, "ERROR -> j2k_dump: failed to setup the decoder\n");
+			fprintf(stderr, "ERROR -> opj_dump: failed to setup the decoder\n");
 			opj_stream_destroy(l_stream);
 			fclose(fsrc);
 			opj_destroy_codec(l_codec);
@@ -543,7 +543,7 @@ int main(int argc, char *argv[])
 
 		/* Read the main header of the codestream and if necessary the JP2 boxes*/
 		if(! opj_read_header(l_stream, l_codec, &image)){
-			fprintf(stderr, "ERROR -> j2k_dump: failed to read the header\n");
+			fprintf(stderr, "ERROR -> opj_dump: failed to read the header\n");
 			opj_stream_destroy(l_stream);
 			fclose(fsrc);
 			opj_destroy_codec(l_codec);

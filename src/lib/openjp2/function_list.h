@@ -73,7 +73,7 @@ typedef struct opj_procedure_list
  *
  * @return	the newly created validation list.
  */
-opj_procedure_list_t *  opj_procedure_list_create();
+opj_procedure_list_t *  opj_procedure_list_create(void);
 
 /**
  * Destroys a validation list.

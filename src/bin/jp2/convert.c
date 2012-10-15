@@ -2921,7 +2921,7 @@ opj_image_t* rawtoimage(const char *filename, opj_cparameters_t *parameters, raw
   return rawtoimage_common(filename, parameters, raw_cp, OPJ_TRUE);
 }
 
-int imagetoraw_common(opj_image_t * image, const char *outfile, opj_bool big_endian)
+static int imagetoraw_common(opj_image_t * image, const char *outfile, opj_bool big_endian)
 {
 	FILE *rawFile = NULL;
   size_t res;

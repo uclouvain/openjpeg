@@ -50,21 +50,21 @@ Size of memory first allocated for MOOV box
 /**
 sample error callback expecting a FILE* client object
 */
-void error_callback(const char *msg, void *client_data) {
+static void error_callback(const char *msg, void *client_data) {
 	FILE *stream = (FILE*)client_data;
 	fprintf(stream, "[ERROR] %s", msg);
 }
 /**
 sample warning callback expecting a FILE* client object
 */
-void warning_callback(const char *msg, void *client_data) {
+static void warning_callback(const char *msg, void *client_data) {
 	FILE *stream = (FILE*)client_data;
 	fprintf(stream, "[WARNING] %s", msg);
 }
 /**
 sample debug callback expecting a FILE* client object
 */
-void info_callback(const char *msg, void *client_data) {
+static void info_callback(const char *msg, void *client_data) {
 	FILE *stream = (FILE*)client_data;
 	fprintf(stream, "[INFO] %s", msg);
 }
@@ -72,7 +72,7 @@ void info_callback(const char *msg, void *client_data) {
 /* -------------------------------------------------------------------------- */
 
 
-void help_display()
+static void help_display()
 {
   fprintf(stdout,"HELP for frames_to_mj2\n----\n\n");
   fprintf(stdout,"- the -h option displays this help information on screen\n\n");
@@ -197,7 +197,7 @@ void help_display()
   fprintf(stdout,"TotalDisto\n\n");
 }
 
-OPJ_PROG_ORDER give_progression(char progression[5])
+static OPJ_PROG_ORDER give_progression(const char progression[5])
 {
   if (progression[0] == 'L' && progression[1] == 'R'
     && progression[2] == 'C' && progression[3] == 'P') {

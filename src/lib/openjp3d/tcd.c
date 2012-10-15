@@ -82,7 +82,7 @@ void tcd_dump(FILE *fd, opj_tcd_t *tcd, opj_tcd_volume_t * vol) {
 	fprintf(fd, "}\n");
 }
 
-void tilec_dump(FILE *fd, opj_tcd_tilecomp_t *tilec) {
+static void tilec_dump(FILE *fd, opj_tcd_tilecomp_t *tilec) {
 
 	int i=0,k;
 	int datalen;

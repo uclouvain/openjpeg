@@ -316,7 +316,7 @@ static void j3d_read_nlt(opj_j3d_t *j3d);
 
 /* ----------------------------------------------------------------------- */
 
-void j3d_dump_volume(FILE *fd, opj_volume_t * vol) {
+static void j3d_dump_volume(FILE *fd, opj_volume_t * vol) {
 	int compno;
 	fprintf(fd, "volume {\n");
 	fprintf(fd, "  x0=%d, y0=%d, z0=%d, x1=%d, y1=%d, z1=%d\n", vol->x0, vol->y0, vol->z0,vol->x1, vol->y1,  vol->z1);
@@ -332,7 +332,7 @@ void j3d_dump_volume(FILE *fd, opj_volume_t * vol) {
 	fprintf(fd, "}\n");
 }
 
-void j3d_dump_cp(FILE *fd, opj_volume_t * vol, opj_cp_t * cp) {
+static void j3d_dump_cp(FILE *fd, opj_volume_t * vol, opj_cp_t * cp) {
 	int tileno, compno, layno, bandno, resno, numbands;
 	fprintf(fd, "coding parameters {\n");
 	fprintf(fd, "  tx0=%d, ty0=%d, tz0=%d\n", cp->tx0, cp->ty0, cp->tz0);

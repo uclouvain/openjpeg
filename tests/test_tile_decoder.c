@@ -139,35 +139,35 @@ static int infile_format(const char *fname)
 /**
   sample error callback expecting a FILE* client object
  */
-void error_callback_file(const char *msg, void *client_data) {
+static void error_callback_file(const char *msg, void *client_data) {
         FILE *stream = (FILE*)client_data;
         fprintf(stream, "[ERROR] %s", msg);
 }
 /**
   sample warning callback expecting a FILE* client object
  */
-void warning_callback_file(const char *msg, void *client_data) {
+static void warning_callback_file(const char *msg, void *client_data) {
         FILE *stream = (FILE*)client_data;
         fprintf(stream, "[WARNING] %s", msg);
 }
 /**
   sample error debug callback expecting no client object
  */
-void error_callback(const char *msg, void *client_data) {
+static void error_callback(const char *msg, void *client_data) {
         (void)client_data;
         fprintf(stdout, "[ERROR] %s", msg);
 }
 /**
   sample warning debug callback expecting no client object
  */
-void warning_callback(const char *msg, void *client_data) {
+static void warning_callback(const char *msg, void *client_data) {
         (void)client_data;
         fprintf(stdout, "[WARNING] %s", msg);
 }
 /**
   sample debug callback expecting no client object
  */
-void info_callback(const char *msg, void *client_data) {
+static void info_callback(const char *msg, void *client_data) {
         (void)client_data;
         fprintf(stdout, "[INFO] %s", msg);
 }
