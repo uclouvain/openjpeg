@@ -31,15 +31,15 @@
 #ifndef __MJ2_CONVERT_H
 #define __MJ2_CONVERT_H
 
-int imagetoyuv(opj_image_t * img, char *outfile);
+OPJ_API int OPJ_CALLCONV imagetoyuv(opj_image_t * img, char *outfile);
 
-int imagetobmp(opj_image_t * img, char *outfile);
+OPJ_API int OPJ_CALLCONV imagetobmp(opj_image_t * img, char *outfile);
 
-opj_image_t *mj2_image_create(mj2_tk_t * tk, opj_cparameters_t *parameters);
+OPJ_API opj_image_t * OPJ_CALLCONV mj2_image_create(mj2_tk_t * tk, opj_cparameters_t *parameters);
 
-char yuvtoimage(mj2_tk_t * tk, opj_image_t * img, int frame_num, opj_cparameters_t *parameters, char* infile);
+OPJ_API char OPJ_CALLCONV yuvtoimage(mj2_tk_t * tk, opj_image_t * img, int frame_num, opj_cparameters_t *parameters, char* infile);
 
-unsigned int yuv_num_frames(mj2_tk_t * tk, char *infile);
+OPJ_API unsigned int OPJ_CALLCONV yuv_num_frames(mj2_tk_t * tk, char *infile);
 
 
 #endif

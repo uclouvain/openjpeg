@@ -78,7 +78,7 @@ int mj2_read_boxhdr(mj2_box_t * box, opj_cio_t *cio)
 *
 */
 
-int mj2_init_stdmovie(opj_mj2_t * movie)
+int OPJ_CALLCONV mj2_init_stdmovie(opj_mj2_t * movie)
 {
   mj2_tk_t *tk0;
   int i, w, h, prec;
@@ -300,7 +300,7 @@ void mj2_stco_decompact(mj2_tk_t * tk)
 * JP Signature box
 *
 */
-void mj2_write_jp(opj_cio_t *cio)
+void OPJ_CALLCONV mj2_write_jp(opj_cio_t *cio)
 {
   mj2_box_t box;
   box.init_pos = cio_tell(cio);
@@ -348,7 +348,7 @@ int mj2_read_jp(opj_cio_t *cio)
 * File type box
 *
 */
-void mj2_write_ftyp(opj_mj2_t * movie, opj_cio_t *cio)
+void OPJ_CALLCONV mj2_write_ftyp(opj_mj2_t * movie, opj_cio_t *cio)
 {
   int i;
   mj2_box_t box;
@@ -2536,7 +2536,7 @@ int mj2_read_mvhd(opj_mj2_t * movie, opj_cio_t *cio)
 * Movie Box
 *
 */
-void mj2_write_moov(opj_mj2_t * movie, opj_cio_t *cio)
+void OPJ_CALLCONV mj2_write_moov(opj_mj2_t * movie, opj_cio_t *cio)
 {
   int i;
   mj2_box_t box;
@@ -2608,7 +2608,7 @@ int mj2_read_moov(opj_mj2_t * movie, opj_image_t * img, opj_cio_t *cio)
   return 0;
 }
 
-int mj2_read_struct(FILE *file, opj_mj2_t *movie) {
+int OPJ_CALLCONV mj2_read_struct(FILE *file, opj_mj2_t *movie) {
   mj2_box_t box;
   opj_image_t img;
   unsigned char * src;
@@ -2721,7 +2721,7 @@ int mj2_read_struct(FILE *file, opj_mj2_t *movie) {
 /* MJ2 decoder interface															                     */
 /* ----------------------------------------------------------------------- */
 
-opj_dinfo_t* mj2_create_decompress() {
+opj_dinfo_t* OPJ_CALLCONV mj2_create_decompress() {
 	opj_mj2_t* mj2;
 	opj_dinfo_t *dinfo = (opj_dinfo_t*) opj_calloc(1, sizeof(opj_dinfo_t));
 	if(!dinfo) return NULL;
@@ -2739,7 +2739,7 @@ opj_dinfo_t* mj2_create_decompress() {
 	return dinfo;
 }
 
-void mj2_setup_decoder(opj_mj2_t *movie, mj2_dparameters_t *mj2_parameters) {
+void OPJ_CALLCONV mj2_setup_decoder(opj_mj2_t *movie, mj2_dparameters_t *mj2_parameters) {
 	movie->num_vtk=0;
   movie->num_stk=0;
   movie->num_htk=0;	
@@ -2750,7 +2750,7 @@ void mj2_setup_decoder(opj_mj2_t *movie, mj2_dparameters_t *mj2_parameters) {
 
 }
 
-void mj2_destroy_decompress(opj_mj2_t *movie) {
+void OPJ_CALLCONV mj2_destroy_decompress(opj_mj2_t *movie) {
 	if(movie) {
 		int i;
 		mj2_tk_t *tk=NULL;
@@ -2799,8 +2799,7 @@ void mj2_destroy_decompress(opj_mj2_t *movie) {
 /* MJ2 encoder interface															                     */
 /* ----------------------------------------------------------------------- */
 
-
-opj_cinfo_t* mj2_create_compress() {
+opj_cinfo_t* OPJ_CALLCONV mj2_create_compress() {
 	opj_mj2_t* mj2;
 	opj_cinfo_t *cinfo = (opj_cinfo_t*) opj_calloc(1, sizeof(opj_cinfo_t));
 	if(!cinfo) return NULL;
@@ -2817,7 +2816,7 @@ opj_cinfo_t* mj2_create_compress() {
 	return cinfo;
 }
 
-void mj2_setup_encoder(opj_mj2_t *movie, mj2_cparameters_t *parameters) {
+void OPJ_CALLCONV mj2_setup_encoder(opj_mj2_t *movie, mj2_cparameters_t *parameters) {
 	if(movie && parameters) {
 		opj_jp2_t *jp2_struct;
 			
@@ -2868,7 +2867,7 @@ void mj2_setup_encoder(opj_mj2_t *movie, mj2_cparameters_t *parameters) {
   }
 }
 
-void mj2_destroy_compress(opj_mj2_t *movie) {
+void OPJ_CALLCONV mj2_destroy_compress(opj_mj2_t *movie) {
 	if(movie) {
 		int i;
 		mj2_tk_t *tk=NULL;

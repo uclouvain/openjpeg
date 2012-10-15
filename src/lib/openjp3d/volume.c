@@ -25,6 +25,8 @@
  */
 
 #include "opj_includes.h"
+#include "volume.h"
+#include "openjp3d.h"
 
 opj_volume_t* OPJ_CALLCONV opj_volume_create(int numcmpts, opj_volume_cmptparm_t *cmptparms, OPJ_COLOR_SPACE clrspc) {
 	int compno;

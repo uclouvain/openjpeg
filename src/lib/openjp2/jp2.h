@@ -265,7 +265,7 @@ opj_jp2_img_header_writer_handler_t;
  *
  * @return true if writing was successful.
 */
-opj_bool opj_jp2_write_jp2h(opj_jp2_v2_t *jp2,
+OPJ_API opj_bool OPJ_CALLCONV opj_jp2_write_jp2h(opj_jp2_v2_t *jp2,
                             opj_stream_private_t *stream,
                             opj_event_mgr_t * p_manager );
 
@@ -300,7 +300,7 @@ opj_bool opj_jp2_decode(opj_jp2_v2_t *jp2,
  * @param image input filled image
  * @param p_manager  FIXME DOC
 */
-void opj_jp2_setup_encoder(  opj_jp2_v2_t *jp2, 
+OPJ_API void OPJ_CALLCONV opj_jp2_setup_encoder(  opj_jp2_v2_t *jp2, 
                             opj_cparameters_t *parameters, 
                             opj_image_t *image, 
                             opj_event_mgr_t * p_manager);
@@ -312,7 +312,7 @@ Encode an image into a JPEG-2000 file stream
 @param p_manager  event manager
 @return Returns true if successful, returns false otherwise
 */
-opj_bool opj_jp2_encode(  opj_jp2_v2_t *jp2, 
+OPJ_API opj_bool OPJ_CALLCONV opj_jp2_encode(  opj_jp2_v2_t *jp2, 
               opj_stream_private_t *stream, 
               opj_event_mgr_t * p_manager);
 
@@ -402,7 +402,7 @@ opj_bool opj_jp2_read_tile_header ( opj_jp2_v2_t * p_jp2,
  * @param  p_stream      the stream to write data to.
  * @param  p_manager  the user event manager.
  */
-opj_bool opj_jp2_write_tile (  opj_jp2_v2_t *p_jp2,
+OPJ_API opj_bool OPJ_CALLCONV opj_jp2_write_tile (  opj_jp2_v2_t *p_jp2,
                     OPJ_UINT32 p_tile_index,
                     OPJ_BYTE * p_data,
                     OPJ_UINT32 p_data_size,
@@ -432,13 +432,13 @@ opj_bool opj_jp2_decode_tile (  opj_jp2_v2_t * p_jp2,
  *
  * @return  an empty jpeg2000 file codec.
  */
-opj_jp2_v2_t* opj_jp2_create (opj_bool p_is_decoder);
+OPJ_API opj_jp2_v2_t* OPJ_CALLCONV opj_jp2_create (opj_bool p_is_decoder);
 
 /**
 Destroy a JP2 decompressor handle
 @param jp2 JP2 decompressor handle to destroy
 */
-void opj_jp2_destroy(opj_jp2_v2_t *jp2);
+OPJ_API void OPJ_CALLCONV opj_jp2_destroy(opj_jp2_v2_t *jp2);
 
 
 /**
@@ -496,7 +496,7 @@ void jp2_dump (opj_jp2_v2_t* p_jp2, OPJ_INT32 flag, FILE* out_stream);
  *
  *@return  the codestream information extract from the jpg2000 codec
  */
-opj_codestream_info_v2_t* jp2_get_cstr_info(opj_jp2_v2_t* p_jp2);
+OPJ_API opj_codestream_info_v2_t* OPJ_CALLCONV jp2_get_cstr_info(opj_jp2_v2_t* p_jp2);
 
 /**
  * Get the codestream index from a JPEG2000 codec.

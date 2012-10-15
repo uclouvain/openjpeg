@@ -154,7 +154,7 @@ unsigned char cio_bytein(opj_cio_t *cio) {
  * v : value to write
  * n : number of bytes to write
  */
-unsigned int cio_write(opj_cio_t *cio, unsigned long long int v, int n) {
+unsigned int OPJ_CALLCONV cio_write(opj_cio_t *cio, unsigned long long int v, int n) {
 	int i;
 	for (i = n - 1; i >= 0; i--) {
 		if( !cio_byteout(cio, (unsigned char) ((v >> (i << 3)) & 0xff)) )
@@ -171,7 +171,7 @@ unsigned int cio_write(opj_cio_t *cio, unsigned long long int v, int n) {
  *
  * return : value of the n bytes read
  */
-unsigned int cio_read(opj_cio_t *cio, int n) {
+unsigned int OPJ_CALLCONV cio_read(opj_cio_t *cio, int n) {
 	int i;
 	unsigned int v = 0;
 	for (i = n - 1; i >= 0; i--) {
@@ -186,13 +186,13 @@ unsigned int cio_read(opj_cio_t *cio, int n) {
  *
  * n : number of bytes to skip
  */
-void cio_skip(opj_cio_t *cio, int n) {
+void OPJ_CALLCONV cio_skip(opj_cio_t *cio, int n) {
 	cio->bp += n;
 }
 
 /* ----------------------------------------------------------------------- */
 
-void opj_write_bytes_BE (OPJ_BYTE * p_buffer, OPJ_UINT32 p_value, OPJ_UINT32 p_nb_bytes)
+void OPJ_CALLCONV opj_write_bytes_BE (OPJ_BYTE * p_buffer, OPJ_UINT32 p_value, OPJ_UINT32 p_nb_bytes)
 {
 	const OPJ_BYTE * l_data_ptr = ((const OPJ_BYTE *) &p_value) + p_nb_bytes;
 
@@ -201,7 +201,7 @@ void opj_write_bytes_BE (OPJ_BYTE * p_buffer, OPJ_UINT32 p_value, OPJ_UINT32 p_n
 	memcpy(p_buffer,l_data_ptr,p_nb_bytes);
 }
 
-void opj_write_bytes_LE (OPJ_BYTE * p_buffer, OPJ_UINT32 p_value, OPJ_UINT32 p_nb_bytes)
+void OPJ_CALLCONV opj_write_bytes_LE (OPJ_BYTE * p_buffer, OPJ_UINT32 p_value, OPJ_UINT32 p_nb_bytes)
 {
 	const OPJ_BYTE * l_data_ptr = ((const OPJ_BYTE *) &p_value) + p_nb_bytes - 1;
 	OPJ_UINT32 i;
@@ -213,7 +213,7 @@ void opj_write_bytes_LE (OPJ_BYTE * p_buffer, OPJ_UINT32 p_value, OPJ_UINT32 p_n
 	}
 }
 
-void opj_read_bytes_BE(const OPJ_BYTE * p_buffer, OPJ_UINT32 * p_value, OPJ_UINT32 p_nb_bytes)
+void OPJ_CALLCONV opj_read_bytes_BE(const OPJ_BYTE * p_buffer, OPJ_UINT32 * p_value, OPJ_UINT32 p_nb_bytes)
 {
 	OPJ_BYTE * l_data_ptr = ((OPJ_BYTE *) p_value);
 
@@ -223,7 +223,7 @@ void opj_read_bytes_BE(const OPJ_BYTE * p_buffer, OPJ_UINT32 * p_value, OPJ_UINT
 	memcpy(l_data_ptr+4-p_nb_bytes,p_buffer,p_nb_bytes);
 }
 
-void opj_read_bytes_LE(const OPJ_BYTE * p_buffer, OPJ_UINT32 * p_value, OPJ_UINT32 p_nb_bytes)
+void OPJ_CALLCONV opj_read_bytes_LE(const OPJ_BYTE * p_buffer, OPJ_UINT32 * p_value, OPJ_UINT32 p_nb_bytes)
 {
 	OPJ_BYTE * l_data_ptr = ((OPJ_BYTE *) p_value) + p_nb_bytes-1;
 	OPJ_UINT32 i;
@@ -242,7 +242,7 @@ void opj_write_double_BE(OPJ_BYTE * p_buffer, OPJ_FLOAT64 p_value)
 	memcpy(p_buffer,l_data_ptr,sizeof(OPJ_FLOAT64));
 }
 
-void opj_write_double_LE(OPJ_BYTE * p_buffer, OPJ_FLOAT64 p_value)
+void OPJ_CALLCONV opj_write_double_LE(OPJ_BYTE * p_buffer, OPJ_FLOAT64 p_value)
 {
 	const OPJ_BYTE * l_data_ptr = ((const OPJ_BYTE *) &p_value) + sizeof(OPJ_FLOAT64) - 1;
 	OPJ_UINT32 i;
@@ -404,7 +404,7 @@ OPJ_API void OPJ_CALLCONV opj_stream_set_user_data_length(opj_stream_t* p_stream
 	l_stream->m_user_data_length = data_length;
 }
 
-OPJ_SIZE_T opj_stream_read_data (opj_stream_private_t * p_stream,OPJ_BYTE * p_buffer, OPJ_SIZE_T p_size, opj_event_mgr_t * p_event_mgr)
+OPJ_SIZE_T OPJ_CALLCONV opj_stream_read_data (opj_stream_private_t * p_stream,OPJ_BYTE * p_buffer, OPJ_SIZE_T p_size, opj_event_mgr_t * p_event_mgr)
 {
 	OPJ_SIZE_T l_read_nb_bytes = 0;
 	if (p_stream->m_bytes_in_buffer >= p_size) {
@@ -511,7 +511,7 @@ OPJ_SIZE_T opj_stream_read_data (opj_stream_private_t * p_stream,OPJ_BYTE * p_bu
 	}
 }
 
-OPJ_SIZE_T opj_stream_write_data (opj_stream_private_t * p_stream,
+OPJ_SIZE_T OPJ_CALLCONV opj_stream_write_data (opj_stream_private_t * p_stream,
 								  const OPJ_BYTE * p_buffer,
 								  OPJ_SIZE_T p_size, 
 								  opj_event_mgr_t * p_event_mgr)
@@ -683,7 +683,7 @@ OPJ_OFF_T opj_stream_write_skip (opj_stream_private_t * p_stream, OPJ_OFF_T p_si
 	return l_skip_nb_bytes;
 }
 
-OPJ_OFF_T opj_stream_tell (const opj_stream_private_t * p_stream)
+OPJ_OFF_T OPJ_CALLCONV opj_stream_tell (const opj_stream_private_t * p_stream)
 {
 	return p_stream->m_byte_offset;
 }
@@ -697,7 +697,7 @@ OPJ_OFF_T opj_stream_get_number_byte_left (const opj_stream_private_t * p_stream
 				0;
 }
 
-OPJ_OFF_T opj_stream_skip (opj_stream_private_t * p_stream, OPJ_OFF_T p_size, opj_event_mgr_t * p_event_mgr)
+OPJ_OFF_T OPJ_CALLCONV opj_stream_skip (opj_stream_private_t * p_stream, OPJ_OFF_T p_size, opj_event_mgr_t * p_event_mgr)
 {
 	assert(p_size >= 0);
 	return p_stream->m_opj_skip(p_stream,p_size,p_event_mgr);
@@ -744,13 +744,13 @@ opj_bool opj_stream_write_seek (opj_stream_private_t * p_stream, OPJ_OFF_T p_siz
 	return OPJ_TRUE;
 }
 
-opj_bool opj_stream_seek (opj_stream_private_t * p_stream, OPJ_OFF_T p_size, struct opj_event_mgr * p_event_mgr)
+opj_bool OPJ_CALLCONV opj_stream_seek (opj_stream_private_t * p_stream, OPJ_OFF_T p_size, struct opj_event_mgr * p_event_mgr)
 {
 	assert(p_size >= 0);
 	return p_stream->m_opj_seek(p_stream,p_size,p_event_mgr);
 }
 
-opj_bool opj_stream_has_seek (const opj_stream_private_t * p_stream)
+opj_bool OPJ_CALLCONV opj_stream_has_seek (const opj_stream_private_t * p_stream)
 {
 	return p_stream->m_seek_fn != opj_stream_default_seek;
 }

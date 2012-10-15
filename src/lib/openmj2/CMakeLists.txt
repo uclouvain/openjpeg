@@ -1,4 +1,10 @@
+# openmj2:
 set(OPENMJ2_LIBRARY_NAME openmj2)
+
+include_directories(
+  ${OPENJPEG_BINARY_DIR}/src/lib/openjp2 # opj_config.h
+  )
+
 set(OPENMJ2_SRCS
   mj2.c
   mj2_convert.c
@@ -27,15 +33,10 @@ set(OPENMJ2_SRCS
 if(WIN32)
   if(BUILD_SHARED_LIBS)
     add_definitions(-DOPJ_EXPORTS)
-  else(BUILD_SHARED_LIBS)
+  else()
     add_definitions(-DOPJ_STATIC)
-  endif(BUILD_SHARED_LIBS)
-endif(WIN32)
-
-include_directories(
-  ${OPENJPEG_BINARY_DIR}/src/lib/openjp2 # opj_config.h
-  #${OPENJPEG_SOURCE_DIR}/src/lib/openjp2
-  )
+  endif()
+endif()
 
 # build mj2 lib:
 add_library(${OPENMJ2_LIBRARY_NAME} ${OPENMJ2_SRCS})

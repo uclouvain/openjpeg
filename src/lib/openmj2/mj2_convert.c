@@ -27,7 +27,7 @@
 */
 
 #include "opj_includes.h"
-#include "mj2.h"
+#include "mj2_convert.h"
 
 /*  -----------------------	      */
 /*				      */
@@ -37,7 +37,7 @@
 /*				      */
 /*  -----------------------	      */
 
-unsigned int yuv_num_frames(mj2_tk_t * tk, char *infile)
+unsigned int OPJ_CALLCONV yuv_num_frames(mj2_tk_t * tk, char *infile)
 {
   unsigned int prec_size;
   long end_of_f, frame_size;
@@ -74,7 +74,7 @@ unsigned int yuv_num_frames(mj2_tk_t * tk, char *infile)
 /* */
 /*  ----------------------- */
 
-opj_image_t *mj2_image_create(mj2_tk_t * tk, opj_cparameters_t *parameters)
+opj_image_t * OPJ_CALLCONV mj2_image_create(mj2_tk_t * tk, opj_cparameters_t *parameters)
 {
 	opj_image_cmptparm_t cmptparm[3];
 	opj_image_t * img;
@@ -99,7 +99,7 @@ opj_image_t *mj2_image_create(mj2_tk_t * tk, opj_cparameters_t *parameters)
 	return img;
 }
 
-char yuvtoimage(mj2_tk_t * tk, opj_image_t * img, int frame_num, opj_cparameters_t *parameters, char* infile)
+char OPJ_CALLCONV yuvtoimage(mj2_tk_t * tk, opj_image_t * img, int frame_num, opj_cparameters_t *parameters, char* infile)
 {
   int i, compno;
   int offset, size, max, prec_bytes, is_16, v;
@@ -177,7 +177,7 @@ char yuvtoimage(mj2_tk_t * tk, opj_image_t * img, int frame_num, opj_cparameters
 /*  ----------------------- */
 
 
-opj_bool imagetoyuv(opj_image_t * img, char *outfile)
+opj_bool OPJ_CALLCONV imagetoyuv(opj_image_t * img, char *outfile)
 {
   FILE *f;
   int *data;
@@ -270,7 +270,7 @@ opj_bool imagetoyuv(opj_image_t * img, char *outfile)
 /* */
 /*  ----------------------- */
 
-int imagetobmp(opj_image_t * img, char *outfile) {
+int OPJ_CALLCONV imagetobmp(opj_image_t * img, char *outfile) {
   int w,wr,h,hr,i,pad;
   FILE *f;
   

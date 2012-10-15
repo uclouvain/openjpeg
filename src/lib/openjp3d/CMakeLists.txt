@@ -1,37 +1,42 @@
+# openjp3d
+include_regular_expression("^.*$")
 
-INCLUDE_REGULAR_EXPRESSION("^.*$")
+include_directories(
+  ${OPENJPEG_BINARY_DIR}/src/lib/openjp2 # opj_config.h
+  )
 
 SET(OPENJP3D_LIBRARY_NAME openjp3d)
 # Defines the source code for the library
 SET(OPENJP3D_SRCS
-bio.c  cio.c  dwt.c  event.c  jp3d.c  jp3d_lib.c  mct.c  mqc.c  openjp3d.c  pi.c  raw.c  t1.c  t1_3d.c  t2.c  tcd.c  tgt.c  volume.c
+bio.c  cio.c  dwt.c  event.c  jp3d.c  jp3d_lib.c  mct.c  mqc.c  openjp3d.c
+pi.c  raw.c  t1.c  t1_3d.c  t2.c  tcd.c  tgt.c  volume.c
 )
 
 # Build the library
-IF(WIN32)
-  IF(BUILD_SHARED_LIBS)
-    ADD_DEFINITIONS(-DOPJ_EXPORTS)
-  ELSE(BUILD_SHARED_LIBS)
-    ADD_DEFINITIONS(-DOPJ_STATIC)
-  ENDIF(BUILD_SHARED_LIBS)
-ENDIF(WIN32)
+if(WIN32)
+  if(BUILD_SHARED_LIBS)
+    add_definitions(-DOPJ_EXPORTS)
+  else()
+    add_definitions(-DOPJ_STATIC)
+  endif()
+endif()
 
 # build jp3d lib:
-ADD_LIBRARY(${OPENJP3D_LIBRARY_NAME} ${OPENJP3D_SRCS})
-IF(UNIX)
-  TARGET_LINK_LIBRARIES(${OPENJP3D_LIBRARY_NAME} m)
-ENDIF(UNIX)
-SET_TARGET_PROPERTIES(${OPENJP3D_LIBRARY_NAME} PROPERTIES ${OPENJPEG_LIBRARY_PROPERTIES})
+add_library(${OPENJP3D_LIBRARY_NAME} ${OPENJP3D_SRCS})
+if(UNIX)
+  target_link_libraries(${OPENJP3D_LIBRARY_NAME} m)
+endif()
+set_target_properties(${OPENJP3D_LIBRARY_NAME} PROPERTIES ${OPENJPEG_LIBRARY_PROPERTIES})
 
 # Install library
-INSTALL(TARGETS ${OPENJP3D_LIBRARY_NAME}
+install(TARGETS ${OPENJP3D_LIBRARY_NAME}
   EXPORT OpenJP3DTargets
   DESTINATION ${OPENJPEG_INSTALL_LIB_DIR} 
   COMPONENT Libraries
 )
 
 # Install includes files
-INSTALL(FILES openjp3d.h
+install(FILES openjp3d.h
   DESTINATION ${OPENJPEG_INSTALL_INCLUDE_DIR}
   COMPONENT Headers
 )

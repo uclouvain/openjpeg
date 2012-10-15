@@ -30,6 +30,7 @@
 #endif /* _WIN32 */
 
 #include "opj_includes.h"
+#include "openjp3d.h"
 #define JP3D_VERSION "1.3.0"
 /* ---------------------------------------------------------------------- */
 #ifdef _WIN32

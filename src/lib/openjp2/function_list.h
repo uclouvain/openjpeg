@@ -90,7 +90,7 @@ void  opj_procedure_list_destroy(opj_procedure_list_t * p_list);
  *
  * @return	OPJ_FALSE if the procedure could ne added.
  */
-opj_bool opj_procedure_list_add_procedure (opj_procedure_list_t * p_validation_list, opj_procedure p_procedure);
+OPJ_API opj_bool OPJ_CALLCONV opj_procedure_list_add_procedure (opj_procedure_list_t * p_validation_list, opj_procedure p_procedure);
 
 /**
  * Gets the number of validation procedures.
@@ -99,7 +99,7 @@ opj_bool opj_procedure_list_add_procedure (opj_procedure_list_t * p_validation_l
  *
  * @return the number of validation procedures.
  */
-OPJ_UINT32 opj_procedure_list_get_nb_procedures (opj_procedure_list_t * p_validation_list);
+OPJ_API OPJ_UINT32 OPJ_CALLCONV opj_procedure_list_get_nb_procedures (opj_procedure_list_t * p_validation_list);
 
 /**
  * Gets the pointer on the first validation procedure. This function is similar to the C++
@@ -110,7 +110,7 @@ OPJ_UINT32 opj_procedure_list_get_nb_procedures (opj_procedure_list_t * p_valida
  *
  * @return	a pointer to the first procedure.
  */
-opj_procedure* opj_procedure_list_get_first_procedure (opj_procedure_list_t * p_validation_list);
+OPJ_API opj_procedure* OPJ_CALLCONV opj_procedure_list_get_first_procedure (opj_procedure_list_t * p_validation_list);
 
 
 /**
@@ -119,7 +119,7 @@ opj_procedure* opj_procedure_list_get_first_procedure (opj_procedure_list_t * p_
  * @param	p_validation_list the list of procedure to clear.
  *
  */
-void  opj_procedure_list_clear (opj_procedure_list_t * p_validation_list);
+OPJ_API void OPJ_CALLCONV opj_procedure_list_clear (opj_procedure_list_t * p_validation_list);
 /*@}*/
 
 #endif /* __FUNCTION_LIST_H */

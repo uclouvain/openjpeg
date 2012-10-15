@@ -3,7 +3,11 @@
 set(common_SRCS ${OPENJPEG_SOURCE_DIR}/src/bin/common/opj_getopt.c)
 
 if(WIN32)
-  add_definitions(-DOPJ_STATIC)
+  if(BUILD_SHARED_LIBS)
+    add_definitions(-DOPJ_EXPORTS)
+  else()
+    add_definitions(-DOPJ_STATIC)
+  endif()
 endif()
 
 # Headers file are located here:

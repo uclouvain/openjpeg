@@ -50,6 +50,11 @@ set(EXES
   )
 foreach(exe ${EXES})
   if(${exe} STREQUAL "opj_jpip_compress")
+    include_directories(
+      ${Z_INCLUDE_DIRNAME}
+      ${PNG_INCLUDE_DIRNAME}
+      ${TIFF_INCLUDE_DIRNAME}
+    )
     add_executable(${exe} ${exe}.c
       ${OPENJPEG_SOURCE_DIR}/src/bin/common/opj_getopt.c
       ${OPENJPEG_SOURCE_DIR}/src/bin/jp2/convert.c

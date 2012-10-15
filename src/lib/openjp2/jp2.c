@@ -1108,7 +1108,7 @@ opj_bool opj_jp2_decode(opj_jp2_v2_t *jp2,
 	return OPJ_TRUE;
 }
 
-opj_bool opj_jp2_write_jp2h(opj_jp2_v2_t *jp2,
+opj_bool OPJ_CALLCONV opj_jp2_write_jp2h(opj_jp2_v2_t *jp2,
                             opj_stream_private_t *stream,
                             opj_event_mgr_t * p_manager
                             )
@@ -1339,7 +1339,7 @@ void opj_jp2_setup_decoder(opj_jp2_v2_t *jp2, opj_dparameters_t *parameters)
 /* JP2 encoder interface                                             */
 /* ----------------------------------------------------------------------- */
 
-void opj_jp2_setup_encoder(	opj_jp2_v2_t *jp2,
+void OPJ_CALLCONV opj_jp2_setup_encoder(	opj_jp2_v2_t *jp2,
                             opj_cparameters_t *parameters,
                             opj_image_t *image,
                             opj_event_mgr_t * p_manager)
@@ -1417,7 +1417,7 @@ void opj_jp2_setup_encoder(	opj_jp2_v2_t *jp2,
 	jp2->approx = 0;		/* APPROX */
 }
 
-opj_bool opj_jp2_encode(opj_jp2_v2_t *jp2,
+opj_bool OPJ_CALLCONV opj_jp2_encode(opj_jp2_v2_t *jp2,
 						opj_stream_private_t *stream,
 						opj_event_mgr_t * p_manager)
 {
@@ -2095,7 +2095,7 @@ opj_bool opj_jp2_read_tile_header ( opj_jp2_v2_t * p_jp2,
 								p_manager);
 }
 
-opj_bool opj_jp2_write_tile (	opj_jp2_v2_t *p_jp2,
+opj_bool OPJ_CALLCONV opj_jp2_write_tile (	opj_jp2_v2_t *p_jp2,
 					 	 	    OPJ_UINT32 p_tile_index,
 					 	 	    OPJ_BYTE * p_data,
 					 	 	    OPJ_UINT32 p_data_size,
@@ -2118,7 +2118,7 @@ opj_bool opj_jp2_decode_tile (  opj_jp2_v2_t * p_jp2,
 	return opj_j2k_decode_tile (p_jp2->j2k,p_tile_index,p_data,p_data_size,p_stream,p_manager);
 }
 
-void opj_jp2_destroy(opj_jp2_v2_t *jp2)
+void OPJ_CALLCONV opj_jp2_destroy(opj_jp2_v2_t *jp2)
 {
 	if (jp2) {
 		/* destroy the J2K codec */
@@ -2249,7 +2249,7 @@ opj_bool opj_jp2_get_tile(	opj_jp2_v2_t *p_jp2,
 /* JP2 encoder interface                                             */
 /* ----------------------------------------------------------------------- */
 
-opj_jp2_v2_t* opj_jp2_create(opj_bool p_is_decoder)
+opj_jp2_v2_t* OPJ_CALLCONV opj_jp2_create(opj_bool p_is_decoder)
 {
 	opj_jp2_v2_t *jp2 = (opj_jp2_v2_t*)opj_malloc(sizeof(opj_jp2_v2_t));
 	if (jp2) {
@@ -2308,7 +2308,7 @@ opj_codestream_index_t* jp2_get_cstr_index(opj_jp2_v2_t* p_jp2)
 	return j2k_get_cstr_index(p_jp2->j2k);
 }
 
-opj_codestream_info_v2_t* jp2_get_cstr_info(opj_jp2_v2_t* p_jp2)
+opj_codestream_info_v2_t* OPJ_CALLCONV jp2_get_cstr_info(opj_jp2_v2_t* p_jp2)
 {
 	return j2k_get_cstr_info(p_jp2->j2k);
 }

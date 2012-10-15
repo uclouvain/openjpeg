@@ -152,7 +152,7 @@ unsigned char cio_bytein(opj_cio_t *cio) {
  * v : value to write
  * n : number of bytes to write
  */
-unsigned int cio_write(opj_cio_t *cio, unsigned int64 v, int n) {
+unsigned int OPJ_CALLCONV cio_write(opj_cio_t *cio, unsigned int64 v, int n) {
 	int i;
 	for (i = n - 1; i >= 0; i--) {
 		if( !cio_byteout(cio, (unsigned char) ((v >> (i << 3)) & 0xff)) )
@@ -168,7 +168,7 @@ unsigned int cio_write(opj_cio_t *cio, unsigned int64 v, int n) {
  *
  * return : value of the n bytes read
  */
-unsigned int cio_read(opj_cio_t *cio, int n) {
+unsigned int OPJ_CALLCONV cio_read(opj_cio_t *cio, int n) {
 	int i;
 	unsigned int v;
 	v = 0;
@@ -183,7 +183,7 @@ unsigned int cio_read(opj_cio_t *cio, int n) {
  *
  * n : number of bytes to skip
  */
-void cio_skip(opj_cio_t *cio, int n) {
+void OPJ_CALLCONV cio_skip(opj_cio_t *cio, int n) {
 	cio->bp += n;
 }
 

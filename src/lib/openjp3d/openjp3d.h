@@ -38,10 +38,18 @@
 */
 
 #if defined(OPJ_STATIC) || !defined(_WIN32)
+/* http://gcc.gnu.org/wiki/Visibility */
+#if __GNUC__ >= 4
+#define OPJ_API    __attribute__ ((visibility ("default")))
+#define OPJ_LOCAL  __attribute__ ((visibility ("hidden")))
+#else
 #define OPJ_API
+#define OPJ_LOCAL
+#endif
 #define OPJ_CALLCONV
 #else
 #define OPJ_CALLCONV __stdcall
+
 /*
 The following ifdef block is the standard way of creating macros which make exporting 
 from a DLL simpler. All files within this DLL are compiled with the OPJ_EXPORTS

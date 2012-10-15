@@ -28,7 +28,7 @@ set(OPENJPEG_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/t2.c
   ${CMAKE_CURRENT_SOURCE_DIR}/tcd.c
   ${CMAKE_CURRENT_SOURCE_DIR}/tgt.c
- ${CMAKE_CURRENT_SOURCE_DIR}/function_list.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/function_list.c
 )
 
 # Build the library

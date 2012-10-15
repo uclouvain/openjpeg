@@ -47,6 +47,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "opj_config.h"
 #include "openjpip.h"
 
 #ifdef _WIN32

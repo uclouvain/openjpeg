@@ -17,13 +17,13 @@ include_directories(
   ${TIFF_INCLUDE_DIRNAME}
   )
 
-IF(WIN32)
-  IF(BUILD_SHARED_LIBS)
-    ADD_DEFINITIONS(-DOPJ_EXPORTS)
-  ELSE(BUILD_SHARED_LIBS)
-    ADD_DEFINITIONS(-DOPJ_STATIC)
-  ENDIF(BUILD_SHARED_LIBS)
-ENDIF(WIN32)
+if(WIN32)
+  if(BUILD_SHARED_LIBS)
+    add_definitions(-DOPJ_EXPORTS)
+  else()
+    add_definitions(-DOPJ_STATIC)
+  endif()
+endif()
 
 # Loop over all executables:
 FOREACH(exe opj_jp3d_compress opj_jp3d_decompress)
@@ -38,4 +38,4 @@ FOREACH(exe opj_jp3d_compress opj_jp3d_decompress)
     EXPORT OpenJP3DTargets
     DESTINATION ${OPENJPEG_INSTALL_BIN_DIR} COMPONENT Applications
   )
-ENDFOREACH(exe)
+endforeach()

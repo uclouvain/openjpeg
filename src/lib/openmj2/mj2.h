@@ -306,30 +306,30 @@ typedef struct mj2_cparameters {
 /**
 Write the JP box 
 */
-void mj2_write_jp(opj_cio_t *cio);
+OPJ_API void OPJ_CALLCONV mj2_write_jp(opj_cio_t *cio);
 /**
 Write the FTYP box
 @param movie MJ2 movie
 @param cio Output buffer stream
 */
-void mj2_write_ftyp(opj_mj2_t *movie, opj_cio_t *cio);
+OPJ_API void OPJ_CALLCONV mj2_write_ftyp(opj_mj2_t *movie, opj_cio_t *cio);
 /**
 Creates an MJ2 decompression structure
 @return Returns a handle to a MJ2 decompressor if successful, returns NULL otherwise
 */
-opj_dinfo_t* mj2_create_decompress();
+OPJ_API opj_dinfo_t* OPJ_CALLCONV mj2_create_decompress();
 /**
 Destroy a MJ2 decompressor handle
 @param movie MJ2 decompressor handle to destroy
 */
-void mj2_destroy_decompress(opj_mj2_t *movie);
+OPJ_API void OPJ_CALLCONV mj2_destroy_decompress(opj_mj2_t *movie);
 /**
 Setup the decoder decoding parameters using user parameters.
 Decoding parameters are returned in mj2->j2k->cp. 
 @param movie MJ2 decompressor handle
 @param mj2_parameters decompression parameters
 */
-void mj2_setup_decoder(opj_mj2_t *movie, mj2_dparameters_t *mj2_parameters);
+OPJ_API void OPJ_CALLCONV mj2_setup_decoder(opj_mj2_t *movie, mj2_dparameters_t *mj2_parameters);
 /**
 Decode an image from a JPEG-2000 file stream
 @param movie MJ2 decompressor handle
@@ -341,19 +341,19 @@ opj_image_t* mj2_decode(opj_mj2_t *movie, opj_cio_t *cio);
 Creates a MJ2 compression structure
 @return Returns a handle to a MJ2 compressor if successful, returns NULL otherwise
 */
-opj_cinfo_t* mj2_create_compress();
+OPJ_API opj_cinfo_t* OPJ_CALLCONV mj2_create_compress();
 /**
 Destroy a MJ2 compressor handle
 @param movie MJ2 compressor handle to destroy
 */
-void mj2_destroy_compress(opj_mj2_t *movie);
+OPJ_API void OPJ_CALLCONV mj2_destroy_compress(opj_mj2_t *movie);
 /**
 Setup the encoder parameters using the current image and using user parameters. 
 Coding parameters are returned in mj2->j2k->cp. 
 @param movie MJ2 compressor handle
 @param parameters compression parameters
 */
-void mj2_setup_encoder(opj_mj2_t *movie, mj2_cparameters_t *parameters);
+OPJ_API void OPJ_CALLCONV mj2_setup_encoder(opj_mj2_t *movie, mj2_cparameters_t *parameters);
 /**
 Encode an image into a JPEG-2000 file stream
 @param movie MJ2 compressor handle
@@ -369,20 +369,20 @@ Init a Standard MJ2 movie
 @param movie MJ2 Movie
 @return Returns 0 if successful, returns 1 otherwise
 */
-int mj2_init_stdmovie(opj_mj2_t *movie);
+OPJ_API int OPJ_CALLCONV mj2_init_stdmovie(opj_mj2_t *movie);
 /**
 Read the structure of an MJ2 file
 @param file MJ2 input File
 @param mj2 J2 movie structure 
 @return Returns 0 if successful, returns 1 otherwise
 */
-int mj2_read_struct(FILE *file, opj_mj2_t *mj2);
+OPJ_API int OPJ_CALLCONV mj2_read_struct(FILE *file, opj_mj2_t *mj2);
 /**
 Write the the MOOV box to an output buffer stream
 @param movie MJ2 movie structure 
 @param cio Output buffer stream
 */
-void mj2_write_moov(opj_mj2_t *movie, opj_cio_t *cio);
+OPJ_API void OPJ_CALLCONV mj2_write_moov(opj_mj2_t *movie, opj_cio_t *cio);
 
 
 /* ----------------------------------------------------------------------- */

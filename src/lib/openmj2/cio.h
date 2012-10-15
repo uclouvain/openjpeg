@@ -70,20 +70,20 @@ Write some bytes
 @param n Number of bytes to write
 @return Returns the number of bytes written or 0 if an error occured
 */
-unsigned int cio_write(opj_cio_t *cio, unsigned int64 v, int n);
+OPJ_API unsigned int OPJ_CALLCONV cio_write(opj_cio_t *cio, unsigned int64 v, int n);
 /**
 Read some bytes
 @param cio CIO handle
 @param n Number of bytes to read
 @return Returns the value of the n bytes read
 */
-unsigned int cio_read(opj_cio_t *cio, int n);
+OPJ_API unsigned int OPJ_CALLCONV cio_read(opj_cio_t *cio, int n);
 /**
 Skip some bytes
 @param cio CIO handle
 @param n Number of bytes to skip
 */
-void cio_skip(opj_cio_t *cio, int n);
+OPJ_API void OPJ_CALLCONV cio_skip(opj_cio_t *cio, int n);
 /* ----------------------------------------------------------------------- */
 /*@}*/
 

@@ -67,7 +67,7 @@ void  opj_procedure_list_destroy(opj_procedure_list_t * p_list)
         opj_free(p_list);
 }
 
-opj_bool  opj_procedure_list_add_procedure (opj_procedure_list_t * p_validation_list, opj_procedure p_procedure)
+opj_bool OPJ_CALLCONV opj_procedure_list_add_procedure (opj_procedure_list_t * p_validation_list, opj_procedure p_procedure)
 {
         if (p_validation_list->m_nb_max_procedures == p_validation_list->m_nb_procedures)
         {
@@ -98,17 +98,17 @@ opj_bool  opj_procedure_list_add_procedure (opj_procedure_list_t * p_validation_
         return OPJ_TRUE;
 }
 
-OPJ_UINT32 opj_procedure_list_get_nb_procedures (opj_procedure_list_t * p_validation_list)
+OPJ_UINT32 OPJ_CALLCONV opj_procedure_list_get_nb_procedures (opj_procedure_list_t * p_validation_list)
 {
         return p_validation_list->m_nb_procedures;
 }
 
-opj_procedure* opj_procedure_list_get_first_procedure (opj_procedure_list_t * p_validation_list)
+opj_procedure* OPJ_CALLCONV opj_procedure_list_get_first_procedure (opj_procedure_list_t * p_validation_list)
 {
         return p_validation_list->m_procedures;
 }
 
-void  opj_procedure_list_clear (opj_procedure_list_t * p_validation_list)
+void OPJ_CALLCONV opj_procedure_list_clear (opj_procedure_list_t * p_validation_list)
 {
         p_validation_list->m_nb_procedures = 0;
 }

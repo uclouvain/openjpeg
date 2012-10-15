@@ -43,7 +43,7 @@ The functions in J2K_LIB.C are internal utilities mainly used for timing.
 Difference in successive opj_clock() calls tells you the elapsed time
 @return Returns time in seconds
 */
-double opj_clock(void);
+OPJ_API double OPJ_CALLCONV opj_clock(void);
 
 /* ----------------------------------------------------------------------- */
 /*@}*/
