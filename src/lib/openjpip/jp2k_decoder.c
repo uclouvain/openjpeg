@@ -37,11 +37,11 @@
 #include "openjpeg.h"
 
 
-void error_callback(const char *msg, void *client_data);
-void warning_callback(const char *msg, void *client_data);
-void info_callback(const char *msg, void *client_data);
+static void error_callback(const char *msg, void *client_data);
+static void warning_callback(const char *msg, void *client_data);
+static void info_callback(const char *msg, void *client_data);
 
-Byte_t * imagetopnm(opj_image_t *image, ihdrbox_param_t **ihdrbox);
+static Byte_t * imagetopnm(opj_image_t *image, ihdrbox_param_t **ihdrbox);
 
 Byte_t * j2k_to_pnm( FILE *fp, ihdrbox_param_t **ihdrbox)
 {
@@ -134,28 +134,28 @@ Byte_t * j2k_to_pnm( FILE *fp, ihdrbox_param_t **ihdrbox)
 /**
    sample error callback expecting a FILE* client object
 */
-void error_callback(const char *msg, void *client_data) {
+static void error_callback(const char *msg, void *client_data) {
   FILE *stream = (FILE*)client_data;
   fprintf(stream, "[ERROR] %s", msg);
 }
 /**
    sample warning callback expecting a FILE* client object
 */
-void warning_callback(const char *msg, void *client_data) {
+static void warning_callback(const char *msg, void *client_data) {
   FILE *stream = (FILE*)client_data;
   fprintf(stream, "[WARNING] %s", msg);
 }
 /**
    sample debug callback expecting no client object
 */
-void info_callback(const char *msg, void *client_data) {
+static void info_callback(const char *msg, void *client_data) {
   (void)client_data;
   (void)msg;
   /*  fprintf(stdout, "[INFO] %s", msg); */
 }
 
 
-Byte_t * imagetopnm(opj_image_t *image, ihdrbox_param_t **ihdrbox)
+static Byte_t * imagetopnm(opj_image_t *image, ihdrbox_param_t **ihdrbox)
 {
   OPJ_UINT32 adjustR, adjustG=0, adjustB=0;
   OPJ_SIZE_T datasize;
