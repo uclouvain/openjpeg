@@ -9,12 +9,12 @@ set(OPENJPEG_SRCS
   ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/event.c
   ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/image.c
   ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/j2k.c
-  ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/j2k_lib.c
   ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/jp2.c
   ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/jpt.c
   ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/mct.c
   ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/mqc.c
   ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/openjpeg.c
+  ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/opj_clock.c
   ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/pi.c
   ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/raw.c
   ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/t1.c
