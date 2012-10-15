@@ -37,8 +37,6 @@
 /** @defgroup JP2 JP2 - JPEG-2000 file format reader/writer */
 /*@{*/
 
-#define JPIP_JPIP 0x6a706970
-
 #define JP2_JP   0x6a502020		/**< JPEG 2000 signature box */
 #define JP2_FTYP 0x66747970		/**< File type box */
 #define JP2_JP2H 0x6a703268		/**< JP2 header box */
@@ -140,7 +138,6 @@ typedef struct opj_jp2 {
 	opj_jp2_comps_t *comps;
 	unsigned int j2k_codestream_offset;
 	unsigned int j2k_codestream_length;
-	opj_bool jpip_on;
 	opj_bool ignore_pclr_cmap_cdef;
 } opj_jp2_t;
 

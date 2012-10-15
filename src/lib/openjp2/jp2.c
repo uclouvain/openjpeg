@@ -1415,8 +1415,6 @@ void opj_jp2_setup_encoder(	opj_jp2_v2_t *jp2,
 	}
 	jp2->precedence = 0;	/* PRECEDENCE */
 	jp2->approx = 0;		/* APPROX */
-	
-	/* jp2->jpip_on = parameters->jpip_on; */
 }
 
 opj_bool opj_jp2_encode(opj_jp2_v2_t *jp2,

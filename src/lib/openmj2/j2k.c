@@ -313,7 +313,7 @@ static int j2k_get_num_tp(opj_cp_t *cp,int pino,int tileno){
 }
 
 /**	mem allocation for TLM marker*/
-int j2k_calculate_tp(opj_cp_t *cp,int img_numcomp,opj_image_t *image,opj_j2k_t *j2k ){
+static int j2k_calculate_tp(opj_cp_t *cp,int img_numcomp,opj_image_t *image,opj_j2k_t *j2k ){
 	int pino,tileno,totnum_tp=0;
 
 	OPJ_ARG_NOT_USED(img_numcomp);

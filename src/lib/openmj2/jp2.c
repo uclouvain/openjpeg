@@ -1100,8 +1100,6 @@ void jp2_setup_encoder(opj_jp2_t *jp2, opj_cparameters_t *parameters, opj_image_
 		jp2->enumcs = 18;	/* YUV */
 	jp2->precedence = 0;	/* PRECEDENCE */
 	jp2->approx = 0;		/* APPROX */
-	
-	jp2->jpip_on = parameters->jpip_on;
 }
 
 opj_bool opj_jp2_encode(opj_jp2_t *jp2, opj_cio_t *cio, opj_image_t *image, opj_codestream_info_t *cstr_info) {
@@ -1118,38 +1116,11 @@ opj_bool opj_jp2_encode(opj_jp2_t *jp2, opj_cio_t *cio, opj_image_t *image, opj_
 	/* JP2 Header box */
 	jp2_write_jp2h(jp2, cio);
 
-#if 0
-	if( jp2->jpip_on){
-	  pos_iptr = cio_tell( cio);
-	  cio_skip( cio, 24); /* IPTR further ! */
-	  
-	  pos_jp2c = cio_tell( cio);
-	}
-#endif
-
 	/* J2K encoding */
 	if(!(len_jp2c = jp2_write_jp2c( jp2, cio, image, cstr_info))){
 	    opj_event_msg(jp2->cinfo, EVT_ERROR, "Failed to encode image\n");
 	    return OPJ_FALSE;
 	}
-
-#if 0
-	if( jp2->jpip_on){
-	  pos_cidx = cio_tell( cio);
-	  
-	  len_cidx = write_cidx( pos_jp2c+8, cio, image, *cstr_info, len_jp2c-8);
-	  
-	  pos_fidx = cio_tell( cio);
-	  len_fidx = write_fidx( pos_jp2c, len_jp2c, pos_cidx, len_cidx, cio);
-	  
-	  end_pos = cio_tell( cio);
-	  
-	  cio_seek( cio, pos_iptr);
-	  write_iptr( pos_fidx, len_fidx, cio);
-	  
-	  cio_seek( cio, end_pos);
-	}
-#endif
 
 	return OPJ_TRUE;
 }
