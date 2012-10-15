@@ -23,13 +23,13 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef __J2K_LIB_H
-#define __J2K_LIB_H
+#ifndef __OPJ_CLOCK_H
+#define __OPJ_CLOCK_H
 /**
-@file j2k_lib.h
-@brief Internal functions
+@file opj_clock.h
+@brief Internal function for timing
 
-The functions in J2K_LIB.C are internal utilities mainly used for timing.
+The functions in OPJ_CLOCK.C are internal utilities mainly used for timing.
 */
 
 /** @defgroup MISC MISC - Miscellaneous internal functions */
@@ -50,5 +50,5 @@ OPJ_FLOAT64 opj_clock(void);
 
 /*@}*/
 
-#endif /* __J2K_LIB_H */
+#endif /* __OPJ_CLOCK_H */
 

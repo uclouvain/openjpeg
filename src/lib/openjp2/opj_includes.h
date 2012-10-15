@@ -146,7 +146,7 @@ static INLINE long lrintf(float f){
 #endif
 
 #include "opj_inttypes.h"
-#include "j2k_lib.h"
+#include "opj_clock.h"
 #include "opj_malloc.h"
 #include "event.h"
 #include "bio.h"
