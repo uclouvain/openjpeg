@@ -97,29 +97,29 @@ typedef struct opj_decompression
  */
 typedef struct opj_compression
 {
-	opj_bool (* opj_start_compress) (	void *p_codec,
+	opj_bool (OPJ_CALLCONV * opj_start_compress) (	void *p_codec,
 										struct opj_stream_private *cio,
 										struct opj_image * p_image,
 										struct opj_event_mgr * p_manager);
 
-	opj_bool (* opj_encode) (	void * p_codec,
+	opj_bool (OPJ_CALLCONV * opj_encode) (	void * p_codec,
 								struct opj_stream_private *p_cio,
 								struct opj_event_mgr * p_manager);
 
-	opj_bool (* opj_write_tile) (	void * p_codec,
+	opj_bool (OPJ_CALLCONV * opj_write_tile) (	void * p_codec,
 									OPJ_UINT32 p_tile_index,
 									OPJ_BYTE * p_data,
 									OPJ_UINT32 p_data_size,
 									struct opj_stream_private * p_cio,
 									struct opj_event_mgr * p_manager);
 
-	opj_bool (* opj_end_compress) (	void * p_codec,
+	opj_bool (OPJ_CALLCONV * opj_end_compress) (	void * p_codec,
 									struct opj_stream_private *p_cio,
 									struct opj_event_mgr * p_manager);
 
-	void (* opj_destroy) (void * p_codec);
+	void (OPJ_CALLCONV * opj_destroy) (void * p_codec);
 
-	void (*opj_setup_encoder) (	void * p_codec,
+	void (OPJ_CALLCONV * opj_setup_encoder) (	void * p_codec,
 								opj_cparameters_t * p_param,
 								struct opj_image * p_image,
 								struct opj_event_mgr * p_manager);
