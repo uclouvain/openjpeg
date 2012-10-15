@@ -4,6 +4,9 @@
 set(openjpegjni_SRCS
   JavaOpenJPEGDecoder.c
   JavaOpenJPEG.c
+  ${OPENJPEG_SOURCE_DIR}/src/bin/common/opj_getopt.c
+  ${OPENJPEG_SOURCE_DIR}/src/bin/jp2/convert.c
+  index.c
   )
 
 # JNI binding:
@@ -13,7 +16,6 @@ include_directories(${JNI_INCLUDE_DIRS})
 # required header file:
 include_directories(
   ${OPENJPEG_BINARY_DIR}/src/lib/openjp2 # opj_config.h
-  #${OPENJPEG_SOURCE_DIR}/src/lib/openjp2
   ${OPENJPEG_SOURCE_DIR}/src/lib/openmj2
   ${OPENJPEG_SOURCE_DIR}/src/bin/common
   ${OPENJPEG_SOURCE_DIR}/src/bin/jp2
@@ -22,6 +24,16 @@ include_directories(
 add_library(openjpegjni MODULE
   ${openjpegjni_SRCS}
   )
+# FIXME (need to use old API):
+if(BUILD_MJ2)
+  target_link_libraries(openjpegjni openmj2)
+endif()
+target_link_libraries(openjpegjni
+  ${PNG_LIBNAME} ${TIFF_LIBNAME} ${LCMS_LIBNAME} ${Z_LIBNAME}
+)
+if(UNIX)
+  target_link_libraries(openjpegjni m)
+endif()
 
 # build jar:
 find_package(Java 1.5 REQUIRED) # javac, jar

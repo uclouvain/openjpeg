@@ -37,6 +37,7 @@
 #include <math.h>
 
 #include "openjpeg.h"
+#include "opj_includes.h"
 #include "opj_getopt.h"
 #include "convert.h"
 #include "index.h"
@@ -349,18 +350,6 @@ OPJ_PROG_ORDER give_progression(char progression[4]) {
 	return PROG_UNKNOWN;
 }
 
-
-/** <summary>
-    Get logarithm of an integer and round downwards.
-    </summary> */
-int int_floorlog2(int a) {
-    int l;
-    for (l=0; a>1; l++) {
-        a>>=1;
-    }
-    return l;
-}
-
 static int initialise_4K_poc(opj_poc_t *POC, int numres){
 	POC[0].tile  = 1; 
 	POC[0].resno0  = 0; 
@@ -627,7 +616,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 				parameters->tcp_numlayers = numlayers;
 				numresolution = parameters->numresolution;
 				matrix_width = numresolution * 3;
-				parameters->cp_matrice = (int *) malloc(numlayers * matrix_width * sizeof(int));
+				parameters->cp_matrice = (int *) opj_malloc(numlayers * matrix_width * sizeof(int));
 				s = s + 2;
 
 				for (i = 0; i < numlayers; i++) {
@@ -855,7 +844,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 
 			case 'C':			/* add a comment */
 			{
-				parameters->cp_comment = (char*)malloc(strlen(opj_optarg) + 1);
+				parameters->cp_comment = (char*)opj_malloc(strlen(opj_optarg) + 1);
 				if(parameters->cp_comment) {
 					strcpy(parameters->cp_comment, opj_optarg);
 				}
@@ -884,7 +873,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 			
 			case 'z':			/* Image Directory path */
 			{
-				img_fol->imgdirpath = (char*)malloc(strlen(opj_optarg) + 1);
+				img_fol->imgdirpath = (char*)opj_malloc(strlen(opj_optarg) + 1);
 				strcpy(img_fol->imgdirpath,opj_optarg);
 				img_fol->set_imgdir=1;
 			}
@@ -1344,7 +1333,7 @@ char* create_index_into_byte_array(opj_codestream_info_t *cstr_info, int* buffer
 	prec_max = 0;
 	for (tileno = 0; tileno < cstr_info->tw * cstr_info->th; tileno++) {
 		for (resno = 0; resno < cstr_info->numdecompos[0] + 1; resno++) {
-			prec_max = max(prec_max,cstr_info->tile[tileno].pw[resno] * cstr_info->tile[tileno].ph[resno]);
+			prec_max = int_max(prec_max,cstr_info->tile[tileno].pw[resno] * cstr_info->tile[tileno].ph[resno]);
 		}
 	}
 
@@ -1358,7 +1347,7 @@ char* create_index_into_byte_array(opj_codestream_info_t *cstr_info, int* buffer
 		+ cstr_info->tw*cstr_info->th * cstr_info->numlayers * (cstr_info->numdecompos[0] + 1) * cstr_info->numcomps * prec_max *8
 		  ) * sizeof(int);
 	/*printf("C: index buffer size = %d bytes\n", *buffer_size);*/
-	buffer = (char*) malloc(*buffer_size);
+	buffer = (char*) opj_malloc(*buffer_size);
 
 	if (!buffer) {
 		/*opj_event_msg(j2k->cinfo, EVT_ERROR, "failed to allocate index buffer for writing %d int\n", *buffer_size);*/
@@ -1812,7 +1801,7 @@ JNIEXPORT jlong JNICALL Java_org_openJpeg_OpenJPEGJavaEncoder_internalEncodeImag
 
 	arraySize = (*env)->GetArrayLength(env, javaParameters);
 	argc = (int) arraySize +1;
-	argv = malloc(argc*sizeof(char*));
+	argv = opj_malloc(argc*sizeof(char*));
 	argv[0] = "ProgramName.exe";	/* The program name: useless*/
 	j=0;
 	for (i=1; i<argc; i++) {
@@ -1867,10 +1856,10 @@ JNIEXPORT jlong JNICALL Java_org_openJpeg_OpenJPEGJavaEncoder_internalEncodeImag
 		const char *version = opj_version();
 /* UniPG>> */
 #ifdef USE_JPWL
-		parameters.cp_comment = (char*)malloc(clen+strlen(version)+11);
+		parameters.cp_comment = (char*)opj_malloc(clen+strlen(version)+11);
 		sprintf(parameters.cp_comment,"%s%s with JPWL", comment, version);
 #else
-		parameters.cp_comment = (char*)malloc(clen+strlen(version)+1);
+		parameters.cp_comment = (char*)opj_malloc(clen+strlen(version)+1);
 		sprintf(parameters.cp_comment,"%s%s", comment, version);
 #endif
 /* <<UniPG */
@@ -1944,7 +1933,7 @@ JNIEXPORT jlong JNICALL Java_org_openJpeg_OpenJPEGJavaEncoder_internalEncodeImag
 		memcpy(jbBody, compressed_index, compressed_index_size);
 		(*env)->ReleasePrimitiveArrayCritical(env, jba, jbBody, 0);
 		(*env)->SetObjectField(env, obj, fid, jba); 
-		free(compressed_index);
+		opj_free(compressed_index);
 
 		/* write the generated codestream to disk ? */
 		if (parameters.outfile[0]!='\0') {
@@ -1977,8 +1966,8 @@ JNIEXPORT jlong JNICALL Java_org_openJpeg_OpenJPEGJavaEncoder_internalEncodeImag
 	}
 
 	/* free user parameters structure */
-  if(parameters.cp_comment) free(parameters.cp_comment);
-	if(parameters.cp_matrice) free(parameters.cp_matrice);
+  if(parameters.cp_comment) opj_free(parameters.cp_comment);
+	if(parameters.cp_matrice) opj_free(parameters.cp_matrice);
 
 	return codestream_length;
 }

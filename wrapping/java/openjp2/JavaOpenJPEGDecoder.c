@@ -37,6 +37,7 @@
 #include <math.h>
 
 #include "openjpeg.h"
+#include "opj_includes.h"
 #include "opj_getopt.h"
 #include "convert.h"
 #include "dirent.h"
@@ -338,7 +339,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 
 			case 'y':			/* Image Directory path */
 				{
-					img_fol->imgdirpath = (char*)malloc(strlen(opj_optarg) + 1);
+					img_fol->imgdirpath = (char*)opj_malloc(strlen(opj_optarg) + 1);
 					strcpy(img_fol->imgdirpath,opj_optarg);
 					img_fol->set_imgdir=1;
 				}
@@ -542,7 +543,7 @@ JNIEXPORT jint JNICALL Java_org_openJpeg_OpenJPEGJavaDecoder_internalDecodeJ2Kto
 	/* Get the String[] containing the parameters, and converts it into a char** to simulate command line arguments.*/
 	arraySize = (*env)->GetArrayLength(env, javaParameters);
 	argc = (int) arraySize +1;
-	argv = malloc(argc*sizeof(char*));
+	argv = opj_malloc(argc*sizeof(char*));
 	argv[0] = "ProgramName.exe";	/* The program name: useless*/
 	j=0;
 	for (i=1; i<argc; i++) {
@@ -596,7 +597,7 @@ JNIEXPORT jint JNICALL Java_org_openJpeg_OpenJPEGJavaDecoder_internalDecodeJ2Kto
 			fseek(fsrc, 0, SEEK_END);
 			file_length = ftell(fsrc);
 			fseek(fsrc, 0, SEEK_SET);
-			src = (unsigned char *) malloc(file_length);
+			src = (unsigned char *) opj_malloc(file_length);
 			fread(src, 1, file_length, fsrc);
 			fclose(fsrc);
 			/*printf("C: %d bytes read from file\n",file_length);*/
@@ -712,7 +713,7 @@ JNIEXPORT jint JNICALL Java_org_openJpeg_OpenJPEGJavaDecoder_internalDecodeJ2Kto
 
 		/* free the memory containing the code-stream */
 		if (parameters.infile && parameters.infile[0]!='\0') {
-			free(src);
+			opj_free(src);
 		} else {
 			(*env)->ReleaseByteArrayElements(env, jba, jbBody, 0);
 		}
