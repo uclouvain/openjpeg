@@ -164,21 +164,21 @@ int write_cidx_v2( int offset, opj_stream_private_t *cio, opj_codestream_info_t 
     box[num_box].type = JPIP_MHIX;
     num_box++;
 
-    box[num_box].length = write_tpix_v2( offset, cstr_info, j2klen, cio);
+    box[num_box].length = write_tpix_v2( offset, cstr_info, j2klen, cio,p_manager);
     box[num_box].type = JPIP_TPIX;
     num_box++;
       
-    box[num_box].length = write_thix_v2( offset, cstr_info, cio);
+    box[num_box].length = write_thix_v2( offset, cstr_info, cio, p_manager);
     box[num_box].type = JPIP_THIX;
     num_box++;
 
-    EPHused = check_EPHuse_v2( offset, cstr_info.marker, cstr_info.marknum, cio);
+    EPHused = check_EPHuse_v2( offset, cstr_info.marker, cstr_info.marknum, cio,p_manager);
       
-    box[num_box].length = write_ppix_v2( offset, cstr_info, EPHused, j2klen, cio);
+    box[num_box].length = write_ppix_v2( offset, cstr_info, EPHused, j2klen, cio,p_manager);
     box[num_box].type = JPIP_PPIX;
     num_box++;
     
-    box[num_box].length = write_phix_v2( offset, cstr_info, EPHused, j2klen, cio);
+    box[num_box].length = write_phix_v2( offset, cstr_info, EPHused, j2klen, cio,p_manager);
     box[num_box].type = JPIP_PHIX;
     num_box++;
       

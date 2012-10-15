@@ -736,7 +736,7 @@ static opj_bool opj_jpip_skip_iptr(	opj_jp2_v2_t *jp2,
 	return OPJ_TRUE;
 }
 
-void opj_jpip_setup_header_writing (opj_jp2_v2_t *jp2)
+static void opj_jpip_setup_header_writing (opj_jp2_v2_t *jp2)
 {
 	/* preconditions */
 	assert(jp2 != 00);
@@ -781,7 +781,7 @@ static opj_bool opj_jp2_exec (  opj_jp2_v2_t * jp2,
 	return l_result;
 }
 
-opj_bool opj_jpip_start_compress(opj_jp2_v2_t *jp2,
+static opj_bool opj_jpip_start_compress(opj_jp2_v2_t *jp2,
                                 opj_stream_private_t *stream,
                                 opj_image_t * p_image,
                                 opj_event_mgr_t * p_manager
@@ -1031,6 +1031,7 @@ static opj_bool opj_jpip_write_jp2c(opj_jp2_v2_t *jp2,
 							opj_event_mgr_t * p_manager )
 {
 	OPJ_OFF_T j2k_codestream_exit;
+  opj_codestream_info_t cstr_info;
 	OPJ_BYTE l_data_header [8];
   OPJ_UINT32 len_jp2c;
   int len_cidx;
@@ -1068,7 +1069,9 @@ static opj_bool opj_jpip_write_jp2c(opj_jp2_v2_t *jp2,
 
   /* CIDX */
   pos_cidx = opj_stream_tell( cio);
-  len_cidx = write_cidx_v2( pos_jp2c+8, cio, jp2_get_cstr_info(jp2), len_jp2c-8);
+  /*cinfo = jp2_get_cstr_info(jp2);*/
+  assert( 0 ); /* MM: FIXME */
+  len_cidx = write_cidx_v2( pos_jp2c+8, cio, cstr_info, len_jp2c-8,p_manager);
 
   /* FIDX */
   pos_fidx = opj_stream_tell( cio);
@@ -1091,7 +1094,7 @@ static void opj_jp2_setup_end_header_writing (opj_jp2_v2_t *jp2)
 	/* DEVELOPER CORNER, add your custom procedures */
 }
 
-opj_bool opj_jpip_end_compress(	opj_jp2_v2_t *jp2,
+static opj_bool opj_jpip_end_compress(	opj_jp2_v2_t *jp2,
 							    opj_stream_private_t *cio,
 							    opj_event_mgr_t * p_manager
                                 )

@@ -112,7 +112,7 @@ int write_thix_v2( int coff, opj_codestream_info_t cstr_info, opj_stream_private
     write_manf_v2( i, cstr_info.tw*cstr_info.th, box, cio);
     
     for (tileno = 0; tileno < cstr_info.tw*cstr_info.th; tileno++){
-      box[tileno].length = write_tilemhix_v2( coff, cstr_info, tileno, cio);
+      box[tileno].length = write_tilemhix_v2( coff, cstr_info, tileno, cio,p_manager);
       box[tileno].type = JPIP_MHIX;
     }
  

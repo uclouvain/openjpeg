@@ -112,7 +112,7 @@ int write_phix_v2( int coff, opj_codestream_info_t cstr_info, opj_bool EPHused, 
     write_manf_v2( i, cstr_info.numcomps, box, cio);
 
     for( compno=0; compno<cstr_info.numcomps; compno++){       
-      box[compno].length = write_phixfaix_v2( coff, compno, cstr_info, EPHused, j2klen, cio);
+      box[compno].length = write_phixfaix_v2( coff, compno, cstr_info, EPHused, j2klen, cio,p_manager);
       box[compno].type = JPIP_FAIX;
     }
 

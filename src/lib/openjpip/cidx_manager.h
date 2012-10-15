@@ -51,6 +51,10 @@
  * @return              length of cidx box
  */
 int write_cidx( int offset, opj_cio_t *cio, opj_image_t *image, opj_codestream_info_t cstr_info, int j2klen);
+int write_cidx_v2( int offset, opj_stream_private_t *cio, opj_codestream_info_t cstr_info, int j2klen,
+              opj_event_mgr_t * p_manager );
 
+opj_bool check_EPHuse_v2( int coff, opj_marker_info_t *markers, int marknum, opj_stream_private_t *cio,
+              opj_event_mgr_t * p_manager );
 
 #endif      /* !CIDX_MANAGER_H_ */
