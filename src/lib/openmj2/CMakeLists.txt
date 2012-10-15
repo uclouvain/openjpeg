@@ -3,6 +3,8 @@ set(OPENMJ2_SRCS
   mj2.c
   mj2_convert.c
 # FIXME: legacy
+  j2k_lib.c
+  cio.c
   jp2.c
   j2k.c
   tcd.c
@@ -15,6 +17,9 @@ set(OPENMJ2_SRCS
   tgt.c
   dwt.c
   event.c
+  image.c
+  jpt.c
+  raw.c
   openjpeg.c
 )
 
