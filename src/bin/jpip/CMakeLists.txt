@@ -55,7 +55,7 @@ foreach(exe ${EXES})
       ${OPENJPEG_SOURCE_DIR}/src/bin/jp2/convert.c
     )
     target_link_libraries(${exe}
-      ${PNG_LIBNAME} ${TIFF_LIBNAME} ${LCMS_LIBNAME}
+      ${PNG_LIBNAME} ${TIFF_LIBNAME} ${LCMS_LIBNAME} ${Z_LIBNAME}
     )
   else()
     add_executable(${exe} ${exe}.c)
