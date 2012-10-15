@@ -42,11 +42,11 @@ OPJ_FLOAT64 opj_clock(void) {
 	/* cout << "freq = " << ((double) freq.QuadPart) << endl; */
     /* t is the high resolution performance counter (see MSDN) */
     QueryPerformanceCounter ( & t ) ;
-    return ( t.QuadPart /(double) freq.QuadPart ) ;
+    return ( t.QuadPart /(OPJ_FLOAT64) freq.QuadPart ) ;
 #else
 	/* Unix or Linux: use resource usage */
     struct rusage t;
-    double procTime;
+    OPJ_FLOAT64 procTime;
     /* (1) Get the rusage data structure at this moment (man getrusage) */
     getrusage(0,&t);
     /* (2) What is the elapsed time ? - CPU time = User time + System time */
