@@ -47,6 +47,9 @@ if(WIN32)
   endif()
 endif()
 add_library(openjpwl ${JPWL_SRCS} ${OPENJPEG_SRCS})
+if(UNIX)
+  target_link_libraries(openjpwl m)
+endif()
 set_target_properties(openjpwl
   PROPERTIES ${OPENJPEG_LIBRARY_PROPERTIES})
 
