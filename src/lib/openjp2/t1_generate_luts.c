@@ -170,7 +170,7 @@ static int t1_init_spb(int f) {
 	return n;
 }
 
-void dump_array16(int array[],int size){
+static void dump_array16(int array[],int size){
 	int i;
 	--size;
 	for (i = 0; i < size; ++i) {
