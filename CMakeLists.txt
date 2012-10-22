@@ -125,6 +125,14 @@ if(NOT OPENJPEG_INSTALL_DOC_DIR)
   set(OPENJPEG_INSTALL_DOC_DIR "share/doc/${OPENJPEG_INSTALL_SUBDIR}")
 endif()
 
+if(NOT OPENJPEG_INSTALL_JNI_DIR)
+  if(WIN32)
+    set(OPENJPEG_INSTALL_JNI_DIR ${OPENJPEG_INSTALL_BIN_DIR})
+  else()
+    set(OPENJPEG_INSTALL_JNI_DIR ${OPENJPEG_INSTALL_LIB_DIR})
+  endif()
+endif()
+
 if(NOT OPENJPEG_INSTALL_PACKAGE_DIR)
   # We could install *.cmake files in share/ however those files contains
   # hardcoded path to libraries on a multi-arch system (fedora/debian) those

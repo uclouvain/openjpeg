@@ -35,6 +35,11 @@ if(UNIX)
   target_link_libraries(openjpegjni m)
 endif()
 
+install(TARGETS openjpegjni
+  EXPORT OpenJPEGTargets
+  LIBRARY DESTINATION ${OPENJPEG_INSTALL_JNI_DIR} COMPONENT Libraries
+)
+
 # build jar:
 find_package(Java 1.5 REQUIRED) # javac, jar
 
@@ -58,4 +63,8 @@ add_custom_command(
 add_custom_target(OpenJPEGJavaJar ALL
   DEPENDS ${LIBRARY_OUTPUT_PATH}/openjpeg.jar
   COMMENT "building openjpeg.jar"
+)
+
+install(FILES ${LIBRARY_OUTPUT_PATH}/openjpeg.jar
+  DESTINATION ${OPENJPEG_INSTALL_SHARE_DIR} COMPONENT JavaModule
 )
