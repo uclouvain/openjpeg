@@ -24,13 +24,14 @@ include_directories(
 add_library(openjpegjni MODULE
   ${openjpegjni_SRCS}
   )
+# Java module should not have a SONAME:
+set_property(TARGET openjpegjni PROPERTY NO_SONAME 1)
+
 TARGET_LINK_LIBRARIES(openjpegjni ${OPENJPEG_LIBRARY_NAME})
 
-IF(WIN32)
-  SET(OPENJPEG_INSTALL_JNI_DIR ${OPENJPEG_INSTALL_BIN_DIR})
-ELSE()
-  SET(OPENJPEG_INSTALL_JNI_DIR ${OPENJPEG_INSTALL_LIB_DIR})
-ENDIF()
+if(UNIX)
+  target_link_libraries(openjpegjni m)
+endif()
 
 INSTALL(TARGETS openjpegjni
   EXPORT OpenJPEGTargets
