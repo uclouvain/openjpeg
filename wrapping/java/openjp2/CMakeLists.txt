@@ -24,6 +24,9 @@ include_directories(
 add_library(openjpegjni MODULE
   ${openjpegjni_SRCS}
   )
+# Java module should not have a SONAME:
+set_property(TARGET openjpegjni PROPERTY NO_SONAME 1)
+
 # FIXME (need to use old API):
 if(BUILD_MJ2)
   target_link_libraries(openjpegjni openmj2)
