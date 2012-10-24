@@ -42,15 +42,15 @@
 #define     JP2_JP   0x6a502020    /**< JPEG 2000 signature box */
 #define     JP2_FTYP 0x66747970    /**< File type box */
 #define     JP2_JP2H 0x6a703268    /**< JP2 header box (super-box) */
-#define   JP2_IHDR 0x69686472    /**< Image header box */
-#define   JP2_COLR 0x636f6c72    /**< Colour specification box */
+#define     JP2_IHDR 0x69686472    /**< Image header box */
+#define     JP2_COLR 0x636f6c72    /**< Colour specification box */
 #define     JP2_JP2C 0x6a703263    /**< Contiguous codestream box */
-#define   JP2_URL  0x75726c20    /**< Data entry URL box */
-#define   JP2_PCLR 0x70636c72    /**< Palette box */
-#define   JP2_CMAP 0x636d6170    /**< Component Mapping box */
-#define   JP2_CDEF 0x63646566    /**< Channel Definition box */
+#define     JP2_URL  0x75726c20    /**< Data entry URL box */
+#define     JP2_PCLR 0x70636c72    /**< Palette box */
+#define     JP2_CMAP 0x636d6170    /**< Component Mapping box */
+#define     JP2_CDEF 0x63646566    /**< Channel Definition box */
 #define     JP2_DTBL 0x6474626c    /**< Data Reference box */
-#define   JP2_BPCC 0x62706363    /**< Bits per component box */
+#define     JP2_BPCC 0x62706363    /**< Bits per component box */
 #define     JP2_JP2  0x6a703220    /**< File type fields */
 
 /* For the future */
@@ -65,20 +65,20 @@
 
 typedef enum
 {
-  JP2_STATE_NONE      = 0x0,
-  JP2_STATE_SIGNATURE    = 0x1,
-  JP2_STATE_FILE_TYPE    = 0x2,
-  JP2_STATE_HEADER    = 0x4,
-  JP2_STATE_CODESTREAM  = 0x8,
+  JP2_STATE_NONE            = 0x0,
+  JP2_STATE_SIGNATURE       = 0x1,
+  JP2_STATE_FILE_TYPE       = 0x2,
+  JP2_STATE_HEADER          = 0x4,
+  JP2_STATE_CODESTREAM      = 0x8,
   JP2_STATE_END_CODESTREAM  = 0x10,
-  JP2_STATE_UNKNOWN    = 0x7fffffff /* ISO C restricts enumerator values to range of 'int' */
+  JP2_STATE_UNKNOWN         = 0x7fffffff /* ISO C restricts enumerator values to range of 'int' */
 }
 JP2_STATE;
 
 typedef enum
 {
-  JP2_IMG_STATE_NONE      = 0x0,
-  JP2_IMG_STATE_UNKNOWN    = 0x7fffffff
+  JP2_IMG_STATE_NONE        = 0x0,
+  JP2_IMG_STATE_UNKNOWN     = 0x7fffffff
 }
 JP2_IMG_STATE;
 
@@ -138,8 +138,8 @@ typedef struct opj_jp2_color
 JP2 component
 */
 typedef struct opj_jp2_comps {
-  int depth;      
-  int sgnd;       
+  OPJ_UINT32 depth;      
+  OPJ_UINT32 sgnd;       
   OPJ_UINT32 bpcc;
 } opj_jp2_comps_t;
 
@@ -233,7 +233,7 @@ typedef struct opj_jp2_header_handler
   /* marker value */
   OPJ_UINT32 id;
   /* action linked to the marker */
-  opj_bool (*handler) (   opj_jp2_v2_t *jp2, 
+  opj_bool (*handler) (     opj_jp2_v2_t *jp2, 
                             OPJ_BYTE *p_header_data, 
                             OPJ_UINT32 p_header_size, 
                             opj_event_mgr_t * p_manager);

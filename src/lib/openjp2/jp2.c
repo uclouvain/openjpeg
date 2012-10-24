@@ -402,7 +402,7 @@ static void opj_jp2_setup_header_reading (opj_jp2_v2_t *jp2);
                                     )
 {
 	/* read header from file */
-	unsigned char l_data_header [8];
+	OPJ_BYTE l_data_header [8];
 
 	/* preconditions */
 	assert(cio != 00);
@@ -445,7 +445,7 @@ static void opj_jp2_setup_header_reading (opj_jp2_v2_t *jp2);
 
 #if 0
 static void jp2_write_url(opj_cio_t *cio, char *Idx_file) {
-	unsigned int i;
+	OPJ_UINT32 i;
 	opj_jp2_box_t box;
 
 	box.init_pos = cio_tell(cio);
@@ -500,11 +500,6 @@ opj_bool opj_jp2_read_ihdr( opj_jp2_v2_t *jp2,
 	opj_read_bytes(p_image_header_data,&(jp2->bpc),1);			/* BPC */
 	++ p_image_header_data;
 
-	/* if equal to 0 then need a BPC box (cf. chapter about image header box of the norm) */
-	/*if (jp2->bpc == 0){
-			 indicate with a flag that we will wait a BPC box
-		}*/
-
 	opj_read_bytes(p_image_header_data,&(jp2->C),1);			/* C */
 	++ p_image_header_data;
 
@@ -525,14 +520,14 @@ OPJ_BYTE * opj_jp2_write_ihdr(opj_jp2_v2_t *jp2,
                               OPJ_UINT32 * p_nb_bytes_written
                               )
 {
-	unsigned char * l_ihdr_data,* l_current_ihdr_ptr;
+	OPJ_BYTE * l_ihdr_data,* l_current_ihdr_ptr;
 	
 	/* preconditions */
 	assert(jp2 != 00);
 	assert(p_nb_bytes_written != 00);
 
 	/* default image header is 22 bytes wide */
-	l_ihdr_data = (unsigned char *) opj_malloc(22);
+	l_ihdr_data = (OPJ_BYTE *) opj_malloc(22);
 	if (l_ihdr_data == 00) {
 		return 00;
 	}
@@ -576,16 +571,16 @@ OPJ_BYTE * opj_jp2_write_bpcc(	opj_jp2_v2_t *jp2,
 						        OPJ_UINT32 * p_nb_bytes_written
                                 )
 {
-	unsigned int i;
+	OPJ_UINT32 i;
 	/* room for 8 bytes for box and 1 byte for each component */
-	int l_bpcc_size = 8 + jp2->numcomps;
-	unsigned char * l_bpcc_data,* l_current_bpcc_ptr;
+	OPJ_INT32 l_bpcc_size = 8 + jp2->numcomps;
+	OPJ_BYTE * l_bpcc_data,* l_current_bpcc_ptr;
 	
 	/* preconditions */
 	assert(jp2 != 00);
 	assert(p_nb_bytes_written != 00);
 
-	l_bpcc_data = (unsigned char *) opj_malloc(l_bpcc_size);
+	l_bpcc_data = (OPJ_BYTE *) opj_malloc(l_bpcc_size);
 	if (l_bpcc_data == 00) {
 		return 00;
 	}
@@ -622,10 +617,10 @@ opj_bool opj_jp2_read_bpcc( opj_jp2_v2_t *jp2,
 	assert(jp2 != 00);
 	assert(p_manager != 00);
 
-	/* TODO MSD */
-	/*if (jp2->bpc != 0 ){
-		opj_event_msg_v2(p_manager, EVT_WARNING, "A BPCC header box is available although BPC is different to zero (%d)\n",jp2->bpc);
-	}*/
+	
+	if (jp2->bpc != 255 ){
+		opj_event_msg_v2(p_manager, EVT_WARNING, "A BPCC header box is available although BPC given by the IHDR box (%d) indicate components bit depth is constant\n",jp2->bpc);
+	}
 
 	/* and length is relevant */
 	if (p_bpc_header_size != jp2->numcomps) {
@@ -647,8 +642,8 @@ OPJ_BYTE * opj_jp2_write_colr(  opj_jp2_v2_t *jp2,
                                 )
 {
 	/* room for 8 bytes for box 3 for common data and variable upon profile*/
-	unsigned int l_colr_size = 11;
-	unsigned char * l_colr_data,* l_current_colr_ptr;
+	OPJ_UINT32 l_colr_size = 11;
+	OPJ_BYTE * l_colr_data,* l_current_colr_ptr;
 	
 	/* preconditions */
 	assert(jp2 != 00);
@@ -665,7 +660,7 @@ OPJ_BYTE * opj_jp2_write_colr(  opj_jp2_v2_t *jp2,
 			return 00;
 	}
 
-	l_colr_data = (unsigned char *) opj_malloc(l_colr_size);
+	l_colr_data = (OPJ_BYTE *) opj_malloc(l_colr_size);
 	if (l_colr_data == 00) {
 		return 00;
 	}
@@ -743,8 +738,8 @@ void opj_jp2_apply_pclr(opj_image_t *image, opj_jp2_color_t *color)
 		}
 
 		/* Palette mapping: */
-		new_comps[pcol].data = (int*)
-				opj_malloc(old_comps[cmp].w * old_comps[cmp].h * sizeof(int));
+		new_comps[pcol].data = (OPJ_INT32*)
+				opj_malloc(old_comps[cmp].w * old_comps[cmp].h * sizeof(OPJ_INT32));
 		new_comps[pcol].prec = channel_size[i];
 		new_comps[pcol].sgnd = channel_sign[i];
 	}
@@ -801,7 +796,7 @@ opj_bool opj_jp2_read_pclr(	opj_jp2_v2_t *jp2,
 	assert(p_pclr_header_data != 00);
 	assert(jp2 != 00);
 	assert(p_manager != 00);
-  (void)p_pclr_header_size;
+    (void)p_pclr_header_size;
 
 	if(jp2->color.jp2_pclr)
 		return OPJ_FALSE;
@@ -838,7 +833,7 @@ opj_bool opj_jp2_read_pclr(	opj_jp2_v2_t *jp2,
 
 	for(j = 0; j < nr_entries; ++j) {
 		for(i = 0; i < nr_channels; ++i) {
-			int bytes_to_read = (channel_size[i]+7)>>3;
+			OPJ_INT32 bytes_to_read = (channel_size[i]+7)>>3;
 
 			opj_read_bytes(p_pclr_header_data, &l_value , bytes_to_read);	/* Cji */
 			p_pclr_header_data += bytes_to_read;
@@ -945,14 +940,14 @@ opj_bool opj_jp2_read_cdef(	opj_jp2_v2_t * jp2,
                             )
 {
 	opj_jp2_cdef_info_t *cdef_info;
-	unsigned short i;
+	OPJ_UINT16 i;
 	OPJ_UINT32 l_value;
 
 	/* preconditions */
 	assert(jp2 != 00);
 	assert(p_cdef_header_data != 00);
 	assert(p_manager != 00);
-  (void)p_cdef_header_size;
+    (void)p_cdef_header_size;
 
 	/* Part 1, I.5.3.6: 'The shall be at most one Channel Definition box
 	 * inside a JP2 Header box.'*/
@@ -1035,13 +1030,13 @@ opj_bool opj_jp2_read_colr( opj_jp2_v2_t *jp2,
 	}
 	else if (jp2->meth == 2) {
 		/* ICC profile */
-		int it_icc_value = 0;
-		int icc_len = p_colr_header_size - 3;
+		OPJ_INT32 it_icc_value = 0;
+		OPJ_INT32 icc_len = p_colr_header_size - 3;
 
 		jp2->color.icc_profile_len = icc_len;
-		jp2->color.icc_profile_buf = (unsigned char*) opj_malloc(icc_len);
+		jp2->color.icc_profile_buf = (OPJ_BYTE*) opj_malloc(icc_len);
 
-		memset(jp2->color.icc_profile_buf, 0, icc_len * sizeof(unsigned char));
+		memset(jp2->color.icc_profile_buf, 0, icc_len * sizeof(OPJ_BYTE));
 
 		for (it_icc_value = 0; it_icc_value < icc_len; ++it_icc_value)
 		{
@@ -1051,7 +1046,7 @@ opj_bool opj_jp2_read_colr( opj_jp2_v2_t *jp2,
 		}
 
 	}
-	else /* TODO MSD */
+	else 
 		opj_event_msg_v2(p_manager, EVT_INFO, "COLR BOX meth value is not a regular value (%d), so we will skip the fields following the approx field.\n", jp2->meth);
 
 	jp2->color.jp2_has_colr = 1;
@@ -1116,13 +1111,13 @@ opj_bool OPJ_CALLCONV opj_jp2_write_jp2h(opj_jp2_v2_t *jp2,
 	opj_jp2_img_header_writer_handler_t l_writers [3];
 	opj_jp2_img_header_writer_handler_t * l_current_writer;
 
-	int i, l_nb_pass;
+	OPJ_INT32 i, l_nb_pass;
 	/* size of data for super box*/
-	int l_jp2h_size = 8;
+	OPJ_INT32 l_jp2h_size = 8;
 	opj_bool l_result = OPJ_TRUE;
 
 	/* to store the data of the super box */
-	unsigned char l_jp2h_data [8];
+	OPJ_BYTE l_jp2h_data [8];
 	
 	/* preconditions */
 	assert(stream != 00);
@@ -1210,9 +1205,9 @@ opj_bool opj_jp2_write_ftyp(opj_jp2_v2_t *jp2,
 							opj_stream_private_t *cio,
 							opj_event_mgr_t * p_manager )
 {
-	unsigned int i;
-	unsigned int l_ftyp_size = 16 + 4 * jp2->numcl;
-	unsigned char * l_ftyp_data, * l_current_data_ptr;
+	OPJ_UINT32 i;
+	OPJ_UINT32 l_ftyp_size = 16 + 4 * jp2->numcl;
+	OPJ_BYTE * l_ftyp_data, * l_current_data_ptr;
 	opj_bool l_result;
 
 	/* preconditions */
@@ -1220,7 +1215,7 @@ opj_bool opj_jp2_write_ftyp(opj_jp2_v2_t *jp2,
 	assert(jp2 != 00);
 	assert(p_manager != 00);
 
-	l_ftyp_data = (unsigned char *) opj_malloc(l_ftyp_size);
+	l_ftyp_data = (OPJ_BYTE *) opj_malloc(l_ftyp_size);
 	
 	if (l_ftyp_data == 00) {
 		opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory to handle ftyp data\n");
@@ -1300,7 +1295,7 @@ opj_bool opj_jp2_write_jp(	opj_jp2_v2_t *jp2,
 				    		opj_event_mgr_t * p_manager )
 {
 	/* 12 bytes will be read */
-	unsigned char l_signature_data [12];
+	OPJ_BYTE l_signature_data [12];
 
 	/* preconditions */
 	assert(cio != 00);
@@ -1345,7 +1340,7 @@ void OPJ_CALLCONV opj_jp2_setup_encoder(	opj_jp2_v2_t *jp2,
                             opj_event_mgr_t * p_manager)
 {
     OPJ_UINT32 i;
-	int depth_0, sign;
+	OPJ_INT32 depth_0, sign;
 
 	if(!jp2 || !parameters || !image)
 		return;
@@ -1369,7 +1364,7 @@ void OPJ_CALLCONV opj_jp2_setup_encoder(	opj_jp2_v2_t *jp2,
 	jp2->brand = JP2_JP2;	/* BR */
 	jp2->minversion = 0;	/* MinV */
 	jp2->numcl = 1;
-	jp2->cl = (unsigned int*) opj_malloc(jp2->numcl * sizeof(unsigned int));
+	jp2->cl = (OPJ_UINT32*) opj_malloc(jp2->numcl * sizeof(OPJ_UINT32));
 	jp2->cl[0] = JP2_JP2;	/* CL0 : JP2 */
 
 	/* Image Header box */
@@ -1383,7 +1378,7 @@ void OPJ_CALLCONV opj_jp2_setup_encoder(	opj_jp2_v2_t *jp2,
 	sign = image->comps[0].sgnd;
 	jp2->bpc = depth_0 + (sign << 7);
 	for (i = 1; i < image->numcomps; i++) {
-		int depth = image->comps[i].prec - 1;
+		OPJ_INT32 depth = image->comps[i].prec - 1;
 		sign = image->comps[i].sgnd;
 		if (depth_0 != depth)
 			jp2->bpc = 255;
@@ -1489,7 +1484,7 @@ opj_bool opj_jp2_default_validation (	opj_jp2_v2_t * jp2,
                                         )
 {
 	opj_bool l_is_valid = OPJ_TRUE;
-	unsigned int i;
+	OPJ_UINT32 i;
 
 	/* preconditions */
 	assert(jp2 != 00);
@@ -1497,7 +1492,6 @@ opj_bool opj_jp2_default_validation (	opj_jp2_v2_t * jp2,
 	assert(p_manager != 00);
 
 	/* JPEG2000 codec validation */
-	/*TODO*/
 
 	/* STATE checking */
 	/* make sure the state is at 0 */
@@ -1548,14 +1542,14 @@ opj_bool opj_jp2_read_header_procedure(  opj_jp2_v2_t *jp2,
 	const opj_jp2_header_handler_t * l_current_handler;
 	OPJ_UINT32 l_last_data_size = BOX_SIZE;
 	OPJ_UINT32 l_current_data_size;
-	unsigned char * l_current_data = 00;
+	OPJ_BYTE * l_current_data = 00;
 
 	/* preconditions */
 	assert(stream != 00);
 	assert(jp2 != 00);
 	assert(p_manager != 00);
 
-	l_current_data = (unsigned char*)opj_malloc(l_last_data_size);
+	l_current_data = (OPJ_BYTE*)opj_malloc(l_last_data_size);
 
 	if (l_current_data == 00) {
 		opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory to handle jpeg2000 file header\n");
@@ -1588,22 +1582,20 @@ opj_bool opj_jp2_read_header_procedure(  opj_jp2_v2_t *jp2,
 
 		if (l_current_handler != 00) {
 			if (l_current_data_size > l_last_data_size) {
-				unsigned char* new_current_data = (unsigned char*)opj_realloc(l_current_data,l_current_data_size);
+				OPJ_BYTE* new_current_data = (OPJ_BYTE*)opj_realloc(l_current_data,l_current_data_size);
 				if (!l_current_data){
 					opj_free(l_current_data);
-                                        opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory to handle jpeg2000 box\n");
+                    opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory to handle jpeg2000 box\n");
 					return OPJ_FALSE;
 				}
-                                l_current_data = new_current_data;
+                l_current_data = new_current_data;
 				l_last_data_size = l_current_data_size;
 			}
 
 			l_nb_bytes_read = opj_stream_read_data(stream,l_current_data,l_current_data_size,p_manager);
 			if (l_nb_bytes_read != l_current_data_size) {
 				opj_event_msg_v2(p_manager, EVT_ERROR, "Problem with reading JPEG2000 box, stream error\n");
-                                /* TODO: LH: why nothing is freed here (as
-                                   all other returns imply a free, even
-                                   in the nominal case)? */
+                opj_free(l_current_data);                
 				return OPJ_FALSE;
 			}
 
@@ -1746,7 +1738,7 @@ static opj_bool opj_jp2_read_jp(opj_jp2_v2_t *jp2,
                                 )
 
 {
-	unsigned int l_magic_number;
+	OPJ_UINT32 l_magic_number;
 
 	/* preconditions */
 	assert(p_header_data != 00);
@@ -1827,12 +1819,12 @@ static opj_bool opj_jp2_read_ftyp(	opj_jp2_v2_t *jp2,
 	/* div by 4 */
 	jp2->numcl = l_remaining_bytes >> 2;
 	if (jp2->numcl) {
-		jp2->cl = (unsigned int *) opj_malloc(jp2->numcl * sizeof(unsigned int));
+		jp2->cl = (OPJ_UINT32 *) opj_malloc(jp2->numcl * sizeof(OPJ_UINT32));
 		if (jp2->cl == 00) {
 			opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory with FTYP Box\n");
 			return OPJ_FALSE;
 		}
-		memset(jp2->cl,0,jp2->numcl * sizeof(unsigned int));
+		memset(jp2->cl,0,jp2->numcl * sizeof(OPJ_UINT32));
 	}
 
 	for (i = 0; i < jp2->numcl; ++i)
@@ -1966,7 +1958,7 @@ opj_bool opj_jp2_read_boxhdr_char(   opj_jp2_box_t *box,
 	/* do we have a "special very large box ?" */
 	/* read then the XLBox */
 	if (box->length == 1) {
-		unsigned int l_xl_part_size;
+		OPJ_UINT32 l_xl_part_size;
 
 		if (p_box_max_size < 16) {
 			opj_event_msg_v2(p_manager, EVT_ERROR, "Cannot handle XL box of less than 16 bytes\n");
