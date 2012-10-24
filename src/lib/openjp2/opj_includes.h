@@ -153,6 +153,7 @@ static INLINE long lrintf(float f){
 #include "cio.h"
 
 #include "image.h"
+#include "invert.h"
 #include "j2k.h"
 #include "jp2.h"
 #include "jpt.h"

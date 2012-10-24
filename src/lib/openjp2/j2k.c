@@ -5909,36 +5909,31 @@ void opj_j2k_setup_encoder(     opj_j2k_v2_t *p_j2k,
                 tcp->tccps = (opj_tccp_t*) opj_calloc(image->numcomps, sizeof(opj_tccp_t));
 
                 if (parameters->mct_data) {
+                      
+                    OPJ_UINT32 lMctSize = image->numcomps * image->numcomps * sizeof(OPJ_FLOAT32);
+                    OPJ_FLOAT32 * lTmpBuf = (OPJ_FLOAT32*)opj_malloc(lMctSize);
+                    OPJ_INT32 * l_dc_shift = (OPJ_INT32 *) ((OPJ_BYTE *) parameters->mct_data + lMctSize);
 
-                        opj_event_msg_v2(p_manager, EVT_ERROR, "MCT not supported for now\n");
-                        return;
+                    tcp->mct = 2;
+                    tcp->m_mct_coding_matrix = (OPJ_FLOAT32*)opj_malloc(lMctSize);
+                    memcpy(tcp->m_mct_coding_matrix,parameters->mct_data,lMctSize);
+                    memcpy(lTmpBuf,parameters->mct_data,lMctSize);
 
-                        /* TODO MSD : merge v2 add invert.c or used a external lib ?
-                        OPJ_UINT32 lMctSize = image->numcomps * image->numcomps * sizeof(OPJ_FLOAT32);
-                        OPJ_FLOAT32 * lTmpBuf = (OPJ_FLOAT32*)opj_malloc(lMctSize);
-                        OPJ_INT32 * l_dc_shift = (OPJ_INT32 *) ((OPJ_BYTE *) parameters->mct_data + lMctSize);
+                    tcp->m_mct_decoding_matrix = (OPJ_FLOAT32*)opj_malloc(lMctSize);
+                    assert(opj_matrix_inversion_f(lTmpBuf,(tcp->m_mct_decoding_matrix),image->numcomps));
 
-                        tcp->mct = 2;
-                        tcp->m_mct_coding_matrix = (OPJ_FLOAT32*)opj_malloc(lMctSize);
-                        memcpy(tcp->m_mct_coding_matrix,parameters->mct_data,lMctSize);
-                        memcpy(lTmpBuf,parameters->mct_data,lMctSize);
+                    tcp->mct_norms = (OPJ_FLOAT64*)
+                                    opj_malloc(image->numcomps * sizeof(OPJ_FLOAT64));
 
-                        tcp->m_mct_decoding_matrix = (OPJ_FLOAT32*)opj_malloc(lMctSize);
-                        assert(opj_matrix_inversion_f(lTmpBuf,(tcp->m_mct_decoding_matrix),image->numcomps));
+                    opj_calculate_norms(tcp->mct_norms,image->numcomps,tcp->m_mct_decoding_matrix);
+                    opj_free(lTmpBuf);
 
-                        tcp->mct_norms = (OPJ_FLOAT64*)
-                                        opj_malloc(image->numcomps * sizeof(OPJ_FLOAT64));
+                    for (i = 0; i < image->numcomps; i++) {
+                            opj_tccp_t *tccp = &tcp->tccps[i];
+                            tccp->m_dc_level_shift = l_dc_shift[i];
+                    }
 
-                        opj_calculate_norms(tcp->mct_norms,image->numcomps,tcp->m_mct_decoding_matrix);
-                        opj_free(lTmpBuf);
-
-                        for (i = 0; i < image->numcomps; i++) {
-                                opj_tccp_t *tccp = &tcp->tccps[i];
-                                tccp->m_dc_level_shift = l_dc_shift[i];
-                        }
-
-                        opj_j2k_setup_mct_encoding(tcp,image);
-                        */
+                    opj_j2k_setup_mct_encoding(tcp,image);                        
                 }
                 else {
                         for (i = 0; i < image->numcomps; i++) {
