@@ -45,12 +45,12 @@ static INLINE OPJ_UINT32 opj_t1_getctxno_mag(OPJ_UINT32 f);
 static OPJ_BYTE opj_t1_getspb(OPJ_UINT32 f);
 static OPJ_INT16 opj_t1_getnmsedec_sig(OPJ_UINT32 x, OPJ_UINT32 bitpos);
 static OPJ_INT16 opj_t1_getnmsedec_ref(OPJ_UINT32 x, OPJ_UINT32 bitpos);
-static void opj_t1_updateflags(flag_t *flagsp, OPJ_UINT32 s, OPJ_UINT32 stride);
+static void opj_t1_updateflags(opj_flag_t *flagsp, OPJ_UINT32 s, OPJ_UINT32 stride);
 /**
 Encode significant pass
 */
 static void opj_t1_enc_sigpass_step(opj_t1_t *t1,
-                                    flag_t *flagsp,
+                                    opj_flag_t *flagsp,
                                     OPJ_INT32 *datap,
                                     OPJ_UINT32 orient,
                                     OPJ_INT32 bpno,
@@ -63,7 +63,7 @@ static void opj_t1_enc_sigpass_step(opj_t1_t *t1,
 Decode significant pass
 */
 static void opj_t1_dec_sigpass_step(opj_t1_t *t1,
-                                    flag_t *flagsp,
+                                    opj_flag_t *flagsp,
                                     OPJ_INT32 *datap,
                                     OPJ_UINT32 orient,
                                     OPJ_INT32 oneplushalf,
@@ -94,7 +94,7 @@ static void opj_t1_dec_sigpass( opj_t1_t *t1,
 Encode refinement pass
 */
 static void opj_t1_enc_refpass_step(opj_t1_t *t1,
-                                    flag_t *flagsp,
+                                    opj_flag_t *flagsp,
                                     OPJ_INT32 *datap,
                                     OPJ_INT32 bpno,
                                     OPJ_INT32 one,
@@ -124,7 +124,7 @@ static void opj_t1_dec_refpass( opj_t1_t *t1,
 Decode refinement pass
 */
 static void opj_t1_dec_refpass_step(opj_t1_t *t1,
-                                    flag_t *flagsp,
+                                    opj_flag_t *flagsp,
                                     OPJ_INT32 *datap,
                                     OPJ_INT32 poshalf,
                                     OPJ_INT32 neghalf,
@@ -136,7 +136,7 @@ Encode clean-up pass
 */
 static void opj_t1_enc_clnpass_step(
 		opj_t1_t *t1,
-		flag_t *flagsp,
+		opj_flag_t *flagsp,
 		OPJ_INT32 *datap,
 		OPJ_UINT32 orient,
 		OPJ_INT32 bpno,
@@ -149,19 +149,19 @@ Decode clean-up pass
 */
 static void t1_dec_clnpass_step_partial(
 		opj_t1_t *t1,
-		flag_t *flagsp,
+		opj_flag_t *flagsp,
 		int *datap,
 		int orient,
 		int oneplushalf);
 static void t1_dec_clnpass_step(
 		opj_t1_t *t1,
-		flag_t *flagsp,
+		opj_flag_t *flagsp,
 		int *datap,
 		int orient,
 		int oneplushalf);
 static void t1_dec_clnpass_step_vsc(
 		opj_t1_t *t1,
-		flag_t *flagsp,
+		opj_flag_t *flagsp,
 		int *datap,
 		int orient,
 		int oneplushalf,
@@ -276,11 +276,11 @@ OPJ_INT16 opj_t1_getnmsedec_ref(OPJ_UINT32 x, OPJ_UINT32 bitpos) {
     return lut_nmsedec_ref0[x & ((1 << T1_NMSEDEC_BITS) - 1)];
 }
 
-void opj_t1_updateflags(flag_t *flagsp, OPJ_UINT32 s, OPJ_UINT32 stride) {
-	flag_t *np = flagsp - stride;
-	flag_t *sp = flagsp + stride;
+void opj_t1_updateflags(opj_flag_t *flagsp, OPJ_UINT32 s, OPJ_UINT32 stride) {
+	opj_flag_t *np = flagsp - stride;
+	opj_flag_t *sp = flagsp + stride;
 
-	static const flag_t mod[] = {
+	static const opj_flag_t mod[] = {
 		T1_SIG_S, T1_SIG_S|T1_SGN_S,
 		T1_SIG_E, T1_SIG_E|T1_SGN_E,
 		T1_SIG_W, T1_SIG_W|T1_SGN_W,
@@ -301,7 +301,7 @@ void opj_t1_updateflags(flag_t *flagsp, OPJ_UINT32 s, OPJ_UINT32 stride) {
 }
 
 void opj_t1_enc_sigpass_step(   opj_t1_t *t1,
-                                flag_t *flagsp,
+                                opj_flag_t *flagsp,
                                 OPJ_INT32 *datap,
                                 OPJ_UINT32 orient,
                                 OPJ_INT32 bpno,
@@ -373,7 +373,7 @@ void opj_t1_enc_sigpass(opj_t1_t *t1,
 
 
 void opj_t1_enc_refpass_step(   opj_t1_t *t1,
-                                flag_t *flagsp,
+                                opj_flag_t *flagsp,
                                 OPJ_INT32 *datap,
                                 OPJ_INT32 bpno,
                                 OPJ_INT32 one,
@@ -434,7 +434,7 @@ void opj_t1_enc_refpass(
 
 void opj_t1_enc_clnpass_step(
 		opj_t1_t *t1,
-		flag_t *flagsp,
+		opj_flag_t *flagsp,
 		OPJ_INT32 *datap,
 		OPJ_UINT32 orient,
 		OPJ_INT32 bpno,
@@ -470,7 +470,7 @@ LABEL_PARTIAL:
 
 static void t1_dec_clnpass_step_partial(
 		opj_t1_t *t1,
-		flag_t *flagsp,
+		opj_flag_t *flagsp,
 		int *datap,
 		int orient,
 		int oneplushalf)
@@ -490,7 +490,7 @@ static void t1_dec_clnpass_step_partial(
 
 static void t1_dec_clnpass_step(
 		opj_t1_t *t1,
-		flag_t *flagsp,
+		opj_flag_t *flagsp,
 		int *datap,
 		int orient,
 		int oneplushalf)
@@ -514,7 +514,7 @@ static void t1_dec_clnpass_step(
 
 static void t1_dec_clnpass_step_vsc(
 		opj_t1_t *t1,
-		flag_t *flagsp,
+		opj_flag_t *flagsp,
 		int *datap,
 		int orient,
 		int oneplushalf,
@@ -660,11 +660,11 @@ static void t1_dec_clnpass(
 	}
 	} else {
 		int *data1 = t1->data;
-		flag_t *flags1 = &t1->flags[1];
+		opj_flag_t *flags1 = &t1->flags[1];
 		for (k = 0; k < (t1->h & ~3); k += 4) {
 			for (i = 0; i < t1->w; ++i) {
 				int *data2 = data1 + i;
-				flag_t *flags2 = flags1 + i;
+				opj_flag_t *flags2 = flags1 + i;
 				agg = !(MACRO_t1_flags(1 + k,1 + i) & (T1_SIG | T1_VISIT | T1_SIG_OTH)
 					|| MACRO_t1_flags(1 + k + 1,1 + i) & (T1_SIG | T1_VISIT | T1_SIG_OTH)
 					|| MACRO_t1_flags(1 + k + 2,1 + i) & (T1_SIG | T1_VISIT | T1_SIG_OTH)
@@ -708,7 +708,7 @@ static void t1_dec_clnpass(
 		}
 		for (i = 0; i < t1->w; ++i) {
 			int *data2 = data1 + i;
-			flag_t *flags2 = flags1 + i;
+			opj_flag_t *flags2 = flags1 + i;
 			for (j = k; j < t1->h; ++j) {
 				flags2 += t1->flags_stride;
 				t1_dec_clnpass_step(t1, flags2, data2, orient, oneplushalf);
@@ -812,13 +812,13 @@ opj_bool opj_t1_allocate_buffers(
 
 	if(flagssize > t1->flagssize){
 		opj_aligned_free(t1->flags);
-		t1->flags = (flag_t*) opj_aligned_malloc(flagssize * sizeof(flag_t));
+		t1->flags = (opj_flag_t*) opj_aligned_malloc(flagssize * sizeof(opj_flag_t));
 		if(!t1->flags){
 			return OPJ_FALSE;
 		}
 		t1->flagssize=flagssize;
 	}
-	memset(t1->flags,0,flagssize * sizeof(flag_t));
+	memset(t1->flags,0,flagssize * sizeof(opj_flag_t));
 
 	t1->w=w;
 	t1->h=h;
@@ -1319,7 +1319,7 @@ void opj_t1_dec_refpass(opj_t1_t *t1,
 
 
 void opj_t1_dec_refpass_step(   opj_t1_t *t1,
-                                flag_t *flagsp,
+                                opj_flag_t *flagsp,
                                 OPJ_INT32 *datap,
                                 OPJ_INT32 poshalf,
                                 OPJ_INT32 neghalf,
@@ -1375,7 +1375,7 @@ void opj_t1_dec_sigpass(opj_t1_t *t1,
 }				/* VSC and  BYPASS by Antonin */
 
 void opj_t1_dec_sigpass_step(   opj_t1_t *t1,
-                                flag_t *flagsp,
+                                opj_flag_t *flagsp,
                                 OPJ_INT32 *datap,
                                 OPJ_UINT32 orient,
                                 OPJ_INT32 oneplushalf,

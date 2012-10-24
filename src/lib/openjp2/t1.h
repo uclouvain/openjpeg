@@ -85,7 +85,7 @@ in T1.C are used by some function in TCD.C.
 
 /* ----------------------------------------------------------------------- */
 
-typedef OPJ_INT16 flag_t;
+typedef OPJ_INT16 opj_flag_t;
 
 /**
 Tier-1 coding (coding of code-block coefficients)
@@ -100,7 +100,7 @@ typedef struct opj_t1 {
 	opj_raw_t *raw;
 
     OPJ_INT32 *data;
-	flag_t *flags;
+	opj_flag_t *flags;
 	OPJ_UINT32 w;
 	OPJ_UINT32 h;
 	OPJ_UINT32 datasize;
