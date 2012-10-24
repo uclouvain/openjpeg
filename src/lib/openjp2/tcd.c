@@ -233,7 +233,7 @@ void opj_tcd_makelayer( opj_tcd_v2_t *tcd,
                                                 n = cblk->numpassesinlayers;
 
                                                 for (passno = cblk->numpassesinlayers; passno < cblk->totalpasses; passno++) {
-                                                        OPJ_INT32 dr;
+                                                        OPJ_UINT32 dr;
                                                         OPJ_FLOAT64 dd;
                                                         opj_tcd_pass_v2_t *pass = &cblk->passes[passno];
 
