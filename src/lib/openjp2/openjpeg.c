@@ -150,7 +150,7 @@ typedef struct opj_codec_private
 opj_codec_private_t;
 
 /* ---------------------------------------------------------------------- */
-/* Functions to set info_handler */
+/* Functions to set the message handlers */
 
 opj_bool OPJ_CALLCONV opj_set_info_handler(	opj_codec_t * p_codec, 
 											opj_msg_callback p_callback,

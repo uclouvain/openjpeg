@@ -1199,9 +1199,33 @@ OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream (FILE * p_file,
    event manager functions definitions
 ==========================================================
 */
-OPJ_API opj_bool OPJ_CALLCONV opj_set_info_handler(opj_codec_t * p_codec, opj_msg_callback p_callback,void * p_user_data);
-OPJ_API opj_bool OPJ_CALLCONV opj_set_warning_handler(opj_codec_t * p_codec, opj_msg_callback p_callback,void * p_user_data);
-OPJ_API opj_bool OPJ_CALLCONV opj_set_error_handler(opj_codec_t * p_codec, opj_msg_callback p_callback,void * p_user_data);
+/**
+ * Set the info handler use by openjpeg.
+ * @param p_codec       the codec previously initialise
+ * @param p_callback    the callback function which will be used
+ * @param p_user_data   FIXME DOC
+*/
+OPJ_API opj_bool OPJ_CALLCONV opj_set_info_handler(opj_codec_t * p_codec, 
+                                                   opj_msg_callback p_callback,
+                                                   void * p_user_data);
+/**
+ * Set the warning handler use by openjpeg.
+ * @param p_codec       the codec previously initialise
+ * @param p_callback    the callback function which will be used
+ * @param p_user_data   FIXME DOC
+*/
+OPJ_API opj_bool OPJ_CALLCONV opj_set_warning_handler(opj_codec_t * p_codec,
+                                                      opj_msg_callback p_callback,
+                                                      void * p_user_data);
+/**
+ * Set the error handler use by openjpeg.
+ * @param p_codec       the codec previously initialise
+ * @param p_callback    the callback function which will be used
+ * @param p_user_data   FIXME DOC
+*/
+OPJ_API opj_bool OPJ_CALLCONV opj_set_error_handler(opj_codec_t * p_codec, 
+                                                    opj_msg_callback p_callback,
+                                                    void * p_user_data);
 
 /* 
 ==========================================================
