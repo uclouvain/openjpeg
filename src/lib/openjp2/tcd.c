@@ -1740,7 +1740,7 @@ void opj_tcd_code_block_enc_deallocate (opj_tcd_precinct_v2_t * p_precinct)
 
         opj_tcd_cblk_enc_v2_t * l_code_block = p_precinct->cblks.enc;
         if (l_code_block) {
-                l_nb_code_blocks = p_precinct->block_size / sizeof(opj_tcd_cblk_enc_t);
+                l_nb_code_blocks = p_precinct->block_size / sizeof(opj_tcd_cblk_enc_v2_t);
                 
                 for     (cblkno = 0; cblkno < l_nb_code_blocks; ++cblkno)  {
                         if (l_code_block->data) {
