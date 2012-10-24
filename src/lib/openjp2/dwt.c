@@ -487,13 +487,6 @@ OPJ_UINT32 opj_dwt_getgain(OPJ_UINT32 orient) {
 /* <summary>                */
 /* Get norm of 5-3 wavelet. */
 /* </summary>               */
-double dwt_getnorm(int level, int orient) {
-	return opj_dwt_norms[orient][level];
-}
-
-/* <summary>                */
-/* Get norm of 5-3 wavelet. */
-/* </summary>               */
 OPJ_FLOAT64 opj_dwt_getnorm(OPJ_UINT32 level, OPJ_UINT32 orient) {
 	return opj_dwt_norms[orient][level];
 }
@@ -512,13 +505,6 @@ opj_bool opj_dwt_encode_real(opj_tcd_tilecomp_v2_t * tilec)
 OPJ_UINT32 opj_dwt_getgain_real(OPJ_UINT32 orient) {
 	(void)orient;
 	return 0;
-}
-
-/* <summary>                */
-/* Get norm of 9-7 wavelet. */
-/* </summary>               */
-double dwt_getnorm_real(int level, int orient) {
-	return opj_dwt_norms_real[orient][level];
 }
 
 /* <summary>                */
@@ -547,39 +533,6 @@ void opj_dwt_calc_explicit_stepsizes(opj_tccp_t * tccp, OPJ_UINT32 prec) {
 		}
 		opj_dwt_encode_stepsize((OPJ_INT32) floor(stepsize * 8192.0), prec + gain, &tccp->stepsizes[bandno]);
 	}
-}
-
-#ifdef OPJ_V1
-/* <summary>                             */
-/* Determine maximum computed resolution level for inverse wavelet transform */
-/* </summary>                            */
-static int dwt_decode_max_resolution(opj_tcd_resolution_t* restrict r, int i) {
-	int mr	= 1;
-	int w;
-	while( --i ) {
-		r++;
-		if( mr < ( w = r->x1 - r->x0 ) )
-			mr = w ;
-		if( mr < ( w = r->y1 - r->y0 ) )
-			mr = w ;
-	}
-	return mr ;
-}
-#endif
-/* <summary>                             */
-/* Determine maximum computed resolution level for inverse wavelet transform */
-/* </summary>                            */
-static OPJ_UINT32 dwt_max_resolution(opj_tcd_resolution_t* restrict r, OPJ_UINT32 i) {
-	OPJ_UINT32 mr	= 0;
-	OPJ_UINT32 w;
-	while( --i ) {
-		++r;
-		if( mr < ( w = r->x1 - r->x0 ) )
-			mr = w ;
-		if( mr < ( w = r->y1 - r->y0 ) )
-			mr = w ;
-	}
-	return mr ;
 }
 
 /* <summary>                             */
@@ -614,9 +567,7 @@ opj_bool opj_dwt_decode_tile(opj_tcd_tilecomp_v2_t* tilec, OPJ_UINT32 numres, DW
 
 	h.mem = (OPJ_INT32*)
 	opj_aligned_malloc(opj_dwt_max_resolution(tr, numres) * sizeof(OPJ_INT32));
-	if
-		(! h.mem)
-	{
+	if (! h.mem){
 		return OPJ_FALSE;
 	}
 
@@ -872,102 +823,10 @@ void opj_v4dwt_decode(v4dwt_t* restrict dwt)
 }
 
 
-/* KEEP TRUNK VERSION + return type of v2 because rev557 */
 /* <summary>                             */
 /* Inverse 9-7 wavelet transform in 2-D. */
 /* </summary>                            */
-/* V1 void dwt_decode_real(opj_tcd_tilecomp_t* restrict tilec, int numres){ */
-opj_bool dwt_decode_real(opj_tcd_tilecomp_t* restrict tilec, int numres)
-{
-	v4dwt_t h;
-	v4dwt_t v;
-
-	opj_tcd_resolution_t* res = tilec->resolutions;
-
-	int rw = res->x1 - res->x0;	/* width of the resolution level computed */
-	int rh = res->y1 - res->y0;	/* height of the resolution level computed */
-
-	int w = tilec->x1 - tilec->x0;
-
-	h.wavelet = (v4*) opj_aligned_malloc((dwt_max_resolution(res, numres)+5) * sizeof(v4));
-	v.wavelet = h.wavelet;
-
-	while( --numres) {
-		float * restrict aj = (float*) tilec->data;
-		int bufsize = (tilec->x1 - tilec->x0) * (tilec->y1 - tilec->y0);
-		int j;
-
-		h.sn = rw;
-		v.sn = rh;
-
-		++res;
-
-		rw = res->x1 - res->x0;	/* width of the resolution level computed */
-		rh = res->y1 - res->y0;	/* height of the resolution level computed */
-
-		h.dn = rw - h.sn;
-		h.cas = res->x0 % 2;
-
-		for(j = rh; j > 3; j -= 4){
-			int k;
-			opj_v4dwt_interleave_h(&h, aj, w, bufsize);
-			opj_v4dwt_decode(&h);
-				for(k = rw; --k >= 0;){
-					aj[k    ] = h.wavelet[k].f[0];
-					aj[k+w  ] = h.wavelet[k].f[1];
-					aj[k+w*2] = h.wavelet[k].f[2];
-					aj[k+w*3] = h.wavelet[k].f[3];
-				}
-			aj += w*4;
-			bufsize -= w*4;
-		}
-		if (rh & 0x03) {
-				int k;
-			j = rh & 0x03;
-			opj_v4dwt_interleave_h(&h, aj, w, bufsize);
-			opj_v4dwt_decode(&h);
-				for(k = rw; --k >= 0;){
-					switch(j) {
-						case 3: aj[k+w*2] = h.wavelet[k].f[2];
-						case 2: aj[k+w  ] = h.wavelet[k].f[1];
-						case 1: aj[k    ] = h.wavelet[k].f[0];
-					}
-				}
-			}
-
-		v.dn = rh - v.sn;
-		v.cas = res->y0 % 2;
-
-		aj = (float*) tilec->data;
-		for(j = rw; j > 3; j -= 4){
-			int k;
-			opj_v4dwt_interleave_v(&v, aj, w, 4);
-			opj_v4dwt_decode(&v);
-				for(k = 0; k < rh; ++k){
-					memcpy(&aj[k*w], &v.wavelet[k], 4 * sizeof(float));
-				}
-			aj += 4;
-		}
-		if (rw & 0x03){
-				int k;
-			j = rw & 0x03;
-			opj_v4dwt_interleave_v(&v, aj, w, j);
-			opj_v4dwt_decode(&v);
-				for(k = 0; k < rh; ++k){
-					memcpy(&aj[k*w], &v.wavelet[k], j * sizeof(float));
-				}
-			}
-	}
-
-	opj_aligned_free(h.wavelet);
-	return OPJ_TRUE;
-}
-
-
-/* <summary>                             */
-/* Inverse 9-7 wavelet transform in 2-D. */
-/* </summary>                            */
-opj_bool dwt_decode_real_v2(opj_tcd_tilecomp_v2_t* restrict tilec, OPJ_UINT32 numres)
+opj_bool opj_dwt_decode_real(opj_tcd_tilecomp_v2_t* restrict tilec, OPJ_UINT32 numres)
 {
 	v4dwt_t h;
 	v4dwt_t v;

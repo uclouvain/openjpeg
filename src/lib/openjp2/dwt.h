@@ -74,7 +74,6 @@ Get the norm of a wavelet function of a subband at a specified level for the rev
 @param orient Band of the wavelet function
 @return Returns the norm of the wavelet function
 */
-double dwt_getnorm(int level, int orient); /* TODO REMOVE IT*/
 OPJ_FLOAT64 opj_dwt_getnorm(OPJ_UINT32 level, OPJ_UINT32 orient);
 /**
 Forward 9-7 wavelet transform in 2-D. 
@@ -83,16 +82,12 @@ Apply an irreversible DWT transform to a component of an image.
 */
 opj_bool opj_dwt_encode_real(opj_tcd_tilecomp_v2_t * tilec);
 /**
-KEEP TRUNK VERSION + return type of v2 because rev557
 Inverse 9-7 wavelet transform in 2-D. 
 Apply an irreversible inverse DWT transform to a component of an image.
 @param tilec Tile component information (current tile)
 @param numres Number of resolution levels to decode
 */
-/* V1 void dwt_decode_real(opj_tcd_tilecomp_t* tilec, int numres); */
-opj_bool dwt_decode_real(opj_tcd_tilecomp_t* tilec, int numres);
-
-opj_bool dwt_decode_real_v2(opj_tcd_tilecomp_v2_t* restrict tilec, OPJ_UINT32 numres);
+opj_bool opj_dwt_decode_real(opj_tcd_tilecomp_v2_t* restrict tilec, OPJ_UINT32 numres);
 
 /**
 Get the gain of a subband for the irreversible 9-7 DWT.
@@ -106,7 +101,6 @@ Get the norm of a wavelet function of a subband at a specified level for the irr
 @param orient Band of the wavelet function
 @return Returns the norm of the 9-7 wavelet
 */
-double dwt_getnorm_real(int level, int orient);
 OPJ_FLOAT64 opj_dwt_getnorm_real(OPJ_UINT32 level, OPJ_UINT32 orient);
 /**
 Explicit calculation of the Quantization Stepsizes 
