@@ -34,7 +34,8 @@
 
 /* ----------------------------------------------------------------------- */
 
-
+/* TODO MSD: */
+#ifdef TODO_MSD 
 void tcd_dump(FILE *fd, opj_tcd_t *tcd, opj_tcd_image_t * img) {
         int tileno, compno, resno, bandno, precno;/*, cblkno;*/
 
@@ -93,6 +94,7 @@ void tcd_dump(FILE *fd, opj_tcd_t *tcd, opj_tcd_image_t * img) {
         }
         fprintf(fd, "}\n");
 }
+#endif
 /**
 * Allocates memory for a decoding code block.
 */
