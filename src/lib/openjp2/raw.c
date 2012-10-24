@@ -42,22 +42,22 @@
 ==========================================================
 */
 
-opj_raw_t* raw_create(void) {
+opj_raw_t* opj_raw_create(void) {
 	opj_raw_t *raw = (opj_raw_t*)opj_malloc(sizeof(opj_raw_t));
 	return raw;
 }
 
-void raw_destroy(opj_raw_t *raw) {
+void opj_raw_destroy(opj_raw_t *raw) {
 	if(raw) {
 		opj_free(raw);
 	}
 }
 
-int raw_numbytes(opj_raw_t *raw) {
+OPJ_UINT32 opj_raw_numbytes(opj_raw_t *raw) {
 	return raw->bp - raw->start;
 }
 
-void raw_init_dec(opj_raw_t *raw, unsigned char *bp, int len) {
+void opj_raw_init_dec(opj_raw_t *raw, OPJ_BYTE *bp, OPJ_UINT32 len) {
 	raw->start = bp;
 	raw->lenmax = len;
 	raw->len = 0;
@@ -65,8 +65,8 @@ void raw_init_dec(opj_raw_t *raw, unsigned char *bp, int len) {
 	raw->ct = 0;
 }
 
-int raw_decode(opj_raw_t *raw) {
-	int d;
+OPJ_UINT32 opj_raw_decode(opj_raw_t *raw) {
+	OPJ_UINT32 d;
 	if (raw->ct == 0) {
 		raw->ct = 8;
 		if (raw->len == raw->lenmax) {

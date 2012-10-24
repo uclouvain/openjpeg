@@ -851,7 +851,7 @@ opj_t1_t* opj_t1_create()
 		return 00;
 	}
 
-	l_t1->raw = raw_create();
+	l_t1->raw = opj_raw_create();
 	if (! l_t1->raw) {
 		opj_t1_destroy(l_t1);
 		return 00;
@@ -875,7 +875,7 @@ void opj_t1_destroy(opj_t1_t *p_t1)
 	/* destroy MQC and RAW handles */
 	opj_mqc_destroy(p_t1->mqc);
 	p_t1->mqc = 00;
-	raw_destroy(p_t1->raw);
+	opj_raw_destroy(p_t1->raw);
 	p_t1->raw = 00;
 	
     if (p_t1->data) {
@@ -1020,7 +1020,7 @@ opj_bool opj_t1_decode_cblk(opj_t1_t *t1,
 			continue;
 		}
 		if (type == T1_TYPE_RAW) {
-			raw_init_dec(raw, (*seg->data) + seg->dataindex, seg->len);
+			opj_raw_init_dec(raw, (*seg->data) + seg->dataindex, seg->len);
 		} else {
             if (OPJ_FALSE == opj_mqc_init_dec(mqc, (*seg->data) + seg->dataindex, seg->len)) {
                     return OPJ_FALSE;
@@ -1336,7 +1336,7 @@ void opj_t1_dec_refpass_step(   opj_t1_t *t1,
 	if ((flag & (T1_SIG | T1_VISIT)) == T1_SIG) {
 		opj_mqc_setcurctx(mqc, opj_t1_getctxno_mag(flag));	/* ESSAI */
 		if (type == T1_TYPE_RAW) {
-			v = raw_decode(raw);
+			v = opj_raw_decode(raw);
 		} else {
 			v = opj_mqc_decode(mqc);
 		}
@@ -1390,8 +1390,8 @@ void opj_t1_dec_sigpass_step(   opj_t1_t *t1,
 	flag = vsc ? ((*flagsp) & (~(T1_SIG_S | T1_SIG_SE | T1_SIG_SW | T1_SGN_S))) : (*flagsp);
 	if ((flag & T1_SIG_OTH) && !(flag & (T1_SIG | T1_VISIT))) {
 		if (type == T1_TYPE_RAW) {
-			if (raw_decode(raw)) {
-				v = raw_decode(raw);	/* ESSAI */
+			if (opj_raw_decode(raw)) {
+				v = opj_raw_decode(raw);	/* ESSAI */
 				*datap = v ? -oneplushalf : oneplushalf;
 				opj_t1_updateflags(flagsp, v, t1->flags_stride);
 			}
