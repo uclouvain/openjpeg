@@ -78,7 +78,7 @@ opj_bool opj_bio_byteout(opj_bio_t *bio) {
 	if (bio->bp >= bio->end) {
 		return OPJ_FALSE;
 	}
-	*bio->bp++ = (unsigned char)(bio->buf >> 8); /* TODO MSD: check this conversion */
+	*bio->bp++ = (OPJ_BYTE)(bio->buf >> 8);
 	return OPJ_TRUE;
 }
 
@@ -94,7 +94,7 @@ opj_bool opj_bio_bytein(opj_bio_t *bio) {
 
 void opj_bio_putbit(opj_bio_t *bio, OPJ_UINT32 b) {
 	if (bio->ct == 0) {
-		opj_bio_byteout(bio); /* TODO_MSD: check this line */
+		opj_bio_byteout(bio); /* MSD: why not check the return value of this function ? */
 	}
 	bio->ct--;
 	bio->buf |= b << bio->ct;
@@ -102,7 +102,7 @@ void opj_bio_putbit(opj_bio_t *bio, OPJ_UINT32 b) {
 
 OPJ_UINT32 opj_bio_getbit(opj_bio_t *bio) {
 	if (bio->ct == 0) {
-		opj_bio_bytein(bio); /* TODO_MSD: check this line */
+		opj_bio_bytein(bio); /* MSD: why not check the return value of this function ? */
 	}
 	bio->ct--;
 	return (bio->buf >> bio->ct) & 1;
