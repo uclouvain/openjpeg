@@ -43,16 +43,6 @@ The functions in CIO.C have for goal to realize a byte input / output process.
 
 #include "opj_config.h"
 
-/** @name Exported functions (see also openjpeg.h) */
-/*@{*/
-/* ----------------------------------------------------------------------- */
-/* ----------------------------------------------------------------------- */
-/*@}*/
-
-/*@}*/
-
-
-
 /* ----------------------------------------------------------------------- */
 
 #if defined(OPJ_BIG_ENDIAN)
@@ -119,9 +109,6 @@ typedef struct opj_stream_private
 	 */
 	opj_stream_seek_fn		m_seek_fn;
 
-
-
-
 	/**
 	 * Actual data stored into the stream if readed from. Data is read by chunk of fixed size.
 	 * you should never access this data directly.
@@ -133,8 +120,14 @@ typedef struct opj_stream_private
 	 */
 	OPJ_BYTE *					m_current_data;
 
+    /**
+    * FIXME DOC.
+    */
 	OPJ_OFF_T (* m_opj_skip)(struct opj_stream_private * ,OPJ_OFF_T , struct opj_event_mgr *);
 
+    /**
+    * FIXME DOC.
+    */
 	opj_bool (* m_opj_seek) (struct opj_stream_private * , OPJ_OFF_T , struct opj_event_mgr *);
 
 	/**
@@ -160,7 +153,9 @@ typedef struct opj_stream_private
 }
 opj_stream_private_t;
 
-
+/** @name Exported functions (see also openjpeg.h) */
+/*@{*/
+/* ----------------------------------------------------------------------- */
 /**
  * Write some bytes to the given data buffer, this function is used in Big Endian cpus.
  * @param p_buffer		pointer the data buffer to write data to.
@@ -359,11 +354,30 @@ opj_bool opj_stream_seek (opj_stream_private_t * p_stream, OPJ_OFF_T p_size, str
  */
 opj_bool opj_stream_has_seek (const opj_stream_private_t * p_stream);
 
+/**
+ * FIXME DOC.
+ */
 OPJ_SIZE_T opj_stream_default_read (void * p_buffer, OPJ_SIZE_T p_nb_bytes, void * p_user_data);
+
+/**
+ * FIXME DOC.
+ */
 OPJ_SIZE_T opj_stream_default_write (void * p_buffer, OPJ_SIZE_T p_nb_bytes, void * p_user_data);
+
+/**
+ * FIXME DOC.
+ */
 OPJ_OFF_T opj_stream_default_skip (OPJ_OFF_T p_nb_bytes, void * p_user_data);
+
+/**
+ * FIXME DOC.
+ */
 opj_bool opj_stream_default_seek (OPJ_OFF_T p_nb_bytes, void * p_user_data);
 
+/* ----------------------------------------------------------------------- */
+/*@}*/
+
+/*@}*/
 
 
 #endif /* __CIO_H */
