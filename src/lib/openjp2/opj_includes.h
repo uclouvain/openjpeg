@@ -148,6 +148,7 @@ static INLINE long lrintf(float f){
 #include "opj_inttypes.h"
 #include "opj_clock.h"
 #include "opj_malloc.h"
+#include "function_list.h"
 #include "event.h"
 #include "bio.h"
 #include "cio.h"
@@ -160,8 +161,9 @@ static INLINE long lrintf(float f){
 #include "mqc.h"
 #include "raw.h"
 #include "bio.h"
-#include "tgt.h"
+
 #include "pi.h"
+#include "tgt.h"
 #include "tcd.h"
 #include "t1.h"
 #include "dwt.h"
@@ -181,6 +183,6 @@ static INLINE long lrintf(float f){
 /* <<JPWL */
 
 /* V2 */
-#include "function_list.h"
+
 
 #endif /* OPJ_INCLUDES_H */

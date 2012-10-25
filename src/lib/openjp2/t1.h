@@ -122,7 +122,7 @@ Encode the code-blocks of a tile
 @param mct_norms  FIXME DOC
 */
 opj_bool opj_t1_encode_cblks(   opj_t1_t *t1,
-                                opj_tcd_tile_v2_t *tile,
+                                opj_tcd_tile_t *tile,
                                 opj_tcp_v2_t *tcp,
                                 const OPJ_FLOAT64 * mct_norms);
 
@@ -133,7 +133,7 @@ Decode the code-blocks of a tile
 @param tccp Tile coding parameters
 */
 opj_bool opj_t1_decode_cblks(   opj_t1_t* t1,
-                                opj_tcd_tilecomp_v2_t* tilec,
+                                opj_tcd_tilecomp_t* tilec,
                                 opj_tccp_t* tccp);
 
 

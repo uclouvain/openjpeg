@@ -329,9 +329,9 @@ static opj_bool opj_j2k_pre_write_tile ( opj_j2k_t * p_j2k,
                                                                              opj_stream_private_t *p_stream,
                                                                              opj_event_mgr_t * p_manager );
 
-static opj_bool opj_j2k_update_image_data (opj_tcd_v2_t * p_tcd, OPJ_BYTE * p_data, opj_image_t* p_output_image);
+static opj_bool opj_j2k_update_image_data (opj_tcd_t * p_tcd, OPJ_BYTE * p_data, opj_image_t* p_output_image);
 
-static void opj_j2k_get_tile_data (opj_tcd_v2_t * p_tcd, OPJ_BYTE * p_data);
+static void opj_j2k_get_tile_data (opj_tcd_t * p_tcd, OPJ_BYTE * p_data);
 
 static opj_bool opj_j2k_post_write_tile (opj_j2k_t * p_j2k,
                                                                              OPJ_BYTE * p_data,
@@ -777,7 +777,7 @@ static opj_bool opj_j2k_read_sot (  opj_j2k_t *p_j2k,
  * @param       p_manager           the user event manager.
 */
 static opj_bool opj_j2k_write_sod(      opj_j2k_t *p_j2k,
-                                                                        opj_tcd_v2_t * p_tile_coder,
+                                                                        opj_tcd_t * p_tile_coder,
                                                                         OPJ_BYTE * p_data,
                                                                         OPJ_UINT32 * p_data_written,
                                                                         OPJ_UINT32 p_total_data_size,
@@ -4073,7 +4073,7 @@ opj_bool opj_j2k_read_sot ( opj_j2k_t *p_j2k,
         }
 
 opj_bool opj_j2k_write_sod(     opj_j2k_t *p_j2k,
-                                                        opj_tcd_v2_t * p_tile_coder,
+                                                        opj_tcd_t * p_tile_coder,
                                                         OPJ_BYTE * p_data,
                                                         OPJ_UINT32 * p_data_written,
                                                         OPJ_UINT32 p_total_data_size,
@@ -4590,7 +4590,7 @@ opj_bool opj_j2k_read_eoc (     opj_j2k_t *p_j2k,
                                                         opj_event_mgr_t * p_manager )
 {
         OPJ_UINT32 i;
-        opj_tcd_v2_t * l_tcd = 00;
+        opj_tcd_t * l_tcd = 00;
         OPJ_UINT32 l_nb_tiles;
         opj_tcp_v2_t * l_tcp = 00;
         opj_bool l_success;
@@ -6735,7 +6735,7 @@ static opj_bool opj_j2k_copy_default_tcp_and_create_tcd (       opj_j2k_t * p_j2
         }
 
         /* Create the current tile decoder*/
-        p_j2k->m_tcd = (opj_tcd_v2_t*)opj_tcd_create(OPJ_TRUE); /* FIXME why a cast ? */
+        p_j2k->m_tcd = (opj_tcd_t*)opj_tcd_create(OPJ_TRUE); /* FIXME why a cast ? */
         if (! p_j2k->m_tcd ) {
                 return OPJ_FALSE;
         }
@@ -7250,7 +7250,7 @@ opj_bool opj_j2k_decode_tile (  opj_j2k_t * p_j2k,
         return OPJ_TRUE;
 }
 
-opj_bool opj_j2k_update_image_data (opj_tcd_v2_t * p_tcd, OPJ_BYTE * p_data, opj_image_t* p_output_image)
+opj_bool opj_j2k_update_image_data (opj_tcd_t * p_tcd, OPJ_BYTE * p_data, opj_image_t* p_output_image)
 {
         OPJ_UINT32 i,j,k = 0;
         OPJ_UINT32 l_width_src,l_height_src;
@@ -7264,11 +7264,11 @@ opj_bool opj_j2k_update_image_data (opj_tcd_v2_t * p_tcd, OPJ_BYTE * p_data, opj
         opj_image_comp_t * l_img_comp_src = 00;
         opj_image_comp_t * l_img_comp_dest = 00;
 
-        opj_tcd_tilecomp_v2_t * l_tilec = 00;
+        opj_tcd_tilecomp_t * l_tilec = 00;
         opj_image_t * l_image_src = 00;
         OPJ_UINT32 l_size_comp, l_remaining;
         OPJ_INT32 * l_dest_ptr;
-        opj_tcd_resolution_v2_t* l_res= 00;
+        opj_tcd_resolution_t* l_res= 00;
 
         l_tilec = p_tcd->tcd_image->tiles->comps;
         l_image_src = p_tcd->image;
@@ -9140,12 +9140,12 @@ opj_bool opj_j2k_pre_write_tile (       opj_j2k_t * p_j2k,
         return OPJ_TRUE;
 }
 
-void opj_j2k_get_tile_data (opj_tcd_v2_t * p_tcd, OPJ_BYTE * p_data)
+void opj_j2k_get_tile_data (opj_tcd_t * p_tcd, OPJ_BYTE * p_data)
 {
         OPJ_UINT32 i,j,k = 0;
         OPJ_UINT32 l_width,l_height,l_stride, l_offset_x,l_offset_y, l_image_width;
         opj_image_comp_t * l_img_comp = 00;
-        opj_tcd_tilecomp_v2_t * l_tilec = 00;
+        opj_tcd_tilecomp_t * l_tilec = 00;
         opj_image_t * l_image = 00;
         OPJ_UINT32 l_size_comp, l_remaining;
         OPJ_INT32 * l_src_ptr;
@@ -9249,7 +9249,7 @@ opj_bool opj_j2k_post_write_tile (      opj_j2k_t * p_j2k,
                                                                 opj_stream_private_t *p_stream,
                                                                 opj_event_mgr_t * p_manager )
 {
-        opj_tcd_v2_t * l_tcd = 00;
+        opj_tcd_t * l_tcd = 00;
         opj_cp_v2_t * l_cp = 00;
         opj_tcp_v2_t * l_tcp = 00;
         OPJ_UINT32 l_nb_bytes_written;
@@ -9381,7 +9381,7 @@ opj_bool opj_j2k_write_first_tile_part (opj_j2k_t *p_j2k,
         OPJ_BYTE * l_begin_data = 00;
 
         opj_tcp_v2_t *l_tcp = 00;
-        opj_tcd_v2_t * l_tcd = 00;
+        opj_tcd_t * l_tcd = 00;
         opj_cp_v2_t * l_cp = 00;
 
         l_tcd = p_j2k->m_tcd;
@@ -9466,7 +9466,7 @@ opj_bool opj_j2k_write_all_tile_parts(  opj_j2k_t *p_j2k,
 
         OPJ_BYTE * l_begin_data;
         opj_tcp_v2_t *l_tcp = 00;
-        opj_tcd_v2_t * l_tcd = 00;
+        opj_tcd_t * l_tcd = 00;
         opj_cp_v2_t * l_cp = 00;
 
         l_tcd = p_j2k->m_tcd;

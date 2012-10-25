@@ -670,7 +670,7 @@ typedef struct opj_j2k_enc
 
 
 
-struct opj_tcd_v2;
+struct opj_tcd;
 /**
 JPEG-2000 codestream reader/writer
 */
@@ -697,10 +697,10 @@ typedef struct opj_j2k
 	opj_cp_v2_t m_cp;
 
 	/** the list of procedures to exec **/
-	struct opj_procedure_list *	m_procedure_list;
+	opj_procedure_list_t *	m_procedure_list;
 
 	/** the list of validation procedures to follow to make sure the code is valid **/
-	struct opj_procedure_list *	m_validation_list;
+	opj_procedure_list_t *	m_validation_list;
 
 	/** helper used to write the index file */
 	opj_codestream_index_t *cstr_index;
@@ -709,7 +709,7 @@ typedef struct opj_j2k
 	OPJ_UINT32 m_current_tile_number;
 
 	/** the current tile coder/decoder **/
-	struct opj_tcd_v2 *	m_tcd;
+	struct opj_tcd *	m_tcd;
 
 }
 opj_j2k_t;

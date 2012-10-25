@@ -86,7 +86,7 @@ Encode the packets of a tile to a destination buffer
 */
 opj_bool opj_t2_encode_packets(	opj_t2_v2_t* t2,
 								OPJ_UINT32 tileno,
-								opj_tcd_tile_v2_t *tile,
+								opj_tcd_tile_t *tile,
 								OPJ_UINT32 maxlayers,
 								OPJ_BYTE *dest,
 								OPJ_UINT32 * p_data_written,
@@ -111,7 +111,7 @@ Decode the packets of a tile from a source buffer
  */
 opj_bool opj_t2_decode_packets(	opj_t2_v2_t *t2,
                                 OPJ_UINT32 tileno,
-                                opj_tcd_tile_v2_t *tile,
+                                opj_tcd_tile_t *tile,
                                 OPJ_BYTE *src,
                                 OPJ_UINT32 * p_data_read,
                                 OPJ_UINT32 len,

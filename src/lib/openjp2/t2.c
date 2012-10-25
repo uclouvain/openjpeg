@@ -61,7 +61,7 @@ Encode a packet of a tile to a destination buffer
 @return
 */
 static opj_bool opj_t2_encode_packet(   OPJ_UINT32 tileno,
-                                        opj_tcd_tile_v2_t *tile,
+                                        opj_tcd_tile_t *tile,
                                         opj_tcp_v2_t *tcp,
                                         opj_pi_iterator_t *pi,
                                         OPJ_BYTE *dest,
@@ -83,7 +83,7 @@ Decode a packet of a tile from a source buffer
 @return  FIXME DOC
 */
 static opj_bool opj_t2_decode_packet(   opj_t2_v2_t* t2,
-                                        opj_tcd_tile_v2_t *tile,
+                                        opj_tcd_tile_t *tile,
                                         opj_tcp_v2_t *tcp,
                                         opj_pi_iterator_t *pi,
                                         OPJ_BYTE *src,
@@ -92,7 +92,7 @@ static opj_bool opj_t2_decode_packet(   opj_t2_v2_t* t2,
                                         opj_packet_info_t *pack_info);
 
 static opj_bool opj_t2_skip_packet( opj_t2_v2_t* p_t2,
-                                    opj_tcd_tile_v2_t *p_tile,
+                                    opj_tcd_tile_t *p_tile,
                                     opj_tcp_v2_t *p_tcp,
                                     opj_pi_iterator_t *p_pi,
                                     OPJ_BYTE *p_src,
@@ -101,7 +101,7 @@ static opj_bool opj_t2_skip_packet( opj_t2_v2_t* p_t2,
                                     opj_packet_info_t *p_pack_info);
 
 static opj_bool opj_t2_read_packet_header(  opj_t2_v2_t* p_t2,
-                                            opj_tcd_tile_v2_t *p_tile,
+                                            opj_tcd_tile_t *p_tile,
                                             opj_tcp_v2_t *p_tcp,
                                             opj_pi_iterator_t *p_pi,
                                             opj_bool * p_is_data_present,
@@ -111,7 +111,7 @@ static opj_bool opj_t2_read_packet_header(  opj_t2_v2_t* p_t2,
                                             opj_packet_info_t *p_pack_info);
 
 static opj_bool opj_t2_read_packet_data(opj_t2_v2_t* p_t2,
-                                        opj_tcd_tile_v2_t *p_tile,
+                                        opj_tcd_tile_t *p_tile,
                                         opj_pi_iterator_t *p_pi,
                                         OPJ_BYTE *p_src_data,
                                         OPJ_UINT32 * p_data_read,
@@ -119,7 +119,7 @@ static opj_bool opj_t2_read_packet_data(opj_t2_v2_t* p_t2,
                                         opj_packet_info_t *pack_info);
 
 static opj_bool opj_t2_skip_packet_data(opj_t2_v2_t* p_t2,
-                                        opj_tcd_tile_v2_t *p_tile,
+                                        opj_tcd_tile_t *p_tile,
                                         opj_pi_iterator_t *p_pi,
                                         OPJ_UINT32 * p_data_read,
                                         OPJ_UINT32 p_max_length,
@@ -131,7 +131,7 @@ static opj_bool opj_t2_skip_packet_data(opj_t2_v2_t* p_t2,
 @param cblksty
 @param first
 */
-static opj_bool opj_t2_init_seg(    opj_tcd_cblk_dec_v2_t* cblk,
+static opj_bool opj_t2_init_seg(    opj_tcd_cblk_dec_t* cblk,
                                     OPJ_UINT32 index,
                                     OPJ_UINT32 cblksty,
                                     OPJ_UINT32 first);
@@ -191,7 +191,7 @@ OPJ_UINT32 opj_t2_getnumpasses(opj_bio_t *bio) {
 
 opj_bool opj_t2_encode_packets( opj_t2_v2_t* p_t2,
                                 OPJ_UINT32 p_tile_no,
-                                opj_tcd_tile_v2_t *p_tile,
+                                opj_tcd_tile_t *p_tile,
                                 OPJ_UINT32 p_maxlayers,
                                 OPJ_BYTE *p_dest,
                                 OPJ_UINT32 * p_data_written,
@@ -312,7 +312,7 @@ opj_bool opj_t2_encode_packets( opj_t2_v2_t* p_t2,
 
 opj_bool opj_t2_decode_packets( opj_t2_v2_t *p_t2,
                                 OPJ_UINT32 p_tile_no,
-                                opj_tcd_tile_v2_t *p_tile,
+                                opj_tcd_tile_t *p_tile,
                                 OPJ_BYTE *p_src,
                                 OPJ_UINT32 * p_data_read,
                                 OPJ_UINT32 p_max_len,
@@ -464,7 +464,7 @@ void opj_t2_destroy(opj_t2_v2_t *t2) {
 }
 
 opj_bool opj_t2_decode_packet(  opj_t2_v2_t* p_t2,
-                                opj_tcd_tile_v2_t *p_tile,
+                                opj_tcd_tile_t *p_tile,
                                 opj_tcp_v2_t *p_tcp,
                                 opj_pi_iterator_t *p_pi,
                                 OPJ_BYTE *p_src,
@@ -503,7 +503,7 @@ opj_bool opj_t2_decode_packet(  opj_t2_v2_t* p_t2,
 }
 
 opj_bool opj_t2_encode_packet(  OPJ_UINT32 tileno,
-                                opj_tcd_tile_v2_t * tile,
+                                opj_tcd_tile_t * tile,
                                 opj_tcp_v2_t * tcp,
                                 opj_pi_iterator_t *pi,
                                 OPJ_BYTE *dest,
@@ -519,12 +519,12 @@ opj_bool opj_t2_encode_packet(  OPJ_UINT32 tileno,
         OPJ_UINT32 precno = pi->precno; /* precinct value */
         OPJ_UINT32 layno  = pi->layno;          /* quality layer value */
         OPJ_UINT32 l_nb_blocks;
-        opj_tcd_band_v2_t *band = 00;
-        opj_tcd_cblk_enc_v2_t* cblk = 00;
-        opj_tcd_pass_v2_t *pass = 00;
+        opj_tcd_band_t *band = 00;
+        opj_tcd_cblk_enc_t* cblk = 00;
+        opj_tcd_pass_t *pass = 00;
 
-        opj_tcd_tilecomp_v2_t *tilec = &tile->comps[compno];
-        opj_tcd_resolution_v2_t *res = &tilec->resolutions[resno];
+        opj_tcd_tilecomp_t *tilec = &tile->comps[compno];
+        opj_tcd_resolution_t *res = &tilec->resolutions[resno];
 
         opj_bio_t *bio = 00;    /* BIO component */
 
@@ -545,14 +545,14 @@ opj_bool opj_t2_encode_packet(  OPJ_UINT32 tileno,
                 band = res->bands;
 
                 for(bandno = 0; bandno < res->numbands; ++bandno) {
-                        opj_tcd_precinct_v2_t *prc = &band->precincts[precno];
+                        opj_tcd_precinct_t *prc = &band->precincts[precno];
 
                         opj_tgt_reset(prc->incltree);
                         opj_tgt_reset(prc->imsbtree);
 
                         l_nb_blocks = prc->cw * prc->ch;
                         for     (cblkno = 0; cblkno < l_nb_blocks; ++cblkno) {
-                                opj_tcd_cblk_enc_v2_t* cblk = &prc->cblks.enc[cblkno];
+                                opj_tcd_cblk_enc_t* cblk = &prc->cblks.enc[cblkno];
 
                                 cblk->numpasses = 0;
                                 opj_tgt_setvalue(prc->imsbtree, cblkno, band->numbps - cblk->numbps);
@@ -568,7 +568,7 @@ opj_bool opj_t2_encode_packet(  OPJ_UINT32 tileno,
         /* Writing Packet header */
         band = res->bands;
         for (bandno = 0; bandno < res->numbands; ++bandno)      {
-                opj_tcd_precinct_v2_t *prc = &band->precincts[precno];
+                opj_tcd_precinct_t *prc = &band->precincts[precno];
 
                 l_nb_blocks = prc->cw * prc->ch;
                 cblk = prc->cblks.enc;
@@ -685,7 +685,7 @@ opj_bool opj_t2_encode_packet(  OPJ_UINT32 tileno,
         /* Writing the packet body */
         band = res->bands;
         for (bandno = 0; bandno < res->numbands; bandno++) {
-                opj_tcd_precinct_v2_t *prc = &band->precincts[precno];
+                opj_tcd_precinct_t *prc = &band->precincts[precno];
 
                 l_nb_blocks = prc->cw * prc->ch;
                 cblk = prc->cblks.enc;
@@ -728,7 +728,7 @@ opj_bool opj_t2_encode_packet(  OPJ_UINT32 tileno,
 }
 
 static opj_bool opj_t2_skip_packet( opj_t2_v2_t* p_t2,
-                                    opj_tcd_tile_v2_t *p_tile,
+                                    opj_tcd_tile_t *p_tile,
                                     opj_tcp_v2_t *p_tcp,
                                     opj_pi_iterator_t *p_pi,
                                     OPJ_BYTE *p_src,
@@ -768,7 +768,7 @@ static opj_bool opj_t2_skip_packet( opj_t2_v2_t* p_t2,
 
 
 opj_bool opj_t2_read_packet_header( opj_t2_v2_t* p_t2,
-                                    opj_tcd_tile_v2_t *p_tile,
+                                    opj_tcd_tile_t *p_tile,
                                     opj_tcp_v2_t *p_tcp,
                                     opj_pi_iterator_t *p_pi,
                                     opj_bool * p_is_data_present,
@@ -787,9 +787,9 @@ opj_bool opj_t2_read_packet_header( opj_t2_v2_t* p_t2,
         OPJ_BYTE *l_current_data = p_src_data;
         opj_cp_v2_t *l_cp = p_t2->cp;
         opj_bio_t *l_bio = 00;  /* BIO component */
-        opj_tcd_band_v2_t *l_band = 00;
-        opj_tcd_cblk_dec_v2_t* l_cblk = 00;
-        opj_tcd_resolution_v2_t* l_res = &p_tile->comps[p_pi->compno].resolutions[p_pi->resno];
+        opj_tcd_band_t *l_band = 00;
+        opj_tcd_cblk_dec_t* l_cblk = 00;
+        opj_tcd_resolution_t* l_res = &p_tile->comps[p_pi->compno].resolutions[p_pi->resno];
 
         OPJ_BYTE *l_header_data = 00;
         OPJ_BYTE **l_header_data_start = 00;
@@ -801,7 +801,7 @@ opj_bool opj_t2_read_packet_header( opj_t2_v2_t* p_t2,
 
                 /* reset tagtrees */
                 for (bandno = 0; bandno < l_res->numbands; ++bandno) {
-                        opj_tcd_precinct_v2_t *l_prc = &l_band->precincts[p_pi->precno];
+                        opj_tcd_precinct_t *l_prc = &l_band->precincts[p_pi->precno];
 
                         if ( ! ((l_band->x1-l_band->x0 == 0)||(l_band->y1-l_band->y0 == 0)) ) {
                                 opj_tgt_reset(l_prc->incltree);
@@ -899,7 +899,7 @@ opj_bool opj_t2_read_packet_header( opj_t2_v2_t* p_t2,
 
         l_band = l_res->bands;
         for (bandno = 0; bandno < l_res->numbands; ++bandno) {
-                opj_tcd_precinct_v2_t *l_prc = &(l_band->precincts[p_pi->precno]);
+                opj_tcd_precinct_t *l_prc = &(l_band->precincts[p_pi->precno]);
 
                 if ((l_band->x1-l_band->x0 == 0)||(l_band->y1-l_band->y0 == 0)) {
                         ++l_band;
@@ -1023,7 +1023,7 @@ opj_bool opj_t2_read_packet_header( opj_t2_v2_t* p_t2,
 }
 
 opj_bool opj_t2_read_packet_data(   opj_t2_v2_t* p_t2,
-                                    opj_tcd_tile_v2_t *p_tile,
+                                    opj_tcd_tile_t *p_tile,
                                     opj_pi_iterator_t *p_pi,
                                     OPJ_BYTE *p_src_data,
                                     OPJ_UINT32 * p_data_read,
@@ -1033,13 +1033,13 @@ opj_bool opj_t2_read_packet_data(   opj_t2_v2_t* p_t2,
         OPJ_UINT32 bandno, cblkno;
         OPJ_UINT32 l_nb_code_blocks;
         OPJ_BYTE *l_current_data = p_src_data;
-        opj_tcd_band_v2_t *l_band = 00;
-        opj_tcd_cblk_dec_v2_t* l_cblk = 00;
-        opj_tcd_resolution_v2_t* l_res = &p_tile->comps[p_pi->compno].resolutions[p_pi->resno];
+        opj_tcd_band_t *l_band = 00;
+        opj_tcd_cblk_dec_t* l_cblk = 00;
+        opj_tcd_resolution_t* l_res = &p_tile->comps[p_pi->compno].resolutions[p_pi->resno];
 
         l_band = l_res->bands;
         for (bandno = 0; bandno < l_res->numbands; ++bandno) {
-                opj_tcd_precinct_v2_t *l_prc = &l_band->precincts[p_pi->precno];
+                opj_tcd_precinct_t *l_prc = &l_band->precincts[p_pi->precno];
 
                 if ((l_band->x1-l_band->x0 == 0)||(l_band->y1-l_band->y0 == 0)) {
                         ++l_band;
@@ -1135,7 +1135,7 @@ opj_bool opj_t2_read_packet_data(   opj_t2_v2_t* p_t2,
 }
 
 opj_bool opj_t2_skip_packet_data(   opj_t2_v2_t* p_t2,
-                                    opj_tcd_tile_v2_t *p_tile,
+                                    opj_tcd_tile_t *p_tile,
                                     opj_pi_iterator_t *p_pi,
                                     OPJ_UINT32 * p_data_read,
                                     OPJ_UINT32 p_max_length,
@@ -1143,15 +1143,15 @@ opj_bool opj_t2_skip_packet_data(   opj_t2_v2_t* p_t2,
 {
         OPJ_UINT32 bandno, cblkno;
         OPJ_UINT32 l_nb_code_blocks;
-        opj_tcd_band_v2_t *l_band = 00;
-        opj_tcd_cblk_dec_v2_t* l_cblk = 00;
-        opj_tcd_resolution_v2_t* l_res = &p_tile->comps[p_pi->compno].resolutions[p_pi->resno];
+        opj_tcd_band_t *l_band = 00;
+        opj_tcd_cblk_dec_t* l_cblk = 00;
+        opj_tcd_resolution_t* l_res = &p_tile->comps[p_pi->compno].resolutions[p_pi->resno];
 
         *p_data_read = 0;
         l_band = l_res->bands;
 
         for (bandno = 0; bandno < l_res->numbands; ++bandno) {
-                opj_tcd_precinct_v2_t *l_prc = &l_band->precincts[p_pi->precno];
+                opj_tcd_precinct_t *l_prc = &l_band->precincts[p_pi->precno];
 
                 if ((l_band->x1-l_band->x0 == 0)||(l_band->y1-l_band->y0 == 0)) {
                         ++l_band;
@@ -1229,7 +1229,7 @@ opj_bool opj_t2_skip_packet_data(   opj_t2_v2_t* p_t2,
 }
 
 
-opj_bool opj_t2_init_seg(   opj_tcd_cblk_dec_v2_t* cblk,
+opj_bool opj_t2_init_seg(   opj_tcd_cblk_dec_t* cblk,
                             OPJ_UINT32 index, 
                             OPJ_UINT32 cblksty, 
                             OPJ_UINT32 first)

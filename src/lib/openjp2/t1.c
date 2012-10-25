@@ -207,7 +207,7 @@ static OPJ_FLOAT64 t1_getwmsedec_v2(
 		const OPJ_FLOAT64 * mct_norms);
 
 static void opj_t1_encode_cblk( opj_t1_t *t1,
-                                opj_tcd_cblk_enc_v2_t* cblk,
+                                opj_tcd_cblk_enc_t* cblk,
                                 OPJ_UINT32 orient,
                                 OPJ_UINT32 compno,
                                 OPJ_UINT32 level,
@@ -215,7 +215,7 @@ static void opj_t1_encode_cblk( opj_t1_t *t1,
                                 OPJ_FLOAT64 stepsize,
                                 OPJ_UINT32 cblksty,
                                 OPJ_UINT32 numcomps,
-                                opj_tcd_tile_v2_t * tile,
+                                opj_tcd_tile_t * tile,
                                 const OPJ_FLOAT64 * mct_norms);
 
 /**
@@ -227,7 +227,7 @@ Decode 1 code-block
 @param cblksty Code-block style
 */
 static opj_bool opj_t1_decode_cblk( opj_t1_t *t1,
-                                    opj_tcd_cblk_dec_v2_t* cblk,
+                                    opj_tcd_cblk_dec_t* cblk,
                                     OPJ_UINT32 orient,
                                     OPJ_UINT32 roishift,
                                     OPJ_UINT32 cblksty);
@@ -892,7 +892,7 @@ void opj_t1_destroy(opj_t1_t *p_t1)
 }
 
 opj_bool opj_t1_decode_cblks(   opj_t1_t* t1,
-                            opj_tcd_tilecomp_v2_t* tilec,
+                            opj_tcd_tilecomp_t* tilec,
                             opj_tccp_t* tccp
                             )
 {
@@ -900,16 +900,16 @@ opj_bool opj_t1_decode_cblks(   opj_t1_t* t1,
 	OPJ_UINT32 tile_w = tilec->x1 - tilec->x0;
 
 	for (resno = 0; resno < tilec->minimum_num_resolutions; ++resno) {
-		opj_tcd_resolution_v2_t* res = &tilec->resolutions[resno];
+		opj_tcd_resolution_t* res = &tilec->resolutions[resno];
 
 		for (bandno = 0; bandno < res->numbands; ++bandno) {
-			opj_tcd_band_v2_t* restrict band = &res->bands[bandno];
+			opj_tcd_band_t* restrict band = &res->bands[bandno];
 
 			for (precno = 0; precno < res->pw * res->ph; ++precno) {
-				opj_tcd_precinct_v2_t* precinct = &band->precincts[precno];
+				opj_tcd_precinct_t* precinct = &band->precincts[precno];
 
 				for (cblkno = 0; cblkno < precinct->cw * precinct->ch; ++cblkno) {
-					opj_tcd_cblk_dec_v2_t* cblk = &precinct->cblks.dec[cblkno];
+					opj_tcd_cblk_dec_t* cblk = &precinct->cblks.dec[cblkno];
 					OPJ_INT32* restrict datap;
 					void* restrict tiledp;
 					OPJ_UINT32 cblk_w, cblk_h;
@@ -928,11 +928,11 @@ opj_bool opj_t1_decode_cblks(   opj_t1_t* t1,
 					x = cblk->x0 - band->x0;
 					y = cblk->y0 - band->y0;
 					if (band->bandno & 1) {
-						opj_tcd_resolution_v2_t* pres = &tilec->resolutions[resno - 1];
+						opj_tcd_resolution_t* pres = &tilec->resolutions[resno - 1];
 						x += pres->x1 - pres->x0;
 					}
 					if (band->bandno & 2) {
-						opj_tcd_resolution_v2_t* pres = &tilec->resolutions[resno - 1];
+						opj_tcd_resolution_t* pres = &tilec->resolutions[resno - 1];
 						y += pres->y1 - pres->y0;
 					}
 
@@ -981,7 +981,7 @@ opj_bool opj_t1_decode_cblks(   opj_t1_t* t1,
 
 
 opj_bool opj_t1_decode_cblk(opj_t1_t *t1,
-                            opj_tcd_cblk_dec_v2_t* cblk,
+                            opj_tcd_cblk_dec_t* cblk,
                             OPJ_UINT32 orient,
                             OPJ_UINT32 roishift,
                             OPJ_UINT32 cblksty)
@@ -1056,7 +1056,7 @@ opj_bool opj_t1_decode_cblk(opj_t1_t *t1,
 }
 
 opj_bool opj_t1_encode_cblks(   opj_t1_t *t1,
-                                opj_tcd_tile_v2_t *tile,
+                                opj_tcd_tile_t *tile,
                                 opj_tcp_v2_t *tcp,
                                 const OPJ_FLOAT64 * mct_norms
                                 )
@@ -1066,22 +1066,22 @@ opj_bool opj_t1_encode_cblks(   opj_t1_t *t1,
 	tile->distotile = 0;		/* fixed_quality */
 
 	for (compno = 0; compno < tile->numcomps; ++compno) {
-		opj_tcd_tilecomp_v2_t* tilec = &tile->comps[compno];
+		opj_tcd_tilecomp_t* tilec = &tile->comps[compno];
 		opj_tccp_t* tccp = &tcp->tccps[compno];
 		OPJ_UINT32 tile_w = tilec->x1 - tilec->x0;
 
 		for (resno = 0; resno < tilec->numresolutions; ++resno) {
-			opj_tcd_resolution_v2_t *res = &tilec->resolutions[resno];
+			opj_tcd_resolution_t *res = &tilec->resolutions[resno];
 
 			for (bandno = 0; bandno < res->numbands; ++bandno) {
-				opj_tcd_band_v2_t* restrict band = &res->bands[bandno];
+				opj_tcd_band_t* restrict band = &res->bands[bandno];
                 OPJ_INT32 bandconst = 8192 * 8192 / ((OPJ_INT32) floor(band->stepsize * 8192));
 
 				for (precno = 0; precno < res->pw * res->ph; ++precno) {
-					opj_tcd_precinct_v2_t *prc = &band->precincts[precno];
+					opj_tcd_precinct_t *prc = &band->precincts[precno];
 
 					for (cblkno = 0; cblkno < prc->cw * prc->ch; ++cblkno) {
-						opj_tcd_cblk_enc_v2_t* cblk = &prc->cblks.enc[cblkno];
+						opj_tcd_cblk_enc_t* cblk = &prc->cblks.enc[cblkno];
 						OPJ_INT32 * restrict datap;
 						OPJ_INT32* restrict tiledp;
 						OPJ_UINT32 cblk_w;
@@ -1091,11 +1091,11 @@ opj_bool opj_t1_encode_cblks(   opj_t1_t *t1,
 						OPJ_INT32 x = cblk->x0 - band->x0;
 						OPJ_INT32 y = cblk->y0 - band->y0;
 						if (band->bandno & 1) {
-							opj_tcd_resolution_v2_t *pres = &tilec->resolutions[resno - 1];
+							opj_tcd_resolution_t *pres = &tilec->resolutions[resno - 1];
 							x += pres->x1 - pres->x0;
 						}
 						if (band->bandno & 2) {
-							opj_tcd_resolution_v2_t *pres = &tilec->resolutions[resno - 1];
+							opj_tcd_resolution_t *pres = &tilec->resolutions[resno - 1];
 							y += pres->y1 - pres->y0;
 						}
 
@@ -1154,7 +1154,7 @@ opj_bool opj_t1_encode_cblks(   opj_t1_t *t1,
 
 /** mod fixed_quality */
 void opj_t1_encode_cblk(opj_t1_t *t1,
-                        opj_tcd_cblk_enc_v2_t* cblk,
+                        opj_tcd_cblk_enc_t* cblk,
                         OPJ_UINT32 orient,
                         OPJ_UINT32 compno,
                         OPJ_UINT32 level,
@@ -1162,7 +1162,7 @@ void opj_t1_encode_cblk(opj_t1_t *t1,
                         OPJ_FLOAT64 stepsize,
                         OPJ_UINT32 cblksty,
                         OPJ_UINT32 numcomps,
-                        opj_tcd_tile_v2_t * tile,
+                        opj_tcd_tile_t * tile,
                         const OPJ_FLOAT64 * mct_norms)
 {
 	OPJ_FLOAT64 cumwmsedec = 0.0;
@@ -1196,7 +1196,7 @@ void opj_t1_encode_cblk(opj_t1_t *t1,
 	opj_mqc_init_enc(mqc, cblk->data);
 
 	for (passno = 0; bpno >= 0; ++passno) {
-		opj_tcd_pass_v2_t *pass = &cblk->passes[passno];
+		opj_tcd_pass_t *pass = &cblk->passes[passno];
 		OPJ_UINT32 correction = 3;
 		type = ((bpno < ((OPJ_INT32) (cblk->numbps) - 4)) && (passtype < 2) && (cblksty & J2K_CCP_CBLKSTY_LAZY)) ? T1_TYPE_RAW : T1_TYPE_MQ;
 
@@ -1278,7 +1278,7 @@ void opj_t1_encode_cblk(opj_t1_t *t1,
 	cblk->totalpasses = passno;
 
 	for (passno = 0; passno<cblk->totalpasses; passno++) {
-		opj_tcd_pass_v2_t *pass = &cblk->passes[passno];
+		opj_tcd_pass_t *pass = &cblk->passes[passno];
 		if (pass->rate > opj_mqc_numbytes(mqc))
 			pass->rate = opj_mqc_numbytes(mqc);
 		/*Preventing generation of FF as last data byte of a pass*/
