@@ -49,21 +49,8 @@ typedef struct opj_t2 {
 	/** Encoding: pointer to the src image. Decoding: pointer to the dst image. */
 	opj_image_t *image;
 	/** pointer to the image coding parameters */
-	opj_cp_t *cp;
-} opj_t2_t;
-
-/**
-Tier-2 coding
-*/
-typedef struct opj_t2_v2 {
-	/** codec context */
-	opj_common_ptr cinfo;
-
-	/** Encoding: pointer to the src image. Decoding: pointer to the dst image. */
-	opj_image_t *image;
-	/** pointer to the image coding parameters */
 	opj_cp_v2_t *cp;
-} opj_t2_v2_t;
+} opj_t2_t;
 
 /** @name Exported functions */
 /*@{*/
@@ -84,7 +71,7 @@ Encode the packets of a tile to a destination buffer
 @param pino             FIXME DOC
 @param t2_mode          If == 0 In Threshold calculation ,If == 1 Final pass
 */
-opj_bool opj_t2_encode_packets(	opj_t2_v2_t* t2,
+opj_bool opj_t2_encode_packets(	opj_t2_t* t2,
 								OPJ_UINT32 tileno,
 								opj_tcd_tile_t *tile,
 								OPJ_UINT32 maxlayers,
@@ -109,7 +96,7 @@ Decode the packets of a tile from a source buffer
 
 @return FIXME DOC
  */
-opj_bool opj_t2_decode_packets(	opj_t2_v2_t *t2,
+opj_bool opj_t2_decode_packets(	opj_t2_t *t2,
                                 OPJ_UINT32 tileno,
                                 opj_tcd_tile_t *tile,
                                 OPJ_BYTE *src,
@@ -124,13 +111,13 @@ opj_bool opj_t2_decode_packets(	opj_t2_v2_t *t2,
  * @param	p_cp		Image coding parameters.
  * @return		a new T2 handle if successful, NULL otherwise.
 */
-opj_t2_v2_t* opj_t2_create(opj_image_t *p_image, opj_cp_v2_t *p_cp);
+opj_t2_t* opj_t2_create(opj_image_t *p_image, opj_cp_v2_t *p_cp);
 
 /**
 Destroy a T2 handle
 @param t2 T2 handle to destroy
 */
-void opj_t2_destroy(opj_t2_v2_t *t2);
+void opj_t2_destroy(opj_t2_t *t2);
 
 /* ----------------------------------------------------------------------- */
 /*@}*/

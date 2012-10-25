@@ -82,7 +82,7 @@ Decode a packet of a tile from a source buffer
 
 @return  FIXME DOC
 */
-static opj_bool opj_t2_decode_packet(   opj_t2_v2_t* t2,
+static opj_bool opj_t2_decode_packet(   opj_t2_t* t2,
                                         opj_tcd_tile_t *tile,
                                         opj_tcp_v2_t *tcp,
                                         opj_pi_iterator_t *pi,
@@ -91,7 +91,7 @@ static opj_bool opj_t2_decode_packet(   opj_t2_v2_t* t2,
                                         OPJ_UINT32 max_length,
                                         opj_packet_info_t *pack_info);
 
-static opj_bool opj_t2_skip_packet( opj_t2_v2_t* p_t2,
+static opj_bool opj_t2_skip_packet( opj_t2_t* p_t2,
                                     opj_tcd_tile_t *p_tile,
                                     opj_tcp_v2_t *p_tcp,
                                     opj_pi_iterator_t *p_pi,
@@ -100,7 +100,7 @@ static opj_bool opj_t2_skip_packet( opj_t2_v2_t* p_t2,
                                     OPJ_UINT32 p_max_length,
                                     opj_packet_info_t *p_pack_info);
 
-static opj_bool opj_t2_read_packet_header(  opj_t2_v2_t* p_t2,
+static opj_bool opj_t2_read_packet_header(  opj_t2_t* p_t2,
                                             opj_tcd_tile_t *p_tile,
                                             opj_tcp_v2_t *p_tcp,
                                             opj_pi_iterator_t *p_pi,
@@ -110,7 +110,7 @@ static opj_bool opj_t2_read_packet_header(  opj_t2_v2_t* p_t2,
                                             OPJ_UINT32 p_max_length,
                                             opj_packet_info_t *p_pack_info);
 
-static opj_bool opj_t2_read_packet_data(opj_t2_v2_t* p_t2,
+static opj_bool opj_t2_read_packet_data(opj_t2_t* p_t2,
                                         opj_tcd_tile_t *p_tile,
                                         opj_pi_iterator_t *p_pi,
                                         OPJ_BYTE *p_src_data,
@@ -118,7 +118,7 @@ static opj_bool opj_t2_read_packet_data(opj_t2_v2_t* p_t2,
                                         OPJ_UINT32 p_max_length,
                                         opj_packet_info_t *pack_info);
 
-static opj_bool opj_t2_skip_packet_data(opj_t2_v2_t* p_t2,
+static opj_bool opj_t2_skip_packet_data(opj_t2_t* p_t2,
                                         opj_tcd_tile_t *p_tile,
                                         opj_pi_iterator_t *p_pi,
                                         OPJ_UINT32 * p_data_read,
@@ -189,7 +189,7 @@ OPJ_UINT32 opj_t2_getnumpasses(opj_bio_t *bio) {
 
 /* ----------------------------------------------------------------------- */
 
-opj_bool opj_t2_encode_packets( opj_t2_v2_t* p_t2,
+opj_bool opj_t2_encode_packets( opj_t2_t* p_t2,
                                 OPJ_UINT32 p_tile_no,
                                 opj_tcd_tile_t *p_tile,
                                 OPJ_UINT32 p_maxlayers,
@@ -310,7 +310,7 @@ opj_bool opj_t2_encode_packets( opj_t2_v2_t* p_t2,
         return OPJ_TRUE;
 }
 
-opj_bool opj_t2_decode_packets( opj_t2_v2_t *p_t2,
+opj_bool opj_t2_decode_packets( opj_t2_t *p_t2,
                                 OPJ_UINT32 p_tile_no,
                                 opj_tcd_tile_t *p_tile,
                                 OPJ_BYTE *p_src,
@@ -442,14 +442,14 @@ opj_bool opj_t2_decode_packets( opj_t2_v2_t *p_t2,
  * @param       p_cp            Image coding parameters.
  * @return              a new T2 handle if successful, NULL otherwise.
 */
-opj_t2_v2_t* opj_t2_create(opj_image_t *p_image, opj_cp_v2_t *p_cp)
+opj_t2_t* opj_t2_create(opj_image_t *p_image, opj_cp_v2_t *p_cp)
 {
         /* create the t2 structure */
-        opj_t2_v2_t *l_t2 = (opj_t2_v2_t*)opj_malloc(sizeof(opj_t2_v2_t));
+        opj_t2_t *l_t2 = (opj_t2_t*)opj_malloc(sizeof(opj_t2_t));
         if (!l_t2) {
                 return NULL;
         }
-        memset(l_t2,0,sizeof(opj_t2_v2_t));
+        memset(l_t2,0,sizeof(opj_t2_t));
 
         l_t2->image = p_image;
         l_t2->cp = p_cp;
@@ -457,13 +457,13 @@ opj_t2_v2_t* opj_t2_create(opj_image_t *p_image, opj_cp_v2_t *p_cp)
         return l_t2;
 }
 
-void opj_t2_destroy(opj_t2_v2_t *t2) {
+void opj_t2_destroy(opj_t2_t *t2) {
         if(t2) {
                 opj_free(t2);
         }
 }
 
-opj_bool opj_t2_decode_packet(  opj_t2_v2_t* p_t2,
+opj_bool opj_t2_decode_packet(  opj_t2_t* p_t2,
                                 opj_tcd_tile_t *p_tile,
                                 opj_tcp_v2_t *p_tcp,
                                 opj_pi_iterator_t *p_pi,
@@ -727,7 +727,7 @@ opj_bool opj_t2_encode_packet(  OPJ_UINT32 tileno,
         return OPJ_TRUE;
 }
 
-static opj_bool opj_t2_skip_packet( opj_t2_v2_t* p_t2,
+static opj_bool opj_t2_skip_packet( opj_t2_t* p_t2,
                                     opj_tcd_tile_t *p_tile,
                                     opj_tcp_v2_t *p_tcp,
                                     opj_pi_iterator_t *p_pi,
@@ -767,7 +767,7 @@ static opj_bool opj_t2_skip_packet( opj_t2_v2_t* p_t2,
 
 
 
-opj_bool opj_t2_read_packet_header( opj_t2_v2_t* p_t2,
+opj_bool opj_t2_read_packet_header( opj_t2_t* p_t2,
                                     opj_tcd_tile_t *p_tile,
                                     opj_tcp_v2_t *p_tcp,
                                     opj_pi_iterator_t *p_pi,
@@ -1022,7 +1022,7 @@ opj_bool opj_t2_read_packet_header( opj_t2_v2_t* p_t2,
         return OPJ_TRUE;
 }
 
-opj_bool opj_t2_read_packet_data(   opj_t2_v2_t* p_t2,
+opj_bool opj_t2_read_packet_data(   opj_t2_t* p_t2,
                                     opj_tcd_tile_t *p_tile,
                                     opj_pi_iterator_t *p_pi,
                                     OPJ_BYTE *p_src_data,
@@ -1134,7 +1134,7 @@ opj_bool opj_t2_read_packet_data(   opj_t2_v2_t* p_t2,
         return OPJ_TRUE;
 }
 
-opj_bool opj_t2_skip_packet_data(   opj_t2_v2_t* p_t2,
+opj_bool opj_t2_skip_packet_data(   opj_t2_t* p_t2,
                                     opj_tcd_tile_t *p_tile,
                                     opj_pi_iterator_t *p_pi,
                                     OPJ_UINT32 * p_data_read,
