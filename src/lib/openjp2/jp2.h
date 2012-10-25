@@ -146,35 +146,6 @@ typedef struct opj_jp2_comps {
 /**
 JPEG-2000 file format reader/writer
 */
-typedef struct opj_jp2 {
-  /** codec context */
-  opj_common_ptr cinfo;
-  /** handle to the J2K codec  */
-  opj_j2k_t *j2k;
-  unsigned int w;
-  unsigned int h;
-  unsigned int numcomps;
-  unsigned int bpc;
-  unsigned int C;
-  unsigned int UnkC;
-  unsigned int IPR;
-  unsigned int meth;
-  unsigned int approx;
-  unsigned int enumcs;
-  unsigned int precedence;
-  unsigned int brand;
-  unsigned int minversion;
-  unsigned int numcl;
-  unsigned int *cl;
-  opj_jp2_comps_t *comps;
-  unsigned int j2k_codestream_offset;
-  unsigned int j2k_codestream_length;
-  opj_bool ignore_pclr_cmap_cdef;
-} opj_jp2_t;
-
-/**
-JPEG-2000 file format reader/writer
-*/
 typedef struct opj_jp2_v2
 {
   /** handle to the J2K codec  */
