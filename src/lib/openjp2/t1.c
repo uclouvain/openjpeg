@@ -255,18 +255,8 @@ static void opj_t1_dec_clnpass(
 		int bpno,
 		int orient,
 		int cblksty);
-static double t1_getwmsedec(
-		int nmsedec,
-		int compno,
-		int level,
-		int orient,
-		int bpno,
-		int qmfbid,
-		double stepsize,
-		int numcomps,
-		int mct);
 
-static OPJ_FLOAT64 t1_getwmsedec_v2(
+static OPJ_FLOAT64 opj_t1_getwmsedec(
 		OPJ_INT32 nmsedec,
 		OPJ_UINT32 compno,
 		OPJ_UINT32 level,
@@ -1137,33 +1127,7 @@ static void opj_t1_dec_clnpass(
 
 
 /** mod fixed_quality */
-static double t1_getwmsedec(
-		int nmsedec,
-		int compno,
-		int level,
-		int orient,
-		int bpno,
-		int qmfbid,
-		double stepsize,
-		int numcomps,
-		int mct)
-{
-	double w1, w2, wmsedec;
-	if (qmfbid == 1) {
-		w1 = (mct && numcomps==3) ? opj_mct_getnorm(compno) : 1.0;
-		w2 = opj_dwt_getnorm(level, orient);
-	} else {			/* if (qmfbid == 0) */
-		w1 = (mct && numcomps==3) ? opj_mct_getnorm_real(compno) : 1.0;
-		w2 = opj_dwt_getnorm_real(level, orient);
-	}
-	wmsedec = w1 * w2 * stepsize * (1 << bpno);
-	wmsedec *= wmsedec * nmsedec / 8192.0;
-	
-	return wmsedec;
-}
-
-/** mod fixed_quality */
-static OPJ_FLOAT64 t1_getwmsedec_v2(
+static OPJ_FLOAT64 opj_t1_getwmsedec(
 		OPJ_INT32 nmsedec,
 		OPJ_UINT32 compno,
 		OPJ_UINT32 level,
@@ -1660,7 +1624,7 @@ void opj_t1_encode_cblk(opj_t1_t *t1,
 		}
 
 		/* fixed_quality */
-		tempwmsedec = t1_getwmsedec_v2(nmsedec, compno, level, orient, bpno, qmfbid, stepsize, numcomps,mct_norms) ;
+		tempwmsedec = opj_t1_getwmsedec(nmsedec, compno, level, orient, bpno, qmfbid, stepsize, numcomps,mct_norms) ;
 		cumwmsedec += tempwmsedec;
 		tile->distotile += tempwmsedec;
 
