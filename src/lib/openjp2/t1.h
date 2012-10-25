@@ -123,7 +123,7 @@ Encode the code-blocks of a tile
 */
 opj_bool opj_t1_encode_cblks(   opj_t1_t *t1,
                                 opj_tcd_tile_t *tile,
-                                opj_tcp_v2_t *tcp,
+                                opj_tcp_t *tcp,
                                 const OPJ_FLOAT64 * mct_norms);
 
 /**

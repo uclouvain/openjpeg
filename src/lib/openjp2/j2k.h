@@ -196,45 +196,6 @@ typedef struct opj_tccp
 opj_tccp_t;
 
 
-/** V1 STYLE
-Tile coding parameters : 
-this structure is used to store coding/decoding parameters common to all
-tiles (information like COD, COC in main header)
-*/
-typedef struct opj_tcp {
-	/** 1 : first part-tile of a tile */
-	int first;
-	/** coding style */
-	int csty;
-	/** progression order */
-	OPJ_PROG_ORDER prg;
-	/** number of layers */
-	int numlayers;
-	/** multi-component transform identifier */
-	int mct;
-	/** rates of layers */
-	float rates[100];
-	/** number of progression order changes */
-	int numpocs;
-	/** indicates if a POC marker has been used O:NO, 1:YES */
-	int POC;
-	/** progression order changes */
-	opj_poc_t pocs[32];
-	/** packet header store there for futur use in t2_decode_packet */
-	unsigned char *ppt_data;
-	/** pointer remaining on the first byte of the first header if ppt is used */
-	unsigned char *ppt_data_first;
-	/** If ppt == 1 --> there was a PPT marker for the present tile */
-	int ppt;
-	/** used in case of multiple marker PPT (number of info already stored) */
-	int ppt_store;
-	/** ppmbug1 */
-	int ppt_len;
-	/** add fixed_quality */
-	float distoratio[100];
-	/** tile-component coding parameters */
-	opj_tccp_t *tccps;
-} opj_tcp_t;
 
 /**
  * FIXME DOC
@@ -267,7 +228,7 @@ Tile coding parameters :
 this structure is used to store coding/decoding parameters common to all
 tiles (information like COD, COC in main header)
 */
-typedef struct opj_tcp_v2
+typedef struct opj_tcp
 {
 	/** coding style */
 	OPJ_UINT32 csty;
@@ -327,7 +288,7 @@ typedef struct opj_tcp_v2
 	OPJ_UINT32 ppt : 1;
 	/** indicates if a POC marker has been used O:NO, 1:YES */
 	OPJ_UINT32 POC : 1;
-} opj_tcp_v2_t;
+} opj_tcp_t;
 
 
 
@@ -410,7 +371,7 @@ typedef struct opj_cp
 	OPJ_INT32 ppm_previous;
 
 	/** tile coding parameters */
-	opj_tcp_v2_t *tcps;
+	opj_tcp_t *tcps;
 
 	union
 	{
@@ -480,7 +441,7 @@ typedef struct opj_j2k_dec
 	/**
 	 * store decoding parameters common to all tiles (information like COD, COC in main header)
 	 */
-	opj_tcp_v2_t *m_default_tcp;
+	opj_tcp_t *m_default_tcp;
 	OPJ_BYTE  *m_header_data;
 	OPJ_UINT32 m_header_data_size;
 	/** to tell the tile part length */
@@ -868,7 +829,7 @@ opj_bool opj_j2k_end_compress( 	opj_j2k_t *p_j2k,
 							    opj_stream_private_t *cio,
 							    opj_event_mgr_t * p_manager);
 
-opj_bool opj_j2k_setup_mct_encoding (opj_tcp_v2_t * p_tcp, opj_image_t * p_image);
+opj_bool opj_j2k_setup_mct_encoding (opj_tcp_t * p_tcp, opj_image_t * p_image);
 
 
 #endif /* __J2K_H */

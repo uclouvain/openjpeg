@@ -62,7 +62,7 @@ Encode a packet of a tile to a destination buffer
 */
 static opj_bool opj_t2_encode_packet(   OPJ_UINT32 tileno,
                                         opj_tcd_tile_t *tile,
-                                        opj_tcp_v2_t *tcp,
+                                        opj_tcp_t *tcp,
                                         opj_pi_iterator_t *pi,
                                         OPJ_BYTE *dest,
                                         OPJ_UINT32 * p_data_written,
@@ -84,7 +84,7 @@ Decode a packet of a tile from a source buffer
 */
 static opj_bool opj_t2_decode_packet(   opj_t2_t* t2,
                                         opj_tcd_tile_t *tile,
-                                        opj_tcp_v2_t *tcp,
+                                        opj_tcp_t *tcp,
                                         opj_pi_iterator_t *pi,
                                         OPJ_BYTE *src,
                                         OPJ_UINT32 * data_read,
@@ -93,7 +93,7 @@ static opj_bool opj_t2_decode_packet(   opj_t2_t* t2,
 
 static opj_bool opj_t2_skip_packet( opj_t2_t* p_t2,
                                     opj_tcd_tile_t *p_tile,
-                                    opj_tcp_v2_t *p_tcp,
+                                    opj_tcp_t *p_tcp,
                                     opj_pi_iterator_t *p_pi,
                                     OPJ_BYTE *p_src,
                                     OPJ_UINT32 * p_data_read,
@@ -102,7 +102,7 @@ static opj_bool opj_t2_skip_packet( opj_t2_t* p_t2,
 
 static opj_bool opj_t2_read_packet_header(  opj_t2_t* p_t2,
                                             opj_tcd_tile_t *p_tile,
-                                            opj_tcp_v2_t *p_tcp,
+                                            opj_tcp_t *p_tcp,
                                             opj_pi_iterator_t *p_pi,
                                             opj_bool * p_is_data_present,
                                             OPJ_BYTE *p_src_data,
@@ -210,7 +210,7 @@ opj_bool opj_t2_encode_packets( opj_t2_t* p_t2,
         opj_pi_iterator_t *l_current_pi = 00;
         opj_image_t *l_image = p_t2->image;
         opj_cp_t *l_cp = p_t2->cp;
-        opj_tcp_v2_t *l_tcp = &l_cp->tcps[p_tile_no];
+        opj_tcp_t *l_tcp = &l_cp->tcps[p_tile_no];
         OPJ_UINT32 pocno = l_cp->m_specific_param.m_enc.m_cinema == CINEMA4K_24? 2: 1;
         OPJ_UINT32 l_max_comp = l_cp->m_specific_param.m_enc.m_max_comp_size > 0 ? l_image->numcomps : 1;
         OPJ_UINT32 l_nb_pocs = l_tcp->numpocs + 1;
@@ -324,7 +324,7 @@ opj_bool opj_t2_decode_packets( opj_t2_t *p_t2,
         opj_image_t *l_image = p_t2->image;
         opj_cp_t *l_cp = p_t2->cp;
         opj_cp_t *cp = p_t2->cp;
-        opj_tcp_v2_t *l_tcp = &(p_t2->cp->tcps[p_tile_no]);
+        opj_tcp_t *l_tcp = &(p_t2->cp->tcps[p_tile_no]);
         OPJ_UINT32 l_nb_bytes_read;
         OPJ_UINT32 l_nb_pocs = l_tcp->numpocs + 1;
         opj_pi_iterator_t *l_current_pi = 00;
@@ -465,7 +465,7 @@ void opj_t2_destroy(opj_t2_t *t2) {
 
 opj_bool opj_t2_decode_packet(  opj_t2_t* p_t2,
                                 opj_tcd_tile_t *p_tile,
-                                opj_tcp_v2_t *p_tcp,
+                                opj_tcp_t *p_tcp,
                                 opj_pi_iterator_t *p_pi,
                                 OPJ_BYTE *p_src,
                                 OPJ_UINT32 * p_data_read,
@@ -504,7 +504,7 @@ opj_bool opj_t2_decode_packet(  opj_t2_t* p_t2,
 
 opj_bool opj_t2_encode_packet(  OPJ_UINT32 tileno,
                                 opj_tcd_tile_t * tile,
-                                opj_tcp_v2_t * tcp,
+                                opj_tcp_t * tcp,
                                 opj_pi_iterator_t *pi,
                                 OPJ_BYTE *dest,
                                 OPJ_UINT32 * p_data_written,
@@ -729,7 +729,7 @@ opj_bool opj_t2_encode_packet(  OPJ_UINT32 tileno,
 
 static opj_bool opj_t2_skip_packet( opj_t2_t* p_t2,
                                     opj_tcd_tile_t *p_tile,
-                                    opj_tcp_v2_t *p_tcp,
+                                    opj_tcp_t *p_tcp,
                                     opj_pi_iterator_t *p_pi,
                                     OPJ_BYTE *p_src,
                                     OPJ_UINT32 * p_data_read,
@@ -769,7 +769,7 @@ static opj_bool opj_t2_skip_packet( opj_t2_t* p_t2,
 
 opj_bool opj_t2_read_packet_header( opj_t2_t* p_t2,
                                     opj_tcd_tile_t *p_tile,
-                                    opj_tcp_v2_t *p_tcp,
+                                    opj_tcp_t *p_tcp,
                                     opj_pi_iterator_t *p_pi,
                                     opj_bool * p_is_data_present,
                                     OPJ_BYTE *p_src_data,

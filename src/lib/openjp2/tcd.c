@@ -290,7 +290,7 @@ void opj_tcd_makelayer_fixed(opj_tcd_t *tcd, OPJ_UINT32 layno, OPJ_UINT32 final)
 
         opj_cp_t *cp = tcd->cp;
         opj_tcd_tile_t *tcd_tile = tcd->tcd_image->tiles;
-        opj_tcp_v2_t *tcd_tcp = tcd->tcp;
+        opj_tcp_t *tcd_tcp = tcd->tcp;
 
         for (compno = 0; compno < tcd_tile->numcomps; compno++) {
                 opj_tcd_tilecomp_t *tilec = &tcd_tile->comps[compno];
@@ -390,7 +390,7 @@ opj_bool opj_tcd_rateallocate(  opj_tcd_t *tcd,
 
         opj_cp_t *cp = tcd->cp;
         opj_tcd_tile_t *tcd_tile = tcd->tcd_image->tiles;
-        opj_tcp_v2_t *tcd_tcp = tcd->tcp;
+        opj_tcp_t *tcd_tcp = tcd->tcp;
 
         min = DBL_MAX;
         max = 0;
@@ -614,7 +614,7 @@ opj_bool FUNCTION (     opj_tcd_t *p_tcd,                        \
 {                                                                   \
         OPJ_UINT32 (*l_gain_ptr)(OPJ_UINT32) = 00;                  \
         OPJ_UINT32 compno, resno, bandno, precno, cblkno;           \
-        opj_tcp_v2_t * l_tcp = 00;                                  \
+        opj_tcp_t * l_tcp = 00;                                  \
         opj_cp_t * l_cp = 00;                                    \
         opj_tcd_tile_t * l_tile = 00;                            \
         opj_tccp_t *l_tccp = 00;                                    \
@@ -1190,7 +1190,7 @@ opj_bool opj_tcd_decode_tile(   opj_tcd_t *p_tcd,
         if(p_cstr_info) {
                 OPJ_UINT32 resno, compno, numprec = 0;
                 for (compno = 0; compno < (OPJ_UINT32) p_cstr_info->numcomps; compno++) {
-                        opj_tcp_v2_t *tcp = &p_tcd->cp->tcps[0];
+                        opj_tcp_t *tcp = &p_tcd->cp->tcps[0];
                         opj_tccp_t *tccp = &tcp->tccps[compno];
                         opj_tcd_tilecomp_t *tilec_idx = &p_tcd->tcd_image->tiles->comps[compno];
                         for (resno = 0; resno < tilec_idx->numresolutions; resno++) {
@@ -1560,7 +1560,7 @@ opj_bool opj_tcd_dwt_decode ( opj_tcd_t *p_tcd )
 opj_bool opj_tcd_mct_decode ( opj_tcd_t *p_tcd )
 {
         opj_tcd_tile_t * l_tile = p_tcd->tcd_image->tiles;
-        opj_tcp_v2_t * l_tcp = p_tcd->tcp;
+        opj_tcp_t * l_tcp = p_tcd->tcp;
         opj_tcd_tilecomp_t * l_tile_comp = l_tile->comps;
         OPJ_UINT32 l_samples,i;
 
@@ -1635,7 +1635,7 @@ opj_bool opj_tcd_dc_level_shift_decode ( opj_tcd_t *p_tcd )
         opj_tccp_t * l_tccp = 00;
         opj_image_comp_t * l_img_comp = 00;
         opj_tcd_resolution_t* l_res = 00;
-        opj_tcp_v2_t * l_tcp = 00;
+        opj_tcp_t * l_tcp = 00;
         opj_tcd_tile_t * l_tile;
         OPJ_UINT32 l_width,l_height,i,j;
         OPJ_INT32 * l_current_ptr;
@@ -1803,7 +1803,7 @@ opj_bool opj_tcd_dc_level_shift_encode ( opj_tcd_t *p_tcd )
         opj_tcd_tilecomp_t * l_tile_comp = 00;
         opj_tccp_t * l_tccp = 00;
         opj_image_comp_t * l_img_comp = 00;
-        opj_tcp_v2_t * l_tcp = 00;
+        opj_tcp_t * l_tcp = 00;
         opj_tcd_tile_t * l_tile;
         OPJ_UINT32 l_nb_elem,i;
         OPJ_INT32 * l_current_ptr;
@@ -1846,7 +1846,7 @@ opj_bool opj_tcd_mct_encode ( opj_tcd_t *p_tcd )
         OPJ_UINT32 samples = (l_tile_comp->x1 - l_tile_comp->x0) * (l_tile_comp->y1 - l_tile_comp->y0);
         OPJ_UINT32 i;
         OPJ_BYTE ** l_data = 00;
-        opj_tcp_v2_t * l_tcp = p_tcd->tcp;
+        opj_tcp_t * l_tcp = p_tcd->tcp;
 
         if(!p_tcd->tcp->mct) {
                 return OPJ_TRUE;
@@ -1924,7 +1924,7 @@ opj_bool opj_tcd_t1_encode ( opj_tcd_t *p_tcd )
 {
         opj_t1_t * l_t1;
         const OPJ_FLOAT64 * l_mct_norms;
-        opj_tcp_v2_t * l_tcp = p_tcd->tcp;
+        opj_tcp_t * l_tcp = p_tcd->tcp;
 
         l_t1 = opj_t1_create();
         if (l_t1 == 00) {

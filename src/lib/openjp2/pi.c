@@ -193,14 +193,14 @@ static opj_pi_iterator_t * opj_pi_create(	const opj_image_t *image,
  * FIXME DOC
  */
 static void opj_pi_update_decode_not_poc (opj_pi_iterator_t * p_pi,
-                                          opj_tcp_v2_t * p_tcp,
+                                          opj_tcp_t * p_tcp,
                                           OPJ_UINT32 p_max_precision,
                                           OPJ_UINT32 p_max_res);
 /**
  * FIXME DOC
  */
 static void opj_pi_update_decode_poc (  opj_pi_iterator_t * p_pi,
-                                        opj_tcp_v2_t * p_tcp,
+                                        opj_tcp_t * p_tcp,
                                         OPJ_UINT32 p_max_precision,
                                         OPJ_UINT32 p_max_res);
 
@@ -560,7 +560,7 @@ void opj_get_encoding_parameters(	const opj_image_t *p_image,
 	/* loop */
 	OPJ_UINT32  compno, resno;
 	/* pointers */
-	const opj_tcp_v2_t *l_tcp = 00;
+	const opj_tcp_t *l_tcp = 00;
 	const opj_tccp_t * l_tccp = 00;
 	const opj_image_comp_t * l_img_comp = 00;
 
@@ -676,7 +676,7 @@ void opj_get_all_encoding_parameters(   const opj_image_t *p_image,
 	OPJ_UINT32 compno, resno;
 
 	/* pointers*/
-	const opj_tcp_v2_t *tcp = 00;
+	const opj_tcp_t *tcp = 00;
 	const opj_tccp_t * l_tccp = 00;
 	const opj_image_comp_t * l_img_comp = 00;
 
@@ -788,7 +788,7 @@ opj_pi_iterator_t * opj_pi_create(	const opj_image_t *image,
 
 	/* pointers to tile coding parameters and components.*/
 	opj_pi_iterator_t *l_pi = 00;
-	opj_tcp_v2_t *tcp = 00;
+	opj_tcp_t *tcp = 00;
 	const opj_tccp_t *tccp = 00;
 
 	/* current packet iterator being allocated*/
@@ -855,7 +855,7 @@ void opj_pi_update_encode_poc_and_final (   opj_cp_t *p_cp,
 	/* loop*/
 	OPJ_UINT32 pino;
 	/* tile coding parameter*/
-	opj_tcp_v2_t *l_tcp = 00;
+	opj_tcp_t *l_tcp = 00;
 	/* current poc being updated*/
 	opj_poc_t * l_current_poc = 00;
 
@@ -932,7 +932,7 @@ void opj_pi_update_encode_not_poc (	opj_cp_t *p_cp,
 	/* loop*/
 	OPJ_UINT32 pino;
 	/* tile coding parameter*/
-	opj_tcp_v2_t *l_tcp = 00;
+	opj_tcp_t *l_tcp = 00;
 	/* current poc being updated*/
 	opj_poc_t * l_current_poc = 00;
 	/* number of pocs*/
@@ -973,7 +973,7 @@ void opj_pi_update_encode_not_poc (	opj_cp_t *p_cp,
 }
 
 void opj_pi_update_decode_poc (opj_pi_iterator_t * p_pi,
-                               opj_tcp_v2_t * p_tcp,
+                               opj_tcp_t * p_tcp,
                                OPJ_UINT32 p_max_precision,
                                OPJ_UINT32 p_max_res)
 {
@@ -1013,7 +1013,7 @@ void opj_pi_update_decode_poc (opj_pi_iterator_t * p_pi,
 }
 
 void opj_pi_update_decode_not_poc (opj_pi_iterator_t * p_pi,
-                                   opj_tcp_v2_t * p_tcp,
+                                   opj_tcp_t * p_tcp,
                                    OPJ_UINT32 p_max_precision,
                                    OPJ_UINT32 p_max_res)
 {
@@ -1056,7 +1056,7 @@ opj_bool opj_pi_check_next_level(	OPJ_INT32 pos,
 								const OPJ_CHAR *prog)
 {
 	OPJ_INT32 i;
-	opj_tcp_v2_t *tcps =&cp->tcps[tileno];
+	opj_tcp_t *tcps =&cp->tcps[tileno];
 	opj_poc_t *tcp = &tcps->pocs[pino];
 
 	if(pos>=0){
@@ -1160,7 +1160,7 @@ opj_pi_iterator_t *opj_pi_create_decode(opj_image_t *p_image,
 
 	/* pointers */
 	opj_pi_iterator_t *l_pi = 00;
-	opj_tcp_v2_t *l_tcp = 00;
+	opj_tcp_t *l_tcp = 00;
 	const opj_tccp_t *l_tccp = 00;
 	opj_pi_comp_t *l_current_comp = 00;
 	opj_image_comp_t * l_img_comp = 00;
@@ -1363,7 +1363,7 @@ opj_pi_iterator_t *opj_pi_initialise_encode(const opj_image_t *p_image,
 
 	/* pointers*/
 	opj_pi_iterator_t *l_pi = 00;
-	opj_tcp_v2_t *l_tcp = 00;
+	opj_tcp_t *l_tcp = 00;
 	const opj_tccp_t *l_tccp = 00;
 	opj_pi_comp_t *l_current_comp = 00;
 	opj_image_comp_t * l_img_comp = 00;
@@ -1536,7 +1536,7 @@ void opj_pi_create_encode( 	opj_pi_iterator_t *pi,
 	const OPJ_CHAR *prog;
 	OPJ_INT32 i;
 	OPJ_UINT32 incr_top=1,resetX=0;
-	opj_tcp_v2_t *tcps =&cp->tcps[tileno];
+	opj_tcp_t *tcps =&cp->tcps[tileno];
 	opj_poc_t *tcp= &tcps->pocs[pino];
 
 	prog = opj_j2k_convert_progression_order(tcp->prg);
@@ -1826,7 +1826,7 @@ void opj_pi_update_encoding_parameters(	const opj_image_t *p_image,
 	OPJ_UINT32 l_dx_min,l_dy_min;
 
 	/* pointers */
-	opj_tcp_v2_t *l_tcp = 00;
+	opj_tcp_t *l_tcp = 00;
 
 	/* preconditions */
 	assert(p_cp != 00);
