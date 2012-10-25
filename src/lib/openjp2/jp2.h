@@ -149,7 +149,7 @@ JPEG-2000 file format reader/writer
 typedef struct opj_jp2
 {
   /** handle to the J2K codec  */
-  struct opj_j2k_v2 *j2k;
+  opj_j2k_t *j2k;
   /** list of validation procedures */
   struct opj_procedure_list * m_validation_list;
   /** list of execution procedures */
