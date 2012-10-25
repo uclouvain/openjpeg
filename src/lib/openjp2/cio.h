@@ -46,45 +46,6 @@ The functions in CIO.C have for goal to realize a byte input / output process.
 /** @name Exported functions (see also openjpeg.h) */
 /*@{*/
 /* ----------------------------------------------------------------------- */
-/**
-Number of bytes left before the end of the stream
-@param cio CIO handle
-@return Returns the number of bytes before the end of the stream
-*/
-OPJ_SIZE_T cio_numbytesleft(opj_cio_t *cio);
-/**
-Get pointer to the current position in the stream
-@param cio CIO handle
-@return Returns a pointer to the current position
-*/
-unsigned char *cio_getbp(opj_cio_t *cio);
-/**
-*/
-opj_bool cio_byteout(opj_cio_t *cio, unsigned char v);
-/**
-*/
-unsigned char cio_bytein(opj_cio_t *cio);
-/**
-Write some bytes
-@param cio CIO handle
-@param v Value to write
-@param n Number of bytes to write
-@return Returns the number of bytes written or 0 if an error occured
-*/
-DEPRECATED(unsigned int cio_write(opj_cio_t *cio, unsigned long long int v, int n));
-/**
-Read some bytes
-@param cio CIO handle
-@param n Number of bytes to read
-@return Returns the value of the n bytes read
-*/
-DEPRECATED(unsigned int cio_read(opj_cio_t *cio, int n));
-/**
-Skip some bytes
-@param cio CIO handle
-@param n Number of bytes to skip
-*/
-DEPRECATED(void cio_skip(opj_cio_t *cio, int n));
 /* ----------------------------------------------------------------------- */
 /*@}*/
 
