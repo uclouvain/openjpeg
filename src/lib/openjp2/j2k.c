@@ -2095,7 +2095,7 @@ static opj_bool opj_j2k_read_siz(opj_j2k_v2_t *p_j2k,
                 opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to take in charge SIZ marker\n");
                 return OPJ_FALSE;
         }
-        memset(l_cp->tcps,0,l_nb_tiles*sizeof(opj_tcp_t));
+        memset(l_cp->tcps,0,l_nb_tiles*sizeof(opj_tcp_v2_t));
 
 #ifdef USE_JPWL
         if (l_cp->correct) {
