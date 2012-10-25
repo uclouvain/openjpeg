@@ -48,22 +48,7 @@ set(EXES
   opj_jpip_test
   )
 foreach(exe ${EXES})
-  if(${exe} STREQUAL "opj_jpip_compress")
-    include_directories(
-      ${Z_INCLUDE_DIRNAME}
-      ${PNG_INCLUDE_DIRNAME}
-      ${TIFF_INCLUDE_DIRNAME}
-    )
-    add_executable(${exe} ${exe}.c
-      ${OPENJPEG_SOURCE_DIR}/src/bin/common/opj_getopt.c
-      ${OPENJPEG_SOURCE_DIR}/src/bin/jp2/convert.c
-    )
-    target_link_libraries(${exe}
-      ${PNG_LIBNAME} ${TIFF_LIBNAME} ${LCMS_LIBNAME} ${Z_LIBNAME}
-    )
-  else()
-    add_executable(${exe} ${exe}.c)
-  endif()
+add_executable(${exe} ${exe}.c)
   target_link_libraries(${exe} openjpip)
   install(TARGETS ${exe}
     EXPORT OpenJPEGTargets

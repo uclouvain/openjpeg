@@ -209,7 +209,7 @@ void local_log( bool query, bool messages, bool sessions, bool targets, QR_t *qr
 
 #ifndef SERVER
 
-dec_server_record_t * init_dec_server( int port)
+dec_server_record_t * OPJ_CALLCONV init_dec_server( int port)
 {
   dec_server_record_t *record = (dec_server_record_t *)opj_malloc( sizeof(dec_server_record_t));
 
@@ -222,7 +222,7 @@ dec_server_record_t * init_dec_server( int port)
   return record;
 }
 
-void terminate_dec_server( dec_server_record_t **rec)
+void OPJ_CALLCONV terminate_dec_server( dec_server_record_t **rec)
 {
   delete_cachelist( &(*rec)->cachelist);  
   opj_free( (*rec)->jpipstream);
@@ -236,7 +236,7 @@ void terminate_dec_server( dec_server_record_t **rec)
   opj_free( *rec);
 }
 
-client_t accept_connection( dec_server_record_t *rec)
+client_t OPJ_CALLCONV accept_connection( dec_server_record_t *rec)
 {
   client_t client;
   
@@ -247,7 +247,7 @@ client_t accept_connection( dec_server_record_t *rec)
   return client;
 }
 
-bool handle_clientreq( client_t client, dec_server_record_t *rec)
+bool OPJ_CALLCONV handle_clientreq( client_t client, dec_server_record_t *rec)
 {
   bool quit = false;
   msgtype_t msgtype = identify_clientmsg( client);
@@ -306,7 +306,7 @@ bool handle_clientreq( client_t client, dec_server_record_t *rec)
 }
 
 
-jpip_dec_param_t * init_jpipdecoder( bool jp2)
+jpip_dec_param_t * OPJ_CALLCONV init_jpipdecoder( bool jp2)
 {
   jpip_dec_param_t *dec;
   
@@ -321,7 +321,7 @@ jpip_dec_param_t * init_jpipdecoder( bool jp2)
 }
 
 
-bool fread_jpip( const char fname[], jpip_dec_param_t *dec)
+bool OPJ_CALLCONV fread_jpip( const char fname[], jpip_dec_param_t *dec)
 {
   int infd;
 
@@ -346,7 +346,7 @@ bool fread_jpip( const char fname[], jpip_dec_param_t *dec)
   return true;
 }
 
-void decode_jpip( jpip_dec_param_t *dec)
+void OPJ_CALLCONV decode_jpip( jpip_dec_param_t *dec)
 {
   parse_JPIPstream( dec->jpipstream, dec->jpiplen, 0, dec->msgqueue);
 
@@ -361,7 +361,7 @@ void decode_jpip( jpip_dec_param_t *dec)
     dec->jp2kstream = recons_j2k( dec->msgqueue, dec->jpipstream, dec->msgqueue->first->csn, 0, 0, &dec->jp2klen);  
 }
 
-bool fwrite_jp2k( const char fname[], jpip_dec_param_t *dec)
+bool OPJ_CALLCONV fwrite_jp2k( const char fname[], jpip_dec_param_t *dec)
 {
   int outfd;
   
@@ -382,7 +382,7 @@ bool fwrite_jp2k( const char fname[], jpip_dec_param_t *dec)
  return true;
 }
 
-void output_log( bool messages, bool metadata, bool ihdrbox, jpip_dec_param_t *dec)
+void OPJ_CALLCONV output_log( bool messages, bool metadata, bool ihdrbox, jpip_dec_param_t *dec)
 {
   if( messages)
     print_msgqueue( dec->msgqueue);
@@ -396,7 +396,7 @@ void output_log( bool messages, bool metadata, bool ihdrbox, jpip_dec_param_t *d
   }
 }
 
-void destroy_jpipdecoder( jpip_dec_param_t **dec)
+void OPJ_CALLCONV destroy_jpipdecoder( jpip_dec_param_t **dec)
 {
   opj_free( (*dec)->jpipstream);
   delete_msgqueue( &(*dec)->msgqueue);
@@ -409,7 +409,7 @@ void destroy_jpipdecoder( jpip_dec_param_t **dec)
   opj_free( *dec);
 }
 
-index_t * get_index_from_JP2file( int fd)
+index_t * OPJ_CALLCONV get_index_from_JP2file( int fd)
 {
   char *data;
  
@@ -437,12 +437,12 @@ index_t * get_index_from_JP2file( int fd)
   return parse_jp2file( fd);
 }
 
-void destroy_index( index_t **idx)
+void OPJ_CALLCONV destroy_index( index_t **idx)
 {
   delete_index( idx);
 }
 
-void output_index( index_t *index)
+void OPJ_CALLCONV output_index( index_t *index)
 {
   print_index( *index);
 }
