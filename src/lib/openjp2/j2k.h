@@ -668,65 +668,7 @@ typedef struct opj_j2k_enc
 
 } opj_j2k_enc_t;
 
-/**
-JPEG-2000 codestream reader/writer
-*/
-typedef struct opj_j2k {
-	/** codec context */
-	opj_common_ptr cinfo;
 
-	/** locate in which part of the codestream the decoder is (main header, tile header, end) */
-	int state;
-	/** number of the tile curently concern by coding/decoding */
-	int curtileno;
-	/** Tile part number*/
-	int tp_num;
-	/** Tilepart number currently coding*/
-	int cur_tp_num;
-	/** Total number of tileparts of the current tile*/
-	int *cur_totnum_tp;
-	/**
-	locate the start position of the TLM marker  
-	after encoding the tilepart, a jump (in j2k_write_sod) is done to the TLM marker to store the value of its length. 
-	*/
-	int tlm_start;
-	/** Total num of tile parts in whole image = num tiles* num tileparts in each tile*/
-	/** used in TLMmarker*/
-	int totnum_tp;	
-	/** 
-	locate the position of the end of the tile in the codestream, 
-	used to detect a truncated codestream (in j2k_read_sod)
-	*/
-	unsigned char *eot;
-	/**
-	locate the start position of the SOT marker of the current coded tile:  
-	after encoding the tile, a jump (in j2k_write_sod) is done to the SOT marker to store the value of its length. 
-	*/
-	int sot_start;
-	int sod_start;
-	/**
-	as the J2K-file is written in several parts during encoding, 
-	it enables to make the right correction in position return by cio_tell
-	*/
-	int pos_correction;
-	/** array used to store the data of each tile */
-	unsigned char **tile_data;
-	/** array used to store the length of each tile */
-	int *tile_len;
-	/** 
-	decompression only : 
-	store decoding parameters common to all tiles (information like COD, COC in main header)
-	*/
-	opj_tcp_t *default_tcp;
-	/** pointer to the encoded / decoded image */
-	opj_image_t *image;
-	/** pointer to the coding parameters */
-	opj_cp_t *cp;
-	/** helper used to write the index file */
-	opj_codestream_info_t *cstr_info;
-	/** pointer to the byte i/o stream */
-	opj_cio_t *cio;
-} opj_j2k_t;
 
 struct opj_tcd_v2;
 /**
