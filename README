@@ -32,3 +32,16 @@ see LICENSE for license and copyright information.
 see INSTALL for installation procedures.
 see NEWS for user visible changes in successive releases.
 see CHANGES for per-revision changes.
+
+----------------
+API/ABI
+
+OpenJPEG strives to provide a stable API/ABI for your applications. As such it
+only exposes a limited subset of its functions.  It uses a mecanism of
+exporting/hiding functions. If you are unsure which functions you can use in
+your applications, you should compile OpenJPEG using something similar to gcc:
+-fvisibility=hidden compilation flag.
+See also: http://gcc.gnu.org/wiki/Visibility
+
+On windows, MSVC directly supports export/hidding function and as such the only
+API available is the one supported by OpenJPEG.
