@@ -68,15 +68,7 @@ typedef struct opj_event_mgr
 /** @name Exported functions (see also openjpeg.h) */
 /*@{*/
 /* ----------------------------------------------------------------------- */
-/**
-Write formatted data to a string and send the string to a user callback. 
-@param cinfo Codec context info
-@param event_type Event type or callback to use to send the message
-@param fmt Format-control string (plus optional arguments)
-@return Returns true if successful, returns false otherwise
-* FIXME Change by its v2 version this function after ended the merge 
-*/
-opj_bool opj_event_msg(opj_common_ptr cinfo, int event_type, const char *fmt, ...);
+
 
 /* ----------------------------------------------------------------------- */
 

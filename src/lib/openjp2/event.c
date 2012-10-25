@@ -69,52 +69,7 @@ _itoa(int i, char *a, int r) {
 static void opj_default_callback (const char *msg, void *client_data){}
 
 /* ----------------------------------------------------------------------- */
-opj_bool opj_event_msg(opj_common_ptr cinfo, int event_type, const char *fmt, ...) {
-#define MSG_SIZE 512 /* 512 bytes should be more than enough for a short message */
-	opj_msg_callback msg_handler = NULL;
 
-	opj_event_mgr_t *event_mgr = cinfo->event_mgr;
-	if(event_mgr != NULL) {
-		switch(event_type) {
-			case EVT_ERROR:
-				msg_handler = event_mgr->error_handler;
-				break;
-			case EVT_WARNING:
-				msg_handler = event_mgr->warning_handler;
-				break;
-			case EVT_INFO:
-				msg_handler = event_mgr->info_handler;
-				break;
-			default:
-				break;
-		}
-		if(msg_handler == NULL) {
-			return OPJ_FALSE;
-		}
-	} else {
-		return OPJ_FALSE;
-	}
-
-	if ((fmt != NULL) && (event_mgr != NULL)) {
-		va_list arg;
-		size_t str_length/*, i, j*/; /* UniPG */
-		char message[MSG_SIZE];
-		memset(message, 0, MSG_SIZE);
-		/* initialize the optional parameter list */
-		va_start(arg, fmt);
-		/* check the length of the format string */
-		str_length = (strlen(fmt) > MSG_SIZE) ? MSG_SIZE : strlen(fmt);
-		/* parse the format string and put the result in 'message' */
-		vsprintf(message, fmt, arg); /* UniPG */
-		/* deinitialize the optional parameter list */
-		va_end(arg);
-
-		/* output the message to the user program */
-		msg_handler(message, cinfo->client_data);
-	}
-
-	return OPJ_TRUE;
-}
 
 /* ----------------------------------------------------------------------- */
 opj_bool opj_event_msg_v2(opj_event_mgr_t* p_event_mgr, int event_type, const char *fmt, ...) {
