@@ -209,7 +209,7 @@ opj_bool opj_t2_encode_packets( opj_t2_t* p_t2,
         opj_pi_iterator_t *l_pi = 00;
         opj_pi_iterator_t *l_current_pi = 00;
         opj_image_t *l_image = p_t2->image;
-        opj_cp_v2_t *l_cp = p_t2->cp;
+        opj_cp_t *l_cp = p_t2->cp;
         opj_tcp_v2_t *l_tcp = &l_cp->tcps[p_tile_no];
         OPJ_UINT32 pocno = l_cp->m_specific_param.m_enc.m_cinema == CINEMA4K_24? 2: 1;
         OPJ_UINT32 l_max_comp = l_cp->m_specific_param.m_enc.m_max_comp_size > 0 ? l_image->numcomps : 1;
@@ -322,8 +322,8 @@ opj_bool opj_t2_decode_packets( opj_t2_t *p_t2,
         opj_pi_iterator_t *l_pi = 00;
         OPJ_UINT32 pino;
         opj_image_t *l_image = p_t2->image;
-        opj_cp_v2_t *l_cp = p_t2->cp;
-        opj_cp_v2_t *cp = p_t2->cp;
+        opj_cp_t *l_cp = p_t2->cp;
+        opj_cp_t *cp = p_t2->cp;
         opj_tcp_v2_t *l_tcp = &(p_t2->cp->tcps[p_tile_no]);
         OPJ_UINT32 l_nb_bytes_read;
         OPJ_UINT32 l_nb_pocs = l_tcp->numpocs + 1;
@@ -442,7 +442,7 @@ opj_bool opj_t2_decode_packets( opj_t2_t *p_t2,
  * @param       p_cp            Image coding parameters.
  * @return              a new T2 handle if successful, NULL otherwise.
 */
-opj_t2_t* opj_t2_create(opj_image_t *p_image, opj_cp_v2_t *p_cp)
+opj_t2_t* opj_t2_create(opj_image_t *p_image, opj_cp_t *p_cp)
 {
         /* create the t2 structure */
         opj_t2_t *l_t2 = (opj_t2_t*)opj_malloc(sizeof(opj_t2_t));
@@ -785,7 +785,7 @@ opj_bool opj_t2_read_packet_header( opj_t2_t* p_t2,
         OPJ_UINT32 l_header_length;
         OPJ_UINT32 * l_modified_length_ptr = 00;
         OPJ_BYTE *l_current_data = p_src_data;
-        opj_cp_v2_t *l_cp = p_t2->cp;
+        opj_cp_t *l_cp = p_t2->cp;
         opj_bio_t *l_bio = 00;  /* BIO component */
         opj_tcd_band_t *l_band = 00;
         opj_tcd_cblk_dec_t* l_cblk = 00;

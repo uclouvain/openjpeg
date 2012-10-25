@@ -115,7 +115,7 @@ typedef struct opj_pi_iterator {
  * @return	a list of packet iterator that points to the first packet of the tile (not true).
 */
 opj_pi_iterator_t *opj_pi_initialise_encode(const opj_image_t *image,
-                                            opj_cp_v2_t *cp,
+                                            opj_cp_t *cp,
                                             OPJ_UINT32 tileno,
                                             J2K_T2_MODE t2_mode);
 
@@ -127,7 +127,7 @@ opj_pi_iterator_t *opj_pi_initialise_encode(const opj_image_t *image,
  * @param	p_tile_no	index of the tile being encoded.
 */
 void opj_pi_update_encoding_parameters(	const opj_image_t *p_image,
-                                        opj_cp_v2_t *p_cp,
+                                        opj_cp_t *p_cp,
                                         OPJ_UINT32 p_tile_no );
 
 /**
@@ -141,7 +141,7 @@ Modify the packet iterator for enabling tile part generation
 @param t2_mode FIXME DOC
 */
 void opj_pi_create_encode(  opj_pi_iterator_t *pi, 
-                            opj_cp_v2_t *cp,
+                            opj_cp_t *cp,
                             OPJ_UINT32 tileno, 
                             OPJ_UINT32 pino,
                             OPJ_UINT32 tpnum, 
@@ -157,7 +157,7 @@ Create a packet iterator for Decoder
 @see opj_pi_destroy
 */
 opj_pi_iterator_t *opj_pi_create_decode(opj_image_t * image, 
-                                        opj_cp_v2_t * cp,
+                                        opj_cp_t * cp,
                                         OPJ_UINT32 tileno);
 /**
  * Destroys a packet iterator array.

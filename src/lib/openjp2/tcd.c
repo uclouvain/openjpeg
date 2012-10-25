@@ -288,7 +288,7 @@ void opj_tcd_makelayer_fixed(opj_tcd_t *tcd, OPJ_UINT32 layno, OPJ_UINT32 final)
         OPJ_INT32 matrice[10][10][3];
         OPJ_UINT32 i, j, k;
 
-        opj_cp_v2_t *cp = tcd->cp;
+        opj_cp_t *cp = tcd->cp;
         opj_tcd_tile_t *tcd_tile = tcd->tcd_image->tiles;
         opj_tcp_v2_t *tcd_tcp = tcd->tcp;
 
@@ -388,7 +388,7 @@ opj_bool opj_tcd_rateallocate(  opj_tcd_t *tcd,
         const OPJ_FLOAT64 K = 1;                /* 1.1; fixed_quality */
         OPJ_FLOAT64 maxSE = 0;
 
-        opj_cp_v2_t *cp = tcd->cp;
+        opj_cp_t *cp = tcd->cp;
         opj_tcd_tile_t *tcd_tile = tcd->tcd_image->tiles;
         opj_tcp_v2_t *tcd_tcp = tcd->tcp;
 
@@ -565,7 +565,7 @@ opj_bool opj_tcd_rateallocate(  opj_tcd_t *tcd,
 
 opj_bool opj_tcd_init( opj_tcd_t *p_tcd,
                                            opj_image_t * p_image,
-                                           opj_cp_v2_t * p_cp )
+                                           opj_cp_t * p_cp )
 {
         OPJ_UINT32 l_tile_comp_size;
 
@@ -615,7 +615,7 @@ opj_bool FUNCTION (     opj_tcd_t *p_tcd,                        \
         OPJ_UINT32 (*l_gain_ptr)(OPJ_UINT32) = 00;                  \
         OPJ_UINT32 compno, resno, bandno, precno, cblkno;           \
         opj_tcp_v2_t * l_tcp = 00;                                  \
-        opj_cp_v2_t * l_cp = 00;                                    \
+        opj_cp_t * l_cp = 00;                                    \
         opj_tcd_tile_t * l_tile = 00;                            \
         opj_tccp_t *l_tccp = 00;                                    \
         opj_tcd_tilecomp_t *l_tilec = 00;                        \
@@ -1997,7 +1997,7 @@ opj_bool opj_tcd_rate_allocate_encode(  opj_tcd_t *p_tcd,
                                                                             OPJ_UINT32 p_max_dest_size,
                                                                             opj_codestream_info_t *p_cstr_info )
 {
-        opj_cp_v2_t * l_cp = p_tcd->cp;
+        opj_cp_t * l_cp = p_tcd->cp;
         OPJ_UINT32 l_nb_written = 0;
 
         if (p_cstr_info)  {

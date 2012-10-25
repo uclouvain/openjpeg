@@ -332,117 +332,6 @@ typedef struct opj_tcp_v2
 
 
 
-
-/** V1 STYLE
-Coding parameters
-*/
-typedef struct opj_cp {
-	/** Digital cinema profile*/
-	OPJ_CINEMA_MODE cinema;
-	/** Maximum rate for each component. If == 0, component size limitation is not considered */
-	int max_comp_size;
-	/** Size of the image in bits*/
-	int img_size;
-	/** Rsiz*/
-	OPJ_RSIZ_CAPABILITIES rsiz;
-	/** Enabling Tile part generation*/
-	char tp_on;
-	/** Flag determining tile part generation*/
-	char tp_flag;
-	/** Position of tile part flag in progression order*/
-	int tp_pos;
-	/** allocation by rate/distortion */
-	int disto_alloc;
-	/** allocation by fixed layer */
-	int fixed_alloc;
-	/** add fixed_quality */
-	int fixed_quality;
-	/** if != 0, then original dimension divided by 2^(reduce); if == 0 or not used, image is decoded to the full resolution */
-	int reduce;
-	/** if != 0, then only the first "layer" layers are decoded; if == 0 or not used, all the quality layers are decoded */
-	int layer;
-	/** if == NO_LIMITATION, decode entire codestream; if == LIMIT_TO_MAIN_HEADER then only decode the main header */
-	OPJ_LIMIT_DECODING limit_decoding;
-	/** XTOsiz */
-	int tx0;
-	/** YTOsiz */
-	int ty0;
-	/** XTsiz */
-	int tdx;
-	/** YTsiz */
-	int tdy;
-	/** comment for coding */
-	char *comment;
-	/** number of tiles in width */
-	int tw;
-	/** number of tiles in heigth */
-	int th;
-	/** ID number of the tiles present in the codestream */
-	int *tileno;
-	/** size of the vector tileno */
-	int tileno_size;
-	/** packet header store there for futur use in t2_decode_packet */
-	unsigned char *ppm_data;
-	/** pointer remaining on the first byte of the first header if ppm is used */
-	unsigned char *ppm_data_first;
-	/** if ppm == 1 --> there was a PPM marker for the present tile */
-	int ppm;
-	/** use in case of multiple marker PPM (number of info already store) */
-	int ppm_store;
-	/** use in case of multiple marker PPM (case on non-finished previous info) */
-	int ppm_previous;
-	/** ppmbug1 */
-	int ppm_len;
-	/** tile coding parameters */
-	opj_tcp_t *tcps;
-	/** fixed layer */
-	int *matrice;
-/* UniPG>> */
-#ifdef USE_JPWL
-	/** enables writing of EPC in MH, thus activating JPWL */
-	opj_bool epc_on;
-	/** enables writing of EPB, in case of activated JPWL */
-	opj_bool epb_on;
-	/** enables writing of ESD, in case of activated JPWL */
-	opj_bool esd_on;
-	/** enables writing of informative techniques of ESD, in case of activated JPWL */
-	opj_bool info_on;
-	/** enables writing of RED, in case of activated JPWL */
-	opj_bool red_on;
-	/** error protection method for MH (0,1,16,32,37-128) */
-	int hprot_MH;
-	/** tile number of header protection specification (>=0) */
-	int hprot_TPH_tileno[JPWL_MAX_NO_TILESPECS];
-	/** error protection methods for TPHs (0,1,16,32,37-128) */
-	int hprot_TPH[JPWL_MAX_NO_TILESPECS];
-	/** tile number of packet protection specification (>=0) */
-	int pprot_tileno[JPWL_MAX_NO_PACKSPECS];
-	/** packet number of packet protection specification (>=0) */
-	int pprot_packno[JPWL_MAX_NO_PACKSPECS];
-	/** error protection methods for packets (0,1,16,32,37-128) */
-	int pprot[JPWL_MAX_NO_PACKSPECS];
-	/** enables writing of ESD, (0/2/4 bytes) */
-	int sens_size;
-	/** sensitivity addressing size (0=auto/2/4 bytes) */
-	int sens_addr;
-	/** sensitivity range (0-3) */
-	int sens_range;
-	/** sensitivity method for MH (-1,0-7) */
-	int sens_MH;
-	/** tile number of sensitivity specification (>=0) */
-	int sens_TPH_tileno[JPWL_MAX_NO_TILESPECS];
-	/** sensitivity methods for TPHs (-1,0-7) */
-	int sens_TPH[JPWL_MAX_NO_TILESPECS];
-	/** enables JPWL correction at the decoder */
-	opj_bool correct;
-	/** expected number of components at the decoder */
-	int exp_comps;
-	/** maximum number of tiles at the decoder */
-	int max_tiles;
-#endif /* USE_JPWL */
-/* <<UniPG */
-} opj_cp_t;
-
 typedef struct opj_encoding_param
 {
 	/** Digital cinema profile*/
@@ -479,7 +368,7 @@ opj_decoding_param_t;
 /**
  * Coding parameters
  */
-typedef struct opj_cp_v2
+typedef struct opj_cp
 {
 	/** Size of the image in bits*/
 	/*int img_size;*/
@@ -581,7 +470,7 @@ typedef struct opj_cp_v2
 	/** tells if the parameter is a coding or decoding one */
 	OPJ_UINT32 m_is_decoder : 1;
 /* <<UniPG */
-} opj_cp_v2_t;
+} opj_cp_t;
 
 
 typedef struct opj_j2k_dec
@@ -694,7 +583,7 @@ typedef struct opj_j2k
 	opj_image_t* m_output_image;
 
 	/** Coding parameters */
-	opj_cp_v2_t m_cp;
+	opj_cp_t m_cp;
 
 	/** the list of procedures to exec **/
 	opj_procedure_list_t *	m_procedure_list;

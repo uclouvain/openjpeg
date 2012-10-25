@@ -83,7 +83,7 @@ static opj_bool opj_pi_next_cprl(opj_pi_iterator_t * pi);
  * @param	p_dx_min		the minimum dx of all the components of all the resolutions for the tile.
  * @param	p_dy_min		the minimum dy of all the components of all the resolutions for the tile.
  */
-static void opj_pi_update_encode_poc_and_final ( opj_cp_v2_t *p_cp,
+static void opj_pi_update_encode_poc_and_final ( opj_cp_t *p_cp,
                                                  OPJ_UINT32 p_tileno,
                                                  OPJ_INT32 p_tx0,
                                                  OPJ_INT32 p_tx1,
@@ -108,7 +108,7 @@ static void opj_pi_update_encode_poc_and_final ( opj_cp_v2_t *p_cp,
  * @param	dx_min		the minimum dx of all the components of all the resolutions for the tile.
  * @param	dy_min		the minimum dy of all the components of all the resolutions for the tile.
  */
-static void opj_pi_update_encode_not_poc (  opj_cp_v2_t *p_cp,
+static void opj_pi_update_encode_not_poc (  opj_cp_t *p_cp,
                                             OPJ_UINT32 p_num_comps,
                                             OPJ_UINT32 p_tileno,
                                             OPJ_INT32 p_tx0,
@@ -135,7 +135,7 @@ static void opj_pi_update_encode_not_poc (  opj_cp_v2_t *p_cp,
  * @param	dy_min			pointer that will hold the the minimum dy of all the components of all the resolutions for the tile.
  */
 static void opj_get_encoding_parameters(const opj_image_t *p_image,
-                                        const opj_cp_v2_t *p_cp,
+                                        const opj_cp_t *p_cp,
                                         OPJ_UINT32  tileno,
                                         OPJ_INT32  * p_tx0,
                                         OPJ_INT32 * p_tx1,
@@ -167,7 +167,7 @@ static void opj_get_encoding_parameters(const opj_image_t *p_image,
  * @param	p_resolutions	pointer to an area corresponding to the one described above.
  */
 static void opj_get_all_encoding_parameters(const opj_image_t *p_image,
-                                            const opj_cp_v2_t *p_cp,
+                                            const opj_cp_t *p_cp,
                                             OPJ_UINT32 tileno,
                                             OPJ_INT32 * p_tx0,
                                             OPJ_INT32 * p_tx1,
@@ -187,7 +187,7 @@ static void opj_get_all_encoding_parameters(const opj_image_t *p_image,
  * @param	p_tile_no	the index of the tile from which creating the packet iterator.
  */
 static opj_pi_iterator_t * opj_pi_create(	const opj_image_t *image,
-                                            const opj_cp_v2_t *cp,
+                                            const opj_cp_t *cp,
                                             OPJ_UINT32 tileno );
 /**
  * FIXME DOC
@@ -208,7 +208,7 @@ static void opj_pi_update_decode_poc (  opj_pi_iterator_t * p_pi,
  * FIXME DOC
  */
 opj_bool opj_pi_check_next_level(	OPJ_INT32 pos,
-								opj_cp_v2_t *cp,
+								opj_cp_t *cp,
 								OPJ_UINT32 tileno,
 								OPJ_UINT32 pino,
 								const OPJ_CHAR *prog);
@@ -546,7 +546,7 @@ LABEL_SKIP:;
 }
 
 void opj_get_encoding_parameters(	const opj_image_t *p_image,
-                                    const opj_cp_v2_t *p_cp,
+                                    const opj_cp_t *p_cp,
                                     OPJ_UINT32 p_tileno,
                                     OPJ_INT32 * p_tx0,
                                     OPJ_INT32  * p_tx1,
@@ -660,7 +660,7 @@ void opj_get_encoding_parameters(	const opj_image_t *p_image,
 
 
 void opj_get_all_encoding_parameters(   const opj_image_t *p_image,
-                                        const opj_cp_v2_t *p_cp,
+                                        const opj_cp_t *p_cp,
                                         OPJ_UINT32 tileno,
                                         OPJ_INT32 * p_tx0,
                                         OPJ_INT32 * p_tx1,
@@ -778,7 +778,7 @@ void opj_get_all_encoding_parameters(   const opj_image_t *p_image,
 }
 
 opj_pi_iterator_t * opj_pi_create(	const opj_image_t *image,
-                                    const opj_cp_v2_t *cp,
+                                    const opj_cp_t *cp,
                                     OPJ_UINT32 tileno )
 {
 	/* loop*/
@@ -841,7 +841,7 @@ opj_pi_iterator_t * opj_pi_create(	const opj_image_t *image,
 	return l_pi;
 }
 
-void opj_pi_update_encode_poc_and_final (   opj_cp_v2_t *p_cp,
+void opj_pi_update_encode_poc_and_final (   opj_cp_t *p_cp,
                                             OPJ_UINT32 p_tileno,
                                             OPJ_INT32 p_tx0,
                                             OPJ_INT32 p_tx1,
@@ -917,7 +917,7 @@ void opj_pi_update_encode_poc_and_final (   opj_cp_v2_t *p_cp,
 	}
 }
 
-void opj_pi_update_encode_not_poc (	opj_cp_v2_t *p_cp,
+void opj_pi_update_encode_not_poc (	opj_cp_t *p_cp,
                                     OPJ_UINT32 p_num_comps,
                                     OPJ_UINT32 p_tileno,
                                     OPJ_INT32 p_tx0,
@@ -1050,7 +1050,7 @@ void opj_pi_update_decode_not_poc (opj_pi_iterator_t * p_pi,
 
 
 opj_bool opj_pi_check_next_level(	OPJ_INT32 pos,
-								opj_cp_v2_t *cp,
+								opj_cp_t *cp,
 								OPJ_UINT32 tileno,
 								OPJ_UINT32 pino,
 								const OPJ_CHAR *prog)
@@ -1138,7 +1138,7 @@ opj_bool opj_pi_check_next_level(	OPJ_INT32 pos,
 ==========================================================
 */
 opj_pi_iterator_t *opj_pi_create_decode(opj_image_t *p_image,
-										opj_cp_v2_t *p_cp,
+										opj_cp_t *p_cp,
 										OPJ_UINT32 p_tile_no)
 {
 	/* loop */
@@ -1340,7 +1340,7 @@ opj_pi_iterator_t *opj_pi_create_decode(opj_image_t *p_image,
 
 
 opj_pi_iterator_t *opj_pi_initialise_encode(const opj_image_t *p_image,
-                                            opj_cp_v2_t *p_cp,
+                                            opj_cp_t *p_cp,
                                             OPJ_UINT32 p_tile_no,
                                             J2K_T2_MODE p_t2_mode )
 {
@@ -1526,7 +1526,7 @@ opj_pi_iterator_t *opj_pi_initialise_encode(const opj_image_t *p_image,
 }
 
 void opj_pi_create_encode( 	opj_pi_iterator_t *pi,
-							opj_cp_v2_t *cp,
+							opj_cp_t *cp,
 							OPJ_UINT32 tileno,
 							OPJ_UINT32 pino,
 							OPJ_UINT32 tpnum,
@@ -1816,7 +1816,7 @@ void opj_pi_destroy(opj_pi_iterator_t *p_pi,
 
 
 void opj_pi_update_encoding_parameters(	const opj_image_t *p_image,
-                                        opj_cp_v2_t *p_cp,
+                                        opj_cp_t *p_cp,
                                         OPJ_UINT32 p_tile_no )
 {
 	/* encoding parameters to set */

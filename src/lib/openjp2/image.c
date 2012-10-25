@@ -99,7 +99,7 @@ void OPJ_CALLCONV opj_image_destroy(opj_image_t *image) {
  * @param p_image_header	the image header to update.
  * @param p_cp				the coding parameters from which to update the image.
  */
-void opj_image_comp_header_update(opj_image_t * p_image_header, const struct opj_cp_v2 * p_cp)
+void opj_image_comp_header_update(opj_image_t * p_image_header, const struct opj_cp * p_cp)
 {
 	OPJ_UINT32 i, l_width, l_height;
 	OPJ_INT32 l_x0, l_y0, l_x1, l_y1;

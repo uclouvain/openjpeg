@@ -200,7 +200,7 @@ typedef struct opj_tcd
 	/** image header */
 	opj_image_t *image;
 	/** coding parameters */
-	opj_cp_v2_t *cp;
+	opj_cp_t *cp;
 	/** coding/decoding parameters common to all tiles */
 	opj_tcp_v2_t *tcp;
 	/** current encoded/decoded tile */
@@ -241,7 +241,7 @@ void opj_tcd_destroy(opj_tcd_t *tcd);
 */
 opj_bool opj_tcd_init(	opj_tcd_t *p_tcd,
 						opj_image_t * p_image,
-						opj_cp_v2_t * p_cp );
+						opj_cp_t * p_cp );
 
 /**
  * Allocates memory for decoding a specific tile.

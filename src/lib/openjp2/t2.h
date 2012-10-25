@@ -49,7 +49,7 @@ typedef struct opj_t2 {
 	/** Encoding: pointer to the src image. Decoding: pointer to the dst image. */
 	opj_image_t *image;
 	/** pointer to the image coding parameters */
-	opj_cp_v2_t *cp;
+	opj_cp_t *cp;
 } opj_t2_t;
 
 /** @name Exported functions */
@@ -111,7 +111,7 @@ opj_bool opj_t2_decode_packets(	opj_t2_t *t2,
  * @param	p_cp		Image coding parameters.
  * @return		a new T2 handle if successful, NULL otherwise.
 */
-opj_t2_t* opj_t2_create(opj_image_t *p_image, opj_cp_v2_t *p_cp);
+opj_t2_t* opj_t2_create(opj_image_t *p_image, opj_cp_t *p_cp);
 
 /**
 Destroy a T2 handle
