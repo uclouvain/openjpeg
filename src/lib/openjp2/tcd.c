@@ -696,7 +696,7 @@ opj_bool FUNCTION (     opj_tcd_v2_t *p_tcd,                        \
                 }                                                   \
                 else if (l_data_size > l_tilec->data_size) {        \
                         OPJ_INT32 * new_data = (OPJ_INT32 *) opj_realloc(l_tilec->data, l_data_size);                                                                                                             \
-                        /* opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory to handle tile data\n");                                                                                                 */  \
+                        /* opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to handle tile data\n");                                                                                                 */  \
                         fprintf(stderr, "Not enough memory to handle tile data\n");                                                                                                                               \
                         if (! new_data) {                           \
                                 opj_free(l_tilec->data);            \
@@ -723,7 +723,7 @@ opj_bool FUNCTION (     opj_tcd_v2_t *p_tcd,                        \
                 else if (l_data_size > l_tilec->resolutions_size) { \
                         opj_tcd_resolution_v2_t* new_resolutions = (opj_tcd_resolution_v2_t *) opj_realloc(l_tilec->resolutions, l_data_size);                                                                    \
                         if (! new_resolutions) {                    \
-                                /* opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory to tile resolutions\n");                                                                                         */  \
+                                /* opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to tile resolutions\n");                                                                                         */  \
                                 fprintf(stderr, "Not enough memory to tile resolutions\n");                                                                                                                       \
                                 opj_free(l_tilec->resolutions);     \
                                 l_tilec->resolutions = NULL;        \
@@ -842,7 +842,7 @@ opj_bool FUNCTION (     opj_tcd_v2_t *p_tcd,                        \
                                                                                                                                                                                                                   \
                                         opj_tcd_precinct_v2_t * new_precincts = (opj_tcd_precinct_v2_t *) opj_realloc(l_band->precincts,/*3 * */ l_nb_precinct_size);                                             \
                                         if (! new_precincts) {                                                                                                                                                    \
-                                                /* opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory to handle band precints\n");                                                                    */   \
+                                                /* opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to handle band precints\n");                                                                    */   \
                                                 fprintf(stderr, "Not enough memory to handle band precints\n");                                                                                                   \
                                                 opj_free(l_band->precincts);                                                                                                                                      \
                                                 l_band->precincts = NULL;                                                                                                                                         \
@@ -906,7 +906,7 @@ opj_bool FUNCTION (     opj_tcd_v2_t *p_tcd,                        \
                                                         opj_free(l_current_precinct->cblks.ELEMENT);                                                                                                              \
                                                         l_current_precinct->cblks.ELEMENT = NULL;                                                                                                                 \
                                                         l_current_precinct->block_size = 0;                                                                                                                       \
-                                                        /* opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory for current precinct codeblock element\n");                                              */  \
+                                                        /* opj_event_msg(p_manager, EVT_ERROR, "Not enough memory for current precinct codeblock element\n");                                              */  \
                                                         fprintf(stderr, "Not enough memory for current precinct codeblock element\n");                                                                            \
                                                         return OPJ_FALSE;                                                                                                                                         \
                                                 }                                                                                                                                                                 \
@@ -1620,7 +1620,7 @@ opj_bool opj_tcd_mct_decode ( opj_tcd_v2_t *p_tcd )
                 }
         }
         else {
-                /* FIXME need to use opj_event_msg_v2 function */
+                /* FIXME need to use opj_event_msg function */
                 fprintf(stderr,"Number of components (%d) is inconsistent with a MCT. Skip the MCT step.\n",l_tile->numcomps);
         }
 

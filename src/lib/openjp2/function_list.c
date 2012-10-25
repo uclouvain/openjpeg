@@ -82,7 +82,7 @@ opj_bool opj_procedure_list_add_procedure (opj_procedure_list_t * p_validation_l
                         opj_free(p_validation_list->m_procedures);
                         p_validation_list->m_nb_max_procedures = 0;
                         p_validation_list->m_nb_procedures = 0;
-                        /* opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory to add a new validation procedure\n"); */
+                        /* opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to add a new validation procedure\n"); */
                         fprintf(stderr, "Not enough memory to add a new validation procedure\n");
                         
                         return OPJ_FALSE;

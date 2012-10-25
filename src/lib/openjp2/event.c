@@ -72,7 +72,7 @@ static void opj_default_callback (const char *msg, void *client_data){}
 
 
 /* ----------------------------------------------------------------------- */
-opj_bool opj_event_msg_v2(opj_event_mgr_t* p_event_mgr, int event_type, const char *fmt, ...) {
+opj_bool opj_event_msg(opj_event_mgr_t* p_event_mgr, int event_type, const char *fmt, ...) {
 #define MSG_SIZE 512 /* 512 bytes should be more than enough for a short message */
 	opj_msg_callback msg_handler = 00;
 	void * l_data = 00;

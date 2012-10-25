@@ -435,7 +435,7 @@ static void opj_jp2_setup_header_reading (opj_jp2_v2_t *jp2);
 
 		opj_read_bytes(l_data_header,&l_xl_part_size, 4);
 		if (l_xl_part_size != 0) {
-			opj_event_msg_v2(p_manager, EVT_ERROR, "Cannot handle box sizes higher than 2^32\n");
+			opj_event_msg(p_manager, EVT_ERROR, "Cannot handle box sizes higher than 2^32\n");
 			return OPJ_FALSE;
 		}
 		opj_read_bytes(l_data_header,&(box->length), 4);
@@ -478,7 +478,7 @@ opj_bool opj_jp2_read_ihdr( opj_jp2_v2_t *jp2,
 	assert(p_manager != 00);
 
 	if (p_image_header_size != 14) {
-		opj_event_msg_v2(p_manager, EVT_ERROR, "Bad image header box (bad size)\n");
+		opj_event_msg(p_manager, EVT_ERROR, "Bad image header box (bad size)\n");
 		return OPJ_FALSE;
 	}
 
@@ -492,7 +492,7 @@ opj_bool opj_jp2_read_ihdr( opj_jp2_v2_t *jp2,
 	/* allocate memory for components */
 	jp2->comps = (opj_jp2_comps_t*) opj_malloc(jp2->numcomps * sizeof(opj_jp2_comps_t));
 	if (jp2->comps == 0) {
-		opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory to handle image header (ihdr)\n");
+		opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to handle image header (ihdr)\n");
 		return OPJ_FALSE;
 	}
 	memset(jp2->comps,0,jp2->numcomps * sizeof(opj_jp2_comps_t));
@@ -505,7 +505,7 @@ opj_bool opj_jp2_read_ihdr( opj_jp2_v2_t *jp2,
 
 	/* Should be equal to 7 cf. chapter about image header box of the norm */
 	if (jp2->C != 7){
-		opj_event_msg_v2(p_manager, EVT_INFO, "JP2 IHDR box: compression type indicate that the file is not a conforming JP2 file (%d) \n", jp2->C);
+		opj_event_msg(p_manager, EVT_INFO, "JP2 IHDR box: compression type indicate that the file is not a conforming JP2 file (%d) \n", jp2->C);
 	}
 
 	opj_read_bytes(p_image_header_data,&(jp2->UnkC),1);			/* UnkC */
@@ -619,12 +619,12 @@ opj_bool opj_jp2_read_bpcc( opj_jp2_v2_t *jp2,
 
 	
 	if (jp2->bpc != 255 ){
-		opj_event_msg_v2(p_manager, EVT_WARNING, "A BPCC header box is available although BPC given by the IHDR box (%d) indicate components bit depth is constant\n",jp2->bpc);
+		opj_event_msg(p_manager, EVT_WARNING, "A BPCC header box is available although BPC given by the IHDR box (%d) indicate components bit depth is constant\n",jp2->bpc);
 	}
 
 	/* and length is relevant */
 	if (p_bpc_header_size != jp2->numcomps) {
-		opj_event_msg_v2(p_manager, EVT_ERROR, "Bad BPCC header box (bad size)\n");
+		opj_event_msg(p_manager, EVT_ERROR, "Bad BPCC header box (bad size)\n");
 		return OPJ_FALSE;
 	}
 
@@ -863,7 +863,7 @@ opj_bool opj_jp2_read_cmap(	opj_jp2_v2_t * jp2,
 
 	/* Need nr_channels: */
 	if(jp2->color.jp2_pclr == NULL) {
-		opj_event_msg_v2(p_manager, EVT_ERROR, "Need to read a PCLR box before the CMAP box.\n");
+		opj_event_msg(p_manager, EVT_ERROR, "Need to read a PCLR box before the CMAP box.\n");
 		return OPJ_FALSE;
 	}
 
@@ -871,7 +871,7 @@ opj_bool opj_jp2_read_cmap(	opj_jp2_v2_t * jp2,
 	 * inside a JP2 Header box' :
 	*/
 	if(jp2->color.jp2_pclr->cmap) {
-		opj_event_msg_v2(p_manager, EVT_ERROR, "Only one CMAP box is allowed.\n");
+		opj_event_msg(p_manager, EVT_ERROR, "Only one CMAP box is allowed.\n");
 		return OPJ_FALSE;
 	}
 
@@ -957,7 +957,7 @@ opj_bool opj_jp2_read_cdef(	opj_jp2_v2_t * jp2,
 	p_cdef_header_data+= 2;
 
 	if ( (OPJ_UINT16)l_value == 0){ /* szukw000: FIXME */
-		opj_event_msg_v2(p_manager, EVT_ERROR, "Number of channel description is equal to zero in CDEF box.\n");
+		opj_event_msg(p_manager, EVT_ERROR, "Number of channel description is equal to zero in CDEF box.\n");
 		return OPJ_FALSE;
 	}
 
@@ -998,7 +998,7 @@ opj_bool opj_jp2_read_colr( opj_jp2_v2_t *jp2,
 	assert(p_manager != 00);
 
 	if (p_colr_header_size < 3) {
-		opj_event_msg_v2(p_manager, EVT_ERROR, "Bad COLR header box (bad size)\n");
+		opj_event_msg(p_manager, EVT_ERROR, "Bad COLR header box (bad size)\n");
 		return OPJ_FALSE;
 	}
 
@@ -1006,7 +1006,7 @@ opj_bool opj_jp2_read_colr( opj_jp2_v2_t *jp2,
 	 * Specification boxes after the first.'
 	*/
 	if(jp2->color.jp2_has_colr) {
-		opj_event_msg_v2(p_manager, EVT_INFO, "A conforming JP2 reader shall ignore all Colour Specification boxes after the first, so we ignore this one.\n");
+		opj_event_msg(p_manager, EVT_INFO, "A conforming JP2 reader shall ignore all Colour Specification boxes after the first, so we ignore this one.\n");
 		p_colr_header_data += p_colr_header_size;
 		return OPJ_TRUE;
 	}
@@ -1022,7 +1022,7 @@ opj_bool opj_jp2_read_colr( opj_jp2_v2_t *jp2,
 
 	if (jp2->meth == 1) {
 		if (p_colr_header_size != 7) {
-			opj_event_msg_v2(p_manager, EVT_ERROR, "Bad BPCC header box (bad size)\n");
+			opj_event_msg(p_manager, EVT_ERROR, "Bad BPCC header box (bad size)\n");
 			return OPJ_FALSE;
 		}
 
@@ -1047,7 +1047,7 @@ opj_bool opj_jp2_read_colr( opj_jp2_v2_t *jp2,
 
 	}
 	else 
-		opj_event_msg_v2(p_manager, EVT_INFO, "COLR BOX meth value is not a regular value (%d), so we will skip the fields following the approx field.\n", jp2->meth);
+		opj_event_msg(p_manager, EVT_INFO, "COLR BOX meth value is not a regular value (%d), so we will skip the fields following the approx field.\n", jp2->meth);
 
 	jp2->color.jp2_has_colr = 1;
 
@@ -1064,7 +1064,7 @@ opj_bool opj_jp2_decode(opj_jp2_v2_t *jp2,
 
 	/* J2K decoding */
 	if( ! opj_j2k_decode(jp2->j2k, p_stream, p_image, p_manager) ) {
-		opj_event_msg_v2(p_manager, EVT_ERROR, "Failed to decode the codestream in the JP2 file\n");
+		opj_event_msg(p_manager, EVT_ERROR, "Failed to decode the codestream in the JP2 file\n");
 		return OPJ_FALSE;
 	}
 
@@ -1146,7 +1146,7 @@ opj_bool opj_jp2_write_jp2h(opj_jp2_v2_t *jp2,
 	for (i=0;i<l_nb_pass;++i) {
 		l_current_writer->m_data = l_current_writer->handler(jp2,&(l_current_writer->m_size));
 		if (l_current_writer->m_data == 00) {
-			opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory to hold JP2 Header data\n");
+			opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to hold JP2 Header data\n");
 			l_result = OPJ_FALSE;
 			break;
 		}
@@ -1172,7 +1172,7 @@ opj_bool opj_jp2_write_jp2h(opj_jp2_v2_t *jp2,
 	
 	/* write super box data on stream */
 	if (opj_stream_write_data(stream,l_jp2h_data,8,p_manager) != 8) {
-		opj_event_msg_v2(p_manager, EVT_ERROR, "Stream error while writing JP2 Header box\n");
+		opj_event_msg(p_manager, EVT_ERROR, "Stream error while writing JP2 Header box\n");
 		l_result = OPJ_FALSE;
 	}
 	
@@ -1180,7 +1180,7 @@ opj_bool opj_jp2_write_jp2h(opj_jp2_v2_t *jp2,
 		l_current_writer = l_writers;
 		for (i=0;i<l_nb_pass;++i) {
 			if (opj_stream_write_data(stream,l_current_writer->m_data,l_current_writer->m_size,p_manager) != l_current_writer->m_size) {
-				opj_event_msg_v2(p_manager, EVT_ERROR, "Stream error while writing JP2 Header box\n");
+				opj_event_msg(p_manager, EVT_ERROR, "Stream error while writing JP2 Header box\n");
 				l_result = OPJ_FALSE;
 				break;
 			}
@@ -1218,7 +1218,7 @@ opj_bool opj_jp2_write_ftyp(opj_jp2_v2_t *jp2,
 	l_ftyp_data = (OPJ_BYTE *) opj_malloc(l_ftyp_size);
 	
 	if (l_ftyp_data == 00) {
-		opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory to handle ftyp data\n");
+		opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to handle ftyp data\n");
 		return OPJ_FALSE;
 	}
 
@@ -1245,7 +1245,7 @@ opj_bool opj_jp2_write_ftyp(opj_jp2_v2_t *jp2,
 	l_result = (opj_stream_write_data(cio,l_ftyp_data,l_ftyp_size,p_manager) == l_ftyp_size);
 	if (! l_result)
 	{
-		opj_event_msg_v2(p_manager, EVT_ERROR, "Error while writing ftyp data to stream\n");
+		opj_event_msg(p_manager, EVT_ERROR, "Error while writing ftyp data to stream\n");
 	}
 
 	opj_free(l_ftyp_data);
@@ -1273,17 +1273,17 @@ opj_bool opj_jp2_write_jp2c(opj_jp2_v2_t *jp2,
 	opj_write_bytes(l_data_header + 4,JP2_JP2C,4);									   /* JP2C */
 
 	if (! opj_stream_seek(cio,jp2->j2k_codestream_offset,p_manager)) {
-		opj_event_msg_v2(p_manager, EVT_ERROR, "Failed to seek in the stream.\n");
+		opj_event_msg(p_manager, EVT_ERROR, "Failed to seek in the stream.\n");
 		return OPJ_FALSE;
 	}
 	
 	if (opj_stream_write_data(cio,l_data_header,8,p_manager) != 8) {
-		opj_event_msg_v2(p_manager, EVT_ERROR, "Failed to seek in the stream.\n");
+		opj_event_msg(p_manager, EVT_ERROR, "Failed to seek in the stream.\n");
 		return OPJ_FALSE;
 	}
 
 	if (! opj_stream_seek(cio,j2k_codestream_exit,p_manager)) {
-		opj_event_msg_v2(p_manager, EVT_ERROR, "Failed to seek in the stream.\n");
+		opj_event_msg(p_manager, EVT_ERROR, "Failed to seek in the stream.\n");
 		return OPJ_FALSE;
 	}
 
@@ -1350,7 +1350,7 @@ void opj_jp2_setup_encoder(	opj_jp2_v2_t *jp2,
 
 	/* Check if number of components respects standard */
 	if (image->numcomps < 1 || image->numcomps > 16384) {
-		opj_event_msg_v2(p_manager, EVT_ERROR, "Invalid number of components specified while setting up JP2 encoder\n");
+		opj_event_msg(p_manager, EVT_ERROR, "Invalid number of components specified while setting up JP2 encoder\n");
 		return;
 	}
 
@@ -1552,7 +1552,7 @@ opj_bool opj_jp2_read_header_procedure(  opj_jp2_v2_t *jp2,
 	l_current_data = (OPJ_BYTE*)opj_malloc(l_last_data_size);
 
 	if (l_current_data == 00) {
-		opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory to handle jpeg2000 file header\n");
+		opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to handle jpeg2000 file header\n");
 		return OPJ_FALSE;
 	}
 	memset(l_current_data, 0 , l_last_data_size);
@@ -1566,13 +1566,13 @@ opj_bool opj_jp2_read_header_procedure(  opj_jp2_v2_t *jp2,
 				return OPJ_TRUE;
 			}
 			else {
-				opj_event_msg_v2(p_manager, EVT_ERROR, "bad placed jpeg codestream\n");
+				opj_event_msg(p_manager, EVT_ERROR, "bad placed jpeg codestream\n");
 				opj_free(l_current_data);
 				return OPJ_FALSE;
 			}
 		}
 		else if	(box.length == 0) {
-			opj_event_msg_v2(p_manager, EVT_ERROR, "Cannot handle box of undefined sizes\n");
+			opj_event_msg(p_manager, EVT_ERROR, "Cannot handle box of undefined sizes\n");
 			opj_free(l_current_data);
 			return OPJ_FALSE;
 		}
@@ -1585,7 +1585,7 @@ opj_bool opj_jp2_read_header_procedure(  opj_jp2_v2_t *jp2,
 				OPJ_BYTE* new_current_data = (OPJ_BYTE*)opj_realloc(l_current_data,l_current_data_size);
 				if (!l_current_data){
 					opj_free(l_current_data);
-                    opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory to handle jpeg2000 box\n");
+                    opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to handle jpeg2000 box\n");
 					return OPJ_FALSE;
 				}
                 l_current_data = new_current_data;
@@ -1594,7 +1594,7 @@ opj_bool opj_jp2_read_header_procedure(  opj_jp2_v2_t *jp2,
 
 			l_nb_bytes_read = opj_stream_read_data(stream,l_current_data,l_current_data_size,p_manager);
 			if (l_nb_bytes_read != l_current_data_size) {
-				opj_event_msg_v2(p_manager, EVT_ERROR, "Problem with reading JPEG2000 box, stream error\n");
+				opj_event_msg(p_manager, EVT_ERROR, "Problem with reading JPEG2000 box, stream error\n");
                 opj_free(l_current_data);                
 				return OPJ_FALSE;
 			}
@@ -1607,7 +1607,7 @@ opj_bool opj_jp2_read_header_procedure(  opj_jp2_v2_t *jp2,
 		else {
 			jp2->jp2_state |= JP2_STATE_UNKNOWN;
 			if (opj_stream_skip(stream,l_current_data_size,p_manager) != l_current_data_size) {
-				opj_event_msg_v2(p_manager, EVT_ERROR, "Problem with skipping JPEG2000 box, stream error\n");
+				opj_event_msg(p_manager, EVT_ERROR, "Problem with skipping JPEG2000 box, stream error\n");
 				opj_free(l_current_data);
 				return OPJ_FALSE;
 			}
@@ -1746,20 +1746,20 @@ static opj_bool opj_jp2_read_jp(opj_jp2_v2_t *jp2,
 	assert(p_manager != 00);
 
 	if (jp2->jp2_state != JP2_STATE_NONE) {
-		opj_event_msg_v2(p_manager, EVT_ERROR, "The signature box must be the first box in the file.\n");
+		opj_event_msg(p_manager, EVT_ERROR, "The signature box must be the first box in the file.\n");
 		return OPJ_FALSE;
 	}
 
 	/* assure length of data is correct (4 -> magic number) */
 	if (p_header_size != 4) {
-		opj_event_msg_v2(p_manager, EVT_ERROR, "Error with JP signature Box size\n");
+		opj_event_msg(p_manager, EVT_ERROR, "Error with JP signature Box size\n");
 		return OPJ_FALSE;
 	}
 
 	/* rearrange data */
 	opj_read_bytes(p_header_data,&l_magic_number,4);
 	if (l_magic_number != 0x0d0a870a ) {
-		opj_event_msg_v2(p_manager, EVT_ERROR, "Error with JP Signature : bad magic number\n");
+		opj_event_msg(p_manager, EVT_ERROR, "Error with JP Signature : bad magic number\n");
 		return OPJ_FALSE;
 	}
 
@@ -1792,13 +1792,13 @@ static opj_bool opj_jp2_read_ftyp(	opj_jp2_v2_t *jp2,
 	assert(p_manager != 00);
 
 	if (jp2->jp2_state != JP2_STATE_SIGNATURE) {
-		opj_event_msg_v2(p_manager, EVT_ERROR, "The ftyp box must be the second box in the file.\n");
+		opj_event_msg(p_manager, EVT_ERROR, "The ftyp box must be the second box in the file.\n");
 		return OPJ_FALSE;
 	}
 
 	/* assure length of data is correct */
 	if (p_header_size < 8) {
-		opj_event_msg_v2(p_manager, EVT_ERROR, "Error with FTYP signature Box size\n");
+		opj_event_msg(p_manager, EVT_ERROR, "Error with FTYP signature Box size\n");
 		return OPJ_FALSE;
 	}
 
@@ -1812,7 +1812,7 @@ static opj_bool opj_jp2_read_ftyp(	opj_jp2_v2_t *jp2,
 
 	/* the number of remaining bytes should be a multiple of 4 */
 	if ((l_remaining_bytes & 0x3) != 0) {
-		opj_event_msg_v2(p_manager, EVT_ERROR, "Error with FTYP signature Box size\n");
+		opj_event_msg(p_manager, EVT_ERROR, "Error with FTYP signature Box size\n");
 		return OPJ_FALSE;
 	}
 
@@ -1821,7 +1821,7 @@ static opj_bool opj_jp2_read_ftyp(	opj_jp2_v2_t *jp2,
 	if (jp2->numcl) {
 		jp2->cl = (OPJ_UINT32 *) opj_malloc(jp2->numcl * sizeof(OPJ_UINT32));
 		if (jp2->cl == 00) {
-			opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory with FTYP Box\n");
+			opj_event_msg(p_manager, EVT_ERROR, "Not enough memory with FTYP Box\n");
 			return OPJ_FALSE;
 		}
 		memset(jp2->cl,0,jp2->numcl * sizeof(OPJ_UINT32));
@@ -1883,7 +1883,7 @@ static opj_bool opj_jp2_read_jp2h(  opj_jp2_v2_t *jp2,
 
 	/* make sure the box is well placed */
 	if ((jp2->jp2_state & JP2_STATE_FILE_TYPE) != JP2_STATE_FILE_TYPE ) {
-		opj_event_msg_v2(p_manager, EVT_ERROR, "The  box must be the first box in the file.\n");
+		opj_event_msg(p_manager, EVT_ERROR, "The  box must be the first box in the file.\n");
 		return OPJ_FALSE;
 	}
 
@@ -1893,12 +1893,12 @@ static opj_bool opj_jp2_read_jp2h(  opj_jp2_v2_t *jp2,
 	while (p_header_size > 0) {
 
 		if (! opj_jp2_read_boxhdr_char(&box,p_header_data,&l_box_size,p_header_size, p_manager)) {
-			opj_event_msg_v2(p_manager, EVT_ERROR, "Stream error while reading JP2 Header box\n");
+			opj_event_msg(p_manager, EVT_ERROR, "Stream error while reading JP2 Header box\n");
 			return OPJ_FALSE;
 		}
 
 		if (box.length > p_header_size) {
-			opj_event_msg_v2(p_manager, EVT_ERROR, "Stream error while reading JP2 Header box: box length is inconsistent.\n");
+			opj_event_msg(p_manager, EVT_ERROR, "Stream error while reading JP2 Header box: box length is inconsistent.\n");
 			return OPJ_FALSE;
 		}
 
@@ -1940,7 +1940,7 @@ opj_bool opj_jp2_read_boxhdr_char(   opj_jp2_box_t *box,
 	assert(p_manager != 00);
 
 	if (p_box_max_size < 8) {
-		opj_event_msg_v2(p_manager, EVT_ERROR, "Cannot handle box of less than 8 bytes\n");
+		opj_event_msg(p_manager, EVT_ERROR, "Cannot handle box of less than 8 bytes\n");
 		return OPJ_FALSE;
 	}
 
@@ -1961,7 +1961,7 @@ opj_bool opj_jp2_read_boxhdr_char(   opj_jp2_box_t *box,
 		OPJ_UINT32 l_xl_part_size;
 
 		if (p_box_max_size < 16) {
-			opj_event_msg_v2(p_manager, EVT_ERROR, "Cannot handle XL box of less than 16 bytes\n");
+			opj_event_msg(p_manager, EVT_ERROR, "Cannot handle XL box of less than 16 bytes\n");
 			return OPJ_FALSE;
 		}
 
@@ -1970,7 +1970,7 @@ opj_bool opj_jp2_read_boxhdr_char(   opj_jp2_box_t *box,
 		*p_number_bytes_read += 4;
 
 		if (l_xl_part_size != 0) {
-			opj_event_msg_v2(p_manager, EVT_ERROR, "Cannot handle box sizes higher than 2^32\n");
+			opj_event_msg(p_manager, EVT_ERROR, "Cannot handle box sizes higher than 2^32\n");
 			return OPJ_FALSE;
 		}
 
@@ -1979,12 +1979,12 @@ opj_bool opj_jp2_read_boxhdr_char(   opj_jp2_box_t *box,
 		box->length = (OPJ_INT32)(l_value);
 
 		if (box->length == 0) {
-			opj_event_msg_v2(p_manager, EVT_ERROR, "Cannot handle box of undefined sizes\n");
+			opj_event_msg(p_manager, EVT_ERROR, "Cannot handle box of undefined sizes\n");
 			return OPJ_FALSE;
 		}
 	}
 	else if (box->length == 0) {
-		opj_event_msg_v2(p_manager, EVT_ERROR, "Cannot handle box of undefined sizes\n");
+		opj_event_msg(p_manager, EVT_ERROR, "Cannot handle box of undefined sizes\n");
 		return OPJ_FALSE;
 	}
 
@@ -2198,10 +2198,10 @@ opj_bool opj_jp2_get_tile(	opj_jp2_v2_t *p_jp2,
 	if (!p_image)
 		return OPJ_FALSE;
 
-	opj_event_msg_v2(p_manager, EVT_WARNING, "JP2 box which are after the codestream will not be read by this function.\n");
+	opj_event_msg(p_manager, EVT_WARNING, "JP2 box which are after the codestream will not be read by this function.\n");
 
 	if (! opj_j2k_get_tile(p_jp2->j2k, p_stream, p_image, p_manager, tile_index) ){
-		opj_event_msg_v2(p_manager, EVT_ERROR, "Failed to decode the codestream in the JP2 file\n");
+		opj_event_msg(p_manager, EVT_ERROR, "Failed to decode the codestream in the JP2 file\n");
 		return OPJ_FALSE;
 	}
 

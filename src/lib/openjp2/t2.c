@@ -1246,7 +1246,7 @@ opj_bool opj_t2_init_seg(   opj_tcd_cblk_dec_v2_t* cblk,
                         opj_free(cblk->segs);
                         cblk->segs = NULL;
                         cblk->m_current_max_segs = 0;
-                        /* opj_event_msg_v2(p_manager, EVT_ERROR, "Not enough memory to initialize segment %d\n", l_nb_segs); */
+                        /* opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to initialize segment %d\n", l_nb_segs); */
                         return OPJ_FALSE;
                 }
                 cblk->segs = new_segs;

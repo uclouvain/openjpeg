@@ -475,7 +475,7 @@ opj_bool OPJ_CALLCONV opj_setup_decoder(opj_codec_t *p_codec,
 		opj_codec_private_t * l_codec = (opj_codec_private_t *) p_codec;
 
 		if (! l_codec->is_decompressor) {
-			opj_event_msg_v2(&(l_codec->m_event_mgr), EVT_ERROR, 
+			opj_event_msg(&(l_codec->m_event_mgr), EVT_ERROR, 
                 "Codec provided to the opj_setup_decoder function is not a decompressor handler.\n");
 			return OPJ_FALSE;
 		}
@@ -496,7 +496,7 @@ opj_bool OPJ_CALLCONV opj_read_header (	opj_stream_t *p_stream,
 		opj_stream_private_t* l_stream = (opj_stream_private_t*) p_stream;
 
 		if(! l_codec->is_decompressor) {
-			opj_event_msg_v2(&(l_codec->m_event_mgr), EVT_ERROR, 
+			opj_event_msg(&(l_codec->m_event_mgr), EVT_ERROR, 
                 "Codec provided to the opj_read_header function is not a decompressor handler.\n");
 			return OPJ_FALSE;
 		}
