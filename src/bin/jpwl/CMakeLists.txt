@@ -39,21 +39,21 @@ foreach(exe decompress compress)
     TARGET ${jpwl_exe}
     APPEND PROPERTY COMPILE_DEFINITIONS USE_JPWL
   )
-  
+
   target_link_libraries(${jpwl_exe} openjpwl
-  	${LCMS_LIBNAME} ${PNG_LIBNAME} ${TIFF_LIBNAME})
-  	
+    ${LCMS_LIBNAME} ${PNG_LIBNAME} ${TIFF_LIBNAME})
+
   # To support universal exe:
   if(ZLIB_FOUND AND APPLE)
     target_link_libraries(${jpwl_exe} z)
   else(ZLIB_FOUND AND APPLE)
     target_link_libraries(${jpwl_exe} ${Z_LIBNAME})
   endif()
-  
+
   if(UNIX)
     target_link_libraries(${jpwl_exe} m)
   endif()
-  
+
   install(TARGETS ${jpwl_exe}
     DESTINATION ${OPENJPEG_INSTALL_BIN_DIR} COMPONENT Applications
   )
