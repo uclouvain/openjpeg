@@ -3,25 +3,24 @@
 add_definitions(-DUSE_JPWL)
 
 set(OPENJPEG_SRCS
-  ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/bio.c
-  ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/cio.c
-  ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/dwt.c
-  ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/event.c
-  ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/image.c
-  ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/j2k.c
-  ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/jp2.c
-  ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/jpt.c
-  ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/mct.c
-  ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/mqc.c
-  ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/openjpeg.c
-  ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/opj_clock.c
-  ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/pi.c
-  ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/raw.c
-  ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/t1.c
-  ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/t2.c
-  ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/tcd.c
-  ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/tgt.c
- ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/function_list.c
+  ${OPENJPEG_SOURCE_DIR}/src/lib/openmj2/bio.c
+  ${OPENJPEG_SOURCE_DIR}/src/lib/openmj2/cio.c
+  ${OPENJPEG_SOURCE_DIR}/src/lib/openmj2/dwt.c
+  ${OPENJPEG_SOURCE_DIR}/src/lib/openmj2/event.c
+  ${OPENJPEG_SOURCE_DIR}/src/lib/openmj2/image.c
+  ${OPENJPEG_SOURCE_DIR}/src/lib/openmj2/j2k.c
+  ${OPENJPEG_SOURCE_DIR}/src/lib/openmj2/jp2.c
+  ${OPENJPEG_SOURCE_DIR}/src/lib/openmj2/jpt.c
+  ${OPENJPEG_SOURCE_DIR}/src/lib/openmj2/mct.c
+  ${OPENJPEG_SOURCE_DIR}/src/lib/openmj2/mqc.c
+  ${OPENJPEG_SOURCE_DIR}/src/lib/openmj2/openjpeg.c
+  ${OPENJPEG_SOURCE_DIR}/src/lib/openmj2/j2k_lib.c
+  ${OPENJPEG_SOURCE_DIR}/src/lib/openmj2/pi.c
+  ${OPENJPEG_SOURCE_DIR}/src/lib/openmj2/raw.c
+  ${OPENJPEG_SOURCE_DIR}/src/lib/openmj2/t1.c
+  ${OPENJPEG_SOURCE_DIR}/src/lib/openmj2/t2.c
+  ${OPENJPEG_SOURCE_DIR}/src/lib/openmj2/tcd.c
+  ${OPENJPEG_SOURCE_DIR}/src/lib/openmj2/tgt.c
 )
 
 set(JPWL_SRCS crc.c jpwl.c jpwl_lib.c rs.c)
@@ -34,8 +33,8 @@ endif()
 
 include_directories(
   ${OPENJPEG_BINARY_DIR}/src/lib/openjp2 # opj_config.h
-  ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2
-  ${OPENJPEG_SOURCE_DIR}/src/lib
+  ${OPENJPEG_SOURCE_DIR}/src/lib/openmj2
+  ${OPENJPEG_SOURCE_DIR}/src/lib/openjpwl
   )
 
 # Build the library

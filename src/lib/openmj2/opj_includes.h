@@ -130,7 +130,7 @@ static INLINE long lrintf(float f){
 
 /* JPWL>> */
 #ifdef USE_JPWL
-#include "./jpwl/jpwl.h"
+#include "jpwl.h"
 #endif /* USE_JPWL */
 /* <<JPWL */
 

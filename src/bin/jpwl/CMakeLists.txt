@@ -2,8 +2,8 @@
 
 # First thing define the common source:
 set(common_SRCS
-  ../jp2/convert.c
-  ../jp2/index.c
+  convert.c
+  index.c
   ${OPENJPEG_SOURCE_DIR}/src/bin/common/color.c
   ${OPENJPEG_SOURCE_DIR}/src/bin/common/opj_getopt.c
   )
@@ -11,7 +11,7 @@ set(common_SRCS
 # Headers file are located here:
 include_directories(
   ${OPENJPEG_BINARY_DIR}/src/lib/openjp2 # opj_config.h
-  ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2
+  ${OPENJPEG_SOURCE_DIR}/src/lib/openmj2
   ${OPENJPEG_SOURCE_DIR}/src/bin/common
   ${LCMS_INCLUDE_DIRNAME}
   ${Z_INCLUDE_DIRNAME}
@@ -31,7 +31,8 @@ foreach(exe decompress compress)
   set(jpwl_exe opj_jpwl_${exe})
   set(jp2_exe opj_${exe})
   add_executable(${jpwl_exe}
-    ../jp2/${jp2_exe}.c
+    #../jp2/${jp2_exe}.c
+    ${jpwl_exe}.c
     ${common_SRCS}
   )
   set_property(
