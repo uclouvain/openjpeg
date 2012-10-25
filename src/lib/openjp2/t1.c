@@ -1007,7 +1007,8 @@ static void opj_t1_dec_clnpass(
 		int orient,
 		int cblksty)
 {
-	int i, j, k, one, half, oneplushalf, agg, runlen, vsc;
+	int one, half, oneplushalf, agg, runlen, vsc;
+    OPJ_UINT32 i, j, k;
 	int segsym = cblksty & J2K_CCP_CBLKSTY_SEGSYM;
 	
 	opj_mqc_t *mqc = t1->mqc;	/* MQC component */
