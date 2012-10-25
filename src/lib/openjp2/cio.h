@@ -71,20 +71,20 @@ Write some bytes
 @param n Number of bytes to write
 @return Returns the number of bytes written or 0 if an error occured
 */
-unsigned int cio_write(opj_cio_t *cio, unsigned long long int v, int n);
+DEPRECATED(unsigned int cio_write(opj_cio_t *cio, unsigned long long int v, int n));
 /**
 Read some bytes
 @param cio CIO handle
 @param n Number of bytes to read
 @return Returns the value of the n bytes read
 */
-unsigned int cio_read(opj_cio_t *cio, int n);
+DEPRECATED(unsigned int cio_read(opj_cio_t *cio, int n));
 /**
 Skip some bytes
 @param cio CIO handle
 @param n Number of bytes to skip
 */
-void cio_skip(opj_cio_t *cio, int n);
+DEPRECATED(void cio_skip(opj_cio_t *cio, int n));
 /* ----------------------------------------------------------------------- */
 /*@}*/
 
