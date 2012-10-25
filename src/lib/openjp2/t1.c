@@ -147,19 +147,19 @@ static void opj_t1_enc_clnpass_step(
 /**
 Decode clean-up pass
 */
-static void t1_dec_clnpass_step_partial(
+static void opj_t1_dec_clnpass_step_partial(
 		opj_t1_t *t1,
 		opj_flag_t *flagsp,
 		int *datap,
 		int orient,
 		int oneplushalf);
-static void t1_dec_clnpass_step(
+static void opj_t1_dec_clnpass_step(
 		opj_t1_t *t1,
 		opj_flag_t *flagsp,
 		int *datap,
 		int orient,
 		int oneplushalf);
-static void t1_dec_clnpass_step_vsc(
+static void opj_t1_dec_clnpass_step_vsc(
 		opj_t1_t *t1,
 		opj_flag_t *flagsp,
 		int *datap,
@@ -179,7 +179,7 @@ static void opj_t1_enc_clnpass(
 /**
 Decode clean-up pass
 */
-static void t1_dec_clnpass(
+static void opj_t1_dec_clnpass(
 		opj_t1_t *t1,
 		int bpno,
 		int orient,
@@ -468,7 +468,7 @@ LABEL_PARTIAL:
 	*flagsp &= ~T1_VISIT;
 }
 
-static void t1_dec_clnpass_step_partial(
+static void opj_t1_dec_clnpass_step_partial(
 		opj_t1_t *t1,
 		opj_flag_t *flagsp,
 		int *datap,
@@ -488,7 +488,7 @@ static void t1_dec_clnpass_step_partial(
 	*flagsp &= ~T1_VISIT;
 }				/* VSC and  BYPASS by Antonin */
 
-static void t1_dec_clnpass_step(
+static void opj_t1_dec_clnpass_step(
 		opj_t1_t *t1,
 		opj_flag_t *flagsp,
 		int *datap,
@@ -512,7 +512,7 @@ static void t1_dec_clnpass_step(
 	*flagsp &= ~T1_VISIT;
 }				/* VSC and  BYPASS by Antonin */
 
-static void t1_dec_clnpass_step_vsc(
+static void opj_t1_dec_clnpass_step_vsc(
 		opj_t1_t *t1,
 		opj_flag_t *flagsp,
 		int *datap,
@@ -608,7 +608,7 @@ void opj_t1_enc_clnpass(
 	}
 }
 
-static void t1_dec_clnpass(
+static void opj_t1_dec_clnpass(
 		opj_t1_t *t1,
 		int bpno,
 		int orient,
@@ -647,7 +647,7 @@ static void t1_dec_clnpass(
 			}
 			for (j = k + runlen; j < k + 4 && j < t1->h; ++j) {
 					vsc = (j == k + 3 || j == t1->h - 1) ? 1 : 0;
-					t1_dec_clnpass_step_vsc(
+					opj_t1_dec_clnpass_step_vsc(
 						t1,
 						&t1->flags[((j+1) * t1->flags_stride) + i + 1],
 						&t1->data[(j * t1->w) + i],
@@ -682,24 +682,24 @@ static void t1_dec_clnpass(
 					for (j = k + runlen; j < k + 4 && j < t1->h; ++j) {
 						flags2 += t1->flags_stride;
 						if (agg && (j == k + runlen)) {
-							t1_dec_clnpass_step_partial(t1, flags2, data2, orient, oneplushalf);
+							opj_t1_dec_clnpass_step_partial(t1, flags2, data2, orient, oneplushalf);
 						} else {
-							t1_dec_clnpass_step(t1, flags2, data2, orient, oneplushalf);
+							opj_t1_dec_clnpass_step(t1, flags2, data2, orient, oneplushalf);
 						}
 						data2 += t1->w;
 					}
 				} else {
 					flags2 += t1->flags_stride;
-					t1_dec_clnpass_step(t1, flags2, data2, orient, oneplushalf);
+					opj_t1_dec_clnpass_step(t1, flags2, data2, orient, oneplushalf);
 					data2 += t1->w;
 					flags2 += t1->flags_stride;
-					t1_dec_clnpass_step(t1, flags2, data2, orient, oneplushalf);
+					opj_t1_dec_clnpass_step(t1, flags2, data2, orient, oneplushalf);
 					data2 += t1->w;
 					flags2 += t1->flags_stride;
-					t1_dec_clnpass_step(t1, flags2, data2, orient, oneplushalf);
+					opj_t1_dec_clnpass_step(t1, flags2, data2, orient, oneplushalf);
 					data2 += t1->w;
 					flags2 += t1->flags_stride;
-					t1_dec_clnpass_step(t1, flags2, data2, orient, oneplushalf);
+					opj_t1_dec_clnpass_step(t1, flags2, data2, orient, oneplushalf);
 					data2 += t1->w;
 				}
 			}
@@ -711,7 +711,7 @@ static void t1_dec_clnpass(
 			opj_flag_t *flags2 = flags1 + i;
 			for (j = k; j < t1->h; ++j) {
 				flags2 += t1->flags_stride;
-				t1_dec_clnpass_step(t1, flags2, data2, orient, oneplushalf);
+				opj_t1_dec_clnpass_step(t1, flags2, data2, orient, oneplushalf);
 				data2 += t1->w;
 			}
 		}
@@ -1036,7 +1036,7 @@ opj_bool opj_t1_decode_cblk(opj_t1_t *t1,
 					opj_t1_dec_refpass(t1, bpno+1, type, cblksty);
 					break;
 				case 2:
-					t1_dec_clnpass(t1, bpno+1, orient, cblksty);
+					opj_t1_dec_clnpass(t1, bpno+1, orient, cblksty);
 					break;
 			}
 
