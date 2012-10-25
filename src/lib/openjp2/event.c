@@ -117,7 +117,7 @@ opj_bool opj_event_msg(opj_common_ptr cinfo, int event_type, const char *fmt, ..
 }
 
 /* ----------------------------------------------------------------------- */
-opj_bool OPJ_CALLCONV opj_event_msg_v2(opj_event_mgr_t* p_event_mgr, int event_type, const char *fmt, ...) {
+opj_bool opj_event_msg_v2(opj_event_mgr_t* p_event_mgr, int event_type, const char *fmt, ...) {
 #define MSG_SIZE 512 /* 512 bytes should be more than enough for a short message */
 	opj_msg_callback msg_handler = 00;
 	void * l_data = 00;
@@ -167,7 +167,7 @@ opj_bool OPJ_CALLCONV opj_event_msg_v2(opj_event_mgr_t* p_event_mgr, int event_t
 	return OPJ_TRUE;
 }
 
-void OPJ_CALLCONV opj_set_default_event_handler(opj_event_mgr_t * p_manager)
+void opj_set_default_event_handler(opj_event_mgr_t * p_manager)
 {
 	p_manager->m_error_data = 00;
 	p_manager->m_warning_data = 00;

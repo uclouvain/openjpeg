@@ -172,14 +172,14 @@ typedef SOCKET client_t;
  * @param[in] port opening tcp port (valid No. 49152-65535)
  * @return         intialized decoding server record pointer
  */
-OPJ_API dec_server_record_t * OPJ_CALLCONV init_dec_server( int port);
+dec_server_record_t * init_dec_server( int port);
 
 /**
  * Terminate the  image decoding server
  *
  * @param[in] rec address of deleting decoding server static record pointer
  */
-OPJ_API void OPJ_CALLCONV terminate_dec_server( dec_server_record_t **rec);
+void terminate_dec_server( dec_server_record_t **rec);
 
 /**
  * Accept client connection
@@ -187,7 +187,7 @@ OPJ_API void OPJ_CALLCONV terminate_dec_server( dec_server_record_t **rec);
  * @param[in] rec decoding server static record pointer
  * @return        client socket ID, -1 if failed
  */
-OPJ_API client_t OPJ_CALLCONV accept_connection( dec_server_record_t *rec);
+client_t accept_connection( dec_server_record_t *rec);
 
  /**
   * Handle client request
@@ -196,7 +196,7 @@ OPJ_API client_t OPJ_CALLCONV accept_connection( dec_server_record_t *rec);
   * @param[in] rec    decoding server static record pointer
   * @return           true if succeed
   */
-OPJ_API bool OPJ_CALLCONV handle_clientreq( client_t client, dec_server_record_t *rec);
+bool handle_clientreq( client_t client, dec_server_record_t *rec);
 
 #endif /*SERVER*/
 
@@ -229,14 +229,14 @@ typedef struct jpip_dec_param{
  * @param[in] jp2 true in case of jp2 file encoding, else j2k file encoding
  * @return        JPIP decoding parameters pointer
  */
-OPJ_API jpip_dec_param_t * OPJ_CALLCONV init_jpipdecoder( bool jp2);
+jpip_dec_param_t * init_jpipdecoder( bool jp2);
 
 /**
  * Destroy jpip decoding parameters
  *
  * @param[in]  dec  address of JPIP decoding parameters pointer
  */
-OPJ_API void OPJ_CALLCONV destroy_jpipdecoder( jpip_dec_param_t **dec);
+void destroy_jpipdecoder( jpip_dec_param_t **dec);
 
 /**
  * Read jpip codestream from a file
@@ -245,14 +245,14 @@ OPJ_API void OPJ_CALLCONV destroy_jpipdecoder( jpip_dec_param_t **dec);
  * @param[in]  dec   JPIP decoding parameters pointer
  * @return           true if succeed
  */
-OPJ_API bool OPJ_CALLCONV fread_jpip( const char fname[], jpip_dec_param_t *dec);
+bool fread_jpip( const char fname[], jpip_dec_param_t *dec);
 
 /**
  * Decode jpip codestream
  *
  * @param[in]  dec   JPIP decoding parameters pointer
  */
-OPJ_API void OPJ_CALLCONV decode_jpip( jpip_dec_param_t *dec);
+void decode_jpip( jpip_dec_param_t *dec);
 
 /**
  * Write J2K/JP2 codestream to a file
@@ -261,7 +261,7 @@ OPJ_API void OPJ_CALLCONV decode_jpip( jpip_dec_param_t *dec);
  * @param[in]  dec   JPIP decoding parameters pointer
  * @return           true if succeed
  */
-OPJ_API bool OPJ_CALLCONV fwrite_jp2k( const char fname[], jpip_dec_param_t *dec);
+bool fwrite_jp2k( const char fname[], jpip_dec_param_t *dec);
 
 /**
  * Option; print out parameter values to stderr
@@ -271,7 +271,7 @@ OPJ_API bool OPJ_CALLCONV fwrite_jp2k( const char fname[], jpip_dec_param_t *dec
  * @param[in]  ihdrbox  true if image header data is to be printed out
  * @param[in]  dec   JPIP decoding parameters pointer
  */
-OPJ_API void OPJ_CALLCONV output_log( bool messages, bool metadata, bool ihdrbox, jpip_dec_param_t *dec);
+void output_log( bool messages, bool metadata, bool ihdrbox, jpip_dec_param_t *dec);
 
 /*
  *  test the format of index (cidx) box in JP2 file
@@ -286,14 +286,14 @@ typedef index_param_t index_t;
  * @param[in] fd file descriptor of the JP2 file
  * @return       pointer to the generated structure of index parameters
  */
-OPJ_API index_t * OPJ_CALLCONV get_index_from_JP2file( int fd);
+index_t * get_index_from_JP2file( int fd);
 
 /**
  * Destroy index parameters
  *
  * @param[in,out] idx addressof the index pointer
  */
-OPJ_API void OPJ_CALLCONV destroy_index( index_t **idx);
+void destroy_index( index_t **idx);
 
 
 /**
@@ -301,9 +301,7 @@ OPJ_API void OPJ_CALLCONV destroy_index( index_t **idx);
  *
  * @param[in] index index parameters
  */
-OPJ_API void OPJ_CALLCONV output_index( index_t *index);
-
-OPJ_API opj_codec_t* OPJ_CALLCONV opj_jpip_create_compress(OPJ_CODEC_FORMAT format);
+void output_index( index_t *index);
 
 #endif /*SERVER*/
 

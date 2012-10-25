@@ -9056,7 +9056,7 @@ opj_bool opj_j2k_encode_v2(     opj_j2k_v2_t * p_j2k,
         return OPJ_TRUE;
 }
 
-opj_bool OPJ_CALLCONV opj_j2k_end_compress(  opj_j2k_v2_t *p_j2k,
+opj_bool opj_j2k_end_compress(  opj_j2k_v2_t *p_j2k,
                                                         opj_stream_private_t *p_stream,
                                                         opj_event_mgr_t * p_manager)
 {
@@ -9071,7 +9071,7 @@ opj_bool OPJ_CALLCONV opj_j2k_end_compress(  opj_j2k_v2_t *p_j2k,
         return OPJ_TRUE;
 }
 
-OPJ_API opj_bool OPJ_CALLCONV opj_j2k_start_compress(opj_j2k_v2_t *p_j2k,
+opj_bool opj_j2k_start_compress(opj_j2k_v2_t *p_j2k,
                                                             opj_stream_private_t *p_stream,
                                                             opj_image_t * p_image,
                                                             opj_event_mgr_t * p_manager)

@@ -46,7 +46,6 @@ set(EXES
   opj_dec_server
   opj_jpip_transcode
   opj_jpip_test
-  opj_jpip_compress
   )
 foreach(exe ${EXES})
   if(${exe} STREQUAL "opj_jpip_compress")

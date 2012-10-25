@@ -1082,26 +1082,26 @@ to contain encoded data.
 @param length Reading: buffer length. Writing: 0
 @return Returns a CIO handle if successful, returns NULL otherwise
 */
-OPJ_API opj_cio_t* OPJ_CALLCONV opj_cio_open(opj_common_ptr cinfo, unsigned char *buffer, int length);
+opj_cio_t* opj_cio_open(opj_common_ptr cinfo, unsigned char *buffer, int length);
 
 /**
 Close and free a CIO handle
 @param cio CIO handle to free
 */
-OPJ_API void OPJ_CALLCONV opj_cio_close(opj_cio_t *cio);
+void opj_cio_close(opj_cio_t *cio);
 
 /**
 Get position in byte stream
 @param cio CIO handle
 @return Returns the position in bytes
 */
-OPJ_API OPJ_OFF_T OPJ_CALLCONV cio_tell(opj_cio_t *cio);
+OPJ_OFF_T cio_tell(opj_cio_t *cio);
 /**
 Set position in byte stream
 @param cio CIO handle
 @param pos Position, in number of bytes, from the beginning of the stream
 */
-OPJ_API void OPJ_CALLCONV cio_seek(opj_cio_t *cio, int pos);
+void cio_seek(opj_cio_t *cio, int pos);
 
 /* <----------- */
 /* V2 framework */

@@ -7,7 +7,6 @@ install( FILES  ${CMAKE_CURRENT_BINARY_DIR}/opj_config.h
 include_directories(
   ${OPENJPEG_BINARY_DIR}/src/lib/openjp2 # opj_config.h
 )
-
 # Defines the source code for the library
 set(OPENJPEG_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/bio.c
@@ -31,6 +30,17 @@ set(OPENJPEG_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/tgt.c
   ${CMAKE_CURRENT_SOURCE_DIR}/function_list.c
 )
+if(BUILD_JPIP)
+  add_definitions(-DUSE_JPIP)
+  set(OPENJPEG_SRCS
+    ${OPENJPEG_SRCS}
+    ${CMAKE_CURRENT_SOURCE_DIR}/cidx_manager.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/phix_manager.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/ppix_manager.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/thix_manager.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/tpix_manager.c
+  )
+endif()
 
 # Build the library
 if(WIN32)

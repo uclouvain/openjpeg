@@ -36,11 +36,6 @@ set(OPENJPIP_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/session_manager.c
   ${CMAKE_CURRENT_SOURCE_DIR}/jpip_parser.c
   ${CMAKE_CURRENT_SOURCE_DIR}/sock_manager.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/cidx_manager.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/phix_manager.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/ppix_manager.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/thix_manager.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/tpix_manager.c
   )
 
 set(SERVER_SRCS
