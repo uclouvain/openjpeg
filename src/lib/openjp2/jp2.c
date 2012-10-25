@@ -51,7 +51,7 @@
  *
  * @return	true if the image header is valid, false else.
  */
-static opj_bool opj_jp2_read_ihdr(  opj_jp2_v2_t *jp2,
+static opj_bool opj_jp2_read_ihdr(  opj_jp2_t *jp2,
                                     OPJ_BYTE *p_image_header_data,
                                     OPJ_UINT32 p_image_header_size,
                                     opj_event_mgr_t * p_manager );
@@ -64,7 +64,7 @@ static opj_bool opj_jp2_read_ihdr(  opj_jp2_v2_t *jp2,
  *
  * @return	the data being copied.
 */
-static OPJ_BYTE * opj_jp2_write_ihdr(opj_jp2_v2_t *jp2,
+static OPJ_BYTE * opj_jp2_write_ihdr(opj_jp2_t *jp2,
                                      OPJ_UINT32 * p_nb_bytes_written );
 
 /**
@@ -75,7 +75,7 @@ static OPJ_BYTE * opj_jp2_write_ihdr(opj_jp2_v2_t *jp2,
  *
  * @return	the data being copied.
 */
-static OPJ_BYTE * opj_jp2_write_bpcc(	opj_jp2_v2_t *jp2,
+static OPJ_BYTE * opj_jp2_write_bpcc(	opj_jp2_t *jp2,
 								        OPJ_UINT32 * p_nb_bytes_written );
 
 /**
@@ -88,12 +88,12 @@ static OPJ_BYTE * opj_jp2_write_bpcc(	opj_jp2_v2_t *jp2,
  *
  * @return	true if the bpc header is valid, fale else.
  */
-static opj_bool opj_jp2_read_bpcc(  opj_jp2_v2_t *jp2,
+static opj_bool opj_jp2_read_bpcc(  opj_jp2_t *jp2,
                                     OPJ_BYTE * p_bpc_header_data,
                                     OPJ_UINT32 p_bpc_header_size,
                                     opj_event_mgr_t * p_manager );
 
-static opj_bool opj_jp2_read_cdef(	opj_jp2_v2_t * jp2,
+static opj_bool opj_jp2_read_cdef(	opj_jp2_t * jp2,
                                     OPJ_BYTE * p_cdef_header_data,
 									OPJ_UINT32 p_cdef_header_size,
 									opj_event_mgr_t * p_manager );
@@ -108,7 +108,7 @@ static void opj_jp2_apply_cdef(opj_image_t *image, opj_jp2_color_t *color);
  *
  * @return	the data being copied.
 */
-static OPJ_BYTE * opj_jp2_write_colr(   opj_jp2_v2_t *jp2,
+static OPJ_BYTE * opj_jp2_write_colr(   opj_jp2_t *jp2,
 									    OPJ_UINT32 * p_nb_bytes_written );
 
 /**
@@ -120,7 +120,7 @@ static OPJ_BYTE * opj_jp2_write_colr(   opj_jp2_v2_t *jp2,
  *
  * @return	true if writing was successful.
  */
-static opj_bool opj_jp2_write_ftyp(	opj_jp2_v2_t *jp2,
+static opj_bool opj_jp2_write_ftyp(	opj_jp2_t *jp2,
 									opj_stream_private_t *cio,
 									opj_event_mgr_t * p_manager );
 
@@ -134,12 +134,12 @@ static opj_bool opj_jp2_write_ftyp(	opj_jp2_v2_t *jp2,
  *
  * @return true if the FTYP box is valid.
  */
-static opj_bool opj_jp2_read_ftyp(	opj_jp2_v2_t *jp2,
+static opj_bool opj_jp2_read_ftyp(	opj_jp2_t *jp2,
 									OPJ_BYTE * p_header_data,
 									OPJ_UINT32 p_header_size,
 									opj_event_mgr_t * p_manager );
 
-opj_bool opj_jp2_skip_jp2c(	opj_jp2_v2_t *jp2,
+opj_bool opj_jp2_skip_jp2c(	opj_jp2_t *jp2,
 						    opj_stream_private_t *cio,
 						    opj_event_mgr_t * p_manager );
 
@@ -153,7 +153,7 @@ opj_bool opj_jp2_skip_jp2c(	opj_jp2_v2_t *jp2,
  *
  * @return true if the JP2 Header box was successfully reconized.
 */
-static opj_bool opj_jp2_read_jp2h(  opj_jp2_v2_t *jp2,
+static opj_bool opj_jp2_read_jp2h(  opj_jp2_t *jp2,
                                     OPJ_BYTE *p_header_data,
                                     OPJ_UINT32 p_header_size,
                                     opj_event_mgr_t * p_manager );
@@ -167,7 +167,7 @@ static opj_bool opj_jp2_read_jp2h(  opj_jp2_v2_t *jp2,
  *
  * @return true if writing was successful.
 */
-static opj_bool opj_jp2_write_jp2c(	opj_jp2_v2_t *jp2,
+static opj_bool opj_jp2_write_jp2c(	opj_jp2_t *jp2,
 								    opj_stream_private_t *cio,
 								    opj_event_mgr_t * p_manager );
 
@@ -181,7 +181,7 @@ static opj_bool opj_jp2_write_jp2c(	opj_jp2_v2_t *jp2,
  *
  * @return true if the file signature box is valid.
  */
-static opj_bool opj_jp2_read_jp(opj_jp2_v2_t *jp2,
+static opj_bool opj_jp2_read_jp(opj_jp2_t *jp2,
                                 OPJ_BYTE * p_header_data,
                                 OPJ_UINT32 p_header_size,
                                 opj_event_mgr_t * p_manager);
@@ -195,7 +195,7 @@ static opj_bool opj_jp2_read_jp(opj_jp2_v2_t *jp2,
  *
  * @return true if writing was successful.
  */
-static opj_bool opj_jp2_write_jp(	opj_jp2_v2_t *jp2,
+static opj_bool opj_jp2_write_jp(	opj_jp2_t *jp2,
 			    	        	    opj_stream_private_t *cio,
 				            		opj_event_mgr_t * p_manager );
 
@@ -218,7 +218,7 @@ static void opj_jp2_free_pclr(opj_jp2_color_t *color);
  *
  * @return Returns true if successful, returns false otherwise
 */
-static opj_bool opj_jp2_read_pclr(	opj_jp2_v2_t *jp2,
+static opj_bool opj_jp2_read_pclr(	opj_jp2_t *jp2,
                                     OPJ_BYTE * p_pclr_header_data,
                                     OPJ_UINT32 p_pclr_header_size,
                                     opj_event_mgr_t * p_manager );
@@ -234,7 +234,7 @@ static opj_bool opj_jp2_read_pclr(	opj_jp2_v2_t *jp2,
  * @return Returns true if successful, returns false otherwise
 */
 
-static opj_bool opj_jp2_read_cmap(	opj_jp2_v2_t * jp2,
+static opj_bool opj_jp2_read_cmap(	opj_jp2_t * jp2,
                                     OPJ_BYTE * p_cmap_header_data,
                                     OPJ_UINT32 p_cmap_header_size,
                                     opj_event_mgr_t * p_manager );
@@ -249,7 +249,7 @@ static opj_bool opj_jp2_read_cmap(	opj_jp2_v2_t * jp2,
  *
  * @return	true if the bpc header is valid, fale else.
 */
-static opj_bool opj_jp2_read_colr(  opj_jp2_v2_t *jp2,
+static opj_bool opj_jp2_read_colr(  opj_jp2_t *jp2,
                                     OPJ_BYTE * p_colr_header_data,
                                     OPJ_UINT32 p_colr_header_size,
                                     opj_event_mgr_t * p_manager );
@@ -262,13 +262,13 @@ static opj_bool opj_jp2_read_colr(  opj_jp2_v2_t *jp2,
  * Sets up the procedures to do on writing header after the codestream.
  * Developpers wanting to extend the library can add their own writing procedures.
  */
-static void opj_jp2_setup_end_header_writing (opj_jp2_v2_t *jp2);
+static void opj_jp2_setup_end_header_writing (opj_jp2_t *jp2);
 
 /**
  * Sets up the procedures to do on reading header after the codestream.
  * Developpers wanting to extend the library can add their own writing procedures.
  */
-static void opj_jp2_setup_end_header_reading (opj_jp2_v2_t *jp2);
+static void opj_jp2_setup_end_header_reading (opj_jp2_t *jp2);
 
 /**
  * Reads a jpeg2000 file header structure.
@@ -279,7 +279,7 @@ static void opj_jp2_setup_end_header_reading (opj_jp2_v2_t *jp2);
  *
  * @return true if the box is valid.
  */
-static opj_bool opj_jp2_read_header_procedure(  opj_jp2_v2_t *jp2,
+static opj_bool opj_jp2_read_header_procedure(  opj_jp2_t *jp2,
                                                 opj_stream_private_t *stream,
                                                 opj_event_mgr_t * p_manager );
 
@@ -293,7 +293,7 @@ static opj_bool opj_jp2_read_header_procedure(  opj_jp2_v2_t *jp2,
  *
  * @return	true				if all the procedures were successfully executed.
  */
-static opj_bool opj_jp2_exec (  opj_jp2_v2_t * jp2,
+static opj_bool opj_jp2_exec (  opj_jp2_t * jp2,
                                 opj_procedure_list_t * p_procedure_list,
                                 opj_stream_private_t *stream,
                                 opj_event_mgr_t * p_manager );
@@ -317,14 +317,14 @@ static opj_bool opj_jp2_read_boxhdr(opj_jp2_box_t *box,
  * Sets up the validation ,i.e. adds the procedures to lauch to make sure the codec parameters
  * are valid. Developpers wanting to extend the library can add their own validation procedures.
  */
-static void opj_jp2_setup_encoding_validation (opj_jp2_v2_t *jp2);
+static void opj_jp2_setup_encoding_validation (opj_jp2_t *jp2);
 
 /**
  * Sets up the procedures to do on writing header. Developpers wanting to extend the library can add their own writing procedures.
  */
-static void opj_jp2_setup_header_writing (opj_jp2_v2_t *jp2);
+static void opj_jp2_setup_header_writing (opj_jp2_t *jp2);
 
-opj_bool opj_jp2_default_validation (	opj_jp2_v2_t * jp2,
+opj_bool opj_jp2_default_validation (	opj_jp2_t * jp2,
                                         opj_stream_private_t *cio,
                                         opj_event_mgr_t * p_manager );
 
@@ -385,13 +385,13 @@ static opj_bool opj_jp2_read_boxhdr_char(   opj_jp2_box_t *box,
  * Sets up the validation ,i.e. adds the procedures to lauch to make sure the codec parameters
  * are valid. Developpers wanting to extend the library can add their own validation procedures.
  */
-static void opj_jp2_setup_decoding_validation (opj_jp2_v2_t *jp2);
+static void opj_jp2_setup_decoding_validation (opj_jp2_t *jp2);
 
 /**
  * Sets up the procedures to do on reading header.
  * Developpers wanting to extend the library can add their own writing procedures.
  */
-static void opj_jp2_setup_header_reading (opj_jp2_v2_t *jp2);
+static void opj_jp2_setup_header_reading (opj_jp2_t *jp2);
 
 /* ----------------------------------------------------------------------- */
 
@@ -467,7 +467,7 @@ static void jp2_write_url(opj_cio_t *cio, char *Idx_file) {
 }
 #endif
 
-opj_bool opj_jp2_read_ihdr( opj_jp2_v2_t *jp2,
+opj_bool opj_jp2_read_ihdr( opj_jp2_t *jp2,
                             OPJ_BYTE *p_image_header_data,
                             OPJ_UINT32 p_image_header_size,
                             opj_event_mgr_t * p_manager )
@@ -516,7 +516,7 @@ opj_bool opj_jp2_read_ihdr( opj_jp2_v2_t *jp2,
 	return OPJ_TRUE;
 }
 
-OPJ_BYTE * opj_jp2_write_ihdr(opj_jp2_v2_t *jp2,
+OPJ_BYTE * opj_jp2_write_ihdr(opj_jp2_t *jp2,
                               OPJ_UINT32 * p_nb_bytes_written
                               )
 {
@@ -567,7 +567,7 @@ OPJ_BYTE * opj_jp2_write_ihdr(opj_jp2_v2_t *jp2,
 	return l_ihdr_data;
 }
 
-OPJ_BYTE * opj_jp2_write_bpcc(	opj_jp2_v2_t *jp2,
+OPJ_BYTE * opj_jp2_write_bpcc(	opj_jp2_t *jp2,
 						        OPJ_UINT32 * p_nb_bytes_written
                                 )
 {
@@ -604,7 +604,7 @@ OPJ_BYTE * opj_jp2_write_bpcc(	opj_jp2_v2_t *jp2,
 	return l_bpcc_data;
 }
 
-opj_bool opj_jp2_read_bpcc( opj_jp2_v2_t *jp2,
+opj_bool opj_jp2_read_bpcc( opj_jp2_t *jp2,
                             OPJ_BYTE * p_bpc_header_data,
                             OPJ_UINT32 p_bpc_header_size,
                             opj_event_mgr_t * p_manager
@@ -637,7 +637,7 @@ opj_bool opj_jp2_read_bpcc( opj_jp2_v2_t *jp2,
 	return OPJ_TRUE;
 }
 
-OPJ_BYTE * opj_jp2_write_colr(  opj_jp2_v2_t *jp2,
+OPJ_BYTE * opj_jp2_write_colr(  opj_jp2_t *jp2,
 							    OPJ_UINT32 * p_nb_bytes_written
                                 )
 {
@@ -779,7 +779,7 @@ void opj_jp2_apply_pclr(opj_image_t *image, opj_jp2_color_t *color)
 
 }/* apply_pclr() */
 
-opj_bool opj_jp2_read_pclr(	opj_jp2_v2_t *jp2,
+opj_bool opj_jp2_read_pclr(	opj_jp2_t *jp2,
                             OPJ_BYTE * p_pclr_header_data,
                             OPJ_UINT32 p_pclr_header_size,
                             opj_event_mgr_t * p_manager
@@ -845,7 +845,7 @@ opj_bool opj_jp2_read_pclr(	opj_jp2_v2_t *jp2,
 	return OPJ_TRUE;
 }
 
-opj_bool opj_jp2_read_cmap(	opj_jp2_v2_t * jp2,
+opj_bool opj_jp2_read_cmap(	opj_jp2_t * jp2,
                             OPJ_BYTE * p_cmap_header_data,
                             OPJ_UINT32 p_cmap_header_size,
                             opj_event_mgr_t * p_manager
@@ -933,7 +933,7 @@ void opj_jp2_apply_cdef(opj_image_t *image, opj_jp2_color_t *color)
 
 }/* jp2_apply_cdef() */
 
-opj_bool opj_jp2_read_cdef(	opj_jp2_v2_t * jp2,
+opj_bool opj_jp2_read_cdef(	opj_jp2_t * jp2,
                             OPJ_BYTE * p_cdef_header_data,
 							OPJ_UINT32 p_cdef_header_size,
 							opj_event_mgr_t * p_manager
@@ -984,7 +984,7 @@ opj_bool opj_jp2_read_cdef(	opj_jp2_v2_t * jp2,
 	return OPJ_TRUE;
 }
 
-opj_bool opj_jp2_read_colr( opj_jp2_v2_t *jp2,
+opj_bool opj_jp2_read_colr( opj_jp2_t *jp2,
                             OPJ_BYTE * p_colr_header_data,
                             OPJ_UINT32 p_colr_header_size,
                             opj_event_mgr_t * p_manager
@@ -1054,7 +1054,7 @@ opj_bool opj_jp2_read_colr( opj_jp2_v2_t *jp2,
 	return OPJ_TRUE;
 }
 
-opj_bool opj_jp2_decode(opj_jp2_v2_t *jp2,
+opj_bool opj_jp2_decode(opj_jp2_t *jp2,
                         opj_stream_private_t *p_stream,
                         opj_image_t* p_image,
                         opj_event_mgr_t * p_manager)
@@ -1103,7 +1103,7 @@ opj_bool opj_jp2_decode(opj_jp2_v2_t *jp2,
 	return OPJ_TRUE;
 }
 
-opj_bool opj_jp2_write_jp2h(opj_jp2_v2_t *jp2,
+opj_bool opj_jp2_write_jp2h(opj_jp2_t *jp2,
                             opj_stream_private_t *stream,
                             opj_event_mgr_t * p_manager
                             )
@@ -1201,7 +1201,7 @@ opj_bool opj_jp2_write_jp2h(opj_jp2_v2_t *jp2,
 	return l_result;
 }
 
-opj_bool opj_jp2_write_ftyp(opj_jp2_v2_t *jp2,
+opj_bool opj_jp2_write_ftyp(opj_jp2_t *jp2,
 							opj_stream_private_t *cio,
 							opj_event_mgr_t * p_manager )
 {
@@ -1253,7 +1253,7 @@ opj_bool opj_jp2_write_ftyp(opj_jp2_v2_t *jp2,
 	return l_result;
 }
 
-opj_bool opj_jp2_write_jp2c(opj_jp2_v2_t *jp2,
+opj_bool opj_jp2_write_jp2c(opj_jp2_t *jp2,
 							opj_stream_private_t *cio,
 							opj_event_mgr_t * p_manager )
 {
@@ -1290,7 +1290,7 @@ opj_bool opj_jp2_write_jp2c(opj_jp2_v2_t *jp2,
 	return OPJ_TRUE;
 }
 
-opj_bool opj_jp2_write_jp(	opj_jp2_v2_t *jp2,
+opj_bool opj_jp2_write_jp(	opj_jp2_t *jp2,
 			    		    opj_stream_private_t *cio,
 				    		opj_event_mgr_t * p_manager )
 {
@@ -1320,7 +1320,7 @@ opj_bool opj_jp2_write_jp(	opj_jp2_v2_t *jp2,
 /* JP2 decoder interface                                             */
 /* ----------------------------------------------------------------------- */
 
-void opj_jp2_setup_decoder(opj_jp2_v2_t *jp2, opj_dparameters_t *parameters)
+void opj_jp2_setup_decoder(opj_jp2_t *jp2, opj_dparameters_t *parameters)
 {
 	/* setup the J2K codec */
 	opj_j2k_setup_decoder(jp2->j2k, parameters);
@@ -1334,7 +1334,7 @@ void opj_jp2_setup_decoder(opj_jp2_v2_t *jp2, opj_dparameters_t *parameters)
 /* JP2 encoder interface                                             */
 /* ----------------------------------------------------------------------- */
 
-void opj_jp2_setup_encoder(	opj_jp2_v2_t *jp2,
+void opj_jp2_setup_encoder(	opj_jp2_t *jp2,
                             opj_cparameters_t *parameters,
                             opj_image_t *image,
                             opj_event_mgr_t * p_manager)
@@ -1412,14 +1412,14 @@ void opj_jp2_setup_encoder(	opj_jp2_v2_t *jp2,
 	jp2->approx = 0;		/* APPROX */
 }
 
-opj_bool opj_jp2_encode(opj_jp2_v2_t *jp2,
+opj_bool opj_jp2_encode(opj_jp2_t *jp2,
 						opj_stream_private_t *stream,
 						opj_event_mgr_t * p_manager)
 {
 	return opj_j2k_encode_v2(jp2->j2k, stream, p_manager);
 }
 
-opj_bool opj_jp2_end_decompress(opj_jp2_v2_t *jp2,
+opj_bool opj_jp2_end_decompress(opj_jp2_t *jp2,
                                 opj_stream_private_t *cio,
                                 opj_event_mgr_t * p_manager
                                 )
@@ -1440,7 +1440,7 @@ opj_bool opj_jp2_end_decompress(opj_jp2_v2_t *jp2,
 	return opj_j2k_end_decompress(jp2->j2k, cio, p_manager);
 }
 
-opj_bool opj_jp2_end_compress(	opj_jp2_v2_t *jp2,
+opj_bool opj_jp2_end_compress(	opj_jp2_t *jp2,
 							    opj_stream_private_t *cio,
 							    opj_event_mgr_t * p_manager
                                 )
@@ -1461,7 +1461,7 @@ opj_bool opj_jp2_end_compress(	opj_jp2_v2_t *jp2,
 	return opj_jp2_exec(jp2,jp2->m_procedure_list,cio,p_manager);
 }
 
-void opj_jp2_setup_end_header_writing (opj_jp2_v2_t *jp2)
+void opj_jp2_setup_end_header_writing (opj_jp2_t *jp2)
 {
 	/* preconditions */
 	assert(jp2 != 00);
@@ -1470,7 +1470,7 @@ void opj_jp2_setup_end_header_writing (opj_jp2_v2_t *jp2)
 	/* DEVELOPER CORNER, add your custom procedures */
 }
 
-void opj_jp2_setup_end_header_reading (opj_jp2_v2_t *jp2)
+void opj_jp2_setup_end_header_reading (opj_jp2_t *jp2)
 {
 	/* preconditions */
 	assert(jp2 != 00);
@@ -1478,7 +1478,7 @@ void opj_jp2_setup_end_header_reading (opj_jp2_v2_t *jp2)
 	/* DEVELOPER CORNER, add your custom procedures */
 }
 
-opj_bool opj_jp2_default_validation (	opj_jp2_v2_t * jp2,
+opj_bool opj_jp2_default_validation (	opj_jp2_t * jp2,
                                         opj_stream_private_t *cio,
                                         opj_event_mgr_t * p_manager
                                         )
@@ -1532,7 +1532,7 @@ opj_bool opj_jp2_default_validation (	opj_jp2_v2_t * jp2,
 	return l_is_valid;
 }
 
-opj_bool opj_jp2_read_header_procedure(  opj_jp2_v2_t *jp2,
+opj_bool opj_jp2_read_header_procedure(  opj_jp2_t *jp2,
                                                 opj_stream_private_t *stream,
                                                 opj_event_mgr_t * p_manager
                                                 )
@@ -1629,14 +1629,14 @@ opj_bool opj_jp2_read_header_procedure(  opj_jp2_v2_t *jp2,
  *
  * @return	true				if all the procedures were successfully executed.
  */
-static opj_bool opj_jp2_exec (  opj_jp2_v2_t * jp2,
+static opj_bool opj_jp2_exec (  opj_jp2_t * jp2,
                                 opj_procedure_list_t * p_procedure_list,
                                 opj_stream_private_t *stream,
                                 opj_event_mgr_t * p_manager
                                 )
 
 {
-	opj_bool (** l_procedure) (opj_jp2_v2_t * jp2, opj_stream_private_t *, opj_event_mgr_t *) = 00;
+	opj_bool (** l_procedure) (opj_jp2_t * jp2, opj_stream_private_t *, opj_event_mgr_t *) = 00;
 	opj_bool l_result = OPJ_TRUE;
 	OPJ_UINT32 l_nb_proc, i;
 
@@ -1647,7 +1647,7 @@ static opj_bool opj_jp2_exec (  opj_jp2_v2_t * jp2,
 	assert(p_manager != 00);
 
 	l_nb_proc = opj_procedure_list_get_nb_procedures(p_procedure_list);
-	l_procedure = (opj_bool (**) (opj_jp2_v2_t * jp2, opj_stream_private_t *, opj_event_mgr_t *)) opj_procedure_list_get_first_procedure(p_procedure_list);
+	l_procedure = (opj_bool (**) (opj_jp2_t * jp2, opj_stream_private_t *, opj_event_mgr_t *)) opj_procedure_list_get_first_procedure(p_procedure_list);
 
 	for	(i=0;i<l_nb_proc;++i) {
 		l_result = l_result && (*l_procedure) (jp2,stream,p_manager);
@@ -1659,7 +1659,7 @@ static opj_bool opj_jp2_exec (  opj_jp2_v2_t * jp2,
 	return l_result;
 }
 
-opj_bool opj_jp2_start_compress(opj_jp2_v2_t *jp2,
+opj_bool opj_jp2_start_compress(opj_jp2_t *jp2,
                                 opj_stream_private_t *stream,
                                 opj_image_t * p_image,
                                 opj_event_mgr_t * p_manager
@@ -1731,7 +1731,7 @@ static const opj_jp2_header_handler_t * opj_jp2_img_find_handler (OPJ_UINT32 p_i
  *
  * @return true if the file signature box is valid.
  */
-static opj_bool opj_jp2_read_jp(opj_jp2_v2_t *jp2,
+static opj_bool opj_jp2_read_jp(opj_jp2_t *jp2,
                                 OPJ_BYTE * p_header_data,
                                 OPJ_UINT32 p_header_size,
                                 opj_event_mgr_t * p_manager
@@ -1778,7 +1778,7 @@ static opj_bool opj_jp2_read_jp(opj_jp2_v2_t *jp2,
  *
  * @return true if the FTYP box is valid.
  */
-static opj_bool opj_jp2_read_ftyp(	opj_jp2_v2_t *jp2,
+static opj_bool opj_jp2_read_ftyp(	opj_jp2_t *jp2,
 									OPJ_BYTE * p_header_data,
 									OPJ_UINT32 p_header_size,
 									opj_event_mgr_t * p_manager
@@ -1838,7 +1838,7 @@ static opj_bool opj_jp2_read_ftyp(	opj_jp2_v2_t *jp2,
 	return OPJ_TRUE;
 }
 
-opj_bool opj_jp2_skip_jp2c(	opj_jp2_v2_t *jp2,
+opj_bool opj_jp2_skip_jp2c(	opj_jp2_t *jp2,
 					    	opj_stream_private_t *stream,
 					    	opj_event_mgr_t * p_manager )
 {
@@ -1866,7 +1866,7 @@ opj_bool opj_jp2_skip_jp2c(	opj_jp2_v2_t *jp2,
  *
  * @return true if the JP2 Header box was successfully reconized.
 */
-static opj_bool opj_jp2_read_jp2h(  opj_jp2_v2_t *jp2,
+static opj_bool opj_jp2_read_jp2h(  opj_jp2_t *jp2,
                                     OPJ_BYTE *p_header_data,
                                     OPJ_UINT32 p_header_size,
                                     opj_event_mgr_t * p_manager
@@ -1992,7 +1992,7 @@ opj_bool opj_jp2_read_boxhdr_char(   opj_jp2_box_t *box,
 }
 
 opj_bool opj_jp2_read_header(	opj_stream_private_t *p_stream,
-                                opj_jp2_v2_t *jp2,
+                                opj_jp2_t *jp2,
                                 opj_image_t ** p_image,
                                 opj_event_mgr_t * p_manager
                                 )
@@ -2024,7 +2024,7 @@ opj_bool opj_jp2_read_header(	opj_stream_private_t *p_stream,
 							p_manager);
 }
 
-void opj_jp2_setup_encoding_validation (opj_jp2_v2_t *jp2)
+void opj_jp2_setup_encoding_validation (opj_jp2_t *jp2)
 {
 	/* preconditions */
 	assert(jp2 != 00);
@@ -2033,14 +2033,14 @@ void opj_jp2_setup_encoding_validation (opj_jp2_v2_t *jp2)
 	/* DEVELOPER CORNER, add your custom validation procedure */
 }
 
-void opj_jp2_setup_decoding_validation (opj_jp2_v2_t *jp2)
+void opj_jp2_setup_decoding_validation (opj_jp2_t *jp2)
 {
 	/* preconditions */
 	assert(jp2 != 00);
 	/* DEVELOPER CORNER, add your custom validation procedure */
 }
 
-void opj_jp2_setup_header_writing (opj_jp2_v2_t *jp2)
+void opj_jp2_setup_header_writing (opj_jp2_t *jp2)
 {
 	/* preconditions */
 	assert(jp2 != 00);
@@ -2054,7 +2054,7 @@ void opj_jp2_setup_header_writing (opj_jp2_v2_t *jp2)
 
 }
 
-void opj_jp2_setup_header_reading (opj_jp2_v2_t *jp2)
+void opj_jp2_setup_header_reading (opj_jp2_t *jp2)
 {
 	/* preconditions */
 	assert(jp2 != 00);
@@ -2063,7 +2063,7 @@ void opj_jp2_setup_header_reading (opj_jp2_v2_t *jp2)
 	/* DEVELOPER CORNER, add your custom procedures */
 }
 
-opj_bool opj_jp2_read_tile_header ( opj_jp2_v2_t * p_jp2,
+opj_bool opj_jp2_read_tile_header ( opj_jp2_t * p_jp2,
                                     OPJ_UINT32 * p_tile_index,
                                     OPJ_UINT32 * p_data_size,
                                     OPJ_INT32 * p_tile_x0,
@@ -2087,7 +2087,7 @@ opj_bool opj_jp2_read_tile_header ( opj_jp2_v2_t * p_jp2,
 								p_manager);
 }
 
-opj_bool opj_jp2_write_tile (	opj_jp2_v2_t *p_jp2,
+opj_bool opj_jp2_write_tile (	opj_jp2_t *p_jp2,
 					 	 	    OPJ_UINT32 p_tile_index,
 					 	 	    OPJ_BYTE * p_data,
 					 	 	    OPJ_UINT32 p_data_size,
@@ -2099,7 +2099,7 @@ opj_bool opj_jp2_write_tile (	opj_jp2_v2_t *p_jp2,
 	return opj_j2k_write_tile (p_jp2->j2k,p_tile_index,p_data,p_data_size,p_stream,p_manager);
 }
 
-opj_bool opj_jp2_decode_tile (  opj_jp2_v2_t * p_jp2,
+opj_bool opj_jp2_decode_tile (  opj_jp2_t * p_jp2,
                                 OPJ_UINT32 p_tile_index,
                                 OPJ_BYTE * p_data,
                                 OPJ_UINT32 p_data_size,
@@ -2110,7 +2110,7 @@ opj_bool opj_jp2_decode_tile (  opj_jp2_v2_t * p_jp2,
 	return opj_j2k_decode_tile (p_jp2->j2k,p_tile_index,p_data,p_data_size,p_stream,p_manager);
 }
 
-void opj_jp2_destroy(opj_jp2_v2_t *jp2)
+void opj_jp2_destroy(opj_jp2_t *jp2)
 {
 	if (jp2) {
 		/* destroy the J2K codec */
@@ -2178,7 +2178,7 @@ void opj_jp2_destroy(opj_jp2_v2_t *jp2)
 	}
 }
 
-opj_bool opj_jp2_set_decode_area(	opj_jp2_v2_t *p_jp2,
+opj_bool opj_jp2_set_decode_area(	opj_jp2_t *p_jp2,
 								    opj_image_t* p_image,
 								    OPJ_INT32 p_start_x, OPJ_INT32 p_start_y,
 								    OPJ_INT32 p_end_x, OPJ_INT32 p_end_y,
@@ -2188,7 +2188,7 @@ opj_bool opj_jp2_set_decode_area(	opj_jp2_v2_t *p_jp2,
 	return opj_j2k_set_decode_area(p_jp2->j2k, p_image, p_start_x, p_start_y, p_end_x, p_end_y, p_manager);
 }
 
-opj_bool opj_jp2_get_tile(	opj_jp2_v2_t *p_jp2,
+opj_bool opj_jp2_get_tile(	opj_jp2_t *p_jp2,
                             opj_stream_private_t *p_stream,
                             opj_image_t* p_image,
                             opj_event_mgr_t * p_manager,
@@ -2241,11 +2241,11 @@ opj_bool opj_jp2_get_tile(	opj_jp2_v2_t *p_jp2,
 /* JP2 encoder interface                                             */
 /* ----------------------------------------------------------------------- */
 
-opj_jp2_v2_t* opj_jp2_create(opj_bool p_is_decoder)
+opj_jp2_t* opj_jp2_create(opj_bool p_is_decoder)
 {
-	opj_jp2_v2_t *jp2 = (opj_jp2_v2_t*)opj_malloc(sizeof(opj_jp2_v2_t));
+	opj_jp2_t *jp2 = (opj_jp2_t*)opj_malloc(sizeof(opj_jp2_t));
 	if (jp2) {
-		memset(jp2,0,sizeof(opj_jp2_v2_t));
+		memset(jp2,0,sizeof(opj_jp2_t));
 
 		/* create the J2K codec */
 		if (! p_is_decoder) {
@@ -2285,7 +2285,7 @@ opj_jp2_v2_t* opj_jp2_create(opj_bool p_is_decoder)
 	return jp2;
 }
 
-void jp2_dump(opj_jp2_v2_t* p_jp2, OPJ_INT32 flag, FILE* out_stream)
+void jp2_dump(opj_jp2_t* p_jp2, OPJ_INT32 flag, FILE* out_stream)
 {
 	/* preconditions */
 	assert(p_jp2 != 00);
@@ -2295,17 +2295,17 @@ void jp2_dump(opj_jp2_v2_t* p_jp2, OPJ_INT32 flag, FILE* out_stream)
 					out_stream);
 }
 
-opj_codestream_index_t* jp2_get_cstr_index(opj_jp2_v2_t* p_jp2)
+opj_codestream_index_t* jp2_get_cstr_index(opj_jp2_t* p_jp2)
 {
 	return j2k_get_cstr_index(p_jp2->j2k);
 }
 
-opj_codestream_info_v2_t* jp2_get_cstr_info(opj_jp2_v2_t* p_jp2)
+opj_codestream_info_v2_t* jp2_get_cstr_info(opj_jp2_t* p_jp2)
 {
 	return j2k_get_cstr_info(p_jp2->j2k);
 }
 
-opj_bool opj_jp2_set_decoded_resolution_factor(opj_jp2_v2_t *p_jp2,
+opj_bool opj_jp2_set_decoded_resolution_factor(opj_jp2_t *p_jp2,
                                                OPJ_UINT32 res_factor,
                                                opj_event_mgr_t * p_manager)
 {

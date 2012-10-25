@@ -146,7 +146,7 @@ typedef struct opj_jp2_comps {
 /**
 JPEG-2000 file format reader/writer
 */
-typedef struct opj_jp2_v2
+typedef struct opj_jp2
 {
   /** handle to the J2K codec  */
   struct opj_j2k_v2 *j2k;
@@ -188,7 +188,7 @@ typedef struct opj_jp2_v2
     
     opj_bool ignore_pclr_cmap_cdef;
 }
-opj_jp2_v2_t;
+opj_jp2_t;
 
 /**
 JP2 Box
@@ -204,7 +204,7 @@ typedef struct opj_jp2_header_handler
   /* marker value */
   OPJ_UINT32 id;
   /* action linked to the marker */
-  opj_bool (*handler) (     opj_jp2_v2_t *jp2, 
+  opj_bool (*handler) (     opj_jp2_t *jp2, 
                             OPJ_BYTE *p_header_data, 
                             OPJ_UINT32 p_header_size, 
                             opj_event_mgr_t * p_manager);
@@ -215,7 +215,7 @@ opj_jp2_header_handler_t;
 typedef struct opj_jp2_img_header_writer_handler 
 {
   /* action to perform */
-  OPJ_BYTE*   (*handler) (opj_jp2_v2_t *jp2, OPJ_UINT32 * p_data_size);
+  OPJ_BYTE*   (*handler) (opj_jp2_t *jp2, OPJ_UINT32 * p_data_size);
   /* result of the action : data */
   OPJ_BYTE*   m_data;
   /* size of data */
@@ -236,7 +236,7 @@ opj_jp2_img_header_writer_handler_t;
  *
  * @return true if writing was successful.
 */
-opj_bool opj_jp2_write_jp2h(opj_jp2_v2_t *jp2,
+opj_bool opj_jp2_write_jp2h(opj_jp2_t *jp2,
                             opj_stream_private_t *stream,
                             opj_event_mgr_t * p_manager );
 
@@ -246,7 +246,7 @@ Decoding parameters are returned in jp2->j2k->cp.
 @param jp2 JP2 decompressor handle
 @param parameters decompression parameters
 */
-void opj_jp2_setup_decoder(opj_jp2_v2_t *jp2, opj_dparameters_t *parameters);
+void opj_jp2_setup_decoder(opj_jp2_t *jp2, opj_dparameters_t *parameters);
 
 /**
  * Decode an image from a JPEG-2000 file stream
@@ -257,7 +257,7 @@ void opj_jp2_setup_decoder(opj_jp2_v2_t *jp2, opj_dparameters_t *parameters);
  *
  * @return Returns a decoded image if successful, returns NULL otherwise
 */
-opj_bool opj_jp2_decode(opj_jp2_v2_t *jp2,
+opj_bool opj_jp2_decode(opj_jp2_t *jp2,
                         opj_stream_private_t *p_stream,
             opj_image_t* p_image,
             opj_event_mgr_t * p_manager);
@@ -271,7 +271,7 @@ opj_bool opj_jp2_decode(opj_jp2_v2_t *jp2,
  * @param image input filled image
  * @param p_manager  FIXME DOC
 */
-void opj_jp2_setup_encoder(  opj_jp2_v2_t *jp2, 
+void opj_jp2_setup_encoder(  opj_jp2_t *jp2, 
                             opj_cparameters_t *parameters, 
                             opj_image_t *image, 
                             opj_event_mgr_t * p_manager);
@@ -283,7 +283,7 @@ Encode an image into a JPEG-2000 file stream
 @param p_manager  event manager
 @return Returns true if successful, returns false otherwise
 */
-opj_bool opj_jp2_encode(  opj_jp2_v2_t *jp2, 
+opj_bool opj_jp2_encode(  opj_jp2_t *jp2, 
               opj_stream_private_t *stream, 
               opj_event_mgr_t * p_manager);
 
@@ -298,7 +298,7 @@ opj_bool opj_jp2_encode(  opj_jp2_v2_t *jp2,
  *
  * @return true if the codec is valid.
  */
-opj_bool opj_jp2_start_compress(opj_jp2_v2_t *jp2,
+opj_bool opj_jp2_start_compress(opj_jp2_t *jp2,
                                 opj_stream_private_t *stream,
                                 opj_image_t * p_image,
                                 opj_event_mgr_t * p_manager);
@@ -308,7 +308,7 @@ opj_bool opj_jp2_start_compress(opj_jp2_v2_t *jp2,
  * Ends the compression procedures and possibiliy add data to be read after the
  * codestream.
  */
-opj_bool opj_jp2_end_compress(  opj_jp2_v2_t *jp2,
+opj_bool opj_jp2_end_compress(  opj_jp2_t *jp2,
                   opj_stream_private_t *cio,
                   opj_event_mgr_t * p_manager);
 
@@ -318,7 +318,7 @@ opj_bool opj_jp2_end_compress(  opj_jp2_v2_t *jp2,
  * Ends the decompression procedures and possibiliy add data to be read after the
  * codestream.
  */
-opj_bool opj_jp2_end_decompress(opj_jp2_v2_t *jp2, 
+opj_bool opj_jp2_end_decompress(opj_jp2_t *jp2, 
                                 opj_stream_private_t *cio,
                                 opj_event_mgr_t * p_manager);
 
@@ -333,7 +333,7 @@ opj_bool opj_jp2_end_decompress(opj_jp2_v2_t *jp2,
  * @return true if the box is valid.
  */
 opj_bool opj_jp2_read_header(  opj_stream_private_t *p_stream,
-                                opj_jp2_v2_t *jp2,
+                                opj_jp2_t *jp2,
                                 opj_image_t ** p_image,
                                 opj_event_mgr_t * p_manager );
 
@@ -351,7 +351,7 @@ opj_bool opj_jp2_read_header(  opj_stream_private_t *p_stream,
  * @param  p_stream      the stream to write data to.
  * @param  p_manager     the user event manager.
  */
-opj_bool opj_jp2_read_tile_header ( opj_jp2_v2_t * p_jp2,
+opj_bool opj_jp2_read_tile_header ( opj_jp2_t * p_jp2,
                                     OPJ_UINT32 * p_tile_index,
                                     OPJ_UINT32 * p_data_size,
                                     OPJ_INT32 * p_tile_x0,
@@ -373,7 +373,7 @@ opj_bool opj_jp2_read_tile_header ( opj_jp2_v2_t * p_jp2,
  * @param  p_stream      the stream to write data to.
  * @param  p_manager  the user event manager.
  */
-opj_bool opj_jp2_write_tile (  opj_jp2_v2_t *p_jp2,
+opj_bool opj_jp2_write_tile (  opj_jp2_t *p_jp2,
                     OPJ_UINT32 p_tile_index,
                     OPJ_BYTE * p_data,
                     OPJ_UINT32 p_data_size,
@@ -391,7 +391,7 @@ opj_bool opj_jp2_write_tile (  opj_jp2_v2_t *p_jp2,
  *
  * @return FIXME DOC
  */
-opj_bool opj_jp2_decode_tile (  opj_jp2_v2_t * p_jp2,
+opj_bool opj_jp2_decode_tile (  opj_jp2_t * p_jp2,
                                 OPJ_UINT32 p_tile_index,
                                 OPJ_BYTE * p_data,
                                 OPJ_UINT32 p_data_size,
@@ -403,13 +403,13 @@ opj_bool opj_jp2_decode_tile (  opj_jp2_v2_t * p_jp2,
  *
  * @return  an empty jpeg2000 file codec.
  */
-opj_jp2_v2_t* opj_jp2_create (opj_bool p_is_decoder);
+opj_jp2_t* opj_jp2_create (opj_bool p_is_decoder);
 
 /**
 Destroy a JP2 decompressor handle
 @param jp2 JP2 decompressor handle to destroy
 */
-void opj_jp2_destroy(opj_jp2_v2_t *jp2);
+void opj_jp2_destroy(opj_jp2_t *jp2);
 
 
 /**
@@ -425,7 +425,7 @@ void opj_jp2_destroy(opj_jp2_v2_t *jp2);
  *
  * @return  true      if the area could be set.
  */
-opj_bool opj_jp2_set_decode_area(  opj_jp2_v2_t *p_jp2,
+opj_bool opj_jp2_set_decode_area(  opj_jp2_t *p_jp2,
                     opj_image_t* p_image,
                     OPJ_INT32 p_start_x, OPJ_INT32 p_start_y,
                     OPJ_INT32 p_end_x, OPJ_INT32 p_end_y,
@@ -434,7 +434,7 @@ opj_bool opj_jp2_set_decode_area(  opj_jp2_v2_t *p_jp2,
  /**
  * 
  */
-opj_bool opj_jp2_get_tile(  opj_jp2_v2_t *p_jp2,
+opj_bool opj_jp2_get_tile(  opj_jp2_t *p_jp2,
                             opj_stream_private_t *p_stream,
                             opj_image_t* p_image,
                             opj_event_mgr_t * p_manager,
@@ -444,7 +444,7 @@ opj_bool opj_jp2_get_tile(  opj_jp2_v2_t *p_jp2,
 /**
  * 
  */
-opj_bool opj_jp2_set_decoded_resolution_factor(opj_jp2_v2_t *p_jp2, 
+opj_bool opj_jp2_set_decoded_resolution_factor(opj_jp2_t *p_jp2, 
                                                OPJ_UINT32 res_factor, 
                                                opj_event_mgr_t * p_manager);
 
@@ -458,7 +458,7 @@ opj_bool opj_jp2_set_decoded_resolution_factor(opj_jp2_v2_t *p_jp2,
  *@param out_stream      output stream where dump the elements.
  *
 */
-void jp2_dump (opj_jp2_v2_t* p_jp2, OPJ_INT32 flag, FILE* out_stream);
+void jp2_dump (opj_jp2_t* p_jp2, OPJ_INT32 flag, FILE* out_stream);
 
 /**
  * Get the codestream info from a JPEG2000 codec.
@@ -467,7 +467,7 @@ void jp2_dump (opj_jp2_v2_t* p_jp2, OPJ_INT32 flag, FILE* out_stream);
  *
  *@return  the codestream information extract from the jpg2000 codec
  */
-opj_codestream_info_v2_t* jp2_get_cstr_info(opj_jp2_v2_t* p_jp2);
+opj_codestream_info_v2_t* jp2_get_cstr_info(opj_jp2_t* p_jp2);
 
 /**
  * Get the codestream index from a JPEG2000 codec.
@@ -476,7 +476,7 @@ opj_codestream_info_v2_t* jp2_get_cstr_info(opj_jp2_v2_t* p_jp2);
  *
  *@return  the codestream index extract from the jpg2000 codec
  */
-opj_codestream_index_t* jp2_get_cstr_index(opj_jp2_v2_t* p_jp2);
+opj_codestream_index_t* jp2_get_cstr_index(opj_jp2_t* p_jp2);
 
 
 /*@}*/
