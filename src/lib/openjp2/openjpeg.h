@@ -1047,10 +1047,7 @@ OPJ_API opj_image_t* OPJ_CALLCONV opj_image_tile_create(OPJ_UINT32 numcmpts, opj
 ==========================================================
    stream functions definitions
 ==========================================================
-
-
-/* <----------- */
-/* V2 framework */
+*/
 
 /**
  * Creates an abstract stream. This function does nothing except allocating memory and initializing the abstract stream.
