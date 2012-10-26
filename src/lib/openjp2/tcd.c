@@ -749,7 +749,7 @@ opj_bool FUNCTION (     opj_tcd_t *p_tcd,                        \
                                                                                                                                                                                                                   \
                 for(resno = 0; resno < l_tilec->numresolutions; ++resno) {                                                                                                                                        \
                         /*fprintf(stderr, "\t\tresno = %d/%d\n", resno, l_tilec->numresolutions);*/                                                                                                               \
-                        OPJ_INT32 tlcbgxstart, tlcbgystart, brcbgxend, brcbgyend;                                                                                                                                 \
+                        OPJ_INT32 tlcbgxstart, tlcbgystart /*, brcbgxend, brcbgyend*/;                                                                                                                                 \
                         OPJ_UINT32 cbgwidthexpn, cbgheightexpn;                                                                                                                                                   \
                         OPJ_UINT32 cblkwidthexpn, cblkheightexpn;                                                                                                                                                 \
                                                                                                                                                                                                                   \
@@ -779,8 +779,8 @@ opj_bool FUNCTION (     opj_tcd_t *p_tcd,                        \
                         if (resno == 0) {                                                                                                                                                                         \
                                 tlcbgxstart = l_tl_prc_x_start;                                                                                                                                                   \
                                 tlcbgystart = l_tl_prc_y_start;                                                                                                                                                   \
-                                brcbgxend = l_br_prc_x_end;                                                                                                                                                       \
-                                brcbgyend = l_br_prc_y_end;                                                                                                                                                       \
+                                /*brcbgxend = l_br_prc_x_end;*/                                                                                                                                                       \
+                               /* brcbgyend = l_br_prc_y_end;*/                                                                                                                                                       \
                                 cbgwidthexpn = l_pdx;                                                                                                                                                             \
                                 cbgheightexpn = l_pdy;                                                                                                                                                            \
                                 l_res->numbands = 1;                                                                                                                                                              \
@@ -788,8 +788,8 @@ opj_bool FUNCTION (     opj_tcd_t *p_tcd,                        \
                         else {                                                                                                                                                                                    \
                                 tlcbgxstart = opj_int_ceildivpow2(l_tl_prc_x_start, 1);                                                                                                                               \
                                 tlcbgystart = opj_int_ceildivpow2(l_tl_prc_y_start, 1);                                                                                                                               \
-                                brcbgxend = opj_int_ceildivpow2(l_br_prc_x_end, 1);                                                                                                                                   \
-                                brcbgyend = opj_int_ceildivpow2(l_br_prc_y_end, 1);                                                                                                                                   \
+                                /*brcbgxend = opj_int_ceildivpow2(l_br_prc_x_end, 1);*/                                                                                                                            \
+                                /*brcbgyend = opj_int_ceildivpow2(l_br_prc_y_end, 1);*/                                                                                                                            \
                                 cbgwidthexpn = l_pdx - 1;                                                                                                                                                         \
                                 cbgheightexpn = l_pdy - 1;                                                                                                                                                        \
                                 l_res->numbands = 3;                                                                                                                                                              \
@@ -1635,7 +1635,6 @@ opj_bool opj_tcd_dc_level_shift_decode ( opj_tcd_t *p_tcd )
         opj_tccp_t * l_tccp = 00;
         opj_image_comp_t * l_img_comp = 00;
         opj_tcd_resolution_t* l_res = 00;
-        opj_tcp_t * l_tcp = 00;
         opj_tcd_tile_t * l_tile;
         OPJ_UINT32 l_width,l_height,i,j;
         OPJ_INT32 * l_current_ptr;
@@ -1644,7 +1643,6 @@ opj_bool opj_tcd_dc_level_shift_decode ( opj_tcd_t *p_tcd )
 
         l_tile = p_tcd->tcd_image->tiles;
         l_tile_comp = l_tile->comps;
-        l_tcp = p_tcd->tcp;
         l_tccp = p_tcd->tcp->tccps;
         l_img_comp = p_tcd->image->comps;
 
@@ -1803,14 +1801,12 @@ opj_bool opj_tcd_dc_level_shift_encode ( opj_tcd_t *p_tcd )
         opj_tcd_tilecomp_t * l_tile_comp = 00;
         opj_tccp_t * l_tccp = 00;
         opj_image_comp_t * l_img_comp = 00;
-        opj_tcp_t * l_tcp = 00;
         opj_tcd_tile_t * l_tile;
         OPJ_UINT32 l_nb_elem,i;
         OPJ_INT32 * l_current_ptr;
 
         l_tile = p_tcd->tcd_image->tiles;
         l_tile_comp = l_tile->comps;
-        l_tcp = p_tcd->tcp;
         l_tccp = p_tcd->tcp->tccps;
         l_img_comp = p_tcd->image->comps;
 

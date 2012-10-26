@@ -323,7 +323,6 @@ opj_bool opj_t2_decode_packets( opj_t2_t *p_t2,
         OPJ_UINT32 pino;
         opj_image_t *l_image = p_t2->image;
         opj_cp_t *l_cp = p_t2->cp;
-        opj_cp_t *cp = p_t2->cp;
         opj_tcp_t *l_tcp = &(p_t2->cp->tcps[p_tile_no]);
         OPJ_UINT32 l_nb_bytes_read;
         OPJ_UINT32 l_nb_pocs = l_tcp->numpocs + 1;
@@ -405,7 +404,7 @@ opj_bool opj_t2_decode_packets( opj_t2_t *p_t2,
                                         curtp++;
                                         info_PK->start_pos = p_cstr_info->tile[p_tile_no].tp[curtp].tp_end_header+1;
                                 } else {
-                                        info_PK->start_pos = (cp->m_specific_param.m_enc.m_tp_on && info_PK->start_pos) ? info_PK->start_pos : info_TL->packet[p_cstr_info->packno - 1].end_pos + 1;
+                                        info_PK->start_pos = (l_cp->m_specific_param.m_enc.m_tp_on && info_PK->start_pos) ? info_PK->start_pos : info_TL->packet[p_cstr_info->packno - 1].end_pos + 1;
                                 }
                                 info_PK->end_pos = info_PK->start_pos + l_nb_bytes_read - 1;
                                 info_PK->end_ph_pos += info_PK->start_pos - 1;  /* End of packet header which now only represents the distance */

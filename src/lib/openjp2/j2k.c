@@ -2579,7 +2579,6 @@ opj_bool opj_j2k_write_qcd(     opj_j2k_t *p_j2k,
                             )
 {
         opj_cp_t *l_cp = 00;
-        opj_tcp_t *l_tcp = 00;
         OPJ_UINT32 l_qcd_size,l_remaining_size;
         OPJ_BYTE * l_current_data = 00;
 
@@ -2589,7 +2588,6 @@ opj_bool opj_j2k_write_qcd(     opj_j2k_t *p_j2k,
         assert(p_stream != 00);
 
         l_cp = &(p_j2k->m_cp);
-        l_tcp = &l_cp->tcps[p_j2k->m_current_tile_number];
         l_qcd_size = 4 + opj_j2k_get_SQcd_SQcc_size(p_j2k,p_j2k->m_current_tile_number,0);
         l_remaining_size = l_qcd_size;
 
@@ -2849,7 +2847,6 @@ opj_bool opj_j2k_write_poc(     opj_j2k_t *p_j2k,
         OPJ_UINT32 l_poc_size;
         OPJ_UINT32 l_written_size = 0;
         opj_tcp_t *l_tcp = 00;
-        opj_tccp_t *l_tccp = 00;
         OPJ_UINT32 l_poc_room;
 
         /* preconditions */
@@ -2858,7 +2855,6 @@ opj_bool opj_j2k_write_poc(     opj_j2k_t *p_j2k,
         assert(p_stream != 00);
 
         l_tcp = &p_j2k->m_cp.tcps[p_j2k->m_current_tile_number];
-        l_tccp = &l_tcp->tccps[0];
         l_nb_comp = p_j2k->m_private_image->numcomps;
         l_nb_poc = 1 + l_tcp->numpocs;
 
@@ -3165,7 +3161,7 @@ static opj_bool opj_j2k_read_tlm (  opj_j2k_t *p_j2k,
                                     opj_event_mgr_t * p_manager
                                     )
 {
-        OPJ_UINT32 l_Ztlm, l_Stlm, l_ST, l_SP, l_tot_num_tp, l_tot_num_tp_remaining, l_quotient, l_Ptlm_size;
+        OPJ_UINT32 l_Ztlm, l_Stlm, l_ST, l_SP, l_tot_num_tp_remaining, l_quotient, l_Ptlm_size;
         /* preconditions */
         assert(p_header_data != 00);
         assert(p_j2k != 00);
@@ -3188,7 +3184,6 @@ static opj_bool opj_j2k_read_tlm (  opj_j2k_t *p_j2k,
         l_Ptlm_size = (l_SP + 1) * 2;
         l_quotient = l_Ptlm_size + l_ST;
 
-        l_tot_num_tp = p_header_size / l_quotient;
         l_tot_num_tp_remaining = p_header_size % l_quotient;
 
         if (l_tot_num_tp_remaining != 0) {
@@ -4081,11 +4076,9 @@ opj_bool opj_j2k_write_sod(     opj_j2k_t *p_j2k,
                                                         opj_event_mgr_t * p_manager
                             )
 {
-        opj_tcp_t *l_tcp = 00;
         opj_codestream_info_t *l_cstr_info = 00;
         opj_cp_t *l_cp = 00;
 
-        OPJ_UINT32 l_size_tile;
         OPJ_UINT32 l_remaining_data;
 
         /* preconditions */
@@ -4100,15 +4093,12 @@ opj_bool opj_j2k_write_sod(     opj_j2k_t *p_j2k,
         l_remaining_data =  p_total_data_size - 4;
 
         l_cp = &(p_j2k->m_cp);
-        l_tcp = &l_cp->tcps[p_j2k->m_current_tile_number];
 
         /* update tile coder */
         p_tile_coder->tp_num = p_j2k->m_specific_param.m_encoder.m_current_poc_tile_part_number ;
         p_tile_coder->cur_tp_num = p_j2k->m_specific_param.m_encoder.m_current_tile_part_number;
 
-        l_size_tile = l_cp->th * l_cp->tw;
-
-        /* INDEX >> */
+         /* INDEX >> */
         /* TODO mergeV2: check this part which use cstr_info */
         /*l_cstr_info = p_j2k->cstr_info;
         if (l_cstr_info) {
@@ -5416,7 +5406,6 @@ static opj_bool opj_j2k_read_mco (      opj_j2k_t *p_j2k,
         opj_tcp_t * l_tcp;
         opj_tccp_t * l_tccp;
         opj_image_t * l_image;
-        opj_image_comp_t * l_img_comp;
 
         /* preconditions */
         assert(p_header_data != 00);
@@ -5447,7 +5436,6 @@ static opj_bool opj_j2k_read_mco (      opj_j2k_t *p_j2k,
         }
 
         l_tccp = l_tcp->tccps;
-        l_img_comp = l_image->comps;
 
         for (i=0;i<l_image->numcomps;++i) {
                 l_tccp->m_dc_level_shift = 0;
@@ -5727,7 +5715,6 @@ void opj_j2k_setup_encoder(     opj_j2k_t *p_j2k,
 {
         OPJ_UINT32 i, j, tileno, numpocs_tile;
         opj_cp_t *cp = 00;
-        opj_bool l_res;
 
         if(!p_j2k || !parameters || ! image) {
                 return;
@@ -5851,8 +5838,8 @@ void opj_j2k_setup_encoder(     opj_j2k_t *p_j2k,
         cp->tcps = (opj_tcp_t*) opj_calloc(cp->tw * cp->th, sizeof(opj_tcp_t));
         if (parameters->numpocs) {
                 /* initialisation of POC */
-                l_res = opj_j2k_check_poc_val(parameters->POC,parameters->numpocs, parameters->numresolution, image->numcomps, parameters->tcp_numlayers, p_manager);
-                /* TODO */
+                opj_j2k_check_poc_val(parameters->POC,parameters->numpocs, parameters->numresolution, image->numcomps, parameters->tcp_numlayers, p_manager);
+                /* TODO MSD use the return value*/
         }
 
         for (tileno = 0; tileno < cp->tw * cp->th; tileno++) {
@@ -5958,7 +5945,7 @@ void opj_j2k_setup_encoder(     opj_j2k_t *p_j2k,
                         tccp->qntsty = parameters->irreversible ? J2K_CCP_QNTSTY_SEQNT : J2K_CCP_QNTSTY_NOQNT;
                         tccp->numgbits = 2;
 
-                        if (i == parameters->roi_compno) {
+                        if ((OPJ_INT32)i == parameters->roi_compno) {
                                 tccp->roishift = parameters->roi_shift;
                         } else {
                                 tccp->roishift = 0;
@@ -8444,8 +8431,8 @@ void j2k_dump_image_comp_header(opj_image_comp_t* comp_header, opj_bool dev_dump
 
 opj_codestream_info_v2_t* j2k_get_cstr_info(opj_j2k_t* p_j2k)
 {
-        OPJ_UINT16 compno;
-        OPJ_UINT16 numcomps = p_j2k->m_private_image->numcomps;
+        OPJ_UINT32 compno;
+        OPJ_UINT32 numcomps = p_j2k->m_private_image->numcomps;
         opj_tcp_t *l_default_tile;
         opj_codestream_info_v2_t* cstr_info = (opj_codestream_info_v2_t*) opj_calloc(1,sizeof(opj_codestream_info_v2_t));
 
@@ -9251,7 +9238,6 @@ opj_bool opj_j2k_post_write_tile (      opj_j2k_t * p_j2k,
 {
         opj_tcd_t * l_tcd = 00;
         opj_cp_t * l_cp = 00;
-        opj_tcp_t * l_tcp = 00;
         OPJ_UINT32 l_nb_bytes_written;
         OPJ_BYTE * l_current_data = 00;
         OPJ_UINT32 l_tile_size = 0;
@@ -9262,8 +9248,7 @@ opj_bool opj_j2k_post_write_tile (      opj_j2k_t * p_j2k,
 
         l_tcd = p_j2k->m_tcd;
         l_cp = &(p_j2k->m_cp);
-        l_tcp = l_cp->tcps + p_j2k->m_current_tile_number;
-
+        
         l_tile_size = p_j2k->m_specific_param.m_encoder.m_encoded_tile_size;
         l_available_data = l_tile_size;
         l_current_data = p_j2k->m_specific_param.m_encoder.m_encoded_tile_data;
@@ -9380,13 +9365,11 @@ opj_bool opj_j2k_write_first_tile_part (opj_j2k_t *p_j2k,
         OPJ_UINT32 l_current_nb_bytes_written;
         OPJ_BYTE * l_begin_data = 00;
 
-        opj_tcp_t *l_tcp = 00;
         opj_tcd_t * l_tcd = 00;
         opj_cp_t * l_cp = 00;
 
         l_tcd = p_j2k->m_tcd;
         l_cp = &(p_j2k->m_cp);
-        l_tcp = l_cp->tcps + p_j2k->m_current_tile_number;
 
         l_tcd->cur_pino = 0;
 
