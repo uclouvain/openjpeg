@@ -33,7 +33,7 @@ The functions in IMAGE.C have for goal to realize operations on images.
 */
 
 struct opj_image;
-struct opj_cp_v2;
+struct opj_cp;
 
 /** @defgroup IMAGE IMAGE - Implementation of operations on images */
 /*@{*/
