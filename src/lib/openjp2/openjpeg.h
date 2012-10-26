@@ -560,29 +560,7 @@ typedef void * opj_codec_t;
 /** The stream was opened for writing. */
 #define OPJ_STREAM_WRITE 0x0002
 
-/**
-Byte input-output stream (CIO)
-DEPRECATED 
-*/
-typedef struct opj_cio {
-	/** codec context */
-	opj_common_ptr cinfo;
 
-	/** open mode (read/write) either OPJ_STREAM_READ or OPJ_STREAM_WRITE */
-	int openmode;
-	/** pointer to the start of the buffer */
-	unsigned char *buffer;
-	/** buffer size in bytes */
-  /* FIXME: MM length is 'int' ?? */
-	int length;
-
-	/** pointer to the start of the stream */
-	unsigned char *start;
-	/** pointer to the end of the stream */
-	unsigned char *end;
-	/** pointer to the current position */
-	unsigned char *bp;
-} opj_cio_t; 
 
 
 /*
@@ -1069,39 +1047,7 @@ OPJ_API opj_image_t* OPJ_CALLCONV opj_image_tile_create(OPJ_UINT32 numcmpts, opj
 ==========================================================
    stream functions definitions
 ==========================================================
-*/
-/* CIO functions are DEPRECATED see following stream functions */
-/**
-Open and allocate a memory stream for read / write. 
-On reading, the user must provide a buffer containing encoded data. The buffer will be 
-wrapped by the returned CIO handle. 
-On writing, buffer parameters must be set to 0: a buffer will be allocated by the library 
-to contain encoded data. 
-@param cinfo Codec context info
-@param buffer Reading: buffer address. Writing: NULL
-@param length Reading: buffer length. Writing: 0
-@return Returns a CIO handle if successful, returns NULL otherwise
-*/
-opj_cio_t* opj_cio_open(opj_common_ptr cinfo, unsigned char *buffer, int length);
 
-/**
-Close and free a CIO handle
-@param cio CIO handle to free
-*/
-void opj_cio_close(opj_cio_t *cio);
-
-/**
-Get position in byte stream
-@param cio CIO handle
-@return Returns the position in bytes
-*/
-OPJ_OFF_T cio_tell(opj_cio_t *cio);
-/**
-Set position in byte stream
-@param cio CIO handle
-@param pos Position, in number of bytes, from the beginning of the stream
-*/
-void cio_seek(opj_cio_t *cio, int pos);
 
 /* <----------- */
 /* V2 framework */

@@ -218,6 +218,8 @@ opj_bool opj_mct_encode_custom(
 	OPJ_UINT32 lMultiplicator = 1 << 13;
 	OPJ_INT32 * lMctPtr;
 
+    OPJ_ARG_NOT_USED(isSigned);
+
 	lCurrentData = (OPJ_INT32 *) opj_malloc((pNbComp + lNbMatCoeff) * sizeof(OPJ_INT32));
 	if (! lCurrentData) {
 		return OPJ_FALSE;
@@ -266,6 +268,8 @@ opj_bool opj_mct_decode_custom(
 	OPJ_FLOAT32 * lCurrentData = 00;
 	OPJ_FLOAT32 * lCurrentResult = 00;
 	OPJ_FLOAT32 ** lData = (OPJ_FLOAT32 **) pData;
+
+    OPJ_ARG_NOT_USED(isSigned);
 
 	lCurrentData = (OPJ_FLOAT32 *) opj_malloc (2 * pNbComp * sizeof(OPJ_FLOAT32));
 	if (! lCurrentData) {

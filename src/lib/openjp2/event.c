@@ -66,7 +66,11 @@ _itoa(int i, char *a, int r) {
  * Default callback function.
  * Do nothing.
  */
-static void opj_default_callback (const char *msg, void *client_data){}
+static void opj_default_callback (const char *msg, void *client_data)
+{
+    OPJ_ARG_NOT_USED(msg);
+    OPJ_ARG_NOT_USED(client_data);
+}
 
 /* ----------------------------------------------------------------------- */
 

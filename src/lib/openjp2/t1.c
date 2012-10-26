@@ -169,20 +169,20 @@ static void opj_t1_dec_refpass_step(opj_t1_t *t1,
                                     OPJ_BYTE type,
                                     OPJ_UINT32 vsc);
 
-static void INLINE opj_t1_dec_refpass_step_raw(
+static INLINE void  opj_t1_dec_refpass_step_raw(
                 opj_t1_t *t1,
                 opj_flag_t *flagsp,
                 int *datap,
                 int poshalf,
                 int neghalf,
                 int vsc);
-static void INLINE opj_t1_dec_refpass_step_mqc(
+static INLINE void opj_t1_dec_refpass_step_mqc(
                 opj_t1_t *t1,
                 opj_flag_t *flagsp,
                 int *datap,
                 int poshalf,
                 int neghalf);
-static void INLINE opj_t1_dec_refpass_step_mqc_vsc(
+static INLINE void opj_t1_dec_refpass_step_mqc_vsc(
                 opj_t1_t *t1,
                 opj_flag_t *flagsp,
                 int *datap,
@@ -401,8 +401,8 @@ static INLINE void opj_t1_dec_sigpass_step_raw(
                 int vsc)
 {
         int v, flag;
-       
         opj_raw_t *raw = t1->raw;       /* RAW component */
+        OPJ_ARG_NOT_USED(orient);
        
         flag = vsc ? ((*flagsp) & (~(T1_SIG_S | T1_SIG_SE | T1_SIG_SW | T1_SGN_S))) : (*flagsp);
         if ((flag & T1_SIG_OTH) && !(flag & (T1_SIG | T1_VISIT))) {
@@ -1130,6 +1130,7 @@ static OPJ_FLOAT64 opj_t1_getwmsedec(
 		const OPJ_FLOAT64 * mct_norms)
 {
 	OPJ_FLOAT64 w1 = 1, w2, wmsedec;
+    OPJ_ARG_NOT_USED(numcomps);
 
 	if (mct_norms) {
 		w1 = mct_norms[compno];
@@ -1337,11 +1338,11 @@ opj_bool opj_t1_decode_cblks(   opj_t1_t* t1,
                             tiledp += tile_w;
 						}
 					}
-                    //opj_free(cblk->data);
-					//opj_free(cblk->segs);
+                    /*opj_free(cblk->data);
+					opj_free(cblk->segs);*/
 					/*cblk->segs = 00;*/
 				} /* cblkno */
-                //opj_free(precinct->cblks.dec);
+                /*opj_free(precinct->cblks.dec);*/
 			} /* precno */
 		} /* bandno */
 	} /* resno */
