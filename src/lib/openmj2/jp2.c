@@ -1104,7 +1104,7 @@ void jp2_setup_encoder(opj_jp2_t *jp2, opj_cparameters_t *parameters, opj_image_
 
 opj_bool opj_jp2_encode(opj_jp2_t *jp2, opj_cio_t *cio, opj_image_t *image, opj_codestream_info_t *cstr_info) {
 
-	int pos_iptr, pos_cidx, pos_jp2c, len_jp2c, len_cidx, end_pos, pos_fidx, len_fidx;
+	int pos_iptr, pos_jp2c, len_jp2c;
 	pos_jp2c = pos_iptr = -1; /* remove a warning */
 
 	/* JP2 encoding */
