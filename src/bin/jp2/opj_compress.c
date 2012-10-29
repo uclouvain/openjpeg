@@ -597,7 +597,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
 	};
 
 	/* parse the command line */
-	const char optlist[] = "i:o:r:q:n:b:c:t:p:s:SEM:x:R:d:T:If:P:C:F:u:"
+	const char optlist[] = "i:o:r:q:n:b:c:t:p:s:SEM:x:R:d:T:If:P:C:F:u:J"
 #ifdef USE_JPWL
 		"W:"
 #endif /* USE_JPWL */
@@ -1449,6 +1449,10 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
 /* <<UniPG */
 /* ------------------------------------------------------ */
 			
+			case 'J':			/* jpip on */
+			{
+			  parameters->jpip_on = OPJ_TRUE;
+			}
 			break;
 				/* ------------------------------------------------------ */
 

@@ -181,6 +181,7 @@ typedef struct opj_jp2
   */
     OPJ_OFF_T j2k_codestream_offset;
     OPJ_OFF_T jpip_iptr_offset;
+	opj_bool jpip_on;
   OPJ_UINT32 jp2_state;
   OPJ_UINT32 jp2_img_state;
 

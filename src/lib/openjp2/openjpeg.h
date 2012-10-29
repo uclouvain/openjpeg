@@ -228,7 +228,7 @@ typedef void (*opj_msg_callback) (const char *msg, void *client_data);
 
 
 
-/** SHOULD BE MOVE IN EVET.H when we remove old functions TODO MSD
+/** SHOULD BE MOVE IN EVENT.H when we remove old functions TODO MSD
 Message handler object
 used for 
 <ul>
@@ -415,9 +415,10 @@ typedef struct opj_cparameters {
 	char tp_flag;
 	/** MCT (multiple component transform) */
 	char tcp_mct;
+	/** Enable JPIP indexing*/
+	opj_bool jpip_on;
 	/** Naive implementation of MCT restricted to a single reversible array based encoding without offset concerning all the components. */
 	void * mct_data;
-
 } opj_cparameters_t;
 
 #define OPJ_DPARAMETERS_IGNORE_PCLR_CMAP_CDEF_FLAG	0x0001
