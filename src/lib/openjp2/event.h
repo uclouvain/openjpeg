@@ -40,7 +40,6 @@ used for
 <li>Debugging messages
 </ul>
 */
-#if 0
 typedef struct opj_event_mgr 
 {
 	/** Data to call the event manager upon */
@@ -56,7 +55,7 @@ typedef struct opj_event_mgr
 	/** Debug message callback if available, NULL otherwise */
 	opj_msg_callback info_handler;
 } opj_event_mgr_t;
-#endif
+
 
 #define EVT_ERROR	1	/**< Error event type */
 #define EVT_WARNING	2	/**< Warning event type */

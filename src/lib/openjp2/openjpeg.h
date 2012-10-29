@@ -226,33 +226,6 @@ typedef enum LIMIT_DECODING {
  * */
 typedef void (*opj_msg_callback) (const char *msg, void *client_data);
 
-
-
-/** SHOULD BE MOVE IN EVENT.H when we remove old functions TODO MSD
-Message handler object
-used for 
-<ul>
-<li>Error messages
-<li>Warning messages
-<li>Debugging messages
-</ul>
-*/
-typedef struct opj_event_mgr 
-{
-	/** Data to call the event manager upon */
-	void *			m_error_data;
-	/** Data to call the event manager upon */
-	void *			m_warning_data;
-	/** Data to call the event manager upon */
-	void *			m_info_data;
-	/** Error message callback if available, NULL otherwise */
-	opj_msg_callback error_handler;
-	/** Warning message callback if available, NULL otherwise */
-	opj_msg_callback warning_handler;
-	/** Debug message callback if available, NULL otherwise */
-	opj_msg_callback info_handler;
-} opj_event_mgr_t;
-
 /* 
 ==========================================================
    codec typedef definitions
