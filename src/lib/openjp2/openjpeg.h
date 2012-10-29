@@ -490,15 +490,28 @@ typedef void * opj_codec_t;
 /** The stream was opened for writing. */
 #define OPJ_STREAM_WRITE OPJ_FALSE
 
-
-
-
 /*
+ * Callback function prototype for read function
  * FIXME DOC
  */
 typedef OPJ_SIZE_T (* opj_stream_read_fn) (void * p_buffer, OPJ_SIZE_T p_nb_bytes, void * p_user_data) ;
+
+/*
+ * Callback function prototype for write function
+ * FIXME DOC
+ */
 typedef OPJ_SIZE_T (* opj_stream_write_fn) (void * p_buffer, OPJ_SIZE_T p_nb_bytes, void * p_user_data) ;
+
+/*
+ * Callback function prototype for skip function
+ * FIXME DOC
+ */
 typedef OPJ_OFF_T (* opj_stream_skip_fn) (OPJ_OFF_T p_nb_bytes, void * p_user_data) ;
+
+/*
+ * Callback function prototype for seek function
+ * FIXME DOC
+ */
 typedef opj_bool (* opj_stream_seek_fn) (OPJ_OFF_T p_nb_bytes, void * p_user_data) ;
 
 /*
