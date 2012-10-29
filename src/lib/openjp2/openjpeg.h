@@ -486,9 +486,9 @@ typedef void * opj_codec_t;
  * Stream open flags.
  */
 /** The stream was opened for reading. */
-#define OPJ_STREAM_READ	0x0001
+#define OPJ_STREAM_READ	OPJ_TRUE
 /** The stream was opened for writing. */
-#define OPJ_STREAM_WRITE 0x0002
+#define OPJ_STREAM_WRITE OPJ_FALSE
 
 
 
