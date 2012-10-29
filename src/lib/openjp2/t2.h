@@ -43,8 +43,6 @@
 Tier-2 coding
 */
 typedef struct opj_t2 {
-	/** codec context */
-	opj_common_ptr cinfo;
 
 	/** Encoding: pointer to the src image. Decoding: pointer to the dst image. */
 	opj_image_t *image;

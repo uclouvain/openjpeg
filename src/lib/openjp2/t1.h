@@ -91,8 +91,6 @@ typedef OPJ_INT16 opj_flag_t;
 Tier-1 coding (coding of code-block coefficients)
 */
 typedef struct opj_t1 {
-	/** codec context */
-	opj_common_ptr cinfo; /* TODO MSD : TO BE REMOVED */
 
 	/** MQC component */
 	opj_mqc_t *mqc;

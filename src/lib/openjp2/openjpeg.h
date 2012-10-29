@@ -496,51 +496,7 @@ typedef struct opj_dparameters {
 } opj_dparameters_t;
 
 
-/* ---> FIXME V1 style */
-/** Common fields between JPEG-2000 compression and decompression master structs. */
 
-#define opj_common_fields \
-	opj_event_mgr_t *event_mgr;	/**< pointer to the event manager */\
-	void * client_data;			/**< Available for use by application */\
-	opj_bool is_decompressor;	/**< So common code can tell which is which */\
-	OPJ_CODEC_FORMAT codec_format;	/**< selected codec */\
-	void *j2k_handle;			/**< pointer to the J2K codec */\
-	void *jp2_handle;			/**< pointer to the JP2 codec */\
-	void *mj2_handle			/**< pointer to the MJ2 codec */
-	
-/* Routines that are to be used by both halves of the library are declared
- * to receive a pointer to this structure.  There are no actual instances of
- * opj_common_struct_t, only of opj_cinfo_t and opj_dinfo_t.
- */
-typedef struct opj_common_struct {
-  opj_common_fields;		/* Fields common to both master struct types */
-  /* Additional fields follow in an actual opj_cinfo_t or
-   * opj_dinfo_t.  All three structs must agree on these
-   * initial fields!  (This would be a lot cleaner in C++.)
-   */
-} opj_common_struct_t;
-
-typedef opj_common_struct_t * opj_common_ptr;
-
-/**
- * Compression context info
- * */
-typedef struct opj_cinfo {
-	/** Fields shared with opj_dinfo_t */
-	opj_common_fields;	
-	/* other specific fields go here */
-} opj_cinfo_t;
-
-/**
- * Decompression context info
- * */
-typedef struct opj_dinfo {
-	/** Fields shared with opj_cinfo_t */
-	opj_common_fields;	
-	/* other specific fields go here */
-} opj_dinfo_t;
-
-/* <--- V1 style */
 
 /**
  * JPEG2000 codec V2.
