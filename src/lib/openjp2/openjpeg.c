@@ -202,7 +202,7 @@ opj_bool OPJ_CALLCONV opj_set_error_handler(opj_codec_t * p_codec,
 static OPJ_SIZE_T opj_read_from_file (void * p_buffer, OPJ_SIZE_T p_nb_bytes, FILE * p_file)
 {
 	OPJ_SIZE_T l_nb_read = fread(p_buffer,1,p_nb_bytes,p_file);
-	return l_nb_read ? l_nb_read : -1;
+	return l_nb_read ? l_nb_read : (OPJ_SIZE_T)-1;
 }
 
 static OPJ_UINT64 opj_get_data_length_from_file (FILE * p_file)
