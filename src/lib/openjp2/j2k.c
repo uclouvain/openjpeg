@@ -1863,7 +1863,7 @@ static opj_bool opj_j2k_read_siz(opj_j2k_t *p_j2k,
                                  opj_event_mgr_t * p_manager
                                  )
 {
-        OPJ_UINT32 l_size, i;
+        OPJ_UINT32 i;
         OPJ_UINT32 l_nb_comp;
         OPJ_UINT32 l_nb_comp_remain;
         OPJ_UINT32 l_remaining_size;
@@ -1895,8 +1895,6 @@ static opj_bool opj_j2k_read_siz(opj_j2k_t *p_j2k,
                 opj_event_msg(p_manager, EVT_ERROR, "Error with SIZ marker size\n");
                 return OPJ_FALSE;
         }
-
-        l_size = p_header_size + 2;                                                                             /* Lsiz */
 
         opj_read_bytes(p_header_data,&l_tmp ,2);                                                /* Rsiz (capabilities) */
         p_header_data+=2;
@@ -2578,7 +2576,6 @@ opj_bool opj_j2k_write_qcd(     opj_j2k_t *p_j2k,
                                                         opj_event_mgr_t * p_manager
                             )
 {
-        opj_cp_t *l_cp = 00;
         OPJ_UINT32 l_qcd_size,l_remaining_size;
         OPJ_BYTE * l_current_data = 00;
 
@@ -2587,7 +2584,6 @@ opj_bool opj_j2k_write_qcd(     opj_j2k_t *p_j2k,
         assert(p_manager != 00);
         assert(p_stream != 00);
 
-        l_cp = &(p_j2k->m_cp);
         l_qcd_size = 4 + opj_j2k_get_SQcd_SQcc_size(p_j2k,p_j2k->m_current_tile_number,0);
         l_remaining_size = l_qcd_size;
 

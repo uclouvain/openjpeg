@@ -862,6 +862,8 @@ void opj_pi_update_encode_poc_and_final (   opj_cp_t *p_cp,
 	/* number of pocs*/
 	OPJ_UINT32 l_poc_bound;
 
+    OPJ_ARG_NOT_USED(p_max_res);
+
 	/* preconditions in debug*/
 	assert(p_cp != 00);
 	assert(p_tileno < p_cp->tw * p_cp->th);
@@ -985,6 +987,8 @@ void opj_pi_update_decode_poc (opj_pi_iterator_t * p_pi,
 
 	opj_pi_iterator_t * l_current_pi = 00;
 	opj_poc_t* l_current_poc = 0;
+
+    OPJ_ARG_NOT_USED(p_max_res);
 
 	/* preconditions in debug*/
 	assert(p_pi != 00);
