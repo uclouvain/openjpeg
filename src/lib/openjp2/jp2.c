@@ -171,6 +171,7 @@ static opj_bool opj_jp2_write_jp2c(	opj_jp2_t *jp2,
 								    opj_stream_private_t *cio,
 								    opj_event_mgr_t * p_manager );
 
+#ifdef USE_JPIP
 /**
  * Write index Finder box
  * @param cio     the stream to write to.
@@ -200,6 +201,7 @@ static opj_bool opj_jpip_write_cidx(opj_jp2_t *jp2,
 static opj_bool opj_jpip_write_fidx(opj_jp2_t *jp2,
   opj_stream_private_t *cio,
   opj_event_mgr_t * p_manager );
+#endif /* USE_JPIP */
 
 /**
  * Reads a jpeg2000 file signature box.
@@ -1497,15 +1499,19 @@ void opj_jp2_setup_end_header_writing (opj_jp2_t *jp2)
 	/* preconditions */
 	assert(jp2 != 00);
 
+#ifdef USE_JPIP
   if( jp2->jpip_on )
     opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)opj_jpip_write_iptr );
+#endif
 	opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)opj_jp2_write_jp2c );
 	/* DEVELOPER CORNER, add your custom procedures */
+#ifdef USE_JPIP
   if( jp2->jpip_on )
     {
     opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)opj_jpip_write_cidx );
     opj_procedure_list_add_procedure(jp2->m_procedure_list,(opj_procedure)opj_jpip_write_fidx );
     }
+#endif
 }
 
 void opj_jp2_setup_end_header_reading (opj_jp2_t *jp2)
@@ -2372,6 +2378,7 @@ opj_bool opj_jp2_set_decoded_resolution_factor(opj_jp2_t *p_jp2,
 
 /* JPIP specific */
 
+#ifdef USE_JPIP
 static opj_bool opj_jpip_write_iptr(opj_jp2_t *jp2,
   opj_stream_private_t *cio,
   opj_event_mgr_t * p_manager )
@@ -2489,101 +2496,59 @@ static opj_bool opj_jpip_write_cidx(opj_jp2_t *jp2,
   return OPJ_TRUE;
 }
 
-static void write_prxy_v2( int offset_jp2c, int length_jp2c, int offset_idx, int length_idx, opj_stream_private_t *cio,
+static void write_prxy( int offset_jp2c, int length_jp2c, int offset_idx, int length_idx, opj_stream_private_t *cio,
   opj_event_mgr_t * p_manager )
 {
   OPJ_BYTE l_data_header [8];
   int len, lenp;
 
-#if 0
-  lenp = cio_tell( cio);
-  cio_skip( cio, 4);              /* L [at the end] */
-  cio_write( cio, JPIP_PRXY, 4);  /* IPTR           */
-#else
   lenp = opj_stream_tell(cio);
   opj_stream_skip(cio, 4, p_manager);         /* L [at the end] */
   opj_write_bytes(l_data_header,JPIP_PRXY,4); /* IPTR           */
   opj_stream_write_data(cio,l_data_header,4,p_manager);
-#endif
 
-#if 0
-  cio_write( cio, offset_jp2c, 8); /* OOFF           */
-  cio_write( cio, length_jp2c, 4); /* OBH part 1     */
-  cio_write( cio, JP2_JP2C, 4);    /* OBH part 2     */
-#else
   opj_write_bytes( l_data_header, offset_jp2c, 8); /* OOFF           */
   opj_stream_write_data(cio,l_data_header,8,p_manager);
   opj_write_bytes( l_data_header, length_jp2c, 4); /* OBH part 1     */
   opj_write_bytes( l_data_header+4, JP2_JP2C, 4);  /* OBH part 2     */
   opj_stream_write_data(cio,l_data_header,8,p_manager);
-#endif
 
-#if 0
-  cio_write( cio, 1,1);           /* NI             */
-#else
   opj_write_bytes( l_data_header, 1, 1);/* NI             */
   opj_stream_write_data(cio,l_data_header,1,p_manager);
-#endif
 
-#if 0
-  cio_write( cio, offset_idx, 8);  /* IOFF           */
-  cio_write( cio, length_idx, 4);  /* IBH part 1     */
-  cio_write( cio, JPIP_CIDX, 4);   /* IBH part 2     */
-#else
   opj_write_bytes( l_data_header, offset_idx, 8);  /* IOFF           */
   opj_stream_write_data(cio,l_data_header,8,p_manager);
   opj_write_bytes( l_data_header, length_idx, 4);  /* IBH part 1     */
   opj_write_bytes( l_data_header+4, JPIP_CIDX, 4);   /* IBH part 2     */
   opj_stream_write_data(cio,l_data_header,8,p_manager);
-#endif
 
-#if 0
-  len = cio_tell( cio)-lenp;
-  cio_seek( cio, lenp);
-  cio_write( cio, len, 4);        /* L              */
-  cio_seek( cio, lenp+len);
-#else
   len = opj_stream_tell(cio)-lenp;
   opj_stream_skip(cio, lenp, p_manager);
   opj_write_bytes(l_data_header,len,4);/* L              */
   opj_stream_write_data(cio,l_data_header,4,p_manager);
   opj_stream_seek(cio, lenp+len,p_manager);
-#endif
 }
 
 
-static int write_fidx_v2( int offset_jp2c, int length_jp2c, int offset_idx, int length_idx, opj_stream_private_t *cio,
+static int write_fidx( int offset_jp2c, int length_jp2c, int offset_idx, int length_idx, opj_stream_private_t *cio,
   opj_event_mgr_t * p_manager )
 {
   OPJ_BYTE l_data_header [4];
   int len, lenp;
 
-#if 0
-  lenp = cio_tell( cio);
-  cio_skip( cio, 4);              /* L [at the end] */
-  cio_write( cio, JPIP_FIDX, 4);  /* IPTR           */
-#else
   lenp = opj_stream_tell(cio);
   opj_stream_skip(cio, 4, p_manager);
   opj_write_bytes(l_data_header,JPIP_FIDX,4); /* FIDX */
   opj_stream_write_data(cio,l_data_header,4,p_manager);
-#endif
 
-  write_prxy_v2( offset_jp2c, length_jp2c, offset_idx, length_idx, cio,p_manager);
+  write_prxy( offset_jp2c, length_jp2c, offset_idx, length_idx, cio,p_manager);
 
-#if 0
-  len = cio_tell( cio)-lenp;
-  cio_seek( cio, lenp);
-  cio_write( cio, len, 4);        /* L              */
-  cio_seek( cio, lenp+len);
-#else
   len = opj_stream_tell(cio)-lenp;
   opj_stream_skip(cio, lenp, p_manager);
   opj_write_bytes(l_data_header,len,4);/* L              */
   opj_stream_write_data(cio,l_data_header,4,p_manager);
   opj_stream_seek(cio, lenp+len,p_manager);
-#endif
 
   return len;
 }
-
+#endif /* USE_JPIP */
