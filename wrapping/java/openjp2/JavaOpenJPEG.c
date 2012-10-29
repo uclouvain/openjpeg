@@ -90,7 +90,7 @@ typedef struct img_folder{
 	float *rates;
 }img_fol_t;
 
-void encode_help_display() {
+static void encode_help_display() {
 	fprintf(stdout,"HELP\n----\n\n");
 	fprintf(stdout,"- the -h option displays this help information on screen\n\n");
 
@@ -330,7 +330,7 @@ void encode_help_display() {
 }
 
 
-OPJ_PROG_ORDER give_progression(char progression[4]) {
+static OPJ_PROG_ORDER give_progression(const char progression[4]) {
 	if(strncmp(progression, "LRCP", 4) == 0) {
 		return LRCP;
 	}
@@ -368,7 +368,7 @@ static int initialise_4K_poc(opj_poc_t *POC, int numres){
 	return 2;
 }
 
-void cinema_parameters(opj_cparameters_t *parameters){
+static void cinema_parameters(opj_cparameters_t *parameters){
 	parameters->tile_size_on = OPJ_FALSE;
 	parameters->cp_tdx=1;
 	parameters->cp_tdy=1;
@@ -401,7 +401,7 @@ void cinema_parameters(opj_cparameters_t *parameters){
 
 }
 
-void cinema_setup_encoder(opj_cparameters_t *parameters,opj_image_t *image, img_fol_t *img_fol){
+static void cinema_setup_encoder(opj_cparameters_t *parameters,opj_image_t *image, img_fol_t *img_fol){
 	int i;
 	float temp_rate;
 	opj_poc_t *POC = NULL;
@@ -483,7 +483,7 @@ void cinema_setup_encoder(opj_cparameters_t *parameters,opj_image_t *image, img_
 
 
 /* ------------------------------------------------------------------------------------ */
-int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
+static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 													img_fol_t *img_fol, char *indexfilename) {
 	int i, j,totlen;
 	opj_option_t long_option[]={
@@ -1324,7 +1324,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 				start position in the codestream
 				end position of this packet
   */
-char* create_index_into_byte_array(opj_codestream_info_t *cstr_info, int* buffer_size) {
+static char* create_index_into_byte_array(opj_codestream_info_t *cstr_info, int* buffer_size) {
 	int tileno, compno, layno, resno, precno, pack_nb, x, y;
 	char* buffer = NULL;
 	int buffer_pos = 0;
@@ -1596,7 +1596,7 @@ char* create_index_into_byte_array(opj_codestream_info_t *cstr_info, int* buffer
 /* -------------------------------------------------------------------------- 
    ------------ Get the image byte[] from the Java object -------------------*/
 
-opj_image_t* loadImage(opj_cparameters_t *parameters, JNIEnv *env, jobject obj, jclass cls) {
+static opj_image_t* loadImage(opj_cparameters_t *parameters, JNIEnv *env, jobject obj, jclass cls) {
 	int i,max,shift,w,h,depth;
 	opj_image_t * img = NULL;
 	int compno, numcomps;
