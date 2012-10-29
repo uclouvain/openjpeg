@@ -159,7 +159,7 @@ query_param_t * get_initquery(void)
   query_param_t *query;
   int i;
 
-  query = (query_param_t *)malloc( sizeof(query_param_t));
+  query = (query_param_t *)opj_malloc( sizeof(query_param_t));
 
   query->target = NULL;
   query->tid = NULL;
@@ -179,15 +179,15 @@ query_param_t * get_initquery(void)
   memset( query->box_type, 0, MAX_NUMOFBOX*4);
   memset( query->limit, 0, MAX_NUMOFBOX*sizeof(int));
   for( i=0; i<MAX_NUMOFBOX; i++){
-    query->w[i] = false;
-    query->s[i] = false;
-    query->g[i] = false;
-    query->a[i] = false;
-    query->priority[i] = false;
+    query->w[i] = OPJ_FALSE;
+    query->s[i] = OPJ_FALSE;
+    query->g[i] = OPJ_FALSE;
+    query->a[i] = OPJ_FALSE;
+    query->priority[i] = OPJ_FALSE;
   }
   query->root_bin = 0;
   query->max_depth = -1;
-  query->metadata_only = false;
+  query->metadata_only = OPJ_FALSE;
   query->return_type = UNKNOWN;
   query->len = -1;
 
@@ -329,7 +329,7 @@ void parse_metareq( char *field, query_param_t *query_param)
     sscanf( ptr+1, "%d", &(query_param->max_depth));
 
   if(( ptr = strstr( field, "!!")))
-    query_param->metadata_only = true;
+    query_param->metadata_only = OPJ_TRUE;
 }
 
 void parse_req_box_prop( char *req_box_prop, int idx, query_param_t *query_param)
@@ -352,22 +352,22 @@ void parse_req_box_prop( char *req_box_prop, int idx, query_param_t *query_param
     ptr++;
     while( *ptr=='w' || *ptr=='s' || *ptr=='g' || *ptr=='a'){
       switch( *ptr){
-      case 'w': query_param->w[idx] = true; break;
-      case 's': query_param->s[idx] = true; break;
-      case 'g': query_param->g[idx] = true; break;
-      case 'a': query_param->a[idx] = true; break;
+      case 'w': query_param->w[idx] = OPJ_TRUE; break;
+      case 's': query_param->s[idx] = OPJ_TRUE; break;
+      case 'g': query_param->g[idx] = OPJ_TRUE; break;
+      case 'a': query_param->a[idx] = OPJ_TRUE; break;
       }
       ptr++;
     }
   }
   else{
-    query_param->g[idx] = true;
-    query_param->s[idx] = true;
-    query_param->w[idx] = true;
+    query_param->g[idx] = OPJ_TRUE;
+    query_param->s[idx] = OPJ_TRUE;
+    query_param->w[idx] = OPJ_TRUE;
   }
 
   if((ptr = strchr( req_box_prop, '!')))
-    query_param->priority[idx] = true;
+    query_param->priority[idx] = OPJ_TRUE;
   
   idx++;   
 }
@@ -399,31 +399,31 @@ void parse_comps( char *field, query_param_t *query_param)
     }
   
   query_param->lastcomp = stop > aux ? stop : aux;
-  query_param->comps = (bool *)calloc( 1, (OPJ_SIZE_T)(query_param->lastcomp+1)*sizeof(bool));
+  query_param->comps = (opj_bool *)opj_calloc( 1, (OPJ_SIZE_T)(query_param->lastcomp+1)*sizeof(opj_bool));
 
   for( i=start; i<=stop; i++)
-    query_param->comps[i]=true;
+    query_param->comps[i]=OPJ_TRUE;
   
   if(aux!=-1)
-    query_param->comps[aux] = true;
+    query_param->comps[aux] = OPJ_TRUE;
 }
 
 void delete_query( query_param_t **query)
 {
   if( (*query)->target)
-    free( (*query)->target);
+    opj_free( (*query)->target);
   
   if( (*query)->tid)
-    free( (*query)->tid);
+    opj_free( (*query)->tid);
   
   if( (*query)->comps)
-    free((*query)->comps);
+    opj_free((*query)->comps);
   
   if( (*query)->cid)
-    free( (*query)->cid);
+    opj_free( (*query)->cid);
 
   if( (*query)->cclose)
-    free( (*query)->cclose);
+    opj_free( (*query)->cclose);
   
-  free( *query);
+  opj_free( *query);
 }

@@ -49,17 +49,17 @@
 SIZmarker_param_t get_SIZmkrdata_from_j2kstream( Byte_t *SIZstream);
 CODmarker_param_t get_CODmkrdata_from_j2kstream( Byte_t *CODstream);
 
-bool get_mainheader_from_j2kstream( Byte_t *j2kstream, SIZmarker_param_t *SIZ, CODmarker_param_t *COD)
+opj_bool get_mainheader_from_j2kstream( Byte_t *j2kstream, SIZmarker_param_t *SIZ, CODmarker_param_t *COD)
 {
   if( *j2kstream++ != 0xff || *j2kstream++ != 0x4f){
     fprintf( FCGI_stderr, "Error, j2kstream is not starting with SOC marker\n");
-    return false;
+    return OPJ_FALSE;
   }
   
   if( SIZ){
     *SIZ = get_SIZmkrdata_from_j2kstream( j2kstream);
     if( SIZ->Lsiz == 0)
-      return false;
+      return OPJ_FALSE;
 
     j2kstream += (SIZ->Lsiz+2);
   }
@@ -70,9 +70,9 @@ bool get_mainheader_from_j2kstream( Byte_t *j2kstream, SIZmarker_param_t *SIZ, C
     
     *COD = get_CODmkrdata_from_j2kstream( j2kstream);
     if( COD->Lcod == 0)
-      return false;
+      return OPJ_FALSE;
   }
-  return true;
+  return OPJ_TRUE;
 }
 
 SIZmarker_param_t get_SIZmkrdata_from_j2kstream( Byte_t *SIZstream)
@@ -145,38 +145,38 @@ CODmarker_param_t get_CODmkrdata_from_j2kstream( Byte_t *CODstream)
 }
 
 
-bool modify_SIZmkrstream( SIZmarker_param_t SIZ, int difOfdecomplev, Byte_t *SIZstream);
+opj_bool modify_SIZmkrstream( SIZmarker_param_t SIZ, int difOfdecomplev, Byte_t *SIZstream);
 Byte2_t modify_CODmkrstream( CODmarker_param_t COD, int numOfdecomp, Byte_t *CODstream);
 
-bool modify_mainheader( Byte_t *j2kstream, int numOfdecomp, SIZmarker_param_t SIZ, CODmarker_param_t COD, Byte8_t *j2klen)
+opj_bool modify_mainheader( Byte_t *j2kstream, int numOfdecomp, SIZmarker_param_t SIZ, CODmarker_param_t COD, Byte8_t *j2klen)
 {
   Byte2_t newLcod;
 
   if( *j2kstream++ != 0xff || *j2kstream++ != 0x4f){
     fprintf( FCGI_stderr, "Error, j2kstream is not starting with SOC marker\n");
-    return false;
+    return OPJ_FALSE;
   }
 
   if(!modify_SIZmkrstream( SIZ, COD.numOfdecomp-numOfdecomp, j2kstream))
-    return false;
+    return OPJ_FALSE;
   
   j2kstream += SIZ.Lsiz+2;
   if( !(newLcod = modify_CODmkrstream( COD, numOfdecomp, j2kstream)))
-    return false;
+    return OPJ_FALSE;
 
   memmove( j2kstream+2+newLcod, j2kstream+2+COD.Lcod, *j2klen - (Byte8_t)(SIZ.Lsiz+COD.Lcod+6));
   *j2klen -= (Byte8_t)( COD.Lcod - newLcod);
   
-  return true;
+  return OPJ_TRUE;
 }
 
-bool modify_SIZmkrstream( SIZmarker_param_t SIZ, int difOfdecomplev, Byte_t *SIZstream)
+opj_bool modify_SIZmkrstream( SIZmarker_param_t SIZ, int difOfdecomplev, Byte_t *SIZstream)
 {
   int i;
   
   if( *SIZstream++ != 0xff || *SIZstream++ != 0x51){
     fprintf( FCGI_stderr, "Error, SIZ marker not found in the reconstructed j2kstream\n");
-    return false;
+    return OPJ_FALSE;
   }
     
   for( i=0; i<difOfdecomplev; i++){
@@ -201,7 +201,7 @@ bool modify_SIZmkrstream( SIZmarker_param_t SIZ, int difOfdecomplev, Byte_t *SIZ
   modify_4Bytecode( SIZ.XTOsiz, SIZstream+24);
   modify_4Bytecode( SIZ.YTOsiz, SIZstream+28);
 
-  return true;
+  return OPJ_TRUE;
 }
 
 Byte2_t modify_CODmkrstream( CODmarker_param_t COD, int numOfdecomp, Byte_t *CODstream)
@@ -233,9 +233,9 @@ Byte2_t modify_CODmkrstream( CODmarker_param_t COD, int numOfdecomp, Byte_t *COD
   return newLcod;
 }
 
-bool modify_COCmkrstream( int numOfdecomp, Byte_t *COCstream, Byte2_t Csiz, Byte2_t *oldLcoc, Byte2_t *newLcoc);
+opj_bool modify_COCmkrstream( int numOfdecomp, Byte_t *COCstream, Byte2_t Csiz, Byte2_t *oldLcoc, Byte2_t *newLcoc);
 
-bool modify_tileheader( Byte_t *j2kstream, Byte8_t SOToffset, int numOfdecomp, Byte2_t Csiz, Byte8_t *j2klen)
+opj_bool modify_tileheader( Byte_t *j2kstream, Byte8_t SOToffset, int numOfdecomp, Byte2_t Csiz, Byte8_t *j2klen)
 {
   Byte4_t Psot; /* tile part length ref A.4.2 Start of tile-part SOT */
   Byte_t *thstream, *SOTstream, *Psot_stream;
@@ -245,7 +245,7 @@ bool modify_tileheader( Byte_t *j2kstream, Byte8_t SOToffset, int numOfdecomp, B
   
   if( *SOTstream++ != 0xff || *SOTstream++ != 0x90){
     fprintf( FCGI_stderr, "Error, thstream is not starting with SOT marker\n");
-    return false;
+    return OPJ_FALSE;
   }
 
   SOTstream += 4; /* skip Lsot & Isot */
@@ -257,7 +257,7 @@ bool modify_tileheader( Byte_t *j2kstream, Byte8_t SOToffset, int numOfdecomp, B
   while( !( *thstream == 0xff && *(thstream+1) == 0x93)){ /* search SOD */
     if( numOfdecomp != -1 && *thstream == 0xff && *(thstream+1) == 0x53){ /* COC */
       if( !modify_COCmkrstream( numOfdecomp, thstream, Csiz, &oldLcoc, &newLcoc))
-	return false;
+	return OPJ_FALSE;
       
       memmove( thstream+newLcoc+2, thstream+oldLcoc+2, *j2klen - (Byte8_t)(thstream-j2kstream+oldLcoc+2));
       *j2klen -= (Byte8_t)( oldLcoc - newLcoc);
@@ -270,15 +270,15 @@ bool modify_tileheader( Byte_t *j2kstream, Byte8_t SOToffset, int numOfdecomp, B
     Psot = (Byte4_t)((*j2klen)-SOToffset);
     modify_4Bytecode( Psot, Psot_stream);
   }
-  return true;
+  return OPJ_TRUE;
 }
 
-bool modify_COCmkrstream( int numOfdecomp, Byte_t *COCstream, Byte2_t Csiz, Byte2_t *oldLcoc, Byte2_t *newLcoc)
+opj_bool modify_COCmkrstream( int numOfdecomp, Byte_t *COCstream, Byte2_t Csiz, Byte2_t *oldLcoc, Byte2_t *newLcoc)
 {
-  if( numOfdecomp < 0 || numOfdecomp > 255 ) return false;
+  if( numOfdecomp < 0 || numOfdecomp > 255 ) return OPJ_FALSE;
   if( *COCstream++ != 0xff || *COCstream++ != 0x53){
     fprintf( FCGI_stderr, "Error, COC marker not found in the reconstructed j2kstream\n");
-    return false;
+    return OPJ_FALSE;
   }
   
   *oldLcoc = big2( COCstream);
@@ -291,5 +291,5 @@ bool modify_COCmkrstream( int numOfdecomp, Byte_t *COCstream, Byte2_t Csiz, Byte
       
   *COCstream = (Byte_t)numOfdecomp;
   
-  return true;
+  return OPJ_TRUE;
 }

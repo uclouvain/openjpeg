@@ -90,7 +90,7 @@ typedef struct aux_response_param{
 #endif
 } aux_response_param_t;
 
-aux_response_param_t * gene_auxresponse( bool istcp, auxtrans_param_t auxtrans, const char cid[], void *data, OPJ_SIZE_T datalen, OPJ_SIZE_T maxlenPerFrame);
+aux_response_param_t * gene_auxresponse( opj_bool istcp, auxtrans_param_t auxtrans, const char cid[], void *data, OPJ_SIZE_T datalen, OPJ_SIZE_T maxlenPerFrame);
 
 void delete_auxresponse( aux_response_param_t **auxresponse);
 
@@ -101,7 +101,7 @@ unsigned __stdcall aux_streaming( void *arg);
 void * aux_streaming( void *arg);
 #endif
 
-void send_responsedata_on_aux( bool istcp, auxtrans_param_t auxtrans, const char cid[], void *data, OPJ_SIZE_T datalen, OPJ_SIZE_T maxlenPerFrame)
+void send_responsedata_on_aux( opj_bool istcp, auxtrans_param_t auxtrans, const char cid[], void *data, OPJ_SIZE_T datalen, OPJ_SIZE_T maxlenPerFrame)
 {
   aux_response_param_t *auxresponse;
 #ifdef _WIN32
@@ -133,11 +133,11 @@ void send_responsedata_on_aux( bool istcp, auxtrans_param_t auxtrans, const char
     fprintf( FCGI_stderr, "Error: error in send_responsedata_on_aux(), udp not implemented\n");
 }
 
-aux_response_param_t * gene_auxresponse( bool istcp, auxtrans_param_t auxtrans, const char cid[], void *data, OPJ_SIZE_T datalen, OPJ_SIZE_T maxlenPerFrame)
+aux_response_param_t * gene_auxresponse( opj_bool istcp, auxtrans_param_t auxtrans, const char cid[], void *data, OPJ_SIZE_T datalen, OPJ_SIZE_T maxlenPerFrame)
 {
   aux_response_param_t *auxresponse;
 
-  auxresponse = (aux_response_param_t *)malloc( sizeof(aux_response_param_t));
+  auxresponse = (aux_response_param_t *)opj_malloc( sizeof(aux_response_param_t));
 
   auxresponse->cid = strdup( cid);
   auxresponse->data = data;
@@ -150,9 +150,9 @@ aux_response_param_t * gene_auxresponse( bool istcp, auxtrans_param_t auxtrans, 
 
 void delete_auxresponse( aux_response_param_t **auxresponse)
 {
-  free( (*auxresponse)->cid);
-  free( (*auxresponse)->data);
-  free( *auxresponse);
+  opj_free( (*auxresponse)->cid);
+  opj_free( (*auxresponse)->data);
+  opj_free( *auxresponse);
 }
 
 /**
@@ -163,9 +163,9 @@ void delete_auxresponse( aux_response_param_t **auxresponse)
  * @param [in] fp               file pointer for log of aux stream
  * @return                      true if identified, false otherwise
  */
-bool identify_cid( SOCKET connected_socket, char refcid[], FILE *fp);
+opj_bool identify_cid( SOCKET connected_socket, char refcid[], FILE *fp);
 
-bool recv_ack( SOCKET connected_socket, void *data);
+opj_bool recv_ack( SOCKET connected_socket, void *data);
 
 #ifdef _WIN32
 unsigned __stdcall aux_streaming( void *arg)
@@ -186,7 +186,7 @@ void * aux_streaming( void *arg)
   pthread_detach( pthread_self());
 #endif
 
-  chunk = (unsigned char *)malloc( auxresponse->maxlenPerFrame);
+  chunk = (unsigned char *)opj_malloc( auxresponse->maxlenPerFrame);
   maxLenOfBody = auxresponse->maxlenPerFrame - headlen;
   remlen = auxresponse->datalen;
 
@@ -216,7 +216,7 @@ void * aux_streaming( void *arg)
       break;
     }
   }
-  free( chunk);
+  opj_free( chunk);
 
   delete_auxresponse( &auxresponse);
   
@@ -230,38 +230,38 @@ void * aux_streaming( void *arg)
 }
 
 
-bool identify_cid( SOCKET connected_socket, char refcid[], FILE *fp)
+opj_bool identify_cid( SOCKET connected_socket, char refcid[], FILE *fp)
 {
   char *cid;
-  bool succeed;
+  opj_bool succeed;
 
   if(!(cid = receive_string( connected_socket))){
     fprintf( fp, "Error: error in identify_cid(), while receiving cid from client\n");
-    return false;
+    return OPJ_FALSE;
   }
   
-  succeed = false;
+  succeed = OPJ_FALSE;
   if( strncmp( refcid, cid, strlen( refcid)) == 0)
-    succeed = true;
+    succeed = OPJ_TRUE;
   
-  free( cid);
+  opj_free( cid);
 
   return succeed;
 }
 
-bool recv_ack( SOCKET connected_socket, void *data)
+opj_bool recv_ack( SOCKET connected_socket, void *data)
 {
   char *header;
-  bool succeed;
+  opj_bool succeed;
   
   header = receive_stream( connected_socket, 8);
   
   if( memcmp( header, data, 8) != 0)
-    succeed = false;
+    succeed = OPJ_FALSE;
   else
-    succeed = true;
+    succeed = OPJ_TRUE;
   
-  free( header);
+  opj_free( header);
 
   return succeed;
 }

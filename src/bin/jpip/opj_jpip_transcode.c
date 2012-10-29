@@ -53,7 +53,7 @@ static int jpip_to_jp2(int argc,char *argv[])
     return -1;
   }
   
-  dec = init_jpipdecoder( true);
+  dec = init_jpipdecoder( OPJ_TRUE);
   
   if(!( fread_jpip( argv[1], dec)))
     return -1;
@@ -63,7 +63,7 @@ static int jpip_to_jp2(int argc,char *argv[])
   if(!(fwrite_jp2k( argv[2], dec)))
     return -1;
 
-  output_log( true, false, true, dec);
+  output_log( OPJ_TRUE, OPJ_FALSE, OPJ_TRUE, dec);
 
   destroy_jpipdecoder( &dec);
 
@@ -92,7 +92,7 @@ static int jpip_to_j2k(int argc,char *argv[])
     return -1;
   }
   
-  dec = init_jpipdecoder( false);
+  dec = init_jpipdecoder( OPJ_FALSE);
   
   if(!( fread_jpip( argv[1], dec)))
     return -1;
@@ -102,7 +102,7 @@ static int jpip_to_j2k(int argc,char *argv[])
   if(!( fwrite_jp2k( argv[2], dec)))
     return -1;
   
-  /*  output_log( true, false, false, dec); */
+  /*  output_log( OPJ_TRUE, OPJ_FALSE, OPJ_FALSE, dec); */
   
   destroy_jpipdecoder( &dec);
 

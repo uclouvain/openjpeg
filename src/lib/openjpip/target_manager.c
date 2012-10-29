@@ -112,7 +112,7 @@ target_param_t * gene_target( targetlist_param_t *targetlist, char *targetpath)
   target->csn = last_csn++;
   target->codeidx = jp2idx;
   target->num_of_use = 0; 
-  target->jppstream = true;
+  target->jppstream = OPJ_TRUE;
   target->jptstream = isJPTfeasible( *jp2idx);
   target->next=NULL;
 

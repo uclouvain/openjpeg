@@ -32,7 +32,7 @@
 #ifndef   	QUERY_PARSER_H_
 # define   	QUERY_PARSER_H_
 
-#include "bool.h"
+#include "opj_includes.h"
 
 /** maximum number of meta request box */
 #define MAX_NUMOFBOX 10
@@ -51,21 +51,21 @@ typedef struct query_param{
   int rx, ry, rw, rh;                         /**< roi region */
   int layers;                                 /**< quality layers */
   int lastcomp;                               /**< last component number */
-  bool *comps;                                /**< components (dynamic array) for jpp-stream, null means all components */
+  opj_bool *comps;                                /**< components (dynamic array) for jpp-stream, null means all components */
   char *cid;                                  /**< channel identifier */
   cnew_transport_t cnew;                      /**< transport name if there is new channel request, else non */
   char *cclose;                               /**< list of closing channel identifiers, separated by '\\0' */
   int numOfcclose;                            /**< number of closing channels */
   char box_type[MAX_NUMOFBOX][4];             /**< interested box-types */
   int limit[MAX_NUMOFBOX];                    /**< limit value, -1: skeleton request "r", 0: entire contents */
-  bool w[MAX_NUMOFBOX];                       /**< Metadata request qualifier flags */
-  bool s[MAX_NUMOFBOX];
-  bool g[MAX_NUMOFBOX];
-  bool a[MAX_NUMOFBOX];
-  bool priority[MAX_NUMOFBOX];                /**< priority flag */
+  opj_bool w[MAX_NUMOFBOX];                       /**< Metadata request qualifier flags */
+  opj_bool s[MAX_NUMOFBOX];
+  opj_bool g[MAX_NUMOFBOX];
+  opj_bool a[MAX_NUMOFBOX];
+  opj_bool priority[MAX_NUMOFBOX];                /**< priority flag */
   int root_bin;                               /**< root-bin */
   int max_depth;                              /**< max-depth */
-  bool metadata_only;                         /**< metadata-only request */
+  opj_bool metadata_only;                         /**< metadata-only request */
   image_return_t return_type;                 /**< image return type */
   int len;                                    /**< maximum response length */
 } query_param_t;

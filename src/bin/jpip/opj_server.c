@@ -84,7 +84,7 @@ int main(void)
 #endif
     {
       QR_t *qr;
-      bool parse_status;
+      opj_bool parse_status;
 
 #ifdef SERVER     
       query_string = getenv("QUERY_STRING");    
@@ -98,7 +98,7 @@ int main(void)
       parse_status = process_JPIPrequest( server_record, qr);
       
 #ifndef SERVER
-      local_log( true, true, parse_status, false, qr, server_record);
+      local_log( OPJ_TRUE, OPJ_TRUE, parse_status, OPJ_FALSE, qr, server_record);
 #endif
             
       if( parse_status)

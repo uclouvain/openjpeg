@@ -32,7 +32,6 @@
 #ifndef         J2KHEADER_MANAGER_H_
 # define        J2KHEADER_MANAGER_H_
 
-#include "bool.h"
 #include "byte_manager.h"
 #include "index_manager.h"
 
@@ -44,7 +43,7 @@
  * @param[out] COD       COD marker pointer
  * @return               if succeeded (true) or failed (false)
  */
-bool get_mainheader_from_j2kstream( Byte_t *j2kstream, SIZmarker_param_t *SIZ, CODmarker_param_t *COD);
+opj_bool get_mainheader_from_j2kstream( Byte_t *j2kstream, SIZmarker_param_t *SIZ, CODmarker_param_t *COD);
 
 /**
  * modify main header in j2k codestream to fit with the new number of decompositions
@@ -56,7 +55,7 @@ bool get_mainheader_from_j2kstream( Byte_t *j2kstream, SIZmarker_param_t *SIZ, C
  * @param[out] j2klen      pointer to the length of j2k code stream
  * @return                 if succeeded (true) or failed (false)
  */
-bool modify_mainheader( Byte_t *j2kstream, int numOfdecomp, SIZmarker_param_t SIZ, CODmarker_param_t COD, Byte8_t *j2klen);
+opj_bool modify_mainheader( Byte_t *j2kstream, int numOfdecomp, SIZmarker_param_t SIZ, CODmarker_param_t COD, Byte8_t *j2klen);
 
 /**
  * modify tile header in j2k codestream to fit with the tile part length, and new number of decompositions for multi-componet images
@@ -68,6 +67,6 @@ bool modify_mainheader( Byte_t *j2kstream, int numOfdecomp, SIZmarker_param_t SI
  * @param[out] j2klen      pointer to the length of j2k code stream
  * @return                 if succeeded (true) or failed (false)
  */
-bool modify_tileheader( Byte_t *j2kstream, Byte8_t SOToffset, int numOfdecomp, Byte2_t Csiz, Byte8_t *j2klen);
+opj_bool modify_tileheader( Byte_t *j2kstream, Byte8_t SOToffset, int numOfdecomp, Byte2_t Csiz, Byte8_t *j2klen);
 
 #endif      /* !J2KHEADER_MANAGER_H_ */

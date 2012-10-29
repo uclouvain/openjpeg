@@ -32,7 +32,6 @@
 #ifndef   	JPIP_PARSER_H_
 # define   	JPIP_PARSER_H_
 
-#include "bool.h"
 #include "query_parser.h"
 #include "session_manager.h"
 #include "target_manager.h"
@@ -47,7 +46,7 @@
  * @param[out]    target        address of target pointer
  * @return                      if succeeded (true) or failed (false)
  */
-bool identify_target( query_param_t query_param, targetlist_param_t *targetlist, target_param_t **target);
+opj_bool identify_target( query_param_t query_param, targetlist_param_t *targetlist, target_param_t **target);
 
 /**
  * REQUEST: channel association
@@ -59,7 +58,7 @@ bool identify_target( query_param_t query_param, targetlist_param_t *targetlist,
  * @param[out]    curchannel    address of the associated channel pointer
  * @return                      if succeeded (true) or failed (false)
  */
-bool associate_channel( query_param_t    query_param, 
+opj_bool associate_channel( query_param_t    query_param, 
 			sessionlist_param_t *sessionlist,
 			session_param_t **cursession, 
 			channel_param_t **curchannel);
@@ -74,7 +73,7 @@ bool associate_channel( query_param_t    query_param,
  * @param[in,out] curchannel    address of the associated/opened channel pointer
  * @return                      if succeeded (true) or failed (false)
  */
-bool open_channel( query_param_t query_param, 
+opj_bool open_channel( query_param_t query_param, 
 		   sessionlist_param_t *sessionlist,
 		   auxtrans_param_t auxtrans,
 		   target_param_t *target,
@@ -90,7 +89,7 @@ bool open_channel( query_param_t query_param,
  * @param[in,out] curchannel    address of the deleting channel pointer
  * @return                      if succeeded (true) or failed (false)
  */
-bool close_channel( query_param_t query_param, 
+opj_bool close_channel( query_param_t query_param, 
 		    sessionlist_param_t *sessionlist,
 		    session_param_t **cursession, 
 		    channel_param_t **curchannel);
@@ -105,7 +104,7 @@ bool close_channel( query_param_t query_param,
  * @param[out]    msgqueue    address of the message queue pointer
  * @return                    if succeeded (true) or failed (false)
  */
-bool gene_JPIPstream( query_param_t query_param,
+opj_bool gene_JPIPstream( query_param_t query_param,
 		      target_param_t *target,
 		      session_param_t *cursession, 
 		      channel_param_t *curchannel,

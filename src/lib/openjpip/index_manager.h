@@ -38,7 +38,6 @@
 #include "faixbox_manager.h"
 #include "metadata_manager.h"
 #include "mhixbox_manager.h"
-#include "bool.h"
 
 /** progression order */
 #if 0
@@ -187,6 +186,6 @@ Byte4_t get_tile_YSiz( SIZmarker_param_t SIZ, Byte4_t tile_id, int level);
  * @param[in] index index parameters
  * @return    true if JPT-stream is feasible
  */
-bool isJPTfeasible( index_param_t index);
+opj_bool isJPTfeasible( index_param_t index);
 
 #endif 	    /* !INDEX_MANAGER_H_ */

@@ -127,7 +127,7 @@ Byte_t * recons_jp2( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte8_t csn
   return jp2stream;
 }
 
-bool isJPPstream( Byte8_t csn, msgqueue_param_t *msgqueue);
+opj_bool isJPPstream( Byte8_t csn, msgqueue_param_t *msgqueue);
 
 Byte_t * recons_codestream_from_JPTstream( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte8_t csn, int fw, int fh,  Byte8_t *j2klen);
 Byte_t * recons_codestream_from_JPPstream( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte8_t csn, int fw, int fh, Byte8_t *j2klen);
@@ -142,7 +142,7 @@ Byte_t * recons_codestream( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte
     return recons_codestream_from_JPTstream( msgqueue, jpipstream, csn, fw, fh, codelen);   
 }
 
-bool isJPPstream( Byte8_t csn, msgqueue_param_t *msgqueue)
+opj_bool isJPPstream( Byte8_t csn, msgqueue_param_t *msgqueue)
 {
   message_param_t *msg;
   
@@ -150,28 +150,28 @@ bool isJPPstream( Byte8_t csn, msgqueue_param_t *msgqueue)
   while( msg){
     if( msg->csn == csn){
       if( msg->class_id <= 2)
-	return true;
+	return OPJ_TRUE;
       else
 	if( msg->class_id == 4 || msg->class_id == 5)
-	  return false;
+	  return OPJ_FALSE;
     }
     msg = msg->next;
   }
   
   fprintf( FCGI_stderr, "Error, message of csn %" PRId64 " not found\n", csn);
 
-  return false;
+  return OPJ_FALSE;
 }
 
 Byte_t * add_mainhead_msgstream( msgqueue_param_t *msgqueue, Byte_t *origstream, Byte_t *j2kstream, Byte8_t csn, Byte8_t *j2klen);
-Byte8_t get_last_tileID( msgqueue_param_t *msgqueue, Byte8_t csn, bool isJPPstream);
+Byte8_t get_last_tileID( msgqueue_param_t *msgqueue, Byte8_t csn, opj_bool isJPPstream);
 Byte_t * add_emptytilestream( const Byte8_t tileID, Byte_t *j2kstream, Byte8_t *j2klen);
 
 Byte_t * recons_codestream_from_JPTstream( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte8_t csn, int fw, int fh,  Byte8_t *j2klen)
 { 
   Byte_t *j2kstream = NULL;
   Byte8_t last_tileID, tileID;
-  bool found;
+  opj_bool found;
   Byte8_t binOffset;
   message_param_t *ptr;
   SIZmarker_param_t SIZ;
@@ -188,16 +188,16 @@ Byte_t * recons_codestream_from_JPTstream( msgqueue_param_t *msgqueue, Byte_t *j
   else
     mindeclev = (OPJ_SIZE_T)comp_decomplev( fw, fh, (int)SIZ.Xsiz, (int)SIZ.Ysiz);
  
-  last_tileID = get_last_tileID( msgqueue, csn, false);
+  last_tileID = get_last_tileID( msgqueue, csn, OPJ_FALSE);
   
   for( tileID=0; tileID <= last_tileID; tileID++){
-    found = false;
+    found = OPJ_FALSE;
     binOffset = 0;
 
     ptr = msgqueue->first;
     while(( ptr = search_message( TILE_MSG, tileID, csn, ptr))!=NULL){
       if( ptr->bin_offset == binOffset){
-	found = true;
+	found = OPJ_TRUE;
 	j2kstream = add_msgstream( ptr, jpipstream, j2kstream, j2klen);
 	binOffset += ptr->length;
       }
@@ -207,7 +207,7 @@ Byte_t * recons_codestream_from_JPTstream( msgqueue_param_t *msgqueue, Byte_t *j
     while(( ptr = search_message( EXT_TILE_MSG, tileID, csn, ptr))!=NULL){
       if( ptr->aux > mindeclev){ /* FIXME: pointer comparison ? */
 	if( ptr->bin_offset == binOffset){
-	  found = true;
+	  found = OPJ_TRUE;
 	  j2kstream = add_msgstream( ptr, jpipstream, j2kstream, j2klen);
 	  binOffset += ptr->length;
 	}
@@ -234,7 +234,7 @@ Byte_t * recons_codestream_from_JPPstream( msgqueue_param_t *msgqueue, Byte_t *j
   Byte_t *j2kstream = NULL;
   Byte8_t tileID, last_tileID;
   Byte8_t SOToffset;
-  bool foundTH;
+  opj_bool foundTH;
   Byte8_t binOffset;
   message_param_t *ptr;
   SIZmarker_param_t SIZ;
@@ -253,19 +253,19 @@ Byte_t * recons_codestream_from_JPPstream( msgqueue_param_t *msgqueue, Byte_t *j
     mindeclev = comp_decomplev( fw, fh, (int)SIZ.Xsiz, (int)SIZ.Ysiz);
   
   max_reslev = -1;
-  last_tileID = get_last_tileID( msgqueue, csn, true); 
+  last_tileID = get_last_tileID( msgqueue, csn, OPJ_TRUE); 
   
   for( tileID=0; tileID <= last_tileID; tileID++){
     
     ptr = msgqueue->first;
     binOffset = 0;
-    foundTH = false;
+    foundTH = OPJ_FALSE;
     SOToffset = *j2klen;
     while(( ptr = search_message( TILE_HEADER_MSG, tileID, csn, ptr))!=NULL){
       if( ptr->bin_offset == binOffset){
 	j2kstream = add_SOTmkr( j2kstream, j2klen);
 	j2kstream = add_msgstream( ptr, jpipstream, j2kstream, j2klen);
-	foundTH = true;
+	foundTH = OPJ_TRUE;
 	binOffset += ptr->length;
       }
       ptr = ptr->next;
@@ -526,7 +526,7 @@ Byte_t * recons_packet( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte_t *
 {
   Byte8_t seqID, precID, binOffset;
   message_param_t *ptr;
-  bool foundPrec;
+  opj_bool foundPrec;
   int l;
 
   seqID = comp_seqID( tileID, SIZ, COD, res_idx, prct_idx);
@@ -534,14 +534,14 @@ Byte_t * recons_packet( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte_t *
 	  	  
   ptr = msgqueue->first;
   binOffset = 0;
-  foundPrec = false;
+  foundPrec = OPJ_FALSE;
   l = 0;
 	  
   while(( ptr = search_message( PRECINCT_MSG, precID, csn, ptr))!=NULL){
     if( ptr->bin_offset == binOffset){
       if( lay_idx == l){
 	j2kstream = add_msgstream( ptr, jpipstream, j2kstream, j2klen);
-	foundPrec = true;
+	foundPrec = OPJ_TRUE;
 	if( *max_reslev < res_idx)
 	  *max_reslev = res_idx;
 		
@@ -565,19 +565,19 @@ Byte_t * recons_precinct( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte_t
 {
   Byte8_t precID, binOffset;
   message_param_t *ptr;
-  bool foundPrec;
+  opj_bool foundPrec;
 
   precID = comp_precinct_id( (int)tileID, comp_idx, (int)seqID, (int)SIZ.Csiz, (int)SIZ.XTnum*(int)SIZ.YTnum);
   
   ptr = msgqueue->first;
   binOffset = 0;
-  foundPrec = false;
+  foundPrec = OPJ_FALSE;
 
   while(( ptr = search_message( PRECINCT_MSG, precID, csn, ptr))!=NULL){
     if( ptr->bin_offset == binOffset){
       j2kstream = add_msgstream( ptr, jpipstream, j2kstream, j2klen);
       
-      foundPrec = true;
+      foundPrec = OPJ_TRUE;
       binOffset += ptr->length;
       if( *max_reslev < res_idx)
 	*max_reslev = res_idx;
@@ -608,7 +608,7 @@ Byte8_t comp_seqID( Byte8_t tileID, SIZmarker_param_t SIZ, CODmarker_param_t COD
   return seqID;
 }
 
-Byte8_t get_last_tileID( msgqueue_param_t *msgqueue, Byte8_t csn, bool isJPPstream)
+Byte8_t get_last_tileID( msgqueue_param_t *msgqueue, Byte8_t csn, opj_bool isJPPstream)
 {
   Byte8_t last_tileID = 0;
   message_param_t *msg;

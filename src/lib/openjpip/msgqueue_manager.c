@@ -56,7 +56,7 @@
 #define logstream stderr
 #endif /*SERVER*/
 
-msgqueue_param_t * gene_msgqueue( bool stateless, cachemodel_param_t *cachemodel)
+msgqueue_param_t * gene_msgqueue( opj_bool stateless, cachemodel_param_t *cachemodel)
 {
   msgqueue_param_t *msgqueue;
 
@@ -137,7 +137,7 @@ void enqueue_mainheader( msgqueue_param_t *msgqueue)
   
   msg = (message_param_t *)opj_malloc( sizeof(message_param_t));
 
-  msg->last_byte = true;
+  msg->last_byte = OPJ_TRUE;
   msg->in_class_id = 0;
   msg->class_id = MAINHEADER_MSG;
   assert( target->csn >= 0 );
@@ -151,7 +151,7 @@ void enqueue_mainheader( msgqueue_param_t *msgqueue)
 
   enqueue_message( msg, msgqueue);
 
-  cachemodel->mhead_model = true;
+  cachemodel->mhead_model = OPJ_TRUE;
 }
 
 void enqueue_tileheader( int tile_id, msgqueue_param_t *msgqueue)
@@ -167,7 +167,7 @@ void enqueue_tileheader( int tile_id, msgqueue_param_t *msgqueue)
 
   if( !cachemodel->th_model[ tile_id]){
     msg = (message_param_t *)opj_malloc( sizeof(message_param_t));
-    msg->last_byte = true;
+    msg->last_byte = OPJ_TRUE;
     assert( tile_id >= 0 );
     msg->in_class_id = (Byte8_t)tile_id;
     msg->class_id = TILE_HEADER_MSG;
@@ -181,7 +181,7 @@ void enqueue_tileheader( int tile_id, msgqueue_param_t *msgqueue)
     msg->next = NULL;
     
     enqueue_message( msg, msgqueue);
-    cachemodel->th_model[ tile_id] = true;
+    cachemodel->th_model[ tile_id] = OPJ_TRUE;
   }
 }
 
@@ -189,7 +189,7 @@ void enqueue_tile( Byte4_t tile_id, int level, msgqueue_param_t *msgqueue)
 {
   cachemodel_param_t *cachemodel;
   target_param_t *target;
-  bool *tp_model;
+  opj_bool *tp_model;
   Byte8_t numOftparts; /* num of tile parts par tile*/
   Byte8_t numOftiles;
   index_param_t *codeidx;
@@ -236,7 +236,7 @@ void enqueue_tile( Byte4_t tile_id, int level, msgqueue_param_t *msgqueue)
 
       enqueue_message( msg, msgqueue);
 
-      tp_model[i] = true;
+      tp_model[i] = OPJ_TRUE;
     }
     binOffset += binLength;
   }
@@ -283,7 +283,7 @@ void enqueue_precinct( int seq_id, int tile_id, int comp_id, int layers, msgqueu
 
       enqueue_message( msg, msgqueue);
       
-      cachemodel->pp_model[comp_id][tile_id*(int)nmax+seq_id*numOflayers+layer_id] = true;
+      cachemodel->pp_model[comp_id][tile_id*(int)nmax+seq_id*numOflayers+layer_id] = OPJ_TRUE;
     }
     binOffset += binLength;
   }
@@ -323,7 +323,7 @@ void enqueue_metadata( Byte8_t meta_id, msgqueue_param_t *msgqueue)
   if( metadata->boxcontents)
     enqueue_boxcontents( meta_id, metadata->boxcontents, msgqueue, &binOffset);
   
-  msgqueue->last->last_byte = true;
+  msgqueue->last->last_byte = OPJ_TRUE;
 }
 
 message_param_t * gene_metamsg( Byte8_t meta_id, Byte8_t binoffset, Byte8_t length, OPJ_OFF_T res_offset, placeholder_param_t *phld, Byte8_t csn);
@@ -378,7 +378,7 @@ message_param_t * gene_metamsg( Byte8_t meta_id, Byte8_t binOffset, Byte8_t leng
 
   msg = (message_param_t *)opj_malloc( sizeof(message_param_t));
     
-  msg->last_byte = false;
+  msg->last_byte = OPJ_FALSE;
   msg->in_class_id = meta_id;
   msg->class_id = METADATA_MSG;
   msg->csn = csn;
@@ -600,7 +600,7 @@ void parse_JPIPstream( Byte_t *JPIPstream, Byte8_t streamlen, OPJ_OFF_T offset, 
     
     ptr = parse_bin_id_vbas( ptr, &bb, &c, &msg->in_class_id);
     
-    msg->last_byte   = c == 1 ? true : false;
+    msg->last_byte   = c == 1 ? OPJ_TRUE : OPJ_FALSE;
     
     if( bb >= 2)
       ptr = parse_vbas( ptr, &class_id);

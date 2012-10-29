@@ -76,7 +76,7 @@ session_param_t * gene_session( sessionlist_param_t *sessionlist)
   return session;
 }
 
-bool search_session_and_channel( char cid[], 
+opj_bool search_session_and_channel( char cid[], 
 				 sessionlist_param_t *sessionlist, 
 				 session_param_t **foundsession, 
 				 channel_param_t **foundchannel)
@@ -90,7 +90,7 @@ bool search_session_and_channel( char cid[],
     while( *foundchannel != NULL){
       
       if( strcmp( cid, (*foundchannel)->cid) == 0)
-	return true;
+	return OPJ_TRUE;
       
       *foundchannel = (*foundchannel)->next;
     }
@@ -100,7 +100,7 @@ bool search_session_and_channel( char cid[],
   fprintf( FCGI_stdout, "Status: 503\r\n");
   fprintf( FCGI_stdout, "Reason: Channel %s not found\r\n", cid); 
 
-  return false;
+  return OPJ_FALSE;
 }
 
 void insert_cachemodel_into_session( session_param_t *session, cachemodel_param_t *cachemodel)
@@ -118,12 +118,12 @@ void insert_cachemodel_into_session( session_param_t *session, cachemodel_param_
   session->cachemodellist->last = cachemodel;
 }
 
-bool delete_session( session_param_t **session, sessionlist_param_t *sessionlist)
+opj_bool delete_session( session_param_t **session, sessionlist_param_t *sessionlist)
 {
   session_param_t *ptr;
 
   if( *session == NULL)
-    return false;
+    return OPJ_FALSE;
 
 
   if( *session == sessionlist->first)
@@ -146,7 +146,7 @@ bool delete_session( session_param_t **session, sessionlist_param_t *sessionlist
 #endif
   opj_free( *session);
 
-  return true;
+  return OPJ_TRUE;
 }
 
 void delete_sessionlist( sessionlist_param_t **sessionlist)

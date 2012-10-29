@@ -86,7 +86,7 @@ void handle_JPIPstreamMSG( SOCKET connected_socket, cachelist_param_t *cachelist
   if( tid)    opj_free( tid);
   if( cid)    opj_free( cid);
 
-  response_signal( connected_socket, true);
+  response_signal( connected_socket, OPJ_TRUE);
 }
 
 void handle_PNMreqMSG( SOCKET connected_socket, Byte_t *jpipstream, msgqueue_param_t *msgqueue, cachelist_param_t *cachelist)
@@ -192,7 +192,7 @@ void handle_dstCIDreqMSG( SOCKET connected_socket, cachelist_param_t *cachelist)
 
   cid = receive_string( connected_socket);
   remove_cachecid( cid, cachelist);
-  response_signal( connected_socket, true);
+  response_signal( connected_socket, OPJ_TRUE);
   
   opj_free( cid);
 }

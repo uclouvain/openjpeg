@@ -31,7 +31,6 @@
 #ifndef   	SESSION_MANAGER_H_
 # define   	SESSION_MANAGER_H_
 
-#include "bool.h"
 #include "channel_manager.h"
 #include "cachemodel_manager.h"
 
@@ -74,7 +73,7 @@ session_param_t * gene_session( sessionlist_param_t *sessionlist);
  * @param[in,out] foundchannel  address of the found channel pointer
  * @return                      if the channel is found (true) or not (false)
  */
-bool search_session_and_channel( char cid[], 
+opj_bool search_session_and_channel( char cid[], 
 				 sessionlist_param_t *sessionlist, 
 				 session_param_t **foundsession, 
 				 channel_param_t **foundchannel);
@@ -95,7 +94,7 @@ void insert_cachemodel_into_session( session_param_t *session, cachemodel_param_
  * @param[in] sessionlist session list pointer
  * @return                    if succeeded (true) or failed (false)
  */
-bool delete_session( session_param_t **session, sessionlist_param_t *sessionlist);
+opj_bool delete_session( session_param_t **session, sessionlist_param_t *sessionlist);
 
 
 /**

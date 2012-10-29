@@ -31,17 +31,16 @@
 #ifndef   	CACHEMODEL_MANAGER_H_
 # define   	CACHEMODEL_MANAGER_H_
 
-#include "bool.h"
 #include "target_manager.h"
 
 /** Cache model parameters*/
 typedef struct cachemodel_param{
   target_param_t *target;        /**< reference pointer to the target*/
-  bool jppstream;                /**< return type, true: JPP-stream, false: JPT-stream*/
-  bool mhead_model;              /**< main header model, if sent, 1, else 0*/
-  bool *tp_model;                /**< dynamic array pointer of tile part model, if sent, 1, else 0*/
-  bool *th_model;                /**< dynamic array pointer of tile header model*/
-  bool **pp_model;               /**< dynamic array pointer of precint packet model*/
+  opj_bool jppstream;                /**< return type, true: JPP-stream, false: JPT-stream*/
+  opj_bool mhead_model;              /**< main header model, if sent, 1, else 0*/
+  opj_bool *tp_model;                /**< dynamic array pointer of tile part model, if sent, 1, else 0*/
+  opj_bool *th_model;                /**< dynamic array pointer of tile header model*/
+  opj_bool **pp_model;               /**< dynamic array pointer of precint packet model*/
   struct cachemodel_param *next; /**< pointer to the next cache model*/
 } cachemodel_param_t;
 
@@ -67,7 +66,7 @@ cachemodellist_param_t * gene_cachemodellist(void);
  * @param[in] reqJPP         if JPP-stream is desired true, JPT-stream false
  * @return                   pointer to the generated cache model
  */
-cachemodel_param_t * gene_cachemodel( cachemodellist_param_t *cachemodellist, target_param_t *target, bool reqJPP);
+cachemodel_param_t * gene_cachemodel( cachemodellist_param_t *cachemodellist, target_param_t *target, opj_bool reqJPP);
 
 
 /**
@@ -94,7 +93,7 @@ cachemodel_param_t * search_cachemodel( target_param_t *target, cachemodellist_p
  * @param[in] cachemodel cache model
  * @return               true if sent all, false otherwise
  */
-bool is_allsent( cachemodel_param_t cachemodel);
+opj_bool is_allsent( cachemodel_param_t cachemodel);
 
 
 /**

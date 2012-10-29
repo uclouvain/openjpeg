@@ -46,37 +46,37 @@
 #endif /*SERVER*/
 
 
-bool identify_target( query_param_t query_param, targetlist_param_t *targetlist, target_param_t **target)
+opj_bool identify_target( query_param_t query_param, targetlist_param_t *targetlist, target_param_t **target)
 {
   if( query_param.tid){
     if( strcmp( query_param.tid, "0") != 0 ){
       if( query_param.cid[0] != '\0'){
 	fprintf( FCGI_stdout, "Reason: Target can not be specified both through tid and cid\r\n");
 	fprintf( FCGI_stdout, "Status: 400\r\n");
-	return false;
+	return OPJ_FALSE;
       }
       if( ( *target = search_targetBytid( query_param.tid, targetlist)))
-	return true;
+	return OPJ_TRUE;
     }
   }
 
   if( query_param.target)
     if( !( *target = search_target( query_param.target, targetlist)))
       if(!( *target = gene_target( targetlist, query_param.target)))
-	return false;
+	return OPJ_FALSE;
 
   if( *target){
     fprintf( FCGI_stdout, "JPIP-tid: %s\r\n", (*target)->tid);
-    return true;
+    return OPJ_TRUE;
   }
   else{
     fprintf( FCGI_stdout, "Reason: target not found\r\n");
     fprintf( FCGI_stdout, "Status: 400\r\n");
-    return false;
+    return OPJ_FALSE;
   }
 }
 
-bool associate_channel( query_param_t    query_param, 
+opj_bool associate_channel( query_param_t    query_param, 
 			sessionlist_param_t *sessionlist,
 			session_param_t **cursession, 
 			channel_param_t **curchannel)
@@ -88,12 +88,12 @@ bool associate_channel( query_param_t    query_param,
   }
   else{
     fprintf( FCGI_stderr, "Error: process canceled\n");
-    return false;
+    return OPJ_FALSE;
   }
-  return true;
+  return OPJ_TRUE;
 }
 
-bool open_channel( query_param_t query_param, 
+opj_bool open_channel( query_param_t query_param, 
 		   sessionlist_param_t *sessionlist,
 		   auxtrans_param_t auxtrans,
 		   target_param_t *target,
@@ -107,7 +107,7 @@ bool open_channel( query_param_t query_param,
       *cursession = gene_session( sessionlist);
     if( !( cachemodel = search_cachemodel( target, (*cursession)->cachemodellist)))
       if( !(cachemodel = gene_cachemodel( (*cursession)->cachemodellist, target, query_param.return_type==JPPstream)))
-	return false;
+	return OPJ_FALSE;
   }
   else
     if( *curchannel)
@@ -115,12 +115,12 @@ bool open_channel( query_param_t query_param,
 
   *curchannel = gene_channel( query_param, auxtrans, cachemodel, (*cursession)->channellist);
   if( *curchannel == NULL)
-    return false;
+    return OPJ_FALSE;
 
-  return true;
+  return OPJ_TRUE;
 }
 
-bool close_channel( query_param_t query_param, 
+opj_bool close_channel( query_param_t query_param, 
 		    sessionlist_param_t *sessionlist,
 		    session_param_t **cursession, 
 		    channel_param_t **curchannel)
@@ -134,7 +134,7 @@ bool close_channel( query_param_t query_param,
 #endif
     /* all channels associatd with the session will be closed */
     if( !delete_session( cursession, sessionlist))
-      return false;
+      return OPJ_FALSE;
   }
   else{
     /* check if all entry belonging to the same session */
@@ -144,12 +144,12 @@ bool close_channel( query_param_t query_param,
       /* In case of the first entry of close cid */
       if( *cursession == NULL){
 	if( !search_session_and_channel( cclose, sessionlist, cursession, curchannel))
-	  return false;
+	  return OPJ_FALSE;
       }
       else /* second or more entry of close cid */
 	if( !(*curchannel=search_channel( cclose, (*cursession)->channellist))){
 	  fprintf( FCGI_stdout, "Reason: Cclose id %s is from another session\r\n", cclose); 
-	  return false;
+	  return OPJ_FALSE;
 	}
     }
 
@@ -163,7 +163,7 @@ bool close_channel( query_param_t query_param,
       /* In case of empty session */
       delete_session( cursession, sessionlist);
   }
-  return true;
+  return OPJ_TRUE;
 }
 
 
@@ -183,10 +183,10 @@ void enqueue_imagedata( query_param_t query_param, msgqueue_param_t *msgqueue);
  * @param[in,out] msgqueue     message queue pointer  
  * @return                     if succeeded (true) or failed (false)
  */
-bool enqueue_metabins( query_param_t query_param, metadatalist_param_t *metadatalist, msgqueue_param_t *msgqueue);
+opj_bool enqueue_metabins( query_param_t query_param, metadatalist_param_t *metadatalist, msgqueue_param_t *msgqueue);
 
 
-bool gene_JPIPstream( query_param_t query_param,
+opj_bool gene_JPIPstream( query_param_t query_param,
 		      target_param_t *target,
 		      session_param_t *cursession, 
 		      channel_param_t *curchannel,
@@ -197,15 +197,15 @@ bool gene_JPIPstream( query_param_t query_param,
   
   if( !cursession || !curchannel){ /* stateless */
     if( !target)
-      return false;
+      return OPJ_FALSE;
     if( !(cachemodel = gene_cachemodel( NULL, target, query_param.return_type==JPPstream)))
-      return false;
-    *msgqueue = gene_msgqueue( true, cachemodel);
+      return OPJ_FALSE;
+    *msgqueue = gene_msgqueue( OPJ_TRUE, cachemodel);
   }
   else{ /* session */
     cachemodel  = curchannel->cachemodel;
     target = cachemodel->target;
-    *msgqueue = gene_msgqueue( false, cachemodel);
+    *msgqueue = gene_msgqueue( OPJ_FALSE, cachemodel);
   }
   
   codeidx = target->codeidx;
@@ -225,10 +225,10 @@ bool gene_JPIPstream( query_param_t query_param,
   /*meta*/
   if( query_param.box_type[0][0] != 0  && query_param.len != 0)
     if( !enqueue_metabins( query_param, codeidx->metadatalist, *msgqueue))
-      return false;
+      return OPJ_FALSE;
   
   if( query_param.metadata_only)
-    return true;
+    return OPJ_TRUE;
 
   /* main header */
   if( !cachemodel->mhead_model && query_param.len != 0)
@@ -238,7 +238,7 @@ bool gene_JPIPstream( query_param_t query_param,
   if( (query_param.fx > 0 && query_param.fy > 0))
     enqueue_imagedata( query_param, *msgqueue);
   
-  return true;
+  return OPJ_TRUE;
 }
 
 
@@ -257,7 +257,7 @@ bool gene_JPIPstream( query_param_t query_param,
  * @param[in] msgqueue  message queue
  * @return
  */
-void enqueue_precincts( int xmin, int xmax, int ymin, int ymax, int tile_id, int level, int lastcomp, bool *comps, int layers, msgqueue_param_t *msgqueue);
+void enqueue_precincts( int xmin, int xmax, int ymin, int ymax, int tile_id, int level, int lastcomp, opj_bool *comps, int layers, msgqueue_param_t *msgqueue);
 
 /**
  * enqueue all precincts inside a tile into the queue
@@ -270,7 +270,7 @@ void enqueue_precincts( int xmin, int xmax, int ymin, int ymax, int tile_id, int
  * @param[in] msgqueue  message queue
  * @return
  */
-void enqueue_allprecincts( int tile_id, int level, int lastcomp, bool *comps, int layers, msgqueue_param_t *msgqueue);
+void enqueue_allprecincts( int tile_id, int level, int lastcomp, opj_bool *comps, int layers, msgqueue_param_t *msgqueue);
 
 void enqueue_imagedata( query_param_t query_param, msgqueue_param_t *msgqueue)
 {
@@ -347,7 +347,7 @@ void enqueue_imagedata( query_param_t query_param, msgqueue_param_t *msgqueue)
 }
 
 
-void enqueue_precincts( int xmin, int xmax, int ymin, int ymax, int tile_id, int level, int lastcomp, bool *comps, int layers, msgqueue_param_t *msgqueue)
+void enqueue_precincts( int xmin, int xmax, int ymin, int ymax, int tile_id, int level, int lastcomp, opj_bool *comps, int layers, msgqueue_param_t *msgqueue)
 {
   index_param_t *codeidx;
   int c, u, v, res_lev, dec_lev;
@@ -406,7 +406,7 @@ void enqueue_precincts( int xmin, int xmax, int ymin, int ymax, int tile_id, int
     }
 }
 
-void enqueue_allprecincts( int tile_id, int level, int lastcomp, bool *comps, int layers, msgqueue_param_t *msgqueue)
+void enqueue_allprecincts( int tile_id, int level, int lastcomp, opj_bool *comps, int layers, msgqueue_param_t *msgqueue)
 {
   index_param_t *codeidx;
   int c, i, res_lev, dec_lev;
@@ -435,14 +435,14 @@ void enqueue_allprecincts( int tile_id, int level, int lastcomp, bool *comps, in
     }
 }
 
-bool enqueue_metabins( query_param_t query_param, metadatalist_param_t *metadatalist, msgqueue_param_t *msgqueue)
+opj_bool enqueue_metabins( query_param_t query_param, metadatalist_param_t *metadatalist, msgqueue_param_t *msgqueue)
 {
   int i;
   for( i=0; query_param.box_type[i][0]!=0 && i<MAX_NUMOFBOX; i++){
     if( query_param.box_type[i][0] == '*'){
       fprintf( FCGI_stdout, "Status: 501\r\n");
       fprintf( FCGI_stdout, "Reason: metareq with all box-property * not implemented\r\n");
-      return false;
+      return OPJ_FALSE;
     }
     else{
       Byte8_t idx = search_metadataidx( query_param.box_type[i], metadatalist);
@@ -452,9 +452,9 @@ bool enqueue_metabins( query_param_t query_param, metadatalist_param_t *metadata
       else{
 	fprintf( FCGI_stdout, "Status: 400\r\n");
 	fprintf( FCGI_stdout, "Reason: box-type %.4s not found\r\n", query_param.box_type[i]);
-	return false;
+	return OPJ_FALSE;
       }
     }
   }
-  return true;
+  return OPJ_TRUE;
 }

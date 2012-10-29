@@ -32,7 +32,6 @@
 #ifndef   	MSGQUEUE_MANAGER_H_
 # define   	MSGQUEUE_MANAGER_H_
 
-#include "bool.h"
 #include "byte_manager.h"
 #include "cachemodel_manager.h"
 #include "placeholder_manager.h"
@@ -47,7 +46,7 @@
 
 /** message parameters */
 typedef struct message_param{
-  bool    last_byte;          /**< if message contains the last byte of the data-bin*/
+  opj_bool    last_byte;          /**< if message contains the last byte of the data-bin*/
   Byte8_t in_class_id;        /**< in-class identifier A.2.3*/
   Byte8_t class_id;           /**< class identifiers */
   Byte8_t csn;                /**< index of the codestream*/
@@ -63,7 +62,7 @@ typedef struct message_param{
 typedef struct msgqueue_param{
   message_param_t *first;         /**< first message pointer of the list*/
   message_param_t *last;          /**< last  message pointer of the list*/
-  bool stateless;                 /**< if this is a stateless message queue*/
+  opj_bool stateless;                 /**< if this is a stateless message queue*/
   cachemodel_param_t *cachemodel; /**< reference cachemodel pointer*/
 } msgqueue_param_t;
 
@@ -74,7 +73,7 @@ typedef struct msgqueue_param{
  * @param[in] cachemodel  cachemodel pointer
  * @return                generated message queue pointer
  */
-msgqueue_param_t * gene_msgqueue( bool stateless, cachemodel_param_t *cachemodel);
+msgqueue_param_t * gene_msgqueue( opj_bool stateless, cachemodel_param_t *cachemodel);
 
 /**
  * delete message queue

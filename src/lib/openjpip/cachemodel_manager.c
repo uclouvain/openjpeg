@@ -56,7 +56,7 @@ cachemodellist_param_t * gene_cachemodellist(void)
   return cachemodellist;
 }
 
-cachemodel_param_t * gene_cachemodel( cachemodellist_param_t *cachemodellist, target_param_t *target, bool reqJPP)
+cachemodel_param_t * gene_cachemodel( cachemodellist_param_t *cachemodellist, target_param_t *target, opj_bool reqJPP)
 {
   cachemodel_param_t *cachemodel;
   faixbox_param_t *tilepart;
@@ -71,27 +71,27 @@ cachemodel_param_t * gene_cachemodel( cachemodellist_param_t *cachemodellist, ta
   
   if( reqJPP){
     if( target->jppstream)
-      cachemodel->jppstream = true;
+      cachemodel->jppstream = OPJ_TRUE;
     else
-      cachemodel->jppstream = false;
+      cachemodel->jppstream = OPJ_FALSE;
   } else{ /* reqJPT */
     if( target->jptstream)
-      cachemodel->jppstream = false;
+      cachemodel->jppstream = OPJ_FALSE;
     else
-      cachemodel->jppstream = true;
+      cachemodel->jppstream = OPJ_TRUE;
   }
 
-  cachemodel->mhead_model = false;
+  cachemodel->mhead_model = OPJ_FALSE;
   
   tilepart = target->codeidx->tilepart;
   numOftiles = get_m( tilepart);
   numOfelem = get_nmax( tilepart)*numOftiles;
-  cachemodel->tp_model = (bool *)opj_calloc( 1, numOfelem*sizeof(bool));
-  cachemodel->th_model = (bool *)opj_calloc( 1, numOftiles*sizeof(bool));
-  cachemodel->pp_model = (bool **)opj_malloc( target->codeidx->SIZ.Csiz*sizeof(bool *));
+  cachemodel->tp_model = (opj_bool *)opj_calloc( 1, numOfelem*sizeof(opj_bool));
+  cachemodel->th_model = (opj_bool *)opj_calloc( 1, numOftiles*sizeof(opj_bool));
+  cachemodel->pp_model = (opj_bool **)opj_malloc( target->codeidx->SIZ.Csiz*sizeof(opj_bool *));
   for( i=0; i<target->codeidx->SIZ.Csiz; i++){
     precpacket = target->codeidx->precpacket[i];
-    cachemodel->pp_model[i] = (bool *)opj_calloc( 1, get_nmax(precpacket)*get_m(precpacket)*sizeof(bool));
+    cachemodel->pp_model[i] = (opj_bool *)opj_calloc( 1, get_nmax(precpacket)*get_m(precpacket)*sizeof(opj_bool));
   }
   cachemodel->next = NULL;
   
@@ -196,7 +196,7 @@ void delete_cachemodel( cachemodel_param_t **cachemodel)
   opj_free( *cachemodel);
 }
 
-bool is_allsent( cachemodel_param_t cachemodel)
+opj_bool is_allsent( cachemodel_param_t cachemodel)
 {
   target_param_t *target;
   Byte8_t TPnum; /* num of tile parts in each tile */
@@ -207,30 +207,30 @@ bool is_allsent( cachemodel_param_t cachemodel)
   target = cachemodel.target;
   
   if( !cachemodel.mhead_model)
-    return false;
+    return OPJ_FALSE;
 
   TPnum = get_nmax( target->codeidx->tilepart);
 
   if( cachemodel.jppstream){
     for( i=0; i<target->codeidx->SIZ.XTnum*target->codeidx->SIZ.YTnum; i++){
       if( !cachemodel.th_model[i])
-	return false;
+	return OPJ_FALSE;
       
       for( j=0; j<target->codeidx->SIZ.Csiz; j++){
 	Pmax = get_nmax( target->codeidx->precpacket[j]);
 	for( k=0; k<Pmax; k++)
 	  if( !cachemodel.pp_model[j][i*Pmax+k])
-	    return false;
+	    return OPJ_FALSE;
       }
     }
-    return true;
+    return OPJ_TRUE;
   }
   else{
     for( i=0, n=0; i<target->codeidx->SIZ.YTnum; i++)
       for( j=0; j<target->codeidx->SIZ.XTnum; j++)
 	for( k=0; k<TPnum; k++)
 	  if( !cachemodel.tp_model[n++])
-	    return false;
-    return true;
+	    return OPJ_FALSE;
+    return OPJ_TRUE;
   }
 }

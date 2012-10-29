@@ -31,7 +31,6 @@
 #ifndef   	SOCK_MANAGER_H_
 # define   	SOCK_MANAGER_H_
 
-#include "bool.h"
 #include "byte_manager.h"
 #include "opj_stdint.h"
 

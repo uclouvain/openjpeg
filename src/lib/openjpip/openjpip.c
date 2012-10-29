@@ -88,7 +88,7 @@ QR_t * parse_querystring( const char *query_string)
   return qr;
 }
 
-bool process_JPIPrequest( server_record_t *rec, QR_t *qr)
+opj_bool process_JPIPrequest( server_record_t *rec, QR_t *qr)
 {
   target_param_t *target = NULL;
   session_param_t *cursession = NULL;
@@ -96,30 +96,30 @@ bool process_JPIPrequest( server_record_t *rec, QR_t *qr)
 
   if( qr->query->target || qr->query->tid){
     if( !identify_target( *(qr->query), rec->targetlist, &target))
-      return false;
+      return OPJ_FALSE;
   }
 
   if( qr->query->cid){
     if( !associate_channel( *(qr->query), rec->sessionlist, &cursession, &curchannel))
-      return false;
+      return OPJ_FALSE;
     qr->channel = curchannel;
   }
   
   if( qr->query->cnew != non){
     if( !open_channel( *(qr->query), rec->sessionlist, rec->auxtrans, target, &cursession, &curchannel))
-      return false;
+      return OPJ_FALSE;
     qr->channel = curchannel;
   }
   
   if( qr->query->cclose)
     if( !close_channel( *(qr->query), rec->sessionlist, &cursession, &curchannel))
-      return false;
+      return OPJ_FALSE;
   
   if( (qr->query->fx > 0 && qr->query->fy > 0) || qr->query->box_type[0][0] != 0 || qr->query->len > 0)
     if( !gene_JPIPstream( *(qr->query), target, cursession, curchannel, &qr->msgqueue))
-      return false;
+      return OPJ_FALSE;
 
-  return true;
+  return OPJ_TRUE;
 }
 
 void add_EORmsg( int fd, QR_t *qr);
@@ -190,7 +190,7 @@ void end_QRprocess( server_record_t *rec, QR_t **qr)
 }
 
 
-void local_log( bool query, bool messages, bool sessions, bool targets, QR_t *qr, server_record_t *rec)
+void local_log( opj_bool query, opj_bool messages, opj_bool sessions, opj_bool targets, QR_t *qr, server_record_t *rec)
 {
   if( query)
     print_queryparam( *qr->query);
@@ -216,7 +216,7 @@ dec_server_record_t * OPJ_CALLCONV init_dec_server( int port)
   record->cachelist = gene_cachelist();
   record->jpipstream = NULL;
   record->jpipstreamlen = 0;
-  record->msgqueue = gene_msgqueue( true, NULL);
+  record->msgqueue = gene_msgqueue( OPJ_TRUE, NULL);
   record->listening_socket = open_listeningsocket( (uint16_t)port);
 
   return record;
@@ -247,9 +247,9 @@ client_t OPJ_CALLCONV accept_connection( dec_server_record_t *rec)
   return client;
 }
 
-bool OPJ_CALLCONV handle_clientreq( client_t client, dec_server_record_t *rec)
+opj_bool OPJ_CALLCONV handle_clientreq( client_t client, dec_server_record_t *rec)
 {
-  bool quit = false;
+  opj_bool quit = OPJ_FALSE;
   msgtype_t msgtype = identify_clientmsg( client);
   
   switch( msgtype){
@@ -286,7 +286,7 @@ bool OPJ_CALLCONV handle_clientreq( client_t client, dec_server_record_t *rec)
     break;
 
   case QUIT:
-    quit = true;
+    quit = OPJ_TRUE;
     save_codestream( rec->jpipstream, rec->jpipstreamlen, "jpt");
     break;
   case MSGERROR:
@@ -296,23 +296,23 @@ bool OPJ_CALLCONV handle_clientreq( client_t client, dec_server_record_t *rec)
   fprintf( stderr, "\t end of the connection\n\n");
   if( close_socket(client) != 0){
     perror("close");
-    return false;
+    return OPJ_FALSE;
   }
 
   if( quit)
-    return false;
+    return OPJ_FALSE;
 
-  return true;
+  return OPJ_TRUE;
 }
 
 
-jpip_dec_param_t * OPJ_CALLCONV init_jpipdecoder( bool jp2)
+jpip_dec_param_t * OPJ_CALLCONV init_jpipdecoder( opj_bool jp2)
 {
   jpip_dec_param_t *dec;
   
   dec = (jpip_dec_param_t *)opj_calloc( 1, sizeof(jpip_dec_param_t));
 
-  dec->msgqueue = gene_msgqueue( true, NULL);
+  dec->msgqueue = gene_msgqueue( OPJ_TRUE, NULL);
   
   if( jp2)
     dec->metadatalist = gene_metadatalist();
@@ -321,29 +321,29 @@ jpip_dec_param_t * OPJ_CALLCONV init_jpipdecoder( bool jp2)
 }
 
 
-bool OPJ_CALLCONV fread_jpip( const char fname[], jpip_dec_param_t *dec)
+opj_bool OPJ_CALLCONV fread_jpip( const char fname[], jpip_dec_param_t *dec)
 {
   int infd;
 
   if(( infd = open( fname, O_RDONLY)) == -1){
     fprintf( stderr, "file %s not exist\n", fname);
-    return false;
+    return OPJ_FALSE;
   }
   
   if(!(dec->jpiplen = (Byte8_t)get_filesize(infd)))
-    return false;
+    return OPJ_FALSE;
   
   dec->jpipstream = (Byte_t *)opj_malloc( dec->jpiplen);
 
   if( read( infd, dec->jpipstream, dec->jpiplen) != (int)dec->jpiplen){
     fprintf( stderr, "file reading error\n");
     opj_free( dec->jpipstream);
-    return false;
+    return OPJ_FALSE;
   }
 
   close(infd);
 
-  return true;
+  return OPJ_TRUE;
 }
 
 void OPJ_CALLCONV decode_jpip( jpip_dec_param_t *dec)
@@ -361,7 +361,7 @@ void OPJ_CALLCONV decode_jpip( jpip_dec_param_t *dec)
     dec->jp2kstream = recons_j2k( dec->msgqueue, dec->jpipstream, dec->msgqueue->first->csn, 0, 0, &dec->jp2klen);  
 }
 
-bool OPJ_CALLCONV fwrite_jp2k( const char fname[], jpip_dec_param_t *dec)
+opj_bool OPJ_CALLCONV fwrite_jp2k( const char fname[], jpip_dec_param_t *dec)
 {
   int outfd;
   
@@ -371,7 +371,7 @@ bool OPJ_CALLCONV fwrite_jp2k( const char fname[], jpip_dec_param_t *dec)
  if(( outfd = open( fname, O_WRONLY|O_CREAT, S_IRWXU|S_IRWXG)) == -1){
 #endif
    fprintf( stderr, "file %s open error\n", fname);
-   return false;
+   return OPJ_FALSE;
  }
   
  if( write( outfd, dec->jp2kstream, dec->jp2klen) != (int)dec->jp2klen)
@@ -379,10 +379,10 @@ bool OPJ_CALLCONV fwrite_jp2k( const char fname[], jpip_dec_param_t *dec)
 
  close(outfd);
 
- return true;
+ return OPJ_TRUE;
 }
 
-void OPJ_CALLCONV output_log( bool messages, bool metadata, bool ihdrbox, jpip_dec_param_t *dec)
+void OPJ_CALLCONV output_log( opj_bool messages, opj_bool metadata, opj_bool ihdrbox, jpip_dec_param_t *dec)
 {
   if( messages)
     print_msgqueue( dec->msgqueue);

@@ -33,7 +33,6 @@
 #include <math.h>
 #include <string.h>
 
-#include "bool.h"
 #include "opj_inttypes.h"
 #include "index_manager.h"
 #include "box_manager.h"
@@ -59,7 +58,7 @@
  * @param[in] toplev_boxlist top level box list
  * @return                   if correct (true) or wrong (false)
  */
-bool check_JP2boxidx( boxlist_param_t *toplev_boxlist);
+opj_bool check_JP2boxidx( boxlist_param_t *toplev_boxlist);
 
 /**
  * set code index parameters (parse cidx box)
@@ -69,7 +68,7 @@ bool check_JP2boxidx( boxlist_param_t *toplev_boxlist);
  * @param[out] codeidx  pointer to index parameters
  * @return              if succeeded (true) or failed (false)
  */
-bool set_cidxdata( box_param_t *cidx_box, index_param_t *codeidx);
+opj_bool set_cidxdata( box_param_t *cidx_box, index_param_t *codeidx);
 
 index_param_t * parse_jp2file( int fd)
 {
@@ -205,7 +204,7 @@ void delete_COD( CODmarker_param_t COD)
   if( COD.YPsiz)    opj_free( COD.YPsiz);
 }
 
-bool check_JP2boxidx( boxlist_param_t *toplev_boxlist)
+opj_bool check_JP2boxidx( boxlist_param_t *toplev_boxlist)
 {
   box_param_t *iptr, *fidx, *prxy;
   box_param_t *cidx, *jp2c;
@@ -247,7 +246,7 @@ bool check_JP2boxidx( boxlist_param_t *toplev_boxlist)
   ni = fetch_DBox1byte( prxy, pos);
   if( ni != 1){
     fprintf( FCGI_stderr, "Multiple indexes not supported\n");
-    return false;
+    return OPJ_FALSE;
   }  
   pos += 1;
   
@@ -264,7 +263,7 @@ bool check_JP2boxidx( boxlist_param_t *toplev_boxlist)
   
   opj_free(prxy);
 
-  return true;
+  return OPJ_TRUE;
 }
 
 /**
@@ -275,7 +274,7 @@ bool check_JP2boxidx( boxlist_param_t *toplev_boxlist)
  * @param[out] jp2idx   pointer to index parameters
  * @return              if succeeded (true) or failed (false)
  */
-bool set_cptrdata( box_param_t *cidx_box, index_param_t *jp2idx);
+opj_bool set_cptrdata( box_param_t *cidx_box, index_param_t *jp2idx);
 
 /**
  * set code index parameters from mhix box for main header
@@ -286,7 +285,7 @@ bool set_cptrdata( box_param_t *cidx_box, index_param_t *jp2idx);
  * @param[out] jp2idx     pointer to index parameters
  * @return                if succeeded (true) or failed (false)
  */
-bool set_mainmhixdata( box_param_t *cidx_box, codestream_param_t codestream, index_param_t *jp2idx);
+opj_bool set_mainmhixdata( box_param_t *cidx_box, codestream_param_t codestream, index_param_t *jp2idx);
 
 /**
  * set code index parameters from tpix box
@@ -296,7 +295,7 @@ bool set_mainmhixdata( box_param_t *cidx_box, codestream_param_t codestream, ind
  * @param[out] jp2idx     pointer to index parameters
  * @return                if succeeded (true) or failed (false)
  */
-bool set_tpixdata( box_param_t *cidx_box, index_param_t *jp2idx);
+opj_bool set_tpixdata( box_param_t *cidx_box, index_param_t *jp2idx);
 
 /**
  * set code index parameters from thix box
@@ -306,7 +305,7 @@ bool set_tpixdata( box_param_t *cidx_box, index_param_t *jp2idx);
  * @param[out] jp2idx     pointer to index parameters
  * @return                if succeeded (true) or failed (false)
  */
-bool set_thixdata( box_param_t *cidx_box, index_param_t *jp2idx);
+opj_bool set_thixdata( box_param_t *cidx_box, index_param_t *jp2idx);
 
 /**
  * set code index parameters from ppix box
@@ -316,9 +315,9 @@ bool set_thixdata( box_param_t *cidx_box, index_param_t *jp2idx);
  * @param[out] jp2idx     pointer to index parameters
  * @return                if succeeded (true) or failed (false)
  */
-bool set_ppixdata( box_param_t *cidx_box, index_param_t *jp2idx);
+opj_bool set_ppixdata( box_param_t *cidx_box, index_param_t *jp2idx);
 
-bool set_cidxdata( box_param_t *cidx_box, index_param_t *jp2idx)
+opj_bool set_cidxdata( box_param_t *cidx_box, index_param_t *jp2idx)
 {
   box_param_t *manf_box;
   manfbox_param_t *manf;
@@ -334,51 +333,51 @@ bool set_cidxdata( box_param_t *cidx_box, index_param_t *jp2idx)
   if( !search_boxheader( "mhix", manf)){
     fprintf( FCGI_stderr, "Error: mhix box not present in manfbox\n");
     opj_free(jp2idx);
-    return false;
+    return OPJ_FALSE;
   }
   set_mainmhixdata( cidx_box, codestream, jp2idx);
 
   if( !search_boxheader( "tpix", manf)){
     fprintf( FCGI_stderr, "Error: tpix box not present in manfbox\n");
     opj_free(jp2idx);
-    return false;
+    return OPJ_FALSE;
   }
   set_tpixdata( cidx_box, jp2idx);
 
   if( !search_boxheader( "thix", manf)){
     fprintf( FCGI_stderr, "Error: thix box not present in manfbox\n");
     opj_free(jp2idx);
-    return false;
+    return OPJ_FALSE;
   }
   set_thixdata( cidx_box, jp2idx);
 
   if( !search_boxheader( "ppix", manf)){
     fprintf( FCGI_stderr, "Error: ppix box not present in manfbox\n");
     opj_free(jp2idx);
-    return false;
+    return OPJ_FALSE;
   }
   set_ppixdata( cidx_box, jp2idx);
 
   delete_manfbox( &manf);
   opj_free( manf_box);
 
-  return true;
+  return OPJ_TRUE;
 }
 
-bool set_cptrdata( box_param_t *cidx_box, index_param_t *jp2idx)
+opj_bool set_cptrdata( box_param_t *cidx_box, index_param_t *jp2idx)
 {
   box_param_t *box;   /**< cptr box*/
   Byte2_t dr, cont;
 
   if( !(box = gene_boxbyType( cidx_box->fd, get_DBoxoff( cidx_box), get_DBoxlen( cidx_box), "cptr")))
-    return false;
+    return OPJ_FALSE;
   
   /* DR: Data Reference. */
   /* If 0, the codestream or its Fragment Table box exists in the current file*/
   if(( dr = fetch_DBox2bytebigendian( box, 0))){
     fprintf( FCGI_stderr, "Error: Codestream not present in current file\n");
     opj_free( box);
-    return false;  
+    return OPJ_FALSE;  
   }
   
   /* CONT: Container Type*/
@@ -387,7 +386,7 @@ bool set_cptrdata( box_param_t *cidx_box, index_param_t *jp2idx)
   if(( cont = fetch_DBox2bytebigendian( box, 2))){
     fprintf( FCGI_stderr, "Error: Can't cope with fragmented codestreams yet\n");
     opj_free( box);
-    return false;  
+    return OPJ_FALSE;  
   }
     
   jp2idx->offset = (OPJ_OFF_T)fetch_DBox8bytebigendian( box, 4);
@@ -395,7 +394,7 @@ bool set_cptrdata( box_param_t *cidx_box, index_param_t *jp2idx)
 
   opj_free( box);
 
-  return true;
+  return OPJ_TRUE;
 }
 
 
@@ -409,7 +408,7 @@ bool set_cptrdata( box_param_t *cidx_box, index_param_t *jp2idx)
  * @param[out] SIZ        SIZ marker parameters pointer
  * @return                if succeeded (true) or failed (false)
  */
-bool set_SIZmkrdata( markeridx_param_t *sizmkidx, codestream_param_t codestream, SIZmarker_param_t *SIZ);
+opj_bool set_SIZmkrdata( markeridx_param_t *sizmkidx, codestream_param_t codestream, SIZmarker_param_t *SIZ);
 
 /**
  * set code index parameters from COD marker in codestream
@@ -421,9 +420,9 @@ bool set_SIZmkrdata( markeridx_param_t *sizmkidx, codestream_param_t codestream,
  * @param[out] COD        COD marker parameters pointer
  * @return                if succeeded (true) or failed (false)
  */
-bool set_CODmkrdata( markeridx_param_t *codmkidx, codestream_param_t codestream, CODmarker_param_t *COD);
+opj_bool set_CODmkrdata( markeridx_param_t *codmkidx, codestream_param_t codestream, CODmarker_param_t *COD);
 
-bool set_mainmhixdata( box_param_t *cidx_box, codestream_param_t codestream, index_param_t *jp2idx)
+opj_bool set_mainmhixdata( box_param_t *cidx_box, codestream_param_t codestream, index_param_t *jp2idx)
 {
   box_param_t *mhix_box;
   mhixbox_param_t *mhix;
@@ -431,7 +430,7 @@ bool set_mainmhixdata( box_param_t *cidx_box, codestream_param_t codestream, ind
   markeridx_param_t *codmkidx;
 
   if( !(mhix_box = gene_boxbyType( cidx_box->fd, get_DBoxoff( cidx_box), get_DBoxlen( cidx_box), "mhix")))
-    return false;
+    return OPJ_FALSE;
 
   jp2idx->mhead_length = fetch_DBox8bytebigendian( mhix_box, 0);
 
@@ -446,22 +445,22 @@ bool set_mainmhixdata( box_param_t *cidx_box, codestream_param_t codestream, ind
 
   delete_mhixbox( &mhix);
 
-  return true;
+  return OPJ_TRUE;
 }
 
-bool set_tpixdata( box_param_t *cidx_box, index_param_t *jp2idx)
+opj_bool set_tpixdata( box_param_t *cidx_box, index_param_t *jp2idx)
 {
   box_param_t *tpix_box;   /**< tpix box*/
   box_param_t *faix_box;   /**< faix box*/
   
   if( !(tpix_box = gene_boxbyType( cidx_box->fd, get_DBoxoff( cidx_box), get_DBoxlen( cidx_box), "tpix"))){
     fprintf( FCGI_stderr, "Error: tpix box not present in cidx box\n");
-    return false;
+    return OPJ_FALSE;
   }
 
   if( !(faix_box = gene_boxbyType( tpix_box->fd, get_DBoxoff( tpix_box), get_DBoxlen( tpix_box), "faix"))){
     fprintf( FCGI_stderr, "Error: faix box not present in tpix box\n");
-    return false;
+    return OPJ_FALSE;
   }
 
   jp2idx->tilepart = gene_faixbox( faix_box);
@@ -469,10 +468,10 @@ bool set_tpixdata( box_param_t *cidx_box, index_param_t *jp2idx)
   opj_free( tpix_box);
   opj_free( faix_box);
 
-  return true;
+  return OPJ_TRUE;
 }
 
-bool set_thixdata( box_param_t *cidx_box, index_param_t *jp2idx)
+opj_bool set_thixdata( box_param_t *cidx_box, index_param_t *jp2idx)
 {
   box_param_t *thix_box, *manf_box, *mhix_box;
   manfbox_param_t *manf;
@@ -484,13 +483,13 @@ bool set_thixdata( box_param_t *cidx_box, index_param_t *jp2idx)
   
   if( !(thix_box = gene_boxbyType( cidx_box->fd, get_DBoxoff( cidx_box), get_DBoxlen( cidx_box), "thix"))){
     fprintf( FCGI_stderr, "Error: thix box not present in cidx box\n");
-    return false;
+    return OPJ_FALSE;
   }
   
   if( !(manf_box = gene_boxbyType( thix_box->fd, get_DBoxoff( thix_box), get_DBoxlen( thix_box), "manf"))){
     fprintf( FCGI_stderr, "Error: manf box not present in thix box\n");
     opj_free( thix_box);
-    return false;
+    return OPJ_FALSE;
   }
   
   manf = gene_manfbox( manf_box);
@@ -506,7 +505,7 @@ bool set_thixdata( box_param_t *cidx_box, index_param_t *jp2idx)
       delete_manfbox( &manf);
       opj_free( manf_box);
       opj_free( thix_box);
-      return false;
+      return OPJ_FALSE;
     }
     mhix = gene_mhixbox( mhix_box);
 
@@ -521,10 +520,10 @@ bool set_thixdata( box_param_t *cidx_box, index_param_t *jp2idx)
   opj_free( manf_box);
   opj_free( thix_box);
 
-  return true;
+  return OPJ_TRUE;
 }
 
-bool set_ppixdata( box_param_t *cidx_box, index_param_t *jp2idx)
+opj_bool set_ppixdata( box_param_t *cidx_box, index_param_t *jp2idx)
 {
   box_param_t *ppix_box, *faix_box, *manf_box;
   manfbox_param_t *manf;     /**< manf*/
@@ -535,14 +534,14 @@ bool set_ppixdata( box_param_t *cidx_box, index_param_t *jp2idx)
 
   if( !(ppix_box = gene_boxbyType( cidx_box->fd, get_DBoxoff( cidx_box), get_DBoxlen( cidx_box), "ppix"))){
     fprintf( FCGI_stderr, "Error: ppix box not present in cidx box\n");
-    return false;
+    return OPJ_FALSE;
   }
 
   inbox_offset = get_DBoxoff( ppix_box);
   if( !(manf_box = gene_boxbyType( ppix_box->fd, inbox_offset, get_DBoxlen( ppix_box), "manf"))){
     fprintf( FCGI_stderr, "Error: manf box not present in ppix box\n");
     opj_free( ppix_box);
-    return false;
+    return OPJ_FALSE;
   }
 
   opj_free( ppix_box);
@@ -558,12 +557,12 @@ bool set_ppixdata( box_param_t *cidx_box, index_param_t *jp2idx)
   for( comp_idx=0; bh!=NULL; bh=bh->next, comp_idx++){
     if( jp2idx->SIZ.Csiz <= comp_idx ){
       fprintf( FCGI_stderr, "Error: num of faix boxes is not identical to num of components in ppix box\n");
-      return false;
+      return OPJ_FALSE;
     }
 
     if( !(faix_box = gene_boxbyOffset( cidx_box->fd, inbox_offset))){
       fprintf( FCGI_stderr, "Error: faix box not present in ppix box\n");
-      return false;
+      return OPJ_FALSE;
     }
   
     faix = gene_faixbox( faix_box);
@@ -575,10 +574,10 @@ bool set_ppixdata( box_param_t *cidx_box, index_param_t *jp2idx)
   
   delete_manfbox( &manf);
 
-  return true;
+  return OPJ_TRUE;
 }
 
-bool set_SIZmkrdata( markeridx_param_t *sizmkidx, codestream_param_t codestream, SIZmarker_param_t *SIZ)
+opj_bool set_SIZmkrdata( markeridx_param_t *sizmkidx, codestream_param_t codestream, SIZmarker_param_t *SIZ)
 {
   marker_param_t sizmkr;
   int i;
@@ -589,7 +588,7 @@ bool set_SIZmkrdata( markeridx_param_t *sizmkidx, codestream_param_t codestream,
 
   if( sizmkidx->length != SIZ->Lsiz){
     fprintf( FCGI_stderr, "Error: marker %#x index is not correct\n", sizmkidx->code);
-    return false;
+    return OPJ_FALSE;
   }
   
   SIZ->Rsiz   = fetch_marker2bytebigendian( sizmkr, 2);
@@ -611,10 +610,10 @@ bool set_SIZmkrdata( markeridx_param_t *sizmkidx, codestream_param_t codestream,
     SIZ->XRsiz[i] = fetch_marker1byte( sizmkr, 39+i*3);
     SIZ->YRsiz[i] = fetch_marker1byte( sizmkr, 40+i*3);
   }
-  return true;
+  return OPJ_TRUE;
 }
 
-bool set_CODmkrdata( markeridx_param_t *codmkidx, codestream_param_t codestream, CODmarker_param_t *COD)
+opj_bool set_CODmkrdata( markeridx_param_t *codmkidx, codestream_param_t codestream, CODmarker_param_t *COD)
 {
   marker_param_t codmkr;
   int i;
@@ -625,7 +624,7 @@ bool set_CODmkrdata( markeridx_param_t *codmkidx, codestream_param_t codestream,
 
   if( codmkidx->length != COD->Lcod){
     fprintf( FCGI_stderr, "Error: marker %#x index is not correct\n", codmkidx->code);
-    return false;
+    return OPJ_FALSE;
   }
 
   COD->Scod   = fetch_marker1byte( codmkr, 2);
@@ -649,7 +648,7 @@ bool set_CODmkrdata( markeridx_param_t *codmkidx, codestream_param_t codestream,
 
     COD->XPsiz[0] = COD->YPsiz[0] = pow(2,15);
   }
-  return true;
+  return OPJ_TRUE;
 }
 
 
@@ -723,10 +722,10 @@ Byte4_t min( Byte4_t n1, Byte4_t n2)
     return n2;
 }
 
-bool isJPTfeasible( index_param_t index)
+opj_bool isJPTfeasible( index_param_t index)
 {
   if( 1 < get_nmax( index.tilepart))
-    return true;
+    return OPJ_TRUE;
   else
-    return false;
+    return OPJ_FALSE;
 }

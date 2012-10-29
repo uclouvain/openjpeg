@@ -35,7 +35,6 @@
 #include "target_manager.h"
 #include "query_parser.h"
 #include "msgqueue_manager.h"
-#include "bool.h"
 #include "sock_manager.h"
 #include "auxtrans_manager.h"
 
@@ -113,7 +112,7 @@ QR_t * parse_querystring( const char *query_string);
  * @param[in]  qr  query/response data pointer
  * @return     true if succeed, otherwise false 
  */
-bool process_JPIPrequest( server_record_t *rec, QR_t *qr);
+opj_bool process_JPIPrequest( server_record_t *rec, QR_t *qr);
 
 /**
  * 3rd process; send response data JPT/JPP-stream
@@ -141,7 +140,7 @@ void end_QRprocess( server_record_t *rec, QR_t **qr);
  * @param[in]  qr       query/response data pointer
  * @param[in]  rec      server static record pinter
  */
-void local_log( bool query, bool messages, bool sessions, bool targets, QR_t *qr, server_record_t *rec);
+void local_log( opj_bool query, opj_bool messages, opj_bool sessions, opj_bool targets, QR_t *qr, server_record_t *rec);
 
 #endif /*SERVER*/
 
@@ -196,7 +195,7 @@ OPJ_API client_t OPJ_CALLCONV accept_connection( dec_server_record_t *rec);
   * @param[in] rec    decoding server static record pointer
   * @return           true if succeed
   */
-OPJ_API bool OPJ_CALLCONV handle_clientreq( client_t client, dec_server_record_t *rec);
+OPJ_API opj_bool OPJ_CALLCONV handle_clientreq( client_t client, dec_server_record_t *rec);
 
 #endif /*SERVER*/
 
@@ -229,7 +228,7 @@ typedef struct jpip_dec_param{
  * @param[in] jp2 true in case of jp2 file encoding, else j2k file encoding
  * @return        JPIP decoding parameters pointer
  */
-OPJ_API jpip_dec_param_t * OPJ_CALLCONV init_jpipdecoder( bool jp2);
+OPJ_API jpip_dec_param_t * OPJ_CALLCONV init_jpipdecoder( opj_bool jp2);
 
 /**
  * Destroy jpip decoding parameters
@@ -245,7 +244,7 @@ OPJ_API void OPJ_CALLCONV destroy_jpipdecoder( jpip_dec_param_t **dec);
  * @param[in]  dec   JPIP decoding parameters pointer
  * @return           true if succeed
  */
-OPJ_API bool OPJ_CALLCONV fread_jpip( const char fname[], jpip_dec_param_t *dec);
+OPJ_API opj_bool OPJ_CALLCONV fread_jpip( const char fname[], jpip_dec_param_t *dec);
 
 /**
  * Decode jpip codestream
@@ -261,7 +260,7 @@ OPJ_API void OPJ_CALLCONV decode_jpip( jpip_dec_param_t *dec);
  * @param[in]  dec   JPIP decoding parameters pointer
  * @return           true if succeed
  */
-OPJ_API bool OPJ_CALLCONV fwrite_jp2k( const char fname[], jpip_dec_param_t *dec);
+OPJ_API opj_bool OPJ_CALLCONV fwrite_jp2k( const char fname[], jpip_dec_param_t *dec);
 
 /**
  * Option; print out parameter values to stderr
@@ -271,7 +270,7 @@ OPJ_API bool OPJ_CALLCONV fwrite_jp2k( const char fname[], jpip_dec_param_t *dec
  * @param[in]  ihdrbox  true if image header data is to be printed out
  * @param[in]  dec   JPIP decoding parameters pointer
  */
-OPJ_API void OPJ_CALLCONV output_log( bool messages, bool metadata, bool ihdrbox, jpip_dec_param_t *dec);
+OPJ_API void OPJ_CALLCONV output_log( opj_bool messages, opj_bool metadata, opj_bool ihdrbox, jpip_dec_param_t *dec);
 
 /*
  *  test the format of index (cidx) box in JP2 file
