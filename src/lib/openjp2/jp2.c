@@ -2500,7 +2500,7 @@ static void write_prxy( int offset_jp2c, int length_jp2c, int offset_idx, int le
   opj_event_mgr_t * p_manager )
 {
   OPJ_BYTE l_data_header [8];
-  int len, lenp;
+  OPJ_OFF_T len, lenp;
 
   lenp = opj_stream_tell(cio);
   opj_stream_skip(cio, 4, p_manager);         /* L [at the end] */
@@ -2534,7 +2534,7 @@ static int write_fidx( int offset_jp2c, int length_jp2c, int offset_idx, int len
   opj_event_mgr_t * p_manager )
 {
   OPJ_BYTE l_data_header [4];
-  int len, lenp;
+  OPJ_OFF_T len, lenp;
 
   lenp = opj_stream_tell(cio);
   opj_stream_skip(cio, 4, p_manager);
