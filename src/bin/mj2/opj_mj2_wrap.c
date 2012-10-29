@@ -85,9 +85,7 @@ static int test_image(const char *fname, mj2_cparameters_t *cp)
 
 	cio = opj_cio_open((opj_common_ptr)dinfo, src, src_len);
 
-#if 0 /* MM: FIXME */
 	image = opj_decode(dinfo, cio);
-#endif
 
 	free(src); cio->buffer = NULL;
 	opj_cio_close(cio);
