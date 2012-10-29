@@ -54,7 +54,7 @@ typedef struct query_param{
   bool *comps;                                /**< components (dynamic array) for jpp-stream, null means all components */
   char *cid;                                  /**< channel identifier */
   cnew_transport_t cnew;                      /**< transport name if there is new channel request, else non */
-  char *cclose;                               /**< list of closing channel identifiers, separated by '\0' */
+  char *cclose;                               /**< list of closing channel identifiers, separated by '\\0' */
   int numOfcclose;                            /**< number of closing channels */
   char box_type[MAX_NUMOFBOX][4];             /**< interested box-types */
   int limit[MAX_NUMOFBOX];                    /**< limit value, -1: skeleton request "r", 0: entire contents */

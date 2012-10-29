@@ -98,6 +98,7 @@ static void opj_pi_update_encode_poc_and_final ( opj_cp_t *p_cp,
  * Updates the coding parameters if the encoding is not used with Progression order changes and final (and cinema parameters are used).
  *
  * @param	p_cp		the coding parameters to modify
+ * @param	p_num_comps		the number of components
  * @param	p_tileno	the tile index being concerned.
  * @param	p_tx0		X0 parameter for the tile
  * @param	p_tx1		X1 parameter for the tile
@@ -105,8 +106,8 @@ static void opj_pi_update_encode_poc_and_final ( opj_cp_t *p_cp,
  * @param	p_ty1		Y1 parameter for the tile
  * @param	p_max_prec	the maximum precision for all the bands of the tile
  * @param	p_max_res	the maximum number of resolutions for all the poc inside the tile.
- * @param	dx_min		the minimum dx of all the components of all the resolutions for the tile.
- * @param	dy_min		the minimum dy of all the components of all the resolutions for the tile.
+ * @param	p_dx_min		the minimum dx of all the components of all the resolutions for the tile.
+ * @param	p_dy_min		the minimum dy of all the components of all the resolutions for the tile.
  */
 static void opj_pi_update_encode_not_poc (  opj_cp_t *p_cp,
                                             OPJ_UINT32 p_num_comps,
@@ -124,15 +125,15 @@ static void opj_pi_update_encode_not_poc (  opj_cp_t *p_cp,
  * 
  * @param	p_image			the image being encoded.
  * @param	p_cp			the coding parameters.
- * @param	p_tileno			the tile index of the tile being encoded.
+ * @param	tileno			the tile index of the tile being encoded.
  * @param	p_tx0			pointer that will hold the X0 parameter for the tile
  * @param	p_tx1			pointer that will hold the X1 parameter for the tile
  * @param	p_ty0			pointer that will hold the Y0 parameter for the tile
  * @param	p_ty1			pointer that will hold the Y1 parameter for the tile
  * @param	p_max_prec		pointer that will hold the the maximum precision for all the bands of the tile
  * @param	p_max_res		pointer that will hold the the maximum number of resolutions for all the poc inside the tile.
- * @param	dx_min			pointer that will hold the the minimum dx of all the components of all the resolutions for the tile.
- * @param	dy_min			pointer that will hold the the minimum dy of all the components of all the resolutions for the tile.
+ * @param	p_dx_min			pointer that will hold the the minimum dx of all the components of all the resolutions for the tile.
+ * @param	p_dy_min			pointer that will hold the the minimum dy of all the components of all the resolutions for the tile.
  */
 static void opj_get_encoding_parameters(const opj_image_t *p_image,
                                         const opj_cp_t *p_cp,
@@ -184,10 +185,10 @@ static void opj_get_all_encoding_parameters(const opj_image_t *p_image,
  * 
  * @param	p_image		the image used to initialize the packet iterator (in fact only the number of components is relevant.
  * @param	p_cp		the coding parameters.
- * @param	p_tile_no	the index of the tile from which creating the packet iterator.
+ * @param	tileno	the index of the tile from which creating the packet iterator.
  */
-static opj_pi_iterator_t * opj_pi_create(	const opj_image_t *image,
-                                            const opj_cp_t *cp,
+static opj_pi_iterator_t * opj_pi_create(	const opj_image_t *p_image,
+                                            const opj_cp_t *p_cp,
                                             OPJ_UINT32 tileno );
 /**
  * FIXME DOC

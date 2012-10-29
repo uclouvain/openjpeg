@@ -115,7 +115,7 @@ void print_metadata( metadata_param_t *metadata);
 /**
  * print all metadata parameters
  *
- * @param[in] metadatalist metadata list pointer
+ * @param[in] list metadata list pointer
  */
 void print_allmetadata( metadatalist_param_t *list);
 

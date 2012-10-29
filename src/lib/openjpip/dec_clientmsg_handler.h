@@ -95,6 +95,8 @@ void handle_dstCIDreqMSG( SOCKET connected_socket, cachelist_param_t *cachelist)
  * handle SIZ request message
  *
  * @param[in]     connected_socket socket descriptor
+ * @param[in] jpipstream       address of caching jpipstream pointer
+ * @param[in] msgqueue         message queue pointer
  * @param[in,out] cachelist        cache list pointer
  */
 void handle_SIZreqMSG( SOCKET connected_socket, Byte_t *jpipstream, msgqueue_param_t *msgqueue, cachelist_param_t *cachelist);

@@ -110,9 +110,9 @@ opj_bool opj_mct_encode_custom(
 FIXME DOC
 @param pDecodingData    MCT data
 @param n                size of components
-@param pDataa           components
+@param pData            components
 @param pNbComp          nb of components (i.e. size of p_data)
-@param isSigneda        tells if the data is signed
+@param isSigned         tells if the data is signed
 @return OPJ_FALSE if function encounter a problem, OPJ_TRUE otherwise
 */
 opj_bool opj_mct_decode_custom(

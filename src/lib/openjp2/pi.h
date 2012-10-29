@@ -65,40 +65,40 @@ typedef struct opj_pi_comp {
 Packet iterator
 */
 typedef struct opj_pi_iterator {
-	/** Enabling Tile part generation*/
-	OPJ_BYTE tp_on;
-	/** precise if the packet has been already used (usefull for progression order change) */
-	OPJ_INT16 *include;
-	/** layer step used to localize the packet in the include vector */
-	OPJ_UINT32 step_l;
-	/** resolution step used to localize the packet in the include vector */
-	OPJ_UINT32 step_r;	
-	/** component step used to localize the packet in the include vector */
-	OPJ_UINT32 step_c;	
-	/** precinct step used to localize the packet in the include vector */
-	OPJ_UINT32 step_p;	
-	/** component that identify the packet */
-	OPJ_UINT32 compno;
-	/** resolution that identify the packet */
-	OPJ_UINT32 resno;
-	/** precinct that identify the packet */
-	OPJ_UINT32 precno;
-	/** layer that identify the packet */
-	OPJ_UINT32 layno;
-	/** 0 if the first packet TODO MSD xhange to opj_bool*/
-	int first; 
-	/** progression order change information */
-	opj_poc_t poc;
-	/** number of components in the image */
-	OPJ_UINT32 numcomps;
-	/** Components*/
-	opj_pi_comp_t *comps;
-    /** FIXME DOC*/
-	OPJ_INT32 tx0, ty0, tx1, ty1;
-    /** FIXME DOC*/
-	OPJ_INT32 x, y;
-    /** FIXME DOC*/
-    OPJ_UINT32 dx, dy;
+  /** Enabling Tile part generation*/
+  OPJ_BYTE tp_on;
+  /** precise if the packet has been already used (usefull for progression order change) */
+  OPJ_INT16 *include;
+  /** layer step used to localize the packet in the include vector */
+  OPJ_UINT32 step_l;
+  /** resolution step used to localize the packet in the include vector */
+  OPJ_UINT32 step_r;
+  /** component step used to localize the packet in the include vector */
+  OPJ_UINT32 step_c;
+  /** precinct step used to localize the packet in the include vector */
+  OPJ_UINT32 step_p;
+  /** component that identify the packet */
+  OPJ_UINT32 compno;
+  /** resolution that identify the packet */
+  OPJ_UINT32 resno;
+  /** precinct that identify the packet */
+  OPJ_UINT32 precno;
+  /** layer that identify the packet */
+  OPJ_UINT32 layno;
+  /** 0 if the first packet */
+  opj_bool first;
+  /** progression order change information */
+  opj_poc_t poc;
+  /** number of components in the image */
+  OPJ_UINT32 numcomps;
+  /** Components*/
+  opj_pi_comp_t *comps;
+  /** FIXME DOC*/
+  OPJ_INT32 tx0, ty0, tx1, ty1;
+  /** FIXME DOC*/
+  OPJ_INT32 x, y;
+  /** FIXME DOC*/
+  OPJ_UINT32 dx, dy;
 } opj_pi_iterator_t;
 
 /** @name Exported functions */

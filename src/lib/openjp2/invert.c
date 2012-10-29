@@ -54,7 +54,7 @@ static void opj_lupInvert ( OPJ_FLOAT32 * pSrcMatrix,
                             OPJ_FLOAT32 * p_dest_temp,
                             OPJ_FLOAT32 * p_swap_area);
 
-/* 
+/*
 ==========================================================
    Matric inversion interface
 ==========================================================
@@ -93,7 +93,7 @@ opj_bool opj_matrix_inversion_f(OPJ_FLOAT32 * pSrcMatrix,
 }
 
 
-/* 
+/*
 ==========================================================
    Local functions
 ==========================================================

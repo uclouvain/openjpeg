@@ -22,6 +22,12 @@ if(DOXYGEN_FOUND)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/jpip_protocol.png
     ${CMAKE_BINARY_DIR}/doc/html/jpip_protocol.png COPYONLY)
 
+  file(GLOB headers
+    ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/*.h
+    ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/*.c
+    ${OPENJPEG_SOURCE_DIR}/src/lib/openjpip/*.h
+    ${OPENJPEG_SOURCE_DIR}/src/lib/openjpip/*.c
+  )
   # Generate new target to build the html documentation
   add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/html/index.html
@@ -29,6 +35,7 @@ if(DOXYGEN_FOUND)
     DEPENDS ${CMAKE_BINARY_DIR}/doc/Doxyfile-html.dox
             ${CMAKE_BINARY_DIR}/doc/mainpage.dox
             ${CMAKE_BINARY_DIR}/doc/openjpip.dox
+            ${headers}
   )
   add_custom_target(doc ALL
     DEPENDS ${CMAKE_BINARY_DIR}/doc/html/index.html

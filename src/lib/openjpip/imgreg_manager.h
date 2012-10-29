@@ -68,13 +68,13 @@ imgreg_param_t map_viewin2imgreg( const int fx,    const int fy,
  * Note: only round-down implemented
  *
  * @param[in]     maxlev maximum decomposition level
- * @param[in/out] lev    decomposition level pointer
- * @param[in/out] fx     horizontal frame size pointer
- * @param[in/out] fy     vertical   frame size pointer
- * @param[in/out] xmin   horizontal image offset pointer
- * @param[in/out] ymin   vertical   image offset pointer
- * @param[in/out] xmax   horizontal image size pointer
- * @param[in/out] ymax   vertical   image size pointer
+ * @param[in,out] lev    decomposition level pointer
+ * @param[in,out] fx     horizontal frame size pointer
+ * @param[in,out] fy     vertical   frame size pointer
+ * @param[in,out] xmin   horizontal image offset pointer
+ * @param[in,out] ymin   vertical   image offset pointer
+ * @param[in,out] xmax   horizontal image size pointer
+ * @param[in,out] ymax   vertical   image size pointer
  */
 void find_level( int maxlev, int *lev, int *fx, int *fy, int *xmin, int *ymin, int *xmax, int *ymax);
 
@@ -82,8 +82,8 @@ void find_level( int maxlev, int *lev, int *fx, int *fy, int *xmin, int *ymin, i
  * compute decomposition level (only to get the level
  *   use find_level for all parameters
  *
- * @param[in] fx   horizontal frame size
- * @param[in] fy   vertical   frame size
+ * @param[in] fw   horizontal frame size
+ * @param[in] fh   vertical   frame size
  * @param[in] Xsiz image width
  * @param[in] Ysiz image height
  * @return decomposition level
