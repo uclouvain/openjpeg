@@ -69,7 +69,6 @@ int main(int argc, char *argv[])
 
   opj_image_cmptparm_t cmptparm;
   opj_image_t *image;
-  opj_event_mgr_t event_mgr;
   opj_codec_t* l_codec = 00;
   opj_bool bSuccess;
   FILE *f;
@@ -100,9 +99,10 @@ int main(int argc, char *argv[])
       }
     }
 
-  event_mgr.error_handler = error_callback;
-  event_mgr.warning_handler = warning_callback;
-  event_mgr.info_handler = info_callback;
+		/* catch events using our callbacks and give a local context */		
+		opj_set_info_handler(l_codec, info_callback,00);
+		opj_set_warning_handler(l_codec, warning_callback,00);
+		opj_set_error_handler(l_codec, error_callback,00);
 
   l_codec = opj_create_compress(CODEC_J2K);
   opj_set_info_handler(l_codec, info_callback,00);
