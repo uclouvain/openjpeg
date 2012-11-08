@@ -73,15 +73,15 @@ static int get_file_format(const char *filename) {
 sample error callback expecting a FILE* client object
 */
 static void error_callback(const char *msg, void *client_data) {
-	FILE *stream = (FILE*)client_data;
-	fprintf(stream, "[ERROR] %s", msg);
+	(void)client_data;
+	fprintf(stdout, "[ERROR] %s", msg);
 }
 /**
 sample warning callback expecting a FILE* client object
 */
 static void warning_callback(const char *msg, void *client_data) {
-	FILE *stream = (FILE*)client_data;
-	fprintf(stream, "[WARNING] %s", msg);
+	(void)client_data;
+	fprintf(stdout, "[WARNING] %s", msg);
 }
 /**
 sample debug callback expecting no client object
