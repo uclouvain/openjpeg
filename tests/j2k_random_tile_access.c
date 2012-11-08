@@ -104,7 +104,7 @@ static int infile_format(const char *fname)
 	const char *s, *magic_s;
 	int ext_format, magic_format;
 	unsigned char buf[12];
-	unsigned int l_nb_read;
+	OPJ_SIZE_T l_nb_read;
 
 	reader = fopen(fname, "rb");
 
@@ -157,6 +157,7 @@ int main(int argc, char **argv)
 {
 	FILE *fsrc = NULL;
 
+  OPJ_UINT32 index;
 	opj_dparameters_t parameters;			/* decompression parameters */
 	opj_image_t* image = NULL;
 	opj_stream_t *l_stream = NULL;				/* Stream */
@@ -269,6 +270,10 @@ int main(int argc, char **argv)
 		fclose(fsrc); \
 		return EXIT_FAILURE; \
 	} \
+  for(index = 0; index < image->numcomps; ++index) { \
+    if( image->comps[index].data == NULL ) \
+      return EXIT_FAILURE; \
+  } \
 	fprintf(stdout, "Tile %d is decoded successfully\n", tile_index);
 
 	TEST_TILE(tile_ul)
