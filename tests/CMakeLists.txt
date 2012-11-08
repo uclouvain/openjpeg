@@ -67,6 +67,11 @@ set_property(TEST ttd2 APPEND PROPERTY DEPENDS tte2)
 #add_test(ttd7 ${EXECUTABLE_OUTPUT_PATH}/test_tile_decoder 0 0  512  512 tte7.jp2)
 #set_property(TEST ttd7 APPEND PROPERTY DEPENDS tte7)
 
+add_test(rta1 ${EXECUTABLE_OUTPUT_PATH}/j2k_random_tile_access tte1.j2k)
+set_property(TEST rta1 APPEND PROPERTY DEPENDS tte1)
+add_test(rta2 ${EXECUTABLE_OUTPUT_PATH}/j2k_random_tile_access tte2.jp2)
+set_property(TEST rta1 APPEND PROPERTY DEPENDS tte2)
+
 # No image send to the dashboard if lib PNG is not available.
 if(NOT HAVE_LIBPNG)
   message(WARNING "Lib PNG seems to be not available: if you want run the non-regression tests with images reported to the dashboard, you need it (try BUILD_THIRDPARTY)")
