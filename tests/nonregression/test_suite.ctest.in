@@ -35,10 +35,11 @@ opj_compress -i @INPUT_NR_PATH@/X_6_2K_24_FULL_CBR_CIRCLE_000.tif -o @TEMP_PATH@
 opj_decompress -i  @INPUT_NR_PATH@/Bretagne2.j2k -o @TEMP_PATH@/Bretagne2.j2k.pgx
 opj_decompress -i  @INPUT_NR_PATH@/_00042.j2k -o @TEMP_PATH@/_00042.j2k.pgx
 opj_decompress -i  @INPUT_NR_PATH@/123.j2c -o @TEMP_PATH@/123.j2c.pgx
-opj_decompress -i  @INPUT_NR_PATH@/broken.jp2 -o @TEMP_PATH@/broken.jp2.pgx
-opj_decompress -i  @INPUT_NR_PATH@/broken2.jp2 -o @TEMP_PATH@/broken2.jp2.pgx
-opj_decompress -i  @INPUT_NR_PATH@/broken3.jp2 -o @TEMP_PATH@/broken3.jp2.pgx
-opj_decompress -i  @INPUT_NR_PATH@/broken4.jp2 -o @TEMP_PATH@/broken4.jp2.pgx
+# The 4 following tests should failed (kakadu indicates that they are corrupted)
+!opj_decompress -i  @INPUT_NR_PATH@/broken.jp2 -o @TEMP_PATH@/broken.jp2.pgx
+!opj_decompress -i  @INPUT_NR_PATH@/broken2.jp2 -o @TEMP_PATH@/broken2.jp2.pgx
+!opj_decompress -i  @INPUT_NR_PATH@/broken3.jp2 -o @TEMP_PATH@/broken3.jp2.pgx
+!opj_decompress -i  @INPUT_NR_PATH@/broken4.jp2 -o @TEMP_PATH@/broken4.jp2.pgx
 opj_decompress -i  @INPUT_NR_PATH@/bug.j2c -o @TEMP_PATH@/bug.j2c.pgx
 opj_decompress -i  @INPUT_NR_PATH@/buxI.j2k -o @TEMP_PATH@/buxI.j2k.pgx
 opj_decompress -i  @INPUT_NR_PATH@/buxR.j2k -o @TEMP_PATH@/buxR.j2k.pgx
@@ -62,6 +63,18 @@ opj_decompress -i  @INPUT_NR_PATH@/relax.jp2 -o @TEMP_PATH@/relax.jp2.pgx
 opj_decompress -i  @INPUT_NR_PATH@/test_lossless.j2k -o @TEMP_PATH@/test_lossless.j2k.pgx
 # text_GBR.jp2 file exhibt a error about a tile part with a index > of the number of tile-part in this tile.
 !opj_decompress -i  @INPUT_NR_PATH@/text_GBR.jp2 -o @TEMP_PATH@/text_GBR.jp2.pgx
+# pacs.ge file should throw an error but finally it seems work with v2
+opj_decompress -i  @INPUT_NR_PATH@/pacs.ge.j2k -o @TEMP_PATH@/pacs.ge.j2k.pgx
+# related to issue 135 
+opj_decompress -i  @INPUT_NR_PATH@/kodak_2layers_lrcp.j2c -o @TEMP_PATH@/kodak_2layers_lrcp.j2c.pgx
+opj_decompress -i  @INPUT_NR_PATH@/kodak_2layers_lrcp.j2c -o @TEMP_PATH@/kodak_2layers_lrcp.j2c.pgx -l 2
+# related to issue 104 which is closed
+opj_decompress -i  @INPUT_NR_PATH@/issue104_jpxstream.jp2 -o @TEMP_PATH@/issue104_jpxstream.jp2.pgx
+# File not supported by kakadu (Malformed PCLR box) and not supoprter by openjpeg (problem with value of TPSot)
+opj_decompress -i  @INPUT_NR_PATH@/mem-b2ace68c-1381.jp2 -o @TEMP_PATH@/mem-b2ace68c-1381.jp2.pgx
+# File which produced weird output with kakadu and not supoprter by openjpeg (problem with value of TPSot)
+opj_decompress -i  @INPUT_NR_PATH@/mem-b2b86b74-2753.jp2 -o @TEMP_PATH@/mem-b2b86b74-2753.jp2.pgx
+
 
 # decode with specific area
 # prec=12; nb_c=1 

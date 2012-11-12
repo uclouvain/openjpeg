@@ -20,7 +20,10 @@ find_package(KAKADU)
 
 # Define a list of file which should be gracefully rejected:
 set(BLACKLIST_JPEG2000
-    empty
+    broken.jp2 
+    broken2.jp2
+    broken3.jp2
+    broken4.jp2
    )
 
 file(GLOB_RECURSE OPJ_DATA_NR_LIST
