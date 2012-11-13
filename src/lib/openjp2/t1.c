@@ -1622,7 +1622,7 @@ void opj_t1_encode_cblk(opj_t1_t *t1,
 			pass->term = 1;
 		} else {
 			if (((bpno < ((OPJ_INT32) (cblk->numbps) - 4) && (passtype > 0))
-				|| ((bpno == (cblk->numbps - 4)) && (passtype == 2))) && (cblksty & J2K_CCP_CBLKSTY_LAZY)) {
+				|| ((bpno == ((OPJ_INT32)cblk->numbps - 4)) && (passtype == 2))) && (cblksty & J2K_CCP_CBLKSTY_LAZY)) {
 				if (type == T1_TYPE_RAW) {
 					opj_mqc_flush(mqc);
 					correction = 1;

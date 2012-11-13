@@ -54,7 +54,7 @@ int opj_write_phix( int coff, opj_codestream_info_t cstr_info, opj_bool EPHused,
   OPJ_BYTE l_data_header [8];
   int len, compno, i;
   opj_jp2_box_t *box;
-  OPJ_OFF_T lenp;
+  OPJ_OFF_T lenp = 0;
 
   box = (opj_jp2_box_t *)opj_calloc( cstr_info.numcomps, sizeof(opj_jp2_box_t));
   

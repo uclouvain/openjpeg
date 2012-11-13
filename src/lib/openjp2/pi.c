@@ -1281,11 +1281,10 @@ opj_pi_iterator_t *opj_pi_create_decode(opj_image_t *p_image,
 	}
 	++l_current_pi;
 
-	for
-		(pino = 1 ; pino<l_bound ; ++pino )
+	for (pino = 1 ; pino<l_bound ; ++pino )
 	{
-		opj_pi_comp_t *l_current_comp = l_current_pi->comps;
-		opj_image_comp_t * l_img_comp = p_image->comps;
+		l_current_comp = l_current_pi->comps;
+		l_img_comp = p_image->comps;
 		l_tccp = l_tcp->tccps;
 
 		l_current_pi->tx0 = l_tx0;
@@ -1475,8 +1474,8 @@ opj_pi_iterator_t *opj_pi_initialise_encode(const opj_image_t *p_image,
 	++l_current_pi;
 
 	for (pino = 1 ; pino<l_bound ; ++pino ) {
-		opj_pi_comp_t *l_current_comp = l_current_pi->comps;
-		opj_image_comp_t * l_img_comp = p_image->comps;
+		l_current_comp = l_current_pi->comps;
+		l_img_comp = p_image->comps;
 		l_tccp = l_tcp->tccps;
 
 		l_current_pi->tx0 = l_tx0;

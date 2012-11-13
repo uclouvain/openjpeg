@@ -2418,10 +2418,10 @@ opj_bool opj_j2k_write_coc( opj_j2k_t *p_j2k,
 
         if (l_coc_size > p_j2k->m_specific_param.m_encoder.m_header_tile_data_size) {
                 OPJ_BYTE *new_header_tile_data;
-                p_j2k->m_specific_param.m_encoder.m_header_tile_data
+                /*p_j2k->m_specific_param.m_encoder.m_header_tile_data
                         = (OPJ_BYTE*)opj_realloc(
                                 p_j2k->m_specific_param.m_encoder.m_header_tile_data,
-                                l_coc_size);
+                                l_coc_size);*/
 
                 new_header_tile_data = (OPJ_BYTE *) opj_realloc(p_j2k->m_specific_param.m_encoder.m_header_tile_data, l_coc_size);
                 if (! new_header_tile_data) {

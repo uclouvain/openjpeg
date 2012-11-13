@@ -327,10 +327,14 @@ opj_bool opj_t2_decode_packets( opj_t2_t *p_t2,
         OPJ_UINT32 l_nb_bytes_read;
         OPJ_UINT32 l_nb_pocs = l_tcp->numpocs + 1;
         opj_pi_iterator_t *l_current_pi = 00;
+#ifdef TODO_MSD
         OPJ_UINT32 curtp = 0;
+#endif 
         OPJ_UINT32 tp_start_packno;
         opj_packet_info_t *l_pack_info = 00;
         opj_image_comp_t* l_img_comp = 00;
+
+        OPJ_ARG_NOT_USED(p_cstr_index);
 
 #ifdef TODO_MSD
         if (p_cstr_index) {
@@ -558,7 +562,7 @@ opj_bool opj_t2_encode_packet(  OPJ_UINT32 tileno,
 
                         l_nb_blocks = prc->cw * prc->ch;
                         for     (cblkno = 0; cblkno < l_nb_blocks; ++cblkno) {
-                                opj_tcd_cblk_enc_t* cblk = &prc->cblks.enc[cblkno];
+                                cblk = &prc->cblks.enc[cblkno];
 
                                 cblk->numpasses = 0;
                                 opj_tgt_setvalue(prc->imsbtree, cblkno, band->numbps - cblk->numbps);
@@ -1043,6 +1047,9 @@ opj_bool opj_t2_read_packet_data(   opj_t2_t* p_t2,
         opj_tcd_cblk_dec_t* l_cblk = 00;
         opj_tcd_resolution_t* l_res = &p_tile->comps[p_pi->compno].resolutions[p_pi->resno];
 
+        OPJ_ARG_NOT_USED(p_t2);
+        OPJ_ARG_NOT_USED(pack_info);
+
         l_band = l_res->bands;
         for (bandno = 0; bandno < l_res->numbands; ++bandno) {
                 opj_tcd_precinct_t *l_prc = &l_band->precincts[p_pi->precno];
@@ -1152,6 +1159,9 @@ opj_bool opj_t2_skip_packet_data(   opj_t2_t* p_t2,
         opj_tcd_band_t *l_band = 00;
         opj_tcd_cblk_dec_t* l_cblk = 00;
         opj_tcd_resolution_t* l_res = &p_tile->comps[p_pi->compno].resolutions[p_pi->resno];
+
+        OPJ_ARG_NOT_USED(p_t2);
+        OPJ_ARG_NOT_USED(pack_info);
 
         *p_data_read = 0;
         l_band = l_res->bands;

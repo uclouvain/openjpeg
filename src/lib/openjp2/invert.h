@@ -50,7 +50,7 @@ The function in INVERT.H compute a matrix inversion with a LUP method
  */
 opj_bool opj_matrix_inversion_f(OPJ_FLOAT32 * pSrcMatrix,
                                 OPJ_FLOAT32 * pDestMatrix, 
-                                OPJ_UINT32 n);
+                                OPJ_UINT32 nb_compo);
 /* ----------------------------------------------------------------------- */
 /*@}*/
 
