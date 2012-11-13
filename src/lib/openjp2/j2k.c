@@ -4080,8 +4080,6 @@ opj_bool opj_j2k_write_sod(     opj_j2k_t *p_j2k,
                             )
 {
         opj_codestream_info_t *l_cstr_info = 00;
-        opj_cp_t *l_cp = 00;
-
         OPJ_UINT32 l_remaining_data;
 
         /* preconditions */
@@ -4094,8 +4092,6 @@ opj_bool opj_j2k_write_sod(     opj_j2k_t *p_j2k,
 
         /* make room for the EOF marker */
         l_remaining_data =  p_total_data_size - 4;
-
-        l_cp = &(p_j2k->m_cp);
 
         /* update tile coder */
         p_tile_coder->tp_num = p_j2k->m_specific_param.m_encoder.m_current_poc_tile_part_number ;
@@ -5894,9 +5890,8 @@ void opj_j2k_setup_encoder(     opj_j2k_t *p_j2k,
                 if (parameters->numpocs) {
                         /* initialisation of POC */
                         tcp->POC = 1;
-                        /* TODO */
-                        for (i = 0; i < (unsigned int) parameters->numpocs; i++) {
-                                if((tileno == parameters->POC[i].tile - 1) || (parameters->POC[i].tile == -1)) {
+                        for (i = 0; i < parameters->numpocs; i++) {
+                                if (tileno + 1 == parameters->POC[i].tile )  {
                                         opj_poc_t *tcp_poc = &tcp->pocs[numpocs_tile];
 
                                         tcp_poc->resno0         = parameters->POC[numpocs_tile].resno0;
@@ -9260,7 +9255,6 @@ opj_bool opj_j2k_post_write_tile (      opj_j2k_t * p_j2k,
                                                                 opj_event_mgr_t * p_manager )
 {
         opj_tcd_t * l_tcd = 00;
-        opj_cp_t * l_cp = 00;
         OPJ_UINT32 l_nb_bytes_written;
         OPJ_BYTE * l_current_data = 00;
         OPJ_UINT32 l_tile_size = 0;
@@ -9270,7 +9264,6 @@ opj_bool opj_j2k_post_write_tile (      opj_j2k_t * p_j2k,
         assert(p_j2k->m_specific_param.m_encoder.m_encoded_tile_data);
 
         l_tcd = p_j2k->m_tcd;
-        l_cp = &(p_j2k->m_cp);
         
         l_tile_size = p_j2k->m_specific_param.m_encoder.m_encoded_tile_size;
         l_available_data = l_tile_size;

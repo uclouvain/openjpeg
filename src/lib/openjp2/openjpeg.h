@@ -292,7 +292,7 @@ typedef struct opj_cparameters {
 	/** progression order changes */
 	opj_poc_t POC[32];
 	/** number of progression order changes (POC), default to 0 */
-	int numpocs;
+	OPJ_UINT32 numpocs;
 	/** number of layers */
 	int tcp_numlayers;
 	/** rates of layers */
