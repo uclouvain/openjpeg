@@ -842,10 +842,31 @@ opj_bool opj_jp2_read_pclr(	opj_jp2_t *jp2,
 	nr_channels = (OPJ_UINT16) l_value;
 
 	entries = (OPJ_UINT32*) opj_malloc(nr_channels * nr_entries * sizeof(OPJ_UINT32));
+    if (!entries)
+        return OPJ_FALSE;
 	channel_size = (OPJ_BYTE*) opj_malloc(nr_channels);
+    if (!channel_size)
+    {
+        opj_free(entries);
+        return OPJ_FALSE;
+    }
 	channel_sign = (OPJ_BYTE*) opj_malloc(nr_channels);
+	if (!channel_sign)
+	{
+        opj_free(entries);
+        opj_free(channel_size);
+        return OPJ_FALSE;
+	}
 
 	jp2_pclr = (opj_jp2_pclr_t*)opj_malloc(sizeof(opj_jp2_pclr_t));
+    if (!jp2_pclr)
+    {
+        opj_free(entries);
+        opj_free(channel_size);
+        opj_free(channel_sign);
+        return OPJ_FALSE;
+    }
+
 	jp2_pclr->channel_sign = channel_sign;
 	jp2_pclr->channel_size = channel_size;
 	jp2_pclr->entries = entries;
@@ -891,7 +912,7 @@ opj_bool opj_jp2_read_cmap(	opj_jp2_t * jp2,
 	assert(jp2 != 00);
 	assert(p_cmap_header_data != 00);
 	assert(p_manager != 00);
-  (void)p_cmap_header_size;
+    (void)p_cmap_header_size;
 
 	/* Need nr_channels: */
 	if(jp2->color.jp2_pclr == NULL) {
@@ -909,6 +930,9 @@ opj_bool opj_jp2_read_cmap(	opj_jp2_t * jp2,
 
 	nr_channels = jp2->color.jp2_pclr->nr_channels;
 	cmap = (opj_jp2_cmap_comp_t*) opj_malloc(nr_channels * sizeof(opj_jp2_cmap_comp_t));
+    if (!cmap)
+        return OPJ_FALSE;
+
 
 	for(i = 0; i < nr_channels; ++i) {
 		opj_read_bytes(p_cmap_header_data, &l_value, 2);			/* CMP^i */
@@ -993,8 +1017,15 @@ opj_bool opj_jp2_read_cdef(	opj_jp2_t * jp2,
 	}
 
 	cdef_info = (opj_jp2_cdef_info_t*) opj_malloc(l_value * sizeof(opj_jp2_cdef_info_t));
+    if (!cdef_info)
+        return OPJ_FALSE;
 
 	jp2->color.jp2_cdef = (opj_jp2_cdef_t*)opj_malloc(sizeof(opj_jp2_cdef_t));
+    if(!jp2->color.jp2_cdef)
+    {
+        opj_free(cdef_info);
+        return OPJ_FALSE;
+    }
 	jp2->color.jp2_cdef->info = cdef_info;
 	jp2->color.jp2_cdef->n = (OPJ_UINT16) l_value;
 
@@ -1066,7 +1097,11 @@ opj_bool opj_jp2_read_colr( opj_jp2_t *jp2,
 
 		jp2->color.icc_profile_len = icc_len;
 		jp2->color.icc_profile_buf = (OPJ_BYTE*) opj_malloc(icc_len);
-
+        if (!jp2->color.icc_profile_buf)
+        {
+            jp2->color.icc_profile_len = 0;
+            return OPJ_FALSE;
+        }
 		memset(jp2->color.icc_profile_buf, 0, icc_len * sizeof(OPJ_BYTE));
 
 		for (it_icc_value = 0; it_icc_value < icc_len; ++it_icc_value)
@@ -1396,12 +1431,23 @@ void opj_jp2_setup_encoder(	opj_jp2_t *jp2,
 	jp2->minversion = 0;	/* MinV */
 	jp2->numcl = 1;
 	jp2->cl = (OPJ_UINT32*) opj_malloc(jp2->numcl * sizeof(OPJ_UINT32));
+    if (!jp2->cl){
+        jp2->cl = NULL;
+        opj_event_msg(p_manager, EVT_ERROR, "Not enough memory when setup the JP2 encoder\n");
+        return;
+    }
 	jp2->cl[0] = JP2_JP2;	/* CL0 : JP2 */
 
 	/* Image Header box */
 
 	jp2->numcomps = image->numcomps;	/* NC */
 	jp2->comps = (opj_jp2_comps_t*) opj_malloc(jp2->numcomps * sizeof(opj_jp2_comps_t));
+    if (!jp2->comps) {
+        jp2->comps = NULL;
+        opj_event_msg(p_manager, EVT_ERROR, "Not enough memory when setup the JP2 encoder\n");
+        return;
+    }
+
 	jp2->h = image->y1 - image->y0;		/* HEIGHT */
 	jp2->w = image->x1 - image->x0;		/* WIDTH */
 	/* BPC */

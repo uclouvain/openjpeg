@@ -809,15 +809,17 @@ void opj_j2k_update_tlm (opj_j2k_t * p_j2k, OPJ_UINT32 p_tile_part_size )
  *
  * @param       p_tile_no               the tile to output
  * @param       p_comp_no               the component to output
- * @param       p_stream                                the stream to write data to.
- * @param       p_j2k                           J2K codec.
+ * @param       nb_comps                the number of components
+ * @param       p_stream                the stream to write data to.
+ * @param       p_j2k                   J2K codec.
  * @param       p_manager               the user event manager.
 */
-static opj_bool opj_j2k_write_rgn(      opj_j2k_t *p_j2k,
-                                                                        OPJ_UINT32 p_tile_no,
-                                                                        OPJ_UINT32 p_comp_no,
-                                                                        opj_stream_private_t *p_stream,
-                                                                        opj_event_mgr_t * p_manager );
+static opj_bool opj_j2k_write_rgn(  opj_j2k_t *p_j2k,
+                                    OPJ_UINT32 p_tile_no,
+                                    OPJ_UINT32 p_comp_no,
+                                    OPJ_UINT32 nb_comps,
+                                    opj_stream_private_t *p_stream,
+                                    opj_event_mgr_t * p_manager );
 
 /**
  * Reads a RGN marker (Region Of Interest)
@@ -4260,16 +4262,15 @@ opj_bool opj_j2k_read_sod (opj_j2k_t *p_j2k,
 }
 
  opj_bool opj_j2k_write_rgn(opj_j2k_t *p_j2k,
-                                                        OPJ_UINT32 p_tile_no,
-                                                        OPJ_UINT32 p_comp_no,
-                                                        opj_stream_private_t *p_stream,
-                                                        opj_event_mgr_t * p_manager
+                            OPJ_UINT32 p_tile_no,
+                            OPJ_UINT32 p_comp_no,
+                            OPJ_UINT32 nb_comps,
+                            opj_stream_private_t *p_stream,
+                            opj_event_mgr_t * p_manager
                             )
 {
         OPJ_BYTE * l_current_data = 00;
-        OPJ_UINT32 l_nb_comp;
         OPJ_UINT32 l_rgn_size;
-        opj_image_t *l_image = 00;
         opj_cp_t *l_cp = 00;
         opj_tcp_t *l_tcp = 00;
         opj_tccp_t *l_tccp = 00;
@@ -4284,9 +4285,7 @@ opj_bool opj_j2k_read_sod (opj_j2k_t *p_j2k,
         l_tcp = &l_cp->tcps[p_tile_no];
         l_tccp = &l_tcp->tccps[p_comp_no];
 
-        l_nb_comp = l_image->numcomps;
-
-        if (l_nb_comp <= 256) {
+        if (nb_comps <= 256) {
                 l_comp_room = 1;
         }
         else {
@@ -4303,13 +4302,13 @@ opj_bool opj_j2k_read_sod (opj_j2k_t *p_j2k,
         opj_write_bytes(l_current_data,l_rgn_size-2,2);                                 /* Lrgn */
         l_current_data += 2;
 
-        opj_write_bytes(l_current_data,p_comp_no,l_comp_room);                  /* Crgn */
+        opj_write_bytes(l_current_data,p_comp_no,l_comp_room);                          /* Crgn */
         l_current_data+=l_comp_room;
 
-        opj_write_bytes(l_current_data, 0,1);                                                   /* Srgn */
+        opj_write_bytes(l_current_data, 0,1);                                           /* Srgn */
         ++l_current_data;
 
-        opj_write_bytes(l_current_data, l_tccp->roishift,1);                    /* SPrgn */
+        opj_write_bytes(l_current_data, l_tccp->roishift,1);                            /* SPrgn */
         ++l_current_data;
 
         if (opj_stream_write_data(p_stream,p_j2k->m_specific_param.m_encoder.m_header_tile_data,l_rgn_size,p_manager) != l_rgn_size) {
@@ -4747,7 +4746,7 @@ opj_bool opj_j2k_write_regions( opj_j2k_t *p_j2k,
         for     (compno = 0; compno < p_j2k->m_private_image->numcomps; ++compno)  {
                 if (l_tccp->roishift) {
 
-                        if (! opj_j2k_write_rgn(p_j2k,0,compno,p_stream,p_manager)) {
+                        if (! opj_j2k_write_rgn(p_j2k,0,compno,p_j2k->m_private_image->numcomps,p_stream,p_manager)) {
                                 return OPJ_FALSE;
                         }
                 }
@@ -8453,6 +8452,8 @@ opj_codestream_info_v2_t* j2k_get_cstr_info(opj_j2k_t* p_j2k)
         OPJ_UINT32 numcomps = p_j2k->m_private_image->numcomps;
         opj_tcp_t *l_default_tile;
         opj_codestream_info_v2_t* cstr_info = (opj_codestream_info_v2_t*) opj_calloc(1,sizeof(opj_codestream_info_v2_t));
+		if (!cstr_info)
+			return NULL;
 
         cstr_info->nbcomps = p_j2k->m_private_image->numcomps;
 
@@ -8473,6 +8474,11 @@ opj_codestream_info_v2_t* j2k_get_cstr_info(opj_j2k_t* p_j2k)
         cstr_info->m_default_tile_info.mct = l_default_tile->mct;
 
         cstr_info->m_default_tile_info.tccp_info = (opj_tccp_info_t*) opj_calloc(cstr_info->nbcomps, sizeof(opj_tccp_info_t));
+		if (!cstr_info->m_default_tile_info.tccp_info)
+		{
+			opj_destroy_cstr_info(&cstr_info);
+			return NULL;
+		}
 
         for (compno = 0; compno < numcomps; compno++) {
                 opj_tccp_t *l_tccp = &(l_default_tile->tccps[compno]);
