@@ -329,8 +329,8 @@ opj_bool opj_t2_decode_packets( opj_t2_t *p_t2,
         opj_pi_iterator_t *l_current_pi = 00;
 #ifdef TODO_MSD
         OPJ_UINT32 curtp = 0;
-#endif 
         OPJ_UINT32 tp_start_packno;
+#endif 
         opj_packet_info_t *l_pack_info = 00;
         opj_image_comp_t* l_img_comp = 00;
 
@@ -348,7 +348,7 @@ opj_bool opj_t2_decode_packets( opj_t2_t *p_t2,
                 return OPJ_FALSE;
         }
 
-        tp_start_packno = 0;
+
         l_current_pi = l_pi;
 
         for     (pino = 0; pino <= l_tcp->numpocs; ++pino) {
@@ -407,6 +407,7 @@ opj_bool opj_t2_decode_packets( opj_t2_t *p_t2,
                         if(p_cstr_info) {
                                 opj_tile_info_v2_t *info_TL = &p_cstr_info->tile[p_tile_no];
                                 opj_packet_info_t *info_PK = &info_TL->packet[p_cstr_info->packno];
+                                tp_start_packno = 0;
                                 if (!p_cstr_info->packno) {
                                         info_PK->start_pos = info_TL->end_header + 1;
                                 } else if (info_TL->packet[p_cstr_info->packno-1].end_pos >= (OPJ_INT32)p_cstr_info->tile[p_tile_no].tp[curtp].tp_end_pos){ /* New tile part */
