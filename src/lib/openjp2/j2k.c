@@ -3891,8 +3891,15 @@ opj_bool opj_j2k_read_sot ( opj_j2k_t *p_j2k,
         /* PSot should be equal to zero or >=14 or <= 2^32-1 */
         if ((l_tot_len !=0 ) && (l_tot_len < 14) )
         {
-                opj_event_msg(p_manager, EVT_ERROR, "Psot value (%d) is not correct regards to the JPEG2000 norm!\n", l_tot_len);
+            if (l_tot_len == 12 ) /* MSD: Special case for the PHR data which are read by kakadu*/
+            {
+                opj_event_msg(p_manager, EVT_WARNING, "Empty SOT marker detected: Psot=%d.\n", l_tot_len);
+            }
+            else
+            {
+                opj_event_msg(p_manager, EVT_ERROR, "Psot value is not correct regards to the JPEG2000 norm: %d.\n", l_tot_len);
                 return OPJ_FALSE;
+            }
         }
 
 #ifdef USE_JPWL
@@ -4151,6 +4158,7 @@ opj_bool opj_j2k_read_sod (opj_j2k_t *p_j2k,
         OPJ_BYTE ** l_current_data = 00;
         opj_tcp_t * l_tcp = 00;
         OPJ_UINT32 * l_tile_len = 00;
+        opj_bool l_sot_length_pb_detected = OPJ_FALSE;
 
         /* preconditions */
         assert(p_j2k != 00);
@@ -4166,19 +4174,27 @@ opj_bool opj_j2k_read_sod (opj_j2k_t *p_j2k,
                 // a file with a single tile part of more than 4 GB...*/
                 p_j2k->m_specific_param.m_decoder.m_sot_length = (OPJ_UINT32)(opj_stream_get_number_byte_left(p_stream) - 2);
         }
-        else
+        else {
+            /* Check to avoid pass the limit of OPJ_UINT32 */
+            if (p_j2k->m_specific_param.m_decoder.m_sot_length >= 2 )
                 p_j2k->m_specific_param.m_decoder.m_sot_length -= 2;
+            else {
+                /* MSD: case commented to support empty SOT marker (PHR data) */
+            }
+        }
 
         l_current_data = &(l_tcp->m_data);
         l_tile_len = &l_tcp->m_data_size;
 
-        if (! *l_current_data) {
+        /* Patch to support new PHR data */
+        if (p_j2k->m_specific_param.m_decoder.m_sot_length) {
+            if (! *l_current_data) {
                 /* LH: oddly enough, in this path, l_tile_len!=0.
                  * TODO: If this was consistant, we could simplify the code to only use realloc(), as realloc(0,...) default to malloc(0,...).
                  */
                 *l_current_data = (OPJ_BYTE*) opj_malloc(p_j2k->m_specific_param.m_decoder.m_sot_length);
-        }
-        else {
+            }
+            else {
                 OPJ_BYTE *l_new_current_data = (OPJ_BYTE *) opj_realloc(*l_current_data, *l_tile_len + p_j2k->m_specific_param.m_decoder.m_sot_length);
                 if (! l_new_current_data) {
                         opj_free(*l_current_data);
@@ -4188,11 +4204,15 @@ opj_bool opj_j2k_read_sod (opj_j2k_t *p_j2k,
                           function. */
                 }
                 *l_current_data = l_new_current_data;
-        }
-
-        if (*l_current_data == 00) {
+            }
+            
+            if (*l_current_data == 00) {
                 opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to decode tile\n");
                 return OPJ_FALSE;
+            }
+        }
+        else {
+            l_sot_length_pb_detected = OPJ_TRUE;
         }
 
         /* Index */
@@ -4218,11 +4238,18 @@ opj_bool opj_j2k_read_sod (opj_j2k_t *p_j2k,
                 /*l_cstr_index->packno = 0;*/
         }
 
-        l_current_read_size = opj_stream_read_data(
+        /* Patch to support new PHR data */
+        if (!l_sot_length_pb_detected) {
+            l_current_read_size = opj_stream_read_data(
                         p_stream,
                         *l_current_data + *l_tile_len,
                         p_j2k->m_specific_param.m_decoder.m_sot_length,
                         p_manager);
+        }
+        else
+        {
+            l_current_read_size = 0;
+        }
 
         if (l_current_read_size != p_j2k->m_specific_param.m_decoder.m_sot_length) {
                 p_j2k->m_specific_param.m_decoder.m_state = J2K_STATE_NEOC;
