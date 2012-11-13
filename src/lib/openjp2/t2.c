@@ -355,6 +355,11 @@ opj_bool opj_t2_decode_packets( opj_t2_t *p_t2,
                  * and no l_img_comp->resno_decoded are computed
                  */
                 opj_bool* first_pass_failed = (opj_bool*)opj_malloc(l_image->numcomps * sizeof(opj_bool));
+                if (!first_pass_failed)
+                {
+                    opj_pi_destroy(l_pi,l_nb_pocs);
+                    return OPJ_FALSE;
+                }
                 memset(first_pass_failed, OPJ_TRUE, l_image->numcomps * sizeof(opj_bool));
 
                 while (opj_pi_next(l_current_pi)) {
@@ -368,6 +373,7 @@ opj_bool opj_t2_decode_packets( opj_t2_t *p_t2,
 
                                 if (! opj_t2_decode_packet(p_t2,p_tile,l_tcp,l_current_pi,l_current_data,&l_nb_bytes_read,p_max_len,l_pack_info)) {
                                         opj_pi_destroy(l_pi,l_nb_pocs);
+                                        opj_free(first_pass_failed);
                                         return OPJ_FALSE;
                                 }
 
@@ -378,6 +384,7 @@ opj_bool opj_t2_decode_packets( opj_t2_t *p_t2,
                                 l_nb_bytes_read = 0;
                                 if (! opj_t2_skip_packet(p_t2,p_tile,l_tcp,l_current_pi,l_current_data,&l_nb_bytes_read,p_max_len,l_pack_info)) {
                                         opj_pi_destroy(l_pi,l_nb_pocs);
+                                        opj_free(first_pass_failed);
                                         return OPJ_FALSE;
                                 }
                         }
