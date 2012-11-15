@@ -170,7 +170,7 @@ opj_tgt_tree_t *opj_tgt_init(opj_tgt_tree_t * p_tree,OPJ_UINT32 p_num_leafs_h, O
                 
                 if (l_node_size > p_tree->nodes_size) {
                         opj_tgt_node_t* new_nodes = (opj_tgt_node_t*) opj_realloc(p_tree->nodes, l_node_size);
-                        if (! p_tree->nodes) {
+                        if (! new_nodes) {
                                 fprintf(stderr, "ERROR Not enough memory to reinitialize the tag tree\n");
                                 opj_tgt_destroy(p_tree);
                                 return 00;
