@@ -119,7 +119,7 @@ typedef uint64_t OPJ_UINT64;
 #define OPJ_J2K_MCC_DEFAULT_NB_RECORDS		10
 #define OPJ_J2K_MCT_DEFAULT_NB_RECORDS		10
 
-/* UniPG>> */
+/* UniPG>> */ /* NOT YET USED IN THE V2 VERSION OF OPENJPEG */
 #define JPWL_MAX_NO_TILESPECS	16 /**< Maximum number of tile parts expected by JPWL: increase at your will */
 #define JPWL_MAX_NO_PACKSPECS	16 /**< Maximum number of packet parts expected by JPWL: increase at your will */
 #define JPWL_MAX_NO_MARKERS	512 /**< Maximum number of JPWL markers: increase at your will */
@@ -131,8 +131,8 @@ typedef uint64_t OPJ_UINT64;
 /* <<UniPG */
 
 /**
- * FIXME EXPERIMENTAL FOR THE MOMENT
- * Supported options about file information
+ * EXPERIMENTAL FOR THE MOMENT
+ * Supported options about file information used only in j2k_dump
 */
 #define OPJ_IMG_INFO		1	/**< Basic image information provided to the user */
 #define OPJ_J2K_MH_INFO		2	/**< Codestream information based only on the main header */
@@ -213,7 +213,7 @@ typedef enum CODEC_FORMAT {
 /**
  * Callback function prototype for events
  * @param msg               Event message
- * @param client_data       FIXME DOC
+ * @param client_data       Client object where will be return the event message 
  * */
 typedef void (*opj_msg_callback) (const char *msg, void *client_data);
 
@@ -335,7 +335,7 @@ typedef struct opj_cparameters {
 	int cod_format;
 	/*@}*/
 
-/* UniPG>> */
+/* UniPG>> */ /* NOT YET USED IN THE V2 VERSION OF OPENJPEG */
 	/**@name JPWL encoding parameters */
 	/*@{*/
 	/** enables writing of EPC in MH, thus activating JPWL */
@@ -436,7 +436,7 @@ typedef struct opj_dparameters {
 
 	/*@}*/
 
-/* UniPG>> */
+/* UniPG>> */ /* NOT YET USED IN THE V2 VERSION OF OPENJPEG */
 	/**@name JPWL decoding parameters */
 	/*@{*/
 	/** activates the JPWL correction capabilities */
@@ -466,9 +466,9 @@ typedef void * opj_codec_t;
 ==========================================================
 */
 
-/*
+/**
  * Stream open flags.
- */
+ * */
 /** The stream was opened for reading. */
 #define OPJ_STREAM_READ	OPJ_TRUE
 /** The stream was opened for writing. */
@@ -476,25 +476,21 @@ typedef void * opj_codec_t;
 
 /*
  * Callback function prototype for read function
- * FIXME DOC
  */
 typedef OPJ_SIZE_T (* opj_stream_read_fn) (void * p_buffer, OPJ_SIZE_T p_nb_bytes, void * p_user_data) ;
 
 /*
  * Callback function prototype for write function
- * FIXME DOC
  */
 typedef OPJ_SIZE_T (* opj_stream_write_fn) (void * p_buffer, OPJ_SIZE_T p_nb_bytes, void * p_user_data) ;
 
 /*
  * Callback function prototype for skip function
- * FIXME DOC
  */
 typedef OPJ_OFF_T (* opj_stream_skip_fn) (OPJ_OFF_T p_nb_bytes, void * p_user_data) ;
 
 /*
  * Callback function prototype for seek function
- * FIXME DOC
  */
 typedef OPJ_BOOL (* opj_stream_seek_fn) (OPJ_OFF_T p_nb_bytes, void * p_user_data) ;
 
@@ -594,6 +590,7 @@ typedef struct opj_image_comptparm {
    Information on the JPEG 2000 codestream
 ==========================================================
 */
+/* QUITE EXPERIMENTAL FOR THE MOMENT */
 
 /**
  * Index structure : Information concerning a packet inside tile
@@ -851,7 +848,7 @@ typedef struct opj_tile_index {
 	/** information concerning tile parts */
 	opj_tp_index_t *tp_index;
 
-	/* UniPG>> */
+	/* UniPG>> */ /* NOT USED FOR THE MOMENT IN THE V2 VERSION */
 		/** number of markers */
 		OPJ_UINT32 marknum;
 		/** list of markers */
@@ -879,7 +876,7 @@ typedef struct opj_codestream_index {
 	/** codestream's size */
 	OPJ_UINT64 codestream_size;
 
-/* UniPG>> */
+/* UniPG>> */ /* NOT USED FOR THE MOMENT IN THE V2 VERSION */
 	/** number of markers */
 	OPJ_UINT32 marknum;
 	/** list of markers */
@@ -904,7 +901,7 @@ typedef struct opj_codestream_index {
 
 /**
  * Info structure of the JP2 file
- * FIXME
+ * EXPERIMENTAL FOR THE MOMENT
  */
 typedef struct opj_jp2_metadata {
 	/** */
@@ -914,7 +911,7 @@ typedef struct opj_jp2_metadata {
 
 /**
  * Index structure of the JP2 file
- * FIXME
+ * EXPERIMENTAL FOR THE MOMENT
  */
 typedef struct opj_jp2_index {
 	/** */
@@ -934,6 +931,7 @@ extern "C" {
 ==========================================================
 */
 
+/* Get the version of the openjpeg library*/
 OPJ_API const char * OPJ_CALLCONV opj_version(void);
 
 /* 
@@ -944,31 +942,31 @@ OPJ_API const char * OPJ_CALLCONV opj_version(void);
 
 /**
  * Create an image
- * @param numcmpts number of components
- * @param cmptparms components parameters
- * @param clrspc image color space
- * @return returns a new image structure if successful, returns NULL otherwise
+ *
+ * @param numcmpts      number of components
+ * @param cmptparms     components parameters
+ * @param clrspc        image color space
+ * @return returns      a new image structure if successful, returns NULL otherwise
  * */
 OPJ_API opj_image_t* OPJ_CALLCONV opj_image_create(OPJ_UINT32 numcmpts, opj_image_cmptparm_t *cmptparms, OPJ_COLOR_SPACE clrspc);
 
 /**
  * Deallocate any resources associated with an image
- * @param image image to be destroyed
+ *
+ * @param image         image to be destroyed
  */
 OPJ_API void OPJ_CALLCONV opj_image_destroy(opj_image_t *image);
-
 
 /**
  * Creates an image without allocating memory for the image (used in the new version of the library).
  *
- * @param	numcmpts			the number of components
- * @param	cmptparms		the components parameters
- * @param	clrspc			the image color space
+ * @param	numcmpts    the number of components
+ * @param	cmptparms   the components parameters
+ * @param	clrspc      the image color space
  *
  * @return	a new image structure if successful, NULL otherwise.
 */
 OPJ_API opj_image_t* OPJ_CALLCONV opj_image_tile_create(OPJ_UINT32 numcmpts, opj_image_cmptparm_t *cmptparms, OPJ_COLOR_SPACE clrspc);
-
 
 /* 
 ==========================================================
@@ -1049,16 +1047,16 @@ OPJ_API void OPJ_CALLCONV opj_stream_set_user_data_length(opj_stream_t* p_stream
 /**
  * Helper function.
  * Sets the stream to be a file stream. The FILE must have been open previously.
- * @param p_file the file stream to operate on
- * @param p_is_read_stream whether the stream is a read stream (true) or not (false)
+ * @param p_file            the file stream to operate on
+ * @param p_is_read_stream  whether the stream is a read stream (true) or not (false)
 */
 OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_default_file_stream (FILE * p_file, OPJ_BOOL p_is_read_stream);
 
 /**
  * FIXME DOC
- * @param p_file           the file stream to operate on
- * @param p_buffer_size    FIXME DOC
- * @param p_is_read_stream FIXME DOC
+ * @param p_file            the file stream to operate on
+ * @param p_buffer_size     size of the chunk used to stream
+ * @param p_is_read_stream  whether the stream is a read stream (true) or not (false)
 */
 OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream (FILE * p_file, OPJ_SIZE_T p_buffer_size, OPJ_BOOL p_is_read_stream);
 
@@ -1071,7 +1069,7 @@ OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream (FILE * p_file,
  * Set the info handler use by openjpeg.
  * @param p_codec       the codec previously initialise
  * @param p_callback    the callback function which will be used
- * @param p_user_data   FIXME DOC
+ * @param p_user_data   client object where will be returned the message
 */
 OPJ_API OPJ_BOOL OPJ_CALLCONV opj_set_info_handler(opj_codec_t * p_codec, 
                                                    opj_msg_callback p_callback,
@@ -1080,7 +1078,7 @@ OPJ_API OPJ_BOOL OPJ_CALLCONV opj_set_info_handler(opj_codec_t * p_codec,
  * Set the warning handler use by openjpeg.
  * @param p_codec       the codec previously initialise
  * @param p_callback    the callback function which will be used
- * @param p_user_data   FIXME DOC
+ * @param p_user_data   client object where will be returned the message
 */
 OPJ_API OPJ_BOOL OPJ_CALLCONV opj_set_warning_handler(opj_codec_t * p_codec,
                                                       opj_msg_callback p_callback,
@@ -1089,7 +1087,7 @@ OPJ_API OPJ_BOOL OPJ_CALLCONV opj_set_warning_handler(opj_codec_t * p_codec,
  * Set the error handler use by openjpeg.
  * @param p_codec       the codec previously initialise
  * @param p_callback    the callback function which will be used
- * @param p_user_data   FIXME DOC
+ * @param p_user_data   client object where will be returned the message
 */
 OPJ_API OPJ_BOOL OPJ_CALLCONV opj_set_error_handler(opj_codec_t * p_codec, 
                                                     opj_msg_callback p_callback,
@@ -1160,7 +1158,7 @@ OPJ_API OPJ_BOOL OPJ_CALLCONV opj_read_header (	opj_stream_t *p_stream,
  * Sets the given area to be decoded. This function should be called right after opj_read_header and before any tile header reading.
  *
  * @param	p_codec			the jpeg2000 codec.
- * @param	p_image     FIXME DOC
+ * @param	p_image         the decoded image previously setted by opj_read_header
  * @param	p_start_x		the left position of the rectangle to decode (in image coordinates).
  * @param	p_end_x			the right position of the rectangle to decode (in image coordinates).
  * @param	p_start_y		the up position of the rectangle to decode (in image coordinates).
@@ -1175,6 +1173,7 @@ OPJ_API OPJ_BOOL OPJ_CALLCONV opj_set_decode_area(	opj_codec_t *p_codec,
 
 /**
  * Decode an image from a JPEG-2000 codestream
+ *
  * @param p_decompressor 	decompressor handle
  * @param p_stream			Input buffer stream
  * @param p_image 			the decoded image
@@ -1186,6 +1185,7 @@ OPJ_API OPJ_BOOL OPJ_CALLCONV opj_decode(   opj_codec_t *p_decompressor,
 
 /**
  * Get the decoded tile from the codec
+ *
  * @param	p_codec			the jpeg2000 codec.
  * @param	p_stream		input streamm
  * @param	p_image			output image
@@ -1210,7 +1210,7 @@ OPJ_API OPJ_BOOL OPJ_CALLCONV opj_set_decoded_resolution_factor(opj_codec_t *p_c
 /**
  * Writes a tile with the given data.
  *
- * @param	p_codec		the jpeg2000 codec.
+ * @param	p_codec		        the jpeg2000 codec.
  * @param	p_tile_index		the index of the tile to write. At the moment, the tiles must be written from 0 to n-1 in sequence.
  * @param	p_data				pointer to the data to write. Data is arranged in sequence, data_comp0, then data_comp1, then ... NO INTERLEAVING should be set.
  * @param	p_data_size			this value os used to make sure the data being written is correct. The size must be equal to the sum for each component of tile_width * tile_height * component_size. component_size can be 1,2 or 4 bytes, depending on the precision of the given component.
@@ -1315,12 +1315,19 @@ OPJ_API OPJ_BOOL OPJ_CALLCONV opj_setup_encoder(opj_codec_t *p_codec,
 												opj_image_t *image);
 
 /**
+ * Start to compress the current image.
+ * @param p_codec 		Compressor handle
+ * @param image 	    Input filled image
+ * @param p_stream 		Input stgream
  */
 OPJ_API OPJ_BOOL OPJ_CALLCONV opj_start_compress (	opj_codec_t *p_codec,
 													opj_image_t * p_image,
-													opj_stream_t *p_cio);
+													opj_stream_t *p_stream);
 
 /**
+ * End to compress the current image.
+ * @param p_codec 		Compressor handle
+ * @param p_stream 		Input stgream
  */
 OPJ_API OPJ_BOOL OPJ_CALLCONV opj_end_compress (opj_codec_t *p_codec,
 												opj_stream_t *p_stream);
@@ -1334,7 +1341,12 @@ OPJ_API OPJ_BOOL OPJ_CALLCONV opj_end_compress (opj_codec_t *p_codec,
  */
 OPJ_API OPJ_BOOL OPJ_CALLCONV opj_encode(opj_codec_t *p_codec,
                                          opj_stream_t *p_stream);
-
+/*
+==========================================================
+   codec output functions definitions
+==========================================================
+*/
+/* EXPERIMENTAL FUNCTIONS FOR NOW, USED ONLY IN J2K_DUMP*/
 
 /**
 Destroy Codestream information after compression or decompression
@@ -1342,13 +1354,6 @@ Destroy Codestream information after compression or decompression
 */
 OPJ_API void OPJ_CALLCONV opj_destroy_cstr_info(opj_codestream_info_v2_t **cstr_info);
 
-
-
-/*
-==========================================================
-   codec output functions definitions
-==========================================================
-*/
 
 /**
  * Dump the codec information into the output stream
@@ -1408,7 +1413,7 @@ OPJ_API opj_jp2_index_t* OPJ_CALLCONV opj_get_jp2_index(opj_codec_t *p_codec);
 
 /*
 ==========================================================
-   new functions
+   MCT functions
 ==========================================================
 */
 
