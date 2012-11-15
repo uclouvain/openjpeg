@@ -39,7 +39,7 @@
 /** @name Local static functions */
 /*@{*/
 
-static void t2_putcommacode(opj_bio_t *bio, int n);
+static void opj_t2_putcommacode(opj_bio_t *bio, OPJ_INT32 n);
 
 static OPJ_UINT32 opj_t2_getcommacode(opj_bio_t *bio); 
 /**
@@ -145,8 +145,7 @@ static OPJ_BOOL opj_t2_init_seg(    opj_tcd_cblk_dec_t* cblk,
 /* ----------------------------------------------------------------------- */
 
 /* #define RESTART 0x04 */
-/* TODO MSD->LHE */
-static void t2_putcommacode(opj_bio_t *bio, int n) {
+static void opj_t2_putcommacode(opj_bio_t *bio, OPJ_INT32 n) {
         while (--n >= 0) {
                 opj_bio_write(bio, 1, 1);
         }
@@ -641,7 +640,7 @@ OPJ_BOOL opj_t2_encode_packet(  OPJ_UINT32 tileno,
 
                                 ++pass;
                         }
-                        t2_putcommacode(bio, increment);
+                        opj_t2_putcommacode(bio, increment);
 
                         /* computation of the new Length indicator */
                         cblk->numlenbits += increment;
