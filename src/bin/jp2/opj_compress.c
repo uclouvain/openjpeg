@@ -149,10 +149,10 @@ static void encode_help_display(void) {
 	fprintf(stdout,"\n");
 	fprintf(stdout,"-h           : display the help information \n ");
 	fprintf(stdout,"\n");
-	fprintf(stdout,"-OPJ_CINEMA2K    : Digital Cinema 2K profile compliant codestream for 2K resolution.(-OPJ_CINEMA2K 24 or 48) \n");
+	fprintf(stdout,"-CINEMA2K    : Digital Cinema 2K profile compliant codestream for 2K resolution.(-CINEMA2K 24 or 48) \n");
   fprintf(stdout,"	  Need to specify the frames per second for a 2K resolution. Only 24 or 48 fps is allowed\n");
 	fprintf(stdout,"\n");
-	fprintf(stdout,"-OPJ_CINEMA4K    : Digital Cinema 4K profile compliant codestream for 4K resolution \n");
+	fprintf(stdout,"-CINEMA4K    : Digital Cinema 4K profile compliant codestream for 4K resolution \n");
 	fprintf(stdout,"	  Frames per second not required. Default value is 24fps\n");
 	fprintf(stdout,"\n");
 	fprintf(stdout,"-r           : different compression ratios for successive layers (-r 20,10,5)\n ");
@@ -584,8 +584,8 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
 													img_fol_t *img_fol, raw_cparameters_t *raw_cp, char *indexfilename) {
 	int i, j, totlen, c;
 	opj_option_t long_option[]={
-		{"OPJ_CINEMA2K",REQ_ARG, NULL ,'w'},
-		{"OPJ_CINEMA4K",NO_ARG, NULL ,'y'},
+		{"CINEMA2K",REQ_ARG, NULL ,'w'},
+		{"CINEMA4K",NO_ARG, NULL ,'y'},
 		{"ImgDir",REQ_ARG, NULL ,'z'},
 		{"TP",REQ_ARG, NULL ,'u'},
 		{"SOP",NO_ARG, NULL ,'S'},
