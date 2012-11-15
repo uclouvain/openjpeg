@@ -90,7 +90,7 @@ typedef struct aux_response_param{
 #endif
 } aux_response_param_t;
 
-aux_response_param_t * gene_auxresponse( opj_bool istcp, auxtrans_param_t auxtrans, const char cid[], void *data, OPJ_SIZE_T datalen, OPJ_SIZE_T maxlenPerFrame);
+aux_response_param_t * gene_auxresponse( OPJ_BOOL istcp, auxtrans_param_t auxtrans, const char cid[], void *data, OPJ_SIZE_T datalen, OPJ_SIZE_T maxlenPerFrame);
 
 void delete_auxresponse( aux_response_param_t **auxresponse);
 
@@ -101,7 +101,7 @@ unsigned __stdcall aux_streaming( void *arg);
 void * aux_streaming( void *arg);
 #endif
 
-void send_responsedata_on_aux( opj_bool istcp, auxtrans_param_t auxtrans, const char cid[], void *data, OPJ_SIZE_T datalen, OPJ_SIZE_T maxlenPerFrame)
+void send_responsedata_on_aux( OPJ_BOOL istcp, auxtrans_param_t auxtrans, const char cid[], void *data, OPJ_SIZE_T datalen, OPJ_SIZE_T maxlenPerFrame)
 {
   aux_response_param_t *auxresponse;
 #ifdef _WIN32
@@ -133,7 +133,7 @@ void send_responsedata_on_aux( opj_bool istcp, auxtrans_param_t auxtrans, const 
     fprintf( FCGI_stderr, "Error: error in send_responsedata_on_aux(), udp not implemented\n");
 }
 
-aux_response_param_t * gene_auxresponse( opj_bool istcp, auxtrans_param_t auxtrans, const char cid[], void *data, OPJ_SIZE_T datalen, OPJ_SIZE_T maxlenPerFrame)
+aux_response_param_t * gene_auxresponse( OPJ_BOOL istcp, auxtrans_param_t auxtrans, const char cid[], void *data, OPJ_SIZE_T datalen, OPJ_SIZE_T maxlenPerFrame)
 {
   aux_response_param_t *auxresponse;
 
@@ -163,9 +163,9 @@ void delete_auxresponse( aux_response_param_t **auxresponse)
  * @param [in] fp               file pointer for log of aux stream
  * @return                      true if identified, false otherwise
  */
-opj_bool identify_cid( SOCKET connected_socket, char refcid[], FILE *fp);
+OPJ_BOOL identify_cid( SOCKET connected_socket, char refcid[], FILE *fp);
 
-opj_bool recv_ack( SOCKET connected_socket, void *data);
+OPJ_BOOL recv_ack( SOCKET connected_socket, void *data);
 
 #ifdef _WIN32
 unsigned __stdcall aux_streaming( void *arg)
@@ -230,10 +230,10 @@ void * aux_streaming( void *arg)
 }
 
 
-opj_bool identify_cid( SOCKET connected_socket, char refcid[], FILE *fp)
+OPJ_BOOL identify_cid( SOCKET connected_socket, char refcid[], FILE *fp)
 {
   char *cid;
-  opj_bool succeed;
+  OPJ_BOOL succeed;
 
   if(!(cid = receive_string( connected_socket))){
     fprintf( fp, "Error: error in identify_cid(), while receiving cid from client\n");
@@ -249,10 +249,10 @@ opj_bool identify_cid( SOCKET connected_socket, char refcid[], FILE *fp)
   return succeed;
 }
 
-opj_bool recv_ack( SOCKET connected_socket, void *data)
+OPJ_BOOL recv_ack( SOCKET connected_socket, void *data)
 {
   char *header;
-  opj_bool succeed;
+  OPJ_BOOL succeed;
   
   header = receive_stream( connected_socket, 8);
   

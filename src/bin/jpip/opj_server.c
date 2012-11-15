@@ -84,7 +84,7 @@ int main(void)
 #endif
     {
       QR_t *qr;
-      opj_bool parse_status;
+      OPJ_BOOL parse_status;
 
 #ifdef SERVER     
       query_string = getenv("QUERY_STRING");    
