@@ -5998,8 +5998,13 @@ void opj_j2k_setup_encoder(     opj_j2k_t *p_j2k,
 
                                                 } else {
                                                         int res_spec = parameters->res_spec;
-                                                        int size_prcw = parameters->prcw_init[res_spec - 1] >> (p - (res_spec - 1));
-                                                        int size_prch = parameters->prch_init[res_spec - 1] >> (p - (res_spec - 1));
+                                                        int size_prcw = 0;
+                                                        int size_prch = 0;
+
+                                                        assert(res_spec>0); /* issue 189 */
+                                                        size_prcw = parameters->prcw_init[res_spec - 1] >> (p - (res_spec - 1));
+                                                        size_prch = parameters->prch_init[res_spec - 1] >> (p - (res_spec - 1));
+
 
                                                         if (size_prcw < 1) {
                                                                 tccp->prcw[it_res] = 1;
