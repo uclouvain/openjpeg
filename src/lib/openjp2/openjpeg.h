@@ -203,15 +203,6 @@ typedef enum CODEC_FORMAT {
 	OPJ_CODEC_JP2  = 2 		/**< JPEG-2000 file format : read/write */
 } OPJ_CODEC_FORMAT;
 
-/** 
- * Limit decoding to certain portions of the codestream.
-*/
-typedef enum LIMIT_DECODING {
-	NO_LIMITATION = 0,				/**< No limitation for the decoding. The entire codestream will de decoded */
-	LIMIT_TO_MAIN_HEADER = 1,		/**< The decoding is limited to the Main Header */
-	DECODE_ALL_BUT_PACKETS = 2		/**< Decode everything except the JPEG 2000 packets */
-} OPJ_LIMIT_DECODING;
-
 
 /* 
 ==========================================================
@@ -457,13 +448,6 @@ typedef struct opj_dparameters {
 	/*@}*/
 /* <<UniPG */
 
-	/** 
-	Specify whether the decoding should be done on the entire codestream, or be limited to the main header
-	Limiting the decoding to the main header makes it possible to extract the characteristics of the codestream
-	if == NO_LIMITATION, the entire codestream is decoded; 
-	if == LIMIT_TO_MAIN_HEADER, only the main header is decoded; 
-	*/
-	OPJ_LIMIT_DECODING cp_limit_decoding;
 
 	unsigned int flags;
 } opj_dparameters_t;
