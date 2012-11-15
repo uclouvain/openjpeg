@@ -1033,7 +1033,7 @@ void OPJ_CALLCONV opj_destroy_cstr_index(opj_codestream_index_t **p_cstr_index)
 /* ---------------------------------------------------------------------- */
 opj_stream_t* OPJ_CALLCONV opj_stream_create_default_file_stream (FILE * p_file, opj_bool p_is_read_stream)
 {
-	return opj_stream_create_file_stream(p_file,J2K_STREAM_CHUNK_SIZE,p_is_read_stream);
+	return opj_stream_create_file_stream(p_file,OPJ_J2K_STREAM_CHUNK_SIZE,p_is_read_stream);
 }
 
 opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream (	FILE * p_file, 

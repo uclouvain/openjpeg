@@ -2119,25 +2119,25 @@ static opj_bool opj_j2k_read_siz(opj_j2k_t *p_j2k,
         memset(p_j2k->m_specific_param.m_decoder.m_default_tcp->tccps ,0,l_image->numcomps*sizeof(opj_tccp_t));
 
         p_j2k->m_specific_param.m_decoder.m_default_tcp->m_mct_records =
-                        (opj_mct_data_t*)opj_malloc(J2K_MCT_DEFAULT_NB_RECORDS * sizeof(opj_mct_data_t));
+                        (opj_mct_data_t*)opj_malloc(OPJ_J2K_MCT_DEFAULT_NB_RECORDS * sizeof(opj_mct_data_t));
 
         if (! p_j2k->m_specific_param.m_decoder.m_default_tcp->m_mct_records) {
                 opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to take in charge SIZ marker\n");
                 return OPJ_FALSE;
         }
-        memset(p_j2k->m_specific_param.m_decoder.m_default_tcp->m_mct_records,0,J2K_MCT_DEFAULT_NB_RECORDS * sizeof(opj_mct_data_t));
-        p_j2k->m_specific_param.m_decoder.m_default_tcp->m_nb_max_mct_records = J2K_MCT_DEFAULT_NB_RECORDS;
+        memset(p_j2k->m_specific_param.m_decoder.m_default_tcp->m_mct_records,0,OPJ_J2K_MCT_DEFAULT_NB_RECORDS * sizeof(opj_mct_data_t));
+        p_j2k->m_specific_param.m_decoder.m_default_tcp->m_nb_max_mct_records = OPJ_J2K_MCT_DEFAULT_NB_RECORDS;
 
         p_j2k->m_specific_param.m_decoder.m_default_tcp->m_mcc_records =
                         (opj_simple_mcc_decorrelation_data_t*)
-                        opj_malloc(J2K_MCC_DEFAULT_NB_RECORDS * sizeof(opj_simple_mcc_decorrelation_data_t));
+                        opj_malloc(OPJ_J2K_MCC_DEFAULT_NB_RECORDS * sizeof(opj_simple_mcc_decorrelation_data_t));
 
         if (! p_j2k->m_specific_param.m_decoder.m_default_tcp->m_mcc_records) {
                 opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to take in charge SIZ marker\n");
                 return OPJ_FALSE;
         }
-        memset(p_j2k->m_specific_param.m_decoder.m_default_tcp->m_mcc_records,0,J2K_MCC_DEFAULT_NB_RECORDS * sizeof(opj_simple_mcc_decorrelation_data_t));
-        p_j2k->m_specific_param.m_decoder.m_default_tcp->m_nb_max_mcc_records = J2K_MCC_DEFAULT_NB_RECORDS;
+        memset(p_j2k->m_specific_param.m_decoder.m_default_tcp->m_mcc_records,0,OPJ_J2K_MCC_DEFAULT_NB_RECORDS * sizeof(opj_simple_mcc_decorrelation_data_t));
+        p_j2k->m_specific_param.m_decoder.m_default_tcp->m_nb_max_mcc_records = OPJ_J2K_MCC_DEFAULT_NB_RECORDS;
 
         /* set up default dc level shift */
         for (i=0;i<l_image->numcomps;++i) {
@@ -4979,7 +4979,7 @@ static opj_bool opj_j2k_read_mct (      opj_j2k_t *p_j2k,
         if (i == l_tcp->m_nb_mct_records) {
                 if (l_tcp->m_nb_mct_records == l_tcp->m_nb_max_mct_records) {
                         opj_mct_data_t *new_mct_records;
-                        l_tcp->m_nb_max_mct_records += J2K_MCT_DEFAULT_NB_RECORDS;
+                        l_tcp->m_nb_max_mct_records += OPJ_J2K_MCT_DEFAULT_NB_RECORDS;
 
                         new_mct_records = (opj_mct_data_t *) opj_realloc(l_tcp->m_mct_records, l_tcp->m_nb_max_mct_records * sizeof(opj_mct_data_t));
                         if (! new_mct_records) {
@@ -5190,7 +5190,7 @@ opj_bool opj_j2k_read_mcc (     opj_j2k_t *p_j2k,
         if (i == l_tcp->m_nb_mcc_records) {
                 if (l_tcp->m_nb_mcc_records == l_tcp->m_nb_max_mcc_records) {
                         opj_simple_mcc_decorrelation_data_t *new_mcc_records;
-                        l_tcp->m_nb_max_mcc_records += J2K_MCC_DEFAULT_NB_RECORDS;
+                        l_tcp->m_nb_max_mcc_records += OPJ_J2K_MCC_DEFAULT_NB_RECORDS;
 
                         new_mcc_records = (opj_simple_mcc_decorrelation_data_t *) opj_realloc(
                                         l_tcp->m_mcc_records, l_tcp->m_nb_max_mcc_records * sizeof(opj_simple_mcc_decorrelation_data_t));
@@ -5701,13 +5701,13 @@ opj_j2k_t* opj_j2k_create_compress(void)
         l_j2k->m_is_decoder = 0;
         l_j2k->m_cp.m_is_decoder = 0;
 
-        l_j2k->m_specific_param.m_encoder.m_header_tile_data = (OPJ_BYTE *) opj_malloc(J2K_DEFAULT_HEADER_SIZE);
+        l_j2k->m_specific_param.m_encoder.m_header_tile_data = (OPJ_BYTE *) opj_malloc(OPJ_J2K_DEFAULT_HEADER_SIZE);
         if (! l_j2k->m_specific_param.m_encoder.m_header_tile_data) {
                 opj_j2k_destroy(l_j2k);
                 return NULL;
         }
 
-        l_j2k->m_specific_param.m_encoder.m_header_tile_data_size = J2K_DEFAULT_HEADER_SIZE;
+        l_j2k->m_specific_param.m_encoder.m_header_tile_data_size = OPJ_J2K_DEFAULT_HEADER_SIZE;
 
         /* validation list creation*/
         l_j2k->m_validation_list = opj_procedure_list_create();
@@ -6245,7 +6245,7 @@ opj_bool opj_j2k_setup_mct_encoding(opj_tcp_t * p_tcp, opj_image_t * p_image)
         if (p_tcp->m_mct_decoding_matrix) {
                 if (p_tcp->m_nb_mct_records == p_tcp->m_nb_max_mct_records) {
                         opj_mct_data_t *new_mct_records;
-                        p_tcp->m_nb_max_mct_records += J2K_MCT_DEFAULT_NB_RECORDS;
+                        p_tcp->m_nb_max_mct_records += OPJ_J2K_MCT_DEFAULT_NB_RECORDS;
 
                         new_mct_records = (opj_mct_data_t *) opj_realloc(p_tcp->m_mct_records, p_tcp->m_nb_max_mct_records * sizeof(opj_mct_data_t));
                         if (! new_mct_records) {
@@ -6287,7 +6287,7 @@ opj_bool opj_j2k_setup_mct_encoding(opj_tcp_t * p_tcp, opj_image_t * p_image)
 
         if (p_tcp->m_nb_mct_records == p_tcp->m_nb_max_mct_records) {
                 opj_mct_data_t *new_mct_records;
-                p_tcp->m_nb_max_mct_records += J2K_MCT_DEFAULT_NB_RECORDS;
+                p_tcp->m_nb_max_mct_records += OPJ_J2K_MCT_DEFAULT_NB_RECORDS;
                 new_mct_records = (opj_mct_data_t *) opj_realloc(p_tcp->m_mct_records, p_tcp->m_nb_max_mct_records * sizeof(opj_mct_data_t));
                 if (! new_mct_records) {
                         opj_free(p_tcp->m_mct_records);
@@ -6350,7 +6350,7 @@ opj_bool opj_j2k_setup_mct_encoding(opj_tcp_t * p_tcp, opj_image_t * p_image)
 
         if (p_tcp->m_nb_mcc_records == p_tcp->m_nb_max_mcc_records) {
                 opj_simple_mcc_decorrelation_data_t *new_mcc_records;
-                p_tcp->m_nb_max_mcc_records += J2K_MCT_DEFAULT_NB_RECORDS;
+                p_tcp->m_nb_max_mcc_records += OPJ_J2K_MCT_DEFAULT_NB_RECORDS;
                 new_mcc_records = (opj_simple_mcc_decorrelation_data_t *) opj_realloc(
                                 p_tcp->m_mcc_records, p_tcp->m_nb_max_mcc_records * sizeof(opj_simple_mcc_decorrelation_data_t));
                 if (! new_mcc_records) {
@@ -7686,13 +7686,13 @@ opj_j2k_t* opj_j2k_create_decompress(void)
         }
         memset(l_j2k->m_specific_param.m_decoder.m_default_tcp,0,sizeof(opj_tcp_t));
 
-        l_j2k->m_specific_param.m_decoder.m_header_data = (OPJ_BYTE *) opj_malloc(J2K_DEFAULT_HEADER_SIZE);
+        l_j2k->m_specific_param.m_decoder.m_header_data = (OPJ_BYTE *) opj_malloc(OPJ_J2K_DEFAULT_HEADER_SIZE);
         if (! l_j2k->m_specific_param.m_decoder.m_header_data) {
                 opj_j2k_destroy(l_j2k);
                 return 00;
         }
 
-        l_j2k->m_specific_param.m_decoder.m_header_data_size = J2K_DEFAULT_HEADER_SIZE;
+        l_j2k->m_specific_param.m_decoder.m_header_data_size = OPJ_J2K_DEFAULT_HEADER_SIZE;
 
         l_j2k->m_specific_param.m_decoder.m_tile_ind_to_dec = -1 ;
 
@@ -8133,10 +8133,10 @@ opj_bool opj_j2k_read_SQcd_SQcc(opj_j2k_t *p_j2k,
                         (*p_header_size) :
                         (*p_header_size) / 2;
 
-                if( l_num_band > J2K_MAXBANDS ) {
+                if( l_num_band > OPJ_J2K_MAXBANDS ) {
                         opj_event_msg(p_manager, EVT_WARNING, "While reading CCP_QNTSTY element inside QCD or QCC marker segment, "
-                                "number of subbands (%d) is greater to J2K_MAXBANDS (%d). So we limit the number of elements stored to "
-                                "J2K_MAXBANDS (%d) and skip the rest. \n", l_num_band, J2K_MAXBANDS, J2K_MAXBANDS);
+                                "number of subbands (%d) is greater to OPJ_J2K_MAXBANDS (%d). So we limit the number of elements stored to "
+                                "OPJ_J2K_MAXBANDS (%d) and skip the rest. \n", l_num_band, OPJ_J2K_MAXBANDS, OPJ_J2K_MAXBANDS);
                         /*return OPJ_FALSE;*/
                 }
         }
@@ -8145,7 +8145,7 @@ opj_bool opj_j2k_read_SQcd_SQcc(opj_j2k_t *p_j2k,
         if (l_cp->correct) {
 
                 /* if JPWL is on, we check whether there are too many subbands */
-                if (/*(l_num_band < 0) ||*/ (l_num_band >= J2K_MAXBANDS)) {
+                if (/*(l_num_band < 0) ||*/ (l_num_band >= OPJ_J2K_MAXBANDS)) {
                         opj_event_msg(p_manager, JPWL_ASSUME ? EVT_WARNING : EVT_ERROR,
                                 "JPWL: bad number of subbands in Sqcx (%d)\n",
                                 l_num_band);
@@ -8167,7 +8167,7 @@ opj_bool opj_j2k_read_SQcd_SQcc(opj_j2k_t *p_j2k,
                 for     (l_band_no = 0; l_band_no < l_num_band; l_band_no++) {
                         opj_read_bytes(l_current_ptr, &l_tmp ,1);                       /* SPqcx_i */
                         ++l_current_ptr;
-                        if (l_band_no < J2K_MAXBANDS){
+                        if (l_band_no < OPJ_J2K_MAXBANDS){
                                 l_tccp->stepsizes[l_band_no].expn = l_tmp>>3;
                                 l_tccp->stepsizes[l_band_no].mant = 0;
                         }
@@ -8178,7 +8178,7 @@ opj_bool opj_j2k_read_SQcd_SQcc(opj_j2k_t *p_j2k,
                 for     (l_band_no = 0; l_band_no < l_num_band; l_band_no++) {
                         opj_read_bytes(l_current_ptr, &l_tmp ,2);                       /* SPqcx_i */
                         l_current_ptr+=2;
-                        if (l_band_no < J2K_MAXBANDS){
+                        if (l_band_no < OPJ_J2K_MAXBANDS){
                                 l_tccp->stepsizes[l_band_no].expn = l_tmp >> 11;
                                 l_tccp->stepsizes[l_band_no].mant = l_tmp & 0x7ff;
                         }
@@ -8188,7 +8188,7 @@ opj_bool opj_j2k_read_SQcd_SQcc(opj_j2k_t *p_j2k,
 
         /* Add Antonin : if scalar_derived -> compute other stepsizes */
         if (l_tccp->qntsty == J2K_CCP_QNTSTY_SIQNT) {
-                for (l_band_no = 1; l_band_no < J2K_MAXBANDS; l_band_no++) {
+                for (l_band_no = 1; l_band_no < OPJ_J2K_MAXBANDS; l_band_no++) {
                         l_tccp->stepsizes[l_band_no].expn =
                                 ((l_tccp->stepsizes[0].expn) - ((l_band_no - 1) / 3) > 0) ?
                                         (l_tccp->stepsizes[0].expn) - ((l_band_no - 1) / 3) : 0;
@@ -8218,7 +8218,7 @@ void opj_j2k_copy_tile_quantization_parameters( opj_j2k_t *p_j2k )
 
         l_ref_tccp = &l_tcp->tccps[0];
         l_copied_tccp = l_ref_tccp + 1;
-        l_size = J2K_MAXBANDS * sizeof(opj_stepsize_t);
+        l_size = OPJ_J2K_MAXBANDS * sizeof(opj_stepsize_t);
 
         for     (i=1;i<p_j2k->m_private_image->numcomps;++i) {
                 l_copied_tccp->qntsty = l_ref_tccp->qntsty;
@@ -8492,7 +8492,7 @@ opj_codestream_info_v2_t* j2k_get_cstr_info(opj_j2k_t* p_j2k)
                 l_tccp_info->cblkh = l_tccp->cblkh;
                 l_tccp_info->cblksty = l_tccp->cblksty;
                 l_tccp_info->qmfbid = l_tccp->qmfbid;
-                if (l_tccp->numresolutions < J2K_MAXRLVLS)
+                if (l_tccp->numresolutions < OPJ_J2K_MAXRLVLS)
                 {
                         memcpy(l_tccp_info->prch, l_tccp->prch, l_tccp->numresolutions);
                         memcpy(l_tccp_info->prcw, l_tccp->prcw, l_tccp->numresolutions);
@@ -8503,7 +8503,7 @@ opj_codestream_info_v2_t* j2k_get_cstr_info(opj_j2k_t* p_j2k)
                 l_tccp_info->numgbits = l_tccp->numgbits;
 
                 numbands = (l_tccp->qntsty == J2K_CCP_QNTSTY_SIQNT) ? 1 : l_tccp->numresolutions * 3 - 2;
-                if (numbands < J2K_MAXBANDS) {
+                if (numbands < OPJ_J2K_MAXBANDS) {
                         for (bandno = 0; bandno < numbands; bandno++) {
                                 l_tccp_info->stepsizes_mant[bandno] = l_tccp->stepsizes[bandno].mant;
                                 l_tccp_info->stepsizes_expn[bandno] = l_tccp->stepsizes[bandno].expn;

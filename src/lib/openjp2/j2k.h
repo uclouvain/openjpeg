@@ -181,15 +181,15 @@ typedef struct opj_tccp
 	/** quantisation style */
 	OPJ_UINT32 qntsty;
 	/** stepsizes used for quantization */
-	opj_stepsize_t stepsizes[J2K_MAXBANDS];
+	opj_stepsize_t stepsizes[OPJ_J2K_MAXBANDS];
 	/** number of guard bits */
 	OPJ_UINT32 numgbits;
 	/** Region Of Interest shift */
 	OPJ_INT32 roishift;
 	/** precinct width */
-	OPJ_UINT32 prcw[J2K_MAXRLVLS];
+	OPJ_UINT32 prcw[OPJ_J2K_MAXRLVLS];
 	/** precinct height */
-	OPJ_UINT32 prch[J2K_MAXRLVLS];
+	OPJ_UINT32 prch[OPJ_J2K_MAXRLVLS];
 	/** the dc_level_shift **/
 	OPJ_INT32 m_dc_level_shift;
 }

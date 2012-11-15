@@ -179,7 +179,7 @@ opj_stream_t* OPJ_CALLCONV opj_stream_create(OPJ_SIZE_T p_buffer_size,opj_bool l
 
 opj_stream_t* OPJ_CALLCONV opj_stream_default_create(opj_bool l_is_input)
 {
-	return opj_stream_create(J2K_STREAM_CHUNK_SIZE,l_is_input);
+	return opj_stream_create(OPJ_J2K_STREAM_CHUNK_SIZE,l_is_input);
 }
 
 void OPJ_CALLCONV opj_stream_destroy(opj_stream_t* p_stream)

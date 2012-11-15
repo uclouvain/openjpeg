@@ -1040,15 +1040,15 @@ opj_bool opj_tcd_code_block_dec_allocate (opj_tcd_cblk_dec_t * p_code_block)
                 }
                 /*fprintf(stderr, "Allocate 8192 elements of code_block->data\n");*/
 
-                l_seg_size = J2K_DEFAULT_NB_SEGS * sizeof(opj_tcd_seg_t);
+                l_seg_size = OPJ_J2K_DEFAULT_NB_SEGS * sizeof(opj_tcd_seg_t);
                 p_code_block->segs = (opj_tcd_seg_t *) opj_malloc(l_seg_size);
                 if (! p_code_block->segs) {
                         return OPJ_FALSE;
                 }
                 memset(p_code_block->segs,0,l_seg_size);
-                /*fprintf(stderr, "Allocate %d elements of code_block->data\n", J2K_DEFAULT_NB_SEGS * sizeof(opj_tcd_seg_t));*/
+                /*fprintf(stderr, "Allocate %d elements of code_block->data\n", OPJ_J2K_DEFAULT_NB_SEGS * sizeof(opj_tcd_seg_t));*/
 
-                p_code_block->m_current_max_segs = J2K_DEFAULT_NB_SEGS;
+                p_code_block->m_current_max_segs = OPJ_J2K_DEFAULT_NB_SEGS;
                 /*fprintf(stderr, "m_current_max_segs of code_block->data = %d\n", p_code_block->m_current_max_segs);*/
         }
         /* TODO */

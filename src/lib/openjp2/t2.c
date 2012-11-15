@@ -1256,7 +1256,7 @@ opj_bool opj_t2_init_seg(   opj_tcd_cblk_dec_t* cblk,
 
         if (l_nb_segs > cblk->m_current_max_segs) {
                 opj_tcd_seg_t* new_segs;
-                cblk->m_current_max_segs += J2K_DEFAULT_NB_SEGS;
+                cblk->m_current_max_segs += OPJ_J2K_DEFAULT_NB_SEGS;
 
                 new_segs = (opj_tcd_seg_t*) opj_realloc(cblk->segs, cblk->m_current_max_segs * sizeof(opj_tcd_seg_t));
                 if(! new_segs) {

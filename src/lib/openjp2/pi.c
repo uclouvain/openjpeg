@@ -1181,7 +1181,7 @@ opj_pi_iterator_t *opj_pi_create_decode(opj_image_t *p_image,
 	l_tcp = &p_cp->tcps[p_tile_no];
 	l_bound = l_tcp->numpocs+1;
 
-	l_data_stride = 4 * J2K_MAXRLVLS;
+	l_data_stride = 4 * OPJ_J2K_MAXRLVLS;
 	l_tmp_data = (OPJ_UINT32*)opj_malloc(
 		l_data_stride * p_image->numcomps * sizeof(OPJ_UINT32));
 	if
@@ -1383,7 +1383,7 @@ opj_pi_iterator_t *opj_pi_initialise_encode(const opj_image_t *p_image,
 	l_tcp = &p_cp->tcps[p_tile_no];
 	l_bound = l_tcp->numpocs+1;
 
-	l_data_stride = 4 * J2K_MAXRLVLS;
+	l_data_stride = 4 * OPJ_J2K_MAXRLVLS;
 	l_tmp_data = (OPJ_UINT32*)opj_malloc(
 		l_data_stride * p_image->numcomps * sizeof(OPJ_UINT32));
 	if (! l_tmp_data) {

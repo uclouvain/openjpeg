@@ -110,14 +110,14 @@ typedef uint64_t OPJ_UINT64;
 
 #define OPJ_PATH_LEN 4096 /**< Maximum allowed size for filenames */
 
-#define J2K_MAXRLVLS 33					/**< Number of maximum resolution level authorized */
-#define J2K_MAXBANDS (3*J2K_MAXRLVLS-2)	/**< Number of maximum sub-band linked to number of resolution level */
+#define OPJ_J2K_MAXRLVLS 33					/**< Number of maximum resolution level authorized */
+#define OPJ_J2K_MAXBANDS (3*OPJ_J2K_MAXRLVLS-2)	/**< Number of maximum sub-band linked to number of resolution level */
 
-#define J2K_DEFAULT_NB_SEGS				10
-#define J2K_STREAM_CHUNK_SIZE			0x100000 /** 1 mega by default */
-#define J2K_DEFAULT_HEADER_SIZE			1000
-#define J2K_MCC_DEFAULT_NB_RECORDS		10
-#define J2K_MCT_DEFAULT_NB_RECORDS		10
+#define OPJ_J2K_DEFAULT_NB_SEGS				10
+#define OPJ_J2K_STREAM_CHUNK_SIZE			0x100000 /** 1 mega by default */
+#define OPJ_J2K_DEFAULT_HEADER_SIZE			1000
+#define OPJ_J2K_MCC_DEFAULT_NB_RECORDS		10
+#define OPJ_J2K_MCT_DEFAULT_NB_RECORDS		10
 
 /* UniPG>> */
 #define JPWL_MAX_NO_TILESPECS	16 /**< Maximum number of tile parts expected by JPWL: increase at your will */
@@ -221,8 +221,8 @@ typedef enum LIMIT_DECODING {
 
 /**
  * Callback function prototype for events
- * @param msg Event message
- * @param client_data
+ * @param msg               Event message
+ * @param client_data       FIXME DOC
  * */
 typedef void (*opj_msg_callback) (const char *msg, void *client_data);
 
@@ -316,9 +316,9 @@ typedef struct opj_cparameters {
 	/* number of precinct size specifications */
 	int res_spec;
 	/** initial precinct width */
-	int prcw_init[J2K_MAXRLVLS];
+	int prcw_init[OPJ_J2K_MAXRLVLS];
 	/** initial precinct height */
-	int prch_init[J2K_MAXRLVLS];
+	int prch_init[OPJ_J2K_MAXRLVLS];
 
 	/**@name command line encoder parameters (not used inside the library) */
 	/*@{*/
@@ -407,14 +407,14 @@ typedef struct opj_dparameters {
 	if != 0, then original dimension divided by 2^(reduce); 
 	if == 0 or not used, image is decoded to the full resolution 
 	*/
-	int cp_reduce;
+	OPJ_UINT32 cp_reduce;
 	/** 
 	Set the maximum number of quality layers to decode. 
 	If there are less quality layers than the specified number, all the quality layers are decoded.
 	if != 0, then only the first "layer" layers are decoded; 
 	if == 0 or not used, all the quality layers are decoded 
 	*/
-	int cp_layer;
+	OPJ_UINT32 cp_layer;
 
 	/**@name command line decoder parameters (not used inside the library) */
 	/*@{*/
@@ -773,17 +773,17 @@ typedef struct opj_tccp_info
 	/** quantisation style */
 	OPJ_UINT32 qntsty;
 	/** stepsizes used for quantization */
-	OPJ_UINT32 stepsizes_mant[J2K_MAXBANDS];
+	OPJ_UINT32 stepsizes_mant[OPJ_J2K_MAXBANDS];
 	/** stepsizes used for quantization */
-	OPJ_UINT32 stepsizes_expn[J2K_MAXBANDS];
+	OPJ_UINT32 stepsizes_expn[OPJ_J2K_MAXBANDS];
 	/** number of guard bits */
 	OPJ_UINT32 numgbits;
 	/** Region Of Interest shift */
 	OPJ_INT32 roishift;
 	/** precinct width */
-	OPJ_UINT32 prcw[J2K_MAXRLVLS];
+	OPJ_UINT32 prcw[OPJ_J2K_MAXRLVLS];
 	/** precinct height */
-	OPJ_UINT32 prch[J2K_MAXRLVLS];
+	OPJ_UINT32 prch[OPJ_J2K_MAXRLVLS];
 }
 opj_tccp_info_t;
 
@@ -1077,8 +1077,6 @@ OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_default_file_stream (FILE *
  * @param p_is_read_stream FIXME DOC
 */
 OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream (FILE * p_file, OPJ_SIZE_T p_buffer_size, opj_bool p_is_read_stream);
-
-/* -----------> */
 
 /* 
 ==========================================================
