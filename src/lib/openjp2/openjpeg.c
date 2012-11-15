@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2005, Herve Drolon, FreeImage Team
+ * Copyright (c) 2008;2011-2012, Centre National d'Etudes Spatiales (CNES), France 
+ * Copyright (c) 2012, CS Systemes d'Information, France
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
