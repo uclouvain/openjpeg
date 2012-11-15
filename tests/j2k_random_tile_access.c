@@ -271,8 +271,15 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE; \
 	} \
   for(index = 0; index < image->numcomps; ++index) { \
-    if( image->comps[index].data == NULL ) \
-      return EXIT_FAILURE; \
+    if( image->comps[index].data == NULL ){ \
+    	fprintf(stderr, "ERROR -> j2k_to_image: failed to decode tile %d\n", tile_index); \
+		opj_stream_destroy(l_stream); \
+		opj_destroy_cstr_info(&cstr_info); \
+		opj_destroy_codec(l_codec); \
+		opj_image_destroy(image); \
+		fclose(fsrc); \
+        return EXIT_FAILURE; \
+        } \
   } \
 	fprintf(stdout, "Tile %d is decoded successfully\n", tile_index);
 
