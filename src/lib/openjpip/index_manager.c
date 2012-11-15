@@ -58,7 +58,7 @@
  * @param[in] toplev_boxlist top level box list
  * @return                   if correct (true) or wrong (false)
  */
-opj_bool check_JP2boxidx( boxlist_param_t *toplev_boxlist);
+OPJ_BOOL check_JP2boxidx( boxlist_param_t *toplev_boxlist);
 
 /**
  * set code index parameters (parse cidx box)
@@ -68,7 +68,7 @@ opj_bool check_JP2boxidx( boxlist_param_t *toplev_boxlist);
  * @param[out] codeidx  pointer to index parameters
  * @return              if succeeded (true) or failed (false)
  */
-opj_bool set_cidxdata( box_param_t *cidx_box, index_param_t *codeidx);
+OPJ_BOOL set_cidxdata( box_param_t *cidx_box, index_param_t *codeidx);
 
 index_param_t * parse_jp2file( int fd)
 {
@@ -204,7 +204,7 @@ void delete_COD( CODmarker_param_t COD)
   if( COD.YPsiz)    opj_free( COD.YPsiz);
 }
 
-opj_bool check_JP2boxidx( boxlist_param_t *toplev_boxlist)
+OPJ_BOOL check_JP2boxidx( boxlist_param_t *toplev_boxlist)
 {
   box_param_t *iptr, *fidx, *prxy;
   box_param_t *cidx, *jp2c;
@@ -274,7 +274,7 @@ opj_bool check_JP2boxidx( boxlist_param_t *toplev_boxlist)
  * @param[out] jp2idx   pointer to index parameters
  * @return              if succeeded (true) or failed (false)
  */
-opj_bool set_cptrdata( box_param_t *cidx_box, index_param_t *jp2idx);
+OPJ_BOOL set_cptrdata( box_param_t *cidx_box, index_param_t *jp2idx);
 
 /**
  * set code index parameters from mhix box for main header
@@ -285,7 +285,7 @@ opj_bool set_cptrdata( box_param_t *cidx_box, index_param_t *jp2idx);
  * @param[out] jp2idx     pointer to index parameters
  * @return                if succeeded (true) or failed (false)
  */
-opj_bool set_mainmhixdata( box_param_t *cidx_box, codestream_param_t codestream, index_param_t *jp2idx);
+OPJ_BOOL set_mainmhixdata( box_param_t *cidx_box, codestream_param_t codestream, index_param_t *jp2idx);
 
 /**
  * set code index parameters from tpix box
@@ -295,7 +295,7 @@ opj_bool set_mainmhixdata( box_param_t *cidx_box, codestream_param_t codestream,
  * @param[out] jp2idx     pointer to index parameters
  * @return                if succeeded (true) or failed (false)
  */
-opj_bool set_tpixdata( box_param_t *cidx_box, index_param_t *jp2idx);
+OPJ_BOOL set_tpixdata( box_param_t *cidx_box, index_param_t *jp2idx);
 
 /**
  * set code index parameters from thix box
@@ -305,7 +305,7 @@ opj_bool set_tpixdata( box_param_t *cidx_box, index_param_t *jp2idx);
  * @param[out] jp2idx     pointer to index parameters
  * @return                if succeeded (true) or failed (false)
  */
-opj_bool set_thixdata( box_param_t *cidx_box, index_param_t *jp2idx);
+OPJ_BOOL set_thixdata( box_param_t *cidx_box, index_param_t *jp2idx);
 
 /**
  * set code index parameters from ppix box
@@ -315,9 +315,9 @@ opj_bool set_thixdata( box_param_t *cidx_box, index_param_t *jp2idx);
  * @param[out] jp2idx     pointer to index parameters
  * @return                if succeeded (true) or failed (false)
  */
-opj_bool set_ppixdata( box_param_t *cidx_box, index_param_t *jp2idx);
+OPJ_BOOL set_ppixdata( box_param_t *cidx_box, index_param_t *jp2idx);
 
-opj_bool set_cidxdata( box_param_t *cidx_box, index_param_t *jp2idx)
+OPJ_BOOL set_cidxdata( box_param_t *cidx_box, index_param_t *jp2idx)
 {
   box_param_t *manf_box;
   manfbox_param_t *manf;
@@ -364,7 +364,7 @@ opj_bool set_cidxdata( box_param_t *cidx_box, index_param_t *jp2idx)
   return OPJ_TRUE;
 }
 
-opj_bool set_cptrdata( box_param_t *cidx_box, index_param_t *jp2idx)
+OPJ_BOOL set_cptrdata( box_param_t *cidx_box, index_param_t *jp2idx)
 {
   box_param_t *box;   /**< cptr box*/
   Byte2_t dr, cont;
@@ -408,7 +408,7 @@ opj_bool set_cptrdata( box_param_t *cidx_box, index_param_t *jp2idx)
  * @param[out] SIZ        SIZ marker parameters pointer
  * @return                if succeeded (true) or failed (false)
  */
-opj_bool set_SIZmkrdata( markeridx_param_t *sizmkidx, codestream_param_t codestream, SIZmarker_param_t *SIZ);
+OPJ_BOOL set_SIZmkrdata( markeridx_param_t *sizmkidx, codestream_param_t codestream, SIZmarker_param_t *SIZ);
 
 /**
  * set code index parameters from COD marker in codestream
@@ -420,9 +420,9 @@ opj_bool set_SIZmkrdata( markeridx_param_t *sizmkidx, codestream_param_t codestr
  * @param[out] COD        COD marker parameters pointer
  * @return                if succeeded (true) or failed (false)
  */
-opj_bool set_CODmkrdata( markeridx_param_t *codmkidx, codestream_param_t codestream, CODmarker_param_t *COD);
+OPJ_BOOL set_CODmkrdata( markeridx_param_t *codmkidx, codestream_param_t codestream, CODmarker_param_t *COD);
 
-opj_bool set_mainmhixdata( box_param_t *cidx_box, codestream_param_t codestream, index_param_t *jp2idx)
+OPJ_BOOL set_mainmhixdata( box_param_t *cidx_box, codestream_param_t codestream, index_param_t *jp2idx)
 {
   box_param_t *mhix_box;
   mhixbox_param_t *mhix;
@@ -448,7 +448,7 @@ opj_bool set_mainmhixdata( box_param_t *cidx_box, codestream_param_t codestream,
   return OPJ_TRUE;
 }
 
-opj_bool set_tpixdata( box_param_t *cidx_box, index_param_t *jp2idx)
+OPJ_BOOL set_tpixdata( box_param_t *cidx_box, index_param_t *jp2idx)
 {
   box_param_t *tpix_box;   /**< tpix box*/
   box_param_t *faix_box;   /**< faix box*/
@@ -471,7 +471,7 @@ opj_bool set_tpixdata( box_param_t *cidx_box, index_param_t *jp2idx)
   return OPJ_TRUE;
 }
 
-opj_bool set_thixdata( box_param_t *cidx_box, index_param_t *jp2idx)
+OPJ_BOOL set_thixdata( box_param_t *cidx_box, index_param_t *jp2idx)
 {
   box_param_t *thix_box, *manf_box, *mhix_box;
   manfbox_param_t *manf;
@@ -523,7 +523,7 @@ opj_bool set_thixdata( box_param_t *cidx_box, index_param_t *jp2idx)
   return OPJ_TRUE;
 }
 
-opj_bool set_ppixdata( box_param_t *cidx_box, index_param_t *jp2idx)
+OPJ_BOOL set_ppixdata( box_param_t *cidx_box, index_param_t *jp2idx)
 {
   box_param_t *ppix_box, *faix_box, *manf_box;
   manfbox_param_t *manf;     /**< manf*/
@@ -577,7 +577,7 @@ opj_bool set_ppixdata( box_param_t *cidx_box, index_param_t *jp2idx)
   return OPJ_TRUE;
 }
 
-opj_bool set_SIZmkrdata( markeridx_param_t *sizmkidx, codestream_param_t codestream, SIZmarker_param_t *SIZ)
+OPJ_BOOL set_SIZmkrdata( markeridx_param_t *sizmkidx, codestream_param_t codestream, SIZmarker_param_t *SIZ)
 {
   marker_param_t sizmkr;
   int i;
@@ -613,7 +613,7 @@ opj_bool set_SIZmkrdata( markeridx_param_t *sizmkidx, codestream_param_t codestr
   return OPJ_TRUE;
 }
 
-opj_bool set_CODmkrdata( markeridx_param_t *codmkidx, codestream_param_t codestream, CODmarker_param_t *COD)
+OPJ_BOOL set_CODmkrdata( markeridx_param_t *codmkidx, codestream_param_t codestream, CODmarker_param_t *COD)
 {
   marker_param_t codmkr;
   int i;
@@ -722,7 +722,7 @@ Byte4_t min( Byte4_t n1, Byte4_t n2)
     return n2;
 }
 
-opj_bool isJPTfeasible( index_param_t index)
+OPJ_BOOL isJPTfeasible( index_param_t index)
 {
   if( 1 < get_nmax( index.tilepart))
     return OPJ_TRUE;

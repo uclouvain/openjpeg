@@ -112,7 +112,7 @@ void send_SIZstream( SOCKET connected_socket, unsigned int width, unsigned int h
  * @param [in]  connected_socket file descriptor of the connected socket
  * @param [in]  succeed          whether if the requested process succeeded
  */
-void response_signal( SOCKET connected_socket, opj_bool succeed);
+void response_signal( SOCKET connected_socket, OPJ_BOOL succeed);
 
 #endif /* !IMGSOCK_MANAGER_H_ */
 

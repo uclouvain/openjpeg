@@ -47,8 +47,8 @@ typedef struct target_param{
   int csn;                        /**< codestream number                                  */
   index_param_t *codeidx;         /**< index information of codestream                    */
   int num_of_use;                 /**< numbers of sessions refering to this target        */
-  opj_bool jppstream;                 /**< if this target can return JPP-stream               */
-  opj_bool jptstream;                 /**< if this target can return JPP-stream               */
+  OPJ_BOOL jppstream;                 /**< if this target can return JPP-stream               */
+  OPJ_BOOL jptstream;                 /**< if this target can return JPP-stream               */
   struct target_param *next;      /**< pointer to the next target                         */
 } target_param_t;
 

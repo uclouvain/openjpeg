@@ -68,7 +68,7 @@ Byte_t * j2k_to_pnm( FILE *fp, ihdrbox_param_t **ihdrbox)
 
   /* JPEG-2000 codestream */
   /* get a decoder handle */
-  l_codec = opj_create_decompress(CODEC_J2K);
+  l_codec = opj_create_decompress(OPJ_CODEC_J2K);
 
   /* catch events using our callbacks and give a local context */
   opj_set_info_handler(l_codec, info_callback,00);

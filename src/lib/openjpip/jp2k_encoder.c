@@ -127,7 +127,7 @@ Byte_t * recons_jp2( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte8_t csn
   return jp2stream;
 }
 
-opj_bool isJPPstream( Byte8_t csn, msgqueue_param_t *msgqueue);
+OPJ_BOOL isJPPstream( Byte8_t csn, msgqueue_param_t *msgqueue);
 
 Byte_t * recons_codestream_from_JPTstream( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte8_t csn, int fw, int fh,  Byte8_t *j2klen);
 Byte_t * recons_codestream_from_JPPstream( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte8_t csn, int fw, int fh, Byte8_t *j2klen);
@@ -142,7 +142,7 @@ Byte_t * recons_codestream( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte
     return recons_codestream_from_JPTstream( msgqueue, jpipstream, csn, fw, fh, codelen);   
 }
 
-opj_bool isJPPstream( Byte8_t csn, msgqueue_param_t *msgqueue)
+OPJ_BOOL isJPPstream( Byte8_t csn, msgqueue_param_t *msgqueue)
 {
   message_param_t *msg;
   
@@ -164,14 +164,14 @@ opj_bool isJPPstream( Byte8_t csn, msgqueue_param_t *msgqueue)
 }
 
 Byte_t * add_mainhead_msgstream( msgqueue_param_t *msgqueue, Byte_t *origstream, Byte_t *j2kstream, Byte8_t csn, Byte8_t *j2klen);
-Byte8_t get_last_tileID( msgqueue_param_t *msgqueue, Byte8_t csn, opj_bool isJPPstream);
+Byte8_t get_last_tileID( msgqueue_param_t *msgqueue, Byte8_t csn, OPJ_BOOL isJPPstream);
 Byte_t * add_emptytilestream( const Byte8_t tileID, Byte_t *j2kstream, Byte8_t *j2klen);
 
 Byte_t * recons_codestream_from_JPTstream( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte8_t csn, int fw, int fh,  Byte8_t *j2klen)
 { 
   Byte_t *j2kstream = NULL;
   Byte8_t last_tileID, tileID;
-  opj_bool found;
+  OPJ_BOOL found;
   Byte8_t binOffset;
   message_param_t *ptr;
   SIZmarker_param_t SIZ;
@@ -234,7 +234,7 @@ Byte_t * recons_codestream_from_JPPstream( msgqueue_param_t *msgqueue, Byte_t *j
   Byte_t *j2kstream = NULL;
   Byte8_t tileID, last_tileID;
   Byte8_t SOToffset;
-  opj_bool foundTH;
+  OPJ_BOOL foundTH;
   Byte8_t binOffset;
   message_param_t *ptr;
   SIZmarker_param_t SIZ;
@@ -351,15 +351,15 @@ Byte_t * recons_bitstream( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte_
 			   int *max_reslev, Byte8_t *j2klen)
 {
   switch( COD.prog_order){
-  case LRCP:
+  case OPJ_LRCP:
     return recons_LRCPbitstream( msgqueue, jpipstream, j2kstream, csn, tileID, SIZ, COD, mindeclev, max_reslev, j2klen);
-  case RLCP:
+  case OPJ_RLCP:
     return recons_RLCPbitstream( msgqueue, jpipstream, j2kstream, csn, tileID, SIZ, COD, mindeclev, max_reslev, j2klen);
-  case RPCL:
+  case OPJ_RPCL:
     return recons_RPCLbitstream( msgqueue, jpipstream, j2kstream, csn, tileID, SIZ, COD, mindeclev, max_reslev, j2klen);
-  case PCRL:
+  case OPJ_PCRL:
     return recons_PCRLbitstream( msgqueue, jpipstream, j2kstream, csn, tileID, SIZ, COD, mindeclev, max_reslev, j2klen);
-  case CPRL:
+  case OPJ_CPRL:
     return recons_CPRLbitstream( msgqueue, jpipstream, j2kstream, csn, tileID, SIZ, COD, mindeclev, max_reslev, j2klen);
   default:
     fprintf( FCGI_stderr, "Error, progression order not supported\n");
@@ -526,7 +526,7 @@ Byte_t * recons_packet( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte_t *
 {
   Byte8_t seqID, precID, binOffset;
   message_param_t *ptr;
-  opj_bool foundPrec;
+  OPJ_BOOL foundPrec;
   int l;
 
   seqID = comp_seqID( tileID, SIZ, COD, res_idx, prct_idx);
@@ -565,7 +565,7 @@ Byte_t * recons_precinct( msgqueue_param_t *msgqueue, Byte_t *jpipstream, Byte_t
 {
   Byte8_t precID, binOffset;
   message_param_t *ptr;
-  opj_bool foundPrec;
+  OPJ_BOOL foundPrec;
 
   precID = comp_precinct_id( (int)tileID, comp_idx, (int)seqID, (int)SIZ.Csiz, (int)SIZ.XTnum*(int)SIZ.YTnum);
   
@@ -608,7 +608,7 @@ Byte8_t comp_seqID( Byte8_t tileID, SIZmarker_param_t SIZ, CODmarker_param_t COD
   return seqID;
 }
 
-Byte8_t get_last_tileID( msgqueue_param_t *msgqueue, Byte8_t csn, opj_bool isJPPstream)
+Byte8_t get_last_tileID( msgqueue_param_t *msgqueue, Byte8_t csn, OPJ_BOOL isJPPstream)
 {
   Byte8_t last_tileID = 0;
   message_param_t *msg;

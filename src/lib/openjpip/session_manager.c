@@ -76,7 +76,7 @@ session_param_t * gene_session( sessionlist_param_t *sessionlist)
   return session;
 }
 
-opj_bool search_session_and_channel( char cid[], 
+OPJ_BOOL search_session_and_channel( char cid[], 
 				 sessionlist_param_t *sessionlist, 
 				 session_param_t **foundsession, 
 				 channel_param_t **foundchannel)
@@ -118,7 +118,7 @@ void insert_cachemodel_into_session( session_param_t *session, cachemodel_param_
   session->cachemodellist->last = cachemodel;
 }
 
-opj_bool delete_session( session_param_t **session, sessionlist_param_t *sessionlist)
+OPJ_BOOL delete_session( session_param_t **session, sessionlist_param_t *sessionlist)
 {
   session_param_t *ptr;
 

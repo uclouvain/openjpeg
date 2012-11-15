@@ -55,7 +55,7 @@ int opj_write_cidx( int offset, opj_stream_private_t *cio, opj_codestream_info_t
   OPJ_UINT32 len;
   opj_jp2_box_t *box;
   int num_box = 0;
-  opj_bool  EPHused;
+  OPJ_BOOL  EPHused;
   OPJ_BYTE l_data_header [4];
 
   lenp = -1;
@@ -210,11 +210,11 @@ int opj_write_mainmhix( int coff, opj_codestream_info_t cstr_info, opj_stream_pr
   return len;
 }
 
-opj_bool opj_check_EPHuse( int coff, opj_marker_info_t *markers, int marknum, opj_stream_private_t *cio,
+OPJ_BOOL opj_check_EPHuse( int coff, opj_marker_info_t *markers, int marknum, opj_stream_private_t *cio,
               opj_event_mgr_t * p_manager )
 {
   OPJ_BYTE l_data_header [4];
-  opj_bool EPHused = OPJ_FALSE;
+  OPJ_BOOL EPHused = OPJ_FALSE;
   int i=0;
   OPJ_OFF_T org_pos;
   unsigned int Scod;

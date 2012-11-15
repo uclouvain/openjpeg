@@ -51,21 +51,21 @@ typedef struct query_param{
   int rx, ry, rw, rh;                         /**< roi region */
   int layers;                                 /**< quality layers */
   int lastcomp;                               /**< last component number */
-  opj_bool *comps;                                /**< components (dynamic array) for jpp-stream, null means all components */
+  OPJ_BOOL *comps;                                /**< components (dynamic array) for jpp-stream, null means all components */
   char *cid;                                  /**< channel identifier */
   cnew_transport_t cnew;                      /**< transport name if there is new channel request, else non */
   char *cclose;                               /**< list of closing channel identifiers, separated by '\\0' */
   int numOfcclose;                            /**< number of closing channels */
   char box_type[MAX_NUMOFBOX][4];             /**< interested box-types */
   int limit[MAX_NUMOFBOX];                    /**< limit value, -1: skeleton request "r", 0: entire contents */
-  opj_bool w[MAX_NUMOFBOX];                       /**< Metadata request qualifier flags */
-  opj_bool s[MAX_NUMOFBOX];
-  opj_bool g[MAX_NUMOFBOX];
-  opj_bool a[MAX_NUMOFBOX];
-  opj_bool priority[MAX_NUMOFBOX];                /**< priority flag */
+  OPJ_BOOL w[MAX_NUMOFBOX];                       /**< Metadata request qualifier flags */
+  OPJ_BOOL s[MAX_NUMOFBOX];
+  OPJ_BOOL g[MAX_NUMOFBOX];
+  OPJ_BOOL a[MAX_NUMOFBOX];
+  OPJ_BOOL priority[MAX_NUMOFBOX];                /**< priority flag */
   int root_bin;                               /**< root-bin */
   int max_depth;                              /**< max-depth */
-  opj_bool metadata_only;                         /**< metadata-only request */
+  OPJ_BOOL metadata_only;                         /**< metadata-only request */
   image_return_t return_type;                 /**< image return type */
   int len;                                    /**< maximum response length */
 } query_param_t;

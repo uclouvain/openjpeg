@@ -196,7 +196,7 @@ void send_SIZstream( SOCKET connected_socket, unsigned int width, unsigned int h
   send_stream( connected_socket, responce, 9);
 }
 
-void response_signal( SOCKET connected_socket, opj_bool succeed)
+void response_signal( SOCKET connected_socket, OPJ_BOOL succeed)
 {
   Byte_t code;
 

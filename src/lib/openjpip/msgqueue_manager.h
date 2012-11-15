@@ -46,7 +46,7 @@
 
 /** message parameters */
 typedef struct message_param{
-  opj_bool    last_byte;          /**< if message contains the last byte of the data-bin*/
+  OPJ_BOOL    last_byte;          /**< if message contains the last byte of the data-bin*/
   Byte8_t in_class_id;        /**< in-class identifier A.2.3*/
   Byte8_t class_id;           /**< class identifiers */
   Byte8_t csn;                /**< index of the codestream*/
@@ -62,7 +62,7 @@ typedef struct message_param{
 typedef struct msgqueue_param{
   message_param_t *first;         /**< first message pointer of the list*/
   message_param_t *last;          /**< last  message pointer of the list*/
-  opj_bool stateless;                 /**< if this is a stateless message queue*/
+  OPJ_BOOL stateless;                 /**< if this is a stateless message queue*/
   cachemodel_param_t *cachemodel; /**< reference cachemodel pointer*/
 } msgqueue_param_t;
 
@@ -73,7 +73,7 @@ typedef struct msgqueue_param{
  * @param[in] cachemodel  cachemodel pointer
  * @return                generated message queue pointer
  */
-msgqueue_param_t * gene_msgqueue( opj_bool stateless, cachemodel_param_t *cachemodel);
+msgqueue_param_t * gene_msgqueue( OPJ_BOOL stateless, cachemodel_param_t *cachemodel);
 
 /**
  * delete message queue

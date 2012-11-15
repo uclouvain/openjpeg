@@ -90,7 +90,7 @@ int opj_write_thix( int coff, opj_codestream_info_t cstr_info, opj_stream_privat
  * @param[in] cio       file output handle
  * @return              length of ppix box
  */
-int opj_write_ppix( int coff, opj_codestream_info_t cstr_info, opj_bool EPHused, int j2klen, opj_stream_private_t *cio,
+int opj_write_ppix( int coff, opj_codestream_info_t cstr_info, OPJ_BOOL EPHused, int j2klen, opj_stream_private_t *cio,
               opj_event_mgr_t * p_manager );
 
 
@@ -104,7 +104,7 @@ int opj_write_ppix( int coff, opj_codestream_info_t cstr_info, opj_bool EPHused,
  * @param[in] cio       file output handle
  * @return              length of ppix box
  */
-int opj_write_phix( int coff, opj_codestream_info_t cstr_info, opj_bool EPHused, int j2klen, opj_stream_private_t *cio,
+int opj_write_phix( int coff, opj_codestream_info_t cstr_info, OPJ_BOOL EPHused, int j2klen, opj_stream_private_t *cio,
               opj_event_mgr_t * p_manager );
 
 /* 
@@ -133,10 +133,10 @@ void opj_write_manf(int second,
 int opj_write_mainmhix( int coff, opj_codestream_info_t cstr_info, opj_stream_private_t *cio,
               opj_event_mgr_t * p_manager );
 
-int opj_write_phixfaix( int coff, int compno, opj_codestream_info_t cstr_info, opj_bool EPHused, int j2klen, opj_stream_private_t *cio,
+int opj_write_phixfaix( int coff, int compno, opj_codestream_info_t cstr_info, OPJ_BOOL EPHused, int j2klen, opj_stream_private_t *cio,
               opj_event_mgr_t * p_manager );
 
-int opj_write_ppixfaix( int coff, int compno, opj_codestream_info_t cstr_info, opj_bool EPHused, int j2klen, opj_stream_private_t *cio,
+int opj_write_ppixfaix( int coff, int compno, opj_codestream_info_t cstr_info, OPJ_BOOL EPHused, int j2klen, opj_stream_private_t *cio,
               opj_event_mgr_t * p_manager );
 
 int opj_write_tilemhix( int coff, opj_codestream_info_t cstr_info, int tileno, opj_stream_private_t *cio,

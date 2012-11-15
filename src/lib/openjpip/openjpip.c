@@ -88,7 +88,7 @@ QR_t * parse_querystring( const char *query_string)
   return qr;
 }
 
-opj_bool process_JPIPrequest( server_record_t *rec, QR_t *qr)
+OPJ_BOOL process_JPIPrequest( server_record_t *rec, QR_t *qr)
 {
   target_param_t *target = NULL;
   session_param_t *cursession = NULL;
@@ -190,7 +190,7 @@ void end_QRprocess( server_record_t *rec, QR_t **qr)
 }
 
 
-void local_log( opj_bool query, opj_bool messages, opj_bool sessions, opj_bool targets, QR_t *qr, server_record_t *rec)
+void local_log( OPJ_BOOL query, OPJ_BOOL messages, OPJ_BOOL sessions, OPJ_BOOL targets, QR_t *qr, server_record_t *rec)
 {
   if( query)
     print_queryparam( *qr->query);
@@ -247,9 +247,9 @@ client_t OPJ_CALLCONV accept_connection( dec_server_record_t *rec)
   return client;
 }
 
-opj_bool OPJ_CALLCONV handle_clientreq( client_t client, dec_server_record_t *rec)
+OPJ_BOOL OPJ_CALLCONV handle_clientreq( client_t client, dec_server_record_t *rec)
 {
-  opj_bool quit = OPJ_FALSE;
+  OPJ_BOOL quit = OPJ_FALSE;
   msgtype_t msgtype = identify_clientmsg( client);
   
   switch( msgtype){
@@ -306,7 +306,7 @@ opj_bool OPJ_CALLCONV handle_clientreq( client_t client, dec_server_record_t *re
 }
 
 
-jpip_dec_param_t * OPJ_CALLCONV init_jpipdecoder( opj_bool jp2)
+jpip_dec_param_t * OPJ_CALLCONV init_jpipdecoder( OPJ_BOOL jp2)
 {
   jpip_dec_param_t *dec;
   
@@ -321,7 +321,7 @@ jpip_dec_param_t * OPJ_CALLCONV init_jpipdecoder( opj_bool jp2)
 }
 
 
-opj_bool OPJ_CALLCONV fread_jpip( const char fname[], jpip_dec_param_t *dec)
+OPJ_BOOL OPJ_CALLCONV fread_jpip( const char fname[], jpip_dec_param_t *dec)
 {
   int infd;
 
@@ -361,7 +361,7 @@ void OPJ_CALLCONV decode_jpip( jpip_dec_param_t *dec)
     dec->jp2kstream = recons_j2k( dec->msgqueue, dec->jpipstream, dec->msgqueue->first->csn, 0, 0, &dec->jp2klen);  
 }
 
-opj_bool OPJ_CALLCONV fwrite_jp2k( const char fname[], jpip_dec_param_t *dec)
+OPJ_BOOL OPJ_CALLCONV fwrite_jp2k( const char fname[], jpip_dec_param_t *dec)
 {
   int outfd;
   
@@ -382,7 +382,7 @@ opj_bool OPJ_CALLCONV fwrite_jp2k( const char fname[], jpip_dec_param_t *dec)
  return OPJ_TRUE;
 }
 
-void OPJ_CALLCONV output_log( opj_bool messages, opj_bool metadata, opj_bool ihdrbox, jpip_dec_param_t *dec)
+void OPJ_CALLCONV output_log( OPJ_BOOL messages, OPJ_BOOL metadata, OPJ_BOOL ihdrbox, jpip_dec_param_t *dec)
 {
   if( messages)
     print_msgqueue( dec->msgqueue);

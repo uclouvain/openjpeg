@@ -399,7 +399,7 @@ void parse_comps( char *field, query_param_t *query_param)
     }
   
   query_param->lastcomp = stop > aux ? stop : aux;
-  query_param->comps = (opj_bool *)opj_calloc( 1, (OPJ_SIZE_T)(query_param->lastcomp+1)*sizeof(opj_bool));
+  query_param->comps = (OPJ_BOOL *)opj_calloc( 1, (OPJ_SIZE_T)(query_param->lastcomp+1)*sizeof(OPJ_BOOL));
 
   for( i=start; i<=stop; i++)
     query_param->comps[i]=OPJ_TRUE;

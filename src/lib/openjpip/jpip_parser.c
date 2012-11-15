@@ -46,7 +46,7 @@
 #endif /*SERVER*/
 
 
-opj_bool identify_target( query_param_t query_param, targetlist_param_t *targetlist, target_param_t **target)
+OPJ_BOOL identify_target( query_param_t query_param, targetlist_param_t *targetlist, target_param_t **target)
 {
   if( query_param.tid){
     if( strcmp( query_param.tid, "0") != 0 ){
@@ -76,7 +76,7 @@ opj_bool identify_target( query_param_t query_param, targetlist_param_t *targetl
   }
 }
 
-opj_bool associate_channel( query_param_t    query_param, 
+OPJ_BOOL associate_channel( query_param_t    query_param, 
 			sessionlist_param_t *sessionlist,
 			session_param_t **cursession, 
 			channel_param_t **curchannel)
@@ -93,7 +93,7 @@ opj_bool associate_channel( query_param_t    query_param,
   return OPJ_TRUE;
 }
 
-opj_bool open_channel( query_param_t query_param, 
+OPJ_BOOL open_channel( query_param_t query_param, 
 		   sessionlist_param_t *sessionlist,
 		   auxtrans_param_t auxtrans,
 		   target_param_t *target,
@@ -120,7 +120,7 @@ opj_bool open_channel( query_param_t query_param,
   return OPJ_TRUE;
 }
 
-opj_bool close_channel( query_param_t query_param, 
+OPJ_BOOL close_channel( query_param_t query_param, 
 		    sessionlist_param_t *sessionlist,
 		    session_param_t **cursession, 
 		    channel_param_t **curchannel)
@@ -183,10 +183,10 @@ void enqueue_imagedata( query_param_t query_param, msgqueue_param_t *msgqueue);
  * @param[in,out] msgqueue     message queue pointer  
  * @return                     if succeeded (true) or failed (false)
  */
-opj_bool enqueue_metabins( query_param_t query_param, metadatalist_param_t *metadatalist, msgqueue_param_t *msgqueue);
+OPJ_BOOL enqueue_metabins( query_param_t query_param, metadatalist_param_t *metadatalist, msgqueue_param_t *msgqueue);
 
 
-opj_bool gene_JPIPstream( query_param_t query_param,
+OPJ_BOOL gene_JPIPstream( query_param_t query_param,
 		      target_param_t *target,
 		      session_param_t *cursession, 
 		      channel_param_t *curchannel,
@@ -257,7 +257,7 @@ opj_bool gene_JPIPstream( query_param_t query_param,
  * @param[in] msgqueue  message queue
  * @return
  */
-void enqueue_precincts( int xmin, int xmax, int ymin, int ymax, int tile_id, int level, int lastcomp, opj_bool *comps, int layers, msgqueue_param_t *msgqueue);
+void enqueue_precincts( int xmin, int xmax, int ymin, int ymax, int tile_id, int level, int lastcomp, OPJ_BOOL *comps, int layers, msgqueue_param_t *msgqueue);
 
 /**
  * enqueue all precincts inside a tile into the queue
@@ -270,7 +270,7 @@ void enqueue_precincts( int xmin, int xmax, int ymin, int ymax, int tile_id, int
  * @param[in] msgqueue  message queue
  * @return
  */
-void enqueue_allprecincts( int tile_id, int level, int lastcomp, opj_bool *comps, int layers, msgqueue_param_t *msgqueue);
+void enqueue_allprecincts( int tile_id, int level, int lastcomp, OPJ_BOOL *comps, int layers, msgqueue_param_t *msgqueue);
 
 void enqueue_imagedata( query_param_t query_param, msgqueue_param_t *msgqueue)
 {
@@ -347,7 +347,7 @@ void enqueue_imagedata( query_param_t query_param, msgqueue_param_t *msgqueue)
 }
 
 
-void enqueue_precincts( int xmin, int xmax, int ymin, int ymax, int tile_id, int level, int lastcomp, opj_bool *comps, int layers, msgqueue_param_t *msgqueue)
+void enqueue_precincts( int xmin, int xmax, int ymin, int ymax, int tile_id, int level, int lastcomp, OPJ_BOOL *comps, int layers, msgqueue_param_t *msgqueue)
 {
   index_param_t *codeidx;
   int c, u, v, res_lev, dec_lev;
@@ -406,7 +406,7 @@ void enqueue_precincts( int xmin, int xmax, int ymin, int ymax, int tile_id, int
     }
 }
 
-void enqueue_allprecincts( int tile_id, int level, int lastcomp, opj_bool *comps, int layers, msgqueue_param_t *msgqueue)
+void enqueue_allprecincts( int tile_id, int level, int lastcomp, OPJ_BOOL *comps, int layers, msgqueue_param_t *msgqueue)
 {
   index_param_t *codeidx;
   int c, i, res_lev, dec_lev;
@@ -435,7 +435,7 @@ void enqueue_allprecincts( int tile_id, int level, int lastcomp, opj_bool *comps
     }
 }
 
-opj_bool enqueue_metabins( query_param_t query_param, metadatalist_param_t *metadatalist, msgqueue_param_t *msgqueue)
+OPJ_BOOL enqueue_metabins( query_param_t query_param, metadatalist_param_t *metadatalist, msgqueue_param_t *msgqueue)
 {
   int i;
   for( i=0; query_param.box_type[i][0]!=0 && i<MAX_NUMOFBOX; i++){

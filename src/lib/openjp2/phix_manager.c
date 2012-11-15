@@ -48,7 +48,7 @@
  * @return              length of faix box
  */
 
-int opj_write_phix( int coff, opj_codestream_info_t cstr_info, opj_bool EPHused, int j2klen, opj_stream_private_t *cio,
+int opj_write_phix( int coff, opj_codestream_info_t cstr_info, OPJ_BOOL EPHused, int j2klen, opj_stream_private_t *cio,
               opj_event_mgr_t * p_manager )
 {
   OPJ_BYTE l_data_header [8];
@@ -87,7 +87,7 @@ int opj_write_phix( int coff, opj_codestream_info_t cstr_info, opj_bool EPHused,
 }
 
 
-int opj_write_phixfaix( int coff, int compno, opj_codestream_info_t cstr_info, opj_bool EPHused, int j2klen, opj_stream_private_t *cio,
+int opj_write_phixfaix( int coff, int compno, opj_codestream_info_t cstr_info, OPJ_BOOL EPHused, int j2klen, opj_stream_private_t *cio,
               opj_event_mgr_t * p_manager )
 {
   int tileno, version, i, nmax, size_of_coding; /* 4 or 8 */
@@ -141,19 +141,19 @@ int opj_write_phixfaix( int coff, int compno, opj_codestream_info_t cstr_info, o
 	for( layno=0; layno<numOflayers; layno++){
 	  
 	  switch ( cstr_info.prog){
-	  case LRCP:
+	  case OPJ_LRCP:
 	    packet = tile_Idx->packet[ ((layno*numOfres+resno)*cstr_info.numcomps+compno)*numOfprec+precno];
 	    break;
-	  case RLCP:
+	  case OPJ_RLCP:
 	    packet = tile_Idx->packet[ ((resno*numOflayers+layno)*cstr_info.numcomps+compno)*numOfprec+precno];
 	    break;
-	  case RPCL:
+	  case OPJ_RPCL:
 	    packet = tile_Idx->packet[ ((resno*numOfprec+precno)*cstr_info.numcomps+compno)*numOflayers+layno];
 	    break;
-	  case PCRL:
+	  case OPJ_PCRL:
 	    packet = tile_Idx->packet[ ((precno*cstr_info.numcomps+compno)*numOfres+resno)*numOflayers + layno];
 	    break;
-	  case CPRL:
+	  case OPJ_CPRL:
 	    packet = tile_Idx->packet[ ((compno*numOfprec+precno)*numOfres+resno)*numOflayers + layno];
 	    break;
 	  default:

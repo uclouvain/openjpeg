@@ -46,7 +46,7 @@
  * @param[out]    target        address of target pointer
  * @return                      if succeeded (true) or failed (false)
  */
-opj_bool identify_target( query_param_t query_param, targetlist_param_t *targetlist, target_param_t **target);
+OPJ_BOOL identify_target( query_param_t query_param, targetlist_param_t *targetlist, target_param_t **target);
 
 /**
  * REQUEST: channel association
@@ -58,7 +58,7 @@ opj_bool identify_target( query_param_t query_param, targetlist_param_t *targetl
  * @param[out]    curchannel    address of the associated channel pointer
  * @return                      if succeeded (true) or failed (false)
  */
-opj_bool associate_channel( query_param_t    query_param, 
+OPJ_BOOL associate_channel( query_param_t    query_param, 
 			sessionlist_param_t *sessionlist,
 			session_param_t **cursession, 
 			channel_param_t **curchannel);
@@ -73,7 +73,7 @@ opj_bool associate_channel( query_param_t    query_param,
  * @param[in,out] curchannel    address of the associated/opened channel pointer
  * @return                      if succeeded (true) or failed (false)
  */
-opj_bool open_channel( query_param_t query_param, 
+OPJ_BOOL open_channel( query_param_t query_param, 
 		   sessionlist_param_t *sessionlist,
 		   auxtrans_param_t auxtrans,
 		   target_param_t *target,
@@ -89,7 +89,7 @@ opj_bool open_channel( query_param_t query_param,
  * @param[in,out] curchannel    address of the deleting channel pointer
  * @return                      if succeeded (true) or failed (false)
  */
-opj_bool close_channel( query_param_t query_param, 
+OPJ_BOOL close_channel( query_param_t query_param, 
 		    sessionlist_param_t *sessionlist,
 		    session_param_t **cursession, 
 		    channel_param_t **curchannel);
@@ -104,7 +104,7 @@ opj_bool close_channel( query_param_t query_param,
  * @param[out]    msgqueue    address of the message queue pointer
  * @return                    if succeeded (true) or failed (false)
  */
-opj_bool gene_JPIPstream( query_param_t query_param,
+OPJ_BOOL gene_JPIPstream( query_param_t query_param,
 		      target_param_t *target,
 		      session_param_t *cursession, 
 		      channel_param_t *curchannel,

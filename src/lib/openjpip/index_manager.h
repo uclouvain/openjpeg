@@ -186,6 +186,6 @@ Byte4_t get_tile_YSiz( SIZmarker_param_t SIZ, Byte4_t tile_id, int level);
  * @param[in] index index parameters
  * @return    true if JPT-stream is feasible
  */
-opj_bool isJPTfeasible( index_param_t index);
+OPJ_BOOL isJPTfeasible( index_param_t index);
 
 #endif 	    /* !INDEX_MANAGER_H_ */

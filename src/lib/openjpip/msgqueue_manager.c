@@ -56,7 +56,7 @@
 #define logstream stderr
 #endif /*SERVER*/
 
-msgqueue_param_t * gene_msgqueue( opj_bool stateless, cachemodel_param_t *cachemodel)
+msgqueue_param_t * gene_msgqueue( OPJ_BOOL stateless, cachemodel_param_t *cachemodel)
 {
   msgqueue_param_t *msgqueue;
 
@@ -189,7 +189,7 @@ void enqueue_tile( Byte4_t tile_id, int level, msgqueue_param_t *msgqueue)
 {
   cachemodel_param_t *cachemodel;
   target_param_t *target;
-  opj_bool *tp_model;
+  OPJ_BOOL *tp_model;
   Byte8_t numOftparts; /* num of tile parts par tile*/
   Byte8_t numOftiles;
   index_param_t *codeidx;
