@@ -1138,13 +1138,13 @@ opj_bool opj_jp2_decode(opj_jp2_t *jp2,
 
 	    /* Set Image Color Space */
 	    if (jp2->enumcs == 16)
-		    p_image->color_space = CLRSPC_SRGB;
+		    p_image->color_space = OPJ_CLRSPC_SRGB;
 	    else if (jp2->enumcs == 17)
-		    p_image->color_space = CLRSPC_GRAY;
+		    p_image->color_space = OPJ_CLRSPC_GRAY;
 	    else if (jp2->enumcs == 18)
-		    p_image->color_space = CLRSPC_SYCC;
+		    p_image->color_space = OPJ_CLRSPC_SYCC;
 	    else
-		    p_image->color_space = CLRSPC_UNKNOWN;
+		    p_image->color_space = OPJ_CLRSPC_UNKNOWN;
 
 	    /* Apply the color space if needed */
 	    if(jp2->color.jp2_cdef) {
@@ -2317,13 +2317,13 @@ opj_bool opj_jp2_get_tile(	opj_jp2_t *p_jp2,
 
 	/* Set Image Color Space */
 	if (p_jp2->enumcs == 16)
-		p_image->color_space = CLRSPC_SRGB;
+		p_image->color_space = OPJ_CLRSPC_SRGB;
 	else if (p_jp2->enumcs == 17)
-		p_image->color_space = CLRSPC_GRAY;
+		p_image->color_space = OPJ_CLRSPC_GRAY;
 	else if (p_jp2->enumcs == 18)
-		p_image->color_space = CLRSPC_SYCC;
+		p_image->color_space = OPJ_CLRSPC_SYCC;
 	else
-		p_image->color_space = CLRSPC_UNKNOWN;
+		p_image->color_space = OPJ_CLRSPC_UNKNOWN;
 
 	/* Apply the color space if needed */
 	if(p_jp2->color.jp2_cdef) {

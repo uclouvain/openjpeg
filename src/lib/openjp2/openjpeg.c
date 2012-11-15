@@ -285,7 +285,7 @@ opj_codec_t* OPJ_CALLCONV opj_create_decompress(OPJ_CODEC_FORMAT p_format)
 	l_codec->is_decompressor = 1;
 
 	switch (p_format) {
-		case CODEC_J2K:
+		case OPJ_CODEC_J2K:
 			l_codec->opj_dump_codec = (void (*) (void*, OPJ_INT32, FILE*)) j2k_dump;
 
 			l_codec->opj_get_codec_info = (opj_codestream_info_v2_t* (*) (void*) ) j2k_get_cstr_info;
@@ -360,7 +360,7 @@ opj_codec_t* OPJ_CALLCONV opj_create_decompress(OPJ_CODEC_FORMAT p_format)
 
 			break;
 
-		case CODEC_JP2:
+		case OPJ_CODEC_JP2:
 			/* get a JP2 decoder handle */
 			l_codec->opj_dump_codec = (void (*) (void*, OPJ_INT32, FILE*)) jp2_dump;
 
@@ -435,8 +435,8 @@ opj_codec_t* OPJ_CALLCONV opj_create_decompress(OPJ_CODEC_FORMAT p_format)
 			}
 
 			break;
-		case CODEC_UNKNOWN:
-		case CODEC_JPT:
+		case OPJ_CODEC_UNKNOWN:
+		case OPJ_CODEC_JPT:
 		default:
 			opj_free(l_codec);
 			return 00;
@@ -663,7 +663,7 @@ opj_codec_t* OPJ_CALLCONV opj_create_compress(OPJ_CODEC_FORMAT p_format)
 	l_codec->is_decompressor = 0;
 
 	switch(p_format) {
-		case CODEC_J2K:
+		case OPJ_CODEC_J2K:
 			l_codec->m_codec_data.m_compression.opj_encode = (opj_bool (*) (void *,
 																			struct opj_stream_private *,
 																			struct opj_event_mgr * )) opj_j2k_encode_v2;
@@ -699,7 +699,7 @@ opj_codec_t* OPJ_CALLCONV opj_create_compress(OPJ_CODEC_FORMAT p_format)
 
 			break;
 
-		case CODEC_JP2:
+		case OPJ_CODEC_JP2:
 			/* get a JP2 decoder handle */
 			l_codec->m_codec_data.m_compression.opj_encode = (opj_bool (*) (void *,
 																			struct opj_stream_private *,
@@ -736,8 +736,8 @@ opj_codec_t* OPJ_CALLCONV opj_create_compress(OPJ_CODEC_FORMAT p_format)
 
 			break;
 
-		case CODEC_UNKNOWN:
-		case CODEC_JPT:
+		case OPJ_CODEC_UNKNOWN:
+		case OPJ_CODEC_JPT:
 		default:
 			opj_free(l_codec);
 			return 00;
@@ -751,13 +751,13 @@ void OPJ_CALLCONV opj_set_default_encoder_parameters(opj_cparameters_t *paramete
 	if(parameters) {
 		memset(parameters, 0, sizeof(opj_cparameters_t));
 		/* default coding parameters */
-		parameters->cp_cinema = OFF; 
+		parameters->cp_cinema = OPJ_OFF; 
 		parameters->max_comp_size = 0;
 		parameters->numresolution = 6;
-		parameters->cp_rsiz = STD_RSIZ;
+		parameters->cp_rsiz = OPJ_STD_RSIZ;
 		parameters->cblockw_init = 64;
 		parameters->cblockh_init = 64;
-		parameters->prog_order = LRCP;
+		parameters->prog_order = OPJ_LRCP;
 		parameters->roi_compno = -1;		/* no ROI */
 		parameters->subsampling_dx = 1;
 		parameters->subsampling_dy = 1;
@@ -906,7 +906,7 @@ opj_bool OPJ_CALLCONV opj_set_MCT(opj_cparameters_t *parameters,
 	OPJ_UINT32 l_mct_total_size = l_matrix_size + l_dc_shift_size;
 
 	/* add MCT capability */
-	int rsiz = (int)parameters->cp_rsiz | (int)MCT;
+	int rsiz = (int)parameters->cp_rsiz | (int)OPJ_MCT;
 	parameters->cp_rsiz = (OPJ_RSIZ_CAPABILITIES)rsiz;
 	parameters->irreversible = 1;
 

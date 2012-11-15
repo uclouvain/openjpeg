@@ -1102,7 +1102,7 @@ opj_bool opj_pi_check_next_level(	OPJ_INT32 pos,
 			    break;
 		    case 'P':
 			    switch(tcp->prg){
-				    case LRCP||RLCP:
+				    case OPJ_LRCP||OPJ_RLCP:
 					    if(tcp->prc_t == tcp->prcE){
 						    if(opj_pi_check_next_level(i-1,cp,tileno,pino,prog)){
 							    return OPJ_TRUE;
@@ -1578,8 +1578,8 @@ void opj_pi_create_encode( 	opj_pi_iterator_t *pi,
 				break;
 			case 'P':
 				switch(tcp->prg){
-				case LRCP:
-				case RLCP:
+				case OPJ_LRCP:
+				case OPJ_RLCP:
 					pi[pino].poc.precno0 = tcp->prcS;
 					pi[pino].poc.precno1 = tcp->prcE;
 					break;
@@ -1617,8 +1617,8 @@ void opj_pi_create_encode( 	opj_pi_iterator_t *pi,
 					break;
 				case 'P':
 					switch(tcp->prg){
-					case LRCP:
-					case RLCP:
+					case OPJ_LRCP:
+					case OPJ_RLCP:
 						tcp->prc_t = tcp->prcS;
 						pi[pino].poc.precno0 = tcp->prc_t;
 						pi[pino].poc.precno1 = tcp->prc_t+1;
@@ -1656,8 +1656,8 @@ void opj_pi_create_encode( 	opj_pi_iterator_t *pi,
 					break;
 				case 'P':
 					switch(tcp->prg){
-					case LRCP:
-					case RLCP:
+					case OPJ_LRCP:
+					case OPJ_RLCP:
 						pi[pino].poc.precno0 = tcp->prc_t-1;
 						pi[pino].poc.precno1 = tcp->prc_t;
 						break;
@@ -1728,8 +1728,8 @@ void opj_pi_create_encode( 	opj_pi_iterator_t *pi,
 						break;
 					case 'P':
 						switch(tcp->prg){
-						case LRCP:
-						case RLCP:
+						case OPJ_LRCP:
+						case OPJ_RLCP:
 							if(tcp->prc_t == tcp->prcE){
 								if(opj_pi_check_next_level(i-1,cp,tileno,pino,prog)){
 									tcp->prc_t = tcp->prcS;
@@ -1852,17 +1852,17 @@ void opj_pi_update_encoding_parameters(	const opj_image_t *p_image,
 
 opj_bool opj_pi_next(opj_pi_iterator_t * pi) {
 	switch (pi->poc.prg) {
-		case LRCP:
+		case OPJ_LRCP:
 			return opj_pi_next_lrcp(pi);
-		case RLCP:
+		case OPJ_RLCP:
 			return opj_pi_next_rlcp(pi);
-		case RPCL:
+		case OPJ_RPCL:
 			return opj_pi_next_rpcl(pi);
-		case PCRL:
+		case OPJ_PCRL:
 			return opj_pi_next_pcrl(pi);
-		case CPRL:
+		case OPJ_CPRL:
 			return opj_pi_next_cprl(pi);
-		case PROG_UNKNOWN:
+		case OPJ_PROG_UNKNOWN:
 			return OPJ_FALSE;
 	}
 	

@@ -1141,11 +1141,11 @@ typedef struct j2k_prog_order{
 }j2k_prog_order_t;
 
 j2k_prog_order_t j2k_prog_order_list[] = {
-        {CPRL, "CPRL"},
-        {LRCP, "LRCP"},
-        {PCRL, "PCRL"},
-        {RLCP, "RLCP"},
-        {RPCL, "RPCL"},
+        {OPJ_CPRL, "CPRL"},
+        {OPJ_LRCP, "LRCP"},
+        {OPJ_PCRL, "PCRL"},
+        {OPJ_RLCP, "RLCP"},
+        {OPJ_RPCL, "RPCL"},
         {(OPJ_PROG_ORDER)-1, ""}
 };
 
@@ -9350,7 +9350,7 @@ void opj_j2k_setup_header_writing (opj_j2k_t *p_j2k)
                 opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_image_components );
                 opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_tlm );
 
-                if (p_j2k->m_cp.m_specific_param.m_enc.m_cinema == CINEMA4K_24) {
+                if (p_j2k->m_cp.m_specific_param.m_enc.m_cinema == OPJ_CINEMA4K_24) {
                         opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_poc );
                 }
         }
@@ -9362,7 +9362,7 @@ void opj_j2k_setup_header_writing (opj_j2k_t *p_j2k)
         }
 
         /* DEVELOPER CORNER, insert your custom procedures */
-        if (p_j2k->m_cp.rsiz & MCT) {
+        if (p_j2k->m_cp.rsiz & OPJ_MCT) {
                 opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_mct_data_group );
         }
         /* End of Developer Corner */

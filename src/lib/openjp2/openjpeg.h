@@ -154,53 +154,53 @@ typedef uint64_t OPJ_UINT64;
  * Rsiz Capabilities
  * */
 typedef enum RSIZ_CAPABILITIES {
-	STD_RSIZ = 0,		/** Standard JPEG2000 profile*/
-	CINEMA2K = 3,		/** Profile name for a 2K image*/
-	CINEMA4K = 4,		/** Profile name for a 4K image*/
-	MCT = 0x8100
+	OPJ_STD_RSIZ = 0,		/** Standard JPEG2000 profile*/
+	OPJ_CINEMA2K = 3,		/** Profile name for a 2K image*/
+	OPJ_CINEMA4K = 4,		/** Profile name for a 4K image*/
+	OPJ_MCT = 0x8100
 } OPJ_RSIZ_CAPABILITIES;
 
 /** 
  * Digital cinema operation mode
  * */
 typedef enum CINEMA_MODE {
-	OFF = 0,			/** Not Digital Cinema*/
-	CINEMA2K_24 = 1,	/** 2K Digital Cinema at 24 fps*/
-	CINEMA2K_48 = 2,	/** 2K Digital Cinema at 48 fps*/
-	CINEMA4K_24 = 3		/** 4K Digital Cinema at 24 fps*/
+	OPJ_OFF = 0,			/** Not Digital Cinema*/
+	OPJ_CINEMA2K_24 = 1,	/** 2K Digital Cinema at 24 fps*/
+	OPJ_CINEMA2K_48 = 2,	/** 2K Digital Cinema at 48 fps*/
+	OPJ_CINEMA4K_24 = 3		/** 4K Digital Cinema at 24 fps*/
 }OPJ_CINEMA_MODE;
 
 /** 
  * Progression order
  * */
 typedef enum PROG_ORDER {
-	PROG_UNKNOWN = -1,	/**< place-holder */
-	LRCP = 0,			/**< layer-resolution-component-precinct order */
-	RLCP = 1,			/**< resolution-layer-component-precinct order */
-	RPCL = 2,			/**< resolution-precinct-component-layer order */
-	PCRL = 3,			/**< precinct-component-resolution-layer order */
-	CPRL = 4			/**< component-precinct-resolution-layer order */
+	OPJ_PROG_UNKNOWN = -1,	/**< place-holder */
+	OPJ_LRCP = 0,			/**< layer-resolution-component-precinct order */
+	OPJ_RLCP = 1,			/**< resolution-layer-component-precinct order */
+	OPJ_RPCL = 2,			/**< resolution-precinct-component-layer order */
+	OPJ_PCRL = 3,			/**< precinct-component-resolution-layer order */
+	OPJ_CPRL = 4			/**< component-precinct-resolution-layer order */
 } OPJ_PROG_ORDER;
 
 /**
  * Supported image color spaces
 */
 typedef enum COLOR_SPACE {
-	CLRSPC_UNKNOWN = -1,	/**< not supported by the library */
-	CLRSPC_UNSPECIFIED = 0, /**< not specified in the codestream */ 
-	CLRSPC_SRGB = 1,		/**< sRGB */
-	CLRSPC_GRAY = 2,		/**< grayscale */
-	CLRSPC_SYCC = 3			/**< YUV */
+	OPJ_CLRSPC_UNKNOWN = -1,	/**< not supported by the library */
+	OPJ_CLRSPC_UNSPECIFIED = 0, /**< not specified in the codestream */ 
+	OPJ_CLRSPC_SRGB = 1,		/**< sRGB */
+	OPJ_CLRSPC_GRAY = 2,		/**< grayscale */
+	OPJ_CLRSPC_SYCC = 3			/**< YUV */
 } OPJ_COLOR_SPACE;
 
 /**
  * Supported codec
 */
 typedef enum CODEC_FORMAT {
-	CODEC_UNKNOWN = -1,	/**< place-holder */
-	CODEC_J2K  = 0,		/**< JPEG-2000 codestream : read/write */
-	CODEC_JPT  = 1,		/**< JPT-stream (JPEG 2000, JPIP) : read only */
-	CODEC_JP2  = 2 		/**< JPEG-2000 file format : read/write */
+	OPJ_CODEC_UNKNOWN = -1,	/**< place-holder */
+	OPJ_CODEC_J2K  = 0,		/**< JPEG-2000 codestream : read/write */
+	OPJ_CODEC_JPT  = 1,		/**< JPT-stream (JPEG 2000, JPIP) : read only */
+	OPJ_CODEC_JP2  = 2 		/**< JPEG-2000 file format : read/write */
 } OPJ_CODEC_FORMAT;
 
 /** 
@@ -287,7 +287,7 @@ typedef struct opj_cparameters {
 	char *cp_comment;
 	/** csty : coding style */
 	int csty;
-	/** progression order (default LRCP) */
+	/** progression order (default OPJ_LRCP) */
 	OPJ_PROG_ORDER prog_order;
 	/** progression order changes */
 	opj_poc_t POC[32];
