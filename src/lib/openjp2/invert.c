@@ -29,7 +29,7 @@
 /** 
  * LUP decomposition
  */
-static opj_bool opj_lupDecompose(OPJ_FLOAT32 * matrix,
+static OPJ_BOOL opj_lupDecompose(OPJ_FLOAT32 * matrix,
                                  OPJ_UINT32 * permutations, 
                                  OPJ_FLOAT32 * p_swap_area,
                                  OPJ_UINT32 nb_compo);
@@ -62,7 +62,7 @@ static void opj_lupInvert ( OPJ_FLOAT32 * pSrcMatrix,
 /**
  * Matrix inversion.
  */
-opj_bool opj_matrix_inversion_f(OPJ_FLOAT32 * pSrcMatrix,
+OPJ_BOOL opj_matrix_inversion_f(OPJ_FLOAT32 * pSrcMatrix,
                                 OPJ_FLOAT32 * pDestMatrix, 
                                 OPJ_UINT32 nb_compo)
 {
@@ -98,7 +98,7 @@ opj_bool opj_matrix_inversion_f(OPJ_FLOAT32 * pSrcMatrix,
    Local functions
 ==========================================================
 */
-opj_bool opj_lupDecompose(OPJ_FLOAT32 * matrix,OPJ_UINT32 * permutations, 
+OPJ_BOOL opj_lupDecompose(OPJ_FLOAT32 * matrix,OPJ_UINT32 * permutations, 
                           OPJ_FLOAT32 * p_swap_area,
                           OPJ_UINT32 nb_compo) 
 {

@@ -69,7 +69,7 @@ Encode the packets of a tile to a destination buffer
 @param pino             FIXME DOC
 @param t2_mode          If == 0 In Threshold calculation ,If == 1 Final pass
 */
-opj_bool opj_t2_encode_packets(	opj_t2_t* t2,
+OPJ_BOOL opj_t2_encode_packets(	opj_t2_t* t2,
 								OPJ_UINT32 tileno,
 								opj_tcd_tile_t *tile,
 								OPJ_UINT32 maxlayers,
@@ -94,7 +94,7 @@ Decode the packets of a tile from a source buffer
 
 @return FIXME DOC
  */
-opj_bool opj_t2_decode_packets(	opj_t2_t *t2,
+OPJ_BOOL opj_t2_decode_packets(	opj_t2_t *t2,
                                 OPJ_UINT32 tileno,
                                 opj_tcd_tile_t *tile,
                                 OPJ_BYTE *src,

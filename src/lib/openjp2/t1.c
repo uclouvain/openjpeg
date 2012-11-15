@@ -277,13 +277,13 @@ Decode 1 code-block
 @param roishift Region of interest shifting value
 @param cblksty Code-block style
 */
-static opj_bool opj_t1_decode_cblk( opj_t1_t *t1,
+static OPJ_BOOL opj_t1_decode_cblk( opj_t1_t *t1,
                                     opj_tcd_cblk_dec_t* cblk,
                                     OPJ_UINT32 orient,
                                     OPJ_UINT32 roishift,
                                     OPJ_UINT32 cblksty);
 
-opj_bool opj_t1_allocate_buffers(   opj_t1_t *t1,
+OPJ_BOOL opj_t1_allocate_buffers(   opj_t1_t *t1,
                                     OPJ_UINT32 w,
                                     OPJ_UINT32 h);
 
@@ -1148,7 +1148,7 @@ static OPJ_FLOAT64 opj_t1_getwmsedec(
 	return wmsedec;
 }
 
-opj_bool opj_t1_allocate_buffers(
+OPJ_BOOL opj_t1_allocate_buffers(
 		opj_t1_t *t1,
 		OPJ_UINT32 w,
 		OPJ_UINT32 h)
@@ -1250,7 +1250,7 @@ void opj_t1_destroy(opj_t1_t *p_t1)
 	opj_free(p_t1);
 }
 
-opj_bool opj_t1_decode_cblks(   opj_t1_t* t1,
+OPJ_BOOL opj_t1_decode_cblks(   opj_t1_t* t1,
                             opj_tcd_tilecomp_t* tilec,
                             opj_tccp_t* tccp
                             )
@@ -1350,7 +1350,7 @@ opj_bool opj_t1_decode_cblks(   opj_t1_t* t1,
 }
 
 
-opj_bool opj_t1_decode_cblk(opj_t1_t *t1,
+OPJ_BOOL opj_t1_decode_cblk(opj_t1_t *t1,
                             opj_tcd_cblk_dec_t* cblk,
                             OPJ_UINT32 orient,
                             OPJ_UINT32 roishift,
@@ -1444,7 +1444,7 @@ opj_bool opj_t1_decode_cblk(opj_t1_t *t1,
 
 
 
-opj_bool opj_t1_encode_cblks(   opj_t1_t *t1,
+OPJ_BOOL opj_t1_encode_cblks(   opj_t1_t *t1,
                                 opj_tcd_tile_t *tile,
                                 opj_tcp_t *tcp,
                                 const OPJ_FLOAT64 * mct_norms

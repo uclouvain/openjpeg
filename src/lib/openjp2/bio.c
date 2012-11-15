@@ -54,13 +54,13 @@ Write a byte
 @param bio BIO handle
 @return Returns OPJ_TRUE if successful, returns OPJ_FALSE otherwise
 */
-static opj_bool opj_bio_byteout(opj_bio_t *bio);
+static OPJ_BOOL opj_bio_byteout(opj_bio_t *bio);
 /**
 Read a byte
 @param bio BIO handle
 @return Returns OPJ_TRUE if successful, returns OPJ_FALSE otherwise
 */
-static opj_bool opj_bio_bytein(opj_bio_t *bio);
+static OPJ_BOOL opj_bio_bytein(opj_bio_t *bio);
 
 /*@}*/
 
@@ -72,7 +72,7 @@ static opj_bool opj_bio_bytein(opj_bio_t *bio);
 ==========================================================
 */
 
-opj_bool opj_bio_byteout(opj_bio_t *bio) {
+OPJ_BOOL opj_bio_byteout(opj_bio_t *bio) {
 	bio->buf = (bio->buf << 8) & 0xffff;
 	bio->ct = bio->buf == 0xff00 ? 7 : 8;
 	if (bio->bp >= bio->end) {
@@ -82,7 +82,7 @@ opj_bool opj_bio_byteout(opj_bio_t *bio) {
 	return OPJ_TRUE;
 }
 
-opj_bool opj_bio_bytein(opj_bio_t *bio) {
+OPJ_BOOL opj_bio_bytein(opj_bio_t *bio) {
 	bio->buf = (bio->buf << 8) & 0xffff;
 	bio->ct = bio->buf == 0xff00 ? 7 : 8;
 	if (bio->bp >= bio->end) {
@@ -162,7 +162,7 @@ OPJ_UINT32 opj_bio_read(opj_bio_t *bio, OPJ_UINT32 n) {
 	return v;
 }
 
-opj_bool opj_bio_flush(opj_bio_t *bio) {
+OPJ_BOOL opj_bio_flush(opj_bio_t *bio) {
 	bio->ct = 0;
 	if (! opj_bio_byteout(bio)) {
 		return OPJ_FALSE;
@@ -176,7 +176,7 @@ opj_bool opj_bio_flush(opj_bio_t *bio) {
 	return OPJ_TRUE;
 }
 
-opj_bool opj_bio_inalign(opj_bio_t *bio) {
+OPJ_BOOL opj_bio_inalign(opj_bio_t *bio) {
 	bio->ct = 0;
 	if ((bio->buf & 0xff) == 0xff) {
 		if (! opj_bio_bytein(bio)) {

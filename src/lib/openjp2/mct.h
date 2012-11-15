@@ -100,7 +100,7 @@ FIXME DOC
 @param is_signed        tells if the data is signed
 @return OPJ_FALSE if function encounter a problem, OPJ_TRUE otherwise
 */
-opj_bool opj_mct_encode_custom(
+OPJ_BOOL opj_mct_encode_custom(
 					   OPJ_BYTE * p_coding_data,
 					   OPJ_UINT32 n,
 					   OPJ_BYTE ** p_data,
@@ -115,7 +115,7 @@ FIXME DOC
 @param isSigned         tells if the data is signed
 @return OPJ_FALSE if function encounter a problem, OPJ_TRUE otherwise
 */
-opj_bool opj_mct_decode_custom(
+OPJ_BOOL opj_mct_decode_custom(
 					   OPJ_BYTE * pDecodingData,
 					   OPJ_UINT32 n,
 					   OPJ_BYTE ** pData,

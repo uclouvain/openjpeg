@@ -86,7 +86,7 @@ typedef struct opj_pi_iterator {
   /** layer that identify the packet */
   OPJ_UINT32 layno;
   /** 0 if the first packet */
-  opj_bool first;
+  OPJ_BOOL first;
   /** progression order change information */
   opj_poc_t poc;
   /** number of components in the image */
@@ -173,7 +173,7 @@ Modify the packet iterator to point to the next packet
 @param pi Packet iterator to modify
 @return Returns false if pi pointed to the last packet or else returns true
 */
-opj_bool opj_pi_next(opj_pi_iterator_t * pi);
+OPJ_BOOL opj_pi_next(opj_pi_iterator_t * pi);
 /* ----------------------------------------------------------------------- */
 /*@}*/
 

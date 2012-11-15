@@ -128,7 +128,7 @@ typedef struct opj_stream_private
     /**
     * FIXME DOC.
     */
-	opj_bool (* m_opj_seek) (struct opj_stream_private * , OPJ_OFF_T , struct opj_event_mgr *);
+	OPJ_BOOL (* m_opj_seek) (struct opj_stream_private * , OPJ_OFF_T , struct opj_event_mgr *);
 
 	/**
 	 * number of bytes containing in the buffer.
@@ -274,7 +274,7 @@ OPJ_SIZE_T opj_stream_write_data (opj_stream_private_t * p_stream,const OPJ_BYTE
  * @param		p_event_mgr	the user event manager to be notified of special events.
  * @return		true if the data could be flushed, false else.
  */
-opj_bool opj_stream_flush (opj_stream_private_t * p_stream, struct opj_event_mgr * p_event_mgr);
+OPJ_BOOL opj_stream_flush (opj_stream_private_t * p_stream, struct opj_event_mgr * p_event_mgr);
 
 /**
  * Skips a number of bytes from the stream.
@@ -329,7 +329,7 @@ OPJ_OFF_T opj_stream_read_skip (opj_stream_private_t * p_stream, OPJ_OFF_T p_siz
  * @param		p_event_mgr	the user event manager to be notified of special events.
  * @return		OPJ_TRUE if success, or OPJ_FALSE if an error occured.
  */
-opj_bool opj_stream_read_seek (opj_stream_private_t * p_stream, OPJ_OFF_T p_size, struct opj_event_mgr * p_event_mgr);
+OPJ_BOOL opj_stream_read_seek (opj_stream_private_t * p_stream, OPJ_OFF_T p_size, struct opj_event_mgr * p_event_mgr);
 
 /**
  * Skips a number of bytes from the stream.
@@ -338,7 +338,7 @@ opj_bool opj_stream_read_seek (opj_stream_private_t * p_stream, OPJ_OFF_T p_size
  * @param		p_event_mgr	the user event manager to be notified of special events.
  * @return		the number of bytes skipped, or -1 if an error occured.
  */
-opj_bool opj_stream_write_seek (opj_stream_private_t * p_stream, OPJ_OFF_T p_size, struct opj_event_mgr * p_event_mgr);
+OPJ_BOOL opj_stream_write_seek (opj_stream_private_t * p_stream, OPJ_OFF_T p_size, struct opj_event_mgr * p_event_mgr);
 
 /**
  * Seeks a number of bytes from the stream.
@@ -347,12 +347,12 @@ opj_bool opj_stream_write_seek (opj_stream_private_t * p_stream, OPJ_OFF_T p_siz
  * @param		p_event_mgr	the user event manager to be notified of special events.
  * @return		true if the stream is seekable.
  */
-opj_bool opj_stream_seek (opj_stream_private_t * p_stream, OPJ_OFF_T p_size, struct opj_event_mgr * p_event_mgr);
+OPJ_BOOL opj_stream_seek (opj_stream_private_t * p_stream, OPJ_OFF_T p_size, struct opj_event_mgr * p_event_mgr);
 
 /**
  * Tells if the given stream is seekable.
  */
-opj_bool opj_stream_has_seek (const opj_stream_private_t * p_stream);
+OPJ_BOOL opj_stream_has_seek (const opj_stream_private_t * p_stream);
 
 /**
  * FIXME DOC.
@@ -372,7 +372,7 @@ OPJ_OFF_T opj_stream_default_skip (OPJ_OFF_T p_nb_bytes, void * p_user_data);
 /**
  * FIXME DOC.
  */
-opj_bool opj_stream_default_seek (OPJ_OFF_T p_nb_bytes, void * p_user_data);
+OPJ_BOOL opj_stream_default_seek (OPJ_OFF_T p_nb_bytes, void * p_user_data);
 
 /* ----------------------------------------------------------------------- */
 /*@}*/

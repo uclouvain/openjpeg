@@ -112,13 +112,13 @@ Flush bits
 @param bio BIO handle
 @return Returns OPJ_TRUE if successful, returns OPJ_FALSE otherwise
 */
-opj_bool opj_bio_flush(opj_bio_t *bio);
+OPJ_BOOL opj_bio_flush(opj_bio_t *bio);
 /**
 Passes the ending bits (coming from flushing)
 @param bio BIO handle
 @return Returns OPJ_TRUE if successful, returns OPJ_FALSE otherwise
 */
-opj_bool opj_bio_inalign(opj_bio_t *bio);
+OPJ_BOOL opj_bio_inalign(opj_bio_t *bio);
 /* ----------------------------------------------------------------------- */
 /*@}*/
 

@@ -223,7 +223,7 @@ Create a new TCD handle
 @param p_is_decoder FIXME DOC
 @return Returns a new TCD handle if successful returns NULL otherwise
 */
-opj_tcd_t* opj_tcd_create(opj_bool p_is_decoder);
+opj_tcd_t* opj_tcd_create(OPJ_BOOL p_is_decoder);
 
 /**
 Destroy a previously created TCD handle
@@ -239,7 +239,7 @@ void opj_tcd_destroy(opj_tcd_t *tcd);
  *
  * @return true if the encoding values could be set (false otherwise).
 */
-opj_bool opj_tcd_init(	opj_tcd_t *p_tcd,
+OPJ_BOOL opj_tcd_init(	opj_tcd_t *p_tcd,
 						opj_image_t * p_image,
 						opj_cp_t * p_cp );
 
@@ -252,7 +252,7 @@ opj_bool opj_tcd_init(	opj_tcd_t *p_tcd,
  *
  * @return	true if the remaining data is sufficient.
  */
-opj_bool opj_tcd_init_decode_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no);
+OPJ_BOOL opj_tcd_init_decode_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no);
 
 void opj_tcd_makelayer_fixed(opj_tcd_t *tcd, OPJ_UINT32 layno, OPJ_UINT32 final);
 
@@ -263,7 +263,7 @@ void opj_tcd_makelayer(	opj_tcd_t *tcd,
 						OPJ_FLOAT64 thresh,
 						OPJ_UINT32 final);
 
-opj_bool opj_tcd_rateallocate(	opj_tcd_t *tcd,
+OPJ_BOOL opj_tcd_rateallocate(	opj_tcd_t *tcd,
 								OPJ_BYTE *dest,
 								OPJ_UINT32 * p_data_written,
 								OPJ_UINT32 len,
@@ -284,7 +284,7 @@ OPJ_UINT32 opj_tcd_get_decoded_tile_size (opj_tcd_t *p_tcd );
  * @param	p_cstr_info		Codestream information structure
  * @return  true if the coding is successfull.
 */
-opj_bool opj_tcd_encode_tile(   opj_tcd_t *p_tcd,
+OPJ_BOOL opj_tcd_encode_tile(   opj_tcd_t *p_tcd,
 							    OPJ_UINT32 p_tile_no,
 							    OPJ_BYTE *p_dest,
 							    OPJ_UINT32 * p_data_written,
@@ -300,7 +300,7 @@ Decode a tile from a buffer into a raw image
 @param tileno Number that identifies one of the tiles to be decoded
 @param cstr_info  FIXME DOC
 */
-opj_bool opj_tcd_decode_tile(   opj_tcd_t *tcd,
+OPJ_BOOL opj_tcd_decode_tile(   opj_tcd_t *tcd,
 							    OPJ_BYTE *src,
 							    OPJ_UINT32 len,
 							    OPJ_UINT32 tileno,
@@ -310,7 +310,7 @@ opj_bool opj_tcd_decode_tile(   opj_tcd_t *tcd,
 /**
  * Copies tile data from the system onto the given memory block.
  */
-opj_bool opj_tcd_update_tile_data (	opj_tcd_t *p_tcd,
+OPJ_BOOL opj_tcd_update_tile_data (	opj_tcd_t *p_tcd,
 								    OPJ_BYTE * p_dest,
 								    OPJ_UINT32 p_dest_length );
 
@@ -327,13 +327,13 @@ OPJ_UINT32 opj_tcd_get_encoded_tile_size ( opj_tcd_t *p_tcd );
  *
  * @return true if the encoding values could be set (false otherwise).
 */
-opj_bool opj_tcd_init_encode_tile (	opj_tcd_t *p_tcd,
+OPJ_BOOL opj_tcd_init_encode_tile (	opj_tcd_t *p_tcd,
 								    OPJ_UINT32 p_tile_no );
 
 /**
  * Copies tile data from the given memory block onto the system.
  */
-opj_bool opj_tcd_copy_tile_data (opj_tcd_t *p_tcd,
+OPJ_BOOL opj_tcd_copy_tile_data (opj_tcd_t *p_tcd,
                                  OPJ_BYTE * p_src,
                                  OPJ_UINT32 p_src_length );
 

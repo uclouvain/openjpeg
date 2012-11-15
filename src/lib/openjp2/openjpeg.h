@@ -79,7 +79,7 @@ defined with this macro as being exported.
 #endif /* OPJ_EXPORTS */
 #endif /* !OPJ_STATIC || !_WIN32 */
 
-typedef int opj_bool; /*FIXME it should be to follow the name of others OPJ_TYPE -> OPJ_BOOL*/
+typedef int OPJ_BOOL; /*FIXME it should be to follow the name of others OPJ_TYPE -> OPJ_BOOL*/
 #define OPJ_TRUE 1
 #define OPJ_FALSE 0
 
@@ -257,7 +257,7 @@ typedef struct opj_poc {
  * */
 typedef struct opj_cparameters {
 	/** size of tile: tile_size_on = false (not in argument) or = true (in argument) */
-	opj_bool tile_size_on;
+	OPJ_BOOL tile_size_on;
 	/** XTOsiz */
 	int cp_tx0;
 	/** YTOsiz */
@@ -339,7 +339,7 @@ typedef struct opj_cparameters {
 	/**@name JPWL encoding parameters */
 	/*@{*/
 	/** enables writing of EPC in MH, thus activating JPWL */
-	opj_bool jpwl_epc_on;
+	OPJ_BOOL jpwl_epc_on;
 	/** error protection method for MH (0,1,16,32,37-128) */
 	int jpwl_hprot_MH;
 	/** tile number of header protection specification (>=0) */
@@ -380,7 +380,7 @@ typedef struct opj_cparameters {
 	/** MCT (multiple component transform) */
 	char tcp_mct;
 	/** Enable JPIP indexing*/
-	opj_bool jpip_on;
+	OPJ_BOOL jpip_on;
 	/** Naive implementation of MCT restricted to a single reversible array based encoding without offset concerning all the components. */
 	void * mct_data;
 } opj_cparameters_t;
@@ -427,7 +427,7 @@ typedef struct opj_dparameters {
 	/** Decoding area bottom boundary */
 	OPJ_UINT32 DA_y1;
 	/** Verbose mode */
-	opj_bool m_verbose;
+	OPJ_BOOL m_verbose;
 
 	/** tile number ot the decoded tile*/
 	OPJ_UINT32 tile_index;
@@ -440,7 +440,7 @@ typedef struct opj_dparameters {
 	/**@name JPWL decoding parameters */
 	/*@{*/
 	/** activates the JPWL correction capabilities */
-	opj_bool jpwl_correct;
+	OPJ_BOOL jpwl_correct;
 	/** expected number of components */
 	int jpwl_exp_comps;
 	/** maximum number of tiles */
@@ -496,7 +496,7 @@ typedef OPJ_OFF_T (* opj_stream_skip_fn) (OPJ_OFF_T p_nb_bytes, void * p_user_da
  * Callback function prototype for seek function
  * FIXME DOC
  */
-typedef opj_bool (* opj_stream_seek_fn) (OPJ_OFF_T p_nb_bytes, void * p_user_data) ;
+typedef OPJ_BOOL (* opj_stream_seek_fn) (OPJ_OFF_T p_nb_bytes, void * p_user_data) ;
 
 /*
  * JPEG2000 Stream.
@@ -983,7 +983,7 @@ OPJ_API opj_image_t* OPJ_CALLCONV opj_image_tile_create(OPJ_UINT32 numcmpts, opj
  *
  * @return	a stream object.
 */
-OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_default_create(opj_bool p_is_input);
+OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_default_create(OPJ_BOOL p_is_input);
 
 /**
  * Creates an abstract stream. This function does nothing except allocating memory and initializing the abstract stream.
@@ -993,7 +993,7 @@ OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_default_create(opj_bool p_is_input
  *
  * @return	a stream object.
 */
-OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create(OPJ_SIZE_T p_buffer_size, opj_bool p_is_input);
+OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create(OPJ_SIZE_T p_buffer_size, OPJ_BOOL p_is_input);
 
 /**
  * Destroys a stream created by opj_create_stream. This function does NOT close the abstract stream. If needed the user must
@@ -1052,7 +1052,7 @@ OPJ_API void OPJ_CALLCONV opj_stream_set_user_data_length(opj_stream_t* p_stream
  * @param p_file the file stream to operate on
  * @param p_is_read_stream whether the stream is a read stream (true) or not (false)
 */
-OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_default_file_stream (FILE * p_file, opj_bool p_is_read_stream);
+OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_default_file_stream (FILE * p_file, OPJ_BOOL p_is_read_stream);
 
 /**
  * FIXME DOC
@@ -1060,7 +1060,7 @@ OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_default_file_stream (FILE *
  * @param p_buffer_size    FIXME DOC
  * @param p_is_read_stream FIXME DOC
 */
-OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream (FILE * p_file, OPJ_SIZE_T p_buffer_size, opj_bool p_is_read_stream);
+OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream (FILE * p_file, OPJ_SIZE_T p_buffer_size, OPJ_BOOL p_is_read_stream);
 
 /* 
 ==========================================================
@@ -1073,7 +1073,7 @@ OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream (FILE * p_file,
  * @param p_callback    the callback function which will be used
  * @param p_user_data   FIXME DOC
 */
-OPJ_API opj_bool OPJ_CALLCONV opj_set_info_handler(opj_codec_t * p_codec, 
+OPJ_API OPJ_BOOL OPJ_CALLCONV opj_set_info_handler(opj_codec_t * p_codec, 
                                                    opj_msg_callback p_callback,
                                                    void * p_user_data);
 /**
@@ -1082,7 +1082,7 @@ OPJ_API opj_bool OPJ_CALLCONV opj_set_info_handler(opj_codec_t * p_codec,
  * @param p_callback    the callback function which will be used
  * @param p_user_data   FIXME DOC
 */
-OPJ_API opj_bool OPJ_CALLCONV opj_set_warning_handler(opj_codec_t * p_codec,
+OPJ_API OPJ_BOOL OPJ_CALLCONV opj_set_warning_handler(opj_codec_t * p_codec,
                                                       opj_msg_callback p_callback,
                                                       void * p_user_data);
 /**
@@ -1091,7 +1091,7 @@ OPJ_API opj_bool OPJ_CALLCONV opj_set_warning_handler(opj_codec_t * p_codec,
  * @param p_callback    the callback function which will be used
  * @param p_user_data   FIXME DOC
 */
-OPJ_API opj_bool OPJ_CALLCONV opj_set_error_handler(opj_codec_t * p_codec, 
+OPJ_API OPJ_BOOL OPJ_CALLCONV opj_set_error_handler(opj_codec_t * p_codec, 
                                                     opj_msg_callback p_callback,
                                                     void * p_user_data);
 
@@ -1121,7 +1121,7 @@ OPJ_API void OPJ_CALLCONV opj_destroy_codec(opj_codec_t * p_codec);
  * @param	p_codec			the JPEG2000 codec to read.
  * @param	p_stream		the JPEG2000 stream.
  */
-OPJ_API opj_bool OPJ_CALLCONV opj_end_decompress (	opj_codec_t *p_codec,
+OPJ_API OPJ_BOOL OPJ_CALLCONV opj_end_decompress (	opj_codec_t *p_codec,
 													opj_stream_t *p_stream);
 
 
@@ -1140,7 +1140,7 @@ OPJ_API void OPJ_CALLCONV opj_set_default_decoder_parameters(opj_dparameters_t *
  *
  * @return true			if the decoder is correctly set
  */
-OPJ_API opj_bool OPJ_CALLCONV opj_setup_decoder(opj_codec_t *p_codec,
+OPJ_API OPJ_BOOL OPJ_CALLCONV opj_setup_decoder(opj_codec_t *p_codec,
 												opj_dparameters_t *parameters );
 
 /**
@@ -1152,7 +1152,7 @@ OPJ_API opj_bool OPJ_CALLCONV opj_setup_decoder(opj_codec_t *p_codec,
  *
  * @return true				if the main header of the codestream and the JP2 header is correctly read.
  */
-OPJ_API opj_bool OPJ_CALLCONV opj_read_header (	opj_stream_t *p_stream,
+OPJ_API OPJ_BOOL OPJ_CALLCONV opj_read_header (	opj_stream_t *p_stream,
 												opj_codec_t *p_codec,
 												opj_image_t **p_image);
 
@@ -1168,7 +1168,7 @@ OPJ_API opj_bool OPJ_CALLCONV opj_read_header (	opj_stream_t *p_stream,
  *
  * @return	true			if the area could be set.
  */
-OPJ_API opj_bool OPJ_CALLCONV opj_set_decode_area(	opj_codec_t *p_codec,
+OPJ_API OPJ_BOOL OPJ_CALLCONV opj_set_decode_area(	opj_codec_t *p_codec,
 													opj_image_t* p_image,
 													OPJ_INT32 p_start_x, OPJ_INT32 p_start_y,
 													OPJ_INT32 p_end_x, OPJ_INT32 p_end_y );
@@ -1180,7 +1180,7 @@ OPJ_API opj_bool OPJ_CALLCONV opj_set_decode_area(	opj_codec_t *p_codec,
  * @param p_image 			the decoded image
  * @return 					true if success, otherwise false
  * */
-OPJ_API opj_bool OPJ_CALLCONV opj_decode(   opj_codec_t *p_decompressor,
+OPJ_API OPJ_BOOL OPJ_CALLCONV opj_decode(   opj_codec_t *p_decompressor,
                                             opj_stream_t *p_stream,
                                             opj_image_t *p_image);
 
@@ -1193,7 +1193,7 @@ OPJ_API opj_bool OPJ_CALLCONV opj_decode(   opj_codec_t *p_decompressor,
  *
  * @return					true if success, otherwise false
  */
-OPJ_API opj_bool OPJ_CALLCONV opj_get_decoded_tile(	opj_codec_t *p_codec,
+OPJ_API OPJ_BOOL OPJ_CALLCONV opj_get_decoded_tile(	opj_codec_t *p_codec,
 													opj_stream_t *p_stream,
 													opj_image_t *p_image,
 													OPJ_UINT32 tile_index);
@@ -1205,7 +1205,7 @@ OPJ_API opj_bool OPJ_CALLCONV opj_get_decoded_tile(	opj_codec_t *p_codec,
  *
  * @return					true if success, otherwise false
  */
-OPJ_API opj_bool OPJ_CALLCONV opj_set_decoded_resolution_factor(opj_codec_t *p_codec, OPJ_UINT32 res_factor);
+OPJ_API OPJ_BOOL OPJ_CALLCONV opj_set_decoded_resolution_factor(opj_codec_t *p_codec, OPJ_UINT32 res_factor);
 
 /**
  * Writes a tile with the given data.
@@ -1218,7 +1218,7 @@ OPJ_API opj_bool OPJ_CALLCONV opj_set_decoded_resolution_factor(opj_codec_t *p_c
  *
  * @return	true if the data could be written.
  */
-OPJ_API opj_bool OPJ_CALLCONV opj_write_tile (	opj_codec_t *p_codec,
+OPJ_API OPJ_BOOL OPJ_CALLCONV opj_write_tile (	opj_codec_t *p_codec,
 												OPJ_UINT32 p_tile_index,
 												OPJ_BYTE * p_data,
 												OPJ_UINT32 p_data_size,
@@ -1245,14 +1245,14 @@ OPJ_API opj_bool OPJ_CALLCONV opj_write_tile (	opj_codec_t *p_codec,
  * @return	true			if the tile header could be decoded. In case the decoding should end, the returned value is still true.
  *							returning false may be the result of a shortage of memory or an internal error.
  */
-OPJ_API opj_bool OPJ_CALLCONV opj_read_tile_header(	opj_codec_t *p_codec,
+OPJ_API OPJ_BOOL OPJ_CALLCONV opj_read_tile_header(	opj_codec_t *p_codec,
 												opj_stream_t * p_stream,
 												OPJ_UINT32 * p_tile_index,
 												OPJ_UINT32 * p_data_size,
 												OPJ_INT32 * p_tile_x0, OPJ_INT32 * p_tile_y0,
 												OPJ_INT32 * p_tile_x1, OPJ_INT32 * p_tile_y1,
 												OPJ_UINT32 * p_nb_comps,
-												opj_bool * p_should_go_on );
+												OPJ_BOOL * p_should_go_on );
 
 /**
  * Reads a tile data. This function is compulsory and allows one to decode tile data. opj_read_tile_header should be called before.
@@ -1266,7 +1266,7 @@ OPJ_API opj_bool OPJ_CALLCONV opj_read_tile_header(	opj_codec_t *p_codec,
  *
  * @return	true			if the data could be decoded.
  */
-OPJ_API opj_bool OPJ_CALLCONV opj_decode_tile_data(	opj_codec_t *p_codec,
+OPJ_API OPJ_BOOL OPJ_CALLCONV opj_decode_tile_data(	opj_codec_t *p_codec,
 													OPJ_UINT32 p_tile_index,
 													OPJ_BYTE * p_data,
 													OPJ_UINT32 p_data_size,
@@ -1310,19 +1310,19 @@ OPJ_API void OPJ_CALLCONV opj_set_default_encoder_parameters(opj_cparameters_t *
  * @param parameters 	Compression parameters
  * @param image 		Input filled image
  */
-OPJ_API opj_bool OPJ_CALLCONV opj_setup_encoder(opj_codec_t *p_codec, 
+OPJ_API OPJ_BOOL OPJ_CALLCONV opj_setup_encoder(opj_codec_t *p_codec, 
 												opj_cparameters_t *parameters, 
 												opj_image_t *image);
 
 /**
  */
-OPJ_API opj_bool OPJ_CALLCONV opj_start_compress (	opj_codec_t *p_codec,
+OPJ_API OPJ_BOOL OPJ_CALLCONV opj_start_compress (	opj_codec_t *p_codec,
 													opj_image_t * p_image,
 													opj_stream_t *p_cio);
 
 /**
  */
-OPJ_API opj_bool OPJ_CALLCONV opj_end_compress (opj_codec_t *p_codec,
+OPJ_API OPJ_BOOL OPJ_CALLCONV opj_end_compress (opj_codec_t *p_codec,
 												opj_stream_t *p_stream);
 
 /**
@@ -1332,7 +1332,7 @@ OPJ_API opj_bool OPJ_CALLCONV opj_end_compress (opj_codec_t *p_codec,
  *
  * @return 				Returns true if successful, returns false otherwise
  */
-OPJ_API opj_bool OPJ_CALLCONV opj_encode(opj_codec_t *p_codec,
+OPJ_API OPJ_BOOL OPJ_CALLCONV opj_encode(opj_codec_t *p_codec,
                                          opj_stream_t *p_stream);
 
 
@@ -1422,7 +1422,7 @@ OPJ_API opj_jp2_index_t* OPJ_CALLCONV opj_get_jp2_index(opj_codec_t *p_codec);
  *
  * @return	true if the parameters could be set.
  */
-OPJ_API opj_bool OPJ_CALLCONV opj_set_MCT( opj_cparameters_t *parameters,
+OPJ_API OPJ_BOOL OPJ_CALLCONV opj_set_MCT( opj_cparameters_t *parameters,
 		                               	   OPJ_FLOAT32 * pEncodingMatrix,
 		                               	   OPJ_INT32 * p_dc_shift,
 		                               	   OPJ_UINT32 pNbComp);

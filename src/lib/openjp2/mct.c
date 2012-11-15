@@ -200,7 +200,7 @@ OPJ_FLOAT64 opj_mct_getnorm_real(OPJ_UINT32 compno) {
 }
 
 
-opj_bool opj_mct_encode_custom(
+OPJ_BOOL opj_mct_encode_custom(
 					   OPJ_BYTE * pCodingdata,
 					   OPJ_UINT32 n,
 					   OPJ_BYTE ** pData,
@@ -253,7 +253,7 @@ opj_bool opj_mct_encode_custom(
 	return OPJ_TRUE;
 }
 
-opj_bool opj_mct_decode_custom(
+OPJ_BOOL opj_mct_decode_custom(
 					   OPJ_BYTE * pDecodingData,
 					   OPJ_UINT32 n,
 					   OPJ_BYTE ** pData,

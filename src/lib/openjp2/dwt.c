@@ -118,9 +118,9 @@ static void opj_dwt_encode_stepsize(OPJ_INT32 stepsize, OPJ_INT32 numbps, opj_st
 /**
 Inverse wavelet transform in 2-D.
 */
-static opj_bool opj_dwt_decode_tile(opj_tcd_tilecomp_t* tilec, OPJ_UINT32 i, DWT1DFN fn);
+static OPJ_BOOL opj_dwt_decode_tile(opj_tcd_tilecomp_t* tilec, OPJ_UINT32 i, DWT1DFN fn);
 
-static opj_bool opj_dwt_encode_procedure(	opj_tcd_tilecomp_t * tilec,
+static OPJ_BOOL opj_dwt_encode_procedure(	opj_tcd_tilecomp_t * tilec,
 										    void (*p_function)(OPJ_INT32 *, OPJ_INT32,OPJ_INT32,OPJ_INT32) );
 
 static OPJ_UINT32 opj_dwt_max_resolution(opj_tcd_resolution_t* restrict r, OPJ_UINT32 i);
@@ -379,7 +379,7 @@ void opj_dwt_encode_stepsize(OPJ_INT32 stepsize, OPJ_INT32 numbps, opj_stepsize_
 /* <summary>                            */
 /* Forward 5-3 wavelet transform in 2-D. */
 /* </summary>                           */
-INLINE opj_bool opj_dwt_encode_procedure(opj_tcd_tilecomp_t * tilec,void (*p_function)(OPJ_INT32 *, OPJ_INT32,OPJ_INT32,OPJ_INT32) )
+INLINE OPJ_BOOL opj_dwt_encode_procedure(opj_tcd_tilecomp_t * tilec,void (*p_function)(OPJ_INT32 *, OPJ_INT32,OPJ_INT32,OPJ_INT32) )
 {
 	OPJ_INT32 i, j, k;
 	OPJ_INT32 *a = 00;
@@ -460,7 +460,7 @@ INLINE opj_bool opj_dwt_encode_procedure(opj_tcd_tilecomp_t * tilec,void (*p_fun
 
 /* Forward 5-3 wavelet transform in 2-D. */
 /* </summary>                           */
-opj_bool opj_dwt_encode(opj_tcd_tilecomp_t * tilec)
+OPJ_BOOL opj_dwt_encode(opj_tcd_tilecomp_t * tilec)
 {
 	return opj_dwt_encode_procedure(tilec,opj_dwt_encode_1);
 }
@@ -468,7 +468,7 @@ opj_bool opj_dwt_encode(opj_tcd_tilecomp_t * tilec)
 /* <summary>                            */
 /* Inverse 5-3 wavelet transform in 2-D. */
 /* </summary>                           */
-opj_bool opj_dwt_decode(opj_tcd_tilecomp_t* tilec, OPJ_UINT32 numres) {
+OPJ_BOOL opj_dwt_decode(opj_tcd_tilecomp_t* tilec, OPJ_UINT32 numres) {
 	return opj_dwt_decode_tile(tilec, numres, &opj_dwt_decode_1);
 }
 
@@ -494,7 +494,7 @@ OPJ_FLOAT64 opj_dwt_getnorm(OPJ_UINT32 level, OPJ_UINT32 orient) {
 /* <summary>                             */
 /* Forward 9-7 wavelet transform in 2-D. */
 /* </summary>                            */
-opj_bool opj_dwt_encode_real(opj_tcd_tilecomp_t * tilec)
+OPJ_BOOL opj_dwt_encode_real(opj_tcd_tilecomp_t * tilec)
 {
 	return opj_dwt_encode_procedure(tilec,opj_dwt_encode_1_real);
 }
@@ -554,7 +554,7 @@ OPJ_UINT32 opj_dwt_max_resolution(opj_tcd_resolution_t* restrict r, OPJ_UINT32 i
 /* <summary>                            */
 /* Inverse wavelet transform in 2-D.     */
 /* </summary>                           */
-opj_bool opj_dwt_decode_tile(opj_tcd_tilecomp_t* tilec, OPJ_UINT32 numres, DWT1DFN dwt_1D) {
+OPJ_BOOL opj_dwt_decode_tile(opj_tcd_tilecomp_t* tilec, OPJ_UINT32 numres, DWT1DFN dwt_1D) {
 	dwt_t h;
 	dwt_t v;
 
@@ -826,7 +826,7 @@ void opj_v4dwt_decode(v4dwt_t* restrict dwt)
 /* <summary>                             */
 /* Inverse 9-7 wavelet transform in 2-D. */
 /* </summary>                            */
-opj_bool opj_dwt_decode_real(opj_tcd_tilecomp_t* restrict tilec, OPJ_UINT32 numres)
+OPJ_BOOL opj_dwt_decode_real(opj_tcd_tilecomp_t* restrict tilec, OPJ_UINT32 numres)
 {
 	v4dwt_t h;
 	v4dwt_t v;

@@ -508,7 +508,7 @@ void opj_mqc_segmark_enc(opj_mqc_t *mqc) {
 	}
 }
 
-opj_bool opj_mqc_init_dec(opj_mqc_t *mqc, OPJ_BYTE *bp, OPJ_UINT32 len) {
+OPJ_BOOL opj_mqc_init_dec(opj_mqc_t *mqc, OPJ_BYTE *bp, OPJ_UINT32 len) {
 	opj_mqc_setcurctx(mqc, 0);
 	mqc->start = bp;
 	mqc->end = bp + len;

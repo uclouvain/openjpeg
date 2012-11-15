@@ -67,7 +67,7 @@ void  opj_procedure_list_destroy(opj_procedure_list_t * p_list)
         opj_free(p_list);
 }
 
-opj_bool opj_procedure_list_add_procedure (opj_procedure_list_t * p_validation_list, opj_procedure p_procedure)
+OPJ_BOOL opj_procedure_list_add_procedure (opj_procedure_list_t * p_validation_list, opj_procedure p_procedure)
 {
         if (p_validation_list->m_nb_max_procedures == p_validation_list->m_nb_procedures)
         {
