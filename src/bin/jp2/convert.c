@@ -190,7 +190,7 @@ static inline int16_t swap16(int16_t x)
 #endif
 
 static int tga_writeheader(FILE *fp, int bits_per_pixel, int width, int height, 
-	opj_bool flip_image)
+	OPJ_BOOL flip_image)
 {
 	unsigned short image_w, image_h, us0;
 	unsigned char uc0, image_type;
@@ -260,8 +260,8 @@ opj_image_t* tgatoimage(const char *filename, opj_cparameters_t *parameters) {
 	opj_image_cmptparm_t cmptparm[4];	/* maximum 4 components */
 	int numcomps;
 	OPJ_COLOR_SPACE color_space;
-	opj_bool mono ;
-	opj_bool save_alpha;
+	OPJ_BOOL mono ;
+	OPJ_BOOL save_alpha;
 	int subsampling_dx, subsampling_dy;
 	int i;	
 
@@ -285,12 +285,12 @@ opj_image_t* tgatoimage(const char *filename, opj_cparameters_t *parameters) {
 	save_alpha = (pixel_bit_depth == 16) || (pixel_bit_depth == 32); /* Mono with alpha, or RGB with alpha */
 
 	if (mono) {
-		color_space = CLRSPC_GRAY;
+		color_space = OPJ_CLRSPC_GRAY;
 		numcomps = save_alpha ? 2 : 1;
 	}	
 	else {
 		numcomps = save_alpha ? 4 : 3;
-		color_space = CLRSPC_SRGB;
+		color_space = OPJ_CLRSPC_SRGB;
 	}
 
 	subsampling_dx = parameters->subsampling_dx;
@@ -405,7 +405,7 @@ opj_image_t* tgatoimage(const char *filename, opj_cparameters_t *parameters) {
 
 int imagetotga(opj_image_t * image, const char *outfile) {
 	int width, height, bpp, x, y;
-	opj_bool write_alpha;
+	OPJ_BOOL write_alpha;
 	int i, adjustR, adjustG, adjustB;
 	unsigned int alpha_channel;
 	float r,g,b,a;
@@ -657,7 +657,7 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
 	if (Info_h.biBitCount == 24) 
    {
 	numcomps = 3;
-	color_space = CLRSPC_SRGB;
+	color_space = OPJ_CLRSPC_SRGB;
 	/* initialize image components */
 	memset(&cmptparm[0], 0, 3 * sizeof(opj_image_cmptparm_t));
 	for(i = 0; i < numcomps; i++) 
@@ -757,7 +757,7 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
 	 W++;
 			
 	numcomps = gray_scale ? 1 : 3;
-	color_space = gray_scale ? CLRSPC_GRAY : CLRSPC_SRGB;
+	color_space = gray_scale ? OPJ_CLRSPC_GRAY : OPJ_CLRSPC_SRGB;
 		/* initialize image components */
 	memset(&cmptparm[0], 0, 3 * sizeof(opj_image_cmptparm_t));
 	for(i = 0; i < numcomps; i++) 
@@ -867,7 +867,7 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
 			gray_scale = 0;
 
 		numcomps = gray_scale ? 1 : 3;
-		color_space = gray_scale ? CLRSPC_GRAY : CLRSPC_SRGB;
+		color_space = gray_scale ? OPJ_CLRSPC_GRAY : OPJ_CLRSPC_SRGB;
 		/* initialize image components */
 		memset(&cmptparm[0], 0, 3 * sizeof(opj_image_cmptparm_t));
 		for (i = 0; i < numcomps; i++)
@@ -1278,7 +1278,7 @@ opj_image_t* pgxtoimage(const char *filename, opj_cparameters_t *parameters) {
 	opj_image_comp_t *comp = NULL;
 
 	numcomps = 1;
-	color_space = CLRSPC_GRAY;
+	color_space = OPJ_CLRSPC_GRAY;
 
 	memset(&cmptparm, 0, sizeof(opj_image_cmptparm_t));
 
@@ -1747,9 +1747,9 @@ opj_image_t* pnmtoimage(const char *filename, opj_cparameters_t *parameters) {
     default: fclose(fp); return NULL;
    }
     if(numcomps < 3)
-     color_space = CLRSPC_GRAY;/* GRAY, GRAYA */
+     color_space = OPJ_CLRSPC_GRAY;/* GRAY, GRAYA */
     else
-     color_space = CLRSPC_SRGB;/* RGB, RGBA */
+     color_space = OPJ_CLRSPC_SRGB;/* RGB, RGBA */
 
     prec = has_prec(header_info.maxval);
 
@@ -2538,7 +2538,7 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
 	if(tiPhoto == PHOTOMETRIC_RGB) /* RGB(A) */
    {
 	numcomps = 3 + has_alpha;
-	color_space = CLRSPC_SRGB;
+	color_space = OPJ_CLRSPC_SRGB;
 
 /*#define USETILEMODE*/
 	for(j = 0; j < numcomps; j++) 
@@ -2702,7 +2702,7 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
 	if(tiPhoto == PHOTOMETRIC_MINISBLACK) /* GRAY(A) */
    {
 	numcomps = 1 + has_alpha;
-	color_space = CLRSPC_GRAY;
+	color_space = OPJ_CLRSPC_GRAY;
 
 	for(j = 0; j < numcomps; ++j)
   {
@@ -2802,7 +2802,7 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
 	RAW IMAGE FORMAT
 
  <<-- <<-- <<-- <<-- */
-static opj_image_t* rawtoimage_common(const char *filename, opj_cparameters_t *parameters, raw_cparameters_t *raw_cp, opj_bool big_endian) {
+static opj_image_t* rawtoimage_common(const char *filename, opj_cparameters_t *parameters, raw_cparameters_t *raw_cp, OPJ_BOOL big_endian) {
 	int subsampling_dx = parameters->subsampling_dx;
 	int subsampling_dy = parameters->subsampling_dy;
 
@@ -2830,7 +2830,7 @@ static opj_image_t* rawtoimage_common(const char *filename, opj_cparameters_t *p
 		return NULL;
 	}
 	numcomps = raw_cp->rawComp;
-	color_space = CLRSPC_SRGB;
+	color_space = OPJ_CLRSPC_SRGB;
 	w = raw_cp->rawWidth;
 	h = raw_cp->rawHeight;
 	cmptparm = (opj_image_cmptparm_t*) malloc(numcomps * sizeof(opj_image_cmptparm_t));
@@ -2921,7 +2921,7 @@ opj_image_t* rawtoimage(const char *filename, opj_cparameters_t *parameters, raw
   return rawtoimage_common(filename, parameters, raw_cp, OPJ_TRUE);
 }
 
-static int imagetoraw_common(opj_image_t * image, const char *outfile, opj_bool big_endian)
+static int imagetoraw_common(opj_image_t * image, const char *outfile, OPJ_BOOL big_endian)
 {
 	FILE *rawFile = NULL;
   size_t res;
@@ -3216,7 +3216,7 @@ opj_image_t *pngtoimage(const char *read_idf, opj_cparameters_t * params)
 	cmptparm[i].h = height;
    }
 
-	image = opj_image_create(nr_comp, &cmptparm[0], CLRSPC_SRGB);
+	image = opj_image_create(nr_comp, &cmptparm[0], OPJ_CLRSPC_SRGB);
 
 	if(image == NULL) goto fin;
 

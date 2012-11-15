@@ -185,7 +185,7 @@ int main (int argc, char *argv[])
         OPJ_UINT32 l_max_data_size = 1000;
         OPJ_UINT32 l_tile_index;
         OPJ_BYTE * l_data = (OPJ_BYTE *) malloc(1000);
-        opj_bool l_go_on = OPJ_TRUE;
+        OPJ_BOOL l_go_on = OPJ_TRUE;
         OPJ_INT32 l_tile_x0=0, l_tile_y0=0 ;
         OPJ_UINT32 l_tile_width=0, l_tile_height=0, l_nb_tiles_x=0, l_nb_tiles_y=0, l_nb_comps=0 ;
         OPJ_INT32 l_current_tile_x0,l_current_tile_y0,l_current_tile_x1,l_current_tile_y1;
@@ -256,13 +256,13 @@ int main (int argc, char *argv[])
                 case J2K_CFMT:	/* JPEG-2000 codestream */
                         {
                                 /* Get a decoder handle */
-                                l_codec = opj_create_decompress(CODEC_J2K);
+                                l_codec = opj_create_decompress(OPJ_CODEC_J2K);
                                 break;
                         }
                 case JP2_CFMT:	/* JPEG 2000 compressed image data */
                         {
                                 /* Get a decoder handle */
-                                l_codec = opj_create_decompress(CODEC_JP2);
+                                l_codec = opj_create_decompress(OPJ_CODEC_JP2);
                                 break;
                         }
                 default:

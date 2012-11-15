@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
 {
   const char * v = opj_version();
 
-  const OPJ_COLOR_SPACE color_space = CLRSPC_GRAY;
+  const OPJ_COLOR_SPACE color_space = OPJ_CLRSPC_GRAY;
   int numcomps = 1;
   int i;
   int image_width = 256;
@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
   opj_image_cmptparm_t cmptparm;
   opj_image_t *image;
   opj_codec_t* l_codec = 00;
-  opj_bool bSuccess;
+  OPJ_BOOL bSuccess;
   FILE *f;
 	opj_stream_t *l_stream = 00;
   (void)argc;
@@ -106,7 +106,7 @@ int main(int argc, char *argv[])
     opj_set_warning_handler(l_codec, warning_callback,00);
     opj_set_error_handler(l_codec, error_callback,00);
 
-  l_codec = opj_create_compress(CODEC_J2K);
+  l_codec = opj_create_compress(OPJ_CODEC_J2K);
   opj_set_info_handler(l_codec, info_callback,00);
   opj_set_warning_handler(l_codec, warning_callback,00);
   opj_set_error_handler(l_codec, error_callback,00);
@@ -141,7 +141,7 @@ int main(int argc, char *argv[])
 	opj_dparameters_t dparameters;
   assert( fsrc );
 
-  d_codec = opj_create_decompress(CODEC_J2K);
+  d_codec = opj_create_decompress(OPJ_CODEC_J2K);
   opj_set_info_handler(d_codec, info_callback,00);
   opj_set_warning_handler(d_codec, warning_callback,00);
   opj_set_error_handler(d_codec, error_callback,00);

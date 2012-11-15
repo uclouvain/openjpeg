@@ -149,10 +149,10 @@ static void encode_help_display(void) {
 	fprintf(stdout,"\n");
 	fprintf(stdout,"-h           : display the help information \n ");
 	fprintf(stdout,"\n");
-	fprintf(stdout,"-cinema2K    : Digital Cinema 2K profile compliant codestream for 2K resolution.(-cinema2k 24 or 48) \n");
+	fprintf(stdout,"-OPJ_CINEMA2K    : Digital Cinema 2K profile compliant codestream for 2K resolution.(-OPJ_CINEMA2K 24 or 48) \n");
   fprintf(stdout,"	  Need to specify the frames per second for a 2K resolution. Only 24 or 48 fps is allowed\n");
 	fprintf(stdout,"\n");
-	fprintf(stdout,"-cinema4K    : Digital Cinema 4K profile compliant codestream for 4K resolution \n");
+	fprintf(stdout,"-OPJ_CINEMA4K    : Digital Cinema 4K profile compliant codestream for 4K resolution \n");
 	fprintf(stdout,"	  Frames per second not required. Default value is 24fps\n");
 	fprintf(stdout,"\n");
 	fprintf(stdout,"-r           : different compression ratios for successive layers (-r 20,10,5)\n ");
@@ -327,22 +327,22 @@ static void encode_help_display(void) {
 
 static OPJ_PROG_ORDER give_progression(const char progression[4]) {
 	if(strncmp(progression, "LRCP", 4) == 0) {
-		return LRCP;
+		return OPJ_LRCP;
 	}
 	if(strncmp(progression, "RLCP", 4) == 0) {
-		return RLCP;
+		return OPJ_RLCP;
 	}
 	if(strncmp(progression, "RPCL", 4) == 0) {
-		return RPCL;
+		return OPJ_RPCL;
 	}
 	if(strncmp(progression, "PCRL", 4) == 0) {
-		return PCRL;
+		return OPJ_PCRL;
 	}
 	if(strncmp(progression, "CPRL", 4) == 0) {
-		return CPRL;
+		return OPJ_CPRL;
 	}
 
-	return PROG_UNKNOWN;
+	return OPJ_PROG_UNKNOWN;
 }
 
 static unsigned int get_num_images(char *imgdirpath){
@@ -451,14 +451,14 @@ static int initialise_4K_poc(opj_poc_t *POC, int numres){
 	POC[0].layno1  = 1;
 	POC[0].resno1  = numres-1;
 	POC[0].compno1 = 3;
-	POC[0].prg1 = CPRL;
+	POC[0].prg1 = OPJ_CPRL;
 	POC[1].tile  = 1;
 	POC[1].resno0  = numres-1;
 	POC[1].compno0 = 0;
 	POC[1].layno1  = 1;
 	POC[1].resno1  = numres;
 	POC[1].compno1 = 3;
-	POC[1].prg1 = CPRL;
+	POC[1].prg1 = OPJ_CPRL;
 	return 2;
 }
 
@@ -483,7 +483,7 @@ static void cinema_parameters(opj_cparameters_t *parameters){
 	parameters->csty |= 0x01;
 
 	/*The progression order shall be CPRL*/
-	parameters->prog_order = CPRL;
+	parameters->prog_order = OPJ_CPRL;
 
 	/* No ROI */
 	parameters->roi_compno = -1;
@@ -500,8 +500,8 @@ static void cinema_setup_encoder(opj_cparameters_t *parameters,opj_image_t *imag
 	float temp_rate;
 
 	switch (parameters->cp_cinema){
-	case CINEMA2K_24:
-	case CINEMA2K_48:
+	case OPJ_CINEMA2K_24:
+	case OPJ_CINEMA2K_48:
 		if(parameters->numresolution > 6){
 			parameters->numresolution = 6;
 		}
@@ -509,11 +509,11 @@ static void cinema_setup_encoder(opj_cparameters_t *parameters,opj_image_t *imag
 			fprintf(stdout,"Image coordinates %d x %d is not 2K compliant.\nJPEG Digital Cinema Profile-3 "
 				"(2K profile) compliance requires that at least one of coordinates match 2048 x 1080\n",
 				image->comps[0].w,image->comps[0].h);
-			parameters->cp_rsiz = STD_RSIZ;
+			parameters->cp_rsiz = OPJ_STD_RSIZ;
 		}
 	break;
 
-	case CINEMA4K_24:
+	case OPJ_CINEMA4K_24:
 		if(parameters->numresolution < 1){
 				parameters->numresolution = 1;
 			}else if(parameters->numresolution > 7){
@@ -523,7 +523,7 @@ static void cinema_setup_encoder(opj_cparameters_t *parameters,opj_image_t *imag
 			fprintf(stdout,"Image coordinates %d x %d is not 4K compliant.\nJPEG Digital Cinema Profile-4"
 				"(4K profile) compliance requires that at least one of coordinates match 4096 x 2160\n",
 				image->comps[0].w,image->comps[0].h);
-			parameters->cp_rsiz = STD_RSIZ;
+			parameters->cp_rsiz = OPJ_STD_RSIZ;
 		}
 		parameters->numpocs = initialise_4K_poc(parameters->POC,parameters->numresolution);
 		break;
@@ -532,8 +532,8 @@ static void cinema_setup_encoder(opj_cparameters_t *parameters,opj_image_t *imag
 	}
 
 	switch (parameters->cp_cinema){
-		case CINEMA2K_24:
-		case CINEMA4K_24:
+		case OPJ_CINEMA2K_24:
+		case OPJ_CINEMA4K_24:
 			for(i=0 ; i<parameters->tcp_numlayers ; i++){
 				temp_rate = 0 ;
 				if (img_fol->rates[i]== 0){
@@ -553,7 +553,7 @@ static void cinema_setup_encoder(opj_cparameters_t *parameters,opj_image_t *imag
 			parameters->max_comp_size = COMP_24_CS;
 			break;
 
-		case CINEMA2K_48:
+		case OPJ_CINEMA2K_48:
 			for(i=0 ; i<parameters->tcp_numlayers ; i++){
 				temp_rate = 0 ;
 				if (img_fol->rates[i]== 0){
@@ -584,8 +584,8 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
 													img_fol_t *img_fol, raw_cparameters_t *raw_cp, char *indexfilename) {
 	int i, j, totlen, c;
 	opj_option_t long_option[]={
-		{"cinema2K",REQ_ARG, NULL ,'w'},
-		{"cinema4K",NO_ARG, NULL ,'y'},
+		{"OPJ_CINEMA2K",REQ_ARG, NULL ,'w'},
+		{"OPJ_CINEMA4K",NO_ARG, NULL ,'y'},
 		{"ImgDir",REQ_ARG, NULL ,'z'},
 		{"TP",REQ_ARG, NULL ,'u'},
 		{"SOP",NO_ARG, NULL ,'S'},
@@ -1036,15 +1036,15 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
 				int fps=0;
 				sscanf(opj_optarg,"%d",&fps);
 				if(fps == 24){
-					parameters->cp_cinema = CINEMA2K_24;
+					parameters->cp_cinema = OPJ_CINEMA2K_24;
 				}else if(fps == 48 ){
-					parameters->cp_cinema = CINEMA2K_48;
+					parameters->cp_cinema = OPJ_CINEMA2K_48;
 				}else {
 					fprintf(stderr,"Incorrect value!! must be 24 or 48\n");
 					return 1;
 				}
 				fprintf(stdout,"CINEMA 2K compliant codestream\n");
-				parameters->cp_rsiz = CINEMA2K;
+				parameters->cp_rsiz = OPJ_CINEMA2K;
 
 			}
 			break;
@@ -1053,9 +1053,9 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
 
 			case 'y':			/* Digital Cinema 4K profile compliance*/
 			{
-				parameters->cp_cinema = CINEMA4K_24;
+				parameters->cp_cinema = OPJ_CINEMA4K_24;
 				fprintf(stdout,"CINEMA 4K compliant codestream\n");
-				parameters->cp_rsiz = CINEMA4K;
+				parameters->cp_rsiz = OPJ_CINEMA4K;
 			}
 			break;
 
@@ -1466,7 +1466,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
 	/* check for possible errors */
 	if (parameters->cp_cinema){
 		if(parameters->tcp_numlayers > 1){
-			parameters->cp_rsiz = STD_RSIZ;
+			parameters->cp_rsiz = OPJ_STD_RSIZ;
      	fprintf(stdout,"Warning: DC profiles do not allow more than one quality layer. The codestream created will not be compliant with the DC profile\n");
 		}
 	}
@@ -1601,8 +1601,8 @@ int main(int argc, char **argv) {
 	img_fol_t img_fol;
 	dircnt_t *dirptr = NULL;
 
-	opj_bool bSuccess;
-  opj_bool bUseTiles = OPJ_FALSE; /* OPJ_TRUE */
+	OPJ_BOOL bSuccess;
+  OPJ_BOOL bUseTiles = OPJ_FALSE; /* OPJ_TRUE */
 	OPJ_UINT32 l_nb_tiles = 4;
 
 	/* set encoding parameters to default values */
@@ -1793,13 +1793,13 @@ int main(int argc, char **argv) {
 			case J2K_CFMT:	/* JPEG-2000 codestream */
 			{
 				/* Get a decoder handle */
-				l_codec = opj_create_compress(CODEC_J2K);
+				l_codec = opj_create_compress(OPJ_CODEC_J2K);
 				break;
 			}
 			case JP2_CFMT:	/* JPEG 2000 compressed image data */
 			{
 				/* Get a decoder handle */
-				l_codec = opj_create_compress(CODEC_JP2);
+				l_codec = opj_create_compress(OPJ_CODEC_JP2);
 				break;
 			}
 			default:

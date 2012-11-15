@@ -143,7 +143,7 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 				cstr_info->tile[tileno].tp[tilepartno].tp_end_pos
 				);
 
-		if (cstr_info->prog == LRCP) {	/* LRCP */
+		if (cstr_info->prog == OPJ_LRCP) {	/* LRCP */
 			fprintf(stream, "LRCP\npack_nb tileno layno resno compno precno start_pos end_ph_pos end_pos");
 			if (disto_on)
 				fprintf(stream, " disto");
@@ -174,7 +174,7 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 			}
 		} /* LRCP */
 
-		else if (cstr_info->prog == RLCP) {	/* RLCP */			
+		else if (cstr_info->prog == OPJ_RLCP) {	/* RLCP */			
 			fprintf(stream, "RLCP\npack_nb tileno resno layno compno precno start_pos end_ph_pos end_pos\n");
 			if (disto_on)
 				fprintf(stream, " disto");
@@ -205,7 +205,7 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 			}
 		} /* RLCP */
 
-		else if (cstr_info->prog == RPCL) {	/* RPCL */
+		else if (cstr_info->prog == OPJ_RPCL) {	/* RPCL */
 
 			fprintf(stream, "RPCL\npack_nb tileno resno precno compno layno start_pos end_ph_pos end_pos"); 
 			if (disto_on)
@@ -254,7 +254,7 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 			} /* resno */
 		} /* RPCL */
 
-		else if (cstr_info->prog == PCRL) {	/* PCRL */
+		else if (cstr_info->prog == OPJ_PCRL) {	/* PCRL */
 			/* I suppose components have same XRsiz, YRsiz */
 			int x0 = cstr_info->tile_Ox + tileno - (int)floor( (float)tileno/(float)cstr_info->tw ) * cstr_info->tw * cstr_info->tile_x;
 			int y0 = cstr_info->tile_Ox + (int)floor( (float)tileno/(float)cstr_info->tw ) * cstr_info->tile_y;

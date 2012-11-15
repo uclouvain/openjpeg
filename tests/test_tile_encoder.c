@@ -175,7 +175,7 @@ int main (int argc, char *argv[])
 	l_param.irreversible = irreversible;
 
 	/* do not bother with mct, the rsiz is set when calling opj_set_MCT*/
-	/*l_param.cp_rsiz = STD_RSIZ;*/
+	/*l_param.cp_rsiz = OPJ_STD_RSIZ;*/
 
 	/* no cinema */
 	/*l_param.cp_cinema = 0;*/
@@ -203,8 +203,8 @@ int main (int argc, char *argv[])
 	l_param.numresolution = 6;
 
 	/** progression order to use*/
-	/** LRCP, RLCP, RPCL, PCRL, CPRL */
-	l_param.prog_order = LRCP;
+	/** OPJ_LRCP, OPJ_RLCP, OPJ_RPCL, PCRL, CPRL */
+	l_param.prog_order = OPJ_LRCP;
 
 	/** no "region" of interest, more precisally component */
 	/* l_param.roi_compno = -1; */
@@ -244,11 +244,11 @@ int main (int argc, char *argv[])
   len = strlen( output_file );
   if( strcmp( output_file + len - 4, ".jp2" ) == 0 )
     {
-    l_codec = opj_create_compress(CODEC_JP2);
+    l_codec = opj_create_compress(OPJ_CODEC_JP2);
     }
   else
     {
-    l_codec = opj_create_compress(CODEC_J2K);
+    l_codec = opj_create_compress(OPJ_CODEC_J2K);
     }
 	if (!l_codec) {
 		return 1;
@@ -259,7 +259,7 @@ int main (int argc, char *argv[])
 	opj_set_warning_handler(l_codec, warning_callback,00);
 	opj_set_error_handler(l_codec, error_callback,00);
 
-	l_image = opj_image_tile_create(num_comps,l_params,CLRSPC_SRGB);
+	l_image = opj_image_tile_create(num_comps,l_params,OPJ_CLRSPC_SRGB);
 	if (! l_image) {
 		opj_destroy_codec(l_codec);
 		return 1;
@@ -269,7 +269,7 @@ int main (int argc, char *argv[])
 	l_image->y0 = 0;
 	l_image->x1 = image_width;
 	l_image->y1 = image_height;
-	l_image->color_space = CLRSPC_SRGB;
+	l_image->color_space = OPJ_CLRSPC_SRGB;
 
 	if (! opj_setup_encoder(l_codec,&l_param,l_image)) {
 		fprintf(stderr, "ERROR -> test_tile_encoder: failed to setup the codec!\n");

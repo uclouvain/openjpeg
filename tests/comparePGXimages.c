@@ -446,7 +446,7 @@ opj_image_t* readImageFromFilePGX(char* filename, int nbFilenamePGX, char *separ
     free(filenameComponentPGX);
     }
 
-  image = opj_image_create(nbFilenamePGX, param_image_read, CLRSPC_UNSPECIFIED);
+  image = opj_image_create(nbFilenamePGX, param_image_read, OPJ_CLRSPC_UNSPECIFIED);
   for (it_file = 0; it_file < nbFilenamePGX; it_file++)
     {
     /* Copy data into output image and free memory*/
@@ -480,7 +480,7 @@ int imageToPNG(const opj_image_t* image, const char* filename, int num_comp_sele
   param_image_write.prec = image->comps[num_comp_select].prec;
   param_image_write.sgnd = image->comps[num_comp_select].sgnd;
 
-  image_write = opj_image_create(1, &param_image_write, CLRSPC_GRAY);
+  image_write = opj_image_create(1, &param_image_write, OPJ_CLRSPC_GRAY);
   memcpy(image_write->comps->data, image->comps[num_comp_select].data, param_image_write.h * param_image_write.w * sizeof(int));
 
   imagetopng(image_write, filename);
@@ -678,7 +678,7 @@ int main(int argc, char **argv)
      return EXIT_FAILURE;
      }
 
-   imageDiff = opj_image_create(imageBase->numcomps, param_image_diff, CLRSPC_UNSPECIFIED);
+   imageDiff = opj_image_create(imageBase->numcomps, param_image_diff, OPJ_CLRSPC_UNSPECIFIED);
    /* Free memory*/
    free(param_image_diff);
 

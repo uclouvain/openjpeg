@@ -217,7 +217,7 @@ void color_sycc_to_rgb(opj_image_t *img)
 {
 	if(img->numcomps < 3) 
    {
-	img->color_space = CLRSPC_GRAY;
+	img->color_space = OPJ_CLRSPC_GRAY;
 	return;
    }
 
@@ -256,7 +256,7 @@ void color_sycc_to_rgb(opj_image_t *img)
 	 __FILE__,__LINE__);
 	return;
   }
-	img->color_space = CLRSPC_SRGB;
+	img->color_space = OPJ_CLRSPC_SRGB;
 
 }/* color_sycc_to_rgb() */
 
@@ -306,7 +306,7 @@ void color_apply_icc_profile(opj_image_t *image)
 	in_type = TYPE_RGB_16;
 	out_type = TYPE_RGB_16;
 	out_prof = cmsCreate_sRGBProfile();
-	image->color_space = CLRSPC_SRGB;
+	image->color_space = OPJ_CLRSPC_SRGB;
    }
 	else
 	if(out_space == cmsSigGrayData) /* enumCS 17 */
@@ -314,7 +314,7 @@ void color_apply_icc_profile(opj_image_t *image)
 	in_type = TYPE_GRAY_8;
 	out_type = TYPE_RGB_8;
 	out_prof = cmsCreate_sRGBProfile();
-	image->color_space = CLRSPC_SRGB;
+	image->color_space = OPJ_CLRSPC_SRGB;
    }
 	else
 	if(out_space == cmsSigYCbCrData) /* enumCS 18 */
@@ -322,7 +322,7 @@ void color_apply_icc_profile(opj_image_t *image)
 	in_type = TYPE_YCbCr_16;
 	out_type = TYPE_RGB_16;
 	out_prof = cmsCreate_sRGBProfile();
-	image->color_space = CLRSPC_SRGB;
+	image->color_space = OPJ_CLRSPC_SRGB;
    }
 	else
    {

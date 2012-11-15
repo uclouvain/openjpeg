@@ -414,7 +414,7 @@ int main(int argc, char *argv[])
 	dircnt_t *dirptr = NULL;
 
 #ifdef MSD
-	opj_bool l_go_on = OPJ_TRUE;
+	OPJ_BOOL l_go_on = OPJ_TRUE;
 	OPJ_UINT32 l_max_data_size = 1000;
 	OPJ_BYTE * l_data = (OPJ_BYTE *) malloc(1000);
 #endif
@@ -505,19 +505,19 @@ int main(int argc, char *argv[])
 			case J2K_CFMT:	/* JPEG-2000 codestream */
 			{
 				/* Get a decoder handle */
-				l_codec = opj_create_decompress(CODEC_J2K);
+				l_codec = opj_create_decompress(OPJ_CODEC_J2K);
 				break;
 			}
 			case JP2_CFMT:	/* JPEG 2000 compressed image data */
 			{
 				/* Get a decoder handle */
-				l_codec = opj_create_decompress(CODEC_JP2);
+				l_codec = opj_create_decompress(OPJ_CODEC_JP2);
 				break;
 			}
 			case JPT_CFMT:	/* JPEG 2000, JPIP */
 			{
 				/* Get a decoder handle */
-				l_codec = opj_create_decompress(CODEC_JPT);
+				l_codec = opj_create_decompress(OPJ_CODEC_JPT);
 				break;
 			}
 			default:
