@@ -45,6 +45,14 @@
 #include <lcms.h>
 #endif
 
+#ifdef CLRSPC_GRAY
+#define OPJ_CLRSPC_GRAY CLRSPC_GRAY
+#endif
+
+#ifdef CLRSPC_SRGB
+#define OPJ_CLRSPC_SRGB CLRSPC_SRGB
+#endif
+
 /*--------------------------------------------------------
 Matrix for sYCC, Amendment 1 to IEC 61966-2-1
 
