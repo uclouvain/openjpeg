@@ -27,6 +27,7 @@ if(WIN32)
   endif()
 endif()
 
+add_definitions(-DUSE_LEGACY)
 foreach(exe decompress compress)
   set(jpwl_exe opj_jpwl_${exe})
   set(jp2_exe opj_${exe})
