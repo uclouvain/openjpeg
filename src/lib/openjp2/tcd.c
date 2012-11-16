@@ -609,7 +609,7 @@ void opj_tcd_destroy(opj_tcd_t *tcd) {
 }
 
 /* ----------------------------------------------------------------------- */
-#define MACRO_TCD_ALLOCATE(FUNCTION,TYPE,FRACTION,ELEMENT,FUNCTION_ELEMENT)                                                                                                                                       \
+#define OPJ_MACRO_TCD_ALLOCATE(FUNCTION,TYPE,FRACTION,ELEMENT,FUNCTION_ELEMENT)                                                                                                                                       \
 OPJ_BOOL FUNCTION (     opj_tcd_t *p_tcd,                        \
                         OPJ_UINT32 p_tile_no                        \
                         )                                           \
@@ -989,10 +989,10 @@ OPJ_BOOL FUNCTION (     opj_tcd_t *p_tcd,                        \
 }                                                                                                                                                                                                                 \
 
 
-MACRO_TCD_ALLOCATE(opj_tcd_init_encode_tile, opj_tcd_cblk_enc_t, 1.f, enc, opj_tcd_code_block_enc_allocate)
-MACRO_TCD_ALLOCATE(opj_tcd_init_decode_tile, opj_tcd_cblk_dec_t, 0.5f, dec, opj_tcd_code_block_dec_allocate)
+OPJ_MACRO_TCD_ALLOCATE(opj_tcd_init_encode_tile, opj_tcd_cblk_enc_t, 1.f, enc, opj_tcd_code_block_enc_allocate)
+OPJ_MACRO_TCD_ALLOCATE(opj_tcd_init_decode_tile, opj_tcd_cblk_dec_t, 0.5f, dec, opj_tcd_code_block_dec_allocate)
 
-#undef MACRO_TCD_ALLOCATE
+#undef OPJ_MACRO_TCD_ALLOCATE
 
 /**
  * Allocates memory for an encoding code block.
@@ -1614,10 +1614,10 @@ OPJ_BOOL opj_tcd_mct_decode ( opj_tcd_t *p_tcd )
                                                         l_samples);
                         }
                         else {
-                                opj_mct_decode_real(        (float*)l_tile->comps[0].data,
-                                                                        (float*)l_tile->comps[1].data,
-                                                                        (float*)l_tile->comps[2].data,
-                                                                        l_samples);
+                            opj_mct_decode_real((OPJ_FLOAT32*)l_tile->comps[0].data,
+                                                (OPJ_FLOAT32*)l_tile->comps[1].data,
+                                                (OPJ_FLOAT32*)l_tile->comps[2].data,
+                                                l_samples);
                         }
                 }
         }

@@ -157,9 +157,9 @@ typedef enum T2_MODE {
  */
 typedef struct opj_stepsize {
 	/** exponent */
-	int expn;
+	OPJ_INT32 expn;
 	/** mantissa */
-	int mant;
+	OPJ_INT32 mant;
 } opj_stepsize_t;
 
 /**
@@ -803,7 +803,7 @@ OPJ_BOOL opj_j2k_write_tile (	opj_j2k_t * p_j2k,
 /**
  * Encodes an image into a JPEG-2000 codestream
  */
-OPJ_BOOL opj_j2k_encode_v2(	opj_j2k_t * p_j2k,
+OPJ_BOOL opj_j2k_encode(	opj_j2k_t * p_j2k,
 			    			opj_stream_private_t *cio,
 				    		opj_event_mgr_t * p_manager );
 

@@ -82,7 +82,7 @@ typedef struct opj_event_mgr
  *
  * @return Returns true if successful, returns false otherwise
  */
-OPJ_BOOL opj_event_msg(opj_event_mgr_t* event_mgr, int event_type, const char *fmt, ...);
+OPJ_BOOL opj_event_msg(opj_event_mgr_t* event_mgr, OPJ_INT32 event_type, const char *fmt, ...);
 /* ----------------------------------------------------------------------- */
 
 /**

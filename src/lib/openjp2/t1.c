@@ -1323,11 +1323,11 @@ OPJ_BOOL opj_t1_decode_cblks(   opj_t1_t* t1,
 							}
 						}
 					} else {		/* if (tccp->qmfbid == 0) */
-                        float* restrict tiledp = (float*) &tilec->data[(y * tile_w) + x];
+                        OPJ_FLOAT32* restrict tiledp = (OPJ_FLOAT32*) &tilec->data[(y * tile_w) + x];
 						for (j = 0; j < cblk_h; ++j) {
-                            float* restrict tiledp2 = tiledp;
+                            OPJ_FLOAT32* restrict tiledp2 = tiledp;
 							for (i = 0; i < cblk_w; ++i) {
-                                float tmp = *datap * band->stepsize;
+                                OPJ_FLOAT32 tmp = *datap * band->stepsize;
                                 *tiledp2 = tmp;
                                 datap++;
                                 tiledp2++;

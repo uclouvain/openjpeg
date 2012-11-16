@@ -4484,7 +4484,7 @@ OPJ_BOOL opj_j2k_update_rates(  opj_j2k_t *p_j2k,
 
                         /* Modification of the RATE >> */
                         if (*l_rates) {
-                                *l_rates =              (( (float) (l_size_pixel * (l_x1 - l_x0) * (l_y1 - l_y0)))
+                                *l_rates =              (( (OPJ_FLOAT32) (l_size_pixel * (l_x1 - l_x0) * (l_y1 - l_y0)))
                                                                 /
                                                                 ((*l_rates) * l_bits_empty)
                                                                 )
@@ -5997,9 +5997,9 @@ void opj_j2k_setup_encoder(     opj_j2k_t *p_j2k,
                                                         }
 
                                                 } else {
-                                                        int res_spec = parameters->res_spec;
-                                                        int size_prcw = 0;
-                                                        int size_prch = 0;
+                                                        OPJ_INT32 res_spec = parameters->res_spec;
+                                                        OPJ_INT32 size_prcw = 0;
+                                                        OPJ_INT32 size_prch = 0;
 
                                                         assert(res_spec>0); /* issue 189 */
                                                         size_prcw = parameters->prcw_init[res_spec - 1] >> (p - (res_spec - 1));
@@ -6046,7 +6046,7 @@ static OPJ_BOOL opj_j2k_add_mhmarker(opj_codestream_index_t *cstr_index, OPJ_UIN
         /* expand the list? */
         if ((cstr_index->marknum + 1) > cstr_index->maxmarknum) {
                 opj_marker_info_t *new_marker;
-                cstr_index->maxmarknum = 100 + (int) ((float) cstr_index->maxmarknum * 1.0F);
+                cstr_index->maxmarknum = 100 + (OPJ_INT32) ((OPJ_FLOAT32) cstr_index->maxmarknum * 1.0F);
                 new_marker = (opj_marker_info_t *) opj_realloc(cstr_index->marker, cstr_index->maxmarknum *sizeof(opj_marker_info_t));
                 if (! new_marker) {
                         opj_free(cstr_index->marker);
@@ -6075,7 +6075,7 @@ static OPJ_BOOL opj_j2k_add_tlmarker(OPJ_UINT32 tileno, opj_codestream_index_t *
         /* expand the list? */
         if ((cstr_index->tile_index[tileno].marknum + 1) > cstr_index->tile_index[tileno].maxmarknum) {
                 opj_marker_info_t *new_marker;
-                cstr_index->tile_index[tileno].maxmarknum = 100 + (int) ((float) cstr_index->tile_index[tileno].maxmarknum * 1.0F);
+                cstr_index->tile_index[tileno].maxmarknum = 100 + (OPJ_INT32) ((OPJ_FLOAT32) cstr_index->tile_index[tileno].maxmarknum * 1.0F);
                 new_marker = (opj_marker_info_t *) opj_realloc(
                                 cstr_index->tile_index[tileno].marker,
                                 cstr_index->tile_index[tileno].maxmarknum *sizeof(opj_marker_info_t));
@@ -9022,9 +9022,9 @@ OPJ_BOOL opj_j2k_set_decoded_resolution_factor(opj_j2k_t *p_j2k,
         return OPJ_FALSE;
 }
 
-OPJ_BOOL opj_j2k_encode_v2(     opj_j2k_t * p_j2k,
-                                                opj_stream_private_t *p_stream,
-                                                opj_event_mgr_t * p_manager )
+OPJ_BOOL opj_j2k_encode(opj_j2k_t * p_j2k,
+                        opj_stream_private_t *p_stream,
+                        opj_event_mgr_t * p_manager )
 {
         OPJ_UINT32 i;
         OPJ_UINT32 l_nb_tiles;

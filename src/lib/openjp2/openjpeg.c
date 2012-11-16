@@ -667,7 +667,7 @@ opj_codec_t* OPJ_CALLCONV opj_create_compress(OPJ_CODEC_FORMAT p_format)
 		case OPJ_CODEC_J2K:
 			l_codec->m_codec_data.m_compression.opj_encode = (OPJ_BOOL (*) (void *,
 																			struct opj_stream_private *,
-																			struct opj_event_mgr * )) opj_j2k_encode_v2;
+																			struct opj_event_mgr * )) opj_j2k_encode;
 
 			l_codec->m_codec_data.m_compression.opj_end_compress = (OPJ_BOOL (*) (	void *,
 																					struct opj_stream_private *,
@@ -907,7 +907,7 @@ OPJ_BOOL OPJ_CALLCONV opj_set_MCT(opj_cparameters_t *parameters,
 	OPJ_UINT32 l_mct_total_size = l_matrix_size + l_dc_shift_size;
 
 	/* add MCT capability */
-	int rsiz = (int)parameters->cp_rsiz | (int)OPJ_MCT;
+	OPJ_INT32 rsiz = (OPJ_INT32)parameters->cp_rsiz | (OPJ_INT32)OPJ_MCT;
 	parameters->cp_rsiz = (OPJ_RSIZ_CAPABILITIES)rsiz;
 	parameters->irreversible = 1;
 

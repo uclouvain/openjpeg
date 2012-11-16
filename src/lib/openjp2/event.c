@@ -78,8 +78,8 @@ static void opj_default_callback (const char *msg, void *client_data)
 
 
 /* ----------------------------------------------------------------------- */
-OPJ_BOOL opj_event_msg(opj_event_mgr_t* p_event_mgr, int event_type, const char *fmt, ...) {
-#define MSG_SIZE 512 /* 512 bytes should be more than enough for a short message */
+OPJ_BOOL opj_event_msg(opj_event_mgr_t* p_event_mgr, OPJ_INT32 event_type, const char *fmt, ...) {
+#define OPJ_MSG_SIZE 512 /* 512 bytes should be more than enough for a short message */
 	opj_msg_callback msg_handler = 00;
 	void * l_data = 00;
 
@@ -110,12 +110,12 @@ OPJ_BOOL opj_event_msg(opj_event_mgr_t* p_event_mgr, int event_type, const char 
 	if ((fmt != 00) && (p_event_mgr != 00)) {
 		va_list arg;
 		size_t str_length/*, i, j*/; /* UniPG */
-		char message[MSG_SIZE];
-		memset(message, 0, MSG_SIZE);
+		char message[OPJ_MSG_SIZE];
+		memset(message, 0, OPJ_MSG_SIZE);
 		/* initialize the optional parameter list */
 		va_start(arg, fmt);
 		/* check the length of the format string */
-		str_length = (strlen(fmt) > MSG_SIZE) ? MSG_SIZE : strlen(fmt);
+		str_length = (strlen(fmt) > OPJ_MSG_SIZE) ? OPJ_MSG_SIZE : strlen(fmt);
         (void)str_length;
 		/* parse the format string and put the result in 'message' */
 		vsprintf(message, fmt, arg); /* UniPG */

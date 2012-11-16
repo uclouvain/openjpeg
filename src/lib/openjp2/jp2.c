@@ -36,7 +36,7 @@
 /** @defgroup JP2 JP2 - JPEG-2000 file format reader/writer */
 /*@{*/
 
-#define BOX_SIZE	1024
+#define OPJ_BOX_SIZE	1024
 
 /** @name Local static functions */
 /*@{*/
@@ -1497,7 +1497,7 @@ OPJ_BOOL opj_jp2_encode(opj_jp2_t *jp2,
 						opj_stream_private_t *stream,
 						opj_event_mgr_t * p_manager)
 {
-	return opj_j2k_encode_v2(jp2->j2k, stream, p_manager);
+	return opj_j2k_encode(jp2->j2k, stream, p_manager);
 }
 
 OPJ_BOOL opj_jp2_end_decompress(opj_jp2_t *jp2,
@@ -1632,7 +1632,7 @@ OPJ_BOOL opj_jp2_read_header_procedure(  opj_jp2_t *jp2,
 	opj_jp2_box_t box;
 	OPJ_UINT32 l_nb_bytes_read;
 	const opj_jp2_header_handler_t * l_current_handler;
-	OPJ_UINT32 l_last_data_size = BOX_SIZE;
+	OPJ_UINT32 l_last_data_size = OPJ_BOX_SIZE;
 	OPJ_UINT32 l_current_data_size;
 	OPJ_BYTE * l_current_data = 00;
 
