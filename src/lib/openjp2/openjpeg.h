@@ -384,15 +384,7 @@ typedef struct opj_cparameters {
 	OPJ_BOOL jpip_on;
 	/** Naive implementation of MCT restricted to a single reversible array based encoding without offset concerning all the components. */
 	void * mct_data;
-    /* extended capacity (not used now, reserved for future development) */
-    opj_extended_cparameters_t extended_parameters;
-} opj_cparameters_t;
-
-/**
- * Extended cparameters (not used now, reserved for future development)
- * */
-typedef void* opj_extended_cparameters_t;
-     
+} opj_cparameters_t;  
 
 #define OPJ_DPARAMETERS_IGNORE_PCLR_CMAP_CDEF_FLAG	0x0001
 
@@ -459,15 +451,7 @@ typedef struct opj_dparameters {
 
 	unsigned int flags;
 
-    /* extended capacity (not used now, reserved for future development)*/
-    opj_extended_dparameters_t extended_parameters;
 } opj_dparameters_t;
-
-
-/**
- * Extended dparameters (not used now, reserved for future development)
- * */
-typedef void* opj_extended_dparameters_t;
 
 
 /**
