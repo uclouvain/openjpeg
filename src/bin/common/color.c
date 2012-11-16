@@ -45,11 +45,8 @@
 #include <lcms.h>
 #endif
 
-#ifdef CLRSPC_GRAY
+#ifdef USE_LEGACY
 #define OPJ_CLRSPC_GRAY CLRSPC_GRAY
-#endif
-
-#ifdef CLRSPC_SRGB
 #define OPJ_CLRSPC_SRGB CLRSPC_SRGB
 #endif
 

@@ -24,6 +24,7 @@ foreach(exe
   opj_mj2_decompress
   opj_mj2_compress
 )
+  add_definitions(-DUSE_LEGACY)
   add_executable(${exe}
     ${exe}.c
     ${common_SRCS}
