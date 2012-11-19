@@ -1,0 +1,1666 @@
+2012-11-19  Mathieu Malaterre
+
+	* [r2226] .[CPY]: [2.0] Create branch for 2.0
+
+2012-11-19  Mickaël Savinaud
+
+	* [r2225] [trunk] fix issue 191 (thanks Even)
+	* [r2224] [trunk]remove not used structures
+
+2012-11-16  Mickaël Savinaud
+
+	* [r2223] [trunk] remove the extended struct it is a bad idea
+	* [r2222] [trunk] add extended capacities for future development
+
+2012-11-16  Mathieu Malaterre
+
+	* [r2221] [trunk] rename USE_LEGACY into OPJ_USE_LEGACY for
+	  consistency with other #define
+	* [r2220] [trunk] Attempt to fix compilation error with mj2
+	* [r2219] [trunk] Attempt to fix compilation error with mj2
+
+2012-11-16  Mickaël Savinaud
+
+	* [r2218] [trunk] solve the problem with new opj_ symbols in
+	  color.c
+	* [r2217] [trunk] add opj_ prefix to some internal define and use
+	  the new opj type instead of int and float in some files
+
+2012-11-15  Mickaël Savinaud
+
+	* [r2216] [trunk]rename the cinema option to old one
+	* [r2215] [trunk] update some applications with new OPJ_BOOL type
+	* [r2214] [trunk] use OPJ_INT32 instead of int in t2.c
+	* [r2213] [trunk] rename function with the new opj_ prefix
+	* [r2212] [trunk] solve a potential bug when we test the realloc
+	* [r2211] [trunk] add an assert to spot a problem. update issue 189
+	* [r2210] [trunk]update the copyright, the authors and thanks to
+	  respect the license
+	* [r2209] [trunk] propagate the new OPJ_ symbol and type to
+	  openjpip
+	* [r2208] [trunk]rename decompress options with the goog name
+	* [r2207] runk] fix the documentation of the API
+	* [r2206] [trunk] avoid memory leak in j2k_random_tile_access.c
+	* [r2205] [trunk]extend last commits to apps
+	* [r2204] [trunk] move opj_bool to OPJ_BOOL to follow the other
+	  type
+	* [r2203] [trunk]remove OPJ_LIMIT_DECODING struct which is not
+	  useful for v2 API
+	* [r2202] [trunk] rename public symbols with OPJ_ prefix (enum
+	  part)
+	* [r2201] [trunk] rename public symbols with OPJ_ prefix
+
+2012-11-13  Mickaël Savinaud
+
+	* [r2200] [trunk] remove warnings raised by flags -Wall -Wextra
+	  -pedantic
+	* [r2199] [trunk] remove warnings raised by vs11-beta analyzer
+	* [r2198] [trunk] remove warnings raised by flags -Wall -Wextra
+	  -pedantic
+	* [r2197] [trunk] remove warnings raised by flags -Wall -Wextra
+	  -pedantic and vs9 analyzer
+	* [r2196] [trunk] remove warnings raised by flags -Wall -Wextra
+	  -pedantic
+	* [r2195] [trunk] manage the case where the SOT marker is alone,
+	  PSot=12 (case of PHR data).
+	  Fixes issue 162
+	* [r2194] [trunk] avoid memory leak in opj_t2_decode_packets
+
+2012-11-12  Mickaël Savinaud
+
+	* [r2193] [trunk] add some new tests related to new data; indicate
+	  that some tests should failed because data are wrong
+
+2012-11-08  Mathieu Malaterre
+
+	* [r2190] [trunk] Add more testing to the tile access/random
+	  
+	  Update issue 186
+	* [r2189] [trunk] Fix what looks like a copy/paste error
+	  
+	  Update issue 186
+	* [r2188] [trunk] Add more test in j2k_random_tile_access
+	  
+	  Update issue 186
+	* [r2187] [trunk] Add new tests (j2k_random_tile_access)
+
+2012-10-30  Mickaël Savinaud
+
+	* [r2186] [trunk] remove old structure from testempty
+
+2012-10-29  Mickaël Savinaud
+
+	* [r2185] [trunk] add documentation
+	* [r2184] [trunk]OPJ_STREAM_READ is now equal to OPJ_TRUE and
+	  OPJ_STREAM_WRITE to OPJ_FALSE
+	* [r2183] [trunk] move opj_event_mgr struct from openjpeg. h to
+	  event.h
+	* [r2182] [trunk] remove old struct from V1 and not used in V2
+
+2012-10-29  Mathieu Malaterre
+
+	* [r2180] [trunk] Remove bool.h, use opj_bool instead
+	  
+	  Fix remaining opj_calloc/malloc/free issues
+	* [r2179] [trunk] Fix simple warning about unused variables
+	* [r2178] [trunk] Make sure to use off_t
+	* [r2177] [trunk] Remove temp fix now that mj2 is fixed
+	* [r2176] [trunk] Update version number to 2.0. This will help for
+	  testing generating scripts
+	* [r2175] [trunk] Fix remainings issues with doxygen doc
+	  
+	  Convert DOS files to UNIX eol
+
+2012-10-29  Mickaël Savinaud
+
+	* [r2173] [trunk] Normalize the return type of opj_read_from_file
+	  regarding the test in the calling function
+
+2012-10-29  Mathieu Malaterre
+
+	* [r2172] [trunk] Remove some simple warnings about missing
+	  prototypes
+	* [r2171] [trunk] Fix compilation when JPIP is OFF
+	* [r2168] [trunk] Merge back JPIP modification into v2
+	  
+	  This commit imports changes from openjpip.c from r2122 into
+	  openjpeg.c
+
+2012-10-29  Mickaël Savinaud
+
+	* [r2167] [trunk] remove warnings related to the use of -Wall
+	  -Wextra -pedantic
+
+2012-10-26  Mickaël Savinaud
+
+	* [r2166] [trunk] finish to remove the old cio_ struct (last
+	  comment is incomplete)
+	* [r2165] [trunk] remove some warnings from -Wall -Wextra -pedantic
+	* [r2164] [trunk]remove some warnings raised by Wall
+	* [r2163] [trunk] use the right cp structure in image.h
+
+2012-10-25  Mickaël Savinaud
+
+	* [r2161] [trunk] remove last warnings from t1
+	* [r2160] [trunk] rename t1_getwmsedec_v2 to opj_t1_getwmsedec and
+	  remove t1_getwmsedec
+	* [r2159] [trunk] cancel previous commit about use of
+	  t1_decode_cblks from v2. We should use t1_decode_cblks from 1.5
+	  because it is faster (rev 557)
+	* [r2158] [trunk] use the opj_ prefix for last t1 functions
+	* [r2156] [trunk] [trunk] remove old opj_tcp and rename opj_tcp_v2
+	  to opj_tcp
+	* [r2155] [trunk] [trunk] remove old opj_cp and rename opj_cp_v2 to
+	  opj_cp
+	* [r2154] [trunk] [trunk] remove old opj_t2 and rename opj_t2_v2 to
+	  opj_t2
+	* [r2153] [trunk] rename opj_tcd_truct_v2 to opj_tcd_struct
+	* [r2152] [trunk] rename opj_j2k_v2 to opj_j2k
+	* [r2151] [trunk] remove old opj_j2k struct
+	* [r2150] [trunk] rename opj_jp2_v2 to opj_jp2
+	* [r2149] [trunk] remove old opj_jp2 struct
+	* [r2148] [trunk] correct a mis use of an old struct
+	* [r2145] [trunk] rename opj_event_msg_v2 to opj_event_msg
+	* [r2144] [trunk]remove old opj_event_mgr function
+	* [r2143] [trunk] style
+	* [r2142] [trunk] remove cio deprecated functions
+	* [r2141] [trunk]clean jpip marker functions but it is still
+	  experimental
+	* [r2140] [trunk] remove jpt.c/.h which used functions not used by
+	  v2. The code is always available in branch 1.5
+
+2012-10-25  Mathieu Malaterre
+
+	* [r2138] [trunk] Fix remaining issue with OPJ_CALLCONV
+	* [r2131] [trunk] Add documentation for stable API/ABI and gcc
+	  flags on UNIX
+	* [r2129] [trunk] marking as deprecated the old cio interface
+	* [r2125] [trunk] Remove some simple warnings about missing
+	  prototypes
+	* [r2124] [trunk] Fix OpenJPWL compilation
+	  
+	  Simply move files over from branch 1.5 onto current trunk, and
+	  use current openmj2 copy (it contains a copy of openjpeg 1.5.x)
+	* [r2123] [trunk] Since r2060 (and r2059) openjpip is now a first
+	  class shared library, instead of a local static lib which expose
+	  all the symbols.
+	  As such re-apply changes from r2077 which were removed in r2122
+	  Also remove old code for now removed opj_jpip_compress
+	* [r2122] [trunk] Rework r2077
+	  
+	  r2077 did expose too much of the detail implementation of
+	  OpenJPEG. Rework dependencies in between JPIP file level details
+	  and JPIP client/server arch.
+	  Move JPIP file level functionalities back into OpenJP2 as was the
+	  case in openjpeg 1.5.x. Use new cio func.
+	* [r2121] [trunk] Add missing newline
+	* [r2120] [trunk] Run fix_comment on invert.c
+
+2012-10-24  Mickaël Savinaud
+
+	* [r2119] [trunk] add the support of complex mct encoding when we
+	  setup the j2k encoder
+	* [r2118] [trunk] correct a small warning raised by continous
+	* [r2117] [trunk] remove old structures from tcd.h
+	* [r2116] [trunk] use the right v2 structure
+	* [r2115] [trunk] rename flag_t to opj_flag_t
+	* [r2114] [trunk] use new opj prefix and type with raw functions
+	* [r2113] [trunk] remove a usefulness test before a free
+	* [r2112] [trunk] update jp2./.h to v2 style: use new OPJ type,
+	  manage case where bpcc box is available even if ihdr indicate
+	  that it is not needed; resolve a LH TODO
+	* [r2111] [trunk] add documentation to the message handler
+	  functions
+	* [r2110] [trunk] Finalize dwt.v/.h with the v2 style : remove last
+	  functions already optimized, add opj_ prefix, use new name of the
+	  functions
+	* [r2109] [trunk] finalize bio.c/.h related to the v2 style
+
+2012-10-22  Mathieu Malaterre
+
+	* [r2106] [trunk] Remove SONAME from Java binding
+	* [r2105] [trunk] Fix java binding installation
+
+2012-10-15  Mathieu Malaterre
+
+	* [r2093] [trunk] Fix another set of issue with calling convention
+	* [r2092] [trunk] Fix issue on windows OS. Need to explicitely
+	  state the calling convention
+	* [r2091] [trunk] Remove some warnings about missing prototypes
+	  (gcc)
+	* [r2090] [trunk] Fix JPIP compilation. Some prototypes were not
+	  respected.
+
+2012-10-15  Mickaël Savinaud
+
+	* [r2086] [trunk] propagate the renaming to openjpwl
+	* [r2085] [trunk] fix a compilation error with windows and new
+	  public function opj_j2k_start_compress
+	* [r2084] [trunk]rename j2k_lib to opj_clock
+	* [r2083] [trunk] modify type of opj_clock function
+
+2012-10-15  Mathieu Malaterre
+
+	* [r2081] [trunk] Fix issue during renaming of man page
+	* [r2077] [trunk] Fix compilation:
+	  - using mingw32 compiler (missing exported symbols)
+	  - using -fvisibility=hidden (gcc on UNIX)
+	* [r2076] [trunk] Fix Java binding compilation. Need to link
+	  against openmj2 for now to resolve all symbols.
+	  Add a local indec.c (pulled from opj 1.5 branch)
+	* [r2075] [trunk] Fix missing -lm to openjpwl
+	* [r2074] [trunk] Fix missing link to zlib
+	* [r2073] [trunk] Fix openmj2 compilation in static mode.
+	* [r2072] [trunk] Fix compilation in static mode. Prevent duplicate
+	  symbols with convert.c implementation
+	* [r2071] [trunk] Add missing newline character
+	* [r2070] [trunk] Fix issues in man pages.
+	* [r2069] [trunk] Fix installaiton of header file
+	* [r2067] [trunk] remove left-over from ->jpip_on implementation.
+	  JPIP is now completely removed from openjp2 and openmj2. Document
+	  jpip_iptr_offset variable
+	* [r2066] [trunk] Fix warning for no previous prototype by using
+	  static function
+
+2012-10-10  Mathieu Malaterre
+
+	* [r2065] [trunk] Fix advanced (and experimental) Java binding. As
+	  reported on the mailing list.
+
+2012-10-09  Mathieu Malaterre
+
+	* [r2064] [trunk] Fix openmj2/mj2 compilation
+	  
+	  As reported on the mailing list, it is better to have a working
+	  (compiling) mj2 codec rather than nothing. mj2 uses it own copy
+	  of openjpeg 1.5
+	  
+	  Update issue 177
+	* [r2063] [trunk] Use opj_malloc/opj_free in jpip bin
+	  
+	  Update issue 177
+	* [r2062] [trunk] FolderReorgProposal task. Remove left over of
+	  JPIP
+	  
+	  JPIP code was moved from JP2 to openjpip
+	  
+	  Update issue 177
+
+2012-10-08  Mathieu Malaterre
+
+	* [r2061] [trunk] Update JPIP (FolderReorgProposal task)
+	  
+	  This commit does three things:
+	  - Use opj_malloc/calloc/free instead of the default C ones.
+	  - Update JPIP API to start using cio _v2 API
+	  - Create a new opj_jpip_compress which is the replacement for
+	  image_to_j2k -jpip
+	  
+	  Update issue 177
+
+2012-10-05  Mathieu Malaterre
+
+	* [r2060] [trunk] Make openjpip a first class shared lib, for
+	  future linking
+	* [r2059] [trunk] First step in moving JPIP code out of openjp2
+
+2012-10-05  Mickaël Savinaud
+
+	* [r2056] [trunk] update t1_generate_luts.c with the right ouput to
+	  generate t1_luts
+
+2012-10-05  Mathieu Malaterre
+
+	* [r2055] [trunk] Fix spelling. writting -> writing
+
+2012-10-05  Mickaël Savinaud
+
+	* [r2054] [trunk] rename int.h to opj_intmath.h and rename all its
+	  functions with opj_ prefix
+	* [r2053] [trunk] move fix_mul inside int.h and remove fix.h from
+	  the project
+	* [r2052] [trunk] remove warnings
+
+2012-10-03  Mickaël Savinaud
+
+	* [r2051] [trunk]remove warnings in pi.c through the update of poc
+	  struct types with new opj_types.
+	* [r2050] [trunk] update global functions of tgt with opj_ prefix
+	* [r2049] [trunk] (style) move global pi functions to the right
+	  place and update indentation
+	* [r2048] [trunk] remove old v1 functions and rename
+	  pi_initialise_encode_v2 to opj_pi_initialise_encode;
+	  pi_create_encode_v2 to opj_pi_create_decode; pi_destroy_v2 to
+	  opj_pi_destroy; pi_create_decode_v2 to opj_pi_create_decode
+	* [r2047] [trunk] update pi_check_next_level with the opj_ prefix
+	  and change output type to be more convenient
+	* [r2046] [trunk]rename pi_update_encoding_parameters to
+	  opj_pi_update_encoding_parameters
+	* [r2045] [trunk] replace pi_next by opj_pi_next
+	* [r2044] [trunk] update local function of pi.c with the opj_
+	  prefix and the new opj types
+	* [r2043] [trunk] update mqc global functions with opj_ prefix
+	* [r2042] [trunk] add comments to check some parts of mqc.c and
+	  update types
+	* [r2041] upadate mqc with new opj_type and use opj_ prefix for
+	  local functions
+	* [r2040] [trunk] correct warnings linked to static dwt functions
+	  because declaration is not hide when we use SSE
+	* [r2039] {trunk]update mct functions with opj_ prefix and new opj
+	  type
+	  add some comments
+	* [r2038] [trunk] update global functions of bio.c with opj_prefix
+	  and new opj type
+
+2012-10-02  Mathieu Malaterre
+
+	* [r2037] [trunk] Set of warnings fix for gcc -pedantic
+	* [r2036] [trunk] Build small internal tools to generate t1_luts.h
+	* [r2030] [trunk] Import opj_malloc.h from branch 1.5.x
+
+2012-10-01  Mathieu Malaterre
+
+	* [r2027] [trunk] V2 will be release with SOVERSION=6
+	* [r2026] [trunk] Remove old function tgt_create
+	  Fix some warnings about size_t
+	* [r2023] [trunk] Update README to reflect FolderReorgProposal
+	  
+	  Update issue 177
+	* [r2022] [trunk] FolderReorgProposal fix. 3rd party variables were
+	  not set
+	  
+	  Update issue 177
+	* [r2021] [trunk] Requires CMake 2.8.2 at least
+	* [r2020] [trunk] Fix minor cmake style
+	* [r2019] [trunk] import unit testing from 1.5.x branch
+	* [r2018] [trunk] remove warnings generated by all project in
+	  thirdparties
+	* [r2017] [trunk] Discard warnings from tiff package
+	* [r2016] [trunk] rename PACKAGE_VERSION to OPJ_PACKAGE_VERSION
+	  
+	  This prevent conflicts with TIFF package which also defines
+	  PACKAGE_VERSION
+	* [r2015] [trunk] Fix missing include directory
+	* [r2014] [trunk] fix compilation on windows where getopt is not
+	  available
+	* [r2013] [trunk] Fix missing getopt symbols on windows
+	* [r2012] [trunk] FolderReorgProposal task: Fix openjp2 lib name
+	* [r2011] [trunk] Fix a set of warnings about C90 issues
+	* [r2010] [trunk] FolderReorgProposal task. Do not rebuild doxygen
+	  always
+	  
+	  Update issue 177
+	* [r2009] [trunk] FolderReorgProposal task: cleanup doxygen
+	  
+	  Update issue 177
+	* [r2008] [trunk] FolderReorgProposal task: fix jpip doxygen
+	  
+	  Update issue 177
+	* [r2006] [trunk] FolderReorgProposal task: Fix doxygen
+	  
+	  Update issue 177
+	* [r2002] [trunk] FolderReorgProposal task: update install
+	  instruction
+	  
+	  Update issue 177
+	* [r2001] [trunk] FolderReorgProposal task: move source code to
+	  source dir
+	* [r2000] [trunk] FolderReorgProposal task: only keep a single
+	  build system
+
+2012-09-30  Mickaël Savinaud
+
+	* [r1999] [trunk] update the name of the executable used for the
+	  tests
+
+2012-09-28  Mathieu Malaterre
+
+	* [r1998] [trunk] FolderReorgProposal task: rename JP3D CLI tools
+	  
+	  Update issue 177
+	* [r1996] [trunk] FolderReorgProposal task: rename MJ2/JPIP CLI
+	  tools
+	  
+	  Update issue 177
+	* [r1995] [trunk] FolderReorgProposal task: fix JPWL
+	  
+	  Update issue 177
+	* [r1994] [trunk] FolderReorgProposal task: rename cli tools
+	  
+	  Update issue 177
+	* [r1993] [trunk] FolderReorgProposal task: Fix Viewer
+	  
+	  Update issue 177
+	* [r1992] [trunk] FolderReorgProposal task: refactor MJ2
+	  
+	  Update issue 177
+	* [r1990] [trunk] FolderReorgProposal task: add JP3D
+	  
+	  Update issue 177
+	* [r1989] [trunk] Continue FolderReorgProposal task. Missing java
+	  wrapping
+	  
+	  Update issue 177
+	* [r1987] [trunk] Start FolderReorgProposal task
+	  
+	  Update issue 177
+
+2012-09-27  Mickaël Savinaud
+
+	* [r1986] update j2k_lib with new opj type
+	* [r1985] correct a warning in image.c
+	* [r1984] clean function_list functions
+	* [r1983] [trunk] Rename bio_create and bio_destroy with opj_
+	  prefix
+	* [r1982] [trunk] udpate local functions of bio.c with opj_prefix
+	  and new opj types
+	  update opj_bio structure
+	* [r1981] [trunk] update t1_luts.h with opj type
+	* [r1980] [trunk] update some local function of t1 with opj_prefix
+	  and new opj type
+	* [r1979] rename opj_t1_enc_clnpass and opj_t1_enc_clnpass_step
+	  with opj_ prefix and update types used in theses functions
+	* [r1978] [trunk]rename t1_enc_refpass_step and t1_enc_repass with
+	  opj_ prefix and update types used in theses functions
+	* [r1977] {trunk] remove old v1 style function t1_encode_cblk
+	  rename t1_encode_cblk_v2 to opj_t1_encode_cblk
+	* [r1976] [trunk] remove old v1 function t1_encode_blocks
+	* [r1975] [trunk] remove old v1 style t1_decode_cblk function and
+	  rename t1_decode_cblk_v2 to opj_t1_decode_cblk
+	  rename t1_dec_sigpass t1_dec_sigpass_step, t1_updateflags,
+	  t1_dec_refpass, t1_dec_refpass_step with opj_prefix and v2 type
+	  delete unused functions in new V2 t1 framework:
+	  t1_dec_refpass_raw, t1_dec_refpass_mqc, t1_dec_refpass_mqc_vsc,
+	  t1_dec_refpass_step_raw, t1_dec_refpass_step_mqc,
+	  t1_dec_refpass_step_mqc_vsc, t1_dec_sigpass_raw,
+	  t1_dec_sigpass_mqc, t1_dec_sigpass_mqc_vsc,
+	  t1_dec_sigpass_step_raw, t1_dec_sigpass_step_mqc,
+	  t1_dec_sigpass_step_mqc_vsc
+	* [r1974] [trunk]remove t2_init_seg
+	  rename t2_init_seg_v2 to opj_t2_init_seg
+	  rename t2_encode_packet_v2 to opj_t2_encode_packet
+	* [r1973] [trunk] remove t2_destroy, t2_decode_packets and
+	  t2_decode_packet
+	  rename from t2_destroy_v2 to opj_t2_destroy
+	  rename from t2_decode_packets_v2 to opj_t2_decode_packets
+	  rename from t2_decode_packet_v2 to opj_t2_decode_packet
+	* [r1972] [trunk] remove old v1 style function t2_create
+	  rename t2_create_v2 to opj_t2_create
+	* [r1971] [trunk] remove t2_encode_packet and t2_encode_packets
+	  rename from t2_encode_packets_v2 to opj_t2_encode_packets
+	* [r1970] [trunk] update t2_getnumpasses from V2 branch and put
+	  opj_ prefix
+	* [r1969] [trunk] update t2_putnumpasses with V2 style
+	* [r1968] [trunk] rename t2_getcommacode to opj_t2_getcommacode
+	* [r1967] [trunk] modify output type of t2_getcommacode
+	* [r1966] [trunk] rename local functions in t2 with opj_ prefix
+	* [r1965] rename from t2_skip_packet to opj_t2_skip_packet;
+	  rename from t2_skip_packet_data to opj_t2_skip_packet_data;
+
+2012-09-12  Mathieu Malaterre
+
+	* [r1950] [trunk] Fix possible code execution vuln
+	  
+	  Thanks to Huzaifa Sidhpurwala of Red Hat Security Response Team
+	  for patch + dataset to reproduce issue.
+	  Technically kdu_expand works fine on the image...
+	  
+	  Fixes issue 175
+
+2012-09-10  Mathieu Malaterre
+
+	* [r1925] [trunk] Fix one remaining issue with C90 compat
+	* [r1924] [trunk] Use new gcc feature to actually hide exported
+	  symbols
+	  
+	  Right now we are only using the Windows/POSIX compatibility
+	  layer. This means that we have only been marking explicitely
+	  which symbols to export.
+	  What this also means is that for one to explicitely remove
+	  non-explicitely marked symbols, one has to set
+	  -fvisibility=hidden as CFLAGS
+	* [r1923] [trunk] no need to export MCT_ELEMENT_SIZE symbol
+	* [r1918] [trunk] Fix Heap-based buffer-overflow when decoding
+	  openjpeg image
+	  
+	  Thanks to Huzaifa Sidhpurwala of Red Hat Security Response Team
+	  for report
+	  This does not affect release 1.5.0 and/or 1.5 release branch.
+	  
+	  Fixes issue 170
+	* [r1916] [trunk] Fix some C90 issues.
+	* [r1911] [trunk] Fix all C90 issues using gcc -pedantic
+	  -Wno-long-long to track them
+	  As a side effect, fix all comment style to remove extra gcc
+	  output
+	  
+	  Fixes issue 173
+
+2012-08-30  Mickaël Savinaud
+
+	* [r1908] [trunk] Remove CMake-language block-end command arguments
+	  Ancient versions of CMake required else(), endif(), and similar
+	  block termination commands to have arguments matching the command
+	  starting the block. This is no longer the preferred style.
+	  Thanks to Hans Johnson
+	* [r1907] [trunk] Convert CMake-language commands to lower case
+	  Ancient CMake versions required upper-case commands. Later
+	  command names became case-insensitive. Now the preferred style is
+	  lower-case.
+	  This also changes all the key words to lower case. The primary
+	  reason for changing key words is that all documentation for
+	  CMakeLists.txt now shows the key words as lower case. Even the
+	  printed “Mastering CMake v5” uses lower case.
+	  Thanks to Hans Johnson
+	* [r1906] [trunk] STYLE: Clean up documentation errors
+	  Functions should only have formal documentation in one place, and
+	  preferably in the declaration (i.e. repeated documentaiton should
+	  not be at both the declaration and the definition, because it
+	  causes too much maintenance to keep them syncronized). In cases
+	  where the definition is also the declaration (as is often the
+	  case for static functions in the .c files) the documentation was
+	  preserved at the first use of the function signature.
+	  Functions that are formally documented should contain
+	  documentation for each function argument.
+	  The clang 3.1 compiler issues documentation warnings when the
+	  documentation block with @params preceeding a declaration does
+	  not match the argument list. This patch set follows a convention
+	  used elsewere in openjpeg to add a placeholder FIXME DOC
+	  description where one was previously missing.
+	  Thanks to Hans Johnson.
+	* [r1905] [trunk] Remove all non-ascii characters (Several
+	  compilers and development tools are confused by non-ascii
+	  characters in source code. These have been removed) thanks to
+	  Hans Johnson
+	* [r1904] [trunk] COMP: Fix one warning identified by clang31 :
+	  openjpeg/applications/codec/j2k_dump.c:362 col 29: warning:
+	  equality comparison
+	  with extraneous parentheses
+	  (thanks to Hans Johnson)
+	* [r1903] [trunk] COMP: Remove compiler warning (warning:
+	  comparison of unsigned expression < 0 is always false
+	  [-Wtautological-compare]) thnaks to Hans Johnson
+	* [r1902] [trunk] COMP: _v2 code remove (thanks to Hans Johnson and
+	  Winfried)
+
+2012-08-23  Luc Hermitte
+
+	* [r1898] [trunk] memory leaks on ppm_data, found in tests
+	  NR-p1_05.j2k-dump, NR-p1_03.j2k-dump, ETS-C1P1-p1_03.j2k-decode,
+	  ETS-C0P1-p1_03.j2k-decode, ETS-C0P1-p1_05.j2k-decode
+	* [r1897] [trunk] realloc is misused and may leak memory
+	  (Issue#168) (complements: compilation errors)
+
+2012-08-22  Luc Hermitte
+
+	* [r1896] [trunk] realloc is misused and may leak memory
+	  (Issue#168)
+	* [r1895] [trunk] j2k_to_image gives fff-topic error message for
+	  non-openable files (Issue#167)
+
+2012-08-17  Mickaël Savinaud
+
+	* [r1894] fix a compilation error
+	* [r1893] rename t1_enc_sigpass_step and t1_enc_sigpass with opj_
+	  prefix and update type
+	* [r1892] remove deprecated v1 style function t1_destroy; rename
+	  t1_destroy_v2 to opj_t1_destroy
+	  remove deprecated v1 style function t1_decode_cblks; rename
+	  t1_decode_cblks_v2 to opj_t1_decode_cblks
+	  remove deprecated v1 style function t1_encode_cblks; rename
+	  t1_encode_cblks_v2 to opj_t1_encode_cblks
+	  remove deprecated v1 style function t1_create; rename
+	  t1_create_v2 to opj_t1_create
+	* [r1891] rename local functions and struct with opj_ prefix
+	* [r1890] rename local dwt functions
+	  remove deprecated v1 style function dwt_decode_tile; rename
+	  dwt_decode_tile_v2 to opj_dwt_decode_tile
+	* [r1889] remove deprecated v1 style function dwt_encode; rename
+	  dwt_encode_v2 to opj_dwt_encode
+	  remove deprecated v1 style function dwt_decode; rename
+	  dwt_decode_v2 to opj_dwt_decode
+	  remove deprecated v1 style function dwt_getgain; rename
+	  dwt_getgain_v2 to opj_dwt_getgain
+	  add opj_dwt_getnorm, opj_dwt_getnorm_real functions
+	  remove deprecated v1 style function dwt_encode_real; rename
+	  dwt_encode_real_v2 to opj_dwt_encode_real
+	  remove deprecated v1 style function dwt_getgain_real; rename
+	  dwt_getgain_real_v2 to opj_dwt_getgain_real
+	  rename dwt_calc_explicit_stepsizes to
+	  opj_dwt_calc_explicit_stepsizes
+
+2012-08-16  Mickaël Savinaud
+
+	* [r1888] rename local tcd functions with opj_ prefix
+	* [r1887] remove deprecated v1 style function tcd_decode_tile;
+	  rename tcd_decode_tile_v2 to opj_tcd_decode_tile
+	  remove deprecated v1 style function tcd_free_decode
+	  remove deprecated v1 style function tcd_free_decode_tile
+	* [r1886] remove deprecated v1 style function tcd_destroy; rename
+	  tcd_destroy_v2 to opj_tcd_destroy
+	  rename tcd_init_v2 to opj_tcd_init
+	  remove deprecated v1 style function tcd_malloc_encode
+	  remove deprecated v1 style function tcd_free_encode
+	  remove deprecated v1 style function tcd_init_encode
+	  remove deprecated v1 style function tcd_malloc_decode
+	  remove deprecated v1 style function tcd_malloc_decode_tile
+	  remove deprecated v1 style function tcd_makelayer_fixed; rename
+	  tcd_makelayer_fixed_v2 to opj_tcd_makelayer_fixed
+	  remove deprecated v1 style function tcd_rateallocate_fixed;
+	  rename tcd_rateallocate_fixed_v2 to opj_tcd_rateallocate_fixed
+	  remove deprecated v1 style function tcd_makelayer; rename
+	  tcd_makelayer_v2 to opj_tcd_makelayer
+	  remove deprecated v1 style function tcd_rateallocate; rename
+	  tcd_rateallocate_v2 to opj_tcd_rateallocate
+	  remove deprecated v1 style function tcd_encode_tile; rename
+	  tcd_encode_tile_v2 to opj_tcd_encode_tile
+	* [r1885] remove deprecated v1 style function tcd_create; rename
+	  tcd_create_v2 to opj_tcd_create
+	* [r1884] rename tcd functions with opj_ prefix
+	* [r1883] optimization of dwt_deinterleave_h, dwt_deinterleave_v
+	  from v2 branch; update type with OPJ_type
+	* [r1882] correct warnings in j2k.c
+	* [r1881] remove deprecated v1 style function j2k_write_eoc; rename
+	  j2k_write_eoc_v2 to opj_j2k_write_eoc
+	* [r1880] remove deprecated v1 style function j2k_read_eoc; rename
+	  j2k_read_eoc_v2 to opj_j2k_read_eoc
+	* [r1879] clean style and remove old v1 style structure in j2k.c
+	* [r1878] remove deprecated v1 style function j2k_add_mhmarker;
+	  rename j2k_add_mhmarker_v2 to opj_j2k_add_mhmarker
+	  remove deprecated v1 style function j2k_add_tlmarker; rename
+	  j2k_add_tlmarker_v2 to opj_j2k_add_tlmarker
+	* [r1877] remove deprecated v1 style function j2k_create_compress;
+	  rename opj_j2k_create_compress_v2 to opj_j2k_create_compress
+	* [r1876] rename j2k functions with opj_ prefix
+	* [r1875] remove deprecated v1 style function j2k_setup_encoder;
+	  rename opj_j2k_setup_encoder_v2 to opj_j2k_setup_encoder
+	* [r1874] remove deprecated v1 style function j2k_get_num_tp;
+	  rename j2k_get_num_tp_v2 to opj_j2k_get_num_tp
+	* [r1873] remove deprecated v1 style function j2k_calculate_tp;
+	  rename j2k_calculate_tp_v2 to opj_j2k_calculate_tp
+	* [r1872] rename local j2k function with opj_ prefix
+	* [r1871] remove deprecated v1 style function j2k_write_rgn; rename
+	  j2k_write_rgn_v2 to opj_j2k_write_rgn
+	* [r1870] remove deprecated v1 style function j2k_write_sod; rename
+	  j2k_write_sod_v2 to opj_j2k_write_sod
+	* [r1869] remove deprecated v1 style function j2k_write_sot; rename
+	  j2k_write_sot_v2 to opj_j2k_write_sot
+	* [r1868] remove deprecated v1 style function j2k_write_tlm; rename
+	  j2k_write_tlm_v2 to opj_j2k_write_tlm
+	* [r1867] rename local j2k function with opj_ prefix
+	* [r1866] rename local j2k function with opj_ prefix
+	* [r1865] remove deprecated v1 style function j2k_write_poc; rename
+	  j2k_write_poc_v2 to opj_j2k_write_poc
+	  rename j2k_write_poc_in_memory to opj_j2k_write_poc_in_memory
+	  rename j2k_get_max_poc_size to opj_j2k_get_max_poc_size
+	* [r1864] remove deprecated v1 style function j2k_write_qcd; rename
+	  j2k_write_qcd_v2 to opj_j2k_write_qcd
+	  remove deprecated v1 style function j2k_write_qcc; rename
+	  j2k_write_qcc_v2 to opj_j2k_write_qcc
+	  remove deprecated v1 style function j2k_write_qcx; rename
+	  j2k_write_qcc_in_memory to
+	  rename j2k_get_max_qcc_size to opj_j2k_get_max_qcc_size
+	* [r1863] rename j2k_get_max_coc_size to opj_j2k_get_max_coc_size
+	* [r1862] remove deprecated v1 style function j2k_write_cod; rename
+	  j2k_write_cod_v2 to opj_j2k_write_cod
+	  remove deprecated v1 style function j2k_write_coc; rename
+	  j2k_write_coc_v2 to opj_j2k_write_coc
+	  remove deprecated v1 style function j2k_write_cox; rename
+	  j2k_write_coc_in_memory to opj_j2k_write_coc_in_memory
+	* [r1861] remove deprecated v1 style function j2k_write_com; rename
+	  j2k_write_com_v2 to opj_j2k_write_com
+	* [r1860] remove deprecated v1 style function j2k_write_siz; rename
+	  j2k_write_siz_v2 to opj_j2k_write_siz
+	* [r1859] rename j2k_write_soc_v2 to opj_j2k_write_soc
+	* [r1858] remove deprecated v1 style function j2k_write_soc
+	* [r1857] remove deprecated v1 style functions
+	  j2k_destroy_decompress, j2k_decode_jpt_stream,
+	  j2k_destroy_compress and j2k_encode
+	* [r1856] rename local j2k function with opj_ prefix
+	* [r1855] free local memory in image_to_j2k application
+	* [r1854] rename j2k functions with opj_ prefix
+	* [r1853] remove warnings from dwt.c
+	* [r1852] Correct the wrong output management of
+	  opj_stream_read_seek function (thanks to EvenR)
+
+2012-08-13  Mickaël Savinaud
+
+	* [r1851] remove old v1 style functions from jp2.c
+	* [r1850] rename local jp2 functions with opj_ prefix
+	* [r1849] rename jp2_write_jp_v2 to opj_jp2_write_jp
+	* [r1848] remove deprecated v1 style function jp2_write_jp
+	* [r1847] rename jp2_write_jp2c_v2 to opj_jp2_write_jp2c
+	* [r1846] remove deprecated v1 style function jp2_write_jp2c
+	* [r1845] rename local function in jp2.c with the opj_ prefix
+	* [r1844] rename jp2_write_ftyp_v2 to opj_jp2_write_ftyp
+	* [r1843] remove deprecated v1 style function jp2_write_ftyp
+	* [r1842] rename jp2_write_colr_v2 to opj_jp2_write_colr
+	* [r1841] remove deprecated v1 style function jp2_write_colr
+	* [r1840] rename jp2_write_bpcc_v2 to opj_jp2_write_bpcc
+	* [r1839] remove deprecated v1 style function jp2_write_bpcc
+	* [r1838] rename jp2_write_ihdr_v2 to opj_jp2_write_ihdr
+	* [r1837] remove deprecated v1 style function jp2_write_ihdr
+	* [r1836] rename jp2 functions with V2 style and opj_ prefix
+	* [r1835] remove deprecated v1 style functions jp2_write_jp2h
+	* [r1834] remove deprecated v1 style functions :
+	  jp2_create_compress, jp2_destroy_compress, opj_jp2_encode
+	* [r1833] fix some warnings in jp2.c
+	* [r1832] fix compilation error with win platform
+
+2012-08-10  Luc Hermitte
+
+	* [r1830] [trunk] fix possible memory leak on realloc failure
+
+2012-08-10  Mickaël Savinaud
+
+	* [r1829] use internal type to reduce warnings in jp2.c
+	* [r1828] rename jp2_read_boxhdr_v2 to opj_jp2_read_boxhdr
+	* [r1827] remove deprecated v1 style function jp2_read_boxhdr
+	* [r1826] rename local function in jp2.c with the opj_ prefix
+	* [r1825] rename jp2_read_jp_v2 to opj_jp2_read_jp
+	* [r1824] remove deprecated v1 style function jp2_read_jp2c,
+	  jp2_read_struct
+	* [r1823] rename jp2_read_ftyp_v2 to opj_jp2_read_ftyp
+	* [r1822] remove deprecated v1 style function jp2_read_ftyp
+	* [r1821] rename jp2_read_colr_v2 to opj_jp2_read_colr,
+	  jp2_read_pclr_v2 to opj_jp2_read_pclr, jp2_read_cmap_v2 to
+	  opj_jp2_read_cmap, jp2_read_cdef_v2 to opj_jp2_read_cdef
+	* [r1820] remove deprecated v1 style function jp2_read_colr,
+	  jp2_read_pclr, jp2_read_cmap, jp2_read_cdef
+	* [r1819] rename jp2_read_bpcc_v2 to opj_jp2_read_bpcc
+	* [r1818] remove deprecated v1 style function jp2_read_bpcc
+	* [r1817] rename jp2_read_ihdr_v2 to opj_jp2_read_ihdr
+	* [r1816] remove deprecated v1 style function jp2_read_ihdr
+	* [r1815] rename jp2_read_jp2h_v2 to opj_jp2_read_jp2h
+	* [r1814] remove deprecated v1 style function jp2_read_jp2h
+	* [r1813] remove deprecated v1 style function
+	  jp2_destroy_decompress
+	* [r1812] rename local functions with opj_ prefix in j2k.c (part 2)
+	* [r1811] rename local functions with opj_ prefix in j2k.c
+	* [r1810] rename some j2k decoding functions with new prefix opj_
+	* [r1809] rename mct function read/write function with opj_ prefix
+	* [r1808] rename j2k_read_mct to opj_j2k_read_mct, j2k_read_mco to
+	  opj_j2k_read_mco, j2k_read_mcc to opj_j2k_read_mcc
+	* [r1807] rename j2k_read_cbd to opj_j2k_read_cbd
+	* [r1806] rename j2k_read_com_v2 to opj_j2k_read_unk
+	* [r1805] remove deprecated v1 style function j2k_read_unk
+	* [r1804] rename j2k_read_com_v2 to opj_j2k_read_com
+	* [r1803] remove deprecated v1 style function j2k_read_com
+	* [r1802] rename j2k_read_crg_v2 to opj_j2k_read_crg
+	* [r1801] remove deprecated v1 style function j2k_read_crg
+	* [r1800] rename j2k_read_ppt_v2 to opj_j2k_read_ppt
+	* [r1799] remove deprecated v1 style function j2k_read_ppt
+	* [r1798] remove deprecated v1 style function j2k_read_cox
+	* [r1797] correct a compilation error about misplaced declaration
+
+2012-08-09  Mickaël Savinaud
+
+	* [r1796] remove deprecated v1 style function j2k_read_ppm
+	* [r1795] rename j2k_read_plt_v2 to opj_j2k_read_plt
+	* [r1794] remove deprecated v1 style function j2k_read_plt
+	* [r1793] rename j2k_read_plm_v2 to opj_j2k_read_plm
+	* [r1792] rename j2k_read_tlm_v2 to opj_j2k_read_tlm
+	* [r1791] remove deprecated v1 style function j2k_read_tlm
+	* [r1790] rename j2k_read_poc_v2 to opj_j2k_read_poc
+	* [r1789] remove deprecated v1 style function j2k_read_poc
+	* [r1788] remove deprecated v1 style function j2k_read_qcx
+	* [r1787] rename j2k_read_qcc_v2 to opj_j2k_read_qcc
+	* [r1786] remove deprecated v1 style function j2k_read_qcc
+	* [r1785] rename j2k_read_qcd_v2 to opj_j2k_read_qcd
+	* [r1784] remove deprecated v1 style function j2k_read_qcd
+	* [r1783] rename j2k_read_rgn_v2 to opj_j2k_read_rgn
+	* [r1782] remove deprecated v1 style function j2k_read_rgn
+	* [r1781] rename j2k_read_coc_v2 to opj_j2k_read_coc
+	* [r1780] remove deprecated v1 style function j2k_read_coc
+	* [r1779] rename j2k_read_cod_v2 to opj_j2k_read_cod
+	* [r1778] remove deprecated v1 style function j2k_read_cod
+	* [r1777] rename j2k_read_siz_v2 to opj_j2k_read_siz
+	* [r1776] remove deprecated v1 style function j2k_read_siz
+	* [r1775] rename j2k_read_sod_v2 to opj_j2k_read_sod
+	* [r1774] remove deprecated v1 style function j2k_read_sod
+	* [r1773] rename j2k_read_sot_v2 to opj_j2k_read_sot
+	* [r1772] remove deprecated v1 style function j2k_read_sot
+	* [r1771] rename j2k_read_soc_v2 to opj_j2k_read_soc
+	* [r1770] remove deprecated v1 style function j2k_read_soc
+	* [r1769] rename j2k_decode_v2 to opj_j2k_decode
+	* [r1768] remove deprecated v1 style function j2k_decode
+	* [r1767] rename j2k_setup_decoder_v2 to opj_j2k_setup_decoder
+	* [r1766] remove deprecated v1 style function j2k_setup_decoder
+	* [r1765] rename j2k_create_decompress_v2 to
+	  opj_j2k_create_decompress
+	* [r1764] remove deprecated v1 style function j2k_create_decompress
+	  and jp2_create_decompress
+	* [r1763] rename jp2_decode_v2 to opj_jp2_decode
+	* [r1762] remove deprecated v1 style function opj_jp2_decode
+	* [r1761] rename jp2_setup_decoder_v2 to opj_jp2_setup_decoder
+	* [r1760] remove deprecated v1 style function jp2_setup_decoder
+	* [r1759] [trunk] add the support of the flag ignore_pclr_cmap_cdef
+	  into the V2 jp2 functions (but not for box reading); no tests
+	  modified
+	* [r1758] [trunk] begin to clean the old V1 style message event
+	  management
+	* [r1757] [trunk] clean jp2_read_ihdr_v2 interface
+	* [r1756] [trunk] rename opj_destroy_cstr_info_v2 to
+	  opj_destroy_cstr_info
+	* [r1755] remove deprecated v1 style function opj_destroy_cstr_info
+	* [r1754] [trunk] move functions in openjpeg.c in two parts
+	  compression vs decompression
+	* [r1753] [trunk] rename opj_encode_v2 to opj_encode
+	* [r1752] [trunk] remove deprecated v1 style function opj_encode
+	  and opj_encode_with_info
+	* [r1751] [trunk] rename opj_setup_encoder_v2 to opj_setup_encoder
+	* [r1750] remove deprecated v1 style function opj_setup_encoder
+	* [r1749] rename opj_create_compress_v2 to opj_create_compress
+	* [r1748] [trunk] remove deprecated v1 style function
+	  opj_create_compress
+	* [r1747] remove deprecated v1 style function opj_decode and
+	  opj_decode_with_info
+	* [r1746] [trunk] rename opj_setup_decoder_v2 to opj_setup_decoder
+	* [r1745] [trunk] remove deprecated v1 style function
+	  opj_setup_decoder
+	* [r1744] [trunk] remove deprecated v1 style function
+	  opj_destroy_decompress
+	* [r1743] [trunk] rename opj_create_decompress_v2 to
+	  opj_create_decompress
+	* [r1742] [trunk] remove V1 style function opj_create_decompress
+	* [r1741] [trunk] define local functions of j2k.c as static and
+	  clean style
+	* [r1740] [trunk] move allocation of cstr_index->tile_index to the
+	  end of the header reading
+	* [r1739] Add file type detection in test_tile_decoder to support
+	  JP2 file as input
+	* [r1738] Use the right file as input for the test ttd2
+	* [r1737] Reorganize and clean style of test_tile_decoder.c
+
+2012-07-25  Mathieu Malaterre
+
+	* [r1735] [trunk] Use const keyword when appropriate
+	* [r1734] [trunk] Import changes from 1.5 branch
+
+2012-07-11  Mathieu Malaterre
+
+	* [r1731] [trunk] Fix r156 to compile on compilers where false is
+	  not defined.
+	* [r1730] [trunk] This fixes issues seen on PDF files
+	  
+	  Fixes issue 156
+
+2012-07-10  Mathieu Malaterre
+
+	* [r1728] [trunk] Fix heap buffer overflow
+	  
+	  Enforce sanity checks on tile number and tile length, even when
+	  the (rather
+	  broken) USE_JPWL code isn't enabled.
+	  Import r1727 from branch 1.5
+
+2012-06-01  Mickaël Savinaud
+
+	* [r1707] [trunk] use new names for baseline
+
+2012-05-29  Mathieu Malaterre
+
+	* [r1699] [trunk] Fix a simple leak in test_tile_encoder
+	* [r1698] [trunk] Adding more tests. tte5.j2k looks as if the tile
+	  compression is broken
+	* [r1697] [trunk] The two files in Issue145 have a precision <
+	  8-bit:
+	  therefore 'jp2_read_pclr' must be changed.
+	  
+	  j2k_to_image fails to create RGB/RGBA images with a
+	  precision < 8-bit: therefore 'imagetopng' must be
+	  changed.
+	  Fixes issue 145
+	* [r1695] [trunk] Fix installation issues. Thanks to winfried for
+	  patch.
+	  Fixes issue 149
+	* [r1692] [trunk] Follow up to r1691. Handle signed case.
+	* [r1691] [trunk] Add new behavior for codecs. Now supports little
+	  endian RAWL format. It is now possible to encode directly little
+	  endian raw file, by simply using the rawl extension. Code has
+	  been modified to use strcasecmp instead of strncasecmp to cope
+	  with 4 letters files extensions.
+	  Update issue 141
+	* [r1690] [trunk] Add commented out code for tile support in
+	  applications.
+
+2012-05-22  Mathieu Malaterre
+
+	* [r1689] [trunk] error message typo, refer PLT instead of PLM
+
+2012-05-21  Mathieu Malaterre
+
+	* [r1680] [trunk] add sentinel when tile_index is null
+	* [r1679] [trunk] Enable tile decoding/encoding round trip
+	* [r1678] Activate tile decoding system to reproduce issues
+
+2012-05-21  Mickaël Savinaud
+
+	* [r1677] Comment the using of j2k_add_marker function into a v2
+	  function.
+
+2012-05-14  Mickaël Savinaud
+
+	* [r1676] use the correct event handler in j2k_to_image.c
+	* [r1675] resolve bug under win arch with test_tile_encoder.c
+	* [r1674]
+
+2012-05-14  Mathieu Malaterre
+
+	* [r1673] [trunk] Start activating tile tests
+	* [r1672] [trunk] Need to use new interface opj_event_msg_v2,
+	  instead of old opj_event_msg. Remove some simple warnings
+	* [r1671] [trunk] Pointer is opj_jp2_v2_t, not opj_jp2_t
+	* [r1670] [trunk] Wrong struct size. Use opj_jp2_v2_t instead
+	* [r1669] [trunk] Make sure the memory is initialized. valgrind was
+	  complaning in mqc_init_enc we were reading uninit value. See also
+	  comment in r479: FIXME: mqc_init_enc and mqc_byteout underrun the
+	  buffer if we don't do this. Why?
+	* [r1668] [trunk] Fix minor typo in error message.
+
+2012-05-14  Mickaël Savinaud
+
+	* [r1667] adding jp2_encode_v2 from v2 branches; using the right
+	  return value for opj_stream_flush
+	* [r1666] correct style in cio.c and use only op_bool return value;
+	  correct error in jp2.c and some style
+	* [r1665] add new functions in jp2 codec from v2 branches; solve
+	  bug in j2k_setup_encoder_v2
+
+2012-05-14  Mathieu Malaterre
+
+	* [r1664] [trunk] Fix remaining compilation errors
+
+2012-05-14  Mickaël Savinaud
+
+	* [r1663] remove opj_event_mgr struct from test_tile_decoder
+
+2012-05-14  Mathieu Malaterre
+
+	* [r1662] [trunk] Fix using proper v2 function
+	* [r1661] [trunk] Import from v2 test_tile_decoder
+
+2012-05-14  Mickaël Savinaud
+
+	* [r1660] Correct a mistake about declaration of j2k_write_eoc_v2
+
+2012-05-13  Mickaël Savinaud
+
+	* [r1659] solve problem with input of image_to_j2k; using the right
+	  return type comparison for opj_stream_flush; add
+	  j2k_write_com_v2, j2k_write_poc_v2, j2k_write_eoc_v2 and
+	  j2k_write_tlm_v2
+	* [r1658] remove a fixme about tcd_deallocate and encodind precint
+
+2012-05-02  Mickaël Savinaud
+
+	* [r1654] [trunk] style
+	* [r1653] [trunk] correct a bug in jpip building induced by the
+	  previous commit
+	* [r1651] [trunk] Enhance support of events like the v2 branch. Use
+	  right name of variables.
+
+2012-04-23  Mathieu Malaterre
+
+	* [r1641] [trunk] apply patch from winfried on the mailing list.
+	  For more info see:
+	  https://groups.google.com/group/openjpeg/msg/e631d586a31c6de4
+	* [r1639] Fix a set of warnings reported by gcc in cio.c. This
+	  patch impact the API directly (remove left over 32bits API)
+	* [r1638] Adding sentinel code for debug
+
+2012-04-13  Mickaël Savinaud
+
+	* [r1627] [trunk] correct a wrong assert in j2k.c
+
+2012-03-27  Mathieu Malaterre
+
+	* [r1624] [trunk] attempt to fix clang/3.1 compilation error
+	  remotely
+	* [r1623] [trunk] fix compilation on OS where ssize_t is not
+	  defined.
+
+2012-03-26  Mathieu Malaterre
+
+	* [r1622] [trunk] Final touch to get rid of most truncation
+	  warnings
+	* [r1621] [trunk] one more round of warnings fixes
+	* [r1620] [trunk] change char* to const char* when possible. Remove
+	  more warnings
+	* [r1619] [trunk] remove warnings from jp2k decoder
+	* [r1618] [trunk] change char* to const char* when possible. Remove
+	  more warnings
+	* [r1617] [trunk] another round of compilation fixes
+	* [r1616] [trunk] another set of warnings fixes for LFS support
+	* [r1615] [trunk] Fix equality into test
+	* [r1614] [trunk] remove some simple warnings
+	* [r1613] [trunk] According to JPIP/A.2.3 in class identifiers
+	  should be an unsigned integer. Since portion of codes was using
+	  Byte8_t and other was using int, pick Byte8_t as best matching
+	  type
+	* [r1612] [trunk] continue work on getting API to use off_t instead
+	  of long toward LFS support in JPIP (sock_manager)
+	* [r1611] [trunk] continue work on getting API to use off_t instead
+	  of long toward LFS support in JPIP (auxtrans_manager)
+	* [r1610] [trunk] continue work on getting API to use off_t instead
+	  of long toward LFS support in JPIP (metadata_manager)
+	* [r1609] [trunk] continue work on getting API to use off_t instead
+	  of long toward LFS support in JPIP (manfbox_manager)
+	* [r1608] [trunk] continue work on getting API to use off_t instead
+	  of long toward LFS support in JPIP (j2kheader_manager)
+	* [r1607] [trunk] continue work on getting API to use off_t instead
+	  of long toward LFS support in JPIP (index_manager)
+	* [r1606] [trunk] continue work on getting API to use off_t instead
+	  of long toward LFS support in JPIP (marker_param_t)
+	* [r1605] [trunk] fix another simple warning
+	* [r1604] [trunk] explicit cast missing
+	* [r1603] [trunk] remove simple warnings.
+	* [r1602] [trunk] continue work on getting API to use off_t instead
+	  of long toward LFS support in JPIP (codestream_param_t)
+	* [r1601] [trunk] continue work on getting API to use off_t instead
+	  of long toward LFS support in JPIP
+	* [r1600] [trunk] Start working on LFS support in JPIP code section
+	* [r1599] [trunk] ICC profile length is always an unsigned integer
+	* [r1598] [trunk] make openjpeg consistant with itself, and adapt
+	  sign of struct variables
+	* [r1597] [trunk] Fix a potential issue with truncation of pointers
+	  diff
+	* [r1596] [trunk] Fix some simple warnings reported by -Wconversion
+	* [r1595] [trunk] fix compilation when jpwl option is ON.
+
+2012-03-26  Mickaël Savinaud
+
+	* [r1594] [trunk] add missing file needed to compile last commit
+
+2012-03-23  Mickaël Savinaud
+
+	* [r1593] [trunk] add test_tile_encoder test and function related
+
+2012-03-19  Mathieu Malaterre
+
+	* [r1590] [trunk] Fix invalid truncation from off_t to int (thanks
+	  to -Wconversion for report)
+	* [r1588] [trunk] Missing PRId64 for MS compilers
+	* [r1587] [trunk] Forgot portion of the previous commit.
+	* [r1586] [trunk] use autotools convention where #ifdef BLA, should
+	  be provided by #define BLA 1. This is to cope with pseudo
+	  autotools generated tif header.
+	* [r1585] [trunk] start using new functionalities from opj_inttypes
+	  in jpip code and main openjpeg
+	* [r1584] [trunk] move functionalities of stdint/inttype into
+	  opj_stdint/opj_inttypes
+	* [r1583] [trunk] Remove remaining of OPJ_INT64_F/OPJ_UINT64_F
+	  before move to C99 convention
+	* [r1582] [trunk] replace more void* object pointer to proper
+	  function pointer: opj_procedure. Remove some warnings reported by
+	  gcc -pedantic
+	* [r1581] [trunk] add debug statement for
+	  Win7-VS2008-32bits-trunk-Debug-OSGeo4W
+
+2012-03-17  Mathieu Malaterre
+
+	* [r1580] [trunk] Quick fix for MS compilers which do not ship
+	  inttypes.h
+	* [r1579] [trunk] Fix compilation win32 with shared libs on (export
+	  symbol name)
+	* [r1578] [trunk] Fix numerous warnings about signed vs unsigned
+	  comparison. Adapt opj_procedure type to what it should hev been
+	  IMHO. Start using PRIi64 for printf and int64_t
+	* [r1577] [trunk] remove a warning, about ISO C restricts
+	  enumerator values to range of 'int'
+	* [r1576] [trunk] HACK: This commit remove some JPWL related code
+	  just to allow compilation. See r1564 for more info
+	* [r1575] [trunk] Fix compilation when zlib.h is in user specified
+	  directory.
+
+2012-03-15  Mathieu Malaterre
+
+	* [r1567] [trunk] Fix compilation on 32bits/PowerPC arch
+	  (debian/linux)
+	* [r1566] [trunk] make sure to build as universal build when OS is
+	  APPLE
+	* [r1565] [trunk] remove a warning about no end of file
+
+2012-03-15  Mickaël Savinaud
+
+	* [r1564] [trunk] modify image_to_j2k and the lib to support
+	  functionalities given by the v2 alpha branch
+
+2012-03-12  Mathieu Malaterre
+
+	* [r1556] [trunk] Fix issue with space
+	* [r1555] [trunk] Add support for compiling libtiff with VS2008
+	* [r1554] [trunk] Add support for MSVC 2010 compiler (32bits)
+	* [r1553] [trunk] Update libtiff to 4.0.1 to support BigTIFF.
+	  openjpeg/tiff 4.0.1 currently builds on linux/x86_64 and
+	  linux/mingw32.
+
+2012-03-11  Mathieu Malaterre
+
+	* [r1548] [trunk] Use stdint.h when available to compute fixed-type
+	  definition.
+	* [r1547] [trunk] Backport diff from openjpeg 1.5 branch
+
+2012-03-09  Mickaël Savinaud
+
+	* [r1542] [trunk] reverted to revision 1536
+	* [r1541] [trunk] add j2k_post_write_tile in trunk from branch v2
+	* [r1540] [trunk] add j2k_get_tile_data in trunk from branch v2
+	* [r1539] [trunk] add tcd_get_encoded_tile_size in trunk from
+	  branch v2alpha
+	* [r1538] [trunk] add j2k_pre_write_tile function in trunk from
+	  v2alpha
+	* [r1537] [trunk] first steps about merge compression WIP
+
+2012-03-02  Mathieu Malaterre
+
+	* [r1531] [trunk] Fix a bunch of warning about C++ comments in C
+	  code.
+	* [r1529] [trunk] merge r1229 from branch 1.5 over to trunk
+	* [r1528] [trunk] minor style to sync with branch 1.5
+	* [r1525] [trunk] convert from DOS eol to UNIX eol
+	* [r1523] [trunk] Sync with branch 1.5
+	* [r1522] [trunk] merge r1234 from branch 1.5 over to trunk
+	* [r1521] [trunk] merge r1322 from branch 1.5 over to trunk
+	* [r1520] [trunk] merge r1197, r1199, r1228, r1230 and r1232 from
+	  branch 1.5 over to trunk
+	* [r1519] [trunk] merge r1479 from branch 1.5 over to trunk
+	* [r1518] [trunk] merge r1323 from branch 1.5 over to trunk
+	* [r1516] [trunk] Remove exe bit on CMakeLists.txt. Set from DOS
+	  eol to UNIX eol
+	* [r1515] [trunk] Sync with 1.5 branch
+	* [r1514] [trunk] Backout r1513 for now.
+	* [r1513] [trunk] merge rev 1330/1331 from branch 1.5 onto trunk
+	* [r1512] [trunk] merge rev 1333 from 1.5 to trunk
+	* [r1511] [trunk] merge rev 1228 from 1.5 to trunk
+	* [r1509] [trunk] Import change from 1.5 branch over to trunk
+	* [r1508] [trunk] Synchronize with 1.5 branch, installation
+	  convention
+	* [r1507] [trunk] minor coding style change to match 1.5
+	* [r1505] [trunk] Import getopt modification from 1.5 branch
+	* [r1503] [trunk] Import remaning bits from JPIP/1.5 over to trunk
+	* [r1502] [trunk] Merge rev 1068 into trunk
+	* [r1501] [trunk] Remove junk from merge
+	* [r1500] [trunk] Import rev 1103 into trunk.
+
+2012-03-02  Mickaël Savinaud
+
+	* [r1499] [trunk] correct bug when we expand the list of marker in
+	  a tile
+	* [r1498] [trunk] check the PSot value during the reading of SOT
+	  marker
+
+2012-03-02  Mathieu Malaterre
+
+	* [r1497] [trunk] do not distribute binary in the source code.
+	  Remove *.jar files
+	* [r1495] [trunk] import JPIP modifications for build-system from
+	  1.5
+	* [r1494] [trunk] Import applications modifications from 1.5 over
+	  to trunk
+	* [r1493] [trunk] Convert from DOS eol to UNIX eol
+	* [r1491] [trunk] Backport from OPJViewer version 1.5 over to trunk
+	* [r1490] [trunk] Remove left-over Makefile
+	* [r1489] [trunk] Sync OPJViewer with 1.5 version
+	* [r1485] [trunk] Backport toplevel files from 1.5
+	* [r1484] [trunk] Remove copyrighted material from java-jni. Import
+	  patch from 1.5 over to trunk/JavaOpenJPEG
+	* [r1483] [trunk] Backport toplevel changes from 1.5 over to trunk.
+	  Remove hand-generated CHANGES file
+
+2012-02-13  Mathieu Malaterre
+
+	* [r1421] [trunk] Merge the CMake/ dir from opj 1.5
+	* [r1414] Integrate some more diffs from the 1.5 branch
+	* [r1411] Start merging of the 1.5 branch into trunk. Start with
+	  doc
+
+2012-01-11  Antonin Descampe
+
+	* [r1308] add opj_logo.icns for trunk and 1.5
+
+2011-12-20  Mathieu Malaterre
+
+	* [r1244] Fix test NR-ENC-Bretagne2.ppm-4-encode on linux.
+	* [r1241] Fix strange line, as reported by lockalsash (gmail.com)
+
+2011-12-12  Mathieu Malaterre
+
+	* [r1225] minor typo
+
+2011-12-07  Mickaël Savinaud
+
+	* [r1192] [trunk] remove some warnings detected by cppcheck
+
+2011-12-06  Mathieu Malaterre
+
+	* [r1182] Add new mechanism for cppcheck
+	* [r1167] Update changelog
+	* [r1166] Apply patch from Brad Hards to fix some typos.
+
+2011-12-03  Mathieu Malaterre
+
+	* [r1157] Apply doxygen fixes suggested by Brad Hards on opj
+	  mailing list.
+
+2011-12-02  Mathieu Malaterre
+
+	* [r1149] Sorry. Reverting mistake.
+	* [r1148] Simplify code. Use standard find_package call instead.
+	  ctest script will need to handle this now
+	* [r1147] Add CPack stuff
+
+2011-12-01  Mickaël Savinaud
+
+	* [r1113] [trunk] fix a bug during the creation of the codestream
+	  index
+
+2011-12-01  Julien Malik
+
+	* [r1111] [trunk] fix warnings when printing large integers
+
+2011-12-01  Mickaël Savinaud
+
+	* [r1110] [trunk] fix a warning about a recent commit (1104)
+
+2011-12-01  Julien Malik
+
+	* [r1109] [trunk] fix compilation of j2k_random_access on Visual
+	  C++
+
+2011-11-30  Julien Malik
+
+	* [r1108] [trunk] make large file support variables persistent in
+	  CMake to allow reconfiguration
+	* [r1107] [trunk] fix call to opj_destroy_cstr_info_v2 in
+	  j2k_random_tile_access
+
+2011-11-30  Mickaël Savinaud
+
+	* [r1106] [trunk] fix bug during random access to tile (tile
+	  already decoded)
+	* [r1105] [trunk] fix error about the way to detect the additional
+	  test suite
+
+2011-11-30  Julien Malik
+
+	* [r1104] [trunk] implement Large File support in the library
+
+2011-11-29  Mickaël Savinaud
+
+	* [r1102] [trunk] fix error with new way to detect kdu_expand
+
+2011-11-28  Julien Malik
+
+	* [r1100] [trunk] add support for Large File in autoconf
+	* [r1099] [trunk] fix definition of _FILE_OFFSET_BITS macro on
+	  platform where it is needed
+	* [r1098] [trunk] add definitions for 64 bits integer types, and
+	  define OPJ_OFF_T to map to OPJ_INT64 systematically
+	* [r1097] [trunk] activate LargeFileSupport in CMake
+
+2011-11-27  Julien Malik
+
+	* [r1096] [trunk] search for kdu_expand in a more cmake-compliant
+	  way
+	* [r1095] [trunk] clean up redundant includes already handled in
+	  opj_includes.h
+	* [r1094] [trunk] backout wrong changeset 1091 - see issue 123
+
+2011-11-24  Julien Malik
+
+	* [r1091] [trunk] support seeking in files larger than 2 GB
+
+2011-11-24  Mathieu Malaterre
+
+	* [r1090] Remove duplicate definition
+	* [r1089] Cleanup jpip cmake compilation
+	* [r1088] add note for cmake
+	* [r1087] Use cmake style define. Fix big endian issue on dual OS
+	  (eg. Tiger)
+	* [r1086] minor reindentation
+	* [r1085] Remove exe bit from source files
+	* [r1084] fix variable name to be hidden
+	* [r1083] Avoid message pollution during cmake configuration time
+
+2011-11-21  Mickaël Savinaud
+
+	* [r1081] [trunk] WIP: fix bug with windows platform and j2k_dump
+
+2011-11-18  Mickaël Savinaud
+
+	* [r1077] [trunk] WIP: fix bug with windows platform and
+	  j2k_to_image
+
+2011-11-17  Mickaël Savinaud
+
+	* [r1076] [trunk] WIP: fix bug when decoding an area or a tile with
+	  special resolution
+	* [r1075] [trunk] WIP: enhance j2k_to_image with new
+	  get_decoded_tile functionality
+	* [r1074] [trunk] WIP: clean j2k_dump and enhance j2k_dump with
+	  commit 1052
+	* [r1073] [trunk] WIP: add a set decoded resolution factor function
+	  and update j2k_to_image help about decoded region
+
+2011-11-16  Kaori Hagihara
+
+	* [r1070] [trunk][JPIP] fixed opj_server execusion error (instant
+	  terminating) with autotool, cmake still need to be fixed
+
+2011-11-10  Mickaël Savinaud
+
+	* [r1056] [trunk] fix tests/nonregresion/CMakeList.txt
+
+2011-11-09  Mickaël Savinaud
+
+	* [r1055] [trunk] WIP: fix get_decoded_tile function to avoid error
+	  with output image
+	* [r1054] [trunk] fix bug with mj2 applications (credit to
+	  winfried)
+	* [r1053] [trunk] enhance mj2 when read jp2h (credit to winfried)
+	* [r1052] [trunk] check if the file extension is the same as the
+	  infile format (credit to winfried)
+
+2011-11-09  Julien Malik
+
+	* [r1051] [trunk] add some sanity check in CMakeLists to prevent
+	  STRING(REGEX..) call issues
+
+2011-11-08  Kaori Hagihara
+
+	* [r1048] [trunk][JPIP] enabled OpenJPEG V2 API
+
+2011-11-08  Mickaël Savinaud
+
+	* [r1047] [trunk] WIP: add get_decoded_tile functionality
+	* [r1046] [trunk] WIP: clean and enhance j2k files
+	* [r1045] [trunk] WIP: clean and enhance openjpeg.c
+	* [r1044] [trunk] WIP: clean and enhance openjpeg.h and add
+	  deprecated macro
+
+2011-11-08  Kaori Hagihara
+
+	* [r1042] [trunk][JPIP] updated main page of doxygen
+
+2011-11-03  Kaori Hagihara
+
+	* [r1037] solved memory leak of opj_server, and removed redundant
+	  defines
+
+2011-11-02  Antonin Descampe
+
+	* [r1036] [trunk][JPIP] additional patches for autotools and cmake
+
+2011-10-26  Kaori Hagihara
+
+	* [r1032] additional patches for autotool are applied
+
+2011-10-25  Kaori Hagihara
+
+	* [r1031] fixed client viewer to be compatible with server response
+	  header both Content-type and Content-Type
+	* [r1030] patches for cmake and autotool are applied
+
+2011-10-25  Mickaël Savinaud
+
+	* [r1029] [trunk] WIP: add a file to exclude some valgrind errors
+	  (detected with ctest_memcheck) related to png lib found with
+	  ubuntu10.04 platform
+	* [r1028] [trunk] WIP: solve problems with reading of elements
+	  outside the tilec->data buffer in dwt
+
+2011-10-21  Mickaël Savinaud
+
+	* [r1027] [trunk] WIP: manage output image with area correponding
+	  to the set decoded area
+	* [r1026] [trunk] WIP: enhance codestream index generation
+
+2011-10-20  Mickaël Savinaud
+
+	* [r1022] [trunk] WIP: isolate dump test suite
+	* [r1021] WIP: remove memory leak about new jp2_read_marker
+	  function
+	* [r1020] [trunk] WIP: remove previous commit about memory leak
+	  with ppm read function
+	* [r1019] [trunk] WIP: solve memory leak with ppm read function
+
+2011-10-19  Kaori Hagihara
+
+	* [r1017] start using API style in openJPIP library
+
+2011-10-19  Mickaël Savinaud
+
+	* [r1014] [trunk] WIP: solve problem with writing of tga image from
+	  an image with signd=1 (credit to Winfried)
+	* [r1013] [trunk] WIP: solve some memory leak in test compare
+	  functions
+
+2011-10-18  Kaori Hagihara
+
+	* [r1012] adapt makefiles to the new structure
+	* [r1011] rearranged opj_server, opj_dec_server directory
+
+2011-10-14  Kaori Hagihara
+
+	* [r1009] enable all progression orders
+
+2011-10-13  Kaori Hagihara
+
+	* [r1008] include stdlib.h for calloc
+
+2011-10-12  Mickaël Savinaud
+
+	* [r1007] [trunk] WIP: resolve heap corruption with p0_07.j2k
+	  (credit to Winfried)
+	* [r1006] [trunk] WIP: correct some memory leaks in applications
+	  functions
+	* [r1005] [trunk] WIP: add a read CBD marker function (JPEG2000
+	  part 2)
+	* [r1004] [trunk] WIP: add a read MCO marker function (JPEG2000
+	  part 2)
+	* [r1003] [trunk] WIP: add a read MCC marker function (JPEG2000
+	  part 2)
+	* [r1002] [trunk] WIP: add a read MCT marker function (JPEG2000
+	  part 2)
+
+2011-10-12  Kaori Hagihara
+
+	* [r1000] enable layers requests; restricting the number of
+	  codesream quality layers
+
+2011-10-11  Mickaël Savinaud
+
+	* [r998] [trunk] WIP: correct a segfault inside j2k_dump output
+
+2011-10-11  Kaori Hagihara
+
+	* [r997] -J option for -jpip added into the option list
+	* [r996] change -v option was renamed to -u, which is equivalent to
+	  -TP long option
+
+2011-10-11  Mickaël Savinaud
+
+	* [r995] [trunk] WIP: correct some segfault with win platform and
+	  remove a aligned allocation which produce error when a realloc is
+	  done on this pointer
+	* [r994] [trunk] WIP: add stream length value to read unknown
+	  marker size, backport 855 into V2 framework, correct memory leak
+	  into get_cstr_info
+	* [r993] [trunk] WIP: add output elements about decoding of jp2
+	  files with last tile part lenght equal zero
+	* [r992] [trunk] WIP: correct mistake with JP2 files and manage
+	  correctly the text_GBR.jp2 filecase
+
+2011-10-10  Kaori Hagihara
+
+	* [r990] change -v option was reactivated for JPIP
+	* [r987] enable JPT-stream request from client viewer option
+
+2011-10-10  Antonin Descampe
+
+	* [r986] [trunk][JPIP]removed obsolete indexer utility
+
+2011-10-10  Vincent Torri
+
+	* [r981] [trunk] fix name
+	* [r980] [trunk] add libopenjpeg-jpwl.pc.in. fix output when
+	  --disable-shared or --disable-static is passed to configure.
+	  Minor clean up of configure.ac.
+	* [r978] [trunk] fix 'distcheck' rule
+
+2011-10-07  Mickaël Savinaud
+
+	* [r976] [trunk] WIP: correct mistake in text output inside
+	  set_decoded_area function (credit to Winfried)
+	* [r975] [trunk] WIP: update jp2 dump functions with the new V2
+	  framework
+	* [r974] [trunk] WIP: update output filename of conformance dump
+	  test to be compatible with new baseline
+	* [r972] [trunk] correct wrong input in dump_codec function and add
+	  missing return value
+	* [r971] [trunk] WIP: correct mistake inside set_decoded_area
+	  function (credit to Francois De Vieilleville)
+	* [r970] [trunk] WIP: backport rev 967-969 about test suite
+	  enhancement and rename of opj_configh.cmake.in from opj-1.5 to
+	  trunk
+
+2011-10-06  Mickaël Savinaud
+
+	* [r963] [trunk] WIP: Enhance html documentation generation with
+	  cmake, add a mainpage to this documentation and bump version to
+	  1.99.0 into the main CMakeLists (as rev951)
+	* [r962] [trunk] WIP: fix build error with windows configuration
+	  induced by rev 960
+
+2011-10-05  Mickaël Savinaud
+
+	* [r961] [trunk] WIP: fix the decoding process with conformance
+	  files and V2 framework
+
+2011-09-30  Vincent Torri
+
+	* [r954] * [vincent] fix autotools for various compilation problems
+	  * [vincent] fix indexer compilation. Patch from Winfried
+
+2011-09-30  Kaori Hagihara
+
+	* [r953] modified indexer for JPIP, JPP-stream
+	* [r952] enabled JPP-stream
+
+2011-09-28  Vincent Torri
+
+	* [r951] [trunk] bump version to 1.99.0
+
+2011-09-27  Mickaël Savinaud
+
+	* [r950] [trunk] WIP: enhance the event management into the new API
+	* [r949] [trunk] WIP: fix some warnings about a static function and
+	  j2k_read_unk_v2
+	* [r948] [trunk] WIP: add basis for a new output management of the
+	  codestream information and index
+	* [r947] [trunk] WIP: fix some warnings from j2k_dump and index.c
+
+2011-09-22  Mickaël Savinaud
+
+	* [r946] [trunk] WIP: fix build compilation (with autotools) with
+	  MJ2 option (credit to Winfried)
+	* [r945] WIP: fix build compilation error with windows platform
+	  about event_mgr management
+
+2011-09-21  Mickaël Savinaud
+
+	* [r944] [trunk] WIP: clean the j2k_dump application and the lib
+	  regards to the event management
+	* [r943] Enhance the support of endianess with cmake and inside the
+	  code (credit to Winfried)
+
+2011-09-20  Mickaël Savinaud
+
+	* [r942] WIP: fixed build issues with JPWL option ON
+	* [r941] WIP: fixed build issue with MJ2 option ON with new
+	  framework
+
+2011-09-19  Mickaël Savinaud
+
+	* [r938] Enhance some new JPIP files about opj_config inclusion and
+	  using of free/calloc (credit to Julien Malik)
+	* [r937] WIP: begin to test opj_decode_tile_data
+	* [r936] WIP: update t1, t2, tcd to use same strut as in V2
+	* [r935] WIP: begin to test opj_read_tile_header with V2 style
+	* [r934] WIP: create a new framework to output file information
+	* [r933] WIP: remove a piece of code copy by the merge op at the
+	  wrong place
+	* [r932] WIP: begin to clean j2k_dump and some other small things
+	* [r931] WIP: enchance the new version with some bug fixes from v1
+	  and from me
+	* [r930] WIP: add support of jp2 for new j2k_dump function and some
+	  other small stuff
+	* [r929] WIP: new image_header struct is used and enable used of
+	  cstr_info
+	* [r928] WIP: manage the case of event_mgr is not provided to
+	  setup_decoder function
+	* [r927] WIP: insert elements from V2 framework into the trunk (add
+	  missing files)
+	* [r926] Work In Progress: insert elements from V2 framework into
+	  the trunk
+
+2011-09-16  Kaori Hagihara
+
+	* [r925] Add README description for stateless requests
+	* [r924] opj_dec_server enabled stateless requests
+	* [r923] opj_viewer_xerces enabled stateless requests
+	* [r922] opj_viewer enabled stateless requests
+
+2011-09-09  Antonin Descampe
+
+	* [r917] TRUNK: fixed autotools for new indexer option
+	* [r915] forgot the CHANGES file in r913
+	* [r913] TRUNK:added a new indexer functionality to the library.
+	  With the new -jpip option at encoding, the user can now generate
+	  a JP2 file including an XML box with the index used when browsing
+	  the image with JPIP
+
+2011-09-02  Mickaël Savinaud
+
+	* [r910] fixed windows nighlty crash about one missing opj_getopt()
+	  (and warning with other platform)
+
+2011-09-01  Kaori Hagihara
+
+	* [r909] changed terminating status of opj_server in
+	  debug/non-server mode
+
+2011-09-01  Antonin Descampe
+
+	* [r907] renamed getopt.{c/h} to opj_getopt.{c/h} and forced the
+	  use of these files rather than the system ones. This fixed issue
+	  78. Credit to Winfried.
+
+2011-08-31  Mickaël Savinaud
+
+	* [r905] fixed a segfault with fgets return value for some cases
+	  inside test function compare_dump_file()
+	* [r901] enhance the encoding test suite and remove unsued
+	  CONFIGURE_FILE into a CMakeList
+
+2011-08-30  Mickaël Savinaud
+
+	* [r900] added first version of the encoding tests suite
+
+2011-08-28  Kaori Hagihara
+
+	* [r897] reorganization of indexer before importing extentional
+	  libopenjpeg files
+
+2011-08-27  Antonin Descampe
+
+	* [r895] fixed missing include directory in
+	  opj_client/opj_dec_server/CMakeLists.txt
+
+2011-08-26  Antonin Descampe
+
+	* [r893] small changes in autotools files
+	* [r892] fixed cmake and autotools files to reflect recent indexer
+	  changes in JPIP
+
