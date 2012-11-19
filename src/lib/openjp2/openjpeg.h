@@ -584,14 +584,6 @@ typedef struct opj_image_comptparm {
 } opj_image_cmptparm_t;
 
 
-
-/**
- * Extended image capabilities (not used now, reserved for the future and development)
- * */
-typedef void* opj_input_image_t;
-typedef void* opj_output_image_t;
-
-
 /* 
 ==========================================================
    Information on the JPEG 2000 codestream
