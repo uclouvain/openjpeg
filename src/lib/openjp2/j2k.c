@@ -7881,6 +7881,12 @@ OPJ_BOOL opj_j2k_read_SPCod_SPCoc(  opj_j2k_t *p_j2k,
 
         opj_read_bytes(l_current_ptr, &l_tccp->numresolutions ,1);              /* SPcox (D) */
         ++l_tccp->numresolutions;                                                                               /* tccp->numresolutions = read() + 1 */
+        if (l_tccp->numresolutions > OPJ_J2K_MAXRLVLS) {
+                opj_event_msg(p_manager, EVT_ERROR,
+                              "Invalid value for numresolutions : %d\n",
+                              l_tccp->numresolutions);
+                return OPJ_FALSE;
+        }
         ++l_current_ptr;
 
         /* If user wants to remove more resolutions than the codestream contains, return error */
