@@ -7883,8 +7883,8 @@ OPJ_BOOL opj_j2k_read_SPCod_SPCoc(  opj_j2k_t *p_j2k,
         ++l_tccp->numresolutions;                                                                               /* tccp->numresolutions = read() + 1 */
         if (l_tccp->numresolutions > OPJ_J2K_MAXRLVLS) {
                 opj_event_msg(p_manager, EVT_ERROR,
-                              "Invalid value for numresolutions : %d\n",
-                              l_tccp->numresolutions);
+                              "Invalid value for numresolutions : %d, max value is set in openjpeg.h at %d\n",
+                              l_tccp->numresolutions, OPJ_J2K_MAXRLVLS);
                 return OPJ_FALSE;
         }
         ++l_current_ptr;
