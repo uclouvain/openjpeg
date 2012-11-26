@@ -1998,6 +1998,13 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
                 opj_read_bytes(p_header_data,&tmp,1);   /* YRsiz_i */
                 ++p_header_data;
                 l_img_comp->dy = (OPJ_INT32)tmp; /* should be between 1 and 255 */
+                if( l_img_comp->dx < 1 || l_img_comp->dx > 255 ||
+                    l_img_comp->dy < 1 || l_img_comp->dy > 255 ) {
+                    opj_event_msg(p_manager, EVT_ERROR,
+                                  "Invalid values for comp = %d : dx=%u dy=%u\n (should be between 1 and 255 according the JPEG2000 norm)",
+                                  i, l_img_comp->dx, l_img_comp->dy);
+                    return OPJ_FALSE;
+                }
 
 #ifdef USE_JPWL
                 if (l_cp->correct) {
