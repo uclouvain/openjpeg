@@ -780,9 +780,7 @@ static void j3d_write_com(opj_j3d_t *j3d) {
 	cio_write(cio, J3D_MS_COM, 2);
 	lenp = cio_tell(cio);
 	cio_skip(cio, 2);
-	/*cio_write(cio, 0, 2);*/
-	cio_write(cio, j3d->cp->transform_format,1);
-	cio_write(cio, j3d->cp->encoding_format,1);
+	cio_write(cio, 0, 2);
 	/*opj_event_msg(j3d->cinfo, EVT_INFO, "TRF %D ENCOD %d\n",j3d->cp->transform_format,j3d->cp->encoding_format);*/
 	if (j3d->cp->comment != NULL) {
 		char *comment = j3d->cp->comment;
@@ -2258,6 +2256,10 @@ bool j3d_encode(opj_j3d_t *j3d, opj_cio_t *cio, opj_volume_t *volume, char *inde
 		j3d_write_cap(j3d);
 		j3d_write_nsi(j3d);
 	}
+
+	/*if (j3d->cp->transform_format != TRF_2D_DWT || j3d->cp->encoding_format != ENCOD_2EB)*/
+		j3d_write_com(j3d);
+
 	j3d_write_cod(j3d);
 	j3d_write_qcd(j3d);
 	for (compno = 0; compno < volume->numcomps; compno++) {
@@ -2271,9 +2273,6 @@ bool j3d_encode(opj_j3d_t *j3d, opj_cio_t *cio, opj_volume_t *volume, char *inde
 	if (j3d->volume->comps[0].dcoffset != 0)
         j3d_write_dco(j3d);
 
-	if (j3d->cp->transform_format != TRF_2D_DWT || j3d->cp->encoding_format != ENCOD_2EB)
-		j3d_write_com(j3d);
-	
 	/* INDEX >> */
 	if(volume_info && volume_info->index_on) {
 		volume_info->main_head_end = cio_tell(cio) - 1;
