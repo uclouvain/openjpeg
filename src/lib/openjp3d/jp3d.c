@@ -58,15 +58,15 @@ Read the SIZ marker (2D volume and tile size)
 */
 static void j3d_read_siz(opj_j3d_t *j3d);
 /**
-Write the ZSI marker (3rd volume and tile size)
+Write the NSI marker (3rd volume and tile size)
 @param j3d J3D handle
 */
-static void j3d_write_zsi(opj_j3d_t *j3d);
+static void j3d_write_nsi(opj_j3d_t *j3d);
 /**
-Read the ZSI marker (3rd volume and tile size)
+Read the NSI marker (3rd volume and tile size)
 @param j3d J3D handle
 */
-static void j3d_read_zsi(opj_j3d_t *j3d);
+static void j3d_read_nsi(opj_j3d_t *j3d);
 /**
 Write the COM marker (comment)
 @param j3d J3D handle
@@ -418,6 +418,10 @@ static void j3d_write_cap(opj_j3d_t *j3d){
 	lenp = cio_tell(cio);
 	cio_skip(cio, 2);
 	cio_write(cio,J3D_CAP_10, 4); 
+  if( J3D_CAP_10 )
+    {
+    cio_write(cio, 0x0, 2); 
+    }
 	len = cio_tell(cio) - lenp;
 	cio_seek(cio, lenp);
 	cio_write(cio, len, 2);		/* Lsiz */
@@ -430,18 +434,24 @@ static void j3d_read_cap(opj_j3d_t *j3d){
 	/*cio_read(cio, 2);	 CAP */
 	len = cio_read(cio, 2);
 	Cap = cio_read(cio, 4);
+  if(Cap) {
+    cio_read(cio, 2);
+  }
+  assert( len == 2 + 4 + 2 );
 }
-static void j3d_write_zsi(opj_j3d_t *j3d) {
+static void j3d_write_nsi(opj_j3d_t *j3d) {
 	int i;
 	int lenp, len;
+  int ndim = 3;
 
 	opj_cio_t *cio = j3d->cio;
 	opj_volume_t *volume = j3d->volume;
 	opj_cp_t *cp = j3d->cp;
 	
-	cio_write(cio, J3D_MS_ZSI, 2);	/* ZSI */
+	cio_write(cio, J3D_MS_NSI, 2);	/* NSI */
 	lenp = cio_tell(cio);
 	cio_skip(cio, 2);
+	cio_write(cio, ndim, 1);	/* Ndim */
 	cio_write(cio, volume->z1, 4);	/* Zsiz */
 	cio_write(cio, volume->z0, 4);	/* Z0siz */
 	cio_write(cio, cp->tdz, 4);		/* ZTsiz */
@@ -455,14 +465,17 @@ static void j3d_write_zsi(opj_j3d_t *j3d) {
 	cio_seek(cio, lenp + len);
 }
 
-static void j3d_read_zsi(opj_j3d_t *j3d) {
+static void j3d_read_nsi(opj_j3d_t *j3d) {
+  int ndim;
 	int len, i;
 	
 	opj_cio_t *cio = j3d->cio;
 	opj_volume_t *volume = j3d->volume;
 	opj_cp_t *cp = j3d->cp;
 	
-	len = cio_read(cio, 2);			/* Lsiz */
+	len = cio_read(cio, 2);			/* Lnsi */
+	ndim = cio_read(cio, 1);			/* Ndim */
+  assert( ndim == 3 );
 	volume->z1 = cio_read(cio, 4);	/* Zsiz */
 	volume->z0 = cio_read(cio, 4);	/* Z0siz */
 	cp->tdz = cio_read(cio, 4);		/* ZTsiz */
@@ -1545,7 +1558,7 @@ opj_dec_mstabent_t j3d_dec_mstab[] = {
   {J3D_MS_EOC, J3D_STATE_TPHSOT, j3d_read_eoc},
   {J3D_MS_CAP, J3D_STATE_MHSIZ, j3d_read_cap},
   {J3D_MS_SIZ, J3D_STATE_MHSIZ, j3d_read_siz},
-  {J3D_MS_ZSI, J3D_STATE_MHSIZ, j3d_read_zsi},
+  {J3D_MS_NSI, J3D_STATE_MHSIZ, j3d_read_nsi},
   {J3D_MS_COD, J3D_STATE_MH | J3D_STATE_TPH, j3d_read_cod},
   {J3D_MS_COC, J3D_STATE_MH | J3D_STATE_TPH, j3d_read_coc},
   {J3D_MS_RGN, J3D_STATE_MH | J3D_STATE_TPH, j3d_read_rgn},
@@ -2243,7 +2256,7 @@ bool j3d_encode(opj_j3d_t *j3d, opj_cio_t *cio, opj_volume_t *volume, char *inde
 	j3d_write_siz(j3d);
 	if (j3d->cinfo->codec_format == CODEC_J3D) {
 		j3d_write_cap(j3d);
-		j3d_write_zsi(j3d);
+		j3d_write_nsi(j3d);
 	}
 	j3d_write_cod(j3d);
 	j3d_write_qcd(j3d);
