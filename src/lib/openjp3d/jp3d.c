@@ -809,6 +809,7 @@ static void j3d_read_com(opj_j3d_t *j3d) {
 
 static void j3d_write_cox(opj_j3d_t *j3d, int compno) {
 	int i;
+  int shift = 2;
 
 	opj_cp_t *cp = j3d->cp;
 	opj_tcp_t *tcp = &cp->tcps[j3d->curtileno];
@@ -820,11 +821,15 @@ static void j3d_write_cox(opj_j3d_t *j3d, int compno) {
 		cio_write(cio, tccp->numresolution[1] - 1, 1);	/* SPcox (E) No of decomposition levels in y-axis*/
 		cio_write(cio, tccp->numresolution[2] - 1, 1);	/* SPcox (F) No of decomposition levels in z-axis*/
 	}
-	/* (cblkw - 2) + (cblkh - 2) + (cblkl - 2) <= 18*/
-	cio_write(cio, tccp->cblk[0] - 2, 1);				/* SPcox (G) Cblk width entre 10 y 2 (8 y 0)*/
-	cio_write(cio, tccp->cblk[1] - 2, 1);				/* SPcox (H) Cblk height*/
 	if (j3d->cinfo->codec_format == CODEC_J3D) {
-		cio_write(cio, tccp->cblk[2] - 2, 1);			/* SPcox (I) Cblk depth*/
+    /* Table A.7 */
+    shift = 0;
+  }
+	/* (cblkw - 2) + (cblkh - 2) + (cblkl - 2) <= 18*/
+	cio_write(cio, tccp->cblk[0] - shift, 1);				/* SPcox (G) Cblk width entre 10 y 2 (8 y 0)*/
+	cio_write(cio, tccp->cblk[1] - shift, 1);				/* SPcox (H) Cblk height*/
+	if (j3d->cinfo->codec_format == CODEC_J3D) {
+		cio_write(cio, tccp->cblk[2] - shift, 1);			/* SPcox (I) Cblk depth*/
 	}
 	cio_write(cio, tccp->cblksty, 1);				/* SPcox (J) Cblk style*/
 	cio_write(cio, tccp->dwtid[0], 1);				/* SPcox (K) WT in x-axis 15444-2 Table A10*/
@@ -847,6 +852,7 @@ static void j3d_write_cox(opj_j3d_t *j3d, int compno) {
 
 static void j3d_read_cox(opj_j3d_t *j3d, int compno) {
 	int i;
+  int shift = 2;
 
 	opj_cp_t *cp = j3d->cp;
 	opj_tcp_t *tcp = j3d->state == J3D_STATE_TPH ? &cp->tcps[j3d->curtileno] : j3d->default_tcp;
@@ -866,10 +872,14 @@ static void j3d_read_cox(opj_j3d_t *j3d, int compno) {
 	cp->reduce[1] = int_min((tccp->numresolution[1])-1, cp->reduce[1]);
 	cp->reduce[2] = int_min((tccp->numresolution[2])-1, cp->reduce[2]);
 	
-	tccp->cblk[0] = cio_read(cio, 1) + 2;	/* SPcox (G) */
-	tccp->cblk[1] = cio_read(cio, 1) + 2;	/* SPcox (H) */
+  if (j3d->cinfo->codec_format == CODEC_J3D) {
+    /* Table A.7 */
+    shift = 0;
+  }
+	tccp->cblk[0] = cio_read(cio, 1) + shift;	/* SPcox (G) */
+	tccp->cblk[1] = cio_read(cio, 1) + shift;	/* SPcox (H) */
 	if (j3d->cinfo->codec_format == CODEC_J3D)
-		tccp->cblk[2] = cio_read(cio, 1) + 2;	/* SPcox (I) */
+		tccp->cblk[2] = cio_read(cio, 1) + shift;	/* SPcox (I) */
 	else
 		tccp->cblk[2] = tccp->cblk[0];
 
