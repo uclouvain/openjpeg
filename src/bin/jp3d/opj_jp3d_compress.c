@@ -488,7 +488,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters) 
 			
 			case 's':			/* subsampling factor */
 			{
-				if (sscanf(opj_optarg, "%d,%d,%d", &parameters->subsampling_dx, &parameters->subsampling_dy, &parameters->subsampling_dz) != 2) {
+				if (sscanf(opj_optarg, "%d,%d,%d", &parameters->subsampling_dx, &parameters->subsampling_dy, &parameters->subsampling_dz) != 3) {
 					fprintf(stdout,	"[ERROR] '-s' sub-sampling argument error !  [-s dx,dy,dz]\n");
 					return 1;
 				}
