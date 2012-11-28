@@ -799,9 +799,8 @@ static void j3d_read_com(opj_j3d_t *j3d) {
 	opj_cio_t *cio = j3d->cio;
 
 	len = cio_read(cio, 2);
+	cio_read(cio, 2); // read registration
 	
-	j3d->cp->transform_format = (OPJ_TRANSFORM) cio_read(cio, 1);
-	j3d->cp->encoding_format = (OPJ_ENTROPY_CODING) cio_read(cio, 1);
 	/*opj_event_msg(j3d->cinfo, EVT_INFO, "TRF %D ENCOD %d\n",j3d->cp->transform_format,j3d->cp->encoding_format);*/
 
 	cio_skip(cio, len - 4);  /*posible comments*/
@@ -1685,11 +1684,12 @@ void j3d_setup_decoder(opj_j3d_t *j3d, opj_dparameters_t *parameters) {
 		cp->reduce[2] = parameters->cp_reduce[2];
 		cp->layer = parameters->cp_layer;
 		cp->bigendian = parameters->bigendian;
-		
-		
-		cp->encoding_format = ENCOD_2EB;
+
+    /* MM: Settings of the following two member variables would take
+      place during j3d_read_com. FIXME */
+		cp->encoding_format = ENCOD_3EB;
 		cp->transform_format = TRF_2D_DWT;
-		
+
 		/* keep a link to cp so that we can destroy it later in j3d_destroy_decompress */
 		j3d->cp = cp;
 	}
