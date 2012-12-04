@@ -1,5 +1,5 @@
 /* create config.h for CMake */
-#cmakedefine OPJ_HAVE_STDINT_H @HAVE_STDINT_H@
+#cmakedefine OPJ_HAVE_STDINT_H @OPJ_HAVE_STDINT_H@
 
 #define OPJ_PACKAGE_VERSION "@PACKAGE_VERSION@"
 
