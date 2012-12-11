@@ -68,6 +68,7 @@ opj_tgt_tree_t *tgt_create(int numleafsh, int numleafsv, int numleafsz) {
 	opj_tgt_node_t *node = NULL;
 	opj_tgt_node_t *parentnode = NULL;
 	opj_tgt_node_t *parentnode0 = NULL;
+	opj_tgt_node_t *parentnode1 = NULL;
 	opj_tgt_tree_t *tree = NULL;
 	int i, j, k, p, p0;
 	int numlvls;
@@ -108,38 +109,32 @@ opj_tgt_tree_t *tgt_create(int numleafsh, int numleafsv, int numleafsz) {
 	node = tree->nodes;
 	parentnode = &tree->nodes[tree->numleafsh * tree->numleafsv * tree->numleafsz];
 	parentnode0 = parentnode;
-		
-	p = tree->numleafsh * tree->numleafsv * tree->numleafsz;
-	p0 = p;
-	n = 0;
+	parentnode1 = parentnode;
 	/*fprintf(stdout,"\nH %d V %d Z %d numlvls %d nodes %d\n",tree->numleafsh,tree->numleafsv,tree->numleafsz,numlvls,tree->numnodes);*/
 	for (i = 0; i < numlvls - 1; ++i) {
-		for (j = 0; j < nplv[i]; ++j) {
-			k = nplh[i]*nplz[i];
-			while (--k >= 0) {
-				node->parent = parentnode;		/*fprintf(stdout,"node[%d].parent = node[%d]\n",n,p);*/
-				++node;	++n;		
-				if (--k >= 0 && n < p) {
-					node->parent = parentnode;	/*fprintf(stdout,"node[%d].parent = node[%d]\n",n,p);*/
-					++node;	++n;	
-				}
-				if (nplz[i] != 1){ /*2D operation vs 3D operation*/
-					if (--k >= 0 && n < p) {
+		for (z = 0; z < nplz[i]; ++z) {
+			for (j = 0; j < nplv[i]; ++j) {
+				k = nplh[i];
+				while(--k >= 0) {
+					node->parent = parentnode;		/*fprintf(stdout,"node[%d].parent = node[%d]\n",n,p);*/
+					++node;
+					if(--k >= 0) {
 						node->parent = parentnode;	/*fprintf(stdout,"node[%d].parent = node[%d]\n",n,p);*/
-						++node;	++n;
+						++node;
 					}
-					if (--k >= 0 && n < p) {
-						node->parent = parentnode;	/*fprintf(stdout,"node[%d].parent = node[%d]\n",n,p);*/
-						++node;	++n;
-					}
+					++parentnode;
 				}
-				++parentnode; ++p;
+				if((j & 1) || j == nplv[i] - 1) {
+					parentnode0 = parentnode;
+				} else {
+					parentnode = parentnode0;
+				}
 			}
-			if ((j & 1) || j == nplv[i] - 1) {
-				parentnode0 = parentnode;			p0 = p;		/*fprintf(stdout,"parent = node[%d] \n",p);*/
+			if ((z & 1) || z == nplz[i] - 1) {
+				parentnode1 = parentnode;
 			} else {
-				parentnode = parentnode0;			p = p0;		/*fprintf(stdout,"parent = node[%d] \n",p);*/
-				parentnode0 += nplh[i]*nplz[i];		p0 += nplh[i]*nplz[i];
+				parentnode0 = parentnode1;
+				parentnode = parentnode1;
 			}
 		}
 	}
