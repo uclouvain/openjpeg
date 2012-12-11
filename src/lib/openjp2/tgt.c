@@ -53,7 +53,7 @@ opj_tgt_tree_t *opj_tgt_create(OPJ_UINT32 numleafsh, OPJ_UINT32 numleafsv) {
 
         tree = (opj_tgt_tree_t *) opj_malloc(sizeof(opj_tgt_tree_t));
         if(!tree) {
-                fprintf(stderr, "ERROR in tgt_create_v2 while allocating tree\n");
+                fprintf(stderr, "ERROR in tgt_create while allocating tree\n");
                 return 00;
         }
         memset(tree,0,sizeof(opj_tgt_tree_t));
@@ -76,13 +76,13 @@ opj_tgt_tree_t *opj_tgt_create(OPJ_UINT32 numleafsh, OPJ_UINT32 numleafsv) {
         /* ADD */
         if (tree->numnodes == 0) {
                 opj_free(tree);
-                fprintf(stderr, "WARNING in tgt_create_v2 tree->numnodes == 0, no tree created.\n");
+                fprintf(stderr, "WARNING in tgt_create tree->numnodes == 0, no tree created.\n");
                 return 00;
         }
 
         tree->nodes = (opj_tgt_node_t*) opj_calloc(tree->numnodes, sizeof(opj_tgt_node_t));
         if(!tree->nodes) {
-                fprintf(stderr, "ERROR in tgt_create_v2 while allocating node of the tree\n");
+                fprintf(stderr, "ERROR in tgt_create while allocating node of the tree\n");
                 opj_free(tree);
                 return 00;
         }
@@ -119,7 +119,7 @@ opj_tgt_tree_t *opj_tgt_create(OPJ_UINT32 numleafsh, OPJ_UINT32 numleafsv) {
 }
 
 /**
- * Reinitialises a tag-tree from an exixting one. (V2 framevork)
+ * Reinitialises a tag-tree from an existing one.
  *
  * @param       p_tree                          the tree to reinitialize.
  * @param       p_num_leafs_h           the width of the array of leafs of the tree
