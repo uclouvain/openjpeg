@@ -534,6 +534,37 @@ typedef struct {
   DWORD biClrImportant;		/* Number of important color (0: ALL) */
 } BITMAPINFOHEADER_t;
 
+	struct bmp_cmap
+   {
+    unsigned char blue;
+    unsigned char green;
+    unsigned char red;
+    unsigned char alpha;
+   };
+
+static void BMP_read_RGB8(int *red, int *green, int *blue, unsigned int line,
+    BITMAPINFOHEADER_t *hdr, struct bmp_cmap bmap[256], FILE *reader,
+    unsigned int offset)
+{
+	unsigned int w, start_pos, y, x, pixel;
+	unsigned int i = 0;
+
+	w = hdr->biWidth;
+
+	start_pos = (((w * hdr->biBitCount + 31) & ~0x1f) >> 3);
+	y  = hdr->biHeight - line - 1;
+	fseek(reader,offset + y * start_pos,SEEK_SET);
+
+	for(x = 0; x < w; ++x)
+   {
+	pixel = fgetc(reader);
+	red[i] = (unsigned char)bmap[pixel].red;
+	green[i] = (unsigned char)bmap[pixel].green;
+	blue[i] = (unsigned char)bmap[pixel].blue;
+	++i;
+   }
+}
+
 opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters) 
 {
 	int subsampling_dx = parameters->subsampling_dx;
@@ -727,37 +758,24 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
 	else 
 	if (Info_h.biBitCount == 8 && Info_h.biCompression == 0)/*RGB */
    {
+	struct bmp_cmap cmap [256];
+	
 	if(Info_h.biClrUsed == 0) Info_h.biClrUsed = 256;
 	else
 	if(Info_h.biClrUsed > 256) Info_h.biClrUsed = 256;
 
-	table_R = (unsigned char *) malloc(256 * sizeof(unsigned char));
-	table_G = (unsigned char *) malloc(256 * sizeof(unsigned char));
-	table_B = (unsigned char *) malloc(256 * sizeof(unsigned char));
-		
-	has_color = 0;	
+    fseek(IN, 14+Info_h.biSize, SEEK_SET);
+    memset(&cmap, 0, sizeof(struct bmp_cmap) * 256);
+
 	for (j = 0; j < Info_h.biClrUsed; j++) 
   {
-	table_B[j] = (unsigned char)getc(IN);
-	table_G[j] = (unsigned char)getc(IN);
-	table_R[j] = (unsigned char)getc(IN);
+	cmap[j].blue = (unsigned char)getc(IN);
+	cmap[j].green = (unsigned char)getc(IN);
+	cmap[j].red = (unsigned char)getc(IN);
 	getc(IN);
-	has_color += 
-	 !(table_R[j] == table_G[j] && table_R[j] == table_B[j]);
   }
-	if(has_color) gray_scale = 0;
-		   
-	/* Place the cursor at the beginning of the image information */
-	fseek(IN, 0, SEEK_SET);
-	fseek(IN, File_h.bfOffBits, SEEK_SET);
-			
-	W = Info_h.biWidth;
-	H = Info_h.biHeight;
-	if (Info_h.biWidth % 2)
-	 W++;
-			
-	numcomps = gray_scale ? 1 : 3;
-	color_space = gray_scale ? CLRSPC_GRAY : CLRSPC_SRGB;
+	numcomps = 3;
+	color_space = CLRSPC_SRGB;
 		/* initialize image components */
 	memset(&cmptparm[0], 0, 3 * sizeof(opj_image_cmptparm_t));
 	for(i = 0; i < numcomps; i++) 
@@ -775,7 +793,6 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
 	if(!image) 
   {
 	fclose(IN);
-	free(table_R); free(table_G); free(table_B);
 	return NULL;
   }
 
@@ -785,55 +802,21 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
 	image->x1 =	!image->x0 ? (w - 1) * subsampling_dx + 1 : image->x0 + (w - 1) * subsampling_dx + 1;
 	image->y1 =	!image->y0 ? (h - 1) * subsampling_dy + 1 : image->y0 + (h - 1) * subsampling_dy + 1;
 
+  {
+	int *red = image->comps[0].data;
+	int *green = image->comps[1].data;
+	int *blue = image->comps[2].data;
+	unsigned int offset = File_h.bfOffBits;
+	unsigned int line;
+
 	/* set image data */
-
-	RGB = (unsigned char *) malloc(W * H * sizeof(unsigned char));
-			
-	if ( fread(RGB, sizeof(unsigned char), W * H, IN) != W * H )
-	{
-		free(table_R);
-		free(table_G);
-		free(table_B);
-		free(RGB);
-		opj_image_destroy(image);
-		fprintf(stderr, "\nError: fread return a number of element different from the expected.\n");
-	    return NULL;
-	}
-	if (gray_scale) 
-  {
-	index = 0;
-	for (j = 0; j < W * H; j++) 
+	for(line = 0; line < h; ++line)
  {
-		if ((j % W < W - 1 && Info_h.biWidth % 2) || !(Info_h.biWidth % 2)) 
-	   {
-		image->comps[0].data[index] = 
-		 table_R[RGB[W * H - ((j) / (W) + 1) * W + (j) % (W)]];
-		index++;
-	   }
- }
+	BMP_read_RGB8(red, green, blue, line, &Info_h, cmap, IN, offset);
 
-  } 
-	else 
-  {
-	index = 0;
-	for (j = 0; j < W * H; j++) 
- {
-		if ((j % W < W - 1 && Info_h.biWidth % 2) 
-		|| !(Info_h.biWidth % 2)) 
-	   {
-		unsigned char pixel_index = 
-		 RGB[W * H - ((j) / (W) + 1) * W + (j) % (W)];
-		image->comps[0].data[index] = table_R[pixel_index];
-		image->comps[1].data[index] = table_G[pixel_index];
-		image->comps[2].data[index] = table_B[pixel_index];
-		index++;
-	   }
+	red += w; green += w; blue += w;
  }
   }
-	free(RGB);
-	free(table_R);
-	free(table_G);
-	free(table_B);
    }/* RGB8 */ 
 	else 
 	if (Info_h.biBitCount == 8 && Info_h.biCompression == 1)/*RLE8*/
