@@ -1001,7 +1001,7 @@ OPJ_BOOL opj_tcd_code_block_enc_allocate (opj_tcd_cblk_enc_t * p_code_block)
 {
         if (! p_code_block->data) {
 
-                p_code_block->data = (OPJ_BYTE*) opj_malloc(8192+1);
+                p_code_block->data = (OPJ_BYTE*) opj_malloc(OPJ_J2K_DEFAULT_CBLK_DATA_SIZE); //why +1 ?
                 if(! p_code_block->data) {
                         return OPJ_FALSE;
                 }
@@ -1036,10 +1036,11 @@ OPJ_BOOL opj_tcd_code_block_dec_allocate (opj_tcd_cblk_dec_t * p_code_block)
 
         if (! p_code_block->data) {
 
-                p_code_block->data = (OPJ_BYTE*) opj_malloc(8192);
+                p_code_block->data = (OPJ_BYTE*) opj_malloc(OPJ_J2K_DEFAULT_CBLK_DATA_SIZE);
                 if (! p_code_block->data) {
                         return OPJ_FALSE;
                 }
+                p_code_block->data_max_size = OPJ_J2K_DEFAULT_CBLK_DATA_SIZE;
                 /*fprintf(stderr, "Allocate 8192 elements of code_block->data\n");*/
 
                 l_seg_size = OPJ_J2K_DEFAULT_NB_SEGS * sizeof(opj_tcd_seg_t);
@@ -1213,8 +1214,7 @@ OPJ_BOOL opj_tcd_decode_tile(   opj_tcd_t *p_tcd,
         /*--------------TIER2------------------*/
         /* FIXME _ProfStart(PGROUP_T2); */
         l_data_read = 0;
-        if
-                (! opj_tcd_t2_decode(p_tcd, p_src, &l_data_read, p_max_length, p_cstr_index))
+        if (! opj_tcd_t2_decode(p_tcd, p_src, &l_data_read, p_max_length, p_cstr_index))
         {
                 return OPJ_FALSE;
         }
@@ -1746,7 +1746,7 @@ void opj_tcd_code_block_enc_deallocate (opj_tcd_precinct_t * p_precinct)
                 
                 for     (cblkno = 0; cblkno < l_nb_code_blocks; ++cblkno)  {
                         if (l_code_block->data) {
-                                opj_free(l_code_block->data-1);
+                                opj_free(l_code_block->data);
                                 l_code_block->data = 00;
                         }
 

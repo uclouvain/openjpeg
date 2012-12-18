@@ -96,10 +96,11 @@ typedef struct opj_tcd_cblk_enc {
 typedef struct opj_tcd_cblk_dec {
 	OPJ_BYTE * data;				/* Data */
 	opj_tcd_seg_t* segs;			/* segments information */
-	OPJ_INT32 x0, y0, x1, y1;		/* dimension of the code-blocks : left upper corner (x0, y0) right low corner (x1,y1) */
+	OPJ_INT32 x0, y0, x1, y1;		/* position of the code-blocks : left upper corner (x0, y0) right low corner (x1,y1) */
 	OPJ_UINT32 numbps;
 	OPJ_UINT32 numlenbits;
-	OPJ_UINT32 len;					/* length */
+    OPJ_UINT32 data_max_size;		/* Size of allocated data buffer */
+	OPJ_UINT32 data_current_size;	/* Size of used data buffer */
 	OPJ_UINT32 numnewpasses;		/* number of pass added to the code-blocks */
 	OPJ_UINT32 numsegs;				/* number of segments */
 	OPJ_UINT32 real_num_segs;

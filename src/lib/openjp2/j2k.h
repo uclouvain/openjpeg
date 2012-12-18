@@ -59,6 +59,8 @@ The functions in J2K.C have for goal to read/write the several parts of the code
 #define J2K_CCP_QNTSTY_SIQNT 1
 #define J2K_CCP_QNTSTY_SEQNT 2
 
+#define OPJ_J2K_DEFAULT_CBLK_DATA_SIZE 8192
+
 /* ----------------------------------------------------------------------- */
 
 #define J2K_MS_SOC 0xff4f	/**< SOC marker value */
