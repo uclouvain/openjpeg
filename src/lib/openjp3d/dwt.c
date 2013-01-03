@@ -58,7 +58,7 @@
 
 /** @name Local static functions */
 /*@{*/
-unsigned int ops;
+/*unsigned int ops;*/
 /**
 Forward lazy transform (horizontal)
 */
@@ -668,7 +668,7 @@ void dwt_encode(opj_tcd_tilecomp_t * tilec, int dwtid[3]) {
 	int *bj = NULL;
 	int *cj = NULL;
 	
-	ops = 0;
+	/*ops = 0;*/
 
 	memset(flagnorm,0,8000*sizeof(int));
 	w = tilec->x1-tilec->x0;
