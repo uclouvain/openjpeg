@@ -479,6 +479,7 @@ int t2_decode_packet(opj_t2_t* t2, unsigned char *src, int len, opj_tcd_tile_t *
 	if (tcp->csty & J3D_CP_CSTY_EPH) {
 		if ((*hd) != 0xff || (*(hd + 1) != 0x92)) {
 			opj_event_msg(t2->cinfo, EVT_ERROR, "Expected EPH marker\n");
+			return -999;
 		} else {
 			hd += 2;
 		}

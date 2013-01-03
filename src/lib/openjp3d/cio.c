@@ -58,6 +58,7 @@ opj_cio_t* OPJ_CALLCONV opj_cio_open(opj_common_ptr cinfo, unsigned char *buffer
 		cio->length = cp->tdx * cp->tdy * cp->tdz * cp->tw * cp->th * cp->tl * 4;
 		cio->buffer = (unsigned char *)opj_malloc(cio->length);
 		if(!cio->buffer) {
+			opj_event_msg(cio->cinfo, EVT_ERROR, "Error allocating memory for compressed bitstream\n");
 			opj_free(cio);
 			return NULL;
 		}
