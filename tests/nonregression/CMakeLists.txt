@@ -24,6 +24,10 @@ set(BLACKLIST_JPEG2000
     broken2.jp2
     broken3.jp2
     broken4.jp2
+    gdal_fuzzer_assert_in_opj_j2k_read_SQcd_SQcc.patch.jp2	
+    gdal_fuzzer_check_comp_dx_dy.jp2
+    gdal_fuzzer_check_number_of_tiles.jp2
+    gdal_fuzzer_unchecked_numresolutions.jp2
    )
 
 file(GLOB_RECURSE OPJ_DATA_NR_LIST
