@@ -76,8 +76,8 @@ opj_decompress -i  @INPUT_NR_PATH@/mem-b2ace68c-1381.jp2 -o @TEMP_PATH@/mem-b2ac
 opj_decompress -i  @INPUT_NR_PATH@/mem-b2b86b74-2753.jp2 -o @TEMP_PATH@/mem-b2b86b74-2753.jp2.pgx
 # issue 191 raised by the gdal fuzzer test (should properly failed)
 !opj_decompress -i  @INPUT_NR_PATH@/gdal_fuzzer_unchecked_numresolutions.jp2 -o @TEMP_PATH@/gdal_fuzzer_unchecked_numresolutions.pgx
-# issue 192 raised by the gdal fuzzer test (should properly failed)
-opj_decompress -i  @INPUT_NR_PATH@/gdal_fuzzer_assert_in_opj_j2k_read_SQcd_SQcc.patch.jp2 -o @TEMP_PATH@/gdal_fuzzer_assert_in_opj_j2k_read_SQcd_SQcc.patch.pgx
+# issue 192 raised by the gdal fuzzer test (should nicely failed)
+! opj_decompress -i  @INPUT_NR_PATH@/gdal_fuzzer_assert_in_opj_j2k_read_SQcd_SQcc.patch.jp2 -o @TEMP_PATH@/gdal_fuzzer_assert_in_opj_j2k_read_SQcd_SQcc.patch.pgx
 # issue 193 raised by the gdal fuzzer test (should properly failed)
 opj_decompress -i  @INPUT_NR_PATH@/gdal_fuzzer_check_number_of_tiles.jp2 -o @TEMP_PATH@/gdal_fuzzer_check_number_of_tiles.pgx
 # issue 194 raised by the gdal fuzzer test (should properly failed)
