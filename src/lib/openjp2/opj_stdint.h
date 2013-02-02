@@ -27,7 +27,7 @@
 #define OPJ_STDINT_H
 
 #include "opj_config.h"
-#ifdef HAVE_STDINT_H
+#ifdef OPJ_HAVE_STDINT_H
 #include <stdint.h>
 #else
 #if defined(_WIN32)
@@ -42,15 +42,6 @@ typedef unsigned __int64  uint64_t;
 #else
 #error unsupported platform
 #endif
-#endif
-
-#ifndef HAVE_SSIZE_T
-#if defined(_WIN32)
-#include <BaseTsd.h>
-typedef SSIZE_T ssize_t;
-#else
-#error SSIZE_T is undefined
-#endif /* _WIN32 */
 #endif
 
 #endif /* OPJ_STDINT_H */

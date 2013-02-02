@@ -192,9 +192,6 @@ CHECK_INCLUDE_FILE("string.h"       HAVE_STRING_H)
 CHECK_INCLUDE_FILE("sys/stat.h"     HAVE_SYS_STAT_H)
 CHECK_INCLUDE_FILE("sys/types.h"    HAVE_SYS_TYPES_H)
 CHECK_INCLUDE_FILE("unistd.h"       HAVE_UNISTD_H)
-# ssize_t
-include(CheckTypeSize)
-CHECK_TYPE_SIZE(ssize_t     SSIZE_T)
 
 # Enable Large file support
 include(TestLargeFiles)

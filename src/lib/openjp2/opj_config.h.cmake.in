@@ -1,9 +1,10 @@
 /* create config.h for CMake */
+#cmakedefine OPJ_HAVE_STDINT_H @HAVE_STDINT_H@
+
 #define OPJ_PACKAGE_VERSION "@PACKAGE_VERSION@"
 
 #cmakedefine HAVE_INTTYPES_H @HAVE_INTTYPES_H@
 #cmakedefine HAVE_MEMORY_H @HAVE_MEMORY_H@
-#cmakedefine HAVE_STDINT_H @HAVE_STDINT_H@
 #cmakedefine HAVE_STDLIB_H @HAVE_STDLIB_H@
 #cmakedefine HAVE_STRINGS_H @HAVE_STRINGS_H@
 #cmakedefine HAVE_STRING_H @HAVE_STRING_H@
@@ -14,7 +15,6 @@
 #cmakedefine HAVE_PNG_H @HAVE_PNG_H@
 #cmakedefine HAVE_LIBTIFF @HAVE_LIBTIFF@
 #cmakedefine HAVE_TIFF_H @HAVE_TIFF_H@
-#cmakedefine HAVE_SSIZE_T @HAVE_SSIZE_T@
 
 #cmakedefine _LARGEFILE_SOURCE
 #cmakedefine _LARGE_FILES
