@@ -287,3 +287,14 @@ endif()
 install(FILES LICENSE DESTINATION ${OPENJPEG_INSTALL_DOC_DIR})
 
 include (cmake/OpenJPEGCPack.cmake)
+
+#-----------------------------------------------------------------------------
+# pkgconfig support
+if(UNIX)
+  # install in lib and not share (see multi-arch note above)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/lib/openjp2/libopenjp2.pc.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/libopenjp2.pc @ONLY)
+  install( FILES  ${CMAKE_CURRENT_BINARY_DIR}/libopenjp2.pc DESTINATION
+    ${OPENJPEG_INSTALL_LIB_DIR}/pkgconfig )
+endif()
+#-----------------------------------------------------------------------------
