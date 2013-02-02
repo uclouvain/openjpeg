@@ -682,13 +682,15 @@ OPJ_BYTE * opj_jp2_write_colr(  opj_jp2_t *jp2,
 	/* preconditions */
 	assert(jp2 != 00);
 	assert(p_nb_bytes_written != 00);
+    assert(jp2->meth == 1 || jp2->meth == 2);
 
-	switch (jp2->meth) {
+	switch (jp2->meth) { 
 		case 1 :
-			l_colr_size += 4;
+			l_colr_size += 4; /* EnumCS */
 			break;
 		case 2 :
-			++l_colr_size;
+            assert(jp2->color.icc_profile_len);	/* ICC profile */
+            l_colr_size += jp2->color.icc_profile_len;
 			break;
 		default :
 			return 00;
@@ -717,11 +719,16 @@ OPJ_BYTE * opj_jp2_write_colr(  opj_jp2_t *jp2,
 	opj_write_bytes(l_current_colr_ptr, jp2->approx,1);				/* APPROX */
 	++l_current_colr_ptr;
 	
-	if (jp2->meth == 1) {
-		opj_write_bytes(l_current_colr_ptr, jp2->enumcs,4);			/* EnumCS */
-	}
-	else {
-		opj_write_bytes(l_current_colr_ptr, 0, 1);					/* PROFILE (??) */
+	if (jp2->meth == 1) { /* Meth value is restricted to 1 or 2 (Table I.9 of part 1) */
+        opj_write_bytes(l_current_colr_ptr, jp2->enumcs,4); }       /* EnumCS */
+    else {
+        if (jp2->meth == 2) {                                      /* ICC profile */
+            OPJ_UINT32 i;
+            for(i = 0; i < jp2->color.icc_profile_len; ++i) {
+                opj_write_bytes(l_current_colr_ptr, jp2->color.icc_profile_buf[i], 1);
+                ++l_current_colr_ptr;
+            }
+        }
 	}
 
 	*p_nb_bytes_written = l_colr_size;
@@ -1472,21 +1479,21 @@ void opj_jp2_setup_encoder(	opj_jp2_t *jp2,
 	}
 
 	/* Colour Specification box */
-	if ((image->numcomps == 1 || image->numcomps == 3) && (jp2->bpc != 255)) {
-		jp2->meth = 1;	/* METH: Enumerated colourspace */
-	} else {
-		jp2->meth = 2;	/* METH: Restricted ICC profile */
-	}
-	if (jp2->meth == 1) {
-		if (image->color_space == 1)
-			jp2->enumcs = 16;	/* sRGB as defined by IEC 61966-2-1 */
-		else if (image->color_space == 2)
-			jp2->enumcs = 17;	/* greyscale */
-		else if (image->color_space == 3)
-			jp2->enumcs = 18;	/* YUV */
-	} else {
-		jp2->enumcs = 0;		/* PROFILE (??) */
-	}
+    if(image->icc_profile_len) {
+        jp2->meth = 2;
+        jp2->enumcs = 0;
+    } 
+    else {
+        jp2->meth = 1;
+        if (image->color_space == 1)
+            jp2->enumcs = 16;	/* sRGB as defined by IEC 61966-2-1 */
+        else if (image->color_space == 2)
+            jp2->enumcs = 17;	/* greyscale */
+        else if (image->color_space == 3)
+            jp2->enumcs = 18;	/* YUV */
+    }
+
+
 	jp2->precedence = 0;	/* PRECEDENCE */
 	jp2->approx = 0;		/* APPROX */
 
