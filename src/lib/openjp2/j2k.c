@@ -2823,6 +2823,13 @@ static OPJ_BOOL opj_j2k_read_qcc(   opj_j2k_t *p_j2k,
         };
 #endif /* USE_JPWL */
 
+        if (l_comp_no >= p_j2k->m_private_image->numcomps) {
+                opj_event_msg(p_manager, EVT_ERROR,
+                              "Invalid component number: %d, regarding the number of components %d\n",
+                              l_comp_no, p_j2k->m_private_image->numcomps);
+                return OPJ_FALSE;
+        }
+
         if (! opj_j2k_read_SQcd_SQcc(p_j2k,l_comp_no,p_header_data,&p_header_size,p_manager)) {
                 opj_event_msg(p_manager, EVT_ERROR, "Error reading QCC marker\n");
                 return OPJ_FALSE;
