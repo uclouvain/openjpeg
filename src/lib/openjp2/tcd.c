@@ -1746,7 +1746,7 @@ void opj_tcd_code_block_enc_deallocate (opj_tcd_precinct_t * p_precinct)
                 
                 for     (cblkno = 0; cblkno < l_nb_code_blocks; ++cblkno)  {
                         if (l_code_block->data) {
-                                opj_free(l_code_block->data);
+                                opj_free(l_code_block->data - 1);
                                 l_code_block->data = 00;
                         }
 
