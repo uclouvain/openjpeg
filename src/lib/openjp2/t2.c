@@ -524,12 +524,12 @@ OPJ_BOOL opj_t2_encode_packet(  OPJ_UINT32 tileno,
                                 opj_codestream_info_t *cstr_info)
 {
         OPJ_UINT32 bandno, cblkno;
-        OPJ_BYTE *c = dest;
+        OPJ_BYTE* c = dest;
         OPJ_UINT32 l_nb_bytes;
-        OPJ_UINT32 compno = pi->compno; /* component value */
-        OPJ_UINT32 resno  = pi->resno;          /* resolution level value */
-        OPJ_UINT32 precno = pi->precno; /* precinct value */
-        OPJ_UINT32 layno  = pi->layno;          /* quality layer value */
+        OPJ_UINT32 compno = pi->compno;     /* component value */
+        OPJ_UINT32 resno  = pi->resno;      /* resolution level value */
+        OPJ_UINT32 precno = pi->precno;     /* precinct value */
+        OPJ_UINT32 layno  = pi->layno;      /* quality layer value */
         OPJ_UINT32 l_nb_blocks;
         opj_tcd_band_t *band = 00;
         opj_tcd_cblk_enc_t* cblk = 00;
@@ -1076,7 +1076,7 @@ OPJ_BOOL opj_t2_read_packet_data(   opj_t2_t* p_t2,
                         if (!l_cblk->numsegs) {
                                 l_seg = l_cblk->segs;
                                 ++l_cblk->numsegs;
-                                l_cblk->len = 0;
+                                l_cblk->data_current_size = 0;
                         }
                         else {
                                 l_seg = &l_cblk->segs[l_cblk->numsegs - 1];
@@ -1111,16 +1111,24 @@ OPJ_BOOL opj_t2_read_packet_data(   opj_t2_t* p_t2,
                                 };
 
 #endif /* USE_JPWL */
-
-                                if ((l_cblk->len + l_seg->newlen) > 8192) {
+                                /* Check if the cblk->data have allocated enough memory */
+                                if ((l_cblk->data_current_size + l_seg->newlen) > l_cblk->data_max_size) {
+                                    OPJ_BYTE* new_cblk_data = (OPJ_BYTE*) opj_realloc(l_cblk->data, l_cblk->data_current_size + l_seg->newlen);
+                                    if(! new_cblk_data) {
+                                        opj_free(l_cblk->data);
+                                        l_cblk->data_max_size = 0;
+                                        /* opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to realloc code block cata!\n"); */
                                         return OPJ_FALSE;
+                                    }
+                                    l_cblk->data_max_size = l_cblk->data_current_size + l_seg->newlen;
+                                    l_cblk->data = new_cblk_data;
                                 }
                                
-                                memcpy(l_cblk->data + l_cblk->len, l_current_data, l_seg->newlen);
+                                memcpy(l_cblk->data + l_cblk->data_current_size, l_current_data, l_seg->newlen);
 
                                 if (l_seg->numpasses == 0) {
                                         l_seg->data = &l_cblk->data;
-                                        l_seg->dataindex = l_cblk->len;
+                                        l_seg->dataindex = l_cblk->data_current_size;
                                 }
 
                                 l_current_data += l_seg->newlen;
@@ -1128,7 +1136,7 @@ OPJ_BOOL opj_t2_read_packet_data(   opj_t2_t* p_t2,
                                 l_cblk->numnewpasses -= l_seg->numnewpasses;
 
                                 l_seg->real_num_passes = l_seg->numpasses;
-                                l_cblk->len += l_seg->newlen;
+                                l_cblk->data_current_size += l_seg->newlen;
                                 l_seg->len += l_seg->newlen;
 
                                 if (l_cblk->numnewpasses > 0) {
@@ -1139,7 +1147,7 @@ OPJ_BOOL opj_t2_read_packet_data(   opj_t2_t* p_t2,
 
                         l_cblk->real_num_segs = l_cblk->numsegs;
                         ++l_cblk;
-                }
+                } /* next code_block */
 
                 ++l_band;
         }
@@ -1191,7 +1199,7 @@ OPJ_BOOL opj_t2_skip_packet_data(   opj_t2_t* p_t2,
                         if (!l_cblk->numsegs) {
                                 l_seg = l_cblk->segs;
                                 ++l_cblk->numsegs;
-                                l_cblk->len = 0;
+                                l_cblk->data_current_size = 0;
                         }
                         else {
                                 l_seg = &l_cblk->segs[l_cblk->numsegs - 1];
