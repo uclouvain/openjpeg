@@ -3408,6 +3408,9 @@ int imagetopng(opj_image_t * image, const char *write_idf)
 	 color_type,
 	 PNG_INTERLACE_NONE,
 	 PNG_COMPRESSION_TYPE_BASE,  PNG_FILTER_TYPE_BASE);
+
+    png_set_gamma(png, 2.2, 1./2.2);
+    png_set_sRGB(png, info, PNG_sRGB_INTENT_PERCEPTUAL); 
 /*=============================*/
 	png_write_info(png, info);
 /*=============================*/
@@ -3524,6 +3527,9 @@ int imagetopng(opj_image_t * image, const char *write_idf)
      PNG_COMPRESSION_TYPE_BASE,  PNG_FILTER_TYPE_BASE);
 
 	png_set_sBIT(png, info, &sig_bit);
+
+    png_set_gamma(png, 2.2, 1./2.2);
+    png_set_sRGB(png, info, PNG_sRGB_INTENT_PERCEPTUAL); 
 /*=============================*/
 	png_write_info(png, info);
 /*=============================*/
