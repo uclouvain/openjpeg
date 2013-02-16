@@ -47,10 +47,10 @@
 #ifdef __GNUC__
 	#define DEPRECATED(func) func __attribute__ ((deprecated))
 #elif defined(_MSC_VER)
-	#define DEPRECATED(func) __declspec(deprecated) func
+	#define OPJ_DEPRECATED(func) __declspec(deprecated) func
 #else
 	#pragma message("WARNING: You need to implement DEPRECATED for this compiler")
-	#define DEPRECATED(func) func
+	#define OPJ_DEPRECATED(func) func
 #endif
 
 #if defined(OPJ_STATIC) || !defined(_WIN32)
@@ -1004,7 +1004,7 @@ OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create(OPJ_SIZE_T p_buffer_size, O
  *
  * @param	p_stream	the stream to destroy.
  */
-OPJ_API void OPJ_CALLCONV opj_stream_destroy(opj_stream_t* p_stream);
+OPJ_DEPRECATED(OPJ_API void OPJ_CALLCONV opj_stream_destroy(opj_stream_t* p_stream));
 OPJ_API void OPJ_CALLCONV opj_stream_destroy_v3(opj_stream_t* p_stream);
  
 /**
