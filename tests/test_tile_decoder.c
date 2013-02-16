@@ -270,7 +270,7 @@ int main (int argc, char *argv[])
                                 fprintf(stderr, "ERROR -> Not a valid JPEG2000 file!\n");
                                 fclose(l_file);
                                 free(l_data);
-                                opj_stream_destroy(l_stream);
+                                opj_stream_destroy_v3(l_stream);
                                 return EXIT_FAILURE;
                         }
         }
@@ -286,7 +286,7 @@ int main (int argc, char *argv[])
                 fprintf(stderr, "ERROR -> j2k_dump: failed to setup the decoder\n");
                 fclose(l_file);
                 free(l_data);
-                opj_stream_destroy(l_stream);
+                opj_stream_destroy_v3(l_stream);
                 opj_destroy_codec(l_codec);
                 return EXIT_FAILURE;
         }
@@ -297,7 +297,7 @@ int main (int argc, char *argv[])
                 fprintf(stderr, "ERROR -> j2k_to_image: failed to read the header\n");
                 fclose(l_file);
                 free(l_data);
-                opj_stream_destroy(l_stream);
+                opj_stream_destroy_v3(l_stream);
                 opj_destroy_codec(l_codec);
                 return EXIT_FAILURE;
         }
@@ -306,7 +306,7 @@ int main (int argc, char *argv[])
                 fprintf(stderr,	"ERROR -> j2k_to_image: failed to set the decoded area\n");
                 fclose(l_file);
                 free(l_data);
-                opj_stream_destroy(l_stream);
+                opj_stream_destroy_v3(l_stream);
                 opj_destroy_codec(l_codec);
                 opj_image_destroy(l_image);
                 return EXIT_FAILURE;
@@ -328,7 +328,7 @@ int main (int argc, char *argv[])
                 {
                         fclose(l_file);
                         free(l_data);
-                        opj_stream_destroy(l_stream);
+                        opj_stream_destroy_v3(l_stream);
                         opj_destroy_codec(l_codec);
                         opj_image_destroy(l_image);
                         return EXIT_FAILURE;
@@ -343,7 +343,7 @@ int main (int argc, char *argv[])
                                 {
                                         fclose(l_file);
                                         free(l_new_data);
-                                        opj_stream_destroy(l_stream);
+                                        opj_stream_destroy_v3(l_stream);
                                         opj_destroy_codec(l_codec);
                                         opj_image_destroy(l_image);
                                         return EXIT_FAILURE;
@@ -356,7 +356,7 @@ int main (int argc, char *argv[])
                         {
                                 fclose(l_file);
                                 free(l_data);
-                                opj_stream_destroy(l_stream);
+                                opj_stream_destroy_v3(l_stream);
                                 opj_destroy_codec(l_codec);
                                 opj_image_destroy(l_image);
                                 return EXIT_FAILURE;
@@ -369,7 +369,7 @@ int main (int argc, char *argv[])
         {
                 fclose(l_file);
                 free(l_data);
-                opj_stream_destroy(l_stream);
+                opj_stream_destroy_v3(l_stream);
                 opj_destroy_codec(l_codec);
                 opj_image_destroy(l_image);
                 return EXIT_FAILURE;
@@ -378,7 +378,7 @@ int main (int argc, char *argv[])
         /* Free memory */
         fclose(l_file);
         free(l_data);
-        opj_stream_destroy(l_stream);
+        opj_stream_destroy_v3(l_stream);
         opj_destroy_codec(l_codec);
         opj_image_destroy(l_image);
 

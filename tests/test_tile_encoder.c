@@ -290,7 +290,7 @@ int main (int argc, char *argv[])
 
 	if (! opj_start_compress(l_codec,l_image,l_stream)) {
 		fprintf(stderr, "ERROR -> test_tile_encoder: failed to start compress!\n");
-		opj_stream_destroy(l_stream);
+		opj_stream_destroy_v3(l_stream);
 		fclose(l_file);
 		opj_destroy_codec(l_codec);
 		opj_image_destroy(l_image);
@@ -300,7 +300,7 @@ int main (int argc, char *argv[])
 	for (i=0;i<l_nb_tiles;++i) {
 		if (! opj_write_tile(l_codec,i,l_data,l_data_size,l_stream)) {
 			fprintf(stderr, "ERROR -> test_tile_encoder: failed to write the tile %d!\n",i);
-			opj_stream_destroy(l_stream);
+			opj_stream_destroy_v3(l_stream);
 			fclose(l_file);
 			opj_destroy_codec(l_codec);
 			opj_image_destroy(l_image);
@@ -310,14 +310,14 @@ int main (int argc, char *argv[])
 
 	if (! opj_end_compress(l_codec,l_stream)) {
 		fprintf(stderr, "ERROR -> test_tile_encoder: failed to end compress!\n");
-		opj_stream_destroy(l_stream);
+		opj_stream_destroy_v3(l_stream);
 		fclose(l_file);
 		opj_destroy_codec(l_codec);
 		opj_image_destroy(l_image);
 		return 1;
 	}
 
-	opj_stream_destroy(l_stream);
+	opj_stream_destroy_v3(l_stream);
 	fclose(l_file);
 	opj_destroy_codec(l_codec);
 	opj_image_destroy(l_image);

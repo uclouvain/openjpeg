@@ -1806,7 +1806,7 @@ int main(int argc, char **argv) {
 			}
 			default:
 				fprintf(stderr, "skipping file..\n");
-				opj_stream_destroy(l_stream);
+				opj_stream_destroy_v3(l_stream);
 				continue;
 		}
 		
@@ -1828,7 +1828,7 @@ int main(int argc, char **argv) {
 		fout = fopen(parameters.outfile, "wb");
 		if (! fout) {
 			fprintf(stderr, "Not enable to create output file!\n");
-			opj_stream_destroy(l_stream);
+			opj_stream_destroy_v3(l_stream);
 			return 1;
 		}
 
@@ -1852,7 +1852,7 @@ int main(int argc, char **argv) {
       for (i=0;i<l_nb_tiles;++i) {
         if (! opj_write_tile(l_codec,i,l_data,l_data_size,l_stream)) {
           fprintf(stderr, "ERROR -> test_tile_encoder: failed to write the tile %d!\n",i);
-          opj_stream_destroy(l_stream);
+          opj_stream_destroy_v3(l_stream);
           fclose(fout);
           opj_destroy_codec(l_codec);
           opj_image_destroy(image);
@@ -1873,7 +1873,7 @@ int main(int argc, char **argv) {
 		}
 
 		if (!bSuccess)  {
-			opj_stream_destroy(l_stream);
+			opj_stream_destroy_v3(l_stream);
 			fclose(fout);
       opj_destroy_codec(l_codec);
       opj_image_destroy(image);
@@ -1883,7 +1883,7 @@ int main(int argc, char **argv) {
 
 		fprintf(stderr,"Generated outfile %s\n",parameters.outfile);
 		/* close and free the byte stream */
-		opj_stream_destroy(l_stream);
+		opj_stream_destroy_v3(l_stream);
 		fclose(fout);
 
 		/* free remaining compression structures */

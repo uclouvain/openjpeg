@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
   bSuccess = opj_end_compress(l_codec, l_stream);
   assert( bSuccess );
 
-  opj_stream_destroy(l_stream);
+  opj_stream_destroy_v3(l_stream);
   fclose(f);
 
   opj_destroy_codec(l_codec);
