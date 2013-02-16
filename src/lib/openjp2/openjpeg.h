@@ -387,7 +387,8 @@ typedef struct opj_cparameters {
 	char tcp_mct;
 	/** Enable JPIP indexing*/
 	OPJ_BOOL jpip_on;
-	/** Naive implementation of MCT restricted to a single reversible array based encoding without offset concerning all the components. */
+	/** Naive implementation of MCT restricted to a single reversible array based 
+        encoding without offset concerning all the components. */
 	void * mct_data;
 } opj_cparameters_t;  
 
@@ -1004,7 +1005,8 @@ OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create(OPJ_SIZE_T p_buffer_size, O
  * @param	p_stream	the stream to destroy.
  */
 OPJ_API void OPJ_CALLCONV opj_stream_destroy(opj_stream_t* p_stream);
-
+OPJ_API void OPJ_CALLCONV opj_stream_destroy_v3(opj_stream_t* p_stream);
+ 
 /**
  * Sets the given function to be used as a read function.
  * @param		p_stream	the stream to modify
@@ -1055,15 +1057,21 @@ OPJ_API void OPJ_CALLCONV opj_stream_set_user_data_length(opj_stream_t* p_stream
  * @param p_is_read_stream  whether the stream is a read stream (true) or not (false)
 */
 OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_default_file_stream (FILE * p_file, OPJ_BOOL p_is_read_stream);
-
+OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_default_file_stream_v3 (const char *fname, OPJ_BOOL p_is_read_stream);
+ 
 /**
  * FIXME DOC
  * @param p_file            the file stream to operate on
  * @param p_buffer_size     size of the chunk used to stream
  * @param p_is_read_stream  whether the stream is a read stream (true) or not (false)
 */
-OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream (FILE * p_file, OPJ_SIZE_T p_buffer_size, OPJ_BOOL p_is_read_stream);
-
+OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream (FILE * p_file, 
+                                                                  OPJ_SIZE_T p_buffer_size,
+                                                                  OPJ_BOOL p_is_read_stream);
+OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream_v3 (const char *fname, 
+                                                                     OPJ_SIZE_T p_buffer_size,
+                                                                     OPJ_BOOL p_is_read_stream);
+ 
 /* 
 ==========================================================
    event manager functions definitions
@@ -1217,7 +1225,8 @@ OPJ_API OPJ_BOOL OPJ_CALLCONV opj_set_decoded_resolution_factor(opj_codec_t *p_c
  * @param	p_codec		        the jpeg2000 codec.
  * @param	p_tile_index		the index of the tile to write. At the moment, the tiles must be written from 0 to n-1 in sequence.
  * @param	p_data				pointer to the data to write. Data is arranged in sequence, data_comp0, then data_comp1, then ... NO INTERLEAVING should be set.
- * @param	p_data_size			this value os used to make sure the data being written is correct. The size must be equal to the sum for each component of tile_width * tile_height * component_size. component_size can be 1,2 or 4 bytes, depending on the precision of the given component.
+ * @param	p_data_size			this value os used to make sure the data being written is correct. The size must be equal to the sum for each component of 
+ *                              tile_width * tile_height * component_size. component_size can be 1,2 or 4 bytes, depending on the precision of the given component.
  * @param	p_stream			the stream to write data to.
  *
  * @return	true if the data could be written.

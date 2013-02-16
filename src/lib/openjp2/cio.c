@@ -195,6 +195,21 @@ void OPJ_CALLCONV opj_stream_destroy(opj_stream_t* p_stream)
 	}
 }
 
+void OPJ_CALLCONV opj_stream_destroy_v3(opj_stream_t* p_stream)
+{
+    opj_stream_private_t* l_stream = (opj_stream_private_t*) p_stream;
+    
+    if (l_stream) {
+        FILE *fp = (FILE*)l_stream->m_user_data;
+        if(fp) 
+            fclose(fp);
+        
+        opj_free(l_stream->m_stored_data);
+        l_stream->m_stored_data = 00;
+        opj_free(l_stream);
+    }
+}
+
 void OPJ_CALLCONV opj_stream_set_read_function(opj_stream_t* p_stream, opj_stream_read_fn p_function)
 {
 	opj_stream_private_t* l_stream = (opj_stream_private_t*) p_stream;
