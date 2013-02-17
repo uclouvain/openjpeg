@@ -150,9 +150,7 @@ static int infile_format(const char *fname)
 /* -------------------------------------------------------------------------- */
 int main(int argc, char **argv)
 {
-	FILE *fsrc = NULL;
-
-  OPJ_UINT32 index;
+    OPJ_UINT32 index;
 	opj_dparameters_t parameters;			/* decompression parameters */
 	opj_image_t* image = NULL;
 	opj_stream_t *l_stream = NULL;				/* Stream */
@@ -175,13 +173,6 @@ int main(int argc, char **argv)
 
 	strncpy(parameters.infile, argv[1], OPJ_PATH_LEN - 1);
 
-	/* read the input file */
-	/* ------------------- */
-	fsrc = fopen(parameters.infile, "rb");
-	if (!fsrc) {
-		fprintf(stderr, "ERROR -> failed to open %s for reading\n", parameters.infile);
-		return EXIT_FAILURE;
-	}
 
 	/* decode the JPEG2000 stream */
 	/* -------------------------- */
@@ -218,10 +209,9 @@ int main(int argc, char **argv)
 	opj_set_warning_handler(l_codec, warning_callback,00);
 	opj_set_error_handler(l_codec, error_callback,00);
 
-	l_stream = opj_stream_create_default_file_stream(fsrc,1);
+    l_stream = opj_stream_create_default_file_stream_v3(parameters.infile,1);
 	if (!l_stream){
-		fclose(fsrc);
-		fprintf(stderr, "ERROR -> failed to create the stream from the file\n");
+        fprintf(stderr, "ERROR -> failed to create the stream from the file %s\n", parameters.infile);
 		return EXIT_FAILURE;
 	}
 
@@ -229,7 +219,6 @@ int main(int argc, char **argv)
 	if ( !opj_setup_decoder(l_codec, &parameters) ){
 		fprintf(stderr, "ERROR -> j2k_dump: failed to setup the decoder\n");
 		opj_stream_destroy_v3(l_stream);
-		fclose(fsrc);
 		opj_destroy_codec(l_codec);
 		return EXIT_FAILURE;
 	}
@@ -238,7 +227,6 @@ int main(int argc, char **argv)
 	if(! opj_read_header(l_stream, l_codec, &image)){
 		fprintf(stderr, "ERROR -> j2k_to_image: failed to read the header\n");
 		opj_stream_destroy_v3(l_stream);
-		fclose(fsrc);
 		opj_destroy_codec(l_codec);
 		opj_image_destroy(image);
 		return EXIT_FAILURE;
@@ -262,7 +250,6 @@ int main(int argc, char **argv)
 		opj_destroy_cstr_info(&cstr_info); \
 		opj_destroy_codec(l_codec); \
 		opj_image_destroy(image); \
-		fclose(fsrc); \
 		return EXIT_FAILURE; \
 	} \
   for(index = 0; index < image->numcomps; ++index) { \
@@ -272,7 +259,6 @@ int main(int argc, char **argv)
 		opj_destroy_cstr_info(&cstr_info); \
 		opj_destroy_codec(l_codec); \
 		opj_image_destroy(image); \
-		fclose(fsrc); \
         return EXIT_FAILURE; \
         } \
   } \
@@ -296,9 +282,6 @@ int main(int argc, char **argv)
 
 	/* Free image data structure */
 	opj_image_destroy(image);
-
-	/* Close the input file */
-	fclose(fsrc);
 
 	return EXIT_SUCCESS;
 }

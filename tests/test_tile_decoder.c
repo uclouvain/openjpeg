@@ -179,7 +179,6 @@ int main (int argc, char *argv[])
         opj_dparameters_t l_param;
         opj_codec_t * l_codec;
         opj_image_t * l_image;
-        FILE * l_file;
         opj_stream_t * l_stream;
         OPJ_UINT32 l_data_size;
         OPJ_UINT32 l_max_data_size = 1000;
@@ -219,17 +218,8 @@ int main (int argc, char *argv[])
                 return EXIT_FAILURE;
         }
 
-        l_file = fopen(input_file,"rb");
-        if (! l_file)
-        {
-                fprintf(stdout, "ERROR while opening input file\n");
-                free(l_data);
-                return EXIT_FAILURE;
-        }
-
-        l_stream = opj_stream_create_default_file_stream(l_file,OPJ_TRUE);
+        l_stream = opj_stream_create_default_file_stream_v3(input_file,OPJ_TRUE);
         if (!l_stream){
-                fclose(l_file);
                 free(l_data);
                 fprintf(stderr, "ERROR -> failed to create the stream from the file\n");
                 return EXIT_FAILURE;
@@ -268,7 +258,6 @@ int main (int argc, char *argv[])
                 default:
                         {    
                                 fprintf(stderr, "ERROR -> Not a valid JPEG2000 file!\n");
-                                fclose(l_file);
                                 free(l_data);
                                 opj_stream_destroy_v3(l_stream);
                                 return EXIT_FAILURE;
@@ -284,7 +273,6 @@ int main (int argc, char *argv[])
         if (! opj_setup_decoder(l_codec, &l_param))
         {
                 fprintf(stderr, "ERROR -> j2k_dump: failed to setup the decoder\n");
-                fclose(l_file);
                 free(l_data);
                 opj_stream_destroy_v3(l_stream);
                 opj_destroy_codec(l_codec);
@@ -295,7 +283,6 @@ int main (int argc, char *argv[])
         if (! opj_read_header(l_stream, l_codec, &l_image))
         {
                 fprintf(stderr, "ERROR -> j2k_to_image: failed to read the header\n");
-                fclose(l_file);
                 free(l_data);
                 opj_stream_destroy_v3(l_stream);
                 opj_destroy_codec(l_codec);
@@ -304,7 +291,6 @@ int main (int argc, char *argv[])
 
         if (!opj_set_decode_area(l_codec, l_image, da_x0, da_y0,da_x1, da_y1)){
                 fprintf(stderr,	"ERROR -> j2k_to_image: failed to set the decoded area\n");
-                fclose(l_file);
                 free(l_data);
                 opj_stream_destroy_v3(l_stream);
                 opj_destroy_codec(l_codec);
@@ -326,7 +312,6 @@ int main (int argc, char *argv[])
                                         &l_nb_comps,
                                         &l_go_on))
                 {
-                        fclose(l_file);
                         free(l_data);
                         opj_stream_destroy_v3(l_stream);
                         opj_destroy_codec(l_codec);
@@ -341,7 +326,6 @@ int main (int argc, char *argv[])
                                 OPJ_BYTE *l_new_data = (OPJ_BYTE *) realloc(l_data, l_data_size);
                                 if (! l_new_data)
                                 {
-                                        fclose(l_file);
                                         free(l_new_data);
                                         opj_stream_destroy_v3(l_stream);
                                         opj_destroy_codec(l_codec);
@@ -354,7 +338,6 @@ int main (int argc, char *argv[])
 
                         if (! opj_decode_tile_data(l_codec,l_tile_index,l_data,l_data_size,l_stream))
                         {
-                                fclose(l_file);
                                 free(l_data);
                                 opj_stream_destroy_v3(l_stream);
                                 opj_destroy_codec(l_codec);
@@ -367,7 +350,6 @@ int main (int argc, char *argv[])
 
         if (! opj_end_decompress(l_codec,l_stream))
         {
-                fclose(l_file);
                 free(l_data);
                 opj_stream_destroy_v3(l_stream);
                 opj_destroy_codec(l_codec);
@@ -376,7 +358,6 @@ int main (int argc, char *argv[])
         }
 
         /* Free memory */
-        fclose(l_file);
         free(l_data);
         opj_stream_destroy_v3(l_stream);
         opj_destroy_codec(l_codec);

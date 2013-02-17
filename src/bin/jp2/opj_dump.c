@@ -401,7 +401,7 @@ static void info_callback(const char *msg, void *client_data) {
 /* -------------------------------------------------------------------------- */
 int main(int argc, char *argv[])
 {
-	FILE *fsrc = NULL, *fout = NULL;
+	FILE *fout = NULL;
 
 	opj_dparameters_t parameters;			/* Decompression parameters */
 	opj_image_t* image = NULL;					/* Image structure */
@@ -486,16 +486,10 @@ int main(int argc, char *argv[])
 
 		/* Read the input file and put it in memory */
 		/* ---------------------------------------- */
-		fsrc = fopen(parameters.infile, "rb");
-		if (!fsrc) {
-			fprintf(stderr, "ERROR -> failed to open %s for reading\n", parameters.infile);
-			return EXIT_FAILURE;
-		}
 
-		l_stream = opj_stream_create_default_file_stream(fsrc,1);
+		l_stream = opj_stream_create_default_file_stream_v3(parameters.infile,1);
 		if (!l_stream){
-			fclose(fsrc);
-			fprintf(stderr, "ERROR -> failed to create the stream from the file\n");
+			fprintf(stderr, "ERROR -> failed to create the stream from the file %s\n",parameters.infile);
 			return EXIT_FAILURE;
 		}
 
@@ -536,7 +530,6 @@ int main(int argc, char *argv[])
 		if ( !opj_setup_decoder(l_codec, &parameters) ){
 			fprintf(stderr, "ERROR -> opj_dump: failed to setup the decoder\n");
 			opj_stream_destroy_v3(l_stream);
-			fclose(fsrc);
 			opj_destroy_codec(l_codec);
 			fclose(fout);
 			return EXIT_FAILURE;
@@ -546,7 +539,6 @@ int main(int argc, char *argv[])
 		if(! opj_read_header(l_stream, l_codec, &image)){
 			fprintf(stderr, "ERROR -> opj_dump: failed to read the header\n");
 			opj_stream_destroy_v3(l_stream);
-			fclose(fsrc);
 			opj_destroy_codec(l_codec);
 			opj_image_destroy(image);
 			fclose(fout);
@@ -561,7 +553,6 @@ int main(int argc, char *argv[])
 
 		/* close the byte stream */
 		opj_stream_destroy_v3(l_stream);
-		fclose(fsrc);
 
 		/* free remaining structures */
 		if (l_codec) {
