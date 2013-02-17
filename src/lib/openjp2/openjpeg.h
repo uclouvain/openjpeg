@@ -1005,6 +1005,13 @@ OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create(OPJ_SIZE_T p_buffer_size, O
  * @param	p_stream	the stream to destroy.
  */
 OPJ_DEPRECATED(OPJ_API void OPJ_CALLCONV opj_stream_destroy(opj_stream_t* p_stream));
+
+/**
+ * Destroys a stream created by opj_create_stream. This function does NOT close the abstract stream. 
+ * If needed the user must close its own implementation of the stream.
+ *
+ * @param	p_stream	the stream to destroy.
+ */
 OPJ_API void OPJ_CALLCONV opj_stream_destroy_v3(opj_stream_t* p_stream);
  
 /**
@@ -1056,7 +1063,13 @@ OPJ_API void OPJ_CALLCONV opj_stream_set_user_data_length(opj_stream_t* p_stream
  * @param p_file            the file stream to operate on
  * @param p_is_read_stream  whether the stream is a read stream (true) or not (false)
 */
-OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_default_file_stream (FILE * p_file, OPJ_BOOL p_is_read_stream);
+OPJ_DEPRECATED(OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_default_file_stream (FILE * p_file, OPJ_BOOL p_is_read_stream));
+
+/**
+ * Create a stream from a file identified with its filename with default parameters (helper function)
+ * @param fname             the filename of the file to stream
+ * @param p_is_read_stream  whether the stream is a read stream (true) or not (false)
+*/
 OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_default_file_stream_v3 (const char *fname, OPJ_BOOL p_is_read_stream);
  
 /**
@@ -1065,9 +1078,15 @@ OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_default_file_stream_v3 (con
  * @param p_buffer_size     size of the chunk used to stream
  * @param p_is_read_stream  whether the stream is a read stream (true) or not (false)
 */
-OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream (FILE * p_file, 
+OPJ_DEPRECATED(OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream (FILE * p_file, 
                                                                   OPJ_SIZE_T p_buffer_size,
-                                                                  OPJ_BOOL p_is_read_stream);
+                                                                  OPJ_BOOL p_is_read_stream));
+
+/** Create a stream from a file identified with its filename with a specific buffer size
+ * @param fname             the filename of the file to stream
+ * @param p_buffer_size     size of the chunk used to stream
+ * @param p_is_read_stream  whether the stream is a read stream (true) or not (false)
+*/
 OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream_v3 (const char *fname, 
                                                                      OPJ_SIZE_T p_buffer_size,
                                                                      OPJ_BOOL p_is_read_stream);
