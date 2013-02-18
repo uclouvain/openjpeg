@@ -45,7 +45,7 @@
 
 /* deprecated attribute */
 #ifdef __GNUC__
-	#define DEPRECATED(func) func __attribute__ ((deprecated))
+	#define OPJ_DEPRECATED(func) func __attribute__ ((deprecated))
 #elif defined(_MSC_VER)
 	#define OPJ_DEPRECATED(func) __declspec(deprecated) func
 #else
