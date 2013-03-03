@@ -29,21 +29,21 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#include "opj_config.h"
+#include "opj_apps_config.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 
-#ifdef HAVE_LIBTIFF
+#ifdef OPJ_HAVE_LIBTIFF
 #include <tiffio.h>
-#endif /* HAVE_LIBTIFF */
+#endif /* OPJ_HAVE_LIBTIFF */
 
-#ifdef HAVE_LIBPNG
+#ifdef OPJ_HAVE_LIBPNG
 #include <zlib.h>
 #include <png.h>
-#endif /* HAVE_LIBPNG */
+#endif /* OPJ_HAVE_LIBPNG */
 
 #include "openjpeg.h"
 #include "convert.h"
@@ -2074,7 +2074,7 @@ int imagetopnm(opj_image_t * image, const char *outfile)
 	return 0;
 }/* imagetopnm() */
 
-#ifdef HAVE_LIBTIFF
+#ifdef OPJ_HAVE_LIBTIFF
 /* -->> -->> -->> -->>
 
 	TIFF IMAGE FORMAT
@@ -2795,7 +2795,7 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
 
 }/* tiftoimage() */
 
-#endif /* HAVE_LIBTIFF */
+#endif /* OPJ_HAVE_LIBTIFF */
 
 /* -->> -->> -->> -->>
 
@@ -3085,7 +3085,7 @@ int imagetorawl(opj_image_t * image, const char *outfile)
   return imagetoraw_common(image, outfile, OPJ_FALSE);
 }
 
-#ifdef HAVE_LIBPNG
+#ifdef OPJ_HAVE_LIBPNG
 
 #define PNG_MAGIC "\x89PNG\x0d\x0a\x1a\x0a"
 #define MAGIC_SIZE 8
@@ -3624,4 +3624,4 @@ fin:
 
 	return fails;
 }/* imagetopng() */
-#endif /* HAVE_LIBPNG */
+#endif /* OPJ_HAVE_LIBPNG */

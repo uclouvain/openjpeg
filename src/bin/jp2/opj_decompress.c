@@ -31,7 +31,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#include "opj_config.h"
+#include "opj_apps_config.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -888,7 +888,7 @@ int main(int argc, char **argv)
 				fprintf(stdout,"Generated Outfile %s\n",parameters.outfile);
 			}
 			break;
-#ifdef HAVE_LIBTIFF
+#ifdef OPJ_HAVE_LIBTIFF
 		case TIF_DFMT:			/* TIFF */
 			if(imagetotif(image, parameters.outfile)){
 				fprintf(stdout,"Outfile %s not generated\n",parameters.outfile);
@@ -897,7 +897,7 @@ int main(int argc, char **argv)
 				fprintf(stdout,"Generated Outfile %s\n",parameters.outfile);
 			}
 			break;
-#endif /* HAVE_LIBTIFF */
+#endif /* OPJ_HAVE_LIBTIFF */
 		case RAW_DFMT:			/* RAW */
 			if(imagetoraw(image, parameters.outfile)){
 				fprintf(stdout,"Error generating raw file. Outfile %s not generated\n",parameters.outfile);
@@ -924,7 +924,7 @@ int main(int argc, char **argv)
 				fprintf(stdout,"Successfully generated Outfile %s\n",parameters.outfile);
 			}
 			break;
-#ifdef HAVE_LIBPNG
+#ifdef OPJ_HAVE_LIBPNG
 		case PNG_DFMT:			/* PNG */
 			if(imagetopng(image, parameters.outfile)){
 				fprintf(stdout,"Error generating png file. Outfile %s not generated\n",parameters.outfile);
@@ -933,9 +933,9 @@ int main(int argc, char **argv)
 				fprintf(stdout,"Successfully generated Outfile %s\n",parameters.outfile);
 			}
 			break;
-#endif /* HAVE_LIBPNG */
+#endif /* OPJ_HAVE_LIBPNG */
 /* Can happen if output file is TIFF or PNG
- * and HAVE_LIBTIF or HAVE_LIBPNG is undefined
+ * and HAVE_LIBTIF or OPJ_HAVE_LIBPNG is undefined
 */
 			default:
 				fprintf(stderr,"Outfile %s not generated\n",parameters.outfile);

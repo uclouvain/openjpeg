@@ -37,7 +37,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#include "opj_config.h"
+#include "opj_apps_config.h"
 #include "opj_getopt.h"
 
 #include "openjpeg.h"
@@ -47,7 +47,7 @@
 double* parseToleranceValues( char* inArg, const int nbcomp);
 void comparePGXimages_help_display(void);
 opj_image_t* readImageFromFilePGX(char* filename, int nbFilenamePGX, char *separator);
-#ifdef HAVE_LIBPNG
+#ifdef OPJ_HAVE_LIBPNG
 int imageToPNG(const opj_image_t* image, const char* filename, int num_comp_select);
 #endif
 
@@ -464,7 +464,7 @@ opj_image_t* readImageFromFilePGX(char* filename, int nbFilenamePGX, char *separ
 /*******************************************************************************
  *
  *******************************************************************************/
-#ifdef HAVE_LIBPNG
+#ifdef OPJ_HAVE_LIBPNG
 int imageToPNG(const opj_image_t* image, const char* filename, int num_comp_select)
 {
   opj_image_cmptparm_t param_image_write;
@@ -756,7 +756,7 @@ int main(int argc, char **argv)
          printf("<DartMeasurement name=\"NumberOfPixelsWithDifferences_%d\" type=\"numeric/int\"> %d </DartMeasurement> \n", it_comp, nbPixelDiff);
          printf("<DartMeasurement name=\"ComponentError_%d\" type=\"numeric/double\"> %f </DartMeasurement> \n", it_comp, sumDiff);
 
-#ifdef HAVE_LIBPNG
+#ifdef OPJ_HAVE_LIBPNG
          sprintf(it_compc, "_%i", it_comp);
          strcat(it_compc,".png");
          strcat(filenamePNGbase_it_comp, it_compc);

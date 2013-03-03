@@ -34,14 +34,14 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "opj_config.h"
+#include "opj_apps_config.h"
 #include "openjpeg.h"
 #include "color.h"
 
-#ifdef HAVE_LIBLCMS2
+#ifdef OPJ_HAVE_LIBLCMS2
 #include <lcms2.h>
 #endif
-#ifdef HAVE_LIBLCMS1
+#ifdef OPJ_HAVE_LIBLCMS1
 #include <lcms.h>
 #endif
 

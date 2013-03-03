@@ -1,6 +1,7 @@
 # Tests
 include_directories(
   ${OPENJPEG_BINARY_DIR}/src/lib/openjp2 # opj_config.h
+  ${OPENJPEG_BINARY_DIR}/src/bin/common # opj_apps_config.h
   ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2
   ${OPENJPEG_SOURCE_DIR}/src/bin/jp2
   ${OPENJPEG_SOURCE_DIR}/src/bin/common

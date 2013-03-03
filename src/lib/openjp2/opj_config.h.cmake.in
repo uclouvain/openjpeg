@@ -11,20 +11,12 @@
 #cmakedefine HAVE_SYS_STAT_H @HAVE_SYS_STAT_H@
 #cmakedefine HAVE_SYS_TYPES_H @HAVE_SYS_TYPES_H@
 #cmakedefine HAVE_UNISTD_H @HAVE_UNISTD_H@
-#cmakedefine HAVE_LIBPNG @HAVE_LIBPNG@
-#cmakedefine HAVE_PNG_H @HAVE_PNG_H@
-#cmakedefine HAVE_LIBTIFF @HAVE_LIBTIFF@
-#cmakedefine HAVE_TIFF_H @HAVE_TIFF_H@
 
 #cmakedefine _LARGEFILE_SOURCE
 #cmakedefine _LARGE_FILES
 #cmakedefine _FILE_OFFSET_BITS @_FILE_OFFSET_BITS@
 #cmakedefine HAVE_FSEEKO @HAVE_FSEEKO@
 
-#cmakedefine HAVE_LIBLCMS1
-#cmakedefine HAVE_LIBLCMS2
-#cmakedefine HAVE_LCMS1_H
-#cmakedefine HAVE_LCMS2_H
 
 /* Byte order.  */
 /* All compilers that support Mac OS X define either __BIG_ENDIAN__ or
