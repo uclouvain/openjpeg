@@ -3,19 +3,20 @@
 
 #define OPJ_PACKAGE_VERSION "@PACKAGE_VERSION@"
 
-#cmakedefine HAVE_INTTYPES_H @HAVE_INTTYPES_H@
-#cmakedefine HAVE_MEMORY_H @HAVE_MEMORY_H@
-#cmakedefine HAVE_STDLIB_H @HAVE_STDLIB_H@
-#cmakedefine HAVE_STRINGS_H @HAVE_STRINGS_H@
-#cmakedefine HAVE_STRING_H @HAVE_STRING_H@
-#cmakedefine HAVE_SYS_STAT_H @HAVE_SYS_STAT_H@
-#cmakedefine HAVE_SYS_TYPES_H @HAVE_SYS_TYPES_H@
-#cmakedefine HAVE_UNISTD_H @HAVE_UNISTD_H@
+/* Not used by openjp2*/
+/*#cmakedefine HAVE_INTTYPES_H @HAVE_INTTYPES_H@*/
+/*#cmakedefine HAVE_MEMORY_H @HAVE_MEMORY_H@*/
+/*#cmakedefine HAVE_STDLIB_H @HAVE_STDLIB_H@*/
+/*#cmakedefine HAVE_STRINGS_H @HAVE_STRINGS_H@*/
+/*#cmakedefine HAVE_STRING_H @HAVE_STRING_H@*/
+/*#cmakedefine HAVE_SYS_STAT_H @HAVE_SYS_STAT_H@*/
+/*#cmakedefine HAVE_SYS_TYPES_H @HAVE_SYS_TYPES_H@ */
+/*#cmakedefine HAVE_UNISTD_H @HAVE_UNISTD_H@*/
 
 #cmakedefine _LARGEFILE_SOURCE
 #cmakedefine _LARGE_FILES
 #cmakedefine _FILE_OFFSET_BITS @_FILE_OFFSET_BITS@
-#cmakedefine HAVE_FSEEKO @HAVE_FSEEKO@
+#cmakedefine OPJ_HAVE_FSEEKO @OPJ_HAVE_FSEEKO@
 
 
 /* Byte order.  */
