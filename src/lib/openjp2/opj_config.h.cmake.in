@@ -1,10 +1,10 @@
 /* create config.h for CMake */
-#cmakedefine OPJ_HAVE_STDINT_H @OPJ_HAVE_STDINT_H@
+#cmakedefine OPJ_HAVE_STDINT_H 		@OPJ_HAVE_STDINT_H@
+#cmakedefine OPJ_HAVE_INTTYPES_H 	@OPJ_HAVE_INTTYPES_H@
 
 #define OPJ_PACKAGE_VERSION "@PACKAGE_VERSION@"
 
 /* Not used by openjp2*/
-/*#cmakedefine HAVE_INTTYPES_H @HAVE_INTTYPES_H@*/
 /*#cmakedefine HAVE_MEMORY_H @HAVE_MEMORY_H@*/
 /*#cmakedefine HAVE_STDLIB_H @HAVE_STDLIB_H@*/
 /*#cmakedefine HAVE_STRINGS_H @HAVE_STRINGS_H@*/

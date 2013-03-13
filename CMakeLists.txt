@@ -182,10 +182,11 @@ endif()
 #-----------------------------------------------------------------------------
 # opj_config.h generation
 include (${CMAKE_ROOT}/Modules/CheckIncludeFile.cmake)
-CHECK_INCLUDE_FILE("strings.h"      HAVE_STRINGS_H)
-CHECK_INCLUDE_FILE("inttypes.h"     HAVE_INTTYPES_H)
-CHECK_INCLUDE_FILE("memory.h"       HAVE_MEMORY_H)
 CHECK_INCLUDE_FILE("stdint.h"       OPJ_HAVE_STDINT_H)
+CHECK_INCLUDE_FILE("inttypes.h"     OPJ_HAVE_INTTYPES_H)
+
+CHECK_INCLUDE_FILE("strings.h"      HAVE_STRINGS_H)
+CHECK_INCLUDE_FILE("memory.h"       HAVE_MEMORY_H)
 CHECK_INCLUDE_FILE("stdlib.h"       HAVE_STDLIB_H)
 CHECK_INCLUDE_FILE("stdio.h"        HAVE_STDIO_H)
 CHECK_INCLUDE_FILE("string.h"       HAVE_STRING_H)
