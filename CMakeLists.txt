@@ -181,15 +181,28 @@ endif()
 
 #-----------------------------------------------------------------------------
 # opj_config.h generation
-include (${CMAKE_ROOT}/Modules/CheckIncludeFile.cmake)
-CHECK_INCLUDE_FILE("stdint.h"       OPJ_HAVE_STDINT_H)
-CHECK_INCLUDE_FILE("inttypes.h"     OPJ_HAVE_INTTYPES_H)
 
+# Check if some include files are provided by the system
+include(EnsureFileInclude)
+# These files are mandatory
+ensure_file_include("string.h"   HAVE_STRING_H YES)
+ensure_file_include("memory.h"   HAVE_MEMORY_H YES)
+ensure_file_include("stdlib.h"   HAVE_STDLIB_H YES)
+ensure_file_include("stdio.h"    HAVE_STDIO_H  YES)
+ensure_file_include("math.h"     HAVE_MATH_H   YES)
+ensure_file_include("float.h"    HAVE_FLOAT_H  YES)
+ensure_file_include("time.h"     HAVE_TIME_H   YES)
+ensure_file_include("stdarg.h"   HAVE_STDARG_H YES)
+ensure_file_include("ctype.h"    HAVE_CTYPE_H  YES)
+ensure_file_include("assert.h"   HAVE_ASSERT_H YES)
+
+# For the following files, we provide an alternative, they are not mandatory
+ensure_file_include("stdint.h"   OPJ_HAVE_STDINT_H   NO)
+ensure_file_include("inttypes.h" OPJ_HAVE_INTTYPES_H NO)
+
+# why check this one ? for openjpip ?
+include (${CMAKE_ROOT}/Modules/CheckIncludeFile.cmake)
 CHECK_INCLUDE_FILE("strings.h"      HAVE_STRINGS_H)
-CHECK_INCLUDE_FILE("memory.h"       HAVE_MEMORY_H)
-CHECK_INCLUDE_FILE("stdlib.h"       HAVE_STDLIB_H)
-CHECK_INCLUDE_FILE("stdio.h"        HAVE_STDIO_H)
-CHECK_INCLUDE_FILE("string.h"       HAVE_STRING_H)
 CHECK_INCLUDE_FILE("sys/stat.h"     HAVE_SYS_STAT_H)
 CHECK_INCLUDE_FILE("sys/types.h"    HAVE_SYS_TYPES_H)
 CHECK_INCLUDE_FILE("unistd.h"       HAVE_UNISTD_H)
