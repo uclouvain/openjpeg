@@ -7,7 +7,7 @@
 
 m4_define([OPJ_MAJOR], [1])
 m4_define([OPJ_MINOR], [5])
-m4_define([OPJ_MICRO], [0])
+m4_define([OPJ_MICRO], [2])
 
 m4_define([lt_cur], m4_eval(OPJ_MAJOR + OPJ_MINOR))
 m4_define([lt_rev], OPJ_MICRO)
