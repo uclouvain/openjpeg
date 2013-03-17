@@ -1773,7 +1773,7 @@ int main(int argc, char **argv) {
 		}
 
 /* Can happen if input file is TIFF or PNG 
- * and HAVE_LIBTIF or OPJ_HAVE_LIBPNG is undefined
+ * and OPJ_HAVE_LIBTIF or OPJ_HAVE_LIBPNG is undefined
 */
 		if( !image) {
 			fprintf(stderr, "Unable to load file: got no image\n");

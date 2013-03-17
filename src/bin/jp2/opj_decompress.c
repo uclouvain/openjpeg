@@ -57,10 +57,10 @@
 #include "convert.h"
 #include "index.h"
 
-#ifdef HAVE_LIBLCMS2
+#ifdef OPJ_HAVE_LIBLCMS2
 #include <lcms2.h>
 #endif
-#ifdef HAVE_LIBLCMS1
+#ifdef OPJ_HAVE_LIBLCMS1
 #include <lcms.h>
 #endif
 #include "color.h"
@@ -852,7 +852,7 @@ int main(int argc, char **argv)
 		}
 
 		if(image->icc_profile_buf) {
-#if defined(HAVE_LIBLCMS1) || defined(HAVE_LIBLCMS2)
+#if defined(OPJ_HAVE_LIBLCMS1) || defined(OPJ_HAVE_LIBLCMS2)
 			color_apply_icc_profile(image); /* FIXME */
 #endif
 			free(image->icc_profile_buf);
@@ -935,7 +935,7 @@ int main(int argc, char **argv)
 			break;
 #endif /* OPJ_HAVE_LIBPNG */
 /* Can happen if output file is TIFF or PNG
- * and HAVE_LIBTIF or OPJ_HAVE_LIBPNG is undefined
+ * and OPJ_HAVE_LIBTIF or OPJ_HAVE_LIBPNG is undefined
 */
 			default:
 				fprintf(stderr,"Outfile %s not generated\n",parameters.outfile);

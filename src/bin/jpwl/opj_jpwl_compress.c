@@ -49,7 +49,7 @@
 #include <strings.h>
 #endif /* _WIN32 */
 
-#include "opj_config.h"
+#include "opj_apps_config.h"
 #include "openjpeg.h"
 #include "opj_getopt.h"
 #include "convert.h"
@@ -1627,7 +1627,7 @@ int main(int argc, char **argv) {
 						return 1;
 					}
 					break;
-#ifdef HAVE_LIBTIFF
+#ifdef OPJ_HAVE_LIBTIFF
 				case TIF_DFMT:
 					image = tiftoimage(parameters.infile, &parameters);
 					if (!image) {
@@ -1635,7 +1635,7 @@ int main(int argc, char **argv) {
 						return 1;
 					}
 				break;
-#endif /* HAVE_LIBTIFF */
+#endif /* OPJ_HAVE_LIBTIFF */
 				case RAW_DFMT:
 					image = rawtoimage(parameters.infile, &parameters, &raw_cp);
 					if (!image) {
@@ -1651,7 +1651,7 @@ int main(int argc, char **argv) {
 						return 1;
 					}
 				break;
-#ifdef HAVE_LIBPNG
+#ifdef OPJ_HAVE_LIBPNG
 				case PNG_DFMT:
 					image = pngtoimage(parameters.infile, &parameters);
 					if (!image) {
@@ -1659,10 +1659,10 @@ int main(int argc, char **argv) {
 						return 1;
 					}
 					break;
-#endif /* HAVE_LIBPNG */
+#endif /* OPJ_HAVE_LIBPNG */
 		}
 /* Can happen if input file is TIFF or PNG 
- * and HAVE_LIBTIF or HAVE_LIBPNG is undefined
+ * and OPJ_HAVE_LIBTIF or OPJ_HAVE_LIBPNG is undefined
 */
 			if( !image)
 		   {

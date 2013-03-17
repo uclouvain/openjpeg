@@ -265,8 +265,8 @@ void color_sycc_to_rgb(opj_image_t *img)
 
 }/* color_sycc_to_rgb() */
 
-#if defined(HAVE_LIBLCMS2) || defined(HAVE_LIBLCMS1)
-#ifdef HAVE_LIBLCMS1
+#if defined(OPJ_HAVE_LIBLCMS2) || defined(OPJ_HAVE_LIBLCMS1)
+#ifdef OPJ_HAVE_LIBLCMS1
 /* Bob Friesenhahn proposed:*/
 #define cmsSigXYZData   icSigXYZData
 #define cmsSigLabData   icSigLabData
@@ -280,7 +280,7 @@ void color_sycc_to_rgb(opj_image_t *img)
 #define cmsColorSpaceSignature icColorSpaceSignature
 #define cmsGetHeaderRenderingIntent cmsTakeRenderingIntent
 
-#endif /* HAVE_LIBLCMS1 */
+#endif /* OPJ_HAVE_LIBLCMS1 */
 
 void color_apply_icc_profile(opj_image_t *image)
 {
@@ -365,7 +365,7 @@ in_type,out_type
 	transform = cmsCreateTransform(in_prof, in_type,
 	 out_prof, out_type, intent, 0);
 
-#ifdef HAVE_LIBLCMS2
+#ifdef OPJ_HAVE_LIBLCMS2
 /* Possible for: LCMS_VERSION >= 2000 :*/
 	cmsCloseProfile(in_prof);
 	cmsCloseProfile(out_prof);
@@ -378,7 +378,7 @@ fprintf(stderr,"%s:%d:color_apply_icc_profile\n\tcmsCreateTransform failed. "
 "ICC Profile ignored.\n",__FILE__,__LINE__);
 #endif
 	image->color_space = oldspace;
-#ifdef HAVE_LIBLCMS1
+#ifdef OPJ_HAVE_LIBLCMS1
 	cmsCloseProfile(in_prof);
 	cmsCloseProfile(out_prof);
 #endif
@@ -461,11 +461,11 @@ fprintf(stderr,"%s:%d:color_apply_icc_profile\n\tcmsCreateTransform failed. "
 
 	cmsDeleteTransform(transform);
 
-#ifdef HAVE_LIBLCMS1
+#ifdef OPJ_HAVE_LIBLCMS1
 	cmsCloseProfile(in_prof);
 	cmsCloseProfile(out_prof);
 #endif
 }/* color_apply_icc_profile() */
 
-#endif /* HAVE_LIBLCMS2 || HAVE_LIBLCMS1 */
+#endif /* OPJ_HAVE_LIBLCMS2 || OPJ_HAVE_LIBLCMS1 */
 

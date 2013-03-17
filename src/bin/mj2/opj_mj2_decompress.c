@@ -29,7 +29,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "opj_config.h"
+#include "opj_apps_config.h"
 #include "openjpeg.h"
 #include "j2k_lib.h"
 #include "cio.h"
@@ -38,10 +38,10 @@
 #include "mj2.h"
 #include "mj2_convert.h"
 
-#ifdef HAVE_LIBLCMS2
+#ifdef OPJ_HAVE_LIBLCMS2
 #include <lcms2.h>
 #endif
-#ifdef HAVE_LIBLCMS1
+#ifdef OPJ_HAVE_LIBLCMS1
 #include <lcms.h>
 #endif
 #include "color.h"
@@ -188,7 +188,7 @@ int main(int argc, char *argv[]) {
 
 	if(img->icc_profile_buf)
   {
-#if defined(HAVE_LIBLCMS1) || defined(HAVE_LIBLCMS2)
+#if defined(OPJ_HAVE_LIBLCMS1) || defined(OPJ_HAVE_LIBLCMS2)
 	color_apply_icc_profile(img);
 #endif
 
