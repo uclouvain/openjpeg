@@ -89,6 +89,8 @@ opj_decompress -i  @INPUT_NR_PATH@/mem-b2b86b74-2753.jp2 -o @TEMP_PATH@/mem-b2b8
 ! opj_decompress -i  @INPUT_NR_PATH@/gdal_fuzzer_check_comp_dx_dy.jp2 -o @TEMP_PATH@/gdal_fuzzer_check_comp_dx_dy.pgx
 # issue 202 
 opj_decompress -i  @INPUT_NR_PATH@/file409752.jp2 -o @TEMP_PATH@/file409752.png
+# issue 188 
+opj_decompress -i  @INPUT_NR_PATH@/issue188_beach_64bitsbox.jp2 -o @TEMP_PATH@/issue188_beach_64bitsbox.jp2.tif
 
 # decode with specific area
 # prec=12; nb_c=1 
