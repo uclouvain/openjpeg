@@ -66,8 +66,8 @@ opj_decompress -i  @INPUT_NR_PATH@/orb-blue10-win-j2k.j2k -o @TEMP_PATH@/orb-blu
 opj_decompress -i  @INPUT_NR_PATH@/orb-blue10-win-jp2.jp2 -o @TEMP_PATH@/orb-blue10-win-jp2.jp2.pgx
 opj_decompress -i  @INPUT_NR_PATH@/relax.jp2 -o @TEMP_PATH@/relax.jp2.pgx
 opj_decompress -i  @INPUT_NR_PATH@/test_lossless.j2k -o @TEMP_PATH@/test_lossless.j2k.pgx
-# text_GBR.jp2 file exhibt a error about a tile part with a index > of the number of tile-part in this tile.
-!opj_decompress -i  @INPUT_NR_PATH@/text_GBR.jp2 -o @TEMP_PATH@/text_GBR.jp2.pgx
+# text_GBR.jp2 file exhibt a error about a tile part with a index > of the number of tile-part in this tile (related to issue 202, 206, 208)
+opj_decompress -i  @INPUT_NR_PATH@/text_GBR.jp2 -o @TEMP_PATH@/text_GBR.jp2.pgx
 # pacs.ge file should throw an error but finally it seems work with v2
 opj_decompress -i  @INPUT_NR_PATH@/pacs.ge.j2k -o @TEMP_PATH@/pacs.ge.j2k.pgx
 # related to issue 135 
@@ -77,7 +77,7 @@ opj_decompress -i  @INPUT_NR_PATH@/kodak_2layers_lrcp.j2c -o @TEMP_PATH@/kodak_2
 opj_decompress -i  @INPUT_NR_PATH@/issue104_jpxstream.jp2 -o @TEMP_PATH@/issue104_jpxstream.jp2.pgx
 # File not supported by kakadu (Malformed PCLR box) and not supoprter by openjpeg (problem with value of TPSot)
 opj_decompress -i  @INPUT_NR_PATH@/mem-b2ace68c-1381.jp2 -o @TEMP_PATH@/mem-b2ace68c-1381.jp2.pgx
-# File which produced weird output with kakadu and not supoprter by openjpeg (problem with value of TPSot)
+# File which produced weird output with kakadu and not supoprter by openjpeg (problem with value of TPSot, issue 202, 206, 208)
 opj_decompress -i  @INPUT_NR_PATH@/mem-b2b86b74-2753.jp2 -o @TEMP_PATH@/mem-b2b86b74-2753.jp2.pgx
 # issue 191 raised by the gdal fuzzer test (should properly failed)
 !opj_decompress -i  @INPUT_NR_PATH@/gdal_fuzzer_unchecked_numresolutions.jp2 -o @TEMP_PATH@/gdal_fuzzer_unchecked_numresolutions.pgx
@@ -91,6 +91,8 @@ opj_decompress -i  @INPUT_NR_PATH@/mem-b2b86b74-2753.jp2 -o @TEMP_PATH@/mem-b2b8
 opj_decompress -i  @INPUT_NR_PATH@/file409752.jp2 -o @TEMP_PATH@/file409752.png
 # issue 188 
 opj_decompress -i  @INPUT_NR_PATH@/issue188_beach_64bitsbox.jp2 -o @TEMP_PATH@/issue188_beach_64bitsbox.jp2.tif
+# issue 206
+opj_decompress -i  @INPUT_NR_PATH@/issue206_image-000.jp2 -o @TEMP_PATH@/issue206_image-000.jp2.png
 
 # decode with specific area
 # prec=12; nb_c=1 

@@ -7033,6 +7033,12 @@ OPJ_BOOL opj_j2k_read_tile_header(      opj_j2k_t * p_j2k,
 
                 /* Try to read until the Start Of Data is detected */
                 while (l_current_marker != J2K_MS_SOD) {
+                    
+                    if(opj_stream_get_number_byte_left(p_stream) == 0)
+                    {
+                        p_j2k->m_specific_param.m_decoder.m_state = J2K_STATE_NEOC;
+                        break;
+                    }
 
                         /* Try to read 2 bytes (the marker size) from stream and copy them into the buffer */
                         if (opj_stream_read_data(p_stream,p_j2k->m_specific_param.m_decoder.m_header_data,2,p_manager) != 2) {
@@ -7127,6 +7133,9 @@ OPJ_BOOL opj_j2k_read_tile_header(      opj_j2k_t * p_j2k,
                                 opj_read_bytes(p_j2k->m_specific_param.m_decoder.m_header_data,&l_current_marker,2);
                         }
                 }
+                if(opj_stream_get_number_byte_left(p_stream) == 0
+                    && p_j2k->m_specific_param.m_decoder.m_state == J2K_STATE_NEOC)
+                    break;
 
                 /* If we didn't skip data before, we need to read the SOD marker*/
                 if (! p_j2k->m_specific_param.m_decoder.m_skip_data) {
@@ -7260,6 +7269,11 @@ OPJ_BOOL opj_j2k_decode_tile (  opj_j2k_t * p_j2k,
         p_j2k->m_specific_param.m_decoder.m_can_decode = 0;
         p_j2k->m_specific_param.m_decoder.m_state &= (~ (0x0080));/* FIXME J2K_DEC_STATE_DATA);*/
 
+        if(opj_stream_get_number_byte_left(p_stream) == 0 
+            && p_j2k->m_specific_param.m_decoder.m_state == J2K_STATE_NEOC){
+            return OPJ_TRUE;
+        }
+
         if (p_j2k->m_specific_param.m_decoder.m_state != 0x0100){ /*FIXME J2K_DEC_STATE_EOC)*/
                 if (opj_stream_read_data(p_stream,l_data,2,p_manager) != 2) {
                         opj_event_msg(p_manager, EVT_ERROR, "Stream too short\n");
@@ -7275,6 +7289,11 @@ OPJ_BOOL opj_j2k_decode_tile (  opj_j2k_t * p_j2k,
                 else if (l_current_marker != J2K_MS_SOT)
                 {
                         opj_event_msg(p_manager, EVT_ERROR, "Stream too short, expected SOT\n");
+                        
+                        if(opj_stream_get_number_byte_left(p_stream) == 0) {
+                            p_j2k->m_specific_param.m_decoder.m_state = J2K_STATE_NEOC;
+                            return OPJ_TRUE;
+                        }
                         return OPJ_FALSE;
                 }
         }
@@ -8691,6 +8710,7 @@ OPJ_BOOL opj_j2k_decode_tiles ( opj_j2k_t *p_j2k,
         OPJ_INT32 l_tile_x0,l_tile_y0,l_tile_x1,l_tile_y1;
         OPJ_UINT32 l_nb_comps;
         OPJ_BYTE * l_current_data;
+        OPJ_UINT32 nr_tiles = 0;
 
         l_current_data = (OPJ_BYTE*)opj_malloc(1000);
         if (! l_current_data) {
@@ -8739,7 +8759,12 @@ OPJ_BOOL opj_j2k_decode_tiles ( opj_j2k_t *p_j2k,
                         return OPJ_FALSE;
                 }
                 opj_event_msg(p_manager, EVT_INFO, "Image data has been updated with tile %d.\n\n", l_current_tile_no + 1);
-
+                
+                if(opj_stream_get_number_byte_left(p_stream) == 0  
+                    && p_j2k->m_specific_param.m_decoder.m_state == J2K_STATE_NEOC)
+                    break;
+                if(++nr_tiles ==  p_j2k->m_cp.th * p_j2k->m_cp.tw) 
+                    break;
         }
 
         opj_free(l_current_data);
