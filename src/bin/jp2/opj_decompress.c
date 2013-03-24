@@ -850,6 +850,13 @@ int main(int argc, char **argv)
 		if(image->color_space == OPJ_CLRSPC_SYCC){
 			color_sycc_to_rgb(image); /* FIXME */
 		}
+		
+		if( image->color_space != OPJ_CLRSPC_SYCC 
+			&& image->numcomps == 3 && image->comps[0].dx == image->comps[0].dy
+			&& image->comps[1].dx != 1 )
+			image->color_space = OPJ_CLRSPC_SYCC;
+		else if (image->numcomps <= 2)
+			image->color_space = OPJ_CLRSPC_GRAY;
 
 		if(image->icc_profile_buf) {
 #if defined(OPJ_HAVE_LIBLCMS1) || defined(OPJ_HAVE_LIBLCMS2)
