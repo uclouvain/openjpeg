@@ -211,8 +211,6 @@ CHECK_INCLUDE_FILE("unistd.h"       HAVE_UNISTD_H)
 include(TestLargeFiles)
 OPJ_TEST_LARGE_FILES(OPJ_HAVE_LARGEFILES)
 
-
-
 #-----------------------------------------------------------------------------
 # Build Library
 add_subdirectory(src)
@@ -247,6 +245,12 @@ add_subdirectory(wrapping)
 configure_file(
  ${CMAKE_CURRENT_SOURCE_DIR}/src/lib/openjp2/opj_config.h.cmake.in
  ${CMAKE_CURRENT_BINARY_DIR}/src/lib/openjp2/opj_config.h
+ @ONLY
+ )
+ 
+ configure_file(
+ ${CMAKE_CURRENT_SOURCE_DIR}/src/lib/openjp2/opj_config_private.h.cmake.in
+ ${CMAKE_CURRENT_BINARY_DIR}/src/lib/openjp2/opj_config_private.h
  @ONLY
  )
 

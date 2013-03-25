@@ -30,7 +30,6 @@
 #include <windows.h>
 #endif /* _WIN32 */
 
-#include "opj_config.h"
 #include "opj_includes.h"
 
 /**

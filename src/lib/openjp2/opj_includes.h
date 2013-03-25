@@ -32,7 +32,7 @@
  * This must be included before any system headers,
  * since they can react to macro defined there
  */
-#include "opj_config.h"
+#include "opj_config_private.h"
 
 /*
  ==========================================================
