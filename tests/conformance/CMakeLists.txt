@@ -11,9 +11,9 @@ SET(INPUT_CONF ${OPJ_DATA_ROOT}/input/conformance)
 # List of components by file (normaly p0_13.j2k have 257 components but for this 
 #set of test we consider only 4)
 SET( CP0_nbC_list "not_used;1;1;1;3;4;4;3;3;1;3;1;1;4;3;1;1")
-SET( CP0_ignore_list "not_used;0;0;1;1;1;1;1;1;0;1;0;0;1;1;1;0")
+SET( CP0_ignore_list "not_used;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0")
 SET( CP1_nbC_list "not_used;1;3;4;1;3;3;2")
-SET( CP1_ignore_list "not_used;0;1;1;0;1;1;1")
+SET( CP1_ignore_list "not_used;0;0;0;0;0;0;0")
 
 SET(COMMENTCODEVAR FALSE)
 
@@ -45,7 +45,9 @@ IF(ignore_test_value EQUAL 0)
   
   # Get corresponding tests parameters
   list(GET C0P0_ResFactor_list ${numFileC0P0}  ResFactor)
-  list(GET CP0_nbC_list ${numFileC0P0}  nbComponents)
+  #For Class-0 testing, we always focus on the first component only
+  #list(GET CP0_nbC_list ${numFileC0P0}  nbComponents)
+  set( nbComponents "1")
   list(GET C0P0_PEAK_list ${numFileC0P0}  PEAK_limit)
   list(GET C0P0_MSE_list ${numFileC0P0}  MSE_limit)
   
@@ -187,7 +189,9 @@ IF(ignore_test_value2 EQUAL 0)
 
   # Get corresponding tests parameters 
   list(GET C0P1_ResFactor_list ${numFileC0P1}  ResFactor)
-  list(GET CP1_nbC_list ${numFileC0P1}  nbComponents)
+  #For Class-0 testing, we always focus on the first component only
+  #list(GET CP0_nbC_list ${numFileC0P0}  nbComponents)
+  set( nbComponents "1")
   list(GET C0P1_PEAK_list ${numFileC0P1}  PEAK_limit)
   list(GET C0P1_MSE_list ${numFileC0P1}  MSE_limit) 
 
