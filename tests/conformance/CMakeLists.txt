@@ -40,7 +40,9 @@ foreach(numFileC0P0 RANGE 1 16)
 
   # Get corresponding tests parameters
   list(GET C0P0_ResFactor_list ${numFileC0P0}  ResFactor)
-  list(GET CP0_nbC_list ${numFileC0P0}  nbComponents)
+  #For Class-0 testing, we always focus on the first component only
+  #list(GET CP0_nbC_list ${numFileC0P0}  nbComponents)
+  set( nbComponents "1")
   list(GET C0P0_PEAK_list ${numFileC0P0}  PEAK_limit)
   list(GET C0P0_MSE_list ${numFileC0P0}  MSE_limit)
 
@@ -177,7 +179,9 @@ foreach(numFileC0P1 RANGE 1 7)
 
   # Get corresponding tests parameters
   list(GET C0P1_ResFactor_list ${numFileC0P1}  ResFactor)
-  list(GET CP1_nbC_list ${numFileC0P1}  nbComponents)
+  #For Class-0 testing, we always focus on the first component only
+  #list(GET CP0_nbC_list ${numFileC0P0}  nbComponents)
+  set( nbComponents "1")
   list(GET C0P1_PEAK_list ${numFileC0P1}  PEAK_limit)
   list(GET C0P1_MSE_list ${numFileC0P1}  MSE_limit)
 
