@@ -850,10 +850,9 @@ OPJ_BOOL OPJ_CALLCONV opj_encode(opj_codec_t *p_info, opj_stream_t *p_stream)
 		opj_stream_private_t * l_stream = (opj_stream_private_t *) p_stream;
 
 		if (! l_codec->is_decompressor) {
-			l_codec->m_codec_data.m_compression.opj_encode(	l_codec->m_codec,
+			return l_codec->m_codec_data.m_compression.opj_encode(	l_codec->m_codec,
 															l_stream,
 															&(l_codec->m_event_mgr));
-			return OPJ_TRUE;
 		}
 	}
 
