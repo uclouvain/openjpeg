@@ -23,7 +23,7 @@ if(BUILD_JPIP_SERVER)
 
   # Build executable
   add_executable(opj_server ${OPJ_SERVER_SRCS})
-  target_link_libraries(opj_server openjpip_server)
+  target_link_libraries(opj_server ${FCGI_LIBRARIES} openjpip_server)
   set_property(
     TARGET opj_server
     APPEND PROPERTY

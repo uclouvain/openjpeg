@@ -213,7 +213,15 @@ OPJ_TEST_LARGE_FILES(OPJ_HAVE_LARGEFILES)
 
 #-----------------------------------------------------------------------------
 # Build Library
-add_subdirectory(src)
+if(BUILD_JPIP_SERVER)
+  find_package(CURL REQUIRED)
+  find_package(FCGI REQUIRED)
+  find_package(Threads REQUIRED)
+  if(NOT CMAKE_USE_PTHREADS_INIT)
+    message(FATAL_ERROR "Only pthread are supported")
+  endif()
+endif()
+add_subdirectory(src/lib)
 
 #-----------------------------------------------------------------------------
 # Build Applications
