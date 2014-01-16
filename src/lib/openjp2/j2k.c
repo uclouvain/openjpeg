@@ -2692,7 +2692,8 @@ OPJ_BOOL opj_j2k_write_qcc(     opj_j2k_t *p_j2k,
         assert(p_manager != 00);
         assert(p_stream != 00);
 
-        l_qcc_size = 6 + opj_j2k_get_SQcd_SQcc_size(p_j2k,p_j2k->m_current_tile_number,p_comp_no);
+        l_qcc_size = 5 + opj_j2k_get_SQcd_SQcc_size(p_j2k,p_j2k->m_current_tile_number,p_comp_no);
+        l_qcc_size += p_j2k->m_private_image->numcomps <= 256 ? 0:1;
         l_remaining_size = l_qcc_size;
 
         if (l_qcc_size > p_j2k->m_specific_param.m_encoder.m_header_tile_data_size) {
@@ -9540,6 +9541,8 @@ OPJ_BOOL opj_j2k_write_all_tile_parts(  opj_j2k_t *p_j2k,
         /*Get number of tile parts*/
         tot_num_tp = opj_j2k_get_num_tp(l_cp,0,p_j2k->m_current_tile_number);
 
+        /* start writing remaining tile parts */
+        ++p_j2k->m_specific_param.m_encoder.m_current_tile_part_number;
         for (tilepartno = 1; tilepartno < tot_num_tp ; ++tilepartno) {
                 p_j2k->m_specific_param.m_encoder.m_current_poc_tile_part_number = tilepartno;
                 l_current_nb_bytes_written = 0;
@@ -9553,7 +9556,7 @@ OPJ_BOOL opj_j2k_write_all_tile_parts(  opj_j2k_t *p_j2k,
                 l_nb_bytes_written += l_current_nb_bytes_written;
                 p_data += l_current_nb_bytes_written;
                 p_total_data_size -= l_current_nb_bytes_written;
-                l_part_tile_size += l_nb_bytes_written;
+                l_part_tile_size += l_current_nb_bytes_written;
 
                 l_current_nb_bytes_written = 0;
                 if (! opj_j2k_write_sod(p_j2k,l_tcd,p_data,&l_current_nb_bytes_written,p_total_data_size,p_stream,p_manager)) {
@@ -9563,7 +9566,7 @@ OPJ_BOOL opj_j2k_write_all_tile_parts(  opj_j2k_t *p_j2k,
                 p_data += l_current_nb_bytes_written;
                 l_nb_bytes_written += l_current_nb_bytes_written;
                 p_total_data_size -= l_current_nb_bytes_written;
-                l_part_tile_size += l_nb_bytes_written;
+                l_part_tile_size += l_current_nb_bytes_written;
 
                 /* Writing Psot in SOT marker */
                 opj_write_bytes(l_begin_data + 6,l_part_tile_size,4);                                   /* PSOT */
