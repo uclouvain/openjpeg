@@ -33,7 +33,7 @@ set(BLACKLIST_JPEG2000
 file(GLOB_RECURSE OPJ_DATA_NR_LIST
      "${INPUT_NR}/*.j2k"
      "${INPUT_NR}/*.j2c"
-     #"${INPUT_NR}/*.jp2"
+     "${INPUT_NR}/*.jp2"
      #"${INPUT_NR}/*.jpx"
      )
 
