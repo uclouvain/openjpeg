@@ -661,7 +661,7 @@ static OPJ_BOOL is_cinema_compliant(opj_image_t *image, OPJ_CINEMA_MODE cinema_m
     switch (cinema_mode){
     case OPJ_CINEMA2K_24:
     case OPJ_CINEMA2K_48:
-        if (!((image->comps[0].w > 2048) | (image->comps[0].h > 1080))){
+        if (((image->comps[0].w > 2048) | (image->comps[0].h > 1080))){
             fprintf(stdout,"JPEG 2000 Profile-3 (2k dc profile) requires:\n"
                     "width <= 2048 and height <= 1080\n"
                     "-> Input image size %d x %d is not compliant\n"
@@ -671,7 +671,7 @@ static OPJ_BOOL is_cinema_compliant(opj_image_t *image, OPJ_CINEMA_MODE cinema_m
         }
         break;
     case OPJ_CINEMA4K_24:
-        if (!((image->comps[0].w > 4096) | (image->comps[0].h > 2160))){
+        if (((image->comps[0].w > 4096) | (image->comps[0].h > 2160))){
             fprintf(stdout,"JPEG 2000 Profile-4 (4k dc profile) requires:\n"
                     "width <= 4096 and height <= 2160\n"
                     "-> Image size %d x %d is not compliant\n"
