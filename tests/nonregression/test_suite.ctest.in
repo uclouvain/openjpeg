@@ -32,9 +32,13 @@ opj_compress -i @INPUT_NR_PATH@/random-issue-0005.tif -o @TEMP_PATH@/random-issu
 # related to issue 62
 opj_compress -i @INPUT_NR_PATH@/tmp-issue-0062.raw -o @TEMP_PATH@/tmp-issue-0062-u.raw.j2k -F 512,512,1,16,u
 opj_compress -i @INPUT_NR_PATH@/tmp-issue-0062.raw -o @TEMP_PATH@/tmp-issue-0062-s.raw.j2k -F 512,512,1,16,s
-opj_compress -i @INPUT_NR_PATH@/X_4_2K_24_185_CBR_WB_000.tif -o @TEMP_PATH@/X_4_2K_24_185_CBR_WB_000.j2k -cinema2K 24
-opj_compress -i @INPUT_NR_PATH@/X_5_2K_24_235_CBR_STEM24_000.tif -o @TEMP_PATH@/X_5_2K_24_235_CBR_STEM24_000.j2k -cinema2K 24
-opj_compress -i @INPUT_NR_PATH@/X_6_2K_24_FULL_CBR_CIRCLE_000.tif -o @TEMP_PATH@/X_6_2K_24_FULL_CBR_CIRCLE_000.j2k -cinema2K 24
+opj_compress -i @INPUT_NR_PATH@/X_4_2K_24_185_CBR_WB_000.tif -o @TEMP_PATH@/X_4_2K_24_185_CBR_WB_000_C2K_24.j2k -cinema2K 24
+opj_compress -i @INPUT_NR_PATH@/X_5_2K_24_235_CBR_STEM24_000.tif -o @TEMP_PATH@/X_5_2K_24_235_CBR_STEM24_000_C2K_24.j2k -cinema2K 24
+opj_compress -i @INPUT_NR_PATH@/X_6_2K_24_FULL_CBR_CIRCLE_000.tif -o @TEMP_PATH@/X_6_2K_24_FULL_CBR_CIRCLE_000_C2K_24.j2k -cinema2K 24
+opj_compress -i @INPUT_NR_PATH@/X_4_2K_24_185_CBR_WB_000.tif -o @TEMP_PATH@/X_4_2K_24_185_CBR_WB_000_C2K_48.j2k -cinema2K 48
+opj_compress -i @INPUT_NR_PATH@/X_5_2K_24_235_CBR_STEM24_000.tif -o @TEMP_PATH@/X_5_2K_24_235_CBR_STEM24_000_C2K_48.j2k -cinema2K 48
+opj_compress -i @INPUT_NR_PATH@/X_6_2K_24_FULL_CBR_CIRCLE_000.tif -o @TEMP_PATH@/X_6_2K_24_FULL_CBR_CIRCLE_000_C2K_48.j2k -cinema2K 48
+opj_compress -i @INPUT_NR_PATH@/ElephantDream_4K.tif -o @TEMP_PATH@/ElephantDream_4K_C4K.j2k -cinema4K
 
 # DECODER TEST SUITE
 opj_decompress -i  @INPUT_NR_PATH@/Bretagne2.j2k -o @TEMP_PATH@/Bretagne2.j2k.pgx

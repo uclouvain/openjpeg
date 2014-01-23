@@ -86,7 +86,7 @@ void comparePGXimages_help_display(void) {
   fprintf(stdout,"  -s \t OPTIONAL \t 1 or 2 filename separator to take into account PGX image with different components, "
                                       "please indicate b or t before separator to indicate respectively the separator "
                                       "for ref/base file and for test file.  \n");
-  fprintf(stdout,"  -r \t OPTIONAL \t indicate if you want to run this function as conformance test or as non regression test\n");
+  fprintf(stdout,"  -d \t OPTIONAL \t indicate if you want to run this function as conformance test or as non regression test\n");
   fprintf(stdout,"\n");
 }
 
@@ -766,6 +766,7 @@ int main(int argc, char **argv)
          strcat(filenamePNGdiff_it_comp, it_compc);
          /*printf("filenamePNGdiff_it = %s [%d / %d octets]\n",filenamePNGdiff_it_comp, strlen(filenamePNGdiff_it_comp),memsizedifffilename );*/
 
+         /*
          if ( imageToPNG(imageBase, filenamePNGbase_it_comp, it_comp) == EXIT_SUCCESS )
            {
            printf("<DartMeasurementFile name=\"BaselineImage_%d\" type=\"image/png\"> %s </DartMeasurementFile> \n", it_comp, filenamePNGbase_it_comp);
@@ -780,6 +781,8 @@ int main(int argc, char **argv)
            {
            printf("<DartMeasurementFile name=\"DiffferenceImage_%d\" type=\"image/png\"> %s </DartMeasurementFile> \n", it_comp, filenamePNGdiff_it_comp);
            }
+           */
+
 #endif
          failed = 1;
          }
