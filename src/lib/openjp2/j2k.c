@@ -1149,9 +1149,9 @@ static OPJ_FLOAT32 opj_j2k_get_default_stride (opj_tcp_t * p_tcp);
 
 static int opj_j2k_initialise_4K_poc(opj_poc_t *POC, int numres);
 
-static void opj_j2k_set_cinema_parameters(opj_cparameters_t *parameters, opj_image_t *image);
+static void opj_j2k_set_cinema_parameters(opj_cparameters_t *parameters, opj_image_t *image, opj_event_mgr_t *p_manager);
 
-static OPJ_BOOL opj_j2k_is_cinema_compliant(opj_image_t *image, OPJ_CINEMA_MODE cinema_mode);
+static OPJ_BOOL opj_j2k_is_cinema_compliant(opj_image_t *image, OPJ_CINEMA_MODE cinema_mode, opj_event_mgr_t *p_manager);
 
 /*@}*/
 
@@ -5808,7 +5808,7 @@ int opj_j2k_initialise_4K_poc(opj_poc_t *POC, int numres){
     return 2;
 }
 
-void opj_j2k_set_cinema_parameters(opj_cparameters_t *parameters, opj_image_t *image)
+void opj_j2k_set_cinema_parameters(opj_cparameters_t *parameters, opj_image_t *image, opj_event_mgr_t *p_manager)
 {
     /* Configure cinema parameters */
     float max_rate = 0;
@@ -5860,7 +5860,8 @@ void opj_j2k_set_cinema_parameters(opj_cparameters_t *parameters, opj_image_t *i
 
     /* Number of layers */
     if (parameters->tcp_numlayers > 1){
-        fprintf(stdout,"JPEG 2000 Profile-3 and 4 (2k/4k dc profile) requires:\n"
+        opj_event_msg(p_manager, EVT_WARNING,
+                "JPEG 2000 Profile-3 and 4 (2k/4k dc profile) requires:\n"
                 "1 single quality layer"
                 "-> Number of layers forced to 1 (rather than %d)\n",
                 parameters->tcp_numlayers);
@@ -5872,7 +5873,8 @@ void opj_j2k_set_cinema_parameters(opj_cparameters_t *parameters, opj_image_t *i
     case OPJ_CINEMA2K_24:
     case OPJ_CINEMA2K_48:
         if(parameters->numresolution > 6){
-            fprintf(stdout,"JPEG 2000 Profile-3 (2k dc profile) requires:\n"
+            opj_event_msg(p_manager, EVT_WARNING,
+                    "JPEG 2000 Profile-3 (2k dc profile) requires:\n"
                     "Number of decomposition levels <= 5\n"
                     "-> Number of decomposition levels forced to 5 (rather than %d)\n",
                     parameters->numresolution+1);
@@ -5881,13 +5883,15 @@ void opj_j2k_set_cinema_parameters(opj_cparameters_t *parameters, opj_image_t *i
         break;
     case OPJ_CINEMA4K_24:
         if(parameters->numresolution < 2){
-            fprintf(stdout,"JPEG 2000 Profile-4 (4k dc profile) requires:\n"
+            opj_event_msg(p_manager, EVT_WARNING,
+                    "JPEG 2000 Profile-4 (4k dc profile) requires:\n"
                     "Number of decomposition levels >= 1 && <= 6\n"
                     "-> Number of decomposition levels forced to 1 (rather than %d)\n",
                     parameters->numresolution+1);
             parameters->numresolution = 1;
         }else if(parameters->numresolution > 7){
-            fprintf(stdout,"JPEG 2000 Profile-4 (4k dc profile) requires:\n"
+            opj_event_msg(p_manager, EVT_WARNING,
+                    "JPEG 2000 Profile-4 (4k dc profile) requires:\n"
                     "Number of decomposition levels >= 1 && <= 6\n"
                     "-> Number of decomposition levels forced to 6 (rather than %d)\n",
                     parameters->numresolution+1);
@@ -5929,13 +5933,15 @@ void opj_j2k_set_cinema_parameters(opj_cparameters_t *parameters, opj_image_t *i
             temp_rate =((float) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec))/
                     (parameters->tcp_rates[0] * 8 * image->comps[0].dx * image->comps[0].dy);
             if (temp_rate > CINEMA_24_CS ){
-                fprintf(stdout,"JPEG 2000 Profile-3 and 4 (2k/4k dc profile) requires:\n"
+                opj_event_msg(p_manager, EVT_WARNING,
+                        "JPEG 2000 Profile-3 and 4 (2k/4k dc profile) requires:\n"
                         "Maximum 1302083 compressed bytes @ 24fps\n"
                         "-> Specified rate (%3.1f) exceeds this limit. Rate will be forced to %3.1f.\n",
                         parameters->tcp_rates[0], max_rate);
                 parameters->tcp_rates[0]= max_rate;
             }else{
-                fprintf(stdout,"JPEG 2000 Profile-3 and 4 (2k/4k dc profile):\n"
+                opj_event_msg(p_manager, EVT_WARNING,
+                        "JPEG 2000 Profile-3 and 4 (2k/4k dc profile):\n"
                         "INFO : Specified rate (%3.1f) is below the 2k/4k limit @ 24fps.\n",
                         parameters->tcp_rates[0]);
             }
@@ -5951,13 +5957,15 @@ void opj_j2k_set_cinema_parameters(opj_cparameters_t *parameters, opj_image_t *i
             temp_rate =((float) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec))/
                     (parameters->tcp_rates[0] * 8 * image->comps[0].dx * image->comps[0].dy);
             if (temp_rate > CINEMA_48_CS ){
-                fprintf(stdout,"JPEG 2000 Profile-3 (2k dc profile) requires:\n"
+                opj_event_msg(p_manager, EVT_WARNING,
+                        "JPEG 2000 Profile-3 (2k dc profile) requires:\n"
                         "Maximum 651041 compressed bytes @ 48fps\n"
                         "-> Specified rate (%3.1f) exceeds this limit. Rate will be forced to %3.1f.\n",
                         parameters->tcp_rates[0], max_rate);
                 parameters->tcp_rates[0]= max_rate;
             }else{
-                fprintf(stdout,"JPEG 2000 Profile-3 (2k dc profile):\n"
+                opj_event_msg(p_manager, EVT_WARNING,
+                        "JPEG 2000 Profile-3 (2k dc profile):\n"
                         "INFO : Specified rate (%3.1f) is below the 2k limit @ 48 fps.\n",
                         parameters->tcp_rates[0]);
             }
@@ -5969,13 +5977,14 @@ void opj_j2k_set_cinema_parameters(opj_cparameters_t *parameters, opj_image_t *i
     }
 }
 
-OPJ_BOOL opj_j2k_is_cinema_compliant(opj_image_t *image, OPJ_CINEMA_MODE cinema_mode)
+OPJ_BOOL opj_j2k_is_cinema_compliant(opj_image_t *image, OPJ_CINEMA_MODE cinema_mode, opj_event_mgr_t *p_manager)
 {
     OPJ_UINT32 i;
 
     /* Number of components */
     if (image->numcomps != 3){
-        fprintf(stdout,"JPEG 2000 Profile-3 (2k dc profile) requires:\n"
+        opj_event_msg(p_manager, EVT_WARNING,
+                "JPEG 2000 Profile-3 (2k dc profile) requires:\n"
                 "3 components"
                 "-> Number of components of input image (%d) is not compliant\n"
                 "-> Non-profile-3 codestream will be generated\n",
@@ -5989,7 +5998,8 @@ OPJ_BOOL opj_j2k_is_cinema_compliant(opj_image_t *image, OPJ_CINEMA_MODE cinema_
             char signed_str[] = "signed";
             char unsigned_str[] = "unsigned";
             char *tmp_str = image->comps[i].sgnd?signed_str:unsigned_str;
-            fprintf(stdout,"JPEG 2000 Profile-3 (2k dc profile) requires:\n"
+            opj_event_msg(p_manager, EVT_WARNING,
+                    "JPEG 2000 Profile-3 (2k dc profile) requires:\n"
                     "Precision of each component shall be 12 bits unsigned"
                     "-> At least component %d of input image (%d bits, %s) is not compliant\n"
                     "-> Non-profile-3 codestream will be generated\n",
@@ -6003,7 +6013,8 @@ OPJ_BOOL opj_j2k_is_cinema_compliant(opj_image_t *image, OPJ_CINEMA_MODE cinema_
     case OPJ_CINEMA2K_24:
     case OPJ_CINEMA2K_48:
         if (((image->comps[0].w > 2048) | (image->comps[0].h > 1080))){
-            fprintf(stdout,"JPEG 2000 Profile-3 (2k dc profile) requires:\n"
+            opj_event_msg(p_manager, EVT_WARNING,
+                    "JPEG 2000 Profile-3 (2k dc profile) requires:\n"
                     "width <= 2048 and height <= 1080\n"
                     "-> Input image size %d x %d is not compliant\n"
                     "-> Non-profile-3 codestream will be generated\n",
@@ -6013,7 +6024,8 @@ OPJ_BOOL opj_j2k_is_cinema_compliant(opj_image_t *image, OPJ_CINEMA_MODE cinema_
         break;
     case OPJ_CINEMA4K_24:
         if (((image->comps[0].w > 4096) | (image->comps[0].h > 2160))){
-            fprintf(stdout,"JPEG 2000 Profile-4 (4k dc profile) requires:\n"
+            opj_event_msg(p_manager, EVT_WARNING,
+                    "JPEG 2000 Profile-4 (4k dc profile) requires:\n"
                     "width <= 4096 and height <= 2160\n"
                     "-> Image size %d x %d is not compliant\n"
                     "-> Non-profile-4 codestream will be generated\n",
@@ -6049,8 +6061,8 @@ void opj_j2k_setup_encoder(     opj_j2k_t *p_j2k,
 
         /* set cinema parameters if required */
         if (parameters->cp_cinema){
-            opj_j2k_set_cinema_parameters(parameters,image);
-            if (!opj_j2k_is_cinema_compliant(image,parameters->cp_cinema)) {
+            opj_j2k_set_cinema_parameters(parameters,image,p_manager);
+            if (!opj_j2k_is_cinema_compliant(image,parameters->cp_cinema,p_manager)) {
                 parameters->cp_rsiz = OPJ_STD_RSIZ;
             }
         }
