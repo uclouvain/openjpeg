@@ -2535,6 +2535,14 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
 */ 
     memset(&cmptparm[0], 0, 4 * sizeof(opj_image_cmptparm_t));
 
+    if ((tiPhoto == PHOTOMETRIC_RGB) && (parameters->cp_cinema)) {
+        fprintf(stdout,"WARNING:\n"
+                "Input image bitdepth is %d bits\n"
+                "TIF conversion has automatically rescaled to 12-bits\n"
+                "to comply with cinema profiles.\n",
+                tiBps);
+    }
+
     if(tiPhoto == PHOTOMETRIC_RGB) /* RGB(A) */
     {
         numcomps = 3 + has_alpha;
