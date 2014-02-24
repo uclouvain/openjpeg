@@ -146,17 +146,17 @@ void opj_bio_init_dec(opj_bio_t *bio, OPJ_BYTE *bp, OPJ_UINT32 len) {
 }
 
 void opj_bio_write(opj_bio_t *bio, OPJ_UINT32 v, OPJ_UINT32 n) {
-	OPJ_INT32 i;
-	for (i = n - 1; i >= 0; i--) {
+	OPJ_UINT32 i;
+	for (i = n - 1; i < n; i--) {
 		opj_bio_putbit(bio, (v >> i) & 1);
 	}
 }
 
 OPJ_UINT32 opj_bio_read(opj_bio_t *bio, OPJ_UINT32 n) {
-	OPJ_INT32 i;
+	OPJ_UINT32 i;
     OPJ_UINT32 v;
 	v = 0;
-	for (i = n - 1; i >= 0; i--) {
+	for (i = n - 1; i < n; i--) {
 		v += opj_bio_getbit(bio) << i;
 	}
 	return v;
