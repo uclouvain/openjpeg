@@ -19,30 +19,38 @@
 #message("0: ${REFFILE}")
 #message("1: ${CMAKE_CURRENT_BINARY_DIR}")
 #message("2: ${FILENAME}")
-execute_process(
-  COMMAND ${CMAKE_COMMAND} -E md5sum ${FILENAME}.png
-  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/Temporary
-  RESULT_VARIABLE res
-  OUTPUT_VARIABLE output
-  ERROR_VARIABLE  error_output
-  OUTPUT_STRIP_TRAILING_WHITESPACE # important
-)
+file(GLOB globfiles "Temporary/${FILENAME}*.pgx" )
+#message("6: ${globfiles}")
 
-# Pass the output back to ctest
-if(res)
-  message(SEND_ERROR "md5 could not be computed, it failed with value ${res}. Output was: ${error_output}")
-endif()
-
-#message("3: ${output}")
-
+# REFFILE follow what md5sum -c would expect as input:
 file(READ ${REFFILE} variable)
-#message("4: ${variable}")
-string(REGEX MATCH "^.*${FILENAME}.png" output_var ${variable})
+#string(REGEX REPLACE "\r?\n" ";" variable "${variable}")
 
-#message("5: ${output_var}")
-
-if("${output_var}" STREQUAL "${output}")
-  #message("6: eqal")
-else()
-  message(SEND_ERROR "not equal: [${output_var}] vs [${output}]")
-endif()
+foreach(pgxfullpath ${globfiles})
+  get_filename_component(pgxfile ${pgxfullpath} NAME)
+  #message("8: ${pgxfile}")
+  execute_process(
+    COMMAND ${CMAKE_COMMAND} -E md5sum ${pgxfile}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/Temporary
+    RESULT_VARIABLE res
+    OUTPUT_VARIABLE output
+    ERROR_VARIABLE  error_output
+    OUTPUT_STRIP_TRAILING_WHITESPACE # important
+  )
+  
+  # Pass the output back to ctest
+  if(res)
+    message(SEND_ERROR "md5 could not be computed, it failed with value ${res}. Output was: ${error_output}")
+  endif()
+  #message("3: ${output}")
+  
+  #message("4: ${variable}")
+  string(REGEX MATCH "[0-9a-f]+  ${pgxfile}" output_var "${variable}")
+  #message("5: ${output_var}")
+  
+  if("${output_var}" STREQUAL "${output}")
+    #message("6: eqal")
+  else()
+    message(SEND_ERROR "not equal: [${output_var}] vs [${output}]")
+  endif()
+endforeach()
