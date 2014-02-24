@@ -43,8 +43,8 @@ foreach(INPUT_FILENAME ${OPJ_DATA_NR_LIST})
   string(REGEX MATCH ${INPUT_FILENAME_NAME} bad_jpeg2000 ${BLACKLIST_JPEG2000})
 
   # Dump the input image
-  add_test(NR-${INPUT_FILENAME_NAME}-dump
-           ${EXECUTABLE_OUTPUT_PATH}/opj_dump
+  add_test(NAME NR-${INPUT_FILENAME_NAME}-dump
+           COMMAND opj_dump
   	       -i ${INPUT_FILENAME}
   	       -o ${TEMP}/${INPUT_FILENAME_NAME}.txt
   	       -v
@@ -57,8 +57,8 @@ foreach(INPUT_FILENAME ${OPJ_DATA_NR_LIST})
   else()
   	
     # Compare the dump output with the baseline
-    add_test(NR-${INPUT_FILENAME_NAME}-compare_dump2base
-  	        ${EXECUTABLE_OUTPUT_PATH}/compare_dump_files
+    add_test(NAME NR-${INPUT_FILENAME_NAME}-compare_dump2base
+  	        COMMAND compare_dump_files
             -b ${BASELINE_NR}/opj_v2_${INPUT_FILENAME_NAME_WE}.txt
             -t ${TEMP}/${INPUT_FILENAME_NAME}.txt
             )
@@ -229,8 +229,8 @@ foreach(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
         math(EXPR IT_TEST_ENC "${IT_TEST_ENC}+1" )
 
         # Encode an image into the jpeg2000 format
-        add_test(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-encode
-          ${EXECUTABLE_OUTPUT_PATH}/opj_compress
+        add_test(NAME NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-encode
+          COMMAND opj_compress
           ${CMD_ARG_LIST_2}
         )
 
@@ -239,8 +239,8 @@ foreach(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
         else()
 
           # Dump the encoding file
-          add_test(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-dump
-            ${EXECUTABLE_OUTPUT_PATH}/opj_dump
+          add_test(NAME NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-dump
+            COMMAND opj_dump
             -i ${OUTPUT_FILENAME}
             -o ${OUTPUT_FILENAME}-ENC-${IT_TEST_ENC}.txt
           )
@@ -249,8 +249,8 @@ foreach(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
                                NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-encode)
 
           # Compare the dump file with the baseline
-          add_test(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-compare_dump2base
-            ${EXECUTABLE_OUTPUT_PATH}/compare_dump_files
+          add_test(NAME NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-compare_dump2base
+            COMMAND compare_dump_files
             -b ${BASELINE_NR}/opj_v2_${OUTPUT_FILENAME_NAME_WE}-ENC-${IT_TEST_ENC}.txt
             -t ${OUTPUT_FILENAME}-ENC-${IT_TEST_ENC}.txt
           )
@@ -261,8 +261,8 @@ foreach(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
 
           # Decode the encoding file with kakadu expand command
           if (KDU_EXPAND_EXECUTABLE)
-            add_test(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-decode-ref
-              ${KDU_EXPAND_EXECUTABLE}
+            add_test(NAME NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-decode-ref
+              COMMAND ${KDU_EXPAND_EXECUTABLE}
               -i ${OUTPUT_FILENAME}
               -o ${OUTPUT_FILENAME}.raw
               )
@@ -272,8 +272,8 @@ foreach(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
                                  NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-encode)
 
             # Compare the decoding file with baseline generated from the kdu_expand and baseline.j2k
-            add_test(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-compare_dec-ref-out2base
-              ${EXECUTABLE_OUTPUT_PATH}/compareRAWimages
+            add_test(NAME NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-compare_dec-ref-out2base
+              COMMAND compareRAWimages
               -b ${BASELINE_NR}/opj_${OUTPUT_FILENAME_NAME_WE}-ENC-${IT_TEST_ENC}.raw
               -t ${OUTPUT_FILENAME}.raw
             )
@@ -290,8 +290,8 @@ foreach(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
       math(EXPR IT_TEST_DEC "${IT_TEST_DEC}+1" )
 
       # Decode the input image
-      add_test(NR-DEC-${INPUT_FILENAME_NAME}-${IT_TEST_DEC}-decode
-        ${EXECUTABLE_OUTPUT_PATH}/opj_decompress
+      add_test(NAME NR-DEC-${INPUT_FILENAME_NAME}-${IT_TEST_DEC}-decode
+        COMMAND opj_decompress
         ${CMD_ARG_LIST_2}
       )
 

@@ -327,15 +327,15 @@ foreach(numFileC1P0 RANGE 1 16)
   list(GET C1P0_PEAK_list ${numFileC1P0}  PEAK_limit)
   list(GET C1P0_MSE_list ${numFileC1P0}  MSE_limit)
 
-  add_test(ETS-C1P0-${filenameInput}-decode
-      ${EXECUTABLE_OUTPUT_PATH}/opj_decompress
+  add_test(NAME ETS-C1P0-${filenameInput}-decode
+      COMMAND opj_decompress
       -i ${INPUT_CONF}/${filenameInput}
       -o ${TEMP}/c1${filenameInput}.pgx
       -r ${ResFactor}
       )
 
-  add_test(ETS-C1P0-${filenameInput}-compare2ref
-      ${EXECUTABLE_OUTPUT_PATH}/comparePGXimages
+  add_test(NAME ETS-C1P0-${filenameInput}-compare2ref
+      COMMAND comparePGXimages
      -b ${BASELINE_CONF}/${filenameRef}
      -t ${TEMP}/c1${filenameInput}.pgx
      -n ${nbComponents}
@@ -348,8 +348,8 @@ foreach(numFileC1P0 RANGE 1 16)
                        PROPERTIES DEPENDS
                        ETS-C1P0-${filenameInput}-decode)
 
-  add_test(NR-C1P0-${filenameInput}-compare2base
-      ${EXECUTABLE_OUTPUT_PATH}/comparePGXimages
+  add_test(NAME NR-C1P0-${filenameInput}-compare2base
+      COMMAND comparePGXimages
      -b ${BASELINE_NR}/opj_${filenameRef}
      -t ${TEMP}/c1${filenameInput}.pgx
      -n ${nbComponents}
@@ -384,15 +384,15 @@ foreach(numFileC1P1 RANGE 1 7)
   list(GET C1P1_PEAK_list ${numFileC1P1}  PEAK_limit)
   list(GET C1P1_MSE_list ${numFileC1P1}  MSE_limit)
 
-  add_test(ETS-C1P1-${filenameInput}-decode
-      ${EXECUTABLE_OUTPUT_PATH}/opj_decompress
+  add_test(NAME ETS-C1P1-${filenameInput}-decode
+      COMMAND opj_decompress
       -i ${INPUT_CONF}/${filenameInput}
       -o ${TEMP}/c1${filenameInput}.pgx
       -r 0
       )
 
-  add_test(ETS-C1P1-${filenameInput}-compare2ref
-      ${EXECUTABLE_OUTPUT_PATH}/comparePGXimages
+  add_test(NAME ETS-C1P1-${filenameInput}-compare2ref
+      COMMAND comparePGXimages
      -b ${BASELINE_CONF}/${filenameRef}
      -t ${TEMP}/c1${filenameInput}.pgx
      -n ${nbComponents}
@@ -405,8 +405,8 @@ foreach(numFileC1P1 RANGE 1 7)
                        PROPERTIES DEPENDS
                        ETS-C1P1-${filenameInput}-decode)
 
-  add_test(NR-C1P1-${filenameInput}-compare2base
-      ${EXECUTABLE_OUTPUT_PATH}/comparePGXimages
+  add_test(NAME NR-C1P1-${filenameInput}-compare2base
+      COMMAND comparePGXimages
      -b ${BASELINE_NR}/opj_${filenameRef}
      -t ${TEMP}/c1${filenameInput}.pgx
      -n ${nbComponents}
@@ -437,8 +437,8 @@ foreach(numFileJP2 RANGE 1 9)
   # Get corresponding tests parameters
   list(GET JP2_PEAK_list ${numFileJP2}  PEAK_limit)
 
-  add_test(ETS-JP2-${filenameInput}-decode
-      ${EXECUTABLE_OUTPUT_PATH}/opj_decompress
+  add_test(NAME ETS-JP2-${filenameInput}-decode
+      COMMAND opj_decompress
       -i ${INPUT_CONF}/${filenameInput}
       -o ${TEMP}/${filenameInput}.tif
       )
@@ -489,14 +489,14 @@ foreach(numFileP0 RANGE 1 16)
   get_filename_component(filenameRefSub ${filenameInput} NAME_WE)
 
 
-  add_test(NR-${filenameInput}-dump
-      ${EXECUTABLE_OUTPUT_PATH}/opj_dump
+  add_test(NAME NR-${filenameInput}-dump
+      COMMAND opj_dump
      -i ${INPUT_CONF}/${filenameInput}
      -o ${TEMP}/${filenameInput}.txt
      )
 
-  add_test(NR-${filenameInput}-compare_dump2base
-      ${EXECUTABLE_OUTPUT_PATH}/compare_dump_files
+  add_test(NAME NR-${filenameInput}-compare_dump2base
+      COMMAND compare_dump_files
      -b ${BASELINE_NR}/opj_v2_${filenameRefSub}.txt
      -t ${TEMP}/${filenameInput}.txt
      )
@@ -518,14 +518,14 @@ foreach(numFileP1 RANGE 1 7)
   set( filenameInput p1_0${numFileP1}.j2k )
   get_filename_component(filenameInputSub ${filenameInput} NAME_WE)
 
-  add_test(NR-${filenameInput}-dump
-      ${EXECUTABLE_OUTPUT_PATH}/opj_dump
+  add_test(NAME NR-${filenameInput}-dump
+      COMMAND opj_dump
      -i ${INPUT_CONF}/${filenameInput}
      -o ${TEMP}/${filenameInput}.txt
      )
 
-  add_test(NR-${filenameInput}-compare_dump2base
-      ${EXECUTABLE_OUTPUT_PATH}/compare_dump_files
+  add_test(NAME NR-${filenameInput}-compare_dump2base
+      COMMAND compare_dump_files
      -b ${BASELINE_NR}/opj_v2_${filenameInputSub}.txt
      -t ${TEMP}/${filenameInput}.txt
      )
@@ -547,14 +547,14 @@ foreach(numFileJP2 RANGE 1 9)
   set( filenameInput "file${numFileJP2}.jp2" )
   get_filename_component(filenameInputSub ${filenameInput} NAME_WE)
 
-  add_test(NR-${filenameInput}-dump
-      ${EXECUTABLE_OUTPUT_PATH}/opj_dump
+  add_test(NAME NR-${filenameInput}-dump
+      COMMAND opj_dump
      -i ${INPUT_CONF}/${filenameInput}
      -o ${TEMP}/${filenameInput}.txt
      )
 
-  add_test(NR-${filenameInput}-compare_dump2base
-      ${EXECUTABLE_OUTPUT_PATH}/compare_dump_files
+  add_test(NAME NR-${filenameInput}-compare_dump2base
+      COMMAND compare_dump_files
      -b ${BASELINE_NR}/opj_v2_${filenameInputSub}.txt
      -t ${TEMP}/${filenameInput}.txt
      )
