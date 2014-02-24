@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
 
   const OPJ_COLOR_SPACE color_space = OPJ_CLRSPC_GRAY;
   unsigned int numcomps = 1;
-  int i;
+  unsigned int i;
   unsigned int image_width = 256;
   unsigned int image_height = 256;
 
