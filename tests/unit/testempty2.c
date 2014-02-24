@@ -40,7 +40,7 @@ void info_callback(const char *msg, void *v);
 void error_callback(const char *msg, void *v) {
 (void)msg;
 (void)v;
-assert(0);
+puts(msg);
 }
 void warning_callback(const char *msg, void *v) {
 (void)msg;
@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
   opj_image_t *image;
   opj_codec_t* l_codec = 00;
   OPJ_BOOL bSuccess;
-	opj_stream_t *l_stream = 00;
+  opj_stream_t *l_stream = 00;
   (void)argc;
   (void)argv;
 
@@ -87,6 +87,7 @@ int main(int argc, char *argv[])
   cmptparm.dy = subsampling_dy;
   cmptparm.w = image_width;
   cmptparm.h = image_height;
+  strncpy(parameters.outfile, outputfile, sizeof(parameters.outfile)-1);
 
   image = opj_image_create(numcomps, &cmptparm, color_space);
   assert( image );
@@ -100,10 +101,10 @@ int main(int argc, char *argv[])
       }
     }
 
-    /* catch events using our callbacks and give a local context */		
-    opj_set_info_handler(l_codec, info_callback,00);
-    opj_set_warning_handler(l_codec, warning_callback,00);
-    opj_set_error_handler(l_codec, error_callback,00);
+  /* catch events using our callbacks and give a local context */
+  opj_set_info_handler(l_codec, info_callback,00);
+  opj_set_warning_handler(l_codec, warning_callback,00);
+  opj_set_error_handler(l_codec, error_callback,00);
 
   l_codec = opj_create_compress(OPJ_CODEC_J2K);
   opj_set_info_handler(l_codec, info_callback,00);
@@ -113,8 +114,23 @@ int main(int argc, char *argv[])
   opj_setup_encoder(l_codec, &parameters, image);
 
   l_stream = opj_stream_create_default_file_stream_v3(parameters.outfile,OPJ_FALSE);
+  if( !l_stream )
+    {
+    fprintf( stderr, "Something went wrong during creation of stream\n" );
+    opj_destroy_codec(l_codec);
+    opj_image_destroy(image);
+    opj_stream_destroy_v3(l_stream);
+    return 1;
+    }
   assert(l_stream);
   bSuccess = opj_start_compress(l_codec,image,l_stream);
+  if( !bSuccess )
+    {
+    opj_stream_destroy_v3(l_stream);
+    opj_destroy_codec(l_codec);
+    opj_image_destroy(image);
+    return 0;
+    }
 
   assert( bSuccess );
   bSuccess = opj_encode(l_codec, l_stream);
@@ -131,7 +147,7 @@ int main(int argc, char *argv[])
   /* read back the generated file */
 {
   opj_codec_t* d_codec = 00;
-	opj_dparameters_t dparameters;
+  opj_dparameters_t dparameters;
 
   d_codec = opj_create_decompress(OPJ_CODEC_J2K);
   opj_set_info_handler(d_codec, info_callback,00);
@@ -150,7 +166,7 @@ int main(int argc, char *argv[])
   bSuccess = opj_decode(l_codec, l_stream, image);
   assert( bSuccess );
 
-  bSuccess = opj_end_decompress(l_codec,	l_stream);
+  bSuccess = opj_end_decompress(l_codec, l_stream);
   assert( bSuccess );
 
   opj_stream_destroy_v3(l_stream);
