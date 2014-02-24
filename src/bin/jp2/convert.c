@@ -2856,6 +2856,7 @@ static opj_image_t* rawtoimage_common(const char *filename, opj_cparameters_t *p
     }
     /* create the image */
     image = opj_image_create(numcomps, &cmptparm[0], color_space);
+    free(cmptparm);
     if(!image) {
         fclose(f);
         return NULL;
