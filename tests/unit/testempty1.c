@@ -39,7 +39,7 @@ void info_callback(const char *msg, void *v);
 void error_callback(const char *msg, void *v) {
 (void)msg;
 (void)v;
-assert(0);
+puts(msg);
 }
 void warning_callback(const char *msg, void *v) {
 (void)msg;
@@ -98,10 +98,10 @@ int main(int argc, char *argv[])
       }
     }
 
-		/* catch events using our callbacks and give a local context */		
-		opj_set_info_handler(l_codec, info_callback,00);
-		opj_set_warning_handler(l_codec, warning_callback,00);
-		opj_set_error_handler(l_codec, error_callback,00);
+  /* catch events using our callbacks and give a local context */
+  opj_set_info_handler(l_codec, info_callback,00);
+  opj_set_warning_handler(l_codec, warning_callback,00);
+  opj_set_error_handler(l_codec, error_callback,00);
 
   l_codec = opj_create_compress(OPJ_CODEC_J2K);
   opj_set_info_handler(l_codec, info_callback,00);
@@ -113,6 +113,13 @@ int main(int argc, char *argv[])
   l_stream = opj_stream_create_default_file_stream_v3("testempty1.j2k",OPJ_FALSE);
   assert(l_stream);
   bSuccess = opj_start_compress(l_codec,image,l_stream);
+  if( !bSuccess )
+    {
+    opj_stream_destroy_v3(l_stream);
+    opj_destroy_codec(l_codec);
+    opj_image_destroy(image);
+    return 0;
+    }
 
   assert( bSuccess );
   bSuccess = opj_encode(l_codec, l_stream);
