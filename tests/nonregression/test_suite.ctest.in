@@ -97,6 +97,8 @@ opj_decompress -i  @INPUT_NR_PATH@/file409752.jp2 -o @TEMP_PATH@/file409752.png
 opj_decompress -i  @INPUT_NR_PATH@/issue188_beach_64bitsbox.jp2 -o @TEMP_PATH@/issue188_beach_64bitsbox.jp2.tif
 # issue 206
 opj_decompress -i  @INPUT_NR_PATH@/issue206_image-000.jp2 -o @TEMP_PATH@/issue206_image-000.jp2.png
+# issue 205
+opj_decompress -i  @INPUT_NR_PATH@/issue205.jp2 -o @TEMP_PATH@/issue205.jp2.png
 
 # decode with specific area
 # prec=12; nb_c=1 
