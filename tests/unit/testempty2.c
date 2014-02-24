@@ -58,15 +58,15 @@ int main(int argc, char *argv[])
   const char * v = opj_version();
 
   const OPJ_COLOR_SPACE color_space = OPJ_CLRSPC_GRAY;
-  int numcomps = 1;
+  unsigned int numcomps = 1;
   int i;
-  int image_width = 256;
-  int image_height = 256;
+  unsigned int image_width = 256;
+  unsigned int image_height = 256;
 
   opj_cparameters_t parameters;
 
-  int subsampling_dx = parameters.subsampling_dx;
-  int subsampling_dy = parameters.subsampling_dy;
+  unsigned int subsampling_dx;
+  unsigned int subsampling_dy;
   const char outputfile[] = "testempty2.j2k";
 
   opj_image_cmptparm_t cmptparm;
@@ -80,6 +80,8 @@ int main(int argc, char *argv[])
   opj_set_default_encoder_parameters(&parameters);
   parameters.cod_format = J2K_CFMT;
   puts(v);
+  subsampling_dx = (unsigned int)parameters.subsampling_dx;
+  subsampling_dy = (unsigned int)parameters.subsampling_dy;
   cmptparm.prec = 8;
   cmptparm.bpp = 8;
   cmptparm.sgnd = 0;

@@ -57,15 +57,15 @@ int main(int argc, char *argv[])
   const char * v = opj_version();
 
   const OPJ_COLOR_SPACE color_space = OPJ_CLRSPC_GRAY;
-  int numcomps = 1;
+  unsigned int numcomps = 1;
   int i;
-  int image_width = 256;
-  int image_height = 256;
+  unsigned int image_width = 256;
+  unsigned int image_height = 256;
 
   opj_cparameters_t parameters;
 
-  int subsampling_dx = 0;
-  int subsampling_dy = 0;
+  unsigned int subsampling_dx = 0;
+  unsigned int subsampling_dy = 0;
 
   opj_image_cmptparm_t cmptparm;
   opj_image_t *image;
