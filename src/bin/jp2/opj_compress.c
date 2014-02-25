@@ -133,7 +133,7 @@ static void encode_help_display(void) {
     fprintf(stdout,"-OutFor \n");
     fprintf(stdout,"    REQUIRED only if -ImgDir is used\n");
     fprintf(stdout,"	  Need to specify only format without filename <BMP>  \n");
-    fprintf(stdout,"    Currently accepts PBM, PGM, PPM, PNM, PAM, PGX, PNG, BMP, TIF, RAW, RAWL and TGA formats\n");
+    fprintf(stdout,"    Currently accepts PBM, PGM, PPM, PNM, PAM, PGX, PNG, BMP, TIF, RAW (MSB), RAWL (LSB) and TGA formats\n");
     fprintf(stdout,"\n");
     fprintf(stdout,"-i           : source file  (-i source.pnm also *pbm, *.pgm, *.ppm, *.pam, *.pgx, *png, *.bmp, *.tif, *.raw, *.tga) \n");
     fprintf(stdout,"    When using this option -o must be used\n");
