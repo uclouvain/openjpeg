@@ -237,7 +237,12 @@ FOREACH(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
         SET_TESTS_PROPERTIES(NR-DEC-${INPUT_FILENAME_NAME}-${IT_TEST_DEC}-decode PROPERTIES WILL_FAIL TRUE)
      
       ELSE(FAILED_TEST_FOUND)
-  
+        # if not failed, check against registered md5:
+        add_test(NAME NR-DEC-${INPUT_FILENAME_NAME}-${IT_TEST_DEC}-decode-md5 COMMAND ${CMAKE_COMMAND}
+          -DREFFILE:STRING=${CMAKE_CURRENT_SOURCE_DIR}/md5refs.txt
+          -DFILENAME:STRING=${INPUT_FILENAME_NAME}
+          -P ${CMAKE_CURRENT_SOURCE_DIR}/checkmd5refs.cmake)
+
 # FIXME: add a compare2base function base on raw which 
 # can output png diff files if necesary 
 #  ADD_TEST(NR-${filename}-compare2base

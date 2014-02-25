@@ -65,3 +65,4 @@ j2k_to_image -i  @INPUT_NR_PATH@/test_lossless.j2k -o @TEMP_PATH@/test_lossless.
 j2k_to_image -i  @INPUT_NR_PATH@/text_GBR.jp2 -o @TEMP_PATH@/text_GBR.jp2.pgx
 j2k_to_image -i  @INPUT_NR_PATH@/issue104_jpxstream.jp2 -o @TEMP_PATH@/issue104_jpxstream.jp2.pgx
 j2k_to_image -i  @INPUT_NR_PATH@/file409752.jp2 -o @TEMP_PATH@/file409752.jp2.pgx
+j2k_to_image -i  @INPUT_NR_PATH@/issue205.jp2 -o @TEMP_PATH@/issue205.jp2.pgx
