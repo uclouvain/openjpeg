@@ -1030,17 +1030,7 @@ void OPJ_CALLCONV opj_destroy_cstr_index(opj_codestream_index_t **p_cstr_index)
 }
 
 /* ---------------------------------------------------------------------- */
-opj_stream_t* OPJ_CALLCONV opj_stream_create_default_file_stream (FILE * p_file, OPJ_BOOL p_is_read_stream)
-{
-	return opj_stream_create_file_stream(p_file,OPJ_J2K_STREAM_CHUNK_SIZE,p_is_read_stream);
-}
-
-opj_stream_t* OPJ_CALLCONV opj_stream_create_default_file_stream_v3 (const char *fname, OPJ_BOOL p_is_read_stream)
-{
-    return opj_stream_create_file_stream_v3(fname, OPJ_J2K_STREAM_CHUNK_SIZE, p_is_read_stream);
-}
-
-opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream (	FILE * p_file, 
+static opj_stream_t* opj_stream_create_file_stream_impl (	FILE * p_file, 
 															OPJ_SIZE_T p_size, 
 															OPJ_BOOL p_is_read_stream)
 {
@@ -1063,6 +1053,23 @@ opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream (	FILE * p_file,
     opj_stream_set_seek_function(l_stream, (opj_stream_seek_fn) opj_seek_from_file);
     
     return l_stream;
+}
+
+opj_stream_t* OPJ_CALLCONV opj_stream_create_default_file_stream (FILE * p_file, OPJ_BOOL p_is_read_stream)
+{
+	return opj_stream_create_file_stream_impl(p_file,OPJ_J2K_STREAM_CHUNK_SIZE,p_is_read_stream);
+}
+
+opj_stream_t* OPJ_CALLCONV opj_stream_create_default_file_stream_v3 (const char *fname, OPJ_BOOL p_is_read_stream)
+{
+    return opj_stream_create_file_stream_v3(fname, OPJ_J2K_STREAM_CHUNK_SIZE, p_is_read_stream);
+}
+
+opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream (	FILE * p_file, 
+															OPJ_SIZE_T p_size, 
+															OPJ_BOOL p_is_read_stream)
+{
+	return opj_stream_create_file_stream_impl(p_file,p_size,p_is_read_stream);
 }
 
 opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream_v3 (
