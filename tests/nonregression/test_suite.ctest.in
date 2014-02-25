@@ -101,7 +101,7 @@ opj_decompress -i  @INPUT_NR_PATH@/issue206_image-000.jp2 -o @TEMP_PATH@/issue20
 opj_decompress -i  @INPUT_NR_PATH@/issue205.jp2 -o @TEMP_PATH@/issue205.jp2.pgx
 # issue 225 (sumatrapdf)
 !opj_decompress -i @INPUT_NR_PATH@/451.pdf.SIGSEGV.5b5.3723.jp2  -o @TEMP_PATH@/451.pdf.SIGSEGV.5b5.3723.jp2.pgx
-!opj_decompress -i @INPUT_NR_PATH@/1888.pdf.asan.35.988.jp2      -o @TEMP_PATH@/1888.pdf.asan.35.988.jp2.pgx
+opj_decompress -i @INPUT_NR_PATH@/1888.pdf.asan.35.988.jp2      -o @TEMP_PATH@/1888.pdf.asan.35.988.jp2.pgx
 !opj_decompress -i @INPUT_NR_PATH@/2539.pdf.SIGFPE.706.1712.jp2  -o @TEMP_PATH@/2539.pdf.SIGFPE.706.1712.jp2.pgx
 !opj_decompress -i @INPUT_NR_PATH@/2236.pdf.SIGSEGV.398.1376.jp2 -o @TEMP_PATH@/2236.pdf.SIGSEGV.398.1376.jp2.pgx
 !opj_decompress -i @INPUT_NR_PATH@/1336.pdf.asan.47.376.jp2      -o @TEMP_PATH@/1336.pdf.asan.47.376.jp2.pgx
@@ -109,7 +109,7 @@ opj_decompress -i  @INPUT_NR_PATH@/issue205.jp2 -o @TEMP_PATH@/issue205.jp2.pgx
 !opj_decompress -i @INPUT_NR_PATH@/4149.pdf.SIGSEGV.cf7.3501.jp2 -o @TEMP_PATH@/4149.pdf.SIGSEGV.cf7.3501.jp2.pgx
 !opj_decompress -i @INPUT_NR_PATH@/4035.pdf.SIGSEGV.d8b.3375.jp2 -o @TEMP_PATH@/4035.pdf.SIGSEGV.d8b.3375.jp2.pgx
 !opj_decompress -i @INPUT_NR_PATH@/2977.pdf.asan.67.2198.jp2     -o @TEMP_PATH@/2977.pdf.asan.67.2198.jp2.pgx
-!opj_decompress -i @INPUT_NR_PATH@/451.pdf.SIGSEGV.ce9.3723.jp2  -o @TEMP_PATH@/451.pdf.SIGSEGV.ce9.3723.jp2.pgx
+opj_decompress -i @INPUT_NR_PATH@/451.pdf.SIGSEGV.ce9.3723.jp2  -o @TEMP_PATH@/451.pdf.SIGSEGV.ce9.3723.jp2.pgx
 !opj_decompress -i @INPUT_NR_PATH@/3635.pdf.asan.77.2930.jp2     -o @TEMP_PATH@/3635.pdf.asan.77.2930.jp2.pgx
 !opj_decompress -i @INPUT_NR_PATH@/1802.pdf.SIGSEGV.36e.894.jp2  -o @TEMP_PATH@/1802.pdf.SIGSEGV.36e.894.jp2.pgx
 !opj_decompress -i @INPUT_NR_PATH@/451.pdf.SIGSEGV.f4c.3723.jp2  -o @TEMP_PATH@/451.pdf.SIGSEGV.f4c.3723.jp2.pgx
