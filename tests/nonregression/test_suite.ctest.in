@@ -100,27 +100,27 @@ opj_decompress -i  @INPUT_NR_PATH@/issue206_image-000.jp2 -o @TEMP_PATH@/issue20
 # issue 205
 opj_decompress -i  @INPUT_NR_PATH@/issue205.jp2 -o @TEMP_PATH@/issue205.jp2.pgx
 # issue 225 (sumatrapdf)
-opj_decompress -i @INPUT_NR_PATH@/451.pdf.SIGSEGV.5b5.3723.jp2  -o @TEMP_PATH@/451.pdf.SIGSEGV.5b5.3723.jp2.pgx
-opj_decompress -i @INPUT_NR_PATH@/1888.pdf.asan.35.988.jp2      -o @TEMP_PATH@/1888.pdf.asan.35.988.jp2.pgx
-opj_decompress -i @INPUT_NR_PATH@/2539.pdf.SIGFPE.706.1712.jp2  -o @TEMP_PATH@/2539.pdf.SIGFPE.706.1712.jp2.pgx
-opj_decompress -i @INPUT_NR_PATH@/2236.pdf.SIGSEGV.398.1376.jp2 -o @TEMP_PATH@/2236.pdf.SIGSEGV.398.1376.jp.pgx2
-opj_decompress -i @INPUT_NR_PATH@/1336.pdf.asan.47.376.jp2      -o @TEMP_PATH@/1336.pdf.asan.47.376.jp2.pgx
-opj_decompress -i @INPUT_NR_PATH@/1851.pdf.SIGSEGV.ce9.948.jp2  -o @TEMP_PATH@/1851.pdf.SIGSEGV.ce9.948.jp2.pgx
-opj_decompress -i @INPUT_NR_PATH@/4149.pdf.SIGSEGV.cf7.3501.jp2 -o @TEMP_PATH@/4149.pdf.SIGSEGV.cf7.3501.jp.pgx2
-opj_decompress -i @INPUT_NR_PATH@/4035.pdf.SIGSEGV.d8b.3375.jp2 -o @TEMP_PATH@/4035.pdf.SIGSEGV.d8b.3375.jp.pgx2
-opj_decompress -i @INPUT_NR_PATH@/2977.pdf.asan.67.2198.jp2     -o @TEMP_PATH@/2977.pdf.asan.67.2198.jp2.pgx
-opj_decompress -i @INPUT_NR_PATH@/451.pdf.SIGSEGV.ce9.3723.jp2  -o @TEMP_PATH@/451.pdf.SIGSEGV.ce9.3723.jp2.pgx
-opj_decompress -i @INPUT_NR_PATH@/3635.pdf.asan.77.2930.jp2     -o @TEMP_PATH@/3635.pdf.asan.77.2930.jp2.pgx
-opj_decompress -i @INPUT_NR_PATH@/1802.pdf.SIGSEGV.36e.894.jp2  -o @TEMP_PATH@/1802.pdf.SIGSEGV.36e.894.jp2.pgx
-opj_decompress -i @INPUT_NR_PATH@/451.pdf.SIGSEGV.f4c.3723.jp2  -o @TEMP_PATH@/451.pdf.SIGSEGV.f4c.3723.jp2.pgx
-opj_decompress -i @INPUT_NR_PATH@/2.pdf.SIGFPE.706.1112.jp2     -o @TEMP_PATH@/2.pdf.SIGFPE.706.1112.jp2.pgx
+!opj_decompress -i @INPUT_NR_PATH@/451.pdf.SIGSEGV.5b5.3723.jp2  -o @TEMP_PATH@/451.pdf.SIGSEGV.5b5.3723.jp2.pgx
+!opj_decompress -i @INPUT_NR_PATH@/1888.pdf.asan.35.988.jp2      -o @TEMP_PATH@/1888.pdf.asan.35.988.jp2.pgx
+!opj_decompress -i @INPUT_NR_PATH@/2539.pdf.SIGFPE.706.1712.jp2  -o @TEMP_PATH@/2539.pdf.SIGFPE.706.1712.jp2.pgx
+!opj_decompress -i @INPUT_NR_PATH@/2236.pdf.SIGSEGV.398.1376.jp2 -o @TEMP_PATH@/2236.pdf.SIGSEGV.398.1376.jp2.pgx
+!opj_decompress -i @INPUT_NR_PATH@/1336.pdf.asan.47.376.jp2      -o @TEMP_PATH@/1336.pdf.asan.47.376.jp2.pgx
+!opj_decompress -i @INPUT_NR_PATH@/1851.pdf.SIGSEGV.ce9.948.jp2  -o @TEMP_PATH@/1851.pdf.SIGSEGV.ce9.948.jp2.pgx
+!opj_decompress -i @INPUT_NR_PATH@/4149.pdf.SIGSEGV.cf7.3501.jp2 -o @TEMP_PATH@/4149.pdf.SIGSEGV.cf7.3501.jp2.pgx
+!opj_decompress -i @INPUT_NR_PATH@/4035.pdf.SIGSEGV.d8b.3375.jp2 -o @TEMP_PATH@/4035.pdf.SIGSEGV.d8b.3375.jp2.pgx
+!opj_decompress -i @INPUT_NR_PATH@/2977.pdf.asan.67.2198.jp2     -o @TEMP_PATH@/2977.pdf.asan.67.2198.jp2.pgx
+!opj_decompress -i @INPUT_NR_PATH@/451.pdf.SIGSEGV.ce9.3723.jp2  -o @TEMP_PATH@/451.pdf.SIGSEGV.ce9.3723.jp2.pgx
+!opj_decompress -i @INPUT_NR_PATH@/3635.pdf.asan.77.2930.jp2     -o @TEMP_PATH@/3635.pdf.asan.77.2930.jp2.pgx
+!opj_decompress -i @INPUT_NR_PATH@/1802.pdf.SIGSEGV.36e.894.jp2  -o @TEMP_PATH@/1802.pdf.SIGSEGV.36e.894.jp2.pgx
+!opj_decompress -i @INPUT_NR_PATH@/451.pdf.SIGSEGV.f4c.3723.jp2  -o @TEMP_PATH@/451.pdf.SIGSEGV.f4c.3723.jp2.pgx
+!opj_decompress -i @INPUT_NR_PATH@/2.pdf.SIGFPE.706.1112.jp2     -o @TEMP_PATH@/2.pdf.SIGFPE.706.1112.jp2.pgx
 # issue 228 (16bits/lossy)
 opj_decompress -i @INPUT_NR_PATH@/issue228.j2k                  -o @TEMP_PATH@/issue228.j2k.pgx
 # issue 229
-opj_decompress -i @INPUT_NR_PATH@/27ac957758a35d00d6765a0c86350d9c.SIGFPE.d25.537.jpc -o @TEMP_PATH@27ac957758a35d00d6765a0c86350d9c.SIGFPE.d25.537.jpc.pgx
-opj_decompress -i @INPUT_NR_PATH@/26ccf3651020967f7778238ef5af08af.SIGFPE.d25.527.jp2 -o @TEMP_PATH@26ccf3651020967f7778238ef5af08af.SIGFPE.d25.527.jp2.pgx
-opj_decompress -i @INPUT_NR_PATH@/0290cb77c5df21828fa74cf2ab2c84d8.SIGFPE.d25.31.jp2  -o @TEMP_PATH@0290cb77c5df21828fa74cf2ab2c84d8.SIGFPE.d25.31.jp2.pgx
-opj_decompress -i @INPUT_NR_PATH@/3672da2f1f67bbecad27d7181b4e9d7c.SIGFPE.d25.805.jpc -o @TEMP_PATH@3672da2f1f67bbecad27d7181b4e9d7c.SIGFPE.d25.805.jpc.pgx
+!opj_decompress -i @INPUT_NR_PATH@/27ac957758a35d00d6765a0c86350d9c.SIGFPE.d25.537.jpc -o @TEMP_PATH@27ac957758a35d00d6765a0c86350d9c.SIGFPE.d25.537.jpc.pgx
+!opj_decompress -i @INPUT_NR_PATH@/26ccf3651020967f7778238ef5af08af.SIGFPE.d25.527.jp2 -o @TEMP_PATH@26ccf3651020967f7778238ef5af08af.SIGFPE.d25.527.jp2.pgx
+!opj_decompress -i @INPUT_NR_PATH@/0290cb77c5df21828fa74cf2ab2c84d8.SIGFPE.d25.31.jp2  -o @TEMP_PATH@0290cb77c5df21828fa74cf2ab2c84d8.SIGFPE.d25.31.jp2.pgx
+!opj_decompress -i @INPUT_NR_PATH@/3672da2f1f67bbecad27d7181b4e9d7c.SIGFPE.d25.805.jpc -o @TEMP_PATH@3672da2f1f67bbecad27d7181b4e9d7c.SIGFPE.d25.805.jpc.pgx
 
 # decode with specific area
 # prec=12; nb_c=1 
