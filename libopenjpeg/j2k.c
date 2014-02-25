@@ -1538,24 +1538,6 @@ static void j2k_read_sod(opj_j2k_t *j2k) {
 		truncate = 1;		/* Case of a truncate codestream */
 	}	
 
-   {/* chop padding bytes: */
-    unsigned char *s, *e; 
-
-    s = cio_getbp(cio);
-    e = s + len;
-
-  if(len > 8) s = e - 8;
-
-  if(e[-2] == 0x00 && e[-1] == 0x00) /* padding bytes */
-  {
-	while(e > s)
- {
-	if(e[-2] == 0xff && e[-1] == 0xd9)	break;
-  --len; --e; truncate = 1;
- }
-  }
-   }
-
 	data = j2k->tile_data[curtileno];
 	data = (unsigned char*) opj_realloc(data, (j2k->tile_len[curtileno] + len) * sizeof(unsigned char));
 
