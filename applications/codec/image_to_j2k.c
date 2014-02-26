@@ -82,7 +82,7 @@ typedef struct img_folder{
 	float *rates;
 }img_fol_t;
 
-void encode_help_display(void) {
+static void encode_help_display(void) {
 	fprintf(stdout,"HELP for image_to_j2k\n----\n\n");
 	fprintf(stdout,"- the -h option displays this help information on screen\n\n");
 
@@ -321,7 +321,7 @@ void encode_help_display(void) {
 	fprintf(stdout,"TotalDisto\n\n");
 }
 
-OPJ_PROG_ORDER give_progression(char progression[4]) {
+static OPJ_PROG_ORDER give_progression(char progression[4]) {
 	if(strncmp(progression, "LRCP", 4) == 0) {
 		return LRCP;
 	}
@@ -341,7 +341,7 @@ OPJ_PROG_ORDER give_progression(char progression[4]) {
 	return PROG_UNKNOWN;
 }
 
-int get_num_images(char *imgdirpath){
+static int get_num_images(char *imgdirpath){
 	DIR *dir;
 	struct dirent* content;
 	int num_images = 0;
@@ -364,7 +364,7 @@ int get_num_images(char *imgdirpath){
 	return num_images;
 }
 
-int load_images(dircnt_t *dirptr, char *imgdirpath){
+static int load_images(dircnt_t *dirptr, char *imgdirpath){
 	DIR *dir;
 	struct dirent* content;
 	int i = 0;
@@ -390,7 +390,7 @@ int load_images(dircnt_t *dirptr, char *imgdirpath){
 	return 0;
 }
 
-int get_file_format(char *filename) {
+static int get_file_format(char *filename) {
 	unsigned int i;
 	static const char *extension[] = {
     "pgx", "pnm", "pgm", "ppm", "pbm", "pam", "bmp", "tif", "raw", "tga", "png", "j2k", "jp2", "j2c", "jpc"
@@ -410,13 +410,13 @@ int get_file_format(char *filename) {
 	return -1;
 }
 
-char * get_file_name(char *name){
+static char * get_file_name(char *name){
 	char *fname;
 	fname= strtok(name,".");
 	return fname;
 }
 
-char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_cparameters_t *parameters){
+static char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_cparameters_t *parameters){
 	char image_filename[OPJ_PATH_LEN], infilename[OPJ_PATH_LEN],outfilename[OPJ_PATH_LEN],temp_ofname[OPJ_PATH_LEN];
   char *temp_p, temp1[OPJ_PATH_LEN]="";
 
@@ -459,7 +459,7 @@ static int initialise_4K_poc(opj_poc_t *POC, int numres){
 	return 2;
 }
 
-void cinema_parameters(opj_cparameters_t *parameters){
+static void cinema_parameters(opj_cparameters_t *parameters){
 	parameters->tile_size_on = OPJ_FALSE;
 	parameters->cp_tdx=1;
 	parameters->cp_tdy=1;
@@ -492,7 +492,7 @@ void cinema_parameters(opj_cparameters_t *parameters){
 
 }
 
-void cinema_setup_encoder(opj_cparameters_t *parameters,opj_image_t *image, img_fol_t *img_fol){
+static void cinema_setup_encoder(opj_cparameters_t *parameters,opj_image_t *image, img_fol_t *img_fol){
 	int i;
 	float temp_rate;
 
@@ -577,7 +577,7 @@ void cinema_setup_encoder(opj_cparameters_t *parameters,opj_image_t *image, img_
 
 /* ------------------------------------------------------------------------------------ */
 
-int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
+static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 													img_fol_t *img_fol, raw_cparameters_t *raw_cp, char *indexfilename) {
 	int i, j, totlen, c;
 	opj_option_t long_option[]={
@@ -1467,21 +1467,21 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
 /**
 sample error callback expecting a FILE* client object
 */
-void error_callback(const char *msg, void *client_data) {
+static void error_callback(const char *msg, void *client_data) {
 	FILE *stream = (FILE*)client_data;
 	fprintf(stream, "[ERROR] %s", msg);
 }
 /**
 sample warning callback expecting a FILE* client object
 */
-void warning_callback(const char *msg, void *client_data) {
+static void warning_callback(const char *msg, void *client_data) {
 	FILE *stream = (FILE*)client_data;
 	fprintf(stream, "[WARNING] %s", msg);
 }
 /**
 sample debug callback expecting a FILE* client object
 */
-void info_callback(const char *msg, void *client_data) {
+static void info_callback(const char *msg, void *client_data) {
 	FILE *stream = (FILE*)client_data;
 	fprintf(stream, "[INFO] %s", msg);
 }
