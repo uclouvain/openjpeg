@@ -1819,6 +1819,12 @@ OPJ_BOOL opj_jp2_read_header_procedure(  opj_jp2_t *jp2,
 			opj_free(l_current_data);
 			return OPJ_FALSE;
 		}
+		/* testcase 1851.pdf.SIGSEGV.ce9.948 */
+		else if	(box.length < l_nb_bytes_read) {
+			opj_event_msg(p_manager, EVT_ERROR, "invalid box size %d (%x)\n", box.length, box.type);
+			opj_free(l_current_data);
+			return OPJ_FALSE;
+		}
 
 		l_current_handler = opj_jp2_find_handler(box.type);
 		l_current_data_size = box.length - l_nb_bytes_read;
