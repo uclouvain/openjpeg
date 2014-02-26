@@ -129,6 +129,8 @@ opj_decompress -i @INPUT_NR_PATH@/issue142.j2k                  -o @TEMP_PATH@/i
 opj_decompress -i @INPUT_NR_PATH@/issue134.jp2                  -o @TEMP_PATH@/issue134.jp2.pgx
 # issue 135
 opj_decompress -i @INPUT_NR_PATH@/issue135.j2k                  -o @TEMP_PATH@/issue135.j2k.pgx
+# issue 211
+opj_decompress -i @INPUT_NR_PATH@/issue211.jp2                  -o @TEMP_PATH@/issue211.jp2.pgx
 # issue 141
 opj_compress -i @INPUT_NR_PATH@/issue141.rawl                   -o @TEMP_PATH@/issue141.rawl.j2k  -F 2048,2816,1,16,u
 opj_compress -i @INPUT_NR_PATH@/issue141.rawl                   -o @TEMP_PATH@/issue141.rawl.j2k  -F 2048,2816,1,16,u -I
