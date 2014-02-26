@@ -36,20 +36,6 @@
 /* -------------------------------------------------------------------------- */
 
 /**
-sample error callback expecting a FILE* client object
-*/
-static void error_callback_file(const char *msg, void *client_data) {
-	FILE *stream = (FILE*)client_data;
-	fprintf(stream, "[ERROR] %s", msg);
-}
-/**
-sample warning callback expecting a FILE* client object
-*/
-static void warning_callback_file(const char *msg, void *client_data) {
-	FILE *stream = (FILE*)client_data;
-	fprintf(stream, "[WARNING] %s", msg);
-}
-/**
 sample error debug callback expecting no client object
 */
 static void error_callback(const char *msg, void *client_data) {

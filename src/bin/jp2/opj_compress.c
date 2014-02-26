@@ -1393,28 +1393,6 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
 /* -------------------------------------------------------------------------- */
 
 /**
-sample error callback expecting a FILE* client object
-*/
-static void error_file_callback(const char *msg, void *client_data) {
-    FILE *stream = (FILE*)client_data;
-    fprintf(stream, "[ERROR] %s", msg);
-}
-/**
-sample warning callback expecting a FILE* client object
-*/
-static void warning_file_callback(const char *msg, void *client_data) {
-    FILE *stream = (FILE*)client_data;
-    fprintf(stream, "[WARNING] %s", msg);
-}
-/**
-sample debug callback expecting a FILE* client object
-*/
-static void info_file_callback(const char *msg, void *client_data) {
-    FILE *stream = (FILE*)client_data;
-    fprintf(stream, "[INFO] %s", msg);
-}
-
-/**
 sample error debug callback expecting no client object
 */
 static void error_callback(const char *msg, void *client_data) {
