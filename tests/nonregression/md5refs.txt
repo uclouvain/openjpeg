@@ -20,6 +20,9 @@ b8f473c07ba5ebfc195bdd53c3b3b97f  buxR.j2k_0.pgx
 e273e2aaea4a4fc1b2cf7c09c53c3cc6  file409752.jp2_2.pgx
 05c062aca83d13b8095460f38a690a08  illegalcolortransform.j2k_0.pgx
 cb28787aa7c223f03e6acad71e244108  issue104_jpxstream.jp2_0.pgx
+c74edbb49e132b2cfc1eaf7908197b17  issue134.jp2_0.pgx
+16fe8ed450da10a6aaae4cf6f467fc21  issue134.jp2_1.pgx
+c6091c07bf0ff221008dfb60d893cdff  issue134.jp2_2.pgx
 cb28787aa7c223f03e6acad71e244108  issue104_jpxstream.jp2_1.pgx
 619694e5674992b3286244bf13058f7c  issue142.j2k_0.pgx
 c675c4b77dc3cc2a0d6542a32b438a48  issue142.j2k_1.pgx
