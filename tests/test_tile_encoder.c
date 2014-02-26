@@ -132,7 +132,7 @@ int main (int argc, char *argv[])
 
 	fprintf(stdout, "Encoding random values -> keep in mind that this is very hard to compress\n");
 	for (i=0;i<l_data_size;++i)	{
-		l_data[i] = i; /*rand();*/
+		l_data[i] = (OPJ_BYTE)i; /*rand();*/
 	}
 
 	opj_set_default_encoder_parameters(&l_param);
@@ -226,7 +226,7 @@ int main (int argc, char *argv[])
 	}
 
   /* should we do j2k or jp2 ?*/
-  len = strlen( output_file );
+  len = (unsigned char)strlen( output_file );
   if( strcmp( output_file + len - 4, ".jp2" ) == 0 )
     {
     l_codec = opj_create_compress(OPJ_CODEC_JP2);

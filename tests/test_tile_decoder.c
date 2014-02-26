@@ -99,7 +99,7 @@ static int infile_format(const char *fname)
                 return -1;
 
         memset(buf, 0, 12);
-        l_nb_read = fread(buf, 1, 12, reader);
+        l_nb_read = (unsigned int)fread(buf, 1, 12, reader);
         fclose(reader);
         if (l_nb_read != 12)
                 return -1;
@@ -136,20 +136,6 @@ static int infile_format(const char *fname)
 
 /* -------------------------------------------------------------------------- */
 
-/**
-  sample error callback expecting a FILE* client object
- */
-static void error_callback_file(const char *msg, void *client_data) {
-        FILE *stream = (FILE*)client_data;
-        fprintf(stream, "[ERROR] %s", msg);
-}
-/**
-  sample warning callback expecting a FILE* client object
- */
-static void warning_callback_file(const char *msg, void *client_data) {
-        FILE *stream = (FILE*)client_data;
-        fprintf(stream, "[WARNING] %s", msg);
-}
 /**
   sample error debug callback expecting no client object
  */
