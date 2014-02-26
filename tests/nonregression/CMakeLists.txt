@@ -28,6 +28,7 @@ set(BLACKLIST_JPEG2000
     gdal_fuzzer_check_comp_dx_dy.jp2
     gdal_fuzzer_check_number_of_tiles.jp2
     gdal_fuzzer_unchecked_numresolutions.jp2
+    mem-b2ace68c-1381.jp2
    )
 
 file(GLOB_RECURSE OPJ_DATA_NR_LIST

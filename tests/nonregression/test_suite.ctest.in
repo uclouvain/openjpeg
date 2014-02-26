@@ -80,7 +80,7 @@ opj_decompress -i  @INPUT_NR_PATH@/kodak_2layers_lrcp.j2c -o @TEMP_PATH@/kodak_2
 # related to issue 104 which is closed
 opj_decompress -i  @INPUT_NR_PATH@/issue104_jpxstream.jp2 -o @TEMP_PATH@/issue104_jpxstream.jp2.pgx
 # File not supported by kakadu (Malformed PCLR box) and not supoprter by openjpeg (problem with value of TPSot)
-opj_decompress -i  @INPUT_NR_PATH@/mem-b2ace68c-1381.jp2 -o @TEMP_PATH@/mem-b2ace68c-1381.jp2.pgx
+!opj_decompress -i  @INPUT_NR_PATH@/mem-b2ace68c-1381.jp2 -o @TEMP_PATH@/mem-b2ace68c-1381.jp2.pgx
 # File which produced weird output with kakadu and not supoprter by openjpeg (problem with value of TPSot, issue 202, 206, 208)
 opj_decompress -i  @INPUT_NR_PATH@/mem-b2b86b74-2753.jp2 -o @TEMP_PATH@/mem-b2b86b74-2753.jp2.pgx
 # issue 191 raised by the gdal fuzzer test (should properly failed)
