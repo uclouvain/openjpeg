@@ -3,9 +3,6 @@ a3a0606dfa0779d657c6a923b90e4678  _00042.j2k_1.pgx
 106954dc468dfe0884d02268e91f9f5b  _00042.j2k_2.pgx
 8889def55f1e18dae6002b9b3a6dd152  123.j2c_0.pgx
 ee6881e50c9cf17994ac74c2bee956a8  1888.pdf.asan.35.988.jp2_0.pgx
-1514d460fa6da37aece72c3a786ad40a  451.pdf.SIGSEGV.ce9.3723.jp2_0.pgx
-398b39afd263f967045928ba38a7ea51  451.pdf.SIGSEGV.ce9.3723.jp2_1.pgx
-64beae9da75e1c3716af24ea231285d7  451.pdf.SIGSEGV.ce9.3723.jp2_2.pgx
 4a0daf7a9065101379eaebc28e436b1e  Bretagne2.j2k_0.pgx
 07578fc7bf81d3da694de8ae27308b82  Bretagne2.j2k_1.pgx
 3690c42f83bad42f4abea48525d45e0e  Bretagne2.j2k_2.pgx
