@@ -123,6 +123,8 @@ opj_decompress -i @INPUT_NR_PATH@/issue228.j2k                  -o @TEMP_PATH@/i
 !opj_decompress -i @INPUT_NR_PATH@/3672da2f1f67bbecad27d7181b4e9d7c.SIGFPE.d25.805.jpc -o @TEMP_PATH@3672da2f1f67bbecad27d7181b4e9d7c.SIGFPE.d25.805.jpc.pgx
 # issue 254 (loss in quality)
 opj_decompress -i @INPUT_NR_PATH@/issue254.jp2                  -o @TEMP_PATH@/issue254.jp2.pgx
+# issue 142
+opj_decompress -i @INPUT_NR_PATH@/issue142.j2k                  -o @TEMP_PATH@/issue142.j2k.pgx
 
 # decode with specific area
 # prec=12; nb_c=1 
