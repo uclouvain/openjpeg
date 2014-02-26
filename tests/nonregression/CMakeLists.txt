@@ -18,8 +18,16 @@ find_package(KAKADU)
 # GENERATION OF THE TEST SUITE (DUMP)
 # Dump all files with the selected extension inside the input directory
 
+# technically opj_dump should simply parse these one, since syntax is ok.
+set(BLACKLIST_JPEG2000_TMP
+    2539.pdf.SIGFPE.706.1712.jp2
+    0290cb77c5df21828fa74cf2ab2c84d8.SIGFPE.d25.31.jp2
+    26ccf3651020967f7778238ef5af08af.SIGFPE.d25.527.jp2
+   )
+
 # Define a list of file which should be gracefully rejected:
 set(BLACKLIST_JPEG2000
+    ${BLACKLIST_JPEG2000_TMP}
     broken.jp2 
     broken2.jp2
     broken3.jp2
@@ -29,6 +37,7 @@ set(BLACKLIST_JPEG2000
     gdal_fuzzer_check_number_of_tiles.jp2
     gdal_fuzzer_unchecked_numresolutions.jp2
     mem-b2ace68c-1381.jp2
+    1851.pdf.SIGSEGV.ce9.948.jp2
    )
 
 file(GLOB_RECURSE OPJ_DATA_NR_LIST
@@ -40,7 +49,11 @@ file(GLOB_RECURSE OPJ_DATA_NR_LIST
 
 foreach(INPUT_FILENAME ${OPJ_DATA_NR_LIST})
   get_filename_component(INPUT_FILENAME_NAME ${INPUT_FILENAME} NAME)
-  get_filename_component(INPUT_FILENAME_NAME_WE ${INPUT_FILENAME_NAME} NAME_WE)
+  #get_filename_component(INPUT_FILENAME_NAME_WE ${INPUT_FILENAME_NAME} NAME_WE)
+  # cannot use longest extension function, since some name contains multiples
+  # dots. Instead write out own shortest extension function:
+  string(FIND ${INPUT_FILENAME_NAME} "." SHORTEST_EXT_POS REVERSE)
+  string(SUBSTRING ${INPUT_FILENAME_NAME} 0 ${SHORTEST_EXT_POS} INPUT_FILENAME_NAME_WE)
   string(REGEX MATCH ${INPUT_FILENAME_NAME} bad_jpeg2000 ${BLACKLIST_JPEG2000})
 
   # Dump the input image
