@@ -4091,7 +4091,7 @@ OPJ_BOOL opj_j2k_read_sot ( opj_j2k_t *p_j2k,
 
                                         if ( l_current_part >= p_j2k->cstr_index->tile_index[p_j2k->m_current_tile_number].current_nb_tps ){
                                                 opj_tp_index_t *new_tp_index;
-                                                p_j2k->cstr_index->tile_index[p_j2k->m_current_tile_number].current_nb_tps += 10;
+                                                p_j2k->cstr_index->tile_index[p_j2k->m_current_tile_number].current_nb_tps = l_current_part + 1;
                                                 new_tp_index = (opj_tp_index_t *) opj_realloc(
                                                                 p_j2k->cstr_index->tile_index[p_j2k->m_current_tile_number].tp_index,
                                                                 p_j2k->cstr_index->tile_index[p_j2k->m_current_tile_number].current_nb_tps * sizeof(opj_tp_index_t));
