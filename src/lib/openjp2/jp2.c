@@ -995,7 +995,12 @@ void opj_jp2_apply_cdef(opj_image_t *image, opj_jp2_color_t *color)
 	for(i = 0; i < n; ++i)
 	{
 		/* WATCH: acn = asoc - 1 ! */
-		if((asoc = info[i].asoc) == 0) continue;
+		if((asoc = info[i].asoc) == 0)
+                {
+                    if (i < image->numcomps)
+                        image->comps[i].alpha = info[i].typ;
+                    continue;
+                }
 
 		cn = info[i].cn; 
         acn = asoc - 1;
@@ -1011,6 +1016,8 @@ void opj_jp2_apply_cdef(opj_image_t *image, opj_jp2_color_t *color)
 			info[i].asoc = cn + 1;
 			info[acn].asoc = info[acn].cn + 1;
 		}
+
+		image->comps[cn].alpha = info[i].typ;
 	}
 
 	if(color->jp2_cdef->info) opj_free(color->jp2_cdef->info);

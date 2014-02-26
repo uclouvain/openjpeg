@@ -538,6 +538,8 @@ typedef struct opj_image_comp {
 	OPJ_UINT32 factor;
 	/** image component data */
 	OPJ_INT32 *data;
+  /** alpha channel */
+  OPJ_UINT16 alpha;
 } opj_image_comp_t;
 
 /** 
