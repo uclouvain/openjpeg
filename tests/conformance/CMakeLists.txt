@@ -56,15 +56,15 @@ IF(ignore_test_value EQUAL 0)
     get_filename_component(filenameRefSub ${filenameRef} NAME_WE)
     #r = 0
     
-    ADD_TEST(ETS-C0P0-${filenameInput}-r0-decode 
-        ${EXECUTABLE_OUTPUT_PATH}/j2k_to_image 
+    ADD_TEST(NAME ETS-C0P0-${filenameInput}-r0-decode 
+        COMMAND j2k_to_image 
         -i ${INPUT_CONF}/${filenameInput}
         -o ${TEMP}/c0${filenameInput}-r0.pgx
         -r 0
         )
      
-    ADD_TEST(ETS-C0P0-${filenameInput}-r0-compare2ref
-        ${EXECUTABLE_OUTPUT_PATH}/comparePGXimages
+    ADD_TEST(NAME ETS-C0P0-${filenameInput}-r0-compare2ref
+        COMMAND comparePGXimages
         -b ${BASELINE_CONF}/${filenameRefSub}r0.pgx
         -t ${TEMP}/c0${filenameInput}-r0.pgx
         -n ${nbComponents}
@@ -77,8 +77,8 @@ IF(ignore_test_value EQUAL 0)
                          PROPERTIES DEPENDS 
                          ETS-C0P0-${filenameInput}-r0-decode)    
                        
-    ADD_TEST(NR-C0P0-${filenameInput}-r0-compare2base
-        ${EXECUTABLE_OUTPUT_PATH}/comparePGXimages
+    ADD_TEST(NAME NR-C0P0-${filenameInput}-r0-compare2base
+        COMMAND comparePGXimages
         -b ${BASELINE_NR}/opj_${filenameRefSub}-r0.pgx
         -t ${TEMP}/c0${filenameInput}-r0.pgx
         -n ${nbComponents}
@@ -91,15 +91,15 @@ IF(ignore_test_value EQUAL 0)
                          ETS-C0P0-${filenameInput}-r0-decode)  
     
     #r = 1
-    ADD_TEST(ETS-C0P0-${filenameInput}-r1-decode
-        ${EXECUTABLE_OUTPUT_PATH}/j2k_to_image 
+    ADD_TEST(NAME ETS-C0P0-${filenameInput}-r1-decode
+        COMMAND j2k_to_image 
         -i ${INPUT_CONF}/${filenameInput}
         -o ${TEMP}/c0${filenameInput}-r1.pgx
         -r 1
         )
      
-    ADD_TEST(ETS-C0P0-${filenameInput}-r1-compare2ref
-        ${EXECUTABLE_OUTPUT_PATH}/comparePGXimages
+    ADD_TEST(NAME ETS-C0P0-${filenameInput}-r1-compare2ref
+        COMMAND comparePGXimages
         -b ${BASELINE_CONF}/${filenameRefSub}r1.pgx
         -t ${TEMP}/c0${filenameInput}-r1.pgx
         -n ${nbComponents}
@@ -112,8 +112,8 @@ IF(ignore_test_value EQUAL 0)
                          PROPERTIES DEPENDS 
                          ETS-C0P0-${filenameInput}-r1-decode)    
                        
-    ADD_TEST(NR-C0P0-${filenameInput}-r1-compare2base
-        ${EXECUTABLE_OUTPUT_PATH}/comparePGXimages
+    ADD_TEST(NAME NR-C0P0-${filenameInput}-r1-compare2base
+        COMMAND comparePGXimages
         -b ${BASELINE_NR}/opj_${filenameRefSub}-r1.pgx
         -t ${TEMP}/c0${filenameInput}-r1.pgx
         -n ${nbComponents}
@@ -127,15 +127,15 @@ IF(ignore_test_value EQUAL 0)
 
   ELSE(numFileC0P0 EQUAL 3 OR numFileC0P0 EQUAL 15)
   
-    ADD_TEST(ETS-C0P0-${filenameInput}-decode
-        ${EXECUTABLE_OUTPUT_PATH}/j2k_to_image 
+    ADD_TEST(NAME ETS-C0P0-${filenameInput}-decode
+        COMMAND j2k_to_image 
         -i ${INPUT_CONF}/${filenameInput}
         -o ${TEMP}/c0${filenameInput}.pgx
         -r ${ResFactor}
         )
    
-    ADD_TEST(ETS-C0P0-${filenameInput}-compare2ref
-        ${EXECUTABLE_OUTPUT_PATH}/comparePGXimages
+    ADD_TEST(NAME ETS-C0P0-${filenameInput}-compare2ref
+        COMMAND comparePGXimages
         -b ${BASELINE_CONF}/${filenameRef}
         -t ${TEMP}/c0${filenameInput}.pgx
         -n ${nbComponents}
@@ -148,8 +148,8 @@ IF(ignore_test_value EQUAL 0)
                          PROPERTIES DEPENDS 
                          ETS-C0P0-${filenameInput}-decode)    
                        
-    ADD_TEST(NR-C0P0-${filenameInput}-compare2base
-        ${EXECUTABLE_OUTPUT_PATH}/comparePGXimages
+    ADD_TEST(NAME NR-C0P0-${filenameInput}-compare2base
+        COMMAND comparePGXimages
         -b ${BASELINE_NR}/opj_${filenameRef}
         -t ${TEMP}/c0${filenameInput}.pgx
         -n ${nbComponents}
@@ -200,15 +200,15 @@ IF(ignore_test_value2 EQUAL 0)
     get_filename_component(filenameRefSub ${filenameRef} NAME_WE)
     
     #r = 0
-    ADD_TEST(ETS-C0P1-${filenameInput}-r0-decode 
-        ${EXECUTABLE_OUTPUT_PATH}/j2k_to_image 
+    ADD_TEST(NAME ETS-C0P1-${filenameInput}-r0-decode 
+        COMMAND j2k_to_image 
         -i ${INPUT_CONF}/${filenameInput}
         -o ${TEMP}/c0${filenameInput}-r0.pgx
         -r 0
         )
     
-    ADD_TEST(ETS-C0P1-${filenameInput}-r0-compare2ref
-        ${EXECUTABLE_OUTPUT_PATH}/comparePGXimages
+    ADD_TEST(NAME ETS-C0P1-${filenameInput}-r0-compare2ref
+        COMMAND comparePGXimages
         -b ${BASELINE_CONF}/${filenameRefSub}r0.pgx
         -t ${TEMP}/c0${filenameInput}-r0.pgx
         -n ${nbComponents}
@@ -221,8 +221,8 @@ IF(ignore_test_value2 EQUAL 0)
                          PROPERTIES DEPENDS 
                          ETS-C0P1-${filenameInput}-r0-decode)    
                        
-    ADD_TEST(NR-C0P1-${filenameInput}-r0-compare2base
-        ${EXECUTABLE_OUTPUT_PATH}/comparePGXimages
+    ADD_TEST(NAME NR-C0P1-${filenameInput}-r0-compare2base
+        COMMAND comparePGXimages
         -b ${BASELINE_NR}/opj_${filenameRefSub}-r0.pgx
         -t ${TEMP}/c0${filenameInput}-r0.pgx
         -n ${nbComponents}
@@ -235,15 +235,15 @@ IF(ignore_test_value2 EQUAL 0)
                          ETS-C0P1-${filenameInput}-r0-decode)
     
     #r = 3
-    ADD_TEST(ETS-C0P1-${filenameInput}-r3-decode
-        ${EXECUTABLE_OUTPUT_PATH}/j2k_to_image 
+    ADD_TEST(NAME ETS-C0P1-${filenameInput}-r3-decode
+        COMMAND j2k_to_image 
         -i ${INPUT_CONF}/${filenameInput}
         -o ${TEMP}/c0${filenameInput}-r3.pgx
         -r 3
         )
         
-    ADD_TEST(ETS-C0P1-${filenameInput}-r3-compare2ref
-        ${EXECUTABLE_OUTPUT_PATH}/comparePGXimages
+    ADD_TEST(NAME ETS-C0P1-${filenameInput}-r3-compare2ref
+        COMMAND comparePGXimages
         -b ${BASELINE_CONF}/${filenameRefSub}r3.pgx
         -t ${TEMP}/c0${filenameInput}-r3.pgx
         -n ${nbComponents}
@@ -256,8 +256,8 @@ IF(ignore_test_value2 EQUAL 0)
                          PROPERTIES DEPENDS 
                          ETS-C0P1-${filenameInput}-r3-decode)    
                        
-    ADD_TEST(NR-C0P1-${filenameInput}-r3-compare2base
-        ${EXECUTABLE_OUTPUT_PATH}/comparePGXimages
+    ADD_TEST(NAME NR-C0P1-${filenameInput}-r3-compare2base
+        COMMAND comparePGXimages
         -b ${BASELINE_NR}/opj_${filenameRefSub}-r3.pgx
         -t ${TEMP}/c0${filenameInput}-r3.pgx
         -n ${nbComponents}
@@ -271,15 +271,15 @@ IF(ignore_test_value2 EQUAL 0)
        
   ELSE(numFileC0P1 EQUAL 4)
 
-    ADD_TEST(ETS-C0P1-${filenameInput}-decode
-        ${EXECUTABLE_OUTPUT_PATH}/j2k_to_image 
+    ADD_TEST(NAME ETS-C0P1-${filenameInput}-decode
+        COMMAND j2k_to_image 
         -i ${INPUT_CONF}/${filenameInput}
         -o ${TEMP}/c0${filenameInput}.pgx
         -r ${ResFactor}
         )
             
-    ADD_TEST(ETS-C0P1-${filenameInput}-compare2ref
-        ${EXECUTABLE_OUTPUT_PATH}/comparePGXimages
+    ADD_TEST(NAME ETS-C0P1-${filenameInput}-compare2ref
+        COMMAND comparePGXimages
         -b ${BASELINE_CONF}/${filenameRef}
         -t ${TEMP}/c0${filenameInput}.pgx
         -n ${nbComponents}
@@ -292,8 +292,8 @@ IF(ignore_test_value2 EQUAL 0)
                          PROPERTIES DEPENDS 
                          ETS-C0P1-${filenameInput}-decode)    
                        
-    ADD_TEST(NR-C0P1-${filenameInput}-compare2base
-        ${EXECUTABLE_OUTPUT_PATH}/comparePGXimages
+    ADD_TEST(NAME NR-C0P1-${filenameInput}-compare2base
+        COMMAND comparePGXimages
         -b ${BASELINE_NR}/opj_${filenameRef}
         -t ${TEMP}/c0${filenameInput}.pgx
         -n ${nbComponents}
@@ -339,15 +339,15 @@ FOREACH(numFileC1P0 RANGE 1 16)
   list(GET C1P0_PEAK_list ${numFileC1P0}  PEAK_limit)
   list(GET C1P0_MSE_list ${numFileC1P0}  MSE_limit)
   
-  ADD_TEST(ETS-C1P0-${filenameInput}-decode
-      ${EXECUTABLE_OUTPUT_PATH}/j2k_to_image 
+  ADD_TEST(NAME ETS-C1P0-${filenameInput}-decode
+      COMMAND j2k_to_image 
       -i ${INPUT_CONF}/${filenameInput}
       -o ${TEMP}/c1${filenameInput}.pgx
       -r ${ResFactor}
       )
       
-  ADD_TEST(ETS-C1P0-${filenameInput}-compare2ref
-      ${EXECUTABLE_OUTPUT_PATH}/comparePGXimages
+  ADD_TEST(NAME ETS-C1P0-${filenameInput}-compare2ref
+      COMMAND comparePGXimages
      -b ${BASELINE_CONF}/${filenameRef}
      -t ${TEMP}/c1${filenameInput}.pgx
      -n ${nbComponents}
@@ -360,8 +360,8 @@ FOREACH(numFileC1P0 RANGE 1 16)
                        PROPERTIES DEPENDS 
                        ETS-C1P0-${filenameInput}-decode)    
                        
-  ADD_TEST(NR-C1P0-${filenameInput}-compare2base
-      ${EXECUTABLE_OUTPUT_PATH}/comparePGXimages
+  ADD_TEST(NAME NR-C1P0-${filenameInput}-compare2base
+      COMMAND comparePGXimages
      -b ${BASELINE_NR}/opj_${filenameRef}
      -t ${TEMP}/c1${filenameInput}.pgx
      -n ${nbComponents}
@@ -398,15 +398,15 @@ FOREACH(numFileC1P1 RANGE 1 7)
   list(GET C1P1_PEAK_list ${numFileC1P1}  PEAK_limit)
   list(GET C1P1_MSE_list ${numFileC1P1}  MSE_limit)
   
-  ADD_TEST(ETS-C1P1-${filenameInput}-decode
-      ${EXECUTABLE_OUTPUT_PATH}/j2k_to_image 
+  ADD_TEST(NAME ETS-C1P1-${filenameInput}-decode
+      COMMAND j2k_to_image 
       -i ${INPUT_CONF}/${filenameInput}
       -o ${TEMP}/c1${filenameInput}.pgx
       -r 0
       )
  
-  ADD_TEST(ETS-C1P1-${filenameInput}-compare2ref
-      ${EXECUTABLE_OUTPUT_PATH}/comparePGXimages
+  ADD_TEST(NAME ETS-C1P1-${filenameInput}-compare2ref
+      COMMAND comparePGXimages
      -b ${BASELINE_CONF}/${filenameRef}
      -t ${TEMP}/c1${filenameInput}.pgx
      -n ${nbComponents}
@@ -419,8 +419,8 @@ FOREACH(numFileC1P1 RANGE 1 7)
                        PROPERTIES DEPENDS 
                        ETS-C1P1-${filenameInput}-decode)
                        
-  ADD_TEST(NR-C1P1-${filenameInput}-compare2base
-      ${EXECUTABLE_OUTPUT_PATH}/comparePGXimages
+  ADD_TEST(NAME NR-C1P1-${filenameInput}-compare2base
+      COMMAND comparePGXimages
      -b ${BASELINE_NR}/opj_${filenameRef}
      -t ${TEMP}/c1${filenameInput}.pgx
      -n ${nbComponents}
@@ -451,16 +451,16 @@ FOREACH(numFileJP2 RANGE 1 9)
   # Get corresponding tests parameters
   list(GET JP2_PEAK_list ${numFileJP2}  PEAK_limit)
   
-  ADD_TEST(ETS-JP2-${filenameInput}-decode
-      ${EXECUTABLE_OUTPUT_PATH}/j2k_to_image 
+  ADD_TEST(NAME ETS-JP2-${filenameInput}-decode
+      COMMAND j2k_to_image 
       -i ${INPUT_CONF}/${filenameInput}
       -o ${TEMP}/${filenameInput}.tif
       )
 #
 # FIXME: Need to implement a compare tif images function
 #  
-#  ADD_TEST(ETS-JP2-${filenameInput}-compare2ref
-#      ${EXECUTABLE_OUTPUT_PATH}/compareTIFimages
+#  ADD_TEST(NAME ETS-JP2-${filenameInput}-compare2ref
+#      COMMAND compareTIFimages
 #     -b ${BASELINE_CONF}/${filenameRef_tif}
 #     -t ${TEMP}/${filenameInput}.pgx
 #     -p 4
@@ -470,8 +470,8 @@ FOREACH(numFileJP2 RANGE 1 9)
 #                       PROPERTIES DEPENDS 
 #                       ETS-JP2-${filenameInput}-decode)
 #                       
-#  ADD_TEST(NR-JP2-${filenameInput}-compare2base
-#      ${EXECUTABLE_OUTPUT_PATH}/compareTIFimages
+#  ADD_TEST(NAME NR-JP2-${filenameInput}-compare2base
+#      COMMAND compareTIFimages
 #     -b ${BASELINE_NR}/opj_${filenameRef}
 #     -t ${TEMP}/${filenameInput}.tif
 #     -d 
@@ -503,14 +503,14 @@ FOREACH(numFileP0 RANGE 1 16)
   get_filename_component(filenameRefSub ${filenameInput} NAME_WE)
 
 
-  ADD_TEST(NR-${filenameInput}-dump
-      ${EXECUTABLE_OUTPUT_PATH}/j2k_dump
+  ADD_TEST(NAME NR-${filenameInput}-dump
+      COMMAND j2k_dump
      -i ${INPUT_CONF}/${filenameInput}
      -o ${TEMP}/${filenameInput}.txt
      )
      
-  ADD_TEST(NR-${filenameInput}-compare_dump2base
-      ${EXECUTABLE_OUTPUT_PATH}/compare_dump_files
+  ADD_TEST(NAME NR-${filenameInput}-compare_dump2base
+      COMMAND compare_dump_files
      -b ${BASELINE_NR}/opj_${filenameRefSub}.txt
      -t ${TEMP}/${filenameInput}.txt
      )
@@ -532,14 +532,14 @@ FOREACH(numFileP1 RANGE 1 7)
   SET( filenameInput p1_0${numFileP1}.j2k )
   get_filename_component(filenameInputSub ${filenameInput} NAME_WE)
 
-  ADD_TEST(NR-${filenameInput}-dump
-      ${EXECUTABLE_OUTPUT_PATH}/j2k_dump
+  ADD_TEST(NAME NR-${filenameInput}-dump
+      COMMAND j2k_dump
      -i ${INPUT_CONF}/${filenameInput}
      -o ${TEMP}/${filenameInput}.txt
      )
      
-  ADD_TEST(NR-${filenameInput}-compare_dump2base
-      ${EXECUTABLE_OUTPUT_PATH}/compare_dump_files
+  ADD_TEST(NAME NR-${filenameInput}-compare_dump2base
+      COMMAND compare_dump_files
      -b ${BASELINE_NR}/opj_${filenameInputSub}.txt
      -t ${TEMP}/${filenameInput}.txt
      )
@@ -561,14 +561,14 @@ FOREACH(numFileJP2 RANGE 1 9)
   SET( filenameInput "file${numFileJP2}.jp2" )
   get_filename_component(filenameInputSub ${filenameInput} NAME_WE)
 
-  ADD_TEST(NR-${filenameInput}-dump
-      ${EXECUTABLE_OUTPUT_PATH}/j2k_dump
+  ADD_TEST(NAME NR-${filenameInput}-dump
+      COMMAND j2k_dump
      -i ${INPUT_CONF}/${filenameInput}
      -o ${TEMP}/${filenameInput}.txt
      )
      
-  ADD_TEST(NR-${filenameInput}-compare_dump2base
-      ${EXECUTABLE_OUTPUT_PATH}/compare_dump_files
+  ADD_TEST(NAME NR-${filenameInput}-compare_dump2base
+      COMMAND compare_dump_files
      -b ${BASELINE_NR}/opj_${filenameInputSub}.txt
      -t ${TEMP}/${filenameInput}.txt
      )

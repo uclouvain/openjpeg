@@ -166,8 +166,8 @@ FOREACH(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
         math(EXPR IT_TEST_ENC "${IT_TEST_ENC}+1" )
         
         # Encode an image into the jpeg2000 format
-        ADD_TEST(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-encode
-          ${EXECUTABLE_OUTPUT_PATH}/image_to_j2k
+        ADD_TEST(NAME NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-encode
+          COMMAND image_to_j2k
           ${CMD_ARG_LIST_2}
         )
         
@@ -176,8 +176,8 @@ FOREACH(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
         ELSE(FAILED_TEST_FOUND)
           
           # Dump the encoding file 
-          ADD_TEST(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-dump
-            ${EXECUTABLE_OUTPUT_PATH}/j2k_dump
+          ADD_TEST(NAME NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-dump
+            COMMAND j2k_dump
             -i ${OUTPUT_FILENAME}
             -o ${OUTPUT_FILENAME}-ENC-${IT_TEST_ENC}.txt
           )
@@ -186,8 +186,8 @@ FOREACH(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
                                NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-encode) 
         
           # Compare the dump file with the baseline 
-          ADD_TEST(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-compare_dump2base
-            ${EXECUTABLE_OUTPUT_PATH}/compare_dump_files
+          ADD_TEST(NAME NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-compare_dump2base
+            COMMAND compare_dump_files
             -b ${BASELINE_NR}/opj_${OUTPUT_FILENAME_NAME_WE}-ENC-${IT_TEST_ENC}.txt
             -t ${OUTPUT_FILENAME}-ENC-${IT_TEST_ENC}.txt
           )
@@ -198,8 +198,8 @@ FOREACH(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
     
           # Decode the encoding file with kakadu expand command
           IF (KDU_EXPAND_EXECUTABLE)
-            ADD_TEST(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-decode-ref
-              ${KDU_EXPAND_EXECUTABLE}
+            ADD_TEST(NAME NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-decode-ref
+              COMMAND ${KDU_EXPAND_EXECUTABLE}
               -i ${OUTPUT_FILENAME}
               -o ${OUTPUT_FILENAME}.raw
               )
@@ -209,8 +209,8 @@ FOREACH(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
                                  NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-encode) 
         
             # Compare the decoding file with baseline generated from the kdu_expand and baseline.j2k 
-            ADD_TEST(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-compare_dec-ref-out2base
-              ${EXECUTABLE_OUTPUT_PATH}/compareRAWimages
+            ADD_TEST(NAME NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-compare_dec-ref-out2base
+              COMMAND compareRAWimages
               -b ${BASELINE_NR}/opj_${OUTPUT_FILENAME_NAME_WE}-ENC-${IT_TEST_ENC}.raw
               -t ${OUTPUT_FILENAME}.raw
             )
@@ -227,8 +227,8 @@ FOREACH(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
       math(EXPR IT_TEST_DEC "${IT_TEST_DEC}+1" )
       
       # Decode the input image
-      ADD_TEST(NR-DEC-${INPUT_FILENAME_NAME}-${IT_TEST_DEC}-decode
-        ${EXECUTABLE_OUTPUT_PATH}/j2k_to_image 
+      ADD_TEST(NAME NR-DEC-${INPUT_FILENAME_NAME}-${IT_TEST_DEC}-decode
+        COMMAND j2k_to_image 
         ${CMD_ARG_LIST_2}
       )
       
@@ -245,8 +245,8 @@ FOREACH(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
 
 # FIXME: add a compare2base function base on raw which 
 # can output png diff files if necesary 
-#  ADD_TEST(NR-${filename}-compare2base
-#      ${EXECUTABLE_OUTPUT_PATH}/comparePGXimages
+#  ADD_TEST(NAME NR-${filename}-compare2base
+#      COMMAND comparePGXimages
 #     -b ${BASELINE_NR}/opj_${filenameRef}
 #     -t ${TEMP}/${filename}.pgx
 #     -n ${nbComponents}
@@ -259,15 +259,15 @@ FOREACH(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
 #                       NR-${filename}-decode)  
     
         # Dump the input image
-        ADD_TEST(NR-DEC-${INPUT_FILENAME_NAME}-${IT_TEST_DEC}-dump
-          ${EXECUTABLE_OUTPUT_PATH}/j2k_dump
+        ADD_TEST(NAME NR-DEC-${INPUT_FILENAME_NAME}-${IT_TEST_DEC}-dump
+          COMMAND j2k_dump
           -i ${INPUT_FILENAME}
           -o ${TEMP}/${INPUT_FILENAME_NAME}.txt
         )
      
         # Compare the dump output with the baseline
-        ADD_TEST(NR-DEC-${INPUT_FILENAME_NAME}-${IT_TEST_DEC}-compare_dump2base
-          ${EXECUTABLE_OUTPUT_PATH}/compare_dump_files
+        ADD_TEST(NAME NR-DEC-${INPUT_FILENAME_NAME}-${IT_TEST_DEC}-compare_dump2base
+          COMMAND compare_dump_files
          -b ${BASELINE_NR}/opj_${INPUT_FILENAME_NAME_WE}.txt
          -t ${TEMP}/${INPUT_FILENAME_NAME}.txt
         )
