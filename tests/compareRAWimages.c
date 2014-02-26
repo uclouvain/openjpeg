@@ -38,8 +38,6 @@
 
 #include "opj_getopt.h"
 
-void compareRAWimages_help_display(void);
-
 typedef struct test_cmp_parameters
 {
 	/**  */
@@ -51,7 +49,7 @@ typedef struct test_cmp_parameters
 /*******************************************************************************
  * Command line help function
  *******************************************************************************/
-void compareRAWimages_help_display(void) {
+static void compareRAWimages_help_display(void) {
 	fprintf(stdout,"\nList of parameters for the comparePGX function  \n");
 	fprintf(stdout,"\n");
 	fprintf(stdout,"  -b \t REQUIRED \t filename to the reference/baseline RAW image \n");
@@ -119,6 +117,7 @@ static int parse_cmdline_cmp(int argc, char **argv, test_cmp_parameters* param)
  *******************************************************************************/
 int main(int argc, char **argv)
 {
+  int pos = 0;
 	test_cmp_parameters inParam;
 	FILE *file_test=NULL, *file_base=NULL;
 	unsigned char equal = 1;
@@ -191,7 +190,7 @@ int main(int argc, char **argv)
 
 		/* Read one byte*/
 		if (!fread(&value_base, 1, 1, file_base)) {
-			eof_base = 1;;
+			eof_base = 1;
 		}
 
 		/* End of file reached by the two files?*/
@@ -208,9 +207,10 @@ int main(int argc, char **argv)
 		/* Binary values are equal?*/
 		if (value_test != value_base)
 		{
-			fprintf(stdout,"Binary values read in the file are different.\n");
+			fprintf(stdout,"Binary values read in the file are different %x vs %x at position %d.\n", value_test, value_base, pos);
 			equal = 0;
 		}
+    pos++;
 	}
 
 	/* Free Memory */
