@@ -1095,6 +1095,7 @@ void jp2_setup_decoder(opj_jp2_t *jp2, opj_dparameters_t *parameters) {
 opj_jp2_t* jp2_create_compress(opj_common_ptr cinfo) {
 	opj_jp2_t *jp2 = (opj_jp2_t*)opj_malloc(sizeof(opj_jp2_t));
 	if(jp2) {
+		memset(jp2, 0, sizeof(opj_jp2_t));
 		jp2->cinfo = cinfo;
 		/* create the J2K codec */
 		jp2->j2k = j2k_create_compress(cinfo);

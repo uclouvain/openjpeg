@@ -116,12 +116,13 @@ static int tga_readheader(FILE *fp, unsigned int *bits_per_pixel,
 
 	if (!bits_per_pixel || !width || !height || !flip_image)
 		return 0;
-	tga = (unsigned char*)malloc(18);
+	tga = (unsigned char*)malloc(TGA_HEADER_SIZE);
 
 	if ( fread(tga, TGA_HEADER_SIZE, 1, fp) != 1 )
 	{
 		fprintf(stderr, "\nError: fread return a number of element different from the expected.\n");
-	    return 0 ;
+		free(tga);
+		return 0 ;
 	}
 	id_len = (unsigned char)tga[0];
 	cmap_type = (unsigned char)tga[1];
@@ -271,12 +272,16 @@ opj_image_t* tgatoimage(const char *filename, opj_cparameters_t *parameters) {
 		return 0;
 	}
 
-	if (!tga_readheader(f, &pixel_bit_depth, &image_width, &image_height, &flip_image))
+	if (!tga_readheader(f, &pixel_bit_depth, &image_width, &image_height, &flip_image)) {
+		fclose(f);
 		return NULL;
+	}
 
 	/* We currently only support 24 & 32 bit tga's ... */
-	if (!((pixel_bit_depth == 24) || (pixel_bit_depth == 32)))
+	if (!((pixel_bit_depth == 24) || (pixel_bit_depth == 32))) {
+		fclose(f);
 		return NULL;
+	}
 
 	/* initialize image components */   
 	memset(&cmptparm[0], 0, 4 * sizeof(opj_image_cmptparm_t));
@@ -309,8 +314,10 @@ opj_image_t* tgatoimage(const char *filename, opj_cparameters_t *parameters) {
 	/* create the image */
 	image = opj_image_create(numcomps, &cmptparm[0], color_space);
 
-	if (!image)
+	if (!image) {
+		fclose(f);
 		return NULL;
+	}
 
 	/* set image offset and reference grid */
 	image->x0 = parameters->image_offset_x0;
@@ -338,19 +345,22 @@ opj_image_t* tgatoimage(const char *filename, opj_cparameters_t *parameters) {
 				{
 					fprintf(stderr, "\nError: fread return a number of element different from the expected.\n");
 					opj_image_destroy(image);
-				    return NULL;
+					fclose(f);
+					return NULL;
 				}
 				if ( !fread(&g, 1, 1, f) )
 				{
 					fprintf(stderr, "\nError: fread return a number of element different from the expected.\n");
 					opj_image_destroy(image);
-				    return NULL;
+					fclose(f);
+					return NULL;
 				}
 				if ( !fread(&r, 1, 1, f) )
 				{
 					fprintf(stderr, "\nError: fread return a number of element different from the expected.\n");
 					opj_image_destroy(image);
-				    return NULL;
+					fclose(f);
+					return NULL;
 				}
 
 				image->comps[0].data[index]=r;
@@ -368,25 +378,29 @@ opj_image_t* tgatoimage(const char *filename, opj_cparameters_t *parameters) {
 				{
 					fprintf(stderr, "\nError: fread return a number of element different from the expected.\n");
 					opj_image_destroy(image);
-				    return NULL;
+					fclose(f);
+					return NULL;
 				}
 				if ( !fread(&g, 1, 1, f) )
 				{
 					fprintf(stderr, "\nError: fread return a number of element different from the expected.\n");
 					opj_image_destroy(image);
-				    return NULL;
+					fclose(f);
+					return NULL;
 				}
 				if ( !fread(&r, 1, 1, f) )
 				{
 					fprintf(stderr, "\nError: fread return a number of element different from the expected.\n");
 					opj_image_destroy(image);
-				    return NULL;
+					fclose(f);
+					return NULL;
 				}
 				if ( !fread(&a, 1, 1, f) )
 				{
 					fprintf(stderr, "\nError: fread return a number of element different from the expected.\n");
 					opj_image_destroy(image);
-				    return NULL;
+					fclose(f);
+					return NULL;
 				}
 
 				image->comps[0].data[index]=r;
@@ -399,7 +413,8 @@ opj_image_t* tgatoimage(const char *filename, opj_cparameters_t *parameters) {
 		else {
 			fprintf(stderr, "Currently unsupported bit depth : %s\n", filename);
 		}
-	}	
+	}
+	fclose(f);
 	return image;
 }
 
@@ -425,6 +440,7 @@ int imagetotga(opj_image_t * image, const char *outfile) {
 			||(image->comps[0].dy != image->comps[i+1].dy) 
 			||(image->comps[0].prec != image->comps[i+1].prec))	{
       fprintf(stderr, "Unable to create a tga file with such J2K image charateristics.");
+      fclose(fdest);
       return 1;
    }
 	}
@@ -437,8 +453,10 @@ int imagetotga(opj_image_t * image, const char *outfile) {
 
 	/* Write TGA header  */
 	bpp = write_alpha ? 32 : 24;
-	if (!tga_writeheader(fdest, bpp, width , height, OPJ_TRUE))
+	if (!tga_writeheader(fdest, bpp, width , height, OPJ_TRUE)) {
+		fclose(fdest);
 		return 1;
+	}
 
 	alpha_channel = image->numcomps-1; 
 
@@ -468,6 +486,7 @@ int imagetotga(opj_image_t * image, const char *outfile) {
 			res = fwrite(&value,1,1,fdest);
       if( res < 1 ) {
         fprintf(stderr, "failed to write 1 byte for %s\n", outfile);
+        fclose(fdest);
         return 1;
       }
 
@@ -475,6 +494,7 @@ int imagetotga(opj_image_t * image, const char *outfile) {
 			res = fwrite(&value,1,1,fdest);
       if( res < 1 ) {
         fprintf(stderr, "failed to write 1 byte for %s\n", outfile);
+        fclose(fdest);
         return 1;
       }
 
@@ -482,6 +502,7 @@ int imagetotga(opj_image_t * image, const char *outfile) {
 			res = fwrite(&value,1,1,fdest);
       if( res < 1 ) {
         fprintf(stderr, "failed to write 1 byte for %s\n", outfile);
+        fclose(fdest);
         return 1;
       }
 
@@ -491,12 +512,14 @@ int imagetotga(opj_image_t * image, const char *outfile) {
 				res = fwrite(&value,1,1,fdest);
         if( res < 1 ) {
           fprintf(stderr, "failed to write 1 byte for %s\n", outfile);
+          fclose(fdest);
           return 1;
         }
 			}
 		}
 	}
 
+	fclose(fdest);
 	return 0;
 }
 
@@ -1108,7 +1131,12 @@ int imagetobmp(opj_image_t * image, const char *outfile) {
 		<<-- <<-- <<-- <<-- */
 
 		fdest = fopen(outfile, "wb");
-		w = image->comps[0].w;	    
+		if (!fdest) {
+			fprintf(stderr, "ERROR -> failed to open %s for writing\n", outfile);
+			return 1;
+		}
+
+		w = image->comps[0].w;
 		h = image->comps[0].h;
 	    
 		fprintf(fdest, "BM");
@@ -1276,6 +1304,7 @@ opj_image_t* pgxtoimage(const char *filename, opj_cparameters_t *parameters) {
 	fseek(f, 0, SEEK_SET);
 	if( fscanf(f, "PG%[ \t]%c%c%[ \t+-]%d%[ \t]%d%[ \t]%d",temp,&endian1,&endian2,signtmp,&prec,temp,&w,temp,&h) != 9){
 		fprintf(stderr, "ERROR: Failed to read the right number of element from the fscanf() function!\n");
+		fclose(f);
 		return NULL;
 	}
 
@@ -1293,6 +1322,7 @@ opj_image_t* pgxtoimage(const char *filename, opj_cparameters_t *parameters) {
 		bigendian = 0;
 	} else {
 		fprintf(stderr, "Bad pgx header, please check input file\n");
+		fclose(f);
 		return NULL;
 	}
 
@@ -1413,10 +1443,6 @@ int imagetopgx(opj_image_t * image, const char *outfile) {
 			fprintf(stderr, "ERROR -> failed to open %s for writing\n", name);
 			return 1;
 		}
-    /* dont need name anymore */
-    if( total > 256 ) {
-      free(name);
-      }
 
 		w = image->comps[compno].w;
 		h = image->comps[compno].h;
@@ -1436,10 +1462,19 @@ int imagetopgx(opj_image_t * image, const char *outfile) {
 				res = fwrite(&byte, 1, 1, fdest);
         if( res < 1 ) {
           fprintf(stderr, "failed to write 1 byte for %s\n", name);
+          if( total > 256 ) {
+            free(name);
+            }
+          fclose(fdest);
           return 1;
         }
 			}
 		}
+		/* dont need name anymore */
+		if( total > 256 ) {
+			free(name);
+			}
+
 		fclose(fdest);
 	}
 
@@ -2820,6 +2855,7 @@ opj_image_t* rawtoimage(const char *filename, opj_cparameters_t *parameters, raw
 	image = opj_image_create(numcomps, &cmptparm[0], color_space);
 	if(!image) {
 		fclose(f);
+		free(cmptparm);
 		return NULL;
 	}
 	/* set image offset and reference grid */
@@ -2835,6 +2871,9 @@ opj_image_t* rawtoimage(const char *filename, opj_cparameters_t *parameters, raw
 			for (i = 0; i < w * h; i++) {
 				if (!fread(&value, 1, 1, f)) {
 					fprintf(stderr,"Error reading raw file. End of file probably reached.\n");
+					fclose(f);
+					free(cmptparm);
+					opj_image_destroy(image);
 					return NULL;
 				}
 				image->comps[compno].data[i] = raw_cp->rawSigned?(char)value:value;
@@ -2849,11 +2888,17 @@ opj_image_t* rawtoimage(const char *filename, opj_cparameters_t *parameters, raw
 				unsigned char temp;
 				if (!fread(&temp, 1, 1, f)) {
 					fprintf(stderr,"Error reading raw file. End of file probably reached.\n");
+					fclose(f);
+					free(cmptparm);
+					opj_image_destroy(image);
 					return NULL;
 				}
 				value = temp << 8;
 				if (!fread(&temp, 1, 1, f)) {
 					fprintf(stderr,"Error reading raw file. End of file probably reached.\n");
+					fclose(f);
+					free(cmptparm);
+					opj_image_destroy(image);
 					return NULL;
 				}
 				value += temp;
@@ -2863,6 +2908,9 @@ opj_image_t* rawtoimage(const char *filename, opj_cparameters_t *parameters, raw
 	}
 	else {
 		fprintf(stderr,"OpenJPEG cannot encode raw components with bit depth higher than 16 bits.\n");
+		fclose(f);
+		free(cmptparm);
+		opj_image_destroy(image);
 		return NULL;
 	}
 
@@ -2870,6 +2918,7 @@ opj_image_t* rawtoimage(const char *filename, opj_cparameters_t *parameters, raw
 		fprintf(stderr,"Warning. End of raw file not reached... processing anyway\n");
 	}
 	fclose(f);
+	free(cmptparm);
 
 	return image;
 }
@@ -2918,6 +2967,7 @@ int imagetoraw(opj_image_t * image, const char *outfile)
 						res = fwrite(&curr, sizeof(signed char), 1, rawFile);
             if( res < 1 ) {
               fprintf(stderr, "failed to write 1 byte for %s\n", outfile);
+              fclose(rawFile);
               return 1;
             }
 						ptr++;
@@ -2935,6 +2985,7 @@ int imagetoraw(opj_image_t * image, const char *outfile)
 						res = fwrite(&curr, sizeof(unsigned char), 1, rawFile);
             if( res < 1 ) {
               fprintf(stderr, "failed to write 1 byte for %s\n", outfile);
+              fclose(rawFile);
               return 1;
             }
 						ptr++;
@@ -2957,12 +3008,14 @@ int imagetoraw(opj_image_t * image, const char *outfile)
 						res = fwrite(&temp, 1, 1, rawFile);
             if( res < 1 ) {
               fprintf(stderr, "failed to write 1 byte for %s\n", outfile);
+              fclose(rawFile);
               return 1;
             }
 						temp = (unsigned char) curr;
 						res = fwrite(&temp, 1, 1, rawFile);
             if( res < 1 ) {
               fprintf(stderr, "failed to write 1 byte for %s\n", outfile);
+              fclose(rawFile);
               return 1;
             }
 						ptr++;
@@ -2982,12 +3035,14 @@ int imagetoraw(opj_image_t * image, const char *outfile)
 						res = fwrite(&temp, 1, 1, rawFile);
             if( res < 1 ) {
               fprintf(stderr, "failed to write 1 byte for %s\n", outfile);
+              fclose(rawFile);
               return 1;
             }
 						temp = (unsigned char) curr;
 						res = fwrite(&temp, 1, 1, rawFile);
             if( res < 1 ) {
               fprintf(stderr, "failed to write 1 byte for %s\n", outfile);
+              fclose(rawFile);
               return 1;
             }
 						ptr++;
@@ -2998,11 +3053,13 @@ int imagetoraw(opj_image_t * image, const char *outfile)
 		else if (image->comps[compno].prec <= 32)
 		{
 			fprintf(stderr,"More than 16 bits per component no handled yet\n");
+			fclose(rawFile);
 			return 1;
 		}
 		else
 		{
 			fprintf(stderr,"Error: invalid precision: %d\n", image->comps[compno].prec);
+			fclose(rawFile);
 			return 1;
 		}
 	}

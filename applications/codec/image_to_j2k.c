@@ -360,6 +360,7 @@ int get_num_images(char *imgdirpath){
 			continue;
 		num_images++;
 	}
+	closedir(dir);
 	return num_images;
 }
 
@@ -385,6 +386,7 @@ int load_images(dircnt_t *dirptr, char *imgdirpath){
 		strcpy(dirptr->filename[i],content->d_name);
 		i++;
 	}
+	closedir(dir);
 	return 0;
 }
 
@@ -410,7 +412,6 @@ int get_file_format(char *filename) {
 
 char * get_file_name(char *name){
 	char *fname;
-	fname= (char*)malloc(OPJ_PATH_LEN*sizeof(char));
 	fname= strtok(name,".");
 	return fname;
 }
