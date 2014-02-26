@@ -7766,6 +7766,10 @@ OPJ_BOOL opj_j2k_update_image_data (opj_tcd_t * p_tcd, OPJ_BYTE * p_data, opj_im
                 if( (l_offset_x0_src < 0 ) || (l_offset_y0_src < 0 ) || (l_offset_x1_src < 0 ) || (l_offset_y1_src < 0 ) ){
                         return OPJ_FALSE;
                 }
+                /* testcase 2977.pdf.asan.67.2198 */
+                if ((OPJ_INT32)l_width_dest < 0 || (OPJ_INT32)l_height_dest < 0) {
+                        return OPJ_FALSE;
+                }
                 /*-----*/
 
                 /* Compute the input buffer offset */
