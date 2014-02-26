@@ -1294,6 +1294,8 @@ OPJ_BOOL opj_jp2_decode(opj_jp2_t *jp2,
 		    p_image->color_space = OPJ_CLRSPC_GRAY;
 	    else if (jp2->enumcs == 18)
 		    p_image->color_space = OPJ_CLRSPC_SYCC;
+            else if (jp2->enumcs == 24)
+                    p_image->color_space = OPJ_CLRSPC_EYCC;
 	    else
 		    p_image->color_space = OPJ_CLRSPC_UNKNOWN;
 
