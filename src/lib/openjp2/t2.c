@@ -983,11 +983,6 @@ OPJ_BOOL opj_t2_read_packet_header( opj_t2_t* p_t2,
                         do {
                                 l_cblk->segs[l_segno].numnewpasses = opj_int_min(l_cblk->segs[l_segno].maxpasses - l_cblk->segs[l_segno].numpasses, n);
                                 l_cblk->segs[l_segno].newlen = opj_bio_read(l_bio, l_cblk->numlenbits + opj_uint_floorlog2(l_cblk->segs[l_segno].numnewpasses));
-                                /* testcase 1802.pdf.SIGSEGV.36e.894 */
-                                if (l_cblk->segs[l_segno].newlen > *l_modified_length_ptr) {
-                                        opj_bio_destroy(l_bio);
-                                        return OPJ_FALSE;
-                                }
 
                                 n -= l_cblk->segs[l_segno].numnewpasses;
                                 if (n > 0) {
