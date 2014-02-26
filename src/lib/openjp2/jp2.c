@@ -985,6 +985,11 @@ OPJ_BOOL opj_jp2_read_pclr(	opj_jp2_t *jp2,
 			if ((ptrdiff_t)p_pclr_header_size < p_pclr_header_data - orig_header_data + bytes_to_read)
 				return OPJ_FALSE;
 
+			if (bytes_to_read > sizeof(OPJ_UINT32))
+				bytes_to_read = sizeof(OPJ_UINT32);
+			if ((ptrdiff_t)p_pclr_header_size < p_pclr_header_data - orig_header_data + bytes_to_read)
+				return OPJ_FALSE;
+
 			opj_read_bytes(p_pclr_header_data, &l_value , bytes_to_read);	/* Cji */
 			p_pclr_header_data += bytes_to_read;
 			*entries = (OPJ_UINT32) l_value;
@@ -1026,6 +1031,11 @@ OPJ_BOOL opj_jp2_read_cmap(	opj_jp2_t * jp2,
 	}
 
 	nr_channels = jp2->color.jp2_pclr->nr_channels;
+	if (p_cmap_header_size < (OPJ_UINT32)nr_channels * 4) {
+		opj_event_msg(p_manager, EVT_ERROR, "Insufficient data for CMAP box.\n");
+		return OPJ_FALSE;
+	}
+
 	if (p_cmap_header_size < (OPJ_UINT32)nr_channels * 4) {
 		opj_event_msg(p_manager, EVT_ERROR, "Insufficient data for CMAP box.\n");
 		return OPJ_FALSE;
@@ -1122,11 +1132,21 @@ OPJ_BOOL opj_jp2_read_cdef(	opj_jp2_t * jp2,
 		return OPJ_FALSE;
 	}
 
+	if (p_cdef_header_size < 2) {
+		opj_event_msg(p_manager, EVT_ERROR, "Insufficient data for CDEF box.\n");
+		return OPJ_FALSE;
+	}
+
 	opj_read_bytes(p_cdef_header_data,&l_value ,2);			/* N */
 	p_cdef_header_data+= 2;
 
 	if ( (OPJ_UINT16)l_value == 0){ /* szukw000: FIXME */
 		opj_event_msg(p_manager, EVT_ERROR, "Number of channel description is equal to zero in CDEF box.\n");
+		return OPJ_FALSE;
+	}
+
+	if (p_cdef_header_size < 2 + (OPJ_UINT32)(OPJ_UINT16)l_value * 6) {
+		opj_event_msg(p_manager, EVT_ERROR, "Insufficient data for CDEF box.\n");
 		return OPJ_FALSE;
 	}
 
