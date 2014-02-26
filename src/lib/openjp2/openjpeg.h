@@ -193,10 +193,11 @@ typedef enum PROG_ORDER {
 */
 typedef enum COLOR_SPACE {
 	OPJ_CLRSPC_UNKNOWN = -1,	/**< not supported by the library */
-	OPJ_CLRSPC_UNSPECIFIED = 0, /**< not specified in the codestream */ 
+	OPJ_CLRSPC_UNSPECIFIED = 0,	/**< not specified in the codestream */ 
 	OPJ_CLRSPC_SRGB = 1,		/**< sRGB */
 	OPJ_CLRSPC_GRAY = 2,		/**< grayscale */
-	OPJ_CLRSPC_SYCC = 3			/**< YUV */
+	OPJ_CLRSPC_SYCC = 3,		/**< YUV */
+  OPJ_CLRSPC_EYCC = 4		/**< e-YCC */
 } OPJ_COLOR_SPACE;
 
 /**
