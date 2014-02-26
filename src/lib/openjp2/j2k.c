@@ -3915,6 +3915,12 @@ OPJ_BOOL opj_j2k_read_sot ( opj_j2k_t *p_j2k,
         opj_read_bytes(p_header_data,&(p_j2k->m_current_tile_number),2);                /* Isot */
         p_header_data+=2;
 
+        /* testcase 2.pdf.SIGFPE.706.1112 */
+        if (p_j2k->m_current_tile_number >= l_cp->tw * l_cp->th) {
+                opj_event_msg(p_manager, EVT_ERROR, "Invalid tile number %d\n", p_j2k->m_current_tile_number);
+                return OPJ_FALSE;
+        }
+
         l_tcp = &l_cp->tcps[p_j2k->m_current_tile_number];
         l_tile_x = p_j2k->m_current_tile_number % l_cp->tw;
         l_tile_y = p_j2k->m_current_tile_number / l_cp->tw;
