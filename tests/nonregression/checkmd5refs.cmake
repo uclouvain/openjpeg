@@ -19,7 +19,7 @@
 #message("0: ${REFFILE}")
 #message("1: ${CMAKE_CURRENT_BINARY_DIR}")
 #message("2: ${FILENAME}")
-file(GLOB globfiles "Temporary/${FILENAME}*.pgx" )
+file(GLOB globfiles "Temporary/${FILENAME}*.pgx" "Temporary/${FILENAME}*.png")
 #message("6: ${globfiles}")
 if(NOT globfiles)
   message(SEND_ERROR "Could not find output PGX files: ${FILENAME}")
