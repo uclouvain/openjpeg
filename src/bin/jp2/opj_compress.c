@@ -930,7 +930,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
             float *lCurrentDoublePtr;
             float *lSpace;
             int *l_int_ptr;
-            int lNbComp = 0, lTotalComp, lMctComp, i, lStrLen;
+            int lNbComp = 0, lTotalComp, lMctComp, i, lStrLen, lStrFread;
 
             /* Open file */
             FILE * lFile = fopen(lFilename,"r");
@@ -943,8 +943,9 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
             lStrLen = ftell(lFile);
             fseek(lFile,0,SEEK_SET);
             lMatrix = (char *) malloc(lStrLen + 1);
-            fread(lMatrix, lStrLen, 1, lFile);
+            lStrFread = fread(lMatrix, 1, lStrLen, lFile);
             fclose(lFile);
+            if( lStrLen != lStrFread ) return 1;
 
             lMatrix[lStrLen] = 0;
             lCurrentPtr = lMatrix;
