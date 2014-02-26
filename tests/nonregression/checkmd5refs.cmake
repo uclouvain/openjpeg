@@ -21,6 +21,9 @@
 #message("2: ${FILENAME}")
 file(GLOB globfiles "Temporary/${FILENAME}*.pgx" )
 #message("6: ${globfiles}")
+if(NOT globfiles)
+  message(SEND_ERROR "Could not find output PGX files: ${FILENAME}")
+endif()
 
 # REFFILE follow what md5sum -c would expect as input:
 file(READ ${REFFILE} variable)
