@@ -663,6 +663,11 @@ OPJ_BOOL FUNCTION (     opj_tcd_t *p_tcd,                        \
         l_tile->y0 = opj_int_max(l_cp->ty0 + q * l_cp->tdy, l_image->y0);                                                                                                                                             \
         l_tile->x1 = opj_int_min(l_cp->tx0 + (p + 1) * l_cp->tdx, l_image->x1);                                                                                                                                       \
         l_tile->y1 = opj_int_min(l_cp->ty0 + (q + 1) * l_cp->tdy, l_image->y1);                                                                                                                                       \
+        /* testcase 1888.pdf.asan.35.988 */ \
+        if (l_tccp->numresolutions == 0) { \
+            fprintf(stderr, "tiles require at least one resolution\n"); \
+            return OPJ_FALSE; \
+        } \
         /*fprintf(stderr, "Tile border = %d,%d,%d,%d\n", l_tile->x0, l_tile->y0,l_tile->x1,l_tile->y1);*/                                                                                                         \
                                                                     \
         /*tile->numcomps = image->numcomps; */                      \
