@@ -7367,6 +7367,12 @@ OPJ_BOOL opj_j2k_read_tile_header(      opj_j2k_t * p_j2k,
                         /* Read 2 bytes from the buffer as the marker size */
                         opj_read_bytes(p_j2k->m_specific_param.m_decoder.m_header_data,&l_marker_size,2);
 
+                        /* cf. https://code.google.com/p/openjpeg/issues/detail?id=226 */
+                        if (l_current_marker == 0x8080 && opj_stream_get_number_byte_left(p_stream) == 0) {
+                                p_j2k->m_specific_param.m_decoder.m_state = J2K_STATE_NEOC;
+                                break;
+                        }
+
                         /* Why this condition? FIXME */
                         if (p_j2k->m_specific_param.m_decoder.m_state & J2K_STATE_TPH){
                                 p_j2k->m_specific_param.m_decoder.m_sot_length -= (l_marker_size + 2);
