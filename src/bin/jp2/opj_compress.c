@@ -683,10 +683,17 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
             int res_spec = 0;
 
             char *s = opj_optarg;
+            int ret;
             do {
                 sep = 0;
-                sscanf(s, "[%d,%d]%c", &parameters->prcw_init[res_spec],
+                ret = sscanf(s, "[%d,%d]%c", &parameters->prcw_init[res_spec],
                        &parameters->prch_init[res_spec], &sep);
+                if( !(ret == 2 && sep == 0) && !(ret == 3 && sep == ',') )
+                  {
+                  fprintf(stderr,"\nError: could not parse precinct dimension: '%s' %x\n", s, sep);
+                  fprintf(stderr,"Example: -i lena.raw -o lena.j2k -c [128,128],[128,128]\n");
+                  return 1;
+                  }
                 parameters->csty |= 0x01;
                 res_spec++;
                 s = strpbrk(s, "]") + 2;
