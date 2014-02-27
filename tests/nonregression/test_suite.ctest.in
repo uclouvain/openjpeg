@@ -82,7 +82,7 @@ opj_decompress -i  @INPUT_NR_PATH@/pacs.ge.j2k -o @TEMP_PATH@/pacs.ge.j2k.pgx
 # related to issue 135 
 opj_decompress -i  @INPUT_NR_PATH@/kodak_2layers_lrcp.j2c -o @TEMP_PATH@/kodak_2layers_lrcp.j2c.pgx
 opj_decompress -i  @INPUT_NR_PATH@/kodak_2layers_lrcp.j2c -o @TEMP_PATH@/kodak_2layers_lrcp.j2c.pgx -l 2
-# related to issue 104 which is closed
+# related to issue 104 and 110
 opj_decompress -i  @INPUT_NR_PATH@/issue104_jpxstream.jp2 -o @TEMP_PATH@/issue104_jpxstream.jp2.pgx
 # File not supported by kakadu (Malformed PCLR box) and not supoprter by openjpeg (problem with value of TPSot)
 !opj_decompress -i  @INPUT_NR_PATH@/mem-b2ace68c-1381.jp2 -o @TEMP_PATH@/mem-b2ace68c-1381.jp2.pgx
