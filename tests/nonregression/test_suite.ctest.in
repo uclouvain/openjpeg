@@ -39,6 +39,11 @@ opj_compress -i @INPUT_NR_PATH@/X_4_2K_24_185_CBR_WB_000.tif -o @TEMP_PATH@/X_4_
 opj_compress -i @INPUT_NR_PATH@/X_5_2K_24_235_CBR_STEM24_000.tif -o @TEMP_PATH@/X_5_2K_24_235_CBR_STEM24_000_C2K_48.j2k -cinema2K 48
 opj_compress -i @INPUT_NR_PATH@/X_6_2K_24_FULL_CBR_CIRCLE_000.tif -o @TEMP_PATH@/X_6_2K_24_FULL_CBR_CIRCLE_000_C2K_48.j2k -cinema2K 48
 opj_compress -i @INPUT_NR_PATH@/ElephantDream_4K.tif -o @TEMP_PATH@/ElephantDream_4K_C4K.j2k -cinema4K
+# issue 141
+opj_compress -i @INPUT_NR_PATH@/issue141.rawl -o @TEMP_PATH@/issue141.rawl.j2k  -F 2048,2816,1,16,u
+opj_compress -i @INPUT_NR_PATH@/issue141.rawl -o @TEMP_PATH@/issue141.rawl.j2k  -F 2048,2816,1,16,u -I
+# issue 46:
+opj_compress -i @INPUT_NR_PATH@/Bretagne2.ppm -o @TEMP_PATH@/Bretagne2_0.j2k -c [64,64]
 
 # DECODER TEST SUITE
 opj_decompress -i  @INPUT_NR_PATH@/Bretagne2.j2k -o @TEMP_PATH@/Bretagne2.j2k.pgx
@@ -133,9 +138,6 @@ opj_decompress -i @INPUT_NR_PATH@/issue135.j2k                  -o @TEMP_PATH@/i
 opj_decompress -i @INPUT_NR_PATH@/issue208.jp2                  -o @TEMP_PATH@/issue208.jp2.pgx
 # issue 211
 opj_decompress -i @INPUT_NR_PATH@/issue211.jp2                  -o @TEMP_PATH@/issue211.jp2.pgx
-# issue 141
-opj_compress -i @INPUT_NR_PATH@/issue141.rawl                   -o @TEMP_PATH@/issue141.rawl.j2k  -F 2048,2816,1,16,u
-opj_compress -i @INPUT_NR_PATH@/issue141.rawl                   -o @TEMP_PATH@/issue141.rawl.j2k  -F 2048,2816,1,16,u -I
 
 # decode with specific area
 # prec=12; nb_c=1 
