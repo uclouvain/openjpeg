@@ -119,7 +119,8 @@ opj_decompress -i  @INPUT_NR_PATH@/issue205.jp2 -o @TEMP_PATH@/issue205.jp2.pgx
 !opj_decompress -i @INPUT_NR_PATH@/1802.pdf.SIGSEGV.36e.894.jp2  -o @TEMP_PATH@/1802.pdf.SIGSEGV.36e.894.jp2.pgx
 !opj_decompress -i @INPUT_NR_PATH@/451.pdf.SIGSEGV.f4c.3723.jp2  -o @TEMP_PATH@/451.pdf.SIGSEGV.f4c.3723.jp2.pgx
 !opj_decompress -i @INPUT_NR_PATH@/2.pdf.SIGFPE.706.1112.jp2     -o @TEMP_PATH@/2.pdf.SIGFPE.706.1112.jp2.pgx
-!opj_decompress -i @INPUT_NR_PATH@/147af3f1083de4393666b7d99b01b58b_signal_sigsegv_130c531_6155_5136.jp2 -o @INPUT_NR_PATH@/147af3f1083de4393666b7d99b01b58b_signal_sigsegv_130c531_6155_5136.jp2.pgx
+!opj_decompress -i @INPUT_NR_PATH@/147af3f1083de4393666b7d99b01b58b_signal_sigsegv_130c531_6155_5136.jp2 -o @TEMP_PATH@/147af3f1083de4393666b7d99b01b58b_signal_sigsegv_130c531_6155_5136.jp2.pgx
+!opj_decompress -i @INPUT_NR_PATH@/4241ac039aba57e6a9c948d519d94216_asan_heap-oob_14650f2_7469_602.jp2 -o @TEMP_PATH@/4241ac039aba57e6a9c948d519d94216_asan_heap-oob_14650f2_7469_602.jp2
 # issue 228 (16bits/lossy)
 opj_decompress -i @INPUT_NR_PATH@/issue228.j2k                  -o @TEMP_PATH@/issue228.j2k.pgx
 # issue 229
