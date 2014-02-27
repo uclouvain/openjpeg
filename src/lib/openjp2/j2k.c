@@ -6314,6 +6314,7 @@ void opj_j2k_setup_encoder(     opj_j2k_t *p_j2k,
 
                                 if (parameters->csty & J2K_CCP_CSTY_PRT) {
                                         OPJ_INT32 p = 0, it_res;
+                                        assert( tccp->numresolutions > 0 );
                                         for (it_res = tccp->numresolutions - 1; it_res >= 0; it_res--) {
                                                 if (p < parameters->res_spec) {
 
