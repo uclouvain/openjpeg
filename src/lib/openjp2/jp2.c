@@ -823,6 +823,7 @@ static OPJ_BOOL opj_jp2_check_color(opj_image_t *image, opj_jp2_color_t *color, 
 	return OPJ_TRUE;
 }
 
+// file9.jp2
 void opj_jp2_apply_pclr(opj_image_t *image, opj_jp2_color_t *color)
 {
 	opj_image_comp_t *old_comps, *new_comps;
@@ -1076,7 +1077,8 @@ void opj_jp2_apply_cdef(opj_image_t *image, opj_jp2_color_t *color)
 	for(i = 0; i < n; ++i)
 	{
 		/* WATCH: acn = asoc - 1 ! */
-		if((asoc = info[i].asoc) == 0)
+    asoc = info[i].asoc;
+		if(asoc == 0 || asoc == 65535)
                 {
                     if (i < image->numcomps)
                         image->comps[i].alpha = info[i].typ;
@@ -1085,6 +1087,11 @@ void opj_jp2_apply_cdef(opj_image_t *image, opj_jp2_color_t *color)
 
 		cn = info[i].cn; 
         acn = asoc - 1;
+        if( cn >= image->numcomps || acn >= image->numcomps )
+        {
+            fprintf(stderr, "cn=%d, acn=%d, numcomps=%d\n", cn, acn, image->numcomps);
+            continue;
+        }
 
 		if(cn != acn)
 		{
