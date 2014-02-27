@@ -406,7 +406,7 @@ opj_image_t* tgatoimage(const char *filename, opj_cparameters_t *parameters) {
 int imagetotga(opj_image_t * image, const char *outfile) {
     int width, height, bpp, x, y;
     OPJ_BOOL write_alpha;
-    int i, adjustR, adjustG, adjustB;
+    int i, v, adjustR, adjustG, adjustB, fails;
     unsigned int alpha_channel;
     float r,g,b,a;
     unsigned char value;
@@ -437,8 +437,9 @@ int imagetotga(opj_image_t * image, const char *outfile) {
 
     /* Write TGA header  */
     bpp = write_alpha ? 32 : 24;
+
     if (!tga_writeheader(fdest, bpp, width , height, OPJ_TRUE))
-        return 1;
+		goto fin;
 
     alpha_channel = image->numcomps-1;
 
@@ -448,56 +449,74 @@ int imagetotga(opj_image_t * image, const char *outfile) {
     adjustG = (image->comps[1].sgnd ? 1 << (image->comps[1].prec - 1) : 0);
     adjustB = (image->comps[2].sgnd ? 1 << (image->comps[2].prec - 1) : 0);
 
-    for (y=0; y < height; y++) {
-        unsigned int index=y*width;
+	for (y=0; y < height; y++) 
+   {
+	unsigned int index=y*width;
 
-        for (x=0; x < width; x++, index++)	{
-            r = (float)(image->comps[0].data[index] + adjustR);
+	for (x=0; x < width; x++, index++)	
+  {
+	r = (float)(image->comps[0].data[index] + adjustR);
 
-            if (image->numcomps>2) {
-                g = (float)(image->comps[1].data[index] + adjustG);
-                b = (float)(image->comps[2].data[index] + adjustB);
-            }
-            else  {/* Greyscale ... */
-                g = r;
-                b = r;
-            }
+	if (image->numcomps > 2) 
+ {
+	g = (float)(image->comps[1].data[index] + adjustG);
+	b = (float)(image->comps[2].data[index] + adjustB);
+ }
+	else  
+ {/* Greyscale ... */
+	g = r;
+	b = r;
+ }
 
-            /* TGA format writes BGR ... */
-            value = (unsigned char)(b*scale);
-            res = fwrite(&value,1,1,fdest);
-            if( res < 1 ) {
-                fprintf(stderr, "failed to write 1 byte for %s\n", outfile);
-                return 1;
-            }
+/* TGA format writes BGR ... */
+	if(b > 255.) b = 255.; else if(b < 0.) b = 0.;
+	value = (unsigned char)(b*scale);
+	res = fwrite(&value,1,1,fdest);
 
-            value = (unsigned char)(g*scale);
-            res = fwrite(&value,1,1,fdest);
-            if( res < 1 ) {
-                fprintf(stderr, "failed to write 1 byte for %s\n", outfile);
-                return 1;
-            }
+	if( res < 1 ) 
+ {
+ 	fprintf(stderr, "failed to write 1 byte for %s\n", outfile);
+	goto fin;
+ }
+	if(g > 255.) g = 255.; else if(g < 0.) g = 0.;
+	value = (unsigned char)(g*scale);
+	res = fwrite(&value,1,1,fdest);
 
-            value = (unsigned char)(r*scale);
-            res = fwrite(&value,1,1,fdest);
-            if( res < 1 ) {
-                fprintf(stderr, "failed to write 1 byte for %s\n", outfile);
-                return 1;
-            }
+	if( res < 1 ) 
+ {
+	fprintf(stderr, "failed to write 1 byte for %s\n", outfile);
+	goto fin;
+ }
+	if(r > 255.) r = 255.; else if(r < 0.) r = 0.;
+	value = (unsigned char)(r*scale);
+	res = fwrite(&value,1,1,fdest);
 
-            if (write_alpha) {
-                a = (float)(image->comps[alpha_channel].data[index]);
-                value = (unsigned char)(a*scale);
-                res = fwrite(&value,1,1,fdest);
-                if( res < 1 ) {
-                    fprintf(stderr, "failed to write 1 byte for %s\n", outfile);
-                    return 1;
-                }
-            }
-        }
-    }
+	if( res < 1 ) 
+ {
+	fprintf(stderr, "failed to write 1 byte for %s\n", outfile);
+	goto fin;
+ }
 
-    return 0;
+	if (write_alpha) 
+ {
+	a = (float)(image->comps[alpha_channel].data[index]);
+	if(a > 255.) a = 255.; else if(a < 0.) a = 0.;
+	value = (unsigned char)(a*scale);
+	res = fwrite(&value,1,1,fdest);
+
+		if( res < 1 ) 
+	   {
+		fprintf(stderr, "failed to write 1 byte for %s\n", outfile);
+		goto fin;
+	   }
+ }
+  }
+   }
+	fails = 0;
+fin:
+	fclose(fdest);
+
+	return fails;
 }
 
 /* -->> -->> -->> -->>
@@ -1397,70 +1416,90 @@ opj_image_t* pgxtoimage(const char *filename, opj_cparameters_t *parameters) {
     return image;
 }
 
-int imagetopgx(opj_image_t * image, const char *outfile) {
+int imagetopgx(opj_image_t * image, const char *outfile) 
+{
     int w, h;
-    int i, j, compno;
+	int i, j, compno, fails;
     FILE *fdest = NULL;
 
-    for (compno = 0; compno < image->numcomps; compno++) {
-        opj_image_comp_t *comp = &image->comps[compno];
-        char bname[256]; /* buffer for name */
+	for (compno = 0; compno < image->numcomps; compno++) 
+   {
+	opj_image_comp_t *comp = &image->comps[compno];
+	char bname[256]; /* buffer for name */
         char *name = bname; /* pointer */
         int nbytes = 0;
         size_t res;
         const size_t olen = strlen(outfile);
         const size_t dotpos = olen - 4;
         const size_t total = dotpos + 1 + 1 + 4; /* '-' + '[1-3]' + '.pgx' */
-        if( outfile[dotpos] != '.' ) {
-            /* `pgx` was recognized but there is no dot at expected position */
+
+    if( outfile[dotpos] != '.' ) 
+  {
+/* `pgx` was recognized but there is no dot at expected position */
             fprintf(stderr, "ERROR -> Impossible happen." );
             return 1;
-        }
-        if( total > 256 ) {
-            name = (char*)malloc(total+1);
-        }
+  }
+    if( total > 256 ) 
+  {
+	name = (char*)malloc(total+1);
+  }
         strncpy(name, outfile, dotpos);
         /*if (image->numcomps > 1) {*/
         sprintf(name+dotpos, "_%d.pgx", compno);
         /*} else {
             strcpy(name+dotpos, ".pgx");
         }*/
-        fdest = fopen(name, "wb");
-        if (!fdest) {
-            fprintf(stderr, "ERROR -> failed to open %s for writing\n", name);
-            return 1;
-        }
-        /* dont need name anymore */
-        if( total > 256 ) {
+	fdest = fopen(name, "wb");
+	if (!fdest) 
+  {
+	fprintf(stderr, "ERROR -> failed to open %s for writing\n", name);
+	return 1;
+  }
+/* dont need name anymore */
+    if( total > 256 ) 
             free(name);
-        }
+  
+	fails = 1;
+	w = image->comps[compno].w;
+	h = image->comps[compno].h;
 
-        w = image->comps[compno].w;
-        h = image->comps[compno].h;
+	fprintf(fdest, "PG ML %c %d %d %d\n", comp->sgnd ? '-' : '+', 
+	 comp->prec, w, h);
 
-        fprintf(fdest, "PG ML %c %d %d %d\n", comp->sgnd ? '-' : '+', comp->prec, w, h);
-        if (comp->prec <= 8) {
-            nbytes = 1;
-        } else if (comp->prec <= 16) {
-            nbytes = 2;
-        } else {
-            nbytes = 4;
-        }
-        for (i = 0; i < w * h; i++) {
-            int v = image->comps[compno].data[i];
-            for (j = nbytes - 1; j >= 0; j--) {
-                char byte = (char) (v >> (j * 8));
-                res = fwrite(&byte, 1, 1, fdest);
-                if( res < 1 ) {
-                    fprintf(stderr, "failed to write 1 byte for %s\n", name);
-                    return 1;
-                }
-            }
-        }
-        fclose(fdest);
-    }
+	if (comp->prec <= 8) 
+	 nbytes = 1;
+	else 
+	if (comp->prec <= 16)
+	 nbytes = 2;
+	else
+	 nbytes = 4;
 
-    return 0;
+	for (i = 0; i < w * h; i++) 
+  {
+	int v, val = image->comps[compno].data[i];
+	unsigned char byte;
+
+	for (j = nbytes - 1; j >= 0; j--) 
+ {
+	v = (int)(val >> (j * 8));
+	if(v > 255) v = 255; else if(v < 0) v = 0;
+	byte = (unsigned char)v;
+	res = fwrite(&byte, 1, 1, fdest);
+
+		if( res < 1 ) 
+	   {
+		fprintf(stderr, "failed to write 1 byte for %s\n", name);
+		goto fin;
+	   }
+ }
+  }
+	fclose(fdest); fdest = NULL;
+   }
+	fails = 0;
+fin:
+	if(fdest) fclose(fdest);
+
+	return fails;
 }
 
 /* -->> -->> -->> -->>
@@ -1893,7 +1932,9 @@ int imagetopnm(opj_image_t * image, const char *outfile)
     FILE *fdest = NULL;
     const char *tmp = outfile;
     char *destname;
-    alpha = NULL;
+
+	alpha = NULL;
+
     if((prec = image->comps[0].prec) > 16)
     {
         fprintf(stderr,"%s:%d:imagetopnm\n\tprecision %d is larger than 16"
@@ -1971,16 +2012,22 @@ int imagetopnm(opj_image_t * image, const char *outfile)
             if(two)
             {
                 v = *red + adjustR; ++red;
+if(v > 65535) v = 65535; else if(v < 0) v = 0;
+
                 /* netpbm: */
                 fprintf(fdest, "%c%c",(unsigned char)(v>>8), (unsigned char)v);
 
                 if(triple)
                 {
                     v = *green + adjustG; ++green;
+if(v > 65535) v = 65535; else if(v < 0) v = 0;
+
                     /* netpbm: */
                     fprintf(fdest, "%c%c",(unsigned char)(v>>8), (unsigned char)v);
 
                     v =  *blue + adjustB; ++blue;
+if(v > 65535) v = 65535; else if(v < 0) v = 0;
+
                     /* netpbm: */
                     fprintf(fdest, "%c%c",(unsigned char)(v>>8), (unsigned char)v);
 
@@ -1989,6 +2036,8 @@ int imagetopnm(opj_image_t * image, const char *outfile)
                 if(has_alpha)
                 {
                     v = *alpha + adjustA; ++alpha;
+		if(v > 65535) v = 65535; else if(v < 0) v = 0;
+
                     /* netpbm: */
                     fprintf(fdest, "%c%c",(unsigned char)(v>>8), (unsigned char)v);
                 }
@@ -1997,14 +2046,28 @@ int imagetopnm(opj_image_t * image, const char *outfile)
             }	/* if(two) */
 
             /* prec <= 8: */
+	v = *red++;
+	if(v > 255) v = 255; else if(v < 0) v = 0;
 
-            fprintf(fdest, "%c", (unsigned char)*red++);
+	fprintf(fdest, "%c", (unsigned char)v);
             if(triple)
-                fprintf(fdest, "%c%c",(unsigned char)*green++, (unsigned char)*blue++);
+ {
+	v = *green++;
+	if(v > 255) v = 255; else if(v < 0) v = 0;
 
+	fprintf(fdest, "%c", (unsigned char)v);
+	v = *blue++;
+	if(v > 255) v = 255; else if(v < 0) v = 0;
+
+	fprintf(fdest, "%c", (unsigned char)v);
+ }
             if(has_alpha)
-                fprintf(fdest, "%c", (unsigned char)*alpha++);
+ {
+	v = *alpha++;
+	if(v > 255) v = 255; else if(v < 0) v = 0;
 
+	fprintf(fdest, "%c", (unsigned char)v);
+ }
         }	/* for(i */
 
         fclose(fdest); return 0;
@@ -2049,12 +2112,16 @@ int imagetopnm(opj_image_t * image, const char *outfile)
             for (i = 0; i < wr * hr; i++)
             {
                 v = *red + adjustR; ++red;
+if(v > 65535) v = 65535; else if(v < 0) v = 0;
+
                 /* netpbm: */
                 fprintf(fdest, "%c%c",(unsigned char)(v>>8), (unsigned char)v);
 
                 if(has_alpha)
                 {
                     v = *alpha++;
+if(v > 65535) v = 65535; else if(v < 0) v = 0;
+
                     /* netpbm: */
                     fprintf(fdest, "%c%c",(unsigned char)(v>>8), (unsigned char)v);
                 }
@@ -2064,7 +2131,10 @@ int imagetopnm(opj_image_t * image, const char *outfile)
         {
             for(i = 0; i < wr * hr; ++i)
             {
-                fprintf(fdest, "%c", (unsigned char)(*red + adjustR)); ++red;
+	v = *red + adjustR; ++red;
+	if(v > 255) v = 255; else if(v < 0) v = 0;
+
+	 fprintf(fdest, "%c", (unsigned char)v);
             }
         }
         fclose(fdest);
@@ -2174,10 +2244,17 @@ int imagetotif(opj_image_t * image, const char *outfile)
                             b += adjust;
                             if(has_alpha) a += adjust;
                         }
+		if(r > 255) r = 255; else if(r < 0) r = 0;
                         dat8[i+0] = r ;
+		if(g > 255) g = 255; else if(g < 0) g = 0;
                         dat8[i+1] = g ;
+		if(b > 255) b = 255; else if(b < 0) b = 0;
                         dat8[i+2] = b ;
-                        if(has_alpha) dat8[i+3] = a;
+		if(has_alpha) 
+	 {
+		if(a > 255) a = 255; else if(a < 0) a = 0;
+		dat8[i+3] = a;
+	 }
 
                         index++;
                         last_i = i + step;
@@ -2206,11 +2283,17 @@ int imagetotif(opj_image_t * image, const char *outfile)
                                 b += adjust;
                                 if(has_alpha) a += adjust;
                             }
+		if(r > 255) r = 255; else if(r < 0) r = 0;
+		if(g > 255) g = 255; else if(g < 0) g = 0;
+		if(b > 255) b = 255; else if(b < 0) b = 0;
+
                             dat8[i+0] = r ;
                             if(i+1 < ssize) dat8[i+1] = g ;  else break;
                             if(i+2 < ssize) dat8[i+2] = b ;  else break;
                             if(has_alpha)
                             {
+		if(a > 255) a = 255; else if(a < 0) a = 0;
+
                                 if(i+3 < ssize) dat8[i+3] = a ;  else break;
                             }
                             index++;
@@ -2252,6 +2335,10 @@ int imagetotif(opj_image_t * image, const char *outfile)
                                 b = (b<<ushift) + (b>>dshift);
                                 if(has_alpha) a = (a<<ushift) + (a>>dshift);
                             }
+		if(r > 65535) r = 65535; else if(r < 0) r = 0;
+		if(g > 65535) g = 65535; else if(g < 0) g = 0;
+		if(b > 65535) b = 65535; else if(b < 0) b = 0;
+
                             dat8[i+0] =  r;/*LSB*/
                             dat8[i+1] = (r >> 8);/*MSB*/
                             dat8[i+2] =  g;
@@ -2260,6 +2347,7 @@ int imagetotif(opj_image_t * image, const char *outfile)
                             dat8[i+5] = (b >> 8);
                             if(has_alpha)
                             {
+		if(a > 65535) a = 65535; else if(a < 0) a = 0;
                                 dat8[i+6] =  a;
                                 dat8[i+7] = (a >> 8);
                             }
@@ -2297,6 +2385,10 @@ int imagetotif(opj_image_t * image, const char *outfile)
                                     b = (b<<ushift) + (b>>dshift);
                                     if(has_alpha) a = (a<<ushift) + (a>>dshift);
                                 }
+		if(r > 65535) r = 65535; else if(r < 0) r = 0;
+		if(g > 65535) g = 65535; else if(g < 0) g = 0;
+		if(b > 65535) b = 65535; else if(b < 0) b = 0;
+
                                 dat8[i+0] =  r;/*LSB*/
                                 if(i+1 < ssize) dat8[i+1] = (r >> 8);else break;/*MSB*/
                                 if(i+2 < ssize) dat8[i+2] =  g;      else break;
@@ -2306,6 +2398,7 @@ int imagetotif(opj_image_t * image, const char *outfile)
 
                                 if(has_alpha)
                                 {
+		if(a > 65535) a = 65535; else if(a < 0) a = 0;
                                     if(i+6 < ssize) dat8[i+6] = a; else break;
                                     if(i+7 < ssize) dat8[i+7] = (a >> 8); else break;
                                 }
@@ -2379,13 +2472,19 @@ int imagetotif(opj_image_t * image, const char *outfile)
                             r += adjust;
                             if(has_alpha) a += adjust;
                         }
+		if(r > 255) r = 255; else if(r < 0) r = 0;
                         dat8[i+0] = r;
-                        if(has_alpha) dat8[i+1] = a;
-                        index++;
+
+		if(has_alpha) 
+	 {
+		if(a > 255) a = 255; else if(a < 0) a = 0;
+		dat8[i+1] = a;
                     }
+		index++;
+	  }
                     else
                         break;
-                }/*for(i )*/
+	   }/*for(i )*/
             }/*if(bps == 8*/
             else
                 if(bps == 16)
@@ -2411,10 +2510,12 @@ int imagetotif(opj_image_t * image, const char *outfile)
                                 r = (r<<ushift) + (r>>dshift);
                                 if(has_alpha) a = (a<<ushift) + (a>>dshift);
                             }
+		if(r > 65535) r = 65535; else if(r < 0) r = 0;
                             dat8[i+0] = r;/*LSB*/
                             dat8[i+1] = r >> 8;/*MSB*/
                             if(has_alpha)
                             {
+		if(a > 65535) a = 65535; else if(a < 0) a = 0;
                                 dat8[i+2] = a;
                                 dat8[i+3] = a >> 8;
                             }
@@ -2490,7 +2591,7 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
     if( !tiBps || !tiPhoto)
     {
         if( !tiBps)
-            fprintf(stderr,"imagetotif: Bits=%d, Only 8 and 16 bits"
+     fprintf(stderr,"tiftoimage: Bits=%d, Only 8 and 16 bits"
                     " implemented\n",tiBps);
         else
             if( !tiPhoto)
@@ -3427,6 +3528,10 @@ int imagetopng(opj_image_t * image, const char *write_idf)
         {
             png_set_packing(png);
         }
+printf("%s:%d:sgnd(%d,%d,%d) w(%d) h(%d) alpha(%d)\n",__FILE__,__LINE__,
+image->comps[0].sgnd,
+image->comps[1].sgnd,image->comps[2].sgnd,width,height,has_alpha);
+
         adjustR = (image->comps[0].sgnd ? 1 << (image->comps[0].prec - 1) : 0);
         adjustG = (image->comps[1].sgnd ? 1 << (image->comps[1].prec - 1) : 0);
         adjustB = (image->comps[2].sgnd ? 1 << (image->comps[2].prec - 1) : 0);
@@ -3442,18 +3547,21 @@ int imagetopng(opj_image_t * image, const char *write_idf)
                 if(is16)
                 {
                     v = *red + adjustR; ++red;
+		if(v > 65535) v = 65535; else if(v < 0) v = 0;
 
                     if(force16) { v = (v<<ushift) + (v>>dshift); }
 
                     *d++ = (unsigned char)(v>>8); *d++ = (unsigned char)v;
 
                     v = *green + adjustG; ++green;
+		if(v > 65535) v = 65535; else if(v < 0) v = 0;
 
                     if(force16) { v = (v<<ushift) + (v>>dshift); }
 
                     *d++ = (unsigned char)(v>>8); *d++ = (unsigned char)v;
 
                     v =  *blue + adjustB; ++blue;
+		if(v > 65535) v = 65535; else if(v < 0) v = 0;
 
                     if(force16) { v = (v<<ushift) + (v>>dshift); }
 
@@ -3462,6 +3570,7 @@ int imagetopng(opj_image_t * image, const char *write_idf)
                     if(has_alpha)
                     {
                         v = *alpha + adjustA; ++alpha;
+		if(v > 65535) v = 65535; else if(v < 0) v = 0;
 
                         if(force16) { v = (v<<ushift) + (v>>dshift); }
 
@@ -3471,18 +3580,21 @@ int imagetopng(opj_image_t * image, const char *write_idf)
                 }/* if(is16) */
 
                 v = *red + adjustR; ++red;
+		if(v > 255) v = 255; else if(v < 0) v = 0;
 
                 if(force8) { v = (v<<ushift) + (v>>dshift); }
 
                 *d++ = (unsigned char)(v & mask);
 
                 v = *green + adjustG; ++green;
+		if(v > 255) v = 255; else if(v < 0) v = 0;
 
                 if(force8) { v = (v<<ushift) + (v>>dshift); }
 
                 *d++ = (unsigned char)(v & mask);
 
                 v = *blue + adjustB; ++blue;
+		if(v > 255) v = 255; else if(v < 0) v = 0;
 
                 if(force8) { v = (v<<ushift) + (v>>dshift); }
 
@@ -3491,6 +3603,7 @@ int imagetopng(opj_image_t * image, const char *write_idf)
                 if(has_alpha)
                 {
                     v = *alpha + adjustA; ++alpha;
+		if(v > 255) v = 255; else if(v < 0) v = 0;
 
                     if(force8) { v = (v<<ushift) + (v>>dshift); }
 
@@ -3561,6 +3674,7 @@ int imagetopng(opj_image_t * image, const char *write_idf)
                     for(x = 0; x < width; ++x)
                     {
                         v = *red + adjustR; ++red;
+		if(v > 65535) v = 65535; else if(v < 0) v = 0;
 
                         if(force16) { v = (v<<ushift) + (v>>dshift); }
 
@@ -3569,6 +3683,7 @@ int imagetopng(opj_image_t * image, const char *write_idf)
                         if(has_alpha)
                         {
                             v = *alpha++;
+		if(v > 65535) v = 65535; else if(v < 0) v = 0;
 
                             if(force16) { v = (v<<ushift) + (v>>dshift); }
 
@@ -3591,6 +3706,7 @@ int imagetopng(opj_image_t * image, const char *write_idf)
                     for(x = 0; x < width; ++x)
                     {
                         v = *red + adjustR; ++red;
+		if(v > 255) v = 255; else if(v < 0) v = 0;
 
                         if(force8) { v = (v<<ushift) + (v>>dshift); }
 
@@ -3599,6 +3715,7 @@ int imagetopng(opj_image_t * image, const char *write_idf)
                         if(has_alpha)
                         {
                             v = *alpha + adjustA; ++alpha;
+		if(v > 255) v = 255; else if(v < 0) v = 0;
 
                             if(force8) { v = (v<<ushift) + (v>>dshift); }
 
