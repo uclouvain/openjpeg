@@ -560,32 +560,24 @@ int main(int argc, char **argv)
   memsizetestfilename = (int)strlen(inParam.test_filename) + 1 + 5 + 2 + 4;
 
   imageBase = readImageFromFilePGX( inParam.base_filename, nbFilenamePGXbase, inParam.separator_base);
-  if ( imageBase != NULL)
-    {
-    filenamePNGbase = (char*) malloc(memsizebasefilename);
-    strcpy(filenamePNGbase, inParam.test_filename);
-    strcat(filenamePNGbase, ".base");
-    /*printf("filenamePNGbase = %s [%d / %d octets]\n",filenamePNGbase, strlen(filenamePNGbase),memsizebasefilename );*/
-    }
-  else
-    {
+  if ( imageBase == NULL )
     goto cleanup;
-    }
+
+  filenamePNGbase = (char*) malloc(memsizebasefilename);
+  strcpy(filenamePNGbase, inParam.test_filename);
+  strcat(filenamePNGbase, ".base");
+  /*printf("filenamePNGbase = %s [%d / %d octets]\n",filenamePNGbase, strlen(filenamePNGbase),memsizebasefilename );*/
 
   /*----------TEST IMAGE--------*/
 
   imageTest = readImageFromFilePGX(inParam.test_filename, nbFilenamePGXtest, inParam.separator_test);
-  if ( imageTest != NULL)
-    {
-    filenamePNGtest = (char*) malloc(memsizetestfilename);
-    strcpy(filenamePNGtest, inParam.test_filename);
-    strcat(filenamePNGtest, ".test");
-    /*printf("filenamePNGtest = %s [%d / %d octets]\n",filenamePNGtest, strlen(filenamePNGtest),memsizetestfilename );*/
-    }
-  else
-    {
+  if ( imageTest == NULL )
     goto cleanup;
-    }
+
+  filenamePNGtest = (char*) malloc(memsizetestfilename);
+  strcpy(filenamePNGtest, inParam.test_filename);
+  strcat(filenamePNGtest, ".test");
+  /*printf("filenamePNGtest = %s [%d / %d octets]\n",filenamePNGtest, strlen(filenamePNGtest),memsizetestfilename );*/
 
   /*----------DIFF IMAGE--------*/
 
