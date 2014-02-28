@@ -1416,90 +1416,101 @@ opj_image_t* pgxtoimage(const char *filename, opj_cparameters_t *parameters) {
     return image;
 }
 
+#define CLAMP(x,a,b) x < a ? a : (x > b ? b : x)
+
+static inline int clamp( const int value, const int prec, const int sgnd )
+{
+  if( sgnd )
+    {
+    if (prec <= 8)       return CLAMP(value,-128,127);
+    else if (prec <= 16) return CLAMP(value,-32768,32767);
+    else                 return CLAMP(value,-2147483648,2147483647);
+    }
+  else
+    {
+    if (prec <= 8)       return CLAMP(value,0,255);
+    else if (prec <= 16) return CLAMP(value,0,65535);
+    else                 return CLAMP(value,0,4294967295);
+    }
+}
+
 int imagetopgx(opj_image_t * image, const char *outfile) 
 {
-    int w, h;
-	int i, j, compno, fails;
-    FILE *fdest = NULL;
+  int w, h;
+  int i, j, compno, fails = 1;
+  FILE *fdest = NULL;
 
-	for (compno = 0; compno < image->numcomps; compno++) 
-   {
-	opj_image_comp_t *comp = &image->comps[compno];
-	char bname[256]; /* buffer for name */
-        char *name = bname; /* pointer */
-        int nbytes = 0;
-        size_t res;
-        const size_t olen = strlen(outfile);
-        const size_t dotpos = olen - 4;
-        const size_t total = dotpos + 1 + 1 + 4; /* '-' + '[1-3]' + '.pgx' */
+  for (compno = 0; compno < image->numcomps; compno++) 
+    {
+    opj_image_comp_t *comp = &image->comps[compno];
+    char bname[256]; /* buffer for name */
+    char *name = bname; /* pointer */
+    int nbytes = 0;
+    size_t res;
+    const size_t olen = strlen(outfile);
+    const size_t dotpos = olen - 4;
+    const size_t total = dotpos + 1 + 1 + 4; /* '-' + '[1-3]' + '.pgx' */
 
     if( outfile[dotpos] != '.' ) 
-  {
-/* `pgx` was recognized but there is no dot at expected position */
-            fprintf(stderr, "ERROR -> Impossible happen." );
-            return 1;
-  }
+      {
+      /* `pgx` was recognized but there is no dot at expected position */
+      fprintf(stderr, "ERROR -> Impossible happen." );
+      goto fin;
+      }
     if( total > 256 ) 
-  {
-	name = (char*)malloc(total+1);
-  }
-        strncpy(name, outfile, dotpos);
-        /*if (image->numcomps > 1) {*/
-        sprintf(name+dotpos, "_%d.pgx", compno);
-        /*} else {
-            strcpy(name+dotpos, ".pgx");
-        }*/
-	fdest = fopen(name, "wb");
-	if (!fdest) 
-  {
-	fprintf(stderr, "ERROR -> failed to open %s for writing\n", name);
-	return 1;
-  }
-/* dont need name anymore */
-    if( total > 256 ) 
-            free(name);
-  
-	fails = 1;
-	w = image->comps[compno].w;
-	h = image->comps[compno].h;
+      {
+      name = (char*)malloc(total+1);
+      }
+    strncpy(name, outfile, dotpos);
+    sprintf(name+dotpos, "_%d.pgx", compno);
+    fdest = fopen(name, "wb");
+    /* dont need name anymore */
+    if( total > 256 ) free(name);
+    if (!fdest) 
+      {
+      fprintf(stderr, "ERROR -> failed to open %s for writing\n", name);
+      goto fin;
+      }
 
-	fprintf(fdest, "PG ML %c %d %d %d\n", comp->sgnd ? '-' : '+', 
-	 comp->prec, w, h);
+    w = image->comps[compno].w;
+    h = image->comps[compno].h;
 
-	if (comp->prec <= 8) 
-	 nbytes = 1;
-	else 
-	if (comp->prec <= 16)
-	 nbytes = 2;
-	else
-	 nbytes = 4;
+    fprintf(fdest, "PG ML %c %d %d %d\n", comp->sgnd ? '-' : '+', comp->prec,
+      w, h);
 
-	for (i = 0; i < w * h; i++) 
-  {
-	int v, val = image->comps[compno].data[i];
-	unsigned char byte;
+    if (comp->prec <= 8) 
+      nbytes = 1;
+    else if (comp->prec <= 16)
+      nbytes = 2;
+    else
+      nbytes = 4;
 
-	for (j = nbytes - 1; j >= 0; j--) 
- {
-	v = (int)(val >> (j * 8));
-	if(v > 255) v = 255; else if(v < 0) v = 0;
-	byte = (unsigned char)v;
-	res = fwrite(&byte, 1, 1, fdest);
+    for (i = 0; i < w * h; i++) 
+      {
+      /* FIXME: clamp func is being called within a loop */
+      const int val = clamp(image->comps[compno].data[i],
+        comp->prec, comp->sgnd);
 
-		if( res < 1 ) 
-	   {
-		fprintf(stderr, "failed to write 1 byte for %s\n", name);
-		goto fin;
-	   }
- }
-  }
-	fclose(fdest); fdest = NULL;
-   }
-	fails = 0;
+      for (j = nbytes - 1; j >= 0; j--) 
+        {
+        int v = (int)(val >> (j * 8));
+        unsigned char byte = (unsigned char)v;
+        res = fwrite(&byte, 1, 1, fdest);
+
+        if( res < 1 ) 
+          {
+          fprintf(stderr, "failed to write 1 byte for %s\n", name);
+          goto fin;
+          }
+        }
+      }
+    fclose(fdest); fdest = NULL;
+    }
+  fails = 0;
 fin:
-	if(fdest) fclose(fdest);
+  if(fdest) fclose(fdest);
 
-	return fails;
+  return fails;
 }
 
 /* -->> -->> -->> -->>
