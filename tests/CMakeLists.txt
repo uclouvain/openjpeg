@@ -93,7 +93,7 @@ if(BUILD_JPIP)
     #set(s "http://jpip.example.com/myFCGI?target=16.jp2&fsiz=170,170&cnew=http&type=jpp-stream")
     set(s "${JPIP_SERVER}?target=16.jp2&fsiz=170,170&cnew=http&type=jpp-stream")
     set(p "${CMAKE_CURRENT_BINARY_DIR}/jpip.dat")
-    set(md5 "62b00c620fb0a600c5ffd413cada4674")
+    set(md5 "d41d8cd98f00b204e9800998ecf8427e")
     add_test(NAME TestJPIP1 COMMAND ${CMAKE_COMMAND} -DD_URL:STRING=${s} -DD_FILE:PATH=${p}
       -DEXPECTED_MD5=${md5} -P ${PROJECT_SOURCE_DIR}/cmake/JPIPTestDriver.cmake)
   endif()
