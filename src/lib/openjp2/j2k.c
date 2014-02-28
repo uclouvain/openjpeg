@@ -4030,7 +4030,7 @@ OPJ_BOOL opj_j2k_read_sot ( opj_j2k_t *p_j2k,
 
                 /* If know the number of tile part header we will check if we didn't read the last*/
                 if (l_tcp->m_nb_tile_parts) {
-                        if (l_tcp->m_nb_tile_parts == l_current_part) {
+                        if (l_tcp->m_nb_tile_parts == (l_current_part+1)) {
                                 p_j2k->m_specific_param.m_decoder.m_can_decode = 1; /* Process the last tile-part header*/
                         }
                 }
