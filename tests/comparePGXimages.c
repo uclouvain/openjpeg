@@ -717,20 +717,13 @@ int main(int argc, char **argv)
            char *filenamePNGbase_it_comp, *filenamePNGtest_it_comp, *filenamePNGdiff_it_comp;
 
            filenamePNGbase_it_comp = (char*) malloc(memsizebasefilename);
-           filenamePNGbase_it_comp[0] = 0;
-           strncpy(filenamePNGbase_it_comp,filenamePNGbase,strlen(filenamePNGbase));
-           filenamePNGbase_it_comp[strlen(filenamePNGbase)] = 0;
+           strcpy(filenamePNGbase_it_comp,filenamePNGbase);
 
            filenamePNGtest_it_comp = (char*) malloc(memsizetestfilename);
-           filenamePNGtest_it_comp[0] = 0;
-           strncpy(filenamePNGtest_it_comp,filenamePNGtest,strlen(filenamePNGtest));
-           filenamePNGtest_it_comp[strlen(filenamePNGtest)] = 0;
+           strcpy(filenamePNGtest_it_comp,filenamePNGtest);
 
            filenamePNGdiff_it_comp = (char*) malloc(memsizedifffilename);
-           filenamePNGdiff_it_comp[0] = 0;
-           strncpy(filenamePNGdiff_it_comp,filenamePNGdiff,strlen(filenamePNGdiff));
-           filenamePNGdiff_it_comp[strlen(filenamePNGdiff)] = 0;
-
+           strcpy(filenamePNGdiff_it_comp,filenamePNGdiff);
 
            sprintf(it_compc, "_%i", it_comp);
            strcat(it_compc,".png");
