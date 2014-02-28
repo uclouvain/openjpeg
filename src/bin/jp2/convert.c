@@ -3036,9 +3036,10 @@ static int imagetoraw_common(opj_image_t * image, const char *outfile, OPJ_BOOL 
     FILE *rawFile = NULL;
     size_t res;
     int compno;
-    int w, h;
-    int line, row;
+    int w, h, fails;
+    int line, row, curr, mask;
     int *ptr;
+    unsigned char uc;
 
     if((image->numcomps * image->x1 * image->y1) == 0)
     {
@@ -3052,6 +3053,7 @@ static int imagetoraw_common(opj_image_t * image, const char *outfile, OPJ_BOOL 
         return 1;
     }
 
+    fails = 1;
     fprintf(stdout,"Raw image characteristics: %d components\n", image->numcomps);
 
     for(compno = 0; compno < image->numcomps; compno++)
@@ -3066,16 +3068,17 @@ static int imagetoraw_common(opj_image_t * image, const char *outfile, OPJ_BOOL 
         {
             if(image->comps[compno].sgnd == 1)
             {
-                signed char curr;
-                int mask = (1 << image->comps[compno].prec) - 1;
+                mask = (1 << image->comps[compno].prec) - 1;
                 ptr = image->comps[compno].data;
                 for (line = 0; line < h; line++) {
                     for(row = 0; row < w; row++)	{
-                        curr = (signed char) (*ptr & mask);
-                        res = fwrite(&curr, sizeof(signed char), 1, rawFile);
+                        curr = *ptr;
+                        if(curr > 127) curr = 127; else if(curr < -128) curr = -128;
+                        uc = (unsigned char) (curr & mask);
+                        res = fwrite(&uc, 1, 1, rawFile);
                         if( res < 1 ) {
                             fprintf(stderr, "failed to write 1 byte for %s\n", outfile);
-                            return 1;
+                            goto fin;
                         }
                         ptr++;
                     }
@@ -3083,16 +3086,17 @@ static int imagetoraw_common(opj_image_t * image, const char *outfile, OPJ_BOOL 
             }
             else if(image->comps[compno].sgnd == 0)
             {
-                unsigned char curr;
-                int mask = (1 << image->comps[compno].prec) - 1;
+                mask = (1 << image->comps[compno].prec) - 1;
                 ptr = image->comps[compno].data;
                 for (line = 0; line < h; line++) {
                     for(row = 0; row < w; row++)	{
-                        curr = (unsigned char) (*ptr & mask);
-                        res = fwrite(&curr, sizeof(unsigned char), 1, rawFile);
+                        curr = *ptr;
+                        if(curr > 255) curr = 255; else if(curr < 0) curr = 0;
+                        uc = (unsigned char) (curr & mask);
+                        res = fwrite(&uc, 1, 1, rawFile);
                         if( res < 1 ) {
                             fprintf(stderr, "failed to write 1 byte for %s\n", outfile);
-                            return 1;
+                            goto fin;
                         }
                         ptr++;
                     }
@@ -3103,33 +3107,18 @@ static int imagetoraw_common(opj_image_t * image, const char *outfile, OPJ_BOOL 
         {
             if(image->comps[compno].sgnd == 1)
             {
-                signed short int curr;
-                int mask = (1 << image->comps[compno].prec) - 1;
+                union { signed short val; signed char vals[2] } uc;
+                mask = (1 << image->comps[compno].prec) - 1;
                 ptr = image->comps[compno].data;
                 for (line = 0; line < h; line++) {
                     for(row = 0; row < w; row++)	{
-                        unsigned char temp1;
-                        unsigned char temp2;
-                        curr = (signed short int) (*ptr & mask);
-                        if( big_endian )
-                        {
-                            temp1 = (unsigned char) (curr >> 8);
-                            temp2 = (unsigned char) curr;
-                        }
-                        else
-                        {
-                            temp2 = (unsigned char) (curr >> 8);
-                            temp1 = (unsigned char) curr;
-                        }
-                        res = fwrite(&temp1, 1, 1, rawFile);
-                        if( res < 1 ) {
-                            fprintf(stderr, "failed to write 1 byte for %s\n", outfile);
-                            return 1;
-                        }
-                        res = fwrite(&temp2, 1, 1, rawFile);
-                        if( res < 1 ) {
-                            fprintf(stderr, "failed to write 1 byte for %s\n", outfile);
-                            return 1;
+                        curr = *ptr;
+                        if(curr > 32767 ) curr = 32767; else if( curr < -32768) curr = -32768;
+                        uc.val = (signed short)(curr & mask);
+                        res = fwrite(uc.vals, 1, 2, rawFile);
+                        if( res < 2 ) {
+                            fprintf(stderr, "failed to write 2 byte for %s\n", outfile);
+                            goto fin;
                         }
                         ptr++;
                     }
@@ -3137,33 +3126,18 @@ static int imagetoraw_common(opj_image_t * image, const char *outfile, OPJ_BOOL 
             }
             else if(image->comps[compno].sgnd == 0)
             {
-                unsigned short int curr;
-                int mask = (1 << image->comps[compno].prec) - 1;
+                union { unsigned short val; unsigned char vals[2] } uc;
+                mask = (1 << image->comps[compno].prec) - 1;
                 ptr = image->comps[compno].data;
                 for (line = 0; line < h; line++) {
                     for(row = 0; row < w; row++)	{
-                        unsigned char temp1;
-                        unsigned char temp2;
-                        curr = (unsigned short int) (*ptr & mask);
-                        if( big_endian )
-                        {
-                            temp1 = (unsigned char) (curr >> 8);
-                            temp2 = (unsigned char) curr;
-                        }
-                        else
-                        {
-                            temp2 = (unsigned char) (curr >> 8);
-                            temp1 = (unsigned char) curr;
-                        }
-                        res = fwrite(&temp1, 1, 1, rawFile);
-                        if( res < 1 ) {
-                            fprintf(stderr, "failed to write 1 byte for %s\n", outfile);
-                            return 1;
-                        }
-                        res = fwrite(&temp2, 1, 1, rawFile);
-                        if( res < 1 ) {
-                            fprintf(stderr, "failed to write 1 byte for %s\n", outfile);
-                            return 1;
+                        curr = *ptr;
+                        if(curr > 65536 ) curr = 65536; else if( curr < 0) curr = 0;
+                        uc.val = (unsigned short)(curr & mask);
+                        res = fwrite(uc.vals, 1, 2, rawFile);
+                        if( res < 2 ) {
+                            fprintf(stderr, "failed to write 2 byte for %s\n", outfile);
+                            goto fin;
                         }
                         ptr++;
                     }
@@ -3173,16 +3147,18 @@ static int imagetoraw_common(opj_image_t * image, const char *outfile, OPJ_BOOL 
         else if (image->comps[compno].prec <= 32)
         {
             fprintf(stderr,"More than 16 bits per component no handled yet\n");
-            return 1;
+            goto fin;
         }
         else
         {
             fprintf(stderr,"Error: invalid precision: %d\n", image->comps[compno].prec);
-            return 1;
+            goto fin;
         }
     }
+  fails = 0;
+fin:
     fclose(rawFile);
-    return 0;
+    return fails;
 }
 
 int imagetoraw(opj_image_t * image, const char *outfile)
