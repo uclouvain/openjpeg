@@ -44,11 +44,214 @@
 #include "format_defs.h"
 #include "convert.h"
 
-double* parseToleranceValues( char* inArg, const int nbcomp);
-void comparePGXimages_help_display(void);
-opj_image_t* readImageFromFilePGX(char* filename, int nbFilenamePGX, char *separator);
+/*******************************************************************************
+ * Parse MSE and PEAK input values (
+ * separator = ":"
+ *******************************************************************************/
+static double* parseToleranceValues( char* inArg, const int nbcomp)
+{
+  double* outArgs= malloc(nbcomp * sizeof(double));
+  int it_comp = 0;
+  char delims[] = ":";
+  char *result = NULL;
+  result = strtok( inArg, delims );
+
+  while( (result != NULL) && (it_comp < nbcomp ))
+    {
+      outArgs[it_comp] = atof(result);
+      result = strtok( NULL, delims );
+      it_comp++;
+    }
+
+  if (it_comp != nbcomp)
+  {
+	free(outArgs);
+    return NULL;
+  }
+  else
+    return outArgs;
+}
+
+/*******************************************************************************
+ * Command line help function
+ *******************************************************************************/
+static void comparePGXimages_help_display(void) {
+  fprintf(stdout,"\nList of parameters for the comparePGX function  \n");
+  fprintf(stdout,"\n");
+  fprintf(stdout,"  -b \t REQUIRED \t filename to the reference/baseline PGX image \n");
+  fprintf(stdout,"  -t \t REQUIRED \t filename to the test PGX image\n");
+  fprintf(stdout,"  -n \t REQUIRED \t number of component of the image (used to generate correct filename)\n");
+  fprintf(stdout,"  -m \t OPTIONAL \t list of MSE tolerances, separated by : (size must correspond to the number of component) of \n");
+  fprintf(stdout,"  -p \t OPTIONAL \t list of PEAK tolerances, separated by : (size must correspond to the number of component) \n");
+  fprintf(stdout,"  -s \t OPTIONAL \t 1 or 2 filename separator to take into account PGX image with different components, "
+                                      "please indicate b or t before separator to indicate respectively the separator "
+                                      "for ref/base file and for test file.  \n");
+  fprintf(stdout,"  -d \t OPTIONAL \t indicate if you want to run this function as conformance test or as non regression test\n");
+  fprintf(stdout,"\n");
+}
+
+/*******************************************************************************
+ * Create filenames from a filename by used separator and nb components
+ * (begin to 0)
+ *******************************************************************************/
+static char* createMultiComponentsFilename(const char* inFilename, const int indexF, const char* separator)
+{
+  char s[255];
+  char *outFilename, *ptr;
+  char token = '.';
+  int posToken = 0;
+
+  /*printf("inFilename = %s\n", inFilename);*/
+  if ((ptr = strrchr(inFilename, token)) != NULL)
+    {
+    posToken = (int) (strlen(inFilename) - strlen(ptr));
+    /*printf("Position of %c character inside inFilename = %d\n", token, posToken);*/
+    }
+  else
+    {
+    /*printf("Token %c not found\n", token);*/
+    outFilename = (char*)malloc(1);
+    outFilename[0] = '\0';
+    return outFilename;
+    }
+
+  outFilename = (char*)malloc((posToken + 7) * sizeof(char)); /*6*/
+
+  strncpy(outFilename, inFilename, posToken);
+
+  outFilename[posToken] = '\0';
+
+  strcat(outFilename, separator);
+
+  sprintf(s, "%i", indexF);
+  strcat(outFilename, s);
+
+  strcat(outFilename, ".pgx");
+
+  /*printf("outfilename: %s\n", outFilename);*/
+  return outFilename;
+}
+
+/*******************************************************************************
+ *
+ *******************************************************************************/
+static opj_image_t* readImageFromFilePGX(char* filename, int nbFilenamePGX, char *separator)
+{
+  int it_file;
+  opj_image_t* image_read = NULL;
+  opj_image_t* image = NULL;
+  opj_cparameters_t parameters;
+  opj_image_cmptparm_t* param_image_read;
+  int** data;
+
+  /* If separator is empty => nb file to read is equal to one*/
+  if ( strlen(separator) == 0 )
+      nbFilenamePGX = 1;
+
+  /* set encoding parameters to default values */
+  opj_set_default_encoder_parameters(&parameters);
+  parameters.decod_format = PGX_DFMT;
+  strncpy(parameters.infile, filename, sizeof(parameters.infile)-1);
+
+  /* Allocate memory*/
+  param_image_read = malloc(nbFilenamePGX * sizeof(opj_image_cmptparm_t));
+  data = malloc(nbFilenamePGX * sizeof(*data));
+
+  it_file = 0;
+  for (it_file = 0; it_file < nbFilenamePGX; it_file++)
+    {
+    /* Create the right filename*/
+    char *filenameComponentPGX;
+    if (strlen(separator) == 0)
+      {
+      filenameComponentPGX = malloc((strlen(filename) + 1) * sizeof(*filenameComponentPGX));
+      strcpy(filenameComponentPGX, filename);
+      }
+    else
+      filenameComponentPGX = createMultiComponentsFilename(filename, it_file, separator);
+
+    /* Read the pgx file corresponding to the component */
+    image_read = pgxtoimage(filenameComponentPGX, &parameters);
+    if (!image_read)
+    {
+    	int it_free_data;
+		fprintf(stderr, "Unable to load pgx file\n");
+
+		free(param_image_read);
+
+		for (it_free_data = 0; it_free_data < it_file; it_free_data++) {
+			free(data[it_free_data]);
+		}
+		free(data);
+
+		free(filenameComponentPGX);
+
+		return NULL;
+	}
+
+    /* Set the image_read parameters*/
+    param_image_read[it_file].x0 = 0;
+    param_image_read[it_file].y0 = 0;
+    param_image_read[it_file].dx = 0;
+    param_image_read[it_file].dy = 0;
+    param_image_read[it_file].h = image_read->comps->h;
+    param_image_read[it_file].w = image_read->comps->w;
+    param_image_read[it_file].bpp = image_read->comps->bpp;
+    param_image_read[it_file].prec = image_read->comps->prec;
+    param_image_read[it_file].sgnd = image_read->comps->sgnd;
+
+    /* Copy data*/
+    data[it_file] = malloc(param_image_read[it_file].h * param_image_read[it_file].w * sizeof(int));
+    memcpy(data[it_file], image_read->comps->data, image_read->comps->h * image_read->comps->w * sizeof(int));
+
+    /* Free memory*/
+    opj_image_destroy(image_read);
+    free(filenameComponentPGX);
+    }
+
+  image = opj_image_create(nbFilenamePGX, param_image_read, OPJ_CLRSPC_UNSPECIFIED);
+  for (it_file = 0; it_file < nbFilenamePGX; it_file++)
+    {
+    /* Copy data into output image and free memory*/
+    memcpy(image->comps[it_file].data, data[it_file], image->comps[it_file].h * image->comps[it_file].w * sizeof(int));
+    free(data[it_file]);
+    }
+
+  /* Free memory*/
+  free(param_image_read);
+  free(data);
+
+  return image;
+}
+
 #ifdef OPJ_HAVE_LIBPNG
-int imageToPNG(const opj_image_t* image, const char* filename, int num_comp_select);
+/*******************************************************************************
+ *
+ *******************************************************************************/
+static int imageToPNG(const opj_image_t* image, const char* filename, int num_comp_select)
+{
+  opj_image_cmptparm_t param_image_write;
+  opj_image_t* image_write = NULL;
+
+  param_image_write.x0 = 0;
+  param_image_write.y0 = 0;
+  param_image_write.dx = 0;
+  param_image_write.dy = 0;
+  param_image_write.h = image->comps[num_comp_select].h;
+  param_image_write.w = image->comps[num_comp_select].w;
+  param_image_write.bpp = image->comps[num_comp_select].bpp;
+  param_image_write.prec = image->comps[num_comp_select].prec;
+  param_image_write.sgnd = image->comps[num_comp_select].sgnd;
+
+  image_write = opj_image_create(1, &param_image_write, OPJ_CLRSPC_GRAY);
+  memcpy(image_write->comps->data, image->comps[num_comp_select].data, param_image_write.h * param_image_write.w * sizeof(int));
+
+  imagetopng(image_write, filename);
+
+  opj_image_destroy(image_write);
+
+  return EXIT_SUCCESS;
+}
 #endif
 
 typedef struct test_cmp_parameters
@@ -71,24 +274,6 @@ typedef struct test_cmp_parameters
   char separator_test[2];
 
 } test_cmp_parameters;
-
-/*******************************************************************************
- * Command line help function
- *******************************************************************************/
-void comparePGXimages_help_display(void) {
-  fprintf(stdout,"\nList of parameters for the comparePGX function  \n");
-  fprintf(stdout,"\n");
-  fprintf(stdout,"  -b \t REQUIRED \t filename to the reference/baseline PGX image \n");
-  fprintf(stdout,"  -t \t REQUIRED \t filename to the test PGX image\n");
-  fprintf(stdout,"  -n \t REQUIRED \t number of component of the image (used to generate correct filename)\n");
-  fprintf(stdout,"  -m \t OPTIONAL \t list of MSE tolerances, separated by : (size must correspond to the number of component) of \n");
-  fprintf(stdout,"  -p \t OPTIONAL \t list of PEAK tolerances, separated by : (size must correspond to the number of component) \n");
-  fprintf(stdout,"  -s \t OPTIONAL \t 1 or 2 filename separator to take into account PGX image with different components, "
-                                      "please indicate b or t before separator to indicate respectively the separator "
-                                      "for ref/base file and for test file.  \n");
-  fprintf(stdout,"  -d \t OPTIONAL \t indicate if you want to run this function as conformance test or as non regression test\n");
-  fprintf(stdout,"\n");
-}
 
 /*******************************************************************************
  * Parse command line
@@ -302,196 +487,6 @@ static int parse_cmdline_cmp(int argc, char **argv, test_cmp_parameters* param)
 }
 
 /*******************************************************************************
- * Parse MSE and PEAK input values (
- * separator = ":"
- *******************************************************************************/
-double* parseToleranceValues( char* inArg, const int nbcomp)
-{
-  double* outArgs= malloc(nbcomp * sizeof(double));
-  int it_comp = 0;
-  char delims[] = ":";
-  char *result = NULL;
-  result = strtok( inArg, delims );
-
-  while( (result != NULL) && (it_comp < nbcomp ))
-    {
-      outArgs[it_comp] = atof(result);
-      result = strtok( NULL, delims );
-      it_comp++;
-    }
-
-  if (it_comp != nbcomp)
-  {
-	free(outArgs);
-    return NULL;
-  }
-  else
-    return outArgs;
-}
-/*******************************************************************************
- * Create filenames from a filename by used separator and nb components
- * (begin to 0)
- *******************************************************************************/
-static char* createMultiComponentsFilename(const char* inFilename, const int indexF, const char* separator)
-{
-  char s[255];
-  char *outFilename, *ptr;
-  char token = '.';
-  int posToken = 0;
-
-  /*printf("inFilename = %s\n", inFilename);*/
-  if ((ptr = strrchr(inFilename, token)) != NULL)
-    {
-    posToken = (int) (strlen(inFilename) - strlen(ptr));
-    /*printf("Position of %c character inside inFilename = %d\n", token, posToken);*/
-    }
-  else
-    {
-    /*printf("Token %c not found\n", token);*/
-    outFilename = (char*)malloc(1);
-    outFilename[0] = '\0';
-    return outFilename;
-    }
-
-  outFilename = (char*)malloc((posToken + 7) * sizeof(char)); /*6*/
-
-  strncpy(outFilename, inFilename, posToken);
-
-  outFilename[posToken] = '\0';
-
-  strcat(outFilename, separator);
-
-  sprintf(s, "%i", indexF);
-  strcat(outFilename, s);
-
-  strcat(outFilename, ".pgx");
-
-  /*printf("outfilename: %s\n", outFilename);*/
-  return outFilename;
-}
-/*******************************************************************************
- *
- *******************************************************************************/
-opj_image_t* readImageFromFilePGX(char* filename, int nbFilenamePGX, char *separator)
-{
-  int it_file;
-  opj_image_t* image_read = NULL;
-  opj_image_t* image = NULL;
-  opj_cparameters_t parameters;
-  opj_image_cmptparm_t* param_image_read;
-  int** data;
-
-  /* If separator is empty => nb file to read is equal to one*/
-  if ( strlen(separator) == 0 )
-      nbFilenamePGX = 1;
-
-  /* set encoding parameters to default values */
-  opj_set_default_encoder_parameters(&parameters);
-  parameters.decod_format = PGX_DFMT;
-  strncpy(parameters.infile, filename, sizeof(parameters.infile)-1);
-
-  /* Allocate memory*/
-  param_image_read = malloc(nbFilenamePGX * sizeof(opj_image_cmptparm_t));
-  data = malloc(nbFilenamePGX * sizeof(*data));
-
-  it_file = 0;
-  for (it_file = 0; it_file < nbFilenamePGX; it_file++)
-    {
-    /* Create the right filename*/
-    char *filenameComponentPGX;
-    if (strlen(separator) == 0)
-      {
-      filenameComponentPGX = malloc((strlen(filename) + 1) * sizeof(*filenameComponentPGX));
-      strcpy(filenameComponentPGX, filename);
-      }
-    else
-      filenameComponentPGX = createMultiComponentsFilename(filename, it_file, separator);
-
-    /* Read the pgx file corresponding to the component */
-    image_read = pgxtoimage(filenameComponentPGX, &parameters);
-    if (!image_read)
-    {
-    	int it_free_data;
-		fprintf(stderr, "Unable to load pgx file\n");
-
-		free(param_image_read);
-
-		for (it_free_data = 0; it_free_data < it_file; it_free_data++) {
-			free(data[it_free_data]);
-		}
-		free(data);
-
-		free(filenameComponentPGX);
-
-		return NULL;
-	}
-
-    /* Set the image_read parameters*/
-    param_image_read[it_file].x0 = 0;
-    param_image_read[it_file].y0 = 0;
-    param_image_read[it_file].dx = 0;
-    param_image_read[it_file].dy = 0;
-    param_image_read[it_file].h = image_read->comps->h;
-    param_image_read[it_file].w = image_read->comps->w;
-    param_image_read[it_file].bpp = image_read->comps->bpp;
-    param_image_read[it_file].prec = image_read->comps->prec;
-    param_image_read[it_file].sgnd = image_read->comps->sgnd;
-
-    /* Copy data*/
-    data[it_file] = malloc(param_image_read[it_file].h * param_image_read[it_file].w * sizeof(int));
-    memcpy(data[it_file], image_read->comps->data, image_read->comps->h * image_read->comps->w * sizeof(int));
-
-    /* Free memory*/
-    opj_image_destroy(image_read);
-    free(filenameComponentPGX);
-    }
-
-  image = opj_image_create(nbFilenamePGX, param_image_read, OPJ_CLRSPC_UNSPECIFIED);
-  for (it_file = 0; it_file < nbFilenamePGX; it_file++)
-    {
-    /* Copy data into output image and free memory*/
-    memcpy(image->comps[it_file].data, data[it_file], image->comps[it_file].h * image->comps[it_file].w * sizeof(int));
-    free(data[it_file]);
-    }
-
-  /* Free memory*/
-  free(param_image_read);
-  free(data);
-
-  return image;
-}
-
-/*******************************************************************************
- *
- *******************************************************************************/
-#ifdef OPJ_HAVE_LIBPNG
-int imageToPNG(const opj_image_t* image, const char* filename, int num_comp_select)
-{
-  opj_image_cmptparm_t param_image_write;
-  opj_image_t* image_write = NULL;
-
-  param_image_write.x0 = 0;
-  param_image_write.y0 = 0;
-  param_image_write.dx = 0;
-  param_image_write.dy = 0;
-  param_image_write.h = image->comps[num_comp_select].h;
-  param_image_write.w = image->comps[num_comp_select].w;
-  param_image_write.bpp = image->comps[num_comp_select].bpp;
-  param_image_write.prec = image->comps[num_comp_select].prec;
-  param_image_write.sgnd = image->comps[num_comp_select].sgnd;
-
-  image_write = opj_image_create(1, &param_image_write, OPJ_CLRSPC_GRAY);
-  memcpy(image_write->comps->data, image->comps[num_comp_select].data, param_image_write.h * param_image_write.w * sizeof(int));
-
-  imagetopng(image_write, filename);
-
-  opj_image_destroy(image_write);
-
-  return EXIT_SUCCESS;
-}
-#endif
-
-/*******************************************************************************
  * MAIN
  *******************************************************************************/
 int main(int argc, char **argv)
@@ -501,7 +496,8 @@ int main(int argc, char **argv)
   int failed = 0;
   int nbFilenamePGXbase, nbFilenamePGXtest;
   char *filenamePNGtest= NULL, *filenamePNGbase = NULL, *filenamePNGdiff = NULL;
-  int memsizebasefilename, memsizetestfilename, memsizedifffilename;
+  int memsizebasefilename, memsizetestfilename;
+  size_t memsizedifffilename;
   int valueDiff = 0, nbPixelDiff = 0;
   double sumDiff = 0.0;
   /* Structures to store image parameters and data*/
