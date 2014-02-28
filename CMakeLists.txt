@@ -281,9 +281,8 @@ if(BUILD_TESTING)
     # They could be found via svn on the OpenJPEG google code project
     # svn checkout http://openjpeg.googlecode.com/svn/data (about 70 Mo)
     find_path(OPJ_DATA_ROOT README-OPJ-Data
-      PATHS
-      $ENV{OPJ_DATA_ROOT}
-      ${CMAKE_SOURCE_DIR}/../data
+      PATHS $ENV{OPJ_DATA_ROOT} ${CMAKE_SOURCE_DIR}/../data
+      NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH
       )
 
     # Add repository where to find tests
