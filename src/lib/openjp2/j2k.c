@@ -4481,6 +4481,14 @@ static OPJ_BOOL opj_j2k_read_rgn (opj_j2k_t *p_j2k,
         };
 #endif /* USE_JPWL */
 
+        /* testcase 3635.pdf.asan.77.2930 */
+        if (l_comp_no >= l_nb_comp) {
+                opj_event_msg(p_manager, EVT_ERROR,
+                        "bad component number in RGN (%d when there are only %d)\n",
+                        l_comp_no, l_nb_comp);
+                return OPJ_FALSE;
+        }
+
         opj_read_bytes(p_header_data,(OPJ_UINT32 *) (&(l_tcp->tccps[l_comp_no].roishift)),1);   /* SPrgn */
         ++p_header_data;
 
