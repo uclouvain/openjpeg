@@ -502,7 +502,7 @@ int main(int argc, char **argv)
 {
   test_cmp_parameters inParam;
   OPJ_UINT32 it_comp, itpxl;
-  int failed = 0;
+  int failed = 1;
   int nbFilenamePGXbase, nbFilenamePGXtest;
   char *filenamePNGtest= NULL, *filenamePNGbase = NULL, *filenamePNGdiff = NULL;
   int memsizebasefilename, memsizetestfilename;
@@ -511,17 +511,13 @@ int main(int argc, char **argv)
   double sumDiff = 0.0;
   /* Structures to store image parameters and data*/
   opj_image_t *imageBase = NULL, *imageTest = NULL, *imageDiff = NULL;
-  opj_image_cmptparm_t* param_image_diff;
+  opj_image_cmptparm_t* param_image_diff = NULL;
 
   /* Get parameters from command line*/
   if( parse_cmdline_cmp(argc, argv, &inParam) )
     {
     comparePGXimages_help_display();
-    free(inParam.tabMSEvalues);
-    free(inParam.tabPEAKvalues);
-    free(inParam.base_filename);
-    free(inParam.test_filename);
-    return EXIT_FAILURE;
+    goto cleanup;
     }
 
   /* Display Parameters*/
@@ -573,17 +569,13 @@ int main(int argc, char **argv)
     filenamePNGbase = (char*) malloc(memsizebasefilename);
     filenamePNGbase[0] = '\0';
     strncpy(filenamePNGbase, inParam.test_filename, strlen(inParam.test_filename));
-    filenamePNGbase[strlen(inParam.test_filename)] = '\0';
+    filenamePNGbase[strlen(inParam.test_filename)] = 0;
     strcat(filenamePNGbase, ".base");
     /*printf("filenamePNGbase = %s [%d / %d octets]\n",filenamePNGbase, strlen(filenamePNGbase),memsizebasefilename );*/
     }
   else
     {
-    free(inParam.tabMSEvalues);
-    free(inParam.tabPEAKvalues);
-    free(inParam.base_filename);
-    free(inParam.test_filename);
-    return EXIT_FAILURE;
+    goto cleanup;
     }
 
   /*----------TEST IMAGE--------*/
@@ -594,18 +586,13 @@ int main(int argc, char **argv)
     filenamePNGtest = (char*) malloc(memsizetestfilename);
     filenamePNGtest[0] = '\0';
     strncpy(filenamePNGtest, inParam.test_filename, strlen(inParam.test_filename));
-    filenamePNGtest[strlen(inParam.test_filename)] = '\0';
+    filenamePNGtest[strlen(inParam.test_filename)] = 0;
     strcat(filenamePNGtest, ".test");
     /*printf("filenamePNGtest = %s [%d / %d octets]\n",filenamePNGtest, strlen(filenamePNGtest),memsizetestfilename );*/
     }
   else
     {
-    free(inParam.tabMSEvalues);
-    free(inParam.tabPEAKvalues);
-    free(inParam.base_filename);
-    free(inParam.test_filename);
-    free(filenamePNGbase);
-    return EXIT_FAILURE;
+    goto cleanup;
     }
 
   /*----------DIFF IMAGE--------*/
@@ -626,7 +613,7 @@ int main(int argc, char **argv)
     if (imageBase->comps[it_comp].sgnd != imageTest->comps[it_comp].sgnd)
       {
       printf("ERROR: sign mismatch [comp %d] (%d><%d)\n", it_comp, ((imageBase->comps)[it_comp]).sgnd, ((imageTest->comps)[it_comp]).sgnd);
-      failed = 1;
+      goto cleanup;
       }
     else
       param_image_diff[it_comp].sgnd = 0 ;
@@ -634,7 +621,7 @@ int main(int argc, char **argv)
     if (((imageBase->comps)[it_comp]).prec != ((imageTest->comps)[it_comp]).prec)
       {
       printf("ERROR: prec mismatch [comp %d] (%d><%d)\n", it_comp, ((imageBase->comps)[it_comp]).prec, ((imageTest->comps)[it_comp]).prec);
-      failed = 1;
+      goto cleanup;
       }
     else
       param_image_diff[it_comp].prec = 8 ;
@@ -642,7 +629,7 @@ int main(int argc, char **argv)
     if (((imageBase->comps)[it_comp]).bpp != ((imageTest->comps)[it_comp]).bpp)
       {
       printf("ERROR: byte per pixel mismatch [comp %d] (%d><%d)\n", it_comp, ((imageBase->comps)[it_comp]).bpp, ((imageTest->comps)[it_comp]).bpp);
-      failed = 1;
+      goto cleanup;
       }
     else
       param_image_diff[it_comp].bpp = 1 ;
@@ -650,7 +637,7 @@ int main(int argc, char **argv)
     if (((imageBase->comps)[it_comp]).h != ((imageTest->comps)[it_comp]).h)
       {
       printf("ERROR: height mismatch [comp %d] (%d><%d)\n", it_comp, ((imageBase->comps)[it_comp]).h, ((imageTest->comps)[it_comp]).h);
-      failed = 1;
+      goto cleanup;
       }
     else
       param_image_diff[it_comp].h = imageBase->comps[it_comp].h ;
@@ -658,43 +645,24 @@ int main(int argc, char **argv)
     if (((imageBase->comps)[it_comp]).w != ((imageTest->comps)[it_comp]).w)
       {
       printf("ERROR: width mismatch [comp %d] (%d><%d)\n", it_comp, ((imageBase->comps)[it_comp]).w, ((imageTest->comps)[it_comp]).w);
-      failed = 1;
+      goto cleanup;
       }
     else
       param_image_diff[it_comp].w = imageBase->comps[it_comp].w ;
     }
 
-   /* If only one parameter is different, we stop the test*/
-   if (failed)
-     {
-     free(inParam.tabMSEvalues);
-     free(inParam.tabPEAKvalues);
-     free(inParam.base_filename);
-     free(inParam.test_filename);
-
-     free(filenamePNGbase);
-     free(filenamePNGtest);
-
-     opj_image_destroy(imageBase);
-     opj_image_destroy(imageTest);
-
-     free(param_image_diff);
-
-     return EXIT_FAILURE;
-     }
-
    imageDiff = opj_image_create(imageBase->numcomps, param_image_diff, OPJ_CLRSPC_UNSPECIFIED);
    /* Free memory*/
-   free(param_image_diff);
+   free(param_image_diff); param_image_diff = NULL;
 
    /* Measurement computation*/
    printf("Step 2 -> measurement comparison\n");
 
    memsizedifffilename = strlen(inParam.test_filename) + 1 + 5 + 2 + 4;
    filenamePNGdiff = (char*) malloc(memsizedifffilename);
-   filenamePNGdiff[0] = '\0';
+   filenamePNGdiff[0] = 0;
    strncpy(filenamePNGdiff, inParam.test_filename, strlen(inParam.test_filename));
-   filenamePNGdiff[strlen(inParam.test_filename)] = '\0';
+   filenamePNGdiff[strlen(inParam.test_filename)] = 0;
    strcat(filenamePNGdiff, ".diff");
    /*printf("filenamePNGdiff = %s [%d / %d octets]\n",filenamePNGdiff, strlen(filenamePNGdiff),memsizedifffilename );*/
 
@@ -703,23 +671,6 @@ int main(int argc, char **argv)
      {
      double SE=0,PEAK=0;
      double MSE=0;
-     char *filenamePNGbase_it_comp, *filenamePNGtest_it_comp, *filenamePNGdiff_it_comp;
-
-     filenamePNGbase_it_comp = (char*) malloc(memsizebasefilename);
-     filenamePNGbase_it_comp[0] = 0;
-     strncpy(filenamePNGbase_it_comp,filenamePNGbase,strlen(filenamePNGbase));
-     filenamePNGbase_it_comp[strlen(filenamePNGbase)] = 0;
-
-     filenamePNGtest_it_comp = (char*) malloc(memsizetestfilename);
-     filenamePNGtest_it_comp[0] = 0;
-     strncpy(filenamePNGtest_it_comp,filenamePNGtest,strlen(filenamePNGtest));
-     filenamePNGtest_it_comp[strlen(filenamePNGtest)] = 0;
-
-     filenamePNGdiff_it_comp = (char*) malloc(memsizedifffilename);
-     filenamePNGdiff_it_comp[0] = 0;
-     strncpy(filenamePNGdiff_it_comp,filenamePNGdiff,strlen(filenamePNGdiff));
-     filenamePNGdiff_it_comp[strlen(filenamePNGdiff)] = 0;
-
      for (itpxl = 0; itpxl < ((imageDiff->comps)[it_comp]).w * ((imageDiff->comps)[it_comp]).h; itpxl++)
        {
        if (abs( ((imageBase->comps)[it_comp]).data[itpxl] - ((imageTest->comps)[it_comp]).data[itpxl] ) > 0)
@@ -746,9 +697,9 @@ int main(int argc, char **argv)
        if ( (MSE > inParam.tabMSEvalues[it_comp]) || (PEAK > inParam.tabPEAKvalues[it_comp]) )
          {
          printf("ERROR: MSE (%f) or PEAK (%f) values produced by the decoded file are greater "
-                "than the allowable error (respectively %f and %f) \n",
-                MSE, PEAK, inParam.tabMSEvalues[it_comp], inParam.tabPEAKvalues[it_comp]);
-         failed = 1;
+           "than the allowable error (respectively %f and %f) \n",
+           MSE, PEAK, inParam.tabMSEvalues[it_comp], inParam.tabPEAKvalues[it_comp]);
+         goto cleanup;
          }
        }
      else  /* Non regression-test */
@@ -756,48 +707,72 @@ int main(int argc, char **argv)
        if ( nbPixelDiff > 0)
          {
          char it_compc[255];
-         it_compc[0] = '\0';
+         it_compc[0] = 0;
 
          printf("<DartMeasurement name=\"NumberOfPixelsWithDifferences_%d\" type=\"numeric/int\"> %d </DartMeasurement> \n", it_comp, nbPixelDiff);
          printf("<DartMeasurement name=\"ComponentError_%d\" type=\"numeric/double\"> %f </DartMeasurement> \n", it_comp, sumDiff);
 
 #ifdef OPJ_HAVE_LIBPNG
-         sprintf(it_compc, "_%i", it_comp);
-         strcat(it_compc,".png");
-         strcat(filenamePNGbase_it_comp, it_compc);
-         /*printf("filenamePNGbase_it = %s [%d / %d octets]\n",filenamePNGbase_it_comp, strlen(filenamePNGbase_it_comp),memsizebasefilename );*/
-         strcat(filenamePNGtest_it_comp, it_compc);
-         /*printf("filenamePNGtest_it = %s [%d / %d octets]\n",filenamePNGtest_it_comp, strlen(filenamePNGtest_it_comp),memsizetestfilename );*/
-         strcat(filenamePNGdiff_it_comp, it_compc);
-         /*printf("filenamePNGdiff_it = %s [%d / %d octets]\n",filenamePNGdiff_it_comp, strlen(filenamePNGdiff_it_comp),memsizedifffilename );*/
+           {
+           char *filenamePNGbase_it_comp, *filenamePNGtest_it_comp, *filenamePNGdiff_it_comp;
 
-         /*
-         if ( imageToPNG(imageBase, filenamePNGbase_it_comp, it_comp) == EXIT_SUCCESS )
+           filenamePNGbase_it_comp = (char*) malloc(memsizebasefilename);
+           filenamePNGbase_it_comp[0] = 0;
+           strncpy(filenamePNGbase_it_comp,filenamePNGbase,strlen(filenamePNGbase));
+           filenamePNGbase_it_comp[strlen(filenamePNGbase)] = 0;
+
+           filenamePNGtest_it_comp = (char*) malloc(memsizetestfilename);
+           filenamePNGtest_it_comp[0] = 0;
+           strncpy(filenamePNGtest_it_comp,filenamePNGtest,strlen(filenamePNGtest));
+           filenamePNGtest_it_comp[strlen(filenamePNGtest)] = 0;
+
+           filenamePNGdiff_it_comp = (char*) malloc(memsizedifffilename);
+           filenamePNGdiff_it_comp[0] = 0;
+           strncpy(filenamePNGdiff_it_comp,filenamePNGdiff,strlen(filenamePNGdiff));
+           filenamePNGdiff_it_comp[strlen(filenamePNGdiff)] = 0;
+
+
+           sprintf(it_compc, "_%i", it_comp);
+           strcat(it_compc,".png");
+           strcat(filenamePNGbase_it_comp, it_compc);
+           /*printf("filenamePNGbase_it = %s [%d / %d octets]\n",filenamePNGbase_it_comp, strlen(filenamePNGbase_it_comp),memsizebasefilename );*/
+           strcat(filenamePNGtest_it_comp, it_compc);
+           /*printf("filenamePNGtest_it = %s [%d / %d octets]\n",filenamePNGtest_it_comp, strlen(filenamePNGtest_it_comp),memsizetestfilename );*/
+           strcat(filenamePNGdiff_it_comp, it_compc);
+           /*printf("filenamePNGdiff_it = %s [%d / %d octets]\n",filenamePNGdiff_it_comp, strlen(filenamePNGdiff_it_comp),memsizedifffilename );*/
+
+           /*
+           if ( imageToPNG(imageBase, filenamePNGbase_it_comp, it_comp) == EXIT_SUCCESS )
            {
            printf("<DartMeasurementFile name=\"BaselineImage_%d\" type=\"image/png\"> %s </DartMeasurementFile> \n", it_comp, filenamePNGbase_it_comp);
            }
 
-         if ( imageToPNG(imageTest, filenamePNGtest_it_comp, it_comp) == EXIT_SUCCESS )
+           if ( imageToPNG(imageTest, filenamePNGtest_it_comp, it_comp) == EXIT_SUCCESS )
            {
            printf("<DartMeasurementFile name=\"TestImage_%d\" type=\"image/png\"> %s </DartMeasurementFile> \n", it_comp, filenamePNGtest_it_comp);
            }
 
-         if ( imageToPNG(imageDiff, filenamePNGdiff_it_comp, it_comp) == EXIT_SUCCESS )
+           if ( imageToPNG(imageDiff, filenamePNGdiff_it_comp, it_comp) == EXIT_SUCCESS )
            {
            printf("<DartMeasurementFile name=\"DiffferenceImage_%d\" type=\"image/png\"> %s </DartMeasurementFile> \n", it_comp, filenamePNGdiff_it_comp);
            }
-           */
+            */
 
+           free(filenamePNGbase_it_comp);
+           free(filenamePNGtest_it_comp);
+           free(filenamePNGdiff_it_comp);
+           }
 #endif
-         failed = 1;
+         goto cleanup;
          }
        }
-     free(filenamePNGbase_it_comp);
-     free(filenamePNGtest_it_comp);
-     free(filenamePNGdiff_it_comp);
      } /* it_comp loop */
 
+   printf("---- TEST SUCCEED ----\n");
+  failed = 0;
+cleanup:
   /*-----------------------------*/
+  free(param_image_diff);
   /* Free memory */
   opj_image_destroy(imageBase);
   opj_image_destroy(imageTest);
@@ -812,8 +787,5 @@ int main(int argc, char **argv)
   free(inParam.base_filename);
   free(inParam.test_filename);
 
-  if (failed) return EXIT_FAILURE;
-
-  printf("---- TEST SUCCEED ----\n");
-  return EXIT_SUCCESS;
+  return failed ? EXIT_FAILURE : EXIT_SUCCESS;
 }
