@@ -36,6 +36,7 @@
 #include <math.h>
 #include <string.h>
 #include <ctype.h>
+#include <assert.h>
 
 #include "opj_apps_config.h"
 #include "opj_getopt.h"
@@ -52,30 +53,30 @@ static double* parseToleranceValues( char* inArg, const int nbcomp)
 {
   double* outArgs= malloc(nbcomp * sizeof(double));
   int it_comp = 0;
-  char delims[] = ":";
-  char *result = NULL;
-  result = strtok( inArg, delims );
+  const char delims[] = ":";
+  char *result = strtok( inArg, delims );
 
   while( (result != NULL) && (it_comp < nbcomp ))
     {
-      outArgs[it_comp] = atof(result);
-      result = strtok( NULL, delims );
-      it_comp++;
+    outArgs[it_comp] = atof(result);
+    result = strtok( NULL, delims );
+    it_comp++;
     }
 
   if (it_comp != nbcomp)
-  {
-	free(outArgs);
+    {
+    free(outArgs);
     return NULL;
-  }
-  else
-    return outArgs;
+    }
+  // else
+  return outArgs;
 }
 
 /*******************************************************************************
  * Command line help function
  *******************************************************************************/
-static void comparePGXimages_help_display(void) {
+static void comparePGXimages_help_display(void)
+{
   fprintf(stdout,"\nList of parameters for the comparePGX function  \n");
   fprintf(stdout,"\n");
   fprintf(stdout,"  -b \t REQUIRED \t filename to the reference/baseline PGX image \n");
@@ -98,7 +99,7 @@ static char* createMultiComponentsFilename(const char* inFilename, const int ind
 {
   char s[255];
   char *outFilename, *ptr;
-  char token = '.';
+  const char token = '.';
   int posToken = 0;
 
   /*printf("inFilename = %s\n", inFilename);*/
@@ -135,7 +136,7 @@ static char* createMultiComponentsFilename(const char* inFilename, const int ind
 /*******************************************************************************
  *
  *******************************************************************************/
-static opj_image_t* readImageFromFilePGX(char* filename, int nbFilenamePGX, char *separator)
+static opj_image_t* readImageFromFilePGX(const char* filename, int nbFilenamePGX, const char *separator)
 {
   int it_file;
   opj_image_t* image_read = NULL;
@@ -146,18 +147,18 @@ static opj_image_t* readImageFromFilePGX(char* filename, int nbFilenamePGX, char
 
   /* If separator is empty => nb file to read is equal to one*/
   if ( strlen(separator) == 0 )
-      nbFilenamePGX = 1;
+    nbFilenamePGX = 1;
 
   /* set encoding parameters to default values */
   opj_set_default_encoder_parameters(&parameters);
   parameters.decod_format = PGX_DFMT;
   strncpy(parameters.infile, filename, sizeof(parameters.infile)-1);
+  assert( parameters.infile[sizeof(parameters.infile)] == 0 );
 
   /* Allocate memory*/
   param_image_read = malloc(nbFilenamePGX * sizeof(opj_image_cmptparm_t));
   data = malloc(nbFilenamePGX * sizeof(*data));
 
-  it_file = 0;
   for (it_file = 0; it_file < nbFilenamePGX; it_file++)
     {
     /* Create the right filename*/
@@ -173,21 +174,21 @@ static opj_image_t* readImageFromFilePGX(char* filename, int nbFilenamePGX, char
     /* Read the pgx file corresponding to the component */
     image_read = pgxtoimage(filenameComponentPGX, &parameters);
     if (!image_read)
-    {
-    	int it_free_data;
-		fprintf(stderr, "Unable to load pgx file\n");
+      {
+      int it_free_data;
+      fprintf(stderr, "Unable to load pgx file\n");
 
-		free(param_image_read);
+      free(param_image_read);
 
-		for (it_free_data = 0; it_free_data < it_file; it_free_data++) {
-			free(data[it_free_data]);
-		}
-		free(data);
+      for (it_free_data = 0; it_free_data < it_file; it_free_data++) {
+        free(data[it_free_data]);
+      }
+      free(data);
 
-		free(filenameComponentPGX);
+      free(filenameComponentPGX);
 
-		return NULL;
-	}
+      return NULL;
+      }
 
     /* Set the image_read parameters*/
     param_image_read[it_file].x0 = 0;
@@ -294,6 +295,8 @@ static int parse_cmdline_cmp(int argc, char **argv, test_cmp_parameters* param)
   param->tabMSEvalues = NULL;
   param->tabPEAKvalues = NULL;
   param->nr_flag = 0;
+  param->separator_base[0] = 0;
+  param->separator_test[0] = 0;
 
   opj_opterr = 0;
 
@@ -350,13 +353,13 @@ static int parse_cmdline_cmp(int argc, char **argv, test_cmp_parameters* param)
     {
     for (index = opj_optind; index < argc; index++)
       fprintf(stderr,"Non-option argument %s\n", argv[index]);
-    return EXIT_FAILURE;
+    return 1;
     }
 
   if (param->nbcomp == 0)
     {
     fprintf(stderr,"Need to indicate the number of components !\n");
-    return EXIT_FAILURE;
+    return 1;
     }
   else
     {
@@ -367,7 +370,7 @@ static int parse_cmdline_cmp(int argc, char **argv, test_cmp_parameters* param)
       if ( (param->tabMSEvalues == NULL) || (param->tabPEAKvalues == NULL))
         {
         fprintf(stderr,"MSE and PEAK values are not correct (respectively need %d values)\n",param->nbcomp);
-        return EXIT_FAILURE;
+        return 1;
         }
       }
     /*else
@@ -399,19 +402,21 @@ static int parse_cmdline_cmp(int argc, char **argv, test_cmp_parameters* param)
           resultB = strtok(resultT, "b");
           if (strlen(resultB) == 1)
             {
-            param->separator_base[0] = separatorList[1];param->separator_base[1] = '\0';
-            param->separator_test[0] ='\0';
+            param->separator_base[0] = separatorList[1];
+            param->separator_base[1] = 0;
+            param->separator_test[0] = 0;
             }
           else /* not found b*/
             {
             free(separatorList2);
-            return EXIT_FAILURE;
+            return 1;
             }
           }
         else /* found t*/
           {
-          param->separator_base[0] ='\0';
-          param->separator_test[0] = separatorList[1];param->separator_test[1] = '\0';
+          param->separator_base[0] = 0;
+          param->separator_test[0] = separatorList[1];
+          param->separator_test[1] = 0;
           }
         /*printf("sep b = %s [%d] and sep t = %s [%d]\n",param->separator_base, strlen(param->separator_base), param->separator_test, strlen(param->separator_test) );*/
         }
@@ -425,13 +430,15 @@ static int parse_cmdline_cmp(int argc, char **argv, test_cmp_parameters* param)
           resultB = strtok(resultT, "b");
           if (strlen(resultB) == 1) /* found b after t*/
             {
-            param->separator_test[0] = separatorList[1];param->separator_test[1] = '\0';
-            param->separator_base[0] = separatorList[3];param->separator_base[1] = '\0';
+            param->separator_test[0] = separatorList[1];
+            param->separator_test[1] = 0;
+            param->separator_base[0] = separatorList[3];
+            param->separator_base[1] = 0;
             }
           else /* didn't find b after t*/
             {
             free(separatorList2);
-            return EXIT_FAILURE;
+            return 1;
             }
           }
         else /* == 2, didn't find t in first place*/
@@ -440,13 +447,15 @@ static int parse_cmdline_cmp(int argc, char **argv, test_cmp_parameters* param)
           resultB = strtok(resultT, "b");
           if (strlen(resultB) == 1) /* found b in first place*/
             {
-            param->separator_base[0] = separatorList[1]; param->separator_base[1] = '\0';
-            param->separator_test[0] = separatorList[3]; param->separator_test[1] = '\0';
+            param->separator_base[0] = separatorList[1];
+            param->separator_base[1] = 0;
+            param->separator_test[0] = separatorList[3];
+            param->separator_test[1] = 0;
             }
           else /* didn't found b in first place => problem*/
             {
             free(separatorList2);
-            return EXIT_FAILURE;
+            return 1;
             }
           }
         }
@@ -454,20 +463,20 @@ static int parse_cmdline_cmp(int argc, char **argv, test_cmp_parameters* param)
       }
     else /* wrong number of argument after -s*/
       {
-      return EXIT_FAILURE;
+      return 1;
       }
     }
   else
     {
     if (param->nbcomp == 1)
       {
-      param->separator_base[0] = '\0';
-      param->separator_test[0] = '\0';
+      assert( param->separator_base[0] == 0 );
+      assert( param->separator_test[0] == 0 );
       }
     else
       {
       fprintf(stderr,"If number of component is > 1, we need separator\n");
-      return EXIT_FAILURE;
+      return 1;
       }
     }
 
@@ -475,15 +484,15 @@ static int parse_cmdline_cmp(int argc, char **argv, test_cmp_parameters* param)
   if ( (param->nr_flag) && (flagP || flagM) )
     {
     fprintf(stderr,"Wrong input parameters list: it is non-regression test or tolerance comparison\n");
-    return EXIT_FAILURE;
+    return 1;
     }
   if ( (!param->nr_flag) && (!flagP || !flagM) )
     {
     fprintf(stderr,"Wrong input parameters list: it is non-regression test or tolerance comparison\n");
-    return EXIT_FAILURE;
+    return 1;
     }
 
-  return EXIT_SUCCESS;
+  return 0;
 }
 
 /*******************************************************************************
@@ -505,13 +514,13 @@ int main(int argc, char **argv)
   opj_image_cmptparm_t* param_image_diff;
 
   /* Get parameters from command line*/
-  if( parse_cmdline_cmp(argc, argv, &inParam) == EXIT_FAILURE )
+  if( parse_cmdline_cmp(argc, argv, &inParam) )
     {
     comparePGXimages_help_display();
-    if (inParam.tabMSEvalues) free(inParam.tabMSEvalues);
-    if (inParam.tabPEAKvalues) free(inParam.tabPEAKvalues);
-    if (inParam.base_filename) free(inParam.base_filename);
-    if (inParam.test_filename) free(inParam.test_filename);
+    free(inParam.tabMSEvalues);
+    free(inParam.tabPEAKvalues);
+    free(inParam.base_filename);
+    free(inParam.test_filename);
     return EXIT_FAILURE;
     }
 
@@ -570,10 +579,10 @@ int main(int argc, char **argv)
     }
   else
     {
-    if (inParam.tabMSEvalues) free(inParam.tabMSEvalues);
-    if (inParam.tabPEAKvalues) free(inParam.tabPEAKvalues);
-    if (inParam.base_filename) free(inParam.base_filename);
-    if (inParam.test_filename) free(inParam.test_filename);
+    free(inParam.tabMSEvalues);
+    free(inParam.tabPEAKvalues);
+    free(inParam.base_filename);
+    free(inParam.test_filename);
     return EXIT_FAILURE;
     }
 
@@ -591,10 +600,10 @@ int main(int argc, char **argv)
     }
   else
     {
-    if (inParam.tabMSEvalues) free(inParam.tabMSEvalues);
-    if (inParam.tabPEAKvalues) free(inParam.tabPEAKvalues);
-    if (inParam.base_filename) free(inParam.base_filename);
-    if (inParam.test_filename) free(inParam.test_filename);
+    free(inParam.tabMSEvalues);
+    free(inParam.tabPEAKvalues);
+    free(inParam.base_filename);
+    free(inParam.test_filename);
     free(filenamePNGbase);
     return EXIT_FAILURE;
     }
@@ -697,19 +706,19 @@ int main(int argc, char **argv)
      char *filenamePNGbase_it_comp, *filenamePNGtest_it_comp, *filenamePNGdiff_it_comp;
 
      filenamePNGbase_it_comp = (char*) malloc(memsizebasefilename);
-     filenamePNGbase_it_comp[0] = '\0';
+     filenamePNGbase_it_comp[0] = 0;
      strncpy(filenamePNGbase_it_comp,filenamePNGbase,strlen(filenamePNGbase));
-     filenamePNGbase_it_comp[strlen(filenamePNGbase)] = '\0';
+     filenamePNGbase_it_comp[strlen(filenamePNGbase)] = 0;
 
      filenamePNGtest_it_comp = (char*) malloc(memsizetestfilename);
-     filenamePNGtest_it_comp[0] = '\0';
+     filenamePNGtest_it_comp[0] = 0;
      strncpy(filenamePNGtest_it_comp,filenamePNGtest,strlen(filenamePNGtest));
-     filenamePNGtest_it_comp[strlen(filenamePNGtest)] = '\0';
+     filenamePNGtest_it_comp[strlen(filenamePNGtest)] = 0;
 
      filenamePNGdiff_it_comp = (char*) malloc(memsizedifffilename);
-     filenamePNGdiff_it_comp[0] = '\0';
+     filenamePNGdiff_it_comp[0] = 0;
      strncpy(filenamePNGdiff_it_comp,filenamePNGdiff,strlen(filenamePNGdiff));
-     filenamePNGdiff_it_comp[strlen(filenamePNGdiff)] = '\0';
+     filenamePNGdiff_it_comp[strlen(filenamePNGdiff)] = 0;
 
      for (itpxl = 0; itpxl < ((imageDiff->comps)[it_comp]).w * ((imageDiff->comps)[it_comp]).h; itpxl++)
        {
@@ -803,11 +812,8 @@ int main(int argc, char **argv)
   free(inParam.base_filename);
   free(inParam.test_filename);
 
-  if (failed)
-    return EXIT_FAILURE;
-  else
-    {
-    printf("---- TEST SUCCEED ----\n");
-    return EXIT_SUCCESS;
-    }
+  if (failed) return EXIT_FAILURE;
+
+  printf("---- TEST SUCCEED ----\n");
+  return EXIT_SUCCESS;
 }
