@@ -225,7 +225,7 @@ static opj_image_t* readImageFromFilePGX(const char* filename, int nbFilenamePGX
   return image;
 }
 
-#ifdef OPJ_HAVE_LIBPNG
+#if defined(OPJ_HAVE_LIBPNG) && 0 /* remove for now */
 /*******************************************************************************
  *
  *******************************************************************************/
@@ -503,7 +503,7 @@ int main(int argc, char **argv)
   test_cmp_parameters inParam;
   OPJ_UINT32 it_comp, itpxl;
   int failed = 1;
-  int nbFilenamePGXbase, nbFilenamePGXtest;
+  int nbFilenamePGXbase = 0, nbFilenamePGXtest = 0;
   char *filenamePNGtest= NULL, *filenamePNGbase = NULL, *filenamePNGdiff = NULL;
   int memsizebasefilename, memsizetestfilename;
   size_t memsizedifffilename;
@@ -545,14 +545,10 @@ int main(int argc, char **argv)
     printf(" Non-regression test = %d\n", inParam.nr_flag);
     }
 
-  if (strlen(inParam.separator_base) == 0)
-    nbFilenamePGXbase = 0;
-  else
+  if (strlen(inParam.separator_base) != 0)
     nbFilenamePGXbase = inParam.nbcomp;
 
-  if (strlen(inParam.separator_test) == 0)
-    nbFilenamePGXtest = 0;
-  else
+  if (strlen(inParam.separator_test) != 0)
     nbFilenamePGXtest = inParam.nbcomp;
 
   printf(" NbFilename to generate from base filename = %d\n", nbFilenamePGXbase);
@@ -567,9 +563,7 @@ int main(int argc, char **argv)
   if ( imageBase != NULL)
     {
     filenamePNGbase = (char*) malloc(memsizebasefilename);
-    filenamePNGbase[0] = '\0';
-    strncpy(filenamePNGbase, inParam.test_filename, strlen(inParam.test_filename));
-    filenamePNGbase[strlen(inParam.test_filename)] = 0;
+    strcpy(filenamePNGbase, inParam.test_filename);
     strcat(filenamePNGbase, ".base");
     /*printf("filenamePNGbase = %s [%d / %d octets]\n",filenamePNGbase, strlen(filenamePNGbase),memsizebasefilename );*/
     }
@@ -584,9 +578,7 @@ int main(int argc, char **argv)
   if ( imageTest != NULL)
     {
     filenamePNGtest = (char*) malloc(memsizetestfilename);
-    filenamePNGtest[0] = '\0';
-    strncpy(filenamePNGtest, inParam.test_filename, strlen(inParam.test_filename));
-    filenamePNGtest[strlen(inParam.test_filename)] = 0;
+    strcpy(filenamePNGtest, inParam.test_filename);
     strcat(filenamePNGtest, ".test");
     /*printf("filenamePNGtest = %s [%d / %d octets]\n",filenamePNGtest, strlen(filenamePNGtest),memsizetestfilename );*/
     }
@@ -609,46 +601,41 @@ int main(int argc, char **argv)
     param_image_diff[it_comp].y0 = 0;
     param_image_diff[it_comp].dx = 0;
     param_image_diff[it_comp].dy = 0;
+    param_image_diff[it_comp].sgnd = 0;
+    param_image_diff[it_comp].prec = 8;
+    param_image_diff[it_comp].bpp = 1;
+    param_image_diff[it_comp].h = imageBase->comps[it_comp].h;
+    param_image_diff[it_comp].w = imageBase->comps[it_comp].w;
 
     if (imageBase->comps[it_comp].sgnd != imageTest->comps[it_comp].sgnd)
       {
       printf("ERROR: sign mismatch [comp %d] (%d><%d)\n", it_comp, ((imageBase->comps)[it_comp]).sgnd, ((imageTest->comps)[it_comp]).sgnd);
       goto cleanup;
       }
-    else
-      param_image_diff[it_comp].sgnd = 0 ;
 
     if (((imageBase->comps)[it_comp]).prec != ((imageTest->comps)[it_comp]).prec)
       {
       printf("ERROR: prec mismatch [comp %d] (%d><%d)\n", it_comp, ((imageBase->comps)[it_comp]).prec, ((imageTest->comps)[it_comp]).prec);
       goto cleanup;
       }
-    else
-      param_image_diff[it_comp].prec = 8 ;
 
     if (((imageBase->comps)[it_comp]).bpp != ((imageTest->comps)[it_comp]).bpp)
       {
       printf("ERROR: byte per pixel mismatch [comp %d] (%d><%d)\n", it_comp, ((imageBase->comps)[it_comp]).bpp, ((imageTest->comps)[it_comp]).bpp);
       goto cleanup;
       }
-    else
-      param_image_diff[it_comp].bpp = 1 ;
 
     if (((imageBase->comps)[it_comp]).h != ((imageTest->comps)[it_comp]).h)
       {
       printf("ERROR: height mismatch [comp %d] (%d><%d)\n", it_comp, ((imageBase->comps)[it_comp]).h, ((imageTest->comps)[it_comp]).h);
       goto cleanup;
       }
-    else
-      param_image_diff[it_comp].h = imageBase->comps[it_comp].h ;
 
     if (((imageBase->comps)[it_comp]).w != ((imageTest->comps)[it_comp]).w)
       {
       printf("ERROR: width mismatch [comp %d] (%d><%d)\n", it_comp, ((imageBase->comps)[it_comp]).w, ((imageTest->comps)[it_comp]).w);
       goto cleanup;
       }
-    else
-      param_image_diff[it_comp].w = imageBase->comps[it_comp].w ;
     }
 
    imageDiff = opj_image_create(imageBase->numcomps, param_image_diff, OPJ_CLRSPC_UNSPECIFIED);
@@ -660,9 +647,7 @@ int main(int argc, char **argv)
 
    memsizedifffilename = strlen(inParam.test_filename) + 1 + 5 + 2 + 4;
    filenamePNGdiff = (char*) malloc(memsizedifffilename);
-   filenamePNGdiff[0] = 0;
-   strncpy(filenamePNGdiff, inParam.test_filename, strlen(inParam.test_filename));
-   filenamePNGdiff[strlen(inParam.test_filename)] = 0;
+   strcpy(filenamePNGdiff, inParam.test_filename);
    strcat(filenamePNGdiff, ".diff");
    /*printf("filenamePNGdiff = %s [%d / %d octets]\n",filenamePNGdiff, strlen(filenamePNGdiff),memsizedifffilename );*/
 
@@ -677,10 +662,10 @@ int main(int argc, char **argv)
          {
          valueDiff = ((imageBase->comps)[it_comp]).data[itpxl] - ((imageTest->comps)[it_comp]).data[itpxl];
          ((imageDiff->comps)[it_comp]).data[itpxl] = abs(valueDiff);
-         sumDiff += (double)valueDiff;
+         sumDiff += valueDiff;
          nbPixelDiff++;
 
-         SE += (double)(valueDiff * valueDiff);
+         SE += (double)valueDiff * valueDiff;
          PEAK = (PEAK > abs(valueDiff)) ? PEAK : abs(valueDiff);
          }
        else
@@ -762,7 +747,7 @@ int main(int argc, char **argv)
      } /* it_comp loop */
 
    printf("---- TEST SUCCEED ----\n");
-  failed = 0;
+   failed = 0;
 cleanup:
   /*-----------------------------*/
   free(param_image_diff);
