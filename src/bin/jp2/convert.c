@@ -3118,7 +3118,7 @@ static int imagetoraw_common(opj_image_t * image, const char *outfile, OPJ_BOOL 
         {
             if(image->comps[compno].sgnd == 1)
             {
-                union { signed short val; signed char vals[2] } uc;
+                union { signed short val; signed char vals[2]; } uc;
                 mask = (1 << image->comps[compno].prec) - 1;
                 ptr = image->comps[compno].data;
                 for (line = 0; line < h; line++) {
@@ -3137,7 +3137,7 @@ static int imagetoraw_common(opj_image_t * image, const char *outfile, OPJ_BOOL 
             }
             else if(image->comps[compno].sgnd == 0)
             {
-                union { unsigned short val; unsigned char vals[2] } uc;
+                union { unsigned short val; unsigned char vals[2]; } uc;
                 mask = (1 << image->comps[compno].prec) - 1;
                 ptr = image->comps[compno].data;
                 for (line = 0; line < h; line++) {
