@@ -1424,7 +1424,7 @@ static inline int clamp( const int value, const int prec, const int sgnd )
     {
     if (prec <= 8)       return CLAMP(value,-128,127);
     else if (prec <= 16) return CLAMP(value,-32768,32767);
-    else                 return CLAMP(value,-2147483648,2147483647);
+    else                 return CLAMP(value,-2147483647-1,2147483647);
     }
   else
     {
