@@ -109,10 +109,10 @@ static int tga_readheader(FILE *fp, unsigned int *bits_per_pixel,
 {
     int palette_size;
     unsigned char *tga ;
-    unsigned char id_len, cmap_type, image_type;
+    unsigned char id_len, /*cmap_type,*/ image_type;
     unsigned char pixel_depth, image_desc;
-    unsigned short cmap_index, cmap_len, cmap_entry_size;
-    unsigned short x_origin, y_origin, image_w, image_h;
+    unsigned short /*cmap_index,*/ cmap_len, cmap_entry_size;
+    unsigned short /*x_origin, y_origin,*/ image_w, image_h;
 
     if (!bits_per_pixel || !width || !height || !flip_image)
         return 0;
@@ -124,15 +124,17 @@ static int tga_readheader(FILE *fp, unsigned int *bits_per_pixel,
         return 0 ;
     }
     id_len = (unsigned char)tga[0];
-    cmap_type = (unsigned char)tga[1];
+    /*cmap_type = (unsigned char)tga[1];*/
     image_type = (unsigned char)tga[2];
-    cmap_index = get_ushort(*(unsigned short*)(&tga[3]));
+    /*cmap_index = get_ushort(*(unsigned short*)(&tga[3]));*/
     cmap_len = get_ushort(*(unsigned short*)(&tga[5]));
     cmap_entry_size = (unsigned char)tga[7];
 
 
+#if 0
     x_origin = get_ushort(*(unsigned short*)(&tga[8]));
     y_origin = get_ushort(*(unsigned short*)(&tga[10]));
+#endif
     image_w = get_ushort(*(unsigned short*)(&tga[12]));
     image_h = get_ushort(*(unsigned short*)(&tga[14]));
     pixel_depth = (unsigned char)tga[16];
@@ -406,7 +408,7 @@ opj_image_t* tgatoimage(const char *filename, opj_cparameters_t *parameters) {
 int imagetotga(opj_image_t * image, const char *outfile) {
     int width, height, bpp, x, y;
     OPJ_BOOL write_alpha;
-    int i, v, adjustR, adjustG, adjustB, fails;
+    int i, adjustR, adjustG, adjustB, fails;
     unsigned int alpha_channel;
     float r,g,b,a;
     unsigned char value;
