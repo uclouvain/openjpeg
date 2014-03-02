@@ -823,7 +823,7 @@ static OPJ_BOOL opj_jp2_check_color(opj_image_t *image, opj_jp2_color_t *color, 
 	return OPJ_TRUE;
 }
 
-// file9.jp2
+/* file9.jp2 */
 void opj_jp2_apply_pclr(opj_image_t *image, opj_jp2_color_t *color)
 {
 	opj_image_comp_t *old_comps, *new_comps;

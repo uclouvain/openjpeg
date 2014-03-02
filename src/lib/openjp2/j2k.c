@@ -5862,6 +5862,9 @@ void opj_j2k_set_cinema_parameters(opj_cparameters_t *parameters, opj_image_t *i
     case OPJ_CINEMA4K_24:
         parameters->cp_rsiz = OPJ_CINEMA4K;
         break;
+    case OPJ_OFF:
+        assert(0);
+        break;
     }
 
     /* No tiling */
@@ -9781,7 +9784,6 @@ OPJ_BOOL opj_j2k_write_first_tile_part (opj_j2k_t *p_j2k,
                                                                         opj_stream_private_t *p_stream,
                                                                         struct opj_event_mgr * p_manager )
 {
-//        OPJ_UINT32 compno;
         OPJ_UINT32 l_nb_bytes_written = 0;
         OPJ_UINT32 l_current_nb_bytes_written;
         OPJ_BYTE * l_begin_data = 00;
@@ -9812,19 +9814,21 @@ OPJ_BOOL opj_j2k_write_first_tile_part (opj_j2k_t *p_j2k,
         p_total_data_size -= l_current_nb_bytes_written;
 
         if (l_cp->m_specific_param.m_enc.m_cinema == 0) {
-//                for (compno = 1; compno < p_j2k->m_private_image->numcomps; compno++) {
-//                        l_current_nb_bytes_written = 0;
-//                        opj_j2k_write_coc_in_memory(p_j2k,compno,p_data,&l_current_nb_bytes_written,p_manager);
-//                        l_nb_bytes_written += l_current_nb_bytes_written;
-//                        p_data += l_current_nb_bytes_written;
-//                        p_total_data_size -= l_current_nb_bytes_written;
+#if 0
+                for (compno = 1; compno < p_j2k->m_private_image->numcomps; compno++) {
+                        l_current_nb_bytes_written = 0;
+                        opj_j2k_write_coc_in_memory(p_j2k,compno,p_data,&l_current_nb_bytes_written,p_manager);
+                        l_nb_bytes_written += l_current_nb_bytes_written;
+                        p_data += l_current_nb_bytes_written;
+                        p_total_data_size -= l_current_nb_bytes_written;
 
-//                        l_current_nb_bytes_written = 0;
-//                        opj_j2k_write_qcc_in_memory(p_j2k,compno,p_data,&l_current_nb_bytes_written,p_manager);
-//                        l_nb_bytes_written += l_current_nb_bytes_written;
-//                        p_data += l_current_nb_bytes_written;
-//                        p_total_data_size -= l_current_nb_bytes_written;
-//                }
+                        l_current_nb_bytes_written = 0;
+                        opj_j2k_write_qcc_in_memory(p_j2k,compno,p_data,&l_current_nb_bytes_written,p_manager);
+                        l_nb_bytes_written += l_current_nb_bytes_written;
+                        p_data += l_current_nb_bytes_written;
+                        p_total_data_size -= l_current_nb_bytes_written;
+                }
+#endif
 
                 if (l_cp->tcps[p_j2k->m_current_tile_number].numpocs) {
                         l_current_nb_bytes_written = 0;

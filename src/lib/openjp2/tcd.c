@@ -1006,7 +1006,7 @@ OPJ_BOOL opj_tcd_code_block_enc_allocate (opj_tcd_cblk_enc_t * p_code_block)
 {
         if (! p_code_block->data) {
 
-                p_code_block->data = (OPJ_BYTE*) opj_malloc(OPJ_J2K_DEFAULT_CBLK_DATA_SIZE); //why +1 ?
+                p_code_block->data = (OPJ_BYTE*) opj_malloc(OPJ_J2K_DEFAULT_CBLK_DATA_SIZE); /*why +1 ?*/
                 if(! p_code_block->data) {
                         return OPJ_FALSE;
                 }
