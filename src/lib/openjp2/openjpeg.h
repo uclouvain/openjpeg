@@ -1061,30 +1061,12 @@ OPJ_API void OPJ_CALLCONV opj_stream_set_user_data (opj_stream_t* p_stream, void
 OPJ_API void OPJ_CALLCONV opj_stream_set_user_data_length(opj_stream_t* p_stream, OPJ_UINT64 data_length);
 
 /**
- * Helper function.
- * Sets the stream to be a file stream. The FILE must have been open previously.
- * @param p_file            the file stream to operate on
- * @param p_is_read_stream  whether the stream is a read stream (true) or not (false)
-*/
-OPJ_DEPRECATED(OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_default_file_stream (FILE * p_file, OPJ_BOOL p_is_read_stream));
-
-/**
  * Create a stream from a file identified with its filename with default parameters (helper function)
  * @param fname             the filename of the file to stream
  * @param p_is_read_stream  whether the stream is a read stream (true) or not (false)
 */
 OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_default_file_stream_v3 (const char *fname, OPJ_BOOL p_is_read_stream);
  
-/**
- * FIXME DOC
- * @param p_file            the file stream to operate on
- * @param p_buffer_size     size of the chunk used to stream
- * @param p_is_read_stream  whether the stream is a read stream (true) or not (false)
-*/
-OPJ_DEPRECATED(OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream (FILE * p_file, 
-                                                                  OPJ_SIZE_T p_buffer_size,
-                                                                  OPJ_BOOL p_is_read_stream));
-
 /** Create a stream from a file identified with its filename with a specific buffer size
  * @param fname             the filename of the file to stream
  * @param p_buffer_size     size of the chunk used to stream

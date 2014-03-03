@@ -43,7 +43,7 @@ static void info_callback(const char *msg, void *client_data);
 
 static Byte_t * imagetopnm(opj_image_t *image, ihdrbox_param_t **ihdrbox);
 
-Byte_t * j2k_to_pnm( FILE *fp, ihdrbox_param_t **ihdrbox)
+Byte_t * j2k_to_pnm( const char *fn, ihdrbox_param_t **ihdrbox)
 {
   Byte_t *pnmstream = NULL;
   opj_dparameters_t parameters;	/* decompression parameters */
@@ -51,13 +51,11 @@ Byte_t * j2k_to_pnm( FILE *fp, ihdrbox_param_t **ihdrbox)
   opj_codec_t *l_codec = NULL;	/* handle to a decompressor */
   opj_stream_t *l_stream = NULL;
 
-
-
   /* set decoding parameters to default values */
   opj_set_default_decoder_parameters(&parameters);
 
   /* set a byte stream */
-  l_stream = opj_stream_create_default_file_stream( fp, 1);
+  l_stream = opj_stream_create_default_file_stream_v3( fn, OPJ_TRUE);
   if (!l_stream){
     fprintf(stderr, "ERROR -> failed to create the stream from the file\n");
     return NULL;
