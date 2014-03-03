@@ -3053,6 +3053,7 @@ static int imagetoraw_common(opj_image_t * image, const char *outfile, OPJ_BOOL 
     int line, row, curr, mask;
     int *ptr;
     unsigned char uc;
+    (void)big_endian;
 
     if((image->numcomps * image->x1 * image->y1) == 0)
     {

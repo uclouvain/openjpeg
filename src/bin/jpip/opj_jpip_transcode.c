@@ -42,7 +42,7 @@
  *   or
  *   % ./jpip_to_jp2 input.jpp output.jp2
  */
-static int jpip_to_jp2(int argc,char *argv[])
+static int jpip_to_jp2(char *argv[])
 {
   jpip_dec_param_t *dec;
     
@@ -74,7 +74,7 @@ static int jpip_to_jp2(int argc,char *argv[])
  *   or
  *   % ./jpip_to_j2k input.jpp output.j2k
  */
-static int jpip_to_j2k(int argc,char *argv[])
+static int jpip_to_j2k(char *argv[])
 {
   jpip_dec_param_t *dec;
   
@@ -111,11 +111,11 @@ int main(int argc,char *argv[])
     /* strcasecmp ? */
     if( strcmp(ext, ".jp2" ) == 0 )
       {
-      return jpip_to_jp2(argc,argv);
+      return jpip_to_jp2(argv);
       }
     if( strcmp(ext, ".j2k" ) == 0 )
       {
-      return jpip_to_j2k(argc,argv);
+      return jpip_to_j2k(argv);
       }
     }
 
