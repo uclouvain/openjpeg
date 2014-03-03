@@ -388,7 +388,8 @@ fprintf(stderr,"%s:%d:color_apply_icc_profile\n\tcmsCreateTransform failed. "
 	if(image->numcomps > 2)/* RGB, RGBA */
    {
 	unsigned short *inbuf, *outbuf, *in, *out;
-	max = max_w * max_h; nr_samples = max * 3 * sizeof(unsigned short);
+	max = max_w * max_h;
+  nr_samples = (cmsUInt32Number)(max * 3 * sizeof(unsigned short));
 	in = inbuf = (unsigned short*)malloc(nr_samples);
 	out = outbuf = (unsigned short*)malloc(nr_samples);
 
