@@ -442,7 +442,7 @@ static void opj_jp2_setup_header_reading (opj_jp2_t *jp2);
 	assert(p_number_bytes_read != 00);
 	assert(p_manager != 00);
 
-	*p_number_bytes_read = opj_stream_read_data(cio,l_data_header,8,p_manager);
+	*p_number_bytes_read = (OPJ_UINT32)opj_stream_read_data(cio,l_data_header,8,p_manager);
 	if (*p_number_bytes_read != 8) {
 		return OPJ_FALSE;
 	}
@@ -451,10 +451,12 @@ static void opj_jp2_setup_header_reading (opj_jp2_t *jp2);
 	opj_read_bytes(l_data_header,&(box->length), 4);
 	opj_read_bytes(l_data_header+4,&(box->type), 4);
     
-    if(box->length == 0)/* last box */
+  if(box->length == 0)/* last box */
     {
-        box->length = opj_stream_get_number_byte_left(cio);
-        return OPJ_TRUE;
+    const OPJ_OFF_T bleft = opj_stream_get_number_byte_left(cio);
+    box->length = (OPJ_UINT32)bleft;
+    assert( (OPJ_OFF_T)box->length == bleft );
+    return OPJ_TRUE;
     }
 
 	/* do we have a "special very large box ?" */
@@ -462,7 +464,7 @@ static void opj_jp2_setup_header_reading (opj_jp2_t *jp2);
 	if (box->length == 1) {
 		OPJ_UINT32 l_xl_part_size;
 
-		OPJ_UINT32 l_nb_bytes_read = opj_stream_read_data(cio,l_data_header,8,p_manager);
+		OPJ_UINT32 l_nb_bytes_read = (OPJ_UINT32)opj_stream_read_data(cio,l_data_header,8,p_manager);
 		if (l_nb_bytes_read != 8) {
 			if (l_nb_bytes_read > 0) {
 				*p_number_bytes_read += l_nb_bytes_read;
@@ -973,8 +975,8 @@ OPJ_BOOL opj_jp2_read_pclr(	opj_jp2_t *jp2,
 		opj_read_bytes(p_pclr_header_data, &l_value , 1);	/* Bi */
 		++p_pclr_header_data;
 
-		channel_size[i] = (l_value & 0x7f) + 1;
-		channel_sign[i] = (l_value & 0x80)? 1 : 0;
+		channel_size[i] = (OPJ_BYTE)((l_value & 0x7f) + 1);
+		channel_sign[i] = (l_value & 0x80) ? 1 : 0;
 	}
 
 	for(j = 0; j < nr_entries; ++j) {
@@ -1074,24 +1076,24 @@ void opj_jp2_apply_cdef(opj_image_t *image, opj_jp2_color_t *color)
 	info = color->jp2_cdef->info;
 	n = color->jp2_cdef->n;
 
-	for(i = 0; i < n; ++i)
-	{
-		/* WATCH: acn = asoc - 1 ! */
+  for(i = 0; i < n; ++i)
+    {
+    /* WATCH: acn = asoc - 1 ! */
     asoc = info[i].asoc;
-		if(asoc == 0 || asoc == 65535)
-                {
-                    if (i < image->numcomps)
-                        image->comps[i].alpha = info[i].typ;
-                    continue;
-                }
+    if(asoc == 0 || asoc == 65535)
+      {
+      if (i < image->numcomps)
+        image->comps[i].alpha = info[i].typ;
+      continue;
+      }
 
-		cn = info[i].cn; 
-        acn = asoc - 1;
-        if( cn >= image->numcomps || acn >= image->numcomps )
-        {
-            fprintf(stderr, "cn=%d, acn=%d, numcomps=%d\n", cn, acn, image->numcomps);
-            continue;
-        }
+    cn = info[i].cn; 
+    acn = (OPJ_INT16)(asoc - 1);
+    if( cn >= image->numcomps || acn >= image->numcomps )
+      {
+      fprintf(stderr, "cn=%d, acn=%d, numcomps=%d\n", cn, acn, image->numcomps);
+      continue;
+      }
 
 		if(cn != acn)
 		{
@@ -1101,8 +1103,8 @@ void opj_jp2_apply_cdef(opj_image_t *image, opj_jp2_color_t *color)
 			memcpy(&image->comps[cn], &image->comps[acn], sizeof(opj_image_comp_t));
 			memcpy(&image->comps[acn], &saved, sizeof(opj_image_comp_t));
 
-			info[i].asoc = cn + 1;
-			info[acn].asoc = info[acn].cn + 1;
+			info[i].asoc = (OPJ_UINT16)(cn + 1);
+			info[acn].asoc = (OPJ_UINT16)(info[acn].cn + 1);
 		}
 
 		image->comps[cn].alpha = info[i].typ;
@@ -1848,7 +1850,7 @@ OPJ_BOOL opj_jp2_read_header_procedure(  opj_jp2_t *jp2,
 				l_last_data_size = l_current_data_size;
 			}
 
-			l_nb_bytes_read = opj_stream_read_data(stream,l_current_data,l_current_data_size,p_manager);
+			l_nb_bytes_read = (OPJ_UINT32)opj_stream_read_data(stream,l_current_data,l_current_data_size,p_manager);
 			if (l_nb_bytes_read != l_current_data_size) {
 				opj_event_msg(p_manager, EVT_ERROR, "Problem with reading JPEG2000 box, stream error\n");
                 opj_free(l_current_data);                
