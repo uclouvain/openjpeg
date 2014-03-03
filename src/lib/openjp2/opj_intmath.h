@@ -102,6 +102,7 @@ Divide an integer and round upwards
 @return Returns a divided by b
 */
 static INLINE OPJ_INT32 opj_int_ceildiv(OPJ_INT32 a, OPJ_INT32 b) {
+  assert(b);
 	return (a + b - 1) / b;
 }
 
