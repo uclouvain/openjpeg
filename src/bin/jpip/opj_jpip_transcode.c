@@ -46,24 +46,17 @@ static int jpip_to_jp2(int argc,char *argv[])
 {
   jpip_dec_param_t *dec;
     
-  if( argc < 3){
-    fprintf( stderr, "Too few arguments:\n");
-    fprintf( stderr, " - input  jpt or jpp file\n");
-    fprintf( stderr, " - output jp2 file\n");
-    return -1;
-  }
-  
   dec = init_jpipdecoder( OPJ_TRUE);
   
   if(!( fread_jpip( argv[1], dec)))
-    return -1;
+    return 1;
   
   decode_jpip( dec);
   
   if(!(fwrite_jp2k( argv[2], dec)))
-    return -1;
+    return 1;
 
-  output_log( OPJ_TRUE, OPJ_FALSE, OPJ_TRUE, dec);
+  /* output_log( OPJ_TRUE, OPJ_FALSE, OPJ_TRUE, dec); */
 
   destroy_jpipdecoder( &dec);
 
@@ -85,22 +78,15 @@ static int jpip_to_j2k(int argc,char *argv[])
 {
   jpip_dec_param_t *dec;
   
-  if( argc < 3){
-    fprintf( stderr, "Too few arguments:\n");
-    fprintf( stderr, " - input  jpt or jpp file\n");
-    fprintf( stderr, " - output j2k file\n");
-    return -1;
-  }
-  
   dec = init_jpipdecoder( OPJ_FALSE);
   
   if(!( fread_jpip( argv[1], dec)))
-    return -1;
+    return 1;
   
   decode_jpip( dec);
   
-  if(!( fwrite_jp2k( argv[2], dec)))
-    return -1;
+  if(!(fwrite_jp2k( argv[2], dec)))
+    return 1;
   
   /*  output_log( OPJ_TRUE, OPJ_FALSE, OPJ_FALSE, dec); */
   
@@ -111,6 +97,28 @@ static int jpip_to_j2k(int argc,char *argv[])
 
 int main(int argc,char *argv[])
 {
-  /* MM: FIXME */
-  return jpip_to_jp2(argc,argv);
+  char *ext;
+  if( argc < 3){
+    fprintf( stderr, "Too few arguments:\n");
+    fprintf( stderr, " - input  jpt or jpp file\n");
+    fprintf( stderr, " - output j2k file\n");
+    return 1;
+  }
+  
+  ext = strrchr( argv[2], '.' );
+  if( ext )
+    {
+    // strcasecmp ?
+    if( strcmp(ext, ".jp2" ) == 0 )
+      {
+      return jpip_to_jp2(argc,argv);
+      }
+    if( strcmp(ext, ".j2k" ) == 0 )
+      {
+      return jpip_to_j2k(argc,argv);
+      }
+    }
+
+  fprintf( stderr, "Invalid file extension for output file: %s\n", argv[2]);
+  return 1;
 }
