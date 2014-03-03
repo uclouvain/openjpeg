@@ -1331,7 +1331,7 @@ OPJ_BOOL opj_t1_decode_cblks(   opj_t1_t* t1,
 						for (j = 0; j < cblk_h; ++j) {
                             OPJ_FLOAT32* restrict tiledp2 = tiledp;
 							for (i = 0; i < cblk_w; ++i) {
-                                OPJ_FLOAT32 tmp = *datap * band->stepsize;
+                                OPJ_FLOAT32 tmp = (OPJ_FLOAT32)*datap * band->stepsize;
                                 *tiledp2 = tmp;
                                 datap++;
                                 tiledp2++;
