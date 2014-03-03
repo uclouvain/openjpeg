@@ -646,7 +646,7 @@ OPJ_BOOL set_CODmkrdata( markeridx_param_t *codmkidx, codestream_param_t codestr
     COD->XPsiz = (Byte4_t *)opj_malloc( sizeof(Byte4_t));
     COD->YPsiz = (Byte4_t *)opj_malloc( sizeof(Byte4_t));
 
-    COD->XPsiz[0] = COD->YPsiz[0] = pow(2,15);
+    COD->XPsiz[0] = COD->YPsiz[0] = 1 << 15; /* pow(2,15); */
   }
   return OPJ_TRUE;
 }
