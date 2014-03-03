@@ -139,7 +139,7 @@ CODmarker_param_t get_CODmkrdata_from_j2kstream( Byte_t *CODstream)
   else{
     COD.XPsiz = (Byte4_t *)opj_malloc( sizeof(Byte4_t));
     COD.YPsiz = (Byte4_t *)opj_malloc( sizeof(Byte4_t));
-    COD.XPsiz[0] = COD.YPsiz[0] = pow(2,15);
+    COD.XPsiz[0] = COD.YPsiz[0] = 1<<15; /*pow(2,15)*/
   }
   return COD;
 }
