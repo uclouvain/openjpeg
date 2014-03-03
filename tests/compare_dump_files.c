@@ -187,7 +187,7 @@ int main(int argc, char **argv)
 
     if(chbase != chtest)
       {
-      size_t nbytes = 2048;
+      int nbytes = 2048;
       int CRLF_shift=1;
       char *strbase, *strtest, *strbase_d, *strtest_d;
 
