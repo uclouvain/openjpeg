@@ -24,6 +24,7 @@ set(BLACKLIST_JPEG2000_TMP
     0290cb77c5df21828fa74cf2ab2c84d8.SIGFPE.d25.31.jp2
     26ccf3651020967f7778238ef5af08af.SIGFPE.d25.527.jp2
     4035.pdf.SIGSEGV.d8b.3375.jp2
+    3635.pdf.asan.77.2930.jp2
    )
 
 # Define a list of file which should be gracefully rejected:
