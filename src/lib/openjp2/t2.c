@@ -547,8 +547,13 @@ OPJ_BOOL opj_t2_encode_packet(  OPJ_UINT32 tileno,
                 c[1] = 145;
                 c[2] = 0;
                 c[3] = 4;
+#if 0
                 c[4] = (tile->packno % 65536) / 256;
                 c[5] = (tile->packno % 65536) % 256;
+#else
+                c[4] = (tile->packno >> 8) & 0xff; /* packno is uint32_t */
+                c[5] = tile->packno & 0xff;
+#endif
                 c += 6;
                 length -= 6;
         }
