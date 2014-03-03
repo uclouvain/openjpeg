@@ -676,7 +676,7 @@ OPJ_BOOL opj_t2_encode_packet(  OPJ_UINT32 tileno,
                 return OPJ_FALSE;               /* modified to eliminate longjmp !! */
         }
 
-        l_nb_bytes = opj_bio_numbytes(bio);
+        l_nb_bytes = (OPJ_UINT32)opj_bio_numbytes(bio);
         c += l_nb_bytes;
         length -= l_nb_bytes;
 
@@ -740,7 +740,8 @@ OPJ_BOOL opj_t2_encode_packet(  OPJ_UINT32 tileno,
                 ++band;
         }
 
-        * p_data_written += (c - dest);
+        assert( c >= dest );
+        * p_data_written += (OPJ_UINT32)(c - dest);
 
         return OPJ_TRUE;
 }
@@ -876,7 +877,7 @@ OPJ_BOOL opj_t2_read_packet_header( opj_t2_t* p_t2,
         else {  /* Normal Case */
                 l_header_data_start = &(l_current_data);
                 l_header_data = *l_header_data_start;
-                l_remaining_length = p_src_data+p_max_length-l_header_data;
+                l_remaining_length = (OPJ_UINT32)(p_src_data+p_max_length-l_header_data);
                 l_modified_length_ptr = &(l_remaining_length);
         }
 
@@ -900,7 +901,7 @@ OPJ_BOOL opj_t2_read_packet_header( opj_t2_t* p_t2,
                         }
                 }
 
-                l_header_length = (l_header_data - *l_header_data_start);
+                l_header_length = (OPJ_UINT32)(l_header_data - *l_header_data_start);
                 *l_modified_length_ptr -= l_header_length;
                 *l_header_data_start += l_header_length;
 
@@ -913,7 +914,7 @@ OPJ_BOOL opj_t2_read_packet_header( opj_t2_t* p_t2,
                 /* INDEX >> */
 
                 * p_is_data_present = OPJ_FALSE;
-                *p_data_read = l_current_data - p_src_data;
+                *p_data_read = (OPJ_UINT32)(l_current_data - p_src_data);
                 return OPJ_TRUE;
         }
 
@@ -1026,7 +1027,7 @@ OPJ_BOOL opj_t2_read_packet_header( opj_t2_t* p_t2,
                 }
         }
 
-        l_header_length = (l_header_data - *l_header_data_start);
+        l_header_length = (OPJ_UINT32)(l_header_data - *l_header_data_start);
         *l_modified_length_ptr -= l_header_length;
         *l_header_data_start += l_header_length;
 
@@ -1039,7 +1040,7 @@ OPJ_BOOL opj_t2_read_packet_header( opj_t2_t* p_t2,
         /* INDEX >> */
 
         *p_is_data_present = OPJ_TRUE;
-        *p_data_read = l_current_data - p_src_data;
+        *p_data_read = (OPJ_UINT32)(l_current_data - p_src_data);
 
         return OPJ_TRUE;
 }
@@ -1162,7 +1163,7 @@ OPJ_BOOL opj_t2_read_packet_data(   opj_t2_t* p_t2,
                 ++l_band;
         }
 
-        *(p_data_read) = l_current_data - p_src_data;
+        *(p_data_read) = (OPJ_UINT32)(l_current_data - p_src_data);
 
         return OPJ_TRUE;
 }
