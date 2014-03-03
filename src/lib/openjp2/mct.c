@@ -230,7 +230,7 @@ OPJ_BOOL opj_mct_encode_custom(
 	lCurrentMatrix = lCurrentData + pNbComp;
 
 	for (i =0;i<lNbMatCoeff;++i) {
-		lCurrentMatrix[i] = (OPJ_INT32) (*(lMct++) * lMultiplicator);
+		lCurrentMatrix[i] = (OPJ_INT32) (*(lMct++) * (OPJ_FLOAT32)lMultiplicator);
 	}
 
 	for (i = 0; i < n; ++i)  {

@@ -87,7 +87,7 @@ opj_tgt_tree_t *opj_tgt_create(OPJ_UINT32 numleafsh, OPJ_UINT32 numleafsv) {
                 return 00;
         }
         memset(tree->nodes,0,tree->numnodes * sizeof(opj_tgt_node_t));
-        tree->nodes_size = tree->numnodes * sizeof(opj_tgt_node_t);
+        tree->nodes_size = tree->numnodes * (OPJ_UINT32)sizeof(opj_tgt_node_t);
 
         node = tree->nodes;
         l_parent_node = &tree->nodes[tree->numleafsh * tree->numleafsv];
@@ -166,7 +166,7 @@ opj_tgt_tree_t *opj_tgt_init(opj_tgt_tree_t * p_tree,OPJ_UINT32 p_num_leafs_h, O
                         opj_tgt_destroy(p_tree);
                         return 00;
                 }
-                l_node_size = p_tree->numnodes * sizeof(opj_tgt_node_t);
+                l_node_size = p_tree->numnodes * (OPJ_UINT32)sizeof(opj_tgt_node_t);
                 
                 if (l_node_size > p_tree->nodes_size) {
                         opj_tgt_node_t* new_nodes = (opj_tgt_node_t*) opj_realloc(p_tree->nodes, l_node_size);
