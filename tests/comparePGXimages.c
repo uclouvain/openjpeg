@@ -68,7 +68,7 @@ static double* parseToleranceValues( char* inArg, const int nbcomp)
     free(outArgs);
     return NULL;
     }
-  // else
+  /* else */
   return outArgs;
 }
 

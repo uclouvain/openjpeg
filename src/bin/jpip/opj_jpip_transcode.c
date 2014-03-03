@@ -108,7 +108,7 @@ int main(int argc,char *argv[])
   ext = strrchr( argv[2], '.' );
   if( ext )
     {
-    // strcasecmp ?
+    /* strcasecmp ? */
     if( strcmp(ext, ".jp2" ) == 0 )
       {
       return jpip_to_jp2(argc,argv);
