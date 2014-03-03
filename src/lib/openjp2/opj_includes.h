@@ -56,9 +56,11 @@
   ftello() only on systems with special LFS support since some systems
   (e.g. FreeBSD) support a 64-bit off_t by default.
 */
+#if !defined(OPENJPIP_H_) && defined(SERVER) /* server implementation uses fcgi/fseek*/
 #if defined(OPJ_HAVE_FSEEKO)
 #  define fseek  fseeko
 #  define ftell  ftello
+#endif
 #endif
 
 
