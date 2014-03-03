@@ -473,6 +473,7 @@ static OPJ_BOOL opj_j2k_read_cod (  opj_j2k_t *p_j2k,
                                     OPJ_UINT32 p_header_size,
                                     opj_event_mgr_t * p_manager);
 
+#if 0
 /**
  * Writes the COC marker (Coding style component)
  *
@@ -485,6 +486,9 @@ static OPJ_BOOL opj_j2k_write_coc(  opj_j2k_t *p_j2k,
                                                                 OPJ_UINT32 p_comp_no,
                                                                 opj_stream_private_t *p_stream,
                                                                 opj_event_mgr_t * p_manager );
+#endif
+
+#if 0
 /**
  * Writes the COC marker (Coding style component)
  *
@@ -499,6 +503,7 @@ static void opj_j2k_write_coc_in_memory(opj_j2k_t *p_j2k,
                                                                             OPJ_BYTE * p_data,
                                                                             OPJ_UINT32 * p_data_written,
                                                                             opj_event_mgr_t * p_manager );
+#endif
 
 /**
  * Gets the maximum size taken by a coc.
@@ -541,6 +546,7 @@ static OPJ_BOOL opj_j2k_read_qcd (  opj_j2k_t *p_j2k,
                                     OPJ_BYTE * p_header_data,
                                     OPJ_UINT32 p_header_size,
                                     opj_event_mgr_t * p_manager );
+#if 0
 /**
  * Writes the QCC marker (quantization component)
  *
@@ -553,7 +559,9 @@ static OPJ_BOOL opj_j2k_write_qcc(      opj_j2k_t *p_j2k,
                                                                         OPJ_UINT32 p_comp_no,
                                                                         opj_stream_private_t *p_stream,
                                                                         opj_event_mgr_t * p_manager );
+#endif
 
+#if 0
 /**
  * Writes the QCC marker (quantization component)
  *
@@ -568,6 +576,7 @@ static void opj_j2k_write_qcc_in_memory(opj_j2k_t *p_j2k,
                                                                             OPJ_BYTE * p_data,
                                                                             OPJ_UINT32 * p_data_written,
                                                                             opj_event_mgr_t * p_manager );
+#endif
 
 /**
  * Gets the maximum size taken by a qcc.
@@ -851,6 +860,7 @@ static OPJ_BOOL opj_j2k_write_eoc(      opj_j2k_t *p_j2k,
                                     opj_stream_private_t *p_stream,
                                     opj_event_mgr_t * p_manager );
 
+#if 0
 /**
  * Reads a EOC marker (End Of Codestream)
  *
@@ -861,6 +871,7 @@ static OPJ_BOOL opj_j2k_write_eoc(      opj_j2k_t *p_j2k,
 static OPJ_BOOL opj_j2k_read_eoc (      opj_j2k_t *p_j2k,
                                                                 opj_stream_private_t *p_stream,
                                                                 opj_event_mgr_t * p_manager );
+#endif
 
 /**
  * Writes the CBD-MCT-MCC-MCO markers (Multi components transform)
@@ -1044,6 +1055,7 @@ static OPJ_BOOL opj_j2k_read_cbd (      opj_j2k_t *p_j2k,
                                                                 OPJ_UINT32 p_header_size,
                                                                 opj_event_mgr_t * p_manager);
 
+#if 0
 /**
  * Writes COC marker for each component.
  *
@@ -1054,7 +1066,9 @@ static OPJ_BOOL opj_j2k_read_cbd (      opj_j2k_t *p_j2k,
 static OPJ_BOOL opj_j2k_write_all_coc( opj_j2k_t *p_j2k,
                                                                         opj_stream_private_t *p_stream,
                                                                         opj_event_mgr_t * p_manager );
+#endif
 
+#if 0
 /**
  * Writes QCC marker for each component.
  *
@@ -1065,6 +1079,7 @@ static OPJ_BOOL opj_j2k_write_all_coc( opj_j2k_t *p_j2k,
 static OPJ_BOOL opj_j2k_write_all_qcc( opj_j2k_t *p_j2k,
                                                                         opj_stream_private_t *p_stream,
                                                                         opj_event_mgr_t * p_manager );
+#endif
 
 /**
  * Writes regions of interests.
@@ -2456,6 +2471,7 @@ static OPJ_BOOL opj_j2k_read_cod (  opj_j2k_t *p_j2k,
         return OPJ_TRUE;
 }
 
+#if 0
 OPJ_BOOL opj_j2k_write_coc( opj_j2k_t *p_j2k,
                                                 OPJ_UINT32 p_comp_no,
                                                 opj_stream_private_t *p_stream,
@@ -2500,7 +2516,9 @@ OPJ_BOOL opj_j2k_write_coc( opj_j2k_t *p_j2k,
 
         return OPJ_TRUE;
 }
+#endif
 
+#if 0
 void opj_j2k_write_coc_in_memory(   opj_j2k_t *p_j2k,
                                                 OPJ_UINT32 p_comp_no,
                                                 OPJ_BYTE * p_data,
@@ -2545,6 +2563,7 @@ void opj_j2k_write_coc_in_memory(   opj_j2k_t *p_j2k,
         opj_j2k_write_SPCod_SPCoc(p_j2k,p_j2k->m_current_tile_number,0,l_current_data,&l_remaining_size,p_manager);
         * p_data_written = l_coc_size;
 }
+#endif
 
 OPJ_UINT32 opj_j2k_get_max_coc_size(opj_j2k_t *p_j2k)
 {
@@ -2718,6 +2737,7 @@ static OPJ_BOOL opj_j2k_read_qcd (  opj_j2k_t *p_j2k,
         return OPJ_TRUE;
 }
 
+#if 0
 OPJ_BOOL opj_j2k_write_qcc(     opj_j2k_t *p_j2k,
                                                 OPJ_UINT32 p_comp_no,
                                                 opj_stream_private_t *p_stream,
@@ -2756,7 +2776,9 @@ OPJ_BOOL opj_j2k_write_qcc(     opj_j2k_t *p_j2k,
 
         return OPJ_TRUE;
 }
+#endif
 
+#if 0
 void opj_j2k_write_qcc_in_memory(   opj_j2k_t *p_j2k,
                                                                 OPJ_UINT32 p_comp_no,
                                                                 OPJ_BYTE * p_data,
@@ -2805,6 +2827,7 @@ void opj_j2k_write_qcc_in_memory(   opj_j2k_t *p_j2k,
 
         *p_data_written = l_qcc_size;
 }
+#endif
 
 OPJ_UINT32 opj_j2k_get_max_qcc_size (opj_j2k_t *p_j2k)
 {
@@ -4677,6 +4700,7 @@ OPJ_BOOL opj_j2k_update_rates(  opj_j2k_t *p_j2k,
         return OPJ_TRUE;
 }
 
+#if 0
 OPJ_BOOL opj_j2k_read_eoc (     opj_j2k_t *p_j2k,
                                                         opj_stream_private_t *p_stream,
                                                         opj_event_mgr_t * p_manager )
@@ -4725,6 +4749,7 @@ OPJ_BOOL opj_j2k_read_eoc (     opj_j2k_t *p_j2k,
         opj_tcd_destroy(l_tcd);
         return OPJ_TRUE;
 }
+#endif
 
 OPJ_BOOL opj_j2k_get_end_header(opj_j2k_t *p_j2k,
                                                         struct opj_stream_private *p_stream,
@@ -4788,6 +4813,7 @@ OPJ_BOOL opj_j2k_write_mct_data_group(  opj_j2k_t *p_j2k,
         return OPJ_TRUE;
 }
 
+#if 0
 OPJ_BOOL opj_j2k_write_all_coc(opj_j2k_t *p_j2k,
                                                                         struct opj_stream_private *p_stream,
                                                                         struct opj_event_mgr * p_manager )
@@ -4808,7 +4834,9 @@ OPJ_BOOL opj_j2k_write_all_coc(opj_j2k_t *p_j2k,
 
         return OPJ_TRUE;
 }
+#endif
 
+#if 0
 OPJ_BOOL opj_j2k_write_all_qcc(opj_j2k_t *p_j2k,
                                                                         struct opj_stream_private *p_stream,
                                                                         struct opj_event_mgr * p_manager )
@@ -4829,6 +4857,7 @@ OPJ_BOOL opj_j2k_write_all_qcc(opj_j2k_t *p_j2k,
 
         return OPJ_TRUE;
 }
+#endif
 
 
 OPJ_BOOL opj_j2k_write_regions( opj_j2k_t *p_j2k,
