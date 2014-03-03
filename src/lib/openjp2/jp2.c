@@ -2712,6 +2712,7 @@ static OPJ_BOOL opj_jpip_write_cidx(opj_jp2_t *jp2,
   return OPJ_TRUE;
 }
 
+#if 0
 static void write_prxy( int offset_jp2c, int length_jp2c, int offset_idx, int length_idx, opj_stream_private_t *cio,
   opj_event_mgr_t * p_manager )
 {
@@ -2744,8 +2745,10 @@ static void write_prxy( int offset_jp2c, int length_jp2c, int offset_idx, int le
   opj_stream_write_data(cio,l_data_header,4,p_manager);
   opj_stream_seek(cio, lenp+len,p_manager);
 }
+#endif
 
 
+#if 0
 static int write_fidx( int offset_jp2c, int length_jp2c, int offset_idx, int length_idx, opj_stream_private_t *cio,
   opj_event_mgr_t * p_manager )
 {
@@ -2767,4 +2770,5 @@ static int write_fidx( int offset_jp2c, int length_jp2c, int offset_idx, int len
 
   return len;
 }
+#endif
 #endif /* USE_JPIP */

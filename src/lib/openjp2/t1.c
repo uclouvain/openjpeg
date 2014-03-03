@@ -62,6 +62,7 @@ static void opj_t1_enc_sigpass_step(opj_t1_t *t1,
 /**
 Decode significant pass
 */
+#if 0
 static void opj_t1_dec_sigpass_step(opj_t1_t *t1,
                                     opj_flag_t *flagsp,
                                     OPJ_INT32 *datap,
@@ -69,6 +70,7 @@ static void opj_t1_dec_sigpass_step(opj_t1_t *t1,
                                     OPJ_INT32 oneplushalf,
                                     OPJ_BYTE type,
                                     OPJ_UINT32 vsc);
+#endif
 
 static INLINE void opj_t1_dec_sigpass_step_raw(
                 opj_t1_t *t1,
@@ -161,6 +163,7 @@ static void opj_t1_dec_refpass_mqc_vsc(
 /**
 Decode refinement pass
 */
+#if 0
 static void opj_t1_dec_refpass_step(opj_t1_t *t1,
                                     opj_flag_t *flagsp,
                                     OPJ_INT32 *datap,
@@ -168,6 +171,7 @@ static void opj_t1_dec_refpass_step(opj_t1_t *t1,
                                     OPJ_INT32 neghalf,
                                     OPJ_BYTE type,
                                     OPJ_UINT32 vsc);
+#endif
 
 static INLINE void  opj_t1_dec_refpass_step_raw(
                 opj_t1_t *t1,
@@ -1678,6 +1682,7 @@ void opj_t1_encode_cblk(opj_t1_t *t1,
 	}
 }
 
+#if 0
 void opj_t1_dec_refpass_step(   opj_t1_t *t1,
                                 opj_flag_t *flagsp,
                                 OPJ_INT32 *datap,
@@ -1705,9 +1710,11 @@ void opj_t1_dec_refpass_step(   opj_t1_t *t1,
 		*flagsp |= T1_REFINE;
 	}
 }				/* VSC and  BYPASS by Antonin  */
+#endif
 
 
 
+#if 0
 void opj_t1_dec_sigpass_step(   opj_t1_t *t1,
                                 opj_flag_t *flagsp,
                                 OPJ_INT32 *datap,
@@ -1741,4 +1748,4 @@ void opj_t1_dec_sigpass_step(   opj_t1_t *t1,
 		*flagsp |= T1_VISIT;
 	}
 }				/* VSC and  BYPASS by Antonin */
-
+#endif
