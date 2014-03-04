@@ -1583,6 +1583,7 @@ OPJ_BOOL opj_tcd_mct_decode ( opj_tcd_t *p_tcd )
                     (l_tile->comps[1].x1 - l_tile->comps[1].x0) * (l_tile->comps[1].y1 - l_tile->comps[1].y0) < (OPJ_INT32)l_samples ||
                     (l_tile->comps[2].x1 - l_tile->comps[2].x0) * (l_tile->comps[2].y1 - l_tile->comps[2].y0) < (OPJ_INT32)l_samples) {
                         fprintf(stderr, "Tiles don't all have the same dimension. Skip the MCT step.\n");
+                        return OPJ_FALSE;
                 }
                 else if (l_tcp->mct == 2) {
                         OPJ_BYTE ** l_data;
