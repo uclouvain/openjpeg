@@ -438,34 +438,37 @@ foreach(numFileJP2 RANGE 1 9)
   list(GET JP2_PEAK_list ${numFileJP2}  PEAK_limit)
 
   add_test(NAME ETS-JP2-${filenameInput}-decode
-      COMMAND opj_decompress
-      -i ${INPUT_CONF}/${filenameInput}
-      -o ${TEMP}/${filenameInput}.tif
-      )
-#
-# FIXME: Need to implement a compare tif images function
-#
-#  add_test(ETS-JP2-${filenameInput}-compare2ref
-#      ${EXECUTABLE_OUTPUT_PATH}/compareTIFimages
-#     -b ${BASELINE_CONF}/${filenameRef_tif}
-#     -t ${TEMP}/${filenameInput}.pgx
-#     -p 4
-#     )
-#
-#  set_tests_properties(ETS-JP2-${filenameInput}-compare2ref
-#                       PROPERTIES DEPENDS
-#                       ETS-JP2-${filenameInput}-decode)
-#
-#  add_test(NR-JP2-${filenameInput}-compare2base
-#      ${EXECUTABLE_OUTPUT_PATH}/compareTIFimages
-#     -b ${BASELINE_NR}/opj_${filenameRef}
-#     -t ${TEMP}/${filenameInput}.tif
-#     -d
-#     )
-#
-#  set_tests_properties(NR-JP2-${filenameInput}-compare2base
-#                       PROPERTIES DEPENDS
-#                       ETS-JP2-${filenameInput}-decode)
+    COMMAND opj_decompress
+    -i ${INPUT_CONF}/${filenameInput}
+    -o ${TEMP}/${filenameInput}.tif
+  )
+
+  add_test(NAME ETS-JP2-${filenameInput}-compare2ref
+    COMMAND comparePGXimages
+    -b ${BASELINE_CONF}/${filenameRef}
+    -t ${TEMP}/${filenameInput}.tif
+    -n 3
+    -p 4:4:4
+    -m 4:4:4
+    -s b_t_
+  )
+
+  set_tests_properties(ETS-JP2-${filenameInput}-compare2ref
+    PROPERTIES DEPENDS
+    ETS-JP2-${filenameInput}-decode)
+
+  add_test(NAME NR-JP2-${filenameInput}-compare2base
+    COMMAND comparePGXimages
+    -b ${BASELINE_NR}/opj_${filenameRef}
+    -t ${TEMP}/${filenameInput}.tif
+    -n 3
+    -d
+    -s b_t_
+  )
+
+  set_tests_properties(NR-JP2-${filenameInput}-compare2base
+    PROPERTIES DEPENDS
+    ETS-JP2-${filenameInput}-decode)
 
 endforeach()
 

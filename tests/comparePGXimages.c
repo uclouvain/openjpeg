@@ -92,8 +92,8 @@ static void comparePGXimages_help_display(void)
 }
 
 /*******************************************************************************
- * Create filenames from a filename by used separator and nb components
- * (begin to 0)
+ * Create filenames from a filename using separator and nb components
+ * (begin from 0)
  *******************************************************************************/
 static char* createMultiComponentsFilename(const char* inFilename, const int indexF, const char* separator)
 {
@@ -136,6 +136,95 @@ static char* createMultiComponentsFilename(const char* inFilename, const int ind
 /*******************************************************************************
  *
  *******************************************************************************/
+static opj_image_t* readImageFromFileTIF(const char* filename, int nbFilenamePGX, const char *separator)
+{
+  int it_file;
+  opj_image_t* image_read = NULL;
+  opj_image_t* image = NULL;
+  opj_cparameters_t parameters;
+  opj_image_cmptparm_t* param_image_read;
+  int** data;
+
+  /* If separator is empty => nb file to read is equal to one*/
+  if ( strlen(separator) == 0 )
+    nbFilenamePGX = 1;
+
+  /* set encoding parameters to default values */
+  opj_set_default_encoder_parameters(&parameters);
+  parameters.decod_format = TIF_DFMT;
+  strncpy(parameters.infile, filename, sizeof(parameters.infile)-1);
+  assert( parameters.infile[sizeof(parameters.infile)] == 0 );
+
+  /* Allocate memory*/
+  param_image_read = malloc(nbFilenamePGX * sizeof(opj_image_cmptparm_t));
+  data = malloc(nbFilenamePGX * sizeof(*data));
+
+  for (it_file = 0; it_file < nbFilenamePGX; it_file++)
+    {
+    /* Create the right filename*/
+    char *filenameComponentPGX;
+    if (strlen(separator) == 0)
+      {
+      filenameComponentPGX = malloc((strlen(filename) + 1) * sizeof(*filenameComponentPGX));
+      strcpy(filenameComponentPGX, filename);
+      }
+    else
+      filenameComponentPGX = createMultiComponentsFilename(filename, it_file, separator);
+
+    /* Read the tif file corresponding to the component */
+    image_read = tiftoimage(filenameComponentPGX, &parameters);
+    if (!image_read)
+      {
+      int it_free_data;
+      fprintf(stderr, "Unable to load pgx file\n");
+
+      free(param_image_read);
+
+      for (it_free_data = 0; it_free_data < it_file; it_free_data++) {
+        free(data[it_free_data]);
+      }
+      free(data);
+
+      free(filenameComponentPGX);
+
+      return NULL;
+      }
+
+    /* Set the image_read parameters*/
+    param_image_read[it_file].x0 = 0;
+    param_image_read[it_file].y0 = 0;
+    param_image_read[it_file].dx = 0;
+    param_image_read[it_file].dy = 0;
+    param_image_read[it_file].h = image_read->comps->h;
+    param_image_read[it_file].w = image_read->comps->w;
+    param_image_read[it_file].bpp = image_read->comps->bpp;
+    param_image_read[it_file].prec = image_read->comps->prec;
+    param_image_read[it_file].sgnd = image_read->comps->sgnd;
+
+    /* Copy data*/
+    data[it_file] = malloc(param_image_read[it_file].h * param_image_read[it_file].w * sizeof(int));
+    memcpy(data[it_file], image_read->comps->data, image_read->comps->h * image_read->comps->w * sizeof(int));
+
+    /* Free memory*/
+    opj_image_destroy(image_read);
+    free(filenameComponentPGX);
+    }
+
+  image = opj_image_create(nbFilenamePGX, param_image_read, OPJ_CLRSPC_UNSPECIFIED);
+  for (it_file = 0; it_file < nbFilenamePGX; it_file++)
+    {
+    /* Copy data into output image and free memory*/
+    memcpy(image->comps[it_file].data, data[it_file], image->comps[it_file].h * image->comps[it_file].w * sizeof(int));
+    free(data[it_file]);
+    }
+
+  /* Free memory*/
+  free(param_image_read);
+  free(data);
+
+  return image;
+}
+
 static opj_image_t* readImageFromFilePGX(const char* filename, int nbFilenamePGX, const char *separator)
 {
   int it_file;
@@ -276,6 +365,19 @@ typedef struct test_cmp_parameters
 
 } test_cmp_parameters;
 
+/* return decode format PGX / TIF , return -1 on error */
+static int get_decod_format(test_cmp_parameters* param)
+{
+  const int dot = '.';
+  char * base_ext = strrchr(param->base_filename, dot);
+  char * test_ext = strrchr(param->test_filename, dot);
+  if( !base_ext || !test_ext ) return -1;
+  if( strcmp(base_ext,test_ext) != 0 ) return -1;
+  if( strcmp(base_ext,".pgx") == 0 ) return PGX_DFMT;
+  if( strcmp(base_ext,".tif") == 0 ) return TIF_DFMT;
+  return -1;
+}
+
 /*******************************************************************************
  * Parse command line
  *******************************************************************************/
@@ -361,22 +463,16 @@ static int parse_cmdline_cmp(int argc, char **argv, test_cmp_parameters* param)
     fprintf(stderr,"Need to indicate the number of components !\n");
     return 1;
     }
-  else
+  /* else */
+  if ( flagM && flagP )
     {
-    if ( flagM && flagP )
+    param->tabMSEvalues = parseToleranceValues( MSElistvalues, param->nbcomp);
+    param->tabPEAKvalues = parseToleranceValues( PEAKlistvalues, param->nbcomp);
+    if ( (param->tabMSEvalues == NULL) || (param->tabPEAKvalues == NULL))
       {
-      param->tabMSEvalues = parseToleranceValues( MSElistvalues, param->nbcomp);
-      param->tabPEAKvalues = parseToleranceValues( PEAKlistvalues, param->nbcomp);
-      if ( (param->tabMSEvalues == NULL) || (param->tabPEAKvalues == NULL))
-        {
-        fprintf(stderr,"MSE and PEAK values are not correct (respectively need %d values)\n",param->nbcomp);
-        return 1;
-        }
+      fprintf(stderr,"MSE and PEAK values are not correct (respectively need %d values)\n",param->nbcomp);
+      return 1;
       }
-    /*else
-      {
-
-      }*/
     }
 
   /* Get separators after corresponding letter (b or t)*/
@@ -512,6 +608,7 @@ int main(int argc, char **argv)
   /* Structures to store image parameters and data*/
   opj_image_t *imageBase = NULL, *imageTest = NULL, *imageDiff = NULL;
   opj_image_cmptparm_t* param_image_diff = NULL;
+  int decod_format;
 
   /* Get parameters from command line*/
   if( parse_cmdline_cmp(argc, argv, &inParam) )
@@ -559,9 +656,22 @@ int main(int argc, char **argv)
   memsizebasefilename = (int)strlen(inParam.test_filename) + 1 + 5 + 2 + 4;
   memsizetestfilename = (int)strlen(inParam.test_filename) + 1 + 5 + 2 + 4;
 
-  imageBase = readImageFromFilePGX( inParam.base_filename, nbFilenamePGXbase, inParam.separator_base);
-  if ( imageBase == NULL )
-    goto cleanup;
+  decod_format = get_decod_format(&inParam);
+  if( decod_format == -1 ) goto cleanup;
+  assert( decod_format == PGX_DFMT || decod_format == TIF_DFMT );
+
+  if( decod_format == PGX_DFMT )
+    {
+    imageBase = readImageFromFilePGX( inParam.base_filename, nbFilenamePGXbase, inParam.separator_base);
+    if ( imageBase == NULL )
+      goto cleanup;
+    }
+  else if( decod_format == TIF_DFMT )
+    {
+    imageBase = readImageFromFileTIF( inParam.base_filename, nbFilenamePGXbase, "");
+    if ( imageBase == NULL )
+      goto cleanup;
+    }
 
   filenamePNGbase = (char*) malloc(memsizebasefilename);
   strcpy(filenamePNGbase, inParam.test_filename);
@@ -570,9 +680,18 @@ int main(int argc, char **argv)
 
   /*----------TEST IMAGE--------*/
 
-  imageTest = readImageFromFilePGX(inParam.test_filename, nbFilenamePGXtest, inParam.separator_test);
-  if ( imageTest == NULL )
-    goto cleanup;
+  if( decod_format == PGX_DFMT )
+    {
+    imageTest = readImageFromFilePGX(inParam.test_filename, nbFilenamePGXtest, inParam.separator_test);
+    if ( imageTest == NULL )
+      goto cleanup;
+    }
+  else if( decod_format == TIF_DFMT )
+    {
+    imageTest = readImageFromFileTIF(inParam.test_filename, nbFilenamePGXtest, "");
+    if ( imageTest == NULL )
+      goto cleanup;
+    }
 
   filenamePNGtest = (char*) malloc(memsizetestfilename);
   strcpy(filenamePNGtest, inParam.test_filename);
