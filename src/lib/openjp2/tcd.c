@@ -682,7 +682,7 @@ OPJ_BOOL FUNCTION (     opj_tcd_t *p_tcd,                        \
                 /*fprintf(stderr, "\tTile compo border = %d,%d,%d,%d\n", l_tilec->x0, l_tilec->y0,l_tilec->x1,l_tilec->y1);*/                                                                                     \
                                                                     \
                 l_data_size = (l_tilec->x1 - l_tilec->x0)           \
-                * (l_tilec->y1 - l_tilec->y0) * sizeof(OPJ_UINT32 );\
+                * (l_tilec->y1 - l_tilec->y0) * (OPJ_UINT32)sizeof(OPJ_UINT32 );\
                 l_tilec->numresolutions = l_tccp->numresolutions;   \
                 if (l_tccp->numresolutions < l_cp->m_specific_param.m_dec.m_reduce) {                                                                                                                             \
                         l_tilec->minimum_num_resolutions = 1;       \
@@ -716,7 +716,7 @@ OPJ_BOOL FUNCTION (     opj_tcd_t *p_tcd,                        \
                         l_tilec->data_size = l_data_size;           \
                 }                                                   \
                                                                     \
-                l_data_size = l_tilec->numresolutions * sizeof(opj_tcd_resolution_t);                                                                                                                          \
+                l_data_size = l_tilec->numresolutions * (OPJ_UINT32)sizeof(opj_tcd_resolution_t);                                                                                                                          \
                                                                     \
                 if (l_tilec->resolutions == 00) {                   \
                         l_tilec->resolutions = (opj_tcd_resolution_t *) opj_malloc(l_data_size);                                                                                                               \
@@ -782,7 +782,7 @@ OPJ_BOOL FUNCTION (     opj_tcd_t *p_tcd,                        \
                         /*fprintf(stderr, "\t\t\tres_pw=%d, res_ph=%d\n", l_res->pw, l_res->ph );*/                                                                                                               \
                                                                                                                                                                                                                   \
                         l_nb_precincts = l_res->pw * l_res->ph;                                                                                                                                                   \
-                        l_nb_precinct_size = l_nb_precincts * sizeof(opj_tcd_precinct_t);                                                                                                                      \
+                        l_nb_precinct_size = l_nb_precincts * (OPJ_UINT32)sizeof(opj_tcd_precinct_t);                                                                                                                      \
                         if (resno == 0) {                                                                                                                                                                         \
                                 tlcbgxstart = l_tl_prc_x_start;                                                                                                                                                   \
                                 tlcbgystart = l_tl_prc_y_start;                                                                                                                                                   \
@@ -894,7 +894,7 @@ OPJ_BOOL FUNCTION (     opj_tcd_t *p_tcd,                        \
                                                                                                                                                                                                                   \
                                         l_nb_code_blocks = l_current_precinct->cw * l_current_precinct->ch;                                                                                                       \
                                         /*fprintf(stderr, "\t\t\t\t precinct_cw = %d x recinct_ch = %d\n",l_current_precinct->cw, l_current_precinct->ch);      */                                                \
-                                        l_nb_code_blocks_size = l_nb_code_blocks * sizeof(TYPE);                                                                                                                  \
+                                        l_nb_code_blocks_size = l_nb_code_blocks * (OPJ_UINT32)sizeof(TYPE);                                                                                                                  \
                                                                                                                                                                                                                   \
                                         if (! l_current_precinct->cblks.ELEMENT) {                                                                                                                                \
                                                 l_current_precinct->cblks.ELEMENT = (TYPE*) opj_malloc(l_nb_code_blocks_size);                                                                                    \
