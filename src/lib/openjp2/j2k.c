@@ -4592,7 +4592,7 @@ OPJ_BOOL opj_j2k_update_rates(  opj_j2k_t *p_j2k,
                         if (*l_rates) {
                                 *l_rates =              (( (OPJ_FLOAT32) (l_size_pixel * (l_x1 - l_x0) * (l_y1 - l_y0)))
                                                                 /
-                                                                ((*l_rates) * l_bits_empty)
+                                                                ((*l_rates) * (OPJ_FLOAT32)l_bits_empty)
                                                                 )
                                                                 -
                                                                 l_offset;
@@ -4604,7 +4604,7 @@ OPJ_BOOL opj_j2k_update_rates(  opj_j2k_t *p_j2k,
                                 if (*l_rates) {
                                         *l_rates =              (( (OPJ_FLOAT32) (l_size_pixel * (l_x1 - l_x0) * (l_y1 - l_y0)))
                                                                         /
-                                                                                ((*l_rates) * l_bits_empty)
+                                                                                ((*l_rates) * (OPJ_FLOAT32)l_bits_empty)
                                                                         )
                                                                         -
                                                                         l_offset;
@@ -6001,7 +6001,7 @@ void opj_j2k_set_cinema_parameters(opj_cparameters_t *parameters, opj_image_t *i
             parameters->tcp_rates[0] = max_rate;
         }else{
             temp_rate =(OPJ_FLOAT32)(image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec)/
-                    (OPJ_FLOAT32)(parameters->tcp_rates[0] * 8 * image->comps[0].dx * image->comps[0].dy);
+                    (parameters->tcp_rates[0] * 8 * (OPJ_FLOAT32)image->comps[0].dx * (OPJ_FLOAT32)image->comps[0].dy);
             if (temp_rate > CINEMA_24_CS ){
                 opj_event_msg(p_manager, EVT_WARNING,
                         "JPEG 2000 Profile-3 and 4 (2k/4k dc profile) requires:\n"
@@ -6020,12 +6020,12 @@ void opj_j2k_set_cinema_parameters(opj_cparameters_t *parameters, opj_image_t *i
         break;
     case OPJ_CINEMA2K_48:
         max_rate = ((float) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec))/
-                (CINEMA_48_CS * 8 * image->comps[0].dx * image->comps[0].dy);
+                (float)(CINEMA_48_CS * 8 * image->comps[0].dx * image->comps[0].dy);
         if (parameters->tcp_rates[0] == 0){
             parameters->tcp_rates[0] = max_rate;
         }else{
             temp_rate =((float) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec))/
-                    (parameters->tcp_rates[0] * 8 * image->comps[0].dx * image->comps[0].dy);
+                    (parameters->tcp_rates[0] * 8 * (float)image->comps[0].dx * (float)image->comps[0].dy);
             if (temp_rate > CINEMA_48_CS ){
                 opj_event_msg(p_manager, EVT_WARNING,
                         "JPEG 2000 Profile-3 (2k dc profile) requires:\n"
@@ -6143,9 +6143,9 @@ void opj_j2k_setup_encoder(     opj_j2k_t *p_j2k,
         cp->m_specific_param.m_enc.m_cinema = parameters->cp_cinema;
         cp->m_specific_param.m_enc.m_max_comp_size =    parameters->max_comp_size;
         cp->rsiz   = parameters->cp_rsiz;
-        cp->m_specific_param.m_enc.m_disto_alloc = parameters->cp_disto_alloc;
-        cp->m_specific_param.m_enc.m_fixed_alloc = parameters->cp_fixed_alloc;
-        cp->m_specific_param.m_enc.m_fixed_quality = parameters->cp_fixed_quality;
+        cp->m_specific_param.m_enc.m_disto_alloc = parameters->cp_disto_alloc & 1u;
+        cp->m_specific_param.m_enc.m_fixed_alloc = parameters->cp_fixed_alloc & 1u;
+        cp->m_specific_param.m_enc.m_fixed_quality = parameters->cp_fixed_quality & 1u;
 
         /* mod fixed_quality */
         if (parameters->cp_fixed_alloc && parameters->cp_matrice) {
