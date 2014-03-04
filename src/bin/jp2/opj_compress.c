@@ -937,7 +937,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
             float *lCurrentDoublePtr;
             float *lSpace;
             int *l_int_ptr;
-            int lNbComp = 0, lTotalComp, lMctComp, i, lStrLen, lStrFread;
+            int lNbComp = 0, lTotalComp, lMctComp, i; long int lStrLen, lStrFread;
 
             /* Open file */
             FILE * lFile = fopen(lFilename,"r");
