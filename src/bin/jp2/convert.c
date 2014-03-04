@@ -584,8 +584,8 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
         return NULL;
     }
 
-    File_h.bfType = getc(IN);
-    File_h.bfType = (getc(IN) << 8) + File_h.bfType;
+    File_h.bfType = (WORD)getc(IN);
+    File_h.bfType = (WORD)((getc(IN) << 8) + File_h.bfType);
 
     if (File_h.bfType != 19778)
     {
@@ -600,11 +600,11 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
     File_h.bfSize = (getc(IN) << 16) + File_h.bfSize;
     File_h.bfSize = (getc(IN) << 24) + File_h.bfSize;
 
-    File_h.bfReserved1 = getc(IN);
-    File_h.bfReserved1 = (getc(IN) << 8) + File_h.bfReserved1;
+    File_h.bfReserved1 = (WORD)getc(IN);
+    File_h.bfReserved1 = (WORD)((getc(IN) << 8) + File_h.bfReserved1);
 
-    File_h.bfReserved2 = getc(IN);
-    File_h.bfReserved2 = (getc(IN) << 8) + File_h.bfReserved2;
+    File_h.bfReserved2 = (WORD)getc(IN);
+    File_h.bfReserved2 = (WORD)((getc(IN) << 8) + File_h.bfReserved2);
 
     File_h.bfOffBits = getc(IN);
     File_h.bfOffBits = (getc(IN) << 8) + File_h.bfOffBits;
@@ -637,11 +637,11 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
     Info_h.biHeight = (getc(IN) << 24) + Info_h.biHeight;
     h = Info_h.biHeight;
 
-    Info_h.biPlanes = getc(IN);
-    Info_h.biPlanes = (getc(IN) << 8) + Info_h.biPlanes;
+    Info_h.biPlanes = (WORD)getc(IN);
+    Info_h.biPlanes = (WORD)((getc(IN) << 8) + Info_h.biPlanes);
 
-    Info_h.biBitCount = getc(IN);
-    Info_h.biBitCount = (getc(IN) << 8) + Info_h.biBitCount;
+    Info_h.biBitCount = (WORD)getc(IN);
+    Info_h.biBitCount = (WORD)((getc(IN) << 8) + Info_h.biBitCount);
 
     Info_h.biCompression = getc(IN);
     Info_h.biCompression = (getc(IN) << 8) + Info_h.biCompression;
@@ -1248,9 +1248,9 @@ static unsigned short readushort(FILE * f, int bigendian)
         return 0;
     }
     if (bigendian)
-        return (c1 << 8) + c2;
+        return (unsigned short)((c1 << 8) + c2);
     else
-        return (c2 << 8) + c1;
+        return (unsigned short)((c2 << 8) + c1);
 }
 
 static unsigned int readuint(FILE * f, int bigendian)
@@ -2258,15 +2258,15 @@ int imagetotif(opj_image_t * image, const char *outfile)
                             if(has_alpha) a += adjust;
                         }
 		if(r > 255) r = 255; else if(r < 0) r = 0;
-                        dat8[i+0] = r ;
+                        dat8[i+0] = (unsigned char)r ;
 		if(g > 255) g = 255; else if(g < 0) g = 0;
-                        dat8[i+1] = g ;
+                        dat8[i+1] = (unsigned char)g ;
 		if(b > 255) b = 255; else if(b < 0) b = 0;
-                        dat8[i+2] = b ;
+                        dat8[i+2] = (unsigned char)b ;
 		if(has_alpha) 
 	 {
 		if(a > 255) a = 255; else if(a < 0) a = 0;
-		dat8[i+3] = a;
+		dat8[i+3] = (unsigned char)a;
 	 }
 
                         index++;
@@ -2300,14 +2300,14 @@ int imagetotif(opj_image_t * image, const char *outfile)
 		if(g > 255) g = 255; else if(g < 0) g = 0;
 		if(b > 255) b = 255; else if(b < 0) b = 0;
 
-                            dat8[i+0] = r ;
-                            if(i+1 < ssize) dat8[i+1] = g ;  else break;
-                            if(i+2 < ssize) dat8[i+2] = b ;  else break;
+                            dat8[i+0] = (unsigned char)r ;
+                            if(i+1 < ssize) dat8[i+1] = (unsigned char)g ;  else break;
+                            if(i+2 < ssize) dat8[i+2] = (unsigned char)b ;  else break;
                             if(has_alpha)
                             {
 		if(a > 255) a = 255; else if(a < 0) a = 0;
 
-                                if(i+3 < ssize) dat8[i+3] = a ;  else break;
+                                if(i+3 < ssize) dat8[i+3] = (unsigned char)a ;  else break;
                             }
                             index++;
                         }
@@ -2352,17 +2352,17 @@ int imagetotif(opj_image_t * image, const char *outfile)
 		if(g > 65535) g = 65535; else if(g < 0) g = 0;
 		if(b > 65535) b = 65535; else if(b < 0) b = 0;
 
-                            dat8[i+0] =  r;/*LSB*/
-                            dat8[i+1] = (r >> 8);/*MSB*/
-                            dat8[i+2] =  g;
-                            dat8[i+3] = (g >> 8);
-                            dat8[i+4] =  b;
-                            dat8[i+5] = (b >> 8);
+                            dat8[i+0] =  (unsigned char)r;/*LSB*/
+                            dat8[i+1] = (unsigned char)(r >> 8);/*MSB*/
+                            dat8[i+2] =  (unsigned char)g;
+                            dat8[i+3] = (unsigned char)(g >> 8);
+                            dat8[i+4] =  (unsigned char)b;
+                            dat8[i+5] = (unsigned char)(b >> 8);
                             if(has_alpha)
                             {
 		if(a > 65535) a = 65535; else if(a < 0) a = 0;
-                                dat8[i+6] =  a;
-                                dat8[i+7] = (a >> 8);
+                                dat8[i+6] =  (unsigned char)a;
+                                dat8[i+7] = (unsigned char)(a >> 8);
                             }
                             index++;
                             last_i = i + step;
@@ -2402,18 +2402,18 @@ int imagetotif(opj_image_t * image, const char *outfile)
 		if(g > 65535) g = 65535; else if(g < 0) g = 0;
 		if(b > 65535) b = 65535; else if(b < 0) b = 0;
 
-                                dat8[i+0] =  r;/*LSB*/
-                                if(i+1 < ssize) dat8[i+1] = (r >> 8);else break;/*MSB*/
-                                if(i+2 < ssize) dat8[i+2] =  g;      else break;
-                                if(i+3 < ssize) dat8[i+3] = (g >> 8);else break;
-                                if(i+4 < ssize) dat8[i+4] =  b;      else break;
-                                if(i+5 < ssize) dat8[i+5] = (b >> 8);else break;
+                                dat8[i+0] = (unsigned char) r;/*LSB*/
+                                if(i+1 < ssize) dat8[i+1] = (unsigned char)(r >> 8);else break;/*MSB*/
+                                if(i+2 < ssize) dat8[i+2] = (unsigned char) g;      else break;
+                                if(i+3 < ssize) dat8[i+3] = (unsigned char)(g >> 8);else break;
+                                if(i+4 < ssize) dat8[i+4] = (unsigned char) b;      else break;
+                                if(i+5 < ssize) dat8[i+5] = (unsigned char)(b >> 8);else break;
 
                                 if(has_alpha)
                                 {
 		if(a > 65535) a = 65535; else if(a < 0) a = 0;
-                                    if(i+6 < ssize) dat8[i+6] = a; else break;
-                                    if(i+7 < ssize) dat8[i+7] = (a >> 8); else break;
+                                    if(i+6 < ssize) dat8[i+6] = (unsigned char)a; else break;
+                                    if(i+7 < ssize) dat8[i+7] = (unsigned char)(a >> 8); else break;
                                 }
                                 index++;
                             }
@@ -2486,12 +2486,12 @@ int imagetotif(opj_image_t * image, const char *outfile)
                             if(has_alpha) a += adjust;
                         }
 		if(r > 255) r = 255; else if(r < 0) r = 0;
-                        dat8[i+0] = r;
+                        dat8[i+0] = (unsigned char)r;
 
 		if(has_alpha) 
 	 {
 		if(a > 255) a = 255; else if(a < 0) a = 0;
-		dat8[i+1] = a;
+		dat8[i+1] = (unsigned char)a;
                     }
 		index++;
 	  }
@@ -2524,13 +2524,13 @@ int imagetotif(opj_image_t * image, const char *outfile)
                                 if(has_alpha) a = (a<<ushift) + (a>>dshift);
                             }
 		if(r > 65535) r = 65535; else if(r < 0) r = 0;
-                            dat8[i+0] = r;/*LSB*/
-                            dat8[i+1] = r >> 8;/*MSB*/
+                            dat8[i+0] = (unsigned char)r;/*LSB*/
+                            dat8[i+1] = (unsigned char)(r >> 8);/*MSB*/
                             if(has_alpha)
                             {
 		if(a > 65535) a = 65535; else if(a < 0) a = 0;
-                                dat8[i+2] = a;
-                                dat8[i+3] = a >> 8;
+                                dat8[i+2] = (unsigned char)a;
+                                dat8[i+3] = (unsigned char)(a >> 8);
                             }
                             index++;
                         }/*if(index < imgsize)*/
@@ -3011,13 +3011,11 @@ static opj_image_t* rawtoimage_common(const char *filename, opj_cparameters_t *p
                 }
                 if( big_endian )
                 {
-                    value = temp1 << 8;
-                    value += temp2;
+                    value = (unsigned short)(temp1 << 8 + temp2);
                 }
                 else
                 {
-                    value = temp2 << 8;
-                    value += temp1;
+                    value = (unsigned short)(temp2 << 8 + temp1);
                 }
                 image->comps[compno].data[i] = raw_cp->rawSigned?(short)value:value;
             }
@@ -3312,8 +3310,8 @@ opj_image_t *pngtoimage(const char *read_idf, opj_cparameters_t * params)
         cmptparm[i].sgnd = 0;
         cmptparm[i].dx = sub_dx;
         cmptparm[i].dy = sub_dy;
-        cmptparm[i].w = width;
-        cmptparm[i].h = height;
+        cmptparm[i].w = (OPJ_UINT32)width;
+        cmptparm[i].h = (OPJ_UINT32)height;
     }
 
     image = opj_image_create(nr_comp, &cmptparm[0], OPJ_CLRSPC_SRGB);
@@ -3322,8 +3320,8 @@ opj_image_t *pngtoimage(const char *read_idf, opj_cparameters_t * params)
 
     image->x0 = params->image_offset_x0;
     image->y0 = params->image_offset_y0;
-    image->x1 = image->x0 + (width  - 1) * sub_dx + 1 + image->x0;
-    image->y1 = image->y0 + (height - 1) * sub_dy + 1 + image->y0;
+    image->x1 = (OPJ_UINT32)(image->x0 + (width  - 1) * sub_dx + 1 + image->x0);
+    image->y1 = (OPJ_UINT32)(image->y0 + (height - 1) * sub_dy + 1 + image->y0);
 
     r = image->comps[0].data;
     g = image->comps[1].data;
@@ -3487,11 +3485,11 @@ int imagetopng(opj_image_t * image, const char *write_idf)
         green = image->comps[1].data;
         blue = image->comps[2].data;
 
-        sig_bit.red = sig_bit.green = sig_bit.blue = prec;
+        sig_bit.red = sig_bit.green = sig_bit.blue = (png_byte)prec;
 
         if(has_alpha)
         {
-            sig_bit.alpha = prec;
+            sig_bit.alpha = (png_byte)prec;
             alpha = image->comps[3].data;
             color_type = PNG_COLOR_TYPE_RGB_ALPHA;
             adjustA = (image->comps[3].sgnd ? 1 << (image->comps[3].prec - 1) : 0);
@@ -3618,14 +3616,14 @@ image->comps[1].sgnd,image->comps[2].sgnd,width,height,has_alpha);
 
             red = image->comps[0].data;
 
-            sig_bit.gray = prec;
+            sig_bit.gray = (png_byte)prec;
             sig_bit.red = sig_bit.green = sig_bit.blue = sig_bit.alpha = 0;
             alpha = NULL; adjustA = 0;
             color_type = PNG_COLOR_TYPE_GRAY;
 
             if(nr_comp == 2)
             {
-                has_alpha = 1; sig_bit.alpha = prec;
+                has_alpha = 1; sig_bit.alpha = (png_byte)prec;
                 alpha = image->comps[1].data;
                 color_type = PNG_COLOR_TYPE_GRAY_ALPHA;
                 adjustA = (image->comps[1].sgnd ? 1 << (image->comps[1].prec - 1) : 0);
