@@ -301,7 +301,7 @@ void opj_tcd_makelayer_fixed(opj_tcd_t *tcd, OPJ_UINT32 layno, OPJ_UINT32 final)
                         for (j = 0; j < tilec->numresolutions; j++) {
                                 for (k = 0; k < 3; k++) {
                                         matrice[i][j][k] =
-                                                (OPJ_INT32) (cp->m_specific_param.m_enc.m_matrice[i * tilec->numresolutions * 3 + j * 3 + k]
+                                                (OPJ_INT32) ((OPJ_FLOAT32)cp->m_specific_param.m_enc.m_matrice[i * tilec->numresolutions * 3 + j * 3 + k]
                                                 * (OPJ_FLOAT32) (tcd->image->comps[compno].prec / 16.0));
                                 }
                         }
@@ -580,7 +580,7 @@ OPJ_BOOL opj_tcd_init( opj_tcd_t *p_tcd,
         }
         memset(p_tcd->tcd_image->tiles,0, sizeof(opj_tcd_tile_t));
 
-        l_tile_comp_size = p_image->numcomps * sizeof(opj_tcd_tilecomp_t);
+        l_tile_comp_size = p_image->numcomps * (OPJ_UINT32)sizeof(opj_tcd_tilecomp_t);
         p_tcd->tcd_image->tiles->comps = (opj_tcd_tilecomp_t *) opj_malloc(l_tile_comp_size);
         if (! p_tcd->tcd_image->tiles->comps ) {
                 return OPJ_FALSE;
@@ -1691,7 +1691,7 @@ OPJ_BOOL opj_tcd_dc_level_shift_decode ( opj_tcd_t *p_tcd )
                         for (j=0;j<l_height;++j) {
                                 for (i = 0; i < l_width; ++i) {
                                         OPJ_FLOAT32 l_value = *((OPJ_FLOAT32 *) l_current_ptr);
-                                        *l_current_ptr = opj_int_clamp(lrintf(l_value) + l_tccp->m_dc_level_shift, l_min, l_max); ;
+                                        *l_current_ptr = opj_int_clamp((OPJ_INT32)lrintf(l_value) + l_tccp->m_dc_level_shift, l_min, l_max); ;
                                         ++l_current_ptr;
                                 }
                                 l_current_ptr += l_stride;
