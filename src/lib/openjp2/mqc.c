@@ -372,7 +372,9 @@ void opj_mqc_destroy(opj_mqc_t *mqc) {
 
 OPJ_UINT32 opj_mqc_numbytes(opj_mqc_t *mqc) {
 	const ptrdiff_t diff = mqc->bp - mqc->start;
+#if 0
   assert( diff <= 0xffffffff && diff >= 0 ); /* UINT32_MAX */
+#endif
 	return (OPJ_UINT32)diff;
 }
 
