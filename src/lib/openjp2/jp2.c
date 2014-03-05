@@ -797,21 +797,28 @@ static OPJ_BOOL opj_jp2_check_color(opj_image_t *image, opj_jp2_color_t *color, 
 		}
 		/* verify that no component is targeted more than once */
 		for (i = 0; i < nr_channels; i++) {
-			OPJ_UINT16 pcol = cmap[i].pcol;
+      OPJ_UINT16 pcol = cmap[i].pcol;
+      assert(cmap[i].mtyp == 0 || cmap[i].mtyp == 1);
 			if (pcol >= nr_channels) {
 				opj_event_msg(p_manager, EVT_ERROR, "Invalid component/palette index for direct mapping %d.\n", pcol);
 				is_sane = OPJ_FALSE;
 			}
-			else if (pcol_usage[pcol]) {
+			else if (pcol_usage[pcol] && cmap[i].mtyp == 1) {
 				opj_event_msg(p_manager, EVT_ERROR, "Component %d is mapped twice.\n", pcol);
 				is_sane = OPJ_FALSE;
 			}
+      else if (cmap[i].mtyp == 0 && cmap[i].pcol != 0) {
+        /* I.5.3.5 PCOL: If the value of the MTYP field for this channel is 0, then
+         * the value of this field shall be 0. */
+				opj_event_msg(p_manager, EVT_ERROR, "Direct use at #%d however pcol=%d.\n", i, pcol);
+				is_sane = OPJ_FALSE;
+      }
 			else
 				pcol_usage[pcol] = OPJ_TRUE;
 		}
 		/* verify that all components are targeted at least once */
 		for (i = 0; i < nr_channels; i++) {
-			if (!pcol_usage[i]) {
+			if (!pcol_usage[i] && cmap[i].mtyp != 0) {
 				opj_event_msg(p_manager, EVT_ERROR, "Component %d doesn't have a mapping.\n", i);
 				is_sane = OPJ_FALSE;
 			}
@@ -850,40 +857,52 @@ void opj_jp2_apply_pclr(opj_image_t *image, opj_jp2_color_t *color)
 	for(i = 0; i < nr_channels; ++i) {
 		pcol = cmap[i].pcol; cmp = cmap[i].cmp;
 
-		new_comps[pcol] = old_comps[cmp];
-
 		/* Direct use */
-		if(cmap[i].mtyp == 0){
-			old_comps[cmp].data = NULL; continue;
-		}
+    if(cmap[i].mtyp == 0){
+      assert( pcol == 0 );
+      new_comps[i] = old_comps[cmp];
+    } else {
+      assert( i == pcol );
+      new_comps[pcol] = old_comps[cmp];
+    }
 
 		/* Palette mapping: */
-		new_comps[pcol].data = (OPJ_INT32*)
+		new_comps[i].data = (OPJ_INT32*)
 				opj_malloc(old_comps[cmp].w * old_comps[cmp].h * sizeof(OPJ_INT32));
-		new_comps[pcol].prec = channel_size[i];
-		new_comps[pcol].sgnd = channel_sign[i];
+		new_comps[i].prec = channel_size[i];
+		new_comps[i].sgnd = channel_sign[i];
 	}
 
 	top_k = color->jp2_pclr->nr_entries - 1;
 
 	for(i = 0; i < nr_channels; ++i) {
-		/* Direct use: */
-		if(cmap[i].mtyp == 0) continue;
-
 		/* Palette mapping: */
 		cmp = cmap[i].cmp; pcol = cmap[i].pcol;
 		src = old_comps[cmp].data;
-		dst = new_comps[pcol].data;
+    assert( src );
 		max = new_comps[pcol].w * new_comps[pcol].h;
 
-		for(j = 0; j < max; ++j)
-		{
-			/* The index */
-			if((k = src[j]) < 0) k = 0; else if(k > top_k) k = top_k;
+		/* Direct use: */
+    if(cmap[i].mtyp == 0) {
+      assert( cmp == 0 );
+      dst = new_comps[i].data;
+      assert( dst );
+      for(j = 0; j < max; ++j) {
+        dst[j] = src[j];
+      }
+    }
+    else {
+      assert( i == pcol );
+      dst = new_comps[pcol].data;
+      assert( dst );
+      for(j = 0; j < max; ++j) {
+        /* The index */
+        if((k = src[j]) < 0) k = 0; else if(k > top_k) k = top_k;
 
-			/* The colour */
-			dst[j] = entries[k * nr_channels + pcol];
-		}
+        /* The colour */
+        dst[j] = entries[k * nr_channels + pcol];
+        }
+    }
 	}
 
 	max = image->numcomps;
