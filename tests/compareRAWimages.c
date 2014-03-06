@@ -77,7 +77,7 @@ static int parse_cmdline_cmp(int argc, char **argv, test_cmp_parameters* param)
 		{
 		case 'b':
 			sizemembasefile = (int)strlen(opj_optarg)+1;
-			param->base_filename = (char*) malloc(sizemembasefile);
+			param->base_filename = (char*) malloc((size_t)sizemembasefile);
 			param->base_filename[0] = '\0';
 			strncpy(param->base_filename, opj_optarg, strlen(opj_optarg));
 			param->base_filename[strlen(opj_optarg)] = '\0';
@@ -85,7 +85,7 @@ static int parse_cmdline_cmp(int argc, char **argv, test_cmp_parameters* param)
 			break;
 		case 't':
 			sizememtestfile = (int) strlen(opj_optarg) + 1;
-			param->test_filename = (char*) malloc(sizememtestfile);
+			param->test_filename = (char*) malloc((size_t)sizememtestfile);
 			param->test_filename[0] = '\0';
 			strncpy(param->test_filename, opj_optarg, strlen(opj_optarg));
 			param->test_filename[strlen(opj_optarg)] = '\0';

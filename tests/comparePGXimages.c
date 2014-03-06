@@ -51,7 +51,7 @@
  *******************************************************************************/
 static double* parseToleranceValues( char* inArg, const int nbcomp)
 {
-  double* outArgs= malloc(nbcomp * sizeof(double));
+  double* outArgs= malloc((size_t)nbcomp * sizeof(double));
   int it_comp = 0;
   const char delims[] = ":";
   char *result = strtok( inArg, delims );
@@ -116,9 +116,9 @@ static char* createMultiComponentsFilename(const char* inFilename, const int ind
     return outFilename;
     }
 
-  outFilename = (char*)malloc((posToken + 7) * sizeof(char)); /*6*/
+  outFilename = (char*)malloc((size_t)(posToken + 7) * sizeof(char)); /*6*/
 
-  strncpy(outFilename, inFilename, posToken);
+  strncpy(outFilename, inFilename, (size_t)posToken);
 
   outFilename[posToken] = '\0';
 
@@ -155,8 +155,8 @@ static opj_image_t* readImageFromFileTIF(const char* filename, int nbFilenamePGX
   strcpy(parameters.infile, filename);
 
   /* Allocate memory*/
-  param_image_read = malloc(nbFilenamePGX * sizeof(opj_image_cmptparm_t));
-  data = malloc(nbFilenamePGX * sizeof(*data));
+  param_image_read = malloc((size_t)nbFilenamePGX * sizeof(opj_image_cmptparm_t));
+  data = malloc((size_t)nbFilenamePGX * sizeof(*data));
 
   for (it_file = 0; it_file < nbFilenamePGX; it_file++)
     {
@@ -209,7 +209,7 @@ static opj_image_t* readImageFromFileTIF(const char* filename, int nbFilenamePGX
     free(filenameComponentPGX);
     }
 
-  image = opj_image_create(nbFilenamePGX, param_image_read, OPJ_CLRSPC_UNSPECIFIED);
+  image = opj_image_create((OPJ_UINT32)nbFilenamePGX, param_image_read, OPJ_CLRSPC_UNSPECIFIED);
   for (it_file = 0; it_file < nbFilenamePGX; it_file++)
     {
     /* Copy data into output image and free memory*/
@@ -244,8 +244,8 @@ static opj_image_t* readImageFromFilePGX(const char* filename, int nbFilenamePGX
   assert( parameters.infile[sizeof(parameters.infile)] == 0 );
 
   /* Allocate memory*/
-  param_image_read = malloc(nbFilenamePGX * sizeof(opj_image_cmptparm_t));
-  data = malloc(nbFilenamePGX * sizeof(*data));
+  param_image_read = malloc((size_t)nbFilenamePGX * sizeof(opj_image_cmptparm_t));
+  data = malloc((size_t)nbFilenamePGX * sizeof(*data));
 
   for (it_file = 0; it_file < nbFilenamePGX; it_file++)
     {
@@ -298,7 +298,7 @@ static opj_image_t* readImageFromFilePGX(const char* filename, int nbFilenamePGX
     free(filenameComponentPGX);
     }
 
-  image = opj_image_create(nbFilenamePGX, param_image_read, OPJ_CLRSPC_UNSPECIFIED);
+  image = opj_image_create((OPJ_UINT32)nbFilenamePGX, param_image_read, OPJ_CLRSPC_UNSPECIFIED);
   for (it_file = 0; it_file < nbFilenamePGX; it_file++)
     {
     /* Copy data into output image and free memory*/
@@ -332,7 +332,7 @@ static int imageToPNG(const opj_image_t* image, const char* filename, int num_co
   param_image_write.prec = image->comps[num_comp_select].prec;
   param_image_write.sgnd = image->comps[num_comp_select].sgnd;
 
-  image_write = opj_image_create(1, &param_image_write, OPJ_CLRSPC_GRAY);
+  image_write = opj_image_create(1u, &param_image_write, OPJ_CLRSPC_GRAY);
   memcpy(image_write->comps->data, image->comps[num_comp_select].data, param_image_write.h * param_image_write.w * sizeof(int));
 
   imagetopng(image_write, filename);
@@ -406,7 +406,7 @@ static int parse_cmdline_cmp(int argc, char **argv, test_cmp_parameters* param)
       {
       case 'b':
         sizemembasefile = (int)strlen(opj_optarg)+1;
-        param->base_filename = (char*) malloc(sizemembasefile);
+        param->base_filename = (char*) malloc((size_t)sizemembasefile);
         param->base_filename[0] = '\0';
         strncpy(param->base_filename, opj_optarg, strlen(opj_optarg));
         param->base_filename[strlen(opj_optarg)] = '\0';
@@ -414,7 +414,7 @@ static int parse_cmdline_cmp(int argc, char **argv, test_cmp_parameters* param)
         break;
       case 't':
         sizememtestfile = (int) strlen(opj_optarg) + 1;
-        param->test_filename = (char*) malloc(sizememtestfile);
+        param->test_filename = (char*) malloc((size_t)sizememtestfile);
         param->test_filename[0] = '\0';
         strncpy(param->test_filename, opj_optarg, strlen(opj_optarg));
         param->test_filename[strlen(opj_optarg)] = '\0';
@@ -481,7 +481,7 @@ static int parse_cmdline_cmp(int argc, char **argv, test_cmp_parameters* param)
       {
       /* keep original string*/
       int sizeseplist = (int)strlen(separatorList)+1;
-      char* separatorList2 = (char*)malloc( sizeseplist );
+      char* separatorList2 = (char*)malloc( (size_t)sizeseplist );
       separatorList2[0] = '\0';
       strncpy(separatorList2, separatorList, strlen(separatorList));
       separatorList2[strlen(separatorList)] = '\0';
@@ -672,7 +672,7 @@ int main(int argc, char **argv)
       goto cleanup;
     }
 
-  filenamePNGbase = (char*) malloc(memsizebasefilename);
+  filenamePNGbase = (char*) malloc((size_t)memsizebasefilename);
   strcpy(filenamePNGbase, inParam.test_filename);
   strcat(filenamePNGbase, ".base");
   /*printf("filenamePNGbase = %s [%d / %d octets]\n",filenamePNGbase, strlen(filenamePNGbase),memsizebasefilename );*/
@@ -692,7 +692,7 @@ int main(int argc, char **argv)
       goto cleanup;
     }
 
-  filenamePNGtest = (char*) malloc(memsizetestfilename);
+  filenamePNGtest = (char*) malloc((size_t)memsizetestfilename);
   strcpy(filenamePNGtest, inParam.test_filename);
   strcat(filenamePNGtest, ".test");
   /*printf("filenamePNGtest = %s [%d / %d octets]\n",filenamePNGtest, strlen(filenamePNGtest),memsizetestfilename );*/
@@ -811,10 +811,10 @@ int main(int argc, char **argv)
            {
            char *filenamePNGbase_it_comp, *filenamePNGtest_it_comp, *filenamePNGdiff_it_comp;
 
-           filenamePNGbase_it_comp = (char*) malloc(memsizebasefilename);
+           filenamePNGbase_it_comp = (char*) malloc((size_t)memsizebasefilename);
            strcpy(filenamePNGbase_it_comp,filenamePNGbase);
 
-           filenamePNGtest_it_comp = (char*) malloc(memsizetestfilename);
+           filenamePNGtest_it_comp = (char*) malloc((size_t)memsizetestfilename);
            strcpy(filenamePNGtest_it_comp,filenamePNGtest);
 
            filenamePNGdiff_it_comp = (char*) malloc(memsizedifffilename);
