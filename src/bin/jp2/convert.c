@@ -408,7 +408,8 @@ opj_image_t* tgatoimage(const char *filename, opj_cparameters_t *parameters) {
 int imagetotga(opj_image_t * image, const char *outfile) {
     int width, height, bpp, x, y;
     OPJ_BOOL write_alpha;
-    int i, adjustR, adjustG, adjustB, fails;
+    unsigned int i;
+    int adjustR, adjustG, adjustB, fails;
     unsigned int alpha_channel;
     float r,g,b,a;
     unsigned char value;
@@ -702,8 +703,8 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
         /* set image offset and reference grid */
         image->x0 = parameters->image_offset_x0;
         image->y0 = parameters->image_offset_y0;
-        image->x1 =	!image->x0 ? (w - 1) * subsampling_dx + 1 : image->x0 + (w - 1) * subsampling_dx + 1;
-        image->y1 =	!image->y0 ? (h - 1) * subsampling_dy + 1 : image->y0 + (h - 1) * subsampling_dy + 1;
+        image->x1 =	!image->x0 ? (w - 1) * subsampling_dx + 1 : (int)(image->x0 + (w - 1) * subsampling_dx + 1);
+        image->y1 =	!image->y0 ? (h - 1) * subsampling_dy + 1 : (int)(image->y0 + (h - 1) * subsampling_dy + 1);
 
         /* set image data */
 
@@ -803,8 +804,8 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
             /* set image offset and reference grid */
             image->x0 = parameters->image_offset_x0;
             image->y0 = parameters->image_offset_y0;
-            image->x1 =	!image->x0 ? (w - 1) * subsampling_dx + 1 : image->x0 + (w - 1) * subsampling_dx + 1;
-            image->y1 =	!image->y0 ? (h - 1) * subsampling_dy + 1 : image->y0 + (h - 1) * subsampling_dy + 1;
+            image->x1 =	!image->x0 ? (w - 1) * subsampling_dx + 1 : (int)(image->x0 + (w - 1) * subsampling_dx + 1);
+            image->y1 =	!image->y0 ? (h - 1) * subsampling_dy + 1 : (int)(image->y0 + (h - 1) * subsampling_dy + 1);
 
             /* set image data */
 
@@ -915,10 +916,8 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
                 /* set image offset and reference grid */
                 image->x0 = parameters->image_offset_x0;
                 image->y0 = parameters->image_offset_y0;
-                image->x1 = !image->x0 ? (w - 1) * subsampling_dx + 1 : image->x0 + (w
-                                                                                     - 1) * subsampling_dx + 1;
-                image->y1 = !image->y0 ? (h - 1) * subsampling_dy + 1 : image->y0 + (h
-                                                                                     - 1) * subsampling_dy + 1;
+                image->x1 = !image->x0 ? (w - 1) * subsampling_dx + 1 : (int)(image->x0 + (w - 1) * subsampling_dx + 1);
+                image->y1 = !image->y0 ? (h - 1) * subsampling_dy + 1 : (int)(image->y0 + (h - 1) * subsampling_dy + 1);
 
                 /* set image data */
 
@@ -1338,8 +1337,8 @@ opj_image_t* pgxtoimage(const char *filename, opj_cparameters_t *parameters) {
 
     cmptparm.x0 = parameters->image_offset_x0;
     cmptparm.y0 = parameters->image_offset_y0;
-    cmptparm.w = !cmptparm.x0 ? (w - 1) * parameters->subsampling_dx + 1 : cmptparm.x0 + (w - 1) * parameters->subsampling_dx + 1;
-    cmptparm.h = !cmptparm.y0 ? (h - 1) * parameters->subsampling_dy + 1 : cmptparm.y0 + (h - 1) * parameters->subsampling_dy + 1;
+    cmptparm.w = !cmptparm.x0 ? (w - 1) * parameters->subsampling_dx + 1 : (int)(cmptparm.x0 + (w - 1) * parameters->subsampling_dx + 1);
+    cmptparm.h = !cmptparm.y0 ? (h - 1) * parameters->subsampling_dy + 1 : (int)(cmptparm.y0 + (h - 1) * parameters->subsampling_dy + 1);
 
     if (sign == '-') {
         cmptparm.sgnd = 1;
@@ -1439,7 +1438,8 @@ static inline int clamp( const int value, const int prec, const int sgnd )
 int imagetopgx(opj_image_t * image, const char *outfile) 
 {
   int w, h;
-  int i, j, compno, fails = 1;
+  int i, j, fails = 1;
+  unsigned int compno;
   FILE *fdest = NULL;
 
   for (compno = 0; compno < image->numcomps; compno++) 
@@ -1938,7 +1938,8 @@ int imagetopnm(opj_image_t * image, const char *outfile)
 {
     int *red, *green, *blue, *alpha;
     int wr, hr, max;
-    int i, compno, ncomp;
+    int i;
+    unsigned int compno, ncomp;
     int adjustR, adjustG, adjustB, adjustA;
     int fails, two, want_gray, has_alpha, triple;
     int prec, v;
@@ -2701,9 +2702,9 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
         image->x0 = parameters->image_offset_x0;
         image->y0 = parameters->image_offset_y0;
         image->x1 =	!image->x0 ? (w - 1) * subsampling_dx + 1 :
-                                 image->x0 + (w - 1) * subsampling_dx + 1;
+                                 (int)(image->x0 + (w - 1) * subsampling_dx + 1);
         image->y1 =	!image->y0 ? (h - 1) * subsampling_dy + 1 :
-                                 image->y0 + (h - 1) * subsampling_dy + 1;
+                                 (int)(image->y0 + (h - 1) * subsampling_dy + 1);
 
         buf = _TIFFmalloc(TIFFStripSize(tif));
 
@@ -2851,9 +2852,9 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
         image->x0 = parameters->image_offset_x0;
         image->y0 = parameters->image_offset_y0;
         image->x1 =	!image->x0 ? (w - 1) * subsampling_dx + 1 :
-                                 image->x0 + (w - 1) * subsampling_dx + 1;
+                                 (int)(image->x0 + (w - 1) * subsampling_dx + 1);
         image->y1 =	!image->y0 ? (h - 1) * subsampling_dy + 1 :
-                                 image->y0 + (h - 1) * subsampling_dy + 1;
+                                 (int)(image->y0 + (h - 1) * subsampling_dy + 1);
 
         buf = _TIFFmalloc(TIFFStripSize(tif));
 
@@ -3046,7 +3047,7 @@ static int imagetoraw_common(opj_image_t * image, const char *outfile, OPJ_BOOL 
 {
     FILE *rawFile = NULL;
     size_t res;
-    int compno;
+    unsigned int compno;
     int w, h, fails;
     int line, row, curr, mask;
     int *ptr;

@@ -1000,7 +1000,7 @@ OPJ_BOOL opj_jp2_read_pclr(	opj_jp2_t *jp2,
 
 	for(j = 0; j < nr_entries; ++j) {
 		for(i = 0; i < nr_channels; ++i) {
-			OPJ_INT32 bytes_to_read = (channel_size[i]+7)>>3;
+			OPJ_UINT32 bytes_to_read = (channel_size[i]+7)>>3;
 
 			if (bytes_to_read > sizeof(OPJ_UINT32))
 				bytes_to_read = sizeof(OPJ_UINT32);

@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
 
   for (i = 0; i < image_width * image_height; i++)
     {
-    int compno;
+    unsigned int compno;
     for(compno = 0; compno < numcomps; compno++)
       {
       image->comps[compno].data[i] = 0;
