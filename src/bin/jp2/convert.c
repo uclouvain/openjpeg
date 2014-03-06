@@ -302,23 +302,23 @@ opj_image_t* tgatoimage(const char *filename, opj_cparameters_t *parameters) {
         cmptparm[i].prec = 8;
         cmptparm[i].bpp = 8;
         cmptparm[i].sgnd = 0;
-        cmptparm[i].dx = subsampling_dx;
-        cmptparm[i].dy = subsampling_dy;
+        cmptparm[i].dx = (OPJ_UINT32)subsampling_dx;
+        cmptparm[i].dy = (OPJ_UINT32)subsampling_dy;
         cmptparm[i].w = image_width;
         cmptparm[i].h = image_height;
     }
 
     /* create the image */
-    image = opj_image_create(numcomps, &cmptparm[0], color_space);
+    image = opj_image_create((OPJ_UINT32)numcomps, &cmptparm[0], color_space);
 
     if (!image)
         return NULL;
 
     /* set image offset and reference grid */
-    image->x0 = parameters->image_offset_x0;
-    image->y0 = parameters->image_offset_y0;
-    image->x1 =	!image->x0 ? (image_width - 1) * subsampling_dx + 1 : image->x0 + (image_width - 1) * subsampling_dx + 1;
-    image->y1 =	!image->y0 ? (image_height - 1) * subsampling_dy + 1 : image->y0 + (image_height - 1) * subsampling_dy + 1;
+    image->x0 = (OPJ_UINT32)parameters->image_offset_x0;
+    image->y0 = (OPJ_UINT32)parameters->image_offset_y0;
+    image->x1 =	!image->x0 ? (OPJ_UINT32)(image_width - 1)  * (OPJ_UINT32)subsampling_dx + 1 : image->x0 + (OPJ_UINT32)(image_width - 1)  * (OPJ_UINT32)subsampling_dx + 1;
+    image->y1 =	!image->y0 ? (OPJ_UINT32)(image_height - 1) * (OPJ_UINT32)subsampling_dy + 1 : image->y0 + (OPJ_UINT32)(image_height - 1) * (OPJ_UINT32)subsampling_dy + 1;
 
     /* set image data */
     for (y=0; y < image_height; y++)
@@ -326,9 +326,9 @@ opj_image_t* tgatoimage(const char *filename, opj_cparameters_t *parameters) {
         int index;
 
         if (flip_image)
-            index = (image_height-y-1)*image_width;
+            index = (int)((image_height-y-1)*image_width);
         else
-            index = y*image_width;
+            index = (int)(y*image_width);
 
         if (numcomps==3)
         {
@@ -432,8 +432,8 @@ int imagetotga(opj_image_t * image, const char *outfile) {
         }
     }
 
-    width = image->comps[0].w;
-    height = image->comps[0].h;
+    width  = (int)image->comps[0].w;
+    height = (int)image->comps[0].h;
 
     /* Mono with alpha, or RGB with alpha. */
     write_alpha = (image->numcomps==2) || (image->numcomps==4);
@@ -454,7 +454,7 @@ int imagetotga(opj_image_t * image, const char *outfile) {
 
 	for (y=0; y < height; y++) 
    {
-	unsigned int index=y*width;
+	unsigned int index= (unsigned int)(y*width);
 
 	for (x=0; x < width; x++, index++)	
   {
@@ -596,10 +596,10 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
     }
     /* FILE HEADER */
     /* ------------- */
-    File_h.bfSize = getc(IN);
-    File_h.bfSize = (getc(IN) << 8) + File_h.bfSize;
-    File_h.bfSize = (getc(IN) << 16) + File_h.bfSize;
-    File_h.bfSize = (getc(IN) << 24) + File_h.bfSize;
+    File_h.bfSize = (DWORD)getc(IN);
+    File_h.bfSize = (DWORD)(getc(IN) << 8) + File_h.bfSize;
+    File_h.bfSize = (DWORD)(getc(IN) << 16) + File_h.bfSize;
+    File_h.bfSize = (DWORD)(getc(IN) << 24) + File_h.bfSize;
 
     File_h.bfReserved1 = (WORD)getc(IN);
     File_h.bfReserved1 = (WORD)((getc(IN) << 8) + File_h.bfReserved1);
@@ -607,18 +607,18 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
     File_h.bfReserved2 = (WORD)getc(IN);
     File_h.bfReserved2 = (WORD)((getc(IN) << 8) + File_h.bfReserved2);
 
-    File_h.bfOffBits = getc(IN);
-    File_h.bfOffBits = (getc(IN) << 8) + File_h.bfOffBits;
-    File_h.bfOffBits = (getc(IN) << 16) + File_h.bfOffBits;
-    File_h.bfOffBits = (getc(IN) << 24) + File_h.bfOffBits;
+    File_h.bfOffBits = (DWORD)getc(IN);
+    File_h.bfOffBits = (DWORD)(getc(IN) << 8) + File_h.bfOffBits;
+    File_h.bfOffBits = (DWORD)(getc(IN) << 16) + File_h.bfOffBits;
+    File_h.bfOffBits = (DWORD)(getc(IN) << 24) + File_h.bfOffBits;
 
     /* INFO HEADER */
     /* ------------- */
 
-    Info_h.biSize = getc(IN);
-    Info_h.biSize = (getc(IN) << 8) + Info_h.biSize;
-    Info_h.biSize = (getc(IN) << 16) + Info_h.biSize;
-    Info_h.biSize = (getc(IN) << 24) + Info_h.biSize;
+    Info_h.biSize = (DWORD)getc(IN);
+    Info_h.biSize = (DWORD)(getc(IN) << 8) + Info_h.biSize;
+    Info_h.biSize = (DWORD)(getc(IN) << 16) + Info_h.biSize;
+    Info_h.biSize = (DWORD)(getc(IN) << 24) + Info_h.biSize;
 
     if(Info_h.biSize != 40)
     {
@@ -626,17 +626,17 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
         fclose(IN);
         return NULL;
     }
-    Info_h.biWidth = getc(IN);
-    Info_h.biWidth = (getc(IN) << 8) + Info_h.biWidth;
-    Info_h.biWidth = (getc(IN) << 16) + Info_h.biWidth;
-    Info_h.biWidth = (getc(IN) << 24) + Info_h.biWidth;
-    w = Info_h.biWidth;
+    Info_h.biWidth = (DWORD)getc(IN);
+    Info_h.biWidth = (DWORD)(getc(IN) << 8) + Info_h.biWidth;
+    Info_h.biWidth = (DWORD)(getc(IN) << 16) + Info_h.biWidth;
+    Info_h.biWidth = (DWORD)(getc(IN) << 24) + Info_h.biWidth;
+    w = (int)Info_h.biWidth;
 
-    Info_h.biHeight = getc(IN);
-    Info_h.biHeight = (getc(IN) << 8) + Info_h.biHeight;
-    Info_h.biHeight = (getc(IN) << 16) + Info_h.biHeight;
-    Info_h.biHeight = (getc(IN) << 24) + Info_h.biHeight;
-    h = Info_h.biHeight;
+    Info_h.biHeight = (DWORD)getc(IN);
+    Info_h.biHeight = (DWORD)(getc(IN) << 8) + Info_h.biHeight;
+    Info_h.biHeight = (DWORD)(getc(IN) << 16) + Info_h.biHeight;
+    Info_h.biHeight = (DWORD)(getc(IN) << 24) + Info_h.biHeight;
+    h = (int)Info_h.biHeight;
 
     Info_h.biPlanes = (WORD)getc(IN);
     Info_h.biPlanes = (WORD)((getc(IN) << 8) + Info_h.biPlanes);
@@ -644,35 +644,35 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
     Info_h.biBitCount = (WORD)getc(IN);
     Info_h.biBitCount = (WORD)((getc(IN) << 8) + Info_h.biBitCount);
 
-    Info_h.biCompression = getc(IN);
-    Info_h.biCompression = (getc(IN) << 8) + Info_h.biCompression;
-    Info_h.biCompression = (getc(IN) << 16) + Info_h.biCompression;
-    Info_h.biCompression = (getc(IN) << 24) + Info_h.biCompression;
+    Info_h.biCompression = (DWORD)getc(IN);
+    Info_h.biCompression = (DWORD)(getc(IN) << 8) + Info_h.biCompression;
+    Info_h.biCompression = (DWORD)(getc(IN) << 16) + Info_h.biCompression;
+    Info_h.biCompression = (DWORD)(getc(IN) << 24) + Info_h.biCompression;
 
-    Info_h.biSizeImage = getc(IN);
-    Info_h.biSizeImage = (getc(IN) << 8) + Info_h.biSizeImage;
-    Info_h.biSizeImage = (getc(IN) << 16) + Info_h.biSizeImage;
-    Info_h.biSizeImage = (getc(IN) << 24) + Info_h.biSizeImage;
+    Info_h.biSizeImage = (DWORD)getc(IN);
+    Info_h.biSizeImage = (DWORD)(getc(IN) << 8) + Info_h.biSizeImage;
+    Info_h.biSizeImage = (DWORD)(getc(IN) << 16) + Info_h.biSizeImage;
+    Info_h.biSizeImage = (DWORD)(getc(IN) << 24) + Info_h.biSizeImage;
 
-    Info_h.biXpelsPerMeter = getc(IN);
-    Info_h.biXpelsPerMeter = (getc(IN) << 8) + Info_h.biXpelsPerMeter;
-    Info_h.biXpelsPerMeter = (getc(IN) << 16) + Info_h.biXpelsPerMeter;
-    Info_h.biXpelsPerMeter = (getc(IN) << 24) + Info_h.biXpelsPerMeter;
+    Info_h.biXpelsPerMeter = (DWORD)getc(IN);
+    Info_h.biXpelsPerMeter = (DWORD)(getc(IN) << 8) + Info_h.biXpelsPerMeter;
+    Info_h.biXpelsPerMeter = (DWORD)(getc(IN) << 16) + Info_h.biXpelsPerMeter;
+    Info_h.biXpelsPerMeter = (DWORD)(getc(IN) << 24) + Info_h.biXpelsPerMeter;
 
-    Info_h.biYpelsPerMeter = getc(IN);
-    Info_h.biYpelsPerMeter = (getc(IN) << 8) + Info_h.biYpelsPerMeter;
-    Info_h.biYpelsPerMeter = (getc(IN) << 16) + Info_h.biYpelsPerMeter;
-    Info_h.biYpelsPerMeter = (getc(IN) << 24) + Info_h.biYpelsPerMeter;
+    Info_h.biYpelsPerMeter = (DWORD)getc(IN);
+    Info_h.biYpelsPerMeter = (DWORD)(getc(IN) << 8) + Info_h.biYpelsPerMeter;
+    Info_h.biYpelsPerMeter = (DWORD)(getc(IN) << 16) + Info_h.biYpelsPerMeter;
+    Info_h.biYpelsPerMeter = (DWORD)(getc(IN) << 24) + Info_h.biYpelsPerMeter;
 
-    Info_h.biClrUsed = getc(IN);
-    Info_h.biClrUsed = (getc(IN) << 8) + Info_h.biClrUsed;
-    Info_h.biClrUsed = (getc(IN) << 16) + Info_h.biClrUsed;
-    Info_h.biClrUsed = (getc(IN) << 24) + Info_h.biClrUsed;
+    Info_h.biClrUsed = (DWORD)getc(IN);
+    Info_h.biClrUsed = (DWORD)(getc(IN) << 8) + Info_h.biClrUsed;
+    Info_h.biClrUsed = (DWORD)(getc(IN) << 16) + Info_h.biClrUsed;
+    Info_h.biClrUsed = (DWORD)(getc(IN) << 24) + Info_h.biClrUsed;
 
-    Info_h.biClrImportant = getc(IN);
-    Info_h.biClrImportant = (getc(IN) << 8) + Info_h.biClrImportant;
-    Info_h.biClrImportant = (getc(IN) << 16) + Info_h.biClrImportant;
-    Info_h.biClrImportant = (getc(IN) << 24) + Info_h.biClrImportant;
+    Info_h.biClrImportant = (DWORD)getc(IN);
+    Info_h.biClrImportant = (DWORD)(getc(IN) << 8) + Info_h.biClrImportant;
+    Info_h.biClrImportant = (DWORD)(getc(IN) << 16) + Info_h.biClrImportant;
+    Info_h.biClrImportant = (DWORD)(getc(IN) << 24) + Info_h.biClrImportant;
 
     /* Read the data and store them in the OUT file */
 
@@ -687,13 +687,13 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
             cmptparm[i].prec = 8;
             cmptparm[i].bpp = 8;
             cmptparm[i].sgnd = 0;
-            cmptparm[i].dx = subsampling_dx;
-            cmptparm[i].dy = subsampling_dy;
-            cmptparm[i].w = w;
-            cmptparm[i].h = h;
+            cmptparm[i].dx = (OPJ_UINT32)subsampling_dx;
+            cmptparm[i].dy = (OPJ_UINT32)subsampling_dy;
+            cmptparm[i].w = (OPJ_UINT32)w;
+            cmptparm[i].h = (OPJ_UINT32)h;
         }
         /* create the image */
-        image = opj_image_create(numcomps, &cmptparm[0], color_space);
+        image = opj_image_create((OPJ_UINT32)numcomps, &cmptparm[0], color_space);
         if(!image)
         {
             fclose(IN);
@@ -701,10 +701,10 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
         }
 
         /* set image offset and reference grid */
-        image->x0 = parameters->image_offset_x0;
-        image->y0 = parameters->image_offset_y0;
-        image->x1 =	!image->x0 ? (w - 1) * subsampling_dx + 1 : (int)(image->x0 + (w - 1) * subsampling_dx + 1);
-        image->y1 =	!image->y0 ? (h - 1) * subsampling_dy + 1 : (int)(image->y0 + (h - 1) * subsampling_dy + 1);
+        image->x0 = (OPJ_UINT32)parameters->image_offset_x0;
+        image->y0 = (OPJ_UINT32)parameters->image_offset_y0;
+        image->x1 =	!image->x0 ? (OPJ_UINT32)(w - 1) * (OPJ_UINT32)subsampling_dx + 1 : image->x0 + (OPJ_UINT32)(w - 1) * (OPJ_UINT32)subsampling_dx + 1;
+        image->y1 =	!image->y0 ? (OPJ_UINT32)(h - 1) * (OPJ_UINT32)subsampling_dy + 1 : image->y0 + (OPJ_UINT32)(h - 1) * (OPJ_UINT32)subsampling_dy + 1;
 
         /* set image data */
 
@@ -734,7 +734,7 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
 
         for(y = 0; y < (int)H; y++)
         {
-            unsigned char *scanline = RGB + (3 * W + PAD) * (H - 1 - y);
+            unsigned char *scanline = RGB + (3 * (unsigned int)W + PAD) * ((unsigned int)H - 1 - (unsigned int)y);
             for(x = 0; x < (int)W; x++)
             {
                 unsigned char *pixel = &scanline[3 * x];
@@ -787,13 +787,13 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
                 cmptparm[i].prec = 8;
                 cmptparm[i].bpp = 8;
                 cmptparm[i].sgnd = 0;
-                cmptparm[i].dx = subsampling_dx;
-                cmptparm[i].dy = subsampling_dy;
-                cmptparm[i].w = w;
-                cmptparm[i].h = h;
+                cmptparm[i].dx = (OPJ_UINT32)subsampling_dx;
+                cmptparm[i].dy = (OPJ_UINT32)subsampling_dy;
+                cmptparm[i].w = (OPJ_UINT32)w;
+                cmptparm[i].h = (OPJ_UINT32)h;
             }
             /* create the image */
-            image = opj_image_create(numcomps, &cmptparm[0], color_space);
+            image = opj_image_create((OPJ_UINT32)numcomps, &cmptparm[0], color_space);
             if(!image)
             {
                 fclose(IN);
@@ -802,10 +802,10 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
             }
 
             /* set image offset and reference grid */
-            image->x0 = parameters->image_offset_x0;
-            image->y0 = parameters->image_offset_y0;
-            image->x1 =	!image->x0 ? (w - 1) * subsampling_dx + 1 : (int)(image->x0 + (w - 1) * subsampling_dx + 1);
-            image->y1 =	!image->y0 ? (h - 1) * subsampling_dy + 1 : (int)(image->y0 + (h - 1) * subsampling_dy + 1);
+            image->x0 = (OPJ_UINT32)parameters->image_offset_x0;
+            image->y0 = (OPJ_UINT32)parameters->image_offset_y0;
+            image->x1 =	!image->x0 ? (OPJ_UINT32)(w - 1) * (OPJ_UINT32)subsampling_dx + 1 : image->x0 + (OPJ_UINT32)(w - 1) * (OPJ_UINT32)subsampling_dx + 1;
+            image->y1 =	!image->y0 ? (OPJ_UINT32)(h - 1) * (OPJ_UINT32)subsampling_dy + 1 : image->y0 + (OPJ_UINT32)(h - 1) * (OPJ_UINT32)subsampling_dy + 1;
 
             /* set image data */
 
@@ -897,13 +897,13 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
                     cmptparm[i].prec = 8;
                     cmptparm[i].bpp = 8;
                     cmptparm[i].sgnd = 0;
-                    cmptparm[i].dx = subsampling_dx;
-                    cmptparm[i].dy = subsampling_dy;
-                    cmptparm[i].w = w;
-                    cmptparm[i].h = h;
+                    cmptparm[i].dx = (OPJ_UINT32)subsampling_dx;
+                    cmptparm[i].dy = (OPJ_UINT32)subsampling_dy;
+                    cmptparm[i].w = (OPJ_UINT32)w;
+                    cmptparm[i].h = (OPJ_UINT32)h;
                 }
                 /* create the image */
-                image = opj_image_create(numcomps, &cmptparm[0], color_space);
+                image = opj_image_create((OPJ_UINT32)numcomps, &cmptparm[0], color_space);
                 if (!image)
                 {
                     fclose(IN);
@@ -914,10 +914,10 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
                 }
 
                 /* set image offset and reference grid */
-                image->x0 = parameters->image_offset_x0;
-                image->y0 = parameters->image_offset_y0;
-                image->x1 = !image->x0 ? (w - 1) * subsampling_dx + 1 : (int)(image->x0 + (w - 1) * subsampling_dx + 1);
-                image->y1 = !image->y0 ? (h - 1) * subsampling_dy + 1 : (int)(image->y0 + (h - 1) * subsampling_dy + 1);
+                image->x0 = (OPJ_UINT32)parameters->image_offset_x0;
+                image->y0 = (OPJ_UINT32)parameters->image_offset_y0;
+                image->x1 = !image->x0 ? (OPJ_UINT32)(w - 1) * (OPJ_UINT32)subsampling_dx + 1 : image->x0 + (OPJ_UINT32)(w - 1) * (OPJ_UINT32)subsampling_dx + 1;
+                image->y1 = !image->y0 ? (OPJ_UINT32)(h - 1) * (OPJ_UINT32)subsampling_dy + 1 : image->y0 + (OPJ_UINT32)(h - 1) * (OPJ_UINT32)subsampling_dy + 1;
 
                 /* set image data */
 
@@ -958,9 +958,9 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
                         else if (c == 0x02) /* MOVE by dxdy */
                         {
                             c = getc(IN);
-                            x += c;
+                            x += (unsigned int)c;
                             c = getc(IN);
-                            y += c;
+                            y += (unsigned int)c;
                             pix = RGB + (H - y - 1) * W + x;
                         }
                         else /* 03 .. 255 */
@@ -1051,8 +1051,8 @@ int imagetobmp(opj_image_t * image, const char *outfile) {
             return 1;
         }
 
-        w = image->comps[0].w;
-        h = image->comps[0].h;
+        w = (int)image->comps[0].w;
+        h = (int)image->comps[0].h;
 
         fprintf(fdest, "BM");
 
@@ -1090,19 +1090,19 @@ int imagetobmp(opj_image_t * image, const char *outfile) {
         fprintf(fdest, "%c%c%c%c", (0) & 0xff, ((0) >> 8) & 0xff, ((0) >> 16) & 0xff, ((0) >> 24) & 0xff);
 
         if (image->comps[0].prec > 8) {
-            adjustR = image->comps[0].prec - 8;
+            adjustR = (int)image->comps[0].prec - 8;
             printf("BMP CONVERSION: Truncating component 0 from %d bits to 8 bits\n", image->comps[0].prec);
         }
         else
             adjustR = 0;
         if (image->comps[1].prec > 8) {
-            adjustG = image->comps[1].prec - 8;
+            adjustG = (int)image->comps[1].prec - 8;
             printf("BMP CONVERSION: Truncating component 1 from %d bits to 8 bits\n", image->comps[1].prec);
         }
         else
             adjustG = 0;
         if (image->comps[2].prec > 8) {
-            adjustB = image->comps[2].prec - 8;
+            adjustB = (int)image->comps[2].prec - 8;
             printf("BMP CONVERSION: Truncating component 2 from %d bits to 8 bits\n", image->comps[2].prec);
         }
         else
@@ -1145,8 +1145,8 @@ int imagetobmp(opj_image_t * image, const char *outfile) {
         <<-- <<-- <<-- <<-- */
 
         fdest = fopen(outfile, "wb");
-        w = image->comps[0].w;
-        h = image->comps[0].h;
+        w = (int)image->comps[0].w;
+        h = (int)image->comps[0].h;
 
         fprintf(fdest, "BM");
 
@@ -1185,7 +1185,7 @@ int imagetobmp(opj_image_t * image, const char *outfile) {
         fprintf(fdest, "%c%c%c%c", (256) & 0xff, ((256) >> 8) & 0xff, ((256) >> 16) & 0xff, ((256) >> 24) & 0xff);
 
         if (image->comps[0].prec > 8) {
-            adjustR = image->comps[0].prec - 8;
+            adjustR = (int)image->comps[0].prec - 8;
             printf("BMP CONVERSION: Truncating component 0 from %d bits to 8 bits\n", image->comps[0].prec);
         }else
             adjustR = 0;
@@ -1276,9 +1276,9 @@ static unsigned int readuint(FILE * f, int bigendian)
         return 0;
     }
     if (bigendian)
-        return (c1 << 24) + (c2 << 16) + (c3 << 8) + c4;
+        return (unsigned int)(c1 << 24) + (unsigned int)(c2 << 16) + (unsigned int)(c3 << 8) + c4;
     else
-        return (c4 << 24) + (c3 << 16) + (c2 << 8) + c1;
+        return (unsigned int)(c4 << 24) + (unsigned int)(c3 << 16) + (unsigned int)(c2 << 8) + c1;
 }
 
 opj_image_t* pgxtoimage(const char *filename, opj_cparameters_t *parameters) {
@@ -1335,10 +1335,10 @@ opj_image_t* pgxtoimage(const char *filename, opj_cparameters_t *parameters) {
 
     /* initialize image component */
 
-    cmptparm.x0 = parameters->image_offset_x0;
-    cmptparm.y0 = parameters->image_offset_y0;
-    cmptparm.w = !cmptparm.x0 ? (w - 1) * parameters->subsampling_dx + 1 : (int)(cmptparm.x0 + (w - 1) * parameters->subsampling_dx + 1);
-    cmptparm.h = !cmptparm.y0 ? (h - 1) * parameters->subsampling_dy + 1 : (int)(cmptparm.y0 + (h - 1) * parameters->subsampling_dy + 1);
+    cmptparm.x0 = (OPJ_UINT32)parameters->image_offset_x0;
+    cmptparm.y0 = (OPJ_UINT32)parameters->image_offset_y0;
+    cmptparm.w = !cmptparm.x0 ? (OPJ_UINT32)((w - 1) * parameters->subsampling_dx + 1) : cmptparm.x0 + (OPJ_UINT32)(w - 1) * (OPJ_UINT32)parameters->subsampling_dx + 1;
+    cmptparm.h = !cmptparm.y0 ? (OPJ_UINT32)((h - 1) * parameters->subsampling_dy + 1) : cmptparm.y0 + (OPJ_UINT32)(h - 1) * (OPJ_UINT32)parameters->subsampling_dy + 1;
 
     if (sign == '-') {
         cmptparm.sgnd = 1;
@@ -1355,13 +1355,13 @@ opj_image_t* pgxtoimage(const char *filename, opj_cparameters_t *parameters) {
     }
     else ushift = dshift = force8 = adjustS = 0;
 
-    cmptparm.prec = prec;
-    cmptparm.bpp = prec;
-    cmptparm.dx = parameters->subsampling_dx;
-    cmptparm.dy = parameters->subsampling_dy;
+    cmptparm.prec = (OPJ_UINT32)prec;
+    cmptparm.bpp = (OPJ_UINT32)prec;
+    cmptparm.dx = (OPJ_UINT32)parameters->subsampling_dx;
+    cmptparm.dy = (OPJ_UINT32)parameters->subsampling_dy;
 
     /* create the image */
-    image = opj_image_create(numcomps, &cmptparm, color_space);
+    image = opj_image_create((OPJ_UINT32)numcomps, &cmptparm, color_space);
     if(!image) {
         fclose(f);
         return NULL;
@@ -1402,7 +1402,7 @@ opj_image_t* pgxtoimage(const char *filename, opj_cparameters_t *parameters) {
             }
         } else {
             if (!comp->sgnd) {
-                v = readuint(f, bigendian);
+                v = (int)readuint(f, bigendian);
             } else {
                 v = (int) readuint(f, bigendian);
             }
@@ -1412,7 +1412,7 @@ opj_image_t* pgxtoimage(const char *filename, opj_cparameters_t *parameters) {
         comp->data[i] = v;
     }
     fclose(f);
-    comp->bpp = int_floorlog2(max) + 1;
+    comp->bpp = (OPJ_UINT32)int_floorlog2(max) + 1;
 
     return image;
 }
@@ -1474,8 +1474,8 @@ int imagetopgx(opj_image_t * image, const char *outfile)
       goto fin;
       }
 
-    w = image->comps[compno].w;
-    h = image->comps[compno].h;
+    w = (int)image->comps[compno].w;
+    h = (int)image->comps[compno].h;
 
     fprintf(fdest, "PG ML %c %d %d %d\n", comp->sgnd ? '-' : '+', comp->prec,
       w, h);
@@ -1491,7 +1491,7 @@ int imagetopgx(opj_image_t * image, const char *outfile)
       {
       /* FIXME: clamp func is being called within a loop */
       const int val = clamp(image->comps[compno].data[i],
-        comp->prec, comp->sgnd);
+        (int)comp->prec, (int)comp->sgnd);
 
       for (j = nbytes - 1; j >= 0; j--) 
         {
@@ -1812,27 +1812,27 @@ opj_image_t* pnmtoimage(const char *filename, opj_cparameters_t *parameters) {
     subsampling_dx = parameters->subsampling_dx;
     subsampling_dy = parameters->subsampling_dy;
 
-    memset(&cmptparm[0], 0, numcomps * sizeof(opj_image_cmptparm_t));
+    memset(&cmptparm[0], 0, (size_t)numcomps * sizeof(opj_image_cmptparm_t));
 
     for(i = 0; i < numcomps; i++)
     {
-        cmptparm[i].prec = prec;
-        cmptparm[i].bpp = prec;
+        cmptparm[i].prec = (OPJ_UINT32)prec;
+        cmptparm[i].bpp = (OPJ_UINT32)prec;
         cmptparm[i].sgnd = 0;
-        cmptparm[i].dx = subsampling_dx;
-        cmptparm[i].dy = subsampling_dy;
-        cmptparm[i].w = w;
-        cmptparm[i].h = h;
+        cmptparm[i].dx = (OPJ_UINT32)subsampling_dx;
+        cmptparm[i].dy = (OPJ_UINT32)subsampling_dy;
+        cmptparm[i].w = (OPJ_UINT32)w;
+        cmptparm[i].h = (OPJ_UINT32)h;
     }
-    image = opj_image_create(numcomps, &cmptparm[0], color_space);
+    image = opj_image_create((OPJ_UINT32)numcomps, &cmptparm[0], color_space);
 
     if(!image) { fclose(fp); return NULL; }
 
     /* set image offset and reference grid */
-    image->x0 = parameters->image_offset_x0;
-    image->y0 = parameters->image_offset_y0;
-    image->x1 = parameters->image_offset_x0 + (w - 1) *	subsampling_dx + 1;
-    image->y1 = parameters->image_offset_y0 + (h - 1) *	subsampling_dy + 1;
+    image->x0 = (OPJ_UINT32)parameters->image_offset_x0;
+    image->y0 = (OPJ_UINT32)parameters->image_offset_y0;
+    image->x1 = (OPJ_UINT32)(parameters->image_offset_x0 + (w - 1) * subsampling_dx + 1);
+    image->y1 = (OPJ_UINT32)(parameters->image_offset_y0 + (h - 1) * subsampling_dy + 1);
 
     if((format == 2) || (format == 3)) /* ascii pixmap */
     {
@@ -1846,7 +1846,7 @@ opj_image_t* pnmtoimage(const char *filename, opj_cparameters_t *parameters) {
                 if (fscanf(fp, "%u", &index) != 1)
                     fprintf(stderr, "\nWARNING: fscanf return a number of element different from the expected.\n");
 
-                image->comps[compno].data[i] = (index * 255)/header_info.maxval;
+                image->comps[compno].data[i] = (OPJ_INT32)(index * 255)/header_info.maxval;
             }
         }
     }
@@ -1949,7 +1949,7 @@ int imagetopnm(opj_image_t * image, const char *outfile)
 
 	alpha = NULL;
 
-    if((prec = image->comps[0].prec) > 16)
+    if((prec = (int)image->comps[0].prec) > 16)
     {
         fprintf(stderr,"%s:%d:imagetopnm\n\tprecision %d is larger than 16"
                 "\n\t: refused.\n",__FILE__,__LINE__,prec);
@@ -1983,7 +1983,7 @@ int imagetopnm(opj_image_t * image, const char *outfile)
         }
         two = (prec > 8);
         triple = (ncomp > 2);
-        wr = image->comps[0].w; hr = image->comps[0].h;
+        wr = (int)image->comps[0].w; hr = (int)image->comps[0].h;
         max = (1<<prec) - 1; has_alpha = (ncomp == 4 || ncomp == 2);
 
         red = image->comps[0].data;
@@ -2110,8 +2110,8 @@ if(v > 65535) v = 65535; else if(v < 0) v = 0;
             free(destname);
             return 1;
         }
-        wr = image->comps[compno].w; hr = image->comps[compno].h;
-        prec = image->comps[compno].prec;
+        wr = (int)image->comps[compno].w; hr = (int)image->comps[compno].h;
+        prec = (int)image->comps[compno].prec;
         max = (1<<prec) - 1;
 
         fprintf(fdest, "P5\n#OpenJPEG-%s\n%d %d\n%d\n",
@@ -2176,7 +2176,7 @@ int imagetotif(opj_image_t * image, const char *outfile)
     tsize_t strip_size;
 
     ushift = dshift = force16 = has_alpha = 0;
-    bps = image->comps[0].prec;
+    bps = (int)image->comps[0].prec;
 
     if(bps > 8 && bps < 16)
     {
@@ -2198,7 +2198,7 @@ int imagetotif(opj_image_t * image, const char *outfile)
         fprintf(stderr, "imagetotif:failed to open %s for writing\n", outfile);
         return 1;
     }
-    sgnd = image->comps[0].sgnd;
+    sgnd = (int)image->comps[0].sgnd;
     adjust = sgnd ? 1 << (image->comps[0].prec - 1) : 0;
 
     if(image->numcomps >= 3
@@ -2211,8 +2211,8 @@ int imagetotif(opj_image_t * image, const char *outfile)
     {
         has_alpha = (image->numcomps == 4);
 
-        width   = image->comps[0].w;
-        height  = image->comps[0].h;
+        width   = (int)image->comps[0].w;
+        height  = (int)image->comps[0].h;
         imgsize = width * height ;
 
         TIFFSetField(tif, TIFFTAG_IMAGEWIDTH, width);
@@ -2443,8 +2443,8 @@ int imagetotif(opj_image_t * image, const char *outfile)
 
         has_alpha = (image->numcomps == 2);
 
-        width   = image->comps[0].w;
-        height  = image->comps[0].h;
+        width   = (int)image->comps[0].w;
+        height  = (int)image->comps[0].h;
         imgsize = width * height;
 
         /* Set tags */
@@ -2596,8 +2596,8 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
     TIFFGetField(tif, TIFFTAG_SAMPLESPERPIXEL, &tiSpp);
     TIFFGetField(tif, TIFFTAG_PHOTOMETRIC, &tiPhoto);
     TIFFGetField(tif, TIFFTAG_PLANARCONFIG, &tiPC);
-    w= tiWidth;
-    h= tiHeight;
+    w= (int)tiWidth;
+    h= (int)tiHeight;
 
     if(tiBps != 8 && tiBps != 16 && tiBps != 12) tiBps = 0;
     if(tiPhoto != 1 && tiPhoto != 2) tiPhoto = 0;
@@ -2676,10 +2676,10 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
                 cmptparm[j].prec = tiBps;
                 cmptparm[j].bpp = tiBps;
             }
-            cmptparm[j].dx = subsampling_dx;
-            cmptparm[j].dy = subsampling_dy;
-            cmptparm[j].w = w;
-            cmptparm[j].h = h;
+            cmptparm[j].dx = (OPJ_UINT32)subsampling_dx;
+            cmptparm[j].dy = (OPJ_UINT32)subsampling_dy;
+            cmptparm[j].w = (OPJ_UINT32)w;
+            cmptparm[j].h = (OPJ_UINT32)h;
 #ifdef USETILEMODE
             cmptparm[j].x0 = 0;
             cmptparm[j].y0 = 0;
@@ -2689,7 +2689,7 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
 #ifdef USETILEMODE
         image = opj_image_tile_create(numcomps,&cmptparm[0],color_space);
 #else
-        image = opj_image_create(numcomps, &cmptparm[0], color_space);
+        image = opj_image_create((OPJ_UINT32)numcomps, &cmptparm[0], color_space);
 #endif
 
         if(!image)
@@ -2699,18 +2699,18 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
         }
         /* set image offset and reference grid
 */
-        image->x0 = parameters->image_offset_x0;
-        image->y0 = parameters->image_offset_y0;
-        image->x1 =	!image->x0 ? (w - 1) * subsampling_dx + 1 :
-                                 (int)(image->x0 + (w - 1) * subsampling_dx + 1);
-        image->y1 =	!image->y0 ? (h - 1) * subsampling_dy + 1 :
-                                 (int)(image->y0 + (h - 1) * subsampling_dy + 1);
+        image->x0 = (OPJ_UINT32)parameters->image_offset_x0;
+        image->y0 = (OPJ_UINT32)parameters->image_offset_y0;
+        image->x1 =	!image->x0 ? (OPJ_UINT32)(w - 1) * (OPJ_UINT32)subsampling_dx + 1 :
+                                 image->x0 + (OPJ_UINT32)(w - 1) * (OPJ_UINT32)subsampling_dx + 1;
+        image->y1 =	!image->y0 ? (OPJ_UINT32)(h - 1) * (OPJ_UINT32)subsampling_dy + 1 :
+                                 image->y0 + (OPJ_UINT32)(h - 1) * (OPJ_UINT32)subsampling_dy + 1;
 
         buf = _TIFFmalloc(TIFFStripSize(tif));
 
         strip_size=TIFFStripSize(tif);
         index = 0;
-        imgsize = image->comps[0].w * image->comps[0].h ;
+        imgsize = (int)(image->comps[0].w * image->comps[0].h);
         /* Read the Image components
 */
         for(strip = 0; strip < TIFFNumberOfStrips(tif); strip++)
@@ -2831,15 +2831,15 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
         {
             cmptparm[j].prec = tiBps;
             cmptparm[j].bpp = tiBps;
-            cmptparm[j].dx = subsampling_dx;
-            cmptparm[j].dy = subsampling_dy;
-            cmptparm[j].w = w;
-            cmptparm[j].h = h;
+            cmptparm[j].dx = (OPJ_UINT32)subsampling_dx;
+            cmptparm[j].dy = (OPJ_UINT32)subsampling_dy;
+            cmptparm[j].w = (OPJ_UINT32)w;
+            cmptparm[j].h = (OPJ_UINT32)h;
         }
 #ifdef USETILEMODE
         image = opj_image_tile_create(numcomps,&cmptparm[0],color_space);
 #else
-        image = opj_image_create(numcomps, &cmptparm[0], color_space);
+        image = opj_image_create((OPJ_UINT32)numcomps, &cmptparm[0], color_space);
 #endif
 
         if(!image)
@@ -2849,18 +2849,18 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
         }
         /* set image offset and reference grid
 */
-        image->x0 = parameters->image_offset_x0;
-        image->y0 = parameters->image_offset_y0;
-        image->x1 =	!image->x0 ? (w - 1) * subsampling_dx + 1 :
-                                 (int)(image->x0 + (w - 1) * subsampling_dx + 1);
-        image->y1 =	!image->y0 ? (h - 1) * subsampling_dy + 1 :
-                                 (int)(image->y0 + (h - 1) * subsampling_dy + 1);
+        image->x0 = (OPJ_UINT32)parameters->image_offset_x0;
+        image->y0 = (OPJ_UINT32)parameters->image_offset_y0;
+        image->x1 =	!image->x0 ? (OPJ_UINT32)(w - 1) * (OPJ_UINT32)subsampling_dx + 1 :
+                                 image->x0 + (OPJ_UINT32)(w - 1) * (OPJ_UINT32)subsampling_dx + 1;
+        image->y1 =	!image->y0 ? (OPJ_UINT32)(h - 1) * (OPJ_UINT32)subsampling_dy + 1 :
+                                 image->y0 + (OPJ_UINT32)(h - 1) * (OPJ_UINT32)subsampling_dy + 1;
 
         buf = _TIFFmalloc(TIFFStripSize(tif));
 
         strip_size = TIFFStripSize(tif);
         index = 0;
-        imgsize = image->comps[0].w * image->comps[0].h ;
+        imgsize = (int)(image->comps[0].w * image->comps[0].h);
         /* Read the Image components
 */
         for(strip = 0; strip < TIFFNumberOfStrips(tif); strip++)
@@ -2956,31 +2956,31 @@ static opj_image_t* rawtoimage_common(const char *filename, opj_cparameters_t *p
     color_space = OPJ_CLRSPC_SRGB;
     w = raw_cp->rawWidth;
     h = raw_cp->rawHeight;
-    cmptparm = (opj_image_cmptparm_t*) malloc(numcomps * sizeof(opj_image_cmptparm_t));
+    cmptparm = (opj_image_cmptparm_t*) malloc((size_t)numcomps * sizeof(opj_image_cmptparm_t));
 
     /* initialize image components */
-    memset(&cmptparm[0], 0, numcomps * sizeof(opj_image_cmptparm_t));
+    memset(&cmptparm[0], 0, (size_t)numcomps * sizeof(opj_image_cmptparm_t));
     for(i = 0; i < numcomps; i++) {
-        cmptparm[i].prec = raw_cp->rawBitDepth;
-        cmptparm[i].bpp = raw_cp->rawBitDepth;
-        cmptparm[i].sgnd = raw_cp->rawSigned;
-        cmptparm[i].dx = subsampling_dx;
-        cmptparm[i].dy = subsampling_dy;
-        cmptparm[i].w = w;
-        cmptparm[i].h = h;
+        cmptparm[i].prec = (OPJ_UINT32)raw_cp->rawBitDepth;
+        cmptparm[i].bpp = (OPJ_UINT32)raw_cp->rawBitDepth;
+        cmptparm[i].sgnd = (OPJ_UINT32)raw_cp->rawSigned;
+        cmptparm[i].dx = (OPJ_UINT32)subsampling_dx;
+        cmptparm[i].dy = (OPJ_UINT32)subsampling_dy;
+        cmptparm[i].w = (OPJ_UINT32)w;
+        cmptparm[i].h = (OPJ_UINT32)h;
     }
     /* create the image */
-    image = opj_image_create(numcomps, &cmptparm[0], color_space);
+    image = opj_image_create((OPJ_UINT32)numcomps, &cmptparm[0], color_space);
     free(cmptparm);
     if(!image) {
         fclose(f);
         return NULL;
     }
     /* set image offset and reference grid */
-    image->x0 = parameters->image_offset_x0;
-    image->y0 = parameters->image_offset_y0;
-    image->x1 = parameters->image_offset_x0 + (w - 1) *	subsampling_dx + 1;
-    image->y1 = parameters->image_offset_y0 + (h - 1) *	subsampling_dy + 1;
+    image->x0 = (OPJ_UINT32)parameters->image_offset_x0;
+    image->y0 = (OPJ_UINT32)parameters->image_offset_y0;
+    image->x1 = (OPJ_UINT32)parameters->image_offset_x0 + (OPJ_UINT32)(w - 1) *	(OPJ_UINT32)subsampling_dx + 1;
+    image->y1 = (OPJ_UINT32)parameters->image_offset_y0 + (OPJ_UINT32)(h - 1) * (OPJ_UINT32)subsampling_dy + 1;
 
     if(raw_cp->rawBitDepth <= 8)
     {
@@ -3074,8 +3074,8 @@ static int imagetoraw_common(opj_image_t * image, const char *outfile, OPJ_BOOL 
         fprintf(stdout,"Component %d characteristics: %dx%dx%d %s\n", compno, image->comps[compno].w,
                 image->comps[compno].h, image->comps[compno].prec, image->comps[compno].sgnd==1 ? "signed": "unsigned");
 
-        w = image->comps[compno].w;
-        h = image->comps[compno].h;
+        w = (int)image->comps[compno].w;
+        h = (int)image->comps[compno].h;
 
         if(image->comps[compno].prec <= 8)
         {
@@ -3289,7 +3289,7 @@ opj_image_t *pngtoimage(const char *read_idf, opj_cparameters_t * params)
 
     has_alpha = (color_type == PNG_COLOR_TYPE_RGB_ALPHA);
 
-    nr_comp = 3 + has_alpha;
+    nr_comp = 3 + (unsigned int)has_alpha;
 
     bit_depth = png_get_bit_depth(png, info);
 
@@ -3305,12 +3305,12 @@ opj_image_t *pngtoimage(const char *read_idf, opj_cparameters_t * params)
 
     for(i = 0; i < nr_comp; ++i)
     {
-        cmptparm[i].prec = bit_depth;
+        cmptparm[i].prec = (OPJ_UINT32)bit_depth;
         /* bits_per_pixel: 8 or 16 */
-        cmptparm[i].bpp = bit_depth;
+        cmptparm[i].bpp = (OPJ_UINT32)bit_depth;
         cmptparm[i].sgnd = 0;
-        cmptparm[i].dx = sub_dx;
-        cmptparm[i].dy = sub_dy;
+        cmptparm[i].dx = (OPJ_UINT32)sub_dx;
+        cmptparm[i].dy = (OPJ_UINT32)sub_dy;
         cmptparm[i].w = (OPJ_UINT32)width;
         cmptparm[i].h = (OPJ_UINT32)height;
     }
@@ -3319,10 +3319,10 @@ opj_image_t *pngtoimage(const char *read_idf, opj_cparameters_t * params)
 
     if(image == NULL) goto fin;
 
-    image->x0 = params->image_offset_x0;
-    image->y0 = params->image_offset_y0;
-    image->x1 = (OPJ_UINT32)(image->x0 + (width  - 1) * sub_dx + 1 + image->x0);
-    image->y1 = (OPJ_UINT32)(image->y0 + (height - 1) * sub_dy + 1 + image->y0);
+    image->x0 = (OPJ_UINT32)params->image_offset_x0;
+    image->y0 = (OPJ_UINT32)params->image_offset_y0;
+    image->x1 = (OPJ_UINT32)(image->x0 + (width  - 1) * (OPJ_UINT32)sub_dx + 1 + image->x0);
+    image->y1 = (OPJ_UINT32)(image->y0 + (height - 1) * (OPJ_UINT32)sub_dy + 1 + image->y0);
 
     r = image->comps[0].data;
     g = image->comps[1].data;
@@ -3382,8 +3382,8 @@ int imagetopng(opj_image_t * image, const char *write_idf)
     png_color_8 sig_bit;
 
     is16 = force16 = force8 = ushift = dshift = 0; fails = 1;
-    prec = image->comps[0].prec;
-    nr_comp = image->numcomps;
+    prec = (int)image->comps[0].prec;
+    nr_comp = (int)image->numcomps;
 
     if(prec > 8 && prec < 16)
     {
@@ -3479,8 +3479,8 @@ int imagetopng(opj_image_t * image, const char *write_idf)
 
         is16 = (prec == 16);
 
-        width = image->comps[0].w;
-        height = image->comps[0].h;
+        width = (int)image->comps[0].w;
+        height = (int)image->comps[0].h;
 
         red = image->comps[0].data;
         green = image->comps[1].data;
@@ -3503,7 +3503,7 @@ int imagetopng(opj_image_t * image, const char *write_idf)
         }
         png_set_sBIT(png, info, &sig_bit);
 
-        png_set_IHDR(png, info, width, height, prec,
+        png_set_IHDR(png, info, (png_uint_32)width, (png_uint_32)height, prec,
                      color_type,
                      PNG_INTERLACE_NONE,
                      PNG_COMPRESSION_TYPE_BASE,  PNG_FILTER_TYPE_BASE);
@@ -3525,7 +3525,7 @@ image->comps[1].sgnd,image->comps[2].sgnd,width,height,has_alpha);
         adjustG = (image->comps[1].sgnd ? 1 << (image->comps[1].prec - 1) : 0);
         adjustB = (image->comps[2].sgnd ? 1 << (image->comps[2].prec - 1) : 0);
 
-        row_buf = (unsigned char*)malloc(width * nr_comp * 2);
+        row_buf = (unsigned char*)malloc((size_t)width * (size_t)nr_comp * 2);
 
         for(y = 0; y < height; ++y)
         {
@@ -3629,10 +3629,10 @@ image->comps[1].sgnd,image->comps[2].sgnd,width,height,has_alpha);
                 color_type = PNG_COLOR_TYPE_GRAY_ALPHA;
                 adjustA = (image->comps[1].sgnd ? 1 << (image->comps[1].prec - 1) : 0);
             }
-            width = image->comps[0].w;
-            height = image->comps[0].h;
+            width = (int)image->comps[0].w;
+            height = (int)image->comps[0].h;
 
-            png_set_IHDR(png, info, width, height, sig_bit.gray,
+            png_set_IHDR(png, info, (png_uint_32)width, (png_uint_32)height, sig_bit.gray,
                          color_type,
                          PNG_INTERLACE_NONE,
                          PNG_COMPRESSION_TYPE_BASE,  PNG_FILTER_TYPE_BASE);
@@ -3654,7 +3654,7 @@ image->comps[1].sgnd,image->comps[2].sgnd,width,height,has_alpha);
             if(prec > 8)
             {
                 row_buf = (unsigned char*)
-                        malloc(width * nr_comp * sizeof(unsigned short));
+                        malloc((size_t)width * (size_t)nr_comp * sizeof(unsigned short));
 
                 for(y = 0; y < height; ++y)
                 {
@@ -3686,7 +3686,7 @@ image->comps[1].sgnd,image->comps[2].sgnd,width,height,has_alpha);
             }
             else /* prec <= 8 */
             {
-                row_buf = (unsigned char*)calloc(width, nr_comp * 2);
+                row_buf = (unsigned char*)calloc((size_t)width, (size_t)nr_comp * 2);
 
                 for(y = 0; y < height; ++y)
                 {
