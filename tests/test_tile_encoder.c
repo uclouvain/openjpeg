@@ -101,7 +101,7 @@ int main (int argc, char *argv[])
   /* should be test_tile_encoder 3 2000 2000 1000 1000 8 tte1.j2k */
   if( argc == 9 )
     {
-    num_comps = atoi( argv[1] );
+    num_comps = (OPJ_UINT32)atoi( argv[1] );
     image_width = atoi( argv[2] );
     image_height = atoi( argv[3] );
     tile_width = atoi( argv[4] );
@@ -125,10 +125,10 @@ int main (int argc, char *argv[])
     {
     return 1;
     }
-	l_nb_tiles = (image_width/tile_width) * (image_height/tile_height);
-	l_data_size = tile_width * tile_height * num_comps * (comp_prec/8);
+	l_nb_tiles = (OPJ_UINT32)(image_width/tile_width) * (OPJ_UINT32)(image_height/tile_height);
+	l_data_size = (OPJ_UINT32)tile_width * (OPJ_UINT32)tile_height * (OPJ_UINT32)num_comps * (OPJ_UINT32)(comp_prec/8);
 
-	l_data = (OPJ_BYTE*) malloc(tile_width * tile_height * num_comps * (comp_prec/8) * sizeof(OPJ_BYTE));
+	l_data = (OPJ_BYTE*) malloc(l_data_size * sizeof(OPJ_BYTE));
 
 	fprintf(stdout, "Encoding random values -> keep in mind that this is very hard to compress\n");
 	for (i=0;i<l_data_size;++i)	{
@@ -213,11 +213,11 @@ int main (int argc, char *argv[])
 		l_current_param_ptr->dx = 1;
 		l_current_param_ptr->dy = 1;
 
-		l_current_param_ptr->h = image_height;
-		l_current_param_ptr->w = image_width;
+		l_current_param_ptr->h = (OPJ_UINT32)image_height;
+		l_current_param_ptr->w = (OPJ_UINT32)image_width;
 
 		l_current_param_ptr->sgnd = 0;
-		l_current_param_ptr->prec = comp_prec;
+		l_current_param_ptr->prec = (OPJ_UINT32)comp_prec;
 
 		l_current_param_ptr->x0 = 0;
 		l_current_param_ptr->y0 = 0;
@@ -252,8 +252,8 @@ int main (int argc, char *argv[])
 
 	l_image->x0 = 0;
 	l_image->y0 = 0;
-	l_image->x1 = image_width;
-	l_image->y1 = image_height;
+	l_image->x1 = (OPJ_UINT32)image_width;
+	l_image->y1 = (OPJ_UINT32)image_height;
 	l_image->color_space = OPJ_CLRSPC_SRGB;
 
 	if (! opj_setup_encoder(l_codec,&l_param,l_image)) {
