@@ -171,7 +171,6 @@ int main (int argc, char *argv[])
         OPJ_UINT32 l_tile_index;
         OPJ_BYTE * l_data = (OPJ_BYTE *) malloc(1000);
         OPJ_BOOL l_go_on = OPJ_TRUE;
-        OPJ_INT32 l_tile_x0=0, l_tile_y0=0 ;
         OPJ_UINT32 l_nb_comps=0 ;
         OPJ_INT32 l_current_tile_x0,l_current_tile_y0,l_current_tile_x1,l_current_tile_y1;
 
