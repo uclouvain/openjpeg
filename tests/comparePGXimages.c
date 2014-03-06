@@ -152,8 +152,7 @@ static opj_image_t* readImageFromFileTIF(const char* filename, int nbFilenamePGX
   /* set encoding parameters to default values */
   opj_set_default_encoder_parameters(&parameters);
   parameters.decod_format = TIF_DFMT;
-  strncpy(parameters.infile, filename, sizeof(parameters.infile)-1);
-  assert( parameters.infile[sizeof(parameters.infile)] == 0 );
+  strcpy(parameters.infile, filename);
 
   /* Allocate memory*/
   param_image_read = malloc(nbFilenamePGX * sizeof(opj_image_cmptparm_t));
