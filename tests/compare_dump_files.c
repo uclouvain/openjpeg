@@ -78,7 +78,7 @@ static int parse_cmdline_cmp(int argc, char **argv, test_cmp_parameters* param)
       {
       case 'b':
         sizemembasefile = (int)strlen(opj_optarg)+1;
-        param->base_filename = (char*) malloc(sizemembasefile);
+        param->base_filename = (char*) malloc((size_t)sizemembasefile);
         param->base_filename[0] = '\0';
         strncpy(param->base_filename, opj_optarg, strlen(opj_optarg));
         param->base_filename[strlen(opj_optarg)] = '\0';
@@ -86,7 +86,7 @@ static int parse_cmdline_cmp(int argc, char **argv, test_cmp_parameters* param)
         break;
       case 't':
         sizememtestfile = (int) strlen(opj_optarg) + 1;
-        param->test_filename = (char*) malloc(sizememtestfile);
+        param->test_filename = (char*) malloc((size_t)sizememtestfile);
         param->test_filename[0] = '\0';
         strncpy(param->test_filename, opj_optarg, strlen(opj_optarg));
         param->test_filename[strlen(opj_optarg)] = '\0';
@@ -162,7 +162,7 @@ int main(int argc, char **argv)
     }
   printf("Ok.\n");
 
-  pos=ftell(fbase);
+  pos=(unsigned long)ftell(fbase);
 
   while(!feof(fbase))
     {
@@ -192,7 +192,7 @@ int main(int argc, char **argv)
       char *strbase, *strtest, *strbase_d, *strtest_d;
 
       printf("Files differ at line %lu:\n", l);
-      fseek(fbase,pos,SEEK_SET);
+      fseek(fbase,(long)pos,SEEK_SET);
 
       /* Take into account CRLF characters when we write \n into
       // dump file when we used WIN platform*/
@@ -200,11 +200,11 @@ int main(int argc, char **argv)
       CRLF_shift = 2;
       fseek(ftest,pos + l - 1,SEEK_SET);
 #else
-      fseek(ftest,pos,SEEK_SET);
+      fseek(ftest,(long)pos,SEEK_SET);
 #endif
 
-      strbase = (char *) malloc(nbytes + 1);
-      strtest = (char *) malloc(nbytes + 1);
+      strbase = (char *) malloc((size_t)nbytes + 1);
+      strtest = (char *) malloc((size_t)nbytes + 1);
 
 	if (fgets(strbase, nbytes, fbase) == NULL)
 		fprintf(stderr,"\nWARNING: fgets return a NULL value");
@@ -217,9 +217,9 @@ int main(int argc, char **argv)
 			strbase_d = (char *) malloc(strlen(strbase)+1);
 			strtest_d = (char *) malloc(strlen(strtest)+1);
 			strncpy(strbase_d, strbase, strlen(strbase)-1);
-			strncpy(strtest_d, strtest, strlen(strtest)-CRLF_shift);
+			strncpy(strtest_d, strtest, strlen(strtest)-(size_t)CRLF_shift);
 			strbase_d[strlen(strbase)-1] = '\0';
-			strtest_d[strlen(strtest)-CRLF_shift] = '\0';
+			strtest_d[strlen(strtest)-(size_t)CRLF_shift] = '\0';
 			printf("<%s> vs. <%s>\n", strbase_d, strtest_d);
 			free(strbase_d);free(strtest_d);
 		}
@@ -236,7 +236,7 @@ int main(int argc, char **argv)
       if (chbase == '\n')
         {
         l++;
-        pos = ftell(fbase);
+        pos = (unsigned long)ftell(fbase);
         }
       }
     }
