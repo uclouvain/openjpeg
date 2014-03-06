@@ -7778,7 +7778,7 @@ OPJ_BOOL opj_j2k_update_image_data (opj_tcd_t * p_tcd, OPJ_BYTE * p_data, opj_im
                 }
 
                 if ( l_y0_dest < (OPJ_UINT32)l_res->y0 ) {
-                        l_start_y_dest = l_res->y0 - l_y0_dest;
+                        l_start_y_dest = (OPJ_UINT32)l_res->y0 - l_y0_dest;
                         l_offset_y0_src = 0;
 
                         if ( l_y1_dest >= (OPJ_UINT32)l_res->y1 ) {
@@ -7786,21 +7786,21 @@ OPJ_BOOL opj_j2k_update_image_data (opj_tcd_t * p_tcd, OPJ_BYTE * p_data, opj_im
                                 l_offset_y1_src = 0;
                         }
                         else {
-                                l_height_dest = l_y1_dest - l_res->y0 ;
-                                l_offset_y1_src =  l_height_src - l_height_dest;
+                                l_height_dest = l_y1_dest - (OPJ_UINT32)l_res->y0 ;
+                                l_offset_y1_src =  (OPJ_INT32)(l_height_src - l_height_dest);
                         }
                 }
                 else {
                         l_start_y_dest = 0 ;
-                        l_offset_y0_src = l_y0_dest - l_res->y0;
+                        l_offset_y0_src = (OPJ_INT32)l_y0_dest - l_res->y0;
 
                         if ( l_y1_dest >= (OPJ_UINT32)l_res->y1 ) {
-                                l_height_dest = l_height_src - l_offset_y0_src;
+                                l_height_dest = l_height_src - (OPJ_UINT32)l_offset_y0_src;
                                 l_offset_y1_src = 0;
                         }
                         else {
                                 l_height_dest = l_img_comp_dest->h ;
-                                l_offset_y1_src = l_res->y1 - l_y1_dest;
+                                l_offset_y1_src = l_res->y1 - (OPJ_INT32)l_y1_dest;
                         }
                 }
 
@@ -7814,13 +7814,13 @@ OPJ_BOOL opj_j2k_update_image_data (opj_tcd_t * p_tcd, OPJ_BYTE * p_data, opj_im
                 /*-----*/
 
                 /* Compute the input buffer offset */
-                l_start_offset_src = l_offset_x0_src + l_offset_y0_src * l_width_src;
+                l_start_offset_src = l_offset_x0_src + l_offset_y0_src * (OPJ_INT32)l_width_src;
                 l_line_offset_src = l_offset_x1_src + l_offset_x0_src;
-                l_end_offset_src = l_offset_y1_src * l_width_src - l_offset_x0_src;
+                l_end_offset_src = l_offset_y1_src * (OPJ_INT32)l_width_src - l_offset_x0_src;
 
                 /* Compute the output buffer offset */
-                l_start_offset_dest = l_start_x_dest + l_start_y_dest * l_img_comp_dest->w;
-                l_line_offset_dest = l_img_comp_dest->w - l_width_dest;
+                l_start_offset_dest = (OPJ_INT32)(l_start_x_dest + l_start_y_dest * l_img_comp_dest->w);
+                l_line_offset_dest = (OPJ_INT32)(l_img_comp_dest->w - l_width_dest);
 
                 /* Move the output buffer to the first place where we will write*/
                 l_dest_ptr = l_img_comp_dest->data + l_start_offset_dest;
@@ -7979,8 +7979,8 @@ OPJ_BOOL opj_j2k_set_decode_area(       opj_j2k_t *p_j2k,
                 p_image->x0 = l_image->x0;
         }
         else {
-                p_j2k->m_specific_param.m_decoder.m_start_tile_x = (p_start_x - l_cp->tx0) / l_cp->tdx;
-                p_image->x0 = p_start_x;
+                p_j2k->m_specific_param.m_decoder.m_start_tile_x = ((OPJ_UINT32)p_start_x - l_cp->tx0) / l_cp->tdx;
+                p_image->x0 = (OPJ_UINT32)p_start_x;
         }
 
         /* Up */
@@ -7998,8 +7998,8 @@ OPJ_BOOL opj_j2k_set_decode_area(       opj_j2k_t *p_j2k,
                 p_image->y0 = l_image->y0;
         }
         else {
-                p_j2k->m_specific_param.m_decoder.m_start_tile_y = (p_start_y - l_cp->ty0) / l_cp->tdy;
-                p_image->y0 = p_start_y;
+                p_j2k->m_specific_param.m_decoder.m_start_tile_y = ((OPJ_UINT32)p_start_y - l_cp->ty0) / l_cp->tdy;
+                p_image->y0 = (OPJ_UINT32)p_start_y;
         }
 
         /* Right */
@@ -8019,8 +8019,8 @@ OPJ_BOOL opj_j2k_set_decode_area(       opj_j2k_t *p_j2k,
                 p_image->x1 = l_image->x1;
         }
         else {
-                p_j2k->m_specific_param.m_decoder.m_end_tile_x = opj_int_ceildiv((p_end_x - l_cp->tx0), l_cp->tdx);
-                p_image->x1 = p_end_x;
+                p_j2k->m_specific_param.m_decoder.m_end_tile_x = (OPJ_UINT32)opj_int_ceildiv(p_end_x - (OPJ_INT32)l_cp->tx0, (OPJ_INT32)l_cp->tdx);
+                p_image->x1 = (OPJ_UINT32)p_end_x;
         }
 
         /* Bottom */
@@ -8038,8 +8038,8 @@ OPJ_BOOL opj_j2k_set_decode_area(       opj_j2k_t *p_j2k,
                 p_image->y1 = l_image->y1;
         }
         else{
-                p_j2k->m_specific_param.m_decoder.m_end_tile_y = opj_int_ceildiv((p_end_y - l_cp->ty0), l_cp->tdy);
-                p_image->y1 = p_end_y;
+                p_j2k->m_specific_param.m_decoder.m_end_tile_y = (OPJ_UINT32)opj_int_ceildiv(p_end_y - (OPJ_INT32)l_cp->ty0, (OPJ_INT32)l_cp->tdy);
+                p_image->y1 = (OPJ_UINT32)p_end_y;
         }
         /* ----- */
 
@@ -8050,30 +8050,30 @@ OPJ_BOOL opj_j2k_set_decode_area(       opj_j2k_t *p_j2k,
         {
                 OPJ_INT32 l_h,l_w;
 
-                l_img_comp->x0 = opj_int_ceildiv(p_image->x0, l_img_comp->dx);
-                l_img_comp->y0 = opj_int_ceildiv(p_image->y0, l_img_comp->dy);
-                l_comp_x1 = opj_int_ceildiv(p_image->x1, l_img_comp->dx);
-                l_comp_y1 = opj_int_ceildiv(p_image->y1, l_img_comp->dy);
+                l_img_comp->x0 = (OPJ_UINT32)opj_int_ceildiv((OPJ_INT32)p_image->x0, (OPJ_INT32)l_img_comp->dx);
+                l_img_comp->y0 = (OPJ_UINT32)opj_int_ceildiv((OPJ_INT32)p_image->y0, (OPJ_INT32)l_img_comp->dy);
+                l_comp_x1 = opj_int_ceildiv((OPJ_INT32)p_image->x1, (OPJ_INT32)l_img_comp->dx);
+                l_comp_y1 = opj_int_ceildiv((OPJ_INT32)p_image->y1, (OPJ_INT32)l_img_comp->dy);
 
-                l_w = opj_int_ceildivpow2(l_comp_x1, l_img_comp->factor)
-                                - opj_int_ceildivpow2(l_img_comp->x0, l_img_comp->factor);
+                l_w = opj_int_ceildivpow2(l_comp_x1, (OPJ_INT32)l_img_comp->factor)
+                                - opj_int_ceildivpow2((OPJ_INT32)l_img_comp->x0, (OPJ_INT32)l_img_comp->factor);
                 if (l_w < 0){
                         opj_event_msg(p_manager, EVT_ERROR,
                                 "Size x of the decoded component image is incorrect (comp[%d].w=%d).\n",
                                 it_comp, l_w);
                         return OPJ_FALSE;
                 }
-                l_img_comp->w = l_w;
+                l_img_comp->w = (OPJ_UINT32)l_w;
 
-                l_h = opj_int_ceildivpow2(l_comp_y1, l_img_comp->factor)
-                                - opj_int_ceildivpow2(l_img_comp->y0, l_img_comp->factor);
+                l_h = opj_int_ceildivpow2(l_comp_y1, (OPJ_INT32)l_img_comp->factor)
+                                - opj_int_ceildivpow2((OPJ_INT32)l_img_comp->y0, (OPJ_INT32)l_img_comp->factor);
                 if (l_h < 0){
                         opj_event_msg(p_manager, EVT_ERROR,
                                 "Size y of the decoded component image is incorrect (comp[%d].h=%d).\n",
                                 it_comp, l_h);
                         return OPJ_FALSE;
                 }
-                l_img_comp->h = l_h;
+                l_img_comp->h = (OPJ_UINT32)l_h;
 
                 l_img_comp++;
         }
@@ -8474,7 +8474,7 @@ OPJ_BOOL opj_j2k_write_SQcd_SQcc(       opj_j2k_t *p_j2k,
                 ++p_data;
 
                 for (l_band_no = 0; l_band_no < l_num_bands; ++l_band_no) {
-                        l_expn = l_tccp->stepsizes[l_band_no].expn;
+                        l_expn = (OPJ_UINT32)l_tccp->stepsizes[l_band_no].expn;
                         opj_write_bytes(p_data, l_expn << 3, 1);        /* SPqcx_i */
                         ++p_data;
                 }
@@ -8491,8 +8491,8 @@ OPJ_BOOL opj_j2k_write_SQcd_SQcc(       opj_j2k_t *p_j2k,
                 ++p_data;
 
                 for (l_band_no = 0; l_band_no < l_num_bands; ++l_band_no) {
-                        l_expn = l_tccp->stepsizes[l_band_no].expn;
-                        l_mant = l_tccp->stepsizes[l_band_no].mant;
+                        l_expn = (OPJ_UINT32)l_tccp->stepsizes[l_band_no].expn;
+                        l_mant = (OPJ_UINT32)l_tccp->stepsizes[l_band_no].mant;
 
                         opj_write_bytes(p_data, (l_expn << 11) + l_mant, 2);    /* SPqcx_i */
                         p_data += 2;
@@ -8590,7 +8590,7 @@ OPJ_BOOL opj_j2k_read_SQcd_SQcc(opj_j2k_t *p_j2k,
                         opj_read_bytes(l_current_ptr, &l_tmp ,1);                       /* SPqcx_i */
                         ++l_current_ptr;
                         if (l_band_no < OPJ_J2K_MAXBANDS){
-                                l_tccp->stepsizes[l_band_no].expn = l_tmp>>3;
+                                l_tccp->stepsizes[l_band_no].expn = (OPJ_INT32)(l_tmp >> 3);
                                 l_tccp->stepsizes[l_band_no].mant = 0;
                         }
                 }
@@ -8601,7 +8601,7 @@ OPJ_BOOL opj_j2k_read_SQcd_SQcc(opj_j2k_t *p_j2k,
                         opj_read_bytes(l_current_ptr, &l_tmp ,2);                       /* SPqcx_i */
                         l_current_ptr+=2;
                         if (l_band_no < OPJ_J2K_MAXBANDS){
-                                l_tccp->stepsizes[l_band_no].expn = l_tmp >> 11;
+                                l_tccp->stepsizes[l_band_no].expn = (OPJ_INT32)(l_tmp >> 11);
                                 l_tccp->stepsizes[l_band_no].mant = l_tmp & 0x7ff;
                         }
                 }
@@ -8612,8 +8612,8 @@ OPJ_BOOL opj_j2k_read_SQcd_SQcc(opj_j2k_t *p_j2k,
         if (l_tccp->qntsty == J2K_CCP_QNTSTY_SIQNT) {
                 for (l_band_no = 1; l_band_no < OPJ_J2K_MAXBANDS; l_band_no++) {
                         l_tccp->stepsizes[l_band_no].expn =
-                                ((l_tccp->stepsizes[0].expn) - ((l_band_no - 1) / 3) > 0) ?
-                                        (l_tccp->stepsizes[0].expn) - ((l_band_no - 1) / 3) : 0;
+                                ((OPJ_INT32)(l_tccp->stepsizes[0].expn) - (OPJ_INT32)((l_band_no - 1) / 3) > 0) ?
+                                        (OPJ_INT32)(l_tccp->stepsizes[0].expn) - (OPJ_INT32)((l_band_no - 1) / 3) : 0;
                         l_tccp->stepsizes[l_band_no].mant = l_tccp->stepsizes[0].mant;
                 }
         }
@@ -8768,7 +8768,7 @@ void opj_j2k_dump_MH_info(opj_j2k_t* p_j2k, FILE* out_stream)
         if (l_default_tile)
         {
                 OPJ_INT32 compno;
-                OPJ_INT32 numcomps = p_j2k->m_private_image->numcomps;
+                OPJ_INT32 numcomps = (OPJ_INT32)p_j2k->m_private_image->numcomps;
 
                 fprintf(out_stream, "\t default tile {\n");
                 fprintf(out_stream, "\t\t csty=%#x\n", l_default_tile->csty);
@@ -8800,7 +8800,7 @@ void opj_j2k_dump_MH_info(opj_j2k_t* p_j2k, FILE* out_stream)
                         fprintf(out_stream, "\t\t\t qntsty=%d\n", l_tccp->qntsty);
                         fprintf(out_stream, "\t\t\t numgbits=%d\n", l_tccp->numgbits);
                         fprintf(out_stream, "\t\t\t stepsizes (m,e)=");
-                        numbands = (l_tccp->qntsty == J2K_CCP_QNTSTY_SIQNT) ? 1 : l_tccp->numresolutions * 3 - 2;
+                        numbands = (l_tccp->qntsty == J2K_CCP_QNTSTY_SIQNT) ? 1 : (OPJ_INT32)l_tccp->numresolutions * 3 - 2;
                         for (bandno = 0; bandno < numbands; bandno++) {
                                 fprintf(out_stream, "(%d,%d) ", l_tccp->stepsizes[bandno].mant,
                                         l_tccp->stepsizes[bandno].expn);
@@ -8924,11 +8924,11 @@ opj_codestream_info_v2_t* j2k_get_cstr_info(opj_j2k_t* p_j2k)
                 l_tccp_info->qntsty = l_tccp->qntsty;
                 l_tccp_info->numgbits = l_tccp->numgbits;
 
-                numbands = (l_tccp->qntsty == J2K_CCP_QNTSTY_SIQNT) ? 1 : l_tccp->numresolutions * 3 - 2;
+                numbands = (l_tccp->qntsty == J2K_CCP_QNTSTY_SIQNT) ? 1 : (OPJ_INT32)l_tccp->numresolutions * 3 - 2;
                 if (numbands < OPJ_J2K_MAXBANDS) {
                         for (bandno = 0; bandno < numbands; bandno++) {
-                                l_tccp_info->stepsizes_mant[bandno] = l_tccp->stepsizes[bandno].mant;
-                                l_tccp_info->stepsizes_expn[bandno] = l_tccp->stepsizes[bandno].expn;
+                                l_tccp_info->stepsizes_mant[bandno] = (OPJ_UINT32)l_tccp->stepsizes[bandno].mant;
+                                l_tccp_info->stepsizes_expn[bandno] = (OPJ_UINT32)l_tccp->stepsizes[bandno].expn;
                         }
                 }
 
@@ -9185,7 +9185,7 @@ static OPJ_BOOL opj_j2k_decode_one_tile (       opj_j2k_t *p_j2k,
                 }
         }
         /* Move into the codestream to the first SOT used to decode the desired tile */
-        l_tile_no_to_dec = p_j2k->m_specific_param.m_decoder.m_tile_ind_to_dec;
+        l_tile_no_to_dec = (OPJ_UINT32)p_j2k->m_specific_param.m_decoder.m_tile_ind_to_dec;
         if (p_j2k->cstr_index->tile_index)
                 if(p_j2k->cstr_index->tile_index->tp_index)
                 {
@@ -9366,13 +9366,13 @@ OPJ_BOOL opj_j2k_get_tile(      opj_j2k_t *p_j2k,
 
                 l_img_comp->factor = p_j2k->m_private_image->comps[compno].factor;
 
-                l_img_comp->x0 = opj_int_ceildiv(p_image->x0, l_img_comp->dx);
-                l_img_comp->y0 = opj_int_ceildiv(p_image->y0, l_img_comp->dy);
-                l_comp_x1 = opj_int_ceildiv(p_image->x1, l_img_comp->dx);
-                l_comp_y1 = opj_int_ceildiv(p_image->y1, l_img_comp->dy);
+                l_img_comp->x0 = (OPJ_UINT32)opj_int_ceildiv((OPJ_INT32)p_image->x0, (OPJ_INT32)l_img_comp->dx);
+                l_img_comp->y0 = (OPJ_UINT32)opj_int_ceildiv((OPJ_INT32)p_image->y0, (OPJ_INT32)l_img_comp->dy);
+                l_comp_x1 = opj_int_ceildiv((OPJ_INT32)p_image->x1, (OPJ_INT32)l_img_comp->dx);
+                l_comp_y1 = opj_int_ceildiv((OPJ_INT32)p_image->y1, (OPJ_INT32)l_img_comp->dy);
 
-                l_img_comp->w = opj_int_ceildivpow2(l_comp_x1, l_img_comp->factor) - opj_int_ceildivpow2(l_img_comp->x0, l_img_comp->factor);
-                l_img_comp->h = opj_int_ceildivpow2(l_comp_y1, l_img_comp->factor) - opj_int_ceildivpow2(l_img_comp->y0, l_img_comp->factor);
+                l_img_comp->w = (OPJ_UINT32)(opj_int_ceildivpow2(l_comp_x1, (OPJ_INT32)l_img_comp->factor) - opj_int_ceildivpow2((OPJ_INT32)l_img_comp->x0, (OPJ_INT32)l_img_comp->factor));
+                l_img_comp->h = (OPJ_UINT32)(opj_int_ceildivpow2(l_comp_y1, (OPJ_INT32)l_img_comp->factor) - opj_int_ceildivpow2((OPJ_INT32)l_img_comp->y0, (OPJ_INT32)l_img_comp->factor));
 
                 l_img_comp++;
         }
@@ -9388,7 +9388,7 @@ OPJ_BOOL opj_j2k_get_tile(      opj_j2k_t *p_j2k,
         }
         opj_copy_image_header(p_image, p_j2k->m_output_image);
 
-        p_j2k->m_specific_param.m_decoder.m_tile_ind_to_dec = tile_index;
+        p_j2k->m_specific_param.m_decoder.m_tile_ind_to_dec = (OPJ_INT32)tile_index;
 
         /* customization of the decoding */
         opj_j2k_setup_decoding_tile(p_j2k);
@@ -9603,13 +9603,13 @@ void opj_j2k_get_tile_data (opj_tcd_t * p_tcd, OPJ_BYTE * p_data)
                         l_size_comp = 4;
                 }
 
-                l_width = (l_tilec->x1 - l_tilec->x0);
-                l_height = (l_tilec->y1 - l_tilec->y0);
-                l_offset_x = opj_int_ceildiv(l_image->x0, l_img_comp->dx);
-                l_offset_y = opj_int_ceildiv(l_image->y0, l_img_comp->dy);
-                l_image_width = opj_int_ceildiv(l_image->x1 - l_image->x0, l_img_comp->dx);
+                l_width  = (OPJ_UINT32)(l_tilec->x1 - l_tilec->x0);
+                l_height = (OPJ_UINT32)(l_tilec->y1 - l_tilec->y0);
+                l_offset_x = (OPJ_UINT32)opj_int_ceildiv((OPJ_INT32)l_image->x0, (OPJ_INT32)l_img_comp->dx);
+                l_offset_y = (OPJ_UINT32)opj_int_ceildiv((OPJ_INT32)l_image->y0, (OPJ_INT32)l_img_comp->dy);
+                l_image_width = (OPJ_UINT32)opj_int_ceildiv((OPJ_INT32)l_image->x1 - (OPJ_INT32)l_image->x0, (OPJ_INT32)l_img_comp->dx);
                 l_stride = l_image_width - l_width;
-                l_src_ptr = l_img_comp->data + (l_tilec->x0 - l_offset_x) + (l_tilec->y0 - l_offset_y) * l_image_width;
+                l_src_ptr = l_img_comp->data + ((OPJ_UINT32)l_tilec->x0 - l_offset_x) + ((OPJ_UINT32)l_tilec->y0 - l_offset_y) * l_image_width;
 
                 switch (l_size_comp) {
                         case 1:
