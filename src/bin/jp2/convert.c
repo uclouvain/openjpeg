@@ -1431,7 +1431,7 @@ static inline int clamp( const int value, const int prec, const int sgnd )
     {
     if (prec <= 8)       return CLAMP(value,0,255);
     else if (prec <= 16) return CLAMP(value,0,65535);
-    else                 return CLAMP(value,0,4294967295);
+    else                 return value; /*CLAMP(value,0,4294967295);*/
     }
 }
 
@@ -3012,11 +3012,11 @@ static opj_image_t* rawtoimage_common(const char *filename, opj_cparameters_t *p
                 }
                 if( big_endian )
                 {
-                    value = (unsigned short)(temp1 << 8 + temp2);
+                    value = (unsigned short)((temp1 << 8) + temp2);
                 }
                 else
                 {
-                    value = (unsigned short)(temp2 << 8 + temp1);
+                    value = (unsigned short)((temp2 << 8) + temp1);
                 }
                 image->comps[compno].data[i] = raw_cp->rawSigned?(short)value:value;
             }
