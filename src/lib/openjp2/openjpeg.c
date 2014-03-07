@@ -94,10 +94,10 @@ static OPJ_UINT64 opj_get_data_length_from_file (FILE * p_file)
 	OPJ_OFF_T file_length = 0;
 
 	OPJ_FSEEK(p_file, 0, SEEK_END);
-	file_length = (OPJ_UINT64)OPJ_FTELL(p_file);
+	file_length = (OPJ_OFF_T)OPJ_FTELL(p_file);
 	OPJ_FSEEK(p_file, 0, SEEK_SET);
 
-	return file_length;
+	return (OPJ_UINT64)file_length;
 }
 
 static OPJ_SIZE_T opj_write_from_file (void * p_buffer, OPJ_SIZE_T p_nb_bytes, FILE * p_file)
