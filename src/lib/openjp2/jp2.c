@@ -614,7 +614,7 @@ OPJ_BYTE * opj_jp2_write_bpcc(	opj_jp2_t *jp2,
 {
 	OPJ_UINT32 i;
 	/* room for 8 bytes for box and 1 byte for each component */
-	OPJ_INT32 l_bpcc_size = 8 + jp2->numcomps;
+	OPJ_UINT32 l_bpcc_size = 8 + jp2->numcomps;
 	OPJ_BYTE * l_bpcc_data,* l_current_bpcc_ptr;
 	
 	/* preconditions */
@@ -900,7 +900,7 @@ void opj_jp2_apply_pclr(opj_image_t *image, opj_jp2_color_t *color)
         if((k = src[j]) < 0) k = 0; else if(k > top_k) k = top_k;
 
         /* The colour */
-        dst[j] = entries[k * nr_channels + pcol];
+        dst[j] = (OPJ_INT32)entries[k * nr_channels + pcol];
         }
     }
 	}
@@ -955,7 +955,7 @@ OPJ_BOOL opj_jp2_read_pclr(	opj_jp2_t *jp2,
 	if (p_pclr_header_size < 3 + (OPJ_UINT32)nr_channels || nr_channels == 0 || nr_entries >= (OPJ_UINT32)-1 / nr_channels)
 		return OPJ_FALSE;
 
-	entries = (OPJ_UINT32*) opj_malloc(nr_channels * nr_entries * sizeof(OPJ_UINT32));
+	entries = (OPJ_UINT32*) opj_malloc((size_t)nr_channels * nr_entries * sizeof(OPJ_UINT32));
     if (!entries)
         return OPJ_FALSE;
 	channel_size = (OPJ_BYTE*) opj_malloc(nr_channels);
@@ -1000,7 +1000,7 @@ OPJ_BOOL opj_jp2_read_pclr(	opj_jp2_t *jp2,
 
 	for(j = 0; j < nr_entries; ++j) {
 		for(i = 0; i < nr_channels; ++i) {
-			OPJ_UINT32 bytes_to_read = (channel_size[i]+7)>>3;
+			OPJ_UINT32 bytes_to_read = (OPJ_UINT32)((channel_size[i]+7)>>3);
 
 			if (bytes_to_read > sizeof(OPJ_UINT32))
 				bytes_to_read = sizeof(OPJ_UINT32);
@@ -1107,7 +1107,7 @@ void opj_jp2_apply_cdef(opj_image_t *image, opj_jp2_color_t *color)
       }
 
     cn = info[i].cn; 
-    acn = (OPJ_INT16)(asoc - 1);
+    acn = (OPJ_UINT16)(asoc - 1);
     if( cn >= image->numcomps || acn >= image->numcomps )
       {
       fprintf(stderr, "cn=%d, acn=%d, numcomps=%d\n", cn, acn, image->numcomps);
@@ -1266,16 +1266,16 @@ OPJ_BOOL opj_jp2_read_colr( opj_jp2_t *jp2,
 	else if (jp2->meth == 2) {
 		/* ICC profile */
 		OPJ_INT32 it_icc_value = 0;
-		OPJ_INT32 icc_len = p_colr_header_size - 3;
+		OPJ_INT32 icc_len = (OPJ_INT32)p_colr_header_size - 3;
 
-		jp2->color.icc_profile_len = icc_len;
-		jp2->color.icc_profile_buf = (OPJ_BYTE*) opj_malloc(icc_len);
+		jp2->color.icc_profile_len = (OPJ_UINT32)icc_len;
+		jp2->color.icc_profile_buf = (OPJ_BYTE*) opj_malloc((size_t)icc_len);
         if (!jp2->color.icc_profile_buf)
         {
             jp2->color.icc_profile_len = 0;
             return OPJ_FALSE;
         }
-		memset(jp2->color.icc_profile_buf, 0, icc_len * sizeof(OPJ_BYTE));
+		memset(jp2->color.icc_profile_buf, 0, (size_t)icc_len * sizeof(OPJ_BYTE));
 
 		for (it_icc_value = 0; it_icc_value < icc_len; ++it_icc_value)
 		{
@@ -1360,7 +1360,7 @@ OPJ_BOOL opj_jp2_write_jp2h(opj_jp2_t *jp2,
 
 	OPJ_INT32 i, l_nb_pass;
 	/* size of data for super box*/
-	OPJ_INT32 l_jp2h_size = 8;
+	OPJ_UINT32 l_jp2h_size = 8;
 	OPJ_BOOL l_result = OPJ_TRUE;
 
 	/* to store the data of the super box */
@@ -1587,7 +1587,8 @@ void opj_jp2_setup_encoder(	opj_jp2_t *jp2,
                             opj_event_mgr_t * p_manager)
 {
     OPJ_UINT32 i;
-	OPJ_INT32 depth_0, sign;
+	OPJ_UINT32 depth_0;
+  OPJ_UINT32 sign;
 
 	if(!jp2 || !parameters || !image)
 		return;
@@ -1636,7 +1637,7 @@ void opj_jp2_setup_encoder(	opj_jp2_t *jp2,
 	sign = image->comps[0].sgnd;
 	jp2->bpc = depth_0 + (sign << 7);
 	for (i = 1; i < image->numcomps; i++) {
-		OPJ_INT32 depth = image->comps[i].prec - 1;
+		OPJ_UINT32 depth = image->comps[i].prec - 1;
 		sign = image->comps[i].sgnd;
 		if (depth_0 != depth)
 			jp2->bpc = 255;
@@ -2242,11 +2243,11 @@ OPJ_BOOL opj_jp2_read_boxhdr_char(   opj_jp2_box_t *box,
 	/* process read data */
 	opj_read_bytes(p_data, &l_value, 4);
 	p_data += 4;
-	box->length = (OPJ_INT32)(l_value);
+	box->length = (OPJ_UINT32)(l_value);
 
 	opj_read_bytes(p_data, &l_value, 4);
 	p_data += 4;
-	box->type = (OPJ_INT32)(l_value);
+	box->type = (OPJ_UINT32)(l_value);
 
 	*p_number_bytes_read = 8;
 
@@ -2271,7 +2272,7 @@ OPJ_BOOL opj_jp2_read_boxhdr_char(   opj_jp2_box_t *box,
 
 		opj_read_bytes(p_data, &l_value, 4);
 		*p_number_bytes_read += 4;
-		box->length = (OPJ_INT32)(l_value);
+		box->length = (OPJ_UINT32)(l_value);
 
 		if (box->length == 0) {
 			opj_event_msg(p_manager, EVT_ERROR, "Cannot handle box of undefined sizes\n");
