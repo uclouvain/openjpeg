@@ -25,10 +25,12 @@
  */
 
 /*
- * compareRAWimages.c
+ * compare_raw_files.c
  *
  *  Created on: 31 August 2011
  *      Author: mickael
+ *
+ * This is equivalent to the UNIX `cmp` command
  */
 
 #include <stdio.h>
@@ -49,8 +51,8 @@ typedef struct test_cmp_parameters
 /*******************************************************************************
  * Command line help function
  *******************************************************************************/
-static void compareRAWimages_help_display(void) {
-  fprintf(stdout,"\nList of parameters for the comparePGX function  \n");
+static void compare_raw_files_help_display(void) {
+  fprintf(stdout,"\nList of parameters for the compare_raw_files function  \n");
   fprintf(stdout,"\n");
   fprintf(stdout,"  -b \t REQUIRED \t filename to the reference/baseline RAW image \n");
   fprintf(stdout,"  -t \t REQUIRED \t filename to the test RAW image\n");
@@ -123,7 +125,7 @@ int main(int argc, char **argv)
   /* Get parameters from command line*/
   if (parse_cmdline_cmp(argc, argv, &inParam))
     {
-    compareRAWimages_help_display();
+    compare_raw_files_help_display();
     goto cleanup;
     }
 

@@ -289,7 +289,7 @@ foreach(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
 
             # Compare the decoding file with baseline generated from the kdu_expand and baseline.j2k
             add_test(NAME NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-compare_dec-ref-out2base
-              COMMAND compareRAWimages
+              COMMAND compare_raw_files
               -b ${BASELINE_NR}/opj_${OUTPUT_FILENAME_NAME_WE}-ENC-${IT_TEST_ENC}.raw
               -t ${OUTPUT_FILENAME}.raw
             )
@@ -330,7 +330,7 @@ foreach(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
 # FIXME: add a compare2base function base on raw which
 # can output png diff files if necesary
 #  add_test(NR-${filename}-compare2base
-#      ${EXECUTABLE_OUTPUT_PATH}/comparePGXimages
+#      ${EXECUTABLE_OUTPUT_PATH}/compare_images
 #     -b ${BASELINE_NR}/opj_${filenameRef}
 #     -t ${TEMP}/${filename}.pgx
 #     -n ${nbComponents}

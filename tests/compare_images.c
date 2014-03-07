@@ -25,7 +25,7 @@
  */
 
 /*
- * comparePGXimages.c
+ * compare_images.c
  *
  *  Created on: 8 juil. 2011
  *      Author: mickael
@@ -79,9 +79,9 @@ static double* parseToleranceValues( char* inArg, const int nbcomp)
 /*******************************************************************************
  * Command line help function
  *******************************************************************************/
-static void comparePGXimages_help_display(void)
+static void compare_images_help_display(void)
 {
-  fprintf(stdout,"\nList of parameters for the comparePGX function  \n");
+  fprintf(stdout,"\nList of parameters for the compare_images function  \n");
   fprintf(stdout,"\n");
   fprintf(stdout,"  -b \t REQUIRED \t filename to the reference/baseline PGX image \n");
   fprintf(stdout,"  -t \t REQUIRED \t filename to the test PGX image\n");
@@ -623,7 +623,7 @@ int main(int argc, char **argv)
   /* Get parameters from command line*/
   if( parse_cmdline_cmp(argc, argv, &inParam) )
     {
-    comparePGXimages_help_display();
+    compare_images_help_display();
     goto cleanup;
     }
 

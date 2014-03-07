@@ -11,7 +11,7 @@ include_directories(
   )
 
 # First thing define the common source:
-set(comparePGXimages_SRCS comparePGXimages.c
+set(compare_images_SRCS compare_images.c
   ${OPENJPEG_SOURCE_DIR}/src/bin/jp2/convert.c
   ${OPENJPEG_SOURCE_DIR}/src/bin/common/opj_getopt.c
   )
@@ -19,19 +19,19 @@ set(comparePGXimages_SRCS comparePGXimages.c
 set(compare_dump_files_SRCS compare_dump_files.c
   ${OPENJPEG_SOURCE_DIR}/src/bin/common/opj_getopt.c)
 
-set(compareRAWimages_SRCS compareRAWimages.c
+set(compare_raw_files_SRCS compare_raw_files.c
   ${OPENJPEG_SOURCE_DIR}/src/bin/common/opj_getopt.c)
 
-add_executable(comparePGXimages ${comparePGXimages_SRCS})
-target_link_libraries(comparePGXimages
+add_executable(compare_images ${compare_images_SRCS})
+target_link_libraries(compare_images
   ${OPENJPEG_LIBRARY_NAME}
   ${PNG_LIBNAME} ${TIFF_LIBNAME}
   )
 # To support universal exe:
 if(ZLIB_FOUND AND APPLE)
-  target_link_libraries(comparePGXimages z)
+  target_link_libraries(compare_images z)
 else(ZLIB_FOUND AND APPLE)
-  target_link_libraries(comparePGXimages ${Z_LIBNAME})
+  target_link_libraries(compare_images ${Z_LIBNAME})
 endif()
 
 add_executable(compare_dump_files ${compare_dump_files_SRCS})
@@ -39,7 +39,7 @@ add_executable(compare_dump_files ${compare_dump_files_SRCS})
 add_executable(j2k_random_tile_access j2k_random_tile_access.c)
 target_link_libraries(j2k_random_tile_access ${OPENJPEG_LIBRARY_NAME})
 
-add_executable(compareRAWimages ${compareRAWimages_SRCS})
+add_executable(compare_raw_files ${compare_raw_files_SRCS})
 
 add_executable(test_tile_encoder test_tile_encoder.c)
 target_link_libraries(test_tile_encoder ${OPENJPEG_LIBRARY_NAME})
