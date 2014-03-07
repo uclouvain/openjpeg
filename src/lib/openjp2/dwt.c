@@ -401,9 +401,6 @@ INLINE OPJ_BOOL opj_dwt_encode_procedure(opj_tcd_tilecomp_t * tilec,void (*p_fun
 	l_cur_res = tilec->resolutions + l;
 	l_last_res = l_cur_res - 1;
 
-	rw = l_cur_res->x1 - l_cur_res->x0;
-	rh = l_cur_res->y1 - l_cur_res->y0;
-
 	l_data_size = opj_dwt_max_resolution( tilec->resolutions,tilec->numresolutions) * (OPJ_UINT32)sizeof(OPJ_INT32);
 	bj = (OPJ_INT32*)opj_malloc((size_t)l_data_size);
 	if (! bj) {
