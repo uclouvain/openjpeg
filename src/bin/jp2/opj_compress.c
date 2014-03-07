@@ -620,7 +620,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
             OPJ_UINT32 numlayers = 0, numresolution = 0, matrix_width = 0;
 
             char *s = opj_optarg;
-            sscanf(s, "%d", &numlayers);
+            sscanf(s, "%ud", &numlayers);
             s++;
             if (numlayers > 9)
                 s++;
@@ -787,7 +787,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
             char *s = opj_optarg;
             POC = parameters->POC;
 
-            while (sscanf(s, "T%d=%d,%d,%d,%d,%d,%4s", &POC[numpocs].tile,
+            while (sscanf(s, "T%ud=%ud,%ud,%ud,%ud,%ud,%4s", &POC[numpocs].tile,
                           &POC[numpocs].resno0, &POC[numpocs].compno0,
                           &POC[numpocs].layno1, &POC[numpocs].resno1,
                           &POC[numpocs].compno1, POC[numpocs].progorder) == 7) {

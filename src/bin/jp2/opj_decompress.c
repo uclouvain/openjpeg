@@ -447,7 +447,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 
 			case 'r':		/* reduce option */
 			{
-				sscanf(opj_optarg, "%d", &parameters->cp_reduce);
+				sscanf(opj_optarg, "%ud", &parameters->cp_reduce);
 			}
 			break;
 			
@@ -456,7 +456,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 
 			case 'l':		/* layering option */
 			{
-				sscanf(opj_optarg, "%d", &parameters->cp_layer);
+				sscanf(opj_optarg, "%ud", &parameters->cp_layer);
 			}
 			break;
 			
@@ -496,7 +496,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 
 			case 't':     		/* Input tile index */
 			{
-				sscanf(opj_optarg, "%d", &parameters->tile_index);
+				sscanf(opj_optarg, "%ud", &parameters->tile_index);
 				parameters->nb_tile_to_decode = 1;
 			}
 			break;
