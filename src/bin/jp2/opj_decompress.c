@@ -676,7 +676,6 @@ static void info_callback(const char *msg, void *client_data) {
 /* -------------------------------------------------------------------------- */
 int main(int argc, char **argv)
 {
-
 	opj_dparameters_t parameters;			/* decompression parameters */
 	opj_image_t* image = NULL;
 	opj_stream_t *l_stream = NULL;				/* Stream */
@@ -688,6 +687,7 @@ int main(int argc, char **argv)
 	OPJ_INT32 num_images, imageno;
 	img_fol_t img_fol;
 	dircnt_t *dirptr = NULL;
+  int failed = 0;
 
 	/* set decoding parameters to default values */
 	opj_set_default_decoder_parameters(&parameters);
@@ -871,7 +871,8 @@ int main(int argc, char **argv)
 		switch (parameters.cod_format) {
 		case PXM_DFMT:			/* PNM PGM PPM */
 			if (imagetopnm(image, parameters.outfile)) {
-				fprintf(stdout,"Outfile %s not generated\n",parameters.outfile);
+				fprintf(stderr,"Outfile %s not generated\n",parameters.outfile);
+        failed = 1;
 			}
 			else {
 				fprintf(stdout,"Generated Outfile %s\n",parameters.outfile);
@@ -961,7 +962,7 @@ int main(int argc, char **argv)
 		opj_destroy_cstr_index(&cstr_index);
 
 	}
-	return EXIT_SUCCESS;
+	return failed ? EXIT_FAILURE : EXIT_SUCCESS;
 }
 /*end main*/
 
