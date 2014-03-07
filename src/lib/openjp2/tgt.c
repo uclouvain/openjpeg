@@ -62,11 +62,11 @@ opj_tgt_tree_t *opj_tgt_create(OPJ_UINT32 numleafsh, OPJ_UINT32 numleafsv) {
         tree->numleafsv = numleafsv;
 
         numlvls = 0;
-        nplh[0] = numleafsh;
-        nplv[0] = numleafsv;
+        nplh[0] = (OPJ_INT32)numleafsh;
+        nplv[0] = (OPJ_INT32)numleafsv;
         tree->numnodes = 0;
         do {
-                n = nplh[numlvls] * nplv[numlvls];
+                n = (OPJ_UINT32)(nplh[numlvls] * nplv[numlvls]);
                 nplh[numlvls + 1] = (nplh[numlvls] + 1) / 2;
                 nplv[numlvls + 1] = (nplv[numlvls] + 1) / 2;
                 tree->numnodes += n;
@@ -148,12 +148,12 @@ opj_tgt_tree_t *opj_tgt_init(opj_tgt_tree_t * p_tree,OPJ_UINT32 p_num_leafs_h, O
                 p_tree->numleafsv = p_num_leafs_v;
 
                 l_num_levels = 0;
-                l_nplh[0] = p_num_leafs_h;
-                l_nplv[0] = p_num_leafs_v;
+                l_nplh[0] = (OPJ_INT32)p_num_leafs_h;
+                l_nplv[0] = (OPJ_INT32)p_num_leafs_v;
                 p_tree->numnodes = 0;
                 do
                 {
-                        n = l_nplh[l_num_levels] * l_nplv[l_num_levels];
+                        n = (OPJ_UINT32)(l_nplh[l_num_levels] * l_nplv[l_num_levels]);
                         l_nplh[l_num_levels + 1] = (l_nplh[l_num_levels] + 1) / 2;
                         l_nplv[l_num_levels + 1] = (l_nplv[l_num_levels] + 1) / 2;
                         p_tree->numnodes += n;
