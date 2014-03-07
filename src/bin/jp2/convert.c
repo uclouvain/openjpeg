@@ -1419,7 +1419,13 @@ opj_image_t* pgxtoimage(const char *filename, opj_cparameters_t *parameters) {
 
 #define CLAMP(x,a,b) x < a ? a : (x > b ? b : x)
 
-static inline int clamp( const int value, const int prec, const int sgnd )
+#ifdef _MSC_VER
+#define STIN static __inline
+#else
+#define STIN static inline
+#endif
+
+STIN int clamp( const int value, const int prec, const int sgnd )
 {
   if( sgnd )
     {
