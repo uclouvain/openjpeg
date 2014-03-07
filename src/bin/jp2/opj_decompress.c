@@ -481,7 +481,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 			case 'd':     		/* Input decode ROI */
 			{
 				int size_optarg = (int)strlen(opj_optarg) + 1;
-				char *ROI_values = (char*) malloc(size_optarg);
+				char *ROI_values = (char*) malloc((size_t)size_optarg);
 				ROI_values[0] = '\0';
 				strncpy(ROI_values, opj_optarg, strlen(opj_optarg));
 				ROI_values[strlen(opj_optarg)] = '\0';
@@ -639,8 +639,8 @@ int parse_DA_values( char* inArg, unsigned int *DA_x0, unsigned int *DA_y0, unsi
 		return EXIT_FAILURE;
 	}
 	else{
-		*DA_x0 = values[0]; *DA_y0 = values[1];
-		*DA_x1 = values[2]; *DA_y1 = values[3];
+		*DA_x0 = (OPJ_UINT32)values[0]; *DA_y0 = (OPJ_UINT32)values[1];
+		*DA_x1 = (OPJ_UINT32)values[2]; *DA_y1 = (OPJ_UINT32)values[3];
 		return EXIT_SUCCESS;
 	}
 }
@@ -710,8 +710,8 @@ int main(int argc, char **argv)
 
 		dirptr=(dircnt_t*)malloc(sizeof(dircnt_t));
 		if(dirptr){
-			dirptr->filename_buf = (char*)malloc(num_images*OPJ_PATH_LEN*sizeof(char));	/* Stores at max 10 image file names*/
-			dirptr->filename = (char**) malloc(num_images*sizeof(char*));
+			dirptr->filename_buf = (char*)malloc((size_t)num_images*OPJ_PATH_LEN*sizeof(char));	/* Stores at max 10 image file names*/
+			dirptr->filename = (char**) malloc((size_t)num_images*sizeof(char*));
 
 			if(!dirptr->filename_buf){
 				return EXIT_FAILURE;
@@ -805,8 +805,8 @@ int main(int argc, char **argv)
 
 		if (!parameters.nb_tile_to_decode) {
 			/* Optional if you want decode the entire image */
-			if (!opj_set_decode_area(l_codec, image, parameters.DA_x0,
-					parameters.DA_y0, parameters.DA_x1, parameters.DA_y1)){
+			if (!opj_set_decode_area(l_codec, image, (OPJ_INT32)parameters.DA_x0,
+					(OPJ_INT32)parameters.DA_y0, (OPJ_INT32)parameters.DA_x1, (OPJ_INT32)parameters.DA_y1)){
 				fprintf(stderr,	"ERROR -> opj_decompress: failed to set the decoded area\n");
 				opj_stream_destroy_v3(l_stream);
 				opj_destroy_codec(l_codec);
