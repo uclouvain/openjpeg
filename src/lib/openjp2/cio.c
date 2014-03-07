@@ -522,7 +522,6 @@ OPJ_OFF_T opj_stream_write_skip (opj_stream_private_t * p_stream, OPJ_OFF_T p_si
 	if (! l_is_written) {
 		p_stream->m_status |= opj_stream_e_error;
 		p_stream->m_bytes_in_buffer = 0;
-		p_stream->m_current_data = p_stream->m_current_data;
 		return (OPJ_OFF_T) -1;
 	}
 	/* then skip */
