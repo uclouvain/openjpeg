@@ -437,8 +437,8 @@ int main(int argc, char *argv[])
 
 		dirptr=(dircnt_t*)malloc(sizeof(dircnt_t));
 		if(dirptr){
-			dirptr->filename_buf = (char*)malloc(num_images*OPJ_PATH_LEN*sizeof(char));	/* Stores at max 10 image file names*/
-			dirptr->filename = (char**) malloc(num_images*sizeof(char*));
+			dirptr->filename_buf = (char*)malloc((size_t)num_images*OPJ_PATH_LEN*sizeof(char));	/* Stores at max 10 image file names*/
+			dirptr->filename = (char**) malloc((size_t)num_images*sizeof(char*));
 
 			if(!dirptr->filename_buf){
 				return EXIT_FAILURE;
