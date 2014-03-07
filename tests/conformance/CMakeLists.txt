@@ -472,6 +472,78 @@ foreach(numFileJP2 RANGE 1 9)
 
 endforeach()
 
+#--------------------------------------------------------------------------
+# Tests about Kakadu/J2K file
+# try to decode
+# compare to ref file
+# non regression comparison
+
+# Tolerances given by ???
+
+set(kdu_j2k_conf_files
+  a1_mono
+  a2_colr
+  a3_mono
+  a4_colr
+  a5_mono
+  a6_mono_colr
+  b1_mono
+  b2_mono
+  b3_mono
+  c1_mono
+  c2_mono
+  d1_colr
+  d2_colr
+  e1_colr
+  e2_colr
+  f1_mono
+  f2_mono
+  g1_colr
+  g2_colr
+  g3_colr
+  g4_colr
+)
+
+foreach(kdu_file ${kdu_j2k_conf_files})
+
+  # Build filenames
+  set( filenameInput "${kdu_file}.j2c" )
+  set( filenameRef   "${kdu_file}.ppm" )
+
+  add_test(NAME ETS-KDU-${filenameInput}-decode
+    COMMAND opj_decompress
+    -i ${INPUT_CONF}/${filenameInput}
+    -o ${TEMP}/${filenameInput}.ppm
+  )
+
+  add_test(NAME ETS-KDU-${filenameInput}-compare2ref
+    COMMAND compare_images
+    -b ${BASELINE_CONF}/${filenameRef}
+    -t ${TEMP}/${filenameInput}.ppm
+    -n 3
+    -p 4:4:4
+    -m 4:4:4
+    -s b_t_
+  )
+
+  set_tests_properties(ETS-KDU-${filenameInput}-compare2ref
+    PROPERTIES DEPENDS
+    ETS-KDU-${filenameInput}-decode)
+
+  add_test(NAME NR-KDU-${filenameInput}-compare2base
+    COMMAND compare_images
+    -b ${BASELINE_NR}/opj_${filenameRef}
+    -t ${TEMP}/${filenameInput}.ppm
+    -n 3
+    -d
+    -s b_t_
+  )
+
+  set_tests_properties(NR-KDU-${filenameInput}-compare2base
+    PROPERTIES DEPENDS
+    ETS-KDU-${filenameInput}-decode)
+endforeach()
+
 #--------------------------------------------------------------------------#
 #--------------------------------------------------------------------------#
 #--------------------------------------------------------------------------#
