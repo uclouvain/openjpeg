@@ -86,6 +86,13 @@ typedef struct opj_stream_private
 	void *					m_user_data;
 
 	/**
+	 * Pointer to function to free m_user_data (NULL at initialization)
+	 * when destroying the stream. If pointer is NULL the function is not
+	 * called and the m_user_data is not freed (even if non-NULL).
+	 */
+	opj_stream_free_user_data_fn		m_free_user_data_fn;
+
+	/**
 	 * User data length
 	 */
 	OPJ_UINT64 				m_user_data_length;

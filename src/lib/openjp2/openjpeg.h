@@ -501,6 +501,11 @@ typedef OPJ_OFF_T (* opj_stream_skip_fn) (OPJ_OFF_T p_nb_bytes, void * p_user_da
 typedef OPJ_BOOL (* opj_stream_seek_fn) (OPJ_OFF_T p_nb_bytes, void * p_user_data) ;
 
 /*
+ * Callback function prototype for free user data function
+ */
+typedef void (* opj_stream_free_user_data_fn) (void * p_user_data) ;
+
+/*
  * JPEG2000 Stream.
  */
 typedef void * opj_stream_t;
@@ -1007,7 +1012,7 @@ OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create(OPJ_SIZE_T p_buffer_size, O
  *
  * @param	p_stream	the stream to destroy.
  */
-OPJ_DEPRECATED(OPJ_API void OPJ_CALLCONV opj_stream_destroy(opj_stream_t* p_stream));
+OPJ_API void OPJ_CALLCONV opj_stream_destroy(opj_stream_t* p_stream);
 
 /**
  * Destroys a stream created by opj_create_stream. This function does NOT close the abstract stream. 
@@ -1049,8 +1054,9 @@ OPJ_API void OPJ_CALLCONV opj_stream_set_seek_function(opj_stream_t* p_stream, o
  * Sets the given data to be used as a user data for the stream.
  * @param		p_stream	the stream to modify
  * @param		p_data		the data to set.
+ * @param		p_function	the function to free p_data when opj_stream_destroy() is called.
 */
-OPJ_API void OPJ_CALLCONV opj_stream_set_user_data (opj_stream_t* p_stream, void * p_data);
+OPJ_API void OPJ_CALLCONV opj_stream_set_user_data (opj_stream_t* p_stream, void * p_data, opj_stream_free_user_data_fn p_function);
 
 /**
  * Sets the length of the user data for the stream.

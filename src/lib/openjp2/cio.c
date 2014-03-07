@@ -189,6 +189,9 @@ void OPJ_CALLCONV opj_stream_destroy(opj_stream_t* p_stream)
 	opj_stream_private_t* l_stream = (opj_stream_private_t*) p_stream;
 	
 	if (l_stream) {
+		if (l_stream->m_free_user_data_fn) {
+			l_stream->m_free_user_data_fn(l_stream->m_user_data);
+		}
 		opj_free(l_stream->m_stored_data);
 		l_stream->m_stored_data = 00;
 		opj_free(l_stream);
@@ -197,17 +200,7 @@ void OPJ_CALLCONV opj_stream_destroy(opj_stream_t* p_stream)
 
 void OPJ_CALLCONV opj_stream_destroy_v3(opj_stream_t* p_stream)
 {
-    opj_stream_private_t* l_stream = (opj_stream_private_t*) p_stream;
-    
-    if (l_stream) {
-        FILE *fp = (FILE*)l_stream->m_user_data;
-        if(fp) 
-            fclose(fp);
-        
-        opj_free(l_stream->m_stored_data);
-        l_stream->m_stored_data = 00;
-        opj_free(l_stream);
-    }
+	opj_stream_destroy(p_stream);
 }
 
 void OPJ_CALLCONV opj_stream_set_read_function(opj_stream_t* p_stream, opj_stream_read_fn p_function)
@@ -253,12 +246,13 @@ void OPJ_CALLCONV opj_stream_set_skip_function(opj_stream_t* p_stream, opj_strea
 	l_stream->m_skip_fn = p_function;
 }
 
-void OPJ_CALLCONV opj_stream_set_user_data(opj_stream_t* p_stream, void * p_data)
+void OPJ_CALLCONV opj_stream_set_user_data(opj_stream_t* p_stream, void * p_data, opj_stream_free_user_data_fn p_function)
 {
 	opj_stream_private_t* l_stream = (opj_stream_private_t*) p_stream;
 	if (!l_stream)
 		return;
 	l_stream->m_user_data = p_data;
+  l_stream->m_free_user_data_fn = p_function;
 }
 
 void OPJ_CALLCONV opj_stream_set_user_data_length(opj_stream_t* p_stream, OPJ_UINT64 data_length)
