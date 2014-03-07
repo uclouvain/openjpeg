@@ -1260,7 +1260,7 @@ OPJ_BOOL opj_t1_decode_cblks(   opj_t1_t* t1,
                             )
 {
 	OPJ_UINT32 resno, bandno, precno, cblkno;
-	OPJ_UINT32 tile_w = tilec->x1 - tilec->x0;
+	OPJ_UINT32 tile_w = (OPJ_UINT32)(tilec->x1 - tilec->x0);
 
 	for (resno = 0; resno < tilec->minimum_num_resolutions; ++resno) {
 		opj_tcd_resolution_t* res = &tilec->resolutions[resno];
@@ -1283,7 +1283,7 @@ OPJ_BOOL opj_t1_decode_cblks(   opj_t1_t* t1,
                                             t1,
                                             cblk,
                                             band->bandno,
-                                            tccp->roishift,
+                                            (OPJ_UINT32)tccp->roishift,
                                             tccp->cblksty)) {
                             return OPJ_FALSE;
                     }
@@ -1319,7 +1319,7 @@ OPJ_BOOL opj_t1_decode_cblks(   opj_t1_t* t1,
 
 					/*tiledp=(void*)&tilec->data[(y * tile_w) + x];*/
 					if (tccp->qmfbid == 1) {
-                        OPJ_INT32* restrict tiledp = &tilec->data[(y * tile_w) + x];
+                        OPJ_INT32* restrict tiledp = &tilec->data[(OPJ_UINT32)y * tile_w + (OPJ_UINT32)x];
 						for (j = 0; j < cblk_h; ++j) {
 							for (i = 0; i < cblk_w; ++i) {
 								OPJ_INT32 tmp = datap[(j * cblk_w) + i];
@@ -1327,7 +1327,7 @@ OPJ_BOOL opj_t1_decode_cblks(   opj_t1_t* t1,
 							}
 						}
 					} else {		/* if (tccp->qmfbid == 0) */
-                        OPJ_FLOAT32* restrict tiledp = (OPJ_FLOAT32*) &tilec->data[(y * tile_w) + x];
+                        OPJ_FLOAT32* restrict tiledp = (OPJ_FLOAT32*) &tilec->data[(OPJ_UINT32)y * tile_w + (OPJ_UINT32)x];
 						for (j = 0; j < cblk_h; ++j) {
                             OPJ_FLOAT32* restrict tiledp2 = tiledp;
 							for (i = 0; i < cblk_w; ++i) {
@@ -1370,13 +1370,13 @@ OPJ_BOOL opj_t1_decode_cblk(opj_t1_t *t1,
 
 	if(!opj_t1_allocate_buffers(
 				t1,
-				cblk->x1 - cblk->x0,
-				cblk->y1 - cblk->y0))
+				(OPJ_UINT32)(cblk->x1 - cblk->x0),
+				(OPJ_UINT32)(cblk->y1 - cblk->y0)))
 	{
 		return OPJ_FALSE;
 	}
 
-	bpno = roishift + cblk->numbps - 1;
+	bpno = (OPJ_INT32)(roishift + cblk->numbps - 1);
 	passtype = 2;
 
 	opj_mqc_resetstates(mqc);
@@ -1405,18 +1405,18 @@ OPJ_BOOL opj_t1_decode_cblk(opj_t1_t *t1,
             switch (passtype) {
                 case 0:
                     if (type == T1_TYPE_RAW) {
-                        opj_t1_dec_sigpass_raw(t1, bpno+1, orient, cblksty);
+                        opj_t1_dec_sigpass_raw(t1, bpno+1, (OPJ_INT32)orient, (OPJ_INT32)cblksty);
                     } else {
                         if (cblksty & J2K_CCP_CBLKSTY_VSC) {
-                            opj_t1_dec_sigpass_mqc_vsc(t1, bpno+1, orient);
+                            opj_t1_dec_sigpass_mqc_vsc(t1, bpno+1, (OPJ_INT32)orient);
                         } else {
-                            opj_t1_dec_sigpass_mqc(t1, bpno+1, orient);
+                            opj_t1_dec_sigpass_mqc(t1, bpno+1, (OPJ_INT32)orient);
                         }
                     }
                     break;
                 case 1:
                     if (type == T1_TYPE_RAW) {
-                            opj_t1_dec_refpass_raw(t1, bpno+1, cblksty);
+                            opj_t1_dec_refpass_raw(t1, bpno+1, (OPJ_INT32)cblksty);
                     } else {
                         if (cblksty & J2K_CCP_CBLKSTY_VSC) {
                             opj_t1_dec_refpass_mqc_vsc(t1, bpno+1);
@@ -1426,7 +1426,7 @@ OPJ_BOOL opj_t1_decode_cblk(opj_t1_t *t1,
                     }
                     break;
                 case 2:
-                    opj_t1_dec_clnpass(t1, bpno+1, orient, cblksty);
+                    opj_t1_dec_clnpass(t1, bpno+1, (OPJ_INT32)orient, (OPJ_INT32)cblksty);
                     break;
             }
 
@@ -1461,7 +1461,7 @@ OPJ_BOOL opj_t1_encode_cblks(   opj_t1_t *t1,
 	for (compno = 0; compno < tile->numcomps; ++compno) {
 		opj_tcd_tilecomp_t* tilec = &tile->comps[compno];
 		opj_tccp_t* tccp = &tcp->tccps[compno];
-		OPJ_UINT32 tile_w = tilec->x1 - tilec->x0;
+		OPJ_UINT32 tile_w = (OPJ_UINT32)(tilec->x1 - tilec->x0);
 
 		for (resno = 0; resno < tilec->numresolutions; ++resno) {
 			opj_tcd_resolution_t *res = &tilec->resolutions[resno];
@@ -1494,8 +1494,8 @@ OPJ_BOOL opj_t1_encode_cblks(   opj_t1_t *t1,
 
 						if(!opj_t1_allocate_buffers(
 									t1,
-									cblk->x1 - cblk->x0,
-									cblk->y1 - cblk->y0))
+									(OPJ_UINT32)(cblk->x1 - cblk->x0),
+									(OPJ_UINT32)(cblk->y1 - cblk->y0)))
 						{
 							return OPJ_FALSE;
 						}
@@ -1504,7 +1504,7 @@ OPJ_BOOL opj_t1_encode_cblks(   opj_t1_t *t1,
 						cblk_w = t1->w;
 						cblk_h = t1->h;
 
-						tiledp=&tilec->data[(y * tile_w) + x];
+						tiledp=&tilec->data[(OPJ_UINT32)y * tile_w + (OPJ_UINT32)x];
 						if (tccp->qmfbid == 1) {
 							for (j = 0; j < cblk_h; ++j) {
 								for (i = 0; i < cblk_w; ++i) {
@@ -1577,9 +1577,9 @@ void opj_t1_encode_cblk(opj_t1_t *t1,
 		max = opj_int_max(max, tmp);
 	}
 
-	cblk->numbps = max ? (opj_int_floorlog2(max) + 1) - T1_NMSEDEC_FRACBITS : 0;
+	cblk->numbps = max ? (OPJ_UINT32)((opj_int_floorlog2(max) + 1) - T1_NMSEDEC_FRACBITS) : 0;
 
-	bpno = cblk->numbps - 1;
+	bpno = (OPJ_INT32)(cblk->numbps - 1);
 	passtype = 2;
 
 	opj_mqc_resetstates(mqc);
