@@ -623,8 +623,8 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
             if (numlayers > 9)
                 s++;
 
-            parameters->tcp_numlayers = numlayers;
-            numresolution = parameters->numresolution;
+            parameters->tcp_numlayers = (int)numlayers;
+            numresolution = (OPJ_UINT32)parameters->numresolution;
             matrix_width = numresolution * 3;
             parameters->cp_matrice = (int *) malloc(numlayers * matrix_width * sizeof(int));
             s = s + 2;
@@ -799,7 +799,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
                 }
                 s++;
             }
-            parameters->numpocs = numpocs;
+            parameters->numpocs = (OPJ_UINT32)numpocs;
         }
             break;
 
@@ -935,7 +935,8 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
             float *lCurrentDoublePtr;
             float *lSpace;
             int *l_int_ptr;
-            int lNbComp = 0, lTotalComp, lMctComp, i; long int lStrLen, lStrFread;
+            int lNbComp = 0, lTotalComp, lMctComp, i;
+            size_t lStrLen, lStrFread;
 
             /* Open file */
             FILE * lFile = fopen(lFilename,"r");
@@ -945,7 +946,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
 
             /* Set size of file and read its content*/
             fseek(lFile,0,SEEK_END);
-            lStrLen = ftell(lFile);
+            lStrLen = (size_t)ftell(lFile);
             fseek(lFile,0,SEEK_SET);
             lMatrix = (char *) malloc(lStrLen + 1);
             lStrFread = fread(lMatrix, 1, lStrLen, lFile);
@@ -969,7 +970,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
             lNbComp = (int) (sqrt(4*lNbComp + 1)/2. - 0.5);
             lMctComp = lNbComp * lNbComp;
             lTotalComp = lMctComp + lNbComp;
-            lSpace = (float *) malloc(lTotalComp * sizeof(float));
+            lSpace = (float *) malloc((size_t)lTotalComp * sizeof(float));
             lCurrentDoublePtr = lSpace;
             for (i=0;i<lMctComp;++i) {
                 lStrLen = strlen(lCurrentPtr) + 1;
@@ -985,7 +986,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
             }
 
             /* TODO should not be here ! */
-            opj_set_MCT(parameters, lSpace, (int *)(lSpace + lMctComp), lNbComp);
+            opj_set_MCT(parameters, lSpace, (int *)(lSpace + lMctComp), (OPJ_UINT32)lNbComp);
 
             /* Free memory*/
             free(lSpace);
@@ -1501,7 +1502,7 @@ int main(int argc, char **argv) {
         fprintf(stderr,"\n");
 
         if(img_fol.set_imgdir==1){
-            if (get_next_file(imageno, dirptr,&img_fol, &parameters)) {
+            if (get_next_file((int)imageno, dirptr,&img_fol, &parameters)) {
                 fprintf(stderr,"skipping file...\n");
                 continue;
             }
