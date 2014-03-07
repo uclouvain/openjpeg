@@ -187,6 +187,7 @@ static INLINE long lrintf(float f){
 /* <<JPWL */
 
 /* V2 */
+#include "opj_codec.h"
 
 
 #endif /* OPJ_INCLUDES_H */
