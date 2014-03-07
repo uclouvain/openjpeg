@@ -45,6 +45,10 @@
 #include "format_defs.h"
 #include "convert.h"
 
+#ifdef OPJ_HAVE_LIBTIFF
+#include <tiffio.h> /* TIFFSetWarningHandler */
+#endif /* OPJ_HAVE_LIBTIFF */
+
 /*******************************************************************************
  * Parse MSE and PEAK input values (
  * separator = ":"
