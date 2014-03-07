@@ -149,11 +149,13 @@ static opj_image_t* readImageFromFileTIF(const char* filename, int nbFilenamePGX
   opj_image_cmptparm_t* param_image_read;
   int** data;
 
-  /* conformance test suite produce annoying warning:
+  /* conformance test suite produce annoying warning/error:
    * TIFFReadDirectory: Warning, /.../data/baseline/conformance/jp2_1.tif: unknown field with tag 37724 (0x935c) encountered.
+   * TIFFOpen: /.../data/baseline/nonregression/opj_jp2_1.tif: Cannot open.
    * On Win32 this open a message box by default, so remove it from the test suite:
    */
   TIFFSetWarningHandler(NULL);
+  TIFFSetErrorHandler(NULL);
 
   /* If separator is empty => nb file to read is equal to one*/
   if ( strlen(separator) == 0 )
