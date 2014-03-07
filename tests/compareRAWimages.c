@@ -40,21 +40,21 @@
 
 typedef struct test_cmp_parameters
 {
-	/**  */
-	char* base_filename;
-	/**  */
-	char* test_filename;
+  /**  */
+  char* base_filename;
+  /**  */
+  char* test_filename;
 } test_cmp_parameters;
 
 /*******************************************************************************
  * Command line help function
  *******************************************************************************/
 static void compareRAWimages_help_display(void) {
-	fprintf(stdout,"\nList of parameters for the comparePGX function  \n");
-	fprintf(stdout,"\n");
-	fprintf(stdout,"  -b \t REQUIRED \t filename to the reference/baseline RAW image \n");
-	fprintf(stdout,"  -t \t REQUIRED \t filename to the test RAW image\n");
-	fprintf(stdout,"\n");
+  fprintf(stdout,"\nList of parameters for the comparePGX function  \n");
+  fprintf(stdout,"\n");
+  fprintf(stdout,"  -b \t REQUIRED \t filename to the reference/baseline RAW image \n");
+  fprintf(stdout,"  -t \t REQUIRED \t filename to the test RAW image\n");
+  fprintf(stdout,"\n");
 }
 
 /*******************************************************************************
@@ -62,54 +62,52 @@ static void compareRAWimages_help_display(void) {
  *******************************************************************************/
 static int parse_cmdline_cmp(int argc, char **argv, test_cmp_parameters* param)
 {
-	int sizemembasefile, sizememtestfile;
-	int index;
-	const char optlist[] = "b:t:";
-	int c;
+  size_t sizemembasefile, sizememtestfile;
+  int index;
+  const char optlist[] = "b:t:";
+  int c;
 
-	/* Init parameters*/
-	param->base_filename = NULL;
-	param->test_filename = NULL;
+  /* Init parameters*/
+  param->base_filename = NULL;
+  param->test_filename = NULL;
 
-	opj_opterr = 0;
-	while ((c = opj_getopt(argc, argv, optlist)) != -1)
-		switch (c)
-		{
-		case 'b':
-			sizemembasefile = (int)strlen(opj_optarg)+1;
-			param->base_filename = (char*) malloc((size_t)sizemembasefile);
-			param->base_filename[0] = '\0';
-			strncpy(param->base_filename, opj_optarg, strlen(opj_optarg));
-			param->base_filename[strlen(opj_optarg)] = '\0';
-			/*printf("param->base_filename = %s [%d / %d]\n", param->base_filename, strlen(param->base_filename), sizemembasefile );*/
-			break;
-		case 't':
-			sizememtestfile = (int) strlen(opj_optarg) + 1;
-			param->test_filename = (char*) malloc((size_t)sizememtestfile);
-			param->test_filename[0] = '\0';
-			strncpy(param->test_filename, opj_optarg, strlen(opj_optarg));
-			param->test_filename[strlen(opj_optarg)] = '\0';
-			/*printf("param->test_filename = %s [%d / %d]\n", param->test_filename, strlen(param->test_filename), sizememtestfile);*/
-			break;
-		case '?':
-			if ((opj_optopt == 'b') || (opj_optopt == 't'))
-				fprintf(stderr, "Option -%c requires an argument.\n", opj_optopt);
-			else
-				if (isprint(opj_optopt))	fprintf(stderr, "Unknown option `-%c'.\n", opj_optopt);
-				else	fprintf(stderr, "Unknown option character `\\x%x'.\n", opj_optopt);
-			return 1;
-		default:
-			fprintf(stderr, "WARNING -> this option is not valid \"-%c %s\"\n", c, opj_optarg);
-			break;
-		}
+  opj_opterr = 0;
+  while ((c = opj_getopt(argc, argv, optlist)) != -1)
+    switch (c)
+      {
+    case 'b':
+      sizemembasefile = strlen(opj_optarg)+1;
+      free(param->base_filename); // handle dup option
+      param->base_filename = (char*) malloc(sizemembasefile);
+      strcpy(param->base_filename, opj_optarg);
+      /*printf("param->base_filename = %s [%d / %d]\n", param->base_filename, strlen(param->base_filename), sizemembasefile );*/
+      break;
+    case 't':
+      sizememtestfile = strlen(opj_optarg) + 1;
+      free(param->test_filename); // handle dup option
+      param->test_filename = (char*) malloc(sizememtestfile);
+      strcpy(param->test_filename, opj_optarg);
+      /*printf("param->test_filename = %s [%d / %d]\n", param->test_filename, strlen(param->test_filename), sizememtestfile);*/
+      break;
+    case '?':
+      if ((opj_optopt == 'b') || (opj_optopt == 't'))
+        fprintf(stderr, "Option -%c requires an argument.\n", opj_optopt);
+      else
+        if (isprint(opj_optopt))	fprintf(stderr, "Unknown option `-%c'.\n", opj_optopt);
+        else	fprintf(stderr, "Unknown option character `\\x%x'.\n", opj_optopt);
+      return 1;
+    default:
+      fprintf(stderr, "WARNING -> this option is not valid \"-%c %s\"\n", c, opj_optarg);
+      break;
+      }
 
-	if (opj_optind != argc) {
-		for (index = opj_optind; index < argc; index++)
-			fprintf(stderr,"Non-option argument %s\n", argv[index]);
-		return EXIT_FAILURE;
-    }
+  if (opj_optind != argc) {
+    for (index = opj_optind; index < argc; index++)
+      fprintf(stderr,"Non-option argument %s\n", argv[index]);
+    return 1;
+  }
 
-  return EXIT_SUCCESS;
+  return 0;
 }
 
 /*******************************************************************************
@@ -118,119 +116,75 @@ static int parse_cmdline_cmp(int argc, char **argv, test_cmp_parameters* param)
 int main(int argc, char **argv)
 {
   int pos = 0;
-	test_cmp_parameters inParam;
-	FILE *file_test=NULL, *file_base=NULL;
-	unsigned char equal = 1;
+  test_cmp_parameters inParam;
+  FILE *file_test=NULL, *file_base=NULL;
+  unsigned char equal = 1;
 
-	/* Get parameters from command line*/
-	if (parse_cmdline_cmp(argc, argv, &inParam) == EXIT_FAILURE)
-	{
-		compareRAWimages_help_display();
+  /* Get parameters from command line*/
+  if (parse_cmdline_cmp(argc, argv, &inParam))
+    {
+    compareRAWimages_help_display();
+    goto cleanup;
+    }
 
-		/* Free Memory */
-		if (inParam.base_filename){
-			free(inParam.base_filename);
-			inParam.base_filename = NULL;
-		}
-		if (inParam.test_filename){
-			free(inParam.test_filename);
-			inParam.test_filename = NULL;
-		}
+  file_test = fopen(inParam.test_filename, "rb");
+  if (!file_test) {
+    fprintf(stderr, "Failed to open %s for reading !!\n", inParam.test_filename);
+    goto cleanup;
+  }
 
-		return EXIT_FAILURE;
-	}
+  file_base = fopen(inParam.base_filename, "rb");
+  if (!file_base) {
+    fprintf(stderr, "Failed to open %s for reading !!\n", inParam.base_filename);
+    goto cleanup;
+  }
 
-	file_test = fopen(inParam.test_filename, "rb");
-	if (!file_test) {
-		fprintf(stderr, "Failed to open %s for reading !!\n", inParam.test_filename);
+  /* Read simultaneously the two files*/
+  while (equal)
+    {
+    unsigned char value_test = 0;
+    unsigned char eof_test = 0;
+    unsigned char value_base = 0;
+    unsigned char eof_base = 0;
 
-		/* Free Memory */
-		if (inParam.base_filename){
-			free(inParam.base_filename);
-			inParam.base_filename = NULL;
-		}
-		if (inParam.test_filename){
-			free(inParam.test_filename);
-			inParam.test_filename = NULL;
-		}
+    /* Read one byte*/
+    if (!fread(&value_test, 1, 1, file_test)) {
+      eof_test = 1;
+    }
 
-		return EXIT_FAILURE;
-	}
+    /* Read one byte*/
+    if (!fread(&value_base, 1, 1, file_base)) {
+      eof_base = 1;
+    }
 
-	file_base = fopen(inParam.base_filename, "rb");
-	if (!file_base) {
-		fprintf(stderr, "Failed to open %s for reading !!\n", inParam.base_filename);
+    /* End of file reached by the two files?*/
+    if (eof_test && eof_base)
+      break;
 
-		/* Free Memory */
-		if (inParam.base_filename){
-			free(inParam.base_filename);
-			inParam.base_filename = NULL;
-		}
-		if (inParam.test_filename){
-			free(inParam.test_filename);
-			inParam.test_filename = NULL;
-		}
+    /* End of file reached only by one file?*/
+    if (eof_test || eof_base)
+      {
+      fprintf(stdout,"Files have different sizes.\n");
+      equal = 0;
+      }
 
-		fclose(file_test);
-		return EXIT_FAILURE;
-	}
-
-	/* Read simultaneously the two files*/
-	while (equal)
-	{
-		unsigned char value_test = 0;
-		unsigned char eof_test = 0;
-		unsigned char value_base = 0;
-		unsigned char eof_base = 0;
-
-		/* Read one byte*/
-		if (!fread(&value_test, 1, 1, file_test)) {
-			eof_test = 1;
-		}
-
-		/* Read one byte*/
-		if (!fread(&value_base, 1, 1, file_base)) {
-			eof_base = 1;
-		}
-
-		/* End of file reached by the two files?*/
-		if (eof_test && eof_base)
-			break;
-
-		/* End of file reached only by one file?*/
-		if (eof_test || eof_base)
-		{
-			fprintf(stdout,"Files have different sizes.\n");
-			equal = 0;
-		}
-
-		/* Binary values are equal?*/
-		if (value_test != value_base)
-		{
-			fprintf(stdout,"Binary values read in the file are different %x vs %x at position %d.\n", value_test, value_base, pos);
-			equal = 0;
-		}
+    /* Binary values are equal?*/
+    if (value_test != value_base)
+      {
+      fprintf(stdout,"Binary values read in the file are different %x vs %x at position %d.\n", value_test, value_base, pos);
+      equal = 0;
+      }
     pos++;
-	}
+    }
 
-	/* Free Memory */
-	if (inParam.base_filename){
-		free(inParam.base_filename);
-		inParam.base_filename = NULL;
-	}
-	if (inParam.test_filename){
-		free(inParam.test_filename);
-		inParam.test_filename = NULL;
-	}
+  if(equal) fprintf(stdout,"---- TEST SUCCEED: Files are equal ----\n");
+cleanup:
+  if(file_test) fclose(file_test);
+  if(file_base) fclose(file_base);
 
-	fclose(file_test);
-	fclose(file_base);
+  /* Free Memory */
+  free(inParam.base_filename);
+  free(inParam.test_filename);
 
-	if (equal)
-	{
-		fprintf(stdout,"---- TEST SUCCEED: Files are equal ----\n");
-		return EXIT_SUCCESS;
-	}
-	else
-		return EXIT_FAILURE;
+  return equal ? EXIT_SUCCESS : EXIT_FAILURE;
 }
