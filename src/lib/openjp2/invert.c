@@ -250,7 +250,7 @@ void opj_lupSolve (OPJ_FLOAT32 * pResult,
 		lTmpMatrix = lLineMatrix;
         u = *(lTmpMatrix++);
 		lCurrentPtr = lDestPtr--;
-        for (j = k + 1; j < nb_compo; ++j) {
+        for (j = (OPJ_UINT32)(k + 1); j < nb_compo; ++j) {
 			/* sum += matrix[k][j] * x[j] */
         	sum += (*(lTmpMatrix++)) * (*(lCurrentPtr++));
 		}
