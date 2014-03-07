@@ -1501,6 +1501,7 @@ OPJ_BOOL opj_j2k_check_poc_val( const opj_poc_t *p_pocs,
         memset(packet_array,0,step_l * p_num_layers* sizeof(OPJ_UINT32));
 
         if (p_nb_pocs == 0) {
+        opj_free(packet_array);
                 return OPJ_TRUE;
         }
 
@@ -9194,12 +9195,14 @@ static OPJ_BOOL opj_j2k_decode_one_tile (       opj_j2k_t *p_j2k,
                                  *  so move to the last SOT read */
                                 if ( !(opj_stream_read_seek(p_stream, p_j2k->m_specific_param.m_decoder.m_last_sot_read_pos+2, p_manager)) ){
                                         opj_event_msg(p_manager, EVT_ERROR, "Problem with seek function\n");
+                        opj_free(l_current_data);
                                         return OPJ_FALSE;
                                 }
                         }
                         else{
                                 if ( !(opj_stream_read_seek(p_stream, p_j2k->cstr_index->tile_index[l_tile_no_to_dec].tp_index[0].start_pos+2, p_manager)) ) {
                                         opj_event_msg(p_manager, EVT_ERROR, "Problem with seek function\n");
+                        opj_free(l_current_data);
                                         return OPJ_FALSE;
                                 }
                         }
