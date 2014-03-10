@@ -115,13 +115,13 @@ static char* createMultiComponentsFilename(const char* inFilename, const int ind
   char s[255];
   char *outFilename, *ptr;
   const char token = '.';
-  int posToken = 0;
+  size_t posToken = 0;
   int decod_format;
 
   /*printf("inFilename = %s\n", inFilename);*/
   if ((ptr = strrchr(inFilename, token)) != NULL)
     {
-    posToken = (int) (strlen(inFilename) - strlen(ptr));
+    posToken = strlen(inFilename) - strlen(ptr);
     /*printf("Position of %c character inside inFilename = %d\n", token, posToken);*/
     }
   else
@@ -132,14 +132,10 @@ static char* createMultiComponentsFilename(const char* inFilename, const int ind
     return outFilename;
     }
 
-  outFilename = (char*)malloc((size_t)(posToken + 7) * sizeof(char)); /*6*/
+  outFilename = (char*)malloc((posToken + 7) * sizeof(char)); /*6*/
 
-  strncpy(outFilename, inFilename, (size_t)posToken);
-
-  outFilename[posToken] = '\0';
-
+  strncpy(outFilename, inFilename, posToken);
   strcat(outFilename, separator);
-
   sprintf(s, "%i", indexF);
   strcat(outFilename, s);
 
@@ -504,7 +500,7 @@ static int parse_cmdline_cmp(int argc, char **argv, test_cmp_parameters* param)
 {
   char *MSElistvalues = NULL;  char *PEAKlistvalues= NULL;
   char *separatorList = NULL;
-  int sizemembasefile, sizememtestfile;
+  size_t sizemembasefile, sizememtestfile;
   int index, flagM=0, flagP=0;
   const char optlist[] = "b:t:n:m:p:s:d";
   int c;
@@ -525,19 +521,15 @@ static int parse_cmdline_cmp(int argc, char **argv, test_cmp_parameters* param)
     switch (c)
       {
       case 'b':
-        sizemembasefile = (int)strlen(opj_optarg)+1;
-        param->base_filename = (char*) malloc((size_t)sizemembasefile);
-        param->base_filename[0] = '\0';
-        strncpy(param->base_filename, opj_optarg, strlen(opj_optarg));
-        param->base_filename[strlen(opj_optarg)] = '\0';
+        sizemembasefile = strlen(opj_optarg) + 1;
+        param->base_filename = (char*) malloc(sizemembasefile);
+        strcpy(param->base_filename, opj_optarg);
         /*printf("param->base_filename = %s [%d / %d]\n", param->base_filename, strlen(param->base_filename), sizemembasefile );*/
         break;
       case 't':
-        sizememtestfile = (int) strlen(opj_optarg) + 1;
-        param->test_filename = (char*) malloc((size_t)sizememtestfile);
-        param->test_filename[0] = '\0';
-        strncpy(param->test_filename, opj_optarg, strlen(opj_optarg));
-        param->test_filename[strlen(opj_optarg)] = '\0';
+        sizememtestfile = strlen(opj_optarg) + 1;
+        param->test_filename = (char*) malloc(sizememtestfile);
+        strcpy(param->test_filename, opj_optarg);
         /*printf("param->test_filename = %s [%d / %d]\n", param->test_filename, strlen(param->test_filename), sizememtestfile);*/
        break;
       case 'n':
@@ -600,11 +592,9 @@ static int parse_cmdline_cmp(int argc, char **argv, test_cmp_parameters* param)
     if( (strlen(separatorList) ==2) || (strlen(separatorList) ==4) )
       {
       /* keep original string*/
-      int sizeseplist = (int)strlen(separatorList)+1;
-      char* separatorList2 = (char*)malloc( (size_t)sizeseplist );
-      separatorList2[0] = '\0';
-      strncpy(separatorList2, separatorList, strlen(separatorList));
-      separatorList2[strlen(separatorList)] = '\0';
+      size_t sizeseplist = strlen(separatorList)+1;
+      char* separatorList2 = (char*)malloc( sizeseplist );
+      strcpy(separatorList2, separatorList);
       /*printf("separatorList2 = %s [%d / %d]\n", separatorList2, strlen(separatorList2), sizeseplist);*/
 
       if (strlen(separatorList) == 2) /* one separator behind b or t*/
