@@ -729,14 +729,14 @@ int main(int argc, char **argv)
 
   if ( (inParam.tabMSEvalues != NULL) && (inParam.tabPEAKvalues != NULL))
     {
-    int it_comp;
+    int it_comp2;
     printf(" MSE values = [");
-    for (it_comp = 0; it_comp < inParam.nbcomp; it_comp++)
-      printf(" %f ", inParam.tabMSEvalues[it_comp]);
+    for (it_comp2 = 0; it_comp2 < inParam.nbcomp; it_comp2++)
+      printf(" %f ", inParam.tabMSEvalues[it_comp2]);
     printf("]\n");
     printf(" PEAK values = [");
-    for (it_comp = 0; it_comp < inParam.nbcomp; it_comp++)
-      printf(" %f ", inParam.tabPEAKvalues[it_comp]);
+    for (it_comp2 = 0; it_comp2 < inParam.nbcomp; it_comp2++)
+      printf(" %f ", inParam.tabPEAKvalues[it_comp2]);
     printf("]\n");
     printf(" Non-regression test = %d\n", inParam.nr_flag);
     }

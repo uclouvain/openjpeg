@@ -573,7 +573,8 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
     unsigned char *table_R, *table_G, *table_B;
     unsigned int j, PAD = 0;
 
-    int x, y, index;
+    unsigned int x, y;
+    int index;
     int gray_scale = 1;
     int has_color;
     DWORD W, H;
@@ -732,10 +733,10 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
 
         index = 0;
 
-        for(y = 0; y < (int)H; y++)
+        for(y = 0; y < H; y++)
         {
             unsigned char *scanline = RGB + (3 * (unsigned int)W + PAD) * ((unsigned int)H - 1 - (unsigned int)y);
-            for(x = 0; x < (int)W; x++)
+            for(x = 0; x < W; x++)
             {
                 unsigned char *pixel = &scanline[3 * x];
                 image->comps[0].data[index] = pixel[2];	/* R */
@@ -862,8 +863,8 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
             {
                 unsigned char *pix, *beyond;
                 int *gray, *red, *green, *blue;
-                unsigned int x, y, max;
-                int i, c, c1;
+                unsigned int max;
+                int c, c1;
                 unsigned char uc;
 
                 if (Info_h.biClrUsed == 0)
@@ -3126,15 +3127,15 @@ static int imagetoraw_common(opj_image_t * image, const char *outfile, OPJ_BOOL 
         {
             if(image->comps[compno].sgnd == 1)
             {
-                union { signed short val; signed char vals[2]; } uc;
+                union { signed short val; signed char vals[2]; } uc16;
                 mask = (1 << image->comps[compno].prec) - 1;
                 ptr = image->comps[compno].data;
                 for (line = 0; line < h; line++) {
                     for(row = 0; row < w; row++)	{
                         curr = *ptr;
                         if(curr > 32767 ) curr = 32767; else if( curr < -32768) curr = -32768;
-                        uc.val = (signed short)(curr & mask);
-                        res = fwrite(uc.vals, 1, 2, rawFile);
+                        uc16.val = (signed short)(curr & mask);
+                        res = fwrite(uc16.vals, 1, 2, rawFile);
                         if( res < 2 ) {
                             fprintf(stderr, "failed to write 2 byte for %s\n", outfile);
                             goto fin;
@@ -3145,15 +3146,15 @@ static int imagetoraw_common(opj_image_t * image, const char *outfile, OPJ_BOOL 
             }
             else if(image->comps[compno].sgnd == 0)
             {
-                union { unsigned short val; unsigned char vals[2]; } uc;
+                union { unsigned short val; unsigned char vals[2]; } uc16;
                 mask = (1 << image->comps[compno].prec) - 1;
                 ptr = image->comps[compno].data;
                 for (line = 0; line < h; line++) {
                     for(row = 0; row < w; row++)	{
                         curr = *ptr;
                         if(curr > 65536 ) curr = 65536; else if( curr < 0) curr = 0;
-                        uc.val = (unsigned short)(curr & mask);
-                        res = fwrite(uc.vals, 1, 2, rawFile);
+                        uc16.val = (unsigned short)(curr & mask);
+                        res = fwrite(uc16.vals, 1, 2, rawFile);
                         if( res < 2 ) {
                             fprintf(stderr, "failed to write 2 byte for %s\n", outfile);
                             goto fin;

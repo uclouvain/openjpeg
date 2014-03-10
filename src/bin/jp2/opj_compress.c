@@ -935,7 +935,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
             float *lCurrentDoublePtr;
             float *lSpace;
             int *l_int_ptr;
-            int lNbComp = 0, lTotalComp, lMctComp, i;
+            int lNbComp = 0, lTotalComp, lMctComp, i2;
             size_t lStrLen, lStrFread;
 
             /* Open file */
@@ -972,14 +972,14 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
             lTotalComp = lMctComp + lNbComp;
             lSpace = (float *) malloc((size_t)lTotalComp * sizeof(float));
             lCurrentDoublePtr = lSpace;
-            for (i=0;i<lMctComp;++i) {
+            for (i2=0;i2<lMctComp;++i2) {
                 lStrLen = strlen(lCurrentPtr) + 1;
                 *lCurrentDoublePtr++ = (float) atof(lCurrentPtr);
                 lCurrentPtr += lStrLen;
             }
 
             l_int_ptr = (int*) lCurrentDoublePtr;
-            for (i=0;i<lNbComp;++i) {
+            for (i2=0;i2<lNbComp;++i2) {
                 lStrLen = strlen(lCurrentPtr) + 1;
                 *l_int_ptr++ = atoi(lCurrentPtr);
                 lCurrentPtr += lStrLen;
