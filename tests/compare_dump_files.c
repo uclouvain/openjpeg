@@ -174,7 +174,7 @@ int main(int argc, char **argv)
 cleanup:
   /*Close File*/
   if(fbase) fclose(fbase);
-  if(ftell) fclose(ftest);
+  if(ftest) fclose(ftest);
 
   /* Free memory*/
   free(inParam.base_filename);
