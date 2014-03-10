@@ -2106,8 +2106,15 @@ if(v > 65535) v = 65535; else if(v < 0) v = 0;
 
     for (compno = 0; compno < ncomp; compno++)
     {
-        if (ncomp > 1)
-            sprintf(destname, "%d.%s", compno, outfile);
+    if (ncomp > 1)
+      {
+      /*sprintf(destname, "%d.%s", compno, outfile);*/
+      const size_t olen = strlen(outfile);
+      const size_t dotpos = olen - 4;
+
+      strncpy(destname, outfile, dotpos);
+      sprintf(destname+dotpos, "_%d.pgm", compno);
+      }
         else
             sprintf(destname, "%s", outfile);
 
