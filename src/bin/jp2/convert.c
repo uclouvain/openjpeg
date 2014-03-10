@@ -416,6 +416,7 @@ int imagetotga(opj_image_t * image, const char *outfile) {
     float scale;
     FILE *fdest;
     size_t res;
+    fails = 1;
 
     fdest = fopen(outfile, "wb");
     if (!fdest) {
