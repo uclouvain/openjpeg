@@ -242,8 +242,10 @@ static opj_image_t* readImageFromFileTIF(const char* filename, int nbFilenamePGX
    * TIFFOpen: /.../data/baseline/nonregression/opj_jp2_1.tif: Cannot open.
    * On Win32 this open a message box by default, so remove it from the test suite:
    */
+#ifdef OPJ_HAVE_LIBTIFF
   TIFFSetWarningHandler(NULL);
   TIFFSetErrorHandler(NULL);
+#endif
 
   /* If separator is empty => nb file to read is equal to one*/
   if ( strlen(separator) == 0 )
@@ -271,11 +273,13 @@ static opj_image_t* readImageFromFileTIF(const char* filename, int nbFilenamePGX
       filenameComponentPGX = createMultiComponentsFilename(filename, it_file, separator);
 
     /* Read the tif file corresponding to the component */
+#ifdef OPJ_HAVE_LIBTIFF
     image_read = tiftoimage(filenameComponentPGX, &parameters);
+#endif
     if (!image_read)
       {
       int it_free_data;
-      fprintf(stderr, "Unable to load pgx file\n");
+      fprintf(stderr, "Unable to load TIF file\n");
 
       free(param_image_read);
 
