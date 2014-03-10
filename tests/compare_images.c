@@ -83,17 +83,28 @@ static void compare_images_help_display(void)
 {
   fprintf(stdout,"\nList of parameters for the compare_images function  \n");
   fprintf(stdout,"\n");
-  fprintf(stdout,"  -b \t REQUIRED \t filename to the reference/baseline PGX image \n");
-  fprintf(stdout,"  -t \t REQUIRED \t filename to the test PGX image\n");
+  fprintf(stdout,"  -b \t REQUIRED \t filename to the reference/baseline PGX/TIF/PNM image \n");
+  fprintf(stdout,"  -t \t REQUIRED \t filename to the test PGX/TIF/PNM image\n");
   fprintf(stdout,"  -n \t REQUIRED \t number of component of the image (used to generate correct filename)\n");
   fprintf(stdout,"  -m \t OPTIONAL \t list of MSE tolerances, separated by : (size must correspond to the number of component) of \n");
   fprintf(stdout,"  -p \t OPTIONAL \t list of PEAK tolerances, separated by : (size must correspond to the number of component) \n");
-  fprintf(stdout,"  -s \t OPTIONAL \t 1 or 2 filename separator to take into account PGX image with different components, "
+  fprintf(stdout,"  -s \t OPTIONAL \t 1 or 2 filename separator to take into account PGX/PNM image with different components, "
                                       "please indicate b or t before separator to indicate respectively the separator "
                                       "for ref/base file and for test file.  \n");
   fprintf(stdout,"  -d \t OPTIONAL \t indicate if you want to run this function as conformance test or as non regression test\n");
   fprintf(stdout,"\n");
 }
+
+static int get_decod_format_from_string(const char *filename)
+{
+  const int dot = '.';
+  char * ext = strrchr(filename, dot);
+  if( strcmp(ext,".pgx") == 0 ) return PGX_DFMT;
+  if( strcmp(ext,".tif") == 0 ) return TIF_DFMT;
+  if( strcmp(ext,".ppm") == 0 ) return PXM_DFMT;
+  return -1;
+}
+
 
 /*******************************************************************************
  * Create filenames from a filename using separator and nb components
@@ -105,6 +116,7 @@ static char* createMultiComponentsFilename(const char* inFilename, const int ind
   char *outFilename, *ptr;
   const char token = '.';
   int posToken = 0;
+  int decod_format;
 
   /*printf("inFilename = %s\n", inFilename);*/
   if ((ptr = strrchr(inFilename, token)) != NULL)
@@ -131,7 +143,15 @@ static char* createMultiComponentsFilename(const char* inFilename, const int ind
   sprintf(s, "%i", indexF);
   strcat(outFilename, s);
 
-  strcat(outFilename, ".pgx");
+  decod_format = get_decod_format_from_string(inFilename);
+  if( decod_format == PGX_DFMT )
+    {
+    strcat(outFilename, ".pgx");
+    }
+  else if( decod_format == PXM_DFMT )
+    {
+    strcat(outFilename, ".pgm");
+    }
 
   /*printf("outfilename: %s\n", outFilename);*/
   return outFilename;
@@ -467,18 +487,14 @@ typedef struct test_cmp_parameters
 
 } test_cmp_parameters;
 
-/* return decode format PGX / TIF , return -1 on error */
+/* return decode format PGX / TIF / PPM , return -1 on error */
 static int get_decod_format(test_cmp_parameters* param)
 {
-  const int dot = '.';
-  char * base_ext = strrchr(param->base_filename, dot);
-  char * test_ext = strrchr(param->test_filename, dot);
-  if( !base_ext || !test_ext ) return -1;
-  if( strcmp(base_ext,test_ext) != 0 ) return -1;
-  if( strcmp(base_ext,".pgx") == 0 ) return PGX_DFMT;
-  if( strcmp(base_ext,".tif") == 0 ) return TIF_DFMT;
-  if( strcmp(base_ext,".ppm") == 0 ) return PXM_DFMT;
-  return -1;
+  int base_format = get_decod_format_from_string( param->base_filename );
+  int test_format = get_decod_format_from_string( param->test_filename );
+  if( base_format != test_format ) return -1;
+  /* handle case -1: */
+  return base_format;
 }
 
 /*******************************************************************************
@@ -781,7 +797,7 @@ int main(int argc, char **argv)
     }
   else if( decod_format == PXM_DFMT )
     {
-    imageBase = readImageFromFilePPM( inParam.base_filename, nbFilenamePGXbase, "");
+    imageBase = readImageFromFilePPM( inParam.base_filename, nbFilenamePGXbase, inParam.separator_base);
     if ( imageBase == NULL )
       goto cleanup;
     }
@@ -807,7 +823,7 @@ int main(int argc, char **argv)
     }
   else if( decod_format == PXM_DFMT )
     {
-    imageTest = readImageFromFilePPM(inParam.test_filename, nbFilenamePGXtest, "");
+    imageTest = readImageFromFilePPM(inParam.test_filename, nbFilenamePGXtest, inParam.separator_test);
     if ( imageTest == NULL )
       goto cleanup;
     }
