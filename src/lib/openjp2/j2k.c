@@ -7728,12 +7728,12 @@ OPJ_BOOL opj_j2k_update_image_data (opj_tcd_t * p_tcd, OPJ_BYTE * p_data, opj_im
                                 l_res->x0, l_res->x1, l_res->y0, l_res->y1);
                 }*/
 
-                l_width_src = (l_res->x1 - l_res->x0);
-                l_height_src = (l_res->y1 - l_res->y0);
+                l_width_src = (OPJ_UINT32)(l_res->x1 - l_res->x0);
+                l_height_src = (OPJ_UINT32)(l_res->y1 - l_res->y0);
 
                 /* Border of the current output component*/
-                l_x0_dest = opj_int_ceildivpow2(l_img_comp_dest->x0, l_img_comp_dest->factor);
-                l_y0_dest = opj_int_ceildivpow2(l_img_comp_dest->y0, l_img_comp_dest->factor);
+                l_x0_dest = (OPJ_UINT32)opj_int_ceildivpow2((OPJ_INT32)l_img_comp_dest->x0, (OPJ_INT32)l_img_comp_dest->factor);
+                l_y0_dest = (OPJ_UINT32)opj_int_ceildivpow2((OPJ_INT32)l_img_comp_dest->y0, (OPJ_INT32)l_img_comp_dest->factor);
                 l_x1_dest = l_x0_dest + l_img_comp_dest->w;
                 l_y1_dest = l_y0_dest + l_img_comp_dest->h;
 
@@ -7752,7 +7752,7 @@ OPJ_BOOL opj_j2k_update_image_data (opj_tcd_t * p_tcd, OPJ_BYTE * p_data, opj_im
                 assert( l_res->x0 >= 0);
                 assert( l_res->x1 >= 0);
                 if ( l_x0_dest < (OPJ_UINT32)l_res->x0 ) {
-                        l_start_x_dest = l_res->x0 - l_x0_dest;
+                        l_start_x_dest = (OPJ_UINT32)l_res->x0 - l_x0_dest;
                         l_offset_x0_src = 0;
 
                         if ( l_x1_dest >= (OPJ_UINT32)l_res->x1 ) {
@@ -7760,21 +7760,21 @@ OPJ_BOOL opj_j2k_update_image_data (opj_tcd_t * p_tcd, OPJ_BYTE * p_data, opj_im
                                 l_offset_x1_src = 0;
                         }
                         else {
-                                l_width_dest = l_x1_dest - l_res->x0 ;
-                                l_offset_x1_src = l_width_src - l_width_dest;
+                                l_width_dest = l_x1_dest - (OPJ_UINT32)l_res->x0 ;
+                                l_offset_x1_src = (OPJ_INT32)(l_width_src - l_width_dest);
                         }
                 }
                 else {
                         l_start_x_dest = 0 ;
-                        l_offset_x0_src = l_x0_dest - l_res->x0;
+                        l_offset_x0_src = (OPJ_INT32)l_x0_dest - l_res->x0;
 
                         if ( l_x1_dest >= (OPJ_UINT32)l_res->x1 ) {
-                                l_width_dest = l_width_src - l_offset_x0_src;
+                                l_width_dest = l_width_src - (OPJ_UINT32)l_offset_x0_src;
                                 l_offset_x1_src = 0;
                         }
                         else {
                                 l_width_dest = l_img_comp_dest->w ;
-                                l_offset_x1_src = l_res->x1 - l_x1_dest;
+                                l_offset_x1_src = l_res->x1 - (OPJ_INT32)l_x1_dest;
                         }
                 }
 
