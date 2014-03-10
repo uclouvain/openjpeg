@@ -515,9 +515,9 @@ foreach(kdu_file ${kdu_j2k_conf_files})
   )
 
   if("${kdu_file}" STREQUAL "a6_mono_colr")
-    set(kdu_test_args "-n 4 -s b_t_")
+    set(kdu_test_args -n 4 -s b_t_)
   else()
-    set(kdu_test_args "-n 1")
+    set(kdu_test_args -n 1)
   endif()
 
   add_test(NAME ETS-KDU-${filenameInput}-compare2ref
@@ -526,7 +526,7 @@ foreach(kdu_file ${kdu_j2k_conf_files})
     -t ${TEMP}/${filenameInput}.ppm
     ${kdu_test_args}
     -p 4:4:4
-    -m 4:4:4
+    -m 1:1:1
   )
 
   set_tests_properties(ETS-KDU-${filenameInput}-compare2ref
@@ -544,6 +544,61 @@ foreach(kdu_file ${kdu_j2k_conf_files})
   set_tests_properties(NR-KDU-${filenameInput}-compare2base
     PROPERTIES DEPENDS
     ETS-KDU-${filenameInput}-decode)
+endforeach()
+
+#--------------------------------------------------------------------------
+# Tests about Richter/J2K file
+# try to decode
+# compare to ref file
+# non regression comparison
+
+# Tolerances given by ???
+
+set(richter_jp2_conf_files
+  subsampling_1
+  subsampling_2
+  zoo1
+  zoo2
+)
+
+foreach(r_file ${richter_jp2_conf_files})
+
+  # Build filenames
+  set( filenameInput "${r_file}.jp2" )
+  set( filenameRef   "${r_file}.ppm" )
+
+  add_test(NAME ETS-RIC-${filenameInput}-decode
+    COMMAND opj_decompress
+    -i ${INPUT_CONF}/${filenameInput}
+    -o ${TEMP}/${filenameInput}.ppm
+  )
+
+  set(ric_test_args -n 1)
+
+  add_test(NAME ETS-RIC-${filenameInput}-compare2ref
+    COMMAND compare_images
+    -b ${BASELINE_CONF}/${filenameRef}
+    -t ${TEMP}/${filenameInput}.ppm
+    ${ric_test_args}
+    -p 4:4:4
+    -m 2:2:2
+  )
+
+  set_tests_properties(ETS-RIC-${filenameInput}-compare2ref
+    PROPERTIES DEPENDS
+    ETS-RIC-${filenameInput}-decode)
+
+  add_test(NAME NR-RIC-${filenameInput}-compare2base
+    COMMAND compare_images
+    -b ${BASELINE_NR}/opj_${filenameRef}
+    -t ${TEMP}/${filenameInput}.ppm
+    ${ric_test_args}
+    -d
+  )
+
+  set_tests_properties(NR-RIC-${filenameInput}-compare2base
+    PROPERTIES DEPENDS
+    ETS-RIC-${filenameInput}-decode)
 endforeach()
 
 #--------------------------------------------------------------------------#
