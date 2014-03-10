@@ -117,7 +117,7 @@ int main(int argc, char **argv)
 {
   test_cmp_parameters inParam;
   FILE *fbase=NULL, *ftest=NULL;
-  int same = 1;
+  int same = 0;
   char lbase[256];
   char strbase[256];
   char ltest[256];
@@ -169,7 +169,7 @@ int main(int argc, char **argv)
       }
     }
 
-  same = 0;
+  same = 1;
   printf("\n***** TEST SUCCEED: Files are the same. *****\n");
 cleanup:
   /*Close File*/
