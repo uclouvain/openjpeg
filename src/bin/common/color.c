@@ -360,6 +360,9 @@ out_space,
 
 in_type,out_type
  );
+#else
+  (void)prec;
+  (void)in_space;
 #endif /* DEBUG_PROFILE */
 
 	transform = cmsCreateTransform(in_prof, in_type,
