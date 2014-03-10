@@ -573,7 +573,7 @@ OPJ_BOOL opj_t2_encode_packet(  OPJ_UINT32 tileno,
                                 cblk = &prc->cblks.enc[cblkno];
 
                                 cblk->numpasses = 0;
-                                opj_tgt_setvalue(prc->imsbtree, cblkno, band->numbps - cblk->numbps);
+                                opj_tgt_setvalue(prc->imsbtree, cblkno, band->numbps - (OPJ_INT32)cblk->numbps);
                         }
                         ++band;
                 }
@@ -595,7 +595,7 @@ OPJ_BOOL opj_t2_encode_packet(  OPJ_UINT32 tileno,
                         opj_tcd_layer_t *layer = &cblk->layers[layno];
 
                         if (!cblk->numpasses && layer->numpasses) {
-                                opj_tgt_setvalue(prc->incltree, cblkno, layno);
+                                opj_tgt_setvalue(prc->incltree, cblkno, (OPJ_INT32)layno);
                         }
 
                         ++cblk;
@@ -611,7 +611,7 @@ OPJ_BOOL opj_t2_encode_packet(  OPJ_UINT32 tileno,
 
                         /* cblk inclusion bits */
                         if (!cblk->numpasses) {
-                                opj_tgt_encode(bio, prc->incltree, cblkno, layno + 1);
+                                opj_tgt_encode(bio, prc->incltree, cblkno, (OPJ_INT32)(layno + 1));
                         } else {
                                 opj_bio_write(bio, layer->numpasses != 0, 1);
                         }
@@ -639,14 +639,15 @@ OPJ_BOOL opj_t2_encode_packet(  OPJ_UINT32 tileno,
                                 len += pass->len;
 
                                 if (pass->term || passno == (cblk->numpasses + layer->numpasses) - 1) {
-                                        increment = opj_int_max(increment, opj_int_floorlog2(len) + 1 - (cblk->numlenbits + opj_int_floorlog2(nump)));
+                                  increment = (OPJ_UINT32)opj_int_max((OPJ_INT32)increment, opj_int_floorlog2((OPJ_INT32)len) + 1
+                                    - ((OPJ_INT32)cblk->numlenbits + opj_int_floorlog2((OPJ_INT32)nump)));
                                         len = 0;
                                         nump = 0;
                                 }
 
                                 ++pass;
                         }
-                        opj_t2_putcommacode(bio, increment);
+                        opj_t2_putcommacode(bio, (OPJ_INT32)increment);
 
                         /* computation of the new Length indicator */
                         cblk->numlenbits += increment;
@@ -658,7 +659,7 @@ OPJ_BOOL opj_t2_encode_packet(  OPJ_UINT32 tileno,
                                 len += pass->len;
 
                                 if (pass->term || passno == (cblk->numpasses + layer->numpasses) - 1) {
-                                        opj_bio_write(bio, len, cblk->numlenbits + opj_int_floorlog2(nump));
+                                        opj_bio_write(bio, (OPJ_UINT32)len, cblk->numlenbits + (OPJ_UINT32)opj_int_floorlog2((OPJ_INT32)nump));
                                         len = 0;
                                         nump = 0;
                                 }
@@ -935,7 +936,7 @@ OPJ_BOOL opj_t2_read_packet_header( opj_t2_t* p_t2,
 
                         /* if cblk not yet included before --> inclusion tagtree */
                         if (!l_cblk->numsegs) {
-                                l_included = opj_tgt_decode(l_bio, l_prc->incltree, cblkno, p_pi->layno + 1);
+                                l_included = opj_tgt_decode(l_bio, l_prc->incltree, cblkno, (OPJ_INT32)(p_pi->layno + 1));
                                 /* else one bit */
                         }
                         else {
@@ -953,11 +954,11 @@ OPJ_BOOL opj_t2_read_packet_header( opj_t2_t* p_t2,
                         if (!l_cblk->numsegs) {
                                 OPJ_UINT32 i = 0;
 
-                                while (!opj_tgt_decode(l_bio, l_prc->imsbtree, cblkno, i)) {
+                                while (!opj_tgt_decode(l_bio, l_prc->imsbtree, cblkno, (OPJ_INT32)i)) {
                                         ++i;
                                 }
 
-                                l_cblk->numbps = l_band->numbps + 1 - i;
+                                l_cblk->numbps = (OPJ_UINT32)l_band->numbps + 1 - i;
                                 l_cblk->numlenbits = 3;
                         }
 
@@ -985,13 +986,13 @@ OPJ_BOOL opj_t2_read_packet_header( opj_t2_t* p_t2,
                                         }
                                 }
                         }
-                        n = l_cblk->numnewpasses;
+                        n = (OPJ_INT32)l_cblk->numnewpasses;
 
                         do {
-                                l_cblk->segs[l_segno].numnewpasses = opj_int_min(l_cblk->segs[l_segno].maxpasses - l_cblk->segs[l_segno].numpasses, n);
+                                l_cblk->segs[l_segno].numnewpasses = (OPJ_UINT32)opj_int_min((OPJ_INT32)(l_cblk->segs[l_segno].maxpasses - l_cblk->segs[l_segno].numpasses), n);
                                 l_cblk->segs[l_segno].newlen = opj_bio_read(l_bio, l_cblk->numlenbits + opj_uint_floorlog2(l_cblk->segs[l_segno].numnewpasses));
 
-                                n -= l_cblk->segs[l_segno].numnewpasses;
+                                n -= (OPJ_INT32)l_cblk->segs[l_segno].numnewpasses;
                                 if (n > 0) {
                                         ++l_segno;
 
