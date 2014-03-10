@@ -426,16 +426,14 @@ endforeach()
 # compare to ref file
 # non regression comparison
 
-# Tolerances given by Table G.1
+# Tolerances given by Part 4 - Table G.1
+# Peak is set to 4 only
 
 foreach(numFileJP2 RANGE 1 9)
 
   # Build filenames
   set( filenameInput "file${numFileJP2}.jp2" )
   set( filenameRef   jp2_${numFileJP2}.tif )
-
-  # Get corresponding tests parameters
-  list(GET JP2_PEAK_list ${numFileJP2}  PEAK_limit)
 
   add_test(NAME ETS-JP2-${filenameInput}-decode
     COMMAND opj_decompress
@@ -449,7 +447,7 @@ foreach(numFileJP2 RANGE 1 9)
     -t ${TEMP}/${filenameInput}.tif
     -n 3
     -p 4:4:4
-    -m 4:4:4
+    -m 1:1:1
     -s b_t_
   )
 
