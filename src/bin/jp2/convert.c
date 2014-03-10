@@ -712,7 +712,7 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
 
         /* Place the cursor at the beginning of the image information */
         fseek(IN, 0, SEEK_SET);
-        fseek(IN, File_h.bfOffBits, SEEK_SET);
+        fseek(IN, (long)File_h.bfOffBits, SEEK_SET);
 
         W = Info_h.biWidth;
         H = Info_h.biHeight;
@@ -773,7 +773,7 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
 
             /* Place the cursor at the beginning of the image information */
             fseek(IN, 0, SEEK_SET);
-            fseek(IN, File_h.bfOffBits, SEEK_SET);
+            fseek(IN, (long)File_h.bfOffBits, SEEK_SET);
 
             W = Info_h.biWidth;
             H = Info_h.biHeight;
@@ -925,7 +925,7 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
 
                 /* Place the cursor at the beginning of the image information */
                 fseek(IN, 0, SEEK_SET);
-                fseek(IN, File_h.bfOffBits, SEEK_SET);
+                fseek(IN, (long)File_h.bfOffBits, SEEK_SET);
 
                 W = Info_h.biWidth;
                 H = Info_h.biHeight;
