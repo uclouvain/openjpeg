@@ -150,8 +150,13 @@ static void sycc422_to_rgb(opj_image_t *img)
 	free(img->comps[1].data); img->comps[1].data = d1;
 	free(img->comps[2].data); img->comps[2].data = d2;
 
+#if defined(USE_JPWL) || defined(USE_MJ2)
+	img->comps[1].w = maxw; img->comps[1].h = maxh;
+	img->comps[2].w = maxw; img->comps[2].h = maxh;
+#else
 	img->comps[1].w = (OPJ_UINT32)maxw; img->comps[1].h = (OPJ_UINT32)maxh;
 	img->comps[2].w = (OPJ_UINT32)maxw; img->comps[2].h = (OPJ_UINT32)maxh;
+#endif
 	img->comps[1].dx = img->comps[0].dx;
 	img->comps[2].dx = img->comps[0].dx;
 	img->comps[1].dy = img->comps[0].dy;
@@ -209,8 +214,13 @@ static void sycc420_to_rgb(opj_image_t *img)
 	free(img->comps[1].data); img->comps[1].data = d1;
 	free(img->comps[2].data); img->comps[2].data = d2;
 
+#if defined(USE_JPWL) || defined(USE_MJ2)
+	img->comps[1].w = maxw; img->comps[1].h = maxh;
+	img->comps[2].w = maxw; img->comps[2].h = maxh;
+#else
 	img->comps[1].w = (OPJ_UINT32)maxw; img->comps[1].h = (OPJ_UINT32)maxh;
 	img->comps[2].w = (OPJ_UINT32)maxw; img->comps[2].h = (OPJ_UINT32)maxh;
+#endif
 	img->comps[1].dx = img->comps[0].dx;
 	img->comps[2].dx = img->comps[0].dx;
 	img->comps[1].dy = img->comps[0].dy;

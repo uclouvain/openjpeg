@@ -32,6 +32,10 @@ foreach(exe
     ${MJ2_SRCS}
     ${OPENJPEG_SOURCE_DIR}/src/bin/common/color.c
     )
+  set_property(
+    TARGET ${exe}
+    APPEND PROPERTY COMPILE_DEFINITIONS USE_MJ2
+  )
   target_link_libraries(${exe} ${LCMS_LIBNAME} openmj2)
   
   if(UNIX)
