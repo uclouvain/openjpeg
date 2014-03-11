@@ -55,7 +55,7 @@ void opj_raw_destroy(opj_raw_t *raw) {
 
 OPJ_UINT32 opj_raw_numbytes(opj_raw_t *raw) {
 	const ptrdiff_t diff = raw->bp - raw->start;
-  assert( diff <= 0xffffffff && diff >= 0 ); /* UINT32_MAX */
+  assert( diff <= (ptrdiff_t)0xffffffff && diff >= 0 ); /* UINT32_MAX */
 	return (OPJ_UINT32)diff;
 }
 
