@@ -441,7 +441,7 @@ OPJ_BOOL opj_t2_decode_packets( opj_t2_t *p_t2,
 
         /* don't forget to release pi */
         opj_pi_destroy(l_pi,l_nb_pocs);
-        assert( l_current_data - p_src < (ptrdiff_t)UINT32_MAX );
+        assert( (OPJ_INT64)(l_current_data - p_src) < (OPJ_INT64)UINT32_MAX );
         *p_data_read = (OPJ_UINT32)(l_current_data - p_src);
         return OPJ_TRUE;
 }
