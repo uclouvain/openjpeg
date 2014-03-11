@@ -7619,6 +7619,7 @@ OPJ_BOOL opj_j2k_decode_tile (  opj_j2k_t * p_j2k,
                                                                 p_j2k->cstr_index) ) {
                 opj_j2k_tcp_destroy(l_tcp);
                 p_j2k->m_specific_param.m_decoder.m_state |= 0x8000;/*FIXME J2K_DEC_STATE_ERR;*/
+                opj_event_msg(p_manager, EVT_ERROR, "Failed to decode.\n");
                 return OPJ_FALSE;
         }
 
@@ -9120,6 +9121,7 @@ OPJ_BOOL opj_j2k_decode_tiles ( opj_j2k_t *p_j2k,
 
                 if (! opj_j2k_decode_tile(p_j2k,l_current_tile_no,l_current_data,l_data_size,p_stream,p_manager)) {
                         opj_free(l_current_data);
+                        opj_event_msg(p_manager, EVT_ERROR, "Failed to decode tile %d/%d\n", l_current_tile_no +1, p_j2k->m_cp.th * p_j2k->m_cp.tw);
                         return OPJ_FALSE;
                 }
                 opj_event_msg(p_manager, EVT_INFO, "Tile %d/%d has been decoded.\n", l_current_tile_no +1, p_j2k->m_cp.th * p_j2k->m_cp.tw);
