@@ -845,6 +845,7 @@ OPJ_BOOL opj_t2_read_packet_header( opj_t2_t* p_t2,
         if (p_tcp->csty & J2K_CP_CSTY_SOP) {
                 if ((*l_current_data) != 0xff || (*(l_current_data + 1) != 0x91)) {
                         /* TODO opj_event_msg(t2->cinfo->event_mgr, EVT_WARNING, "Expected SOP marker\n"); */
+                        fprintf(stderr, "Error : expected SOP marker\n");
                 } else {
                         l_current_data += 6;
                 }
