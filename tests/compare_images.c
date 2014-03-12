@@ -247,12 +247,10 @@ static opj_image_t* readImageFromFilePPM(const char* filename, int nbFilenamePGX
 
 static opj_image_t* readImageFromFileTIF(const char* filename, int nbFilenamePGX, const char *separator)
 {
-  int it_file;
   opj_image_t* image_read = NULL;
-  opj_image_t* image = NULL;
   opj_cparameters_t parameters;
-  opj_image_cmptparm_t* param_image_read;
-  int** data;
+  (void)nbFilenamePGX;
+  (void)separator;
 
   /* conformance test suite produce annoying warning/error:
    * TIFFReadDirectory: Warning, /.../data/baseline/conformance/jp2_1.tif: unknown field with tag 37724 (0x935c) encountered.
@@ -264,85 +262,24 @@ static opj_image_t* readImageFromFileTIF(const char* filename, int nbFilenamePGX
   TIFFSetErrorHandler(NULL);
 #endif
 
-  /* If separator is empty => nb file to read is equal to one*/
-  if ( strlen(separator) == 0 )
-    nbFilenamePGX = 1;
-
   /* set encoding parameters to default values */
   opj_set_default_encoder_parameters(&parameters);
   parameters.decod_format = TIF_DFMT;
   strcpy(parameters.infile, filename);
 
-  /* Allocate memory*/
-  param_image_read = malloc((size_t)nbFilenamePGX * sizeof(opj_image_cmptparm_t));
-  data = malloc((size_t)nbFilenamePGX * sizeof(*data));
-
-  for (it_file = 0; it_file < nbFilenamePGX; it_file++)
-    {
-    /* Create the right filename*/
-    char *filenameComponentPGX;
-    if (strlen(separator) == 0)
-      {
-      filenameComponentPGX = malloc((strlen(filename) + 1) * sizeof(*filenameComponentPGX));
-      strcpy(filenameComponentPGX, filename);
-      }
-    else
-      filenameComponentPGX = createMultiComponentsFilename(filename, it_file, separator);
-
-    /* Read the tif file corresponding to the component */
+  /* Read the tif file corresponding to the component */
 #ifdef OPJ_HAVE_LIBTIFF
-    image_read = tiftoimage(filenameComponentPGX, &parameters);
+  image_read = tiftoimage(filename, &parameters);
 #endif
-    if (!image_read)
-      {
-      int it_free_data;
-      fprintf(stderr, "Unable to load TIF file\n");
-
-      free(param_image_read);
-
-      for (it_free_data = 0; it_free_data < it_file; it_free_data++) {
-        free(data[it_free_data]);
-      }
-      free(data);
-
-      free(filenameComponentPGX);
-
-      return NULL;
-      }
-
-    /* Set the image_read parameters*/
-    param_image_read[it_file].x0 = 0;
-    param_image_read[it_file].y0 = 0;
-    param_image_read[it_file].dx = 0;
-    param_image_read[it_file].dy = 0;
-    param_image_read[it_file].h = image_read->comps->h;
-    param_image_read[it_file].w = image_read->comps->w;
-    param_image_read[it_file].bpp = image_read->comps->bpp;
-    param_image_read[it_file].prec = image_read->comps->prec;
-    param_image_read[it_file].sgnd = image_read->comps->sgnd;
-
-    /* Copy data*/
-    data[it_file] = malloc(param_image_read[it_file].h * param_image_read[it_file].w * sizeof(int));
-    memcpy(data[it_file], image_read->comps->data, image_read->comps->h * image_read->comps->w * sizeof(int));
-
-    /* Free memory*/
-    opj_image_destroy(image_read);
-    free(filenameComponentPGX);
-    }
-
-  image = opj_image_create((OPJ_UINT32)nbFilenamePGX, param_image_read, OPJ_CLRSPC_UNSPECIFIED);
-  for (it_file = 0; it_file < nbFilenamePGX; it_file++)
+  if (!image_read)
     {
-    /* Copy data into output image and free memory*/
-    memcpy(image->comps[it_file].data, data[it_file], image->comps[it_file].h * image->comps[it_file].w * sizeof(int));
-    free(data[it_file]);
+    fprintf(stderr, "Unable to load TIF file\n");
+    return NULL;
     }
 
-  /* Free memory*/
-  free(param_image_read);
-  free(data);
-
-  return image;
+  /* \postconditions */
+  assert( image_read->numcomps == 3 );
+  return image_read;
 }
 
 static opj_image_t* readImageFromFilePGX(const char* filename, int nbFilenamePGX, const char *separator)
@@ -711,7 +648,7 @@ int main(int argc, char **argv)
   int failed = 1;
   int nbFilenamePGXbase = 0, nbFilenamePGXtest = 0;
   char *filenamePNGtest= NULL, *filenamePNGbase = NULL, *filenamePNGdiff = NULL;
-  int memsizebasefilename, memsizetestfilename;
+  size_t memsizebasefilename, memsizetestfilename;
   size_t memsizedifffilename;
   int valueDiff = 0, nbPixelDiff = 0;
   double sumDiff = 0.0;
@@ -763,8 +700,8 @@ int main(int argc, char **argv)
   printf("************************* \n");
 
   /*----------BASELINE IMAGE--------*/
-  memsizebasefilename = (int)strlen(inParam.test_filename) + 1 + 5 + 2 + 4;
-  memsizetestfilename = (int)strlen(inParam.test_filename) + 1 + 5 + 2 + 4;
+  memsizebasefilename = strlen(inParam.test_filename) + 1 + 5 + 2 + 4;
+  memsizetestfilename = strlen(inParam.test_filename) + 1 + 5 + 2 + 4;
 
   decod_format = get_decod_format(&inParam);
   if( decod_format == -1 )
@@ -793,7 +730,7 @@ int main(int argc, char **argv)
       goto cleanup;
     }
 
-  filenamePNGbase = (char*) malloc((size_t)memsizebasefilename);
+  filenamePNGbase = (char*) malloc(memsizebasefilename);
   strcpy(filenamePNGbase, inParam.test_filename);
   strcat(filenamePNGbase, ".base");
   /*printf("filenamePNGbase = %s [%d / %d octets]\n",filenamePNGbase, strlen(filenamePNGbase),memsizebasefilename );*/
@@ -819,7 +756,7 @@ int main(int argc, char **argv)
       goto cleanup;
     }
 
-  filenamePNGtest = (char*) malloc((size_t)memsizetestfilename);
+  filenamePNGtest = (char*) malloc(memsizetestfilename);
   strcpy(filenamePNGtest, inParam.test_filename);
   strcat(filenamePNGtest, ".test");
   /*printf("filenamePNGtest = %s [%d / %d octets]\n",filenamePNGtest, strlen(filenamePNGtest),memsizetestfilename );*/
