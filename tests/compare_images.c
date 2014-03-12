@@ -278,7 +278,7 @@ static opj_image_t* readImageFromFileTIF(const char* filename, int nbFilenamePGX
     }
 
   /* \postconditions */
-  assert( image_read->numcomps == 3 );
+  assert( image_read->numcomps == 1 || image_read->numcomps == 3 );
   return image_read;
 }
 
@@ -875,10 +875,10 @@ int main(int argc, char **argv)
            {
            char *filenamePNGbase_it_comp, *filenamePNGtest_it_comp, *filenamePNGdiff_it_comp;
 
-           filenamePNGbase_it_comp = (char*) malloc((size_t)memsizebasefilename);
+           filenamePNGbase_it_comp = (char*) malloc(memsizebasefilename);
            strcpy(filenamePNGbase_it_comp,filenamePNGbase);
 
-           filenamePNGtest_it_comp = (char*) malloc((size_t)memsizetestfilename);
+           filenamePNGtest_it_comp = (char*) malloc(memsizetestfilename);
            strcpy(filenamePNGtest_it_comp,filenamePNGtest);
 
            filenamePNGdiff_it_comp = (char*) malloc(memsizedifffilename);
