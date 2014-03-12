@@ -33,6 +33,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+#include <assert.h>
 
 #include "opj_apps_config.h"
 #include "openjpeg.h"
@@ -292,6 +293,7 @@ void color_sycc_to_rgb(opj_image_t *img)
 
 #endif /* OPJ_HAVE_LIBLCMS1 */
 
+/*#define DEBUG_PROFILE*/
 void color_apply_icc_profile(opj_image_t *image)
 {
 	cmsHPROFILE in_prof, out_prof;
@@ -304,6 +306,11 @@ void color_apply_icc_profile(opj_image_t *image)
 
 	in_prof = 
 	 cmsOpenProfileFromMem(image->icc_profile_buf, image->icc_profile_len);
+#ifdef DEBUG_PROFILE
+  FILE *icm = fopen("debug.icm","wb");
+  fwrite( image->icc_profile_buf,1, image->icc_profile_len,icm);
+  fclose(icm);
+#endif
 
 	if(in_prof == NULL) return;
 
