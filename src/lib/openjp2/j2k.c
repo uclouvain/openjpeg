@@ -3175,6 +3175,8 @@ static OPJ_BOOL opj_j2k_read_poc (  opj_j2k_t *p_j2k,
                 opj_read_bytes(p_header_data,&(l_current_poc->compno0),l_comp_room);    /* CSpoc_i */
                 p_header_data+=l_comp_room;
                 opj_read_bytes(p_header_data,&(l_current_poc->layno1),2);                               /* LYEpoc_i */
+                /* make sure layer end is in acceptable bounds */
+                l_current_poc->layno1 = opj_uint_min(l_current_poc->layno1, l_tcp->numlayers);
                 p_header_data+=2;
                 opj_read_bytes(p_header_data,&(l_current_poc->resno1),1);                               /* REpoc_i */
                 ++p_header_data;
