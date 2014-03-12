@@ -63,8 +63,8 @@ int main(int argc, char *argv[])
 
   opj_cparameters_t parameters;
 
-  int subsampling_dx = parameters.subsampling_dx;
-  int subsampling_dy = parameters.subsampling_dy;
+  int subsampling_dx;
+  int subsampling_dy;
   const char outputfile[] = "testempty2.j2k";
 
   opj_image_cmptparm_t cmptparm;
@@ -81,6 +81,8 @@ int main(int argc, char *argv[])
   opj_set_default_encoder_parameters(&parameters);
   parameters.cod_format = J2K_CFMT;
   puts(v);
+  subsampling_dx = parameters.subsampling_dx;
+  subsampling_dy = parameters.subsampling_dy;
   cmptparm.prec = 8;
   cmptparm.bpp = 8;
   cmptparm.sgnd = 0;

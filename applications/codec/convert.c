@@ -830,7 +830,7 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
 	int *green = image->comps[1].data;
 	int *blue = image->comps[2].data;
 	unsigned int offset = File_h.bfOffBits;
-	unsigned int line;
+	int line;
 
 	/* set image data */
 	for(line = 0; line < h; ++line)
