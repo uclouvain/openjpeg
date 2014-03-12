@@ -326,8 +326,16 @@ void color_apply_icc_profile(opj_image_t *image)
 
 	if(out_space == cmsSigRgbData) /* enumCS 16 */
    {
+  if( prec <= 8 )
+{
+	in_type = TYPE_RGB_8;
+	out_type = TYPE_RGB_8;
+}
+else
+{
 	in_type = TYPE_RGB_16;
 	out_type = TYPE_RGB_16;
+}
 	out_prof = cmsCreate_sRGBProfile();
 	image->color_space = OPJ_CLRSPC_SRGB;
    }
@@ -408,6 +416,41 @@ fprintf(stderr,"%s:%d:color_apply_icc_profile\n\tcmsCreateTransform failed. "
 
 	if(image->numcomps > 2)/* RGB, RGBA */
    {
+  if( prec <= 8 )
+{
+	unsigned char *inbuf, *outbuf, *in, *out;
+	max = max_w * max_h;
+  nr_samples = (cmsUInt32Number)max * 3 * (cmsUInt32Number)sizeof(unsigned char);
+	in = inbuf = (unsigned char*)malloc(nr_samples);
+	out = outbuf = (unsigned char*)malloc(nr_samples);
+
+	r = image->comps[0].data;
+	g = image->comps[1].data;
+	b = image->comps[2].data;
+
+	for(i = 0; i < max; ++i)
+  {
+	*in++ = (unsigned char)*r++;
+	*in++ = (unsigned char)*g++;
+	*in++ = (unsigned char)*b++;
+  }
+
+	cmsDoTransform(transform, inbuf, outbuf, (cmsUInt32Number)max);
+
+	r = image->comps[0].data;
+	g = image->comps[1].data;
+	b = image->comps[2].data;
+
+	for(i = 0; i < max; ++i)
+  {
+	*r++ = (int)*out++;
+	*g++ = (int)*out++;
+	*b++ = (int)*out++;
+  }
+	free(inbuf); free(outbuf);
+}
+else
+{
 	unsigned short *inbuf, *outbuf, *in, *out;
 	max = max_w * max_h;
   nr_samples = (cmsUInt32Number)max * 3 * (cmsUInt32Number)sizeof(unsigned short);
@@ -438,6 +481,7 @@ fprintf(stderr,"%s:%d:color_apply_icc_profile\n\tcmsCreateTransform failed. "
 	*b++ = (int)*out++;
   }
 	free(inbuf); free(outbuf);
+}
    }
 	else /* GRAY, GRAYA */
    {
