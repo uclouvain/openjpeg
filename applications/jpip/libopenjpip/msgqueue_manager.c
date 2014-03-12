@@ -677,7 +677,7 @@ placeholder_param_t * parse_phld( Byte_t *datastream, Byte8_t metalength)
   phld = (placeholder_param_t *)malloc( sizeof(placeholder_param_t));
   
   phld->LBox = big4( datastream);
-  strcpy( phld->TBox, "phld");
+  strncpy( phld->TBox, "phld", 4);
   phld->Flags = big4( datastream+8);
   phld->OrigID = big8( datastream+12);
   phld->OrigBHlen = metalength - 20;
