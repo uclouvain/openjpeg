@@ -98,3 +98,5 @@ if(BUILD_JPIP)
       -DEXPECTED_MD5=${md5} -P ${PROJECT_SOURCE_DIR}/cmake/JPIPTestDriver.cmake)
   endif()
 endif()
+
+add_executable(ppm2rgb3 ppm2rgb3.c)
