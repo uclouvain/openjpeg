@@ -319,7 +319,6 @@ foreach(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
         # if not failed, check against registered md5:
         add_test(NAME NR-DEC-${INPUT_FILENAME_NAME}-${IT_TEST_DEC}-decode-md5 COMMAND ${CMAKE_COMMAND}
           -DREFFILE:STRING=${CMAKE_CURRENT_SOURCE_DIR}/md5refs.txt
-          -DFILENAME:STRING=${INPUT_FILENAME_NAME}
           -DOUTFILENAME:STRING=${OUTPUT_FILENAME}
           -P ${CMAKE_CURRENT_SOURCE_DIR}/checkmd5refs.cmake)
 
