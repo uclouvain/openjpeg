@@ -881,7 +881,8 @@ int main(int argc, char **argv)
 
 		case PGX_DFMT:			/* PGX */
 			if(imagetopgx(image, parameters.outfile)){
-				fprintf(stdout,"Outfile %s not generated\n",parameters.outfile);
+				fprintf(stderr,"Outfile %s not generated\n",parameters.outfile);
+        failed = 1;
 			}
 			else {
 				fprintf(stdout,"Generated Outfile %s\n",parameters.outfile);
@@ -890,7 +891,8 @@ int main(int argc, char **argv)
 
 		case BMP_DFMT:			/* BMP */
 			if(imagetobmp(image, parameters.outfile)){
-				fprintf(stdout,"Outfile %s not generated\n",parameters.outfile);
+				fprintf(stderr,"Outfile %s not generated\n",parameters.outfile);
+        failed = 1;
 			}
 			else {
 				fprintf(stdout,"Generated Outfile %s\n",parameters.outfile);
@@ -899,7 +901,8 @@ int main(int argc, char **argv)
 #ifdef OPJ_HAVE_LIBTIFF
 		case TIF_DFMT:			/* TIFF */
 			if(imagetotif(image, parameters.outfile)){
-				fprintf(stdout,"Outfile %s not generated\n",parameters.outfile);
+				fprintf(stderr,"Outfile %s not generated\n",parameters.outfile);
+        failed = 1;
 			}
 			else {
 				fprintf(stdout,"Generated Outfile %s\n",parameters.outfile);
@@ -908,7 +911,8 @@ int main(int argc, char **argv)
 #endif /* OPJ_HAVE_LIBTIFF */
 		case RAW_DFMT:			/* RAW */
 			if(imagetoraw(image, parameters.outfile)){
-				fprintf(stdout,"Error generating raw file. Outfile %s not generated\n",parameters.outfile);
+				fprintf(stderr,"Error generating raw file. Outfile %s not generated\n",parameters.outfile);
+        failed = 1;
 			}
 			else {
 				fprintf(stdout,"Successfully generated Outfile %s\n",parameters.outfile);
@@ -917,7 +921,8 @@ int main(int argc, char **argv)
 
 		case RAWL_DFMT:			/* RAWL */
 			if(imagetorawl(image, parameters.outfile)){
-				fprintf(stdout,"Error generating rawl file. Outfile %s not generated\n",parameters.outfile);
+				fprintf(stderr,"Error generating rawl file. Outfile %s not generated\n",parameters.outfile);
+        failed = 1;
 			}
 			else {
 				fprintf(stdout,"Successfully generated Outfile %s\n",parameters.outfile);
@@ -926,7 +931,8 @@ int main(int argc, char **argv)
 
 		case TGA_DFMT:			/* TGA */
 			if(imagetotga(image, parameters.outfile)){
-				fprintf(stdout,"Error generating tga file. Outfile %s not generated\n",parameters.outfile);
+				fprintf(stderr,"Error generating tga file. Outfile %s not generated\n",parameters.outfile);
+        failed = 1;
 			}
 			else {
 				fprintf(stdout,"Successfully generated Outfile %s\n",parameters.outfile);
@@ -935,7 +941,8 @@ int main(int argc, char **argv)
 #ifdef OPJ_HAVE_LIBPNG
 		case PNG_DFMT:			/* PNG */
 			if(imagetopng(image, parameters.outfile)){
-				fprintf(stdout,"Error generating png file. Outfile %s not generated\n",parameters.outfile);
+				fprintf(stderr,"Error generating png file. Outfile %s not generated\n",parameters.outfile);
+        failed = 1;
 			}
 			else {
 				fprintf(stdout,"Successfully generated Outfile %s\n",parameters.outfile);
@@ -947,6 +954,7 @@ int main(int argc, char **argv)
 */
 			default:
 				fprintf(stderr,"Outfile %s not generated\n",parameters.outfile);
+        failed = 1;
 		}
 
 		/* free remaining structures */
