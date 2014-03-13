@@ -354,8 +354,8 @@ OPJ_BOOL opj_t2_decode_packets( opj_t2_t *p_t2,
 
         for     (pino = 0; pino <= l_tcp->numpocs; ++pino) {
 
-                /* if the resolution needed is to low, one dim of the tilec could be equal to zero
-                 * and no packets are used to encode this resolution and
+                /* if the resolution needed is too low, one dim of the tilec could be equal to zero
+                 * and no packets are used to decode this resolution and
                  * l_current_pi->resno is always >= p_tile->comps[l_current_pi->compno].minimum_num_resolutions
                  * and no l_img_comp->resno_decoded are computed
                  */
@@ -441,7 +441,6 @@ OPJ_BOOL opj_t2_decode_packets( opj_t2_t *p_t2,
 
         /* don't forget to release pi */
         opj_pi_destroy(l_pi,l_nb_pocs);
-        assert( (OPJ_INT64)(l_current_data - p_src) < (OPJ_INT64)UINT32_MAX );
         *p_data_read = (OPJ_UINT32)(l_current_data - p_src);
         return OPJ_TRUE;
 }
@@ -1024,6 +1023,7 @@ OPJ_BOOL opj_t2_read_packet_header( opj_t2_t* p_t2,
                         fprintf(stderr, "Not enough space for expected EPH marker\n");
                 } else if ((*l_header_data) != 0xff || (*(l_header_data + 1) != 0x92)) {
                         /* TODO opj_event_msg(t2->cinfo->event_mgr, EVT_ERROR, "Expected EPH marker\n"); */
+                        fprintf(stderr, "Error : expected EPH marker\n");
                 } else {
                         l_header_data += 2;
                 }
@@ -1102,6 +1102,8 @@ OPJ_BOOL opj_t2_read_packet_data(   opj_t2_t* p_t2,
 
                         do {
                                 if (l_current_data + l_seg->newlen > p_src_data + p_max_length) {
+                                        fprintf(stderr, "read: segment too long (%d) with max (%d) for codeblock %d (p=%d, b=%d, r=%d, c=%d)\n",
+                                                l_seg->newlen, p_max_length, cblkno, p_pi->precno, bandno, p_pi->resno, p_pi->compno);
                                         return OPJ_FALSE;
                                 }
 
@@ -1225,7 +1227,7 @@ OPJ_BOOL opj_t2_skip_packet_data(   opj_t2_t* p_t2,
 
                         do {
                                 if (* p_data_read + l_seg->newlen > p_max_length) {
-                                        fprintf(stderr, "segment too long (%d) with max (%d) for codeblock %d (p=%d, b=%d, r=%d, c=%d)\n",
+                                        fprintf(stderr, "skip: segment too long (%d) with max (%d) for codeblock %d (p=%d, b=%d, r=%d, c=%d)\n",
                                                 l_seg->newlen, p_max_length, cblkno, p_pi->precno, bandno, p_pi->resno, p_pi->compno);
                                         return OPJ_FALSE;
                                 }
