@@ -262,6 +262,8 @@ static opj_image_t* readImageFromFileTIF(const char* filename, int nbFilenamePGX
   TIFFSetErrorHandler(NULL);
 #endif
 
+  if ( strlen(separator) != 0 ) return NULL;
+
   /* set encoding parameters to default values */
   opj_set_default_encoder_parameters(&parameters);
   parameters.decod_format = TIF_DFMT;
