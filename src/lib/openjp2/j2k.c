@@ -9322,6 +9322,13 @@ OPJ_BOOL opj_j2k_decode(opj_j2k_t * p_j2k,
         for (compno = 0; compno < p_image->numcomps; compno++) {
                 p_image->comps[compno].resno_decoded = p_j2k->m_output_image->comps[compno].resno_decoded;
                 p_image->comps[compno].data = p_j2k->m_output_image->comps[compno].data;
+#if 0
+                char fn[256];
+                sprintf( fn, "/tmp/%d.raw", compno );
+                FILE *debug = fopen( fn, "wb" );
+                fwrite( p_image->comps[compno].data, sizeof(OPJ_INT32), p_image->comps[compno].w * p_image->comps[compno].h, debug );
+                fclose( debug );
+#endif
                 p_j2k->m_output_image->comps[compno].data = NULL;
         }
 
