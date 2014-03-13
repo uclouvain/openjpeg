@@ -311,6 +311,13 @@ OPJ_BOOL opj_t2_encode_packets( opj_t2_t* p_t2,
         return OPJ_TRUE;
 }
 
+/* see issue 80 */
+#if 0
+#define JAS_FPRINTF fprintf
+#else
+#define JAS_FPRINTF
+#endif
+
 OPJ_BOOL opj_t2_decode_packets( opj_t2_t *p_t2,
                                 OPJ_UINT32 p_tile_no,
                                 opj_tcd_tile_t *p_tile,
@@ -368,7 +375,8 @@ OPJ_BOOL opj_t2_decode_packets( opj_t2_t *p_t2,
                 memset(first_pass_failed, OPJ_TRUE, l_image->numcomps * sizeof(OPJ_BOOL));
 
                 while (opj_pi_next(l_current_pi)) {
-
+                  JAS_FPRINTF( stderr, "packet offset=00000166 prg=%d cmptno=%02d rlvlno=%02d prcno=%03d lyrno=%02d\n\n",
+                    l_current_pi->poc.prg1, l_current_pi->compno, l_current_pi->resno, l_current_pi->precno, l_current_pi->layno );
 
                         if (l_tcp->num_layers_to_decode > l_current_pi->layno
                                         && l_current_pi->resno < p_tile->comps[l_current_pi->compno].minimum_num_resolutions) {
@@ -785,7 +793,6 @@ static OPJ_BOOL opj_t2_skip_packet( opj_t2_t* p_t2,
 }
 
 
-
 OPJ_BOOL opj_t2_read_packet_header( opj_t2_t* p_t2,
                                     opj_tcd_tile_t *p_tile,
                                     opj_tcp_t *p_tcp,
@@ -885,6 +892,7 @@ OPJ_BOOL opj_t2_read_packet_header( opj_t2_t* p_t2,
         opj_bio_init_dec(l_bio, l_header_data,*l_modified_length_ptr);
 
         l_present = opj_bio_read(l_bio, 1);
+        JAS_FPRINTF(stderr, "present=%d \n", l_present );
         if (!l_present) {
             /* TODO MSD: no test to control the output of this function*/
                 opj_bio_inalign(l_bio);
@@ -947,6 +955,7 @@ OPJ_BOOL opj_t2_read_packet_header( opj_t2_t* p_t2,
                         if (!l_included) {
                                 l_cblk->numnewpasses = 0;
                                 ++l_cblk;
+        JAS_FPRINTF(stderr, "included=%d \n", l_included);
                                 continue;
                         }
 
@@ -991,6 +1000,7 @@ OPJ_BOOL opj_t2_read_packet_header( opj_t2_t* p_t2,
                         do {
                                 l_cblk->segs[l_segno].numnewpasses = (OPJ_UINT32)opj_int_min((OPJ_INT32)(l_cblk->segs[l_segno].maxpasses - l_cblk->segs[l_segno].numpasses), n);
                                 l_cblk->segs[l_segno].newlen = opj_bio_read(l_bio, l_cblk->numlenbits + opj_uint_floorlog2(l_cblk->segs[l_segno].numnewpasses));
+                                        JAS_FPRINTF(stderr, "included=%d numnewpasses=%d increment=%d len=%d \n", l_included, l_cblk->segs[l_segno].numnewpasses, l_increment, l_cblk->segs[l_segno].newlen );
 
                                 n -= (OPJ_INT32)l_cblk->segs[l_segno].numnewpasses;
                                 if (n > 0) {
@@ -1030,6 +1040,8 @@ OPJ_BOOL opj_t2_read_packet_header( opj_t2_t* p_t2,
         }
 
         l_header_length = (OPJ_UINT32)(l_header_data - *l_header_data_start);
+        JAS_FPRINTF( stderr, "hdrlen=%d \n", l_header_length );
+        JAS_FPRINTF( stderr, "packet body\n");
         *l_modified_length_ptr -= l_header_length;
         *l_header_data_start += l_header_length;
 
@@ -1251,6 +1263,7 @@ OPJ_BOOL opj_t2_skip_packet_data(   opj_t2_t* p_t2,
                                 };
 
 #endif /* USE_JPWL */
+                                        JAS_FPRINTF(stderr, "p_data_read (%d) newlen (%d) \n", *p_data_read, l_seg->newlen );
                                 *(p_data_read) += l_seg->newlen;
 
                                 l_seg->numpasses += l_seg->numnewpasses;
