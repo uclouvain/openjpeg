@@ -27,9 +27,9 @@ cccccccccccccccccccccccccccccccc  issue135.j2k_2.pgx
 619694e5674992b3286244bf13058f7c  issue142.j2k_0.pgx
 c675c4b77dc3cc2a0d6542a32b438a48  issue142.j2k_1.pgx
 663ebdd12dd6a36915ea1152c43cb69a  issue142.j2k_2.pgx
-820b37ef934bd17d45dd73f5dc4d95b7  issue171.jp2_0.pgx
-4596dcd3efa51f84824b60353e2af306  issue171.jp2_1.pgx
-c2a656096b1965c3b4a26563d6ade467  issue171.jp2_2.pgx
+c44662b1f7fe01caa2ebf3ad62948e3e  issue171.jp2_0.pgx
+f70e8a4e5dbefeb44d50edd79b6c4cf6  issue171.jp2_1.pgx
+18bc167a1c851db2fd9f8c7af3289134  issue171.jp2_2.pgx
 adda4f5e46845b96dd3df14a76aa7229  issue188_beach_64bitsbox.jp2_0.pgx
 90a9709c166019d1e101e7b96d257ed9  issue188_beach_64bitsbox.jp2_1.pgx
 37e23d2df06ee60bf0f9f5e1c16054d8  issue188_beach_64bitsbox.jp2_2.pgx
