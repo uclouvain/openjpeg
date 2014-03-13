@@ -1001,16 +1001,16 @@ void opj_pi_update_decode_poc (opj_pi_iterator_t * p_pi,
 	l_current_poc = p_tcp->pocs;
 
 	for	(pino = 0;pino<l_bound;++pino) {
-		l_current_pi->poc.prg = l_current_poc->prg;
+		l_current_pi->poc.prg = l_current_poc->prg; /* Progression Order #0 */
 		l_current_pi->first = 1;
 
-		l_current_pi->poc.resno0 = l_current_poc->resno0;
-		l_current_pi->poc.compno0 = l_current_poc->compno0;
+		l_current_pi->poc.resno0 = l_current_poc->resno0; /* Resolution Level Index #0 (Start) */
+		l_current_pi->poc.compno0 = l_current_poc->compno0; /* Component Index #0 (Start) */
 		l_current_pi->poc.layno0 = 0;
 		l_current_pi->poc.precno0 = 0;
-		l_current_pi->poc.resno1 = l_current_poc->resno1;
-		l_current_pi->poc.compno1 = l_current_poc->compno1;
-		l_current_pi->poc.layno1 = l_current_poc->layno1;
+		l_current_pi->poc.resno1 = l_current_poc->resno1; /* Resolution Level Index #0 (End) */
+		l_current_pi->poc.compno1 = l_current_poc->compno1; /* Component Index #0 (End) */
+		l_current_pi->poc.layno1 = l_current_poc->layno1; /* Layer Index #0 (End) */
 		l_current_pi->poc.precno1 = p_max_precision;
 		++l_current_pi;
 		++l_current_poc;
