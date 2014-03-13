@@ -3555,6 +3555,17 @@ OPJ_BOOL j2k_read_ppm_v3 (
                 p_header_data+=4;
                 p_header_size-=4;
 
+                /* sanity check: how much bytes is left for Ippm */
+                if( p_header_size < l_N_ppm )
+                  {
+                  opj_event_msg(p_manager, EVT_ERROR, "Not enough bytes (%u) to hold Ippm series (%u), Index (%d)\n", p_header_size, l_N_ppm, l_Z_ppm );
+                  opj_free(l_cp->ppm_data);
+                  l_cp->ppm_data = NULL;
+                  l_cp->ppm_buffer = NULL;
+                  l_cp->ppm = 0; /* do not use PPM */
+                  return OPJ_TRUE;
+                  }
+
                 /* First PPM marker: Initialization */
                 l_cp->ppm_len = l_N_ppm;
                 l_cp->ppm_data_read = 0;
@@ -3589,6 +3600,16 @@ OPJ_BOOL j2k_read_ppm_v3 (
                                 p_header_data+=4;
                                 p_header_size-=4;
 
+                                /* sanity check: how much bytes is left for Ippm */
+                                if( p_header_size < l_N_ppm )
+                                  {
+                                  opj_event_msg(p_manager, EVT_ERROR, "Not enough bytes (%u) to hold Ippm series (%u), Index (%d)\n", p_header_size, l_N_ppm, l_Z_ppm );
+                                  opj_free(l_cp->ppm_data);
+                                  l_cp->ppm_data = NULL;
+                                  l_cp->ppm_buffer = NULL;
+                                  l_cp->ppm = 0; /* do not use PPM */
+                                  return OPJ_TRUE;
+                                  }
                                 /* Increase the size of ppm_data to add the new Ippm series*/
                                 assert(l_cp->ppm_data == l_cp->ppm_buffer && "We need ppm_data and ppm_buffer to be the same when reallocating");
                                 new_ppm_data = (OPJ_BYTE *) opj_realloc(l_cp->ppm_data, l_cp->ppm_len + l_N_ppm);
