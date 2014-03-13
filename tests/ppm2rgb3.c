@@ -81,6 +81,9 @@ static int writeoutput( const char *fn, FILE *ppm, int X, int Y, int bpp )
   /* write single comp as PGM: P5 */
   for( i = 0; i < 3; ++i )
     {
+#ifdef _MSC_VER
+#define snprintf _snprintf /* Visual Studio */
+#endif
     snprintf( outfn, sizeof(outfn), "%s.%s.pgm", fn, exts[i] );
     outf[i] = fopen( outfn, "wb" );
     if( !outf[i] ) goto cleanup;
