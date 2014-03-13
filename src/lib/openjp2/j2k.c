@@ -3634,7 +3634,7 @@ OPJ_BOOL j2k_read_ppm_v3 (
                 l_remaining_data = p_header_size;
 
                 /* Next Ippm series is a complete series ?*/
-                if (l_remaining_data > l_N_ppm) {
+                if (l_remaining_data >= l_N_ppm) {
                         OPJ_BYTE *new_ppm_data;
                         /* Increase the size of ppm_data to add the new Ippm series*/
                         assert(l_cp->ppm_data == l_cp->ppm_buffer && "We need ppm_data and ppm_buffer to be the same when reallocating");
