@@ -183,7 +183,7 @@ static int tga_readheader(FILE *fp, unsigned int *bits_per_pixel,
 
 #if WORDS_BIGENDIAN == 1
 
-static inline int16_t swap16(int16_t x)
+static INLINE int16_t swap16(int16_t x)
 {
     return((((u_int16_t)x & 0x00ffU) <<  8) |
            (((u_int16_t)x & 0xff00U) >>  8));
@@ -1421,13 +1421,7 @@ opj_image_t* pgxtoimage(const char *filename, opj_cparameters_t *parameters) {
 
 #define CLAMP(x,a,b) x < a ? a : (x > b ? b : x)
 
-#ifdef _MSC_VER
-#define STIN static __inline
-#else
-#define STIN static inline
-#endif
-
-STIN int clamp( const int value, const int prec, const int sgnd )
+static INLINE int clamp( const int value, const int prec, const int sgnd )
 {
   if( sgnd )
     {
