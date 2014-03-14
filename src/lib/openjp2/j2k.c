@@ -8676,6 +8676,58 @@ void opj_j2k_copy_tile_quantization_parameters( opj_j2k_t *p_j2k )
         }
 }
 
+static void opj_j2k_dump_tile_info( opj_tcp_t * l_default_tile,OPJ_INT32 numcomps,FILE* out_stream)
+{
+        if (l_default_tile)
+        {
+                OPJ_INT32 compno;
+
+                fprintf(out_stream, "\t default tile {\n");
+                fprintf(out_stream, "\t\t csty=%#x\n", l_default_tile->csty);
+                fprintf(out_stream, "\t\t prg=%#x\n", l_default_tile->prg);
+                fprintf(out_stream, "\t\t numlayers=%d\n", l_default_tile->numlayers);
+                fprintf(out_stream, "\t\t mct=%x\n", l_default_tile->mct);
+
+                for (compno = 0; compno < numcomps; compno++) {
+                        opj_tccp_t *l_tccp = &(l_default_tile->tccps[compno]);
+                        OPJ_UINT32 resno;
+      OPJ_INT32 bandno, numbands;
+
+                        /* coding style*/
+                        fprintf(out_stream, "\t\t comp %d {\n", compno);
+                        fprintf(out_stream, "\t\t\t csty=%#x\n", l_tccp->csty);
+                        fprintf(out_stream, "\t\t\t numresolutions=%d\n", l_tccp->numresolutions);
+                        fprintf(out_stream, "\t\t\t cblkw=2^%d\n", l_tccp->cblkw);
+                        fprintf(out_stream, "\t\t\t cblkh=2^%d\n", l_tccp->cblkh);
+                        fprintf(out_stream, "\t\t\t cblksty=%#x\n", l_tccp->cblksty);
+                        fprintf(out_stream, "\t\t\t qmfbid=%d\n", l_tccp->qmfbid);
+
+                        fprintf(out_stream, "\t\t\t preccintsize (w,h)=");
+                        for (resno = 0; resno < l_tccp->numresolutions; resno++) {
+                                fprintf(out_stream, "(%d,%d) ", l_tccp->prcw[resno], l_tccp->prch[resno]);
+                        }
+                        fprintf(out_stream, "\n");
+
+                        /* quantization style*/
+                        fprintf(out_stream, "\t\t\t qntsty=%d\n", l_tccp->qntsty);
+                        fprintf(out_stream, "\t\t\t numgbits=%d\n", l_tccp->numgbits);
+                        fprintf(out_stream, "\t\t\t stepsizes (m,e)=");
+                        numbands = (l_tccp->qntsty == J2K_CCP_QNTSTY_SIQNT) ? 1 : (OPJ_INT32)l_tccp->numresolutions * 3 - 2;
+                        for (bandno = 0; bandno < numbands; bandno++) {
+                                fprintf(out_stream, "(%d,%d) ", l_tccp->stepsizes[bandno].mant,
+                                        l_tccp->stepsizes[bandno].expn);
+                        }
+                        fprintf(out_stream, "\n");
+
+                        /* RGN value*/
+                        fprintf(out_stream, "\t\t\t roishift=%d\n", l_tccp->roishift);
+
+                        fprintf(out_stream, "\t\t }\n");
+                } /*end of component of default tile*/
+                fprintf(out_stream, "\t }\n"); /*end of default tile*/
+            }
+}
+
 void j2k_dump (opj_j2k_t* p_j2k, OPJ_INT32 flag, FILE* out_stream)
 {
         /* Check if the flag is compatible with j2k file*/
@@ -8693,6 +8745,16 @@ void j2k_dump (opj_j2k_t* p_j2k, OPJ_INT32 flag, FILE* out_stream)
         /* Dump the codestream info from main header */
         if (flag & OPJ_J2K_MH_INFO){
                 opj_j2k_dump_MH_info(p_j2k, out_stream);
+        }
+        /* Dump all tile/codestream info */
+        if (flag & OPJ_J2K_TCH_INFO){
+          OPJ_UINT32 l_nb_tiles = p_j2k->m_cp.th * p_j2k->m_cp.tw;
+          OPJ_UINT32 i;
+          opj_tcp_t * l_tcp = p_j2k->m_cp.tcps;
+          for (i=0;i<l_nb_tiles;++i) {
+            opj_j2k_dump_tile_info( l_tcp,(OPJ_INT32)p_j2k->m_private_image->numcomps, out_stream);
+            ++l_tcp;
+          }
         }
 
         /* Dump the codestream info of the current tile */
@@ -8780,70 +8842,17 @@ void opj_j2k_dump_MH_index(opj_j2k_t* p_j2k, FILE* out_stream)
 
 }
 
+
 void opj_j2k_dump_MH_info(opj_j2k_t* p_j2k, FILE* out_stream)
 {
-        opj_tcp_t * l_default_tile=NULL;
 
         fprintf(out_stream, "Codestream info from main header: {\n");
 
         fprintf(out_stream, "\t tx0=%d, ty0=%d\n", p_j2k->m_cp.tx0, p_j2k->m_cp.ty0);
         fprintf(out_stream, "\t tdx=%d, tdy=%d\n", p_j2k->m_cp.tdx, p_j2k->m_cp.tdy);
         fprintf(out_stream, "\t tw=%d, th=%d\n", p_j2k->m_cp.tw, p_j2k->m_cp.th);
-
-        l_default_tile = p_j2k->m_specific_param.m_decoder.m_default_tcp;
-        if (l_default_tile)
-        {
-                OPJ_INT32 compno;
-                OPJ_INT32 numcomps = (OPJ_INT32)p_j2k->m_private_image->numcomps;
-
-                fprintf(out_stream, "\t default tile {\n");
-                fprintf(out_stream, "\t\t csty=%#x\n", l_default_tile->csty);
-                fprintf(out_stream, "\t\t prg=%#x\n", l_default_tile->prg);
-                fprintf(out_stream, "\t\t numlayers=%d\n", l_default_tile->numlayers);
-                fprintf(out_stream, "\t\t mct=%x\n", l_default_tile->mct);
-
-                for (compno = 0; compno < numcomps; compno++) {
-                        opj_tccp_t *l_tccp = &(l_default_tile->tccps[compno]);
-                        OPJ_UINT32 resno;
-      OPJ_INT32 bandno, numbands;
-
-                        /* coding style*/
-                        fprintf(out_stream, "\t\t comp %d {\n", compno);
-                        fprintf(out_stream, "\t\t\t csty=%#x\n", l_tccp->csty);
-                        fprintf(out_stream, "\t\t\t numresolutions=%d\n", l_tccp->numresolutions);
-                        fprintf(out_stream, "\t\t\t cblkw=2^%d\n", l_tccp->cblkw);
-                        fprintf(out_stream, "\t\t\t cblkh=2^%d\n", l_tccp->cblkh);
-                        fprintf(out_stream, "\t\t\t cblksty=%#x\n", l_tccp->cblksty);
-                        fprintf(out_stream, "\t\t\t qmfbid=%d\n", l_tccp->qmfbid);
-
-                        fprintf(out_stream, "\t\t\t preccintsize (w,h)=");
-                        for (resno = 0; resno < l_tccp->numresolutions; resno++) {
-                                fprintf(out_stream, "(%d,%d) ", l_tccp->prcw[resno], l_tccp->prch[resno]);
-                        }
-                        fprintf(out_stream, "\n");
-
-                        /* quantization style*/
-                        fprintf(out_stream, "\t\t\t qntsty=%d\n", l_tccp->qntsty);
-                        fprintf(out_stream, "\t\t\t numgbits=%d\n", l_tccp->numgbits);
-                        fprintf(out_stream, "\t\t\t stepsizes (m,e)=");
-                        numbands = (l_tccp->qntsty == J2K_CCP_QNTSTY_SIQNT) ? 1 : (OPJ_INT32)l_tccp->numresolutions * 3 - 2;
-                        for (bandno = 0; bandno < numbands; bandno++) {
-                                fprintf(out_stream, "(%d,%d) ", l_tccp->stepsizes[bandno].mant,
-                                        l_tccp->stepsizes[bandno].expn);
-                        }
-                        fprintf(out_stream, "\n");
-
-                        /* RGN value*/
-                        fprintf(out_stream, "\t\t\t roishift=%d\n", l_tccp->roishift);
-
-                        fprintf(out_stream, "\t\t }\n");
-                } /*end of component of default tile*/
-                fprintf(out_stream, "\t }\n"); /*end of default tile*/
-
-        }
-
+        opj_j2k_dump_tile_info(p_j2k->m_specific_param.m_decoder.m_default_tcp,(OPJ_INT32)p_j2k->m_private_image->numcomps, out_stream);
         fprintf(out_stream, "}\n");
-
 }
 
 void j2k_dump_image_header(opj_image_t* img_header, OPJ_BOOL dev_dump_flag, FILE* out_stream)

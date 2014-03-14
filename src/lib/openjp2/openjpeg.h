@@ -160,7 +160,7 @@ typedef size_t   OPJ_SIZE_T;
 #define OPJ_IMG_INFO		1	/**< Basic image information provided to the user */
 #define OPJ_J2K_MH_INFO		2	/**< Codestream information based only on the main header */
 #define OPJ_J2K_TH_INFO		4	/**< Tile information based on the current tile header */
-/*FIXME #define OPJ_J2K_CSTR_INFO	6*/	/**<  */
+#define OPJ_J2K_TCH_INFO	8	/**< Tile/Component information of all tiles */
 #define OPJ_J2K_MH_IND		16	/**< Codestream index based only on the main header */
 #define OPJ_J2K_TH_IND		32	/**< Tile index based on the current tile */
 /*FIXME #define OPJ_J2K_CSTR_IND	48*/	/**<  */

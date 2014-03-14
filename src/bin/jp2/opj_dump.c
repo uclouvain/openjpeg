@@ -71,6 +71,7 @@ typedef struct img_folder{
 	/** Enable Cod Format for output*/
 	char set_out_format;
 
+  int flag;
 }img_fol_t;
 
 /* -------------------------------------------------------------------------- */
@@ -273,7 +274,7 @@ static int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *param
 	opj_option_t long_option[]={
 		{"ImgDir",REQ_ARG, NULL ,'y'},
 	};
-	const char optlist[] = "i:o:hv";
+	const char optlist[] = "i:o:f:hv";
 
 	totlen=sizeof(long_option);
 	img_fol->set_out_format = 0;
@@ -312,6 +313,10 @@ static int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *param
 			}
 			break;
 				
+				/* ----------------------------------------------------- */
+      case 'f': 			/* flag */
+        img_fol->flag = atoi(opj_optarg);
+        break;
 				/* ----------------------------------------------------- */
 
 			case 'h': 			/* display an help description */
@@ -424,6 +429,7 @@ int main(int argc, char *argv[])
 
 	/* Initialize img_fol */
 	memset(&img_fol,0,sizeof(img_fol_t));
+  img_fol.flag = OPJ_IMG_INFO | OPJ_J2K_MH_INFO | OPJ_J2K_MH_IND;
 
 	/* Parse input and get user encoding parameters */
 	if(parse_cmdline_decoder(argc, argv, &parameters,&img_fol) == 1) {
@@ -544,7 +550,7 @@ int main(int argc, char *argv[])
 			return EXIT_FAILURE;
 		}
 
-		opj_dump_codec(l_codec, OPJ_IMG_INFO | OPJ_J2K_MH_INFO | OPJ_J2K_MH_IND, fout );
+		opj_dump_codec(l_codec, img_fol.flag, fout );
 
 		cstr_info = opj_get_cstr_info(l_codec);
 
