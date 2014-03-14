@@ -47,6 +47,7 @@ file(GLOB_RECURSE OPJ_DATA_NR_LIST
      "${INPUT_NR}/*.j2k"
      "${INPUT_NR}/*.j2c"
      "${INPUT_NR}/*.jp2"
+     "${INPUT_NR}/*.jpc"
      #"${INPUT_NR}/*.jpx"
      )
 
@@ -133,6 +134,7 @@ else()
 endif()
 
 
+set(nonregression_filenames_used)
 # Parse the command line found in the file(s)
 set(IT_TEST_ENC 0)
 set(IT_TEST_DEC 0)
@@ -240,7 +242,6 @@ foreach(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
     #-----
     # Now we can add the test suite corresponding to a line command in the file
     #-----
-
     # ENCODER TEST SUITE
     if(ENC_TEST_FOUND)
         math(EXPR IT_TEST_ENC "${IT_TEST_ENC}+1" )
@@ -304,6 +305,10 @@ foreach(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
 
     # DECODER TEST SUITE
     else()
+      string(FIND ${INPUT_FILENAME} "nonregression" nr_pos)
+      if(${nr_pos} GREATER 0)
+        list(APPEND nonregression_filenames_used ${INPUT_FILENAME_NAME})
+      endif()
       math(EXPR IT_TEST_DEC "${IT_TEST_DEC}+1" )
 
       # Decode the input image
@@ -348,4 +353,19 @@ foreach(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
 
   endif()
 
+endforeach()
+
+set(existing_filenames)
+foreach(f ${OPJ_DATA_NR_LIST})
+  get_filename_component(ff ${f} NAME)
+  list(APPEND existing_filenames ${ff})
+endforeach()
+list(REMOVE_ITEM existing_filenames ${nonregression_filenames_used})
+
+# keep track of new addition:
+# if we reach here, then a J2K files was added but no test is present in
+# test_suite.ctest.in:
+foreach(found_but_no_test ${existing_filenames})
+  add_test(NAME Found-But-No-Test-${found_but_no_test} COMMAND ${CMAKE_COMMAND} -E echo "${found_but_no_test}")
+  set_tests_properties(Found-But-No-Test-${found_but_no_test} PROPERTIES WILL_FAIL TRUE)
 endforeach()
