@@ -315,7 +315,13 @@ OPJ_BOOL opj_t2_encode_packets( opj_t2_t* p_t2,
 #if 0
 #define JAS_FPRINTF fprintf
 #else
-#define JAS_FPRINTF
+/* issue 290 */
+static void opj_null_jas_fprintf(FILE* file, const char * format, ...)
+{
+  (void)file;
+  (void)format;
+}
+#define JAS_FPRINTF opj_null_jas_fprintf
 #endif
 
 OPJ_BOOL opj_t2_decode_packets( opj_t2_t *p_t2,
