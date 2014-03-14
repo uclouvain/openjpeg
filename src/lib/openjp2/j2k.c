@@ -3803,6 +3803,7 @@ static OPJ_BOOL opj_j2k_read_ppt (  opj_j2k_t *p_j2k,
                 l_tcp->ppt_data_size = 0;
                 l_tcp->ppt_len = p_header_size;
 
+                opj_free(l_tcp->ppt_buffer);
                 l_tcp->ppt_buffer = (OPJ_BYTE *) opj_calloc(l_tcp->ppt_len, sizeof(OPJ_BYTE) );
                 if (l_tcp->ppt_buffer == 00) {
                         opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to read PPT marker\n");
