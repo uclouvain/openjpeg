@@ -1007,11 +1007,6 @@ OPJ_BOOL opj_jp2_read_pclr(	opj_jp2_t *jp2,
 			if ((ptrdiff_t)p_pclr_header_size < p_pclr_header_data - orig_header_data + (ptrdiff_t)bytes_to_read)
 				return OPJ_FALSE;
 
-			if (bytes_to_read > sizeof(OPJ_UINT32))
-				bytes_to_read = sizeof(OPJ_UINT32);
-			if ((ptrdiff_t)p_pclr_header_size < p_pclr_header_data - orig_header_data + (ptrdiff_t)bytes_to_read)
-				return OPJ_FALSE;
-
 			opj_read_bytes(p_pclr_header_data, &l_value , bytes_to_read);	/* Cji */
 			p_pclr_header_data += bytes_to_read;
 			*entries = (OPJ_UINT32) l_value;
