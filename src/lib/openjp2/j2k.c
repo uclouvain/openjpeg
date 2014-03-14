@@ -3163,6 +3163,11 @@ static OPJ_BOOL opj_j2k_read_poc (  opj_j2k_t *p_j2k,
         l_old_poc_nb = l_tcp->POC ? l_tcp->numpocs + 1 : 0;
         l_current_poc_nb += l_old_poc_nb;
 
+        if(l_current_poc_nb >= 32)
+          {
+          opj_event_msg(p_manager, EVT_ERROR, "Too many POCs %d\n", l_current_poc_nb);
+          return OPJ_FALSE;
+          }
         assert(l_current_poc_nb < 32);
 
         /* now poc is in use.*/
