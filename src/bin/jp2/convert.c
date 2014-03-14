@@ -1716,7 +1716,7 @@ static void read_pnm_header(FILE *reader, struct pnm_header *ph)
         }
         if(ph->depth < 1 || ph->depth > 4) return;
 
-        if(ph->width && ph->height && ph->depth & ph->maxval && ttype)
+        if(ph->width && ph->height && ph->depth && ph->maxval && ttype)
             ph->ok = 1;
     }
     else
