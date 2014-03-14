@@ -515,9 +515,9 @@ foreach(kdu_file ${kdu_j2k_conf_files})
   )
 
   if("${kdu_file}" STREQUAL "a6_mono_colr")
-    set(kdu_test_args -n 4 -s b_t_)
+    set(kdu_test_args -n 4 -s b_t_ -p 4:4:4:4 -m 1:1:1:1)
   else()
-    set(kdu_test_args -n 1)
+    set(kdu_test_args -n 1 -p 4:4:4 -m 1:1:1)
   endif()
 
   add_test(NAME ETS-KDU-${filenameInput}-compare2ref
@@ -525,8 +525,6 @@ foreach(kdu_file ${kdu_j2k_conf_files})
     -b ${BASELINE_CONF}/${filenameRef}
     -t ${TEMP}/${filenameInput}.ppm
     ${kdu_test_args}
-    -p 4:4:4
-    -m 1:1:1
   )
 
   set_tests_properties(ETS-KDU-${filenameInput}-compare2ref

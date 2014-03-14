@@ -196,7 +196,7 @@ static opj_image_t* readImageFromFilePPM(const char* filename, int nbFilenamePGX
     if (!image_read)
       {
       int it_free_data;
-      fprintf(stderr, "Unable to load pgx file\n");
+      fprintf(stderr, "Unable to load ppm file: %s\n", filenameComponentPGX);
 
       free(param_image_read);
 
