@@ -144,6 +144,10 @@ opj_decompress -i @INPUT_NR_PATH@/issue211.jp2                  -o @TEMP_PATH@/i
 opj_decompress -i @INPUT_NR_PATH@/issue171.jp2                  -o @TEMP_PATH@/issue171.jp2.pgx
 # issue 171
 !opj_decompress -i @INPUT_NR_PATH@/issue165.jp2                  -o @TEMP_PATH@/issue165.jp2.pgx
+#
+!opj_decompress -i @INPUT_NR_PATH@/broken.jpc                    -o @TEMP_PATH@/broken.jpc.pgx
+# issue 226
+opj_decompress -i @INPUT_NR_PATH@/issue226.j2k                   -o @TEMP_PATH@/issue226.j2k.pgx
 
 # decode with specific area
 # prec=12; nb_c=1 
