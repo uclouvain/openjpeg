@@ -771,6 +771,13 @@ int main(int argc, char **argv)
   /* Comparison of header parameters*/
   printf("Step 1 -> Header comparison\n");
 
+  /* check dimensions (issue 286)*/
+  if(imageBase->numcomps != imageTest->numcomps )
+    {
+    printf("ERROR: dim mismatch (%d><%d)\n", imageBase->numcomps, imageTest->numcomps);
+    goto cleanup;
+    }
+
   for (it_comp = 0; it_comp < imageBase->numcomps; it_comp++)
     {
     param_image_diff[it_comp].x0 = 0;
