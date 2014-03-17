@@ -522,10 +522,8 @@ static opj_bool jp2_read_cmap(opj_jp2_t *jp2, opj_cio_t *cio,
 static void jp2_apply_cdef(opj_image_t *image, opj_jp2_color_t *color)
 {
 	opj_jp2_cdef_info_t *info;
-	int color_space;
 	unsigned short i, n, cn, typ, asoc, acn;
 
-	color_space = image->color_space;
 	info = color->jp2_cdef->info;
 	n = color->jp2_cdef->n;
 
@@ -535,6 +533,7 @@ static void jp2_apply_cdef(opj_image_t *image, opj_jp2_color_t *color)
 	if((asoc = info[i].asoc) == 0) continue;
 
 	cn = info[i].cn; typ = info[i].typ; acn = asoc - 1;
+  (void)typ;
 
 	if(cn != acn)
   {

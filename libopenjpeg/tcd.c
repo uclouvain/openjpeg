@@ -250,7 +250,9 @@ void tcd_malloc_encode(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp, int c
 					cbgwidthexpn = pdx - 1;
 					cbgheightexpn = pdy - 1;
 				}
-				
+        (void)brcbgyend;
+        (void)brcbgxend;
+
 				cblkwidthexpn = int_min(tccp->cblkw, cbgwidthexpn);
 				cblkheightexpn = int_min(tccp->cblkh, cbgheightexpn);
 				
@@ -512,6 +514,8 @@ void tcd_init_encode(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp, int cur
 					cbgwidthexpn = pdx - 1;
 					cbgheightexpn = pdy - 1;
 				}
+        (void)brcbgyend;
+        (void)brcbgxend;
 				
 				cblkwidthexpn = int_min(tccp->cblkw, cbgwidthexpn);
 				cblkheightexpn = int_min(tccp->cblkh, cbgheightexpn);
@@ -760,6 +764,8 @@ void tcd_malloc_decode_tile(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp, 
 				cbgwidthexpn = pdx - 1;
 				cbgheightexpn = pdy - 1;
 			}
+      (void)brcbgyend;
+      (void)brcbgxend;
 			
 			cblkwidthexpn = int_min(tccp->cblkw, cbgwidthexpn);
 			cblkheightexpn = int_min(tccp->cblkh, cbgheightexpn);

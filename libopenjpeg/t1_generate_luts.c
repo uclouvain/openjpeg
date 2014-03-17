@@ -215,7 +215,7 @@ int main(){
 	}
 	printf("%i\n};\n\n", lut_ctxno_zc[1023]);
 
-	// lut_ctxno_sc
+	/* lut_ctxno_sc */
 	printf("static char lut_ctxno_sc[256] = {\n  ");
 	for (i = 0; i < 255; ++i) {
 		printf("0x%x, ", t1_init_ctxno_sc(i << 4));
@@ -224,7 +224,7 @@ int main(){
 	}
 	printf("0x%x\n};\n\n", t1_init_ctxno_sc(255 << 4));
 
-	// lut_spb
+	/* lut_spb */
 	printf("static char lut_spb[256] = {\n  ");
 	for (i = 0; i < 255; ++i) {
 		printf("%i, ", t1_init_spb(i << 4));

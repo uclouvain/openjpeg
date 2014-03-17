@@ -293,12 +293,14 @@ void color_apply_icc_profile(opj_image_t *image)
 	if(in_prof == NULL) return;
 
 	in_space = cmsGetPCS(in_prof);
+  (void)in_space;
 	out_space = cmsGetColorSpace(in_prof);
 	intent = cmsGetHeaderRenderingIntent(in_prof);
 
 	
 	max_w = image->comps[0].w; max_h = image->comps[0].h;
 	prec = image->comps[0].prec;
+  (void)prec;
 	oldspace = image->color_space;
 
 	if(out_space == cmsSigRgbData) /* enumCS 16 */

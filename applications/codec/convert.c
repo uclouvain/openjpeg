@@ -126,14 +126,18 @@ static int tga_readheader(FILE *fp, unsigned int *bits_per_pixel,
 	}
 	id_len = (unsigned char)tga[0];
 	cmap_type = (unsigned char)tga[1];
+  (void)cmap_type;
 	image_type = (unsigned char)tga[2];
 	cmap_index = get_ushort(*(unsigned short*)(&tga[3]));
+  (void)cmap_index;
 	cmap_len = get_ushort(*(unsigned short*)(&tga[5]));
 	cmap_entry_size = (unsigned char)tga[7];
 
 
 	x_origin = get_ushort(*(unsigned short*)(&tga[8]));
+  (void)x_origin;
 	y_origin = get_ushort(*(unsigned short*)(&tga[10]));
+  (void)y_origin;
 	image_w = get_ushort(*(unsigned short*)(&tga[12]));
 	image_h = get_ushort(*(unsigned short*)(&tga[14]));
 	pixel_depth = (unsigned char)tga[16];

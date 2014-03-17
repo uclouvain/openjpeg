@@ -466,6 +466,8 @@ static void j2k_read_siz(opj_j2k_t *j2k) {
 		/* update components number in the jpwl_exp_comps filed */
 		cp->exp_comps = image->numcomps;
 	}
+#else
+  (void)len;
 #endif /* USE_JPWL */
 
   /* prevent division by zero */
@@ -476,7 +478,7 @@ static void j2k_read_siz(opj_j2k_t *j2k) {
 
 	image->comps = (opj_image_comp_t*) opj_calloc(image->numcomps, sizeof(opj_image_comp_t));
 	for (i = 0; i < image->numcomps; i++) {
-		int tmp, w, h;
+		int tmp;
 		tmp = cio_read(cio, 1);		/* Ssiz_i */
 		image->comps[i].prec = (tmp & 0x7f) + 1;
 		image->comps[i].sgnd = tmp >> 7;
@@ -517,10 +519,6 @@ static void j2k_read_siz(opj_j2k_t *j2k) {
       opj_event_msg(j2k->cinfo, EVT_ERROR, "JPWL: invalid component size (dx: %d, dy: %d)\n", image->comps[i].dx, image->comps[i].dy);
       return;
     }
-
-		/* TODO: unused ? */
-		w = int_ceildiv(image->x1 - image->x0, image->comps[i].dx);
-		h = int_ceildiv(image->y1 - image->y0, image->comps[i].dy);
 
 		image->comps[i].resno_decoded = 0;	/* number of resolution decoded */
 		image->comps[i].factor = cp->reduce; /* reducing factor per component */
@@ -781,6 +779,7 @@ static void j2k_read_cod(opj_j2k_t *j2k) {
 	opj_image_t *image = j2k->image;
 	
 	len = cio_read(cio, 2);				/* Lcod */
+  (void)len;
 	tcp->csty = cio_read(cio, 1);		/* Scod */
 	tcp->prg = (OPJ_PROG_ORDER)cio_read(cio, 1);		/* SGcod (A) */
 	tcp->numlayers = cio_read(cio, 2);	/* SGcod (B) */
@@ -834,6 +833,7 @@ static void j2k_read_coc(opj_j2k_t *j2k) {
 	opj_cio_t *cio = j2k->cio;
 	
 	len = cio_read(cio, 2);		/* Lcoc */
+  (void)len;
 	compno = cio_read(cio, image->numcomps <= 256 ? 1 : 2);	/* Ccoc */
   if (compno >= image->numcomps) {
     opj_event_msg(j2k->cinfo, EVT_ERROR,
@@ -1099,9 +1099,12 @@ static void j2k_read_crg(opj_j2k_t *j2k) {
 	int numcomps = j2k->image->numcomps;
 	
 	len = cio_read(cio, 2);			/* Lcrg */
+  (void)len;
 	for (i = 0; i < numcomps; i++) {
 		Xcrg_i = cio_read(cio, 2);	/* Xcrg_i */
+    (void)Xcrg_i;
 		Ycrg_i = cio_read(cio, 2);	/* Ycrg_i */
+    (void)Ycrg_i;
 	}
 }
 
@@ -1113,13 +1116,16 @@ static void j2k_read_tlm(opj_j2k_t *j2k) {
 	
 	len = cio_read(cio, 2);		/* Ltlm */
 	Ztlm = cio_read(cio, 1);	/* Ztlm */
+  (void)Ztlm;
 	Stlm = cio_read(cio, 1);	/* Stlm */
 	ST = ((Stlm >> 4) & 0x01) + ((Stlm >> 4) & 0x02);
 	SP = (Stlm >> 6) & 0x01;
 	tile_tlm = (len - 4) / ((SP + 1) * 2 + ST);
 	for (i = 0; i < tile_tlm; i++) {
 		Ttlm_i = cio_read(cio, ST);	/* Ttlm_i */
+    (void)Ttlm_i;
 		Ptlm_i = cio_read(cio, SP ? 4 : 2);	/* Ptlm_i */
+    (void)Ptlm_i;
 	}
 }
 
@@ -1130,6 +1136,7 @@ static void j2k_read_plm(opj_j2k_t *j2k) {
 
 	len = cio_read(cio, 2);		/* Lplm */
 	Zplm = cio_read(cio, 1);	/* Zplm */
+  (void)Zplm;
 	len -= 3;
 	while (len > 0) {
 		Nplm = cio_read(cio, 4);		/* Nplm */
@@ -1155,6 +1162,7 @@ static void j2k_read_plt(opj_j2k_t *j2k) {
 	
 	len = cio_read(cio, 2);		/* Lplt */
 	Zplt = cio_read(cio, 1);	/* Zplt */
+  (void)Zplt;
 	for (i = len - 3; i > 0; i--) {
 		add = cio_read(cio, 1);
 		packet_len = (packet_len << 7) + add;	/* Iplt_i */
@@ -1302,6 +1310,7 @@ static void j2k_read_sot(opj_j2k_t *j2k) {
 	opj_cio_t *cio = j2k->cio;
 
 	len = cio_read(cio, 2);
+  (void)len;
 	tileno = cio_read(cio, 2);
 
 #ifdef USE_JPWL
@@ -1579,8 +1588,10 @@ static void j2k_read_rgn(opj_j2k_t *j2k) {
 	int numcomps = j2k->image->numcomps;
 
 	len = cio_read(cio, 2);										/* Lrgn */
+  (void)len;
 	compno = cio_read(cio, numcomps <= 256 ? 1 : 2);			/* Crgn */
 	roisty = cio_read(cio, 1);									/* Srgn */
+  (void)roisty;
 
 #ifdef USE_JPWL
 	if (j2k->cp->correct) {
