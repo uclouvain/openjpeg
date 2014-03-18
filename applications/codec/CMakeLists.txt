@@ -5,8 +5,12 @@ SET(common_SRCS
   convert.c
   index.c
   ${OPENJPEG_SOURCE_DIR}/applications/common/color.c
-  ${OPENJPEG_SOURCE_DIR}/applications/common/opj_getopt.c
   )
+if(NOT USE_SYSTEM_GETOPT)
+  list(APPEND common_SRCS
+    ${OPENJPEG_SOURCE_DIR}/applications/common/opj_getopt.c
+  )
+endif()
 
 # Headers file are located here:
 INCLUDE_DIRECTORIES(

@@ -11,14 +11,15 @@ INCLUDE_DIRECTORIES(
 # First thing define the common source:
 SET(comparePGXimages_SRCS comparePGXimages.c
   ${OPENJPEG_SOURCE_DIR}/applications/codec/convert.c
-  ${OPENJPEG_SOURCE_DIR}/applications/common/opj_getopt.c
   )
+SET(compare_dump_files_SRCS compare_dump_files.c)
+SET(compareRAWimages_SRCS compareRAWimages.c)
 
-SET(compare_dump_files_SRCS compare_dump_files.c
-  ${OPENJPEG_SOURCE_DIR}/applications/common/opj_getopt.c)
-
-SET(compareRAWimages_SRCS compareRAWimages.c
-  ${OPENJPEG_SOURCE_DIR}/applications/common/opj_getopt.c)
+if(NOT USE_SYSTEM_GETOPT)
+  list(APPEND comparePGXimages_SRCS ${OPENJPEG_SOURCE_DIR}/applications/common/opj_getopt.c)
+  list(APPEND compare_dump_files_SRCS ${OPENJPEG_SOURCE_DIR}/applications/common/opj_getopt.c)
+  list(APPEND compareRAWimages_SRCS ${OPENJPEG_SOURCE_DIR}/applications/common/opj_getopt.c)
+endif()
 
 ADD_EXECUTABLE(comparePGXimages ${comparePGXimages_SRCS})
 TARGET_LINK_LIBRARIES(comparePGXimages

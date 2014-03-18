@@ -38,6 +38,10 @@ static char sccsid[] = "@(#)opj_getopt.c	8.3 (Berkeley) 4/27/95";
 #include <string.h>
 #include "opj_getopt.h"
 
+#ifdef USE_SYSTEM_GETOPT
+#error
+#endif
+
 int opj_opterr = 1,			/* if error message should be printed */
  opj_optind = 1,			/* index into parent argv vector */
  opj_optopt,			/* character checked for validity */
