@@ -737,6 +737,84 @@ opj_bool jp2_read_jp2h(opj_jp2_t *jp2, opj_cio_t *cio, opj_jp2_color_t *color)
 
 }/* jp2_read_jp2h() */
 
+static opj_bool opj_jp2_check_color(opj_image_t *image, opj_jp2_color_t *color, opj_common_ptr cinfo)
+{
+	int i;
+
+	/* testcase 4149.pdf.SIGSEGV.cf7.3501 */
+	if (color->jp2_cdef) {
+		opj_jp2_cdef_info_t *info = color->jp2_cdef->info;
+		int n = color->jp2_cdef->n;
+
+		for (i = 0; i < n; i++) {
+			if (info[i].cn >= image->numcomps) {
+				opj_event_msg(cinfo, EVT_ERROR, "Invalid component index %d (>= %d).\n", info[i].cn, image->numcomps);
+				return OPJ_FALSE;
+			}
+			if (info[i].asoc > 0 && (info[i].asoc - 1) >= image->numcomps) {
+				opj_event_msg(cinfo, EVT_ERROR, "Invalid component index %d (>= %d).\n", info[i].asoc - 1, image->numcomps);
+				return OPJ_FALSE;
+			}
+		}
+	}
+
+	/* testcases 451.pdf.SIGSEGV.f4c.3723, 451.pdf.SIGSEGV.5b5.3723 and
+	   66ea31acbb0f23a2bbc91f64d69a03f5_signal_sigsegv_13937c0_7030_5725.pdf */
+	if (color->jp2_pclr && color->jp2_pclr->cmap) {
+		int nr_channels = color->jp2_pclr->nr_channels;
+		opj_jp2_cmap_comp_t *cmap = color->jp2_pclr->cmap;
+		opj_bool *pcol_usage, is_sane = OPJ_TRUE;
+
+		/* verify that all original components match an existing one */
+		for (i = 0; i < nr_channels; i++) {
+			if (cmap[i].cmp >= image->numcomps) {
+				opj_event_msg(cinfo, EVT_ERROR, "Invalid component index %d (>= %d).\n", cmap[i].cmp, image->numcomps);
+				is_sane = OPJ_FALSE;
+			}
+		}
+
+		pcol_usage = opj_calloc(nr_channels, sizeof(opj_bool));
+		if (!pcol_usage) {
+			opj_event_msg(cinfo, EVT_ERROR, "Unexpected OOM.\n");
+			return OPJ_FALSE;
+		}
+		/* verify that no component is targeted more than once */
+		for (i = 0; i < nr_channels; i++) {
+      int pcol = cmap[i].pcol;
+      assert(cmap[i].mtyp == 0 || cmap[i].mtyp == 1);
+			if (pcol >= nr_channels) {
+				opj_event_msg(cinfo, EVT_ERROR, "Invalid component/palette index for direct mapping %d.\n", pcol);
+				is_sane = OPJ_FALSE;
+			}
+			else if (pcol_usage[pcol] && cmap[i].mtyp == 1) {
+				opj_event_msg(cinfo, EVT_ERROR, "Component %d is mapped twice.\n", pcol);
+				is_sane = OPJ_FALSE;
+			}
+      else if (cmap[i].mtyp == 0 && cmap[i].pcol != 0) {
+        /* I.5.3.5 PCOL: If the value of the MTYP field for this channel is 0, then
+         * the value of this field shall be 0. */
+				opj_event_msg(cinfo, EVT_ERROR, "Direct use at #%d however pcol=%d.\n", i, pcol);
+				is_sane = OPJ_FALSE;
+      }
+			else
+				pcol_usage[pcol] = OPJ_TRUE;
+		}
+		/* verify that all components are targeted at least once */
+		for (i = 0; i < nr_channels; i++) {
+			if (!pcol_usage[i] && cmap[i].mtyp != 0) {
+				opj_event_msg(cinfo, EVT_ERROR, "Component %d doesn't have a mapping.\n", i);
+				is_sane = OPJ_FALSE;
+			}
+		}
+		opj_free(pcol_usage);
+		if (!is_sane) {
+			return OPJ_FALSE;
+		}
+	}
+
+	return OPJ_TRUE;
+}
+
 opj_image_t* opj_jp2_decode(opj_jp2_t *jp2, opj_cio_t *cio, 
 	opj_codestream_info_t *cstr_info) 
 {
@@ -770,6 +848,10 @@ opj_image_t* opj_jp2_decode(opj_jp2_t *jp2, opj_cio_t *cio,
    }
    
     if (!jp2->ignore_pclr_cmap_cdef){
+	    if (!opj_jp2_check_color(image, &color, cinfo)) {
+        opj_event_msg(cinfo, EVT_ERROR, "Failed to decode PCRL box\n");
+		    return NULL;
+	    }
 
     /* Set Image Color Space */
 	if (jp2->enumcs == 16)

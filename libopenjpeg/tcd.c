@@ -32,6 +32,7 @@
 
 #define _ISOC99_SOURCE /* lrintf is C99 */
 #include "opj_includes.h"
+#include <assert.h>
 
 void tcd_dump(FILE *fd, opj_tcd_t *tcd, opj_tcd_image_t * img) {
 	int tileno, compno, resno, bandno, precno;/*, cblkno;*/
@@ -1493,10 +1494,18 @@ opj_bool tcd_decode_tile(opj_tcd_t *tcd, unsigned char *src, int len, int tileno
 		int tw = tilec->x1 - tilec->x0;
 		int w = imagec->w;
 
+		int i, j;
 		int offset_x = int_ceildivpow2(imagec->x0, imagec->factor);
 		int offset_y = int_ceildivpow2(imagec->y0, imagec->factor);
+    if( res->x0 > offset_x || offset_x > res->x1
+     || res->y0 > offset_y || offset_y > res->y1 )
+      {
+      opj_event_msg(tcd->cinfo, EVT_ERROR, "Impossible offsets\n");
+      return OPJ_FALSE;
+      }
+    assert( res->x0 <= offset_x && offset_x <= res->x1 );
+    assert( res->y0 <= offset_y && offset_y <= res->y1 );
 
-		int i, j;
 		if(!imagec->data){
 			imagec->data = (int*) opj_malloc(imagec->w * imagec->h * sizeof(int));
 		}
@@ -1510,6 +1519,7 @@ opj_bool tcd_decode_tile(opj_tcd_t *tcd, unsigned char *src, int len, int tileno
 				for(i = res->x0; i < res->x1; ++i) {
 					int v = tilec->data[i - res->x0 + (j - res->y0) * tw];
 					v += adjust;
+          /*assert( (i - offset_x) + (j - offset_y) * w >= 0 );*/
 					imagec->data[(i - offset_x) + (j - offset_y) * w] = int_clamp(v, min, max);
 				}
 			}
@@ -1519,6 +1529,7 @@ opj_bool tcd_decode_tile(opj_tcd_t *tcd, unsigned char *src, int len, int tileno
 					float tmp = ((float*)tilec->data)[i - res->x0 + (j - res->y0) * tw];
 					int v = lrintf(tmp);
 					v += adjust;
+          /*assert( (i - offset_x) + (j - offset_y) * w >= 0 );*/
 					imagec->data[(i - offset_x) + (j - offset_y) * w] = int_clamp(v, min, max);
 				}
 			}
