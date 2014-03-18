@@ -1983,7 +1983,7 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
 
         /* testcase 1610.pdf.SIGSEGV.59c.681 */
         if (((OPJ_UINT64)l_image->x1) * ((OPJ_UINT64)l_image->y1) != (l_image->x1 * l_image->y1)) {
-                opj_event_msg(p_manager, EVT_ERROR, "Prevent buffer overflow (x1: %d, y1: %d)", l_image->x1, l_image->y1);
+                opj_event_msg(p_manager, EVT_ERROR, "Prevent buffer overflow (x1: %d, y1: %d)\n", l_image->x1, l_image->y1);
                 return OPJ_FALSE;
         }
 
@@ -3568,7 +3568,7 @@ OPJ_BOOL j2k_read_ppm_v3 (
                   l_cp->ppm_data = NULL;
                   l_cp->ppm_buffer = NULL;
                   l_cp->ppm = 0; /* do not use PPM */
-                  return OPJ_TRUE;
+                  return OPJ_FALSE;
                   }
 
                 /* First PPM marker: Initialization */
@@ -3613,7 +3613,7 @@ OPJ_BOOL j2k_read_ppm_v3 (
                                   l_cp->ppm_data = NULL;
                                   l_cp->ppm_buffer = NULL;
                                   l_cp->ppm = 0; /* do not use PPM */
-                                  return OPJ_TRUE;
+                                  return OPJ_FALSE;
                                   }
                                 /* Increase the size of ppm_data to add the new Ippm series*/
                                 assert(l_cp->ppm_data == l_cp->ppm_buffer && "We need ppm_data and ppm_buffer to be the same when reallocating");

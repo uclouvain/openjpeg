@@ -26,6 +26,22 @@ set(BLACKLIST_JPEG2000_TMP
     4035.pdf.SIGSEGV.d8b.3375.jp2
     3635.pdf.asan.77.2930.jp2
     issue165.jp2
+    #edf_c2_1103421.jp2
+    edf_c2_1178956.jp2
+    edf_c2_1000290.jp2
+    #edf_c2_1000691.jp2 # ok
+    #edf_c2_20.jp2 #looks ok as per kdu_jp2info
+    edf_c2_1377017.jp2
+    edf_c2_1002767.jp2
+    #edf_c2_10025.jp2
+    edf_c2_1000234.jp2
+    edf_c2_225881.jp2
+    edf_c2_1000671.jp2
+    #edf_c2_1013627.jp2 # weird box, but kdu_jp2info ok
+    edf_c2_1015644.jp2
+    edf_c2_101463.jp2
+    edf_c2_1674177.jp2
+    edf_c2_1673169.jp2
    )
 
 # Define a list of file which should be gracefully rejected:
