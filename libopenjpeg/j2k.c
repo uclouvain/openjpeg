@@ -549,6 +549,15 @@ static void j2k_read_siz(opj_j2k_t *j2k) {
 	cp->tw = int_ceildiv(image->x1 - cp->tx0, cp->tdx);
 	cp->th = int_ceildiv(image->y1 - cp->ty0, cp->tdy);
 
+  /* gdal_fuzzer_check_number_of_tiles.jp2 */
+  if (cp->tw == 0 || cp->th == 0 || cp->tw > 65535 / cp->th) {
+    opj_event_msg(j2k->cinfo, EVT_ERROR, 
+                            "Invalid number of tiles : %u x %u (maximum fixed by jpeg2000 norm is 65535 tiles)\n",
+                            cp->tw, cp->th);
+    return;
+  }
+
+
 #ifdef USE_JPWL
 	if (j2k->cp->correct) {
 		/* if JPWL is on, we check whether TX errors have damaged
