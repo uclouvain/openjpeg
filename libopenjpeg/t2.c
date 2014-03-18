@@ -30,6 +30,7 @@
  */
 
 #include "opj_includes.h"
+#include <assert.h>
 
 /** @defgroup T2 T2 - Implementation of a tier-2 coding */
 /*@{*/
@@ -340,13 +341,15 @@ static int t2_decode_packet(opj_t2_t* t2, unsigned char *src, int len, opj_tcd_t
 	int precno = pi->precno;	/* precinct value */
 	int layno  = pi->layno;		/* quality layer value */
 
-	opj_tcd_resolution_t* res = &tile->comps[compno].resolutions[resno];
-
 	unsigned char *hd = NULL;
 	int present;
 	
 	opj_bio_t *bio = NULL;	/* BIO component */
-	
+
+	opj_tcd_resolution_t* res;
+	assert(&tile->comps[compno] != NULL);
+	res = &tile->comps[compno].resolutions[resno];
+
 	if (layno == 0) {
 		for (bandno = 0; bandno < res->numbands; bandno++) {
 			opj_tcd_band_t *band = &res->bands[bandno];

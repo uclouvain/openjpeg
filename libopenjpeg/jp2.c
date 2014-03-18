@@ -30,6 +30,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 #include "opj_includes.h"
+#include <assert.h>
 
 /** @defgroup JP2 JP2 - JPEG-2000 file format reader/writer */
 /*@{*/
@@ -172,8 +173,7 @@ static opj_bool jp2_read_boxhdr(opj_common_ptr cinfo, opj_cio_t *cio, opj_jp2_bo
 	}
 	else if (box->length == 0) {
 		box->length = cio_numbytesleft(cio) + 8;
-	}
-	if (box->length < 0) {
+	} else if (box->length < 0) {
 		opj_event_msg(cinfo, EVT_ERROR, "Integer overflow in box->length\n");
 		return OPJ_FALSE; /* TODO: actually check jp2_read_boxhdr's return value */
 	}
@@ -865,6 +865,14 @@ static opj_bool jp2_read_ftyp(opj_jp2_t *jp2, opj_cio_t *cio) {
 	jp2->brand = cio_read(cio, 4);		/* BR */
 	jp2->minversion = cio_read(cio, 4);	/* MinV */
 	jp2->numcl = (box.length - 16) / 4;
+
+  /* edf_c2_1673169.jp2 */
+	if (cio_numbytesleft(cio) < ((int)jp2->numcl * 4)) {
+		opj_event_msg(cinfo, EVT_ERROR, "Not enough bytes in FTYP Box "
+				"(expected %d, but only %d left)\n",
+				((int)jp2->numcl * 4), cio_numbytesleft(cio));
+		return OPJ_FALSE;
+	}
 	jp2->cl = (unsigned int *) opj_malloc(jp2->numcl * sizeof(unsigned int));
 
 	for (i = 0; i < (int)jp2->numcl; i++) {

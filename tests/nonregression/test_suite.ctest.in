@@ -37,10 +37,11 @@ image_to_j2k -i @INPUT_NR_PATH@/X_6_2K_24_FULL_CBR_CIRCLE_000.tif -o @TEMP_PATH@
 j2k_to_image -i  @INPUT_NR_PATH@/Bretagne2.j2k -o @TEMP_PATH@/Bretagne2.j2k.pgx
 j2k_to_image -i  @INPUT_NR_PATH@/_00042.j2k -o @TEMP_PATH@/_00042.j2k.pgx
 j2k_to_image -i  @INPUT_NR_PATH@/123.j2c -o @TEMP_PATH@/123.j2c.pgx
-j2k_to_image -i  @INPUT_NR_PATH@/broken.jp2 -o @TEMP_PATH@/broken.jp2.pgx
-j2k_to_image -i  @INPUT_NR_PATH@/broken2.jp2 -o @TEMP_PATH@/broken2.jp2.pgx
-j2k_to_image -i  @INPUT_NR_PATH@/broken3.jp2 -o @TEMP_PATH@/broken3.jp2.pgx
-j2k_to_image -i  @INPUT_NR_PATH@/broken4.jp2 -o @TEMP_PATH@/broken4.jp2.pgx
+# The 4 following tests should failed (kakadu indicates that they are corrupted)
+!j2k_to_image -i  @INPUT_NR_PATH@/broken.jp2 -o @TEMP_PATH@/broken.jp2.pgx
+!j2k_to_image -i  @INPUT_NR_PATH@/broken2.jp2 -o @TEMP_PATH@/broken2.jp2.pgx
+!j2k_to_image -i  @INPUT_NR_PATH@/broken3.jp2 -o @TEMP_PATH@/broken3.jp2.pgx
+!j2k_to_image -i  @INPUT_NR_PATH@/broken4.jp2 -o @TEMP_PATH@/broken4.jp2.pgx
 j2k_to_image -i  @INPUT_NR_PATH@/bug.j2c -o @TEMP_PATH@/bug.j2c.pgx
 j2k_to_image -i  @INPUT_NR_PATH@/buxI.j2k -o @TEMP_PATH@/buxI.j2k.pgx
 j2k_to_image -i  @INPUT_NR_PATH@/buxR.j2k -o @TEMP_PATH@/buxR.j2k.pgx
@@ -62,7 +63,93 @@ j2k_to_image -i  @INPUT_NR_PATH@/orb-blue10-win-j2k.j2k -o @TEMP_PATH@/orb-blue1
 j2k_to_image -i  @INPUT_NR_PATH@/orb-blue10-win-jp2.jp2 -o @TEMP_PATH@/orb-blue10-win-jp2.jp2.pgx
 j2k_to_image -i  @INPUT_NR_PATH@/relax.jp2 -o @TEMP_PATH@/relax.jp2.pgx
 j2k_to_image -i  @INPUT_NR_PATH@/test_lossless.j2k -o @TEMP_PATH@/test_lossless.j2k.pgx
+# text_GBR.jp2 file exhibt a error about a tile part with a index > of the number of tile-part in this tile (related to issue 202, 206, 208)
 j2k_to_image -i  @INPUT_NR_PATH@/text_GBR.jp2 -o @TEMP_PATH@/text_GBR.jp2.pgx
+# pacs.ge file should throw an error but finally it seems work with v2
+j2k_to_image -i  @INPUT_NR_PATH@/pacs.ge.j2k -o @TEMP_PATH@/pacs.ge.j2k.pgx
+# related to issue 135 
+j2k_to_image -i  @INPUT_NR_PATH@/kodak_2layers_lrcp.j2c -o @TEMP_PATH@/kodak_2layers_lrcp.j2c.pgx
+j2k_to_image -i  @INPUT_NR_PATH@/kodak_2layers_lrcp.j2c -o @TEMP_PATH@/kodak_2layers_lrcp.j2c.pgx -l 2
+# related to issue 104 and 110
 j2k_to_image -i  @INPUT_NR_PATH@/issue104_jpxstream.jp2 -o @TEMP_PATH@/issue104_jpxstream.jp2.pgx
+# File not supported by kakadu (Malformed PCLR box) and not supoprter by openjpeg (problem with value of TPSot)
+!j2k_to_image -i  @INPUT_NR_PATH@/mem-b2ace68c-1381.jp2 -o @TEMP_PATH@/mem-b2ace68c-1381.jp2.pgx
+# File which produced weird output with kakadu and not supoprter by openjpeg (problem with value of TPSot, issue 202, 206, 208)
+j2k_to_image -i  @INPUT_NR_PATH@/mem-b2b86b74-2753.jp2 -o @TEMP_PATH@/mem-b2b86b74-2753.jp2.pgx
+# issue 191 raised by the gdal fuzzer test (should properly failed)
+!j2k_to_image -i  @INPUT_NR_PATH@/gdal_fuzzer_unchecked_numresolutions.jp2 -o @TEMP_PATH@/gdal_fuzzer_unchecked_numresolutions.pgx
+# issue 192 raised by the gdal fuzzer test (should nicely failed)
+!j2k_to_image -i  @INPUT_NR_PATH@/gdal_fuzzer_assert_in_opj_j2k_read_SQcd_SQcc.patch.jp2 -o @TEMP_PATH@/gdal_fuzzer_assert_in_opj_j2k_read_SQcd_SQcc.patch.pgx
+# issue 193 raised by the gdal fuzzer test (should nicely failed)
+!j2k_to_image -i  @INPUT_NR_PATH@/gdal_fuzzer_check_number_of_tiles.jp2 -o @TEMP_PATH@/gdal_fuzzer_check_number_of_tiles.pgx
+# issue 194 raised by the gdal fuzzer test (should nicely failed)
+!j2k_to_image -i  @INPUT_NR_PATH@/gdal_fuzzer_check_comp_dx_dy.jp2 -o @TEMP_PATH@/gdal_fuzzer_check_comp_dx_dy.pgx
+# issue 202 
 j2k_to_image -i  @INPUT_NR_PATH@/file409752.jp2 -o @TEMP_PATH@/file409752.jp2.pgx
+# issue 188 
+j2k_to_image -i  @INPUT_NR_PATH@/issue188_beach_64bitsbox.jp2 -o @TEMP_PATH@/issue188_beach_64bitsbox.jp2.pgx
+# issue 206
+j2k_to_image -i  @INPUT_NR_PATH@/issue206_image-000.jp2 -o @TEMP_PATH@/issue206_image-000.jp2.pgx
+# issue 205
 j2k_to_image -i  @INPUT_NR_PATH@/issue205.jp2 -o @TEMP_PATH@/issue205.jp2.pgx
+# issue 225 (sumatrapdf)
+!j2k_to_image -i @INPUT_NR_PATH@/451.pdf.SIGSEGV.5b5.3723.jp2  -o @TEMP_PATH@/451.pdf.SIGSEGV.5b5.3723.jp2.pgx
+!j2k_to_image -i @INPUT_NR_PATH@/1888.pdf.asan.35.988.jp2      -o @TEMP_PATH@/1888.pdf.asan.35.988.jp2.pgx
+!j2k_to_image -i @INPUT_NR_PATH@/2539.pdf.SIGFPE.706.1712.jp2  -o @TEMP_PATH@/2539.pdf.SIGFPE.706.1712.jp2.pgx
+!j2k_to_image -i @INPUT_NR_PATH@/2236.pdf.SIGSEGV.398.1376.jp2 -o @TEMP_PATH@/2236.pdf.SIGSEGV.398.1376.jp2.pgx
+!j2k_to_image -i @INPUT_NR_PATH@/1336.pdf.asan.47.376.jp2      -o @TEMP_PATH@/1336.pdf.asan.47.376.jp2.pgx
+!j2k_to_image -i @INPUT_NR_PATH@/1851.pdf.SIGSEGV.ce9.948.jp2  -o @TEMP_PATH@/1851.pdf.SIGSEGV.ce9.948.jp2.pgx
+!j2k_to_image -i @INPUT_NR_PATH@/4149.pdf.SIGSEGV.cf7.3501.jp2 -o @TEMP_PATH@/4149.pdf.SIGSEGV.cf7.3501.jp2.pgx
+!j2k_to_image -i @INPUT_NR_PATH@/4035.pdf.SIGSEGV.d8b.3375.jp2 -o @TEMP_PATH@/4035.pdf.SIGSEGV.d8b.3375.jp2.pgx
+!j2k_to_image -i @INPUT_NR_PATH@/2977.pdf.asan.67.2198.jp2     -o @TEMP_PATH@/2977.pdf.asan.67.2198.jp2.pgx
+!j2k_to_image -i @INPUT_NR_PATH@/451.pdf.SIGSEGV.ce9.3723.jp2  -o @TEMP_PATH@/451.pdf.SIGSEGV.ce9.3723.jp2.pgx
+!j2k_to_image -i @INPUT_NR_PATH@/3635.pdf.asan.77.2930.jp2     -o @TEMP_PATH@/3635.pdf.asan.77.2930.jp2.pgx
+!j2k_to_image -i @INPUT_NR_PATH@/1802.pdf.SIGSEGV.36e.894.jp2  -o @TEMP_PATH@/1802.pdf.SIGSEGV.36e.894.jp2.pgx
+!j2k_to_image -i @INPUT_NR_PATH@/451.pdf.SIGSEGV.f4c.3723.jp2  -o @TEMP_PATH@/451.pdf.SIGSEGV.f4c.3723.jp2.pgx
+!j2k_to_image -i @INPUT_NR_PATH@/2.pdf.SIGFPE.706.1112.jp2     -o @TEMP_PATH@/2.pdf.SIGFPE.706.1112.jp2.pgx
+!j2k_to_image -i @INPUT_NR_PATH@/147af3f1083de4393666b7d99b01b58b_signal_sigsegv_130c531_6155_5136.jp2 -o @TEMP_PATH@/147af3f1083de4393666b7d99b01b58b_signal_sigsegv_130c531_6155_5136.jp2.pgx
+!j2k_to_image -i @INPUT_NR_PATH@/4241ac039aba57e6a9c948d519d94216_asan_heap-oob_14650f2_7469_602.jp2 -o @TEMP_PATH@/4241ac039aba57e6a9c948d519d94216_asan_heap-oob_14650f2_7469_602.jp2
+# issue 228 (16bits/lossy)
+j2k_to_image -i @INPUT_NR_PATH@/issue228.j2k                  -o @TEMP_PATH@/issue228.j2k.pgx
+# issue 229
+!j2k_to_image -i @INPUT_NR_PATH@/27ac957758a35d00d6765a0c86350d9c.SIGFPE.d25.537.jpc -o @TEMP_PATH@27ac957758a35d00d6765a0c86350d9c.SIGFPE.d25.537.jpc.pgx
+!j2k_to_image -i @INPUT_NR_PATH@/26ccf3651020967f7778238ef5af08af.SIGFPE.d25.527.jp2 -o @TEMP_PATH@26ccf3651020967f7778238ef5af08af.SIGFPE.d25.527.jp2.pgx
+!j2k_to_image -i @INPUT_NR_PATH@/0290cb77c5df21828fa74cf2ab2c84d8.SIGFPE.d25.31.jp2  -o @TEMP_PATH@0290cb77c5df21828fa74cf2ab2c84d8.SIGFPE.d25.31.jp2.pgx
+!j2k_to_image -i @INPUT_NR_PATH@/3672da2f1f67bbecad27d7181b4e9d7c.SIGFPE.d25.805.jpc -o @TEMP_PATH@3672da2f1f67bbecad27d7181b4e9d7c.SIGFPE.d25.805.jpc.pgx
+# issue 254 (loss in quality)
+j2k_to_image -i @INPUT_NR_PATH@/issue254.jp2                  -o @TEMP_PATH@/issue254.jp2.pgx
+# issue 142
+j2k_to_image -i @INPUT_NR_PATH@/issue142.j2k                  -o @TEMP_PATH@/issue142.j2k.pgx
+# issue 134
+j2k_to_image -i @INPUT_NR_PATH@/issue134.jp2                  -o @TEMP_PATH@/issue134.jp2.pgx
+# issue 135
+j2k_to_image -i @INPUT_NR_PATH@/issue135.j2k                  -o @TEMP_PATH@/issue135.j2k.pgx
+# issue 208
+j2k_to_image -i @INPUT_NR_PATH@/issue208.jp2                  -o @TEMP_PATH@/issue208.jp2.pgx
+# issue 211
+j2k_to_image -i @INPUT_NR_PATH@/issue211.jp2                  -o @TEMP_PATH@/issue211.jp2.pgx
+# issue 171
+j2k_to_image -i @INPUT_NR_PATH@/issue171.jp2                  -o @TEMP_PATH@/issue171.jp2.pgx
+# issue 171
+!j2k_to_image -i @INPUT_NR_PATH@/issue165.jp2                  -o @TEMP_PATH@/issue165.jp2.pgx
+#
+!j2k_to_image -i @INPUT_NR_PATH@/broken.jpc                    -o @TEMP_PATH@/broken.jpc.pgx
+# issue 226
+j2k_to_image -i @INPUT_NR_PATH@/issue226.j2k                   -o @TEMP_PATH@/issue226.j2k.pgx
+# issue 297
+!j2k_to_image -i @INPUT_NR_PATH@/edf_c2_1103421.jp2  -o @TEMP_PATH@/edf_c2_1103421.jp2.pgx
+!j2k_to_image -i @INPUT_NR_PATH@/edf_c2_1178956.jp2  -o @TEMP_PATH@/edf_c2_1178956.jp2.pgx
+!j2k_to_image -i @INPUT_NR_PATH@/edf_c2_1000290.jp2  -o @TEMP_PATH@/edf_c2_1000290.jp2.pgx
+!j2k_to_image -i @INPUT_NR_PATH@/edf_c2_1000691.jp2  -o @TEMP_PATH@/edf_c2_1000691.jp2.pgx
+!j2k_to_image -i @INPUT_NR_PATH@/edf_c2_20.jp2       -o @TEMP_PATH@/edf_c2_20.jp2.pgx
+!j2k_to_image -i @INPUT_NR_PATH@/edf_c2_1377017.jp2  -o @TEMP_PATH@/edf_c2_1377017.jp2.pgx
+!j2k_to_image -i @INPUT_NR_PATH@/edf_c2_1002767.jp2  -o @TEMP_PATH@/edf_c2_1002767.jp2.pgx
+!j2k_to_image -i @INPUT_NR_PATH@/edf_c2_10025.jp2    -o @TEMP_PATH@/edf_c2_10025.jp2.pgx
+!j2k_to_image -i @INPUT_NR_PATH@/edf_c2_1000234.jp2  -o @TEMP_PATH@/edf_c2_1000234.jp2.pgx
+!j2k_to_image -i @INPUT_NR_PATH@/edf_c2_225881.jp2   -o @TEMP_PATH@/edf_c2_225881.jp2.pgx
+!j2k_to_image -i @INPUT_NR_PATH@/edf_c2_1000671.jp2  -o @TEMP_PATH@/edf_c2_1000671.jp2.pgx
+!j2k_to_image -i @INPUT_NR_PATH@/edf_c2_1013627.jp2  -o @TEMP_PATH@/edf_c2_1013627.jp2.pgx
+!j2k_to_image -i @INPUT_NR_PATH@/edf_c2_1015644.jp2  -o @TEMP_PATH@/edf_c2_1015644.jp2.pgx
+!j2k_to_image -i @INPUT_NR_PATH@/edf_c2_101463.jp2   -o @TEMP_PATH@/edf_c2_101463.jp2.pgx
+!j2k_to_image -i @INPUT_NR_PATH@/edf_c2_1674177.jp2  -o @TEMP_PATH@/edf_c2_1674177.jp2.pgx
+!j2k_to_image -i @INPUT_NR_PATH@/edf_c2_1673169.jp2  -o @TEMP_PATH@/edf_c2_1673169.jp2.pgx

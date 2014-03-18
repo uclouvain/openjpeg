@@ -32,6 +32,7 @@
  */
 
 #include "opj_includes.h"
+#include <assert.h>
 
 /** @defgroup J2K J2K - JPEG-2000 codestream reader/writer */
 /*@{*/
@@ -404,6 +405,7 @@ static void j2k_write_siz(opj_j2k_t *j2k) {
 
 static void j2k_read_siz(opj_j2k_t *j2k) {
 	int len, i;
+  int n_comps;
 	
 	opj_cio_t *cio = j2k->cio;
 	opj_image_t *image = j2k->image;
@@ -422,12 +424,32 @@ static void j2k_read_siz(opj_j2k_t *j2k) {
 	
 	if ((image->x0<0)||(image->x1<0)||(image->y0<0)||(image->y1<0)) {
 		opj_event_msg(j2k->cinfo, EVT_ERROR,
-									"%s: invalid image size (x0:%d, x1:%d, y0:%d, y1:%d)\n",
+									"invalid image size (x0:%d, x1:%d, y0:%d, y1:%d)\n",
 									image->x0,image->x1,image->y0,image->y1);
 		return;
 	}
 	
+  n_comps = (len - 36 - 2 ) / 3;
+  assert( (len - 36 - 2 ) % 3 == 0 );
 	image->numcomps = cio_read(cio, 2);	/* Csiz */
+  assert( n_comps == image->numcomps );
+
+  /* testcase 4035.pdf.SIGSEGV.d8b.3375 */
+  if (image->x0 > image->x1 || image->y0 > image->y1) {
+    opj_event_msg(j2k->cinfo, EVT_ERROR, "Error with SIZ marker: negative image size (%d x %d)\n", image->x1 - image->x0, image->y1 - image->y0);
+    return;
+  }
+  /* testcase 2539.pdf.SIGFPE.706.1712 (also 3622.pdf.SIGFPE.706.2916 and 4008.pdf.SIGFPE.706.3345 and maybe more) */
+  if (!(cp->tdx * cp->tdy)) {
+    opj_event_msg(j2k->cinfo, EVT_ERROR, "Error with SIZ marker: invalid tile size (tdx: %d, tdy: %d)\n", cp->tdx, cp->tdy);
+    return;
+  }
+
+  /* testcase 1610.pdf.SIGSEGV.59c.681 */
+  if (((int64)image->x1) * ((int64)image->y1) != (image->x1 * image->y1)) {
+    opj_event_msg(j2k->cinfo, EVT_ERROR, "Prevent buffer overflow (x1: %d, y1: %d)\n", image->x1, image->y1);
+    return;
+  }
 
 #ifdef USE_JPWL
 	if (j2k->cp->correct) {
@@ -472,7 +494,7 @@ static void j2k_read_siz(opj_j2k_t *j2k) {
 
   /* prevent division by zero */
   if (!(cp->tdx * cp->tdy)) {
-    opj_event_msg(j2k->cinfo, EVT_ERROR, "JPWL: invalid tile size (tdx: %d, tdy: %d)\n", cp->tdx, cp->tdy);
+    opj_event_msg(j2k->cinfo, EVT_ERROR, "invalid tile size (tdx: %d, tdy: %d)\n", cp->tdx, cp->tdy);
     return;
   }
 
@@ -911,6 +933,8 @@ static void j2k_read_qcx(opj_j2k_t *j2k, int compno, int len) {
 		opj_event_msg(j2k->cinfo, EVT_WARNING ,
 					"bad number of subbands in Sqcx (%d) regarding to J2K_MAXBANDS (%d) \n"
 				    "- limiting number of bands to J2K_MAXBANDS and try to move to the next markers\n", numbands, J2K_MAXBANDS);
+    /* edf_c2_1013627.jp2 */
+    numbands = 1;
 	}
 
 #endif /* USE_JPWL */
@@ -1077,6 +1101,15 @@ static void j2k_read_poc(opj_j2k_t *j2k) {
 	len = cio_read(cio, 2);		/* Lpoc */
 	numpchgs = (len - 2) / (5 + 2 * (numcomps <= 256 ? 1 : 2));
 	
+  if( numpchgs >= 32 )
+    {
+    /* edf_c2_1103421.jp2 */
+    opj_event_msg(j2k->cinfo, EVT_ERROR,
+      "bad number of POCS (%d out of a maximum of %d)\n",
+      numpchgs, 32);
+    numpchgs = 0;
+    }
+
 	for (i = old_poc; i < numpchgs + old_poc; i++) {
 		opj_poc_t *poc;
 		poc = &tcp->pocs[i];
@@ -1548,7 +1581,13 @@ static void j2k_read_sod(opj_j2k_t *j2k) {
 	}	
 
 	data = j2k->tile_data[curtileno];
+  data_ptr = data; /* store in case of failure */
 	data = (unsigned char*) opj_realloc(data, (j2k->tile_len[curtileno] + len) * sizeof(unsigned char));
+  if( data == NULL ) {
+    opj_event_msg(j2k->cinfo, EVT_ERROR, "Could not reallocated\n" );
+    opj_free( data_ptr );
+    return;
+    }
 
 	data_ptr = data + j2k->tile_len[curtileno];
 	for (i = 0; i < len; i++) {
@@ -1645,6 +1684,7 @@ static void j2k_read_eoc(opj_j2k_t *j2k) {
 			{
 				tileno = j2k->cp->tileno[i];
 				success = tcd_decode_tile(tcd, j2k->tile_data[tileno], j2k->tile_len[tileno], tileno, j2k->cstr_info);
+        assert( tileno != -1 );
 				opj_free(j2k->tile_data[tileno]);
 				j2k->tile_data[tileno] = NULL;
 				tcd_free_decode_tile(tcd, i);
@@ -1824,8 +1864,11 @@ void j2k_destroy_decompress(opj_j2k_t *j2k) {
         if(j2k->cp != NULL) {
             for (i = 0; i < j2k->cp->tileno_size; i++) {
                 int tileno = j2k->cp->tileno[i];
-                opj_free(j2k->tile_data[tileno]);
-                j2k->tile_data[tileno] = NULL;
+                if( tileno != -1 )
+                  {
+                  opj_free(j2k->tile_data[tileno]);
+                  j2k->tile_data[tileno] = NULL;
+                  }
             }
         }
 
@@ -1989,6 +2032,11 @@ opj_image_t* j2k_decode(opj_j2k_t *j2k, opj_cio_t *cio, opj_codestream_info_t *c
 	}
 	if (j2k->state == J2K_STATE_NEOC) {
 		j2k_read_eoc(j2k);
+		/* Check one last time for errors during decoding before returning */
+		if (j2k->state & J2K_STATE_ERR) {
+			opj_image_destroy(image);
+			return NULL;
+		}
 	}
 
 	if (j2k->state != J2K_STATE_MT) {

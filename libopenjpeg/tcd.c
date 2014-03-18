@@ -1387,6 +1387,7 @@ opj_bool tcd_decode_tile(opj_tcd_t *tcd, unsigned char *src, int len, int tileno
 	if (l == -999) {
 		eof = 1;
 		opj_event_msg(tcd->cinfo, EVT_ERROR, "tcd_decode: incomplete bistream\n");
+    return OPJ_FALSE;
 	}
 	
 	/*------------------TIER1-----------------*/
@@ -1454,6 +1455,13 @@ opj_bool tcd_decode_tile(opj_tcd_t *tcd, unsigned char *src, int len, int tileno
 		int n = (tile->comps[0].x1 - tile->comps[0].x0) * (tile->comps[0].y1 - tile->comps[0].y0);
 
 		if (tile->numcomps >= 3 ){
+      /* testcase 1336.pdf.asan.47.376 */
+      if ((tile->comps[0].x1 - tile->comps[0].x0) * (tile->comps[0].y1 - tile->comps[0].y0) < n ||
+        (  tile->comps[1].x1 - tile->comps[1].x0) * (tile->comps[1].y1 - tile->comps[1].y0) < n ||
+        (  tile->comps[2].x1 - tile->comps[2].x0) * (tile->comps[2].y1 - tile->comps[2].y0) < n) {
+        opj_event_msg(tcd->cinfo, EVT_ERROR, "Tiles don't all have the same dimension. Skip the MCT step.\n");
+        return OPJ_FALSE;
+      }
 			if (tcd->tcp->tccps[0].qmfbid == 1) {
 				mct_decode(
 						tile->comps[0].data,
