@@ -94,7 +94,7 @@ struct tga_header
 
 static unsigned short get_ushort(unsigned short val) {
 
-#ifdef WORDS_BIGENDIAN
+#ifdef OPJ_BIG_ENDIAN
     return( ((val & 0xff) << 8) + (val >> 8) );
 #else
     return( val );
@@ -181,7 +181,7 @@ static int tga_readheader(FILE *fp, unsigned int *bits_per_pixel,
     return 1;
 }
 
-#if WORDS_BIGENDIAN == 1
+#ifdef OPJ_BIG_ENDIAN
 
 static INLINE int16_t swap16(int16_t x)
 {
@@ -228,7 +228,7 @@ static int tga_writeheader(FILE *fp, int bits_per_pixel, int width, int height,
     image_w = (unsigned short)width;
     image_h = (unsigned short) height;
 
-#if WORDS_BIGENDIAN == 0
+#ifndef OPJ_BIG_ENDIAN
     if(fwrite(&image_w, 2, 1, fp) != 1) goto fails;
     if(fwrite(&image_h, 2, 1, fp) != 1) goto fails;
 #else
