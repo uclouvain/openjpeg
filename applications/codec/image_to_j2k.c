@@ -590,7 +590,8 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
 		{"OutFor",REQ_ARG, NULL ,'O'},
 		{"POC",REQ_ARG, NULL ,'P'},
 		{"ROI",REQ_ARG, NULL ,'R'},
-		{"jpip",NO_ARG, NULL, 'J'}
+		{"jpip",NO_ARG, NULL, 'J'},
+		{0,0,0,0} /* GNU getopt_long requirement */
 	};
 
 	/* parse the command line */
@@ -600,12 +601,16 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
 #endif /* USE_JPWL */
 		"h";
 
-	totlen=sizeof(long_option);
+	totlen=sizeof(long_option)-1;
 	img_fol->set_out_format=0;
 	raw_cp->rawWidth = 0;
 
 	do{
+#ifdef USE_SYSTEM_GETOPT
+		c = opj_getopt_long(argc, argv, optlist,long_option,0);
+#else
 		c = opj_getopt_long(argc, argv, optlist,long_option,totlen);
+#endif
 		if (c == -1)
 			break;
 		switch (c) {

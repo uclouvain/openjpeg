@@ -243,6 +243,7 @@ static int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *param
 	opj_option_t long_option[]={
 		{"ImgDir",REQ_ARG, NULL ,'y'},
 		{"OutFor",REQ_ARG, NULL ,'O'},
+		{0,0,0,0} /* GNU getopt_long requirement */
 	};
 
 	const char optlist[] = "i:o:r:l:x:"
@@ -253,10 +254,14 @@ static int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *param
 #endif /* USE_JPWL */
 /* <<UniPG */
 			"h"		;
-	totlen=sizeof(long_option);
+	totlen=sizeof(long_option) - 1;
 	img_fol->set_out_format = 0;
 	do {
+#ifdef USE_SYSTEM_GETOPT
+		c = opj_getopt_long(argc, argv,optlist,long_option,0);
+#else
 		c = opj_getopt_long(argc, argv,optlist,long_option,totlen);
+#endif
 		if (c == -1)
 			break;
 		switch (c) {
