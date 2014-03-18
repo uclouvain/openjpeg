@@ -1497,14 +1497,15 @@ opj_bool tcd_decode_tile(opj_tcd_t *tcd, unsigned char *src, int len, int tileno
 		int i, j;
 		int offset_x = int_ceildivpow2(imagec->x0, imagec->factor);
 		int offset_y = int_ceildivpow2(imagec->y0, imagec->factor);
-    if( res->x0 > offset_x || offset_x > res->x1
-     || res->y0 > offset_y || offset_y > res->y1 )
+    /* NR-DEC-2977.pdf.asan.67.2198.jp2-52-decode */
+    if( res->x0 - offset_x < 0 || res->x1 - offset_x < 0
+     || res->y0 - offset_y < 0 || res->y1 - offset_y < 0 )
       {
-      opj_event_msg(tcd->cinfo, EVT_ERROR, "Impossible offsets\n");
+      opj_event_msg(tcd->cinfo, EVT_ERROR, "Impossible offsets %d / %d\n", offset_x, offset_y);
       return OPJ_FALSE;
       }
-    assert( res->x0 <= offset_x && offset_x <= res->x1 );
-    assert( res->y0 <= offset_y && offset_y <= res->y1 );
+    assert( 0 <= res->x0 - offset_x && 0 <= res->x1 - offset_x );
+    assert( 0 <= res->y0 - offset_y && 0 <= res->y1 - offset_y );
 
 		if(!imagec->data){
 			imagec->data = (int*) opj_malloc(imagec->w * imagec->h * sizeof(int));
