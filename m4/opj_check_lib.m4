@@ -21,16 +21,28 @@ __opj_func=$4
 __opj_have_dep="no"
 
 save_CPPFLAGS=${CPPFLAGS}
-save_LDFLAGS=${LDFLAGS}
 save_LIBS=${LIBS}
 
-if test "x${__opj_prefix}" = "x" ; then
+if test "x$UP[_CFLAGS]" != "x"; then
    CPPFLAGS="${CPPFLAGS} $UP[_CFLAGS]"
-   LDFLAGS="${LDFLAGS} $UP[_LIBS]"
 else
-   CPPFLAGS="${CPPFLAGS} -I${__opj_prefix}/include"
-   LDFLAGS="${LDFLAGS} -L${__opj_prefix}/lib"
-   LIBS="${LIBS} -l${__opj_lib}"
+   if test "x${__opj_prefix}" != "x" ; then
+     __opj_CPPFLAGS="-I${__opj_prefix}/include"
+   else
+     __opj_CPPFLAGS=""
+   fi
+   CPPFLAGS="${CPPFLAGS} ${__opj_CPPFLAGS}"
+fi
+
+if test "x$UP[_LIBS]" != "x"; then
+   LIBS="${LIBS} $UP[_LIBS]"
+else
+   if test "x${__opj_prefix}" != "x" ; then
+     __opj_LIBS="-L${__opj_prefix}/lib -l${__opj_lib}"
+   else
+     __opj_LIBS="-l${__opj_lib}"
+   fi
+   LIBS="${LIBS} ${__opj_LIBS}"
 fi
 
 AC_LINK_IFELSE(
@@ -45,7 +57,6 @@ ${__opj_func}();
        [__opj_have_dep="no"])
 
 CPPFLAGS=${save_CPPFLAGS}
-LDFLAGS=${save_LDFLAGS}
 LIBS=${save_LIBS}
 
 if test "x${__opj_prefix}" = "x" ; then
@@ -55,12 +66,12 @@ else
 fi
 AC_MSG_RESULT([${__opj_have_dep}])
 
-if test "x${__opj_have_dep}" = "xyes" && ! test "x${__opj_prefix}" = "x"; then
+if test "x${__opj_have_dep}" = "xyes"; then
    if test "x${UP[]_CFLAGS}" = "x" ; then
-      UP[]_CFLAGS="-I${__opj_prefix}/include"
+      UP[]_CFLAGS="${__opj_CPPFLAGS}"
    fi
    if test "x${UP[]_LIBS}" = "x" ; then
-      UP[]_LIBS="-L${__opj_prefix}/lib -l${__opj_lib}"
+      UP[]_LIBS="${__opj_LIBS}"
    fi
 fi
 
