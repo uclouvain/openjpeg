@@ -1867,8 +1867,12 @@ opj_image_t* pnmtoimage(const char *filename, opj_cparameters_t *parameters) {
             {
                 for(compno = 0; compno < numcomps; compno++)
                 {
-                    if ( !fread(&c0, 1, 1, fp) )
-                        fprintf(stderr, "\nError: fread return a number of element different from the expected.\n");
+                if ( !fread(&c0, 1, 1, fp) )
+                  {
+                  fprintf(stderr, "\nError: fread return a number of element different from the expected.\n");
+                  opj_image_destroy(image);
+                  return NULL;
+                  }
                     if(one)
                     {
                         image->comps[compno].data[i] = c0;
