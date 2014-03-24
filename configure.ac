@@ -23,7 +23,6 @@ AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADERS([opj_config.h])
 
-AC_CANONICAL_SYSTEM
 AC_CANONICAL_HOST
 
 AM_INIT_AUTOMAKE([1.11 foreign dist-bzip2 dist-xz dist-zip])
