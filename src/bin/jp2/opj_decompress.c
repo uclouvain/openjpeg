@@ -787,7 +787,7 @@ int main(int argc, char **argv)
 
 		/* Setup the decoder decoding parameters using user parameters */
 		if ( !opj_setup_decoder(l_codec, &parameters) ){
-			fprintf(stderr, "ERROR -> j2k_dump: failed to setup the decoder\n");
+			fprintf(stderr, "ERROR -> opj_compress: failed to setup the decoder\n");
 			opj_stream_destroy_v3(l_stream);
 			opj_destroy_codec(l_codec);
 			return EXIT_FAILURE;
