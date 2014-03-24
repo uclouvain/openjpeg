@@ -45,6 +45,11 @@ dist_man3_MANS = \
 man/man3/libopenjpeg.3
 
 install-data-hook:
+	@echo -e " (MAN)\t$(man1dir)/image_to_j2k.1" >> $(top_builddir)/report.txt
+	@echo -e " (MAN)\t$(man1dir)/j2k_dump.1" >> $(top_builddir)/report.txt
+	@echo -e " (MAN)\t$(man1dir)/j2k_to_image.1" >> $(top_builddir)/report.txt
+	@echo -e " (MAN)\t$(man3dir)/libopenjpeg.3" >> $(top_builddir)/report.txt
+if WANT_JPWL
 	cd $(DESTDIR)$(man1dir) && \
 	  rm -f jpwl_image_to_j2k.1 && \
 	  $(LN_S) image_to_j2k.1 jpwl_image_to_j2k.1
@@ -54,18 +59,17 @@ install-data-hook:
 	cd $(DESTDIR)$(man3dir) && \
 	  rm -f jpwl_libopenjpeg.3 && \
 	  $(LN_S) libopenjpeg.3 jpwl_libopenjpeg.3
-	@echo -e " (MAN)\t$(man1dir)/image_to_j2k.1" >> $(top_builddir)/report.txt
 	@echo -e " (LN)\t$(man1dir)/jpwl_image_to_j2k.1" >> $(top_builddir)/report.txt
-	@echo -e " (MAN)\t$(man1dir)/j2k_dump.1" >> $(top_builddir)/report.txt
-	@echo -e " (MAN)\t$(man1dir)/j2k_to_image.1" >> $(top_builddir)/report.txt
 	@echo -e " (LN)\t$(man1dir)//jpwl_j2k_to_image.1" >> $(top_builddir)/report.txt
-	@echo -e " (MAN)\t$(man3dir)/libopenjpeg.3" >> $(top_builddir)/report.txt
 	@echo -e " (LN)\t$(man3dir)/jpwl_libopenjpeg.3" >> $(top_builddir)/report.txt
+endif
 
 uninstall-hook:
+if WANT_JPWL
 	rm -f $(DESTDIR)$(man1dir)/jpwl_image_to_j2k.1
 	rm -f $(DESTDIR)$(man1dir)/jpwl_j2k_to_image.1
 	rm -f $(DESTDIR)$(man3dir)/jpwl_libopenjpeg.3
+endif
 
 EXTRA_DIST = \
 CMakeLists.txt \
