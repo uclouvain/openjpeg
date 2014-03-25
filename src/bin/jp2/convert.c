@@ -3222,7 +3222,7 @@ opj_image_t *pngtoimage(const char *read_idf, opj_cparameters_t * params)
     opj_image_cmptparm_t cmptparm[4];
     int sub_dx, sub_dy;
     unsigned int nr_comp;
-    int *r, *g, *b, *a;
+    int *r, *g, *b, *a = NULL;
     unsigned char sigbuf[8];
 
     if((reader = fopen(read_idf, "rb")) == NULL)
@@ -3312,7 +3312,7 @@ opj_image_t *pngtoimage(const char *read_idf, opj_cparameters_t * params)
 
     png_read_image(png, rows);
 
-    memset(&cmptparm, 0, 4 * sizeof(opj_image_cmptparm_t));
+    memset(cmptparm, 0, sizeof(cmptparm));
 
     sub_dx = params->subsampling_dx; sub_dy = params->subsampling_dy;
 
@@ -3340,7 +3340,7 @@ opj_image_t *pngtoimage(const char *read_idf, opj_cparameters_t * params)
     r = image->comps[0].data;
     g = image->comps[1].data;
     b = image->comps[2].data;
-    a = image->comps[3].data;
+    if(has_alpha) a = image->comps[3].data;
 
     for(i = 0; i < height; ++i)
     {
