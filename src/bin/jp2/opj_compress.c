@@ -102,6 +102,7 @@ static void encode_help_display(void) {
     fprintf(stdout,"\n");
     fprintf(stdout," * Lossless\n");
     fprintf(stdout," * 1 tile\n");
+    fprintf(stdout," * RGB->YCC conversion if at least 3 components\n");
     fprintf(stdout," * Size of precinct : 2^15 x 2^15 (means 1 precinct)\n");
     fprintf(stdout," * Size of code-block : 64 x 64\n");
     fprintf(stdout," * Number of resolutions: 6\n");
@@ -208,8 +209,14 @@ static void encode_help_display(void) {
     fprintf(stdout,"               -F rawWidth,rawHeight,rawComp,rawBitDepth,s/u (Signed/Unsigned)\n");
     fprintf(stdout,"               Example: -i lena.raw -o lena.j2k -F 512,512,3,8,u\n");
     fprintf(stdout,"\n");
-    fprintf(stdout,"-m           : use array-based MCT, values are coma separated, line by line\n");
-    fprintf(stdout,"			   no specific separators between lines, no space allowed between values\n");
+    fprintf(stdout,"-mct {0,1,2} : explicitely specifies if an Multiple Component Transform has to be used.\n");
+    fprintf(stdout,"               0: no MCT ; 1: RGB->YCC conversion ; 2: custom MCT.\n");
+    fprintf(stdout,"               If custom MCT, \"-m\" option has to be used (see hereunder).\n");
+    fprintf(stdout,"               By default, RGB->YCC conversion is used if there are 3 components or more,\n");
+    fprintf(stdout,"               no conversion otherwise.\n");
+    fprintf(stdout,"-m <file>    : use array-based MCT, values are coma separated, line by line\n");
+    fprintf(stdout,"               no specific separators between lines, no space allowed between values\n");
+    fprintf(stdout,"               If this option is used, it automatically sets \"-mct\" option to 2.\n");
     fprintf(stdout,"-jpip        : write jpip codestream index box in JP2 output file\n");
     fprintf(stdout,"               NOTICE: currently supports only RPCL order\n");
     fprintf(stdout,"\n");
@@ -453,11 +460,12 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
         {"OutFor",REQ_ARG, NULL ,'O'},
         {"POC",REQ_ARG, NULL ,'P'},
         {"ROI",REQ_ARG, NULL ,'R'},
-        {"jpip",NO_ARG, NULL, 'J'}
+        {"jpip",NO_ARG, NULL, 'J'},
+        {"mct",REQ_ARG, NULL, 'Y'}
     };
 
     /* parse the command line */
-    const char optlist[] = "i:o:r:q:n:b:c:t:p:s:SEM:x:R:d:T:If:P:C:F:u:J"
+    const char optlist[] = "i:o:r:q:n:b:c:t:p:s:SEM:x:R:d:T:If:P:C:F:u:JY:"
         #ifdef USE_JPWL
             "W:"
         #endif /* USE_JPWL */
@@ -927,6 +935,22 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
             break;
 
             /* ------------------------------------------------------ */
+
+        case 'Y':			/* Shall we do an MCT ? 0:no_mct;1:rgb->ycc;2:custom mct (-m option required)*/
+        {
+            int mct_mode=0;
+            sscanf(opj_optarg,"%d",&mct_mode);
+            if(mct_mode < 0 || mct_mode > 2){
+                fprintf(stderr,"MCT incorrect value!! Current accepted values are 0, 1 or 2.\n");
+                return 1;
+            }
+            parameters->tcp_mct = mct_mode;
+        }
+            break;
+
+            /* ------------------------------------------------------ */
+
+
         case 'm':			/* mct input file */
         {
             char *lFilename = opj_optarg;
@@ -1452,6 +1476,7 @@ int main(int argc, char **argv) {
     memset(&img_fol,0,sizeof(img_fol_t));
 
     /* parse input and get user encoding parameters */
+    parameters.tcp_mct = -1; /* This will be set later according to the input image or the provided option */
     if(parse_cmdline_encoder(argc, argv, &parameters,&img_fol, &raw_cp, indexfilename) == 1) {
         return 1;
     }
@@ -1611,7 +1636,20 @@ int main(int argc, char **argv) {
         }
 
         /* Decide if MCT should be used */
-        parameters.tcp_mct = image->numcomps == 3 ? 1 : 0;
+        if (parameters.tcp_mct == -1) { /* mct mode has not been set in commandline */
+            parameters.tcp_mct = image->numcomps >= 3 ? 1 : 0;
+        } else {            /* mct mode has been set in commandline */
+            if ((parameters.tcp_mct == 1) && (image->numcomps < 3)){
+                fprintf(stderr, "RGB->YCC conversion cannot be used:\n");
+                fprintf(stderr, "Input image has less than 3 components\n");
+                return 1;
+            }
+            if ((parameters.tcp_mct == 2) && (!parameters.mct_data)){
+                fprintf(stderr, "Custom MCT has been set but no array-based MCT\n");
+                fprintf(stderr, "has been provided. Aborting.\n");
+                return 1;
+            }
+        }
 
         /* encode the destination image */
         /* ---------------------------- */
