@@ -944,7 +944,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
                 fprintf(stderr,"MCT incorrect value!! Current accepted values are 0, 1 or 2.\n");
                 return 1;
             }
-            parameters->tcp_mct = mct_mode;
+            parameters->tcp_mct = (char) mct_mode;
         }
             break;
 
