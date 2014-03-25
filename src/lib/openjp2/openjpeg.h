@@ -1071,9 +1071,17 @@ OPJ_API void OPJ_CALLCONV opj_stream_set_seek_function(opj_stream_t* p_stream, o
  * Sets the given data to be used as a user data for the stream.
  * @param		p_stream	the stream to modify
  * @param		p_data		the data to set.
+ * @warning depending on your source object p_stream this function may leak, use opj_stream_set_user_data_v3
+*/
+OPJ_DEPRECATED(OPJ_API void OPJ_CALLCONV opj_stream_set_user_data (opj_stream_t* p_stream, void * p_data));
+
+/**
+ * Sets the given data to be used as a user data for the stream.
+ * @param		p_stream	the stream to modify
+ * @param		p_data		the data to set.
  * @param		p_function	the function to free p_data when opj_stream_destroy() is called.
 */
-OPJ_API void OPJ_CALLCONV opj_stream_set_user_data (opj_stream_t* p_stream, void * p_data, opj_stream_free_user_data_fn p_function);
+OPJ_API void OPJ_CALLCONV opj_stream_set_user_data_v3 (opj_stream_t* p_stream, void * p_data, opj_stream_free_user_data_fn p_function);
 
 /**
  * Sets the length of the user data for the stream.
