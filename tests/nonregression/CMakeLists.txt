@@ -376,7 +376,9 @@ foreach(f ${OPJ_DATA_NR_LIST})
   get_filename_component(ff ${f} NAME)
   list(APPEND existing_filenames ${ff})
 endforeach()
+if(existing_filenames)
 list(REMOVE_ITEM existing_filenames ${nonregression_filenames_used})
+endif()
 
 # keep track of new addition:
 # if we reach here, then a J2K files was added but no test is present in
