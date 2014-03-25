@@ -120,7 +120,11 @@ int main(int argc, char *argv[])
   int X, Y, bpp;
   int ok = 0;
 
-  if( argc < 2 ) goto cleanup;
+  if( argc < 2 )
+    {
+    fprintf( stderr, "%s input.ppm\n", argv[0] );
+    goto cleanup;
+    }
   fn = argv[1];
   ppm = fopen( fn, "rb" );
 
