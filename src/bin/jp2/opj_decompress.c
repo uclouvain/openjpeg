@@ -222,7 +222,7 @@ int get_file_format(const char *filename) {
 	if (ext == NULL)
 		return -1;
 	ext++;
-	if(ext) {
+	if(*ext) {
 		for(i = 0; i < sizeof(format)/sizeof(*format); i++) {
 			if(strcasecmp(ext, extension[i]) == 0) {
 				return format[i];
