@@ -27,6 +27,9 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
 
   # Suppress warning caused by intentional messages about deprecation
   ".*warning,.* is deprecated"
+  # java also warns about deprecated API
+  ".*java.*deprecation"
+  ".*deprecation.*"
   # supress warnings caused by 3rd party libs:
   ".*thirdparty.*"
   "libtiff.*has no symbols"

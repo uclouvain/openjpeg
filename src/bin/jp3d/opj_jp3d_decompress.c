@@ -518,7 +518,8 @@ int main(int argc, char **argv) {
 	fprintf(stdout, "[RESULT] Volume: %d x %d x %d (x %d bpv)\n ", 
 			 (volume->comps[0].w >> volume->comps[0].factor[0]),
 			 (volume->comps[0].h >> volume->comps[0].factor[1]),
-			 (volume->comps[0].l >> volume->comps[0].factor[2]),volume->comps[0].prec);
+			 (volume->comps[0].l >> volume->comps[0].factor[2]),
+        volume->comps[0].prec);
 
 	if(original){
 		psnr = calc_PSNR(original,volume);

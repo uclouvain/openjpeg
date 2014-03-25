@@ -221,7 +221,7 @@ int main(int argc, char **argv)
 	l_stream = opj_stream_create_default_file_stream(fsrc,1);
 	if (!l_stream){
 		fclose(fsrc);
-		fprintf(stderr, "ERROR -> failed to create the stream from the file\n");
+    fprintf(stderr, "ERROR -> failed to create the stream from the file\n");
 		return EXIT_FAILURE;
 	}
 

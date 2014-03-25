@@ -23,7 +23,7 @@ if(BUILD_JPIP_SERVER)
 
   # Build executable
   add_executable(opj_server ${OPJ_SERVER_SRCS})
-  target_link_libraries(opj_server openjpip_server)
+  target_link_libraries(opj_server ${FCGI_LIBRARIES} openjpip_server)
   set_property(
     TARGET opj_server
     APPEND PROPERTY
@@ -58,6 +58,14 @@ endforeach()
 
 # Build the two java clients:
 find_package(Java 1.5 COMPONENTS Development) # javac, jar
+
+# User can override this:
+if(NOT DEFINED JAVA_SOURCE_VERSION) 
+  set(JAVA_SOURCE_VERSION 1.5)
+endif()
+if(NOT DEFINED JAVA_TARGET_VERSION)
+  set(JAVA_TARGET_VERSION 1.5)
+endif()
 
 # Only build the java viewer if dev is found:
 if(Java_Development_FOUND AND Java_JAVAC_EXECUTABLE)
@@ -97,6 +105,7 @@ if(Java_Development_FOUND AND Java_JAVAC_EXECUTABLE)
     add_custom_command(
       OUTPUT ${LIBRARY_OUTPUT_PATH}/opj_jpip_viewer.jar
       COMMAND ${Java_JAVAC_EXECUTABLE} ${jflags}
+      -source ${JAVA_SOURCE_VERSION} -target ${JAVA_TARGET_VERSION}
       -classpath ${APACHE_XERCES_JAR}
       ${java2_srcs} -d ${CMAKE_CURRENT_BINARY_DIR}/classes2
       COMMAND ${Java_JAR_EXECUTABLE} cfm ${LIBRARY_OUTPUT_PATH}/opj_jpip_viewer.jar
@@ -127,6 +136,7 @@ if(Java_Development_FOUND AND Java_JAVAC_EXECUTABLE)
     add_custom_command(
       OUTPUT ${LIBRARY_OUTPUT_PATH}/opj_jpip_viewer.jar
       COMMAND ${Java_JAVAC_EXECUTABLE} ${jflags}
+      -source ${JAVA_SOURCE_VERSION} -target ${JAVA_TARGET_VERSION}
       ${java1_srcs} -d ${CMAKE_CURRENT_BINARY_DIR}/classes1
       COMMAND ${Java_JAR_EXECUTABLE} cfm ${LIBRARY_OUTPUT_PATH}/opj_jpip_viewer.jar
       ${CMAKE_CURRENT_SOURCE_DIR}/opj_viewer/dist/manifest.txt -C

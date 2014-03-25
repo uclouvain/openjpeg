@@ -51,9 +51,9 @@ OPJ_FLOAT64 opj_clock(void) {
     getrusage(0,&t);
     /* (2) What is the elapsed time ? - CPU time = User time + System time */
 	/* (2a) Get the seconds */
-    procTime = t.ru_utime.tv_sec + t.ru_stime.tv_sec;
+    procTime = (OPJ_FLOAT64)(t.ru_utime.tv_sec + t.ru_stime.tv_sec);
     /* (2b) More precisely! Get the microseconds part ! */
-    return ( procTime + (t.ru_utime.tv_usec + t.ru_stime.tv_usec) * 1e-6 ) ;
+    return ( procTime + (OPJ_FLOAT64)(t.ru_utime.tv_usec + t.ru_stime.tv_usec) * 1e-6 ) ;
 #endif
 }
 

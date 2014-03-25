@@ -29,7 +29,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "opj_config.h"
+#include "opj_apps_config.h"
 #include "openjpeg.h"
 #include "j2k_lib.h"
 #include "cio.h"
@@ -60,13 +60,6 @@ sample warning callback expecting a FILE* client object
 static void warning_callback(const char *msg, void *client_data) {
 	FILE *stream = (FILE*)client_data;
 	fprintf(stream, "[WARNING] %s", msg);
-}
-/**
-sample debug callback expecting a FILE* client object
-*/
-static void info_callback(const char *msg, void *client_data) {
-	FILE *stream = (FILE*)client_data;
-	fprintf(stream, "[INFO] %s", msg);
 }
 
 /* -------------------------------------------------------------------------- */

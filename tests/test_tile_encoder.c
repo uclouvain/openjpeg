@@ -36,20 +36,6 @@
 /* -------------------------------------------------------------------------- */
 
 /**
-sample error callback expecting a FILE* client object
-*/
-static void error_callback_file(const char *msg, void *client_data) {
-	FILE *stream = (FILE*)client_data;
-	fprintf(stream, "[ERROR] %s", msg);
-}
-/**
-sample warning callback expecting a FILE* client object
-*/
-static void warning_callback_file(const char *msg, void *client_data) {
-	FILE *stream = (FILE*)client_data;
-	fprintf(stream, "[WARNING] %s", msg);
-}
-/**
 sample error debug callback expecting no client object
 */
 static void error_callback(const char *msg, void *client_data) {
@@ -116,7 +102,7 @@ int main (int argc, char *argv[])
   /* should be test_tile_encoder 3 2000 2000 1000 1000 8 tte1.j2k */
   if( argc == 9 )
     {
-    num_comps = atoi( argv[1] );
+    num_comps = (OPJ_UINT32)atoi( argv[1] );
     image_width = atoi( argv[2] );
     image_height = atoi( argv[3] );
     tile_width = atoi( argv[4] );
@@ -140,14 +126,14 @@ int main (int argc, char *argv[])
     {
     return 1;
     }
-	l_nb_tiles = (image_width/tile_width) * (image_height/tile_height);
-	l_data_size = tile_width * tile_height * num_comps * (comp_prec/8);
+	l_nb_tiles = (OPJ_UINT32)(image_width/tile_width) * (OPJ_UINT32)(image_height/tile_height);
+	l_data_size = (OPJ_UINT32)tile_width * (OPJ_UINT32)tile_height * (OPJ_UINT32)num_comps * (OPJ_UINT32)(comp_prec/8);
 
-	l_data = (OPJ_BYTE*) malloc(tile_width * tile_height * num_comps * (comp_prec/8) * sizeof(OPJ_BYTE));
+	l_data = (OPJ_BYTE*) malloc(l_data_size * sizeof(OPJ_BYTE));
 
 	fprintf(stdout, "Encoding random values -> keep in mind that this is very hard to compress\n");
 	for (i=0;i<l_data_size;++i)	{
-		l_data[i] = i; /*rand();*/
+		l_data[i] = (OPJ_BYTE)i; /*rand();*/
 	}
 
 	opj_set_default_encoder_parameters(&l_param);
@@ -228,11 +214,11 @@ int main (int argc, char *argv[])
 		l_current_param_ptr->dx = 1;
 		l_current_param_ptr->dy = 1;
 
-		l_current_param_ptr->h = image_height;
-		l_current_param_ptr->w = image_width;
+		l_current_param_ptr->h = (OPJ_UINT32)image_height;
+		l_current_param_ptr->w = (OPJ_UINT32)image_width;
 
 		l_current_param_ptr->sgnd = 0;
-		l_current_param_ptr->prec = comp_prec;
+		l_current_param_ptr->prec = (OPJ_UINT32)comp_prec;
 
 		l_current_param_ptr->x0 = 0;
 		l_current_param_ptr->y0 = 0;
@@ -241,7 +227,7 @@ int main (int argc, char *argv[])
 	}
 
   /* should we do j2k or jp2 ?*/
-  len = strlen( output_file );
+  len = (unsigned char)strlen( output_file );
   if( strcmp( output_file + len - 4, ".jp2" ) == 0 )
     {
     l_codec = opj_create_compress(OPJ_CODEC_JP2);
@@ -267,8 +253,8 @@ int main (int argc, char *argv[])
 
 	l_image->x0 = 0;
 	l_image->y0 = 0;
-	l_image->x1 = image_width;
-	l_image->y1 = image_height;
+	l_image->x1 = (OPJ_UINT32)image_width;
+	l_image->y1 = (OPJ_UINT32)image_height;
 	l_image->color_space = OPJ_CLRSPC_SRGB;
 
 	if (! opj_setup_encoder(l_codec,&l_param,l_image)) {
@@ -287,6 +273,13 @@ int main (int argc, char *argv[])
 	}
 
 	l_stream = opj_stream_create_default_file_stream(l_file, OPJ_FALSE);
+    if (! l_stream) {
+		fprintf(stderr, "ERROR -> test_tile_encoder: failed to create the stream from the output file %s !\n",output_file );
+		fclose(l_file);
+		opj_destroy_codec(l_codec);
+		opj_image_destroy(l_image);
+		return 1;
+	}
 
 	if (! opj_start_compress(l_codec,l_image,l_stream)) {
 		fprintf(stderr, "ERROR -> test_tile_encoder: failed to start compress!\n");

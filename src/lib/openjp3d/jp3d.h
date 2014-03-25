@@ -65,7 +65,7 @@ The functions in J3D.C have for goal to read/write the several parts of the code
 #define J3D_MS_EOC 0xffd9	/**< EOC marker value */
 #define J3D_MS_CAP 0xff50	/**< CAP marker value */
 #define J3D_MS_SIZ 0xff51	/**< SIZ marker value */
-#define J3D_MS_ZSI 0xff54	/**< ZSI marker value */
+#define J3D_MS_NSI 0xff54	/**< NSI marker value */
 #define J3D_MS_COD 0xff52	/**< COD marker value */
 #define J3D_MS_COC 0xff53	/**< COC marker value */
 #define J3D_MS_RGN 0xff5e	/**< RGN marker value */

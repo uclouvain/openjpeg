@@ -26,8 +26,8 @@
 #ifndef OPJ_INTTYPES_H
 #define OPJ_INTTYPES_H
 
-#include "opj_config.h"
-#ifdef HAVE_INTTYPES_H
+#include "opj_config_private.h"
+#ifdef OPJ_HAVE_INTTYPES_H
 #include <inttypes.h>
 #else
 #if defined(_WIN32)

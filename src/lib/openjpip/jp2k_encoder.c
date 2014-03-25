@@ -608,14 +608,14 @@ Byte8_t comp_seqID( Byte8_t tileID, SIZmarker_param_t SIZ, CODmarker_param_t COD
   return seqID;
 }
 
-Byte8_t get_last_tileID( msgqueue_param_t *msgqueue, Byte8_t csn, OPJ_BOOL isJPPstream)
+Byte8_t get_last_tileID( msgqueue_param_t *msgqueue, Byte8_t csn, OPJ_BOOL isjppstream)
 {
   Byte8_t last_tileID = 0;
   message_param_t *msg;
   
   msg = msgqueue->first;
   while( msg){
-    if( isJPPstream){
+    if( isjppstream){
       if((msg->class_id == TILE_HEADER_MSG) && msg->csn == csn && last_tileID < msg->in_class_id)
 	last_tileID = msg->in_class_id;
     }

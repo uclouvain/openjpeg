@@ -32,7 +32,7 @@
  * This must be included before any system headers,
  * since they can react to macro defined there
  */
-#include "opj_config.h"
+#include "opj_config_private.h"
 
 /*
  ==========================================================
@@ -56,7 +56,7 @@
   ftello() only on systems with special LFS support since some systems
   (e.g. FreeBSD) support a 64-bit off_t by default.
 */
-#if defined(HAVE_FSEEKO)
+#if defined(OPJ_HAVE_FSEEKO) && !defined(fseek)
 #  define fseek  fseeko
 #  define ftell  ftello
 #endif
@@ -102,22 +102,6 @@
 	#define __attribute__(x) /* __attribute__(x) */
 #endif
 
-/*
-The inline keyword is supported by C99 but not by C90. 
-Most compilers implement their own version of this keyword ... 
-*/
-#ifndef INLINE
-	#if defined(_MSC_VER)
-		#define INLINE __forceinline
-	#elif defined(__GNUC__)
-		#define INLINE __inline__
-	#elif defined(__MWERKS__)
-		#define INLINE inline
-	#else 
-		/* add other compilers here ... */
-		#define INLINE 
-	#endif /* defined(<Compiler>) */
-#endif /* INLINE */
 
 /* Are restricted pointers available? (C99) */
 #if (__STDC_VERSION__ != 199901L)
@@ -129,8 +113,8 @@ Most compilers implement their own version of this keyword ...
 	#endif
 #endif
 
-/* MSVC and Borland C do not have lrintf */
-#if defined(_MSC_VER) || defined(__BORLANDC__)
+/* MSVC before 2013 and Borland C do not have lrintf */
+#if defined(_MSC_VER) && (_MSC_VER < 1800) || defined(__BORLANDC__)
 static INLINE long lrintf(float f){
 #ifdef _M_X64
     return (long)((f>0.0f) ? (f + 0.5f):(f -0.5f));
@@ -185,6 +169,7 @@ static INLINE long lrintf(float f){
 /* <<JPWL */
 
 /* V2 */
+#include "opj_codec.h"
 
 
 #endif /* OPJ_INCLUDES_H */

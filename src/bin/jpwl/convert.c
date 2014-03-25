@@ -29,21 +29,21 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#include "opj_config.h"
+#include "opj_apps_config.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 
-#ifdef HAVE_LIBTIFF
+#ifdef OPJ_HAVE_LIBTIFF
 #include <tiffio.h>
-#endif /* HAVE_LIBTIFF */
+#endif /* OPJ_HAVE_LIBTIFF */
 
-#ifdef HAVE_LIBPNG
+#ifdef OPJ_HAVE_LIBPNG
 #include <zlib.h>
 #include <png.h>
-#endif /* HAVE_LIBPNG */
+#endif /* OPJ_HAVE_LIBPNG */
 
 #include "openjpeg.h"
 #include "convert.h"
@@ -94,7 +94,7 @@ struct tga_header
 
 static unsigned short get_ushort(unsigned short val) {
 
-#ifdef WORDS_BIGENDIAN
+#ifdef OPJ_BIG_ENDIAN
 	return( ((val & 0xff) << 8) + (val >> 8) );
 #else
     return( val );
@@ -179,7 +179,7 @@ static int tga_readheader(FILE *fp, unsigned int *bits_per_pixel,
 	return 1;
 }
 
-#if WORDS_BIGENDIAN == 1
+#ifdef OPJ_BIG_ENDIAN
 
 static inline int16_t swap16(int16_t x)
 {
@@ -226,7 +226,7 @@ static int tga_writeheader(FILE *fp, int bits_per_pixel, int width, int height,
 	image_w = (unsigned short)width;
 	image_h = (unsigned short) height;
 
-#if WORDS_BIGENDIAN == 0
+#ifndef OPJ_BIG_ENDIAN
 	if(fwrite(&image_w, 2, 1, fp) != 1) goto fails;
 	if(fwrite(&image_h, 2, 1, fp) != 1) goto fails;
 #else
@@ -2074,7 +2074,7 @@ int imagetopnm(opj_image_t * image, const char *outfile)
 	return 0;
 }/* imagetopnm() */
 
-#ifdef HAVE_LIBTIFF
+#ifdef OPJ_HAVE_LIBTIFF
 /* -->> -->> -->> -->>
 
 	TIFF IMAGE FORMAT
@@ -2781,7 +2781,7 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
 
 }/* tiftoimage() */
 
-#endif /* HAVE_LIBTIFF */
+#endif /* OPJ_HAVE_LIBTIFF */
 
 /* -->> -->> -->> -->>
 
@@ -3027,7 +3027,7 @@ int imagetoraw(opj_image_t * image, const char *outfile)
 	return 0;
 }
 
-#ifdef HAVE_LIBPNG
+#ifdef OPJ_HAVE_LIBPNG
 
 #define PNG_MAGIC "\x89PNG\x0d\x0a\x1a\x0a"
 #define MAGIC_SIZE 8
@@ -3560,4 +3560,4 @@ fin:
 
 	return fails;
 }/* imagetopng() */
-#endif /* HAVE_LIBPNG */
+#endif /* OPJ_HAVE_LIBPNG */

@@ -58,15 +58,15 @@ Read the SIZ marker (2D volume and tile size)
 */
 static void j3d_read_siz(opj_j3d_t *j3d);
 /**
-Write the ZSI marker (3rd volume and tile size)
+Write the NSI marker (3rd volume and tile size)
 @param j3d J3D handle
 */
-static void j3d_write_zsi(opj_j3d_t *j3d);
+static void j3d_write_nsi(opj_j3d_t *j3d);
 /**
-Read the ZSI marker (3rd volume and tile size)
+Read the NSI marker (3rd volume and tile size)
 @param j3d J3D handle
 */
-static void j3d_read_zsi(opj_j3d_t *j3d);
+static void j3d_read_nsi(opj_j3d_t *j3d);
 /**
 Write the COM marker (comment)
 @param j3d J3D handle
@@ -418,6 +418,10 @@ static void j3d_write_cap(opj_j3d_t *j3d){
 	lenp = cio_tell(cio);
 	cio_skip(cio, 2);
 	cio_write(cio,J3D_CAP_10, 4); 
+  if( J3D_CAP_10 )
+    {
+    cio_write(cio, 0x0, 2); 
+    }
 	len = cio_tell(cio) - lenp;
 	cio_seek(cio, lenp);
 	cio_write(cio, len, 2);		/* Lsiz */
@@ -430,18 +434,24 @@ static void j3d_read_cap(opj_j3d_t *j3d){
 	/*cio_read(cio, 2);	 CAP */
 	len = cio_read(cio, 2);
 	Cap = cio_read(cio, 4);
+  if(Cap) {
+    cio_read(cio, 2);
+  }
+  assert( len == 2 + 4 + 2 );
 }
-static void j3d_write_zsi(opj_j3d_t *j3d) {
+static void j3d_write_nsi(opj_j3d_t *j3d) {
 	int i;
 	int lenp, len;
+  int ndim = 3;
 
 	opj_cio_t *cio = j3d->cio;
 	opj_volume_t *volume = j3d->volume;
 	opj_cp_t *cp = j3d->cp;
 	
-	cio_write(cio, J3D_MS_ZSI, 2);	/* ZSI */
+	cio_write(cio, J3D_MS_NSI, 2);	/* NSI */
 	lenp = cio_tell(cio);
 	cio_skip(cio, 2);
+	cio_write(cio, ndim, 1);	/* Ndim */
 	cio_write(cio, volume->z1, 4);	/* Zsiz */
 	cio_write(cio, volume->z0, 4);	/* Z0siz */
 	cio_write(cio, cp->tdz, 4);		/* ZTsiz */
@@ -455,14 +465,17 @@ static void j3d_write_zsi(opj_j3d_t *j3d) {
 	cio_seek(cio, lenp + len);
 }
 
-static void j3d_read_zsi(opj_j3d_t *j3d) {
+static void j3d_read_nsi(opj_j3d_t *j3d) {
+  int ndim;
 	int len, i;
 	
 	opj_cio_t *cio = j3d->cio;
 	opj_volume_t *volume = j3d->volume;
 	opj_cp_t *cp = j3d->cp;
 	
-	len = cio_read(cio, 2);			/* Lsiz */
+	len = cio_read(cio, 2);			/* Lnsi */
+	ndim = cio_read(cio, 1);			/* Ndim */
+  assert( ndim == 3 );
 	volume->z1 = cio_read(cio, 4);	/* Zsiz */
 	volume->z0 = cio_read(cio, 4);	/* Z0siz */
 	cp->tdz = cio_read(cio, 4);		/* ZTsiz */
@@ -767,9 +780,7 @@ static void j3d_write_com(opj_j3d_t *j3d) {
 	cio_write(cio, J3D_MS_COM, 2);
 	lenp = cio_tell(cio);
 	cio_skip(cio, 2);
-	/*cio_write(cio, 0, 2);*/
-	cio_write(cio, j3d->cp->transform_format,1);
-	cio_write(cio, j3d->cp->encoding_format,1);
+	cio_write(cio, 1, 2);
 	/*opj_event_msg(j3d->cinfo, EVT_INFO, "TRF %D ENCOD %d\n",j3d->cp->transform_format,j3d->cp->encoding_format);*/
 	if (j3d->cp->comment != NULL) {
 		char *comment = j3d->cp->comment;
@@ -788,9 +799,8 @@ static void j3d_read_com(opj_j3d_t *j3d) {
 	opj_cio_t *cio = j3d->cio;
 
 	len = cio_read(cio, 2);
+	cio_read(cio, 2); // read registration
 	
-	j3d->cp->transform_format = (OPJ_TRANSFORM) cio_read(cio, 1);
-	j3d->cp->encoding_format = (OPJ_ENTROPY_CODING) cio_read(cio, 1);
 	/*opj_event_msg(j3d->cinfo, EVT_INFO, "TRF %D ENCOD %d\n",j3d->cp->transform_format,j3d->cp->encoding_format);*/
 
 	cio_skip(cio, len - 4);  /*posible comments*/
@@ -798,6 +808,7 @@ static void j3d_read_com(opj_j3d_t *j3d) {
 
 static void j3d_write_cox(opj_j3d_t *j3d, int compno) {
 	int i;
+  int shift = 2;
 
 	opj_cp_t *cp = j3d->cp;
 	opj_tcp_t *tcp = &cp->tcps[j3d->curtileno];
@@ -809,11 +820,15 @@ static void j3d_write_cox(opj_j3d_t *j3d, int compno) {
 		cio_write(cio, tccp->numresolution[1] - 1, 1);	/* SPcox (E) No of decomposition levels in y-axis*/
 		cio_write(cio, tccp->numresolution[2] - 1, 1);	/* SPcox (F) No of decomposition levels in z-axis*/
 	}
-	/* (cblkw - 2) + (cblkh - 2) + (cblkl - 2) <= 18*/
-	cio_write(cio, tccp->cblk[0] - 2, 1);				/* SPcox (G) Cblk width entre 10 y 2 (8 y 0)*/
-	cio_write(cio, tccp->cblk[1] - 2, 1);				/* SPcox (H) Cblk height*/
 	if (j3d->cinfo->codec_format == CODEC_J3D) {
-		cio_write(cio, tccp->cblk[2] - 2, 1);			/* SPcox (I) Cblk depth*/
+    /* Table A.7 */
+    shift = 0;
+  }
+	/* (cblkw - 2) + (cblkh - 2) + (cblkl - 2) <= 18*/
+	cio_write(cio, tccp->cblk[0] - shift, 1);				/* SPcox (G) Cblk width entre 10 y 2 (8 y 0)*/
+	cio_write(cio, tccp->cblk[1] - shift, 1);				/* SPcox (H) Cblk height*/
+	if (j3d->cinfo->codec_format == CODEC_J3D) {
+		cio_write(cio, tccp->cblk[2] - shift, 1);			/* SPcox (I) Cblk depth*/
 	}
 	cio_write(cio, tccp->cblksty, 1);				/* SPcox (J) Cblk style*/
 	cio_write(cio, tccp->dwtid[0], 1);				/* SPcox (K) WT in x-axis 15444-2 Table A10*/
@@ -836,6 +851,7 @@ static void j3d_write_cox(opj_j3d_t *j3d, int compno) {
 
 static void j3d_read_cox(opj_j3d_t *j3d, int compno) {
 	int i;
+  int shift = 2;
 
 	opj_cp_t *cp = j3d->cp;
 	opj_tcp_t *tcp = j3d->state == J3D_STATE_TPH ? &cp->tcps[j3d->curtileno] : j3d->default_tcp;
@@ -855,10 +871,14 @@ static void j3d_read_cox(opj_j3d_t *j3d, int compno) {
 	cp->reduce[1] = int_min((tccp->numresolution[1])-1, cp->reduce[1]);
 	cp->reduce[2] = int_min((tccp->numresolution[2])-1, cp->reduce[2]);
 	
-	tccp->cblk[0] = cio_read(cio, 1) + 2;	/* SPcox (G) */
-	tccp->cblk[1] = cio_read(cio, 1) + 2;	/* SPcox (H) */
+  if (j3d->cinfo->codec_format == CODEC_J3D) {
+    /* Table A.7 */
+    shift = 0;
+  }
+	tccp->cblk[0] = cio_read(cio, 1) + shift;	/* SPcox (G) */
+	tccp->cblk[1] = cio_read(cio, 1) + shift;	/* SPcox (H) */
 	if (j3d->cinfo->codec_format == CODEC_J3D)
-		tccp->cblk[2] = cio_read(cio, 1) + 2;	/* SPcox (I) */
+		tccp->cblk[2] = cio_read(cio, 1) + shift;	/* SPcox (I) */
 	else
 		tccp->cblk[2] = tccp->cblk[0];
 
@@ -1545,7 +1565,7 @@ opj_dec_mstabent_t j3d_dec_mstab[] = {
   {J3D_MS_EOC, J3D_STATE_TPHSOT, j3d_read_eoc},
   {J3D_MS_CAP, J3D_STATE_MHSIZ, j3d_read_cap},
   {J3D_MS_SIZ, J3D_STATE_MHSIZ, j3d_read_siz},
-  {J3D_MS_ZSI, J3D_STATE_MHSIZ, j3d_read_zsi},
+  {J3D_MS_NSI, J3D_STATE_MHSIZ, j3d_read_nsi},
   {J3D_MS_COD, J3D_STATE_MH | J3D_STATE_TPH, j3d_read_cod},
   {J3D_MS_COC, J3D_STATE_MH | J3D_STATE_TPH, j3d_read_coc},
   {J3D_MS_RGN, J3D_STATE_MH | J3D_STATE_TPH, j3d_read_rgn},
@@ -1664,11 +1684,12 @@ void j3d_setup_decoder(opj_j3d_t *j3d, opj_dparameters_t *parameters) {
 		cp->reduce[2] = parameters->cp_reduce[2];
 		cp->layer = parameters->cp_layer;
 		cp->bigendian = parameters->bigendian;
-		
-		
-		cp->encoding_format = ENCOD_2EB;
+
+    /* MM: Settings of the following two member variables would take
+      place during j3d_read_com. FIXME */
+		cp->encoding_format = ENCOD_3EB;
 		cp->transform_format = TRF_2D_DWT;
-		
+
 		/* keep a link to cp so that we can destroy it later in j3d_destroy_decompress */
 		j3d->cp = cp;
 	}
@@ -2243,8 +2264,12 @@ bool j3d_encode(opj_j3d_t *j3d, opj_cio_t *cio, opj_volume_t *volume, char *inde
 	j3d_write_siz(j3d);
 	if (j3d->cinfo->codec_format == CODEC_J3D) {
 		j3d_write_cap(j3d);
-		j3d_write_zsi(j3d);
+		j3d_write_nsi(j3d);
 	}
+
+	/*if (j3d->cp->transform_format != TRF_2D_DWT || j3d->cp->encoding_format != ENCOD_2EB)*/
+		j3d_write_com(j3d);
+
 	j3d_write_cod(j3d);
 	j3d_write_qcd(j3d);
 	for (compno = 0; compno < volume->numcomps; compno++) {
@@ -2258,9 +2283,6 @@ bool j3d_encode(opj_j3d_t *j3d, opj_cio_t *cio, opj_volume_t *volume, char *inde
 	if (j3d->volume->comps[0].dcoffset != 0)
         j3d_write_dco(j3d);
 
-	if (j3d->cp->transform_format != TRF_2D_DWT || j3d->cp->encoding_format != ENCOD_2EB)
-		j3d_write_com(j3d);
-	
 	/* INDEX >> */
 	if(volume_info && volume_info->index_on) {
 		volume_info->main_head_end = cio_tell(cio) - 1;

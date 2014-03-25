@@ -41,9 +41,9 @@
 #define BMP_DFMT 12
 #define YUV_DFMT 13
 #define TIF_DFMT 14
-#define RAW_DFMT 15
+#define RAW_DFMT 15 /* MSB / Big Endian */
 #define TGA_DFMT 16
 #define PNG_DFMT 17
-#define RAWL_DFMT 18
+#define RAWL_DFMT 18 /* LSB / Little Endian */
 
 #endif /* _OPJ_FORMAT_DEFS_H_ */

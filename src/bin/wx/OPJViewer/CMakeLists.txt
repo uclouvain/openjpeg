@@ -9,6 +9,7 @@ include_directories(
   ${OPENJPEG_SOURCE_DIR}/src/lib
   ${OPENJPEG_SOURCE_DIR}/src/bin
   ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2
+  ${OPENJPEG_BINARY_DIR}/src/lib/openjp2 # opj_config.h and opj_config_private.h
   )
 
 # original flags:

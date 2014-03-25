@@ -48,6 +48,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "fcgi_stdio.h"
 #include "openjpip.h"
 
 #ifndef QUIT_SIGNAL

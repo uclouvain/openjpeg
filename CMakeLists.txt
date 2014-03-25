@@ -30,7 +30,7 @@ include_regular_expression("^.*$")
 # OPENJPEG version number, useful for packaging and doxygen doc:
 set(OPENJPEG_VERSION_MAJOR 2)
 set(OPENJPEG_VERSION_MINOR 0)
-set(OPENJPEG_VERSION_BUILD 0)
+set(OPENJPEG_VERSION_BUILD 1)
 set(OPENJPEG_VERSION
   "${OPENJPEG_VERSION_MAJOR}.${OPENJPEG_VERSION_MINOR}.${OPENJPEG_VERSION_BUILD}")
 set(PACKAGE_VERSION
@@ -47,11 +47,12 @@ set(PACKAGE_VERSION
 #   1.5   |  5
 #   1.5.1 |  5
 #   2.0   |  6
+#   2.0.1 |  6
 # above is the recommendation by the OPJ team. If you really need to override this default,
 # you can specify your own OPENJPEG_SOVERSION at cmake configuration time:
 # cmake -DOPENJPEG_SOVERSION:STRING=42 /path/to/openjpeg
 if(NOT OPENJPEG_SOVERSION)
-  SET(OPENJPEG_SOVERSION 6)
+  SET(OPENJPEG_SOVERSION 7)
 endif(NOT OPENJPEG_SOVERSION)
 set(OPENJPEG_LIBRARY_PROPERTIES
   VERSION   "${OPENJPEG_VERSION_MAJOR}.${OPENJPEG_VERSION_MINOR}.${OPENJPEG_VERSION_BUILD}"
@@ -181,14 +182,28 @@ endif()
 
 #-----------------------------------------------------------------------------
 # opj_config.h generation (1/2)
+
+# Check if some include files are provided by the system
+include(EnsureFileInclude)
+# These files are mandatory
+ensure_file_include("string.h"   HAVE_STRING_H YES)
+ensure_file_include("memory.h"   HAVE_MEMORY_H YES)
+ensure_file_include("stdlib.h"   HAVE_STDLIB_H YES)
+ensure_file_include("stdio.h"    HAVE_STDIO_H  YES)
+ensure_file_include("math.h"     HAVE_MATH_H   YES)
+ensure_file_include("float.h"    HAVE_FLOAT_H  YES)
+ensure_file_include("time.h"     HAVE_TIME_H   YES)
+ensure_file_include("stdarg.h"   HAVE_STDARG_H YES)
+ensure_file_include("ctype.h"    HAVE_CTYPE_H  YES)
+ensure_file_include("assert.h"   HAVE_ASSERT_H YES)
+
+# For the following files, we provide an alternative, they are not mandatory
+ensure_file_include("stdint.h"   OPJ_HAVE_STDINT_H   NO)
+ensure_file_include("inttypes.h" OPJ_HAVE_INTTYPES_H NO)
+
+# why check this one ? for openjpip ?
 include (${CMAKE_ROOT}/Modules/CheckIncludeFile.cmake)
 CHECK_INCLUDE_FILE("strings.h"      HAVE_STRINGS_H)
-CHECK_INCLUDE_FILE("inttypes.h"     HAVE_INTTYPES_H)
-CHECK_INCLUDE_FILE("memory.h"       HAVE_MEMORY_H)
-CHECK_INCLUDE_FILE("stdint.h"       HAVE_STDINT_H)
-CHECK_INCLUDE_FILE("stdlib.h"       HAVE_STDLIB_H)
-CHECK_INCLUDE_FILE("stdio.h"        HAVE_STDIO_H)
-CHECK_INCLUDE_FILE("string.h"       HAVE_STRING_H)
 CHECK_INCLUDE_FILE("sys/stat.h"     HAVE_SYS_STAT_H)
 CHECK_INCLUDE_FILE("sys/types.h"    HAVE_SYS_TYPES_H)
 CHECK_INCLUDE_FILE("unistd.h"       HAVE_UNISTD_H)
@@ -199,7 +214,15 @@ OPJ_TEST_LARGE_FILES(OPJ_HAVE_LARGEFILES)
 
 #-----------------------------------------------------------------------------
 # Build Library
-add_subdirectory(src)
+if(BUILD_JPIP_SERVER)
+  find_package(CURL REQUIRED)
+  find_package(FCGI REQUIRED)
+  find_package(Threads REQUIRED)
+  if(NOT CMAKE_USE_PTHREADS_INIT)
+    message(FATAL_ERROR "Only pthread are supported")
+  endif()
+endif()
+add_subdirectory(src/lib)
 
 #-----------------------------------------------------------------------------
 # Build Applications
@@ -233,6 +256,12 @@ configure_file(
  ${CMAKE_CURRENT_BINARY_DIR}/src/lib/openjp2/opj_config.h
  @ONLY
  )
+ 
+ configure_file(
+ ${CMAKE_CURRENT_SOURCE_DIR}/src/lib/openjp2/opj_config_private.h.cmake.in
+ ${CMAKE_CURRENT_BINARY_DIR}/src/lib/openjp2/opj_config_private.h
+ @ONLY
+ )
 
 #-----------------------------------------------------------------------------
 # Build DOCUMENTATION (not in ALL target and only if Doxygen is found)
@@ -253,9 +282,8 @@ if(BUILD_TESTING)
     # They could be found via svn on the OpenJPEG google code project
     # svn checkout http://openjpeg.googlecode.com/svn/data (about 70 Mo)
     find_path(OPJ_DATA_ROOT README-OPJ-Data
-      PATHS
-      $ENV{OPJ_DATA_ROOT}
-      ${CMAKE_SOURCE_DIR}/../data
+      PATHS $ENV{OPJ_DATA_ROOT} ${CMAKE_SOURCE_DIR}/../../data
+      NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH
       )
 
     # Add repository where to find tests
@@ -319,4 +347,5 @@ if(UNIX)
     ${OPENJPEG_INSTALL_LIB_DIR}/pkgconfig )
   endif()
 endif()
+
 #-----------------------------------------------------------------------------

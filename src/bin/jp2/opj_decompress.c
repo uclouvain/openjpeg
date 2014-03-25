@@ -31,7 +31,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#include "opj_config.h"
+#include "opj_apps_config.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -57,10 +57,10 @@
 #include "convert.h"
 #include "index.h"
 
-#ifdef HAVE_LIBLCMS2
+#ifdef OPJ_HAVE_LIBLCMS2
 #include <lcms2.h>
 #endif
-#ifdef HAVE_LIBLCMS1
+#ifdef OPJ_HAVE_LIBLCMS1
 #include <lcms.h>
 #endif
 #include "color.h"
@@ -271,7 +271,7 @@ static int infile_format(const char *fname)
 	const char *s, *magic_s;
 	int ext_format, magic_format;
 	unsigned char buf[12];
-	unsigned int l_nb_read;
+	OPJ_SIZE_T l_nb_read;
 
 	reader = fopen(fname, "rb");
 
@@ -447,7 +447,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 
 			case 'r':		/* reduce option */
 			{
-				sscanf(opj_optarg, "%d", &parameters->cp_reduce);
+				sscanf(opj_optarg, "%ud", &parameters->cp_reduce);
 			}
 			break;
 			
@@ -456,7 +456,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 
 			case 'l':		/* layering option */
 			{
-				sscanf(opj_optarg, "%d", &parameters->cp_layer);
+				sscanf(opj_optarg, "%ud", &parameters->cp_layer);
 			}
 			break;
 			
@@ -481,7 +481,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 			case 'd':     		/* Input decode ROI */
 			{
 				int size_optarg = (int)strlen(opj_optarg) + 1;
-				char *ROI_values = (char*) malloc(size_optarg);
+				char *ROI_values = (char*) malloc((size_t)size_optarg);
 				ROI_values[0] = '\0';
 				strncpy(ROI_values, opj_optarg, strlen(opj_optarg));
 				ROI_values[strlen(opj_optarg)] = '\0';
@@ -496,7 +496,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 
 			case 't':     		/* Input tile index */
 			{
-				sscanf(opj_optarg, "%d", &parameters->tile_index);
+				sscanf(opj_optarg, "%ud", &parameters->tile_index);
 				parameters->nb_tile_to_decode = 1;
 			}
 			break;
@@ -639,8 +639,8 @@ int parse_DA_values( char* inArg, unsigned int *DA_x0, unsigned int *DA_y0, unsi
 		return EXIT_FAILURE;
 	}
 	else{
-		*DA_x0 = values[0]; *DA_y0 = values[1];
-		*DA_x1 = values[2]; *DA_y1 = values[3];
+		*DA_x0 = (OPJ_UINT32)values[0]; *DA_y0 = (OPJ_UINT32)values[1];
+		*DA_x1 = (OPJ_UINT32)values[2]; *DA_y1 = (OPJ_UINT32)values[3];
 		return EXIT_SUCCESS;
 	}
 }
@@ -689,6 +689,7 @@ int main(int argc, char **argv)
 	OPJ_INT32 num_images, imageno;
 	img_fol_t img_fol;
 	dircnt_t *dirptr = NULL;
+  int failed = 0;
 
 	/* set decoding parameters to default values */
 	opj_set_default_decoder_parameters(&parameters);
@@ -711,8 +712,8 @@ int main(int argc, char **argv)
 
 		dirptr=(dircnt_t*)malloc(sizeof(dircnt_t));
 		if(dirptr){
-			dirptr->filename_buf = (char*)malloc(num_images*OPJ_PATH_LEN*sizeof(char));	/* Stores at max 10 image file names*/
-			dirptr->filename = (char**) malloc(num_images*sizeof(char*));
+			dirptr->filename_buf = (char*)malloc((size_t)num_images*OPJ_PATH_LEN*sizeof(char));	/* Stores at max 10 image file names*/
+			dirptr->filename = (char**) malloc((size_t)num_images*sizeof(char*));
 
 			if(!dirptr->filename_buf){
 				return EXIT_FAILURE;
@@ -794,7 +795,7 @@ int main(int argc, char **argv)
 
 		/* Setup the decoder decoding parameters using user parameters */
 		if ( !opj_setup_decoder(l_codec, &parameters) ){
-			fprintf(stderr, "ERROR -> j2k_dump: failed to setup the decoder\n");
+			fprintf(stderr, "ERROR -> opj_compress: failed to setup the decoder\n");
 			opj_stream_destroy(l_stream);
 			fclose(fsrc);
 			opj_destroy_codec(l_codec);
@@ -814,8 +815,8 @@ int main(int argc, char **argv)
 
 		if (!parameters.nb_tile_to_decode) {
 			/* Optional if you want decode the entire image */
-			if (!opj_set_decode_area(l_codec, image, parameters.DA_x0,
-					parameters.DA_y0, parameters.DA_x1, parameters.DA_y1)){
+			if (!opj_set_decode_area(l_codec, image, (OPJ_INT32)parameters.DA_x0,
+					(OPJ_INT32)parameters.DA_y0, (OPJ_INT32)parameters.DA_x1, (OPJ_INT32)parameters.DA_y1)){
 				fprintf(stderr,	"ERROR -> opj_decompress: failed to set the decoded area\n");
 				opj_stream_destroy(l_stream);
 				opj_destroy_codec(l_codec);
@@ -864,9 +865,16 @@ int main(int argc, char **argv)
 		if(image->color_space == OPJ_CLRSPC_SYCC){
 			color_sycc_to_rgb(image); /* FIXME */
 		}
+		
+		if( image->color_space != OPJ_CLRSPC_SYCC 
+			&& image->numcomps == 3 && image->comps[0].dx == image->comps[0].dy
+			&& image->comps[1].dx != 1 )
+			image->color_space = OPJ_CLRSPC_SYCC;
+		else if (image->numcomps <= 2)
+			image->color_space = OPJ_CLRSPC_GRAY;
 
 		if(image->icc_profile_buf) {
-#if defined(HAVE_LIBLCMS1) || defined(HAVE_LIBLCMS2)
+#if defined(OPJ_HAVE_LIBLCMS1) || defined(OPJ_HAVE_LIBLCMS2)
 			color_apply_icc_profile(image); /* FIXME */
 #endif
 			free(image->icc_profile_buf);
@@ -878,7 +886,8 @@ int main(int argc, char **argv)
 		switch (parameters.cod_format) {
 		case PXM_DFMT:			/* PNM PGM PPM */
 			if (imagetopnm(image, parameters.outfile)) {
-				fprintf(stdout,"Outfile %s not generated\n",parameters.outfile);
+				fprintf(stderr,"Outfile %s not generated\n",parameters.outfile);
+        failed = 1;
 			}
 			else {
 				fprintf(stdout,"Generated Outfile %s\n",parameters.outfile);
@@ -887,7 +896,8 @@ int main(int argc, char **argv)
 
 		case PGX_DFMT:			/* PGX */
 			if(imagetopgx(image, parameters.outfile)){
-				fprintf(stdout,"Outfile %s not generated\n",parameters.outfile);
+				fprintf(stderr,"Outfile %s not generated\n",parameters.outfile);
+        failed = 1;
 			}
 			else {
 				fprintf(stdout,"Generated Outfile %s\n",parameters.outfile);
@@ -896,25 +906,28 @@ int main(int argc, char **argv)
 
 		case BMP_DFMT:			/* BMP */
 			if(imagetobmp(image, parameters.outfile)){
-				fprintf(stdout,"Outfile %s not generated\n",parameters.outfile);
+				fprintf(stderr,"Outfile %s not generated\n",parameters.outfile);
+        failed = 1;
 			}
 			else {
 				fprintf(stdout,"Generated Outfile %s\n",parameters.outfile);
 			}
 			break;
-#ifdef HAVE_LIBTIFF
+#ifdef OPJ_HAVE_LIBTIFF
 		case TIF_DFMT:			/* TIFF */
 			if(imagetotif(image, parameters.outfile)){
-				fprintf(stdout,"Outfile %s not generated\n",parameters.outfile);
+				fprintf(stderr,"Outfile %s not generated\n",parameters.outfile);
+        failed = 1;
 			}
 			else {
 				fprintf(stdout,"Generated Outfile %s\n",parameters.outfile);
 			}
 			break;
-#endif /* HAVE_LIBTIFF */
+#endif /* OPJ_HAVE_LIBTIFF */
 		case RAW_DFMT:			/* RAW */
 			if(imagetoraw(image, parameters.outfile)){
-				fprintf(stdout,"Error generating raw file. Outfile %s not generated\n",parameters.outfile);
+				fprintf(stderr,"Error generating raw file. Outfile %s not generated\n",parameters.outfile);
+        failed = 1;
 			}
 			else {
 				fprintf(stdout,"Successfully generated Outfile %s\n",parameters.outfile);
@@ -923,7 +936,8 @@ int main(int argc, char **argv)
 
 		case RAWL_DFMT:			/* RAWL */
 			if(imagetorawl(image, parameters.outfile)){
-				fprintf(stdout,"Error generating rawl file. Outfile %s not generated\n",parameters.outfile);
+				fprintf(stderr,"Error generating rawl file. Outfile %s not generated\n",parameters.outfile);
+        failed = 1;
 			}
 			else {
 				fprintf(stdout,"Successfully generated Outfile %s\n",parameters.outfile);
@@ -932,27 +946,30 @@ int main(int argc, char **argv)
 
 		case TGA_DFMT:			/* TGA */
 			if(imagetotga(image, parameters.outfile)){
-				fprintf(stdout,"Error generating tga file. Outfile %s not generated\n",parameters.outfile);
+				fprintf(stderr,"Error generating tga file. Outfile %s not generated\n",parameters.outfile);
+        failed = 1;
 			}
 			else {
 				fprintf(stdout,"Successfully generated Outfile %s\n",parameters.outfile);
 			}
 			break;
-#ifdef HAVE_LIBPNG
+#ifdef OPJ_HAVE_LIBPNG
 		case PNG_DFMT:			/* PNG */
 			if(imagetopng(image, parameters.outfile)){
-				fprintf(stdout,"Error generating png file. Outfile %s not generated\n",parameters.outfile);
+				fprintf(stderr,"Error generating png file. Outfile %s not generated\n",parameters.outfile);
+        failed = 1;
 			}
 			else {
 				fprintf(stdout,"Successfully generated Outfile %s\n",parameters.outfile);
 			}
 			break;
-#endif /* HAVE_LIBPNG */
+#endif /* OPJ_HAVE_LIBPNG */
 /* Can happen if output file is TIFF or PNG
- * and HAVE_LIBTIF or HAVE_LIBPNG is undefined
+ * and OPJ_HAVE_LIBTIF or OPJ_HAVE_LIBPNG is undefined
 */
 			default:
 				fprintf(stderr,"Outfile %s not generated\n",parameters.outfile);
+        failed = 1;
 		}
 
 		/* free remaining structures */
@@ -968,7 +985,7 @@ int main(int argc, char **argv)
 		opj_destroy_cstr_index(&cstr_index);
 
 	}
-	return EXIT_SUCCESS;
+	return failed ? EXIT_FAILURE : EXIT_SUCCESS;
 }
 /*end main*/
 

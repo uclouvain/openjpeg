@@ -51,8 +51,6 @@ Byte_t * j2k_to_pnm( FILE *fp, ihdrbox_param_t **ihdrbox)
   opj_codec_t *l_codec = NULL;	/* handle to a decompressor */
   opj_stream_t *l_stream = NULL;
 
-
-
   /* set decoding parameters to default values */
   opj_set_default_decoder_parameters(&parameters);
 

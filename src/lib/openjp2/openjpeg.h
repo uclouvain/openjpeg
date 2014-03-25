@@ -43,14 +43,31 @@
 ==========================================================
 */
 
+/*
+The inline keyword is supported by C99 but not by C90. 
+Most compilers implement their own version of this keyword ... 
+*/
+#ifndef INLINE
+	#if defined(_MSC_VER)
+		#define INLINE __forceinline
+	#elif defined(__GNUC__)
+		#define INLINE __inline__
+	#elif defined(__MWERKS__)
+		#define INLINE inline
+	#else 
+		/* add other compilers here ... */
+		#define INLINE 
+	#endif /* defined(<Compiler>) */
+#endif /* INLINE */
+
 /* deprecated attribute */
 #ifdef __GNUC__
-	#define DEPRECATED(func) func __attribute__ ((deprecated))
+	#define OPJ_DEPRECATED(func) func __attribute__ ((deprecated))
 #elif defined(_MSC_VER)
-	#define DEPRECATED(func) __declspec(deprecated) func
+	#define OPJ_DEPRECATED(func) __declspec(deprecated) func
 #else
 	#pragma message("WARNING: You need to implement DEPRECATED for this compiler")
-	#define DEPRECATED(func) func
+	#define OPJ_DEPRECATED(func) func
 #endif
 
 #if defined(OPJ_STATIC) || !defined(_WIN32)
@@ -143,7 +160,7 @@ typedef size_t   OPJ_SIZE_T;
 #define OPJ_IMG_INFO		1	/**< Basic image information provided to the user */
 #define OPJ_J2K_MH_INFO		2	/**< Codestream information based only on the main header */
 #define OPJ_J2K_TH_INFO		4	/**< Tile information based on the current tile header */
-/*FIXME #define OPJ_J2K_CSTR_INFO	6*/	/**<  */
+#define OPJ_J2K_TCH_INFO	8	/**< Tile/Component information of all tiles */
 #define OPJ_J2K_MH_IND		16	/**< Codestream index based only on the main header */
 #define OPJ_J2K_TH_IND		32	/**< Tile index based on the current tile */
 /*FIXME #define OPJ_J2K_CSTR_IND	48*/	/**<  */
@@ -193,10 +210,10 @@ typedef enum PROG_ORDER {
 */
 typedef enum COLOR_SPACE {
 	OPJ_CLRSPC_UNKNOWN = -1,	/**< not supported by the library */
-	OPJ_CLRSPC_UNSPECIFIED = 0, /**< not specified in the codestream */ 
+	OPJ_CLRSPC_UNSPECIFIED = 0,	/**< not specified in the codestream */ 
 	OPJ_CLRSPC_SRGB = 1,		/**< sRGB */
 	OPJ_CLRSPC_GRAY = 2,		/**< grayscale */
-	OPJ_CLRSPC_SYCC = 3			/**< YUV */
+	OPJ_CLRSPC_SYCC = 3		/**< YUV */
 } OPJ_COLOR_SPACE;
 
 /**
@@ -387,7 +404,8 @@ typedef struct opj_cparameters {
 	char tcp_mct;
 	/** Enable JPIP indexing*/
 	OPJ_BOOL jpip_on;
-	/** Naive implementation of MCT restricted to a single reversible array based encoding without offset concerning all the components. */
+	/** Naive implementation of MCT restricted to a single reversible array based 
+        encoding without offset concerning all the components. */
 	void * mct_data;
 } opj_cparameters_t;  
 
@@ -1217,7 +1235,8 @@ OPJ_API OPJ_BOOL OPJ_CALLCONV opj_set_decoded_resolution_factor(opj_codec_t *p_c
  * @param	p_codec		        the jpeg2000 codec.
  * @param	p_tile_index		the index of the tile to write. At the moment, the tiles must be written from 0 to n-1 in sequence.
  * @param	p_data				pointer to the data to write. Data is arranged in sequence, data_comp0, then data_comp1, then ... NO INTERLEAVING should be set.
- * @param	p_data_size			this value os used to make sure the data being written is correct. The size must be equal to the sum for each component of tile_width * tile_height * component_size. component_size can be 1,2 or 4 bytes, depending on the precision of the given component.
+ * @param	p_data_size			this value os used to make sure the data being written is correct. The size must be equal to the sum for each component of 
+ *                              tile_width * tile_height * component_size. component_size can be 1,2 or 4 bytes, depending on the precision of the given component.
  * @param	p_stream			the stream to write data to.
  *
  * @return	true if the data could be written.

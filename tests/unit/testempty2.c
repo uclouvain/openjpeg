@@ -40,7 +40,7 @@ void info_callback(const char *msg, void *v);
 void error_callback(const char *msg, void *v) {
 (void)msg;
 (void)v;
-assert(0);
+puts(msg);
 }
 void warning_callback(const char *msg, void *v) {
 (void)msg;
@@ -58,15 +58,15 @@ int main(int argc, char *argv[])
   const char * v = opj_version();
 
   const OPJ_COLOR_SPACE color_space = OPJ_CLRSPC_GRAY;
-  int numcomps = 1;
-  int i;
-  int image_width = 256;
-  int image_height = 256;
+  unsigned int numcomps = 1;
+  unsigned int i;
+  unsigned int image_width = 256;
+  unsigned int image_height = 256;
 
   opj_cparameters_t parameters;
 
-  int subsampling_dx = parameters.subsampling_dx;
-  int subsampling_dy = parameters.subsampling_dy;
+  unsigned int subsampling_dx;
+  unsigned int subsampling_dy;
   const char outputfile[] = "testempty2.j2k";
 
   opj_image_cmptparm_t cmptparm;
@@ -74,13 +74,15 @@ int main(int argc, char *argv[])
   opj_codec_t* l_codec = 00;
   OPJ_BOOL bSuccess;
   FILE *f;
-	opj_stream_t *l_stream = 00;
+  opj_stream_t *l_stream = 00;
   (void)argc;
   (void)argv;
 
   opj_set_default_encoder_parameters(&parameters);
   parameters.cod_format = J2K_CFMT;
   puts(v);
+  subsampling_dx = (unsigned int)parameters.subsampling_dx;
+  subsampling_dy = (unsigned int)parameters.subsampling_dy;
   cmptparm.prec = 8;
   cmptparm.bpp = 8;
   cmptparm.sgnd = 0;
@@ -94,17 +96,17 @@ int main(int argc, char *argv[])
 
   for (i = 0; i < image_width * image_height; i++)
     {
-    int compno;
+    unsigned int compno;
     for(compno = 0; compno < numcomps; compno++)
       {
       image->comps[compno].data[i] = 0;
       }
     }
 
-    /* catch events using our callbacks and give a local context */		
-    opj_set_info_handler(l_codec, info_callback,00);
-    opj_set_warning_handler(l_codec, warning_callback,00);
-    opj_set_error_handler(l_codec, error_callback,00);
+  /* catch events using our callbacks and give a local context */
+  opj_set_info_handler(l_codec, info_callback,00);
+  opj_set_warning_handler(l_codec, warning_callback,00);
+  opj_set_error_handler(l_codec, error_callback,00);
 
   l_codec = opj_create_compress(OPJ_CODEC_J2K);
   opj_set_info_handler(l_codec, info_callback,00);
@@ -118,8 +120,25 @@ int main(int argc, char *argv[])
   assert( f );
 
   l_stream = opj_stream_create_default_file_stream(f,OPJ_FALSE);
+  if( !l_stream )
+    {
+    fprintf( stderr, "Something went wrong during creation of stream\n" );
+  fclose(f);
+    opj_destroy_codec(l_codec);
+    opj_image_destroy(image);
+    opj_stream_destroy(l_stream);
+    return 1;
+    }
   assert(l_stream);
   bSuccess = opj_start_compress(l_codec,image,l_stream);
+  if( !bSuccess )
+    {
+  fclose(f);
+    opj_stream_destroy(l_stream);
+    opj_destroy_codec(l_codec);
+    opj_image_destroy(image);
+    return 0;
+    }
 
   assert( bSuccess );
   bSuccess = opj_encode(l_codec, l_stream);
@@ -138,7 +157,7 @@ int main(int argc, char *argv[])
 {
   FILE *fsrc = fopen(outputfile, "rb");
   opj_codec_t* d_codec = 00;
-	opj_dparameters_t dparameters;
+  opj_dparameters_t dparameters;
   assert( fsrc );
 
   d_codec = opj_create_decompress(OPJ_CODEC_J2K);
@@ -158,7 +177,7 @@ int main(int argc, char *argv[])
   bSuccess = opj_decode(l_codec, l_stream, image);
   assert( bSuccess );
 
-  bSuccess = opj_end_decompress(l_codec,	l_stream);
+  bSuccess = opj_end_decompress(l_codec, l_stream);
   assert( bSuccess );
 
   opj_stream_destroy(l_stream);

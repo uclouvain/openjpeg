@@ -13,6 +13,7 @@ endif()
 # Headers file are located here:
 include_directories(
   ${OPENJPEG_BINARY_DIR}/src/lib/openjp2 # opj_config.h
+  ${OPENJPEG_BINARY_DIR}/src/bin/common # opj_apps_config.h
   ${OPENJPEG_SOURCE_DIR}/src/lib/openmj2
   ${OPENJPEG_SOURCE_DIR}/src/bin/common
   ${LCMS_INCLUDE_DIRNAME}
@@ -31,6 +32,10 @@ foreach(exe
     ${MJ2_SRCS}
     ${OPENJPEG_SOURCE_DIR}/src/bin/common/color.c
     )
+  set_property(
+    TARGET ${exe}
+    APPEND PROPERTY COMPILE_DEFINITIONS USE_MJ2
+  )
   target_link_libraries(${exe} ${LCMS_LIBNAME} openmj2)
   
   if(UNIX)

@@ -71,18 +71,18 @@ typedef struct img_folder{
 	/** Enable Cod Format for output*/
 	char set_out_format;
 
+  int flag;
 }img_fol_t;
 
 /* -------------------------------------------------------------------------- */
 /* Declarations                                                               */
-int get_num_images(char *imgdirpath);
-int load_images(dircnt_t *dirptr, char *imgdirpath);
-int get_file_format(const char *filename);
-char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_dparameters_t *parameters);
+static int get_num_images(char *imgdirpath);
+static int load_images(dircnt_t *dirptr, char *imgdirpath);
+static int get_file_format(const char *filename);
+static char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_dparameters_t *parameters);
 static int infile_format(const char *fname);
 
-int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,img_fol_t *img_fol);
-int parse_DA_values( char* inArg, unsigned int *DA_x0, unsigned int *DA_y0, unsigned int *DA_x1, unsigned int *DA_y1);
+static int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,img_fol_t *img_fol);
 
 /* -------------------------------------------------------------------------- */
 static void decode_help_display(void) {
@@ -116,7 +116,7 @@ static void decode_help_display(void) {
 }
 
 /* -------------------------------------------------------------------------- */
-int get_num_images(char *imgdirpath){
+static int get_num_images(char *imgdirpath){
 	DIR *dir;
 	struct dirent* content;	
 	int num_images = 0;
@@ -138,7 +138,7 @@ int get_num_images(char *imgdirpath){
 }
 
 /* -------------------------------------------------------------------------- */
-int load_images(dircnt_t *dirptr, char *imgdirpath){
+static int load_images(dircnt_t *dirptr, char *imgdirpath){
 	DIR *dir;
 	struct dirent* content;	
 	int i = 0;
@@ -164,7 +164,7 @@ int load_images(dircnt_t *dirptr, char *imgdirpath){
 }
 
 /* -------------------------------------------------------------------------- */
-int get_file_format(const char *filename) {
+static int get_file_format(const char *filename) {
 	unsigned int i;
 	static const char *extension[] = {"pgx", "pnm", "pgm", "ppm", "bmp","tif", "raw", "tga", "png", "j2k", "jp2", "jpt", "j2c", "jpc"  };
 	static const int format[] = { PGX_DFMT, PXM_DFMT, PXM_DFMT, PXM_DFMT, BMP_DFMT, TIF_DFMT, RAW_DFMT, TGA_DFMT, PNG_DFMT, J2K_CFMT, JP2_CFMT, JPT_CFMT, J2K_CFMT, J2K_CFMT };
@@ -184,7 +184,7 @@ int get_file_format(const char *filename) {
 }
 
 /* -------------------------------------------------------------------------- */
-char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_dparameters_t *parameters){
+static char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_dparameters_t *parameters){
 	char image_filename[OPJ_PATH_LEN], infilename[OPJ_PATH_LEN],outfilename[OPJ_PATH_LEN],temp_ofname[OPJ_PATH_LEN];
 	char *temp_p, temp1[OPJ_PATH_LEN]="";
 
@@ -221,7 +221,7 @@ static int infile_format(const char *fname)
 	const char *s, *magic_s;
 	int ext_format, magic_format;
 	unsigned char buf[12];
-	unsigned int l_nb_read; 
+	size_t l_nb_read; 
 
 	reader = fopen(fname, "rb");
 
@@ -269,12 +269,12 @@ static int infile_format(const char *fname)
  * Parse the command line
  */
 /* -------------------------------------------------------------------------- */
-int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,img_fol_t *img_fol) {
+static int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,img_fol_t *img_fol) {
 	int totlen, c;
 	opj_option_t long_option[]={
 		{"ImgDir",REQ_ARG, NULL ,'y'},
 	};
-	const char optlist[] = "i:o:hv";
+	const char optlist[] = "i:o:f:hv";
 
 	totlen=sizeof(long_option);
 	img_fol->set_out_format = 0;
@@ -313,6 +313,10 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 			}
 			break;
 				
+				/* ----------------------------------------------------- */
+      case 'f': 			/* flag */
+        img_fol->flag = atoi(opj_optarg);
+        break;
 				/* ----------------------------------------------------- */
 
 			case 'h': 			/* display an help description */
@@ -425,6 +429,7 @@ int main(int argc, char *argv[])
 
 	/* Initialize img_fol */
 	memset(&img_fol,0,sizeof(img_fol_t));
+  img_fol.flag = OPJ_IMG_INFO | OPJ_J2K_MH_INFO | OPJ_J2K_MH_IND;
 
 	/* Parse input and get user encoding parameters */
 	if(parse_cmdline_decoder(argc, argv, &parameters,&img_fol) == 1) {
@@ -438,8 +443,8 @@ int main(int argc, char *argv[])
 
 		dirptr=(dircnt_t*)malloc(sizeof(dircnt_t));
 		if(dirptr){
-			dirptr->filename_buf = (char*)malloc(num_images*OPJ_PATH_LEN*sizeof(char));	/* Stores at max 10 image file names*/
-			dirptr->filename = (char**) malloc(num_images*sizeof(char*));
+			dirptr->filename_buf = (char*)malloc((size_t)num_images*OPJ_PATH_LEN*sizeof(char));	/* Stores at max 10 image file names*/
+			dirptr->filename = (char**) malloc((size_t)num_images*sizeof(char*));
 
 			if(!dirptr->filename_buf){
 				return EXIT_FAILURE;
@@ -553,7 +558,7 @@ int main(int argc, char *argv[])
 			return EXIT_FAILURE;
 		}
 
-		opj_dump_codec(l_codec, OPJ_IMG_INFO | OPJ_J2K_MH_INFO | OPJ_J2K_MH_IND, fout );
+		opj_dump_codec(l_codec, img_fol.flag, fout );
 
 		cstr_info = opj_get_cstr_info(l_codec);
 
