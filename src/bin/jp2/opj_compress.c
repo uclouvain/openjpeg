@@ -1476,7 +1476,7 @@ int main(int argc, char **argv) {
     memset(&img_fol,0,sizeof(img_fol_t));
 
     /* parse input and get user encoding parameters */
-    parameters.tcp_mct = -1; /* This will be set later according to the input image or the provided option */
+    parameters.tcp_mct = (char) 255; /* This will be set later according to the input image or the provided option */
     if(parse_cmdline_encoder(argc, argv, &parameters,&img_fol, &raw_cp, indexfilename) == 1) {
         return 1;
     }
@@ -1636,8 +1636,8 @@ int main(int argc, char **argv) {
         }
 
         /* Decide if MCT should be used */
-        if (parameters.tcp_mct == -1) { /* mct mode has not been set in commandline */
-            parameters.tcp_mct = image->numcomps >= 3 ? 1 : 0;
+        if (parameters.tcp_mct == (char) 255) { /* mct mode has not been set in commandline */
+            parameters.tcp_mct = (image->numcomps >= 3) ? 1 : 0;
         } else {            /* mct mode has been set in commandline */
             if ((parameters.tcp_mct == 1) && (image->numcomps < 3)){
                 fprintf(stderr, "RGB->YCC conversion cannot be used:\n");
