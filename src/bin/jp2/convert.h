@@ -31,6 +31,16 @@
 #ifndef __J2K_CONVERT_H
 #define __J2K_CONVERT_H
 
+/**@name RAW component encoding parameters */
+/*@{*/
+typedef struct raw_comp_cparameters {
+    /** subsampling in X direction */
+    int dx;
+    /** subsampling in Y direction */
+    int dy;
+    /*@}*/
+} raw_comp_cparameters_t;
+
 /**@name RAW image encoding parameters */
 /*@{*/
 typedef struct raw_cparameters {
@@ -38,12 +48,14 @@ typedef struct raw_cparameters {
 	int rawWidth;
 	/** height of the raw image */
 	int rawHeight;
-	/** components of the raw image */
+    /** number of components of the raw image */
 	int rawComp;
-	/** bit depth of the raw image */
-	int rawBitDepth;
-	/** signed/unsigned raw image */
-	OPJ_BOOL rawSigned;
+    /** bit depth of the raw image */
+    int rawBitDepth;
+    /** signed/unsigned raw image */
+    OPJ_BOOL rawSigned;
+    /** raw components parameters */
+    raw_comp_cparameters_t *rawComps;
 	/*@}*/
 } raw_cparameters_t;
 

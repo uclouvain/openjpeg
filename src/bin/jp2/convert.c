@@ -2953,9 +2953,11 @@ static opj_image_t* rawtoimage_common(const char *filename, opj_cparameters_t *p
     {
         fprintf(stderr,"\nError: invalid raw image parameters\n");
         fprintf(stderr,"Please use the Format option -F:\n");
-        fprintf(stderr,"-F rawWidth,rawHeight,rawComp,rawBitDepth,s/u (Signed/Unsigned)\n");
-        fprintf(stderr,"Example: -i lena.raw -o lena.j2k -F 512,512,3,8,u\n");
-        fprintf(stderr,"Aborting\n");
+        fprintf(stderr,"-F <width>,<height>,<ncomp>,<bitdepth>,{s,u}@<dx1>x<dy1>:...:<dxn>x<dyn>\n");
+        fprintf(stderr,"If subsampling is omitted, 1x1 is assumed for all components\n");
+        fprintf(stderr,"Example: -i image.raw -o image.j2k -F 512,512,3,8,u@1x1:2x2:2x2\n");
+        fprintf(stderr,"         for raw 512x512 image with 4:2:0 subsampling\n");
+        fprintf(stderr,"Aborting.\n");
         return NULL;
     }
 
@@ -2966,7 +2968,17 @@ static opj_image_t* rawtoimage_common(const char *filename, opj_cparameters_t *p
         return NULL;
     }
     numcomps = raw_cp->rawComp;
-    color_space = OPJ_CLRSPC_SRGB;
+
+    /* FIXME ADE at this point, tcp_mct has not been properly set in calling function */
+    if (numcomps == 0) {
+        color_space = OPJ_CLRSPC_GRAY;
+    } else if ((numcomps >= 3) && (parameters->tcp_mct == 0)) {
+        color_space = OPJ_CLRSPC_SYCC;
+    } else if ((numcomps >= 3) && (parameters->tcp_mct != 2)) {
+        color_space = OPJ_CLRSPC_SRGB;
+    } else {
+        color_space = OPJ_CLRSPC_UNKNOWN;
+    }
     w = raw_cp->rawWidth;
     h = raw_cp->rawHeight;
     cmptparm = (opj_image_cmptparm_t*) malloc((size_t)numcomps * sizeof(opj_image_cmptparm_t));
@@ -2977,8 +2989,8 @@ static opj_image_t* rawtoimage_common(const char *filename, opj_cparameters_t *p
         cmptparm[i].prec = (OPJ_UINT32)raw_cp->rawBitDepth;
         cmptparm[i].bpp = (OPJ_UINT32)raw_cp->rawBitDepth;
         cmptparm[i].sgnd = (OPJ_UINT32)raw_cp->rawSigned;
-        cmptparm[i].dx = (OPJ_UINT32)subsampling_dx;
-        cmptparm[i].dy = (OPJ_UINT32)subsampling_dy;
+        cmptparm[i].dx = (OPJ_UINT32)subsampling_dx * raw_cp->rawComps[i].dx;
+        cmptparm[i].dy = (OPJ_UINT32)subsampling_dy * raw_cp->rawComps[i].dy;
         cmptparm[i].w = (OPJ_UINT32)w;
         cmptparm[i].h = (OPJ_UINT32)h;
     }
@@ -2999,7 +3011,8 @@ static opj_image_t* rawtoimage_common(const char *filename, opj_cparameters_t *p
     {
         unsigned char value = 0;
         for(compno = 0; compno < numcomps; compno++) {
-            for (i = 0; i < w * h; i++) {
+            int nloop = (w*h)/(raw_cp->rawComps[compno].dx*raw_cp->rawComps[compno].dx);
+            for (i = 0; i < nloop; i++) {
                 if (!fread(&value, 1, 1, f)) {
                     fprintf(stderr,"Error reading raw file. End of file probably reached.\n");
                     return NULL;
@@ -3012,7 +3025,8 @@ static opj_image_t* rawtoimage_common(const char *filename, opj_cparameters_t *p
     {
         unsigned short value;
         for(compno = 0; compno < numcomps; compno++) {
-            for (i = 0; i < w * h; i++) {
+            int nloop = (w*h)/(raw_cp->rawComps[compno].dx*raw_cp->rawComps[compno].dx);
+            for (i = 0; i < nloop; i++) {
                 unsigned char temp1;
                 unsigned char temp2;
                 if (!fread(&temp1, 1, 1, f)) {

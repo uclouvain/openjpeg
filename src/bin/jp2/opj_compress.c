@@ -209,7 +209,7 @@ static void encode_help_display(void) {
     fprintf(stdout,"               -F rawWidth,rawHeight,rawComp,rawBitDepth,s/u (Signed/Unsigned)\n");
     fprintf(stdout,"               Example: -i lena.raw -o lena.j2k -F 512,512,3,8,u\n");
     fprintf(stdout,"\n");
-    fprintf(stdout,"-mct {0,1,2} : explicitely specifies if an Multiple Component Transform has to be used.\n");
+    fprintf(stdout,"-mct {0,1,2} : explicitely specifies if a Multiple Component Transform has to be used.\n");
     fprintf(stdout,"               0: no MCT ; 1: RGB->YCC conversion ; 2: custom MCT.\n");
     fprintf(stdout,"               If custom MCT, \"-m\" option has to be used (see hereunder).\n");
     fprintf(stdout,"               By default, RGB->YCC conversion is used if there are 3 components or more,\n");
@@ -569,33 +569,84 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
 
         case 'F':			/* Raw image format parameters */
         {
+            OPJ_BOOL wrong = OPJ_FALSE;
+            char *substr1;
+            char *substr2;
+            char *sep;
             char signo;
-            char *s = opj_optarg;
-            if (sscanf(s, "%d,%d,%d,%d,%c", &raw_cp->rawWidth, &raw_cp->rawHeight, &raw_cp->rawComp, &raw_cp->rawBitDepth, &signo) == 5) {
+            int width,height,bitdepth,ncomp;
+            int len;
+            OPJ_BOOL raw_signed;
+            substr2 = strchr(opj_optarg,'@');
+            if (substr2 == NULL) {
+                len = (int) strlen(opj_optarg);
+            } else {
+                len = substr2 - opj_optarg;
+                substr2++; /* skip '@' character */
+            }
+            substr1 = (char*) malloc((len+1)*sizeof(char));
+            memcpy(substr1,opj_optarg,len);
+            substr1[len] = '\0';
+            if (sscanf(substr1, "%d,%d,%d,%d,%[su]", &width, &height, &ncomp, &bitdepth, &signo) == 5) {
                 if (signo == 's') {
-                    raw_cp->rawSigned = OPJ_TRUE;
-                    fprintf(stdout,"\nRaw file parameters: %d,%d,%d,%d Signed\n", raw_cp->rawWidth, raw_cp->rawHeight, raw_cp->rawComp, raw_cp->rawBitDepth);
+                    raw_signed = OPJ_TRUE;
+                } else if (signo == 'u') {
+                    raw_signed = OPJ_FALSE;
+                } else {
+                    wrong = OPJ_TRUE;
                 }
-                else if (signo == 'u') {
-                    raw_cp->rawSigned = OPJ_FALSE;
-                    fprintf(stdout,"\nRaw file parameters: %d,%d,%d,%d Unsigned\n", raw_cp->rawWidth, raw_cp->rawHeight, raw_cp->rawComp, raw_cp->rawBitDepth);
-                }
-                else {
-                    fprintf(stderr,"\nError: invalid raw image parameters: Unknown sign of raw file\n");
-                    fprintf(stderr,"Please use the Format option -F:\n");
-                    fprintf(stderr,"-F rawWidth,rawHeight,rawComp,rawBitDepth,s/u (Signed/Unsigned)\n");
-                    fprintf(stderr,"Example: -i lena.raw -o lena.j2k -F 512,512,3,8,u\n");
-                    fprintf(stderr,"Aborting\n");
+            } else {
+                wrong = OPJ_TRUE;
+            }
+            if (!wrong) {
+                int i;
+                int lastdx = 1;
+                int lastdy = 1;
+                raw_cp->rawWidth = width;
+                raw_cp->rawHeight = height;
+                raw_cp->rawComp = ncomp;
+                raw_cp->rawBitDepth = bitdepth;
+                raw_cp->rawSigned  = raw_signed;
+                raw_cp->rawComps = (raw_comp_cparameters_t*) malloc(ncomp*sizeof(raw_comp_cparameters_t));
+                for (i = 0; i < ncomp && !wrong; i++) {
+                    if (substr2 == NULL) {
+                        raw_cp->rawComps[i].dx = lastdx;
+                        raw_cp->rawComps[i].dy = lastdy;
+                    } else {
+                        int dx,dy;
+                        sep = strchr(substr2,':');
+                        if (sep == NULL) {
+                            if (sscanf(substr2, "%dx%d", &dx, &dy) == 2) {
+                                lastdx = dx;
+                                lastdy = dy;
+                                raw_cp->rawComps[i].dx = dx;
+                                raw_cp->rawComps[i].dy = dy;
+                                substr2 = NULL;
+                            } else {
+                                wrong = OPJ_TRUE;
+                            }
+                        } else {
+                            if (sscanf(substr2, "%dx%d:%s", &dx, &dy, substr2) == 3) {
+                                raw_cp->rawComps[i].dx = dx;
+                                raw_cp->rawComps[i].dy = dy;
+                            } else {
+                                wrong = OPJ_TRUE;
+                            }
+                        }
+                    }
                 }
             }
-            else {
+            if (wrong) {
                 fprintf(stderr,"\nError: invalid raw image parameters\n");
                 fprintf(stderr,"Please use the Format option -F:\n");
-                fprintf(stderr,"-F rawWidth,rawHeight,rawComp,rawBitDepth,s/u (Signed/Unsigned)\n");
-                fprintf(stderr,"Example: -i lena.raw -o lena.j2k -F 512,512,3,8,u\n");
-                fprintf(stderr,"Aborting\n");
+                fprintf(stderr,"-F <width>,<height>,<ncomp>,<bitdepth>,{s,u}@<dx1>x<dy1>:...:<dxn>x<dyn>\n");
+                fprintf(stderr,"If subsampling is omitted, 1x1 is assumed for all components\n");
+                fprintf(stderr,"Example: -i image.raw -o image.j2k -F 512,512,3,8,u@1x1:2x2:2x2\n");
+                fprintf(stderr,"         for raw 512x512 image with 4:2:0 subsampling\n");
+                fprintf(stderr,"Aborting.\n");
                 return 1;
             }
+            if (substr1 != NULL) free(substr1);
         }
             break;
 
@@ -1749,6 +1800,7 @@ int main(int argc, char **argv) {
     /* free user parameters structure */
     if(parameters.cp_comment)   free(parameters.cp_comment);
     if(parameters.cp_matrice)   free(parameters.cp_matrice);
+    if(raw_cp.rawComps) free(raw_cp.rawComps);
 
     return 0;
 }
