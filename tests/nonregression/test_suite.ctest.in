@@ -44,6 +44,8 @@ opj_compress -i @INPUT_NR_PATH@/issue141.rawl -o @TEMP_PATH@/issue141.rawl.j2k  
 opj_compress -i @INPUT_NR_PATH@/issue141.rawl -o @TEMP_PATH@/issue141.rawl.j2k  -F 2048,2816,1,16,u -I
 # issue 46:
 opj_compress -i @INPUT_NR_PATH@/Bretagne2.ppm -o @TEMP_PATH@/Bretagne2_0.j2k -c [64,64]
+# issue 316
+opj_compress -i @INPUT_NR_PATH@/issue316.png -o @TEMP_PATH@/issue316.png.jp2
 
 # DECODER TEST SUITE
 opj_decompress -i  @INPUT_NR_PATH@/Bretagne2.j2k -o @TEMP_PATH@/Bretagne2.j2k.pgx
@@ -165,6 +167,13 @@ opj_decompress -i @INPUT_NR_PATH@/issue226.j2k                   -o @TEMP_PATH@/
 !opj_decompress -i @INPUT_NR_PATH@/edf_c2_101463.jp2   -o @TEMP_PATH@/edf_c2_101463.jp2.pgx
 !opj_decompress -i @INPUT_NR_PATH@/edf_c2_1674177.jp2  -o @TEMP_PATH@/edf_c2_1674177.jp2.pgx
 !opj_decompress -i @INPUT_NR_PATH@/edf_c2_1673169.jp2  -o @TEMP_PATH@/edf_c2_1673169.jp2.pgx
+# issue 296
+#!opj_decompress -i @INPUT_NR_PATH@/3459.pdf.asan.78.2734.0.jp2 -o @TEMP_PATH@/3459.pdf.asan.78.2734.0.jp2.pgx
+#!opj_decompress -i @INPUT_NR_PATH@/3459.pdf.asan.78.2734.1.jp2 -o @TEMP_PATH@/3459.pdf.asan.78.2734.1.jp2.pgx
+#!opj_decompress -i @INPUT_NR_PATH@/3459.pdf.asan.78.2734.2.jp2 -o @TEMP_PATH@/3459.pdf.asan.78.2734.2.jp2.pgx
+#!opj_decompress -i @INPUT_NR_PATH@/3459.pdf.asan.6c.2734.0.jp2 -o @TEMP_PATH@/3459.pdf.asan.6c.2734.0.jp2.pgx
+#!opj_decompress -i @INPUT_NR_PATH@/3459.pdf.asan.6c.2734.1.jp2 -o @TEMP_PATH@/3459.pdf.asan.6c.2734.1.jp2.pgx
+#!opj_decompress -i @INPUT_NR_PATH@/3459.pdf.asan.6c.2734.2.jp2 -o @TEMP_PATH@/3459.pdf.asan.6c.2734.2.jp2.pgx
 
 # decode with specific area
 # prec=12; nb_c=1 
