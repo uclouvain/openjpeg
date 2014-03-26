@@ -2989,8 +2989,8 @@ static opj_image_t* rawtoimage_common(const char *filename, opj_cparameters_t *p
         cmptparm[i].prec = (OPJ_UINT32)raw_cp->rawBitDepth;
         cmptparm[i].bpp = (OPJ_UINT32)raw_cp->rawBitDepth;
         cmptparm[i].sgnd = (OPJ_UINT32)raw_cp->rawSigned;
-        cmptparm[i].dx = (OPJ_UINT32)subsampling_dx * raw_cp->rawComps[i].dx;
-        cmptparm[i].dy = (OPJ_UINT32)subsampling_dy * raw_cp->rawComps[i].dy;
+        cmptparm[i].dx = (OPJ_UINT32)(subsampling_dx * raw_cp->rawComps[i].dx);
+        cmptparm[i].dy = (OPJ_UINT32)(subsampling_dy * raw_cp->rawComps[i].dy);
         cmptparm[i].w = (OPJ_UINT32)w;
         cmptparm[i].h = (OPJ_UINT32)h;
     }

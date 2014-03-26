@@ -575,13 +575,13 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
             char *sep;
             char signo;
             int width,height,bitdepth,ncomp;
-            int len;
+            OPJ_UINT32 len;
             OPJ_BOOL raw_signed;
             substr2 = strchr(opj_optarg,'@');
             if (substr2 == NULL) {
-                len = (int) strlen(opj_optarg);
+                len = (OPJ_UINT32) strlen(opj_optarg);
             } else {
-                len = substr2 - opj_optarg;
+                len = (OPJ_UINT32) (substr2 - opj_optarg);
                 substr2++; /* skip '@' character */
             }
             substr1 = (char*) malloc((len+1)*sizeof(char));
@@ -607,7 +607,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
                 raw_cp->rawComp = ncomp;
                 raw_cp->rawBitDepth = bitdepth;
                 raw_cp->rawSigned  = raw_signed;
-                raw_cp->rawComps = (raw_comp_cparameters_t*) malloc(ncomp*sizeof(raw_comp_cparameters_t));
+                raw_cp->rawComps = (raw_comp_cparameters_t*) malloc(((OPJ_UINT32)(ncomp))*sizeof(raw_comp_cparameters_t));
                 for (i = 0; i < ncomp && !wrong; i++) {
                     if (substr2 == NULL) {
                         raw_cp->rawComps[i].dx = lastdx;
