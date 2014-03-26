@@ -465,8 +465,14 @@ AC_HEADER_DIRENT
 ### Checks for compiler characteristics
 
 AM_PROG_CC_C_O
-AC_C_BIGENDIAN
-
+ac_cv_c_big_endian=0
+AC_C_BIGENDIAN([ac_cv_c_big_endian=yes], [ac_cv_c_big_endian=no],[])
+#
+if test "x${ac_cv_c_big_endian}" = "xyes" ; then
+ AC_DEFINE(OPJ_BIG_ENDIAN, [1], [define to 1 if your machine has BE])
+ AC_DEFINE(WORDS_BIGENDIAN, [1], [define to 1 if your machine has BE])
+fi
+#
 #OPJ_COMPILER_FLAG([-Wall])
 #OPJ_COMPILER_FLAG([-Wextra])
 #OPJ_COMPILER_FLAG([-Wshadow])
