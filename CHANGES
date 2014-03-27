@@ -1,0 +1,198 @@
+2012-10-01  Mathieu Malaterre
+
+	* [r2028] CMakeLists.txt: [1.5] Start opj 1.5.2
+	* [r2029] libopenjpeg/jp2.c: [1.5] jp2_read_boxhdr() can trigger
+	  random pointer memory access
+	  
+	  Fixes issue 155
+
+2012-10-02  Mathieu Malaterre
+
+	* [r2031] libopenjpeg/Makefile.am, libopenjpeg/jpwl/Makefile.am:
+	  [1.5] int main() in t1_generate_luts.c breaks mplayer
+	  
+	  Fixes issue 152
+	* [r2032] libopenjpeg/j2k.c: [1.5] division by zero in j2k_read_siz
+	  
+	  Fixes issue 169
+	* [r2033] libopenjpeg/j2k.c: [1.5] missing range check in
+	  j2k_read_coc et al.
+	  
+	  Fixes issue 166
+	* [r2035] libopenjpeg/CMakeLists.txt: [1.5] Build small internal
+	  tools to generate t1_luts.h
+
+2012-10-22  Mathieu Malaterre
+
+	* [r2107] CMakeLists.txt, applications/JavaOpenJPEG/CMakeLists.txt:
+	  [1.5] Fix Java binding issues.
+	  
+	  Properly link to math lib on UNIX
+	  Make JNI install location a user configuration
+	  Remove SONAME property from the java module
+
+2012-12-07  Rex Dieter
+
+	* [r2260] doc/Doxyfile.dox, doc/Doxyfile.dox.cmake.in: backport
+	  r2259
+	  
+	  Doxyfile: HTML_TIMESTAMP = NO
+	  
+	  helps when comparing the output of multiple runs,
+	  and distros will appreciate avoiding multilib conflicts.
+
+2012-12-18  Mickaël Savinaud
+
+	* [r2265] applications/codec/convert.c: [1.5] improve the bmp read
+	  function for RGB8 case (thanks Winfried). Update issue 203
+
+2013-02-27  Mathieu Malaterre
+
+	* [r2299] libopenjpeg/opj_includes.h: [1.5] Rework #ifdef checks.
+	  We should check for _M_IX86 instead of not(_M_X64). Thanks to
+	  Misha Ulyutin for report on ML
+
+2013-03-14  Mickaël Savinaud
+
+	* [r2305] configure.ac: [b1.5.x] update the micro version into the
+	  configure file (thanks to winfried)
+
+2013-07-11  Antonin Descampe
+
+	* [r2345] tests/conformance/CMakeLists.txt: tests : reactivated
+	  conformance tests in openjpeg 1.5 branch to enable comparison
+	  with trunk
+
+2013-09-26  Mathieu Malaterre
+
+	* [r2346] libopenjpeg/image.c: [1.5] Import patch suggested in bug
+	  #241
+
+2014-02-24  Mathieu Malaterre
+
+	* [r2390] libopenjpeg/bio.c: [1.5] Remove some simple warnings
+	* [r2391] CMake/CTestCustom.cmake.in: [1.5] Do not report warning
+	  on third party lib
+
+2014-02-25  Mathieu Malaterre
+
+	* [r2420] tests/nonregression/CMakeLists.txt,
+	  tests/nonregression/checkmd5refs.cmake,
+	  tests/nonregression/md5refs.txt,
+	  tests/nonregression/test_suite.ctest.in: [1.5] Import md5 checker
+	  from trunk back onto 1.5 branch
+	* [r2423] libopenjpeg/j2k.c: [1.5] Remove addition from r1702 this
+	  introduced a regression as seen in issue 205
+	  
+	  Fixes issue 205
+
+2014-02-26  Mathieu Malaterre
+
+	* [r2437] tests/CMakeLists.txt, tests/conformance/CMakeLists.txt,
+	  tests/nonregression/CMakeLists.txt, tests/unit/CMakeLists.txt:
+	  [1.5] Use new add_test signature to handle cross compilation and
+	  execution using wine
+	* [r2438] applications/codec/convert.c,
+	  applications/codec/image_to_j2k.c, applications/codec/j2k_dump.c,
+	  applications/codec/j2k_to_image.c, libopenjpeg/jp2.c,
+	  libopenjpeg/tcd.c: [1.5] Import first patch (fixes.patch) from
+	  issue 249 to fix leaks on error condition.
+	  
+	  Update issue 249
+	* [r2439] applications/codec/image_to_j2k.c,
+	  applications/codec/j2k_to_image.c: [1.5] Declare functions static
+	  to track unused ones.
+
+2014-03-04  Mathieu Malaterre
+
+	* [r2564] CMakeLists.txt: [1.5] Use improved find_path syntax to
+	  help cross-compilation setup find openjpeg data root
+
+2014-03-12  Mathieu Malaterre
+
+	* [r2696] applications/codec/convert.c, tests/unit/testempty2.c:
+	  [1.5] Fix remainings warnings on 1.5 branch
+	* [r2697] applications/jpip/libopenjpip/msgqueue_manager.c: [1.5]
+	  Prevent buffer overflow in openjpip code
+
+2014-03-17  Mathieu Malaterre
+
+	* [r2750] applications/common/opj_getopt.c: [1.5] Update BSD-4
+	  copyright into a BSD-3 copyright
+	  Update issue 300
+	* [r2752] libopenjpeg/jp2.c, libopenjpeg/t1_generate_luts.c: [1.5]
+	  Remove simple warning about C++ style comments
+	* [r2753] applications/codec/convert.c,
+	  applications/common/color.c, libopenjpeg/j2k.c,
+	  libopenjpeg/jp2.c, libopenjpeg/t1_generate_luts.c,
+	  libopenjpeg/tcd.c: [1.5] Remove another set of simple warnings
+
+2014-03-18  Mathieu Malaterre
+
+	* [r2757] libopenjpeg/cio.c, libopenjpeg/j2k.c, libopenjpeg/jp2.c,
+	  libopenjpeg/t2.c, libopenjpeg/tcd.c,
+	  tests/nonregression/test_suite.ctest.in: [1.5] Import portion of
+	  patch from issue 297
+	  Run test suite on new datasets
+	  Update issue 297
+	* [r2758] libopenjpeg/jp2.c, libopenjpeg/tcd.c: [1.5] Import patch
+	  from trunk to make test passes. Affects:
+	  NR-DEC-2977.pdf.asan.67.2198.jp2-52-decode &
+	  NR-DEC-4149.pdf.SIGSEGV.cf7.3501.jp2-50-decode
+	* [r2759] libopenjpeg/j2k.c: [1.5] Check the number of tiles
+	* [r2760] libopenjpeg/tcd.c: [1.5] Rework r2758 the conditions were
+	  not quite right. Update checks.
+	* [r2762] applications/codec/convert.c: [1.5] Fix issues with big
+	  endian handling
+	  Fixes issue 302
+	* [r2765] applications/jpip/util/CMakeLists.txt: [1.5] Add a way
+	  for user to override source/target java version
+	  Update issue 303
+	* [r2768] CMakeLists.txt, applications/codec/CMakeLists.txt,
+	  applications/common/opj_getopt.c,
+	  applications/common/opj_getopt.h, opj_config.h.cmake.in,
+	  tests/CMakeLists.txt: [1.5] Create a new cmake option to choose
+	  between convienient copy of getopt and system installed one
+	  Udapte issue 301
+	* [r2769] applications/codec/image_to_j2k.c,
+	  applications/codec/j2k_dump.c, applications/codec/j2k_to_image.c,
+	  applications/common/opj_getopt.h: [1.5] Rework r2768 in fact
+	  getopt_long is slightly different on GNU. Adapt signature to
+	  handle BSD signature and GNU one.
+	  Update issue 301
+
+2014-03-24  Rex Dieter
+
+	* [r2780] configure.ac: Calling AC_CANONICAL_SYSTEM implies
+	  AC_CANONICAL_TARGET, which
+	  gives incorrect results when cross compiling. Calling only
+	  AC_CANONICAL_HOST is enough.
+	  
+	  issue: 129
+	* [r2781] doc/Makefile.am: Install jpwl man pages only if jpwl is
+	  enabled
+	  
+	  issue: 129
+	* [r2782] m4/opj_check_lib.m4: Improve check for standard libs
+	  
+	  Previously, with <lib>_LIBS and <lib>_CFLAGS undefined,
+	  the most basic compile command "$CC conftest.c -l<lib>" was not
+	  tested.
+	  
+	  issue: 129
+
+2014-03-25  Mathieu Malaterre
+
+	* [r2800] applications/codec/Makefile.am,
+	  applications/jpip/libopenjpip/CMakeLists.txt: [1.5] Import patch
+	  from bug tracker
+	  Thanks to winfried
+	  Fixes issue 304
+
+2014-03-26  Mathieu Malaterre
+
+	* [r2807] configure.ac: [1.5] Fix big endian checking with
+	  autotools
+	  Thanks to winfried for patch
+	  Fixes issue 302
+
