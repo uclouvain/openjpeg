@@ -2,23 +2,24 @@
 OpenJPEG NEWS - user visible changes
 ====================================
 
-Changes from OpenJPEG 1.5.1 to OpenJPEG 1.5.0
+Changes from OpenJPEG 1.5.2 to OpenJPEG 1.5.1
 ----------------------------------------------
 
 Security:
 
-    * Fixes: CVE-2012-3535
-    * Fixes: CVE-2012-3358
+    * Fixes: CVE-2013-4289 CVE-2013-4290
+    * Fixes: CVE-2013-1447 CVE-2013-6045 CVE-2013-6052 CVE-2013-6054 CVE-2013-6053 CVE-2013-6887
 
 New Features:
 
-    * Use a new API scheme and solve the SOVERSIONing in OpenJPEG
-    * Allow better integration with multi-arch system
-    * Compile & Install Java bindings (CMake)
-    * Install required addXMLinJP2 (JPIP)
+    * Compile Java with source/target specific java version
+    * Do not set SONAME for Java module, fix linking (missing math lib)
+    * Support some BMP/RGB8 files
+    * Fix compilation on ARM
 
 Misc:
 
-    * fix linker error by resolving all symbols (eg. missing -lm)
-    * fix some man page typos
+    * Remove BSD-4 license from getopt copy, since upstream switched to BSD-3
+    * Support compilation against system installed getopt
+    * Fix Big Endian checking (autotools)
     * Huge amount of bug fixes. See CHANGES for details.
