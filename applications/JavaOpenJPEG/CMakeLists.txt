@@ -41,6 +41,14 @@ INSTALL(TARGETS openjpegjni
 # build jar:
 FIND_PACKAGE(Java 1.5 REQUIRED) # javac, jar
 
+# User can override this:
+if(NOT DEFINED JAVA_SOURCE_VERSION) 
+  set(JAVA_SOURCE_VERSION 1.5)
+endif()
+if(NOT DEFINED JAVA_TARGET_VERSION)
+  set(JAVA_TARGET_VERSION 1.5)
+endif()
+
 # build dep list:
 file(GLOB java_srcs "java-sources/org/openJpeg/*.java")
 
@@ -49,7 +57,9 @@ file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/classes)
 # Build java
 ADD_CUSTOM_COMMAND(
   OUTPUT ${LIBRARY_OUTPUT_PATH}/openjpeg.jar
-  COMMAND ${Java_JAVAC_EXECUTABLE} -sourcepath  "${CMAKE_CURRENT_SOURCE_DIR}/java-sources"
+  COMMAND ${Java_JAVAC_EXECUTABLE}
+  -source ${JAVA_SOURCE_VERSION} -target ${JAVA_TARGET_VERSION}
+  -sourcepath  "${CMAKE_CURRENT_SOURCE_DIR}/java-sources"
   ${java_srcs} -d ${CMAKE_CURRENT_BINARY_DIR}/classes
   COMMAND ${Java_JAR_EXECUTABLE} cvf ${LIBRARY_OUTPUT_PATH}/openjpeg.jar org
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/classes
