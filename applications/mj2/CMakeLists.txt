@@ -1,6 +1,8 @@
 # Makefile for the MJ2 codecs of the OpenJPEG library: frames_to_mj2, mj2_to_frames, extract_j2k_from_mj2 and wrap_j2k_in_mj2
 
+if(NOT USE_SYSTEM_GETOPT)
 SET(common_SRCS ${OPENJPEG_SOURCE_DIR}/applications/common/opj_getopt.c)
+endif()
 
 # While mj2 executables do not use the API correctly, we do not link with the library but rather compile the sources files.
 SET(OPJ_SRCS
