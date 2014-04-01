@@ -1721,7 +1721,7 @@ opj_image_t* loadImage(opj_cparameters_t *parameters, JNIEnv *env, jobject obj, 
 			len = (*env)->GetArrayLength(env, jba);
 			
 			jbBody = (*env)->GetPrimitiveArrayCritical(env, jba, &isCopy);
-/* printf("C: before transfering 8 bpp image\n"); */
+/* printf("C: before transferring 8 bpp image\n"); */
 			if (comp->sgnd) {
 				for(i=0; i< len;i++) {
 					comp->data[i] = (char) jbBody[i];
@@ -1740,7 +1740,7 @@ opj_image_t* loadImage(opj_cparameters_t *parameters, JNIEnv *env, jobject obj, 
 			len = (*env)->GetArrayLength(env, jsa);
 			
 			jsBody = (*env)->GetPrimitiveArrayCritical(env, jsa, &isCopy);
-/*printf("C: before transfering 16 bpp image\n"); */
+/*printf("C: before transferring 16 bpp image\n"); */
 			if (comp->sgnd) {
 /* Special behaviour to deal with signed elements ?? */
 				comp->data[i] = (short) jsBody[i];
@@ -1761,7 +1761,7 @@ opj_image_t* loadImage(opj_cparameters_t *parameters, JNIEnv *env, jobject obj, 
 			shift = compno*8;
 
 			jiBody = (*env)->GetPrimitiveArrayCritical(env, jia, &isCopy);
-/*printf("C: before transfering 24 bpp image (component %d, signed = %d)\n", compno, comp->sgnd);*/
+/*printf("C: before transferring 24 bpp image (component %d, signed = %d)\n", compno, comp->sgnd);*/
 			if (comp->sgnd) {	
 /* Special behaviour to deal with signed elements ?? XXXXX */
 				for(i=0; i< len;i++) {

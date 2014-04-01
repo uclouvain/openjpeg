@@ -615,7 +615,7 @@ JNIEXPORT jint JNICALL Java_org_openJpeg_OpenJPEGJavaDecoder_internalDecodeJ2Kto
 			/* printf("C: %d bytes read from file\n",file_length); */
 		} else {
 			/* Preparing the transfer of the codestream from Java to C */
-			/* printf("C: before transfering codestream\n"); */
+			/* printf("C: before transferring codestream\n"); */
 			fid = (*env)->GetFieldID(env, cls,"compressedStream", "[B");
 			jba = (*env)->GetObjectField(env, obj, fid);
 			file_length = (*env)->GetArrayLength(env, jba);
@@ -797,7 +797,7 @@ JNIEXPORT jint JNICALL Java_org_openJpeg_OpenJPEGJavaDecoder_internalDecodeJ2Kto
 			jia = (*env)->GetObjectField(env, obj, fid);
 			jiBody = (*env)->GetIntArrayElements(env, jia, 0);
 			ptrIBody = jiBody;
-			printf("C: transfering image24: %d int to Java pointer=%d\n",image->numcomps*w*h, ptrIBody);
+			printf("C: transferring image24: %d int to Java pointer=%d\n",image->numcomps*w*h, ptrIBody);
 
 			for (i=0; i<w*h; i++) {
 				tempUC = (unsigned char)(ptr[i]);
@@ -823,7 +823,7 @@ JNIEXPORT jint JNICALL Java_org_openJpeg_OpenJPEGJavaDecoder_internalDecodeJ2Kto
 
 		} else {	/* 1 component 8 or 16 bpp image */
 			ptr = image->comps[0].data;
-			printf("C: before transfering a %d bpp image to java (length = %d)\n",image->comps[0].prec ,w*h);
+			printf("C: before transferring a %d bpp image to java (length = %d)\n",image->comps[0].prec ,w*h);
 			if (image->comps[0].prec<=8) {
 				fid = (*env)->GetFieldID(env, cls,"image8", "[B");
 				jba = (*env)->GetObjectField(env, obj, fid);
@@ -838,7 +838,7 @@ JNIEXPORT jint JNICALL Java_org_openJpeg_OpenJPEGJavaDecoder_internalDecodeJ2Kto
 					max_value = 255;
 				}
 #endif								
-/* printf("C: transfering %d shorts to Java image8 pointer = %d\n", wr*hr,ptrSBody); */
+/* printf("C: transferring %d shorts to Java image8 pointer = %d\n", wr*hr,ptrSBody); */
 				for (i=0; i<w*h; i++) {
 					tempUC = (unsigned char) (ptr[i]);
 #ifdef CHECK_THRESHOLDS
@@ -866,7 +866,7 @@ JNIEXPORT jint JNICALL Java_org_openJpeg_OpenJPEGJavaDecoder_internalDecodeJ2Kto
 				}
 				printf("C: minValue = %d, maxValue = %d\n", min_value, max_value);
 #endif				
-				printf("C: transfering %d shorts to Java image16 pointer = %d\n", w*h,ptrSBody);
+				printf("C: transferring %d shorts to Java image16 pointer = %d\n", w*h,ptrSBody);
 				for (i=0; i<w*h; i++) {
 					tempS = (short) (ptr[i]);
 #ifdef CHECK_THRESHOLDS
