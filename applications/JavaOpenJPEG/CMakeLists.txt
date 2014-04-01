@@ -7,8 +7,12 @@ SET(openjpegjni_SRCS
   ${OPENJPEG_SOURCE_DIR}/applications/codec/index.c
   ${OPENJPEG_SOURCE_DIR}/applications/codec/convert.c
   #${OPENJPEG_SOURCE_DIR}/applications/common/color.c
-  ${OPENJPEG_SOURCE_DIR}/applications/common/opj_getopt.c
   )
+if(NOT USE_SYSTEM_GETOPT)
+  list(APPEND openjpegjni_SRCS
+    ${OPENJPEG_SOURCE_DIR}/applications/common/opj_getopt.c
+  )
+endif()
 
 # JNI binding:
 find_package(JNI REQUIRED)
