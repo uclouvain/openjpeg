@@ -587,7 +587,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
             substr1 = (char*) malloc((len+1)*sizeof(char));
             memcpy(substr1,opj_optarg,len);
             substr1[len] = '\0';
-            if (sscanf(substr1, "%d,%d,%d,%d,%[su]", &width, &height, &ncomp, &bitdepth, &signo) == 5) {
+            if (sscanf(substr1, "%d,%d,%d,%d,%c", &width, &height, &ncomp, &bitdepth, &signo) == 5) {
                 if (signo == 's') {
                     raw_signed = OPJ_TRUE;
                 } else if (signo == 'u') {
@@ -636,6 +636,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
                     }
                 }
             }
+            if (substr1) free(substr1);
             if (wrong) {
                 fprintf(stderr,"\nError: invalid raw image parameters\n");
                 fprintf(stderr,"Please use the Format option -F:\n");
@@ -646,7 +647,6 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
                 fprintf(stderr,"Aborting.\n");
                 return 1;
             }
-            if (substr1 != NULL) free(substr1);
         }
             break;
 
@@ -1525,6 +1525,14 @@ int main(int argc, char **argv) {
     /* Initialize indexfilename and img_fol */
     *indexfilename = 0;
     memset(&img_fol,0,sizeof(img_fol_t));
+
+    /* raw_cp initialization */
+    raw_cp.rawBitDepth = 0;
+    raw_cp.rawComp = 0;
+    raw_cp.rawComps = 0;
+    raw_cp.rawHeight = 0;
+    raw_cp.rawSigned = 0;
+    raw_cp.rawWidth = 0;
 
     /* parse input and get user encoding parameters */
     parameters.tcp_mct = (char) 255; /* This will be set later according to the input image or the provided option */
