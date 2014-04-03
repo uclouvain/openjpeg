@@ -1,8 +1,8 @@
 /*
  * $Id: opj_server.c 53 2011-05-09 16:55:39Z kaori $
  *
- * Copyright (c) 2002-2011, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
- * Copyright (c) 2002-2011, Professor Benoit Macq
+ * Copyright (c) 2002-2014, Universite catholique de Louvain (UCL), Belgium
+ * Copyright (c) 2002-2014, Professor Benoit Macq
  * Copyright (c) 2010-2011, Kaori Hagihara 
  * Copyright (c) 2011,      Lucian Corlaciu, GSoC
  * All rights reserved.
