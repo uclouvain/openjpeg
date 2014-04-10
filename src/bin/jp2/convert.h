@@ -1,9 +1,15 @@
 /*
- * Copyright (c) 2002-2007, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
- * Copyright (c) 2002-2007, Professor Benoit Macq
+ * The copyright in this software is being made available under the 2-clauses 
+ * BSD License, included below. This software may be subject to other third 
+ * party and contributor rights, including patent rights, and no such rights
+ * are granted under this license.
+ *
+ * Copyright (c) 2002-2014, Universite catholique de Louvain (UCL), Belgium
+ * Copyright (c) 2002-2014, Professor Benoit Macq
  * Copyright (c) 2001-2003, David Janssens
  * Copyright (c) 2002-2003, Yannick Verschueren
- * Copyright (c) 2003-2007, Francois-Olivier Devaux and Antonin Descampe
+ * Copyright (c) 2003-2007, Francois-Olivier Devaux 
+ * Copyright (c) 2003-2014, Antonin Descampe
  * Copyright (c) 2005, Herve Drolon, FreeImage Team
  * All rights reserved.
  *
@@ -31,6 +37,16 @@
 #ifndef __J2K_CONVERT_H
 #define __J2K_CONVERT_H
 
+/**@name RAW component encoding parameters */
+/*@{*/
+typedef struct raw_comp_cparameters {
+    /** subsampling in X direction */
+    int dx;
+    /** subsampling in Y direction */
+    int dy;
+    /*@}*/
+} raw_comp_cparameters_t;
+
 /**@name RAW image encoding parameters */
 /*@{*/
 typedef struct raw_cparameters {
@@ -38,12 +54,14 @@ typedef struct raw_cparameters {
 	int rawWidth;
 	/** height of the raw image */
 	int rawHeight;
-	/** components of the raw image */
+    /** number of components of the raw image */
 	int rawComp;
-	/** bit depth of the raw image */
-	int rawBitDepth;
-	/** signed/unsigned raw image */
-	OPJ_BOOL rawSigned;
+    /** bit depth of the raw image */
+    int rawBitDepth;
+    /** signed/unsigned raw image */
+    OPJ_BOOL rawSigned;
+    /** raw components parameters */
+    raw_comp_cparameters_t *rawComps;
 	/*@}*/
 } raw_cparameters_t;
 

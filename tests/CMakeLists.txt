@@ -100,3 +100,4 @@ if(BUILD_JPIP)
 endif()
 
 add_executable(ppm2rgb3 ppm2rgb3.c)
+#add_executable(pdf2jp2 pdf2jp2.c)

@@ -16,7 +16,7 @@ ELSE (BUILD_THIRDPARTY)
     SET(Z_LIBNAME ${ZLIB_LIBRARIES} PARENT_SCOPE)
     SET(Z_INCLUDE_DIRNAME ${ZLIB_INCLUDE_DIRS} PARENT_SCOPE)
     message(STATUS "Your system seems to have a Z lib available, we will use it to generate PNG lib")
-    message(STATUS "DEBUG: ${ZLIB_INCLUDE_DIRS} vs ${ZLIB_INCLUDE_DIR}")
+    # message(STATUS "DEBUG: ${ZLIB_INCLUDE_DIRS} vs ${ZLIB_INCLUDE_DIR}")
   ELSE (ZLIB_FOUND) # not found
     message(STATUS "Z lib not found, activate BUILD_THIRDPARTY if you want build it (necessary to build libPNG)")
   ENDIF(ZLIB_FOUND)

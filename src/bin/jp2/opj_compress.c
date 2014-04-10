@@ -1,9 +1,15 @@
 /*
- * Copyright (c) 2002-2007, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
- * Copyright (c) 2002-2007, Professor Benoit Macq
+ * The copyright in this software is being made available under the 2-clauses 
+ * BSD License, included below. This software may be subject to other third 
+ * party and contributor rights, including patent rights, and no such rights
+ * are granted under this license.
+ *
+ * Copyright (c) 2002-2014, Universite catholique de Louvain (UCL), Belgium
+ * Copyright (c) 2002-2014, Professor Benoit Macq
  * Copyright (c) 2001-2003, David Janssens
  * Copyright (c) 2002-2003, Yannick Verschueren
- * Copyright (c) 2003-2007, Francois-Olivier Devaux and Antonin Descampe
+ * Copyright (c) 2003-2007, Francois-Olivier Devaux 
+ * Copyright (c) 2003-2014, Antonin Descampe
  * Copyright (c) 2005, Herve Drolon, FreeImage Team
  * Copyright (c) 2006-2007, Parvatha Elangovan
  * Copyright (c) 2008, Jerome Fimes, Communications & Systemes <jerome.fimes@c-s.fr>
@@ -209,7 +215,7 @@ static void encode_help_display(void) {
     fprintf(stdout,"               -F rawWidth,rawHeight,rawComp,rawBitDepth,s/u (Signed/Unsigned)\n");
     fprintf(stdout,"               Example: -i lena.raw -o lena.j2k -F 512,512,3,8,u\n");
     fprintf(stdout,"\n");
-    fprintf(stdout,"-mct {0,1,2} : explicitely specifies if an Multiple Component Transform has to be used.\n");
+    fprintf(stdout,"-mct {0,1,2} : explicitely specifies if a Multiple Component Transform has to be used.\n");
     fprintf(stdout,"               0: no MCT ; 1: RGB->YCC conversion ; 2: custom MCT.\n");
     fprintf(stdout,"               If custom MCT, \"-m\" option has to be used (see hereunder).\n");
     fprintf(stdout,"               By default, RGB->YCC conversion is used if there are 3 components or more,\n");
@@ -569,31 +575,82 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
 
         case 'F':			/* Raw image format parameters */
         {
+            OPJ_BOOL wrong = OPJ_FALSE;
+            char *substr1;
+            char *substr2;
+            char *sep;
             char signo;
-            char *s = opj_optarg;
-            if (sscanf(s, "%d,%d,%d,%d,%c", &raw_cp->rawWidth, &raw_cp->rawHeight, &raw_cp->rawComp, &raw_cp->rawBitDepth, &signo) == 5) {
+            int width,height,bitdepth,ncomp;
+            OPJ_UINT32 len;
+            OPJ_BOOL raw_signed;
+            substr2 = strchr(opj_optarg,'@');
+            if (substr2 == NULL) {
+                len = (OPJ_UINT32) strlen(opj_optarg);
+            } else {
+                len = (OPJ_UINT32) (substr2 - opj_optarg);
+                substr2++; /* skip '@' character */
+            }
+            substr1 = (char*) malloc((len+1)*sizeof(char));
+            memcpy(substr1,opj_optarg,len);
+            substr1[len] = '\0';
+            if (sscanf(substr1, "%d,%d,%d,%d,%c", &width, &height, &ncomp, &bitdepth, &signo) == 5) {
                 if (signo == 's') {
-                    raw_cp->rawSigned = OPJ_TRUE;
-                    fprintf(stdout,"\nRaw file parameters: %d,%d,%d,%d Signed\n", raw_cp->rawWidth, raw_cp->rawHeight, raw_cp->rawComp, raw_cp->rawBitDepth);
+                    raw_signed = OPJ_TRUE;
+                } else if (signo == 'u') {
+                    raw_signed = OPJ_FALSE;
+                } else {
+                    wrong = OPJ_TRUE;
                 }
-                else if (signo == 'u') {
-                    raw_cp->rawSigned = OPJ_FALSE;
-                    fprintf(stdout,"\nRaw file parameters: %d,%d,%d,%d Unsigned\n", raw_cp->rawWidth, raw_cp->rawHeight, raw_cp->rawComp, raw_cp->rawBitDepth);
-                }
-                else {
-                    fprintf(stderr,"\nError: invalid raw image parameters: Unknown sign of raw file\n");
-                    fprintf(stderr,"Please use the Format option -F:\n");
-                    fprintf(stderr,"-F rawWidth,rawHeight,rawComp,rawBitDepth,s/u (Signed/Unsigned)\n");
-                    fprintf(stderr,"Example: -i lena.raw -o lena.j2k -F 512,512,3,8,u\n");
-                    fprintf(stderr,"Aborting\n");
+            } else {
+                wrong = OPJ_TRUE;
+            }
+            if (!wrong) {
+                int i;
+                int lastdx = 1;
+                int lastdy = 1;
+                raw_cp->rawWidth = width;
+                raw_cp->rawHeight = height;
+                raw_cp->rawComp = ncomp;
+                raw_cp->rawBitDepth = bitdepth;
+                raw_cp->rawSigned  = raw_signed;
+                raw_cp->rawComps = (raw_comp_cparameters_t*) malloc(((OPJ_UINT32)(ncomp))*sizeof(raw_comp_cparameters_t));
+                for (i = 0; i < ncomp && !wrong; i++) {
+                    if (substr2 == NULL) {
+                        raw_cp->rawComps[i].dx = lastdx;
+                        raw_cp->rawComps[i].dy = lastdy;
+                    } else {
+                        int dx,dy;
+                        sep = strchr(substr2,':');
+                        if (sep == NULL) {
+                            if (sscanf(substr2, "%dx%d", &dx, &dy) == 2) {
+                                lastdx = dx;
+                                lastdy = dy;
+                                raw_cp->rawComps[i].dx = dx;
+                                raw_cp->rawComps[i].dy = dy;
+                                substr2 = NULL;
+                            } else {
+                                wrong = OPJ_TRUE;
+                            }
+                        } else {
+                            if (sscanf(substr2, "%dx%d:%s", &dx, &dy, substr2) == 3) {
+                                raw_cp->rawComps[i].dx = dx;
+                                raw_cp->rawComps[i].dy = dy;
+                            } else {
+                                wrong = OPJ_TRUE;
+                            }
+                        }
+                    }
                 }
             }
-            else {
+            if (substr1) free(substr1);
+            if (wrong) {
                 fprintf(stderr,"\nError: invalid raw image parameters\n");
                 fprintf(stderr,"Please use the Format option -F:\n");
-                fprintf(stderr,"-F rawWidth,rawHeight,rawComp,rawBitDepth,s/u (Signed/Unsigned)\n");
-                fprintf(stderr,"Example: -i lena.raw -o lena.j2k -F 512,512,3,8,u\n");
-                fprintf(stderr,"Aborting\n");
+                fprintf(stderr,"-F <width>,<height>,<ncomp>,<bitdepth>,{s,u}@<dx1>x<dy1>:...:<dxn>x<dyn>\n");
+                fprintf(stderr,"If subsampling is omitted, 1x1 is assumed for all components\n");
+                fprintf(stderr,"Example: -i image.raw -o image.j2k -F 512,512,3,8,u@1x1:2x2:2x2\n");
+                fprintf(stderr,"         for raw 512x512 image with 4:2:0 subsampling\n");
+                fprintf(stderr,"Aborting.\n");
                 return 1;
             }
         }
@@ -1476,8 +1533,16 @@ int main(int argc, char **argv) {
     *indexfilename = 0;
     memset(&img_fol,0,sizeof(img_fol_t));
 
+    /* raw_cp initialization */
+    raw_cp.rawBitDepth = 0;
+    raw_cp.rawComp = 0;
+    raw_cp.rawComps = 0;
+    raw_cp.rawHeight = 0;
+    raw_cp.rawSigned = 0;
+    raw_cp.rawWidth = 0;
+
     /* parse input and get user encoding parameters */
-    parameters.tcp_mct = -1; /* This will be set later according to the input image or the provided option */
+    parameters.tcp_mct = (char) 255; /* This will be set later according to the input image or the provided option */
     if(parse_cmdline_encoder(argc, argv, &parameters,&img_fol, &raw_cp, indexfilename) == 1) {
         return 1;
     }
@@ -1637,8 +1702,8 @@ int main(int argc, char **argv) {
         }
 
         /* Decide if MCT should be used */
-        if (parameters.tcp_mct == -1) { /* mct mode has not been set in commandline */
-            parameters.tcp_mct = image->numcomps >= 3 ? 1 : 0;
+        if (parameters.tcp_mct == (char) 255) { /* mct mode has not been set in commandline */
+            parameters.tcp_mct = (image->numcomps >= 3) ? 1 : 0;
         } else {            /* mct mode has been set in commandline */
             if ((parameters.tcp_mct == 1) && (image->numcomps < 3)){
                 fprintf(stderr, "RGB->YCC conversion cannot be used:\n");
@@ -1761,6 +1826,7 @@ int main(int argc, char **argv) {
     /* free user parameters structure */
     if(parameters.cp_comment)   free(parameters.cp_comment);
     if(parameters.cp_matrice)   free(parameters.cp_matrice);
+    if(raw_cp.rawComps) free(raw_cp.rawComps);
 
     return 0;
 }
