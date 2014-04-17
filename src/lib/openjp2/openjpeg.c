@@ -639,10 +639,11 @@ void OPJ_CALLCONV opj_set_default_encoder_parameters(opj_cparameters_t *paramete
 	if(parameters) {
 		memset(parameters, 0, sizeof(opj_cparameters_t));
 		/* default coding parameters */
-		parameters->cp_cinema = OPJ_OFF; 
+        parameters->cp_cinema = OPJ_OFF; /* DEPRECATED */
+        parameters->rsiz = OPJ_PROFILE_NONE;
 		parameters->max_comp_size = 0;
 		parameters->numresolution = 6;
-		parameters->cp_rsiz = OPJ_STD_RSIZ;
+        parameters->cp_rsiz = OPJ_STD_RSIZ; /* DEPRECATED */
 		parameters->cblockw_init = 64;
 		parameters->cblockh_init = 64;
 		parameters->prog_order = OPJ_LRCP;
@@ -793,8 +794,11 @@ OPJ_BOOL OPJ_CALLCONV opj_set_MCT(opj_cparameters_t *parameters,
 	OPJ_UINT32 l_mct_total_size = l_matrix_size + l_dc_shift_size;
 
 	/* add MCT capability */
-	OPJ_INT32 rsiz = (OPJ_INT32)parameters->cp_rsiz | (OPJ_INT32)OPJ_MCT;
-	parameters->cp_rsiz = (OPJ_RSIZ_CAPABILITIES)rsiz;
+    if (OPJ_IS_PART2(parameters->rsiz)) {
+        parameters->rsiz |= OPJ_EXTENSION_MCT;
+    } else {
+        parameters->rsiz = ((OPJ_PROFILE_PART2) | (OPJ_EXTENSION_MCT));
+    }
 	parameters->irreversible = 1;
 
 	/* use array based MCT */

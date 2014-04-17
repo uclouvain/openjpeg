@@ -968,9 +968,13 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
             int fps=0;
             sscanf(opj_optarg,"%d",&fps);
             if(fps == 24){
-                parameters->cp_cinema = OPJ_CINEMA2K_24;
+                parameters->rsiz = OPJ_PROFILE_CINEMA_2K;
+                parameters->max_comp_size = OPJ_CINEMA_24_COMP;
+                parameters->max_cs_size = OPJ_CINEMA_24_CS;
             }else if(fps == 48 ){
-                parameters->cp_cinema = OPJ_CINEMA2K_48;
+                parameters->rsiz = OPJ_PROFILE_CINEMA_2K;
+                parameters->max_comp_size = OPJ_CINEMA_48_COMP;
+                parameters->max_cs_size = OPJ_CINEMA_48_CS;
             }else {
                 fprintf(stderr,"Incorrect value!! must be 24 or 48\n");
                 return 1;
@@ -985,7 +989,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
 
         case 'y':			/* Digital Cinema 4K profile compliance*/
         {
-            parameters->cp_cinema = OPJ_CINEMA4K_24;
+            parameters->rsiz = OPJ_PROFILE_CINEMA_4K;
             fprintf(stdout,"CINEMA 4K profile activated\n"
                     "Other options specified could be overriden\n");
         }

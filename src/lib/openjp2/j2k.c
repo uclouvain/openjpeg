@@ -42,11 +42,6 @@
 
 #include "opj_includes.h"
 
-#define CINEMA_24_CS 1302083	/*Codestream length for 24fps*/
-#define CINEMA_48_CS 651041		/*Codestream length for 48fps*/
-#define COMP_24_CS 1041666		/*Maximum size per color component for 2K & 4K @ 24fps*/
-#define COMP_48_CS 520833		/*Maximum size per color component for 2K @ 48fps*/
-
 /** @defgroup J2K J2K - JPEG-2000 codestream reader/writer */
 /*@{*/
 
@@ -1172,7 +1167,7 @@ static int opj_j2k_initialise_4K_poc(opj_poc_t *POC, int numres);
 
 static void opj_j2k_set_cinema_parameters(opj_cparameters_t *parameters, opj_image_t *image, opj_event_mgr_t *p_manager);
 
-static OPJ_BOOL opj_j2k_is_cinema_compliant(opj_image_t *image, OPJ_CINEMA_MODE cinema_mode, opj_event_mgr_t *p_manager);
+static OPJ_BOOL opj_j2k_is_cinema_compliant(opj_image_t *image, OPJ_UINT16 rsiz, opj_event_mgr_t *p_manager);
 
 /*@}*/
 
@@ -1945,7 +1940,7 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
 
         opj_read_bytes(p_header_data,&l_tmp ,2);                                                /* Rsiz (capabilities) */
         p_header_data+=2;
-        l_cp->rsiz = (OPJ_RSIZ_CAPABILITIES) l_tmp;
+        l_cp->rsiz = (OPJ_UINT16) l_tmp;
         opj_read_bytes(p_header_data, (OPJ_UINT32*) &l_image->x1, 4);   /* Xsiz */
         p_header_data+=4;
         opj_read_bytes(p_header_data, (OPJ_UINT32*) &l_image->y1, 4);   /* Ysiz */
@@ -3102,7 +3097,7 @@ OPJ_UINT32 opj_j2k_get_specific_header_sizes(opj_j2k_t *p_j2k)
         l_nb_comps = p_j2k->m_private_image->numcomps - 1;
         l_nb_bytes += opj_j2k_get_max_toc_size(p_j2k);
 
-        if (p_j2k->m_cp.m_specific_param.m_enc.m_cinema == 0) {
+        if (!(OPJ_IS_CINEMA(p_j2k->m_cp.rsiz))) {
                 l_coc_bytes = opj_j2k_get_max_coc_size(p_j2k);
                 l_nb_bytes += l_nb_comps * l_coc_bytes;
 
@@ -4722,7 +4717,7 @@ OPJ_BOOL opj_j2k_update_rates(  opj_j2k_t *p_j2k,
                 return OPJ_FALSE;
         }
 
-        if (l_cp->m_specific_param.m_enc.m_cinema) {
+        if (OPJ_IS_CINEMA(l_cp->rsiz)) {
                 p_j2k->m_specific_param.m_encoder.m_tlm_sot_offsets_buffer =
                                 (OPJ_BYTE *) opj_malloc(5*p_j2k->m_specific_param.m_encoder.m_total_tile_parts);
                 if (! p_j2k->m_specific_param.m_encoder.m_tlm_sot_offsets_buffer) {
@@ -5914,23 +5909,7 @@ int opj_j2k_initialise_4K_poc(opj_poc_t *POC, int numres){
 void opj_j2k_set_cinema_parameters(opj_cparameters_t *parameters, opj_image_t *image, opj_event_mgr_t *p_manager)
 {
     /* Configure cinema parameters */
-    OPJ_FLOAT32 max_rate = 0;
-    OPJ_FLOAT32 temp_rate = 0;
     int i;
-
-    /* profile (Rsiz) */
-    switch (parameters->cp_cinema){
-    case OPJ_CINEMA2K_24:
-    case OPJ_CINEMA2K_48:
-        parameters->cp_rsiz = OPJ_CINEMA2K;
-        break;
-    case OPJ_CINEMA4K_24:
-        parameters->cp_rsiz = OPJ_CINEMA4K;
-        break;
-    case OPJ_OFF:
-        assert(0);
-        break;
-    }
 
     /* No tiling */
     parameters->tile_size_on = OPJ_FALSE;
@@ -5969,15 +5948,16 @@ void opj_j2k_set_cinema_parameters(opj_cparameters_t *parameters, opj_image_t *i
         opj_event_msg(p_manager, EVT_WARNING,
                 "JPEG 2000 Profile-3 and 4 (2k/4k dc profile) requires:\n"
                 "1 single quality layer"
-                "-> Number of layers forced to 1 (rather than %d)\n",
-                parameters->tcp_numlayers);
+                "-> Number of layers forced to 1 (rather than %d)\n"
+                "-> Rate of the last layer (%3.1f) will be used",
+                parameters->tcp_numlayers, parameters->tcp_rates[parameters->tcp_numlayers-1]);
+        parameters->tcp_rates[0] = parameters->tcp_rates[parameters->tcp_numlayers-1];
         parameters->tcp_numlayers = 1;
     }
 
     /* Resolution levels */
-    switch (parameters->cp_cinema){
-    case OPJ_CINEMA2K_24:
-    case OPJ_CINEMA2K_48:
+    switch (parameters->rsiz){
+    case OPJ_PROFILE_CINEMA_2K:
         if(parameters->numresolution > 6){
             opj_event_msg(p_manager, EVT_WARNING,
                     "JPEG 2000 Profile-3 (2k dc profile) requires:\n"
@@ -5987,7 +5967,7 @@ void opj_j2k_set_cinema_parameters(opj_cparameters_t *parameters, opj_image_t *i
             parameters->numresolution = 6;
         }
         break;
-    case OPJ_CINEMA4K_24:
+    case OPJ_PROFILE_CINEMA_4K:
         if(parameters->numresolution < 2){
             opj_event_msg(p_manager, EVT_WARNING,
                     "JPEG 2000 Profile-4 (4k dc profile) requires:\n"
@@ -6020,7 +6000,7 @@ void opj_j2k_set_cinema_parameters(opj_cparameters_t *parameters, opj_image_t *i
     parameters->prog_order = OPJ_CPRL;
 
     /* Progression order changes for 4K, disallowed for 2K */
-    if (parameters->cp_cinema == OPJ_CINEMA4K_24) {
+    if (parameters->rsiz == OPJ_PROFILE_CINEMA_4K) {
         parameters->numpocs = (OPJ_UINT32)opj_j2k_initialise_4K_poc(parameters->POC,parameters->numresolution);
     } else {
         parameters->numpocs = 0;
@@ -6028,62 +6008,42 @@ void opj_j2k_set_cinema_parameters(opj_cparameters_t *parameters, opj_image_t *i
 
     /* Limited bit-rate */
     parameters->cp_disto_alloc = 1;
-    switch (parameters->cp_cinema){
-    case OPJ_CINEMA2K_24:
-    case OPJ_CINEMA4K_24:
-        max_rate = (OPJ_FLOAT32) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec)/
-                (OPJ_FLOAT32)(CINEMA_24_CS * 8 * image->comps[0].dx * image->comps[0].dy);
-        if (parameters->tcp_rates[0] == 0){
-            parameters->tcp_rates[0] = max_rate;
-        }else{
-            temp_rate =(OPJ_FLOAT32)(image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec)/
-                    (parameters->tcp_rates[0] * 8 * (OPJ_FLOAT32)image->comps[0].dx * (OPJ_FLOAT32)image->comps[0].dy);
-            if (temp_rate > CINEMA_24_CS ){
-                opj_event_msg(p_manager, EVT_WARNING,
-                        "JPEG 2000 Profile-3 and 4 (2k/4k dc profile) requires:\n"
-                        "Maximum 1302083 compressed bytes @ 24fps\n"
-                        "-> Specified rate (%3.1f) exceeds this limit. Rate will be forced to %3.1f.\n",
-                        parameters->tcp_rates[0], max_rate);
-                parameters->tcp_rates[0]= max_rate;
-            }else{
-                opj_event_msg(p_manager, EVT_WARNING,
-                        "JPEG 2000 Profile-3 and 4 (2k/4k dc profile):\n"
-                        "INFO : Specified rate (%3.1f) is below the 2k/4k limit @ 24fps.\n",
-                        parameters->tcp_rates[0]);
-            }
-        }
-        parameters->max_comp_size = COMP_24_CS;
-        break;
-    case OPJ_CINEMA2K_48:
-        max_rate = ((float) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec))/
-                (float)(CINEMA_48_CS * 8 * image->comps[0].dx * image->comps[0].dy);
-        if (parameters->tcp_rates[0] == 0){
-            parameters->tcp_rates[0] = max_rate;
-        }else{
-            temp_rate =((float) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec))/
-                    (parameters->tcp_rates[0] * 8 * (float)image->comps[0].dx * (float)image->comps[0].dy);
-            if (temp_rate > CINEMA_48_CS ){
-                opj_event_msg(p_manager, EVT_WARNING,
-                        "JPEG 2000 Profile-3 (2k dc profile) requires:\n"
-                        "Maximum 651041 compressed bytes @ 48fps\n"
-                        "-> Specified rate (%3.1f) exceeds this limit. Rate will be forced to %3.1f.\n",
-                        parameters->tcp_rates[0], max_rate);
-                parameters->tcp_rates[0]= max_rate;
-            }else{
-                opj_event_msg(p_manager, EVT_WARNING,
-                        "JPEG 2000 Profile-3 (2k dc profile):\n"
-                        "INFO : Specified rate (%3.1f) is below the 2k limit @ 48 fps.\n",
-                        parameters->tcp_rates[0]);
-            }
-        }
-        parameters->max_comp_size = COMP_48_CS;
-        break;
-    default:
-        break;
+    if (parameters->max_cs_size <= 0) {
+        /* No rate has been introduced, 24 fps is assumed */
+        parameters->max_cs_size = OPJ_CINEMA_24_CS;
+        opj_event_msg(p_manager, EVT_WARNING,
+                      "JPEG 2000 Profile-3 and 4 (2k/4k dc profile) requires:\n"
+                      "Maximum 1302083 compressed bytes @ 24fps\n"
+                      "As no rate has been given, this limit will be used.\n");
+    } else if (parameters->max_cs_size > OPJ_CINEMA_24_CS) {
+        opj_event_msg(p_manager, EVT_WARNING,
+                      "JPEG 2000 Profile-3 and 4 (2k/4k dc profile) requires:\n"
+                      "Maximum 1302083 compressed bytes @ 24fps\n"
+                      "-> Specified rate exceeds this limit. Rate will be forced to 1302083 bytes.\n");
+        parameters->max_cs_size = OPJ_CINEMA_24_CS;
     }
+
+    if (parameters->max_comp_size <= 0) {
+        /* No rate has been introduced, 24 fps is assumed */
+        parameters->max_comp_size = OPJ_CINEMA_24_COMP;
+        opj_event_msg(p_manager, EVT_WARNING,
+                      "JPEG 2000 Profile-3 and 4 (2k/4k dc profile) requires:\n"
+                      "Maximum 1041666 compressed bytes @ 24fps\n"
+                      "As no rate has been given, this limit will be used.\n");
+    } else if (parameters->max_comp_size > OPJ_CINEMA_24_COMP) {
+        opj_event_msg(p_manager, EVT_WARNING,
+                      "JPEG 2000 Profile-3 and 4 (2k/4k dc profile) requires:\n"
+                      "Maximum 1041666 compressed bytes @ 24fps\n"
+                      "-> Specified rate exceeds this limit. Rate will be forced to 1041666 bytes.\n");
+        parameters->max_comp_size = OPJ_CINEMA_24_COMP;
+    }
+
+    parameters->tcp_rates[0] = (OPJ_FLOAT32) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec)/
+            (OPJ_FLOAT32)(parameters->max_cs_size * 8 * image->comps[0].dx * image->comps[0].dy);
+
 }
 
-OPJ_BOOL opj_j2k_is_cinema_compliant(opj_image_t *image, OPJ_CINEMA_MODE cinema_mode, opj_event_mgr_t *p_manager)
+OPJ_BOOL opj_j2k_is_cinema_compliant(opj_image_t *image, OPJ_UINT16 rsiz, opj_event_mgr_t *p_manager)
 {
     OPJ_UINT32 i;
 
@@ -6115,9 +6075,8 @@ OPJ_BOOL opj_j2k_is_cinema_compliant(opj_image_t *image, OPJ_CINEMA_MODE cinema_
     }
 
     /* Image size */
-    switch (cinema_mode){
-    case OPJ_CINEMA2K_24:
-    case OPJ_CINEMA2K_48:
+    switch (rsiz){
+    case OPJ_PROFILE_CINEMA_2K:
         if (((image->comps[0].w > 2048) | (image->comps[0].h > 1080))){
             opj_event_msg(p_manager, EVT_WARNING,
                     "JPEG 2000 Profile-3 (2k dc profile) requires:\n"
@@ -6128,7 +6087,7 @@ OPJ_BOOL opj_j2k_is_cinema_compliant(opj_image_t *image, OPJ_CINEMA_MODE cinema_
             return OPJ_FALSE;
         }
         break;
-    case OPJ_CINEMA4K_24:
+    case OPJ_PROFILE_CINEMA_4K:
         if (((image->comps[0].w > 4096) | (image->comps[0].h > 2160))){
             opj_event_msg(p_manager, EVT_WARNING,
                     "JPEG 2000 Profile-4 (4k dc profile) requires:\n"
@@ -6165,20 +6124,117 @@ void opj_j2k_setup_encoder(     opj_j2k_t *p_j2k,
         cp->tw = 1;
         cp->th = 1;
 
+        /* FIXME ADE: to be removed once deprecated cp_cinema and cp_rsiz have been removed */
+        if (parameters->rsiz == OPJ_PROFILE_NONE) { /* consider deprecated fields only if RSIZ has not been set */
+            switch (parameters->cp_cinema){
+            case OPJ_CINEMA2K_24:
+                parameters->rsiz = OPJ_PROFILE_CINEMA_2K;
+                parameters->max_cs_size = OPJ_CINEMA_24_CS;
+                parameters->max_comp_size = OPJ_CINEMA_24_COMP;
+                break;
+            case OPJ_CINEMA2K_48:
+                parameters->rsiz = OPJ_PROFILE_CINEMA_2K;
+                parameters->max_cs_size = OPJ_CINEMA_48_CS;
+                parameters->max_comp_size = OPJ_CINEMA_48_COMP;
+                break;
+            case OPJ_CINEMA4K_24:
+                parameters->rsiz = OPJ_PROFILE_CINEMA_4K;
+                parameters->max_cs_size = OPJ_CINEMA_24_CS;
+                parameters->max_comp_size = OPJ_CINEMA_24_COMP;
+                break;
+            case OPJ_OFF:
+            default:
+                break;
+            }
+            switch (parameters->cp_rsiz){
+            case OPJ_CINEMA2K:
+                parameters->rsiz = OPJ_PROFILE_CINEMA_2K;
+                break;
+            case OPJ_CINEMA4K:
+                parameters->rsiz = OPJ_PROFILE_CINEMA_4K;
+                break;
+            case OPJ_MCT:
+                parameters->rsiz = OPJ_PROFILE_PART2 | OPJ_EXTENSION_MCT;
+            case OPJ_STD_RSIZ:
+            default:
+                break;
+            }
+        }
+
+        /* see if max_codestream_size does limit input rate */
+        if (parameters->max_cs_size <= 0) {
+            if (parameters->tcp_rates[parameters->tcp_numlayers-1] > 0) {
+                OPJ_FLOAT32 temp_size;
+                temp_size =(OPJ_FLOAT32)(image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec)/
+                        (parameters->tcp_rates[parameters->tcp_numlayers-1] * 8 * (OPJ_FLOAT32)image->comps[0].dx * (OPJ_FLOAT32)image->comps[0].dy);
+                parameters->max_cs_size = (int) floor(temp_size);
+            } else {
+                parameters->max_cs_size = 0;
+            }
+        } else {
+            OPJ_FLOAT32 temp_rate;
+            OPJ_BOOL cap = OPJ_FALSE;
+            temp_rate = (OPJ_FLOAT32) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec)/
+                    (OPJ_FLOAT32)(parameters->max_cs_size * 8 * image->comps[0].dx * image->comps[0].dy);
+            for (i = 0; i < (OPJ_UINT32) parameters->tcp_numlayers; i++) {
+                if (parameters->tcp_rates[i] < temp_rate) {
+                    parameters->tcp_rates[i] = temp_rate;
+                    cap = OPJ_TRUE;
+                }
+            }
+            if (cap) {
+                opj_event_msg(p_manager, EVT_WARNING,
+                        "The desired maximum codestream size has limited\n"
+                        "at least one of the desired quality layers\n");
+            }
+        }
+
+        /* Manage profiles and applications and set RSIZ */
         /* set cinema parameters if required */
-        if (parameters->cp_cinema){
-            opj_j2k_set_cinema_parameters(parameters,image,p_manager);
-            if (!opj_j2k_is_cinema_compliant(image,parameters->cp_cinema,p_manager)) {
-                parameters->cp_rsiz = OPJ_STD_RSIZ;
+        if (OPJ_IS_CINEMA(parameters->rsiz)){
+            if ((parameters->rsiz == OPJ_PROFILE_CINEMA_S2K)
+                    || (parameters->rsiz == OPJ_PROFILE_CINEMA_S4K)){
+                opj_event_msg(p_manager, EVT_WARNING,
+                        "JPEG 2000 Scalable Digital Cinema profiles not yet supported\n");
+                parameters->rsiz = OPJ_PROFILE_NONE;
+            } else {
+                opj_j2k_set_cinema_parameters(parameters,image,p_manager);
+                if (!opj_j2k_is_cinema_compliant(image,parameters->rsiz,p_manager)) {
+                    parameters->rsiz = OPJ_PROFILE_NONE;
+                }
+            }
+        } else if (OPJ_IS_STORAGE(parameters->rsiz)) {
+            opj_event_msg(p_manager, EVT_WARNING,
+                    "JPEG 2000 Long Term Storage profile not yet supported\n");
+            parameters->rsiz = OPJ_PROFILE_NONE;
+        } else if (OPJ_IS_BROADCAST(parameters->rsiz)) {
+            opj_event_msg(p_manager, EVT_WARNING,
+                    "JPEG 2000 Broadcast profiles not yet supported\n");
+            parameters->rsiz = OPJ_PROFILE_NONE;
+        } else if (OPJ_IS_IMF(parameters->rsiz)) {
+            opj_event_msg(p_manager, EVT_WARNING,
+                    "JPEG 2000 IMF profiles not yet supported\n");
+            parameters->rsiz = OPJ_PROFILE_NONE;
+        } else if (OPJ_IS_PART2(parameters->rsiz)) {
+            if (parameters->rsiz == ((OPJ_PROFILE_PART2) | (OPJ_EXTENSION_NONE))) {
+                opj_event_msg(p_manager, EVT_WARNING,
+                              "JPEG 2000 Part-2 profile defined\n"
+                              "but no Part-2 extension enabled.\n"
+                              "Profile set to NONE.\n");
+                parameters->rsiz = OPJ_PROFILE_NONE;
+            } else if (parameters->rsiz != ((OPJ_PROFILE_PART2) | (OPJ_EXTENSION_MCT))) {
+                opj_event_msg(p_manager, EVT_WARNING,
+                              "Unsupported Part-2 extension enabled\n"
+                              "Profile set to NONE.\n");
+                parameters->rsiz = OPJ_PROFILE_NONE;
             }
         }
 
         /*
         copy user encoding parameters
         */
-        cp->m_specific_param.m_enc.m_cinema = parameters->cp_cinema;
         cp->m_specific_param.m_enc.m_max_comp_size = (OPJ_UINT32)parameters->max_comp_size;
-        cp->rsiz   = parameters->cp_rsiz;
+        cp->rsiz = parameters->rsiz;
         cp->m_specific_param.m_enc.m_disto_alloc = (OPJ_UINT32)parameters->cp_disto_alloc & 1u;
         cp->m_specific_param.m_enc.m_fixed_alloc = (OPJ_UINT32)parameters->cp_fixed_alloc & 1u;
         cp->m_specific_param.m_enc.m_fixed_quality = (OPJ_UINT32)parameters->cp_fixed_quality & 1u;
@@ -6293,7 +6349,7 @@ void opj_j2k_setup_encoder(     opj_j2k_t *p_j2k,
                 tcp->numlayers = (OPJ_UINT32)parameters->tcp_numlayers;
 
                 for (j = 0; j < tcp->numlayers; j++) {
-                        if(cp->m_specific_param.m_enc.m_cinema){
+                        if(OPJ_IS_CINEMA(cp->rsiz)){
                                 if (cp->m_specific_param.m_enc.m_fixed_quality) {
                                         tcp->distoratio[j] = parameters->tcp_distoratio[j];
                                 }
@@ -9798,7 +9854,7 @@ void opj_j2k_setup_end_compress (opj_j2k_t *p_j2k)
         /* DEVELOPER CORNER, insert your custom procedures */
         opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_eoc );
 
-        if (p_j2k->m_cp.m_specific_param.m_enc.m_cinema) {
+        if (OPJ_IS_CINEMA(p_j2k->m_cp.rsiz)) {
                 opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_updated_tlm);
         }
 
@@ -9830,14 +9886,14 @@ void opj_j2k_setup_header_writing (opj_j2k_t *p_j2k)
         opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_cod );
         opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_qcd );
 
-        if (p_j2k->m_cp.m_specific_param.m_enc.m_cinema) {
+        if (OPJ_IS_CINEMA(p_j2k->m_cp.rsiz)) {
                 /* No need for COC or QCC, QCD and COD are used
                 opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_all_coc );
                 opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_all_qcc );
                 */
                 opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_tlm );
 
-                if (p_j2k->m_cp.m_specific_param.m_enc.m_cinema == OPJ_CINEMA4K_24) {
+                if (p_j2k->m_cp.rsiz == OPJ_PROFILE_CINEMA_4K) {
                         opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_poc );
                 }
         }
@@ -9849,7 +9905,7 @@ void opj_j2k_setup_header_writing (opj_j2k_t *p_j2k)
         }
 
         /* DEVELOPER CORNER, insert your custom procedures */
-        if (p_j2k->m_cp.rsiz & OPJ_MCT) {
+        if (p_j2k->m_cp.rsiz & OPJ_EXTENSION_MCT) {
                 opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_mct_data_group );
         }
         /* End of Developer Corner */
@@ -9898,7 +9954,7 @@ OPJ_BOOL opj_j2k_write_first_tile_part (opj_j2k_t *p_j2k,
         p_data += l_current_nb_bytes_written;
         p_total_data_size -= l_current_nb_bytes_written;
 
-        if (l_cp->m_specific_param.m_enc.m_cinema == 0) {
+        if (!OPJ_IS_CINEMA(l_cp->rsiz)) {
 #if 0
                 for (compno = 1; compno < p_j2k->m_private_image->numcomps; compno++) {
                         l_current_nb_bytes_written = 0;
@@ -9935,7 +9991,7 @@ OPJ_BOOL opj_j2k_write_first_tile_part (opj_j2k_t *p_j2k,
         /* Writing Psot in SOT marker */
         opj_write_bytes(l_begin_data + 6,l_nb_bytes_written,4);                                 /* PSOT */
 
-        if (l_cp->m_specific_param.m_enc.m_cinema){
+        if (OPJ_IS_CINEMA(l_cp->rsiz)){
                 opj_j2k_update_tlm(p_j2k,l_nb_bytes_written);
         }
 
@@ -9999,7 +10055,7 @@ OPJ_BOOL opj_j2k_write_all_tile_parts(  opj_j2k_t *p_j2k,
                 /* Writing Psot in SOT marker */
                 opj_write_bytes(l_begin_data + 6,l_part_tile_size,4);                                   /* PSOT */
 
-                if (l_cp->m_specific_param.m_enc.m_cinema) {
+                if (OPJ_IS_CINEMA(l_cp->rsiz)) {
                         opj_j2k_update_tlm(p_j2k,l_part_tile_size);
                 }
 
@@ -10040,7 +10096,7 @@ OPJ_BOOL opj_j2k_write_all_tile_parts(  opj_j2k_t *p_j2k,
                         /* Writing Psot in SOT marker */
                         opj_write_bytes(l_begin_data + 6,l_part_tile_size,4);                                   /* PSOT */
 
-                        if (l_cp->m_specific_param.m_enc.m_cinema) {
+                        if (OPJ_IS_CINEMA(l_cp->rsiz)) {
                                 opj_j2k_update_tlm(p_j2k,l_part_tile_size);
                         }
 

@@ -2597,6 +2597,7 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
     int has_alpha = 0;
     unsigned short tiBps, tiPhoto, tiSf, tiSpp, tiPC;
     unsigned int tiWidth, tiHeight;
+    OPJ_BOOL is_cinema = OPJ_IS_CINEMA(parameters->rsiz);
 
     tif = TIFFOpen(filename, "r");
 
@@ -2669,7 +2670,7 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
 */ 
     memset(&cmptparm[0], 0, 4 * sizeof(opj_image_cmptparm_t));
 
-    if ((tiPhoto == PHOTOMETRIC_RGB) && (parameters->cp_cinema)) {
+    if ((tiPhoto == PHOTOMETRIC_RGB) && (is_cinema)) {
         fprintf(stdout,"WARNING:\n"
                 "Input image bitdepth is %d bits\n"
                 "TIF conversion has automatically rescaled to 12-bits\n"
@@ -2685,7 +2686,7 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
         /*#define USETILEMODE*/
         for(j = 0; j < numcomps; j++)
         {
-            if(parameters->cp_cinema)
+            if(is_cinema)
             {
                 cmptparm[j].prec = 12;
                 cmptparm[j].bpp = 12;
@@ -2754,7 +2755,7 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
                         if(has_alpha)
                             image->comps[3].data[index] = ( dat8[i+7] << 8 ) | dat8[i+6];
 
-                        if(parameters->cp_cinema)
+                        if(is_cinema)
                         {
                             /* Rounding 16 to 12 bits
 */
@@ -2791,7 +2792,7 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
                                 image->comps[3].data[index] = dat8[i+3];
 #endif
 
-                            if(parameters->cp_cinema)
+                            if(is_cinema)
                             {
                                 /* Rounding 8 to 12 bits
 */
