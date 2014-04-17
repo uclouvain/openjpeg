@@ -291,7 +291,7 @@ typedef enum CODEC_FORMAT {
 	OPJ_CODEC_JPT  = 1,		/**< JPT-stream (JPEG 2000, JPIP) : read only */
     OPJ_CODEC_JP2  = 2,		/**< JP2 file format : read/write */
     OPJ_CODEC_JPP  = 3,		/**< JPP-stream (JPEG 2000, JPIP) : to be coded */
-    OPJ_CODEC_JPX  = 4,		/**< JPX file format (JPEG 2000 Part-2) : to be coded */
+    OPJ_CODEC_JPX  = 4		/**< JPX file format (JPEG 2000 Part-2) : to be coded */
 } OPJ_CODEC_FORMAT;
 
 
@@ -469,13 +469,6 @@ typedef struct opj_cparameters {
      * */
 	int max_comp_size;
     /**
-     * Maximum size (in bytes) for the whole codestream.
-     * If == 0, codestream size limitation is not considered
-     * If it does not comply with tcp_rates, max_cs_size prevails
-     * and a warning is issued.
-     * */
-    int max_cs_size;
-    /**
      * DEPRECATED: use RSIZ, OPJ_PROFILE_* and OPJ_EXTENSION_* instead
      * Profile name
      * */
@@ -491,6 +484,13 @@ typedef struct opj_cparameters {
 	/** Naive implementation of MCT restricted to a single reversible array based 
         encoding without offset concerning all the components. */
 	void * mct_data;
+    /**
+     * Maximum size (in bytes) for the whole codestream.
+     * If == 0, codestream size limitation is not considered
+     * If it does not comply with tcp_rates, max_cs_size prevails
+     * and a warning is issued.
+     * */
+    int max_cs_size;
     /** RSIZ value
         To be used to combine OPJ_PROFILE_*, OPJ_EXTENSION_* and (sub)levels values. */
     OPJ_UINT16 rsiz;
