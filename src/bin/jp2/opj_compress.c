@@ -467,7 +467,8 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
         {"POC",REQ_ARG, NULL ,'P'},
         {"ROI",REQ_ARG, NULL ,'R'},
         {"jpip",NO_ARG, NULL, 'J'},
-        {"mct",REQ_ARG, NULL, 'Y'}
+        {"mct",REQ_ARG, NULL, 'Y'},
+        {"version",NO_ARG, NULL, 'v'}
     };
 
     /* parse the command line */
@@ -475,7 +476,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
         #ifdef USE_JPWL
             "W:"
         #endif /* USE_JPWL */
-            "h";
+            "hv";
 
     totlen=sizeof(long_option);
     img_fol->set_out_format=0;
@@ -502,8 +503,8 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
                 break;
             default:
                 fprintf(stderr,
-                        "!! Unrecognized format for infile : %s "
-                        "[accept only *.pnm, *.pgm, *.ppm, *.pgx, *png, *.bmp, *.tif, *.raw or *.tga] !!\n\n",
+                        "[ERROR] Unknown input file format: %s \n"
+                        "        Known file formats are *.pnm, *.pgm, *.ppm, *.pgx, *png, *.bmp, *.tif, *.raw or *.tga\n",
                         infile);
                 return 1;
             }
@@ -838,6 +839,13 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
 
         case 'h':			/* display an help description */
             encode_help_display();
+            return 1;
+
+            /* ----------------------------------------------------- */
+
+        case 'v':			/* display the openjpeg library version in use */
+            fprintf(stdout,"This is the opj_compress utility from the OpenJPEG project.\n"
+                    "It has been compiled against openjp2 library v%s.\n",opj_version());
             return 1;
 
             /* ----------------------------------------------------- */
@@ -1412,37 +1420,38 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
 
 
         default:
-            fprintf(stderr, "ERROR -> Command line not valid\n");
-            return 1;
+            fprintf(stderr, "[WARNING] An invalid option has been ignored\n");
+            break;
         }
     }while(c != -1);
 
     if(img_fol->set_imgdir == 1){
         if(!(parameters->infile[0] == 0)){
-            fprintf(stderr, "Error: options -ImgDir and -i cannot be used together !!\n");
+            fprintf(stderr, "[ERROR] options -ImgDir and -i cannot be used together !!\n");
             return 1;
         }
         if(img_fol->set_out_format == 0){
-            fprintf(stderr, "Error: When -ImgDir is used, -OutFor <FORMAT> must be used !!\n");
+            fprintf(stderr, "[ERROR] When -ImgDir is used, -OutFor <FORMAT> must be used !!\n");
             fprintf(stderr, "Only one format allowed! Valid formats are j2k and jp2!!\n");
             return 1;
         }
         if(!((parameters->outfile[0] == 0))){
-            fprintf(stderr, "Error: options -ImgDir and -o cannot be used together !!\n");
+            fprintf(stderr, "[ERROR] options -ImgDir and -o cannot be used together !!\n");
             fprintf(stderr, "Specify OutputFormat using -OutFor<FORMAT> !!\n");
             return 1;
         }
     }else{
         if((parameters->infile[0] == 0) || (parameters->outfile[0] == 0)) {
-            fprintf(stderr, "Example: %s -i image.ppm  -o image.j2k\n",argv[0]);
-            fprintf(stderr, "    Try: %s -h\n",argv[0]);
+            fprintf(stderr, "[ERROR] Required parameters are missing\n"
+                            "Example: %s -i image.j2k -o image.pgm\n",argv[0]);
+            fprintf(stderr, "   Help: %s -h\n",argv[0]);
             return 1;
         }
     }
 
     if ( (parameters->decod_format == RAW_DFMT && raw_cp->rawWidth == 0)
          || (parameters->decod_format == RAWL_DFMT && raw_cp->rawWidth == 0)) {
-        fprintf(stderr,"\nError: invalid raw image parameters\n");
+        fprintf(stderr,"[ERROR] invalid raw image parameters\n");
         fprintf(stderr,"Please use the Format option -F:\n");
         fprintf(stderr,"-F rawWidth,rawHeight,rawComp,rawBitDepth,s/u (Signed/Unsigned)\n");
         fprintf(stderr,"Example: -i lena.raw -o lena.j2k -F 512,512,3,8,u\n");
@@ -1452,7 +1461,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
 
     if ((parameters->cp_disto_alloc || parameters->cp_fixed_alloc || parameters->cp_fixed_quality)
             && (!(parameters->cp_disto_alloc ^ parameters->cp_fixed_alloc ^ parameters->cp_fixed_quality))) {
-        fprintf(stderr, "Error: options -r -q and -f cannot be used together !!\n");
+        fprintf(stderr, "[ERROR] options -r -q and -f cannot be used together !!\n");
         return 1;
     }				/* mod fixed_quality */
 
@@ -1465,7 +1474,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
 
     if((parameters->cp_tx0 > parameters->image_offset_x0) || (parameters->cp_ty0 > parameters->image_offset_y0)) {
         fprintf(stderr,
-                "Error: Tile offset dimension is unnappropriate --> TX0(%d)<=IMG_X0(%d) TYO(%d)<=IMG_Y0(%d) \n",
+                "[ERROR] Tile offset dimension is unnappropriate --> TX0(%d)<=IMG_X0(%d) TYO(%d)<=IMG_Y0(%d) \n",
                 parameters->cp_tx0, parameters->image_offset_x0, parameters->cp_ty0, parameters->image_offset_y0);
         return 1;
     }
@@ -1803,7 +1812,7 @@ int main(int argc, char **argv) {
             return 1;
         }
 
-        fprintf(stderr,"Generated outfile %s\n",parameters.outfile);
+        fprintf(stdout,"[INFO] Generated outfile %s\n",parameters.outfile);
         /* close and free the byte stream */
         opj_stream_destroy_v3(l_stream);
 

@@ -298,12 +298,13 @@ static int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *param
 					case JP2_CFMT:
 						break;
 					case JPT_CFMT:
-						break;
-					default:
-						fprintf(stderr, 
-							"!! Unrecognized format for infile : %s [accept only *.j2k, *.jp2, *.jpc or *.jpt] !!\n\n", 
-							infile);
-						return 1;
+                    break;
+                default:
+                    fprintf(stderr,
+                            "[ERROR] Unknown input file format: %s \n"
+                            "        Known file formats are *.j2k, *.jp2, *.jpc or *.jpt\n",
+                            infile);
+                    return 1;
 				}
 				strncpy(parameters->infile, infile, sizeof(parameters->infile)-1);
 			}
