@@ -921,12 +921,12 @@ void OPJ_CALLCONV opj_destroy_cstr_index(opj_codestream_index_t **p_cstr_index)
 	}
 }
 
-opj_stream_t* OPJ_CALLCONV opj_stream_create_default_file_stream_v3 (const char *fname, OPJ_BOOL p_is_read_stream)
+opj_stream_t* OPJ_CALLCONV opj_stream_create_default_file_stream (const char *fname, OPJ_BOOL p_is_read_stream)
 {
-    return opj_stream_create_file_stream_v3(fname, OPJ_J2K_STREAM_CHUNK_SIZE, p_is_read_stream);
+    return opj_stream_create_file_stream(fname, OPJ_J2K_STREAM_CHUNK_SIZE, p_is_read_stream);
 }
 
-opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream_v3 (
+opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream (
         const char *fname, 
 		OPJ_SIZE_T p_size, 
         OPJ_BOOL p_is_read_stream)
@@ -953,7 +953,7 @@ opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream_v3 (
         return NULL;
     }
 
-    opj_stream_set_user_data_v3(l_stream, p_file, (opj_stream_free_user_data_fn) fclose);
+    opj_stream_set_user_data(l_stream, p_file, (opj_stream_free_user_data_fn) fclose);
     opj_stream_set_user_data_length(l_stream, opj_get_data_length_from_file(p_file));
     opj_stream_set_read_function(l_stream, (opj_stream_read_fn) opj_read_from_file);
     opj_stream_set_write_function(l_stream, (opj_stream_write_fn) opj_write_from_file);

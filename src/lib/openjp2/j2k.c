@@ -6126,21 +6126,25 @@ void opj_j2k_setup_encoder(     opj_j2k_t *p_j2k,
 
         /* FIXME ADE: to be removed once deprecated cp_cinema and cp_rsiz have been removed */
         if (parameters->rsiz == OPJ_PROFILE_NONE) { /* consider deprecated fields only if RSIZ has not been set */
+            OPJ_BOOL deprecated_used = OPJ_FALSE;
             switch (parameters->cp_cinema){
             case OPJ_CINEMA2K_24:
                 parameters->rsiz = OPJ_PROFILE_CINEMA_2K;
                 parameters->max_cs_size = OPJ_CINEMA_24_CS;
                 parameters->max_comp_size = OPJ_CINEMA_24_COMP;
+                deprecated_used = OPJ_TRUE;
                 break;
             case OPJ_CINEMA2K_48:
                 parameters->rsiz = OPJ_PROFILE_CINEMA_2K;
                 parameters->max_cs_size = OPJ_CINEMA_48_CS;
                 parameters->max_comp_size = OPJ_CINEMA_48_COMP;
+                deprecated_used = OPJ_TRUE;
                 break;
             case OPJ_CINEMA4K_24:
                 parameters->rsiz = OPJ_PROFILE_CINEMA_4K;
                 parameters->max_cs_size = OPJ_CINEMA_24_CS;
                 parameters->max_comp_size = OPJ_CINEMA_24_COMP;
+                deprecated_used = OPJ_TRUE;
                 break;
             case OPJ_OFF:
             default:
@@ -6149,15 +6153,24 @@ void opj_j2k_setup_encoder(     opj_j2k_t *p_j2k,
             switch (parameters->cp_rsiz){
             case OPJ_CINEMA2K:
                 parameters->rsiz = OPJ_PROFILE_CINEMA_2K;
+                deprecated_used = OPJ_TRUE;
                 break;
             case OPJ_CINEMA4K:
                 parameters->rsiz = OPJ_PROFILE_CINEMA_4K;
+                deprecated_used = OPJ_TRUE;
                 break;
             case OPJ_MCT:
                 parameters->rsiz = OPJ_PROFILE_PART2 | OPJ_EXTENSION_MCT;
+                deprecated_used = OPJ_TRUE;
             case OPJ_STD_RSIZ:
             default:
                 break;
+            }
+            if (deprecated_used) {
+                opj_event_msg(p_manager, EVT_WARNING,
+                        "Deprecated fields cp_cinema or cp_rsiz are used\n"
+                        "Please consider using only the rsiz field\n"
+                        "See openjpeg.h documentation for more details\n");
             }
         }
 

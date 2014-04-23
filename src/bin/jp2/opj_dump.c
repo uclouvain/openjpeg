@@ -498,7 +498,7 @@ int main(int argc, char *argv[])
 		/* Read the input file and put it in memory */
 		/* ---------------------------------------- */
 
-		l_stream = opj_stream_create_default_file_stream_v3(parameters.infile,1);
+		l_stream = opj_stream_create_default_file_stream(parameters.infile,1);
 		if (!l_stream){
 			fprintf(stderr, "ERROR -> failed to create the stream from the file %s\n",parameters.infile);
 			return EXIT_FAILURE;
@@ -528,7 +528,7 @@ int main(int argc, char *argv[])
 			}
 			default:
 				fprintf(stderr, "skipping file..\n");
-				opj_stream_destroy_v3(l_stream);
+				opj_stream_destroy(l_stream);
 				continue;
 		}
 
@@ -540,7 +540,7 @@ int main(int argc, char *argv[])
 		/* Setup the decoder decoding parameters using user parameters */
 		if ( !opj_setup_decoder(l_codec, &parameters) ){
 			fprintf(stderr, "ERROR -> opj_dump: failed to setup the decoder\n");
-			opj_stream_destroy_v3(l_stream);
+			opj_stream_destroy(l_stream);
 			opj_destroy_codec(l_codec);
 			fclose(fout);
 			return EXIT_FAILURE;
@@ -549,7 +549,7 @@ int main(int argc, char *argv[])
 		/* Read the main header of the codestream and if necessary the JP2 boxes*/
 		if(! opj_read_header(l_stream, l_codec, &image)){
 			fprintf(stderr, "ERROR -> opj_dump: failed to read the header\n");
-			opj_stream_destroy_v3(l_stream);
+			opj_stream_destroy(l_stream);
 			opj_destroy_codec(l_codec);
 			opj_image_destroy(image);
 			fclose(fout);
@@ -563,7 +563,7 @@ int main(int argc, char *argv[])
 		cstr_index = opj_get_cstr_index(l_codec);
 
 		/* close the byte stream */
-		opj_stream_destroy_v3(l_stream);
+		opj_stream_destroy(l_stream);
 
 		/* free remaining structures */
 		if (l_codec) {

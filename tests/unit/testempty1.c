@@ -110,12 +110,12 @@ int main(int argc, char *argv[])
 
   opj_setup_encoder(l_codec, &parameters, image);
 
-  l_stream = opj_stream_create_default_file_stream_v3("testempty1.j2k",OPJ_FALSE);
+  l_stream = opj_stream_create_default_file_stream("testempty1.j2k",OPJ_FALSE);
   assert(l_stream);
   bSuccess = opj_start_compress(l_codec,image,l_stream);
   if( !bSuccess )
     {
-    opj_stream_destroy_v3(l_stream);
+    opj_stream_destroy(l_stream);
     opj_destroy_codec(l_codec);
     opj_image_destroy(image);
     return 0;
@@ -127,7 +127,7 @@ int main(int argc, char *argv[])
   bSuccess = opj_end_compress(l_codec, l_stream);
   assert( bSuccess );
 
-  opj_stream_destroy_v3(l_stream);
+  opj_stream_destroy(l_stream);
 
   opj_destroy_codec(l_codec);
   opj_image_destroy(image);
