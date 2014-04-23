@@ -91,7 +91,9 @@ static int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *param
 
 /* -------------------------------------------------------------------------- */
 static void decode_help_display(void) {
-	fprintf(stdout,"HELP for opj_dump\n----\n\n");
+    fprintf(stdout,"This is the opj_dump utility from the OpenJPEG project.\n"
+            "It has been compiled against openjp2 library v%s.\n\n",opj_version());
+    fprintf(stdout,"HELP\n----\n\n");
 	fprintf(stdout,"- the -h option displays this help information on screen\n\n");
 
 /* UniPG>> */
@@ -99,7 +101,7 @@ static void decode_help_display(void) {
 #ifdef USE_JPWL
 		"+ JPWL "
 #endif /* USE_JPWL */
-		"decoder:\n");
+        "dump utility:\n");
 /* <<UniPG */
 	fprintf(stdout,"\n");
 	fprintf(stdout,"\n");
@@ -113,10 +115,10 @@ static void decode_help_display(void) {
 	fprintf(stdout,"    OPTIONAL\n");
 	fprintf(stdout,"    Output file where file info will be dump.\n");
 	fprintf(stdout,"    By default it will be in the stdout.\n");
-	fprintf(stdout,"  -v "); /* FIXME WIP_MSD */
+    fprintf(stdout,"  -quiet "); /* FIXME WIP_MSD */
 	fprintf(stdout,"    OPTIONAL\n");
-	fprintf(stdout,"    Activate or not the verbose mode (display info and warning message)\n");
-	fprintf(stdout,"    By default verbose mode is off.\n");
+    fprintf(stdout,"    Suppress informative messages\n");
+    fprintf(stdout,"    By default verbose mode is on.\n");
 	fprintf(stdout,"\n");
 }
 
@@ -277,9 +279,9 @@ static int infile_format(const char *fname)
 static int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,img_fol_t *img_fol) {
 	int totlen, c;
 	opj_option_t long_option[]={
-		{"ImgDir",REQ_ARG, NULL ,'y'},
+        {"ImgDir",REQ_ARG, NULL ,'y'}
 	};
-	const char optlist[] = "i:o:f:hv";
+    const char optlist[] = "i:o:f:hv";
 
 	totlen=sizeof(long_option);
 	img_fol->set_out_format = 0;
@@ -341,38 +343,40 @@ static int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *param
 
 			/* ----------------------------------------------------- */
 
-			case 'v':     		/* Verbose mode */
+            case 'v':     		/* Verbose mode */
 			{
-				parameters->m_verbose = 1;
+                parameters->m_verbose = 1;
 			}
 			break;
 			
 				/* ----------------------------------------------------- */
-			default:
-				fprintf(stderr,"WARNING -> this option is not valid \"-%c %s\"\n",c, opj_optarg);
-				break;
-		}
+        default:
+            fprintf(stderr, "[WARNING] An invalid option has been ignored.\n");
+            break;
+        }
 	}while(c != -1);
 
 	/* check for possible errors */
 	if(img_fol->set_imgdir==1){
 		if(!(parameters->infile[0]==0)){
-			fprintf(stderr, "Error: options -ImgDir and -i cannot be used together !!\n");
+            fprintf(stderr, "[ERROR] options -ImgDir and -i cannot be used together.\n");
 			return 1;
 		}
 		if(img_fol->set_out_format == 0){
-			fprintf(stderr, "Error: When -ImgDir is used, -OutFor <FORMAT> must be used !!\n");
-			fprintf(stderr, "Only one format allowed! Valid format PGM, PPM, PNM, PGX, BMP, TIF, RAW and TGA!!\n");
+            fprintf(stderr, "[ERROR] When -ImgDir is used, -OutFor <FORMAT> must be used.\n");
+            fprintf(stderr, "Only one format allowed.\n"
+                            "Valid format are PGM, PPM, PNM, PGX, BMP, TIF, RAW and TGA.\n");
 			return 1;
 		}
 		if(!(parameters->outfile[0] == 0)){
-			fprintf(stderr, "Error: options -ImgDir and -o cannot be used together !!\n");
+            fprintf(stderr, "[ERROR] options -ImgDir and -o cannot be used together\n");
 			return 1;
 		}
 	}else{
 		if(parameters->infile[0] == 0) {
+            fprintf(stderr, "[ERROR] Required parameter is missing\n");
 			fprintf(stderr, "Example: %s -i image.j2k\n",argv[0]);
-			fprintf(stderr, "    Try: %s -h\n",argv[0]);
+            fprintf(stderr, "   Help: %s -h\n",argv[0]);
 			return 1;
 		}
 	}

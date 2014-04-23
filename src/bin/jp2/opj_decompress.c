@@ -106,9 +106,10 @@ int parse_DA_values( char* inArg, unsigned int *DA_x0, unsigned int *DA_y0, unsi
 
 /* -------------------------------------------------------------------------- */
 static void decode_help_display(void) {
-	fprintf(stdout,"HELP for opj_decompress\n----\n\n");
+    fprintf(stdout,"This is the opj_decompress utility from the OpenJPEG project.\n"
+            "It has been compiled against openjp2 library v%s.\n\n",opj_version());
+    fprintf(stdout,"HELP\n----\n\n");
 	fprintf(stdout,"- the -h option displays this help information on screen\n\n");
-
 /* UniPG>> */
 	fprintf(stdout,"List of parameters for the JPEG 2000 "
 #ifdef USE_JPWL
@@ -331,8 +332,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 	int totlen, c;
 	opj_option_t long_option[]={
 		{"ImgDir",REQ_ARG, NULL ,'y'},
-		{"OutFor",REQ_ARG, NULL ,'O'},
-        {"version",NO_ARG, NULL ,'v'}
+        {"OutFor",REQ_ARG, NULL ,'O'}
 	};
 
 	const char optlist[] = "i:o:r:l:x:d:t:"
@@ -342,7 +342,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 					"W:"
 #endif /* USE_JPWL */
 /* <<UniPG */
-            "hv"		;
+            "h"		;
 	totlen=sizeof(long_option);
 	img_fol->set_out_format = 0;
 	do {
@@ -474,13 +474,6 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 				decode_help_display();
 				return 1;				
 
-                /* ------------------------------------------------------ */
-
-             case 'v':			/* display the openjpeg library version in use */
-            fprintf(stdout,"This is the opj_decompress utility from the OpenJPEG project.\n"
-                    "It has been compiled against openjp2 library v%s.\n",opj_version());
-            return 1;
-
             /* ----------------------------------------------------- */
 
 			case 'y':			/* Image Directory path */
@@ -599,7 +592,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 				/* ----------------------------------------------------- */
 			
         default:
-            fprintf(stderr, "[WARNING] An invalid option has been ignored\n");
+            fprintf(stderr, "[WARNING] An invalid option has been ignored.\n");
             break;
 		}
 	}while(c != -1);
@@ -607,16 +600,17 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 	/* check for possible errors */
 	if(img_fol->set_imgdir==1){
 		if(!(parameters->infile[0]==0)){
-            fprintf(stderr, "[ERROR] options -ImgDir and -i cannot be used together !!\n");
+            fprintf(stderr, "[ERROR] options -ImgDir and -i cannot be used together.\n");
 			return 1;
 		}
 		if(img_fol->set_out_format == 0){
-            fprintf(stderr, "[ERROR] When -ImgDir is used, -OutFor <FORMAT> must be used !!\n");
-			fprintf(stderr, "Only one format allowed! Valid format PGM, PPM, PNM, PGX, BMP, TIF, RAW and TGA!!\n");
+            fprintf(stderr, "[ERROR] When -ImgDir is used, -OutFor <FORMAT> must be used.\n");
+            fprintf(stderr, "Only one format allowed.\n"
+                            "Valid format are PGM, PPM, PNM, PGX, BMP, TIF, RAW and TGA.\n");
 			return 1;
 		}
 		if(!((parameters->outfile[0] == 0))){
-            fprintf(stderr, "[ERROR] options -ImgDir and -o cannot be used together !!\n");
+            fprintf(stderr, "[ERROR] options -ImgDir and -o cannot be used together.\n");
 			return 1;
 		}
 	}else{

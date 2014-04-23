@@ -6039,7 +6039,7 @@ void opj_j2k_set_cinema_parameters(opj_cparameters_t *parameters, opj_image_t *i
     }
 
     parameters->tcp_rates[0] = (OPJ_FLOAT32) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec)/
-            (OPJ_FLOAT32)(parameters->max_cs_size * 8 * image->comps[0].dx * image->comps[0].dy);
+            (OPJ_FLOAT32)(((OPJ_UINT32)parameters->max_cs_size) * 8 * image->comps[0].dx * image->comps[0].dy);
 
 }
 

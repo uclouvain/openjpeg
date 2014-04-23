@@ -86,7 +86,9 @@ typedef struct img_folder{
 }img_fol_t;
 
 static void encode_help_display(void) {
-    fprintf(stdout,"HELP for opj_compress\n----\n\n");
+    fprintf(stdout,"This is the opj_compress utility from the OpenJPEG project.\n"
+            "It has been compiled against openjp2 library v%s.\n\n",opj_version());
+    fprintf(stdout,"HELP\n----\n\n");
     fprintf(stdout,"- the -h option displays this help information on screen\n\n");
 
     /* UniPG>> */
@@ -467,8 +469,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
         {"POC",REQ_ARG, NULL ,'P'},
         {"ROI",REQ_ARG, NULL ,'R'},
         {"jpip",NO_ARG, NULL, 'J'},
-        {"mct",REQ_ARG, NULL, 'Y'},
-        {"version",NO_ARG, NULL, 'v'}
+        {"mct",REQ_ARG, NULL, 'Y'}
     };
 
     /* parse the command line */
@@ -476,7 +477,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
         #ifdef USE_JPWL
             "W:"
         #endif /* USE_JPWL */
-            "hv";
+            "h";
 
     totlen=sizeof(long_option);
     img_fol->set_out_format=0;
@@ -839,13 +840,6 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
 
         case 'h':			/* display an help description */
             encode_help_display();
-            return 1;
-
-            /* ----------------------------------------------------- */
-
-        case 'v':			/* display the openjpeg library version in use */
-            fprintf(stdout,"This is the opj_compress utility from the OpenJPEG project.\n"
-                    "It has been compiled against openjp2 library v%s.\n",opj_version());
             return 1;
 
             /* ----------------------------------------------------- */
