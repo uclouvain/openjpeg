@@ -91,21 +91,14 @@ static int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *param
 
 /* -------------------------------------------------------------------------- */
 static void decode_help_display(void) {
-    fprintf(stdout,"This is the opj_dump utility from the OpenJPEG project.\n"
+    fprintf(stdout,"\nThis is the opj_dump utility from the OpenJPEG project.\n"
+            "It dumps JPEG 2000 codestream info to stdout or a given file.\n"
             "It has been compiled against openjp2 library v%s.\n\n",opj_version());
-    fprintf(stdout,"HELP\n----\n\n");
-	fprintf(stdout,"- the -h option displays this help information on screen\n\n");
 
-/* UniPG>> */
-	fprintf(stdout,"List of parameters for the JPEG 2000 "
-#ifdef USE_JPWL
-		"+ JPWL "
-#endif /* USE_JPWL */
-        "dump utility:\n");
-/* <<UniPG */
-	fprintf(stdout,"\n");
-	fprintf(stdout,"\n");
-	fprintf(stdout,"  -ImgDir \n");
+    fprintf(stdout,"Parameters:\n");
+    fprintf(stdout,"-----------\n");
+    fprintf(stdout,"\n");
+    fprintf(stdout,"  -ImgDir <directory>\n");
 	fprintf(stdout,"	Image file Directory path \n");
 	fprintf(stdout,"  -i <compressed file>\n");
 	fprintf(stdout,"    REQUIRED only if an Input image directory not specified\n");
@@ -115,10 +108,10 @@ static void decode_help_display(void) {
 	fprintf(stdout,"    OPTIONAL\n");
 	fprintf(stdout,"    Output file where file info will be dump.\n");
 	fprintf(stdout,"    By default it will be in the stdout.\n");
-    fprintf(stdout,"  -quiet "); /* FIXME WIP_MSD */
+    fprintf(stdout,"  -v "); /* FIXME WIP_MSD */
 	fprintf(stdout,"    OPTIONAL\n");
-    fprintf(stdout,"    Suppress informative messages\n");
-    fprintf(stdout,"    By default verbose mode is on.\n");
+    fprintf(stdout,"    Enable informative messages\n");
+    fprintf(stdout,"    By default verbose mode is off.\n");
 	fprintf(stdout,"\n");
 }
 

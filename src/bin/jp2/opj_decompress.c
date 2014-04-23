@@ -106,32 +106,25 @@ int parse_DA_values( char* inArg, unsigned int *DA_x0, unsigned int *DA_y0, unsi
 
 /* -------------------------------------------------------------------------- */
 static void decode_help_display(void) {
-    fprintf(stdout,"This is the opj_decompress utility from the OpenJPEG project.\n"
+    fprintf(stdout,"\nThis is the opj_decompress utility from the OpenJPEG project.\n"
+            "It decompresses JPEG 2000 codestreams to various image formats.\n"
             "It has been compiled against openjp2 library v%s.\n\n",opj_version());
-    fprintf(stdout,"HELP\n----\n\n");
-	fprintf(stdout,"- the -h option displays this help information on screen\n\n");
-/* UniPG>> */
-	fprintf(stdout,"List of parameters for the JPEG 2000 "
-#ifdef USE_JPWL
-		"+ JPWL "
-#endif /* USE_JPWL */
-		"decoder:\n");
-/* <<UniPG */
+
+    fprintf(stdout,"Parameters:\n");
+    fprintf(stdout,"-----------\n");
 	fprintf(stdout,"\n");
-	fprintf(stdout,"\n");
-	fprintf(stdout,"  -ImgDir \n");
+    fprintf(stdout,"  -ImgDir <directory> \n");
 	fprintf(stdout,"	Image file Directory path \n");
-	fprintf(stdout,"  -OutFor \n");
+    fprintf(stdout,"  -OutFor <PBM|PGM|PPM|PNM|PAM|PGX|PNG|BMP|TIF|RAW|RAWL|TGA>\n");
 	fprintf(stdout,"    REQUIRED only if -ImgDir is used\n");
-	fprintf(stdout,"	  Need to specify only format without filename <BMP>  \n");
-	fprintf(stdout,"    Currently accepts PGM, PPM, PNM, PGX, PNG, BMP, TIF, RAW and TGA formats\n");
+    fprintf(stdout,"	Output format for decompressed images.\n");
 	fprintf(stdout,"  -i <compressed file>\n");
-	fprintf(stdout,"    REQUIRED only if an Input image directory not specified\n");
+    fprintf(stdout,"    REQUIRED only if an Input image directory is not specified\n");
 	fprintf(stdout,"    Currently accepts J2K-files, JP2-files and JPT-files. The file type\n");
 	fprintf(stdout,"    is identified based on its suffix.\n");
 	fprintf(stdout,"  -o <decompressed file>\n");
 	fprintf(stdout,"    REQUIRED\n");
-	fprintf(stdout,"    Currently accepts PGM, PPM, PNM, PGX, PNG, BMP, TIF, RAW and TGA files\n");
+    fprintf(stdout,"    Currently accepts formats specified above (see OutFor option)\n");
 	fprintf(stdout,"    Binary data is written to the file (not ascii). If a PGX\n");
 	fprintf(stdout,"    filename is given, there will be as many output files as there are\n");
 	fprintf(stdout,"    components: an indice starting from 0 will then be appended to the\n");
