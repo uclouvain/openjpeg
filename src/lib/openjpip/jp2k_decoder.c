@@ -55,7 +55,7 @@ Byte_t * j2k_to_pnm( const char *fn, ihdrbox_param_t **ihdrbox)
   opj_set_default_decoder_parameters(&parameters);
 
   /* set a byte stream */
-  l_stream = opj_stream_create_default_file_stream_v3( fn, OPJ_TRUE);
+  l_stream = opj_stream_create_default_file_stream( fn, OPJ_TRUE);
   if (!l_stream){
     fprintf(stderr, "ERROR -> failed to create the stream from the file\n");
     return NULL;
