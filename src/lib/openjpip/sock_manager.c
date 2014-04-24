@@ -30,6 +30,7 @@
 
 #ifdef _WIN32
 #include <windows.h>
+typedef SSIZE_T ssize_t;
 #else
 #include <sys/types.h>
 #include <sys/socket.h>
