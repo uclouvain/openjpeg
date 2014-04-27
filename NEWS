@@ -22,7 +22,7 @@ API/ABI modifications: (see abi_compat_report in dev-utils/scripts)
 	* Added 
         - opj_stream_create_default_file_stream(char*,...)
         - opj_stream_create_file_stream(char*,...)
-        - opj_stream_destroy_v3(opj_stream_t*)
+        - opj_stream_destroy(opj_stream_t*)
         - opj_stream_set_user_data (opj_stream_t* p_stream, void * p_data, 
             ... opj_stream_free_user_data_fn p_function)
         - JPEG 2000 profiles and Part-2 extensions defined through '#define'
