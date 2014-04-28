@@ -6188,7 +6188,7 @@ void opj_j2k_setup_encoder(     opj_j2k_t *p_j2k,
             OPJ_FLOAT32 temp_rate;
             OPJ_BOOL cap = OPJ_FALSE;
             temp_rate = (OPJ_FLOAT32) (image->numcomps * image->comps[0].w * image->comps[0].h * image->comps[0].prec)/
-                    (OPJ_FLOAT32)(parameters->max_cs_size * 8 * image->comps[0].dx * image->comps[0].dy);
+                    (OPJ_FLOAT32)(((OPJ_UINT32)parameters->max_cs_size) * 8 * image->comps[0].dx * image->comps[0].dy);
             for (i = 0; i < (OPJ_UINT32) parameters->tcp_numlayers; i++) {
                 if (parameters->tcp_rates[i] < temp_rate) {
                     parameters->tcp_rates[i] = temp_rate;
