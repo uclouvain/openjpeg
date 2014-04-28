@@ -1789,7 +1789,7 @@ int main(int argc, char **argv) {
         if (!bSuccess)  {
             fprintf(stderr, "failed to encode image: opj_start_compress\n");
         }
-        if( bUseTiles ) {
+        if( bSuccess && bUseTiles ) {
             OPJ_BYTE *l_data;
             OPJ_UINT32 l_data_size = 512*512*3;
             l_data = (OPJ_BYTE*) malloc( l_data_size * sizeof(OPJ_BYTE));
@@ -1822,6 +1822,7 @@ int main(int argc, char **argv) {
             opj_destroy_codec(l_codec);
             opj_image_destroy(image);
             fprintf(stderr, "failed to encode image\n");
+			remove(parameters.outfile);
             return 1;
         }
 
