@@ -52,6 +52,7 @@ foreach(exe opj_decompress opj_compress opj_dump)
   )
 endforeach()
 
+if(BUILD_DOC)
 # Install man pages
 install(
   FILES       ${OPENJPEG_SOURCE_DIR}/doc/man/man1/opj_compress.1
@@ -59,3 +60,4 @@ install(
               ${OPENJPEG_SOURCE_DIR}/doc/man/man1/opj_dump.1
   DESTINATION ${OPENJPEG_INSTALL_MAN_DIR}/man1)
 #
+endif()

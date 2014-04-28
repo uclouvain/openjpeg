@@ -95,6 +95,8 @@ endif()
 
 # --------------------------------------------------------------------------
 # Install directories
+# Build DOCUMENTATION (not in ALL target and only if Doxygen is found)
+option(BUILD_DOC "Build the HTML documentation (with doxygen if available)." OFF)
 
 string(TOLOWER ${PROJECT_NAME} projectname)
 set(OPENJPEG_INSTALL_SUBDIR "${projectname}-${OPENJPEG_VERSION_MAJOR}.${OPENJPEG_VERSION_MINOR}")
@@ -119,12 +121,14 @@ if(NOT OPENJPEG_INSTALL_INCLUDE_DIR)
   set(OPENJPEG_INSTALL_INCLUDE_DIR "include/${OPENJPEG_INSTALL_SUBDIR}")
 endif()
 
+if(BUILD_DOC)
 if(NOT OPENJPEG_INSTALL_MAN_DIR)
   set(OPENJPEG_INSTALL_MAN_DIR "share/man/")
 endif()
 
 if(NOT OPENJPEG_INSTALL_DOC_DIR)
   set(OPENJPEG_INSTALL_DOC_DIR "share/doc/${OPENJPEG_INSTALL_SUBDIR}")
+endif()
 endif()
 
 if(NOT OPENJPEG_INSTALL_JNI_DIR)
@@ -265,8 +269,7 @@ configure_file(
  )
 
 #-----------------------------------------------------------------------------
-# Build DOCUMENTATION (not in ALL target and only if Doxygen is found)
-option(BUILD_DOC "Build the HTML documentation (with doxygen if available)." OFF)
+# build documentation in doc subdir:
 if(BUILD_DOC)
   add_subdirectory(doc)
 endif()
@@ -308,16 +311,25 @@ install( FILES ${OPENJPEG_BINARY_DIR}/OpenJPEGConfig.cmake
 
 #-----------------------------------------------------------------------------
 # install CHANGES and LICENSE
+if(BUILD_DOC)
 if(EXISTS ${OPENJPEG_SOURCE_DIR}/CHANGES)
   install(FILES CHANGES DESTINATION ${OPENJPEG_INSTALL_DOC_DIR})
 endif()
+
 install(FILES LICENSE DESTINATION ${OPENJPEG_INSTALL_DOC_DIR})
+endif()
 
 include (cmake/OpenJPEGCPack.cmake)
 
 #-----------------------------------------------------------------------------
 # pkgconfig support
+# enabled by default on Unix, disabled by default on other platforms
 if(UNIX)
+  option(BUILD_PKGCONFIG_FILES "Build and install pkg-config files" ON)
+else()
+  option(BUILD_PKGCONFIG_FILES "Build and install pkg-config files" OFF)
+endif()
+if(BUILD_PKGCONFIG_FILES)
   # install in lib and not share (see multi-arch note above)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/lib/openjp2/libopenjp2.pc.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}/libopenjp2.pc @ONLY)
