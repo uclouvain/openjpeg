@@ -49,7 +49,7 @@ The functions in CIO.C have for goal to realize a byte input / output process.
 /** @defgroup CIO CIO - byte input-output stream */
 /*@{*/
 
-#include "opj_config.h"
+#include "opj_config_private.h"
 
 /* ----------------------------------------------------------------------- */
 
