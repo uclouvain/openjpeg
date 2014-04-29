@@ -1,0 +1,1116 @@
+2014-04-29  Mathieu Malaterre
+
+	* [r2866] .[CPY]: [2.1] Create the 2.1 branch
+
+2014-04-28  Antonin Descampe
+
+	* [r2864] [trunk] fixed warning in j2k.c about sign conversion
+
+2014-04-28  Mathieu Malaterre
+
+	* [r2863] [trunk] Finalize API for openjpeg 2.1
+	  public header will only contains minimal information: major,
+	  minor and build version
+	  Prefix has been changed from OPENJPEG to OPJ for consistency
+	  SOVERSION has been removed from header (ABI vs API info)
+	  OPJ_VERSION string has been removed, since it is accessible
+	  already (PACKAGE_VERSION)
+	  Fixes issue 342
+	* [r2862] [trunk] Properly handle failure to compress (remove file)
+	  Fixes issue 323
+	* [r2861] [trunk] Missing endianess setting
+	  Fixes issue 337
+	* [r2860] [trunk] properly handle pkg-config on non-UNIX hosts
+	  Fixes issue 340
+	* [r2859] [trunk] Provide #ifdef blockers for OpenJPEG Version
+	  Fixes issue 342
+
+2014-04-27  Antonin Descampe
+
+	* [r2858] [trunk] fixed typo in NEWS
+
+2014-04-25  Antonin Descampe
+
+	* [r2857] [trunk] updated NEWS for 2.1.0
+
+2014-04-24  Mathieu Malaterre
+
+	* [r2855] [trunk] Make sure OpenJPIP compiles on WIN32
+
+2014-04-24  Antonin Descampe
+
+	* [r2852] [trunk] fixed reference to opj_stream_set_user_data_v3 in
+	  jpip sources.
+
+2014-04-23  Antonin Descampe
+
+	* [r2851] [trunk]removed '-x' option for index file as long as it's
+	  broken
+	* [r2849] [trunk]re-formatted help display in executables
+	* [r2848] [trunk]formatted some messages. Removed -version option
+	  to disambiguate
+	  with -v(erbose) option, added version info in help display
+	* [r2847] [trunk]Replaced deprecated opj_stream_set_user_data
+	  function from API
+	  with its 'v3' version, and removed all other 'v3' suffixes from
+	  API.
+
+2014-04-22  Antonin Descampe
+
+	* [r2845] [trunk] fixed some warning and errors formatting and add
+	  a '-version'
+	  option to opj_compress and opj_decompress binaries
+
+2014-04-17  Antonin Descampe
+
+	* [r2838] [trunk] fixed warning related to r2837 and move new field
+	  at the end of
+	  parameters structure.
+	* [r2837] [trunk] refactoring of rsiz, profiles, and extensions
+	  management
+
+2014-04-03  Antonin Descampe
+
+	* [r2835] [trunk] updated copyright and added copyright notice
+	  required by ISO, in each file; updated AUTHORS, NEWS
+
+2014-04-02  Antonin Descampe
+
+	* [r2832] [trunk] removed debug message in CMakeLists.txt
+	* [r2831] [trunk] fixed a bug triggering SEGFAULT on debug mode
+	  (uninitialized
+	  structure)
+
+2014-03-27  Mathieu Malaterre
+
+	* [r2815] [trunk] Properly copy/paste code from the autotools
+	  gcc correctly fails compiling this code, I needed to move the
+	  code outside the main function to get the error. This actually
+	  match the autotools (incorrect) code. We'll see how they fix this
+	  code in future release.
+	  This make the code compatible with previous openjpeg version and
+	  remove C99 requirement.
+	  Fixes issue 316
+
+2014-03-26  Mathieu Malaterre
+
+	* [r2808] [trunk] Make sure to use long long (this is not C89).
+	  However this should be ok on most compilers nowadays
+	  Update issue 316
+
+2014-03-26  Antonin Descampe
+
+	* [r2806] [trunk] fixed warnings triggered on linux related to
+	  r2802
+
+2014-03-26  Mathieu Malaterre
+
+	* [r2804] [trunk] Run test suite on issue 316 dataset
+	  Update issue 316
+
+2014-03-26  Antonin Descampe
+
+	* [r2802] [trunk] add ability in opj_compress to input subsampled
+	  images through
+	  '-F' (aka raw option). Let the user input raw images with 444,
+	  422, 420
+	  (etc) subsampling. To be used in conjunction with '-mct 0' option
+	  to
+	  compress subsampled YCC images.
+
+2014-03-26  Mathieu Malaterre
+
+	* [r2801] [trunk] Add small utilities to extract JP2 files from PDF
+
+2014-03-25  Mathieu Malaterre
+
+	* [r2799] [trunk] Make sure to test value not pointer
+	  Update issue 302
+
+2014-03-25  Antonin Descampe
+
+	* [r2798] [trunk] fixed bug related to r2791
+
+2014-03-25  Mathieu Malaterre
+
+	* [r2796] [trunk] Add sentinel in case list empty.
+	  I was getting a cmake error `list sub-command REMOVE_ITEM
+	  requires list to be present`
+	* [r2795] [trunk] Import change from 2.0 branch
+
+2014-03-25  Antonin Descampe
+
+	* [r2792] [trunk] fixed warning due induced by r2791
+	* [r2791] [trunk] add "-mct {0,1,2}" option to opj_compress to
+	  allow MCT to be
+	  disabled if needed.
+
+2014-03-25  Mathieu Malaterre
+
+	* [r2789] [trunk] Make sure to not use alpha pointer if it is not
+	  an RGBA input
+	  Fixes issue 310
+	* [r2786] [trunk] Rework previous commit r2610
+	  This way we are able to gently deprecate the old API, and
+	  preserve ABI
+	  Update issue 306
+	* [r2785] [trunk] Add documentation
+
+2014-03-24  Mathieu Malaterre
+
+	* [r2773] [trunk] Make sure to exit early instead of looping on
+	  every single pixels
+	* [r2772] [trunk] Fix typo in comment (this is not j2k_dump)
+
+2014-03-18  Mathieu Malaterre
+
+	* [r2767] [trunk] Revert r2764. It breaks ~230 tests as seen on
+	  continuous. Since no dataset is available, the issue 296 will be
+	  left open.
+	  Update issue 296
+	* [r2766] [trunk] User can now control source/target java version
+	  Fixes issue 303
+	* [r2764] [trunk] Import git commit
+	  fc884aee2b69c78500e65c3d05bf216791a9ea4a from ghostscript team
+	  Fixes issue 296
+	* [r2763] [trunk] Import git commit
+	  99a6f1af177c15f4db475186b79d169c993494ef from ghostscript team
+	  Update issue 296
+	* [r2761] [trunk] Update big endian handling no such thing as
+	  WORDS_BIGENDIAN (prefer OPJ_BIG_ENDIAN)
+	  Update issue 302
+	* [r2756] [trunk] Now that dataset from issue 297 have been
+	  imported, run test suite.
+	  None of the dataset triggered any buffer overflow. Recent changes
+	  in trunk handle all those cases.
+	  Update issue 297
+
+2014-03-17  Mathieu Malaterre
+
+	* [r2754] [trunk] Explicitely reject file4/file6 scenario
+	  Update issue 286
+	* [r2751] [trunk] Update BSD-4 copyright into a BSD-3 copyright
+	  Fixes issue 300
+
+2014-03-14  Mathieu Malaterre
+
+	* [r2748] [trunk] Since r2747 we are now able to track which files
+	  are missing from the test_suite. Add them.
+	* [r2747] [trunk] add mecanism to track of addition of new
+	  regression files in svn/data. It will report when a J2K files is
+	  added but no test is found in the test_suite file
+	* [r2746] [trunk] Remove duplicate content from test_inline.c
+	  Thanks to Matthieu Darbois for report (and patch)
+	  Fixes issue 285
+	* [r2745] [trunk] rework code from r2463. Really there has been
+	  some code duplication from r2413
+	  Thanks to John Rogers (oracle.com) for report
+	* [r2744] [trunk] rework code from r2463. Really there has been
+	  some code duplication from r2413
+	  Thanks to John Rogers (oracle.com) for report
+	* [r2743] [trunk] Now that issue 165 dataset is in non regression
+	  repository, activate code to reject them
+	  Fixes issue 165
+	* [r2741] [trunk] Fix issue with & vs &&
+	  Fixes issue 277
+	* [r2740] [trunk] Add internal implementation to dump all
+	  tiles/comp info
+	  Eg: opj_dump -f 8 -i input.j2k
+	  Update issue 3
+	* [r2739] [trunk] Prevent a leak when reading PPT markers
+	  Update issue 295
+	* [r2735] [trunk] Move INLINE definition within openjpeg.h header
+	  since application may use it
+	* [r2733] [trunk] Apply final missing patch from sumatrapdf team:
+	  http://bugs.ghostscript.com/show_bug.cgi?id=694893
+	  Update issue 231
+	* [r2732] [trunk] Rework r2731 since it breaks non-regression
+	  testing
+	* [r2731] [trunk] Be more verbose about failure.
+	  Update issue 294
+	* [r2730] [trunk] Add a temporary work around for issue 293
+	  As described in the bug report the default allocation mecanism
+	  for codeblock data is too small for those dataset (16bits). We
+	  would need a finer (more granular) mecanism to reallocated only
+	  on demand. For now this help the two failing tests to pass.
+	  Fixes issue 293
+	* [r2726] [trunk] Mark OpenJPEG to be ABI incompatible with
+	  previous one, move to SONAME 7
+	  Also declare this is 2.1.0 (or very close)
+	* [r2722] [trunk] Remove warnings about unused values introduced in
+	  r2710
+	  Thanks to Matthieu Darbois for patch
+	  Fixes issue 290
+
+2014-03-13  Mathieu Malaterre
+
+	* [r2720] [trunk] Add some sanity checks when reading Ippm(i)
+	  segments
+	  Update issue 288
+	* [r2719] [trunk] Make sure to reallocate ppm data buffer when
+	  multiple Ippm(i) buffer are found
+	  This handle the case where remaining data is exactly Nppm(i)
+	  Fixes issue 287
+	* [r2715] [trunk] Add documentation to the checkmd5refs cmake
+	  module (used for regression testing)
+	* [r2714] [trunk] Always report when decompression failed as return
+	  code value
+	* [r2713] [trunk] Fix test NR-DEC-issue171.jp2-71-decode-md5 after
+	  recent code change
+	* [r2712] [trunk] Add a double check for user input
+	* [r2711] [trunk] Fix compilation on VS2010 (snprintf is not C89).
+	  C++11 should avoid this in the future
+	* [r2710] [trunk] Just in case this would be helpful for other,
+	  here is the code used to track issue 80
+	  Update issue 80
+	* [r2709] [trunk] Tweak documentation in t2.c. Be more verbose in
+	  case of failure.
+	* [r2708] [trunk] Add some documention in the pi code
+	* [r2707] [trunk] Add debug code to extract decompressed image
+	  right before PCLR handling
+	  Update issue 235
+	* [r2705] [trunk] Add a small helper to spli ppm into 3 pgm files
+	  Update issue 235
+
+2014-03-12  Mathieu Malaterre
+
+	* [r2703] [trunk] Make sure to use 8bits buffer when applying the
+	  ICC profile.
+	  Fixes issue 281
+	* [r2701] [trunk] Add debug info to be able to test integration
+	  with littlecms
+	* [r2695] [trunk] TIFF files in test suite can have 1 or 3
+	  components
+	* [r2694] [trunk] Simplify code when reading in TIFF images
+	* [r2692] [trunk] Make sure when reading POC that number of layers
+	  (layer end) is within acceptable bound.
+	  Fixes issue 80
+
+2014-03-11  Mathieu Malaterre
+
+	* [r2691] [trunk] Re-active old warning about missing SOP marker
+	* [r2690] [trunk] Add debug info to track issue 80
+	  Update issue 80
+	* [r2688] [trunk] Rework assertion to work on 32bits system
+	* [r2687] [trunk] Fix remainings warnings on linux/32bits arch
+	* [r2686] [trunk] Rework fseek ifdefs blockers, it breaks the
+	  64bits behavior for fseeko
+	* [r2685] [trunk] Fix compilation errors when JPWL and/or MJ2 are
+	  build
+
+2014-03-10  Mathieu Malaterre
+
+	* [r2683] [trunk] Another final round of fixes for sign conversion
+	  warnings.
+	  Fixes issue 256
+	* [r2682] [trunk] Another round of fixes for sign conversion
+	  warnings.
+	  Update issue 256
+	* [r2681] [trunk] Another round of fixes for sign conversion
+	  warnings.
+	  Update issue 256
+	* [r2680] [trunk] Another round of fixes for sign conversion
+	  warnings.
+	  Update issue 256
+	* [r2679] [trunk] Remove old warnings about deprecated API
+	* [r2677] [trunk] Remove a set of warning about sign conversion
+	  Update issue 266
+	* [r2676] [trunk] Remove warning about sign conversion in color.c
+	  Update issue 256
+	* [r2672] [trunk] Run richter test suite, correct a regression
+	  introduced in r2668
+	* [r2670] [trunk] Tweak JP2 conformance test suite add
+	  documentation
+	* [r2668] [trunk] Properly handle number of components to run
+	  kakadu test suite.
+	  Update issue 266
+	* [r2664] [trunk] Fix simple sign conversion warnings only visible
+	  on 32bits arch
+	* [r2663] [trunk] Handle multi components files with PGM outputs
+	* [r2661] [trunk] Properly handle PGM file generation when fullpath
+	  is specified in the cmd line
+	  This will break a very old behavior (since 2005), but avoid
+	  writing in un-expected places for users
+	  This also make the behavior similar with PGX file generation
+	* [r2660] [trunk] Fix inversion in code convention
+	* [r2659] [trunk] Fix typo in the code
+	* [r2658] [trunk] rework actual code to handle DOS/UNIX end of
+	  lines in a transparent manner.
+	  This will help cross compilation cases
+	* [r2657] [trunk] First pass to cleanup compare_dump_files
+	* [r2656] [trunk] Fix compilation when TIFF lib is neither found
+	  nor compiled
+	* [r2655] [trunk] Make sure to always initialize variable
+	* [r2654] [trunk] Fix warnings about shadow variables
+	* [r2653] [trunk] remove a warning when using strict prototype
+	* [r2652] [trunk] Remove 2 warnings about set but not used
+	  variables
+
+2014-03-07  Mathieu Malaterre
+
+	* [r2651] [trunk] Upon failure, need to return proper return code
+	* [r2650] [trunk] Add new test suite that run on kakadu conformance
+	  images
+	* [r2644] [trunk] Cleanup commit. Rename compare family since
+	  comparePGX now support TIFF.
+	  Rename compareRAWimage for clarity since it merely compare files
+	  (not images).
+	* [r2643] [trunk] Use C-style comments
+	* [r2642] [trunk] Rework the code to simplify cleanup code
+	* [r2638] [trunk] Also override the default error handler for TIFF
+	  files
+	* [r2636] [trunk] Another round of fixes for sign conversion
+	  warnings.
+	  Update issue 256
+	* [r2635] [trunk] Another round of fixes for sign conversion
+	  warnings.
+	  Update issue 256
+	* [r2634] [trunk] Rework r2597, make sure test suite is passing
+	  now.
+	  Update issue 256
+	* [r2633] [trunk] Another round of fixes for sign conversion
+	  warnings.
+	  Update issue 256
+	* [r2632] [trunk] Another round of fixes for sign conversion
+	  warnings.
+	  Update issue 256
+	* [r2631] [trunk] Another round of fixes for sign conversion
+	  warnings.
+	  Update issue 256
+	* [r2630] [trunk] Another round of fixes for sign conversion
+	  warnings.
+	  Update issue 256
+	* [r2629] [trunk] Another round of fixes for sign conversion
+	  warnings.
+	  Update issue 256
+	* [r2628] [trunk] Redo r2623, and remove guilty section
+	  Update issue 256
+	* [r2627] [trunk] Revert r2623 for now
+	* [r2626] [trunk] Another round of fixes for sign conversion
+	  warnings.
+	  Update issue 256
+	* [r2625] [trunk] Another round of fixes for sign conversion
+	  warnings.
+	  Update issue 256
+	* [r2624] [trunk] Another round of fixes for sign conversion
+	  warnings.
+	  Update issue 256
+	* [r2623] [trunk] Another round of fixes for sign conversion
+	  warnings.
+	  Update issue 256
+	* [r2622] [trunk] Another round of fixes for sign conversion
+	  warnings.
+	  Update issue 256
+	* [r2621] [trunk] Another round of fixes for sign conversion
+	  warnings.
+	  Update issue 256
+	* [r2620] [trunk] Another round of fixes for sign conversion
+	  warnings.
+	  Update issue 256
+	* [r2619] [trunk] As reported by clang analyzer thoses values were
+	  never read
+	* [r2618] [trunk] Remove mem leak and warning reported by clang
+	* [r2617] [trunk] Remove simple warnings about format
+	* [r2616] [trunk] Remove simple warning about functions not used
+	* [r2615] [trunk] Another round of fixes for sign conversion
+	  warnings.
+	  Update issue 256
+	* [r2614] [trunk] Another round of fixes for sign conversion
+	  warnings.
+	  Update issue 256
+	* [r2613] [trunk] Fix simple warning about sign conversion
+	  Update issue 256
+	* [r2612] [trunk] Another of fixes for warning about sign
+	  conversion
+	  Update issue 256
+	* [r2611] [trunk] Fix warning about sign conversion
+	  Update issue 256
+	* [r2610] [trunk] un-deprecated opj_stream_destroy API, import
+	  patch manually
+	  In some case user still want to be able to call
+	  opj_stream_destroy.
+	  Fixes issue 227
+	* [r2609] [trunk] Update memory management mecanism
+	  Fixes issue 253
+	* [r2608] [trunk] Remove self-assignement.
+	  Fixes issue 273
+	* [r2605] [trunk] Fix compilation in visual studio, inline cannot
+	  be used directly.
+	  Fixes issue 272
+	* [r2604] [trunk] Remove warning about implicitly defined function
+	* [r2601] [trunk] Remove TIFF warning handler. This help test suite
+	  run smoothly on windows by removing the message box.
+	  Fixes issue 276
+	* [r2600] [trunk] Fix mem leaks reported by cppcheck
+	* [r2599] [trunk] Simplify code and remove bogus out of bound check
+
+2014-03-06  Mathieu Malaterre
+
+	* [r2598] [trunk] Revert r2597 for now, since it breaks a lot of
+	  tests
+	* [r2597] [trunk] Remove warning about sign conversion.
+	  Update issue 256
+	* [r2595] [trunk] Remove some easy warnings
+	* [r2594] [trunk] Remove warning about sign conversion.
+	  Update issue 256
+	* [r2593] [trunk] Remove warning about sign conversion.
+	  Update issue 256
+	* [r2592] [trunk] Remove warning about sign conversion.
+	  Update issue 256
+	* [r2591] [trunk] Remove warning about sign conversion.
+	  Update issue 256
+	* [r2590] [trunk] Remove warning about sign conversion.
+	  Update issue 256
+	* [r2589] [trunk] Remove some easy warnings about sign compare
+	  reported by gcc
+	* [r2588] [trunk] Remove out of bound access in code and simplify
+	  code. this is a test tool, security is not an issue here.
+	* [r2587] [trunk] Remove simple warning about unused variables
+	* [r2586] [trunk] Make sure that all output files from the test
+	  suite are using a different output name
+	  Fixes issue 271
+
+2014-03-05  Mathieu Malaterre
+
+	* [r2577] [trunk] Handle cmap where direct use is specified
+	  (issue235_cmapsubbox.jp2)
+	  I doubt the old code ever work. The new code copy the old
+	  codestream bytes into the new components (instead of copying the
+	  pointer).
+	  Technically the issue235.jp2 file should be handled since I.5.3.5
+	  specifies that:
+	  ...
+	  If the JP2 Header box does not contain a Component Mapping box,
+	  the components shall be mapped directly to channels,
+	  such that component i is mapped to channel i.
+	  ...
+	  Update issue 235
+
+2014-03-04  Mathieu Malaterre
+
+	* [r2572] [trunk] Make sure to reject images such as
+	  1336.pdf.asan.47.376.jp2
+	  Fixes issue 267
+	* [r2571] [trunk] remove more conversion warning in multi-lines
+	  macro.
+	  C allow simple tricks such as to find those:
+	  gcc -E tcd.c | sed '/^\#/d' | indent -st -i2 > clean.c
+	  Update issue 256
+	* [r2570] [trunk] Remove some conversion warnings reported by gcc
+	  Update issue 256
+	* [r2569] [trunk] Remove another warning. ftell returns long int
+	  Update issue 256
+	* [r2568] [trunk] Remove more conversion warnings.
+	  Update issue 256
+	* [r2567] [trunk] Remove warning about conversion.
+	  Update issue 256
+	* [r2566] [trunk] Add a TIFF compare function (PEAK/MSE)
+	  Fixes issue 100
+	* [r2565] [trunk] Revert portion of r2562, need to investigate
+	  issue.
+	  Update issue 269
+
+2014-03-03  Mathieu Malaterre
+
+	* [r2562] [trunk] Remove remaining conversion issues in mqc.c
+	* [r2561] [trunk] Remove remainings conversion issues in t2.c +
+	  clock.c
+	* [r2560] [trunk] Remove a simple warning about int -> float
+	  conversion
+	* [r2559] [trunk] rework code to avoid a warning. this also remove
+	  a division and prefer bit-shift
+	* [r2558] [trunk] Remove some more warnings about conversion
+	* [r2557] [trunk] Prefer compile time constant to avoid conversion
+	  double -> int
+	* [r2556] [trunk] Review warning about types conversion, and add
+	  cast when needed
+	* [r2553] [trunk] Remove some simple warnings about conversion
+	* [r2552] [trunk] fgets takes an int as parameter
+	* [r2551] [trunk] Remove warning about cast double -> int. Instead
+	  use bit-shifting (compile time computation)
+	* [r2550] [trunk] Remove easy to fix warnings about conversion
+	* [r2549] [trunk] Import left over from patch submitted as issue
+	  225 (comment #14)
+	  Update issue 225
+	* [r2548] [trunk] remove some simple warnings about unused params
+	* [r2547] [trunk] remove all api with invalid FILE* parameters
+	  which could leads to issues when applications are compiled with
+	  different flags from openjpeg.
+	  Fixes issue 198
+	* [r2546] [trunk] Explicitely trigger issue 229, there may be an
+	  impact in code execution. The assert may get removed afterward
+	  Update issue 229
+	* [r2545] [trunk] Remove simple warnings
+	* [r2544] [trunk] Remove 3635.pdf.asan.77.2930.jp2 from opj_dump
+	  tests
+	  Update issue 250
+	* [r2539] [trunk] Avoid conflicting declarion for fseek in openjp2
+	  vs fseek in openjpip
+	* [r2538] [trunk] Fix md5 values for decode-md5 tests.
+	  Update issue 250
+	* [r2537] [trunk] Remove deprecated functions.
+	  Update issue 268
+	* [r2536] [trunk] Remove warning about unused function
+	  Update issue 268
+	* [r2535] [trunk] Remove deprecated functions (not called anywhere
+	  in the code base).
+	  Update issue 268
+	* [r2533] [trunk] Remove unused variables from test
+
+2014-03-02  Mathieu Malaterre
+
+	* [r2532] [trunk] Remove some simple warnings about var being set
+	  but not used
+	* [r2531] [trunk] Remove warning about -2147483648 (aka INT_MIN),
+	  causing this decimal constant is unsigned only in ISO C90
+	* [r2530] [trunk] Remove simple warnings about comments, missing
+	  case in switch statement
+
+2014-03-01  Mathieu Malaterre
+
+	* [r2529] [trunk] Fix compilation on MSVC compiler
+
+2014-02-28  Mathieu Malaterre
+
+	* [r2528] [trunk] Partially rework r2506, original patch from issue
+	  171 was totally bogus (untested?) and did break most of the test
+	  (eg. p1_04 family)
+	  convert.c duplicate a lot of code, this patch only adresses the
+	  PGX codec section of the code.
+	  Update issue 171
+	  Update issue 264
+	* [r2527] [trunk] Make sure to run *-decode-md5 only after *-decode
+	  tests. Update md5 since recent code change.
+	* [r2526] [trunk] Remove easy uint32 <-> int32 conversions
+	* [r2525] [trunk] Re-import chunk from r2458 that made textGBR.jp2
+	  to fail otherwise
+	  Update issue 225
+	* [r2524] [trunk] Rework r2458, instead we should reject
+	  451.pdf.SIGSEGV.ce9.3723 since tile-parts are out of order (as
+	  per kakadu behavior).
+	  Update issue 225
+	* [r2523] [trunk] Mark a file as being invalid for opj_dump
+	* [r2522] [trunk] Fix JPIP test with updated md5sum
+	* [r2521] [trunk] Really apply r2460 this time, but fix the
+	  original typo in the submitted patch
+	  Update issue 225
+	* [r2520] [trunk] final round of minor cleanups
+	* [r2519] [trunk] Remove PNG generation code for now
+	* [r2518] [trunk] Prefer strcpy since it copies trailing 0 directly
+	* [r2517] [trunk] Simplify code to centralize code cleanup
+	* [r2516] [trunk] Some code cleanup add sentinels
+	* [r2515] [trunk] Remove a simple warning, and use static to detect
+	  unused functions. Simplify function declarations.
+	* [r2513] [trunk] run test suite on dataset from issue 171
+	  Fixes issue 171
+	* [r2511] [trunk] Remove some simple warnings in opj_dump
+	* [r2510] [trunk] Merge final patch from issue 171 with code
+	  simplification. also handles signed case properly.
+	  Fixes issue 171
+	* [r2508] [trunk] Fix find_path behavior within cross-compilation
+	  execution
+
+2014-02-27  Mathieu Malaterre
+
+	* [r2507] [trunk] Import patch from issue 218. No dataset to check,
+	  so blindly applied it.
+	  Fixes issue 218
+	* [r2506] [trunk] Import patch from issue 171. Only the imagetoraw
+	  part was not applied.
+	  Update issue 171
+	* [r2505] [trunk] Try to run test suite on invalid dataset from
+	  sumatrapdf team
+	  Update issue 225
+	* [r2503] [trunk] run test suite to illustrate patch from r2458
+	* [r2501] [trunk] Make sure that opj_decompress only output a
+	  single component
+	  Update issue 110
+	* [r2496] [trunk] add issue 46 to the test suite
+	  Fixes issue 46
+	* [r2495] [trunk] improve command line parser syntax checking
+	* [r2493] [trunk] add a sentinel in debug code
+	* [r2492] [trunk] simplify code using for loop
+
+2014-02-26  Mathieu Malaterre
+
+	* [r2491] [trunk] Import test case from issue 208. This appears to
+	  be fixed now.
+	  Fixes issue 208
+	* [r2489] [trunk] Run test suite on dataset from issue 211. Test is
+	  now passing nicely.
+	  Fixes issue 211
+	* [r2487] [trunk] run test suite on dataset from issue 135. Add
+	  fake md5sum to make sure tests is failing.
+	  Update issue 135
+	* [r2485] [trunk] Update missing md5sums
+	* [r2484] [trunk] kakadu does not support 451.pdf.SIGSEGV.ce9.372
+	  we should not pretend to be able to decompress it
+	  
+	  Update issue 225
+	* [r2483] [trunk] Run test suite on issue 141. Add a fake dataset
+	  to report that test is failing.
+	  Update issue 141
+	* [r2481] [trunk] Add more details in case test fails
+	* [r2480] [trunk] run test suite on input dataset from issue 134
+	  Fixes issue 134
+	* [r2478] [trunk] fixes test NR-DEC-file409752.jp2-40-decode, use
+	  proper naming convention (need to keep file extension)
+	* [r2477] [trunk] add test suite for issue 142
+	  
+	  Fixes issue 142
+	* [r2476] [trunk] When no output PGX file is found, report an error
+	* [r2474] [trunk] Add missing include dir for wx app
+	* [r2473] [trunk] Remove some simple warnings about cast, and
+	  unused functions
+	* [r2471] [trunk] Remove a simple warning about a cast
+	* [r2470] [trunk] revert r2460 since it breaks
+	  ETS-C1P0-p0_03.j2k-decode.
+	  Update issue 225
+	* [r2469] [trunk] Revert r2453 since it breaks conformance test
+	  ETS-C1P1-p1_06.j2k-decode
+	* [r2468] [trunk] Import patch from sumatrapdf team. This handle
+	  testcase 1336.pdf.asan.47.376
+	  Update issue 225
+	* [r2467] [trunk] Import patch from sumatrapdf team. This handle
+	  testcase 1888.pdf.asan.35.988
+	  Update issue 225
+	* [r2466] [trunk] Import patch from sumatrapdf team. This handle
+	  testcase 1851.pdf.SIGSEGV.ce9.948
+	  Update issue 225
+	* [r2465] [trunk] Import patch from sumatrapdf team. Start using
+	  new color space when found.
+	  Update issue 225
+	* [r2464] [trunk] Import patch from sumatrapdf team. This handle
+	  some Part-2 compliant file, by being more tolerant in COLR box.
+	  No testcase for now.
+	  Fixes issue 247
+	* [r2463] [trunk] Import patch from sumatrapdf team. This handle
+	  some testcase with no input dataset, but changes looks ok.
+	  Update issue 225
+	* [r2462] [trunk] Import patch from sumatrapdf team. This handle
+	  testcase 2977.pdf.asan.67.2198
+	  Update issue 225
+	* [r2461] [trunk] Import (ugly) patch from sumatrapdf team. This
+	  feels like a hack rather than a solution.
+	  Fixes issue 226
+	* [r2460] [trunk] Import patch from sumatrapdf team. This handle
+	  testcase 3635.pdf.asan.77.2930
+	  Update issue 225
+	* [r2459] [trunk] Import patch from sumatrapdf team. Original
+	  commit is 5b0c9985e3359aca9b3fcfd94424166aa61a141a.
+	  Update issue 225
+	* [r2458] [trunk] Import patch from sumatrapdf team. This handle
+	  testcase 451.pdf.SIGSEGV.ce9.3723
+	  Update issue 225
+	* [r2457] [trunk] Import patch from sumatrapdf team. This handle
+	  testcase 2.pdf.SIGFPE.706.1112
+	  Update issue 225
+	* [r2456] [trunk] Import patch from sumatrapdf team. This handle
+	  testcase 1610.pdf.SIGSEGV.59c.681
+	  Update issue 225
+	* [r2455] [trunk] Import patch from sumatrapdf team. This handle
+	  testcase 2539.pdf.SIGFPE.706.1712
+	  Update issue 225
+	* [r2454] [trunk] Import patch from sumatrapdf team. This handle
+	  testcase 4035.pdf.SIGSEGV.d8b.3375
+	  Update issue 225
+	* [r2453] [trunk] Import patch from sumatrapdf team. Add detection
+	  for testcase 1802.pdf.SIGSEGV.36e.894
+	  
+	  Update issue 225
+	* [r2452] [trunk] Import patch from sumatrapdf team. Add a new
+	  function to check color box.
+	  
+	  Update issue 225
+	* [r2451] [trunk] Import patch from sumatrapdf team. This patch
+	  adds new colorspace handling.
+	  
+	  Update issue 225
+	* [r2450] [trunk] Import patch from sumatrapdf team. This adds
+	  alpha handling. This patch changes ABI.
+	  
+	  Update issue 225
+	* [r2449] [trunk] Update file extension function to handle cases
+	  where filename containes multiples dots.
+	  
+	  Update issue 250
+	* [r2447] [trunk] Clearly indicate that mem-b2ace68c-1381.jp2
+	  should not be decompressed.
+	  
+	  Update issue 250
+	* [r2446] [trunk] Fix TestJPIP1 on case sensitive system
+	* [r2445] [trunk] regex would not be used to remove java
+	  deprecation warning from dashboard
+	* [r2444] [trunk] Remove simple warnings about unused functions
+	* [r2443] [trunk] Properly store and use value returned by fread.
+	  Also invert nmemb and size in fread call.
+	  
+	  Fixes issue 262
+	* [r2442] [trunk] Fix invalid write access in JPIP code.
+	  
+	  Fixes issue 261
+
+2014-02-25  Mathieu Malaterre
+
+	* [r2436] [trunk] Run decoder on input dataset from issue 254. Add
+	  fake md5sum to make sure the test is failing.
+	  
+	  Update issue 254
+	* [r2433] [trunk] deprecationg warning issued by java compiler
+	  should be ignored
+	* [r2432] [trunk] Create a new static *_impl function to avoid a
+	  warning triggered by the deprecation mecanism
+	  
+	  Fixes issue 257
+	* [r2430] [trunk] New decoded files are passing. Adding reference
+	  files.
+	  
+	  Update issue 225
+	* [r2428] [trunk] For now assume any provided stream should not get
+	  decompressed.
+	  
+	  Update issue 225
+	* [r2427] [trunk] Run decoder on issue 229 test cases
+	  
+	  Update issue 229
+	* [r2419] [trunk] Revert r2415 for now since it introduce large
+	  regression
+	* [r2418] [trunk] Import commit
+	  87b08a096bb8ad61f9dbe4811e208d9c9d7fe63b from ghostpdl
+	  
+	  don't define lrintf for MSVC 2013 (fix compilation breakage)
+	  
+	  Update issue 225
+	* [r2417] [trunk] Import commit
+	  4cee6ceab21025079f439bb152fb9d8ae8c5c832 from ghostpdl
+	  
+	  Bug 694906: fix potential heap overflow in
+	  opj_t2_read_packet_header
+	  
+	  Update issue 225
+	* [r2416] [trunk] import commit
+	  83dad6a76536222a3a51146f942e733a2e90ec52 from ghostpdl
+	  
+	  fix potential NULL-pointer dereference caused by testing the
+	  wrong variable
+	  after opj_realloc (happens only in OOM situations)
+	  
+	  Update issue 225
+	* [r2415] [trunk] Import commit
+	  fc884aee2b69c78500e65c3d05bf216791a9ea4a from ghostpdl
+	  
+	  prevent heap overflow in opj_t2_read_packet_header
+	  
+	  Also prevent a double-free of segment data under OOM conditions.
+	  
+	  Problem found in a test file, 1802.pdf.SIGSEGV.36e.894 supplied
+	  by Mateusz "j00ru" Jurczyk and Gynvael Coldwind of the Google
+	  Security Team using Address Sanitizer. Many thanks!
+	  
+	  Update issue 225
+	* [r2414] [trunk] Import commit
+	  8ec8321df613986e8642e2975f7182072eb4be62 from ghostpdl
+	  
+	  make opj_stream_set_user_data accept a NULL stream
+	  for consistency with opj_stream_set_* which does so.
+	  
+	  Update issue 225
+	* [r2413] [trunk] Import commit
+	  f4139d702559649e577a5df9cfd64b0ca6107a7a from ghostpdl
+	  
+	  Several functions accept a buffer size but never actually check
+	  whether
+	  the buffer overflows during reading/writing. This fixes all cases
+	  where
+	  a size variable has explicitly been marked as unused (through a
+	  (void)
+	  cast).
+	  
+	  This was discovered while investigating an assertion caused by
+	  7cc691f332f26802c64cdc47e17bff8b_signal_sigabrt_7ffff6d59425_2247_2509.pdf
+	  among others.
+	  
+	  Thanks to Mateusz Jurczyk and Gynvael Coldwind of the Google
+	  Security
+	  Team for providing the example files.
+	* [r2411] [trunk] Clarify raw input in openjpeg. LSB vs MSB are now
+	  documented.
+	  
+	  Fixes issue 62
+	* [r2410] [trunk] Run test case for issue 228. Output has been
+	  validated.
+	  
+	  Fixes issue 228
+	* [r2407] [trunk] Run sumatrapdf test cases
+
+2014-02-24  Mathieu Malaterre
+
+	* [r2404] [trunk] add missing private lib. Update issue 223
+	* [r2402] [trunk] Make sure to always output pgx file. Handle case
+	  where multiple pgx files are generated. Fixes all tests.
+	* [r2401] [trunk] add test demonstrating a regression in 1.5.0 and
+	  up. Update issue 205
+	* [r2399] [trunk] improve test suite by checking against a
+	  reference md5
+	* [r2398] [trunk] Fix a simple mem leak
+	* [r2397] [trunk] Fix two simple warnings about sign mismatch
+	* [r2395] [trunk] Fix warning about signed/unsigned mismatch
+	* [r2394] [trunk] Make sure to handle ret value, and properly
+	  initialize output file
+	* [r2393] [trunk] Make sure to handle ret value in test
+	* [r2392] [trunk] Prefer the new style cmake: add_test command
+	  
+	  Fixes issues 258
+	* [r2388] [trunk] Fix a warning about type conversion. Use a trick
+	  where unsigned wrapping is legal
+
+2014-02-12  Antonin Descampe
+
+	* [r2375] [trunk] replaced fprintf with event_mgr in cinema-related
+	  stuff in j2k.c
+	* [r2374] [trunk] moved logic related to cinema profiles in library
+	  (was in
+	  opj_compress.c). This enables one using the library with its own
+	  executable to easily ask for cinema profiles.
+	* [r2373] [trunk] added a warning when tif conversion changes input
+	  image bitdepth
+	* [r2372] [trunk]re-indenting convert.c
+
+2014-02-07  Mathieu Malaterre
+
+	* [r2371] Update kakadu cmake module
+
+2014-01-23  Antonin Descampe
+
+	* [r2369] [trunk] added some tests for Cinema2k 48fps and Cinema 4k
+	  24 fps. Fixed
+	  a bug in comparePGXimages.c leading to huge Test.xml file
+	  uploaded to
+	  DashBoard
+	* [r2367] [trunk] fixed another DCI compliance bug
+
+2014-01-22  Antonin Descampe
+
+	* [r2366] [trunk] uncomment tests mistakenly commented in previous
+	  commit
+	* [r2365] [trunk] fixed several bugs in cinema mode (2K 24/48 fps,
+	  and 4K). Trunk
+	  now produces compliant DCI code-streams.
+
+2014-01-16  Antonin Descampe
+
+	* [r2364] [trunk] fixed indentation in opj_compress.c, renamed 2
+	  internal
+	  functions, added some comments
+
+2014-01-16  Antonin Descampe
+
+	* [r2363] [trunk] fixed DCI-compliant codestream generation
+	  (-cinema2K and -
+
+2013-10-30  Antonin Descampe
+
+	* [r2352] trunk: fixed cmake config so as to be able to link
+	  opj_jpip_server with FCGI.
+	* [r2351] trunk: fixed cmake config so as to be able to link
+	  opj_jpip_server with FCGI.
+
+2013-10-28  Antonin Descampe
+
+	* [r2350] trunk: disabling class-0 conformance tests for now (bad
+	  implentation of tests)
+
+2013-10-15  Rex Dieter
+
+	* [r2348] complete openjpeg2 pkgconfig support, bug #68
+
+2013-09-26  Mathieu Malaterre
+
+	* [r2347] [trunk] Import patch from bug #241
+
+2013-07-11  Antonin Descampe
+
+	* [r2344] test: modified class-0 conformance testing to comply with
+	  constraints
+
+2013-03-25  Mickaël Savinaud
+
+	* [r2322] [trunk] use the private version of opj_config to avoid
+	  compilation error into mj2
+	* [r2321] [trunk] use opj_config_private.h into the opj_inttypes.h
+	* [r2320] [trunk] separate the opj_config file between public and
+	  private part to avoid expose unused variables into the public
+	  API.
+	* [r2319] [trunk] update test suite because now
+	  illegalcolortransform.j2k could be decoded
+
+2013-03-24  Mickaël Savinaud
+
+	* [r2318] [trunk] enhance the support of sYCC into opj_decompress
+	  application (thanks winfried).
+	* [r2317] [trunk] managed nicely the case where TPSot value is
+	  incorrect (thanks winfried). Update the test suite to check this
+	  case. Updates issue 202. Updates issue 206. Update issue 208
+
+2013-03-17  Mickaël Savinaud
+
+	* [r2315] [trunk] add access to opj_apps_config.h to old
+	  applications
+	* [r2314] [trunk] manage correctly the case where meth value is not
+	  correct (thanks winfried)
+	* [r2313] [trunk] correct issue 188 (thanks winfried) and add test
+	  about it. Fixes issue 188
+	* [r2308] [trunk] use OPJ_ prefix on HAVE variable also for tests
+	* [r2307] [trunk]remove wrong code in mj2 library detected by
+	  winfried (thanks to you)
+	* [r2306] [trunk] use everywhere the new opj_ prefix for HAVE
+	  variables and use the opj_apps_config file (thanks to winfried)
+
+2013-03-13  Mickaël Savinaud
+
+	* [r2304] [trunk] use the home made macro to ensure the existence
+	  of some include file
+	* [r2303] [trunk] use the opj_ prefix for the HAVE_FSEEKO variable
+	* [r2302] [trunk] correct missing variable in openjpeg config file
+
+2013-03-03  Mickaël Savinaud
+
+	* [r2301] [trunk] remove some unused variable from opj_config and
+	  rename other one with opj_ prefix
+	* [r2300] [trunk] split into two config files config options
+	  related to the lib and to the application.
+
+2013-02-18  Mickaël Savinaud
+
+	* [r2298] [trunk] add the prefix opj_ to deprecated everywhere
+
+2013-02-17  Mickaël Savinaud
+
+	* [r2297] [trunk] update documentation of new functions _v3 and
+	  mark deprecated related functions
+	* [r2296] [trunk] move to the new API for function
+	  opj_stream_create_default_file_stream. Use now
+	  opj_stream_create_default_file_stream_v3 (WIP)
+
+2013-02-16  Mickaël Savinaud
+
+	* [r2295] [trunk] move to the new API for function
+	  opj_stream_destroy. Use now opj_stream_destroy_v3 (WIP)
+	* [r2294] [trunk] rename deprecated macro with opj_ prefix and use
+	  it for opj_stream_destroy function
+	* [r2293] [trunk] add functions to avoid to use FILE* into the API
+	  (thanks winfried).
+	  Update issue 120 and update issue 198
+
+2013-02-04  Mickaël Savinaud
+
+	* [r2292] [trunk] add a test related to issue 202
+
+2013-02-03  Mickaël Savinaud
+
+	* [r2290] [trunk] update convert about png writing with additional
+	  metadata (thanks winfried)
+	* [r2287] [trunk] update test suite for issue 5 and 62
+	* [r2285] [trunk] backout one part of the rev 2266
+
+2013-01-03  Mathieu Malaterre
+
+	* [r2272] [trunk] JP3D: Fix issue with Z handling in packet
+	  iterator
+	* [r2271] [trunk] JP3D: Handles errors properly
+	* [r2270] [trunk] JP3D: remove old debug
+
+2013-01-02  Mathieu Malaterre
+
+	* [r2269] [trunk] JP3D: convert from DOS to UNIX eol
+	* [r2268] [trunk] JP3D: remove exe bit from source files
+
+2012-12-18  Mickaël Savinaud
+
+	* [r2266] [trunk] merge from branch 1.5 a correction about large
+	  code-block data (decoding part) and add tests about issue 5 and
+	  issue 62
+
+2012-12-11  Mathieu Malaterre
+
+	* [r2263] [trunk] remove left over from v2 transition
+	* [r2262] [trunk] JP3D: completely redo the opj_tgt_create
+	  function. Take as input the initial opj_tgt_create as found in
+	  openjpeg 1.5, and extend with the 3rd dimension.
+
+2012-12-07  Rex Dieter
+
+	* [r2259] Doxyfile: HTML_TIMESTAMP = NO
+	  
+	  helps when comparing the output of multiple runs,
+	  and distros will appreciate avoiding multilib conflicts.
+
+2012-12-04  Mickaël Savinaud
+
+	* [r2255] [trunk] correct the new name of OPJ_HAVE_STDINT_H
+	  everywhere
+	* [r2254] [trunk] remove SSIZE which is unused in openjpeg and
+	  rename HAVE_STDINT_H to OPJ_HAVE_STDINT_H
+	* [r2253] [trunk] add openjpeg.h in some files of openjpip to use
+	  some opj type (thanks winfried)
+
+2012-12-03  Mickaël Savinaud
+
+	* [r2252] [trunk] move typedef from opj_stdint.h to openjpeg.h and
+	  add an include of stdio.h in openjpeg.h. Fixes issue 197
+	* [r2251] [trunk] correct the encoding of colr box information
+	  (thanks Winfried)
+	* [r2250] [trunk]add the pkgconfig support for openjp2 (thanks
+	  Winfried)
+
+2012-11-28  Mathieu Malaterre
+
+	* [r2249] [trunk] JP3D codec was trying to pull information from
+	  the registration parameter in COM. This is non-standard.
+	* [r2248] [trunk] As per T.809 code block are not shifted in JP3D
+	  
+	  Table A.7
+	  3D code-block width, height and depth exponent values xcb =
+	  value, ycb = value
+	  or zcb = value.
+	  NOTE – This redefines Rec. ITU-T T.800 | ISO/IEC 15444-1
+	  significantly! The 3D
+	  code-block width, height and depth are limited to powers of two
+	  with the minimum
+	  size being 20 and the maximum being 210.
+	  Further, the 3D code-block size is restricted so that 4 ≤
+	  xcb+ycb+zcb ≤ 18.
+	* [r2247] [trunk] JP3D: this is safe to write comment using
+	  Registration: ISO-8859-15
+	* [r2246] [trunk] JP3D fix issue with Registration value in COM
+	  marker. Move COM marker just before COD.
+	* [r2245] [trunk] jp3d: fix command line parsing for subsampling
+	* [r2244] [trunk] Fix issue with ITU-T T.809 (05/2011)
+	  
+	  - ZSI is now known as NSI (FF54)
+	  - NSI now stores Ndim (=3)
+	  - CAP extended marker was not set properly
+	* [r2243] [trunk] Fix compilation issue where size_t would be
+	  undefined
+
+2012-11-27  Mickaël Savinaud
+
+	* [r2242] [test] update the list of files which will be gracefully
+	  rejected when they are dump
+	* [r2241] [trunk] add empty test about the issue 197. Updates issue
+	  197
+
+2012-11-26  Mickaël Savinaud
+
+	* [r2240] [trun[trunk] check if the dx and dy steps are not
+	  incorrect according to the JPEG2000 norm (thanks Even).
+	  Test associated to this issue should nicely fail. Fixes issue 194
+	* [r2239] [trunk] check if the number of tiles is not incorrect
+	  regarding the JPEG2000 norm (thanks Even).
+	  Test associated to this issue should nicely fail. Fixes issue 163
+	* [r2238] [trunk] test about issue 192 should nicely fail
+	* [r2237] [trunk] check the index of the component in read_qcc
+	  (thanks Even). fixes issue 192
+	* [r2235] [trunk] update test suite with issue 191 to 194 and
+	  update patch for 191 which should fail properly
+
