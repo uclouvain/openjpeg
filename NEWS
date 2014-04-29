@@ -2,7 +2,7 @@
 OpenJPEG NEWS - user visible changes
 ====================================
 
-Changes from OpenJPEG 2.0.0 to OpenJPEG 2.X.X
+Changes from OpenJPEG 2.0.0 to OpenJPEG 2.1.0
 ----------------------------------------------
 
 New Features:
@@ -39,7 +39,7 @@ Misc:
     * OpenJPEG is now officialy conformant with JPEG 2000 Part-1
 	  and will soon become official reference software at the 
 	  JPEG committee.
-	* Huge amount of bug fixes. See CHANGES for details.
+    * Huge amount of bug fixes. See CHANGES for details.
 
 
 Changes from OpenJPEG 1.5.x to OpenJPEG 2.0.0
