@@ -6124,6 +6124,22 @@ void opj_j2k_setup_encoder(     opj_j2k_t *p_j2k,
         cp->tw = 1;
         cp->th = 1;
 
+        /* Create comment for codestream */
+        if(parameters->cp_comment == NULL) {
+            const char comment[] = "Created by OpenJPEG version ";
+            const size_t clen = strlen(comment);
+            const char *version = opj_version();
+            /* UniPG>> */
+#ifdef USE_JPWL
+            parameters->cp_comment = (char*)malloc(clen+strlen(version)+11);
+            sprintf(parameters->cp_comment,"%s%s with JPWL", comment, version);
+#else
+            parameters->cp_comment = (char*)malloc(clen+strlen(version)+1);
+            sprintf(parameters->cp_comment,"%s%s", comment, version);
+#endif
+            /* <<UniPG */
+        }
+
         /* FIXME ADE: to be removed once deprecated cp_cinema and cp_rsiz have been removed */
         if (parameters->rsiz == OPJ_PROFILE_NONE) { /* consider deprecated fields only if RSIZ has not been set */
             OPJ_BOOL deprecated_used = OPJ_FALSE;

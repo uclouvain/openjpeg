@@ -1572,22 +1572,6 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    /* Create comment for codestream */
-    if(parameters.cp_comment == NULL) {
-        const char comment[] = "Created by OpenJPEG version ";
-        const size_t clen = strlen(comment);
-        const char *version = opj_version();
-        /* UniPG>> */
-#ifdef USE_JPWL
-        parameters.cp_comment = (char*)malloc(clen+strlen(version)+11);
-        sprintf(parameters.cp_comment,"%s%s with JPWL", comment, version);
-#else
-        parameters.cp_comment = (char*)malloc(clen+strlen(version)+1);
-        sprintf(parameters.cp_comment,"%s%s", comment, version);
-#endif
-        /* <<UniPG */
-    }
-
     /* Read directory if necessary */
     if(img_fol.set_imgdir==1){
         num_images=get_num_images(img_fol.imgdirpath);
