@@ -6131,10 +6131,10 @@ void opj_j2k_setup_encoder(     opj_j2k_t *p_j2k,
             const char *version = opj_version();
             /* UniPG>> */
 #ifdef USE_JPWL
-            parameters->cp_comment = (char*)malloc(clen+strlen(version)+11);
+            parameters->cp_comment = (char*)opj_malloc(clen+strlen(version)+11);
             sprintf(parameters->cp_comment,"%s%s with JPWL", comment, version);
 #else
-            parameters->cp_comment = (char*)malloc(clen+strlen(version)+1);
+            parameters->cp_comment = (char*)opj_malloc(clen+strlen(version)+1);
             sprintf(parameters->cp_comment,"%s%s", comment, version);
 #endif
             /* <<UniPG */
