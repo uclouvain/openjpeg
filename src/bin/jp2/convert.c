@@ -3018,7 +3018,7 @@ static opj_image_t* rawtoimage_common(const char *filename, opj_cparameters_t *p
     {
         unsigned char value = 0;
         for(compno = 0; compno < numcomps; compno++) {
-            int nloop = (w*h)/(raw_cp->rawComps[compno].dx*raw_cp->rawComps[compno].dx);
+            int nloop = (w*h)/(raw_cp->rawComps[compno].dx*raw_cp->rawComps[compno].dy);
             for (i = 0; i < nloop; i++) {
                 if (!fread(&value, 1, 1, f)) {
                     fprintf(stderr,"Error reading raw file. End of file probably reached.\n");

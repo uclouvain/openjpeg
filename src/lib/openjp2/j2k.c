@@ -6453,6 +6453,15 @@ void opj_j2k_setup_encoder(     opj_j2k_t *p_j2k,
                     opj_j2k_setup_mct_encoding(tcp,image);                        
                 }
                 else {
+                    if(tcp->mct==1 && image->numcomps == 3) { // RGB->YCC MCT is enabled
+                        if ((image->comps[0].dx != image->comps[1].dx) ||
+                                (image->comps[0].dx != image->comps[2].dx) ||
+                                (image->comps[0].dy != image->comps[1].dy) ||
+                                (image->comps[0].dy != image->comps[2].dy)) {
+                            opj_event_msg(p_manager, EVT_WARNING, "Cannot perform MCT on components with different sizes. Disabling MCT.\n");
+                            tcp->mct = 0;
+                        }
+                    }
                         for (i = 0; i < image->numcomps; i++) {
                                 opj_tccp_t *tccp = &tcp->tccps[i];
                                 opj_image_comp_t * l_comp = &(image->comps[i]);
