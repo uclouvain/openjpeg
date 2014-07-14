@@ -7783,13 +7783,13 @@ OPJ_BOOL opj_j2k_decode_tile (  opj_j2k_t * p_j2k,
                         p_j2k->m_specific_param.m_decoder.m_state =  0x0100;/*FIXME J2K_DEC_STATE_EOC;*/
                 }
                 else if (l_current_marker != J2K_MS_SOT)
-                {
-                        opj_event_msg(p_manager, EVT_ERROR, "Stream too short, expected SOT\n");
-                        
+                {       
                         if(opj_stream_get_number_byte_left(p_stream) == 0) {
                             p_j2k->m_specific_param.m_decoder.m_state = J2K_STATE_NEOC;
+                            opj_event_msg(p_manager, EVT_WARNING, "Stream does not end with EOC\n");
                             return OPJ_TRUE;
                         }
+                        opj_event_msg(p_manager, EVT_ERROR, "Stream too short, expected SOT\n");
                         return OPJ_FALSE;
                 }
         }
