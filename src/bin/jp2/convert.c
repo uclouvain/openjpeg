@@ -2988,10 +2988,13 @@ static opj_image_t* rawtoimage_common(const char *filename, opj_cparameters_t *p
     }
     w = raw_cp->rawWidth;
     h = raw_cp->rawHeight;
-    cmptparm = (opj_image_cmptparm_t*) malloc((size_t)numcomps * sizeof(opj_image_cmptparm_t));
-
+    cmptparm = (opj_image_cmptparm_t*) calloc(numcomps,sizeof(opj_image_cmptparm_t));
+    if (!cmptparm) {
+        fprintf(stderr, "Failed to allocate image components parameters !!\n");
+        fprintf(stderr,"Aborting\n");
+        return NULL;
+    }
     /* initialize image components */
-    memset(&cmptparm[0], 0, (size_t)numcomps * sizeof(opj_image_cmptparm_t));
     for(i = 0; i < numcomps; i++) {
         cmptparm[i].prec = (OPJ_UINT32)raw_cp->rawBitDepth;
         cmptparm[i].bpp = (OPJ_UINT32)raw_cp->rawBitDepth;

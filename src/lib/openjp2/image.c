@@ -205,21 +205,19 @@ opj_image_t* OPJ_CALLCONV opj_image_tile_create(OPJ_UINT32 numcmpts, opj_image_c
 	OPJ_UINT32 compno;
 	opj_image_t *image = 00;
 
-	image = (opj_image_t*) opj_malloc(sizeof(opj_image_t));
+	image = (opj_image_t*) opj_calloc(1,sizeof(opj_image_t));
 	if (image)
 	{
-		memset(image,0,sizeof(opj_image_t));
 		
 		image->color_space = clrspc;
 		image->numcomps = numcmpts;
 		
 		/* allocate memory for the per-component information */
-		image->comps = (opj_image_comp_t*)opj_malloc(image->numcomps * sizeof(opj_image_comp_t));
+		image->comps = (opj_image_comp_t*)opj_calloc(image->numcomps, sizeof(opj_image_comp_t));
 		if (!image->comps) {
 			opj_image_destroy(image);
 			return 00;
 		}
-		memset(image->comps,0,image->numcomps * sizeof(opj_image_comp_t));
 		
 		/* create the individual image components */
 		for(compno = 0; compno < numcmpts; compno++) {

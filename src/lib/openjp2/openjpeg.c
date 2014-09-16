@@ -169,7 +169,6 @@ opj_codec_t* OPJ_CALLCONV opj_create_decompress(OPJ_CODEC_FORMAT p_format)
 	if (!l_codec){
 		return 00;
 	}
-	memset(l_codec, 0, sizeof(opj_codec_private_t));
 
 	l_codec->is_decompressor = 1;
 
@@ -546,7 +545,6 @@ opj_codec_t* OPJ_CALLCONV opj_create_compress(OPJ_CODEC_FORMAT p_format)
 	if (!l_codec) {
 		return 00;
 	}
-	memset(l_codec, 0, sizeof(opj_codec_private_t));
 	
 	l_codec->is_decompressor = 0;
 

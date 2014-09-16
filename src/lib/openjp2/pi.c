@@ -815,7 +815,6 @@ opj_pi_iterator_t * opj_pi_create(	const opj_image_t *image,
 	if (!l_pi) {
 		return NULL;
 	}
-	memset(l_pi,0,l_poc_bound * sizeof(opj_pi_iterator_t));
 
 	l_current_pi = l_pi;
 	for (pino = 0; pino < l_poc_bound ; ++pino) {
@@ -827,21 +826,19 @@ opj_pi_iterator_t * opj_pi_create(	const opj_image_t *image,
 		}
 
 		l_current_pi->numcomps = image->numcomps;
-		memset(l_current_pi->comps,0,image->numcomps * sizeof(opj_pi_comp_t));
 
 		for (compno = 0; compno < image->numcomps; ++compno) {
 			opj_pi_comp_t *comp = &l_current_pi->comps[compno];
 
 			tccp = &tcp->tccps[compno];
 
-			comp->resolutions = (opj_pi_resolution_t*) opj_malloc(tccp->numresolutions * sizeof(opj_pi_resolution_t));
+			comp->resolutions = (opj_pi_resolution_t*) opj_calloc(tccp->numresolutions, sizeof(opj_pi_resolution_t));
 			if (!comp->resolutions) {
 				opj_pi_destroy(l_pi, l_poc_bound);
 				return 00;
 			}
 
 			comp->numresolutions = tccp->numresolutions;
-			memset(comp->resolutions,0,tccp->numresolutions * sizeof(opj_pi_resolution_t));
 		}
 		++l_current_pi;
 	}
@@ -1242,7 +1239,6 @@ opj_pi_iterator_t *opj_pi_create_decode(opj_image_t *p_image,
 		opj_pi_destroy(l_pi, l_bound);
 		return 00;
 	}
-	memset(l_current_pi->include,0, (l_tcp->numlayers + 1) * l_step_l* sizeof(OPJ_INT16));
 
 	/* special treatment for the first packet iterator */
 	l_current_comp = l_current_pi->comps;
@@ -1439,7 +1435,6 @@ opj_pi_iterator_t *opj_pi_initialise_encode(const opj_image_t *p_image,
 		opj_pi_destroy(l_pi, l_bound);
 		return 00;
 	}
-	memset(l_current_pi->include,0,l_tcp->numlayers * l_step_l* sizeof(OPJ_INT16));
 
 	/* special treatment for the first packet iterator*/
 	l_current_comp = l_current_pi->comps;

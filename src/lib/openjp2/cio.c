@@ -151,12 +151,11 @@ void opj_read_float_LE(const OPJ_BYTE * p_buffer, OPJ_FLOAT32 * p_value)
 opj_stream_t* OPJ_CALLCONV opj_stream_create(OPJ_SIZE_T p_buffer_size,OPJ_BOOL l_is_input)
 {
 	opj_stream_private_t * l_stream = 00;
-	l_stream = (opj_stream_private_t*) opj_malloc(sizeof(opj_stream_private_t));
+	l_stream = (opj_stream_private_t*) opj_calloc(1,sizeof(opj_stream_private_t));
 	if (! l_stream) {
 		return 00;
 	}
 
-	memset(l_stream,0,sizeof(opj_stream_private_t));
 	l_stream->m_buffer_size = p_buffer_size;
 	l_stream->m_stored_data = (OPJ_BYTE *) opj_malloc(p_buffer_size);
 	if (! l_stream->m_stored_data) {

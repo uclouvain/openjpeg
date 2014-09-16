@@ -1499,7 +1499,6 @@ OPJ_BOOL opj_j2k_check_poc_val( const opj_poc_t *p_pocs,
                 opj_event_msg(p_manager , EVT_ERROR, "Not enough memory for checking the poc values.\n");
                 return OPJ_FALSE;
         }
-        memset(packet_array,0,step_l * p_num_layers* sizeof(OPJ_UINT32));
 
         if (p_nb_pocs == 0) {
         opj_free(packet_array);
@@ -2038,7 +2037,6 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
                 return OPJ_FALSE;
         }
 
-        memset(l_image->comps,0,l_image->numcomps * sizeof(opj_image_comp_t));
         l_img_comp = l_image->comps;
 
         /* Read the component information */
@@ -2167,7 +2165,6 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
                 opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to take in charge SIZ marker\n");
                 return OPJ_FALSE;
         }
-        memset(l_cp->tcps,0,l_nb_tiles*sizeof(opj_tcp_t));
 
 #ifdef USE_JPWL
         if (l_cp->correct) {
@@ -2188,27 +2185,24 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
                 opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to take in charge SIZ marker\n");
                 return OPJ_FALSE;
         }
-        memset(p_j2k->m_specific_param.m_decoder.m_default_tcp->tccps ,0,l_image->numcomps*sizeof(opj_tccp_t));
 
         p_j2k->m_specific_param.m_decoder.m_default_tcp->m_mct_records =
-                        (opj_mct_data_t*)opj_malloc(OPJ_J2K_MCT_DEFAULT_NB_RECORDS * sizeof(opj_mct_data_t));
+                        (opj_mct_data_t*)opj_calloc(OPJ_J2K_MCT_DEFAULT_NB_RECORDS ,sizeof(opj_mct_data_t));
 
         if (! p_j2k->m_specific_param.m_decoder.m_default_tcp->m_mct_records) {
                 opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to take in charge SIZ marker\n");
                 return OPJ_FALSE;
         }
-        memset(p_j2k->m_specific_param.m_decoder.m_default_tcp->m_mct_records,0,OPJ_J2K_MCT_DEFAULT_NB_RECORDS * sizeof(opj_mct_data_t));
         p_j2k->m_specific_param.m_decoder.m_default_tcp->m_nb_max_mct_records = OPJ_J2K_MCT_DEFAULT_NB_RECORDS;
 
         p_j2k->m_specific_param.m_decoder.m_default_tcp->m_mcc_records =
                         (opj_simple_mcc_decorrelation_data_t*)
-                        opj_malloc(OPJ_J2K_MCC_DEFAULT_NB_RECORDS * sizeof(opj_simple_mcc_decorrelation_data_t));
+                        opj_calloc(OPJ_J2K_MCC_DEFAULT_NB_RECORDS, sizeof(opj_simple_mcc_decorrelation_data_t));
 
         if (! p_j2k->m_specific_param.m_decoder.m_default_tcp->m_mcc_records) {
                 opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to take in charge SIZ marker\n");
                 return OPJ_FALSE;
         }
-        memset(p_j2k->m_specific_param.m_decoder.m_default_tcp->m_mcc_records,0,OPJ_J2K_MCC_DEFAULT_NB_RECORDS * sizeof(opj_simple_mcc_decorrelation_data_t));
         p_j2k->m_specific_param.m_decoder.m_default_tcp->m_nb_max_mcc_records = OPJ_J2K_MCC_DEFAULT_NB_RECORDS;
 
         /* set up default dc level shift */
@@ -2220,12 +2214,11 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
 
         l_current_tile_param = l_cp->tcps;
         for     (i = 0; i < l_nb_tiles; ++i) {
-                l_current_tile_param->tccps = (opj_tccp_t*) opj_malloc(l_image->numcomps * sizeof(opj_tccp_t));
+                l_current_tile_param->tccps = (opj_tccp_t*) opj_calloc(l_image->numcomps, sizeof(opj_tccp_t));
                 if (l_current_tile_param->tccps == 00) {
                         opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to take in charge SIZ marker\n");
                         return OPJ_FALSE;
                 }
-                memset(l_current_tile_param->tccps,0,l_image->numcomps * sizeof(opj_tccp_t));
 
                 ++l_current_tile_param;
         }
@@ -3576,13 +3569,12 @@ OPJ_BOOL j2k_read_ppm_v3 (
                 l_cp->ppm_len = l_N_ppm;
                 l_cp->ppm_data_read = 0;
 
-                l_cp->ppm_data = (OPJ_BYTE *) opj_malloc(l_cp->ppm_len);
+                l_cp->ppm_data = (OPJ_BYTE *) opj_calloc(1,l_cp->ppm_len);
                 l_cp->ppm_buffer = l_cp->ppm_data;
                 if (l_cp->ppm_data == 00) {
                         opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to read ppm marker\n");
                         return OPJ_FALSE;
                 }
-                memset(l_cp->ppm_data,0,l_cp->ppm_len);
 
                 l_cp->ppm_data_current = l_cp->ppm_data;
 
@@ -5853,12 +5845,11 @@ void opj_j2k_setup_decoder(opj_j2k_t *j2k, opj_dparameters_t *parameters)
 
 opj_j2k_t* opj_j2k_create_compress(void)
 {
-        opj_j2k_t *l_j2k = (opj_j2k_t*) opj_malloc(sizeof(opj_j2k_t));
+        opj_j2k_t *l_j2k = (opj_j2k_t*) opj_calloc(1,sizeof(opj_j2k_t));
         if (!l_j2k) {
                 return NULL;
         }
 
-        memset(l_j2k,0,sizeof(opj_j2k_t));
 
         l_j2k->m_is_decoder = 0;
         l_j2k->m_cp.m_is_decoder = 0;
@@ -8217,23 +8208,21 @@ OPJ_BOOL opj_j2k_set_decode_area(       opj_j2k_t *p_j2k,
 
 opj_j2k_t* opj_j2k_create_decompress(void)
 {
-        opj_j2k_t *l_j2k = (opj_j2k_t*) opj_malloc(sizeof(opj_j2k_t));
+        opj_j2k_t *l_j2k = (opj_j2k_t*) opj_calloc(1,sizeof(opj_j2k_t));
         if (!l_j2k) {
                 return 00;
         }
-        memset(l_j2k,0,sizeof(opj_j2k_t));
 
         l_j2k->m_is_decoder = 1;
         l_j2k->m_cp.m_is_decoder = 1;
 
-        l_j2k->m_specific_param.m_decoder.m_default_tcp = (opj_tcp_t*) opj_malloc(sizeof(opj_tcp_t));
+        l_j2k->m_specific_param.m_decoder.m_default_tcp = (opj_tcp_t*) opj_calloc(1,sizeof(opj_tcp_t));
         if (!l_j2k->m_specific_param.m_decoder.m_default_tcp) {
                 opj_j2k_destroy(l_j2k);
                 return 00;
         }
-        memset(l_j2k->m_specific_param.m_decoder.m_default_tcp,0,sizeof(opj_tcp_t));
 
-        l_j2k->m_specific_param.m_decoder.m_header_data = (OPJ_BYTE *) opj_malloc(OPJ_J2K_DEFAULT_HEADER_SIZE);
+        l_j2k->m_specific_param.m_decoder.m_header_data = (OPJ_BYTE *) opj_calloc(1,OPJ_J2K_DEFAULT_HEADER_SIZE);
         if (! l_j2k->m_specific_param.m_decoder.m_header_data) {
                 opj_j2k_destroy(l_j2k);
                 return 00;

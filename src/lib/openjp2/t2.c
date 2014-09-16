@@ -477,11 +477,10 @@ OPJ_BOOL opj_t2_decode_packets( opj_t2_t *p_t2,
 opj_t2_t* opj_t2_create(opj_image_t *p_image, opj_cp_t *p_cp)
 {
         /* create the t2 structure */
-        opj_t2_t *l_t2 = (opj_t2_t*)opj_malloc(sizeof(opj_t2_t));
+        opj_t2_t *l_t2 = (opj_t2_t*)opj_calloc(1,sizeof(opj_t2_t));
         if (!l_t2) {
                 return NULL;
         }
-        memset(l_t2,0,sizeof(opj_t2_t));
 
         l_t2->image = p_image;
         l_t2->cp = p_cp;

@@ -57,12 +57,11 @@ opj_tgt_tree_t *opj_tgt_create(OPJ_UINT32 numleafsh, OPJ_UINT32 numleafsv) {
         OPJ_UINT32 numlvls;
         OPJ_UINT32 n;
 
-        tree = (opj_tgt_tree_t *) opj_malloc(sizeof(opj_tgt_tree_t));
+        tree = (opj_tgt_tree_t *) opj_calloc(1,sizeof(opj_tgt_tree_t));
         if(!tree) {
                 fprintf(stderr, "ERROR in tgt_create while allocating tree\n");
                 return 00;
         }
-        memset(tree,0,sizeof(opj_tgt_tree_t));
 
         tree->numleafsh = numleafsh;
         tree->numleafsv = numleafsv;
@@ -92,7 +91,6 @@ opj_tgt_tree_t *opj_tgt_create(OPJ_UINT32 numleafsh, OPJ_UINT32 numleafsv) {
                 opj_free(tree);
                 return 00;
         }
-        memset(tree->nodes,0,tree->numnodes * sizeof(opj_tgt_node_t));
         tree->nodes_size = tree->numnodes * (OPJ_UINT32)sizeof(opj_tgt_node_t);
 
         node = tree->nodes;

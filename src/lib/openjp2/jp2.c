@@ -537,12 +537,11 @@ OPJ_BOOL opj_jp2_read_ihdr( opj_jp2_t *jp2,
 	p_image_header_data += 2;
 
 	/* allocate memory for components */
-	jp2->comps = (opj_jp2_comps_t*) opj_malloc(jp2->numcomps * sizeof(opj_jp2_comps_t));
+	jp2->comps = (opj_jp2_comps_t*) opj_calloc(jp2->numcomps, sizeof(opj_jp2_comps_t));
 	if (jp2->comps == 0) {
 		opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to handle image header (ihdr)\n");
 		return OPJ_FALSE;
 	}
-	memset(jp2->comps,0,jp2->numcomps * sizeof(opj_jp2_comps_t));
 
 	opj_read_bytes(p_image_header_data,&(jp2->bpc),1);			/* BPC */
 	++ p_image_header_data;
@@ -574,11 +573,10 @@ OPJ_BYTE * opj_jp2_write_ihdr(opj_jp2_t *jp2,
 	assert(p_nb_bytes_written != 00);
 
 	/* default image header is 22 bytes wide */
-	l_ihdr_data = (OPJ_BYTE *) opj_malloc(22);
+	l_ihdr_data = (OPJ_BYTE *) opj_calloc(1,22);
 	if (l_ihdr_data == 00) {
 		return 00;
 	}
-	memset(l_ihdr_data,0,22);
 
 	l_current_ihdr_ptr = l_ihdr_data;
 	
@@ -627,11 +625,10 @@ OPJ_BYTE * opj_jp2_write_bpcc(	opj_jp2_t *jp2,
 	assert(jp2 != 00);
 	assert(p_nb_bytes_written != 00);
 
-	l_bpcc_data = (OPJ_BYTE *) opj_malloc(l_bpcc_size);
+	l_bpcc_data = (OPJ_BYTE *) opj_calloc(1,l_bpcc_size);
 	if (l_bpcc_data == 00) {
 		return 00;
 	}
-	memset(l_bpcc_data,0,l_bpcc_size);
 
 	l_current_bpcc_ptr = l_bpcc_data;
 
@@ -709,11 +706,10 @@ OPJ_BYTE * opj_jp2_write_colr(  opj_jp2_t *jp2,
 			return 00;
 	}
 
-	l_colr_data = (OPJ_BYTE *) opj_malloc(l_colr_size);
+	l_colr_data = (OPJ_BYTE *) opj_calloc(1,l_colr_size);
 	if (l_colr_data == 00) {
 		return 00;
 	}
-	memset(l_colr_data,0,l_colr_size);
 	
 	l_current_colr_ptr = l_colr_data;
 
@@ -1255,13 +1251,12 @@ OPJ_BOOL opj_jp2_read_colr( opj_jp2_t *jp2,
 		OPJ_INT32 icc_len = (OPJ_INT32)p_colr_header_size - 3;
 
 		jp2->color.icc_profile_len = (OPJ_UINT32)icc_len;
-		jp2->color.icc_profile_buf = (OPJ_BYTE*) opj_malloc((size_t)icc_len);
+		jp2->color.icc_profile_buf = (OPJ_BYTE*) opj_calloc(1,(size_t)icc_len);
         if (!jp2->color.icc_profile_buf)
         {
             jp2->color.icc_profile_len = 0;
             return OPJ_FALSE;
         }
-		memset(jp2->color.icc_profile_buf, 0, (size_t)icc_len * sizeof(OPJ_BYTE));
 
 		for (it_icc_value = 0; it_icc_value < icc_len; ++it_icc_value)
 		{
@@ -1448,14 +1443,12 @@ OPJ_BOOL opj_jp2_write_ftyp(opj_jp2_t *jp2,
 	assert(jp2 != 00);
 	assert(p_manager != 00);
 
-	l_ftyp_data = (OPJ_BYTE *) opj_malloc(l_ftyp_size);
+	l_ftyp_data = (OPJ_BYTE *) opj_calloc(1,l_ftyp_size);
 	
 	if (l_ftyp_data == 00) {
 		opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to handle ftyp data\n");
 		return OPJ_FALSE;
 	}
-
-	memset(l_ftyp_data,0,l_ftyp_size);
 
 	l_current_data_ptr = l_ftyp_data;
 
@@ -1807,13 +1800,12 @@ OPJ_BOOL opj_jp2_read_header_procedure(  opj_jp2_t *jp2,
 	assert(jp2 != 00);
 	assert(p_manager != 00);
 
-	l_current_data = (OPJ_BYTE*)opj_malloc(l_last_data_size);
+	l_current_data = (OPJ_BYTE*)opj_calloc(1,l_last_data_size);
 
 	if (l_current_data == 00) {
 		opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to handle jpeg2000 file header\n");
 		return OPJ_FALSE;
 	}
-	memset(l_current_data, 0 , l_last_data_size);
 
 	while (opj_jp2_read_boxhdr(&box,&l_nb_bytes_read,stream,p_manager)) {
 		/* is it the codestream box ? */
@@ -2083,12 +2075,11 @@ static OPJ_BOOL opj_jp2_read_ftyp(	opj_jp2_t *jp2,
 	/* div by 4 */
 	jp2->numcl = l_remaining_bytes >> 2;
 	if (jp2->numcl) {
-		jp2->cl = (OPJ_UINT32 *) opj_malloc(jp2->numcl * sizeof(OPJ_UINT32));
+		jp2->cl = (OPJ_UINT32 *) opj_calloc(jp2->numcl, sizeof(OPJ_UINT32));
 		if (jp2->cl == 00) {
 			opj_event_msg(p_manager, EVT_ERROR, "Not enough memory with FTYP Box\n");
 			return OPJ_FALSE;
 		}
-		memset(jp2->cl,0,jp2->numcl * sizeof(OPJ_UINT32));
 	}
 
 	for (i = 0; i < jp2->numcl; ++i)
@@ -2531,9 +2522,8 @@ OPJ_BOOL opj_jp2_get_tile(	opj_jp2_t *p_jp2,
 
 opj_jp2_t* opj_jp2_create(OPJ_BOOL p_is_decoder)
 {
-	opj_jp2_t *jp2 = (opj_jp2_t*)opj_malloc(sizeof(opj_jp2_t));
+	opj_jp2_t *jp2 = (opj_jp2_t*)opj_calloc(1,sizeof(opj_jp2_t));
 	if (jp2) {
-		memset(jp2,0,sizeof(opj_jp2_t));
 
 		/* create the J2K codec */
 		if (! p_is_decoder) {
