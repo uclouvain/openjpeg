@@ -572,7 +572,7 @@ opj_codec_t* OPJ_CALLCONV opj_create_compress(OPJ_CODEC_FORMAT p_format)
 
 			l_codec->m_codec_data.m_compression.opj_destroy = (void (*) (void *)) opj_j2k_destroy;
 
-			l_codec->m_codec_data.m_compression.opj_setup_encoder = (void (*) (	void *,
+			l_codec->m_codec_data.m_compression.opj_setup_encoder = (OPJ_BOOL (*) (	void *,
 																				opj_cparameters_t *,
 																				struct opj_image *,
 																				struct opj_event_mgr * )) opj_j2k_setup_encoder;
@@ -609,7 +609,7 @@ opj_codec_t* OPJ_CALLCONV opj_create_compress(OPJ_CODEC_FORMAT p_format)
 
 			l_codec->m_codec_data.m_compression.opj_destroy = (void (*) (void *)) opj_jp2_destroy;
 
-			l_codec->m_codec_data.m_compression.opj_setup_encoder = (void (*) (	void *,
+			l_codec->m_codec_data.m_compression.opj_setup_encoder = (OPJ_BOOL (*) (	void *,
 																				opj_cparameters_t *,
 																				struct opj_image *,
 																				struct opj_event_mgr * )) opj_jp2_setup_encoder;

@@ -278,8 +278,9 @@ OPJ_BOOL opj_jp2_decode(opj_jp2_t *jp2,
  * @param parameters compression parameters
  * @param image input filled image
  * @param p_manager  FIXME DOC
+ * @return OPJ_TRUE if successful, OPJ_FALSE otherwise
 */
-void opj_jp2_setup_encoder(  opj_jp2_t *jp2, 
+OPJ_BOOL opj_jp2_setup_encoder(  opj_jp2_t *jp2, 
                             opj_cparameters_t *parameters, 
                             opj_image_t *image, 
                             opj_event_mgr_t * p_manager);

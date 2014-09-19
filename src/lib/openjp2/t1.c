@@ -1170,6 +1170,7 @@ OPJ_BOOL opj_t1_allocate_buffers(
 		opj_aligned_free(t1->data);
 		t1->data = (OPJ_INT32*) opj_aligned_malloc(datasize * sizeof(OPJ_INT32));
 		if(!t1->data){
+			/* FIXME event manager error callback */
 			return OPJ_FALSE;
 		}
 		t1->datasize=datasize;
@@ -1183,6 +1184,7 @@ OPJ_BOOL opj_t1_allocate_buffers(
 		opj_aligned_free(t1->flags);
 		t1->flags = (opj_flag_t*) opj_aligned_malloc(flagssize * sizeof(opj_flag_t));
 		if(!t1->flags){
+			/* FIXME event manager error callback */
 			return OPJ_FALSE;
 		}
 		t1->flagssize=flagssize;

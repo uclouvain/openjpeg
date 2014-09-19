@@ -598,6 +598,10 @@ OPJ_BOOL opj_t2_encode_packet(  OPJ_UINT32 tileno,
         }
 
         bio = opj_bio_create();
+        if (!bio) {
+                /* FIXME event manager error callback */
+                return OPJ_FALSE;
+        }
         opj_bio_init_enc(bio, c, length);
         opj_bio_write(bio, 1, 1);           /* Empty header bit */
 
@@ -1128,7 +1132,8 @@ OPJ_BOOL opj_t2_read_packet_data(   opj_t2_t* p_t2,
                         }
 
                         do {
-                                if (l_current_data + l_seg->newlen > p_src_data + p_max_length) {
+                                /* Check possible overflow (on l_current_data only, assumes input args already checked) then size */
+                                if (((OPJ_SIZE_T)(l_current_data + l_seg->newlen) < (OPJ_SIZE_T)l_current_data) || (l_current_data + l_seg->newlen > p_src_data + p_max_length)) {
                                         fprintf(stderr, "read: segment too long (%d) with max (%d) for codeblock %d (p=%d, b=%d, r=%d, c=%d)\n",
                                                 l_seg->newlen, p_max_length, cblkno, p_pi->precno, bandno, p_pi->resno, p_pi->compno);
                                         return OPJ_FALSE;

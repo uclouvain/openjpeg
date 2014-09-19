@@ -855,7 +855,11 @@ void opj_jp2_apply_pclr(opj_image_t *image, opj_jp2_color_t *color)
 	old_comps = image->comps;
 	new_comps = (opj_image_comp_t*)
 			opj_malloc(nr_channels * sizeof(opj_image_comp_t));
-
+	if (!new_comps) {
+		/* FIXME no error code for opj_jp2_apply_pclr */
+		/* FIXME event manager error callback */
+		return;
+	}
 	for(i = 0; i < nr_channels; ++i) {
 		pcol = cmap[i].pcol; cmp = cmap[i].cmp;
 
@@ -871,6 +875,13 @@ void opj_jp2_apply_pclr(opj_image_t *image, opj_jp2_color_t *color)
 		/* Palette mapping: */
 		new_comps[i].data = (OPJ_INT32*)
 				opj_malloc(old_comps[cmp].w * old_comps[cmp].h * sizeof(OPJ_INT32));
+		if (!new_comps[i].data) {
+			opj_free(new_comps);
+			new_comps = NULL;
+			/* FIXME no error code for opj_jp2_apply_pclr */
+			/* FIXME event manager error callback */
+			return;
+		}
 		new_comps[i].prec = channel_size[i];
 		new_comps[i].sgnd = channel_sign[i];
 	}
@@ -1560,7 +1571,7 @@ void opj_jp2_setup_decoder(opj_jp2_t *jp2, opj_dparameters_t *parameters)
 /* JP2 encoder interface                                             */
 /* ----------------------------------------------------------------------- */
 
-void opj_jp2_setup_encoder(	opj_jp2_t *jp2,
+OPJ_BOOL opj_jp2_setup_encoder(	opj_jp2_t *jp2,
                             opj_cparameters_t *parameters,
                             opj_image_t *image,
                             opj_event_mgr_t * p_manager)
@@ -1570,7 +1581,7 @@ void opj_jp2_setup_encoder(	opj_jp2_t *jp2,
   OPJ_UINT32 sign;
 
 	if(!jp2 || !parameters || !image)
-		return;
+		return OPJ_FALSE;
 
 	/* setup the J2K codec */
 	/* ------------------- */
@@ -1578,10 +1589,12 @@ void opj_jp2_setup_encoder(	opj_jp2_t *jp2,
 	/* Check if number of components respects standard */
 	if (image->numcomps < 1 || image->numcomps > 16384) {
 		opj_event_msg(p_manager, EVT_ERROR, "Invalid number of components specified while setting up JP2 encoder\n");
-		return;
+		return OPJ_FALSE;
 	}
 
-	opj_j2k_setup_encoder(jp2->j2k, parameters, image, p_manager );
+	if (opj_j2k_setup_encoder(jp2->j2k, parameters, image, p_manager ) == OPJ_FALSE) {
+		return OPJ_FALSE;
+	}
 
 	/* setup the JP2 codec */
 	/* ------------------- */
@@ -1592,22 +1605,23 @@ void opj_jp2_setup_encoder(	opj_jp2_t *jp2,
 	jp2->minversion = 0;	/* MinV */
 	jp2->numcl = 1;
 	jp2->cl = (OPJ_UINT32*) opj_malloc(jp2->numcl * sizeof(OPJ_UINT32));
-    if (!jp2->cl){
-        jp2->cl = NULL;
-        opj_event_msg(p_manager, EVT_ERROR, "Not enough memory when setup the JP2 encoder\n");
-        return;
-    }
+	if (!jp2->cl){
+		jp2->cl = NULL;
+		opj_event_msg(p_manager, EVT_ERROR, "Not enough memory when setup the JP2 encoder\n");
+		return OPJ_FALSE;
+	}
 	jp2->cl[0] = JP2_JP2;	/* CL0 : JP2 */
 
 	/* Image Header box */
 
 	jp2->numcomps = image->numcomps;	/* NC */
 	jp2->comps = (opj_jp2_comps_t*) opj_malloc(jp2->numcomps * sizeof(opj_jp2_comps_t));
-    if (!jp2->comps) {
-        jp2->comps = NULL;
-        opj_event_msg(p_manager, EVT_ERROR, "Not enough memory when setup the JP2 encoder\n");
-        return;
-    }
+	if (!jp2->comps) {
+		jp2->comps = NULL;
+		opj_event_msg(p_manager, EVT_ERROR, "Not enough memory when setup the JP2 encoder\n");
+		/* Memory of jp2->cl will be freed by opj_jp2_destroy */
+		return OPJ_FALSE;
+	}
 
 	jp2->h = image->y1 - image->y0;		/* HEIGHT */
 	jp2->w = image->x1 - image->x0;		/* WIDTH */
@@ -1650,6 +1664,8 @@ void opj_jp2_setup_encoder(	opj_jp2_t *jp2,
 	jp2->approx = 0;		/* APPROX */
 
 	jp2->jpip_on = parameters->jpip_on;
+
+	return OPJ_TRUE;
 }
 
 OPJ_BOOL opj_jp2_encode(opj_jp2_t *jp2,

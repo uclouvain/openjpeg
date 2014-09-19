@@ -465,6 +465,10 @@ OPJ_BOOL opj_tcd_rateallocate(  opj_tcd_t *tcd,
                 tile_info->numpix = tcd_tile->numpix;
                 tile_info->distotile = tcd_tile->distotile;
                 tile_info->thresh = (OPJ_FLOAT64 *) opj_malloc(tcd_tcp->numlayers * sizeof(OPJ_FLOAT64));
+                if (!tile_info->thresh) {
+                        /* FIXME event manager error callback */
+                        return OPJ_FALSE;
+                }
         }
 
         for (layno = 0; layno < tcd_tcp->numlayers; layno++) {
@@ -1121,6 +1125,10 @@ OPJ_BOOL opj_tcd_encode_tile(   opj_tcd_t *p_tcd,
                                 p_cstr_info->tile[p_tile_no].pdy[i] = (int)l_tccp->prch[i];
                         }
                         p_cstr_info->tile[p_tile_no].packet = (opj_packet_info_t*) opj_calloc((size_t)p_cstr_info->numcomps * (size_t)p_cstr_info->numlayers * l_num_packs, sizeof(opj_packet_info_t));
+                        if (!p_cstr_info->tile[p_tile_no].packet) {
+                                /* FIXME event manager error callback */
+                                return OPJ_FALSE;
+                        }
                 }
                 /* << INDEX */
 

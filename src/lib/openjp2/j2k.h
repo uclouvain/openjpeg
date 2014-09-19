@@ -594,7 +594,7 @@ void opj_j2k_setup_decoder(opj_j2k_t *j2k, opj_dparameters_t *parameters);
 opj_j2k_t* opj_j2k_create_compress(void);
 
 
-void opj_j2k_setup_encoder(	opj_j2k_t *p_j2k,
+OPJ_BOOL opj_j2k_setup_encoder(	opj_j2k_t *p_j2k,
 						    opj_cparameters_t *parameters,
 						    opj_image_t *image,
 						    opj_event_mgr_t * p_manager);
