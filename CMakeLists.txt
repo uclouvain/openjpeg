@@ -146,6 +146,10 @@ if(NOT OPENJPEG_INSTALL_PACKAGE_DIR)
   set(OPENJPEG_INSTALL_PACKAGE_DIR "${OPENJPEG_INSTALL_LIB_DIR}/${OPENJPEG_INSTALL_SUBDIR}")
 endif()
 
+if (APPLE)
+	list(APPEND OPENJPEG_LIBRARY_PROPERTIES INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/${OPENJPEG_INSTALL_LIB_DIR}")
+endif()
+
 #-----------------------------------------------------------------------------
 # Big endian test:
 include (${CMAKE_ROOT}/Modules/TestBigEndian.cmake)
