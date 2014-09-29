@@ -1163,6 +1163,7 @@ OPJ_BOOL opj_t2_read_packet_data(   opj_t2_t* p_t2,
                                     OPJ_BYTE* new_cblk_data = (OPJ_BYTE*) opj_realloc(l_cblk->data, l_cblk->data_current_size + l_seg->newlen);
                                     if(! new_cblk_data) {
                                         opj_free(l_cblk->data);
+                                        l_cblk->data = NULL;
                                         l_cblk->data_max_size = 0;
                                         /* opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to realloc code block cata!\n"); */
                                         return OPJ_FALSE;
