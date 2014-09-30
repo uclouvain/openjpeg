@@ -866,11 +866,10 @@ OPJ_BOOL opj_t2_read_packet_header( opj_t2_t* p_t2,
         if (p_tcp->csty & J2K_CP_CSTY_SOP) {
                 if (p_max_length < 6) {
                         /* TODO opj_event_msg(p_t2->cinfo->event_mgr, EVT_WARNING, "Not enough space for expected SOP marker\n"); */
-                        printf("Not enough space for expected SOP marker\n");
+                        fprintf(stderr, "Not enough space for expected SOP marker\n");
                 } else if ((*l_current_data) != 0xff || (*(l_current_data + 1) != 0x91)) {
                         /* TODO opj_event_msg(p_t2->cinfo->event_mgr, EVT_WARNING, "Expected SOP marker\n"); */
-                        printf("Expected SOP marker\n");
-                        fprintf(stderr, "Error : expected SOP marker\n");
+                        fprintf(stderr, "Warning: expected SOP marker\n");
                 } else {
                         l_current_data += 6;
                 }
@@ -920,7 +919,7 @@ OPJ_BOOL opj_t2_read_packet_header( opj_t2_t* p_t2,
 
                 /* EPH markers */
                 if (p_tcp->csty & J2K_CP_CSTY_EPH) {
-                        if (p_max_length < 2) {
+                        if ((*l_modified_length_ptr - (OPJ_UINT32)(l_header_data - *l_header_data_start)) < 2U) {
                                 fprintf(stderr, "Not enough space for expected EPH marker\n");
                         } else if ((*l_header_data) != 0xff || (*(l_header_data + 1) != 0x92)) {
                                 fprintf(stderr, "Error : expected EPH marker\n");
@@ -1048,7 +1047,7 @@ OPJ_BOOL opj_t2_read_packet_header( opj_t2_t* p_t2,
 
         /* EPH markers */
         if (p_tcp->csty & J2K_CP_CSTY_EPH) {
-                if (p_max_length < 2) {
+                if ((*l_modified_length_ptr - (OPJ_UINT32)(l_header_data - *l_header_data_start)) < 2U) {
                         fprintf(stderr, "Not enough space for expected EPH marker\n");
                 } else if ((*l_header_data) != 0xff || (*(l_header_data + 1) != 0x92)) {
                         /* TODO opj_event_msg(t2->cinfo->event_mgr, EVT_ERROR, "Expected EPH marker\n"); */
@@ -1201,6 +1200,7 @@ OPJ_BOOL opj_t2_read_packet_data(   opj_t2_t* p_t2,
         }
 
         *(p_data_read) = (OPJ_UINT32)(l_current_data - p_src_data);
+
 
         return OPJ_TRUE;
 }
