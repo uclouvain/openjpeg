@@ -1501,12 +1501,10 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
     }
 
     /* If subsampled image is provided, automatically disable MCT */
-    if ( ((parameters->decod_format == RAW_DFMT)
-          || (parameters->decod_format == RAWL_DFMT))
-         && ((raw_cp->rawComps[1].dx > 1)
-             || (raw_cp->rawComps[1].dy > 1)
-             || (raw_cp->rawComps[2].dx > 1)
-             || (raw_cp->rawComps[2].dy > 1))) {
+    if ( ((parameters->decod_format == RAW_DFMT) || (parameters->decod_format == RAWL_DFMT))
+         && (   ((raw_cp->rawComp > 1 ) && ((raw_cp->rawComps[1].dx > 1) || (raw_cp->rawComps[1].dy > 1)))
+             || ((raw_cp->rawComp > 2 ) && ((raw_cp->rawComps[2].dx > 1) || (raw_cp->rawComps[2].dy > 1)))
+						)) {
         parameters->tcp_mct = 0;
     }
 
