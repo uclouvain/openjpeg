@@ -1157,6 +1157,12 @@ OPJ_BOOL opj_t2_read_packet_data(   opj_t2_t* p_t2,
                                 };
 
 #endif /* USE_JPWL */
+                                /* Check possible overflow on size */
+                                if ((l_cblk->data_current_size + l_seg->newlen) < l_cblk->data_current_size) {
+                                        fprintf(stderr, "read: segment too long (%d) with current size (%d > %d) for codeblock %d (p=%d, b=%d, r=%d, c=%d)\n",
+                                                l_seg->newlen, l_cblk->data_current_size, 0xFFFFFFFF - l_seg->newlen, cblkno, p_pi->precno, bandno, p_pi->resno, p_pi->compno);
+                                        return OPJ_FALSE;
+                                }
                                 /* Check if the cblk->data have allocated enough memory */
                                 if ((l_cblk->data_current_size + l_seg->newlen) > l_cblk->data_max_size) {
                                     OPJ_BYTE* new_cblk_data = (OPJ_BYTE*) opj_realloc(l_cblk->data, l_cblk->data_current_size + l_seg->newlen);
