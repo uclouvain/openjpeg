@@ -1132,7 +1132,7 @@ OPJ_BOOL opj_t2_read_packet_data(   opj_t2_t* p_t2,
 
                         do {
                                 /* Check possible overflow (on l_current_data only, assumes input args already checked) then size */
-                                if (((OPJ_SIZE_T)(l_current_data + l_seg->newlen) < (OPJ_SIZE_T)l_current_data) || (l_current_data + l_seg->newlen > p_src_data + p_max_length)) {
+                                if ((((OPJ_SIZE_T)l_current_data + (OPJ_SIZE_T)l_seg->newlen) < (OPJ_SIZE_T)l_current_data) || (l_current_data + l_seg->newlen > p_src_data + p_max_length)) {
                                         fprintf(stderr, "read: segment too long (%d) with max (%d) for codeblock %d (p=%d, b=%d, r=%d, c=%d)\n",
                                                 l_seg->newlen, p_max_length, cblkno, p_pi->precno, bandno, p_pi->resno, p_pi->compno);
                                         return OPJ_FALSE;
