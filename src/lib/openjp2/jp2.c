@@ -2282,7 +2282,10 @@ OPJ_BOOL opj_jp2_read_boxhdr_char(   opj_jp2_box_t *box,
 		opj_event_msg(p_manager, EVT_ERROR, "Cannot handle box of undefined sizes\n");
 		return OPJ_FALSE;
 	}
-
+	if (box->length < *p_number_bytes_read) {
+		opj_event_msg(p_manager, EVT_ERROR, "Box length is inconsistent.\n");
+		return OPJ_FALSE;
+	}
 	return OPJ_TRUE;
 }
 
