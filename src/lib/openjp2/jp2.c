@@ -1843,7 +1843,7 @@ OPJ_BOOL opj_jp2_read_header_procedure(  opj_jp2_t *jp2,
 			return OPJ_FALSE;
 		}
 		/* testcase 1851.pdf.SIGSEGV.ce9.948 */
-		else if	(box.length < l_nb_bytes_read) {
+        else if (box.length < l_nb_bytes_read) {
 			opj_event_msg(p_manager, EVT_ERROR, "invalid box size %d (%x)\n", box.length, box.type);
 			opj_free(l_current_data);
 			return OPJ_FALSE;
@@ -1853,6 +1853,12 @@ OPJ_BOOL opj_jp2_read_header_procedure(  opj_jp2_t *jp2,
 		l_current_data_size = box.length - l_nb_bytes_read;
 
 		if (l_current_handler != 00) {
+			if ((OPJ_OFF_T)l_current_data_size > opj_stream_get_number_byte_left(stream)) {
+				/* do not even try to malloc if we can't read */
+				opj_event_msg(p_manager, EVT_ERROR, "Invalid box size %d for box '%c%c%c%c'. Need %d bytes, %d bytes remaining \n", box.length, (OPJ_BYTE)(box.type>>24), (OPJ_BYTE)(box.type>>16), (OPJ_BYTE)(box.type>>8), (OPJ_BYTE)(box.type>>0), l_current_data_size, (OPJ_UINT32)opj_stream_get_number_byte_left(stream));
+				opj_free(l_current_data);
+				return OPJ_FALSE;
+			}
 			if (l_current_data_size > l_last_data_size) {
 				OPJ_BYTE* new_current_data = (OPJ_BYTE*)opj_realloc(l_current_data,l_current_data_size);
 				if (!new_current_data) {

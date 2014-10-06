@@ -3641,6 +3641,15 @@ OPJ_BOOL j2k_read_ppm_v3 (
 
                 if (p_header_size)
                 {
+                        if (p_header_size < 4) {
+                                opj_free(l_cp->ppm_data);
+                                l_cp->ppm_data = NULL;
+                                l_cp->ppm_buffer = NULL;  /* TODO: no need for a new local variable: ppm_buffer and ppm_data are enough */
+                                l_cp->ppm_len = 0;
+                                l_cp->ppm = 0;
+                                opj_event_msg(p_manager, EVT_ERROR, "Error reading PPM marker\n");
+                                return OPJ_FALSE;
+                        }
                         opj_read_bytes(p_header_data,&l_N_ppm,4);               /* N_ppm^i */
                         p_header_data+=4;
                         p_header_size-=4;
