@@ -4326,6 +4326,12 @@ OPJ_BOOL opj_j2k_read_sod (opj_j2k_t *p_j2k,
 
         /* Patch to support new PHR data */
         if (p_j2k->m_specific_param.m_decoder.m_sot_length) {
+            /* If we are here, we'll try to read the data after allocation */
+            /* Check enough bytes left in stream before allocation */
+            if ((OPJ_OFF_T)p_j2k->m_specific_param.m_decoder.m_sot_length > opj_stream_get_number_byte_left(p_stream)) {
+                opj_event_msg(p_manager, EVT_ERROR, "Tile part length size inconsistent with stream length\n");
+                return OPJ_FALSE;
+            }
             if (! *l_current_data) {
                 /* LH: oddly enough, in this path, l_tile_len!=0.
                  * TODO: If this was consistant, we could simplify the code to only use realloc(), as realloc(0,...) default to malloc(0,...).
@@ -7599,6 +7605,12 @@ OPJ_BOOL opj_j2k_read_tile_header(      opj_j2k_t * p_j2k,
                         /* Read 2 bytes from the buffer as the marker size */
                         opj_read_bytes(p_j2k->m_specific_param.m_decoder.m_header_data,&l_marker_size,2);
 
+                        /* Check marker size (does not include marker ID but includes marker size) */
+                        if (l_marker_size < 2) {
+                                opj_event_msg(p_manager, EVT_ERROR, "Inconsistent marker size\n");
+                                return OPJ_FALSE;
+                        }
+
                         /* cf. https://code.google.com/p/openjpeg/issues/detail?id=226 */
                         if (l_current_marker == 0x8080 && opj_stream_get_number_byte_left(p_stream) == 0) {
                                 p_j2k->m_specific_param.m_decoder.m_state = J2K_STATE_NEOC;
@@ -7623,7 +7635,14 @@ OPJ_BOOL opj_j2k_read_tile_header(      opj_j2k_t * p_j2k,
 
                         /* Check if the marker size is compatible with the header data size */
                         if (l_marker_size > p_j2k->m_specific_param.m_decoder.m_header_data_size) {
-                                OPJ_BYTE *new_header_data = (OPJ_BYTE *) opj_realloc(p_j2k->m_specific_param.m_decoder.m_header_data, l_marker_size);
+                                OPJ_BYTE *new_header_data = NULL;
+                                /* If we are here, this means we consider this marker as known & we will read it */
+                                /* Check enough bytes left in stream before allocation */
+                                if ((OPJ_OFF_T)l_marker_size >  opj_stream_get_number_byte_left(p_stream)) {
+                                        opj_event_msg(p_manager, EVT_ERROR, "Marker size inconsistent with stream length\n");
+                                        return OPJ_FALSE;
+                                }
+                                new_header_data = (OPJ_BYTE *) opj_realloc(p_j2k->m_specific_param.m_decoder.m_header_data, l_marker_size);
                                 if (! new_header_data) {
                                         opj_free(p_j2k->m_specific_param.m_decoder.m_header_data);
                                         p_j2k->m_specific_param.m_decoder.m_header_data = NULL;
