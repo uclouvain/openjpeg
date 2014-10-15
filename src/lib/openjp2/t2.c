@@ -242,6 +242,11 @@ OPJ_BOOL opj_t2_encode_packets( opj_t2_t* p_t2,
                                 /* TODO MSD : check why this function cannot fail (cf. v1) */
                                 opj_pi_create_encode(l_pi, l_cp,p_tile_no,poc,l_tp_num,p_tp_pos,p_t2_mode);
 
+                                if (l_current_pi->poc.prg == OPJ_PROG_UNKNOWN) {
+                                    /* TODO ADE : add an error */
+                                    opj_pi_destroy(l_pi, l_nb_pocs);
+                                    return OPJ_FALSE;
+                                }
                                 while (opj_pi_next(l_current_pi)) {
                                         if (l_current_pi->layno < p_maxlayers) {
                                                 l_nb_bytes = 0;
@@ -274,7 +279,11 @@ OPJ_BOOL opj_t2_encode_packets( opj_t2_t* p_t2,
                 opj_pi_create_encode(l_pi, l_cp,p_tile_no,p_pino,p_tp_num,p_tp_pos,p_t2_mode);
 
                 l_current_pi = &l_pi[p_pino];
-
+                if (l_current_pi->poc.prg == OPJ_PROG_UNKNOWN) {
+                    /* TODO ADE : add an error */
+                    opj_pi_destroy(l_pi, l_nb_pocs);
+                    return OPJ_FALSE;
+                }
                 while (opj_pi_next(l_current_pi)) {
                         if (l_current_pi->layno < p_maxlayers) {
                                 l_nb_bytes=0;
@@ -386,6 +395,11 @@ OPJ_BOOL opj_t2_decode_packets( opj_t2_t *p_t2,
                 }
                 memset(first_pass_failed, OPJ_TRUE, l_image->numcomps * sizeof(OPJ_BOOL));
 
+                if (l_current_pi->poc.prg == OPJ_PROG_UNKNOWN) {
+                    /* TODO ADE : add an error */
+                    opj_pi_destroy(l_pi, l_nb_pocs);
+                    return OPJ_FALSE;
+                }
                 while (opj_pi_next(l_current_pi)) {
                   JAS_FPRINTF( stderr, "packet offset=00000166 prg=%d cmptno=%02d rlvlno=%02d prcno=%03d lyrno=%02d\n\n",
                     l_current_pi->poc.prg1, l_current_pi->compno, l_current_pi->resno, l_current_pi->precno, l_current_pi->layno );

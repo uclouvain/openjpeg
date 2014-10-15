@@ -2423,6 +2423,11 @@ static OPJ_BOOL opj_j2k_read_cod (  opj_j2k_t *p_j2k,
         opj_read_bytes(p_header_data,&l_tmp,1);                         /* SGcod (A) */
         ++p_header_data;
         l_tcp->prg = (OPJ_PROG_ORDER) l_tmp;
+        /* Make sure progression order is valid */
+        if (l_tcp->prg > OPJ_CPRL ) {
+                opj_event_msg(p_manager, EVT_ERROR, "Unknown progression order in COD marker\n");
+                l_tcp->prg = OPJ_PROG_UNKNOWN;
+        }
         opj_read_bytes(p_header_data,&l_tcp->numlayers,2);      /* SGcod (B) */
         p_header_data+=2;
 
