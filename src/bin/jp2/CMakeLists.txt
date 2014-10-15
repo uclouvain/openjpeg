@@ -50,6 +50,13 @@ foreach(exe opj_decompress opj_compress opj_dump)
     EXPORT OpenJPEGTargets
     DESTINATION ${OPENJPEG_INSTALL_BIN_DIR} COMPONENT Applications
   )
+  if(OPJ_USE_DSYMUTIL)
+    GET_TARGET_PROPERTY(EXE_LOCATION ${exe} LOCATION)
+    add_custom_command(TARGET ${exe} POST_BUILD 
+    COMMAND "dsymutil" "${EXE_LOCATION}"
+    COMMENT "dsymutil ${EXE_LOCATION}"
+    DEPENDS ${exe})
+  endif()
 endforeach()
 
 if(BUILD_DOC)
