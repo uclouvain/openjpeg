@@ -2415,6 +2415,11 @@ static OPJ_BOOL opj_j2k_read_cod (  opj_j2k_t *p_j2k,
 
         opj_read_bytes(p_header_data,&l_tcp->csty,1);           /* Scod */
         ++p_header_data;
+        /* Make sure we know how to decode this */
+        if ((l_tcp->csty & ~(OPJ_UINT32)(J2K_CP_CSTY_PRT | J2K_CP_CSTY_SOP | J2K_CP_CSTY_EPH)) != 0U) {
+                opj_event_msg(p_manager, EVT_ERROR, "Unknown Scod value in COD marker\n");
+                return OPJ_FALSE;
+        }
         opj_read_bytes(p_header_data,&l_tmp,1);                         /* SGcod (A) */
         ++p_header_data;
         l_tcp->prg = (OPJ_PROG_ORDER) l_tmp;
