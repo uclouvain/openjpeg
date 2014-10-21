@@ -3554,6 +3554,14 @@ OPJ_BOOL j2k_read_ppm_v3 (
 
         /* First PPM marker */
         if (l_Z_ppm == 0) {
+                if (l_cp->ppm_data != NULL) {
+                        opj_event_msg(p_manager, EVT_ERROR, "Zppm O already processed. Found twice.\n");
+                        opj_free(l_cp->ppm_data);
+                        l_cp->ppm_data = NULL;
+                        l_cp->ppm_buffer = NULL;
+                        l_cp->ppm = 0; /* do not use PPM */
+                        return OPJ_FALSE;
+                }
                 /* We need now at least the Nppm^0 element */
                 if (p_header_size < 4) {
                         opj_event_msg(p_manager, EVT_ERROR, "Error reading PPM marker\n");
