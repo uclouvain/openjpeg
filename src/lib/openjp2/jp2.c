@@ -764,6 +764,12 @@ static OPJ_BOOL opj_jp2_check_color(opj_image_t *image, opj_jp2_color_t *color, 
 	if (color->jp2_cdef) {
 		opj_jp2_cdef_info_t *info = color->jp2_cdef->info;
 		OPJ_UINT16 n = color->jp2_cdef->n;
+		OPJ_UINT32 nr_channels = image->numcomps; /* FIXME image->numcomps == jp2->numcomps before color is applied ??? */
+
+		/* cdef applies to cmap channels if any */
+		if (color->jp2_pclr && color->jp2_pclr->cmap) {
+			nr_channels = (OPJ_UINT32)color->jp2_pclr->nr_channels;
+		}
 
 		for (i = 0; i < n; i++) {
 			if (info[i].cn >= image->numcomps) {
@@ -774,6 +780,22 @@ static OPJ_BOOL opj_jp2_check_color(opj_image_t *image, opj_jp2_color_t *color, 
 				opj_event_msg(p_manager, EVT_ERROR, "Invalid component index %d (>= %d).\n", info[i].asoc - 1, image->numcomps);
 				return OPJ_FALSE;
 			}
+		}
+
+		/* issue 397 */
+		/* ISO 15444-1 states that if cdef is present, it shall contain a complete list of channel definitions. */
+		while (nr_channels > 0)
+		{
+			for(i = 0; i < n; ++i) {
+				if ((OPJ_UINT32)info[i].cn == (nr_channels - 1U)) {
+					break;
+				}
+			}
+			if (i == n) {
+				opj_event_msg(p_manager, EVT_ERROR, "Incomplete channel definitions.\n");
+				return OPJ_FALSE;
+			}
+			--nr_channels;
 		}
 	}
 
