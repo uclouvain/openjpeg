@@ -2170,6 +2170,7 @@ static OPJ_BOOL opj_jp2_read_jp2h(  opj_jp2_t *jp2,
 	OPJ_UINT32 l_box_size=0, l_current_data_size = 0;
 	opj_jp2_box_t box;
 	const opj_jp2_header_handler_t * l_current_handler;
+	OPJ_BOOL l_has_ihdr = 0;
 
 	/* preconditions */
 	assert(p_header_data != 00);
@@ -2210,8 +2211,17 @@ static OPJ_BOOL opj_jp2_read_jp2h(  opj_jp2_t *jp2,
 			jp2->jp2_img_state |= JP2_IMG_STATE_UNKNOWN;
 		}
 
+		if (box.type == JP2_IHDR) {
+			l_has_ihdr = 1;
+		}
+
 		p_header_data += l_current_data_size;
 		p_header_size -= box.length;
+	}
+
+	if (l_has_ihdr == 0) {
+		opj_event_msg(p_manager, EVT_ERROR, "Stream error while reading JP2 Header box: no 'ihdr' box.\n");
+		return OPJ_FALSE;
 	}
 
 	jp2->jp2_state |= JP2_STATE_HEADER;
