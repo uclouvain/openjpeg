@@ -174,6 +174,26 @@ opj_decompress -i @INPUT_NR_PATH@/issue226.j2k                   -o @TEMP_PATH@/
 #!opj_decompress -i @INPUT_NR_PATH@/3459.pdf.asan.6c.2734.0.jp2 -o @TEMP_PATH@/3459.pdf.asan.6c.2734.0.jp2.pgx
 #!opj_decompress -i @INPUT_NR_PATH@/3459.pdf.asan.6c.2734.1.jp2 -o @TEMP_PATH@/3459.pdf.asan.6c.2734.1.jp2.pgx
 #!opj_decompress -i @INPUT_NR_PATH@/3459.pdf.asan.6c.2734.2.jp2 -o @TEMP_PATH@/3459.pdf.asan.6c.2734.2.jp2.pgx
+# issue 362 (from pdfium fuzz engine)
+# Invalid PPM Marker
+!opj_decompress -i @INPUT_NR_PATH@/issue362-2863.jp2 -o @TEMP_PATH@/issue362-2863.jp2.pgx
+# Invalid ftyp box size
+!opj_decompress -i @INPUT_NR_PATH@/issue362-2866.jp2 -o @TEMP_PATH@/issue362-2866.jp2.pgx
+!opj_decompress -i @INPUT_NR_PATH@/issue362-2894.jp2 -o @TEMP_PATH@/issue362-2894.jp2.pgx
+# issue 363  (from pdfium fuzz engine)
+# Invalid Tile part length
+!opj_decompress -i @INPUT_NR_PATH@/issue363-4723.jp2 -o @TEMP_PATH@/issue363-4723.jp2.pgx
+# Invalid Marker length
+!opj_decompress -i @INPUT_NR_PATH@/issue363-4740.jp2 -o @TEMP_PATH@/issue363-4740.jp2.pgx
+!opj_decompress -i @INPUT_NR_PATH@/issue363-4792.jp2 -o @TEMP_PATH@/issue363-4792.jp2.pgx
+# issue 390  (from pdfium fuzz engine) Invalid segment size
+!opj_decompress -i @INPUT_NR_PATH@/issue390.jp2 -o @TEMP_PATH@/issue390.jp2.pgx
+# issue 391  (from pdfium fuzz engine) Invalid segment size
+!opj_decompress -i @INPUT_NR_PATH@/issue391.jp2 -o @TEMP_PATH@/issue391.jp2.pgx
+# issue 400  (from pdfium fuzz engine) Unknown Scod value in COD marker
+!opj_decompress -i @INPUT_NR_PATH@/issue400.jp2 -o @TEMP_PATH@/issue400.jp2.pgx
+# issue 413  (from pdfium fuzz engine) Unknown progression order in COD marker
+!opj_decompress -i @INPUT_NR_PATH@/issue413.jp2 -o @TEMP_PATH@/issue413.jp2.pgx
 
 # decode with specific area
 # prec=12; nb_c=1 
