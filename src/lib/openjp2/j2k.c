@@ -7090,6 +7090,9 @@ OPJ_BOOL opj_j2k_read_header_procedure( opj_j2k_t *p_j2k,
         OPJ_UINT32 l_current_marker;
         OPJ_UINT32 l_marker_size;
         const opj_dec_memory_marker_handler_t * l_marker_handler = 00;
+        OPJ_BOOL l_has_siz = 0;
+        OPJ_BOOL l_has_cod = 0;
+        OPJ_BOOL l_has_qcd = 0;
 
         /* preconditions */
         assert(p_stream != 00);
@@ -7137,6 +7140,19 @@ OPJ_BOOL opj_j2k_read_header_procedure( opj_j2k_t *p_j2k,
                                 break; /* SOT marker is detected main header is completely read */
                         else    /* Get the marker handler from the marker ID */
                                 l_marker_handler = opj_j2k_get_marker_handler(l_current_marker);
+                }
+
+                if (l_marker_handler->id == J2K_MS_SIZ) {
+                    /* Mark required SIZ marker as found */
+                    l_has_siz = 1;
+                }
+                if (l_marker_handler->id == J2K_MS_COD) {
+                    /* Mark required COD marker as found */
+                    l_has_cod = 1;
+                }
+                if (l_marker_handler->id == J2K_MS_QCD) {
+                    /* Mark required QCD marker as found */
+                    l_has_qcd = 1;
                 }
 
                 /* Check if the marker is known and if it is the right place to find it */
@@ -7199,6 +7215,19 @@ OPJ_BOOL opj_j2k_read_header_procedure( opj_j2k_t *p_j2k,
 
                 /* read 2 bytes as the new marker ID */
                 opj_read_bytes(p_j2k->m_specific_param.m_decoder.m_header_data,&l_current_marker,2);
+        }
+
+        if (l_has_siz == 0) {
+            opj_event_msg(p_manager, EVT_ERROR, "required SIZ marker not found in main header\n");
+            return OPJ_FALSE;
+        }
+        if (l_has_cod == 0) {
+            opj_event_msg(p_manager, EVT_ERROR, "required COD marker not found in main header\n");
+            return OPJ_FALSE;
+        }
+        if (l_has_qcd == 0) {
+            opj_event_msg(p_manager, EVT_ERROR, "required QCD marker not found in main header\n");
+            return OPJ_FALSE;
         }
 
         opj_event_msg(p_manager, EVT_INFO, "Main header has been correctly decoded.\n");

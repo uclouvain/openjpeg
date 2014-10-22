@@ -57,6 +57,7 @@ set(BLACKLIST_JPEG2000
     gdal_fuzzer_unchecked_numresolutions.jp2
     mem-b2ace68c-1381.jp2
     1851.pdf.SIGSEGV.ce9.948.jp2
+    1888.pdf.asan.35.988.jp2
    )
 
 file(GLOB_RECURSE OPJ_DATA_NR_LIST
