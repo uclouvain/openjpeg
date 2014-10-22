@@ -676,7 +676,7 @@ OPJ_BOOL FUNCTION (     opj_tcd_t *p_tcd,                        \
         /*tile->numcomps = image->numcomps; */                      \
         for(compno = 0; compno < l_tile->numcomps; ++compno) {      \
                 /*fprintf(stderr, "compno = %d/%d\n", compno, l_tile->numcomps);*/                                                                                                                                \
-                                                                    \
+                l_image_comp->resno_decoded = 0;                                                    \
                 /* border of each l_tile component (global) */      \
                 l_tilec->x0 = opj_int_ceildiv(l_tile->x0, (OPJ_INT32)l_image_comp->dx);                                                                                                                                          \
                 l_tilec->y0 = opj_int_ceildiv(l_tile->y0, (OPJ_INT32)l_image_comp->dy);                                                                                                                                          \
