@@ -3684,6 +3684,15 @@ OPJ_BOOL j2k_read_ppm_v3 (
                         OPJ_BYTE *new_ppm_data;
                         /* Increase the size of ppm_data to add the new Ippm series*/
                         assert(l_cp->ppm_data == l_cp->ppm_buffer && "We need ppm_data and ppm_buffer to be the same when reallocating");
+                        /* Overflow check */
+                        if ((l_cp->ppm_len + l_N_ppm) < l_N_ppm) {
+                                opj_free(l_cp->ppm_data);
+                                l_cp->ppm_data = NULL;
+                                l_cp->ppm_buffer = NULL;  /* TODO: no need for a new local variable: ppm_buffer and ppm_data are enough */
+                                l_cp->ppm_len = 0;
+                                opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to increase the size of ppm_data to add the new (complete) Ippm series\n");
+                                return OPJ_FALSE;
+                        }
                         new_ppm_data = (OPJ_BYTE *) opj_realloc(l_cp->ppm_data, l_cp->ppm_len + l_N_ppm);
                         if (! new_ppm_data) {
                                 opj_free(l_cp->ppm_data);
@@ -3707,6 +3716,16 @@ OPJ_BOOL j2k_read_ppm_v3 (
         if (l_remaining_data) {
                 OPJ_BYTE *new_ppm_data;
                 assert(l_cp->ppm_data == l_cp->ppm_buffer && "We need ppm_data and ppm_buffer to be the same when reallocating");
+
+                /* Overflow check */
+                if ((l_cp->ppm_len + l_N_ppm) < l_N_ppm) {
+                        opj_free(l_cp->ppm_data);
+                        l_cp->ppm_data = NULL;
+                        l_cp->ppm_buffer = NULL;  /* TODO: no need for a new local variable: ppm_buffer and ppm_data are enough */
+                        l_cp->ppm_len = 0;
+                        opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to increase the size of ppm_data to add the new (complete) Ippm series\n");
+                        return OPJ_FALSE;
+                }
                 new_ppm_data = (OPJ_BYTE *) opj_realloc(l_cp->ppm_data, l_cp->ppm_len + l_N_ppm);
                 if (! new_ppm_data) {
                         opj_free(l_cp->ppm_data);
