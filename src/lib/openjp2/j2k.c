@@ -8617,6 +8617,11 @@ OPJ_BOOL opj_j2k_read_SPCod_SPCoc(  opj_j2k_t *p_j2k,
                 for     (i = 0; i < l_tccp->numresolutions; ++i) {
                         opj_read_bytes(l_current_ptr,&l_tmp ,1);                /* SPcoc (I_i) */
                         ++l_current_ptr;
+                        /* Precinct exponent 0 is only allowed for lowest resolution level (Table A.21) */
+                        if ((i != 0) && (((l_tmp & 0xf) == 0) || ((l_tmp >> 4) == 0))) {
+                                opj_event_msg(p_manager, EVT_ERROR, "Invalid precinct size\n");
+                                return OPJ_FALSE;
+                        }
                         l_tccp->prcw[i] = l_tmp & 0xf;
                         l_tccp->prch[i] = l_tmp >> 4;
                 }
