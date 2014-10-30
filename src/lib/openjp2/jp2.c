@@ -772,12 +772,12 @@ static OPJ_BOOL opj_jp2_check_color(opj_image_t *image, opj_jp2_color_t *color, 
 		}
 
 		for (i = 0; i < n; i++) {
-			if (info[i].cn >= image->numcomps) {
-				opj_event_msg(p_manager, EVT_ERROR, "Invalid component index %d (>= %d).\n", info[i].cn, image->numcomps);
+			if (info[i].cn >= nr_channels) {
+				opj_event_msg(p_manager, EVT_ERROR, "Invalid component index %d (>= %d).\n", info[i].cn, nr_channels);
 				return OPJ_FALSE;
 			}
-			if (info[i].asoc > 0 && (OPJ_UINT32)(info[i].asoc - 1) >= image->numcomps) {
-				opj_event_msg(p_manager, EVT_ERROR, "Invalid component index %d (>= %d).\n", info[i].asoc - 1, image->numcomps);
+			if (info[i].asoc > 0 && (OPJ_UINT32)(info[i].asoc - 1) >= nr_channels) {
+				opj_event_msg(p_manager, EVT_ERROR, "Invalid component index %d (>= %d).\n", info[i].asoc - 1, nr_channels);
 				return OPJ_FALSE;
 			}
 		}
@@ -1357,17 +1357,17 @@ OPJ_BOOL opj_jp2_decode(opj_jp2_t *jp2,
 	    else
 		    p_image->color_space = OPJ_CLRSPC_UNKNOWN;
 
-	    /* Apply the color space if needed */
-	    if(jp2->color.jp2_cdef) {
-		    opj_jp2_apply_cdef(p_image, &(jp2->color));
-	    }
-
 	    if(jp2->color.jp2_pclr) {
 		    /* Part 1, I.5.3.4: Either both or none : */
 		    if( !jp2->color.jp2_pclr->cmap)
 			    opj_jp2_free_pclr(&(jp2->color));
 		    else
 			    opj_jp2_apply_pclr(p_image, &(jp2->color));
+	    }
+
+	    /* Apply the color space if needed */
+	    if(jp2->color.jp2_cdef) {
+		    opj_jp2_apply_cdef(p_image, &(jp2->color));
 	    }
 
 	    if(jp2->color.icc_profile_buf) {
