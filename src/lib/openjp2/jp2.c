@@ -1116,48 +1116,64 @@ void opj_jp2_apply_cdef(opj_image_t *image, opj_jp2_color_t *color)
 {
 	opj_jp2_cdef_info_t *info;
 	OPJ_UINT16 i, n, cn, asoc, acn;
-
+	
 	info = color->jp2_cdef->info;
 	n = color->jp2_cdef->n;
-
-  for(i = 0; i < n; ++i)
-    {
-    /* WATCH: acn = asoc - 1 ! */
-    asoc = info[i].asoc;
-    if(asoc == 0 || asoc == 65535)
-      {
-      if (i < image->numcomps)
-        image->comps[i].alpha = info[i].typ;
-      continue;
-      }
-
-    cn = info[i].cn; 
-    acn = (OPJ_UINT16)(asoc - 1);
-    if( cn >= image->numcomps || acn >= image->numcomps )
-      {
-      fprintf(stderr, "cn=%d, acn=%d, numcomps=%d\n", cn, acn, image->numcomps);
-      continue;
-      }
-
-		if(cn != acn)
+	
+	for(i = 0; i < n; ++i)
+	{
+		/* WATCH: acn = asoc - 1 ! */
+		asoc = info[i].asoc;
+		cn = info[i].cn;
+		
+		if( cn >= image->numcomps)
+		{
+			fprintf(stderr, "cn=%d, numcomps=%d\n", cn, image->numcomps);
+			continue;
+		}
+		if(asoc == 0 || asoc == 65535)
+		{
+			image->comps[cn].alpha = info[i].typ;
+			continue;
+		}
+		
+		acn = (OPJ_UINT16)(asoc - 1);
+		if( acn >= image->numcomps )
+		{
+			fprintf(stderr, "acn=%d, numcomps=%d\n", acn, image->numcomps);
+			continue;
+		}
+		
+		/* Swap only if color channel */
+		if((cn != acn) && (info[i].typ == 0))
 		{
 			opj_image_comp_t saved;
-
+			OPJ_UINT16 j;
+			
 			memcpy(&saved, &image->comps[cn], sizeof(opj_image_comp_t));
 			memcpy(&image->comps[cn], &image->comps[acn], sizeof(opj_image_comp_t));
 			memcpy(&image->comps[acn], &saved, sizeof(opj_image_comp_t));
-
-			info[i].asoc = (OPJ_UINT16)(cn + 1);
-			info[acn].asoc = (OPJ_UINT16)(info[acn].cn + 1);
+			
+			/* Swap channels in following channel definitions, don't bother with j <= i that are already processed */
+			for (j = i + 1; j < n ; ++j)
+			{
+				if (info[j].cn == cn) {
+					info[j].cn = acn;
+				}
+				else if (info[j].cn == acn) {
+					info[j].cn = cn;
+				}
+				/* asoc is related to color index. Do not update. */
+			}
 		}
-
+		
 		image->comps[cn].alpha = info[i].typ;
 	}
-
+	
 	if(color->jp2_cdef->info) opj_free(color->jp2_cdef->info);
-
+	
 	opj_free(color->jp2_cdef); color->jp2_cdef = NULL;
-
+	
 }/* jp2_apply_cdef() */
 
 OPJ_BOOL opj_jp2_read_cdef(	opj_jp2_t * jp2,
