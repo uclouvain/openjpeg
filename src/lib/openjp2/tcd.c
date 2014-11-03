@@ -611,6 +611,37 @@ void opj_tcd_destroy(opj_tcd_t *tcd) {
         }
 }
 
+OPJ_BOOL opj_alloc_tile_component_data(opj_tcd_tilecomp_t *l_tilec)
+{
+	if ((l_tilec->data == 00) || ((l_tilec->data_size_needed > l_tilec->data_size) && (l_tilec->ownsData == OPJ_FALSE))) {
+		l_tilec->data = (OPJ_INT32 *) opj_malloc(l_tilec->data_size_needed);
+		if (! l_tilec->data ) {
+			return OPJ_FALSE;
+		}
+		/*fprintf(stderr, "tAllocate data of tilec (int): %d x OPJ_UINT32n",l_data_size);*/
+		l_tilec->data_size = l_tilec->data_size_needed;
+		l_tilec->ownsData = OPJ_TRUE;
+	}
+	else if (l_tilec->data_size_needed > l_tilec->data_size) {
+		OPJ_INT32 * new_data = (OPJ_INT32 *) opj_realloc(l_tilec->data, l_tilec->data_size_needed);
+		/* opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to handle tile datan"); */
+		/* fprintf(stderr, "Not enough memory to handle tile data"); */
+		if (! new_data) {
+			opj_free(l_tilec->data);
+			l_tilec->data = NULL;
+			l_tilec->data_size = 0;
+			l_tilec->data_size_needed = 0;
+			l_tilec->ownsData = OPJ_FALSE;
+			return OPJ_FALSE;
+		}
+		l_tilec->data = new_data;
+		/*fprintf(stderr, "tReallocate data of tilec (int): from %d to %d x OPJ_UINT32n", l_tilec->data_size, l_data_size);*/
+		l_tilec->data_size = l_tilec->data_size_needed;
+		l_tilec->ownsData = OPJ_TRUE;
+	}
+	return OPJ_TRUE;
+}
+
 /* ----------------------------------------------------------------------- */
 #define OPJ_MACRO_TCD_ALLOCATE(FUNCTION,TYPE,FRACTION,ELEMENT,FUNCTION_ELEMENT)                                                                                                                                       \
 OPJ_BOOL FUNCTION (     opj_tcd_t *p_tcd,                        \
@@ -695,29 +726,10 @@ OPJ_BOOL FUNCTION (     opj_tcd_t *p_tcd,                        \
                         - l_cp->m_specific_param.m_dec.m_reduce;    \
                 }                                                   \
                                                                     \
-                if (l_tilec->data == 00) {                          \
-                        l_tilec->data = (OPJ_INT32 *) opj_malloc(l_data_size);                                                                                                                                    \
-                        if (! l_tilec->data ) {                     \
-                                return OPJ_FALSE;                   \
-                        }                                           \
-                        /*fprintf(stderr, "\tAllocate data of tilec (int): %d x OPJ_UINT32\n",l_data_size);*/                                                                                                     \
-                                                                    \
-                        l_tilec->data_size = l_data_size;           \
-                }                                                   \
-                else if (l_data_size > l_tilec->data_size) {        \
-                        OPJ_INT32 * new_data = (OPJ_INT32 *) opj_realloc(l_tilec->data, l_data_size);                                                                                                             \
-                        /* opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to handle tile data\n");                                                                                                 */  \
-                        fprintf(stderr, "Not enough memory to handle tile data\n");                                                                                                                               \
-                        if (! new_data) {                           \
-                                opj_free(l_tilec->data);            \
-                                l_tilec->data = NULL;               \
-                                l_tilec->data_size = 0;             \
-                                return OPJ_FALSE;                   \
-                        }                                           \
-                        l_tilec->data = new_data;                   \
-                        /*fprintf(stderr, "\tReallocate data of tilec (int): from %d to %d x OPJ_UINT32\n", l_tilec->data_size, l_data_size);*/                                                                   \
-                        l_tilec->data_size = l_data_size;           \
-                }                                                   \
+								l_tilec->data_size_needed = l_data_size;            \
+								if (p_tcd->m_is_decoder && !opj_alloc_tile_component_data(l_tilec)) { \
+									return OPJ_FALSE;                                                   \
+								}                                                                     \
                                                                     \
                 l_data_size = l_tilec->numresolutions * (OPJ_UINT32)sizeof(opj_tcd_resolution_t);                                                                                                                          \
                                                                     \
@@ -1457,9 +1469,12 @@ void opj_tcd_free_tile(opj_tcd_t *p_tcd)
                         l_tile_comp->resolutions = 00;
                 }
 
-                if (l_tile_comp->data) {
+                if (l_tile_comp->ownsData && l_tile_comp->data) {
                         opj_free(l_tile_comp->data);
                         l_tile_comp->data = 00;
+                        l_tile_comp->ownsData = 0;
+                        l_tile_comp->data_size = 0;
+                        l_tile_comp->data_size_needed = 0;
                 }
                 ++l_tile_comp;
         }
@@ -1512,7 +1527,7 @@ OPJ_BOOL opj_tcd_t1_decode ( opj_tcd_t *p_tcd )
         opj_tccp_t * l_tccp = p_tcd->tcp->tccps;
 
 
-        l_t1 = opj_t1_create();
+        l_t1 = opj_t1_create(OPJ_FALSE);
         if (l_t1 == 00) {
                 return OPJ_FALSE;
         }
@@ -1947,7 +1962,7 @@ OPJ_BOOL opj_tcd_t1_encode ( opj_tcd_t *p_tcd )
         const OPJ_FLOAT64 * l_mct_norms;
         opj_tcp_t * l_tcp = p_tcd->tcp;
 
-        l_t1 = opj_t1_create();
+        l_t1 = opj_t1_create(OPJ_TRUE);
         if (l_t1 == 00) {
                 return OPJ_FALSE;
         }

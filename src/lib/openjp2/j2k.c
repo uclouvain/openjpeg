@@ -338,6 +338,18 @@ static OPJ_BOOL opj_j2k_pre_write_tile ( opj_j2k_t * p_j2k,
 
 static OPJ_BOOL opj_j2k_update_image_data (opj_tcd_t * p_tcd, OPJ_BYTE * p_data, opj_image_t* p_output_image);
 
+static void opj_get_tile_dimensions(opj_image_t * l_image,
+																		opj_tcd_tilecomp_t * l_tilec,
+																		opj_image_comp_t * l_img_comp,
+																		OPJ_UINT32* l_size_comp,
+																		OPJ_UINT32* l_width,
+																		OPJ_UINT32* l_height,
+																		OPJ_UINT32* l_offset_x,
+																		OPJ_UINT32* l_offset_y,
+																		OPJ_UINT32* l_image_width,
+																		OPJ_UINT32* l_stride,
+																		OPJ_UINT32* l_tile_offset);
+
 static void opj_j2k_get_tile_data (opj_tcd_t * p_tcd, OPJ_BYTE * p_data);
 
 static OPJ_BOOL opj_j2k_post_write_tile (opj_j2k_t * p_j2k,
@@ -9756,50 +9768,82 @@ OPJ_BOOL opj_j2k_encode(opj_j2k_t * p_j2k,
                         opj_stream_private_t *p_stream,
                         opj_event_mgr_t * p_manager )
 {
-        OPJ_UINT32 i;
+        OPJ_UINT32 i, j;
         OPJ_UINT32 l_nb_tiles;
-        OPJ_UINT32 l_max_tile_size, l_current_tile_size;
-        OPJ_BYTE * l_current_data;
+        OPJ_UINT32 l_max_tile_size = 0, l_current_tile_size;
+        OPJ_BYTE * l_current_data = 00;
+        opj_tcd_t* p_tcd = 00;
 
         /* preconditions */
         assert(p_j2k != 00);
         assert(p_stream != 00);
         assert(p_manager != 00);
-
-        l_current_data = (OPJ_BYTE*)opj_malloc(1000);
-        if (! l_current_data) {
-                opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to encode all tiles\n");
-                return OPJ_FALSE;
-        }
-        l_max_tile_size = 1000;
+	
+        p_tcd = p_j2k->m_tcd;
 
         l_nb_tiles = p_j2k->m_cp.th * p_j2k->m_cp.tw;
         for (i=0;i<l_nb_tiles;++i) {
                 if (! opj_j2k_pre_write_tile(p_j2k,i,p_stream,p_manager)) {
-                        opj_free(l_current_data);
+                        if (l_current_data) {
+                                opj_free(l_current_data);
+                        }
                         return OPJ_FALSE;
                 }
 
-                l_current_tile_size = opj_tcd_get_encoded_tile_size(p_j2k->m_tcd);
-                if (l_current_tile_size > l_max_tile_size) {
-                        OPJ_BYTE *l_new_current_data = (OPJ_BYTE *) opj_realloc(l_current_data, l_current_tile_size);
-                        if (! l_new_current_data) {
-                                opj_free(l_current_data);
-                                opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to encode all tiles\n");
-                                return OPJ_FALSE;
+                /* if we only have one tile, then simply set tile component data equal to image component data */
+                /* otherwise, allocate the data */
+                for (j=0;j<p_j2k->m_tcd->image->numcomps;++j) {
+                        opj_tcd_tilecomp_t* l_tilec = p_tcd->tcd_image->tiles->comps + j;
+                        if (l_nb_tiles == 1) {
+												        opj_image_comp_t * l_img_comp = p_tcd->image->comps + j;
+												        l_tilec->data  =  l_img_comp->data;
+												        l_tilec->ownsData = OPJ_FALSE;
+                        } else {
+												        if(! opj_alloc_tile_component_data(l_tilec)) {
+												                opj_event_msg(p_manager, EVT_ERROR, "Error allocating tile component data." );
+												                if (l_current_data) {
+												                        opj_free(l_current_data);
+												                }
+												                return OPJ_FALSE;
+												        }
+												        opj_alloc_tile_component_data(l_tilec);
                         }
-                        l_current_data = l_new_current_data;
-                        l_max_tile_size = l_current_tile_size;
                 }
+                l_current_tile_size = opj_tcd_get_encoded_tile_size(p_j2k->m_tcd);
+                if (l_nb_tiles > 1) {
+                        if (l_current_tile_size > l_max_tile_size) {
+												        OPJ_BYTE *l_new_current_data = (OPJ_BYTE *) opj_realloc(l_current_data, l_current_tile_size);
+												        if (! l_new_current_data) {
+												                if (l_current_data) {
+												                        opj_free(l_current_data);
+												                }
+												                opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to encode all tiles\n");
+												                return OPJ_FALSE;
+																}
+																l_current_data = l_new_current_data;
+																l_max_tile_size = l_current_tile_size;
+                        }
 
-                opj_j2k_get_tile_data(p_j2k->m_tcd,l_current_data);
+                        /* copy image data (32 bit) to l_current_data as contiguous, all-component, zero offset buffer */
+                        /* 32 bit components @ 8 bit precision get converted to 8 bit */
+                        /* 32 bit components @ 16 bit precision get converted to 16 bit */
+                        opj_j2k_get_tile_data(p_j2k->m_tcd,l_current_data);
+
+                        /* now copy this data into the tile component */
+                        if (! opj_tcd_copy_tile_data(p_j2k->m_tcd,l_current_data,l_current_tile_size)) {
+																opj_event_msg(p_manager, EVT_ERROR, "Size mismatch between tile data and sent data." );
+																return OPJ_FALSE;
+                        }
+                }
 
                 if (! opj_j2k_post_write_tile (p_j2k,l_current_data,l_current_tile_size,p_stream,p_manager)) {
                         return OPJ_FALSE;
                 }
         }
 
-        opj_free(l_current_data);
+        if (l_current_data) {
+                opj_free(l_current_data);
+        }
         return OPJ_TRUE;
 }
 
@@ -9891,37 +9935,61 @@ OPJ_BOOL opj_j2k_pre_write_tile (       opj_j2k_t * p_j2k,
         return OPJ_TRUE;
 }
 
+void opj_get_tile_dimensions(opj_image_t * l_image,
+                             opj_tcd_tilecomp_t * l_tilec,
+                             opj_image_comp_t * l_img_comp,
+                             OPJ_UINT32* l_size_comp,
+                             OPJ_UINT32* l_width,
+                             OPJ_UINT32* l_height,
+                             OPJ_UINT32* l_offset_x,
+                             OPJ_UINT32* l_offset_y,
+                             OPJ_UINT32* l_image_width,
+                             OPJ_UINT32* l_stride,
+                             OPJ_UINT32* l_tile_offset) {
+	OPJ_UINT32 l_remaining;
+	*l_size_comp = l_img_comp->prec >> 3; /* (/8) */
+	l_remaining = l_img_comp->prec & 7;  /* (%8) */
+	if (l_remaining) {
+		*l_size_comp += 1;
+	}
+
+	if (*l_size_comp == 3) {
+		*l_size_comp = 4;
+	}
+
+	*l_width  = (OPJ_UINT32)(l_tilec->x1 - l_tilec->x0);
+	*l_height = (OPJ_UINT32)(l_tilec->y1 - l_tilec->y0);
+	*l_offset_x = (OPJ_UINT32)opj_int_ceildiv((OPJ_INT32)l_image->x0, (OPJ_INT32)l_img_comp->dx);
+	*l_offset_y = (OPJ_UINT32)opj_int_ceildiv((OPJ_INT32)l_image->y0, (OPJ_INT32)l_img_comp->dy);
+	*l_image_width = (OPJ_UINT32)opj_int_ceildiv((OPJ_INT32)l_image->x1 - (OPJ_INT32)l_image->x0, (OPJ_INT32)l_img_comp->dx);
+	*l_stride = *l_image_width - *l_width;
+	*l_tile_offset = ((OPJ_UINT32)l_tilec->x0 - *l_offset_x) + ((OPJ_UINT32)l_tilec->y0 - *l_offset_y) * *l_image_width;
+}
+
 void opj_j2k_get_tile_data (opj_tcd_t * p_tcd, OPJ_BYTE * p_data)
 {
         OPJ_UINT32 i,j,k = 0;
-        OPJ_UINT32 l_width,l_height,l_stride, l_offset_x,l_offset_y, l_image_width;
-        opj_image_comp_t * l_img_comp = 00;
-        opj_tcd_tilecomp_t * l_tilec = 00;
-        opj_image_t * l_image = 00;
-        OPJ_UINT32 l_size_comp, l_remaining;
-        OPJ_INT32 * l_src_ptr;
-        l_tilec = p_tcd->tcd_image->tiles->comps;
-        l_image = p_tcd->image;
-        l_img_comp = l_image->comps;
 
         for (i=0;i<p_tcd->image->numcomps;++i) {
-                l_size_comp = l_img_comp->prec >> 3; /* (/8) */
-                l_remaining = l_img_comp->prec & 7;  /* (%8) */
-                if (l_remaining) {
-                        ++l_size_comp;
-                }
+                opj_image_t * l_image =  p_tcd->image;
+                OPJ_INT32 * l_src_ptr;
+                opj_tcd_tilecomp_t * l_tilec = p_tcd->tcd_image->tiles->comps + i;
+                opj_image_comp_t * l_img_comp = l_image->comps + i;
+                OPJ_UINT32 l_size_comp,l_width,l_height,l_offset_x,l_offset_y, l_image_width,l_stride,l_tile_offset;
 
-                if (l_size_comp == 3) {
-                        l_size_comp = 4;
-                }
+                opj_get_tile_dimensions(l_image,
+                                        l_tilec,
+                                        l_img_comp,
+                                        &l_size_comp,
+                                        &l_width,
+                                        &l_height,
+                                        &l_offset_x,
+                                        &l_offset_y,
+                                        &l_image_width,
+                                        &l_stride,
+                                        &l_tile_offset);
 
-                l_width  = (OPJ_UINT32)(l_tilec->x1 - l_tilec->x0);
-                l_height = (OPJ_UINT32)(l_tilec->y1 - l_tilec->y0);
-                l_offset_x = (OPJ_UINT32)opj_int_ceildiv((OPJ_INT32)l_image->x0, (OPJ_INT32)l_img_comp->dx);
-                l_offset_y = (OPJ_UINT32)opj_int_ceildiv((OPJ_INT32)l_image->y0, (OPJ_INT32)l_img_comp->dy);
-                l_image_width = (OPJ_UINT32)opj_int_ceildiv((OPJ_INT32)l_image->x1 - (OPJ_INT32)l_image->x0, (OPJ_INT32)l_img_comp->dx);
-                l_stride = l_image_width - l_width;
-                l_src_ptr = l_img_comp->data + ((OPJ_UINT32)l_tilec->x0 - l_offset_x) + ((OPJ_UINT32)l_tilec->y0 - l_offset_y) * l_image_width;
+                l_src_ptr = l_img_comp->data + l_tile_offset;
 
                 switch (l_size_comp) {
                         case 1:
@@ -9988,9 +10056,6 @@ void opj_j2k_get_tile_data (opj_tcd_t * p_tcd, OPJ_BYTE * p_data)
                                 }
                                 break;
                 }
-
-                ++l_img_comp;
-                ++l_tilec;
         }
 }
 
@@ -10010,15 +10075,10 @@ OPJ_BOOL opj_j2k_post_write_tile (      opj_j2k_t * p_j2k,
         assert(p_j2k->m_specific_param.m_encoder.m_encoded_tile_data);
 
         l_tcd = p_j2k->m_tcd;
-        
+
         l_tile_size = p_j2k->m_specific_param.m_encoder.m_encoded_tile_size;
         l_available_data = l_tile_size;
         l_current_data = p_j2k->m_specific_param.m_encoder.m_encoded_tile_data;
-
-        if (! opj_tcd_copy_tile_data(l_tcd,p_data,p_data_size)) {
-                opj_event_msg(p_manager, EVT_ERROR, "Size mismatch between tile data and sent data." );
-                return OPJ_FALSE;
-        }
 
         l_nb_bytes_written = 0;
         if (! opj_j2k_write_first_tile_part(p_j2k,l_current_data,&l_nb_bytes_written,l_available_data,p_stream,p_manager)) {
@@ -10490,6 +10550,22 @@ OPJ_BOOL opj_j2k_write_tile (opj_j2k_t * p_j2k,
                 return OPJ_FALSE;
         }
         else {
+                OPJ_UINT32 j;
+                /* Allocate data */
+                for (j=0;j<p_j2k->m_tcd->image->numcomps;++j) {
+                        opj_tcd_tilecomp_t* l_tilec = p_j2k->m_tcd->tcd_image->tiles->comps + j;
+
+                        if(! opj_alloc_tile_component_data(l_tilec)) {
+												        opj_event_msg(p_manager, EVT_ERROR, "Error allocating tile component data." );
+                                return OPJ_FALSE;
+                        }
+                }
+
+                /* now copy data into the the tile component */
+                if (! opj_tcd_copy_tile_data(p_j2k->m_tcd,p_data,p_data_size)) {
+                        opj_event_msg(p_manager, EVT_ERROR, "Size mismatch between tile data and sent data." );
+                        return OPJ_FALSE;
+                }
                 if (! opj_j2k_post_write_tile(p_j2k,p_data,p_data_size,p_stream,p_manager)) {
                         opj_event_msg(p_manager, EVT_ERROR, "Error while opj_j2k_post_write_tile with tile index = %d\n", p_tile_index);
                         return OPJ_FALSE;
