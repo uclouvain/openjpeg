@@ -151,3 +151,15 @@ cdb1d69eb48ffd8545751326b86d9d7e  test_lossless.j2k_0.pgx
 a37e7e5811d7c0c7adb61582790ccd33  text_GBR.jp2_0.pgx
 fc2173be54954a146b4e2887ee14be06  text_GBR.jp2_1.pgx
 14108b4fb8d9126750db0424417ed17d  text_GBR.jp2_2.pgx
+a73bec4d6d82c8a64203e8fdf893b86d  issue412.jp2_0.pgx
+a73bec4d6d82c8a64203e8fdf893b86d  issue428.jp2_0.pgx
+2354cf24a1cc5e4a3b72896b333ba361  issue412.jp2_1.pgx
+2354cf24a1cc5e4a3b72896b333ba361  issue428.jp2_1.pgx
+77d707ff949371e561e13a8d720108b5  issue412.jp2_2.pgx
+77d707ff949371e561e13a8d720108b5  issue428.jp2_2.pgx
+2fc600f30ec0bc013befb1874e7adaeb  issue414.jp2_0.pgx
+354f9bb4668717d5c814cda354ec2b43  issue414.jp2_1.pgx
+8b96a253937c4c7dd6b41b4aa11367d9  issue414.jp2_2.pgx
+ec6886229ffaeaddfe22ce02b7a75e15  issue414.jp2_3.pgx
+6aa5c69c83d6f4d5d65968f34f9bc2a3  issue414.jp2_4.pgx
+00f34217ad2f88f4d4e1c5cd0d2c4329  issue399.j2k_0.pgx

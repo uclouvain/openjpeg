@@ -194,6 +194,31 @@ opj_decompress -i @INPUT_NR_PATH@/issue226.j2k                   -o @TEMP_PATH@/
 !opj_decompress -i @INPUT_NR_PATH@/issue400.jp2 -o @TEMP_PATH@/issue400.jp2.pgx
 # issue 413  (from pdfium fuzz engine) Unknown progression order in COD marker
 !opj_decompress -i @INPUT_NR_PATH@/issue413.jp2 -o @TEMP_PATH@/issue413.jp2.pgx
+# issue 364 (from pdfium fuzz engine)
+# Inconsistent box length for jp2 box
+!opj_decompress -i @INPUT_NR_PATH@/issue364-38.jp2 -o @TEMP_PATH@/issue364-38.jp2.pgx
+# No ihdr box
+!opj_decompress -i @INPUT_NR_PATH@/issue364-903.jp2 -o @TEMP_PATH@/issue364-903.jp2.pgx
+# issue 393  (from pdfium fuzz engine) Zppm found twice
+!opj_decompress -i @INPUT_NR_PATH@/issue393.jp2 -o @TEMP_PATH@/issue393.jp2.pgx
+# issue 395  (from pdfium fuzz engine) Stream too short
+!opj_decompress -i @INPUT_NR_PATH@/issue395.jp2 -o @TEMP_PATH@/issue395.jp2.pgx
+# issue 397  (from pdfium fuzz engine) Incomplete channel definitions.
+!opj_decompress -i @INPUT_NR_PATH@/issue397.jp2 -o @TEMP_PATH@/issue397.jp2.pgx
+# issue 399  (from pdfium fuzz engine) Incomplete channel definitions.
+opj_decompress -i @INPUT_NR_PATH@/issue399.j2k -o @TEMP_PATH@/issue399.j2k.pgx
+# issue 408  (from pdfium fuzz engine) No COD marker in main j2k header.
+!opj_decompress -i @INPUT_NR_PATH@/issue408.jp2 -o @TEMP_PATH@/issue408.jp2.pgx
+# issue 412 Palette image with cdef fails to decompress.
+opj_decompress -i @INPUT_NR_PATH@/issue412.jp2 -o @TEMP_PATH@/issue412.jp2.pgx
+# issue 428 Palette image with cdef fails to decompress properly.
+opj_decompress -i @INPUT_NR_PATH@/issue412.jp2 -o @TEMP_PATH@/issue428.jp2.pgx -t 0
+# issue 414 Image with per channel alpha (cdef) does not decode properly.
+opj_decompress -i @INPUT_NR_PATH@/issue414.jp2 -o @TEMP_PATH@/issue414.jp2.pgx
+# issue 418 (from pdfium fuzz engine) Tile part length size inconsistent with stream length.
+!opj_decompress -i @INPUT_NR_PATH@/issue418.jp2 -o @TEMP_PATH@/issue418.jp2.pgx
+# issue 420 (from pdfium fuzz engine) Illegal custom precinct exponent.
+!opj_decompress -i @INPUT_NR_PATH@/issue420.jp2 -o @TEMP_PATH@/issue420.jp2.pgx
 
 # decode with specific area
 # prec=12; nb_c=1 
