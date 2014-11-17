@@ -2704,17 +2704,17 @@ OPJ_BOOL opj_jp2_get_tile(	opj_jp2_t *p_jp2,
 	else
 		p_image->color_space = OPJ_CLRSPC_UNKNOWN;
 
-	/* Apply the color space if needed */
-	if(p_jp2->color.jp2_cdef) {
-		opj_jp2_apply_cdef(p_image, &(p_jp2->color));
-	}
-
 	if(p_jp2->color.jp2_pclr) {
 		/* Part 1, I.5.3.4: Either both or none : */
 		if( !p_jp2->color.jp2_pclr->cmap)
 			opj_jp2_free_pclr(&(p_jp2->color));
 		else
 			opj_jp2_apply_pclr(p_image, &(p_jp2->color));
+	}
+	
+	/* Apply the color space if needed */
+	if(p_jp2->color.jp2_cdef) {
+		opj_jp2_apply_cdef(p_image, &(p_jp2->color));
 	}
 
 	if(p_jp2->color.icc_profile_buf) {
