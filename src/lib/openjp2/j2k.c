@@ -353,8 +353,6 @@ static void opj_get_tile_dimensions(opj_image_t * l_image,
 static void opj_j2k_get_tile_data (opj_tcd_t * p_tcd, OPJ_BYTE * p_data);
 
 static OPJ_BOOL opj_j2k_post_write_tile (opj_j2k_t * p_j2k,
-                                                                             OPJ_BYTE * p_data,
-                                                                             OPJ_UINT32 p_data_size,
                                                                              opj_stream_private_t *p_stream,
                                                                              opj_event_mgr_t * p_manager );
 
@@ -9836,7 +9834,7 @@ OPJ_BOOL opj_j2k_encode(opj_j2k_t * p_j2k,
                         }
                 }
 
-                if (! opj_j2k_post_write_tile (p_j2k,l_current_data,l_current_tile_size,p_stream,p_manager)) {
+                if (! opj_j2k_post_write_tile (p_j2k,p_stream,p_manager)) {
                         return OPJ_FALSE;
                 }
         }
@@ -10060,12 +10058,9 @@ void opj_j2k_get_tile_data (opj_tcd_t * p_tcd, OPJ_BYTE * p_data)
 }
 
 OPJ_BOOL opj_j2k_post_write_tile (      opj_j2k_t * p_j2k,
-                                                                OPJ_BYTE * p_data,
-                                                                OPJ_UINT32 p_data_size,
                                                                 opj_stream_private_t *p_stream,
                                                                 opj_event_mgr_t * p_manager )
 {
-        opj_tcd_t * l_tcd = 00;
         OPJ_UINT32 l_nb_bytes_written;
         OPJ_BYTE * l_current_data = 00;
         OPJ_UINT32 l_tile_size = 0;
@@ -10073,8 +10068,6 @@ OPJ_BOOL opj_j2k_post_write_tile (      opj_j2k_t * p_j2k,
 
         /* preconditions */
         assert(p_j2k->m_specific_param.m_encoder.m_encoded_tile_data);
-
-        l_tcd = p_j2k->m_tcd;
 
         l_tile_size = p_j2k->m_specific_param.m_encoder.m_encoded_tile_size;
         l_available_data = l_tile_size;
@@ -10566,7 +10559,7 @@ OPJ_BOOL opj_j2k_write_tile (opj_j2k_t * p_j2k,
                         opj_event_msg(p_manager, EVT_ERROR, "Size mismatch between tile data and sent data." );
                         return OPJ_FALSE;
                 }
-                if (! opj_j2k_post_write_tile(p_j2k,p_data,p_data_size,p_stream,p_manager)) {
+                if (! opj_j2k_post_write_tile(p_j2k,p_stream,p_manager)) {
                         opj_event_msg(p_manager, EVT_ERROR, "Error while opj_j2k_post_write_tile with tile index = %d\n", p_tile_index);
                         return OPJ_FALSE;
                 }

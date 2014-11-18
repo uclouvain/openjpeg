@@ -1683,8 +1683,8 @@ OPJ_BOOL opj_jp2_setup_encoder(	opj_jp2_t *jp2,
 	OPJ_UINT32 depth_0;
   OPJ_UINT32 sign;
 	OPJ_UINT32 alpha_count;
-	OPJ_UINT32 color_channels;
-	OPJ_UINT32 alpha_channel;
+	OPJ_UINT32 color_channels = 0U;
+	OPJ_UINT32 alpha_channel = 0U;
 	
 
 	if(!jp2 || !parameters || !image)
