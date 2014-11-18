@@ -219,6 +219,10 @@ opj_decompress -i @INPUT_NR_PATH@/issue414.jp2 -o @TEMP_PATH@/issue414.jp2.pgx
 !opj_decompress -i @INPUT_NR_PATH@/issue418.jp2 -o @TEMP_PATH@/issue418.jp2.pgx
 # issue 420 (from pdfium fuzz engine) Illegal custom precinct exponent.
 !opj_decompress -i @INPUT_NR_PATH@/issue420.jp2 -o @TEMP_PATH@/issue420.jp2.pgx
+# issue 422 (rework of issue 411). ycc with odd width/height
+opj_decompress -i @INPUT_NR_PATH@/issue411-ycc444.jp2 -o @TEMP_PATH@/issue411-ycc444.jp2.pgx
+opj_decompress -i @INPUT_NR_PATH@/issue411-ycc422.jp2 -o @TEMP_PATH@/issue411-ycc422.jp2.pgx
+opj_decompress -i @INPUT_NR_PATH@/issue411-ycc420.jp2 -o @TEMP_PATH@/issue411-ycc420.jp2.pgx
 
 # decode with specific area
 # prec=12; nb_c=1 
