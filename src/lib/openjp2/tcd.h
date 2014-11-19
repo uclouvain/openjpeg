@@ -122,6 +122,7 @@ typedef struct opj_tcd_precinct {
 	union{							/* code-blocks information */
 		opj_tcd_cblk_enc_t* enc;
 		opj_tcd_cblk_dec_t* dec;
+		void*               blocks;
 	} cblks;
 	OPJ_UINT32 block_size;			/* size taken by cblks (in bytes) */
 	opj_tgt_tree_t *incltree;	    /* inclusion tree */
