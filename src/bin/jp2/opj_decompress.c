@@ -93,75 +93,234 @@ typedef struct img_folder{
 
 }img_fol_t;
 
+typedef enum opj_prec_mode
+{
+	OPJ_PREC_MODE_CLIP,
+	OPJ_PREC_MODE_SCALE
+} opj_precision_mode;
+
+typedef struct opj_prec
+{
+	OPJ_UINT32         prec;
+	opj_precision_mode mode;
+}opj_precision;
+
+typedef struct opj_decompress_params
+{
+	/** core library parameters */
+	opj_dparameters_t core;
+	
+	/** input file name */
+	char infile[OPJ_PATH_LEN];
+	/** output file name */
+	char outfile[OPJ_PATH_LEN];
+	/** input file format 0: J2K, 1: JP2, 2: JPT */
+	int decod_format;
+	/** output file format 0: PGX, 1: PxM, 2: BMP */
+	int cod_format;
+	
+	/** Decoding area left boundary */
+	OPJ_UINT32 DA_x0;
+	/** Decoding area right boundary */
+	OPJ_UINT32 DA_x1;
+	/** Decoding area up boundary */
+	OPJ_UINT32 DA_y0;
+	/** Decoding area bottom boundary */
+	OPJ_UINT32 DA_y1;
+	/** Verbose mode */
+	OPJ_BOOL m_verbose;
+	
+	/** tile number ot the decoded tile*/
+	OPJ_UINT32 tile_index;
+	/** Nb of tile to decode */
+	OPJ_UINT32 nb_tile_to_decode;
+	
+	opj_precision* precision;
+	OPJ_UINT32     nb_precision;
+}opj_decompress_parameters;
+
 /* -------------------------------------------------------------------------- */
 /* Declarations                                                               */
 int get_num_images(char *imgdirpath);
 int load_images(dircnt_t *dirptr, char *imgdirpath);
 int get_file_format(const char *filename);
-char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_dparameters_t *parameters);
+char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_decompress_parameters *parameters);
 static int infile_format(const char *fname);
 
-int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,img_fol_t *img_fol, char *indexfilename);
+int parse_cmdline_decoder(int argc, char **argv, opj_decompress_parameters *parameters,img_fol_t *img_fol, char *indexfilename);
 int parse_DA_values( char* inArg, unsigned int *DA_x0, unsigned int *DA_y0, unsigned int *DA_x1, unsigned int *DA_y1);
 
 /* -------------------------------------------------------------------------- */
 static void decode_help_display(void) {
-    fprintf(stdout,"\nThis is the opj_decompress utility from the OpenJPEG project.\n"
-            "It decompresses JPEG 2000 codestreams to various image formats.\n"
-            "It has been compiled against openjp2 library v%s.\n\n",opj_version());
+	fprintf(stdout,"\nThis is the opj_decompress utility from the OpenJPEG project.\n"
+	               "It decompresses JPEG 2000 codestreams to various image formats.\n"
+	               "It has been compiled against openjp2 library v%s.\n\n",opj_version());
 
-    fprintf(stdout,"Parameters:\n");
-    fprintf(stdout,"-----------\n");
-	fprintf(stdout,"\n");
-    fprintf(stdout,"  -ImgDir <directory> \n");
-	fprintf(stdout,"	Image file Directory path \n");
-    fprintf(stdout,"  -OutFor <PBM|PGM|PPM|PNM|PAM|PGX|PNG|BMP|TIF|RAW|RAWL|TGA>\n");
-	fprintf(stdout,"    REQUIRED only if -ImgDir is used\n");
-    fprintf(stdout,"	Output format for decompressed images.\n");
-	fprintf(stdout,"  -i <compressed file>\n");
-    fprintf(stdout,"    REQUIRED only if an Input image directory is not specified\n");
-	fprintf(stdout,"    Currently accepts J2K-files, JP2-files and JPT-files. The file type\n");
-	fprintf(stdout,"    is identified based on its suffix.\n");
-	fprintf(stdout,"  -o <decompressed file>\n");
-	fprintf(stdout,"    REQUIRED\n");
-    fprintf(stdout,"    Currently accepts formats specified above (see OutFor option)\n");
-	fprintf(stdout,"    Binary data is written to the file (not ascii). If a PGX\n");
-	fprintf(stdout,"    filename is given, there will be as many output files as there are\n");
-	fprintf(stdout,"    components: an indice starting from 0 will then be appended to the\n");
-	fprintf(stdout,"    output filename, just before the \"pgx\" extension. If a PGM filename\n");
-	fprintf(stdout,"    is given and there are more than one component, only the first component\n");
-	fprintf(stdout,"    will be written to the file.\n");
-	fprintf(stdout,"  -r <reduce factor>\n");
-	fprintf(stdout,"    Set the number of highest resolution levels to be discarded. The\n");
-	fprintf(stdout,"    image resolution is effectively divided by 2 to the power of the\n");
-	fprintf(stdout,"    number of discarded levels. The reduce factor is limited by the\n");
-	fprintf(stdout,"    smallest total number of decomposition levels among tiles.\n");
-	fprintf(stdout,"  -l <number of quality layers to decode>\n");
-	fprintf(stdout,"    Set the maximum number of quality layers to decode. If there are\n");
-	fprintf(stdout,"    less quality layers than the specified number, all the quality layers\n");
-	fprintf(stdout,"    are decoded.\n");
-	fprintf(stdout,"  -x  \n"); 
-	fprintf(stdout,"    Create an index file *.Idx (-x index_name.Idx) \n");
-	fprintf(stdout,"  -d <x0,y0,x1,y1>\n");
-	fprintf(stdout,"    OPTIONAL\n");
-	fprintf(stdout,"    Decoding area\n");
-	fprintf(stdout,"    By default all the image is decoded.\n");
-	fprintf(stdout,"  -t <tile_number>\n");
-	fprintf(stdout,"    OPTIONAL\n");
-	fprintf(stdout,"    Set the tile number of the decoded tile. Follow the JPEG2000 convention from left-up to bottom-up\n");
-	fprintf(stdout,"    By default all tiles are decoded.\n");
-	fprintf(stdout,"\n");
+	fprintf(stdout,"Parameters:\n"
+	               "-----------\n"
+	               "\n"
+	               "  -ImgDir <directory> \n"
+	               "	Image file Directory path \n"
+	               "  -OutFor <PBM|PGM|PPM|PNM|PAM|PGX|PNG|BMP|TIF|RAW|RAWL|TGA>\n"
+	               "    REQUIRED only if -ImgDir is used\n"
+	               "	Output format for decompressed images.\n"
+	               "  -i <compressed file>\n"
+	               "    REQUIRED only if an Input image directory is not specified\n"
+	               "    Currently accepts J2K-files, JP2-files and JPT-files. The file type\n"
+	               "    is identified based on its suffix.\n"
+	               "  -o <decompressed file>\n"
+	               "    REQUIRED\n"
+	               "    Currently accepts formats specified above (see OutFor option)\n"
+	               "    Binary data is written to the file (not ascii). If a PGX\n"
+	               "    filename is given, there will be as many output files as there are\n"
+	               "    components: an indice starting from 0 will then be appended to the\n"
+	               "    output filename, just before the \"pgx\" extension. If a PGM filename\n"
+	               "    is given and there are more than one component, only the first component\n"
+	               "    will be written to the file.\n"
+	               "  -r <reduce factor>\n"
+	               "    Set the number of highest resolution levels to be discarded. The\n"
+	               "    image resolution is effectively divided by 2 to the power of the\n"
+	               "    number of discarded levels. The reduce factor is limited by the\n"
+	               "    smallest total number of decomposition levels among tiles.\n"
+	               "  -l <number of quality layers to decode>\n"
+	               "    Set the maximum number of quality layers to decode. If there are\n"
+	               "    less quality layers than the specified number, all the quality layers\n"
+	               "    are decoded.\n"
+	               "  -x  \n" 
+	               "    Create an index file *.Idx (-x index_name.Idx) \n"
+	               "  -d <x0,y0,x1,y1>\n"
+	               "    OPTIONAL\n"
+	               "    Decoding area\n"
+	               "    By default all the image is decoded.\n"
+	               "  -t <tile_number>\n"
+	               "    OPTIONAL\n"
+	               "    Set the tile number of the decoded tile. Follow the JPEG2000 convention from left-up to bottom-up\n"
+	               "    By default all tiles are decoded.\n"
+	               "  -p <comp 0 precision>[C|S][,<comp 1 precision>[C|S][,...]]\n"
+	               "    OPTIONAL\n"
+	               "    Force the precision (bit depth) of components.\n"
+	               "    There shall be at least 1 value. Theres no limit on the number of values (comma separated, last values ignored if too much values).\n"
+	               "    If there are less values than components, the last value is used for remaining components.\n"
+	               "    If 'C' is specified (default), values are clipped.\n"
+	               "    If 'S' is specified, values are scaled.\n"
+	               "    A 0 value can be specified (meaning original bit depth).\n"
+	               "\n");
 /* UniPG>> */
 #ifdef USE_JPWL
-	fprintf(stdout,"  -W <options>\n");
-	fprintf(stdout,"    Activates the JPWL correction capability, if the codestream complies.\n");
-	fprintf(stdout,"    Options can be a comma separated list of <param=val> tokens:\n");
-	fprintf(stdout,"    c, c=numcomps\n");
-	fprintf(stdout,"       numcomps is the number of expected components in the codestream\n");
-	fprintf(stdout,"       (search of first EPB rely upon this, default is %d)\n", JPWL_EXPECTED_COMPONENTS);
+	fprintf(stdout,"  -W <options>\n"
+	               "    Activates the JPWL correction capability, if the codestream complies.\n"
+	               "    Options can be a comma separated list of <param=val> tokens:\n"
+	               "    c, c=numcomps\n"
+	               "       numcomps is the number of expected components in the codestream\n"
+	               "       (search of first EPB rely upon this, default is %d)\n", JPWL_EXPECTED_COMPONENTS);
 #endif /* USE_JPWL */
 /* <<UniPG */
 	fprintf(stdout,"\n");
+}
+
+/* -------------------------------------------------------------------------- */
+
+static OPJ_BOOL parse_precision(const char* option, opj_decompress_parameters* parameters)
+{
+	const char* l_remaining = option;
+	OPJ_BOOL l_result = OPJ_TRUE;
+	
+	/* reset */
+	if (parameters->precision) {
+		free(parameters->precision);
+		parameters->precision = NULL;
+	}
+	parameters->nb_precision = 0U;
+	
+	for(;;)
+	{
+		OPJ_UINT32 prec;
+		char mode;
+		char comma;
+		int count;
+		
+		count = sscanf(l_remaining, "%d%c%c", &prec, &mode, &comma);
+		if (count == 1) {
+			mode = 'C';
+			count++;
+		}
+		if ((count == 2) || (mode==',')) {
+			if (mode==',') {
+				mode = 'C';
+			}
+			comma=',';
+			count = 3;
+		}
+		if (count == 3) {
+			if (prec > 32U) {
+				fprintf(stderr,"Invalid precision %d in precision option %s\n", prec, option);
+				l_result = OPJ_FALSE;
+				break;
+			}
+			if ((mode != 'C') && (mode != 'S')) {
+				fprintf(stderr,"Invalid precision mode %c in precision option %s\n", mode, option);
+				l_result = OPJ_FALSE;
+				break;
+			}
+			if (comma != ',') {
+				fprintf(stderr,"Invalid character %c in precision option %s\n", comma, option);
+				l_result = OPJ_FALSE;
+				break;
+			}
+			
+			if (parameters->precision == NULL) {
+				/* first one */
+				parameters->precision = malloc(sizeof(opj_precision));
+				if (parameters->precision == NULL) {
+					fprintf(stderr,"Could not allocate memory for precision option\n");
+					l_result = OPJ_FALSE;
+					break;
+				}
+			} else {
+				OPJ_UINT32 l_new_size = parameters->nb_precision + 1U;
+				opj_precision* l_new;
+				
+				if (l_new_size == 0U) {
+					fprintf(stderr,"Could not allocate memory for precision option\n");
+					l_result = OPJ_FALSE;
+					break;
+				}
+				
+				l_new = realloc(parameters->precision, l_new_size * sizeof(opj_precision));
+				if (l_new == NULL) {
+					fprintf(stderr,"Could not allocate memory for precision option\n");
+					l_result = OPJ_FALSE;
+					break;
+				}
+				parameters->precision = l_new;
+			}
+			
+			parameters->precision[parameters->nb_precision].prec = prec;
+			switch (mode) {
+				case 'C':
+					parameters->precision[parameters->nb_precision].mode = OPJ_PREC_MODE_CLIP;
+					break;
+				case 'S':
+					parameters->precision[parameters->nb_precision].mode = OPJ_PREC_MODE_SCALE;
+					break;
+				default:
+					break;
+			}
+			parameters->nb_precision++;
+			
+			l_remaining = strchr(l_remaining, ',');
+			if (l_remaining == NULL) {
+				break;
+			}
+			l_remaining += 1;
+		} else {
+			fprintf(stderr,"Could not parse precision option %s\n", option);
+			l_result = OPJ_FALSE;
+			break;
+		}
+	}
+	
+	return l_result;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -234,7 +393,7 @@ int get_file_format(const char *filename) {
 }
 
 /* -------------------------------------------------------------------------- */
-char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_dparameters_t *parameters){
+char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_decompress_parameters *parameters){
 	char image_filename[OPJ_PATH_LEN], infilename[OPJ_PATH_LEN],outfilename[OPJ_PATH_LEN],temp_ofname[OPJ_PATH_LEN];
 	char *temp_p, temp1[OPJ_PATH_LEN]="";
 
@@ -320,7 +479,7 @@ static int infile_format(const char *fname)
  * Parse the command line
  */
 /* -------------------------------------------------------------------------- */
-int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,img_fol_t *img_fol, char *indexfilename) {
+int parse_cmdline_decoder(int argc, char **argv, opj_decompress_parameters *parameters,img_fol_t *img_fol, char *indexfilename) {
 	/* parse the command line */
 	int totlen, c;
 	opj_option_t long_option[]={
@@ -328,7 +487,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
         {"OutFor",REQ_ARG, NULL ,'O'}
 	};
 
-	const char optlist[] = "i:o:r:l:x:d:t:"
+	const char optlist[] = "i:o:r:l:x:d:t:p:"
 
 /* UniPG>> */
 #ifdef USE_JPWL
@@ -448,7 +607,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 
 			case 'r':		/* reduce option */
 			{
-				sscanf(opj_optarg, "%ud", &parameters->cp_reduce);
+				sscanf(opj_optarg, "%ud", &(parameters->core.cp_reduce));
 			}
 			break;
 			
@@ -457,7 +616,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 
 			case 'l':		/* layering option */
 			{
-				sscanf(opj_optarg, "%ud", &parameters->cp_layer);
+				sscanf(opj_optarg, "%ud", &(parameters->core.cp_layer));
 			}
 			break;
 			
@@ -510,7 +669,18 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 					strncpy(indexfilename, index, OPJ_PATH_LEN);
 				}
 				break;
+				
 				/* ----------------------------------------------------- */
+			case 'p': /* Force precision */
+				{
+					if (!parse_precision(opj_optarg, parameters))
+					{
+						return 1;
+					}
+				}
+				break;
+				/* ----------------------------------------------------- */
+				
 				/* UniPG>> */
 #ifdef USE_JPWL
 			
@@ -672,6 +842,30 @@ static void info_callback(const char *msg, void *client_data) {
 	fprintf(stdout, "[INFO] %s", msg);
 }
 
+static void set_default_parameters(opj_decompress_parameters* parameters)
+{
+	if (parameters) {
+		memset(parameters, 0, sizeof(opj_decompress_parameters));
+		
+		/* default decoding parameters (command line specific) */
+		parameters->decod_format = -1;
+		parameters->cod_format = -1;
+		
+		/* default decoding parameters (core) */
+		opj_set_default_decoder_parameters(&(parameters->core));
+	}
+}
+
+static void destroy_parameters(opj_decompress_parameters* parameters)
+{
+	if (parameters) {
+		if (parameters->precision) {
+			free(parameters->precision);
+			parameters->precision = NULL;
+		}
+	}
+}
+
 /* -------------------------------------------------------------------------- */
 /**
  * OPJ_DECOMPRESS MAIN
@@ -679,7 +873,7 @@ static void info_callback(const char *msg, void *client_data) {
 /* -------------------------------------------------------------------------- */
 int main(int argc, char **argv)
 {
-	opj_dparameters_t parameters;			/* decompression parameters */
+	opj_decompress_parameters parameters;			/* decompression parameters */
 	opj_image_t* image = NULL;
 	opj_stream_t *l_stream = NULL;				/* Stream */
 	opj_codec_t* l_codec = NULL;				/* Handle to a decompressor */
@@ -693,7 +887,7 @@ int main(int argc, char **argv)
   int failed = 0;
 
 	/* set decoding parameters to default values */
-	opj_set_default_decoder_parameters(&parameters);
+	set_default_parameters(&parameters);
 
 	/* FIXME Initialize indexfilename and img_fol */
 	*indexfilename = 0;
@@ -703,6 +897,7 @@ int main(int argc, char **argv)
 
 	/* parse input and get user encoding parameters */
 	if(parse_cmdline_decoder(argc, argv, &parameters,&img_fol, indexfilename) == 1) {
+		destroy_parameters(&parameters);
 		return EXIT_FAILURE;
 	}
 
@@ -717,6 +912,7 @@ int main(int argc, char **argv)
 			dirptr->filename = (char**) malloc((size_t)num_images*sizeof(char*));
 
 			if(!dirptr->filename_buf){
+				destroy_parameters(&parameters);
 				return EXIT_FAILURE;
 			}
 			for(it_image=0;it_image<num_images;it_image++){
@@ -724,10 +920,12 @@ int main(int argc, char **argv)
 			}
 		}
 		if(load_images(dirptr,img_fol.imgdirpath)==1){
+			destroy_parameters(&parameters);
 			return EXIT_FAILURE;
 		}
 		if (num_images==0){
 			fprintf(stdout,"Folder is empty\n");
+			destroy_parameters(&parameters);
 			return EXIT_FAILURE;
 		}
 	}else{
@@ -742,6 +940,7 @@ int main(int argc, char **argv)
 		if(img_fol.set_imgdir==1){
 			if (get_next_file(imageno, dirptr,&img_fol, &parameters)) {
 				fprintf(stderr,"skipping file...\n");
+				destroy_parameters(&parameters);
 				continue;
 			}
 		}
@@ -752,6 +951,7 @@ int main(int argc, char **argv)
 		l_stream = opj_stream_create_default_file_stream(parameters.infile,1);
 		if (!l_stream){
 			fprintf(stderr, "ERROR -> failed to create the stream from the file %s\n", parameters.infile);
+			destroy_parameters(&parameters);
 			return EXIT_FAILURE;
 		}
 
@@ -779,6 +979,7 @@ int main(int argc, char **argv)
 			}
 			default:
 				fprintf(stderr, "skipping file..\n");
+				destroy_parameters(&parameters);
 				opj_stream_destroy(l_stream);
 				continue;
 		}
@@ -789,8 +990,9 @@ int main(int argc, char **argv)
 		opj_set_error_handler(l_codec, error_callback,00);
 
 		/* Setup the decoder decoding parameters using user parameters */
-		if ( !opj_setup_decoder(l_codec, &parameters) ){
+		if ( !opj_setup_decoder(l_codec, &(parameters.core)) ){
 			fprintf(stderr, "ERROR -> opj_compress: failed to setup the decoder\n");
+			destroy_parameters(&parameters);
 			opj_stream_destroy(l_stream);
 			opj_destroy_codec(l_codec);
 			return EXIT_FAILURE;
@@ -800,6 +1002,7 @@ int main(int argc, char **argv)
 		/* Read the main header of the codestream and if necessary the JP2 boxes*/
 		if(! opj_read_header(l_stream, l_codec, &image)){
 			fprintf(stderr, "ERROR -> opj_decompress: failed to read the header\n");
+			destroy_parameters(&parameters);
 			opj_stream_destroy(l_stream);
 			opj_destroy_codec(l_codec);
 			opj_image_destroy(image);
@@ -811,6 +1014,7 @@ int main(int argc, char **argv)
 			if (!opj_set_decode_area(l_codec, image, (OPJ_INT32)parameters.DA_x0,
 					(OPJ_INT32)parameters.DA_y0, (OPJ_INT32)parameters.DA_x1, (OPJ_INT32)parameters.DA_y1)){
 				fprintf(stderr,	"ERROR -> opj_decompress: failed to set the decoded area\n");
+				destroy_parameters(&parameters);
 				opj_stream_destroy(l_stream);
 				opj_destroy_codec(l_codec);
 				opj_image_destroy(image);
@@ -820,6 +1024,7 @@ int main(int argc, char **argv)
 			/* Get the decoded image */
 			if (!(opj_decode(l_codec, l_stream, image) && opj_end_decompress(l_codec,	l_stream))) {
 				fprintf(stderr,"ERROR -> opj_decompress: failed to decode image!\n");
+				destroy_parameters(&parameters);
 				opj_destroy_codec(l_codec);
 				opj_stream_destroy(l_stream);
 				opj_image_destroy(image);
@@ -839,6 +1044,7 @@ int main(int argc, char **argv)
 
 			if (!opj_get_decoded_tile(l_codec, l_stream, image, parameters.tile_index)) {
 				fprintf(stderr, "ERROR -> opj_decompress: failed to decode tile!\n");
+				destroy_parameters(&parameters);
 				opj_destroy_codec(l_codec);
 				opj_stream_destroy(l_stream);
 				opj_image_destroy(image);
@@ -867,6 +1073,39 @@ int main(int argc, char **argv)
 #endif
 			free(image->icc_profile_buf);
 			image->icc_profile_buf = NULL; image->icc_profile_len = 0;
+		}
+		
+		/* Force output precision */
+		/* ---------------------- */
+		if (parameters.precision != NULL)
+		{
+			OPJ_UINT32 compno;
+			for (compno = 0; compno < image->numcomps; ++compno)
+			{
+				OPJ_UINT32 precno = compno;
+				OPJ_UINT32 prec;
+				
+				if (precno >= parameters.nb_precision) {
+					precno = parameters.nb_precision - 1U;
+				}
+				
+				prec = parameters.precision[precno].prec;
+				if (prec == 0) {
+					prec = image->comps[compno].prec;
+				}
+				
+				switch (parameters.precision[precno].mode) {
+					case OPJ_PREC_MODE_CLIP:
+						clip_component(&(image->comps[compno]), prec);
+						break;
+					case OPJ_PREC_MODE_SCALE:
+						scale_component(&(image->comps[compno]), prec);
+						break;
+					default:
+						break;
+				}
+				
+			}
 		}
 
 		/* create output image */
@@ -974,6 +1213,7 @@ int main(int argc, char **argv)
 
 		if(failed) remove(parameters.outfile);
 	}
+	destroy_parameters(&parameters);
 	return failed ? EXIT_FAILURE : EXIT_SUCCESS;
 }
 /*end main*/

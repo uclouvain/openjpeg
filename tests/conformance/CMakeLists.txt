@@ -439,6 +439,7 @@ foreach(numFileJP2 RANGE 1 9)
     COMMAND opj_decompress
     -i ${INPUT_CONF}/${filenameInput}
     -o ${TEMP}/${filenameInput}.tif
+    -p 8S
   )
 
   add_test(NAME ETS-JP2-${filenameInput}-compare2ref
