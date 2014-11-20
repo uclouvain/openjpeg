@@ -387,7 +387,15 @@ OPJ_BOOL opj_t2_decode_packets( opj_t2_t *p_t2,
                  * l_current_pi->resno is always >= p_tile->comps[l_current_pi->compno].minimum_num_resolutions
                  * and no l_img_comp->resno_decoded are computed
                  */
-                OPJ_BOOL* first_pass_failed = (OPJ_BOOL*)opj_malloc(l_image->numcomps * sizeof(OPJ_BOOL));
+                OPJ_BOOL* first_pass_failed = NULL;
+					
+                if (l_current_pi->poc.prg == OPJ_PROG_UNKNOWN) {
+                    /* TODO ADE : add an error */
+                    opj_pi_destroy(l_pi, l_nb_pocs);
+                    return OPJ_FALSE;
+                }
+					
+                first_pass_failed = (OPJ_BOOL*)opj_malloc(l_image->numcomps * sizeof(OPJ_BOOL));
                 if (!first_pass_failed)
                 {
                     opj_pi_destroy(l_pi,l_nb_pocs);
@@ -395,11 +403,6 @@ OPJ_BOOL opj_t2_decode_packets( opj_t2_t *p_t2,
                 }
                 memset(first_pass_failed, OPJ_TRUE, l_image->numcomps * sizeof(OPJ_BOOL));
 
-                if (l_current_pi->poc.prg == OPJ_PROG_UNKNOWN) {
-                    /* TODO ADE : add an error */
-                    opj_pi_destroy(l_pi, l_nb_pocs);
-                    return OPJ_FALSE;
-                }
                 while (opj_pi_next(l_current_pi)) {
                   JAS_FPRINTF( stderr, "packet offset=00000166 prg=%d cmptno=%02d rlvlno=%02d prcno=%03d lyrno=%02d\n\n",
                     l_current_pi->poc.prg1, l_current_pi->compno, l_current_pi->resno, l_current_pi->precno, l_current_pi->layno );
