@@ -1042,12 +1042,20 @@ OPJ_BOOL opj_jp2_read_pclr(	opj_jp2_t *jp2,
 	opj_read_bytes(p_pclr_header_data, &l_value , 2);	/* NE */
 	p_pclr_header_data += 2;
 	nr_entries = (OPJ_UINT16) l_value;
+	if ((nr_entries == 0U) || (nr_entries > 1024U)) {
+		opj_event_msg(p_manager, EVT_ERROR, "Invalid PCLR box. Reports %d entries\n", (int)nr_entries);
+		return OPJ_FALSE;
+	}
 
 	opj_read_bytes(p_pclr_header_data, &l_value , 1);	/* NPC */
 	++p_pclr_header_data;
 	nr_channels = (OPJ_UINT16) l_value;
+	if (nr_channels == 0U) {
+		opj_event_msg(p_manager, EVT_ERROR, "Invalid PCLR box. Reports 0 palette columns\n");
+		return OPJ_FALSE;
+	}
 
-	if (p_pclr_header_size < 3 + (OPJ_UINT32)nr_channels || nr_channels == 0 || nr_entries >= (OPJ_UINT32)-1 / nr_channels)
+	if (p_pclr_header_size < 3 + (OPJ_UINT32)nr_channels)
 		return OPJ_FALSE;
 
 	entries = (OPJ_UINT32*) opj_malloc((size_t)nr_channels * nr_entries * sizeof(OPJ_UINT32));
