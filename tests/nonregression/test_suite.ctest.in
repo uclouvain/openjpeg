@@ -225,6 +225,8 @@ opj_decompress -i @INPUT_NR_PATH@/issue411-ycc422.jp2 -o @TEMP_PATH@/issue411-yc
 opj_decompress -i @INPUT_NR_PATH@/issue411-ycc420.jp2 -o @TEMP_PATH@/issue411-ycc420.jp2.pgx
 # issue 429 (from pdfium fuzz engine) 0 entries in PCLR box.
 !opj_decompress -i @INPUT_NR_PATH@/issue429.jp2 -o @TEMP_PATH@/issue429.jp2.pgx
+# issue 432 (from pdfium fuzz engine) Overflow in tcd tilec data size computation.
+!opj_decompress -i @INPUT_NR_PATH@/issue432.jp2 -o @TEMP_PATH@/issue432.jp2.pgx
 
 # decode with specific area
 # prec=12; nb_c=1 

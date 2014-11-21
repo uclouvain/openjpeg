@@ -718,7 +718,19 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
 		l_tilec->y1 = opj_int_ceildiv(l_tile->y1, (OPJ_INT32)l_image_comp->dy);
 		/*fprintf(stderr, "\tTile compo border = %d,%d,%d,%d\n", l_tilec->x0, l_tilec->y0,l_tilec->x1,l_tilec->y1);*/
 		
-		l_data_size = (OPJ_UINT32)(l_tilec->x1 - l_tilec->x0) * (OPJ_UINT32)(l_tilec->y1 - l_tilec->y0) * (OPJ_UINT32)sizeof(OPJ_UINT32 );
+		/* compute l_data_size with overflow check */
+		l_data_size = (OPJ_UINT32)(l_tilec->x1 - l_tilec->x0);
+		if ((((OPJ_UINT32)-1) / l_data_size) < (OPJ_UINT32)(l_tilec->y1 - l_tilec->y0)) {
+			/* TODO event */
+			return OPJ_FALSE;
+		}
+		l_data_size = l_data_size * (OPJ_UINT32)(l_tilec->y1 - l_tilec->y0);
+		
+		if ((((OPJ_UINT32)-1) / (OPJ_UINT32)sizeof(OPJ_UINT32)) < l_data_size) {
+			/* TODO event */
+			return OPJ_FALSE;
+		}
+		l_data_size = l_data_size * (OPJ_UINT32)sizeof(OPJ_UINT32);
 		l_tilec->numresolutions = l_tccp->numresolutions;
 		if (l_tccp->numresolutions < l_cp->m_specific_param.m_dec.m_reduce) {
 			l_tilec->minimum_num_resolutions = 1;
