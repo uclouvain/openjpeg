@@ -440,6 +440,7 @@ foreach(numFileJP2 RANGE 1 9)
     -i ${INPUT_CONF}/${filenameInput}
     -o ${TEMP}/${filenameInput}.tif
     -p 8S
+    -force-rgb
   )
 
   add_test(NAME ETS-JP2-${filenameInput}-compare2ref

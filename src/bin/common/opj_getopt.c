@@ -54,7 +54,7 @@ int opj_opterr = 1,			/* if error message should be printed */
 static char EMSG[]={""};
 
 /* As this class remembers its values from one Java call to the other, reset the values before each use */
-void reset_options_reading(void) {
+void opj_reset_options_reading(void) {
 	opj_opterr = 1;
 	opj_optind = 1;
 }
