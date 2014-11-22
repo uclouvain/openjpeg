@@ -1665,7 +1665,6 @@ static char *skip_idf(char *start, char out_idf[256])
 
 static void read_pnm_header(FILE *reader, struct pnm_header *ph)
 {
-    char *s;
     int format, have_wh, end, ttype;
     char idf[256], type[256];
     char line[256];
@@ -1691,6 +1690,8 @@ static void read_pnm_header(FILE *reader, struct pnm_header *ph)
 
     while(fgets(line, 250, reader))
     {
+        char *s;
+
         if(*line == '#') continue;
 
         s = line;
@@ -1774,7 +1775,18 @@ static void read_pnm_header(FILE *reader, struct pnm_header *ph)
             have_wh = 1;
 
             if(format == 1 || format == 4) break;
-
+					
+            if(format == 2 || format == 3 || format == 5 || format == 6)
+            {
+                if (skip_int(s, &ph->maxval) != NULL) {
+                    if(ph->maxval > 65535) {
+                        return;
+                    }
+                    else {
+                        break;
+                    }
+                }
+            }
             continue;
         }
         if(format == 2 || format == 3 || format == 5 || format == 6)
