@@ -139,7 +139,7 @@ typedef struct opj_decompress_params
 	OPJ_UINT32     nb_precision;
 	
 	/* force output colorspace to RGB */
-	OPJ_BOOL force_rgb;
+	int force_rgb;
 }opj_decompress_parameters;
 
 /* -------------------------------------------------------------------------- */
@@ -492,7 +492,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_decompress_parameters *para
 	opj_option_t long_option[]={
 		{"ImgDir",    REQ_ARG, NULL ,'y'},
 		{"OutFor",    REQ_ARG, NULL ,'O'},
-		{"force-rgb", NO_ARG,  NULL ,'FRGB'}
+		{"force-rgb", NO_ARG,  &(parameters->force_rgb), 1}
 	};
 
 	const char optlist[] = "i:o:r:l:x:d:t:p:"
@@ -511,6 +511,8 @@ int parse_cmdline_decoder(int argc, char **argv, opj_decompress_parameters *para
 		if (c == -1)
 			break;
 		switch (c) {
+			case 0: /* long opt with flag */
+				break;
 			case 'i':			/* input file */
 			{
 				char *infile = opj_optarg;
@@ -686,12 +688,6 @@ int parse_cmdline_decoder(int argc, char **argv, opj_decompress_parameters *para
 					{
 						return 1;
 					}
-				}
-				break;
-				/* ----------------------------------------------------- */
-			case 'FRGB': /* Force RGB output */
-				{
-					parameters->force_rgb = OPJ_TRUE;
 				}
 				break;
 				/* ----------------------------------------------------- */
