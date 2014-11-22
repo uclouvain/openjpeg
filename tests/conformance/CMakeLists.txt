@@ -514,6 +514,7 @@ foreach(kdu_file ${kdu_j2k_conf_files})
     COMMAND opj_decompress
     -i ${INPUT_CONF}/${filenameInput}
     -o ${TEMP}/${filenameInput}.ppm
+    -upsample
   )
 
   if("${kdu_file}" STREQUAL "a6_mono_colr")
