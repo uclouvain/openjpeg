@@ -706,7 +706,7 @@ static OPJ_BYTE * opj_jp2_write_cdef(opj_jp2_t *jp2, OPJ_UINT32 * p_nb_bytes_wri
 	assert(jp2->color.jp2_cdef->info != 00);
 	assert(jp2->color.jp2_cdef->n > 0U);
 
-	l_cdef_size += 6 * jp2->color.jp2_cdef->n;
+	l_cdef_size += 6U * jp2->color.jp2_cdef->n;
 
 	l_cdef_data = (OPJ_BYTE *) opj_malloc(l_cdef_size);
 	if (l_cdef_data == 00) {
@@ -1223,7 +1223,7 @@ void opj_jp2_apply_cdef(opj_image_t *image, opj_jp2_color_t *color)
 			memcpy(&image->comps[acn], &saved, sizeof(opj_image_comp_t));
 			
 			/* Swap channels in following channel definitions, don't bother with j <= i that are already processed */
-			for (j = i + 1; j < n ; ++j)
+			for (j = (OPJ_UINT16)(i + 1U); j < n ; ++j)
 			{
 				if (info[j].cn == cn) {
 					info[j].cn = acn;
