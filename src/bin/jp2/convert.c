@@ -112,9 +112,9 @@ void scale_component(opj_image_comp_t* component, OPJ_UINT32 precision)
 		return;
 	}
 	if (component->prec < precision) {
-		shift = precision - component->prec;
+		shift = (int)(precision - component->prec);
 	} else {
-		shift = component->prec - precision;
+		shift = (int)(component->prec - precision);
 	}
 	len = (OPJ_SIZE_T)component->w * (OPJ_SIZE_T)component->h;
 	
@@ -3078,7 +3078,7 @@ static opj_image_t* rawtoimage_common(const char *filename, opj_cparameters_t *p
     }
     w = raw_cp->rawWidth;
     h = raw_cp->rawHeight;
-    cmptparm = (opj_image_cmptparm_t*) calloc(numcomps,sizeof(opj_image_cmptparm_t));
+    cmptparm = (opj_image_cmptparm_t*) calloc((OPJ_UINT32)numcomps,sizeof(opj_image_cmptparm_t));
     if (!cmptparm) {
         fprintf(stderr, "Failed to allocate image components parameters !!\n");
         fprintf(stderr,"Aborting\n");
