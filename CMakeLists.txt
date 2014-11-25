@@ -11,6 +11,9 @@ cmake_minimum_required(VERSION 2.8.2)
 
 if(COMMAND CMAKE_POLICY)
   cmake_policy(SET CMP0003 NEW)
+  if (NOT (${CMAKE_VERSION} VERSION_LESS 3.0))
+    cmake_policy(SET CMP0042 NEW)
+  endif()
 endif()
 
 if(NOT OPENJPEG_NAMESPACE)
