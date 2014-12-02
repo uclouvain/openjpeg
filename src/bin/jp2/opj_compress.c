@@ -1456,7 +1456,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
     }else{
         if((parameters->infile[0] == 0) || (parameters->outfile[0] == 0)) {
             fprintf(stderr, "[ERROR] Required parameters are missing\n"
-                            "Example: %s -i image.j2k -o image.pgm\n",argv[0]);
+                            "Example: %s -i image.pgm -o image.j2k\n",argv[0]);
             fprintf(stderr, "   Help: %s -h\n",argv[0]);
             return 1;
         }
