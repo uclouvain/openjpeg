@@ -6571,7 +6571,7 @@ OPJ_BOOL opj_j2k_setup_encoder(     opj_j2k_t *p_j2k,
                     }
                 }
                 else {
-                    if(tcp->mct==1 && image->numcomps == 3) { /* RGB->YCC MCT is enabled */
+                    if(tcp->mct==1 && image->numcomps >= 3) { /* RGB->YCC MCT is enabled */
                         if ((image->comps[0].dx != image->comps[1].dx) ||
                                 (image->comps[0].dx != image->comps[2].dx) ||
                                 (image->comps[0].dy != image->comps[1].dy) ||

@@ -265,7 +265,8 @@ static OPJ_FLOAT64 opj_t1_getwmsedec(
 		OPJ_UINT32 qmfbid,
 		OPJ_FLOAT64 stepsize,
 		OPJ_UINT32 numcomps,
-		const OPJ_FLOAT64 * mct_norms);
+		const OPJ_FLOAT64 * mct_norms,
+		OPJ_UINT32 mct_numcomps);
 
 static void opj_t1_encode_cblk( opj_t1_t *t1,
                                 opj_tcd_cblk_enc_t* cblk,
@@ -277,7 +278,8 @@ static void opj_t1_encode_cblk( opj_t1_t *t1,
                                 OPJ_UINT32 cblksty,
                                 OPJ_UINT32 numcomps,
                                 opj_tcd_tile_t * tile,
-                                const OPJ_FLOAT64 * mct_norms);
+                                const OPJ_FLOAT64 * mct_norms,
+                                OPJ_UINT32 mct_numcomps);
 
 /**
 Decode 1 code-block
@@ -1137,12 +1139,13 @@ static OPJ_FLOAT64 opj_t1_getwmsedec(
 		OPJ_UINT32 qmfbid,
 		OPJ_FLOAT64 stepsize,
 		OPJ_UINT32 numcomps,
-		const OPJ_FLOAT64 * mct_norms)
+		const OPJ_FLOAT64 * mct_norms,
+		OPJ_UINT32 mct_numcomps)
 {
 	OPJ_FLOAT64 w1 = 1, w2, wmsedec;
-    OPJ_ARG_NOT_USED(numcomps);
+	OPJ_ARG_NOT_USED(numcomps);
 
-	if (mct_norms) {
+	if (mct_norms && (compno < mct_numcomps)) {
 		w1 = mct_norms[compno];
 	}
 
@@ -1462,7 +1465,8 @@ OPJ_BOOL opj_t1_decode_cblk(opj_t1_t *t1,
 OPJ_BOOL opj_t1_encode_cblks(   opj_t1_t *t1,
                                 opj_tcd_tile_t *tile,
                                 opj_tcp_t *tcp,
-                                const OPJ_FLOAT64 * mct_norms
+                                const OPJ_FLOAT64 * mct_norms,
+                                OPJ_UINT32 mct_numcomps
                                 )
 {
 	OPJ_UINT32 compno, resno, bandno, precno, cblkno;
@@ -1550,7 +1554,8 @@ OPJ_BOOL opj_t1_encode_cblks(   opj_t1_t *t1,
 								tccp->cblksty,
 								tile->numcomps,
 								tile,
-								mct_norms);
+								mct_norms,
+								mct_numcomps);
 
 					} /* cblkno */
 				} /* precno */
@@ -1571,7 +1576,8 @@ void opj_t1_encode_cblk(opj_t1_t *t1,
                         OPJ_UINT32 cblksty,
                         OPJ_UINT32 numcomps,
                         opj_tcd_tile_t * tile,
-                        const OPJ_FLOAT64 * mct_norms)
+                        const OPJ_FLOAT64 * mct_norms,
+                        OPJ_UINT32 mct_numcomps)
 {
 	OPJ_FLOAT64 cumwmsedec = 0.0;
 
@@ -1626,7 +1632,7 @@ void opj_t1_encode_cblk(opj_t1_t *t1,
 		}
 
 		/* fixed_quality */
-		tempwmsedec = opj_t1_getwmsedec(nmsedec, compno, level, orient, bpno, qmfbid, stepsize, numcomps,mct_norms) ;
+		tempwmsedec = opj_t1_getwmsedec(nmsedec, compno, level, orient, bpno, qmfbid, stepsize, numcomps,mct_norms, mct_numcomps) ;
 		cumwmsedec += tempwmsedec;
 		tile->distotile += tempwmsedec;
 
