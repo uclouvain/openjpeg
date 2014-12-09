@@ -1,4 +1,4 @@
-/* $Id: tif_win32.c,v 1.39 2011-12-22 17:07:57 bfriesen Exp $ */
+/* $Id: tif_win32.c,v 1.40 2012-11-18 17:51:52 bfriesen Exp $ */
 
 /*
  * Copyright (c) 1988-1997 Sam Leffler
@@ -329,6 +329,9 @@ TIFFOpenW(const wchar_t* name, const char* mode)
 void*
 _TIFFmalloc(tmsize_t s)
 {
+        if (s == 0)
+                return ((void *) NULL);
+
 	return (malloc((size_t) s));
 }
 
