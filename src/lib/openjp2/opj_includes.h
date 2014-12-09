@@ -136,6 +136,10 @@ static INLINE long lrintf(float f){
 }
 #endif
 
+#if defined(_MSC_VER) && (_MSC_VER < 1400)
+	#define vsnprintf _vsnprintf
+#endif
+
 #include "opj_inttypes.h"
 #include "opj_clock.h"
 #include "opj_malloc.h"

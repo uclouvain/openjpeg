@@ -46,12 +46,11 @@
 #       define M_LOG10E    0.434294481903251827651
 #endif
 
-// BorlandC 5.5 is broken on that
-#ifdef __BORLANDC__
+// BorlandC 5.5 & Visual Studio 2003 are broken on that
+#if defined(__BORLANDC__) || (defined(_MSC_VER) && (_MSC_VER == 1310))
 #define sinf(x) (float)sin((float)x)
 #define sqrtf(x) (float)sqrt((float)x)
 #endif
-
 
 // Alignment of ICC file format uses 4 bytes (cmsUInt32Number)
 #define _cmsSIZEOFLONGMINUS1    (sizeof(cmsUInt32Number)-1)
