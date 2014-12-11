@@ -2907,7 +2907,7 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
 
                         for(i = 0; i < ssize; i += step)
                         {
-                            if((index < imgsize)&(index+1 < imgsize))
+                            if((index < imgsize)&&(index+1 < imgsize))
                             {
                                 image->comps[0].data[index]   = ( dat8[i+0]<<4 )        |(dat8[i+1]>>4);
                                 image->comps[1].data[index]   = ((dat8[i+1]& 0x0f)<< 8) | dat8[i+2];
