@@ -87,15 +87,16 @@ typedef struct opj_tcd_layer {
 FIXME DOC
 */
 typedef struct opj_tcd_cblk_enc {
-	OPJ_BYTE* data;					/* Data */
-	opj_tcd_layer_t* layers;		/* layer information */
-	opj_tcd_pass_t* passes;		/* information about the passes */
-	OPJ_INT32 x0, y0, x1, y1;		/* dimension of the code-blocks : left upper corner (x0, y0) right low corner (x1,y1) */
+	OPJ_BYTE* data;               /* Data */
+	opj_tcd_layer_t* layers;      /* layer information */
+	opj_tcd_pass_t* passes;       /* information about the passes */
+	OPJ_INT32 x0, y0, x1, y1;     /* dimension of the code-blocks : left upper corner (x0, y0) right low corner (x1,y1) */
 	OPJ_UINT32 numbps;
 	OPJ_UINT32 numlenbits;
-	OPJ_UINT32 numpasses;			/* number of pass already done for the code-blocks */
-	OPJ_UINT32 numpassesinlayers;	/* number of passes in the layer */
-	OPJ_UINT32 totalpasses;			/* total number of passes */
+	OPJ_UINT32 data_size;         /* Size of allocated data buffer */
+	OPJ_UINT32 numpasses;         /* number of pass already done for the code-blocks */
+	OPJ_UINT32 numpassesinlayers; /* number of passes in the layer */
+	OPJ_UINT32 totalpasses;	      /* total number of passes */
 } opj_tcd_cblk_enc_t;
 
 
@@ -105,7 +106,7 @@ typedef struct opj_tcd_cblk_dec {
 	OPJ_INT32 x0, y0, x1, y1;		/* position of the code-blocks : left upper corner (x0, y0) right low corner (x1,y1) */
 	OPJ_UINT32 numbps;
 	OPJ_UINT32 numlenbits;
-    OPJ_UINT32 data_max_size;		/* Size of allocated data buffer */
+	OPJ_UINT32 data_max_size;		/* Size of allocated data buffer */
 	OPJ_UINT32 data_current_size;	/* Size of used data buffer */
 	OPJ_UINT32 numnewpasses;		/* number of pass added to the code-blocks */
 	OPJ_UINT32 numsegs;				/* number of segments */

@@ -120,9 +120,14 @@ static OPJ_BOOL opj_tcd_code_block_dec_allocate (opj_tcd_cblk_dec_t * p_code_blo
 static void opj_tcd_code_block_dec_deallocate (opj_tcd_precinct_t * p_precinct);
 
 /**
- * Allocates memory for an encoding code block.
+ * Allocates memory for an encoding code block (but not data).
  */
 static OPJ_BOOL opj_tcd_code_block_enc_allocate (opj_tcd_cblk_enc_t * p_code_block);
+
+/**
+ * Allocates data for an encoding code block
+ */
+static OPJ_BOOL opj_tcd_code_block_enc_allocate_data (opj_tcd_cblk_enc_t * p_code_block);
 
 /**
  * Deallocates the encoding data of the given precinct.
@@ -1004,6 +1009,10 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
 							l_code_block->y0 = opj_int_max(cblkystart, l_current_precinct->y0);
 							l_code_block->x1 = opj_int_min(cblkxend, l_current_precinct->x1);
 							l_code_block->y1 = opj_int_min(cblkyend, l_current_precinct->y1);
+							
+							if (! opj_tcd_code_block_enc_allocate_data(l_code_block)) {
+								return OPJ_FALSE;
+							}
 						} else {
 							opj_tcd_cblk_dec_t* l_code_block = l_current_precinct->cblks.dec + cblkno;
 							
@@ -1043,39 +1052,56 @@ OPJ_BOOL opj_tcd_init_decode_tile (opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no)
 }
 
 /**
- * Allocates memory for an encoding code block.
+ * Allocates memory for an encoding code block (but not data memory).
  */
-OPJ_BOOL opj_tcd_code_block_enc_allocate (opj_tcd_cblk_enc_t * p_code_block)
+static OPJ_BOOL opj_tcd_code_block_enc_allocate (opj_tcd_cblk_enc_t * p_code_block)
 {
-        if (! p_code_block->data) {
+	if (! p_code_block->layers) {
+		/* no memset since data */
+		p_code_block->layers = (opj_tcd_layer_t*) opj_calloc(100, sizeof(opj_tcd_layer_t));
+		if (! p_code_block->layers) {
+			return OPJ_FALSE;
+		}
+	}
+	if (! p_code_block->passes) {
+		p_code_block->passes = (opj_tcd_pass_t*) opj_calloc(100, sizeof(opj_tcd_pass_t));
+		if (! p_code_block->passes) {
+			return OPJ_FALSE;
+		}
+	}
+	return OPJ_TRUE;
+}
 
-                p_code_block->data = (OPJ_BYTE*) opj_malloc(OPJ_J2K_DEFAULT_CBLK_DATA_SIZE*2); /*why +1 ?*/
-                if(! p_code_block->data) {
-                        return OPJ_FALSE;
-                }
-
-                p_code_block->data[0] = 0;
-                p_code_block->data+=1;
-
-                /* no memset since data */
-                p_code_block->layers = (opj_tcd_layer_t*) opj_calloc(100, sizeof(opj_tcd_layer_t));
-                if (! p_code_block->layers) {
-                        return OPJ_FALSE;
-                }
-
-                p_code_block->passes = (opj_tcd_pass_t*) opj_calloc(100, sizeof(opj_tcd_pass_t));
-                if (! p_code_block->passes) {
-                        return OPJ_FALSE;
-                }
-        }
-
-        return OPJ_TRUE;
+/**
+ * Allocates data memory for an encoding code block.
+ */
+static OPJ_BOOL opj_tcd_code_block_enc_allocate_data (opj_tcd_cblk_enc_t * p_code_block)
+{
+	OPJ_UINT32 l_data_size;
+	
+	l_data_size = (p_code_block->x1 - p_code_block->x0) * (p_code_block->y1 - p_code_block->y0) * sizeof(OPJ_UINT32);
+	
+	if (l_data_size > p_code_block->data_size) {
+		if (p_code_block->data) {
+			opj_free(p_code_block->data - 1); /* again, why -1 */
+		}
+		p_code_block->data = (OPJ_BYTE*) opj_malloc(l_data_size);
+		if(! p_code_block->data) {
+			p_code_block->data_size = 0U;
+			return OPJ_FALSE;
+		}
+		p_code_block->data_size = l_data_size;
+		
+		p_code_block->data[0] = 0;
+		p_code_block->data+=1;   /*why +1 ?*/
+	}
+	return OPJ_TRUE;
 }
 
 /**
  * Allocates memory for a decoding code block.
  */
-OPJ_BOOL opj_tcd_code_block_dec_allocate (opj_tcd_cblk_dec_t * p_code_block)
+static OPJ_BOOL opj_tcd_code_block_dec_allocate (opj_tcd_cblk_dec_t * p_code_block)
 {
         if (! p_code_block->data) {
 
