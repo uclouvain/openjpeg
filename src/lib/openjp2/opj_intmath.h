@@ -166,7 +166,7 @@ Multiply two fixed-precision rational numbers.
 */
 static INLINE OPJ_INT32 opj_int_fix_mul(OPJ_INT32 a, OPJ_INT32 b) {
     OPJ_INT64 temp = (OPJ_INT64) a * (OPJ_INT64) b ;
-    temp += temp & 4096;
+    temp += 4096;
     return (OPJ_INT32) (temp >> 13) ;
 }
 
