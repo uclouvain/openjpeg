@@ -1919,7 +1919,7 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
         OPJ_UINT32 l_nb_comp_remain;
         OPJ_UINT32 l_remaining_size;
         OPJ_UINT32 l_nb_tiles;
-        OPJ_UINT32 l_tmp;
+        OPJ_UINT32 l_tmp, l_tx1, l_ty1;
         opj_image_t *l_image = 00;
         opj_cp_t *l_cp = 00;
         opj_image_comp_t * l_img_comp = 00;
@@ -1995,6 +1995,20 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
         /* testcase 1610.pdf.SIGSEGV.59c.681 */
         if (((OPJ_UINT64)l_image->x1) * ((OPJ_UINT64)l_image->y1) != (l_image->x1 * l_image->y1)) {
                 opj_event_msg(p_manager, EVT_ERROR, "Prevent buffer overflow (x1: %d, y1: %d)\n", l_image->x1, l_image->y1);
+                return OPJ_FALSE;
+        }
+
+        /* testcase issue427-illegal-tile-offset.jp2 */
+        l_tx1 = l_cp->tx0 + l_cp->tdx;
+        if (l_tx1 < l_cp->tx0) { /* manage overflow */
+                l_tx1 = 0xFFFFFFFFU;
+        }
+        l_ty1 = l_cp->ty0 + l_cp->tdy;
+        if (l_ty1 < l_cp->ty0) { /* manage overflow */
+                l_ty1 = 0xFFFFFFFFU;
+        }
+        if ((l_cp->tx0 > l_image->x0) || (l_cp->ty0 > l_image->y0) || (l_tx1 <= l_image->x0) || (l_ty1 <= l_image->y0) ) {
+                opj_event_msg(p_manager, EVT_ERROR, "Error with SIZ marker: illegal tile offset\n");
                 return OPJ_FALSE;
         }
 
