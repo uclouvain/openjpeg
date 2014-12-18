@@ -43,6 +43,7 @@ set(BLACKLIST_JPEG2000_TMP
     edf_c2_1674177.jp2
     edf_c2_1673169.jp2
     issue429.jp2
+    issue427-null-image-size.jp2
    )
 
 # Define a list of file which should be gracefully rejected:
