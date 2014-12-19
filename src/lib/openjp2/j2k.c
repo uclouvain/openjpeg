@@ -7074,21 +7074,20 @@ OPJ_BOOL opj_j2k_encoding_validation (  opj_j2k_t * p_j2k,
         /* make sure a validation list is present */
         l_is_valid &= (p_j2k->m_validation_list != 00);
 
-	      /* ISO 15444-1:2004 states between 1 & 33 (0 -> 32) */
-	      /* 33 (32) would always fail the 2 checks below (if a cast to 64bits was done) */
-	      /* 32 (31) would always fail the 2 checks below (if a cast to 64bits was done) */
-        /* FIXME Shall we change OPJ_J2K_MAXRLVLS to 31 ? */
-        if ((p_j2k->m_cp.tcps->tccps->numresolutions <= 0) || (p_j2k->m_cp.tcps->tccps->numresolutions > 31)) {
+        /* ISO 15444-1:2004 states between 1 & 33 (0 -> 32) */
+        /* 33 (32) would always fail the check below (if a cast to 64bits was done) */
+        /* FIXME Shall we change OPJ_J2K_MAXRLVLS to 32 ? */
+        if ((p_j2k->m_cp.tcps->tccps->numresolutions <= 0) || (p_j2k->m_cp.tcps->tccps->numresolutions > 32)) {
                 opj_event_msg(p_manager, EVT_ERROR, "Number of resolutions is too high in comparison to the size of tiles\n");
                 return OPJ_FALSE;
         }
 
-        if ((p_j2k->m_cp.tdx) < (OPJ_UINT32) (1 << p_j2k->m_cp.tcps->tccps->numresolutions)) {
+        if ((p_j2k->m_cp.tdx) < (OPJ_UINT32) (1 << (p_j2k->m_cp.tcps->tccps->numresolutions - 1U))) {
                 opj_event_msg(p_manager, EVT_ERROR, "Number of resolutions is too high in comparison to the size of tiles\n");
                 return OPJ_FALSE;
         }
 
-        if ((p_j2k->m_cp.tdy) < (OPJ_UINT32) (1 << p_j2k->m_cp.tcps->tccps->numresolutions)) {
+        if ((p_j2k->m_cp.tdy) < (OPJ_UINT32) (1 << (p_j2k->m_cp.tcps->tccps->numresolutions - 1U))) {
                 opj_event_msg(p_manager, EVT_ERROR, "Number of resolutions is too high in comparison to the size of tiles\n");
                 return OPJ_FALSE;
         }
