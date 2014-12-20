@@ -1534,9 +1534,9 @@ OPJ_BOOL opj_t1_encode_cblks(   opj_t1_t *t1,
 								for (i = 0; i < cblk_w; ++i) {
 									OPJ_INT32 tmp = tiledp[tileIndex];
 									tiledp[tileIndex] =
-										opj_int_fix_mul(
+										opj_int_fix_mul_t1(
 										tmp,
-										bandconst) >> (11 - T1_NMSEDEC_FRACBITS);
+										bandconst);
 									tileIndex++;
 								}
 								tileIndex += tileLineAdvance;
