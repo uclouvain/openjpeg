@@ -50,6 +50,7 @@ opj_compress -i @INPUT_NR_PATH@/issue316.png -o @TEMP_PATH@/issue316.png.jp2
 opj_compress -i @INPUT_NR_PATH@/basn6a08.png -o @TEMP_PATH@/basn6a08.png.jp2 -n 6
 # issue 203 BMP Files not handled properly
 opj_compress -i @INPUT_NR_PATH@/issue203-8bpp-width1.bmp -o @TEMP_PATH@/issue203-8bpp-width1.bmp.jp2
+opj_compress -i @INPUT_NR_PATH@/issue203-rle8.bmp -o @TEMP_PATH@/issue203-rle8.bmp.jp2
 
 # DECODER TEST SUITE
 opj_decompress -i  @INPUT_NR_PATH@/Bretagne2.j2k -o @TEMP_PATH@/Bretagne2.j2k.pgx
