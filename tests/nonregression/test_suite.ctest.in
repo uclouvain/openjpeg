@@ -40,8 +40,8 @@ opj_compress -i @INPUT_NR_PATH@/X_5_2K_24_235_CBR_STEM24_000.tif -o @TEMP_PATH@/
 opj_compress -i @INPUT_NR_PATH@/X_6_2K_24_FULL_CBR_CIRCLE_000.tif -o @TEMP_PATH@/X_6_2K_24_FULL_CBR_CIRCLE_000_C2K_48.j2k -cinema2K 48
 opj_compress -i @INPUT_NR_PATH@/ElephantDream_4K.tif -o @TEMP_PATH@/ElephantDream_4K_C4K.j2k -cinema4K
 # issue 141
-opj_compress -i @INPUT_NR_PATH@/issue141.rawl -o @TEMP_PATH@/issue141.rawl.j2k  -F 2048,2816,1,16,u
-opj_compress -i @INPUT_NR_PATH@/issue141.rawl -o @TEMP_PATH@/issue141.rawl.j2k  -F 2048,2816,1,16,u -I
+opj_compress -i @INPUT_NR_PATH@/issue141.rawl -o @TEMP_PATH@/issue141.rawl.j2k   -F 2048,32,1,16,u
+opj_compress -i @INPUT_NR_PATH@/issue141.rawl -o @TEMP_PATH@/issue141-I.rawl.j2k -F 2048,32,1,16,u -I
 # issue 46:
 opj_compress -i @INPUT_NR_PATH@/Bretagne2.ppm -o @TEMP_PATH@/Bretagne2_0.j2k -c [64,64]
 # issue 316
@@ -85,7 +85,7 @@ opj_decompress -i  @INPUT_NR_PATH@/text_GBR.jp2 -o @TEMP_PATH@/text_GBR.jp2.pgx
 opj_decompress -i  @INPUT_NR_PATH@/pacs.ge.j2k -o @TEMP_PATH@/pacs.ge.j2k.pgx
 # related to issue 135 
 opj_decompress -i  @INPUT_NR_PATH@/kodak_2layers_lrcp.j2c -o @TEMP_PATH@/kodak_2layers_lrcp.j2c.pgx
-opj_decompress -i  @INPUT_NR_PATH@/kodak_2layers_lrcp.j2c -o @TEMP_PATH@/kodak_2layers_lrcp.j2c.pgx -l 2
+opj_decompress -i  @INPUT_NR_PATH@/kodak_2layers_lrcp.j2c -o @TEMP_PATH@/kodak_2layers_lrcp-l2.j2c.pgx -l 2
 # related to issue 104 and 110
 opj_decompress -i  @INPUT_NR_PATH@/issue104_jpxstream.jp2 -o @TEMP_PATH@/issue104_jpxstream.jp2.pgx
 # File not supported by kakadu (Malformed PCLR box) and not supoprter by openjpeg (problem with value of TPSot)

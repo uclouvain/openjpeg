@@ -57,6 +57,9 @@ ea926520f990640862f3fe6616097613  j2k32.j2k_2.pgx
 12a8a4668315d9ae27969991251ce85f  kodak_2layers_lrcp.j2c_0.pgx
 56d0b0c547d6d5bb12f0c36e88722b11  kodak_2layers_lrcp.j2c_1.pgx
 48ba092fb40090c160bbd08bdf7bdbf2  kodak_2layers_lrcp.j2c_2.pgx
+12a8a4668315d9ae27969991251ce85f  kodak_2layers_lrcp-l2.j2c_0.pgx
+56d0b0c547d6d5bb12f0c36e88722b11  kodak_2layers_lrcp-l2.j2c_1.pgx
+48ba092fb40090c160bbd08bdf7bdbf2  kodak_2layers_lrcp-l2.j2c_2.pgx
 05c062aca83d13b8095460f38a690a08  MarkerIsNotCompliant.j2k_0.pgx
 ff73d2bd32951d9e55b02186aac24aff  Marrin.jp2_0.pgx
 55ce884dd2346af6a5172a434ee578fa  Marrin.jp2_1.pgx
