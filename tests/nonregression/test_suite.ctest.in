@@ -54,7 +54,7 @@ opj_decompress -i  @INPUT_NR_PATH@/Bretagne2.j2k -o @TEMP_PATH@/Bretagne2.j2k.pg
 opj_decompress -i  @INPUT_NR_PATH@/_00042.j2k -o @TEMP_PATH@/_00042.j2k.pgx
 opj_decompress -i  @INPUT_NR_PATH@/123.j2c -o @TEMP_PATH@/123.j2c.pgx
 # The 4 following tests should failed (kakadu indicates that they are corrupted)
-!opj_decompress -i  @INPUT_NR_PATH@/broken.jp2 -o @TEMP_PATH@/broken.jp2.pgx
+!opj_decompress -i  @INPUT_NR_PATH@/broken1.jp2 -o @TEMP_PATH@/broken1.jp2.pgx
 !opj_decompress -i  @INPUT_NR_PATH@/broken2.jp2 -o @TEMP_PATH@/broken2.jp2.pgx
 !opj_decompress -i  @INPUT_NR_PATH@/broken3.jp2 -o @TEMP_PATH@/broken3.jp2.pgx
 !opj_decompress -i  @INPUT_NR_PATH@/broken4.jp2 -o @TEMP_PATH@/broken4.jp2.pgx

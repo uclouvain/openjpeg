@@ -50,7 +50,7 @@ set(BLACKLIST_JPEG2000_TMP
 # Define a list of file which should be gracefully rejected:
 set(BLACKLIST_JPEG2000
     ${BLACKLIST_JPEG2000_TMP}
-    broken.jp2 
+    broken1.jp2 
     broken2.jp2
     broken3.jp2
     broken4.jp2
@@ -70,6 +70,8 @@ set(BLACKLIST_JPEG2000
     issue393.jp2 #kdu_jp2info ok
     issue408.jp2 #kdu_jp2info ok
     issue420.jp2 #kdu_jp2info ok
+    27ac957758a35d00d6765a0c86350d9c.SIGFPE.d25.537.jpc #kdu_jp2info crash
+    3672da2f1f67bbecad27d7181b4e9d7c.SIGFPE.d25.805.jpc #kdu_jp2info crash
    )
 
 file(GLOB_RECURSE OPJ_DATA_NR_LIST
