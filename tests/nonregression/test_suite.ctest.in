@@ -71,6 +71,8 @@ opj_compress -i @INPUT_NR_PATH@/issue203-32x32-bgra16.bmp -o @TEMP_PATH@/issue20
 opj_compress -i @INPUT_NR_PATH@/issue203-33x33-bgra16.bmp -o @TEMP_PATH@/issue203-33x33-bgra16.bmp.jp2
 opj_compress -i @INPUT_NR_PATH@/issue203-32x32-bgrx16.bmp -o @TEMP_PATH@/issue203-32x32-bgrx16.bmp.jp2
 opj_compress -i @INPUT_NR_PATH@/issue203-33x33-bgrx16.bmp -o @TEMP_PATH@/issue203-33x33-bgrx16.bmp.jp2
+opj_compress -i @INPUT_NR_PATH@/issue203-127x64-bgr16.bmp -o @TEMP_PATH@/issue203-127x64-bgr16.bmp.jp2
+opj_compress -i @INPUT_NR_PATH@/issue203-127x64-bgrx.bmp -o @TEMP_PATH@/issue203-127x64-bgrx.bmp.jp2
 
 # DECODER TEST SUITE
 opj_decompress -i  @INPUT_NR_PATH@/Bretagne2.j2k -o @TEMP_PATH@/Bretagne2.j2k.pgx

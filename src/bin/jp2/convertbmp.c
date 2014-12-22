@@ -661,7 +661,7 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
 		}
 	} else {
 		numcmpts = 3U;
-		if (Info_h.biAlphaMask != 0U) {
+		if ((Info_h.biCompression == 3) && (Info_h.biAlphaMask != 0U)) {
 			numcmpts++;
 		}
 	}
@@ -745,10 +745,21 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
 	else if (Info_h.biBitCount == 4 && Info_h.biCompression == 2) { /*RLE4*/
 		bmp8toimage(IN, pData, stride, image, pLUT); /* RLE 4 gets decoded as 8 bits data for now */
 	}
+	else if (Info_h.biBitCount == 32 && Info_h.biCompression == 0) { /* RGBX */
+		bmpmask32toimage(IN, pData, stride, image, 0x00FF0000U, 0x0000FF00U, 0x000000FFU, 0x00000000U);
+	}
 	else if (Info_h.biBitCount == 32 && Info_h.biCompression == 3) { /* bitmask */
 		bmpmask32toimage(IN, pData, stride, image, Info_h.biRedMask, Info_h.biGreenMask, Info_h.biBlueMask, Info_h.biAlphaMask);
 	}
+	else if (Info_h.biBitCount == 16 && Info_h.biCompression == 0) { /* RGBX */
+		bmpmask16toimage(IN, pData, stride, image, 0x7C00U, 0x03E0U, 0x001FU, 0x0000U);
+	}
 	else if (Info_h.biBitCount == 16 && Info_h.biCompression == 3) { /* bitmask */
+		if ((Info_h.biRedMask == 0U) && (Info_h.biGreenMask == 0U) && (Info_h.biBlueMask == 0U)) {
+			Info_h.biRedMask   = 0xF800U;
+			Info_h.biGreenMask = 0x07E0U;
+			Info_h.biBlueMask  = 0x001FU;
+		}
 		bmpmask16toimage(IN, pData, stride, image, Info_h.biRedMask, Info_h.biGreenMask, Info_h.biBlueMask, Info_h.biAlphaMask);
 	}
 	else {
