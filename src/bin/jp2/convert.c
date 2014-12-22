@@ -102,43 +102,51 @@ void clip_component(opj_image_comp_t* component, OPJ_UINT32 precision)
 }
 
 /* Component precision scaling */
+static void scale_component_up(opj_image_comp_t* component, OPJ_UINT32 precision)
+{
+	OPJ_SIZE_T i, len;
+	
+	len = (OPJ_SIZE_T)component->w * (OPJ_SIZE_T)component->h;
+	if (component->sgnd) {
+		OPJ_INT64  newMax = (1U << (precision - 1));
+		OPJ_INT64  oldMax = (1U << (component->prec - 1));
+		OPJ_INT32* l_data = component->data;
+		for (i = 0; i < len; ++i) {
+			l_data[i] = (OPJ_INT32)(((OPJ_INT64)l_data[i] * newMax) / oldMax);
+		}
+	} else {
+		OPJ_UINT64  newMax = (1U << precision) - 1U;
+		OPJ_UINT64  oldMax = (1U << component->prec) - 1U;
+		OPJ_UINT32* l_data = (OPJ_UINT32*)component->data;
+		for (i = 0; i < len; ++i) {
+			l_data[i] = (OPJ_UINT32)(((OPJ_UINT64)l_data[i] * newMax) / oldMax);
+		}
+	}
+	component->prec = precision;
+}
 void scale_component(opj_image_comp_t* component, OPJ_UINT32 precision)
 {
 	int shift;
-	OPJ_SIZE_T i;
-	OPJ_SIZE_T len;
+	OPJ_SIZE_T i, len;
 	
 	if (component->prec == precision) {
 		return;
 	}
 	if (component->prec < precision) {
-		shift = (int)(precision - component->prec);
-	} else {
-		shift = (int)(component->prec - precision);
+		scale_component_up(component, precision);
+		return;
 	}
+	shift = (int)(component->prec - precision);
 	len = (OPJ_SIZE_T)component->w * (OPJ_SIZE_T)component->h;
-	
 	if (component->sgnd) {
 		OPJ_INT32* l_data = component->data;
-		if (component->prec < precision) {
-			for (i = 0; i < len; ++i) {
-				l_data[i] <<= shift;
-			}
-		} else {
-			for (i = 0; i < len; ++i) {
-				l_data[i] >>= shift;
-			}
+		for (i = 0; i < len; ++i) {
+			l_data[i] >>= shift;
 		}
 	} else {
 		OPJ_UINT32* l_data = (OPJ_UINT32*)component->data;
-		if (component->prec < precision) {
-			for (i = 0; i < len; ++i) {
-				l_data[i] <<= shift;
-			}
-		} else {
-			for (i = 0; i < len; ++i) {
-				l_data[i] >>= shift;
-			}
+		for (i = 0; i < len; ++i) {
+			l_data[i] >>= shift;
 		}
 	}
 	component->prec = precision;

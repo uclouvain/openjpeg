@@ -258,6 +258,9 @@ opj_decompress -i @INPUT_NR_PATH@/issue411-ycc420.jp2 -o @TEMP_PATH@/issue411-yc
 !opj_decompress -i @INPUT_NR_PATH@/issue427-null-image-size.jp2 -o @TEMP_PATH@/issue427-null-image-size.jp2.pgx
 # issue 427 illegal tile offset
 !opj_decompress -i @INPUT_NR_PATH@/issue427-illegal-tile-offset.jp2 -o @TEMP_PATH@/issue427-illegal-tile-offset.jp2.pgx
+# issue 458 component precision upscaling
+opj_decompress -i @INPUT_NR_PATH@/issue458.jp2 -o @TEMP_PATH@/issue458.jp2.pgx
+
 
 # decode with specific area
 # prec=12; nb_c=1 

@@ -175,3 +175,7 @@ d5ecef537edf294af83826763c0cf860  issue411-ycc422.jp2_1.pgx
 07480962d25b3d8cce18096648963c8a  issue411-ycc420.jp2_0.pgx
 149a69831b42401f20b8f7492ef99d97  issue411-ycc420.jp2_1.pgx
 ec8d1c99db9763a8ba489df4f41dda53  issue411-ycc420.jp2_2.pgx
+3c7ff2e4bdae849167be36589f32bcd5  issue458.jp2_0.pgx
+f004b48eafb2e52529cc9c7b6a3ff5d2  issue458.jp2_1.pgx
+3127bd0a591d113c3c2428c8d2c14ec8  issue458.jp2_2.pgx
+dacaf60e4c430916a8c2a9ebec32e71c  issue458.jp2_3.pgx
