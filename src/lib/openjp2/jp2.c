@@ -1969,7 +1969,7 @@ OPJ_BOOL opj_jp2_default_validation (	opj_jp2_t * jp2,
 	l_is_valid &= (jp2->w > 0);
 	/* precision */
 	for (i = 0; i < jp2->numcomps; ++i)	{
-		l_is_valid &= (jp2->comps[i].bpcc > 0);
+		l_is_valid &= ((jp2->comps[i].bpcc & 0x7FU) < 38U); /* 0 is valid, ignore sign for check */
 	}
 
 	/* METH */
