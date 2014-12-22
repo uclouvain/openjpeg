@@ -43,7 +43,7 @@ opj_compress -i @INPUT_NR_PATH@/ElephantDream_4K.tif -o @TEMP_PATH@/ElephantDrea
 opj_compress -i @INPUT_NR_PATH@/issue141.rawl -o @TEMP_PATH@/issue141.rawl.j2k   -F 2048,32,1,16,u
 opj_compress -i @INPUT_NR_PATH@/issue141.rawl -o @TEMP_PATH@/issue141-I.rawl.j2k -F 2048,32,1,16,u -I
 # issue 46:
-opj_compress -i @INPUT_NR_PATH@/Bretagne2.ppm -o @TEMP_PATH@/Bretagne2_0.j2k -c [64,64]
+opj_compress -i @INPUT_NR_PATH@/Bretagne2.ppm -o @TEMP_PATH@/Bretagne2_5.j2k -c [64,64]
 # issue 316
 opj_compress -i @INPUT_NR_PATH@/issue316.png -o @TEMP_PATH@/issue316.png.jp2
 # issue 416 (cdef for png with alpha) + issue 436 (MCT norm read buffer overflow for num comp > 3 + Issue 215 number of decomp levels
@@ -51,6 +51,26 @@ opj_compress -i @INPUT_NR_PATH@/basn6a08.png -o @TEMP_PATH@/basn6a08.png.jp2 -n 
 # issue 203 BMP Files not handled properly
 opj_compress -i @INPUT_NR_PATH@/issue203-8bpp-width1.bmp -o @TEMP_PATH@/issue203-8bpp-width1.bmp.jp2
 opj_compress -i @INPUT_NR_PATH@/issue203-rle8.bmp -o @TEMP_PATH@/issue203-rle8.bmp.jp2
+opj_compress -i @INPUT_NR_PATH@/issue203-32x32-y8.bmp -o @TEMP_PATH@/issue203-32x32-y8.bmp.jp2
+opj_compress -i @INPUT_NR_PATH@/issue203-33x33-y8.bmp -o @TEMP_PATH@/issue203-33x33-y8.bmp.jp2
+opj_compress -i @INPUT_NR_PATH@/issue203-34x34-y8.bmp -o @TEMP_PATH@/issue203-34x34-y8.bmp.jp2
+opj_compress -i @INPUT_NR_PATH@/issue203-35x35-y8.bmp -o @TEMP_PATH@/issue203-35x35-y8.bmp.jp2
+opj_compress -i @INPUT_NR_PATH@/issue203-32x32-bgr.bmp -o @TEMP_PATH@/issue203-32x32-bgr.bmp.jp2
+opj_compress -i @INPUT_NR_PATH@/issue203-33x33-bgr.bmp -o @TEMP_PATH@/issue203-33x33-bgr.bmp.jp2
+opj_compress -i @INPUT_NR_PATH@/issue203-34x34-bgr.bmp -o @TEMP_PATH@/issue203-34x34-bgr.bmp.jp2
+opj_compress -i @INPUT_NR_PATH@/issue203-35x35-bgr.bmp -o @TEMP_PATH@/issue203-35x35-bgr.bmp.jp2
+opj_compress -i @INPUT_NR_PATH@/issue203-32x32-y-rle8.bmp -o @TEMP_PATH@/issue203-32x32-y-rle8.bmp.jp2
+opj_compress -i @INPUT_NR_PATH@/issue203-32x32-bgr-rle8.bmp -o @TEMP_PATH@/issue203-32x32-bgr-rle8.bmp.jp2
+opj_compress -i @INPUT_NR_PATH@/issue203-32x32-y-rle4.bmp -o @TEMP_PATH@/issue203-32x32-y-rle4.bmp.jp2
+opj_compress -i @INPUT_NR_PATH@/issue203-32x32-bgr-rle4.bmp -o @TEMP_PATH@/issue203-32x32-bgr-rle4.bmp.jp2
+opj_compress -i @INPUT_NR_PATH@/issue203-32x32-bgra.bmp -o @TEMP_PATH@/issue203-32x32-bgra.bmp.jp2
+opj_compress -i @INPUT_NR_PATH@/issue203-32x32-bgrx.bmp -o @TEMP_PATH@/issue203-32x32-bgrx.bmp.jp2
+opj_compress -i @INPUT_NR_PATH@/issue203-32x32-bgr16.bmp -o @TEMP_PATH@/issue203-32x32-bgr16.bmp.jp2
+opj_compress -i @INPUT_NR_PATH@/issue203-33x33-bgr16.bmp -o @TEMP_PATH@/issue203-33x33-bgr16.bmp.jp2
+opj_compress -i @INPUT_NR_PATH@/issue203-32x32-bgra16.bmp -o @TEMP_PATH@/issue203-32x32-bgra16.bmp.jp2
+opj_compress -i @INPUT_NR_PATH@/issue203-33x33-bgra16.bmp -o @TEMP_PATH@/issue203-33x33-bgra16.bmp.jp2
+opj_compress -i @INPUT_NR_PATH@/issue203-32x32-bgrx16.bmp -o @TEMP_PATH@/issue203-32x32-bgrx16.bmp.jp2
+opj_compress -i @INPUT_NR_PATH@/issue203-33x33-bgrx16.bmp -o @TEMP_PATH@/issue203-33x33-bgrx16.bmp.jp2
 
 # DECODER TEST SUITE
 opj_decompress -i  @INPUT_NR_PATH@/Bretagne2.j2k -o @TEMP_PATH@/Bretagne2.j2k.pgx
