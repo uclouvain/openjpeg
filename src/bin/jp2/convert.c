@@ -2586,7 +2586,7 @@ static int imagetoraw_common(opj_image_t * image, const char *outfile, OPJ_BOOL 
                 for (line = 0; line < h; line++) {
                     for(row = 0; row < w; row++)	{
                         curr = *ptr;
-                        if(curr > 65536 ) curr = 65536; else if( curr < 0) curr = 0;
+                        if(curr > 65535 ) curr = 65535; else if( curr < 0) curr = 0;
                         uc16.val = (unsigned short)(curr & mask);
                         res = fwrite(uc16.vals, 1, 2, rawFile);
                         if( res < 2 ) {
