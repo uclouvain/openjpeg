@@ -169,12 +169,10 @@ OPJ_UINT32 opj_bio_read(opj_bio_t *bio, OPJ_UINT32 n) {
 }
 
 OPJ_BOOL opj_bio_flush(opj_bio_t *bio) {
-	bio->ct = 0;
 	if (! opj_bio_byteout(bio)) {
 		return OPJ_FALSE;
 	}
 	if (bio->ct == 7) {
-		bio->ct = 0;
 		if (! opj_bio_byteout(bio)) {
 			return OPJ_FALSE;
 		}
@@ -183,12 +181,11 @@ OPJ_BOOL opj_bio_flush(opj_bio_t *bio) {
 }
 
 OPJ_BOOL opj_bio_inalign(opj_bio_t *bio) {
-	bio->ct = 0;
 	if ((bio->buf & 0xff) == 0xff) {
 		if (! opj_bio_bytein(bio)) {
 			return OPJ_FALSE;
 		}
-		bio->ct = 0;
 	}
+	bio->ct = 0;
 	return OPJ_TRUE;
 }
