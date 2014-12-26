@@ -1235,7 +1235,7 @@ int main(int argc, char **argv)
 
 		/* Setup the decoder decoding parameters using user parameters */
 		if ( !opj_setup_decoder(l_codec, &(parameters.core)) ){
-			fprintf(stderr, "ERROR -> opj_compress: failed to setup the decoder\n");
+			fprintf(stderr, "ERROR -> opj_decompress: failed to setup the decoder\n");
 			destroy_parameters(&parameters);
 			opj_stream_destroy(l_stream);
 			opj_destroy_codec(l_codec);
