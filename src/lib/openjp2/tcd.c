@@ -701,10 +701,11 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
 	/*fprintf(stderr, "Tile coordinate = %d,%d\n", p, q);*/
 	
 	/* 4 borders of the tile rescale on the image if necessary */
-	l_tile->x0 = opj_int_max((OPJ_INT32)(l_cp->tx0 + p * l_cp->tdx), (OPJ_INT32)l_image->x0);
-	l_tile->y0 = opj_int_max((OPJ_INT32)(l_cp->ty0 + q * l_cp->tdy), (OPJ_INT32)l_image->y0);
-	l_tile->x1 = opj_int_min((OPJ_INT32)(l_cp->tx0 + (p + 1) * l_cp->tdx), (OPJ_INT32)l_image->x1);
-	l_tile->y1 = opj_int_min((OPJ_INT32)(l_cp->ty0 + (q + 1) * l_cp->tdy), (OPJ_INT32)l_image->y1);
+	l_tile->x0 = (OPJ_INT32)opj_uint_max(l_cp->tx0 + p * l_cp->tdx, l_image->x0);
+	l_tile->y0 = (OPJ_INT32)opj_uint_max(l_cp->ty0 + q * l_cp->tdy, l_image->y0);
+	l_tile->x1 = (OPJ_INT32)opj_uint_min(l_cp->tx0 + (p + 1) * l_cp->tdx, l_image->x1);
+	l_tile->y1 = (OPJ_INT32)opj_uint_min(l_cp->ty0 + (q + 1) * l_cp->tdy, l_image->y1);
+
 	/* testcase 1888.pdf.asan.35.988 */
 	if (l_tccp->numresolutions == 0) {
 		fprintf(stderr, "tiles require at least one resolution\n");
