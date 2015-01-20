@@ -2066,6 +2066,16 @@ OPJ_BOOL opj_jp2_read_header_procedure(  opj_jp2_t *jp2,
 			}
 		}
 		else {
+            if (!(jp2->jp2_state & JP2_STATE_SIGNATURE)) {
+                opj_event_msg(p_manager, EVT_ERROR, "Malformed JP2 file format: first box must be JPEG 2000 signature box\n");
+                opj_free(l_current_data);
+                return OPJ_FALSE;
+            }
+            if (!(jp2->jp2_state & JP2_STATE_FILE_TYPE)) {
+                opj_event_msg(p_manager, EVT_ERROR, "Malformed JP2 file format: second box must be file type box\n");
+                opj_free(l_current_data);
+                return OPJ_FALSE;
+            }
 			jp2->jp2_state |= JP2_STATE_UNKNOWN;
 			if (opj_stream_skip(stream,l_current_data_size,p_manager) != l_current_data_size) {
 				opj_event_msg(p_manager, EVT_ERROR, "Problem with skipping JPEG2000 box, stream error\n");
