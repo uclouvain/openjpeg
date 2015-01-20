@@ -5236,6 +5236,7 @@ static OPJ_BOOL opj_j2k_read_mct (      opj_j2k_t *p_j2k,
                 }
 
                 l_mct_data = l_tcp->m_mct_records + l_tcp->m_nb_mct_records;
+                ++l_tcp->m_nb_mct_records;
         }
 
         if (l_mct_data->m_data) {
@@ -5264,7 +5265,6 @@ static OPJ_BOOL opj_j2k_read_mct (      opj_j2k_t *p_j2k,
         memcpy(l_mct_data->m_data,p_header_data,p_header_size);
 
         l_mct_data->m_data_size = p_header_size;
-        ++l_tcp->m_nb_mct_records;
 
         return OPJ_TRUE;
 }
@@ -7165,7 +7165,7 @@ OPJ_BOOL opj_j2k_read_header_procedure( opj_j2k_t *p_j2k,
 
                 /* Check if the current marker ID is valid */
                 if (l_current_marker < 0xff00) {
-                        opj_event_msg(p_manager, EVT_ERROR, "We expected read a marker ID (0xff--) instead of %.8x\n", l_current_marker);
+                        opj_event_msg(p_manager, EVT_ERROR, "A marker ID was expected (0xff--) instead of %.8x\n", l_current_marker);
                         return OPJ_FALSE;
                 }
 
