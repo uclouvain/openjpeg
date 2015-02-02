@@ -403,6 +403,12 @@ int get_file_format(const char *filename) {
 	return -1;
 }
 
+#ifdef _WIN32
+const char* path_separator = "\\";
+#else
+const char* path_separator = "/";
+#endif
+
 /* -------------------------------------------------------------------------- */
 char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_decompress_parameters *parameters){
 	char image_filename[OPJ_PATH_LEN], infilename[OPJ_PATH_LEN],outfilename[OPJ_PATH_LEN],temp_ofname[OPJ_PATH_LEN];
@@ -410,10 +416,10 @@ char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_decompre
 
 	strcpy(image_filename,dirptr->filename[imageno]);
 	fprintf(stderr,"File Number %d \"%s\"\n",imageno,image_filename);
-	parameters->decod_format = infile_format(image_filename);
+	sprintf(infilename, "%s%s%s", img_fol->imgdirpath, path_separator, image_filename);
+	parameters->decod_format = infile_format(infilename);
 	if (parameters->decod_format == -1)
 		return 1;
-	sprintf(infilename,"%s/%s",img_fol->imgdirpath,image_filename);
 	strncpy(parameters->infile, infilename, sizeof(infilename));
 
 	/*Set output file*/
