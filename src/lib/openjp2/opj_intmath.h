@@ -82,6 +82,15 @@ static INLINE OPJ_UINT32 opj_uint_max(OPJ_UINT32  a, OPJ_UINT32  b) {
 }
 
 /**
+ Get the saturated sum of two unsigned integers
+ @return Returns saturated sum of a+b
+ */
+static INLINE OPJ_UINT32 opj_uint_adds(OPJ_UINT32 a, OPJ_UINT32 b) {
+	OPJ_UINT64 sum = (OPJ_UINT64)a + (OPJ_UINT64)b;
+	return -(OPJ_UINT32)(sum >> 32) | (OPJ_UINT32)sum;
+}
+
+/**
 Clamp an integer inside an interval
 @return
 <ul>

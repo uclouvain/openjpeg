@@ -675,6 +675,7 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
 	OPJ_UINT32 l_pdx, l_pdy;
 	OPJ_UINT32 l_gain;
 	OPJ_INT32 l_x0b, l_y0b;
+	OPJ_UINT32 l_tx0, l_ty0;
 	/* extent of precincts , top left, bottom right**/
 	OPJ_INT32 l_tl_prc_x_start, l_tl_prc_y_start, l_br_prc_x_end, l_br_prc_y_end;
 	/* number of precinct for a resolution */
@@ -701,10 +702,12 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
 	/*fprintf(stderr, "Tile coordinate = %d,%d\n", p, q);*/
 	
 	/* 4 borders of the tile rescale on the image if necessary */
-	l_tile->x0 = (OPJ_INT32)opj_uint_max(l_cp->tx0 + p * l_cp->tdx, l_image->x0);
-	l_tile->y0 = (OPJ_INT32)opj_uint_max(l_cp->ty0 + q * l_cp->tdy, l_image->y0);
-	l_tile->x1 = (OPJ_INT32)opj_uint_min(l_cp->tx0 + (p + 1) * l_cp->tdx, l_image->x1);
-	l_tile->y1 = (OPJ_INT32)opj_uint_min(l_cp->ty0 + (q + 1) * l_cp->tdy, l_image->y1);
+	l_tx0 = l_cp->tx0 + p * l_cp->tdx; /* can't be greater than l_image->x1 so won't overflow */
+	l_tile->x0 = (OPJ_INT32)opj_uint_max(l_tx0, l_image->x0);
+	l_tile->x1 = (OPJ_INT32)opj_uint_min(opj_uint_adds(l_tx0, l_cp->tdx), l_image->x1);
+	l_ty0 = l_cp->ty0 + q * l_cp->tdy; /* can't be greater than l_image->y1 so won't overflow */
+	l_tile->y0 = (OPJ_INT32)opj_uint_max(l_ty0, l_image->y0);
+	l_tile->y1 = (OPJ_INT32)opj_uint_min(opj_uint_adds(l_ty0, l_cp->tdy), l_image->y1);
 
 	/* testcase 1888.pdf.asan.35.988 */
 	if (l_tccp->numresolutions == 0) {
