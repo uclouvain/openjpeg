@@ -780,12 +780,32 @@ static OPJ_BOOL opj_j2k_write_sot(      opj_j2k_t *p_j2k,
                                                                         opj_event_mgr_t * p_manager );
 
 /**
- * Reads a PPT marker (Packed packet headers, tile-part header)
+ * Reads values from a SOT marker (Start of tile-part)
  *
- * @param       p_header_data   the data contained in the PPT box.
- * @param       p_j2k                   the jpeg2000 codec.
+ * the j2k decoder state is not affected. No side effects, no checks except for p_header_size.
+ *
+ * @param       p_header_data   the data contained in the SOT marker.
+ * @param       p_header_size   the size of the data contained in the SOT marker.
+ * @param       p_tile_no       Isot.
+ * @param       p_tot_len       Psot.
+ * @param       p_current_part  TPsot.
+ * @param       p_num_parts     TNsot.
+ * @param       p_manager       the user event manager.
+ */
+static OPJ_BOOL opj_j2k_get_sot_values(OPJ_BYTE *  p_header_data,
+																			 OPJ_UINT32  p_header_size,
+																			 OPJ_UINT32* p_tile_no,
+																			 OPJ_UINT32* p_tot_len,
+																			 OPJ_UINT32* p_current_part,
+																			 OPJ_UINT32* p_num_parts,
+																			 opj_event_mgr_t * p_manager );
+/**
+ * Reads a SOT marker (Start of tile-part)
+ *
+ * @param       p_header_data   the data contained in the SOT marker.
+ * @param       p_j2k           the jpeg2000 codec.
  * @param       p_header_size   the size of the data contained in the PPT marker.
- * @param       p_manager               the user event manager.
+ * @param       p_manager       the user event manager.
 */
 static OPJ_BOOL opj_j2k_read_sot (  opj_j2k_t *p_j2k,
                                     OPJ_BYTE * p_header_data,
@@ -1178,6 +1198,18 @@ static int opj_j2k_initialise_4K_poc(opj_poc_t *POC, int numres);
 static void opj_j2k_set_cinema_parameters(opj_cparameters_t *parameters, opj_image_t *image, opj_event_mgr_t *p_manager);
 
 static OPJ_BOOL opj_j2k_is_cinema_compliant(opj_image_t *image, OPJ_UINT16 rsiz, opj_event_mgr_t *p_manager);
+
+/**
+ * Checks for invalid number of tile-parts in SOT marker (TPsot==TNsot). See issue 254.
+ *
+ * @param       p_stream            the stream to read data from.
+ * @param       tile_no             tile number we're looking for.
+ * @param       p_correction_needed output value. if true, non conformant codestream needs TNsot correction.
+ * @param       p_manager       the user event manager.
+ *
+ * @return true if the function was successful, false else.
+ */
+static OPJ_BOOL opj_j2k_need_nb_tile_parts_correction(opj_stream_private_t *p_stream, OPJ_UINT32 tile_no, OPJ_BOOL* p_correction_needed, opj_event_mgr_t * p_manager );
 
 /*@}*/
 
@@ -4006,6 +4038,35 @@ OPJ_BOOL opj_j2k_write_sot(     opj_j2k_t *p_j2k,
         return OPJ_TRUE;
 }
 
+static OPJ_BOOL opj_j2k_get_sot_values(OPJ_BYTE *  p_header_data,
+																			 OPJ_UINT32  p_header_size,
+																			 OPJ_UINT32* p_tile_no,
+																			 OPJ_UINT32* p_tot_len,
+																			 OPJ_UINT32* p_current_part,
+																			 OPJ_UINT32* p_num_parts,
+																			 opj_event_mgr_t * p_manager )
+{
+	/* preconditions */
+	assert(p_header_data != 00);
+	assert(p_manager != 00);
+	
+	/* Size of this marker is fixed = 12 (we have already read marker and its size)*/
+	if (p_header_size != 8) {
+		opj_event_msg(p_manager, EVT_ERROR, "Error reading SOT marker\n");
+		return OPJ_FALSE;
+	}
+	
+	opj_read_bytes(p_header_data,p_tile_no,2);      /* Isot */
+	p_header_data+=2;
+	opj_read_bytes(p_header_data,p_tot_len,4);      /* Psot */
+	p_header_data+=4;
+	opj_read_bytes(p_header_data,p_current_part,1); /* TPsot */
+	++p_header_data;
+	opj_read_bytes(p_header_data,p_num_parts ,1);   /* TNsot */
+	++p_header_data;
+	return OPJ_TRUE;
+}
+
 OPJ_BOOL opj_j2k_read_sot ( opj_j2k_t *p_j2k,
                             OPJ_BYTE * p_header_data,
                             OPJ_UINT32 p_header_size,
@@ -4018,19 +4079,16 @@ OPJ_BOOL opj_j2k_read_sot ( opj_j2k_t *p_j2k,
         OPJ_UINT32 l_tile_x,l_tile_y;
 
         /* preconditions */
-        assert(p_header_data != 00);
+	
         assert(p_j2k != 00);
         assert(p_manager != 00);
-
-        /* Size of this marker is fixed = 12 (we have already read marker and its size)*/
-        if (p_header_size != 8) {
+	
+        if (! opj_j2k_get_sot_values(p_header_data, p_header_size, &(p_j2k->m_current_tile_number), &l_tot_len, &l_current_part, &l_num_parts, p_manager)) {
                 opj_event_msg(p_manager, EVT_ERROR, "Error reading SOT marker\n");
                 return OPJ_FALSE;
         }
 
         l_cp = &(p_j2k->m_cp);
-        opj_read_bytes(p_header_data,&(p_j2k->m_current_tile_number),2);                /* Isot */
-        p_header_data+=2;
 
         /* testcase 2.pdf.SIGFPE.706.1112 */
         if (p_j2k->m_current_tile_number >= l_cp->tw * l_cp->th) {
@@ -4072,9 +4130,6 @@ OPJ_BOOL opj_j2k_read_sot ( opj_j2k_t *p_j2k,
         /* look for the tile in the list of already processed tile (in parts). */
         /* Optimization possible here with a more complex data structure and with the removing of tiles */
         /* since the time taken by this function can only grow at the time */
-
-        opj_read_bytes(p_header_data,&l_tot_len,4);             /* Psot */
-        p_header_data+=4;
 
         /* PSot should be equal to zero or >=14 or <= 2^32-1 */
         if ((l_tot_len !=0 ) && (l_tot_len < 14) )
@@ -4118,13 +4173,8 @@ OPJ_BOOL opj_j2k_read_sot ( opj_j2k_t *p_j2k,
                         p_j2k->m_specific_param.m_decoder.m_last_tile_part = 1;
                 }
 
-                opj_read_bytes(p_header_data,&l_current_part ,1);       /* TPsot */
-                ++p_header_data;
-
-                opj_read_bytes(p_header_data,&l_num_parts ,1);          /* TNsot */
-                ++p_header_data;
-
                 if (l_num_parts != 0) { /* Number of tile-part header is provided by this tile-part header */
+                        l_num_parts += p_j2k->m_specific_param.m_decoder.m_nb_tile_parts_correction;
                         /* Useful to manage the case of textGBR.jp2 file because two values of TNSot are allowed: the correct numbers of
                          * tile-parts for that tile and zero (A.4.2 of 15444-1 : 2002). */
                         if (l_tcp->m_nb_tile_parts) {
@@ -7658,6 +7708,104 @@ void opj_j2k_cp_destroy (opj_cp_t *p_cp)
         }
 }
 
+static OPJ_BOOL opj_j2k_need_nb_tile_parts_correction(opj_stream_private_t *p_stream, OPJ_UINT32 tile_no, OPJ_BOOL* p_correction_needed, opj_event_mgr_t * p_manager )
+{
+	OPJ_BYTE   l_header_data[10];
+	OPJ_OFF_T  l_stream_pos_backup;
+	OPJ_UINT32 l_current_marker;
+	OPJ_UINT32 l_marker_size;
+	OPJ_UINT32 l_tile_no, l_tot_len, l_current_part, l_num_parts;
+	
+	/* initialize to no correction needed */
+	*p_correction_needed = OPJ_FALSE;
+	
+	l_stream_pos_backup = opj_stream_tell(p_stream);
+	if (l_stream_pos_backup == -1) {
+		/* let's do nothing */
+		return OPJ_TRUE;
+	}
+	
+	for (;;) {
+		/* Try to read 2 bytes (the next marker ID) from stream and copy them into the buffer */
+		if (opj_stream_read_data(p_stream,l_header_data, 2, p_manager) != 2) {
+			/* assume all is OK */
+			if (! opj_stream_seek(p_stream, l_stream_pos_backup, p_manager)) {
+				return OPJ_FALSE;
+			}
+			return OPJ_TRUE;
+		}
+		
+		/* Read 2 bytes from buffer as the new marker ID */
+		opj_read_bytes(l_header_data, &l_current_marker, 2);
+		
+		if (l_current_marker != J2K_MS_SOT) {
+			/* assume all is OK */
+			if (! opj_stream_seek(p_stream, l_stream_pos_backup, p_manager)) {
+				return OPJ_FALSE;
+			}
+			return OPJ_TRUE;
+		}
+		
+		/* Try to read 2 bytes (the marker size) from stream and copy them into the buffer */
+		if (opj_stream_read_data(p_stream, l_header_data, 2, p_manager) != 2) {
+			opj_event_msg(p_manager, EVT_ERROR, "Stream too short\n");
+			return OPJ_FALSE;
+		}
+		
+		/* Read 2 bytes from the buffer as the marker size */
+		opj_read_bytes(l_header_data, &l_marker_size, 2);
+		
+		/* Check marker size for SOT Marker */
+		if (l_marker_size != 10) {
+			opj_event_msg(p_manager, EVT_ERROR, "Inconsistent marker size\n");
+			return OPJ_FALSE;
+		}
+		l_marker_size -= 2;
+		
+		if (opj_stream_read_data(p_stream, l_header_data, l_marker_size, p_manager) != l_marker_size) {
+			opj_event_msg(p_manager, EVT_ERROR, "Stream too short\n");
+			return OPJ_FALSE;
+		}
+		
+		if (! opj_j2k_get_sot_values(l_header_data, l_marker_size, &l_tile_no, &l_tot_len, &l_current_part, &l_num_parts, p_manager)) {
+			return OPJ_FALSE;
+		}
+		
+		if (l_tile_no == tile_no) {
+			/* we found what we were looking for */
+			break;
+		}
+		
+		if ((l_tot_len == 0U) || (l_tot_len < 14U)) {
+			/* last SOT until EOC or invalid Psot value */
+			/* assume all is OK */
+			if (! opj_stream_seek(p_stream, l_stream_pos_backup, p_manager)) {
+				return OPJ_FALSE;
+			}
+			return OPJ_TRUE;
+		}
+		l_tot_len -= 12U;
+		/* look for next SOT marker */
+		if (opj_stream_skip(p_stream, (OPJ_OFF_T)(l_tot_len), p_manager) != (OPJ_OFF_T)(l_tot_len)) {
+			/* assume all is OK */
+			if (! opj_stream_seek(p_stream, l_stream_pos_backup, p_manager)) {
+				return OPJ_FALSE;
+			}
+			return OPJ_TRUE;
+		}
+	}
+	
+	/* check for correction */
+	if (l_current_part == l_num_parts) {
+		*p_correction_needed = OPJ_TRUE;
+	}
+	
+	if (! opj_stream_seek(p_stream, l_stream_pos_backup, p_manager)) {
+		return OPJ_FALSE;
+	}
+	return OPJ_TRUE;
+}
+
 OPJ_BOOL opj_j2k_read_tile_header(      opj_j2k_t * p_j2k,
                                                                     OPJ_UINT32 * p_tile_index,
                                                                     OPJ_UINT32 * p_data_size,
@@ -7822,7 +7970,30 @@ OPJ_BOOL opj_j2k_read_tile_header(      opj_j2k_t * p_j2k,
                         if (! opj_j2k_read_sod(p_j2k, p_stream, p_manager)) {
                                 return OPJ_FALSE;
                         }
+                        if (p_j2k->m_specific_param.m_decoder.m_can_decode && !p_j2k->m_specific_param.m_decoder.m_nb_tile_parts_correction_checked) {
+                                /* Issue 254 */
+                                OPJ_BOOL l_correction_needed;
+													
+                                p_j2k->m_specific_param.m_decoder.m_nb_tile_parts_correction_checked = 1;
+                                if(!opj_j2k_need_nb_tile_parts_correction(p_stream, p_j2k->m_current_tile_number, &l_correction_needed, p_manager)) {
+                                        opj_event_msg(p_manager, EVT_ERROR, "opj_j2k_apply_nb_tile_parts_correction error\n");
+                                        return OPJ_FALSE;
+                                }
+                                if (l_correction_needed) {
+                                        OPJ_UINT32 l_nb_tiles = p_j2k->m_cp.tw * p_j2k->m_cp.th;
+                                        OPJ_UINT32 l_tile_no;
 
+                                        p_j2k->m_specific_param.m_decoder.m_can_decode = 0;
+                                        p_j2k->m_specific_param.m_decoder.m_nb_tile_parts_correction = 1;
+                                        /* correct tiles */
+                                        for (l_tile_no = 0U; l_tile_no < l_nb_tiles; ++l_tile_no) {
+                                                if (p_j2k->m_cp.tcps[l_tile_no].m_nb_tile_parts != 0U) {
+                                                        p_j2k->m_cp.tcps[l_tile_no].m_nb_tile_parts+=1;
+                                                }
+                                        }
+                                        opj_event_msg(p_manager, EVT_WARNING, "Non conformant codestream TPsot==TNsot.\n");
+                                }
+                        }
                         if (! p_j2k->m_specific_param.m_decoder.m_can_decode){
                                 /* Try to read 2 bytes (the next marker ID) from stream and copy them into the buffer */
                                 if (opj_stream_read_data(p_stream,p_j2k->m_specific_param.m_decoder.m_header_data,2,p_manager) != 2) {

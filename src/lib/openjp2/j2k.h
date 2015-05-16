@@ -481,6 +481,9 @@ typedef struct opj_j2k_dec
 	OPJ_UINT32 m_can_decode			: 1;
 	OPJ_UINT32 m_discard_tiles		: 1;
 	OPJ_UINT32 m_skip_data			: 1;
+	/** TNsot correction : see issue 254 **/
+	OPJ_UINT32 m_nb_tile_parts_correction_checked : 1;
+	OPJ_UINT32 m_nb_tile_parts_correction : 1;
 
 } opj_j2k_dec_t;
 
@@ -567,7 +570,6 @@ typedef struct opj_j2k
 
 	/** the current tile coder/decoder **/
 	struct opj_tcd *	m_tcd;
-
 }
 opj_j2k_t;
 
