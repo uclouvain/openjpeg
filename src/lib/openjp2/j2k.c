@@ -8158,10 +8158,10 @@ OPJ_BOOL opj_j2k_update_image_data (opj_tcd_t * p_tcd, OPJ_BYTE * p_data, opj_im
         OPJ_UINT32 l_width_src,l_height_src;
         OPJ_UINT32 l_width_dest,l_height_dest;
         OPJ_INT32 l_offset_x0_src, l_offset_y0_src, l_offset_x1_src, l_offset_y1_src;
-        size_t l_start_offset_src, l_line_offset_src, l_end_offset_src ;
+        OPJ_INT32 l_start_offset_src, l_line_offset_src, l_end_offset_src ;
         OPJ_UINT32 l_start_x_dest , l_start_y_dest;
         OPJ_UINT32 l_x0_dest, l_y0_dest, l_x1_dest, l_y1_dest;
-        size_t l_start_offset_dest, l_line_offset_dest;
+        OPJ_INT32 l_start_offset_dest, l_line_offset_dest;
 
         opj_image_comp_t * l_img_comp_src = 00;
         opj_image_comp_t * l_img_comp_dest = 00;
@@ -8183,7 +8183,7 @@ OPJ_BOOL opj_j2k_update_image_data (opj_tcd_t * p_tcd, OPJ_BYTE * p_data, opj_im
                 /* Allocate output component buffer if necessary */
                 if (!l_img_comp_dest->data) {
 
-                        l_img_comp_dest->data = (OPJ_INT32*) opj_calloc((size_t)l_img_comp_dest->w * (size_t)l_img_comp_dest->h, sizeof(OPJ_INT32));
+                        l_img_comp_dest->data = (OPJ_INT32*) opj_calloc(l_img_comp_dest->w * l_img_comp_dest->h, sizeof(OPJ_INT32));
                         if (! l_img_comp_dest->data) {
                                 return OPJ_FALSE;
                         }
@@ -8250,7 +8250,7 @@ OPJ_BOOL opj_j2k_update_image_data (opj_tcd_t * p_tcd, OPJ_BYTE * p_data, opj_im
                         }
                 }
                 else {
-                        l_start_x_dest = 0U;
+                        l_start_x_dest = 0 ;
                         l_offset_x0_src = (OPJ_INT32)l_x0_dest - l_res->x0;
 
                         if ( l_x1_dest >= (OPJ_UINT32)l_res->x1 ) {
@@ -8277,7 +8277,7 @@ OPJ_BOOL opj_j2k_update_image_data (opj_tcd_t * p_tcd, OPJ_BYTE * p_data, opj_im
                         }
                 }
                 else {
-                        l_start_y_dest = 0U;
+                        l_start_y_dest = 0 ;
                         l_offset_y0_src = (OPJ_INT32)l_y0_dest - l_res->y0;
 
                         if ( l_y1_dest >= (OPJ_UINT32)l_res->y1 ) {
@@ -8300,13 +8300,13 @@ OPJ_BOOL opj_j2k_update_image_data (opj_tcd_t * p_tcd, OPJ_BYTE * p_data, opj_im
                 /*-----*/
 
                 /* Compute the input buffer offset */
-                l_start_offset_src = (size_t)l_offset_x0_src + (size_t)l_offset_y0_src * (size_t)l_width_src;
-                l_line_offset_src  = (size_t)l_offset_x1_src + (size_t)l_offset_x0_src;
-                l_end_offset_src   = (size_t)l_offset_y1_src * (size_t)l_width_src - (size_t)l_offset_x0_src;
+                l_start_offset_src = l_offset_x0_src + l_offset_y0_src * (OPJ_INT32)l_width_src;
+                l_line_offset_src = l_offset_x1_src + l_offset_x0_src;
+                l_end_offset_src = l_offset_y1_src * (OPJ_INT32)l_width_src - l_offset_x0_src;
 
                 /* Compute the output buffer offset */
-                l_start_offset_dest = (size_t)l_start_x_dest + (size_t)l_start_y_dest * (size_t)l_img_comp_dest->w;
-                l_line_offset_dest  = (size_t)l_img_comp_dest->w - (size_t)l_width_dest;
+                l_start_offset_dest = (OPJ_INT32)(l_start_x_dest + l_start_y_dest * l_img_comp_dest->w);
+                l_line_offset_dest = (OPJ_INT32)(l_img_comp_dest->w - l_width_dest);
 
                 /* Move the output buffer to the first place where we will write*/
                 l_dest_ptr = l_img_comp_dest->data + l_start_offset_dest;
@@ -9790,7 +9790,7 @@ OPJ_BOOL opj_j2k_decode(opj_j2k_t * p_j2k,
 
         if (!p_image)
                 return OPJ_FALSE;
-	
+
         p_j2k->m_output_image = opj_image_create0();
         if (! (p_j2k->m_output_image)) {
                 return OPJ_FALSE;
