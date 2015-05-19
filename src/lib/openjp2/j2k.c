@@ -2431,7 +2431,14 @@ static OPJ_BOOL opj_j2k_read_cod (  opj_j2k_t *p_j2k,
         l_tcp = (p_j2k->m_specific_param.m_decoder.m_state == J2K_STATE_TPH) ?
                                 &l_cp->tcps[p_j2k->m_current_tile_number] :
                                 p_j2k->m_specific_param.m_decoder.m_default_tcp;
-
+	
+        /* Only one COD per tile */
+        if (l_tcp->cod) {
+                opj_event_msg(p_manager, EVT_ERROR, "COD marker already read. No more than one COD marker per tile.\n");
+                return OPJ_FALSE;
+        }
+        l_tcp->cod = 1;
+	
         /* Make sure room is sufficient */
         if (p_header_size < 5) {
                 opj_event_msg(p_manager, EVT_ERROR, "Error reading COD marker\n");
@@ -7350,6 +7357,7 @@ static OPJ_BOOL opj_j2k_copy_default_tcp_and_create_tcd (       opj_j2k_t * p_j2
                 /*Copy default coding parameters into the current tile coding parameters*/
                 memcpy(l_tcp, l_default_tcp, sizeof(opj_tcp_t));
                 /* Initialize some values of the current tile coding parameters*/
+                l_tcp->cod = 0;
                 l_tcp->ppt = 0;
                 l_tcp->ppt_data = 00;
                 /* Reconnect the tile-compo coding parameters pointer to the current tile coding parameters*/

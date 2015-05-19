@@ -260,6 +260,8 @@ opj_decompress -i @INPUT_NR_PATH@/issue411-ycc420.jp2 -o @TEMP_PATH@/issue411-yc
 !opj_decompress -i @INPUT_NR_PATH@/issue427-illegal-tile-offset.jp2 -o @TEMP_PATH@/issue427-illegal-tile-offset.jp2.pgx
 # issue 458 component precision upscaling
 opj_decompress -i @INPUT_NR_PATH@/issue458.jp2 -o @TEMP_PATH@/issue458.jp2.pgx
+# issue 476 Multiple COD in MH
+!opj_decompress -i @INPUT_NR_PATH@/issue476.jp2 -o @TEMP_PATH@/issue476.jp2.pgx
 
 
 # decode with specific area
