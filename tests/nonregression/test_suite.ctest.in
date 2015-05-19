@@ -262,6 +262,8 @@ opj_decompress -i @INPUT_NR_PATH@/issue411-ycc420.jp2 -o @TEMP_PATH@/issue411-yc
 opj_decompress -i @INPUT_NR_PATH@/issue458.jp2 -o @TEMP_PATH@/issue458.jp2.pgx
 # issue 476 Multiple COD in MH
 !opj_decompress -i @INPUT_NR_PATH@/issue476.jp2 -o @TEMP_PATH@/issue476.jp2.pgx
+# issue 475 Invalid number of layers
+!opj_decompress -i @INPUT_NR_PATH@/issue475.jp2 -o @TEMP_PATH@/issue475.jp2.pgx
 
 
 # decode with specific area

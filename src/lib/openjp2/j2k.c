@@ -2462,6 +2462,11 @@ static OPJ_BOOL opj_j2k_read_cod (  opj_j2k_t *p_j2k,
         }
         opj_read_bytes(p_header_data,&l_tcp->numlayers,2);      /* SGcod (B) */
         p_header_data+=2;
+	
+        if ((l_tcp->numlayers < 1U) || (l_tcp->numlayers > 65535U)) {
+                opj_event_msg(p_manager, EVT_ERROR, "Invalid number of layers in COD marker : %d not in range [1-65535]\n", l_tcp->numlayers);
+                return OPJ_FALSE;
+        }
 
         /* If user didn't set a number layer to decode take the max specify in the codestream. */
         if      (l_cp->m_specific_param.m_dec.m_layer) {
@@ -8630,6 +8635,12 @@ OPJ_BOOL opj_j2k_read_SPCod_SPCoc(  opj_j2k_t *p_j2k,
         opj_read_bytes(l_current_ptr,&l_tccp->cblkh ,1);                /* SPcoc (F) */
         ++l_current_ptr;
         l_tccp->cblkh += 2;
+
+        if ((l_tccp->cblkw > 10) || (l_tccp->cblkh > 10) || ((l_tccp->cblkw + l_tccp->cblkh) > 12)) {
+                opj_event_msg(p_manager, EVT_ERROR, "Error reading SPCod SPCoc element, Invalid cblkw/cblkh combination\n");
+                return OPJ_FALSE;
+        }
+	
 
         opj_read_bytes(l_current_ptr,&l_tccp->cblksty ,1);              /* SPcoc (G) */
         ++l_current_ptr;
