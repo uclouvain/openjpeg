@@ -179,3 +179,6 @@ ec8d1c99db9763a8ba489df4f41dda53  issue411-ycc420.jp2_2.pgx
 f004b48eafb2e52529cc9c7b6a3ff5d2  issue458.jp2_1.pgx
 3127bd0a591d113c3c2428c8d2c14ec8  issue458.jp2_2.pgx
 dacaf60e4c430916a8c2a9ebec32e71c  issue458.jp2_3.pgx
+d33fb5dbddb9b9b4438eb51fa27445a3  issue495.jp2_0.pgx
+27db8c35e12a5d5eb94d403d2aae2909  issue495.jp2_1.pgx
+97da625d2f2d0b75bf891d8083ce8bfb  issue495.jp2_2.pgx
