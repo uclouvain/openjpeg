@@ -1768,7 +1768,12 @@ int main(int argc, char **argv) {
             parameters.cp_tdx = 512;
             parameters.cp_tdy = 512;
         }
-        opj_setup_encoder(l_codec, &parameters, image);
+        if (! opj_setup_encoder(l_codec, &parameters, image)) {
+            fprintf(stderr, "failed to encode image: opj_setup_encoder\n");
+            opj_destroy_codec(l_codec);
+            opj_image_destroy(image);
+            return 1;
+        }
 
         /* open a byte stream for writing and allocate memory for all tiles */
         l_stream = opj_stream_create_default_file_stream(parameters.outfile,OPJ_FALSE);
