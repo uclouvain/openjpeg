@@ -293,6 +293,8 @@ typedef struct opj_tcp
 
 
 	/***** FLAGS *******/
+	/** If cod == 1 --> there was a COD marker for the present tile */
+	OPJ_UINT32 cod : 1;
 	/** If ppt == 1 --> there was a PPT marker for the present tile */
 	OPJ_UINT32 ppt : 1;
 	/** indicates if a POC marker has been used O:NO, 1:YES */

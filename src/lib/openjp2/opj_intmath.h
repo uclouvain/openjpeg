@@ -137,6 +137,15 @@ Divide an integer by a power of 2 and round upwards
 static INLINE OPJ_INT32 opj_int_ceildivpow2(OPJ_INT32 a, OPJ_INT32 b) {
 	return (OPJ_INT32)((a + (OPJ_INT64)(1 << b) - 1) >> b);
 }
+
+/**
+ Divide an integer by a power of 2 and round upwards
+ @return Returns a divided by 2^b
+ */
+static INLINE OPJ_UINT32 opj_uint_ceildivpow2(OPJ_UINT32 a, OPJ_UINT32 b) {
+	return (OPJ_UINT32)((a + (OPJ_UINT64)(1U << b) - 1U) >> b);
+}
+
 /**
 Divide an integer by a power of 2 and round downwards
 @return Returns a divided by 2^b

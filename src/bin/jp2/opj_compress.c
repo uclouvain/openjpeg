@@ -699,7 +699,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
             OPJ_UINT32 numlayers = 0, numresolution = 0, matrix_width = 0;
 
             char *s = opj_optarg;
-            sscanf(s, "%ud", &numlayers);
+            sscanf(s, "%u", &numlayers);
             s++;
             if (numlayers > 9)
                 s++;
@@ -871,7 +871,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
             char *s = opj_optarg;
             POC = parameters->POC;
 
-            while (sscanf(s, "T%ud=%ud,%ud,%ud,%ud,%ud,%4s", &POC[numpocs].tile,
+            while (sscanf(s, "T%u=%u,%u,%u,%u,%u,%4s", &POC[numpocs].tile,
                           &POC[numpocs].resno0, &POC[numpocs].compno0,
                           &POC[numpocs].layno1, &POC[numpocs].resno1,
                           &POC[numpocs].compno1, POC[numpocs].progorder) == 7) {
@@ -1768,7 +1768,12 @@ int main(int argc, char **argv) {
             parameters.cp_tdx = 512;
             parameters.cp_tdy = 512;
         }
-        opj_setup_encoder(l_codec, &parameters, image);
+        if (! opj_setup_encoder(l_codec, &parameters, image)) {
+            fprintf(stderr, "failed to encode image: opj_setup_encoder\n");
+            opj_destroy_codec(l_codec);
+            opj_image_destroy(image);
+            return 1;
+        }
 
         /* open a byte stream for writing and allocate memory for all tiles */
         l_stream = opj_stream_create_default_file_stream(parameters.outfile,OPJ_FALSE);

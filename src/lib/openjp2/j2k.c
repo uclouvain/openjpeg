@@ -2463,7 +2463,14 @@ static OPJ_BOOL opj_j2k_read_cod (  opj_j2k_t *p_j2k,
         l_tcp = (p_j2k->m_specific_param.m_decoder.m_state == J2K_STATE_TPH) ?
                                 &l_cp->tcps[p_j2k->m_current_tile_number] :
                                 p_j2k->m_specific_param.m_decoder.m_default_tcp;
-
+	
+        /* Only one COD per tile */
+        if (l_tcp->cod) {
+                opj_event_msg(p_manager, EVT_ERROR, "COD marker already read. No more than one COD marker per tile.\n");
+                return OPJ_FALSE;
+        }
+        l_tcp->cod = 1;
+	
         /* Make sure room is sufficient */
         if (p_header_size < 5) {
                 opj_event_msg(p_manager, EVT_ERROR, "Error reading COD marker\n");
@@ -2487,6 +2494,11 @@ static OPJ_BOOL opj_j2k_read_cod (  opj_j2k_t *p_j2k,
         }
         opj_read_bytes(p_header_data,&l_tcp->numlayers,2);      /* SGcod (B) */
         p_header_data+=2;
+	
+        if ((l_tcp->numlayers < 1U) || (l_tcp->numlayers > 65535U)) {
+                opj_event_msg(p_manager, EVT_ERROR, "Invalid number of layers in COD marker : %d not in range [1-65535]\n", l_tcp->numlayers);
+                return OPJ_FALSE;
+        }
 
         /* If user didn't set a number layer to decode take the max specify in the codestream. */
         if      (l_cp->m_specific_param.m_dec.m_layer) {
@@ -7400,8 +7412,15 @@ static OPJ_BOOL opj_j2k_copy_default_tcp_and_create_tcd (       opj_j2k_t * p_j2
                 /*Copy default coding parameters into the current tile coding parameters*/
                 memcpy(l_tcp, l_default_tcp, sizeof(opj_tcp_t));
                 /* Initialize some values of the current tile coding parameters*/
+                l_tcp->cod = 0;
                 l_tcp->ppt = 0;
                 l_tcp->ppt_data = 00;
+                /* Remove memory not owned by this tile in case of early error return. */
+                l_tcp->m_mct_decoding_matrix = 00;
+                l_tcp->m_nb_max_mct_records = 0;
+                l_tcp->m_mct_records = 00;
+                l_tcp->m_nb_max_mcc_records = 0;
+                l_tcp->m_mcc_records = 00;
                 /* Reconnect the tile-compo coding parameters pointer to the current tile coding parameters*/
                 l_tcp->tccps = l_current_tccp;
 
@@ -7439,6 +7458,8 @@ static OPJ_BOOL opj_j2k_copy_default_tcp_and_create_tcd (       opj_j2k_t * p_j2
 
                         ++l_src_mct_rec;
                         ++l_dest_mct_rec;
+                        /* Update with each pass to free exactly what has been allocated on early return. */
+                        l_tcp->m_nb_max_mct_records += 1;
                 }
 
                 /* Get the mcc_record of the dflt_tile_cp and copy them into the current tile cp*/
@@ -7448,6 +7469,7 @@ static OPJ_BOOL opj_j2k_copy_default_tcp_and_create_tcd (       opj_j2k_t * p_j2
                         return OPJ_FALSE;
                 }
                 memcpy(l_tcp->m_mcc_records,l_default_tcp->m_mcc_records,l_mcc_records_size);
+                l_tcp->m_nb_max_mcc_records = l_default_tcp->m_nb_max_mcc_records;
 
                 /* Copy the mcc record data from dflt_tile_cp to the current tile*/
                 l_src_mcc_rec = l_default_tcp->m_mcc_records;
@@ -8158,10 +8180,10 @@ OPJ_BOOL opj_j2k_update_image_data (opj_tcd_t * p_tcd, OPJ_BYTE * p_data, opj_im
         OPJ_UINT32 l_width_src,l_height_src;
         OPJ_UINT32 l_width_dest,l_height_dest;
         OPJ_INT32 l_offset_x0_src, l_offset_y0_src, l_offset_x1_src, l_offset_y1_src;
-        OPJ_INT32 l_start_offset_src, l_line_offset_src, l_end_offset_src ;
+        OPJ_SIZE_T l_start_offset_src, l_line_offset_src, l_end_offset_src ;
         OPJ_UINT32 l_start_x_dest , l_start_y_dest;
         OPJ_UINT32 l_x0_dest, l_y0_dest, l_x1_dest, l_y1_dest;
-        OPJ_INT32 l_start_offset_dest, l_line_offset_dest;
+        OPJ_SIZE_T l_start_offset_dest, l_line_offset_dest;
 
         opj_image_comp_t * l_img_comp_src = 00;
         opj_image_comp_t * l_img_comp_dest = 00;
@@ -8183,7 +8205,7 @@ OPJ_BOOL opj_j2k_update_image_data (opj_tcd_t * p_tcd, OPJ_BYTE * p_data, opj_im
                 /* Allocate output component buffer if necessary */
                 if (!l_img_comp_dest->data) {
 
-                        l_img_comp_dest->data = (OPJ_INT32*) opj_calloc(l_img_comp_dest->w * l_img_comp_dest->h, sizeof(OPJ_INT32));
+                        l_img_comp_dest->data = (OPJ_INT32*) opj_calloc((OPJ_SIZE_T)l_img_comp_dest->w * (OPJ_SIZE_T)l_img_comp_dest->h, sizeof(OPJ_INT32));
                         if (! l_img_comp_dest->data) {
                                 return OPJ_FALSE;
                         }
@@ -8217,9 +8239,9 @@ OPJ_BOOL opj_j2k_update_image_data (opj_tcd_t * p_tcd, OPJ_BYTE * p_data, opj_im
                 l_height_src = (OPJ_UINT32)(l_res->y1 - l_res->y0);
 
                 /* Border of the current output component*/
-                l_x0_dest = (OPJ_UINT32)opj_int_ceildivpow2((OPJ_INT32)l_img_comp_dest->x0, (OPJ_INT32)l_img_comp_dest->factor);
-                l_y0_dest = (OPJ_UINT32)opj_int_ceildivpow2((OPJ_INT32)l_img_comp_dest->y0, (OPJ_INT32)l_img_comp_dest->factor);
-                l_x1_dest = l_x0_dest + l_img_comp_dest->w;
+                l_x0_dest = opj_uint_ceildivpow2(l_img_comp_dest->x0, l_img_comp_dest->factor);
+                l_y0_dest = opj_uint_ceildivpow2(l_img_comp_dest->y0, l_img_comp_dest->factor);
+                l_x1_dest = l_x0_dest + l_img_comp_dest->w; /* can't overflow given that image->x1 is uint32 */
                 l_y1_dest = l_y0_dest + l_img_comp_dest->h;
 
                 /*if (i == 0) {
@@ -8250,7 +8272,7 @@ OPJ_BOOL opj_j2k_update_image_data (opj_tcd_t * p_tcd, OPJ_BYTE * p_data, opj_im
                         }
                 }
                 else {
-                        l_start_x_dest = 0 ;
+                        l_start_x_dest = 0U;
                         l_offset_x0_src = (OPJ_INT32)l_x0_dest - l_res->x0;
 
                         if ( l_x1_dest >= (OPJ_UINT32)l_res->x1 ) {
@@ -8277,7 +8299,7 @@ OPJ_BOOL opj_j2k_update_image_data (opj_tcd_t * p_tcd, OPJ_BYTE * p_data, opj_im
                         }
                 }
                 else {
-                        l_start_y_dest = 0 ;
+                        l_start_y_dest = 0U;
                         l_offset_y0_src = (OPJ_INT32)l_y0_dest - l_res->y0;
 
                         if ( l_y1_dest >= (OPJ_UINT32)l_res->y1 ) {
@@ -8300,13 +8322,13 @@ OPJ_BOOL opj_j2k_update_image_data (opj_tcd_t * p_tcd, OPJ_BYTE * p_data, opj_im
                 /*-----*/
 
                 /* Compute the input buffer offset */
-                l_start_offset_src = l_offset_x0_src + l_offset_y0_src * (OPJ_INT32)l_width_src;
-                l_line_offset_src = l_offset_x1_src + l_offset_x0_src;
-                l_end_offset_src = l_offset_y1_src * (OPJ_INT32)l_width_src - l_offset_x0_src;
+                l_start_offset_src = (OPJ_SIZE_T)l_offset_x0_src + (OPJ_SIZE_T)l_offset_y0_src * (OPJ_SIZE_T)l_width_src;
+                l_line_offset_src  = (OPJ_SIZE_T)l_offset_x1_src + (OPJ_SIZE_T)l_offset_x0_src;
+                l_end_offset_src   = (OPJ_SIZE_T)l_offset_y1_src * (OPJ_SIZE_T)l_width_src - (OPJ_SIZE_T)l_offset_x0_src;
 
                 /* Compute the output buffer offset */
-                l_start_offset_dest = (OPJ_INT32)(l_start_x_dest + l_start_y_dest * l_img_comp_dest->w);
-                l_line_offset_dest = (OPJ_INT32)(l_img_comp_dest->w - l_width_dest);
+                l_start_offset_dest = (OPJ_SIZE_T)l_start_x_dest + (OPJ_SIZE_T)l_start_y_dest * (OPJ_SIZE_T)l_img_comp_dest->w;
+                l_line_offset_dest  = (OPJ_SIZE_T)l_img_comp_dest->w - (OPJ_SIZE_T)l_width_dest;
 
                 /* Move the output buffer to the first place where we will write*/
                 l_dest_ptr = l_img_comp_dest->data + l_start_offset_dest;
@@ -8793,6 +8815,12 @@ OPJ_BOOL opj_j2k_read_SPCod_SPCoc(  opj_j2k_t *p_j2k,
         opj_read_bytes(l_current_ptr,&l_tccp->cblkh ,1);                /* SPcoc (F) */
         ++l_current_ptr;
         l_tccp->cblkh += 2;
+
+        if ((l_tccp->cblkw > 10) || (l_tccp->cblkh > 10) || ((l_tccp->cblkw + l_tccp->cblkh) > 12)) {
+                opj_event_msg(p_manager, EVT_ERROR, "Error reading SPCod SPCoc element, Invalid cblkw/cblkh combination\n");
+                return OPJ_FALSE;
+        }
+	
 
         opj_read_bytes(l_current_ptr,&l_tccp->cblksty ,1);              /* SPcoc (G) */
         ++l_current_ptr;
@@ -9790,7 +9818,7 @@ OPJ_BOOL opj_j2k_decode(opj_j2k_t * p_j2k,
 
         if (!p_image)
                 return OPJ_FALSE;
-
+	
         p_j2k->m_output_image = opj_image_create0();
         if (! (p_j2k->m_output_image)) {
                 return OPJ_FALSE;

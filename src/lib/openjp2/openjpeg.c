@@ -524,14 +524,12 @@ OPJ_BOOL OPJ_CALLCONV opj_set_decoded_resolution_factor(opj_codec_t *p_codec,
 	opj_codec_private_t * l_codec = (opj_codec_private_t *) p_codec;
 
 	if ( !l_codec ){
-		fprintf(stderr, "[ERROR] Input parameters of the setup_decoder function are incorrect.\n");
 		return OPJ_FALSE;
 	}
 
-	l_codec->m_codec_data.m_decompression.opj_set_decoded_resolution_factor(l_codec->m_codec, 
+	return l_codec->m_codec_data.m_decompression.opj_set_decoded_resolution_factor(l_codec->m_codec,
 																			res_factor,
 																			&(l_codec->m_event_mgr) );
-	return OPJ_TRUE;
 }
 
 /* ---------------------------------------------------------------------- */
@@ -700,11 +698,10 @@ OPJ_BOOL OPJ_CALLCONV opj_setup_encoder(opj_codec_t *p_codec,
 		opj_codec_private_t * l_codec = (opj_codec_private_t *) p_codec;
 
 		if (! l_codec->is_decompressor) {
-			l_codec->m_codec_data.m_compression.opj_setup_encoder(	l_codec->m_codec,
+			return l_codec->m_codec_data.m_compression.opj_setup_encoder(	l_codec->m_codec,
 																	parameters,
 																	p_image,
 																	&(l_codec->m_event_mgr) );
-			return OPJ_TRUE;
 		}
 	}
 
