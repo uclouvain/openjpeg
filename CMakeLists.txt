@@ -192,7 +192,9 @@ if(CMAKE_COMPILER_IS_GNUCC)
   # Do not use ffast-math for all build, it would produce incorrect results, only set for release:
   set(CMAKE_C_FLAGS_RELEASE "-ffast-math ${CMAKE_C_FLAGS_RELEASE}")
 endif()
-
+if(UNIX)
+  set(CMAKE_C_FLAGS "-fPIC ${CMAKE_C_FLAGS}")
+endif()
 #-----------------------------------------------------------------------------
 # opj_config.h generation (1/2)
 
@@ -252,6 +254,17 @@ option(BUILD_JP3D "Build the JP3D comp" OFF)
 mark_as_advanced(BUILD_VIEWER)
 mark_as_advanced(BUILD_JAVA)
 mark_as_advanced(BUILD_JP3D)
+
+option(BUILD_FLVIEWER "Build the flviewer executable (C++)" OFF)
+option(BUILD_FLVIEWER_WITH_SHARED_LIBS "Build the flviewer with shared libraries" OFF)
+option(BUILD_FLVIEWER_WITH_JPWL_LIB "Build the flviewer with JPWL library" OFF)
+option(FLTK_SKIP_OPENGL "Build flviewer without OPENGL support" ON)
+option(BUILD_WITH_GERMAN "Build flviewer with GERMAN language" OFF)
+mark_as_advanced(BUILD_FLVIEWER)
+mark_as_advanced(BUILD_FLVIEWER_WITH_SHARED_LIBS)
+mark_as_advanced(BUILD_FLVIEWER_WITH_JPWL_LIB)
+mark_as_advanced(FLTK_SKIP_OPENGL)
+mark_as_advanced(BUILD_WITH_GERMAN)
 
 if(BUILD_CODEC OR BUILD_MJ2)
   # OFF: It will only build 3rd party libs if they are not found on the system
