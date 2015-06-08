@@ -1775,7 +1775,9 @@ int imagetotif(opj_image_t * image, const char *outfile)
 		if(r > 65535) r = 65535; else if(r < 0) r = 0;
 		if(g > 65535) g = 65535; else if(g < 0) g = 0;
 		if(b > 65535) b = 65535; else if(b < 0) b = 0;
-
+#ifdef OPJ_BIG_ENDIAN
+		r = swap16(r); g = swap16(g); b = swap16(b);
+#endif
                             dat8[i+0] =  (unsigned char)r;/*LSB*/
                             dat8[i+1] = (unsigned char)(r >> 8);/*MSB*/
                             dat8[i+2] =  (unsigned char)g;
@@ -1785,6 +1787,9 @@ int imagetotif(opj_image_t * image, const char *outfile)
                             if(has_alpha)
                             {
 		if(a > 65535) a = 65535; else if(a < 0) a = 0;
+#ifdef OPJ_BIG_ENDIAN
+		a = swap16(a);
+#endif
                                 dat8[i+6] =  (unsigned char)a;
                                 dat8[i+7] = (unsigned char)(a >> 8);
                             }
@@ -1825,7 +1830,9 @@ int imagetotif(opj_image_t * image, const char *outfile)
 		if(r > 65535) r = 65535; else if(r < 0) r = 0;
 		if(g > 65535) g = 65535; else if(g < 0) g = 0;
 		if(b > 65535) b = 65535; else if(b < 0) b = 0;
-
+#ifdef OPJ_BIG_ENDIAN
+		r = swap16(r); g = swap16(g); b = swap16(b);
+#endif
                                 dat8[i+0] = (unsigned char) r;/*LSB*/
                                 if(i+1 < ssize) dat8[i+1] = (unsigned char)(r >> 8);else break;/*MSB*/
                                 if(i+2 < ssize) dat8[i+2] = (unsigned char) g;      else break;
@@ -1836,6 +1843,9 @@ int imagetotif(opj_image_t * image, const char *outfile)
                                 if(has_alpha)
                                 {
 		if(a > 65535) a = 65535; else if(a < 0) a = 0;
+#ifdef OPJ_BIG_ENDIAN
+		a = swap16(a);
+#endif
                                     if(i+6 < ssize) dat8[i+6] = (unsigned char)a; else break;
                                     if(i+7 < ssize) dat8[i+7] = (unsigned char)(a >> 8); else break;
                                 }
