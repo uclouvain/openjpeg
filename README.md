@@ -1,8 +1,7 @@
 
-OPENJPEG LIBRARY and APPLICATIONS
-----------------------------------
+# OPENJPEG LIBRARY and APPLICATIONS
 
-Details on folders hierarchy:
+## Details on folders hierarchy:
 
 * src
   * lib
