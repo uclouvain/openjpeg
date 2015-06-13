@@ -1,7 +1,7 @@
 
 # OPENJPEG LIBRARY and APPLICATIONS
 
-## Details on folders hierarchy:
+## Details on folders hierarchy
 
 * src
   * lib
@@ -27,19 +27,18 @@
 * tests: configuration files and utilities for the openjpeg test suite. All test images are located in 'http://openjpeg.googlecode.com/svn/data' folder.
 * cmake: cmake related files
 
-see LICENSE for license and copyright information.
-see INSTALL for installation procedures.
-see NEWS for user visible changes in successive releases.
-see CHANGES for per-revision changes.
+See LICENSE for license and copyright information.
+See INSTALL for installation procedures.
+See NEWS for user visible changes in successive releases.
+See CHANGES for per-revision changes.
 
-----------------
-API/ABI
+## API/ABI
 
 OpenJPEG strives to provide a stable API/ABI for your applications. As such it
 only exposes a limited subset of its functions.  It uses a mecanism of
 exporting/hiding functions. If you are unsure which functions you can use in
 your applications, you should compile OpenJPEG using something similar to gcc:
--fvisibility=hidden compilation flag.
+`fvisibility=hidden` compilation flag.
 See also: http://gcc.gnu.org/wiki/Visibility
 
 On windows, MSVC directly supports export/hidding function and as such the only
