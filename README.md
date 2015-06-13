@@ -1,5 +1,5 @@
 
-# OPENJPEG LIBRARY and APPLICATIONS
+# OPENJPEG Library and Applications
 
 ## Details on folders hierarchy
 
