@@ -27,10 +27,11 @@
 * tests: configuration files and utilities for the openjpeg test suite. All test images are located in 'http://openjpeg.googlecode.com/svn/data' folder.
 * cmake: cmake related files
 
-See LICENSE for license and copyright information.
-See INSTALL for installation procedures.
-See NEWS for user visible changes in successive releases.
-See CHANGES for per-revision changes.
+See [LICENSE](https://github.com/uclouvain/openjpeg/blob/master/LICENSE) for license and copyright information.
+
+See [INSTALL](https://github.com/uclouvain/openjpeg/blob/master/INSTALL) for installation procedures.
+
+See [NEWS](https://github.com/uclouvain/openjpeg/blob/master/NEWS) for user visible changes in successive releases.
 
 ## API/ABI
 
