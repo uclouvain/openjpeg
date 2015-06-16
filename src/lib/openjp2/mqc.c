@@ -599,14 +599,13 @@ OPJ_INT32 opj_mqc_decode(opj_mqc_t *const mqc) {
 		}
 	} else {
 		if (mqc->a < q) {
-			mqc->a = q;
 			*mqc->curctx = (*mqc->curctx)->nmps;
 		}
 		else {
-			mqc->a = q;
 			d = 1 - d;
 			*mqc->curctx = (*mqc->curctx)->nlps;
 		}
+		mqc->a = q;
 		opj_mqc_renormd(mqc);
 	}
 	return d;
