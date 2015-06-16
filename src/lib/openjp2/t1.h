@@ -48,7 +48,10 @@ in T1.C are used by some function in TCD.C.
 /*@{*/
 
 /* ----------------------------------------------------------------------- */
+
 #define T1_NMSEDEC_BITS 7
+#define T1_NMSEDEC_BITS_MASK 127
+#define T1_NMSEDEC_FRACBITS 6  //(T1_NMSEDEC_BITS-1)
 
 #define T1_SIG_NE 0x0001	/**< Context orientation : North-East direction */
 #define T1_SIG_SE 0x0002	/**< Context orientation : South-East direction */
@@ -58,18 +61,24 @@ in T1.C are used by some function in TCD.C.
 #define T1_SIG_E 0x0020		/**< Context orientation : East direction */
 #define T1_SIG_S 0x0040		/**< Context orientation : South direction */
 #define T1_SIG_W 0x0080		/**< Context orientation : West direction */
-#define T1_SIG_OTH (T1_SIG_N|T1_SIG_NE|T1_SIG_E|T1_SIG_SE|T1_SIG_S|T1_SIG_SW|T1_SIG_W|T1_SIG_NW)
-#define T1_SIG_PRIM (T1_SIG_N|T1_SIG_E|T1_SIG_S|T1_SIG_W)
+#define T1_SIG_OTH    0xFF  //(T1_SIG_N|T1_SIG_NE|T1_SIG_E|T1_SIG_SE|T1_SIG_S|T1_SIG_SW|T1_SIG_W|T1_SIG_NW)
+#define T1_SIG_PRIM  0xF0  //(T1_SIG_N|T1_SIG_E|T1_SIG_S|T1_SIG_W)
 
 #define T1_SGN_N 0x0100
 #define T1_SGN_E 0x0200
 #define T1_SGN_S 0x0400
 #define T1_SGN_W 0x0800
-#define T1_SGN (T1_SGN_N|T1_SGN_E|T1_SGN_S|T1_SGN_W)
+#define T1_SGN   0x0F00  //(T1_SGN_N|T1_SGN_E|T1_SGN_S|T1_SGN_W)
+
+#define T1_SIG_PRIM_SGN 0x0FF0
 
 #define T1_SIG 0x1000
 #define T1_REFINE 0x2000
 #define T1_VISIT 0x4000
+#define T1_NO_VISIT 0xBFFF
+
+#define T1_SIG_VISIT 0x5000
+#define T1_SIG_VISIT_OTH 0x50FF
 
 #define T1_NUMCTXS_ZC 9
 #define T1_NUMCTXS_SC 5
@@ -78,13 +87,15 @@ in T1.C are used by some function in TCD.C.
 #define T1_NUMCTXS_UNI 1
 
 #define T1_CTXNO_ZC 0
-#define T1_CTXNO_SC (T1_CTXNO_ZC+T1_NUMCTXS_ZC)
-#define T1_CTXNO_MAG (T1_CTXNO_SC+T1_NUMCTXS_SC)
-#define T1_CTXNO_AGG (T1_CTXNO_MAG+T1_NUMCTXS_MAG)
-#define T1_CTXNO_UNI (T1_CTXNO_AGG+T1_NUMCTXS_AGG)
-#define T1_NUMCTXS (T1_CTXNO_UNI+T1_NUMCTXS_UNI)
+#define T1_CTXNO_SC 9   //(T1_CTXNO_ZC+T1_NUMCTXS_ZC)
+#define T1_CTXNO_MAG 14 //(T1_CTXNO_SC+T1_NUMCTXS_SC)
+#define T1_CTXNO_AGG 17 //(T1_CTXNO_MAG+T1_NUMCTXS_MAG)
+#define T1_CTXNO_UNI 18 //(T1_CTXNO_AGG+T1_NUMCTXS_AGG)
+#define T1_NUMCTXS   19 //(T1_CTXNO_UNI+T1_NUMCTXS_UNI)
 
-#define T1_NMSEDEC_FRACBITS (T1_NMSEDEC_BITS-1)
+#define T1_CTXNO_MAG_PLUS_ONE 15
+#define T1_CTXNO_MAG_PLUS_TWO 16
+
 
 #define T1_TYPE_MQ 0	/**< Normal coding using entropy coder */
 #define T1_TYPE_RAW 1	/**< No encoding the information is store under raw format in codestream (mode switch RAW)*/
