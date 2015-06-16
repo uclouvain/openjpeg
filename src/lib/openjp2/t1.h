@@ -128,20 +128,17 @@ Encode the code-blocks of a tile
 @param mct_norms  FIXME DOC
 @param mct_numcomps Number of components used for MCT
 */
-OPJ_BOOL opj_t1_encode_cblks(   opj_t1_t *t1,
-                                opj_tcd_tile_t *tile,
+OPJ_BOOL opj_t1_encode_cblks(   opj_tcd_tile_t *tile,
                                 opj_tcp_t *tcp,
                                 const OPJ_FLOAT64 * mct_norms,
                                 OPJ_UINT32 mct_numcomps);
 
 /**
 Decode the code-blocks of a tile
-@param t1 T1 handle
 @param tilec The tile to decode
 @param tccp Tile coding parameters
 */
-OPJ_BOOL opj_t1_decode_cblks(   opj_t1_t* t1,
-                                opj_tcd_tilecomp_t* tilec,
+OPJ_BOOL opj_t1_decode_cblks(   opj_tcd_tilecomp_t* tilec,
                                 opj_tccp_t* tccp);
 
 
