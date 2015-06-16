@@ -1,5 +1,15 @@
 include_regular_expression("^.*$")
 
+if (BUILD_WITH_OPENMP)
+find_package(OpenMP)
+if (OPENMP_FOUND)
+	add_definitions(-DNUM_CORES=4)
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+endif()
+endif()
+
+
 #
 install( FILES  ${CMAKE_CURRENT_BINARY_DIR}/opj_config.h
  DESTINATION ${OPENJPEG_INSTALL_INCLUDE_DIR} COMPONENT Headers)
