@@ -36,11 +36,11 @@ See [NEWS](https://github.com/uclouvain/openjpeg/blob/master/NEWS) for user visi
 ## API/ABI
 
 OpenJPEG strives to provide a stable API/ABI for your applications. As such it
-only exposes a limited subset of its functions.  It uses a mecanism of
+only exposes a limited subset of its functions.  It uses a mechanism of
 exporting/hiding functions. If you are unsure which functions you can use in
 your applications, you should compile OpenJPEG using something similar to gcc:
 `fvisibility=hidden` compilation flag.
 See also: http://gcc.gnu.org/wiki/Visibility
 
-On windows, MSVC directly supports export/hidding function and as such the only
+On windows, MSVC directly supports export/hiding function and as such the only
 API available is the one supported by OpenJPEG.
