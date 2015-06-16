@@ -324,16 +324,16 @@ OPJ_BYTE opj_t1_getspb(OPJ_UINT32 f) {
 }
 
 OPJ_INT16 opj_t1_getnmsedec_sig(OPJ_UINT32 x, OPJ_UINT32 bitpos) {
-	if (bitpos > T1_NMSEDEC_FRACBITS) {
-		return lut_nmsedec_sig[(x >> (bitpos - T1_NMSEDEC_FRACBITS)) & ((1 << T1_NMSEDEC_BITS) - 1)];
+	if (bitpos > 0) {
+		return lut_nmsedec_sig[(x >> (bitpos)) & ((1 << T1_NMSEDEC_BITS) - 1)];
 	}
 	
 	return lut_nmsedec_sig0[x & ((1 << T1_NMSEDEC_BITS) - 1)];
 }
 
 OPJ_INT16 opj_t1_getnmsedec_ref(OPJ_UINT32 x, OPJ_UINT32 bitpos) {
-	if (bitpos > T1_NMSEDEC_FRACBITS) {
-		return lut_nmsedec_ref[(x >> (bitpos - T1_NMSEDEC_FRACBITS)) & ((1 << T1_NMSEDEC_BITS) - 1)];
+	if (bitpos > 0) {
+		return lut_nmsedec_ref[(x >> (bitpos)) & ((1 << T1_NMSEDEC_BITS) - 1)];
 	}
 
     return lut_nmsedec_ref0[x & ((1 << T1_NMSEDEC_BITS) - 1)];
@@ -390,7 +390,7 @@ void opj_t1_enc_sigpass_step(   opj_t1_t *t1,
 		}
 		if (v) {
 			v = *datap < 0 ? 1 : 0;
-			*nmsedec +=	opj_t1_getnmsedec_sig((OPJ_UINT32)opj_int_abs(*datap), (OPJ_UINT32)(bpno + T1_NMSEDEC_FRACBITS));
+			*nmsedec +=	opj_t1_getnmsedec_sig((OPJ_UINT32)opj_int_abs(*datap), (OPJ_UINT32)(bpno));
 			opj_mqc_setcurctx(mqc, opj_t1_getctxno_sc(flag));	/* ESSAI */
 			if (type == T1_TYPE_RAW) {	/* BYPASS/LAZY MODE */
 				opj_mqc_bypass_enc(mqc, (OPJ_UINT32)v);
@@ -624,7 +624,7 @@ void opj_t1_enc_refpass_step(   opj_t1_t *t1,
 	
 	flag = vsc ? (OPJ_UINT32)((*flagsp) & (~(T1_SIG_S | T1_SIG_SE | T1_SIG_SW | T1_SGN_S))) : (OPJ_UINT32)(*flagsp);
 	if ((flag & (T1_SIG | T1_VISIT)) == T1_SIG) {
-		*nmsedec += opj_t1_getnmsedec_ref((OPJ_UINT32)opj_int_abs(*datap), (OPJ_UINT32)(bpno + T1_NMSEDEC_FRACBITS));
+		*nmsedec += opj_t1_getnmsedec_ref((OPJ_UINT32)opj_int_abs(*datap), (OPJ_UINT32)(bpno));
 		v = opj_int_abs(*datap) & one ? 1 : 0;
 		opj_mqc_setcurctx(mqc, opj_t1_getctxno_mag(flag));	/* ESSAI */
 		if (type == T1_TYPE_RAW) {	/* BYPASS/LAZY MODE */
@@ -853,7 +853,7 @@ void opj_t1_enc_clnpass_step(
 		opj_mqc_encode(mqc, (OPJ_UINT32)v);
 		if (v) {
 LABEL_PARTIAL:
-			*nmsedec += opj_t1_getnmsedec_sig((OPJ_UINT32)opj_int_abs(*datap), (OPJ_UINT32)(bpno + T1_NMSEDEC_FRACBITS));
+			*nmsedec += opj_t1_getnmsedec_sig((OPJ_UINT32)opj_int_abs(*datap), (OPJ_UINT32)(bpno));
 			opj_mqc_setcurctx(mqc, opj_t1_getctxno_sc(flag));
 			v = *datap < 0 ? 1 : 0;
 			opj_mqc_encode(mqc, (OPJ_UINT32)(v ^ opj_t1_getspb((OPJ_UINT32)flag)));
@@ -962,10 +962,10 @@ void opj_t1_enc_clnpass(
 						|| (MACRO_t1_flags(1 + k + 3,1 + i) 
 						& (~(T1_SIG_S | T1_SIG_SE | T1_SIG_SW |	T1_SGN_S))) & (T1_SIG | T1_VISIT | T1_SIG_OTH));
 				} else {
-					agg = !(MACRO_t1_flags(1 + k,1 + i) & (T1_SIG | T1_VISIT | T1_SIG_OTH)
-						|| MACRO_t1_flags(1 + k + 1,1 + i) & (T1_SIG | T1_VISIT | T1_SIG_OTH)
-						|| MACRO_t1_flags(1 + k + 2,1 + i) & (T1_SIG | T1_VISIT | T1_SIG_OTH)
-						|| MACRO_t1_flags(1 + k + 3,1 + i) & (T1_SIG | T1_VISIT | T1_SIG_OTH));
+					agg = !((MACRO_t1_flags(1 + k,1 + i) | 
+						    MACRO_t1_flags(1 + k + 1,1 + i) |
+						    MACRO_t1_flags(1 + k + 2,1 + i) | 
+						     MACRO_t1_flags(1 + k + 3,1 + i)) & (T1_SIG | T1_VISIT | T1_SIG_OTH));
 				}
 			} else {
 				agg = 0;
@@ -1061,10 +1061,10 @@ static void opj_t1_dec_clnpass(
 			for (i = 0; i < t1->w; ++i) {
 				OPJ_INT32 *data2 = data1 + i;
 				opj_flag_t *flags2 = flags1 + i;
-				agg = !(MACRO_t1_flags(1 + k,1 + i) & (T1_SIG | T1_VISIT | T1_SIG_OTH)
-					|| MACRO_t1_flags(1 + k + 1,1 + i) & (T1_SIG | T1_VISIT | T1_SIG_OTH)
-					|| MACRO_t1_flags(1 + k + 2,1 + i) & (T1_SIG | T1_VISIT | T1_SIG_OTH)
-					|| MACRO_t1_flags(1 + k + 3,1 + i) & (T1_SIG | T1_VISIT | T1_SIG_OTH));
+				agg = !((MACRO_t1_flags(1 + k, 1 + i) |
+							MACRO_t1_flags(1 + k + 1, 1 + i) |
+							MACRO_t1_flags(1 + k + 2, 1 + i) |
+							MACRO_t1_flags(1 + k + 3, 1 + i)) & (T1_SIG | T1_VISIT | T1_SIG_OTH));
 				if (agg) {
 					opj_mqc_setcurctx(mqc, T1_CTXNO_AGG);
 					if (!opj_mqc_decode(mqc)) {
@@ -1075,9 +1075,9 @@ static void opj_t1_dec_clnpass(
 					runlen = (runlen << 1) | opj_mqc_decode(mqc);
 					flags2 += (OPJ_UINT32)runlen * t1->flags_stride;
 					data2 += (OPJ_UINT32)runlen * t1->w;
-					for (j = k + (OPJ_UINT32)runlen; j < k + 4 && j < t1->h; ++j) {
+					for (j = (OPJ_UINT32)runlen; j < 4 && j < t1->h; ++j) {
 						flags2 += t1->flags_stride;
-						if (agg && (j == k + (OPJ_UINT32)runlen)) {
+						if (agg && (j == (OPJ_UINT32)runlen)) {
 							opj_t1_dec_clnpass_step_partial(t1, flags2, data2, orient, oneplushalf);
 						} else {
 							opj_t1_dec_clnpass_step(t1, flags2, data2, orient, oneplushalf);
@@ -1288,7 +1288,6 @@ OPJ_BOOL opj_t1_decode_cblks(   opj_t1_t* t1,
 				for (cblkno = 0; cblkno < precinct->cw * precinct->ch; ++cblkno) {
 					opj_tcd_cblk_dec_t* cblk = &precinct->cblks.dec[cblkno];
 					OPJ_INT32* restrict datap;
-					/*void* restrict tiledp;*/
 					OPJ_UINT32 cblk_w, cblk_h;
 					OPJ_INT32 x, y;
 					OPJ_UINT32 i, j;
@@ -1330,14 +1329,12 @@ OPJ_BOOL opj_t1_decode_cblks(   opj_t1_t* t1,
 							}
 						}
 					}
-
-					/*tiledp=(void*)&tilec->data[(y * tile_w) + x];*/
 					if (tccp->qmfbid == 1) {
                         OPJ_INT32* restrict tiledp = &tilec->data[(OPJ_UINT32)y * tile_w + (OPJ_UINT32)x];
 						for (j = 0; j < cblk_h; ++j) {
 							for (i = 0; i < cblk_w; ++i) {
 								OPJ_INT32 tmp = datap[(j * cblk_w) + i];
-								((OPJ_INT32*)tiledp)[(j * tile_w) + i] = tmp / 2;
+								((OPJ_INT32*)tiledp)[(j * tile_w) + i] = tmp/2;
 							}
 						}
 					} else {		/* if (tccp->qmfbid == 0) */
@@ -1349,18 +1346,11 @@ OPJ_BOOL opj_t1_decode_cblks(   opj_t1_t* t1,
                                 *tiledp2 = tmp;
                                 datap++;
                                 tiledp2++;
-								/*float tmp = datap[(j * cblk_w) + i] * band->stepsize;
-								((float*)tiledp)[(j * tile_w) + i] = tmp;*/
-
 							}
                             tiledp += tile_w;
 						}
 					}
-                    /*opj_free(cblk->data);
-					opj_free(cblk->segs);*/
-					/*cblk->segs = 00;*/
 				} /* cblkno */
-                /*opj_free(precinct->cblks.dec);*/
 			} /* precno */
 		} /* bandno */
 	} /* resno */
@@ -1377,7 +1367,7 @@ OPJ_BOOL opj_t1_decode_cblk(opj_t1_t *t1,
 	opj_raw_t *raw = t1->raw;	/* RAW component */
 	opj_mqc_t *mqc = t1->mqc;	/* MQC component */
 
-	OPJ_INT32 bpno;
+	OPJ_INT32 bpno_plus_one;
 	OPJ_UINT32 passtype;
 	OPJ_UINT32 segno, passno;
 	OPJ_BYTE type = T1_TYPE_MQ; /* BYPASS mode */
@@ -1390,7 +1380,7 @@ OPJ_BOOL opj_t1_decode_cblk(opj_t1_t *t1,
 		return OPJ_FALSE;
 	}
 
-	bpno = (OPJ_INT32)(roishift + cblk->numbps - 1);
+	bpno_plus_one = (OPJ_INT32)(roishift + cblk->numbps);
 	passtype = 2;
 
 	opj_mqc_resetstates(mqc);
@@ -1402,7 +1392,7 @@ OPJ_BOOL opj_t1_decode_cblk(opj_t1_t *t1,
 		opj_tcd_seg_t *seg = &cblk->segs[segno];
 
 		/* BYPASS mode */
-		type = ((bpno <= ((OPJ_INT32) (cblk->numbps) - 1) - 4) && (passtype < 2) && (cblksty & J2K_CCP_CBLKSTY_LAZY)) ? T1_TYPE_RAW : T1_TYPE_MQ;
+		type = ((bpno_plus_one <= ((OPJ_INT32) (cblk->numbps)) - 4) && (passtype < 2) && (cblksty & J2K_CCP_CBLKSTY_LAZY)) ? T1_TYPE_RAW : T1_TYPE_MQ;
 		/* FIXME: slviewer gets here with a null pointer. Why? Partially downloaded and/or corrupt textures? */
 		if(seg->data == 00){
 			continue;
@@ -1419,28 +1409,28 @@ OPJ_BOOL opj_t1_decode_cblk(opj_t1_t *t1,
             switch (passtype) {
                 case 0:
                     if (type == T1_TYPE_RAW) {
-                        opj_t1_dec_sigpass_raw(t1, bpno+1, (OPJ_INT32)orient, (OPJ_INT32)cblksty);
+                        opj_t1_dec_sigpass_raw(t1, bpno_plus_one, (OPJ_INT32)orient, (OPJ_INT32)cblksty);
                     } else {
                         if (cblksty & J2K_CCP_CBLKSTY_VSC) {
-                            opj_t1_dec_sigpass_mqc_vsc(t1, bpno+1, (OPJ_INT32)orient);
+                            opj_t1_dec_sigpass_mqc_vsc(t1, bpno_plus_one, (OPJ_INT32)orient);
                         } else {
-                            opj_t1_dec_sigpass_mqc(t1, bpno+1, (OPJ_INT32)orient);
+                            opj_t1_dec_sigpass_mqc(t1, bpno_plus_one, (OPJ_INT32)orient);
                         }
                     }
                     break;
                 case 1:
                     if (type == T1_TYPE_RAW) {
-                            opj_t1_dec_refpass_raw(t1, bpno+1, (OPJ_INT32)cblksty);
+                            opj_t1_dec_refpass_raw(t1, bpno_plus_one, (OPJ_INT32)cblksty);
                     } else {
                         if (cblksty & J2K_CCP_CBLKSTY_VSC) {
-                            opj_t1_dec_refpass_mqc_vsc(t1, bpno+1);
+                            opj_t1_dec_refpass_mqc_vsc(t1, bpno_plus_one);
                         } else {
-                            opj_t1_dec_refpass_mqc(t1, bpno+1);
+                            opj_t1_dec_refpass_mqc(t1, bpno_plus_one);
                         }
                     }
                     break;
                 case 2:
-                    opj_t1_dec_clnpass(t1, bpno+1, (OPJ_INT32)orient, (OPJ_INT32)cblksty);
+                    opj_t1_dec_clnpass(t1, bpno_plus_one, (OPJ_INT32)orient, (OPJ_INT32)cblksty);
                     break;
             }
 
@@ -1452,11 +1442,11 @@ OPJ_BOOL opj_t1_decode_cblk(opj_t1_t *t1,
 			}
 			if (++passtype == 3) {
 				passtype = 0;
-				bpno--;
+				bpno_plus_one--;
 			}
 		}
 	}
-        return OPJ_TRUE;
+    return OPJ_TRUE;
 }
 
 
