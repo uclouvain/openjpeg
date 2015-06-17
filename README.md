@@ -1,6 +1,18 @@
 
 # OPENJPEG Library and Applications
 
+## What is OpenJPEG ?
+
+OpenJPEG is an open-source JPEG 2000 codec written in C language. It has been developed in order to promote the use of [JPEG 2000](http://www.jpeg.org/jpeg2000), a still-image compression standard from the Joint Photographic Experts Group ([JPEG](http://www.jpeg.org)).  Since october 2014, it is officially recognized by ISO as one of the JPEG 2000 Reference Software.
+
+## Who can use the code ?
+
+Anyone. As the OpenJPEG code is released under the [2-clauses BSD license](https://github.com/uclouvain/openjpeg/blob/master/LICENSE), anyone can use or modify the code, even for commercial applications. The only restriction is to retain the copyright in the sources or in the binaries documentation. Of course, if you modified the code in a way that might be of interest for other users, you are encouraged to share it (through a [github pull request](https://github.com/uclouvain/openjpeg/pulls) or by filling an [issue](https://github.com/uclouvain/openjpeg/issues)) but this is not a requirement.
+    
+## Who are the developers ?
+
+The library is developed and maintained by the Image and Signal Processing Group ([ISPGroup](http://sites.uclouvain.be/ispgroup/)), in the Université catholique de Louvain ([UCL](http://www.uclouvain.be/en-index.html), with the support of the [CNES](https://cnes.fr/), the [CS](http://www.c-s.fr/) company and the [intoPIX](http://www.intopix.com) company. The JPWL module has been developed by the Digital Signal Processing Lab ([DSPLab](http://dsplab.diei.unipg.it/)) of the University of Perugia, Italy ([UNIPG](http://www.unipg.it/)).
+
 ## Details on folders hierarchy
 
 * src
@@ -24,7 +36,7 @@
   * java: java jni to use openjpeg in a java program
 * thirdparty: thirdparty libraries used by some applications. These libraries will be built only if there are not found on the system. Note that libopenjpeg itself does not have any dependency.
 * doc: doxygen documentation setup file and man pages
-* tests: configuration files and utilities for the openjpeg test suite. All test images are located in 'http://openjpeg.googlecode.com/svn/data' folder.
+* tests: configuration files and utilities for the openjpeg test suite. All test images are located in [openjpeg-data](https://github.com/uclouvain/openjpeg-data) repository.
 * cmake: cmake related files
 
 See [LICENSE](https://github.com/uclouvain/openjpeg/blob/master/LICENSE) for license and copyright information.
