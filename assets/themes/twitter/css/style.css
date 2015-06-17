@@ -1,11 +1,151 @@
 /* Custom container */
 .container-narrow {
-  margin: 0 auto;
-  max-width: 700px; }
-
+  margin: auto auto auto 150px;
+  max-width: 600px; 
+  }
+  
 .container-narrow > hr {
   margin: 30px 0; }
 
+.top-area{
+  background-color: #ffffff ;
+  margin-bottom: 20px;
+}
+
+.banner-header{
+   margin-top: 10px;
+   margin-bottom: 10px;
+  }
+  
+.banner-tagline{
+  font-size:22px;
+  letter-spacing:3px;
+  line-height:30px;
+  text-align:left;
+  color:#a8a7a6;
+  margin-top: 10px;
+  margin-bottom: 0px;
+  }
+
+.pagination{
+  text-align:center;
+  font-size:14px;
+  font-weight:bold;
+  }
+  
+.post-entry{padding-bottom:25px;}
+
+.newsbar{
+  margin-top: 0px;
+  margin-bottom: 20px;
+  padding: 15px;
+  border: 2px solid #ccc;
+  }
+  
+.newsbar h2{
+  font-size:20px;
+  line-height:26px; 
+  margin:10px 0 20px 0; 
+  border-bottom: 2px solid #ccc;
+  text-align:center;
+  }
+  
+.sidebar{
+  background-color: #f0f0f0;
+  margin-top: 0px;
+  margin-bottom: 20px;
+  padding: 15px;
+  }
+  
+.sidebar h1{
+  font-size:24px;
+  text-align:left;
+  }
+  
+.sidebar h2{
+  font-size:20px;
+  line-height:26px; 
+  margin:10px 0 20px 0; 
+  border-bottom: 2px solid #ccc;
+  text-align:left;
+  }
+
+.sidebar h3{
+  font-size:18px;
+  line-height:24px; 
+  margin:10px 0 20px 0;
+  color:#708090;
+  text-align:left;
+  }  
+
+.sidebar p{
+  font-size:14px;
+  }  
+
+.sidebar small{
+  color:#708090;;
+}
+
+.sidebar figure figcaption{
+    font-size:14px;
+    text-align: center;
+    font-style:normal;
+    margin-top: 0;
+    margin-bottom: 0;
+    text-align: center;
+    }
+    
+.sidebarLeft{
+  margin-top: 0px;
+  padding: 15px;
+  }  
+
+.sidebarLeft h2{
+  font-size:20px;
+  line-height:26px; 
+  margin:10px 0 20px 0; 
+  border-bottom: 2px solid #ccc;
+  text-align:center;
+  }
+  
+
+body{
+  font-size:16px;
+  }
+  
+blockquote p{
+  margin-bottom:0; font-size:16px; font-style:italic; font-weight:300 ;line-height:22px; }
+
+h1{font-size:28px;}
+h2{font-size:20px;}
+h3{font-size:18px;}  
+  
+figure{
+  display:inline-block;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left:15px;
+  padding-right:15px;
+  margin-top:0px;
+  margin-bottom:0px;
+  }
+
+figure figcaption{
+    font-size:16px;
+    font-style:italic;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    text-align: left;}
+
+table{
+  font-size:14px;line-height:16px;
+  border-collapse:collapse;
+  }
+
+td, th{
+ padding:15px;
+ border: 1px solid black; }
+ 
 .navbar .nav {
   float: right; }
 

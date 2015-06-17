@@ -1,46 +1,18 @@
 ---
 layout: page
-title: Hello World!
-tagline: Supporting tagline
+title: OpenJPEG
+tagline: An open-source JPEG 2000 codec written in C
 ---
 {% include JB/setup %}
 
-Read [Jekyll Quick Start](http://jekyllbootstrap.com/usage/jekyll-quick-start.html)
+## What is OpenJPEG ?
 
-Complete usage and documentation available at: [Jekyll Bootstrap](http://jekyllbootstrap.com)
+OpenJPEG is an open-source JPEG 2000 codec written in C language. It has been developed in order to promote the use of [JPEG 2000](http://www.jpeg.org/jpeg2000), a still-image compression standard from the Joint Photographic Experts Group ([JPEG](http://www.jpeg.org)).  In addition to the basic codec, various other features are under development, among them the JP2 and MJ2 (Motion JPEG 2000) file formats, an indexing tool useful for the JPIP protocol, JPWL-tools for error-resilience, a Java-viewer for j2k-images, ...
 
-## Update Author Attributes
+## Who can use the code ?
 
-In `_config.yml` remember to specify your own data:
+Anyone. As the OpenJPEG code is released under the 2-clauses BSD license, anyone can use or modify the code, even for commercial applications. The only restriction is to retain the copyright in the sources or in the binaries documentation. Of course, if you modified the code in a way that might be of interest for other users, you are encouraged to share it (through a github pull request or by filling an issue) but this is not a requirement.
     
-    title : My Blog =)
-    
-    author :
-      name : Name Lastname
-      email : blah@email.test
-      github : username
-      twitter : username
+## Who are the developers ?
 
-The theme should reference these variables whenever needed.
-    
-## Sample Posts
-
-This blog contains sample posts which help stage pages and blog data.
-When you don't need the samples anymore just delete the `_posts/core-samples` folder.
-
-    $ rm -rf _posts/core-samples
-
-Here's a sample "posts list".
-
-<ul class="posts">
-  {% for post in site.posts %}
-    <li><span>{{ post.date | date_to_string }}</span> &raquo; <a href="{{ BASE_PATH }}{{ post.url }}">{{ post.title }}</a></li>
-  {% endfor %}
-</ul>
-
-## To-Do
-
-This theme is still unfinished. If you'd like to be added as a contributor, [please fork](http://github.com/plusjade/jekyll-bootstrap)!
-We need to clean up the themes, make theme usage guides with theme-specific markup examples.
-
-
+The library is developed and maintained by the Communications and Remote Sensing Lab (TELE), in the Université catholique de Louvain (UCL), with the support of the CNES, the CS company and the intoPIX company. The JPWL module is developed and maintained by the Digital Signal Processing Lab (DSPLab) of the University of Perugia, Italy (UNIPG).

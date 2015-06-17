@@ -33,33 +33,106 @@
   </head>
 
   <body>
-    <div class="navbar">
-      <div class="navbar-inner">
-        <div class="container-narrow">
-          <a class="brand" href="{{ HOME_PATH }}">{{ site.title }}</a>
-          <ul class="nav">
-            {% assign pages_list = site.pages %}
-            {% assign group = 'navigation' %}
-            {% include JB/pages_list %}
-          </ul>
+    
+  <!-- Place banner image aligned with column layout --> 
+  <div class="top-area">
+  <div class="container-fluid">
+    <div class="row-fluid">
+      <div class="span2">
+	  </div>
+      <div class="span10">
+	    <!-- Column center (banner goes here) -->
+        <div class="banner-header">
+		  <!--<a href="{{ HOME_PATH }}"><img src="{{ site.url }}/assets/images/logoopenjpeg_616x198.png" alt="openjpeg"  width="616" height="198"></a> -->
+		  <a href="{{ BASE_PATH }}"><img src="{{ BASE_PATH }}/assets/images/opj_logo_full.png" alt="opj_logo" width="450"></a>
+      <!--<a href="{{ BASE_PATH }}"><img src="{{ BASE_PATH }}/assets/images/openjpeg_simple.png" alt="openjpeg" width="300"></a>-->
+		  <div class="banner-tagline">{{ site.tagline }}</div>
         </div>
       </div>
     </div>
-
-    <div class="container-narrow">
-
-      <div class="content">
-        {{ content }}
+  </div>
+  </div>
+  
+  <div class="container-fluid">
+	<div class="row-fluid">
+	  <div class="span2">
+	    <div class="sidebar">
+        
+        <h2>Downloads</h2>
+          <p><a href="{{ site.latestReleaseURL }}">Latest release (v{{ site.binVersion }})</a></p>
+          <p><a href="{{ site.allReleasesURL }}">Previous releases</a></p>
+          
       </div>
-      <hr>
-      <footer>
-        <p>&copy; {{ site.time | date: '%Y' }} {{ site.author.name }}
-          with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
-          and <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>
-        </p>
-      </footer>
+         
+      <div class="sidebar">
+        <h2>Documentation</h2>
+      </div>
 
-    </div>
+      <div class="sidebar">
+        <h2>Developers</h2>
+          
+          <figure>
+            <a href="{{ site.issuesURL}}"><img src="{{ BASE_PATH }}/assets/images/issue-64.png" alt="issue tracker"  width="64" height="64"></a>
+        <figcaption>
+              <a href="{{ site.issuesURL}}">Issue tracker</a>
+        </figcaption>
+          </figure>           
+      </div>
+	  </div>
+	
+	  <div class="span6">
+	    <!-- Column center (main content) -->
+        <div class="content">
+          {{ content }}
+        </div>	
+	  </div>
+	  	  
+	  <div class="span3"> 
+              
+	    <div class="sidebarLeft">
+	      <!-- Column right -->
+        <p><a href="{{ BASE_PATH}}/2014/09/11/openjpeg-finalist-dpa"><img src="{{ BASE_PATH }}/assets/images/J2Klogo_wide.png" alt="JPEG 2000 Reference software"  width="200"></a></p>
+    <br>
+    <p><a href="{{ site.uclURL}}"><img src="{{ BASE_PATH }}/assets/images/UCL_logo.png" alt="UCL"  width="160"></a></p>
+    <br>
+    <p><a href="{{ site.icteamURL}}"><img src="{{ BASE_PATH }}/assets/images/logo-icteam.jpg" alt="ICTEAM"  width="160"></a></p>
+    <br>
+    <p><a href="{{ site.intopixURL}}"><img src="{{ BASE_PATH }}/assets/images/logo_intopix.png" alt="INTOPIX"  width="160"></a></p>
+    <br><br><br><br>
+    <figure>
+          <a href="{{ BASE_PATH }}/rss.xml"><img src="{{ BASE_PATH }}/assets/images/feed-icon-32.png" alt="RSS" width="32" height="32"></a>
+          <figcaption>
+            <a href="{{ BASE_PATH }}/rss.xml">RSS</a>
+          </figcaption>
+        </figure>
+
+        <figure>
+          <a href="{{ BASE_PATH }}/atom.xml"><img src="{{ BASE_PATH }}/assets/images/feed-icon-32.png" alt="ATOM" width="32" height="32"></a>
+          <figcaption>
+            <a href="{{ BASE_PATH }}/atom.xml">ATOM</a>
+          </figcaption>
+        </figure>
+	    </div>
+        
+      </div>	  
+	</div>
+	
+	<footer>
+	<hr>
+	<div class="row-fluid">
+      <div class="span2">
+	    <!-- Column left (empty) -->
+	  </div>
+	  
+	  <div class="span6">
+	  <!-- Column center (footer text) -->
+	    <p><small>&copy; {{ site.time | date: '%Y' }} {{ site.author.name }}
+        with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
+        and <a href="http://getbootstrap.com" target="_blank">Bootstrap</a></p>
+      </div>
+	</div>
+    </footer>
+  </div>
 
     {% include JB/analytics %}
   </body>
