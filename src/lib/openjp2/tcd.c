@@ -1606,7 +1606,7 @@ OPJ_BOOL opj_tcd_dwt_decode ( opj_tcd_t *p_tcd )
 		OPJ_INT32 compno;
 		OPJ_BOOL rc = OPJ_TRUE;
 #ifdef _OPENMP
-		omp_set_num_threads(NUM_CORES < 3 ? NUM_CORES : 3);
+		omp_set_num_threads(OPJ_NUM_CORES < 3 ? OPJ_NUM_CORES : 3);
 		 #pragma omp parallel default(none) private(compno) shared(p_tcd, l_tile, rc)
 		 {
 		#pragma omp for
@@ -1992,7 +1992,7 @@ OPJ_BOOL opj_tcd_dwt_encode ( opj_tcd_t *p_tcd )
         OPJ_INT32 compno;
 		OPJ_BOOL rc = OPJ_TRUE;
 #ifdef _OPENMP
-		omp_set_num_threads(NUM_CORES < 3 ? NUM_CORES : 3);
+		omp_set_num_threads(OPJ_NUM_CORES < 3 ? OPJ_NUM_CORES : 3);
 		 #pragma omp parallel default(none) private(compno) shared(p_tcd, l_tile, rc)
 		 {
 		#pragma omp for
@@ -2041,10 +2041,7 @@ OPJ_BOOL opj_tcd_t1_encode ( opj_tcd_t *p_tcd )
                 l_mct_norms = (const OPJ_FLOAT64 *) (l_tcp->mct_norms);
         }
 
-        if (! opj_t1_encode_cblks(p_tcd->tcd_image->tiles , l_tcp, l_mct_norms, l_mct_numcomps)) {
-        }
-
-        return OPJ_TRUE;
+		return opj_t1_encode_cblks(p_tcd->tcd_image->tiles, l_tcp, l_mct_norms, l_mct_numcomps);
 }
 
 OPJ_BOOL opj_tcd_t2_encode (opj_tcd_t *p_tcd,
