@@ -1215,6 +1215,8 @@ int main(int argc, char **argv)
 	omp_set_num_threads(OPJ_NUM_COMPRESS_DECOMPRESS_THREADS);
 #endif
 
+	opj_initialize();
+
 	t_cumulative = opj_clock();
 #ifdef _OPENMP
 #pragma omp parallel default(none) private(imageno) shared(num_images,img_fol, dirptr, parameters, failed,store_file_to_disk,num_decompressed_images)

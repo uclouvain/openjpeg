@@ -4,7 +4,7 @@
 if (BUILD_WITH_OPENMP)
 find_package(OpenMP)
 if (OPENMP_FOUND)
-	add_definitions(-DOPJ_NUM_COMPRESS_DECOMPRESS_THREADS=8)
+	add_definitions(-DOPJ_NUM_COMPRESS_DECOMPRESS_THREADS=4)
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 endif()

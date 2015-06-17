@@ -91,28 +91,7 @@ in T1.C are used by some function in TCD.C.
 
 /* ----------------------------------------------------------------------- */
 
-typedef OPJ_INT16 opj_flag_t;
 
-/**
-Tier-1 coding (coding of code-block coefficients)
-*/
-typedef struct opj_t1 {
-
-	/** MQC component */
-	opj_mqc_t *mqc;
-	/** RAW component */
-	opj_raw_t *raw;
-
-	OPJ_INT32  *data;
-	opj_flag_t *flags;
-	OPJ_UINT32 w;
-	OPJ_UINT32 h;
-	OPJ_UINT32 datasize;
-	OPJ_UINT32 flagssize;
-	OPJ_UINT32 flags_stride;
-	OPJ_UINT32 data_stride;
-	OPJ_BOOL   encoder;
-} opj_t1_t;
 
 #define MACRO_t1_flags(x,y) t1->flags[((x)*(t1->flags_stride))+(y)]
 
@@ -142,20 +121,23 @@ OPJ_BOOL opj_t1_decode_cblks(   opj_tcd_tilecomp_t* tilec,
                                 opj_tccp_t* tccp);
 
 
+OPJ_FLOAT64 opj_t1_getwmsedec(
+	OPJ_INT32 nmsedec,
+	OPJ_UINT32 compno,
+	OPJ_UINT32 level,
+	OPJ_UINT32 orient,
+	OPJ_INT32 bpno,
+	OPJ_UINT32 qmfbid,
+	OPJ_FLOAT64 stepsize,
+	OPJ_UINT32 numcomps,
+	const OPJ_FLOAT64 * mct_norms,
+	OPJ_UINT32 mct_numcomps);
 
-/**
- * Creates a new Tier 1 handle
- * and initializes the look-up tables of the Tier-1 coder/decoder
- * @return a new T1 handle if successful, returns NULL otherwise
-*/
-opj_t1_t* opj_t1_create(OPJ_BOOL isEncoder);
 
-/**
- * Destroys a previously created T1 handle
- *
- * @param p_t1 Tier 1 handle to destroy
-*/
-void opj_t1_destroy(opj_t1_t *p_t1);
+OPJ_INT16 opj_t1_getnmsedec_sig(OPJ_UINT32 x, OPJ_UINT32 bitpos);
+OPJ_INT16 opj_t1_getnmsedec_ref(OPJ_UINT32 x, OPJ_UINT32 bitpos);
+
+
 /* ----------------------------------------------------------------------- */
 /*@}*/
 

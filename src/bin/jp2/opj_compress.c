@@ -1581,8 +1581,8 @@ int main(int argc, char **argv) {
 
     char indexfilename[OPJ_PATH_LEN];	/* index file name */
 
-    unsigned int i,num_images;
-	int imageno;
+	OPJ_INT32 i,num_images;
+	OPJ_INT32 imageno;
     img_fol_t img_fol;
     dircnt_t *dirptr = NULL;
 
@@ -1640,6 +1640,8 @@ int main(int argc, char **argv) {
 #ifdef _OPENMP
 	omp_set_num_threads(OPJ_NUM_COMPRESS_DECOMPRESS_THREADS);
 #endif
+
+	opj_initialize();
 
 
 #ifdef _OPENMP
@@ -1922,7 +1924,6 @@ int main(int argc, char **argv) {
 	t = opj_clock() - t;
 	if (num_compressed_files)
 		fprintf(stdout, "encode time: %d ms \n", (int)((t * 1000)/num_compressed_files));
-	//getch());
-
+	//getch();
     return rc;
 }

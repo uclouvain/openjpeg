@@ -1603,15 +1603,14 @@ OPJ_BOOL opj_tcd_t1_decode ( opj_tcd_t *p_tcd )
 OPJ_BOOL opj_tcd_dwt_decode ( opj_tcd_t *p_tcd )
 {
         opj_tcd_tile_t * l_tile = p_tcd->tcd_image->tiles;
-		OPJ_INT32 compno;
+		OPJ_INT64 compno;
 		OPJ_BOOL rc = OPJ_TRUE;
 #ifdef _OPENMP
-		omp_set_num_threads(OPJ_NUM_CORES < 3 ? OPJ_NUM_CORES : 3);
 		 #pragma omp parallel default(none) private(compno) shared(p_tcd, l_tile, rc)
 		 {
 		#pragma omp for
 #endif
-        for (compno = 0; compno < l_tile->numcomps; compno++) {
+        for (compno = 0; compno < (OPJ_INT64)l_tile->numcomps; compno++) {
 			 opj_tcd_tilecomp_t * l_tile_comp = l_tile->comps + compno;
 			opj_tccp_t * l_tccp = p_tcd->tcp->tccps + compno;
 			opj_image_comp_t * l_img_comp = p_tcd->image->comps + compno;
@@ -1989,15 +1988,14 @@ OPJ_BOOL opj_tcd_mct_encode ( opj_tcd_t *p_tcd )
 OPJ_BOOL opj_tcd_dwt_encode ( opj_tcd_t *p_tcd )
 {
        opj_tcd_tile_t * l_tile = p_tcd->tcd_image->tiles;
-        OPJ_INT32 compno;
+        OPJ_INT64 compno;
 		OPJ_BOOL rc = OPJ_TRUE;
 #ifdef _OPENMP
-		omp_set_num_threads(OPJ_NUM_CORES < 3 ? OPJ_NUM_CORES : 3);
 		 #pragma omp parallel default(none) private(compno) shared(p_tcd, l_tile, rc)
 		 {
 		#pragma omp for
 #endif
-        for (compno = 0; compno < l_tile->numcomps; ++compno) {
+        for (compno = 0; compno < (OPJ_INT64)l_tile->numcomps; ++compno) {
 			   opj_tcd_tilecomp_t * tile_comp = p_tcd->tcd_image->tiles->comps + compno;
 			    opj_tccp_t * l_tccp = p_tcd->tcp->tccps + compno;
                 if (l_tccp->qmfbid == 1) {
