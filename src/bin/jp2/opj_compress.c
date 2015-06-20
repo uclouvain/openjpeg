@@ -57,6 +57,9 @@
 #define strncasecmp _strnicmp
 #else
 #include <strings.h>
+#include <sys/time.h>
+#include <sys/resource.h>
+#include <sys/times.h>
 #endif /* _WIN32 */
 
 #include "opj_apps_config.h"
@@ -1535,6 +1538,31 @@ static void info_callback(const char *msg, void *client_data) {
     fprintf(stdout, "[INFO] %s", msg);
 }
 
+OPJ_FLOAT64 opj_clock(void) {
+#ifdef _WIN32
+	/* _WIN32: use QueryPerformance (very accurate) */
+    LARGE_INTEGER freq , t ;
+    /* freq is the clock speed of the CPU */
+    QueryPerformanceFrequency(&freq) ;
+	/* cout << "freq = " << ((double) freq.QuadPart) << endl; */
+    /* t is the high resolution performance counter (see MSDN) */
+    QueryPerformanceCounter ( & t ) ;
+    return freq.QuadPart ? ( t.QuadPart /(OPJ_FLOAT64) freq.QuadPart ) : 0 ;
+#else
+	/* Unix or Linux: use resource usage */
+    struct rusage t;
+    OPJ_FLOAT64 procTime;
+    /* (1) Get the rusage data structure at this moment (man getrusage) */
+    getrusage(0,&t);
+    /* (2) What is the elapsed time ? - CPU time = User time + System time */
+	/* (2a) Get the seconds */
+    procTime = (OPJ_FLOAT64)(t.ru_utime.tv_sec + t.ru_stime.tv_sec);
+    /* (2b) More precisely! Get the microseconds part ! */
+    return ( procTime + (OPJ_FLOAT64)(t.ru_utime.tv_usec + t.ru_stime.tv_usec) * 1e-6 ) ;
+#endif
+}
+
+
 /* -------------------------------------------------------------------------- */
 /**
  * OPJ_COMPRESS MAIN
@@ -1548,6 +1576,7 @@ int main(int argc, char **argv) {
     opj_codec_t* l_codec = 00;
     opj_image_t *image = NULL;
     raw_cparameters_t raw_cp;
+	OPJ_SIZE_T num_compressed_files = 0;
 
     char indexfilename[OPJ_PATH_LEN];	/* index file name */
 
@@ -1558,6 +1587,7 @@ int main(int argc, char **argv) {
     OPJ_BOOL bSuccess;
     OPJ_BOOL bUseTiles = OPJ_FALSE; /* OPJ_TRUE */
     OPJ_UINT32 l_nb_tiles = 4;
+	OPJ_FLOAT64 t = opj_clock();
 
     /* set encoding parameters to default values */
     opj_set_default_encoder_parameters(&parameters);
@@ -1822,6 +1852,7 @@ int main(int argc, char **argv) {
             return 1;
         }
 
+		num_compressed_files++;
         fprintf(stdout,"[INFO] Generated outfile %s\n",parameters.outfile);
         /* close and free the byte stream */
         opj_stream_destroy(l_stream);
@@ -1838,6 +1869,11 @@ int main(int argc, char **argv) {
     if(parameters.cp_comment)   free(parameters.cp_comment);
     if(parameters.cp_matrice)   free(parameters.cp_matrice);
     if(raw_cp.rawComps) free(raw_cp.rawComps);
+	
+	t = opj_clock() - t;
+	if (num_compressed_files)
+		fprintf(stdout, "encode time: %d ms \n", (int)((t * 1000)/num_compressed_files));
+	//getch());
 
     return 0;
 }

@@ -56,6 +56,9 @@
 #define strncasecmp _strnicmp
 #else
 #include <strings.h>
+#include <sys/time.h>
+#include <sys/resource.h>
+#include <sys/times.h>
 #endif /* _WIN32 */
 
 #include "openjpeg.h"
@@ -840,6 +843,30 @@ int parse_DA_values( char* inArg, unsigned int *DA_x0, unsigned int *DA_y0, unsi
 	}
 }
 
+OPJ_FLOAT64 opj_clock(void) {
+#ifdef _WIN32
+	/* _WIN32: use QueryPerformance (very accurate) */
+    LARGE_INTEGER freq , t ;
+    /* freq is the clock speed of the CPU */
+    QueryPerformanceFrequency(&freq) ;
+	/* cout << "freq = " << ((double) freq.QuadPart) << endl; */
+    /* t is the high resolution performance counter (see MSDN) */
+    QueryPerformanceCounter ( & t ) ;
+	return freq.QuadPart ? (t.QuadPart / (OPJ_FLOAT64)freq.QuadPart) : 0;
+#else
+	/* Unix or Linux: use resource usage */
+    struct rusage t;
+    OPJ_FLOAT64 procTime;
+    /* (1) Get the rusage data structure at this moment (man getrusage) */
+    getrusage(0,&t);
+    /* (2) What is the elapsed time ? - CPU time = User time + System time */
+	/* (2a) Get the seconds */
+    procTime = (OPJ_FLOAT64)(t.ru_utime.tv_sec + t.ru_stime.tv_sec);
+    /* (2b) More precisely! Get the microseconds part ! */
+    return ( procTime + (OPJ_FLOAT64)(t.ru_utime.tv_usec + t.ru_stime.tv_usec) * 1e-6 ) ;
+#endif
+}
+
 /* -------------------------------------------------------------------------- */
 
 /**
@@ -1135,6 +1162,8 @@ int main(int argc, char **argv)
 	img_fol_t img_fol;
 	dircnt_t *dirptr = NULL;
   int failed = 0;
+  OPJ_FLOAT64 t, tCumulative = 0;
+  OPJ_UINT32 numDecompressedImages = 0;
 
 	/* set decoding parameters to default values */
 	set_default_parameters(&parameters);
@@ -1239,6 +1268,8 @@ int main(int argc, char **argv)
 		opj_set_warning_handler(l_codec, warning_callback,00);
 		opj_set_error_handler(l_codec, error_callback,00);
 
+		t = opj_clock();
+
 		/* Setup the decoder decoding parameters using user parameters */
 		if ( !opj_setup_decoder(l_codec, &(parameters.core)) ){
 			fprintf(stderr, "ERROR -> opj_decompress: failed to setup the decoder\n");
@@ -1302,6 +1333,9 @@ int main(int argc, char **argv)
 			}
 			fprintf(stdout, "tile %d is decoded!\n\n", parameters.tile_index);
 		}
+
+		tCumulative += opj_clock() - t;
+		numDecompressedImages++;
 
 		/* Close the byte stream */
 		opj_stream_destroy(l_stream);
@@ -1501,6 +1535,9 @@ int main(int argc, char **argv)
 		if(failed) remove(parameters.outfile);
 	}
 	destroy_parameters(&parameters);
+	if (numDecompressedImages)
+		fprintf(stdout, "decode time: %d ms \n", (int)( (tCumulative * 1000) / numDecompressedImages));
+	//getch();
 	return failed ? EXIT_FAILURE : EXIT_SUCCESS;
 }
 /*end main*/
