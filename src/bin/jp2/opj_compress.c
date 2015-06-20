@@ -1547,7 +1547,7 @@ OPJ_FLOAT64 opj_clock(void) {
 	/* cout << "freq = " << ((double) freq.QuadPart) << endl; */
     /* t is the high resolution performance counter (see MSDN) */
     QueryPerformanceCounter ( & t ) ;
-    return ( t.QuadPart /(OPJ_FLOAT64) freq.QuadPart ) ;
+    return freq.QuadPart ? ( t.QuadPart /(OPJ_FLOAT64) freq.QuadPart ) : 0 ;
 #else
 	/* Unix or Linux: use resource usage */
     struct rusage t;
@@ -1871,8 +1871,9 @@ int main(int argc, char **argv) {
     if(raw_cp.rawComps) free(raw_cp.rawComps);
 	
 	t = opj_clock() - t;
-	fprintf(stdout, "encode time: %d ms \n", (int)((t * 1000)/num_compressed_files));
-	scanf("%d");
+	if (num_compressed_files)
+		fprintf(stdout, "encode time: %d ms \n", (int)((t * 1000)/num_compressed_files));
+	//getch());
 
     return 0;
 }

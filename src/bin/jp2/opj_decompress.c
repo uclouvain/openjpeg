@@ -852,7 +852,7 @@ OPJ_FLOAT64 opj_clock(void) {
 	/* cout << "freq = " << ((double) freq.QuadPart) << endl; */
     /* t is the high resolution performance counter (see MSDN) */
     QueryPerformanceCounter ( & t ) ;
-    return ( t.QuadPart /(OPJ_FLOAT64) freq.QuadPart ) ;
+	return freq.QuadPart ? (t.QuadPart / (OPJ_FLOAT64)freq.QuadPart) : 0;
 #else
 	/* Unix or Linux: use resource usage */
     struct rusage t;
@@ -1535,8 +1535,9 @@ int main(int argc, char **argv)
 		if(failed) remove(parameters.outfile);
 	}
 	destroy_parameters(&parameters);
-	fprintf(stdout, "decode time: %d ms \n", (int)( (tCumulative * 1000) / numDecompressedImages));
-	scanf("%d");
+	if (numDecompressedImages)
+		fprintf(stdout, "decode time: %d ms \n", (int)( (tCumulative * 1000) / numDecompressedImages));
+	//getch();
 	return failed ? EXIT_FAILURE : EXIT_SUCCESS;
 }
 /*end main*/
