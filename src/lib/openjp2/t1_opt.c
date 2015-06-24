@@ -377,7 +377,7 @@ static void  opj_t1_enc_sigpass_step(   opj_t1_opt_t *t1,
 		/* if location is not significant, has not been coded in significance pass, and is in preferred neighbourhood,
 		then code in this pass: */
 		if ((shift_flags & (T1_SIGMA_THIS | T1_PI_THIS)) == 0U && (shift_flags & T1_SIGMA_NEIGHBOURS) != 0U) {
-			v = (*datap & one) ? 1 : 0;
+			v = (*datap >> one) & 1;
 			opj_mqc_setcurctx(mqc, opj_t1_getctxno_zc_opt(shift_flags, orient)); 
 			opj_mqc_encode(mqc, v);
 			if (v) {
@@ -403,7 +403,7 @@ static void opj_t1_enc_sigpass(opj_t1_opt_t *t1,
                         OPJ_INT32 *nmsedec  )
 {
 	OPJ_UINT32 i, k;
-	OPJ_INT32 const one = 1 << (bpno + T1_NMSEDEC_FRACBITS);
+	OPJ_INT32 const one =  (bpno + T1_NMSEDEC_FRACBITS);
 	OPJ_UINT32 const flag_row_extra = t1->flags_stride - t1->w;
 	OPJ_UINT32 const data_row_extra =  (t1->w << 2) - t1->w;
 
@@ -456,7 +456,7 @@ static void opj_t1_enc_refpass_step(   opj_t1_opt_t *t1,
 		/* if location is significant, but has not been coded in significance propagation pass, then code in this pass: */
 		if ((shift_flags & (T1_SIGMA_THIS | T1_PI_THIS)) == T1_SIGMA_THIS) {
 			*nmsedec += opj_t1_getnmsedec_ref(*datap, bpno);
-			v = (*datap & one) ? 1 : 0;
+			v = (*datap >> one) & 1;
 			opj_mqc_setcurctx(mqc, opj_t1_getctxno_mag_opt(shift_flags));	
 			opj_mqc_encode(mqc, v);
 			/* flip magnitude refinement bit*/
@@ -472,7 +472,7 @@ static void opj_t1_enc_refpass(
 		OPJ_INT32 *nmsedec)
 {
 	OPJ_UINT32 i, k;
-	const OPJ_INT32 one = 1 << (bpno + T1_NMSEDEC_FRACBITS);
+	const OPJ_INT32 one =  (bpno + T1_NMSEDEC_FRACBITS);
 	opj_flag_opt_t* f = ENC_FLAGS_ADDRESS(0, 0);
 	OPJ_UINT32 const flag_row_extra = t1->flags_stride - t1->w;
 	OPJ_UINT32 const data_row_extra = (t1->w << 2) - t1->w;
@@ -543,7 +543,7 @@ static void opj_t1_enc_clnpass_step(
 
 		if (!(shift_flags & (T1_SIGMA_THIS | T1_PI_THIS))) {
 			opj_mqc_setcurctx(mqc, opj_t1_getctxno_zc_opt(shift_flags, orient));
-			v = (*datap & one) ? 1 : 0;
+			v = (*datap >> one) & 1;
 			opj_mqc_encode(mqc, v);
 			if (v) {
 			LABEL_PARTIAL:
@@ -568,7 +568,7 @@ static void opj_t1_enc_clnpass(
 		OPJ_INT32 *nmsedec)
 {
 	OPJ_UINT32 i, k;
-	const OPJ_INT32 one = 1 << (bpno + T1_NMSEDEC_FRACBITS);
+	const OPJ_INT32 one = (bpno + T1_NMSEDEC_FRACBITS);
 	OPJ_UINT32 agg, runlen;
 
 	opj_mqc_t *mqc = t1->mqc;	
@@ -580,7 +580,7 @@ static void opj_t1_enc_clnpass(
 			agg = !ENC_FLAGS(i, k);
 			if (agg) {
 				for (runlen = 0; runlen < 4; ++runlen) {
-					if (t1->data[((k + runlen)*t1->w) + i] & one)
+					if ( (t1->data[((k + runlen)*t1->w) + i] >> one) & 1)
 						break;
 				}
 				opj_mqc_setcurctx(mqc, T1_CTXNO_AGG);
