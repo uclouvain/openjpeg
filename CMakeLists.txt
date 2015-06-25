@@ -192,7 +192,9 @@ if(CMAKE_COMPILER_IS_GNUCC)
   # Do not use ffast-math for all build, it would produce incorrect results, only set for release:
   set(CMAKE_C_FLAGS_RELEASE "-ffast-math ${CMAKE_C_FLAGS_RELEASE}")
 endif()
-
+if(UNIX)
+  set(CMAKE_C_FLAGS "-fPIC ${CMAKE_C_FLAGS}")
+endif()
 #-----------------------------------------------------------------------------
 # opj_config.h generation (1/2)
 

@@ -1306,10 +1306,6 @@ int main(int argc, char **argv)
 		/* Close the byte stream */
 		opj_stream_destroy(l_stream);
 
-		if(image->color_space == OPJ_CLRSPC_SYCC){
-			color_sycc_to_rgb(image); /* FIXME */
-		}
-		
 		if( image->color_space != OPJ_CLRSPC_SYCC 
 			&& image->numcomps == 3 && image->comps[0].dx == image->comps[0].dy
 			&& image->comps[1].dx != 1 )
@@ -1317,9 +1313,24 @@ int main(int argc, char **argv)
 		else if (image->numcomps <= 2)
 			image->color_space = OPJ_CLRSPC_GRAY;
 
+		if(image->color_space == OPJ_CLRSPC_SYCC){
+			color_sycc_to_rgb(image);
+		}
+		else
+		if(image->color_space == OPJ_CLRSPC_CMYK){
+			color_cmyk_to_rgb(image);
+		}
+		else
+		if(image->color_space == OPJ_CLRSPC_EYCC){
+			color_esycc_to_rgb(image);
+		}
+		
 		if(image->icc_profile_buf) {
 #if defined(OPJ_HAVE_LIBLCMS1) || defined(OPJ_HAVE_LIBLCMS2)
-			color_apply_icc_profile(image); /* FIXME */
+			if(image->icc_profile_len)
+			 color_apply_icc_profile(image);
+			else
+			 color_apply_conversion(image);
 #endif
 			free(image->icc_profile_buf);
 			image->icc_profile_buf = NULL; image->icc_profile_len = 0;
