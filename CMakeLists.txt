@@ -23,6 +23,7 @@ endif()
 # In all cases:
 #string(TOLOWER ${OPENJPEG_NAMESPACE} OPENJPEG_LIBRARY_NAME)
 set(OPENJPEG_LIBRARY_NAME openjp2)
+set(OPENJPEG_PLUGIN_NAME openjp2_plugin)
 
 project(${OPENJPEG_NAMESPACE} C)
 

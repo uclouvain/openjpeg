@@ -88,6 +88,10 @@
 #  define OPJ_STAT(path,stat_buff) stat(path,stat_buff)
 #endif
 
+#include "minpf_plugin_manager.h"
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 /*
  ==========================================================

@@ -37,12 +37,12 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#include "opj_apps_config.h"
 
 #ifdef _OPENMP
 #include <omp.h>
 #endif
 
+#include "opj_apps_config.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -150,6 +150,7 @@ typedef struct opj_decompress_params
 	int force_rgb;
 	/* upsample components according to their dx/dy values */
 	int upsample;
+	char plugin_dir[OPJ_PATH_LEN];
 }opj_decompress_parameters;
 
 /* -------------------------------------------------------------------------- */
@@ -509,7 +510,8 @@ int parse_cmdline_decoder(int argc, char **argv, opj_decompress_parameters *para
 		{"ImgDir",    REQ_ARG, NULL ,'y'},
 		{"OutFor",    REQ_ARG, NULL ,'O'},
 		{"force-rgb", NO_ARG,  &(parameters->force_rgb), 1},
-		{"upsample",  NO_ARG,  &(parameters->upsample),  1}
+		{"upsample",  NO_ARG,  &(parameters->upsample),  1},
+		{ "PluginDir", REQ_ARG, NULL, 'g' }
 	};
 
 	const char optlist[] = "i:o:r:l:x:d:t:p:"
@@ -663,6 +665,12 @@ int parse_cmdline_decoder(int argc, char **argv, opj_decompress_parameters *para
 					img_fol->set_imgdir=1;
 				}
 				break;
+
+			case 'g':
+			{
+				strcpy(parameters->plugin_dir, opj_optarg);
+			}
+			break;
 
 				/* ----------------------------------------------------- */
 
@@ -1215,7 +1223,7 @@ int main(int argc, char **argv)
 	omp_set_num_threads(OPJ_NUM_COMPRESS_DECOMPRESS_THREADS);
 #endif
 
-	opj_initialize();
+	opj_initialize(parameters.plugin_dir);
 
 	t_cumulative = opj_clock();
 #ifdef _OPENMP

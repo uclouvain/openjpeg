@@ -39,6 +39,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -69,10 +74,6 @@
 #include "index.h"
 
 #include "format_defs.h"
-
-#ifdef _OPENMP
-#include <omp.h>
-#endif
 
 
 typedef struct dircnt{
@@ -491,7 +492,8 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
         {"POC",REQ_ARG, NULL ,'P'},
         {"ROI",REQ_ARG, NULL ,'R'},
         {"jpip",NO_ARG, NULL, 'J'},
-        {"mct",REQ_ARG, NULL, 'Y'}
+        {"mct",REQ_ARG, NULL, 'Y'},
+		{ "PluginDir", REQ_ARG, NULL, 'g' }
     };
 
     /* parse the command line */
@@ -1036,7 +1038,13 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
             }
             parameters->tcp_mct = (char) mct_mode;
         }
-            break;
+        break;
+
+		case 'g':
+		{
+			strcpy(parameters->plugin_dir, opj_optarg);
+		}
+		break;
 
             /* ------------------------------------------------------ */
 
@@ -1641,7 +1649,7 @@ int main(int argc, char **argv) {
 	omp_set_num_threads(OPJ_NUM_COMPRESS_DECOMPRESS_THREADS);
 #endif
 
-	opj_initialize();
+	opj_initialize(parameters.plugin_dir);
 
 
 #ifdef _OPENMP

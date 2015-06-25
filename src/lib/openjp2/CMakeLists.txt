@@ -16,6 +16,8 @@ install( FILES  ${CMAKE_CURRENT_BINARY_DIR}/opj_config.h
 
 include_directories(
   ${OPENJPEG_BINARY_DIR}/src/lib/openjp2 # opj_config.h and opj_config_private.h
+  ${OPENJPEG_SOURCE_DIR}/src/bin/jp2
+  
 )
 # Defines the source code for the library
 set(OPENJPEG_SRCS
@@ -40,6 +42,13 @@ set(OPENJPEG_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/tcd.c
   ${CMAKE_CURRENT_SOURCE_DIR}/tgt.c
   ${CMAKE_CURRENT_SOURCE_DIR}/function_list.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/minpf_dynamic_library.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/minpf_dynamic_library.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/minpf_plugin_manager.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/minpf_plugin_manager.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/hashmap.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/hashmap.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/minpf_common.h
 )
 if(BUILD_JPIP)
   add_definitions(-DUSE_JPIP)

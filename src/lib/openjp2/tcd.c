@@ -39,9 +39,8 @@
  */
 
 #include "opj_includes.h"
-#ifdef _OPENMP
-#include <omp.h>
-#endif
+#include "t1_plugin.h"
+
 
 
 /* ----------------------------------------------------------------------- */
@@ -1188,6 +1187,8 @@ OPJ_BOOL opj_tcd_encode_tile(   opj_tcd_t *p_tcd,
 
         if (p_tcd->cur_tp_num == 0) {
 
+				minpf_plugin_manager*  mgr = NULL;
+				ENCODE_TILE encodeFunc = NULL;
                 p_tcd->tcd_tileno = p_tile_no;
                 p_tcd->tcp = &p_tcd->cp->tcps[p_tile_no];
 
@@ -1214,31 +1215,52 @@ OPJ_BOOL opj_tcd_encode_tile(   opj_tcd_t *p_tcd,
                                 return OPJ_FALSE;
                         }
                 }
-                /* << INDEX */
 
-                /* FIXME _ProfStart(PGROUP_DC_SHIFT); */
-                /*---------------TILE-------------------*/
-                if (! opj_tcd_dc_level_shift_encode(p_tcd)) {
-                        return OPJ_FALSE;
-                }
-                /* FIXME _ProfStop(PGROUP_DC_SHIFT); */
+				// try to use plugin
+				mgr = minpf_get_plugin_manager();
+				if (mgr && mgr->num_libraries > 0) {
+					encodeFunc = (ENCODE_TILE)minpf_get_symbol(mgr->dynamic_libraries[0], encode_method_name);
+					if (encodeFunc) {
+						OPJ_BOOL rc = encodeFunc(p_tcd,
+							p_tile_no,
+							p_dest,
+							p_data_written,
+							p_max_length,
+							p_cstr_info);
+						if (!rc)
+							return OPJ_FALSE;
+					} 
+				}
+				if (!encodeFunc) {
 
-                /* FIXME _ProfStart(PGROUP_MCT); */
-                if (! opj_tcd_mct_encode(p_tcd)) {
-                        return OPJ_FALSE;
-                }
-                /* FIXME _ProfStop(PGROUP_MCT); */
+					/* << INDEX */
 
-                /* FIXME _ProfStart(PGROUP_DWT); */
-                if (! opj_tcd_dwt_encode(p_tcd)) {
-                        return OPJ_FALSE;
-                }
-                /* FIXME  _ProfStop(PGROUP_DWT); */
+					/* FIXME _ProfStart(PGROUP_DC_SHIFT); */
+					/*---------------TILE-------------------*/
+					if (!opj_tcd_dc_level_shift_encode(p_tcd)) {
+						return OPJ_FALSE;
+					}
+					/* FIXME _ProfStop(PGROUP_DC_SHIFT); */
 
-                /* FIXME  _ProfStart(PGROUP_T1); */
-                if (! opj_tcd_t1_encode(p_tcd)) {
-                        return OPJ_FALSE;
-                }
+					/* FIXME _ProfStart(PGROUP_MCT); */
+					if (!opj_tcd_mct_encode(p_tcd)) {
+						return OPJ_FALSE;
+					}
+					/* FIXME _ProfStop(PGROUP_MCT); */
+
+					/* FIXME _ProfStart(PGROUP_DWT); */
+					if (!opj_tcd_dwt_encode(p_tcd)) {
+						return OPJ_FALSE;
+					}
+					/* FIXME  _ProfStop(PGROUP_DWT); */
+
+					/* FIXME  _ProfStart(PGROUP_T1); */
+					if (!opj_tcd_t1_encode(p_tcd)) {
+						return OPJ_FALSE;
+					}
+				}
+
+
                 /* FIXME _ProfStop(PGROUP_T1); */
 
                 /* FIXME _ProfStart(PGROUP_RATE); */
@@ -1276,6 +1298,8 @@ OPJ_BOOL opj_tcd_decode_tile(   opj_tcd_t *p_tcd,
         OPJ_UINT32 l_data_read;
         p_tcd->tcd_tileno = p_tile_no;
         p_tcd->tcp = &(p_tcd->cp->tcps[p_tile_no]);
+		minpf_plugin_manager*  mgr = NULL;
+		DECODE_TILE decodeFunc = NULL;
 
 #ifdef TODO_MSD /* FIXME */
         /* INDEX >>  */
@@ -1309,42 +1333,62 @@ OPJ_BOOL opj_tcd_decode_tile(   opj_tcd_t *p_tcd,
         }
         /* FIXME _ProfStop(PGROUP_T2); */
 
-        /*------------------TIER1-----------------*/
 
-        /* FIXME _ProfStart(PGROUP_T1); */
-        if
-                (! opj_tcd_t1_decode(p_tcd))
-        {
-                return OPJ_FALSE;
-        }
-        /* FIXME _ProfStop(PGROUP_T1); */
+		// try to use plugin
+		mgr = minpf_get_plugin_manager();
+		if (mgr && mgr->num_libraries > 0) {
+			decodeFunc = (DECODE_TILE)minpf_get_symbol(mgr->dynamic_libraries[0], decode_method_name);
+			if (decodeFunc) {
+				OPJ_BOOL rc = decodeFunc(p_tcd,
+										p_src,
+										p_max_length,
+										p_tile_no,
+										p_cstr_index);
+				if (!rc)
+					return OPJ_FALSE;
+			}
+		}
+		if (!decodeFunc) {
+			/*------------------TIER1-----------------*/
 
-        /*----------------DWT---------------------*/
+			/* FIXME _ProfStart(PGROUP_T1); */
+			if
+				(!opj_tcd_t1_decode(p_tcd))
+			{
+				return OPJ_FALSE;
+			}
+			/* FIXME _ProfStop(PGROUP_T1); */
 
-        /* FIXME _ProfStart(PGROUP_DWT); */
-        if
-                (! opj_tcd_dwt_decode(p_tcd))
-        {
-                return OPJ_FALSE;
-        }
-        /* FIXME _ProfStop(PGROUP_DWT); */
+			/*----------------DWT---------------------*/
 
-        /*----------------MCT-------------------*/
-        /* FIXME _ProfStart(PGROUP_MCT); */
-        if
-                (! opj_tcd_mct_decode(p_tcd))
-        {
-                return OPJ_FALSE;
-        }
-        /* FIXME _ProfStop(PGROUP_MCT); */
+			/* FIXME _ProfStart(PGROUP_DWT); */
+			if
+				(!opj_tcd_dwt_decode(p_tcd))
+			{
+				return OPJ_FALSE;
+			}
+			/* FIXME _ProfStop(PGROUP_DWT); */
 
-        /* FIXME _ProfStart(PGROUP_DC_SHIFT); */
-        if
-                (! opj_tcd_dc_level_shift_decode(p_tcd))
-        {
-                return OPJ_FALSE;
-        }
-        /* FIXME _ProfStop(PGROUP_DC_SHIFT); */
+			/*----------------MCT-------------------*/
+			/* FIXME _ProfStart(PGROUP_MCT); */
+			if
+				(!opj_tcd_mct_decode(p_tcd))
+			{
+				return OPJ_FALSE;
+			}
+			/* FIXME _ProfStop(PGROUP_MCT); */
+
+			/* FIXME _ProfStart(PGROUP_DC_SHIFT); */
+			if
+				(!opj_tcd_dc_level_shift_decode(p_tcd))
+			{
+				return OPJ_FALSE;
+			}
+			/* FIXME _ProfStop(PGROUP_DC_SHIFT); */
+
+
+		}
+       
 
 
         /*---------------TILE-------------------*/
