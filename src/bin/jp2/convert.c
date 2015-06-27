@@ -1603,7 +1603,7 @@ int imagetotif(opj_image_t * image, const char *outfile)
 
     if(bps > 8 && bps < 16)
     {
-        ushift = 16 - bps; dshift = bps - ushift;
+        ushift = 16 - bps; dshift = (bps - ushift)>>1;
         bps = 16; force16 = 1;
     }
 
@@ -1775,7 +1775,9 @@ int imagetotif(opj_image_t * image, const char *outfile)
 		if(r > 65535) r = 65535; else if(r < 0) r = 0;
 		if(g > 65535) g = 65535; else if(g < 0) g = 0;
 		if(b > 65535) b = 65535; else if(b < 0) b = 0;
-
+#ifdef OPJ_BIG_ENDIAN
+		r = swap16(r); g = swap16(g); b = swap16(b);
+#endif
                             dat8[i+0] =  (unsigned char)r;/*LSB*/
                             dat8[i+1] = (unsigned char)(r >> 8);/*MSB*/
                             dat8[i+2] =  (unsigned char)g;
@@ -1785,6 +1787,9 @@ int imagetotif(opj_image_t * image, const char *outfile)
                             if(has_alpha)
                             {
 		if(a > 65535) a = 65535; else if(a < 0) a = 0;
+#ifdef OPJ_BIG_ENDIAN
+		a = swap16(a);
+#endif
                                 dat8[i+6] =  (unsigned char)a;
                                 dat8[i+7] = (unsigned char)(a >> 8);
                             }
@@ -1825,7 +1830,9 @@ int imagetotif(opj_image_t * image, const char *outfile)
 		if(r > 65535) r = 65535; else if(r < 0) r = 0;
 		if(g > 65535) g = 65535; else if(g < 0) g = 0;
 		if(b > 65535) b = 65535; else if(b < 0) b = 0;
-
+#ifdef OPJ_BIG_ENDIAN
+		r = swap16(r); g = swap16(g); b = swap16(b);
+#endif
                                 dat8[i+0] = (unsigned char) r;/*LSB*/
                                 if(i+1 < ssize) dat8[i+1] = (unsigned char)(r >> 8);else break;/*MSB*/
                                 if(i+2 < ssize) dat8[i+2] = (unsigned char) g;      else break;
@@ -1836,6 +1843,9 @@ int imagetotif(opj_image_t * image, const char *outfile)
                                 if(has_alpha)
                                 {
 		if(a > 65535) a = 65535; else if(a < 0) a = 0;
+#ifdef OPJ_BIG_ENDIAN
+		a = swap16(a);
+#endif
                                     if(i+6 < ssize) dat8[i+6] = (unsigned char)a; else break;
                                     if(i+7 < ssize) dat8[i+7] = (unsigned char)(a >> 8); else break;
                                 }
@@ -1948,11 +1958,17 @@ int imagetotif(opj_image_t * image, const char *outfile)
                                 if(has_alpha) a = (a<<ushift) + (a>>dshift);
                             }
 		if(r > 65535) r = 65535; else if(r < 0) r = 0;
+#ifdef OPJ_BIG_ENDIAN
+		r = swap16(r);
+#endif
                             dat8[i+0] = (unsigned char)r;/*LSB*/
                             dat8[i+1] = (unsigned char)(r >> 8);/*MSB*/
                             if(has_alpha)
                             {
 		if(a > 65535) a = 65535; else if(a < 0) a = 0;
+#ifdef OPJ_BIG_ENDIAN
+		a = swap16(a);
+#endif
                                 dat8[i+2] = (unsigned char)a;
                                 dat8[i+3] = (unsigned char)(a >> 8);
                             }
@@ -2251,6 +2267,7 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
         numcomps = 1 + has_alpha;
         color_space = OPJ_CLRSPC_GRAY;
 
+fprintf(stderr,"%s:%d:\n\ttiftoimage numcomps(%d)\n",__FILE__,__LINE__,numcomps);
         for(j = 0; j < numcomps; ++j)
         {
             cmptparm[j].prec = tiBps;
@@ -2292,6 +2309,7 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
             unsigned char *dat8;
             tsize_t i, ssize;
             int step;
+            unsigned short v;
 
             ssize = TIFFReadEncodedStrip(tif, strip, buf, strip_size);
             dat8 = (unsigned char*)buf;
@@ -2304,9 +2322,19 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
                 {
                     if(index < imgsize)
                     {
-                        image->comps[0].data[index] = ( dat8[i+1] << 8 ) | dat8[i+0];
+						v = ( dat8[i+1] << 8 ) | dat8[i+0];
+#ifdef OPJ_BIG_ENDIAN
+						v = swap16(v);
+#endif
+                        image->comps[0].data[index] = v;
                         if(has_alpha)
-                            image->comps[1].data[index] = ( dat8[i+3] << 8 ) | dat8[i+2];
+					   {
+			    		v = ( dat8[i+3] << 8 ) | dat8[i+2];
+#ifdef OPJ_BIG_ENDIAN
+			    		v = swap16(v);	
+#endif
+                    	image->comps[1].data[index] = v;
+					   }
                         index++;
                     }
                     else
