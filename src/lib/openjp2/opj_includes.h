@@ -88,6 +88,10 @@
 #  define OPJ_STAT(path,stat_buff) stat(path,stat_buff)
 #endif
 
+#include "minpf_plugin_manager.h"
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 /*
  ==========================================================
@@ -118,15 +122,20 @@
 	#endif
 #endif
 
+
+
 /* MSVC before 2013 and Borland C do not have lrintf */
-#if defined(_MSC_VER) && (_MSC_VER < 1800) || defined(__BORLANDC__)
+#if defined(_MSC_VER)
+#include <intrin.h>
 static INLINE long lrintf(float f){
 #ifdef _M_X64
-    return (long)((f>0.0f) ? (f + 0.5f):(f -0.5f));
+	return _mm_cvt_ss2si(_mm_load_ss(&f));
+
+	// commented out line breaks many tests
+    ///return (long)((f>0.0f) ? (f + 0.5f):(f -0.5f));
 #else
     int i;
- 
-    _asm{
+     _asm{
         fld f
         fistp i
     };
@@ -135,6 +144,25 @@ static INLINE long lrintf(float f){
 #endif
 }
 #endif
+
+#if  defined(__BORLANDC__)
+static INLINE long lrintf(float f) {
+#ifdef _M_X64
+     return (long)((f>0.0f) ? (f + 0.5f):(f -0.5f));
+#else
+	int i;
+
+	_asm {
+		fld f
+			fistp i
+	};
+
+	return i;
+#endif
+}
+#endif
+
+
 
 #if defined(_MSC_VER) && (_MSC_VER < 1400)
 	#define vsnprintf _vsnprintf
@@ -161,6 +189,7 @@ static INLINE long lrintf(float f){
 #include "tgt.h"
 #include "tcd.h"
 #include "t1.h"
+#include "t1_opt.h"
 #include "dwt.h"
 #include "t2.h"
 #include "mct.h"

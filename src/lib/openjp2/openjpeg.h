@@ -498,6 +498,7 @@ typedef struct opj_cparameters {
     /** RSIZ value
         To be used to combine OPJ_PROFILE_*, OPJ_EXTENSION_* and (sub)levels values. */
     OPJ_UINT16 rsiz;
+	char plugin_dir[OPJ_PATH_LEN];
 } opj_cparameters_t;  
 
 #define OPJ_DPARAMETERS_IGNORE_PCLR_CMAP_CDEF_FLAG	0x0001
@@ -1044,6 +1045,23 @@ typedef struct opj_jp2_index {
 extern "C" {
 #endif
 
+/*
+Initialize plugins found in pluginDir directory
+*/
+	
+typedef struct opj_plugin_init_info {
+
+	const char* pluginDir;
+
+} opj_plugin_init_info_t;
+
+OPJ_API void OPJ_CALLCONV opj_plugin_init(opj_plugin_init_info_t info);
+
+/*
+Clean up loaded plugins
+*/
+OPJ_API void OPJ_CALLCONV opj_plugin_cleanup(void);
+
 
 /* 
 ==========================================================
@@ -1053,6 +1071,9 @@ extern "C" {
 
 /* Get the version of the openjpeg library*/
 OPJ_API const char * OPJ_CALLCONV opj_version(void);
+
+/* Initialize OpenJPEG library */
+OPJ_API OPJ_BOOL OPJ_CALLCONV opj_initialize(const char* plugin_dir);
 
 /* 
 ==========================================================

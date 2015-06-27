@@ -37,6 +37,19 @@
 
 #include "opj_includes.h"
 
+static OPJ_BOOL is_initialized = OPJ_FALSE;
+OPJ_BOOL OPJ_CALLCONV opj_initialize(const char* plugin_dir) {
+	if (!is_initialized) {
+#ifdef _OPENMP
+		omp_set_num_threads(OPJ_NUM_CORES);
+#endif
+		is_initialized = OPJ_TRUE;
+	}
+	opj_plugin_init_info_t info;
+	info.pluginDir = plugin_dir;
+	opj_plugin_init(info);
+	return OPJ_TRUE;
+}
 
 /* ---------------------------------------------------------------------- */
 /* Functions to set the message handlers */
@@ -156,6 +169,15 @@ DllMain(HINSTANCE hModule, DWORD ul_reason_for_call, LPVOID lpReserved) {
 
 const char* OPJ_CALLCONV opj_version(void) {
     return OPJ_PACKAGE_VERSION;
+}
+
+void OPJ_CALLCONV opj_plugin_init(opj_plugin_init_info_t info){
+	minpf_load_all(info.pluginDir, NULL);
+}
+
+void OPJ_CALLCONV opj_plugin_cleanup(void){
+
+	minpf_cleanup_plugin_manager();
 }
 
 /* ---------------------------------------------------------------------- */

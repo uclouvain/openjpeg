@@ -1,11 +1,23 @@
 include_regular_expression("^.*$")
 
+if (BUILD_WITH_OPENMP)
+find_package(OpenMP)
+if (OPENMP_FOUND)
+	add_definitions(-DOPJ_NUM_CORES=8)
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+endif()
+endif()
+
+
 #
 install( FILES  ${CMAKE_CURRENT_BINARY_DIR}/opj_config.h
  DESTINATION ${OPENJPEG_INSTALL_INCLUDE_DIR} COMPONENT Headers)
 
 include_directories(
   ${OPENJPEG_BINARY_DIR}/src/lib/openjp2 # opj_config.h and opj_config_private.h
+  ${OPENJPEG_SOURCE_DIR}/src/bin/jp2
+  
 )
 # Defines the source code for the library
 set(OPENJPEG_SRCS
@@ -24,10 +36,19 @@ set(OPENJPEG_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/pi.c
   ${CMAKE_CURRENT_SOURCE_DIR}/raw.c
   ${CMAKE_CURRENT_SOURCE_DIR}/t1.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/t1_opt.c 
+  ${CMAKE_CURRENT_SOURCE_DIR}/t1_opt.c
   ${CMAKE_CURRENT_SOURCE_DIR}/t2.c
   ${CMAKE_CURRENT_SOURCE_DIR}/tcd.c
   ${CMAKE_CURRENT_SOURCE_DIR}/tgt.c
   ${CMAKE_CURRENT_SOURCE_DIR}/function_list.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/minpf_dynamic_library.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/minpf_dynamic_library.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/minpf_plugin_manager.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/minpf_plugin_manager.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/hashmap.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/hashmap.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/minpf_common.h
 )
 if(BUILD_JPIP)
   add_definitions(-DUSE_JPIP)

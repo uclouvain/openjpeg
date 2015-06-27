@@ -23,6 +23,7 @@ endif()
 # In all cases:
 #string(TOLOWER ${OPENJPEG_NAMESPACE} OPENJPEG_LIBRARY_NAME)
 set(OPENJPEG_LIBRARY_NAME openjp2)
+set(OPENJPEG_PLUGIN_NAME openjp2_plugin)
 
 project(${OPENJPEG_NAMESPACE} C)
 
@@ -240,6 +241,7 @@ add_subdirectory(src/lib)
 #-----------------------------------------------------------------------------
 # Build Applications
 option(BUILD_CODEC "Build the CODEC executables" ON)
+option(BUILD_WITH_OPENMP "Build the OpenMP support." OFF)
 option(BUILD_MJ2 "Build the MJ2 executables." OFF)
 option(BUILD_JPWL "Build the JPWL library and executables" OFF)
 option(BUILD_JPIP "Build the JPIP library and executables." OFF)
