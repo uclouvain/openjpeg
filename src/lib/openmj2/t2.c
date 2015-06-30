@@ -35,7 +35,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "opj_includes.h"
+#include "mj2_includes.h"
 
 /** @defgroup T2 T2 - Implementation of a tier-2 coding */
 /*@{*/

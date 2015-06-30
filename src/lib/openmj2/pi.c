@@ -36,7 +36,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "opj_includes.h"
+#include "mj2_includes.h"
 
 /** @defgroup PI PI - Implementation of a packet iterator */
 /*@{*/

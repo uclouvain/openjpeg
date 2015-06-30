@@ -31,7 +31,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "opj_includes.h"
+#include "mj2_includes.h"
 #include "mj2.h"
 
 /** @defgroup JP2 JP2 - JPEG-2000 file format reader/writer */

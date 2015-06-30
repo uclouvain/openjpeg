@@ -35,7 +35,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#include "opj_apps_config.h"
+#include "mj2_apps_config.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -51,7 +51,7 @@
 #include <png.h>
 #endif /* OPJ_HAVE_LIBPNG */
 
-#include "openjpeg.h"
+#include "mj2_openjpeg.h"
 #include "convert.h"
 
 /*

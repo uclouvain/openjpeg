@@ -36,7 +36,7 @@
 
 #ifdef USE_JPWL
 
-#include "opj_includes.h"
+#include "mj2_includes.h"
 #include <limits.h>
 
 /** Minimum and maximum values for the double->pfp conversion */

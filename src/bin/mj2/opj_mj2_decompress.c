@@ -29,8 +29,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "opj_apps_config.h"
-#include "openjpeg.h"
+#include "mj2_apps_config.h"
+#include "mj2_openjpeg.h"
 #include "j2k_lib.h"
 #include "cio.h"
 #include "j2k.h"

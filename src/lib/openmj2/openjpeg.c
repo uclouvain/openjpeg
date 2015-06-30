@@ -33,8 +33,8 @@
 #include <windows.h>
 #endif /* _WIN32 */
 
-#include "opj_config_private.h"
-#include "opj_includes.h"
+#include "mj2_config_private.h"
+#include "mj2_includes.h"
 
 /* ---------------------------------------------------------------------- */
 #ifdef _WIN32

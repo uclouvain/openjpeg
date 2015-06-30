@@ -35,7 +35,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "openjpeg.h"
+#include "mj2_openjpeg.h"
 #include "cio.h"
 #include "j2k.h"
 #include "jp2.h"
