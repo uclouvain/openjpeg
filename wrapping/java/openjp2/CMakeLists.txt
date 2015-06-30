@@ -15,12 +15,23 @@ include_directories(${JNI_INCLUDE_DIRS})
 
 # required header file:
 include_directories(
-  ${OPENJPEG_BINARY_DIR}/src/lib/openjp2 # opj_config.h
-  ${OPENJPEG_SOURCE_DIR}/src/lib/openmj2
-  ${OPENJPEG_SOURCE_DIR}/src/bin/common
-  ${OPENJPEG_SOURCE_DIR}/src/bin/jp2
+  ${JNI_INCLUDE_DIRS}
+  ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2 # openjpeg.h
+  ${OPENJPEG_BINARY_DIR}/src/lib/openjp2 # opj_config.h,opj_config_private.h
+  ${OPENJPEG_SOURCE_DIR}/src/bin/common  # color.h
+  ${OPENJPEG_BINARY_DIR}/src/bin/common  # opj_apps_config.h
+  ${OPENJPEG_SOURCE_DIR}/src/bin/jp2     # convert.h
   )
-
+if(BUILD_THIRDPARTY)
+ include_directories(
+  ${OPENJPEG_SOURCE_DIR}/thirdparty/include
+  ${OPENJPEG_SOURCE_DIR}/thirdparty/liblcms2/include
+  ${OPENJPEG_SOURCE_DIR}/thirdparty/libpng
+  ${OPENJPEG_SOURCE_DIR}/thirdparty/libtiff
+  ${OPENJPEG_BINARY_DIR}/thirdparty/libtiff
+ )
+endif()
+#
 add_library(openjpegjni MODULE
   ${openjpegjni_SRCS}
   )
