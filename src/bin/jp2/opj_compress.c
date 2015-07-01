@@ -104,9 +104,7 @@ static void encode_help_display(void) {
     fprintf(stdout," * No sub-sampling in x or y direction\n");
     fprintf(stdout," * No mode switch activated\n");
     fprintf(stdout," * Progression order: LRCP\n");
-    #ifdef FIXME_INDEX
     fprintf(stdout," * No index file\n");
-    #endif /* FIXME_INDEX */
     fprintf(stdout," * No ROI upshifted\n");
     fprintf(stdout," * No offset of the origin of the image\n");
     fprintf(stdout," * No offset of the origin of the tiles\n");
@@ -214,10 +212,8 @@ static void encode_help_display(void) {
     fprintf(stdout,"    Divide packets of every tile into tile-parts.\n");
     fprintf(stdout,"    Division is made by grouping Resolutions (R), Layers (L)\n");
     fprintf(stdout,"    or Components (C).\n");
-    #ifdef FIXME_INDEX
     fprintf(stdout,"-x  <index file>\n");
     fprintf(stdout,"    Create an index file.\n");
-    #endif /*FIXME_INDEX*/
     fprintf(stdout,"-ROI c=<component index>,U=<upshifting value>\n");
     fprintf(stdout,"    Quantization indices upshifted for a component. \n");
     fprintf(stdout,"    Warning: This option does not implement the usual ROI (Region of Interest).\n");
@@ -312,7 +308,6 @@ static void encode_help_display(void) {
 #endif /* USE_JPWL */
     /* <<UniPG */
     fprintf(stdout,"\n");
-#ifdef FIXME_INDEX
     fprintf(stdout,"Index structure:\n");
     fprintf(stdout,"----------------\n");
     fprintf(stdout,"\n");
@@ -346,7 +341,6 @@ static void encode_help_display(void) {
     fprintf(stdout,"Tpacket_Np ''   ''    ''   ''    ''       ''       ''     ''\n");
     fprintf(stdout,"MaxDisto\n");
     fprintf(stdout,"TotalDisto\n\n");
-#endif /*FIXME_INDEX*/
 }
 
 static OPJ_PROG_ORDER give_progression(const char progression[4]) {
@@ -806,11 +800,6 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
         {
             char *index = opj_optarg;
             strncpy(indexfilename, index, OPJ_PATH_LEN);
-            /* FIXME ADE INDEX >> */
-            fprintf(stderr,
-                    "[WARNING] Index file generation is currently broken.\n"
-                    "          '-x' option ignored.\n");
-            /* << FIXME ADE INDEX */
         }
             break;
 
@@ -1821,7 +1810,6 @@ int main(int argc, char **argv) {
 			remove(parameters.outfile);
             return 1;
         }
-
         fprintf(stdout,"[INFO] Generated outfile %s\n",parameters.outfile);
         /* close and free the byte stream */
         opj_stream_destroy(l_stream);
@@ -1832,6 +1820,11 @@ int main(int argc, char **argv) {
         /* free image data */
         opj_image_destroy(image);
 
+		if(indexfilename[0])
+	   {
+		opj_dump_file(parameters.outfile, indexfilename, 
+		 parameters.cod_format, imageno);
+	   }
     }
 
     /* free user parameters structure */
@@ -1841,3 +1834,4 @@ int main(int argc, char **argv) {
 
     return 0;
 }
+

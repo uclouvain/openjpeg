@@ -31,12 +31,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
 #include "openjpeg.h"
 #include "index.h"
 #include "opj_inttypes.h"
+#include "format_defs.h"
 
 /* ------------------------------------------------------------------------------------ */
 
@@ -395,3 +397,115 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 
 	return 0;
 }
+
+void opj_dump_file(const char *infile, const char *indexfilename,
+	int format, int imageno)
+{
+	FILE *fout = NULL;
+	opj_dparameters_t parameters;
+	opj_image_t* image = NULL;
+	opj_codec_t* l_codec = NULL;
+	opj_stream_t *l_stream = NULL;
+	char *outfile;
+	int fails;
+	int flags = OPJ_IMG_INFO | OPJ_J2K_MH_INFO | OPJ_J2K_MH_IND;
+	OPJ_CODEC_FORMAT codec_format;
+
+	if(format == J2K_CFMT)
+	 codec_format = OPJ_CODEC_J2K;
+	else
+	if(format == JP2_CFMT)
+	 codec_format = OPJ_CODEC_JP2;
+	else
+	if(format == JPT_CFMT)
+	 codec_format = OPJ_CODEC_JPT;
+	else
+   {
+	fprintf(stderr,"%s:%d:\n\tdump_file has wrong format %d\n",
+	__FILE__,__LINE__,format);
+	 return;
+   }
+	outfile = (char*)malloc(strlen(indexfilename) + 8);
+
+	if(outfile == NULL) 
+   {
+	fprintf(stderr,"%s:%d:\n\tdump_file memory out\n",
+	__FILE__,__LINE__);
+	return;
+   }
+
+	if(imageno > 1)
+   {
+	sprintf(outfile, "%s-%d", indexfilename, imageno);
+   }
+	else
+   {
+	strcpy(outfile, indexfilename);
+   }
+	opj_set_default_decoder_parameters(&parameters);
+
+	strcpy(parameters.outfile, outfile);
+
+	parameters.decod_format = format;
+
+	fout = fopen(outfile,"w");
+
+	if(fout == NULL)
+   {
+	fprintf(stderr, "%s:%d:\n\tdump_file: failed to open %s for writing\n",
+	__FILE__,__LINE__,outfile);
+	free(outfile);
+	return ;
+   }
+	strcpy(parameters.infile, infile);
+
+	fails = 1;
+
+	l_stream = 
+	 opj_stream_create_default_file_stream(infile, 1);//1:READ
+
+	if(l_stream == NULL)
+   {
+	fprintf(stderr, "dump_file: opj_stream_create_default_file_stream"
+	 " failed.\n");
+	goto fin;
+   }
+
+	l_codec = opj_create_decompress(codec_format);
+
+	if(l_codec == NULL) 
+   {
+	fprintf(stderr, "dump_file: opj_create_decompress failed.\n");
+	goto fin;
+   }
+
+	if( !opj_setup_decoder(l_codec, &parameters) )
+   {
+	fprintf(stderr, "dump_file: opj_setup_decoder failed.\n");
+	goto fin;
+   }
+
+	if(! opj_read_header(l_stream, l_codec, &image))
+   {
+	fprintf(stderr, "dump_file: opj_read_header failed.\n");
+	goto fin;
+   }
+
+	opj_dump_codec(l_codec, flags, fout );
+
+	fails = 0;
+fin:
+	if(fails) remove(outfile);
+
+	if(l_stream) opj_stream_destroy(l_stream);
+
+	if(l_codec) opj_destroy_codec(l_codec);
+
+	if(image) opj_image_destroy(image);
+
+	fclose(fout);
+
+	free(outfile);
+
+}
+
