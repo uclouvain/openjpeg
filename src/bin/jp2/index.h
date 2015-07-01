@@ -46,6 +46,9 @@ Write a structured index to a file
 */
 int write_index_file(opj_codestream_info_t *cstr_info, char *index);
 
+void opj_dump_file(const char *infile, const char *indexfilename,
+    int format, int imageno);
+
 #ifdef __cplusplus
 }
 #endif

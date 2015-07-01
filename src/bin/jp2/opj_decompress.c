@@ -1498,7 +1498,16 @@ int main(int argc, char **argv)
 		/* destroy the codestream index */
 		opj_destroy_cstr_index(&cstr_index);
 
-		if(failed) remove(parameters.outfile);
+		if(failed) 
+	   {
+		remove(parameters.outfile);
+	   }
+		else
+		if(indexfilename[0])
+	   {
+		opj_dump_file(parameters.infile, indexfilename,
+		 parameters.decod_format, imageno);
+	   }
 	}
 	destroy_parameters(&parameters);
 	return failed ? EXIT_FAILURE : EXIT_SUCCESS;
