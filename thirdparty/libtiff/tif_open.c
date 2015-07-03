@@ -1,4 +1,4 @@
-/* $Id: tif_open.c,v 1.46 2010-12-06 16:54:54 faxguy Exp $ */
+/* $Id$ */
 
 /*
  * Copyright (c) 1988-1997 Sam Leffler

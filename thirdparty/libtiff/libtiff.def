@@ -114,10 +114,17 @@ EXPORTS TIFFOpen
 	_TIFFmemset
 	_TIFFmemcpy
 	_TIFFmemcmp
+	_TIFFCheckMalloc
 	TIFFCreateDirectory
 	TIFFSetTagExtender
 	TIFFFieldWithName
 	TIFFFieldWithTag
+	TIFFFieldTag
+	TIFFFieldName
+	TIFFFieldDataType
+	TIFFFieldPassCount
+	TIFFFieldReadCount
+	TIFFFieldWriteCount
 	TIFFCurrentDirOffset
 	TIFFWriteCheck
 	TIFFRGBAImageOK

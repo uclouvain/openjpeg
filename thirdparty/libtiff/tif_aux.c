@@ -1,4 +1,4 @@
-/* $Id: tif_aux.c,v 1.26 2010-07-01 15:33:28 dron Exp $ */
+/* $Id$ */
 
 /*
  * Copyright (c) 1991-1997 Sam Leffler
