@@ -2962,8 +2962,8 @@ int imagetopng(opj_image_t * image, const char *write_idf)
             png_set_packing(png);
         }
 // printf("%s:%d:sgnd(%d,%d,%d) w(%d) h(%d) alpha(%d)\n",__FILE__,__LINE__,
-image->comps[0].sgnd,
-image->comps[1].sgnd,image->comps[2].sgnd,width,height,has_alpha);
+//image->comps[0].sgnd,
+//image->comps[1].sgnd,image->comps[2].sgnd,width,height,has_alpha);
 
         adjustR = (image->comps[0].sgnd ? 1 << (image->comps[0].prec - 1) : 0);
         adjustG = (image->comps[1].sgnd ? 1 << (image->comps[1].prec - 1) : 0);
