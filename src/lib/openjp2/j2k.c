@@ -8602,6 +8602,10 @@ opj_j2k_t* opj_j2k_create_decompress(void)
         l_j2k->m_is_decoder = 1;
         l_j2k->m_cp.m_is_decoder = 1;
 
+#ifdef OPJ_DISABLE_TPSOT_FIX
+        l_j2k->m_specific_param.m_decoder.m_nb_tile_parts_correction_checked = 1;
+#endif
+
         l_j2k->m_specific_param.m_decoder.m_default_tcp = (opj_tcp_t*) opj_calloc(1,sizeof(opj_tcp_t));
         if (!l_j2k->m_specific_param.m_decoder.m_default_tcp) {
                 opj_j2k_destroy(l_j2k);
