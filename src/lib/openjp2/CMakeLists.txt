@@ -41,6 +41,11 @@ if(BUILD_JPIP)
   )
 endif()
 
+option(OPJ_DISABLE_TPSOT_FIX "Disable TPsot==TNsot fix. See https://github.com/uclouvain/openjpeg/issues/254." OFF)
+if(OPJ_DISABLE_TPSOT_FIX)
+  add_definitions(-DOPJ_DISABLE_TPSOT_FIX)
+endif()
+
 # Build the library
 if(WIN32)
   if(BUILD_SHARED_LIBS)
