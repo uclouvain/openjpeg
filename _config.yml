@@ -29,6 +29,15 @@ icteamURL: https://www.uclouvain.be/en-icteam.html
 intopixURL: http://www.intopix.com/
 latestReleaseURL: https://github.com/uclouvain/openjpeg/releases/latest
 allReleasesURL: https://github.com/uclouvain/openjpeg/releases/
+docInstallURL: https://github.com/uclouvain/openjpeg/wiki/Installation
+docUsageURL: https://github.com/uclouvain/openjpeg/wiki/DocJ2KCodec
+docAPIURL: http://www.openjpeg.org/libdoc/index.html
+ciURL: http://my.cdash.org/index.php?project=OPENJPEG
+dataURL: https://github.com/uclouvain/openjpeg-data
+newIssueURL: https://github.com/uclouvain/openjpeg/issues/new
+mlURL: 'https://groups.google.com/forum/#!forum/openjpeg'
+mlsubURL: 'https://groups.google.com/forum/#!forum/openjpeg/join'
+refSoftURL: http://www.jpeg.org/jpeg2000/software.html
 
 # The production_url is only used when full-domain names are needed
 # such as sitemap.txt 

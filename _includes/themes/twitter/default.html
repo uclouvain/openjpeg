@@ -65,17 +65,22 @@
          
       <div class="sidebar">
         <h2>Documentation</h2>
+          <p><a href="{{ site.docInstallURL }}">Build / Installation</a></p>
+          <p><a href="{{ site.docUsageURL }}">Usage</a></p>
       </div>
 
       <div class="sidebar">
+        <h2>Community</h2>
+          <p><a href="{{ site.mlURL }}">Mailing-list</a> (<a href="{{ site.mlsubURL }}">subscribe</a>)</p>
+          <p><a href="{{ site.issuesURL }}">Issue tracker</a> (<a href="{{ site.newIssueURL }}">fill an issue</a>)</p> 
+      </div>
+      
+
+      <div class="sidebar">
         <h2>Developers</h2>
-          
-          <figure>
-            <a href="{{ site.issuesURL}}"><img src="{{ BASE_PATH }}/assets/images/issue-64.png" alt="issue tracker"  width="64" height="64"></a>
-        <figcaption>
-              <a href="{{ site.issuesURL}}">Issue tracker</a>
-        </figcaption>
-          </figure>           
+          <p><a href="{{ site.gitURL }}">Source code</a></p>
+          <p><a href="{{ site.dataURL }}">Test files</a></p> 
+          <p><a href="{{ site.ciURL }}">CDash</a></p> 
       </div>
 	  </div>
 	
@@ -90,14 +95,17 @@
               
 	    <div class="sidebarLeft">
 	      <!-- Column right -->
-        <p><a href="{{ BASE_PATH}}/2014/09/11/openjpeg-finalist-dpa"><img src="{{ BASE_PATH }}/assets/images/J2Klogo_wide.png" alt="JPEG 2000 Reference software"  width="200"></a></p>
+        <p><a href="{{ site.refSoftURL}}"><img src="{{ BASE_PATH }}/assets/images/J2Klogo_wide.png" alt="JPEG 2000 Reference software"  width="200"></a></p>
     <br>
     <p><a href="{{ site.uclURL}}"><img src="{{ BASE_PATH }}/assets/images/UCL_logo.png" alt="UCL"  width="160"></a></p>
     <br>
-    <p><a href="{{ site.icteamURL}}"><img src="{{ BASE_PATH }}/assets/images/logo-icteam.jpg" alt="ICTEAM"  width="160"></a></p>
-    <br>
+    <!--<p><a href="{{ site.icteamURL}}"><img src="{{ BASE_PATH }}/assets/images/logo-icteam.jpg" alt="ICTEAM"  width="160"></a></p>
+    <br>-->
     <p><a href="{{ site.intopixURL}}"><img src="{{ BASE_PATH }}/assets/images/logo_intopix.png" alt="INTOPIX"  width="160"></a></p>
-    <br><br><br><br>
+    <br><br>
+    <p><a class="twitter-timeline" href="https://twitter.com/OpenJPEG" data-widget-id="619207551389986816">Tweets de @OpenJPEG</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script></p>
+    <br>
     <figure>
           <a href="{{ BASE_PATH }}/rss.xml"><img src="{{ BASE_PATH }}/assets/images/feed-icon-32.png" alt="RSS" width="32" height="32"></a>
           <figcaption>
