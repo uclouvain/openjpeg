@@ -1350,7 +1350,7 @@ opj_image_t* pnmtoimage(const char *filename, opj_cparameters_t *parameters) {
     return image;
 }/* pnmtoimage() */
 
-int imagetopnm(opj_image_t * image, const char *outfile) 
+int imagetopnm(opj_image_t * image, const char *outfile, int force_split)
 {
     int *red, *green, *blue, *alpha;
     int wr, hr, max;
@@ -1380,7 +1380,8 @@ int imagetopnm(opj_image_t * image, const char *outfile)
 
     if(want_gray) ncomp = 1;
 
-    if (ncomp == 2 /* GRAYA */
+    if ((force_split == 0) &&
+				(ncomp == 2 /* GRAYA */
             || (ncomp > 2 /* RGB, RGBA */
                 && image->comps[0].dx == image->comps[1].dx
                 && image->comps[1].dx == image->comps[2].dx
@@ -1388,8 +1389,8 @@ int imagetopnm(opj_image_t * image, const char *outfile)
                 && image->comps[1].dy == image->comps[2].dy
                 && image->comps[0].prec == image->comps[1].prec
                 && image->comps[1].prec == image->comps[2].prec
-                ))
-    {
+                )))
+		{
         fdest = fopen(outfile, "wb");
 
         if (!fdest)

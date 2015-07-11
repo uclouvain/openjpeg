@@ -145,6 +145,8 @@ typedef struct opj_decompress_params
 	int force_rgb;
 	/* upsample components according to their dx/dy values */
 	int upsample;
+	/* split output components to different files */
+	int split_pnm;
 }opj_decompress_parameters;
 
 /* -------------------------------------------------------------------------- */
@@ -218,6 +220,8 @@ static void decode_help_display(void) {
 	               "    Force output image colorspace to RGB\n"
 	               "  -upsample\n"
 	               "    Downsampled components will be upsampled to image size\n"
+	               "  -split-pnm\n"
+	               "    Split output components to different files when writing to PNM\n"
 	               "\n");
 /* UniPG>> */
 #ifdef USE_JPWL
@@ -506,7 +510,8 @@ int parse_cmdline_decoder(int argc, char **argv, opj_decompress_parameters *para
 		{"ImgDir",    REQ_ARG, NULL ,'y'},
 		{"OutFor",    REQ_ARG, NULL ,'O'},
 		{"force-rgb", NO_ARG,  &(parameters->force_rgb), 1},
-		{"upsample",  NO_ARG,  &(parameters->upsample),  1}
+		{"upsample",  NO_ARG,  &(parameters->upsample),  1},
+		{"split-pnm", NO_ARG,  &(parameters->split_pnm), 1}
 	};
 
 	const char optlist[] = "i:o:r:l:x:d:t:p:"
@@ -1433,7 +1438,7 @@ int main(int argc, char **argv)
 		/* ------------------- */
 		switch (parameters.cod_format) {
 		case PXM_DFMT:			/* PNM PGM PPM */
-			if (imagetopnm(image, parameters.outfile)) {
+			if (imagetopnm(image, parameters.outfile, parameters.split_pnm)) {
                 fprintf(stderr,"[ERROR] Outfile %s not generated\n",parameters.outfile);
         failed = 1;
 			}
