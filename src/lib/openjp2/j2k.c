@@ -2031,14 +2031,8 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
         }
 
         /* testcase issue427-illegal-tile-offset.jp2 */
-        l_tx1 = l_cp->tx0 + l_cp->tdx;
-        if (l_tx1 < l_cp->tx0) { /* manage overflow */
-                l_tx1 = 0xFFFFFFFFU;
-        }
-        l_ty1 = l_cp->ty0 + l_cp->tdy;
-        if (l_ty1 < l_cp->ty0) { /* manage overflow */
-                l_ty1 = 0xFFFFFFFFU;
-        }
+        l_tx1 = opj_uint_adds(l_cp->tx0, l_cp->tdx); /* manage overflow */
+        l_ty1 = opj_uint_adds(l_cp->ty0, l_cp->tdy); /* manage overflow */
         if ((l_cp->tx0 > l_image->x0) || (l_cp->ty0 > l_image->y0) || (l_tx1 <= l_image->x0) || (l_ty1 <= l_image->y0) ) {
                 opj_event_msg(p_manager, EVT_ERROR, "Error with SIZ marker: illegal tile offset\n");
                 return OPJ_FALSE;

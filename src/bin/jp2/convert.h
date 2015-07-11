@@ -91,7 +91,7 @@ opj_image_t* pgxtoimage(const char *filename, opj_cparameters_t *parameters);
 int imagetopgx(opj_image_t *image, const char *outfile);
 
 opj_image_t* pnmtoimage(const char *filename, opj_cparameters_t *parameters);
-int imagetopnm(opj_image_t *image, const char *outfile);
+int imagetopnm(opj_image_t *image, const char *outfile, int force_split);
 
 /* RAW conversion */
 int imagetoraw(opj_image_t * image, const char *outfile);
