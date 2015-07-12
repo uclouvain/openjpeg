@@ -907,6 +907,23 @@ static OPJ_BOOL opj_jp2_check_color(opj_image_t *image, opj_jp2_color_t *color, 
 				is_sane = OPJ_FALSE;
 			}
 		}
+		/* Issue 235/447 weird cmap */
+		if (1 && is_sane && (image->numcomps==1U)) {
+			for (i = 0; i < nr_channels; i++) {
+				if (!pcol_usage[i]) {
+					is_sane = 0U;
+					opj_event_msg(p_manager, EVT_WARNING, "Component mapping seems wrong. Trying to correct.\n", i);
+					break;
+				}
+			}
+			if (!is_sane) {
+				is_sane = OPJ_TRUE;
+				for (i = 0; i < nr_channels; i++) {
+					cmap[i].mtyp = 1U;
+					cmap[i].pcol = (OPJ_BYTE) i;
+				}
+			}
+		}
 		opj_free(pcol_usage);
 		if (!is_sane) {
 			return OPJ_FALSE;
@@ -1990,6 +2007,7 @@ OPJ_BOOL opj_jp2_read_header_procedure(  opj_jp2_t *jp2,
 	opj_jp2_box_t box;
 	OPJ_UINT32 l_nb_bytes_read;
 	const opj_jp2_header_handler_t * l_current_handler;
+	const opj_jp2_header_handler_t * l_current_handler_misplaced;
 	OPJ_UINT32 l_last_data_size = OPJ_BOX_SIZE;
 	OPJ_UINT32 l_current_data_size;
 	OPJ_BYTE * l_current_data = 00;
@@ -2033,9 +2051,26 @@ OPJ_BOOL opj_jp2_read_header_procedure(  opj_jp2_t *jp2,
 		}
 
 		l_current_handler = opj_jp2_find_handler(box.type);
+		l_current_handler_misplaced = opj_jp2_img_find_handler(box.type);
 		l_current_data_size = box.length - l_nb_bytes_read;
 
-		if (l_current_handler != 00) {
+		if ((l_current_handler != 00) || (l_current_handler_misplaced != 00)) {
+			if (l_current_handler == 00) {
+				opj_event_msg(p_manager, EVT_WARNING, "Found a misplaced '%c%c%c%c' box outside jp2h box\n", (OPJ_BYTE)(box.type>>24), (OPJ_BYTE)(box.type>>16), (OPJ_BYTE)(box.type>>8), (OPJ_BYTE)(box.type>>0));
+				if (jp2->jp2_state & JP2_STATE_HEADER) {
+					/* read anyway, we already have jp2h */
+					l_current_handler = l_current_handler_misplaced;
+				} else {
+					opj_event_msg(p_manager, EVT_WARNING, "JPEG2000 Header box not read yet, '%c%c%c%c' box will be ignored\n", (OPJ_BYTE)(box.type>>24), (OPJ_BYTE)(box.type>>16), (OPJ_BYTE)(box.type>>8), (OPJ_BYTE)(box.type>>0));
+					jp2->jp2_state |= JP2_STATE_UNKNOWN;
+					if (opj_stream_skip(stream,l_current_data_size,p_manager) != l_current_data_size) {
+							opj_event_msg(p_manager, EVT_ERROR, "Problem with skipping JPEG2000 box, stream error\n");
+							opj_free(l_current_data);
+							return OPJ_FALSE;
+					}
+					continue;
+				}
+			}
 			if ((OPJ_OFF_T)l_current_data_size > opj_stream_get_number_byte_left(stream)) {
 				/* do not even try to malloc if we can't read */
 				opj_event_msg(p_manager, EVT_ERROR, "Invalid box size %d for box '%c%c%c%c'. Need %d bytes, %d bytes remaining \n", box.length, (OPJ_BYTE)(box.type>>24), (OPJ_BYTE)(box.type>>16), (OPJ_BYTE)(box.type>>8), (OPJ_BYTE)(box.type>>0), l_current_data_size, (OPJ_UINT32)opj_stream_get_number_byte_left(stream));
