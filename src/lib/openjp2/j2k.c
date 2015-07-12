@@ -718,28 +718,28 @@ static OPJ_BOOL opj_j2k_read_plt (  opj_j2k_t *p_j2k,
                                     OPJ_UINT32 p_header_size,
                                     opj_event_mgr_t * p_manager );
 
-#if 0
 /**
- * Reads a PPM marker (Packed packet headers, main header)
+ * Reads a PPM marker (Packed headers, main header)
  *
  * @param       p_header_data   the data contained in the POC box.
  * @param       p_j2k                   the jpeg2000 codec.
  * @param       p_header_size   the size of the data contained in the POC marker.
  * @param       p_manager               the user event manager.
-*/
-static OPJ_BOOL j2k_read_ppm_v2 (
-                                                opj_j2k_t *p_j2k,
-                                                OPJ_BYTE * p_header_data,
-                                                OPJ_UINT32 p_header_size,
-                                                struct opj_event_mgr * p_manager
-                                        );
-#endif
+ */
 
-static OPJ_BOOL j2k_read_ppm_v3 (
-                                                opj_j2k_t *p_j2k,
-                                                OPJ_BYTE * p_header_data,
-                                                OPJ_UINT32 p_header_size,
-                                                opj_event_mgr_t * p_manager );
+static OPJ_BOOL opj_j2k_read_ppm (
+																		 opj_j2k_t *p_j2k,
+																		 OPJ_BYTE * p_header_data,
+																		 OPJ_UINT32 p_header_size,
+																		 opj_event_mgr_t * p_manager );
+
+/**
+ * Merges all PPM markers read (Packed headers, main header)
+ *
+ * @param       p_cp      main coding parameters.
+ * @param       p_manager the user event manager.
+ */
+static OPJ_BOOL opj_j2k_merge_ppm ( opj_cp_t *p_cp, opj_event_mgr_t * p_manager );
 
 /**
  * Reads a PPT marker (Packed packet headers, tile-part header)
@@ -755,7 +755,7 @@ static OPJ_BOOL opj_j2k_read_ppt (  opj_j2k_t *p_j2k,
                                     opj_event_mgr_t * p_manager );
 
 /**
- * Merges all PPT markers read (Packed packet headers, tile-part header)
+ * Merges all PPT markers read (Packed headers, tile-part header)
  *
  * @param       p_tcp   the tile.
  * @param       p_manager               the user event manager.
@@ -1305,7 +1305,7 @@ const opj_dec_memory_marker_handler_t j2k_memory_marker_handler_tab [] =
   {J2K_MS_TLM, J2K_STATE_MH, opj_j2k_read_tlm},
   {J2K_MS_PLM, J2K_STATE_MH, opj_j2k_read_plm},
   {J2K_MS_PLT, J2K_STATE_TPH, opj_j2k_read_plt},
-  {J2K_MS_PPM, J2K_STATE_MH, j2k_read_ppm_v3},
+  {J2K_MS_PPM, J2K_STATE_MH, opj_j2k_read_ppm},
   {J2K_MS_PPT, J2K_STATE_TPH, opj_j2k_read_ppt},
   {J2K_MS_SOP, 0, 0},
   {J2K_MS_CRG, J2K_STATE_MH, opj_j2k_read_crg},
@@ -3495,382 +3495,220 @@ static OPJ_BOOL opj_j2k_read_plt (  opj_j2k_t *p_j2k,
         return OPJ_TRUE;
 }
 
-#if 0
-OPJ_BOOL j2k_read_ppm_v2 (
-                                                opj_j2k_t *p_j2k,
-                                                OPJ_BYTE * p_header_data,
-                                                OPJ_UINT32 p_header_size,
-                                                struct opj_event_mgr * p_manager
-                                        )
+/**
+ * Reads a PPM marker (Packed packet headers, main header)
+ *
+ * @param       p_header_data   the data contained in the POC box.
+ * @param       p_j2k                   the jpeg2000 codec.
+ * @param       p_header_size   the size of the data contained in the POC marker.
+ * @param       p_manager               the user event manager.
+ */
+
+static OPJ_BOOL opj_j2k_read_ppm (
+																	opj_j2k_t *p_j2k,
+																	OPJ_BYTE * p_header_data,
+																	OPJ_UINT32 p_header_size,
+																	opj_event_mgr_t * p_manager )
 {
+	opj_cp_t *l_cp = 00;
+	OPJ_UINT32 l_Z_ppm;
+	
+	/* preconditions */
+	assert(p_header_data != 00);
+	assert(p_j2k != 00);
+	assert(p_manager != 00);
+	
+	/* We need to have the Z_ppm element + 1 byte of Nppm/Ippm at minimum */
+	if (p_header_size < 2) {
+		opj_event_msg(p_manager, EVT_ERROR, "Error reading PPM marker\n");
+		return OPJ_FALSE;
+	}
+	
+	l_cp = &(p_j2k->m_cp);
+	l_cp->ppm = 1;
+	
+	opj_read_bytes(p_header_data,&l_Z_ppm,1);               /* Z_ppm */
+	++p_header_data;
+	--p_header_size;
+	
+	/* check allocation needed */
+	if (l_cp->ppm_markers == NULL) { /* first PPM marker */
+		OPJ_UINT32 l_newCount = l_Z_ppm + 1U; /* can't overflow, l_Z_ppm is UINT8 */
+		assert(l_cp->ppm_markers_count == 0U);
+		
+		l_cp->ppm_markers = (opj_ppx *) opj_calloc(l_newCount, sizeof(opj_ppx));
+		if (l_cp->ppm_markers == NULL) {
+			opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to read PPM marker\n");
+			return OPJ_FALSE;
+		}
+		l_cp->ppm_markers_count = l_newCount;
+	} else if (l_cp->ppm_markers_count <= l_Z_ppm) {
+		OPJ_UINT32 l_newCount = l_Z_ppm + 1U; /* can't overflow, l_Z_ppm is UINT8 */
+		opj_ppx *new_ppm_markers;
+		new_ppm_markers = (opj_ppx *) opj_realloc(l_cp->ppm_markers, l_newCount * sizeof(opj_ppx));
+		if (new_ppm_markers == NULL) {
+			/* clean up to be done on l_cp destruction */
+			opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to read PPM marker\n");
+			return OPJ_FALSE;
+		}
+		l_cp->ppm_markers = new_ppm_markers;
+		memset(l_cp->ppm_markers + l_cp->ppm_markers_count, 0, (l_newCount - l_cp->ppm_markers_count) * sizeof(opj_ppx));
+		l_cp->ppm_markers_count = l_newCount;
+	}
+	
+	if (l_cp->ppm_markers[l_Z_ppm].m_data != NULL) {
+		/* clean up to be done on l_cp destruction */
+		opj_event_msg(p_manager, EVT_ERROR, "Zppm %u already read\n", l_Z_ppm);
+		return OPJ_FALSE;
+	}
+	
+	l_cp->ppm_markers[l_Z_ppm].m_data = opj_malloc(p_header_size);
+	if (l_cp->ppm_markers[l_Z_ppm].m_data == NULL) {
+		/* clean up to be done on l_cp destruction */
+		opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to read PPM marker\n");
+		return OPJ_FALSE;
+	}
+	l_cp->ppm_markers[l_Z_ppm].m_data_size = p_header_size;
+	memcpy(l_cp->ppm_markers[l_Z_ppm].m_data, p_header_data, p_header_size);
 
-        opj_cp_t *l_cp = 00;
-        OPJ_UINT32 l_remaining_data, l_Z_ppm, l_N_ppm;
-
-        /* preconditions */
-        assert(p_header_data != 00);
-        assert(p_j2k != 00);
-        assert(p_manager != 00);
-
-        if (p_header_size < 1) {
-                opj_event_msg(p_manager, EVT_ERROR, "Error reading PPM marker\n");
-                return OPJ_FALSE;
-        }
-
-        l_cp = &(p_j2k->m_cp);
-        l_cp->ppm = 1;
-
-        opj_read_bytes(p_header_data,&l_Z_ppm,1);               /* Z_ppm */
-        ++p_header_data;
-        --p_header_size;
-
-        /* First PPM marker */
-        if (l_Z_ppm == 0) {
-                if (p_header_size < 4) {
-                        opj_event_msg(p_manager, EVT_ERROR, "Error reading PPM marker\n");
-                        return OPJ_FALSE;
-                }
-
-                opj_read_bytes(p_header_data,&l_N_ppm,4);               /* N_ppm */
-                p_header_data+=4;
-                p_header_size-=4;
-
-                /* First PPM marker: Initialization */
-                l_cp->ppm_len = l_N_ppm;
-                l_cp->ppm_data_size = 0;
-
-                l_cp->ppm_buffer = (OPJ_BYTE *) opj_malloc(l_cp->ppm_len);
-                if (l_cp->ppm_buffer == 00) {
-                        opj_event_msg(p_manager, EVT_ERROR, "Not enough memory reading ppm marker\n");
-                        return OPJ_FALSE;
-                }
-                memset(l_cp->ppm_buffer,0,l_cp->ppm_len);
-
-                l_cp->ppm_data = l_cp->ppm_buffer;
-        }
-
-        while (1) {
-                if (l_cp->ppm_data_size == l_cp->ppm_len) {
-                        if (p_header_size >= 4) {
-                                /* read a N_ppm */
-                                opj_read_bytes(p_header_data,&l_N_ppm,4);               /* N_ppm */
-                                p_header_data+=4;
-                                p_header_size-=4;
-                                l_cp->ppm_len += l_N_ppm ;
-
-                                OPJ_BYTE *new_ppm_buffer = (OPJ_BYTE *) opj_realloc(l_cp->ppm_buffer, l_cp->ppm_len);
-                                if (! new_ppm_buffer) {
-                                        opj_free(l_cp->ppm_buffer);
-                                        l_cp->ppm_buffer = NULL;
-                                        l_cp->ppm_len = 0;
-                                        l_cp->ppm_data = NULL;
-                                        opj_event_msg(p_manager, EVT_ERROR, "Not enough memory reading ppm marker\n");
-                                        return OPJ_FALSE;
-                                }
-                                l_cp->ppm_buffer = new_ppm_buffer;
-                                memset(l_cp->ppm_buffer+l_cp->ppm_data_size,0,l_N_ppm);
-                                l_cp->ppm_data = l_cp->ppm_buffer;
-                        }
-                        else {
-                                return OPJ_FALSE;
-                        }
-                }
-
-                l_remaining_data = l_cp->ppm_len - l_cp->ppm_data_size;
-
-                if (l_remaining_data <= p_header_size) {
-                        /* we must store less information than available in the packet */
-                        memcpy(l_cp->ppm_buffer + l_cp->ppm_data_size , p_header_data , l_remaining_data);
-                        l_cp->ppm_data_size = l_cp->ppm_len;
-                        p_header_size -= l_remaining_data;
-                        p_header_data += l_remaining_data;
-                }
-                else {
-                        memcpy(l_cp->ppm_buffer + l_cp->ppm_data_size , p_header_data , p_header_size);
-                        l_cp->ppm_data_size += p_header_size;
-                        p_header_data += p_header_size;
-                        p_header_size = 0;
-                        break;
-                }
-        }
-
-        return OPJ_TRUE;
+	return OPJ_TRUE;
 }
-#endif
 
-OPJ_BOOL j2k_read_ppm_v3 (
-                                                opj_j2k_t *p_j2k,
-                                                OPJ_BYTE * p_header_data,
-                                                OPJ_UINT32 p_header_size,
-                                                struct opj_event_mgr * p_manager
-                                        )
+/**
+ * Merges all PPM markers read (Packed headers, main header)
+ *
+ * @param       p_cp      main coding parameters.
+ * @param       p_manager the user event manager.
+ */
+static OPJ_BOOL opj_j2k_merge_ppm ( opj_cp_t *p_cp, opj_event_mgr_t * p_manager )
 {
-        opj_cp_t *l_cp = 00;
-        OPJ_UINT32 l_remaining_data, l_Z_ppm, l_N_ppm;
+	OPJ_UINT32 i, l_ppm_data_size, l_N_ppm_remaining;
+	
+	/* preconditions */
+	assert(p_cp != 00);
+	assert(p_manager != 00);
+	assert(p_cp->ppm_buffer == NULL);
+	
+	if (p_cp->ppm == 0U) {
+		return OPJ_TRUE;
+	}
+	
+	l_ppm_data_size = 0U;
+	l_N_ppm_remaining = 0U;
+	for (i = 0U; i < p_cp->ppm_markers_count; ++i) {
+		if (p_cp->ppm_markers[i].m_data != NULL) { /* standard doesn't seem to require contiguous Zppm */
+			OPJ_UINT32 l_N_ppm;
+			OPJ_UINT32 l_data_size = p_cp->ppm_markers[i].m_data_size;
+			const OPJ_BYTE* l_data = p_cp->ppm_markers[i].m_data;
+			
+			if (l_N_ppm_remaining >= l_data_size) {
+				l_N_ppm_remaining -= l_data_size;
+				l_data_size = 0U;
+			} else {
+				l_data += l_N_ppm_remaining;
+				l_data_size -= l_N_ppm_remaining;
+				l_N_ppm_remaining = 0U;
+			}
+			
+			if (l_data_size > 0U) {
+				do
+				{
+					/* read Nppm */
+					if (l_data_size < 4U) {
+						/* clean up to be done on l_cp destruction */
+						opj_event_msg(p_manager, EVT_ERROR, "Not enough bytes to read Nppm\n");
+						return OPJ_FALSE;
+					}
+					opj_read_bytes(l_data, &l_N_ppm, 4);
+					l_data+=4;
+					l_data_size-=4;
+					l_ppm_data_size += l_N_ppm; /* can't overflow, max 256 markers of max 65536 bytes, that is when PPM markers are not corrupted which is checked elsewhere */
+					
+					if (l_data_size >= l_N_ppm) {
+						l_data_size -= l_N_ppm;
+						l_data += l_N_ppm;
+					} else {
+						l_N_ppm_remaining = l_N_ppm - l_data_size;
+						l_data_size = 0U;
+					}
+				} while (l_data_size > 0U);
+			}
+		}
+	}
+	
+	if (l_N_ppm_remaining != 0U) {
+		/* clean up to be done on l_cp destruction */
+		opj_event_msg(p_manager, EVT_ERROR, "Corrupted PPM markers\n");
+		return OPJ_FALSE;
+	}
+	
+	p_cp->ppm_buffer = (OPJ_BYTE *) opj_malloc(l_ppm_data_size);
+	if (p_cp->ppm_buffer == 00) {
+		opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to read PPM marker\n");
+		return OPJ_FALSE;
+	}
+	p_cp->ppm_len = l_ppm_data_size;
+	l_ppm_data_size = 0U;
+	l_N_ppm_remaining = 0U;
+	for (i = 0U; i < p_cp->ppm_markers_count; ++i) {
+		if (p_cp->ppm_markers[i].m_data != NULL) { /* standard doesn't seem to require contiguous Zppm */
+			OPJ_UINT32 l_N_ppm;
+			OPJ_UINT32 l_data_size = p_cp->ppm_markers[i].m_data_size;
+			const OPJ_BYTE* l_data = p_cp->ppm_markers[i].m_data;
+			
+			if (l_N_ppm_remaining >= l_data_size) {
+				memcpy(p_cp->ppm_buffer + l_ppm_data_size, l_data, l_data_size);
+				l_ppm_data_size += l_data_size;
+				l_N_ppm_remaining -= l_data_size;
+				l_data_size = 0U;
+			} else {
+				memcpy(p_cp->ppm_buffer + l_ppm_data_size, l_data, l_N_ppm_remaining);
+				l_ppm_data_size += l_N_ppm_remaining;
+				l_data += l_N_ppm_remaining;
+				l_data_size -= l_N_ppm_remaining;
+				l_N_ppm_remaining = 0U;
+			}
 
-        /* preconditions */
-        assert(p_header_data != 00);
-        assert(p_j2k != 00);
-        assert(p_manager != 00);
-
-        /* Minimum size of PPM marker is equal to the size of Zppm element */
-        if (p_header_size < 1) {
-                opj_event_msg(p_manager, EVT_ERROR, "Error reading PPM marker\n");
-                return OPJ_FALSE;
-        }
-
-        l_cp = &(p_j2k->m_cp);
-        l_cp->ppm = 1;
-
-        opj_read_bytes(p_header_data,&l_Z_ppm,1);               /* Z_ppm */
-        ++p_header_data;
-        --p_header_size;
-
-        /* First PPM marker */
-        if (l_Z_ppm == 0) {
-                if (l_cp->ppm_data != NULL) {
-                        opj_event_msg(p_manager, EVT_ERROR, "Zppm O already processed. Found twice.\n");
-                        opj_free(l_cp->ppm_data);
-                        l_cp->ppm_data = NULL;
-                        l_cp->ppm_buffer = NULL;
-                        l_cp->ppm = 0; /* do not use PPM */
-                        return OPJ_FALSE;
-                }
-                /* We need now at least the Nppm^0 element */
-                if (p_header_size < 4) {
-                        opj_event_msg(p_manager, EVT_ERROR, "Error reading PPM marker\n");
-                        return OPJ_FALSE;
-                }
-
-                opj_read_bytes(p_header_data,&l_N_ppm,4);               /* First N_ppm */
-                p_header_data+=4;
-                p_header_size-=4;
-
-                /* sanity check: how much bytes is left for Ippm */
-                if( p_header_size < l_N_ppm )
-                  {
-                  opj_event_msg(p_manager, EVT_ERROR, "Not enough bytes (%u) to hold Ippm series (%u), Index (%d)\n", p_header_size, l_N_ppm, l_Z_ppm );
-                  opj_free(l_cp->ppm_data);
-                  l_cp->ppm_data = NULL;
-                  l_cp->ppm_buffer = NULL;
-                  l_cp->ppm = 0; /* do not use PPM */
-                  return OPJ_FALSE;
-                  }
-
-                /* First PPM marker: Initialization */
-                l_cp->ppm_len = l_N_ppm;
-                l_cp->ppm_data_read = 0;
-
-                l_cp->ppm_data = (OPJ_BYTE *) opj_calloc(1,l_cp->ppm_len);
-                l_cp->ppm_buffer = l_cp->ppm_data;
-                if (l_cp->ppm_data == 00) {
-                        opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to read ppm marker\n");
-                        return OPJ_FALSE;
-                }
-
-                l_cp->ppm_data_current = l_cp->ppm_data;
-
-                /*l_cp->ppm_data = l_cp->ppm_buffer;*/
-        }
-        else {
-                if (p_header_size < 4) {
-                        opj_event_msg(p_manager, EVT_WARNING, "Empty PPM marker\n");
-                        return OPJ_TRUE;
-                }
-                else {
-                        /* Uncompleted Ippm series in the previous PPM marker?*/
-                        if (l_cp->ppm_data_read < l_cp->ppm_len) {
-                                /* Get the place where add the remaining Ippm series*/
-                                l_cp->ppm_data_current = &(l_cp->ppm_data[l_cp->ppm_data_read]);
-                                l_N_ppm = l_cp->ppm_len - l_cp->ppm_data_read;
-                        }
-                        else {
-                                OPJ_BYTE *new_ppm_data;
-                                opj_read_bytes(p_header_data,&l_N_ppm,4);               /* First N_ppm */
-                                p_header_data+=4;
-                                p_header_size-=4;
-
-                                /* sanity check: how much bytes is left for Ippm */
-                                if( p_header_size < l_N_ppm )
-                                  {
-                                  opj_event_msg(p_manager, EVT_ERROR, "Not enough bytes (%u) to hold Ippm series (%u), Index (%d)\n", p_header_size, l_N_ppm, l_Z_ppm );
-                                  opj_free(l_cp->ppm_data);
-                                  l_cp->ppm_data = NULL;
-                                  l_cp->ppm_buffer = NULL;
-                                  l_cp->ppm = 0; /* do not use PPM */
-                                  return OPJ_FALSE;
-                                  }
-                                /* Increase the size of ppm_data to add the new Ippm series*/
-                                assert(l_cp->ppm_data == l_cp->ppm_buffer && "We need ppm_data and ppm_buffer to be the same when reallocating");
-                                new_ppm_data = (OPJ_BYTE *) opj_realloc(l_cp->ppm_data, l_cp->ppm_len + l_N_ppm);
-                                if (! new_ppm_data) {
-                                        opj_free(l_cp->ppm_data);
-                                        l_cp->ppm_data = NULL;
-                                        l_cp->ppm_buffer = NULL;  /* TODO: no need for a new local variable: ppm_buffer and ppm_data are enough */
-                                        l_cp->ppm_len = 0;
-                                        opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to increase the size of ppm_data to add the new Ippm series\n");
-                                        return OPJ_FALSE;
-                                }
-                                l_cp->ppm_data = new_ppm_data;
-                                l_cp->ppm_buffer = l_cp->ppm_data;
-
-                                /* Keep the position of the place where concatenate the new series*/
-                                l_cp->ppm_data_current = &(l_cp->ppm_data[l_cp->ppm_len]);
-                                l_cp->ppm_len += l_N_ppm;
-                        }
-                }
-        }
-
-        l_remaining_data = p_header_size;
-
-        while (l_remaining_data >= l_N_ppm) {
-                /* read a complete Ippm series*/
-                memcpy(l_cp->ppm_data_current, p_header_data, l_N_ppm);
-                p_header_size -= l_N_ppm;
-                p_header_data += l_N_ppm;
-
-                l_cp->ppm_data_read += l_N_ppm; /* Increase the number of data read*/
-
-                if (p_header_size)
-                {
-                        if (p_header_size < 4) {
-                                opj_free(l_cp->ppm_data);
-                                l_cp->ppm_data = NULL;
-                                l_cp->ppm_buffer = NULL;  /* TODO: no need for a new local variable: ppm_buffer and ppm_data are enough */
-                                l_cp->ppm_len = 0;
-                                l_cp->ppm = 0;
-                                opj_event_msg(p_manager, EVT_ERROR, "Error reading PPM marker\n");
-                                return OPJ_FALSE;
-                        }
-                        opj_read_bytes(p_header_data,&l_N_ppm,4);               /* N_ppm^i */
-                        p_header_data+=4;
-                        p_header_size-=4;
-                }
-                else {
-                        l_remaining_data = p_header_size;
-                        break;
-                }
-
-                l_remaining_data = p_header_size;
-
-                /* Next Ippm series is a complete series ?*/
-                if (l_remaining_data >= l_N_ppm) {
-                        OPJ_BYTE *new_ppm_data;
-                        /* Increase the size of ppm_data to add the new Ippm series*/
-                        assert(l_cp->ppm_data == l_cp->ppm_buffer && "We need ppm_data and ppm_buffer to be the same when reallocating");
-                        /* Overflow check */
-                        if ((l_cp->ppm_len + l_N_ppm) < l_N_ppm) {
-                                opj_free(l_cp->ppm_data);
-                                l_cp->ppm_data = NULL;
-                                l_cp->ppm_buffer = NULL;  /* TODO: no need for a new local variable: ppm_buffer and ppm_data are enough */
-                                l_cp->ppm_len = 0;
-                                opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to increase the size of ppm_data to add the new (complete) Ippm series\n");
-                                return OPJ_FALSE;
-                        }
-                        new_ppm_data = (OPJ_BYTE *) opj_realloc(l_cp->ppm_data, l_cp->ppm_len + l_N_ppm);
-                        if (! new_ppm_data) {
-                                opj_free(l_cp->ppm_data);
-                                l_cp->ppm_data = NULL;
-                                l_cp->ppm_buffer = NULL;  /* TODO: no need for a new local variable: ppm_buffer and ppm_data are enough */
-                                l_cp->ppm_len = 0;
-                                opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to increase the size of ppm_data to add the new (complete) Ippm series\n");
-                                return OPJ_FALSE;
-                        }
-                        l_cp->ppm_data = new_ppm_data;
-                        l_cp->ppm_buffer = l_cp->ppm_data;
-
-                        /* Keep the position of the place where concatenate the new series */
-                        l_cp->ppm_data_current = &(l_cp->ppm_data[l_cp->ppm_len]);
-                        l_cp->ppm_len += l_N_ppm;
-                }
-
-        }
-
-        /* Need to read an incomplete Ippm series*/
-        if (l_remaining_data) {
-                OPJ_BYTE *new_ppm_data;
-                assert(l_cp->ppm_data == l_cp->ppm_buffer && "We need ppm_data and ppm_buffer to be the same when reallocating");
-
-                /* Overflow check */
-                if ((l_cp->ppm_len + l_N_ppm) < l_N_ppm) {
-                        opj_free(l_cp->ppm_data);
-                        l_cp->ppm_data = NULL;
-                        l_cp->ppm_buffer = NULL;  /* TODO: no need for a new local variable: ppm_buffer and ppm_data are enough */
-                        l_cp->ppm_len = 0;
-                        opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to increase the size of ppm_data to add the new (complete) Ippm series\n");
-                        return OPJ_FALSE;
-                }
-                new_ppm_data = (OPJ_BYTE *) opj_realloc(l_cp->ppm_data, l_cp->ppm_len + l_N_ppm);
-                if (! new_ppm_data) {
-                        opj_free(l_cp->ppm_data);
-                        l_cp->ppm_data = NULL;
-                        l_cp->ppm_buffer = NULL;  /* TODO: no need for a new local variable: ppm_buffer and ppm_data are enough */
-                        l_cp->ppm_len = 0;
-                        opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to increase the size of ppm_data to add the new (incomplete) Ippm series\n");
-                        return OPJ_FALSE;
-                }
-                l_cp->ppm_data = new_ppm_data;
-                l_cp->ppm_buffer = l_cp->ppm_data;
-
-                /* Keep the position of the place where concatenate the new series*/
-                l_cp->ppm_data_current = &(l_cp->ppm_data[l_cp->ppm_len]);
-                l_cp->ppm_len += l_N_ppm;
-
-                /* Read incomplete Ippm series*/
-                memcpy(l_cp->ppm_data_current, p_header_data, l_remaining_data);
-                p_header_size -= l_remaining_data;
-                p_header_data += l_remaining_data;
-
-                l_cp->ppm_data_read += l_remaining_data; /* Increase the number of data read*/
-        }
-
-#ifdef CLEAN_MSD
-
-                if (l_cp->ppm_data_size == l_cp->ppm_len) {
-                        if (p_header_size >= 4) {
-                                /* read a N_ppm*/
-                                opj_read_bytes(p_header_data,&l_N_ppm,4);               /* N_ppm */
-                                p_header_data+=4;
-                                p_header_size-=4;
-                                l_cp->ppm_len += l_N_ppm ;
-
-                                OPJ_BYTE *new_ppm_buffer = (OPJ_BYTE *) opj_realloc(l_cp->ppm_buffer, l_cp->ppm_len);
-                                if (! new_ppm_buffer) {
-                                        opj_free(l_cp->ppm_buffer);
-                                        l_cp->ppm_buffer = NULL;
-                                        l_cp->ppm_len = 0;
-                                        opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to read ppm marker\n");
-                                        return OPJ_FALSE;
-                                }
-                                l_cp->ppm_buffer = new_ppm_buffer;
-                                memset(l_cp->ppm_buffer+l_cp->ppm_data_size,0,l_N_ppm);
-
-                                l_cp->ppm_data = l_cp->ppm_buffer;
-                        }
-                        else {
-                                return OPJ_FALSE;
-                        }
-                }
-
-                l_remaining_data = l_cp->ppm_len - l_cp->ppm_data_size;
-
-                if (l_remaining_data <= p_header_size) {
-                        /* we must store less information than available in the packet */
-                        memcpy(l_cp->ppm_buffer + l_cp->ppm_data_size , p_header_data , l_remaining_data);
-                        l_cp->ppm_data_size = l_cp->ppm_len;
-                        p_header_size -= l_remaining_data;
-                        p_header_data += l_remaining_data;
-                }
-                else {
-                        memcpy(l_cp->ppm_buffer + l_cp->ppm_data_size , p_header_data , p_header_size);
-                        l_cp->ppm_data_size += p_header_size;
-                        p_header_data += p_header_size;
-                        p_header_size = 0;
-                        break;
-                }
-        }
-#endif
-        return OPJ_TRUE;
+			if (l_data_size > 0U) {
+				do
+				{
+					/* read Nppm */
+					if (l_data_size < 4U) {
+						/* clean up to be done on l_cp destruction */
+						opj_event_msg(p_manager, EVT_ERROR, "Not enough bytes to read Nppm\n");
+						return OPJ_FALSE;
+					}
+					opj_read_bytes(l_data, &l_N_ppm, 4);
+					l_data+=4;
+					l_data_size-=4;
+					
+					if (l_data_size >= l_N_ppm) {
+						memcpy(p_cp->ppm_buffer + l_ppm_data_size, l_data, l_N_ppm);
+						l_ppm_data_size += l_N_ppm;
+						l_data_size -= l_N_ppm;
+						l_data += l_N_ppm;
+					} else {
+						memcpy(p_cp->ppm_buffer + l_ppm_data_size, l_data, l_data_size);
+						l_ppm_data_size += l_data_size;
+						l_N_ppm_remaining = l_N_ppm - l_data_size;
+						l_data_size = 0U;
+					}
+				} while (l_data_size > 0U);
+			}
+			opj_free(p_cp->ppm_markers[i].m_data);
+			p_cp->ppm_markers[i].m_data = NULL;
+			p_cp->ppm_markers[i].m_data_size = 0U;
+		}
+	}
+	
+	p_cp->ppm_data = p_cp->ppm_buffer;
+	p_cp->ppm_data_size = p_cp->ppm_len;
+	
+	p_cp->ppm_markers_count = 0U;
+	opj_free(p_cp->ppm_markers);
+	p_cp->ppm_markers = NULL;
+	
+	return OPJ_TRUE;
 }
 
 /**
@@ -3920,7 +3758,7 @@ static OPJ_BOOL opj_j2k_read_ppt (  opj_j2k_t *p_j2k,
 		OPJ_UINT32 l_newCount = l_Z_ppt + 1U; /* can't overflow, l_Z_ppt is UINT8 */
 		assert(l_tcp->ppt_markers_count == 0U);
 		
-		l_tcp->ppt_markers = (opj_ppt *) opj_calloc(l_newCount, sizeof(opj_ppt));
+		l_tcp->ppt_markers = (opj_ppx *) opj_calloc(l_newCount, sizeof(opj_ppx));
 		if (l_tcp->ppt_markers == NULL) {
 			opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to read PPT marker\n");
 			return OPJ_FALSE;
@@ -3928,15 +3766,15 @@ static OPJ_BOOL opj_j2k_read_ppt (  opj_j2k_t *p_j2k,
 		l_tcp->ppt_markers_count = l_newCount;
 	} else if (l_tcp->ppt_markers_count <= l_Z_ppt) {
 		OPJ_UINT32 l_newCount = l_Z_ppt + 1U; /* can't overflow, l_Z_ppt is UINT8 */
-		opj_ppt *new_ppt_markers;
-		new_ppt_markers = (opj_ppt *) opj_realloc(l_tcp->ppt_markers, l_newCount * sizeof(opj_ppt));
+		opj_ppx *new_ppt_markers;
+		new_ppt_markers = (opj_ppx *) opj_realloc(l_tcp->ppt_markers, l_newCount * sizeof(opj_ppx));
 		if (new_ppt_markers == NULL) {
 			/* clean up to be done on l_tcp destruction */
 			opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to read PPT marker\n");
 			return OPJ_FALSE;
 		}
 		l_tcp->ppt_markers = new_ppt_markers;
-		memset(l_tcp->ppt_markers + l_tcp->ppt_markers_count, 0, (l_newCount - l_tcp->ppt_markers_count) * sizeof(opj_ppt));
+		memset(l_tcp->ppt_markers + l_tcp->ppt_markers_count, 0, (l_newCount - l_tcp->ppt_markers_count) * sizeof(opj_ppx));
 		l_tcp->ppt_markers_count = l_newCount;
 	}
 	
@@ -7389,6 +7227,11 @@ OPJ_BOOL opj_j2k_read_header_procedure( opj_j2k_t *p_j2k,
             opj_event_msg(p_manager, EVT_ERROR, "required QCD marker not found in main header\n");
             return OPJ_FALSE;
         }
+	
+        if (! opj_j2k_merge_ppm(&(p_j2k->m_cp), p_manager)) {
+            opj_event_msg(p_manager, EVT_ERROR, "Failed to merge PPM data\n");
+            return OPJ_FALSE;
+        }
 
         opj_event_msg(p_manager, EVT_INFO, "Main header has been correctly decoded.\n");
 
@@ -7764,37 +7607,48 @@ void opj_j2k_tcp_data_destroy (opj_tcp_t *p_tcp)
 
 void opj_j2k_cp_destroy (opj_cp_t *p_cp)
 {
-        OPJ_UINT32 l_nb_tiles;
-        opj_tcp_t * l_current_tile = 00;
-        OPJ_UINT32 i;
+	OPJ_UINT32 l_nb_tiles;
+	opj_tcp_t * l_current_tile = 00;
+	OPJ_UINT32 i;
 
-        if (p_cp == 00)
-        {
-                return;
-        }
-        if (p_cp->tcps != 00)
-        {
-                l_current_tile = p_cp->tcps;
-                l_nb_tiles = p_cp->th * p_cp->tw;
-
-                for (i = 0; i < l_nb_tiles; ++i)
-                {
-                        opj_j2k_tcp_destroy(l_current_tile);
-                        ++l_current_tile;
-                }
-                opj_free(p_cp->tcps);
-                p_cp->tcps = 00;
-        }
-        opj_free(p_cp->ppm_buffer);
-        p_cp->ppm_buffer = 00;
-        p_cp->ppm_data = NULL; /* ppm_data belongs to the allocated buffer pointed by ppm_buffer */
-        opj_free(p_cp->comment);
-        p_cp->comment = 00;
-        if (! p_cp->m_is_decoder)
-        {
-                opj_free(p_cp->m_specific_param.m_enc.m_matrice);
-                p_cp->m_specific_param.m_enc.m_matrice = 00;
-        }
+	if (p_cp == 00)
+	{
+		return;
+	}
+	if (p_cp->tcps != 00)
+	{
+		l_current_tile = p_cp->tcps;
+		l_nb_tiles = p_cp->th * p_cp->tw;
+		
+		for (i = 0; i < l_nb_tiles; ++i)
+		{
+			opj_j2k_tcp_destroy(l_current_tile);
+			++l_current_tile;
+		}
+		opj_free(p_cp->tcps);
+		p_cp->tcps = 00;
+	}
+	if (p_cp->ppm_markers != 00) {
+		OPJ_UINT32 i;
+		for (i = 0U; i < p_cp->ppm_markers_count; ++i) {
+			if (p_cp->ppm_markers[i].m_data != NULL) {
+				opj_free(p_cp->ppm_markers[i].m_data);
+			}
+		}
+		p_cp->ppm_markers_count = 0U;
+		opj_free(p_cp->ppm_markers);
+		p_cp->ppm_markers = NULL;
+	}
+	opj_free(p_cp->ppm_buffer);
+	p_cp->ppm_buffer = 00;
+	p_cp->ppm_data = NULL; /* ppm_data belongs to the allocated buffer pointed by ppm_buffer */
+	opj_free(p_cp->comment);
+	p_cp->comment = 00;
+	if (! p_cp->m_is_decoder)
+	{
+		opj_free(p_cp->m_specific_param.m_enc.m_matrice);
+		p_cp->m_specific_param.m_enc.m_matrice = 00;
+	}
 }
 
 static OPJ_BOOL opj_j2k_need_nb_tile_parts_correction(opj_stream_private_t *p_stream, OPJ_UINT32 tile_no, OPJ_BOOL* p_correction_needed, opj_event_mgr_t * p_manager )
@@ -8135,6 +7989,10 @@ OPJ_BOOL opj_j2k_read_tile_header(      opj_j2k_t * p_j2k,
                 }
         }
 
+        if (! opj_j2k_merge_ppt(p_j2k->m_cp.tcps + p_j2k->m_current_tile_number, p_manager)) {
+                opj_event_msg(p_manager, EVT_ERROR, "Failed to merge PPT data\n");
+                return OPJ_FALSE;
+        }
         /*FIXME ???*/
         if (! opj_tcd_init_decode_tile(p_j2k->m_tcd, p_j2k->m_current_tile_number)) {
                 opj_event_msg(p_manager, EVT_ERROR, "Cannot decode tile, memory error\n");
@@ -8181,11 +8039,6 @@ OPJ_BOOL opj_j2k_decode_tile (  opj_j2k_t * p_j2k,
 
         l_tcp = &(p_j2k->m_cp.tcps[p_tile_index]);
         if (! l_tcp->m_data) {
-                opj_j2k_tcp_destroy(l_tcp);
-                return OPJ_FALSE;
-        }
-	
-        if (! opj_j2k_merge_ppt(l_tcp, p_manager)) {
                 opj_j2k_tcp_destroy(l_tcp);
                 return OPJ_FALSE;
         }
