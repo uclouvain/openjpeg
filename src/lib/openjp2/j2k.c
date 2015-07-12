@@ -753,6 +753,17 @@ static OPJ_BOOL opj_j2k_read_ppt (  opj_j2k_t *p_j2k,
                                     OPJ_BYTE * p_header_data,
                                     OPJ_UINT32 p_header_size,
                                     opj_event_mgr_t * p_manager );
+
+/**
+ * Merges all PPT markers read (Packed packet headers, tile-part header)
+ *
+ * @param       p_tcp   the tile.
+ * @param       p_manager               the user event manager.
+ */
+static OPJ_BOOL opj_j2k_merge_ppt (  opj_tcp_t *p_tcp,
+																	   opj_event_mgr_t * p_manager );
+
+
 /**
  * Writes the TLM marker (Tile Length Marker)
  *
@@ -3876,74 +3887,124 @@ static OPJ_BOOL opj_j2k_read_ppt (  opj_j2k_t *p_j2k,
                                     opj_event_mgr_t * p_manager
                                     )
 {
-        opj_cp_t *l_cp = 00;
-        opj_tcp_t *l_tcp = 00;
-        OPJ_UINT32 l_Z_ppt;
+	opj_cp_t *l_cp = 00;
+	opj_tcp_t *l_tcp = 00;
+	OPJ_UINT32 l_Z_ppt;
 
-        /* preconditions */
-        assert(p_header_data != 00);
-        assert(p_j2k != 00);
-        assert(p_manager != 00);
+	/* preconditions */
+	assert(p_header_data != 00);
+	assert(p_j2k != 00);
+	assert(p_manager != 00);
 
-        /* We need to have the Z_ppt element at minimum */
-        if (p_header_size < 1) {
-                opj_event_msg(p_manager, EVT_ERROR, "Error reading PPT marker\n");
-                return OPJ_FALSE;
-        }
+	/* We need to have the Z_ppt element + 1 byte of Ippt at minimum */
+	if (p_header_size < 2) {
+		opj_event_msg(p_manager, EVT_ERROR, "Error reading PPT marker\n");
+		return OPJ_FALSE;
+	}
 
-        l_cp = &(p_j2k->m_cp);
-        if (l_cp->ppm){
-                opj_event_msg(p_manager, EVT_ERROR, "Error reading PPT marker: packet header have been previously found in the main header (PPM marker).\n");
-                return OPJ_FALSE;
-        }
+	l_cp = &(p_j2k->m_cp);
+	if (l_cp->ppm){
+		opj_event_msg(p_manager, EVT_ERROR, "Error reading PPT marker: packet header have been previously found in the main header (PPM marker).\n");
+		return OPJ_FALSE;
+	}
 
-        l_tcp = &(l_cp->tcps[p_j2k->m_current_tile_number]);
-        l_tcp->ppt = 1;
+	l_tcp = &(l_cp->tcps[p_j2k->m_current_tile_number]);
+	l_tcp->ppt = 1;
 
-        opj_read_bytes(p_header_data,&l_Z_ppt,1);               /* Z_ppt */
-        ++p_header_data;
-        --p_header_size;
+	opj_read_bytes(p_header_data,&l_Z_ppt,1);               /* Z_ppt */
+	++p_header_data;
+	--p_header_size;
+	
+	/* check allocation needed */
+	if (l_tcp->ppt_markers == NULL) { /* first PPT marker */
+		OPJ_UINT32 l_newCount = l_Z_ppt + 1U; /* can't overflow, l_Z_ppt is UINT8 */
+		assert(l_tcp->ppt_markers_count == 0U);
+		
+		l_tcp->ppt_markers = (opj_ppt *) opj_calloc(l_newCount, sizeof(opj_ppt));
+		if (l_tcp->ppt_markers == NULL) {
+			opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to read PPT marker\n");
+			return OPJ_FALSE;
+		}
+		l_tcp->ppt_markers_count = l_newCount;
+	} else if (l_tcp->ppt_markers_count <= l_Z_ppt) {
+		OPJ_UINT32 l_newCount = l_Z_ppt + 1U; /* can't overflow, l_Z_ppt is UINT8 */
+		opj_ppt *new_ppt_markers;
+		new_ppt_markers = (opj_ppt *) opj_realloc(l_tcp->ppt_markers, l_newCount * sizeof(opj_ppt));
+		if (new_ppt_markers == NULL) {
+			/* clean up to be done on l_tcp destruction */
+			opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to read PPT marker\n");
+			return OPJ_FALSE;
+		}
+		l_tcp->ppt_markers = new_ppt_markers;
+		memset(l_tcp->ppt_markers + l_tcp->ppt_markers_count, 0, (l_newCount - l_tcp->ppt_markers_count) * sizeof(opj_ppt));
+		l_tcp->ppt_markers_count = l_newCount;
+	}
+	
+	if (l_tcp->ppt_markers[l_Z_ppt].m_data != NULL) {
+		/* clean up to be done on l_tcp destruction */
+		opj_event_msg(p_manager, EVT_ERROR, "Zppt %u already read\n", l_Z_ppt);
+		return OPJ_FALSE;
+	}
+	
+	l_tcp->ppt_markers[l_Z_ppt].m_data = opj_malloc(p_header_size);
+	if (l_tcp->ppt_markers[l_Z_ppt].m_data == NULL) {
+		/* clean up to be done on l_tcp destruction */
+		opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to read PPT marker\n");
+		return OPJ_FALSE;
+	}
+	l_tcp->ppt_markers[l_Z_ppt].m_data_size = p_header_size;
+	memcpy(l_tcp->ppt_markers[l_Z_ppt].m_data, p_header_data, p_header_size);
+	return OPJ_TRUE;
+}
 
-        /* Allocate buffer to read the packet header */
-        if (l_Z_ppt == 0) {
-                /* First PPT marker */
-                l_tcp->ppt_data_size = 0;
-                l_tcp->ppt_len = p_header_size;
-
-                opj_free(l_tcp->ppt_buffer);
-                l_tcp->ppt_buffer = (OPJ_BYTE *) opj_calloc(l_tcp->ppt_len, sizeof(OPJ_BYTE) );
-                if (l_tcp->ppt_buffer == 00) {
-                        opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to read PPT marker\n");
-                        return OPJ_FALSE;
-                }
-                l_tcp->ppt_data = l_tcp->ppt_buffer;
-
-                /* memset(l_tcp->ppt_buffer,0,l_tcp->ppt_len); */
-        }
-        else {
-                OPJ_BYTE *new_ppt_buffer;
-                l_tcp->ppt_len += p_header_size;
-
-                new_ppt_buffer = (OPJ_BYTE *) opj_realloc(l_tcp->ppt_buffer, l_tcp->ppt_len);
-                if (! new_ppt_buffer) {
-                        opj_free(l_tcp->ppt_buffer);
-                        l_tcp->ppt_buffer = NULL;
-                        l_tcp->ppt_len = 0;
-                        opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to read PPT marker\n");
-                        return OPJ_FALSE;
-                }
-                l_tcp->ppt_buffer = new_ppt_buffer;
-                l_tcp->ppt_data = l_tcp->ppt_buffer;
-
-                memset(l_tcp->ppt_buffer+l_tcp->ppt_data_size,0,p_header_size);
-        }
-
-        /* Read packet header from buffer */
-        memcpy(l_tcp->ppt_buffer+l_tcp->ppt_data_size,p_header_data,p_header_size);
-
-        l_tcp->ppt_data_size += p_header_size;
-
-        return OPJ_TRUE;
+/**
+ * Merges all PPT markers read (Packed packet headers, tile-part header)
+ *
+ * @param       p_tcp   the tile.
+ * @param       p_manager               the user event manager.
+ */
+static OPJ_BOOL opj_j2k_merge_ppt(opj_tcp_t *p_tcp, opj_event_mgr_t * p_manager)
+{
+	OPJ_UINT32 i, l_ppt_data_size;
+	/* preconditions */
+	assert(p_tcp != 00);
+	assert(p_manager != 00);
+	assert(p_tcp->ppt_buffer == NULL);
+	
+	if (p_tcp->ppt == 0U) {
+		return OPJ_TRUE;
+	}
+	
+	l_ppt_data_size = 0U;
+	for (i = 0U; i < p_tcp->ppt_markers_count; ++i) {
+		l_ppt_data_size += p_tcp->ppt_markers[i].m_data_size; /* can't overflow, max 256 markers of max 65536 bytes */
+	}
+	
+	p_tcp->ppt_buffer = (OPJ_BYTE *) opj_malloc(l_ppt_data_size);
+	if (p_tcp->ppt_buffer == 00) {
+		opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to read PPT marker\n");
+		return OPJ_FALSE;
+	}
+	p_tcp->ppt_len = l_ppt_data_size;
+	l_ppt_data_size = 0U;
+	for (i = 0U; i < p_tcp->ppt_markers_count; ++i) {
+		if (p_tcp->ppt_markers[i].m_data != NULL) { /* standard doesn't seem to require contiguous Zppt */
+			memcpy(p_tcp->ppt_buffer + l_ppt_data_size, p_tcp->ppt_markers[i].m_data, p_tcp->ppt_markers[i].m_data_size);
+			l_ppt_data_size += p_tcp->ppt_markers[i].m_data_size; /* can't overflow, max 256 markers of max 65536 bytes */
+			
+			opj_free(p_tcp->ppt_markers[i].m_data);
+			p_tcp->ppt_markers[i].m_data = NULL;
+			p_tcp->ppt_markers[i].m_data_size = 0U;
+		}
+	}
+	
+	p_tcp->ppt_markers_count = 0U;
+	opj_free(p_tcp->ppt_markers);
+	p_tcp->ppt_markers = NULL;
+	
+	p_tcp->ppt_data = p_tcp->ppt_buffer;
+	p_tcp->ppt_data_size = p_tcp->ppt_len;
+	return OPJ_TRUE;
 }
 
 OPJ_BOOL opj_j2k_write_tlm(     opj_j2k_t *p_j2k,
@@ -7623,60 +7684,72 @@ void j2k_destroy_cstr_index (opj_codestream_index_t *p_cstr_ind)
 
 void opj_j2k_tcp_destroy (opj_tcp_t *p_tcp)
 {
-        if (p_tcp == 00) {
-                return;
-        }
+	if (p_tcp == 00) {
+		return;
+	}
+	
+	if (p_tcp->ppt_markers != 00) {
+		OPJ_UINT32 i;
+		for (i = 0U; i < p_tcp->ppt_markers_count; ++i) {
+			if (p_tcp->ppt_markers[i].m_data != NULL) {
+				opj_free(p_tcp->ppt_markers[i].m_data);
+			}
+		}
+		p_tcp->ppt_markers_count = 0U;
+		opj_free(p_tcp->ppt_markers);
+		p_tcp->ppt_markers = NULL;
+	}
+	
+	if (p_tcp->ppt_buffer != 00) {
+		opj_free(p_tcp->ppt_buffer);
+		p_tcp->ppt_buffer = 00;
+	}
+	
+	if (p_tcp->tccps != 00) {
+		opj_free(p_tcp->tccps);
+		p_tcp->tccps = 00;
+	}
+	
+	if (p_tcp->m_mct_coding_matrix != 00) {
+		opj_free(p_tcp->m_mct_coding_matrix);
+		p_tcp->m_mct_coding_matrix = 00;
+	}
+	
+	if (p_tcp->m_mct_decoding_matrix != 00) {
+		opj_free(p_tcp->m_mct_decoding_matrix);
+		p_tcp->m_mct_decoding_matrix = 00;
+	}
+	
+	if (p_tcp->m_mcc_records) {
+		opj_free(p_tcp->m_mcc_records);
+		p_tcp->m_mcc_records = 00;
+		p_tcp->m_nb_max_mcc_records = 0;
+		p_tcp->m_nb_mcc_records = 0;
+	}
+	
+	if (p_tcp->m_mct_records) {
+		opj_mct_data_t * l_mct_data = p_tcp->m_mct_records;
+		OPJ_UINT32 i;
+		
+		for (i=0;i<p_tcp->m_nb_mct_records;++i) {
+			if (l_mct_data->m_data) {
+				opj_free(l_mct_data->m_data);
+				l_mct_data->m_data = 00;
+			}
+			
+			++l_mct_data;
+		}
+		
+		opj_free(p_tcp->m_mct_records);
+		p_tcp->m_mct_records = 00;
+	}
 
-        if (p_tcp->ppt_buffer != 00) {
-                opj_free(p_tcp->ppt_buffer);
-                p_tcp->ppt_buffer = 00;
-        }
+	if (p_tcp->mct_norms != 00) {
+		opj_free(p_tcp->mct_norms);
+		p_tcp->mct_norms = 00;
+	}
 
-        if (p_tcp->tccps != 00) {
-                opj_free(p_tcp->tccps);
-                p_tcp->tccps = 00;
-        }
-
-        if (p_tcp->m_mct_coding_matrix != 00) {
-                opj_free(p_tcp->m_mct_coding_matrix);
-                p_tcp->m_mct_coding_matrix = 00;
-        }
-
-        if (p_tcp->m_mct_decoding_matrix != 00) {
-                opj_free(p_tcp->m_mct_decoding_matrix);
-                p_tcp->m_mct_decoding_matrix = 00;
-        }
-
-        if (p_tcp->m_mcc_records) {
-                opj_free(p_tcp->m_mcc_records);
-                p_tcp->m_mcc_records = 00;
-                p_tcp->m_nb_max_mcc_records = 0;
-                p_tcp->m_nb_mcc_records = 0;
-        }
-
-        if (p_tcp->m_mct_records) {
-                opj_mct_data_t * l_mct_data = p_tcp->m_mct_records;
-                OPJ_UINT32 i;
-
-                for (i=0;i<p_tcp->m_nb_mct_records;++i) {
-                        if (l_mct_data->m_data) {
-                                opj_free(l_mct_data->m_data);
-                                l_mct_data->m_data = 00;
-                        }
-
-                        ++l_mct_data;
-                }
-
-                opj_free(p_tcp->m_mct_records);
-                p_tcp->m_mct_records = 00;
-        }
-
-        if (p_tcp->mct_norms != 00) {
-                opj_free(p_tcp->mct_norms);
-                p_tcp->mct_norms = 00;
-        }
-
-        opj_j2k_tcp_data_destroy(p_tcp);
+	opj_j2k_tcp_data_destroy(p_tcp);
 
 }
 
@@ -8108,6 +8181,11 @@ OPJ_BOOL opj_j2k_decode_tile (  opj_j2k_t * p_j2k,
 
         l_tcp = &(p_j2k->m_cp.tcps[p_tile_index]);
         if (! l_tcp->m_data) {
+                opj_j2k_tcp_destroy(l_tcp);
+                return OPJ_FALSE;
+        }
+	
+        if (! opj_j2k_merge_ppt(l_tcp, p_manager)) {
                 opj_j2k_tcp_destroy(l_tcp);
                 return OPJ_FALSE;
         }
