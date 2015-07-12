@@ -10015,7 +10015,6 @@ OPJ_BOOL opj_j2k_encode(opj_j2k_t * p_j2k,
 												                }
 												                return OPJ_FALSE;
 												        }
-												        opj_alloc_tile_component_data(l_tilec);
                         }
                 }
                 l_current_tile_size = opj_tcd_get_encoded_tile_size(p_j2k->m_tcd);
