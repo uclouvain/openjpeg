@@ -55,398 +55,460 @@
  TIFF IMAGE FORMAT
  
  <<-- <<-- <<-- <<-- */
+typedef void (* tif_32stoX)(const OPJ_INT32* pSrc, OPJ_BYTE* pDst, OPJ_SIZE_T length);
+
+static void tif_32sto1u(const OPJ_INT32* pSrc, OPJ_BYTE* pDst, OPJ_SIZE_T length)
+{
+	OPJ_SIZE_T i;
+	for (i = 0; i < (length & -(OPJ_SIZE_T)8U); i+=8U) {
+		OPJ_UINT32 src0 = (OPJ_UINT32)pSrc[i+0];
+		OPJ_UINT32 src1 = (OPJ_UINT32)pSrc[i+1];
+		OPJ_UINT32 src2 = (OPJ_UINT32)pSrc[i+2];
+		OPJ_UINT32 src3 = (OPJ_UINT32)pSrc[i+3];
+		OPJ_UINT32 src4 = (OPJ_UINT32)pSrc[i+4];
+		OPJ_UINT32 src5 = (OPJ_UINT32)pSrc[i+5];
+		OPJ_UINT32 src6 = (OPJ_UINT32)pSrc[i+6];
+		OPJ_UINT32 src7 = (OPJ_UINT32)pSrc[i+7];
+		
+		*pDst++ = (src0 << 7) | (src1 << 6) | (src2 << 5) | (src3 << 4) | (src4 << 3) | (src5 << 2) | (src6 << 1) | src7;
+	}
+	
+	if (length & 7U) {
+		OPJ_UINT32 src0 = (OPJ_UINT32)pSrc[i+0];
+		OPJ_UINT32 src1 = 0U;
+		OPJ_UINT32 src2 = 0U;
+		OPJ_UINT32 src3 = 0U;
+		OPJ_UINT32 src4 = 0U;
+		OPJ_UINT32 src5 = 0U;
+		OPJ_UINT32 src6 = 0U;
+		length = length & 7U;
+		
+		if (length > 1U) {
+			src1 = (OPJ_UINT32)pSrc[i+1];
+			if (length > 2U) {
+				src2 = (OPJ_UINT32)pSrc[i+2];
+				if (length > 3U) {
+					src3 = (OPJ_UINT32)pSrc[i+3];
+					if (length > 4U) {
+						src4 = (OPJ_UINT32)pSrc[i+4];
+						if (length > 5U) {
+							src5 = (OPJ_UINT32)pSrc[i+5];
+							if (length > 6U) {
+								src6 = (OPJ_UINT32)pSrc[i+6];
+							}
+						}
+					}
+				}
+			}
+		}
+		*pDst++ = (src0 << 7) | (src1 << 6) | (src2 << 5) | (src3 << 4) | (src4 << 3) | (src5 << 2) | (src6 << 1);
+	}
+}
+
+static void tif_32sto2u(const OPJ_INT32* pSrc, OPJ_BYTE* pDst, OPJ_SIZE_T length)
+{
+	OPJ_SIZE_T i;
+	for (i = 0; i < (length & -(OPJ_SIZE_T)4U); i+=4U) {
+		OPJ_UINT32 src0 = (OPJ_UINT32)pSrc[i+0];
+		OPJ_UINT32 src1 = (OPJ_UINT32)pSrc[i+1];
+		OPJ_UINT32 src2 = (OPJ_UINT32)pSrc[i+2];
+		OPJ_UINT32 src3 = (OPJ_UINT32)pSrc[i+3];
+		
+		*pDst++ = (src0 << 6) | (src1 << 4) | (src2 << 2) | src3;
+	}
+	
+	if (length & 3U) {
+		OPJ_UINT32 src0 = (OPJ_UINT32)pSrc[i+0];
+		OPJ_UINT32 src1 = 0U;
+		OPJ_UINT32 src2 = 0U;
+		length = length & 3U;
+		
+		if (length > 1U) {
+			src1 = (OPJ_UINT32)pSrc[i+1];
+			if (length > 2U) {
+				src2 = (OPJ_UINT32)pSrc[i+2];
+			}
+		}
+		*pDst++ = (src0 << 6) | (src1 << 4) | (src2 << 2);
+	}
+}
+
+static void tif_32sto4u(const OPJ_INT32* pSrc, OPJ_BYTE* pDst, OPJ_SIZE_T length)
+{
+	OPJ_SIZE_T i;
+	for (i = 0; i < (length & -(OPJ_SIZE_T)2U); i+=2U) {
+		OPJ_UINT32 src0 = (OPJ_UINT32)pSrc[i+0];
+		OPJ_UINT32 src1 = (OPJ_UINT32)pSrc[i+1];
+		
+		*pDst++ = (src0 << 4) | src1;
+	}
+	
+	if (length & 1U) {
+		OPJ_UINT32 src0 = (OPJ_UINT32)pSrc[i+0];
+		*pDst++ = (src0 << 4);
+	}
+}
+
+static void tif_32sto6u(const OPJ_INT32* pSrc, OPJ_BYTE* pDst, OPJ_SIZE_T length)
+{
+	OPJ_SIZE_T i;
+	for (i = 0; i < (length & -(OPJ_SIZE_T)4U); i+=4U) {
+		OPJ_UINT32 src0 = (OPJ_UINT32)pSrc[i+0];
+		OPJ_UINT32 src1 = (OPJ_UINT32)pSrc[i+1];
+		OPJ_UINT32 src2 = (OPJ_UINT32)pSrc[i+2];
+		OPJ_UINT32 src3 = (OPJ_UINT32)pSrc[i+3];
+		
+		*pDst++ = (src0 << 2) | (src1 >> 4);
+		*pDst++ = ((src1 & 0xFU) << 4) | (src2 >> 2);
+		*pDst++ = ((src2 & 0x3U) << 6) | src3;
+	}
+	
+	if (length & 3U) {
+		OPJ_UINT32 src0 = (OPJ_UINT32)pSrc[i+0];
+		OPJ_UINT32 src1 = 0U;
+		OPJ_UINT32 src2 = 0U;
+		length = length & 3U;
+		
+		if (length > 1U) {
+			src1 = (OPJ_UINT32)pSrc[i+1];
+			if (length > 2U) {
+				src2 = (OPJ_UINT32)pSrc[i+2];
+			}
+		}
+		*pDst++ = (src0 << 2) | (src1 >> 4);
+		if (length > 1U) {
+			*pDst++ = ((src1 & 0xFU) << 4) | (src2 >> 2);
+			if (length > 2U) {
+				*pDst++ = ((src2 & 0x3U) << 6);
+			}
+		}
+	}
+}
+static void tif_32sto8u(const OPJ_INT32* pSrc, OPJ_BYTE* pDst, OPJ_SIZE_T length)
+{
+	OPJ_SIZE_T i;
+	for (i = 0; i < length; ++i) {
+		pDst[i] = (OPJ_BYTE)pSrc[i];
+	}
+}
+static void tif_32sto10u(const OPJ_INT32* pSrc, OPJ_BYTE* pDst, OPJ_SIZE_T length)
+{
+	OPJ_SIZE_T i;
+	for (i = 0; i < (length & -(OPJ_SIZE_T)4U); i+=4U) {
+		OPJ_UINT32 src0 = (OPJ_UINT32)pSrc[i+0];
+		OPJ_UINT32 src1 = (OPJ_UINT32)pSrc[i+1];
+		OPJ_UINT32 src2 = (OPJ_UINT32)pSrc[i+2];
+		OPJ_UINT32 src3 = (OPJ_UINT32)pSrc[i+3];
+		
+		*pDst++ = src0 >> 2;
+		*pDst++ = ((src0 & 0x3U) << 6) | (src1 >> 4);
+		*pDst++ = ((src1 & 0xFU) << 4) | (src2 >> 6);
+		*pDst++ = ((src2 & 0x3FU) << 2) | (src3 >> 8);
+		*pDst++ = src3;
+	}
+	
+	if (length & 3U) {
+		OPJ_UINT32 src0 = (OPJ_UINT32)pSrc[i+0];
+		OPJ_UINT32 src1 = 0U;
+		OPJ_UINT32 src2 = 0U;
+		length = length & 3U;
+		
+		if (length > 1U) {
+			src1 = (OPJ_UINT32)pSrc[i+1];
+			if (length > 2U) {
+				src2 = (OPJ_UINT32)pSrc[i+2];
+			}
+		}
+		*pDst++ = src0 >> 2;
+		*pDst++ = ((src0 & 0x3U) << 6) | (src1 >> 4);
+		if (length > 1U) {
+			*pDst++ = ((src1 & 0xFU) << 4) | (src2 >> 6);
+			if (length > 2U) {
+				*pDst++ = ((src2 & 0x3FU) << 2);
+			}
+		}
+	}
+}
+static void tif_32sto12u(const OPJ_INT32* pSrc, OPJ_BYTE* pDst, OPJ_SIZE_T length)
+{
+	OPJ_SIZE_T i;
+	for (i = 0; i < (length & -(OPJ_SIZE_T)2U); i+=2U) {
+		OPJ_UINT32 src0 = (OPJ_UINT32)pSrc[i+0];
+		OPJ_UINT32 src1 = (OPJ_UINT32)pSrc[i+1];
+		
+		*pDst++ = src0 >> 4;
+		*pDst++ = ((src0 & 0xFU) << 4) | (src1 >> 8);
+		*pDst++ = src1;
+	}
+	
+	if (length & 1U) {
+		OPJ_UINT32 src0 = (OPJ_UINT32)pSrc[i+0];
+		*pDst++ = src0 >> 4;
+		*pDst++ = ((src0 & 0xFU) << 4);
+	}
+}
+static void tif_32sto14u(const OPJ_INT32* pSrc, OPJ_BYTE* pDst, OPJ_SIZE_T length)
+{
+	OPJ_SIZE_T i;
+	for (i = 0; i < (length & -(OPJ_SIZE_T)4U); i+=4U) {
+		OPJ_UINT32 src0 = (OPJ_UINT32)pSrc[i+0];
+		OPJ_UINT32 src1 = (OPJ_UINT32)pSrc[i+1];
+		OPJ_UINT32 src2 = (OPJ_UINT32)pSrc[i+2];
+		OPJ_UINT32 src3 = (OPJ_UINT32)pSrc[i+3];
+		
+		*pDst++ = src0 >> 6;
+		*pDst++ = ((src0 & 0x3FU) << 2) | (src1 >> 12);
+		*pDst++ = src1 >> 4;
+		*pDst++ = ((src1 & 0xFU) << 4) | (src2 >> 10);
+		*pDst++ = src2 >> 2;
+		*pDst++ = ((src2 & 0x3U) << 6) | (src3 >> 8);
+		*pDst++ = src3;
+	}
+	
+	if (length & 3U) {
+		OPJ_UINT32 src0 = (OPJ_UINT32)pSrc[i+0];
+		OPJ_UINT32 src1 = 0U;
+		OPJ_UINT32 src2 = 0U;
+		length = length & 3U;
+		
+		if (length > 1U) {
+			src1 = (OPJ_UINT32)pSrc[i+1];
+			if (length > 2U) {
+				src2 = (OPJ_UINT32)pSrc[i+2];
+			}
+		}
+		*pDst++ = src0 >> 6;
+		*pDst++ = ((src0 & 0x3FU) << 2) | (src1 >> 12);
+		if (length > 1U) {
+			*pDst++ = src1 >> 4;
+			*pDst++ = ((src1 & 0xFU) << 4) | (src2 >> 10);
+			if (length > 2U) {
+				*pDst++ = src2 >> 2;
+				*pDst++ = ((src2 & 0x3U) << 6);
+			}
+		}
+	}
+}
+static void tif_32sto16u(const OPJ_INT32* pSrc, OPJ_UINT16* pDst, OPJ_SIZE_T length)
+{
+	OPJ_SIZE_T i;
+	for (i = 0; i < length; ++i) {
+		pDst[i] = (OPJ_UINT16)pSrc[i];
+	}
+}
+
+typedef void (* convert_32s_PXCX)(OPJ_INT32 const* const* pSrc, OPJ_INT32* pDst, OPJ_SIZE_T length, OPJ_INT32 adjust);
+static void convert_32s_P1C1(OPJ_INT32 const* const* pSrc, OPJ_INT32* pDst, OPJ_SIZE_T length, OPJ_INT32 adjust)
+{
+	OPJ_SIZE_T i;
+	const OPJ_INT32* pSrc0 = pSrc[0];
+	
+	for (i = 0; i < length; i++) {
+		pDst[i] = pSrc0[i] + adjust;
+	}
+}
+static void convert_32s_P2C2(OPJ_INT32 const* const* pSrc, OPJ_INT32* pDst, OPJ_SIZE_T length, OPJ_INT32 adjust)
+{
+	OPJ_SIZE_T i;
+	const OPJ_INT32* pSrc0 = pSrc[0];
+	const OPJ_INT32* pSrc1 = pSrc[1];
+	
+	for (i = 0; i < length; i++) {
+		pDst[2*i+0] = pSrc0[i] + adjust;
+		pDst[2*i+1] = pSrc1[i] + adjust;
+	}
+}
+static void convert_32s_P3C3(OPJ_INT32 const* const* pSrc, OPJ_INT32* pDst, OPJ_SIZE_T length, OPJ_INT32 adjust)
+{
+	OPJ_SIZE_T i;
+	const OPJ_INT32* pSrc0 = pSrc[0];
+	const OPJ_INT32* pSrc1 = pSrc[1];
+	const OPJ_INT32* pSrc2 = pSrc[2];
+	
+	for (i = 0; i < length; i++) {
+		pDst[3*i+0] = pSrc0[i] + adjust;
+		pDst[3*i+1] = pSrc1[i] + adjust;
+		pDst[3*i+2] = pSrc2[i] + adjust;
+	}
+}
+static void convert_32s_P4C4(OPJ_INT32 const* const* pSrc, OPJ_INT32* pDst, OPJ_SIZE_T length, OPJ_INT32 adjust)
+{
+	OPJ_SIZE_T i;
+	const OPJ_INT32* pSrc0 = pSrc[0];
+	const OPJ_INT32* pSrc1 = pSrc[1];
+	const OPJ_INT32* pSrc2 = pSrc[2];
+	const OPJ_INT32* pSrc3 = pSrc[3];
+	
+	for (i = 0; i < length; i++) {
+		pDst[4*i+0] = pSrc0[i] + adjust;
+		pDst[4*i+1] = pSrc1[i] + adjust;
+		pDst[4*i+2] = pSrc2[i] + adjust;
+		pDst[4*i+3] = pSrc3[i] + adjust;
+	}
+}
 
 int imagetotif(opj_image_t * image, const char *outfile)
 {
-	int width, height, imgsize;
-	int bps,index,adjust, sgnd;
-	int ushift, dshift, has_alpha, force16;
+	int width, height;
+	int bps,adjust, sgnd;
+	int has_alpha;
+	int tiPhoto;
 	TIFF *tif;
 	tdata_t buf;
-	tstrip_t strip;
 	tsize_t strip_size;
+	OPJ_UINT32 i, numcomps;
+	OPJ_SIZE_T rowStride;
+	OPJ_INT32* buffer32s = NULL;
+	OPJ_INT32 const* planes[4];
+	convert_32s_PXCX cvtPxToCx = NULL;
+	tif_32stoX cvt32sToTif = NULL;
 	
-	ushift = dshift = force16 = has_alpha = 0;
+	has_alpha = 0;
 	bps = (int)image->comps[0].prec;
+	planes[0] = image->comps[0].data;
 	
-	if(bps > 8 && bps < 16)
-	{
-		ushift = 16 - bps; dshift = bps - ushift;
-		bps = 16; force16 = 1;
+	numcomps = image->numcomps;
+	
+	if (numcomps > 2U) {
+		tiPhoto = PHOTOMETRIC_RGB;
+		if (numcomps > 4U) {
+			numcomps = 4U;
+		}
+	} else {
+		tiPhoto = PHOTOMETRIC_MINISBLACK;
+	}
+	for (i = 1U; i < numcomps; ++i) {
+		if (image->comps[0].dx != image->comps[i].dx) {
+			break;
+		}
+		if (image->comps[0].dy != image->comps[i].dy) {
+			break;
+		}
+		if (image->comps[0].prec != image->comps[i].prec) {
+			break;
+		}
+		if (image->comps[0].sgnd != image->comps[i].sgnd) {
+			break;
+		}
+		planes[i] = image->comps[i].data;
+	}
+	if (i != numcomps) {
+		fprintf(stderr,"imagetotif: All components shall have the same subsampling, same bit depth.\n");
+		fprintf(stderr,"\tAborting\n");
+		return 1;
 	}
 	
-	if(bps != 8 && bps != 16)
+	if((bps > 16) || ((bps != 1) && (bps & 1))) bps = 0;
+	if(bps == 0)
 	{
-		fprintf(stderr,"imagetotif: Bits=%d, Only 8 and 16 bits implemented\n",
-						bps);
+		fprintf(stderr,"imagetotif: Bits=%d, Only 1, 2, 4, 6, 8, 10, 12, 14 and 16 bits implemented\n",bps);
 		fprintf(stderr,"\tAborting\n");
 		return 1;
 	}
 	tif = TIFFOpen(outfile, "wb");
-	
 	if (!tif)
 	{
 		fprintf(stderr, "imagetotif:failed to open %s for writing\n", outfile);
 		return 1;
 	}
+	for (i = 0U; i < numcomps; ++i) {
+		clip_component(&(image->comps[i]), image->comps[0].prec);
+	}
+	switch (numcomps) {
+		case 1:
+			cvtPxToCx = convert_32s_P1C1;
+			break;
+		case 2:
+			cvtPxToCx = convert_32s_P2C2;
+			break;
+		case 3:
+			cvtPxToCx = convert_32s_P3C3;
+			break;
+		case 4:
+			cvtPxToCx = convert_32s_P4C4;
+			break;
+		default:
+			/* never here */
+			break;
+	}
+	switch (bps) {
+		case 1:
+			cvt32sToTif = tif_32sto1u;
+			break;
+		case 2:
+			cvt32sToTif = tif_32sto2u;
+			break;
+		case 4:
+			cvt32sToTif = tif_32sto4u;
+			break;
+		case 6:
+			cvt32sToTif = tif_32sto6u;
+			break;
+		case 8:
+			cvt32sToTif = tif_32sto8u;
+			break;
+		case 10:
+			cvt32sToTif = tif_32sto10u;
+			break;
+		case 12:
+			cvt32sToTif = tif_32sto12u;
+			break;
+		case 14:
+			cvt32sToTif = tif_32sto14u;
+			break;
+		case 16:
+			cvt32sToTif = (tif_32stoX)tif_32sto16u;
+			break;
+		default:
+			/* never here */
+			break;
+	}
 	sgnd = (int)image->comps[0].sgnd;
 	adjust = sgnd ? 1 << (image->comps[0].prec - 1) : 0;
+	width   = (int)image->comps[0].w;
+	height  = (int)image->comps[0].h;
 	
-	if(image->numcomps >= 3
-		 && image->comps[0].dx == image->comps[1].dx
-		 && image->comps[1].dx == image->comps[2].dx
-		 && image->comps[0].dy == image->comps[1].dy
-		 && image->comps[1].dy == image->comps[2].dy
-		 && image->comps[0].prec == image->comps[1].prec
-		 && image->comps[1].prec == image->comps[2].prec)
-	{
-		has_alpha = (image->numcomps == 4);
-		
-		width   = (int)image->comps[0].w;
-		height  = (int)image->comps[0].h;
-		imgsize = width * height ;
-		
-		TIFFSetField(tif, TIFFTAG_IMAGEWIDTH, width);
-		TIFFSetField(tif, TIFFTAG_IMAGELENGTH, height);
-		TIFFSetField(tif, TIFFTAG_SAMPLESPERPIXEL, 3 + has_alpha);
-		TIFFSetField(tif, TIFFTAG_BITSPERSAMPLE, bps);
-		TIFFSetField(tif, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
-		TIFFSetField(tif, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
-		TIFFSetField(tif, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
-		TIFFSetField(tif, TIFFTAG_ROWSPERSTRIP, 1);
-		strip_size = TIFFStripSize(tif);
-		buf = _TIFFmalloc(strip_size);
-		index=0;
-		
-		for(strip = 0; strip < TIFFNumberOfStrips(tif); strip++)
-		{
-			unsigned char *dat8;
-			tsize_t i, ssize, last_i = 0;
-			int step, restx;
-			ssize = TIFFStripSize(tif);
-			dat8 = (unsigned char*)buf;
-			
-			if(bps == 8)
-			{
-				step = 3 + has_alpha;
-				restx = step - 1;
-				
-				for(i=0; i < ssize - restx; i += step)
-				{
-					int r, g, b, a = 0;
-					
-					if(index < imgsize)
-					{
-						r = image->comps[0].data[index];
-						g = image->comps[1].data[index];
-						b = image->comps[2].data[index];
-						if(has_alpha) a = image->comps[3].data[index];
-						
-						if(sgnd)
-						{
-							r += adjust;
-							g += adjust;
-							b += adjust;
-							if(has_alpha) a += adjust;
-						}
-						if(r > 255) r = 255; else if(r < 0) r = 0;
-						dat8[i+0] = (unsigned char)r ;
-						if(g > 255) g = 255; else if(g < 0) g = 0;
-						dat8[i+1] = (unsigned char)g ;
-						if(b > 255) b = 255; else if(b < 0) b = 0;
-						dat8[i+2] = (unsigned char)b ;
-						if(has_alpha)
-						{
-							if(a > 255) a = 255; else if(a < 0) a = 0;
-							dat8[i+3] = (unsigned char)a;
-						}
-						
-						index++;
-						last_i = i + step;
-					}
-					else
-						break;
-				}/*for(i = 0;)*/
-				
-				if(last_i < ssize)
-				{
-					for(i = last_i; i < ssize; i += step)
-					{
-						int r, g, b, a = 0;
-						
-						if(index < imgsize)
-						{
-							r = image->comps[0].data[index];
-							g = image->comps[1].data[index];
-							b = image->comps[2].data[index];
-							if(has_alpha) a = image->comps[3].data[index];
-							
-							if(sgnd)
-							{
-								r += adjust;
-								g += adjust;
-								b += adjust;
-								if(has_alpha) a += adjust;
-							}
-							if(r > 255) r = 255; else if(r < 0) r = 0;
-							if(g > 255) g = 255; else if(g < 0) g = 0;
-							if(b > 255) b = 255; else if(b < 0) b = 0;
-							
-							dat8[i+0] = (unsigned char)r ;
-							if(i+1 < ssize) dat8[i+1] = (unsigned char)g ;  else break;
-							if(i+2 < ssize) dat8[i+2] = (unsigned char)b ;  else break;
-							if(has_alpha)
-							{
-								if(a > 255) a = 255; else if(a < 0) a = 0;
-								
-								if(i+3 < ssize) dat8[i+3] = (unsigned char)a ;  else break;
-							}
-							index++;
-						}
-						else
-							break;
-					}/*for(i)*/
-				}/*if(last_i < ssize)*/
-				
-			}	/*if(bps == 8)*/
-			else
-				if(bps == 16)
-				{
-					step = 6 + has_alpha + has_alpha;
-					restx = step - 1;
-					
-					for(i = 0; i < ssize - restx ; i += step)
-					{
-						int r, g, b, a = 0;
-						
-						if(index < imgsize)
-						{
-							r = image->comps[0].data[index];
-							g = image->comps[1].data[index];
-							b = image->comps[2].data[index];
-							if(has_alpha) a = image->comps[3].data[index];
-							
-							if(sgnd)
-							{
-								r += adjust;
-								g += adjust;
-								b += adjust;
-								if(has_alpha) a += adjust;
-							}
-							if(force16)
-							{
-								r = (r<<ushift) + (r>>dshift);
-								g = (g<<ushift) + (g>>dshift);
-								b = (b<<ushift) + (b>>dshift);
-								if(has_alpha) a = (a<<ushift) + (a>>dshift);
-							}
-							if(r > 65535) r = 65535; else if(r < 0) r = 0;
-							if(g > 65535) g = 65535; else if(g < 0) g = 0;
-							if(b > 65535) b = 65535; else if(b < 0) b = 0;
-							
-							dat8[i+0] =  (unsigned char)r;/*LSB*/
-							dat8[i+1] = (unsigned char)(r >> 8);/*MSB*/
-							dat8[i+2] =  (unsigned char)g;
-							dat8[i+3] = (unsigned char)(g >> 8);
-							dat8[i+4] =  (unsigned char)b;
-							dat8[i+5] = (unsigned char)(b >> 8);
-							if(has_alpha)
-							{
-								if(a > 65535) a = 65535; else if(a < 0) a = 0;
-								dat8[i+6] =  (unsigned char)a;
-								dat8[i+7] = (unsigned char)(a >> 8);
-							}
-							index++;
-							last_i = i + step;
-						}
-						else
-							break;
-					}/*for(i = 0;)*/
-					
-					if(last_i < ssize)
-					{
-						for(i = last_i ; i < ssize ; i += step)
-						{
-							int r, g, b, a = 0;
-							
-							if(index < imgsize)
-							{
-								r = image->comps[0].data[index];
-								g = image->comps[1].data[index];
-								b = image->comps[2].data[index];
-								if(has_alpha) a = image->comps[3].data[index];
-								
-								if(sgnd)
-								{
-									r += adjust;
-									g += adjust;
-									b += adjust;
-									if(has_alpha) a += adjust;
-								}
-								if(force16)
-								{
-									r = (r<<ushift) + (r>>dshift);
-									g = (g<<ushift) + (g>>dshift);
-									b = (b<<ushift) + (b>>dshift);
-									if(has_alpha) a = (a<<ushift) + (a>>dshift);
-								}
-								if(r > 65535) r = 65535; else if(r < 0) r = 0;
-								if(g > 65535) g = 65535; else if(g < 0) g = 0;
-								if(b > 65535) b = 65535; else if(b < 0) b = 0;
-								
-								dat8[i+0] = (unsigned char) r;/*LSB*/
-								if(i+1 < ssize) dat8[i+1] = (unsigned char)(r >> 8);else break;/*MSB*/
-								if(i+2 < ssize) dat8[i+2] = (unsigned char) g;      else break;
-								if(i+3 < ssize) dat8[i+3] = (unsigned char)(g >> 8);else break;
-								if(i+4 < ssize) dat8[i+4] = (unsigned char) b;      else break;
-								if(i+5 < ssize) dat8[i+5] = (unsigned char)(b >> 8);else break;
-								
-								if(has_alpha)
-								{
-									if(a > 65535) a = 65535; else if(a < 0) a = 0;
-									if(i+6 < ssize) dat8[i+6] = (unsigned char)a; else break;
-									if(i+7 < ssize) dat8[i+7] = (unsigned char)(a >> 8); else break;
-								}
-								index++;
-							}
-							else
-								break;
-						}/*for(i)*/
-					}/*if(last_i < ssize)*/
-					
-				}/*if(bps == 16)*/
-			(void)TIFFWriteEncodedStrip(tif, strip, (void*)buf, strip_size);
-		}/*for(strip = 0; )*/
-		
-		_TIFFfree((void*)buf);
+	TIFFSetField(tif, TIFFTAG_IMAGEWIDTH, width);
+	TIFFSetField(tif, TIFFTAG_IMAGELENGTH, height);
+	TIFFSetField(tif, TIFFTAG_SAMPLESPERPIXEL, numcomps);
+	TIFFSetField(tif, TIFFTAG_BITSPERSAMPLE, bps);
+	TIFFSetField(tif, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
+	TIFFSetField(tif, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
+	TIFFSetField(tif, TIFFTAG_PHOTOMETRIC, tiPhoto);
+	TIFFSetField(tif, TIFFTAG_ROWSPERSTRIP, 1);
+	strip_size = TIFFStripSize(tif);
+	rowStride = ((OPJ_SIZE_T)width * numcomps * bps + 7U) / 8U;
+	if (rowStride != (OPJ_SIZE_T)strip_size) {
+		fprintf(stderr, "Invalid TIFF strip size\n");
 		TIFFClose(tif);
-		
-		return 0;
-	}/*RGB(A)*/
-	
-	if(image->numcomps == 1 /* GRAY */
-		 || (   image->numcomps == 2 /* GRAY_ALPHA */
-				 && image->comps[0].dx == image->comps[1].dx
-				 && image->comps[0].dy == image->comps[1].dy
-				 && image->comps[0].prec == image->comps[1].prec))
-	{
-		int step;
-		
-		has_alpha = (image->numcomps == 2);
-		
-		width   = (int)image->comps[0].w;
-		height  = (int)image->comps[0].h;
-		imgsize = width * height;
-		
-		/* Set tags */
-		TIFFSetField(tif, TIFFTAG_IMAGEWIDTH, width);
-		TIFFSetField(tif, TIFFTAG_IMAGELENGTH, height);
-		TIFFSetField(tif, TIFFTAG_SAMPLESPERPIXEL, 1 + has_alpha);
-		TIFFSetField(tif, TIFFTAG_BITSPERSAMPLE, bps);
-		TIFFSetField(tif, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
-		TIFFSetField(tif, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
-		TIFFSetField(tif, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_MINISBLACK);
-		TIFFSetField(tif, TIFFTAG_ROWSPERSTRIP, 1);
-		
-		/* Get a buffer for the data */
-		strip_size = TIFFStripSize(tif);
-		buf = _TIFFmalloc(strip_size);
-		index = 0;
-		
-		for(strip = 0; strip < TIFFNumberOfStrips(tif); strip++)
-		{
-			unsigned char *dat8;
-			tsize_t i, ssize = TIFFStripSize(tif);
-			dat8 = (unsigned char*)buf;
-			
-			if(bps == 8)
-			{
-				step = 1 + has_alpha;
-				
-				for(i=0; i < ssize; i += step)
-				{
-					if(index < imgsize)
-					{
-						int r, a = 0;
-						
-						r = image->comps[0].data[index];
-						if(has_alpha) a = image->comps[1].data[index];
-						
-						if(sgnd)
-						{
-							r += adjust;
-							if(has_alpha) a += adjust;
-						}
-						if(r > 255) r = 255; else if(r < 0) r = 0;
-						dat8[i+0] = (unsigned char)r;
-						
-						if(has_alpha)
-						{
-							if(a > 255) a = 255; else if(a < 0) a = 0;
-							dat8[i+1] = (unsigned char)a;
-						}
-						index++;
-					}
-					else
-						break;
-	   }/*for(i )*/
-			}/*if(bps == 8*/
-			else
-				if(bps == 16)
-				{
-					step = 2 + has_alpha + has_alpha;
-					
-					for(i=0; i < ssize; i += step)
-					{
-						if(index < imgsize)
-						{
-							int r, a = 0;
-							
-							r = image->comps[0].data[index];
-							if(has_alpha) a = image->comps[1].data[index];
-							
-							if(sgnd)
-							{
-								r += adjust;
-								if(has_alpha) a += adjust;
-							}
-							if(force16)
-							{
-								r = (r<<ushift) + (r>>dshift);
-								if(has_alpha) a = (a<<ushift) + (a>>dshift);
-							}
-							if(r > 65535) r = 65535; else if(r < 0) r = 0;
-							dat8[i+0] = (unsigned char)r;/*LSB*/
-							dat8[i+1] = (unsigned char)(r >> 8);/*MSB*/
-							if(has_alpha)
-							{
-								if(a > 65535) a = 65535; else if(a < 0) a = 0;
-								dat8[i+2] = (unsigned char)a;
-								dat8[i+3] = (unsigned char)(a >> 8);
-							}
-							index++;
-						}/*if(index < imgsize)*/
-						else
-							break;
-					}/*for(i )*/
-				}
-			(void)TIFFWriteEncodedStrip(tif, strip, (void*)buf, strip_size);
-		}/*for(strip*/
-		
+		return 1;
+	}
+	buf = _TIFFmalloc(strip_size);
+	if (buf == NULL) {
+		TIFFClose(tif);
+		return 1;
+	}
+	buffer32s = malloc((OPJ_SIZE_T)width * numcomps * sizeof(OPJ_INT32));
+	if (buffer32s == NULL) {
 		_TIFFfree(buf);
 		TIFFClose(tif);
-		
-		return 0;
+		return 1;
 	}
 	
+	for (i = 0; i < image->comps[0].h; ++i) {
+		cvtPxToCx(planes, buffer32s, width, adjust);
+		cvt32sToTif(buffer32s, buf, width * numcomps);
+		(void)TIFFWriteEncodedStrip(tif, i, (void*)buf, strip_size);
+		planes[0] += width;
+		planes[1] += width;
+		planes[2] += width;
+		planes[3] += width;
+	}
+	_TIFFfree((void*)buf);
 	TIFFClose(tif);
-	
-	fprintf(stderr,"imagetotif: Bad color format.\n"
-					"\tOnly RGB(A) and GRAY(A) has been implemented\n");
-	fprintf(stderr,"\tFOUND: numcomps(%d)\n\tAborting\n",
-					image->numcomps);
-	
-	return 1;
+	free(buffer32s);
+		
+	return 0;
 }/* imagetotif() */
 
 typedef void (* tif_Xto32s)(const OPJ_BYTE* pSrc, OPJ_INT32* pDst, OPJ_SIZE_T length);
@@ -842,8 +904,7 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
 			if(tiSpp == 4 || tiSpp == 2) has_alpha = 1;
 	}
 	
-	/* initialize image components
-	 */
+	/* initialize image components */
 	memset(&cmptparm[0], 0, 4 * sizeof(opj_image_cmptparm_t));
 	
 	if ((tiPhoto == PHOTOMETRIC_RGB) && (is_cinema) && (tiBps != 12U)) {
@@ -880,7 +941,7 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
 		case 4:
 			cvtCxToPx = convert_32s_C4P4;
 			break;
-  default:
+		default:
 			/* never here */
 			break;
 	}
@@ -916,9 +977,6 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
 	for(j = 0; j < numcomps; j++)
 	{
 		planes[j] = image->comps[j].data;
-		if (has_alpha) {
-			planes[j] = image->comps[j].data;
-		}
 	}
 		
 	strip_size = TIFFStripSize(tif);
