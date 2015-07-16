@@ -74,6 +74,31 @@ opj_compress -i @INPUT_NR_PATH@/issue203-33x33-bgrx16.bmp -o @TEMP_PATH@/issue20
 opj_compress -i @INPUT_NR_PATH@/issue203-127x64-bgr16.bmp -o @TEMP_PATH@/issue203-127x64-bgr16.bmp.jp2
 opj_compress -i @INPUT_NR_PATH@/issue203-127x64-bgrx.bmp -o @TEMP_PATH@/issue203-127x64-bgrx.bmp.jp2
 
+# issue 322 limited tif support 
+opj_compress -i @INPUT_NR_PATH@/flower-minisblack-01.tif -o @TEMP_PATH@/flower-minisblack-01.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-minisblack-02.tif -o @TEMP_PATH@/flower-minisblack-02.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-minisblack-04.tif -o @TEMP_PATH@/flower-minisblack-04.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-minisblack-06.tif -o @TEMP_PATH@/flower-minisblack-06.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-minisblack-08.tif -o @TEMP_PATH@/flower-minisblack-08.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-minisblack-10.tif -o @TEMP_PATH@/flower-minisblack-10.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-minisblack-12.tif -o @TEMP_PATH@/flower-minisblack-12.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-minisblack-14.tif -o @TEMP_PATH@/flower-minisblack-14.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-minisblack-16.tif -o @TEMP_PATH@/flower-minisblack-16.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-rgb-contig-02.tif -o @TEMP_PATH@/flower-rgb-contig-02.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-rgb-contig-04.tif -o @TEMP_PATH@/flower-rgb-contig-04.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-rgb-contig-08.tif -o @TEMP_PATH@/flower-rgb-contig-08.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-rgb-contig-10.tif -o @TEMP_PATH@/flower-rgb-contig-10.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-rgb-contig-12.tif -o @TEMP_PATH@/flower-rgb-contig-12.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-rgb-contig-14.tif -o @TEMP_PATH@/flower-rgb-contig-14.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-rgb-contig-16.tif -o @TEMP_PATH@/flower-rgb-contig-16.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-rgb-planar-02.tif -o @TEMP_PATH@/flower-rgb-planar-02.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-rgb-planar-04.tif -o @TEMP_PATH@/flower-rgb-planar-04.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-rgb-planar-08.tif -o @TEMP_PATH@/flower-rgb-planar-08.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-rgb-planar-10.tif -o @TEMP_PATH@/flower-rgb-planar-10.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-rgb-planar-12.tif -o @TEMP_PATH@/flower-rgb-planar-12.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-rgb-planar-14.tif -o @TEMP_PATH@/flower-rgb-planar-14.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-rgb-planar-16.tif -o @TEMP_PATH@/flower-rgb-planar-16.tif.jp2
+
 # DECODER TEST SUITE
 opj_decompress -i  @INPUT_NR_PATH@/Bretagne2.j2k -o @TEMP_PATH@/Bretagne2.j2k.pgx
 opj_decompress -i  @INPUT_NR_PATH@/_00042.j2k -o @TEMP_PATH@/_00042.j2k.pgx
