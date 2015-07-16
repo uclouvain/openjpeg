@@ -12,6 +12,7 @@
  * Copyright (c) 2003-2014, Antonin Descampe
  * Copyright (c) 2005, Herve Drolon, FreeImage Team
  * Copyright (c) 2006-2007, Parvatha Elangovan
+ * Copyright (c) 2015, Matthieu Darbois
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -70,7 +71,7 @@ static void tif_32sto1u(const OPJ_INT32* pSrc, OPJ_BYTE* pDst, OPJ_SIZE_T length
 		OPJ_UINT32 src6 = (OPJ_UINT32)pSrc[i+6];
 		OPJ_UINT32 src7 = (OPJ_UINT32)pSrc[i+7];
 		
-		*pDst++ = (src0 << 7) | (src1 << 6) | (src2 << 5) | (src3 << 4) | (src4 << 3) | (src5 << 2) | (src6 << 1) | src7;
+		*pDst++ = (OPJ_BYTE)((src0 << 7) | (src1 << 6) | (src2 << 5) | (src3 << 4) | (src4 << 3) | (src5 << 2) | (src6 << 1) | src7);
 	}
 	
 	if (length & 7U) {
@@ -101,7 +102,7 @@ static void tif_32sto1u(const OPJ_INT32* pSrc, OPJ_BYTE* pDst, OPJ_SIZE_T length
 				}
 			}
 		}
-		*pDst++ = (src0 << 7) | (src1 << 6) | (src2 << 5) | (src3 << 4) | (src4 << 3) | (src5 << 2) | (src6 << 1);
+		*pDst++ = (OPJ_BYTE)((src0 << 7) | (src1 << 6) | (src2 << 5) | (src3 << 4) | (src4 << 3) | (src5 << 2) | (src6 << 1));
 	}
 }
 
@@ -114,7 +115,7 @@ static void tif_32sto2u(const OPJ_INT32* pSrc, OPJ_BYTE* pDst, OPJ_SIZE_T length
 		OPJ_UINT32 src2 = (OPJ_UINT32)pSrc[i+2];
 		OPJ_UINT32 src3 = (OPJ_UINT32)pSrc[i+3];
 		
-		*pDst++ = (src0 << 6) | (src1 << 4) | (src2 << 2) | src3;
+		*pDst++ = (OPJ_BYTE)((src0 << 6) | (src1 << 4) | (src2 << 2) | src3);
 	}
 	
 	if (length & 3U) {
@@ -129,7 +130,7 @@ static void tif_32sto2u(const OPJ_INT32* pSrc, OPJ_BYTE* pDst, OPJ_SIZE_T length
 				src2 = (OPJ_UINT32)pSrc[i+2];
 			}
 		}
-		*pDst++ = (src0 << 6) | (src1 << 4) | (src2 << 2);
+		*pDst++ = (OPJ_BYTE)((src0 << 6) | (src1 << 4) | (src2 << 2));
 	}
 }
 
@@ -140,12 +141,12 @@ static void tif_32sto4u(const OPJ_INT32* pSrc, OPJ_BYTE* pDst, OPJ_SIZE_T length
 		OPJ_UINT32 src0 = (OPJ_UINT32)pSrc[i+0];
 		OPJ_UINT32 src1 = (OPJ_UINT32)pSrc[i+1];
 		
-		*pDst++ = (src0 << 4) | src1;
+		*pDst++ = (OPJ_BYTE)((src0 << 4) | src1);
 	}
 	
 	if (length & 1U) {
 		OPJ_UINT32 src0 = (OPJ_UINT32)pSrc[i+0];
-		*pDst++ = (src0 << 4);
+		*pDst++ = (OPJ_BYTE)((src0 << 4));
 	}
 }
 
@@ -158,9 +159,9 @@ static void tif_32sto6u(const OPJ_INT32* pSrc, OPJ_BYTE* pDst, OPJ_SIZE_T length
 		OPJ_UINT32 src2 = (OPJ_UINT32)pSrc[i+2];
 		OPJ_UINT32 src3 = (OPJ_UINT32)pSrc[i+3];
 		
-		*pDst++ = (src0 << 2) | (src1 >> 4);
-		*pDst++ = ((src1 & 0xFU) << 4) | (src2 >> 2);
-		*pDst++ = ((src2 & 0x3U) << 6) | src3;
+		*pDst++ = (OPJ_BYTE)((src0 << 2) | (src1 >> 4));
+		*pDst++ = (OPJ_BYTE)(((src1 & 0xFU) << 4) | (src2 >> 2));
+		*pDst++ = (OPJ_BYTE)(((src2 & 0x3U) << 6) | src3);
 	}
 	
 	if (length & 3U) {
@@ -175,11 +176,11 @@ static void tif_32sto6u(const OPJ_INT32* pSrc, OPJ_BYTE* pDst, OPJ_SIZE_T length
 				src2 = (OPJ_UINT32)pSrc[i+2];
 			}
 		}
-		*pDst++ = (src0 << 2) | (src1 >> 4);
+		*pDst++ = (OPJ_BYTE)((src0 << 2) | (src1 >> 4));
 		if (length > 1U) {
-			*pDst++ = ((src1 & 0xFU) << 4) | (src2 >> 2);
+			*pDst++ = (OPJ_BYTE)(((src1 & 0xFU) << 4) | (src2 >> 2));
 			if (length > 2U) {
-				*pDst++ = ((src2 & 0x3U) << 6);
+				*pDst++ = (OPJ_BYTE)(((src2 & 0x3U) << 6));
 			}
 		}
 	}
@@ -200,11 +201,11 @@ static void tif_32sto10u(const OPJ_INT32* pSrc, OPJ_BYTE* pDst, OPJ_SIZE_T lengt
 		OPJ_UINT32 src2 = (OPJ_UINT32)pSrc[i+2];
 		OPJ_UINT32 src3 = (OPJ_UINT32)pSrc[i+3];
 		
-		*pDst++ = src0 >> 2;
-		*pDst++ = ((src0 & 0x3U) << 6) | (src1 >> 4);
-		*pDst++ = ((src1 & 0xFU) << 4) | (src2 >> 6);
-		*pDst++ = ((src2 & 0x3FU) << 2) | (src3 >> 8);
-		*pDst++ = src3;
+		*pDst++ = (OPJ_BYTE)(src0 >> 2);
+		*pDst++ = (OPJ_BYTE)(((src0 & 0x3U) << 6) | (src1 >> 4));
+		*pDst++ = (OPJ_BYTE)(((src1 & 0xFU) << 4) | (src2 >> 6));
+		*pDst++ = (OPJ_BYTE)(((src2 & 0x3FU) << 2) | (src3 >> 8));
+		*pDst++ = (OPJ_BYTE)(src3);
 	}
 	
 	if (length & 3U) {
@@ -219,12 +220,12 @@ static void tif_32sto10u(const OPJ_INT32* pSrc, OPJ_BYTE* pDst, OPJ_SIZE_T lengt
 				src2 = (OPJ_UINT32)pSrc[i+2];
 			}
 		}
-		*pDst++ = src0 >> 2;
-		*pDst++ = ((src0 & 0x3U) << 6) | (src1 >> 4);
+		*pDst++ = (OPJ_BYTE)(src0 >> 2);
+		*pDst++ = (OPJ_BYTE)(((src0 & 0x3U) << 6) | (src1 >> 4));
 		if (length > 1U) {
-			*pDst++ = ((src1 & 0xFU) << 4) | (src2 >> 6);
+			*pDst++ = (OPJ_BYTE)(((src1 & 0xFU) << 4) | (src2 >> 6));
 			if (length > 2U) {
-				*pDst++ = ((src2 & 0x3FU) << 2);
+				*pDst++ = (OPJ_BYTE)(((src2 & 0x3FU) << 2));
 			}
 		}
 	}
@@ -236,15 +237,15 @@ static void tif_32sto12u(const OPJ_INT32* pSrc, OPJ_BYTE* pDst, OPJ_SIZE_T lengt
 		OPJ_UINT32 src0 = (OPJ_UINT32)pSrc[i+0];
 		OPJ_UINT32 src1 = (OPJ_UINT32)pSrc[i+1];
 		
-		*pDst++ = src0 >> 4;
-		*pDst++ = ((src0 & 0xFU) << 4) | (src1 >> 8);
-		*pDst++ = src1;
+		*pDst++ = (OPJ_BYTE)(src0 >> 4);
+		*pDst++ = (OPJ_BYTE)(((src0 & 0xFU) << 4) | (src1 >> 8));
+		*pDst++ = (OPJ_BYTE)(src1);
 	}
 	
 	if (length & 1U) {
 		OPJ_UINT32 src0 = (OPJ_UINT32)pSrc[i+0];
-		*pDst++ = src0 >> 4;
-		*pDst++ = ((src0 & 0xFU) << 4);
+		*pDst++ = (OPJ_BYTE)(src0 >> 4);
+		*pDst++ = (OPJ_BYTE)(((src0 & 0xFU) << 4));
 	}
 }
 static void tif_32sto14u(const OPJ_INT32* pSrc, OPJ_BYTE* pDst, OPJ_SIZE_T length)
@@ -256,13 +257,13 @@ static void tif_32sto14u(const OPJ_INT32* pSrc, OPJ_BYTE* pDst, OPJ_SIZE_T lengt
 		OPJ_UINT32 src2 = (OPJ_UINT32)pSrc[i+2];
 		OPJ_UINT32 src3 = (OPJ_UINT32)pSrc[i+3];
 		
-		*pDst++ = src0 >> 6;
-		*pDst++ = ((src0 & 0x3FU) << 2) | (src1 >> 12);
-		*pDst++ = src1 >> 4;
-		*pDst++ = ((src1 & 0xFU) << 4) | (src2 >> 10);
-		*pDst++ = src2 >> 2;
-		*pDst++ = ((src2 & 0x3U) << 6) | (src3 >> 8);
-		*pDst++ = src3;
+		*pDst++ = (OPJ_BYTE)(src0 >> 6);
+		*pDst++ = (OPJ_BYTE)(((src0 & 0x3FU) << 2) | (src1 >> 12));
+		*pDst++ = (OPJ_BYTE)(src1 >> 4);
+		*pDst++ = (OPJ_BYTE)(((src1 & 0xFU) << 4) | (src2 >> 10));
+		*pDst++ = (OPJ_BYTE)(src2 >> 2);
+		*pDst++ = (OPJ_BYTE)(((src2 & 0x3U) << 6) | (src3 >> 8));
+		*pDst++ = (OPJ_BYTE)(src3);
 	}
 	
 	if (length & 3U) {
@@ -277,14 +278,14 @@ static void tif_32sto14u(const OPJ_INT32* pSrc, OPJ_BYTE* pDst, OPJ_SIZE_T lengt
 				src2 = (OPJ_UINT32)pSrc[i+2];
 			}
 		}
-		*pDst++ = src0 >> 6;
-		*pDst++ = ((src0 & 0x3FU) << 2) | (src1 >> 12);
+		*pDst++ = (OPJ_BYTE)(src0 >> 6);
+		*pDst++ = (OPJ_BYTE)(((src0 & 0x3FU) << 2) | (src1 >> 12));
 		if (length > 1U) {
-			*pDst++ = src1 >> 4;
-			*pDst++ = ((src1 & 0xFU) << 4) | (src2 >> 10);
+			*pDst++ = (OPJ_BYTE)(src1 >> 4);
+			*pDst++ = (OPJ_BYTE)(((src1 & 0xFU) << 4) | (src2 >> 10));
 			if (length > 2U) {
-				*pDst++ = src2 >> 2;
-				*pDst++ = ((src2 & 0x3U) << 6);
+				*pDst++ = (OPJ_BYTE)(src2 >> 2);
+				*pDst++ = (OPJ_BYTE)(((src2 & 0x3U) << 6));
 			}
 		}
 	}
@@ -351,7 +352,6 @@ int imagetotif(opj_image_t * image, const char *outfile)
 {
 	int width, height;
 	int bps,adjust, sgnd;
-	int has_alpha;
 	int tiPhoto;
 	TIFF *tif;
 	tdata_t buf;
@@ -362,8 +362,7 @@ int imagetotif(opj_image_t * image, const char *outfile)
 	OPJ_INT32 const* planes[4];
 	convert_32s_PXCX cvtPxToCx = NULL;
 	tif_32stoX cvt32sToTif = NULL;
-	
-	has_alpha = 0;
+
 	bps = (int)image->comps[0].prec;
 	planes[0] = image->comps[0].data;
 	
@@ -477,7 +476,7 @@ int imagetotif(opj_image_t * image, const char *outfile)
 	TIFFSetField(tif, TIFFTAG_PHOTOMETRIC, tiPhoto);
 	TIFFSetField(tif, TIFFTAG_ROWSPERSTRIP, 1);
 	strip_size = TIFFStripSize(tif);
-	rowStride = ((OPJ_SIZE_T)width * numcomps * bps + 7U) / 8U;
+	rowStride = ((OPJ_SIZE_T)width * numcomps * (OPJ_SIZE_T)bps + 7U) / 8U;
 	if (rowStride != (OPJ_SIZE_T)strip_size) {
 		fprintf(stderr, "Invalid TIFF strip size\n");
 		TIFFClose(tif);
@@ -496,8 +495,8 @@ int imagetotif(opj_image_t * image, const char *outfile)
 	}
 	
 	for (i = 0; i < image->comps[0].h; ++i) {
-		cvtPxToCx(planes, buffer32s, width, adjust);
-		cvt32sToTif(buffer32s, buf, width * numcomps);
+		cvtPxToCx(planes, buffer32s, (OPJ_SIZE_T)width, adjust);
+		cvt32sToTif(buffer32s, buf, (OPJ_SIZE_T)width * numcomps);
 		(void)TIFFWriteEncodedStrip(tif, i, (void*)buf, strip_size);
 		planes[0] += width;
 		planes[1] += width;
@@ -517,33 +516,33 @@ static void tif_1uto32s(const OPJ_BYTE* pSrc, OPJ_INT32* pDst, OPJ_SIZE_T length
 {
 	OPJ_SIZE_T i;
 	for (i = 0; i < (length & -(OPJ_SIZE_T)8U); i+=8U) {
-		OPJ_UINT8 val = *pSrc++;
-		pDst[i+0] =  val >> 7;
-		pDst[i+1] = (val >> 6) & 0x1U;
-		pDst[i+2] = (val >> 5) & 0x1U;
-		pDst[i+3] = (val >> 4) & 0x1U;
-		pDst[i+4] = (val >> 3) & 0x1U;
-		pDst[i+5] = (val >> 2) & 0x1U;
-		pDst[i+6] = (val >> 1) & 0x1U;
-		pDst[i+7] = val & 0x1U;
+		OPJ_UINT32 val = *pSrc++;
+		pDst[i+0] = (OPJ_INT32)( val >> 7);
+		pDst[i+1] = (OPJ_INT32)((val >> 6) & 0x1U);
+		pDst[i+2] = (OPJ_INT32)((val >> 5) & 0x1U);
+		pDst[i+3] = (OPJ_INT32)((val >> 4) & 0x1U);
+		pDst[i+4] = (OPJ_INT32)((val >> 3) & 0x1U);
+		pDst[i+5] = (OPJ_INT32)((val >> 2) & 0x1U);
+		pDst[i+6] = (OPJ_INT32)((val >> 1) & 0x1U);
+		pDst[i+7] = (OPJ_INT32)(val & 0x1U);
 	}
 	if (length & 7U) {
-		OPJ_UINT8 val = *pSrc++;
+		OPJ_UINT32 val = *pSrc++;
 		length = length & 7U;
-		pDst[i+0] =  val >> 7;
+		pDst[i+0] = (OPJ_INT32)(val >> 7);
 		
 		if (length > 1U) {
-			pDst[i+1] = (val >> 6) & 0x1U;
+			pDst[i+1] = (OPJ_INT32)((val >> 6) & 0x1U);
 			if (length > 2U) {
-				pDst[i+2] = (val >> 5) & 0x1U;
+				pDst[i+2] = (OPJ_INT32)((val >> 5) & 0x1U);
 				if (length > 3U) {
-					pDst[i+3] = (val >> 4) & 0x1U;
+					pDst[i+3] = (OPJ_INT32)((val >> 4) & 0x1U);
 					if (length > 4U) {
-						pDst[i+4] = (val >> 3) & 0x1U;
+						pDst[i+4] = (OPJ_INT32)((val >> 3) & 0x1U);
 						if (length > 5U) {
-							pDst[i+5] = (val >> 2) & 0x1U;
+							pDst[i+5] = (OPJ_INT32)((val >> 2) & 0x1U);
 							if (length > 6U) {
-								pDst[i+6] = (val >> 1) & 0x1U;
+								pDst[i+6] = (OPJ_INT32)((val >> 1) & 0x1U);
 							}
 						}
 					}
@@ -556,21 +555,21 @@ static void tif_2uto32s(const OPJ_BYTE* pSrc, OPJ_INT32* pDst, OPJ_SIZE_T length
 {
 	OPJ_SIZE_T i;
 	for (i = 0; i < (length & -(OPJ_SIZE_T)4U); i+=4U) {
-		OPJ_UINT8 val = *pSrc++;
-		pDst[i+0] =  val >> 6;
-		pDst[i+1] = (val >> 4) & 0x3U;
-		pDst[i+2] = (val >> 2) & 0x3U;
-		pDst[i+3] = val & 0x3U;
+		OPJ_UINT32 val = *pSrc++;
+		pDst[i+0] = (OPJ_INT32)( val >> 6);
+		pDst[i+1] = (OPJ_INT32)((val >> 4) & 0x3U);
+		pDst[i+2] = (OPJ_INT32)((val >> 2) & 0x3U);
+		pDst[i+3] = (OPJ_INT32)(val & 0x3U);
 	}
 	if (length & 3U) {
-		OPJ_UINT8 val = *pSrc++;
+		OPJ_UINT32 val = *pSrc++;
 		length = length & 3U;
-		pDst[i+0] =  val >> 6;
+		pDst[i+0] =  (OPJ_INT32)(val >> 6);
 		
 		if (length > 1U) {
-			pDst[i+1] = (val >> 4) & 0x3U;
+			pDst[i+1] = (OPJ_INT32)((val >> 4) & 0x3U);
 			if (length > 2U) {
-				pDst[i+2] = (val >> 2) & 0x3U;
+				pDst[i+2] = (OPJ_INT32)((val >> 2) & 0x3U);
 				
 			}
 		}
@@ -580,39 +579,39 @@ static void tif_4uto32s(const OPJ_BYTE* pSrc, OPJ_INT32* pDst, OPJ_SIZE_T length
 {
 	OPJ_SIZE_T i;
 	for (i = 0; i < (length & -(OPJ_SIZE_T)2U); i+=2U) {
-		OPJ_UINT8 val = *pSrc++;
-		pDst[i+0] = val >> 4;
-		pDst[i+1] = val & 0xFU;
+		OPJ_UINT32 val = *pSrc++;
+		pDst[i+0] = (OPJ_INT32)(val >> 4);
+		pDst[i+1] = (OPJ_INT32)(val & 0xFU);
 	}
 	if (length & 1U) {
 		OPJ_UINT8 val = *pSrc++;
-		pDst[i+0] = val >> 4;
+		pDst[i+0] = (OPJ_INT32)(val >> 4);
 	}
 }
 static void tif_6uto32s(const OPJ_BYTE* pSrc, OPJ_INT32* pDst, OPJ_SIZE_T length)
 {
 	OPJ_SIZE_T i;
 	for (i = 0; i < (length & -(OPJ_SIZE_T)4U); i+=4U) {
-		OPJ_UINT8 val0 = *pSrc++;
-		OPJ_UINT8 val1 = *pSrc++;
-		OPJ_UINT8 val2 = *pSrc++;
-		pDst[i+0] = val0 >> 2;
-		pDst[i+1] = ((val0 & 0x3U) << 4) | (val1 >> 4);
-		pDst[i+2] = ((val1 & 0xFU) << 2) | (val2 >> 6);
-		pDst[i+3] = val2 & 0x3FU;
+		OPJ_UINT32 val0 = *pSrc++;
+		OPJ_UINT32 val1 = *pSrc++;
+		OPJ_UINT32 val2 = *pSrc++;
+		pDst[i+0] = (OPJ_INT32)(val0 >> 2);
+		pDst[i+1] = (OPJ_INT32)(((val0 & 0x3U) << 4) | (val1 >> 4));
+		pDst[i+2] = (OPJ_INT32)(((val1 & 0xFU) << 2) | (val2 >> 6));
+		pDst[i+3] = (OPJ_INT32)(val2 & 0x3FU);
 		
 	}
 	if (length & 3U) {
-		OPJ_UINT8 val0 = *pSrc++;
+		OPJ_UINT32 val0 = *pSrc++;
 		length = length & 3U;
-		pDst[i+0] =  val0 >> 2;
+		pDst[i+0] = (OPJ_INT32)(val0 >> 2);
 		
 		if (length > 1U) {
-			OPJ_UINT8 val1 = *pSrc++;
-			pDst[i+1] = ((val0 & 0x3U) << 4) | (val1 >> 4);
+			OPJ_UINT32 val1 = *pSrc++;
+			pDst[i+1] = (OPJ_INT32)(((val0 & 0x3U) << 4) | (val1 >> 4));
 			if (length > 2U) {
-				OPJ_UINT8 val2 = *pSrc++;
-				pDst[i+2] = ((val1 & 0xFU) << 2) | (val2 >> 6);
+				OPJ_UINT32 val2 = *pSrc++;
+				pDst[i+2] = (OPJ_INT32)(((val1 & 0xFU) << 2) | (val2 >> 6));
 			}
 		}
 	}
@@ -628,30 +627,30 @@ static void tif_10uto32s(const OPJ_BYTE* pSrc, OPJ_INT32* pDst, OPJ_SIZE_T lengt
 {
 	OPJ_SIZE_T i;
 	for (i = 0; i < (length & -(OPJ_SIZE_T)4U); i+=4U) {
-		OPJ_INT32 val0 = *pSrc++;
-		OPJ_INT32 val1 = *pSrc++;
-		OPJ_INT32 val2 = *pSrc++;
-		OPJ_INT32 val3 = *pSrc++;
-		OPJ_INT32 val4 = *pSrc++;
+		OPJ_UINT32 val0 = *pSrc++;
+		OPJ_UINT32 val1 = *pSrc++;
+		OPJ_UINT32 val2 = *pSrc++;
+		OPJ_UINT32 val3 = *pSrc++;
+		OPJ_UINT32 val4 = *pSrc++;
 		
-		pDst[i+0] = (val0 << 2) | (val1 >> 6);
-		pDst[i+1] = ((val1 & 0x3FU) << 4) | (val2 >> 4);
-		pDst[i+2] = ((val2 & 0xFU) << 6) | (val3 >> 2);
-		pDst[i+3] = ((val3 & 0x3U) << 8) | val4;
+		pDst[i+0] = (OPJ_INT32)((val0 << 2) | (val1 >> 6));
+		pDst[i+1] = (OPJ_INT32)(((val1 & 0x3FU) << 4) | (val2 >> 4));
+		pDst[i+2] = (OPJ_INT32)(((val2 & 0xFU) << 6) | (val3 >> 2));
+		pDst[i+3] = (OPJ_INT32)(((val3 & 0x3U) << 8) | val4);
 		
 	}
 	if (length & 3U) {
-		OPJ_INT32 val0 = *pSrc++;
-		OPJ_INT32 val1 = *pSrc++;
+		OPJ_UINT32 val0 = *pSrc++;
+		OPJ_UINT32 val1 = *pSrc++;
 		length = length & 3U;
-		pDst[i+0] = (val0 << 2) | (val1 >> 6);
+		pDst[i+0] = (OPJ_INT32)((val0 << 2) | (val1 >> 6));
 		
 		if (length > 1U) {
-			OPJ_INT32 val2 = *pSrc++;
-			pDst[i+1] = ((val1 & 0x3FU) << 4) | (val2 >> 4);
+			OPJ_UINT32 val2 = *pSrc++;
+			pDst[i+1] = (OPJ_INT32)(((val1 & 0x3FU) << 4) | (val2 >> 4));
 			if (length > 2U) {
-				OPJ_INT32 val3 = *pSrc++;
-				pDst[i+2] = ((val2 & 0xFU) << 6) | (val3 >> 2);
+				OPJ_UINT32 val3 = *pSrc++;
+				pDst[i+2] = (OPJ_INT32)(((val2 & 0xFU) << 6) | (val3 >> 2));
 			}
 		}
 	}
@@ -660,51 +659,51 @@ static void tif_12uto32s(const OPJ_BYTE* pSrc, OPJ_INT32* pDst, OPJ_SIZE_T lengt
 {
 	OPJ_SIZE_T i;
 	for (i = 0; i < (length & -(OPJ_SIZE_T)2U); i+=2U) {
-		OPJ_INT32 val0 = *pSrc++;
-		OPJ_INT32 val1 = *pSrc++;
-		OPJ_INT32 val2 = *pSrc++;
+		OPJ_UINT32 val0 = *pSrc++;
+		OPJ_UINT32 val1 = *pSrc++;
+		OPJ_UINT32 val2 = *pSrc++;
 
-		pDst[i+0] = (val0 << 4) | (val1 >> 4);
-		pDst[i+1] = ((val1 & 0xFU) << 8) | val2;
+		pDst[i+0] = (OPJ_INT32)((val0 << 4) | (val1 >> 4));
+		pDst[i+1] = (OPJ_INT32)(((val1 & 0xFU) << 8) | val2);
 	}
 	if (length & 1U) {
-		OPJ_INT32 val0 = *pSrc++;
-		OPJ_INT32 val1 = *pSrc++;
-		pDst[i+0] = (val0 << 4) | (val1 >> 4);
+		OPJ_UINT32 val0 = *pSrc++;
+		OPJ_UINT32 val1 = *pSrc++;
+		pDst[i+0] = (OPJ_INT32)((val0 << 4) | (val1 >> 4));
 	}
 }
 static void tif_14uto32s(const OPJ_BYTE* pSrc, OPJ_INT32* pDst, OPJ_SIZE_T length)
 {
 	OPJ_SIZE_T i;
 	for (i = 0; i < (length & -(OPJ_SIZE_T)4U); i+=4U) {
-		OPJ_INT32 val0 = *pSrc++;
-		OPJ_INT32 val1 = *pSrc++;
-		OPJ_INT32 val2 = *pSrc++;
-		OPJ_INT32 val3 = *pSrc++;
-		OPJ_INT32 val4 = *pSrc++;
-		OPJ_INT32 val5 = *pSrc++;
-		OPJ_INT32 val6 = *pSrc++;
+		OPJ_UINT32 val0 = *pSrc++;
+		OPJ_UINT32 val1 = *pSrc++;
+		OPJ_UINT32 val2 = *pSrc++;
+		OPJ_UINT32 val3 = *pSrc++;
+		OPJ_UINT32 val4 = *pSrc++;
+		OPJ_UINT32 val5 = *pSrc++;
+		OPJ_UINT32 val6 = *pSrc++;
 		
-		pDst[i+0] = (val0 << 6) | (val1 >> 2);
-		pDst[i+1] = ((val1 & 0x3U) << 12) | (val2 << 4) | (val3 >> 4);
-		pDst[i+2] = ((val3 & 0xFU) << 10) | (val4 << 2) | (val5 >> 6);
-		pDst[i+3] = ((val5 & 0x3FU) << 8) | val6;
+		pDst[i+0] = (OPJ_INT32)((val0 << 6) | (val1 >> 2));
+		pDst[i+1] = (OPJ_INT32)(((val1 & 0x3U) << 12) | (val2 << 4) | (val3 >> 4));
+		pDst[i+2] = (OPJ_INT32)(((val3 & 0xFU) << 10) | (val4 << 2) | (val5 >> 6));
+		pDst[i+3] = (OPJ_INT32)(((val5 & 0x3FU) << 8) | val6);
 		
 	}
 	if (length & 3U) {
-		OPJ_INT32 val0 = *pSrc++;
-		OPJ_INT32 val1 = *pSrc++;
+		OPJ_UINT32 val0 = *pSrc++;
+		OPJ_UINT32 val1 = *pSrc++;
 		length = length & 3U;
-		pDst[i+0] = (val0 << 6) | (val1 >> 2);
+		pDst[i+0] = (OPJ_INT32)((val0 << 6) | (val1 >> 2));
 		
 		if (length > 1U) {
-			OPJ_INT32 val2 = *pSrc++;
-			OPJ_INT32 val3 = *pSrc++;
-			pDst[i+1] = ((val1 & 0x3U) << 12) | (val2 << 4) | (val3 >> 4);
+			OPJ_UINT32 val2 = *pSrc++;
+			OPJ_UINT32 val3 = *pSrc++;
+			pDst[i+1] = (OPJ_INT32)(((val1 & 0x3U) << 12) | (val2 << 4) | (val3 >> 4));
 			if (length > 2U) {
-				OPJ_INT32 val4 = *pSrc++;
-				OPJ_INT32 val5 = *pSrc++;
-				pDst[i+2] = ((val3 & 0xFU) << 10) | (val4 << 2) | (val5 >> 6);
+				OPJ_UINT32 val4 = *pSrc++;
+				OPJ_UINT32 val5 = *pSrc++;
+				pDst[i+2] = (OPJ_INT32)(((val3 & 0xFU) << 10) | (val4 << 2) | (val5 >> 6));
 			}
 		}
 	}
@@ -714,12 +713,12 @@ static void tif_16uto32s(const OPJ_BYTE* pSrc, OPJ_INT32* pDst, OPJ_SIZE_T lengt
 {
 	OPJ_SIZE_T i;
 	for (i = 0; i < length; i++) {
-		OPJ_INT32 val0 = *pSrc++;
-		OPJ_INT32 val1 = *pSrc++;
+		OPJ_UINT32 val0 = *pSrc++;
+		OPJ_UINT32 val1 = *pSrc++;
 #ifdef OPJ_BIG_ENDIAN
-		pDst[i] = (val0 << 8) | val1;
+		pDst[i] = (OPJ_INT32)((val0 << 8) | val1);
 #else
-		pDst[i] = (val1 << 8) | val0;
+		pDst[i] = (OPJ_INT32)((val1 << 8) | val0);
 #endif
 	}
 }
@@ -793,7 +792,7 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
 	tstrip_t strip;
 	tsize_t strip_size;
 	int j, currentPlane, numcomps = 0, w, h;
-	OPJ_COLOR_SPACE color_space;
+	OPJ_COLOR_SPACE color_space = OPJ_CLRSPC_UNKNOWN;
 	opj_image_cmptparm_t cmptparm[4]; /* RGBA */
 	opj_image_t *image = NULL;
 	int has_alpha = 0;
@@ -1006,14 +1005,14 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
 		for(; (h > 0) && (strip < TIFFNumberOfStrips(tif)); strip++)
 		{
 				const OPJ_UINT8 *dat8;
-				tsize_t ssize;
+				OPJ_SIZE_T ssize;
 				
-				ssize = TIFFReadEncodedStrip(tif, strip, buf, strip_size);
+				ssize = (OPJ_SIZE_T)TIFFReadEncodedStrip(tif, strip, buf, strip_size);
 				dat8 = (const OPJ_UINT8*)buf;
 				
 				while (ssize >= rowStride) {
-					cvtTifTo32s(dat8, buffer32s, w * tiSpp);
-					cvtCxToPx(buffer32s, planes, w);
+					cvtTifTo32s(dat8, buffer32s, (OPJ_SIZE_T)w * tiSpp);
+					cvtCxToPx(buffer32s, planes, (OPJ_SIZE_T)w);
 					planes[0] += w;
 					planes[1] += w;
 					planes[2] += w;
