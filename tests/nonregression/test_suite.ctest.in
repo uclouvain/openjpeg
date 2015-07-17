@@ -98,6 +98,9 @@ opj_compress -i @INPUT_NR_PATH@/flower-rgb-planar-10.tif -o @TEMP_PATH@/flower-r
 opj_compress -i @INPUT_NR_PATH@/flower-rgb-planar-12.tif -o @TEMP_PATH@/flower-rgb-planar-12.tif.jp2
 opj_compress -i @INPUT_NR_PATH@/flower-rgb-planar-14.tif -o @TEMP_PATH@/flower-rgb-planar-14.tif.jp2
 opj_compress -i @INPUT_NR_PATH@/flower-rgb-planar-16.tif -o @TEMP_PATH@/flower-rgb-planar-16.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/basn6a08.tif -o @TEMP_PATH@/basn6a08.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/basn4a08.tif -o @TEMP_PATH@/basn4a08.tif.jp2
+
 
 # DECODER TEST SUITE
 opj_decompress -i  @INPUT_NR_PATH@/Bretagne2.j2k -o @TEMP_PATH@/Bretagne2.j2k.pgx

@@ -977,6 +977,7 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
 	{
 		planes[j] = image->comps[j].data;
 	}
+	image->comps[numcomps - 1].alpha = (OPJ_UINT16)(1 - (numcomps & 1));
 		
 	strip_size = TIFFStripSize(tif);
 	
