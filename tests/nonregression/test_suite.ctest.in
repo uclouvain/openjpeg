@@ -74,6 +74,34 @@ opj_compress -i @INPUT_NR_PATH@/issue203-33x33-bgrx16.bmp -o @TEMP_PATH@/issue20
 opj_compress -i @INPUT_NR_PATH@/issue203-127x64-bgr16.bmp -o @TEMP_PATH@/issue203-127x64-bgr16.bmp.jp2
 opj_compress -i @INPUT_NR_PATH@/issue203-127x64-bgrx.bmp -o @TEMP_PATH@/issue203-127x64-bgrx.bmp.jp2
 
+# issue 322 limited tif support 
+opj_compress -i @INPUT_NR_PATH@/flower-minisblack-01.tif -o @TEMP_PATH@/flower-minisblack-01.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-minisblack-02.tif -o @TEMP_PATH@/flower-minisblack-02.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-minisblack-04.tif -o @TEMP_PATH@/flower-minisblack-04.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-minisblack-06.tif -o @TEMP_PATH@/flower-minisblack-06.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-minisblack-08.tif -o @TEMP_PATH@/flower-minisblack-08.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-minisblack-10.tif -o @TEMP_PATH@/flower-minisblack-10.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-minisblack-12.tif -o @TEMP_PATH@/flower-minisblack-12.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-minisblack-14.tif -o @TEMP_PATH@/flower-minisblack-14.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-minisblack-16.tif -o @TEMP_PATH@/flower-minisblack-16.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-rgb-contig-02.tif -o @TEMP_PATH@/flower-rgb-contig-02.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-rgb-contig-04.tif -o @TEMP_PATH@/flower-rgb-contig-04.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-rgb-contig-08.tif -o @TEMP_PATH@/flower-rgb-contig-08.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-rgb-contig-10.tif -o @TEMP_PATH@/flower-rgb-contig-10.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-rgb-contig-12.tif -o @TEMP_PATH@/flower-rgb-contig-12.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-rgb-contig-14.tif -o @TEMP_PATH@/flower-rgb-contig-14.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-rgb-contig-16.tif -o @TEMP_PATH@/flower-rgb-contig-16.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-rgb-planar-02.tif -o @TEMP_PATH@/flower-rgb-planar-02.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-rgb-planar-04.tif -o @TEMP_PATH@/flower-rgb-planar-04.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-rgb-planar-08.tif -o @TEMP_PATH@/flower-rgb-planar-08.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-rgb-planar-10.tif -o @TEMP_PATH@/flower-rgb-planar-10.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-rgb-planar-12.tif -o @TEMP_PATH@/flower-rgb-planar-12.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-rgb-planar-14.tif -o @TEMP_PATH@/flower-rgb-planar-14.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-rgb-planar-16.tif -o @TEMP_PATH@/flower-rgb-planar-16.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/basn6a08.tif -o @TEMP_PATH@/basn6a08.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/basn4a08.tif -o @TEMP_PATH@/basn4a08.tif.jp2
+
+
 # DECODER TEST SUITE
 opj_decompress -i  @INPUT_NR_PATH@/Bretagne2.j2k -o @TEMP_PATH@/Bretagne2.j2k.pgx
 opj_decompress -i  @INPUT_NR_PATH@/_00042.j2k -o @TEMP_PATH@/_00042.j2k.pgx
@@ -341,3 +369,45 @@ opj_decompress -i @INPUT_CONF_PATH@/p0_04.j2k -o @TEMP_PATH@/p0_04_6_5.j2k.png -
 #opj_decompress -i @INPUT_CONF_PATH@/p1_01.j2k -o @TEMP_PATH@/p1_01_3.j2k.png -d 10,150,190,210
 #opj_decompress -i @INPUT_CONF_PATH@/p1_01.j2k -o @TEMP_PATH@/p1_01_4.j2k.png -d 100,80,200,150
 #opj_decompress -i @INPUT_CONF_PATH@/p1_01.j2k -o @TEMP_PATH@/p1_01_5.j2k.png -d 150,20,200,50
+
+# issue 322 limited tif support
+# GRAYSCALE 
+opj_decompress -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_tif-1.tif -p 1S
+opj_decompress -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_tif-2.tif -p 2S
+opj_decompress -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_tif-4.tif -p 4S
+opj_decompress -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_tif-6.tif -p 6S
+opj_decompress -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_tif-8.tif -p 8S
+opj_decompress -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_tif-10.tif -p 10S
+opj_decompress -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_tif-12.tif -p 12S
+opj_decompress -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_tif-14.tif -p 14S
+opj_decompress -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_tif-16.tif -p 16S
+# GRAYSCALE ALPHA
+opj_decompress -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_tif-1.tif -p 1S
+opj_decompress -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_tif-2.tif -p 2S
+opj_decompress -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_tif-4.tif -p 4S
+opj_decompress -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_tif-6.tif -p 6S
+opj_decompress -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_tif-8.tif -p 8S
+opj_decompress -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_tif-10.tif -p 10S
+opj_decompress -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_tif-12.tif -p 12S
+opj_decompress -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_tif-14.tif -p 14S
+opj_decompress -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_tif-16.tif -p 16S
+# RGB
+opj_decompress -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_tif-1.tif -p 1S
+opj_decompress -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_tif-2.tif -p 2S
+opj_decompress -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_tif-4.tif -p 4S
+opj_decompress -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_tif-6.tif -p 6S
+opj_decompress -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_tif-8.tif -p 8S
+opj_decompress -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_tif-10.tif -p 10S
+opj_decompress -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_tif-12.tif -p 12S
+opj_decompress -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_tif-14.tif -p 14S
+opj_decompress -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_tif-16.tif -p 16S
+# RGBA
+opj_decompress -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-1.tif -p 1S
+opj_decompress -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-2.tif -p 2S
+opj_decompress -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-4.tif -p 4S
+opj_decompress -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-6.tif -p 6S
+opj_decompress -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-8.tif -p 8S
+opj_decompress -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-10.tif -p 10S
+opj_decompress -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-12.tif -p 12S
+opj_decompress -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-14.tif -p 14S
+opj_decompress -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-16.tif -p 16S

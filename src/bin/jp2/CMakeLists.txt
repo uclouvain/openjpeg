@@ -8,6 +8,10 @@ set(common_SRCS
   ${OPENJPEG_SOURCE_DIR}/src/bin/common/color.c
   ${OPENJPEG_SOURCE_DIR}/src/bin/common/opj_getopt.c
   )
+  
+if(OPJ_HAVE_LIBTIFF)
+	list(APPEND common_SRCS converttif.c)
+endif()
 
 # Headers file are located here:
 include_directories(
