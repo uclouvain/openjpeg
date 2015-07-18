@@ -158,7 +158,7 @@ static void opj_t2_putcommacode(opj_bio_t *bio, OPJ_INT32 n) {
         opj_bio_write(bio, 0, 1);
 }
 
-OPJ_UINT32 opj_t2_getcommacode(opj_bio_t *bio) 
+static OPJ_UINT32 opj_t2_getcommacode(opj_bio_t *bio)
 {
     OPJ_UINT32 n = 0;
     while (opj_bio_read(bio, 1)) {
@@ -167,7 +167,7 @@ OPJ_UINT32 opj_t2_getcommacode(opj_bio_t *bio)
     return n;
 }
 
-void opj_t2_putnumpasses(opj_bio_t *bio, OPJ_UINT32 n) {
+static void opj_t2_putnumpasses(opj_bio_t *bio, OPJ_UINT32 n) {
         if (n == 1) {
                 opj_bio_write(bio, 0, 1);
         } else if (n == 2) {
@@ -181,7 +181,7 @@ void opj_t2_putnumpasses(opj_bio_t *bio, OPJ_UINT32 n) {
         }
 }
 
-OPJ_UINT32 opj_t2_getnumpasses(opj_bio_t *bio) {
+static OPJ_UINT32 opj_t2_getnumpasses(opj_bio_t *bio) {
         OPJ_UINT32 n;
         if (!opj_bio_read(bio, 1))
                 return 1;
@@ -511,7 +511,7 @@ void opj_t2_destroy(opj_t2_t *t2) {
         }
 }
 
-OPJ_BOOL opj_t2_decode_packet(  opj_t2_t* p_t2,
+static OPJ_BOOL opj_t2_decode_packet(  opj_t2_t* p_t2,
                                 opj_tcd_tile_t *p_tile,
                                 opj_tcp_t *p_tcp,
                                 opj_pi_iterator_t *p_pi,
@@ -550,7 +550,7 @@ OPJ_BOOL opj_t2_decode_packet(  opj_t2_t* p_t2,
         return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_t2_encode_packet(  OPJ_UINT32 tileno,
+static OPJ_BOOL opj_t2_encode_packet(  OPJ_UINT32 tileno,
                                 opj_tcd_tile_t * tile,
                                 opj_tcp_t * tcp,
                                 opj_pi_iterator_t *pi,
@@ -825,7 +825,7 @@ static OPJ_BOOL opj_t2_skip_packet( opj_t2_t* p_t2,
 }
 
 
-OPJ_BOOL opj_t2_read_packet_header( opj_t2_t* p_t2,
+static OPJ_BOOL opj_t2_read_packet_header( opj_t2_t* p_t2,
                                     opj_tcd_tile_t *p_tile,
                                     opj_tcp_t *p_tcp,
                                     opj_pi_iterator_t *p_pi,
@@ -1094,7 +1094,7 @@ OPJ_BOOL opj_t2_read_packet_header( opj_t2_t* p_t2,
         return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_t2_read_packet_data(   opj_t2_t* p_t2,
+static OPJ_BOOL opj_t2_read_packet_data(   opj_t2_t* p_t2,
                                     opj_tcd_tile_t *p_tile,
                                     opj_pi_iterator_t *p_pi,
                                     OPJ_BYTE *p_src_data,
@@ -1228,7 +1228,7 @@ OPJ_BOOL opj_t2_read_packet_data(   opj_t2_t* p_t2,
         return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_t2_skip_packet_data(   opj_t2_t* p_t2,
+static OPJ_BOOL opj_t2_skip_packet_data(   opj_t2_t* p_t2,
                                     opj_tcd_tile_t *p_tile,
                                     opj_pi_iterator_t *p_pi,
                                     OPJ_UINT32 * p_data_read,

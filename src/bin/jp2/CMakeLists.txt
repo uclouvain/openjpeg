@@ -3,10 +3,14 @@
 # First thing define the common source:
 set(common_SRCS
   convert.c
+  convert.h
   convertbmp.c
   index.c
+  index.h
   ${OPENJPEG_SOURCE_DIR}/src/bin/common/color.c
+  ${OPENJPEG_SOURCE_DIR}/src/bin/common/color.h
   ${OPENJPEG_SOURCE_DIR}/src/bin/common/opj_getopt.c
+  ${OPENJPEG_SOURCE_DIR}/src/bin/common/opj_getopt.h
   )
   
 if(OPJ_HAVE_LIBTIFF)

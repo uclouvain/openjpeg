@@ -78,7 +78,7 @@ static OPJ_BOOL opj_bio_bytein(opj_bio_t *bio);
 ==========================================================
 */
 
-OPJ_BOOL opj_bio_byteout(opj_bio_t *bio) {
+static OPJ_BOOL opj_bio_byteout(opj_bio_t *bio) {
 	bio->buf = (bio->buf << 8) & 0xffff;
 	bio->ct = bio->buf == 0xff00 ? 7 : 8;
 	if ((OPJ_SIZE_T)bio->bp >= (OPJ_SIZE_T)bio->end) {
@@ -88,7 +88,7 @@ OPJ_BOOL opj_bio_byteout(opj_bio_t *bio) {
 	return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_bio_bytein(opj_bio_t *bio) {
+static OPJ_BOOL opj_bio_bytein(opj_bio_t *bio) {
 	bio->buf = (bio->buf << 8) & 0xffff;
 	bio->ct = bio->buf == 0xff00 ? 7 : 8;
 	if ((OPJ_SIZE_T)bio->bp >= (OPJ_SIZE_T)bio->end) {
@@ -98,7 +98,7 @@ OPJ_BOOL opj_bio_bytein(opj_bio_t *bio) {
 	return OPJ_TRUE;
 }
 
-void opj_bio_putbit(opj_bio_t *bio, OPJ_UINT32 b) {
+static void opj_bio_putbit(opj_bio_t *bio, OPJ_UINT32 b) {
 	if (bio->ct == 0) {
 		opj_bio_byteout(bio); /* MSD: why not check the return value of this function ? */
 	}
@@ -106,7 +106,7 @@ void opj_bio_putbit(opj_bio_t *bio, OPJ_UINT32 b) {
 	bio->buf |= b << bio->ct;
 }
 
-OPJ_UINT32 opj_bio_getbit(opj_bio_t *bio) {
+static OPJ_UINT32 opj_bio_getbit(opj_bio_t *bio) {
 	if (bio->ct == 0) {
 		opj_bio_bytein(bio); /* MSD: why not check the return value of this function ? */
 	}
