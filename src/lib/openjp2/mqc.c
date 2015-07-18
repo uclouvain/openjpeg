@@ -202,7 +202,7 @@ static opj_mqc_state_t mqc_states[47 * 2] = {
 ==========================================================
 */
 
-void opj_mqc_byteout(opj_mqc_t *mqc) {
+static void opj_mqc_byteout(opj_mqc_t *mqc) {
 	if (*mqc->bp == 0xff) {
 		mqc->bp++;
 		*mqc->bp = (OPJ_BYTE)(mqc->c >> 20);
@@ -232,7 +232,7 @@ void opj_mqc_byteout(opj_mqc_t *mqc) {
 	}
 }
 
-void opj_mqc_renorme(opj_mqc_t *mqc) {
+static void opj_mqc_renorme(opj_mqc_t *mqc) {
 	do {
 		mqc->a <<= 1;
 		mqc->c <<= 1;
@@ -243,7 +243,7 @@ void opj_mqc_renorme(opj_mqc_t *mqc) {
 	} while ((mqc->a & 0x8000) == 0);
 }
 
-void opj_mqc_codemps(opj_mqc_t *mqc) {
+static void opj_mqc_codemps(opj_mqc_t *mqc) {
 	mqc->a -= (*mqc->curctx)->qeval;
 	if ((mqc->a & 0x8000) == 0) {
 		if (mqc->a < (*mqc->curctx)->qeval) {
@@ -258,7 +258,7 @@ void opj_mqc_codemps(opj_mqc_t *mqc) {
 	}
 }
 
-void opj_mqc_codelps(opj_mqc_t *mqc) {
+static void opj_mqc_codelps(opj_mqc_t *mqc) {
 	mqc->a -= (*mqc->curctx)->qeval;
 	if (mqc->a < (*mqc->curctx)->qeval) {
 		mqc->c += (*mqc->curctx)->qeval;
@@ -269,7 +269,7 @@ void opj_mqc_codelps(opj_mqc_t *mqc) {
 	opj_mqc_renorme(mqc);
 }
 
-void opj_mqc_setbits(opj_mqc_t *mqc) {
+static void opj_mqc_setbits(opj_mqc_t *mqc) {
 	OPJ_UINT32 tempc = mqc->c + mqc->a;
 	mqc->c |= 0xffff;
 	if (mqc->c >= tempc) {
