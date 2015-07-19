@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: main
 title: OpenJPEG
 tagline: An open-source JPEG 2000 codec written in C
 ---

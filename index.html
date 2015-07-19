@@ -1,0 +1,54 @@
+---
+layout: page
+title: OpenJPEG
+---
+{% include JB/setup %}
+
+<div class="newsbar">
+<h2>Latest news</h2>
+
+<ul>
+{% for post in paginator.posts %}
+   <!-- <div class="post-entry"> -->
+   <li><a href="{{ BASE_PATH }}{{ post.url }}">{{ post.title }}</a> <small>({{ post.date | date_to_string }})</small>
+   </li>
+   <!-- </div> -->
+{% endfor %}
+</ul>
+<!-- Pagination links -->
+
+{% if paginator.total_pages > 1 %}
+<div class="pagination">
+<!--  {% if paginator.previous_page %}
+    <a href="{{ paginator.previous_page_path }}" class="previous">Previous</a>
+  {% else %}
+    <span class="previous">Previous</span>
+  {% endif %}
+  <span class="page_number ">Page: {{ paginator.page }} of {{ paginator.total_pages }}</span>
+  {% if paginator.next_page %}
+    <a href="{{ paginator.next_page_path }}" class="next">Next</a>
+  {% else %}
+    <span class="next ">Next</span>
+  {% endif %}-->
+<!--
+Removed all pagination code here as links got totally messed up on project website!
+-->
+
+  <span><a href="{{ BASE_PATH }}/archive.html">News Archive</a></span>
+</div>
+{% endif %}
+
+</div>
+
+<h2 id="what-is-openjpeg-">What is OpenJPEG ?</h2>
+
+<p>OpenJPEG is an open-source JPEG 2000 codec written in C language. It has been developed in order to promote the use of <a href="http://www.jpeg.org/jpeg2000">JPEG 2000</a>, a still-image compression standard from the Joint Photographic Experts Group (<a href="http://www.jpeg.org">JPEG</a>).  Since may 2015, it is officially recognized by ISO/IEC and ITU-T as a <a href="http://www.jpeg.org/jpeg2000/software.html">JPEG 2000 Reference Software</a>.</p>
+
+<h2 id="who-can-use-the-code-">Who can use the code ?</h2>
+
+<p>Anyone. As the OpenJPEG code is released under the <a href="https://github.com/uclouvain/openjpeg/blob/master/LICENSE">2-clauses BSD license</a>, anyone can use or modify the code, even for commercial applications. The only restriction is to retain the copyright in the sources or in the binaries documentation. Of course, if you modified the code in a way that might be of interest for other users, you are encouraged to share it (through a <a href="https://github.com/uclouvain/openjpeg/pulls">github pull request</a> or by filling an <a href="https://github.com/uclouvain/openjpeg/issues">issue</a>) but this is not a requirement.</p>
+
+<h2 id="who-supports-the-project-">Who supports the project ?</h2>
+
+<p>The library has been created and is still maintained by the Image and Signal Processing Group (<a href="http://sites.uclouvain.be/ispgroup/">ISPGroup</a>), in the Université catholique de Louvain (<a href="http://www.uclouvain.be/en-index.html">UCL</a>), with the support of <a href="http://www.intopix.com">intoPIX</a>. It has been supported and partially funded in the past by the <a href="https://cnes.fr/">CNES</a> and the <a href="http://www.c-s.fr/">CS</a> company. The JPWL module has been developed by the Digital Signal Processing Lab (<a href="http://dsplab.diei.unipg.it/">DSPLab</a>) of the University of Perugia, Italy (<a href="http://www.unipg.it/">UNIPG</a>).</p>
+
