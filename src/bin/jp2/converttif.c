@@ -825,18 +825,14 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
 	w= (int)tiWidth;
 	h= (int)tiHeight;
 	
-	if((tiBps > 16U) || ((tiBps != 1U) && (tiBps & 1U))) tiBps = 0U;
-	if(tiPhoto != PHOTOMETRIC_MINISBLACK && tiPhoto != PHOTOMETRIC_RGB) tiPhoto = 0;
-	
-	if( !tiBps || !tiPhoto)
-	{
-		if( !tiBps)
-			fprintf(stderr,"tiftoimage: Bits=%d, Only 1, 2, 4, 6, 8, 10, 12, 14 and 16 bits implemented\n",tiBps);
-		else
-			if( !tiPhoto)
-				fprintf(stderr,"tiftoimage: Bad color format %d.\n\tOnly RGB(A)"
-								" and GRAY(A) has been implemented\n",(int) tiPhoto);
-		
+	if((tiBps > 16U) || ((tiBps != 1U) && (tiBps & 1U))) {
+		fprintf(stderr,"tiftoimage: Bits=%d, Only 1, 2, 4, 6, 8, 10, 12, 14 and 16 bits implemented\n",tiBps);
+		fprintf(stderr,"\tAborting\n");
+		TIFFClose(tif);
+		return NULL;
+	}
+	if(tiPhoto != PHOTOMETRIC_MINISBLACK && tiPhoto != PHOTOMETRIC_RGB) {
+		fprintf(stderr,"tiftoimage: Bad color format %d.\n\tOnly RGB(A) and GRAY(A) has been implemented\n",(int) tiPhoto);
 		fprintf(stderr,"\tAborting\n");
 		TIFFClose(tif);
 		return NULL;
