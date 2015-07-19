@@ -47,7 +47,7 @@ opj_compress -i @INPUT_NR_PATH@/Bretagne2.ppm -o @TEMP_PATH@/Bretagne2_5.j2k -c 
 # issue 316
 opj_compress -i @INPUT_NR_PATH@/issue316.png -o @TEMP_PATH@/issue316.png.jp2
 # issue 416 (cdef for png with alpha) + issue 436 (MCT norm read buffer overflow for num comp > 3 + Issue 215 number of decomp levels
-opj_compress -i @INPUT_NR_PATH@/basn6a08.png -o @TEMP_PATH@/basn6a08.png.jp2 -n 6
+opj_compress -i @INPUT_NR_PATH@/pngsuite/basn6a08.png -o @TEMP_PATH@/basn6a08.png.jp2 -n 6
 # issue 203 BMP Files not handled properly
 opj_compress -i @INPUT_NR_PATH@/issue203-8bpp-width1.bmp -o @TEMP_PATH@/issue203-8bpp-width1.bmp.jp2
 opj_compress -i @INPUT_NR_PATH@/issue203-rle8.bmp -o @TEMP_PATH@/issue203-rle8.bmp.jp2
@@ -101,6 +101,38 @@ opj_compress -i @INPUT_NR_PATH@/flower-rgb-planar-16.tif -o @TEMP_PATH@/flower-r
 opj_compress -i @INPUT_NR_PATH@/basn6a08.tif -o @TEMP_PATH@/basn6a08.tif.jp2
 opj_compress -i @INPUT_NR_PATH@/basn4a08.tif -o @TEMP_PATH@/basn4a08.tif.jp2
 
+# issue 536 (PNG images are always read as RGB(A) images) + issue 264 (convert.c is unmaintainable)
+# Test all images from pngsuite
+opj_compress -i @INPUT_NR_PATH@/pngsuite/basn0g01.png -o @TEMP_PATH@/basn0g01.png.jp2
+opj_compress -i @INPUT_NR_PATH@/pngsuite/basn0g02.png -o @TEMP_PATH@/basn0g02.png.jp2
+opj_compress -i @INPUT_NR_PATH@/pngsuite/basn0g04.png -o @TEMP_PATH@/basn0g04.png.jp2
+opj_compress -i @INPUT_NR_PATH@/pngsuite/basn0g08.png -o @TEMP_PATH@/basn0g08.png.jp2
+opj_compress -i @INPUT_NR_PATH@/pngsuite/basn0g16.png -o @TEMP_PATH@/basn0g16.png.jp2
+opj_compress -i @INPUT_NR_PATH@/pngsuite/basn2c08.png -o @TEMP_PATH@/basn2c08.png.jp2
+opj_compress -i @INPUT_NR_PATH@/pngsuite/basn2c16.png -o @TEMP_PATH@/basn2c16.png.jp2
+opj_compress -i @INPUT_NR_PATH@/pngsuite/basn3p01.png -o @TEMP_PATH@/basn3p01.png.jp2
+opj_compress -i @INPUT_NR_PATH@/pngsuite/basn3p02.png -o @TEMP_PATH@/basn3p02.png.jp2
+opj_compress -i @INPUT_NR_PATH@/pngsuite/basn3p04.png -o @TEMP_PATH@/basn3p04.png.jp2
+opj_compress -i @INPUT_NR_PATH@/pngsuite/basn3p08.png -o @TEMP_PATH@/basn3p08.png.jp2
+opj_compress -i @INPUT_NR_PATH@/pngsuite/basn4a08.png -o @TEMP_PATH@/basn4a08.png.jp2
+opj_compress -i @INPUT_NR_PATH@/pngsuite/basn4a16.png -o @TEMP_PATH@/basn4a16.png.jp2
+# already done opj_compress -i @INPUT_NR_PATH@/pngsuite/basn6a08.png -o @TEMP_PATH@/basn6a08.png.jp2
+opj_compress -i @INPUT_NR_PATH@/pngsuite/basn6a16.png -o @TEMP_PATH@/basn6a16.png.jp2
+opj_compress -i @INPUT_NR_PATH@/pngsuite/ftbbn0g01.png -o @TEMP_PATH@/ftbbn0g01.png.jp2
+opj_compress -i @INPUT_NR_PATH@/pngsuite/ftbbn0g02.png -o @TEMP_PATH@/ftbbn0g02.png.jp2
+opj_compress -i @INPUT_NR_PATH@/pngsuite/ftbbn0g04.png -o @TEMP_PATH@/ftbbn0g04.png.jp2
+opj_compress -i @INPUT_NR_PATH@/pngsuite/ftbbn2c16.png -o @TEMP_PATH@/ftbbn2c16.png.jp2
+opj_compress -i @INPUT_NR_PATH@/pngsuite/ftbbn3p08.png -o @TEMP_PATH@/ftbbn3p08.png.jp2
+opj_compress -i @INPUT_NR_PATH@/pngsuite/ftbgn2c16.png -o @TEMP_PATH@/ftbgn2c16.png.jp2
+opj_compress -i @INPUT_NR_PATH@/pngsuite/ftbgn3p08.png -o @TEMP_PATH@/ftbgn3p08.png.jp2
+opj_compress -i @INPUT_NR_PATH@/pngsuite/ftbrn2c08.png -o @TEMP_PATH@/ftbrn2c08.png.jp2
+opj_compress -i @INPUT_NR_PATH@/pngsuite/ftbwn0g16.png -o @TEMP_PATH@/ftbwn0g16.png.jp2
+opj_compress -i @INPUT_NR_PATH@/pngsuite/ftbwn3p08.png -o @TEMP_PATH@/ftbwn3p08.png.jp2
+opj_compress -i @INPUT_NR_PATH@/pngsuite/ftbyn3p08.png -o @TEMP_PATH@/ftbyn3p08.png.jp2
+opj_compress -i @INPUT_NR_PATH@/pngsuite/ftp0n0g08.png -o @TEMP_PATH@/ftp0n0g08.png.jp2
+opj_compress -i @INPUT_NR_PATH@/pngsuite/ftp0n2c08.png -o @TEMP_PATH@/ftp0n2c08.png.jp2
+opj_compress -i @INPUT_NR_PATH@/pngsuite/ftp0n3p08.png -o @TEMP_PATH@/ftp0n3p08.png.jp2
+opj_compress -i @INPUT_NR_PATH@/pngsuite/ftp1n3p08.png -o @TEMP_PATH@/ftp1n3p08.png.jp2
 
 # DECODER TEST SUITE
 opj_decompress -i  @INPUT_NR_PATH@/Bretagne2.j2k -o @TEMP_PATH@/Bretagne2.j2k.pgx

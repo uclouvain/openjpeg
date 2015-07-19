@@ -16,6 +16,9 @@ set(common_SRCS
 if(OPJ_HAVE_LIBTIFF)
 	list(APPEND common_SRCS converttif.c)
 endif()
+if(OPJ_HAVE_LIBPNG)
+	list(APPEND common_SRCS convertpng.c)
+endif()
 
 # Headers file are located here:
 include_directories(
