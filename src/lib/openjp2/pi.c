@@ -214,7 +214,7 @@ static void opj_pi_update_decode_poc (  opj_pi_iterator_t * p_pi,
 /**
  * FIXME DOC
  */
-OPJ_BOOL opj_pi_check_next_level(	OPJ_INT32 pos,
+static OPJ_BOOL opj_pi_check_next_level(	OPJ_INT32 pos,
 								opj_cp_t *cp,
 								OPJ_UINT32 tileno,
 								OPJ_UINT32 pino,
@@ -230,7 +230,7 @@ OPJ_BOOL opj_pi_check_next_level(	OPJ_INT32 pos,
 ==========================================================
 */
 
-OPJ_BOOL opj_pi_next_lrcp(opj_pi_iterator_t * pi) {
+static OPJ_BOOL opj_pi_next_lrcp(opj_pi_iterator_t * pi) {
 	opj_pi_comp_t *comp = NULL;
 	opj_pi_resolution_t *res = NULL;
 	OPJ_UINT32 index = 0;
@@ -270,7 +270,7 @@ LABEL_SKIP:;
 	return OPJ_FALSE;
 }
 
-OPJ_BOOL opj_pi_next_rlcp(opj_pi_iterator_t * pi) {
+static OPJ_BOOL opj_pi_next_rlcp(opj_pi_iterator_t * pi) {
 	opj_pi_comp_t *comp = NULL;
 	opj_pi_resolution_t *res = NULL;
 	OPJ_UINT32 index = 0;
@@ -309,7 +309,7 @@ LABEL_SKIP:;
 	return OPJ_FALSE;
 }
 
-OPJ_BOOL opj_pi_next_rpcl(opj_pi_iterator_t * pi) {
+static OPJ_BOOL opj_pi_next_rpcl(opj_pi_iterator_t * pi) {
 	opj_pi_comp_t *comp = NULL;
 	opj_pi_resolution_t *res = NULL;
 	OPJ_UINT32 index = 0;
@@ -392,7 +392,7 @@ LABEL_SKIP:;
 	return OPJ_FALSE;
 }
 
-OPJ_BOOL opj_pi_next_pcrl(opj_pi_iterator_t * pi) {
+static OPJ_BOOL opj_pi_next_pcrl(opj_pi_iterator_t * pi) {
 	opj_pi_comp_t *comp = NULL;
 	opj_pi_resolution_t *res = NULL;
 	OPJ_UINT32 index = 0;
@@ -473,7 +473,7 @@ LABEL_SKIP:;
 	return OPJ_FALSE;
 }
 
-OPJ_BOOL opj_pi_next_cprl(opj_pi_iterator_t * pi) {
+static OPJ_BOOL opj_pi_next_cprl(opj_pi_iterator_t * pi) {
 	opj_pi_comp_t *comp = NULL;
 	opj_pi_resolution_t *res = NULL;
 	OPJ_UINT32 index = 0;
@@ -552,7 +552,7 @@ LABEL_SKIP:;
 	return OPJ_FALSE;
 }
 
-void opj_get_encoding_parameters(	const opj_image_t *p_image,
+static void opj_get_encoding_parameters(	const opj_image_t *p_image,
                                     const opj_cp_t *p_cp,
                                     OPJ_UINT32 p_tileno,
                                     OPJ_INT32 * p_tx0,
@@ -666,7 +666,7 @@ void opj_get_encoding_parameters(	const opj_image_t *p_image,
 }
 
 
-void opj_get_all_encoding_parameters(   const opj_image_t *p_image,
+static void opj_get_all_encoding_parameters(   const opj_image_t *p_image,
                                         const opj_cp_t *p_cp,
                                         OPJ_UINT32 tileno,
                                         OPJ_INT32 * p_tx0,
@@ -789,7 +789,7 @@ void opj_get_all_encoding_parameters(   const opj_image_t *p_image,
 	}
 }
 
-opj_pi_iterator_t * opj_pi_create(	const opj_image_t *image,
+static opj_pi_iterator_t * opj_pi_create(	const opj_image_t *image,
                                     const opj_cp_t *cp,
                                     OPJ_UINT32 tileno )
 {
@@ -850,7 +850,7 @@ opj_pi_iterator_t * opj_pi_create(	const opj_image_t *image,
 	return l_pi;
 }
 
-void opj_pi_update_encode_poc_and_final (   opj_cp_t *p_cp,
+static void opj_pi_update_encode_poc_and_final (   opj_cp_t *p_cp,
                                             OPJ_UINT32 p_tileno,
                                             OPJ_INT32 p_tx0,
                                             OPJ_INT32 p_tx1,
@@ -928,7 +928,7 @@ void opj_pi_update_encode_poc_and_final (   opj_cp_t *p_cp,
 	}
 }
 
-void opj_pi_update_encode_not_poc (	opj_cp_t *p_cp,
+static void opj_pi_update_encode_not_poc (	opj_cp_t *p_cp,
                                     OPJ_UINT32 p_num_comps,
                                     OPJ_UINT32 p_tileno,
                                     OPJ_INT32 p_tx0,
@@ -983,7 +983,7 @@ void opj_pi_update_encode_not_poc (	opj_cp_t *p_cp,
 	}
 }
 
-void opj_pi_update_decode_poc (opj_pi_iterator_t * p_pi,
+static void opj_pi_update_decode_poc (opj_pi_iterator_t * p_pi,
                                opj_tcp_t * p_tcp,
                                OPJ_UINT32 p_max_precision,
                                OPJ_UINT32 p_max_res)
@@ -1025,7 +1025,7 @@ void opj_pi_update_decode_poc (opj_pi_iterator_t * p_pi,
 	}
 }
 
-void opj_pi_update_decode_not_poc (opj_pi_iterator_t * p_pi,
+static void opj_pi_update_decode_not_poc (opj_pi_iterator_t * p_pi,
                                    opj_tcp_t * p_tcp,
                                    OPJ_UINT32 p_max_precision,
                                    OPJ_UINT32 p_max_res)
@@ -1062,7 +1062,7 @@ void opj_pi_update_decode_not_poc (opj_pi_iterator_t * p_pi,
 
 
 
-OPJ_BOOL opj_pi_check_next_level(	OPJ_INT32 pos,
+static OPJ_BOOL opj_pi_check_next_level(	OPJ_INT32 pos,
 								opj_cp_t *cp,
 								OPJ_UINT32 tileno,
 								OPJ_UINT32 pino,

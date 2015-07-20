@@ -1462,7 +1462,7 @@ OPJ_BOOL opj_tcd_update_tile_data ( opj_tcd_t *p_tcd,
 
 
 
-void opj_tcd_free_tile(opj_tcd_t *p_tcd)
+static void opj_tcd_free_tile(opj_tcd_t *p_tcd)
 {
         OPJ_UINT32 compno, resno, bandno, precno;
         opj_tcd_tile_t *l_tile = 00;
@@ -1545,7 +1545,7 @@ void opj_tcd_free_tile(opj_tcd_t *p_tcd)
 }
 
 
-OPJ_BOOL opj_tcd_t2_decode (opj_tcd_t *p_tcd,
+static OPJ_BOOL opj_tcd_t2_decode (opj_tcd_t *p_tcd,
                             OPJ_BYTE * p_src_data,
                             OPJ_UINT32 * p_data_read,
                             OPJ_UINT32 p_max_src_size,
@@ -1577,7 +1577,7 @@ OPJ_BOOL opj_tcd_t2_decode (opj_tcd_t *p_tcd,
         return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_tcd_t1_decode ( opj_tcd_t *p_tcd )
+static OPJ_BOOL opj_tcd_t1_decode ( opj_tcd_t *p_tcd )
 {
         OPJ_UINT32 compno;
         opj_t1_t * l_t1;
@@ -1607,7 +1607,7 @@ OPJ_BOOL opj_tcd_t1_decode ( opj_tcd_t *p_tcd )
 }
 
 
-OPJ_BOOL opj_tcd_dwt_decode ( opj_tcd_t *p_tcd )
+static OPJ_BOOL opj_tcd_dwt_decode ( opj_tcd_t *p_tcd )
 {
         OPJ_UINT32 compno;
         opj_tcd_tile_t * l_tile = p_tcd->tcd_image->tiles;
@@ -1647,7 +1647,7 @@ OPJ_BOOL opj_tcd_dwt_decode ( opj_tcd_t *p_tcd )
 
         return OPJ_TRUE;
 }
-OPJ_BOOL opj_tcd_mct_decode ( opj_tcd_t *p_tcd )
+static OPJ_BOOL opj_tcd_mct_decode ( opj_tcd_t *p_tcd )
 {
         opj_tcd_tile_t * l_tile = p_tcd->tcd_image->tiles;
         opj_tcp_t * l_tcp = p_tcd->tcp;
@@ -1725,7 +1725,7 @@ OPJ_BOOL opj_tcd_mct_decode ( opj_tcd_t *p_tcd )
 }
 
 
-OPJ_BOOL opj_tcd_dc_level_shift_decode ( opj_tcd_t *p_tcd )
+static OPJ_BOOL opj_tcd_dc_level_shift_decode ( opj_tcd_t *p_tcd )
 {
         OPJ_UINT32 compno;
         opj_tcd_tilecomp_t * l_tile_comp = 00;
@@ -1795,7 +1795,7 @@ OPJ_BOOL opj_tcd_dc_level_shift_decode ( opj_tcd_t *p_tcd )
 /**
  * Deallocates the encoding data of the given precinct.
  */
-void opj_tcd_code_block_dec_deallocate (opj_tcd_precinct_t * p_precinct)
+static void opj_tcd_code_block_dec_deallocate (opj_tcd_precinct_t * p_precinct)
 {
         OPJ_UINT32 cblkno , l_nb_code_blocks;
 
@@ -1833,7 +1833,7 @@ void opj_tcd_code_block_dec_deallocate (opj_tcd_precinct_t * p_precinct)
 /**
  * Deallocates the encoding data of the given precinct.
  */
-void opj_tcd_code_block_enc_deallocate (opj_tcd_precinct_t * p_precinct)
+static void opj_tcd_code_block_enc_deallocate (opj_tcd_precinct_t * p_precinct)
 {       
         OPJ_UINT32 cblkno , l_nb_code_blocks;
 
@@ -1894,7 +1894,7 @@ OPJ_UINT32 opj_tcd_get_encoded_tile_size ( opj_tcd_t *p_tcd )
         return l_data_size;
 }
                 
-OPJ_BOOL opj_tcd_dc_level_shift_encode ( opj_tcd_t *p_tcd )
+static OPJ_BOOL opj_tcd_dc_level_shift_encode ( opj_tcd_t *p_tcd )
 {
         OPJ_UINT32 compno;
         opj_tcd_tilecomp_t * l_tile_comp = 00;
@@ -1934,7 +1934,7 @@ OPJ_BOOL opj_tcd_dc_level_shift_encode ( opj_tcd_t *p_tcd )
         return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_tcd_mct_encode ( opj_tcd_t *p_tcd )
+static OPJ_BOOL opj_tcd_mct_encode ( opj_tcd_t *p_tcd )
 {
         opj_tcd_tile_t * l_tile = p_tcd->tcd_image->tiles;
         opj_tcd_tilecomp_t * l_tile_comp = p_tcd->tcd_image->tiles->comps;
@@ -1989,7 +1989,7 @@ OPJ_BOOL opj_tcd_mct_encode ( opj_tcd_t *p_tcd )
         return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_tcd_dwt_encode ( opj_tcd_t *p_tcd )
+static OPJ_BOOL opj_tcd_dwt_encode ( opj_tcd_t *p_tcd )
 {
         opj_tcd_tile_t * l_tile = p_tcd->tcd_image->tiles;
         opj_tcd_tilecomp_t * l_tile_comp = p_tcd->tcd_image->tiles->comps;
@@ -2015,7 +2015,7 @@ OPJ_BOOL opj_tcd_dwt_encode ( opj_tcd_t *p_tcd )
         return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_tcd_t1_encode ( opj_tcd_t *p_tcd )
+static OPJ_BOOL opj_tcd_t1_encode ( opj_tcd_t *p_tcd )
 {
         opj_t1_t * l_t1;
         const OPJ_FLOAT64 * l_mct_norms;
@@ -2052,7 +2052,7 @@ OPJ_BOOL opj_tcd_t1_encode ( opj_tcd_t *p_tcd )
         return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_tcd_t2_encode (opj_tcd_t *p_tcd,
+static OPJ_BOOL opj_tcd_t2_encode (opj_tcd_t *p_tcd,
                                                 OPJ_BYTE * p_dest_data,
                                                 OPJ_UINT32 * p_data_written,
                                                 OPJ_UINT32 p_max_dest_size,
@@ -2090,7 +2090,7 @@ OPJ_BOOL opj_tcd_t2_encode (opj_tcd_t *p_tcd,
 }
 
 
-OPJ_BOOL opj_tcd_rate_allocate_encode(  opj_tcd_t *p_tcd,
+static OPJ_BOOL opj_tcd_rate_allocate_encode(  opj_tcd_t *p_tcd,
                                                                             OPJ_BYTE * p_dest_data,
                                                                             OPJ_UINT32 p_max_dest_size,
                                                                             opj_codestream_info_t *p_cstr_info )

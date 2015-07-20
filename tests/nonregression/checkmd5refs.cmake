@@ -32,7 +32,7 @@
 get_filename_component(OUTFILENAME_NAME ${OUTFILENAME} NAME)
 string(FIND ${OUTFILENAME_NAME} "." SHORTEST_EXT_POS REVERSE)
 string(SUBSTRING ${OUTFILENAME_NAME} 0 ${SHORTEST_EXT_POS} OUTFILENAME_NAME_WE)
-file(GLOB globfiles "Temporary/${OUTFILENAME_NAME_WE}*.pgx" "Temporary/${OUTFILENAME_NAME_WE}*.png")
+file(GLOB globfiles "Temporary/${OUTFILENAME_NAME_WE}*.pgx" "Temporary/${OUTFILENAME_NAME_WE}*.png" "Temporary/${OUTFILENAME_NAME_WE}*.tif")
 if(NOT globfiles)
   message(SEND_ERROR "Could not find output PGX files: ${OUTFILENAME_NAME_WE}")
 endif()
