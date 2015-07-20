@@ -443,3 +443,7 @@ opj_decompress -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-10.ti
 opj_decompress -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-12.tif -p 12S
 opj_decompress -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-14.tif -p 14S
 opj_decompress -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-16.tif -p 16S
+
+#issue 235 CMAP outside jp2h box. CMAP is buggy
+opj_decompress -i @INPUT_NR_PATH@/issue235.jp2 -o @TEMP_PATH@/issue235.jp2.pgx
+
