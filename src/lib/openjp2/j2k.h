@@ -232,6 +232,12 @@ typedef struct opj_simple_mcc_decorrelation_data
 }
 opj_simple_mcc_decorrelation_data_t;
 
+typedef struct opj_ppx_struct
+{
+	OPJ_BYTE*   m_data; /* m_data == NULL => Zppx not read yet */
+	OPJ_UINT32	m_data_size;
+} opj_ppx;
+
 /**
 Tile coding parameters :
 this structure is used to store coding/decoding parameters common to all
@@ -254,6 +260,12 @@ typedef struct opj_tcp
 	OPJ_UINT32 numpocs;
 	/** progression order changes */
 	opj_poc_t pocs[32];
+	
+	/** number of ppt markers (reserved size) */
+	OPJ_UINT32 ppt_markers_count;
+	/** ppt markers data (table indexed by Zppt) */
+	opj_ppx* ppt_markers;
+	
 	/** packet header store there for futur use in t2_decode_packet */
 	OPJ_BYTE *ppt_data;
 	/** used to keep a track of the allocated memory */
@@ -359,6 +371,11 @@ typedef struct opj_cp
 	/** number of tiles in heigth */
 	OPJ_UINT32 th;
 
+	/** number of ppm markers (reserved size) */
+	OPJ_UINT32 ppm_markers_count;
+	/** ppm markers data (table indexed by Zppm) */
+	opj_ppx* ppm_markers;
+	
 	/** packet header store there for futur use in t2_decode_packet */
 	OPJ_BYTE *ppm_data;
 	/** size of the ppm_data*/
