@@ -453,6 +453,14 @@ cmsBool CMSEXPORT cmsCloseIOhandler(cmsIOHANDLER* io)
 
 // -------------------------------------------------------------------------------------------------------
 
+cmsIOHANDLER* CMSEXPORT cmsGetProfileIOhandler(cmsHPROFILE hProfile)
+{
+	_cmsICCPROFILE* Icc = (_cmsICCPROFILE*)hProfile;
+
+	if (Icc == NULL) return NULL;
+	return Icc->IOhandler;
+}
+
 // Creates an empty structure holding all required parameters
 cmsHPROFILE CMSEXPORT cmsCreateProfilePlaceholder(cmsContext ContextID)
 {
@@ -623,6 +631,32 @@ cmsBool CMSEXPORT cmsIsTag(cmsHPROFILE hProfile, cmsTagSignature sig)
 }
 
 
+
+// Enforces that the profile version is per. spec.
+// Operates on the big endian bytes from the profile.
+// Called before converting to platform endianness.
+// Byte 0 is BCD major version, so max 9.
+// Byte 1 is 2 BCD digits, one per nibble.
+// Reserved bytes 2 & 3 must be 0.
+static 
+cmsUInt32Number _validatedVersion(cmsUInt32Number DWord)
+{
+    cmsUInt8Number* pByte = (cmsUInt8Number*) &DWord;
+    cmsUInt8Number temp1;
+    cmsUInt8Number temp2;
+
+    if (*pByte > 0x09) *pByte = (cmsUInt8Number) 0x09;
+    temp1 = *(pByte+1) & 0xf0;
+    temp2 = *(pByte+1) & 0x0f;
+    if (temp1 > 0x90) temp1 = 0x90;
+    if (temp2 > 0x09) temp2 = 0x09;
+    *(pByte+1) = (cmsUInt8Number)(temp1 | temp2);
+    *(pByte+2) = (cmsUInt8Number)0;
+    *(pByte+3) = (cmsUInt8Number)0;
+
+    return DWord;
+}
+
 // Read profile header and validate it
 cmsBool _cmsReadHeader(_cmsICCPROFILE* Icc)
 {
@@ -657,7 +691,7 @@ cmsBool _cmsReadHeader(_cmsICCPROFILE* Icc)
     Icc -> creator         = _cmsAdjustEndianess32(Header.creator);
     
     _cmsAdjustEndianess64(&Icc -> attributes, &Header.attributes);
-    Icc -> Version         = _cmsAdjustEndianess32(Header.version);
+    Icc -> Version         = _cmsAdjustEndianess32(_validatedVersion(Header.version));
 
     // Get size as reported in header
     HeaderSize = _cmsAdjustEndianess32(Header.size);
@@ -1794,7 +1828,7 @@ Error:
 
 // Similar to the anterior. This function allows to write directly to the ICC profile any data, without
 // checking anything. As a rule, mixing Raw with cooked doesn't work, so writting a tag as raw and then reading
-// it as cooked without serializing does result into an error. If that is wha you want, you will need to dump
+// it as cooked without serializing does result into an error. If that is what you want, you will need to dump
 // the profile to memry or disk and then reopen it.
 cmsBool CMSEXPORT cmsWriteRawTag(cmsHPROFILE hProfile, cmsTagSignature sig, const void* data, cmsUInt32Number Size)
 {
@@ -1818,6 +1852,11 @@ cmsBool CMSEXPORT cmsWriteRawTag(cmsHPROFILE hProfile, cmsTagSignature sig, cons
     Icc ->TagSizes[i] = Size;
 
     _cmsUnlockMutex(Icc->ContextID, Icc ->UsrMutex);
+
+    if (Icc->TagPtrs[i] == NULL) {           
+           Icc->TagNames[i] = 0;
+           return FALSE;
+    }
     return TRUE;
 }
 

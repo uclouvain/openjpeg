@@ -683,15 +683,21 @@ struct _cmsContext_struct* _cmsGetContext(cmsContext ContextID)
 
 
 // Internal: get the memory area associanted with each context client
-// Returns the block assigned to the specific zone. 
+// Returns the block assigned to the specific zone. Never return NULL.
 void* _cmsContextGetClientChunk(cmsContext ContextID, _cmsMemoryClient mc)
 {
     struct _cmsContext_struct* ctx;
     void *ptr;
 
-    if (mc < 0 || mc >= MemoryClientMax) {
-        cmsSignalError(ContextID, cmsERROR_RANGE, "Bad context client");
-        return NULL;
+    if ((int) mc < 0 || mc >= MemoryClientMax) {
+        
+           cmsSignalError(ContextID, cmsERROR_INTERNAL, "Bad context client -- possible corruption");
+
+           // This is catastrophic. Should never reach here
+           _cmsAssert(0);
+
+           // Reverts to global context
+           return globalContext.chunks[UserPtr];
     }
     
     ctx = _cmsGetContext(ContextID);
@@ -880,7 +886,7 @@ cmsContext CMSEXPORT cmsDupContext(cmsContext ContextID, void* NewUserData)
 }
 
 
-
+/*
 static
 struct _cmsContext_struct* FindPrev(struct _cmsContext_struct* id)
 {
@@ -897,6 +903,7 @@ struct _cmsContext_struct* FindPrev(struct _cmsContext_struct* id)
 
     return NULL;  // List is empty or only one element!
 }
+*/
 
 // Frees any resources associated with the given context, 
 // and destroys the context placeholder. 
@@ -932,8 +939,8 @@ void CMSEXPORT cmsDeleteContext(cmsContext ContextID)
 
             // Search for previous
             for (prev = _cmsContextPoolHead; 
-                prev != NULL;
-                prev = prev ->Next)
+                 prev != NULL;
+                 prev = prev ->Next)
             {
                 if (prev -> Next == ctx) {
                     prev -> Next = ctx ->Next;

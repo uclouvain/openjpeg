@@ -23,7 +23,7 @@
 //
 //---------------------------------------------------------------------------------
 //
-// Version 2.6
+// Version 2.7
 //
 
 #ifndef _lcms2_H
@@ -75,7 +75,7 @@ extern "C" {
 #endif
 
 // Version/release
-#define LCMS_VERSION        2060
+#define LCMS_VERSION        2070
 
 // I will give the chance of redefining basic types for compilers that are not fully C99 compliant
 #ifndef CMS_BASIC_TYPES_ALREADY_DEFINED
@@ -184,25 +184,17 @@ typedef int                  cmsBool;
 #   define CMS_USE_BIG_ENDIAN   1
 #endif
 
-#  ifdef TARGET_CPU_PPC
-#    if TARGET_CPU_PPC
-#      define CMS_USE_BIG_ENDIAN   1
-#    endif
-#  endif
 
 #if defined(__powerpc__) || defined(__ppc__) || defined(TARGET_CPU_PPC)
+#  if __powerpc__ || __ppc__ || TARGET_CPU_PPC
 #   define CMS_USE_BIG_ENDIAN   1
-#   if defined (__GNUC__) && defined(__BYTE_ORDER) && defined(__LITTLE_ENDIAN)
-#       if __BYTE_ORDER  == __LITTLE_ENDIAN
-//               // Don't use big endian for PowerPC little endian mode
+#   if defined (__GNUC__) && defined(__BYTE_ORDER__) && defined(__ORDER_LITTLE_ENDIAN__)
+#       if __BYTE_ORDER__  == __ORDER_LITTLE_ENDIAN__
+                // Don't use big endian for PowerPC little endian mode
 #                undef CMS_USE_BIG_ENDIAN
 #       endif
+#     endif
 #   endif
-#endif
-
-// WORDS_BIGENDIAN takes precedence
-#if defined(_HOST_BIG_ENDIAN) || defined(__BIG_ENDIAN__) || defined(WORDS_BIGENDIAN)
-#   define CMS_USE_BIG_ENDIAN      1
 #endif
 
 #ifdef macintosh
@@ -213,6 +205,12 @@ typedef int                  cmsBool;
 #   undef CMS_USE_BIG_ENDIAN
 # endif
 #endif
+
+// WORDS_BIGENDIAN takes precedence
+#if defined(_HOST_BIG_ENDIAN) || defined(__BIG_ENDIAN__) || defined(WORDS_BIGENDIAN)
+#   define CMS_USE_BIG_ENDIAN      1
+#endif
+
 
 // Calling convention -- this is hardly platform and compiler dependent
 #ifdef CMS_IS_WINDOWS_
@@ -516,7 +514,7 @@ typedef enum {
     cmsSigNamedColorElemType            = 0x6E636C20,  // 'ncl '
     cmsSigLabV2toV4                     = 0x32203420,  // '2 4 '
     cmsSigLabV4toV2                     = 0x34203220,  // '4 2 '
-
+  
     // Identities
     cmsSigIdentityElemType              = 0x69646E20,  // 'idn '
 
@@ -524,7 +522,8 @@ typedef enum {
     cmsSigLab2FloatPCS                  = 0x64326C20,  // 'd2l '
     cmsSigFloatPCS2Lab                  = 0x6C326420,  // 'l2d '
     cmsSigXYZ2FloatPCS                  = 0x64327820,  // 'd2x '
-    cmsSigFloatPCS2XYZ                  = 0x78326420   // 'x2d '
+    cmsSigFloatPCS2XYZ                  = 0x78326420,  // 'x2d '  
+    cmsSigClipNegativesElemType         = 0x636c7020   // 'clp '
 
 } cmsStageSignature;
 
@@ -1001,6 +1000,10 @@ typedef struct {
         cmsUInt32Number IlluminantType;  // viewing condition
 
     } cmsICCViewingConditions;
+
+// Get LittleCMS version (for shared objects) -----------------------------------------------------------------------------
+
+CMSAPI int               CMSEXPORT cmsGetEncodedCMMversion(void);
 
 // Support of non-standard functions --------------------------------------------------------------------------------------
 
@@ -1480,7 +1483,7 @@ CMSAPI int                      CMSEXPORT _cmsLCMScolorSpace(cmsColorSpaceSignat
 
 CMSAPI cmsUInt32Number   CMSEXPORT cmsChannelsOf(cmsColorSpaceSignature ColorSpace);
 
-// Build a suitable formatter for the colorspace of this profile
+// Build a suitable formatter for the colorspace of this profile. nBytes=1 means 8 bits, nBytes=2 means 16 bits. 
 CMSAPI cmsUInt32Number   CMSEXPORT cmsFormatterForColorspaceOfProfile(cmsHPROFILE hProfile, cmsUInt32Number nBytes, cmsBool lIsFloat);
 CMSAPI cmsUInt32Number   CMSEXPORT cmsFormatterForPCSOfProfile(cmsHPROFILE hProfile, cmsUInt32Number nBytes, cmsBool lIsFloat);
 
@@ -1509,6 +1512,7 @@ CMSAPI cmsIOHANDLER*     CMSEXPORT cmsOpenIOhandlerFromFile(cmsContext ContextID
 CMSAPI cmsIOHANDLER*     CMSEXPORT cmsOpenIOhandlerFromStream(cmsContext ContextID, FILE* Stream);
 CMSAPI cmsIOHANDLER*     CMSEXPORT cmsOpenIOhandlerFromMem(cmsContext ContextID, void *Buffer, cmsUInt32Number size, const char* AccessMode);
 CMSAPI cmsIOHANDLER*     CMSEXPORT cmsOpenIOhandlerFromNULL(cmsContext ContextID);
+CMSAPI cmsIOHANDLER*     CMSEXPORT cmsGetProfileIOhandler(cmsHPROFILE hProfile);
 CMSAPI cmsBool           CMSEXPORT cmsCloseIOhandler(cmsIOHANDLER* io);
 
 // MD5 message digest --------------------------------------------------------------------------------------------------
@@ -1642,6 +1646,10 @@ CMSAPI cmsUInt32Number  CMSEXPORT cmsGetSupportedIntentsTHR(cmsContext ContextID
 #define cmsFLAGS_FORCE_CLUT               0x0002    // Force CLUT optimization
 #define cmsFLAGS_CLUT_POST_LINEARIZATION  0x0001    // create postlinearization tables if possible
 #define cmsFLAGS_CLUT_PRE_LINEARIZATION   0x0010    // create prelinearization tables if possible
+
+// Specific to unbounded mode
+#define cmsFLAGS_NONEGATIVES              0x8000    // Prevent negative numbers in floating point transforms
+
 
 // Fine-tune control over number of gridpoints
 #define cmsFLAGS_GRIDPOINTS(n)           (((n) & 0xFF) << 16)
