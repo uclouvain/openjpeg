@@ -1089,7 +1089,7 @@ static OPJ_BOOL opj_tcd_code_block_enc_allocate_data (opj_tcd_cblk_enc_t * p_cod
 		if (p_code_block->data) {
 			opj_free(p_code_block->data - 1); /* again, why -1 */
 		}
-		p_code_block->data = (OPJ_BYTE*) opj_malloc(l_data_size);
+		p_code_block->data = (OPJ_BYTE*) opj_malloc(l_data_size+1);
 		if(! p_code_block->data) {
 			p_code_block->data_size = 0U;
 			return OPJ_FALSE;
