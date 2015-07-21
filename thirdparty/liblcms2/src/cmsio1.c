@@ -1,24 +1,24 @@
 //---------------------------------------------------------------------------------
 //
 //  Little Color Management System
-//  Copyright (c) 1998-2010 Marti Maria Saguer
+//  Copyright (c) 1998-2012 Marti Maria Saguer
 //
-// Permission is hereby granted, free of charge, to any person obtaining 
-// a copy of this software and associated documentation files (the "Software"), 
-// to deal in the Software without restriction, including without limitation 
-// the rights to use, copy, modify, merge, publish, distribute, sublicense, 
-// and/or sell copies of the Software, and to permit persons to whom the Software 
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the "Software"),
+// to deal in the Software without restriction, including without limitation
+// the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the Software
 // is furnished to do so, subject to the following conditions:
 //
-// The above copyright notice and this permission notice shall be included in 
+// The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
 //
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO 
-// THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE 
-// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION 
-// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+// THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 //---------------------------------------------------------------------------------
@@ -56,9 +56,9 @@ static const cmsTagSignature PCS2DeviceFloat[] = {cmsSigBToD0Tag,     // Percept
 
 // Several resources for gray conversions.
 static const cmsFloat64Number GrayInputMatrix[] = { (InpAdj*cmsD50X),  (InpAdj*cmsD50Y),  (InpAdj*cmsD50Z) };
-static const cmsFloat64Number OneToThreeInputMatrix[] = { 1, 1, 1 };   
-static const cmsFloat64Number PickYMatrix[] = { 0, (OutpAdj*cmsD50Y), 0 };   
-static const cmsFloat64Number PickLstarMatrix[] = { 1, 0, 0 };   
+static const cmsFloat64Number OneToThreeInputMatrix[] = { 1, 1, 1 };
+static const cmsFloat64Number PickYMatrix[] = { 0, (OutpAdj*cmsD50Y), 0 };
+static const cmsFloat64Number PickLstarMatrix[] = { 1, 0, 0 };
 
 // Get a media white point fixing some issues found in certain old profiles
 cmsBool  _cmsReadMediaWhitePoint(cmsCIEXYZ* Dest, cmsHPROFILE hProfile)
@@ -67,7 +67,7 @@ cmsBool  _cmsReadMediaWhitePoint(cmsCIEXYZ* Dest, cmsHPROFILE hProfile)
 
     _cmsAssert(Dest != NULL);
 
-    Tag = (cmsCIEXYZ*) cmsReadTag(hProfile, cmsSigMediaWhitePointTag);   
+    Tag = (cmsCIEXYZ*) cmsReadTag(hProfile, cmsSigMediaWhitePointTag);
 
     // If no wp, take D50
     if (Tag == NULL) {
@@ -80,7 +80,7 @@ cmsBool  _cmsReadMediaWhitePoint(cmsCIEXYZ* Dest, cmsHPROFILE hProfile)
 
         if (cmsGetDeviceClass(hProfile) == cmsSigDisplayClass) {
             *Dest = *cmsD50_XYZ();
-            return TRUE;            
+            return TRUE;
         }
     }
 
@@ -100,7 +100,6 @@ cmsBool  _cmsReadCHAD(cmsMAT3* Dest, cmsHPROFILE hProfile)
     Tag = (cmsMAT3*) cmsReadTag(hProfile, cmsSigChromaticAdaptationTag);
 
     if (Tag != NULL) {
-
         *Dest = *Tag;
         return TRUE;
     }
@@ -113,7 +112,7 @@ cmsBool  _cmsReadCHAD(cmsMAT3* Dest, cmsHPROFILE hProfile)
 
         if (cmsGetDeviceClass(hProfile) == cmsSigDisplayClass) {
 
-            cmsCIEXYZ* White = (cmsCIEXYZ*) cmsReadTag(hProfile, cmsSigMediaWhitePointTag);   
+            cmsCIEXYZ* White = (cmsCIEXYZ*) cmsReadTag(hProfile, cmsSigMediaWhitePointTag);
 
             if (White == NULL) {
 
@@ -121,7 +120,7 @@ cmsBool  _cmsReadCHAD(cmsMAT3* Dest, cmsHPROFILE hProfile)
                 return TRUE;
             }
 
-            return _cmsAdaptationMatrix(Dest, NULL, cmsD50_XYZ(), White);
+            return _cmsAdaptationMatrix(Dest, NULL, White, cmsD50_XYZ());
         }
     }
 
@@ -141,7 +140,7 @@ cmsBool ReadICCMatrixRGB2XYZ(cmsMAT3* r, cmsHPROFILE hProfile)
     PtrGreen = (cmsCIEXYZ *) cmsReadTag(hProfile, cmsSigGreenColorantTag);
     PtrBlue  = (cmsCIEXYZ *) cmsReadTag(hProfile, cmsSigBlueColorantTag);
 
-    if (PtrRed == NULL || PtrGreen == NULL || PtrBlue == NULL) 
+    if (PtrRed == NULL || PtrGreen == NULL || PtrBlue == NULL)
         return FALSE;
 
     _cmsVEC3init(&r -> v[0], PtrRed -> X, PtrGreen -> X,  PtrBlue -> X);
@@ -159,12 +158,13 @@ cmsPipeline* BuildGrayInputMatrixPipeline(cmsHPROFILE hProfile)
     cmsToneCurve *GrayTRC;
     cmsPipeline* Lut;
     cmsContext ContextID = cmsGetProfileContextID(hProfile);
-    
+
     GrayTRC = (cmsToneCurve *) cmsReadTag(hProfile, cmsSigGrayTRCTag);
     if (GrayTRC == NULL) return NULL;
 
     Lut = cmsPipelineAlloc(ContextID, 1, 3);
-    if (Lut == NULL) return NULL;
+    if (Lut == NULL)
+        goto Error;
 
     if (cmsGetPCS(hProfile) == cmsSigLabData) {
 
@@ -172,31 +172,38 @@ cmsPipeline* BuildGrayInputMatrixPipeline(cmsHPROFILE hProfile)
         cmsUInt16Number Zero[2] = { 0x8080, 0x8080 };
         cmsToneCurve* EmptyTab;
         cmsToneCurve* LabCurves[3];
-        
-        EmptyTab = cmsBuildTabulatedToneCurve16(ContextID, 2, Zero); 
 
-        if (EmptyTab == NULL) {
+        EmptyTab = cmsBuildTabulatedToneCurve16(ContextID, 2, Zero);
 
-                 cmsPipelineFree(Lut);
-                 return NULL;
-        }
+        if (EmptyTab == NULL)
+            goto Error;
 
         LabCurves[0] = GrayTRC;
         LabCurves[1] = EmptyTab;
         LabCurves[2] = EmptyTab;
 
-        cmsPipelineInsertStage(Lut, cmsAT_END, cmsStageAllocMatrix(ContextID, 3,  1, OneToThreeInputMatrix, NULL));
-        cmsPipelineInsertStage(Lut, cmsAT_END, cmsStageAllocToneCurves(ContextID, 3, LabCurves));
-        
+        if (!cmsPipelineInsertStage(Lut, cmsAT_END, cmsStageAllocMatrix(ContextID, 3,  1, OneToThreeInputMatrix, NULL)) ||
+            !cmsPipelineInsertStage(Lut, cmsAT_END, cmsStageAllocToneCurves(ContextID, 3, LabCurves))) {
+                cmsFreeToneCurve(EmptyTab);
+                goto Error;
+        }
+
         cmsFreeToneCurve(EmptyTab);
 
     }
     else  {
-       cmsPipelineInsertStage(Lut, cmsAT_END, cmsStageAllocToneCurves(ContextID, 1, &GrayTRC));
-       cmsPipelineInsertStage(Lut, cmsAT_END, cmsStageAllocMatrix(ContextID, 3,  1, GrayInputMatrix, NULL));
+
+        if (!cmsPipelineInsertStage(Lut, cmsAT_END, cmsStageAllocToneCurves(ContextID, 1, &GrayTRC)) ||
+            !cmsPipelineInsertStage(Lut, cmsAT_END, cmsStageAllocMatrix(ContextID, 3,  1, GrayInputMatrix, NULL)))
+            goto Error;
     }
-  
+
     return Lut;
+
+Error:
+    cmsFreeToneCurve(GrayTRC);
+    cmsPipelineFree(Lut);
+    return NULL;
 }
 
 // RGB Matrix shaper
@@ -212,15 +219,15 @@ cmsPipeline* BuildRGBInputMatrixShaper(cmsHPROFILE hProfile)
     if (!ReadICCMatrixRGB2XYZ(&Mat, hProfile)) return NULL;
 
     // XYZ PCS in encoded in 1.15 format, and the matrix output comes in 0..0xffff range, so
-    // we need to adjust the output by a factor of (0x10000/0xffff) to put data in 
+    // we need to adjust the output by a factor of (0x10000/0xffff) to put data in
     // a 1.16 range, and then a >> 1 to obtain 1.15. The total factor is (65536.0)/(65535.0*2)
-    
+
     for (i=0; i < 3; i++)
         for (j=0; j < 3; j++)
             Mat.v[i].n[j] *= InpAdj;
-    
 
-    Shapes[0] = (cmsToneCurve *) cmsReadTag(hProfile, cmsSigRedTRCTag);        
+
+    Shapes[0] = (cmsToneCurve *) cmsReadTag(hProfile, cmsSigRedTRCTag);
     Shapes[1] = (cmsToneCurve *) cmsReadTag(hProfile, cmsSigGreenTRCTag);
     Shapes[2] = (cmsToneCurve *) cmsReadTag(hProfile, cmsSigBlueTRCTag);
 
@@ -230,15 +237,76 @@ cmsPipeline* BuildRGBInputMatrixShaper(cmsHPROFILE hProfile)
     Lut = cmsPipelineAlloc(ContextID, 3, 3);
     if (Lut != NULL) {
 
-        cmsPipelineInsertStage(Lut, cmsAT_END, cmsStageAllocToneCurves(ContextID, 3, Shapes));
-        cmsPipelineInsertStage(Lut, cmsAT_END, cmsStageAllocMatrix(ContextID, 3, 3, (cmsFloat64Number*) &Mat, NULL));
+        if (!cmsPipelineInsertStage(Lut, cmsAT_END, cmsStageAllocToneCurves(ContextID, 3, Shapes)) ||
+            !cmsPipelineInsertStage(Lut, cmsAT_END, cmsStageAllocMatrix(ContextID, 3, 3, (cmsFloat64Number*) &Mat, NULL)))
+            goto Error;
+
+        // Note that it is certainly possible a single profile would have a LUT based
+        // tag for output working in lab and a matrix-shaper for the fallback cases. 
+        // This is not allowed by the spec, but this code is tolerant to those cases    
+        if (cmsGetPCS(hProfile) == cmsSigLabData) {
+
+            if (!cmsPipelineInsertStage(Lut, cmsAT_END, _cmsStageAllocXYZ2Lab(ContextID)))
+                goto Error;
+        }
+
     }
 
     return Lut;
+
+Error:
+    cmsPipelineFree(Lut);
+    return NULL;
 }
 
+
+
+// Read the DToAX tag, adjusting the encoding of Lab or XYZ if neded
+static
+cmsPipeline* _cmsReadFloatInputTag(cmsHPROFILE hProfile, cmsTagSignature tagFloat)
+{
+    cmsContext ContextID       = cmsGetProfileContextID(hProfile);
+    cmsPipeline* Lut           = cmsPipelineDup((cmsPipeline*) cmsReadTag(hProfile, tagFloat));
+    cmsColorSpaceSignature spc = cmsGetColorSpace(hProfile);
+    cmsColorSpaceSignature PCS = cmsGetPCS(hProfile);
+    
+    if (Lut == NULL) return NULL;
+    
+    // input and output of transform are in lcms 0..1 encoding.  If XYZ or Lab spaces are used, 
+    //  these need to be normalized into the appropriate ranges (Lab = 100,0,0, XYZ=1.0,1.0,1.0)
+    if ( spc == cmsSigLabData)
+    {
+        if (!cmsPipelineInsertStage(Lut, cmsAT_BEGIN, _cmsStageNormalizeToLabFloat(ContextID)))
+            goto Error;
+    }
+    else if (spc == cmsSigXYZData)
+    {
+        if (!cmsPipelineInsertStage(Lut, cmsAT_BEGIN, _cmsStageNormalizeToXyzFloat(ContextID)))
+            goto Error;
+    }
+    
+    if ( PCS == cmsSigLabData)
+    {
+        if (!cmsPipelineInsertStage(Lut, cmsAT_END, _cmsStageNormalizeFromLabFloat(ContextID)))
+            goto Error;
+    }
+    else if( PCS == cmsSigXYZData)
+    {
+        if (!cmsPipelineInsertStage(Lut, cmsAT_END, _cmsStageNormalizeFromXyzFloat(ContextID)))
+            goto Error;
+    }
+    
+    return Lut;
+
+Error:
+    cmsPipelineFree(Lut);
+    return NULL;
+}
+
+
 // Read and create a BRAND NEW MPE LUT from a given profile. All stuff dependent of version, etc
-// is adjusted here in order to create a LUT that takes care of all those details
+// is adjusted here in order to create a LUT that takes care of all those details.
+// We add intent = -1 as a way to read matrix shaper always, no matter of other LUT
 cmsPipeline* _cmsReadInputLUT(cmsHPROFILE hProfile, int Intent)
 {
     cmsTagTypeSignature OriginalType;
@@ -246,57 +314,95 @@ cmsPipeline* _cmsReadInputLUT(cmsHPROFILE hProfile, int Intent)
     cmsTagSignature tagFloat = Device2PCSFloat[Intent];
     cmsContext ContextID = cmsGetProfileContextID(hProfile);
 
-    if (cmsIsTag(hProfile, tagFloat)) {  // Float tag takes precedence
+    // On named color, take the appropiate tag
+    if (cmsGetDeviceClass(hProfile) == cmsSigNamedColorClass) {
 
-        // Floating point LUT are always V4, so no adjustment is required
-        return cmsPipelineDup((cmsPipeline*) cmsReadTag(hProfile, tagFloat));
-    }
+        cmsPipeline* Lut;
+        cmsNAMEDCOLORLIST* nc = (cmsNAMEDCOLORLIST*) cmsReadTag(hProfile, cmsSigNamedColor2Tag);
 
-    // Revert to perceptual if no tag is found
-    if (!cmsIsTag(hProfile, tag16)) {
-        tag16 = Device2PCS16[0];
-    }
+        if (nc == NULL) return NULL;
 
-    if (cmsIsTag(hProfile, tag16)) { // Is there any LUT-Based table?
+        Lut = cmsPipelineAlloc(ContextID, 0, 0);
+        if (Lut == NULL) {
+            cmsFreeNamedColorList(nc);
+            return NULL;
+        }
 
-        // Check profile version and LUT type. Do the necessary adjustments if needed
-
-        // First read the tag
-        cmsPipeline* Lut = (cmsPipeline*) cmsReadTag(hProfile, tag16);
-        if (Lut == NULL) return NULL;
-
-        // After reading it, we have now info about the original type
-        OriginalType =  _cmsGetTagTrueType(hProfile, tag16);
-
-        // The profile owns the Lut, so we need to copy it
-        Lut = cmsPipelineDup(Lut);
-
-        // We need to adjust data only for Lab16 on output
-        if (OriginalType != cmsSigLut16Type || cmsGetPCS(hProfile) != cmsSigLabData) 
-            return Lut;
-
-        // Add a matrix for conversion V2 to V4 Lab PCS
-        cmsPipelineInsertStage(Lut, cmsAT_END, _cmsStageAllocLabV2ToV4(ContextID));
+        if (!cmsPipelineInsertStage(Lut, cmsAT_BEGIN, _cmsStageAllocNamedColor(nc, TRUE)) ||
+            !cmsPipelineInsertStage(Lut, cmsAT_END, _cmsStageAllocLabV2ToV4(ContextID))) {
+            cmsPipelineFree(Lut);
+            return NULL;
+        }
         return Lut;
-    }   
+    }
+
+    // This is an attempt to reuse this funtion to retrieve the matrix-shaper as pipeline no
+    // matter other LUT are present and have precedence. Intent = -1 means just this.
+    if (Intent != -1) {
+
+        if (cmsIsTag(hProfile, tagFloat)) {  // Float tag takes precedence
+
+            // Floating point LUT are always V4, but the encoding range is no
+            // longer 0..1.0, so we need to add an stage depending on the color space
+            return _cmsReadFloatInputTag(hProfile, tagFloat);
+        }
+
+        // Revert to perceptual if no tag is found
+        if (!cmsIsTag(hProfile, tag16)) {
+            tag16 = Device2PCS16[0];
+        }
+
+        if (cmsIsTag(hProfile, tag16)) { // Is there any LUT-Based table?
+
+            // Check profile version and LUT type. Do the necessary adjustments if needed
+
+            // First read the tag
+            cmsPipeline* Lut = (cmsPipeline*) cmsReadTag(hProfile, tag16);
+            if (Lut == NULL) return NULL;
+
+            // After reading it, we have now info about the original type
+            OriginalType =  _cmsGetTagTrueType(hProfile, tag16);
+
+            // The profile owns the Lut, so we need to copy it
+            Lut = cmsPipelineDup(Lut);
+
+            // We need to adjust data only for Lab16 on output
+            if (OriginalType != cmsSigLut16Type || cmsGetPCS(hProfile) != cmsSigLabData)
+                return Lut;
+
+            // If the input is Lab, add also a conversion at the begin
+            if (cmsGetColorSpace(hProfile) == cmsSigLabData &&
+                !cmsPipelineInsertStage(Lut, cmsAT_BEGIN, _cmsStageAllocLabV4ToV2(ContextID)))
+                goto Error;
+
+            // Add a matrix for conversion V2 to V4 Lab PCS
+            if (!cmsPipelineInsertStage(Lut, cmsAT_END, _cmsStageAllocLabV2ToV4(ContextID)))
+                goto Error;
+
+            return Lut;
+Error:
+            cmsPipelineFree(Lut);
+            return NULL;
+        }
+    }
 
     // Lut was not found, try to create a matrix-shaper
 
     // Check if this is a grayscale profile.
     if (cmsGetColorSpace(hProfile) == cmsSigGrayData) {
 
-        // if so, build appropiate conversion tables. 
+        // if so, build appropiate conversion tables.
         // The tables are the PCS iluminant, scaled across GrayTRC
-        return BuildGrayInputMatrixPipeline(hProfile);              
+        return BuildGrayInputMatrixPipeline(hProfile);
     }
 
-    // Not gray, create a normal matrix-shaper 
+    // Not gray, create a normal matrix-shaper
     return BuildRGBInputMatrixShaper(hProfile);
 }
 
 // ---------------------------------------------------------------------------------------------------------------
 
-// Gray output pipeline. 
+// Gray output pipeline.
 // XYZ -> Gray or Lab -> Gray. Since we only know the GrayTRC, we need to do some assumptions. Gray component will be
 // given by Y on XYZ PCS and by L* on Lab PCS, Both across inverse TRC curve.
 // The complete pipeline on XYZ is Matrix[3:1] -> Tone curve and in Lab Matrix[3:1] -> Tone Curve as well.
@@ -308,7 +414,7 @@ cmsPipeline* BuildGrayOutputPipeline(cmsHPROFILE hProfile)
     cmsPipeline* Lut;
     cmsContext ContextID = cmsGetProfileContextID(hProfile);
 
-    GrayTRC = (cmsToneCurve *) cmsReadTag(hProfile, cmsSigGrayTRCTag);       
+    GrayTRC = (cmsToneCurve *) cmsReadTag(hProfile, cmsSigGrayTRCTag);
     if (GrayTRC == NULL) return NULL;
 
     RevGrayTRC = cmsReverseToneCurve(GrayTRC);
@@ -322,19 +428,25 @@ cmsPipeline* BuildGrayOutputPipeline(cmsHPROFILE hProfile)
 
     if (cmsGetPCS(hProfile) == cmsSigLabData) {
 
-        cmsPipelineInsertStage(Lut, cmsAT_END, cmsStageAllocMatrix(ContextID, 1,  3, PickLstarMatrix, NULL));
+        if (!cmsPipelineInsertStage(Lut, cmsAT_END, cmsStageAllocMatrix(ContextID, 1,  3, PickLstarMatrix, NULL)))
+            goto Error;
     }
     else  {
-        cmsPipelineInsertStage(Lut, cmsAT_END, cmsStageAllocMatrix(ContextID, 1,  3, PickYMatrix, NULL));
+        if (!cmsPipelineInsertStage(Lut, cmsAT_END, cmsStageAllocMatrix(ContextID, 1,  3, PickYMatrix, NULL)))
+            goto Error;
     }
 
-    cmsPipelineInsertStage(Lut, cmsAT_END, cmsStageAllocToneCurves(ContextID, 1, &RevGrayTRC));
+    if (!cmsPipelineInsertStage(Lut, cmsAT_END, cmsStageAllocToneCurves(ContextID, 1, &RevGrayTRC)))
+        goto Error;
+
     cmsFreeToneCurve(RevGrayTRC);
-
     return Lut;
+
+Error:
+    cmsFreeToneCurve(RevGrayTRC);
+    cmsPipelineFree(Lut);
+    return NULL;
 }
-
-
 
 
 static
@@ -353,14 +465,14 @@ cmsPipeline* BuildRGBOutputMatrixShaper(cmsHPROFILE hProfile)
         return NULL;
 
     // XYZ PCS in encoded in 1.15 format, and the matrix input should come in 0..0xffff range, so
-    // we need to adjust the input by a << 1 to obtain a 1.16 fixed and then by a factor of 
+    // we need to adjust the input by a << 1 to obtain a 1.16 fixed and then by a factor of
     // (0xffff/0x10000) to put data in 0..0xffff range. Total factor is (2.0*65535.0)/65536.0;
 
     for (i=0; i < 3; i++)
         for (j=0; j < 3; j++)
             Inv.v[i].n[j] *= OutpAdj;
 
-    Shapes[0] = (cmsToneCurve *) cmsReadTag(hProfile, cmsSigRedTRCTag);        
+    Shapes[0] = (cmsToneCurve *) cmsReadTag(hProfile, cmsSigRedTRCTag);
     Shapes[1] = (cmsToneCurve *) cmsReadTag(hProfile, cmsSigGreenTRCTag);
     Shapes[2] = (cmsToneCurve *) cmsReadTag(hProfile, cmsSigBlueTRCTag);
 
@@ -371,19 +483,33 @@ cmsPipeline* BuildRGBOutputMatrixShaper(cmsHPROFILE hProfile)
     InvShapes[1] = cmsReverseToneCurve(Shapes[1]);
     InvShapes[2] = cmsReverseToneCurve(Shapes[2]);
 
-    if (!InvShapes[0] || !InvShapes[1] || !InvShapes[2]) {      
+    if (!InvShapes[0] || !InvShapes[1] || !InvShapes[2]) {
         return NULL;
     }
 
     Lut = cmsPipelineAlloc(ContextID, 3, 3);
     if (Lut != NULL) {
 
-        cmsPipelineInsertStage(Lut, cmsAT_END, cmsStageAllocMatrix(ContextID, 3, 3, (cmsFloat64Number*) &Inv, NULL));
-        cmsPipelineInsertStage(Lut, cmsAT_END, cmsStageAllocToneCurves(ContextID, 3, InvShapes));
+        // Note that it is certainly possible a single profile would have a LUT based
+        // tag for output working in lab and a matrix-shaper for the fallback cases. 
+        // This is not allowed by the spec, but this code is tolerant to those cases    
+        if (cmsGetPCS(hProfile) == cmsSigLabData) {
+
+            if (!cmsPipelineInsertStage(Lut, cmsAT_END, _cmsStageAllocLab2XYZ(ContextID)))
+                goto Error;
+        }
+
+        if (!cmsPipelineInsertStage(Lut, cmsAT_END, cmsStageAllocMatrix(ContextID, 3, 3, (cmsFloat64Number*) &Inv, NULL)) ||
+            !cmsPipelineInsertStage(Lut, cmsAT_END, cmsStageAllocToneCurves(ContextID, 3, InvShapes)))
+            goto Error;
     }
 
     cmsFreeToneCurveTriple(InvShapes);
     return Lut;
+Error:
+    cmsFreeToneCurveTriple(InvShapes);
+    cmsPipelineFree(Lut);
+    return NULL;
 }
 
 
@@ -402,9 +528,54 @@ void ChangeInterpolationToTrilinear(cmsPipeline* Lut)
                 _cmsStageCLutData* CLUT = (_cmsStageCLutData*) Stage ->Data;
 
                 CLUT ->Params->dwFlags |= CMS_LERP_FLAGS_TRILINEAR;
-                _cmsSetInterpolationRoutine(CLUT ->Params);
+                _cmsSetInterpolationRoutine(Lut->ContextID, CLUT ->Params);
             }
     }
+}
+
+
+// Read the DToAX tag, adjusting the encoding of Lab or XYZ if neded
+static
+cmsPipeline* _cmsReadFloatOutputTag(cmsHPROFILE hProfile, cmsTagSignature tagFloat)
+{
+    cmsContext ContextID       = cmsGetProfileContextID(hProfile);
+    cmsPipeline* Lut           = cmsPipelineDup((cmsPipeline*) cmsReadTag(hProfile, tagFloat));
+    cmsColorSpaceSignature PCS = cmsGetPCS(hProfile);
+    cmsColorSpaceSignature dataSpace = cmsGetColorSpace(hProfile);
+    
+    if (Lut == NULL) return NULL;
+    
+    // If PCS is Lab or XYZ, the floating point tag is accepting data in the space encoding,
+    // and since the formatter has already accomodated to 0..1.0, we should undo this change
+    if ( PCS == cmsSigLabData)
+    {
+        if (!cmsPipelineInsertStage(Lut, cmsAT_BEGIN, _cmsStageNormalizeToLabFloat(ContextID)))
+            goto Error;
+    }
+    else
+        if (PCS == cmsSigXYZData)
+        {
+            if (!cmsPipelineInsertStage(Lut, cmsAT_BEGIN, _cmsStageNormalizeToXyzFloat(ContextID)))
+                goto Error;
+        }
+    
+    // the output can be Lab or XYZ, in which case normalisation is needed on the end of the pipeline
+    if ( dataSpace == cmsSigLabData)
+    {
+        if (!cmsPipelineInsertStage(Lut, cmsAT_END, _cmsStageNormalizeFromLabFloat(ContextID)))
+            goto Error;
+    }
+    else if (dataSpace == cmsSigXYZData)
+    {
+        if (!cmsPipelineInsertStage(Lut, cmsAT_END, _cmsStageNormalizeFromXyzFloat(ContextID)))
+            goto Error;
+    }
+    
+    return Lut;
+
+Error:
+    cmsPipelineFree(Lut);
+    return NULL;
 }
 
 // Create an output MPE LUT from agiven profile. Version mismatches are handled here
@@ -415,63 +586,118 @@ cmsPipeline* _cmsReadOutputLUT(cmsHPROFILE hProfile, int Intent)
     cmsTagSignature tagFloat = PCS2DeviceFloat[Intent];
     cmsContext ContextID     = cmsGetProfileContextID(hProfile);
 
-    if (cmsIsTag(hProfile, tagFloat)) {  // Float tag takes precedence
 
-        // Floating point LUT are always V4, so no adjustment is required
-        return cmsPipelineDup((cmsPipeline*) cmsReadTag(hProfile, tagFloat));
-    }
+    if (Intent != -1) {
 
-    // Revert to perceptual if no tag is found
-    if (!cmsIsTag(hProfile, tag16)) {
-        tag16 = PCS2Device16[0];
-    }
+        if (cmsIsTag(hProfile, tagFloat)) {  // Float tag takes precedence
 
-    if (cmsIsTag(hProfile, tag16)) { // Is there any LUT-Based table?
+            // Floating point LUT are always V4
+            return _cmsReadFloatOutputTag(hProfile, tagFloat);
+        }
 
-        // Check profile version and LUT type. Do the necessary adjustments if needed
+        // Revert to perceptual if no tag is found
+        if (!cmsIsTag(hProfile, tag16)) {
+            tag16 = PCS2Device16[0];
+        }
 
-        // First read the tag
-        cmsPipeline* Lut = (cmsPipeline*) cmsReadTag(hProfile, tag16);
-        if (Lut == NULL) return NULL;
+        if (cmsIsTag(hProfile, tag16)) { // Is there any LUT-Based table?
 
-        // After reading it, we have info about the original type
-        OriginalType =  _cmsGetTagTrueType(hProfile, tag16);
+            // Check profile version and LUT type. Do the necessary adjustments if needed
 
-        // The profile owns the Lut, so we need to copy it
-        Lut = cmsPipelineDup(Lut);
-        if (Lut == NULL) return NULL;
+            // First read the tag
+            cmsPipeline* Lut = (cmsPipeline*) cmsReadTag(hProfile, tag16);
+            if (Lut == NULL) return NULL;
 
-        // Now it is time for a controversial stuff. I found that for 3D LUTS using 
-        // Lab used as indexer space,  trilinear interpolation should be used         
-        if (cmsGetPCS(hProfile) == cmsSigLabData)
-                             ChangeInterpolationToTrilinear(Lut);       
+            // After reading it, we have info about the original type
+            OriginalType =  _cmsGetTagTrueType(hProfile, tag16);
 
-        // We need to adjust data only for Lab and Lut16 type
-        if (OriginalType != cmsSigLut16Type || cmsGetPCS(hProfile) != cmsSigLabData) 
+            // The profile owns the Lut, so we need to copy it
+            Lut = cmsPipelineDup(Lut);
+            if (Lut == NULL) return NULL;
+
+            // Now it is time for a controversial stuff. I found that for 3D LUTS using
+            // Lab used as indexer space,  trilinear interpolation should be used
+            if (cmsGetPCS(hProfile) == cmsSigLabData)
+                ChangeInterpolationToTrilinear(Lut);
+
+            // We need to adjust data only for Lab and Lut16 type
+            if (OriginalType != cmsSigLut16Type || cmsGetPCS(hProfile) != cmsSigLabData)
+                return Lut;
+
+            // Add a matrix for conversion V4 to V2 Lab PCS
+            if (!cmsPipelineInsertStage(Lut, cmsAT_BEGIN, _cmsStageAllocLabV4ToV2(ContextID)))
+                goto Error;
+
+            // If the output is Lab, add also a conversion at the end
+            if (cmsGetColorSpace(hProfile) == cmsSigLabData)
+                if (!cmsPipelineInsertStage(Lut, cmsAT_END, _cmsStageAllocLabV2ToV4(ContextID)))
+                    goto Error;
+
             return Lut;
-
-        // Add a matrix for conversion V4 to V2 Lab PCS
-        cmsPipelineInsertStage(Lut, cmsAT_BEGIN, _cmsStageAllocLabV4ToV2(ContextID));
-        return Lut;
-    }   
+Error:
+            cmsPipelineFree(Lut);
+            return NULL;
+        }
+    }
 
     // Lut not found, try to create a matrix-shaper
 
     // Check if this is a grayscale profile.
-     if (cmsGetColorSpace(hProfile) == cmsSigGrayData) {
+    if (cmsGetColorSpace(hProfile) == cmsSigGrayData) {
 
-              // if so, build appropiate conversion tables. 
-              // The tables are the PCS iluminant, scaled across GrayTRC
-              return BuildGrayOutputPipeline(hProfile);              
+        // if so, build appropiate conversion tables.
+        // The tables are the PCS iluminant, scaled across GrayTRC
+        return BuildGrayOutputPipeline(hProfile);
     }
 
-    // Not gray, create a normal matrix-shaper 
+    // Not gray, create a normal matrix-shaper, which only operates in XYZ space  
     return BuildRGBOutputMatrixShaper(hProfile);
 }
 
 // ---------------------------------------------------------------------------------------------------------------
 
-// This one includes abstract profiles as well. Matrix-shaper cannot be obtained on that device class. The 
+// Read the AToD0 tag, adjusting the encoding of Lab or XYZ if neded
+static
+cmsPipeline* _cmsReadFloatDevicelinkTag(cmsHPROFILE hProfile, cmsTagSignature tagFloat)
+{
+    cmsContext ContextID       = cmsGetProfileContextID(hProfile);
+    cmsPipeline* Lut           = cmsPipelineDup((cmsPipeline*) cmsReadTag(hProfile, tagFloat));
+    cmsColorSpaceSignature PCS = cmsGetPCS(hProfile);
+    cmsColorSpaceSignature spc = cmsGetColorSpace(hProfile);
+
+    if (Lut == NULL) return NULL;
+
+    if (spc == cmsSigLabData)
+    {
+        if (!cmsPipelineInsertStage(Lut, cmsAT_BEGIN, _cmsStageNormalizeToLabFloat(ContextID)))
+            goto Error;
+    }
+    else
+        if (spc == cmsSigXYZData)
+        {
+            if (!cmsPipelineInsertStage(Lut, cmsAT_BEGIN, _cmsStageNormalizeToXyzFloat(ContextID)))
+                goto Error;
+        }
+
+        if (PCS == cmsSigLabData)
+        {
+            if (!cmsPipelineInsertStage(Lut, cmsAT_END, _cmsStageNormalizeFromLabFloat(ContextID)))
+                goto Error;
+        }
+        else
+            if (PCS == cmsSigXYZData)
+            {
+                if (!cmsPipelineInsertStage(Lut, cmsAT_END, _cmsStageNormalizeFromXyzFloat(ContextID)))
+                    goto Error;
+            }
+
+    return Lut;
+Error:
+    cmsPipelineFree(Lut);
+    return NULL;
+}
+
+// This one includes abstract profiles as well. Matrix-shaper cannot be obtained on that device class. The
 // tag name here may default to AToB0
 cmsPipeline* _cmsReadDevicelinkLUT(cmsHPROFILE hProfile, int Intent)
 {
@@ -481,22 +707,48 @@ cmsPipeline* _cmsReadDevicelinkLUT(cmsHPROFILE hProfile, int Intent)
     cmsTagSignature tagFloat = Device2PCSFloat[Intent];
     cmsContext ContextID = cmsGetProfileContextID(hProfile);
 
+
+    // On named color, take the appropiate tag
+    if (cmsGetDeviceClass(hProfile) == cmsSigNamedColorClass) {
+
+        cmsNAMEDCOLORLIST* nc = (cmsNAMEDCOLORLIST*) cmsReadTag(hProfile, cmsSigNamedColor2Tag);
+
+        if (nc == NULL) return NULL;
+
+        Lut = cmsPipelineAlloc(ContextID, 0, 0);
+        if (Lut == NULL)
+            goto Error;
+
+        if (!cmsPipelineInsertStage(Lut, cmsAT_BEGIN, _cmsStageAllocNamedColor(nc, FALSE)))
+            goto Error;
+
+        if (cmsGetColorSpace(hProfile) == cmsSigLabData)
+            if (!cmsPipelineInsertStage(Lut, cmsAT_END, _cmsStageAllocLabV2ToV4(ContextID)))
+                goto Error;
+
+        return Lut;
+Error:
+        cmsPipelineFree(Lut);
+        cmsFreeNamedColorList(nc);
+        return NULL;
+    }
+
     if (cmsIsTag(hProfile, tagFloat)) {  // Float tag takes precedence
 
-        // Floating point LUT are always V4, no adjustment is required
-        return cmsPipelineDup((cmsPipeline*) cmsReadTag(hProfile, tagFloat));
+        // Floating point LUT are always V
+        return _cmsReadFloatDevicelinkTag(hProfile, tagFloat);
     }
 
     tagFloat = Device2PCSFloat[0];
-    if (cmsIsTag(hProfile, tagFloat)) {  
-        
+    if (cmsIsTag(hProfile, tagFloat)) {
+
         return cmsPipelineDup((cmsPipeline*) cmsReadTag(hProfile, tagFloat));
     }
 
     if (!cmsIsTag(hProfile, tag16)) {  // Is there any LUT-Based table?
-        
+
         tag16    = Device2PCS16[0];
-        if (!cmsIsTag(hProfile, tag16)) return NULL;        
+        if (!cmsIsTag(hProfile, tag16)) return NULL;
     }
 
     // Check profile version and LUT type. Do the necessary adjustments if needed
@@ -509,41 +761,45 @@ cmsPipeline* _cmsReadDevicelinkLUT(cmsHPROFILE hProfile, int Intent)
     Lut = cmsPipelineDup(Lut);
     if (Lut == NULL) return NULL;
 
-     // Now it is time for a controversial stuff. I found that for 3D LUTS using 
-     // Lab used as indexer space,  trilinear interpolation should be used         
-    if (cmsGetColorSpace(hProfile) == cmsSigLabData)
-                        ChangeInterpolationToTrilinear(Lut);    
+    // Now it is time for a controversial stuff. I found that for 3D LUTS using
+    // Lab used as indexer space,  trilinear interpolation should be used
+    if (cmsGetPCS(hProfile) == cmsSigLabData)
+        ChangeInterpolationToTrilinear(Lut);
 
     // After reading it, we have info about the original type
     OriginalType =  _cmsGetTagTrueType(hProfile, tag16);
 
     // We need to adjust data for Lab16 on output
     if (OriginalType != cmsSigLut16Type) return Lut;
-        
+
     // Here it is possible to get Lab on both sides
 
-    if (cmsGetPCS(hProfile) == cmsSigLabData) {
-            cmsPipelineInsertStage(Lut, cmsAT_BEGIN, _cmsStageAllocLabV4ToV2(ContextID));
+    if (cmsGetColorSpace(hProfile) == cmsSigLabData) {
+        if(!cmsPipelineInsertStage(Lut, cmsAT_BEGIN, _cmsStageAllocLabV4ToV2(ContextID)))
+            goto Error2;
     }
 
-    if (cmsGetColorSpace(hProfile) == cmsSigLabData) {
-            cmsPipelineInsertStage(Lut, cmsAT_END, _cmsStageAllocLabV2ToV4(ContextID));
+    if (cmsGetPCS(hProfile) == cmsSigLabData) {
+        if(!cmsPipelineInsertStage(Lut, cmsAT_END, _cmsStageAllocLabV2ToV4(ContextID)))
+            goto Error2;
     }
 
     return Lut;
 
-
+Error2:
+    cmsPipelineFree(Lut);
+    return NULL;
 }
 
 // ---------------------------------------------------------------------------------------------------------------
 
 // Returns TRUE if the profile is implemented as matrix-shaper
 cmsBool  CMSEXPORT cmsIsMatrixShaper(cmsHPROFILE hProfile)
-{    
+{
     switch (cmsGetColorSpace(hProfile)) {
 
     case cmsSigGrayData:
-        
+
         return cmsIsTag(hProfile, cmsSigGrayTRCTag);
 
     case cmsSigRgbData:
@@ -563,7 +819,7 @@ cmsBool  CMSEXPORT cmsIsMatrixShaper(cmsHPROFILE hProfile)
 
 // Returns TRUE if the intent is implemented as CLUT
 cmsBool  CMSEXPORT cmsIsCLUT(cmsHPROFILE hProfile, cmsUInt32Number Intent, cmsUInt32Number UsedDirection)
-{    
+{
     const cmsTagSignature* TagTable;
 
     // For devicelinks, the supported intent is that one stated in the header
@@ -574,10 +830,10 @@ cmsBool  CMSEXPORT cmsIsCLUT(cmsHPROFILE hProfile, cmsUInt32Number Intent, cmsUI
     switch (UsedDirection) {
 
        case LCMS_USED_AS_INPUT: TagTable = Device2PCS16; break;
-       case LCMS_USED_AS_OUTPUT:TagTable = PCS2Device16; break; 
+       case LCMS_USED_AS_OUTPUT:TagTable = PCS2Device16; break;
 
        // For proofing, we need rel. colorimetric in output. Let's do some recursion
-       case LCMS_USED_AS_PROOF: 
+       case LCMS_USED_AS_PROOF:
            return cmsIsIntentSupported(hProfile, Intent, LCMS_USED_AS_INPUT) &&
                   cmsIsIntentSupported(hProfile, INTENT_RELATIVE_COLORIMETRIC, LCMS_USED_AS_OUTPUT);
 
@@ -611,7 +867,6 @@ cmsBool  CMSEXPORT cmsIsIntentSupported(cmsHPROFILE hProfile,
 
 // Read both, profile sequence description and profile sequence id if present. Then combine both to
 // create qa unique structure holding both. Shame on ICC to store things in such complicated way.
-
 cmsSEQ* _cmsReadProfileSequence(cmsHPROFILE hProfile)
 {
     cmsSEQ* ProfileSeq;
@@ -621,7 +876,7 @@ cmsSEQ* _cmsReadProfileSequence(cmsHPROFILE hProfile)
 
     // Take profile sequence description first
     ProfileSeq = (cmsSEQ*) cmsReadTag(hProfile, cmsSigProfileSequenceDescTag);
-    
+
     // Take profile sequence ID
     ProfileId  = (cmsSEQ*) cmsReadTag(hProfile, cmsSigProfileSequenceIdTag);
 
@@ -630,18 +885,19 @@ cmsSEQ* _cmsReadProfileSequence(cmsHPROFILE hProfile)
     if (ProfileSeq == NULL) return cmsDupProfileSequenceDescription(ProfileId);
     if (ProfileId  == NULL) return cmsDupProfileSequenceDescription(ProfileSeq);
 
-    // We have to mix both together. For that they must agree 
+    // We have to mix both together. For that they must agree
     if (ProfileSeq ->n != ProfileId ->n) return cmsDupProfileSequenceDescription(ProfileSeq);
 
     NewSeq = cmsDupProfileSequenceDescription(ProfileSeq);
-    
-    // Ok, proceed to the mixing
-    for (i=0; i < ProfileSeq ->n; i++) {
-    
-        memmove(&NewSeq ->seq[i].ProfileID, &ProfileId ->seq[i].ProfileID, sizeof(cmsProfileID));
-        NewSeq ->seq[i].Description = cmsMLUdup(ProfileId ->seq[i].Description);
-    }
 
+    // Ok, proceed to the mixing
+    if (NewSeq != NULL) {
+        for (i=0; i < ProfileSeq ->n; i++) {
+
+            memmove(&NewSeq ->seq[i].ProfileID, &ProfileId ->seq[i].ProfileID, sizeof(cmsProfileID));
+            NewSeq ->seq[i].Description = cmsMLUdup(ProfileId ->seq[i].Description);
+        }
+    }
     return NewSeq;
 }
 
@@ -682,22 +938,22 @@ cmsSEQ* _cmsCompileProfileSequence(cmsContext ContextID, cmsUInt32Number nProfil
         cmsPSEQDESC* ps = &seq ->seq[i];
         cmsHPROFILE h = hProfiles[i];
         cmsTechnologySignature* techpt;
-        
+
         cmsGetHeaderAttributes(h, &ps ->attributes);
-        cmsGetHeaderProfileID(h, ps ->ProfileID.ID8);       
+        cmsGetHeaderProfileID(h, ps ->ProfileID.ID8);
         ps ->deviceMfg   = cmsGetHeaderManufacturer(h);
         ps ->deviceModel = cmsGetHeaderModel(h);
-        
+
         techpt = (cmsTechnologySignature*) cmsReadTag(h, cmsSigTechnologyTag);
         if (techpt == NULL)
             ps ->technology   =  (cmsTechnologySignature) 0;
         else
             ps ->technology   = *techpt;
-                
+
         ps ->Manufacturer = GetMLUFromProfile(h,  cmsSigDeviceMfgDescTag);
-        ps ->Model        = GetMLUFromProfile(h,  cmsSigDeviceModelDescTag);        
+        ps ->Model        = GetMLUFromProfile(h,  cmsSigDeviceModelDescTag);
         ps ->Description  = GetMLUFromProfile(h, cmsSigProfileDescriptionTag);
-        
+
     }
 
     return seq;
@@ -714,7 +970,7 @@ const cmsMLU* GetInfo(cmsHPROFILE hProfile, cmsInfoType Info)
     switch (Info) {
 
     case cmsInfoDescription:
-        sig = cmsSigProfileDescriptionTag; 
+        sig = cmsSigProfileDescriptionTag;
         break;
 
     case cmsInfoManufacturer:
@@ -738,8 +994,8 @@ const cmsMLU* GetInfo(cmsHPROFILE hProfile, cmsInfoType Info)
 
 
 
-cmsUInt32Number CMSEXPORT cmsGetProfileInfo(cmsHPROFILE hProfile, cmsInfoType Info, 
-                                            const char LanguageCode[3], const char CountryCode[3], 
+cmsUInt32Number CMSEXPORT cmsGetProfileInfo(cmsHPROFILE hProfile, cmsInfoType Info,
+                                            const char LanguageCode[3], const char CountryCode[3],
                                             wchar_t* Buffer, cmsUInt32Number BufferSize)
 {
     const cmsMLU* mlu = GetInfo(hProfile, Info);
@@ -749,8 +1005,8 @@ cmsUInt32Number CMSEXPORT cmsGetProfileInfo(cmsHPROFILE hProfile, cmsInfoType In
 }
 
 
-cmsUInt32Number  CMSEXPORT cmsGetProfileInfoASCII(cmsHPROFILE hProfile, cmsInfoType Info, 
-                                                          const char LanguageCode[3], const char CountryCode[3], 
+cmsUInt32Number  CMSEXPORT cmsGetProfileInfoASCII(cmsHPROFILE hProfile, cmsInfoType Info,
+                                                          const char LanguageCode[3], const char CountryCode[3],
                                                           char* Buffer, cmsUInt32Number BufferSize)
 {
     const cmsMLU* mlu = GetInfo(hProfile, Info);
