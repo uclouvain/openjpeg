@@ -852,7 +852,7 @@ static OPJ_BOOL opj_j2k_read_sod(   opj_j2k_t *p_j2k,
                                     opj_stream_private_t *p_stream,
                                     opj_event_mgr_t * p_manager );
 
-void opj_j2k_update_tlm (opj_j2k_t * p_j2k, OPJ_UINT32 p_tile_part_size )
+static void opj_j2k_update_tlm (opj_j2k_t * p_j2k, OPJ_UINT32 p_tile_part_size )
 {
         opj_write_bytes(p_j2k->m_specific_param.m_encoder.m_tlm_sot_offsets_current,p_j2k->m_current_tile_number,1);            /* PSOT */
         ++p_j2k->m_specific_param.m_encoder.m_tlm_sot_offsets_current;
@@ -1232,7 +1232,7 @@ typedef struct j2k_prog_order{
         char str_prog[5];
 }j2k_prog_order_t;
 
-j2k_prog_order_t j2k_prog_order_list[] = {
+static j2k_prog_order_t j2k_prog_order_list[] = {
         {OPJ_CPRL, "CPRL"},
         {OPJ_LRCP, "LRCP"},
         {OPJ_PCRL, "PCRL"},
@@ -1254,7 +1254,7 @@ static const OPJ_UINT32 MCT_ELEMENT_SIZE [] =
 
 typedef void (* opj_j2k_mct_function) (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem);
 
-const opj_j2k_mct_function j2k_mct_read_functions_to_float [] =
+static const opj_j2k_mct_function j2k_mct_read_functions_to_float [] =
 {
         opj_j2k_read_int16_to_float,
         opj_j2k_read_int32_to_float,
@@ -1262,7 +1262,7 @@ const opj_j2k_mct_function j2k_mct_read_functions_to_float [] =
         opj_j2k_read_float64_to_float
 };
 
-const opj_j2k_mct_function j2k_mct_read_functions_to_int32 [] =
+static const opj_j2k_mct_function j2k_mct_read_functions_to_int32 [] =
 {
         opj_j2k_read_int16_to_int32,
         opj_j2k_read_int32_to_int32,
@@ -1270,7 +1270,7 @@ const opj_j2k_mct_function j2k_mct_read_functions_to_int32 [] =
         opj_j2k_read_float64_to_int32
 };
 
-const opj_j2k_mct_function j2k_mct_write_functions_from_float [] =
+static const opj_j2k_mct_function j2k_mct_write_functions_from_float [] =
 {
         opj_j2k_write_float_to_int16,
         opj_j2k_write_float_to_int32,
@@ -1292,7 +1292,7 @@ typedef struct opj_dec_memory_marker_handler
 }
 opj_dec_memory_marker_handler_t;
 
-const opj_dec_memory_marker_handler_t j2k_memory_marker_handler_tab [] =
+static const opj_dec_memory_marker_handler_t j2k_memory_marker_handler_tab [] =
 {
   {J2K_MS_SOT, J2K_STATE_MH | J2K_STATE_TPHSOT, opj_j2k_read_sot},
   {J2K_MS_COD, J2K_STATE_MH | J2K_STATE_TPH, opj_j2k_read_cod},
@@ -1329,7 +1329,7 @@ const opj_dec_memory_marker_handler_t j2k_memory_marker_handler_tab [] =
   {J2K_MS_UNK, J2K_STATE_MH | J2K_STATE_TPH, 0}/*opj_j2k_read_unk is directly used*/
 };
 
-void  opj_j2k_read_int16_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
+static void  opj_j2k_read_int16_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
 {
         OPJ_BYTE * l_src_data = (OPJ_BYTE *) p_src_data;
         OPJ_FLOAT32 * l_dest_data = (OPJ_FLOAT32 *) p_dest_data;
@@ -1345,7 +1345,7 @@ void  opj_j2k_read_int16_to_float (const void * p_src_data, void * p_dest_data, 
         }
 }
 
-void  opj_j2k_read_int32_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
+static void  opj_j2k_read_int32_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
 {
         OPJ_BYTE * l_src_data = (OPJ_BYTE *) p_src_data;
         OPJ_FLOAT32 * l_dest_data = (OPJ_FLOAT32 *) p_dest_data;
@@ -1361,7 +1361,7 @@ void  opj_j2k_read_int32_to_float (const void * p_src_data, void * p_dest_data, 
         }
 }
 
-void  opj_j2k_read_float32_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
+static void  opj_j2k_read_float32_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
 {
         OPJ_BYTE * l_src_data = (OPJ_BYTE *) p_src_data;
         OPJ_FLOAT32 * l_dest_data = (OPJ_FLOAT32 *) p_dest_data;
@@ -1377,7 +1377,7 @@ void  opj_j2k_read_float32_to_float (const void * p_src_data, void * p_dest_data
         }
 }
 
-void  opj_j2k_read_float64_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
+static void  opj_j2k_read_float64_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
 {
         OPJ_BYTE * l_src_data = (OPJ_BYTE *) p_src_data;
         OPJ_FLOAT32 * l_dest_data = (OPJ_FLOAT32 *) p_dest_data;
@@ -1393,7 +1393,7 @@ void  opj_j2k_read_float64_to_float (const void * p_src_data, void * p_dest_data
         }
 }
 
-void  opj_j2k_read_int16_to_int32 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
+static void  opj_j2k_read_int16_to_int32 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
 {
         OPJ_BYTE * l_src_data = (OPJ_BYTE *) p_src_data;
         OPJ_INT32 * l_dest_data = (OPJ_INT32 *) p_dest_data;
@@ -1409,7 +1409,7 @@ void  opj_j2k_read_int16_to_int32 (const void * p_src_data, void * p_dest_data, 
         }
 }
 
-void  opj_j2k_read_int32_to_int32 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
+static void  opj_j2k_read_int32_to_int32 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
 {
         OPJ_BYTE * l_src_data = (OPJ_BYTE *) p_src_data;
         OPJ_INT32 * l_dest_data = (OPJ_INT32 *) p_dest_data;
@@ -1425,7 +1425,7 @@ void  opj_j2k_read_int32_to_int32 (const void * p_src_data, void * p_dest_data, 
         }
 }
 
-void  opj_j2k_read_float32_to_int32 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
+static void  opj_j2k_read_float32_to_int32 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
 {
         OPJ_BYTE * l_src_data = (OPJ_BYTE *) p_src_data;
         OPJ_INT32 * l_dest_data = (OPJ_INT32 *) p_dest_data;
@@ -1441,7 +1441,7 @@ void  opj_j2k_read_float32_to_int32 (const void * p_src_data, void * p_dest_data
         }
 }
 
-void  opj_j2k_read_float64_to_int32 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
+static void  opj_j2k_read_float64_to_int32 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
 {
         OPJ_BYTE * l_src_data = (OPJ_BYTE *) p_src_data;
         OPJ_INT32 * l_dest_data = (OPJ_INT32 *) p_dest_data;
@@ -1457,7 +1457,7 @@ void  opj_j2k_read_float64_to_int32 (const void * p_src_data, void * p_dest_data
         }
 }
 
-void  opj_j2k_write_float_to_int16 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
+static void  opj_j2k_write_float_to_int16 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
 {
         OPJ_BYTE * l_dest_data = (OPJ_BYTE *) p_dest_data;
         OPJ_FLOAT32 * l_src_data = (OPJ_FLOAT32 *) p_src_data;
@@ -1473,7 +1473,7 @@ void  opj_j2k_write_float_to_int16 (const void * p_src_data, void * p_dest_data,
         }
 }
 
-void opj_j2k_write_float_to_int32 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
+static void opj_j2k_write_float_to_int32 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
 {
         OPJ_BYTE * l_dest_data = (OPJ_BYTE *) p_dest_data;
         OPJ_FLOAT32 * l_src_data = (OPJ_FLOAT32 *) p_src_data;
@@ -1489,7 +1489,7 @@ void opj_j2k_write_float_to_int32 (const void * p_src_data, void * p_dest_data, 
         }
 }
 
-void  opj_j2k_write_float_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
+static void  opj_j2k_write_float_to_float (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
 {
         OPJ_BYTE * l_dest_data = (OPJ_BYTE *) p_dest_data;
         OPJ_FLOAT32 * l_src_data = (OPJ_FLOAT32 *) p_src_data;
@@ -1505,7 +1505,7 @@ void  opj_j2k_write_float_to_float (const void * p_src_data, void * p_dest_data,
         }
 }
 
-void  opj_j2k_write_float_to_float64 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
+static void  opj_j2k_write_float_to_float64 (const void * p_src_data, void * p_dest_data, OPJ_UINT32 p_nb_elem)
 {
         OPJ_BYTE * l_dest_data = (OPJ_BYTE *) p_dest_data;
         OPJ_FLOAT32 * l_src_data = (OPJ_FLOAT32 *) p_src_data;
@@ -1531,7 +1531,7 @@ char *opj_j2k_convert_progression_order(OPJ_PROG_ORDER prg_order){
         return po->str_prog;
 }
 
-OPJ_BOOL opj_j2k_check_poc_val( const opj_poc_t *p_pocs,
+static OPJ_BOOL opj_j2k_check_poc_val( const opj_poc_t *p_pocs,
                                                         OPJ_UINT32 p_nb_pocs,
                                                         OPJ_UINT32 p_nb_resolutions,
                                                         OPJ_UINT32 p_num_comps,
@@ -1635,7 +1635,7 @@ OPJ_BOOL opj_j2k_check_poc_val( const opj_poc_t *p_pocs,
 
 /* ----------------------------------------------------------------------- */
 
-OPJ_UINT32 opj_j2k_get_num_tp(opj_cp_t *cp, OPJ_UINT32 pino, OPJ_UINT32 tileno)
+static OPJ_UINT32 opj_j2k_get_num_tp(opj_cp_t *cp, OPJ_UINT32 pino, OPJ_UINT32 tileno)
 {
         const OPJ_CHAR *prog = 00;
         OPJ_INT32 i;
@@ -1693,7 +1693,7 @@ OPJ_UINT32 opj_j2k_get_num_tp(opj_cp_t *cp, OPJ_UINT32 pino, OPJ_UINT32 tileno)
         return tpnum;
 }
 
-OPJ_BOOL opj_j2k_calculate_tp(  opj_j2k_t *p_j2k,
+static OPJ_BOOL opj_j2k_calculate_tp(  opj_j2k_t *p_j2k,
                                                         opj_cp_t *cp,
                                                         OPJ_UINT32 * p_nb_tiles,
                                                         opj_image_t *image,
@@ -1771,7 +1771,7 @@ OPJ_BOOL opj_j2k_calculate_tp(  opj_j2k_t *p_j2k,
         return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_j2k_write_soc(     opj_j2k_t *p_j2k,
+static OPJ_BOOL opj_j2k_write_soc(     opj_j2k_t *p_j2k,
                                                 opj_stream_private_t *p_stream,
                                                     opj_event_mgr_t * p_manager )
 {
@@ -1849,7 +1849,7 @@ static OPJ_BOOL opj_j2k_read_soc(   opj_j2k_t *p_j2k,
         return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_j2k_write_siz(     opj_j2k_t *p_j2k,
+static OPJ_BOOL opj_j2k_write_siz(     opj_j2k_t *p_j2k,
                                                         opj_stream_private_t *p_stream,
                                                         opj_event_mgr_t * p_manager )
 {
@@ -2291,7 +2291,7 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
         return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_j2k_write_com(     opj_j2k_t *p_j2k,
+static OPJ_BOOL opj_j2k_write_com(     opj_j2k_t *p_j2k,
                                                         opj_stream_private_t *p_stream,
                                                         opj_event_mgr_t * p_manager
                             )
@@ -2365,7 +2365,7 @@ static OPJ_BOOL opj_j2k_read_com (  opj_j2k_t *p_j2k,
         return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_j2k_write_cod(     opj_j2k_t *p_j2k,
+static OPJ_BOOL opj_j2k_write_cod(     opj_j2k_t *p_j2k,
                                                         opj_stream_private_t *p_stream,
                                                         opj_event_mgr_t * p_manager )
 {
@@ -2551,7 +2551,7 @@ static OPJ_BOOL opj_j2k_read_cod (  opj_j2k_t *p_j2k,
 }
 
 #if 0
-OPJ_BOOL opj_j2k_write_coc( opj_j2k_t *p_j2k,
+static OPJ_BOOL opj_j2k_write_coc( opj_j2k_t *p_j2k,
                                                 OPJ_UINT32 p_comp_no,
                                                 opj_stream_private_t *p_stream,
                                                 opj_event_mgr_t * p_manager )
@@ -2598,7 +2598,7 @@ OPJ_BOOL opj_j2k_write_coc( opj_j2k_t *p_j2k,
 #endif
 
 #if 0
-void opj_j2k_write_coc_in_memory(   opj_j2k_t *p_j2k,
+static void opj_j2k_write_coc_in_memory(   opj_j2k_t *p_j2k,
                                                 OPJ_UINT32 p_comp_no,
                                                 OPJ_BYTE * p_data,
                                                 OPJ_UINT32 * p_data_written,
@@ -2644,7 +2644,7 @@ void opj_j2k_write_coc_in_memory(   opj_j2k_t *p_j2k,
 }
 #endif
 
-OPJ_UINT32 opj_j2k_get_max_coc_size(opj_j2k_t *p_j2k)
+static OPJ_UINT32 opj_j2k_get_max_coc_size(opj_j2k_t *p_j2k)
 {
         OPJ_UINT32 i,j;
         OPJ_UINT32 l_nb_comp;
@@ -2726,7 +2726,7 @@ static OPJ_BOOL opj_j2k_read_coc (  opj_j2k_t *p_j2k,
         return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_j2k_write_qcd(     opj_j2k_t *p_j2k,
+static OPJ_BOOL opj_j2k_write_qcd(     opj_j2k_t *p_j2k,
                                                         opj_stream_private_t *p_stream,
                                                         opj_event_mgr_t * p_manager
                             )
@@ -2817,7 +2817,7 @@ static OPJ_BOOL opj_j2k_read_qcd (  opj_j2k_t *p_j2k,
 }
 
 #if 0
-OPJ_BOOL opj_j2k_write_qcc(     opj_j2k_t *p_j2k,
+static OPJ_BOOL opj_j2k_write_qcc(     opj_j2k_t *p_j2k,
                                                 OPJ_UINT32 p_comp_no,
                                                 opj_stream_private_t *p_stream,
                                                 opj_event_mgr_t * p_manager
@@ -2858,7 +2858,7 @@ OPJ_BOOL opj_j2k_write_qcc(     opj_j2k_t *p_j2k,
 #endif
 
 #if 0
-void opj_j2k_write_qcc_in_memory(   opj_j2k_t *p_j2k,
+static void opj_j2k_write_qcc_in_memory(   opj_j2k_t *p_j2k,
                                                                 OPJ_UINT32 p_comp_no,
                                                                 OPJ_BYTE * p_data,
                                                                 OPJ_UINT32 * p_data_written,
@@ -2908,7 +2908,7 @@ void opj_j2k_write_qcc_in_memory(   opj_j2k_t *p_j2k,
 }
 #endif
 
-OPJ_UINT32 opj_j2k_get_max_qcc_size (opj_j2k_t *p_j2k)
+static OPJ_UINT32 opj_j2k_get_max_qcc_size (opj_j2k_t *p_j2k)
 {
         return opj_j2k_get_max_coc_size(p_j2k);
 }
@@ -3000,7 +3000,7 @@ static OPJ_BOOL opj_j2k_read_qcc(   opj_j2k_t *p_j2k,
         return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_j2k_write_poc(     opj_j2k_t *p_j2k,
+static OPJ_BOOL opj_j2k_write_poc(     opj_j2k_t *p_j2k,
                                                         opj_stream_private_t *p_stream,
                                                         opj_event_mgr_t * p_manager
                             )
@@ -3051,7 +3051,7 @@ OPJ_BOOL opj_j2k_write_poc(     opj_j2k_t *p_j2k,
         return OPJ_TRUE;
 }
 
-void opj_j2k_write_poc_in_memory(   opj_j2k_t *p_j2k,
+static void opj_j2k_write_poc_in_memory(   opj_j2k_t *p_j2k,
                                                                 OPJ_BYTE * p_data,
                                                                 OPJ_UINT32 * p_data_written,
                                                                 opj_event_mgr_t * p_manager
@@ -3126,7 +3126,7 @@ void opj_j2k_write_poc_in_memory(   opj_j2k_t *p_j2k,
         *p_data_written = l_poc_size;
 }
 
-OPJ_UINT32 opj_j2k_get_max_poc_size(opj_j2k_t *p_j2k)
+static OPJ_UINT32 opj_j2k_get_max_poc_size(opj_j2k_t *p_j2k)
 {
         opj_tcp_t * l_tcp = 00;
         OPJ_UINT32 l_nb_tiles = 0;
@@ -3146,7 +3146,7 @@ OPJ_UINT32 opj_j2k_get_max_poc_size(opj_j2k_t *p_j2k)
         return 4 + 9 * l_max_poc;
 }
 
-OPJ_UINT32 opj_j2k_get_max_toc_size (opj_j2k_t *p_j2k)
+static OPJ_UINT32 opj_j2k_get_max_toc_size (opj_j2k_t *p_j2k)
 {
         OPJ_UINT32 i;
         OPJ_UINT32 l_nb_tiles;
@@ -3165,7 +3165,7 @@ OPJ_UINT32 opj_j2k_get_max_toc_size (opj_j2k_t *p_j2k)
         return 12 * l_max;
 }
 
-OPJ_UINT32 opj_j2k_get_specific_header_sizes(opj_j2k_t *p_j2k)
+static OPJ_UINT32 opj_j2k_get_specific_header_sizes(opj_j2k_t *p_j2k)
 {
         OPJ_UINT32 l_nb_bytes = 0;
         OPJ_UINT32 l_nb_comps;
@@ -3845,7 +3845,7 @@ static OPJ_BOOL opj_j2k_merge_ppt(opj_tcp_t *p_tcp, opj_event_mgr_t * p_manager)
 	return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_j2k_write_tlm(     opj_j2k_t *p_j2k,
+static OPJ_BOOL opj_j2k_write_tlm(     opj_j2k_t *p_j2k,
                                                         opj_stream_private_t *p_stream,
                                                         opj_event_mgr_t * p_manager
                             )
@@ -3899,7 +3899,7 @@ OPJ_BOOL opj_j2k_write_tlm(     opj_j2k_t *p_j2k,
         return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_j2k_write_sot(     opj_j2k_t *p_j2k,
+static OPJ_BOOL opj_j2k_write_sot(     opj_j2k_t *p_j2k,
                                                         OPJ_BYTE * p_data,
                                                         OPJ_UINT32 * p_data_written,
                                                         const opj_stream_private_t *p_stream,
@@ -3972,7 +3972,7 @@ static OPJ_BOOL opj_j2k_get_sot_values(OPJ_BYTE *  p_header_data,
 	return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_j2k_read_sot ( opj_j2k_t *p_j2k,
+static OPJ_BOOL opj_j2k_read_sot ( opj_j2k_t *p_j2k,
                             OPJ_BYTE * p_header_data,
                             OPJ_UINT32 p_header_size,
                             opj_event_mgr_t * p_manager )
@@ -4229,7 +4229,7 @@ OPJ_BOOL opj_j2k_read_sot ( opj_j2k_t *p_j2k,
                 return OPJ_TRUE;
         }
 
-OPJ_BOOL opj_j2k_write_sod(     opj_j2k_t *p_j2k,
+static OPJ_BOOL opj_j2k_write_sod(     opj_j2k_t *p_j2k,
                                                         opj_tcd_t * p_tile_coder,
                                                         OPJ_BYTE * p_data,
                                                         OPJ_UINT32 * p_data_written,
@@ -4303,7 +4303,7 @@ OPJ_BOOL opj_j2k_write_sod(     opj_j2k_t *p_j2k,
         return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_j2k_read_sod (opj_j2k_t *p_j2k,
+static OPJ_BOOL opj_j2k_read_sod (opj_j2k_t *p_j2k,
                            opj_stream_private_t *p_stream,
                                                    opj_event_mgr_t * p_manager
                            )
@@ -4424,7 +4424,7 @@ OPJ_BOOL opj_j2k_read_sod (opj_j2k_t *p_j2k,
         return OPJ_TRUE;
 }
 
- OPJ_BOOL opj_j2k_write_rgn(opj_j2k_t *p_j2k,
+static OPJ_BOOL opj_j2k_write_rgn(opj_j2k_t *p_j2k,
                             OPJ_UINT32 p_tile_no,
                             OPJ_UINT32 p_comp_no,
                             OPJ_UINT32 nb_comps,
@@ -4481,7 +4481,7 @@ OPJ_BOOL opj_j2k_read_sod (opj_j2k_t *p_j2k,
         return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_j2k_write_eoc(     opj_j2k_t *p_j2k,
+static OPJ_BOOL opj_j2k_write_eoc(     opj_j2k_t *p_j2k,
                             opj_stream_private_t *p_stream,
                             opj_event_mgr_t * p_manager
                             )
@@ -4591,18 +4591,18 @@ static OPJ_BOOL opj_j2k_read_rgn (opj_j2k_t *p_j2k,
 
 }
 
-OPJ_FLOAT32 opj_j2k_get_tp_stride (opj_tcp_t * p_tcp)
+static OPJ_FLOAT32 opj_j2k_get_tp_stride (opj_tcp_t * p_tcp)
 {
         return (OPJ_FLOAT32) ((p_tcp->m_nb_tile_parts - 1) * 14);
 }
 
-OPJ_FLOAT32 opj_j2k_get_default_stride (opj_tcp_t * p_tcp)
+static OPJ_FLOAT32 opj_j2k_get_default_stride (opj_tcp_t * p_tcp)
 {
     (void)p_tcp;
     return 0;
 }
 
-OPJ_BOOL opj_j2k_update_rates(  opj_j2k_t *p_j2k,
+static OPJ_BOOL opj_j2k_update_rates(  opj_j2k_t *p_j2k,
                                                             opj_stream_private_t *p_stream,
                                                             opj_event_mgr_t * p_manager )
 {
@@ -4765,7 +4765,7 @@ OPJ_BOOL opj_j2k_update_rates(  opj_j2k_t *p_j2k,
 }
 
 #if 0
-OPJ_BOOL opj_j2k_read_eoc (     opj_j2k_t *p_j2k,
+static OPJ_BOOL opj_j2k_read_eoc (     opj_j2k_t *p_j2k,
                                                         opj_stream_private_t *p_stream,
                                                         opj_event_mgr_t * p_manager )
 {
@@ -4815,7 +4815,7 @@ OPJ_BOOL opj_j2k_read_eoc (     opj_j2k_t *p_j2k,
 }
 #endif
 
-OPJ_BOOL opj_j2k_get_end_header(opj_j2k_t *p_j2k,
+static OPJ_BOOL opj_j2k_get_end_header(opj_j2k_t *p_j2k,
                                                         struct opj_stream_private *p_stream,
                                                         struct opj_event_mgr * p_manager )
 {
@@ -4829,7 +4829,7 @@ OPJ_BOOL opj_j2k_get_end_header(opj_j2k_t *p_j2k,
         return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_j2k_write_mct_data_group(  opj_j2k_t *p_j2k,
+static OPJ_BOOL opj_j2k_write_mct_data_group(  opj_j2k_t *p_j2k,
                                                                         struct opj_stream_private *p_stream,
                                                                         struct opj_event_mgr * p_manager )
 {
@@ -4878,7 +4878,7 @@ OPJ_BOOL opj_j2k_write_mct_data_group(  opj_j2k_t *p_j2k,
 }
 
 #if 0
-OPJ_BOOL opj_j2k_write_all_coc(opj_j2k_t *p_j2k,
+static OPJ_BOOL opj_j2k_write_all_coc(opj_j2k_t *p_j2k,
                                                                         struct opj_stream_private *p_stream,
                                                                         struct opj_event_mgr * p_manager )
 {
@@ -4901,7 +4901,7 @@ OPJ_BOOL opj_j2k_write_all_coc(opj_j2k_t *p_j2k,
 #endif
 
 #if 0
-OPJ_BOOL opj_j2k_write_all_qcc(opj_j2k_t *p_j2k,
+static OPJ_BOOL opj_j2k_write_all_qcc(opj_j2k_t *p_j2k,
                                                                         struct opj_stream_private *p_stream,
                                                                         struct opj_event_mgr * p_manager )
 {
@@ -4924,7 +4924,7 @@ OPJ_BOOL opj_j2k_write_all_qcc(opj_j2k_t *p_j2k,
 #endif
 
 
-OPJ_BOOL opj_j2k_write_regions( opj_j2k_t *p_j2k,
+static OPJ_BOOL opj_j2k_write_regions( opj_j2k_t *p_j2k,
                                                         struct opj_stream_private *p_stream,
                                                         struct opj_event_mgr * p_manager )
 {
@@ -4952,7 +4952,7 @@ OPJ_BOOL opj_j2k_write_regions( opj_j2k_t *p_j2k,
         return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_j2k_write_epc(     opj_j2k_t *p_j2k,
+static OPJ_BOOL opj_j2k_write_epc(     opj_j2k_t *p_j2k,
                                                 struct opj_stream_private *p_stream,
                                                 struct opj_event_mgr * p_manager )
 {
@@ -4990,7 +4990,7 @@ OPJ_BOOL opj_j2k_write_epc(     opj_j2k_t *p_j2k,
         return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_j2k_read_unk (     opj_j2k_t *p_j2k,
+static OPJ_BOOL opj_j2k_read_unk (     opj_j2k_t *p_j2k,
                                                         opj_stream_private_t *p_stream,
                                                         OPJ_UINT32 *output_marker,
                                                         opj_event_mgr_t * p_manager
@@ -5052,7 +5052,7 @@ OPJ_BOOL opj_j2k_read_unk (     opj_j2k_t *p_j2k,
         return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_j2k_write_mct_record(      opj_j2k_t *p_j2k,
+static OPJ_BOOL opj_j2k_write_mct_record(      opj_j2k_t *p_j2k,
                                                                 opj_mct_data_t * p_mct_record,
                                                                 struct opj_stream_private *p_stream,
                                                                 struct opj_event_mgr * p_manager )
@@ -5224,7 +5224,7 @@ static OPJ_BOOL opj_j2k_read_mct (      opj_j2k_t *p_j2k,
         return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_j2k_write_mcc_record(      opj_j2k_t *p_j2k,
+static OPJ_BOOL opj_j2k_write_mcc_record(      opj_j2k_t *p_j2k,
                                                                 struct opj_simple_mcc_decorrelation_data * p_mcc_record,
                                                                 struct opj_stream_private *p_stream,
                                                                 struct opj_event_mgr * p_manager )
@@ -5327,7 +5327,7 @@ OPJ_BOOL opj_j2k_write_mcc_record(      opj_j2k_t *p_j2k,
         return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_j2k_read_mcc (     opj_j2k_t *p_j2k,
+static OPJ_BOOL opj_j2k_read_mcc (     opj_j2k_t *p_j2k,
                                                 OPJ_BYTE * p_header_data,
                                                 OPJ_UINT32 p_header_size,
                                                 opj_event_mgr_t * p_manager )
@@ -5542,7 +5542,7 @@ OPJ_BOOL opj_j2k_read_mcc (     opj_j2k_t *p_j2k,
         return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_j2k_write_mco(     opj_j2k_t *p_j2k,
+static OPJ_BOOL opj_j2k_write_mco(     opj_j2k_t *p_j2k,
                                                 struct opj_stream_private *p_stream,
                                                 struct opj_event_mgr * p_manager
                                   )
@@ -5672,7 +5672,7 @@ static OPJ_BOOL opj_j2k_read_mco (      opj_j2k_t *p_j2k,
         return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_j2k_add_mct(opj_tcp_t * p_tcp, opj_image_t * p_image, OPJ_UINT32 p_index)
+static OPJ_BOOL opj_j2k_add_mct(opj_tcp_t * p_tcp, opj_image_t * p_image, OPJ_UINT32 p_index)
 {
         OPJ_UINT32 i;
         opj_simple_mcc_decorrelation_data_t * l_mcc_record;
@@ -5754,7 +5754,7 @@ OPJ_BOOL opj_j2k_add_mct(opj_tcp_t * p_tcp, opj_image_t * p_image, OPJ_UINT32 p_
         return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_j2k_write_cbd( opj_j2k_t *p_j2k,
+static OPJ_BOOL opj_j2k_write_cbd( opj_j2k_t *p_j2k,
                                                 struct opj_stream_private *p_stream,
                                                 struct opj_event_mgr * p_manager )
 {
@@ -5920,7 +5920,7 @@ opj_j2k_t* opj_j2k_create_compress(void)
         return l_j2k;
 }
 
-int opj_j2k_initialise_4K_poc(opj_poc_t *POC, int numres){
+static int opj_j2k_initialise_4K_poc(opj_poc_t *POC, int numres){
     POC[0].tile  = 1;
     POC[0].resno0  = 0;
     POC[0].compno0 = 0;
@@ -5938,7 +5938,7 @@ int opj_j2k_initialise_4K_poc(opj_poc_t *POC, int numres){
     return 2;
 }
 
-void opj_j2k_set_cinema_parameters(opj_cparameters_t *parameters, opj_image_t *image, opj_event_mgr_t *p_manager)
+static void opj_j2k_set_cinema_parameters(opj_cparameters_t *parameters, opj_image_t *image, opj_event_mgr_t *p_manager)
 {
     /* Configure cinema parameters */
     int i;
@@ -6075,7 +6075,7 @@ void opj_j2k_set_cinema_parameters(opj_cparameters_t *parameters, opj_image_t *i
 
 }
 
-OPJ_BOOL opj_j2k_is_cinema_compliant(opj_image_t *image, OPJ_UINT16 rsiz, opj_event_mgr_t *p_manager)
+static OPJ_BOOL opj_j2k_is_cinema_compliant(opj_image_t *image, OPJ_UINT16 rsiz, opj_event_mgr_t *p_manager)
 {
     OPJ_UINT32 i;
 
@@ -6775,7 +6775,7 @@ OPJ_BOOL opj_j2k_read_header(   opj_stream_private_t *p_stream,
         return OPJ_TRUE;
 }
 
-void opj_j2k_setup_header_reading (opj_j2k_t *p_j2k)
+static void opj_j2k_setup_header_reading (opj_j2k_t *p_j2k)
 {
         /* preconditions*/
         assert(p_j2k != 00);
@@ -6787,7 +6787,7 @@ void opj_j2k_setup_header_reading (opj_j2k_t *p_j2k)
 
 }
 
-void opj_j2k_setup_decoding_validation (opj_j2k_t *p_j2k)
+static void opj_j2k_setup_decoding_validation (opj_j2k_t *p_j2k)
 {
         /* preconditions*/
         assert(p_j2k != 00);
@@ -6798,7 +6798,7 @@ void opj_j2k_setup_decoding_validation (opj_j2k_t *p_j2k)
 
 }
 
-OPJ_BOOL opj_j2k_mct_validation (       opj_j2k_t * p_j2k,
+static OPJ_BOOL opj_j2k_mct_validation (       opj_j2k_t * p_j2k,
                                                                 opj_stream_private_t *p_stream,
                                                                 opj_event_mgr_t * p_manager )
 {
@@ -6984,7 +6984,7 @@ OPJ_BOOL opj_j2k_setup_mct_encoding(opj_tcp_t * p_tcp, opj_image_t * p_image)
         return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_j2k_build_decoder (opj_j2k_t * p_j2k,
+static OPJ_BOOL opj_j2k_build_decoder (opj_j2k_t * p_j2k,
                                                             opj_stream_private_t *p_stream,
                                                             opj_event_mgr_t * p_manager )
 {
@@ -6996,7 +6996,7 @@ OPJ_BOOL opj_j2k_build_decoder (opj_j2k_t * p_j2k,
         return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_j2k_build_encoder (opj_j2k_t * p_j2k,
+static OPJ_BOOL opj_j2k_build_encoder (opj_j2k_t * p_j2k,
                                                         opj_stream_private_t *p_stream,
                                                         opj_event_mgr_t * p_manager )
 {
@@ -7008,7 +7008,7 @@ OPJ_BOOL opj_j2k_build_encoder (opj_j2k_t * p_j2k,
         return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_j2k_encoding_validation (  opj_j2k_t * p_j2k,
+static OPJ_BOOL opj_j2k_encoding_validation (  opj_j2k_t * p_j2k,
                                                                             opj_stream_private_t *p_stream,
                                                                             opj_event_mgr_t * p_manager )
 {
@@ -7051,7 +7051,7 @@ OPJ_BOOL opj_j2k_encoding_validation (  opj_j2k_t * p_j2k,
         return l_is_valid;
 }
 
-OPJ_BOOL opj_j2k_decoding_validation (  opj_j2k_t *p_j2k,
+static OPJ_BOOL opj_j2k_decoding_validation (  opj_j2k_t *p_j2k,
                                         opj_stream_private_t *p_stream,
                                         opj_event_mgr_t * p_manager
                                         )
@@ -7081,7 +7081,7 @@ OPJ_BOOL opj_j2k_decoding_validation (  opj_j2k_t *p_j2k,
         return l_is_valid;
 }
 
-OPJ_BOOL opj_j2k_read_header_procedure( opj_j2k_t *p_j2k,
+static OPJ_BOOL opj_j2k_read_header_procedure( opj_j2k_t *p_j2k,
                                                                             opj_stream_private_t *p_stream,
                                                                             opj_event_mgr_t * p_manager)
 {
@@ -7244,7 +7244,7 @@ OPJ_BOOL opj_j2k_read_header_procedure( opj_j2k_t *p_j2k,
         return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_j2k_exec ( opj_j2k_t * p_j2k,
+static OPJ_BOOL opj_j2k_exec ( opj_j2k_t * p_j2k,
                                         opj_procedure_list_t * p_procedure_list,
                                         opj_stream_private_t *p_stream,
                                         opj_event_mgr_t * p_manager )
@@ -7412,7 +7412,7 @@ static OPJ_BOOL opj_j2k_copy_default_tcp_and_create_tcd (       opj_j2k_t * p_j2
         return OPJ_TRUE;
 }
 
-const opj_dec_memory_marker_handler_t * opj_j2k_get_marker_handler (OPJ_UINT32 p_id)
+static const opj_dec_memory_marker_handler_t * opj_j2k_get_marker_handler (OPJ_UINT32 p_id)
 {
         const opj_dec_memory_marker_handler_t *e;
         for (e = j2k_memory_marker_handler_tab; e->id != 0; ++e) {
@@ -7525,7 +7525,7 @@ void j2k_destroy_cstr_index (opj_codestream_index_t *p_cstr_ind)
         }
 }
 
-void opj_j2k_tcp_destroy (opj_tcp_t *p_tcp)
+static void opj_j2k_tcp_destroy (opj_tcp_t *p_tcp)
 {
 	if (p_tcp == 00) {
 		return;
@@ -7596,7 +7596,7 @@ void opj_j2k_tcp_destroy (opj_tcp_t *p_tcp)
 
 }
 
-void opj_j2k_tcp_data_destroy (opj_tcp_t *p_tcp)
+static void opj_j2k_tcp_data_destroy (opj_tcp_t *p_tcp)
 {
         if (p_tcp->m_data) {
                 opj_free(p_tcp->m_data);
@@ -7605,7 +7605,7 @@ void opj_j2k_tcp_data_destroy (opj_tcp_t *p_tcp)
         }
 }
 
-void opj_j2k_cp_destroy (opj_cp_t *p_cp)
+static void opj_j2k_cp_destroy (opj_cp_t *p_cp)
 {
 	OPJ_UINT32 l_nb_tiles;
 	opj_tcp_t * l_current_tile = 00;
@@ -8099,7 +8099,7 @@ OPJ_BOOL opj_j2k_decode_tile (  opj_j2k_t * p_j2k,
         return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_j2k_update_image_data (opj_tcd_t * p_tcd, OPJ_BYTE * p_data, opj_image_t* p_output_image)
+static OPJ_BOOL opj_j2k_update_image_data (opj_tcd_t * p_tcd, OPJ_BYTE * p_data, opj_image_t* p_output_image)
 {
         OPJ_UINT32 i,j,k = 0;
         OPJ_UINT32 l_width_src,l_height_src;
@@ -8573,7 +8573,7 @@ opj_j2k_t* opj_j2k_create_decompress(void)
         return l_j2k;
 }
 
-opj_codestream_index_t* opj_j2k_create_cstr_index(void)
+static opj_codestream_index_t* opj_j2k_create_cstr_index(void)
 {
         opj_codestream_index_t* cstr_index = (opj_codestream_index_t*)
                         opj_calloc(1,sizeof(opj_codestream_index_t));
@@ -8592,7 +8592,7 @@ opj_codestream_index_t* opj_j2k_create_cstr_index(void)
         return cstr_index;
 }
 
-OPJ_UINT32 opj_j2k_get_SPCod_SPCoc_size (       opj_j2k_t *p_j2k,
+static OPJ_UINT32 opj_j2k_get_SPCod_SPCoc_size (       opj_j2k_t *p_j2k,
                                                                                 OPJ_UINT32 p_tile_no,
                                                                                 OPJ_UINT32 p_comp_no )
 {
@@ -8619,7 +8619,7 @@ OPJ_UINT32 opj_j2k_get_SPCod_SPCoc_size (       opj_j2k_t *p_j2k,
         }
 }
 
-OPJ_BOOL opj_j2k_write_SPCod_SPCoc(     opj_j2k_t *p_j2k,
+static OPJ_BOOL opj_j2k_write_SPCod_SPCoc(     opj_j2k_t *p_j2k,
                                                                     OPJ_UINT32 p_tile_no,
                                                                     OPJ_UINT32 p_comp_no,
                                                                     OPJ_BYTE * p_data,
@@ -8685,7 +8685,7 @@ OPJ_BOOL opj_j2k_write_SPCod_SPCoc(     opj_j2k_t *p_j2k,
         return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_j2k_read_SPCod_SPCoc(  opj_j2k_t *p_j2k,
+static OPJ_BOOL opj_j2k_read_SPCod_SPCoc(  opj_j2k_t *p_j2k,
                                                                 OPJ_UINT32 compno,
                                                                 OPJ_BYTE * p_header_data,
                                                                 OPJ_UINT32 * p_header_size,
@@ -8808,7 +8808,7 @@ OPJ_BOOL opj_j2k_read_SPCod_SPCoc(  opj_j2k_t *p_j2k,
         return OPJ_TRUE;
 }
 
-void opj_j2k_copy_tile_component_parameters( opj_j2k_t *p_j2k )
+static void opj_j2k_copy_tile_component_parameters( opj_j2k_t *p_j2k )
 {
         /* loop */
         OPJ_UINT32 i;
@@ -8841,7 +8841,7 @@ void opj_j2k_copy_tile_component_parameters( opj_j2k_t *p_j2k )
         }
 }
 
-OPJ_UINT32 opj_j2k_get_SQcd_SQcc_size ( opj_j2k_t *p_j2k,
+static OPJ_UINT32 opj_j2k_get_SQcd_SQcc_size ( opj_j2k_t *p_j2k,
                                                                         OPJ_UINT32 p_tile_no,
                                                                         OPJ_UINT32 p_comp_no )
 {
@@ -8872,7 +8872,7 @@ OPJ_UINT32 opj_j2k_get_SQcd_SQcc_size ( opj_j2k_t *p_j2k,
         }
 }
 
-OPJ_BOOL opj_j2k_write_SQcd_SQcc(       opj_j2k_t *p_j2k,
+static OPJ_BOOL opj_j2k_write_SQcd_SQcc(       opj_j2k_t *p_j2k,
                                                                 OPJ_UINT32 p_tile_no,
                                                                 OPJ_UINT32 p_comp_no,
                                                                 OPJ_BYTE * p_data,
@@ -8945,7 +8945,7 @@ OPJ_BOOL opj_j2k_write_SQcd_SQcc(       opj_j2k_t *p_j2k,
         return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_j2k_read_SQcd_SQcc(opj_j2k_t *p_j2k,
+static OPJ_BOOL opj_j2k_read_SQcd_SQcc(opj_j2k_t *p_j2k,
                                                             OPJ_UINT32 p_comp_no,
                                                             OPJ_BYTE* p_header_data,
                                                             OPJ_UINT32 * p_header_size,
@@ -9062,7 +9062,7 @@ OPJ_BOOL opj_j2k_read_SQcd_SQcc(opj_j2k_t *p_j2k,
         return OPJ_TRUE;
 }
 
-void opj_j2k_copy_tile_quantization_parameters( opj_j2k_t *p_j2k )
+static void opj_j2k_copy_tile_quantization_parameters( opj_j2k_t *p_j2k )
 {
         OPJ_UINT32 i;
         opj_cp_t *l_cp = NULL;
@@ -9189,7 +9189,7 @@ void j2k_dump (opj_j2k_t* p_j2k, OPJ_INT32 flag, FILE* out_stream)
 
 }
 
-void opj_j2k_dump_MH_index(opj_j2k_t* p_j2k, FILE* out_stream)
+static void opj_j2k_dump_MH_index(opj_j2k_t* p_j2k, FILE* out_stream)
 {
         opj_codestream_index_t* cstr_index = p_j2k->cstr_index;
         OPJ_UINT32 it_marker, it_tile, it_tile_part;
@@ -9258,7 +9258,7 @@ void opj_j2k_dump_MH_index(opj_j2k_t* p_j2k, FILE* out_stream)
 }
 
 
-void opj_j2k_dump_MH_info(opj_j2k_t* p_j2k, FILE* out_stream)
+static void opj_j2k_dump_MH_info(opj_j2k_t* p_j2k, FILE* out_stream)
 {
 
         fprintf(out_stream, "Codestream info from main header: {\n");
@@ -9498,7 +9498,7 @@ opj_codestream_index_t* j2k_get_cstr_index(opj_j2k_t* p_j2k)
         return l_cstr_index;
 }
 
-OPJ_BOOL opj_j2k_allocate_tile_element_cstr_index(opj_j2k_t *p_j2k)
+static OPJ_BOOL opj_j2k_allocate_tile_element_cstr_index(opj_j2k_t *p_j2k)
 {
         OPJ_UINT32 it_tile=0;
 
@@ -9519,7 +9519,7 @@ OPJ_BOOL opj_j2k_allocate_tile_element_cstr_index(opj_j2k_t *p_j2k)
         return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_j2k_decode_tiles ( opj_j2k_t *p_j2k,
+static OPJ_BOOL opj_j2k_decode_tiles ( opj_j2k_t *p_j2k,
                                                             opj_stream_private_t *p_stream,
                                                             opj_event_mgr_t * p_manager)
 {
@@ -10049,7 +10049,7 @@ OPJ_BOOL opj_j2k_start_compress(opj_j2k_t *p_j2k,
         return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_j2k_pre_write_tile (       opj_j2k_t * p_j2k,
+static OPJ_BOOL opj_j2k_pre_write_tile (       opj_j2k_t * p_j2k,
                                                                 OPJ_UINT32 p_tile_index,
                                                                 opj_stream_private_t *p_stream,
                                                                 opj_event_mgr_t * p_manager )
@@ -10074,7 +10074,7 @@ OPJ_BOOL opj_j2k_pre_write_tile (       opj_j2k_t * p_j2k,
         return OPJ_TRUE;
 }
 
-void opj_get_tile_dimensions(opj_image_t * l_image,
+static void opj_get_tile_dimensions(opj_image_t * l_image,
                              opj_tcd_tilecomp_t * l_tilec,
                              opj_image_comp_t * l_img_comp,
                              OPJ_UINT32* l_size_comp,
@@ -10105,7 +10105,7 @@ void opj_get_tile_dimensions(opj_image_t * l_image,
 	*l_tile_offset = ((OPJ_UINT32)l_tilec->x0 - *l_offset_x) + ((OPJ_UINT32)l_tilec->y0 - *l_offset_y) * *l_image_width;
 }
 
-void opj_j2k_get_tile_data (opj_tcd_t * p_tcd, OPJ_BYTE * p_data)
+static void opj_j2k_get_tile_data (opj_tcd_t * p_tcd, OPJ_BYTE * p_data)
 {
         OPJ_UINT32 i,j,k = 0;
 
@@ -10198,7 +10198,7 @@ void opj_j2k_get_tile_data (opj_tcd_t * p_tcd, OPJ_BYTE * p_data)
         }
 }
 
-OPJ_BOOL opj_j2k_post_write_tile (      opj_j2k_t * p_j2k,
+static OPJ_BOOL opj_j2k_post_write_tile (      opj_j2k_t * p_j2k,
                                                                 opj_stream_private_t *p_stream,
                                                                 opj_event_mgr_t * p_manager )
 {
@@ -10240,7 +10240,7 @@ OPJ_BOOL opj_j2k_post_write_tile (      opj_j2k_t * p_j2k,
         return OPJ_TRUE;
 }
 
-void opj_j2k_setup_end_compress (opj_j2k_t *p_j2k)
+static void opj_j2k_setup_end_compress (opj_j2k_t *p_j2k)
 {
         /* preconditions */
         assert(p_j2k != 00);
@@ -10257,7 +10257,7 @@ void opj_j2k_setup_end_compress (opj_j2k_t *p_j2k)
         opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_destroy_header_memory);
 }
 
-void opj_j2k_setup_encoding_validation (opj_j2k_t *p_j2k)
+static void opj_j2k_setup_encoding_validation (opj_j2k_t *p_j2k)
 {
         /* preconditions */
         assert(p_j2k != 00);
@@ -10269,7 +10269,7 @@ void opj_j2k_setup_encoding_validation (opj_j2k_t *p_j2k)
         opj_procedure_list_add_procedure(p_j2k->m_validation_list, (opj_procedure)opj_j2k_mct_validation);
 }
 
-void opj_j2k_setup_header_writing (opj_j2k_t *p_j2k)
+static void opj_j2k_setup_header_writing (opj_j2k_t *p_j2k)
 {
         /* preconditions */
         assert(p_j2k != 00);
@@ -10312,7 +10312,7 @@ void opj_j2k_setup_header_writing (opj_j2k_t *p_j2k)
         opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_update_rates);
 }
 
-OPJ_BOOL opj_j2k_write_first_tile_part (opj_j2k_t *p_j2k,
+static OPJ_BOOL opj_j2k_write_first_tile_part (opj_j2k_t *p_j2k,
                                                                         OPJ_BYTE * p_data,
                                                                         OPJ_UINT32 * p_data_written,
                                                                         OPJ_UINT32 p_total_data_size,
@@ -10392,7 +10392,7 @@ OPJ_BOOL opj_j2k_write_first_tile_part (opj_j2k_t *p_j2k,
         return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_j2k_write_all_tile_parts(  opj_j2k_t *p_j2k,
+static OPJ_BOOL opj_j2k_write_all_tile_parts(  opj_j2k_t *p_j2k,
                                                                         OPJ_BYTE * p_data,
                                                                         OPJ_UINT32 * p_data_written,
                                                                         OPJ_UINT32 p_total_data_size,
@@ -10503,7 +10503,7 @@ OPJ_BOOL opj_j2k_write_all_tile_parts(  opj_j2k_t *p_j2k,
         return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_j2k_write_updated_tlm( opj_j2k_t *p_j2k,
+static OPJ_BOOL opj_j2k_write_updated_tlm( opj_j2k_t *p_j2k,
                                                                     struct opj_stream_private *p_stream,
                                                                     struct opj_event_mgr * p_manager )
 {
@@ -10534,7 +10534,7 @@ OPJ_BOOL opj_j2k_write_updated_tlm( opj_j2k_t *p_j2k,
         return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_j2k_end_encoding(  opj_j2k_t *p_j2k,
+static OPJ_BOOL opj_j2k_end_encoding(  opj_j2k_t *p_j2k,
                                                         struct opj_stream_private *p_stream,
                                                         struct opj_event_mgr * p_manager )
 {
@@ -10585,7 +10585,7 @@ static OPJ_BOOL opj_j2k_destroy_header_memory ( opj_j2k_t * p_j2k,
         return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_j2k_init_info(     opj_j2k_t *p_j2k,
+static OPJ_BOOL opj_j2k_init_info(     opj_j2k_t *p_j2k,
                                                 struct opj_stream_private *p_stream,
                                                 struct opj_event_mgr * p_manager )
 {
