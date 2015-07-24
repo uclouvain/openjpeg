@@ -1576,7 +1576,7 @@ int main(int argc, char **argv) {
     opj_codec_t* l_codec = 00;
     opj_image_t *image = NULL;
     raw_cparameters_t raw_cp;
-	OPJ_SIZE_T num_compressed_files = 0;
+    OPJ_SIZE_T num_compressed_files = 0;
 
     char indexfilename[OPJ_PATH_LEN];	/* index file name */
 
@@ -1587,7 +1587,7 @@ int main(int argc, char **argv) {
     OPJ_BOOL bSuccess;
     OPJ_BOOL bUseTiles = OPJ_FALSE; /* OPJ_TRUE */
     OPJ_UINT32 l_nb_tiles = 4;
-	OPJ_FLOAT64 t = opj_clock();
+    OPJ_FLOAT64 t = opj_clock();
 
     /* set encoding parameters to default values */
     opj_set_default_encoder_parameters(&parameters);
@@ -1870,10 +1870,10 @@ int main(int argc, char **argv) {
     if(parameters.cp_matrice)   free(parameters.cp_matrice);
     if(raw_cp.rawComps) free(raw_cp.rawComps);
 	
-	t = opj_clock() - t;
-	if (num_compressed_files)
-		fprintf(stdout, "encode time: %d ms \n", (int)((t * 1000)/num_compressed_files));
-	//getch());
+    t = opj_clock() - t;
+    if (num_compressed_files) {
+		    fprintf(stdout, "encode time: %d ms \n", (int)((t * 1000.0)/(OPJ_FLOAT64)num_compressed_files));
+    }
 
     return 0;
 }

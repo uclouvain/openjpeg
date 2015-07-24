@@ -175,12 +175,12 @@ static void decode_help_display(void) {
 	               "	Image file Directory path \n"
 	               "  -OutFor <PBM|PGM|PPM|PNM|PAM|PGX|PNG|BMP|TIF|RAW|RAWL|TGA>\n"
 	               "    REQUIRED only if -ImgDir is used\n"
-	               "	Output format for decompressed images.\n"
-	               "  -i <compressed file>\n"
+	               "	Output format for decompressed images.\n");
+	fprintf(stdout,"  -i <compressed file>\n"
 	               "    REQUIRED only if an Input image directory is not specified\n"
 	               "    Currently accepts J2K-files, JP2-files and JPT-files. The file type\n"
-	               "    is identified based on its suffix.\n"
-	               "  -o <decompressed file>\n"
+	               "    is identified based on its suffix.\n");
+	fprintf(stdout,"  -o <decompressed file>\n"
 	               "    REQUIRED\n"
 	               "    Currently accepts formats specified above (see OutFor option)\n"
 	               "    Binary data is written to the file (not ascii). If a PGX\n"
@@ -188,8 +188,8 @@ static void decode_help_display(void) {
 	               "    components: an indice starting from 0 will then be appended to the\n"
 	               "    output filename, just before the \"pgx\" extension. If a PGM filename\n"
 	               "    is given and there are more than one component, only the first component\n"
-	               "    will be written to the file.\n"
-	               "  -r <reduce factor>\n"
+	               "    will be written to the file.\n");
+	fprintf(stdout,"  -r <reduce factor>\n"
 	               "    Set the number of highest resolution levels to be discarded. The\n"
 	               "    image resolution is effectively divided by 2 to the power of the\n"
 	               "    number of discarded levels. The reduce factor is limited by the\n"
@@ -197,8 +197,8 @@ static void decode_help_display(void) {
 	               "  -l <number of quality layers to decode>\n"
 	               "    Set the maximum number of quality layers to decode. If there are\n"
 	               "    less quality layers than the specified number, all the quality layers\n"
-	               "    are decoded.\n"
-	               "  -x  \n" 
+	               "    are decoded.\n");
+	fprintf(stdout,"  -x  \n"
 	               "    Create an index file *.Idx (-x index_name.Idx) \n"
 	               "  -d <x0,y0,x1,y1>\n"
 	               "    OPTIONAL\n"
@@ -207,8 +207,8 @@ static void decode_help_display(void) {
 	               "  -t <tile_number>\n"
 	               "    OPTIONAL\n"
 	               "    Set the tile number of the decoded tile. Follow the JPEG2000 convention from left-up to bottom-up\n"
-	               "    By default all tiles are decoded.\n"
-	               "  -p <comp 0 precision>[C|S][,<comp 1 precision>[C|S][,...]]\n"
+	               "    By default all tiles are decoded.\n");
+	fprintf(stdout,"  -p <comp 0 precision>[C|S][,<comp 1 precision>[C|S][,...]]\n"
 	               "    OPTIONAL\n"
 	               "    Force the precision (bit depth) of components.\n"
 	               "    There shall be at least 1 value. Theres no limit on the number of values (comma separated, last values ignored if too much values).\n"
@@ -252,7 +252,7 @@ static OPJ_BOOL parse_precision(const char* option, opj_decompress_parameters* p
 	
 	for(;;)
 	{
-		OPJ_UINT32 prec;
+		int prec;
 		char mode;
 		char comma;
 		int count;
@@ -270,7 +270,7 @@ static OPJ_BOOL parse_precision(const char* option, opj_decompress_parameters* p
 			count = 3;
 		}
 		if (count == 3) {
-			if (prec > 32U) {
+			if ((prec < 1) || (prec > 32)) {
 				fprintf(stderr,"Invalid precision %d in precision option %s\n", prec, option);
 				l_result = OPJ_FALSE;
 				break;
@@ -313,7 +313,7 @@ static OPJ_BOOL parse_precision(const char* option, opj_decompress_parameters* p
 				parameters->precision = l_new;
 			}
 			
-			parameters->precision[parameters->nb_precision].prec = prec;
+			parameters->precision[parameters->nb_precision].prec = (OPJ_UINT32)prec;
 			switch (mode) {
 				case 'C':
 					parameters->precision[parameters->nb_precision].mode = OPJ_PREC_MODE_CLIP;
@@ -1540,9 +1540,9 @@ int main(int argc, char **argv)
 		if(failed) remove(parameters.outfile);
 	}
 	destroy_parameters(&parameters);
-	if (numDecompressedImages)
-		fprintf(stdout, "decode time: %d ms \n", (int)( (tCumulative * 1000) / numDecompressedImages));
-	//getch();
+	if (numDecompressedImages) {
+		fprintf(stdout, "decode time: %d ms\n", (int)( (tCumulative * 1000.0) / (OPJ_FLOAT64)numDecompressedImages));
+	}
 	return failed ? EXIT_FAILURE : EXIT_SUCCESS;
 }
 /*end main*/

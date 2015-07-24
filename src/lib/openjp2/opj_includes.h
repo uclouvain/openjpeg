@@ -127,8 +127,8 @@ static INLINE long lrintf(float f){
 #ifdef _M_X64
 	return _mm_cvt_ss2si(_mm_load_ss(&f));
 
-	// commented out line breaks many tests
-    ///return (long)((f>0.0f) ? (f + 0.5f):(f -0.5f));
+	/* commented out line breaks many tests */
+  /* return (long)((f>0.0f) ? (f + 0.5f):(f -0.5f)); */
 #else
     int i;
      _asm{
