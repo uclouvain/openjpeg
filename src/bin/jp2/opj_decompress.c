@@ -210,13 +210,13 @@ static void decode_help_display(void) {
 	               "    By default all tiles are decoded.\n");
 	fprintf(stdout,"  -p <comp 0 precision>[C|S][,<comp 1 precision>[C|S][,...]]\n"
 	               "    OPTIONAL\n"
-	               "    Force the precision (bit depth) of components.\n"
-	               "    There shall be at least 1 value. Theres no limit on the number of values (comma separated, last values ignored if too much values).\n"
+	               "    Force the precision (bit depth) of components.\n");
+	fprintf(stdout,"    There shall be at least 1 value. Theres no limit on the number of values (comma separated, last values ignored if too much values).\n"
 	               "    If there are less values than components, the last value is used for remaining components.\n"
 	               "    If 'C' is specified (default), values are clipped.\n"
 	               "    If 'S' is specified, values are scaled.\n"
-	               "    A 0 value can be specified (meaning original bit depth).\n"
-	               "  -force-rgb\n"
+	               "    A 0 value can be specified (meaning original bit depth).\n");
+	fprintf(stdout,"  -force-rgb\n"
 	               "    Force output image colorspace to RGB\n"
 	               "  -upsample\n"
 	               "    Downsampled components will be upsampled to image size\n"
