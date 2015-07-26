@@ -145,6 +145,387 @@ void scale_component(opj_image_comp_t* component, OPJ_UINT32 precision)
 }
 
 
+/* planar / interleaved conversions */
+/* used by PNG/TIFF */
+static void convert_32s_C1P1(const OPJ_INT32* pSrc, OPJ_INT32* const* pDst, OPJ_SIZE_T length)
+{
+	memcpy(pDst[0], pSrc, length * sizeof(OPJ_INT32));
+}
+static void convert_32s_C2P2(const OPJ_INT32* pSrc, OPJ_INT32* const* pDst, OPJ_SIZE_T length)
+{
+	OPJ_SIZE_T i;
+	OPJ_INT32* pDst0 = pDst[0];
+	OPJ_INT32* pDst1 = pDst[1];
+	
+	for (i = 0; i < length; i++) {
+		pDst0[i] = pSrc[2*i+0];
+		pDst1[i] = pSrc[2*i+1];
+	}
+}
+static void convert_32s_C3P3(const OPJ_INT32* pSrc, OPJ_INT32* const* pDst, OPJ_SIZE_T length)
+{
+	OPJ_SIZE_T i;
+	OPJ_INT32* pDst0 = pDst[0];
+	OPJ_INT32* pDst1 = pDst[1];
+	OPJ_INT32* pDst2 = pDst[2];
+	
+	for (i = 0; i < length; i++) {
+		pDst0[i] = pSrc[3*i+0];
+		pDst1[i] = pSrc[3*i+1];
+		pDst2[i] = pSrc[3*i+2];
+	}
+}
+static void convert_32s_C4P4(const OPJ_INT32* pSrc, OPJ_INT32* const* pDst, OPJ_SIZE_T length)
+{
+	OPJ_SIZE_T i;
+	OPJ_INT32* pDst0 = pDst[0];
+	OPJ_INT32* pDst1 = pDst[1];
+	OPJ_INT32* pDst2 = pDst[2];
+	OPJ_INT32* pDst3 = pDst[3];
+	
+	for (i = 0; i < length; i++) {
+		pDst0[i] = pSrc[4*i+0];
+		pDst1[i] = pSrc[4*i+1];
+		pDst2[i] = pSrc[4*i+2];
+		pDst3[i] = pSrc[4*i+3];
+	}
+}
+const convert_32s_CXPX convert_32s_CXPX_LUT[5] = {
+	NULL,
+	convert_32s_C1P1,
+	convert_32s_C2P2,
+	convert_32s_C3P3,
+	convert_32s_C4P4
+};
+
+static void convert_32s_P1C1(OPJ_INT32 const* const* pSrc, OPJ_INT32* pDst, OPJ_SIZE_T length, OPJ_INT32 adjust)
+{
+	OPJ_SIZE_T i;
+	const OPJ_INT32* pSrc0 = pSrc[0];
+	
+	for (i = 0; i < length; i++) {
+		pDst[i] = pSrc0[i] + adjust;
+	}
+}
+static void convert_32s_P2C2(OPJ_INT32 const* const* pSrc, OPJ_INT32* pDst, OPJ_SIZE_T length, OPJ_INT32 adjust)
+{
+	OPJ_SIZE_T i;
+	const OPJ_INT32* pSrc0 = pSrc[0];
+	const OPJ_INT32* pSrc1 = pSrc[1];
+	
+	for (i = 0; i < length; i++) {
+		pDst[2*i+0] = pSrc0[i] + adjust;
+		pDst[2*i+1] = pSrc1[i] + adjust;
+	}
+}
+static void convert_32s_P3C3(OPJ_INT32 const* const* pSrc, OPJ_INT32* pDst, OPJ_SIZE_T length, OPJ_INT32 adjust)
+{
+	OPJ_SIZE_T i;
+	const OPJ_INT32* pSrc0 = pSrc[0];
+	const OPJ_INT32* pSrc1 = pSrc[1];
+	const OPJ_INT32* pSrc2 = pSrc[2];
+	
+	for (i = 0; i < length; i++) {
+		pDst[3*i+0] = pSrc0[i] + adjust;
+		pDst[3*i+1] = pSrc1[i] + adjust;
+		pDst[3*i+2] = pSrc2[i] + adjust;
+	}
+}
+static void convert_32s_P4C4(OPJ_INT32 const* const* pSrc, OPJ_INT32* pDst, OPJ_SIZE_T length, OPJ_INT32 adjust)
+{
+	OPJ_SIZE_T i;
+	const OPJ_INT32* pSrc0 = pSrc[0];
+	const OPJ_INT32* pSrc1 = pSrc[1];
+	const OPJ_INT32* pSrc2 = pSrc[2];
+	const OPJ_INT32* pSrc3 = pSrc[3];
+	
+	for (i = 0; i < length; i++) {
+		pDst[4*i+0] = pSrc0[i] + adjust;
+		pDst[4*i+1] = pSrc1[i] + adjust;
+		pDst[4*i+2] = pSrc2[i] + adjust;
+		pDst[4*i+3] = pSrc3[i] + adjust;
+	}
+}
+const convert_32s_PXCX convert_32s_PXCX_LUT[5] = {
+	NULL,
+	convert_32s_P1C1,
+	convert_32s_P2C2,
+	convert_32s_P3C3,
+	convert_32s_P4C4
+};
+
+/* bit depth conversions */
+/* used by PNG/TIFF up to 8bpp */
+static void convert_1u32s_C1R(const OPJ_BYTE* pSrc, OPJ_INT32* pDst, OPJ_SIZE_T length)
+{
+	OPJ_SIZE_T i;
+	for (i = 0; i < (length & ~(OPJ_SIZE_T)7U); i+=8U) {
+		OPJ_UINT32 val = *pSrc++;
+		pDst[i+0] = (OPJ_INT32)( val >> 7);
+		pDst[i+1] = (OPJ_INT32)((val >> 6) & 0x1U);
+		pDst[i+2] = (OPJ_INT32)((val >> 5) & 0x1U);
+		pDst[i+3] = (OPJ_INT32)((val >> 4) & 0x1U);
+		pDst[i+4] = (OPJ_INT32)((val >> 3) & 0x1U);
+		pDst[i+5] = (OPJ_INT32)((val >> 2) & 0x1U);
+		pDst[i+6] = (OPJ_INT32)((val >> 1) & 0x1U);
+		pDst[i+7] = (OPJ_INT32)(val & 0x1U);
+	}
+	if (length & 7U) {
+		OPJ_UINT32 val = *pSrc++;
+		length = length & 7U;
+		pDst[i+0] = (OPJ_INT32)(val >> 7);
+		
+		if (length > 1U) {
+			pDst[i+1] = (OPJ_INT32)((val >> 6) & 0x1U);
+			if (length > 2U) {
+				pDst[i+2] = (OPJ_INT32)((val >> 5) & 0x1U);
+				if (length > 3U) {
+					pDst[i+3] = (OPJ_INT32)((val >> 4) & 0x1U);
+					if (length > 4U) {
+						pDst[i+4] = (OPJ_INT32)((val >> 3) & 0x1U);
+						if (length > 5U) {
+							pDst[i+5] = (OPJ_INT32)((val >> 2) & 0x1U);
+							if (length > 6U) {
+								pDst[i+6] = (OPJ_INT32)((val >> 1) & 0x1U);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+static void convert_2u32s_C1R(const OPJ_BYTE* pSrc, OPJ_INT32* pDst, OPJ_SIZE_T length)
+{
+	OPJ_SIZE_T i;
+	for (i = 0; i < (length & ~(OPJ_SIZE_T)3U); i+=4U) {
+		OPJ_UINT32 val = *pSrc++;
+		pDst[i+0] = (OPJ_INT32)( val >> 6);
+		pDst[i+1] = (OPJ_INT32)((val >> 4) & 0x3U);
+		pDst[i+2] = (OPJ_INT32)((val >> 2) & 0x3U);
+		pDst[i+3] = (OPJ_INT32)(val & 0x3U);
+	}
+	if (length & 3U) {
+		OPJ_UINT32 val = *pSrc++;
+		length = length & 3U;
+		pDst[i+0] =  (OPJ_INT32)(val >> 6);
+		
+		if (length > 1U) {
+			pDst[i+1] = (OPJ_INT32)((val >> 4) & 0x3U);
+			if (length > 2U) {
+				pDst[i+2] = (OPJ_INT32)((val >> 2) & 0x3U);
+				
+			}
+		}
+	}
+}
+static void convert_4u32s_C1R(const OPJ_BYTE* pSrc, OPJ_INT32* pDst, OPJ_SIZE_T length)
+{
+	OPJ_SIZE_T i;
+	for (i = 0; i < (length & ~(OPJ_SIZE_T)1U); i+=2U) {
+		OPJ_UINT32 val = *pSrc++;
+		pDst[i+0] = (OPJ_INT32)(val >> 4);
+		pDst[i+1] = (OPJ_INT32)(val & 0xFU);
+	}
+	if (length & 1U) {
+		OPJ_UINT8 val = *pSrc++;
+		pDst[i+0] = (OPJ_INT32)(val >> 4);
+	}
+}
+static void convert_6u32s_C1R(const OPJ_BYTE* pSrc, OPJ_INT32* pDst, OPJ_SIZE_T length)
+{
+	OPJ_SIZE_T i;
+	for (i = 0; i < (length & ~(OPJ_SIZE_T)3U); i+=4U) {
+		OPJ_UINT32 val0 = *pSrc++;
+		OPJ_UINT32 val1 = *pSrc++;
+		OPJ_UINT32 val2 = *pSrc++;
+		pDst[i+0] = (OPJ_INT32)(val0 >> 2);
+		pDst[i+1] = (OPJ_INT32)(((val0 & 0x3U) << 4) | (val1 >> 4));
+		pDst[i+2] = (OPJ_INT32)(((val1 & 0xFU) << 2) | (val2 >> 6));
+		pDst[i+3] = (OPJ_INT32)(val2 & 0x3FU);
+		
+	}
+	if (length & 3U) {
+		OPJ_UINT32 val0 = *pSrc++;
+		length = length & 3U;
+		pDst[i+0] = (OPJ_INT32)(val0 >> 2);
+		
+		if (length > 1U) {
+			OPJ_UINT32 val1 = *pSrc++;
+			pDst[i+1] = (OPJ_INT32)(((val0 & 0x3U) << 4) | (val1 >> 4));
+			if (length > 2U) {
+				OPJ_UINT32 val2 = *pSrc++;
+				pDst[i+2] = (OPJ_INT32)(((val1 & 0xFU) << 2) | (val2 >> 6));
+			}
+		}
+	}
+}
+static void convert_8u32s_C1R(const OPJ_BYTE* pSrc, OPJ_INT32* pDst, OPJ_SIZE_T length)
+{
+	OPJ_SIZE_T i;
+	for (i = 0; i < length; i++) {
+		pDst[i] = pSrc[i];
+	}
+}
+const convert_XXx32s_C1R convert_XXu32s_C1R_LUT[9] = {
+	NULL,
+	convert_1u32s_C1R,
+	convert_2u32s_C1R,
+	NULL,
+	convert_4u32s_C1R,
+	NULL,
+	convert_6u32s_C1R,
+	NULL,
+	convert_8u32s_C1R
+};
+
+
+static void convert_32s1u_C1R(const OPJ_INT32* pSrc, OPJ_BYTE* pDst, OPJ_SIZE_T length)
+{
+	OPJ_SIZE_T i;
+	for (i = 0; i < (length & ~(OPJ_SIZE_T)7U); i+=8U) {
+		OPJ_UINT32 src0 = (OPJ_UINT32)pSrc[i+0];
+		OPJ_UINT32 src1 = (OPJ_UINT32)pSrc[i+1];
+		OPJ_UINT32 src2 = (OPJ_UINT32)pSrc[i+2];
+		OPJ_UINT32 src3 = (OPJ_UINT32)pSrc[i+3];
+		OPJ_UINT32 src4 = (OPJ_UINT32)pSrc[i+4];
+		OPJ_UINT32 src5 = (OPJ_UINT32)pSrc[i+5];
+		OPJ_UINT32 src6 = (OPJ_UINT32)pSrc[i+6];
+		OPJ_UINT32 src7 = (OPJ_UINT32)pSrc[i+7];
+		
+		*pDst++ = (OPJ_BYTE)((src0 << 7) | (src1 << 6) | (src2 << 5) | (src3 << 4) | (src4 << 3) | (src5 << 2) | (src6 << 1) | src7);
+	}
+	
+	if (length & 7U) {
+		OPJ_UINT32 src0 = (OPJ_UINT32)pSrc[i+0];
+		OPJ_UINT32 src1 = 0U;
+		OPJ_UINT32 src2 = 0U;
+		OPJ_UINT32 src3 = 0U;
+		OPJ_UINT32 src4 = 0U;
+		OPJ_UINT32 src5 = 0U;
+		OPJ_UINT32 src6 = 0U;
+		length = length & 7U;
+		
+		if (length > 1U) {
+			src1 = (OPJ_UINT32)pSrc[i+1];
+			if (length > 2U) {
+				src2 = (OPJ_UINT32)pSrc[i+2];
+				if (length > 3U) {
+					src3 = (OPJ_UINT32)pSrc[i+3];
+					if (length > 4U) {
+						src4 = (OPJ_UINT32)pSrc[i+4];
+						if (length > 5U) {
+							src5 = (OPJ_UINT32)pSrc[i+5];
+							if (length > 6U) {
+								src6 = (OPJ_UINT32)pSrc[i+6];
+							}
+						}
+					}
+				}
+			}
+		}
+		*pDst++ = (OPJ_BYTE)((src0 << 7) | (src1 << 6) | (src2 << 5) | (src3 << 4) | (src4 << 3) | (src5 << 2) | (src6 << 1));
+	}
+}
+
+static void convert_32s2u_C1R(const OPJ_INT32* pSrc, OPJ_BYTE* pDst, OPJ_SIZE_T length)
+{
+	OPJ_SIZE_T i;
+	for (i = 0; i < (length & ~(OPJ_SIZE_T)3U); i+=4U) {
+		OPJ_UINT32 src0 = (OPJ_UINT32)pSrc[i+0];
+		OPJ_UINT32 src1 = (OPJ_UINT32)pSrc[i+1];
+		OPJ_UINT32 src2 = (OPJ_UINT32)pSrc[i+2];
+		OPJ_UINT32 src3 = (OPJ_UINT32)pSrc[i+3];
+		
+		*pDst++ = (OPJ_BYTE)((src0 << 6) | (src1 << 4) | (src2 << 2) | src3);
+	}
+	
+	if (length & 3U) {
+		OPJ_UINT32 src0 = (OPJ_UINT32)pSrc[i+0];
+		OPJ_UINT32 src1 = 0U;
+		OPJ_UINT32 src2 = 0U;
+		length = length & 3U;
+		
+		if (length > 1U) {
+			src1 = (OPJ_UINT32)pSrc[i+1];
+			if (length > 2U) {
+				src2 = (OPJ_UINT32)pSrc[i+2];
+			}
+		}
+		*pDst++ = (OPJ_BYTE)((src0 << 6) | (src1 << 4) | (src2 << 2));
+	}
+}
+
+static void convert_32s4u_C1R(const OPJ_INT32* pSrc, OPJ_BYTE* pDst, OPJ_SIZE_T length)
+{
+	OPJ_SIZE_T i;
+	for (i = 0; i < (length & ~(OPJ_SIZE_T)1U); i+=2U) {
+		OPJ_UINT32 src0 = (OPJ_UINT32)pSrc[i+0];
+		OPJ_UINT32 src1 = (OPJ_UINT32)pSrc[i+1];
+		
+		*pDst++ = (OPJ_BYTE)((src0 << 4) | src1);
+	}
+	
+	if (length & 1U) {
+		OPJ_UINT32 src0 = (OPJ_UINT32)pSrc[i+0];
+		*pDst++ = (OPJ_BYTE)((src0 << 4));
+	}
+}
+
+static void convert_32s6u_C1R(const OPJ_INT32* pSrc, OPJ_BYTE* pDst, OPJ_SIZE_T length)
+{
+	OPJ_SIZE_T i;
+	for (i = 0; i < (length & ~(OPJ_SIZE_T)3U); i+=4U) {
+		OPJ_UINT32 src0 = (OPJ_UINT32)pSrc[i+0];
+		OPJ_UINT32 src1 = (OPJ_UINT32)pSrc[i+1];
+		OPJ_UINT32 src2 = (OPJ_UINT32)pSrc[i+2];
+		OPJ_UINT32 src3 = (OPJ_UINT32)pSrc[i+3];
+		
+		*pDst++ = (OPJ_BYTE)((src0 << 2) | (src1 >> 4));
+		*pDst++ = (OPJ_BYTE)(((src1 & 0xFU) << 4) | (src2 >> 2));
+		*pDst++ = (OPJ_BYTE)(((src2 & 0x3U) << 6) | src3);
+	}
+	
+	if (length & 3U) {
+		OPJ_UINT32 src0 = (OPJ_UINT32)pSrc[i+0];
+		OPJ_UINT32 src1 = 0U;
+		OPJ_UINT32 src2 = 0U;
+		length = length & 3U;
+		
+		if (length > 1U) {
+			src1 = (OPJ_UINT32)pSrc[i+1];
+			if (length > 2U) {
+				src2 = (OPJ_UINT32)pSrc[i+2];
+			}
+		}
+		*pDst++ = (OPJ_BYTE)((src0 << 2) | (src1 >> 4));
+		if (length > 1U) {
+			*pDst++ = (OPJ_BYTE)(((src1 & 0xFU) << 4) | (src2 >> 2));
+			if (length > 2U) {
+				*pDst++ = (OPJ_BYTE)(((src2 & 0x3U) << 6));
+			}
+		}
+	}
+}
+static void convert_32s8u_C1R(const OPJ_INT32* pSrc, OPJ_BYTE* pDst, OPJ_SIZE_T length)
+{
+	OPJ_SIZE_T i;
+	for (i = 0; i < length; ++i) {
+		pDst[i] = (OPJ_BYTE)pSrc[i];
+	}
+}
+const convert_32sXXx_C1R convert_32sXXu_C1R_LUT[9] = {
+	NULL,
+	convert_32s1u_C1R,
+	convert_32s2u_C1R,
+	NULL,
+	convert_32s4u_C1R,
+	NULL,
+	convert_32s6u_C1R,
+	NULL,
+	convert_32s8u_C1R
+};
+
 /* -->> -->> -->> -->>
 
   TGA IMAGE FORMAT
