@@ -56,142 +56,7 @@
  TIFF IMAGE FORMAT
  
  <<-- <<-- <<-- <<-- */
-typedef void (* tif_32stoX)(const OPJ_INT32* pSrc, OPJ_BYTE* pDst, OPJ_SIZE_T length);
 
-static void tif_32sto1u(const OPJ_INT32* pSrc, OPJ_BYTE* pDst, OPJ_SIZE_T length)
-{
-	OPJ_SIZE_T i;
-	for (i = 0; i < (length & ~(OPJ_SIZE_T)7U); i+=8U) {
-		OPJ_UINT32 src0 = (OPJ_UINT32)pSrc[i+0];
-		OPJ_UINT32 src1 = (OPJ_UINT32)pSrc[i+1];
-		OPJ_UINT32 src2 = (OPJ_UINT32)pSrc[i+2];
-		OPJ_UINT32 src3 = (OPJ_UINT32)pSrc[i+3];
-		OPJ_UINT32 src4 = (OPJ_UINT32)pSrc[i+4];
-		OPJ_UINT32 src5 = (OPJ_UINT32)pSrc[i+5];
-		OPJ_UINT32 src6 = (OPJ_UINT32)pSrc[i+6];
-		OPJ_UINT32 src7 = (OPJ_UINT32)pSrc[i+7];
-		
-		*pDst++ = (OPJ_BYTE)((src0 << 7) | (src1 << 6) | (src2 << 5) | (src3 << 4) | (src4 << 3) | (src5 << 2) | (src6 << 1) | src7);
-	}
-	
-	if (length & 7U) {
-		OPJ_UINT32 src0 = (OPJ_UINT32)pSrc[i+0];
-		OPJ_UINT32 src1 = 0U;
-		OPJ_UINT32 src2 = 0U;
-		OPJ_UINT32 src3 = 0U;
-		OPJ_UINT32 src4 = 0U;
-		OPJ_UINT32 src5 = 0U;
-		OPJ_UINT32 src6 = 0U;
-		length = length & 7U;
-		
-		if (length > 1U) {
-			src1 = (OPJ_UINT32)pSrc[i+1];
-			if (length > 2U) {
-				src2 = (OPJ_UINT32)pSrc[i+2];
-				if (length > 3U) {
-					src3 = (OPJ_UINT32)pSrc[i+3];
-					if (length > 4U) {
-						src4 = (OPJ_UINT32)pSrc[i+4];
-						if (length > 5U) {
-							src5 = (OPJ_UINT32)pSrc[i+5];
-							if (length > 6U) {
-								src6 = (OPJ_UINT32)pSrc[i+6];
-							}
-						}
-					}
-				}
-			}
-		}
-		*pDst++ = (OPJ_BYTE)((src0 << 7) | (src1 << 6) | (src2 << 5) | (src3 << 4) | (src4 << 3) | (src5 << 2) | (src6 << 1));
-	}
-}
-
-static void tif_32sto2u(const OPJ_INT32* pSrc, OPJ_BYTE* pDst, OPJ_SIZE_T length)
-{
-	OPJ_SIZE_T i;
-	for (i = 0; i < (length & ~(OPJ_SIZE_T)3U); i+=4U) {
-		OPJ_UINT32 src0 = (OPJ_UINT32)pSrc[i+0];
-		OPJ_UINT32 src1 = (OPJ_UINT32)pSrc[i+1];
-		OPJ_UINT32 src2 = (OPJ_UINT32)pSrc[i+2];
-		OPJ_UINT32 src3 = (OPJ_UINT32)pSrc[i+3];
-		
-		*pDst++ = (OPJ_BYTE)((src0 << 6) | (src1 << 4) | (src2 << 2) | src3);
-	}
-	
-	if (length & 3U) {
-		OPJ_UINT32 src0 = (OPJ_UINT32)pSrc[i+0];
-		OPJ_UINT32 src1 = 0U;
-		OPJ_UINT32 src2 = 0U;
-		length = length & 3U;
-		
-		if (length > 1U) {
-			src1 = (OPJ_UINT32)pSrc[i+1];
-			if (length > 2U) {
-				src2 = (OPJ_UINT32)pSrc[i+2];
-			}
-		}
-		*pDst++ = (OPJ_BYTE)((src0 << 6) | (src1 << 4) | (src2 << 2));
-	}
-}
-
-static void tif_32sto4u(const OPJ_INT32* pSrc, OPJ_BYTE* pDst, OPJ_SIZE_T length)
-{
-	OPJ_SIZE_T i;
-	for (i = 0; i < (length & ~(OPJ_SIZE_T)1U); i+=2U) {
-		OPJ_UINT32 src0 = (OPJ_UINT32)pSrc[i+0];
-		OPJ_UINT32 src1 = (OPJ_UINT32)pSrc[i+1];
-		
-		*pDst++ = (OPJ_BYTE)((src0 << 4) | src1);
-	}
-	
-	if (length & 1U) {
-		OPJ_UINT32 src0 = (OPJ_UINT32)pSrc[i+0];
-		*pDst++ = (OPJ_BYTE)((src0 << 4));
-	}
-}
-
-static void tif_32sto6u(const OPJ_INT32* pSrc, OPJ_BYTE* pDst, OPJ_SIZE_T length)
-{
-	OPJ_SIZE_T i;
-	for (i = 0; i < (length & ~(OPJ_SIZE_T)3U); i+=4U) {
-		OPJ_UINT32 src0 = (OPJ_UINT32)pSrc[i+0];
-		OPJ_UINT32 src1 = (OPJ_UINT32)pSrc[i+1];
-		OPJ_UINT32 src2 = (OPJ_UINT32)pSrc[i+2];
-		OPJ_UINT32 src3 = (OPJ_UINT32)pSrc[i+3];
-		
-		*pDst++ = (OPJ_BYTE)((src0 << 2) | (src1 >> 4));
-		*pDst++ = (OPJ_BYTE)(((src1 & 0xFU) << 4) | (src2 >> 2));
-		*pDst++ = (OPJ_BYTE)(((src2 & 0x3U) << 6) | src3);
-	}
-	
-	if (length & 3U) {
-		OPJ_UINT32 src0 = (OPJ_UINT32)pSrc[i+0];
-		OPJ_UINT32 src1 = 0U;
-		OPJ_UINT32 src2 = 0U;
-		length = length & 3U;
-		
-		if (length > 1U) {
-			src1 = (OPJ_UINT32)pSrc[i+1];
-			if (length > 2U) {
-				src2 = (OPJ_UINT32)pSrc[i+2];
-			}
-		}
-		*pDst++ = (OPJ_BYTE)((src0 << 2) | (src1 >> 4));
-		if (length > 1U) {
-			*pDst++ = (OPJ_BYTE)(((src1 & 0xFU) << 4) | (src2 >> 2));
-			if (length > 2U) {
-				*pDst++ = (OPJ_BYTE)(((src2 & 0x3U) << 6));
-			}
-		}
-	}
-}
-static void tif_32sto8u(const OPJ_INT32* pSrc, OPJ_BYTE* pDst, OPJ_SIZE_T length)
-{
-	OPJ_SIZE_T i;
-	for (i = 0; i < length; ++i) {
-		pDst[i] = (OPJ_BYTE)pSrc[i];
-	}
-}
 static void tif_32sto10u(const OPJ_INT32* pSrc, OPJ_BYTE* pDst, OPJ_SIZE_T length)
 {
 	OPJ_SIZE_T i;
@@ -298,56 +163,6 @@ static void tif_32sto16u(const OPJ_INT32* pSrc, OPJ_UINT16* pDst, OPJ_SIZE_T len
 	}
 }
 
-typedef void (* convert_32s_PXCX)(OPJ_INT32 const* const* pSrc, OPJ_INT32* pDst, OPJ_SIZE_T length, OPJ_INT32 adjust);
-static void convert_32s_P1C1(OPJ_INT32 const* const* pSrc, OPJ_INT32* pDst, OPJ_SIZE_T length, OPJ_INT32 adjust)
-{
-	OPJ_SIZE_T i;
-	const OPJ_INT32* pSrc0 = pSrc[0];
-	
-	for (i = 0; i < length; i++) {
-		pDst[i] = pSrc0[i] + adjust;
-	}
-}
-static void convert_32s_P2C2(OPJ_INT32 const* const* pSrc, OPJ_INT32* pDst, OPJ_SIZE_T length, OPJ_INT32 adjust)
-{
-	OPJ_SIZE_T i;
-	const OPJ_INT32* pSrc0 = pSrc[0];
-	const OPJ_INT32* pSrc1 = pSrc[1];
-	
-	for (i = 0; i < length; i++) {
-		pDst[2*i+0] = pSrc0[i] + adjust;
-		pDst[2*i+1] = pSrc1[i] + adjust;
-	}
-}
-static void convert_32s_P3C3(OPJ_INT32 const* const* pSrc, OPJ_INT32* pDst, OPJ_SIZE_T length, OPJ_INT32 adjust)
-{
-	OPJ_SIZE_T i;
-	const OPJ_INT32* pSrc0 = pSrc[0];
-	const OPJ_INT32* pSrc1 = pSrc[1];
-	const OPJ_INT32* pSrc2 = pSrc[2];
-	
-	for (i = 0; i < length; i++) {
-		pDst[3*i+0] = pSrc0[i] + adjust;
-		pDst[3*i+1] = pSrc1[i] + adjust;
-		pDst[3*i+2] = pSrc2[i] + adjust;
-	}
-}
-static void convert_32s_P4C4(OPJ_INT32 const* const* pSrc, OPJ_INT32* pDst, OPJ_SIZE_T length, OPJ_INT32 adjust)
-{
-	OPJ_SIZE_T i;
-	const OPJ_INT32* pSrc0 = pSrc[0];
-	const OPJ_INT32* pSrc1 = pSrc[1];
-	const OPJ_INT32* pSrc2 = pSrc[2];
-	const OPJ_INT32* pSrc3 = pSrc[3];
-	
-	for (i = 0; i < length; i++) {
-		pDst[4*i+0] = pSrc0[i] + adjust;
-		pDst[4*i+1] = pSrc1[i] + adjust;
-		pDst[4*i+2] = pSrc2[i] + adjust;
-		pDst[4*i+3] = pSrc3[i] + adjust;
-	}
-}
-
 int imagetotif(opj_image_t * image, const char *outfile)
 {
 	int width, height;
@@ -361,7 +176,7 @@ int imagetotif(opj_image_t * image, const char *outfile)
 	OPJ_INT32* buffer32s = NULL;
 	OPJ_INT32 const* planes[4];
 	convert_32s_PXCX cvtPxToCx = NULL;
-	tif_32stoX cvt32sToTif = NULL;
+	convert_32sXXx_C1R cvt32sToTif = NULL;
 
 	bps = (int)image->comps[0].prec;
 	planes[0] = image->comps[0].data;
@@ -413,38 +228,14 @@ int imagetotif(opj_image_t * image, const char *outfile)
 	for (i = 0U; i < numcomps; ++i) {
 		clip_component(&(image->comps[i]), image->comps[0].prec);
 	}
-	switch (numcomps) {
-		case 1:
-			cvtPxToCx = convert_32s_P1C1;
-			break;
-		case 2:
-			cvtPxToCx = convert_32s_P2C2;
-			break;
-		case 3:
-			cvtPxToCx = convert_32s_P3C3;
-			break;
-		case 4:
-			cvtPxToCx = convert_32s_P4C4;
-			break;
-		default:
-			/* never here */
-			break;
-	}
+	cvtPxToCx = convert_32s_PXCX_LUT[numcomps];
 	switch (bps) {
 		case 1:
-			cvt32sToTif = tif_32sto1u;
-			break;
 		case 2:
-			cvt32sToTif = tif_32sto2u;
-			break;
 		case 4:
-			cvt32sToTif = tif_32sto4u;
-			break;
 		case 6:
-			cvt32sToTif = tif_32sto6u;
-			break;
 		case 8:
-			cvt32sToTif = tif_32sto8u;
+			cvt32sToTif = convert_32sXXu_C1R_LUT[bps];
 			break;
 		case 10:
 			cvt32sToTif = tif_32sto10u;
@@ -456,7 +247,7 @@ int imagetotif(opj_image_t * image, const char *outfile)
 			cvt32sToTif = tif_32sto14u;
 			break;
 		case 16:
-			cvt32sToTif = (tif_32stoX)tif_32sto16u;
+			cvt32sToTif = (convert_32sXXx_C1R)tif_32sto16u;
 			break;
 		default:
 			/* never here */
@@ -510,119 +301,6 @@ int imagetotif(opj_image_t * image, const char *outfile)
 	return 0;
 }/* imagetotif() */
 
-typedef void (* tif_Xto32s)(const OPJ_BYTE* pSrc, OPJ_INT32* pDst, OPJ_SIZE_T length);
-
-static void tif_1uto32s(const OPJ_BYTE* pSrc, OPJ_INT32* pDst, OPJ_SIZE_T length)
-{
-	OPJ_SIZE_T i;
-	for (i = 0; i < (length & ~(OPJ_SIZE_T)7U); i+=8U) {
-		OPJ_UINT32 val = *pSrc++;
-		pDst[i+0] = (OPJ_INT32)( val >> 7);
-		pDst[i+1] = (OPJ_INT32)((val >> 6) & 0x1U);
-		pDst[i+2] = (OPJ_INT32)((val >> 5) & 0x1U);
-		pDst[i+3] = (OPJ_INT32)((val >> 4) & 0x1U);
-		pDst[i+4] = (OPJ_INT32)((val >> 3) & 0x1U);
-		pDst[i+5] = (OPJ_INT32)((val >> 2) & 0x1U);
-		pDst[i+6] = (OPJ_INT32)((val >> 1) & 0x1U);
-		pDst[i+7] = (OPJ_INT32)(val & 0x1U);
-	}
-	if (length & 7U) {
-		OPJ_UINT32 val = *pSrc++;
-		length = length & 7U;
-		pDst[i+0] = (OPJ_INT32)(val >> 7);
-		
-		if (length > 1U) {
-			pDst[i+1] = (OPJ_INT32)((val >> 6) & 0x1U);
-			if (length > 2U) {
-				pDst[i+2] = (OPJ_INT32)((val >> 5) & 0x1U);
-				if (length > 3U) {
-					pDst[i+3] = (OPJ_INT32)((val >> 4) & 0x1U);
-					if (length > 4U) {
-						pDst[i+4] = (OPJ_INT32)((val >> 3) & 0x1U);
-						if (length > 5U) {
-							pDst[i+5] = (OPJ_INT32)((val >> 2) & 0x1U);
-							if (length > 6U) {
-								pDst[i+6] = (OPJ_INT32)((val >> 1) & 0x1U);
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-}
-static void tif_2uto32s(const OPJ_BYTE* pSrc, OPJ_INT32* pDst, OPJ_SIZE_T length)
-{
-	OPJ_SIZE_T i;
-	for (i = 0; i < (length & ~(OPJ_SIZE_T)3U); i+=4U) {
-		OPJ_UINT32 val = *pSrc++;
-		pDst[i+0] = (OPJ_INT32)( val >> 6);
-		pDst[i+1] = (OPJ_INT32)((val >> 4) & 0x3U);
-		pDst[i+2] = (OPJ_INT32)((val >> 2) & 0x3U);
-		pDst[i+3] = (OPJ_INT32)(val & 0x3U);
-	}
-	if (length & 3U) {
-		OPJ_UINT32 val = *pSrc++;
-		length = length & 3U;
-		pDst[i+0] =  (OPJ_INT32)(val >> 6);
-		
-		if (length > 1U) {
-			pDst[i+1] = (OPJ_INT32)((val >> 4) & 0x3U);
-			if (length > 2U) {
-				pDst[i+2] = (OPJ_INT32)((val >> 2) & 0x3U);
-				
-			}
-		}
-	}
-}
-static void tif_4uto32s(const OPJ_BYTE* pSrc, OPJ_INT32* pDst, OPJ_SIZE_T length)
-{
-	OPJ_SIZE_T i;
-	for (i = 0; i < (length & ~(OPJ_SIZE_T)1U); i+=2U) {
-		OPJ_UINT32 val = *pSrc++;
-		pDst[i+0] = (OPJ_INT32)(val >> 4);
-		pDst[i+1] = (OPJ_INT32)(val & 0xFU);
-	}
-	if (length & 1U) {
-		OPJ_UINT8 val = *pSrc++;
-		pDst[i+0] = (OPJ_INT32)(val >> 4);
-	}
-}
-static void tif_6uto32s(const OPJ_BYTE* pSrc, OPJ_INT32* pDst, OPJ_SIZE_T length)
-{
-	OPJ_SIZE_T i;
-	for (i = 0; i < (length & ~(OPJ_SIZE_T)3U); i+=4U) {
-		OPJ_UINT32 val0 = *pSrc++;
-		OPJ_UINT32 val1 = *pSrc++;
-		OPJ_UINT32 val2 = *pSrc++;
-		pDst[i+0] = (OPJ_INT32)(val0 >> 2);
-		pDst[i+1] = (OPJ_INT32)(((val0 & 0x3U) << 4) | (val1 >> 4));
-		pDst[i+2] = (OPJ_INT32)(((val1 & 0xFU) << 2) | (val2 >> 6));
-		pDst[i+3] = (OPJ_INT32)(val2 & 0x3FU);
-		
-	}
-	if (length & 3U) {
-		OPJ_UINT32 val0 = *pSrc++;
-		length = length & 3U;
-		pDst[i+0] = (OPJ_INT32)(val0 >> 2);
-		
-		if (length > 1U) {
-			OPJ_UINT32 val1 = *pSrc++;
-			pDst[i+1] = (OPJ_INT32)(((val0 & 0x3U) << 4) | (val1 >> 4));
-			if (length > 2U) {
-				OPJ_UINT32 val2 = *pSrc++;
-				pDst[i+2] = (OPJ_INT32)(((val1 & 0xFU) << 2) | (val2 >> 6));
-			}
-		}
-	}
-}
-static void tif_8uto32s(const OPJ_BYTE* pSrc, OPJ_INT32* pDst, OPJ_SIZE_T length)
-{
-	OPJ_SIZE_T i;
-	for (i = 0; i < length; ++i) {
-		pDst[i] = pSrc[i];
-	}
-}
 static void tif_10uto32s(const OPJ_BYTE* pSrc, OPJ_INT32* pDst, OPJ_SIZE_T length)
 {
 	OPJ_SIZE_T i;
@@ -718,52 +396,6 @@ static void tif_16uto32s(const OPJ_UINT16* pSrc, OPJ_INT32* pDst, OPJ_SIZE_T len
 	}
 }
 
-typedef void (* convert_32s_CXPX)(const OPJ_INT32* pSrc, OPJ_INT32* const* pDst, OPJ_SIZE_T length);
-static void convert_32s_C1P1(const OPJ_INT32* pSrc, OPJ_INT32* const* pDst, OPJ_SIZE_T length)
-{
-	memcpy(pDst[0], pSrc, length * sizeof(OPJ_INT32));
-}
-static void convert_32s_C2P2(const OPJ_INT32* pSrc, OPJ_INT32* const* pDst, OPJ_SIZE_T length)
-{
-	OPJ_SIZE_T i;
-	OPJ_INT32* pDst0 = pDst[0];
-	OPJ_INT32* pDst1 = pDst[1];
-	
-	for (i = 0; i < length; i++) {
-		pDst0[i] = pSrc[2*i+0];
-		pDst1[i] = pSrc[2*i+1];
-	}
-}
-static void convert_32s_C3P3(const OPJ_INT32* pSrc, OPJ_INT32* const* pDst, OPJ_SIZE_T length)
-{
-	OPJ_SIZE_T i;
-	OPJ_INT32* pDst0 = pDst[0];
-	OPJ_INT32* pDst1 = pDst[1];
-	OPJ_INT32* pDst2 = pDst[2];
-	
-	for (i = 0; i < length; i++) {
-		pDst0[i] = pSrc[3*i+0];
-		pDst1[i] = pSrc[3*i+1];
-		pDst2[i] = pSrc[3*i+2];
-	}
-}
-static void convert_32s_C4P4(const OPJ_INT32* pSrc, OPJ_INT32* const* pDst, OPJ_SIZE_T length)
-{
-	OPJ_SIZE_T i;
-	OPJ_INT32* pDst0 = pDst[0];
-	OPJ_INT32* pDst1 = pDst[1];
-	OPJ_INT32* pDst2 = pDst[2];
-	OPJ_INT32* pDst3 = pDst[3];
-	
-	for (i = 0; i < length; i++) {
-		pDst0[i] = pSrc[4*i+0];
-		pDst1[i] = pSrc[4*i+1];
-		pDst2[i] = pSrc[4*i+2];
-		pDst3[i] = pSrc[4*i+3];
-	}
-}
-
-
 /*
  * libtiff/tif_getimage.c : 1,2,4,8,16 bitspersample accepted
  * CINEMA                 : 12 bit precision
@@ -784,7 +416,7 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
 	unsigned short tiBps, tiPhoto, tiSf, tiSpp, tiPC;
 	unsigned int tiWidth, tiHeight;
 	OPJ_BOOL is_cinema = OPJ_IS_CINEMA(parameters->rsiz);
-	tif_Xto32s cvtTifTo32s = NULL;
+	convert_XXx32s_C1R cvtTifTo32s = NULL;
 	convert_32s_CXPX cvtCxToPx = NULL;
 	OPJ_INT32* buffer32s = NULL;
 	OPJ_INT32* planes[4];
@@ -825,20 +457,13 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
 	
 	switch (tiBps) {
 		case 1:
-			cvtTifTo32s = tif_1uto32s;
-			break;
 		case 2:
-			cvtTifTo32s = tif_2uto32s;
-			break;
 		case 4:
-			cvtTifTo32s = tif_4uto32s;
-			break;
 		case 6:
-			cvtTifTo32s = tif_6uto32s;
-			break;
 		case 8:
-			cvtTifTo32s = tif_8uto32s;
+			cvtTifTo32s = convert_XXu32s_C1R_LUT[tiBps];
 			break;
+		/* others are specific to TIFF */
 		case 10:
 			cvtTifTo32s = tif_10uto32s;
 			break;
@@ -849,7 +474,7 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
 			cvtTifTo32s = tif_14uto32s;
 			break;
 		case 16:
-			cvtTifTo32s = (tif_Xto32s)tif_16uto32s;
+			cvtTifTo32s = (convert_XXx32s_C1R)tif_16uto32s;
 			break;
 		default:
 			/* never here */
@@ -908,25 +533,9 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
 		color_space = OPJ_CLRSPC_GRAY;
 	}
 	
-	switch (numcomps) {
-		case 1:
-			cvtCxToPx = convert_32s_C1P1;
-			break;
-		case 2:
-			cvtCxToPx = convert_32s_C2P2;
-			break;
-		case 3:
-			cvtCxToPx = convert_32s_C3P3;
-			break;
-		case 4:
-			cvtCxToPx = convert_32s_C4P4;
-			break;
-		default:
-			/* never here */
-			break;
-	}
+	cvtCxToPx = convert_32s_CXPX_LUT[numcomps];
 	if (tiPC == PLANARCONFIG_SEPARATE) {
-		cvtCxToPx = convert_32s_C1P1; /* override */
+		cvtCxToPx = convert_32s_CXPX_LUT[1]; /* override */
 		tiSpp = 1U; /* consider only one sample per plane */
 	}
 
