@@ -601,7 +601,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
             char signo;
             int width,height,bitdepth,ncomp;
             OPJ_UINT32 len;
-            OPJ_BOOL raw_signed;
+            OPJ_BOOL raw_signed = OPJ_FALSE;
             substr2 = strchr(opj_optarg,'@');
             if (substr2 == NULL) {
                 len = (OPJ_UINT32) strlen(opj_optarg);

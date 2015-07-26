@@ -194,12 +194,12 @@ static void convert_16u32s_C1R(const OPJ_BYTE* pSrc, OPJ_INT32* pDst, OPJ_SIZE_T
 
 opj_image_t *pngtoimage(const char *read_idf, opj_cparameters_t * params)
 {
-	png_structp  png;
-	png_infop    info;
+	png_structp  png = NULL;
+	png_infop    info = NULL;
 	double gamma;
 	int bit_depth, interlace_type,compression_type, filter_type;
 	OPJ_UINT32 i;
-	png_uint_32  width, height;
+	png_uint_32  width, height = 0U;
 	int color_type;
 	FILE *reader = NULL;
 	OPJ_BYTE** rows = NULL;
@@ -395,12 +395,14 @@ int imagetopng(opj_image_t * image, const char *write_idf)
 	int *red, *green, *blue, *alpha;
 	unsigned char *row_buf, *d;
 	int has_alpha, width, height, nr_comp, color_type;
-	int adjustR, adjustG, adjustB, adjustA, x, y, fails;
+	int adjustR, adjustG, adjustB, adjustA, x, y;
 	int prec, ushift, dshift, is16, force16, force8;
-	unsigned short mask = 0xffff;
+	unsigned short mask;
 	png_color_8 sig_bit;
 	
-	is16 = force16 = force8 = ushift = dshift = 0; fails = 1;
+	volatile int fails = 1;
+	
+	is16 = force16 = force8 = ushift = dshift = 0;
 	prec = (int)image->comps[0].prec;
 	nr_comp = (int)image->numcomps;
 	
@@ -474,6 +476,7 @@ int imagetopng(opj_image_t * image, const char *write_idf)
 	 */
 	png_set_compression_level(png, Z_BEST_COMPRESSION);
 	
+	mask = 0xffff;
 	if(prec == 16) mask = 0xffff;
 	else
 		if(prec == 8) mask = 0x00ff;
