@@ -129,7 +129,7 @@ static INLINE long opj_lrintf(float f){
 
 	/* commented out line breaks many tests */
   /* return (long)((f>0.0f) ? (f + 0.5f):(f -0.5f)); */
-#else
+#elif defined(_M_IX86)
     int i;
      _asm{
         fld f
@@ -137,6 +137,8 @@ static INLINE long opj_lrintf(float f){
     };
  
     return i;
+#else 
+	return (long)((f>0.0f) ? (f + 0.5f) : (f - 0.5f));
 #endif
 }
 #elif defined(__BORLANDC__)
