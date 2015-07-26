@@ -87,7 +87,7 @@ static INLINE OPJ_UINT32 opj_uint_max(OPJ_UINT32  a, OPJ_UINT32  b) {
  */
 static INLINE OPJ_UINT32 opj_uint_adds(OPJ_UINT32 a, OPJ_UINT32 b) {
 	OPJ_UINT64 sum = (OPJ_UINT64)a + (OPJ_UINT64)b;
-	return -(OPJ_UINT32)(sum >> 32) | (OPJ_UINT32)sum;
+	return (OPJ_UINT32)(-(OPJ_INT32)(sum >> 32)) | (OPJ_UINT32)sum;
 }
 
 /**

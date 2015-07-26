@@ -440,7 +440,10 @@ static OPJ_BOOL bmp_read_info_header(FILE* IN, OPJ_BITMAPINFOHEADER* header)
 		header->biColorSpaceType |= (OPJ_UINT32)(getc(IN) << 16);
 		header->biColorSpaceType |= (OPJ_UINT32)(getc(IN) << 24);
 		
-		fread(&(header->biColorSpaceEP), 1U, sizeof(header->biColorSpaceEP), IN);
+		if (fread(&(header->biColorSpaceEP), 1U, sizeof(header->biColorSpaceEP), IN) != sizeof(header->biColorSpaceEP)) {
+			fprintf(stderr,"Error, can't  read BMP header\n");
+			return OPJ_FALSE;
+		}
 		
 		header->biRedGamma  = (OPJ_UINT32)getc(IN);
 		header->biRedGamma |= (OPJ_UINT32)(getc(IN) << 8);

@@ -5007,7 +5007,7 @@ static OPJ_BOOL opj_j2k_read_unk (     opj_j2k_t *p_j2k,
 
         opj_event_msg(p_manager, EVT_WARNING, "Unknown marker\n");
 
-        while(1) {
+		for (;;) {
                 /* Try to read 2 bytes (the next marker ID) from stream and copy them into the buffer*/
                 if (opj_stream_read_data(p_stream,p_j2k->m_specific_param.m_decoder.m_header_data,2,p_manager) != 2) {
                         opj_event_msg(p_manager, EVT_ERROR, "Stream too short\n");
@@ -7609,7 +7609,6 @@ static void opj_j2k_cp_destroy (opj_cp_t *p_cp)
 {
 	OPJ_UINT32 l_nb_tiles;
 	opj_tcp_t * l_current_tile = 00;
-	OPJ_UINT32 i;
 
 	if (p_cp == 00)
 	{
@@ -7617,10 +7616,11 @@ static void opj_j2k_cp_destroy (opj_cp_t *p_cp)
 	}
 	if (p_cp->tcps != 00)
 	{
+		OPJ_UINT32 i;
 		l_current_tile = p_cp->tcps;
 		l_nb_tiles = p_cp->th * p_cp->tw;
 		
-		for (i = 0; i < l_nb_tiles; ++i)
+		for (i = 0U; i < l_nb_tiles; ++i)
 		{
 			opj_j2k_tcp_destroy(l_current_tile);
 			++l_current_tile;
@@ -7763,7 +7763,6 @@ OPJ_BOOL opj_j2k_read_tile_header(      opj_j2k_t * p_j2k,
         OPJ_UINT32 l_marker_size;
         const opj_dec_memory_marker_handler_t * l_marker_handler = 00;
         opj_tcp_t * l_tcp = NULL;
-        OPJ_UINT32 l_nb_tiles;
 
         /* preconditions */
         assert(p_stream != 00);
@@ -7975,8 +7974,8 @@ OPJ_BOOL opj_j2k_read_tile_header(      opj_j2k_t * p_j2k,
 
         /* FIXME DOC ???*/
         if ( ! p_j2k->m_specific_param.m_decoder.m_can_decode) {
+                OPJ_UINT32 l_nb_tiles = p_j2k->m_cp.th * p_j2k->m_cp.tw;
                 l_tcp = p_j2k->m_cp.tcps + p_j2k->m_current_tile_number;
-                l_nb_tiles = p_j2k->m_cp.th * p_j2k->m_cp.tw;
 
                 while( (p_j2k->m_current_tile_number < l_nb_tiles) && (l_tcp->m_data == 00) ) {
                         ++p_j2k->m_current_tile_number;
@@ -9538,7 +9537,7 @@ static OPJ_BOOL opj_j2k_decode_tiles ( opj_j2k_t *p_j2k,
         }
         l_max_data_size = 1000;
 
-        while (OPJ_TRUE) {
+		for (;;) {
                 if (! opj_j2k_read_tile_header( p_j2k,
                                         &l_current_tile_no,
                                         &l_data_size,
@@ -9661,7 +9660,7 @@ static OPJ_BOOL opj_j2k_decode_one_tile (       opj_j2k_t *p_j2k,
                                 p_j2k->m_specific_param.m_decoder.m_state = J2K_STATE_TPHSOT;
                 }
 
-        while (OPJ_TRUE) {
+		for (;;) {
                 if (! opj_j2k_read_tile_header( p_j2k,
                                         &l_current_tile_no,
                                         &l_data_size,

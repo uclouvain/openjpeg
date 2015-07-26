@@ -507,11 +507,11 @@ int parse_cmdline_decoder(int argc, char **argv, opj_decompress_parameters *para
 	/* parse the command line */
 	int totlen, c;
 	opj_option_t long_option[]={
-		{"ImgDir",    REQ_ARG, NULL ,'y'},
-		{"OutFor",    REQ_ARG, NULL ,'O'},
-		{"force-rgb", NO_ARG,  &(parameters->force_rgb), 1},
-		{"upsample",  NO_ARG,  &(parameters->upsample),  1},
-		{"split-pnm", NO_ARG,  &(parameters->split_pnm), 1}
+		{"ImgDir",    REQ_ARG, NULL,'y'},
+		{"OutFor",    REQ_ARG, NULL,'O'},
+		{"force-rgb", NO_ARG,  NULL, 1},
+		{"upsample",  NO_ARG,  NULL, 1},
+		{"split-pnm", NO_ARG,  NULL, 1}
 	};
 
 	const char optlist[] = "i:o:r:l:x:d:t:p:"
@@ -522,6 +522,10 @@ int parse_cmdline_decoder(int argc, char **argv, opj_decompress_parameters *para
 #endif /* USE_JPWL */
 /* <<UniPG */
             "h"		;
+
+	long_option[2].flag = &(parameters->force_rgb);
+	long_option[3].flag = &(parameters->upsample);
+	long_option[4].flag = &(parameters->split_pnm);
 	totlen=sizeof(long_option);
 	opj_reset_options_reading();
 	img_fol->set_out_format = 0;
