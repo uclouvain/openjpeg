@@ -624,7 +624,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
                 wrong = OPJ_TRUE;
             }
             if (!wrong) {
-                int i;
+                int compno;
                 int lastdx = 1;
                 int lastdy = 1;
                 raw_cp->rawWidth = width;
@@ -633,10 +633,10 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
                 raw_cp->rawBitDepth = bitdepth;
                 raw_cp->rawSigned  = raw_signed;
                 raw_cp->rawComps = (raw_comp_cparameters_t*) malloc(((OPJ_UINT32)(ncomp))*sizeof(raw_comp_cparameters_t));
-                for (i = 0; i < ncomp && !wrong; i++) {
+                for (compno = 0; compno < ncomp && !wrong; compno++) {
                     if (substr2 == NULL) {
-                        raw_cp->rawComps[i].dx = lastdx;
-                        raw_cp->rawComps[i].dy = lastdy;
+                        raw_cp->rawComps[compno].dx = lastdx;
+                        raw_cp->rawComps[compno].dy = lastdy;
                     } else {
                         int dx,dy;
                         sep = strchr(substr2,':');
@@ -644,16 +644,16 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
                             if (sscanf(substr2, "%dx%d", &dx, &dy) == 2) {
                                 lastdx = dx;
                                 lastdy = dy;
-                                raw_cp->rawComps[i].dx = dx;
-                                raw_cp->rawComps[i].dy = dy;
+                                raw_cp->rawComps[compno].dx = dx;
+                                raw_cp->rawComps[compno].dy = dy;
                                 substr2 = NULL;
                             } else {
                                 wrong = OPJ_TRUE;
                             }
                         } else {
                             if (sscanf(substr2, "%dx%d:%s", &dx, &dy, substr2) == 3) {
-                                raw_cp->rawComps[i].dx = dx;
-                                raw_cp->rawComps[i].dy = dy;
+                                raw_cp->rawComps[compno].dx = dx;
+                                raw_cp->rawComps[compno].dy = dy;
                             } else {
                                 wrong = OPJ_TRUE;
                             }

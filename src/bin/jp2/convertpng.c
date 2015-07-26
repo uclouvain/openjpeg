@@ -102,7 +102,7 @@ typedef void (* convert_XXx32s_C1R)(const OPJ_BYTE* pSrc, OPJ_INT32* pDst, OPJ_S
 static void convert_1u32s_C1R(const OPJ_BYTE* pSrc, OPJ_INT32* pDst, OPJ_SIZE_T length)
 {
 	OPJ_SIZE_T i;
-	for (i = 0; i < (length & -(OPJ_SIZE_T)8U); i+=8U) {
+	for (i = 0; i < (length & ~(OPJ_SIZE_T)7U); i+=8U) {
 		OPJ_UINT32 val = *pSrc++;
 		pDst[i+0] = (OPJ_INT32)( val >> 7);
 		pDst[i+1] = (OPJ_INT32)((val >> 6) & 0x1U);
@@ -141,7 +141,7 @@ static void convert_1u32s_C1R(const OPJ_BYTE* pSrc, OPJ_INT32* pDst, OPJ_SIZE_T 
 static void convert_2u32s_C1R(const OPJ_BYTE* pSrc, OPJ_INT32* pDst, OPJ_SIZE_T length)
 {
 	OPJ_SIZE_T i;
-	for (i = 0; i < (length & -(OPJ_SIZE_T)4U); i+=4U) {
+	for (i = 0; i < (length & ~(OPJ_SIZE_T)3U); i+=4U) {
 		OPJ_UINT32 val = *pSrc++;
 		pDst[i+0] = (OPJ_INT32)( val >> 6);
 		pDst[i+1] = (OPJ_INT32)((val >> 4) & 0x3U);
@@ -165,7 +165,7 @@ static void convert_2u32s_C1R(const OPJ_BYTE* pSrc, OPJ_INT32* pDst, OPJ_SIZE_T 
 static void convert_4u32s_C1R(const OPJ_BYTE* pSrc, OPJ_INT32* pDst, OPJ_SIZE_T length)
 {
 	OPJ_SIZE_T i;
-	for (i = 0; i < (length & -(OPJ_SIZE_T)2U); i+=2U) {
+	for (i = 0; i < (length & ~(OPJ_SIZE_T)1U); i+=2U) {
 		OPJ_UINT32 val = *pSrc++;
 		pDst[i+0] = (OPJ_INT32)(val >> 4);
 		pDst[i+1] = (OPJ_INT32)(val & 0xFU);

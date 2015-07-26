@@ -179,9 +179,9 @@ struct tga_header
 static unsigned short get_ushort(unsigned short val) {
 
 #ifdef OPJ_BIG_ENDIAN
-    return( ((val & 0xff) << 8) + (val >> 8) );
+    return (unsigned short)(((val & 0xffU) << 8) | (val >> 8));
 #else
-    return( val );
+    return val;
 #endif
 
 }
@@ -267,10 +267,9 @@ static int tga_readheader(FILE *fp, unsigned int *bits_per_pixel,
 
 #ifdef OPJ_BIG_ENDIAN
 
-static INLINE int16_t swap16(int16_t x)
+static INLINE OPJ_UINT16 swap16(OPJ_UINT16 x)
 {
-    return((((u_int16_t)x & 0x00ffU) <<  8) |
-           (((u_int16_t)x & 0xff00U) >>  8));
+    return (OPJ_UINT16)(((x & 0x00ffU) <<  8) | ((x & 0xff00U) >>  8));
 }
 
 #endif
@@ -278,7 +277,7 @@ static INLINE int16_t swap16(int16_t x)
 static int tga_writeheader(FILE *fp, int bits_per_pixel, int width, int height, 
                            OPJ_BOOL flip_image)
 {
-    unsigned short image_w, image_h, us0;
+    OPJ_UINT16 image_w, image_h, us0;
     unsigned char uc0, image_type;
     unsigned char pixel_depth, image_desc;
 

@@ -1430,7 +1430,7 @@ opj_pi_iterator_t *opj_pi_initialise_encode(const opj_image_t *p_image,
 	l_step_l = l_max_res * l_step_r;
 
 	/* set values for first packet iterator*/
-	l_pi->tp_on = p_cp->m_specific_param.m_enc.m_tp_on;
+	l_pi->tp_on = (OPJ_BYTE)p_cp->m_specific_param.m_enc.m_tp_on;
 	l_current_pi = l_pi;
 
 	/* memory allocation for include*/
