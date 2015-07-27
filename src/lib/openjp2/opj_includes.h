@@ -162,10 +162,14 @@ static INLINE long opj_lrintf(float f) {
 }
 #endif
 
-
-
 #if defined(_MSC_VER) && (_MSC_VER < 1400)
 	#define vsnprintf _vsnprintf
+#endif
+
+/* MSVC x86 is really bad at doing int64 = int32 * int32 on its own. Use intrinsic. */
+#if defined(_MSC_VER) && (_MSC_VER >= 1400) && !defined(__INTEL_COMPILER) && defined(_M_IX86)
+#	include <intrin.h>
+#	pragma intrinsic(__emul)
 #endif
 
 #include "opj_inttypes.h"
