@@ -13,6 +13,8 @@ set(INPUT_CONF_PATH ${OPJ_DATA_ROOT}/input/conformance)
 
 # need kdu_expand if possible
 find_package(KAKADU)
+# need jpylyzer if possible
+find_package(JPYLYZER)
 
 #########################################################################
 # GENERATION OF THE TEST SUITE (DUMP)
@@ -335,6 +337,21 @@ foreach(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
                                  NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-decode-ref)
 
           endif()
+          
+          # Test the encoded file is a valid JP2 file
+          if (JPYLYZER_EXECUTABLE)
+          	if (${OUTPUT_FILENAME} MATCHES "\\.jp2$")
+          		add_test(NAME NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-jpylyser
+              	COMMAND ${JPYLYZER_EXECUTABLE}
+              	${OUTPUT_FILENAME}
+              	)
+              set_tests_properties(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-jpylyser PROPERTIES 
+              	DEPENDS NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-encode
+  							PASS_REGULAR_EXPRESSION "<isValidJP2>True</isValidJP2>"
+								)
+								
+          	endif()
+          endif(JPYLYZER_EXECUTABLE)
       endif()
 
     # DECODER TEST SUITE
