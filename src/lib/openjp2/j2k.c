@@ -6543,9 +6543,9 @@ OPJ_BOOL opj_j2k_setup_encoder(     opj_j2k_t *p_j2k,
                 else {
                     if(tcp->mct==1 && image->numcomps >= 3) { /* RGB->YCC MCT is enabled */
                         if ((image->comps[0].dx != image->comps[1].dx) ||
-                                (image->comps[0].dx != image->comps[2].dx) ||
-                                (image->comps[0].dy != image->comps[1].dy) ||
-                                (image->comps[0].dy != image->comps[2].dy)) {
+                            (image->comps[0].dx != image->comps[2].dx) ||
+                            (image->comps[0].dy != image->comps[1].dy) ||
+                            (image->comps[0].dy != image->comps[2].dy)) {
                             opj_event_msg(p_manager, EVT_WARNING, "Cannot perform MCT on components with different sizes. Disabling MCT.\n");
                             tcp->mct = 0;
                         }
@@ -7639,12 +7639,16 @@ static void opj_j2k_cp_destroy (opj_cp_t *p_cp)
 		opj_free(p_cp->ppm_markers);
 		p_cp->ppm_markers = NULL;
 	}
-	opj_free(p_cp->ppm_buffer);
+    if (p_cp->ppm_buffer) {
+        opj_free(p_cp->ppm_buffer);
+    }
 	p_cp->ppm_buffer = 00;
 	p_cp->ppm_data = NULL; /* ppm_data belongs to the allocated buffer pointed by ppm_buffer */
-	opj_free(p_cp->comment);
+    if (p_cp->comment) {
+        opj_free(p_cp->comment);
+    }
 	p_cp->comment = 00;
-	if (! p_cp->m_is_decoder)
+	if (! p_cp->m_is_decoder && p_cp->m_specific_param.m_enc.m_matrice)
 	{
 		opj_free(p_cp->m_specific_param.m_enc.m_matrice);
 		p_cp->m_specific_param.m_enc.m_matrice = 00;
@@ -9932,50 +9936,50 @@ OPJ_BOOL opj_j2k_encode(opj_j2k_t * p_j2k,
                 /* if we only have one tile, then simply set tile component data equal to image component data */
                 /* otherwise, allocate the data */
                 for (j=0;j<p_j2k->m_tcd->image->numcomps;++j) {
-                        opj_tcd_tilecomp_t* l_tilec = p_tcd->tcd_image->tiles->comps + j;
-                        if (l_nb_tiles == 1) {
-												        opj_image_comp_t * l_img_comp = p_tcd->image->comps + j;
-												        l_tilec->data  =  l_img_comp->data;
-												        l_tilec->ownsData = OPJ_FALSE;
-                        } else {
-												        if(! opj_alloc_tile_component_data(l_tilec)) {
-												                opj_event_msg(p_manager, EVT_ERROR, "Error allocating tile component data." );
-												                if (l_current_data) {
-												                        opj_free(l_current_data);
-												                }
-												                return OPJ_FALSE;
-												        }
-                        }
+                    opj_tcd_tilecomp_t* l_tilec = p_tcd->tcd_image->tiles->comps + j;
+                    if (l_nb_tiles == 1) {
+				        opj_image_comp_t * l_img_comp = p_tcd->image->comps + j;
+					    l_tilec->data  =  l_img_comp->data;
+					    l_tilec->ownsData = OPJ_FALSE;
+                    } else {
+				        if(! opj_alloc_tile_component_data(l_tilec)) {
+			                opj_event_msg(p_manager, EVT_ERROR, "Error allocating tile component data." );
+			                if (l_current_data) {
+		                        opj_free(l_current_data);
+			                }
+			                return OPJ_FALSE;
+				        }
+                    }
                 }
                 l_current_tile_size = opj_tcd_get_encoded_tile_size(p_j2k->m_tcd);
                 if (l_nb_tiles > 1) {
-                        if (l_current_tile_size > l_max_tile_size) {
-												        OPJ_BYTE *l_new_current_data = (OPJ_BYTE *) opj_realloc(l_current_data, l_current_tile_size);
-												        if (! l_new_current_data) {
-												                if (l_current_data) {
-												                        opj_free(l_current_data);
-												                }
-												                opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to encode all tiles\n");
-												                return OPJ_FALSE;
-																}
-																l_current_data = l_new_current_data;
-																l_max_tile_size = l_current_tile_size;
-                        }
+                    if (l_current_tile_size > l_max_tile_size) {
+    			        OPJ_BYTE *l_new_current_data = (OPJ_BYTE *) opj_realloc(l_current_data, l_current_tile_size);
+				        if (! l_new_current_data) {
+			                if (l_current_data) {
+		                        opj_free(l_current_data);
+			                }
+	    	                opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to encode all tiles\n");
+				            return OPJ_FALSE;
+		    		    }
+						l_current_data = l_new_current_data;
+						l_max_tile_size = l_current_tile_size;
+                    }
 
-                        /* copy image data (32 bit) to l_current_data as contiguous, all-component, zero offset buffer */
-                        /* 32 bit components @ 8 bit precision get converted to 8 bit */
-                        /* 32 bit components @ 16 bit precision get converted to 16 bit */
-                        opj_j2k_get_tile_data(p_j2k->m_tcd,l_current_data);
+                    /* copy image data (32 bit) to l_current_data as contiguous, all-component, zero offset buffer */
+                    /* 32 bit components @ 8 bit precision get converted to 8 bit */
+                    /* 32 bit components @ 16 bit precision get converted to 16 bit */
+                    opj_j2k_get_tile_data(p_j2k->m_tcd,l_current_data);
 
-                        /* now copy this data into the tile component */
-                        if (! opj_tcd_copy_tile_data(p_j2k->m_tcd,l_current_data,l_current_tile_size)) {
-																opj_event_msg(p_manager, EVT_ERROR, "Size mismatch between tile data and sent data." );
-																return OPJ_FALSE;
-                        }
+                    /* now copy this data into the tile component */
+                    if (! opj_tcd_copy_tile_data(p_j2k->m_tcd,l_current_data,l_current_tile_size)) {
+						opj_event_msg(p_manager, EVT_ERROR, "Size mismatch between tile data and sent data." );
+						return OPJ_FALSE;
+                    }
                 }
 
                 if (! opj_j2k_post_write_tile (p_j2k,p_stream,p_manager)) {
-                        return OPJ_FALSE;
+                    return OPJ_FALSE;
                 }
         }
 
@@ -10689,8 +10693,8 @@ OPJ_BOOL opj_j2k_write_tile (opj_j2k_t * p_j2k,
                         opj_tcd_tilecomp_t* l_tilec = p_j2k->m_tcd->tcd_image->tiles->comps + j;
 
                         if(! opj_alloc_tile_component_data(l_tilec)) {
-												        opj_event_msg(p_manager, EVT_ERROR, "Error allocating tile component data." );
-                                return OPJ_FALSE;
+							opj_event_msg(p_manager, EVT_ERROR, "Error allocating tile component data." );
+                            return OPJ_FALSE;
                         }
                 }
 
