@@ -266,7 +266,7 @@ typedef struct opj_tcp
 	/** ppt markers data (table indexed by Zppt) */
 	opj_ppx* ppt_markers;
 	
-	/** packet header store there for futur use in t2_decode_packet */
+	/** packet header store there for future use in t2_decode_packet */
 	OPJ_BYTE *ppt_data;
 	/** used to keep a track of the allocated memory */
 	OPJ_BYTE *ppt_buffer;
@@ -376,7 +376,7 @@ typedef struct opj_cp
 	/** ppm markers data (table indexed by Zppm) */
 	opj_ppx* ppm_markers;
 	
-	/** packet header store there for futur use in t2_decode_packet */
+	/** packet header store there for future use in t2_decode_packet */
 	OPJ_BYTE *ppm_data;
 	/** size of the ppm_data*/
 	OPJ_UINT32 ppm_len;
