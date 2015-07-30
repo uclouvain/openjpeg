@@ -27,6 +27,7 @@ if(UNIX)
   target_link_libraries(${OPENJP3D_LIBRARY_NAME} m)
 endif()
 set_target_properties(${OPENJP3D_LIBRARY_NAME} PROPERTIES ${OPENJPEG_LIBRARY_PROPERTIES})
+target_compile_options(${OPENJP3D_LIBRARY_NAME} PRIVATE ${OPENJPEG_LIBRARY_COMPILE_OPTIONS})
 
 # Install library
 install(TARGETS ${OPENJP3D_LIBRARY_NAME}

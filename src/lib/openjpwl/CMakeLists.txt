@@ -51,6 +51,7 @@ if(UNIX)
 endif()
 set_target_properties(openjpwl
   PROPERTIES ${OPENJPEG_LIBRARY_PROPERTIES})
+target_compile_options(openjpwl PRIVATE ${OPENJPEG_LIBRARY_COMPILE_OPTIONS})
 
 # Install library
 install(TARGETS openjpwl
