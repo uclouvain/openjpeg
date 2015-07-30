@@ -262,10 +262,11 @@ OPJ_BOOL opj_tcd_init(	opj_tcd_t *p_tcd,
  * @param	p_tcd		the tile decoder.
  * @param	p_tile_no	the index of the tile received in sequence. This not necessarily lead to the
  * tile at index p_tile_no.
+ * @param p_manager the event manager.
  *
  * @return	true if the remaining data is sufficient.
  */
-OPJ_BOOL opj_tcd_init_decode_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no);
+OPJ_BOOL opj_tcd_init_decode_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no, opj_event_mgr_t* p_manager);
 
 void opj_tcd_makelayer_fixed(opj_tcd_t *tcd, OPJ_UINT32 layno, OPJ_UINT32 final);
 
@@ -312,12 +313,14 @@ Decode a tile from a buffer into a raw image
 @param len Length of source buffer
 @param tileno Number that identifies one of the tiles to be decoded
 @param cstr_info  FIXME DOC
+@param manager the event manager.
 */
 OPJ_BOOL opj_tcd_decode_tile(   opj_tcd_t *tcd,
 							    OPJ_BYTE *src,
 							    OPJ_UINT32 len,
 							    OPJ_UINT32 tileno,
-							    opj_codestream_index_t *cstr_info);
+							    opj_codestream_index_t *cstr_info,
+							    opj_event_mgr_t *manager);
 
 
 /**
@@ -337,11 +340,12 @@ OPJ_UINT32 opj_tcd_get_encoded_tile_size ( opj_tcd_t *p_tcd );
  *
  * @param	p_tcd		TCD handle.
  * @param	p_tile_no	current tile index to encode.
+ * @param p_manager the event manager.
  *
  * @return true if the encoding values could be set (false otherwise).
 */
 OPJ_BOOL opj_tcd_init_encode_tile (	opj_tcd_t *p_tcd,
-								    OPJ_UINT32 p_tile_no );
+								    OPJ_UINT32 p_tile_no, opj_event_mgr_t* p_manager );
 
 /**
  * Copies tile data from the given memory block onto the system.
