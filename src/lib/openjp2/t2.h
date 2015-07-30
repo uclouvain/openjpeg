@@ -108,7 +108,8 @@ OPJ_BOOL opj_t2_decode_packets(	opj_t2_t *t2,
                                 OPJ_BYTE *src,
                                 OPJ_UINT32 * p_data_read,
                                 OPJ_UINT32 len,
-                                opj_codestream_index_t *cstr_info);
+                                opj_codestream_index_t *cstr_info,
+                                opj_event_mgr_t *p_manager);
 
 /**
  * Creates a Tier 2 handle
