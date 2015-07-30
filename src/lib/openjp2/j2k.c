@@ -51,7 +51,7 @@
 /**
  * Sets up the procedures to do on reading header. Developpers wanting to extend the library can add their own reading procedures.
  */
-static void opj_j2k_setup_header_reading (opj_j2k_t *p_j2k);
+static OPJ_BOOL opj_j2k_setup_header_reading (opj_j2k_t *p_j2k, opj_event_mgr_t * p_manager);
 
 /**
  * The read header procedure.
@@ -90,19 +90,19 @@ static OPJ_BOOL opj_j2k_decoding_validation (   opj_j2k_t * p_j2k,
  * Sets up the validation ,i.e. adds the procedures to lauch to make sure the codec parameters
  * are valid. Developpers wanting to extend the library can add their own validation procedures.
  */
-static void opj_j2k_setup_encoding_validation (opj_j2k_t *p_j2k);
+static OPJ_BOOL opj_j2k_setup_encoding_validation (opj_j2k_t *p_j2k, opj_event_mgr_t * p_manager);
 
 /**
  * Sets up the validation ,i.e. adds the procedures to lauch to make sure the codec parameters
  * are valid. Developpers wanting to extend the library can add their own validation procedures.
  */
-static void opj_j2k_setup_decoding_validation (opj_j2k_t *p_j2k);
+static OPJ_BOOL opj_j2k_setup_decoding_validation (opj_j2k_t *p_j2k, opj_event_mgr_t * p_manager);
 
 /**
  * Sets up the validation ,i.e. adds the procedures to lauch to make sure the codec parameters
  * are valid. Developpers wanting to extend the library can add their own validation procedures.
  */
-static void opj_j2k_setup_end_compress (opj_j2k_t *p_j2k);
+static OPJ_BOOL opj_j2k_setup_end_compress (opj_j2k_t *p_j2k, opj_event_mgr_t * p_manager);
 
 /**
  * The mct encoding validation procedure.
@@ -385,7 +385,7 @@ static OPJ_BOOL opj_j2k_post_write_tile (opj_j2k_t * p_j2k,
  * Sets up the procedures to do on writing header.
  * Developers wanting to extend the library can add their own writing procedures.
  */
-static void opj_j2k_setup_header_writing (opj_j2k_t *p_j2k);
+static OPJ_BOOL opj_j2k_setup_header_writing (opj_j2k_t *p_j2k, opj_event_mgr_t * p_manager);
 
 static OPJ_BOOL opj_j2k_write_first_tile_part(  opj_j2k_t *p_j2k,
                                                                                             OPJ_BYTE * p_data,
@@ -4993,7 +4993,7 @@ static OPJ_BOOL opj_j2k_write_regions( opj_j2k_t *p_j2k,
 
         l_tccp = p_j2k->m_cp.tcps->tccps;
 
-        for     (compno = 0; compno < p_j2k->m_private_image->numcomps; ++compno)  {
+        for (compno = 0; compno < p_j2k->m_private_image->numcomps; ++compno)  {
                 if (l_tccp->roishift) {
 
                         if (! opj_j2k_write_rgn(p_j2k,0,compno,p_j2k->m_private_image->numcomps,p_stream,p_manager)) {
@@ -6795,7 +6795,11 @@ OPJ_BOOL opj_j2k_read_header(   opj_stream_private_t *p_stream,
         }
 
         /* customization of the validation */
-        opj_j2k_setup_decoding_validation(p_j2k);
+        if (! opj_j2k_setup_decoding_validation(p_j2k, p_manager)) {
+                opj_image_destroy(p_j2k->m_private_image);
+                p_j2k->m_private_image = NULL;
+                return OPJ_FALSE;
+        }
 
         /* validation of the parameters codec */
         if (! opj_j2k_exec(p_j2k, p_j2k->m_validation_list, p_stream,p_manager)) {
@@ -6805,7 +6809,11 @@ OPJ_BOOL opj_j2k_read_header(   opj_stream_private_t *p_stream,
         }
 
         /* customization of the encoding */
-        opj_j2k_setup_header_reading(p_j2k);
+        if (! opj_j2k_setup_header_reading(p_j2k, p_manager)) {
+                opj_image_destroy(p_j2k->m_private_image);
+                p_j2k->m_private_image = NULL;
+                return OPJ_FALSE;
+        }
 
         /* read header */
         if (! opj_j2k_exec (p_j2k,p_j2k->m_procedure_list,p_stream,p_manager)) {
@@ -6830,27 +6838,39 @@ OPJ_BOOL opj_j2k_read_header(   opj_stream_private_t *p_stream,
         return OPJ_TRUE;
 }
 
-static void opj_j2k_setup_header_reading (opj_j2k_t *p_j2k)
+static OPJ_BOOL opj_j2k_setup_header_reading (opj_j2k_t *p_j2k, opj_event_mgr_t * p_manager)
 {
         /* preconditions*/
         assert(p_j2k != 00);
+        assert(p_manager != 00);
 
-        opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_read_header_procedure);
+        if (! opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_read_header_procedure, p_manager)) {
+                return OPJ_FALSE;
+        }
 
         /* DEVELOPER CORNER, add your custom procedures */
-        opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_copy_default_tcp_and_create_tcd);
-
+        if (! opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_copy_default_tcp_and_create_tcd, p_manager))  {
+                return OPJ_FALSE;
+        }
+	
+        return OPJ_TRUE;
 }
 
-static void opj_j2k_setup_decoding_validation (opj_j2k_t *p_j2k)
+static OPJ_BOOL opj_j2k_setup_decoding_validation (opj_j2k_t *p_j2k, opj_event_mgr_t * p_manager)
 {
         /* preconditions*/
         assert(p_j2k != 00);
+        assert(p_manager != 00);
 
-        opj_procedure_list_add_procedure(p_j2k->m_validation_list, (opj_procedure)opj_j2k_build_decoder);
-        opj_procedure_list_add_procedure(p_j2k->m_validation_list, (opj_procedure)opj_j2k_decoding_validation);
+        if (! opj_procedure_list_add_procedure(p_j2k->m_validation_list,(opj_procedure)opj_j2k_build_decoder, p_manager)) {
+                return OPJ_FALSE;
+        }
+        if (! opj_procedure_list_add_procedure(p_j2k->m_validation_list,(opj_procedure)opj_j2k_decoding_validation, p_manager)) {
+                return OPJ_FALSE;
+        }
+
         /* DEVELOPER CORNER, add your custom validation procedure */
-
+        return OPJ_TRUE;
 }
 
 static OPJ_BOOL opj_j2k_mct_validation (       opj_j2k_t * p_j2k,
@@ -8048,7 +8068,7 @@ OPJ_BOOL opj_j2k_read_tile_header(      opj_j2k_t * p_j2k,
                 return OPJ_FALSE;
         }
         /*FIXME ???*/
-        if (! opj_tcd_init_decode_tile(p_j2k->m_tcd, p_j2k->m_current_tile_number)) {
+        if (! opj_tcd_init_decode_tile(p_j2k->m_tcd, p_j2k->m_current_tile_number, p_manager)) {
                 opj_event_msg(p_manager, EVT_ERROR, "Cannot decode tile, memory error\n");
                 return OPJ_FALSE;
         }
@@ -8101,7 +8121,7 @@ OPJ_BOOL opj_j2k_decode_tile (  opj_j2k_t * p_j2k,
                                                                 l_tcp->m_data,
                                                                 l_tcp->m_data_size,
                                                                 p_tile_index,
-                                                                p_j2k->cstr_index) ) {
+                                                                p_j2k->cstr_index, p_manager) ) {
                 opj_j2k_tcp_destroy(l_tcp);
                 p_j2k->m_specific_param.m_decoder.m_state |= 0x8000;/*FIXME J2K_DEC_STATE_ERR;*/
                 opj_event_msg(p_manager, EVT_ERROR, "Failed to decode.\n");
@@ -9743,14 +9763,18 @@ static OPJ_BOOL opj_j2k_decode_tiles ( opj_j2k_t *p_j2k,
 /**
  * Sets up the procedures to do on decoding data. Developpers wanting to extend the library can add their own reading procedures.
  */
-static void opj_j2k_setup_decoding (opj_j2k_t *p_j2k)
+static OPJ_BOOL opj_j2k_setup_decoding (opj_j2k_t *p_j2k, opj_event_mgr_t * p_manager)
 {
         /* preconditions*/
         assert(p_j2k != 00);
+        assert(p_manager != 00);
 
-        opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_decode_tiles);
+        if (! opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_decode_tiles, p_manager)) {
+                return OPJ_FALSE;
+        }
         /* DEVELOPER CORNER, add your custom procedures */
 
+        return OPJ_TRUE;
 }
 
 /*
@@ -9876,14 +9900,18 @@ static OPJ_BOOL opj_j2k_decode_one_tile (       opj_j2k_t *p_j2k,
 /**
  * Sets up the procedures to do on decoding one tile. Developpers wanting to extend the library can add their own reading procedures.
  */
-static void opj_j2k_setup_decoding_tile (opj_j2k_t *p_j2k)
+static OPJ_BOOL opj_j2k_setup_decoding_tile (opj_j2k_t *p_j2k, opj_event_mgr_t * p_manager)
 {
         /* preconditions*/
         assert(p_j2k != 00);
+        assert(p_manager != 00);
 
-        opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_decode_one_tile);
+        if (! opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_decode_one_tile, p_manager)) {
+                return OPJ_FALSE;
+        }
         /* DEVELOPER CORNER, add your custom procedures */
 
+        return OPJ_TRUE;
 }
 
 OPJ_BOOL opj_j2k_decode(opj_j2k_t * p_j2k,
@@ -9903,7 +9931,7 @@ OPJ_BOOL opj_j2k_decode(opj_j2k_t * p_j2k,
         opj_copy_image_header(p_image, p_j2k->m_output_image);
 
         /* customization of the decoding */
-        opj_j2k_setup_decoding(p_j2k);
+        opj_j2k_setup_decoding(p_j2k, p_manager);
 
         /* Decode the codestream */
         if (! opj_j2k_exec (p_j2k,p_j2k->m_procedure_list,p_stream,p_manager)) {
@@ -9999,7 +10027,7 @@ OPJ_BOOL opj_j2k_get_tile(      opj_j2k_t *p_j2k,
         p_j2k->m_specific_param.m_decoder.m_tile_ind_to_dec = (OPJ_INT32)tile_index;
 
         /* customization of the decoding */
-        opj_j2k_setup_decoding_tile(p_j2k);
+        opj_j2k_setup_decoding_tile(p_j2k, p_manager);
 
         /* Decode the codestream */
         if (! opj_j2k_exec (p_j2k,p_j2k->m_procedure_list,p_stream,p_manager)) {
@@ -10139,7 +10167,9 @@ OPJ_BOOL opj_j2k_end_compress(  opj_j2k_t *p_j2k,
                                                         opj_event_mgr_t * p_manager)
 {
         /* customization of the encoding */
-        opj_j2k_setup_end_compress(p_j2k);
+        if (! opj_j2k_setup_end_compress(p_j2k, p_manager)) {
+                return OPJ_FALSE;
+        }
 
         if (! opj_j2k_exec (p_j2k, p_j2k->m_procedure_list, p_stream, p_manager))
         {
@@ -10179,7 +10209,9 @@ OPJ_BOOL opj_j2k_start_compress(opj_j2k_t *p_j2k,
         }
 
         /* customization of the validation */
-        opj_j2k_setup_encoding_validation (p_j2k);
+        if (! opj_j2k_setup_encoding_validation (p_j2k, p_manager)) {
+                return OPJ_FALSE;
+        }
 
         /* validation of the parameters codec */
         if (! opj_j2k_exec(p_j2k,p_j2k->m_validation_list,p_stream,p_manager)) {
@@ -10187,7 +10219,9 @@ OPJ_BOOL opj_j2k_start_compress(opj_j2k_t *p_j2k,
         }
 
         /* customization of the encoding */
-        opj_j2k_setup_header_writing(p_j2k);
+        if (! opj_j2k_setup_header_writing(p_j2k, p_manager)) {
+                return OPJ_FALSE;
+        }
 
         /* write header */
         if (! opj_j2k_exec (p_j2k,p_j2k->m_procedure_list,p_stream,p_manager)) {
@@ -10215,7 +10249,7 @@ static OPJ_BOOL opj_j2k_pre_write_tile (       opj_j2k_t * p_j2k,
         p_j2k->m_specific_param.m_encoder.m_current_poc_tile_part_number = 0;
 
         /* initialisation before tile encoding  */
-        if (! opj_tcd_init_encode_tile(p_j2k->m_tcd, p_j2k->m_current_tile_number)) {
+        if (! opj_tcd_init_encode_tile(p_j2k->m_tcd, p_j2k->m_current_tile_number, p_manager)) {
                 return OPJ_FALSE;
         }
 
@@ -10388,74 +10422,128 @@ static OPJ_BOOL opj_j2k_post_write_tile (      opj_j2k_t * p_j2k,
         return OPJ_TRUE;
 }
 
-static void opj_j2k_setup_end_compress (opj_j2k_t *p_j2k)
+static OPJ_BOOL opj_j2k_setup_end_compress (opj_j2k_t *p_j2k, opj_event_mgr_t * p_manager)
 {
         /* preconditions */
         assert(p_j2k != 00);
+        assert(p_manager != 00);
 
         /* DEVELOPER CORNER, insert your custom procedures */
-        opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_eoc );
-
-        if (OPJ_IS_CINEMA(p_j2k->m_cp.rsiz)) {
-                opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_updated_tlm);
+        if (! opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_eoc, p_manager)) {
+                return OPJ_FALSE;
         }
 
-        opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_epc );
-        opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_end_encoding );
-        opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_destroy_header_memory);
-}
-
-static void opj_j2k_setup_encoding_validation (opj_j2k_t *p_j2k)
-{
-        /* preconditions */
-        assert(p_j2k != 00);
-
-        opj_procedure_list_add_procedure(p_j2k->m_validation_list, (opj_procedure)opj_j2k_build_encoder);
-        opj_procedure_list_add_procedure(p_j2k->m_validation_list, (opj_procedure)opj_j2k_encoding_validation);
-
-        /* DEVELOPER CORNER, add your custom validation procedure */
-        opj_procedure_list_add_procedure(p_j2k->m_validation_list, (opj_procedure)opj_j2k_mct_validation);
-}
-
-static void opj_j2k_setup_header_writing (opj_j2k_t *p_j2k)
-{
-        /* preconditions */
-        assert(p_j2k != 00);
-
-        opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_init_info );
-        opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_soc );
-        opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_siz );
-        opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_cod );
-        opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_qcd );
-        opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_all_coc );
-        opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_all_qcc );
-	
         if (OPJ_IS_CINEMA(p_j2k->m_cp.rsiz)) {
-                opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_tlm );
-
-                if (p_j2k->m_cp.rsiz == OPJ_PROFILE_CINEMA_4K) {
-                        opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_poc );
+                if (! opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_updated_tlm, p_manager)) {
+                        return OPJ_FALSE;
                 }
         }
 
-        opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_regions);
+        if (! opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_epc, p_manager)) {
+                return OPJ_FALSE;
+        }
+        if (! opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_end_encoding, p_manager)) {
+                return OPJ_FALSE;
+        }
+        if (! opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_destroy_header_memory, p_manager)) {
+                return OPJ_FALSE;
+        }
+        return OPJ_TRUE;
+}
+
+static OPJ_BOOL opj_j2k_setup_encoding_validation (opj_j2k_t *p_j2k, opj_event_mgr_t * p_manager)
+{
+        /* preconditions */
+        assert(p_j2k != 00);
+        assert(p_manager != 00);
+
+        if (! opj_procedure_list_add_procedure(p_j2k->m_validation_list, (opj_procedure)opj_j2k_build_encoder, p_manager)) {
+                return OPJ_FALSE;
+        }
+        if (! opj_procedure_list_add_procedure(p_j2k->m_validation_list, (opj_procedure)opj_j2k_encoding_validation, p_manager)) {
+                return OPJ_FALSE;
+				}
+
+        /* DEVELOPER CORNER, add your custom validation procedure */
+        if (! opj_procedure_list_add_procedure(p_j2k->m_validation_list, (opj_procedure)opj_j2k_mct_validation, p_manager)) {
+                return OPJ_FALSE;
+        }
+	
+        return OPJ_TRUE;
+}
+
+static OPJ_BOOL opj_j2k_setup_header_writing (opj_j2k_t *p_j2k, opj_event_mgr_t * p_manager)
+{
+        /* preconditions */
+        assert(p_j2k != 00);
+        assert(p_manager != 00);
+
+        if (! opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_init_info, p_manager)) {
+                return OPJ_FALSE;
+        }
+        if (! opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_soc, p_manager)) {
+                return OPJ_FALSE;
+        }
+        if (! opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_siz, p_manager)) {
+                return OPJ_FALSE;
+        }
+        if (! opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_cod, p_manager)) {
+                return OPJ_FALSE;
+        }
+        if (! opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_qcd, p_manager)) {
+                return OPJ_FALSE;
+        }
+        if (! opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_all_coc, p_manager)) {
+                return OPJ_FALSE;
+        }
+        if (! opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_all_qcc, p_manager)) {
+                return OPJ_FALSE;
+        }
+
+        if (OPJ_IS_CINEMA(p_j2k->m_cp.rsiz)) {
+                if (! opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_tlm, p_manager)) {
+                        return OPJ_FALSE;
+                }
+
+                if (p_j2k->m_cp.rsiz == OPJ_PROFILE_CINEMA_4K) {
+                        if (! opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_poc, p_manager)) {
+                                return OPJ_FALSE;
+                        }
+                }
+        }
+
+        if (! opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_regions, p_manager)) {
+                return OPJ_FALSE;
+        }
 
         if (p_j2k->m_cp.comment != 00)  {
-                opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_com);
+                if (! opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_com, p_manager)) {
+                        return OPJ_FALSE;
+                }
         }
 
         /* DEVELOPER CORNER, insert your custom procedures */
         if (p_j2k->m_cp.rsiz & OPJ_EXTENSION_MCT) {
-                opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_mct_data_group );
+                if (! opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_write_mct_data_group, p_manager)) {
+                        return OPJ_FALSE;
+                }
         }
         /* End of Developer Corner */
 
         if (p_j2k->cstr_index) {
-                opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_get_end_header );
+                if (! opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_get_end_header, p_manager)) {
+                        return OPJ_FALSE;
+                }
         }
 
-        opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_create_tcd);
-        opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_update_rates);
+        if (! opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_create_tcd, p_manager)) {
+                return OPJ_FALSE;
+        }
+        if (! opj_procedure_list_add_procedure(p_j2k->m_procedure_list,(opj_procedure)opj_j2k_update_rates, p_manager)) {
+                return OPJ_FALSE;
+        }
+
+        return OPJ_TRUE;
 }
 
 static OPJ_BOOL opj_j2k_write_first_tile_part (opj_j2k_t *p_j2k,

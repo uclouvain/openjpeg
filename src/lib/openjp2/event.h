@@ -95,6 +95,12 @@ OPJ_BOOL opj_event_msg(opj_event_mgr_t* event_mgr, OPJ_INT32 event_type, const c
  */
 void opj_set_default_event_handler(opj_event_mgr_t * p_manager);
 
+/*
+#ifdef __GNUC__
+#pragma GCC poison printf fprintf
+#endif
+*/
+
 /*@}*/
 
 /*@}*/

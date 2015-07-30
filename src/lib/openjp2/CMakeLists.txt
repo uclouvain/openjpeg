@@ -85,6 +85,7 @@ if(UNIX)
   target_link_libraries(${OPENJPEG_LIBRARY_NAME} m)
 endif()
 set_target_properties(${OPENJPEG_LIBRARY_NAME} PROPERTIES ${OPENJPEG_LIBRARY_PROPERTIES})
+target_compile_options(${OPENJPEG_LIBRARY_NAME} PRIVATE ${OPENJPEG_LIBRARY_COMPILE_OPTIONS})
 
 # Install library
 install(TARGETS ${OPENJPEG_LIBRARY_NAME}

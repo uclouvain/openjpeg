@@ -95,7 +95,7 @@ void  opj_procedure_list_destroy(opj_procedure_list_t * p_list);
  *
  * @return	OPJ_TRUE if the procedure could be added.
  */
-OPJ_BOOL opj_procedure_list_add_procedure (opj_procedure_list_t * p_validation_list, opj_procedure p_procedure);
+OPJ_BOOL opj_procedure_list_add_procedure (opj_procedure_list_t * p_validation_list, opj_procedure p_procedure, opj_event_mgr_t* p_manager);
 
 /**
  * Gets the number of validation procedures.
