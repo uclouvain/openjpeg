@@ -83,7 +83,7 @@ Create a tag-tree
 @param numleafsv Height of the array of leafs of the tree
 @return Returns a new tag-tree if successful, returns NULL otherwise
 */
-opj_tgt_tree_t *opj_tgt_create(OPJ_UINT32 numleafsh, OPJ_UINT32 numleafsv);
+opj_tgt_tree_t *opj_tgt_create(OPJ_UINT32 numleafsh, OPJ_UINT32 numleafsv, opj_event_mgr_t *manager);
 
 /**
  * Reinitialises a tag-tree from an exixting one.
@@ -91,11 +91,12 @@ opj_tgt_tree_t *opj_tgt_create(OPJ_UINT32 numleafsh, OPJ_UINT32 numleafsv);
  * @param	p_tree				the tree to reinitialize.
  * @param	p_num_leafs_h		the width of the array of leafs of the tree
  * @param	p_num_leafs_v		the height of the array of leafs of the tree
+ * @param p_manager       the event manager
  * @return	a new tag-tree if successful, NULL otherwise
 */
 opj_tgt_tree_t *opj_tgt_init(opj_tgt_tree_t * p_tree, 
                              OPJ_UINT32  p_num_leafs_h, 
-                             OPJ_UINT32  p_num_leafs_v);
+                             OPJ_UINT32  p_num_leafs_v, opj_event_mgr_t *p_manager);
 /**
 Destroy a tag-tree, liberating memory
 @param tree Tag-tree to destroy

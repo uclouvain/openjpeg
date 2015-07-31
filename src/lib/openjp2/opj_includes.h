@@ -175,8 +175,8 @@ static INLINE long opj_lrintf(float f) {
 #include "opj_inttypes.h"
 #include "opj_clock.h"
 #include "opj_malloc.h"
-#include "function_list.h"
 #include "event.h"
+#include "function_list.h"
 #include "bio.h"
 #include "cio.h"
 

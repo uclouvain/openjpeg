@@ -169,12 +169,11 @@ opj_stream_t* OPJ_CALLCONV opj_stream_create(OPJ_SIZE_T p_buffer_size,OPJ_BOOL l
 		l_stream->m_status |= opj_stream_e_input;
 		l_stream->m_opj_skip = opj_stream_read_skip;
 		l_stream->m_opj_seek = opj_stream_read_seek;
-        l_stream->m_bytes_in_buffer = p_buffer_size;
-	} else {
+	}
+	else {
 		l_stream->m_status |= opj_stream_e_output;
 		l_stream->m_opj_skip = opj_stream_write_skip;
 		l_stream->m_opj_seek = opj_stream_write_seek;
-        l_stream->m_bytes_in_buffer = 0;
 	}
 
 	l_stream->m_read_fn = opj_stream_default_read;
