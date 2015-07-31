@@ -7659,12 +7659,16 @@ static void opj_j2k_cp_destroy (opj_cp_t *p_cp)
 		opj_free(p_cp->ppm_markers);
 		p_cp->ppm_markers = NULL;
 	}
-	opj_free(p_cp->ppm_buffer);
+    if (p_cp->ppm_buffer) {
+        opj_free(p_cp->ppm_buffer);
+    }
 	p_cp->ppm_buffer = 00;
 	p_cp->ppm_data = NULL; /* ppm_data belongs to the allocated buffer pointed by ppm_buffer */
-	opj_free(p_cp->comment);
+    if (p_cp->comment) {
+        opj_free(p_cp->comment);
+    }
 	p_cp->comment = 00;
-	if (! p_cp->m_is_decoder)
+    if ((! p_cp->m_is_decoder) && p_cp->m_specific_param.m_enc.m_matrice)
 	{
 		opj_free(p_cp->m_specific_param.m_enc.m_matrice);
 		p_cp->m_specific_param.m_enc.m_matrice = 00;
@@ -10052,7 +10056,7 @@ OPJ_BOOL opj_j2k_start_compress(opj_j2k_t *p_j2k,
                 OPJ_UINT32 it_comp;
                 for (it_comp = 0 ; it_comp < p_image->numcomps; it_comp++) {
                         if (p_image->comps[it_comp].data) {
-                                p_j2k->m_private_image->comps[it_comp].data =p_image->comps[it_comp].data;
+                                p_j2k->m_private_image->comps[it_comp].data = p_image->comps[it_comp].data;
                                 p_image->comps[it_comp].data = NULL;
 
                         }
