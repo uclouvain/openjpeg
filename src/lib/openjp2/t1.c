@@ -49,12 +49,37 @@
 /** @name Local static functions */
 /*@{*/
 
+
+
+typedef OPJ_INT16 opj_flag_t;
+
+/**
+Tier-1 coding (coding of code-block coefficients)
+*/
+typedef struct opj_t1 {
+
+	/** MQC component */
+	opj_mqc_t *mqc;
+	/** RAW component */
+	opj_raw_t *raw;
+
+	OPJ_INT32  *data;
+	opj_flag_t *flags;
+	OPJ_UINT32 w;
+	OPJ_UINT32 h;
+	OPJ_UINT32 datasize;
+	OPJ_UINT32 flagssize;
+	OPJ_UINT32 flags_stride;
+	OPJ_UINT32 data_stride;
+	OPJ_BOOL   encoder;
+} opj_t1_t;
+
+
+
 static INLINE OPJ_BYTE opj_t1_getctxno_zc(OPJ_UINT32 f, OPJ_UINT32 orient);
 static OPJ_BYTE opj_t1_getctxno_sc(OPJ_UINT32 f);
 static INLINE OPJ_UINT32 opj_t1_getctxno_mag(OPJ_UINT32 f);
 static OPJ_BYTE opj_t1_getspb(OPJ_UINT32 f);
-static OPJ_INT16 opj_t1_getnmsedec_sig(OPJ_UINT32 x, OPJ_UINT32 bitpos);
-static OPJ_INT16 opj_t1_getnmsedec_ref(OPJ_UINT32 x, OPJ_UINT32 bitpos);
 static void opj_t1_updateflags(opj_flag_t *flagsp, OPJ_UINT32 s, OPJ_UINT32 stride);
 /**
 Encode significant pass
@@ -260,17 +285,6 @@ static void opj_t1_dec_clnpass(
 		OPJ_INT32 orient,
 		OPJ_INT32 cblksty);
 
-static OPJ_FLOAT64 opj_t1_getwmsedec(
-		OPJ_INT32 nmsedec,
-		OPJ_UINT32 compno,
-		OPJ_UINT32 level,
-		OPJ_UINT32 orient,
-		OPJ_INT32 bpno,
-		OPJ_UINT32 qmfbid,
-		OPJ_FLOAT64 stepsize,
-		OPJ_UINT32 numcomps,
-		const OPJ_FLOAT64 * mct_norms,
-		OPJ_UINT32 mct_numcomps);
 
 static void opj_t1_encode_cblk( opj_t1_t *t1,
                                 opj_tcd_cblk_enc_t* cblk,
@@ -303,6 +317,25 @@ static OPJ_BOOL opj_t1_allocate_buffers(   opj_t1_t *t1,
                                     OPJ_UINT32 w,
                                     OPJ_UINT32 h);
 
+
+
+/**
+* Creates a new Tier 1 handle
+* and initializes the look-up tables of the Tier-1 coder/decoder
+* @return a new T1 handle if successful, returns NULL otherwise
+*/
+static opj_t1_t* opj_t1_create(OPJ_BOOL isEncoder);
+
+/**
+* Destroys a previously created T1 handle
+*
+* @param p_t1 Tier 1 handle to destroy
+*/
+static void opj_t1_destroy(opj_t1_t *p_t1);
+
+
+
+
 /*@}*/
 
 /*@}*/
@@ -327,7 +360,7 @@ static OPJ_BYTE opj_t1_getspb(OPJ_UINT32 f) {
 	return lut_spb[(f & (T1_SIG_PRIM | T1_SGN)) >> 4];
 }
 
-static OPJ_INT16 opj_t1_getnmsedec_sig(OPJ_UINT32 x, OPJ_UINT32 bitpos) {
+OPJ_INT16 opj_t1_getnmsedec_sig(OPJ_UINT32 x, OPJ_UINT32 bitpos) {
 	if (bitpos > 0) {
 		return lut_nmsedec_sig[(x >> (bitpos)) & ((1 << T1_NMSEDEC_BITS) - 1)];
 	}
@@ -335,7 +368,7 @@ static OPJ_INT16 opj_t1_getnmsedec_sig(OPJ_UINT32 x, OPJ_UINT32 bitpos) {
 	return lut_nmsedec_sig0[x & ((1 << T1_NMSEDEC_BITS) - 1)];
 }
 
-static OPJ_INT16 opj_t1_getnmsedec_ref(OPJ_UINT32 x, OPJ_UINT32 bitpos) {
+OPJ_INT16 opj_t1_getnmsedec_ref(OPJ_UINT32 x, OPJ_UINT32 bitpos) {
 	if (bitpos > 0) {
 		return lut_nmsedec_ref[(x >> (bitpos)) & ((1 << T1_NMSEDEC_BITS) - 1)];
 	}
@@ -1134,7 +1167,7 @@ static void opj_t1_dec_clnpass(
 
 
 /** mod fixed_quality */
-static OPJ_FLOAT64 opj_t1_getwmsedec(
+OPJ_FLOAT64 opj_t1_getwmsedec(
 		OPJ_INT32 nmsedec,
 		OPJ_UINT32 compno,
 		OPJ_UINT32 level,
@@ -1214,7 +1247,7 @@ static OPJ_BOOL opj_t1_allocate_buffers(
  * and initializes the look-up tables of the Tier-1 coder/decoder
  * @return a new T1 handle if successful, returns NULL otherwise
 */
-opj_t1_t* opj_t1_create(OPJ_BOOL isEncoder)
+static opj_t1_t* opj_t1_create(OPJ_BOOL isEncoder)
 {
 	opj_t1_t *l_t1 = 00;
 
@@ -1246,7 +1279,7 @@ opj_t1_t* opj_t1_create(OPJ_BOOL isEncoder)
  *
  * @param p_t1 Tier 1 handle to destroy
 */
-void opj_t1_destroy(opj_t1_t *p_t1)
+static void opj_t1_destroy(opj_t1_t *p_t1)
 {
 	if (! p_t1) {
 		return;
@@ -1279,10 +1312,6 @@ OPJ_BOOL opj_t1_decode_cblks(  opj_tcd_tilecomp_t* tilec,
 	OPJ_UINT32 resno, bandno, precno;
 	OPJ_UINT32 tile_w = (OPJ_UINT32)(tilec->x1 - tilec->x0);
 	OPJ_BOOL rc = OPJ_TRUE;
-#ifdef _OPENMP
-	omp_set_num_threads(OPJ_NUM_CORES);
-#endif
-
 	for (resno = 0; resno < tilec->minimum_num_resolutions; ++resno) {
 		opj_tcd_resolution_t* res = &tilec->resolutions[resno];
 
@@ -1483,12 +1512,24 @@ OPJ_BOOL opj_t1_encode_cblks(   opj_tcd_tile_t *tile,
                                 OPJ_UINT32 mct_numcomps
                                 )
 {
+	OPJ_BOOL do_opt = OPJ_TRUE;
 	OPJ_UINT32 compno, resno, bandno, precno;
 	OPJ_BOOL rc = OPJ_TRUE;
 	tile->distotile = 0;		/* fixed_quality */
-#ifdef _OPENMP
-	omp_set_num_threads(OPJ_NUM_CORES);
-#endif
+
+	for (compno = 0; compno < tile->numcomps; ++compno) {
+		opj_tcd_tilecomp_t* tilec = tile->comps + compno;
+		opj_tccp_t* tccp = tcp->tccps + compno;
+		if (tccp->cblksty != 0)
+		{
+			do_opt = OPJ_FALSE;
+			break;
+		}
+	}
+
+	if (do_opt)
+		return opj_t1_opt_encode_cblks(tile, tcp, mct_norms, mct_numcomps);
+
 	for (compno = 0; compno < tile->numcomps; ++compno) {
 		opj_tcd_tilecomp_t* tilec = &tile->comps[compno];
 		opj_tccp_t* tccp = &tcp->tccps[compno];
