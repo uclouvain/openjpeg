@@ -193,6 +193,7 @@ static INLINE long opj_lrintf(float f) {
 #include "tgt.h"
 #include "tcd.h"
 #include "t1.h"
+#include "t1_opt.h"
 #include "dwt.h"
 #include "t2.h"
 #include "mct.h"
