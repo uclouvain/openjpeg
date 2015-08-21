@@ -62,6 +62,7 @@
 #include <sys/times.h>
 #endif /* _WIN32 */
 
+#include "tiffio.h"
 #include "opj_apps_config.h"
 #include "openjpeg.h"
 #include "opj_getopt.h"
@@ -256,6 +257,11 @@ static void encode_help_display(void) {
     fprintf(stdout,"    Currently supports only RPCL order.\n");
     fprintf(stdout,"-C <comment>\n");
     fprintf(stdout,"    Add <comment> in the comment marker segment.\n");
+    fprintf(stdout,"-Q\n");
+    fprintf(stdout,"    Suppress warning pop-ups\n");
+    fprintf(stdout,"-N <Number of threads>\n");
+    fprintf(stdout,"    OPTIONAL (default is the actual number of processors)\n");
+    fprintf(stdout,"    The number of threads to use for openMP\n");
     /* UniPG>> */
 #ifdef USE_JPWL
     fprintf(stdout,"-W <params>\n");
@@ -486,11 +492,13 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
         {"POC",REQ_ARG, NULL ,'P'},
         {"ROI",REQ_ARG, NULL ,'R'},
         {"jpip",NO_ARG, NULL, 'J'},
-        {"mct",REQ_ARG, NULL, 'Y'}
+        {"mct",REQ_ARG, NULL, 'Y'},
+        {"Quiet",NO_ARG, NULL ,'Q'},
+        {"NumThreads",REQ_ARG, NULL ,'N'}
     };
 
     /* parse the command line */
-    const char optlist[] = "i:o:r:q:n:b:c:t:p:s:SEM:x:R:d:T:If:P:C:F:u:JY:"
+    const char optlist[] = "i:o:r:q:n:b:c:t:p:s:SEM:x:R:d:T:If:P:C:F:u:JY:QN:"
         #ifdef USE_JPWL
             "W:"
         #endif /* USE_JPWL */
@@ -1434,6 +1442,20 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
             break;
             /* ------------------------------------------------------ */
 
+        case 'Q':			/* quiet on */
+        {
+            parameters->quiet_flag = OPJ_TRUE;
+        }
+            break;
+            /* ------------------------------------------------------ */
+
+        case 'N':			/* number of threads */
+        {
+            sscanf(opj_optarg, "%d", &parameters->num_threads);
+        }
+            break;
+
+            /* ------------------------------------------------------ */
 
         default:
             fprintf(stderr, "[WARNING] An invalid option has been ignored\n");
@@ -1589,6 +1611,9 @@ int main(int argc, char **argv) {
     OPJ_UINT32 l_nb_tiles = 4;
     OPJ_FLOAT64 t = opj_clock();
 
+    /* variables used for timing the compression process */
+    OPJ_FLOAT64 begin_time, end_time, image_end_time;
+
     /* set encoding parameters to default values */
     opj_set_default_encoder_parameters(&parameters);
 
@@ -1608,6 +1633,17 @@ int main(int argc, char **argv) {
     parameters.tcp_mct = (char) 255; /* This will be set later according to the input image or the provided option */
     if(parse_cmdline_encoder(argc, argv, &parameters,&img_fol, &raw_cp, indexfilename) == 1) {
         return 1;
+    }
+
+    /* if passed in set the number of threads */
+    if (parameters.num_threads) {
+      set_num_threads(parameters.num_threads);
+    }
+    
+    /* if quiet, disable the warning handlers */
+    if (parameters.quiet_flag) {
+      TIFFSetWarningHandler(NULL);
+      TIFFSetWarningHandlerExt(NULL);
     }
 
     /* Read directory if necessary */
@@ -1636,6 +1672,8 @@ int main(int argc, char **argv) {
     }
     /*Encoding image one by one*/
     for(imageno=0;imageno<num_images;imageno++)	{
+        /* start timing the process */
+        begin_time = opj_clock();
         image = NULL;
         fprintf(stderr,"\n");
 
@@ -1748,6 +1786,10 @@ int main(int argc, char **argv) {
             return 1;
         }
 
+       /* The image has been loaded in menory so record the time */
+       image_end_time = opj_clock();
+       fprintf(stdout,"Image Load Seconds:    %f\n",image_end_time - begin_time);
+
         /* Decide if MCT should be used */
         if (parameters.tcp_mct == (char) 255) { /* mct mode has not been set in commandline */
             parameters.tcp_mct = (image->numcomps >= 3) ? 1 : 0;
@@ -1854,6 +1896,13 @@ int main(int argc, char **argv) {
 
 		num_compressed_files++;
         fprintf(stdout,"[INFO] Generated outfile %s\n",parameters.outfile);
+
+        /* success, print out the timing values for the process */
+        end_time = opj_clock();
+        fprintf(stdout,"Image load Seconds: %f\n",(image_end_time - begin_time));
+        fprintf(stdout,"Openjpg Seconds:    %f\n",(end_time - image_end_time));
+        fprintf(stdout,"Total Seconds:      %f\n",(end_time - begin_time));
+        
         /* close and free the byte stream */
         opj_stream_destroy(l_stream);
 

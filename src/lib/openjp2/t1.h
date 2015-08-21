@@ -136,12 +136,10 @@ OPJ_BOOL opj_t1_encode_cblks(   opj_t1_t *t1,
 
 /**
 Decode the code-blocks of a tile
-@param t1 T1 handle
 @param tilec The tile to decode
 @param tccp Tile coding parameters
 */
-OPJ_BOOL opj_t1_decode_cblks(   opj_t1_t* t1,
-                                opj_tcd_tilecomp_t* tilec,
+OPJ_BOOL opj_t1_decode_cblks(   opj_tcd_tilecomp_t* tilec,
                                 opj_tccp_t* tccp);
 
 
