@@ -1,0 +1,32 @@
+
+flviewer /home/IMG/MJ2/hall-420-1056x576-yuv-r00.mj2
+
+
+*** glibc detected *** /graphics/FLVIEWER/TRUNK-2.0/v0.1.6/openjpeg-2.x-trunk-r2871-1-flviewer-0.1.6/BUILD/bin/flviewer: double free or corruption (fasttop): 0x00007fffec17f680 ***
+^C
+Program received signal SIGINT, Interrupt.
+0x00007ffff63a2a94 in pthread_cond_wait@@GLIBC_2.3.2 () from /lib64/libpthread.so.0
+(gdb) bt
+#0  0x00007ffff63a2a94 in pthread_cond_wait@@GLIBC_2.3.2 () from /lib64/libpthread.so.0
+#1  0x000000000041c782 in get_rgb_buffer() ()
+#2  0x000000000041dc44 in OPENMJ2_load(canvas*, char const*, unsigned long) ()
+#3  0x000000000040a3d8 in chooser_cb(char const*) ()
+#4  0x00007ffff72bb5ba in Fl_Widget::do_callback(Fl_Widget*, void*) ()
+   from /usr/local/fltk13/lib/libfltk.so.1.3
+#5  0x00007ffff72982d3 in Fl_Input_::handletext(int, int, int, int, int) ()
+   from /usr/local/fltk13/lib/libfltk.so.1.3
+#6  0x00007ffff727b5ca in Fl::focus(Fl_Widget*) () from /usr/local/fltk13/lib/libfltk.so.1.3
+#7  0x00007ffff72bb442 in Fl_Widget::take_focus() () from /usr/local/fltk13/lib/libfltk.so.1.3
+#8  0x00007ffff728bbb7 in Fl_Group::navigation(int) () from /usr/local/fltk13/lib/libfltk.so.1.3
+#9  0x00007ffff728c0e9 in Fl_Group::handle(int) () from /usr/local/fltk13/lib/libfltk.so.1.3
+#10 0x00007ffff727af1d in send(int, Fl_Widget*, Fl_Window*) ()
+   from /usr/local/fltk13/lib/libfltk.so.1.3
+#11 0x00007ffff727c676 in Fl::handle_(int, Fl_Window*) () from /usr/local/fltk13/lib/libfltk.so.1.3
+#12 0x00007ffff727c59e in Fl::handle_(int, Fl_Window*) () from /usr/local/fltk13/lib/libfltk.so.1.3
+#13 0x00007ffff72c1d58 in fl_handle(_XEvent const&) () from /usr/local/fltk13/lib/libfltk.so.1.3
+#14 0x00007ffff72c1de5 in do_queued_events() () from /usr/local/fltk13/lib/libfltk.so.1.3
+#15 0x00007ffff72c1f9a in fl_wait(double) () from /usr/local/fltk13/lib/libfltk.so.1.3
+#16 0x00007ffff727c16d in Fl::wait(double) () from /usr/local/fltk13/lib/libfltk.so.1.3
+#17 0x00007ffff727c193 in Fl::run() () from /usr/local/fltk13/lib/libfltk.so.1.3
+#18 0x0000000000408039 in main ()
+

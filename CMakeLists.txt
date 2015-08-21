@@ -253,6 +253,20 @@ mark_as_advanced(BUILD_VIEWER)
 mark_as_advanced(BUILD_JAVA)
 mark_as_advanced(BUILD_JP3D)
 
+option(BUILD_FLVIEWER "Build the flviewer executable (C++)" OFF)
+option(BUILD_FLVIEWER_WITH_SHARED_LIBS "Build the flviewer with shared libraries" OFF)
+option(BUILD_FLVIEWER_WITH_JPWL_LIB "Build the flviewer with JPWL library" OFF)
+option(FLTK_SKIP_OPENGL "Build flviewer without OPENGL support" ON)
+option(BUILD_WITH_GERMAN "Build flviewer with GERMAN language" OFF)
+if(FLTK_SKIP_OPENGL)
+ SET(FLTK_GL_LIBRARY "")
+endif()
+mark_as_advanced(BUILD_FLVIEWER)
+mark_as_advanced(BUILD_FLVIEWER_WITH_SHARED_LIBS)
+mark_as_advanced(BUILD_FLVIEWER_WITH_JPWL_LIB)
+mark_as_advanced(FLTK_SKIP_OPENGL)
+mark_as_advanced(BUILD_WITH_GERMAN)
+
 if(BUILD_CODEC OR BUILD_MJ2)
   # OFF: It will only build 3rd party libs if they are not found on the system
   # ON: 3rd party libs will ALWAYS be build, and used
