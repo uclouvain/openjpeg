@@ -569,7 +569,7 @@ void color_apply_conversion(opj_image_t *image)
 	
 	image->color_space = OPJ_CLRSPC_SRGB;
 	
-	numcomps = image->numcomps;
+	numcomps = (int)image->numcomps;
 	
 	if(numcomps != 3)
 	{
@@ -615,7 +615,7 @@ void color_apply_conversion(opj_image_t *image)
 		prec1 = (double)image->comps[1].prec;
 		prec2 = (double)image->comps[2].prec;
 		
-		default_type = row[1];
+		default_type = (unsigned int)row[1];
 		
 		if(default_type == 0x44454600)// DEF : default
 		{
@@ -749,8 +749,8 @@ void color_esycc_to_rgb(opj_image_t *image)
 	w = image->comps[0].w;
 	h = image->comps[0].h;
 	
-	sign1 = image->comps[1].sgnd;
-	sign2 = image->comps[2].sgnd;
+	sign1 = (int)image->comps[1].sgnd;
+	sign2 = (int)image->comps[2].sgnd;
 	
 	max = w * h;
 	
