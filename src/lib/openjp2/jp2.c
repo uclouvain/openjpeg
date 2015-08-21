@@ -849,6 +849,8 @@ static OPJ_BOOL opj_jp2_check_color(opj_image_t *image, opj_jp2_color_t *color, 
 				opj_event_msg(p_manager, EVT_ERROR, "Invalid component index %d (>= %d).\n", info[i].cn, nr_channels);
 				return OPJ_FALSE;
 			}
+			if (info[i].asoc > 65534) continue;
+
 			if (info[i].asoc > 0 && (OPJ_UINT32)(info[i].asoc - 1) >= nr_channels) {
 				opj_event_msg(p_manager, EVT_ERROR, "Invalid component index %d (>= %d).\n", info[i].asoc - 1, nr_channels);
 				return OPJ_FALSE;
@@ -966,7 +968,7 @@ static void opj_jp2_apply_pclr(opj_image_t *image, opj_jp2_color_t *color)
 
 	old_comps = image->comps;
 	new_comps = (opj_image_comp_t*)
-			opj_malloc(nr_channels * sizeof(opj_image_comp_t));
+			opj_calloc(nr_channels, sizeof(opj_image_comp_t));
 	if (!new_comps) {
 		/* FIXME no error code for opj_jp2_apply_pclr */
 		/* FIXME event manager error callback */
@@ -1312,11 +1314,11 @@ static OPJ_BOOL opj_jp2_read_cdef(	opj_jp2_t * jp2,
 		return OPJ_FALSE;
 	}
 
-	cdef_info = (opj_jp2_cdef_info_t*) opj_malloc(l_value * sizeof(opj_jp2_cdef_info_t));
+	cdef_info = (opj_jp2_cdef_info_t*) opj_calloc(1, l_value * sizeof(opj_jp2_cdef_info_t));
     if (!cdef_info)
         return OPJ_FALSE;
 
-	jp2->color.jp2_cdef = (opj_jp2_cdef_t*)opj_malloc(sizeof(opj_jp2_cdef_t));
+	jp2->color.jp2_cdef = (opj_jp2_cdef_t*)opj_calloc(1, sizeof(opj_jp2_cdef_t));
     if(!jp2->color.jp2_cdef)
     {
         opj_free(cdef_info);
@@ -1389,7 +1391,51 @@ static OPJ_BOOL opj_jp2_read_colr( opj_jp2_t *jp2,
 		}
 
 		opj_read_bytes(p_colr_header_data,&jp2->enumcs ,4);			/* EnumCS */
-        
+
+        p_colr_header_data += 4;
+
+        if(jp2->enumcs == 14)/* CIELab */
+       {
+        OPJ_UINT32 *cielab;
+        OPJ_UINT32 rl, ol, ra, oa, rb, ob, il;
+
+        cielab = (OPJ_UINT32*)opj_malloc(9 * sizeof(OPJ_UINT32));
+        cielab[0] = 14; /* enumcs */
+
+       if(p_colr_header_size == 7)/* default values */
+     {
+        rl = ra = rb = ol = oa = ob = 0;
+        il = 0x00443530; /* D50 */
+        cielab[1] = 0x44454600;/* DEF */
+     }
+        else
+       if(p_colr_header_size == 35)
+     {
+        opj_read_bytes(p_colr_header_data, &rl, 4);
+       p_colr_header_data += 4;
+        opj_read_bytes(p_colr_header_data, &ol, 4);
+       p_colr_header_data += 4;
+        opj_read_bytes(p_colr_header_data, &ra, 4);
+       p_colr_header_data += 4;
+        opj_read_bytes(p_colr_header_data, &oa, 4);
+       p_colr_header_data += 4;
+        opj_read_bytes(p_colr_header_data, &rb, 4);
+       p_colr_header_data += 4;
+        opj_read_bytes(p_colr_header_data, &ob, 4);
+       p_colr_header_data += 4;
+       opj_read_bytes(p_colr_header_data, &il, 4);
+       p_colr_header_data += 4;
+
+        cielab[1] = 0;
+     }
+        cielab[2] = rl; cielab[4] = ra; cielab[6] = rb;
+        cielab[3] = ol; cielab[5] = oa; cielab[7] = ob;
+        cielab[8] = il;
+
+        jp2->color.icc_profile_buf = (unsigned char*)cielab;
+        jp2->color.icc_profile_len = 0;
+      }
+
         jp2->color.jp2_has_colr = 1;
 	}
 	else if (jp2->meth == 2) {
@@ -1452,6 +1498,9 @@ OPJ_BOOL opj_jp2_decode(opj_jp2_t *jp2,
 		    p_image->color_space = OPJ_CLRSPC_SYCC;
             else if (jp2->enumcs == 24)
                     p_image->color_space = OPJ_CLRSPC_EYCC;
+		else
+		if (jp2->enumcs == 12)
+			p_image->color_space = OPJ_CLRSPC_CMYK;
 	    else
 		    p_image->color_space = OPJ_CLRSPC_UNKNOWN;
 
@@ -1840,14 +1889,14 @@ OPJ_BOOL opj_jp2_setup_encoder(	opj_jp2_t *jp2,
 		opj_event_msg(p_manager, EVT_WARNING, "Multiple alpha channels specified. No cdef box will be created.\n");
 	}
 	if (alpha_count == 1U) { /* if here, we know what we can do */
-		jp2->color.jp2_cdef = (opj_jp2_cdef_t*)opj_malloc(sizeof(opj_jp2_cdef_t));
+		jp2->color.jp2_cdef = (opj_jp2_cdef_t*)opj_calloc(1, sizeof(opj_jp2_cdef_t));
 		if(!jp2->color.jp2_cdef) {
 			opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to setup the JP2 encoder\n");
 			return OPJ_FALSE;
 		}
 		/* no memset needed, all values will be overwritten except if jp2->color.jp2_cdef->info allocation fails, */
 		/* in which case jp2->color.jp2_cdef->info will be NULL => valid for destruction */
-		jp2->color.jp2_cdef->info = (opj_jp2_cdef_info_t*) opj_malloc(image->numcomps * sizeof(opj_jp2_cdef_info_t));
+		jp2->color.jp2_cdef->info = (opj_jp2_cdef_info_t*) opj_calloc(1, image->numcomps * sizeof(opj_jp2_cdef_info_t));
 		if (!jp2->color.jp2_cdef->info) {
 			/* memory will be freed by opj_jp2_destroy */
 			opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to setup the JP2 encoder\n");
@@ -2824,6 +2873,12 @@ OPJ_BOOL opj_jp2_get_tile(	opj_jp2_t *p_jp2,
 		p_image->color_space = OPJ_CLRSPC_GRAY;
 	else if (p_jp2->enumcs == 18)
 		p_image->color_space = OPJ_CLRSPC_SYCC;
+	else
+	if (p_jp2->enumcs == 24)
+		p_image->color_space = OPJ_CLRSPC_EYCC;
+	else
+	if (p_jp2->enumcs == 12)
+		p_image->color_space = OPJ_CLRSPC_CMYK;
 	else
 		p_image->color_space = OPJ_CLRSPC_UNKNOWN;
 
