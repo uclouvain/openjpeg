@@ -490,7 +490,7 @@ opj_decompress -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_png-14.pn
 opj_decompress -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_png-16.png -p 16S
 
 # issue 388
-opj_decompress -i @INPUT_NR_PATH@/v4dwt_interleave_h.gsr105.j2k -o @TEMP_PATH@/v4dwt_interleave_h.gsr105.j2k.pgx
+!opj_decompress -i @INPUT_NR_PATH@/v4dwt_interleave_h.gsr105.j2k -o @TEMP_PATH@/v4dwt_interleave_h.gsr105.j2k.pgx
 opj_decompress -i @INPUT_NR_PATH@/dwt_interleave_h.gsr105.jp2 -o @TEMP_PATH@/dwt_interleave_h.gsr105.jp2.pgx
 
 # PR 559 : CMYK tif output
