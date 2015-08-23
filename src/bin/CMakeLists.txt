@@ -16,6 +16,10 @@ endif()
 if(BUILD_JP3D)
   add_subdirectory(jp3d)
 endif()
-
+if(BUILD_VIEWER)
 # wx apps:
-add_subdirectory(wx)
+  add_subdirectory(wx)
+endif()
+if(BUILD_FLVIEWER)
+  add_subdirectory(fltk)
+endif()
