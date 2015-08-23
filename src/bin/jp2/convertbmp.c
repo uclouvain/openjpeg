@@ -315,7 +315,7 @@ static opj_image_t* bmp8toimage(const OPJ_UINT8* pData, OPJ_UINT32 stride, opj_i
 static OPJ_BOOL bmp_read_file_header(FILE* IN, OPJ_BITMAPFILEHEADER* header)
 {
 	header->bfType  = (OPJ_UINT16)getc(IN);
-	header->bfType |= (OPJ_UINT16)((OPJ_UINT32)(getc(IN) << 8));
+	header->bfType |= (OPJ_UINT16)((OPJ_UINT32)getc(IN) << 8);
 	
 	if (header->bfType != 19778) {
 		fprintf(stderr,"Error, not a BMP file!\n");
@@ -325,20 +325,20 @@ static OPJ_BOOL bmp_read_file_header(FILE* IN, OPJ_BITMAPFILEHEADER* header)
 	/* FILE HEADER */
 	/* ------------- */
 	header->bfSize  = (OPJ_UINT32)getc(IN);
-	header->bfSize |= (OPJ_UINT32)(getc(IN) << 8);
-	header->bfSize |= (OPJ_UINT32)(getc(IN) << 16);
-	header->bfSize |= (OPJ_UINT32)(getc(IN) << 24);
+	header->bfSize |= (OPJ_UINT32)getc(IN) << 8;
+	header->bfSize |= (OPJ_UINT32)getc(IN) << 16;
+	header->bfSize |= (OPJ_UINT32)getc(IN) << 24;
 	
 	header->bfReserved1  = (OPJ_UINT16)getc(IN);
-	header->bfReserved1 |= (OPJ_UINT16)((OPJ_UINT32)(getc(IN) << 8));
+	header->bfReserved1 |= (OPJ_UINT16)((OPJ_UINT32)getc(IN) << 8);
 	
 	header->bfReserved2  = (OPJ_UINT16)getc(IN);
-	header->bfReserved2 |= (OPJ_UINT16)((OPJ_UINT32)(getc(IN) << 8));
+	header->bfReserved2 |= (OPJ_UINT16)((OPJ_UINT32)getc(IN) << 8);
 	
 	header->bfOffBits  = (OPJ_UINT32)getc(IN);
-	header->bfOffBits |= (OPJ_UINT32)(getc(IN) << 8);
-	header->bfOffBits |= (OPJ_UINT32)(getc(IN) << 16);
-	header->bfOffBits |= (OPJ_UINT32)(getc(IN) << 24);
+	header->bfOffBits |= (OPJ_UINT32)getc(IN) << 8;
+	header->bfOffBits |= (OPJ_UINT32)getc(IN) << 16;
+	header->bfOffBits |= (OPJ_UINT32)getc(IN) << 24;
 	return OPJ_TRUE;
 }
 static OPJ_BOOL bmp_read_info_header(FILE* IN, OPJ_BITMAPINFOHEADER* header)
@@ -347,9 +347,9 @@ static OPJ_BOOL bmp_read_info_header(FILE* IN, OPJ_BITMAPINFOHEADER* header)
 	/* INFO HEADER */
 	/* ------------- */
 	header->biSize  = (OPJ_UINT32)getc(IN);
-	header->biSize |= (OPJ_UINT32)(getc(IN) << 8);
-	header->biSize |= (OPJ_UINT32)(getc(IN) << 16);
-	header->biSize |= (OPJ_UINT32)(getc(IN) << 24);
+	header->biSize |= (OPJ_UINT32)getc(IN) << 8;
+	header->biSize |= (OPJ_UINT32)getc(IN) << 16;
+	header->biSize |= (OPJ_UINT32)getc(IN) << 24;
 	
 	switch (header->biSize) {
 		case 12U:  /* BITMAPCOREHEADER */
@@ -365,80 +365,80 @@ static OPJ_BOOL bmp_read_info_header(FILE* IN, OPJ_BITMAPINFOHEADER* header)
 	}
 	
 	header->biWidth  = (OPJ_UINT32)getc(IN);
-	header->biWidth |= (OPJ_UINT32)(getc(IN) << 8);
-	header->biWidth |= (OPJ_UINT32)(getc(IN) << 16);
-	header->biWidth |= (OPJ_UINT32)(getc(IN) << 24);
+	header->biWidth |= (OPJ_UINT32)getc(IN) << 8;
+	header->biWidth |= (OPJ_UINT32)getc(IN) << 16;
+	header->biWidth |= (OPJ_UINT32)getc(IN) << 24;
 	
 	header->biHeight  = (OPJ_UINT32)getc(IN);
-	header->biHeight |= (OPJ_UINT32)(getc(IN) << 8);
-	header->biHeight |= (OPJ_UINT32)(getc(IN) << 16);
-	header->biHeight |= (OPJ_UINT32)(getc(IN) << 24);
+	header->biHeight |= (OPJ_UINT32)getc(IN) << 8;
+	header->biHeight |= (OPJ_UINT32)getc(IN) << 16;
+	header->biHeight |= (OPJ_UINT32)getc(IN) << 24;
 	
 	header->biPlanes  = (OPJ_UINT16)getc(IN);
-	header->biPlanes |= (OPJ_UINT16)((OPJ_UINT32)(getc(IN) << 8));
+	header->biPlanes |= (OPJ_UINT16)((OPJ_UINT32)getc(IN) << 8);
 	
 	header->biBitCount  = (OPJ_UINT16)getc(IN);
-	header->biBitCount |= (OPJ_UINT16)((OPJ_UINT32)(getc(IN) << 8));
+	header->biBitCount |= (OPJ_UINT16)((OPJ_UINT32)getc(IN) << 8);
 	
 	if(header->biSize >= 40U) {
 		header->biCompression  = (OPJ_UINT32)getc(IN);
-		header->biCompression |= (OPJ_UINT32)(getc(IN) << 8);
-		header->biCompression |= (OPJ_UINT32)(getc(IN) << 16);
-		header->biCompression |= (OPJ_UINT32)(getc(IN) << 24);
+		header->biCompression |= (OPJ_UINT32)getc(IN) << 8;
+		header->biCompression |= (OPJ_UINT32)getc(IN) << 16;
+		header->biCompression |= (OPJ_UINT32)getc(IN) << 24;
 		
 		header->biSizeImage  = (OPJ_UINT32)getc(IN);
-		header->biSizeImage |= (OPJ_UINT32)(getc(IN) << 8);
-		header->biSizeImage |= (OPJ_UINT32)(getc(IN) << 16);
-		header->biSizeImage |= (OPJ_UINT32)(getc(IN) << 24);
+		header->biSizeImage |= (OPJ_UINT32)getc(IN) << 8;
+		header->biSizeImage |= (OPJ_UINT32)getc(IN) << 16;
+		header->biSizeImage |= (OPJ_UINT32)getc(IN) << 24;
 		
 		header->biXpelsPerMeter  = (OPJ_UINT32)getc(IN);
-		header->biXpelsPerMeter |= (OPJ_UINT32)(getc(IN) << 8);
-		header->biXpelsPerMeter |= (OPJ_UINT32)(getc(IN) << 16);
-		header->biXpelsPerMeter |= (OPJ_UINT32)(getc(IN) << 24);
+		header->biXpelsPerMeter |= (OPJ_UINT32)getc(IN) << 8;
+		header->biXpelsPerMeter |= (OPJ_UINT32)getc(IN) << 16;
+		header->biXpelsPerMeter |= (OPJ_UINT32)getc(IN) << 24;
 		
 		header->biYpelsPerMeter  = (OPJ_UINT32)getc(IN);
-		header->biYpelsPerMeter |= (OPJ_UINT32)(getc(IN) << 8);
-		header->biYpelsPerMeter |= (OPJ_UINT32)(getc(IN) << 16);
-		header->biYpelsPerMeter |= (OPJ_UINT32)(getc(IN) << 24);
+		header->biYpelsPerMeter |= (OPJ_UINT32)getc(IN) << 8;
+		header->biYpelsPerMeter |= (OPJ_UINT32)getc(IN) << 16;
+		header->biYpelsPerMeter |= (OPJ_UINT32)getc(IN) << 24;
 		
 		header->biClrUsed  = (OPJ_UINT32)getc(IN);
-		header->biClrUsed |= (OPJ_UINT32)(getc(IN) << 8);
-		header->biClrUsed |= (OPJ_UINT32)(getc(IN) << 16);
-		header->biClrUsed |= (OPJ_UINT32)(getc(IN) << 24);
+		header->biClrUsed |= (OPJ_UINT32)getc(IN) << 8;
+		header->biClrUsed |= (OPJ_UINT32)getc(IN) << 16;
+		header->biClrUsed |= (OPJ_UINT32)getc(IN) << 24;
 		
 		header->biClrImportant  = (OPJ_UINT32)getc(IN);
-		header->biClrImportant |= (OPJ_UINT32)(getc(IN) << 8);
-		header->biClrImportant |= (OPJ_UINT32)(getc(IN) << 16);
-		header->biClrImportant |= (OPJ_UINT32)(getc(IN) << 24);
+		header->biClrImportant |= (OPJ_UINT32)getc(IN) << 8;
+		header->biClrImportant |= (OPJ_UINT32)getc(IN) << 16;
+		header->biClrImportant |= (OPJ_UINT32)getc(IN) << 24;
 	}
 	
 	if(header->biSize >= 56U) {
 		header->biRedMask  = (OPJ_UINT32)getc(IN);
-		header->biRedMask |= (OPJ_UINT32)(getc(IN) << 8);
-		header->biRedMask |= (OPJ_UINT32)(getc(IN) << 16);
-		header->biRedMask |= (OPJ_UINT32)(getc(IN) << 24);
+		header->biRedMask |= (OPJ_UINT32)getc(IN) << 8;
+		header->biRedMask |= (OPJ_UINT32)getc(IN) << 16;
+		header->biRedMask |= (OPJ_UINT32)getc(IN) << 24;
 		
 		header->biGreenMask  = (OPJ_UINT32)getc(IN);
-		header->biGreenMask |= (OPJ_UINT32)(getc(IN) << 8);
-		header->biGreenMask |= (OPJ_UINT32)(getc(IN) << 16);
-		header->biGreenMask |= (OPJ_UINT32)(getc(IN) << 24);
+		header->biGreenMask |= (OPJ_UINT32)getc(IN) << 8;
+		header->biGreenMask |= (OPJ_UINT32)getc(IN) << 16;
+		header->biGreenMask |= (OPJ_UINT32)getc(IN) << 24;
 		
 		header->biBlueMask  = (OPJ_UINT32)getc(IN);
-		header->biBlueMask |= (OPJ_UINT32)(getc(IN) << 8);
-		header->biBlueMask |= (OPJ_UINT32)(getc(IN) << 16);
-		header->biBlueMask |= (OPJ_UINT32)(getc(IN) << 24);
+		header->biBlueMask |= (OPJ_UINT32)getc(IN) << 8;
+		header->biBlueMask |= (OPJ_UINT32)getc(IN) << 16;
+		header->biBlueMask |= (OPJ_UINT32)getc(IN) << 24;
 		
 		header->biAlphaMask  = (OPJ_UINT32)getc(IN);
-		header->biAlphaMask |= (OPJ_UINT32)(getc(IN) << 8);
-		header->biAlphaMask |= (OPJ_UINT32)(getc(IN) << 16);
-		header->biAlphaMask |= (OPJ_UINT32)(getc(IN) << 24);
+		header->biAlphaMask |= (OPJ_UINT32)getc(IN) << 8;
+		header->biAlphaMask |= (OPJ_UINT32)getc(IN) << 16;
+		header->biAlphaMask |= (OPJ_UINT32)getc(IN) << 24;
 	}
 	
 	if(header->biSize >= 108U) {
 		header->biColorSpaceType  = (OPJ_UINT32)getc(IN);
-		header->biColorSpaceType |= (OPJ_UINT32)(getc(IN) << 8);
-		header->biColorSpaceType |= (OPJ_UINT32)(getc(IN) << 16);
-		header->biColorSpaceType |= (OPJ_UINT32)(getc(IN) << 24);
+		header->biColorSpaceType |= (OPJ_UINT32)getc(IN) << 8;
+		header->biColorSpaceType |= (OPJ_UINT32)getc(IN) << 16;
+		header->biColorSpaceType |= (OPJ_UINT32)getc(IN) << 24;
 		
 		if (fread(&(header->biColorSpaceEP), 1U, sizeof(header->biColorSpaceEP), IN) != sizeof(header->biColorSpaceEP)) {
 			fprintf(stderr,"Error, can't  read BMP header\n");
@@ -446,41 +446,41 @@ static OPJ_BOOL bmp_read_info_header(FILE* IN, OPJ_BITMAPINFOHEADER* header)
 		}
 		
 		header->biRedGamma  = (OPJ_UINT32)getc(IN);
-		header->biRedGamma |= (OPJ_UINT32)(getc(IN) << 8);
-		header->biRedGamma |= (OPJ_UINT32)(getc(IN) << 16);
-		header->biRedGamma |= (OPJ_UINT32)(getc(IN) << 24);
+		header->biRedGamma |= (OPJ_UINT32)getc(IN) << 8;
+		header->biRedGamma |= (OPJ_UINT32)getc(IN) << 16;
+		header->biRedGamma |= (OPJ_UINT32)getc(IN) << 24;
 		
 		header->biGreenGamma  = (OPJ_UINT32)getc(IN);
-		header->biGreenGamma |= (OPJ_UINT32)(getc(IN) << 8);
-		header->biGreenGamma |= (OPJ_UINT32)(getc(IN) << 16);
-		header->biGreenGamma |= (OPJ_UINT32)(getc(IN) << 24);
+		header->biGreenGamma |= (OPJ_UINT32)getc(IN) << 8;
+		header->biGreenGamma |= (OPJ_UINT32)getc(IN) << 16;
+		header->biGreenGamma |= (OPJ_UINT32)getc(IN) << 24;
 		
 		header->biBlueGamma  = (OPJ_UINT32)getc(IN);
-		header->biBlueGamma |= (OPJ_UINT32)(getc(IN) << 8);
-		header->biBlueGamma |= (OPJ_UINT32)(getc(IN) << 16);
-		header->biBlueGamma |= (OPJ_UINT32)(getc(IN) << 24);
+		header->biBlueGamma |= (OPJ_UINT32)getc(IN) << 8;
+		header->biBlueGamma |= (OPJ_UINT32)getc(IN) << 16;
+		header->biBlueGamma |= (OPJ_UINT32)getc(IN) << 24;
 	}
 	
 	if(header->biSize >= 124U) {
 		header->biIntent  = (OPJ_UINT32)getc(IN);
-		header->biIntent |= (OPJ_UINT32)(getc(IN) << 8);
-		header->biIntent |= (OPJ_UINT32)(getc(IN) << 16);
-		header->biIntent |= (OPJ_UINT32)(getc(IN) << 24);
+		header->biIntent |= (OPJ_UINT32)getc(IN) << 8;
+		header->biIntent |= (OPJ_UINT32)getc(IN) << 16;
+		header->biIntent |= (OPJ_UINT32)getc(IN) << 24;
 		
 		header->biIccProfileData  = (OPJ_UINT32)getc(IN);
-		header->biIccProfileData |= (OPJ_UINT32)(getc(IN) << 8);
-		header->biIccProfileData |= (OPJ_UINT32)(getc(IN) << 16);
-		header->biIccProfileData |= (OPJ_UINT32)(getc(IN) << 24);
+		header->biIccProfileData |= (OPJ_UINT32)getc(IN) << 8;
+		header->biIccProfileData |= (OPJ_UINT32)getc(IN) << 16;
+		header->biIccProfileData |= (OPJ_UINT32)getc(IN) << 24;
 		
 		header->biIccProfileSize  = (OPJ_UINT32)getc(IN);
-		header->biIccProfileSize |= (OPJ_UINT32)(getc(IN) << 8);
-		header->biIccProfileSize |= (OPJ_UINT32)(getc(IN) << 16);
-		header->biIccProfileSize |= (OPJ_UINT32)(getc(IN) << 24);
+		header->biIccProfileSize |= (OPJ_UINT32)getc(IN) << 8;
+		header->biIccProfileSize |= (OPJ_UINT32)getc(IN) << 16;
+		header->biIccProfileSize |= (OPJ_UINT32)getc(IN) << 24;
 		
 		header->biReserved  = (OPJ_UINT32)getc(IN);
-		header->biReserved |= (OPJ_UINT32)(getc(IN) << 8);
-		header->biReserved |= (OPJ_UINT32)(getc(IN) << 16);
-		header->biReserved |= (OPJ_UINT32)(getc(IN) << 24);
+		header->biReserved |= (OPJ_UINT32)getc(IN) << 8;
+		header->biReserved |= (OPJ_UINT32)getc(IN) << 16;
+		header->biReserved |= (OPJ_UINT32)getc(IN) << 24;
 	}
 	return OPJ_TRUE;
 }

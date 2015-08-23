@@ -742,7 +742,7 @@ void color_esycc_to_rgb(opj_image_t *image)
 	int y, cb, cr, sign1, sign2, val;
 	unsigned int w, h, max, i;
 	int flip_value = (1 << (image->comps[0].prec-1));
-	int max_value = (~(-1 << image->comps[0].prec));
+	int max_value = (1 << image->comps[0].prec) - 1;
 	
 	if(image->numcomps < 3) return;
 	
