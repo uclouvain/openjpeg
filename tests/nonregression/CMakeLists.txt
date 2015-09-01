@@ -1,5 +1,7 @@
 # NON-REGRESSION TESTS ON THIS DATASET LOCATED ${OPJ_DATA_ROOT}/input/nonregression
 
+cmake_minimum_required(VERSION 2.8.7)
+
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/Temporary)
 
 set(TEMP ${CMAKE_CURRENT_BINARY_DIR}/Temporary)
