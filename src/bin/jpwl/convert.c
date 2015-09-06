@@ -2858,6 +2858,7 @@ opj_image_t* rawtoimage(const char *filename, opj_cparameters_t *parameters, raw
 			for (i = 0; i < w * h; i++) {
 				if (!fread(&value, 1, 1, f)) {
 					fprintf(stderr,"Error reading raw file. End of file probably reached.\n");
+					fclose(f);
 					return NULL;
 				}
 				image->comps[compno].data[i] = raw_cp->rawSigned?(char)value:value;
@@ -2872,11 +2873,13 @@ opj_image_t* rawtoimage(const char *filename, opj_cparameters_t *parameters, raw
 				unsigned char temp;
 				if (!fread(&temp, 1, 1, f)) {
 					fprintf(stderr,"Error reading raw file. End of file probably reached.\n");
+					fclose(f);
 					return NULL;
 				}
 				value = temp << 8;
 				if (!fread(&temp, 1, 1, f)) {
 					fprintf(stderr,"Error reading raw file. End of file probably reached.\n");
+					fclose(f);
 					return NULL;
 				}
 				value += temp;
@@ -2886,6 +2889,7 @@ opj_image_t* rawtoimage(const char *filename, opj_cparameters_t *parameters, raw
 	}
 	else {
 		fprintf(stderr,"OpenJPEG cannot encode raw components with bit depth higher than 16 bits.\n");
+		fclose(f);
 		return NULL;
 	}
 
