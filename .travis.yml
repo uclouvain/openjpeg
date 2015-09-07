@@ -1,11 +1,11 @@
 language: c
 before_install:
-  - git clone --depth=1 --branch=master git://github.com/uclouvain/openjpeg-data.git uclouvain/openjpeg-data
+  - git clone --depth=1 --branch=master git://github.com/uclouvain/openjpeg-data.git data
 compiler:
   - gcc
 script:
     - mkdir build
     - cd build
-    - cmake -G "Unix Makefiles" -DBUILD_CODEC=ON -DBUILD_THIRDPARTY=ON -DBUILD_TESTING=ON -DOPJ_DATA_ROOT=../../openjpeg-data ..
+    - cmake -G "Unix Makefiles" -DBUILD_CODEC=ON -DBUILD_THIRDPARTY=ON -DBUILD_TESTING=ON -DOPJ_DATA_ROOT=../data ..
     - make
     - make test ARGS=-j2
