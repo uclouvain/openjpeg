@@ -12,6 +12,9 @@ Anyone. As the OpenJPEG code is released under the [2-clauses BSD license](https
 ## How to install and use OpenJPEG ?
 API Documentation needs a major refactoring. Meanwhile, you can check [installation](https://github.com/uclouvain/openjpeg/wiki/Installation) instructions and [codec documentation](https://github.com/uclouvain/openjpeg/wiki/DocJ2KCodec).
     
+## Current Status
+* Build status: [![Build Status](https://travis-ci.org/uclouvain/openjpeg.svg?branch=master)](https://travis-ci.org/uclouvain/openjpeg)
+    
 ## Who are the developers ?
 
 The library is developed and maintained by the Image and Signal Processing Group ([ISPGroup](http://sites.uclouvain.be/ispgroup/)), in the Université catholique de Louvain ([UCL](http://www.uclouvain.be/en-index.html), with the support of the [CNES](https://cnes.fr/), the [CS](http://www.c-s.fr/) company and the [intoPIX](http://www.intopix.com) company. The JPWL module has been developed by the Digital Signal Processing Lab ([DSPLab](http://dsplab.diei.unipg.it/)) of the University of Perugia, Italy ([UNIPG](http://www.unipg.it/)).
