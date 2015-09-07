@@ -1400,6 +1400,12 @@ static OPJ_BOOL opj_jp2_read_colr( opj_jp2_t *jp2,
 			OPJ_UINT32 rl, ol, ra, oa, rb, ob, il;
 
 			cielab = (OPJ_UINT32*)opj_malloc(9 * sizeof(OPJ_UINT32));
+
+			if(cielab == NULL)
+		   {
+			opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to handle CIELab\n");
+			return OPJ_FALSE;
+		   }
 			cielab[0] = 14; /* enumcs */
 			
 			/* default values */
@@ -1501,6 +1507,8 @@ OPJ_BOOL opj_jp2_decode(opj_jp2_t *jp2,
 			p_image->color_space = OPJ_CLRSPC_EYCC;
 		else if (jp2->enumcs == 12)
 			p_image->color_space = OPJ_CLRSPC_CMYK;
+		else if (jp2->enumcs == 14)
+			p_image->color_space = OPJ_CLRSPC_CIELAB;
 		else
 			p_image->color_space = OPJ_CLRSPC_UNKNOWN;
 
@@ -2877,6 +2885,8 @@ OPJ_BOOL opj_jp2_get_tile(	opj_jp2_t *p_jp2,
 		p_image->color_space = OPJ_CLRSPC_EYCC;
 	else if (p_jp2->enumcs == 12)
 		p_image->color_space = OPJ_CLRSPC_CMYK;
+	else if (p_jp2->enumcs == 14)
+		p_image->color_space = OPJ_CLRSPC_CIELAB;
 	else
 		p_image->color_space = OPJ_CLRSPC_UNKNOWN;
 

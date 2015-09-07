@@ -1,15 +1,12 @@
+#ifndef _FLIMAGE_COLOR_HH_
+#define _FLIMAGE_COLOR_HH_
+
 /*
- * The copyright in this software is being made available under the 2-clauses 
- * BSD License, included below. This software may be subject to other third 
- * party and contributor rights, including patent rights, and no such rights
- * are granted under this license.
- *
- * Copyright (c) 2002-2014, Universite catholique de Louvain (UCL), Belgium
- * Copyright (c) 2002-2014, Professor Benoit Macq
+ * Copyright (c) 2002-2007, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
+ * Copyright (c) 2002-2007, Professor Benoit Macq
  * Copyright (c) 2001-2003, David Janssens
  * Copyright (c) 2002-2003, Yannick Verschueren
- * Copyright (c) 2003-2007, Francois-Olivier Devaux 
- * Copyright (c) 2003-2014, Antonin Descampe
+ * Copyright (c) 2003-2007, Francois-Olivier Devaux and Antonin Descampe
  * Copyright (c) 2005, Herve Drolon, FreeImage Team
  * All rights reserved.
  *
@@ -35,13 +32,30 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _OPJ_COLOR_H_
-#define _OPJ_COLOR_H_
+typedef struct image_info
+{
+	int *red;
+	int *green;
+	int *blue;
+	int *alpha;
+	unsigned int numcomps;
+	OPJ_COLOR_SPACE color_space;
 
-extern void color_sycc_to_rgb(opj_image_t *img);
-extern void color_apply_icc_profile(opj_image_t *image);
-extern void color_cielab_to_rgb(opj_image_t *image);
+	unsigned int dx[4], dy[4], prec[4], sgnd[4];
 
-extern void color_cmyk_to_rgb(opj_image_t *image);
-extern void color_esycc_to_rgb(opj_image_t *image);
-#endif /* _OPJ_COLOR_H_ */
+	unsigned char free_red, free_green, free_blue, unused_alpha;
+	int has_alpha;
+	int is_still;
+
+} ImageInfo;
+
+#if defined(OPJ_HAVE_LIBLCMS1) || defined(OPJ_HAVE_LIBLCMS2)
+extern void COLOR_apply_icc_profile(opj_image_t *image, ImageInfo *dst);
+extern void COLOR_cielab_to_rgb(opj_image_t *image, ImageInfo *dst);
+#endif
+
+extern void COLOR_sycc_to_rgb(opj_image_t *img, ImageInfo *dst);
+extern void COLOR_cmyk_to_rgb(opj_image_t *image, ImageInfo *dst);
+extern void COLOR_esycc_to_rgb(opj_image_t *image, ImageInfo *dst);
+
+#endif /* _FLIMAGE_COLOR_HH_ */
