@@ -5,7 +5,7 @@ compiler:
 before_install:
   - cmake --version
   - git clone --depth=1 --branch=master git://github.com/uclouvain/openjpeg-data.git data
-  - wget -qO - https://github.com/openpreserve/jpylyzer/archive/1.14.2.tar.gz | tar -xzf
+  - wget -qO - https://github.com/openpreserve/jpylyzer/archive/1.14.2.tar.gz | tar -xvz
 install:
   - chmod +x jpylyzer-1.14.2/jpylyzer/jpylyzer.py
 
