@@ -862,10 +862,10 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
 					/* y0b = 1 if bandno = 2 or 3 */
 					l_y0b = (OPJ_INT32)((l_band->bandno)>>1);
 					/* l_band border (global) */
-					l_band->x0 = opj_int_ceildivpow2(l_tilec->x0 - (1 << l_level_no) * l_x0b, (OPJ_INT32)(l_level_no + 1));
-					l_band->y0 = opj_int_ceildivpow2(l_tilec->y0 - (1 << l_level_no) * l_y0b, (OPJ_INT32)(l_level_no + 1));
-					l_band->x1 = opj_int_ceildivpow2(l_tilec->x1 - (1 << l_level_no) * l_x0b, (OPJ_INT32)(l_level_no + 1));
-					l_band->y1 = opj_int_ceildivpow2(l_tilec->y1 - (1 << l_level_no) * l_y0b, (OPJ_INT32)(l_level_no + 1));
+					l_band->x0 = opj_int64_ceildivpow2(l_tilec->x0 - ((OPJ_INT64)l_x0b << l_level_no), (OPJ_INT32)(l_level_no + 1));
+					l_band->y0 = opj_int64_ceildivpow2(l_tilec->y0 - ((OPJ_INT64)l_y0b << l_level_no), (OPJ_INT32)(l_level_no + 1));
+					l_band->x1 = opj_int64_ceildivpow2(l_tilec->x1 - ((OPJ_INT64)l_x0b << l_level_no), (OPJ_INT32)(l_level_no + 1));
+					l_band->y1 = opj_int64_ceildivpow2(l_tilec->y1 - ((OPJ_INT64)l_y0b << l_level_no), (OPJ_INT32)(l_level_no + 1));
 				}
 				
 				/** avoid an if with storing function pointer */

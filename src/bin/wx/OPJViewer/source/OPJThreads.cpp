@@ -889,7 +889,7 @@ void OPJMarkerTree::OnSelChanged(wxTreeEvent& event)
 
 	m_peektextCtrl->WriteText(text);
 
-	delete buffer;
+	delete [] buffer;
 }
 
 /*void LogKeyEvent(const wxChar *name, const wxKeyEvent& event)

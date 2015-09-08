@@ -183,7 +183,18 @@ int imagetotif(opj_image_t * image, const char *outfile)
 	
 	numcomps = image->numcomps;
 	
-	if (numcomps > 2U) {
+	if (image->color_space == OPJ_CLRSPC_CMYK) {
+		if (numcomps < 4U) {
+			fprintf(stderr,"imagetotif: CMYK images shall be composed of at least 4 planes.\n");
+			fprintf(stderr,"\tAborting\n");
+			return 1;
+		}
+		tiPhoto = PHOTOMETRIC_SEPARATED;
+		if (numcomps > 4U) {
+			numcomps = 4U; /* Alpha not supported */
+		}
+	}
+	else if (numcomps > 2U) {
 		tiPhoto = PHOTOMETRIC_RGB;
 		if (numcomps > 4U) {
 			numcomps = 4U;
@@ -266,6 +277,7 @@ int imagetotif(opj_image_t * image, const char *outfile)
 	TIFFSetField(tif, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
 	TIFFSetField(tif, TIFFTAG_PHOTOMETRIC, tiPhoto);
 	TIFFSetField(tif, TIFFTAG_ROWSPERSTRIP, 1);
+	
 	strip_size = TIFFStripSize(tif);
 	rowStride = ((OPJ_SIZE_T)width * numcomps * (OPJ_SIZE_T)bps + 7U) / 8U;
 	if (rowStride != (OPJ_SIZE_T)strip_size) {

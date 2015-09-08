@@ -490,5 +490,15 @@ opj_decompress -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_png-14.pn
 opj_decompress -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_png-16.png -p 16S
 
 # issue 388
-opj_decompress -i @INPUT_NR_PATH@/v4dwt_interleave_h.gsr105.j2k -o @TEMP_PATH@/v4dwt_interleave_h.gsr105.j2k.pgx
+!opj_decompress -i @INPUT_NR_PATH@/v4dwt_interleave_h.gsr105.j2k -o @TEMP_PATH@/v4dwt_interleave_h.gsr105.j2k.pgx
 opj_decompress -i @INPUT_NR_PATH@/dwt_interleave_h.gsr105.jp2 -o @TEMP_PATH@/dwt_interleave_h.gsr105.jp2.pgx
+
+# PR 559 : CMYK tif output
+opj_decompress -i @INPUT_NR_PATH@/issue205.jp2 -o @TEMP_PATH@/issue205-tif.jp2.tif
+
+# issue 236: esYCC colorspace
+opj_decompress -i @INPUT_NR_PATH@/issue236-ESYCC-CDEF.jp2 -o @TEMP_PATH@/issue236-ESYCC-CDEF.jp2.pgx
+
+# issue 326 + PR 559: CIELab colorspace
+opj_decompress -i @INPUT_NR_PATH@/issue559-eci-090-CIELab.jp2 -o @TEMP_PATH@/issue559-eci-090-CIELab.jp2.pgx
+opj_decompress -i @INPUT_NR_PATH@/issue559-eci-091-CIELab.jp2 -o @TEMP_PATH@/issue559-eci-091-CIELab.jp2.pgx
