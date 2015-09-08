@@ -555,6 +555,9 @@ JPEG-2000 codestream reader/writer
 */
 typedef struct opj_j2k
 {
+	/* Memory manager */
+	opj_manager_t m_manager;
+
 	/* J2K codestream is decoded*/
 	OPJ_BOOL m_is_decoder;
 
@@ -612,13 +615,12 @@ void opj_j2k_setup_decoder(opj_j2k_t *j2k, opj_dparameters_t *parameters);
  *
  * @return Returns a handle to a J2K compressor if successful, returns NULL otherwise
 */
-opj_j2k_t* opj_j2k_create_compress(void);
+opj_j2k_t* opj_j2k_create_compress(opj_manager_t manager);
 
 
 OPJ_BOOL opj_j2k_setup_encoder(	opj_j2k_t *p_j2k,
 						    opj_cparameters_t *parameters,
-						    opj_image_t *image,
-						    opj_event_mgr_t * p_manager);
+						    opj_image_t *image);
 
 /**
 Converts an enum type progression order to string type
@@ -635,8 +637,7 @@ char *opj_j2k_convert_progression_order(OPJ_PROG_ORDER prg_order);
  * codestream.
  */
 OPJ_BOOL opj_j2k_end_decompress(opj_j2k_t *j2k,
-                                opj_stream_private_t *p_stream,
-                                opj_event_mgr_t * p_manager);
+                                opj_stream_private_t *p_stream);
 
 /**
  * Reads a jpeg2000 codestream header structure.
@@ -644,14 +645,12 @@ OPJ_BOOL opj_j2k_end_decompress(opj_j2k_t *j2k,
  * @param p_stream the stream to read data from.
  * @param p_j2k the jpeg2000 codec.
  * @param p_image FIXME DOC
- * @param p_manager the user event manager.
  *
  * @return true if the box is valid.
  */
 OPJ_BOOL opj_j2k_read_header(	opj_stream_private_t *p_stream,
                                 opj_j2k_t* p_j2k,
-                                opj_image_t** p_image,
-                                opj_event_mgr_t* p_manager );
+                                opj_image_t** p_image );
 
 
 /**
@@ -666,7 +665,7 @@ void opj_j2k_destroy (opj_j2k_t *p_j2k);
  *
  * @param	p_cstr_ind	the codestream index parameter to destroy.
  */
-void j2k_destroy_cstr_index (opj_codestream_index_t *p_cstr_ind);
+void j2k_destroy_cstr_index (opj_manager_t manager, opj_codestream_index_t *p_cstr_ind);
 
 /**
  * Decode tile data.
@@ -681,8 +680,7 @@ OPJ_BOOL opj_j2k_decode_tile (  opj_j2k_t * p_j2k,
                                 OPJ_UINT32 p_tile_index,
                                 OPJ_BYTE * p_data,
                                 OPJ_UINT32 p_data_size,
-                                opj_stream_private_t *p_stream,
-                                opj_event_mgr_t * p_manager );
+                                opj_stream_private_t *p_stream );
 
 /**
  * Reads a tile header.
@@ -707,8 +705,7 @@ OPJ_BOOL opj_j2k_read_tile_header ( opj_j2k_t * p_j2k,
                                     OPJ_INT32 * p_tile_y1,
                                     OPJ_UINT32 * p_nb_comps,
                                     OPJ_BOOL * p_go_on,
-                                    opj_stream_private_t *p_stream,
-                                    opj_event_mgr_t * p_manager );
+                                    opj_stream_private_t *p_stream );
 
 
 /**
@@ -720,22 +717,20 @@ OPJ_BOOL opj_j2k_read_tile_header ( opj_j2k_t * p_j2k,
  * @param	p_start_y		the up position of the rectangle to decode (in image coordinates).
  * @param	p_end_x			the right position of the rectangle to decode (in image coordinates).
  * @param	p_end_y			the bottom position of the rectangle to decode (in image coordinates).
- * @param	p_manager		the user event manager
  *
  * @return	true			if the area could be set.
  */
 OPJ_BOOL opj_j2k_set_decode_area(	opj_j2k_t *p_j2k,
 								    opj_image_t* p_image,
 								    OPJ_INT32 p_start_x, OPJ_INT32 p_start_y,
-								    OPJ_INT32 p_end_x, OPJ_INT32 p_end_y,
-								    opj_event_mgr_t * p_manager );
+								    OPJ_INT32 p_end_x, OPJ_INT32 p_end_y );
 
 /**
  * Creates a J2K decompression structure.
  *
  * @return a handle to a J2K decompressor if successful, NULL otherwise.
  */
-opj_j2k_t* opj_j2k_create_decompress(void);
+opj_j2k_t* opj_j2k_create_decompress(opj_manager_t manager);
 
 
 /**
@@ -791,24 +786,20 @@ opj_codestream_index_t* j2k_get_cstr_index(opj_j2k_t* p_j2k);
  * @param j2k J2K decompressor handle
  * @param p_stream  FIXME DOC
  * @param p_image   FIXME DOC
- * @param p_manager FIXME DOC
  * @return FIXME DOC
 */
 OPJ_BOOL opj_j2k_decode(opj_j2k_t *j2k,
                         opj_stream_private_t *p_stream,
-                        opj_image_t *p_image,
-                        opj_event_mgr_t *p_manager);
+                        opj_image_t *p_image);
 
 
 OPJ_BOOL opj_j2k_get_tile(	opj_j2k_t *p_j2k,
 			    			opj_stream_private_t *p_stream,
 				    		opj_image_t* p_image,
-					    	opj_event_mgr_t * p_manager,
 						    OPJ_UINT32 tile_index );
 
 OPJ_BOOL opj_j2k_set_decoded_resolution_factor(opj_j2k_t *p_j2k, 
-                                               OPJ_UINT32 res_factor,
-                                               opj_event_mgr_t * p_manager);
+                                               OPJ_UINT32 res_factor);
 
 
 /**
@@ -818,21 +809,18 @@ OPJ_BOOL opj_j2k_set_decoded_resolution_factor(opj_j2k_t *p_j2k,
  * @param p_data FIXME DOC
  * @param p_data_size FIXME DOC
  * @param	p_stream			the stream to write data to.
- * @param	p_manager	the user event manager.
  */
 OPJ_BOOL opj_j2k_write_tile (	opj_j2k_t * p_j2k,
 							    OPJ_UINT32 p_tile_index,
 							    OPJ_BYTE * p_data,
 							    OPJ_UINT32 p_data_size,
-							    opj_stream_private_t *p_stream,
-							    opj_event_mgr_t * p_manager );
+							    opj_stream_private_t *p_stream );
 
 /**
  * Encodes an image into a JPEG-2000 codestream
  */
-OPJ_BOOL opj_j2k_encode(	opj_j2k_t * p_j2k,
-			    			opj_stream_private_t *cio,
-				    		opj_event_mgr_t * p_manager );
+OPJ_BOOL opj_j2k_encode(    opj_j2k_t * p_j2k,
+                            opj_stream_private_t *cio );
 
 /**
  * Starts a compression scheme, i.e. validates the codec parameters, writes the header.
@@ -840,24 +828,20 @@ OPJ_BOOL opj_j2k_encode(	opj_j2k_t * p_j2k,
  * @param	p_j2k		the jpeg2000 codec.
  * @param	p_stream			the stream object.
  * @param	p_image FIXME DOC
- * @param	p_manager	the user event manager.
  *
  * @return true if the codec is valid.
  */
 OPJ_BOOL opj_j2k_start_compress(opj_j2k_t *p_j2k,
 							    opj_stream_private_t *p_stream,
-							    opj_image_t * p_image,
-							    opj_event_mgr_t * p_manager);
+							    opj_image_t * p_image);
 
 /**
  * Ends the compression procedures and possibiliy add data to be read after the
  * codestream.
  */
-OPJ_BOOL opj_j2k_end_compress( 	opj_j2k_t *p_j2k,
-							    opj_stream_private_t *cio,
-							    opj_event_mgr_t * p_manager);
+OPJ_BOOL opj_j2k_end_compress(opj_j2k_t *p_j2k, opj_stream_private_t *cio);
 
-OPJ_BOOL opj_j2k_setup_mct_encoding (opj_tcp_t * p_tcp, opj_image_t * p_image);
+static OPJ_BOOL opj_j2k_setup_mct_encoding (opj_manager_t manager, opj_tcp_t * p_tcp, opj_image_t * p_image);
 
 
 #endif /* __J2K_H */

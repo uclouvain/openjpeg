@@ -101,6 +101,7 @@ OPJ_FLOAT64 opj_mct_getnorm_real(OPJ_UINT32 compno);
 
 /**
 FIXME DOC
+@param manager          User memory/event manager
 @param p_coding_data    MCT data
 @param n                size of components
 @param p_data           components
@@ -109,6 +110,7 @@ FIXME DOC
 @return OPJ_FALSE if function encounter a problem, OPJ_TRUE otherwise
 */
 OPJ_BOOL opj_mct_encode_custom(
+					   opj_manager_t manager,
 					   OPJ_BYTE * p_coding_data,
 					   OPJ_UINT32 n,
 					   OPJ_BYTE ** p_data,
@@ -116,6 +118,7 @@ OPJ_BOOL opj_mct_encode_custom(
 					   OPJ_UINT32 is_signed);
 /**
 FIXME DOC
+@param manager          User memory/event manager
 @param pDecodingData    MCT data
 @param n                size of components
 @param pData            components
@@ -124,6 +127,7 @@ FIXME DOC
 @return OPJ_FALSE if function encounter a problem, OPJ_TRUE otherwise
 */
 OPJ_BOOL opj_mct_decode_custom(
+					   opj_manager_t manager,
 					   OPJ_BYTE * pDecodingData,
 					   OPJ_UINT32 n,
 					   OPJ_BYTE ** pData,

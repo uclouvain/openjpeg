@@ -57,6 +57,11 @@ typedef void (*opj_procedure)(void);
 typedef struct opj_procedure_list 
 {
 	/**
+	 * The memory manager.
+	 */
+	opj_manager_t m_manager;
+
+	/**
 	 * The number of validation procedures.
 	 */
 	OPJ_UINT32 m_nb_procedures;
@@ -76,9 +81,11 @@ typedef struct opj_procedure_list
 /**
  * Creates a validation list.
  *
+ * @param manager OpenJpeg memory/event manager
+ *
  * @return	the newly created validation list.
  */
-opj_procedure_list_t *  opj_procedure_list_create(void);
+opj_procedure_list_t *  opj_procedure_list_create(opj_manager_t manager);
 
 /**
  * Destroys a validation list.

@@ -52,14 +52,12 @@ typedef struct opj_codec_private
             /** Main header reading function handler */
             OPJ_BOOL (*opj_read_header) ( struct opj_stream_private * cio,
                                           void * p_codec,
-                                          opj_image_t **p_image,
-                                          struct opj_event_mgr * p_manager);
+                                          opj_image_t **p_image);
 
             /** Decoding function */
             OPJ_BOOL (*opj_decode) ( void * p_codec,
                                      struct opj_stream_private * p_cio,
-                                     opj_image_t * p_image,
-                                     struct opj_event_mgr * p_manager);
+                                     opj_image_t * p_image);
 
             /** FIXME DOC */
             OPJ_BOOL (*opj_read_tile_header)( void * p_codec,
@@ -71,21 +69,18 @@ typedef struct opj_codec_private
                                               OPJ_INT32 * p_tile_y1,
                                               OPJ_UINT32 * p_nb_comps,
                                               OPJ_BOOL * p_should_go_on,
-                                              struct opj_stream_private * p_cio,
-                                              struct opj_event_mgr * p_manager);
+                                              struct opj_stream_private * p_cio);
 
             /** FIXME DOC */
             OPJ_BOOL (*opj_decode_tile_data)( void * p_codec,
                                               OPJ_UINT32 p_tile_index,
                                               OPJ_BYTE * p_data,
                                               OPJ_UINT32 p_data_size,
-                                              struct opj_stream_private * p_cio,
-                                              struct opj_event_mgr * p_manager);
+                                              struct opj_stream_private * p_cio);
 
             /** Reading function used after codestream if necessary */
             OPJ_BOOL (* opj_end_decompress) ( void *p_codec,
-                                              struct opj_stream_private * cio,
-                                              struct opj_event_mgr * p_manager);
+                                              struct opj_stream_private * cio);
 
             /** Codec destroy function handler */
             void (*opj_destroy) (void * p_codec);
@@ -99,20 +94,17 @@ typedef struct opj_codec_private
                                               OPJ_INT32 p_start_x,
                                               OPJ_INT32 p_end_x,
                                               OPJ_INT32 p_start_y,
-                                              OPJ_INT32 p_end_y,
-                                              struct opj_event_mgr * p_manager);
+                                              OPJ_INT32 p_end_y);
 
             /** Get tile function */
             OPJ_BOOL (*opj_get_decoded_tile) ( void *p_codec,
                                                opj_stream_private_t * p_cio,
                                                opj_image_t *p_image,
-                                               struct opj_event_mgr * p_manager,
                                                OPJ_UINT32 tile_index);
 
             /** Set the decoded resolution factor */
             OPJ_BOOL (*opj_set_decoded_resolution_factor) ( void * p_codec,
-                                                            OPJ_UINT32 res_factor,
-                                                            opj_event_mgr_t * p_manager);
+                                                            OPJ_UINT32 res_factor);
         } m_decompression;
 
         /**
@@ -122,36 +114,33 @@ typedef struct opj_codec_private
         {
             OPJ_BOOL (* opj_start_compress) ( void *p_codec,
                                               struct opj_stream_private * cio,
-                                              struct opj_image * p_image,
-                                              struct opj_event_mgr * p_manager);
+                                              struct opj_image * p_image);
 
             OPJ_BOOL (* opj_encode) ( void * p_codec,
-                                      struct opj_stream_private *p_cio,
-                                      struct opj_event_mgr * p_manager);
+                                      struct opj_stream_private *p_cio);
 
             OPJ_BOOL (* opj_write_tile) ( void * p_codec,
                                           OPJ_UINT32 p_tile_index,
                                           OPJ_BYTE * p_data,
                                           OPJ_UINT32 p_data_size,
-                                          struct opj_stream_private * p_cio,
-                                          struct opj_event_mgr * p_manager);
+                                          struct opj_stream_private * p_cio);
 
             OPJ_BOOL (* opj_end_compress) (	void * p_codec,
-                                            struct opj_stream_private * p_cio,
-                                            struct opj_event_mgr * p_manager);
+                                            struct opj_stream_private * p_cio);
 
             void (* opj_destroy) (void * p_codec);
 
             OPJ_BOOL (* opj_setup_encoder) ( void * p_codec,
                                              opj_cparameters_t * p_param,
-                                             struct opj_image * p_image,
-                                             struct opj_event_mgr * p_manager);
+                                             struct opj_image * p_image);
         } m_compression;
     } m_codec_data;
     /** FIXME DOC*/
     void * m_codec;
-    /** Event handler */
-    opj_event_mgr_t m_event_mgr;
+    /** Manager */
+    opj_manager_t manager;
+    /** Flag to indicate if the manager is private or not */
+    OPJ_BOOL manager_is_private;
     /** Flag to indicate if the codec is used to decode or encode*/
     OPJ_BOOL is_decompressor;
     void (*opj_dump_codec) (void * p_codec, OPJ_INT32 info_flag, FILE* output_stream);

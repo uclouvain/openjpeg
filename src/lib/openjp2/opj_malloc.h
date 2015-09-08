@@ -107,12 +107,12 @@ Allocate memory aligned to a 16 byte boundry
 	#endif
 #endif
 
-#define opj_aligned_malloc(size) malloc(size)
+#define opj_aligned_malloc(size,align) malloc(size)
 #define opj_aligned_free(m) free(m)
 
 #ifdef HAVE_MM_MALLOC
 	#undef opj_aligned_malloc
-	#define opj_aligned_malloc(size) _mm_malloc(size, 16)
+	#define opj_aligned_malloc(size,align) _mm_malloc((size), (align))
 	#undef opj_aligned_free
 	#define opj_aligned_free(m) _mm_free(m)
 #endif
@@ -120,7 +120,7 @@ Allocate memory aligned to a 16 byte boundry
 #ifdef HAVE_MEMALIGN
 	extern void* memalign(size_t, size_t);
 	#undef opj_aligned_malloc
-	#define opj_aligned_malloc(size) memalign(16, (size))
+	#define opj_aligned_malloc(size, align) memalign((align), (size))
 	#undef opj_aligned_free
 	#define opj_aligned_free(m) free(m)
 #endif
@@ -129,9 +129,9 @@ Allocate memory aligned to a 16 byte boundry
 	#undef opj_aligned_malloc
 	extern int posix_memalign(void**, size_t, size_t);
 
-	static INLINE void* __attribute__ ((malloc)) opj_aligned_malloc(size_t size){
+	static INLINE void* __attribute__ ((malloc)) opj_aligned_malloc(size_t size, size_t align){
 		void* mem = NULL;
-		posix_memalign(&mem, 16, size);
+		posix_memalign(&mem, align, size);
 		return mem;
 	}
 	#undef opj_aligned_free
@@ -140,7 +140,7 @@ Allocate memory aligned to a 16 byte boundry
 
 #ifdef ALLOC_PERF_OPT
 	#undef opj_aligned_malloc
-	#define opj_aligned_malloc(size) opj_malloc(size)
+	#define opj_aligned_malloc(size, align) opj_malloc(size)
 	#undef opj_aligned_free
 	#define opj_aligned_free(m) opj_free(m)
 #endif

@@ -48,12 +48,14 @@ The function in INVERT.H compute a matrix inversion with a LUP method
  * Calculates a n x n double matrix inversion with a LUP method. Data is aligned, rows after rows (or columns after columns).
  * The function does not take ownership of any memory block, data must be fred by the user.
  *
- * @param pSrcMatrix	the matrix to invert.
- * @param pDestMatrix	data to store the inverted matrix. 
- * @param n size of the matrix
+ * @param manager       Memory manager.
+ * @param pSrcMatrix    the matrix to invert.
+ * @param pDestMatrix   data to store the inverted matrix.
+ * @param n             size of the matrix
  * @return OPJ_TRUE if the inversion is successful, OPJ_FALSE if the matrix is singular.
  */
-OPJ_BOOL opj_matrix_inversion_f(OPJ_FLOAT32 * pSrcMatrix,
+OPJ_BOOL opj_matrix_inversion_f(opj_manager_t manager,
+                                OPJ_FLOAT32 * pSrcMatrix,
                                 OPJ_FLOAT32 * pDestMatrix, 
                                 OPJ_UINT32 nb_compo);
 /* ----------------------------------------------------------------------- */

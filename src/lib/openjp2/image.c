@@ -31,53 +31,86 @@
 
 #include "opj_includes.h"
 
-opj_image_t* opj_image_create0(void) {
-	opj_image_t *image = (opj_image_t*)opj_calloc(1, sizeof(opj_image_t));
+opj_image_t* opj_image_create0(opj_manager_t manager) {
+	opj_image_t *image = NULL;
+
+	/* preconditions */
+	assert(manager != NULL);
+
+	image = (opj_image_t*)opj_manager_calloc(manager, 1, sizeof(opj_image_t));
+	if (image == NULL) {
+		opj_event_msg(&(manager->event_mgr), EVT_ERROR, "Unable to allocate memory for image.");
+		return NULL;
+	}
 	return image;
 }
 
-opj_image_t* OPJ_CALLCONV opj_image_create(OPJ_UINT32 numcmpts, opj_image_cmptparm_t *cmptparms, OPJ_COLOR_SPACE clrspc) {
+opj_image_t* OPJ_CALLCONV opj_image_create(OPJ_UINT32 numcmpts, opj_image_cmptparm_t *cmptparms, OPJ_COLOR_SPACE clrspc)
+{
+	opj_manager_t l_manager = opj_manager_get_global_manager();
+
+	return opj_manager_image_create(l_manager, numcmpts, cmptparms, clrspc);
+}
+
+OPJ_API opj_image_t* OPJ_CALLCONV opj_manager_image_create(opj_manager_t manager, OPJ_UINT32 numcmpts, opj_image_cmptparm_t *cmptparms, OPJ_COLOR_SPACE clrspc)
+{
 	OPJ_UINT32 compno;
 	opj_image_t *image = NULL;
 
-	image = (opj_image_t*) opj_calloc(1, sizeof(opj_image_t));
-	if(image) {
-		image->color_space = clrspc;
-		image->numcomps = numcmpts;
-		/* allocate memory for the per-component information */
-		image->comps = (opj_image_comp_t*)opj_calloc(1,image->numcomps * sizeof(opj_image_comp_t));
-		if(!image->comps) {
-			/* TODO replace with event manager, breaks API */
-			/* fprintf(stderr,"Unable to allocate memory for image.\n"); */
-			opj_image_destroy(image);
+	if (manager == NULL) {
+		return NULL;
+	}
+
+	image = (opj_image_t*) opj_manager_calloc(manager, 1, sizeof(opj_image_t));
+	if (image == NULL) {
+		opj_event_msg(&(manager->event_mgr), EVT_ERROR, "Unable to allocate memory for image.");
+		return NULL;
+	}
+	image->color_space = clrspc;
+	image->numcomps = numcmpts;
+	/* allocate memory for the per-component information */
+	image->comps = (opj_image_comp_t*)opj_manager_calloc(manager, 1,image->numcomps * sizeof(opj_image_comp_t));
+	if(!image->comps) {
+		opj_event_msg(&(manager->event_mgr), EVT_ERROR, "Unable to allocate memory for image.");
+		opj_manager_image_destroy(manager, image);
+		return NULL;
+	}
+	/* create the individual image components */
+	for(compno = 0; compno < numcmpts; compno++) {
+		opj_image_comp_t *comp = &image->comps[compno];
+		comp->dx = cmptparms[compno].dx;
+		comp->dy = cmptparms[compno].dy;
+		comp->w = cmptparms[compno].w;
+		comp->h = cmptparms[compno].h;
+		comp->x0 = cmptparms[compno].x0;
+		comp->y0 = cmptparms[compno].y0;
+		comp->prec = cmptparms[compno].prec;
+		comp->bpp = cmptparms[compno].bpp;
+		comp->sgnd = cmptparms[compno].sgnd;
+		comp->data = (OPJ_INT32*) opj_manager_calloc(manager, comp->w * comp->h, sizeof(OPJ_INT32));
+		if(!comp->data) {
+			opj_event_msg(&(manager->event_mgr), EVT_ERROR, "Unable to allocate memory for image.");
+			opj_manager_image_destroy(manager, image);
 			return NULL;
-		}
-		/* create the individual image components */
-		for(compno = 0; compno < numcmpts; compno++) {
-			opj_image_comp_t *comp = &image->comps[compno];
-			comp->dx = cmptparms[compno].dx;
-			comp->dy = cmptparms[compno].dy;
-			comp->w = cmptparms[compno].w;
-			comp->h = cmptparms[compno].h;
-			comp->x0 = cmptparms[compno].x0;
-			comp->y0 = cmptparms[compno].y0;
-			comp->prec = cmptparms[compno].prec;
-			comp->bpp = cmptparms[compno].bpp;
-			comp->sgnd = cmptparms[compno].sgnd;
-			comp->data = (OPJ_INT32*) opj_calloc(comp->w * comp->h, sizeof(OPJ_INT32));
-			if(!comp->data) {
-				/* TODO replace with event manager, breaks API */
-				/* fprintf(stderr,"Unable to allocate memory for image.\n"); */
-				opj_image_destroy(image);
-				return NULL;
-			}
 		}
 	}
 
 	return image;
 }
 
-void OPJ_CALLCONV opj_image_destroy(opj_image_t *image) {
+void OPJ_CALLCONV opj_image_destroy(opj_image_t *image)
+{
+	opj_manager_t l_manager = opj_manager_get_global_manager();
+
+	opj_manager_image_destroy(l_manager, image);
+}
+
+OPJ_API void OPJ_CALLCONV opj_manager_image_destroy(opj_manager_t manager, opj_image_t *image)
+{
+	if (manager == NULL) {
+		return;
+	}
+
 	if(image) {
 		if(image->comps) {
 			OPJ_UINT32 compno;
@@ -86,17 +119,16 @@ void OPJ_CALLCONV opj_image_destroy(opj_image_t *image) {
 			for(compno = 0; compno < image->numcomps; compno++) {
 				opj_image_comp_t *image_comp = &(image->comps[compno]);
 				if(image_comp->data) {
-					opj_free(image_comp->data);
+					opj_manager_free(manager, image_comp->data);
 				}
 			}
-			opj_free(image->comps);
+			opj_manager_free(manager, image->comps);
 		}
 
 		if(image->icc_profile_buf) {
-			opj_free(image->icc_profile_buf);
+			opj_manager_free(manager, image->icc_profile_buf);
 		}
-
-		opj_free(image);
+		opj_manager_free(manager, image);
 	}
 }
 
@@ -141,15 +173,17 @@ void opj_image_comp_header_update(opj_image_t * p_image_header, const struct opj
  * Copy only header of image and its component header (no data are copied)
  * if dest image have data, they will be freed
  *
- * @param	p_image_src		the src image
- * @param	p_image_dest	the dest image
- *
- */
-void opj_copy_image_header(const opj_image_t* p_image_src, opj_image_t* p_image_dest)
+ * @param manager      OpenJpeg memory/event manager
+ * @param	p_image_src  the src image
+ * @param	p_image_dest the dest image
+ * @return OPJ_TRUE on success, OPJ_FALSE on failure
+ * */
+OPJ_BOOL opj_copy_image_header(opj_manager_t manager, const opj_image_t* p_image_src, opj_image_t* p_image_dest)
 {
 	OPJ_UINT32 compno;
 
 	/* preconditions */
+	assert(manager != NULL);
 	assert(p_image_src != 00);
 	assert(p_image_dest != 00);
 
@@ -162,26 +196,25 @@ void opj_copy_image_header(const opj_image_t* p_image_src, opj_image_t* p_image_
 		for(compno = 0; compno < p_image_dest->numcomps; compno++) {
 			opj_image_comp_t *image_comp = &(p_image_dest->comps[compno]);
 			if(image_comp->data) {
-				opj_free(image_comp->data);
+				opj_manager_free(manager, image_comp->data);
 			}
 		}
-		opj_free(p_image_dest->comps);
+		opj_manager_free(manager, p_image_dest->comps);
 		p_image_dest->comps = NULL;
 	}
 
 	p_image_dest->numcomps = p_image_src->numcomps;
 
-	p_image_dest->comps = (opj_image_comp_t*) opj_malloc(p_image_dest->numcomps * sizeof(opj_image_comp_t));
-	if (!p_image_dest->comps){
+	p_image_dest->comps = (opj_image_comp_t*) opj_manager_malloc(manager, p_image_dest->numcomps * sizeof(opj_image_comp_t));
+	if (p_image_dest->comps == NULL) {
+		opj_event_msg(&(manager->event_mgr), EVT_ERROR, "Unable to allocate memory for image.");
 		p_image_dest->comps = NULL;
 		p_image_dest->numcomps = 0;
-		return;
+		return OPJ_FALSE;
 	}
 
 	for (compno=0; compno < p_image_dest->numcomps; compno++){
-		memcpy( &(p_image_dest->comps[compno]),
-				&(p_image_src->comps[compno]),
-				sizeof(opj_image_comp_t));
+		memcpy( &(p_image_dest->comps[compno]), &(p_image_src->comps[compno]), sizeof(opj_image_comp_t));
 		p_image_dest->comps[compno].data = NULL;
 	}
 
@@ -189,53 +222,65 @@ void opj_copy_image_header(const opj_image_t* p_image_src, opj_image_t* p_image_
 	p_image_dest->icc_profile_len = p_image_src->icc_profile_len;
 
 	if (p_image_dest->icc_profile_len) {
-		p_image_dest->icc_profile_buf = (OPJ_BYTE*)opj_malloc(p_image_dest->icc_profile_len);
-		if (!p_image_dest->icc_profile_buf){
+		p_image_dest->icc_profile_buf = (OPJ_BYTE*)opj_manager_malloc(manager, p_image_dest->icc_profile_len);
+		if (p_image_dest->icc_profile_buf == NULL) {
+			opj_event_msg(&(manager->event_mgr), EVT_ERROR, "Unable to allocate memory for image.");
 			p_image_dest->icc_profile_buf = NULL;
 			p_image_dest->icc_profile_len = 0;
-			return;
+			return OPJ_FALSE;
 		}
-		memcpy( p_image_dest->icc_profile_buf,
-				p_image_src->icc_profile_buf,
-				p_image_src->icc_profile_len);
-		}
-		else
-			p_image_dest->icc_profile_buf = NULL;
+		memcpy( p_image_dest->icc_profile_buf, p_image_src->icc_profile_buf, p_image_src->icc_profile_len);
+	} else {
+		p_image_dest->icc_profile_buf = NULL;
+	}
 
-	return;
+	return OPJ_TRUE;
 }
 
-opj_image_t* OPJ_CALLCONV opj_image_tile_create(OPJ_UINT32 numcmpts, opj_image_cmptparm_t *cmptparms, OPJ_COLOR_SPACE clrspc) {
+opj_image_t* OPJ_CALLCONV opj_image_tile_create(OPJ_UINT32 numcmpts, opj_image_cmptparm_t *cmptparms, OPJ_COLOR_SPACE clrspc)
+{
+	opj_manager_t l_manager = opj_manager_get_global_manager();
+
+	return opj_manager_image_tile_create(l_manager, numcmpts, cmptparms, clrspc);
+}
+OPJ_API opj_image_t* OPJ_CALLCONV opj_manager_image_tile_create(opj_manager_t manager, OPJ_UINT32 numcmpts, opj_image_cmptparm_t *cmptparms, OPJ_COLOR_SPACE clrspc)
+{
 	OPJ_UINT32 compno;
 	opj_image_t *image = 00;
 
-	image = (opj_image_t*) opj_calloc(1,sizeof(opj_image_t));
-	if (image)
-	{
+	if (manager == NULL) {
+		return NULL;
+	}
+
+	image = (opj_image_t*) opj_manager_calloc(manager, 1, sizeof(opj_image_t));
+	if (image == NULL) {
+		opj_event_msg(&(manager->event_mgr), EVT_ERROR, "Unable to allocate memory for image.");
+		return NULL;
+	}
 		
-		image->color_space = clrspc;
-		image->numcomps = numcmpts;
+	image->color_space = clrspc;
+	image->numcomps = numcmpts;
 		
-		/* allocate memory for the per-component information */
-		image->comps = (opj_image_comp_t*)opj_calloc(image->numcomps, sizeof(opj_image_comp_t));
-		if (!image->comps) {
-			opj_image_destroy(image);
-			return 00;
-		}
+	/* allocate memory for the per-component information */
+	image->comps = (opj_image_comp_t*)opj_manager_calloc(manager, image->numcomps, sizeof(opj_image_comp_t));
+	if (!image->comps) {
+		opj_event_msg(&(manager->event_mgr), EVT_ERROR, "Unable to allocate memory for image.");
+		opj_manager_image_destroy(manager, image);
+		return NULL;
+	}
 		
-		/* create the individual image components */
-		for(compno = 0; compno < numcmpts; compno++) {
-			opj_image_comp_t *comp = &image->comps[compno];
-			comp->dx = cmptparms[compno].dx;
-			comp->dy = cmptparms[compno].dy;
-			comp->w = cmptparms[compno].w;
-			comp->h = cmptparms[compno].h;
-			comp->x0 = cmptparms[compno].x0;
-			comp->y0 = cmptparms[compno].y0;
-			comp->prec = cmptparms[compno].prec;
-			comp->sgnd = cmptparms[compno].sgnd;
-			comp->data = 0;
-		}
+	/* create the individual image components */
+	for(compno = 0; compno < numcmpts; compno++) {
+		opj_image_comp_t *comp = &image->comps[compno];
+		comp->dx = cmptparms[compno].dx;
+		comp->dy = cmptparms[compno].dy;
+		comp->w = cmptparms[compno].w;
+		comp->h = cmptparms[compno].h;
+		comp->x0 = cmptparms[compno].x0;
+		comp->y0 = cmptparms[compno].y0;
+		comp->prec = cmptparms[compno].prec;
+		comp->sgnd = cmptparms[compno].sgnd;
+		comp->data = NULL;
 	}
 
 	return image;

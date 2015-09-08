@@ -174,7 +174,7 @@ static INLINE long opj_lrintf(float f) {
 
 #include "opj_inttypes.h"
 #include "opj_clock.h"
-#include "opj_malloc.h"
+/* #include "opj_malloc.h" */
 #include "event.h"
 #include "function_list.h"
 #include "bio.h"
@@ -211,6 +211,7 @@ static INLINE long opj_lrintf(float f) {
 
 /* V2 */
 #include "opj_codec.h"
+#include "opj_manager.h"
 
 
 #endif /* OPJ_INCLUDES_H */

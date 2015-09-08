@@ -150,17 +150,32 @@ void opj_read_float_LE(const OPJ_BYTE * p_buffer, OPJ_FLOAT32 * p_value)
 
 opj_stream_t* OPJ_CALLCONV opj_stream_create(OPJ_SIZE_T p_buffer_size,OPJ_BOOL l_is_input)
 {
-	opj_stream_private_t * l_stream = 00;
-	l_stream = (opj_stream_private_t*) opj_calloc(1,sizeof(opj_stream_private_t));
-	if (! l_stream) {
-		return 00;
+	opj_manager_t l_manager = opj_manager_get_global_manager();
+
+	return opj_manager_stream_create(l_manager, p_buffer_size, l_is_input);
+}
+
+OPJ_API opj_stream_t* OPJ_CALLCONV opj_manager_stream_create(opj_manager_t manager, OPJ_SIZE_T p_buffer_size, OPJ_BOOL l_is_input)
+{
+	opj_stream_private_t * l_stream = NULL;
+
+	if (manager == NULL) {
+		return NULL;
 	}
 
+	l_stream = (opj_stream_private_t*) opj_manager_calloc(manager, 1, sizeof(opj_stream_private_t));
+	if (! l_stream) {
+		opj_event_msg(&(manager->event_mgr), EVT_ERROR, "Unable to allocate memory for stream.");
+		return NULL;
+	}
+	l_stream->m_manager = manager;
+
 	l_stream->m_buffer_size = p_buffer_size;
-	l_stream->m_stored_data = (OPJ_BYTE *) opj_malloc(p_buffer_size);
-	if (! l_stream->m_stored_data) {
-		opj_free(l_stream);
-		return 00;
+	l_stream->m_stored_data = (OPJ_BYTE *) opj_manager_malloc(manager, p_buffer_size);
+	if (l_stream->m_stored_data == NULL) {
+		opj_event_msg(&(manager->event_mgr), EVT_ERROR, "Unable to allocate memory for stream.");
+		opj_manager_free(manager, l_stream);
+		return NULL;
 	}
 
 	l_stream->m_current_data = l_stream->m_stored_data;
@@ -186,20 +201,28 @@ opj_stream_t* OPJ_CALLCONV opj_stream_create(OPJ_SIZE_T p_buffer_size,OPJ_BOOL l
 
 opj_stream_t* OPJ_CALLCONV opj_stream_default_create(OPJ_BOOL l_is_input)
 {
-	return opj_stream_create(OPJ_J2K_STREAM_CHUNK_SIZE,l_is_input);
+	opj_manager_t l_manager = opj_manager_get_global_manager();
+
+	return opj_manager_stream_default_create(l_manager, l_is_input);
+}
+OPJ_API opj_stream_t* OPJ_CALLCONV opj_manager_stream_default_create(opj_manager_t manager, OPJ_BOOL l_is_input)
+{
+	return opj_manager_stream_create(manager, OPJ_J2K_STREAM_CHUNK_SIZE,l_is_input);
 }
 
 void OPJ_CALLCONV opj_stream_destroy(opj_stream_t* p_stream)
 {
 	opj_stream_private_t* l_stream = (opj_stream_private_t*) p_stream;
-	
+
 	if (l_stream) {
+		opj_manager_t l_manager = l_stream->m_manager;
+
 		if (l_stream->m_free_user_data_fn) {
 			l_stream->m_free_user_data_fn(l_stream->m_user_data);
 		}
-		opj_free(l_stream->m_stored_data);
+		opj_manager_free(l_manager, l_stream->m_stored_data);
 		l_stream->m_stored_data = 00;
-		opj_free(l_stream);
+		opj_manager_free(l_manager, l_stream);
 	}
 }
 

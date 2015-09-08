@@ -359,8 +359,8 @@ static INLINE void opj_mqc_renormd(opj_mqc_t *const mqc) {
 ==========================================================
 */
 
-opj_mqc_t* opj_mqc_create(void) {
-	opj_mqc_t *mqc = (opj_mqc_t*)opj_malloc(sizeof(opj_mqc_t));
+opj_mqc_t* opj_mqc_create(opj_manager_t manager) {
+	opj_mqc_t *mqc = (opj_mqc_t*)opj_manager_malloc(manager, sizeof(opj_mqc_t));
 #ifdef MQC_PERF_OPT
 	if (mqc) {
 		mqc->buffer = NULL;
@@ -369,14 +369,14 @@ opj_mqc_t* opj_mqc_create(void) {
 	return mqc;
 }
 
-void opj_mqc_destroy(opj_mqc_t *mqc) {
+void opj_mqc_destroy(opj_manager_t manager, opj_mqc_t *mqc) {
 	if(mqc) {
 #ifdef MQC_PERF_OPT
 		if (mqc->buffer) {
-			opj_free(mqc->buffer);
+			opj_manager_free(manager, mqc->buffer);
 		}
 #endif
-		opj_free(mqc);
+		opj_manager_free(manager, mqc);
 	}
 }
 

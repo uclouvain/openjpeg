@@ -1172,8 +1172,8 @@ static OPJ_BOOL opj_t1_allocate_buffers(
 	/* encoder uses tile buffer, so no need to allocate */
 	if (!t1->encoder) {
 		if(datasize > t1->datasize){
-			opj_aligned_free(t1->data);
-			t1->data = (OPJ_INT32*) opj_aligned_malloc(datasize * sizeof(OPJ_INT32));
+			opj_manager_aligned_free(t1->manager, t1->data);
+			t1->data = (OPJ_INT32*) opj_manager_aligned_malloc(t1->manager, datasize * sizeof(OPJ_INT32), 16);
 			if(!t1->data){
 				/* FIXME event manager error callback */
 				return OPJ_FALSE;
@@ -1186,8 +1186,8 @@ static OPJ_BOOL opj_t1_allocate_buffers(
 	flagssize=t1->flags_stride * (h+2);
 
 	if(flagssize > t1->flagssize){
-		opj_aligned_free(t1->flags);
-		t1->flags = (opj_flag_t*) opj_aligned_malloc(flagssize * sizeof(opj_flag_t));
+		opj_manager_aligned_free(t1->manager, t1->flags);
+		t1->flags = (opj_flag_t*) opj_manager_aligned_malloc(t1->manager, flagssize * sizeof(opj_flag_t), 16);
 		if(!t1->flags){
 			/* FIXME event manager error callback */
 			return OPJ_FALSE;
@@ -1210,23 +1210,24 @@ static OPJ_BOOL opj_t1_allocate_buffers(
  * and initializes the look-up tables of the Tier-1 coder/decoder
  * @return a new T1 handle if successful, returns NULL otherwise
 */
-opj_t1_t* opj_t1_create(OPJ_BOOL isEncoder)
+opj_t1_t* opj_t1_create(opj_manager_t manager, OPJ_BOOL isEncoder)
 {
 	opj_t1_t *l_t1 = 00;
 
-	l_t1 = (opj_t1_t*) opj_calloc(1,sizeof(opj_t1_t));
+	l_t1 = (opj_t1_t*) opj_manager_calloc(manager, 1, sizeof(opj_t1_t));
 	if (!l_t1) {
 		return 00;
 	}
+	l_t1->manager = manager;
 
 	/* create MQC and RAW handles */
-	l_t1->mqc = opj_mqc_create();
+	l_t1->mqc = opj_mqc_create(manager);
 	if (! l_t1->mqc) {
 		opj_t1_destroy(l_t1);
 		return 00;
 	}
 
-	l_t1->raw = opj_raw_create();
+	l_t1->raw = opj_raw_create(manager);
 	if (! l_t1->raw) {
 		opj_t1_destroy(l_t1);
 		return 00;
@@ -1244,28 +1245,29 @@ opj_t1_t* opj_t1_create(OPJ_BOOL isEncoder)
 */
 void opj_t1_destroy(opj_t1_t *p_t1)
 {
+	opj_manager_t manager;
 	if (! p_t1) {
 		return;
 	}
-
+	manager = p_t1->manager;
 	/* destroy MQC and RAW handles */
-	opj_mqc_destroy(p_t1->mqc);
+	opj_mqc_destroy(manager, p_t1->mqc);
 	p_t1->mqc = 00;
-	opj_raw_destroy(p_t1->raw);
+	opj_raw_destroy(manager, p_t1->raw);
 	p_t1->raw = 00;
 	
 	/* encoder uses tile buffer, so no need to free */
 	if (!p_t1->encoder && p_t1->data) {
-		opj_aligned_free(p_t1->data);
+		opj_manager_aligned_free(manager, p_t1->data);
 		p_t1->data = 00;
 	}
 
 	if (p_t1->flags) {
-		opj_aligned_free(p_t1->flags);
+		opj_manager_aligned_free(manager, p_t1->flags);
 		p_t1->flags = 00;
 	}
 
-	opj_free(p_t1);
+	opj_manager_free(manager, p_t1);
 }
 
 OPJ_BOOL opj_t1_decode_cblks(   opj_t1_t* t1,
@@ -1622,7 +1624,7 @@ static void opj_t1_encode_cblk(opj_t1_t *t1,
 		}
 
 		/* fixed_quality */
-		tempwmsedec = opj_t1_getwmsedec(nmsedec, compno, level, orient, bpno, qmfbid, stepsize, numcomps,mct_norms, mct_numcomps) ;
+		tempwmsedec = opj_t1_getwmsedec(nmsedec, compno, level, orient, bpno, qmfbid, stepsize, numcomps,mct_norms, mct_numcomps);
 		cumwmsedec += tempwmsedec;
 		tile->distotile += tempwmsedec;
 
