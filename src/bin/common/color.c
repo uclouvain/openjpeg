@@ -581,7 +581,7 @@ void color_apply_conversion(opj_image_t *image)
 	row = (int*)image->icc_profile_buf;
 	enumcs = row[0];
 	
-	if(enumcs == 14)// CIELab
+	if(enumcs == 14) /* CIELab */
 	{
 		int *L, *a, *b, *red, *green, *blue;
 		int *src0, *src1, *src2, *dst0, *dst1, *dst2;
