@@ -5606,16 +5606,16 @@ void opj_j2k_setup_decoder(opj_j2k_t *j2k, opj_dparameters_t *parameters)
 
 opj_j2k_t* opj_j2k_create_compress(opj_manager_t manager)
 {
-	if (manager == NULL) {
-		return NULL;
-	}
-        opj_j2k_t *l_j2k = (opj_j2k_t*) opj_manager_calloc(manager, 1,sizeof(opj_j2k_t));
+        opj_j2k_t *l_j2k = 00;
+
+        assert(manager != 00);
+
+        l_j2k = (opj_j2k_t*) opj_manager_calloc(manager, 1,sizeof(opj_j2k_t));
         if (!l_j2k) {
                 return NULL;
         }
 
-	l_j2k->m_manager = manager;
-
+        l_j2k->m_manager = manager;
         l_j2k->m_is_decoder = 0;
         l_j2k->m_cp.m_is_decoder = 0;
 
@@ -8236,11 +8236,16 @@ OPJ_BOOL opj_j2k_set_decode_area(       opj_j2k_t *p_j2k,
 
 opj_j2k_t* opj_j2k_create_decompress(opj_manager_t manager)
 {
-        opj_j2k_t *l_j2k = (opj_j2k_t*) opj_manager_calloc(manager,1,sizeof(opj_j2k_t));
+        opj_j2k_t *l_j2k = 00;
+
+        assert(manager != 00);
+
+        l_j2k = (opj_j2k_t*) opj_manager_calloc(manager,1,sizeof(opj_j2k_t));
         if (!l_j2k) {
                 return 00;
         }
 
+        l_j2k->m_manager = manager;
         l_j2k->m_is_decoder = 1;
         l_j2k->m_cp.m_is_decoder = 1;
 
