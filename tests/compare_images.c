@@ -85,7 +85,7 @@ static void compare_images_help_display(void)
   fprintf(stdout,"\n");
   fprintf(stdout,"  -b \t REQUIRED \t filename to the reference/baseline PGX/TIF/PNM image \n");
   fprintf(stdout,"  -t \t REQUIRED \t filename to the test PGX/TIF/PNM image\n");
-  fprintf(stdout,"  -n \t REQUIRED \t number of component of the image (used to generate correct filename)\n");
+  fprintf(stdout,"  -n \t REQUIRED \t number of component of the image (used to generate correct filename, not used when both input files are TIF)\n");
   fprintf(stdout,"  -m \t OPTIONAL \t list of MSE tolerances, separated by : (size must correspond to the number of component) of \n");
   fprintf(stdout,"  -p \t OPTIONAL \t list of PEAK tolerances, separated by : (size must correspond to the number of component) \n");
   fprintf(stdout,"  -s \t OPTIONAL \t 1 or 2 filename separator to take into account PGX/PNM image with different components, "
