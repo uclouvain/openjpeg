@@ -6,10 +6,15 @@ before_install:
   - cmake --version
   - git clone --depth=1 --branch=master git://github.com/uclouvain/openjpeg-data.git data
   - wget -qO - https://github.com/openpreserve/jpylyzer/archive/1.14.2.tar.gz | tar -xvz
-  - wget -q http://kakadusoftware.com/wp-content/uploads/2014/06/KDU77_Demo_Apps_for_Linux-x86-64_150710.zip
+# When OPJ_NONCOMMERCIAL=1, kakadu trial binaries are used for testing. Here's the copyright notice from kakadu:
+# Copyright is owned by NewSouth Innovations Pty Limited, commercial arm of the UNSW Australia in Sydney.
+# You are free to trial these executables and even to re-distribute them, 
+# so long as such use or re-distribution is accompanied with this copyright notice and is not for commercial gain.
+# Note: Binaries can only be used for non-commercial purposes.
+  - if [ "${OPJ_NONCOMMERCIAL:-}" == "1" ]; then wget -q http://kakadusoftware.com/wp-content/uploads/2014/06/KDU77_Demo_Apps_for_Linux-x86-64_150710.zip; fi
 install:
   - chmod +x jpylyzer-1.14.2/jpylyzer/jpylyzer.py
-  - cmake -E tar -xf KDU77_Demo_Apps_for_Linux-x86-64_150710.zip
+  - if [ "${OPJ_NONCOMMERCIAL:-}" == "1" ]; then cmake -E tar -xf KDU77_Demo_Apps_for_Linux-x86-64_150710.zip; fi
   - export LD_LIBRARY_PATH=${PWD}/KDU77_Demo_Apps_for_Linux-x86-64_150710:${LD_LIBRARY_PATH}
   - export PATH=${PWD}/KDU77_Demo_Apps_for_Linux-x86-64_150710:${PATH}
 
