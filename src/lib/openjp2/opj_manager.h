@@ -91,7 +91,7 @@ static INLINE void* opj_manager_realloc(opj_manager_t manager, void* ptr, OPJ_SI
 }
 static INLINE void opj_manager_free(opj_manager_t manager, void* ptr)
 {
-    return manager->free_callback(ptr, manager->context);
+    manager->free_callback(ptr, manager->context);
 }
 static INLINE void* opj_manager_aligned_malloc(opj_manager_t manager, OPJ_SIZE_T size, OPJ_SIZE_T alignment)
 {
@@ -99,7 +99,7 @@ static INLINE void* opj_manager_aligned_malloc(opj_manager_t manager, OPJ_SIZE_T
 }
 static INLINE void opj_manager_aligned_free(opj_manager_t manager, void* ptr)
 {
-    return manager->aligned_free_callback(ptr, manager->context);
+    manager->aligned_free_callback(ptr, manager->context);
 }
 
 #endif /* __OPJ_MANAGER_H */
