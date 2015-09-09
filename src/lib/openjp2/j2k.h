@@ -841,7 +841,5 @@ OPJ_BOOL opj_j2k_start_compress(opj_j2k_t *p_j2k,
  */
 OPJ_BOOL opj_j2k_end_compress(opj_j2k_t *p_j2k, opj_stream_private_t *cio);
 
-static OPJ_BOOL opj_j2k_setup_mct_encoding (opj_manager_t manager, opj_tcp_t * p_tcp, opj_image_t * p_image);
-
 
 #endif /* __J2K_H */
