@@ -42,6 +42,7 @@ opj_image_t* opj_image_create0(opj_manager_t manager) {
 		opj_event_msg(&(manager->event_mgr), EVT_ERROR, "Unable to allocate memory for image.");
 		return NULL;
 	}
+	image->m_manager = manager;
 	return image;
 }
 
@@ -66,6 +67,7 @@ OPJ_API opj_image_t* OPJ_CALLCONV opj_manager_image_create(opj_manager_t manager
 		opj_event_msg(&(manager->event_mgr), EVT_ERROR, "Unable to allocate memory for image.");
 		return NULL;
 	}
+	image->m_manager = manager;
 	image->color_space = clrspc;
 	image->numcomps = numcmpts;
 	/* allocate memory for the per-component information */
@@ -100,9 +102,9 @@ OPJ_API opj_image_t* OPJ_CALLCONV opj_manager_image_create(opj_manager_t manager
 
 void OPJ_CALLCONV opj_image_destroy(opj_image_t *image)
 {
-	opj_manager_t l_manager = opj_manager_get_global_manager();
-
-	opj_manager_image_destroy(l_manager, image);
+	if (image) {
+		opj_manager_image_destroy(image->m_manager, image);
+	}
 }
 
 OPJ_API void OPJ_CALLCONV opj_manager_image_destroy(opj_manager_t manager, opj_image_t *image)
@@ -243,6 +245,7 @@ opj_image_t* OPJ_CALLCONV opj_image_tile_create(OPJ_UINT32 numcmpts, opj_image_c
 
 	return opj_manager_image_tile_create(l_manager, numcmpts, cmptparms, clrspc);
 }
+
 OPJ_API opj_image_t* OPJ_CALLCONV opj_manager_image_tile_create(opj_manager_t manager, OPJ_UINT32 numcmpts, opj_image_cmptparm_t *cmptparms, OPJ_COLOR_SPACE clrspc)
 {
 	OPJ_UINT32 compno;
