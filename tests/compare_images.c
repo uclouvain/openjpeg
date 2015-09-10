@@ -279,8 +279,6 @@ static opj_image_t* readImageFromFileTIF(const char* filename, int nbFilenamePGX
     return NULL;
     }
 
-  /* \postconditions */
-  assert( image_read->numcomps == 1 || image_read->numcomps == 3 );
   return image_read;
 }
 
