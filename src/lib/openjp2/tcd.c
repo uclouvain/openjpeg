@@ -268,7 +268,7 @@ void opj_tcd_makelayer( opj_tcd_t *tcd,
                                                                         n = passno + 1;
                                                                 continue;
                                                         }
-                                                        if (dd / dr > thresh)
+                                                        if (thresh - (dd / dr) <= DBL_EPSILON) /* do not rely on float equality, check with DBL_EPSILON margin */
                                                                 n = passno + 1;
                                                 }
 
@@ -565,7 +565,7 @@ OPJ_BOOL opj_tcd_rateallocate(  opj_tcd_t *tcd,
                         opj_t2_destroy(t2);
                 } else {
                         success = OPJ_TRUE;
-                        goodthresh = min - DBL_EPSILON; /* do not rely on float equality for lossless transform */
+                        goodthresh = min;
                 }
 
                 if (!success) {
