@@ -565,7 +565,7 @@ OPJ_BOOL opj_tcd_rateallocate(  opj_tcd_t *tcd,
                         opj_t2_destroy(t2);
                 } else {
                         success = OPJ_TRUE;
-                        goodthresh = min - DBL_MAX; /* do not rely on float equality for lossless transform */
+                        goodthresh = min - DBL_EPSILON; /* do not rely on float equality for lossless transform */
                 }
 
                 if (!success) {
