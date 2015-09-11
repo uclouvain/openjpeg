@@ -268,7 +268,7 @@ void opj_tcd_makelayer( opj_tcd_t *tcd,
                                                                         n = passno + 1;
                                                                 continue;
                                                         }
-                                                        if (thresh - (dd / dr) <= DBL_EPSILON) /* do not rely on float equality, check with DBL_EPSILON margin */
+                                                        if (thresh - (dd / dr) < DBL_EPSILON) /* do not rely on float equality, check with DBL_EPSILON margin */
                                                                 n = passno + 1;
                                                 }
 
