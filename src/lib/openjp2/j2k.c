@@ -7659,12 +7659,16 @@ static void opj_j2k_cp_destroy (opj_cp_t *p_cp)
 		opj_free(p_cp->ppm_markers);
 		p_cp->ppm_markers = NULL;
 	}
-	opj_free(p_cp->ppm_buffer);
+    if (p_cp->ppm_buffer) {
+        opj_free(p_cp->ppm_buffer);
+    }
 	p_cp->ppm_buffer = 00;
 	p_cp->ppm_data = NULL; /* ppm_data belongs to the allocated buffer pointed by ppm_buffer */
-	opj_free(p_cp->comment);
+    if (p_cp->comment) {
+        opj_free(p_cp->comment);
+    }
 	p_cp->comment = 00;
-	if (! p_cp->m_is_decoder)
+    if ((! p_cp->m_is_decoder) && p_cp->m_specific_param.m_enc.m_matrice)
 	{
 		opj_free(p_cp->m_specific_param.m_enc.m_matrice);
 		p_cp->m_specific_param.m_enc.m_matrice = 00;
@@ -9638,23 +9642,15 @@ static OPJ_BOOL opj_j2k_decode_one_tile (       opj_j2k_t *p_j2k,
         OPJ_BOOL l_go_on = OPJ_TRUE;
         OPJ_UINT32 l_current_tile_no;
         OPJ_UINT32 l_tile_no_to_dec;
-        OPJ_UINT32 l_data_size,l_max_data_size;
+        OPJ_UINT32 l_data_size;
         OPJ_INT32 l_tile_x0,l_tile_y0,l_tile_x1,l_tile_y1;
         OPJ_UINT32 l_nb_comps;
-        OPJ_BYTE * l_current_data;
-
-        l_current_data = (OPJ_BYTE*)opj_malloc(1000);
-        if (! l_current_data) {
-                opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to decode one tile\n");
-                return OPJ_FALSE;
-        }
-        l_max_data_size = 1000;
+        OPJ_BYTE * l_tile_data;
 
         /*Allocate and initialize some elements of codestrem index if not already done*/
         if( !p_j2k->cstr_index->tile_index)
         {
                 if (!opj_j2k_allocate_tile_element_cstr_index(p_j2k)){
-                        opj_free(l_current_data);
                         return OPJ_FALSE;
                 }
         }
@@ -9668,14 +9664,12 @@ static OPJ_BOOL opj_j2k_decode_one_tile (       opj_j2k_t *p_j2k,
                                  *  so move to the last SOT read */
                                 if ( !(opj_stream_read_seek(p_stream, p_j2k->m_specific_param.m_decoder.m_last_sot_read_pos+2, p_manager)) ){
                                         opj_event_msg(p_manager, EVT_ERROR, "Problem with seek function\n");
-                        opj_free(l_current_data);
                                         return OPJ_FALSE;
                                 }
                         }
                         else{
                                 if ( !(opj_stream_read_seek(p_stream, p_j2k->cstr_index->tile_index[l_tile_no_to_dec].tp_index[0].start_pos+2, p_manager)) ) {
                                         opj_event_msg(p_manager, EVT_ERROR, "Problem with seek function\n");
-                        opj_free(l_current_data);
                                         return OPJ_FALSE;
                                 }
                         }
@@ -9694,7 +9688,6 @@ static OPJ_BOOL opj_j2k_decode_one_tile (       opj_j2k_t *p_j2k,
                                         &l_go_on,
                                         p_stream,
                                         p_manager)) {
-                        opj_free(l_current_data);
                         return OPJ_FALSE;
                 }
 
@@ -9702,28 +9695,22 @@ static OPJ_BOOL opj_j2k_decode_one_tile (       opj_j2k_t *p_j2k,
                         break;
                 }
 
-                if (l_data_size > l_max_data_size) {
-                        OPJ_BYTE *l_new_current_data = (OPJ_BYTE *) opj_realloc(l_current_data, l_data_size);
-                        if (! l_new_current_data) {
-                                opj_free(l_current_data);
-                                l_current_data = NULL;
+        l_tile_data = (OPJ_BYTE *) opj_malloc(l_data_size);
+        if (! l_tile_data) {
                                 /* TODO: LH: why tile numbering policy used in messages differs from
                                    the one used in opj_j2k_decode_tiles() ? */
                                 opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to decode tile %d/%d\n", l_current_tile_no, (p_j2k->m_cp.th * p_j2k->m_cp.tw) - 1);
                                 return OPJ_FALSE;
                         }
-                        l_current_data = l_new_current_data;
-                        l_max_data_size = l_data_size;
-                }
 
-                if (! opj_j2k_decode_tile(p_j2k,l_current_tile_no,l_current_data,l_data_size,p_stream,p_manager)) {
-                        opj_free(l_current_data);
+        if (! opj_j2k_decode_tile(p_j2k,l_current_tile_no,l_tile_data,l_data_size,p_stream,p_manager)) {
+            opj_free(l_tile_data);
                         return OPJ_FALSE;
                 }
                 opj_event_msg(p_manager, EVT_INFO, "Tile %d/%d has been decoded.\n", l_current_tile_no, (p_j2k->m_cp.th * p_j2k->m_cp.tw) - 1);
 
-                if (! opj_j2k_update_image_data(p_j2k->m_tcd,l_current_data, p_j2k->m_output_image)) {
-                        opj_free(l_current_data);
+        if (! opj_j2k_update_image_data(p_j2k->m_tcd,l_tile_data, p_j2k->m_output_image)) {
+            opj_free(l_tile_data);
                         return OPJ_FALSE;
                 }
                 opj_event_msg(p_manager, EVT_INFO, "Image data has been updated with tile %d.\n\n", l_current_tile_no);
@@ -9743,7 +9730,7 @@ static OPJ_BOOL opj_j2k_decode_one_tile (       opj_j2k_t *p_j2k,
 
         }
 
-        opj_free(l_current_data);
+    opj_free(l_tile_data);
 
         return OPJ_TRUE;
 }
@@ -9782,7 +9769,9 @@ OPJ_BOOL opj_j2k_decode(opj_j2k_t * p_j2k,
         opj_copy_image_header(p_image, p_j2k->m_output_image);
 
         /* customization of the decoding */
-        opj_j2k_setup_decoding(p_j2k, p_manager);
+        if (! opj_j2k_setup_decoding(p_j2k, p_manager)) {
+            return OPJ_FALSE;
+        }
 
         /* Decode the codestream */
         if (! opj_j2k_exec (p_j2k,p_j2k->m_procedure_list,p_stream,p_manager)) {
@@ -9878,7 +9867,9 @@ OPJ_BOOL opj_j2k_get_tile(      opj_j2k_t *p_j2k,
         p_j2k->m_specific_param.m_decoder.m_tile_ind_to_dec = (OPJ_INT32)tile_index;
 
         /* customization of the decoding */
-        opj_j2k_setup_decoding_tile(p_j2k, p_manager);
+        if (! opj_j2k_setup_decoding_tile(p_j2k, p_manager)) {
+            return OPJ_FALSE;
+        }
 
         /* Decode the codestream */
         if (! opj_j2k_exec (p_j2k,p_j2k->m_procedure_list,p_stream,p_manager)) {
@@ -10052,7 +10043,7 @@ OPJ_BOOL opj_j2k_start_compress(opj_j2k_t *p_j2k,
                 OPJ_UINT32 it_comp;
                 for (it_comp = 0 ; it_comp < p_image->numcomps; it_comp++) {
                         if (p_image->comps[it_comp].data) {
-                                p_j2k->m_private_image->comps[it_comp].data =p_image->comps[it_comp].data;
+                                p_j2k->m_private_image->comps[it_comp].data = p_image->comps[it_comp].data;
                                 p_image->comps[it_comp].data = NULL;
 
                         }
