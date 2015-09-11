@@ -134,6 +134,9 @@ opj_compress -i @INPUT_NR_PATH@/pngsuite/ftp0n2c08.png -o @TEMP_PATH@/ftp0n2c08.
 opj_compress -i @INPUT_NR_PATH@/pngsuite/ftp0n3p08.png -o @TEMP_PATH@/ftp0n3p08.png.jp2
 opj_compress -i @INPUT_NR_PATH@/pngsuite/ftp1n3p08.png -o @TEMP_PATH@/ftp1n3p08.png.jp2
 
+# issue 571 Lossless is not lossless on linux x86
+opj_compress -i @INPUT_NR_PATH@/issue571.tif -o @TEMP_PATH@/issue571.tif.j2k
+
 # DECODER TEST SUITE
 opj_decompress -i  @INPUT_NR_PATH@/Bretagne2.j2k -o @TEMP_PATH@/Bretagne2.j2k.pgx
 opj_decompress -i  @INPUT_NR_PATH@/_00042.j2k -o @TEMP_PATH@/_00042.j2k.pgx
