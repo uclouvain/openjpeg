@@ -11,7 +11,7 @@ before_install:
 # You are free to trial these executables and even to re-distribute them, 
 # so long as such use or re-distribution is accompanied with this copyright notice and is not for commercial gain.
 # Note: Binaries can only be used for non-commercial purposes.
-  - if [ "${OPJ_NONCOMMERCIAL:-}" == "1" ]; then echo "Testing will use Kakadu trial binaries. Here's the copyright notice from kakadu:"; echo "Copyright is owned by NewSouth Innovations Pty Limited, commercial arm of the UNSW Australia in Sydney."; echo "You are free to trial these executables and even to re-distribute them,"; echo "so long as such use or re-distribution is accompanied with this copyright notice and is not for commercial gain."; echo "Note: Binaries can only be used for non-commercial purposes."; fi
+  - if [ "${OPJ_NONCOMMERCIAL:-}" == "1" ]; then echo "Testing will use Kakadu trial binaries. Here's the copyright notice from kakadu:"; echo "Copyright is owned by NewSouth Innovations Pty Limited, commercial arm of the UNSW Australia in Sydney."; echo "You are free to trial these executables and even to re-distribute them,"; echo "so long as such use or re-distribution is accompanied with this copyright notice and is not for commercial gain."; echo "Note:\ Binaries can only be used for non-commercial purposes."; fi
   - if [ "${OPJ_NONCOMMERCIAL:-}" == "1" ]; then wget -q http://kakadusoftware.com/wp-content/uploads/2014/06/KDU77_Demo_Apps_for_Linux-x86-64_150710.zip; fi
 install:
   - chmod +x jpylyzer-1.14.2/jpylyzer/jpylyzer.py
