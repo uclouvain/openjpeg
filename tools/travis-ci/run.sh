@@ -131,26 +131,34 @@ Parsing logs for new/unknown failures
 "
 OPJ_CI_RESULT=0
 
-awk -F: '{ print $2 }' build/Testing/Temporary/LastTestsFailed_*.log > failures.txt
+OPJ_HAS_TESTS=$(find build -path 'build/Testing/Temporary*' -name 'LastTestsFailed*' | wc -l)
+OPJ_HAS_TESTS=$(echo $OPJ_HAS_TESTS) #macos wc workaround
 
-while read FAILEDTEST; do
-	# Start with common errors
-	if grep -x "${FAILEDTEST}" ${OPJ_SOURCE_DIR}/tools/travis-ci/knownfailures-all.txt > /dev/null; then
-		continue
-	fi
-	if [ -f ${OPJ_SOURCE_DIR}/tools/travis-ci/knownfailures-${OPJ_BUILDNAME_TEST}.txt ]; then
-		if grep -x "${FAILEDTEST}" ${OPJ_SOURCE_DIR}/tools/travis-ci/knownfailures-${OPJ_BUILDNAME_TEST}.txt > /dev/null; then
+if [ $OPJ_HAS_TESTS -ne 0 ]; then
+	awk -F: '{ print $2 }' build/Testing/Temporary/LastTestsFailed_*.log > failures.txt
+	while read FAILEDTEST; do
+		# Start with common errors
+		if grep -x "${FAILEDTEST}" ${OPJ_SOURCE_DIR}/tools/travis-ci/knownfailures-all.txt > /dev/null; then
 			continue
 		fi
-	fi
-	echo "${FAILEDTEST}"
-	OPJ_CI_RESULT=1
-done < failures.txt
+		if [ -f ${OPJ_SOURCE_DIR}/tools/travis-ci/knownfailures-${OPJ_BUILDNAME_TEST}.txt ]; then
+			if grep -x "${FAILEDTEST}" ${OPJ_SOURCE_DIR}/tools/travis-ci/knownfailures-${OPJ_BUILDNAME_TEST}.txt > /dev/null; then
+				continue
+			fi
+		fi
+		echo "${FAILEDTEST}"
+		OPJ_CI_RESULT=1
+	done < failures.txt
+fi
 
 # TODO parse memcheck
 
 if [ ${OPJ_CI_RESULT} -eq 0 ]; then
 	echo "No new/unknown failure found"
+else
+	echo "
+New/unknown failures found!!!
+"
 fi
 
 exit ${OPJ_CI_RESULT}
