@@ -49,7 +49,7 @@ set( CACHE_CONTENTS "
 CMAKE_BUILD_TYPE:STRING=${CTEST_BUILD_CONFIGURATION}
 
 # Warning level
-CMAKE_C_FLAGS:STRING= -Wall -Wextra -Wconversion -Wpedantic -Wno-unused-parameter -Wdeclaration-after-statement
+CMAKE_C_FLAGS:STRING= -Wall -Wextra -Wconversion -Wno-unused-parameter -Wdeclaration-after-statement
 
 # Use to activate the test suite
 BUILD_TESTING:BOOL=TRUE
