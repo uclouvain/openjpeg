@@ -51,7 +51,7 @@ chmod +x jpylyzer/jpylyzer/jpylyzer.py
 if [ "${OPJ_NONCOMMERCIAL:-}" == "1" ]; then
 	if [ "${TRAVIS_OS_NAME:-}" == "linux" ]; then
 		echo "Retrieving Kakadu"
-		wget -q http://kakadusoftware.com/wp-content/uploads/2014/06/KDU77_Demo_Apps_for_Linux-x86-64_150710.zip  | tar -x
+		wget -q http://kakadusoftware.com/wp-content/uploads/2014/06/KDU77_Demo_Apps_for_Linux-x86-64_150710.zip
 		cmake -E tar -xf KDU77_Demo_Apps_for_Linux-x86-64_150710.zip
 		mv KDU77_Demo_Apps_for_Linux-x86-64_150710 kdu
 	fi
