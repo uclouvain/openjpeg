@@ -30,6 +30,8 @@ addons:
   apt:
     packages:
       - gcc-multilib
+      - gcc-mingw-w64-i686
+      - gcc-mingw-w64-x86-64
       - gcc-mingw-w64
 
 install:
