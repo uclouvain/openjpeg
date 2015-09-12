@@ -84,7 +84,10 @@ fi
 
 set -x
 # This will print configuration
-export OPJ_DO_SUBMIT=${OPJ_DO_SUBMIT}
+export OPJ_SITE=${OPJ_SITE}
+export OPJ_BUILDNAME=${OPJ_BUILDNAME}
 export OPJ_SOURCE_DIR=${OPJ_SOURCE_DIR}
+export OPJ_BUILD_CONFIGURATION=${OPJ_BUILD_CONFIGURATION}
+export OPJ_DO_SUBMIT=${OPJ_DO_SUBMIT}
 
-ctest -S ${OPJ_SOURCE_DIR}/tools/ctest_scripts/travis-ci.cmake -V -D CTEST_BUILD_NAME:STRING=${OPJ_BUILDNAME} -D CTEST_SITE:STRING=${OPJ_SITE} -D CTEST_BUILD_CONFIGURATION:STRING=${OPJ_BUILD_CONFIGURATION}
+ctest -S ${OPJ_SOURCE_DIR}/tools/ctest_scripts/travis-ci.cmake -V

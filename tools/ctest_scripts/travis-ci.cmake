@@ -6,10 +6,27 @@
 
 cmake_minimum_required(VERSION 2.8)
 
-set(ENV{LANG} en_US.UTF-8)
+set( ENV{LANG} en_US.UTF-8)
 set( CTEST_DASHBOARD_ROOT  "$ENV{PWD}/build" )
 set( CTEST_CMAKE_GENERATOR "Unix Makefiles")   # Always makefile in travis-ci environment
-set( BUILD_PLATFORM "x86_64" )
+
+if ("$ENV{OPJ_BUILD_CONFIGURATION}" STREQUAL "")
+  set( CTEST_BUILD_CONFIGURATION "Release")
+else()
+	set( CTEST_BUILD_CONFIGURATION "$ENV{OPJ_BUILD_CONFIGURATION}")
+endif()
+
+if ("$ENV{OPJ_SITE}" STREQUAL "")
+  set( CTEST_SITE "Unknown")
+else()
+	set( CTEST_SITE "$ENV{OPJ_SITE}")
+endif()
+
+if ("$ENV{OPJ_BUILDNAME}" STREQUAL "")
+  set( CTEST_BUILD_NAME "Unknown-${CTEST_BUILD_CONFIGURATION}")
+else()
+	set( CTEST_BUILD_NAME "$ENV{OPJ_BUILDNAME}")
+endif()
 
 # To execute part of the encoding test suite, kakadu binaries are needed to decode encoded image and compare 
 # it to the baseline. Kakadu binaries are freely available for non-commercial purposes 
