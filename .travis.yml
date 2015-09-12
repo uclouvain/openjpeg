@@ -9,7 +9,7 @@ compiler:
 matrix:
   exclude:
     - os: osx
-    - compiler: gcc
+      compiler: gcc
 
 install:
   - ./tools/travis-ci/install.sh
