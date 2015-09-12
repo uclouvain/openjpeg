@@ -44,7 +44,11 @@ if ("$ENV{OPJ_CI_ASAN}" STREQUAL "1")
 	set(OPJ_HAS_MEMCHECK TRUE)
 	set(CTEST_MEMORYCHECK_TYPE "AddressSanitizer")
 	set(CCFLAGS_ARCH "${CCFLAGS_ARCH} -g -fsanitize=address -fno-omit-frame-pointer")
-	
+endif()
+
+if("$ENV{CC}" MATCHES ".*mingw.*")
+	# We are trying to use mingw
+	set(CTEST_CONFIGURE_OPTIONS "-DCMAKE_TOOLCHAIN_FILE=${CTEST_SCRIPT_DIRECTORY}/toolchain-mingw64.cmake")
 endif()
 
 if(NOT "$ENV{OPJ_CI_SKIP_TESTS}" STREQUAL "1")
@@ -110,7 +114,7 @@ file(WRITE "${CTEST_BINARY_DIRECTORY}/CMakeCache.txt" "${CACHE_CONTENTS}")
 # Perform a Experimental build
 ctest_start(Experimental)
 #ctest_update(SOURCE "${CTEST_SOURCE_DIRECTORY}")
-ctest_configure(BUILD "${CTEST_BINARY_DIRECTORY}")
+ctest_configure(BUILD "${CTEST_BINARY_DIRECTORY}" OPTIONS "${CTEST_CONFIGURE_OPTIONS}")
 ctest_read_custom_files(${CTEST_BINARY_DIRECTORY})
 ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}")
 if(NOT "$ENV{OPJ_CI_SKIP_TESTS}" STREQUAL "1")
@@ -122,4 +126,4 @@ endif()
 if ("$ENV{OPJ_DO_SUBMIT}" STREQUAL "1")
 	ctest_submit()
 endif()
-ctest_empty_binary_directory( "${CTEST_BINARY_DIRECTORY}" )
+#ctest_empty_binary_directory( "${CTEST_BINARY_DIRECTORY}" )

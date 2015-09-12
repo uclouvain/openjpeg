@@ -5,6 +5,7 @@ os:
 compiler:
   - gcc
   - clang
+  - x86_64-w64-mingw32-gcc
 env:
   - OPJ_CI_ARCH=x86_64 OPJ_CI_BUILD_CONFIGURATION=Release
   - OPJ_CI_ARCH=i386 OPJ_CI_BUILD_CONFIGURATION=Release
@@ -14,9 +15,13 @@ matrix:
   exclude:
     - os: osx
       compiler: gcc
+    - os: osx
+      compiler: x86_64-w64-mingw32-gcc
     - compiler: clang
       env: OPJ_CI_ARCH=i386 OPJ_CI_BUILD_CONFIGURATION=Release
     - compiler: gcc
+      env: OPJ_CI_ARCH=x86_64 OPJ_CI_BUILD_CONFIGURATION=Debug OPJ_CI_ASAN=1
+    - compiler: x86_64-w64-mingw32-gcc
       env: OPJ_CI_ARCH=x86_64 OPJ_CI_BUILD_CONFIGURATION=Debug OPJ_CI_ASAN=1
     - os: osx
       env: OPJ_CI_ARCH=x86_64 OPJ_CI_BUILD_CONFIGURATION=Debug OPJ_CI_ASAN=1
@@ -25,6 +30,7 @@ addons:
   apt:
     packages:
       - gcc-multilib
+      - mingw-w64
 
 install:
   - ./tools/travis-ci/install.sh

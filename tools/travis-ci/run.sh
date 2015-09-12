@@ -52,9 +52,16 @@ elif [ "${TRAVIS_OS_NAME}" == "linux" ]; then
 	if which lsb_release > /dev/null; then
 		OPJ_OS_NAME=$(lsb_release -si)$(lsb_release -sr | sed 's/\([^0-9]*\.[0-9]*\).*/\1/')
 	fi
-	if [ "${CC}" == "gcc" ]; then
-		OPJ_CC_VERSION=gcc$(${CC} --version | head -1 | sed 's/.*\ \([0-9.]*[0-9]\)/\1/')
-	elif [ "${CC}" == "clang" ]; then
+	if [ -z "${CC##*gcc*}" ]; then
+		OPJ_CC_VERSION=$(${CC} --version | head -1 | sed 's/.*\ \([0-9.]*[0-9]\)/\1/')
+		if [ -z "${CC##*mingw*}" ]; then
+			OPJ_CC_VERSION=mingw${OPJ_CC_VERSION}
+			# disable testing for now
+			export OPJ_CI_SKIP_TESTS=1
+		else
+			OPJ_CC_VERSION=gcc${OPJ_CC_VERSION}
+		fi
+	elif [ -z "${CC##*clang*}" ]; then
 		OPJ_CC_VERSION=clang$(${CC} --version | grep version | sed 's/.*version \([^0-9.]*[0-9.]*\).*/\1/')
 	else
 		echo "Compiler not supported: ${CC}"; exit 1
