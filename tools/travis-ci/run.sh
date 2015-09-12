@@ -8,9 +8,12 @@ set -o errexit   ## set -e : exit the script if any statement returns a non-true
 set -o pipefail  ## Fail on error in pipe
 
 # Set-up some variables
+OPJ_BUILD_CONFIGURATION=Release
 OPJ_SOURCE_DIR=$(cd $(dirname $0)/../.. && pwd)
 
-OPJ_DO_SUBMIT=0 # Do not flood cdash
+if [ "${OPJ_DO_SUBMIT:-}" == "" ]; then
+	OPJ_DO_SUBMIT=0 # Do not flood cdash by default
+fi
 if [ "${TRAVIS_REPO_SLUG:-}" != "" ]; then
 	OPJ_OWNER=$(echo "${TRAVIS_REPO_SLUG}" | sed 's/\(^.*\)\/.*/\1/')
 	OPJ_SITE="${OPJ_OWNER}.travis-ci.org"
@@ -63,11 +66,11 @@ if [ "${TRAVIS_BRANCH:-}" == "" ]; then
 	TRAVIS_BRANCH=$(git -C ${OPJ_SOURCE_DIR} branch | grep '*' | tr -d '*[[:blank:]]') #default to master
 fi
 
-OPJ_BUILDNAME=${OPJ_OS_NAME}-${OPJ_CC_VERSION}-${TRAVIS_BRANCH}
+OPJ_BUILDNAME=${OPJ_OS_NAME}-${OPJ_CC_VERSION}-x86_64-${TRAVIS_BRANCH}
 if [ "${TRAVIS_PULL_REQUEST:-}" != "false" ] && [ "${TRAVIS_PULL_REQUEST:-}" != "" ]; then
 	OPJ_BUILDNAME=${OPJ_BUILDNAME}-pr${TRAVIS_PULL_REQUEST}
 fi
-OPJ_BUILDNAME=${OPJ_BUILDNAME}-Release-3rdP
+OPJ_BUILDNAME=${OPJ_BUILDNAME}-${OPJ_BUILD_CONFIGURATION}-3rdP
 
 if [ "${OPJ_NONCOMMERCIAL:-}" == "1" ] && [ -d kdu ]; then
 	echo "
@@ -80,21 +83,8 @@ Note: Binaries can only be used for non-commercial purposes.
 fi
 
 set -x
-if [ "${OPJ_NONCOMMERCIAL:-}" == "1" ] && [ -d kdu ]; then
-	if [ "${TRAVIS_OS_NAME}" == "linux" ]; then
-		if [ "${LD_LIBRARY_PATH:-}" == "" ]; then
-			export LD_LIBRARY_PATH=${PWD}/kdu
-		else
-			export LD_LIBRARY_PATH=${PWD}/kdu:${LD_LIBRARY_PATH}
-		fi
-	fi
-	export PATH=${PWD}/kdu:${PATH}
-fi
+# This will print configuration
+export OPJ_DO_SUBMIT=${OPJ_DO_SUBMIT}
+export OPJ_SOURCE_DIR=${OPJ_SOURCE_DIR}
 
-mkdir build
-cd build
-cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DBUILD_CODEC=ON -DBUILD_THIRDPARTY=ON -DBUILD_TESTING=ON -DOPJ_DATA_ROOT=${PWD}/../data -DJPYLYZER_EXECUTABLE=${PWD}/../jpylyzer/jpylyzer/jpylyzer.py -DSITE=${OPJ_SITE} -DBUILDNAME=${OPJ_BUILDNAME} ${OPJ_SOURCE_DIR}
-ctest -D ExperimentalStart
-ctest -D ExperimentalBuild -V
-ctest -D ExperimentalTest -j2 || true
-ctest -D ExperimentalSubmit || true
+ctest -S ${OPJ_SOURCE_DIR}/tools/ctest_scripts/travis-ci.cmake -V -D CTEST_BUILD_NAME:STRING=${OPJ_BUILDNAME} -D CTEST_SITE:STRING=${OPJ_SITE} -D CTEST_BUILD_CONFIGURATION:STRING=${OPJ_BUILD_CONFIGURATION}
