@@ -14,7 +14,7 @@ matrix:
     - os: osx
       compiler: gcc
     - compiler: clang
-      env: OPJ_CI_ARCH=x86
+      env: OPJ_CI_ARCH=i386
   
 addons:
   apt:

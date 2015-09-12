@@ -40,19 +40,24 @@ if (NOT "$ENV{OPJ_CI_ARCH}" STREQUAL "")
 	endif()
 endif()
 
-# To execute part of the encoding test suite, kakadu binaries are needed to decode encoded image and compare 
-# it to the baseline. Kakadu binaries are freely available for non-commercial purposes 
-# at http://www.kakadusoftware.com.
-# Here's the copyright notice from kakadu:
-# Copyright is owned by NewSouth Innovations Pty Limited, commercial arm of the UNSW Australia in Sydney.
-# You are free to trial these executables and even to re-distribute them,
-# so long as such use or re-distribution is accompanied with this copyright notice and is not for commercial gain.
-# Note: Binaries can only be used for non-commercial purposes.
-if ("$ENV{OPJ_NONCOMMERCIAL}" STREQUAL "1")
-	set(KDUPATH $ENV{PWD}/kdu)
-	set(ENV{LD_LIBRARY_PATH} ${KDUPATH})
-	set(ENV{PATH} $ENV{PATH}:${KDUPATH})
-endif()
+if(NOT "$ENV{OPJ_CI_SKIP_TESTS}" STREQUAL "1")
+	# To execute part of the encoding test suite, kakadu binaries are needed to decode encoded image and compare 
+	# it to the baseline. Kakadu binaries are freely available for non-commercial purposes 
+	# at http://www.kakadusoftware.com.
+	# Here's the copyright notice from kakadu:
+	# Copyright is owned by NewSouth Innovations Pty Limited, commercial arm of the UNSW Australia in Sydney.
+	# You are free to trial these executables and even to re-distribute them,
+	# so long as such use or re-distribution is accompanied with this copyright notice and is not for commercial gain.
+	# Note: Binaries can only be used for non-commercial purposes.
+	if ("$ENV{OPJ_NONCOMMERCIAL}" STREQUAL "1" )
+		set(KDUPATH $ENV{PWD}/kdu)
+		set(ENV{LD_LIBRARY_PATH} ${KDUPATH})
+		set(ENV{PATH} $ENV{PATH}:${KDUPATH})
+	endif()
+	set(BUILD_TESTING "TRUE")
+else()
+	set(BUILD_TESTING "FALSE")
+endif(NOT "$ENV{OPJ_CI_SKIP_TESTS}" STREQUAL "1")
 
 # Options 
 set( CACHE_CONTENTS "
@@ -64,7 +69,7 @@ CMAKE_BUILD_TYPE:STRING=${CTEST_BUILD_CONFIGURATION}
 CMAKE_C_FLAGS:STRING= ${CCFLAGS_ARCH} -Wall -Wextra -Wconversion -Wno-unused-parameter -Wdeclaration-after-statement
 
 # Use to activate the test suite
-BUILD_TESTING:BOOL=TRUE
+BUILD_TESTING:BOOL=${BUILD_TESTING}
 
 # Build Thirdparty, useful but not required for test suite 
 BUILD_THIRDPARTY:BOOL=TRUE
@@ -101,8 +106,9 @@ ctest_start(Experimental)
 ctest_configure(BUILD "${CTEST_BINARY_DIRECTORY}")
 ctest_read_custom_files(${CTEST_BINARY_DIRECTORY})
 ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}")
-ctest_test(BUILD "${CTEST_BINARY_DIRECTORY}" PARALLEL_LEVEL 2)
-
+if(NOT "$ENV{OPJ_CI_SKIP_TESTS}" STREQUAL "1")
+	ctest_test(BUILD "${CTEST_BINARY_DIRECTORY}" PARALLEL_LEVEL 2)
+endif()
 if ("$ENV{OPJ_DO_SUBMIT}" STREQUAL "1")
 	ctest_submit()
 endif()
