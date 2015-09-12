@@ -48,7 +48,11 @@ endif()
 
 if("$ENV{CC}" MATCHES ".*mingw.*")
 	# We are trying to use mingw
-	set(CTEST_CONFIGURE_OPTIONS "-DCMAKE_TOOLCHAIN_FILE=${CTEST_SCRIPT_DIRECTORY}/toolchain-mingw64.cmake")
+	if ("$ENV{OPJ_CI_ARCH}" MATCHES "^i[3-6]86$")
+		set(CTEST_CONFIGURE_OPTIONS "-DCMAKE_TOOLCHAIN_FILE=${CTEST_SCRIPT_DIRECTORY}/toolchain-mingw32.cmake")
+	else()
+		set(CTEST_CONFIGURE_OPTIONS "-DCMAKE_TOOLCHAIN_FILE=${CTEST_SCRIPT_DIRECTORY}/toolchain-mingw64.cmake")
+	endif()
 endif()
 
 if(NOT "$ENV{OPJ_CI_SKIP_TESTS}" STREQUAL "1")
@@ -126,4 +130,4 @@ endif()
 if ("$ENV{OPJ_DO_SUBMIT}" STREQUAL "1")
 	ctest_submit()
 endif()
-#ctest_empty_binary_directory( "${CTEST_BINARY_DIRECTORY}" )
+ctest_empty_binary_directory( "${CTEST_BINARY_DIRECTORY}" )
