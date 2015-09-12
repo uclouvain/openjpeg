@@ -8,7 +8,9 @@ set -o errexit   ## set -e : exit the script if any statement returns a non-true
 set -o pipefail  ## Fail on error in pipe
 
 # Set-up some variables
-OPJ_BUILD_CONFIGURATION=Release
+if [ "${OPJ_CI_BUILD_CONFIGURATION:-}" == "" ]; then
+	export OPJ_CI_BUILD_CONFIGURATION=Release #default
+fi
 OPJ_SOURCE_DIR=$(cd $(dirname $0)/../.. && pwd)
 
 if [ "${OPJ_DO_SUBMIT:-}" == "" ]; then
@@ -79,7 +81,7 @@ OPJ_BUILDNAME=${OPJ_OS_NAME}-${OPJ_CC_VERSION}-${OPJ_CI_ARCH}-${TRAVIS_BRANCH}
 if [ "${TRAVIS_PULL_REQUEST:-}" != "false" ] && [ "${TRAVIS_PULL_REQUEST:-}" != "" ]; then
 	OPJ_BUILDNAME=${OPJ_BUILDNAME}-pr${TRAVIS_PULL_REQUEST}
 fi
-OPJ_BUILDNAME=${OPJ_BUILDNAME}-${OPJ_BUILD_CONFIGURATION}-3rdP
+OPJ_BUILDNAME=${OPJ_BUILDNAME}-${OPJ_CI_BUILD_CONFIGURATION}-3rdP
 
 if [ "${OPJ_NONCOMMERCIAL:-}" == "1" ] && [ "${OPJ_CI_SKIP_TESTS:-}" != "1" ] && [ -d kdu ]; then
 	echo "
@@ -99,7 +101,7 @@ cmake --version
 export OPJ_SITE=${OPJ_SITE}
 export OPJ_BUILDNAME=${OPJ_BUILDNAME}
 export OPJ_SOURCE_DIR=${OPJ_SOURCE_DIR}
-export OPJ_BUILD_CONFIGURATION=${OPJ_BUILD_CONFIGURATION}
+export OPJ_BUILD_CONFIGURATION=${OPJ_CI_BUILD_CONFIGURATION}
 export OPJ_DO_SUBMIT=${OPJ_DO_SUBMIT}
 
 ctest -S ${OPJ_SOURCE_DIR}/tools/ctest_scripts/travis-ci.cmake -V

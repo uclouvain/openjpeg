@@ -8,6 +8,8 @@ compiler:
 env:
   - OPJ_CI_ARCH=x86_64
   - OPJ_CI_ARCH=i386
+  - OPJ_CI_BUILD_CONFIGURATION=Release
+  - OPJ_CI_BUILD_CONFIGURATION=Debug
   
 matrix:
   exclude:
@@ -15,6 +17,10 @@ matrix:
       compiler: gcc
     - compiler: clang
       env: OPJ_CI_ARCH=i386
+    - compiler: gcc
+      env: OPJ_CI_BUILD_CONFIGURATION=Debug
+    - os: osx
+      env: OPJ_CI_BUILD_CONFIGURATION=Debug
   
 addons:
   apt:
