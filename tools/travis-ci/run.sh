@@ -10,12 +10,15 @@ set -o pipefail  ## Fail on error in pipe
 # Set-up some variables
 OPJ_SOURCE_DIR=$(cd $(dirname $0)/../.. && pwd)
 
-if [ "${TRAVIS_REPO_SLUG:-}" == "uclouvain/openjpeg" ]; then
-	OPJ_SITE="travis-ci.org"
-	OPJ_DO_SUBMIT=1
+OPJ_DO_SUBMIT=0 # Do not flood cdash
+if [ "${TRAVIS_REPO_SLUG:-}" != "" ]; then
+	OPJ_OWNER=$(echo "${TRAVIS_REPO_SLUG}" | sed 's/\(^.*\)\/.*/\1/')
+	OPJ_SITE="${OPJ_OWNER}.travis-ci.org"
+	if [ "${OPJ_OWNER}" == "uclouvain" ]; then
+		OPJ_DO_SUBMIT=1
+	fi
 else
 	OPJ_SITE="$(hostname)"
-	OPJ_DO_SUBMIT=0 # Do not flood cdash
 fi
 
 if [ "${TRAVIS_OS_NAME:-}" == "" ]; then
