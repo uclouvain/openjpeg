@@ -5,11 +5,21 @@ os:
 compiler:
   - gcc
   - clang
+env:
+  - OPJ_CI_ARCH=x86_64
+  - OPJ_CI_ARCH=i386
   
 matrix:
   exclude:
     - os: osx
       compiler: gcc
+    - compiler: clang
+      env: OPJ_CI_ARCH=x86
+  
+addons:
+  apt:
+    packages:
+      - gcc-multilib
 
 install:
   - ./tools/travis-ci/install.sh

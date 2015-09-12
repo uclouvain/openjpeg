@@ -28,6 +28,18 @@ else()
 	set( CTEST_BUILD_NAME "$ENV{OPJ_BUILDNAME}")
 endif()
 
+if (NOT "$ENV{OPJ_CI_ARCH}" STREQUAL "")
+	if (APPLE)
+	  set(CCFLAGS_ARCH "-arch $ENV{OPJ_CI_ARCH}")
+	else()
+		if ("$ENV{OPJ_CI_ARCH}" MATCHES "^i[3-6]86$")
+			set(CCFLAGS_ARCH "-m32 -march=$ENV{OPJ_CI_ARCH}")
+		elseif ("$ENV{OPJ_CI_ARCH}" STREQUAL "x86_64")
+			set(CCFLAGS_ARCH "-m64")
+		endif()
+	endif()
+endif()
+
 # To execute part of the encoding test suite, kakadu binaries are needed to decode encoded image and compare 
 # it to the baseline. Kakadu binaries are freely available for non-commercial purposes 
 # at http://www.kakadusoftware.com.
@@ -49,7 +61,7 @@ set( CACHE_CONTENTS "
 CMAKE_BUILD_TYPE:STRING=${CTEST_BUILD_CONFIGURATION}
 
 # Warning level
-CMAKE_C_FLAGS:STRING= -Wall -Wextra -Wconversion -Wno-unused-parameter -Wdeclaration-after-statement
+CMAKE_C_FLAGS:STRING= ${CCFLAGS_ARCH} -Wall -Wextra -Wconversion -Wno-unused-parameter -Wdeclaration-after-statement
 
 # Use to activate the test suite
 BUILD_TESTING:BOOL=TRUE

@@ -55,10 +55,19 @@ elif [ "${TRAVIS_OS_NAME}" == "linux" ]; then
 	elif [ "${CC}" == "clang" ]; then
 		OPJ_CC_VERSION=clang$(${CC} --version | grep version | sed 's/.*version \([^0-9.]*[0-9.]*\).*/\1/')
 	else
-		echo "Compiler not supported: ${CC}"
+		echo "Compiler not supported: ${CC}"; exit 1
 	fi
 else
-	echo "OS not supported: ${TRAVIS_OS_NAME}"
+	echo "OS not supported: ${TRAVIS_OS_NAME}"; exit 1
+fi
+
+if [ "${OPJ_CI_ARCH:-}" == "" ]; then
+	echo "Guessing build architecture"
+	MACHINE_ARCH=$(uname -m)
+	if [ "${MACHINE_ARCH}" == "x86_64" ]; then
+		export OPJ_CI_ARCH=x86_64
+	fi
+	echo "${OPJ_CI_ARCH}"
 fi
 
 if [ "${TRAVIS_BRANCH:-}" == "" ]; then
@@ -66,13 +75,13 @@ if [ "${TRAVIS_BRANCH:-}" == "" ]; then
 	TRAVIS_BRANCH=$(git -C ${OPJ_SOURCE_DIR} branch | grep '*' | tr -d '*[[:blank:]]') #default to master
 fi
 
-OPJ_BUILDNAME=${OPJ_OS_NAME}-${OPJ_CC_VERSION}-x86_64-${TRAVIS_BRANCH}
+OPJ_BUILDNAME=${OPJ_OS_NAME}-${OPJ_CC_VERSION}-${OPJ_CI_ARCH}-${TRAVIS_BRANCH}
 if [ "${TRAVIS_PULL_REQUEST:-}" != "false" ] && [ "${TRAVIS_PULL_REQUEST:-}" != "" ]; then
 	OPJ_BUILDNAME=${OPJ_BUILDNAME}-pr${TRAVIS_PULL_REQUEST}
 fi
 OPJ_BUILDNAME=${OPJ_BUILDNAME}-${OPJ_BUILD_CONFIGURATION}-3rdP
 
-if [ "${OPJ_NONCOMMERCIAL:-}" == "1" ] && [ -d kdu ]; then
+if [ "${OPJ_NONCOMMERCIAL:-}" == "1" ] && [ "${OPJ_CI_SKIP_TESTS:-}" != "1" ] && [ -d kdu ]; then
 	echo "
 Testing will use Kakadu trial binaries. Here's the copyright notice from kakadu:
 Copyright is owned by NewSouth Innovations Pty Limited, commercial arm of the UNSW Australia in Sydney.
@@ -84,6 +93,9 @@ fi
 
 set -x
 # This will print configuration
+# travis-ci doesn't dump cmake version in system info, let's print it 
+cmake --version
+
 export OPJ_SITE=${OPJ_SITE}
 export OPJ_BUILDNAME=${OPJ_BUILDNAME}
 export OPJ_SOURCE_DIR=${OPJ_SOURCE_DIR}

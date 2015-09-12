@@ -17,14 +17,11 @@ function exit_handler ()
 	exit "${exit_code}"
 }
 trap exit_handler EXIT
-trap exit ERR 
-
-# travis-ci doesn't dump cmake version in system info, let's print it 
-cmake --version
+trap exit ERR
 
 # We don't need anything for coverity scan builds
 
-if [ "${COVERITY_SCAN_BRANCH:-}" != 1 ]; then
+if [ "${COVERITY_SCAN_BRANCH:-}" != "1" ] && [ "${OPJ_CI_SKIP_TESTS:-}" != "1" ]; then
 
 	OPJ_SOURCE_DIR=$(cd $(dirname $0)/../.. && pwd)
 
