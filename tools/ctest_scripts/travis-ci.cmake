@@ -43,7 +43,7 @@ endif()
 if ("$ENV{OPJ_CI_ASAN}" STREQUAL "1")
 	set(OPJ_HAS_MEMCHECK TRUE)
 	set(CTEST_MEMORYCHECK_TYPE "AddressSanitizer")
-	set(CCFLAGS_ARCH "${CCFLAGS_ARCH} -g -fsanitize=address -fno-omit-frame-pointer")
+	set(CCFLAGS_ARCH "${CCFLAGS_ARCH} -O1 -g -fsanitize=address -fno-omit-frame-pointer")
 endif()
 
 if("$ENV{CC}" MATCHES ".*mingw.*")
