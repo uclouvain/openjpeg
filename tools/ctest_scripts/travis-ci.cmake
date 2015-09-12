@@ -130,4 +130,5 @@ endif()
 if ("$ENV{OPJ_DO_SUBMIT}" STREQUAL "1")
 	ctest_submit()
 endif()
-ctest_empty_binary_directory( "${CTEST_BINARY_DIRECTORY}" )
+# Do not clean, we'll parse the log for known failure
+#ctest_empty_binary_directory( "${CTEST_BINARY_DIRECTORY}" )

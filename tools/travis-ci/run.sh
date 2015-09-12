@@ -85,12 +85,15 @@ if [ "${TRAVIS_BRANCH:-}" == "" ]; then
 fi
 
 OPJ_BUILDNAME=${OPJ_OS_NAME}-${OPJ_CC_VERSION}-${OPJ_CI_ARCH}-${TRAVIS_BRANCH}
+OPJ_BUILDNAME_TEST=${OPJ_OS_NAME}-${OPJ_CC_VERSION}-${OPJ_CI_ARCH}
 if [ "${TRAVIS_PULL_REQUEST:-}" != "false" ] && [ "${TRAVIS_PULL_REQUEST:-}" != "" ]; then
 	OPJ_BUILDNAME=${OPJ_BUILDNAME}-pr${TRAVIS_PULL_REQUEST}
 fi
 OPJ_BUILDNAME=${OPJ_BUILDNAME}-${OPJ_CI_BUILD_CONFIGURATION}-3rdP
+OPJ_BUILDNAME_TEST=${OPJ_BUILDNAME_TEST}-${OPJ_CI_BUILD_CONFIGURATION}-3rdP
 if [ "${OPJ_CI_ASAN:-}" == "1" ]; then
 	OPJ_BUILDNAME=${OPJ_BUILDNAME}-ASan
+	OPJ_BUILDNAME_TEST=${OPJ_BUILDNAME_TEST}-ASan
 fi
 
 if [ "${OPJ_NONCOMMERCIAL:-}" == "1" ] && [ "${OPJ_CI_SKIP_TESTS:-}" != "1" ] && [ -d kdu ]; then
@@ -119,3 +122,35 @@ export OPJ_BUILD_CONFIGURATION=${OPJ_CI_BUILD_CONFIGURATION}
 export OPJ_DO_SUBMIT=${OPJ_DO_SUBMIT}
 
 ctest -S ${OPJ_SOURCE_DIR}/tools/ctest_scripts/travis-ci.cmake -V
+
+# ctest will exit with error code 0 even if tests failed
+# let's parse discarding known failure
+set +x
+echo "
+Parsing logs for new/unknown failures
+"
+OPJ_CI_RESULT=0
+
+awk -F: '{ print $2 }' build/Testing/Temporary/LastTestsFailed_*.log > failures.txt
+
+while read FAILEDTEST; do
+	# Start with common errors
+	if grep -x "${FAILEDTEST}" ${OPJ_SOURCE_DIR}/tools/travis-ci/knownfailures-all.txt > /dev/null; then
+		continue
+	fi
+	if [ -f ${OPJ_SOURCE_DIR}/tools/travis-ci/knownfailures-${OPJ_BUILDNAME_TEST}.txt ]; then
+		if grep -x "${FAILEDTEST}" ${OPJ_SOURCE_DIR}/tools/travis-ci/knownfailures-${OPJ_BUILDNAME_TEST}.txt > /dev/null; then
+			continue
+		fi
+	fi
+	echo "${FAILEDTEST}"
+	OPJ_CI_RESULT=1
+done < failures.txt
+
+# TODO parse memcheck
+
+if [ ${OPJ_CI_RESULT} -eq 0 ]; then
+	echo "No new/unknown failure found"
+fi
+
+exit ${OPJ_CI_RESULT}
