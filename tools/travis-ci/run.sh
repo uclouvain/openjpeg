@@ -60,7 +60,7 @@ fi
 
 if [ "${TRAVIS_BRANCH:-}" == "" ]; then
 	echo "Guessing branch"
-	TRAVIS_BRANCH=$(git -C ../openjpeg branch | grep '*' | tr -d '*[[:blank:]]') #default to master
+	TRAVIS_BRANCH=$(git -C ${OPJ_SOURCE_DIR} branch | grep '*' | tr -d '*[[:blank:]]') #default to master
 fi
 
 OPJ_BUILDNAME=${OPJ_OS_NAME}-${OPJ_CC_VERSION}-${TRAVIS_BRANCH}
