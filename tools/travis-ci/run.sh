@@ -82,6 +82,9 @@ if [ "${TRAVIS_PULL_REQUEST:-}" != "false" ] && [ "${TRAVIS_PULL_REQUEST:-}" != 
 	OPJ_BUILDNAME=${OPJ_BUILDNAME}-pr${TRAVIS_PULL_REQUEST}
 fi
 OPJ_BUILDNAME=${OPJ_BUILDNAME}-${OPJ_CI_BUILD_CONFIGURATION}-3rdP
+if [ "${OPJ_CI_ASAN:-}" == "1" ]; then
+	OPJ_BUILDNAME=${OPJ_BUILDNAME}-ASan
+fi
 
 if [ "${OPJ_NONCOMMERCIAL:-}" == "1" ] && [ "${OPJ_CI_SKIP_TESTS:-}" != "1" ] && [ -d kdu ]; then
 	echo "
@@ -91,6 +94,10 @@ You are free to trial these executables and even to re-distribute them,
 so long as such use or re-distribution is accompanied with this copyright notice and is not for commercial gain.
 Note: Binaries can only be used for non-commercial purposes.
 "
+fi
+
+if [ -d cmake-install ]; then
+	export PATH=${PWD}/cmake-install/bin:${PATH}
 fi
 
 set -x

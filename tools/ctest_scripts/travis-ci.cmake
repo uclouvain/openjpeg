@@ -40,6 +40,13 @@ if (NOT "$ENV{OPJ_CI_ARCH}" STREQUAL "")
 	endif()
 endif()
 
+if ("$ENV{OPJ_CI_ASAN}" STREQUAL "1")
+	set(OPJ_HAS_MEMCHECK TRUE)
+	set(CTEST_MEMORYCHECK_TYPE "AddressSanitizer")
+	set(CCFLAGS_ARCH "${CCFLAGS_ARCH} -g -fsanitize=address -fno-omit-frame-pointer")
+	
+endif()
+
 if(NOT "$ENV{OPJ_CI_SKIP_TESTS}" STREQUAL "1")
 	# To execute part of the encoding test suite, kakadu binaries are needed to decode encoded image and compare 
 	# it to the baseline. Kakadu binaries are freely available for non-commercial purposes 
@@ -108,6 +115,9 @@ ctest_read_custom_files(${CTEST_BINARY_DIRECTORY})
 ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}")
 if(NOT "$ENV{OPJ_CI_SKIP_TESTS}" STREQUAL "1")
 	ctest_test(BUILD "${CTEST_BINARY_DIRECTORY}" PARALLEL_LEVEL 2)
+	if(OPJ_HAS_MEMCHECK)
+		ctest_memcheck(BUILD "${CTEST_BINARY_DIRECTORY}" PARALLEL_LEVEL 2)
+	endif()
 endif()
 if ("$ENV{OPJ_DO_SUBMIT}" STREQUAL "1")
 	ctest_submit()
