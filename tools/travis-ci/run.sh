@@ -82,7 +82,11 @@ fi
 set -x
 if [ "${OPJ_NONCOMMERCIAL:-}" == "1" ] && [ -d kdu ]; then
 	if [ "${TRAVIS_OS_NAME}" == "linux" ]; then
-		export LD_LIBRARY_PATH=${PWD}/kdu:${LD_LIBRARY_PATH}
+		if [ "${LD_LIBRARY_PATH:-}" == "" ]; then
+			export LD_LIBRARY_PATH=${PWD}/kdu
+		else
+			export LD_LIBRARY_PATH=${PWD}/kdu:${LD_LIBRARY_PATH}
+		fi
 	fi
 	export PATH=${PWD}/kdu:${PATH}
 fi

@@ -49,7 +49,7 @@ chmod +x jpylyzer/jpylyzer/jpylyzer.py
 # so long as such use or re-distribution is accompanied with this copyright notice and is not for commercial gain.
 # Note: Binaries can only be used for non-commercial purposes.
 if [ "${OPJ_NONCOMMERCIAL:-}" == "1" ]; then
-	if [ "${TRAVIS_OS_NAME:-}" == "linux" ]; then
+	if [ "${TRAVIS_OS_NAME:-}" == "linux" ] || uname -s | grep -i Linux &> /dev/null; then
 		echo "Retrieving Kakadu"
 		wget -q http://kakadusoftware.com/wp-content/uploads/2014/06/KDU77_Demo_Apps_for_Linux-x86-64_150710.zip
 		cmake -E tar -xf KDU77_Demo_Apps_for_Linux-x86-64_150710.zip
