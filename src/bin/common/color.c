@@ -599,13 +599,13 @@ void color_apply_conversion(opj_image_t *image)
 		
 		transform = cmsCreateTransform(in, TYPE_Lab_DBL, out, TYPE_RGB_16, INTENT_PERCEPTUAL, 0);
 		
-#ifdef HAVE_LIBLCMS2
+#ifdef OPJ_HAVE_LIBLCMS2
 		cmsCloseProfile(in);
 		cmsCloseProfile(out);
 #endif
 		if(transform == NULL)
 		{
-#ifdef HAVE_LIBLCMS1
+#ifdef OPJ_HAVE_LIBLCMS1
 			cmsCloseProfile(in);
 			cmsCloseProfile(out);
 #endif
@@ -662,7 +662,7 @@ void color_apply_conversion(opj_image_t *image)
 			*blue++ = RGB[2];
 		}
 		cmsDeleteTransform(transform);
-#ifdef HAVE_LIBLCMS1
+#ifdef OPJ_HAVE_LIBLCMS1
 		cmsCloseProfile(in);
 		cmsCloseProfile(out);
 #endif
@@ -681,7 +681,7 @@ void color_apply_conversion(opj_image_t *image)
 	fprintf(stderr,"%s:%d:\n\tenumCS %d not handled. Ignoring.\n", __FILE__,__LINE__, enumcs);
 }// color_apply_conversion()
 
-#endif // HAVE_LIBLCMS2 || HAVE_LIBLCMS1
+#endif // OPJ_HAVE_LIBLCMS2 || OPJ_HAVE_LIBLCMS1
 
 void color_cmyk_to_rgb(opj_image_t *image)
 {
