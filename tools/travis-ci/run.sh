@@ -191,9 +191,9 @@ if [ "${OPJ_CI_SKIP_TESTS:-}" != "1" ]; then
 	fi
 
 	# 4th memcheck step
-	OPJ_MEMCHECK_XML=$(find build -path 'build/Testing/*' -name 'MemCheck.xml')
+	OPJ_MEMCHECK_XML=$(find build -path 'build/Testing/*' -name 'DynamicAnalysis.xml')
 	if [ -f "${OPJ_MEMCHECK_XML}" ]; then
-		echo "TODO parse MemCheck.xml"
+		echo "TODO parse DynamicAnalysis.xml"
 	fi
 
 	if [ ${OPJ_CI_RESULT} -eq 0 ]; then
