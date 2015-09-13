@@ -121,44 +121,88 @@ export OPJ_SOURCE_DIR=${OPJ_SOURCE_DIR}
 export OPJ_BUILD_CONFIGURATION=${OPJ_CI_BUILD_CONFIGURATION}
 export OPJ_DO_SUBMIT=${OPJ_DO_SUBMIT}
 
-ctest -S ${OPJ_SOURCE_DIR}/tools/ctest_scripts/travis-ci.cmake -V
-
-# ctest will exit with error code 0 even if tests failed
-# let's parse discarding known failure
+ctest -S ${OPJ_SOURCE_DIR}/tools/ctest_scripts/travis-ci.cmake -V || true
+# ctest will exit with various error codes depending on version.
+# ignore ctest exit code & parse this ourselves
 set +x
+
+# let's parse configure/build/tests for failure
+
 echo "
-Parsing logs for new/unknown failures
+Parsing logs for failures
 "
 OPJ_CI_RESULT=0
 
-OPJ_HAS_TESTS=$(find build -path 'build/Testing/Temporary*' -name 'LastTestsFailed*' | wc -l)
-OPJ_HAS_TESTS=$(echo $OPJ_HAS_TESTS) #macos wc workaround
-
-if [ $OPJ_HAS_TESTS -ne 0 ]; then
-	awk -F: '{ print $2 }' build/Testing/Temporary/LastTestsFailed_*.log > failures.txt
-	while read FAILEDTEST; do
-		# Start with common errors
-		if grep -x "${FAILEDTEST}" ${OPJ_SOURCE_DIR}/tools/travis-ci/knownfailures-all.txt > /dev/null; then
-			continue
-		fi
-		if [ -f ${OPJ_SOURCE_DIR}/tools/travis-ci/knownfailures-${OPJ_BUILDNAME_TEST}.txt ]; then
-			if grep -x "${FAILEDTEST}" ${OPJ_SOURCE_DIR}/tools/travis-ci/knownfailures-${OPJ_BUILDNAME_TEST}.txt > /dev/null; then
-				continue
-			fi
-		fi
-		echo "${FAILEDTEST}"
+# 1st configure step
+OPJ_CONFIGURE_XML=$(find build -path 'build/Testing/*' -name 'Configure.xml')
+if [ ! -f "${OPJ_CONFIGURE_XML}" ]; then
+	echo "No configure log found"
+	OPJ_CI_RESULT=1
+else
+	if ! grep '<ConfigureStatus>0</ConfigureStatus>' ${OPJ_CONFIGURE_XML} &> /dev/null; then
+		echo "Errors were found in configure log"
 		OPJ_CI_RESULT=1
-	done < failures.txt
+	fi
 fi
 
-# TODO parse memcheck
-
-if [ ${OPJ_CI_RESULT} -eq 0 ]; then
-	echo "No new/unknown failure found"
+# 2nd build step
+# We must have one Build.xml file
+OPJ_BUILD_XML=$(find build -path 'build/Testing/*' -name 'Build.xml')
+if [ ! -f "${OPJ_BUILD_XML}" ]; then
+	echo "No build log found"
+	OPJ_CI_RESULT=1
 else
-	echo "
-New/unknown failures found!!!
-"
+	if grep '<Error>' ${OPJ_BUILD_XML} &> /dev/null; then
+		echo "Errors were found in build log"
+		OPJ_CI_RESULT=1
+	fi
+fi
+
+if [ ${OPJ_CI_RESULT} -ne 0 ]; then
+	# Don't trash output with failing tests when there are configure/build errors
+	exit ${OPJ_CI_RESULT}
+fi
+
+if [ "${OPJ_CI_SKIP_TESTS:-}" != "1" ]; then
+	OPJ_TEST_XML=$(find build -path 'build/Testing/*' -name 'Test.xml')
+	if [ ! -f "${OPJ_TEST_XML}" ]; then
+		echo "No test log found"
+		OPJ_CI_RESULT=1
+	else
+		echo "Parsing tests for new/unknown failures"
+		# 3rd test step
+		OPJ_FAILEDTEST_LOG=$(find build -path 'build/Testing/Temporary/*' -name 'LastTestsFailed_*.log')
+		if [ -f "${OPJ_FAILEDTEST_LOG}" ]; then
+			awk -F: '{ print $2 }' ${OPJ_FAILEDTEST_LOG} > failures.txt
+			while read FAILEDTEST; do
+				# Start with common errors
+				if grep -x "${FAILEDTEST}" ${OPJ_SOURCE_DIR}/tools/travis-ci/knownfailures-all.txt > /dev/null; then
+					continue
+				fi
+				if [ -f ${OPJ_SOURCE_DIR}/tools/travis-ci/knownfailures-${OPJ_BUILDNAME_TEST}.txt ]; then
+					if grep -x "${FAILEDTEST}" ${OPJ_SOURCE_DIR}/tools/travis-ci/knownfailures-${OPJ_BUILDNAME_TEST}.txt > /dev/null; then
+						continue
+					fi
+				fi
+				echo "${FAILEDTEST}"
+				OPJ_CI_RESULT=1
+			done < failures.txt
+		fi
+	fi
+
+	# 4th memcheck step
+	OPJ_MEMCHECK_XML=$(find build -path 'build/Testing/*' -name 'MemCheck.xml')
+	if [ -f "${OPJ_MEMCHECK_XML}" ]; then
+		echo "TODO parse MemCheck.xml"
+	fi
+
+	if [ ${OPJ_CI_RESULT} -eq 0 ]; then
+		echo "No new/unknown test failure found"
+	else
+		echo "
+New/unknown test failure found!!!
+	"
+	fi
 fi
 
 exit ${OPJ_CI_RESULT}
