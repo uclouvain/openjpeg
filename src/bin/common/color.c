@@ -562,7 +562,7 @@ fprintf(stderr,"%s:%d:color_apply_icc_profile\n\tcmsCreateTransform failed. "
 #endif
 }/* color_apply_icc_profile() */
 
-void color_apply_conversion(opj_image_t *image)
+void color_cielab_to_rgb(opj_image_t *image)
 {
 	int *row;
 	int enumcs, numcomps;
