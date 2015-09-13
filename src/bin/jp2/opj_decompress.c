@@ -1365,13 +1365,18 @@ int main(int argc, char **argv)
 		else if(image->color_space == OPJ_CLRSPC_EYCC){
 			color_esycc_to_rgb(image);
 		}
-		
+		else if(image->color_space == OPJ_CLRSPC_CIELAB){
+#if defined(OPJ_HAVE_LIBLCMS1) || defined(OPJ_HAVE_LIBLCMS2)
+			color_cielab_to_rgb(image);
+#endif
+		free(image->icc_profile_buf);
+		image->icc_profile_buf = NULL; image->icc_profile_len = 0;
+		}
+
 		if(image->icc_profile_buf) {
 #if defined(OPJ_HAVE_LIBLCMS1) || defined(OPJ_HAVE_LIBLCMS2)
 			if(image->icc_profile_len)
 			 color_apply_icc_profile(image);
-			else
-			 color_apply_conversion(image);
 #endif
 			free(image->icc_profile_buf);
 			image->icc_profile_buf = NULL; image->icc_profile_len = 0;
