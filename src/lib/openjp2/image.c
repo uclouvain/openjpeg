@@ -102,9 +102,9 @@ OPJ_API opj_image_t* OPJ_CALLCONV opj_manager_image_create(opj_manager_t manager
 
 void OPJ_CALLCONV opj_image_destroy(opj_image_t *image)
 {
-	if (image) {
-		opj_manager_image_destroy(image->m_manager, image);
-	}
+	opj_manager_t l_manager = opj_manager_get_global_manager();
+
+	opj_manager_image_destroy(l_manager, image);
 }
 
 OPJ_API void OPJ_CALLCONV opj_manager_image_destroy(opj_manager_t manager, opj_image_t *image)
