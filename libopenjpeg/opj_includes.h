@@ -46,6 +46,7 @@
    OpenJPEG interface
  ==========================================================
  */
+#include "opj_config.h"
 #include "openjpeg.h"
 
 /*
