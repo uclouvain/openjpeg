@@ -189,20 +189,26 @@ if [ "${OPJ_CI_SKIP_TESTS:-}" != "1" ]; then
 			done < failures.txt
 		fi
 	fi
-
-	# 4th memcheck step
-	OPJ_MEMCHECK_XML=$(find build -path 'build/Testing/*' -name 'DynamicAnalysis.xml')
-	if [ -f "${OPJ_MEMCHECK_XML}" ]; then
-		echo "TODO parse DynamicAnalysis.xml"
-	fi
-
+	
 	if [ ${OPJ_CI_RESULT} -eq 0 ]; then
-		echo "No new/unknown test failure found"
+		echo "No new/unknown test failure found
+		"
 	else
 		echo "
 New/unknown test failure found!!!
 	"
 	fi
+	
+	# 4th memcheck step
+	OPJ_MEMCHECK_XML=$(find build -path 'build/Testing/*' -name 'DynamicAnalysis.xml')
+	if [ -f "${OPJ_MEMCHECK_XML}" ]; then
+		if grep '<Defect Type' ${OPJ_MEMCHECK_XML} 2> /dev/null; then
+			echo "Errors were found in dynamic analysis log"
+			OPJ_CI_RESULT=1
+		fi
+	fi
+
+
 fi
 
 exit ${OPJ_CI_RESULT}
