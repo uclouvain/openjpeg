@@ -7804,7 +7804,7 @@ OPJ_BOOL opj_j2k_decode_tile (  opj_j2k_t * p_j2k,
                 }
                 else if (l_current_marker != J2K_MS_SOT)
                 {       
-                        if(opj_stream_get_number_byte_left(p_stream) == 0) {
+                        if (opj_stream_get_number_byte_left(p_stream) == 0) {
                             p_j2k->m_specific_param.m_decoder.m_state = J2K_STATE_NEOC;
                             opj_event_msg(&(p_j2k->m_manager->event_mgr), EVT_WARNING, "Stream does not end with EOC\n");
                             return OPJ_TRUE;
@@ -9461,18 +9461,20 @@ OPJ_BOOL opj_j2k_decode(opj_j2k_t * p_j2k,
 {
         OPJ_UINT32 compno;
 
-		if (!p_image || !p_j2k || !p_j2k->m_manager)
-                return OPJ_FALSE;
-	
-		p_j2k->m_output_image = opj_image_create0(p_j2k->m_manager);
+        if (!p_image || !p_j2k || !p_j2k->m_manager)
+            return OPJ_FALSE;
+
+        p_j2k->m_output_image = opj_image_create0(p_j2k->m_manager);
         if (! (p_j2k->m_output_image)) {
                 return OPJ_FALSE;
         }
-		opj_copy_image_header(p_j2k->m_manager, p_image, p_j2k->m_output_image);
+
+        if (!opj_copy_image_header(p_j2k->m_manager, p_image, p_j2k->m_output_image)) {
+            return OPJ_FALSE;
+        }
 
         /* customization of the decoding */
-		opj_j2k_setup_decoding(p_j2k);
-
+        opj_j2k_setup_decoding(p_j2k);
         /* Decode the codestream */
 		if (!opj_j2k_exec(p_j2k, p_j2k->m_procedure_list, p_stream)) {
                 opj_manager_image_destroy(p_j2k->m_manager, p_j2k->m_private_image);
