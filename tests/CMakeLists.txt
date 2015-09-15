@@ -56,7 +56,7 @@ endif()
 add_executable(compare_dump_files ${compare_dump_files_SRCS})
 
 # No image send to the dashboard if lib PNG is not available.
-if(NOT OPJ_HAVE_LIBPNG)
+if(NOT HAVE_LIBPNG)
   message(WARNING "Lib PNG seems to be not available: if you want run the non-regression tests with images reported to the dashboard, you need it (try BUILD_THIRDPARTY)")
 endif()
 
