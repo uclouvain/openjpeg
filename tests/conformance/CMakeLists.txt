@@ -510,7 +510,7 @@ foreach(kdu_file ${kdu_j2k_conf_files})
   set( filenameInput "${kdu_file}.j2c" )
   set( filenameRef   "${kdu_file}.ppm" )
 
-        if("${kdu_file}" STREQUAL "a6_mono_colr")
+  if("${kdu_file}" STREQUAL "a6_mono_colr")
     set(kdu_test_args -upsample -split-pnm )
   else()
     set(kdu_test_args -upsample )

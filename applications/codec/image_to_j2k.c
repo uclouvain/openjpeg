@@ -591,7 +591,9 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
 		{"POC",REQ_ARG, NULL ,'P'},
 		{"ROI",REQ_ARG, NULL ,'R'},
 		{"jpip",NO_ARG, NULL, 'J'},
-		{0,0,0,0} /* GNU getopt_long requirement */
+#ifdef USE_SYSTEM_GETOPT
+        {0,0,0,0} /* GNU getopt_long requirement */
+#endif
 	};
 
 	/* parse the command line */
@@ -601,7 +603,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
 #endif /* USE_JPWL */
 		"h";
 
-	totlen=sizeof(long_option)-1;
+    totlen=sizeof(long_option);
 	img_fol->set_out_format=0;
 	raw_cp->rawWidth = 0;
 
@@ -1391,10 +1393,10 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
 				/* ------------------------------------------------------ */
 
 
-			default:
-				fprintf(stderr, "ERROR -> Command line not valid\n");
-				return 1;
-		}
+        default:
+            fprintf(stderr, "[WARNING] An invalid option has been ignored\n");
+            break;
+        }
 	}while(c != -1);
 
 	/* check for possible errors */

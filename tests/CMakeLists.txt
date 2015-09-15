@@ -12,14 +12,34 @@ include_directories(
 set(compare_images_SRCS compare_images.c
   ${OPENJPEG_SOURCE_DIR}/applications/codec/convert.c
 #  ${OPENJPEG_SOURCE_DIR}/applications/codec/converttif.c
-  ${OPENJPEG_SOURCE_DIR}/applications/common/opj_getopt.c
+#  ${OPENJPEG_SOURCE_DIR}/applications/common/opj_getopt.c
   )
 
+if(NOT USE_SYSTEM_GETOPT)
+  list(APPEND compare_images_SRCS
+    ${OPENJPEG_SOURCE_DIR}/applications/common/opj_getopt.c
+  )
+endif()
+
 set(compare_dump_files_SRCS compare_dump_files.c
-  ${OPENJPEG_SOURCE_DIR}/applications/common/opj_getopt.c)
+  #${OPENJPEG_SOURCE_DIR}/applications/common/opj_getopt.c
+  )
+
+if(NOT USE_SYSTEM_GETOPT)
+  list(APPEND compare_dump_files_SRCS
+    ${OPENJPEG_SOURCE_DIR}/applications/common/opj_getopt.c
+  )
+endif()
 
 set(compare_raw_files_SRCS compare_raw_files.c
-  ${OPENJPEG_SOURCE_DIR}/applications/common/opj_getopt.c)
+  #${OPENJPEG_SOURCE_DIR}/applications/common/opj_getopt.c
+  )
+
+if(NOT USE_SYSTEM_GETOPT)
+  list(APPEND compare_raw_files_SRCS
+    ${OPENJPEG_SOURCE_DIR}/applications/common/opj_getopt.c
+  )
+endif()
 
 add_executable(compare_images ${compare_images_SRCS})
 target_link_libraries(compare_images

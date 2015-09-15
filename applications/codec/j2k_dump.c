@@ -201,13 +201,15 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 	int totlen, c;
 	opj_option_t long_option[]={
 		{"ImgDir",REQ_ARG, NULL ,'y'},
+#ifdef USE_SYSTEM_GETOPT
 		{0,0,0,0} /* GNU getopt_long requirement */
+#endif
 	};
 	const char optlist[] = "i:o:h";
 
 	OPJ_ARG_NOT_USED(indexfilename);
 
-	totlen=sizeof(long_option)-1;
+    totlen=sizeof(long_option);
 	img_fol->set_out_format = 0;
 	do {
 #ifdef USE_SYSTEM_GETOPT
@@ -265,7 +267,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 				/* ----------------------------------------------------- */
 			
 			default:
-				fprintf(stderr,"WARNING -> this option is not valid \"-%c %s\"\n",c, opj_optarg);
+                fprintf(stderr,"[WARNING] An invalid option has been ignored\n");
 				break;
 		}
 	}while(c != -1);
