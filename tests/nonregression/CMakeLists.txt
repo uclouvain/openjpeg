@@ -1,5 +1,7 @@
 # NON-REGRESSION TESTS ON THIS DATASET LOCATED ${OPJ_DATA_ROOT}/input/nonregression
 
+cmake_minimum_required(VERSION 2.8.7)
+
 FILE(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/Temporary)
 
 SET(TEMP ${CMAKE_CURRENT_BINARY_DIR}/Temporary)
@@ -8,12 +10,124 @@ SET(INPUT_NR ${OPJ_DATA_ROOT}/input/nonregression)
 
 SET(INPUT_NR_PATH ${INPUT_NR})
 SET(TEMP_PATH ${TEMP})
+set(INPUT_CONF_PATH ${OPJ_DATA_ROOT}/input/conformance)
 
 # need kdu_expand if possible
 find_package(KAKADU)
+# need jpylyzer if possible
+find_package(JPYLYZER)
 
 #########################################################################
-# GENERATION OF THE TEST SUITE
+# GENERATION OF THE TEST SUITE (DUMP)
+# Dump all files with the selected extension inside the input directory
+
+# technically opj_dump should simply parse these one, since syntax is ok.
+set(BLACKLIST_JPEG2000_TMP
+    2539.pdf.SIGFPE.706.1712.jp2
+    0290cb77c5df21828fa74cf2ab2c84d8.SIGFPE.d25.31.jp2
+    26ccf3651020967f7778238ef5af08af.SIGFPE.d25.527.jp2
+    4035.pdf.SIGSEGV.d8b.3375.jp2
+    3635.pdf.asan.77.2930.jp2
+    issue165.jp2
+    #edf_c2_1103421.jp2
+    edf_c2_1178956.jp2
+    edf_c2_1000290.jp2
+    #edf_c2_1000691.jp2 # ok
+    #edf_c2_20.jp2 #looks ok as per kdu_jp2info
+    edf_c2_1377017.jp2
+    edf_c2_1002767.jp2
+    #edf_c2_10025.jp2
+    edf_c2_1000234.jp2
+    edf_c2_225881.jp2
+    edf_c2_1000671.jp2
+    #edf_c2_1013627.jp2 # weird box, but kdu_jp2info ok
+    edf_c2_1015644.jp2
+    edf_c2_101463.jp2
+    edf_c2_1674177.jp2
+    edf_c2_1673169.jp2
+    issue429.jp2
+    issue427-null-image-size.jp2
+    issue427-illegal-tile-offset.jp2
+   )
+
+# Define a list of file which should be gracefully rejected:
+set(BLACKLIST_JPEG2000
+    ${BLACKLIST_JPEG2000_TMP}
+    broken1.jp2 
+    broken2.jp2
+    broken3.jp2
+    broken4.jp2
+    gdal_fuzzer_assert_in_opj_j2k_read_SQcd_SQcc.patch.jp2	
+    gdal_fuzzer_check_comp_dx_dy.jp2
+    gdal_fuzzer_check_number_of_tiles.jp2
+    gdal_fuzzer_unchecked_numresolutions.jp2
+    mem-b2ace68c-1381.jp2
+    1851.pdf.SIGSEGV.ce9.948.jp2
+    1888.pdf.asan.35.988.jp2
+    issue362-2863.jp2 #kdu_jp2info ok
+    issue362-2866.jp2
+    issue362-2894.jp2
+    issue400.jp2 #kdu_jp2info ok
+    issue364-38.jp2
+    issue364-903.jp2 #kdu_jp2info ok
+    issue393.jp2 #kdu_jp2info ok
+    issue408.jp2 #kdu_jp2info ok
+    issue420.jp2 #kdu_jp2info ok
+    27ac957758a35d00d6765a0c86350d9c.SIGFPE.d25.537.jpc #kdu_jp2info crash
+    3672da2f1f67bbecad27d7181b4e9d7c.SIGFPE.d25.805.jpc #kdu_jp2info crash
+    issue476.jp2 #kdu_jp2info ok
+    issue475.jp2 #kdu_jp2info ok
+    issue413.jp2 #kdu_jp2info ok
+   )
+
+file(GLOB_RECURSE OPJ_DATA_NR_LIST
+     "${INPUT_NR}/*.j2k"
+     "${INPUT_NR}/*.j2c"
+     "${INPUT_NR}/*.jp2"
+     "${INPUT_NR}/*.jpc"
+     #"${INPUT_NR}/*.jpx"
+     )
+
+foreach(INPUT_FILENAME ${OPJ_DATA_NR_LIST})
+  get_filename_component(INPUT_FILENAME_NAME ${INPUT_FILENAME} NAME)
+  #get_filename_component(INPUT_FILENAME_NAME_WE ${INPUT_FILENAME_NAME} NAME_WE)
+  # cannot use longest extension function, since some name contains multiples
+  # dots. Instead write out own shortest extension function:
+  string(FIND ${INPUT_FILENAME_NAME} "." SHORTEST_EXT_POS REVERSE)
+  string(SUBSTRING ${INPUT_FILENAME_NAME} 0 ${SHORTEST_EXT_POS} INPUT_FILENAME_NAME_WE)
+  string(REGEX MATCH ${INPUT_FILENAME_NAME} bad_jpeg2000 ${BLACKLIST_JPEG2000})
+
+  # Dump the input image
+  add_test(NAME NR-${INPUT_FILENAME_NAME}-dump
+           COMMAND opj_dump
+  	       -i ${INPUT_FILENAME}
+  	       -o ${TEMP}/${INPUT_FILENAME_NAME}.txt
+  	       -v
+  	       )
+  	
+  if(bad_jpeg2000)
+    set_tests_properties(NR-${INPUT_FILENAME_NAME}-dump
+                         PROPERTIES WILL_FAIL TRUE)
+
+  else()
+  	
+    # Compare the dump output with the baseline
+    add_test(NAME NR-${INPUT_FILENAME_NAME}-compare_dump2base
+  	        COMMAND compare_dump_files
+            -b ${BASELINE_NR}/opj_v2_${INPUT_FILENAME_NAME_WE}.txt
+            -t ${TEMP}/${INPUT_FILENAME_NAME}.txt
+            )
+
+    set_tests_properties(NR-${INPUT_FILENAME_NAME}-compare_dump2base
+                         PROPERTIES DEPENDS
+                         NR-${INPUT_FILENAME_NAME}-dump)
+  endif()
+
+endforeach()
+
+
+#########################################################################
+# GENERATION OF THE TEST SUITE (DECODE AND ENCODE)
 # Read one and more input file(s) (located in ${OPJ_DATA_ROOT}/input/nonregression) 
 # to know which files processed and with which options.
 
@@ -32,7 +146,8 @@ IF (TEST_SUITE_FILES)
     
     # Avoid to process the official test suite
     SET(FILE_ALREADY_READ 0)
-    STRING(REGEX MATCH "test_suite.ctest.in$" FILE_ALREADY_READ ${TEST_SUITE_FILE})
+    get_filename_component(TEST_SUITE_FILENAME ${TEST_SUITE_FILE} NAME)
+    string(REGEX MATCH "^test_suite.ctest.in$" FILE_ALREADY_READ ${TEST_SUITE_FILENAME})
    
     IF(NOT FILE_ALREADY_READ) 
       # Configure the additional test suite file:
@@ -56,6 +171,7 @@ ELSE(TEST_SUITE_FILES)
 ENDIF(TEST_SUITE_FILES)
 
 
+set(nonregression_filenames_used)
 # Parse the command line found in the file(s)
 SET(IT_TEST_ENC 0)
 SET(IT_TEST_DEC 0)
@@ -68,9 +184,12 @@ FOREACH(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
   
   # Check if the first argument begin by the comment sign
   LIST(GET CMD_ARG_LIST 0 EXE_NAME)
+
+  if(EXE_NAME)
   STRING(REGEX MATCH "^#" IGNORE_LINE_FOUND ${EXE_NAME})
+  endif()
  
-  IF(IGNORE_LINE_FOUND) 
+  if(IGNORE_LINE_FOUND OR NOT EXE_NAME)
     
     #MESSAGE( STATUS "Current line is ignored: ${OPJ_TEST_CMD_LINE}")
    
@@ -81,7 +200,7 @@ FOREACH(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
     STRING(REGEX MATCH "^!" FAILED_TEST_FOUND ${EXE_NAME})
    
     IF (FAILED_TEST_FOUND)
-      # Manage the different cases with the failed sign to remove the first argument which must be image_to_j2k
+      # Manage the different cases with the failed sign to remove the first argument which must be opj_compress
       SET(FAILED_TEST_FOUND_1 0)
       STRING(REGEX MATCH "^!image_to_j2k$|^!j2k_to_image$" FAILED_TEST_FOUND_1 ${EXE_NAME})
       
@@ -210,7 +329,7 @@ FOREACH(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
         
             # Compare the decoding file with baseline generated from the kdu_expand and baseline.j2k 
             ADD_TEST(NAME NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-compare_dec-ref-out2base
-              COMMAND compareRAWimages
+              COMMAND compare_raw_files
               -b ${BASELINE_NR}/opj_${OUTPUT_FILENAME_NAME_WE}-ENC-${IT_TEST_ENC}.raw
               -t ${OUTPUT_FILENAME}.raw
             )
@@ -222,8 +341,47 @@ FOREACH(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
           ENDIF()
       ENDIF(FAILED_TEST_FOUND)     
     
+          # Test the encoded file is a valid JP2 file
+          if (JPYLYZER_EXECUTABLE)
+            if (${OUTPUT_FILENAME} MATCHES "\\.jp2$")
+              add_test(NAME NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-jpylyser
+                COMMAND ${JPYLYZER_EXECUTABLE}
+                ${OUTPUT_FILENAME}
+                )
+              set_tests_properties(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-jpylyser PROPERTIES 
+                DEPENDS NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-encode
+                PASS_REGULAR_EXPRESSION "<isValidJP2>True</isValidJP2>"
+                )		
+            endif()
+          endif(JPYLYZER_EXECUTABLE)
+          
+          # If lossless compression (simple test is 4 arguments), decompress & compare
+          list(LENGTH CMD_ARG_LIST_2 ARG_COUNT)
+          if (ARG_COUNT EQUAL 4)
+            # can we compare with the input image ?
+            if (${INPUT_FILENAME_NAME} MATCHES "\\.tif$")
+              add_test(NAME NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-lossless-decode
+                COMMAND opj_decompress -i ${OUTPUT_FILENAME} -o ${OUTPUT_FILENAME}.lossless.tif
+                )
+              set_tests_properties(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-lossless-decode PROPERTIES 
+                DEPENDS NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-encode
+                )
+              add_test(NAME NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-lossless-compare
+                COMMAND compare_images -b ${INPUT_FILENAME} -t ${OUTPUT_FILENAME}.lossless.tif -n 1 -d
+                )
+              set_tests_properties(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-lossless-compare PROPERTIES 
+                DEPENDS NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-lossless-decode
+                )	
+            endif()
+          endif()
+      endif()
+
     # DECODER TEST SUITE
-    ELSE(ENC_TEST_FOUND)
+    else()
+      string(FIND ${INPUT_FILENAME} "nonregression" nr_pos)
+      if(${nr_pos} GREATER 0)
+        list(APPEND nonregression_filenames_used ${INPUT_FILENAME_NAME})
+      endif()
       math(EXPR IT_TEST_DEC "${IT_TEST_DEC}+1" )
       
       # Decode the input image
@@ -240,13 +398,17 @@ FOREACH(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
         # if not failed, check against registered md5:
         add_test(NAME NR-DEC-${INPUT_FILENAME_NAME}-${IT_TEST_DEC}-decode-md5 COMMAND ${CMAKE_COMMAND}
           -DREFFILE:STRING=${CMAKE_CURRENT_SOURCE_DIR}/md5refs.txt
-          -DFILENAME:STRING=${INPUT_FILENAME_NAME}
+          -DOUTFILENAME:STRING=${OUTPUT_FILENAME}
           -P ${CMAKE_CURRENT_SOURCE_DIR}/checkmd5refs.cmake)
+
+        set_tests_properties(NR-DEC-${INPUT_FILENAME_NAME}-${IT_TEST_DEC}-decode-md5 
+          PROPERTIES DEPENDS NR-DEC-${INPUT_FILENAME_NAME}-${IT_TEST_DEC}-decode
+        )
 
 # FIXME: add a compare2base function base on raw which 
 # can output png diff files if necesary 
-#  ADD_TEST(NAME NR-${filename}-compare2base
-#      COMMAND comparePGXimages
+#  add_test(NR-${filename}-compare2base
+#      ${EXECUTABLE_OUTPUT_PATH}/compare_images
 #     -b ${BASELINE_NR}/opj_${filenameRef}
 #     -t ${TEMP}/${filename}.pgx
 #     -n ${nbComponents}
@@ -258,30 +420,27 @@ FOREACH(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
 #                       PROPERTIES DEPENDS 
 #                       NR-${filename}-decode)  
     
-        # Dump the input image
-        ADD_TEST(NAME NR-DEC-${INPUT_FILENAME_NAME}-${IT_TEST_DEC}-dump
-          COMMAND j2k_dump
-          -i ${INPUT_FILENAME}
-          -o ${TEMP}/${INPUT_FILENAME_NAME}.txt
-        )
+      endif()
      
-        # Compare the dump output with the baseline
-        ADD_TEST(NAME NR-DEC-${INPUT_FILENAME_NAME}-${IT_TEST_DEC}-compare_dump2base
-          COMMAND compare_dump_files
-         -b ${BASELINE_NR}/opj_${INPUT_FILENAME_NAME_WE}.txt
-         -t ${TEMP}/${INPUT_FILENAME_NAME}.txt
-        )
+    endif()
      
-        SET_TESTS_PROPERTIES(NR-DEC-${INPUT_FILENAME_NAME}-${IT_TEST_DEC}-compare_dump2base  
-                             PROPERTIES DEPENDS 
-                             NR-DEC-${INPUT_FILENAME_NAME}-${IT_TEST_DEC}-dump)     
+  endif()
   
+endforeach()
 
-      ENDIF(FAILED_TEST_FOUND)    
+set(existing_filenames)
+foreach(f ${OPJ_DATA_NR_LIST})
+  get_filename_component(ff ${f} NAME)
+  list(APPEND existing_filenames ${ff})
+endforeach()
+if(existing_filenames)
+list(REMOVE_ITEM existing_filenames ${nonregression_filenames_used})
+endif()
   
-    ENDIF(ENC_TEST_FOUND)
-   
-  ENDIF(IGNORE_LINE_FOUND)
-
-ENDFOREACH(OPJ_TEST_CMD_LINE)
-
+# keep track of new addition:
+# if we reach here, then a J2K files was added but no test is present in
+# test_suite.ctest.in:
+foreach(found_but_no_test ${existing_filenames})
+  add_test(NAME Found-But-No-Test-${found_but_no_test} COMMAND ${CMAKE_COMMAND} -E echo "${found_but_no_test}")
+  set_tests_properties(Found-But-No-Test-${found_but_no_test} PROPERTIES WILL_FAIL TRUE)
+endforeach()

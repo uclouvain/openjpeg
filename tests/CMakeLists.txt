@@ -1,5 +1,5 @@
 # Tests
-INCLUDE_DIRECTORIES(
+include_directories(
   ${OPENJPEG_SOURCE_DIR}/libopenjpeg
   ${OPENJPEG_SOURCE_DIR}/applications/codec
   ${OPENJPEG_SOURCE_DIR}/applications/common
@@ -9,50 +9,51 @@ INCLUDE_DIRECTORIES(
   )
 
 # First thing define the common source:
-SET(comparePGXimages_SRCS comparePGXimages.c
+set(compare_images_SRCS compare_images.c
   ${OPENJPEG_SOURCE_DIR}/applications/codec/convert.c
+#  ${OPENJPEG_SOURCE_DIR}/applications/codec/converttif.c
+  ${OPENJPEG_SOURCE_DIR}/applications/common/opj_getopt.c
   )
-SET(compare_dump_files_SRCS compare_dump_files.c)
-SET(compareRAWimages_SRCS compareRAWimages.c)
 
-if(NOT USE_SYSTEM_GETOPT)
-  list(APPEND comparePGXimages_SRCS ${OPENJPEG_SOURCE_DIR}/applications/common/opj_getopt.c)
-  list(APPEND compare_dump_files_SRCS ${OPENJPEG_SOURCE_DIR}/applications/common/opj_getopt.c)
-  list(APPEND compareRAWimages_SRCS ${OPENJPEG_SOURCE_DIR}/applications/common/opj_getopt.c)
-endif()
+set(compare_dump_files_SRCS compare_dump_files.c
+  ${OPENJPEG_SOURCE_DIR}/applications/common/opj_getopt.c)
 
-ADD_EXECUTABLE(comparePGXimages ${comparePGXimages_SRCS})
-TARGET_LINK_LIBRARIES(comparePGXimages
+set(compare_raw_files_SRCS compare_raw_files.c
+  ${OPENJPEG_SOURCE_DIR}/applications/common/opj_getopt.c)
+
+add_executable(compare_images ${compare_images_SRCS})
+target_link_libraries(compare_images
   ${OPENJPEG_LIBRARY_NAME}
   ${PNG_LIBNAME} ${TIFF_LIBNAME}
   )
 # To support universal exe:
-IF(ZLIB_FOUND AND APPLE)
-  TARGET_LINK_LIBRARIES(comparePGXimages z)
-ELSe(ZLIB_FOUND AND APPLE)
-  TARGET_LINK_LIBRARIES(comparePGXimages ${Z_LIBNAME})
-ENDIF(ZLIB_FOUND AND APPLE)
+if(ZLIB_FOUND AND APPLE)
+  target_link_libraries(compare_images z)
+else(ZLIB_FOUND AND APPLE)
+  target_link_libraries(compare_images ${Z_LIBNAME})
+endif()
 
-ADD_EXECUTABLE(compare_dump_files ${compare_dump_files_SRCS})
-
-ADD_EXECUTABLE(compareRAWimages ${compareRAWimages_SRCS})
+add_executable(compare_dump_files ${compare_dump_files_SRCS})
 
 # No image send to the dashboard if lib PNG is not available.
-IF(NOT HAVE_LIBPNG)
-  MESSAGE(WARNING "Lib PNG seems to be not available: if you want run the non-regression tests with images reported to the dashboard, you need it (try BUILD_THIRDPARTY)") 
-ENDIF(NOT HAVE_LIBPNG)
+if(NOT OPJ_HAVE_LIBPNG)
+  message(WARNING "Lib PNG seems to be not available: if you want run the non-regression tests with images reported to the dashboard, you need it (try BUILD_THIRDPARTY)")
+endif()
 
-ADD_SUBDIRECTORY(conformance)
-ADD_SUBDIRECTORY(nonregression)
-ADD_SUBDIRECTORY(unit)
+add_subdirectory(conformance)
+#add_subdirectory(nonregression)
+add_subdirectory(unit)
 
-IF(BUILD_JPIP)
-  IF(JPIP_SERVER)
-    #SET(s "http://jpip.example.com/myFCGI?target=16.jp2&fsiz=170,170&cnew=http&type=jpp-stream")
-    SET(s "${JPIP_SERVER}?target=16.jp2&fsiz=170,170&cnew=http&type=jpp-stream")
-    SET(p "${CMAKE_CURRENT_BINARY_DIR}/jpip.dat")
-    SET(md5 "62b00c620fb0a600c5ffd413cada4674")
-    ADD_TEST(NAME TestJPIP1 COMMAND ${CMAKE_COMMAND} -DD_URL:STRING=${s} -DD_FILE:PATH=${p}
-      -DEXPECTED_MD5=${md5} -P ${PROJECT_SOURCE_DIR}/CMake/JPIPTestDriver.cmake)
-  ENDIF(JPIP_SERVER)
-ENDIF(BUILD_JPIP)
+if(BUILD_JPIP)
+  if(JPIP_SERVER)
+    #set(s "http://jpip.example.com/myFCGI?target=16.jp2&fsiz=170,170&cnew=http&type=jpp-stream")
+    set(s "${JPIP_SERVER}?target=16.jp2&fsiz=170,170&cnew=http&type=jpp-stream")
+    set(p "${CMAKE_CURRENT_BINARY_DIR}/jpip.dat")
+    set(md5 "d41d8cd98f00b204e9800998ecf8427e")
+    add_test(NAME TestJPIP1 COMMAND ${CMAKE_COMMAND} -DD_URL:STRING=${s} -DD_FILE:PATH=${p}
+      -DEXPECTED_MD5=${md5} -P ${PROJECT_SOURCE_DIR}/cmake/JPIPTestDriver.cmake)
+  endif()
+endif()
+
+add_executable(ppm2rgb3 ppm2rgb3.c)
+#add_executable(pdf2jp2 pdf2jp2.c)
