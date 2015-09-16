@@ -165,6 +165,10 @@ typedef struct opj_stream_private
 	 */
 	opj_stream_flag m_status;
 
+	/**
+	 * OpenJpeg Manager (memory/event)
+	 */
+	opj_manager_t m_manager;
 }
 opj_stream_private_t;
 

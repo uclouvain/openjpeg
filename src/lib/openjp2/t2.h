@@ -51,7 +51,7 @@
 Tier-2 coding
 */
 typedef struct opj_t2 {
-
+	opj_manager_t manager;
 	/** Encoding: pointer to the src image. Decoding: pointer to the dst image. */
 	opj_image_t *image;
 	/** pointer to the image coding parameters */
@@ -118,7 +118,7 @@ OPJ_BOOL opj_t2_decode_packets(	opj_t2_t *t2,
  * @param	p_cp		Image coding parameters.
  * @return		a new T2 handle if successful, NULL otherwise.
 */
-opj_t2_t* opj_t2_create(opj_image_t *p_image, opj_cp_t *p_cp);
+opj_t2_t* opj_t2_create(opj_manager_t manager, opj_image_t *p_image, opj_cp_t *p_cp);
 
 /**
 Destroy a T2 handle

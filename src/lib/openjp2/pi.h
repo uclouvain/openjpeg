@@ -120,7 +120,7 @@ typedef struct opj_pi_iterator {
  *
  * @return	a list of packet iterator that points to the first packet of the tile (not true).
 */
-opj_pi_iterator_t *opj_pi_initialise_encode(const opj_image_t *image,
+opj_pi_iterator_t *opj_pi_initialise_encode(opj_manager_t manager, const opj_image_t *image,
                                             opj_cp_t *cp,
                                             OPJ_UINT32 tileno,
                                             J2K_T2_MODE t2_mode);
@@ -162,7 +162,7 @@ Create a packet iterator for Decoder
 @return Returns a packet iterator that points to the first packet of the tile
 @see opj_pi_destroy
 */
-opj_pi_iterator_t *opj_pi_create_decode(opj_image_t * image, 
+opj_pi_iterator_t *opj_pi_create_decode(opj_manager_t manager, opj_image_t * image,
                                         opj_cp_t * cp,
                                         OPJ_UINT32 tileno);
 /**
@@ -171,7 +171,7 @@ opj_pi_iterator_t *opj_pi_create_decode(opj_image_t * image,
  * @param	p_pi			the packet iterator array to destroy.
  * @param	p_nb_elements	the number of elements in the array.
  */
-void opj_pi_destroy(opj_pi_iterator_t *p_pi,
+void opj_pi_destroy(opj_manager_t manager, opj_pi_iterator_t *p_pi,
                     OPJ_UINT32 p_nb_elements);
 
 /**

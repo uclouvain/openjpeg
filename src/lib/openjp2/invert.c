@@ -67,7 +67,8 @@ static void opj_lupInvert ( OPJ_FLOAT32 * pSrcMatrix,
 /**
  * Matrix inversion.
  */
-OPJ_BOOL opj_matrix_inversion_f(OPJ_FLOAT32 * pSrcMatrix,
+OPJ_BOOL opj_matrix_inversion_f(opj_manager_t manager,
+																OPJ_FLOAT32 * pSrcMatrix,
                                 OPJ_FLOAT32 * pDestMatrix, 
                                 OPJ_UINT32 nb_compo)
 {
@@ -78,8 +79,12 @@ OPJ_BOOL opj_matrix_inversion_f(OPJ_FLOAT32 * pSrcMatrix,
 	OPJ_UINT32 * lPermutations = 00;
 	OPJ_FLOAT32 * l_double_data = 00;
 
-	l_data = (OPJ_BYTE *) opj_malloc(l_total_size);
-	if (l_data == 0) {
+	if (manager == NULL) {
+		return OPJ_FALSE;
+	}
+
+	l_data = (OPJ_BYTE *) opj_manager_malloc(manager, l_total_size);
+	if (l_data == NULL) {
 		return OPJ_FALSE;
 	}
 	lPermutations = (OPJ_UINT32 *) l_data;
@@ -87,14 +92,14 @@ OPJ_BOOL opj_matrix_inversion_f(OPJ_FLOAT32 * pSrcMatrix,
 	memset(lPermutations,0,l_permutation_size);
 
 	if(! opj_lupDecompose(pSrcMatrix,lPermutations,l_double_data,nb_compo)) {
-		opj_free(l_data);
+		opj_manager_free(manager, l_data);
 		return OPJ_FALSE;
 	}
 	
-    opj_lupInvert(pSrcMatrix,pDestMatrix,nb_compo,lPermutations,l_double_data,l_double_data + nb_compo,l_double_data + 2*nb_compo);
-	opj_free(l_data);
+	opj_lupInvert(pSrcMatrix,pDestMatrix,nb_compo,lPermutations,l_double_data,l_double_data + nb_compo,l_double_data + 2*nb_compo);
+	opj_manager_free(manager, l_data);
 	
-    return OPJ_TRUE;
+	return OPJ_TRUE;
 }
 
 

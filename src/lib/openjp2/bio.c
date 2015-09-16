@@ -120,14 +120,14 @@ static OPJ_UINT32 opj_bio_getbit(opj_bio_t *bio) {
 ==========================================================
 */
 
-opj_bio_t* opj_bio_create(void) {
-	opj_bio_t *bio = (opj_bio_t*)opj_malloc(sizeof(opj_bio_t));
+opj_bio_t* opj_bio_create(opj_manager_t manager) {
+	opj_bio_t *bio = (opj_bio_t*)opj_manager_malloc(manager, sizeof(opj_bio_t));
 	return bio;
 }
 
-void opj_bio_destroy(opj_bio_t *bio) {
+void opj_bio_destroy(opj_manager_t manager, opj_bio_t *bio) {
 	if(bio) {
-		opj_free(bio);
+		opj_manager_free(manager, bio);
 	}
 }
 

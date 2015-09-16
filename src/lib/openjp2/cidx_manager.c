@@ -30,6 +30,7 @@
  */
 
 #include "opj_includes.h"
+#include "opj_malloc.h"
 
 
 /* 

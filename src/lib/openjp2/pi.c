@@ -193,7 +193,8 @@ static void opj_get_all_encoding_parameters(const opj_image_t *p_image,
  * @param	p_cp		the coding parameters.
  * @param	tileno	the index of the tile from which creating the packet iterator.
  */
-static opj_pi_iterator_t * opj_pi_create(	const opj_image_t *p_image,
+static opj_pi_iterator_t * opj_pi_create(   opj_manager_t manager,
+                                            const opj_image_t *p_image,
                                             const opj_cp_t *p_cp,
                                             OPJ_UINT32 tileno );
 /**
@@ -789,7 +790,8 @@ static void opj_get_all_encoding_parameters(   const opj_image_t *p_image,
 	}
 }
 
-static opj_pi_iterator_t * opj_pi_create(	const opj_image_t *image,
+static opj_pi_iterator_t * opj_pi_create(	opj_manager_t manager,
+                                    const opj_image_t *image,
                                     const opj_cp_t *cp,
                                     OPJ_UINT32 tileno )
 {
@@ -816,7 +818,7 @@ static opj_pi_iterator_t * opj_pi_create(	const opj_image_t *image,
 	l_poc_bound = tcp->numpocs+1;
 
 	/* memory allocations*/
-	l_pi = (opj_pi_iterator_t*) opj_calloc((l_poc_bound), sizeof(opj_pi_iterator_t));
+	l_pi = (opj_pi_iterator_t*) opj_manager_calloc(manager, (l_poc_bound), sizeof(opj_pi_iterator_t));
 	if (!l_pi) {
 		return NULL;
 	}
@@ -824,9 +826,9 @@ static opj_pi_iterator_t * opj_pi_create(	const opj_image_t *image,
 	l_current_pi = l_pi;
 	for (pino = 0; pino < l_poc_bound ; ++pino) {
 
-		l_current_pi->comps = (opj_pi_comp_t*) opj_calloc(image->numcomps, sizeof(opj_pi_comp_t));
+		l_current_pi->comps = (opj_pi_comp_t*) opj_manager_calloc(manager, image->numcomps, sizeof(opj_pi_comp_t));
 		if (! l_current_pi->comps) {
-			opj_pi_destroy(l_pi, l_poc_bound);
+			opj_pi_destroy(manager, l_pi, l_poc_bound);
 			return NULL;
 		}
 
@@ -837,9 +839,9 @@ static opj_pi_iterator_t * opj_pi_create(	const opj_image_t *image,
 
 			tccp = &tcp->tccps[compno];
 
-			comp->resolutions = (opj_pi_resolution_t*) opj_calloc(tccp->numresolutions, sizeof(opj_pi_resolution_t));
+			comp->resolutions = (opj_pi_resolution_t*) opj_manager_calloc(manager, tccp->numresolutions, sizeof(opj_pi_resolution_t));
 			if (!comp->resolutions) {
-				opj_pi_destroy(l_pi, l_poc_bound);
+				opj_pi_destroy(manager, l_pi, l_poc_bound);
 				return 00;
 			}
 
@@ -1151,7 +1153,7 @@ static OPJ_BOOL opj_pi_check_next_level(	OPJ_INT32 pos,
    Packet iterator interface
 ==========================================================
 */
-opj_pi_iterator_t *opj_pi_create_decode(opj_image_t *p_image,
+opj_pi_iterator_t *opj_pi_create_decode(opj_manager_t manager, opj_image_t *p_image,
 										opj_cp_t *p_cp,
 										OPJ_UINT32 p_tile_no)
 {
@@ -1191,27 +1193,27 @@ opj_pi_iterator_t *opj_pi_create_decode(opj_image_t *p_image,
 	l_bound = l_tcp->numpocs+1;
 
 	l_data_stride = 4 * OPJ_J2K_MAXRLVLS;
-	l_tmp_data = (OPJ_UINT32*)opj_malloc(
+	l_tmp_data = (OPJ_UINT32*)opj_manager_malloc(manager,
 		l_data_stride * p_image->numcomps * sizeof(OPJ_UINT32));
 	if
 		(! l_tmp_data)
 	{
 		return 00;
 	}
-	l_tmp_ptr = (OPJ_UINT32**)opj_malloc(
+	l_tmp_ptr = (OPJ_UINT32**)opj_manager_malloc(manager,
 		p_image->numcomps * sizeof(OPJ_UINT32 *));
 	if
 		(! l_tmp_ptr)
 	{
-		opj_free(l_tmp_data);
+		opj_manager_free(manager, l_tmp_data);
 		return 00;
 	}
 
 	/* memory allocation for pi */
-	l_pi = opj_pi_create(p_image, p_cp, p_tile_no);
+	l_pi = opj_pi_create(manager, p_image, p_cp, p_tile_no);
 	if (!l_pi) {
-		opj_free(l_tmp_data);
-		opj_free(l_tmp_ptr);
+		opj_manager_free(manager, l_tmp_data);
+		opj_manager_free(manager, l_tmp_ptr);
 		return 00;
 	}
 
@@ -1236,13 +1238,13 @@ opj_pi_iterator_t *opj_pi_create_decode(opj_image_t *p_image,
 	l_current_pi = l_pi;
 
 	/* memory allocation for include */
-	l_current_pi->include = (OPJ_INT16*) opj_calloc((l_tcp->numlayers +1) * l_step_l, sizeof(OPJ_INT16));
+	l_current_pi->include = (OPJ_INT16*) opj_manager_calloc(manager, (l_tcp->numlayers +1) * l_step_l, sizeof(OPJ_INT16));
 	if
 		(!l_current_pi->include)
 	{
-		opj_free(l_tmp_data);
-		opj_free(l_tmp_ptr);
-		opj_pi_destroy(l_pi, l_bound);
+		opj_manager_free(manager, l_tmp_data);
+		opj_manager_free(manager, l_tmp_ptr);
+		opj_pi_destroy(manager, l_pi, l_bound);
 		return 00;
 	}
 
@@ -1333,9 +1335,9 @@ opj_pi_iterator_t *opj_pi_create_decode(opj_image_t *p_image,
 		l_current_pi->include = (l_current_pi-1)->include;
 		++l_current_pi;
 	}
-	opj_free(l_tmp_data);
+	opj_manager_free(manager, l_tmp_data);
 	l_tmp_data = 00;
-	opj_free(l_tmp_ptr);
+	opj_manager_free(manager, l_tmp_ptr);
 	l_tmp_ptr = 00;
 	if
 		(l_tcp->POC)
@@ -1351,7 +1353,7 @@ opj_pi_iterator_t *opj_pi_create_decode(opj_image_t *p_image,
 
 
 
-opj_pi_iterator_t *opj_pi_initialise_encode(const opj_image_t *p_image,
+opj_pi_iterator_t *opj_pi_initialise_encode(opj_manager_t manager, const opj_image_t *p_image,
                                             opj_cp_t *p_cp,
                                             OPJ_UINT32 p_tile_no,
                                             J2K_T2_MODE p_t2_mode )
@@ -1392,24 +1394,24 @@ opj_pi_iterator_t *opj_pi_initialise_encode(const opj_image_t *p_image,
 	l_bound = l_tcp->numpocs+1;
 
 	l_data_stride = 4 * OPJ_J2K_MAXRLVLS;
-	l_tmp_data = (OPJ_UINT32*)opj_malloc(
+	l_tmp_data = (OPJ_UINT32*)opj_manager_malloc(manager,
 		l_data_stride * p_image->numcomps * sizeof(OPJ_UINT32));
 	if (! l_tmp_data) {
 		return 00;
 	}
 
-	l_tmp_ptr = (OPJ_UINT32**)opj_malloc(
+	l_tmp_ptr = (OPJ_UINT32**)opj_manager_malloc(manager,
 		p_image->numcomps * sizeof(OPJ_UINT32 *));
 	if (! l_tmp_ptr) {
-		opj_free(l_tmp_data);
+		opj_manager_free(manager, l_tmp_data);
 		return 00;
 	}
 
 	/* memory allocation for pi*/
-	l_pi = opj_pi_create(p_image,p_cp,p_tile_no);
+	l_pi = opj_pi_create(manager, p_image,p_cp,p_tile_no);
 	if (!l_pi) {
-		opj_free(l_tmp_data);
-		opj_free(l_tmp_ptr);
+		opj_manager_free(manager, l_tmp_data);
+		opj_manager_free(manager, l_tmp_ptr);
 		return 00;
 	}
 
@@ -1434,11 +1436,11 @@ opj_pi_iterator_t *opj_pi_initialise_encode(const opj_image_t *p_image,
 	l_current_pi = l_pi;
 
 	/* memory allocation for include*/
-	l_current_pi->include = (OPJ_INT16*) opj_calloc(l_tcp->numlayers * l_step_l, sizeof(OPJ_INT16));
+	l_current_pi->include = (OPJ_INT16*) opj_manager_calloc(manager, l_tcp->numlayers * l_step_l, sizeof(OPJ_INT16));
 	if (!l_current_pi->include) {
-		opj_free(l_tmp_data);
-		opj_free(l_tmp_ptr);
-		opj_pi_destroy(l_pi, l_bound);
+		opj_manager_free(manager, l_tmp_data);
+		opj_manager_free(manager, l_tmp_ptr);
+		opj_pi_destroy(manager, l_pi, l_bound);
 		return 00;
 	}
 
@@ -1521,9 +1523,9 @@ opj_pi_iterator_t *opj_pi_initialise_encode(const opj_image_t *p_image,
 		++l_current_pi;
 	}
 
-	opj_free(l_tmp_data);
+	opj_manager_free(manager, l_tmp_data);
 	l_tmp_data = 00;
-	opj_free(l_tmp_ptr);
+	opj_manager_free(manager, l_tmp_ptr);
 	l_tmp_ptr = 00;
 
     if (l_tcp->POC && (OPJ_IS_CINEMA(p_cp->rsiz) || p_t2_mode == FINAL_PASS)) {
@@ -1794,14 +1796,14 @@ void opj_pi_create_encode( 	opj_pi_iterator_t *pi,
 	}
 }
 
-void opj_pi_destroy(opj_pi_iterator_t *p_pi,
+void opj_pi_destroy(opj_manager_t manager, opj_pi_iterator_t *p_pi,
                     OPJ_UINT32 p_nb_elements)
 {
 	OPJ_UINT32 compno, pino;
 	opj_pi_iterator_t *l_current_pi = p_pi;
     if (p_pi) {
 		if (p_pi->include) {
-			opj_free(p_pi->include);
+			opj_manager_free(manager, p_pi->include);
 			p_pi->include = 00;
 		}
 		for (pino = 0; pino < p_nb_elements; ++pino){
@@ -1809,18 +1811,18 @@ void opj_pi_destroy(opj_pi_iterator_t *p_pi,
 				opj_pi_comp_t *l_current_component = l_current_pi->comps;
                 for (compno = 0; compno < l_current_pi->numcomps; compno++){
                     if(l_current_component->resolutions) {
-						opj_free(l_current_component->resolutions);
+						opj_manager_free(manager, l_current_component->resolutions);
 						l_current_component->resolutions = 00;
 					}
 
 					++l_current_component;
 				}
-				opj_free(l_current_pi->comps);
+				opj_manager_free(manager, l_current_pi->comps);
 				l_current_pi->comps = 0;
 			}
 			++l_current_pi;
 		}
-		opj_free(p_pi);
+		opj_manager_free(manager, p_pi);
 	}
 }
 

@@ -88,6 +88,94 @@ typedef struct img_folder{
     char set_out_format;
 }img_fol_t;
 
+/* -------------------------------------------------------------------------- */
+/* Custom allocation functions                                                */
+//#define OPJ_USE_MEMORY_MANAGER
+#ifdef OPJ_USE_MEMORY_MANAGER
+static void* opj_custom_malloc(OPJ_SIZE_T size, void *client_data)
+{
+	OPJ_ARG_NOT_USED(client_data);
+
+	if ((size + 32U) < size) {
+		return NULL;
+	}
+	size += 32U;
+
+	return (void*)(((OPJ_UINT8*)malloc(size)) + 32);
+}
+static void* opj_custom_calloc(OPJ_SIZE_T num, OPJ_SIZE_T size, void *client_data)
+{
+	OPJ_ARG_NOT_USED(client_data);
+
+	if ((size + 32U) < size) {
+		return NULL;
+	}
+	size += 32U;
+
+	return (void*)(((OPJ_UINT8*)calloc(num, size)) + 32);
+}
+static void* opj_custom_realloc(void* ptr, OPJ_SIZE_T size, void *client_data)
+{
+	OPJ_ARG_NOT_USED(client_data);
+
+	if ((size + 32U) < size) {
+		return NULL;
+	}
+	size += 32U;
+
+	if (ptr != NULL) {
+		ptr = ((OPJ_UINT8*)ptr) - 32;
+	}
+
+	return (void*)(((OPJ_UINT8*)realloc(ptr, size)) + 32);
+}
+static void opj_custom_free(void* ptr, void *client_data)
+{
+	OPJ_ARG_NOT_USED(client_data);
+	if (ptr != NULL) {
+		free(((OPJ_UINT8*)ptr) - 32);
+	}
+}
+static void* opj_custom_aligned_malloc(OPJ_SIZE_T size, OPJ_SIZE_T alignment, void *client_data)
+{
+	void** l_result = NULL;
+	void** l_original = NULL;
+
+	OPJ_ARG_NOT_USED(client_data);
+
+	if ((alignment == 0) || (alignment & (alignment - 1))) {
+		return NULL;
+	}
+
+	if ((size + alignment) < size) {
+		return NULL;
+	}
+	size += alignment;
+	if ((size + 32U * sizeof(void*)) < size) {
+		return NULL;
+	}
+	size += 32U * sizeof(void*);
+
+	l_original = (void**)malloc(size);
+
+	l_result = l_original + 30U;
+
+	if (alignment > sizeof(void*)) {
+		l_result = (void**)(((OPJ_SIZE_T)l_result + (alignment - 1)) & -alignment );
+	}
+	l_result[-1] = l_original;
+
+	return (void*)l_result;
+}
+static void opj_custom_aligned_free(void* ptr, void *client_data)
+{
+	OPJ_ARG_NOT_USED(client_data);
+	if (ptr != NULL) {
+		free(((void**)ptr)[-1]);
+	}
+}
+#endif
+
 static void encode_help_display(void) {
     fprintf(stdout,"\nThis is the opj_compress utility from the OpenJPEG project.\n"
             "It compresses various image formats with the JPEG 2000 algorithm.\n"
@@ -1569,7 +1657,9 @@ OPJ_FLOAT64 opj_clock(void) {
  */
 /* -------------------------------------------------------------------------- */
 int main(int argc, char **argv) {
-
+#ifdef OPJ_USE_MEMORY_MANAGER
+    opj_manager_t l_manager = NULL;
+#endif
     opj_cparameters_t parameters;	/* compression parameters */
 
     opj_stream_t *l_stream = 00;
@@ -1634,6 +1724,13 @@ int main(int argc, char **argv) {
     }else{
         num_images=1;
     }
+#ifdef OPJ_USE_MEMORY_MANAGER
+    l_manager = opj_manager_create(NULL, opj_custom_malloc, opj_custom_calloc, opj_custom_realloc, opj_custom_free, opj_custom_aligned_malloc, opj_custom_aligned_free);
+    if (!l_manager){
+        fprintf(stderr, "ERROR -> failed to create memory manager\n");
+        return EXIT_FAILURE;
+    }
+#endif
     /*Encoding image one by one*/
     for(imageno=0;imageno<num_images;imageno++)	{
         image = NULL;
@@ -1675,6 +1772,9 @@ int main(int argc, char **argv) {
             image = pgxtoimage(parameters.infile, &parameters);
             if (!image) {
                 fprintf(stderr, "Unable to load pgx file\n");
+#ifdef OPJ_USE_MEMORY_MANAGER
+                opj_manager_destroy(l_manager);
+#endif
                 return 1;
             }
             break;
@@ -1683,6 +1783,9 @@ int main(int argc, char **argv) {
             image = pnmtoimage(parameters.infile, &parameters);
             if (!image) {
                 fprintf(stderr, "Unable to load pnm file\n");
+#ifdef OPJ_USE_MEMORY_MANAGER
+                opj_manager_destroy(l_manager);
+#endif
                 return 1;
             }
             break;
@@ -1691,6 +1794,9 @@ int main(int argc, char **argv) {
             image = bmptoimage(parameters.infile, &parameters);
             if (!image) {
                 fprintf(stderr, "Unable to load bmp file\n");
+#ifdef OPJ_USE_MEMORY_MANAGER
+                opj_manager_destroy(l_manager);
+#endif
                 return 1;
             }
             break;
@@ -1700,6 +1806,9 @@ int main(int argc, char **argv) {
             image = tiftoimage(parameters.infile, &parameters);
             if (!image) {
                 fprintf(stderr, "Unable to load tiff file\n");
+#ifdef OPJ_USE_MEMORY_MANAGER
+                opj_manager_destroy(l_manager);
+#endif
                 return 1;
             }
             break;
@@ -1709,6 +1818,9 @@ int main(int argc, char **argv) {
             image = rawtoimage(parameters.infile, &parameters, &raw_cp);
             if (!image) {
                 fprintf(stderr, "Unable to load raw file\n");
+#ifdef OPJ_USE_MEMORY_MANAGER
+                opj_manager_destroy(l_manager);
+#endif
                 return 1;
             }
             break;
@@ -1717,6 +1829,9 @@ int main(int argc, char **argv) {
             image = rawltoimage(parameters.infile, &parameters, &raw_cp);
             if (!image) {
                 fprintf(stderr, "Unable to load raw file\n");
+#ifdef OPJ_USE_MEMORY_MANAGER
+                opj_manager_destroy(l_manager);
+#endif
                 return 1;
             }
             break;
@@ -1725,6 +1840,9 @@ int main(int argc, char **argv) {
             image = tgatoimage(parameters.infile, &parameters);
             if (!image) {
                 fprintf(stderr, "Unable to load tga file\n");
+#ifdef OPJ_USE_MEMORY_MANAGER
+                opj_manager_destroy(l_manager);
+#endif
                 return 1;
             }
             break;
@@ -1734,6 +1852,9 @@ int main(int argc, char **argv) {
             image = pngtoimage(parameters.infile, &parameters);
             if (!image) {
                 fprintf(stderr, "Unable to load png file\n");
+#ifdef OPJ_USE_MEMORY_MANAGER
+                opj_manager_destroy(l_manager);
+#endif
                 return 1;
             }
             break;
@@ -1745,6 +1866,9 @@ int main(int argc, char **argv) {
 */
         if( !image) {
             fprintf(stderr, "Unable to load file: got no image\n");
+#ifdef OPJ_USE_MEMORY_MANAGER
+            opj_manager_destroy(l_manager);
+#endif
             return 1;
         }
 
@@ -1755,11 +1879,17 @@ int main(int argc, char **argv) {
             if ((parameters.tcp_mct == 1) && (image->numcomps < 3)){
                 fprintf(stderr, "RGB->YCC conversion cannot be used:\n");
                 fprintf(stderr, "Input image has less than 3 components\n");
+#ifdef OPJ_USE_MEMORY_MANAGER
+                opj_manager_destroy(l_manager);
+#endif
                 return 1;
             }
             if ((parameters.tcp_mct == 2) && (!parameters.mct_data)){
                 fprintf(stderr, "Custom MCT has been set but no array-based MCT\n");
                 fprintf(stderr, "has been provided. Aborting.\n");
+#ifdef OPJ_USE_MEMORY_MANAGER
+                opj_manager_destroy(l_manager);
+#endif
                 return 1;
             }
         }
@@ -1771,13 +1901,21 @@ int main(int argc, char **argv) {
         case J2K_CFMT:	/* JPEG-2000 codestream */
         {
             /* Get a decoder handle */
+#ifdef OPJ_USE_MEMORY_MANAGER
+            l_codec = opj_manager_create_compress(l_manager, OPJ_CODEC_J2K);
+#else
             l_codec = opj_create_compress(OPJ_CODEC_J2K);
+#endif
             break;
         }
         case JP2_CFMT:	/* JPEG 2000 compressed image data */
         {
             /* Get a decoder handle */
+#ifdef OPJ_USE_MEMORY_MANAGER
+            l_codec = opj_manager_create_compress(l_manager, OPJ_CODEC_JP2);
+#else
             l_codec = opj_create_compress(OPJ_CODEC_JP2);
+#endif
             break;
         }
         default:
@@ -1787,9 +1925,15 @@ int main(int argc, char **argv) {
         }
 
         /* catch events using our callbacks and give a local context */
+#ifdef OPJ_USE_MEMORY_MANAGER
+        opj_manager_set_info_handler(l_manager, info_callback,00);
+        opj_manager_set_warning_handler(l_manager, warning_callback,00);
+        opj_manager_set_error_handler(l_manager, error_callback,00);
+#else
         opj_set_info_handler(l_codec, info_callback,00);
         opj_set_warning_handler(l_codec, warning_callback,00);
         opj_set_error_handler(l_codec, error_callback,00);
+#endif
 
         if( bUseTiles ) {
             parameters.cp_tx0 = 0;
@@ -1806,8 +1950,15 @@ int main(int argc, char **argv) {
         }
 
         /* open a byte stream for writing and allocate memory for all tiles */
+#ifdef OPJ_USE_MEMORY_MANAGER
+        l_stream = opj_manager_stream_create_default_file_stream(l_manager, parameters.outfile,OPJ_FALSE);
+#else
         l_stream = opj_stream_create_default_file_stream(parameters.outfile,OPJ_FALSE);
+#endif
         if (! l_stream){
+#ifdef OPJ_USE_MEMORY_MANAGER
+            opj_manager_destroy(l_manager);
+#endif
             return 1;
         }
 
@@ -1827,6 +1978,9 @@ int main(int argc, char **argv) {
                     opj_stream_destroy(l_stream);
                     opj_destroy_codec(l_codec);
                     opj_image_destroy(image);
+#ifdef OPJ_USE_MEMORY_MANAGER
+                    opj_manager_destroy(l_manager);
+#endif
                     return 1;
                 }
             }
@@ -1847,8 +2001,11 @@ int main(int argc, char **argv) {
             opj_stream_destroy(l_stream);
             opj_destroy_codec(l_codec);
             opj_image_destroy(image);
+#ifdef OPJ_USE_MEMORY_MANAGER
+            opj_manager_destroy(l_manager);
+#endif
             fprintf(stderr, "failed to encode image\n");
-			remove(parameters.outfile);
+            remove(parameters.outfile);
             return 1;
         }
 
@@ -1869,7 +2026,10 @@ int main(int argc, char **argv) {
     if(parameters.cp_comment)   free(parameters.cp_comment);
     if(parameters.cp_matrice)   free(parameters.cp_matrice);
     if(raw_cp.rawComps) free(raw_cp.rawComps);
-	
+#ifdef OPJ_USE_MEMORY_MANAGER
+    opj_manager_destroy(l_manager);
+#endif
+
     t = opj_clock() - t;
     if (num_compressed_files) {
 		    fprintf(stdout, "encode time: %d ms \n", (int)((t * 1000.0)/(OPJ_FLOAT64)num_compressed_files));

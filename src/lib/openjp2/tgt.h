@@ -66,11 +66,12 @@ Tag tree
 */
 typedef struct opj_tgt_tree
 {
-	OPJ_UINT32  numleafsh;
-	OPJ_UINT32  numleafsv;
-	OPJ_UINT32 numnodes;
+	opj_manager_t   manager;
 	opj_tgt_node_t *nodes;
-	OPJ_UINT32  nodes_size;		/* maximum size taken by nodes */
+	OPJ_UINT32      numleafsh;
+	OPJ_UINT32      numleafsv;
+	OPJ_UINT32      numnodes;
+	OPJ_UINT32      nodes_size;		/* maximum size taken by nodes */
 } opj_tgt_tree_t;
 
 
@@ -83,7 +84,7 @@ Create a tag-tree
 @param numleafsv Height of the array of leafs of the tree
 @return Returns a new tag-tree if successful, returns NULL otherwise
 */
-opj_tgt_tree_t *opj_tgt_create(OPJ_UINT32 numleafsh, OPJ_UINT32 numleafsv, opj_event_mgr_t *manager);
+opj_tgt_tree_t *opj_tgt_create(opj_manager_t manager, OPJ_UINT32 numleafsh, OPJ_UINT32 numleafsv);
 
 /**
  * Reinitialises a tag-tree from an exixting one.

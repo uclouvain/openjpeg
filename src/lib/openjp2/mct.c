@@ -117,10 +117,8 @@ void opj_mct_encode(
 		OPJ_INT32* restrict c2,
 		OPJ_UINT32 n)
 {
-	OPJ_SIZE_T i;
-	const OPJ_SIZE_T len = n;
-	
-	for(i = 0; i < len; ++i) {
+	OPJ_UINT32 i;
+	for(i = 0; i < n; ++i) {
 		OPJ_INT32 r = c0[i];
 		OPJ_INT32 g = c1[i];
 		OPJ_INT32 b = c2[i];
@@ -206,10 +204,10 @@ OPJ_FLOAT64 opj_mct_getnorm(OPJ_UINT32 compno) {
 /* </summary> */
 #ifdef __SSE4_1__
 void opj_mct_encode_real(
-												 OPJ_INT32* restrict c0,
-												 OPJ_INT32* restrict c1,
-												 OPJ_INT32* restrict c2,
-												 OPJ_UINT32 n)
+	OPJ_INT32* restrict c0,
+	OPJ_INT32* restrict c1,
+	OPJ_INT32* restrict c2,
+	OPJ_UINT32 n)
 {
 	OPJ_SIZE_T i;
 	const OPJ_SIZE_T len = n;
@@ -297,11 +295,11 @@ void opj_mct_encode_real(
 		hi = _mm_slli_epi64(hi, 32-13);
 		u = _mm_sub_epi32(u, _mm_blend_epi16(lo, hi, 0xCC));
 		_mm_store_si128((__m128i *)&(c1[i]), u);
-		
+
 		/*lo = r;
-		hi = _mm_shuffle_epi32(r, _MM_SHUFFLE(3, 3, 1, 1));
-		lo = _mm_mul_epi32(lo, mulround);
-		hi = _mm_mul_epi32(hi, mulround);*/
+		 hi = _mm_shuffle_epi32(r, _MM_SHUFFLE(3, 3, 1, 1));
+		 lo = _mm_mul_epi32(lo, mulround);
+		 hi = _mm_mul_epi32(hi, mulround);*/
 		lo = _mm_cvtepi32_epi64(_mm_shuffle_epi32(r, _MM_SHUFFLE(3, 2, 2, 0)));
 		hi = _mm_cvtepi32_epi64(_mm_shuffle_epi32(r, _MM_SHUFFLE(3, 2, 3, 1)));
 		lo = _mm_slli_epi64(lo, 12);
@@ -437,6 +435,7 @@ OPJ_FLOAT64 opj_mct_getnorm_real(OPJ_UINT32 compno) {
 
 
 OPJ_BOOL opj_mct_encode_custom(
+					   opj_manager_t manager,
 					   OPJ_BYTE * pCodingdata,
 					   OPJ_UINT32 n,
 					   OPJ_BYTE ** pData,
@@ -454,9 +453,13 @@ OPJ_BOOL opj_mct_encode_custom(
 	OPJ_UINT32 lMultiplicator = 1 << 13;
 	OPJ_INT32 * lMctPtr;
 
-    OPJ_ARG_NOT_USED(isSigned);
+	OPJ_ARG_NOT_USED(isSigned);
 
-	lCurrentData = (OPJ_INT32 *) opj_malloc((pNbComp + lNbMatCoeff) * sizeof(OPJ_INT32));
+	if (manager == NULL) {
+		return OPJ_FALSE;
+	}
+
+	lCurrentData = (OPJ_INT32 *) opj_manager_malloc(manager, (pNbComp + lNbMatCoeff) * sizeof(OPJ_INT32));
 	if (! lCurrentData) {
 		return OPJ_FALSE;
 	}
@@ -484,12 +487,13 @@ OPJ_BOOL opj_mct_encode_custom(
 		}
 	}
 
-	opj_free(lCurrentData);
+	opj_manager_free(manager, lCurrentData);
 
 	return OPJ_TRUE;
 }
 
 OPJ_BOOL opj_mct_decode_custom(
+					   opj_manager_t manager,
 					   OPJ_BYTE * pDecodingData,
 					   OPJ_UINT32 n,
 					   OPJ_BYTE ** pData,
@@ -507,7 +511,11 @@ OPJ_BOOL opj_mct_decode_custom(
 
     OPJ_ARG_NOT_USED(isSigned);
 
-	lCurrentData = (OPJ_FLOAT32 *) opj_malloc (2 * pNbComp * sizeof(OPJ_FLOAT32));
+	if (manager == NULL) {
+		return OPJ_FALSE;
+	}
+
+	lCurrentData = (OPJ_FLOAT32 *) opj_manager_malloc(manager, 2 * pNbComp * sizeof(OPJ_FLOAT32));
 	if (! lCurrentData) {
 		return OPJ_FALSE;
 	}
@@ -526,7 +534,7 @@ OPJ_BOOL opj_mct_decode_custom(
 			*(lData[j]++) = (OPJ_FLOAT32) (lCurrentResult[j]);
 		}
 	}
-	opj_free(lCurrentData);
+	opj_manager_free(manager, lCurrentData);
 	return OPJ_TRUE;
 }
 

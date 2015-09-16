@@ -34,7 +34,7 @@
  */
 
 #include "opj_includes.h"
-
+#include "opj_malloc.h"
 
 
 int opj_write_thix( int coff, opj_codestream_info_t cstr_info, opj_stream_private_t *cio,

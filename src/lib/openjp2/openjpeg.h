@@ -298,6 +298,78 @@ typedef enum CODEC_FORMAT {
     OPJ_CODEC_JPX  = 4		/**< JPX file format (JPEG 2000 Part-2) : to be coded */
 } OPJ_CODEC_FORMAT;
 
+/*
+ ==========================================================
+ manager typedef definitions
+ ==========================================================
+ */
+
+/**
+ * OpenJPEG Manager object handle
+ *
+ * This object is responsible for memory allocations & events.
+ * When no manager is used, events can still be retrieved for an opj_codec_t object using opj_set_info_handler, opj_set_warning_handler and opj_set_error_handler.
+ * The use of a manager & those functions are mutually exclusive.
+ *
+ */
+typedef struct opj_manager* opj_manager_t;
+
+/*
+ ==========================================================
+ memory manager typedef definitions
+ ==========================================================
+ */
+
+/**
+ * Callback function prototype for malloc
+ * @param  size        Size of the memory block, in bytes.
+ * @param  client_data Client object where will be return the event message
+ * @return returns     a pointer to the memory block allocated by the function.
+ * */
+typedef void* (*opj_malloc_callback) (OPJ_SIZE_T size, void *client_data);
+
+/**
+ * Callback function prototype for calloc
+ * @param  num         Number of elements to allocate.
+ * @param  size        Size of an element, in bytes.
+ * @param  client_data Client object where will be return the event message
+ * @return returns     a pointer to the memory block allocated by the function.
+ * */
+typedef void* (*opj_calloc_callback) (OPJ_SIZE_T num, OPJ_SIZE_T size, void *client_data);
+
+/**
+ * Callback function prototype for realloc
+ * @param ptr         Pointer to a memory block previously allocated with opj_malloc_callback, opj_calloc_callback or opj_realloc_callback.
+ * @param size        New size for the memory block, in bytes.
+ * @param client_data Client object where will be return the event message
+ * @return returns    a pointer to the reallocated memory block, which may be either the same as ptr or a new location.
+ * */
+typedef void* (*opj_realloc_callback) (void* ptr, OPJ_SIZE_T size, void *client_data);
+
+/**
+ * Callback function prototype for free
+ * @param  ptr         Pointer to a memory block previously allocated with opj_malloc_callback, opj_calloc_callback or opj_realloc_callback.
+ * @param  client_data Client object where will be return the event message
+ * @return returns     a pointer to the memory block allocated by the function.
+ * */
+typedef void (*opj_free_callback) (void* ptr, void *client_data);
+
+/**
+ * Callback function prototype for aligned_malloc
+ * @param  size        Size of the memory block, in bytes.
+ * @param  alignment   The value of alignment shall be a multiple of sizeof( void *), that is also a power of two.
+ * @param  client_data Client object where will be return the event message
+ * @return returns     a pointer to the memory block allocated by the function.
+ * */
+typedef void* (*opj_aligned_malloc_callback) (OPJ_SIZE_T size, OPJ_SIZE_T alignment, void *client_data);
+
+/**
+ * Callback function prototype for aligned_free
+ * @param  ptr         Pointer to a memory block previously allocated with opj_aligned_malloc_callback.
+ * @param  client_data Client object where will be return the event message
+ * @return returns     a pointer to the memory block allocated by the function.
+ * */
+typedef void (*opj_aligned_free_callback) (void* ptr, void *client_data);
 
 /* 
 ==========================================================
@@ -677,6 +749,8 @@ typedef struct opj_image {
 	OPJ_BYTE *icc_profile_buf;
 	/** size of ICC profile */
 	OPJ_UINT32 icc_profile_len;
+	/** OpenJpeg Manager (memory/event) */
+	opj_manager_t m_manager;
 } opj_image_t;
 
 
@@ -1054,7 +1128,77 @@ extern "C" {
 /* Get the version of the openjpeg library*/
 OPJ_API const char * OPJ_CALLCONV opj_version(void);
 
-/* 
+/*
+==========================================================
+   manager typedef definitions
+==========================================================
+*/
+
+/**
+	* Creates a manager using user provided allocation functions
+	*
+	* @param context                 callback user context that will be passed back each time an allocation callback is called.
+	* @param malloc_callback         malloc callback.
+	* @param calloc_callback         calloc callback.
+	* @param realloc_callback        realloc callback.
+	* @param free_callback           free callback.
+	* @param aligned_malloc_callback aligned malloc callback.
+	* @param aligned_free_callback   aligned free callback.
+	* @return returns      a new manager object handle if successful, returns NULL otherwise
+	* */
+OPJ_API opj_manager_t OPJ_CALLCONV opj_manager_create(
+		void*                       context,
+		opj_malloc_callback         malloc_callback,
+		opj_calloc_callback         calloc_callback,
+		opj_realloc_callback        realloc_callback,
+		opj_free_callback           free_callback,
+		opj_aligned_malloc_callback aligned_malloc_callback,
+		opj_aligned_free_callback   aligned_free_callback
+	);
+
+/**
+	* Creates a manager using default allocation functions
+	*
+	* @return returns      a new manager object handle if successful, returns NULL otherwise
+	* */
+OPJ_API opj_manager_t OPJ_CALLCONV opj_manager_create_default(void);
+
+/**
+	* Deallocates a manager
+	*
+	* @param manager manager to be destroyed
+	* */
+OPJ_API void OPJ_CALLCONV opj_manager_destroy(opj_manager_t manager);
+
+/**
+	* Set the info handler use by openjpeg.
+	* @param manager       the manager previously initialised
+	* @param p_callback    the callback function which will be used
+	* @param p_user_data   client object where will be returned the message
+	* */
+OPJ_API OPJ_BOOL OPJ_CALLCONV opj_manager_set_info_handler(opj_manager_t manager,
+																										 opj_msg_callback p_callback,
+																										 void * p_user_data);
+/**
+	* Set the warning handler use by openjpeg.
+	* @param manager       the manager previously initialised
+	* @param p_callback    the callback function which will be used
+	* @param p_user_data   client object where will be returned the message
+	* */
+OPJ_API OPJ_BOOL OPJ_CALLCONV opj_manager_set_warning_handler(opj_manager_t manager,
+																												opj_msg_callback p_callback,
+																												void * p_user_data);
+/**
+	* Set the error handler use by openjpeg.
+	* @param manager       the manager previously initialised
+	* @param p_callback    the callback function which will be used
+	* @param p_user_data   client object where will be returned the message
+	* */
+OPJ_API OPJ_BOOL OPJ_CALLCONV opj_manager_set_error_handler(opj_manager_t manager,
+																											opj_msg_callback p_callback,
+																											void * p_user_data);
+
+/*
 ==========================================================
    image functions definitions
 ==========================================================
@@ -1071,11 +1215,30 @@ OPJ_API const char * OPJ_CALLCONV opj_version(void);
 OPJ_API opj_image_t* OPJ_CALLCONV opj_image_create(OPJ_UINT32 numcmpts, opj_image_cmptparm_t *cmptparms, OPJ_COLOR_SPACE clrspc);
 
 /**
+	* Creates an image using the specified manager
+	*
+	* @param manager       the manager previously initialised
+	* @param numcmpts      number of components
+	* @param cmptparms     components parameters
+	* @param clrspc        image color space
+	* @return returns      a new image structure if successful, returns NULL otherwise
+	* */
+OPJ_API opj_image_t* OPJ_CALLCONV opj_manager_image_create(opj_manager_t manager, OPJ_UINT32 numcmpts, opj_image_cmptparm_t *cmptparms, OPJ_COLOR_SPACE clrspc);
+
+/**
  * Deallocate any resources associated with an image
  *
  * @param image         image to be destroyed
  */
 OPJ_API void OPJ_CALLCONV opj_image_destroy(opj_image_t *image);
+
+/**
+	* Deallocate any resources associated with an image
+	*
+	* @param manager       the manager previously initialised
+	* @param image         image to be destroyed
+	* */
+OPJ_API void OPJ_CALLCONV opj_manager_image_destroy(opj_manager_t manager, opj_image_t *image);
 
 /**
  * Creates an image without allocating memory for the image (used in the new version of the library).
@@ -1087,6 +1250,18 @@ OPJ_API void OPJ_CALLCONV opj_image_destroy(opj_image_t *image);
  * @return	a new image structure if successful, NULL otherwise.
 */
 OPJ_API opj_image_t* OPJ_CALLCONV opj_image_tile_create(OPJ_UINT32 numcmpts, opj_image_cmptparm_t *cmptparms, OPJ_COLOR_SPACE clrspc);
+
+/**
+	* Creates an image without allocating memory for the image (used in the new version of the library).
+	*
+	* @param manager     the manager previously initialised
+	* @param numcmpts    the number of components
+	* @param cmptparms   the components parameters
+	* @param clrspc      the image color space
+	*
+	* @return	a new image structure if successful, NULL otherwise.
+	* */
+OPJ_API opj_image_t* OPJ_CALLCONV opj_manager_image_tile_create(opj_manager_t manager, OPJ_UINT32 numcmpts, opj_image_cmptparm_t *cmptparms, OPJ_COLOR_SPACE clrspc);
 
 /* 
 ==========================================================
@@ -1103,6 +1278,8 @@ OPJ_API opj_image_t* OPJ_CALLCONV opj_image_tile_create(OPJ_UINT32 numcmpts, opj
 */
 OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_default_create(OPJ_BOOL p_is_input);
 
+OPJ_API opj_stream_t* OPJ_CALLCONV opj_manager_stream_default_create(opj_manager_t manager, OPJ_BOOL p_is_input);
+
 /**
  * Creates an abstract stream. This function does nothing except allocating memory and initializing the abstract stream.
  *
@@ -1112,6 +1289,8 @@ OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_default_create(OPJ_BOOL p_is_input
  * @return	a stream object.
 */
 OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create(OPJ_SIZE_T p_buffer_size, OPJ_BOOL p_is_input);
+
+OPJ_API opj_stream_t* OPJ_CALLCONV opj_manager_stream_create(opj_manager_t manager, OPJ_SIZE_T p_buffer_size, OPJ_BOOL p_is_input);
 
 /**
  * Destroys a stream created by opj_create_stream. This function does NOT close the abstract stream. If needed the user must
@@ -1171,6 +1350,7 @@ OPJ_API void OPJ_CALLCONV opj_stream_set_user_data_length(opj_stream_t* p_stream
  * @param p_is_read_stream  whether the stream is a read stream (true) or not (false)
 */
 OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_default_file_stream (const char *fname, OPJ_BOOL p_is_read_stream);
+OPJ_API opj_stream_t* OPJ_CALLCONV opj_manager_stream_create_default_file_stream (opj_manager_t manager, const char *fname, OPJ_BOOL p_is_read_stream);
  
 /** Create a stream from a file identified with its filename with a specific buffer size
  * @param fname             the filename of the file to stream
@@ -1180,8 +1360,12 @@ OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_default_file_stream (const 
 OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream (const char *fname,
                                                                      OPJ_SIZE_T p_buffer_size,
                                                                      OPJ_BOOL p_is_read_stream);
+OPJ_API opj_stream_t* OPJ_CALLCONV opj_manager_stream_create_file_stream (opj_manager_t manager,
+																																					const char *fname,
+																																		OPJ_SIZE_T p_buffer_size,
+																																		OPJ_BOOL p_is_read_stream);
  
-/* 
+/*
 ==========================================================
    event manager functions definitions
 ==========================================================
@@ -1227,6 +1411,7 @@ OPJ_API OPJ_BOOL OPJ_CALLCONV opj_set_error_handler(opj_codec_t * p_codec,
  * @return Returns a handle to a decompressor if successful, returns NULL otherwise
  * */
 OPJ_API opj_codec_t* OPJ_CALLCONV opj_create_decompress(OPJ_CODEC_FORMAT format);
+OPJ_API opj_codec_t* OPJ_CALLCONV opj_manager_create_decompress(opj_manager_t manager, OPJ_CODEC_FORMAT format);
 
 /**
  * Destroy a decompressor handle
@@ -1242,7 +1427,6 @@ OPJ_API void OPJ_CALLCONV opj_destroy_codec(opj_codec_t * p_codec);
  */
 OPJ_API OPJ_BOOL OPJ_CALLCONV opj_end_decompress (	opj_codec_t *p_codec,
 													opj_stream_t *p_stream);
-
 
 /**
  * Set decoding parameters to default values
@@ -1402,6 +1586,7 @@ OPJ_API OPJ_BOOL OPJ_CALLCONV opj_decode_tile_data(	opj_codec_t *p_codec,
  * @return 				Returns a handle to a compressor if successful, returns NULL otherwise
  */
 OPJ_API opj_codec_t* OPJ_CALLCONV opj_create_compress(OPJ_CODEC_FORMAT format);
+OPJ_API opj_codec_t* OPJ_CALLCONV opj_manager_create_compress(opj_manager_t manager, OPJ_CODEC_FORMAT format);
 
 /**
 Set encoding parameters to default values, that means : 
@@ -1463,6 +1648,7 @@ OPJ_API OPJ_BOOL OPJ_CALLCONV opj_end_compress (opj_codec_t *p_codec,
  */
 OPJ_API OPJ_BOOL OPJ_CALLCONV opj_encode(opj_codec_t *p_codec,
                                          opj_stream_t *p_stream);
+
 /*
 ==========================================================
    codec output functions definitions
@@ -1475,6 +1661,7 @@ Destroy Codestream information after compression or decompression
 @param cstr_info Codestream information structure
 */
 OPJ_API void OPJ_CALLCONV opj_destroy_cstr_info(opj_codestream_info_v2_t **cstr_info);
+OPJ_API void OPJ_CALLCONV opj_manager_destroy_cstr_info(opj_manager_t manager, opj_codestream_info_v2_t **cstr_info);
 
 
 /**
@@ -1510,6 +1697,7 @@ OPJ_API opj_codestream_info_v2_t* OPJ_CALLCONV opj_get_cstr_info(opj_codec_t *p_
 OPJ_API opj_codestream_index_t * OPJ_CALLCONV opj_get_cstr_index(opj_codec_t *p_codec);
 
 OPJ_API void OPJ_CALLCONV opj_destroy_cstr_index(opj_codestream_index_t **p_cstr_index);
+OPJ_API void OPJ_CALLCONV opj_manager_destroy_cstr_index(opj_manager_t manager, opj_codestream_index_t **p_cstr_index);
 
 
 /**
@@ -1532,7 +1720,6 @@ OPJ_API opj_jp2_metadata_t* OPJ_CALLCONV opj_get_jp2_metadata(opj_codec_t *p_cod
  */
 OPJ_API opj_jp2_index_t* OPJ_CALLCONV opj_get_jp2_index(opj_codec_t *p_codec);
 
-
 /*
 ==========================================================
    MCT functions
@@ -1553,6 +1740,11 @@ OPJ_API OPJ_BOOL OPJ_CALLCONV opj_set_MCT( opj_cparameters_t *parameters,
 		                               	   OPJ_FLOAT32 * pEncodingMatrix,
 		                               	   OPJ_INT32 * p_dc_shift,
 		                               	   OPJ_UINT32 pNbComp);
+OPJ_API OPJ_BOOL OPJ_CALLCONV opj_manager_set_MCT(opj_manager_t manager,
+                                                  opj_cparameters_t *parameters,
+                                                  OPJ_FLOAT32 * pEncodingMatrix,
+                                                  OPJ_INT32 * p_dc_shift,
+                                                  OPJ_UINT32 pNbComp);
 
 
 

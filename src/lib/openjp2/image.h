@@ -46,9 +46,11 @@ struct opj_cp;
 /**
  * Create an empty image
  *
+ * @param manager OpenJpeg memory/event manager
+ *
  * @return returns an empty image if successful, returns NULL otherwise
  */
-opj_image_t* opj_image_create0(void);
+opj_image_t* opj_image_create0(opj_manager_t manager);
 
 
 
@@ -60,7 +62,7 @@ opj_image_t* opj_image_create0(void);
  */
 void opj_image_comp_header_update(opj_image_t * p_image, const struct opj_cp* p_cp);
 
-void opj_copy_image_header(const opj_image_t* p_image_src, opj_image_t* p_image_dest);
+OPJ_BOOL opj_copy_image_header(opj_manager_t manager, const opj_image_t* p_image_src, opj_image_t* p_image_dest);
 
 /*@}*/
 

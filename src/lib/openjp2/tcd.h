@@ -198,6 +198,8 @@ Tile coder/decoder
 */
 typedef struct opj_tcd
 {
+	/** User memory/event manager */
+	opj_manager_t manager;
 	/** Position of the tilepart flag in Progression order*/
 	OPJ_INT32 tp_pos;
 	/** Tile part number*/
@@ -233,16 +235,17 @@ Dump the content of a tcd structure
 
 /**
 Create a new TCD handle
+@param manager      User memory/event manager
 @param p_is_decoder FIXME DOC
 @return Returns a new TCD handle if successful returns NULL otherwise
 */
-opj_tcd_t* opj_tcd_create(OPJ_BOOL p_is_decoder);
+opj_tcd_t* opj_tcd_create(opj_manager_t manager, OPJ_BOOL p_is_decoder);
 
 /**
 Destroy a previously created TCD handle
 @param tcd TCD handle to destroy
 */
-void opj_tcd_destroy(opj_tcd_t *tcd);
+void opj_tcd_destroy(opj_manager_t manager,opj_tcd_t *tcd);
 
 /**
  * Initialize the tile coder and may reuse some memory.
@@ -359,7 +362,7 @@ OPJ_BOOL opj_tcd_copy_tile_data (opj_tcd_t *p_tcd,
  *
  *
  */
-OPJ_BOOL opj_alloc_tile_component_data(opj_tcd_tilecomp_t *l_tilec);
+OPJ_BOOL opj_alloc_tile_component_data(opj_manager_t manager, opj_tcd_tilecomp_t *l_tilec);
 
 /* ----------------------------------------------------------------------- */
 /*@}*/

@@ -124,9 +124,9 @@ static void opj_dwt_encode_stepsize(OPJ_INT32 stepsize, OPJ_INT32 numbps, opj_st
 /**
 Inverse wavelet transform in 2-D.
 */
-static OPJ_BOOL opj_dwt_decode_tile(opj_tcd_tilecomp_t* tilec, OPJ_UINT32 i, DWT1DFN fn);
+static OPJ_BOOL opj_dwt_decode_tile(opj_manager_t manager, opj_tcd_tilecomp_t* tilec, OPJ_UINT32 i, DWT1DFN fn);
 
-static OPJ_BOOL opj_dwt_encode_procedure(	opj_tcd_tilecomp_t * tilec,
+static OPJ_BOOL opj_dwt_encode_procedure(	opj_manager_t manager, opj_tcd_tilecomp_t * tilec,
 										    void (*p_function)(OPJ_INT32 *, OPJ_INT32,OPJ_INT32,OPJ_INT32) );
 
 static OPJ_UINT32 opj_dwt_max_resolution(opj_tcd_resolution_t* restrict r, OPJ_UINT32 i);
@@ -385,7 +385,7 @@ static void opj_dwt_encode_stepsize(OPJ_INT32 stepsize, OPJ_INT32 numbps, opj_st
 /* <summary>                            */
 /* Forward 5-3 wavelet transform in 2-D. */
 /* </summary>                           */
-static INLINE OPJ_BOOL opj_dwt_encode_procedure(opj_tcd_tilecomp_t * tilec,void (*p_function)(OPJ_INT32 *, OPJ_INT32,OPJ_INT32,OPJ_INT32) )
+static INLINE OPJ_BOOL opj_dwt_encode_procedure(opj_manager_t manager, opj_tcd_tilecomp_t * tilec,void (*p_function)(OPJ_INT32 *, OPJ_INT32,OPJ_INT32,OPJ_INT32) )
 {
 	OPJ_INT32 i, j, k;
 	OPJ_INT32 *a = 00;
@@ -408,7 +408,7 @@ static INLINE OPJ_BOOL opj_dwt_encode_procedure(opj_tcd_tilecomp_t * tilec,void 
 	l_last_res = l_cur_res - 1;
 
 	l_data_size = opj_dwt_max_resolution( tilec->resolutions,tilec->numresolutions) * (OPJ_UINT32)sizeof(OPJ_INT32);
-	bj = (OPJ_INT32*)opj_malloc((size_t)l_data_size);
+	bj = (OPJ_INT32*)opj_manager_malloc(manager, (size_t)l_data_size);
 	if (! bj) {
 		return OPJ_FALSE;
 	}
@@ -457,22 +457,22 @@ static INLINE OPJ_BOOL opj_dwt_encode_procedure(opj_tcd_tilecomp_t * tilec,void 
 		--l_last_res;
 	}
 
-	opj_free(bj);
+	opj_manager_free(manager, bj);
 	return OPJ_TRUE;
 }
 
 /* Forward 5-3 wavelet transform in 2-D. */
 /* </summary>                           */
-OPJ_BOOL opj_dwt_encode(opj_tcd_tilecomp_t * tilec)
+OPJ_BOOL opj_dwt_encode(opj_manager_t manager, opj_tcd_tilecomp_t * tilec)
 {
-	return opj_dwt_encode_procedure(tilec,opj_dwt_encode_1);
+	return opj_dwt_encode_procedure(manager, tilec,opj_dwt_encode_1);
 }
 
 /* <summary>                            */
 /* Inverse 5-3 wavelet transform in 2-D. */
 /* </summary>                           */
-OPJ_BOOL opj_dwt_decode(opj_tcd_tilecomp_t* tilec, OPJ_UINT32 numres) {
-	return opj_dwt_decode_tile(tilec, numres, &opj_dwt_decode_1);
+OPJ_BOOL opj_dwt_decode(opj_manager_t manager, opj_tcd_tilecomp_t* tilec, OPJ_UINT32 numres) {
+	return opj_dwt_decode_tile(manager, tilec, numres, &opj_dwt_decode_1);
 }
 
 
@@ -497,9 +497,9 @@ OPJ_FLOAT64 opj_dwt_getnorm(OPJ_UINT32 level, OPJ_UINT32 orient) {
 /* <summary>                             */
 /* Forward 9-7 wavelet transform in 2-D. */
 /* </summary>                            */
-OPJ_BOOL opj_dwt_encode_real(opj_tcd_tilecomp_t * tilec)
+OPJ_BOOL opj_dwt_encode_real(opj_manager_t manager, opj_tcd_tilecomp_t * tilec)
 {
-	return opj_dwt_encode_procedure(tilec,opj_dwt_encode_1_real);
+	return opj_dwt_encode_procedure(manager, tilec,opj_dwt_encode_1_real);
 }
 
 /* <summary>                          */
@@ -557,7 +557,7 @@ static OPJ_UINT32 opj_dwt_max_resolution(opj_tcd_resolution_t* restrict r, OPJ_U
 /* <summary>                            */
 /* Inverse wavelet transform in 2-D.     */
 /* </summary>                           */
-static OPJ_BOOL opj_dwt_decode_tile(opj_tcd_tilecomp_t* tilec, OPJ_UINT32 numres, DWT1DFN dwt_1D) {
+static OPJ_BOOL opj_dwt_decode_tile(opj_manager_t manager, opj_tcd_tilecomp_t* tilec, OPJ_UINT32 numres, DWT1DFN dwt_1D) {
 	opj_dwt_t h;
 	opj_dwt_t v;
 
@@ -569,7 +569,7 @@ static OPJ_BOOL opj_dwt_decode_tile(opj_tcd_tilecomp_t* tilec, OPJ_UINT32 numres
 	OPJ_UINT32 w = (OPJ_UINT32)(tilec->x1 - tilec->x0);
 
 	h.mem = (OPJ_INT32*)
-	opj_aligned_malloc(opj_dwt_max_resolution(tr, numres) * sizeof(OPJ_INT32));
+	opj_manager_aligned_malloc(manager, opj_dwt_max_resolution(tr, numres) * sizeof(OPJ_INT32), 16);
 	if (! h.mem){
 		/* FIXME event manager error callback */
 		return OPJ_FALSE;
@@ -609,7 +609,7 @@ static OPJ_BOOL opj_dwt_decode_tile(opj_tcd_tilecomp_t* tilec, OPJ_UINT32 numres
 			}
 		}
 	}
-	opj_aligned_free(h.mem);
+	opj_manager_aligned_free(manager, h.mem);
 	return OPJ_TRUE;
 }
 
@@ -830,7 +830,7 @@ void opj_v4dwt_decode(opj_v4dwt_t* restrict dwt)
 /* <summary>                             */
 /* Inverse 9-7 wavelet transform in 2-D. */
 /* </summary>                            */
-OPJ_BOOL opj_dwt_decode_real(opj_tcd_tilecomp_t* restrict tilec, OPJ_UINT32 numres)
+OPJ_BOOL opj_dwt_decode_real(opj_manager_t manager, opj_tcd_tilecomp_t* restrict tilec, OPJ_UINT32 numres)
 {
 	opj_v4dwt_t h;
 	opj_v4dwt_t v;
@@ -842,7 +842,7 @@ OPJ_BOOL opj_dwt_decode_real(opj_tcd_tilecomp_t* restrict tilec, OPJ_UINT32 numr
 
 	OPJ_UINT32 w = (OPJ_UINT32)(tilec->x1 - tilec->x0);
 
-	h.wavelet = (opj_v4_t*) opj_aligned_malloc((opj_dwt_max_resolution(res, numres)+5) * sizeof(opj_v4_t));
+	h.wavelet = (opj_v4_t*) opj_manager_aligned_malloc(manager, (opj_dwt_max_resolution(res, numres)+5) * sizeof(opj_v4_t), 16);
 	if (!h.wavelet) {
 		/* FIXME event manager error callback */
 		return OPJ_FALSE;
@@ -925,6 +925,6 @@ OPJ_BOOL opj_dwt_decode_real(opj_tcd_tilecomp_t* restrict tilec, OPJ_UINT32 numr
 		}
 	}
 
-	opj_aligned_free(h.wavelet);
+	opj_manager_aligned_free(manager, h.wavelet);
 	return OPJ_TRUE;
 }

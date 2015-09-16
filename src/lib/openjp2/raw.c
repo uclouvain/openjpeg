@@ -48,14 +48,14 @@
 ==========================================================
 */
 
-opj_raw_t* opj_raw_create(void) {
-	opj_raw_t *raw = (opj_raw_t*)opj_malloc(sizeof(opj_raw_t));
+opj_raw_t* opj_raw_create(opj_manager_t manager) {
+	opj_raw_t *raw = (opj_raw_t*)opj_manager_malloc(manager, sizeof(opj_raw_t));
 	return raw;
 }
 
-void opj_raw_destroy(opj_raw_t *raw) {
+void opj_raw_destroy(opj_manager_t manager, opj_raw_t *raw) {
 	if(raw) {
-		opj_free(raw);
+		opj_manager_free(manager, raw);
 	}
 }
 

@@ -73,12 +73,12 @@ typedef struct opj_raw {
 Create a new RAW handle 
 @return Returns a new RAW handle if successful, returns NULL otherwise
 */
-opj_raw_t* opj_raw_create(void);
+opj_raw_t* opj_raw_create(opj_manager_t manager);
 /**
 Destroy a previously created RAW handle
 @param raw RAW handle to destroy
 */
-void opj_raw_destroy(opj_raw_t *raw);
+void opj_raw_destroy(opj_manager_t manager, opj_raw_t *raw);
 /**
 Return the number of bytes written/read since initialisation
 @param raw RAW handle to destroy
