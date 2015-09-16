@@ -111,6 +111,15 @@ int main(int argc, char *argv[])
   cio = opj_cio_open((opj_common_ptr)cinfo, NULL, 0);
   assert( cio );
   bSuccess = opj_encode(cinfo, cio, image, NULL);
+
+  if( !bSuccess )
+  {
+      opj_cio_close(cio);
+      opj_destroy_compress(cinfo);
+      opj_image_destroy(image);
+      return 0;
+  }
+
   assert( bSuccess );
 
   codestream_length = (size_t)cio_tell(cio);

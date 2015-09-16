@@ -247,6 +247,12 @@ Add tile header marker information
 @param len length of marker segment
  */
 static void j2k_add_tlmarker( int tileno, opj_codestream_info_t *cstr_info, unsigned short int type, int pos, int len);
+/**
+Validate encoding parameters and image before actual encoding
+@param j2k J2K handle
+@param image IMAGE handle
+ */
+static opj_bool j2k_validate_encode( opj_j2k_t *j2k, opj_image_t *image);
 
 /*@}*/
 
@@ -2450,6 +2456,9 @@ opj_bool j2k_encode(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image, opj_code
 
 	cp = j2k->cp;
 
+    /* Parameters validation */
+    if (!j2k_validate_encode(j2k, image)) return OPJ_FALSE;
+
 	/* INDEX >> */
 	j2k->cstr_info = cstr_info;
 	if (cstr_info) {
@@ -2697,4 +2706,22 @@ static void j2k_add_tlmarker( int tileno, opj_codestream_info_t *cstr_info, unsi
 	marker->pos = pos;
 	marker->len = len;
 	cstr_info->tile[tileno].marknum++;
+}
+
+static opj_bool j2k_validate_encode(opj_j2k_t *j2k, opj_image_t *image) {
+
+    int compno;
+    opj_bool is_valid = OPJ_TRUE;
+
+    /* preconditions */
+    assert(j2k != 00);
+    assert(image != 00);
+
+    /* PARAMETERS checking */
+    for (compno=0; compno < image->numcomps; compno++) {
+        is_valid &= (image->comps[compno].dx > 1 && j2k->image->comps[compno].dx < 255);
+        is_valid &= (image->comps[compno].dy > 1 && j2k->image->comps[compno].dy < 255);
+    }
+
+    return is_valid;
 }

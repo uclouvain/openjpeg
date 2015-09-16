@@ -44,6 +44,8 @@ The functions in INT.H have for goal to realize operations on integers.
 /*@{*/
 /* ----------------------------------------------------------------------- */
 
+#include <assert.h>
+
 #ifdef HAVE_STDINT_H
 #include <stdint.h>
 #else
@@ -102,8 +104,10 @@ Divide an integer and round upwards
 @return Returns a divided by b
 */
 static INLINE int int_ceildiv(int a, int b) {
-	return (a + b - 1) / b;
+    assert(b);
+    return (a + b - 1) / b;
 }
+
 /**
 Divide an integer by a power of 2 and round upwards
 @return Returns a divided by 2^b
