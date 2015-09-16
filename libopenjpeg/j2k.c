@@ -1235,6 +1235,7 @@ static void j2k_read_ppm(opj_j2k_t *j2k) {
 	
 	Z_ppm = cio_read(cio, 1);	/* Z_ppm */
 	len -= 3;
+
 	while (len > 0) {
 		if (cp->ppm_previous == 0) {
 			N_ppm = cio_read(cio, 4);	/* N_ppm */
@@ -1242,9 +1243,16 @@ static void j2k_read_ppm(opj_j2k_t *j2k) {
 		} else {
 			N_ppm = cp->ppm_previous;
 		}
+
+        /* issue 362-2863, issue 393 */
+        if (N_ppm < 0) {
+            j2k->state = J2K_STATE_ERR;
+            return;
+        }
+
 		j = cp->ppm_store;
-		if (Z_ppm == 0) {	/* First PPM marker */
-			cp->ppm_data = (unsigned char *) opj_malloc(N_ppm * sizeof(unsigned char));
+        if (Z_ppm == 0) {	/* First PPM marker */
+            cp->ppm_data = (unsigned char *) opj_malloc(N_ppm * sizeof(unsigned char));
 			cp->ppm_data_first = cp->ppm_data;
 			cp->ppm_len = N_ppm;
 		} else {			/* NON-first PPM marker */
