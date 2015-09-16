@@ -29,16 +29,124 @@ image_to_j2k -i @INPUT_NR_PATH@/Bretagne2.ppm -o @TEMP_PATH@/Bretagne2_4.j2k -d 
 image_to_j2k -i @INPUT_NR_PATH@/Cevennes1.bmp -o @TEMP_PATH@/Cevennes1.j2k -r 10
 image_to_j2k -i @INPUT_NR_PATH@/Cevennes2.ppm -o @TEMP_PATH@/Cevennes2.jp2 -r 50
 image_to_j2k -i @INPUT_NR_PATH@/Rome.bmp -o @TEMP_PATH@/Rome.jp2 -q 30,35,50 -p LRCP -n 3
-image_to_j2k -i @INPUT_NR_PATH@/X_4_2K_24_185_CBR_WB_000.tif -o @TEMP_PATH@/X_4_2K_24_185_CBR_WB_000.j2k -cinema2K 24
-image_to_j2k -i @INPUT_NR_PATH@/X_5_2K_24_235_CBR_STEM24_000.tif -o @TEMP_PATH@/X_5_2K_24_235_CBR_STEM24_000.j2k -cinema2K 24
-image_to_j2k -i @INPUT_NR_PATH@/X_6_2K_24_FULL_CBR_CIRCLE_000.tif -o @TEMP_PATH@/X_6_2K_24_FULL_CBR_CIRCLE_000.j2k -cinema2K 24
+
+# related to issue 5
+image_to_j2k -i @INPUT_NR_PATH@/random-issue-0005.tif -o @TEMP_PATH@/random-issue-0005.tif.j2k
+# related to issue 62
+image_to_j2k -i @INPUT_NR_PATH@/tmp-issue-0062.raw -o @TEMP_PATH@/tmp-issue-0062-u.raw.j2k -F 512,512,1,16,u
+image_to_j2k -i @INPUT_NR_PATH@/tmp-issue-0062.raw -o @TEMP_PATH@/tmp-issue-0062-s.raw.j2k -F 512,512,1,16,s
+image_to_j2k -i @INPUT_NR_PATH@/X_4_2K_24_185_CBR_WB_000.tif -o @TEMP_PATH@/X_4_2K_24_185_CBR_WB_000_C2K_24.j2k -cinema2K 24
+image_to_j2k -i @INPUT_NR_PATH@/X_5_2K_24_235_CBR_STEM24_000.tif -o @TEMP_PATH@/X_5_2K_24_235_CBR_STEM24_000_C2K_24.j2k -cinema2K 24
+image_to_j2k -i @INPUT_NR_PATH@/X_6_2K_24_FULL_CBR_CIRCLE_000.tif -o @TEMP_PATH@/X_6_2K_24_FULL_CBR_CIRCLE_000_C2K_24.j2k -cinema2K 24
+image_to_j2k -i @INPUT_NR_PATH@/X_4_2K_24_185_CBR_WB_000.tif -o @TEMP_PATH@/X_4_2K_24_185_CBR_WB_000_C2K_48.j2k -cinema2K 48
+image_to_j2k -i @INPUT_NR_PATH@/X_5_2K_24_235_CBR_STEM24_000.tif -o @TEMP_PATH@/X_5_2K_24_235_CBR_STEM24_000_C2K_48.j2k -cinema2K 48
+image_to_j2k -i @INPUT_NR_PATH@/X_6_2K_24_FULL_CBR_CIRCLE_000.tif -o @TEMP_PATH@/X_6_2K_24_FULL_CBR_CIRCLE_000_C2K_48.j2k -cinema2K 48
+#not implemented in 1.5
+!image_to_j2k -i @INPUT_NR_PATH@/ElephantDream_4K.tif -o @TEMP_PATH@/ElephantDream_4K_C4K.j2k -cinema4K
+# issue 141
+image_to_j2k -i @INPUT_NR_PATH@/issue141.rawl -o @TEMP_PATH@/issue141.rawl.j2k   -F 2048,32,1,16,u
+image_to_j2k -i @INPUT_NR_PATH@/issue141.rawl -o @TEMP_PATH@/issue141-I.rawl.j2k -F 2048,32,1,16,u -I
+# issue 46:
+image_to_j2k -i @INPUT_NR_PATH@/Bretagne2.ppm -o @TEMP_PATH@/Bretagne2_5.j2k -c [64,64]
+# issue 316
+image_to_j2k -i @INPUT_NR_PATH@/issue316.png -o @TEMP_PATH@/issue316.png.jp2
+# issue 416 (cdef for png with alpha) + issue 436 (MCT norm read buffer overflow for num comp > 3 + Issue 215 number of decomp levels
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn6a08.png -o @TEMP_PATH@/basn6a08.png.jp2 -n 6
+# issue 203 BMP Files not handled properly
+image_to_j2k -i @INPUT_NR_PATH@/issue203-8bpp-width1.bmp -o @TEMP_PATH@/issue203-8bpp-width1.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-rle8.bmp -o @TEMP_PATH@/issue203-rle8.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-32x32-y8.bmp -o @TEMP_PATH@/issue203-32x32-y8.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-33x33-y8.bmp -o @TEMP_PATH@/issue203-33x33-y8.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-34x34-y8.bmp -o @TEMP_PATH@/issue203-34x34-y8.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-35x35-y8.bmp -o @TEMP_PATH@/issue203-35x35-y8.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-32x32-bgr.bmp -o @TEMP_PATH@/issue203-32x32-bgr.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-33x33-bgr.bmp -o @TEMP_PATH@/issue203-33x33-bgr.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-34x34-bgr.bmp -o @TEMP_PATH@/issue203-34x34-bgr.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-35x35-bgr.bmp -o @TEMP_PATH@/issue203-35x35-bgr.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-32x32-y-rle8.bmp -o @TEMP_PATH@/issue203-32x32-y-rle8.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-32x32-bgr-rle8.bmp -o @TEMP_PATH@/issue203-32x32-bgr-rle8.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-32x32-y-rle4.bmp -o @TEMP_PATH@/issue203-32x32-y-rle4.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-32x32-bgr-rle4.bmp -o @TEMP_PATH@/issue203-32x32-bgr-rle4.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-32x32-bgra.bmp -o @TEMP_PATH@/issue203-32x32-bgra.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-32x32-bgrx.bmp -o @TEMP_PATH@/issue203-32x32-bgrx.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-32x32-bgr16.bmp -o @TEMP_PATH@/issue203-32x32-bgr16.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-33x33-bgr16.bmp -o @TEMP_PATH@/issue203-33x33-bgr16.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-32x32-bgra16.bmp -o @TEMP_PATH@/issue203-32x32-bgra16.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-33x33-bgra16.bmp -o @TEMP_PATH@/issue203-33x33-bgra16.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-32x32-bgrx16.bmp -o @TEMP_PATH@/issue203-32x32-bgrx16.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-33x33-bgrx16.bmp -o @TEMP_PATH@/issue203-33x33-bgrx16.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-127x64-bgr16.bmp -o @TEMP_PATH@/issue203-127x64-bgr16.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-127x64-bgrx.bmp -o @TEMP_PATH@/issue203-127x64-bgrx.bmp.jp2
+
+# issue 322 limited tif support
+image_to_j2k -i @INPUT_NR_PATH@/flower-minisblack-01.tif -o @TEMP_PATH@/flower-minisblack-01.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-minisblack-02.tif -o @TEMP_PATH@/flower-minisblack-02.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-minisblack-04.tif -o @TEMP_PATH@/flower-minisblack-04.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-minisblack-06.tif -o @TEMP_PATH@/flower-minisblack-06.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-minisblack-08.tif -o @TEMP_PATH@/flower-minisblack-08.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-minisblack-10.tif -o @TEMP_PATH@/flower-minisblack-10.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-minisblack-12.tif -o @TEMP_PATH@/flower-minisblack-12.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-minisblack-14.tif -o @TEMP_PATH@/flower-minisblack-14.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-minisblack-16.tif -o @TEMP_PATH@/flower-minisblack-16.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-rgb-contig-02.tif -o @TEMP_PATH@/flower-rgb-contig-02.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-rgb-contig-04.tif -o @TEMP_PATH@/flower-rgb-contig-04.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-rgb-contig-08.tif -o @TEMP_PATH@/flower-rgb-contig-08.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-rgb-contig-10.tif -o @TEMP_PATH@/flower-rgb-contig-10.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-rgb-contig-12.tif -o @TEMP_PATH@/flower-rgb-contig-12.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-rgb-contig-14.tif -o @TEMP_PATH@/flower-rgb-contig-14.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-rgb-contig-16.tif -o @TEMP_PATH@/flower-rgb-contig-16.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-rgb-planar-02.tif -o @TEMP_PATH@/flower-rgb-planar-02.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-rgb-planar-04.tif -o @TEMP_PATH@/flower-rgb-planar-04.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-rgb-planar-08.tif -o @TEMP_PATH@/flower-rgb-planar-08.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-rgb-planar-10.tif -o @TEMP_PATH@/flower-rgb-planar-10.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-rgb-planar-12.tif -o @TEMP_PATH@/flower-rgb-planar-12.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-rgb-planar-14.tif -o @TEMP_PATH@/flower-rgb-planar-14.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-rgb-planar-16.tif -o @TEMP_PATH@/flower-rgb-planar-16.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/basn6a08.tif -o @TEMP_PATH@/basn6a08.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/basn4a08.tif -o @TEMP_PATH@/basn4a08.tif.jp2
+
+# issue 536 (PNG images are always read as RGB(A) images) + issue 264 (convert.c is unmaintainable)
+# Test all images from pngsuite
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn0g01.png -o @TEMP_PATH@/basn0g01.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn0g02.png -o @TEMP_PATH@/basn0g02.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn0g04.png -o @TEMP_PATH@/basn0g04.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn0g08.png -o @TEMP_PATH@/basn0g08.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn0g16.png -o @TEMP_PATH@/basn0g16.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn2c08.png -o @TEMP_PATH@/basn2c08.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn2c16.png -o @TEMP_PATH@/basn2c16.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn3p01.png -o @TEMP_PATH@/basn3p01.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn3p02.png -o @TEMP_PATH@/basn3p02.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn3p04.png -o @TEMP_PATH@/basn3p04.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn3p08.png -o @TEMP_PATH@/basn3p08.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn4a08.png -o @TEMP_PATH@/basn4a08.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn4a16.png -o @TEMP_PATH@/basn4a16.png.jp2
+# already done image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn6a08.png -o @TEMP_PATH@/basn6a08.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn6a16.png -o @TEMP_PATH@/basn6a16.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftbbn0g01.png -o @TEMP_PATH@/ftbbn0g01.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftbbn0g02.png -o @TEMP_PATH@/ftbbn0g02.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftbbn0g04.png -o @TEMP_PATH@/ftbbn0g04.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftbbn2c16.png -o @TEMP_PATH@/ftbbn2c16.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftbbn3p08.png -o @TEMP_PATH@/ftbbn3p08.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftbgn2c16.png -o @TEMP_PATH@/ftbgn2c16.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftbgn3p08.png -o @TEMP_PATH@/ftbgn3p08.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftbrn2c08.png -o @TEMP_PATH@/ftbrn2c08.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftbwn0g16.png -o @TEMP_PATH@/ftbwn0g16.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftbwn3p08.png -o @TEMP_PATH@/ftbwn3p08.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftbyn3p08.png -o @TEMP_PATH@/ftbyn3p08.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftp0n0g08.png -o @TEMP_PATH@/ftp0n0g08.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftp0n2c08.png -o @TEMP_PATH@/ftp0n2c08.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftp0n3p08.png -o @TEMP_PATH@/ftp0n3p08.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftp1n3p08.png -o @TEMP_PATH@/ftp1n3p08.png.jp2
+
+# issue 571 Lossless is not lossless on linux x86
+image_to_j2k -i @INPUT_NR_PATH@/issue571.tif -o @TEMP_PATH@/issue571.tif.j2k
 
 # DECODER TEST SUITE
 j2k_to_image -i  @INPUT_NR_PATH@/Bretagne2.j2k -o @TEMP_PATH@/Bretagne2.j2k.pgx
 j2k_to_image -i  @INPUT_NR_PATH@/_00042.j2k -o @TEMP_PATH@/_00042.j2k.pgx
 j2k_to_image -i  @INPUT_NR_PATH@/123.j2c -o @TEMP_PATH@/123.j2c.pgx
 # The 4 following tests should failed (kakadu indicates that they are corrupted)
-!j2k_to_image -i  @INPUT_NR_PATH@/broken.jp2 -o @TEMP_PATH@/broken.jp2.pgx
+!j2k_to_image -i  @INPUT_NR_PATH@/broken1.jp2 -o @TEMP_PATH@/broken1.jp2.pgx
 !j2k_to_image -i  @INPUT_NR_PATH@/broken2.jp2 -o @TEMP_PATH@/broken2.jp2.pgx
 !j2k_to_image -i  @INPUT_NR_PATH@/broken3.jp2 -o @TEMP_PATH@/broken3.jp2.pgx
 !j2k_to_image -i  @INPUT_NR_PATH@/broken4.jp2 -o @TEMP_PATH@/broken4.jp2.pgx
@@ -153,3 +261,257 @@ j2k_to_image -i @INPUT_NR_PATH@/issue226.j2k                   -o @TEMP_PATH@/is
 !j2k_to_image -i @INPUT_NR_PATH@/edf_c2_101463.jp2   -o @TEMP_PATH@/edf_c2_101463.jp2.pgx
 !j2k_to_image -i @INPUT_NR_PATH@/edf_c2_1674177.jp2  -o @TEMP_PATH@/edf_c2_1674177.jp2.pgx
 !j2k_to_image -i @INPUT_NR_PATH@/edf_c2_1673169.jp2  -o @TEMP_PATH@/edf_c2_1673169.jp2.pgx
+# issue 296
+#!j2k_to_image -i @INPUT_NR_PATH@/3459.pdf.asan.78.2734.0.jp2 -o @TEMP_PATH@/3459.pdf.asan.78.2734.0.jp2.pgx
+#!j2k_to_image -i @INPUT_NR_PATH@/3459.pdf.asan.78.2734.1.jp2 -o @TEMP_PATH@/3459.pdf.asan.78.2734.1.jp2.pgx
+#!j2k_to_image -i @INPUT_NR_PATH@/3459.pdf.asan.78.2734.2.jp2 -o @TEMP_PATH@/3459.pdf.asan.78.2734.2.jp2.pgx
+#!j2k_to_image -i @INPUT_NR_PATH@/3459.pdf.asan.6c.2734.0.jp2 -o @TEMP_PATH@/3459.pdf.asan.6c.2734.0.jp2.pgx
+#!j2k_to_image -i @INPUT_NR_PATH@/3459.pdf.asan.6c.2734.1.jp2 -o @TEMP_PATH@/3459.pdf.asan.6c.2734.1.jp2.pgx
+#!j2k_to_image -i @INPUT_NR_PATH@/3459.pdf.asan.6c.2734.2.jp2 -o @TEMP_PATH@/3459.pdf.asan.6c.2734.2.jp2.pgx
+# issue 362 (from pdfium fuzz engine)
+# Invalid PPM Marker
+!j2k_to_image -i @INPUT_NR_PATH@/issue362-2863.jp2 -o @TEMP_PATH@/issue362-2863.jp2.pgx
+# Invalid ftyp box size
+!j2k_to_image -i @INPUT_NR_PATH@/issue362-2866.jp2 -o @TEMP_PATH@/issue362-2866.jp2.pgx
+!j2k_to_image -i @INPUT_NR_PATH@/issue362-2894.jp2 -o @TEMP_PATH@/issue362-2894.jp2.pgx
+# issue 363  (from pdfium fuzz engine)
+# Invalid Tile part length
+!j2k_to_image -i @INPUT_NR_PATH@/issue363-4723.jp2 -o @TEMP_PATH@/issue363-4723.jp2.pgx
+# Invalid Marker length
+!j2k_to_image -i @INPUT_NR_PATH@/issue363-4740.jp2 -o @TEMP_PATH@/issue363-4740.jp2.pgx
+!j2k_to_image -i @INPUT_NR_PATH@/issue363-4792.jp2 -o @TEMP_PATH@/issue363-4792.jp2.pgx
+# issue 390  (from pdfium fuzz engine) Invalid segment size
+!j2k_to_image -i @INPUT_NR_PATH@/issue390.jp2 -o @TEMP_PATH@/issue390.jp2.pgx
+# issue 391  (from pdfium fuzz engine) Invalid segment size
+!j2k_to_image -i @INPUT_NR_PATH@/issue391.jp2 -o @TEMP_PATH@/issue391.jp2.pgx
+# issue 400  (from pdfium fuzz engine) Unknown Scod value in COD marker
+!j2k_to_image -i @INPUT_NR_PATH@/issue400.jp2 -o @TEMP_PATH@/issue400.jp2.pgx
+# issue 413  (from pdfium fuzz engine) Unknown progression order in COD marker
+!j2k_to_image -i @INPUT_NR_PATH@/issue413.jp2 -o @TEMP_PATH@/issue413.jp2.pgx
+# issue 364 (from pdfium fuzz engine)
+# Inconsistent box length for jp2 box
+!j2k_to_image -i @INPUT_NR_PATH@/issue364-38.jp2 -o @TEMP_PATH@/issue364-38.jp2.pgx
+# No ihdr box
+!j2k_to_image -i @INPUT_NR_PATH@/issue364-903.jp2 -o @TEMP_PATH@/issue364-903.jp2.pgx
+# issue 393  (from pdfium fuzz engine) Zppm found twice
+!j2k_to_image -i @INPUT_NR_PATH@/issue393.jp2 -o @TEMP_PATH@/issue393.jp2.pgx
+# issue 395  (from pdfium fuzz engine) Stream too short
+!j2k_to_image -i @INPUT_NR_PATH@/issue395.jp2 -o @TEMP_PATH@/issue395.jp2.pgx
+# issue 397  (from pdfium fuzz engine) Incomplete channel definitions.
+!j2k_to_image -i @INPUT_NR_PATH@/issue397.jp2 -o @TEMP_PATH@/issue397.jp2.pgx
+# issue 399  (from pdfium fuzz engine) Incomplete channel definitions.
+j2k_to_image -i @INPUT_NR_PATH@/issue399.j2k -o @TEMP_PATH@/issue399.j2k.pgx
+# issue 408  (from pdfium fuzz engine) No COD marker in main j2k header.
+!j2k_to_image -i @INPUT_NR_PATH@/issue408.jp2 -o @TEMP_PATH@/issue408.jp2.pgx
+# issue 412 Palette image with cdef fails to decompress.
+j2k_to_image -i @INPUT_NR_PATH@/issue412.jp2 -o @TEMP_PATH@/issue412.jp2.pgx
+# issue 428 Palette image with cdef fails to decompress properly.
+j2k_to_image -i @INPUT_NR_PATH@/issue412.jp2 -o @TEMP_PATH@/issue428.jp2.pgx -t 0
+# issue 414 Image with per channel alpha (cdef) does not decode properly.
+j2k_to_image -i @INPUT_NR_PATH@/issue414.jp2 -o @TEMP_PATH@/issue414.jp2.pgx
+# issue 418 (from pdfium fuzz engine) Tile part length size inconsistent with stream length.
+!j2k_to_image -i @INPUT_NR_PATH@/issue418.jp2 -o @TEMP_PATH@/issue418.jp2.pgx
+# issue 420 (from pdfium fuzz engine) Illegal custom precinct exponent.
+!j2k_to_image -i @INPUT_NR_PATH@/issue420.jp2 -o @TEMP_PATH@/issue420.jp2.pgx
+# issue 422 (rework of issue 411). ycc with odd width/height
+j2k_to_image -i @INPUT_NR_PATH@/issue411-ycc444.jp2 -o @TEMP_PATH@/issue411-ycc444.jp2.pgx
+j2k_to_image -i @INPUT_NR_PATH@/issue411-ycc422.jp2 -o @TEMP_PATH@/issue411-ycc422.jp2.pgx
+j2k_to_image -i @INPUT_NR_PATH@/issue411-ycc420.jp2 -o @TEMP_PATH@/issue411-ycc420.jp2.pgx
+# issue 429 (from pdfium fuzz engine) 0 entries in PCLR box.
+!j2k_to_image -i @INPUT_NR_PATH@/issue429.jp2 -o @TEMP_PATH@/issue429.jp2.pgx
+# issue 432 (from pdfium fuzz engine) Overflow in tcd tilec data size computation.
+!j2k_to_image -i @INPUT_NR_PATH@/issue432.jp2 -o @TEMP_PATH@/issue432.jp2.pgx
+# issue 427 image width is 0
+!j2k_to_image -i @INPUT_NR_PATH@/issue427-null-image-size.jp2 -o @TEMP_PATH@/issue427-null-image-size.jp2.pgx
+# issue 427 illegal tile offset
+!j2k_to_image -i @INPUT_NR_PATH@/issue427-illegal-tile-offset.jp2 -o @TEMP_PATH@/issue427-illegal-tile-offset.jp2.pgx
+# issue 458 component precision upscaling
+j2k_to_image -i @INPUT_NR_PATH@/issue458.jp2 -o @TEMP_PATH@/issue458.jp2.pgx
+# issue 476 Multiple COD in MH
+!j2k_to_image -i @INPUT_NR_PATH@/issue476.jp2 -o @TEMP_PATH@/issue476.jp2.pgx
+# issue 475 Invalid number of layers
+!j2k_to_image -i @INPUT_NR_PATH@/issue475.jp2 -o @TEMP_PATH@/issue475.jp2.pgx
+# issue 495 Overflow op_image_comp_header_updat
+j2k_to_image -i @INPUT_NR_PATH@/issue495.jp2 -o @TEMP_PATH@/issue495.jp2.pgx
+
+# OPTIONS NOT IMPLEMENTED >
+
+# # decode with specific area
+# # prec=12; nb_c=1
+# j2k_to_image -i @INPUT_CONF_PATH@/p1_04.j2k -o @TEMP_PATH@/p1_04.j2k.png -d 0,0,1024,1024
+# j2k_to_image -i @INPUT_CONF_PATH@/p1_04.j2k -o @TEMP_PATH@/p1_04_1.j2k.png -d 512,640,640,768
+# j2k_to_image -i @INPUT_CONF_PATH@/p1_04.j2k -o @TEMP_PATH@/p1_04_2.j2k.png -d 896,896,1024,1024
+# j2k_to_image -i @INPUT_CONF_PATH@/p1_04.j2k -o @TEMP_PATH@/p1_04_3.j2k.png -d 100,500,300,800
+# j2k_to_image -i @INPUT_CONF_PATH@/p1_04.j2k -o @TEMP_PATH@/p1_04_4.j2k.png -d 260,520,360,600
+# j2k_to_image -i @INPUT_CONF_PATH@/p1_04.j2k -o @TEMP_PATH@/p1_04_5.j2k.png -d 260,520,360,660
+# j2k_to_image -i @INPUT_CONF_PATH@/p1_04.j2k -o @TEMP_PATH@/p1_04_6.j2k.png -d 360,520,400,600
+# j2k_to_image -i @INPUT_CONF_PATH@/p1_04.j2k -o @TEMP_PATH@/p1_04_10.j2k.png -d 0,0,1024,1024 -r 2
+# j2k_to_image -i @INPUT_CONF_PATH@/p1_04.j2k -o @TEMP_PATH@/p1_04_11.j2k.png -d 512,640,640,768 -r 2
+# j2k_to_image -i @INPUT_CONF_PATH@/p1_04.j2k -o @TEMP_PATH@/p1_04_12.j2k.png -d 896,896,1024,1024 -r 2
+# j2k_to_image -i @INPUT_CONF_PATH@/p1_04.j2k -o @TEMP_PATH@/p1_04_13.j2k.png -d 100,500,300,800 -r 2
+# j2k_to_image -i @INPUT_CONF_PATH@/p1_04.j2k -o @TEMP_PATH@/p1_04_14.j2k.png -d 260,520,360,600 -r 2
+# j2k_to_image -i @INPUT_CONF_PATH@/p1_04.j2k -o @TEMP_PATH@/p1_04_15.j2k.png -d 260,520,360,660 -r 2
+# j2k_to_image -i @INPUT_CONF_PATH@/p1_04.j2k -o @TEMP_PATH@/p1_04_16.j2k.png -d 360,520,400,600 -r 2
+
+# j2k_to_image -i @INPUT_CONF_PATH@/p1_04.j2k -o @TEMP_PATH@/p1_04_17_t63.j2k.png -t 63
+# j2k_to_image -i @INPUT_CONF_PATH@/p1_04.j2k -o @TEMP_PATH@/p1_04_17_t63_r2.j2k.png -t 63 -r 2
+# j2k_to_image -i @INPUT_CONF_PATH@/p1_04.j2k -o @TEMP_PATH@/p1_04_18.t12.j2k.png -t 12
+# j2k_to_image -i @INPUT_CONF_PATH@/p1_04.j2k -o @TEMP_PATH@/p1_04_19_t12_r1.j2k.png -t 12 -r 1
+
+# # prec=8; nb_c=3
+# j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06.j2k.png -d 0,0,12,12
+# j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_1.j2k.png -d 1,8,8,11
+# j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_2.j2k.png -d 9,9,12,12
+# j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_3.j2k.png -d 10,4,12,10
+# j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_4.j2k.png -d 3,3,9,9
+# j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_5.j2k.png -d 4,4,7,7
+# j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_6.j2k.png -d 4,4,5,5
+# j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_7.j2k.png -d 0,0,12,12 -r 1
+# j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_7_1.j2k.png -d 1,8,8,11 -r 1
+# j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_7_2.j2k.png -d 9,9,12,12 -r 1
+# j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_7_3.j2k.png -d 10,4,12,10 -r 1
+# j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_7_4.j2k.png -d 3,3,9,9 -r 1
+# j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_7_5.j2k.png -d 4,4,7,7 -r 1
+# j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_7_6.j2k.png -d 4,4,5,5 -r 1
+
+# j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_8_6.j2k.png -d 9,9,12,12 -r 2
+
+# j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_9.j2k.png -t 0
+# j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_9_1.j2k.png -t 5
+# j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_9_2.j2k.png -t 9
+# j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_9_3.j2k.png -t 15
+
+# j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_10.j2k.png -t 0 -r 2
+# j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_10_1.j2k.png -t 5 -r 2
+# j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_10_2.j2k.png -t 9 -r 2
+# j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_10_3.j2k.png -t 15 -r 2
+
+# j2k_to_image -i @INPUT_CONF_PATH@/p1_06.j2k -o @TEMP_PATH@/p1_06_11.j2k.png -r 4
+
+# # prec=4; nb_c=3 ; signd=yes
+# j2k_to_image -i @INPUT_CONF_PATH@/p0_04.j2k -o @TEMP_PATH@/p0_04.j2k.png -d 0,0,256,256
+# j2k_to_image -i @INPUT_CONF_PATH@/p0_04.j2k -o @TEMP_PATH@/p0_04_1.j2k.png -d 128,0,256,128
+# j2k_to_image -i @INPUT_CONF_PATH@/p0_04.j2k -o @TEMP_PATH@/p0_04_2.j2k.png -d 50,10,120,200
+# j2k_to_image -i @INPUT_CONF_PATH@/p0_04.j2k -o @TEMP_PATH@/p0_04_3.j2k.png -d 10,150,190,210
+# j2k_to_image -i @INPUT_CONF_PATH@/p0_04.j2k -o @TEMP_PATH@/p0_04_4.j2k.png -d 100,80,200,150
+# j2k_to_image -i @INPUT_CONF_PATH@/p0_04.j2k -o @TEMP_PATH@/p0_04_5.j2k.png -d 150,20,200,50
+# j2k_to_image -i @INPUT_CONF_PATH@/p0_04.j2k -o @TEMP_PATH@/p0_04_6.j2k.png -d 0,0,256,256 -r 2
+# j2k_to_image -i @INPUT_CONF_PATH@/p0_04.j2k -o @TEMP_PATH@/p0_04_6_1.j2k.png -d 128,0,256,128 -r 2
+# j2k_to_image -i @INPUT_CONF_PATH@/p0_04.j2k -o @TEMP_PATH@/p0_04_6_2.j2k.png -d 50,10,120,200 -r 2
+# j2k_to_image -i @INPUT_CONF_PATH@/p0_04.j2k -o @TEMP_PATH@/p0_04_6_3.j2k.png -d 10,150,190,210  -r 2
+# j2k_to_image -i @INPUT_CONF_PATH@/p0_04.j2k -o @TEMP_PATH@/p0_04_6_4.j2k.png -d 100,80,200,150 -r 2
+# j2k_to_image -i @INPUT_CONF_PATH@/p0_04.j2k -o @TEMP_PATH@/p0_04_6_5.j2k.png -d 150,20,200,50 -r 2
+
+# # prec=8; nb_c=1 ; non standard origin (image offset and tile offset); sample sep: 2x1
+# #j2k_to_image -i @INPUT_CONF_PATH@/p1_01.j2k -o @TEMP_PATH@/p1_01.j2k.png -d 5,128,127,226
+# #j2k_to_image -i @INPUT_CONF_PATH@/p1_01.j2k -o @TEMP_PATH@/p1_01_1.j2k.png -d 5,128,122,99
+# #j2k_to_image -i @INPUT_CONF_PATH@/p1_01.j2k -o @TEMP_PATH@/p1_01_2.j2k.png -d 50,10,120,200
+# #j2k_to_image -i @INPUT_CONF_PATH@/p1_01.j2k -o @TEMP_PATH@/p1_01_3.j2k.png -d 10,150,190,210
+# #j2k_to_image -i @INPUT_CONF_PATH@/p1_01.j2k -o @TEMP_PATH@/p1_01_4.j2k.png -d 100,80,200,150
+# #j2k_to_image -i @INPUT_CONF_PATH@/p1_01.j2k -o @TEMP_PATH@/p1_01_5.j2k.png -d 150,20,200,50
+
+# # issue 322 limited tif support
+# # GRAYSCALE
+# j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_tif-1.tif -p 1S
+# j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_tif-2.tif -p 2S
+# j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_tif-4.tif -p 4S
+# j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_tif-6.tif -p 6S
+# j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_tif-8.tif -p 8S
+# j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_tif-10.tif -p 10S
+# j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_tif-12.tif -p 12S
+# j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_tif-14.tif -p 14S
+# j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_tif-16.tif -p 16S
+# # GRAYSCALE ALPHA
+# j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_tif-1.tif -p 1S
+# j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_tif-2.tif -p 2S
+# j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_tif-4.tif -p 4S
+# j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_tif-6.tif -p 6S
+# j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_tif-8.tif -p 8S
+# j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_tif-10.tif -p 10S
+# j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_tif-12.tif -p 12S
+# j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_tif-14.tif -p 14S
+# j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_tif-16.tif -p 16S
+# # RGB
+# j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_tif-1.tif -p 1S
+# j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_tif-2.tif -p 2S
+# j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_tif-4.tif -p 4S
+# j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_tif-6.tif -p 6S
+# j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_tif-8.tif -p 8S
+# j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_tif-10.tif -p 10S
+# j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_tif-12.tif -p 12S
+# j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_tif-14.tif -p 14S
+# j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_tif-16.tif -p 16S
+# # RGBA
+# j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-1.tif -p 1S
+# j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-2.tif -p 2S
+# j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-4.tif -p 4S
+# j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-6.tif -p 6S
+# j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-8.tif -p 8S
+# j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-10.tif -p 10S
+# j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-12.tif -p 12S
+# j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-14.tif -p 14S
+# j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-16.tif -p 16S
+
+# < NOT IMPLEMENTED
+
+#issue 235 CMAP outside jp2h box. CMAP is buggy
+j2k_to_image -i @INPUT_NR_PATH@/issue235.jp2 -o @TEMP_PATH@/issue235.jp2.pgx
+
+# NOT IMPLEMENTED >
+# # issue 264, add checks for png
+# # GRAYSCALE
+# j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_png-1.png -p 1S
+# j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_png-2.png -p 2S
+# j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_png-4.png -p 4S
+# j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_png-6.png -p 6S
+# j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_png-8.png -p 8S
+# j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_png-10.png -p 10S
+# j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_png-12.png -p 12S
+# j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_png-14.png -p 14S
+# j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_png-16.png -p 16S
+# # GRAYSCALE ALPHA
+# j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_png-1.png -p 1S
+# j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_png-2.png -p 2S
+# j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_png-4.png -p 4S
+# j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_png-6.png -p 6S
+# j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_png-8.png -p 8S
+# j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_png-10.png -p 10S
+# j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_png-12.png -p 12S
+# j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_png-14.png -p 14S
+# j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_png-16.png -p 16S
+# # RGB
+# j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_png-1.png -p 1S
+# j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_png-2.png -p 2S
+# j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_png-4.png -p 4S
+# j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_png-6.png -p 6S
+# j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_png-8.png -p 8S
+# j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_png-10.png -p 10S
+# j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_png-12.png -p 12S
+# j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_png-14.png -p 14S
+# j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_png-16.png -p 16S
+# # RGBA
+# j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_png-1.png -p 1S
+# j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_png-2.png -p 2S
+# j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_png-4.png -p 4S
+# j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_png-6.png -p 6S
+# j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_png-8.png -p 8S
+# j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_png-10.png -p 10S
+# j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_png-12.png -p 12S
+# j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_png-14.png -p 14S
+# j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_png-16.png -p 16S
+
+# < NOT IMPLEMENTED
+
+# issue 388
+!j2k_to_image -i @INPUT_NR_PATH@/v4dwt_interleave_h.gsr105.j2k -o @TEMP_PATH@/v4dwt_interleave_h.gsr105.j2k.pgx
+j2k_to_image -i @INPUT_NR_PATH@/dwt_interleave_h.gsr105.jp2 -o @TEMP_PATH@/dwt_interleave_h.gsr105.jp2.pgx
+
+# PR 559 : CMYK tif output
+j2k_to_image -i @INPUT_NR_PATH@/issue205.jp2 -o @TEMP_PATH@/issue205-tif.jp2.tif
+
+# issue 236: esYCC colorspace
+j2k_to_image -i @INPUT_NR_PATH@/issue236-ESYCC-CDEF.jp2 -o @TEMP_PATH@/issue236-ESYCC-CDEF.jp2.pgx
+
+# issue 326 + PR 559: CIELab colorspace
+j2k_to_image -i @INPUT_NR_PATH@/issue559-eci-090-CIELab.jp2 -o @TEMP_PATH@/issue559-eci-090-CIELab.jp2.pgx
+j2k_to_image -i @INPUT_NR_PATH@/issue559-eci-091-CIELab.jp2 -o @TEMP_PATH@/issue559-eci-091-CIELab.jp2.pgx

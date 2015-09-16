@@ -55,13 +55,15 @@ endif()
 
 add_executable(compare_dump_files ${compare_dump_files_SRCS})
 
+add_executable(compare_raw_files ${compare_raw_files_SRCS})
+
 # No image send to the dashboard if lib PNG is not available.
 if(NOT HAVE_LIBPNG)
   message(WARNING "Lib PNG seems to be not available: if you want run the non-regression tests with images reported to the dashboard, you need it (try BUILD_THIRDPARTY)")
 endif()
 
 add_subdirectory(conformance)
-#add_subdirectory(nonregression)
+add_subdirectory(nonregression)
 add_subdirectory(unit)
 
 if(BUILD_JPIP)
