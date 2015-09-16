@@ -243,7 +243,10 @@ static int tga_writeheader(FILE *fp, int bits_per_pixel, int width, int height,
 
 	if(fwrite(&pixel_depth, 1, 1, fp) != 1) goto fails;
 
-	image_desc = 8; /* 8 bits per component. */
+	image_desc = // bits 0-3 are # of alpha bits per pixel
+		bits_per_pixel == 16 ? 1 :
+		bits_per_pixel == 32 ? 8 :
+		0;
 
 	if (flip_image)
 		image_desc |= 32;
