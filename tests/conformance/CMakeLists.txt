@@ -498,9 +498,9 @@ set(kdu_j2k_conf_files
   e2_colr
   f1_mono
   f2_mono
-  g1_colr
-  g2_colr
-  g3_colr
+  #g1_colr
+  #g2_colr
+  #g3_colr
   g4_colr
 )
 
