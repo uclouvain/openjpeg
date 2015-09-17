@@ -9999,11 +9999,15 @@ OPJ_BOOL opj_j2k_encode(opj_j2k_t * p_j2k,
                         /* now copy this data into the tile component */
                         if (! opj_tcd_copy_tile_data(p_j2k->m_tcd,l_current_data,l_current_tile_size)) {
 																opj_event_msg(p_manager, EVT_ERROR, "Size mismatch between tile data and sent data." );
+																opj_free(l_current_data);
 																return OPJ_FALSE;
                         }
                 }
 
                 if (! opj_j2k_post_write_tile (p_j2k,p_stream,p_manager)) {
+                        if (l_current_data) {
+                                opj_free(l_current_data);
+                        }
                         return OPJ_FALSE;
                 }
         }
