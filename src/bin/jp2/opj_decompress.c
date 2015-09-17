@@ -1371,7 +1371,7 @@ int main(int argc, char **argv)
 			if(image->icc_profile_len)
 			 color_apply_icc_profile(image);
 			else
-			 color_apply_conversion(image);
+			 color_cielab_to_rgb(image);
 #endif
 			free(image->icc_profile_buf);
 			image->icc_profile_buf = NULL; image->icc_profile_len = 0;
