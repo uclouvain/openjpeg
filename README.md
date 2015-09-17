@@ -13,7 +13,9 @@ Anyone. As the OpenJPEG code is released under the [2-clauses BSD license](https
 API Documentation needs a major refactoring. Meanwhile, you can check [installation](https://github.com/uclouvain/openjpeg/wiki/Installation) instructions and [codec documentation](https://github.com/uclouvain/openjpeg/wiki/DocJ2KCodec).
     
 ## Current Status
-* Build status: [![Build Status](https://travis-ci.org/uclouvain/openjpeg.svg?branch=master)](https://travis-ci.org/uclouvain/openjpeg)
+[![Build Status](https://travis-ci.org/uclouvain/openjpeg.svg?branch=master)](https://travis-ci.org/uclouvain/openjpeg)
+
+[![Coverity Scan Build Status](https://scan.coverity.com/projects/6383/badge.svg)](https://scan.coverity.com/projects/uclouvain-openjpeg)
     
 ## Who are the developers ?
 
