@@ -167,7 +167,7 @@ opj_skip_from_buffer (OPJ_SIZE_T len, opj_buffer_info_t* psrc)
 }
 
 static OPJ_BOOL
-opj_seek_from_buffer (OPJ_SIZE_T len, opj_buffer_info_t* psrc)
+opj_seek_from_buffer (OPJ_OFF_T len, opj_buffer_info_t* psrc)
 {
     OPJ_SIZE_T n = psrc->len;
 
