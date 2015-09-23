@@ -359,6 +359,11 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
+    /* j2k_dump focuses on j2k codestream and skips JP2 boxes */
+    parameters.flags = 1;
+    /* j2k_dump shall not actually decode packets (parsing codestream is enough). */
+    parameters.cp_limit_decoding = DECODE_ALL_BUT_PACKETS;
+
 	/* Initialize reading of directory */
 	if(img_fol.set_imgdir==1){	
 		num_images=get_num_images(img_fol.imgdirpath);
@@ -454,7 +459,7 @@ int main(int argc, char *argv[])
 			cio = opj_cio_open((opj_common_ptr)dinfo, src, file_length);
 
 			/* decode the stream and fill the image structure */
-			if (*indexfilename)				/* If need to extract codestream information*/
+            if (*indexfilename)				/* If need to extract codestream information*/
 				image = opj_decode_with_info(dinfo, cio, &cstr_info);
 			else
 				image = opj_decode(dinfo, cio);
@@ -503,7 +508,7 @@ int main(int argc, char *argv[])
 			cio = opj_cio_open((opj_common_ptr)dinfo, src, file_length);
 
 			/* decode the stream and fill the image structure */
-			if (*indexfilename)				/* If need to extract codestream information*/
+            if (*indexfilename)				/* If need to extract codestream information*/
 				image = opj_decode_with_info(dinfo, cio, &cstr_info);
 			else
 				image = opj_decode(dinfo, cio);			

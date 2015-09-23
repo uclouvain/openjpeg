@@ -1726,6 +1726,8 @@ static void j2k_read_eoc(opj_j2k_t *j2k) {
 	}
 	/* if packets should not be decoded  */
 	else {
+        opj_event_msg(j2k->cinfo, EVT_INFO, "Codestream parsing complete.\n");
+        opj_event_msg(j2k->cinfo, EVT_INFO, "Skipped actual packet decoding.\n");
 		for (i = 0; i < j2k->cp->tileno_size; i++) {
 			tileno = j2k->cp->tileno[i];
 			opj_free(j2k->tile_data[tileno]);
