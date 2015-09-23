@@ -573,7 +573,7 @@ static int tga_readheader(FILE *fp, unsigned int *bits_per_pixel,
                           unsigned int *width, unsigned int *height, int *flip_image)
 {
     int palette_size;
-    unsigned char *tga ;
+    unsigned char tga[TGA_HEADER_SIZE];
     unsigned char id_len, /*cmap_type,*/ image_type;
     unsigned char pixel_depth, image_desc;
     unsigned short /*cmap_index,*/ cmap_len, cmap_entry_size;
@@ -581,7 +581,6 @@ static int tga_readheader(FILE *fp, unsigned int *bits_per_pixel,
 
     if (!bits_per_pixel || !width || !height || !flip_image)
         return 0;
-    tga = (unsigned char*)malloc(18);
 
     if ( fread(tga, TGA_HEADER_SIZE, 1, fp) != 1 )
     {
@@ -604,8 +603,6 @@ static int tga_readheader(FILE *fp, unsigned int *bits_per_pixel,
     image_h = get_ushort(*(unsigned short*)(&tga[14]));
     pixel_depth = (unsigned char)tga[16];
     image_desc  = (unsigned char)tga[17];
-
-    free(tga);
 
     *bits_per_pixel = (unsigned int)pixel_depth;
     *width  = (unsigned int)image_w;
