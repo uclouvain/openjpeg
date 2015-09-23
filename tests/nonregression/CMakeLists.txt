@@ -21,7 +21,7 @@ find_package(JPYLYZER)
 # GENERATION OF THE TEST SUITE (DUMP)
 # Dump all files with the selected extension inside the input directory
 
-# technically opj_dump should simply parse these one, since syntax is ok.
+# technically j2k_dump should simply parse these one, since syntax is ok.
 set(BLACKLIST_JPEG2000_TMP
   2539.pdf.SIGFPE.706.1712.jp2
   0290cb77c5df21828fa74cf2ab2c84d8.SIGFPE.d25.31.jp2
@@ -99,10 +99,9 @@ foreach(INPUT_FILENAME ${OPJ_DATA_NR_LIST})
 
   # Dump the input image
   add_test(NAME NR-${INPUT_FILENAME_NAME}-dump
-   COMMAND opj_dump
+   COMMAND j2k_dump
    -i ${INPUT_FILENAME}
    -o ${TEMP}/${INPUT_FILENAME_NAME}.txt
-   -v
    )
 
   if(bad_jpeg2000)
@@ -114,7 +113,7 @@ foreach(INPUT_FILENAME ${OPJ_DATA_NR_LIST})
     # Compare the dump output with the baseline
     add_test(NAME NR-${INPUT_FILENAME_NAME}-compare_dump2base
      COMMAND compare_dump_files
-     -b ${BASELINE_NR}/opj_v2_${INPUT_FILENAME_NAME_WE}.txt
+     -b ${BASELINE_NR}/opj_${INPUT_FILENAME_NAME_WE}.txt
      -t ${TEMP}/${INPUT_FILENAME_NAME}.txt
      )
 
@@ -200,7 +199,7 @@ FOREACH(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
     STRING(REGEX MATCH "^!" FAILED_TEST_FOUND ${EXE_NAME})
 
     IF (FAILED_TEST_FOUND)
-      # Manage the different cases with the failed sign to remove the first argument which must be opj_compress
+      # Manage the different cases with the failed sign to remove the first argument which must be image_to_j2k
       SET(FAILED_TEST_FOUND_1 0)
       STRING(REGEX MATCH "^!image_to_j2k$|^!j2k_to_image$" FAILED_TEST_FOUND_1 ${EXE_NAME})
       
@@ -360,7 +359,7 @@ FOREACH(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
           # can we compare with the input image ?
           if (${INPUT_FILENAME_NAME} MATCHES "\\.tif$")
             add_test(NAME NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-lossless-decode
-              COMMAND opj_decompress -i ${OUTPUT_FILENAME} -o ${OUTPUT_FILENAME}.lossless.tif
+              COMMAND j2k_to_image -i ${OUTPUT_FILENAME} -o ${OUTPUT_FILENAME}.lossless.tif
               )
             set_tests_properties(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-lossless-decode PROPERTIES 
               DEPENDS NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-encode
