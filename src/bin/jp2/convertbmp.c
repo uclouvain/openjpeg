@@ -572,7 +572,7 @@ static OPJ_BOOL bmp_read_rle4_data(FILE* IN, OPJ_UINT8* pData, OPJ_UINT32 stride
 			OPJ_UINT8 c1 = (OPJ_UINT8)getc(IN);
 		
 			for (j = 0; (j < c) && (x < width) && ((OPJ_SIZE_T)pix < (OPJ_SIZE_T)beyond); j++, x++, pix++) {
-				*pix = (j&1) ? (c1 & 0x0f) : ((c1>>4)&0x0f);
+				*pix = (OPJ_UINT8)((j&1) ? (c1 & 0x0fU) : ((c1>>4)&0x0fU));
 			}
 		}
 		else { /* absolute mode */
@@ -598,7 +598,7 @@ static OPJ_BOOL bmp_read_rle4_data(FILE* IN, OPJ_UINT8* pData, OPJ_UINT32 stride
 					if((j&1) == 0) {
 							c1 = (OPJ_UINT8)getc(IN);
 					}
-					*pix = (j&1) ? (c1 & 0x0f) : ((c1>>4)&0x0f);
+					*pix =  (OPJ_UINT8)((j&1) ? (c1 & 0x0fU) : ((c1>>4)&0x0fU));
 				}
 				if(((c&3) == 1) || ((c&3) == 2)) { /* skip padding byte */
 						getc(IN);
