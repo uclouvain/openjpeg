@@ -1550,7 +1550,7 @@ int main(int argc, char **argv)
 		/* destroy the codestream index */
 		opj_destroy_cstr_index(&cstr_index);
 
-		if(failed) remove(parameters.outfile);
+		if(failed) (void)remove(parameters.outfile); /* ignore return value */
 	}
 	destroy_parameters(&parameters);
 	if (numDecompressedImages) {

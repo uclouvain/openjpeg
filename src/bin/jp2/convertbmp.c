@@ -903,6 +903,10 @@ int imagetobmp(opj_image_t * image, const char *outfile) {
         <<-- <<-- <<-- <<-- */
 
         fdest = fopen(outfile, "wb");
+        if (!fdest) {
+            fprintf(stderr, "ERROR -> failed to open %s for writing\n", outfile);
+            return 1;
+        }
         w = (int)image->comps[0].w;
         h = (int)image->comps[0].h;
 

@@ -456,7 +456,7 @@ static char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_c
     if (parameters->decod_format == -1)
         return 1;
     sprintf(infilename,"%s/%s",img_fol->imgdirpath,image_filename);
-    strncpy(parameters->infile, infilename, sizeof(infilename));
+    strncpy(parameters->infile, infilename, sizeof(infilename) - 1U);
 
     /*Set output file*/
     strcpy(temp_ofname,get_file_name(image_filename));
@@ -466,7 +466,7 @@ static char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_c
     }
     if(img_fol->set_out_format==1){
         sprintf(outfilename,"%s/%s.%s",img_fol->imgdirpath,temp_ofname,img_fol->out_format);
-        strncpy(parameters->outfile, outfilename, sizeof(outfilename));
+        strncpy(parameters->outfile, outfilename, sizeof(outfilename) - 1U);
     }
     return 0;
 }
@@ -612,6 +612,9 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
                 substr2++; /* skip '@' character */
             }
             substr1 = (char*) malloc((len+1)*sizeof(char));
+            if (substr1 == NULL) {
+                return 1;
+            }
             memcpy(substr1,opj_optarg,len);
             substr1[len] = '\0';
             if (sscanf(substr1, "%d,%d,%d,%d,%c", &width, &height, &ncomp, &bitdepth, &signo) == 5) {
@@ -663,7 +666,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
                     }
                 }
             }
-            if (substr1) free(substr1);
+            free(substr1);
             if (wrong) {
                 fprintf(stderr,"\nError: invalid raw image parameters\n");
                 fprintf(stderr,"Please use the Format option -F:\n");
