@@ -729,6 +729,7 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
 	image = opj_image_create(numcmpts, &cmptparm[0], (numcmpts == 1U) ? OPJ_CLRSPC_GRAY : OPJ_CLRSPC_SRGB);
 	if(!image) {
 		fclose(IN);
+		free(pData);
 		return NULL;
 	}
 	if (numcmpts == 4U) {

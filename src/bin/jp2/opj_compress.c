@@ -391,6 +391,7 @@ static unsigned int get_num_images(char *imgdirpath){
             continue;
         num_images++;
     }
+    closedir(dir);
     return num_images;
 }
 
@@ -416,6 +417,7 @@ static int load_images(dircnt_t *dirptr, char *imgdirpath){
         strcpy(dirptr->filename[i],content->d_name);
         i++;
     }
+	closedir(dir);
     return 0;
 }
 
@@ -1058,9 +1060,16 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
             lStrLen = (size_t)ftell(lFile);
             fseek(lFile,0,SEEK_SET);
             lMatrix = (char *) malloc(lStrLen + 1);
+            if (lMatrix == NULL) {
+                fclose(lFile);
+                return 1;
+            }
             lStrFread = fread(lMatrix, 1, lStrLen, lFile);
             fclose(lFile);
-            if( lStrLen != lStrFread ) return 1;
+            if( lStrLen != lStrFread ) {
+                free(lMatrix);
+                return 1;
+            }
 
             lMatrix[lStrLen] = 0;
             lCurrentPtr = lMatrix;
@@ -1080,6 +1089,10 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
             lMctComp = lNbComp * lNbComp;
             lTotalComp = lMctComp + lNbComp;
             lSpace = (float *) malloc((size_t)lTotalComp * sizeof(float));
+            if(lSpace == NULL) {
+                free(lMatrix);
+                return 1;
+            }
             lCurrentDoublePtr = lSpace;
             for (i2=0;i2<lMctComp;++i2) {
                 lStrLen = strlen(lCurrentPtr) + 1;
