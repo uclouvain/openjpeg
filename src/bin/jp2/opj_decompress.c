@@ -147,6 +147,10 @@ typedef struct opj_decompress_params
 	int upsample;
 	/* split output components to different files */
 	int split_pnm;
+
+  /* number of threads to use with openMP*/
+  OPJ_UINT32 num_threads;
+
 }opj_decompress_parameters;
 
 /* -------------------------------------------------------------------------- */
@@ -208,6 +212,9 @@ static void decode_help_display(void) {
 	               "    OPTIONAL\n"
 	               "    Set the tile number of the decoded tile. Follow the JPEG2000 convention from left-up to bottom-up\n"
 	               "    By default all tiles are decoded.\n");
+  fprintf(stdout,"  -N <Number of threads>\n"
+                 "    OPTIONAL (default is the actual number of processors)\n"
+                 "    The number of threads to use for openMP\n");
 	fprintf(stdout,"  -p <comp 0 precision>[C|S][,<comp 1 precision>[C|S][,...]]\n"
 	               "    OPTIONAL\n"
 	               "    Force the precision (bit depth) of components.\n");
@@ -509,12 +516,13 @@ int parse_cmdline_decoder(int argc, char **argv, opj_decompress_parameters *para
 	opj_option_t long_option[]={
 		{"ImgDir",    REQ_ARG, NULL,'y'},
 		{"OutFor",    REQ_ARG, NULL,'O'},
+    {"NumThreads",  REQ_ARG, NULL ,'N'},
 		{"force-rgb", NO_ARG,  NULL, 1},
 		{"upsample",  NO_ARG,  NULL, 1},
 		{"split-pnm", NO_ARG,  NULL, 1}
 	};
 
-	const char optlist[] = "i:o:r:l:x:d:t:p:"
+	const char optlist[] = "i:o:r:l:x:d:t:N:p:"
 
 /* UniPG>> */
 #ifdef USE_JPWL
@@ -787,6 +795,14 @@ int parse_cmdline_decoder(int argc, char **argv, opj_decompress_parameters *para
 /* <<UniPG */            
 
 				/* ----------------------------------------------------- */
+
+        case 'N':			/* number of threads */
+        {
+            sscanf(opj_optarg, "%d", &parameters->num_threads);
+        }
+            break;
+
+            /* ------------------------------------------------------ */
 			
         default:
             fprintf(stderr, "[WARNING] An invalid option has been ignored.\n");
@@ -1174,6 +1190,9 @@ int main(int argc, char **argv)
   OPJ_FLOAT64 t, tCumulative = 0;
   OPJ_UINT32 numDecompressedImages = 0;
 
+  /* variables used for timing the decompression process */
+  OPJ_FLOAT64 begin_time, end_time, openjpg_end_time;
+
 	/* set decoding parameters to default values */
 	set_default_parameters(&parameters);
 
@@ -1188,6 +1207,11 @@ int main(int argc, char **argv)
 		destroy_parameters(&parameters);
 		return EXIT_FAILURE;
 	}
+
+    /* if passed in set the number of threads */
+    if (parameters.num_threads) {
+      set_num_threads(parameters.num_threads);
+    }
 
 	/* Initialize reading of directory */
 	if(img_fol.set_imgdir==1){	
@@ -1223,6 +1247,8 @@ int main(int argc, char **argv)
 	/*Decoding image one by one*/
 	for(imageno = 0; imageno < num_images ; imageno++)	{
 
+        /* start timing the process */
+        begin_time = opj_clock();
 		fprintf(stderr,"\n");
 
 		if(img_fol.set_imgdir==1){
@@ -1447,6 +1473,9 @@ int main(int argc, char **argv)
 			}
 		}
 
+        /* The image has been loaded in menory so record the time */
+        openjpg_end_time = opj_clock();
+
 		/* create output image */
 		/* ------------------- */
 		switch (parameters.cod_format) {
@@ -1551,6 +1580,16 @@ int main(int argc, char **argv)
 		opj_destroy_cstr_index(&cstr_index);
 
 		if(failed) remove(parameters.outfile);
+
+        if(!failed) {
+           fprintf(stdout,"[INFO] Generated outfile %s\n",parameters.outfile);
+
+           /* success, print out the timing values for the process */
+           end_time = opj_clock();
+           fprintf(stdout,"Openjpg Seconds:     %f\n",(openjpg_end_time - begin_time));
+           fprintf(stdout,"Image Write Seconds: %f\n",(end_time - openjpg_end_time));
+           fprintf(stdout,"Total Seconds:       %f\n",(end_time - begin_time));
+        }
 	}
 	destroy_parameters(&parameters);
 	if (numDecompressedImages) {

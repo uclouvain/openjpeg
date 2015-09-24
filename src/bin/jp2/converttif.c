@@ -433,7 +433,10 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
 	OPJ_INT32* buffer32s = NULL;
 	OPJ_INT32* planes[4];
 	OPJ_SIZE_T rowStride;
-	
+	unsigned long tileWidth;
+    unsigned long rowsPerStrip;
+
+
 	tif = TIFFOpen(filename, "r");
 	
 	if(!tif)
@@ -454,6 +457,17 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
 	w= (int)tiWidth;
 	h= (int)tiHeight;
 	
+    tileWidth = rowsPerStrip = 0;
+    TIFFGetField(tif, TIFFTAG_TILEWIDTH, &tileWidth);
+    TIFFGetField(tif, TIFFTAG_ROWSPERSTRIP, &rowsPerStrip);
+    if(tileWidth > 0) {
+		fprintf(stderr,"tiftoimage: tileWidth=%d, Only stripped images has been implemented\n",tileWidth);
+		fprintf(stderr,"\tAborting\n");
+		TIFFClose(tif);
+		return NULL;
+	}
+
+
 	if((tiBps > 16U) || ((tiBps != 1U) && (tiBps & 1U))) {
 		fprintf(stderr,"tiftoimage: Bits=%d, Only 1, 2, 4, 6, 8, 10, 12, 14 and 16 bits implemented\n",tiBps);
 		fprintf(stderr,"\tAborting\n");

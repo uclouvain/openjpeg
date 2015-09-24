@@ -158,6 +158,33 @@ const char* OPJ_CALLCONV opj_version(void) {
     return OPJ_PACKAGE_VERSION;
 }
 
+
+/* ---------------------------------------------------------------------- */
+static OPJ_UINT32 num_threads;
+
+void OPJ_CALLCONV set_num_threads(OPJ_UINT32 threads) {
+   num_threads = threads;
+}
+
+OPJ_UINT32 OPJ_CALLCONV get_num_threads(void) {
+  if (!num_threads) {
+    OPJ_UINT32 num_procs = 1;
+#ifdef _OPENMP
+    num_procs = omp_get_num_procs();
+#endif
+    num_threads = num_procs;
+  } 
+  return num_threads;
+}
+
+OPJ_UINT32 OPJ_CALLCONV get_num_procs(void) {
+    OPJ_UINT32 num_procs = 1;
+#ifdef _OPENMP
+    num_procs = omp_get_num_procs();
+#endif 
+    return num_procs;
+}
+
 /* ---------------------------------------------------------------------- */
 /* DECOMPRESSION FUNCTIONS*/
 
