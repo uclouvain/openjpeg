@@ -57,6 +57,7 @@
 #include "index.h"
 
 #include "format_defs.h"
+#include "opj_string.h"
 
 typedef struct dircnt{
 	/** Buffer for holding images read from Directory*/
@@ -196,7 +197,9 @@ static char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_d
 	if (parameters->decod_format == -1)
 		return 1;
 	sprintf(infilename,"%s/%s",img_fol->imgdirpath,image_filename);
-	strncpy(parameters->infile, infilename, sizeof(infilename));
+	if (opj_strcpy_s(parameters->infile, sizeof(parameters->infile), infilename) != 0) {
+		return 1;
+	}
 
 	/*Set output file*/
 	strcpy(temp_ofname,strtok(image_filename,"."));
@@ -206,7 +209,9 @@ static char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_d
 	}
 	if(img_fol->set_out_format==1){
 		sprintf(outfilename,"%s/%s.%s",img_fol->imgdirpath,temp_ofname,img_fol->out_format);
-		strncpy(parameters->outfile, outfilename, sizeof(outfilename));
+		if (opj_strcpy_s(parameters->outfile, sizeof(parameters->outfile), outfilename) != 0) {
+			return 1;
+		}
 	}
 	return 0;
 }
@@ -303,7 +308,10 @@ static int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *param
                             infile);
                     return 1;
 				}
-				strncpy(parameters->infile, infile, sizeof(parameters->infile)-1);
+				if (opj_strcpy_s(parameters->infile, sizeof(parameters->infile), infile) != 0) {
+					fprintf(stderr, "[ERROR] Path is too long\n");
+					return 1;
+				}
 			}
 			break;
 
@@ -311,8 +319,10 @@ static int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *param
 
 			case 'o':     /* output file */
 			{
-			  char *outfile = opj_optarg;
-			  strncpy(parameters->outfile, outfile, sizeof(parameters->outfile)-1);
+				if (opj_strcpy_s(parameters->outfile, sizeof(parameters->outfile), opj_optarg) != 0) {
+					fprintf(stderr, "[ERROR] Path is too long\n");
+					return 1;
+				}
 			}
 			break;
 				

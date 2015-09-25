@@ -69,6 +69,7 @@
 #include "index.h"
 
 #include "format_defs.h"
+#include "opj_string.h"
 
 typedef struct dircnt{
     /** Buffer for holding images read from Directory*/
@@ -456,8 +457,10 @@ static char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_c
     if (parameters->decod_format == -1)
         return 1;
     sprintf(infilename,"%s/%s",img_fol->imgdirpath,image_filename);
-    strncpy(parameters->infile, infilename, sizeof(infilename) - 1U);
-
+    if (opj_strcpy_s(parameters->infile, sizeof(parameters->infile), infilename) != 0) {
+        return 1;
+    }
+	
     /*Set output file*/
     strcpy(temp_ofname,get_file_name(image_filename));
     while((temp_p = strtok(NULL,".")) != NULL){
@@ -466,7 +469,9 @@ static char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_c
     }
     if(img_fol->set_out_format==1){
         sprintf(outfilename,"%s/%s.%s",img_fol->imgdirpath,temp_ofname,img_fol->out_format);
-        strncpy(parameters->outfile, outfilename, sizeof(outfilename) - 1U);
+        if (opj_strcpy_s(parameters->outfile, sizeof(parameters->outfile), outfilename) != 0) {
+            return 1;
+        }
     }
     return 0;
 }
@@ -474,7 +479,7 @@ static char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_c
 /* ------------------------------------------------------------------------------------ */
 
 static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
-                                 img_fol_t *img_fol, raw_cparameters_t *raw_cp, char *indexfilename) {
+                                 img_fol_t *img_fol, raw_cparameters_t *raw_cp, char *indexfilename, size_t indexfilename_size) {
     OPJ_UINT32 i, j;
     int totlen, c;
     opj_option_t long_option[]={
@@ -528,7 +533,9 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
                         infile);
                 return 1;
             }
-            strncpy(parameters->infile, infile, sizeof(parameters->infile)-1);
+            if (opj_strcpy_s(parameters->infile, sizeof(parameters->infile), infile) != 0) {
+                return 1;
+            }
         }
             break;
 
@@ -546,7 +553,9 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
                 fprintf(stderr, "Unknown output format image %s [only *.j2k, *.j2c or *.jp2]!! \n", outfile);
                 return 1;
             }
-            strncpy(parameters->outfile, outfile, sizeof(parameters->outfile)-1);
+            if (opj_strcpy_s(parameters->outfile, sizeof(parameters->outfile), outfile) != 0) {
+                return 1;
+            }
         }
             break;
 
@@ -812,8 +821,9 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
 
         case 'x':			/* creation of index file */
         {
-            char *index = opj_optarg;
-            strncpy(indexfilename, index, OPJ_PATH_LEN);
+            if (opj_strcpy_s(indexfilename, indexfilename_size, opj_optarg) != 0) {
+                return 1;
+            }
             /* FIXME ADE INDEX >> */
             fprintf(stderr,
                     "[WARNING] Index file generation is currently broken.\n"
@@ -1133,7 +1143,9 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
 
             /* we need to enable indexing */
             if (!indexfilename || !*indexfilename) {
-                strncpy(indexfilename, JPWL_PRIVATEINDEX_NAME, OPJ_PATH_LEN);
+                if (opj_strcpy_s(indexfilename, indexfilename_size, JPWL_PRIVATEINDEX_NAME) != 0) {
+                    return 1;
+                }
             }
 
             /* search for different protection methods */
@@ -1622,7 +1634,7 @@ int main(int argc, char **argv) {
 
     /* parse input and get user encoding parameters */
     parameters.tcp_mct = (char) 255; /* This will be set later according to the input image or the provided option */
-    if(parse_cmdline_encoder(argc, argv, &parameters,&img_fol, &raw_cp, indexfilename) == 1) {
+    if(parse_cmdline_encoder(argc, argv, &parameters,&img_fol, &raw_cp, indexfilename, sizeof(indexfilename)) == 1) {
         return 1;
     }
 

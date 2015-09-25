@@ -11,6 +11,7 @@ set(common_SRCS
   ${OPENJPEG_SOURCE_DIR}/src/bin/common/color.h
   ${OPENJPEG_SOURCE_DIR}/src/bin/common/opj_getopt.c
   ${OPENJPEG_SOURCE_DIR}/src/bin/common/opj_getopt.h
+  ${OPENJPEG_SOURCE_DIR}/src/bin/common/opj_string.h
   )
   
 if(OPJ_HAVE_LIBTIFF)
