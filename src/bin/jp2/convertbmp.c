@@ -729,6 +729,7 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
 	image = opj_image_create(numcmpts, &cmptparm[0], (numcmpts == 1U) ? OPJ_CLRSPC_GRAY : OPJ_CLRSPC_SRGB);
 	if(!image) {
 		fclose(IN);
+		free(pData);
 		return NULL;
 	}
 	if (numcmpts == 4U) {
@@ -902,6 +903,10 @@ int imagetobmp(opj_image_t * image, const char *outfile) {
         <<-- <<-- <<-- <<-- */
 
         fdest = fopen(outfile, "wb");
+        if (!fdest) {
+            fprintf(stderr, "ERROR -> failed to open %s for writing\n", outfile);
+            return 1;
+        }
         w = (int)image->comps[0].w;
         h = (int)image->comps[0].h;
 
