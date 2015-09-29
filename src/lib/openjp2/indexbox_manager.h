@@ -108,7 +108,7 @@ int opj_write_phix( int coff, opj_codestream_info_t cstr_info, OPJ_BOOL EPHused,
               opj_event_mgr_t * p_manager );
 
 /* 
- * Wriet manifest box (box)
+ * Write manifest box (box)
  *
  * @param[in] second number to be visited
  * @param[in] v      number of boxes

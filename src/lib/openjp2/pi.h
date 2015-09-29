@@ -73,7 +73,7 @@ Packet iterator
 typedef struct opj_pi_iterator {
   /** Enabling Tile part generation*/
   OPJ_BYTE tp_on;
-  /** precise if the packet has been already used (usefull for progression order change) */
+  /** precise if the packet has been already used (useful for progression order change) */
   OPJ_INT16 *include;
   /** layer step used to localize the packet in the include vector */
   OPJ_UINT32 step_l;

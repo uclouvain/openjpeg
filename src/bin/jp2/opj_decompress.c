@@ -1108,7 +1108,7 @@ static opj_image_t* upsample_image_components(opj_image_t* original)
 				l_dst += l_new_cmp->w;
 			}
 			
-			if(l_new_cmp->h > (l_org_cmp->dy - 1U)) { /* check substraction overflow for really small images */
+			if(l_new_cmp->h > (l_org_cmp->dy - 1U)) { /* check subtraction overflow for really small images */
 				for (; y < l_new_cmp->h - (l_org_cmp->dy - 1U); y += l_org_cmp->dy) {
 					OPJ_UINT32 x, dy;
 					OPJ_UINT32 xorg;
@@ -1117,7 +1117,7 @@ static opj_image_t* upsample_image_components(opj_image_t* original)
 					for (x = 0U; x < xoff; ++x) {
 						l_dst[x] = 0;
 					}
-					if (l_new_cmp->w > (l_org_cmp->dx - 1U)) { /* check substraction overflow for really small images */
+					if (l_new_cmp->w > (l_org_cmp->dx - 1U)) { /* check subtraction overflow for really small images */
 						for (; x < l_new_cmp->w - (l_org_cmp->dx - 1U); x += l_org_cmp->dx, ++xorg) {
 							OPJ_UINT32 dx;
 							for (dx = 0U; dx < l_org_cmp->dx; ++dx) {
@@ -1145,7 +1145,7 @@ static opj_image_t* upsample_image_components(opj_image_t* original)
 				for (x = 0U; x < xoff; ++x) {
 					l_dst[x] = 0;
 				}
-				if (l_new_cmp->w > (l_org_cmp->dx - 1U)) { /* check substraction overflow for really small images */
+				if (l_new_cmp->w > (l_org_cmp->dx - 1U)) { /* check subtraction overflow for really small images */
 					for (; x < l_new_cmp->w - (l_org_cmp->dx - 1U); x += l_org_cmp->dx, ++xorg) {
 						OPJ_UINT32 dx;
 						for (dx = 0U; dx < l_org_cmp->dx; ++dx) {

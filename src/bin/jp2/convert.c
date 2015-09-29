@@ -1256,7 +1256,7 @@ int imagetopgx(opj_image_t * image, const char *outfile)
     strncpy(name, outfile, dotpos);
     sprintf(name+dotpos, "_%d.pgx", compno);
     fdest = fopen(name, "wb");
-    /* dont need name anymore */
+    /* don't need name anymore */
 			
     if (!fdest) 
 		{

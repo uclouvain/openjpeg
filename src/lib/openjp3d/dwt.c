@@ -89,12 +89,12 @@ Inverse lazy transform (axial)
 */
 static void dwt_interleave_z(int *a, int *b, int dn, int sn, int xy, int cas);
 /**
-Forward 5-3 wavelet tranform in 1-D
+Forward 5-3 wavelet transform in 1-D
 */
 static void dwt_encode_53(int *a, int dn, int sn, int cas);
 static void dwt_encode_97(int *a, int dn, int sn, int cas);
 /**
-Inverse 5-3 wavelet tranform in 1-D
+Inverse 5-3 wavelet transform in 1-D
 */
 static void dwt_decode_53(int *a, int dn, int sn, int cas);
 static void dwt_decode_97(int *a, int dn, int sn, int cas);
@@ -333,7 +333,7 @@ static void dwt_interleave_z(int *a, int *b, int dn, int sn, int xy, int cas) {
 
 
 /* <summary>                            */
-/* Forward 5-3 or 9-7 wavelet tranform in 1-D. */
+/* Forward 5-3 or 9-7 wavelet transform in 1-D. */
 /* </summary>                           */
 static void dwt_encode_53(int *a, int dn, int sn, int cas) {
 	int i;
@@ -409,7 +409,7 @@ static void dwt_encode_97(int *a, int dn, int sn, int cas) {
 		}
 }
 /* <summary>                            */
-/* Inverse 5-3 or 9-7 wavelet tranform in 1-D. */
+/* Inverse 5-3 or 9-7 wavelet transform in 1-D. */
 /* </summary>                           */ 
 static void dwt_decode_53(int *a, int dn, int sn, int cas) {
 	int i;
@@ -661,7 +661,7 @@ static void dwt_encode_stepsize(int stepsize, int numbps, opj_stepsize_t *bandno
 ==========================================================
 */
 /* <summary>                            */
-/* Forward 5-3 wavelet tranform in 3-D. */
+/* Forward 5-3 wavelet transform in 3-D. */
 /* </summary>                           */
 void dwt_encode(opj_tcd_tilecomp_t * tilec, int dwtid[3]) {
 	int i, j, k;
@@ -792,7 +792,7 @@ void dwt_encode(opj_tcd_tilecomp_t * tilec, int dwtid[3]) {
 
 
 /* <summary>                            */
-/* Inverse 5-3 wavelet tranform in 3-D. */
+/* Inverse 5-3 wavelet transform in 3-D. */
 /* </summary>                           */
 void dwt_decode(opj_tcd_tilecomp_t * tilec, int stops[3], int dwtid[3]) {
 	int i, j, k;
