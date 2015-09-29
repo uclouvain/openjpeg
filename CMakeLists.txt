@@ -291,8 +291,8 @@ if(BUILD_TESTING)
     include(CTest)
 
     # Search openjpeg data needed for the tests
-    # They could be found via svn on the OpenJPEG google code project
-    # svn checkout http://openjpeg.googlecode.com/svn/data (about 70 Mo)
+    # They could be found via git on the OpenJPEG GitHub code project
+    # git clone https://github.com/uclouvain/openjpeg-data.git
     find_path(OPJ_DATA_ROOT README-OPJ-Data
       PATHS $ENV{OPJ_DATA_ROOT} ${CMAKE_SOURCE_DIR}/../data
       NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH
