@@ -1436,7 +1436,7 @@ int imagetopgx(opj_image_t * image, const char *outfile) {
 			fprintf(stderr, "ERROR -> failed to open %s for writing\n", name);
 			return 1;
 		}
-    /* dont need name anymore */
+    /* don't need name anymore */
     if( total > 256 ) {
       free(name);
       }

@@ -125,7 +125,7 @@ static OPJ_BOOL opj_lupDecompose(OPJ_FLOAT32 * matrix,OPJ_UINT32 * permutations,
 	{
     	*tmpPermutations++ = i;
 	}
-	/* now make a pivot with colum switch */
+	/* now make a pivot with column switch */
 	tmpPermutations = permutations;
 	for (k = 0; k < lLastColum; ++k) {
 		p = 0.0;

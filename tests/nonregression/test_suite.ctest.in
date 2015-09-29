@@ -1,7 +1,7 @@
 # This file list all the input commands of the tests run by the ctest command which 
 # are not related to the conformance files.
 #
-# For each line of this file (exept line which begin with #) an opj_compress test or a 
+# For each line of this file (except line which begin with #) an opj_compress test or a
 # opj_decompress is run and its related tests.
 #   + For encoder related tests = dump, compare dump to base, decode the encoded file with 
 #     reference and compare the decoded file with the baseline decoded previously with 

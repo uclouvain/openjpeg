@@ -58,7 +58,7 @@
 
 /* ----------------------------------------------------------------------- */
 /** 
-Channel description: channel index, type, assocation
+Channel description: channel index, type, association
 */
 typedef struct opj_jp2_cdef_info
 {

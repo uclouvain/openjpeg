@@ -8,4 +8,4 @@ Anybody. As the OpenJPEG library is released under the BSD license, anybody can 
 
 Who is developing the library ?
 ===============================
-The library is developed by the Communications and Remote Sensing Lab (TELE), in the Université Catholique de Louvain (UCL). The JPWL module is developped and maintained by the Digital Signal Processing Lab (DSPLab) of the University of Perugia, Italy (UNIPG). As our purpose is to make OpenJPEG really useful for those interested in the image compression field, any feedback/advices are obviously welcome ! We will do our best to handle them quickly. 
+The library is developed by the Communications and Remote Sensing Lab (TELE), in the Université Catholique de Louvain (UCL). The JPWL module is developed and maintained by the Digital Signal Processing Lab (DSPLab) of the University of Perugia, Italy (UNIPG). As our purpose is to make OpenJPEG really useful for those interested in the image compression field, any feedback/advices are obviously welcome ! We will do our best to handle them quickly.
