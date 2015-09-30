@@ -432,13 +432,17 @@ static void j2k_read_siz(opj_j2k_t *j2k) {
 		opj_event_msg(j2k->cinfo, EVT_ERROR,
 									"invalid image size (x0:%d, x1:%d, y0:%d, y1:%d)\n",
 									image->x0,image->x1,image->y0,image->y1);
+        j2k->state |= J2K_STATE_ERR;
 		return;
 	}
 	
   n_comps = (len - 36 - 2 ) / 3;
-  assert( (len - 36 - 2 ) % 3 == 0 );
-	image->numcomps = cio_read(cio, 2);	/* Csiz */
-  assert( n_comps == image->numcomps );
+  image->numcomps = cio_read(cio, 2);	/* Csiz */
+  if (((len - 36 - 2 ) % 3 != 0)||(n_comps != image->numcomps)) {
+      opj_event_msg(j2k->cinfo, EVT_ERROR,"invalid SIZ marker value\n");
+      j2k->state |= J2K_STATE_ERR;
+      return;
+  }
 
   /* testcase 4035.pdf.SIGSEGV.d8b.3375 */
   if (image->x0 > image->x1 || image->y0 > image->y1) {
