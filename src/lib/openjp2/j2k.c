@@ -7682,6 +7682,11 @@ static OPJ_BOOL opj_j2k_need_nb_tile_parts_correction(opj_stream_private_t *p_st
 	/* initialize to no correction needed */
 	*p_correction_needed = OPJ_FALSE;
 	
+	if (!opj_stream_has_seek(p_stream)) {
+		/* We can't do much in this case, seek is needed */
+		return OPJ_TRUE;
+	}
+	
 	l_stream_pos_backup = opj_stream_tell(p_stream);
 	if (l_stream_pos_backup == -1) {
 		/* let's do nothing */
