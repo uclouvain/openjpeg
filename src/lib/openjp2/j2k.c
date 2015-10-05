@@ -4351,7 +4351,7 @@ static OPJ_BOOL opj_j2k_read_sod (opj_j2k_t *p_j2k,
             }
             if (! *l_current_data) {
                 /* LH: oddly enough, in this path, l_tile_len!=0.
-                 * TODO: If this was consistant, we could simplify the code to only use realloc(), as realloc(0,...) default to malloc(0,...).
+                 * TODO: If this was consistent, we could simplify the code to only use realloc(), as realloc(0,...) default to malloc(0,...).
                  */
                 *l_current_data = (OPJ_BYTE*) opj_malloc(p_j2k->m_specific_param.m_decoder.m_sot_length);
             }
@@ -5583,7 +5583,7 @@ static OPJ_BOOL opj_j2k_write_mco(     opj_j2k_t *p_j2k,
         opj_write_bytes(l_current_data,l_mco_size-2,2);                 /* Lmco */
         l_current_data += 2;
 
-        opj_write_bytes(l_current_data,l_tcp->m_nb_mcc_records,1);      /* Nmco : only one tranform stage*/
+        opj_write_bytes(l_current_data,l_tcp->m_nb_mcc_records,1);      /* Nmco : only one transform stage*/
         ++l_current_data;
 
         l_mcc_record = l_tcp->m_mcc_records;
@@ -5635,7 +5635,7 @@ static OPJ_BOOL opj_j2k_read_mco (      opj_j2k_t *p_j2k,
                 return OPJ_FALSE;
         }
 
-        opj_read_bytes(p_header_data,&l_nb_stages,1);                           /* Nmco : only one tranform stage*/
+        opj_read_bytes(p_header_data,&l_nb_stages,1);                           /* Nmco : only one transform stage*/
         ++p_header_data;
 
         if (l_nb_stages > 1) {
@@ -7681,6 +7681,11 @@ static OPJ_BOOL opj_j2k_need_nb_tile_parts_correction(opj_stream_private_t *p_st
 	
 	/* initialize to no correction needed */
 	*p_correction_needed = OPJ_FALSE;
+	
+	if (!opj_stream_has_seek(p_stream)) {
+		/* We can't do much in this case, seek is needed */
+		return OPJ_TRUE;
+	}
 	
 	l_stream_pos_backup = opj_stream_tell(p_stream);
 	if (l_stream_pos_backup == -1) {

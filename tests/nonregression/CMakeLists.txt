@@ -405,7 +405,7 @@ foreach(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
         )
 
 # FIXME: add a compare2base function base on raw which
-# can output png diff files if necesary
+# can output png diff files if necessary
 #  add_test(NR-${filename}-compare2base
 #      ${EXECUTABLE_OUTPUT_PATH}/compare_images
 #     -b ${BASELINE_NR}/opj_${filenameRef}

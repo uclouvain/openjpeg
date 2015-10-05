@@ -356,7 +356,7 @@ static void setparams(opj_mj2_t *movie, opj_image_t *image) {
      movie->tk[0].jp2_struct.enumcs = 18;  /* YUV */
   
   else
-    movie->tk[0].jp2_struct.enumcs = 0;	/* Unkown profile */
+    movie->tk[0].jp2_struct.enumcs = 0;	/* Unknown profile */
 }
 
 int main(int argc, char *argv[]) {

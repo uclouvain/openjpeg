@@ -114,6 +114,7 @@ static void scale_component_up(opj_image_comp_t* component, OPJ_UINT32 precision
 		}
 	}
 	component->prec = precision;
+	component->bpp = precision;
 }
 void scale_component(opj_image_comp_t* component, OPJ_UINT32 precision)
 {
@@ -1256,7 +1257,7 @@ int imagetopgx(opj_image_t * image, const char *outfile)
     strncpy(name, outfile, dotpos);
     sprintf(name+dotpos, "_%d.pgx", compno);
     fdest = fopen(name, "wb");
-    /* dont need name anymore */
+    /* don't need name anymore */
 			
     if (!fdest) 
 		{

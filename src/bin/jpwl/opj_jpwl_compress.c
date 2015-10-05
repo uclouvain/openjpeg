@@ -199,7 +199,7 @@ static void encode_help_display(void) {
 	fprintf(stdout,"                 Indicate multiple modes by adding their values. \n");
 	fprintf(stdout,"                 ex: RESTART(4) + RESET(2) + SEGMARK(32) = -M 38\n");
 	fprintf(stdout,"\n");
-	fprintf(stdout,"-TP          : devide packets of every tile into tile-parts (-TP R) [R, L, C]\n");
+	fprintf(stdout,"-TP          : divide packets of every tile into tile-parts (-TP R) [R, L, C]\n");
 	fprintf(stdout,"\n");
 	fprintf(stdout,"-x           : create an index file *.Idx (-x index_name.Idx) \n");
 	fprintf(stdout,"\n");

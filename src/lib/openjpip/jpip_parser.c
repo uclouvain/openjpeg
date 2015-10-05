@@ -357,7 +357,7 @@ void enqueue_precincts( int xmin, int xmax, int ymin, int ymax, int tile_id, int
   Byte4_t xminP, xmaxP, yminP, ymaxP;
 
   codeidx  = msgqueue->cachemodel->target->codeidx;
-  /* MM: shouldnt xmin/xmax be Byte4_t instead ? */
+  /* MM: shouldn't xmin/xmax be Byte4_t instead ? */
   if( xmin < 0 || xmax < 0 || ymin < 0 || ymax < 0)
     return;
   /* MM: I think the API should not really be int should it ? */
