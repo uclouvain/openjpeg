@@ -3562,7 +3562,7 @@ static OPJ_BOOL opj_j2k_read_ppm (
 		return OPJ_FALSE;
 	}
 	
-	l_cp->ppm_markers[l_Z_ppm].m_data = opj_malloc(p_header_size);
+	l_cp->ppm_markers[l_Z_ppm].m_data = (OPJ_BYTE *) opj_malloc(p_header_size);
 	if (l_cp->ppm_markers[l_Z_ppm].m_data == NULL) {
 		/* clean up to be done on l_cp destruction */
 		opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to read PPM marker\n");
@@ -3784,7 +3784,7 @@ static OPJ_BOOL opj_j2k_read_ppt (  opj_j2k_t *p_j2k,
 		return OPJ_FALSE;
 	}
 	
-	l_tcp->ppt_markers[l_Z_ppt].m_data = opj_malloc(p_header_size);
+	l_tcp->ppt_markers[l_Z_ppt].m_data = (OPJ_BYTE *) opj_malloc(p_header_size);
 	if (l_tcp->ppt_markers[l_Z_ppt].m_data == NULL) {
 		/* clean up to be done on l_tcp destruction */
 		opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to read PPT marker\n");
