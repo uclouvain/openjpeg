@@ -170,7 +170,7 @@ static OPJ_BOOL opj_jp2_skip_jp2c(	opj_jp2_t *jp2,
  * @param	p_header_size	the size of the data contained in the file header box.
  * @param	p_manager		the user event manager.
  *
- * @return true if the JP2 Header box was successfully reconized.
+ * @return true if the JP2 Header box was successfully recognized.
 */
 static OPJ_BOOL opj_jp2_read_jp2h(  opj_jp2_t *jp2,
                                     OPJ_BYTE *p_header_data,
@@ -370,7 +370,7 @@ static OPJ_BOOL opj_jp2_exec (  opj_jp2_t * jp2,
  * @param	p_number_bytes_read		pointer to an int that will store the number of bytes read from the stream (shoul usually be 2).
  * @param	p_manager				user event manager.
  *
- * @return	true if the box is reconized, false otherwise
+ * @return	true if the box is recognized, false otherwise
 */
 static OPJ_BOOL opj_jp2_read_boxhdr(opj_jp2_box_t *box,
                                     OPJ_UINT32 * p_number_bytes_read,
@@ -437,7 +437,7 @@ static const opj_jp2_header_handler_t jp2_img_header [] =
  * @param	p_box_max_size			the maximum number of bytes in the box.
  * @param	p_manager         FIXME DOC
  *
- * @return	true if the box is reconized, false otherwise
+ * @return	true if the box is recognized, false otherwise
 */
 static OPJ_BOOL opj_jp2_read_boxhdr_char(   opj_jp2_box_t *box,
                                             OPJ_BYTE * p_data,
@@ -889,7 +889,7 @@ static OPJ_BOOL opj_jp2_check_color(opj_image_t *image, opj_jp2_color_t *color, 
 			}
 		}
 
-		pcol_usage = opj_calloc(nr_channels, sizeof(OPJ_BOOL));
+		pcol_usage = (OPJ_BOOL *) opj_calloc(nr_channels, sizeof(OPJ_BOOL));
 		if (!pcol_usage) {
 			opj_event_msg(p_manager, EVT_ERROR, "Unexpected OOM.\n");
 			return OPJ_FALSE;
@@ -2474,7 +2474,7 @@ static OPJ_BOOL opj_jpip_skip_iptr(	opj_jp2_t *jp2,
  * @param	p_header_size	the size of the data contained in the file header box.
  * @param	p_manager		the user event manager.
  *
- * @return true if the JP2 Header box was successfully reconized.
+ * @return true if the JP2 Header box was successfully recognized.
 */
 static OPJ_BOOL opj_jp2_read_jp2h(  opj_jp2_t *jp2,
                                     OPJ_BYTE *p_header_data,

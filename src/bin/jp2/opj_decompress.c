@@ -75,6 +75,7 @@
 #include "color.h"
 
 #include "format_defs.h"
+#include "opj_string.h"
 
 typedef struct dircnt{
 	/** Buffer for holding images read from Directory*/
@@ -121,6 +122,8 @@ typedef struct opj_decompress_params
 	int decod_format;
 	/** output file format 0: PGX, 1: PxM, 2: BMP */
 	int cod_format;
+	/** index file name */
+	char indexfilename[OPJ_PATH_LEN];
 	
 	/** Decoding area left boundary */
 	OPJ_UINT32 DA_x0;
@@ -157,7 +160,7 @@ int get_file_format(const char *filename);
 char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_decompress_parameters *parameters);
 static int infile_format(const char *fname);
 
-int parse_cmdline_decoder(int argc, char **argv, opj_decompress_parameters *parameters,img_fol_t *img_fol, char *indexfilename);
+int parse_cmdline_decoder(int argc, char **argv, opj_decompress_parameters *parameters,img_fol_t *img_fol);
 int parse_DA_values( char* inArg, unsigned int *DA_x0, unsigned int *DA_y0, unsigned int *DA_x1, unsigned int *DA_y1);
 
 static opj_image_t* convert_gray_to_rgb(opj_image_t* original);
@@ -361,6 +364,7 @@ int get_num_images(char *imgdirpath){
 			continue;
 		num_images++;
 	}
+	closedir(dir);
 	return num_images;
 }
 
@@ -387,6 +391,7 @@ int load_images(dircnt_t *dirptr, char *imgdirpath){
 		strcpy(dirptr->filename[i],content->d_name);
 		i++;
 	}
+	closedir(dir);
 	return 0;	
 }
 
@@ -427,7 +432,9 @@ char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_decompre
 	parameters->decod_format = infile_format(infilename);
 	if (parameters->decod_format == -1)
 		return 1;
-	strncpy(parameters->infile, infilename, sizeof(infilename));
+	if (opj_strcpy_s(parameters->infile, sizeof(parameters->infile), infilename) != 0) {
+		return 1;
+	}
 
 	/*Set output file*/
 	strcpy(temp_ofname,strtok(image_filename,"."));
@@ -437,7 +444,9 @@ char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_decompre
 	}
 	if(img_fol->set_out_format==1){
 		sprintf(outfilename,"%s/%s.%s",img_fol->imgdirpath,temp_ofname,img_fol->out_format);
-		strncpy(parameters->outfile, outfilename, sizeof(outfilename));
+		if (opj_strcpy_s(parameters->outfile, sizeof(parameters->outfile), outfilename) != 0) {
+			return 1;
+		}
 	}
 	return 0;
 }
@@ -503,7 +512,7 @@ static int infile_format(const char *fname)
  * Parse the command line
  */
 /* -------------------------------------------------------------------------- */
-int parse_cmdline_decoder(int argc, char **argv, opj_decompress_parameters *parameters,img_fol_t *img_fol, char *indexfilename) {
+int parse_cmdline_decoder(int argc, char **argv, opj_decompress_parameters *parameters,img_fol_t *img_fol) {
 	/* parse the command line */
 	int totlen, c;
 	opj_option_t long_option[]={
@@ -559,7 +568,10 @@ int parse_cmdline_decoder(int argc, char **argv, opj_decompress_parameters *para
 							infile);
 						return 1;
 				}
-				strncpy(parameters->infile, infile, sizeof(parameters->infile)-1);
+				if (opj_strcpy_s(parameters->infile, sizeof(parameters->infile), infile) != 0) {
+					fprintf(stderr, "[ERROR] Path is too long\n");
+					return 1;
+				}
 			}
 			break;
 				
@@ -590,7 +602,10 @@ int parse_cmdline_decoder(int argc, char **argv, opj_decompress_parameters *para
 						fprintf(stderr, "Unknown output format image %s [only *.pnm, *.pgm, *.ppm, *.pgx, *.bmp, *.tif, *.raw or *.tga]!! \n", outfile);
 						return 1;
 				}
-				strncpy(parameters->outfile, outfile, sizeof(parameters->outfile)-1);
+				if (opj_strcpy_s(parameters->outfile, sizeof(parameters->outfile), outfile) != 0) {
+					fprintf(stderr, "[ERROR] Path is too long\n");
+					return 1;
+				}
 			}
 			break;
 			
@@ -674,11 +689,14 @@ int parse_cmdline_decoder(int argc, char **argv, opj_decompress_parameters *para
 
 			case 'd':     		/* Input decode ROI */
 			{
-				int size_optarg = (int)strlen(opj_optarg) + 1;
-				char *ROI_values = (char*) malloc((size_t)size_optarg);
+				size_t size_optarg = (size_t)strlen(opj_optarg) + 1U;
+				char *ROI_values = (char*) malloc(size_optarg);
+				if (ROI_values == NULL) {
+					fprintf(stderr, "[ERROR] Couldn't allocate memory\n");
+					return 1;
+				}
 				ROI_values[0] = '\0';
-				strncpy(ROI_values, opj_optarg, strlen(opj_optarg));
-				ROI_values[strlen(opj_optarg)] = '\0';
+				memcpy(ROI_values, opj_optarg, size_optarg);
 				/*printf("ROI_values = %s [%d / %d]\n", ROI_values, strlen(ROI_values), size_optarg ); */
 				parse_DA_values( ROI_values, &parameters->DA_x0, &parameters->DA_y0, &parameters->DA_x1, &parameters->DA_y1);
 
@@ -699,8 +717,10 @@ int parse_cmdline_decoder(int argc, char **argv, opj_decompress_parameters *para
 
 			case 'x':			/* Creation of index file */
 				{
-					char *index = opj_optarg;
-					strncpy(indexfilename, index, OPJ_PATH_LEN);
+					if (opj_strcpy_s(parameters->indexfilename, sizeof(parameters->indexfilename), opj_optarg) != 0) {
+						fprintf(stderr, "[ERROR] Path is too long\n");
+						return 1;
+					}
 				}
 				break;
 				
@@ -1088,7 +1108,7 @@ static opj_image_t* upsample_image_components(opj_image_t* original)
 				l_dst += l_new_cmp->w;
 			}
 			
-			if(l_new_cmp->h > (l_org_cmp->dy - 1U)) { /* check substraction overflow for really small images */
+			if(l_new_cmp->h > (l_org_cmp->dy - 1U)) { /* check subtraction overflow for really small images */
 				for (; y < l_new_cmp->h - (l_org_cmp->dy - 1U); y += l_org_cmp->dy) {
 					OPJ_UINT32 x, dy;
 					OPJ_UINT32 xorg;
@@ -1097,7 +1117,7 @@ static opj_image_t* upsample_image_components(opj_image_t* original)
 					for (x = 0U; x < xoff; ++x) {
 						l_dst[x] = 0;
 					}
-					if (l_new_cmp->w > (l_org_cmp->dx - 1U)) { /* check substraction overflow for really small images */
+					if (l_new_cmp->w > (l_org_cmp->dx - 1U)) { /* check subtraction overflow for really small images */
 						for (; x < l_new_cmp->w - (l_org_cmp->dx - 1U); x += l_org_cmp->dx, ++xorg) {
 							OPJ_UINT32 dx;
 							for (dx = 0U; dx < l_org_cmp->dx; ++dx) {
@@ -1125,7 +1145,7 @@ static opj_image_t* upsample_image_components(opj_image_t* original)
 				for (x = 0U; x < xoff; ++x) {
 					l_dst[x] = 0;
 				}
-				if (l_new_cmp->w > (l_org_cmp->dx - 1U)) { /* check substraction overflow for really small images */
+				if (l_new_cmp->w > (l_org_cmp->dx - 1U)) { /* check subtraction overflow for really small images */
 					for (; x < l_new_cmp->w - (l_org_cmp->dx - 1U); x += l_org_cmp->dx, ++xorg) {
 						OPJ_UINT32 dx;
 						for (dx = 0U; dx < l_org_cmp->dx; ++dx) {
@@ -1165,8 +1185,6 @@ int main(int argc, char **argv)
 	opj_codec_t* l_codec = NULL;				/* Handle to a decompressor */
 	opj_codestream_index_t* cstr_index = NULL;
 
-	char indexfilename[OPJ_PATH_LEN];	/* index file name */
-
 	OPJ_INT32 num_images, imageno;
 	img_fol_t img_fol;
 	dircnt_t *dirptr = NULL;
@@ -1177,14 +1195,11 @@ int main(int argc, char **argv)
 	/* set decoding parameters to default values */
 	set_default_parameters(&parameters);
 
-	/* FIXME Initialize indexfilename and img_fol */
-	*indexfilename = 0;
-
 	/* Initialize img_fol */
 	memset(&img_fol,0,sizeof(img_fol_t));
 
 	/* parse input and get user encoding parameters */
-	if(parse_cmdline_decoder(argc, argv, &parameters,&img_fol, indexfilename) == 1) {
+	if(parse_cmdline_decoder(argc, argv, &parameters,&img_fol) == 1) {
 		destroy_parameters(&parameters);
 		return EXIT_FAILURE;
 	}
@@ -1550,7 +1565,7 @@ int main(int argc, char **argv)
 		/* destroy the codestream index */
 		opj_destroy_cstr_index(&cstr_index);
 
-		if(failed) remove(parameters.outfile);
+		if(failed) (void)remove(parameters.outfile); /* ignore return value */
 	}
 	destroy_parameters(&parameters);
 	if (numDecompressedImages) {

@@ -65,7 +65,7 @@ Write some bytes
 @param cio CIO handle
 @param v Value to write
 @param n Number of bytes to write
-@return Returns the number of bytes written or 0 if an error occured
+@return Returns the number of bytes written or 0 if an error occurred
 */
 unsigned int cio_write(opj_cio_t *cio, unsigned int v, int n);
 /**
@@ -86,7 +86,7 @@ Write some bytes
 @param cio CIO handle
 @param v Signed integer value to write
 @param n Number of bytes to write
-@return Returns the number of bytes written or 0 if an error occured
+@return Returns the number of bytes written or 0 if an error occurred
 */
 int cio_write_int(opj_cio_t *cio, int v, int n);
 /**

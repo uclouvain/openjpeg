@@ -64,7 +64,7 @@
  *
  * 
  * \section sysarchtect System Architecture
- * JPIP protocol is implimented between the JPIP server program (opj_server) and the JPIP client java program (opj_viewer).\n
+ * JPIP protocol is implemented between the JPIP server program (opj_server) and the JPIP client java program (opj_viewer).\n
  * Figure below represents the overview of our system architecture.\n
  * The JPIP server parses JPIP query and sends corresponding JPT/JPP-stream.
  * The JPIP client viewer is an image viewer with GUI to publish JPIP requests and receive JPT/JPP-stream.\n

@@ -70,7 +70,7 @@ const OPJ_FLOAT64 * opj_mct_get_mct_norms_real ()
 }
 
 /* <summary> */
-/* Foward reversible MCT. */
+/* Forward reversible MCT. */
 /* </summary> */
 #ifdef __SSE2__
 void opj_mct_encode(
@@ -202,7 +202,7 @@ OPJ_FLOAT64 opj_mct_getnorm(OPJ_UINT32 compno) {
 }
 
 /* <summary> */
-/* Foward irreversible MCT. */
+/* Forward irreversible MCT. */
 /* </summary> */
 #ifdef __SSE4_1__
 void opj_mct_encode_real(

@@ -206,7 +206,7 @@ static void encode_help_display() {
 	fprintf(stdout,"                 Indicate multiple modes by adding their values. \n");
 	fprintf(stdout,"                 ex: RESTART(4) + RESET(2) + SEGMARK(32) = -M 38\n");
 	fprintf(stdout,"\n");
-	fprintf(stdout,"-TP          : devide packets of every tile into tile-parts (-TP R) [R, L, C]\n");
+	fprintf(stdout,"-TP          : divide packets of every tile into tile-parts (-TP R) [R, L, C]\n");
 	fprintf(stdout,"\n");
 	fprintf(stdout,"-x           : create an index file *.Idx (-x index_name.Idx) \n");
 	fprintf(stdout,"\n");
@@ -1696,7 +1696,7 @@ static opj_image_t* loadImage(opj_cparameters_t *parameters, JNIEnv *env, jobjec
 			len = (*env)->GetArrayLength(env, jba);
 			
 			jbBody = (*env)->GetPrimitiveArrayCritical(env, jba, &isCopy);
-			/*printf("C: before transfering 8 bpp image\n");*/
+			/*printf("C: before transferring 8 bpp image\n");*/
 			if (comp->sgnd) {
 				for(i=0; i< len;i++) {
 					comp->data[i] = (char) jbBody[i];
@@ -1715,7 +1715,7 @@ static opj_image_t* loadImage(opj_cparameters_t *parameters, JNIEnv *env, jobjec
 			len = (*env)->GetArrayLength(env, jsa);
 			
 			jsBody = (*env)->GetPrimitiveArrayCritical(env, jsa, &isCopy);
-			/*printf("C: before transfering 16 bpp image\n");*/
+			/*printf("C: before transferring 16 bpp image\n");*/
 			if (comp->sgnd) {	/* Special behaviour to deal with signed elements ??*/
 				comp->data[i] = (short) jsBody[i];
 				for(i=0; i< len;i++) {
@@ -1735,7 +1735,7 @@ static opj_image_t* loadImage(opj_cparameters_t *parameters, JNIEnv *env, jobjec
 			shift = compno*8;
 
 			jiBody = (*env)->GetPrimitiveArrayCritical(env, jia, &isCopy);
-			/*printf("C: before transfering 24 bpp image (component %d, signed = %d)\n", compno, comp->sgnd);*/
+			/*printf("C: before transferring 24 bpp image (component %d, signed = %d)\n", compno, comp->sgnd);*/
 			if (comp->sgnd) {	/* Special behaviour to deal with signed elements ?? XXXXX*/
 				for(i=0; i< len;i++) {
 					comp->data[i] = ( ((int) jiBody[i]) & (0xFF << shift) ) >> shift;

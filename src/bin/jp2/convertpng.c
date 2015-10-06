@@ -486,7 +486,7 @@ fin:
 	}
 	fclose(writer);
 	
-	if(fails) remove(write_idf);
+	if(fails) (void)remove(write_idf); /* ignore return value */
 	
 	return fails;
 }/* imagetopng() */

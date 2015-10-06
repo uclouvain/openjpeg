@@ -184,7 +184,7 @@ void opj_write_bytes_BE (OPJ_BYTE * p_buffer, OPJ_UINT32 p_value, OPJ_UINT32 p_n
  * @param p_buffer		pointer the data buffer to read data from.
  * @param p_value		pointer to the value that will store the data.
  * @param p_nb_bytes	the nb bytes to read.
- * @return				the number of bytes read or -1 if an error occured.
+ * @return				the number of bytes read or -1 if an error occurred.
  */
 void opj_read_bytes_BE(const OPJ_BYTE * p_buffer, OPJ_UINT32 * p_value, OPJ_UINT32 p_nb_bytes);
 
@@ -193,7 +193,7 @@ void opj_read_bytes_BE(const OPJ_BYTE * p_buffer, OPJ_UINT32 * p_value, OPJ_UINT
  * @param p_buffer		pointer the data buffer to write data to.
  * @param p_value		the value to write
  * @param p_nb_bytes	the number of bytes to write
- * @return				the number of bytes written or -1 if an error occured
+ * @return				the number of bytes written or -1 if an error occurred
 */
 void opj_write_bytes_LE (OPJ_BYTE * p_buffer, OPJ_UINT32 p_value, OPJ_UINT32 p_nb_bytes);
 
@@ -202,7 +202,7 @@ void opj_write_bytes_LE (OPJ_BYTE * p_buffer, OPJ_UINT32 p_value, OPJ_UINT32 p_n
  * @param p_buffer		pointer the data buffer to read data from.
  * @param p_value		pointer to the value that will store the data.
  * @param p_nb_bytes	the nb bytes to read.
- * @return				the number of bytes read or -1 if an error occured.
+ * @return				the number of bytes read or -1 if an error occurred.
  */
 void opj_read_bytes_LE(const OPJ_BYTE * p_buffer, OPJ_UINT32 * p_value, OPJ_UINT32 p_nb_bytes);
 
@@ -269,7 +269,7 @@ void opj_write_float_BE(OPJ_BYTE * p_buffer, OPJ_FLOAT32 p_value);
  * @param		p_buffer	pointer to the data buffer that will receive the data.
  * @param		p_size		number of bytes to read.
  * @param		p_event_mgr	the user event manager to be notified of special events.
- * @return		the number of bytes read, or -1 if an error occured or if the stream is at the end.
+ * @return		the number of bytes read, or -1 if an error occurred or if the stream is at the end.
  */
 OPJ_SIZE_T opj_stream_read_data (opj_stream_private_t * p_stream,OPJ_BYTE * p_buffer, OPJ_SIZE_T p_size, struct opj_event_mgr * p_event_mgr);
 
@@ -279,7 +279,7 @@ OPJ_SIZE_T opj_stream_read_data (opj_stream_private_t * p_stream,OPJ_BYTE * p_bu
  * @param		p_buffer	pointer to the data buffer holds the data to be writtent.
  * @param		p_size		number of bytes to write.
  * @param		p_event_mgr	the user event manager to be notified of special events.
- * @return		the number of bytes writtent, or -1 if an error occured.
+ * @return		the number of bytes writtent, or -1 if an error occurred.
  */
 OPJ_SIZE_T opj_stream_write_data (opj_stream_private_t * p_stream,const OPJ_BYTE * p_buffer, OPJ_SIZE_T p_size, struct opj_event_mgr * p_event_mgr);
 
@@ -296,7 +296,7 @@ OPJ_BOOL opj_stream_flush (opj_stream_private_t * p_stream, struct opj_event_mgr
  * @param		p_stream	the stream to skip data from.
  * @param		p_size		the number of bytes to skip.
  * @param		p_event_mgr	the user event manager to be notified of special events.
- * @return		the number of bytes skipped, or -1 if an error occured.
+ * @return		the number of bytes skipped, or -1 if an error occurred.
  */
 OPJ_OFF_T opj_stream_skip (opj_stream_private_t * p_stream,OPJ_OFF_T p_size, struct opj_event_mgr * p_event_mgr);
 
@@ -324,7 +324,7 @@ OPJ_OFF_T opj_stream_get_number_byte_left (const opj_stream_private_t * p_stream
  * @param		p_stream	the stream to skip data from.
  * @param		p_size		the number of bytes to skip.
  * @param		p_event_mgr	the user event manager to be notified of special events.
- * @return		the number of bytes skipped, or -1 if an error occured.
+ * @return		the number of bytes skipped, or -1 if an error occurred.
  */
 OPJ_OFF_T opj_stream_write_skip (opj_stream_private_t * p_stream, OPJ_OFF_T p_size, struct opj_event_mgr * p_event_mgr);
 
@@ -333,7 +333,7 @@ OPJ_OFF_T opj_stream_write_skip (opj_stream_private_t * p_stream, OPJ_OFF_T p_si
  * @param		p_stream	the stream to skip data from.
  * @param		p_size		the number of bytes to skip.
  * @param		p_event_mgr	the user event manager to be notified of special events.
- * @return		the number of bytes skipped, or -1 if an error occured.
+ * @return		the number of bytes skipped, or -1 if an error occurred.
  */
 OPJ_OFF_T opj_stream_read_skip (opj_stream_private_t * p_stream, OPJ_OFF_T p_size, struct opj_event_mgr * p_event_mgr);
 
@@ -342,7 +342,7 @@ OPJ_OFF_T opj_stream_read_skip (opj_stream_private_t * p_stream, OPJ_OFF_T p_siz
  * @param		p_stream	the stream to skip data from.
  * @param		p_size		the number of bytes to skip.
  * @param		p_event_mgr	the user event manager to be notified of special events.
- * @return		OPJ_TRUE if success, or OPJ_FALSE if an error occured.
+ * @return		OPJ_TRUE if success, or OPJ_FALSE if an error occurred.
  */
 OPJ_BOOL opj_stream_read_seek (opj_stream_private_t * p_stream, OPJ_OFF_T p_size, struct opj_event_mgr * p_event_mgr);
 
@@ -351,7 +351,7 @@ OPJ_BOOL opj_stream_read_seek (opj_stream_private_t * p_stream, OPJ_OFF_T p_size
  * @param		p_stream	the stream to skip data from.
  * @param		p_size		the number of bytes to skip.
  * @param		p_event_mgr	the user event manager to be notified of special events.
- * @return		the number of bytes skipped, or -1 if an error occured.
+ * @return		the number of bytes skipped, or -1 if an error occurred.
  */
 OPJ_BOOL opj_stream_write_seek (opj_stream_private_t * p_stream, OPJ_OFF_T p_size, struct opj_event_mgr * p_event_mgr);
 

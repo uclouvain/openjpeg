@@ -3615,7 +3615,7 @@ static OPJ_BOOL opj_j2k_read_ppm (
 		return OPJ_FALSE;
 	}
 	
-	l_cp->ppm_markers[l_Z_ppm].m_data = opj_malloc(p_header_size);
+	l_cp->ppm_markers[l_Z_ppm].m_data = (OPJ_BYTE *) opj_malloc(p_header_size);
 	if (l_cp->ppm_markers[l_Z_ppm].m_data == NULL) {
 		/* clean up to be done on l_cp destruction */
 		opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to read PPM marker\n");
@@ -3837,7 +3837,7 @@ static OPJ_BOOL opj_j2k_read_ppt (  opj_j2k_t *p_j2k,
 		return OPJ_FALSE;
 	}
 	
-	l_tcp->ppt_markers[l_Z_ppt].m_data = opj_malloc(p_header_size);
+	l_tcp->ppt_markers[l_Z_ppt].m_data = (OPJ_BYTE *) opj_malloc(p_header_size);
 	if (l_tcp->ppt_markers[l_Z_ppt].m_data == NULL) {
 		/* clean up to be done on l_tcp destruction */
 		opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to read PPT marker\n");
@@ -4404,7 +4404,7 @@ static OPJ_BOOL opj_j2k_read_sod (opj_j2k_t *p_j2k,
             }
             if (! *l_current_data) {
                 /* LH: oddly enough, in this path, l_tile_len!=0.
-                 * TODO: If this was consistant, we could simplify the code to only use realloc(), as realloc(0,...) default to malloc(0,...).
+                 * TODO: If this was consistent, we could simplify the code to only use realloc(), as realloc(0,...) default to malloc(0,...).
                  */
                 *l_current_data = (OPJ_BYTE*) opj_malloc(p_j2k->m_specific_param.m_decoder.m_sot_length);
             }
@@ -5638,7 +5638,7 @@ static OPJ_BOOL opj_j2k_write_mco(     opj_j2k_t *p_j2k,
         opj_write_bytes(l_current_data,l_mco_size-2,2);                 /* Lmco */
         l_current_data += 2;
 
-        opj_write_bytes(l_current_data,l_tcp->m_nb_mcc_records,1);      /* Nmco : only one tranform stage*/
+        opj_write_bytes(l_current_data,l_tcp->m_nb_mcc_records,1);      /* Nmco : only one transform stage*/
         ++l_current_data;
 
         l_mcc_record = l_tcp->m_mcc_records;
@@ -5690,7 +5690,7 @@ static OPJ_BOOL opj_j2k_read_mco (      opj_j2k_t *p_j2k,
                 return OPJ_FALSE;
         }
 
-        opj_read_bytes(p_header_data,&l_nb_stages,1);                           /* Nmco : only one tranform stage*/
+        opj_read_bytes(p_header_data,&l_nb_stages,1);                           /* Nmco : only one transform stage*/
         ++p_header_data;
 
         if (l_nb_stages > 1) {
@@ -7737,6 +7737,11 @@ static OPJ_BOOL opj_j2k_need_nb_tile_parts_correction(opj_stream_private_t *p_st
 	/* initialize to no correction needed */
 	*p_correction_needed = OPJ_FALSE;
 	
+	if (!opj_stream_has_seek(p_stream)) {
+		/* We can't do much in this case, seek is needed */
+		return OPJ_TRUE;
+	}
+	
 	l_stream_pos_backup = opj_stream_tell(p_stream);
 	if (l_stream_pos_backup == -1) {
 		/* let's do nothing */
@@ -8658,8 +8663,10 @@ static opj_codestream_index_t* opj_j2k_create_cstr_index(void)
         cstr_index->marknum = 0;
         cstr_index->marker = (opj_marker_info_t*)
                         opj_calloc(cstr_index->maxmarknum, sizeof(opj_marker_info_t));
-        if (!cstr_index-> marker)
+        if (!cstr_index-> marker) {
+                opj_free(cstr_index);
                 return NULL;
+        }
 
         cstr_index->tile_index = NULL;
 
@@ -9817,14 +9824,14 @@ static OPJ_BOOL opj_j2k_decode_one_tile (       opj_j2k_t *p_j2k,
                                  *  so move to the last SOT read */
                                 if ( !(opj_stream_read_seek(p_stream, p_j2k->m_specific_param.m_decoder.m_last_sot_read_pos+2, p_manager)) ){
                                         opj_event_msg(p_manager, EVT_ERROR, "Problem with seek function\n");
-                        opj_free(l_current_data);
+                                        opj_free(l_current_data);
                                         return OPJ_FALSE;
                                 }
                         }
                         else{
                                 if ( !(opj_stream_read_seek(p_stream, p_j2k->cstr_index->tile_index[l_tile_no_to_dec].tp_index[0].start_pos+2, p_manager)) ) {
                                         opj_event_msg(p_manager, EVT_ERROR, "Problem with seek function\n");
-                        opj_free(l_current_data);
+                                        opj_free(l_current_data);
                                         return OPJ_FALSE;
                                 }
                         }
@@ -9882,6 +9889,7 @@ static OPJ_BOOL opj_j2k_decode_one_tile (       opj_j2k_t *p_j2k,
                         /* move into the codestream to the the first SOT (FIXME or not move?)*/
                         if (!(opj_stream_read_seek(p_stream, p_j2k->cstr_index->main_head_end + 2, p_manager) ) ) {
                                 opj_event_msg(p_manager, EVT_ERROR, "Problem with seek function\n");
+                                opj_free(l_current_data);
                                 return OPJ_FALSE;
                         }
                         break;
@@ -10147,11 +10155,15 @@ OPJ_BOOL opj_j2k_encode(opj_j2k_t * p_j2k,
                         /* now copy this data into the tile component */
                         if (! opj_tcd_copy_tile_data(p_j2k->m_tcd,l_current_data,l_current_tile_size)) {
 																opj_event_msg(p_manager, EVT_ERROR, "Size mismatch between tile data and sent data." );
+																opj_free(l_current_data);
 																return OPJ_FALSE;
                         }
                 }
 
                 if (! opj_j2k_post_write_tile (p_j2k,p_stream,p_manager)) {
+                        if (l_current_data) {
+                                opj_free(l_current_data);
+                        }
                         return OPJ_FALSE;
                 }
         }

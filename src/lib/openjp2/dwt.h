@@ -54,14 +54,14 @@ DWT.C are used by some function in TCD.C.
 /*@{*/
 /* ----------------------------------------------------------------------- */
 /**
-Forward 5-3 wavelet tranform in 2-D. 
+Forward 5-3 wavelet transform in 2-D.
 Apply a reversible DWT transform to a component of an image.
 @param tilec Tile component information (current tile)
 */
 OPJ_BOOL opj_dwt_encode(opj_tcd_tilecomp_t * tilec);
 
 /**
-Inverse 5-3 wavelet tranform in 2-D.
+Inverse 5-3 wavelet transform in 2-D.
 Apply a reversible inverse DWT transform to a component of an image.
 @param tilec Tile component information (current tile)
 @param numres Number of resolution levels to decode
