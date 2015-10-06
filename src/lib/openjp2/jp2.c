@@ -889,7 +889,7 @@ static OPJ_BOOL opj_jp2_check_color(opj_image_t *image, opj_jp2_color_t *color, 
 			}
 		}
 
-		pcol_usage = opj_calloc(nr_channels, sizeof(OPJ_BOOL));
+		pcol_usage = (OPJ_BOOL *) opj_calloc(nr_channels, sizeof(OPJ_BOOL));
 		if (!pcol_usage) {
 			opj_event_msg(p_manager, EVT_ERROR, "Unexpected OOM.\n");
 			return OPJ_FALSE;
