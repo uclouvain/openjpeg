@@ -290,7 +290,7 @@ int imagetotif(opj_image_t * image, const char *outfile)
 		TIFFClose(tif);
 		return 1;
 	}
-	buffer32s = malloc((OPJ_SIZE_T)width * numcomps * sizeof(OPJ_INT32));
+	buffer32s = (OPJ_INT32 *)malloc((OPJ_SIZE_T)width * numcomps * sizeof(OPJ_INT32));
 	if (buffer32s == NULL) {
 		_TIFFfree(buf);
 		TIFFClose(tif);
@@ -299,7 +299,7 @@ int imagetotif(opj_image_t * image, const char *outfile)
 	
 	for (i = 0; i < image->comps[0].h; ++i) {
 		cvtPxToCx(planes, buffer32s, (OPJ_SIZE_T)width, adjust);
-		cvt32sToTif(buffer32s, buf, (OPJ_SIZE_T)width * numcomps);
+		cvt32sToTif(buffer32s, (OPJ_BYTE *)buf, (OPJ_SIZE_T)width * numcomps);
 		(void)TIFFWriteEncodedStrip(tif, i, (void*)buf, strip_size);
 		planes[0] += width;
 		planes[1] += width;
@@ -590,7 +590,7 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
 		return NULL;
 	}
 	rowStride = ((OPJ_SIZE_T)w * tiSpp * tiBps + 7U) / 8U;
-	buffer32s = malloc((OPJ_SIZE_T)w * tiSpp * sizeof(OPJ_INT32));
+	buffer32s = (OPJ_INT32 *)malloc((OPJ_SIZE_T)w * tiSpp * sizeof(OPJ_INT32));
 	if (buffer32s == NULL) {
 		_TIFFfree(buf);
 		TIFFClose(tif);
