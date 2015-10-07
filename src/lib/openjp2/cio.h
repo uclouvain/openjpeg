@@ -81,6 +81,25 @@ typedef enum
 }
 opj_stream_flag ;
 
+#if defined(__cplusplus)
+
+static inline opj_stream_flag operator |=(opj_stream_flag a, opj_stream_flag b)
+{
+    return opj_stream_flag(int(a) | int(b));
+}
+
+static inline opj_stream_flag operator &=(opj_stream_flag a, opj_stream_flag b)
+{
+    return opj_stream_flag(int(a) & int(b));
+}
+
+static inline opj_stream_flag operator ~(opj_stream_flag a)
+{
+    return opj_stream_flag(~int(a));
+}
+
+#endif /* __cplusplus */
+
 /**
 Byte input-output stream.
 */
