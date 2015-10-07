@@ -70,16 +70,10 @@ The functions in CIO.C have for goal to realize a byte input / output process.
 #endif
 
 
-
-typedef enum
-{
-	opj_signed_sentinel		= -1, /* do not use in code */
-	opj_stream_e_output		= 0x1,
-	opj_stream_e_input		= 0x2,
-	opj_stream_e_end		= 0x4,
-	opj_stream_e_error		= 0x8
-}
-opj_stream_flag ;
+#define OPJ_STREAM_STATUS_OUTPUT  0x1U
+#define OPJ_STREAM_STATUS_INPUT   0x2U
+#define OPJ_STREAM_STATUS_END     0x4U
+#define OPJ_STREAM_STATUS_ERROR   0x8U
 
 /**
 Byte input-output stream.
@@ -162,8 +156,9 @@ typedef struct opj_stream_private
 
 	/**
 	 * Flags to tell the status of the stream.
+	 * Used with OPJ_STREAM_STATUS_* defines.
 	 */
-	opj_stream_flag m_status;
+	OPJ_UINT32 m_status;
 
 }
 opj_stream_private_t;
