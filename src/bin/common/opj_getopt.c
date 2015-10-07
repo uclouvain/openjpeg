@@ -66,7 +66,7 @@ void opj_reset_options_reading(void) {
 int opj_getopt(int nargc, char *const *nargv, const char *ostr) {
 #  define __progname nargv[0]
   static char *place = EMSG;	/* option letter processing */
-  char *oli = NULL;			/* option letter list index */
+  const char *oli = NULL;	/* option letter list index */
 
   if (opj_optreset || !*place) {	/* update scanning pointer */
     opj_optreset = 0;
@@ -125,7 +125,7 @@ int opj_getopt(int nargc, char *const *nargv, const char *ostr) {
 int opj_getopt_long(int argc, char * const argv[], const char *optstring,
 const opj_option_t *longopts, int totlen) {
 	static int lastidx,lastofs;
-	char *tmp;
+	const char *tmp;
 	int i,len;
 	char param = 1;
 
