@@ -211,7 +211,7 @@ opj_image_t *pngtoimage(const char *read_idf, opj_cparameters_t * params)
 	image->x1 = (OPJ_UINT32)(image->x0 + (width  - 1) * (OPJ_UINT32)params->subsampling_dx + 1 + image->x0);
 	image->y1 = (OPJ_UINT32)(image->y0 + (height - 1) * (OPJ_UINT32)params->subsampling_dy + 1 + image->y0);
 	
-	row32s = malloc((size_t)width * nr_comp * sizeof(OPJ_INT32));
+	row32s = (OPJ_INT32 *)malloc((size_t)width * nr_comp * sizeof(OPJ_INT32));
 	if(row32s == NULL) goto fin;
 	
 	/* Set alpha channel */
