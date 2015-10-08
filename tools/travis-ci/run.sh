@@ -7,6 +7,11 @@ set -o nounset   ## set -u : exit the script if you try to use an uninitialised 
 set -o errexit   ## set -e : exit the script if any statement returns a non-true return value
 set -o pipefail  ## Fail on error in pipe
 
+# ABI check is done by abi-check.sh
+if [ "${OPJ_CI_ABI_CHECK:-}" == "1" ]; then
+	exit 0
+fi
+
 # Set-up some variables
 if [ "${OPJ_CI_BUILD_CONFIGURATION:-}" == "" ]; then
 	export OPJ_CI_BUILD_CONFIGURATION=Release #default
@@ -207,8 +212,6 @@ New/unknown test failure found!!!
 			OPJ_CI_RESULT=1
 		fi
 	fi
-
-
 fi
 
 exit ${OPJ_CI_RESULT}
