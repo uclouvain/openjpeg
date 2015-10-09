@@ -2,7 +2,6 @@
   "Name":           "openjpeg",
   "Title":          "OpenJPEG",
   "SourceUrl":      "https://github.com/uclouvain/openjpeg/tags",
-  "Git":            "https://github.com/uclouvain/openjpeg.git",
   "Maintainer":     "Antonin D.",
   "MaintainerUrl":  "http://www.openjpeg.org/",
   "Package":        "version.",
@@ -11,7 +10,7 @@
   {
     "Number":         "current",
     "Installed":      "installed/openjpeg/current",
-    "Source":         "@OPJ_SRC_DIR@",
+    "Source":         "src/openjpeg/current",
     "Changelog":      "On",
     "HeadersDiff":    "On",
     "PkgDiff":        "Off",
