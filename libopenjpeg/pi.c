@@ -340,12 +340,12 @@ static opj_bool pi_next_cprl(opj_pi_iterator_t * pi) {
 		pi->dx = 0;
 		pi->dy = 0;
 		for (resno = 0; resno < comp->numresolutions; resno++) {
-			int dx, dy;
+            int64 dx, dy;
 			res = &comp->resolutions[resno];
-			dx = comp->dx * (1 << (res->pdx + comp->numresolutions - 1 - resno));
-			dy = comp->dy * (1 << (res->pdy + comp->numresolutions - 1 - resno));
-			pi->dx = !pi->dx ? dx : int_min(pi->dx, dx);
-			pi->dy = !pi->dy ? dy : int_min(pi->dy, dy);
+            dx = comp->dx * (((int64) 1) << (res->pdx + comp->numresolutions - 1 - resno));
+            dy = comp->dy * (((int64) 1) << (res->pdy + comp->numresolutions - 1 - resno));
+            pi->dx = !pi->dx ? dx : pi->dx < dx ? pi->dx : dx;
+            pi->dy = !pi->dy ? dy : pi->dy < dy ? pi->dy : dy;
 		}
 		if (!pi->tp_on){
 			pi->poc.ty0 = pi->ty0;

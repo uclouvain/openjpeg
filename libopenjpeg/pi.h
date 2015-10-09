@@ -93,8 +93,8 @@ typedef struct opj_pi_iterator {
 	int numcomps;
 	/** Components*/
 	opj_pi_comp_t *comps;
-	int tx0, ty0, tx1, ty1;
-	int x, y, dx, dy;
+    int tx0, ty0, tx1, ty1;
+    int64 x, y, dx, dy;
 } opj_pi_iterator_t;
 
 /** @name Exported functions */
