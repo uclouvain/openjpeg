@@ -50,6 +50,7 @@ set(OPENJPEG_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/opj_codec.h
   ${CMAKE_CURRENT_SOURCE_DIR}/opj_includes.h
   ${CMAKE_CURRENT_SOURCE_DIR}/opj_intmath.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/opj_malloc.c
   ${CMAKE_CURRENT_SOURCE_DIR}/opj_malloc.h
   ${CMAKE_CURRENT_SOURCE_DIR}/opj_stdint.h
 )

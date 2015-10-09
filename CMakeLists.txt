@@ -225,6 +225,20 @@ CHECK_INCLUDE_FILE("unistd.h"       HAVE_UNISTD_H)
 include(TestLargeFiles)
 OPJ_TEST_LARGE_FILES(OPJ_HAVE_LARGEFILES)
 
+include(CheckIncludeFiles)
+check_include_files(malloc.h HAVE_MALLOC_H)
+include(CheckSymbolExists)
+# aligned_alloc
+set(CMAKE_REQUIRED_FLAGS "-std=c11")
+check_symbol_exists(aligned_alloc stdlib.h HAVE_ALIGNED_ALLOC)
+unset(CMAKE_REQUIRED_FLAGS)
+# _aligned_alloc https://msdn.microsoft.com/en-us/library/8z34s9c6.aspx
+check_symbol_exists(_aligned_malloc malloc.h HAVE__ALIGNED_MALLOC)
+# memalign
+check_symbol_exists(memalign malloc.h HAVE_MEMALIGN)
+# posix_memalign
+check_symbol_exists(posix_memalign stdlib.h HAVE_POSIX_MEMALIGN)
+
 #-----------------------------------------------------------------------------
 # Build Library
 if(BUILD_JPIP_SERVER)
