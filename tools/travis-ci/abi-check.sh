@@ -71,6 +71,4 @@ rm -rf src installed
 if [ ${OPJ_UPLOAD_ABI_REPORT} -eq 1 ]; then
 	echo "TODO: Where to upload the report"
 fi
-cat build_logs/openjpeg/current/cmake
-cmake -version
 exit $EXIT_CODE
