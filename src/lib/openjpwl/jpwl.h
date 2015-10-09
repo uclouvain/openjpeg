@@ -357,7 +357,7 @@ opj_bool jpwl_correct(opj_j2k_t *j2k);
 @param post_len length of post_data
 @param conn is a pointer to the length of all connected (packed) EPBs
 @param L4_bufp is a pointer to the buffer pointer of redundancy data
-@return returns true if correction could be succesfully performed
+@return returns true if correction could be successfully performed
 */
 opj_bool jpwl_epb_correct(opj_j2k_t *j2k, unsigned char *buffer, int type, int pre_len, int post_len, int *conn,
 					  unsigned char **L4_bufp);

@@ -63,14 +63,14 @@ typedef struct opj_wtfilt {
 /*@{*/
 /* ----------------------------------------------------------------------- */
 /**
-Forward 5-3 wavelet tranform in 3-D. 
+Forward 5-3 wavelet transform in 3-D.
 Apply a reversible DWT transform to a component of an volume.
 @param tilec Tile component information (current tile)
 @param dwtid Number of identification of wavelet kernel(s) used in DWT in each direction
 */
 void dwt_encode(opj_tcd_tilecomp_t * tilec, int dwtid[3]);
 /**
-Inverse 5-3 wavelet tranform in 3-D.
+Inverse 5-3 wavelet transform in 3-D.
 Apply a reversible inverse DWT transform to a component of an volume.
 @param tilec Tile component information (current tile)
 @param stops Number of decoded resolution levels in each dimension

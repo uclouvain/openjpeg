@@ -296,7 +296,7 @@ OPJ_UINT32 opj_tcd_get_decoded_tile_size (opj_tcd_t *p_tcd );
  * @param	p_data_written	pointer to an int that is incremented by the number of bytes really written on p_dest
  * @param	p_len			Maximum length of the destination buffer
  * @param	p_cstr_info		Codestream information structure
- * @return  true if the coding is successfull.
+ * @return  true if the coding is successful.
 */
 OPJ_BOOL opj_tcd_encode_tile(   opj_tcd_t *p_tcd,
 							    OPJ_UINT32 p_tile_no,

@@ -242,7 +242,7 @@
    * Substitute for real dirent structure.  Note that `d_name' field is a
    * true character array although we have it copied in the implementation
    * dependent data.  We could save some memory if we had declared `d_name'
-   * as a pointer refering the name within implementation dependent data.
+   * as a pointer referring the name within implementation dependent data.
    * We have not done that since some code may rely on sizeof(d_name) to be
    * something other than four.  Besides, directory entries are typically so
    * small that it takes virtually no time to copy them from place to place.
@@ -410,7 +410,7 @@ static DIR *opendir(const char *dirname)
  * capacity of d_name with different macros and some systems do not define
  * capacity at all (besides actual declaration of the field). If you really
  * need to find out storage capacity of d_name then you might want to try
- * NAME_MAX macro. The NAME_MAX is defined in POSIX standard althought
+ * NAME_MAX macro. The NAME_MAX is defined in POSIX standard although
  * there are many MS-DOS and MS-Windows implementations those do not define
  * it.  There are also systems that declare d_name as "char d_name[1]" and
  * then allocate suitable amount of memory at run-time.  Thanks to Alain
@@ -465,7 +465,7 @@ readdir (DIR *dirp)
     /* fill in entry and return that */
 #if defined(DIRENT_WIN32_INTERFACE)
     if (FindNextFile (dirp->search_handle, &dirp->current.data) == FALSE) {
-      /* Last file has been processed or an error occured */
+      /* Last file has been processed or an error occurred */
       FindClose (dirp->search_handle);
       dirp->search_handle = INVALID_HANDLE_VALUE;
       errno = ENOENT;

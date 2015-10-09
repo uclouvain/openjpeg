@@ -375,7 +375,7 @@ void xml_write_free_and_skip(FILE* xmlout, opj_mj2_t * movie) {
 }
 
 void xml_write_uuid(FILE* xmlout, opj_mj2_t * movie) {
-/* Univeral Unique IDs of 16 bytes.  */
+/* Universal Unique IDs of 16 bytes.  */
 #ifdef NOTYET
   /* NO-OP so far.  There can be zero or more instances of private uuid boxes in a file.
      This function supports the top level of the file, but uuid may be elsewhere [not yet supported].
@@ -962,7 +962,7 @@ int xml_out_frame(FILE* file, FILE* xmlout, mj2_sample_t *sample, unsigned int s
   fprintf(xmlout,      "      <JP2_Frame Num=\"%d\">\n", snum+1);
   fprintf(xmlout,      "        <MainHeader>\n");
   /* There can be multiple codestreams; a particular image is entirely within a single codestream */
-  /* TO DO:  A frame can be represented by two I-guess-contigious codestreams if its interleaved. */
+  /* TO DO:  A frame can be represented by two I-guess-contiguous codestreams if its interleaved. */
   fprintf(xmlout,      "          <StartOfCodestream Marker=\"SOC\" />\n");
   /* "cp" stands for "coding parameter"; "tcp" is tile coding parameters, "tccp" is tile-component coding parameters */
   xml_out_frame_siz(xmlout, img, cp); /* reqd in main */

@@ -57,6 +57,7 @@
 #include "index.h"
 
 #include "format_defs.h"
+#include "opj_string.h"
 
 typedef struct dircnt{
 	/** Buffer for holding images read from Directory*/
@@ -134,6 +135,7 @@ static int get_num_images(char *imgdirpath){
 			continue;
 		num_images++;
 	}
+	closedir(dir);
 	return num_images;
 }
 
@@ -160,6 +162,7 @@ static int load_images(dircnt_t *dirptr, char *imgdirpath){
 		strcpy(dirptr->filename[i],content->d_name);
 		i++;
 	}
+	closedir(dir);
 	return 0;	
 }
 
@@ -168,7 +171,7 @@ static int get_file_format(const char *filename) {
 	unsigned int i;
 	static const char *extension[] = {"pgx", "pnm", "pgm", "ppm", "bmp","tif", "raw", "tga", "png", "j2k", "jp2", "jpt", "j2c", "jpc"  };
 	static const int format[] = { PGX_DFMT, PXM_DFMT, PXM_DFMT, PXM_DFMT, BMP_DFMT, TIF_DFMT, RAW_DFMT, TGA_DFMT, PNG_DFMT, J2K_CFMT, JP2_CFMT, JPT_CFMT, J2K_CFMT, J2K_CFMT };
-	char * ext = strrchr(filename, '.');
+	const char *ext = strrchr(filename, '.');
 	if (ext == NULL)
 		return -1;
 	ext++;
@@ -194,7 +197,9 @@ static char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_d
 	if (parameters->decod_format == -1)
 		return 1;
 	sprintf(infilename,"%s/%s",img_fol->imgdirpath,image_filename);
-	strncpy(parameters->infile, infilename, sizeof(infilename));
+	if (opj_strcpy_s(parameters->infile, sizeof(parameters->infile), infilename) != 0) {
+		return 1;
+	}
 
 	/*Set output file*/
 	strcpy(temp_ofname,strtok(image_filename,"."));
@@ -204,7 +209,9 @@ static char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_d
 	}
 	if(img_fol->set_out_format==1){
 		sprintf(outfilename,"%s/%s.%s",img_fol->imgdirpath,temp_ofname,img_fol->out_format);
-		strncpy(parameters->outfile, outfilename, sizeof(outfilename));
+		if (opj_strcpy_s(parameters->outfile, sizeof(parameters->outfile), outfilename) != 0) {
+			return 1;
+		}
 	}
 	return 0;
 }
@@ -301,7 +308,10 @@ static int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *param
                             infile);
                     return 1;
 				}
-				strncpy(parameters->infile, infile, sizeof(parameters->infile)-1);
+				if (opj_strcpy_s(parameters->infile, sizeof(parameters->infile), infile) != 0) {
+					fprintf(stderr, "[ERROR] Path is too long\n");
+					return 1;
+				}
 			}
 			break;
 
@@ -309,8 +319,10 @@ static int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *param
 
 			case 'o':     /* output file */
 			{
-			  char *outfile = opj_optarg;
-			  strncpy(parameters->outfile, outfile, sizeof(parameters->outfile)-1);
+				if (opj_strcpy_s(parameters->outfile, sizeof(parameters->outfile), opj_optarg) != 0) {
+					fprintf(stderr, "[ERROR] Path is too long\n");
+					return 1;
+				}
 			}
 			break;
 				

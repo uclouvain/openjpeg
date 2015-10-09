@@ -69,6 +69,7 @@
 #include "index.h"
 
 #include "format_defs.h"
+#include "opj_string.h"
 
 typedef struct dircnt{
     /** Buffer for holding images read from Directory*/
@@ -391,6 +392,7 @@ static unsigned int get_num_images(char *imgdirpath){
             continue;
         num_images++;
     }
+    closedir(dir);
     return num_images;
 }
 
@@ -416,6 +418,7 @@ static int load_images(dircnt_t *dirptr, char *imgdirpath){
         strcpy(dirptr->filename[i],content->d_name);
         i++;
     }
+	closedir(dir);
     return 0;
 }
 
@@ -454,8 +457,10 @@ static char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_c
     if (parameters->decod_format == -1)
         return 1;
     sprintf(infilename,"%s/%s",img_fol->imgdirpath,image_filename);
-    strncpy(parameters->infile, infilename, sizeof(infilename));
-
+    if (opj_strcpy_s(parameters->infile, sizeof(parameters->infile), infilename) != 0) {
+        return 1;
+    }
+	
     /*Set output file*/
     strcpy(temp_ofname,get_file_name(image_filename));
     while((temp_p = strtok(NULL,".")) != NULL){
@@ -464,7 +469,9 @@ static char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_c
     }
     if(img_fol->set_out_format==1){
         sprintf(outfilename,"%s/%s.%s",img_fol->imgdirpath,temp_ofname,img_fol->out_format);
-        strncpy(parameters->outfile, outfilename, sizeof(outfilename));
+        if (opj_strcpy_s(parameters->outfile, sizeof(parameters->outfile), outfilename) != 0) {
+            return 1;
+        }
     }
     return 0;
 }
@@ -472,7 +479,7 @@ static char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_c
 /* ------------------------------------------------------------------------------------ */
 
 static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
-                                 img_fol_t *img_fol, raw_cparameters_t *raw_cp, char *indexfilename) {
+                                 img_fol_t *img_fol, raw_cparameters_t *raw_cp, char *indexfilename, size_t indexfilename_size) {
     OPJ_UINT32 i, j;
     int totlen, c;
     opj_option_t long_option[]={
@@ -526,7 +533,9 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
                         infile);
                 return 1;
             }
-            strncpy(parameters->infile, infile, sizeof(parameters->infile)-1);
+            if (opj_strcpy_s(parameters->infile, sizeof(parameters->infile), infile) != 0) {
+                return 1;
+            }
         }
             break;
 
@@ -544,7 +553,9 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
                 fprintf(stderr, "Unknown output format image %s [only *.j2k, *.j2c or *.jp2]!! \n", outfile);
                 return 1;
             }
-            strncpy(parameters->outfile, outfile, sizeof(parameters->outfile)-1);
+            if (opj_strcpy_s(parameters->outfile, sizeof(parameters->outfile), outfile) != 0) {
+                return 1;
+            }
         }
             break;
 
@@ -610,6 +621,9 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
                 substr2++; /* skip '@' character */
             }
             substr1 = (char*) malloc((len+1)*sizeof(char));
+            if (substr1 == NULL) {
+                return 1;
+            }
             memcpy(substr1,opj_optarg,len);
             substr1[len] = '\0';
             if (sscanf(substr1, "%d,%d,%d,%d,%c", &width, &height, &ncomp, &bitdepth, &signo) == 5) {
@@ -661,7 +675,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
                     }
                 }
             }
-            if (substr1) free(substr1);
+            free(substr1);
             if (wrong) {
                 fprintf(stderr,"\nError: invalid raw image parameters\n");
                 fprintf(stderr,"Please use the Format option -F:\n");
@@ -807,8 +821,9 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
 
         case 'x':			/* creation of index file */
         {
-            char *index = opj_optarg;
-            strncpy(indexfilename, index, OPJ_PATH_LEN);
+            if (opj_strcpy_s(indexfilename, indexfilename_size, opj_optarg) != 0) {
+                return 1;
+            }
             /* FIXME ADE INDEX >> */
             fprintf(stderr,
                     "[WARNING] Index file generation is currently broken.\n"
@@ -1058,9 +1073,16 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
             lStrLen = (size_t)ftell(lFile);
             fseek(lFile,0,SEEK_SET);
             lMatrix = (char *) malloc(lStrLen + 1);
+            if (lMatrix == NULL) {
+                fclose(lFile);
+                return 1;
+            }
             lStrFread = fread(lMatrix, 1, lStrLen, lFile);
             fclose(lFile);
-            if( lStrLen != lStrFread ) return 1;
+            if( lStrLen != lStrFread ) {
+                free(lMatrix);
+                return 1;
+            }
 
             lMatrix[lStrLen] = 0;
             lCurrentPtr = lMatrix;
@@ -1080,6 +1102,10 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
             lMctComp = lNbComp * lNbComp;
             lTotalComp = lMctComp + lNbComp;
             lSpace = (float *) malloc((size_t)lTotalComp * sizeof(float));
+            if(lSpace == NULL) {
+                free(lMatrix);
+                return 1;
+            }
             lCurrentDoublePtr = lSpace;
             for (i2=0;i2<lMctComp;++i2) {
                 lStrLen = strlen(lCurrentPtr) + 1;
@@ -1117,7 +1143,9 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
 
             /* we need to enable indexing */
             if (!indexfilename || !*indexfilename) {
-                strncpy(indexfilename, JPWL_PRIVATEINDEX_NAME, OPJ_PATH_LEN);
+                if (opj_strcpy_s(indexfilename, indexfilename_size, JPWL_PRIVATEINDEX_NAME) != 0) {
+                    return 1;
+                }
             }
 
             /* search for different protection methods */
@@ -1606,7 +1634,7 @@ int main(int argc, char **argv) {
 
     /* parse input and get user encoding parameters */
     parameters.tcp_mct = (char) 255; /* This will be set later according to the input image or the provided option */
-    if(parse_cmdline_encoder(argc, argv, &parameters,&img_fol, &raw_cp, indexfilename) == 1) {
+    if(parse_cmdline_encoder(argc, argv, &parameters,&img_fol, &raw_cp, indexfilename, sizeof(indexfilename)) == 1) {
         return 1;
     }
 

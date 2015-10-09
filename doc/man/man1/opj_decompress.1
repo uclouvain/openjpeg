@@ -29,7 +29,7 @@
 .SP
 .fi
 ..
-.TH opj_decompress 1 "Version 1.4.0" "opj_decompress" "converts jpeg2000 files"
+.TH opj_decompress 1 "Version 2.1.1" "opj_decompress" "converts jpeg2000 files"
 .P
 .SH NAME
 opj_decompress - 
@@ -73,9 +73,19 @@ n is the maximum number of quality layers to decode. See LAYERS below)
 .B \-\^OutFor "ext"
 (extension for output files)
 .P
+.SH JPIP OPTIONS
+Options usable only if the library has been compiled with
+.B BUILD_JPIP
+.TP
+.B -jpip
+Embed index table box into the output JP2 file (compulsory for JPIP)
+.TP
+.B -TP R
+Partition a tile into tile parts of different resolution levels (compulsory for JPT-stream)
+.P
 .SH JPWL OPTIONS
 Options usable only if the library has been compiled with
-.B -DUSE_JPWL
+.B BUILD_JPWL
 .TP
 .B -W c\fR[=Nc] (Nc is the  number of expected components in the codestream; default:3)
 .TP
