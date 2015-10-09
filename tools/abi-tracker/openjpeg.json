@@ -2,6 +2,7 @@
   "Name":           "openjpeg",
   "Title":          "OpenJPEG",
   "SourceUrl":      "https://github.com/uclouvain/openjpeg/tags",
+  "Git":            "https://github.com/uclouvain/openjpeg.git",
   "Maintainer":     "Antonin D.",
   "MaintainerUrl":  "http://www.openjpeg.org/",
   "Package":        "version.",

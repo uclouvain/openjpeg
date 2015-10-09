@@ -44,16 +44,18 @@ export PATH=${PWD}/tools/wdiff/bin:$PATH
 wget -qO - https://tools.ietf.org/tools/rfcdiff/rfcdiff-1.42.tgz | tar -xz
 mv rfcdiff-1.42 ${PWD}/tools/rfcdiff
 export PATH=${PWD}/tools/rfcdiff:$PATH
-wget -qO - https://github.com/lvc/installer/archive/0.2.tar.gz | tar -xz
+wget -qO - https://github.com/lvc/installer/archive/0.4.tar.gz | tar -xz
 mkdir ${PWD}/tools/abi-tracker
-make -C installer-0.2 install prefix=${PWD}/tools/abi-tracker target=abi-tracker
+make -C installer-0.4 install prefix=${PWD}/tools/abi-tracker target=abi-tracker
 export PATH=${PWD}/tools/abi-tracker/bin:$PATH
+
 mkdir tracker
-cp -f ${OPJ_SOURCE_DIR}/tools/abi-tracker/openjpeg.json ./tracker/openjpeg.json
 cd tracker
 
 # Let's create all we need
+grep -v Git ${OPJ_SOURCE_DIR}/tools/abi-tracker/openjpeg.json > ./openjpeg.json
 abi-monitor ${OPJ_LIMIT_ABI_BUILDS} -get openjpeg.json
+cp -f ${OPJ_SOURCE_DIR}/tools/abi-tracker/openjpeg.json ./openjpeg.json
 cp -rf ${OPJ_SOURCE_DIR} src/openjpeg/current
 abi-monitor ${OPJ_LIMIT_ABI_BUILDS} -build openjpeg.json
 abi-tracker -build openjpeg.json
