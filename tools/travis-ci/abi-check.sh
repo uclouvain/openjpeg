@@ -34,10 +34,10 @@ mkdir tools
 # Travis doesn't allow package wdiff...
 wget -qO - http://mirrors.kernel.org/gnu/wdiff/wdiff-latest.tar.gz | tar -xz
 cd wdiff-*
-./configure --prefix=${HOME}/abi-check/tools/wdiff
-make
-make check
-make install
+./configure --prefix=${HOME}/abi-check/tools/wdiff &> /dev/null
+make &> /dev/null
+make check &> /dev/null
+make install &> /dev/null
 cd ..
 export PATH=${PWD}/tools/wdiff/bin:$PATH
 
