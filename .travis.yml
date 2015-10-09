@@ -2,13 +2,16 @@ language: c
 os:
   - linux
 compiler:
-  - gcc
+  - gcc-4.8
 env:
   - OPJ_CI_ABI_CHECK=1
   
 addons:
   apt:
+    sources:
+      - ubuntu-toolchain-r-test
     packages:
+      - gcc-4.8
       - gcc-multilib
       - gcc-mingw-w64-base
       - binutils-mingw-w64-i686
