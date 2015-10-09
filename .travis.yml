@@ -18,7 +18,7 @@ addons:
       - gcc-mingw-w64
       - libelf-dev
       - elfutils
-      - wdiff
+      - texinfo
       - exuberant-ctags
 
 install:

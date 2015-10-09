@@ -31,13 +31,23 @@ mkdir ${HOME}/abi-check
 cd ${HOME}/abi-check
 # Let's get tools not available with apt
 mkdir tools
+# Travis doesn't allow package wdiff...
+wget -qO - http://mirrors.kernel.org/gnu/wdiff/wdiff-latest.tar.gz | tar -xz
+cd wdiff-*
+./configure --prefix=${HOME}/abi-check/tools/wdiff
+make
+make check
+make install
+cd ..
+export PATH=${PWD}/tools/wdiff/bin:$PATH
+
 wget -qO - https://tools.ietf.org/tools/rfcdiff/rfcdiff-1.42.tgz | tar -xz
 mv rfcdiff-1.42 ${PWD}/tools/rfcdiff
+export PATH=${PWD}/tools/rfcdiff:$PATH
 wget -qO - https://github.com/lvc/installer/archive/0.2.tar.gz | tar -xz
 mkdir ${PWD}/tools/abi-tracker
 make -C installer-0.2 install prefix=${PWD}/tools/abi-tracker target=abi-tracker
-rm -rf installer-0.2
-export PATH=${PWD}/tools/rfcdiff:${PWD}/tools/abi-tracker/bin:$PATH
+export PATH=${PWD}/tools/abi-tracker/bin:$PATH
 mkdir tracker
 cp -f ${OPJ_SOURCE_DIR}/tools/abi-tracker/openjpeg.json ./tracker/openjpeg.json
 cd tracker
