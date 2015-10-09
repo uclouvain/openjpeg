@@ -626,7 +626,7 @@ void opj_tcd_destroy(opj_tcd_t *tcd) {
 OPJ_BOOL opj_alloc_tile_component_data(opj_tcd_tilecomp_t *l_tilec)
 {
 	if ((l_tilec->data == 00) || ((l_tilec->data_size_needed > l_tilec->data_size) && (l_tilec->ownsData == OPJ_FALSE))) {
-		l_tilec->data = (OPJ_INT32 *) opj_aligned_malloc(l_tilec->data_size_needed);
+		l_tilec->data = (OPJ_INT32 *) opj_malloc(l_tilec->data_size_needed);
 		if (! l_tilec->data ) {
 			return OPJ_FALSE;
 		}
