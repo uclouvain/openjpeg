@@ -15,7 +15,7 @@ endif()
 
 if("$ENV{TRAVIS_OS_NAME}" STREQUAL "windows")
 	set( CTEST_CMAKE_GENERATOR "NMake Makefiles")
-	SET( CTEST_BUILD_COMMAND   "nmake" )
+	set( CTEST_BUILD_COMMAND   "nmake" )
 else()
 	set( CTEST_CMAKE_GENERATOR "Unix Makefiles")   # Always makefile in travis-ci environment
 endif()

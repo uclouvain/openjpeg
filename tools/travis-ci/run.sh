@@ -163,7 +163,7 @@ export OPJ_BINARY_DIR=$(opjpath -m ${PWD}/build)
 export OPJ_BUILD_CONFIGURATION=${OPJ_CI_BUILD_CONFIGURATION}
 export OPJ_DO_SUBMIT=${OPJ_DO_SUBMIT}
 
-ctest -S ${OPJ_SOURCE_DIR}/tools/ctest_scripts/travis-ci.cmake -V || true
+ctest -S ${OPJ_SOURCE_DIR}/tools/ctest_scripts/travis-ci.cmake -VV || true
 # ctest will exit with various error codes depending on version.
 # ignore ctest exit code & parse this ourselves
 #set +x
