@@ -174,7 +174,7 @@ echo "
 Parsing logs for failures
 "
 OPJ_CI_RESULT=0
-
+ls -l .
 ls -l build
 ls -l build/Testing
 

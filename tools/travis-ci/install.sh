@@ -2,6 +2,20 @@
 
 # This script executes the install step when running under travis-ci
 
+#if cygwin, check path
+case ${MACHTYPE} in
+	*cygwin*) OPJ_CI_IS_CYGWIN=1;;
+	*) ;;
+esac
+
+if [ "${OPJ_CI_IS_CYGWIN:-}" == "1" ]; then
+	# Hack for appveyor
+	if ! which wget; then
+		# PATH is not yet set up
+		export PATH=$PATH:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+	fi
+fi
+
 # Set-up some error handling
 set -o nounset   ## set -u : exit the script if you try to use an uninitialised variable
 set -o errexit   ## set -e : exit the script if any statement returns a non-true return value
@@ -55,7 +69,7 @@ if [ "${OPJ_CI_SKIP_TESTS:-}" != "1" ]; then
 	# We need jpylyzer for the test suite
 	echo "Retrieving jpylyzer"
 	if [ "${APPVEYOR:-}" == "True" ]; then
-		curl -o jpylyzer_1.14.2_win32.zip -L http://dl.bintray.com/openplanets/opf-windows/jpylyzer_1.14.2_win32.zip
+		wget --local-encoding=UTF-8 -q http://dl.bintray.com/openplanets/opf-windows/jpylyzer_1.14.2_win32.zip
 		mkdir jpylyzer
 		cd jpylyzer
 		cmake -E tar -xf ../jpylyzer_1.14.2_win32.zip
@@ -93,7 +107,7 @@ if [ "${OPJ_CI_SKIP_TESTS:-}" != "1" ]; then
 			install_name_tool -change /usr/local/lib/libkdu_v77R.dylib ${PWD}/libkdu_v77R.dylib kdu_compress
 			install_name_tool -change /usr/local/lib/libkdu_v77R.dylib ${PWD}/libkdu_v77R.dylib kdu_expand
 		elif [ "${APPVEYOR:-}" == "True" ]; then
-			curl -o KDU77_Demo_Apps_for_Win32_150710.msi_.zip -L http://kakadusoftware.com/wp-content/uploads/2014/06/KDU77_Demo_Apps_for_Win32_150710.msi_.zip
+			wget -q http://kakadusoftware.com/wp-content/uploads/2014/06/KDU77_Demo_Apps_for_Win32_150710.msi_.zip
 			cmake -E tar -xf KDU77_Demo_Apps_for_Win32_150710.msi_.zip
 			msiexec /i KDU77_Demo_Apps_for_Win32_150710.msi /quiet /qn /norestart
 		fi
