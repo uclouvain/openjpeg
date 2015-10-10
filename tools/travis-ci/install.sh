@@ -112,7 +112,7 @@ if [ "${OPJ_CI_SKIP_TESTS:-}" != "1" ]; then
 				cp -r "C:/Program Files/Kakadu" ./kdu
 			else
 				cp -r "C:/Program Files (x86)/Kakadu" ./kdu
-			endif
+			fi
 		fi
 	fi
 fi
