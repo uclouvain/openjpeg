@@ -67,7 +67,7 @@ static inline void *opj_aligned_realloc_n(void *ptr, size_t alignment, size_t si
   /* glibc doc states one can mixed aligned malloc with realloc */
   void *r_ptr = realloc( ptr, size );
   /* fast path */
-  if( (uintptr_t)r_ptr & alignment == 0 )
+  if( ((uintptr_t)r_ptr & alignment) == 0 )
     return r_ptr;
   /* this is non-trivial to implement a portable aligned realloc, so use a
    * simple approach where we do not need a function that return the size of an
