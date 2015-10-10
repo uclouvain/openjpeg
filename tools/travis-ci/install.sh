@@ -9,6 +9,7 @@ case ${MACHTYPE} in
 esac
 
 if [ "${OPJ_CI_IS_CYGWIN:-}" == "1" ]; then
+	# Hack for appveyor
 	if ! which wget; then
 		# PATH is not yet set up
 		export PATH=$PATH:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
@@ -67,9 +68,15 @@ if [ "${OPJ_CI_SKIP_TESTS:-}" != "1" ]; then
 
 	# We need jpylyzer for the test suite
 	echo "Retrieving jpylyzer"
-	wget -qO - https://github.com/openpreserve/jpylyzer/archive/1.14.2.tar.gz | tar -xz
-	mv jpylyzer-1.14.2 jpylyzer
-	chmod +x jpylyzer/jpylyzer/jpylyzer.py
+	if [ "${APPVEYOR:-}" == "True" ]; then
+		wget -q http://dl.bintray.com/openplanets/opf-windows/jpylyzer_1.14.2_win32.zip
+		cmake -E tar -xf jpylyzer_1.14.2_win32.zip
+		mv jpylyzer_1.14.2_win32 jpylyzer
+	else
+		wget -qO - https://github.com/openpreserve/jpylyzer/archive/1.14.2.tar.gz | tar -xz
+		mv jpylyzer-1.14.2/jpylyzer ./
+		chmod +x jpylyzer/jpylyzer.py
+	fi
 
 	# When OPJ_NONCOMMERCIAL=1, kakadu trial binaries are used for testing. Here's the copyright notice from kakadu:
 	# Copyright is owned by NewSouth Innovations Pty Limited, commercial arm of the UNSW Australia in Sydney.
