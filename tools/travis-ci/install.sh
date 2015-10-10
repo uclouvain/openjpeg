@@ -9,11 +9,8 @@ case ${MACHTYPE} in
 esac
 
 if [ "${OPJ_CI_IS_CYGWIN:-}" == "1" ]; then
-	# Hack for appveyor
-	if ! which wget; then
-		# PATH is not yet set up
-		export PATH=$PATH:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
-	fi
+	# PATH is not yet set up
+	export PATH=$PATH:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
 fi
 
 # Set-up some error handling
@@ -111,7 +108,11 @@ if [ "${OPJ_CI_SKIP_TESTS:-}" != "1" ]; then
 			wget -q http://kakadusoftware.com/wp-content/uploads/2014/06/KDU77_Demo_Apps_for_Win32_150710.msi_.zip
 			cmake -E tar -xf KDU77_Demo_Apps_for_Win32_150710.msi_.zip
 			msiexec /i KDU77_Demo_Apps_for_Win32_150710.msi /quiet /qn /norestart
-			cp -r "C:/Program Files (x86)/Kakadu" ./kdu
+			if [ -d "C:/Program Files/Kakadu" ]; then
+				cp -r "C:/Program Files/Kakadu" ./kdu
+			else
+				cp -r "C:/Program Files (x86)/Kakadu" ./kdu
+			endif
 		fi
 	fi
 fi
