@@ -2,6 +2,19 @@
 
 # This script executes the install step when running under travis-ci
 
+#if cygwin, check path
+case ${MACHTYPE} in
+	*cygwin*) OPJ_CI_IS_CYGWIN=1;;
+	*) ;;
+esac
+
+if [ "${OPJ_CI_IS_CYGWIN:-}" == "1" ]; then
+	if ! which which; then
+		# PATH is not yet set up
+		export PATH=$PATH:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+	fi
+fi
+
 # Set-up some error handling
 set -o nounset   ## set -u : exit the script if you try to use an uninitialised variable
 set -o errexit   ## set -e : exit the script if any statement returns a non-true return value
@@ -36,10 +49,14 @@ if [ "${OPJ_CI_SKIP_TESTS:-}" != "1" ]; then
 	OPJ_SOURCE_DIR=$(cd $(dirname $0)/../.. && pwd)
 
 	# We need test data
-	if [ "${TRAVIS_BRANCH:-}" == "" ]; then
-		TRAVIS_BRANCH=$(git -C ${OPJ_SOURCE_DIR} branch | grep '*' | tr -d '*[[:blank:]]') #default to same branch as we're setting up
+	if [ "${TRAVIS_BRANCH:-}" != "" ]; then
+		OPJ_DATA_BRANCH=${TRAVIS_BRANCH}
+	elif [ "${APPVEYOR_REPO_BRANCH:-}" != "" ]; then
+		OPJ_DATA_BRANCH=${APPVEYOR_REPO_BRANCH}
+	else
+		OPJ_DATA_BRANCH=$(git -C ${OPJ_SOURCE_DIR} branch | grep '*' | tr -d '*[[:blank:]]') #default to same branch as we're setting up
 	fi
-	OPJ_DATA_HAS_BRANCH=$(git ls-remote --heads git://github.com/uclouvain/openjpeg-data.git ${TRAVIS_BRANCH} | wc -l)
+	OPJ_DATA_HAS_BRANCH=$(git ls-remote --heads git://github.com/uclouvain/openjpeg-data.git ${OPJ_DATA_BRANCH} | wc -l)
 	if [ ${OPJ_DATA_HAS_BRANCH} -ne 0 ]; then
 		OPJ_DATA_BRANCH=${TRAVIS_BRANCH}
 	else
@@ -80,6 +97,10 @@ if [ "${OPJ_CI_SKIP_TESTS:-}" != "1" ]; then
 			install_name_tool -id ${PWD}/libkdu_v77R.dylib libkdu_v77R.dylib 
 			install_name_tool -change /usr/local/lib/libkdu_v77R.dylib ${PWD}/libkdu_v77R.dylib kdu_compress
 			install_name_tool -change /usr/local/lib/libkdu_v77R.dylib ${PWD}/libkdu_v77R.dylib kdu_expand
+		elif [ "${APPVEYOR:-}" == "True" ]; then
+			wget -q http://kakadusoftware.com/wp-content/uploads/2014/06/KDU77_Demo_Apps_for_Win32_150710.msi_.zip
+			cmake -E tar -xf KDU77_Demo_Apps_for_Win32_150710.msi_.zip
+			msiexec /i KDU77_Demo_Apps_for_Win32_150710.msi /quiet /qn /norestart
 		fi
 	fi
 fi
