@@ -15,6 +15,7 @@ if [ "${OPJ_CI_IS_CYGWIN:-}" == "1" ]; then
 		export PATH=$PATH:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
 	fi
 fi
+export PATH=$(dirname ${BASH}):$PATH
 
 # Set-up some bash options
 set -o nounset   ## set -u : exit the script if you try to use an uninitialised variable
