@@ -45,6 +45,12 @@ if [ "${TRAVIS_REPO_SLUG:-}" != "" ]; then
 	if [ "${OPJ_OWNER}" == "uclouvain" ]; then
 		OPJ_DO_SUBMIT=1
 	fi
+elif [ "${APPVEYOR_REPO_NAME:-}" != "" ]; then
+	OPJ_OWNER=$(echo "${APPVEYOR_REPO_NAME}" | sed 's/\(^.*\)\/.*/\1/')
+	OPJ_SITE="${OPJ_OWNER}.appveyor.com"
+	if [ "${OPJ_OWNER}" == "uclouvain" ]; then
+		OPJ_DO_SUBMIT=1
+	fi
 else
 	OPJ_SITE="$(hostname)"
 fi
@@ -159,7 +165,7 @@ export OPJ_BINARY_DIR=$(opjpath -m ${PWD}/build)
 export OPJ_BUILD_CONFIGURATION=${OPJ_CI_BUILD_CONFIGURATION}
 export OPJ_DO_SUBMIT=${OPJ_DO_SUBMIT}
 
-ctest -S ${OPJ_SOURCE_DIR}/tools/ctest_scripts/travis-ci.cmake -VV || true
+ctest -S ${OPJ_SOURCE_DIR}/tools/ctest_scripts/travis-ci.cmake -V || true
 # ctest will exit with various error codes depending on version.
 # ignore ctest exit code & parse this ourselves
 set +x
