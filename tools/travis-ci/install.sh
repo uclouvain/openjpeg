@@ -69,7 +69,7 @@ if [ "${OPJ_CI_SKIP_TESTS:-}" != "1" ]; then
 	# We need jpylyzer for the test suite
 	echo "Retrieving jpylyzer"
 	if [ "${APPVEYOR:-}" == "True" ]; then
-		wget http://dl.bintray.com/openplanets/opf-windows/jpylyzer_1.14.2_win32.zip
+		wget --local-encoding=UTF-8 http://dl.bintray.com/openplanets/opf-windows/jpylyzer_1.14.2_win32.zip
 		cmake -E tar -xf jpylyzer_1.14.2_win32.zip
 		mv jpylyzer_1.14.2_win32 jpylyzer
 	else
