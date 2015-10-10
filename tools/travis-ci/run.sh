@@ -56,7 +56,7 @@ if [ "${TRAVIS_OS_NAME:-}" == "" ]; then
 			# default to gcc
 			export CC=gcc
 		fi
-	elif uname -s | grep -i CYGWIN_NT &> /dev/null; then
+	elif uname -s | grep -i CYGWIN &> /dev/null; then
 		TRAVIS_OS_NAME=windows
 	else
 		echo "Failed to guess OS"; exit 1
