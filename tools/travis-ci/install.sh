@@ -9,7 +9,7 @@ case ${MACHTYPE} in
 esac
 
 if [ "${OPJ_CI_IS_CYGWIN:-}" == "1" ]; then
-	if ! which which; then
+	if ! which wget; then
 		# PATH is not yet set up
 		export PATH=$PATH:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
 	fi
