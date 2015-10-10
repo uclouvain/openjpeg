@@ -156,6 +156,7 @@ set -x
 # travis-ci doesn't dump cmake version in system info, let's print it 
 cmake --version
 
+export TRAVIS_OS_NAME=${TRAVIS_OS_NAME}
 export OPJ_SITE=${OPJ_SITE}
 export OPJ_BUILDNAME=${OPJ_BUILDNAME}
 export OPJ_SOURCE_DIR=$(opjpath -m ${OPJ_SOURCE_DIR})
