@@ -8,13 +8,7 @@ case ${MACHTYPE} in
 	*) ;;
 esac
 
-if [ "${OPJ_CI_IS_CYGWIN:-}" == "1" ]; then
-	# Hack for appveyor
-	if ! which wget; then
-		# PATH is not yet set up
-		export PATH=$PATH:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
-	fi
-fi
+# Hack for appveyor to get GNU find in path before windows one.
 export PATH=$(dirname ${BASH}):$PATH
 
 # Set-up some bash options
@@ -168,7 +162,7 @@ export OPJ_DO_SUBMIT=${OPJ_DO_SUBMIT}
 ctest -S ${OPJ_SOURCE_DIR}/tools/ctest_scripts/travis-ci.cmake -VV || true
 # ctest will exit with various error codes depending on version.
 # ignore ctest exit code & parse this ourselves
-#set +x
+set +x
 
 # let's parse configure/build/tests for failure
 
@@ -176,8 +170,6 @@ echo "
 Parsing logs for failures
 "
 OPJ_CI_RESULT=0
-which find
-find build -path 'build/Testing/*'
 
 # 1st configure step
 OPJ_CONFIGURE_XML=$(find build -path 'build/Testing/*' -name 'Configure.xml')
