@@ -68,6 +68,7 @@ Allocate memory aligned to a 16 byte boundary
 @return Returns a void pointer to the allocated space, or NULL if there is insufficient memory available
 */
 void * opj_aligned_malloc(size_t size);
+void * opj_aligned_realloc(void *ptr, size_t size);
 void opj_aligned_free(void* ptr);
 
 /**

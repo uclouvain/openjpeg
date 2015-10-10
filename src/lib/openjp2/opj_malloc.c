@@ -32,10 +32,11 @@
 #include "opj_malloc.h"
 #include "opj_config_private.h"
 #include <stdlib.h>
+#include <string.h>
+#include <inttypes.h>
 
-static inline void *opj_aligned_alloc(size_t alignment, size_t size)
+static inline void *opj_aligned_alloc_n(size_t alignment, size_t size)
 {
-/* MacOSX / clang */
 #if defined(HAVE_POSIX_MEMALIGN)
   // aligned_alloc requires c11, restrict to posix_memalign for now. Quote:
   // This function was introduced in POSIX 1003.1d. Although this function is
@@ -59,12 +60,36 @@ static inline void *opj_aligned_alloc(size_t alignment, size_t size)
 #error missing aligned alloc function
 #endif
 }
-
+static inline void *opj_aligned_realloc_n(void *ptr, size_t alignment, size_t size)
+{
+/* no portable aligned realloc */
+#if defined(HAVE_POSIX_MEMALIGN) || defined(HAVE_MEMALIGN)
+  /* glibc doc states one can mixed aligned malloc with realloc */
+  void *r_ptr = realloc( ptr, size );
+  /* fast path */
+  if( (uintptr_t)r_ptr & alignment == 0 )
+    return r_ptr;
+  /* this is non-trivial to implement a portable aligned realloc, so use a
+   * simple approach where we do not need a function that return the size of an
+   * allocated array (eg. _msize on Windows, malloc_size on MacOS,
+   * malloc_usable_size on systems with glibc) */
+  void *a_ptr = opj_aligned_alloc_n(alignment, size);
+  /* memory may overlap, do not use memcpy */
+  memmove(a_ptr, r_ptr, size);
+  free( r_ptr );
+  return a_ptr;
+/* _MSC_VER */
+#elif defined(HAVE__ALIGNED_MALLOC)
+  return _aligned_realloc( ptr, size, alignment );
+#else
+/* TODO: _mm_malloc(x,y) */
+#error missing aligned realloc function
+#endif
+}
 void * opj_malloc(size_t size)
 {
   return malloc(size);
 }
-
 void * opj_calloc(size_t numOfElements, size_t sizeOfElements)
 {
   return calloc(numOfElements, sizeOfElements);
@@ -72,7 +97,11 @@ void * opj_calloc(size_t numOfElements, size_t sizeOfElements)
 
 void *opj_aligned_malloc(size_t size)
 {
-  return opj_aligned_alloc(16u,size);
+  return opj_aligned_alloc_n(16u,size);
+}
+void * opj_aligned_realloc(void *ptr, size_t size)
+{
+  return opj_aligned_realloc_n(ptr,16u,size);
 }
 
 void opj_aligned_free(void* ptr)
