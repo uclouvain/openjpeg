@@ -64,7 +64,7 @@ if [ "${OPJ_CI_SKIP_TESTS:-}" != "1" ]; then
 		OPJ_DATA_BRANCH=master #default to master
 	fi
 	echo "Cloning openjpeg-data from ${OPJ_DATA_BRANCH} branch"
-	#git clone --depth=1 --branch=${OPJ_DATA_BRANCH} git://github.com/uclouvain/openjpeg-data.git data
+	git clone --depth=1 --branch=${OPJ_DATA_BRANCH} git://github.com/uclouvain/openjpeg-data.git data
 
 	# We need jpylyzer for the test suite
 	echo "Retrieving jpylyzer"
