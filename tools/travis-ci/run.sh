@@ -175,6 +175,9 @@ Parsing logs for failures
 "
 OPJ_CI_RESULT=0
 
+ls -l build
+ls -l build/Testing
+
 # 1st configure step
 OPJ_CONFIGURE_XML=$(find build -path 'build/Testing/*' -name 'Configure.xml')
 if [ ! -f "${OPJ_CONFIGURE_XML}" ]; then
