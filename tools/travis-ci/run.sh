@@ -24,9 +24,9 @@ set -o pipefail  ## Fail on error in pipe
 function opjpath ()
 {
 	if [ "${OPJ_CI_IS_CYGWIN:-}" == "1" ]; then
-		cygpath -m "$1"
+		cygpath $1 "$2"
 	else
-		echo "$1"
+		echo "$2"
 	fi
 }
 
@@ -158,11 +158,11 @@ cmake --version
 
 export OPJ_SITE=${OPJ_SITE}
 export OPJ_BUILDNAME=${OPJ_BUILDNAME}
-export OPJ_SOURCE_DIR=${OPJ_SOURCE_DIR}
+export OPJ_SOURCE_DIR=$(opjpath -m ${OPJ_SOURCE_DIR})
 export OPJ_BUILD_CONFIGURATION=${OPJ_CI_BUILD_CONFIGURATION}
 export OPJ_DO_SUBMIT=${OPJ_DO_SUBMIT}
 
-ctest -S $(opjpath ${OPJ_SOURCE_DIR}/tools/ctest_scripts/travis-ci.cmake) -V || true
+ctest -S ${OPJ_SOURCE_DIR}/tools/ctest_scripts/travis-ci.cmake -V || true
 # ctest will exit with various error codes depending on version.
 # ignore ctest exit code & parse this ourselves
 set +x
@@ -217,11 +217,11 @@ if [ "${OPJ_CI_SKIP_TESTS:-}" != "1" ]; then
 			awk -F: '{ print $2 }' ${OPJ_FAILEDTEST_LOG} > failures.txt
 			while read FAILEDTEST; do
 				# Start with common errors
-				if grep -x "${FAILEDTEST}" ${OPJ_SOURCE_DIR}/tools/travis-ci/knownfailures-all.txt > /dev/null; then
+				if grep -x "${FAILEDTEST}" $(opjpath -u ${OPJ_SOURCE_DIR})/tools/travis-ci/knownfailures-all.txt > /dev/null; then
 					continue
 				fi
-				if [ -f ${OPJ_SOURCE_DIR}/tools/travis-ci/knownfailures-${OPJ_BUILDNAME_TEST}.txt ]; then
-					if grep -x "${FAILEDTEST}" ${OPJ_SOURCE_DIR}/tools/travis-ci/knownfailures-${OPJ_BUILDNAME_TEST}.txt > /dev/null; then
+				if [ -f $(opjpath -u ${OPJ_SOURCE_DIR})/tools/travis-ci/knownfailures-${OPJ_BUILDNAME_TEST}.txt ]; then
+					if grep -x "${FAILEDTEST}" $(opjpath -u ${OPJ_SOURCE_DIR})/tools/travis-ci/knownfailures-${OPJ_BUILDNAME_TEST}.txt > /dev/null; then
 						continue
 					fi
 				fi
