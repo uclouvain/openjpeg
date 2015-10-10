@@ -21,6 +21,15 @@ set -o nounset   ## set -u : exit the script if you try to use an uninitialised 
 set -o errexit   ## set -e : exit the script if any statement returns a non-true return value
 set -o pipefail  ## Fail on error in pipe
 
+function opjpath ()
+{
+	if [ "${OPJ_CI_IS_CYGWIN:-}" == "1" ]; then
+		cygpath -m "$1"
+	else
+		echo "$1"
+	fi
+}
+
 # ABI check is done by abi-check.sh
 if [ "${OPJ_CI_ABI_CHECK:-}" == "1" ]; then
 	exit 0
@@ -153,7 +162,7 @@ export OPJ_SOURCE_DIR=${OPJ_SOURCE_DIR}
 export OPJ_BUILD_CONFIGURATION=${OPJ_CI_BUILD_CONFIGURATION}
 export OPJ_DO_SUBMIT=${OPJ_DO_SUBMIT}
 
-ctest -S ${OPJ_SOURCE_DIR}/tools/ctest_scripts/travis-ci.cmake -V || true
+ctest -S $(opjpath ${OPJ_SOURCE_DIR}/tools/ctest_scripts/travis-ci.cmake) -V || true
 # ctest will exit with various error codes depending on version.
 # ignore ctest exit code & parse this ourselves
 set +x
