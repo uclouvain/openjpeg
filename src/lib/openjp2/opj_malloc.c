@@ -30,36 +30,34 @@
  */
 #define OPJ_SKIP_POISON
 #include "opj_malloc.h"
+#include "opj_config_private.h"
 #include <stdlib.h>
 
 static inline void *opj_aligned_alloc(size_t alignment, size_t size)
 {
-#ifndef HAVE_ALIGNED_ALLOC
-  /* older linux */
-#ifdef HAVE_MEMALIGN
-  assert( size % alignment == 0 );
-  return memalign( alignment, size );
-#endif /* HAVE_MEMALIGN */
-
-/* _MSC_VER */
-#ifdef HAVE__ALIGNED_MALLOC
-  return _aligned_malloc( alignment, size );
-#endif /* HAVE__ALIGNED_MALLOC */
-
 /* MacOSX / clang */
-#if defined(HAVE_POSIX_MEMALIGN) && !defined(HAVE_MEMALIGN)
+#if defined(HAVE_POSIX_MEMALIGN)
+  // aligned_alloc requires c11, restrict to posix_memalign for now. Quote:
+  // This function was introduced in POSIX 1003.1d. Although this function is
+  // superseded by aligned_alloc, it is more portable to older POSIX systems
+  // that do not support ISO C11.
   void* ptr;
   if (posix_memalign (&ptr, alignment, size))
   {
     ptr = NULL;
   }
   return ptr;
-#endif /* HAVE_POSIX_MEMALIGN */
-
-#else /* HAVE_ALIGNED_ALLOC */
-  return aligned_alloc( alignment, size );
-#endif /* HAVE_ALIGNED_ALLOC */
+  /* older linux */
+#elif defined(HAVE_MEMALIGN)
+  assert( size % alignment == 0 );
+  return memalign( alignment, size );
+/* _MSC_VER */
+#elif defined(HAVE__ALIGNED_MALLOC)
+  return _aligned_malloc( alignment, size );
+#else
 /* TODO: _mm_malloc(x,y) */
+#error missing aligned alloc function
+#endif
 }
 
 void * opj_malloc(size_t size)
@@ -74,7 +72,7 @@ void * opj_calloc(size_t numOfElements, size_t sizeOfElements)
 
 void *opj_aligned_malloc(size_t size)
 {
-  return opj_aligned_alloc(size,16);
+  return opj_aligned_alloc(16u,size);
 }
 
 void opj_aligned_free(void* ptr)
