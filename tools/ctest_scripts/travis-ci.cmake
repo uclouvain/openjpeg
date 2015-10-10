@@ -12,7 +12,13 @@ if($ENV{OPJ_BINARY_DIR})
 else()
 	set( CTEST_DASHBOARD_ROOT  "$ENV{PWD}/build" )
 endif()
-set( CTEST_CMAKE_GENERATOR "Unix Makefiles")   # Always makefile in travis-ci environment
+
+if("$ENV{TRAVIS_OS_NAME}" STREQUAL "windows")
+	set( CTEST_CMAKE_GENERATOR "NMake Makefiles")
+	SET( CTEST_BUILD_COMMAND   "nmake" )
+else()
+	set( CTEST_CMAKE_GENERATOR "Unix Makefiles")   # Always makefile in travis-ci environment
+endif()
 
 if ("$ENV{OPJ_BUILD_CONFIGURATION}" STREQUAL "")
   set( CTEST_BUILD_CONFIGURATION "Release")

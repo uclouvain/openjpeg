@@ -107,6 +107,7 @@ if [ "${OPJ_CI_SKIP_TESTS:-}" != "1" ]; then
 			install_name_tool -change /usr/local/lib/libkdu_v77R.dylib ${PWD}/libkdu_v77R.dylib kdu_compress
 			install_name_tool -change /usr/local/lib/libkdu_v77R.dylib ${PWD}/libkdu_v77R.dylib kdu_expand
 		elif [ "${APPVEYOR:-}" == "True" ]; then
+			echo "Retrieving Kakadu"
 			wget -q http://kakadusoftware.com/wp-content/uploads/2014/06/KDU77_Demo_Apps_for_Win32_150710.msi_.zip
 			cmake -E tar -xf KDU77_Demo_Apps_for_Win32_150710.msi_.zip
 			msiexec /i KDU77_Demo_Apps_for_Win32_150710.msi /quiet /qn /norestart
