@@ -16,9 +16,11 @@ endif()
 if("$ENV{TRAVIS_OS_NAME}" STREQUAL "windows")
 	set( CTEST_CMAKE_GENERATOR "NMake Makefiles")
 	set( CTEST_BUILD_COMMAND   "nmake" )
+	set( JPYLYZER_EXT          "exe"  )
 else()
 	set( CTEST_CMAKE_GENERATOR "Unix Makefiles")   # Always makefile in travis-ci environment
 	set( CCFLAGS_WARNING "-Wall -Wextra -Wconversion -Wno-unused-parameter -Wdeclaration-after-statement")
+	set( JPYLYZER_EXT          "py"  )
 endif()
 
 if ("$ENV{OPJ_BUILD_CONFIGURATION}" STREQUAL "")
@@ -104,7 +106,7 @@ BUILD_THIRDPARTY:BOOL=TRUE
 OPJ_DATA_ROOT:PATH=$ENV{PWD}/data
 
 # jpylyzer is available with on GitHub: https://github.com/openpreserve/jpylyzer  
-JPYLYZER_EXECUTABLE=$ENV{PWD}/jpylyzer/jpylyzer/jpylyzer.py
+JPYLYZER_EXECUTABLE=$ENV{PWD}/jpylyzer/jpylyzer.${JPYLYZER_EXT}
 
 " )
 
