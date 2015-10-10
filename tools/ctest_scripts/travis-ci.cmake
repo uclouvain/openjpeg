@@ -7,7 +7,11 @@
 cmake_minimum_required(VERSION 2.8)
 
 set( ENV{LANG} en_US.UTF-8)
-set( CTEST_DASHBOARD_ROOT  "$ENV{PWD}/build" )
+if($ENV{OPJ_BINARY_DIR})
+	set( CTEST_DASHBOARD_ROOT  "$ENV{OPJ_BINARY_DIR}" )
+else
+	set( CTEST_DASHBOARD_ROOT  "$ENV{PWD}/build" )
+endif()
 set( CTEST_CMAKE_GENERATOR "Unix Makefiles")   # Always makefile in travis-ci environment
 
 if ("$ENV{OPJ_BUILD_CONFIGURATION}" STREQUAL "")
