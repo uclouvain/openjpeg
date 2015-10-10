@@ -58,6 +58,8 @@ if [ "${TRAVIS_OS_NAME:-}" == "" ]; then
 		fi
 	elif uname -s | grep -i CYGWIN &> /dev/null; then
 		TRAVIS_OS_NAME=windows
+	elif uname -s | grep -i MINGW32 &> /dev/null; then
+		TRAVIS_OS_NAME=windows
 	else
 		echo "Failed to guess OS"; exit 1
 	fi
