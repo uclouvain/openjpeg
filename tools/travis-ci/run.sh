@@ -2,6 +2,20 @@
 
 # This script executes the script step when running under travis-ci
 
+#if cygwin, check path
+case ${MACHTYPE} in
+	*cygwin*) OPJ_CI_IS_CYGWIN=1;;
+	*) ;;
+esac
+
+if [ "${OPJ_CI_IS_CYGWIN:-}" == "1" ]; then
+	# Hack for appveyor
+	if ! which wget; then
+		# PATH is not yet set up
+		export PATH=$PATH:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+	fi
+fi
+
 # Set-up some bash options
 set -o nounset   ## set -u : exit the script if you try to use an uninitialised variable
 set -o errexit   ## set -e : exit the script if any statement returns a non-true return value
@@ -42,6 +56,8 @@ if [ "${TRAVIS_OS_NAME:-}" == "" ]; then
 			# default to gcc
 			export CC=gcc
 		fi
+	elif uname -s | grep -i CYGWIN_NT &> /dev/null; then
+		TRAVIS_OS_NAME=windows
 	else
 		echo "Failed to guess OS"; exit 1
 	fi
@@ -71,6 +87,9 @@ elif [ "${TRAVIS_OS_NAME}" == "linux" ]; then
 	else
 		echo "Compiler not supported: ${CC}"; exit 1
 	fi
+elif [ "${TRAVIS_OS_NAME}" == "windows" ]; then
+	OPJ_OS_NAME=windows
+	OPJ_CC_VERSION=vs2015
 else
 	echo "OS not supported: ${TRAVIS_OS_NAME}"; exit 1
 fi
@@ -85,14 +104,20 @@ if [ "${OPJ_CI_ARCH:-}" == "" ]; then
 fi
 
 if [ "${TRAVIS_BRANCH:-}" == "" ]; then
-	echo "Guessing branch"
-	TRAVIS_BRANCH=$(git -C ${OPJ_SOURCE_DIR} branch | grep '*' | tr -d '*[[:blank:]]') #default to master
+	if [ "${APPVEYOR_REPO_BRANCH:-}" != "" ]; then
+		TRAVIS_BRANCH=${APPVEYOR_REPO_BRANCH}
+	else
+		echo "Guessing branch"
+		TRAVIS_BRANCH=$(git -C ${OPJ_SOURCE_DIR} branch | grep '*' | tr -d '*[[:blank:]]')
+	fi
 fi
 
 OPJ_BUILDNAME=${OPJ_OS_NAME}-${OPJ_CC_VERSION}-${OPJ_CI_ARCH}-${TRAVIS_BRANCH}
 OPJ_BUILDNAME_TEST=${OPJ_OS_NAME}-${OPJ_CC_VERSION}-${OPJ_CI_ARCH}
 if [ "${TRAVIS_PULL_REQUEST:-}" != "false" ] && [ "${TRAVIS_PULL_REQUEST:-}" != "" ]; then
 	OPJ_BUILDNAME=${OPJ_BUILDNAME}-pr${TRAVIS_PULL_REQUEST}
+elif [ "${APPVEYOR_PULL_REQUEST_NUMBER:-}" != "" ]; then
+	OPJ_BUILDNAME=${OPJ_BUILDNAME}-pr${APPVEYOR_PULL_REQUEST_NUMBER}
 fi
 OPJ_BUILDNAME=${OPJ_BUILDNAME}-${OPJ_CI_BUILD_CONFIGURATION}-3rdP
 OPJ_BUILDNAME_TEST=${OPJ_BUILDNAME_TEST}-${OPJ_CI_BUILD_CONFIGURATION}-3rdP
