@@ -18,6 +18,7 @@ if("$ENV{TRAVIS_OS_NAME}" STREQUAL "windows")
 	set( CTEST_BUILD_COMMAND   "nmake" )
 else()
 	set( CTEST_CMAKE_GENERATOR "Unix Makefiles")   # Always makefile in travis-ci environment
+	set( CCFLAGS_WARNING "-Wall -Wextra -Wconversion -Wno-unused-parameter -Wdeclaration-after-statement")
 endif()
 
 if ("$ENV{OPJ_BUILD_CONFIGURATION}" STREQUAL "")
@@ -91,7 +92,7 @@ set( CACHE_CONTENTS "
 CMAKE_BUILD_TYPE:STRING=${CTEST_BUILD_CONFIGURATION}
 
 # Warning level
-CMAKE_C_FLAGS:STRING= ${CCFLAGS_ARCH} -Wall -Wextra -Wconversion -Wno-unused-parameter -Wdeclaration-after-statement
+CMAKE_C_FLAGS:STRING= ${CCFLAGS_ARCH} ${CCFLAGS_WARNING}
 
 # Use to activate the test suite
 BUILD_TESTING:BOOL=${BUILD_TESTING}
