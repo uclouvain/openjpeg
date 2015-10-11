@@ -68,7 +68,7 @@ if [ "${TRAVIS_OS_NAME:-}" == "" ]; then
 		fi
 	elif uname -s | grep -i CYGWIN &> /dev/null; then
 		TRAVIS_OS_NAME=windows
-	elif uname -s | grep -i MINGW32 &> /dev/null; then
+	elif uname -s | grep -i MINGW &> /dev/null; then
 		TRAVIS_OS_NAME=windows
 	else
 		echo "Failed to guess OS"; exit 1
@@ -101,7 +101,24 @@ elif [ "${TRAVIS_OS_NAME}" == "linux" ]; then
 	fi
 elif [ "${TRAVIS_OS_NAME}" == "windows" ]; then
 	OPJ_OS_NAME=windows
-	OPJ_CC_VERSION=vs2015
+	if which cl > /dev/null; then
+		OPJ_CL_VERSION=$(cl 2>&1 | grep Version | sed 's/.*Version \([0-9]*\).*/\1/')
+		if [ ${OPJ_CL_VERSION} -eq 19 ]; then
+			OPJ_CC_VERSION=vs2015
+		elif [ ${OPJ_CL_VERSION} -eq 18 ]; then
+			OPJ_CC_VERSION=vs2013
+		elif [ ${OPJ_CL_VERSION} -eq 17 ]; then
+			OPJ_CC_VERSION=vs2012
+		elif [ ${OPJ_CL_VERSION} -eq 16 ]; then
+			OPJ_CC_VERSION=vs2010
+		elif [ ${OPJ_CL_VERSION} -eq 15 ]; then
+			OPJ_CC_VERSION=vs2008
+		elif [ ${OPJ_CL_VERSION} -eq 14 ]; then
+			OPJ_CC_VERSION=vs2005
+		else
+			OPJ_CC_VERSION=vs????
+		fi
+	fi
 else
 	echo "OS not supported: ${TRAVIS_OS_NAME}"; exit 1
 fi
