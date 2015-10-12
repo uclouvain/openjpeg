@@ -34,14 +34,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include <inttypes.h>
+#include <assert.h>
 
 static inline void *opj_aligned_alloc_n(size_t alignment, size_t size)
 {
 #if defined(HAVE_POSIX_MEMALIGN)
-  // aligned_alloc requires c11, restrict to posix_memalign for now. Quote:
-  // This function was introduced in POSIX 1003.1d. Although this function is
-  // superseded by aligned_alloc, it is more portable to older POSIX systems
-  // that do not support ISO C11.
+  /* aligned_alloc requires c11, restrict to posix_memalign for now. Quote:
+   * This function was introduced in POSIX 1003.1d. Although this function is
+   * superseded by aligned_alloc, it is more portable to older POSIX systems
+   * that do not support ISO C11.  */
   void* ptr;
   if (posix_memalign (&ptr, alignment, size))
   {
@@ -50,7 +51,7 @@ static inline void *opj_aligned_alloc_n(size_t alignment, size_t size)
   return ptr;
   /* older linux */
 #elif defined(HAVE_MEMALIGN)
-  assert( size % alignment == 0 );
+  assert( size & (alignment - 1u) == 0 );
   return memalign( alignment, size );
 /* _MSC_VER */
 #elif defined(HAVE__ALIGNED_MALLOC)
@@ -62,18 +63,22 @@ static inline void *opj_aligned_alloc_n(size_t alignment, size_t size)
 }
 static inline void *opj_aligned_realloc_n(void *ptr, size_t alignment, size_t size)
 {
+  void *a_ptr;
 /* no portable aligned realloc */
 #if defined(HAVE_POSIX_MEMALIGN) || defined(HAVE_MEMALIGN)
   /* glibc doc states one can mixed aligned malloc with realloc */
   void *r_ptr = realloc( ptr, size );
+  assert( alignment > 0 );
   /* fast path */
-  if( ((uintptr_t)r_ptr & alignment) == 0 )
+  /* we simply use `size_t` to cast, since we are only interest in binary AND
+   * operator */
+  if( ((size_t)r_ptr & (alignment - 1u)) == 0 )
     return r_ptr;
   /* this is non-trivial to implement a portable aligned realloc, so use a
    * simple approach where we do not need a function that return the size of an
    * allocated array (eg. _msize on Windows, malloc_size on MacOS,
    * malloc_usable_size on systems with glibc) */
-  void *a_ptr = opj_aligned_alloc_n(alignment, size);
+  a_ptr = opj_aligned_alloc_n(alignment, size);
   /* memory may overlap, do not use memcpy */
   memmove(a_ptr, r_ptr, size);
   free( r_ptr );
