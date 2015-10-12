@@ -617,7 +617,7 @@ void color_cielab_to_rgb(opj_image_t *image)
 		
 		default_type = (unsigned int)row[1];
 		
-		if(default_type == 0x44454600)// DEF : default
+		if(default_type == 0x44454600)/* DEF : default */
 		{
 			rl = 100; ra = 170; rb = 200;
 			ol = 0;
@@ -679,9 +679,9 @@ void color_cielab_to_rgb(opj_image_t *image)
 	}
 	
 	fprintf(stderr,"%s:%d:\n\tenumCS %d not handled. Ignoring.\n", __FILE__,__LINE__, enumcs);
-}// color_apply_conversion()
+}/* color_apply_conversion() */
 
-#endif // OPJ_HAVE_LIBLCMS2 || OPJ_HAVE_LIBLCMS1
+#endif /* OPJ_HAVE_LIBLCMS2 || OPJ_HAVE_LIBLCMS1 */
 
 void color_cmyk_to_rgb(opj_image_t *image)
 {
@@ -732,11 +732,11 @@ void color_cmyk_to_rgb(opj_image_t *image)
 		memcpy(&(image->comps[i]), &(image->comps[i+1]), sizeof(image->comps[i]));
 	}
 
-}// color_cmyk_to_rgb()
+}/* color_cmyk_to_rgb() */
 
-//
-// This code has been adopted from sjpx_openjpeg.c of ghostscript
-//
+/*
+ * This code has been adopted from sjpx_openjpeg.c of ghostscript
+ */
 void color_esycc_to_rgb(opj_image_t *image)
 {
 	int y, cb, cr, sign1, sign2, val;
@@ -785,4 +785,4 @@ void color_esycc_to_rgb(opj_image_t *image)
 	}
 	image->color_space = OPJ_CLRSPC_SRGB;
 
-}// color_esycc_to_rgb()
+}/* color_esycc_to_rgb() */
