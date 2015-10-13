@@ -1296,7 +1296,7 @@ opj_bool jpwl_check_tile(opj_j2k_t *j2k, opj_tcd_t *tcd, int tileno) {
                                                         opj_event_msg(j2k->cinfo, JPWL_ASSUME ? EVT_WARNING : EVT_ERROR,
                                                                 "JPWL: wrong x-cord of block origin %d => x-prec is (%d, %d)\n",
                                                                 block->x0, prec->x0, prec->x1);
-                                                        if (!JPWL_ASSUME || JPWL_ASSUME)
+                                                        if (!JPWL_ASSUME)
                                                                 return OPJ_FALSE;
                                                 };
                                         }
