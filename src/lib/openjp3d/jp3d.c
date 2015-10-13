@@ -1008,6 +1008,7 @@ static void j3d_write_qcx(opj_j3d_t *j3d, int compno) {
 	
 	cio_write(cio, tccp->qntsty + (tccp->numgbits << 5), 1);	/* Sqcx : Table A28 de 15444-1*/
 	
+	numbands = 0; // compiler warning
 	if (j3d->cinfo->codec_format == CODEC_J2K)
         numbands = tccp->qntsty == J3D_CCP_QNTSTY_SIQNT ? 1 : tccp->numresolution[0] * 3 - 2; 
 	else if (j3d->cinfo->codec_format == CODEC_J3D) {
