@@ -7,8 +7,21 @@
 cmake_minimum_required(VERSION 2.8)
 
 set( ENV{LANG} en_US.UTF-8)
-set( CTEST_DASHBOARD_ROOT  "$ENV{PWD}/build" )
-set( CTEST_CMAKE_GENERATOR "Unix Makefiles")   # Always makefile in travis-ci environment
+if($ENV{OPJ_BINARY_DIR})
+	set( CTEST_DASHBOARD_ROOT  "$ENV{OPJ_BINARY_DIR}" )
+else()
+	set( CTEST_DASHBOARD_ROOT  "$ENV{PWD}/build" )
+endif()
+
+if("$ENV{TRAVIS_OS_NAME}" STREQUAL "windows")
+	set( CTEST_CMAKE_GENERATOR "NMake Makefiles")
+	set( CTEST_BUILD_COMMAND   "nmake" )
+	set( JPYLYZER_EXT          "exe"  )
+else()
+	set( CTEST_CMAKE_GENERATOR "Unix Makefiles")   # Always makefile in travis-ci environment
+	set( CCFLAGS_WARNING "-Wall -Wextra -Wconversion -Wno-unused-parameter -Wdeclaration-after-statement")
+	set( JPYLYZER_EXT          "py"  )
+endif()
 
 if ("$ENV{OPJ_BUILD_CONFIGURATION}" STREQUAL "")
   set( CTEST_BUILD_CONFIGURATION "Release")
@@ -66,8 +79,12 @@ if(NOT "$ENV{OPJ_CI_SKIP_TESTS}" STREQUAL "1")
 	# Note: Binaries can only be used for non-commercial purposes.
 	if ("$ENV{OPJ_NONCOMMERCIAL}" STREQUAL "1" )
 		set(KDUPATH $ENV{PWD}/kdu)
-		set(ENV{LD_LIBRARY_PATH} ${KDUPATH})
-		set(ENV{PATH} $ENV{PATH}:${KDUPATH})
+		if("$ENV{TRAVIS_OS_NAME}" STREQUAL "windows")
+			set(ENV{PATH} "$ENV{PATH};${KDUPATH}")
+		else()
+			set(ENV{LD_LIBRARY_PATH} ${KDUPATH})
+			set(ENV{PATH} $ENV{PATH}:${KDUPATH})
+		endif()
 	endif()
 	set(BUILD_TESTING "TRUE")
 else()
@@ -81,7 +98,7 @@ set( CACHE_CONTENTS "
 CMAKE_BUILD_TYPE:STRING=${CTEST_BUILD_CONFIGURATION}
 
 # Warning level
-CMAKE_C_FLAGS:STRING= ${CCFLAGS_ARCH} -Wall -Wextra -Wconversion -Wno-unused-parameter -Wdeclaration-after-statement
+CMAKE_C_FLAGS:STRING= ${CCFLAGS_ARCH} ${CCFLAGS_WARNING}
 
 # Use to activate the test suite
 BUILD_TESTING:BOOL=${BUILD_TESTING}
@@ -93,7 +110,7 @@ BUILD_THIRDPARTY:BOOL=TRUE
 OPJ_DATA_ROOT:PATH=$ENV{PWD}/data
 
 # jpylyzer is available with on GitHub: https://github.com/openpreserve/jpylyzer  
-JPYLYZER_EXECUTABLE=$ENV{PWD}/jpylyzer/jpylyzer/jpylyzer.py
+JPYLYZER_EXECUTABLE=$ENV{PWD}/jpylyzer/jpylyzer.${JPYLYZER_EXT}
 
 " )
 

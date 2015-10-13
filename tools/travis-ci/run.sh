@@ -2,10 +2,33 @@
 
 # This script executes the script step when running under travis-ci
 
+#if cygwin, check path
+case ${MACHTYPE} in
+	*cygwin*) OPJ_CI_IS_CYGWIN=1;;
+	*) ;;
+esac
+
+# Hack for appveyor to get GNU find in path before windows one.
+export PATH=$(dirname ${BASH}):$PATH
+
 # Set-up some bash options
 set -o nounset   ## set -u : exit the script if you try to use an uninitialised variable
 set -o errexit   ## set -e : exit the script if any statement returns a non-true return value
 set -o pipefail  ## Fail on error in pipe
+
+function opjpath ()
+{
+	if [ "${OPJ_CI_IS_CYGWIN:-}" == "1" ]; then
+		cygpath $1 "$2"
+	else
+		echo "$2"
+	fi
+}
+
+# ABI check is done by abi-check.sh
+if [ "${OPJ_CI_ABI_CHECK:-}" == "1" ]; then
+	exit 0
+fi
 
 # Set-up some variables
 if [ "${OPJ_CI_BUILD_CONFIGURATION:-}" == "" ]; then
@@ -19,6 +42,12 @@ fi
 if [ "${TRAVIS_REPO_SLUG:-}" != "" ]; then
 	OPJ_OWNER=$(echo "${TRAVIS_REPO_SLUG}" | sed 's/\(^.*\)\/.*/\1/')
 	OPJ_SITE="${OPJ_OWNER}.travis-ci.org"
+	if [ "${OPJ_OWNER}" == "uclouvain" ]; then
+		OPJ_DO_SUBMIT=1
+	fi
+elif [ "${APPVEYOR_REPO_NAME:-}" != "" ]; then
+	OPJ_OWNER=$(echo "${APPVEYOR_REPO_NAME}" | sed 's/\(^.*\)\/.*/\1/')
+	OPJ_SITE="${OPJ_OWNER}.appveyor.com"
 	if [ "${OPJ_OWNER}" == "uclouvain" ]; then
 		OPJ_DO_SUBMIT=1
 	fi
@@ -37,6 +66,10 @@ if [ "${TRAVIS_OS_NAME:-}" == "" ]; then
 			# default to gcc
 			export CC=gcc
 		fi
+	elif uname -s | grep -i CYGWIN &> /dev/null; then
+		TRAVIS_OS_NAME=windows
+	elif uname -s | grep -i MINGW &> /dev/null; then
+		TRAVIS_OS_NAME=windows
 	else
 		echo "Failed to guess OS"; exit 1
 	fi
@@ -66,6 +99,26 @@ elif [ "${TRAVIS_OS_NAME}" == "linux" ]; then
 	else
 		echo "Compiler not supported: ${CC}"; exit 1
 	fi
+elif [ "${TRAVIS_OS_NAME}" == "windows" ]; then
+	OPJ_OS_NAME=windows
+	if which cl > /dev/null; then
+		OPJ_CL_VERSION=$(cl 2>&1 | grep Version | sed 's/.*Version \([0-9]*\).*/\1/')
+		if [ ${OPJ_CL_VERSION} -eq 19 ]; then
+			OPJ_CC_VERSION=vs2015
+		elif [ ${OPJ_CL_VERSION} -eq 18 ]; then
+			OPJ_CC_VERSION=vs2013
+		elif [ ${OPJ_CL_VERSION} -eq 17 ]; then
+			OPJ_CC_VERSION=vs2012
+		elif [ ${OPJ_CL_VERSION} -eq 16 ]; then
+			OPJ_CC_VERSION=vs2010
+		elif [ ${OPJ_CL_VERSION} -eq 15 ]; then
+			OPJ_CC_VERSION=vs2008
+		elif [ ${OPJ_CL_VERSION} -eq 14 ]; then
+			OPJ_CC_VERSION=vs2005
+		else
+			OPJ_CC_VERSION=vs????
+		fi
+	fi
 else
 	echo "OS not supported: ${TRAVIS_OS_NAME}"; exit 1
 fi
@@ -80,14 +133,20 @@ if [ "${OPJ_CI_ARCH:-}" == "" ]; then
 fi
 
 if [ "${TRAVIS_BRANCH:-}" == "" ]; then
-	echo "Guessing branch"
-	TRAVIS_BRANCH=$(git -C ${OPJ_SOURCE_DIR} branch | grep '*' | tr -d '*[[:blank:]]') #default to master
+	if [ "${APPVEYOR_REPO_BRANCH:-}" != "" ]; then
+		TRAVIS_BRANCH=${APPVEYOR_REPO_BRANCH}
+	else
+		echo "Guessing branch"
+		TRAVIS_BRANCH=$(git -C ${OPJ_SOURCE_DIR} branch | grep '*' | tr -d '*[[:blank:]]')
+	fi
 fi
 
 OPJ_BUILDNAME=${OPJ_OS_NAME}-${OPJ_CC_VERSION}-${OPJ_CI_ARCH}-${TRAVIS_BRANCH}
 OPJ_BUILDNAME_TEST=${OPJ_OS_NAME}-${OPJ_CC_VERSION}-${OPJ_CI_ARCH}
 if [ "${TRAVIS_PULL_REQUEST:-}" != "false" ] && [ "${TRAVIS_PULL_REQUEST:-}" != "" ]; then
 	OPJ_BUILDNAME=${OPJ_BUILDNAME}-pr${TRAVIS_PULL_REQUEST}
+elif [ "${APPVEYOR_PULL_REQUEST_NUMBER:-}" != "" ]; then
+	OPJ_BUILDNAME=${OPJ_BUILDNAME}-pr${APPVEYOR_PULL_REQUEST_NUMBER}
 fi
 OPJ_BUILDNAME=${OPJ_BUILDNAME}-${OPJ_CI_BUILD_CONFIGURATION}-3rdP
 OPJ_BUILDNAME_TEST=${OPJ_BUILDNAME_TEST}-${OPJ_CI_BUILD_CONFIGURATION}-3rdP
@@ -115,9 +174,11 @@ set -x
 # travis-ci doesn't dump cmake version in system info, let's print it 
 cmake --version
 
+export TRAVIS_OS_NAME=${TRAVIS_OS_NAME}
 export OPJ_SITE=${OPJ_SITE}
 export OPJ_BUILDNAME=${OPJ_BUILDNAME}
-export OPJ_SOURCE_DIR=${OPJ_SOURCE_DIR}
+export OPJ_SOURCE_DIR=$(opjpath -m ${OPJ_SOURCE_DIR})
+export OPJ_BINARY_DIR=$(opjpath -m ${PWD}/build)
 export OPJ_BUILD_CONFIGURATION=${OPJ_CI_BUILD_CONFIGURATION}
 export OPJ_DO_SUBMIT=${OPJ_DO_SUBMIT}
 
@@ -176,11 +237,11 @@ if [ "${OPJ_CI_SKIP_TESTS:-}" != "1" ]; then
 			awk -F: '{ print $2 }' ${OPJ_FAILEDTEST_LOG} > failures.txt
 			while read FAILEDTEST; do
 				# Start with common errors
-				if grep -x "${FAILEDTEST}" ${OPJ_SOURCE_DIR}/tools/travis-ci/knownfailures-all.txt > /dev/null; then
+				if grep -x "${FAILEDTEST}" $(opjpath -u ${OPJ_SOURCE_DIR})/tools/travis-ci/knownfailures-all.txt > /dev/null; then
 					continue
 				fi
-				if [ -f ${OPJ_SOURCE_DIR}/tools/travis-ci/knownfailures-${OPJ_BUILDNAME_TEST}.txt ]; then
-					if grep -x "${FAILEDTEST}" ${OPJ_SOURCE_DIR}/tools/travis-ci/knownfailures-${OPJ_BUILDNAME_TEST}.txt > /dev/null; then
+				if [ -f $(opjpath -u ${OPJ_SOURCE_DIR})/tools/travis-ci/knownfailures-${OPJ_BUILDNAME_TEST}.txt ]; then
+					if grep -x "${FAILEDTEST}" $(opjpath -u ${OPJ_SOURCE_DIR})/tools/travis-ci/knownfailures-${OPJ_BUILDNAME_TEST}.txt > /dev/null; then
 						continue
 					fi
 				fi
@@ -207,8 +268,6 @@ New/unknown test failure found!!!
 			OPJ_CI_RESULT=1
 		fi
 	fi
-
-
 fi
 
 exit ${OPJ_CI_RESULT}
