@@ -8,7 +8,7 @@ OpenJPEG is an open-source JPEG 2000 codec written in C language. It has been de
 ## Who can use the code ?
 [![badge-license]][link-license]
 
-Anyone. As the OpenJPEG code is released under the [BSD 2-Clause][link-license] license, anyone can use or modify the code, even for commercial applications. The only restriction is to retain the copyright in the sources or in the binaries documentation. Of course, if you modified the code in a way that might be of interest for other users, you are encouraged to share it (through a [github pull request](https://github.com/uclouvain/openjpeg/pulls) or by filling an [issue](https://github.com/uclouvain/openjpeg/issues)) but this is not a requirement.
+Anyone. As the OpenJPEG code is released under the [BSD 2-clause "Simplified" License][link-license], anyone can use or modify the code, even for commercial applications. The only restriction is to retain the copyright in the sources or in the binaries documentation. Of course, if you modified the code in a way that might be of interest for other users, you are encouraged to share it (through a [github pull request](https://github.com/uclouvain/openjpeg/pulls) or by filling an [issue](https://github.com/uclouvain/openjpeg/issues)) but this is not a requirement.
 
 ## How to install and use OpenJPEG ?
 API Documentation needs a major refactoring. Meanwhile, you can check [installation](https://github.com/uclouvain/openjpeg/wiki/Installation) instructions and [codec documentation](https://github.com/uclouvain/openjpeg/wiki/DocJ2KCodec).
@@ -68,9 +68,9 @@ See also: http://gcc.gnu.org/wiki/Visibility
 On windows, MSVC directly supports export/hiding function and as such the only
 API available is the one supported by OpenJPEG.
 
-[comment-license]: https://img.shields.io/github/license/uclouvain/openjpeg.svg "https://img.shields.io/badge/license-BSD_2--Clause-blue.svg"
-[badge-license]: https://img.shields.io/badge/license-BSD_2--Clause-blue.svg "License"
-[link-license]: https://github.com/uclouvain/openjpeg/blob/master/LICENSE "License"
+[comment-license]: https://img.shields.io/github/license/uclouvain/openjpeg.svg "https://img.shields.io/badge/license-BSD--2--Clause-blue.svg"
+[badge-license]: https://img.shields.io/badge/license-BSD--2--Clause-blue.svg "BSD 2-clause "Simplified" License"
+[link-license]: https://github.com/uclouvain/openjpeg/blob/master/LICENSE "BSD 2-clause "Simplified" License"
 [badge-build]: https://travis-ci.org/uclouvain/openjpeg.svg?branch=master "Build Status"
 [link-build]: https://travis-ci.org/uclouvain/openjpeg "Build Status"
 [badge-msvc-build]: https://ci.appveyor.com/api/projects/status/github/uclouvain/openjpeg?branch=master&svg=true "Windows Build Status"
