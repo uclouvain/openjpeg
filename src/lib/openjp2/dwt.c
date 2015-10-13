@@ -741,8 +741,8 @@ static void opj_v4dwt_decode_step1(opj_v4_t* w, OPJ_INT32 count, const OPJ_FLOAT
 
 static void opj_v4dwt_decode_step2(opj_v4_t* l, opj_v4_t* w, OPJ_INT32 k, OPJ_INT32 m, OPJ_FLOAT32 c)
 {
-	OPJ_FLOAT32* restrict fl = (OPJ_FLOAT32*) l;
-	OPJ_FLOAT32* restrict fw = (OPJ_FLOAT32*) w;
+	OPJ_FLOAT32* fl = (OPJ_FLOAT32*) l;
+	OPJ_FLOAT32* fw = (OPJ_FLOAT32*) w;
 	OPJ_INT32 i;
 	for(i = 0; i < m; ++i){
 		OPJ_FLOAT32 tmp1_1 = fl[0];
