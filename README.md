@@ -6,17 +6,20 @@
 OpenJPEG is an open-source JPEG 2000 codec written in C language. It has been developed in order to promote the use of [JPEG 2000](http://www.jpeg.org/jpeg2000), a still-image compression standard from the Joint Photographic Experts Group ([JPEG](http://www.jpeg.org)).  Since April 2015, it is officially recognized by ISO/IEC and ITU-T as a [JPEG 2000 Reference Software](http://www.itu.int/rec/T-REC-T.804-201504-I!Amd2).
 
 ## Who can use the code ?
+[![badge-license]][link-license]
 
-Anyone. As the OpenJPEG code is released under the [2-clauses BSD license](https://github.com/uclouvain/openjpeg/blob/master/LICENSE), anyone can use or modify the code, even for commercial applications. The only restriction is to retain the copyright in the sources or in the binaries documentation. Of course, if you modified the code in a way that might be of interest for other users, you are encouraged to share it (through a [github pull request](https://github.com/uclouvain/openjpeg/pulls) or by filling an [issue](https://github.com/uclouvain/openjpeg/issues)) but this is not a requirement.
+Anyone. As the OpenJPEG code is released under the [BSD 2-Clause][link-license] license, anyone can use or modify the code, even for commercial applications. The only restriction is to retain the copyright in the sources or in the binaries documentation. Of course, if you modified the code in a way that might be of interest for other users, you are encouraged to share it (through a [github pull request](https://github.com/uclouvain/openjpeg/pulls) or by filling an [issue](https://github.com/uclouvain/openjpeg/issues)) but this is not a requirement.
 
 ## How to install and use OpenJPEG ?
 API Documentation needs a major refactoring. Meanwhile, you can check [installation](https://github.com/uclouvain/openjpeg/wiki/Installation) instructions and [codec documentation](https://github.com/uclouvain/openjpeg/wiki/DocJ2KCodec).
     
 ## Current Status
-[![Build Status](https://travis-ci.org/uclouvain/openjpeg.svg?branch=master)](https://travis-ci.org/uclouvain/openjpeg)
+[![badge-build]][link-build]
 
-[![Coverity Scan Build Status](https://scan.coverity.com/projects/6383/badge.svg)](https://scan.coverity.com/projects/uclouvain-openjpeg)
-    
+[![badge-msvc-build]][link-msvc-build] 
+
+[![badge-coverity]][link-coverity]
+
 ## Who are the developers ?
 
 The library is developed and maintained by the Image and Signal Processing Group ([ISPGroup](http://sites.uclouvain.be/ispgroup/)), in the Université catholique de Louvain ([UCL](http://www.uclouvain.be/en-index.html), with the support of the [CNES](https://cnes.fr/), the [CS](http://www.c-s.fr/) company and the [intoPIX](http://www.intopix.com) company. The JPWL module has been developed by the Digital Signal Processing Lab ([DSPLab](http://dsplab.diei.unipg.it/)) of the University of Perugia, Italy ([UNIPG](http://www.unipg.it/)).
@@ -47,7 +50,7 @@ The library is developed and maintained by the Image and Signal Processing Group
 * tests: configuration files and utilities for the openjpeg test suite. All test images are located in [openjpeg-data](https://github.com/uclouvain/openjpeg-data) repository.
 * cmake: cmake related files
 
-See [LICENSE](https://github.com/uclouvain/openjpeg/blob/master/LICENSE) for license and copyright information.
+See [LICENSE][link-license] for license and copyright information.
 
 See [INSTALL](https://github.com/uclouvain/openjpeg/blob/master/INSTALL) for installation procedures.
 
@@ -59,8 +62,18 @@ OpenJPEG strives to provide a stable API/ABI for your applications. As such it
 only exposes a limited subset of its functions.  It uses a mechanism of
 exporting/hiding functions. If you are unsure which functions you can use in
 your applications, you should compile OpenJPEG using something similar to gcc:
-`fvisibility=hidden` compilation flag.
+`-fvisibility=hidden` compilation flag.
 See also: http://gcc.gnu.org/wiki/Visibility
 
 On windows, MSVC directly supports export/hiding function and as such the only
 API available is the one supported by OpenJPEG.
+
+[comment-license]: https://img.shields.io/github/license/uclouvain/openjpeg.svg "https://img.shields.io/badge/license-BSD_2--Clause-blue.svg"
+[badge-license]: https://img.shields.io/badge/license-BSD_2--Clause-blue.svg "License"
+[link-license]: https://github.com/uclouvain/openjpeg/blob/master/LICENSE "License"
+[badge-build]: https://travis-ci.org/uclouvain/openjpeg.svg?branch=master "Build Status"
+[link-build]: https://travis-ci.org/uclouvain/openjpeg "Build Status"
+[badge-msvc-build]: https://ci.appveyor.com/api/projects/status/github/uclouvain/openjpeg?branch=master&svg=true "Windows Build Status"
+[link-msvc-build]: https://ci.appveyor.com/project/uclouvain/openjpeg/branch/master "Windows Build Status"
+[badge-coverity]: https://scan.coverity.com/projects/6383/badge.svg "Coverity Scan Build Status"
+[link-coverity]: https://scan.coverity.com/projects/uclouvain-openjpeg "Coverity Scan Build Status"
