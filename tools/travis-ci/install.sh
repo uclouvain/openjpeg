@@ -55,9 +55,7 @@ if [ "${OPJ_CI_SKIP_TESTS:-}" != "1" ]; then
 		OPJ_DATA_BRANCH=$(git -C ${OPJ_SOURCE_DIR} branch | grep '*' | tr -d '*[[:blank:]]') #default to same branch as we're setting up
 	fi
 	OPJ_DATA_HAS_BRANCH=$(git ls-remote --heads git://github.com/uclouvain/openjpeg-data.git ${OPJ_DATA_BRANCH} | wc -l)
-	if [ ${OPJ_DATA_HAS_BRANCH} -ne 0 ]; then
-		OPJ_DATA_BRANCH=${TRAVIS_BRANCH}
-	else
+	if [ ${OPJ_DATA_HAS_BRANCH} -eq 0 ]; then
 		OPJ_DATA_BRANCH=master #default to master
 	fi
 	echo "Cloning openjpeg-data from ${OPJ_DATA_BRANCH} branch"
