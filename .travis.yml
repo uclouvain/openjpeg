@@ -11,6 +11,10 @@ matrix:
     - os: linux
       compiler: gcc
       env: OPJ_CI_ARCH=i386 OPJ_CI_BUILD_CONFIGURATION=Release
+      addons:
+        apt:
+          packages:
+            - gcc-multilib
     - os: linux
       compiler: gcc
       env: OPJ_CI_ARCH=x86_64 OPJ_CI_BUILD_CONFIGURATION=Debug
@@ -20,30 +24,36 @@ matrix:
     - os: linux
       compiler: x86_64-w64-mingw32-gcc
       env: OPJ_CI_ARCH=x86_64 OPJ_CI_BUILD_CONFIGURATION=Release
+      addons:
+        apt:
+          packages:
+            - gcc-mingw-w64-base
+            - binutils-mingw-w64-x86-64
+            - gcc-mingw-w64-x86-64
+            - gcc-mingw-w64
     - os: linux
       compiler: x86_64-w64-mingw32-gcc
       env: OPJ_CI_ARCH=i386 OPJ_CI_BUILD_CONFIGURATION=Release
+      addons:
+        apt:
+          packages:
+            - gcc-mingw-w64-base
+            - binutils-mingw-w64-i686
+            - gcc-mingw-w64-i686
+            - gcc-mingw-w64      
     - os: linux
       compiler: gcc-4.8
       env: OPJ_CI_ABI_CHECK=1
-
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-    packages:
-      - gcc-4.8
-      - gcc-multilib
-      - gcc-mingw-w64-base
-      - binutils-mingw-w64-i686
-      - binutils-mingw-w64-x86-64
-      - gcc-mingw-w64-i686
-      - gcc-mingw-w64-x86-64
-      - gcc-mingw-w64
-      - libelf-dev
-      - elfutils
-      - texinfo
-      - exuberant-ctags
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - gcc-4.8
+            - libelf-dev
+            - elfutils
+            - texinfo
+            - exuberant-ctags
 
 install:
   - ./tools/travis-ci/install.sh
