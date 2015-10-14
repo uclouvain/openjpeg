@@ -55,7 +55,12 @@ cd tracker
 # Let's create all we need
 grep -v Git ${OPJ_SOURCE_DIR}/tools/abi-tracker/openjpeg.json > ./openjpeg.json
 abi-monitor ${OPJ_LIMIT_ABI_BUILDS} -get openjpeg.json
-cp -f ${OPJ_SOURCE_DIR}/tools/abi-tracker/openjpeg.json ./openjpeg.json
+if [ "${OPJ_LIMIT_ABI_BUILDS}" != "" ]; then
+	cp -f ${OPJ_SOURCE_DIR}/tools/abi-tracker/openjpeg.json ./openjpeg.json
+else
+	# Old versions of openjpeg don't like -fvisibility=hidden...
+	grep -v Configure ${OPJ_SOURCE_DIR}/tools/abi-tracker/openjpeg.json > ./openjpeg.json
+fi
 cp -rf ${OPJ_SOURCE_DIR} src/openjpeg/current
 abi-monitor ${OPJ_LIMIT_ABI_BUILDS} -build openjpeg.json
 abi-tracker -build openjpeg.json
@@ -66,8 +71,11 @@ EXIT_CODE=0
 abi-compliance-checker -l openjpeg -old $(find ./abi_dump/openjpeg/2.1 -name '*.dump') -new $(find ./abi_dump/openjpeg/current -name '*.dump') -header openjpeg.h -api -s || EXIT_CODE=1
 
 # Check ABI
-# Disabled for now, problems with symbol visibility...
-# abi-compliance-checker -l openjpeg -old $(find ./abi_dump/openjpeg/2.1 -name '*.dump') -new $(find ./abi_dump/openjpeg/current -name '*.dump') -header openjpeg.h -abi -s || EXIT_CODE=1
+if [ "${OPJ_LIMIT_ABI_BUILDS}" != "" ]; then
+	abi-compliance-checker -l openjpeg -old $(find ./abi_dump/openjpeg/2.1 -name '*.dump') -new $(find ./abi_dump/openjpeg/current -name '*.dump') -header openjpeg.h -abi -s || EXIT_CODE=1
+else
+	echo "Disable ABI check for now, problems with symbol visibility..."
+fi
 
 rm -rf src installed
 
