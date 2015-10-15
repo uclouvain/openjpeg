@@ -74,6 +74,6 @@ API available is the one supported by OpenJPEG.
 [badge-build]: https://travis-ci.org/uclouvain/openjpeg.svg?branch=master "Build Status"
 [link-build]: https://travis-ci.org/uclouvain/openjpeg "Build Status"
 [badge-msvc-build]: https://ci.appveyor.com/api/projects/status/github/uclouvain/openjpeg?branch=master&svg=true "Windows Build Status"
-[link-msvc-build]: https://ci.appveyor.com/project/uclouvain/openjpeg/branch/master "Windows Build Status"
+[link-msvc-build]: https://ci.appveyor.com/project/detonin/openjpeg/branch/master "Windows Build Status"
 [badge-coverity]: https://scan.coverity.com/projects/6383/badge.svg "Coverity Scan Build Status"
 [link-coverity]: https://scan.coverity.com/projects/uclouvain-openjpeg "Coverity Scan Build Status"
