@@ -2733,8 +2733,8 @@ static opj_bool j2k_validate_encode(opj_j2k_t *j2k, opj_image_t *image) {
 
     /* PARAMETERS checking */
     for (compno=0; compno < image->numcomps; compno++) {
-        is_valid &= (image->comps[compno].dx > 1 && j2k->image->comps[compno].dx < 255);
-        is_valid &= (image->comps[compno].dy > 1 && j2k->image->comps[compno].dy < 255);
+        is_valid &= (image->comps[compno].dx >= 1 && j2k->image->comps[compno].dx <= 255);
+        is_valid &= (image->comps[compno].dy >= 1 && j2k->image->comps[compno].dy <= 255);
     }
 
     return is_valid;
