@@ -988,7 +988,7 @@ void tcd_makelayer(opj_tcd_t *tcd, int layno, double thresh, int final) {
 									n = passno + 1;
 								continue;
 							}
-							if (dd / dr >= thresh)
+							if (thresh - (dd / dr) < DBL_EPSILON) /* do not rely on float equality, check with DBL_EPSILON margin */
 								n = passno + 1;
 						}
 						layer->numpasses = n - cblk->numpassesinlayers;
