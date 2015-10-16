@@ -79,8 +79,7 @@ static inline void *opj_aligned_realloc_n(void *ptr, size_t alignment, size_t si
    * allocated array (eg. _msize on Windows, malloc_size on MacOS,
    * malloc_usable_size on systems with glibc) */
   a_ptr = opj_aligned_alloc_n(alignment, size);
-  /* memory may overlap, do not use memcpy */
-  memmove(a_ptr, r_ptr, size);
+  memcpy(a_ptr, r_ptr, size);
   free( r_ptr );
   return a_ptr;
 /* _MSC_VER */
