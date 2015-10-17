@@ -5,6 +5,7 @@
  * are granted under this license.
  *
  * Copyright (c) 2015, Mathieu Malaterre <mathieu.malaterre@gmail.com>
+ * Copyright (c) 2015, Matthieu Darbois
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,57 +39,65 @@
 
 static inline void *opj_aligned_alloc_n(size_t alignment, size_t size)
 {
+  void* ptr;
+
+  /* alignment shall be power of 2 */
+  assert( (alignment != 0U) && ((alignment & (alignment - 1U)) == 0U));
+
 #if defined(HAVE_POSIX_MEMALIGN)
   /* aligned_alloc requires c11, restrict to posix_memalign for now. Quote:
    * This function was introduced in POSIX 1003.1d. Although this function is
    * superseded by aligned_alloc, it is more portable to older POSIX systems
    * that do not support ISO C11.  */
-  void* ptr;
   if (posix_memalign (&ptr, alignment, size))
   {
     ptr = NULL;
   }
-  return ptr;
   /* older linux */
 #elif defined(HAVE_MEMALIGN)
-  assert( size & (alignment - 1u) == 0 );
-  return memalign( alignment, size );
+  ptr = memalign( alignment, size );
 /* _MSC_VER */
 #elif defined(HAVE__ALIGNED_MALLOC)
-  return _aligned_malloc( alignment, size );
+  ptr = _aligned_malloc( alignment, size );
 #else
 /* TODO: _mm_malloc(x,y) */
 #error missing aligned alloc function
 #endif
+  return ptr;
 }
 static inline void *opj_aligned_realloc_n(void *ptr, size_t alignment, size_t size)
 {
-  void *a_ptr;
+  void *r_ptr;
+
+  /* alignment shall be power of 2 */
+  assert( (alignment != 0U) && ((alignment & (alignment - 1U)) == 0U));
+
 /* no portable aligned realloc */
 #if defined(HAVE_POSIX_MEMALIGN) || defined(HAVE_MEMALIGN)
   /* glibc doc states one can mixed aligned malloc with realloc */
-  void *r_ptr = realloc( ptr, size );
-  assert( alignment > 0 );
-  /* fast path */
+  r_ptr = realloc( ptr, size ); /* fast path */
   /* we simply use `size_t` to cast, since we are only interest in binary AND
    * operator */
-  if( ((size_t)r_ptr & (alignment - 1u)) == 0 )
-    return r_ptr;
-  /* this is non-trivial to implement a portable aligned realloc, so use a
-   * simple approach where we do not need a function that return the size of an
-   * allocated array (eg. _msize on Windows, malloc_size on MacOS,
-   * malloc_usable_size on systems with glibc) */
-  a_ptr = opj_aligned_alloc_n(alignment, size);
-  memcpy(a_ptr, r_ptr, size);
-  free( r_ptr );
-  return a_ptr;
+  if( ((size_t)r_ptr & (alignment - 1U)) != 0U ) {
+    /* this is non-trivial to implement a portable aligned realloc, so use a
+     * simple approach where we do not need a function that return the size of an
+     * allocated array (eg. _msize on Windows, malloc_size on MacOS,
+     * malloc_usable_size on systems with glibc) */
+    void *a_ptr = opj_aligned_alloc_n(alignment, size);
+    if (a_ptr != NULL) {
+      memcpy(a_ptr, r_ptr, size);
+    }
+    free( r_ptr );
+    r_ptr = a_ptr;
+  }
 /* _MSC_VER */
 #elif defined(HAVE__ALIGNED_MALLOC)
-  return _aligned_realloc( ptr, size, alignment );
+  r_ptr = _aligned_realloc( ptr, size, alignment );
 #else
 /* TODO: _mm_malloc(x,y) */
 #error missing aligned realloc function
 #endif
+	return r_ptr;
 }
 void * opj_malloc(size_t size)
 {
