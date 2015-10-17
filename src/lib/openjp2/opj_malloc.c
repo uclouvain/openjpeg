@@ -44,6 +44,10 @@ static inline void *opj_aligned_alloc_n(size_t alignment, size_t size)
   /* alignment shall be power of 2 */
   assert( (alignment != 0U) && ((alignment & (alignment - 1U)) == 0U));
 
+  if (size == 0U) { /* prevent implementation defined behavior of realloc */
+    return NULL;
+  }
+
 #if defined(HAVE_POSIX_MEMALIGN)
   /* aligned_alloc requires c11, restrict to posix_memalign for now. Quote:
    * This function was introduced in POSIX 1003.1d. Although this function is
@@ -65,17 +69,21 @@ static inline void *opj_aligned_alloc_n(size_t alignment, size_t size)
 #endif
   return ptr;
 }
-static inline void *opj_aligned_realloc_n(void *ptr, size_t alignment, size_t size)
+static inline void *opj_aligned_realloc_n(void *ptr, size_t alignment, size_t new_size)
 {
   void *r_ptr;
 
   /* alignment shall be power of 2 */
   assert( (alignment != 0U) && ((alignment & (alignment - 1U)) == 0U));
 
+  if (new_size == 0U) { /* prevent implementation defined behavior of realloc */
+    return NULL;
+  }
+
 /* no portable aligned realloc */
 #if defined(HAVE_POSIX_MEMALIGN) || defined(HAVE_MEMALIGN)
   /* glibc doc states one can mixed aligned malloc with realloc */
-  r_ptr = realloc( ptr, size ); /* fast path */
+  r_ptr = realloc( ptr, new_size ); /* fast path */
   /* we simply use `size_t` to cast, since we are only interest in binary AND
    * operator */
   if( ((size_t)r_ptr & (alignment - 1U)) != 0U ) {
@@ -83,16 +91,16 @@ static inline void *opj_aligned_realloc_n(void *ptr, size_t alignment, size_t si
      * simple approach where we do not need a function that return the size of an
      * allocated array (eg. _msize on Windows, malloc_size on MacOS,
      * malloc_usable_size on systems with glibc) */
-    void *a_ptr = opj_aligned_alloc_n(alignment, size);
+    void *a_ptr = opj_aligned_alloc_n(alignment, new_size);
     if (a_ptr != NULL) {
-      memcpy(a_ptr, r_ptr, size);
+      memcpy(a_ptr, r_ptr, new_size);
     }
     free( r_ptr );
     r_ptr = a_ptr;
   }
 /* _MSC_VER */
 #elif defined(HAVE__ALIGNED_MALLOC)
-  r_ptr = _aligned_realloc( ptr, size, alignment );
+  r_ptr = _aligned_realloc( ptr, new_size, alignment );
 #else
 /* TODO: _mm_malloc(x,y) */
 #error missing aligned realloc function
@@ -101,20 +109,27 @@ static inline void *opj_aligned_realloc_n(void *ptr, size_t alignment, size_t si
 }
 void * opj_malloc(size_t size)
 {
+  if (size == 0U) { /* prevent implementation defined behavior of realloc */
+    return NULL;
+  }
   return malloc(size);
 }
-void * opj_calloc(size_t numOfElements, size_t sizeOfElements)
+void * opj_calloc(size_t num, size_t size)
 {
-  return calloc(numOfElements, sizeOfElements);
+  if (size == 0U) { /* prevent implementation defined behavior of realloc */
+    return NULL;
+  }
+  /* according to C89 standard, num == 0 shall return a valid pointer */
+  return calloc(num, size);
 }
 
 void *opj_aligned_malloc(size_t size)
 {
-  return opj_aligned_alloc_n(16u,size);
+  return opj_aligned_alloc_n(16U, size);
 }
 void * opj_aligned_realloc(void *ptr, size_t size)
 {
-  return opj_aligned_realloc_n(ptr,16u,size);
+  return opj_aligned_realloc_n(ptr, 16U, size);
 }
 
 void opj_aligned_free(void* ptr)
@@ -126,11 +141,14 @@ void opj_aligned_free(void* ptr)
 #endif
 }
 
-void * opj_realloc(void * m, size_t s)
+void * opj_realloc(void *ptr, size_t new_size)
 {
-  return realloc(m,s);
+  if (new_size == 0U) { /* prevent implementation defined behavior of realloc */
+    return NULL;
+  }
+  return realloc(ptr, new_size);
 }
-void opj_free(void * m)
+void opj_free(void *ptr)
 {
-  free(m);
+  free(ptr);
 }

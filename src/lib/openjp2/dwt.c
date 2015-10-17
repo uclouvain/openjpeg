@@ -567,9 +567,11 @@ static OPJ_BOOL opj_dwt_decode_tile(opj_tcd_tilecomp_t* tilec, OPJ_UINT32 numres
 	OPJ_UINT32 rh = (OPJ_UINT32)(tr->y1 - tr->y0);	/* height of the resolution level computed */
 
 	OPJ_UINT32 w = (OPJ_UINT32)(tilec->x1 - tilec->x0);
-
-	h.mem = (OPJ_INT32*)
-	opj_aligned_malloc(opj_dwt_max_resolution(tr, numres) * sizeof(OPJ_INT32));
+	
+	if (numres == 1U) {
+		return OPJ_TRUE;
+	}
+	h.mem = (OPJ_INT32*)opj_aligned_malloc(opj_dwt_max_resolution(tr, numres) * sizeof(OPJ_INT32));
 	if (! h.mem){
 		/* FIXME event manager error callback */
 		return OPJ_FALSE;

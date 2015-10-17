@@ -871,7 +871,7 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
 				l_band->stepsize = (OPJ_FLOAT32)(((1.0 + l_step_size->mant / 2048.0) * pow(2.0, (OPJ_INT32) (numbps - l_step_size->expn)))) * fraction;
 				l_band->numbps = l_step_size->expn + (OPJ_INT32)l_tccp->numgbits - 1;      /* WHY -1 ? */
 				
-				if (! l_band->precincts) {
+				if (!l_band->precincts && (l_nb_precincts > 0U)) {
 					l_band->precincts = (opj_tcd_precinct_t *) opj_malloc( /*3 * */ l_nb_precinct_size);
 					if (! l_band->precincts) {
 						return OPJ_FALSE;
@@ -930,7 +930,7 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
 					/*fprintf(stderr, "\t\t\t\t precinct_cw = %d x recinct_ch = %d\n",l_current_precinct->cw, l_current_precinct->ch);      */
 					l_nb_code_blocks_size = l_nb_code_blocks * (OPJ_UINT32)sizeof_block;
 					
-					if (! l_current_precinct->cblks.blocks) {
+					if (!l_current_precinct->cblks.blocks && (l_nb_code_blocks > 0U)) {
 						l_current_precinct->cblks.blocks = opj_malloc(l_nb_code_blocks_size);
 						if (! l_current_precinct->cblks.blocks ) {
 							return OPJ_FALSE;
