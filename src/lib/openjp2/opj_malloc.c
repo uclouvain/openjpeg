@@ -30,14 +30,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 #define OPJ_SKIP_POISON
-#include "opj_malloc.h"
-#include "opj_config_private.h"
+#include "opj_includes.h"
 #include <stdlib.h>
 #include <string.h>
 #include <inttypes.h>
 #include <assert.h>
 
-static inline void *opj_aligned_alloc_n(size_t alignment, size_t size)
+static INLINE void *opj_aligned_alloc_n(size_t alignment, size_t size)
 {
   void* ptr;
 
@@ -62,14 +61,14 @@ static inline void *opj_aligned_alloc_n(size_t alignment, size_t size)
   ptr = memalign( alignment, size );
 /* _MSC_VER */
 #elif defined(HAVE__ALIGNED_MALLOC)
-  ptr = _aligned_malloc( alignment, size );
+  ptr = _aligned_malloc(size, alignment);
 #else
 /* TODO: _mm_malloc(x,y) */
 #error missing aligned alloc function
 #endif
   return ptr;
 }
-static inline void *opj_aligned_realloc_n(void *ptr, size_t alignment, size_t new_size)
+static INLINE void *opj_aligned_realloc_n(void *ptr, size_t alignment, size_t new_size)
 {
   void *r_ptr;
 
