@@ -5,9 +5,6 @@ branches:
 skip_tags: true
 clone_depth: 50
 environment:
-  OPJ_NONCOMMERCIAL: 1
-  OPJ_CI_SKIP_TESTS: 0
-  OPJ_DO_SUBMIT: 1
   matrix:
   - OPJ_CI_ARCH: x86
     OPJ_CI_VSCOMNTOOLS: $(VS140COMNTOOLS)
