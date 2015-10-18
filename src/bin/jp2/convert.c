@@ -1255,7 +1255,7 @@ int imagetopgx(opj_image_t * image, const char *outfile)
 			}
 		}
     strncpy(name, outfile, dotpos);
-    sprintf(name+dotpos, "_%d.pgx", compno);
+    sprintf(name+dotpos, "_%u.pgx", compno);
     fdest = fopen(name, "wb");
     /* don't need name anymore */
 			
@@ -1339,7 +1339,7 @@ static char *skip_int(char *start, int *out_n)
     char *s;
     char c;
 
-    *out_n = 0; s = start;
+    *out_n = 0;
 
     s = skip_white(start);
     if(s == NULL) return NULL;
@@ -1812,7 +1812,7 @@ int imagetopnm(opj_image_t * image, const char *outfile, int force_split)
         {
             const char *tt = (triple?"RGB_ALPHA":"GRAYSCALE_ALPHA");
 
-            fprintf(fdest, "P7\n# OpenJPEG-%s\nWIDTH %d\nHEIGHT %d\nDEPTH %d\n"
+            fprintf(fdest, "P7\n# OpenJPEG-%s\nWIDTH %d\nHEIGHT %d\nDEPTH %u\n"
                     "MAXVAL %d\nTUPLTYPE %s\nENDHDR\n", opj_version(),
                     wr, hr, ncomp, max, tt);
             alpha = image->comps[ncomp - 1].data;
@@ -1918,7 +1918,7 @@ if(v > 65535) v = 65535; else if(v < 0) v = 0;
       const size_t dotpos = olen - 4;
 
       strncpy(destname, outfile, dotpos);
-      sprintf(destname+dotpos, "_%d.pgm", compno);
+      sprintf(destname+dotpos, "_%u.pgm", compno);
       }
         else
             sprintf(destname, "%s", outfile);
@@ -2155,7 +2155,7 @@ static int imagetoraw_common(opj_image_t * image, const char *outfile, OPJ_BOOL 
 
     for(compno = 0; compno < image->numcomps; compno++)
     {
-        fprintf(stdout,"Component %d characteristics: %dx%dx%d %s\n", compno, image->comps[compno].w,
+        fprintf(stdout,"Component %u characteristics: %dx%dx%d %s\n", compno, image->comps[compno].w,
                 image->comps[compno].h, image->comps[compno].prec, image->comps[compno].sgnd==1 ? "signed": "unsigned");
 
         w = (int)image->comps[compno].w;
