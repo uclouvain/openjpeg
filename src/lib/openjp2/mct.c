@@ -81,6 +81,10 @@ void opj_mct_encode(
 {
 	OPJ_SIZE_T i;
 	const OPJ_SIZE_T len = n;
+	/* buffer are aligned on 16 bytes */
+	assert( ((size_t)c0 & 0xf) == 0 );
+	assert( ((size_t)c1 & 0xf) == 0 );
+	assert( ((size_t)c2 & 0xf) == 0 );
 	
 	for(i = 0; i < (len & ~3U); i += 4) {
 		__m128i y, u, v;

@@ -626,7 +626,7 @@ void opj_tcd_destroy(opj_tcd_t *tcd) {
 OPJ_BOOL opj_alloc_tile_component_data(opj_tcd_tilecomp_t *l_tilec)
 {
 	if ((l_tilec->data == 00) || ((l_tilec->data_size_needed > l_tilec->data_size) && (l_tilec->ownsData == OPJ_FALSE))) {
-		l_tilec->data = (OPJ_INT32 *) opj_malloc(l_tilec->data_size_needed);
+		l_tilec->data = (OPJ_INT32 *) opj_aligned_malloc(l_tilec->data_size_needed);
 		if (! l_tilec->data ) {
 			return OPJ_FALSE;
 		}
@@ -635,18 +635,15 @@ OPJ_BOOL opj_alloc_tile_component_data(opj_tcd_tilecomp_t *l_tilec)
 		l_tilec->ownsData = OPJ_TRUE;
 	}
 	else if (l_tilec->data_size_needed > l_tilec->data_size) {
-		OPJ_INT32 * new_data = (OPJ_INT32 *) opj_realloc(l_tilec->data, l_tilec->data_size_needed);
-		/* opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to handle tile datan"); */
-		/* fprintf(stderr, "Not enough memory to handle tile data"); */
-		if (! new_data) {
-			opj_free(l_tilec->data);
-			l_tilec->data = NULL;
+		/* We don't need to keep old data */
+		opj_aligned_free(l_tilec->data);
+		l_tilec->data = (OPJ_INT32 *) opj_aligned_malloc(l_tilec->data_size_needed);
+		if (! l_tilec->data ) {
 			l_tilec->data_size = 0;
 			l_tilec->data_size_needed = 0;
 			l_tilec->ownsData = OPJ_FALSE;
 			return OPJ_FALSE;
 		}
-		l_tilec->data = new_data;
 		/*fprintf(stderr, "tReallocate data of tilec (int): from %d to %d x OPJ_UINT32n", l_tilec->data_size, l_data_size);*/
 		l_tilec->data_size = l_tilec->data_size_needed;
 		l_tilec->ownsData = OPJ_TRUE;
@@ -874,7 +871,7 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
 				l_band->stepsize = (OPJ_FLOAT32)(((1.0 + l_step_size->mant / 2048.0) * pow(2.0, (OPJ_INT32) (numbps - l_step_size->expn)))) * fraction;
 				l_band->numbps = l_step_size->expn + (OPJ_INT32)l_tccp->numgbits - 1;      /* WHY -1 ? */
 				
-				if (! l_band->precincts) {
+				if (!l_band->precincts && (l_nb_precincts > 0U)) {
 					l_band->precincts = (opj_tcd_precinct_t *) opj_malloc( /*3 * */ l_nb_precinct_size);
 					if (! l_band->precincts) {
 						return OPJ_FALSE;
@@ -933,7 +930,7 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
 					/*fprintf(stderr, "\t\t\t\t precinct_cw = %d x recinct_ch = %d\n",l_current_precinct->cw, l_current_precinct->ch);      */
 					l_nb_code_blocks_size = l_nb_code_blocks * (OPJ_UINT32)sizeof_block;
 					
-					if (! l_current_precinct->cblks.blocks) {
+					if (!l_current_precinct->cblks.blocks && (l_nb_code_blocks > 0U)) {
 						l_current_precinct->cblks.blocks = opj_malloc(l_nb_code_blocks_size);
 						if (! l_current_precinct->cblks.blocks ) {
 							return OPJ_FALSE;
@@ -1521,7 +1518,7 @@ static void opj_tcd_free_tile(opj_tcd_t *p_tcd)
                 }
 
                 if (l_tile_comp->ownsData && l_tile_comp->data) {
-                        opj_free(l_tile_comp->data);
+                        opj_aligned_free(l_tile_comp->data);
                         l_tile_comp->data = 00;
                         l_tile_comp->ownsData = 0;
                         l_tile_comp->data_size = 0;
