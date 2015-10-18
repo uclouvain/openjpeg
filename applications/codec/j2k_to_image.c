@@ -85,6 +85,40 @@ typedef struct img_folder{
 
 }img_fol_t;
 
+typedef enum opj_prec_mode
+{
+	OPJ_PREC_MODE_CLIP,
+	OPJ_PREC_MODE_SCALE
+} opj_precision_mode;
+
+typedef struct opj_prec
+{
+	int                prec;
+	opj_precision_mode mode;
+}opj_precision;
+
+typedef struct opj_decompress_params
+{
+	/** core library parameters */
+	opj_dparameters_t core;
+	
+	/** input file name */
+	char infile[OPJ_PATH_LEN];
+	/** output file name */
+	char outfile[OPJ_PATH_LEN];
+	/** input file format 0: J2K, 1: JP2, 2: JPT */
+	int decod_format;
+	/** output file format 0: PGX, 1: PxM, 2: BMP */
+	int cod_format;
+	
+	opj_precision* precision;
+	int            nb_precision;
+	/* force output colorspace to RGB */
+	int force_rgb;
+	/* upsample components according to their dx/dy values */
+	int upsample;
+}opj_decompress_parameters;
+
 static void decode_help_display(void) {
 	fprintf(stdout,"HELP for j2k_to_image\n----\n\n");
 	fprintf(stdout,"- the -h option displays this help information on screen\n\n");
@@ -128,6 +162,18 @@ static void decode_help_display(void) {
 	fprintf(stdout,"    are decoded.\n");
 	fprintf(stdout,"  -x  \n"); 
 	fprintf(stdout,"    Create an index file *.Idx (-x index_name.Idx) \n");
+	fprintf(stdout,"  -p <comp 0 precision>[C|S][,<comp 1 precision>[C|S][,...]]\n");
+	fprintf(stdout,"    OPTIONAL\n");
+	fprintf(stdout,"    Force the precision (bit depth) of components.\n");
+	fprintf(stdout,"    There shall be at least 1 value. Theres no limit on the number of values (comma separated, last values ignored if too much values).\n");
+	fprintf(stdout,"    If there are less values than components, the last value is used for remaining components.\n");
+	fprintf(stdout,"    If 'C' is specified (default), values are clipped.\n");
+	fprintf(stdout,"    If 'S' is specified, values are scaled.\n");
+	fprintf(stdout,"    A 0 value can be specified (meaning original bit depth).\n");
+	fprintf(stdout,"  -force-rgb\n");
+	fprintf(stdout,"    Force output image colorspace to RGB\n");
+	fprintf(stdout,"  -upsample\n");
+	fprintf(stdout,"    Downsampled components will be upsampled to image size\n");
 	fprintf(stdout,"\n");
 /* UniPG>> */
 #ifdef USE_JPWL
@@ -140,6 +186,111 @@ static void decode_help_display(void) {
 #endif /* USE_JPWL */
 /* <<UniPG */
 	fprintf(stdout,"\n");
+}
+
+/* -------------------------------------------------------------------------- */
+
+static opj_bool parse_precision(const char* option, opj_decompress_parameters* parameters)
+{
+	const char* l_remaining = option;
+	opj_bool l_result = OPJ_TRUE;
+	
+	/* reset */
+	if (parameters->precision) {
+		free(parameters->precision);
+		parameters->precision = NULL;
+	}
+	parameters->nb_precision = 0U;
+	
+	for(;;)
+	{
+		int prec;
+		char mode;
+		char comma;
+		int count;
+		
+		count = sscanf(l_remaining, "%d%c%c", &prec, &mode, &comma);
+		if (count == 1) {
+			mode = 'C';
+			count++;
+		}
+		if ((count == 2) || (mode==',')) {
+			if (mode==',') {
+				mode = 'C';
+			}
+			comma=',';
+			count = 3;
+		}
+		if (count == 3) {
+			if ((prec < 1) || (prec > 32)) {
+				fprintf(stderr,"Invalid precision %d in precision option %s\n", prec, option);
+				l_result = OPJ_FALSE;
+				break;
+			}
+			if ((mode != 'C') && (mode != 'S')) {
+				fprintf(stderr,"Invalid precision mode %c in precision option %s\n", mode, option);
+				l_result = OPJ_FALSE;
+				break;
+			}
+			if (comma != ',') {
+				fprintf(stderr,"Invalid character %c in precision option %s\n", comma, option);
+				l_result = OPJ_FALSE;
+				break;
+			}
+			
+			if (parameters->precision == NULL) {
+				/* first one */
+				parameters->precision = (opj_precision *)malloc(sizeof(opj_precision));
+				if (parameters->precision == NULL) {
+					fprintf(stderr,"Could not allocate memory for precision option\n");
+					l_result = OPJ_FALSE;
+					break;
+				}
+			} else {
+				int l_new_size = parameters->nb_precision + 1U;
+				opj_precision* l_new;
+				
+				if (l_new_size == 0U) {
+					fprintf(stderr,"Could not allocate memory for precision option\n");
+					l_result = OPJ_FALSE;
+					break;
+				}
+				
+				l_new = (opj_precision *)realloc(parameters->precision, l_new_size * sizeof(opj_precision));
+				if (l_new == NULL) {
+					fprintf(stderr,"Could not allocate memory for precision option\n");
+					l_result = OPJ_FALSE;
+					break;
+				}
+				parameters->precision = l_new;
+			}
+			
+			parameters->precision[parameters->nb_precision].prec = prec;
+			switch (mode) {
+				case 'C':
+					parameters->precision[parameters->nb_precision].mode = OPJ_PREC_MODE_CLIP;
+					break;
+				case 'S':
+					parameters->precision[parameters->nb_precision].mode = OPJ_PREC_MODE_SCALE;
+					break;
+				default:
+					break;
+			}
+			parameters->nb_precision++;
+			
+			l_remaining = strchr(l_remaining, ',');
+			if (l_remaining == NULL) {
+				break;
+			}
+			l_remaining += 1;
+		} else {
+			fprintf(stderr,"Could not parse precision option %s\n", option);
+			l_result = OPJ_FALSE;
+			break;
+		}
+	}
+	
+	return l_result;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -211,7 +362,7 @@ static int get_file_format(char *filename) {
 	return -1;
 }
 
-static char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_dparameters_t *parameters){
+static char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_decompress_parameters *parameters){
 	char image_filename[OPJ_PATH_LEN], infilename[OPJ_PATH_LEN],outfilename[OPJ_PATH_LEN],temp_ofname[OPJ_PATH_LEN];
 	char *temp_p, temp1[OPJ_PATH_LEN]="";
 
@@ -237,18 +388,20 @@ static char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_d
 }
 
 /* -------------------------------------------------------------------------- */
-static int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,img_fol_t *img_fol, char *indexfilename) {
+static int parse_cmdline_decoder(int argc, char **argv, opj_decompress_parameters *parameters,img_fol_t *img_fol, char *indexfilename) {
 	/* parse the command line */
 	int totlen, c;
 	opj_option_t long_option[]={
 		{"ImgDir",REQ_ARG, NULL ,'y'},
-        {"OutFor",REQ_ARG, NULL ,'O'},
+		{"OutFor",REQ_ARG, NULL ,'O'},
+		{"force-rgb", NO_ARG,  NULL, 1},
+		{"upsample",  NO_ARG,  NULL, 1},
 #ifdef USE_SYSTEM_GETOPT
-        {0,0,0,0} /* GNU getopt_long requirement */
+		{0,0,0,0} /* GNU getopt_long requirement */
 #endif
 	};
 
-	const char optlist[] = "i:o:r:l:x:"
+	const char optlist[] = "i:o:r:l:x:p:"
 
 /* UniPG>> */
 #ifdef USE_JPWL
@@ -256,7 +409,10 @@ static int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *param
 #endif /* USE_JPWL */
 /* <<UniPG */
 			"h"		;
-    totlen=sizeof(long_option);
+	
+	long_option[2].flag = &(parameters->force_rgb);
+	long_option[3].flag = &(parameters->upsample);
+	totlen=sizeof(long_option);
 	img_fol->set_out_format = 0;
 	do {
 #ifdef USE_SYSTEM_GETOPT
@@ -267,6 +423,8 @@ static int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *param
 		if (c == -1)
 			break;
 		switch (c) {
+			case 0: /* long opt with flag */
+				break;
 			case 'i':			/* input file */
 			{
 				char *infile = opj_optarg;
@@ -353,7 +511,7 @@ static int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *param
 
 			case 'r':		/* reduce option */
 			{
-				sscanf(opj_optarg, "%d", &parameters->cp_reduce);
+				sscanf(opj_optarg, "%d", &parameters->core.cp_reduce);
 			}
 			break;
 			
@@ -362,7 +520,7 @@ static int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *param
 
 			case 'l':		/* layering option */
 			{
-				sscanf(opj_optarg, "%d", &parameters->cp_layer);
+				sscanf(opj_optarg, "%d", &parameters->core.cp_layer);
 			}
 			break;
 			
@@ -386,6 +544,15 @@ static int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *param
 				{
 					char *index = opj_optarg;
 					strncpy(indexfilename, index, OPJ_PATH_LEN);
+				}
+				break;
+				/* ----------------------------------------------------- */
+			case 'p': /* Force precision */
+				{
+					if (!parse_precision(opj_optarg, parameters))
+					{
+						return 1;
+					}
 				}
 				break;
 				/* ----------------------------------------------------- */
@@ -496,6 +663,32 @@ static int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *param
 
 /* -------------------------------------------------------------------------- */
 
+static void set_default_parameters(opj_decompress_parameters* parameters)
+{
+	if (parameters) {
+		memset(parameters, 0, sizeof(opj_decompress_parameters));
+		
+		/* default decoding parameters (command line specific) */
+		parameters->decod_format = -1;
+		parameters->cod_format = -1;
+		
+		/* default decoding parameters (core) */
+		opj_set_default_decoder_parameters(&(parameters->core));
+	}
+}
+
+static void destroy_parameters(opj_decompress_parameters* parameters)
+{
+	if (parameters) {
+		if (parameters->precision) {
+			free(parameters->precision);
+			parameters->precision = NULL;
+		}
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
 /**
 sample error callback expecting a FILE* client object
 */
@@ -520,8 +713,233 @@ static void info_callback(const char *msg, void *client_data) {
 
 /* -------------------------------------------------------------------------- */
 
+static opj_image_t* convert_gray_to_rgb(opj_image_t* original)
+{
+	int compno;
+	opj_image_t* l_new_image = NULL;
+	opj_image_cmptparm_t* l_new_components = NULL;
+	
+	l_new_components = (opj_image_cmptparm_t*)malloc((original->numcomps + 2U) * sizeof(opj_image_cmptparm_t));
+	if (l_new_components == NULL) {
+		fprintf(stderr, "ERROR -> j2k_to_image: failed to allocate memory for RGB image!\n");
+		opj_image_destroy(original);
+		return NULL;
+	}
+	
+	l_new_components[0].bpp  = l_new_components[1].bpp  = l_new_components[2].bpp  = original->comps[0].bpp;
+	l_new_components[0].dx   = l_new_components[1].dx   = l_new_components[2].dx   = original->comps[0].dx;
+	l_new_components[0].dy   = l_new_components[1].dy   = l_new_components[2].dy   = original->comps[0].dy;
+	l_new_components[0].h    = l_new_components[1].h    = l_new_components[2].h    = original->comps[0].h;
+	l_new_components[0].w    = l_new_components[1].w    = l_new_components[2].w    = original->comps[0].w;
+	l_new_components[0].prec = l_new_components[1].prec = l_new_components[2].prec = original->comps[0].prec;
+	l_new_components[0].sgnd = l_new_components[1].sgnd = l_new_components[2].sgnd = original->comps[0].sgnd;
+	l_new_components[0].x0   = l_new_components[1].x0   = l_new_components[2].x0   = original->comps[0].x0;
+	l_new_components[0].y0   = l_new_components[1].y0   = l_new_components[2].y0   = original->comps[0].y0;
+	
+	for(compno = 1; compno < original->numcomps; ++compno) {
+		l_new_components[compno+2].bpp  = original->comps[compno].bpp;
+		l_new_components[compno+2].dx   = original->comps[compno].dx;
+		l_new_components[compno+2].dy   = original->comps[compno].dy;
+		l_new_components[compno+2].h    = original->comps[compno].h;
+		l_new_components[compno+2].w    = original->comps[compno].w;
+		l_new_components[compno+2].prec = original->comps[compno].prec;
+		l_new_components[compno+2].sgnd = original->comps[compno].sgnd;
+		l_new_components[compno+2].x0   = original->comps[compno].x0;
+		l_new_components[compno+2].y0   = original->comps[compno].y0;
+	}
+	
+	l_new_image = opj_image_create(original->numcomps + 2, l_new_components, CLRSPC_SRGB);
+	free(l_new_components);
+	if (l_new_image == NULL) {
+		fprintf(stderr, "ERROR -> j2k_to_image: failed to allocate memory for RGB image!\n");
+		opj_image_destroy(original);
+		return NULL;
+	}
+	
+	l_new_image->x0 = original->x0;
+	l_new_image->x1 = original->x1;
+	l_new_image->y0 = original->y0;
+	l_new_image->y1 = original->y1;
+	
+	l_new_image->comps[0].factor        = l_new_image->comps[1].factor        = l_new_image->comps[2].factor        = original->comps[0].factor;
+	l_new_image->comps[0].resno_decoded = l_new_image->comps[1].resno_decoded = l_new_image->comps[2].resno_decoded = original->comps[0].resno_decoded;
+	
+	memcpy(l_new_image->comps[0].data, original->comps[0].data, original->comps[0].w * original->comps[0].h * sizeof(int));
+	memcpy(l_new_image->comps[1].data, original->comps[0].data, original->comps[0].w * original->comps[0].h * sizeof(int));
+	memcpy(l_new_image->comps[2].data, original->comps[0].data, original->comps[0].w * original->comps[0].h * sizeof(int));
+	
+	for(compno = 1; compno < original->numcomps; ++compno) {
+		l_new_image->comps[compno+2].factor        = original->comps[compno].factor;
+		l_new_image->comps[compno+2].resno_decoded = original->comps[compno].resno_decoded;
+		memcpy(l_new_image->comps[compno+2].data, original->comps[compno].data, original->comps[compno].w * original->comps[compno].h * sizeof(int));
+	}
+	opj_image_destroy(original);
+	return l_new_image;
+}
+
+/* -------------------------------------------------------------------------- */
+
+static opj_image_t* upsample_image_components(opj_image_t* original)
+{
+	opj_image_t* l_new_image = NULL;
+	opj_image_cmptparm_t* l_new_components = NULL;
+	opj_bool l_upsample_need = OPJ_FALSE;
+	int compno;
+	
+	for (compno = 0; compno < original->numcomps; ++compno) {
+		if (original->comps[compno].factor > 0) {
+			fprintf(stderr, "ERROR -> j2k_to_image: -upsample not supported with reduction\n");
+			opj_image_destroy(original);
+			return NULL;
+		}
+		if ((original->comps[compno].dx > 1) || (original->comps[compno].dy > 1)) {
+			l_upsample_need = OPJ_TRUE;
+			break;
+		}
+	}
+	if (!l_upsample_need) {
+		return original;
+	}
+	/* Upsample is needed */
+	l_new_components = (opj_image_cmptparm_t*)malloc(original->numcomps * sizeof(opj_image_cmptparm_t));
+	if (l_new_components == NULL) {
+		fprintf(stderr, "ERROR -> j2k_to_image: failed to allocate memory for upsampled components!\n");
+		opj_image_destroy(original);
+		return NULL;
+	}
+	
+	for (compno = 0; compno < original->numcomps; ++compno) {
+		opj_image_cmptparm_t* l_new_cmp = &(l_new_components[compno]);
+		opj_image_comp_t*     l_org_cmp = &(original->comps[compno]);
+		
+		l_new_cmp->bpp  = l_org_cmp->bpp;
+		l_new_cmp->prec = l_org_cmp->prec;
+		l_new_cmp->sgnd = l_org_cmp->sgnd;
+		l_new_cmp->x0   = original->x0;
+		l_new_cmp->y0   = original->y0;
+		l_new_cmp->dx   = 1;
+		l_new_cmp->dy   = 1;
+		l_new_cmp->w    = l_org_cmp->w; /* should be original->x1 - original->x0 for dx==1 */
+		l_new_cmp->h    = l_org_cmp->h; /* should be original->y1 - original->y0 for dy==0 */
+		
+		if (l_org_cmp->dx > 1) {
+			l_new_cmp->w = original->x1 - original->x0;
+		}
+		
+		if (l_org_cmp->dy > 1) {
+			l_new_cmp->h = original->y1 - original->y0;
+		}
+	}
+	
+	l_new_image = opj_image_create(original->numcomps, l_new_components, original->color_space);
+	free(l_new_components);
+	if (l_new_image == NULL) {
+		fprintf(stderr, "ERROR -> j2k_to_image: failed to allocate memory for upsampled components!\n");
+		opj_image_destroy(original);
+		return NULL;
+	}
+	
+	l_new_image->x0 = original->x0;
+	l_new_image->x1 = original->x1;
+	l_new_image->y0 = original->y0;
+	l_new_image->y1 = original->y1;
+	
+	for (compno = 0; compno < original->numcomps; ++compno) {
+		opj_image_comp_t* l_new_cmp = &(l_new_image->comps[compno]);
+		opj_image_comp_t* l_org_cmp = &(original->comps[compno]);
+		
+		l_new_cmp->factor        = l_org_cmp->factor;
+		l_new_cmp->resno_decoded = l_org_cmp->resno_decoded;
+		
+		if ((l_org_cmp->dx > 1) || (l_org_cmp->dy > 1)) {
+			const int* l_src = l_org_cmp->data;
+			int*       l_dst = l_new_cmp->data;
+			int y;
+			int xoff, yoff;
+			
+			/* need to take into account dx & dy */
+			xoff = l_org_cmp->dx * l_org_cmp->x0 -  original->x0;
+			yoff = l_org_cmp->dy * l_org_cmp->y0 -  original->y0;
+			if ((xoff >= l_org_cmp->dx) || (yoff >= l_org_cmp->dy)) {
+				fprintf(stderr, "ERROR -> j2k_to_image: Invalid image/component parameters found when upsampling\n");
+				opj_image_destroy(original);
+				opj_image_destroy(l_new_image);
+				return NULL;
+			}
+			
+			for (y = 0; y < yoff; ++y) {
+				memset(l_dst, 0, l_new_cmp->w * sizeof(int));
+				l_dst += l_new_cmp->w;
+			}
+			
+			if(l_new_cmp->h > (l_org_cmp->dy - 1)) { /* check subtraction overflow for really small images */
+				for (; y < l_new_cmp->h - (l_org_cmp->dy - 1); y += l_org_cmp->dy) {
+					int x, dy;
+					int xorg;
+					
+					xorg = 0;
+					for (x = 0; x < xoff; ++x) {
+						l_dst[x] = 0;
+					}
+					if (l_new_cmp->w > (l_org_cmp->dx - 1)) { /* check subtraction overflow for really small images */
+						for (; x < l_new_cmp->w - (l_org_cmp->dx - 1); x += l_org_cmp->dx, ++xorg) {
+							int dx;
+							for (dx = 0; dx < l_org_cmp->dx; ++dx) {
+								l_dst[x + dx] = l_src[xorg];
+							}
+						}
+					}
+					for (; x < l_new_cmp->w; ++x) {
+						l_dst[x] = l_src[xorg];
+					}
+					l_dst += l_new_cmp->w;
+					
+					for (dy = 1; dy < l_org_cmp->dy; ++dy) {
+						memcpy(l_dst, l_dst - l_new_cmp->w, l_new_cmp->w * sizeof(int));
+						l_dst += l_new_cmp->w;
+					}
+					l_src += l_org_cmp->w;
+				}
+			}
+			if (y < l_new_cmp->h) {
+				int x;
+				int xorg;
+				
+				xorg = 0;
+				for (x = 0; x < xoff; ++x) {
+					l_dst[x] = 0;
+				}
+				if (l_new_cmp->w > (l_org_cmp->dx - 1)) { /* check subtraction overflow for really small images */
+					for (; x < l_new_cmp->w - (l_org_cmp->dx - 1); x += l_org_cmp->dx, ++xorg) {
+						int dx;
+						for (dx = 0; dx < l_org_cmp->dx; ++dx) {
+							l_dst[x + dx] = l_src[xorg];
+						}
+					}
+				}
+				for (; x < l_new_cmp->w; ++x) {
+					l_dst[x] = l_src[xorg];
+				}
+				l_dst += l_new_cmp->w;
+				++y;
+				for (; y < l_new_cmp->h; ++y) {
+					memcpy(l_dst, l_dst - l_new_cmp->w, l_new_cmp->w * sizeof(int));
+					l_dst += l_new_cmp->w;
+				}
+			}
+		}
+		else {
+			memcpy(l_new_cmp->data, l_org_cmp->data, l_org_cmp->w * l_org_cmp->h * sizeof(int));
+		}
+	}
+	opj_image_destroy(original);
+	return l_new_image;
+}
+
+/* -------------------------------------------------------------------------- */
+
 int main(int argc, char **argv) {
-	opj_dparameters_t parameters;	/* decompression parameters */
+	opj_decompress_parameters parameters;	/* decompression parameters */
 	img_fol_t img_fol;
 	opj_event_mgr_t event_mgr;		/* event manager */
 	opj_image_t *image = NULL;
@@ -543,7 +961,7 @@ int main(int argc, char **argv) {
 	event_mgr.info_handler = info_callback;
 
 	/* set decoding parameters to default values */
-	opj_set_default_decoder_parameters(&parameters);
+	set_default_parameters(&parameters);
 
 	/* Initialize indexfilename and img_fol */
 	*indexfilename = 0;
@@ -551,6 +969,7 @@ int main(int argc, char **argv) {
 
 	/* parse input and get user encoding parameters */
 	if(parse_cmdline_decoder(argc, argv, &parameters,&img_fol, indexfilename) == 1) {
+		destroy_parameters(&parameters);
 		return 1;
 	}
 
@@ -564,6 +983,7 @@ int main(int argc, char **argv) {
 			dirptr->filename = (char**) malloc(num_images*sizeof(char*));
 
 			if(!dirptr->filename_buf){
+				destroy_parameters(&parameters);
 				return 1;
 			}
 			for(i=0;i<num_images;i++){
@@ -571,10 +991,12 @@ int main(int argc, char **argv) {
 			}
 		}
 		if(load_images(dirptr,img_fol.imgdirpath)==1){
+			destroy_parameters(&parameters);
 			return 1;
 		}
 		if (num_images==0){
 			fprintf(stdout,"Folder is empty\n");
+			destroy_parameters(&parameters);
 			return 1;
 		}
 	}else{
@@ -598,6 +1020,7 @@ int main(int argc, char **argv) {
 		fsrc = fopen(parameters.infile, "rb");
 		if (!fsrc) {
 			fprintf(stderr, "ERROR -> failed to open %s for reading\n", parameters.infile);
+			destroy_parameters(&parameters);
 			return 1;
 		}
 		fseek(fsrc, 0, SEEK_END);
@@ -609,6 +1032,7 @@ int main(int argc, char **argv) {
 			free(src);
 			fclose(fsrc);
 			fprintf(stderr, "\nERROR: fread return a number of element different from the expected.\n");
+			destroy_parameters(&parameters);
 			return 1;
 		}
 		fclose(fsrc);
@@ -628,7 +1052,7 @@ int main(int argc, char **argv) {
 			opj_set_event_mgr((opj_common_ptr)dinfo, &event_mgr, stderr);
 
 			/* setup the decoder decoding parameters using user parameters */
-			opj_setup_decoder(dinfo, &parameters);
+			opj_setup_decoder(dinfo, &parameters.core);
 
 			/* open a byte stream */
 			cio = opj_cio_open((opj_common_ptr)dinfo, src, file_length);
@@ -643,6 +1067,7 @@ int main(int argc, char **argv) {
 				opj_destroy_decompress(dinfo);
 				opj_cio_close(cio);
 				free(src);
+				destroy_parameters(&parameters);
 				return 1;
 			}
 
@@ -671,7 +1096,7 @@ int main(int argc, char **argv) {
 			opj_set_event_mgr((opj_common_ptr)dinfo, &event_mgr, stderr);
 
 			/* setup the decoder decoding parameters using the current image and user parameters */
-			opj_setup_decoder(dinfo, &parameters);
+			opj_setup_decoder(dinfo, &parameters.core);
 
 			/* open a byte stream */
 			cio = opj_cio_open((opj_common_ptr)dinfo, src, file_length);
@@ -686,6 +1111,7 @@ int main(int argc, char **argv) {
 				opj_destroy_decompress(dinfo);
 				opj_cio_close(cio);
 				free(src);
+				destroy_parameters(&parameters);
 				return 1;
 			}
 
@@ -714,7 +1140,7 @@ int main(int argc, char **argv) {
 			opj_set_event_mgr((opj_common_ptr)dinfo, &event_mgr, stderr);
 
 			/* setup the decoder decoding parameters using user parameters */
-			opj_setup_decoder(dinfo, &parameters);
+			opj_setup_decoder(dinfo, &parameters.core);
 
 			/* open a byte stream */
 			cio = opj_cio_open((opj_common_ptr)dinfo, src, file_length);
@@ -729,6 +1155,7 @@ int main(int argc, char **argv) {
 				opj_destroy_decompress(dinfo);
 				opj_cio_close(cio);
 				free(src);
+				destroy_parameters(&parameters);
 				return 1;
 			}
 
@@ -755,20 +1182,89 @@ int main(int argc, char **argv) {
 		free(src);
 		src = NULL;
 
-	if(image->color_space == CLRSPC_SYCC)
-   {
-	color_sycc_to_rgb(image);
-   }
+		if(image->color_space == CLRSPC_SYCC)
+		{
+			color_sycc_to_rgb(image);
+		}
 
-	if(image->icc_profile_buf)
-   {
+		if(image->icc_profile_buf)
+		{
 #if defined(HAVE_LIBLCMS1) || defined(HAVE_LIBLCMS2)
-	color_apply_icc_profile(image);
+			color_apply_icc_profile(image);
 #endif
-
-	free(image->icc_profile_buf);
-	image->icc_profile_buf = NULL; image->icc_profile_len = 0;
-   }
+			free(image->icc_profile_buf);
+			image->icc_profile_buf = NULL; image->icc_profile_len = 0;
+		}
+		
+		/* Force output precision */
+		/* ---------------------- */
+		if (parameters.precision != NULL)
+		{
+			int compno;
+			for (compno = 0; compno < image->numcomps; ++compno)
+			{
+				int precno = compno;
+				int prec;
+				
+				if (precno >= parameters.nb_precision) {
+					precno = parameters.nb_precision - 1U;
+				}
+				
+				prec = parameters.precision[precno].prec;
+				if (prec == 0) {
+					prec = image->comps[compno].prec;
+				}
+				
+				switch (parameters.precision[precno].mode) {
+					case OPJ_PREC_MODE_CLIP:
+						clip_component(&(image->comps[compno]), prec);
+						break;
+					case OPJ_PREC_MODE_SCALE:
+						scale_component(&(image->comps[compno]), prec);
+						break;
+					default:
+						break;
+				}
+				
+			}
+		}
+		
+		/* Upsample components */
+		/* ------------------- */
+		if (parameters.upsample)
+		{
+			image = upsample_image_components(image);
+			if (image == NULL) {
+				fprintf(stderr, "ERROR -> j2k_to_image: failed to upsample image components!\n");
+				destroy_parameters(&parameters);
+				opj_destroy_decompress(dinfo);
+				return EXIT_FAILURE;
+			}
+		}
+		
+		/* Force RGB output */
+		/* ---------------- */
+		if (parameters.force_rgb)
+		{
+			switch (image->color_space) {
+				case CLRSPC_SRGB:
+					break;
+				case CLRSPC_GRAY:
+					image = convert_gray_to_rgb(image);
+					break;
+				default:
+					fprintf(stderr, "ERROR -> j2k_to_image: don't know how to convert image to RGB colorspace!\n");
+					opj_image_destroy(image);
+					image = NULL;
+					break;
+			}
+			if (image == NULL) {
+				fprintf(stderr, "ERROR -> j2k_to_image: failed to convert to RGB image!\n");
+				destroy_parameters(&parameters);
+				opj_destroy_decompress(dinfo);
+				return EXIT_FAILURE;
+			}
+		}
 
 		/* create output image */
 		/* ------------------- */
@@ -854,6 +1350,7 @@ int main(int argc, char **argv) {
 		opj_image_destroy(image);
 
 	}
+	destroy_parameters(&parameters);
 	return 0;
 }
 /*end main*/

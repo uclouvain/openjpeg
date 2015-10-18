@@ -47,6 +47,10 @@ typedef struct raw_cparameters {
 	/*@}*/
 } raw_cparameters_t;
 
+/* Component precision scaling */
+void clip_component(opj_image_comp_t* component, int precision);
+void scale_component(opj_image_comp_t* component, int precision);
+
 /* TGA conversion */
 opj_image_t* tgatoimage(const char *filename, opj_cparameters_t *parameters);
 int imagetotga(opj_image_t * image, const char *outfile);

@@ -48,6 +48,23 @@
 #include "openjpeg.h"
 #include "convert.h"
 
+#ifdef HAVE_STDINT_H
+#include <stdint.h>
+#else
+#if defined(_WIN32)
+typedef   signed __int8   int8_t;
+typedef unsigned __int8   uint8_t;
+typedef   signed __int16  int16_t;
+typedef unsigned __int16  uint16_t;
+typedef   signed __int32  int32_t;
+typedef unsigned __int32  uint32_t;
+typedef   signed __int64  int64_t;
+typedef unsigned __int64  uint64_t;
+#else
+#error unsupported platform
+#endif
+#endif
+
 /*
  * Get logarithm of an integer and round downwards.
  *
@@ -59,6 +76,92 @@ static int int_floorlog2(int a) {
 		a >>= 1;
 	}
 	return l;
+}
+
+/* Component precision scaling */
+void clip_component(opj_image_comp_t* component, int precision)
+{
+	size_t i, len;
+	unsigned int umax = (unsigned int)((int)-1);
+	
+	len = (size_t)component->w * (size_t)component->h;
+	if (precision < 32) {
+		umax = (1U << precision) - 1U;
+	}
+	
+	if (component->sgnd) {
+		int* l_data = component->data;
+		int max = (int)(umax / 2U);
+		int min = -max - 1;
+		for (i = 0U; i < len; ++i) {
+			if (l_data[i] > max) {
+				l_data[i] = max;
+			} else if (l_data[i] < min) {
+				l_data[i] = min;
+			}
+		}
+	} else {
+		unsigned int* l_data = (unsigned int*)component->data;
+		for (i = 0U; i < len; ++i) {
+			if (l_data[i] > umax) {
+				l_data[i] = umax;
+			}
+		}
+	}
+	component->prec = precision;
+}
+
+/* Component precision scaling */
+static void scale_component_up(opj_image_comp_t* component, int precision)
+{
+	size_t i, len;
+	
+	len = (size_t)component->w * (size_t)component->h;
+	if (component->sgnd) {
+		int64_t newMax = (int64_t)(1U << (precision - 1));
+		int64_t oldMax = (int64_t)(1U << (component->prec - 1));
+		int* l_data = component->data;
+		for (i = 0; i < len; ++i) {
+			l_data[i] = (int)(((int64_t)l_data[i] * newMax) / oldMax);
+		}
+	} else {
+		uint64_t newMax = (uint64_t)((1U << precision) - 1U);
+		uint64_t oldMax = (uint64_t)((1U << component->prec) - 1U);
+		unsigned int* l_data = (unsigned int*)component->data;
+		for (i = 0; i < len; ++i) {
+			l_data[i] = (unsigned int)(((uint64_t)l_data[i] * newMax) / oldMax);
+		}
+	}
+	component->prec = precision;
+	component->bpp = precision;
+}
+void scale_component(opj_image_comp_t* component, int precision)
+{
+	int shift;
+	size_t i, len;
+	
+	if (component->prec == precision) {
+		return;
+	}
+	if (component->prec < precision) {
+		scale_component_up(component, precision);
+		return;
+	}
+	shift = (int)(component->prec - precision);
+	len = (size_t)component->w * (size_t)component->h;
+	if (component->sgnd) {
+		int* l_data = component->data;
+		for (i = 0U; i < len; ++i) {
+			l_data[i] >>= shift;
+		}
+	} else {
+		unsigned int* l_data = (unsigned int*)component->data;
+		for (i = 0U; i < len; ++i) {
+			l_data[i] >>= shift;
+		}
+	}
+	component->bpp = precision;
+	component->prec = precision;
 }
 
 /* -->> -->> -->> -->>
