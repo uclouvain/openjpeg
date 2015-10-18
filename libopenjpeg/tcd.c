@@ -1433,9 +1433,11 @@ opj_bool tcd_decode_tile(opj_tcd_t *tcd, unsigned char *src, int len, int tileno
 				return OPJ_FALSE;
 			}
       else {
-		  	tcd->image->comps[compno].resno_decoded =
-				tile->comps[compno].numresolutions - tcd->cp->reduce - 1;
+		  	tcd->image->comps[compno].resno_decoded = tile->comps[compno].numresolutions - tcd->cp->reduce - 1;
       }
+		}
+		else {
+			tcd->image->comps[compno].resno_decoded = tile->comps[compno].numresolutions - 1;
 		}
 
 		numres2decode = tcd->image->comps[compno].resno_decoded + 1;
