@@ -117,9 +117,9 @@ static INLINE int int_ceildivpow2(int a, int b) {
 }
 
 /**
-	+ Divide a 64bits integer by a power of 2 and round upwards
-	+ @return Returns a divided by 2^b
-	+ */
+Divide a 64bits integer by a power of 2 and round upwards
+@return Returns a divided by 2^b
+*/
 static INLINE int int64_ceildivpow2(int64_t a, int b) {
 	return (int)((a + ((int64_t)1 << b) - 1) >> b);
 }
