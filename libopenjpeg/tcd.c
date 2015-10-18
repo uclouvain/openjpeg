@@ -276,10 +276,10 @@ void tcd_malloc_encode(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp, int c
 						band->y1 = int_ceildivpow2(tilec->y1, levelno);
 					} else {
 						/* band border (global) */
-						band->x0 = int_ceildivpow2(tilec->x0 - (1 << levelno) * x0b, levelno + 1);
-						band->y0 = int_ceildivpow2(tilec->y0 - (1 << levelno) * y0b, levelno + 1);
-						band->x1 = int_ceildivpow2(tilec->x1 - (1 << levelno) * x0b, levelno + 1);
-						band->y1 = int_ceildivpow2(tilec->y1 - (1 << levelno) * y0b, levelno + 1);
+						band->x0 = int64_ceildivpow2(tilec->x0 - ((int64_t)x0b << levelno), levelno + 1);
+						band->y0 = int64_ceildivpow2(tilec->y0 - ((int64_t)y0b << levelno), levelno + 1);
+						band->x1 = int64_ceildivpow2(tilec->x1 - ((int64_t)x0b << levelno), levelno + 1);
+						band->y1 = int64_ceildivpow2(tilec->y1 - ((int64_t)y0b << levelno), levelno + 1);
 					}
 					
 					ss = &tccp->stepsizes[resno == 0 ? 0 : 3 * (resno - 1) + bandno + 1];
@@ -789,10 +789,10 @@ void tcd_malloc_decode_tile(opj_tcd_t *tcd, opj_image_t * image, opj_cp_t * cp, 
 					band->y1 = int_ceildivpow2(tilec->y1, levelno);
 				} else {
 					/* band border (global) */
-					band->x0 = int_ceildivpow2(tilec->x0 - (1 << levelno) * x0b, levelno + 1);
-					band->y0 = int_ceildivpow2(tilec->y0 - (1 << levelno) * y0b, levelno + 1);
-					band->x1 = int_ceildivpow2(tilec->x1 - (1 << levelno) * x0b, levelno + 1);
-					band->y1 = int_ceildivpow2(tilec->y1 - (1 << levelno) * y0b, levelno + 1);
+					band->x0 = int64_ceildivpow2(tilec->x0 - ((int64_t)x0b << levelno), levelno + 1);
+					band->y0 = int64_ceildivpow2(tilec->y0 - ((int64_t)y0b << levelno), levelno + 1);
+					band->x1 = int64_ceildivpow2(tilec->x1 - ((int64_t)x0b << levelno), levelno + 1);
+					band->y1 = int64_ceildivpow2(tilec->y1 - ((int64_t)y0b << levelno), levelno + 1);
 				}
 				
 				ss = &tccp->stepsizes[resno == 0 ? 0 : 3 * (resno - 1) + bandno + 1];
