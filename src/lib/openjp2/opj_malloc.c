@@ -31,10 +31,6 @@
  */
 #define OPJ_SKIP_POISON
 #include "opj_includes.h"
-#include <stdlib.h>
-#include <string.h>
-#include <inttypes.h>
-#include <assert.h>
 
 static INLINE void *opj_aligned_alloc_n(size_t alignment, size_t size)
 {
