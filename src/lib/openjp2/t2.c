@@ -1338,7 +1338,7 @@ static OPJ_BOOL opj_t2_skip_packet_data(   opj_t2_t* p_t2,
 }
 
 
-OPJ_BOOL opj_t2_init_seg(   opj_tcd_cblk_dec_t* cblk,
+static OPJ_BOOL opj_t2_init_seg(   opj_tcd_cblk_dec_t* cblk,
                             OPJ_UINT32 index, 
                             OPJ_UINT32 cblksty, 
                             OPJ_UINT32 first)
