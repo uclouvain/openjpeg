@@ -795,7 +795,7 @@ static void opj_v4dwt_decode_step2(opj_v4_t* l, opj_v4_t* w, OPJ_INT32 k, OPJ_IN
 /* <summary>                             */
 /* Inverse 9-7 wavelet transform in 1-D. */
 /* </summary>                            */
-void opj_v4dwt_decode(opj_v4dwt_t* restrict dwt)
+static void opj_v4dwt_decode(opj_v4dwt_t* restrict dwt)
 {
 	OPJ_INT32 a, b;
 	if(dwt->cas == 0) {
