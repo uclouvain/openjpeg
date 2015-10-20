@@ -32,6 +32,10 @@
 #define OPJ_SKIP_POISON
 #include "opj_includes.h"
 
+#ifndef SIZE_MAX
+#define SIZE_MAX ((size_t) -1)
+#endif
+
 static INLINE void *opj_aligned_alloc_n(size_t alignment, size_t size)
 {
   void* ptr;
@@ -59,8 +63,30 @@ static INLINE void *opj_aligned_alloc_n(size_t alignment, size_t size)
 #elif defined(HAVE__ALIGNED_MALLOC)
   ptr = _aligned_malloc(size, alignment);
 #else
-/* TODO: _mm_malloc(x,y) */
-#error missing aligned alloc function
+  /*
+   * Generic aligned malloc implementation.
+   * Uses ptrdiff_t for the integer manipulation of the pointer, as
+   * uintptr_t is not available in C89.
+   */
+  {
+    ptrdiff_t mask;
+    void *mem;
+
+    /* Room for padding and extra pointer stored in front of allocated area */
+    size_t overhead = (alignment - 1) + sizeof(void *);
+
+    /* Avoid integer overflow */
+    if (size > SIZE_MAX - overhead)
+      return NULL;
+
+    mem = malloc(size + overhead);
+    if (!mem)
+      return mem;
+
+    mask = ~(ptrdiff_t)(alignment - 1);
+    ptr = (void *) ((ptrdiff_t) (mem + overhead) & mask);
+    ((void**) ptr)[-1] = mem;
+  }
 #endif
   return ptr;
 }
@@ -97,8 +123,46 @@ static INLINE void *opj_aligned_realloc_n(void *ptr, size_t alignment, size_t ne
 #elif defined(HAVE__ALIGNED_MALLOC)
   r_ptr = _aligned_realloc( ptr, new_size, alignment );
 #else
-/* TODO: _mm_malloc(x,y) */
-#error missing aligned realloc function
+  {
+    void *oldmem, *newmem;
+    size_t overhead = (alignment - 1) + sizeof(void *);
+    
+    if (new_size == 0) {
+      my_aligned_free(ptr);
+      return NULL;
+    }
+
+    /* Avoid integer overflow */
+    if (new_size > SIZE_MAX - overhead)
+      return NULL;
+
+    oldmem = ((void**) ptr)[-1];
+    newmem = realloc(oldmem, new_size + overhead);
+    if (!newmem)
+      return newmem;
+
+    if (newmem == oldmem) {
+      r_ptr = ptr;
+    }
+    else {
+      ptrdiff_t old_offset, new_offset;
+      ptrdiff_t mask;
+
+      /* realloc created a new copy, realign the copied memory block */
+      old_offset = (char *) ptr - (char *) oldmem;
+
+      mask = ~(ptrdiff_t)(alignment - 1);
+      r_ptr = (void *) ((ptrdiff_t) (newmem + overhead) & mask);
+
+      new_offset = (char *) r_ptr - (char *) newmem;
+
+      if (new_offset != old_offset) {
+	memmove((char *) newmem + new_offset, (char *) newmem + old_offset,
+		      new_size);
+      }
+      ((void**) r_ptr)[-1] = newmem;
+    }
+  }
 #endif
 	return r_ptr;
 }
@@ -129,10 +193,14 @@ void * opj_aligned_realloc(void *ptr, size_t size)
 
 void opj_aligned_free(void* ptr)
 {
-#ifdef HAVE__ALIGNED_MALLOC
+#if defined(HAVE_POSIX_MEMALIGN) || defined(HAVE_MEMALIGN)
+  free( ptr );
+#elif defined(HAVE__ALIGNED_MALLOC)
   _aligned_free( ptr );
 #else
-  free( ptr );
+  /* Generic implementation has malloced pointer stored in front of used area */
+  if (ptr)
+    free(((void**) ptr)[-1]);
 #endif
 }
 
