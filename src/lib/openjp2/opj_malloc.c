@@ -166,7 +166,7 @@ static INLINE void *opj_aligned_realloc_n(void *ptr, size_t alignment, size_t ne
       size_t new_offset;
 
       /* realloc created a new copy, realign the copied memory block */
-      old_offset = (size_t)(ptr - oldmem);
+      old_offset = (size_t)((OPJ_UINT8*)ptr - (OPJ_UINT8*)oldmem);
 
       /* offset = ((alignment + 1U) - ((size_t)(mem + sizeof(void*)) & alignment)) & alignment; */
       /* Use the fact that alignment + 1U is a power of 2 */
