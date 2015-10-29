@@ -588,12 +588,12 @@ static int tga_readheader(FILE *fp, unsigned int *bits_per_pixel,
         fprintf(stderr, "\nError: fread return a number of element different from the expected.\n");
         return 0 ;
     }
-    id_len = (unsigned char)tga[0];
-    /*cmap_type = (unsigned char)tga[1];*/
-    image_type = (unsigned char)tga[2];
+    id_len = tga[0];
+    /*cmap_type = tga[1];*/
+    image_type = tga[2];
     /*cmap_index = get_ushort(*(unsigned short*)(&tga[3]));*/
     cmap_len = get_ushort(*(unsigned short*)(&tga[5]));
-    cmap_entry_size = (unsigned char)tga[7];
+    cmap_entry_size = tga[7];
 
 
 #if 0
@@ -602,8 +602,8 @@ static int tga_readheader(FILE *fp, unsigned int *bits_per_pixel,
 #endif
     image_w = get_ushort(*(unsigned short*)(&tga[12]));
     image_h = get_ushort(*(unsigned short*)(&tga[14]));
-    pixel_depth = (unsigned char)tga[16];
-    image_desc  = (unsigned char)tga[17];
+    pixel_depth = tga[16];
+    image_desc  = tga[17];
 
     *bits_per_pixel = (unsigned int)pixel_depth;
     *width  = (unsigned int)image_w;
