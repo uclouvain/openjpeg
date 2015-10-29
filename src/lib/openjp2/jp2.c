@@ -94,7 +94,7 @@ static OPJ_BYTE * opj_jp2_write_bpcc(	opj_jp2_t *jp2,
  * @param	p_bpc_header_size			the size of the bpc header
  * @param	p_manager					the user event manager.
  *
- * @return	true if the bpc header is valid, fale else.
+ * @return	true if the bpc header is valid, false else.
  */
 static OPJ_BOOL opj_jp2_read_bpcc(  opj_jp2_t *jp2,
                                     OPJ_BYTE * p_bpc_header_data,
@@ -311,7 +311,7 @@ static OPJ_BOOL opj_jp2_read_cmap(	opj_jp2_t * jp2,
  * @param	p_colr_header_size			the size of the color header
  * @param	p_manager					the user event manager.
  *
- * @return	true if the bpc header is valid, fale else.
+ * @return	true if the bpc header is valid, false else.
 */
 static OPJ_BOOL opj_jp2_read_colr(  opj_jp2_t *jp2,
                                     OPJ_BYTE * p_colr_header_data,
