@@ -599,7 +599,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_decompress_parameters *para
 					case PNG_DFMT:
 						break;
 					default:
-						fprintf(stderr, "Unknown output format image %s [only *.pnm, *.pgm, *.ppm, *.pgx, *.bmp, *.tif, *.raw or *.tga]!! \n", outfile);
+						fprintf(stderr, "Unknown output format image %s [only *.png, *.pnm, *.pgm, *.ppm, *.pgx, *.bmp, *.tif, *.raw or *.tga]!!\n", outfile);
 						return 1;
 				}
 				if (opj_strcpy_s(parameters->outfile, sizeof(parameters->outfile), outfile) != 0) {
@@ -644,7 +644,7 @@ int parse_cmdline_decoder(int argc, char **argv, opj_decompress_parameters *para
 						img_fol->out_format = "png";
 						break;
 					default:
-						fprintf(stderr, "Unknown output format image %s [only *.pnm, *.pgm, *.ppm, *.pgx, *.bmp, *.tif, *.raw or *.tga]!! \n", outformat);
+						fprintf(stderr, "Unknown output format image %s [only *.png, *.pnm, *.pgm, *.ppm, *.pgx, *.bmp, *.tif, *.raw or *.tga]!!\n", outformat);
 						return 1;
 						break;
 				}
