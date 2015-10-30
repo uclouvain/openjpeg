@@ -558,14 +558,12 @@ struct tga_header
 };
 #endif /* INFORMATION_ONLY */
 
-static unsigned short get_ushort(unsigned short val) {
-
+static unsigned short get_ushort(unsigned char *data) {
+    unsigned short val = *(unsigned short *)data;
 #ifdef OPJ_BIG_ENDIAN
-    return (unsigned short)(((val & 0xffU) << 8) | (val >> 8));
-#else
-    return val;
+    val = ((val & 0xffU) << 8) | (val >> 8);
 #endif
-
+    return val;
 }
 
 #define TGA_HEADER_SIZE 18
@@ -588,22 +586,22 @@ static int tga_readheader(FILE *fp, unsigned int *bits_per_pixel,
         fprintf(stderr, "\nError: fread return a number of element different from the expected.\n");
         return 0 ;
     }
-    id_len = (unsigned char)tga[0];
-    /*cmap_type = (unsigned char)tga[1];*/
-    image_type = (unsigned char)tga[2];
-    /*cmap_index = get_ushort(*(unsigned short*)(&tga[3]));*/
-    cmap_len = get_ushort(*(unsigned short*)(&tga[5]));
-    cmap_entry_size = (unsigned char)tga[7];
+    id_len = tga[0];
+    /*cmap_type = tga[1];*/
+    image_type = tga[2];
+    /*cmap_index = get_ushort(&tga[3]);*/
+    cmap_len = get_ushort(&tga[5]);
+    cmap_entry_size = tga[7];
 
 
 #if 0
-    x_origin = get_ushort(*(unsigned short*)(&tga[8]));
-    y_origin = get_ushort(*(unsigned short*)(&tga[10]));
+    x_origin = get_ushort(&tga[8]);
+    y_origin = get_ushort(&tga[10]);
 #endif
-    image_w = get_ushort(*(unsigned short*)(&tga[12]));
-    image_h = get_ushort(*(unsigned short*)(&tga[14]));
-    pixel_depth = (unsigned char)tga[16];
-    image_desc  = (unsigned char)tga[17];
+    image_w = get_ushort(&tga[12]);
+    image_h = get_ushort(&tga[14]);
+    pixel_depth = tga[16];
+    image_desc  = tga[17];
 
     *bits_per_pixel = (unsigned int)pixel_depth;
     *width  = (unsigned int)image_w;
