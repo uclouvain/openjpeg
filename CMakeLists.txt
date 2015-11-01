@@ -227,14 +227,14 @@ OPJ_TEST_LARGE_FILES(OPJ_HAVE_LARGEFILES)
 
 # Allocating Aligned Memory Blocks
 include(CheckIncludeFiles)
-check_include_files(malloc.h HAVE_MALLOC_H)
+check_include_files(malloc.h OPJ_HAVE_MALLOC_H)
 include(CheckSymbolExists)
 # _aligned_alloc https://msdn.microsoft.com/en-us/library/8z34s9c6.aspx
-check_symbol_exists(_aligned_malloc malloc.h HAVE__ALIGNED_MALLOC)
+check_symbol_exists(_aligned_malloc malloc.h OPJ_HAVE__ALIGNED_MALLOC)
 # posix_memalign
-check_symbol_exists(posix_memalign stdlib.h HAVE_POSIX_MEMALIGN)
+check_symbol_exists(posix_memalign stdlib.h OPJ_HAVE_POSIX_MEMALIGN)
 # memalign (obsolete)
-check_symbol_exists(memalign malloc.h HAVE_MEMALIGN)
+check_symbol_exists(memalign malloc.h OPJ_HAVE_MEMALIGN)
 #-----------------------------------------------------------------------------
 # Build Library
 if(BUILD_JPIP_SERVER)
