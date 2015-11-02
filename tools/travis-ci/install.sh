@@ -37,9 +37,9 @@ fi
 
 if [ "${OPJ_CI_ASAN:-}" == "1" ]; then
 	# We need a new version of cmake than travis-ci provides
-	wget -qO - http://www.cmake.org/files/v3.3/cmake-3.3.1-Linux-x86_64.tar.gz | tar -xz
+	wget -qO - https://cmake.org/files/v3.3/cmake-3.3.2-Linux-x86_64.tar.gz | tar -xz
 	# copy to a directory that will not changed every version
-	mv cmake-3.3.1-Linux-x86_64 cmake-install
+	mv cmake-3.3.2-Linux-x86_64 cmake-install
 fi
 
 if [ "${OPJ_CI_SKIP_TESTS:-}" != "1" ]; then
