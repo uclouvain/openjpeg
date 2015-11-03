@@ -115,7 +115,7 @@ static INLINE void *opj_aligned_realloc_n(void *ptr, size_t alignment, size_t ne
 
 /* no portable aligned realloc */
 #if defined(OPJ_HAVE_POSIX_MEMALIGN) || defined(OPJ_HAVE_MEMALIGN)
-  /* glibc doc states one can mixed aligned malloc with realloc */
+  /* glibc doc states one can mix aligned malloc with realloc */
   r_ptr = realloc( ptr, new_size ); /* fast path */
   /* we simply use `size_t` to cast, since we are only interest in binary AND
    * operator */
