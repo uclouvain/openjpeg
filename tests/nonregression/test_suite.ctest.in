@@ -81,32 +81,31 @@ image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn6a08.png -o @TEMP_PATH@/basn6a08.pn
 #image_to_j2k -i @INPUT_NR_PATH@/issue203-127x64-bgrx.bmp -o @TEMP_PATH@/issue203-127x64-bgrx.bmp.jp2
 
 # issue 322 limited tif support
-# No plan to fix this in 1.5 branch right now
-#image_to_j2k -i @INPUT_NR_PATH@/flower-minisblack-01.tif -o @TEMP_PATH@/flower-minisblack-01.tif.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/flower-minisblack-02.tif -o @TEMP_PATH@/flower-minisblack-02.tif.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/flower-minisblack-04.tif -o @TEMP_PATH@/flower-minisblack-04.tif.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/flower-minisblack-06.tif -o @TEMP_PATH@/flower-minisblack-06.tif.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/flower-minisblack-08.tif -o @TEMP_PATH@/flower-minisblack-08.tif.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/flower-minisblack-10.tif -o @TEMP_PATH@/flower-minisblack-10.tif.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/flower-minisblack-12.tif -o @TEMP_PATH@/flower-minisblack-12.tif.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/flower-minisblack-14.tif -o @TEMP_PATH@/flower-minisblack-14.tif.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/flower-minisblack-16.tif -o @TEMP_PATH@/flower-minisblack-16.tif.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/flower-rgb-contig-02.tif -o @TEMP_PATH@/flower-rgb-contig-02.tif.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/flower-rgb-contig-04.tif -o @TEMP_PATH@/flower-rgb-contig-04.tif.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/flower-rgb-contig-08.tif -o @TEMP_PATH@/flower-rgb-contig-08.tif.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/flower-rgb-contig-10.tif -o @TEMP_PATH@/flower-rgb-contig-10.tif.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/flower-rgb-contig-12.tif -o @TEMP_PATH@/flower-rgb-contig-12.tif.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/flower-rgb-contig-14.tif -o @TEMP_PATH@/flower-rgb-contig-14.tif.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/flower-rgb-contig-16.tif -o @TEMP_PATH@/flower-rgb-contig-16.tif.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/flower-rgb-planar-02.tif -o @TEMP_PATH@/flower-rgb-planar-02.tif.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/flower-rgb-planar-04.tif -o @TEMP_PATH@/flower-rgb-planar-04.tif.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/flower-rgb-planar-08.tif -o @TEMP_PATH@/flower-rgb-planar-08.tif.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/flower-rgb-planar-10.tif -o @TEMP_PATH@/flower-rgb-planar-10.tif.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/flower-rgb-planar-12.tif -o @TEMP_PATH@/flower-rgb-planar-12.tif.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/flower-rgb-planar-14.tif -o @TEMP_PATH@/flower-rgb-planar-14.tif.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/flower-rgb-planar-16.tif -o @TEMP_PATH@/flower-rgb-planar-16.tif.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/basn6a08.tif -o @TEMP_PATH@/basn6a08.tif.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/basn4a08.tif -o @TEMP_PATH@/basn4a08.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-minisblack-01.tif -o @TEMP_PATH@/flower-minisblack-01.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-minisblack-02.tif -o @TEMP_PATH@/flower-minisblack-02.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-minisblack-04.tif -o @TEMP_PATH@/flower-minisblack-04.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-minisblack-06.tif -o @TEMP_PATH@/flower-minisblack-06.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-minisblack-08.tif -o @TEMP_PATH@/flower-minisblack-08.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-minisblack-10.tif -o @TEMP_PATH@/flower-minisblack-10.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-minisblack-12.tif -o @TEMP_PATH@/flower-minisblack-12.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-minisblack-14.tif -o @TEMP_PATH@/flower-minisblack-14.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-minisblack-16.tif -o @TEMP_PATH@/flower-minisblack-16.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-rgb-contig-02.tif -o @TEMP_PATH@/flower-rgb-contig-02.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-rgb-contig-04.tif -o @TEMP_PATH@/flower-rgb-contig-04.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-rgb-contig-08.tif -o @TEMP_PATH@/flower-rgb-contig-08.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-rgb-contig-10.tif -o @TEMP_PATH@/flower-rgb-contig-10.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-rgb-contig-12.tif -o @TEMP_PATH@/flower-rgb-contig-12.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-rgb-contig-14.tif -o @TEMP_PATH@/flower-rgb-contig-14.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-rgb-contig-16.tif -o @TEMP_PATH@/flower-rgb-contig-16.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-rgb-planar-02.tif -o @TEMP_PATH@/flower-rgb-planar-02.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-rgb-planar-04.tif -o @TEMP_PATH@/flower-rgb-planar-04.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-rgb-planar-08.tif -o @TEMP_PATH@/flower-rgb-planar-08.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-rgb-planar-10.tif -o @TEMP_PATH@/flower-rgb-planar-10.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-rgb-planar-12.tif -o @TEMP_PATH@/flower-rgb-planar-12.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-rgb-planar-14.tif -o @TEMP_PATH@/flower-rgb-planar-14.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/flower-rgb-planar-16.tif -o @TEMP_PATH@/flower-rgb-planar-16.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/basn6a08.tif -o @TEMP_PATH@/basn6a08.tif.jp2
+image_to_j2k -i @INPUT_NR_PATH@/basn4a08.tif -o @TEMP_PATH@/basn4a08.tif.jp2
 
 # issue 536 (PNG images are always read as RGB(A) images) + issue 264 (convert.c is unmaintainable)
 # Test all images from pngsuite
@@ -414,49 +413,49 @@ j2k_to_image -i @INPUT_NR_PATH@/issue495.jp2 -o @TEMP_PATH@/issue495.jp2.pgx
 # #j2k_to_image -i @INPUT_CONF_PATH@/p1_01.j2k -o @TEMP_PATH@/p1_01_4.j2k.png -d 100,80,200,150
 # #j2k_to_image -i @INPUT_CONF_PATH@/p1_01.j2k -o @TEMP_PATH@/p1_01_5.j2k.png -d 150,20,200,50
 
-# # issue 322 limited tif support
-# # GRAYSCALE
-# j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_tif-1.tif -p 1S
-# j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_tif-2.tif -p 2S
-# j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_tif-4.tif -p 4S
-# j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_tif-6.tif -p 6S
-# j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_tif-8.tif -p 8S
-# j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_tif-10.tif -p 10S
-# j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_tif-12.tif -p 12S
-# j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_tif-14.tif -p 14S
-# j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_tif-16.tif -p 16S
-# # GRAYSCALE ALPHA
-# j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_tif-1.tif -p 1S
-# j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_tif-2.tif -p 2S
-# j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_tif-4.tif -p 4S
-# j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_tif-6.tif -p 6S
-# j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_tif-8.tif -p 8S
-# j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_tif-10.tif -p 10S
-# j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_tif-12.tif -p 12S
-# j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_tif-14.tif -p 14S
-# j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_tif-16.tif -p 16S
-# # RGB
-# j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_tif-1.tif -p 1S
-# j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_tif-2.tif -p 2S
-# j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_tif-4.tif -p 4S
-# j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_tif-6.tif -p 6S
-# j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_tif-8.tif -p 8S
-# j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_tif-10.tif -p 10S
-# j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_tif-12.tif -p 12S
-# j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_tif-14.tif -p 14S
-# j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_tif-16.tif -p 16S
-# # RGBA
-# j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-1.tif -p 1S
-# j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-2.tif -p 2S
-# j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-4.tif -p 4S
-# j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-6.tif -p 6S
-# j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-8.tif -p 8S
-# j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-10.tif -p 10S
-# j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-12.tif -p 12S
-# j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-14.tif -p 14S
-# j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-16.tif -p 16S
-
 # < NOT IMPLEMENTED
+
+# issue 322 limited tif support
+# GRAYSCALE
+j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_tif-1.tif -p 1S
+j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_tif-2.tif -p 2S
+j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_tif-4.tif -p 4S
+j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_tif-6.tif -p 6S
+j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_tif-8.tif -p 8S
+j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_tif-10.tif -p 10S
+j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_tif-12.tif -p 12S
+j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_tif-14.tif -p 14S
+j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_tif-16.tif -p 16S
+# GRAYSCALE ALPHA
+j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_tif-1.tif -p 1S
+j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_tif-2.tif -p 2S
+j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_tif-4.tif -p 4S
+j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_tif-6.tif -p 6S
+j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_tif-8.tif -p 8S
+j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_tif-10.tif -p 10S
+j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_tif-12.tif -p 12S
+j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_tif-14.tif -p 14S
+j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_tif-16.tif -p 16S
+# RGB
+j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_tif-1.tif -p 1S
+j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_tif-2.tif -p 2S
+j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_tif-4.tif -p 4S
+j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_tif-6.tif -p 6S
+j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_tif-8.tif -p 8S
+j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_tif-10.tif -p 10S
+j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_tif-12.tif -p 12S
+j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_tif-14.tif -p 14S
+j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_tif-16.tif -p 16S
+# RGBA
+j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-1.tif -p 1S
+j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-2.tif -p 2S
+j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-4.tif -p 4S
+j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-6.tif -p 6S
+j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-8.tif -p 8S
+j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-10.tif -p 10S
+j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-12.tif -p 12S
+j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-14.tif -p 14S
+j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-16.tif -p 16S
 
 #issue 235 CMAP outside jp2h box. CMAP is buggy
 j2k_to_image -i @INPUT_NR_PATH@/issue235.jp2 -o @TEMP_PATH@/issue235.jp2.pgx

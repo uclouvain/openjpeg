@@ -3,6 +3,7 @@
 # First thing define the common source:
 SET(common_SRCS
   convert.c
+  converttif.c
   index.c
   ${OPENJPEG_SOURCE_DIR}/applications/common/color.c
   )

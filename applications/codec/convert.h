@@ -51,6 +51,17 @@ typedef struct raw_cparameters {
 void clip_component(opj_image_comp_t* component, int precision);
 void scale_component(opj_image_comp_t* component, int precision);
 
+/* planar / interleaved conversions */
+typedef void (* convert_32s_CXPX)(const int* pSrc, int* const* pDst, size_t length);
+extern const convert_32s_CXPX convert_32s_CXPX_LUT[5];
+typedef void (* convert_32s_PXCX)(int const* const* pSrc, int* pDst, size_t length, int adjust);
+extern const convert_32s_PXCX convert_32s_PXCX_LUT[5];
+/* bit depth conversions */
+typedef void (* convert_XXx32s_C1R)(const unsigned char* pSrc, int* pDst, size_t length);
+extern const convert_XXx32s_C1R convert_XXu32s_C1R_LUT[9]; /* up to 8bpp */
+typedef void (* convert_32sXXx_C1R)(const int* pSrc, unsigned char* pDst, size_t length);
+extern const convert_32sXXx_C1R convert_32sXXu_C1R_LUT[9]; /* up to 8bpp */
+
 /* TGA conversion */
 opj_image_t* tgatoimage(const char *filename, opj_cparameters_t *parameters);
 int imagetotga(opj_image_t * image, const char *outfile);
