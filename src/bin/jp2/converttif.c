@@ -42,6 +42,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#ifndef _WIN32
+#include <unistd.h>
+#endif
 
 #ifndef OPJ_HAVE_LIBTIFF
 # error OPJ_HAVE_LIBTIFF_NOT_DEFINED
