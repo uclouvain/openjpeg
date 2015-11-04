@@ -53,33 +53,6 @@ image_to_j2k -i @INPUT_NR_PATH@/issue316.png -o @TEMP_PATH@/issue316.png.jp2
 # issue 416 (cdef for png with alpha) + issue 436 (MCT norm read buffer overflow for num comp > 3 + Issue 215 number of decomp levels
 image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn6a08.png -o @TEMP_PATH@/basn6a08.png.jp2 -n 6
 
-# issue 203 BMP Files not handled properly
-# No plan to fix this in 1.5 branch right now
-#image_to_j2k -i @INPUT_NR_PATH@/issue203-8bpp-width1.bmp -o @TEMP_PATH@/issue203-8bpp-width1.bmp.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/issue203-rle8.bmp -o @TEMP_PATH@/issue203-rle8.bmp.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/issue203-32x32-y8.bmp -o @TEMP_PATH@/issue203-32x32-y8.bmp.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/issue203-33x33-y8.bmp -o @TEMP_PATH@/issue203-33x33-y8.bmp.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/issue203-34x34-y8.bmp -o @TEMP_PATH@/issue203-34x34-y8.bmp.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/issue203-35x35-y8.bmp -o @TEMP_PATH@/issue203-35x35-y8.bmp.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/issue203-32x32-bgr.bmp -o @TEMP_PATH@/issue203-32x32-bgr.bmp.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/issue203-33x33-bgr.bmp -o @TEMP_PATH@/issue203-33x33-bgr.bmp.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/issue203-34x34-bgr.bmp -o @TEMP_PATH@/issue203-34x34-bgr.bmp.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/issue203-35x35-bgr.bmp -o @TEMP_PATH@/issue203-35x35-bgr.bmp.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/issue203-32x32-y-rle8.bmp -o @TEMP_PATH@/issue203-32x32-y-rle8.bmp.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/issue203-32x32-bgr-rle8.bmp -o @TEMP_PATH@/issue203-32x32-bgr-rle8.bmp.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/issue203-32x32-y-rle4.bmp -o @TEMP_PATH@/issue203-32x32-y-rle4.bmp.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/issue203-32x32-bgr-rle4.bmp -o @TEMP_PATH@/issue203-32x32-bgr-rle4.bmp.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/issue203-32x32-bgra.bmp -o @TEMP_PATH@/issue203-32x32-bgra.bmp.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/issue203-32x32-bgrx.bmp -o @TEMP_PATH@/issue203-32x32-bgrx.bmp.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/issue203-32x32-bgr16.bmp -o @TEMP_PATH@/issue203-32x32-bgr16.bmp.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/issue203-33x33-bgr16.bmp -o @TEMP_PATH@/issue203-33x33-bgr16.bmp.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/issue203-32x32-bgra16.bmp -o @TEMP_PATH@/issue203-32x32-bgra16.bmp.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/issue203-33x33-bgra16.bmp -o @TEMP_PATH@/issue203-33x33-bgra16.bmp.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/issue203-32x32-bgrx16.bmp -o @TEMP_PATH@/issue203-32x32-bgrx16.bmp.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/issue203-33x33-bgrx16.bmp -o @TEMP_PATH@/issue203-33x33-bgrx16.bmp.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/issue203-127x64-bgr16.bmp -o @TEMP_PATH@/issue203-127x64-bgr16.bmp.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/issue203-127x64-bgrx.bmp -o @TEMP_PATH@/issue203-127x64-bgrx.bmp.jp2
-
 # issue 322 limited tif support
 image_to_j2k -i @INPUT_NR_PATH@/flower-minisblack-01.tif -o @TEMP_PATH@/flower-minisblack-01.tif.jp2
 image_to_j2k -i @INPUT_NR_PATH@/flower-minisblack-02.tif -o @TEMP_PATH@/flower-minisblack-02.tif.jp2
@@ -106,6 +79,32 @@ image_to_j2k -i @INPUT_NR_PATH@/flower-rgb-planar-14.tif -o @TEMP_PATH@/flower-r
 image_to_j2k -i @INPUT_NR_PATH@/flower-rgb-planar-16.tif -o @TEMP_PATH@/flower-rgb-planar-16.tif.jp2
 image_to_j2k -i @INPUT_NR_PATH@/basn6a08.tif -o @TEMP_PATH@/basn6a08.tif.jp2
 image_to_j2k -i @INPUT_NR_PATH@/basn4a08.tif -o @TEMP_PATH@/basn4a08.tif.jp2
+
+# issue 203 BMP Files not handled properly
+image_to_j2k -i @INPUT_NR_PATH@/issue203-8bpp-width1.bmp -o @TEMP_PATH@/issue203-8bpp-width1.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-rle8.bmp -o @TEMP_PATH@/issue203-rle8.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-32x32-y8.bmp -o @TEMP_PATH@/issue203-32x32-y8.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-33x33-y8.bmp -o @TEMP_PATH@/issue203-33x33-y8.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-34x34-y8.bmp -o @TEMP_PATH@/issue203-34x34-y8.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-35x35-y8.bmp -o @TEMP_PATH@/issue203-35x35-y8.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-32x32-bgr.bmp -o @TEMP_PATH@/issue203-32x32-bgr.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-33x33-bgr.bmp -o @TEMP_PATH@/issue203-33x33-bgr.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-34x34-bgr.bmp -o @TEMP_PATH@/issue203-34x34-bgr.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-35x35-bgr.bmp -o @TEMP_PATH@/issue203-35x35-bgr.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-32x32-y-rle8.bmp -o @TEMP_PATH@/issue203-32x32-y-rle8.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-32x32-bgr-rle8.bmp -o @TEMP_PATH@/issue203-32x32-bgr-rle8.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-32x32-y-rle4.bmp -o @TEMP_PATH@/issue203-32x32-y-rle4.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-32x32-bgr-rle4.bmp -o @TEMP_PATH@/issue203-32x32-bgr-rle4.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-32x32-bgra.bmp -o @TEMP_PATH@/issue203-32x32-bgra.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-32x32-bgrx.bmp -o @TEMP_PATH@/issue203-32x32-bgrx.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-32x32-bgr16.bmp -o @TEMP_PATH@/issue203-32x32-bgr16.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-33x33-bgr16.bmp -o @TEMP_PATH@/issue203-33x33-bgr16.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-32x32-bgra16.bmp -o @TEMP_PATH@/issue203-32x32-bgra16.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-33x33-bgra16.bmp -o @TEMP_PATH@/issue203-33x33-bgra16.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-32x32-bgrx16.bmp -o @TEMP_PATH@/issue203-32x32-bgrx16.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-33x33-bgrx16.bmp -o @TEMP_PATH@/issue203-33x33-bgrx16.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-127x64-bgr16.bmp -o @TEMP_PATH@/issue203-127x64-bgr16.bmp.jp2
+image_to_j2k -i @INPUT_NR_PATH@/issue203-127x64-bgrx.bmp -o @TEMP_PATH@/issue203-127x64-bgrx.bmp.jp2
 
 # issue 536 (PNG images are always read as RGB(A) images) + issue 264 (convert.c is unmaintainable)
 # Test all images from pngsuite

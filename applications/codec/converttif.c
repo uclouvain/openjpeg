@@ -171,27 +171,27 @@ int imagetotif(opj_image_t * image, const char *outfile)
 	TIFF *tif;
 	tdata_t buf;
 	tsize_t strip_size;
-	uint32 i, numcomps;
+	int32 i, numcomps;
 	size_t rowStride;
 	int32* buffer32s = NULL;
 	int32 const* planes[4];
 	convert_32s_PXCX cvtPxToCx = NULL;
 	convert_32sXXx_C1R cvt32sToTif = NULL;
 
-	bps = (int)image->comps[0].prec;
+	bps = image->comps[0].prec;
 	planes[0] = image->comps[0].data;
 	
 	numcomps = image->numcomps;
 	
-	if (numcomps > 2U) {
+	if (numcomps > 2) {
 		tiPhoto = PHOTOMETRIC_RGB;
-		if (numcomps > 4U) {
-			numcomps = 4U;
+		if (numcomps > 4) {
+			numcomps = 4;
 		}
 	} else {
 		tiPhoto = PHOTOMETRIC_MINISBLACK;
 	}
-	for (i = 1U; i < numcomps; ++i) {
+	for (i = 1; i < numcomps; ++i) {
 		if (image->comps[0].dx != image->comps[i].dx) {
 			break;
 		}
@@ -225,7 +225,7 @@ int imagetotif(opj_image_t * image, const char *outfile)
 		fprintf(stderr, "imagetotif:failed to open %s for writing\n", outfile);
 		return 1;
 	}
-	for (i = 0U; i < numcomps; ++i) {
+	for (i = 0; i < numcomps; ++i) {
 		clip_component(&(image->comps[i]), image->comps[0].prec);
 	}
 	cvtPxToCx = convert_32s_PXCX_LUT[numcomps];
