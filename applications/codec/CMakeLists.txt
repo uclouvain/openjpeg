@@ -5,6 +5,7 @@ SET(common_SRCS
   convert.c
   converttif.c
   convertbmp.c
+  convertpng.c
   index.c
   ${OPENJPEG_SOURCE_DIR}/applications/common/color.c
   )

@@ -106,42 +106,42 @@ image_to_j2k -i @INPUT_NR_PATH@/issue203-33x33-bgrx16.bmp -o @TEMP_PATH@/issue20
 image_to_j2k -i @INPUT_NR_PATH@/issue203-127x64-bgr16.bmp -o @TEMP_PATH@/issue203-127x64-bgr16.bmp.jp2
 image_to_j2k -i @INPUT_NR_PATH@/issue203-127x64-bgrx.bmp -o @TEMP_PATH@/issue203-127x64-bgrx.bmp.jp2
 
-# issue 536 (PNG images are always read as RGB(A) images) + issue 264 (convert.c is unmaintainable)
-# Test all images from pngsuite
-# No plan to fix this in 1.5 branch right now
-#image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn0g01.png -o @TEMP_PATH@/basn0g01.png.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn0g02.png -o @TEMP_PATH@/basn0g02.png.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn0g04.png -o @TEMP_PATH@/basn0g04.png.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn0g08.png -o @TEMP_PATH@/basn0g08.png.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn0g16.png -o @TEMP_PATH@/basn0g16.png.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn2c08.png -o @TEMP_PATH@/basn2c08.png.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn2c16.png -o @TEMP_PATH@/basn2c16.png.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn3p01.png -o @TEMP_PATH@/basn3p01.png.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn3p02.png -o @TEMP_PATH@/basn3p02.png.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn3p04.png -o @TEMP_PATH@/basn3p04.png.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn3p08.png -o @TEMP_PATH@/basn3p08.png.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn4a08.png -o @TEMP_PATH@/basn4a08.png.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn4a16.png -o @TEMP_PATH@/basn4a16.png.jp2
-## already done image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn6a08.png -o @TEMP_PATH@/basn6a08.png.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn6a16.png -o @TEMP_PATH@/basn6a16.png.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftbbn0g01.png -o @TEMP_PATH@/ftbbn0g01.png.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftbbn0g02.png -o @TEMP_PATH@/ftbbn0g02.png.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftbbn0g04.png -o @TEMP_PATH@/ftbbn0g04.png.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftbbn2c16.png -o @TEMP_PATH@/ftbbn2c16.png.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftbbn3p08.png -o @TEMP_PATH@/ftbbn3p08.png.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftbgn2c16.png -o @TEMP_PATH@/ftbgn2c16.png.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftbgn3p08.png -o @TEMP_PATH@/ftbgn3p08.png.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftbrn2c08.png -o @TEMP_PATH@/ftbrn2c08.png.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftbwn0g16.png -o @TEMP_PATH@/ftbwn0g16.png.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftbwn3p08.png -o @TEMP_PATH@/ftbwn3p08.png.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftbyn3p08.png -o @TEMP_PATH@/ftbyn3p08.png.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftp0n0g08.png -o @TEMP_PATH@/ftp0n0g08.png.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftp0n2c08.png -o @TEMP_PATH@/ftp0n2c08.png.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftp0n3p08.png -o @TEMP_PATH@/ftp0n3p08.png.jp2
-#image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftp1n3p08.png -o @TEMP_PATH@/ftp1n3p08.png.jp2
-
 # issue 571 Lossless is not lossless on linux x86
 image_to_j2k -i @INPUT_NR_PATH@/issue571.tif -o @TEMP_PATH@/issue571.tif.j2k
+
+# issue 536 (PNG images are always read as RGB(A) images) + issue 264 (convert.c is unmaintainable)
+# Test all images from pngsuite
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn0g01.png -o @TEMP_PATH@/basn0g01.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn0g02.png -o @TEMP_PATH@/basn0g02.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn0g04.png -o @TEMP_PATH@/basn0g04.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn0g08.png -o @TEMP_PATH@/basn0g08.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn0g16.png -o @TEMP_PATH@/basn0g16.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn2c08.png -o @TEMP_PATH@/basn2c08.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn2c16.png -o @TEMP_PATH@/basn2c16.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn3p01.png -o @TEMP_PATH@/basn3p01.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn3p02.png -o @TEMP_PATH@/basn3p02.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn3p04.png -o @TEMP_PATH@/basn3p04.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn3p08.png -o @TEMP_PATH@/basn3p08.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn4a08.png -o @TEMP_PATH@/basn4a08.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn4a16.png -o @TEMP_PATH@/basn4a16.png.jp2
+# already done image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn6a08.png -o @TEMP_PATH@/basn6a08.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/basn6a16.png -o @TEMP_PATH@/basn6a16.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftbbn0g01.png -o @TEMP_PATH@/ftbbn0g01.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftbbn0g02.png -o @TEMP_PATH@/ftbbn0g02.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftbbn0g04.png -o @TEMP_PATH@/ftbbn0g04.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftbbn2c16.png -o @TEMP_PATH@/ftbbn2c16.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftbbn3p08.png -o @TEMP_PATH@/ftbbn3p08.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftbgn2c16.png -o @TEMP_PATH@/ftbgn2c16.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftbgn3p08.png -o @TEMP_PATH@/ftbgn3p08.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftbrn2c08.png -o @TEMP_PATH@/ftbrn2c08.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftbwn0g16.png -o @TEMP_PATH@/ftbwn0g16.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftbwn3p08.png -o @TEMP_PATH@/ftbwn3p08.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftbyn3p08.png -o @TEMP_PATH@/ftbyn3p08.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftp0n0g08.png -o @TEMP_PATH@/ftp0n0g08.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftp0n2c08.png -o @TEMP_PATH@/ftp0n2c08.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftp0n3p08.png -o @TEMP_PATH@/ftp0n3p08.png.jp2
+image_to_j2k -i @INPUT_NR_PATH@/pngsuite/ftp1n3p08.png -o @TEMP_PATH@/ftp1n3p08.png.jp2
+
 
 # DECODER TEST SUITE
 j2k_to_image -i  @INPUT_NR_PATH@/Bretagne2.j2k -o @TEMP_PATH@/Bretagne2.j2k.pgx
@@ -459,50 +459,47 @@ j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-16.tif 
 #issue 235 CMAP outside jp2h box. CMAP is buggy
 j2k_to_image -i @INPUT_NR_PATH@/issue235.jp2 -o @TEMP_PATH@/issue235.jp2.pgx
 
-# NOT IMPLEMENTED >
-# # issue 264, add checks for png
-# # GRAYSCALE
-# j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_png-1.png -p 1S
-# j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_png-2.png -p 2S
-# j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_png-4.png -p 4S
-# j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_png-6.png -p 6S
-# j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_png-8.png -p 8S
-# j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_png-10.png -p 10S
-# j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_png-12.png -p 12S
-# j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_png-14.png -p 14S
-# j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_png-16.png -p 16S
-# # GRAYSCALE ALPHA
-# j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_png-1.png -p 1S
-# j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_png-2.png -p 2S
-# j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_png-4.png -p 4S
-# j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_png-6.png -p 6S
-# j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_png-8.png -p 8S
-# j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_png-10.png -p 10S
-# j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_png-12.png -p 12S
-# j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_png-14.png -p 14S
-# j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_png-16.png -p 16S
-# # RGB
-# j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_png-1.png -p 1S
-# j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_png-2.png -p 2S
-# j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_png-4.png -p 4S
-# j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_png-6.png -p 6S
-# j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_png-8.png -p 8S
-# j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_png-10.png -p 10S
-# j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_png-12.png -p 12S
-# j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_png-14.png -p 14S
-# j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_png-16.png -p 16S
-# # RGBA
-# j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_png-1.png -p 1S
-# j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_png-2.png -p 2S
-# j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_png-4.png -p 4S
-# j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_png-6.png -p 6S
-# j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_png-8.png -p 8S
-# j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_png-10.png -p 10S
-# j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_png-12.png -p 12S
-# j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_png-14.png -p 14S
-# j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_png-16.png -p 16S
-
-# < NOT IMPLEMENTED
+# issue 264, add checks for png
+# GRAYSCALE
+j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_png-1.png -p 1S
+j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_png-2.png -p 2S
+j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_png-4.png -p 4S
+j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_png-6.png -p 6S
+j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_png-8.png -p 8S
+j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_png-10.png -p 10S
+j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_png-12.png -p 12S
+j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_png-14.png -p 14S
+j2k_to_image -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_png-16.png -p 16S
+# GRAYSCALE ALPHA
+j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_png-1.png -p 1S
+j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_png-2.png -p 2S
+j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_png-4.png -p 4S
+j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_png-6.png -p 6S
+j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_png-8.png -p 8S
+j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_png-10.png -p 10S
+j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_png-12.png -p 12S
+j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_png-14.png -p 14S
+j2k_to_image -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_png-16.png -p 16S
+# RGB
+j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_png-1.png -p 1S
+j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_png-2.png -p 2S
+j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_png-4.png -p 4S
+j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_png-6.png -p 6S
+j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_png-8.png -p 8S
+j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_png-10.png -p 10S
+j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_png-12.png -p 12S
+j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_png-14.png -p 14S
+j2k_to_image -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_png-16.png -p 16S
+# RGBA
+j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_png-1.png -p 1S
+j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_png-2.png -p 2S
+j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_png-4.png -p 4S
+j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_png-6.png -p 6S
+j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_png-8.png -p 8S
+j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_png-10.png -p 10S
+j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_png-12.png -p 12S
+j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_png-14.png -p 14S
+j2k_to_image -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_png-16.png -p 16S
 
 # issue 388
 !j2k_to_image -i @INPUT_NR_PATH@/v4dwt_interleave_h.gsr105.j2k -o @TEMP_PATH@/v4dwt_interleave_h.gsr105.j2k.pgx

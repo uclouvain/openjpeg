@@ -644,7 +644,7 @@ static int parse_cmdline_cmp(int argc, char **argv, test_cmp_parameters* param)
 int main(int argc, char **argv)
 {
   test_cmp_parameters inParam;
-  unsigned int it_comp, itpxl;
+  int it_comp, itpxl;
   int failed = 1;
   int nbFilenamePGXbase = 0, nbFilenamePGXtest = 0;
   char *filenamePNGtest= NULL, *filenamePNGbase = NULL, *filenamePNGdiff = NULL;
