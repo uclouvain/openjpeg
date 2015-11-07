@@ -269,3 +269,4 @@ e163102afcc857cf001337178241f518  issue559-eci-090-CIELab.jp2_2.pgx
 b004b2e08b0dfb217c131b353cf157eb  issue559-eci-091-CIELab.jp2_0.pgx
 2400da6b8ed6b1747b9913af544580f9  issue559-eci-091-CIELab.jp2_1.pgx
 cf73dda887967928dbcf5cc87ab204cc  issue559-eci-091-CIELab.jp2_2.pgx
+3bf91c974abc17e520c6a5efa883a58a  issue653-zero-unknownbox.jp2.png
