@@ -505,3 +505,6 @@ opj_decompress -i @INPUT_NR_PATH@/issue236-ESYCC-CDEF.jp2 -o @TEMP_PATH@/issue23
 # issue 326 + PR 559: CIELab colorspace
 opj_decompress -i @INPUT_NR_PATH@/issue559-eci-090-CIELab.jp2 -o @TEMP_PATH@/issue559-eci-090-CIELab.jp2.pgx
 opj_decompress -i @INPUT_NR_PATH@/issue559-eci-091-CIELab.jp2 -o @TEMP_PATH@/issue559-eci-091-CIELab.jp2.pgx
+
+# issue 653 Last box of undefined size byg
+opj_decompress -i @INPUT_NR_PATH@/issue653-zero-unknownbox.jp2 -o @TEMP_PATH@/issue653-zero-unknownbox.jp2.png -p 8S
