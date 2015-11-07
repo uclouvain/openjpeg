@@ -4,7 +4,6 @@ branches:
   - coverity_scan
 skip_tags: true
 clone_depth: 50
-os: Previous Windows Server 2012 R2
 environment:
   matrix:
   - OPJ_CI_ARCH: x86
