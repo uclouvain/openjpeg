@@ -440,7 +440,7 @@ int imagetopng(opj_image_t * image, const char *write_idf)
 	/* convert */
 	{
 		size_t width= image->comps[0].w;
-		png_uint_32 y;
+		int y;
 		convert_32s_PXCX cvtPxToCx = convert_32s_PXCX_LUT[nr_comp];
 		convert_32sXXx_C1R cvt32sToPack = NULL;
 		png_int_32 adjust = image->comps[0].sgnd ? 1 << (prec - 1) : 0;
