@@ -70,7 +70,7 @@ if [ "${TRAVIS_OS_NAME:-}" == "" ]; then
 		TRAVIS_OS_NAME=windows
 	elif uname -s | grep -i MINGW &> /dev/null; then
 		TRAVIS_OS_NAME=windows
-	elif [ "${APPVEYOR:-}" == "True"; then
+	elif [ "${APPVEYOR:-}" == "True" ]; then
 		TRAVIS_OS_NAME=windows
 	else
 		echo "Failed to guess OS"; exit 1
