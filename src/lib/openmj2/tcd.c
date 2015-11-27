@@ -1386,7 +1386,7 @@ opj_bool tcd_decode_tile(opj_tcd_t *tcd, unsigned char *src, int len, int tileno
 
 	if (l == -999) {
 		eof = 1;
-		opj_event_msg(tcd->cinfo, EVT_ERROR, "tcd_decode: incomplete bistream\n");
+		opj_event_msg(tcd->cinfo, EVT_ERROR, "tcd_decode: incomplete bitstream\n");
 	}
 	
 	/*------------------TIER1-----------------*/

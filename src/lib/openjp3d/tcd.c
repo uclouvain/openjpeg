@@ -1601,7 +1601,7 @@ bool tcd_decode_tile(opj_tcd_t *tcd, unsigned char *src, int len, int tileno) {
 		
 		if (l == -999) {
 			eof = 1;
-			opj_event_msg(tcd->cinfo, EVT_ERROR, "Tcd_decode_tile: incomplete bistream\n");
+			opj_event_msg(tcd->cinfo, EVT_ERROR, "Tcd_decode_tile: incomplete bitstream\n");
 		}
 	
 		/*------------------TIER1-----------------*/
@@ -1631,7 +1631,7 @@ bool tcd_decode_tile(opj_tcd_t *tcd, unsigned char *src, int len, int tileno) {
 		golomb_destroy(gr);
 		if (l == -999) {
 			eof = 1;
-			opj_event_msg(tcd->cinfo, EVT_ERROR, "Tcd_decode_tile: incomplete bistream\n");
+			opj_event_msg(tcd->cinfo, EVT_ERROR, "Tcd_decode_tile: incomplete bitstream\n");
 		}
 		*/
 	} 
