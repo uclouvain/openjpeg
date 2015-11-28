@@ -1054,6 +1054,9 @@ extern "C" {
 /* Get the version of the openjpeg library*/
 OPJ_API const char * OPJ_CALLCONV opj_version(void);
 
+/* Initialize OpenJPEG library */
+OPJ_API OPJ_BOOL OPJ_CALLCONV opj_initialize();
+
 /* 
 ==========================================================
    image functions definitions
