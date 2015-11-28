@@ -228,20 +228,20 @@ void opj_tcd_makelayer( opj_tcd_t *tcd,
         tcd_tile->distolayer[layno] = 0;        /* fixed_quality */
 
         for (compno = 0; compno < tcd_tile->numcomps; compno++) {
-                opj_tcd_tilecomp_t *tilec = &tcd_tile->comps[compno];
+                opj_tcd_tilecomp_t *tilec = tcd_tile->comps+compno;
 
                 for (resno = 0; resno < tilec->numresolutions; resno++) {
-                        opj_tcd_resolution_t *res = &tilec->resolutions[resno];
+                        opj_tcd_resolution_t *res = tilec->resolutions+resno;
 
                         for (bandno = 0; bandno < res->numbands; bandno++) {
-                                opj_tcd_band_t *band = &res->bands[bandno];
+                                opj_tcd_band_t *band = res->bands+bandno;
 
                                 for (precno = 0; precno < res->pw * res->ph; precno++) {
-                                        opj_tcd_precinct_t *prc = &band->precincts[precno];
+                                        opj_tcd_precinct_t *prc = band->precincts+precno;
 
                                         for (cblkno = 0; cblkno < prc->cw * prc->ch; cblkno++) {
-                                                opj_tcd_cblk_enc_t *cblk = &prc->cblks.enc[cblkno];
-                                                opj_tcd_layer_t *layer = &cblk->layers[layno];
+                                                opj_tcd_cblk_enc_t *cblk = prc->cblks.enc+cblkno;
+                                                opj_tcd_layer_t *layer = cblk->layers+layno;
                                                 OPJ_UINT32 n;
 
                                                 if (layno == 0) {
@@ -490,6 +490,7 @@ OPJ_BOOL opj_tcd_rateallocate(  opj_tcd_t *tcd,
                 OPJ_UINT32 maxlen = tcd_tcp->rates[layno] ? opj_uint_min(((OPJ_UINT32) ceil(tcd_tcp->rates[layno])), len) : len;
                 OPJ_FLOAT64 goodthresh = 0;
                 OPJ_FLOAT64 stable_thresh = 0;
+				OPJ_FLOAT64 old_thresh = -1;
                 OPJ_UINT32 i;
                 OPJ_FLOAT64 distotarget;                /* fixed_quality */
 
@@ -514,10 +515,13 @@ OPJ_BOOL opj_tcd_rateallocate(  opj_tcd_t *tcd,
                                 thresh = (lo + hi) / 2;
 
                                 opj_tcd_makelayer(tcd, layno, thresh, 0);
+								if ((fabs(old_thresh - thresh)) < 0.001)
+									break;
+								old_thresh = thresh;
 
                                 if (cp->m_specific_param.m_enc.m_fixed_quality) {       /* fixed_quality */
                                         if(OPJ_IS_CINEMA(cp->rsiz)){
-                                                if (! opj_t2_encode_packets(t2,tcd->tcd_tileno, tcd_tile, layno + 1, dest, p_data_written, maxlen, cstr_info,tcd->cur_tp_num,tcd->tp_pos,tcd->cur_pino,THRESH_CALC)) {
+                                                if (! opj_t2_encode_packets_thresh(t2,tcd->tcd_tileno, tcd_tile, layno + 1, p_data_written, maxlen, cstr_info,tcd->cur_tp_num,tcd->tp_pos,tcd->cur_pino)) {
 
                                                         lo = thresh;
                                                         continue;
@@ -546,7 +550,7 @@ OPJ_BOOL opj_tcd_rateallocate(  opj_tcd_t *tcd,
                                                 lo = thresh;
                                         }
                                 } else {
-                                        if (! opj_t2_encode_packets(t2, tcd->tcd_tileno, tcd_tile, layno + 1, dest,p_data_written, maxlen, cstr_info,tcd->cur_tp_num,tcd->tp_pos,tcd->cur_pino,THRESH_CALC))
+                                        if (! opj_t2_encode_packets_thresh(t2, tcd->tcd_tileno, tcd_tile, layno + 1, p_data_written, maxlen, cstr_info,tcd->cur_tp_num,tcd->tp_pos,tcd->cur_pino))
                                         {
                                                 /* TODO: what to do with l ??? seek / tell ??? */
                                                 /* opj_event_msg(tcd->cinfo, EVT_INFO, "rate alloc: len=%d, max=%d\n", l, maxlen); */
@@ -2066,8 +2070,7 @@ static OPJ_BOOL opj_tcd_t2_encode (opj_tcd_t *p_tcd,
                                         p_cstr_info,
                                         p_tcd->tp_num,
                                         p_tcd->tp_pos,
-                                        p_tcd->cur_pino,
-                                        FINAL_PASS))
+                                        p_tcd->cur_pino))
         {
                 opj_t2_destroy(l_t2);
                 return OPJ_FALSE;
