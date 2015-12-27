@@ -82,6 +82,8 @@ typedef struct opj_mqc {
 #endif
 } opj_mqc_t;
 
+#include "mqc_inl.h"
+
 /** @name Exported functions */
 /*@{*/
 /* ----------------------------------------------------------------------- */
@@ -198,7 +200,7 @@ Decode a symbol
 @param mqc MQC handle
 @return Returns the decoded symbol (0 or 1)
 */
-OPJ_INT32 opj_mqc_decode(opj_mqc_t * const mqc);
+static INLINE OPJ_INT32 opj_mqc_decode(opj_mqc_t * const mqc);
 /* ----------------------------------------------------------------------- */
 /*@}*/
 
