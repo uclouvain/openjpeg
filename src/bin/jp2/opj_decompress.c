@@ -1177,6 +1177,8 @@ static opj_image_t* upsample_image_components(opj_image_t* original)
  * OPJ_DECOMPRESS MAIN
  */
 /* -------------------------------------------------------------------------- */
+OPJ_BOOL debug_buffers = OPJ_FALSE;
+
 int main(int argc, char **argv)
 {
 	opj_decompress_parameters parameters;			/* decompression parameters */
@@ -1236,13 +1238,13 @@ int main(int argc, char **argv)
 	}
 
 	/*Decoding image one by one*/
-	for(imageno = 0; imageno < num_images ; imageno++)	{
+	for (imageno = 0; imageno < num_images; imageno++) {
 
-		fprintf(stderr,"\n");
+		fprintf(stderr, "\n");
 
-		if(img_fol.set_imgdir==1){
-			if (get_next_file(imageno, dirptr,&img_fol, &parameters)) {
-				fprintf(stderr,"skipping file...\n");
+		if (img_fol.set_imgdir == 1) {
+			if (get_next_file(imageno, dirptr, &img_fol, &parameters)) {
+				fprintf(stderr, "skipping file...\n");
 				destroy_parameters(&parameters);
 				continue;
 			}
@@ -1250,8 +1252,33 @@ int main(int argc, char **argv)
 
 		/* read the input file and put it in memory */
 		/* ---------------------------------------- */
+		if (debug_buffers) {
+			FILE* p_file = NULL;
+			OPJ_SIZE_T sz = 0;
+			OPJ_BYTE* buffer = NULL;
 
-		l_stream = opj_stream_create_default_file_stream(parameters.infile,1);
+			p_file = fopen(parameters.infile, "rb");
+			if (p_file) {
+				fseek(p_file, 0L, SEEK_END);
+				sz = ftell(p_file);
+				fseek(p_file, 0L, SEEK_SET);
+				buffer = (OPJ_BYTE*)malloc(sz);
+				if (buffer) {
+					int res = 0;
+					res = fread(buffer, 1, sz, p_file);
+					if (res) {
+						fclose(p_file);
+						l_stream = opj_stream_create_buffer_stream(buffer, sz, 1);
+					}
+				}
+			}
+		}
+
+		if (!l_stream) {
+			l_stream = opj_stream_create_mapped_file_stream(parameters.infile, OPJ_J2K_STREAM_CHUNK_SIZE, OPJ_TRUE);
+			//l_stream = opj_stream_create_default_file_stream(parameters.infile, 1);
+		}
+
 		if (!l_stream){
 			fprintf(stderr, "ERROR -> failed to create the stream from the file %s\n", parameters.infile);
 			destroy_parameters(&parameters);
