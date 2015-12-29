@@ -568,6 +568,7 @@ typedef struct opj_dparameters {
 } opj_dparameters_t;
 
 
+
 /**
  * JPEG2000 codec V2.
  * */
@@ -591,6 +592,12 @@ typedef void * opj_codec_t;
  * Callback function prototype for read function
  */
 typedef OPJ_SIZE_T (* opj_stream_read_fn) (void * p_buffer, OPJ_SIZE_T p_nb_bytes, void * p_user_data) ;
+
+/*
+* Callback function prototype for zero copy read function
+*/
+typedef OPJ_SIZE_T(*opj_stream_zero_copy_read_fn) (void ** p_buffer, OPJ_SIZE_T p_nb_bytes, void * p_user_data);
+
 
 /*
  * Callback function prototype for write function
@@ -1129,6 +1136,15 @@ OPJ_API void OPJ_CALLCONV opj_stream_destroy(opj_stream_t* p_stream);
 OPJ_API void OPJ_CALLCONV opj_stream_set_read_function(opj_stream_t* p_stream, opj_stream_read_fn p_function);
 
 /**
+* Sets the given function to be used as a zero copy read function.
+* NOTE: this feature is only available for memory mapped and buffer backed streams, not file streams
+* @param		p_stream	the stream to modify
+* @param		p_function	the function to use a read function.
+*/
+OPJ_API void OPJ_CALLCONV opj_stream_set_zero_copy_read_function(opj_stream_t* p_stream, opj_stream_zero_copy_read_fn p_function);
+
+
+/**
  * Sets the given function to be used as a write function.
  * @param		p_stream	the stream to modify
  * @param		p_function	the function to use a write function.
@@ -1180,6 +1196,11 @@ OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_default_file_stream (const 
 OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream (const char *fname,
                                                                      OPJ_SIZE_T p_buffer_size,
                                                                      OPJ_BOOL p_is_read_stream);
+OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_buffer_stream(OPJ_BYTE *buf,
+																	OPJ_SIZE_T len,
+																	OPJ_BOOL p_is_read_stream);
+
+OPJ_API opj_stream_t* OPJ_CALLCONV opj_stream_create_mapped_file_read_stream(const char *fname);
  
 /* 
 ==========================================================

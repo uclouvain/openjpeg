@@ -97,7 +97,8 @@ typedef OPJ_INT16 opj_flag_t;
 Tier-1 coding (coding of code-block coefficients)
 */
 typedef struct opj_t1 {
-
+	OPJ_BYTE* compressed_block;
+	OPJ_SIZE_T compressed_block_size;
 	/** MQC component */
 	opj_mqc_t *mqc;
 	/** RAW component */
@@ -151,7 +152,7 @@ OPJ_BOOL opj_t1_decode_cblks(   opj_t1_t* t1,
  * and initializes the look-up tables of the Tier-1 coder/decoder
  * @return a new T1 handle if successful, returns NULL otherwise
 */
-opj_t1_t* opj_t1_create(OPJ_BOOL isEncoder);
+opj_t1_t* opj_t1_create(OPJ_BOOL isEncoder, OPJ_UINT16 code_block_width, OPJ_UINT16 code_block_height);
 
 /**
  * Destroys a previously created T1 handle

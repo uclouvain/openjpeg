@@ -4310,9 +4310,7 @@ static OPJ_BOOL opj_j2k_read_sod (opj_j2k_t *p_j2k,
 {
         OPJ_SIZE_T l_current_read_size;
         opj_codestream_index_t * l_cstr_index = 00;
-        OPJ_BYTE ** l_current_data = 00;
         opj_tcp_t * l_tcp = 00;
-        OPJ_UINT32 * l_tile_len = 00;
         OPJ_BOOL l_sot_length_pb_detected = OPJ_FALSE;
 
         /* preconditions */
@@ -4338,8 +4336,6 @@ static OPJ_BOOL opj_j2k_read_sod (opj_j2k_t *p_j2k,
             }
         }
 
-        l_current_data = &(l_tcp->m_data);
-        l_tile_len = &l_tcp->m_data_size;
 
         /* Patch to support new PHR data */
         if (p_j2k->m_specific_param.m_decoder.m_sot_length) {
@@ -4347,28 +4343,6 @@ static OPJ_BOOL opj_j2k_read_sod (opj_j2k_t *p_j2k,
             /* Check enough bytes left in stream before allocation */
             if ((OPJ_OFF_T)p_j2k->m_specific_param.m_decoder.m_sot_length > opj_stream_get_number_byte_left(p_stream)) {
                 opj_event_msg(p_manager, EVT_ERROR, "Tile part length size inconsistent with stream length\n");
-                return OPJ_FALSE;
-            }
-            if (! *l_current_data) {
-                /* LH: oddly enough, in this path, l_tile_len!=0.
-                 * TODO: If this was consistent, we could simplify the code to only use realloc(), as realloc(0,...) default to malloc(0,...).
-                 */
-                *l_current_data = (OPJ_BYTE*) opj_malloc(p_j2k->m_specific_param.m_decoder.m_sot_length);
-            }
-            else {
-                OPJ_BYTE *l_new_current_data = (OPJ_BYTE *) opj_realloc(*l_current_data, *l_tile_len + p_j2k->m_specific_param.m_decoder.m_sot_length);
-                if (! l_new_current_data) {
-                        opj_free(*l_current_data);
-                        /*nothing more is done as l_current_data will be set to null, and just
-                          afterward we enter in the error path
-                          and the actual tile_len is updated (committed) at the end of the
-                          function. */
-                }
-                *l_current_data = l_new_current_data;
-            }
-            
-            if (*l_current_data == 00) {
-                opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to decode tile\n");
                 return OPJ_FALSE;
             }
         }
@@ -4401,11 +4375,24 @@ static OPJ_BOOL opj_j2k_read_sod (opj_j2k_t *p_j2k,
 
         /* Patch to support new PHR data */
         if (!l_sot_length_pb_detected) {
-            l_current_read_size = opj_stream_read_data(
-                        p_stream,
-                        *l_current_data + *l_tile_len,
-                        p_j2k->m_specific_param.m_decoder.m_sot_length,
-                        p_manager);
+			if (opj_stream_supports_zero_copy_read(p_stream)) {
+				OPJ_BYTE* ptr = NULL;
+				l_current_read_size = opj_stream_read_data_zero_copy(p_stream,
+					&ptr,
+					p_j2k->m_specific_param.m_decoder.m_sot_length,
+					p_manager);
+				opj_seg_buf_push_back(&l_tcp->m_data, ptr, p_j2k->m_specific_param.m_decoder.m_sot_length);
+
+			}
+			else {
+				opj_seg_buf_alloc_and_push_back(&l_tcp->m_data, p_j2k->m_specific_param.m_decoder.m_sot_length);
+				l_current_read_size = opj_stream_read_data(
+					p_stream,
+					opj_seg_buf_get_global_ptr(&l_tcp->m_data),
+					p_j2k->m_specific_param.m_decoder.m_sot_length,
+					p_manager);
+
+			}
         }
         else
         {
@@ -4418,9 +4405,6 @@ static OPJ_BOOL opj_j2k_read_sod (opj_j2k_t *p_j2k,
         else {
                 p_j2k->m_specific_param.m_decoder.m_state = J2K_STATE_TPHSOT;
         }
-
-        *l_tile_len += (OPJ_UINT32)l_current_read_size;
-
         return OPJ_TRUE;
 }
 
@@ -7618,11 +7602,7 @@ static void opj_j2k_tcp_destroy (opj_tcp_t *p_tcp)
 
 static void opj_j2k_tcp_data_destroy (opj_tcp_t *p_tcp)
 {
-        if (p_tcp->m_data) {
-                opj_free(p_tcp->m_data);
-                p_tcp->m_data = NULL;
-                p_tcp->m_data_size = 0;
-        }
+    opj_seg_buf_cleanup(&p_tcp->m_data);
 }
 
 static void opj_j2k_cp_destroy (opj_cp_t *p_cp)
@@ -8002,7 +7982,7 @@ OPJ_BOOL opj_j2k_read_tile_header(      opj_j2k_t * p_j2k,
                 OPJ_UINT32 l_nb_tiles = p_j2k->m_cp.th * p_j2k->m_cp.tw;
                 l_tcp = p_j2k->m_cp.tcps + p_j2k->m_current_tile_number;
 
-                while( (p_j2k->m_current_tile_number < l_nb_tiles) && (l_tcp->m_data == 00) ) {
+                while( (p_j2k->m_current_tile_number < l_nb_tiles) && (l_tcp->m_data.segments.data == 00) ) {
                         ++p_j2k->m_current_tile_number;
                         ++l_tcp;
                 }
@@ -8062,16 +8042,15 @@ OPJ_BOOL opj_j2k_decode_tile (  opj_j2k_t * p_j2k,
         }
 
         l_tcp = &(p_j2k->m_cp.tcps[p_tile_index]);
-        if (! l_tcp->m_data) {
+        if (! l_tcp->m_data.segments.data) {
                 opj_j2k_tcp_destroy(l_tcp);
                 return OPJ_FALSE;
         }
 
-        if (! opj_tcd_decode_tile(      p_j2k->m_tcd,
-                                                                l_tcp->m_data,
-                                                                l_tcp->m_data_size,
-                                                                p_tile_index,
-                                                                p_j2k->cstr_index, p_manager) ) {
+        if (! opj_tcd_decode_tile(  p_j2k->m_tcd,
+                                    &l_tcp->m_data,
+                                    p_tile_index,
+                                    p_j2k->cstr_index, p_manager) ) {
                 opj_j2k_tcp_destroy(l_tcp);
                 p_j2k->m_specific_param.m_decoder.m_state |= 0x8000;/*FIXME J2K_DEC_STATE_ERR;*/
                 opj_event_msg(p_manager, EVT_ERROR, "Failed to decode.\n");
