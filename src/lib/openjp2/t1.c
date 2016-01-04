@@ -1210,7 +1210,7 @@ static OPJ_BOOL opj_t1_allocate_buffers(
  * and initializes the look-up tables of the Tier-1 coder/decoder
  * @return a new T1 handle if successful, returns NULL otherwise
 */
-opj_t1_t* opj_t1_create(OPJ_BOOL isEncoder)
+opj_t1_t* opj_t1_create(OPJ_BOOL isEncoder, OPJ_UINT16 code_block_width, OPJ_UINT16 code_block_height)
 {
 	opj_t1_t *l_t1 = 00;
 
@@ -1230,6 +1230,16 @@ opj_t1_t* opj_t1_create(OPJ_BOOL isEncoder)
 	if (! l_t1->raw) {
 		opj_t1_destroy(l_t1);
 		return 00;
+	}
+
+	if (!isEncoder && code_block_width > 0 && code_block_height > 0) {
+		l_t1->compressed_block = (OPJ_BYTE*)opj_malloc(code_block_width * code_block_height);
+		if (!l_t1->compressed_block) {
+			opj_t1_destroy(l_t1);
+			return 00;
+		}
+		l_t1->compressed_block_size = (OPJ_SIZE_T)(code_block_width * code_block_height);
+
 	}
 	l_t1->encoder = isEncoder;
 
@@ -1264,7 +1274,8 @@ void opj_t1_destroy(opj_t1_t *p_t1)
 		opj_aligned_free(p_t1->flags);
 		p_t1->flags = 00;
 	}
-
+	if (p_t1->compressed_block)
+		opj_free(p_t1->compressed_block);
 	opj_free(p_t1);
 }
 
@@ -1371,6 +1382,8 @@ static OPJ_BOOL opj_t1_decode_cblk(opj_t1_t *t1,
 	OPJ_UINT32 passtype;
 	OPJ_UINT32 segno, passno;
 	OPJ_BYTE type = T1_TYPE_MQ; /* BYPASS mode */
+	OPJ_BYTE* block_buffer = NULL;
+	OPJ_SIZE_T total_seg_len;
 
 	if(!opj_t1_allocate_buffers(
 				t1,
@@ -1379,6 +1392,33 @@ static OPJ_BOOL opj_t1_decode_cblk(opj_t1_t *t1,
 	{
 		return OPJ_FALSE;
 	}
+
+	total_seg_len = opj_min_buf_vec_get_len(&cblk->seg_buffers);
+	if (cblk->real_num_segs && total_seg_len) {
+		/* if there is only one segment, then it is already contiguous, so no need to make a copy*/
+		if (total_seg_len == 1 && cblk->seg_buffers.data[0]) {
+			block_buffer = ((opj_buf_t*)(cblk->seg_buffers.data[0]))->buf;
+		}
+		else {
+			/* block should have been allocated on creation of t1*/
+			if (!t1->compressed_block)
+				return OPJ_FALSE;
+			if (t1->compressed_block_size < total_seg_len) {
+				OPJ_BYTE* new_block = opj_realloc(t1->compressed_block, total_seg_len);
+				if (!new_block)
+					return OPJ_FALSE;
+				t1->compressed_block = new_block;
+				t1->compressed_block_size = total_seg_len;
+			}
+			opj_min_buf_vec_copy_to_contiguous_buffer(&cblk->seg_buffers, t1->compressed_block);
+			block_buffer = t1->compressed_block;
+		}
+	}
+	else {
+		return OPJ_TRUE;
+	}
+
+
 
 	bpno_plus_one = (OPJ_INT32)(roishift + cblk->numbps);
 	passtype = 2;
@@ -1393,14 +1433,10 @@ static OPJ_BOOL opj_t1_decode_cblk(opj_t1_t *t1,
 
 		/* BYPASS mode */
 		type = ((bpno_plus_one <= ((OPJ_INT32) (cblk->numbps)) - 4) && (passtype < 2) && (cblksty & J2K_CCP_CBLKSTY_LAZY)) ? T1_TYPE_RAW : T1_TYPE_MQ;
-		/* FIXME: slviewer gets here with a null pointer. Why? Partially downloaded and/or corrupt textures? */
-		if(seg->data == 00){
-			continue;
-		}
 		if (type == T1_TYPE_RAW) {
-			opj_raw_init_dec(raw, (*seg->data) + seg->dataindex, seg->len);
+			opj_raw_init_dec(raw, block_buffer + seg->dataindex, seg->len);
 		} else {
-            if (OPJ_FALSE == opj_mqc_init_dec(mqc, (*seg->data) + seg->dataindex, seg->len)) {
+            if (OPJ_FALSE == opj_mqc_init_dec(mqc, block_buffer + seg->dataindex, seg->len)) {
                     return OPJ_FALSE;
             }
 		}

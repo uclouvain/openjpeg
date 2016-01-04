@@ -156,14 +156,15 @@ opj_stream_t* OPJ_CALLCONV opj_stream_create(OPJ_SIZE_T p_buffer_size,OPJ_BOOL l
 		return 00;
 	}
 
-	l_stream->m_buffer_size = p_buffer_size;
-	l_stream->m_stored_data = (OPJ_BYTE *) opj_malloc(p_buffer_size);
-	if (! l_stream->m_stored_data) {
-		opj_free(l_stream);
-		return 00;
+	if (p_buffer_size) {
+		l_stream->m_buffer_size = p_buffer_size;
+		l_stream->m_stored_data = (OPJ_BYTE *)opj_malloc(p_buffer_size);
+		if (!l_stream->m_stored_data) {
+			opj_free(l_stream);
+			return 00;
+		}
+		l_stream->m_current_data = l_stream->m_stored_data;
 	}
-
-	l_stream->m_current_data = l_stream->m_stored_data;
 
 	if (l_is_input) {
 		l_stream->m_status |= OPJ_STREAM_STATUS_INPUT;
@@ -197,8 +198,10 @@ void OPJ_CALLCONV opj_stream_destroy(opj_stream_t* p_stream)
 		if (l_stream->m_free_user_data_fn) {
 			l_stream->m_free_user_data_fn(l_stream->m_user_data);
 		}
-		opj_free(l_stream->m_stored_data);
-		l_stream->m_stored_data = 00;
+		if (l_stream->m_stored_data) {
+			opj_free(l_stream->m_stored_data);
+			l_stream->m_stored_data = 00;
+		}
 		opj_free(l_stream);
 	}
 }
@@ -212,6 +215,17 @@ void OPJ_CALLCONV opj_stream_set_read_function(opj_stream_t* p_stream, opj_strea
 	}
 
 	l_stream->m_read_fn = p_function;
+}
+
+void OPJ_CALLCONV opj_stream_set_zero_copy_read_function(opj_stream_t* p_stream, opj_stream_zero_copy_read_fn p_function)
+{
+	opj_stream_private_t* l_stream = (opj_stream_private_t*)p_stream;
+
+	if ((!l_stream) || (!(l_stream->m_status & OPJ_STREAM_STATUS_INPUT))) {
+		return;
+	}
+
+	l_stream->m_zero_copy_read_fn = p_function;
 }
 
 void OPJ_CALLCONV opj_stream_set_seek_function(opj_stream_t* p_stream, opj_stream_seek_fn p_function)
@@ -261,6 +275,12 @@ void OPJ_CALLCONV opj_stream_set_user_data_length(opj_stream_t* p_stream, OPJ_UI
 	if (!l_stream)
 		return;
 	l_stream->m_user_data_length = data_length;
+}
+
+
+
+OPJ_BOOL opj_stream_supports_zero_copy_read(opj_stream_private_t * p_stream) {
+	return p_stream->m_zero_copy_read_fn ? OPJ_TRUE : OPJ_FALSE;
 }
 
 OPJ_SIZE_T opj_stream_read_data (opj_stream_private_t * p_stream,OPJ_BYTE * p_buffer, OPJ_SIZE_T p_size, opj_event_mgr_t * p_event_mgr)
@@ -369,6 +389,26 @@ OPJ_SIZE_T opj_stream_read_data (opj_stream_private_t * p_stream,OPJ_BYTE * p_bu
 		}
 	}
 }
+
+
+
+OPJ_SIZE_T opj_stream_read_data_zero_copy(opj_stream_private_t * p_stream, OPJ_BYTE ** p_buffer, OPJ_SIZE_T p_size, opj_event_mgr_t * p_event_mgr)
+{
+	OPJ_SIZE_T l_read_nb_bytes = p_stream->m_zero_copy_read_fn(p_buffer, p_size, p_stream->m_user_data);
+
+	if (l_read_nb_bytes == (OPJ_SIZE_T)-1) {
+		/*  end of stream */
+		opj_event_msg(p_event_mgr, EVT_INFO, "Stream reached its end !\n");
+		p_stream->m_status |= OPJ_STREAM_STATUS_END;
+		return (OPJ_SIZE_T)-1;
+	}
+	else {
+		p_stream->m_byte_offset += (OPJ_OFF_T)l_read_nb_bytes;
+		return l_read_nb_bytes;
+	}
+
+}
+
 
 OPJ_SIZE_T opj_stream_write_data (opj_stream_private_t * p_stream,
 								  const OPJ_BYTE * p_buffer,
