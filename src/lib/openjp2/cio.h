@@ -98,9 +98,15 @@ typedef struct opj_stream_private
 	OPJ_UINT64 				m_user_data_length;
 
 	/**
-	 * Pointer to actual read function (NULL at the initialization of the cio.
+	 * Pointer to actual read function (NULL at the initialization of the cio).
 	 */
 	opj_stream_read_fn		m_read_fn;
+
+	/**
+	* Pointer to actual zero copy read function (NULL at the initialization of the cio).
+	*/
+	opj_stream_zero_copy_read_fn		m_zero_copy_read_fn;
+
 
 	/**
 	 * Pointer to actual write function (NULL at the initialization of the cio.
@@ -267,6 +273,13 @@ void opj_write_float_BE(OPJ_BYTE * p_buffer, OPJ_FLOAT32 p_value);
  * @return		the number of bytes read, or -1 if an error occurred or if the stream is at the end.
  */
 OPJ_SIZE_T opj_stream_read_data (opj_stream_private_t * p_stream,OPJ_BYTE * p_buffer, OPJ_SIZE_T p_size, struct opj_event_mgr * p_event_mgr);
+
+OPJ_SIZE_T opj_stream_read_data_zero_copy(opj_stream_private_t * p_stream, OPJ_BYTE ** p_buffer, OPJ_SIZE_T p_size, struct opj_event_mgr * p_event_mgr);
+
+/**
+* Check if this stream supports zero copy reads
+*/
+OPJ_BOOL opj_stream_supports_zero_copy_read(opj_stream_private_t * p_stream);
 
 /**
  * Writes some bytes to the stream.

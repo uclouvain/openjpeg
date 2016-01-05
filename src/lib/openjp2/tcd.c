@@ -114,7 +114,7 @@ void tcd_dump(FILE *fd, opj_tcd_t *tcd, opj_tcd_image_t * img) {
 static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no, OPJ_BOOL isEncoder, OPJ_FLOAT32 fraction, OPJ_SIZE_T sizeof_block, opj_event_mgr_t* manager);
 
 /**
-* Allocates memory for a decoding code block.
+* Allocates memory for a decoding code block (but not data)
 */
 static OPJ_BOOL opj_tcd_code_block_dec_allocate (opj_tcd_cblk_dec_t * p_code_block);
 
@@ -147,9 +147,8 @@ static void opj_tcd_free_tile(opj_tcd_t *tcd);
 
 
 static OPJ_BOOL opj_tcd_t2_decode ( opj_tcd_t *p_tcd,
-                                    OPJ_BYTE * p_src_data,
+									opj_seg_buf_t* src_buf,
                                     OPJ_UINT32 * p_data_read,
-                                    OPJ_UINT32 p_max_src_size,
                                     opj_codestream_index_t *p_cstr_index,
                                     opj_event_mgr_t *p_manager);
 
@@ -703,6 +702,8 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
 	l_image = p_tcd->image;
 	l_image_comp = p_tcd->image->comps;
 	
+	opj_seg_buf_rewind(&l_tcp->m_data);
+
 	p = p_tile_no % l_cp->tw;       /* tile coordinates */
 	q = p_tile_no / l_cp->tw;
 	/*fprintf(stderr, "Tile coordinate = %d,%d\n", p, q);*/
@@ -1099,42 +1100,36 @@ static OPJ_BOOL opj_tcd_code_block_enc_allocate_data (opj_tcd_cblk_enc_t * p_cod
 }
 
 /**
- * Allocates memory for a decoding code block.
+ * Allocates memory for a decoding code block (but not data)
  */
 static OPJ_BOOL opj_tcd_code_block_dec_allocate (opj_tcd_cblk_dec_t * p_code_block)
 {
-        if (! p_code_block->data) {
+	if (!p_code_block->segs) {
+		p_code_block->segs = (opj_tcd_seg_t *)opj_calloc(OPJ_J2K_DEFAULT_NB_SEGS, sizeof(opj_tcd_seg_t));
+		if (!p_code_block->segs) {
+			return OPJ_FALSE;
+		}
+		/*fprintf(stderr, "Allocate %d elements of code_block->data\n", OPJ_J2K_DEFAULT_NB_SEGS * sizeof(opj_tcd_seg_t));*/
 
-                p_code_block->data = (OPJ_BYTE*) opj_malloc(OPJ_J2K_DEFAULT_CBLK_DATA_SIZE);
-                if (! p_code_block->data) {
-                        return OPJ_FALSE;
-                }
-                p_code_block->data_max_size = OPJ_J2K_DEFAULT_CBLK_DATA_SIZE;
-                /*fprintf(stderr, "Allocate 8192 elements of code_block->data\n");*/
+		p_code_block->m_current_max_segs = OPJ_J2K_DEFAULT_NB_SEGS;
 
-                p_code_block->segs = (opj_tcd_seg_t *) opj_calloc(OPJ_J2K_DEFAULT_NB_SEGS,sizeof(opj_tcd_seg_t));
-                if (! p_code_block->segs) {
-                        return OPJ_FALSE;
-                }
-                /*fprintf(stderr, "Allocate %d elements of code_block->data\n", OPJ_J2K_DEFAULT_NB_SEGS * sizeof(opj_tcd_seg_t));*/
+		/*fprintf(stderr, "Allocate 8192 elements of code_block->data\n");*/
+		/*fprintf(stderr, "m_current_max_segs of code_block->data = %d\n", p_code_block->m_current_max_segs);*/
+	}
+	else {
+		/* sanitize */
+		opj_tcd_seg_t * l_segs = p_code_block->segs;
+		OPJ_UINT32 l_current_max_segs = p_code_block->m_current_max_segs;
 
-                p_code_block->m_current_max_segs = OPJ_J2K_DEFAULT_NB_SEGS;
-                /*fprintf(stderr, "m_current_max_segs of code_block->data = %d\n", p_code_block->m_current_max_segs);*/
-        } else {
-					/* sanitize */
-					OPJ_BYTE* l_data = p_code_block->data;
-					OPJ_UINT32 l_data_max_size = p_code_block->data_max_size;
-					opj_tcd_seg_t * l_segs = p_code_block->segs;
-					OPJ_UINT32 l_current_max_segs = p_code_block->m_current_max_segs;
+		/* Note: since seg_buffers simply holds references to another data buffer,
+		we do not need to copy it  to the sanitized block  */
+		opj_vec_cleanup(&p_code_block->seg_buffers);
 
-					memset(p_code_block, 0, sizeof(opj_tcd_cblk_dec_t));
-					p_code_block->data = l_data;
-					p_code_block->data_max_size = l_data_max_size;
-					p_code_block->segs = l_segs;
-					p_code_block->m_current_max_segs = l_current_max_segs;
-				}
-
-        return OPJ_TRUE;
+		memset(p_code_block, 0, sizeof(opj_tcd_cblk_dec_t));
+		p_code_block->segs = l_segs;
+		p_code_block->m_current_max_segs = l_current_max_segs;
+	}
+	return OPJ_TRUE;
 }
 
 OPJ_UINT32 opj_tcd_get_decoded_tile_size ( opj_tcd_t *p_tcd )
@@ -1259,8 +1254,7 @@ OPJ_BOOL opj_tcd_encode_tile(   opj_tcd_t *p_tcd,
 }
 
 OPJ_BOOL opj_tcd_decode_tile(   opj_tcd_t *p_tcd,
-                                OPJ_BYTE *p_src,
-                                OPJ_UINT32 p_max_length,
+								opj_seg_buf_t* src_buf,
                                 OPJ_UINT32 p_tile_no,
                                 opj_codestream_index_t *p_cstr_index,
                                 opj_event_mgr_t *p_manager
@@ -1296,7 +1290,7 @@ OPJ_BOOL opj_tcd_decode_tile(   opj_tcd_t *p_tcd,
         /*--------------TIER2------------------*/
         /* FIXME _ProfStart(PGROUP_T2); */
         l_data_read = 0;
-        if (! opj_tcd_t2_decode(p_tcd, p_src, &l_data_read, p_max_length, p_cstr_index, p_manager))
+        if (! opj_tcd_t2_decode(p_tcd, src_buf, &l_data_read,p_cstr_index, p_manager))
         {
                 return OPJ_FALSE;
         }
@@ -1543,9 +1537,8 @@ static void opj_tcd_free_tile(opj_tcd_t *p_tcd)
 
 
 static OPJ_BOOL opj_tcd_t2_decode (opj_tcd_t *p_tcd,
-                            OPJ_BYTE * p_src_data,
+							opj_seg_buf_t* src_buf,
                             OPJ_UINT32 * p_data_read,
-                            OPJ_UINT32 p_max_src_size,
                             opj_codestream_index_t *p_cstr_index,
                             opj_event_mgr_t *p_manager
                             )
@@ -1561,9 +1554,8 @@ static OPJ_BOOL opj_tcd_t2_decode (opj_tcd_t *p_tcd,
                                         l_t2,
                                         p_tcd->tcd_tileno,
                                         p_tcd->tcd_image->tiles,
-                                        p_src_data,
+                                        src_buf,
                                         p_data_read,
-                                        p_max_src_size,
                                         p_cstr_index,
                                         p_manager)) {
                 opj_t2_destroy(l_t2);
@@ -1799,12 +1791,7 @@ static void opj_tcd_code_block_dec_deallocate (opj_tcd_precinct_t * p_precinct)
                 /*fprintf(stderr,"nb_code_blocks =%d\t}\n", l_nb_code_blocks);*/
 
                 for (cblkno = 0; cblkno < l_nb_code_blocks; ++cblkno) {
-
-                        if (l_code_block->data) {
-                                opj_free(l_code_block->data);
-                                l_code_block->data = 00;
-                        }
-
+						opj_vec_cleanup(&l_code_block->seg_buffers);
                         if (l_code_block->segs) {
                                 opj_free(l_code_block->segs );
                                 l_code_block->segs = 00;

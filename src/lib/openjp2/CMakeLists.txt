@@ -47,6 +47,8 @@ set(OPENJPEG_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/pi.h
   ${CMAKE_CURRENT_SOURCE_DIR}/raw.c
   ${CMAKE_CURRENT_SOURCE_DIR}/raw.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/segmented_stream.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/segmented_stream.h
   ${CMAKE_CURRENT_SOURCE_DIR}/t1.c  
   ${CMAKE_CURRENT_SOURCE_DIR}/t1.h
   ${CMAKE_CURRENT_SOURCE_DIR}/t1_opt.c 
@@ -65,6 +67,8 @@ set(OPENJPEG_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/opj_malloc.c
   ${CMAKE_CURRENT_SOURCE_DIR}/opj_malloc.h
   ${CMAKE_CURRENT_SOURCE_DIR}/opj_stdint.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/vector.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/vector.c
 )
 if(BUILD_JPIP)
   add_definitions(-DUSE_JPIP)
