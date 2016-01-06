@@ -136,10 +136,10 @@ static void opj_pi_update_encode_not_poc (  opj_cp_t *p_cp,
  * @param	p_tx1			pointer that will hold the X1 parameter for the tile
  * @param	p_ty0			pointer that will hold the Y0 parameter for the tile
  * @param	p_ty1			pointer that will hold the Y1 parameter for the tile
- * @param	p_max_prec		pointer that will hold the the maximum precision for all the bands of the tile
- * @param	p_max_res		pointer that will hold the the maximum number of resolutions for all the poc inside the tile.
- * @param	p_dx_min			pointer that will hold the the minimum dx of all the components of all the resolutions for the tile.
- * @param	p_dy_min			pointer that will hold the the minimum dy of all the components of all the resolutions for the tile.
+ * @param	p_max_prec		pointer that will hold the maximum precision for all the bands of the tile
+ * @param	p_max_res		pointer that will hold the maximum number of resolutions for all the poc inside the tile.
+ * @param	p_dx_min			pointer that will hold the minimum dx of all the components of all the resolutions for the tile.
+ * @param	p_dy_min			pointer that will hold the minimum dy of all the components of all the resolutions for the tile.
  */
 static void opj_get_encoding_parameters(const opj_image_t *p_image,
                                         const opj_cp_t *p_cp,
@@ -167,10 +167,10 @@ static void opj_get_encoding_parameters(const opj_image_t *p_image,
  * @param	p_tx1			pointer that will hold the X1 parameter for the tile
  * @param	p_ty0			pointer that will hold the Y0 parameter for the tile
  * @param	p_ty1			pointer that will hold the Y1 parameter for the tile
- * @param	p_max_prec		pointer that will hold the the maximum precision for all the bands of the tile
- * @param	p_max_res		pointer that will hold the the maximum number of resolutions for all the poc inside the tile.
- * @param	p_dx_min		pointer that will hold the the minimum dx of all the components of all the resolutions for the tile.
- * @param	p_dy_min		pointer that will hold the the minimum dy of all the components of all the resolutions for the tile.
+ * @param	p_max_prec		pointer that will hold the maximum precision for all the bands of the tile
+ * @param	p_max_res		pointer that will hold the maximum number of resolutions for all the poc inside the tile.
+ * @param	p_dx_min		pointer that will hold the minimum dx of all the components of all the resolutions for the tile.
+ * @param	p_dy_min		pointer that will hold the minimum dy of all the components of all the resolutions for the tile.
  * @param	p_resolutions	pointer to an area corresponding to the one described above.
  */
 static void opj_get_all_encoding_parameters(const opj_image_t *p_image,

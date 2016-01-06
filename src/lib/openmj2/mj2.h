@@ -378,7 +378,7 @@ Read the structure of an MJ2 file
 */
 OPJ_API int OPJ_CALLCONV mj2_read_struct(FILE *file, opj_mj2_t *mj2);
 /**
-Write the the MOOV box to an output buffer stream
+Write the MOOV box to an output buffer stream
 @param movie MJ2 movie structure 
 @param cio Output buffer stream
 */
