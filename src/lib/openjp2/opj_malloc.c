@@ -1,6 +1,6 @@
 /*
- * The copyright in this software is being made available under the 2-clauses 
- * BSD License, included below. This software may be subject to other third 
+ * The copyright in this software is being made available under the 2-clauses
+ * BSD License, included below. This software may be subject to other third
  * party and contributor rights, including patent rights, and no such rights
  * are granted under this license.
  *
@@ -68,7 +68,7 @@ static INLINE void *opj_aligned_alloc_n(size_t alignment, size_t size)
   /*
    * Generic aligned malloc implementation.
    * Uses size_t offset for the integer manipulation of the pointer,
-   * as uintptr_t is not available in C89 to do 
+   * as uintptr_t is not available in C89 to do
    * bitwise operations on the pointer itself.
    */
   alignment--;
@@ -78,7 +78,7 @@ static INLINE void *opj_aligned_alloc_n(size_t alignment, size_t size)
 
     /* Room for padding and extra pointer stored in front of allocated area */
     size_t overhead = alignment + sizeof(void *);
-		
+
     /* let's be extra careful */
     assert(alignment <= (SIZE_MAX - sizeof(void *)));
 
@@ -151,7 +151,7 @@ static INLINE void *opj_aligned_realloc_n(void *ptr, size_t alignment, size_t ne
     if (new_size > SIZE_MAX - overhead) {
       return NULL;
     }
-		
+
     oldmem = ((void**) ptr)[-1];
     newmem = (OPJ_UINT8*)realloc(oldmem, new_size + overhead);
     if (newmem == NULL) {
