@@ -61,9 +61,9 @@ typedef struct opj_bio {
 	/** pointer to the present position in the buffer */
 	OPJ_BYTE *bp;
 	/** temporary place where each byte is read or written */
-	OPJ_UINT8 buf;
+	OPJ_BYTE buf;
 	/** coder : number of bits free to write. decoder : number of bits read */
-	OPJ_UINT32 ct;
+	OPJ_BYTE ct;
 
 	OPJ_BOOL simOut;
 } opj_bio_t;

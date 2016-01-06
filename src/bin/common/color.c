@@ -113,9 +113,10 @@ static void sycc444_to_rgb(opj_image_t *img)
 		sycc_to_rgb(offset, upb, *y, *cb, *cr, r, g, b);
 		++y; ++cb; ++cr; ++r; ++g; ++b;
 	}
-	free(img->comps[0].data); img->comps[0].data = d0;
-	free(img->comps[1].data); img->comps[1].data = d1;
-	free(img->comps[2].data); img->comps[2].data = d2;
+	opj_image_all_components_data_free(img);
+	img->comps[0].data = d0;
+	img->comps[1].data = d1;
+	 img->comps[2].data = d2;
 
 }/* sycc444_to_rgb() */
 
@@ -155,9 +156,10 @@ static void sycc422_to_rgb(opj_image_t *img)
 			++y; ++r; ++g; ++b; ++cb; ++cr;
 		}
 	}
-	free(img->comps[0].data); img->comps[0].data = d0;
-	free(img->comps[1].data); img->comps[1].data = d1;
-	free(img->comps[2].data); img->comps[2].data = d2;
+	opj_image_all_components_data_free(img);
+	 img->comps[0].data = d0;
+	 img->comps[1].data = d1;
+	 img->comps[2].data = d2;
 
 #if defined(USE_JPWL) || defined(USE_MJ2)
 	img->comps[1].w = maxw; img->comps[1].h = maxh;
@@ -239,10 +241,10 @@ static void sycc420_to_rgb(opj_image_t *img)
 			sycc_to_rgb(offset, upb, *y, *cb, *cr, r, g, b);
 		}
 	}
-
-	free(img->comps[0].data); img->comps[0].data = d0;
-	free(img->comps[1].data); img->comps[1].data = d1;
-	free(img->comps[2].data); img->comps[2].data = d2;
+	opj_image_all_components_data_free(img);
+	img->comps[0].data = d0;
+	img->comps[1].data = d1;
+	 img->comps[2].data = d2;
 
 #if defined(USE_JPWL) || defined(USE_MJ2)
 	img->comps[1].w = maxw; img->comps[1].h = maxh;
@@ -666,9 +668,10 @@ void color_cielab_to_rgb(opj_image_t *image)
 		cmsCloseProfile(in);
 		cmsCloseProfile(out);
 #endif
-		free(src0); image->comps[0].data = dst0;
-		free(src1); image->comps[1].data = dst1;
-		free(src2); image->comps[2].data = dst2;
+		opj_image_all_components_data_free(image);
+		image->comps[0].data = dst0;
+		image->comps[1].data = dst1;
+		image->comps[2].data = dst2;
 		
 		image->color_space = OPJ_CLRSPC_SRGB;
 		image->comps[0].prec = 16;
@@ -721,7 +724,7 @@ void color_cmyk_to_rgb(opj_image_t *image)
 		image->comps[2].data[i] = (int)(255.0F * Y * K); /* B */
 	}
 
-	free(image->comps[3].data); image->comps[3].data = NULL;
+	opj_image_single_component_data_free(image->comps+3);
 	image->comps[0].prec = 8;
 	image->comps[1].prec = 8;
 	image->comps[2].prec = 8;

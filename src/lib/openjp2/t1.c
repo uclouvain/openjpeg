@@ -1271,7 +1271,7 @@ opj_t1_t* opj_t1_create(OPJ_BOOL isEncoder, OPJ_UINT16 code_block_width, OPJ_UIN
 	}
 
 	if (!isEncoder && code_block_width > 0 && code_block_height > 0) {
-		l_t1->compressed_block = (OPJ_BYTE*)opj_malloc(code_block_width * code_block_height);
+		l_t1->compressed_block = (OPJ_BYTE*)opj_malloc((OPJ_SIZE_T)code_block_width * (OPJ_SIZE_T)code_block_height);
 		if (!l_t1->compressed_block) {
 			opj_t1_destroy(l_t1);
 			return 00;
@@ -1346,7 +1346,7 @@ OPJ_BOOL opj_t1_decode_cblks(  opj_tcd_tilecomp_t* tilec,
 					OPJ_INT32 x, y;
 					OPJ_UINT32 i, j;
 
-					 opj_t1_t* t1 = opj_t1_create(OPJ_FALSE,tccp->cblkw, tccp->cblkh);
+					 opj_t1_t* t1 = opj_t1_create(OPJ_FALSE,(OPJ_UINT16)tccp->cblkw, (OPJ_UINT16)tccp->cblkh);
 					if (t1 == 00) {
 						rc = OPJ_FALSE;
 						continue;
@@ -1555,7 +1555,6 @@ OPJ_BOOL opj_t1_encode_cblks(   opj_tcd_tile_t *tile,
 	tile->distotile = 0;		/* fixed_quality */
 
 	for (compno = 0; compno < tile->numcomps; ++compno) {
-		opj_tcd_tilecomp_t* tilec = tile->comps + compno;
 		opj_tccp_t* tccp = tcp->tccps + compno;
 		if (tccp->cblksty != 0)
 		{

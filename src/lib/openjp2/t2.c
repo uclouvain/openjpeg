@@ -89,12 +89,11 @@ Encode a packet of a tile to a destination buffer
 @param cstr_info Codestream information structure
 @return
 */
-static OPJ_BOOL opj_t2_encode_packet_thresh(OPJ_UINT32 tileno,
-	opj_tcd_tile_t *tile,
-	opj_tcp_t *tcp,
-	opj_pi_iterator_t *pi,
-	OPJ_UINT32 * p_data_written,
-	OPJ_UINT32 len);
+static OPJ_BOOL opj_t2_encode_packet_thresh(opj_tcd_tile_t *tile,
+											opj_tcp_t *tcp,
+											opj_pi_iterator_t *pi,
+											OPJ_UINT32 * p_data_written,
+											OPJ_UINT32 len);
 
 
 
@@ -237,8 +236,6 @@ OPJ_BOOL opj_t2_encode_packets( opj_t2_t* p_t2,
         opj_image_t *l_image = p_t2->image;
         opj_cp_t *l_cp = p_t2->cp;
         opj_tcp_t *l_tcp = &l_cp->tcps[p_tile_no];
-        OPJ_UINT32 pocno = (l_cp->rsiz == OPJ_PROFILE_CINEMA_4K)? 2: 1;
-        OPJ_UINT32 l_max_comp = l_cp->m_specific_param.m_enc.m_max_comp_size > 0 ? l_image->numcomps : 1;
         OPJ_UINT32 l_nb_pocs = l_tcp->numpocs + 1;
 
         l_pi = opj_pi_initialise_encode(l_image, l_cp, p_tile_no, FINAL_PASS);
@@ -304,10 +301,7 @@ OPJ_BOOL opj_t2_encode_packets_thresh(opj_t2_t* p_t2,
 	OPJ_UINT32 p_maxlayers,
 	OPJ_UINT32 * p_data_written,
 	OPJ_UINT32 p_max_len,
-	opj_codestream_info_t *cstr_info,
-	OPJ_UINT32 p_tp_num,
-	OPJ_INT32 p_tp_pos,
-	OPJ_UINT32 p_pino)
+	OPJ_INT32 p_tp_pos)
 {
 	OPJ_UINT32 l_nb_bytes = 0;
 	OPJ_UINT32 compno;
@@ -347,7 +341,7 @@ OPJ_BOOL opj_t2_encode_packets_thresh(opj_t2_t* p_t2,
 				if (l_current_pi->layno < p_maxlayers) {
 					l_nb_bytes = 0;
 
-					if (!opj_t2_encode_packet_thresh(p_tile_no, p_tile, l_tcp, l_current_pi, &l_nb_bytes, p_max_len)) {
+					if (!opj_t2_encode_packet_thresh(p_tile, l_tcp, l_current_pi, &l_nb_bytes, p_max_len)) {
 						opj_pi_destroy(l_pi, l_nb_pocs);
 						return OPJ_FALSE;
 					}
@@ -839,12 +833,11 @@ static OPJ_BOOL opj_t2_encode_packet(  OPJ_UINT32 tileno,
 }
 
 
-static OPJ_BOOL opj_t2_encode_packet_thresh(OPJ_UINT32 tileno,
-	opj_tcd_tile_t * tile,
-	opj_tcp_t * tcp,
-	opj_pi_iterator_t *pi,
-	OPJ_UINT32 * p_data_written,
-	OPJ_UINT32 length)
+static OPJ_BOOL opj_t2_encode_packet_thresh(opj_tcd_tile_t * tile,
+											opj_tcp_t * tcp,
+											opj_pi_iterator_t *pi,
+											OPJ_UINT32 * p_data_written,
+											OPJ_UINT32 length)
 {
 	OPJ_UINT32 bandno, cblkno;
 	OPJ_UINT32 l_nb_bytes;
@@ -861,7 +854,7 @@ static OPJ_BOOL opj_t2_encode_packet_thresh(OPJ_UINT32 tileno,
 	opj_tcd_resolution_t *res = tilec->resolutions + resno;
 
 	opj_bio_t *bio = 00;    /* BIO component */
-	OPJ_INT32 packet_bytes_written = 0;
+	OPJ_UINT32 packet_bytes_written = 0;
 
 	/* <SOP 0xff91> */
 	if (tcp->csty & J2K_CP_CSTY_SOP) {
@@ -1462,7 +1455,7 @@ static OPJ_BOOL opj_t2_read_packet_data(   opj_t2_t* p_t2,
                                        l_seg->dataindex = l_cblk->data_current_size;
                                 }
 
-								opj_min_buf_vec_push_back(&l_cblk->seg_buffers, opj_seg_buf_get_global_ptr(src_buf), l_seg->newlen);
+								opj_min_buf_vec_push_back(&l_cblk->seg_buffers, opj_seg_buf_get_global_ptr(src_buf), (OPJ_UINT16)l_seg->newlen);
 
 
 

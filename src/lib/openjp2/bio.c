@@ -104,7 +104,7 @@ static void opj_bio_putbit(opj_bio_t *bio, OPJ_BYTE b) {
 		opj_bio_byteout(bio); /* MSD: why not check the return value of this function ? */
 	}
 	bio->ct--;
-	bio->buf |= b << bio->ct;
+	bio->buf |= (OPJ_BYTE)(b << bio->ct);
 }
 
 static OPJ_UINT32 opj_bio_getbit(opj_bio_t *bio) {

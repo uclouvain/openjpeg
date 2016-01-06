@@ -40,7 +40,7 @@ static OPJ_BOOL opj_vec_double_capacity_if_full(opj_vec_t *vec) {
 	if (vec->size == vec->capacity-1) {
 		void** new_data = NULL;
 		OPJ_INT32 new_capacity = (OPJ_INT32)(1.5*vec->capacity);
-		new_data = opj_realloc(vec->data, (OPJ_SIZE_T)(sizeof(void*) * new_capacity));
+		new_data = opj_realloc(vec->data, sizeof(void*) * (OPJ_SIZE_T)new_capacity);
 		if (new_data) {
 			vec->capacity = new_capacity;
 			vec->data = new_data;
@@ -61,7 +61,7 @@ OPJ_BOOL opj_vec_init(opj_vec_t *vec) {
 
 	vec->size = 0;
 	vec->capacity = VECTOR_INITIAL_CAPACITY;
-	vec->data = opj_malloc(sizeof(void*) * vec->capacity);
+	vec->data = opj_malloc(sizeof(void*) * (OPJ_SIZE_T)vec->capacity);
 	return vec->data ? OPJ_TRUE : OPJ_FALSE;
 }
 

@@ -658,6 +658,8 @@ typedef struct opj_image_comp {
 	OPJ_UINT32 factor;
 	/** image component data */
 	OPJ_INT32 *data;
+	/* true if data was allocated with opj_aligned_malloc */
+	OPJ_BOOL aligned_data;
   /** alpha channel */
   OPJ_UINT16 alpha;
 } opj_image_comp_t;
@@ -1578,7 +1580,9 @@ OPJ_API OPJ_BOOL OPJ_CALLCONV opj_set_MCT( opj_cparameters_t *parameters,
 		                               	   OPJ_INT32 * p_dc_shift,
 		                               	   OPJ_UINT32 pNbComp);
 
+OPJ_API void OPJ_CALLCONV opj_image_all_components_data_free(opj_image_t* image);
 
+OPJ_API void OPJ_CALLCONV opj_image_single_component_data_free(opj_image_comp_t* image);
 
 #ifdef __cplusplus
 }

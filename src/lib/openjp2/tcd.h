@@ -277,7 +277,6 @@ void opj_tcd_makelayer(	opj_tcd_t *tcd,
 						OPJ_UINT32 final);
 
 OPJ_BOOL opj_tcd_rateallocate(	opj_tcd_t *tcd,
-								OPJ_BYTE *dest,
 								OPJ_UINT32 * p_data_written,
 								OPJ_UINT32 len,
 								opj_codestream_info_t *cstr_info);

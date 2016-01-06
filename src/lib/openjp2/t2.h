@@ -96,10 +96,7 @@ Encode the packets of a tile to a destination buffer
 @param maxlayers        maximum number of layers
 @param p_data_written   FIXME DOC
 @param len              the length of the destination buffer
-@param cstr_info        Codestream information structure
-@param tpnum            Tile part number of the current tile
 @param tppos            The position of the tile part flag in the progression order
-@param pino             FIXME DOC
 */
 OPJ_BOOL opj_t2_encode_packets_thresh(opj_t2_t* t2,
 	OPJ_UINT32 tileno,
@@ -107,10 +104,7 @@ OPJ_BOOL opj_t2_encode_packets_thresh(opj_t2_t* t2,
 	OPJ_UINT32 maxlayers,
 	OPJ_UINT32 * p_data_written,
 	OPJ_UINT32 len,
-	opj_codestream_info_t *cstr_info,
-	OPJ_UINT32 tpnum,
-	OPJ_INT32 tppos,
-	OPJ_UINT32 pino);
+	OPJ_INT32 tppos);
 
 
 /**

@@ -103,7 +103,7 @@ static void opj_seg_buf_increment(opj_seg_buf_t * seg_buf)
 	}
 
 	cur_seg = (opj_buf_t*)opj_vec_get(&seg_buf->segments, seg_buf->cur_seg_id);
-	if (cur_seg->offset == cur_seg->len  && 
+	if ((OPJ_SIZE_T)cur_seg->offset == cur_seg->len  && 
 					seg_buf->cur_seg_id < seg_buf->segments.size -1)	{
 		seg_buf->cur_seg_id++;
 	}
@@ -123,7 +123,7 @@ static OPJ_SIZE_T opj_seg_buf_read(opj_seg_buf_t * seg_buf,
 		return 0;
 
 	/*don't try to read more bytes than are available */
-	bytes_remaining_in_file = seg_buf->data_len - opj_seg_buf_get_global_offset(seg_buf);
+	bytes_remaining_in_file = seg_buf->data_len - (OPJ_SIZE_T)opj_seg_buf_get_global_offset(seg_buf);
 	if (p_nb_bytes > bytes_remaining_in_file) {
 #ifdef DEBUG_SEG_BUF
 		printf("Warning: attempt to read past end of segmented buffer\n");
@@ -135,7 +135,7 @@ static OPJ_SIZE_T opj_seg_buf_read(opj_seg_buf_t * seg_buf,
 	bytes_left_to_read = p_nb_bytes;
 	while (bytes_left_to_read > 0 && seg_buf->cur_seg_id < seg_buf->segments.size) {
 		opj_buf_t* cur_seg = (opj_buf_t*)opj_vec_get(&seg_buf->segments, seg_buf->cur_seg_id);
-		bytes_in_current_segment = (OPJ_SIZE_T)(cur_seg->len - cur_seg->offset);
+		bytes_in_current_segment = (cur_seg->len - (OPJ_SIZE_T)cur_seg->offset);
 
 		bytes_to_read = (bytes_left_to_read < bytes_in_current_segment) ? 
 											bytes_left_to_read : bytes_in_current_segment;
@@ -143,7 +143,7 @@ static OPJ_SIZE_T opj_seg_buf_read(opj_seg_buf_t * seg_buf,
 		if (p_buffer) {
 			memcpy((OPJ_BYTE*)p_buffer + total_bytes_read,cur_seg->buf + cur_seg->offset, bytes_to_read);
 		}
-		opj_seg_buf_incr_cur_seg_offset(seg_buf,bytes_to_read);
+		opj_seg_buf_incr_cur_seg_offset(seg_buf,(OPJ_OFF_T)bytes_to_read);
 
 		total_bytes_read	+= bytes_to_read;
 		bytes_left_to_read	-= bytes_to_read;
@@ -153,7 +153,8 @@ static OPJ_SIZE_T opj_seg_buf_read(opj_seg_buf_t * seg_buf,
 	return total_bytes_read ? total_bytes_read : (OPJ_SIZE_T)-1;
 }
 
-
+/* Disable this method for now, since it is not needed at the moment */
+#if 0
 static OPJ_OFF_T opj_seg_buf_skip(OPJ_OFF_T p_nb_bytes, opj_seg_buf_t * seg_buf)
 {
 	OPJ_SIZE_T bytes_in_current_segment;
@@ -194,12 +195,7 @@ static OPJ_OFF_T opj_seg_buf_skip(OPJ_OFF_T p_nb_bytes, opj_seg_buf_t * seg_buf)
 	}
 	return p_nb_bytes;
 }
-
-static OPJ_BOOL opj_seg_buf_seek(OPJ_OFF_T p_nb_bytes, opj_seg_buf_t* seg_buf)
-{
-	return OPJ_FALSE;
-}
-
+#endif
 static OPJ_BOOL opj_seg_buf_add_segment(opj_seg_buf_t* seg_buf, OPJ_BYTE* buf, OPJ_SIZE_T len) {
 	opj_buf_t* new_seg = NULL;
 	if (!seg_buf)
@@ -305,7 +301,7 @@ void opj_seg_buf_incr_cur_seg_offset(opj_seg_buf_t* seg_buf, OPJ_OFF_T offset) {
 		return;
 	cur_seg = (opj_buf_t*)(seg_buf->segments.data[seg_buf->cur_seg_id]);
 	opj_buf_incr_offset(cur_seg, offset);
-	if (cur_seg->offset == cur_seg->len) {
+	if ((OPJ_SIZE_T)cur_seg->offset == cur_seg->len) {
 		opj_seg_buf_increment(seg_buf);
 	}
 
@@ -326,7 +322,7 @@ OPJ_BOOL opj_seg_buf_zero_copy_read(opj_seg_buf_t* seg_buf,
 	if (!cur_seg)
 		return OPJ_FALSE;
 
-	if (cur_seg->offset + chunk_len <= cur_seg->len) {
+	if ((OPJ_SIZE_T)cur_seg->offset + chunk_len <= cur_seg->len) {
 		*ptr = cur_seg->buf + cur_seg->offset;
 		opj_seg_buf_read(seg_buf, NULL, chunk_len);
 		return OPJ_TRUE;
@@ -364,7 +360,7 @@ OPJ_SIZE_T opj_seg_buf_get_cur_seg_len(opj_seg_buf_t* seg_buf) {
 	if (!seg_buf)
 		return 0;
 	cur_seg = (opj_buf_t*)(opj_vec_get(&seg_buf->segments, seg_buf->cur_seg_id));
-	return (cur_seg) ? (OPJ_SIZE_T)(cur_seg->len - cur_seg->offset) : 0;
+	return (cur_seg) ? (cur_seg->len - (OPJ_SIZE_T)cur_seg->offset) : 0;
 }
 
 OPJ_OFF_T opj_seg_buf_get_cur_seg_offset(opj_seg_buf_t* seg_buf) {
@@ -385,7 +381,7 @@ OPJ_OFF_T opj_seg_buf_get_global_offset(opj_seg_buf_t* seg_buf) {
 
 	for (i = 0; i < seg_buf->cur_seg_id; ++i) {
 		opj_buf_t* seg = (opj_buf_t*)opj_vec_get(&seg_buf->segments, i);
-		offset += seg->len;
+		offset += (OPJ_OFF_T)seg->len;
 	}
 	return offset + opj_seg_buf_get_cur_seg_offset(seg_buf);
 }
@@ -399,7 +395,7 @@ void opj_buf_incr_offset(opj_buf_t* buf, OPJ_OFF_T off) {
 #ifdef DEBUG_SEG_BUF
 		printf("Warning: attempt to increment buffer offset out of bounds\n");
 #endif
-		buf->offset = buf->len;
+		buf->offset = (OPJ_OFF_T)buf->len;
 	}
 	buf->offset += off;
 }

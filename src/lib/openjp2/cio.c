@@ -394,7 +394,7 @@ OPJ_SIZE_T opj_stream_read_data (opj_stream_private_t * p_stream,OPJ_BYTE * p_bu
 
 OPJ_SIZE_T opj_stream_read_data_zero_copy(opj_stream_private_t * p_stream, OPJ_BYTE ** p_buffer, OPJ_SIZE_T p_size, opj_event_mgr_t * p_event_mgr)
 {
-	OPJ_SIZE_T l_read_nb_bytes = p_stream->m_zero_copy_read_fn(p_buffer, p_size, p_stream->m_user_data);
+	OPJ_SIZE_T l_read_nb_bytes = p_stream->m_zero_copy_read_fn((void**)p_buffer, p_size, p_stream->m_user_data);
 
 	if (l_read_nb_bytes == (OPJ_SIZE_T)-1) {
 		/*  end of stream */

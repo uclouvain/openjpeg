@@ -80,15 +80,7 @@ opj_image_t* OPJ_CALLCONV opj_image_create(OPJ_UINT32 numcmpts, opj_image_cmptpa
 void OPJ_CALLCONV opj_image_destroy(opj_image_t *image) {
 	if(image) {
 		if(image->comps) {
-			OPJ_UINT32 compno;
-
-			/* image components */
-			for(compno = 0; compno < image->numcomps; compno++) {
-				opj_image_comp_t *image_comp = &(image->comps[compno]);
-				if(image_comp->data) {
-					opj_free(image_comp->data);
-				}
-			}
+			opj_image_all_components_data_free(image);
 			opj_free(image->comps);
 		}
 
@@ -159,12 +151,7 @@ void opj_copy_image_header(const opj_image_t* p_image_src, opj_image_t* p_image_
 	p_image_dest->y1 = p_image_src->y1;
 
 	if (p_image_dest->comps){
-		for(compno = 0; compno < p_image_dest->numcomps; compno++) {
-			opj_image_comp_t *image_comp = &(p_image_dest->comps[compno]);
-			if(image_comp->data) {
-				opj_free(image_comp->data);
-			}
-		}
+		opj_image_all_components_data_free(p_image_dest);
 		opj_free(p_image_dest->comps);
 		p_image_dest->comps = NULL;
 	}

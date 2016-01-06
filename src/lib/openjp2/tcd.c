@@ -176,9 +176,8 @@ static OPJ_BOOL opj_tcd_t2_encode (     opj_tcd_t *p_tcd,
                                                                     opj_codestream_info_t *p_cstr_info );
 
 static OPJ_BOOL opj_tcd_rate_allocate_encode(   opj_tcd_t *p_tcd,
-                                                                                        OPJ_BYTE * p_dest_data,
-                                                                                        OPJ_UINT32 p_max_dest_size,
-                                                                                        opj_codestream_info_t *p_cstr_info );
+                                                OPJ_UINT32 p_max_dest_size,
+                                                opj_codestream_info_t *p_cstr_info );
 
 /* ----------------------------------------------------------------------- */
 
@@ -397,7 +396,6 @@ void opj_tcd_makelayer_fixed(opj_tcd_t *tcd, OPJ_UINT32 layno, OPJ_UINT32 final)
 }
 
 OPJ_BOOL opj_tcd_rateallocate(  opj_tcd_t *tcd,
-                                                                OPJ_BYTE *dest,
                                                                 OPJ_UINT32 * p_data_written,
                                                                 OPJ_UINT32 len,
                                                                 opj_codestream_info_t *cstr_info)
@@ -524,7 +522,7 @@ OPJ_BOOL opj_tcd_rateallocate(  opj_tcd_t *tcd,
 
                                 if (cp->m_specific_param.m_enc.m_fixed_quality) {       /* fixed_quality */
                                         if(OPJ_IS_CINEMA(cp->rsiz)){
-                                                if (! opj_t2_encode_packets_thresh(t2,tcd->tcd_tileno, tcd_tile, layno + 1, p_data_written, maxlen, cstr_info,tcd->cur_tp_num,tcd->tp_pos,tcd->cur_pino)) {
+                                                if (! opj_t2_encode_packets_thresh(t2,tcd->tcd_tileno, tcd_tile, layno + 1, p_data_written, maxlen, tcd->tp_pos)) {
 
                                                         lo = thresh;
                                                         continue;
@@ -553,7 +551,7 @@ OPJ_BOOL opj_tcd_rateallocate(  opj_tcd_t *tcd,
                                                 lo = thresh;
                                         }
                                 } else {
-                                        if (! opj_t2_encode_packets_thresh(t2, tcd->tcd_tileno, tcd_tile, layno + 1, p_data_written, maxlen, cstr_info,tcd->cur_tp_num,tcd->tp_pos,tcd->cur_pino))
+                                        if (! opj_t2_encode_packets_thresh(t2, tcd->tcd_tileno, tcd_tile, layno + 1, p_data_written, maxlen, tcd->tp_pos))
                                         {
                                                 /* TODO: what to do with l ??? seek / tell ??? */
                                                 /* opj_event_msg(tcd->cinfo, EVT_INFO, "rate alloc: len=%d, max=%d\n", l, maxlen); */
@@ -1131,7 +1129,10 @@ static OPJ_BOOL opj_tcd_code_block_dec_allocate (opj_tcd_cblk_dec_t * p_code_blo
 	}
 	return OPJ_TRUE;
 }
-
+/*
+Get size of tile data, summed over all components, reflecting actual precision of data.
+opj_image_t always stores data in 32 bit format.
+*/
 OPJ_UINT32 opj_tcd_get_decoded_tile_size ( opj_tcd_t *p_tcd )
 {
         OPJ_UINT32 i;
@@ -1139,18 +1140,13 @@ OPJ_UINT32 opj_tcd_get_decoded_tile_size ( opj_tcd_t *p_tcd )
         opj_image_comp_t * l_img_comp = 00;
         opj_tcd_tilecomp_t * l_tile_comp = 00;
         opj_tcd_resolution_t * l_res = 00;
-        OPJ_UINT32 l_size_comp, l_remaining;
+        OPJ_UINT32 l_size_comp;
 
         l_tile_comp = p_tcd->tcd_image->tiles->comps;
         l_img_comp = p_tcd->image->comps;
 
         for (i=0;i<p_tcd->image->numcomps;++i) {
-                l_size_comp = l_img_comp->prec >> 3; /*(/ 8)*/
-                l_remaining = l_img_comp->prec & 7;  /* (%8) */
-
-                if(l_remaining) {
-                        ++l_size_comp;
-                }
+                l_size_comp = (l_img_comp->prec + 7) >> 3;
 
                 if (l_size_comp == 3) {
                         l_size_comp = 4;
@@ -1229,7 +1225,7 @@ OPJ_BOOL opj_tcd_encode_tile(   opj_tcd_t *p_tcd,
                 /* FIXME _ProfStop(PGROUP_T1); */
 
                 /* FIXME _ProfStart(PGROUP_RATE); */
-                if (! opj_tcd_rate_allocate_encode(p_tcd,p_dest,p_max_length,p_cstr_info)) {
+                if (! opj_tcd_rate_allocate_encode(p_tcd,p_max_length,p_cstr_info)) {
                         return OPJ_FALSE;
                 }
                 /* FIXME _ProfStop(PGROUP_RATE); */
@@ -1338,6 +1334,20 @@ OPJ_BOOL opj_tcd_decode_tile(   opj_tcd_t *p_tcd,
         return OPJ_TRUE;
 }
 
+/*
+
+For each component, copy decoded resolutions from the tile data buffer
+into p_dest buffer.
+
+So, p_dest stores a sub-region of the tcd data, based on the number
+of resolutions decoded. (why doesn't tile data buffer also match number of resolutions decoded ?) 
+
+Note: p_dest stores data in the actual precision of the decompressed image,
+vs. tile data buffer which is always 32 bits.
+
+If we are decoding all resolutions, then this step is not necessary ??
+
+*/
 OPJ_BOOL opj_tcd_update_tile_data ( opj_tcd_t *p_tcd,
                                     OPJ_BYTE * p_dest,
                                     OPJ_UINT32 p_dest_length
@@ -1347,7 +1357,7 @@ OPJ_BOOL opj_tcd_update_tile_data ( opj_tcd_t *p_tcd,
         opj_image_comp_t * l_img_comp = 00;
         opj_tcd_tilecomp_t * l_tilec = 00;
         opj_tcd_resolution_t * l_res;
-        OPJ_UINT32 l_size_comp, l_remaining;
+        OPJ_UINT32 l_size_comp;
         OPJ_UINT32 l_stride, l_width,l_height;
 
         l_data_size = opj_tcd_get_decoded_tile_size(p_tcd);
@@ -1359,16 +1369,11 @@ OPJ_BOOL opj_tcd_update_tile_data ( opj_tcd_t *p_tcd,
         l_img_comp = p_tcd->image->comps;
 
         for (i=0;i<p_tcd->image->numcomps;++i) {
-                l_size_comp = l_img_comp->prec >> 3; /*(/ 8)*/
-                l_remaining = l_img_comp->prec & 7;  /* (%8) */
+                l_size_comp = (l_img_comp->prec + 7) >> 3; 
                 l_res = l_tilec->resolutions + l_img_comp->resno_decoded;
                 l_width = (OPJ_UINT32)(l_res->x1 - l_res->x0);
                 l_height = (OPJ_UINT32)(l_res->y1 - l_res->y0);
                 l_stride = (OPJ_UINT32)(l_tilec->x1 - l_tilec->x0) - l_width;
-
-                if (l_remaining) {
-                        ++l_size_comp;
-                }
 
                 if (l_size_comp == 3) {
                         l_size_comp = 4;
@@ -2060,9 +2065,8 @@ static OPJ_BOOL opj_tcd_t2_encode (opj_tcd_t *p_tcd,
 
 
 static OPJ_BOOL opj_tcd_rate_allocate_encode(  opj_tcd_t *p_tcd,
-                                                                            OPJ_BYTE * p_dest_data,
-                                                                            OPJ_UINT32 p_max_dest_size,
-                                                                            opj_codestream_info_t *p_cstr_info )
+                                            OPJ_UINT32 p_max_dest_size,
+                                            opj_codestream_info_t *p_cstr_info )
 {
         opj_cp_t * l_cp = p_tcd->cp;
         OPJ_UINT32 l_nb_written = 0;
@@ -2074,7 +2078,7 @@ static OPJ_BOOL opj_tcd_rate_allocate_encode(  opj_tcd_t *p_tcd,
         if (l_cp->m_specific_param.m_enc.m_disto_alloc|| l_cp->m_specific_param.m_enc.m_fixed_quality)  {
                 /* fixed_quality */
                 /* Normal Rate/distortion allocation */
-                if (! opj_tcd_rateallocate(p_tcd, p_dest_data,&l_nb_written, p_max_dest_size, p_cstr_info)) {
+                if (! opj_tcd_rateallocate(p_tcd, &l_nb_written, p_max_dest_size, p_cstr_info)) {
                         return OPJ_FALSE;
                 }
         }

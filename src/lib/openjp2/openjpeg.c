@@ -183,12 +183,12 @@ static OPJ_SIZE_T opj_zero_copy_read_from_buffer(void ** p_buffer,
 {
 	OPJ_SIZE_T l_nb_read = 0;
 
-	if (p_source_buffer->off + p_nb_bytes < p_source_buffer->len)	{
+	if ( ((OPJ_SIZE_T)p_source_buffer->off + p_nb_bytes) < p_source_buffer->len){
 		l_nb_read = p_nb_bytes;
 	}
 
 	*p_buffer = p_source_buffer->buf + p_source_buffer->off;
-	p_source_buffer->off += l_nb_read;
+	p_source_buffer->off += (OPJ_OFF_T)l_nb_read;
 
 	return l_nb_read ? l_nb_read : ((OPJ_SIZE_T)-1);
 }
@@ -199,16 +199,14 @@ static OPJ_SIZE_T opj_read_from_buffer(void * p_buffer,
 {
 	OPJ_SIZE_T l_nb_read;
 
-	if (p_source_buffer->off + p_nb_bytes < p_source_buffer->len)
-	{
+	if ((OPJ_SIZE_T)p_source_buffer->off + p_nb_bytes < p_source_buffer->len){
 		l_nb_read = p_nb_bytes;
 	}
-	else
-	{
-		l_nb_read = (OPJ_SIZE_T)(p_source_buffer->len - p_source_buffer->off);
+	else{
+		l_nb_read = (p_source_buffer->len - (OPJ_SIZE_T)p_source_buffer->off);
 	}
 	memcpy(p_buffer, p_source_buffer->buf + p_source_buffer->off, l_nb_read);
-	p_source_buffer->off += l_nb_read;
+	p_source_buffer->off += (OPJ_OFF_T)l_nb_read;
 
 	return l_nb_read ? l_nb_read : ((OPJ_SIZE_T)-1);
 }
@@ -217,8 +215,8 @@ static OPJ_SIZE_T opj_write_from_buffer(void * p_buffer,
 										OPJ_SIZE_T p_nb_bytes,
 										opj_buf_info_t* p_source_buffer)
 {
-	memcpy(p_source_buffer->buf + p_source_buffer->off, p_buffer, p_nb_bytes);
-	p_source_buffer->off += p_nb_bytes;
+	memcpy(p_source_buffer->buf + (OPJ_SIZE_T)p_source_buffer->off, p_buffer, p_nb_bytes);
+	p_source_buffer->off += (OPJ_OFF_T)p_nb_bytes;
 	p_source_buffer->len += p_nb_bytes;
 
 	return p_nb_bytes;
@@ -231,7 +229,7 @@ static OPJ_OFF_T opj_skip_from_buffer(OPJ_OFF_T p_nb_bytes,
 		p_source_buffer->off += p_nb_bytes;
 	}
 	else {
-		p_source_buffer->off = p_source_buffer->len;
+		p_source_buffer->off = (OPJ_OFF_T)p_source_buffer->len;
 	}
 	return p_nb_bytes;
 }
@@ -239,12 +237,11 @@ static OPJ_OFF_T opj_skip_from_buffer(OPJ_OFF_T p_nb_bytes,
 static OPJ_BOOL opj_seek_from_buffer(OPJ_OFF_T p_nb_bytes,
 									opj_buf_info_t * p_source_buffer)
 {
-	if (p_nb_bytes <  (OPJ_OFF_T)p_source_buffer->len)
-	{
+	if (p_nb_bytes <  (OPJ_OFF_T)p_source_buffer->len)	{
 		p_source_buffer->off = p_nb_bytes;
 	}
 	else {
-		p_source_buffer->off = p_source_buffer->len;
+		p_source_buffer->off = (OPJ_OFF_T)p_source_buffer->len;
 	}
 	return OPJ_TRUE;
 }
@@ -1191,6 +1188,7 @@ static void* opj_map(opj_handle_t fd, OPJ_SIZE_T len) {
 
 static OPJ_INT32 opj_unmap(void* ptr, OPJ_SIZE_T len){
 	OPJ_INT32 rc = -1;
+	(void)len;
 	if (ptr) 
 		rc = UnmapViewOfFile(ptr) ? 0 : -1; 
 	return rc;
@@ -1273,7 +1271,7 @@ static void* opj_map(opj_handle_t fd, OPJ_SIZE_T len) {
 
 static OPJ_INT32 opj_unmap(void* ptr, OPJ_SIZE_T len) {
 	if (ptr)
-		munmap(ptr, (off_t)len);
+		munmap(ptr, len);
 	return 0;
 }
 
@@ -1359,4 +1357,30 @@ opj_stream_t* OPJ_CALLCONV opj_stream_create_mapped_file_read_stream(const char 
 
 	return l_stream;
 }
+
+void OPJ_CALLCONV opj_image_all_components_data_free(opj_image_t* image) {
+	OPJ_UINT32 i;
+	if (!image || !image->comps)
+		return;
+	for (i = 0; i < image->numcomps; ++i) {
+		opj_image_single_component_data_free(image->comps + i);
+	}
+}
+
+
+
+void OPJ_CALLCONV opj_image_single_component_data_free(opj_image_comp_t* comp) {
+	if (!comp)
+		return;
+	if (comp->data) {
+		if (comp->aligned_data)
+			opj_aligned_free(comp->data);
+		else
+			opj_free(comp->data);
+		comp->data = NULL;
+	}
+	comp->aligned_data = OPJ_FALSE;
+}
+
+
 

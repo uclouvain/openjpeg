@@ -1580,7 +1580,7 @@ OPJ_FLOAT64 opj_clock(void) {
 	/* cout << "freq = " << ((double) freq.QuadPart) << endl; */
     /* t is the high resolution performance counter (see MSDN) */
     QueryPerformanceCounter ( & t ) ;
-    return freq.QuadPart ? ( t.QuadPart /(OPJ_FLOAT64) freq.QuadPart ) : 0 ;
+    return freq.QuadPart ? ((OPJ_FLOAT64)t.QuadPart /(OPJ_FLOAT64) freq.QuadPart ) : 0 ;
 #else
 	/* Unix or Linux: use resource usage */
     struct rusage t;
@@ -1609,8 +1609,8 @@ int main(int argc, char **argv) {
 
     char indexfilename[OPJ_PATH_LEN];	/* index file name */
 
-	OPJ_INT32 i,num_images;
-	OPJ_INT32 imageno;
+	OPJ_UINT32 i,num_images;
+	OPJ_UINT32 imageno;
     img_fol_t img_fol;
     dircnt_t *dirptr = NULL;
 
@@ -1687,7 +1687,6 @@ int main(int argc, char **argv) {
 			opj_codec_t* l_codec = 00;
 			opj_image_t *image = NULL;
 			char infile[OPJ_PATH_LEN], outfile[OPJ_PATH_LEN];
-			unsigned int i;
 			fprintf(stderr, "\n");
 
 			if (img_fol.set_imgdir == 1) {

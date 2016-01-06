@@ -1037,10 +1037,9 @@ static void opj_jp2_apply_pclr(opj_image_t *image, opj_jp2_color_t *color)
 	}
 
 	max = image->numcomps;
-	for(i = 0; i < max; ++i) {
-		if(old_comps[i].data) opj_free(old_comps[i].data);
+	for (i = 0; i < max; ++i) {
+		opj_image_single_component_data_free(old_comps + i);
 	}
-
 	opj_free(old_comps);
 	image->comps = new_comps;
 	image->numcomps = nr_channels;
