@@ -9737,7 +9737,7 @@ static OPJ_BOOL opj_j2k_decode_one_tile (       opj_j2k_t *p_j2k,
 
                 if(l_current_tile_no == l_tile_no_to_dec)
                 {
-                        /* move into the codestream to the the first SOT (FIXME or not move?)*/
+                        /* move into the codestream to the first SOT (FIXME or not move?)*/
                         if (!(opj_stream_read_seek(p_stream, p_j2k->cstr_index->main_head_end + 2, p_manager) ) ) {
                                 opj_event_msg(p_manager, EVT_ERROR, "Problem with seek function\n");
                                 opj_free(l_current_data);
@@ -10806,7 +10806,7 @@ OPJ_BOOL opj_j2k_write_tile (opj_j2k_t * p_j2k,
                         }
                 }
 
-                /* now copy data into the the tile component */
+                /* now copy data into the tile component */
                 if (! opj_tcd_copy_tile_data(p_j2k->m_tcd,p_data,p_data_size)) {
                         opj_event_msg(p_manager, EVT_ERROR, "Size mismatch between tile data and sent data." );
                         return OPJ_FALSE;
