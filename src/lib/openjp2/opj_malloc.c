@@ -32,6 +32,10 @@
 #define OPJ_SKIP_POISON
 #include "opj_includes.h"
 
+#if defined(OPJ_HAVE_MALLOC_H) && defined(OPJ_HAVE_MEMALIGN)
+# include <malloc.h>
+#endif
+
 #ifndef SIZE_MAX
 # define SIZE_MAX ((size_t) -1)
 #endif
