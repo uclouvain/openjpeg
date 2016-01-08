@@ -63,15 +63,10 @@ static void opj_j2k_transfer_image_data(opj_image_t* src, opj_image_t* dest) {
 		dest_comp->resno_decoded = src_comp->resno_decoded;
 
 		if (dest_comp->data) {
-			if (dest_comp->aligned_data)
-				opj_aligned_free(dest_comp->data);
-			else
-				opj_free(dest_comp->data);
+			opj_aligned_free(dest_comp->data);
 		}
 		dest_comp->data = src_comp->data;
-		dest_comp->aligned_data = src_comp->aligned_data;
 		src_comp->data = NULL;
-		src_comp->aligned_data = OPJ_FALSE;
 	}
 }
 
@@ -8157,7 +8152,6 @@ OPJ_BOOL opj_j2k_decode_tile (  opj_j2k_t * p_j2k,
 				opj_tcd_tilecomp_t* tilec = p_j2k->m_tcd->tcd_image->tiles->comps + compno;
 				opj_image_comp_t* comp = p_j2k->m_output_image->comps + compno;
 				comp->data = tilec->data;
-				comp->aligned_data = OPJ_TRUE;
 				tilec->data = NULL;
 				comp->resno_decoded = p_j2k->m_tcd->image->comps[compno].resno_decoded;
 
@@ -8260,7 +8254,7 @@ static OPJ_BOOL opj_j2k_update_image_data (opj_tcd_t * p_tcd, OPJ_BYTE * p_data,
                 /* Allocate output component buffer if necessary */
                 if (!l_img_comp_dest->data) {
 
-                        l_img_comp_dest->data = (OPJ_INT32*) opj_calloc((OPJ_SIZE_T)l_img_comp_dest->w * (OPJ_SIZE_T)l_img_comp_dest->h, sizeof(OPJ_INT32));
+                        l_img_comp_dest->data = (OPJ_INT32*) opj_aligned_malloc((OPJ_SIZE_T)l_img_comp_dest->w * (OPJ_SIZE_T)l_img_comp_dest->h * sizeof(OPJ_INT32));
                         if (! l_img_comp_dest->data) {
                                 return OPJ_FALSE;
                         }
@@ -9791,7 +9785,6 @@ static OPJ_BOOL opj_j2k_needs_copy_tile_data(opj_j2k_t *p_j2k) {
 		}
 	}
 	return copy_tile_data;
-
 }
 
 static OPJ_BOOL opj_j2k_decode_tiles ( opj_j2k_t *p_j2k,

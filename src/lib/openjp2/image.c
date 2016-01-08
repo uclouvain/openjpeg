@@ -64,7 +64,7 @@ opj_image_t* OPJ_CALLCONV opj_image_create(OPJ_UINT32 numcmpts, opj_image_cmptpa
 			comp->prec = cmptparms[compno].prec;
 			comp->bpp = cmptparms[compno].bpp;
 			comp->sgnd = cmptparms[compno].sgnd;
-			comp->data = (OPJ_INT32*) opj_calloc(comp->w * comp->h, sizeof(OPJ_INT32));
+			comp->data = (OPJ_INT32*) opj_aligned_malloc(comp->w * comp->h * sizeof(OPJ_INT32));
 			if(!comp->data) {
 				/* TODO replace with event manager, breaks API */
 				/* fprintf(stderr,"Unable to allocate memory for image.\n"); */

@@ -658,8 +658,6 @@ typedef struct opj_image_comp {
 	OPJ_UINT32 factor;
 	/** image component data */
 	OPJ_INT32 *data;
-	/* true if data was allocated with opj_aligned_malloc */
-	OPJ_BOOL aligned_data;
   /** alpha channel */
   OPJ_UINT16 alpha;
 } opj_image_comp_t;

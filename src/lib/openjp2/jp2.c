@@ -992,7 +992,7 @@ static void opj_jp2_apply_pclr(opj_image_t *image, opj_jp2_color_t *color)
 
 		/* Palette mapping: */
 		new_comps[i].data = (OPJ_INT32*)
-				opj_malloc(old_comps[cmp].w * old_comps[cmp].h * sizeof(OPJ_INT32));
+				opj_aligned_malloc(old_comps[cmp].w * old_comps[cmp].h * sizeof(OPJ_INT32));
 		if (!new_comps[i].data) {
 			opj_free(new_comps);
 			new_comps = NULL;

@@ -1373,13 +1373,9 @@ void OPJ_CALLCONV opj_image_single_component_data_free(opj_image_comp_t* comp) {
 	if (!comp)
 		return;
 	if (comp->data) {
-		if (comp->aligned_data)
-			opj_aligned_free(comp->data);
-		else
-			opj_free(comp->data);
+		opj_aligned_free(comp->data);
 		comp->data = NULL;
 	}
-	comp->aligned_data = OPJ_FALSE;
 }
 
 
