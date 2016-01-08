@@ -1609,8 +1609,8 @@ int main(int argc, char **argv) {
 
     char indexfilename[OPJ_PATH_LEN];	/* index file name */
 
-	OPJ_UINT32 i,num_images;
-	OPJ_UINT32 imageno;
+	OPJ_INT32 i,num_images;
+	OPJ_INT32 imageno;
     img_fol_t img_fol;
     dircnt_t *dirptr = NULL;
 
@@ -1673,7 +1673,11 @@ int main(int argc, char **argv) {
 
 
 #ifdef _OPENMP
+#ifdef _WIN32
 #pragma omp parallel default(none) private(imageno) shared(num_images,img_fol, dirptr, parameters,raw_cp, rc,num_compressed_files)
+#else
+#pragma omp parallel default(none) private(imageno) shared(stdout, stderr, num_images,img_fol, dirptr, parameters,raw_cp, rc,num_compressed_files)
+#endif
 	{
 #pragma omp for
 #endif
@@ -1885,6 +1889,7 @@ int main(int argc, char **argv) {
 				fprintf(stderr, "failed to encode image: opj_start_compress\n");
 			}
 			if (bSuccess && bUseTiles) {
+				OPJ_UINT32 i;
 				OPJ_BYTE *l_data;
 				OPJ_UINT32 l_data_size = 512 * 512 * 3;
 				l_data = (OPJ_BYTE*)calloc(1, l_data_size);

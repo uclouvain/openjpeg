@@ -1246,7 +1246,11 @@ int main(int argc, char **argv)
 
 	t_cumulative = opj_clock();
 #ifdef _OPENMP
+#ifdef _WIN32
 #pragma omp parallel default(none) private(imageno) shared(num_images,img_fol, dirptr, parameters, failed,store_file_to_disk,num_decompressed_images)
+#else
+#pragma omp parallel default(none) private(imageno) shared(stdout, stderr, num_images,img_fol, dirptr, parameters, failed,store_file_to_disk,num_decompressed_images)
+#endif
 	{
 #pragma omp for
 #endif
