@@ -61,10 +61,7 @@ static void opj_j2k_transfer_image_data(opj_image_t* src, opj_image_t* dest) {
 		opj_image_comp_t* src_comp = src->comps + compno;
 		opj_image_comp_t* dest_comp = dest->comps + compno;
 		dest_comp->resno_decoded = src_comp->resno_decoded;
-
-		if (dest_comp->data) {
-			opj_aligned_free(dest_comp->data);
-		}
+		opj_image_single_component_data_free(dest_comp);
 		dest_comp->data = src_comp->data;
 		src_comp->data = NULL;
 	}
@@ -8134,7 +8131,6 @@ OPJ_BOOL opj_j2k_decode_tile (  opj_j2k_t * p_j2k,
                 return OPJ_FALSE;
         }
 
-	
 		/* if p_data is not null, then copy decoded resolutions from tile data into p_data.
 		Otherwise, simply copy tile data pointer to output image
 		*/
@@ -8253,9 +8249,7 @@ static OPJ_BOOL opj_j2k_update_image_data (opj_tcd_t * p_tcd, OPJ_BYTE * p_data,
 
                 /* Allocate output component buffer if necessary */
                 if (!l_img_comp_dest->data) {
-
-                        l_img_comp_dest->data = (OPJ_INT32*) opj_aligned_malloc((OPJ_SIZE_T)l_img_comp_dest->w * (OPJ_SIZE_T)l_img_comp_dest->h * sizeof(OPJ_INT32));
-                        if (! l_img_comp_dest->data) {
+                        if (!opj_image_single_component_data_alloc(l_img_comp_dest)) {
                                 return OPJ_FALSE;
                         }
                 }
@@ -8265,7 +8259,7 @@ static OPJ_BOOL opj_j2k_update_image_data (opj_tcd_t * p_tcd, OPJ_BYTE * p_data,
 
                 /*-----*/
                 /* Compute the precision of the output buffer */
-                l_size_comp = (l_img_comp_src->prec + 7) >> 3; 
+                l_size_comp = (l_img_comp_src->prec + 7) >> 3;
                 l_res = l_tilec->resolutions + l_img_comp_src->resno_decoded;
 
                 if (l_size_comp == 3) {
@@ -9735,12 +9729,14 @@ static OPJ_BOOL opj_j2k_allocate_tile_element_cstr_index(opj_j2k_t *p_j2k)
 }
 
 static OPJ_BOOL opj_j2k_needs_copy_tile_data(opj_j2k_t *p_j2k) {
+	return OPJ_TRUE;
+#if 0
 	/* single tile, RGB images only*/
 	OPJ_BOOL copy_tile_data = (p_j2k->m_cp.th * p_j2k->m_cp.tw > 1) ||
 								p_j2k->m_output_image->numcomps != 3 ||
 								p_j2k->m_output_image->numcomps != 3 ||
 								p_j2k->m_tcd->tcd_image->tiles->numcomps != 3;
-											
+
 	OPJ_UINT32 i = 0;
 
 
@@ -9785,6 +9781,7 @@ static OPJ_BOOL opj_j2k_needs_copy_tile_data(opj_j2k_t *p_j2k) {
 		}
 	}
 	return copy_tile_data;
+#endif
 }
 
 static OPJ_BOOL opj_j2k_decode_tiles ( opj_j2k_t *p_j2k,

@@ -4,7 +4,8 @@
  * party and contributor rights, including patent rights, and no such rights
  * are granted under this license.
  *
- * Copyright (c) 2015, Aaron Boxer
+ * Copyright (c) 2002-2016, Universite catholique de Louvain (UCL), Belgium
+ * Copyright (c) 2002-2016, OpenJPEG contributors
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

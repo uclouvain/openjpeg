@@ -568,7 +568,6 @@ typedef struct opj_dparameters {
 } opj_dparameters_t;
 
 
-
 /**
  * JPEG2000 codec V2.
  * */
@@ -1581,6 +1580,8 @@ OPJ_API OPJ_BOOL OPJ_CALLCONV opj_set_MCT( opj_cparameters_t *parameters,
 OPJ_API void OPJ_CALLCONV opj_image_all_components_data_free(opj_image_t* image);
 
 OPJ_API void OPJ_CALLCONV opj_image_single_component_data_free(opj_image_comp_t* image);
+
+OPJ_API OPJ_BOOL OPJ_CALLCONV opj_image_single_component_data_alloc(opj_image_comp_t* image);
 
 #ifdef __cplusplus
 }
