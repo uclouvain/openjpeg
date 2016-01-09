@@ -106,8 +106,8 @@ BUILD_TESTING:BOOL=${BUILD_TESTING}
 # Build the JPIP library and utilities
 BUILD_JPIP:BOOL=TRUE
 
-# Build the JPIP server
-BUILD_JPIP_SERVER:BOOL=TRUE
+# Build the JPIP server (disabled because of missing build dependencies)
+#BUILD_JPIP_SERVER:BOOL=TRUE
 
 # Build Thirdparty, useful but not required for test suite
 BUILD_THIRDPARTY:BOOL=TRUE
