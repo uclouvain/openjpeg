@@ -409,6 +409,8 @@ static INLINE OPJ_BOOL opj_dwt_encode_procedure(opj_tcd_tilecomp_t * tilec,void 
 
 	l_data_size = opj_dwt_max_resolution( tilec->resolutions,tilec->numresolutions) * (OPJ_UINT32)sizeof(OPJ_INT32);
 	bj = (OPJ_INT32*)opj_malloc((size_t)l_data_size);
+	/* l_data_size is equal to 0 when numresolutions == 1 but bj is not used */
+	/* in that case, so do not error out */
 	if (l_data_size != 0 && ! bj) {
 		return OPJ_FALSE;
 	}
