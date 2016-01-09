@@ -1368,6 +1368,18 @@ void OPJ_CALLCONV opj_image_all_components_data_free(opj_image_t* image) {
 }
 
 
+OPJ_BOOL OPJ_CALLCONV opj_image_single_component_data_alloc(opj_image_comp_t* comp) {
+	OPJ_INT32* data = NULL;
+	if (!comp)
+		return OPJ_FALSE;
+
+	data = (OPJ_INT32*)opj_aligned_malloc(comp->w * comp->h * sizeof(OPJ_UINT32));
+	if (!data)
+		return OPJ_FALSE;
+	opj_image_single_component_data_free(comp);
+	comp->data = data;
+	return OPJ_TRUE;
+}
 
 void OPJ_CALLCONV opj_image_single_component_data_free(opj_image_comp_t* comp) {
 	if (!comp)
