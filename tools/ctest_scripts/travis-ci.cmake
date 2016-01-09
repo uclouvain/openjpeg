@@ -103,6 +103,12 @@ CMAKE_C_FLAGS:STRING= ${CCFLAGS_ARCH} ${CCFLAGS_WARNING}
 # Use to activate the test suite
 BUILD_TESTING:BOOL=${BUILD_TESTING}
 
+# Build the JPIP library and utilities
+BUILD_JPIP:BOOL=TRUE
+
+# Build the JPIP server
+BUILD_JPIP_SERVER:BOOL=TRUE
+
 # Build Thirdparty, useful but not required for test suite
 BUILD_THIRDPARTY:BOOL=TRUE
 
