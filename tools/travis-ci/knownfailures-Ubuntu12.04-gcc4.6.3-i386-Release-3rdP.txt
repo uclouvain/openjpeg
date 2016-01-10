@@ -1,11 +1,3 @@
-NR-ENC-issue203-32x32-bgr16.bmp-43-compare_dump2base
-NR-ENC-issue203-32x32-bgr16.bmp-43-compare_dec-ref-out2base
-NR-ENC-issue203-33x33-bgr16.bmp-44-compare_dump2base
-NR-ENC-issue203-33x33-bgr16.bmp-44-compare_dec-ref-out2base
-NR-ENC-issue203-32x32-bgra16.bmp-45-compare_dump2base
-NR-ENC-issue203-33x33-bgra16.bmp-46-compare_dump2base
-NR-ENC-issue203-127x64-bgr16.bmp-49-compare_dump2base
-NR-ENC-issue203-127x64-bgr16.bmp-49-compare_dec-ref-out2base
 NR-DEC-issue104_jpxstream.jp2-33-decode-md5
 NR-DEC-issue226.j2k-74-decode
 NR-DEC-issue226.j2k-74-decode-md5
