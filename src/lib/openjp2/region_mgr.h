@@ -4,8 +4,7 @@
  * party and contributor rights, including patent rights, and no such rights
  * are granted under this license.
  *
- * Copyright (c) 2002-2016, Universite catholique de Louvain (UCL), Belgium
- * Copyright (c) 2002-2016, OpenJPEG contributors
+ * Copyright (c) 2015, Aaron Boxer
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,58 +29,34 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __VECTOR_H
-#define __VECTOR_H
+#ifndef __REGION_MGR_H
+#define __REGION_MGR_H
 
-/*
-Vector - a dynamic array.
+typedef struct opj_image opj_image_t;
+typedef struct opj_tcd_tile opj_tcd_tile_t;
 
-*/
+typedef struct opj_rgn_component {
+	opj_vec_t* regions;
+} opj_rgn_component_t;
 
-typedef struct opj_vec{
-	OPJ_INT32 size;     /* current size of vec */
-	OPJ_INT32 capacity;  /* maximum size of vec */
-	void* *data;		/* array of void* pointers */ 
-	OPJ_BOOL owns_data;
-} opj_vec_t;
+typedef struct opj_rgn_mgr {
+	opj_vec_t* comps;
+} opj_rgn_mgr_t;
 
-/*
-Initialize vector
-*/
+/* create region manager */
+opj_rgn_mgr_t* opj_rgn_mgr_create(opj_tcd_tile_t * l_tile, 
+								   OPJ_BOOL irreversible,
+									opj_image_t* output_image);
 
-OPJ_BOOL opj_vec_init(opj_vec_t *vec, OPJ_BOOL owns_data);
+/* destroy region manager */
+void opj_rgn_mgr_destroy(opj_rgn_mgr_t* mgr);
 
-OPJ_BOOL opj_vec_init_with_capacity(opj_vec_t *vec, OPJ_INT32 capacity, OPJ_BOOL owns_data);
+void opj_rgn_mgr_destroy_component(opj_rgn_component_t* comp);
 
-/*
-Add a value to the end of the vector
-*/
-OPJ_BOOL opj_vec_push_back(opj_vec_t *vec, void* value);
+/* check if rect overlaps with regions in region component */
+OPJ_BOOL opj_rgn_mgr_hit_test(opj_rgn_component_t* comp, opj_rect_t* rect);
 
-/*
-Set a value at specified index. If index is greater then the size of the vector,
-all intervening indices will be initialized to NULL
-*/
-OPJ_BOOL opj_vec_set(opj_vec_t *vec, OPJ_INT32 index, void* value);
-
-/*
-Get value at specified index
-*/
-void* opj_vec_get(opj_vec_t *vec, OPJ_INT32 index);
-
-/*
-Get value at end of vector
-*/
-void* opj_vec_back(opj_vec_t *vec);
-
-/*
-Clean up vector resources. Does NOT free vector itself
-*/
-void opj_vec_cleanup(opj_vec_t *vec);
-
-/*
-Clean up vector resources and free vector itself
-*/
-void opj_vec_destroy(opj_vec_t *vec);
+/* convenience method */
+opj_rgn_component_t* opj_rgn_mgr_get_region_component(opj_rgn_mgr_t* mgr, OPJ_INT32 index);
 
 #endif

@@ -177,6 +177,7 @@ static INLINE long opj_lrintf(float f) {
 #include "opj_malloc.h"
 #include "event.h"
 #include "function_list.h"
+#include "util.h"
 #include "vector.h"
 #include "segmented_stream.h"
 #include "bio.h"
@@ -190,7 +191,7 @@ static INLINE long opj_lrintf(float f) {
 #include "mqc.h"
 #include "raw.h"
 #include "bio.h"
-
+#include "region_mgr.h"
 #include "pi.h"
 #include "tgt.h"
 #include "tcd.h"

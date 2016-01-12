@@ -166,6 +166,7 @@ typedef struct opj_tcd_tilecomp
 	OPJ_UINT32 data_size_needed;        /* we may either need to allocate this amount of data, or re-use image data and ignore this value */
 	OPJ_UINT32 data_size;               /* size of the data of the component */
 	OPJ_INT32 numpix;                   /* add fixed_quality */
+	opj_rgn_component_t* region;
 } opj_tcd_tilecomp_t;
 
 
@@ -180,6 +181,7 @@ typedef struct opj_tcd_tile {
 	OPJ_FLOAT64 distotile;			/* add fixed_quality */
 	OPJ_FLOAT64 distolayer[100];	/* add fixed_quality */
 	OPJ_UINT32 packno;              /* packet number */
+	opj_rgn_mgr_t* region_manager;
 } opj_tcd_tile_t;
 
 /**
@@ -259,13 +261,18 @@ OPJ_BOOL opj_tcd_init(	opj_tcd_t *p_tcd,
  * Allocates memory for decoding a specific tile.
  *
  * @param	p_tcd		the tile decoder.
+ * @param	output_image output image - stores the decode region of interest
  * @param	p_tile_no	the index of the tile received in sequence. This not necessarily lead to the
  * tile at index p_tile_no.
  * @param p_manager the event manager.
  *
  * @return	true if the remaining data is sufficient.
  */
-OPJ_BOOL opj_tcd_init_decode_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no, opj_event_mgr_t* p_manager);
+OPJ_BOOL opj_tcd_init_decode_tile(opj_tcd_t *p_tcd,
+									OPJ_UINT32 qmfbid,
+									opj_image_t* output_image,
+									OPJ_UINT32 p_tile_no,
+									opj_event_mgr_t* p_manager);
 
 void opj_tcd_makelayer_fixed(opj_tcd_t *tcd, OPJ_UINT32 layno, OPJ_UINT32 final);
 

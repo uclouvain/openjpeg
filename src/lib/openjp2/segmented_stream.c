@@ -58,8 +58,7 @@ OPJ_BOOL opj_min_buf_vec_push_back(opj_vec_t* buf_vec, OPJ_BYTE* buf, OPJ_UINT16
 		return OPJ_FALSE;
 
 	if (!buf_vec->data) {
-		opj_vec_init(buf_vec);
-		buf_vec->owns_data = OPJ_TRUE;
+		opj_vec_init(buf_vec,OPJ_TRUE);
 	}
 
 	seg = (opj_min_buf_t*)opj_malloc(sizeof(opj_buf_t));
@@ -253,10 +252,9 @@ OPJ_BOOL opj_seg_buf_push_back(opj_seg_buf_t* seg_buf, OPJ_BYTE* buf, OPJ_SIZE_T
 		return OPJ_FALSE;
 
 	if (!seg_buf->segments.data) {
-		opj_vec_init(&seg_buf->segments);
-		/* let segmented buffer free the segment and its internal buffer, 
-		   so don't make vector manage memory  */
-		seg_buf->segments.owns_data = OPJ_FALSE;
+		/* let segmented buffer free the segment and its internal buffer,
+		so don't make vector manage memory  */
+		opj_vec_init(&seg_buf->segments, OPJ_FALSE);
 	}
 
 
@@ -275,9 +273,8 @@ OPJ_BOOL opj_seg_buf_alloc_and_push_back(opj_seg_buf_t* seg_buf, OPJ_SIZE_T len)
 		return OPJ_FALSE;
 
 	if (!seg_buf->segments.data) {
-		opj_vec_init(&seg_buf->segments);
 		/* we want to free the segment and its internal buffer, so don't make vector manage memory*/
-		seg_buf->segments.owns_data = OPJ_FALSE;
+		opj_vec_init(&seg_buf->segments, OPJ_FALSE);
 	}
 
 

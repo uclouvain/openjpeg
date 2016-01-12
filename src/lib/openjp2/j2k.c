@@ -8072,7 +8072,14 @@ OPJ_BOOL opj_j2k_read_tile_header(      opj_j2k_t * p_j2k,
                 return OPJ_FALSE;
         }
         /*FIXME ???*/
-        if (! opj_tcd_init_decode_tile(p_j2k->m_tcd, p_j2k->m_current_tile_number, p_manager)) {
+
+		l_tcp = p_j2k->m_specific_param.m_decoder.m_default_tcp;
+
+        if (! opj_tcd_init_decode_tile(p_j2k->m_tcd,
+										l_tcp->tccps->qmfbid,
+										p_j2k->m_output_image,
+										p_j2k->m_current_tile_number,
+										p_manager)) {
                 opj_event_msg(p_manager, EVT_ERROR, "Cannot decode tile, memory error\n");
                 return OPJ_FALSE;
         }
@@ -10059,15 +10066,15 @@ OPJ_BOOL opj_j2k_decode(opj_j2k_t * p_j2k,
         return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_j2k_get_tile(      opj_j2k_t *p_j2k,
-                                                    opj_stream_private_t *p_stream,
-                                                    opj_image_t* p_image,
-                                                    opj_event_mgr_t * p_manager,
-                                                    OPJ_UINT32 tile_index )
-{
+OPJ_BOOL opj_j2k_get_tile(  opj_j2k_t *p_j2k,
+                            opj_stream_private_t *p_stream,
+                            opj_image_t* p_image,
+                            opj_event_mgr_t * p_manager,
+                            OPJ_UINT32 tile_index ) {
         OPJ_UINT32 compno;
         OPJ_UINT32 l_tile_x, l_tile_y;
         opj_image_comp_t* l_img_comp;
+		opj_rect_t original_image_rect, tile_rect, overlap_rect;
 
         if (!p_image) {
                 opj_event_msg(p_manager, EVT_ERROR, "We need an image previously created.\n");
@@ -10083,19 +10090,44 @@ OPJ_BOOL opj_j2k_get_tile(      opj_j2k_t *p_j2k,
         l_tile_x = tile_index % p_j2k->m_cp.tw;
         l_tile_y = tile_index / p_j2k->m_cp.tw;
 
-        p_image->x0 = l_tile_x * p_j2k->m_cp.tdx + p_j2k->m_cp.tx0;
-        if (p_image->x0 < p_j2k->m_private_image->x0)
-                p_image->x0 = p_j2k->m_private_image->x0;
-        p_image->x1 = (l_tile_x + 1) * p_j2k->m_cp.tdx + p_j2k->m_cp.tx0;
-        if (p_image->x1 > p_j2k->m_private_image->x1)
-                p_image->x1 = p_j2k->m_private_image->x1;
+		opj_rect_init(&original_image_rect, p_image->x0, p_image->y0, p_image->x1, p_image->y1);
 
-        p_image->y0 = l_tile_y * p_j2k->m_cp.tdy + p_j2k->m_cp.ty0;
-        if (p_image->y0 < p_j2k->m_private_image->y0)
-                p_image->y0 = p_j2k->m_private_image->y0;
-        p_image->y1 = (l_tile_y + 1) * p_j2k->m_cp.tdy + p_j2k->m_cp.ty0;
-        if (p_image->y1 > p_j2k->m_private_image->y1)
-                p_image->y1 = p_j2k->m_private_image->y1;
+		p_image->x0 = l_tile_x * p_j2k->m_cp.tdx + p_j2k->m_cp.tx0;
+		if (p_image->x0 < p_j2k->m_private_image->x0)
+			p_image->x0 = p_j2k->m_private_image->x0;
+		p_image->x1 = (l_tile_x + 1) * p_j2k->m_cp.tdx + p_j2k->m_cp.tx0;
+		if (p_image->x1 > p_j2k->m_private_image->x1)
+			p_image->x1 = p_j2k->m_private_image->x1;
+
+		p_image->y0 = l_tile_y * p_j2k->m_cp.tdy + p_j2k->m_cp.ty0;
+		if (p_image->y0 < p_j2k->m_private_image->y0)
+			p_image->y0 = p_j2k->m_private_image->y0;
+		p_image->y1 = (l_tile_y + 1) * p_j2k->m_cp.tdy + p_j2k->m_cp.ty0;
+		if (p_image->y1 > p_j2k->m_private_image->y1)
+			p_image->y1 = p_j2k->m_private_image->y1;
+
+		tile_rect.x0 = p_image->x0;
+		tile_rect.y0 = p_image->y0;
+		tile_rect.x1 = p_image->x1;
+		tile_rect.y1 = p_image->y1;
+
+		if (opj_rect_is_non_degenerate(&original_image_rect) &&
+				opj_rect_is_non_degenerate(&tile_rect) &&
+					opj_rect_get_overlap(&original_image_rect, &tile_rect, &overlap_rect) &&
+						opj_rect_is_non_degenerate(&overlap_rect)) {
+			p_image->x0 = overlap_rect.x0;
+			p_image->y0 = overlap_rect.y0;
+			p_image->x1 = overlap_rect.x1;
+			p_image->y1 = overlap_rect.y1;
+		}
+		else {
+			opj_event_msg(p_manager, EVT_WARNING, "Decode region <%d,%d,%d,%d> does not overlap requested tile %d. Ignoring.\n",
+				original_image_rect.x0,
+				original_image_rect.y0,
+				original_image_rect.x1,
+				original_image_rect.y1,
+				tile_index);
+		}
 
         l_img_comp = p_image->comps;
         for (compno=0; compno < p_image->numcomps; ++compno)

@@ -1340,13 +1340,40 @@ OPJ_BOOL opj_t1_decode_cblks(  opj_tcd_tilecomp_t* tilec,
 				#pragma omp for
 #endif
 				for (cblkno = 0; cblkno < (OPJ_INT32)(precinct->cw * precinct->ch); ++cblkno) {
+					opj_rect_t cblk_rect;
 					opj_tcd_cblk_dec_t* cblk = &precinct->cblks.dec[cblkno];
 					OPJ_INT32* restrict datap;
 					OPJ_UINT32 cblk_w, cblk_h;
-					OPJ_INT32 x, y;
+					OPJ_INT32 x, y;		/* absolute code block offset */
 					OPJ_UINT32 i, j;
+					opj_t1_t* t1 = NULL;
 
-					 opj_t1_t* t1 = opj_t1_create(OPJ_FALSE,(OPJ_UINT16)tccp->cblkw, (OPJ_UINT16)tccp->cblkh);
+					/* get code block offset relative to band*/
+					x = cblk->x0 - band->x0;
+					y = cblk->y0 - band->y0;
+
+					/* add band offset relative to previous resolution */
+					if (band->bandno & 1) {
+						opj_tcd_resolution_t* pres = &tilec->resolutions[resno - 1];
+						x += pres->x1 - pres->x0;
+					}
+					if (band->bandno & 2) {
+						opj_tcd_resolution_t* pres = &tilec->resolutions[resno - 1];
+						y += pres->y1 - pres->y0;
+					}
+
+					/* check if block overlaps with decode region */
+					opj_rect_init(&cblk_rect, x, y, x + tccp->cblkw, y + tccp->cblkh);
+
+					
+					if (tilec->region && 
+							tilec->region->regions && 
+								tilec->region->regions->size > 0 &&
+									!opj_rgn_mgr_hit_test(tilec->region, &cblk_rect))
+																				continue;
+						
+
+					t1 = opj_t1_create(OPJ_FALSE,(OPJ_UINT16)tccp->cblkw, (OPJ_UINT16)tccp->cblkh);
 					if (t1 == 00) {
 						rc = OPJ_FALSE;
 						continue;
@@ -1363,21 +1390,10 @@ OPJ_BOOL opj_t1_decode_cblks(  opj_tcd_tilecomp_t* tilec,
 						continue;
                     }
 
-					x = cblk->x0 - band->x0;
-					y = cblk->y0 - band->y0;
-					if (band->bandno & 1) {
-						opj_tcd_resolution_t* pres = &tilec->resolutions[resno - 1];
-						x += pres->x1 - pres->x0;
-					}
-					if (band->bandno & 2) {
-						opj_tcd_resolution_t* pres = &tilec->resolutions[resno - 1];
-						y += pres->y1 - pres->y0;
-					}
 
-					datap=t1->data;
+					datap = t1->data;
 					cblk_w = t1->w;
 					cblk_h = t1->h;
-
 					if (tccp->roishift) {
 						OPJ_INT32 thresh = 1 << tccp->roishift;
 						for (j = 0; j < cblk_h; ++j) {

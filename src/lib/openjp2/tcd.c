@@ -1045,9 +1045,30 @@ OPJ_BOOL opj_tcd_init_encode_tile (opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no, opj_e
 	return opj_tcd_init_tile(p_tcd, p_tile_no, OPJ_TRUE, 1.0F, sizeof(opj_tcd_cblk_enc_t), p_manager);
 }
 
-OPJ_BOOL opj_tcd_init_decode_tile (opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no, opj_event_mgr_t* p_manager)
+OPJ_BOOL opj_tcd_init_decode_tile (opj_tcd_t *p_tcd,
+									OPJ_UINT32 qmfbid,
+									opj_image_t* output_image,
+									OPJ_UINT32 p_tile_no,
+									opj_event_mgr_t* p_manager)
 {
-	return opj_tcd_init_tile(p_tcd, p_tile_no, OPJ_FALSE, 0.5F, sizeof(opj_tcd_cblk_dec_t), p_manager);
+	OPJ_UINT32 i;
+	OPJ_BOOL rc =  opj_tcd_init_tile(p_tcd, p_tile_no, OPJ_FALSE, 0.5F, sizeof(opj_tcd_cblk_dec_t), p_manager);
+	if (rc && output_image) {
+		if (p_tcd->tcd_image->tiles->region_manager)
+			opj_rgn_mgr_destroy(p_tcd->tcd_image->tiles->region_manager);
+		p_tcd->tcd_image->tiles->region_manager = 
+					opj_rgn_mgr_create(p_tcd->tcd_image->tiles,
+									  qmfbid ? OPJ_FALSE : OPJ_TRUE,
+									output_image);
+		if (!p_tcd->tcd_image->tiles->region_manager) {
+			return OPJ_FALSE;
+		}
+		for (i = 0; i < p_tcd->tcd_image->tiles->numcomps; ++i) {
+			(p_tcd->tcd_image->tiles->comps + i)->region = 
+				opj_rgn_mgr_get_region_component(p_tcd->tcd_image->tiles->region_manager,i);
+		}
+	}
+	return rc;
 }
 
 /**
@@ -1536,6 +1557,9 @@ static void opj_tcd_free_tile(opj_tcd_t *p_tcd)
 
         opj_free(l_tile->comps);
         l_tile->comps = 00;
+		if (l_tile->region_manager)
+			opj_rgn_mgr_destroy(l_tile->region_manager);
+		l_tile->region_manager = 00;
         opj_free(p_tcd->tcd_image->tiles);
         p_tcd->tcd_image->tiles = 00;
 }

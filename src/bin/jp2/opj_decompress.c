@@ -1341,6 +1341,19 @@ int main(int argc, char **argv)
 					goto cleanup;
 				}
 
+
+				/* It is just here to illustrate how to use the resolution after set parameters */
+				/*
+				if (!opj_set_decoded_resolution_factor(l_codec, 5)) {
+					fprintf(stderr, "ERROR -> opj_decompress: failed to set the resolution factor tile!\n");
+					opj_destroy_codec(l_codec);
+					opj_stream_destroy(l_stream);
+					opj_image_destroy(image);
+					return EXIT_FAILURE;
+				}
+				*/
+
+
 				/* Get the decoded image */
 				if (!(opj_decode(l_codec, l_stream, image) && opj_end_decompress(l_codec, l_stream))) {
 					fprintf(stderr, "ERROR -> opj_decompress: failed to decode image!\n");
@@ -1351,13 +1364,31 @@ int main(int argc, char **argv)
 			else {
 
 				/* It is just here to illustrate how to use the resolution after set parameters */
-				/*if (!opj_set_decoded_resolution_factor(l_codec, 5)) {
+				/*
+				if (!opj_set_decoded_resolution_factor(l_codec, 0)) {
 					fprintf(stderr, "ERROR -> opj_decompress: failed to set the resolution factor tile!\n");
 					opj_destroy_codec(l_codec);
 					opj_stream_destroy(l_stream);
 					opj_image_destroy(image);
 					return EXIT_FAILURE;
-				}*/
+				}
+				*/
+
+				/* Optional if you want decode the entire image */
+				if (!opj_set_decode_area(l_codec,
+										image,
+										(OPJ_INT32)parameters.DA_x0,
+										(OPJ_INT32)parameters.DA_y0,
+										(OPJ_INT32)parameters.DA_x1,
+										(OPJ_INT32)parameters.DA_y1)) {
+					fprintf(stderr, "ERROR -> opj_decompress: failed to set the decoded area\n");
+					destroy_parameters(&parameters);
+					opj_stream_destroy(l_stream);
+					opj_destroy_codec(l_codec);
+					opj_image_destroy(image);
+					failed = 1;
+					continue;
+				}
 
 				if (!opj_get_decoded_tile(l_codec, l_stream, image, parameters.tile_index)) {
 					fprintf(stderr, "ERROR -> opj_decompress: failed to decode tile!\n");

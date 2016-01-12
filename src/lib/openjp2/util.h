@@ -4,8 +4,7 @@
  * party and contributor rights, including patent rights, and no such rights
  * are granted under this license.
  *
- * Copyright (c) 2002-2016, Universite catholique de Louvain (UCL), Belgium
- * Copyright (c) 2002-2016, OpenJPEG contributors
+ * Copyright (c) 2015, Aaron Boxer
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,58 +29,41 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __VECTOR_H
-#define __VECTOR_H
+#ifndef __UTIL_H
+#define __UTIL_H
 
-/*
-Vector - a dynamic array.
+typedef struct opj_pt {
+	OPJ_INT32 x;
+	OPJ_INT32 y;
 
-*/
+} opj_pt_t;
 
-typedef struct opj_vec{
-	OPJ_INT32 size;     /* current size of vec */
-	OPJ_INT32 capacity;  /* maximum size of vec */
-	void* *data;		/* array of void* pointers */ 
-	OPJ_BOOL owns_data;
-} opj_vec_t;
+typedef struct opj_rect {
 
-/*
-Initialize vector
-*/
+	OPJ_INT32 x0;
+	OPJ_INT32 y0;
+	OPJ_INT32 x1;
+	OPJ_INT32 y1;
 
-OPJ_BOOL opj_vec_init(opj_vec_t *vec, OPJ_BOOL owns_data);
+} opj_rect_t;
 
-OPJ_BOOL opj_vec_init_with_capacity(opj_vec_t *vec, OPJ_INT32 capacity, OPJ_BOOL owns_data);
+void opj_rect_init(opj_rect_t* r, OPJ_INT32 x0, OPJ_INT32 y0, OPJ_INT32 x1, OPJ_INT32 y1);
 
-/*
-Add a value to the end of the vector
-*/
-OPJ_BOOL opj_vec_push_back(opj_vec_t *vec, void* value);
+/* valid if x0 <= x1 && y0 <= y1. Can included degenerate rectangles: line and point*/
+OPJ_BOOL opj_rect_is_valid(opj_rect_t* rect);
 
-/*
-Set a value at specified index. If index is greater then the size of the vector,
-all intervening indices will be initialized to NULL
-*/
-OPJ_BOOL opj_vec_set(opj_vec_t *vec, OPJ_INT32 index, void* value);
+OPJ_BOOL opj_rect_is_non_degenerate(opj_rect_t* rect);
 
-/*
-Get value at specified index
-*/
-void* opj_vec_get(opj_vec_t *vec, OPJ_INT32 index);
+OPJ_BOOL opj_rect_is_valid(opj_rect_t* rect);
 
-/*
-Get value at end of vector
-*/
-void* opj_vec_back(opj_vec_t *vec);
+OPJ_BOOL opj_rect_get_overlap(opj_rect_t* r1, opj_rect_t* r2, opj_rect_t* result);
 
-/*
-Clean up vector resources. Does NOT free vector itself
-*/
-void opj_vec_cleanup(opj_vec_t *vec);
+void opj_rect_zoom(opj_rect_t* r, OPJ_FLOAT32 factor);
 
-/*
-Clean up vector resources and free vector itself
-*/
-void opj_vec_destroy(opj_vec_t *vec);
+void opj_rect_grow(opj_rect_t* r, OPJ_INT32 boundary);
+
+void opj_rect_pan(opj_rect_t* r, opj_pt_t* shift);
+
+void opj_rect_print(opj_rect_t* r);
 
 #endif
