@@ -280,10 +280,9 @@ typedef struct opj_tcp
 	opj_tccp_t *tccps;
 	/** number of tile parts for the tile. */
 	OPJ_UINT32 m_nb_tile_parts;
-	/** data for the tile */
-	OPJ_BYTE *		m_data;
-	/** size of data */
-	OPJ_UINT32		m_data_size;
+
+	opj_seg_buf_t m_data;
+
 	/** encoding norms */
 	OPJ_FLOAT64 *	mct_norms;
 	/** the mct decoding matrix */

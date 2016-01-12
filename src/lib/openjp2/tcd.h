@@ -53,7 +53,6 @@ each other. The functions in TCD.C are used by other functions in J2K.C.
 FIXME DOC
 */
 typedef struct opj_tcd_seg {
-	OPJ_BYTE ** data;
 	OPJ_UINT32 dataindex;
 	OPJ_UINT32 numpasses;
 	OPJ_UINT32 real_num_passes;
@@ -101,7 +100,7 @@ typedef struct opj_tcd_cblk_enc {
 
 
 typedef struct opj_tcd_cblk_dec {
-	OPJ_BYTE * data;				/* Data */
+	opj_vec_t seg_buffers;
 	opj_tcd_seg_t* segs;			/* segments information */
 	OPJ_INT32 x0, y0, x1, y1;		/* position of the code-blocks : left upper corner (x0, y0) right low corner (x1,y1) */
 	OPJ_UINT32 numbps;
@@ -278,7 +277,6 @@ void opj_tcd_makelayer(	opj_tcd_t *tcd,
 						OPJ_UINT32 final);
 
 OPJ_BOOL opj_tcd_rateallocate(	opj_tcd_t *tcd,
-								OPJ_BYTE *dest,
 								OPJ_UINT32 * p_data_written,
 								OPJ_UINT32 len,
 								opj_codestream_info_t *cstr_info);
@@ -316,8 +314,7 @@ Decode a tile from a buffer into a raw image
 @param manager the event manager.
 */
 OPJ_BOOL opj_tcd_decode_tile(   opj_tcd_t *tcd,
-							    OPJ_BYTE *src,
-							    OPJ_UINT32 len,
+								opj_seg_buf_t* src_buf,
 							    OPJ_UINT32 tileno,
 							    opj_codestream_index_t *cstr_info,
 							    opj_event_mgr_t *manager);

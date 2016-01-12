@@ -1,5 +1,15 @@
 include_regular_expression("^.*$")
 
+if (BUILD_WITH_OPENMP)
+find_package(OpenMP)
+if (OPENMP_FOUND)
+	add_definitions(-DOPJ_NUM_CORES=8)
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+endif()
+endif()
+
+
 #
 install( FILES  ${CMAKE_CURRENT_BINARY_DIR}/opj_config.h
  DESTINATION ${OPENJPEG_INSTALL_INCLUDE_DIR} COMPONENT Headers)
@@ -37,8 +47,12 @@ set(OPENJPEG_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/pi.h
   ${CMAKE_CURRENT_SOURCE_DIR}/raw.c
   ${CMAKE_CURRENT_SOURCE_DIR}/raw.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/t1.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/segmented_stream.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/segmented_stream.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/t1.c  
   ${CMAKE_CURRENT_SOURCE_DIR}/t1.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/t1_opt.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/t1_opt.h
   ${CMAKE_CURRENT_SOURCE_DIR}/t2.c
   ${CMAKE_CURRENT_SOURCE_DIR}/t2.h
   ${CMAKE_CURRENT_SOURCE_DIR}/tcd.c
@@ -53,6 +67,8 @@ set(OPENJPEG_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/opj_malloc.c
   ${CMAKE_CURRENT_SOURCE_DIR}/opj_malloc.h
   ${CMAKE_CURRENT_SOURCE_DIR}/opj_stdint.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/vector.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/vector.c
 )
 if(BUILD_JPIP)
   add_definitions(-DUSE_JPIP)

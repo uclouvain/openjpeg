@@ -979,21 +979,22 @@ static void opj_jp2_apply_pclr(opj_image_t *image, opj_jp2_color_t *color)
 		return;
 	}
 	for(i = 0; i < nr_channels; ++i) {
-		pcol = cmap[i].pcol; cmp = cmap[i].cmp;
+		pcol = cmap[i].pcol; 
+		cmp = cmap[i].cmp;
 
 		/* Direct use */
-    if(cmap[i].mtyp == 0){
-      assert( pcol == 0 );
-      new_comps[i] = old_comps[cmp];
-    } else {
-      assert( i == pcol );
-      new_comps[pcol] = old_comps[cmp];
-    }
+		if(cmap[i].mtyp == 0){
+		  assert( pcol == 0 );
+		  new_comps[i] = old_comps[cmp];
+		  new_comps[i].data = NULL;
+		} else {
+		  assert( i == pcol );
+		  new_comps[pcol] = old_comps[cmp];
+		  new_comps[pcol].data = NULL;
+		}
 
 		/* Palette mapping: */
-		new_comps[i].data = (OPJ_INT32*)
-				opj_malloc(old_comps[cmp].w * old_comps[cmp].h * sizeof(OPJ_INT32));
-		if (!new_comps[i].data) {
+		if (!opj_image_single_component_data_alloc(new_comps + i)) {
 			opj_free(new_comps);
 			new_comps = NULL;
 			/* FIXME no error code for opj_jp2_apply_pclr */
@@ -1037,10 +1038,9 @@ static void opj_jp2_apply_pclr(opj_image_t *image, opj_jp2_color_t *color)
 	}
 
 	max = image->numcomps;
-	for(i = 0; i < max; ++i) {
-		if(old_comps[i].data) opj_free(old_comps[i].data);
+	for (i = 0; i < max; ++i) {
+		opj_image_single_component_data_free(old_comps + i);
 	}
-
 	opj_free(old_comps);
 	image->comps = new_comps;
 	image->numcomps = nr_channels;
