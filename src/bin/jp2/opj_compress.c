@@ -1666,7 +1666,7 @@ int main(int argc, char **argv) {
 
 	t = opj_clock();
 #ifdef _OPENMP
-	omp_set_num_threads(OPJ_NUM_COMPRESS_DECOMPRESS_THREADS);
+	omp_set_num_threads(img_fol.set_imgdir == 1 ? OPJ_NUM_COMPRESS_DECOMPRESS_THREADS : 1);
 #endif
 
 	opj_initialize();

@@ -162,7 +162,7 @@ typedef struct opj_decompress_params
 int get_num_images(char *imgdirpath);
 int load_images(dircnt_t *dirptr, char *imgdirpath);
 int get_file_format(const char *filename);
-char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, int* decod_format, char* infilename, char* outfilename);
+void get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, char* infilename, char* outfilename);
 static int infile_format(const char *fname);
 
 int parse_cmdline_decoder(int argc, char **argv, opj_decompress_parameters *parameters,img_fol_t *img_fol);
@@ -427,16 +427,13 @@ const char* path_separator = "/";
 #endif
 
 /* -------------------------------------------------------------------------- */
-char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, int* decod_format, char* infilename, char* outfilename){
+void get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, char* infilename, char* outfilename){
 	char image_filename[OPJ_PATH_LEN], temp_ofname[OPJ_PATH_LEN];
 	char *temp_p, temp1[OPJ_PATH_LEN]="";
 
 	strcpy(image_filename,dirptr->filename[imageno]);
 	fprintf(stderr,"File Number %d \"%s\"\n",imageno,image_filename);
 	sprintf(infilename, "%s%s%s", img_fol->imgdirpath, path_separator, image_filename);
-	*decod_format = infile_format(infilename);
-	if (*decod_format == -1)
-		return 1;
 
 	/*Set output file*/
 	strcpy(temp_ofname,strtok(image_filename,"."));
@@ -447,7 +444,6 @@ char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, int* decod_f
 	if(img_fol->set_out_format==1){
 		sprintf(outfilename,"%s/%s.%s",img_fol->imgdirpath,temp_ofname,img_fol->out_format);
 	}
-	return 0;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -1233,7 +1229,7 @@ int main(int argc, char **argv)
 	}
 
 #ifdef _OPENMP
-	omp_set_num_threads(OPJ_NUM_COMPRESS_DECOMPRESS_THREADS);
+	omp_set_num_threads(img_fol.set_imgdir == 1 ? OPJ_NUM_COMPRESS_DECOMPRESS_THREADS : 1);
 #endif
 
 	opj_initialize();
@@ -1260,15 +1256,20 @@ int main(int argc, char **argv)
 			int decod_format = -1;
 
 			fprintf(stderr, "\n");
+
 			if (img_fol.set_imgdir == 1) {
-				if (get_next_file(imageno, dirptr, &img_fol, &decod_format, infile, outfile)) {
-					fprintf(stderr, "skipping file...\n");
-					goto cleanup;
-				}
+				get_next_file(imageno, dirptr, &img_fol, infile, outfile);
 			}
 			else {
 				strncpy(infile, parameters.infile, sizeof(parameters.infile));
 				strncpy(outfile, parameters.outfile, sizeof(parameters.outfile));
+			}
+
+			decod_format = infile_format(infile);
+			if (decod_format == -1) {
+				fprintf(stderr, "skipping file...\n");
+				goto cleanup;
+
 			}
 
 			/* read the input file and put it in memory */
