@@ -9735,12 +9735,11 @@ static OPJ_BOOL opj_j2k_allocate_tile_element_cstr_index(opj_j2k_t *p_j2k)
         return OPJ_TRUE;
 }
 
-static OPJ_BOOL opj_j2k_needs_copy_tile_data(opj_j2k_t *p_j2k) {
+static OPJ_BOOL opj_j2k_needs_copy_tile_data(opj_j2k_t *p_j2k, OPJ_UINT32 num_tiles) {
 	/* single tile, RGB images only*/
-	OPJ_BOOL copy_tile_data = (p_j2k->m_cp.th * p_j2k->m_cp.tw > 1) ||
-								p_j2k->m_output_image->numcomps != 3 ||
-								p_j2k->m_output_image->numcomps != 3 ||
-								p_j2k->m_tcd->tcd_image->tiles->numcomps != 3;
+	OPJ_BOOL copy_tile_data = (num_tiles> 1) ||
+									p_j2k->m_output_image->numcomps != 3 ||
+										p_j2k->m_tcd->tcd_image->tiles->numcomps != 3;
 
 	OPJ_UINT32 i = 0;
 
@@ -9800,7 +9799,7 @@ static OPJ_BOOL opj_j2k_decode_tiles ( opj_j2k_t *p_j2k,
         OPJ_BYTE * l_current_data=NULL;
         OPJ_UINT32 nr_tiles = 0;
 		
-		if (opj_j2k_needs_copy_tile_data(p_j2k)) {
+		if (opj_j2k_needs_copy_tile_data(p_j2k, p_j2k->m_cp.th * p_j2k->m_cp.tw)) {
 			l_current_data = (OPJ_BYTE*)opj_malloc(1);
 			if (!l_current_data) {
 				opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to decode tiles\n");
@@ -9890,9 +9889,9 @@ static OPJ_BOOL opj_j2k_setup_decoding (opj_j2k_t *p_j2k, opj_event_mgr_t * p_ma
 /*
  * Read and decode one tile.
  */
-static OPJ_BOOL opj_j2k_decode_one_tile (       opj_j2k_t *p_j2k,
-                                                                            opj_stream_private_t *p_stream,
-                                                                            opj_event_mgr_t * p_manager)
+static OPJ_BOOL opj_j2k_decode_one_tile ( opj_j2k_t *p_j2k,
+                                          opj_stream_private_t *p_stream,
+                                          opj_event_mgr_t * p_manager)
 {
         OPJ_BOOL l_go_on = OPJ_TRUE;
         OPJ_UINT32 l_current_tile_no;
@@ -9902,7 +9901,7 @@ static OPJ_BOOL opj_j2k_decode_one_tile (       opj_j2k_t *p_j2k,
         OPJ_UINT32 l_nb_comps;
         OPJ_BYTE * l_current_data=NULL;
 
-		if (opj_j2k_needs_copy_tile_data(p_j2k)) {
+		if (opj_j2k_needs_copy_tile_data(p_j2k,1)) {
 			l_current_data = (OPJ_BYTE*)opj_malloc(1);
 			if (!l_current_data) {
 				opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to decode tiles\n");
