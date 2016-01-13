@@ -1367,8 +1367,8 @@ OPJ_BOOL opj_t1_decode_cblks(  opj_tcd_tilecomp_t* tilec,
 
 					
 					if (tilec->region && 
-							tilec->region->regions && 
-								tilec->region->regions->size > 0 &&
+							tilec->region->resolutions && 
+								tilec->region->resolutions->size > 0 &&
 									!opj_rgn_mgr_hit_test(tilec->region, &cblk_rect))
 																				continue;
 						

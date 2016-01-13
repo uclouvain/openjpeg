@@ -1629,7 +1629,7 @@ cleanup:
 	if (num_decompressed_images) {
 		fprintf(stdout, "decode time: %d ms \n", (int)( (t_cumulative * 1000) / num_decompressed_images));
 	}
-	getchar();
+	//getchar();
 	return failed ? EXIT_FAILURE : EXIT_SUCCESS;
 }
 /*end main*/

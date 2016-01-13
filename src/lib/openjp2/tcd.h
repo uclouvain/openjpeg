@@ -365,6 +365,11 @@ OPJ_BOOL opj_tcd_copy_tile_data (opj_tcd_t *p_tcd,
  */
 OPJ_BOOL opj_alloc_tile_component_data(opj_tcd_tilecomp_t *l_tilec);
 
+/* create region manager */
+opj_rgn_mgr_t* opj_rgn_mgr_create(opj_tcd_tile_t * l_tile,
+									OPJ_BOOL irreversible,
+									opj_image_t* output_image);
+
 /* ----------------------------------------------------------------------- */
 /*@}*/
 

@@ -31,6 +31,14 @@
 
 #include "opj_includes.h"
 
+/*
+Create region manager.
+
+Note: because this method uses a tcd struct, and we can forward declare the struct
+in region_mgr.h header file, this method's declaration can be found in the tcd.h 
+header file.
+
+*/
 opj_rgn_mgr_t* opj_rgn_mgr_create(opj_tcd_tile_t * l_tile,
 									OPJ_BOOL irreversible,
 									opj_image_t* output_image) {
@@ -80,16 +88,16 @@ opj_rgn_mgr_t* opj_rgn_mgr_create(opj_tcd_tile_t * l_tile,
 
 		}
 
-		/* create regions vector */
-		comp->regions = (opj_vec_t*)opj_calloc(1, sizeof(opj_vec_t));
-		if (!comp->regions) {
+		/* create resolutions vector */
+		comp->resolutions = (opj_vec_t*)opj_calloc(1, sizeof(opj_vec_t));
+		if (!comp->resolutions) {
 			opj_rgn_mgr_destroy(mgr);
 			return OPJ_FALSE;
 
 		}
 
 		opj_vec_push_back(mgr->comps, comp);
-		if (!opj_vec_init_with_capacity(comp->regions, 3 * tilec->numresolutions - 2, OPJ_TRUE)) {
+		if (!opj_vec_init_with_capacity(comp->resolutions, 3 * tilec->numresolutions - 2, OPJ_TRUE)) {
 			opj_rgn_mgr_destroy(mgr);
 			return OPJ_FALSE;
 		}
@@ -97,10 +105,15 @@ opj_rgn_mgr_t* opj_rgn_mgr_create(opj_tcd_tile_t * l_tile,
 		/* printf("\nRegion manager creation: component %d\n\n", compno); */
 
 
-		/* fill regions vector */
-		for (resno = tilec->numresolutions-1; resno >= 0; --resno) {
+		/* fill resolutions vector */
+		for (resno = (OPJ_INT32)(tilec->numresolutions-1); resno >= 0; --resno) {
 			opj_tcd_resolution_t*  resolution = tilec->resolutions + resno;
 			opj_tcd_resolution_t* pres = resolution - 1;
+			opj_rgn_resolution_t* res = (opj_rgn_resolution_t*)opj_calloc(1, sizeof(opj_rgn_resolution_t));
+			if (!res) {
+				opj_rgn_mgr_destroy_component(comp);
+				return OPJ_FALSE;
+			}
 
 			/* shrink by 1/2 and add boundary, except for lowest resolution */
 			if (resno > 0) {
@@ -110,15 +123,10 @@ opj_rgn_mgr_t* opj_rgn_mgr_create(opj_tcd_tile_t * l_tile,
 			for (bandno = 0; bandno < resolution->numbands; ++bandno) {
 				opj_tcd_band_t* band = NULL;
 				opj_pt_t offset;
-				opj_rect_t* region_rect  = (opj_rect_t*)opj_calloc(1, sizeof(opj_rect_t));
-				if (!region_rect) {
-					opj_rgn_mgr_destroy_component(comp);
-					return OPJ_FALSE;
-				}
+				
 				band = resolution->bands + bandno;
 
-				*region_rect = component_output_rect;
-				//opj_rect_init(region_rect,0,0, band->x1 - band->x0, band->y1-band->y0);
+				res->band[bandno] = component_output_rect;
 
 				/* start with zero offset (relative to tile origin) */
 				offset.x = 0;
@@ -132,10 +140,12 @@ opj_rgn_mgr_t* opj_rgn_mgr_create(opj_tcd_tile_t * l_tile,
 					offset.y += pres->y1 - pres->y0;
 				}
 				
-				opj_rect_pan(region_rect, &offset);
-				/* opj_rect_print(region_rect); */
-				opj_vec_push_back(comp->regions, region_rect);
+				opj_rect_pan(res->band + bandno, &offset);
+				
+				/* opj_rect_print(res->band + bandno); */
 			}
+			res->num_bands = resolution->numbands;
+			opj_vec_push_back(comp->resolutions, res);
 		}
 	}
 	return mgr;
@@ -145,13 +155,12 @@ opj_rgn_mgr_t* opj_rgn_mgr_create(opj_tcd_tile_t * l_tile,
 void opj_rgn_mgr_destroy_component(opj_rgn_component_t* comp) {
 	if (!comp)
 		return;
-	opj_vec_destroy(comp->regions);
+	opj_vec_destroy(comp->resolutions);
 	opj_free(comp);
 }
 
 void opj_rgn_mgr_destroy(opj_rgn_mgr_t* mgr) {
 	OPJ_INT32 i;
-	opj_rgn_component_t* region_comp=NULL;
 	if (!mgr)
 		return;
 	
@@ -170,23 +179,42 @@ void opj_rgn_mgr_destroy(opj_rgn_mgr_t* mgr) {
 
 OPJ_BOOL opj_rgn_mgr_hit_test(opj_rgn_component_t* comp, opj_rect_t* rect) {
 	OPJ_INT32 i;
-	opj_rect_t* region_rect;
+	opj_rgn_resolution_t* res;
 
 	if (!comp || !rect)
 		return OPJ_FALSE;
-	for (i = 0; i < comp->regions->size; ++i) {
+	for (i = 0; i < comp->resolutions->size; ++i) {
 		opj_rect_t dummy;
-		region_rect = (opj_rect_t*)opj_vec_get(comp->regions,i);
-		if (opj_rect_get_overlap(region_rect, rect, &dummy))
-			return OPJ_TRUE;
+		OPJ_UINT32 j;
+		res = (opj_rgn_resolution_t*)opj_vec_get(comp->resolutions,i);
+		for (j = 0; j < res->num_bands; ++j) {
+			if (opj_rect_get_overlap(res->band+j, rect, &dummy))
+				return OPJ_TRUE;
+		}
 	}
 	return OPJ_FALSE;
 }
 
-opj_rgn_component_t* opj_rgn_mgr_get_region_component(opj_rgn_mgr_t* mgr, OPJ_INT32 index) {
+opj_rgn_component_t* opj_rgn_mgr_get_region_component(opj_rgn_mgr_t* mgr, OPJ_INT32 compno) {
 	if (!mgr || !mgr->comps || !mgr->comps->size)
 		return NULL;
-	return (opj_rgn_component_t*)opj_vec_get(mgr->comps, index);
+	return (opj_rgn_component_t*)opj_vec_get(mgr->comps, compno);
+}
+
+opj_rgn_resolution_t* opj_rgn_get_region_resolution(opj_rgn_mgr_t* mgr, 
+													OPJ_INT32 compno,
+													OPJ_INT32 resno) {
+	opj_rgn_component_t* comp = NULL;
+	if (!mgr || !mgr->comps || !mgr->comps->size)
+		return NULL;
+	comp = opj_rgn_mgr_get_region_component(mgr, compno);
+	if (comp) {
+		/* note: resolutions are stored in reverse order*/
+		return (opj_rgn_resolution_t*)opj_vec_get(comp->resolutions, 
+													comp->resolutions->size - 1 - resno);
+	}
+	return NULL;
+
 }
 
 

@@ -32,31 +32,34 @@
 #ifndef __REGION_MGR_H
 #define __REGION_MGR_H
 
-typedef struct opj_image opj_image_t;
-typedef struct opj_tcd_tile opj_tcd_tile_t;
+#include "openjpeg.h"
+
+typedef struct opj_rgn_resolution {
+	opj_rect_t band[3];
+	OPJ_UINT32 num_bands;
+}opj_rgn_resolution_t;
 
 typedef struct opj_rgn_component {
-	opj_vec_t* regions;
+	opj_vec_t* resolutions;
 } opj_rgn_component_t;
 
 typedef struct opj_rgn_mgr {
 	opj_vec_t* comps;
 } opj_rgn_mgr_t;
 
-/* create region manager */
-opj_rgn_mgr_t* opj_rgn_mgr_create(opj_tcd_tile_t * l_tile, 
-								   OPJ_BOOL irreversible,
-									opj_image_t* output_image);
-
 /* destroy region manager */
 void opj_rgn_mgr_destroy(opj_rgn_mgr_t* mgr);
 
 void opj_rgn_mgr_destroy_component(opj_rgn_component_t* comp);
 
-/* check if rect overlaps with regions in region component */
+/* check if rect overlaps with resolutions in region component */
 OPJ_BOOL opj_rgn_mgr_hit_test(opj_rgn_component_t* comp, opj_rect_t* rect);
 
 /* convenience method */
-opj_rgn_component_t* opj_rgn_mgr_get_region_component(opj_rgn_mgr_t* mgr, OPJ_INT32 index);
+opj_rgn_component_t* opj_rgn_mgr_get_region_component(opj_rgn_mgr_t* mgr, OPJ_INT32 compno);
+
+opj_rgn_resolution_t* opj_rgn_get_region_resolution(opj_rgn_mgr_t* mgr, 
+													OPJ_INT32 compno,
+													OPJ_INT32 resno);
 
 #endif

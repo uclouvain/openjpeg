@@ -10089,7 +10089,11 @@ OPJ_BOOL opj_j2k_get_tile(  opj_j2k_t *p_j2k,
         l_tile_x = tile_index % p_j2k->m_cp.tw;
         l_tile_y = tile_index / p_j2k->m_cp.tw;
 
-		opj_rect_init(&original_image_rect, p_image->x0, p_image->y0, p_image->x1, p_image->y1);
+		opj_rect_init(&original_image_rect, 
+						(OPJ_INT32)p_image->x0,
+						(OPJ_INT32)p_image->y0,
+						(OPJ_INT32)p_image->x1,
+						(OPJ_INT32)p_image->y1);
 
 		p_image->x0 = l_tile_x * p_j2k->m_cp.tdx + p_j2k->m_cp.tx0;
 		if (p_image->x0 < p_j2k->m_private_image->x0)
@@ -10114,10 +10118,10 @@ OPJ_BOOL opj_j2k_get_tile(  opj_j2k_t *p_j2k,
 				opj_rect_is_non_degenerate(&tile_rect) &&
 					opj_rect_get_overlap(&original_image_rect, &tile_rect, &overlap_rect) &&
 						opj_rect_is_non_degenerate(&overlap_rect)) {
-			p_image->x0 = overlap_rect.x0;
-			p_image->y0 = overlap_rect.y0;
-			p_image->x1 = overlap_rect.x1;
-			p_image->y1 = overlap_rect.y1;
+			p_image->x0 = (OPJ_UINT32)overlap_rect.x0;
+			p_image->y0 = (OPJ_UINT32)overlap_rect.y0;
+			p_image->x1 = (OPJ_UINT32)overlap_rect.x1;
+			p_image->y1 = (OPJ_UINT32)overlap_rect.y1;
 		}
 		else {
 			opj_event_msg(p_manager, EVT_WARNING, "Decode region <%d,%d,%d,%d> does not overlap requested tile %d. Ignoring.\n",
