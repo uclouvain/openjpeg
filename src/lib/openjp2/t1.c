@@ -1344,7 +1344,7 @@ OPJ_BOOL opj_t1_decode_cblks(  opj_tcd_tilecomp_t* tilec,
 					opj_tcd_cblk_dec_t* cblk = &precinct->cblks.dec[cblkno];
 					OPJ_INT32* restrict datap;
 					OPJ_UINT32 cblk_w, cblk_h;
-					OPJ_INT32 x, y;		/* absolute code block offset */
+					OPJ_INT32 x, y;		/* relative code block offset */
 					OPJ_UINT32 i, j;
 					opj_t1_t* t1 = NULL;
 
@@ -1363,7 +1363,7 @@ OPJ_BOOL opj_t1_decode_cblks(  opj_tcd_tilecomp_t* tilec,
 					}
 
 					/* check if block overlaps with decode region */
-					opj_rect_init(&cblk_rect, x, y, x + tccp->cblkw, y + tccp->cblkh);
+					opj_rect_init(&cblk_rect, x, y, x + (1<< tccp->cblkw), y + (1<<tccp->cblkh));
 
 					
 					if (tilec->region && 
