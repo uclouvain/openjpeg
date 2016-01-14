@@ -161,12 +161,8 @@ typedef struct opj_tcd_tilecomp
 	OPJ_UINT32 minimum_num_resolutions; /* number of resolutions level to decode (at max)*/
 	opj_tcd_resolution_t *resolutions;  /* resolutions information */
 	OPJ_UINT32 resolutions_size;        /* size of data for resolutions (in bytes) */
-	OPJ_INT32 *data;                    /* data of the component */
-	OPJ_BOOL  ownsData;                 /* if true, then need to free after usage, otherwise do not free */
-	OPJ_UINT32 data_size_needed;        /* we may either need to allocate this amount of data, or re-use image data and ignore this value */
-	OPJ_UINT32 data_size;               /* size of the data of the component */
 	OPJ_INT32 numpix;                   /* add fixed_quality */
-	opj_rgn_component_t* region;
+	opj_tile_buf_component_t* buf;
 } opj_tcd_tilecomp_t;
 
 
@@ -181,18 +177,7 @@ typedef struct opj_tcd_tile {
 	OPJ_FLOAT64 distotile;			/* add fixed_quality */
 	OPJ_FLOAT64 distolayer[100];	/* add fixed_quality */
 	OPJ_UINT32 packno;              /* packet number */
-	opj_rgn_mgr_t* region_manager;
 } opj_tcd_tile_t;
-
-/**
-FIXME DOC
-*/
-typedef struct opj_tcd_image
-{
-	opj_tcd_tile_t *tiles;		/* Tiles information */
-}
-opj_tcd_image_t;
-
 
 /**
 Tile coder/decoder
@@ -210,7 +195,7 @@ typedef struct opj_tcd
 	/** Current Packet iterator number */
 	OPJ_UINT32 cur_pino;
 	/** info on each image tile */
-	opj_tcd_image_t *tcd_image;
+	opj_tcd_tile_t* current_tile;
 	/** image header */
 	opj_image_t *image;
 	/** coding parameters */
@@ -363,11 +348,10 @@ OPJ_BOOL opj_tcd_copy_tile_data (opj_tcd_t *p_tcd,
  *
  *
  */
-OPJ_BOOL opj_alloc_tile_component_data(opj_tcd_tilecomp_t *l_tilec);
-
-/* create region manager */
-opj_rgn_mgr_t* opj_rgn_mgr_create(opj_tcd_tile_t * l_tile,
+OPJ_BOOL opj_tile_buf_create_component(opj_tcd_tilecomp_t * tilec,
 									OPJ_BOOL irreversible,
+									OPJ_UINT32 cblkw,
+									OPJ_UINT32 cblkh,
 									opj_image_t* output_image);
 
 /* ----------------------------------------------------------------------- */

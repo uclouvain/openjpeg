@@ -4,7 +4,8 @@
  * party and contributor rights, including patent rights, and no such rights
  * are granted under this license.
  *
- * Copyright (c) 2015, Aaron Boxer
+ * Copyright (c) 2002-2016, Universite catholique de Louvain (UCL), Belgium
+ * Copyright (c) 2002-2016, OpenJPEG contributors
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -56,14 +57,28 @@ OPJ_BOOL opj_rect_is_non_degenerate(opj_rect_t* rect);
 
 OPJ_BOOL opj_rect_is_valid(opj_rect_t* rect);
 
+OPJ_BOOL opj_rect_are_equal(opj_rect_t* r1, opj_rect_t* r2);
+
 OPJ_BOOL opj_rect_get_overlap(opj_rect_t* r1, opj_rect_t* r2, opj_rect_t* result);
 
 void opj_rect_zoom(opj_rect_t* r, OPJ_FLOAT32 factor);
 
 void opj_rect_grow(opj_rect_t* r, OPJ_INT32 boundary);
 
+void opj_rect_grow2(opj_rect_t* r, OPJ_INT32 boundaryx, OPJ_INT32 boundaryy);
+
 void opj_rect_pan(opj_rect_t* r, opj_pt_t* shift);
 
 void opj_rect_print(opj_rect_t* r);
+
+typedef struct opj_buf {
+	OPJ_BYTE *buf;		/* internal array*/
+	OPJ_OFF_T offset;	/* current offset into array */
+	OPJ_SIZE_T len;		/* length of array */
+	OPJ_BOOL owns_data;	/* OPJ_TRUE if buffer manages the buf array */
+} opj_buf_t;
+
+
+
 
 #endif

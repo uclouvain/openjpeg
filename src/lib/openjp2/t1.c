@@ -1318,12 +1318,18 @@ static void opj_t1_destroy(opj_t1_t *p_t1)
 }
 
 OPJ_BOOL opj_t1_decode_cblks(  opj_tcd_tilecomp_t* tilec,
-                            opj_tccp_t* tccp
-                            )
+                            opj_tccp_t* tccp,
+							opj_event_mgr_t * p_manager)
 {
 	OPJ_UINT32 resno, bandno, precno;
 	OPJ_UINT32 tile_w = (OPJ_UINT32)(tilec->x1 - tilec->x0);
 	OPJ_BOOL rc = OPJ_TRUE;
+	
+	if (!opj_tile_buf_alloc_component_data(tilec->buf)) {
+		opj_event_msg(p_manager, EVT_ERROR, "Not enough memory for tile data\n");
+		return OPJ_FALSE;
+	}
+
 	for (resno = 0; resno < tilec->minimum_num_resolutions; ++resno) {
 		opj_tcd_resolution_t* res = &tilec->resolutions[resno];
 
@@ -1366,10 +1372,10 @@ OPJ_BOOL opj_t1_decode_cblks(  opj_tcd_tilecomp_t* tilec,
 					opj_rect_init(&cblk_rect, x, y, x + (1<< tccp->cblkw), y + (1<<tccp->cblkh));
 
 					
-					if (tilec->region && 
-							tilec->region->resolutions && 
-								tilec->region->resolutions->size > 0 &&
-									!opj_rgn_mgr_hit_test(tilec->region, &cblk_rect))
+					if (tilec->buf && 
+							tilec->buf->resolutions &&
+								tilec->buf->resolutions->size > 0 &&
+									!opj_tile_buf_hit_test(tilec->buf, &cblk_rect))
 																				continue;
 						
 
@@ -1408,7 +1414,7 @@ OPJ_BOOL opj_t1_decode_cblks(  opj_tcd_tilecomp_t* tilec,
 						}
 					}
 					if (tccp->qmfbid == 1) {
-                        OPJ_INT32* restrict tiledp = &tilec->data[(OPJ_UINT32)y * tile_w + (OPJ_UINT32)x];
+                        OPJ_INT32* restrict tiledp = &tilec->buf->data[(OPJ_UINT32)y * tile_w + (OPJ_UINT32)x];
 						for (j = 0; j < cblk_h; ++j) {
 							for (i = 0; i < cblk_w; ++i) {
 								OPJ_INT32 tmp = datap[(j * cblk_w) + i];
@@ -1416,7 +1422,7 @@ OPJ_BOOL opj_t1_decode_cblks(  opj_tcd_tilecomp_t* tilec,
 							}
 						}
 					} else {		/* if (tccp->qmfbid == 0) */
-                        OPJ_FLOAT32* restrict tiledp = (OPJ_FLOAT32*) &tilec->data[(OPJ_UINT32)y * tile_w + (OPJ_UINT32)x];
+                        OPJ_FLOAT32* restrict tiledp = (OPJ_FLOAT32*) &tilec->buf->data[(OPJ_UINT32)y * tile_w + (OPJ_UINT32)x];
 						for (j = 0; j < cblk_h; ++j) {
                             OPJ_FLOAT32* restrict tiledp2 = tiledp;
 							for (i = 0; i < cblk_w; ++i) {
@@ -1641,7 +1647,7 @@ OPJ_BOOL opj_t1_encode_cblks(   opj_tcd_tile_t *tile,
 						cblk_h = t1->h;
 						tileLineAdvance = tile_w - cblk_w;
 
-						tiledp=&tilec->data[(OPJ_UINT32)y * tile_w + (OPJ_UINT32)x];
+						tiledp=&tilec->buf->data[(OPJ_UINT32)y * tile_w + (OPJ_UINT32)x];
 						t1->data = tiledp;
 						t1->data_stride = tile_w;
 						if (tccp->qmfbid == 1) {

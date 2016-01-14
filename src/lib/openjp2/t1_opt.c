@@ -758,7 +758,7 @@ OPJ_BOOL opj_t1_opt_encode_cblks(   opj_tcd_tile_t *tile,
 						cblk_h = t1->h;
 						tileLineAdvance = tile_w - cblk_w;
 
-						tiledp=&tilec->data[(OPJ_UINT32)y * tile_w + (OPJ_UINT32)x];
+						tiledp=&tilec->buf->data[(OPJ_UINT32)y * tile_w + (OPJ_UINT32)x];
 						if (tccp->qmfbid == 1) {
 							for (j = 0; j < cblk_h; ++j) {
 								for (i = 0; i < cblk_w; ++i) {

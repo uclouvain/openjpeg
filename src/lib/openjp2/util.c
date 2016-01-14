@@ -4,7 +4,8 @@
  * party and contributor rights, including patent rights, and no such rights
  * are granted under this license.
  *
- * Copyright (c) 2015, Aaron Boxer
+ * Copyright (c) 2002-2016, Universite catholique de Louvain (UCL), Belgium
+ * Copyright (c) 2002-2016, OpenJPEG contributors
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -65,6 +66,13 @@ OPJ_BOOL opj_rect_is_non_degenerate(opj_rect_t* rect) {
 	return rect->x0 < rect->x1 && rect->y0 < rect->y1;
 }
 
+OPJ_BOOL opj_rect_are_equal(opj_rect_t* r1, opj_rect_t* r2) {
+	return r1->x0 == r2->x0 && 
+			r1->y0 == r2->y0 &&
+			r1->x1 == r2->x1 &&
+			r1->y1 == r2->y1;
+}
+
 OPJ_BOOL opj_rect_get_overlap(opj_rect_t* r1, opj_rect_t* r2, opj_rect_t* result) {
 	OPJ_BOOL rc;
 	opj_rect_t temp;
@@ -115,9 +123,15 @@ void opj_rect_grow(opj_rect_t* r, OPJ_INT32 boundary) {
 	if (!r)
 		return;
 
-	r->x0 -= boundary;
-	r->y0 -= boundary;
-	r->x1 += boundary;
-	r->y1 += boundary;
+	opj_rect_grow2(r, boundary, boundary);
+}
 
+void opj_rect_grow2(opj_rect_t* r, OPJ_INT32 boundaryx, OPJ_INT32 boundaryy) {
+	if (!r)
+		return;
+
+	r->x0 -= boundaryx;
+	r->y0 -= boundaryy;
+	r->x1 += boundaryx;
+	r->y1 += boundaryy;
 }

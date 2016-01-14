@@ -119,7 +119,8 @@ Decode the code-blocks of a tile
 @param tccp Tile coding parameters
 */
 OPJ_BOOL opj_t1_decode_cblks(   opj_tcd_tilecomp_t* tilec,
-                                opj_tccp_t* tccp);
+                                opj_tccp_t* tccp,
+								opj_event_mgr_t * p_manager);
 
 
 OPJ_FLOAT64 opj_t1_getwmsedec(

@@ -4357,7 +4357,7 @@ static OPJ_BOOL opj_j2k_write_sod(     opj_j2k_t *p_j2k,
         /* << INDEX */
 
         if (p_j2k->m_specific_param.m_encoder.m_current_tile_part_number == 0) {
-                p_tile_coder->tcd_image->tiles->packno = 0;
+                p_tile_coder->current_tile->packno = 0;
                 if (l_cstr_info) {
                         l_cstr_info->packno = 0;
                 }
@@ -8090,11 +8090,11 @@ OPJ_BOOL opj_j2k_read_tile_header(      opj_j2k_t * p_j2k,
         *p_tile_index = p_j2k->m_current_tile_number;
         *p_go_on = OPJ_TRUE;
         *p_data_size = opj_tcd_get_decoded_tile_size(p_j2k->m_tcd);
-        *p_tile_x0 = p_j2k->m_tcd->tcd_image->tiles->x0;
-        *p_tile_y0 = p_j2k->m_tcd->tcd_image->tiles->y0;
-        *p_tile_x1 = p_j2k->m_tcd->tcd_image->tiles->x1;
-        *p_tile_y1 = p_j2k->m_tcd->tcd_image->tiles->y1;
-        *p_nb_comps = p_j2k->m_tcd->tcd_image->tiles->numcomps;
+        *p_tile_x0 = p_j2k->m_tcd->current_tile->x0;
+        *p_tile_y0 = p_j2k->m_tcd->current_tile->y0;
+        *p_tile_x1 = p_j2k->m_tcd->current_tile->x1;
+        *p_tile_y1 = p_j2k->m_tcd->current_tile->y1;
+        *p_nb_comps = p_j2k->m_tcd->current_tile->numcomps;
 
          p_j2k->m_specific_param.m_decoder.m_state |= 0x0080;/* FIXME J2K_DEC_STATE_DATA;*/
 
@@ -8131,7 +8131,8 @@ OPJ_BOOL opj_j2k_decode_tile (  opj_j2k_t * p_j2k,
         if (! opj_tcd_decode_tile(  p_j2k->m_tcd,
                                     &l_tcp->m_data,
                                     p_tile_index,
-                                    p_j2k->cstr_index, p_manager) ) {
+                                    p_j2k->cstr_index,
+									p_manager) ) {
                 opj_j2k_tcp_destroy(l_tcp);
                 p_j2k->m_specific_param.m_decoder.m_state |= 0x8000;/*FIXME J2K_DEC_STATE_ERR;*/
                 opj_event_msg(p_manager, EVT_ERROR, "Failed to decode.\n");
@@ -8152,10 +8153,10 @@ OPJ_BOOL opj_j2k_decode_tile (  opj_j2k_t * p_j2k,
 			for (compno = 0; compno < p_j2k->m_output_image->numcomps; compno++) {
 				OPJ_UINT32 l_size_comp = 0;
 				OPJ_UINT32 i, j;
-				opj_tcd_tilecomp_t* tilec = p_j2k->m_tcd->tcd_image->tiles->comps + compno;
+				opj_tcd_tilecomp_t* tilec = p_j2k->m_tcd->current_tile->comps + compno;
 				opj_image_comp_t* comp = p_j2k->m_output_image->comps + compno;
-				comp->data = tilec->data;
-				tilec->data = NULL;
+				comp->data = tilec->buf->data;
+				tilec->buf->data = NULL;
 				comp->resno_decoded = p_j2k->m_tcd->image->comps[compno].resno_decoded;
 
 				/* now sanitize data (signed data is broken at the moment */
@@ -8246,7 +8247,7 @@ static OPJ_BOOL opj_j2k_update_image_data (opj_tcd_t * p_tcd, OPJ_BYTE * p_data,
         OPJ_INT32 * l_dest_ptr;
         opj_tcd_resolution_t* l_res= 00;
 
-        l_tilec = p_tcd->tcd_image->tiles->comps;
+        l_tilec = p_tcd->current_tile->comps;
         l_image_src = p_tcd->image;
         l_img_comp_src = l_image_src->comps;
 
@@ -9739,7 +9740,7 @@ static OPJ_BOOL opj_j2k_needs_copy_tile_data(opj_j2k_t *p_j2k, OPJ_UINT32 num_ti
 	/* single tile, RGB images only*/
 	OPJ_BOOL copy_tile_data = (num_tiles> 1) ||
 									p_j2k->m_output_image->numcomps != 3 ||
-										p_j2k->m_tcd->tcd_image->tiles->numcomps != 3;
+										p_j2k->m_tcd->current_tile->numcomps != 3;
 
 	OPJ_UINT32 i = 0;
 
@@ -9758,7 +9759,7 @@ static OPJ_BOOL opj_j2k_needs_copy_tile_data(opj_j2k_t *p_j2k, OPJ_UINT32 num_ti
 	if (!copy_tile_data) {
 
 		for (i = 0; i < p_j2k->m_output_image->numcomps; i++) {
-			opj_tcd_tilecomp_t* tilec = p_j2k->m_tcd->tcd_image->tiles->comps + i;
+			opj_tcd_tilecomp_t* tilec = p_j2k->m_tcd->current_tile->comps + i;
 			opj_image_comp_t* dest_comp = p_j2k->m_output_image->comps + i;
 			OPJ_UINT32 l_x0_dest = opj_uint_ceildivpow2(dest_comp->x0, dest_comp->factor);
 			OPJ_UINT32 l_y0_dest = opj_uint_ceildivpow2(dest_comp->y0, dest_comp->factor);
@@ -10248,20 +10249,20 @@ OPJ_BOOL opj_j2k_encode(opj_j2k_t * p_j2k,
                 /* if we only have one tile, then simply set tile component data equal to image component data */
                 /* otherwise, allocate the data */
                 for (j=0;j<p_j2k->m_tcd->image->numcomps;++j) {
-                        opj_tcd_tilecomp_t* l_tilec = p_tcd->tcd_image->tiles->comps + j;
-                        if (l_reuse_data) {
-												        opj_image_comp_t * l_img_comp = p_tcd->image->comps + j;
-												        l_tilec->data  =  l_img_comp->data;
-												        l_tilec->ownsData = OPJ_FALSE;
-                        } else {
-												        if(! opj_alloc_tile_component_data(l_tilec)) {
-												                opj_event_msg(p_manager, EVT_ERROR, "Error allocating tile component data." );
-												                if (l_current_data) {
-												                        opj_free(l_current_data);
-												                }
-												                return OPJ_FALSE;
-												        }
-                        }
+                    opj_tcd_tilecomp_t* l_tilec = p_tcd->current_tile->comps + j;
+                    if (l_reuse_data) {
+						opj_image_comp_t * l_img_comp = p_tcd->image->comps + j;
+						l_tilec->buf->data  =  l_img_comp->data;
+						l_tilec->buf->owns_data = OPJ_FALSE;
+                    } else {
+						if(! opj_tile_buf_alloc_component_data(l_tilec->buf)) {
+								opj_event_msg(p_manager, EVT_ERROR, "Error allocating tile component data." );
+								if (l_current_data) {
+										opj_free(l_current_data);
+								}
+								return OPJ_FALSE;
+						}
+                    }
                 }
                 l_current_tile_size = opj_tcd_get_encoded_tile_size(p_j2k->m_tcd);
                 if (!l_reuse_data) {
@@ -10437,7 +10438,7 @@ static void opj_j2k_get_tile_data (opj_tcd_t * p_tcd, OPJ_BYTE * p_data)
         for (i=0;i<p_tcd->image->numcomps;++i) {
                 opj_image_t * l_image =  p_tcd->image;
                 OPJ_INT32 * l_src_ptr;
-                opj_tcd_tilecomp_t * l_tilec = p_tcd->tcd_image->tiles->comps + i;
+                opj_tcd_tilecomp_t * l_tilec = p_tcd->current_tile->comps + i;
                 opj_image_comp_t * l_img_comp = l_image->comps + i;
                 OPJ_UINT32 l_size_comp,l_width,l_height,l_offset_x,l_offset_y, l_image_width,l_stride,l_tile_offset;
 
@@ -11063,10 +11064,10 @@ OPJ_BOOL opj_j2k_write_tile (opj_j2k_t * p_j2k,
                 OPJ_UINT32 j;
                 /* Allocate data */
                 for (j=0;j<p_j2k->m_tcd->image->numcomps;++j) {
-                        opj_tcd_tilecomp_t* l_tilec = p_j2k->m_tcd->tcd_image->tiles->comps + j;
+                        opj_tcd_tilecomp_t* l_tilec = p_j2k->m_tcd->current_tile->comps + j;
 
-                        if(! opj_alloc_tile_component_data(l_tilec)) {
-												        opj_event_msg(p_manager, EVT_ERROR, "Error allocating tile component data." );
+                        if(!opj_tile_buf_alloc_component_data(l_tilec->buf)) {
+								opj_event_msg(p_manager, EVT_ERROR, "Error allocating tile component data." );
                                 return OPJ_FALSE;
                         }
                 }

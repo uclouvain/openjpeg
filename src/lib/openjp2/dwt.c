@@ -402,7 +402,7 @@ static INLINE OPJ_BOOL opj_dwt_encode_procedure(opj_tcd_tilecomp_t * tilec,void 
 
 	w = tilec->x1-tilec->x0;
 	l = (OPJ_INT32)tilec->numresolutions-1;
-	a = tilec->data;
+	a = tilec->buf->data;
 
 	l_cur_res = tilec->resolutions + l;
 	l_last_res = l_cur_res - 1;
@@ -582,7 +582,7 @@ static OPJ_BOOL opj_dwt_decode_tile(opj_tcd_tilecomp_t* tilec, OPJ_UINT32 numres
 	v.mem = h.mem;
 
 	while( --numres) {
-		OPJ_INT32 * restrict tiledp = tilec->data;
+		OPJ_INT32 * restrict tiledp = tilec->buf->data;
 		OPJ_UINT32 j;
 
 		++tr;
@@ -854,7 +854,7 @@ OPJ_BOOL opj_dwt_decode_real(opj_tcd_tilecomp_t* restrict tilec, OPJ_UINT32 numr
 	v.wavelet = h.wavelet;
 
 	while( --numres) {
-		OPJ_FLOAT32 * restrict aj = (OPJ_FLOAT32*) tilec->data;
+		OPJ_FLOAT32 * restrict aj = (OPJ_FLOAT32*) tilec->buf->data;
 		OPJ_UINT32 bufsize = (OPJ_UINT32)((tilec->x1 - tilec->x0) * (tilec->y1 - tilec->y0));
 		OPJ_INT32 j;
 
@@ -902,7 +902,7 @@ OPJ_BOOL opj_dwt_decode_real(opj_tcd_tilecomp_t* restrict tilec, OPJ_UINT32 numr
 		v.dn = (OPJ_INT32)(rh - (OPJ_UINT32)v.sn);
 		v.cas = res->y0 % 2;
 
-		aj = (OPJ_FLOAT32*) tilec->data;
+		aj = (OPJ_FLOAT32*) tilec->buf->data;
 		for(j = (OPJ_INT32)rw; j > 3; j -= 4){
 			OPJ_UINT32 k;
 

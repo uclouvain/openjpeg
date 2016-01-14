@@ -58,13 +58,6 @@ Sum lengths of all buffers
 
 OPJ_UINT16 opj_min_buf_vec_get_len(opj_vec_t* min_buf_vec);
 
-typedef struct opj_buf {
-	OPJ_BYTE *buf;		/* internal array*/
-	OPJ_OFF_T offset;	/* current offset into array */
-	OPJ_SIZE_T len;		/* length of array */
-	OPJ_BOOL owns_data;	/* OPJ_TRUE if buffer manages the buf array */
-} opj_buf_t;
-
 
 /*
 Increment buffer offset
