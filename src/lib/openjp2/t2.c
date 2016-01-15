@@ -444,69 +444,124 @@ OPJ_BOOL opj_t2_decode_packets( opj_t2_t *p_t2,
                 memset(first_pass_failed, OPJ_TRUE, l_image->numcomps * sizeof(OPJ_BOOL));
 
                 while (opj_pi_next(l_current_pi)) {
-                  JAS_FPRINTF( stderr, "packet offset=00000166 prg=%d cmptno=%02d rlvlno=%02d prcno=%03d lyrno=%02d\n\n",
-                    l_current_pi->poc.prg1, l_current_pi->compno, l_current_pi->resno, l_current_pi->precno, l_current_pi->layno );
+					OPJ_BOOL skip_precinct = OPJ_FALSE;
+					opj_tcd_tilecomp_t* tilec = p_tile->comps + l_current_pi->compno;
+					OPJ_BOOL skip_layer_or_res = l_current_pi->layno >= l_tcp->num_layers_to_decode ||
+													l_current_pi->resno >= tilec->minimum_num_resolutions;
 
-                        if (l_tcp->num_layers_to_decode > l_current_pi->layno
-                                        && l_current_pi->resno < p_tile->comps[l_current_pi->compno].minimum_num_resolutions) {
-                                l_nb_bytes_read = 0;
+					l_img_comp = &(l_image->comps[l_current_pi->compno]);
 
-                                first_pass_failed[l_current_pi->compno] = OPJ_FALSE;
+					JAS_FPRINTF( stderr, 
+					  "packet offset=00000166 prg=%d cmptno=%02d rlvlno=%02d prcno=%03d lyrno=%02d\n\n",
+						l_current_pi->poc.prg1,
+						l_current_pi->compno,
+						l_current_pi->resno, 
+						l_current_pi->precno,
+						l_current_pi->layno );
 
-                                if (! opj_t2_decode_packet(p_t2,p_tile,l_tcp,l_current_pi, 
-															src_buf,&l_nb_bytes_read, 
-															l_pack_info, p_manager)) {
-                                        opj_pi_destroy(l_pi,l_nb_pocs);
-                                        opj_free(first_pass_failed);
-                                        return OPJ_FALSE;
-                                }
 
-                                l_img_comp = &(l_image->comps[l_current_pi->compno]);
-                                l_img_comp->resno_decoded = opj_uint_max(l_current_pi->resno, l_img_comp->resno_decoded);
+					
+					if (!skip_layer_or_res && tilec->buf && tilec->buf->resolutions) {
+						opj_tcd_resolution_t* res = tilec->resolutions + l_current_pi->resno;
+						opj_tcd_resolution_t* pres = res - 1;
+						OPJ_UINT32 bandno;
+						skip_precinct = OPJ_TRUE;
+						for (bandno = 0; bandno < res->numbands && skip_precinct; ++bandno) {
+							opj_tcd_band_t* band = res->bands + bandno;
+							OPJ_UINT32 num_precincts = 
+										band->precincts_data_size / sizeof(opj_tcd_precinct_t);
+							OPJ_UINT32 precno;
+							for (precno = 0; precno < num_precincts && skip_precinct; ++precno) {
+								opj_rect_t prec_rect;
+								opj_pt_t band_offset;
+								opj_tcd_precinct_t* prec = band->precincts + precno;
+								opj_rect_init(&prec_rect,prec->x0, prec->y0, prec->x1, prec->y1);
+								band_offset.x = -band->x0;
+								band_offset.y = -band->y0;
+
+								if (band->bandno & 1) {
+									band_offset.x += pres->x1 - pres->x0;
+								}
+								if (band->bandno & 2) {
+									band_offset.y += pres->y1 - pres->y0;
+								}
+
+
+								opj_rect_pan(&prec_rect, &band_offset);
+								if (opj_tile_buf_hit_test(tilec->buf,&prec_rect)) {
+									skip_precinct = OPJ_FALSE;
+									break;
+								}
+							}
+						}
+					}
+					
+					if (!skip_layer_or_res && !skip_precinct) {
+                        l_nb_bytes_read = 0;
+
+                        first_pass_failed[l_current_pi->compno] = OPJ_FALSE;
+
+                        if (! opj_t2_decode_packet(p_t2,
+													p_tile,
+													l_tcp,
+													l_current_pi, 
+													src_buf,
+													&l_nb_bytes_read, 
+													l_pack_info,
+													p_manager)) {
+                                opj_pi_destroy(l_pi,l_nb_pocs);
+                                opj_free(first_pass_failed);
+                                return OPJ_FALSE;
                         }
-                        else {
-                                l_nb_bytes_read = 0;
-                                if (! opj_t2_skip_packet(p_t2,p_tile,l_tcp,l_current_pi, 
-															src_buf,
-															&l_nb_bytes_read,
-															l_pack_info, p_manager)) {
-                                        opj_pi_destroy(l_pi,l_nb_pocs);
-                                        opj_free(first_pass_failed);
-                                        return OPJ_FALSE;
-                                }
-                        }
+					}
+                    else {
+                            l_nb_bytes_read = 0;
+                            if (! opj_t2_skip_packet(p_t2,
+													p_tile,
+													l_tcp,l_current_pi, 
+													src_buf,
+													&l_nb_bytes_read,
+													l_pack_info, p_manager)) {
+                                    opj_pi_destroy(l_pi,l_nb_pocs);
+                                    opj_free(first_pass_failed);
+                                    return OPJ_FALSE;
+                            }
+                    }
 
-                        if (first_pass_failed[l_current_pi->compno]) {
-                                l_img_comp = &(l_image->comps[l_current_pi->compno]);
-                                if (l_img_comp->resno_decoded == 0)
-                                        l_img_comp->resno_decoded = p_tile->comps[l_current_pi->compno].minimum_num_resolutions - 1;
-                        }
+					if (!skip_layer_or_res)
+						l_img_comp->resno_decoded = opj_uint_max(l_current_pi->resno, l_img_comp->resno_decoded);
 
-						*p_data_read += l_nb_bytes_read;
+                    if (first_pass_failed[l_current_pi->compno]) {
+                            if (l_img_comp->resno_decoded == 0)
+                                    l_img_comp->resno_decoded = 
+											p_tile->comps[l_current_pi->compno].minimum_num_resolutions - 1;
+                    }
+
+					*p_data_read += l_nb_bytes_read;
   
 
-                        /* INDEX >> */
+                    /* INDEX >> */
 #ifdef TODO_MSD
-                        if(p_cstr_info) {
-                                opj_tile_info_v2_t *info_TL = &p_cstr_info->tile[p_tile_no];
-                                opj_packet_info_t *info_PK = &info_TL->packet[p_cstr_info->packno];
-                                tp_start_packno = 0;
-                                if (!p_cstr_info->packno) {
-                                        info_PK->start_pos = info_TL->end_header + 1;
-                                } else if (info_TL->packet[p_cstr_info->packno-1].end_pos >= (OPJ_INT32)p_cstr_info->tile[p_tile_no].tp[curtp].tp_end_pos){ /* New tile part */
-                                        info_TL->tp[curtp].tp_numpacks = p_cstr_info->packno - tp_start_packno; /* Number of packets in previous tile-part */
-                                        tp_start_packno = p_cstr_info->packno;
-                                        curtp++;
-                                        info_PK->start_pos = p_cstr_info->tile[p_tile_no].tp[curtp].tp_end_header+1;
-                                } else {
-                                        info_PK->start_pos = (l_cp->m_specific_param.m_enc.m_tp_on && info_PK->start_pos) ? info_PK->start_pos : info_TL->packet[p_cstr_info->packno - 1].end_pos + 1;
-                                }
-                                info_PK->end_pos = info_PK->start_pos + l_nb_bytes_read - 1;
-                                info_PK->end_ph_pos += info_PK->start_pos - 1;  /* End of packet header which now only represents the distance */
-                                ++p_cstr_info->packno;
-                        }
+                    if(p_cstr_info) {
+                            opj_tile_info_v2_t *info_TL = &p_cstr_info->tile[p_tile_no];
+                            opj_packet_info_t *info_PK = &info_TL->packet[p_cstr_info->packno];
+                            tp_start_packno = 0;
+                            if (!p_cstr_info->packno) {
+                                    info_PK->start_pos = info_TL->end_header + 1;
+                            } else if (info_TL->packet[p_cstr_info->packno-1].end_pos >= (OPJ_INT32)p_cstr_info->tile[p_tile_no].tp[curtp].tp_end_pos){ /* New tile part */
+                                    info_TL->tp[curtp].tp_numpacks = p_cstr_info->packno - tp_start_packno; /* Number of packets in previous tile-part */
+                                    tp_start_packno = p_cstr_info->packno;
+                                    curtp++;
+                                    info_PK->start_pos = p_cstr_info->tile[p_tile_no].tp[curtp].tp_end_header+1;
+                            } else {
+                                    info_PK->start_pos = (l_cp->m_specific_param.m_enc.m_tp_on && info_PK->start_pos) ? info_PK->start_pos : info_TL->packet[p_cstr_info->packno - 1].end_pos + 1;
+                            }
+                            info_PK->end_pos = info_PK->start_pos + l_nb_bytes_read - 1;
+                            info_PK->end_ph_pos += info_PK->start_pos - 1;  /* End of packet header which now only represents the distance */
+                            ++p_cstr_info->packno;
+                    }
 #endif
-                        /* << INDEX */
+                    /* << INDEX */
                 }
                 ++l_current_pi;
 
@@ -1434,23 +1489,6 @@ static OPJ_BOOL opj_t2_read_packet_data(   opj_t2_t* p_t2,
                                                 l_seg->newlen, l_cblk->data_current_size, 0xFFFFFFFF - l_seg->newlen, cblkno, p_pi->precno, bandno, p_pi->resno, p_pi->compno);
                                         return OPJ_FALSE;
                                 }
-#ifdef POO
-                                /* Check if the cblk->data have allocated enough memory */
-                                if ((l_cblk->data_current_size + l_seg->newlen) > l_cblk->data_max_size) {
-                                    OPJ_BYTE* new_cblk_data = (OPJ_BYTE*) opj_realloc(l_cblk->data, l_cblk->data_current_size + l_seg->newlen);
-                                    if(! new_cblk_data) {
-                                        opj_free(l_cblk->data);
-                                        l_cblk->data = NULL;
-                                        l_cblk->data_max_size = 0;
-                                        /* opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to realloc code block cata!\n"); */
-                                        return OPJ_FALSE;
-                                    }
-                                    l_cblk->data_max_size = l_cblk->data_current_size + l_seg->newlen;
-                                    l_cblk->data = new_cblk_data;
-                                }
-                               
-                                memcpy(l_cblk->data + l_cblk->data_current_size, src_buf->mother.buf + src_buf->mother.offset, l_seg->newlen);
-#endif
                                 if (l_seg->numpasses == 0) {
                                        l_seg->dataindex = l_cblk->data_current_size;
                                 }

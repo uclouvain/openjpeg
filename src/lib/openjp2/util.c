@@ -118,6 +118,15 @@ void opj_rect_pan(opj_rect_t* r, opj_pt_t* shift) {
 	r->y1 += shift->y;
 }
 
+void opj_rect_subsample(opj_rect_t* r, OPJ_UINT32 dx, OPJ_UINT32 dy) {
+	if (!r)
+		return;
+
+	r->x0 = opj_int_ceildiv(r->x0, (OPJ_INT32)dx);
+	r->y0 = opj_int_ceildiv(r->y0, (OPJ_INT32)dy);
+	r->x1 = opj_int_ceildiv(r->x1, (OPJ_INT32)dx);
+	r->y1 = opj_int_ceildiv(r->y1, (OPJ_INT32)dy);
+}
 
 void opj_rect_grow(opj_rect_t* r, OPJ_INT32 boundary) {
 	if (!r)

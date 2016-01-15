@@ -210,7 +210,7 @@ OPJ_BOOL opj_tile_buf_hit_test(opj_tile_buf_component_t* comp, opj_rect_t* rect)
 	OPJ_INT32 i;
 	opj_tile_buf_resolution_t* res;
 
-	if (!comp || !rect)
+	if (!comp || !rect || !comp->resolutions)
 		return OPJ_FALSE;
 	for (i = 0; i < comp->resolutions->size; ++i) {
 		opj_rect_t dummy;

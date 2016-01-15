@@ -67,6 +67,8 @@ void opj_rect_grow(opj_rect_t* r, OPJ_INT32 boundary);
 
 void opj_rect_grow2(opj_rect_t* r, OPJ_INT32 boundaryx, OPJ_INT32 boundaryy);
 
+void opj_rect_subsample(opj_rect_t* r, OPJ_UINT32 dx, OPJ_UINT32 dy);
+
 void opj_rect_pan(opj_rect_t* r, opj_pt_t* shift);
 
 void opj_rect_print(opj_rect_t* r);
