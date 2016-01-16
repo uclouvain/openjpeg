@@ -198,6 +198,7 @@ static INLINE long opj_lrintf(float f) {
 #include "t1.h"
 #include "t1_opt.h"
 #include "dwt.h"
+#include "dwt_region.h"
 #include "t2.h"
 #include "mct.h"
 #include "opj_intmath.h"

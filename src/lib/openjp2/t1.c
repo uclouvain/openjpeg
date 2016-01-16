@@ -1325,7 +1325,7 @@ OPJ_BOOL opj_t1_decode_cblks(  opj_tcd_tilecomp_t* tilec,
 	OPJ_UINT32 tile_w = (OPJ_UINT32)(tilec->x1 - tilec->x0);
 	OPJ_BOOL rc = OPJ_TRUE;
 	
-	if (!opj_tile_buf_alloc_component_data(tilec->buf)) {
+	if (!opj_tile_buf_alloc_component_data_decode(tilec->buf)) {
 		opj_event_msg(p_manager, EVT_ERROR, "Not enough memory for tile data\n");
 		return OPJ_FALSE;
 	}

@@ -33,8 +33,11 @@ typedef struct opj_tile_buf_component {
 
 } opj_tile_buf_component_t;
 
+OPJ_BOOL opj_tile_buf_alloc_component_data_decode(opj_tile_buf_component_t* buf);
 
-OPJ_BOOL opj_tile_buf_alloc_component_data(opj_tile_buf_component_t* buf);
+OPJ_BOOL opj_tile_buf_alloc_component_data_encode(opj_tile_buf_component_t* buf);
+
+OPJ_BOOL opj_tile_buf_is_decode_region(opj_tile_buf_component_t* buf);
 
 void opj_tile_buf_destroy_component(opj_tile_buf_component_t* comp);
 

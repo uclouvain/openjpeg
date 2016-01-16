@@ -10255,7 +10255,7 @@ OPJ_BOOL opj_j2k_encode(opj_j2k_t * p_j2k,
 						l_tilec->buf->data  =  l_img_comp->data;
 						l_tilec->buf->owns_data = OPJ_FALSE;
                     } else {
-						if(! opj_tile_buf_alloc_component_data(l_tilec->buf)) {
+						if(! opj_tile_buf_alloc_component_data_encode(l_tilec->buf)) {
 								opj_event_msg(p_manager, EVT_ERROR, "Error allocating tile component data." );
 								if (l_current_data) {
 										opj_free(l_current_data);
@@ -11066,7 +11066,7 @@ OPJ_BOOL opj_j2k_write_tile (opj_j2k_t * p_j2k,
                 for (j=0;j<p_j2k->m_tcd->image->numcomps;++j) {
                         opj_tcd_tilecomp_t* l_tilec = p_j2k->m_tcd->current_tile->comps + j;
 
-                        if(!opj_tile_buf_alloc_component_data(l_tilec->buf)) {
+                        if(!opj_tile_buf_alloc_component_data_encode(l_tilec->buf)) {
 								opj_event_msg(p_manager, EVT_ERROR, "Error allocating tile component data." );
                                 return OPJ_FALSE;
                         }

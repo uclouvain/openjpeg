@@ -60,7 +60,7 @@ OPJ_BOOL opj_tile_buf_create_component(opj_tcd_tilecomp_t* tilec,
 	tile_offset.x = -tilec->x0;
 	tile_offset.y = -tilec->y0;
 	opj_rect_pan(&comp->dim, &tile_offset);
-
+	opj_rect_pan(&comp->tile_dim, &tile_offset);
 
 	/* for encode, we don't need to allocate resolutions */
 	if (!output_image) {
@@ -143,8 +143,17 @@ OPJ_BOOL opj_tile_buf_create_component(opj_tcd_tilecomp_t* tilec,
 	return OPJ_TRUE;
 }
 
-OPJ_BOOL opj_tile_buf_alloc_component_data(opj_tile_buf_component_t* buf)
+OPJ_BOOL opj_tile_buf_is_decode_region(opj_tile_buf_component_t* buf) {
+	if (!buf)
+		return OPJ_FALSE;
+	return !opj_rect_are_equal(&buf->dim, &buf->tile_dim);
+}
+
+OPJ_BOOL opj_tile_buf_alloc_component_data_encode(opj_tile_buf_component_t* buf)
 {
+	if (!buf)
+		return OPJ_FALSE;
+
 	if ((buf->data == 00) || ((buf->data_size_needed > buf->data_size) && (buf->owns_data == OPJ_FALSE))) {
 		buf->data = (OPJ_INT32 *)opj_aligned_malloc(buf->data_size_needed);
 		if (!buf->data) {
@@ -170,6 +179,30 @@ OPJ_BOOL opj_tile_buf_alloc_component_data(opj_tile_buf_component_t* buf)
 	}
 	return OPJ_TRUE;
 }
+
+
+OPJ_BOOL opj_tile_buf_alloc_component_data_decode(opj_tile_buf_component_t* buf)
+{
+	if (!buf)
+		return OPJ_FALSE;
+
+	if (!buf->data ){
+		OPJ_INT32 area = opj_rect_get_area(&buf->tile_dim);
+		if (!area)
+			return OPJ_FALSE;
+		buf->data = (OPJ_INT32 *)opj_aligned_malloc( area * sizeof(OPJ_INT32));
+		if (!buf->data) {
+			return OPJ_FALSE;
+		}
+		/*fprintf(stderr, "tAllocate data of tilec (int): %d x OPJ_UINT32n",l_data_size);*/
+		buf->data_size = area * sizeof(OPJ_INT32);
+		buf->data_size_needed = buf->data_size;
+		buf->owns_data = OPJ_TRUE;
+	}
+	
+	return OPJ_TRUE;
+}
+
 
 void opj_tile_buf_destroy_component(opj_tile_buf_component_t* comp) {
 	if (!comp)

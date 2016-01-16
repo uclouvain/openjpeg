@@ -43,6 +43,12 @@ OPJ_BOOL opj_rect_is_non_degenerate(opj_rect_t* rect) {
 }
 
 OPJ_BOOL opj_rect_are_equal(opj_rect_t* r1, opj_rect_t* r2) {
+	if (!r1 && !r2)
+		return OPJ_TRUE;
+	
+	if (!r1 || !r2)
+		return OPJ_FALSE;
+
 	return r1->x0 == r2->x0 && 
 			r1->y0 == r2->y0 &&
 			r1->x1 == r2->x1 &&
@@ -83,6 +89,12 @@ void opj_rect_zoom(opj_rect_t* r, OPJ_FLOAT32 factor) {
 
 }
 
+
+OPJ_INT32 opj_rect_get_area(opj_rect_t* r) {
+	if (!r)
+		return 0;
+	return (r->x1 - r->x0) * (r->y1 - r->y0);
+}
 
 void opj_rect_pan(opj_rect_t* r, opj_pt_t* shift) {
 	if (!r)

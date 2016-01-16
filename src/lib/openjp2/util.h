@@ -29,6 +29,8 @@ void opj_rect_init(opj_rect_t* r, OPJ_INT32 x0, OPJ_INT32 y0, OPJ_INT32 x1, OPJ_
 /* valid if x0 <= x1 && y0 <= y1. Can included degenerate rectangles: line and point*/
 OPJ_BOOL opj_rect_is_valid(opj_rect_t* rect);
 
+OPJ_INT32 opj_rect_get_area(opj_rect_t* r);
+
 OPJ_BOOL opj_rect_is_non_degenerate(opj_rect_t* rect);
 
 OPJ_BOOL opj_rect_is_valid(opj_rect_t* rect);
