@@ -75,7 +75,6 @@ Encode the packets of a tile to a destination buffer
 @param tpnum            Tile part number of the current tile
 @param tppos            The position of the tile part flag in the progression order
 @param pino             FIXME DOC
-@param t2_mode          If == 0 In Threshold calculation ,If == 1 Final pass
 */
 OPJ_BOOL opj_t2_encode_packets(	opj_t2_t* t2,
 								OPJ_UINT32 tileno,
@@ -87,8 +86,26 @@ OPJ_BOOL opj_t2_encode_packets(	opj_t2_t* t2,
 								opj_codestream_info_t *cstr_info,
 								OPJ_UINT32 tpnum,
 								OPJ_INT32 tppos,
-								OPJ_UINT32 pino,
-								J2K_T2_MODE t2_mode);
+								OPJ_UINT32 pino);
+
+/**
+Encode the packets of a tile to a destination buffer
+@param t2               T2 handle
+@param tileno           number of the tile encoded
+@param tile             the tile for which to write the packets
+@param maxlayers        maximum number of layers
+@param p_data_written   FIXME DOC
+@param len              the length of the destination buffer
+@param tppos            The position of the tile part flag in the progression order
+*/
+OPJ_BOOL opj_t2_encode_packets_thresh(opj_t2_t* t2,
+	OPJ_UINT32 tileno,
+	opj_tcd_tile_t *tile,
+	OPJ_UINT32 maxlayers,
+	OPJ_UINT32 * p_data_written,
+	OPJ_UINT32 len,
+	OPJ_INT32 tppos);
+
 
 /**
 Decode the packets of a tile from a source buffer
@@ -105,9 +122,8 @@ Decode the packets of a tile from a source buffer
 OPJ_BOOL opj_t2_decode_packets(	opj_t2_t *t2,
                                 OPJ_UINT32 tileno,
                                 opj_tcd_tile_t *tile,
-                                OPJ_BYTE *src,
+								opj_seg_buf_t* src_buf,
                                 OPJ_UINT32 * p_data_read,
-                                OPJ_UINT32 len,
                                 opj_codestream_index_t *cstr_info,
                                 opj_event_mgr_t *p_manager);
 

@@ -53,7 +53,6 @@ each other. The functions in TCD.C are used by other functions in J2K.C.
 FIXME DOC
 */
 typedef struct opj_tcd_seg {
-	OPJ_BYTE ** data;
 	OPJ_UINT32 dataindex;
 	OPJ_UINT32 numpasses;
 	OPJ_UINT32 real_num_passes;
@@ -101,7 +100,7 @@ typedef struct opj_tcd_cblk_enc {
 
 
 typedef struct opj_tcd_cblk_dec {
-	OPJ_BYTE * data;				/* Data */
+	opj_vec_t seg_buffers;
 	opj_tcd_seg_t* segs;			/* segments information */
 	OPJ_INT32 x0, y0, x1, y1;		/* position of the code-blocks : left upper corner (x0, y0) right low corner (x1,y1) */
 	OPJ_UINT32 numbps;
@@ -162,11 +161,8 @@ typedef struct opj_tcd_tilecomp
 	OPJ_UINT32 minimum_num_resolutions; /* number of resolutions level to decode (at max)*/
 	opj_tcd_resolution_t *resolutions;  /* resolutions information */
 	OPJ_UINT32 resolutions_size;        /* size of data for resolutions (in bytes) */
-	OPJ_INT32 *data;                    /* data of the component */
-	OPJ_BOOL  ownsData;                 /* if true, then need to free after usage, otherwise do not free */
-	OPJ_UINT32 data_size_needed;        /* we may either need to allocate this amount of data, or re-use image data and ignore this value */
-	OPJ_UINT32 data_size;               /* size of the data of the component */
 	OPJ_INT32 numpix;                   /* add fixed_quality */
+	opj_tile_buf_component_t* buf;
 } opj_tcd_tilecomp_t;
 
 
@@ -184,16 +180,6 @@ typedef struct opj_tcd_tile {
 } opj_tcd_tile_t;
 
 /**
-FIXME DOC
-*/
-typedef struct opj_tcd_image
-{
-	opj_tcd_tile_t *tiles;		/* Tiles information */
-}
-opj_tcd_image_t;
-
-
-/**
 Tile coder/decoder
 */
 typedef struct opj_tcd
@@ -209,7 +195,7 @@ typedef struct opj_tcd
 	/** Current Packet iterator number */
 	OPJ_UINT32 cur_pino;
 	/** info on each image tile */
-	opj_tcd_image_t *tcd_image;
+	opj_tcd_tile_t* current_tile;
 	/** image header */
 	opj_image_t *image;
 	/** coding parameters */
@@ -260,13 +246,18 @@ OPJ_BOOL opj_tcd_init(	opj_tcd_t *p_tcd,
  * Allocates memory for decoding a specific tile.
  *
  * @param	p_tcd		the tile decoder.
+ * @param	output_image output image - stores the decode region of interest
  * @param	p_tile_no	the index of the tile received in sequence. This not necessarily lead to the
  * tile at index p_tile_no.
  * @param p_manager the event manager.
  *
  * @return	true if the remaining data is sufficient.
  */
-OPJ_BOOL opj_tcd_init_decode_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no, opj_event_mgr_t* p_manager);
+OPJ_BOOL opj_tcd_init_decode_tile(opj_tcd_t *p_tcd,
+									OPJ_UINT32 qmfbid,
+									opj_image_t* output_image,
+									OPJ_UINT32 p_tile_no,
+									opj_event_mgr_t* p_manager);
 
 void opj_tcd_makelayer_fixed(opj_tcd_t *tcd, OPJ_UINT32 layno, OPJ_UINT32 final);
 
@@ -278,7 +269,6 @@ void opj_tcd_makelayer(	opj_tcd_t *tcd,
 						OPJ_UINT32 final);
 
 OPJ_BOOL opj_tcd_rateallocate(	opj_tcd_t *tcd,
-								OPJ_BYTE *dest,
 								OPJ_UINT32 * p_data_written,
 								OPJ_UINT32 len,
 								opj_codestream_info_t *cstr_info);
@@ -316,8 +306,7 @@ Decode a tile from a buffer into a raw image
 @param manager the event manager.
 */
 OPJ_BOOL opj_tcd_decode_tile(   opj_tcd_t *tcd,
-							    OPJ_BYTE *src,
-							    OPJ_UINT32 len,
+								opj_seg_buf_t* src_buf,
 							    OPJ_UINT32 tileno,
 							    opj_codestream_index_t *cstr_info,
 							    opj_event_mgr_t *manager);
@@ -359,7 +348,11 @@ OPJ_BOOL opj_tcd_copy_tile_data (opj_tcd_t *p_tcd,
  *
  *
  */
-OPJ_BOOL opj_alloc_tile_component_data(opj_tcd_tilecomp_t *l_tilec);
+OPJ_BOOL opj_tile_buf_create_component(opj_tcd_tilecomp_t * tilec,
+									OPJ_BOOL irreversible,
+									OPJ_UINT32 cblkw,
+									OPJ_UINT32 cblkh,
+									opj_image_t* output_image);
 
 /* ----------------------------------------------------------------------- */
 /*@}*/

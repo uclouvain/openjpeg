@@ -129,7 +129,6 @@ static OPJ_BOOL opj_dwt_decode_tile(opj_tcd_tilecomp_t* tilec, OPJ_UINT32 i, DWT
 static OPJ_BOOL opj_dwt_encode_procedure(	opj_tcd_tilecomp_t * tilec,
 										    void (*p_function)(OPJ_INT32 *, OPJ_INT32,OPJ_INT32,OPJ_INT32) );
 
-static OPJ_UINT32 opj_dwt_max_resolution(opj_tcd_resolution_t* restrict r, OPJ_UINT32 i);
 
 /* <summary>                             */
 /* Inverse 9-7 wavelet transform in 1-D. */
@@ -402,7 +401,7 @@ static INLINE OPJ_BOOL opj_dwt_encode_procedure(opj_tcd_tilecomp_t * tilec,void 
 
 	w = tilec->x1-tilec->x0;
 	l = (OPJ_INT32)tilec->numresolutions-1;
-	a = tilec->data;
+	a = tilec->buf->data;
 
 	l_cur_res = tilec->resolutions + l;
 	l_last_res = l_cur_res - 1;
@@ -474,6 +473,8 @@ OPJ_BOOL opj_dwt_encode(opj_tcd_tilecomp_t * tilec)
 /* Inverse 5-3 wavelet transform in 2-D. */
 /* </summary>                           */
 OPJ_BOOL opj_dwt_decode(opj_tcd_tilecomp_t* tilec, OPJ_UINT32 numres) {
+	if (opj_tile_buf_is_decode_region(tilec->buf))
+		return opj_dwt_region_decode53(tilec, numres);
 	return opj_dwt_decode_tile(tilec, numres, &opj_dwt_decode_1);
 }
 
@@ -543,7 +544,7 @@ void opj_dwt_calc_explicit_stepsizes(opj_tccp_t * tccp, OPJ_UINT32 prec) {
 /* <summary>                             */
 /* Determine maximum computed resolution level for inverse wavelet transform */
 /* </summary>                            */
-static OPJ_UINT32 opj_dwt_max_resolution(opj_tcd_resolution_t* restrict r, OPJ_UINT32 i) {
+OPJ_UINT32 opj_dwt_max_resolution(opj_tcd_resolution_t* restrict r, OPJ_UINT32 i) {
 	OPJ_UINT32 mr	= 0;
 	OPJ_UINT32 w;
 	while( --i ) {
@@ -582,7 +583,7 @@ static OPJ_BOOL opj_dwt_decode_tile(opj_tcd_tilecomp_t* tilec, OPJ_UINT32 numres
 	v.mem = h.mem;
 
 	while( --numres) {
-		OPJ_INT32 * restrict tiledp = tilec->data;
+		OPJ_INT32 * restrict tiledp = tilec->buf->data;
 		OPJ_UINT32 j;
 
 		++tr;
@@ -846,6 +847,9 @@ OPJ_BOOL opj_dwt_decode_real(opj_tcd_tilecomp_t* restrict tilec, OPJ_UINT32 numr
 
 	OPJ_UINT32 w = (OPJ_UINT32)(tilec->x1 - tilec->x0);
 
+	if (opj_tile_buf_is_decode_region(tilec->buf))
+		return opj_dwt_region_decode97(tilec, numres);
+
 	h.wavelet = (opj_v4_t*) opj_aligned_malloc((opj_dwt_max_resolution(res, numres)+5) * sizeof(opj_v4_t));
 	if (!h.wavelet) {
 		/* FIXME event manager error callback */
@@ -854,7 +858,7 @@ OPJ_BOOL opj_dwt_decode_real(opj_tcd_tilecomp_t* restrict tilec, OPJ_UINT32 numr
 	v.wavelet = h.wavelet;
 
 	while( --numres) {
-		OPJ_FLOAT32 * restrict aj = (OPJ_FLOAT32*) tilec->data;
+		OPJ_FLOAT32 * restrict aj = (OPJ_FLOAT32*) tilec->buf->data;
 		OPJ_UINT32 bufsize = (OPJ_UINT32)((tilec->x1 - tilec->x0) * (tilec->y1 - tilec->y0));
 		OPJ_INT32 j;
 
@@ -902,7 +906,7 @@ OPJ_BOOL opj_dwt_decode_real(opj_tcd_tilecomp_t* restrict tilec, OPJ_UINT32 numr
 		v.dn = (OPJ_INT32)(rh - (OPJ_UINT32)v.sn);
 		v.cas = res->y0 % 2;
 
-		aj = (OPJ_FLOAT32*) tilec->data;
+		aj = (OPJ_FLOAT32*) tilec->buf->data;
 		for(j = (OPJ_INT32)rw; j > 3; j -= 4){
 			OPJ_UINT32 k;
 

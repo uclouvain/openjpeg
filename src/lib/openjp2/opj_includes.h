@@ -172,11 +172,15 @@ static INLINE long opj_lrintf(float f) {
 #	pragma intrinsic(__emul)
 #endif
 
+#include "mem_stream.h"
 #include "opj_inttypes.h"
 #include "opj_clock.h"
 #include "opj_malloc.h"
 #include "event.h"
 #include "function_list.h"
+#include "vector.h"
+#include "util.h"
+#include "segmented_stream.h"
 #include "bio.h"
 #include "cio.h"
 
@@ -188,12 +192,14 @@ static INLINE long opj_lrintf(float f) {
 #include "mqc.h"
 #include "raw.h"
 #include "bio.h"
-
+#include "tile_buf.h"
 #include "pi.h"
 #include "tgt.h"
 #include "tcd.h"
 #include "t1.h"
+#include "t1_opt.h"
 #include "dwt.h"
+#include "dwt_region.h"
 #include "t2.h"
 #include "mct.h"
 #include "opj_intmath.h"

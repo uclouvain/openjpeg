@@ -114,6 +114,12 @@ Explicit calculation of the Quantization Stepsizes
 @param prec Precint analyzed
 */
 void opj_dwt_calc_explicit_stepsizes(opj_tccp_t * tccp, OPJ_UINT32 prec);
+
+/* <summary>                             */
+/* Determine maximum computed resolution level for inverse wavelet transform */
+/* </summary>
+*/
+OPJ_UINT32 opj_dwt_max_resolution(opj_tcd_resolution_t* restrict r, OPJ_UINT32 i);
 /* ----------------------------------------------------------------------- */
 /*@}*/
 

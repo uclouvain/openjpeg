@@ -57,6 +57,31 @@
 #define OPJ_CLRSPC_SRGB CLRSPC_SRGB
 #endif
 
+
+
+static opj_image_t*  image_create(OPJ_UINT32 numcmpts, OPJ_UINT32 w, OPJ_UINT32 h, OPJ_UINT32 prec) {
+	opj_image_cmptparm_t* cmptparms = (opj_image_cmptparm_t*)calloc(numcmpts, sizeof(opj_image_cmptparm_t));
+	opj_image_t* img = NULL;
+	OPJ_UINT32 compno=0;
+	for (compno = 0; compno < numcmpts; ++compno) {
+		memset(cmptparms + compno, 0, sizeof(opj_image_cmptparm_t));
+		cmptparms[compno].dx = 1;
+		cmptparms[compno].dy = 1;
+		cmptparms[compno].w = w;
+		cmptparms[compno].h = h;
+		cmptparms[compno].x0 = 0;
+		cmptparms[compno].y0 = 0;
+		cmptparms[compno].prec = prec;
+		cmptparms[compno].bpp = prec;
+		cmptparms[compno].sgnd = 0;
+	}
+	img = opj_image_create(numcmpts, (opj_image_cmptparm_t *)cmptparms, OPJ_CLRSPC_SRGB);
+	free(cmptparms);
+	return img;
+
+}
+
+
 /*--------------------------------------------------------
 Matrix for sYCC, Amendment 1 to IEC 61966-2-1
 
@@ -93,6 +118,7 @@ static void sycc444_to_rgb(opj_image_t *img)
 	const int *y, *cb, *cr;
 	unsigned int maxw, maxh, max, i;
 	int offset, upb;
+	opj_image_t* new_image = image_create(3, img->comps[0].w, img->comps[0].h, img->comps[0].prec);
 
 	upb = (int)img->comps[0].prec;
 	offset = 1<<(upb - 1); upb = (1<<upb)-1;
@@ -104,18 +130,26 @@ static void sycc444_to_rgb(opj_image_t *img)
 	cb = img->comps[1].data;
 	cr = img->comps[2].data;
 
-	d0 = r = (int*)malloc(sizeof(int) * (size_t)max);
-	d1 = g = (int*)malloc(sizeof(int) * (size_t)max);
-	d2 = b = (int*)malloc(sizeof(int) * (size_t)max);
+	d0 = r = new_image->comps[0].data;
+	d1 = g = new_image->comps[1].data;
+	d2 = b = new_image->comps[2].data;
+
+	new_image->comps[0].data = NULL;
+	new_image->comps[1].data = NULL;
+	new_image->comps[2].data = NULL;
+
+	opj_image_destroy(new_image);
+	new_image = NULL;
 
 	for(i = 0U; i < max; ++i)
 	{
 		sycc_to_rgb(offset, upb, *y, *cb, *cr, r, g, b);
 		++y; ++cb; ++cr; ++r; ++g; ++b;
 	}
-	free(img->comps[0].data); img->comps[0].data = d0;
-	free(img->comps[1].data); img->comps[1].data = d1;
-	free(img->comps[2].data); img->comps[2].data = d2;
+	opj_image_all_components_data_free(img);
+	img->comps[0].data = d0;
+	img->comps[1].data = d1;
+	img->comps[2].data = d2;
 
 }/* sycc444_to_rgb() */
 
@@ -123,25 +157,33 @@ static void sycc422_to_rgb(opj_image_t *img)
 {	
 	int *d0, *d1, *d2, *r, *g, *b;
 	const int *y, *cb, *cr;
-	unsigned int maxw, maxh, max;
+	unsigned int maxw, maxh;
 	int offset, upb;
 	unsigned int i, j;
+	opj_image_t* new_image = image_create(3, img->comps[0].w, img->comps[0].h, img->comps[0].prec);
 
 	upb = (int)img->comps[0].prec;
 	offset = 1<<(upb - 1); upb = (1<<upb)-1;
 
-	maxw = (unsigned int)img->comps[0].w; maxh = (unsigned int)img->comps[0].h;
-	max = maxw * maxh;
+	maxw = (unsigned int)img->comps[0].w;
+	maxh = (unsigned int)img->comps[0].h;
 
 	y = img->comps[0].data;
 	cb = img->comps[1].data;
 	cr = img->comps[2].data;
 
-	d0 = r = (int*)malloc(sizeof(int) * (size_t)max);
-	d1 = g = (int*)malloc(sizeof(int) * (size_t)max);
-	d2 = b = (int*)malloc(sizeof(int) * (size_t)max);
+	d0 = r = new_image->comps[0].data;
+	d1 = g = new_image->comps[1].data;
+	d2 = b = new_image->comps[2].data;
 
-	for(i=0U; i < maxh; ++i)
+	new_image->comps[0].data = NULL;
+	new_image->comps[1].data = NULL;
+	new_image->comps[2].data = NULL;
+
+	opj_image_destroy(new_image);
+	new_image = NULL;
+
+	for (i = 0U; i < maxh; ++i)
 	{
 		for(j=0U; j < (maxw & ~(unsigned int)1U); j += 2U)
 		{
@@ -155,9 +197,10 @@ static void sycc422_to_rgb(opj_image_t *img)
 			++y; ++r; ++g; ++b; ++cb; ++cr;
 		}
 	}
-	free(img->comps[0].data); img->comps[0].data = d0;
-	free(img->comps[1].data); img->comps[1].data = d1;
-	free(img->comps[2].data); img->comps[2].data = d2;
+	opj_image_all_components_data_free(img);
+	img->comps[0].data = d0;
+	img->comps[1].data = d1;
+	img->comps[2].data = d2;
 
 #if defined(USE_JPWL) || defined(USE_MJ2)
 	img->comps[1].w = maxw; img->comps[1].h = maxh;
@@ -177,25 +220,33 @@ static void sycc420_to_rgb(opj_image_t *img)
 {
 	int *d0, *d1, *d2, *r, *g, *b, *nr, *ng, *nb;
 	const int *y, *cb, *cr, *ny;
-	unsigned int maxw, maxh, max;
+	unsigned int maxw, maxh;
 	int offset, upb;
 	unsigned int i, j;
+	opj_image_t* new_image = image_create(3, img->comps[0].w, img->comps[0].h, img->comps[0].prec);
 
 	upb = (int)img->comps[0].prec;
 	offset = 1<<(upb - 1); upb = (1<<upb)-1;
 
-	maxw = (unsigned int)img->comps[0].w; maxh = (unsigned int)img->comps[0].h;
-	max = maxw * maxh;
+	maxw = (unsigned int)img->comps[0].w;
+	maxh = (unsigned int)img->comps[0].h;
 
 	y = img->comps[0].data;
 	cb = img->comps[1].data;
 	cr = img->comps[2].data;
 
-	d0 = r = (int*)malloc(sizeof(int) * (size_t)max);
-	d1 = g = (int*)malloc(sizeof(int) * (size_t)max);
-	d2 = b = (int*)malloc(sizeof(int) * (size_t)max);
+	d0 = r = new_image->comps[0].data;
+	d1 = g = new_image->comps[1].data;
+	d2 = b = new_image->comps[2].data;
 
-	for(i=0U; i < (maxh & ~(unsigned int)1U); i += 2U)
+	new_image->comps[0].data = NULL;
+	new_image->comps[1].data = NULL;
+	new_image->comps[2].data = NULL;
+
+	opj_image_destroy(new_image);
+	new_image = NULL;
+
+	for (i = 0U; i < (maxh & ~(unsigned int)1U); i += 2U)
 	{
 		ny = y + maxw;
 		nr = r + maxw; ng = g + maxw; nb = b + maxw;
@@ -239,10 +290,10 @@ static void sycc420_to_rgb(opj_image_t *img)
 			sycc_to_rgb(offset, upb, *y, *cb, *cr, r, g, b);
 		}
 	}
-
-	free(img->comps[0].data); img->comps[0].data = d0;
-	free(img->comps[1].data); img->comps[1].data = d1;
-	free(img->comps[2].data); img->comps[2].data = d2;
+	opj_image_all_components_data_free(img);
+	img->comps[0].data = d0;
+	img->comps[1].data = d1;
+	img->comps[2].data = d2;
 
 #if defined(USE_JPWL) || defined(USE_MJ2)
 	img->comps[1].w = maxw; img->comps[1].h = maxh;
@@ -332,6 +383,7 @@ void color_apply_icc_profile(opj_image_t *image)
 	int *r, *g, *b;
 	int prec, i, max, max_w, max_h;
 	OPJ_COLOR_SPACE oldspace;
+	opj_image_t* new_image = NULL;
 
 	in_prof = 
 	 cmsOpenProfileFromMem(image->icc_profile_buf, image->icc_profile_len);
@@ -520,8 +572,8 @@ fprintf(stderr,"%s:%d:color_apply_icc_profile\n\tcmsCreateTransform failed. "
 	in = inbuf = (unsigned char*)malloc(nr_samples);
 	out = outbuf = (unsigned char*)malloc(nr_samples);
 
-	image->comps = (opj_image_comp_t*)
-	 realloc(image->comps, (image->numcomps+2)*sizeof(opj_image_comp_t));
+		new_image = image_create(2, image->comps[0].w, image->comps[0].h, image->comps[0].prec);
+		image->comps = (opj_image_comp_t*)realloc(image->comps, (image->numcomps + 2)*sizeof(opj_image_comp_t));
 
 	if(image->numcomps == 2)
 	 image->comps[3] = image->comps[1];
@@ -529,8 +581,14 @@ fprintf(stderr,"%s:%d:color_apply_icc_profile\n\tcmsCreateTransform failed. "
 	image->comps[1] = image->comps[0];
 	image->comps[2] = image->comps[0];
 
-	image->comps[1].data = (int*)calloc((size_t)max, sizeof(int));
-	image->comps[2].data = (int*)calloc((size_t)max, sizeof(int));
+		image->comps[1].data = new_image->comps[0].data;
+		image->comps[2].data = new_image->comps[1].data;
+
+		new_image->comps[0].data= NULL;
+		new_image->comps[1].data = NULL;
+		
+		opj_image_destroy(new_image);
+		new_image = NULL;
 
 	image->numcomps += 2;
 
@@ -593,7 +651,8 @@ void color_cielab_to_rgb(opj_image_t *image)
 		cmsHTRANSFORM transform;
 		cmsUInt16Number RGB[3];
 		cmsCIELab Lab;
-		
+		opj_image_t* new_image = image_create(3, image->comps[0].w, image->comps[0].h, image->comps[0].prec);
+
 		in = cmsCreateLab4Profile(NULL);
 		out = cmsCreate_sRGBProfile();
 		
@@ -635,12 +694,19 @@ void color_cielab_to_rgb(opj_image_t *image)
 		b = src2 = image->comps[2].data;
 		
 		max = image->comps[0].w * image->comps[0].h;
-		
-		red = dst0 = (int*)malloc(max * sizeof(int));
-		green = dst1 = (int*)malloc(max * sizeof(int));
-		blue = dst2 = (int*)malloc(max * sizeof(int));
-		
-		minL = -(rl * ol)/(pow(2, prec0)-1);
+
+		red = dst0	= new_image->comps[0].data;
+		green = dst1 = new_image->comps[1].data;
+		blue = dst2	 = new_image->comps[2].data;
+
+		new_image->comps[0].data=NULL;
+		new_image->comps[1].data=NULL;
+		new_image->comps[2].data=NULL;
+
+		opj_image_destroy(new_image);
+		new_image = NULL;
+
+		minL = -(rl * ol) / (pow(2, prec0) - 1);
 		maxL = minL + rl;
 		
 		mina = -(ra * oa)/(pow(2, prec1)-1);
@@ -666,10 +732,11 @@ void color_cielab_to_rgb(opj_image_t *image)
 		cmsCloseProfile(in);
 		cmsCloseProfile(out);
 #endif
-		free(src0); image->comps[0].data = dst0;
-		free(src1); image->comps[1].data = dst1;
-		free(src2); image->comps[2].data = dst2;
-		
+		opj_image_all_components_data_free(image);
+		image->comps[0].data = dst0;
+		image->comps[1].data = dst1;
+		image->comps[2].data = dst2;
+
 		image->color_space = OPJ_CLRSPC_SRGB;
 		image->comps[0].prec = 16;
 		image->comps[1].prec = 16;
@@ -721,7 +788,7 @@ void color_cmyk_to_rgb(opj_image_t *image)
 		image->comps[2].data[i] = (int)(255.0F * Y * K); /* B */
 	}
 
-	free(image->comps[3].data); image->comps[3].data = NULL;
+	opj_image_single_component_data_free(image->comps + 3);
 	image->comps[0].prec = 8;
 	image->comps[1].prec = 8;
 	image->comps[2].prec = 8;

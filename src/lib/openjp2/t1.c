@@ -39,18 +39,48 @@
 #include "opj_includes.h"
 #include "t1_luts.h"
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 /** @defgroup T1 T1 - Implementation of the tier-1 coding */
 /*@{*/
 
 /** @name Local static functions */
 /*@{*/
 
+
+
+typedef OPJ_INT16 opj_flag_t;
+
+/**
+Tier-1 coding (coding of code-block coefficients)
+*/
+typedef struct opj_t1 {
+	OPJ_BYTE* compressed_block;
+	OPJ_SIZE_T compressed_block_size;
+	/** MQC component */
+	opj_mqc_t *mqc;
+	/** RAW component */
+	opj_raw_t *raw;
+
+	OPJ_INT32  *data;
+	opj_flag_t *flags;
+	OPJ_UINT32 w;
+	OPJ_UINT32 h;
+	OPJ_UINT32 datasize;
+	OPJ_UINT32 flagssize;
+	OPJ_UINT32 flags_stride;
+	OPJ_UINT32 data_stride;
+	OPJ_BOOL   encoder;
+} opj_t1_t;
+
+
+
 static INLINE OPJ_BYTE opj_t1_getctxno_zc(OPJ_UINT32 f, OPJ_UINT32 orient);
 static OPJ_BYTE opj_t1_getctxno_sc(OPJ_UINT32 f);
 static INLINE OPJ_UINT32 opj_t1_getctxno_mag(OPJ_UINT32 f);
 static OPJ_BYTE opj_t1_getspb(OPJ_UINT32 f);
-static OPJ_INT16 opj_t1_getnmsedec_sig(OPJ_UINT32 x, OPJ_UINT32 bitpos);
-static OPJ_INT16 opj_t1_getnmsedec_ref(OPJ_UINT32 x, OPJ_UINT32 bitpos);
 static void opj_t1_updateflags(opj_flag_t *flagsp, OPJ_UINT32 s, OPJ_UINT32 stride);
 /**
 Encode significant pass
@@ -256,17 +286,6 @@ static void opj_t1_dec_clnpass(
 		OPJ_INT32 orient,
 		OPJ_INT32 cblksty);
 
-static OPJ_FLOAT64 opj_t1_getwmsedec(
-		OPJ_INT32 nmsedec,
-		OPJ_UINT32 compno,
-		OPJ_UINT32 level,
-		OPJ_UINT32 orient,
-		OPJ_INT32 bpno,
-		OPJ_UINT32 qmfbid,
-		OPJ_FLOAT64 stepsize,
-		OPJ_UINT32 numcomps,
-		const OPJ_FLOAT64 * mct_norms,
-		OPJ_UINT32 mct_numcomps);
 
 static void opj_t1_encode_cblk( opj_t1_t *t1,
                                 opj_tcd_cblk_enc_t* cblk,
@@ -299,6 +318,25 @@ static OPJ_BOOL opj_t1_allocate_buffers(   opj_t1_t *t1,
                                     OPJ_UINT32 w,
                                     OPJ_UINT32 h);
 
+
+
+/**
+* Creates a new Tier 1 handle
+* and initializes the look-up tables of the Tier-1 coder/decoder
+* @return a new T1 handle if successful, returns NULL otherwise
+*/
+opj_t1_t* opj_t1_create(OPJ_BOOL isEncoder, OPJ_UINT16 code_block_width, OPJ_UINT16 code_block_height);
+
+/**
+* Destroys a previously created T1 handle
+*
+* @param p_t1 Tier 1 handle to destroy
+*/
+static void opj_t1_destroy(opj_t1_t *p_t1);
+
+
+
+
 /*@}*/
 
 /*@}*/
@@ -323,7 +361,7 @@ static OPJ_BYTE opj_t1_getspb(OPJ_UINT32 f) {
 	return lut_spb[(f & (T1_SIG_PRIM | T1_SGN)) >> 4];
 }
 
-static OPJ_INT16 opj_t1_getnmsedec_sig(OPJ_UINT32 x, OPJ_UINT32 bitpos) {
+OPJ_INT16 opj_t1_getnmsedec_sig(OPJ_UINT32 x, OPJ_UINT32 bitpos) {
 	if (bitpos > 0) {
 		return lut_nmsedec_sig[(x >> (bitpos)) & ((1 << T1_NMSEDEC_BITS) - 1)];
 	}
@@ -331,7 +369,7 @@ static OPJ_INT16 opj_t1_getnmsedec_sig(OPJ_UINT32 x, OPJ_UINT32 bitpos) {
 	return lut_nmsedec_sig0[x & ((1 << T1_NMSEDEC_BITS) - 1)];
 }
 
-static OPJ_INT16 opj_t1_getnmsedec_ref(OPJ_UINT32 x, OPJ_UINT32 bitpos) {
+OPJ_INT16 opj_t1_getnmsedec_ref(OPJ_UINT32 x, OPJ_UINT32 bitpos) {
 	if (bitpos > 0) {
 		return lut_nmsedec_ref[(x >> (bitpos)) & ((1 << T1_NMSEDEC_BITS) - 1)];
 	}
@@ -1130,7 +1168,7 @@ static void opj_t1_dec_clnpass(
 
 
 /** mod fixed_quality */
-static OPJ_FLOAT64 opj_t1_getwmsedec(
+OPJ_FLOAT64 opj_t1_getwmsedec(
 		OPJ_INT32 nmsedec,
 		OPJ_UINT32 compno,
 		OPJ_UINT32 level,
@@ -1210,7 +1248,7 @@ static OPJ_BOOL opj_t1_allocate_buffers(
  * and initializes the look-up tables of the Tier-1 coder/decoder
  * @return a new T1 handle if successful, returns NULL otherwise
 */
-opj_t1_t* opj_t1_create(OPJ_BOOL isEncoder)
+opj_t1_t* opj_t1_create(OPJ_BOOL isEncoder, OPJ_UINT16 code_block_width, OPJ_UINT16 code_block_height)
 {
 	opj_t1_t *l_t1 = 00;
 
@@ -1231,6 +1269,16 @@ opj_t1_t* opj_t1_create(OPJ_BOOL isEncoder)
 		opj_t1_destroy(l_t1);
 		return 00;
 	}
+
+	if (!isEncoder && code_block_width > 0 && code_block_height > 0) {
+		l_t1->compressed_block = (OPJ_BYTE*)opj_malloc((OPJ_SIZE_T)code_block_width * (OPJ_SIZE_T)code_block_height);
+		if (!l_t1->compressed_block) {
+			opj_t1_destroy(l_t1);
+			return 00;
+		}
+		l_t1->compressed_block_size = (OPJ_SIZE_T)(code_block_width * code_block_height);
+
+	}
 	l_t1->encoder = isEncoder;
 
 	return l_t1;
@@ -1242,7 +1290,7 @@ opj_t1_t* opj_t1_create(OPJ_BOOL isEncoder)
  *
  * @param p_t1 Tier 1 handle to destroy
 */
-void opj_t1_destroy(opj_t1_t *p_t1)
+static void opj_t1_destroy(opj_t1_t *p_t1)
 {
 	if (! p_t1) {
 		return;
@@ -1264,17 +1312,23 @@ void opj_t1_destroy(opj_t1_t *p_t1)
 		opj_aligned_free(p_t1->flags);
 		p_t1->flags = 00;
 	}
-
+	if (p_t1->compressed_block)
+		opj_free(p_t1->compressed_block);
 	opj_free(p_t1);
 }
 
-OPJ_BOOL opj_t1_decode_cblks(   opj_t1_t* t1,
-                            opj_tcd_tilecomp_t* tilec,
-                            opj_tccp_t* tccp
-                            )
+OPJ_BOOL opj_t1_decode_cblks(  opj_tcd_tilecomp_t* tilec,
+                            opj_tccp_t* tccp,
+							opj_event_mgr_t * p_manager)
 {
-	OPJ_UINT32 resno, bandno, precno, cblkno;
+	OPJ_UINT32 resno, bandno, precno;
 	OPJ_UINT32 tile_w = (OPJ_UINT32)(tilec->x1 - tilec->x0);
+	OPJ_BOOL rc = OPJ_TRUE;
+	
+	if (!opj_tile_buf_alloc_component_data_decode(tilec->buf)) {
+		opj_event_msg(p_manager, EVT_ERROR, "Not enough memory for tile data\n");
+		return OPJ_FALSE;
+	}
 
 	for (resno = 0; resno < tilec->minimum_num_resolutions; ++resno) {
 		opj_tcd_resolution_t* res = &tilec->resolutions[resno];
@@ -1284,25 +1338,27 @@ OPJ_BOOL opj_t1_decode_cblks(   opj_t1_t* t1,
 
 			for (precno = 0; precno < res->pw * res->ph; ++precno) {
 				opj_tcd_precinct_t* precinct = &band->precincts[precno];
+				OPJ_INT32 cblkno;
 
-				for (cblkno = 0; cblkno < precinct->cw * precinct->ch; ++cblkno) {
+#ifdef _OPENMP
+				#pragma omp parallel default(none) private(cblkno) shared(band, tilec,precinct, tccp,  tile_w, resno, rc)
+				{
+				#pragma omp for
+#endif
+				for (cblkno = 0; cblkno < (OPJ_INT32)(precinct->cw * precinct->ch); ++cblkno) {
+					opj_rect_t cblk_rect;
 					opj_tcd_cblk_dec_t* cblk = &precinct->cblks.dec[cblkno];
 					OPJ_INT32* restrict datap;
 					OPJ_UINT32 cblk_w, cblk_h;
-					OPJ_INT32 x, y;
+					OPJ_INT32 x, y;		/* relative code block offset */
 					OPJ_UINT32 i, j;
+					opj_t1_t* t1 = NULL;
 
-                    if (OPJ_FALSE == opj_t1_decode_cblk(
-                                            t1,
-                                            cblk,
-                                            band->bandno,
-                                            (OPJ_UINT32)tccp->roishift,
-                                            tccp->cblksty)) {
-                            return OPJ_FALSE;
-                    }
-
+					/* get code block offset relative to band*/
 					x = cblk->x0 - band->x0;
 					y = cblk->y0 - band->y0;
+
+					/* add band offset relative to previous resolution */
 					if (band->bandno & 1) {
 						opj_tcd_resolution_t* pres = &tilec->resolutions[resno - 1];
 						x += pres->x1 - pres->x0;
@@ -1312,10 +1368,38 @@ OPJ_BOOL opj_t1_decode_cblks(   opj_t1_t* t1,
 						y += pres->y1 - pres->y0;
 					}
 
-					datap=t1->data;
+					/* check if block overlaps with decode region */
+					opj_rect_init(&cblk_rect, x, y, x + (1<< tccp->cblkw), y + (1<<tccp->cblkh));
+
+					
+					if (tilec->buf && 
+							tilec->buf->resolutions &&
+								tilec->buf->resolutions->size > 0 &&
+									!opj_tile_buf_hit_test(tilec->buf, &cblk_rect))
+																				continue;
+						
+
+					t1 = opj_t1_create(OPJ_FALSE,(OPJ_UINT16)tccp->cblkw, (OPJ_UINT16)tccp->cblkh);
+					if (t1 == 00) {
+						rc = OPJ_FALSE;
+						continue;
+					}
+
+                    if (!opj_t1_decode_cblk(
+                                            t1,
+                                            cblk,
+                                            band->bandno,
+                                            (OPJ_UINT32)tccp->roishift,
+                                            tccp->cblksty)) {
+						opj_t1_destroy(t1);
+						rc = OPJ_FALSE;
+						continue;
+                    }
+
+
+					datap = t1->data;
 					cblk_w = t1->w;
 					cblk_h = t1->h;
-
 					if (tccp->roishift) {
 						OPJ_INT32 thresh = 1 << tccp->roishift;
 						for (j = 0; j < cblk_h; ++j) {
@@ -1330,7 +1414,7 @@ OPJ_BOOL opj_t1_decode_cblks(   opj_t1_t* t1,
 						}
 					}
 					if (tccp->qmfbid == 1) {
-                        OPJ_INT32* restrict tiledp = &tilec->data[(OPJ_UINT32)y * tile_w + (OPJ_UINT32)x];
+                        OPJ_INT32* restrict tiledp = &tilec->buf->data[(OPJ_UINT32)y * tile_w + (OPJ_UINT32)x];
 						for (j = 0; j < cblk_h; ++j) {
 							for (i = 0; i < cblk_w; ++i) {
 								OPJ_INT32 tmp = datap[(j * cblk_w) + i];
@@ -1338,7 +1422,7 @@ OPJ_BOOL opj_t1_decode_cblks(   opj_t1_t* t1,
 							}
 						}
 					} else {		/* if (tccp->qmfbid == 0) */
-                        OPJ_FLOAT32* restrict tiledp = (OPJ_FLOAT32*) &tilec->data[(OPJ_UINT32)y * tile_w + (OPJ_UINT32)x];
+                        OPJ_FLOAT32* restrict tiledp = (OPJ_FLOAT32*) &tilec->buf->data[(OPJ_UINT32)y * tile_w + (OPJ_UINT32)x];
 						for (j = 0; j < cblk_h; ++j) {
                             OPJ_FLOAT32* restrict tiledp2 = tiledp;
 							for (i = 0; i < cblk_w; ++i) {
@@ -1350,11 +1434,15 @@ OPJ_BOOL opj_t1_decode_cblks(   opj_t1_t* t1,
                             tiledp += tile_w;
 						}
 					}
+					 opj_t1_destroy(t1);
 				} /* cblkno */
+#ifdef _OPENMP
+				}
+#endif
 			} /* precno */
 		} /* bandno */
 	} /* resno */
-        return OPJ_TRUE;
+     return rc;
 }
 
 
@@ -1371,6 +1459,8 @@ static OPJ_BOOL opj_t1_decode_cblk(opj_t1_t *t1,
 	OPJ_UINT32 passtype;
 	OPJ_UINT32 segno, passno;
 	OPJ_BYTE type = T1_TYPE_MQ; /* BYPASS mode */
+	OPJ_BYTE* block_buffer = NULL;
+	OPJ_SIZE_T total_seg_len;
 
 	if(!opj_t1_allocate_buffers(
 				t1,
@@ -1379,6 +1469,33 @@ static OPJ_BOOL opj_t1_decode_cblk(opj_t1_t *t1,
 	{
 		return OPJ_FALSE;
 	}
+
+	total_seg_len = opj_min_buf_vec_get_len(&cblk->seg_buffers);
+	if (cblk->real_num_segs && total_seg_len) {
+		/* if there is only one segment, then it is already contiguous, so no need to make a copy*/
+		if (total_seg_len == 1 && cblk->seg_buffers.data[0]) {
+			block_buffer = ((opj_buf_t*)(cblk->seg_buffers.data[0]))->buf;
+		}
+		else {
+			/* block should have been allocated on creation of t1*/
+			if (!t1->compressed_block)
+				return OPJ_FALSE;
+			if (t1->compressed_block_size < total_seg_len) {
+				OPJ_BYTE* new_block = opj_realloc(t1->compressed_block, total_seg_len);
+				if (!new_block)
+					return OPJ_FALSE;
+				t1->compressed_block = new_block;
+				t1->compressed_block_size = total_seg_len;
+			}
+			opj_min_buf_vec_copy_to_contiguous_buffer(&cblk->seg_buffers, t1->compressed_block);
+			block_buffer = t1->compressed_block;
+		}
+	}
+	else {
+		return OPJ_TRUE;
+	}
+
+
 
 	bpno_plus_one = (OPJ_INT32)(roishift + cblk->numbps);
 	passtype = 2;
@@ -1393,14 +1510,10 @@ static OPJ_BOOL opj_t1_decode_cblk(opj_t1_t *t1,
 
 		/* BYPASS mode */
 		type = ((bpno_plus_one <= ((OPJ_INT32) (cblk->numbps)) - 4) && (passtype < 2) && (cblksty & J2K_CCP_CBLKSTY_LAZY)) ? T1_TYPE_RAW : T1_TYPE_MQ;
-		/* FIXME: slviewer gets here with a null pointer. Why? Partially downloaded and/or corrupt textures? */
-		if(seg->data == 00){
-			continue;
-		}
 		if (type == T1_TYPE_RAW) {
-			opj_raw_init_dec(raw, (*seg->data) + seg->dataindex, seg->len);
+			opj_raw_init_dec(raw, block_buffer + seg->dataindex, seg->len);
 		} else {
-            if (OPJ_FALSE == opj_mqc_init_dec(mqc, (*seg->data) + seg->dataindex, seg->len)) {
+            if (OPJ_FALSE == opj_mqc_init_dec(mqc, block_buffer + seg->dataindex, seg->len)) {
                     return OPJ_FALSE;
             }
 		}
@@ -1452,16 +1565,28 @@ static OPJ_BOOL opj_t1_decode_cblk(opj_t1_t *t1,
 
 
 
-OPJ_BOOL opj_t1_encode_cblks(   opj_t1_t *t1,
-                                opj_tcd_tile_t *tile,
+OPJ_BOOL opj_t1_encode_cblks(   opj_tcd_tile_t *tile,
                                 opj_tcp_t *tcp,
                                 const OPJ_FLOAT64 * mct_norms,
                                 OPJ_UINT32 mct_numcomps
                                 )
 {
-	OPJ_UINT32 compno, resno, bandno, precno, cblkno;
-
+	OPJ_BOOL do_opt = OPJ_TRUE;
+	OPJ_UINT32 compno, resno, bandno, precno;
+	OPJ_BOOL rc = OPJ_TRUE;
 	tile->distotile = 0;		/* fixed_quality */
+
+	for (compno = 0; compno < tile->numcomps; ++compno) {
+		opj_tccp_t* tccp = tcp->tccps + compno;
+		if (tccp->cblksty != 0)
+		{
+			do_opt = OPJ_FALSE;
+			break;
+		}
+	}
+
+	if (do_opt)
+		return opj_t1_opt_encode_cblks(tile, tcp, mct_norms, mct_numcomps);
 
 	for (compno = 0; compno < tile->numcomps; ++compno) {
 		opj_tcd_tilecomp_t* tilec = &tile->comps[compno];
@@ -1477,38 +1602,52 @@ OPJ_BOOL opj_t1_encode_cblks(   opj_t1_t *t1,
 
 				for (precno = 0; precno < res->pw * res->ph; ++precno) {
 					opj_tcd_precinct_t *prc = &band->precincts[precno];
-
-					for (cblkno = 0; cblkno < prc->cw * prc->ch; ++cblkno) {
-						opj_tcd_cblk_enc_t* cblk = &prc->cblks.enc[cblkno];
+					 OPJ_INT32 cblkno;
+					 OPJ_INT32 bandOdd = band->bandno & 1;
+					 OPJ_INT32 bandModTwo = band->bandno & 2;
+ 
+#ifdef _OPENMP			
+#pragma omp parallel default(none) private(cblkno) shared(band, bandOdd, bandModTwo, prc, tilec, tccp, mct_norms, mct_numcomps, bandconst,compno, tile, tile_w, resno, rc)
+					 {
+						
+					#pragma omp for
+#endif
+					for (cblkno = 0; cblkno < (OPJ_INT32)(prc->cw * prc->ch); ++cblkno) {
 						OPJ_INT32* restrict tiledp;
+						opj_tcd_cblk_enc_t* cblk = prc->cblks.enc + cblkno;
 						OPJ_UINT32 cblk_w;
 						OPJ_UINT32 cblk_h;
 						OPJ_UINT32 i, j, tileIndex=0, tileLineAdvance;
-
+						opj_t1_t * t1 = 00;
 						OPJ_INT32 x = cblk->x0 - band->x0;
 						OPJ_INT32 y = cblk->y0 - band->y0;
-						if (band->bandno & 1) {
+						if (bandOdd) {
 							opj_tcd_resolution_t *pres = &tilec->resolutions[resno - 1];
 							x += pres->x1 - pres->x0;
 						}
-						if (band->bandno & 2) {
+						if (bandModTwo) {
 							opj_tcd_resolution_t *pres = &tilec->resolutions[resno - 1];
 							y += pres->y1 - pres->y0;
 						}
-
+						t1 = opj_t1_create(OPJ_TRUE,0,0);
+						if (!t1) {
+							rc = OPJ_FALSE;
+							continue;
+						}
 						if(!opj_t1_allocate_buffers(
 									t1,
 									(OPJ_UINT32)(cblk->x1 - cblk->x0),
 									(OPJ_UINT32)(cblk->y1 - cblk->y0)))
 						{
-							return OPJ_FALSE;
+							opj_t1_destroy(t1);
+							rc = OPJ_FALSE;
+							continue;
 						}
-
 						cblk_w = t1->w;
 						cblk_h = t1->h;
 						tileLineAdvance = tile_w - cblk_w;
 
-						tiledp=&tilec->data[(OPJ_UINT32)y * tile_w + (OPJ_UINT32)x];
+						tiledp=&tilec->buf->data[(OPJ_UINT32)y * tile_w + (OPJ_UINT32)x];
 						t1->data = tiledp;
 						t1->data_stride = tile_w;
 						if (tccp->qmfbid == 1) {
@@ -1546,13 +1685,17 @@ OPJ_BOOL opj_t1_encode_cblks(   opj_t1_t *t1,
 								tile,
 								mct_norms,
 								mct_numcomps);
+						opj_t1_destroy(t1);
 
 					} /* cblkno */
+#ifdef _OPENMP
+					 }
+#endif
 				} /* precno */
 			} /* bandno */
 		} /* resno  */
 	} /* compno  */
-	return OPJ_TRUE;
+	return rc;
 }
 
 /** mod fixed_quality */

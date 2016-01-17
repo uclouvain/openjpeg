@@ -33,10 +33,37 @@
 
 #ifdef _WIN32
 #include <windows.h>
-#endif /* _WIN32 */
+#else /* _WIN32 */
+
+#include <errno.h>
+
+#include <stdarg.h>
+#include <stdlib.h>
+#include <sys/stat.h>
+# include <unistd.h>
+# include <sys/mman.h>
+
+#endif
+
+#include <fcntl.h>
 
 #include "opj_includes.h"
 
+
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
+static OPJ_BOOL is_initialized = OPJ_FALSE;
+OPJ_BOOL OPJ_CALLCONV opj_initialize() {
+	if (!is_initialized) {
+#ifdef _OPENMP
+		omp_set_num_threads(OPJ_NUM_CORES);
+#endif
+		is_initialized = OPJ_TRUE;
+	}
+	return OPJ_TRUE;
+}
 
 /* ---------------------------------------------------------------------- */
 /* Functions to set the message handlers */
@@ -129,6 +156,11 @@ static OPJ_BOOL opj_seek_from_file (OPJ_OFF_T p_nb_bytes, FILE * p_user_data)
 }
 
 /* ---------------------------------------------------------------------- */
+
+/* ---------------------------------------------------------------------- */
+
+
+
 #ifdef _WIN32
 #ifndef OPJ_STATIC
 BOOL APIENTRY
@@ -401,6 +433,9 @@ OPJ_BOOL OPJ_CALLCONV opj_decode(   opj_codec_t *p_codec,
                                     opj_stream_t *p_stream,
                                     opj_image_t* p_image)
 {
+	if (!opj_initialize())
+		return OPJ_FALSE;
+
 	if (p_codec && p_stream) {
 		opj_codec_private_t * l_codec = (opj_codec_private_t *) p_codec;
 		opj_stream_private_t * l_stream = (opj_stream_private_t *) p_stream;
@@ -729,6 +764,9 @@ OPJ_BOOL OPJ_CALLCONV opj_start_compress (	opj_codec_t *p_codec,
 
 OPJ_BOOL OPJ_CALLCONV opj_encode(opj_codec_t *p_info, opj_stream_t *p_stream)
 {
+	if (!opj_initialize())
+		return OPJ_FALSE;
+
 	if (p_info && p_stream) {
 		opj_codec_private_t * l_codec = (opj_codec_private_t *) p_info;
 		opj_stream_private_t * l_stream = (opj_stream_private_t *) p_stream;
@@ -917,6 +955,8 @@ void OPJ_CALLCONV opj_destroy_cstr_index(opj_codestream_index_t **p_cstr_index)
 	}
 }
 
+/* ---------------------------------------------------------------------- */
+
 opj_stream_t* OPJ_CALLCONV opj_stream_create_default_file_stream (const char *fname, OPJ_BOOL p_is_read_stream)
 {
     return opj_stream_create_file_stream(fname, OPJ_J2K_STREAM_CHUNK_SIZE, p_is_read_stream);
@@ -958,3 +998,54 @@ opj_stream_t* OPJ_CALLCONV opj_stream_create_file_stream (
 
     return l_stream;
 }
+
+/* ---------------------------------------------------------------------- */
+opj_stream_t* OPJ_CALLCONV opj_stream_create_buffer_stream(OPJ_BYTE *buf,
+																	OPJ_SIZE_T len,
+																	OPJ_BOOL p_is_read_stream) {
+	return opj_create_buffer_stream(buf, len, p_is_read_stream);
+
+}
+
+opj_stream_t* OPJ_CALLCONV opj_stream_create_mapped_file_read_stream(const char *fname)
+{
+	return opj_create_mapped_file_read_stream(fname);
+}
+
+
+/* ---------------------------------------------------------------------- */
+
+void OPJ_CALLCONV opj_image_all_components_data_free(opj_image_t* image) {
+	OPJ_UINT32 i;
+	if (!image || !image->comps)
+		return;
+	for (i = 0; i < image->numcomps; ++i) {
+		opj_image_single_component_data_free(image->comps + i);
+	}
+}
+
+
+OPJ_BOOL OPJ_CALLCONV opj_image_single_component_data_alloc(opj_image_comp_t* comp) {
+	OPJ_INT32* data = NULL;
+	if (!comp)
+		return OPJ_FALSE;
+
+	data = (OPJ_INT32*)opj_aligned_malloc(comp->w * comp->h * sizeof(OPJ_UINT32));
+	if (!data)
+		return OPJ_FALSE;
+	opj_image_single_component_data_free(comp);
+	comp->data = data;
+	return OPJ_TRUE;
+}
+
+void OPJ_CALLCONV opj_image_single_component_data_free(opj_image_comp_t* comp) {
+	if (!comp)
+		return;
+	if (comp->data) {
+		opj_aligned_free(comp->data);
+		comp->data = NULL;
+	}
+}
+
+
+
