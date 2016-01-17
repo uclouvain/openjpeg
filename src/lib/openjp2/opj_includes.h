@@ -172,6 +172,7 @@ static INLINE long opj_lrintf(float f) {
 #	pragma intrinsic(__emul)
 #endif
 
+#include "mem_stream.h"
 #include "opj_inttypes.h"
 #include "opj_clock.h"
 #include "opj_malloc.h"
