@@ -36,21 +36,21 @@
 *
 * \section home Home page
 *
-* The Home Page of the OpenJPEG library can be found at:
-*
-* http://code.google.com/p/openjpeg/
-*
-* More information about the OpenJPEG library is available here:
+* The Home Page of the OpenJPEG project can be found at:
 *
 * http://www.openjpeg.org/
+*
+* The source code repository is available here:
+*
+* http://github.com/uclouvain/openjpeg
 *
 * The OpenJPEG mailing list is located here:
 *
 * http://groups.google.com/group/openjpeg
 *
-* All the source code is online and can be retrieved using svn from here:
+* The test files repository is available here:
 *
-* http://openjpeg.googlecode.com/svn/
+* http://github.com/uclouvain/openjpeg-data
 *
 * \section license License
 * This software is released under the BSD license, anybody can use or modify the library, even for commercial applications.\n

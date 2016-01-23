@@ -1,4 +1,4 @@
-/* $Id: tif_strip.c,v 1.34 2011-04-02 20:54:09 bfriesen Exp $ */
+/* $Id: tif_strip.c,v 1.36 2015-06-07 22:35:40 bfriesen Exp $ */
 
 /*
  * Copyright (c) 1991-1997 Sam Leffler
@@ -107,11 +107,13 @@ TIFFVStripSize64(TIFF* tif, uint32 nrows)
 		}
 		TIFFGetFieldDefaulted(tif,TIFFTAG_YCBCRSUBSAMPLING,ycbcrsubsampling+0,
 		    ycbcrsubsampling+1);
-		if (((ycbcrsubsampling[0]!=1)&&(ycbcrsubsampling[0]!=2)&&(ycbcrsubsampling[0]!=4)) ||
-		    ((ycbcrsubsampling[1]!=1)&&(ycbcrsubsampling[1]!=2)&&(ycbcrsubsampling[1]!=4)))
+		if ((ycbcrsubsampling[0] != 1 && ycbcrsubsampling[0] != 2 && ycbcrsubsampling[0] != 4)
+		    ||(ycbcrsubsampling[1] != 1 && ycbcrsubsampling[1] != 2 && ycbcrsubsampling[1] != 4))
 		{
 			TIFFErrorExt(tif->tif_clientdata,module,
-			    "Invalid YCbCr subsampling");
+				     "Invalid YCbCr subsampling (%dx%d)", 
+				     ycbcrsubsampling[0], 
+				     ycbcrsubsampling[1] );
 			return 0;
 		}
 		samplingblock_samples=ycbcrsubsampling[0]*ycbcrsubsampling[1]+2;
@@ -315,7 +317,14 @@ TIFFScanlineSize64(TIFF* tif)
 		}
 	}
 	else
+        {
 		scanline_size=TIFFhowmany_64(_TIFFMultiply64(tif,td->td_imagewidth,td->td_bitspersample,module),8);
+        }
+        if (scanline_size == 0)
+        {
+                TIFFErrorExt(tif->tif_clientdata,module,"Computed scanline size is zero");
+                return 0;
+        }
 	return(scanline_size);
 }
 tmsize_t
@@ -326,8 +335,7 @@ TIFFScanlineSize(TIFF* tif)
 	tmsize_t n;
 	m=TIFFScanlineSize64(tif);
 	n=(tmsize_t)m;
-	if ((uint64)n!=m)
-	{
+	if ((uint64)n!=m) {
 		TIFFErrorExt(tif->tif_clientdata,module,"Integer arithmetic overflow");
 		n=0;
 	}

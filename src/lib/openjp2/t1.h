@@ -103,13 +103,15 @@ typedef struct opj_t1 {
 	/** RAW component */
 	opj_raw_t *raw;
 
-    OPJ_INT32 *data;
+	OPJ_INT32  *data;
 	opj_flag_t *flags;
 	OPJ_UINT32 w;
 	OPJ_UINT32 h;
 	OPJ_UINT32 datasize;
 	OPJ_UINT32 flagssize;
 	OPJ_UINT32 flags_stride;
+	OPJ_UINT32 data_stride;
+	OPJ_BOOL   encoder;
 } opj_t1_t;
 
 #define MACRO_t1_flags(x,y) t1->flags[((x)*(t1->flags_stride))+(y)]
@@ -124,11 +126,13 @@ Encode the code-blocks of a tile
 @param tile The tile to encode
 @param tcp Tile coding parameters
 @param mct_norms  FIXME DOC
+@param mct_numcomps Number of components used for MCT
 */
 OPJ_BOOL opj_t1_encode_cblks(   opj_t1_t *t1,
                                 opj_tcd_tile_t *tile,
                                 opj_tcp_t *tcp,
-                                const OPJ_FLOAT64 * mct_norms);
+                                const OPJ_FLOAT64 * mct_norms,
+                                OPJ_UINT32 mct_numcomps);
 
 /**
 Decode the code-blocks of a tile
@@ -147,7 +151,7 @@ OPJ_BOOL opj_t1_decode_cblks(   opj_t1_t* t1,
  * and initializes the look-up tables of the Tier-1 coder/decoder
  * @return a new T1 handle if successful, returns NULL otherwise
 */
-opj_t1_t* opj_t1_create(void);
+opj_t1_t* opj_t1_create(OPJ_BOOL isEncoder);
 
 /**
  * Destroys a previously created T1 handle

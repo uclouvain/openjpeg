@@ -1,24 +1,24 @@
 //---------------------------------------------------------------------------------
 //
 //  Little Color Management System
-//  Copyright (c) 1998-2010 Marti Maria Saguer
+//  Copyright (c) 1998-2014 Marti Maria Saguer
 //
-// Permission is hereby granted, free of charge, to any person obtaining 
-// a copy of this software and associated documentation files (the "Software"), 
-// to deal in the Software without restriction, including without limitation 
-// the rights to use, copy, modify, merge, publish, distribute, sublicense, 
-// and/or sell copies of the Software, and to permit persons to whom the Software 
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the "Software"),
+// to deal in the Software without restriction, including without limitation
+// the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the Software
 // is furnished to do so, subject to the following conditions:
 //
-// The above copyright notice and this permission notice shall be included in 
+// The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
 //
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO 
-// THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE 
-// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION 
-// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+// THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 //---------------------------------------------------------------------------------
@@ -47,63 +47,63 @@ const cmsCIExyY* CMSEXPORT cmsD50_xyY(void)
 // Obtains WhitePoint from Temperature
 cmsBool  CMSEXPORT cmsWhitePointFromTemp(cmsCIExyY* WhitePoint, cmsFloat64Number TempK)
 {
-       cmsFloat64Number x, y;
-       cmsFloat64Number T, T2, T3;
-       // cmsFloat64Number M1, M2;
+    cmsFloat64Number x, y;
+    cmsFloat64Number T, T2, T3;
+    // cmsFloat64Number M1, M2;
 
-	   _cmsAssert(WhitePoint != NULL);
+    _cmsAssert(WhitePoint != NULL);
 
-       T = TempK;
-       T2 = T*T;            // Square
-       T3 = T2*T;           // Cube
+    T = TempK;
+    T2 = T*T;            // Square
+    T3 = T2*T;           // Cube
 
-       // For correlated color temperature (T) between 4000K and 7000K:
+    // For correlated color temperature (T) between 4000K and 7000K:
 
-       if (T >= 4000. && T <= 7000.)
-       {
-              x = -4.6070*(1E9/T3) + 2.9678*(1E6/T2) + 0.09911*(1E3/T) + 0.244063;
-       }
-       else
-              // or for correlated color temperature (T) between 7000K and 25000K:
+    if (T >= 4000. && T <= 7000.)
+    {
+        x = -4.6070*(1E9/T3) + 2.9678*(1E6/T2) + 0.09911*(1E3/T) + 0.244063;
+    }
+    else
+        // or for correlated color temperature (T) between 7000K and 25000K:
 
-       if (T > 7000.0 && T <= 25000.0)
-       {
-              x = -2.0064*(1E9/T3) + 1.9018*(1E6/T2) + 0.24748*(1E3/T) + 0.237040;
-       }
-       else {
-              cmsSignalError(0, cmsERROR_RANGE, "cmsWhitePointFromTemp: invalid temp");
-              return FALSE;
-              }
+        if (T > 7000.0 && T <= 25000.0)
+        {
+            x = -2.0064*(1E9/T3) + 1.9018*(1E6/T2) + 0.24748*(1E3/T) + 0.237040;
+        }
+        else {
+            cmsSignalError(0, cmsERROR_RANGE, "cmsWhitePointFromTemp: invalid temp");
+            return FALSE;
+        }
 
-       // Obtain y(x)
+        // Obtain y(x)
 
-       y = -3.000*(x*x) + 2.870*x - 0.275;
+        y = -3.000*(x*x) + 2.870*x - 0.275;
 
-       // wave factors (not used, but here for futures extensions)
+        // wave factors (not used, but here for futures extensions)
 
-       // M1 = (-1.3515 - 1.7703*x + 5.9114 *y)/(0.0241 + 0.2562*x - 0.7341*y);
-       // M2 = (0.0300 - 31.4424*x + 30.0717*y)/(0.0241 + 0.2562*x - 0.7341*y);
+        // M1 = (-1.3515 - 1.7703*x + 5.9114 *y)/(0.0241 + 0.2562*x - 0.7341*y);
+        // M2 = (0.0300 - 31.4424*x + 30.0717*y)/(0.0241 + 0.2562*x - 0.7341*y);
 
-       WhitePoint -> x = x;
-       WhitePoint -> y = y;
-       WhitePoint -> Y = 1.0;
+        WhitePoint -> x = x;
+        WhitePoint -> y = y;
+        WhitePoint -> Y = 1.0;
 
-       return TRUE;
+        return TRUE;
 }
 
 
 
 typedef struct {
 
-    cmsFloat64Number mirek;  // temp (in microreciprocal kelvin) 
-    cmsFloat64Number ut;     // u coord of intersection w/ blackbody locus  
-    cmsFloat64Number vt;     // v coord of intersection w/ blackbody locus 
-    cmsFloat64Number tt;     // slope of ISOTEMPERATURE. line 
+    cmsFloat64Number mirek;  // temp (in microreciprocal kelvin)
+    cmsFloat64Number ut;     // u coord of intersection w/ blackbody locus
+    cmsFloat64Number vt;     // v coord of intersection w/ blackbody locus
+    cmsFloat64Number tt;     // slope of ISOTEMPERATURE. line
 
     } ISOTEMPERATURE;
 
 static ISOTEMPERATURE isotempdata[] = {
-//  {Mirek, Ut,       Vt,      Tt      } 
+//  {Mirek, Ut,       Vt,      Tt      }
     {0,     0.18006,  0.26352,  -0.24341},
     {10,    0.18066,  0.26589,  -0.25479},
     {20,    0.18133,  0.26846,  -0.26876},
@@ -143,50 +143,50 @@ static ISOTEMPERATURE isotempdata[] = {
 // Robertson's method
 cmsBool  CMSEXPORT cmsTempFromWhitePoint(cmsFloat64Number* TempK, const cmsCIExyY* WhitePoint)
 {
-	int j;
-	cmsFloat64Number us,vs;
-	cmsFloat64Number uj,vj,tj,di,dj,mi,mj;
-	cmsFloat64Number xs, ys;
+    cmsUInt32Number j;
+    cmsFloat64Number us,vs;
+    cmsFloat64Number uj,vj,tj,di,dj,mi,mj;
+    cmsFloat64Number xs, ys;
 
-	_cmsAssert(WhitePoint != NULL);
+    _cmsAssert(WhitePoint != NULL);
     _cmsAssert(TempK != NULL);
 
-	di = mi = 0;
-	xs = WhitePoint -> x;
-	ys = WhitePoint -> y;
+    di = mi = 0;
+    xs = WhitePoint -> x;
+    ys = WhitePoint -> y;
 
-	// convert (x,y) to CIE 1960 (u,WhitePoint) 
+    // convert (x,y) to CIE 1960 (u,WhitePoint)
 
-	us = (2*xs) / (-xs + 6*ys + 1.5);
-	vs = (3*ys) / (-xs + 6*ys + 1.5);
+    us = (2*xs) / (-xs + 6*ys + 1.5);
+    vs = (3*ys) / (-xs + 6*ys + 1.5);
 
 
-	for (j=0; j < NISO; j++) {
+    for (j=0; j < NISO; j++) {
 
-		uj = isotempdata[j].ut;
-		vj = isotempdata[j].vt;
-		tj = isotempdata[j].tt;
-		mj = isotempdata[j].mirek;
+        uj = isotempdata[j].ut;
+        vj = isotempdata[j].vt;
+        tj = isotempdata[j].tt;
+        mj = isotempdata[j].mirek;
 
-		dj = ((vs - vj) - tj * (us - uj)) / sqrt(1.0 + tj * tj);
+        dj = ((vs - vj) - tj * (us - uj)) / sqrt(1.0 + tj * tj);
 
-		if ((j != 0) && (di/dj < 0.0)) {
+        if ((j != 0) && (di/dj < 0.0)) {
 
-			// Found a match
-			*TempK = 1000000.0 / (mi + (di / (di - dj)) * (mj - mi));
-			return TRUE;
-		}
+            // Found a match
+            *TempK = 1000000.0 / (mi + (di / (di - dj)) * (mj - mi));
+            return TRUE;
+        }
 
-		di = dj;
-		mi = mj;
-	}
+        di = dj;
+        mi = mj;
+    }
 
-	// Not found
-	return FALSE;
+    // Not found
+    return FALSE;
 }
 
 
-// Compute chromatic adaptation matrix using Chad as cone matrix 
+// Compute chromatic adaptation matrix using Chad as cone matrix
 
 static
 cmsBool ComputeChromaticAdaptation(cmsMAT3* Conversion,
@@ -195,7 +195,7 @@ cmsBool ComputeChromaticAdaptation(cmsMAT3* Conversion,
                                 const cmsMAT3* Chad)
 
 {
-      
+
     cmsMAT3 Chad_Inv;
     cmsVEC3 ConeSourceXYZ, ConeSourceRGB;
     cmsVEC3 ConeDestXYZ, ConeDestRGB;
@@ -226,41 +226,41 @@ cmsBool ComputeChromaticAdaptation(cmsMAT3* Conversion,
     _cmsMAT3per(&Tmp, &Cone, Chad);
     _cmsMAT3per(Conversion, &Chad_Inv, &Tmp);
 
-	return TRUE;
+    return TRUE;
 }
 
 // Returns the final chrmatic adaptation from illuminant FromIll to Illuminant ToIll
 // The cone matrix can be specified in ConeMatrix. If NULL, Bradford is assumed
 cmsBool  _cmsAdaptationMatrix(cmsMAT3* r, const cmsMAT3* ConeMatrix, const cmsCIEXYZ* FromIll, const cmsCIEXYZ* ToIll)
 {
-	cmsMAT3 LamRigg   = {{ // Bradford matrix
-		{{  0.8951,  0.2664, -0.1614 }},
-		{{ -0.7502,  1.7135,  0.0367 }},
-		{{  0.0389, -0.0685,  1.0296 }}
-	}};
+    cmsMAT3 LamRigg   = {{ // Bradford matrix
+        {{  0.8951,  0.2664, -0.1614 }},
+        {{ -0.7502,  1.7135,  0.0367 }},
+        {{  0.0389, -0.0685,  1.0296 }}
+    }};
 
-	if (ConeMatrix == NULL)
-		ConeMatrix = &LamRigg;
+    if (ConeMatrix == NULL)
+        ConeMatrix = &LamRigg;
 
-	return ComputeChromaticAdaptation(r, FromIll, ToIll, ConeMatrix);	
+    return ComputeChromaticAdaptation(r, FromIll, ToIll, ConeMatrix);
 }
 
 // Same as anterior, but assuming D50 destination. White point is given in xyY
 static
 cmsBool _cmsAdaptMatrixToD50(cmsMAT3* r, const cmsCIExyY* SourceWhitePt)
 {
-	cmsCIEXYZ Dn;      
-	cmsMAT3 Bradford;
-	cmsMAT3 Tmp;
+    cmsCIEXYZ Dn;
+    cmsMAT3 Bradford;
+    cmsMAT3 Tmp;
 
-	cmsxyY2XYZ(&Dn, SourceWhitePt);
+    cmsxyY2XYZ(&Dn, SourceWhitePt);
 
-	if (!_cmsAdaptationMatrix(&Bradford, NULL, &Dn, cmsD50_XYZ())) return FALSE;
+    if (!_cmsAdaptationMatrix(&Bradford, NULL, &Dn, cmsD50_XYZ())) return FALSE;
 
-	Tmp = *r;
-	_cmsMAT3per(r, &Bradford, &Tmp);
+    Tmp = *r;
+    _cmsMAT3per(r, &Bradford, &Tmp);
 
-	return TRUE;
+    return TRUE;
 }
 
 // Build a White point, primary chromas transfer matrix from RGB to CIE XYZ
@@ -278,74 +278,74 @@ cmsBool _cmsAdaptMatrixToD50(cmsMAT3* r, const cmsCIExyY* SourceWhitePt)
 //
 cmsBool _cmsBuildRGB2XYZtransferMatrix(cmsMAT3* r, const cmsCIExyY* WhitePt, const cmsCIExyYTRIPLE* Primrs)
 {
-	cmsVEC3 WhitePoint, Coef;
-	cmsMAT3 Result, Primaries;
-	cmsFloat64Number xn, yn;
-	cmsFloat64Number xr, yr;
-	cmsFloat64Number xg, yg;
-	cmsFloat64Number xb, yb;
+    cmsVEC3 WhitePoint, Coef;
+    cmsMAT3 Result, Primaries;
+    cmsFloat64Number xn, yn;
+    cmsFloat64Number xr, yr;
+    cmsFloat64Number xg, yg;
+    cmsFloat64Number xb, yb;
 
-	xn = WhitePt -> x;
-	yn = WhitePt -> y;
-	xr = Primrs -> Red.x;
-	yr = Primrs -> Red.y;
-	xg = Primrs -> Green.x;
-	yg = Primrs -> Green.y;
-	xb = Primrs -> Blue.x;
-	yb = Primrs -> Blue.y;
+    xn = WhitePt -> x;
+    yn = WhitePt -> y;
+    xr = Primrs -> Red.x;
+    yr = Primrs -> Red.y;
+    xg = Primrs -> Green.x;
+    yg = Primrs -> Green.y;
+    xb = Primrs -> Blue.x;
+    yb = Primrs -> Blue.y;
 
-	// Build Primaries matrix
-	_cmsVEC3init(&Primaries.v[0], xr,        xg,         xb);
-	_cmsVEC3init(&Primaries.v[1], yr,        yg,         yb);
-	_cmsVEC3init(&Primaries.v[2], (1-xr-yr), (1-xg-yg),  (1-xb-yb));
-
-
-	// Result = Primaries ^ (-1) inverse matrix
-	if (!_cmsMAT3inverse(&Primaries, &Result))
-		return FALSE;
+    // Build Primaries matrix
+    _cmsVEC3init(&Primaries.v[0], xr,        xg,         xb);
+    _cmsVEC3init(&Primaries.v[1], yr,        yg,         yb);
+    _cmsVEC3init(&Primaries.v[2], (1-xr-yr), (1-xg-yg),  (1-xb-yb));
 
 
-	_cmsVEC3init(&WhitePoint, xn/yn, 1.0, (1.0-xn-yn)/yn);
-
-	// Across inverse primaries ...
-	_cmsMAT3eval(&Coef, &Result, &WhitePoint);
-
-	// Give us the Coefs, then I build transformation matrix
-	_cmsVEC3init(&r -> v[0], Coef.n[VX]*xr,          Coef.n[VY]*xg,          Coef.n[VZ]*xb);
-	_cmsVEC3init(&r -> v[1], Coef.n[VX]*yr,          Coef.n[VY]*yg,          Coef.n[VZ]*yb);
-	_cmsVEC3init(&r -> v[2], Coef.n[VX]*(1.0-xr-yr), Coef.n[VY]*(1.0-xg-yg), Coef.n[VZ]*(1.0-xb-yb));
+    // Result = Primaries ^ (-1) inverse matrix
+    if (!_cmsMAT3inverse(&Primaries, &Result))
+        return FALSE;
 
 
-	return _cmsAdaptMatrixToD50(r, WhitePt);
-	
+    _cmsVEC3init(&WhitePoint, xn/yn, 1.0, (1.0-xn-yn)/yn);
+
+    // Across inverse primaries ...
+    _cmsMAT3eval(&Coef, &Result, &WhitePoint);
+
+    // Give us the Coefs, then I build transformation matrix
+    _cmsVEC3init(&r -> v[0], Coef.n[VX]*xr,          Coef.n[VY]*xg,          Coef.n[VZ]*xb);
+    _cmsVEC3init(&r -> v[1], Coef.n[VX]*yr,          Coef.n[VY]*yg,          Coef.n[VZ]*yb);
+    _cmsVEC3init(&r -> v[2], Coef.n[VX]*(1.0-xr-yr), Coef.n[VY]*(1.0-xg-yg), Coef.n[VZ]*(1.0-xb-yb));
+
+
+    return _cmsAdaptMatrixToD50(r, WhitePt);
+
 }
 
 
 // Adapts a color to a given illuminant. Original color is expected to have
-// a SourceWhitePt white point. 
-cmsBool CMSEXPORT cmsAdaptToIlluminant(cmsCIEXYZ* Result, 
-							 const cmsCIEXYZ* SourceWhitePt, 
-							 const cmsCIEXYZ* Illuminant, 
-							 const cmsCIEXYZ* Value)
+// a SourceWhitePt white point.
+cmsBool CMSEXPORT cmsAdaptToIlluminant(cmsCIEXYZ* Result,
+                                       const cmsCIEXYZ* SourceWhitePt,
+                                       const cmsCIEXYZ* Illuminant,
+                                       const cmsCIEXYZ* Value)
 {
-	cmsMAT3 Bradford;
-	cmsVEC3 In, Out;
+    cmsMAT3 Bradford;
+    cmsVEC3 In, Out;
 
-	_cmsAssert(Result != NULL);
-	_cmsAssert(SourceWhitePt != NULL);
-	_cmsAssert(Illuminant != NULL);
-	_cmsAssert(Value != NULL);
+    _cmsAssert(Result != NULL);
+    _cmsAssert(SourceWhitePt != NULL);
+    _cmsAssert(Illuminant != NULL);
+    _cmsAssert(Value != NULL);
 
-	if (!_cmsAdaptationMatrix(&Bradford, NULL, SourceWhitePt, Illuminant)) return FALSE;
+    if (!_cmsAdaptationMatrix(&Bradford, NULL, SourceWhitePt, Illuminant)) return FALSE;
 
-	_cmsVEC3init(&In, Value -> X, Value -> Y, Value -> Z);
-	_cmsMAT3eval(&Out, &Bradford, &In);
+    _cmsVEC3init(&In, Value -> X, Value -> Y, Value -> Z);
+    _cmsMAT3eval(&Out, &Bradford, &In);
 
-	Result -> X = Out.n[0];
-	Result -> Y = Out.n[1];
-	Result -> Z = Out.n[2];
+    Result -> X = Out.n[0];
+    Result -> Y = Out.n[1];
+    Result -> Z = Out.n[2];
 
-	return TRUE;
+    return TRUE;
 }
 
 

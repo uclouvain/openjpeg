@@ -17,7 +17,7 @@
 #
 
 macro(OPJ_TEST_LARGE_FILES VARIABLE)
-    if("${VARIABLE}" MATCHES "^${VARIABLE}$")
+    if(NOT DEFINED ${VARIABLE})
 
         # On most platforms it is probably overkill to first test the flags for 64-bit off_t,
         # and then separately fseeko. However, in the future we might have 128-bit filesystems

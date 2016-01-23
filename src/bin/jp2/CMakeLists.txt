@@ -3,10 +3,23 @@
 # First thing define the common source:
 set(common_SRCS
   convert.c
+  convert.h
+  convertbmp.c
   index.c
+  index.h
   ${OPENJPEG_SOURCE_DIR}/src/bin/common/color.c
+  ${OPENJPEG_SOURCE_DIR}/src/bin/common/color.h
   ${OPENJPEG_SOURCE_DIR}/src/bin/common/opj_getopt.c
+  ${OPENJPEG_SOURCE_DIR}/src/bin/common/opj_getopt.h
+  ${OPENJPEG_SOURCE_DIR}/src/bin/common/opj_string.h
   )
+  
+if(OPJ_HAVE_LIBTIFF)
+	list(APPEND common_SRCS converttif.c)
+endif()
+if(OPJ_HAVE_LIBPNG)
+	list(APPEND common_SRCS convertpng.c)
+endif()
 
 # Headers file are located here:
 include_directories(
@@ -50,6 +63,12 @@ foreach(exe opj_decompress opj_compress opj_dump)
     EXPORT OpenJPEGTargets
     DESTINATION ${OPENJPEG_INSTALL_BIN_DIR} COMPONENT Applications
   )
+  if(OPJ_USE_DSYMUTIL)
+    add_custom_command(TARGET ${exe} POST_BUILD 
+    COMMAND "dsymutil" "$<TARGET_FILE:${exe}>"
+    COMMENT "dsymutil $<TARGET_FILE:${exe}>"
+    DEPENDS ${exe})
+  endif()
 endforeach()
 
 if(BUILD_DOC)

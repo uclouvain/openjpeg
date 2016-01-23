@@ -1,4 +1,4 @@
-/* $Id: tif_tile.c,v 1.22 2010-07-01 15:33:28 dron Exp $ */
+/* $Id: tif_tile.c,v 1.24 2015-06-07 22:35:40 bfriesen Exp $ */
 
 /*
  * Copyright (c) 1991-1997 Sam Leffler
@@ -143,17 +143,40 @@ TIFFNumberOfTiles(TIFF* tif)
 uint64
 TIFFTileRowSize64(TIFF* tif)
 {
+        static const char module[] = "TIFFTileRowSize64";
 	TIFFDirectory *td = &tif->tif_dir;
 	uint64 rowsize;
+	uint64 tilerowsize;
 
-	if (td->td_tilelength == 0 || td->td_tilewidth == 0)
+	if (td->td_tilelength == 0)
+        {
+                TIFFErrorExt(tif->tif_clientdata,module,"Tile length is zero");
+                return 0;
+        }
+        if (td->td_tilewidth == 0)
+        {
+                TIFFErrorExt(tif->tif_clientdata,module,"Tile width is zero");
 		return (0);
+        }
 	rowsize = _TIFFMultiply64(tif, td->td_bitspersample, td->td_tilewidth,
 	    "TIFFTileRowSize");
 	if (td->td_planarconfig == PLANARCONFIG_CONTIG)
+        {
+                if (td->td_samplesperpixel == 0)
+                {
+                        TIFFErrorExt(tif->tif_clientdata,module,"Samples per pixel is zero");
+                        return 0;
+                }
 		rowsize = _TIFFMultiply64(tif, rowsize, td->td_samplesperpixel,
 		    "TIFFTileRowSize");
-	return (TIFFhowmany8_64(rowsize));
+        }
+        tilerowsize=TIFFhowmany8_64(rowsize);
+        if (tilerowsize == 0)
+        {
+                TIFFErrorExt(tif->tif_clientdata,module,"Computed tile row size is zero");
+                return 0;
+        }
+	return (tilerowsize);
 }
 tmsize_t
 TIFFTileRowSize(TIFF* tif)
@@ -203,12 +226,13 @@ TIFFVTileSize64(TIFF* tif, uint32 nrows)
 		uint64 samplingrow_size;
 		TIFFGetFieldDefaulted(tif,TIFFTAG_YCBCRSUBSAMPLING,ycbcrsubsampling+0,
 		    ycbcrsubsampling+1);
-		assert((ycbcrsubsampling[0]==1)||(ycbcrsubsampling[0]==2)||(ycbcrsubsampling[0]==4));
-		assert((ycbcrsubsampling[1]==1)||(ycbcrsubsampling[1]==2)||(ycbcrsubsampling[1]==4));
-		if (ycbcrsubsampling[0]*ycbcrsubsampling[1]==0)
+		if ((ycbcrsubsampling[0] != 1 && ycbcrsubsampling[0] != 2 && ycbcrsubsampling[0] != 4)
+		    ||(ycbcrsubsampling[1] != 1 && ycbcrsubsampling[1] != 2 && ycbcrsubsampling[1] != 4))
 		{
 			TIFFErrorExt(tif->tif_clientdata,module,
-			    "Invalid YCbCr subsampling");
+				     "Invalid YCbCr subsampling (%dx%d)", 
+				     ycbcrsubsampling[0], 
+				     ycbcrsubsampling[1] );
 			return 0;
 		}
 		samplingblock_samples=ycbcrsubsampling[0]*ycbcrsubsampling[1]+2;

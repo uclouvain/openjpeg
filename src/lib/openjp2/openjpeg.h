@@ -78,29 +78,33 @@ Most compilers implement their own version of this keyword ...
 
 #if defined(OPJ_STATIC) || !defined(_WIN32)
 /* http://gcc.gnu.org/wiki/Visibility */
-#if __GNUC__ >= 4
-#define OPJ_API    __attribute__ ((visibility ("default")))
-#define OPJ_LOCAL  __attribute__ ((visibility ("hidden")))
+#	if __GNUC__ >= 4
+#		if defined(OPJ_STATIC) /* static library uses "hidden" */
+#			define OPJ_API    __attribute__ ((visibility ("hidden")))
+#		else
+#			define OPJ_API    __attribute__ ((visibility ("default")))
+#		endif
+#		define OPJ_LOCAL  __attribute__ ((visibility ("hidden")))
+#	else
+#		define OPJ_API
+#		define OPJ_LOCAL
+#	endif
+#	define OPJ_CALLCONV
 #else
-#define OPJ_API
-#define OPJ_LOCAL
-#endif
-#define OPJ_CALLCONV
-#else
-#define OPJ_CALLCONV __stdcall
+#	define OPJ_CALLCONV __stdcall
 /*
 The following ifdef block is the standard way of creating macros which make exporting 
 from a DLL simpler. All files within this DLL are compiled with the OPJ_EXPORTS
 symbol defined on the command line. this symbol should not be defined on any project
 that uses this DLL. This way any other project whose source files include this file see 
-OPJ_API functions as being imported from a DLL, wheras this DLL sees symbols
+OPJ_API functions as being imported from a DLL, whereas this DLL sees symbols
 defined with this macro as being exported.
 */
-#if defined(OPJ_EXPORTS) || defined(DLL_EXPORT)
-#define OPJ_API __declspec(dllexport)
-#else
-#define OPJ_API __declspec(dllimport)
-#endif /* OPJ_EXPORTS */
+#	if defined(OPJ_EXPORTS) || defined(DLL_EXPORT)
+#		define OPJ_API __declspec(dllexport)
+#	else
+#		define OPJ_API __declspec(dllimport)
+#	endif /* OPJ_EXPORTS */
 #endif /* !OPJ_STATIC || !_WIN32 */
 
 typedef int OPJ_BOOL;
@@ -846,7 +850,7 @@ typedef struct opj_codestream_info {
 } opj_codestream_info_t;
 
 /* <----------------------------------------------------------- */
-/* new output managment of the codestream information and index */
+/* new output management of the codestream information and index */
 
 /**
  * Tile-component coding parameters information
@@ -1343,7 +1347,7 @@ OPJ_API OPJ_BOOL OPJ_CALLCONV opj_write_tile (	opj_codec_t *p_codec,
 												opj_stream_t *p_stream );
 
 /**
- * Reads a tile header. This function is compulsory and allows one to know the size of the tile thta will be decoded.
+ * Reads a tile header. This function is compulsory and allows one to know the size of the tile that will be decoded.
  * The user may need to refer to the image got by opj_read_header to understand the size being taken by the tile.
  *
  * @param	p_codec			the jpeg2000 codec.

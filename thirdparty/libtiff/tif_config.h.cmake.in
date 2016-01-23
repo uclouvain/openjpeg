@@ -380,6 +380,11 @@
 /* Define to empty if `const' does not conform to ANSI C. */
 #cmakedefine const
 
+/* Visual Studio 2015 / VC 14 / MSVC 19.00 finally has snprintf() */
+#if defined(_MSC_VER) && _MSC_VER < 1900
+#define snprintf _snprintf
+#endif
+
 /* Define to `__inline__' or `__inline' if that's what the C compiler
    calls it, or to nothing if 'inline' is not supported under any name.  */
 #ifndef __cplusplus

@@ -64,7 +64,7 @@ void help_display()
   fprintf(stdout,"----------\n");
   fprintf(stdout,"The metadata includes the jp2 image and tile headers of the first frame.\n");
   fprintf(stdout,"\n");
-  fprintf(stdout,"Metadata values are shown in 'raw' form (e.g., hexidecimal) as stored in the\n");
+  fprintf(stdout,"Metadata values are shown in 'raw' form (e.g., hexadecimal) as stored in the\n");
   fprintf(stdout,"file, and, if apt, in a 'derived' form that is more quickly grasped.\n");
   fprintf(stdout,"\n");
   fprintf(stdout,"Notes explaining the XML are embedded as terse comments.  These include\n");

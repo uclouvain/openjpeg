@@ -118,29 +118,65 @@
 	#endif
 #endif
 
+
+
 /* MSVC before 2013 and Borland C do not have lrintf */
-#if defined(_MSC_VER) && (_MSC_VER < 1800) || defined(__BORLANDC__)
-static INLINE long lrintf(float f){
+#if defined(_MSC_VER)
+#include <intrin.h>
+static INLINE long opj_lrintf(float f){
 #ifdef _M_X64
-    return (long)((f>0.0f) ? (f + 0.5f):(f -0.5f));
-#else
+	return _mm_cvt_ss2si(_mm_load_ss(&f));
+
+	/* commented out line breaks many tests */
+  /* return (long)((f>0.0f) ? (f + 0.5f):(f -0.5f)); */
+#elif defined(_M_IX86)
     int i;
- 
-    _asm{
+     _asm{
         fld f
         fistp i
     };
  
     return i;
+#else 
+	return (long)((f>0.0f) ? (f + 0.5f) : (f - 0.5f));
 #endif
 }
+#elif defined(__BORLANDC__)
+static INLINE long opj_lrintf(float f) {
+#ifdef _M_X64
+     return (long)((f>0.0f) ? (f + 0.5f):(f -0.5f));
+#else
+	int i;
+
+	_asm {
+		fld f
+			fistp i
+	};
+
+	return i;
+#endif
+}
+#else
+static INLINE long opj_lrintf(float f) {
+	return lrintf(f);
+}
+#endif
+
+#if defined(_MSC_VER) && (_MSC_VER < 1400)
+	#define vsnprintf _vsnprintf
+#endif
+
+/* MSVC x86 is really bad at doing int64 = int32 * int32 on its own. Use intrinsic. */
+#if defined(_MSC_VER) && (_MSC_VER >= 1400) && !defined(__INTEL_COMPILER) && defined(_M_IX86)
+#	include <intrin.h>
+#	pragma intrinsic(__emul)
 #endif
 
 #include "opj_inttypes.h"
 #include "opj_clock.h"
 #include "opj_malloc.h"
-#include "function_list.h"
 #include "event.h"
+#include "function_list.h"
 #include "bio.h"
 #include "cio.h"
 

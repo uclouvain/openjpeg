@@ -32,7 +32,7 @@
 get_filename_component(OUTFILENAME_NAME ${OUTFILENAME} NAME)
 string(FIND ${OUTFILENAME_NAME} "." SHORTEST_EXT_POS REVERSE)
 string(SUBSTRING ${OUTFILENAME_NAME} 0 ${SHORTEST_EXT_POS} OUTFILENAME_NAME_WE)
-file(GLOB globfiles "Temporary/${OUTFILENAME_NAME_WE}*.pgx" "Temporary/${OUTFILENAME_NAME_WE}*.png")
+file(GLOB globfiles "Temporary/${OUTFILENAME_NAME_WE}*.pgx" "Temporary/${OUTFILENAME_NAME_WE}*.png" "Temporary/${OUTFILENAME_NAME_WE}*.tif")
 if(NOT globfiles)
   message(SEND_ERROR "Could not find output PGX files: ${OUTFILENAME_NAME_WE}")
 endif()
@@ -41,22 +41,12 @@ endif()
 file(READ ${REFFILE} variable)
 
 foreach(pgxfullpath ${globfiles})
+  file(MD5 ${pgxfullpath} output)
   get_filename_component(pgxfile ${pgxfullpath} NAME)
-  execute_process(
-    COMMAND ${CMAKE_COMMAND} -E md5sum ${pgxfile}
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/Temporary
-    RESULT_VARIABLE res
-    OUTPUT_VARIABLE output
-    ERROR_VARIABLE  error_output
-    OUTPUT_STRIP_TRAILING_WHITESPACE # important
-  )
-  
-  # Pass the output back to ctest
-  if(res)
-    message(SEND_ERROR "md5 could not be computed, it failed with value ${res}. Output was: ${error_output}")
-  endif()
   
   string(REGEX MATCH "[0-9a-f]+  ${pgxfile}" output_var "${variable}")
+
+  set(output "${output}  ${pgxfile}")
   
   if("${output_var}" STREQUAL "${output}")
     message(STATUS "equal: [${output_var}] vs [${output}]")

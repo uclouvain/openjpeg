@@ -10,35 +10,67 @@ include_directories(
 # Defines the source code for the library
 set(OPENJPEG_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/bio.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/bio.h
   ${CMAKE_CURRENT_SOURCE_DIR}/cio.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/cio.h
   ${CMAKE_CURRENT_SOURCE_DIR}/dwt.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/dwt.h
   ${CMAKE_CURRENT_SOURCE_DIR}/event.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/event.h
   ${CMAKE_CURRENT_SOURCE_DIR}/image.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/image.h
   ${CMAKE_CURRENT_SOURCE_DIR}/invert.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/invert.h
   ${CMAKE_CURRENT_SOURCE_DIR}/j2k.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/j2k.h
   ${CMAKE_CURRENT_SOURCE_DIR}/jp2.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/jp2.h
   ${CMAKE_CURRENT_SOURCE_DIR}/mct.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/mct.h
   ${CMAKE_CURRENT_SOURCE_DIR}/mqc.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/mqc.h
   ${CMAKE_CURRENT_SOURCE_DIR}/openjpeg.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/openjpeg.h
   ${CMAKE_CURRENT_SOURCE_DIR}/opj_clock.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/opj_clock.h
   ${CMAKE_CURRENT_SOURCE_DIR}/pi.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/pi.h
   ${CMAKE_CURRENT_SOURCE_DIR}/raw.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/raw.h
   ${CMAKE_CURRENT_SOURCE_DIR}/t1.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/t1.h
   ${CMAKE_CURRENT_SOURCE_DIR}/t2.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/t2.h
   ${CMAKE_CURRENT_SOURCE_DIR}/tcd.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/tcd.h
   ${CMAKE_CURRENT_SOURCE_DIR}/tgt.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/tgt.h
   ${CMAKE_CURRENT_SOURCE_DIR}/function_list.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/function_list.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/opj_codec.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/opj_includes.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/opj_intmath.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/opj_malloc.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/opj_malloc.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/opj_stdint.h
 )
 if(BUILD_JPIP)
   add_definitions(-DUSE_JPIP)
   set(OPENJPEG_SRCS
     ${OPENJPEG_SRCS}
     ${CMAKE_CURRENT_SOURCE_DIR}/cidx_manager.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/cidx_manager.h
     ${CMAKE_CURRENT_SOURCE_DIR}/phix_manager.c
     ${CMAKE_CURRENT_SOURCE_DIR}/ppix_manager.c
     ${CMAKE_CURRENT_SOURCE_DIR}/thix_manager.c
     ${CMAKE_CURRENT_SOURCE_DIR}/tpix_manager.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/indexbox_manager.h
   )
+endif()
+
+option(OPJ_DISABLE_TPSOT_FIX "Disable TPsot==TNsot fix. See https://github.com/uclouvain/openjpeg/issues/254." OFF)
+if(OPJ_DISABLE_TPSOT_FIX)
+  add_definitions(-DOPJ_DISABLE_TPSOT_FIX)
 endif()
 
 # Build the library
@@ -54,6 +86,9 @@ if(UNIX)
   target_link_libraries(${OPENJPEG_LIBRARY_NAME} m)
 endif()
 set_target_properties(${OPENJPEG_LIBRARY_NAME} PROPERTIES ${OPENJPEG_LIBRARY_PROPERTIES})
+if(${CMAKE_VERSION} VERSION_GREATER "2.8.11")
+  target_compile_options(${OPENJPEG_LIBRARY_NAME} PRIVATE ${OPENJPEG_LIBRARY_COMPILE_OPTIONS})
+endif()
 
 # Install library
 install(TARGETS ${OPENJPEG_LIBRARY_NAME}
@@ -97,4 +132,13 @@ if(OPENJPEG_CPPCHECK)
     add_custom_command(TARGET ${OPENJPEG_LIBRARY_NAME}
       COMMAND ${CPPCHECK_EXECUTABLE} -DWIN32 ${f})
   endforeach()
+endif()
+
+if(OPJ_USE_DSYMUTIL)
+  if(BUILD_SHARED_LIBS)
+    add_custom_command(TARGET ${OPENJPEG_LIBRARY_NAME} POST_BUILD 
+    COMMAND "dsymutil" "$<TARGET_SONAME_FILE:${OPENJPEG_LIBRARY_NAME}>"
+    COMMENT "dsymutil $<TARGET_SONAME_FILE:${OPENJPEG_LIBRARY_NAME}>"
+    DEPENDS ${OPENJPEG_LIBRARY_NAME})
+  endif()
 endif()

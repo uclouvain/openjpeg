@@ -120,14 +120,14 @@ int main(int argc, char **argv)
   int pos = 0;
   test_cmp_parameters inParam;
   FILE *file_test=NULL, *file_base=NULL;
-  unsigned char equal = 1;
+  unsigned char equal = 0U; /* returns error by default */
 
   /* Get parameters from command line*/
   if (parse_cmdline_cmp(argc, argv, &inParam))
-    {
+  {
     compare_raw_files_help_display();
     goto cleanup;
-    }
+  }
 
   file_test = fopen(inParam.test_filename, "rb");
   if (!file_test) {
@@ -142,8 +142,9 @@ int main(int argc, char **argv)
   }
 
   /* Read simultaneously the two files*/
+  equal = 1U;
   while (equal)
-    {
+  {
     unsigned char value_test = 0;
     unsigned char eof_test = 0;
     unsigned char value_base = 0;
@@ -165,19 +166,19 @@ int main(int argc, char **argv)
 
     /* End of file reached only by one file?*/
     if (eof_test || eof_base)
-      {
+    {
       fprintf(stdout,"Files have different sizes.\n");
       equal = 0;
-      }
+    }
 
     /* Binary values are equal?*/
     if (value_test != value_base)
-      {
+    {
       fprintf(stdout,"Binary values read in the file are different %x vs %x at position %d.\n", value_test, value_base, pos);
       equal = 0;
-      }
-    pos++;
     }
+    pos++;
+  }
 
   if(equal) fprintf(stdout,"---- TEST SUCCEED: Files are equal ----\n");
 cleanup:

@@ -17,6 +17,24 @@
 #cmakedefine _FILE_OFFSET_BITS @_FILE_OFFSET_BITS@
 #cmakedefine OPJ_HAVE_FSEEKO @OPJ_HAVE_FSEEKO@
 
+/* find whether or not have <malloc.h> */
+#cmakedefine OPJ_HAVE_MALLOC_H
+/* check if function `aligned_alloc` exists */
+#cmakedefine OPJ_HAVE_ALIGNED_ALLOC
+/* check if function `_aligned_malloc` exists */
+#cmakedefine OPJ_HAVE__ALIGNED_MALLOC
+/* check if function `memalign` exists */
+#cmakedefine OPJ_HAVE_MEMALIGN
+/* check if function `posix_memalign` exists */
+#cmakedefine OPJ_HAVE_POSIX_MEMALIGN
+
+#if !defined(_POSIX_C_SOURCE)
+#if defined(OPJ_HAVE_FSEEKO) || defined(OPJ_HAVE_POSIX_MEMALIGN)
+/* Get declarations of fseeko, ftello, posix_memalign. */
+#define _POSIX_C_SOURCE 200112L
+#endif
+#endif
+
 /* Byte order.  */
 /* All compilers that support Mac OS X define either __BIG_ENDIAN__ or
 __LITTLE_ENDIAN__ to match the endianness of the architecture being

@@ -103,7 +103,7 @@ OPJ_BOOL opj_matrix_inversion_f(OPJ_FLOAT32 * pSrcMatrix,
    Local functions
 ==========================================================
 */
-OPJ_BOOL opj_lupDecompose(OPJ_FLOAT32 * matrix,OPJ_UINT32 * permutations, 
+static OPJ_BOOL opj_lupDecompose(OPJ_FLOAT32 * matrix,OPJ_UINT32 * permutations,
                           OPJ_FLOAT32 * p_swap_area,
                           OPJ_UINT32 nb_compo) 
 {
@@ -125,7 +125,7 @@ OPJ_BOOL opj_lupDecompose(OPJ_FLOAT32 * matrix,OPJ_UINT32 * permutations,
 	{
     	*tmpPermutations++ = i;
 	}
-	/* now make a pivot with colum switch */
+	/* now make a pivot with column switch */
 	tmpPermutations = permutations;
 	for (k = 0; k < lLastColum; ++k) {
 		p = 0.0;
@@ -204,7 +204,7 @@ OPJ_BOOL opj_lupDecompose(OPJ_FLOAT32 * matrix,OPJ_UINT32 * permutations,
     return OPJ_TRUE;
 }
    		
-void opj_lupSolve (OPJ_FLOAT32 * pResult, 
+static void opj_lupSolve (OPJ_FLOAT32 * pResult,
                    OPJ_FLOAT32 * pMatrix, 
                    OPJ_FLOAT32 * pVector, 
                    OPJ_UINT32* pPermutations, 
@@ -266,7 +266,7 @@ void opj_lupSolve (OPJ_FLOAT32 * pResult,
 }
     
 
-void opj_lupInvert (OPJ_FLOAT32 * pSrcMatrix,
+static void opj_lupInvert (OPJ_FLOAT32 * pSrcMatrix,
                     OPJ_FLOAT32 * pDestMatrix,
                     OPJ_UINT32 nb_compo,
                     OPJ_UINT32 * pPermutations,

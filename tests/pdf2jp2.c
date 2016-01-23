@@ -37,6 +37,11 @@
  * only work on linux since I need memmem function
  */
 
+/*
+ * Add support for other signatures:
+ * 
+ * obj<</Subtype/Image/Length 110494/Filter/JPXDecode/BitsPerComponent 8/ColorSpace/DeviceRGB/Width 712/Height 1052>>stream
+ */
 #define _GNU_SOURCE
 #include <string.h>
 #include <stdio.h>
@@ -98,7 +103,17 @@ int main(int argc, char *argv[])
     assert( r );
     /*fprintf( stderr, "DEBUG: %s", r );*/
     s = sscanf(r, "JPXDecode]/Length  %d/Width %*d/BitsPerComponent %*d/Height %*d", &len);
-    assert( s == 1 );
+    if( s == 0 )
+      { // try again harder
+      const int ret = fseek(f, offets[i] - 40, SEEK_SET); // 40 is magic number
+      assert( ret == 0 );
+      r = fgets(buffer, sizeof(buffer), f);
+      assert( r );
+      const char needle2[] = "/Length";
+      char * s2 = strstr(buffer, needle2);
+      s = sscanf(s2, "/Length  %d/", &len);
+      }
+    if( s == 1 )
       {
       FILE *jp2;
       int j;

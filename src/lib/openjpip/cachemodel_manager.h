@@ -80,7 +80,7 @@ void print_cachemodel( cachemodel_param_t cachemodel);
 /**
  * search a cache model of a target
  *
- * @param[in] target         refering target
+ * @param[in] target         referring target
  * @param[in] cachemodellist cache model list
  * @return                   found cache model pointer
  */

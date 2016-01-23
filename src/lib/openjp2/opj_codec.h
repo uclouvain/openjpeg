@@ -142,10 +142,10 @@ typedef struct opj_codec_private
 
             void (* opj_destroy) (void * p_codec);
 
-            void (* opj_setup_encoder) ( void * p_codec,
-                                         opj_cparameters_t * p_param,
-                                         struct opj_image * p_image,
-                                         struct opj_event_mgr * p_manager);
+            OPJ_BOOL (* opj_setup_encoder) ( void * p_codec,
+                                             opj_cparameters_t * p_param,
+                                             struct opj_image * p_image,
+                                             struct opj_event_mgr * p_manager);
         } m_compression;
     } m_codec_data;
     /** FIXME DOC*/

@@ -82,7 +82,7 @@ typedef struct opj_pi_comp {
 Packet iterator 
 */
 typedef struct opj_pi_iterator {
-/** precise if the packet has been already used (usefull for progression order change) */
+/** precise if the packet has been already used (useful for progression order change) */
 	short int *include;		
 /** layer step used to localize the packet in the include vector */
 	int step_l;		

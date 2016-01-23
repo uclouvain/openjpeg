@@ -1,4 +1,4 @@
-/* $Id: tiffio.h,v 1.89 2012-02-18 16:20:26 bfriesen Exp $ */
+/* $Id: tiffio.h,v 1.91 2012-07-29 15:45:29 tgl Exp $ */
 
 /*
  * Copyright (c) 1988-1997 Sam Leffler
@@ -319,6 +319,13 @@ extern const TIFFField* TIFFFindField(TIFF *, uint32, TIFFDataType);
 extern const TIFFField* TIFFFieldWithTag(TIFF*, uint32);
 extern const TIFFField* TIFFFieldWithName(TIFF*, const char *);
 
+extern uint32 TIFFFieldTag(const TIFFField*);
+extern const char* TIFFFieldName(const TIFFField*);
+extern TIFFDataType TIFFFieldDataType(const TIFFField*);
+extern int TIFFFieldPassCount(const TIFFField*);
+extern int TIFFFieldReadCount(const TIFFField*);
+extern int TIFFFieldWriteCount(const TIFFField*);
+
 typedef int (*TIFFVSetMethod)(TIFF*, uint32, va_list);
 typedef int (*TIFFVGetMethod)(TIFF*, uint32, va_list);
 typedef void (*TIFFPrintMethod)(TIFF*, FILE*, long);
@@ -392,6 +399,8 @@ extern int TIFFSetupStrips(TIFF *);
 extern int TIFFWriteCheck(TIFF*, int, const char *);
 extern void TIFFFreeDirectory(TIFF*);
 extern int TIFFCreateDirectory(TIFF*);
+extern int TIFFCreateCustomDirectory(TIFF*,const TIFFFieldArray*);
+extern int TIFFCreateEXIFDirectory(TIFF*);
 extern int TIFFLastDirectory(TIFF*);
 extern int TIFFSetDirectory(TIFF*, uint16);
 extern int TIFFSetSubDirectory(TIFF*, uint64);
@@ -400,6 +409,7 @@ extern int TIFFSetField(TIFF*, uint32, ...);
 extern int TIFFVSetField(TIFF*, uint32, va_list);
 extern int TIFFUnsetField(TIFF*, uint32);
 extern int TIFFWriteDirectory(TIFF *);
+extern int TIFFWriteCustomDirectory(TIFF *, uint64 *);
 extern int TIFFCheckpointDirectory(TIFF *);
 extern int TIFFRewriteDirectory(TIFF *);
 

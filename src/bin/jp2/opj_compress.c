@@ -57,6 +57,9 @@
 #define strncasecmp _strnicmp
 #else
 #include <strings.h>
+#include <sys/time.h>
+#include <sys/resource.h>
+#include <sys/times.h>
 #endif /* _WIN32 */
 
 #include "opj_apps_config.h"
@@ -66,6 +69,7 @@
 #include "index.h"
 
 #include "format_defs.h"
+#include "opj_string.h"
 
 typedef struct dircnt{
     /** Buffer for holding images read from Directory*/
@@ -388,6 +392,7 @@ static unsigned int get_num_images(char *imgdirpath){
             continue;
         num_images++;
     }
+    closedir(dir);
     return num_images;
 }
 
@@ -413,6 +418,7 @@ static int load_images(dircnt_t *dirptr, char *imgdirpath){
         strcpy(dirptr->filename[i],content->d_name);
         i++;
     }
+	closedir(dir);
     return 0;
 }
 
@@ -451,8 +457,10 @@ static char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_c
     if (parameters->decod_format == -1)
         return 1;
     sprintf(infilename,"%s/%s",img_fol->imgdirpath,image_filename);
-    strncpy(parameters->infile, infilename, sizeof(infilename));
-
+    if (opj_strcpy_s(parameters->infile, sizeof(parameters->infile), infilename) != 0) {
+        return 1;
+    }
+	
     /*Set output file*/
     strcpy(temp_ofname,get_file_name(image_filename));
     while((temp_p = strtok(NULL,".")) != NULL){
@@ -461,7 +469,9 @@ static char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_c
     }
     if(img_fol->set_out_format==1){
         sprintf(outfilename,"%s/%s.%s",img_fol->imgdirpath,temp_ofname,img_fol->out_format);
-        strncpy(parameters->outfile, outfilename, sizeof(outfilename));
+        if (opj_strcpy_s(parameters->outfile, sizeof(parameters->outfile), outfilename) != 0) {
+            return 1;
+        }
     }
     return 0;
 }
@@ -469,7 +479,7 @@ static char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_c
 /* ------------------------------------------------------------------------------------ */
 
 static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
-                                 img_fol_t *img_fol, raw_cparameters_t *raw_cp, char *indexfilename) {
+                                 img_fol_t *img_fol, raw_cparameters_t *raw_cp, char *indexfilename, size_t indexfilename_size) {
     OPJ_UINT32 i, j;
     int totlen, c;
     opj_option_t long_option[]={
@@ -523,7 +533,9 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
                         infile);
                 return 1;
             }
-            strncpy(parameters->infile, infile, sizeof(parameters->infile)-1);
+            if (opj_strcpy_s(parameters->infile, sizeof(parameters->infile), infile) != 0) {
+                return 1;
+            }
         }
             break;
 
@@ -541,7 +553,9 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
                 fprintf(stderr, "Unknown output format image %s [only *.j2k, *.j2c or *.jp2]!! \n", outfile);
                 return 1;
             }
-            strncpy(parameters->outfile, outfile, sizeof(parameters->outfile)-1);
+            if (opj_strcpy_s(parameters->outfile, sizeof(parameters->outfile), outfile) != 0) {
+                return 1;
+            }
         }
             break;
 
@@ -598,7 +612,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
             char signo;
             int width,height,bitdepth,ncomp;
             OPJ_UINT32 len;
-            OPJ_BOOL raw_signed;
+            OPJ_BOOL raw_signed = OPJ_FALSE;
             substr2 = strchr(opj_optarg,'@');
             if (substr2 == NULL) {
                 len = (OPJ_UINT32) strlen(opj_optarg);
@@ -607,6 +621,9 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
                 substr2++; /* skip '@' character */
             }
             substr1 = (char*) malloc((len+1)*sizeof(char));
+            if (substr1 == NULL) {
+                return 1;
+            }
             memcpy(substr1,opj_optarg,len);
             substr1[len] = '\0';
             if (sscanf(substr1, "%d,%d,%d,%d,%c", &width, &height, &ncomp, &bitdepth, &signo) == 5) {
@@ -621,7 +638,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
                 wrong = OPJ_TRUE;
             }
             if (!wrong) {
-                int i;
+                int compno;
                 int lastdx = 1;
                 int lastdy = 1;
                 raw_cp->rawWidth = width;
@@ -630,10 +647,10 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
                 raw_cp->rawBitDepth = bitdepth;
                 raw_cp->rawSigned  = raw_signed;
                 raw_cp->rawComps = (raw_comp_cparameters_t*) malloc(((OPJ_UINT32)(ncomp))*sizeof(raw_comp_cparameters_t));
-                for (i = 0; i < ncomp && !wrong; i++) {
+                for (compno = 0; compno < ncomp && !wrong; compno++) {
                     if (substr2 == NULL) {
-                        raw_cp->rawComps[i].dx = lastdx;
-                        raw_cp->rawComps[i].dy = lastdy;
+                        raw_cp->rawComps[compno].dx = lastdx;
+                        raw_cp->rawComps[compno].dy = lastdy;
                     } else {
                         int dx,dy;
                         sep = strchr(substr2,':');
@@ -641,16 +658,16 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
                             if (sscanf(substr2, "%dx%d", &dx, &dy) == 2) {
                                 lastdx = dx;
                                 lastdy = dy;
-                                raw_cp->rawComps[i].dx = dx;
-                                raw_cp->rawComps[i].dy = dy;
+                                raw_cp->rawComps[compno].dx = dx;
+                                raw_cp->rawComps[compno].dy = dy;
                                 substr2 = NULL;
                             } else {
                                 wrong = OPJ_TRUE;
                             }
                         } else {
                             if (sscanf(substr2, "%dx%d:%s", &dx, &dy, substr2) == 3) {
-                                raw_cp->rawComps[i].dx = dx;
-                                raw_cp->rawComps[i].dy = dy;
+                                raw_cp->rawComps[compno].dx = dx;
+                                raw_cp->rawComps[compno].dy = dy;
                             } else {
                                 wrong = OPJ_TRUE;
                             }
@@ -658,7 +675,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
                     }
                 }
             }
-            if (substr1) free(substr1);
+            free(substr1);
             if (wrong) {
                 fprintf(stderr,"\nError: invalid raw image parameters\n");
                 fprintf(stderr,"Please use the Format option -F:\n");
@@ -699,7 +716,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
             OPJ_UINT32 numlayers = 0, numresolution = 0, matrix_width = 0;
 
             char *s = opj_optarg;
-            sscanf(s, "%ud", &numlayers);
+            sscanf(s, "%u", &numlayers);
             s++;
             if (numlayers > 9)
                 s++;
@@ -804,8 +821,9 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
 
         case 'x':			/* creation of index file */
         {
-            char *index = opj_optarg;
-            strncpy(indexfilename, index, OPJ_PATH_LEN);
+            if (opj_strcpy_s(indexfilename, indexfilename_size, opj_optarg) != 0) {
+                return 1;
+            }
             /* FIXME ADE INDEX >> */
             fprintf(stderr,
                     "[WARNING] Index file generation is currently broken.\n"
@@ -871,7 +889,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
             char *s = opj_optarg;
             POC = parameters->POC;
 
-            while (sscanf(s, "T%ud=%ud,%ud,%ud,%ud,%ud,%4s", &POC[numpocs].tile,
+            while (sscanf(s, "T%u=%u,%u,%u,%u,%u,%4s", &POC[numpocs].tile,
                           &POC[numpocs].resno0, &POC[numpocs].compno0,
                           &POC[numpocs].layno1, &POC[numpocs].resno1,
                           &POC[numpocs].compno1, POC[numpocs].progorder) == 7) {
@@ -1055,9 +1073,16 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
             lStrLen = (size_t)ftell(lFile);
             fseek(lFile,0,SEEK_SET);
             lMatrix = (char *) malloc(lStrLen + 1);
+            if (lMatrix == NULL) {
+                fclose(lFile);
+                return 1;
+            }
             lStrFread = fread(lMatrix, 1, lStrLen, lFile);
             fclose(lFile);
-            if( lStrLen != lStrFread ) return 1;
+            if( lStrLen != lStrFread ) {
+                free(lMatrix);
+                return 1;
+            }
 
             lMatrix[lStrLen] = 0;
             lCurrentPtr = lMatrix;
@@ -1077,6 +1102,10 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
             lMctComp = lNbComp * lNbComp;
             lTotalComp = lMctComp + lNbComp;
             lSpace = (float *) malloc((size_t)lTotalComp * sizeof(float));
+            if(lSpace == NULL) {
+                free(lMatrix);
+                return 1;
+            }
             lCurrentDoublePtr = lSpace;
             for (i2=0;i2<lMctComp;++i2) {
                 lStrLen = strlen(lCurrentPtr) + 1;
@@ -1114,7 +1143,9 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
 
             /* we need to enable indexing */
             if (!indexfilename || !*indexfilename) {
-                strncpy(indexfilename, JPWL_PRIVATEINDEX_NAME, OPJ_PATH_LEN);
+                if (opj_strcpy_s(indexfilename, indexfilename_size, JPWL_PRIVATEINDEX_NAME) != 0) {
+                    return 1;
+                }
             }
 
             /* search for different protection methods */
@@ -1456,7 +1487,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
     }else{
         if((parameters->infile[0] == 0) || (parameters->outfile[0] == 0)) {
             fprintf(stderr, "[ERROR] Required parameters are missing\n"
-                            "Example: %s -i image.j2k -o image.pgm\n",argv[0]);
+                            "Example: %s -i image.pgm -o image.j2k\n",argv[0]);
             fprintf(stderr, "   Help: %s -h\n",argv[0]);
             return 1;
         }
@@ -1500,6 +1531,14 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
         }
     }
 
+    /* If subsampled image is provided, automatically disable MCT */
+    if ( ((parameters->decod_format == RAW_DFMT) || (parameters->decod_format == RAWL_DFMT))
+         && (   ((raw_cp->rawComp > 1 ) && ((raw_cp->rawComps[1].dx > 1) || (raw_cp->rawComps[1].dy > 1)))
+             || ((raw_cp->rawComp > 2 ) && ((raw_cp->rawComps[2].dx > 1) || (raw_cp->rawComps[2].dy > 1)))
+						)) {
+        parameters->tcp_mct = 0;
+    }
+
     return 0;
 }
 
@@ -1527,6 +1566,31 @@ static void info_callback(const char *msg, void *client_data) {
     fprintf(stdout, "[INFO] %s", msg);
 }
 
+OPJ_FLOAT64 opj_clock(void) {
+#ifdef _WIN32
+	/* _WIN32: use QueryPerformance (very accurate) */
+    LARGE_INTEGER freq , t ;
+    /* freq is the clock speed of the CPU */
+    QueryPerformanceFrequency(&freq) ;
+	/* cout << "freq = " << ((double) freq.QuadPart) << endl; */
+    /* t is the high resolution performance counter (see MSDN) */
+    QueryPerformanceCounter ( & t ) ;
+    return freq.QuadPart ? ( t.QuadPart /(OPJ_FLOAT64) freq.QuadPart ) : 0 ;
+#else
+	/* Unix or Linux: use resource usage */
+    struct rusage t;
+    OPJ_FLOAT64 procTime;
+    /* (1) Get the rusage data structure at this moment (man getrusage) */
+    getrusage(0,&t);
+    /* (2) What is the elapsed time ? - CPU time = User time + System time */
+	/* (2a) Get the seconds */
+    procTime = (OPJ_FLOAT64)(t.ru_utime.tv_sec + t.ru_stime.tv_sec);
+    /* (2b) More precisely! Get the microseconds part ! */
+    return ( procTime + (OPJ_FLOAT64)(t.ru_utime.tv_usec + t.ru_stime.tv_usec) * 1e-6 ) ;
+#endif
+}
+
+
 /* -------------------------------------------------------------------------- */
 /**
  * OPJ_COMPRESS MAIN
@@ -1540,6 +1604,7 @@ int main(int argc, char **argv) {
     opj_codec_t* l_codec = 00;
     opj_image_t *image = NULL;
     raw_cparameters_t raw_cp;
+    OPJ_SIZE_T num_compressed_files = 0;
 
     char indexfilename[OPJ_PATH_LEN];	/* index file name */
 
@@ -1550,6 +1615,7 @@ int main(int argc, char **argv) {
     OPJ_BOOL bSuccess;
     OPJ_BOOL bUseTiles = OPJ_FALSE; /* OPJ_TRUE */
     OPJ_UINT32 l_nb_tiles = 4;
+    OPJ_FLOAT64 t = opj_clock();
 
     /* set encoding parameters to default values */
     opj_set_default_encoder_parameters(&parameters);
@@ -1568,24 +1634,8 @@ int main(int argc, char **argv) {
 
     /* parse input and get user encoding parameters */
     parameters.tcp_mct = (char) 255; /* This will be set later according to the input image or the provided option */
-    if(parse_cmdline_encoder(argc, argv, &parameters,&img_fol, &raw_cp, indexfilename) == 1) {
+    if(parse_cmdline_encoder(argc, argv, &parameters,&img_fol, &raw_cp, indexfilename, sizeof(indexfilename)) == 1) {
         return 1;
-    }
-
-    /* Create comment for codestream */
-    if(parameters.cp_comment == NULL) {
-        const char comment[] = "Created by OpenJPEG version ";
-        const size_t clen = strlen(comment);
-        const char *version = opj_version();
-        /* UniPG>> */
-#ifdef USE_JPWL
-        parameters.cp_comment = (char*)malloc(clen+strlen(version)+11);
-        sprintf(parameters.cp_comment,"%s%s with JPWL", comment, version);
-#else
-        parameters.cp_comment = (char*)malloc(clen+strlen(version)+1);
-        sprintf(parameters.cp_comment,"%s%s", comment, version);
-#endif
-        /* <<UniPG */
     }
 
     /* Read directory if necessary */
@@ -1776,7 +1826,12 @@ int main(int argc, char **argv) {
             parameters.cp_tdx = 512;
             parameters.cp_tdy = 512;
         }
-        opj_setup_encoder(l_codec, &parameters, image);
+        if (! opj_setup_encoder(l_codec, &parameters, image)) {
+            fprintf(stderr, "failed to encode image: opj_setup_encoder\n");
+            opj_destroy_codec(l_codec);
+            opj_image_destroy(image);
+            return 1;
+        }
 
         /* open a byte stream for writing and allocate memory for all tiles */
         l_stream = opj_stream_create_default_file_stream(parameters.outfile,OPJ_FALSE);
@@ -1792,8 +1847,7 @@ int main(int argc, char **argv) {
         if( bSuccess && bUseTiles ) {
             OPJ_BYTE *l_data;
             OPJ_UINT32 l_data_size = 512*512*3;
-            l_data = (OPJ_BYTE*) malloc( l_data_size * sizeof(OPJ_BYTE));
-            memset(l_data, 0, l_data_size );
+            l_data = (OPJ_BYTE*) calloc( 1,l_data_size);
             assert( l_data );
             for (i=0;i<l_nb_tiles;++i) {
                 if (! opj_write_tile(l_codec,i,l_data,l_data_size,l_stream)) {
@@ -1826,6 +1880,7 @@ int main(int argc, char **argv) {
             return 1;
         }
 
+		num_compressed_files++;
         fprintf(stdout,"[INFO] Generated outfile %s\n",parameters.outfile);
         /* close and free the byte stream */
         opj_stream_destroy(l_stream);
@@ -1842,6 +1897,11 @@ int main(int argc, char **argv) {
     if(parameters.cp_comment)   free(parameters.cp_comment);
     if(parameters.cp_matrice)   free(parameters.cp_matrice);
     if(raw_cp.rawComps) free(raw_cp.rawComps);
+	
+    t = opj_clock() - t;
+    if (num_compressed_files) {
+		    fprintf(stdout, "encode time: %d ms \n", (int)((t * 1000.0)/(OPJ_FLOAT64)num_compressed_files));
+    }
 
     return 0;
 }

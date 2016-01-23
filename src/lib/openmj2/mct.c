@@ -52,7 +52,7 @@ static const double mct_norms[3] = { 1.732, .8292, .8292 };
 static const double mct_norms_real[3] = { 1.732, 1.805, 1.573 };
 
 /* <summary> */
-/* Foward reversible MCT. */
+/* Forward reversible MCT. */
 /* </summary> */
 void mct_encode(
 		int* restrict c0,
@@ -105,7 +105,7 @@ double mct_getnorm(int compno) {
 }
 
 /* <summary> */
-/* Foward irreversible MCT. */
+/* Forward irreversible MCT. */
 /* </summary> */
 void mct_encode_real(
 		int* restrict c0,

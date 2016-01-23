@@ -181,19 +181,19 @@ void send_PNMstream( SOCKET connected_socket, Byte_t *pnmstream, unsigned int wi
 
 void send_SIZstream( SOCKET connected_socket, unsigned int width, unsigned int height)
 {
-  Byte_t responce[9];
+  Byte_t response[9];
   
-  responce[0] = 'S';
-  responce[1] = 'I';
-  responce[2] = 'Z';
-  responce[3] = (width >> 16) & 0xff;
-  responce[4] = (width >> 8) & 0xff;
-  responce[5] = width & 0xff;
-  responce[6] = (height >> 16) & 0xff;
-  responce[7] = (height >> 8) & 0xff;
-  responce[8] = height & 0xff;
+  response[0] = 'S';
+  response[1] = 'I';
+  response[2] = 'Z';
+  response[3] = (width >> 16) & 0xff;
+  response[4] = (width >> 8) & 0xff;
+  response[5] = width & 0xff;
+  response[6] = (height >> 16) & 0xff;
+  response[7] = (height >> 8) & 0xff;
+  response[8] = height & 0xff;
 
-  send_stream( connected_socket, responce, 9);
+  send_stream( connected_socket, response, 9);
 }
 
 void response_signal( SOCKET connected_socket, OPJ_BOOL succeed)

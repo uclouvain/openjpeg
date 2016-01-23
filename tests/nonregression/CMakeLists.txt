@@ -1,5 +1,7 @@
 # NON-REGRESSION TESTS ON THIS DATASET LOCATED ${OPJ_DATA_ROOT}/input/nonregression
 
+cmake_minimum_required(VERSION 2.8.7)
+
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/Temporary)
 
 set(TEMP ${CMAKE_CURRENT_BINARY_DIR}/Temporary)
@@ -13,6 +15,8 @@ set(INPUT_CONF_PATH ${OPJ_DATA_ROOT}/input/conformance)
 
 # need kdu_expand if possible
 find_package(KAKADU)
+# need jpylyzer if possible
+find_package(JPYLYZER)
 
 #########################################################################
 # GENERATION OF THE TEST SUITE (DUMP)
@@ -42,12 +46,15 @@ set(BLACKLIST_JPEG2000_TMP
     edf_c2_101463.jp2
     edf_c2_1674177.jp2
     edf_c2_1673169.jp2
+    issue429.jp2
+    issue427-null-image-size.jp2
+    issue427-illegal-tile-offset.jp2
    )
 
 # Define a list of file which should be gracefully rejected:
 set(BLACKLIST_JPEG2000
     ${BLACKLIST_JPEG2000_TMP}
-    broken.jp2 
+    broken1.jp2 
     broken2.jp2
     broken3.jp2
     broken4.jp2
@@ -57,6 +64,21 @@ set(BLACKLIST_JPEG2000
     gdal_fuzzer_unchecked_numresolutions.jp2
     mem-b2ace68c-1381.jp2
     1851.pdf.SIGSEGV.ce9.948.jp2
+    1888.pdf.asan.35.988.jp2
+    issue362-2863.jp2 #kdu_jp2info ok
+    issue362-2866.jp2
+    issue362-2894.jp2
+    issue400.jp2 #kdu_jp2info ok
+    issue364-38.jp2
+    issue364-903.jp2 #kdu_jp2info ok
+    issue393.jp2 #kdu_jp2info ok
+    issue408.jp2 #kdu_jp2info ok
+    issue420.jp2 #kdu_jp2info ok
+    27ac957758a35d00d6765a0c86350d9c.SIGFPE.d25.537.jpc #kdu_jp2info crash
+    3672da2f1f67bbecad27d7181b4e9d7c.SIGFPE.d25.805.jpc #kdu_jp2info crash
+    issue476.jp2 #kdu_jp2info ok
+    issue475.jp2 #kdu_jp2info ok
+    issue413.jp2 #kdu_jp2info ok
    )
 
 file(GLOB_RECURSE OPJ_DATA_NR_LIST
@@ -317,6 +339,40 @@ foreach(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
                                  NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-decode-ref)
 
           endif()
+          
+          # Test the encoded file is a valid JP2 file
+          if (JPYLYZER_EXECUTABLE)
+            if (${OUTPUT_FILENAME} MATCHES "\\.jp2$")
+              add_test(NAME NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-jpylyser
+                COMMAND ${JPYLYZER_EXECUTABLE}
+                ${OUTPUT_FILENAME}
+                )
+              set_tests_properties(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-jpylyser PROPERTIES 
+                DEPENDS NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-encode
+                PASS_REGULAR_EXPRESSION "<isValidJP2>True</isValidJP2>"
+                )		
+            endif()
+          endif(JPYLYZER_EXECUTABLE)
+          
+          # If lossless compression (simple test is 4 arguments), decompress & compare
+          list(LENGTH CMD_ARG_LIST_2 ARG_COUNT)
+          if (ARG_COUNT EQUAL 4)
+            # can we compare with the input image ?
+            if (${INPUT_FILENAME_NAME} MATCHES "\\.tif$")
+              add_test(NAME NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-lossless-decode
+                COMMAND opj_decompress -i ${OUTPUT_FILENAME} -o ${OUTPUT_FILENAME}.lossless.tif
+                )
+              set_tests_properties(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-lossless-decode PROPERTIES 
+                DEPENDS NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-encode
+                )
+              add_test(NAME NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-lossless-compare
+                COMMAND compare_images -b ${INPUT_FILENAME} -t ${OUTPUT_FILENAME}.lossless.tif -n 1 -d
+                )
+              set_tests_properties(NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-lossless-compare PROPERTIES 
+                DEPENDS NR-ENC-${INPUT_FILENAME_NAME}-${IT_TEST_ENC}-lossless-decode
+                )	
+            endif()
+          endif()
       endif()
 
     # DECODER TEST SUITE
@@ -349,7 +405,7 @@ foreach(OPJ_TEST_CMD_LINE ${OPJ_TEST_CMD_LINE_LIST})
         )
 
 # FIXME: add a compare2base function base on raw which
-# can output png diff files if necesary
+# can output png diff files if necessary
 #  add_test(NR-${filename}-compare2base
 #      ${EXECUTABLE_OUTPUT_PATH}/compare_images
 #     -b ${BASELINE_NR}/opj_${filenameRef}

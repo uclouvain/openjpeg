@@ -232,6 +232,12 @@ typedef struct opj_simple_mcc_decorrelation_data
 }
 opj_simple_mcc_decorrelation_data_t;
 
+typedef struct opj_ppx_struct
+{
+	OPJ_BYTE*   m_data; /* m_data == NULL => Zppx not read yet */
+	OPJ_UINT32	m_data_size;
+} opj_ppx;
+
 /**
 Tile coding parameters :
 this structure is used to store coding/decoding parameters common to all
@@ -254,7 +260,13 @@ typedef struct opj_tcp
 	OPJ_UINT32 numpocs;
 	/** progression order changes */
 	opj_poc_t pocs[32];
-	/** packet header store there for futur use in t2_decode_packet */
+	
+	/** number of ppt markers (reserved size) */
+	OPJ_UINT32 ppt_markers_count;
+	/** ppt markers data (table indexed by Zppt) */
+	opj_ppx* ppt_markers;
+	
+	/** packet header store there for future use in t2_decode_packet */
 	OPJ_BYTE *ppt_data;
 	/** used to keep a track of the allocated memory */
 	OPJ_BYTE *ppt_buffer;
@@ -293,6 +305,8 @@ typedef struct opj_tcp
 
 
 	/***** FLAGS *******/
+	/** If cod == 1 --> there was a COD marker for the present tile */
+	OPJ_UINT32 cod : 1;
 	/** If ppt == 1 --> there was a PPT marker for the present tile */
 	OPJ_UINT32 ppt : 1;
 	/** indicates if a POC marker has been used O:NO, 1:YES */
@@ -357,7 +371,12 @@ typedef struct opj_cp
 	/** number of tiles in heigth */
 	OPJ_UINT32 th;
 
-	/** packet header store there for futur use in t2_decode_packet */
+	/** number of ppm markers (reserved size) */
+	OPJ_UINT32 ppm_markers_count;
+	/** ppm markers data (table indexed by Zppm) */
+	opj_ppx* ppm_markers;
+	
+	/** packet header store there for future use in t2_decode_packet */
 	OPJ_BYTE *ppm_data;
 	/** size of the ppm_data*/
 	OPJ_UINT32 ppm_len;
@@ -481,6 +500,9 @@ typedef struct opj_j2k_dec
 	OPJ_UINT32 m_can_decode			: 1;
 	OPJ_UINT32 m_discard_tiles		: 1;
 	OPJ_UINT32 m_skip_data			: 1;
+	/** TNsot correction : see issue 254 **/
+	OPJ_UINT32 m_nb_tile_parts_correction_checked : 1;
+	OPJ_UINT32 m_nb_tile_parts_correction : 1;
 
 } opj_j2k_dec_t;
 
@@ -567,7 +589,6 @@ typedef struct opj_j2k
 
 	/** the current tile coder/decoder **/
 	struct opj_tcd *	m_tcd;
-
 }
 opj_j2k_t;
 
@@ -594,7 +615,7 @@ void opj_j2k_setup_decoder(opj_j2k_t *j2k, opj_dparameters_t *parameters);
 opj_j2k_t* opj_j2k_create_compress(void);
 
 
-void opj_j2k_setup_encoder(	opj_j2k_t *p_j2k,
+OPJ_BOOL opj_j2k_setup_encoder(	opj_j2k_t *p_j2k,
 						    opj_cparameters_t *parameters,
 						    opj_image_t *image,
 						    opj_event_mgr_t * p_manager);
