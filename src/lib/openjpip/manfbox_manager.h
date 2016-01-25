@@ -38,8 +38,8 @@
 
 /** manifest box parameters*/
 /** I.3.2.3 Manifest box*/
-typedef struct manfbox_param{
-  boxheader_param_t *first; /**< top of the box header list*/
+typedef struct manfbox_param {
+    boxheader_param_t *first; /**< top of the box header list*/
 } manfbox_param_t;
 
 

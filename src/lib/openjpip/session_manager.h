@@ -35,16 +35,16 @@
 #include "cachemodel_manager.h"
 
 /** Session parameters*/
-typedef struct session_param{
-  channellist_param_t *channellist;        /**< channel list pointer*/
-  cachemodellist_param_t *cachemodellist;  /**< cache list pointer*/
-  struct session_param *next;              /**< pointer to the next session*/
+typedef struct session_param {
+    channellist_param_t *channellist;        /**< channel list pointer*/
+    cachemodellist_param_t *cachemodellist;  /**< cache list pointer*/
+    struct session_param *next;              /**< pointer to the next session*/
 } session_param_t;
 
 /** Session list parameters*/
-typedef struct sessionlist_param{
-  session_param_t *first; /**< first session pointer of the list*/
-  session_param_t *last;  /**< last  session pointer of the list*/
+typedef struct sessionlist_param {
+    session_param_t *first; /**< first session pointer of the list*/
+    session_param_t *last;  /**< last  session pointer of the list*/
 } sessionlist_param_t;
 
 
@@ -73,10 +73,10 @@ session_param_t * gene_session( sessionlist_param_t *sessionlist);
  * @param[in,out] foundchannel  address of the found channel pointer
  * @return                      if the channel is found (true) or not (false)
  */
-OPJ_BOOL search_session_and_channel( char cid[], 
-				 sessionlist_param_t *sessionlist, 
-				 session_param_t **foundsession, 
-				 channel_param_t **foundchannel);
+OPJ_BOOL search_session_and_channel( char cid[],
+                                     sessionlist_param_t *sessionlist,
+                                     session_param_t **foundsession,
+                                     channel_param_t **foundchannel);
 
 /**
  * insert a cache model into a session

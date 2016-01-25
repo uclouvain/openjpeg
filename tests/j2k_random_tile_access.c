@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2012, Centre National d'Etudes Spatiales (CNES), France 
+ * Copyright (c) 2011-2012, Centre National d'Etudes Spatiales (CNES), France
  * Copyright (c) 2012, CS Systemes d'Information, France
  * All rights reserved.
  *
@@ -43,23 +43,24 @@
 #include "format_defs.h"
 
 /* -------------------------------------------------------------------------- */
-static int get_file_format(const char *filename) {
-	unsigned int i;
-	static const char *extension[] = {"pgx", "pnm", "pgm", "ppm", "bmp","tif", "raw", "tga", "png", "j2k", "jp2", "jpt", "j2c", "jpc" };
-	static const int format[] = { PGX_DFMT, PXM_DFMT, PXM_DFMT, PXM_DFMT, BMP_DFMT, TIF_DFMT, RAW_DFMT, TGA_DFMT, PNG_DFMT, J2K_CFMT, JP2_CFMT, JPT_CFMT, J2K_CFMT, J2K_CFMT };
-	char * ext = strrchr(filename, '.');
-	if (ext == NULL)
-		return -1;
-	ext++;
-	if(ext) {
-		for(i = 0; i < sizeof(format)/sizeof(*format); i++) {
-			if(_strnicmp(ext, extension[i], 3) == 0) {
-				return format[i];
-			}
-		}
-	}
+static int get_file_format(const char *filename)
+{
+    unsigned int i;
+    static const char *extension[] = {"pgx", "pnm", "pgm", "ppm", "bmp","tif", "raw", "tga", "png", "j2k", "jp2", "jpt", "j2c", "jpc" };
+    static const int format[] = { PGX_DFMT, PXM_DFMT, PXM_DFMT, PXM_DFMT, BMP_DFMT, TIF_DFMT, RAW_DFMT, TGA_DFMT, PNG_DFMT, J2K_CFMT, JP2_CFMT, JPT_CFMT, J2K_CFMT, J2K_CFMT };
+    char * ext = strrchr(filename, '.');
+    if (ext == NULL)
+        return -1;
+    ext++;
+    if(ext) {
+        for(i = 0; i < sizeof(format)/sizeof(*format); i++) {
+            if(_strnicmp(ext, extension[i], 3) == 0) {
+                return format[i];
+            }
+        }
+    }
 
-	return -1;
+    return -1;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -67,23 +68,26 @@ static int get_file_format(const char *filename) {
 /**
 sample error callback expecting a FILE* client object
 */
-static void error_callback(const char *msg, void *client_data) {
-	(void)client_data;
-	fprintf(stdout, "[ERROR] %s", msg);
+static void error_callback(const char *msg, void *client_data)
+{
+    (void)client_data;
+    fprintf(stdout, "[ERROR] %s", msg);
 }
 /**
 sample warning callback expecting a FILE* client object
 */
-static void warning_callback(const char *msg, void *client_data) {
-	(void)client_data;
-	fprintf(stdout, "[WARNING] %s", msg);
+static void warning_callback(const char *msg, void *client_data)
+{
+    (void)client_data;
+    fprintf(stdout, "[WARNING] %s", msg);
 }
 /**
 sample debug callback expecting no client object
 */
-static void info_callback(const char *msg, void *client_data) {
-	(void)client_data;
-	fprintf(stdout, "[INFO] %s", msg);
+static void info_callback(const char *msg, void *client_data)
+{
+    (void)client_data;
+    fprintf(stdout, "[INFO] %s", msg);
 }
 
 
@@ -95,52 +99,50 @@ static void info_callback(const char *msg, void *client_data) {
 
 static int infile_format(const char *fname)
 {
-	FILE *reader;
-	const char *s, *magic_s;
-	int ext_format, magic_format;
-	unsigned char buf[12];
-	OPJ_SIZE_T l_nb_read;
+    FILE *reader;
+    const char *s, *magic_s;
+    int ext_format, magic_format;
+    unsigned char buf[12];
+    OPJ_SIZE_T l_nb_read;
 
-	reader = fopen(fname, "rb");
+    reader = fopen(fname, "rb");
 
-	if (reader == NULL)
-		return -1;
+    if (reader == NULL)
+        return -1;
 
-	memset(buf, 0, 12);
-	l_nb_read = fread(buf, 1, 12, reader);
-	fclose(reader);
-	if (l_nb_read != 12)
-		return -1;
+    memset(buf, 0, 12);
+    l_nb_read = fread(buf, 1, 12, reader);
+    fclose(reader);
+    if (l_nb_read != 12)
+        return -1;
 
 
 
-	ext_format = get_file_format(fname);
+    ext_format = get_file_format(fname);
 
-	if (ext_format == JPT_CFMT)
-		return JPT_CFMT;
+    if (ext_format == JPT_CFMT)
+        return JPT_CFMT;
 
-	if (memcmp(buf, JP2_RFC3745_MAGIC, 12) == 0 || memcmp(buf, JP2_MAGIC, 4) == 0) {
-		magic_format = JP2_CFMT;
-		magic_s = ".jp2";
-	}
-	else if (memcmp(buf, J2K_CODESTREAM_MAGIC, 4) == 0) {
-		magic_format = J2K_CFMT;
-		magic_s = ".j2k or .jpc or .j2c";
-	}
-	else
-		return -1;
+    if (memcmp(buf, JP2_RFC3745_MAGIC, 12) == 0 || memcmp(buf, JP2_MAGIC, 4) == 0) {
+        magic_format = JP2_CFMT;
+        magic_s = ".jp2";
+    } else if (memcmp(buf, J2K_CODESTREAM_MAGIC, 4) == 0) {
+        magic_format = J2K_CFMT;
+        magic_s = ".j2k or .jpc or .j2c";
+    } else
+        return -1;
 
-	if (magic_format == ext_format)
-		return ext_format;
+    if (magic_format == ext_format)
+        return ext_format;
 
-	s = fname + strlen(fname) - 4;
+    s = fname + strlen(fname) - 4;
 
-	fputs("\n===========================================\n", stderr);
-	fprintf(stderr, "The extension of this file is incorrect.\n"
-					"FOUND %s. SHOULD BE %s\n", s, magic_s);
-	fputs("===========================================\n", stderr);
+    fputs("\n===========================================\n", stderr);
+    fprintf(stderr, "The extension of this file is incorrect.\n"
+            "FOUND %s. SHOULD BE %s\n", s, magic_s);
+    fputs("===========================================\n", stderr);
 
-	return magic_format;
+    return magic_format;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -151,96 +153,93 @@ static int infile_format(const char *fname)
 int main(int argc, char **argv)
 {
     OPJ_UINT32 index;
-	opj_dparameters_t parameters;			/* decompression parameters */
-	opj_image_t* image = NULL;
-	opj_stream_t *l_stream = NULL;				/* Stream */
-	opj_codec_t* l_codec = NULL;				/* Handle to a decompressor */
-	opj_codestream_info_v2_t* cstr_info = NULL;
+    opj_dparameters_t parameters;			/* decompression parameters */
+    opj_image_t* image = NULL;
+    opj_stream_t *l_stream = NULL;				/* Stream */
+    opj_codec_t* l_codec = NULL;				/* Handle to a decompressor */
+    opj_codestream_info_v2_t* cstr_info = NULL;
 
-	/* Index of corner tiles */
-	OPJ_UINT32 tile_ul = 0;
-	OPJ_UINT32 tile_ur = 0;
-	OPJ_UINT32 tile_lr = 0;
-	OPJ_UINT32 tile_ll = 0;
+    /* Index of corner tiles */
+    OPJ_UINT32 tile_ul = 0;
+    OPJ_UINT32 tile_ur = 0;
+    OPJ_UINT32 tile_lr = 0;
+    OPJ_UINT32 tile_ll = 0;
 
-	if (argc != 2) {
-		fprintf(stderr, "Usage: %s <input_file>\n", argv[0]);
-		return EXIT_FAILURE;
-	}
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <input_file>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
 
-	/* Set decoding parameters to default values */
-	opj_set_default_decoder_parameters(&parameters);
+    /* Set decoding parameters to default values */
+    opj_set_default_decoder_parameters(&parameters);
 
-	strncpy(parameters.infile, argv[1], OPJ_PATH_LEN - 1);
+    strncpy(parameters.infile, argv[1], OPJ_PATH_LEN - 1);
 
 
-	/* decode the JPEG2000 stream */
-	/* -------------------------- */
-	parameters.decod_format = infile_format(parameters.infile);
+    /* decode the JPEG2000 stream */
+    /* -------------------------- */
+    parameters.decod_format = infile_format(parameters.infile);
 
-	switch(parameters.decod_format) {
-		case J2K_CFMT:	/* JPEG-2000 codestream */
-		{
-			/* Get a decoder handle */
-			l_codec = opj_create_decompress(OPJ_CODEC_J2K);
-			break;
-		}
-		case JP2_CFMT:	/* JPEG 2000 compressed image data */
-		{
-			/* Get a decoder handle */
-			l_codec = opj_create_decompress(OPJ_CODEC_JP2);
-			break;
-		}
-		case JPT_CFMT:	/* JPEG 2000, JPIP */
-		{
-			/* Get a decoder handle */
-			l_codec = opj_create_decompress(OPJ_CODEC_JPT);
-			break;
-		}
-		default:
-			fprintf(stderr,
-				"Unrecognized format for input %s [accept only *.j2k, *.jp2, *.jpc or *.jpt]\n\n",
-				parameters.infile);
-			return EXIT_FAILURE;
-	}
+    switch(parameters.decod_format) {
+    case J2K_CFMT: {	/* JPEG-2000 codestream */
+        /* Get a decoder handle */
+        l_codec = opj_create_decompress(OPJ_CODEC_J2K);
+        break;
+    }
+    case JP2_CFMT: {	/* JPEG 2000 compressed image data */
+        /* Get a decoder handle */
+        l_codec = opj_create_decompress(OPJ_CODEC_JP2);
+        break;
+    }
+    case JPT_CFMT: {	/* JPEG 2000, JPIP */
+        /* Get a decoder handle */
+        l_codec = opj_create_decompress(OPJ_CODEC_JPT);
+        break;
+    }
+    default:
+        fprintf(stderr,
+                "Unrecognized format for input %s [accept only *.j2k, *.jp2, *.jpc or *.jpt]\n\n",
+                parameters.infile);
+        return EXIT_FAILURE;
+    }
 
-	/* catch events using our callbacks and give a local context */		
-	opj_set_info_handler(l_codec, info_callback,00);
-	opj_set_warning_handler(l_codec, warning_callback,00);
-	opj_set_error_handler(l_codec, error_callback,00);
+    /* catch events using our callbacks and give a local context */
+    opj_set_info_handler(l_codec, info_callback,00);
+    opj_set_warning_handler(l_codec, warning_callback,00);
+    opj_set_error_handler(l_codec, error_callback,00);
 
     l_stream = opj_stream_create_default_file_stream(parameters.infile,1);
-	if (!l_stream){
+    if (!l_stream) {
         fprintf(stderr, "ERROR -> failed to create the stream from the file %s\n", parameters.infile);
-		return EXIT_FAILURE;
-	}
+        return EXIT_FAILURE;
+    }
 
-	/* Setup the decoder decoding parameters using user parameters */
-	if ( !opj_setup_decoder(l_codec, &parameters) ){
-		fprintf(stderr, "ERROR -> j2k_dump: failed to setup the decoder\n");
-		opj_stream_destroy(l_stream);
-		opj_destroy_codec(l_codec);
-		return EXIT_FAILURE;
-	}
+    /* Setup the decoder decoding parameters using user parameters */
+    if ( !opj_setup_decoder(l_codec, &parameters) ) {
+        fprintf(stderr, "ERROR -> j2k_dump: failed to setup the decoder\n");
+        opj_stream_destroy(l_stream);
+        opj_destroy_codec(l_codec);
+        return EXIT_FAILURE;
+    }
 
-	/* Read the main header of the codestream and if necessary the JP2 boxes*/
-	if(! opj_read_header(l_stream, l_codec, &image)){
-		fprintf(stderr, "ERROR -> j2k_to_image: failed to read the header\n");
-		opj_stream_destroy(l_stream);
-		opj_destroy_codec(l_codec);
-		opj_image_destroy(image);
-		return EXIT_FAILURE;
-	}
+    /* Read the main header of the codestream and if necessary the JP2 boxes*/
+    if(! opj_read_header(l_stream, l_codec, &image)) {
+        fprintf(stderr, "ERROR -> j2k_to_image: failed to read the header\n");
+        opj_stream_destroy(l_stream);
+        opj_destroy_codec(l_codec);
+        opj_image_destroy(image);
+        return EXIT_FAILURE;
+    }
 
-	/* Extract some info from the code stream */
-	cstr_info = opj_get_cstr_info(l_codec);
+    /* Extract some info from the code stream */
+    cstr_info = opj_get_cstr_info(l_codec);
 
-	fprintf(stdout, "The file contains %dx%d tiles\n", cstr_info->tw, cstr_info->th);
+    fprintf(stdout, "The file contains %dx%d tiles\n", cstr_info->tw, cstr_info->th);
 
-	tile_ul = 0;
-	tile_ur = cstr_info->tw - 1;
-	tile_lr = cstr_info->tw * cstr_info->th - 1;
-	tile_ll = tile_lr - cstr_info->tw;
+    tile_ul = 0;
+    tile_ur = cstr_info->tw - 1;
+    tile_lr = cstr_info->tw * cstr_info->th - 1;
+    tile_ll = tile_lr - cstr_info->tw;
 
 #define TEST_TILE( tile_index ) \
 	fprintf(stdout, "Decoding tile %d ...\n", tile_index); \
@@ -264,26 +263,26 @@ int main(int argc, char **argv)
   } \
 	fprintf(stdout, "Tile %d is decoded successfully\n", tile_index);
 
-	TEST_TILE(tile_ul)
-	TEST_TILE(tile_lr)
-	TEST_TILE(tile_ul)
-	TEST_TILE(tile_ll)
-	TEST_TILE(tile_ur)
-	TEST_TILE(tile_lr)
+    TEST_TILE(tile_ul)
+    TEST_TILE(tile_lr)
+    TEST_TILE(tile_ul)
+    TEST_TILE(tile_ll)
+    TEST_TILE(tile_ur)
+    TEST_TILE(tile_lr)
 
-	/* Close the byte stream */
-	opj_stream_destroy(l_stream);
+    /* Close the byte stream */
+    opj_stream_destroy(l_stream);
 
-	/* Destroy code stream info */
-	opj_destroy_cstr_info(&cstr_info);
+    /* Destroy code stream info */
+    opj_destroy_cstr_info(&cstr_info);
 
-	/* Free remaining structures */
-	opj_destroy_codec(l_codec);
+    /* Free remaining structures */
+    opj_destroy_codec(l_codec);
 
-	/* Free image data structure */
-	opj_image_destroy(image);
+    /* Free image data structure */
+    opj_image_destroy(image);
 
-	return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }
 /*end main*/
 

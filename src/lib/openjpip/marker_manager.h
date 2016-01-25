@@ -35,11 +35,11 @@
 
 
 /** Marker parameters*/
-typedef struct marker_param{
-  codestream_param_t cs; /**< corresponding codestream*/
-  Byte2_t code;          /**< marker code*/
-  OPJ_OFF_T offset;        /**< offset relative to the start of the codestream ( including the length parameter but not the marker itself)*/
-  Byte2_t length;        /**< marker segment length*/
+typedef struct marker_param {
+    codestream_param_t cs; /**< corresponding codestream*/
+    Byte2_t code;          /**< marker code*/
+    OPJ_OFF_T offset;        /**< offset relative to the start of the codestream ( including the length parameter but not the marker itself)*/
+    Byte2_t length;        /**< marker segment length*/
 } marker_param_t;
 
 

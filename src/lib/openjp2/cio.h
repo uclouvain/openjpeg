@@ -1,6 +1,6 @@
 /*
- * The copyright in this software is being made available under the 2-clauses 
- * BSD License, included below. This software may be subject to other third 
+ * The copyright in this software is being made available under the 2-clauses
+ * BSD License, included below. This software may be subject to other third
  * party and contributor rights, including patent rights, and no such rights
  * are granted under this license.
  *
@@ -8,10 +8,10 @@
  * Copyright (c) 2002-2014, Professor Benoit Macq
  * Copyright (c) 2001-2003, David Janssens
  * Copyright (c) 2002-2003, Yannick Verschueren
- * Copyright (c) 2003-2007, Francois-Olivier Devaux 
+ * Copyright (c) 2003-2007, Francois-Olivier Devaux
  * Copyright (c) 2003-2014, Antonin Descampe
  * Copyright (c) 2005, Herve Drolon, FreeImage Team
- * Copyright (c) 2008, 2011-2012, Centre National d'Etudes Spatiales (CNES), FR 
+ * Copyright (c) 2008, 2011-2012, Centre National d'Etudes Spatiales (CNES), FR
  * Copyright (c) 2012, CS Systemes d'Information, France
  * All rights reserved.
  *
@@ -54,19 +54,19 @@ The functions in CIO.C have for goal to realize a byte input / output process.
 /* ----------------------------------------------------------------------- */
 
 #if defined(OPJ_BIG_ENDIAN)
-	#define opj_write_bytes		opj_write_bytes_BE
-	#define opj_read_bytes		opj_read_bytes_BE
-	#define opj_write_double	opj_write_double_BE
-	#define opj_read_double		opj_read_double_BE
-	#define opj_write_float		opj_write_float_BE
-	#define opj_read_float		opj_read_float_BE
+#define opj_write_bytes		opj_write_bytes_BE
+#define opj_read_bytes		opj_read_bytes_BE
+#define opj_write_double	opj_write_double_BE
+#define opj_read_double		opj_read_double_BE
+#define opj_write_float		opj_write_float_BE
+#define opj_read_float		opj_read_float_BE
 #else
-	#define opj_write_bytes		opj_write_bytes_LE
-	#define opj_read_bytes		opj_read_bytes_LE
-	#define opj_write_double	opj_write_double_LE
-	#define opj_read_double		opj_read_double_LE
-	#define opj_write_float		opj_write_float_LE
-	#define opj_read_float		opj_read_float_LE
+#define opj_write_bytes		opj_write_bytes_LE
+#define opj_read_bytes		opj_read_bytes_LE
+#define opj_write_double	opj_write_double_LE
+#define opj_read_double		opj_read_double_LE
+#define opj_write_float		opj_write_float_LE
+#define opj_read_float		opj_read_float_LE
 #endif
 
 
@@ -78,87 +78,86 @@ The functions in CIO.C have for goal to realize a byte input / output process.
 /**
 Byte input-output stream.
 */
-typedef struct opj_stream_private
-{
-	/**
-	 * User data, be it files, ... The actual data depends on the type of the stream.
-	 */
-	void *					m_user_data;
+typedef struct opj_stream_private {
+    /**
+     * User data, be it files, ... The actual data depends on the type of the stream.
+     */
+    void *					m_user_data;
 
-	/**
-	 * Pointer to function to free m_user_data (NULL at initialization)
-	 * when destroying the stream. If pointer is NULL the function is not
-	 * called and the m_user_data is not freed (even if non-NULL).
-	 */
-	opj_stream_free_user_data_fn		m_free_user_data_fn;
+    /**
+     * Pointer to function to free m_user_data (NULL at initialization)
+     * when destroying the stream. If pointer is NULL the function is not
+     * called and the m_user_data is not freed (even if non-NULL).
+     */
+    opj_stream_free_user_data_fn		m_free_user_data_fn;
 
-	/**
-	 * User data length
-	 */
-	OPJ_UINT64 				m_user_data_length;
+    /**
+     * User data length
+     */
+    OPJ_UINT64 				m_user_data_length;
 
-	/**
-	 * Pointer to actual read function (NULL at the initialization of the cio.
-	 */
-	opj_stream_read_fn		m_read_fn;
+    /**
+     * Pointer to actual read function (NULL at the initialization of the cio.
+     */
+    opj_stream_read_fn		m_read_fn;
 
-	/**
-	 * Pointer to actual write function (NULL at the initialization of the cio.
-	 */
-	opj_stream_write_fn		m_write_fn;
+    /**
+     * Pointer to actual write function (NULL at the initialization of the cio.
+     */
+    opj_stream_write_fn		m_write_fn;
 
-	/**
-	 * Pointer to actual skip function (NULL at the initialization of the cio.
-	 * There is no seek function to prevent from back and forth slow procedures.
-	 */
-	opj_stream_skip_fn		m_skip_fn;
+    /**
+     * Pointer to actual skip function (NULL at the initialization of the cio.
+     * There is no seek function to prevent from back and forth slow procedures.
+     */
+    opj_stream_skip_fn		m_skip_fn;
 
-	/**
-	 * Pointer to actual seek function (if available).
-	 */
-	opj_stream_seek_fn		m_seek_fn;
+    /**
+     * Pointer to actual seek function (if available).
+     */
+    opj_stream_seek_fn		m_seek_fn;
 
-	/**
-	 * Actual data stored into the stream if readed from. Data is read by chunk of fixed size.
-	 * you should never access this data directly.
-	 */
-	OPJ_BYTE *					m_stored_data;
+    /**
+     * Actual data stored into the stream if readed from. Data is read by chunk of fixed size.
+     * you should never access this data directly.
+     */
+    OPJ_BYTE *					m_stored_data;
 
-	/**
-	 * Pointer to the current read data.
-	 */
-	OPJ_BYTE *					m_current_data;
+    /**
+     * Pointer to the current read data.
+     */
+    OPJ_BYTE *					m_current_data;
 
     /**
     * FIXME DOC.
     */
-	OPJ_OFF_T (* m_opj_skip)(struct opj_stream_private * ,OPJ_OFF_T , struct opj_event_mgr *);
+    OPJ_OFF_T (* m_opj_skip)(struct opj_stream_private * ,OPJ_OFF_T , struct opj_event_mgr *);
 
     /**
     * FIXME DOC.
     */
-	OPJ_BOOL (* m_opj_seek) (struct opj_stream_private * , OPJ_OFF_T , struct opj_event_mgr *);
+    OPJ_BOOL (* m_opj_seek) (struct opj_stream_private * , OPJ_OFF_T , struct opj_event_mgr *);
 
-	/**
-	 * number of bytes containing in the buffer.
-	 */
-	OPJ_SIZE_T			m_bytes_in_buffer;
+    /**
+     * number of bytes containing in the buffer.
+     */
+    OPJ_SIZE_T			m_bytes_in_buffer;
 
-	/**
-	 * The number of bytes read/written from the beginning of the stream
-	 */
-	OPJ_OFF_T			m_byte_offset;
+    /**
+     * The number of bytes read/written from the beginning of the stream
+     */
+    OPJ_OFF_T			m_byte_offset;
 
-	/**
-	 * The size of the buffer.
-	 */
-	OPJ_SIZE_T			m_buffer_size;
+    /**
+     * The size of the buffer.
+     */
+    OPJ_SIZE_T			m_buffer_size;
 
-	/**
-	 * Flags to tell the status of the stream.
-	 * Used with OPJ_STREAM_STATUS_* defines.
-	 */
-	OPJ_UINT32 m_status;
+    /**
+     * Flags to tell the status of the stream.
+     * Used with OPJ_STREAM_STATUS_* defines.
+     */
+    OPJ_UINT32 m_status;
 
 }
 opj_stream_private_t;

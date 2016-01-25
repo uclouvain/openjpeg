@@ -1,11 +1,11 @@
 /*
- * The copyright in this software is being made available under the 2-clauses 
- * BSD License, included below. This software may be subject to other third 
+ * The copyright in this software is being made available under the 2-clauses
+ * BSD License, included below. This software may be subject to other third
  * party and contributor rights, including patent rights, and no such rights
  * are granted under this license.
  *
  * Copyright (c) 2005, Herve Drolon, FreeImage Team
- * Copyright (c) 2008, 2011-2012, Centre National d'Etudes Spatiales (CNES), FR 
+ * Copyright (c) 2008, 2011-2012, Centre National d'Etudes Spatiales (CNES), FR
  * Copyright (c) 2012, CS Systemes d'Information, France
  * All rights reserved.
  *
@@ -40,27 +40,26 @@ The functions in EVENT.C have for goal to send output messages (errors, warnings
 */
 /**
 Message handler object
-used for 
+used for
 <ul>
 <li>Error messages
 <li>Warning messages
 <li>Debugging messages
 </ul>
 */
-typedef struct opj_event_mgr 
-{
-	/** Data to call the event manager upon */
-	void *			m_error_data;
-	/** Data to call the event manager upon */
-	void *			m_warning_data;
-	/** Data to call the event manager upon */
-	void *			m_info_data;
-	/** Error message callback if available, NULL otherwise */
-	opj_msg_callback error_handler;
-	/** Warning message callback if available, NULL otherwise */
-	opj_msg_callback warning_handler;
-	/** Debug message callback if available, NULL otherwise */
-	opj_msg_callback info_handler;
+typedef struct opj_event_mgr {
+    /** Data to call the event manager upon */
+    void *			m_error_data;
+    /** Data to call the event manager upon */
+    void *			m_warning_data;
+    /** Data to call the event manager upon */
+    void *			m_info_data;
+    /** Error message callback if available, NULL otherwise */
+    opj_msg_callback error_handler;
+    /** Warning message callback if available, NULL otherwise */
+    opj_msg_callback warning_handler;
+    /** Debug message callback if available, NULL otherwise */
+    opj_msg_callback info_handler;
 } opj_event_mgr_t;
 
 

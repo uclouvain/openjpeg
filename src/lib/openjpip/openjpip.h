@@ -59,26 +59,26 @@
 
 #endif /*SERVER*/
 
-/* 
+/*
  *==========================================================
  * JPIP server API
  *==========================================================
  */
- 
- #ifdef SERVER
+
+#ifdef SERVER
 
 /** Server static records*/
-typedef struct server_record{
-  sessionlist_param_t *sessionlist; /**< list of session records*/
-  targetlist_param_t *targetlist;   /**< list of target records*/
-  auxtrans_param_t auxtrans;
+typedef struct server_record {
+    sessionlist_param_t *sessionlist; /**< list of session records*/
+    targetlist_param_t *targetlist;   /**< list of target records*/
+    auxtrans_param_t auxtrans;
 } server_record_t;
 
 /** Query/response data for each client*/
-typedef struct QR{
-  query_param_t *query;             /**< query parameters*/
-  msgqueue_param_t *msgqueue;       /**< message queue*/
-  channel_param_t *channel;         /**< channel, (NULL if stateless)*/
+typedef struct QR {
+    query_param_t *query;             /**< query parameters*/
+    msgqueue_param_t *msgqueue;       /**< message queue*/
+    channel_param_t *channel;         /**< channel, (NULL if stateless)*/
 } QR_t;
 
 /**
@@ -110,7 +110,7 @@ QR_t * parse_querystring( const char *query_string);
  *
  * @param[in]  rec server static record pointer
  * @param[in]  qr  query/response data pointer
- * @return     true if succeed, otherwise false 
+ * @return     true if succeed, otherwise false
  */
 OPJ_BOOL process_JPIPrequest( server_record_t *rec, QR_t *qr);
 
@@ -123,7 +123,7 @@ OPJ_BOOL process_JPIPrequest( server_record_t *rec, QR_t *qr);
 void send_responsedata( server_record_t *rec, QR_t *qr);
 
 /**
- * 4th (last) process; 
+ * 4th (last) process;
  *
  * @param[in]  rec server static record pinter
  * @param[in]  qr  address of query/response data pointer
@@ -144,7 +144,7 @@ void local_log( OPJ_BOOL query, OPJ_BOOL messages, OPJ_BOOL sessions, OPJ_BOOL t
 
 #endif /*SERVER*/
 
-/* 
+/*
  *==========================================================
  *      JPIP decoding server API
  *==========================================================
@@ -153,12 +153,12 @@ void local_log( OPJ_BOOL query, OPJ_BOOL messages, OPJ_BOOL sessions, OPJ_BOOL t
 #ifndef SERVER
 
 /** Decoding server static records*/
-typedef struct dec_server_record{
-  cachelist_param_t *cachelist; /**< cache list*/
-  Byte_t *jpipstream;           /**< JPT/JPP stream*/
-  OPJ_SIZE_T jpipstreamlen;            /**< length of jpipstream*/
-  msgqueue_param_t *msgqueue;   /**< parsed message queue of jpipstream*/
-  SOCKET listening_socket;      /**< listenning socket*/
+typedef struct dec_server_record {
+    cachelist_param_t *cachelist; /**< cache list*/
+    Byte_t *jpipstream;           /**< JPT/JPP stream*/
+    OPJ_SIZE_T jpipstreamlen;            /**< length of jpipstream*/
+    msgqueue_param_t *msgqueue;   /**< parsed message queue of jpipstream*/
+    SOCKET listening_socket;      /**< listenning socket*/
 } dec_server_record_t;
 
 
@@ -188,18 +188,18 @@ OPJ_API void OPJ_CALLCONV terminate_dec_server( dec_server_record_t **rec);
  */
 OPJ_API client_t OPJ_CALLCONV accept_connection( dec_server_record_t *rec);
 
- /**
-  * Handle client request
-  *
-  * @param[in] client client socket ID
-  * @param[in] rec    decoding server static record pointer
-  * @return           true if succeed
-  */
+/**
+ * Handle client request
+ *
+ * @param[in] client client socket ID
+ * @param[in] rec    decoding server static record pointer
+ * @return           true if succeed
+ */
 OPJ_API OPJ_BOOL OPJ_CALLCONV handle_clientreq( client_t client, dec_server_record_t *rec);
 
 #endif /*SERVER*/
 
-/* 
+/*
  *==========================================================
  *     JPIP tool API
  *==========================================================
@@ -212,14 +212,14 @@ OPJ_API OPJ_BOOL OPJ_CALLCONV handle_clientreq( client_t client, dec_server_reco
  */
 
 /** JPIP decoding parameters*/
-typedef struct jpip_dec_param{
-  Byte_t *jpipstream;                 /**< JPT/JPP-stream*/
-  Byte8_t jpiplen;                    /**< length of jpipstream*/
-  msgqueue_param_t *msgqueue;         /**< message queue*/
-  metadatalist_param_t *metadatalist; /**< metadata list going into JP2 file*/
-  ihdrbox_param_t *ihdrbox;           /**< ihdr box going into JP2 file*/
-  Byte_t *jp2kstream;                 /**< J2K codestream or JP2 file codestream*/
-  Byte8_t jp2klen;                    /**< length of j2kstream or JP2 file*/
+typedef struct jpip_dec_param {
+    Byte_t *jpipstream;                 /**< JPT/JPP-stream*/
+    Byte8_t jpiplen;                    /**< length of jpipstream*/
+    msgqueue_param_t *msgqueue;         /**< message queue*/
+    metadatalist_param_t *metadatalist; /**< metadata list going into JP2 file*/
+    ihdrbox_param_t *ihdrbox;           /**< ihdr box going into JP2 file*/
+    Byte_t *jp2kstream;                 /**< J2K codestream or JP2 file codestream*/
+    Byte8_t jp2klen;                    /**< length of j2kstream or JP2 file*/
 } jpip_dec_param_t;
 
 /**
@@ -281,7 +281,7 @@ typedef index_param_t index_t;
 
 /**
  * Parse JP2 file and get index information from cidx box inside
- * 
+ *
  * @param[in] fd file descriptor of the JP2 file
  * @return       pointer to the generated structure of index parameters
  */

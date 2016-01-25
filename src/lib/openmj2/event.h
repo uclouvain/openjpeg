@@ -1,6 +1,6 @@
 /*
- * The copyright in this software is being made available under the 2-clauses 
- * BSD License, included below. This software may be subject to other third 
+ * The copyright in this software is being made available under the 2-clauses
+ * BSD License, included below. This software may be subject to other third
  * party and contributor rights, including patent rights, and no such rights
  * are granted under this license.
  *
@@ -48,7 +48,7 @@ The functions in EVENT.C have for goal to send output messages (errors, warnings
 /*@{*/
 /* ----------------------------------------------------------------------- */
 /**
-Write formatted data to a string and send the string to a user callback. 
+Write formatted data to a string and send the string to a user callback.
 @param cinfo Codec context info
 @param event_type Event type or callback to use to send the message
 @param fmt Format-control string (plus optionnal arguments)

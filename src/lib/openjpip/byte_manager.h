@@ -113,7 +113,7 @@ Byte8_t big8( Byte_t *buf);
 
 /**
  * modify 4Byte code in a codestream
- *  
+ *
  * @param[in]  code code value
  * @param[out] stream modifying codestream
  */

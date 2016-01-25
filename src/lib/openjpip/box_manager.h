@@ -34,20 +34,20 @@
 #include "byte_manager.h"
 
 /** box parameters*/
-typedef struct box_param{
-  int fd;                 /**< file descriptor*/
-  OPJ_OFF_T offset;         /**< byte position of the whole Box (LBox) in the file*/
-  Byte_t  headlen;        /**< header length  8 or 16*/
-  Byte8_t length;         /**< length of the whole Box*/
-  char    type[4];        /**< type of information in the DBox*/
-  struct box_param *next; /**< pointer to the next box*/
+typedef struct box_param {
+    int fd;                 /**< file descriptor*/
+    OPJ_OFF_T offset;         /**< byte position of the whole Box (LBox) in the file*/
+    Byte_t  headlen;        /**< header length  8 or 16*/
+    Byte8_t length;         /**< length of the whole Box*/
+    char    type[4];        /**< type of information in the DBox*/
+    struct box_param *next; /**< pointer to the next box*/
 } box_param_t;
 
 
 /** Box list parameters*/
-typedef struct boxlist_param{
-  box_param_t *first; /**< first box pointer of the list*/
-  box_param_t *last;  /**< last  box pointer of the list*/
+typedef struct boxlist_param {
+    box_param_t *first; /**< first box pointer of the list*/
+    box_param_t *last;  /**< last  box pointer of the list*/
 } boxlist_param_t;
 
 
@@ -93,7 +93,7 @@ box_param_t * gene_boxbyOffinStream( Byte_t *stream, OPJ_OFF_T offset);
  *
  * @param[in] fd     file discriptor of the JP2 file
  * @param[in] offset start Byte position of the search
- * @param[in] length Byte length of the search, if 0, size to the end of file 
+ * @param[in] length Byte length of the search, if 0, size to the end of file
  * @param[in] TBox   Box Type
  * @return           pointer to the structure of generate/found box parameters
  */
@@ -104,7 +104,7 @@ box_param_t * gene_boxbyType( int fd, OPJ_OFF_T offset, OPJ_SIZE_T length, const
  *
  * @param[in] stream code stream ( from the first byte)
  * @param[in] offset start Byte position of the search
- * @param[in] length Byte length of the search, if 0, size to the end of file 
+ * @param[in] length Byte length of the search, if 0, size to the end of file
  * @param[in] TBox   Box Type
  * @return           pointer to the structure of generate/found box parameters
  */

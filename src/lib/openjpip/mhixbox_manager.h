@@ -35,24 +35,24 @@
 #include "box_manager.h"
 
 /** Marker index parameters*/
-typedef struct markeridx_param{
-  Byte2_t code;                 /**< marker code*/
-  Byte2_t num_remain;           /**< remining number of the same marker index segments listed immediately*/
-  OPJ_OFF_T offset;               /**< offset relative to the start of the*/
-			                          /**codestream ( including the length*/
-			                          /**parameter but not the marker itself)*/
-  Byte2_t length;               /**< marker segment length*/
-  struct markeridx_param *next; /**< pointer to the next markeridx*/
+typedef struct markeridx_param {
+    Byte2_t code;                 /**< marker code*/
+    Byte2_t num_remain;           /**< remining number of the same marker index segments listed immediately*/
+    OPJ_OFF_T offset;               /**< offset relative to the start of the*/
+    /**codestream ( including the length*/
+    /**parameter but not the marker itself)*/
+    Byte2_t length;               /**< marker segment length*/
+    struct markeridx_param *next; /**< pointer to the next markeridx*/
 } markeridx_param_t;
 
 
 
 /** header index table box parameters*/
 /** I.3.2.4.3 Header Index Table box*/
-typedef struct mhixbox_param{
-  Byte8_t tlen;             /**< length ( total length of the main*/
-			                      /**header or of the first tile-part header)*/
-  markeridx_param_t *first; /**< first marker index pointer of the list*/
+typedef struct mhixbox_param {
+    Byte8_t tlen;             /**< length ( total length of the main*/
+    /**header or of the first tile-part header)*/
+    markeridx_param_t *first; /**< first marker index pointer of the list*/
 } mhixbox_param_t;
 
 

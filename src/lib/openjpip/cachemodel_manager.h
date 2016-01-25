@@ -34,20 +34,20 @@
 #include "target_manager.h"
 
 /** Cache model parameters*/
-typedef struct cachemodel_param{
-  target_param_t *target;        /**< reference pointer to the target*/
-  OPJ_BOOL jppstream;                /**< return type, true: JPP-stream, false: JPT-stream*/
-  OPJ_BOOL mhead_model;              /**< main header model, if sent, 1, else 0*/
-  OPJ_BOOL *tp_model;                /**< dynamic array pointer of tile part model, if sent, 1, else 0*/
-  OPJ_BOOL *th_model;                /**< dynamic array pointer of tile header model*/
-  OPJ_BOOL **pp_model;               /**< dynamic array pointer of precint packet model*/
-  struct cachemodel_param *next; /**< pointer to the next cache model*/
+typedef struct cachemodel_param {
+    target_param_t *target;        /**< reference pointer to the target*/
+    OPJ_BOOL jppstream;                /**< return type, true: JPP-stream, false: JPT-stream*/
+    OPJ_BOOL mhead_model;              /**< main header model, if sent, 1, else 0*/
+    OPJ_BOOL *tp_model;                /**< dynamic array pointer of tile part model, if sent, 1, else 0*/
+    OPJ_BOOL *th_model;                /**< dynamic array pointer of tile header model*/
+    OPJ_BOOL **pp_model;               /**< dynamic array pointer of precint packet model*/
+    struct cachemodel_param *next; /**< pointer to the next cache model*/
 } cachemodel_param_t;
 
 /** Cache model list parameters*/
-typedef struct cachemodellist_param{
-  cachemodel_param_t *first; /**< first cache model pointer of the list*/
-  cachemodel_param_t *last;  /**< last  cache model pointer of the list*/
+typedef struct cachemodellist_param {
+    cachemodel_param_t *first; /**< first cache model pointer of the list*/
+    cachemodel_param_t *last;  /**< last  cache model pointer of the list*/
 } cachemodellist_param_t;
 
 

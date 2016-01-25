@@ -1,6 +1,6 @@
 /*
- * The copyright in this software is being made available under the 2-clauses 
- * BSD License, included below. This software may be subject to other third 
+ * The copyright in this software is being made available under the 2-clauses
+ * BSD License, included below. This software may be subject to other third
  * party and contributor rights, including patent rights, and no such rights
  * are granted under this license.
  *
@@ -39,16 +39,13 @@
 /**
  * Main codec handler used for compression or decompression.
  */
-typedef struct opj_codec_private
-{
+typedef struct opj_codec_private {
     /** FIXME DOC */
-    union
-    {
+    union {
         /**
          * Decompression handler.
          */
-        struct opj_decompression
-        {
+        struct opj_decompression {
             /** Main header reading function handler */
             OPJ_BOOL (*opj_read_header) ( struct opj_stream_private * cio,
                                           void * p_codec,
@@ -111,15 +108,14 @@ typedef struct opj_codec_private
 
             /** Set the decoded resolution factor */
             OPJ_BOOL (*opj_set_decoded_resolution_factor) ( void * p_codec,
-                                                            OPJ_UINT32 res_factor,
-                                                            opj_event_mgr_t * p_manager);
+                    OPJ_UINT32 res_factor,
+                    opj_event_mgr_t * p_manager);
         } m_decompression;
 
         /**
          * Compression handler. FIXME DOC
          */
-        struct opj_compression
-        {
+        struct opj_compression {
             OPJ_BOOL (* opj_start_compress) ( void *p_codec,
                                               struct opj_stream_private * cio,
                                               struct opj_image * p_image,

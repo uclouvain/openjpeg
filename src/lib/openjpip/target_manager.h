@@ -37,26 +37,26 @@
 #define MAX_LENOFTID 30
 
 /** target parameters*/
-typedef struct target_param{
-  char tid[MAX_LENOFTID];         /**< target identifier*/
-  char *targetname;               /**< local file path or URL ( URL is suported only with SERVER mode)*/
-  int fd;                         /**< file descriptor*/
+typedef struct target_param {
+    char tid[MAX_LENOFTID];         /**< target identifier*/
+    char *targetname;               /**< local file path or URL ( URL is suported only with SERVER mode)*/
+    int fd;                         /**< file descriptor*/
 #ifdef SERVER
-  char *tmpfname;                 /**< temporal file name to download a remote target file*/
+    char *tmpfname;                 /**< temporal file name to download a remote target file*/
 #endif
-  int csn;                        /**< codestream number                                  */
-  index_param_t *codeidx;         /**< index information of codestream                    */
-  int num_of_use;                 /**< numbers of sessions referring to this target       */
-  OPJ_BOOL jppstream;                 /**< if this target can return JPP-stream               */
-  OPJ_BOOL jptstream;                 /**< if this target can return JPP-stream               */
-  struct target_param *next;      /**< pointer to the next target                         */
+    int csn;                        /**< codestream number                                  */
+    index_param_t *codeidx;         /**< index information of codestream                    */
+    int num_of_use;                 /**< numbers of sessions referring to this target       */
+    OPJ_BOOL jppstream;                 /**< if this target can return JPP-stream               */
+    OPJ_BOOL jptstream;                 /**< if this target can return JPP-stream               */
+    struct target_param *next;      /**< pointer to the next target                         */
 } target_param_t;
 
 
 /** Target list parameters*/
-typedef struct targetlist_param{
-  target_param_t *first; /**< first target pointer of the list*/
-  target_param_t *last;  /**< last  target pointer of the list*/
+typedef struct targetlist_param {
+    target_param_t *first; /**< first target pointer of the list*/
+    target_param_t *last;  /**< last  target pointer of the list*/
 } targetlist_param_t;
 
 

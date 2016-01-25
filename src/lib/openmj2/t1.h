@@ -1,6 +1,6 @@
 /*
- * The copyright in this software is being made available under the 2-clauses 
- * BSD License, included below. This software may be subject to other third 
+ * The copyright in this software is being made available under the 2-clauses
+ * BSD License, included below. This software may be subject to other third
  * party and contributor rights, including patent rights, and no such rights
  * are granted under this license.
  *
@@ -8,7 +8,7 @@
  * Copyright (c) 2002-2014, Professor Benoit Macq
  * Copyright (c) 2001-2003, David Janssens
  * Copyright (c) 2002-2003, Yannick Verschueren
- * Copyright (c) 2003-2007, Francois-Olivier Devaux 
+ * Copyright (c) 2003-2007, Francois-Olivier Devaux
  * Copyright (c) 2003-2014, Antonin Descampe
  * Copyright (c) 2005, Herve Drolon, FreeImage Team
  * All rights reserved.
@@ -97,21 +97,21 @@ typedef short flag_t;
 Tier-1 coding (coding of code-block coefficients)
 */
 typedef struct opj_t1 {
-	/** codec context */
-	opj_common_ptr cinfo;
+    /** codec context */
+    opj_common_ptr cinfo;
 
-	/** MQC component */
-	opj_mqc_t *mqc;
-	/** RAW component */
-	opj_raw_t *raw;
+    /** MQC component */
+    opj_mqc_t *mqc;
+    /** RAW component */
+    opj_raw_t *raw;
 
-	int *data;
-	flag_t *flags;
-	int w;
-	int h;
-	int datasize;
-	int flagssize;
-	int flags_stride;
+    int *data;
+    flag_t *flags;
+    int w;
+    int h;
+    int datasize;
+    int flagssize;
+    int flags_stride;
 } opj_t1_t;
 
 #define MACRO_t1_flags(x,y) t1->flags[((x)*(t1->flags_stride))+(y)]
@@ -120,7 +120,7 @@ typedef struct opj_t1 {
 /*@{*/
 /* ----------------------------------------------------------------------- */
 /**
-Create a new T1 handle 
+Create a new T1 handle
 and initialize the look-up tables of the Tier-1 coder/decoder
 @return Returns a new T1 handle if successful, returns NULL otherwise
 @see t1_init_luts

@@ -1,6 +1,6 @@
 /*
- * The copyright in this software is being made available under the 2-clauses 
- * BSD License, included below. This software may be subject to other third 
+ * The copyright in this software is being made available under the 2-clauses
+ * BSD License, included below. This software may be subject to other third
  * party and contributor rights, including patent rights, and no such rights
  * are granted under this license.
  *
@@ -66,23 +66,23 @@ public:
         m_type = wxBITMAP_TYPE_MXF;
         m_mime = wxT("image/mxf");
 
-		m_reducefactor = 0;
-		m_qualitylayers = 0;
-		m_components = 0;
-		m_filename = wxT("");
+        m_reducefactor = 0;
+        m_qualitylayers = 0;
+        m_components = 0;
+        m_filename = wxT("");
 #ifdef USE_JPWL
-		m_enablejpwl = true;
-		m_expcomps = JPWL_EXPECTED_COMPONENTS;
-		m_maxtiles = JPWL_MAXIMUM_TILES;
+        m_enablejpwl = true;
+        m_expcomps = JPWL_EXPECTED_COMPONENTS;
+        m_maxtiles = JPWL_MAXIMUM_TILES;
 #endif // USE_JPWL
     }
 
-		// decoding engine parameters
-		int m_reducefactor, m_qualitylayers, m_components, m_framenum;
-		wxFileName m_filename;
+    // decoding engine parameters
+    int m_reducefactor, m_qualitylayers, m_components, m_framenum;
+    wxFileName m_filename;
 #ifdef USE_JPWL
-		bool m_enablejpwl;
-		int m_expcomps, m_maxtiles;
+    bool m_enablejpwl;
+    int m_expcomps, m_maxtiles;
 #endif // USE_JPWL
 
 #if wxUSE_STREAMS

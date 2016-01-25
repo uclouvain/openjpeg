@@ -1,6 +1,6 @@
 /*
- * The copyright in this software is being made available under the 2-clauses 
- * BSD License, included below. This software may be subject to other third 
+ * The copyright in this software is being made available under the 2-clauses
+ * BSD License, included below. This software may be subject to other third
  * party and contributor rights, including patent rights, and no such rights
  * are granted under this license.
  *
@@ -54,7 +54,7 @@ in T1.C are used by some function in TCD.C.
 #define T1_MINCBLKW 4		/*< Minimum size of code-block (width) */
 #define T1_MINCBLKH 4		/*< Minimum size of code-block (heigth) */
 #define T1_MINCBLKD 4		/*< Minimum size of code-block (depth) */
-#define T1_MAXWHD 18	
+#define T1_MAXWHD 18
 #define T1_CBLKW 256
 #define T1_CBLKH 256
 #define T1_CBLKD 256
@@ -104,34 +104,34 @@ in T1.C are used by some function in TCD.C.
 Tier-1 coding (coding of code-block coefficients)
 */
 typedef struct opj_t1 {
-	/** codec context */
-	opj_common_ptr cinfo;
+    /** codec context */
+    opj_common_ptr cinfo;
 
-	/** MQC component */
-	opj_mqc_t *mqc;
-	/** RAW component */
-	opj_raw_t *raw;
-	/** LUTs for context-based coding */
-	int lut_ctxno_zc[1024];
-	int lut_ctxno_sc[256];
-	int lut_ctxno_mag[4096];
-	int lut_spb[256];
-	/** LUTs for decoding normalised MSE */
-	int lut_nmsedec_sig[1 << T1_NMSEDEC_BITS];
-	int lut_nmsedec_sig0[1 << T1_NMSEDEC_BITS];
-	int lut_nmsedec_ref[1 << T1_NMSEDEC_BITS];
-	int lut_nmsedec_ref0[1 << T1_NMSEDEC_BITS];
-	/** Codeblock data */
-	int data[T1_CBLKD][T1_CBLKH][T1_CBLKW];/*int ***data;*/
-	/** Context information for each voxel in codeblock */
-	int flags[T1_CBLKD + 2][T1_CBLKH + 2][T1_CBLKH + 2];/*int ***flags;*/
+    /** MQC component */
+    opj_mqc_t *mqc;
+    /** RAW component */
+    opj_raw_t *raw;
+    /** LUTs for context-based coding */
+    int lut_ctxno_zc[1024];
+    int lut_ctxno_sc[256];
+    int lut_ctxno_mag[4096];
+    int lut_spb[256];
+    /** LUTs for decoding normalised MSE */
+    int lut_nmsedec_sig[1 << T1_NMSEDEC_BITS];
+    int lut_nmsedec_sig0[1 << T1_NMSEDEC_BITS];
+    int lut_nmsedec_ref[1 << T1_NMSEDEC_BITS];
+    int lut_nmsedec_ref0[1 << T1_NMSEDEC_BITS];
+    /** Codeblock data */
+    int data[T1_CBLKD][T1_CBLKH][T1_CBLKW];/*int ***data;*/
+    /** Context information for each voxel in codeblock */
+    int flags[T1_CBLKD + 2][T1_CBLKH + 2][T1_CBLKH + 2];/*int ***flags;*/
 } opj_t1_t;
 
 /** @name Exported functions */
 /*@{*/
 /* ----------------------------------------------------------------------- */
 /**
-Create a new T1 handle 
+Create a new T1 handle
 and initialize the look-up tables of the Tier-1 coder/decoder
 @return Returns a new T1 handle if successful, returns NULL otherwise
 @see t1_init_luts
@@ -159,8 +159,8 @@ void t1_decode_cblks(opj_t1_t *t1, opj_tcd_tile_t *tile, opj_tcp_t *tcp);
 /**
 Get weigths of MSE decoding
 @param nmsedec The normalized MSE reduction
-@param compno 
-@param level 
+@param compno
+@param level
 @param orient
 @param bpno
 @param stepsize

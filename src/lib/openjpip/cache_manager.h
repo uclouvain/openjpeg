@@ -35,21 +35,21 @@
 #include "ihdrbox_manager.h"
 
 /** cache parameters*/
-typedef struct cache_param{
-  char *filename;                     /**< file name*/
-  char *tid;                          /**< taregt identifier*/
-  int csn;                            /**< codestream number*/
-  char **cid;                         /**< dynamic array of channel identifiers*/
-  int numOfcid;                       /**< number of cids*/
-  metadatalist_param_t *metadatalist; /**< metadata-bin list*/
-  ihdrbox_param_t *ihdrbox;           /**< ihdrbox*/
-  struct cache_param *next;           /**< pointer to the next cache*/
+typedef struct cache_param {
+    char *filename;                     /**< file name*/
+    char *tid;                          /**< taregt identifier*/
+    int csn;                            /**< codestream number*/
+    char **cid;                         /**< dynamic array of channel identifiers*/
+    int numOfcid;                       /**< number of cids*/
+    metadatalist_param_t *metadatalist; /**< metadata-bin list*/
+    ihdrbox_param_t *ihdrbox;           /**< ihdrbox*/
+    struct cache_param *next;           /**< pointer to the next cache*/
 } cache_param_t;
 
 /**< cache list parameters*/
-typedef struct cachelist_param{
-  cache_param_t *first; /**< first cache pointer of the list*/
-  cache_param_t *last;  /**< last  cache pointer of the list*/
+typedef struct cachelist_param {
+    cache_param_t *first; /**< first cache pointer of the list*/
+    cache_param_t *last;  /**< last  cache pointer of the list*/
 } cachelist_param_t;
 
 

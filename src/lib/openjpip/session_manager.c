@@ -46,151 +46,151 @@
 
 sessionlist_param_t * gene_sessionlist(void)
 {
-  sessionlist_param_t *sessionlist;
+    sessionlist_param_t *sessionlist;
 
-  sessionlist = (sessionlist_param_t *)opj_malloc( sizeof(sessionlist_param_t));
-  
-  sessionlist->first = NULL;
-  sessionlist->last  = NULL;
+    sessionlist = (sessionlist_param_t *)opj_malloc( sizeof(sessionlist_param_t));
 
-  return sessionlist;
+    sessionlist->first = NULL;
+    sessionlist->last  = NULL;
+
+    return sessionlist;
 }
 
 session_param_t * gene_session( sessionlist_param_t *sessionlist)
 {
-  session_param_t *session;
-  
-  session = (session_param_t *)opj_malloc( sizeof(session_param_t));
+    session_param_t *session;
 
-  session->channellist = gene_channellist();
-  session->cachemodellist = gene_cachemodellist();
+    session = (session_param_t *)opj_malloc( sizeof(session_param_t));
 
-  session->next = NULL;
-  
-  if( sessionlist->first) /* there are one or more entries */
-    sessionlist->last->next = session;
-  else                   /* first entry */
-    sessionlist->first = session;
-  sessionlist->last = session;
-  
-  return session;
+    session->channellist = gene_channellist();
+    session->cachemodellist = gene_cachemodellist();
+
+    session->next = NULL;
+
+    if( sessionlist->first) /* there are one or more entries */
+        sessionlist->last->next = session;
+    else                   /* first entry */
+        sessionlist->first = session;
+    sessionlist->last = session;
+
+    return session;
 }
 
-OPJ_BOOL search_session_and_channel( char cid[], 
-				 sessionlist_param_t *sessionlist, 
-				 session_param_t **foundsession, 
-				 channel_param_t **foundchannel)
+OPJ_BOOL search_session_and_channel( char cid[],
+                                     sessionlist_param_t *sessionlist,
+                                     session_param_t **foundsession,
+                                     channel_param_t **foundchannel)
 {
-  *foundsession = sessionlist->first;
-  
-  while( *foundsession != NULL){
+    *foundsession = sessionlist->first;
 
-    *foundchannel = (*foundsession)->channellist->first;
-    
-    while( *foundchannel != NULL){
-      
-      if( strcmp( cid, (*foundchannel)->cid) == 0)
-	return OPJ_TRUE;
-      
-      *foundchannel = (*foundchannel)->next;
+    while( *foundsession != NULL) {
+
+        *foundchannel = (*foundsession)->channellist->first;
+
+        while( *foundchannel != NULL) {
+
+            if( strcmp( cid, (*foundchannel)->cid) == 0)
+                return OPJ_TRUE;
+
+            *foundchannel = (*foundchannel)->next;
+        }
+        *foundsession = (*foundsession)->next;
     }
-    *foundsession = (*foundsession)->next;
-  }
-  
-  fprintf( FCGI_stdout, "Status: 503\r\n");
-  fprintf( FCGI_stdout, "Reason: Channel %s not found\r\n", cid); 
 
-  return OPJ_FALSE;
+    fprintf( FCGI_stdout, "Status: 503\r\n");
+    fprintf( FCGI_stdout, "Reason: Channel %s not found\r\n", cid);
+
+    return OPJ_FALSE;
 }
 
 void insert_cachemodel_into_session( session_param_t *session, cachemodel_param_t *cachemodel)
 {
-  if(!cachemodel)
-    return;
+    if(!cachemodel)
+        return;
 
 #ifndef SERVER
-  fprintf( logstream, "local log: insert cachemodel into session\n");
+    fprintf( logstream, "local log: insert cachemodel into session\n");
 #endif
-  if( session->cachemodellist->first != NULL)
-    session->cachemodellist->last->next = cachemodel;
-  else
-    session->cachemodellist->first = cachemodel;
-  session->cachemodellist->last = cachemodel;
+    if( session->cachemodellist->first != NULL)
+        session->cachemodellist->last->next = cachemodel;
+    else
+        session->cachemodellist->first = cachemodel;
+    session->cachemodellist->last = cachemodel;
 }
 
 OPJ_BOOL delete_session( session_param_t **session, sessionlist_param_t *sessionlist)
 {
-  session_param_t *ptr;
+    session_param_t *ptr;
 
-  if( *session == NULL)
-    return OPJ_FALSE;
+    if( *session == NULL)
+        return OPJ_FALSE;
 
 
-  if( *session == sessionlist->first)
-    sessionlist->first = (*session)->next;
-  else{
-    ptr = sessionlist->first;
-    while( ptr->next != *session)
-      ptr = ptr->next;
-    ptr->next = (*session)->next;
+    if( *session == sessionlist->first)
+        sessionlist->first = (*session)->next;
+    else {
+        ptr = sessionlist->first;
+        while( ptr->next != *session)
+            ptr = ptr->next;
+        ptr->next = (*session)->next;
 
-    if( *session == sessionlist->last)
-      sessionlist->last = ptr;
-  }
-  
-  delete_channellist( &((*session)->channellist));
-  delete_cachemodellist( &((*session)->cachemodellist));
+        if( *session == sessionlist->last)
+            sessionlist->last = ptr;
+    }
+
+    delete_channellist( &((*session)->channellist));
+    delete_cachemodellist( &((*session)->cachemodellist));
 
 #ifndef SERVER
-  fprintf( logstream, "local log: session: %p deleted!\n", (void *)(*session));
+    fprintf( logstream, "local log: session: %p deleted!\n", (void *)(*session));
 #endif
-  opj_free( *session);
+    opj_free( *session);
 
-  return OPJ_TRUE;
+    return OPJ_TRUE;
 }
 
 void delete_sessionlist( sessionlist_param_t **sessionlist)
-{  
-  session_param_t *sessionPtr, *sessionNext;
+{
+    session_param_t *sessionPtr, *sessionNext;
 
-  sessionPtr = (*sessionlist)->first;
-  while( sessionPtr != NULL){
-    sessionNext=sessionPtr->next;
+    sessionPtr = (*sessionlist)->first;
+    while( sessionPtr != NULL) {
+        sessionNext=sessionPtr->next;
 
-    delete_channellist( &(sessionPtr->channellist));
-    delete_cachemodellist( &(sessionPtr->cachemodellist));
+        delete_channellist( &(sessionPtr->channellist));
+        delete_cachemodellist( &(sessionPtr->cachemodellist));
 
 #ifndef SERVER
-    fprintf( logstream, "local log: session: %p deleted!\n", (void *)sessionPtr);
+        fprintf( logstream, "local log: session: %p deleted!\n", (void *)sessionPtr);
 #endif
-    opj_free( sessionPtr);
+        opj_free( sessionPtr);
 
-    sessionPtr=sessionNext;
-  }
+        sessionPtr=sessionNext;
+    }
 
-  (*sessionlist)->first = NULL;
-  (*sessionlist)->last  = NULL;
+    (*sessionlist)->first = NULL;
+    (*sessionlist)->last  = NULL;
 
-  opj_free(*sessionlist);
+    opj_free(*sessionlist);
 }
 
 void print_allsession( sessionlist_param_t *sessionlist)
 {
-  session_param_t *ptr;
-  cachemodel_param_t *cachemodel;
-  int i=0;
+    session_param_t *ptr;
+    cachemodel_param_t *cachemodel;
+    int i=0;
 
-  fprintf( logstream, "SESSIONS info:\n");
+    fprintf( logstream, "SESSIONS info:\n");
 
-  ptr = sessionlist->first;
-  while( ptr != NULL){
-    fprintf( logstream, "session No.%d\n", i++);
-    print_allchannel( ptr->channellist);
-    cachemodel = ptr->cachemodellist->first;
-    while( cachemodel){
-      print_target( cachemodel->target);
-      cachemodel = cachemodel->next;
+    ptr = sessionlist->first;
+    while( ptr != NULL) {
+        fprintf( logstream, "session No.%d\n", i++);
+        print_allchannel( ptr->channellist);
+        cachemodel = ptr->cachemodellist->first;
+        while( cachemodel) {
+            print_target( cachemodel->target);
+            cachemodel = cachemodel->next;
+        }
+        ptr=ptr->next;
     }
-    ptr=ptr->next;
-  }
 }

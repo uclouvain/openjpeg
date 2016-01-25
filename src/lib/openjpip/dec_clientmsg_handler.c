@@ -40,214 +40,212 @@
 #include "opj_inttypes.h"
 
 void handle_JPIPstreamMSG( SOCKET connected_socket, cachelist_param_t *cachelist,
-			   Byte_t **jpipstream, OPJ_SIZE_T *streamlen, msgqueue_param_t *msgqueue)
+                           Byte_t **jpipstream, OPJ_SIZE_T *streamlen, msgqueue_param_t *msgqueue)
 {
-  Byte_t *newjpipstream;
-  OPJ_SIZE_T newstreamlen = 0;
-  cache_param_t *cache;
-  char *target, *tid, *cid;
-  metadatalist_param_t *metadatalist;
-  
-  newjpipstream = receive_JPIPstream( connected_socket, &target, &tid, &cid, &newstreamlen);
+    Byte_t *newjpipstream;
+    OPJ_SIZE_T newstreamlen = 0;
+    cache_param_t *cache;
+    char *target, *tid, *cid;
+    metadatalist_param_t *metadatalist;
 
-  fprintf( stderr, "newjpipstream length: %" PRIu64 "\n", newstreamlen);
-  
-  parse_JPIPstream( newjpipstream, newstreamlen, (OPJ_OFF_T)*streamlen, msgqueue);
+    newjpipstream = receive_JPIPstream( connected_socket, &target, &tid, &cid, &newstreamlen);
 
-  *jpipstream = update_JPIPstream( newjpipstream, newstreamlen, *jpipstream, streamlen);
-  opj_free( newjpipstream);
+    fprintf( stderr, "newjpipstream length: %" PRIu64 "\n", newstreamlen);
 
-  metadatalist = gene_metadatalist();
-  parse_metamsg( msgqueue, *jpipstream, *streamlen, metadatalist);
+    parse_JPIPstream( newjpipstream, newstreamlen, (OPJ_OFF_T)*streamlen, msgqueue);
 
-  assert( msgqueue->last );
-  assert( msgqueue->last->csn < INT_MAX );
-  /* cid registration*/
-  if( target != NULL){
-    if((cache = search_cache( target, cachelist))){
-      if( tid != NULL)
-	update_cachetid( tid, cache);
-      if( cid != NULL)
-	add_cachecid( cid, cache);
-    }
-    else{
-      cache = gene_cache( target, (int)msgqueue->last->csn, tid, cid);
-      insert_cache_into_list( cache, cachelist);
-    }
-  }
-  else
-    cache = search_cacheBycsn( (int)msgqueue->last->csn, cachelist);
+    *jpipstream = update_JPIPstream( newjpipstream, newstreamlen, *jpipstream, streamlen);
+    opj_free( newjpipstream);
 
-  if( cache->metadatalist)
-    delete_metadatalist( &cache->metadatalist);
-  cache->metadatalist = metadatalist;
+    metadatalist = gene_metadatalist();
+    parse_metamsg( msgqueue, *jpipstream, *streamlen, metadatalist);
 
-  if( target)    opj_free( target);
-  if( tid)    opj_free( tid);
-  if( cid)    opj_free( cid);
+    assert( msgqueue->last );
+    assert( msgqueue->last->csn < INT_MAX );
+    /* cid registration*/
+    if( target != NULL) {
+        if((cache = search_cache( target, cachelist))) {
+            if( tid != NULL)
+                update_cachetid( tid, cache);
+            if( cid != NULL)
+                add_cachecid( cid, cache);
+        } else {
+            cache = gene_cache( target, (int)msgqueue->last->csn, tid, cid);
+            insert_cache_into_list( cache, cachelist);
+        }
+    } else
+        cache = search_cacheBycsn( (int)msgqueue->last->csn, cachelist);
 
-  response_signal( connected_socket, OPJ_TRUE);
+    if( cache->metadatalist)
+        delete_metadatalist( &cache->metadatalist);
+    cache->metadatalist = metadatalist;
+
+    if( target)    opj_free( target);
+    if( tid)    opj_free( tid);
+    if( cid)    opj_free( cid);
+
+    response_signal( connected_socket, OPJ_TRUE);
 }
 
 void handle_PNMreqMSG( SOCKET connected_socket, Byte_t *jpipstream, msgqueue_param_t *msgqueue, cachelist_param_t *cachelist)
 {
-  Byte_t *pnmstream;
-  ihdrbox_param_t *ihdrbox;
-  char *CIDorTID, tmp[10];
-  cache_param_t *cache;
-  int fw, fh;
-  int maxval;
-  
-  CIDorTID = receive_string( connected_socket);
-  
-  if(!(cache = search_cacheBycid( CIDorTID, cachelist)))
-    if(!(cache = search_cacheBytid( CIDorTID, cachelist))){
-      opj_free( CIDorTID);
-      return;
-    }
-  
-  opj_free( CIDorTID);
+    Byte_t *pnmstream;
+    ihdrbox_param_t *ihdrbox;
+    char *CIDorTID, tmp[10];
+    cache_param_t *cache;
+    int fw, fh;
+    int maxval;
 
-  receive_line( connected_socket, tmp);
-  fw = atoi( tmp);
+    CIDorTID = receive_string( connected_socket);
 
-  receive_line( connected_socket, tmp);
-  fh = atoi( tmp);
+    if(!(cache = search_cacheBycid( CIDorTID, cachelist)))
+        if(!(cache = search_cacheBytid( CIDorTID, cachelist))) {
+            opj_free( CIDorTID);
+            return;
+        }
 
-  ihdrbox = NULL;
-  assert( cache->csn >= 0 );
-  pnmstream = jpipstream_to_pnm( jpipstream, msgqueue, (Byte8_t)cache->csn, fw, fh, &ihdrbox);
+    opj_free( CIDorTID);
 
-  maxval = ihdrbox->bpc > 8 ? 255 : (1 << ihdrbox->bpc) - 1;
-  send_PNMstream( connected_socket, pnmstream, ihdrbox->width, ihdrbox->height, ihdrbox->nc, (Byte_t)maxval );
+    receive_line( connected_socket, tmp);
+    fw = atoi( tmp);
 
-  opj_free( ihdrbox);
-  opj_free( pnmstream);
+    receive_line( connected_socket, tmp);
+    fh = atoi( tmp);
+
+    ihdrbox = NULL;
+    assert( cache->csn >= 0 );
+    pnmstream = jpipstream_to_pnm( jpipstream, msgqueue, (Byte8_t)cache->csn, fw, fh, &ihdrbox);
+
+    maxval = ihdrbox->bpc > 8 ? 255 : (1 << ihdrbox->bpc) - 1;
+    send_PNMstream( connected_socket, pnmstream, ihdrbox->width, ihdrbox->height, ihdrbox->nc, (Byte_t)maxval );
+
+    opj_free( ihdrbox);
+    opj_free( pnmstream);
 }
 
 void handle_XMLreqMSG( SOCKET connected_socket, Byte_t *jpipstream, cachelist_param_t *cachelist)
 {
-  char *cid;
-  cache_param_t *cache;
-  boxcontents_param_t *boxcontents;
-  Byte_t *xmlstream;
+    char *cid;
+    cache_param_t *cache;
+    boxcontents_param_t *boxcontents;
+    Byte_t *xmlstream;
 
-  cid = receive_string( connected_socket);
+    cid = receive_string( connected_socket);
 
-  if(!(cache = search_cacheBycid( cid, cachelist))){
+    if(!(cache = search_cacheBycid( cid, cachelist))) {
+        opj_free( cid);
+        return;
+    }
+
     opj_free( cid);
-    return;
-  }
 
-  opj_free( cid);
-  
-  boxcontents = cache->metadatalist->last->boxcontents;
-  xmlstream = (Byte_t *)opj_malloc( boxcontents->length);
-  memcpy( xmlstream, jpipstream+boxcontents->offset, boxcontents->length);
-  send_XMLstream( connected_socket, xmlstream, boxcontents->length);
-  opj_free( xmlstream);
+    boxcontents = cache->metadatalist->last->boxcontents;
+    xmlstream = (Byte_t *)opj_malloc( boxcontents->length);
+    memcpy( xmlstream, jpipstream+boxcontents->offset, boxcontents->length);
+    send_XMLstream( connected_socket, xmlstream, boxcontents->length);
+    opj_free( xmlstream);
 }
 
 void handle_TIDreqMSG( SOCKET connected_socket, cachelist_param_t *cachelist)
 {
-  char *target, *tid = NULL;
-  cache_param_t *cache;
-  OPJ_SIZE_T tidlen = 0;
+    char *target, *tid = NULL;
+    cache_param_t *cache;
+    OPJ_SIZE_T tidlen = 0;
 
-  target = receive_string( connected_socket);
-  cache = search_cache( target, cachelist);
+    target = receive_string( connected_socket);
+    cache = search_cache( target, cachelist);
 
-  opj_free( target);
-  
-  if( cache){
-    tid = cache->tid;
-    tidlen = strlen(tid);
-  }
-  send_TIDstream( connected_socket, tid, tidlen);
+    opj_free( target);
+
+    if( cache) {
+        tid = cache->tid;
+        tidlen = strlen(tid);
+    }
+    send_TIDstream( connected_socket, tid, tidlen);
 }
 
 void handle_CIDreqMSG( SOCKET connected_socket, cachelist_param_t *cachelist)
 {
-  char *target, *cid = NULL;
-  cache_param_t *cache;
-  OPJ_SIZE_T cidlen = 0;
+    char *target, *cid = NULL;
+    cache_param_t *cache;
+    OPJ_SIZE_T cidlen = 0;
 
-  target = receive_string( connected_socket);
-  cache = search_cache( target, cachelist);
-  
-  opj_free( target);
+    target = receive_string( connected_socket);
+    cache = search_cache( target, cachelist);
 
-  if( cache){
-    if( cache->numOfcid > 0){
-      cid = cache->cid[ cache->numOfcid-1];
-      cidlen = strlen(cid);
+    opj_free( target);
+
+    if( cache) {
+        if( cache->numOfcid > 0) {
+            cid = cache->cid[ cache->numOfcid-1];
+            cidlen = strlen(cid);
+        }
     }
-  }
-  send_CIDstream( connected_socket, cid, cidlen);
+    send_CIDstream( connected_socket, cid, cidlen);
 }
 
 void handle_dstCIDreqMSG( SOCKET connected_socket, cachelist_param_t *cachelist)
 {
-  char *cid;
+    char *cid;
 
-  cid = receive_string( connected_socket);
-  remove_cachecid( cid, cachelist);
-  response_signal( connected_socket, OPJ_TRUE);
-  
-  opj_free( cid);
+    cid = receive_string( connected_socket);
+    remove_cachecid( cid, cachelist);
+    response_signal( connected_socket, OPJ_TRUE);
+
+    opj_free( cid);
 }
 
 void handle_SIZreqMSG( SOCKET connected_socket, Byte_t *jpipstream, msgqueue_param_t *msgqueue, cachelist_param_t *cachelist)
 {
-  char *tid, *cid;
-  cache_param_t *cache;
-  Byte4_t width, height;
-  
-  tid = receive_string( connected_socket);
-  cid = receive_string( connected_socket);
-  
-  cache = NULL;
+    char *tid, *cid;
+    cache_param_t *cache;
+    Byte4_t width, height;
 
-  if( tid[0] != '0')
-    cache = search_cacheBytid( tid, cachelist);
-  
-  if( !cache && cid[0] != '0')
-    cache = search_cacheBycid( cid, cachelist);
+    tid = receive_string( connected_socket);
+    cid = receive_string( connected_socket);
 
-  opj_free( tid);
-  opj_free( cid);
-  
-  width = height = 0;
-  if( cache){
-    assert( cache->csn >= 0);
-    if( !cache->ihdrbox)
-      cache->ihdrbox = get_SIZ_from_jpipstream( jpipstream, msgqueue, (Byte8_t)cache->csn);
-    width  = cache->ihdrbox->width;
-    height = cache->ihdrbox->height;
-  }
-  send_SIZstream( connected_socket, width, height);
+    cache = NULL;
+
+    if( tid[0] != '0')
+        cache = search_cacheBytid( tid, cachelist);
+
+    if( !cache && cid[0] != '0')
+        cache = search_cacheBycid( cid, cachelist);
+
+    opj_free( tid);
+    opj_free( cid);
+
+    width = height = 0;
+    if( cache) {
+        assert( cache->csn >= 0);
+        if( !cache->ihdrbox)
+            cache->ihdrbox = get_SIZ_from_jpipstream( jpipstream, msgqueue, (Byte8_t)cache->csn);
+        width  = cache->ihdrbox->width;
+        height = cache->ihdrbox->height;
+    }
+    send_SIZstream( connected_socket, width, height);
 }
 
 void handle_JP2saveMSG( SOCKET connected_socket, cachelist_param_t *cachelist, msgqueue_param_t *msgqueue, Byte_t *jpipstream)
 {
-  char *cid;
-  cache_param_t *cache;
-  Byte_t *jp2stream;
-  Byte8_t jp2len;
+    char *cid;
+    cache_param_t *cache;
+    Byte_t *jp2stream;
+    Byte8_t jp2len;
 
-  cid = receive_string( connected_socket);
-  if(!(cache = search_cacheBycid( cid, cachelist))){
+    cid = receive_string( connected_socket);
+    if(!(cache = search_cacheBycid( cid, cachelist))) {
+        opj_free( cid);
+        return;
+    }
+
     opj_free( cid);
-    return;
-  }
-  
-  opj_free( cid);
-  
-  assert( cache->csn >= 0);
-  jp2stream = recons_jp2( msgqueue, jpipstream, (Byte8_t)cache->csn, &jp2len);
 
-  if( jp2stream){
-    save_codestream( jp2stream, jp2len, "jp2");
-    opj_free( jp2stream);
-  }
+    assert( cache->csn >= 0);
+    jp2stream = recons_jp2( msgqueue, jpipstream, (Byte8_t)cache->csn, &jp2len);
+
+    if( jp2stream) {
+        save_codestream( jp2stream, jp2len, "jp2");
+        opj_free( jp2stream);
+    }
 }

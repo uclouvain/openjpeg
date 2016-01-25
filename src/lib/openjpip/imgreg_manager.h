@@ -32,13 +32,13 @@
 # define   	IMGREG_MANAGER_H_
 
 /** image region parameters */
-typedef struct imgreg_param{
-  int xosiz, yosiz; /** offset from the origin of the reference grid
+typedef struct imgreg_param {
+    int xosiz, yosiz; /** offset from the origin of the reference grid
 		    at the decomposition level */
-  int fx, fy;       /** frame size (fsiz) */
-  int ox, oy;       /** offset (roff) */
-  int sx, sy;       /** region size (rsiz) */
-  int level;        /** decomposition level */
+    int fx, fy;       /** frame size (fsiz) */
+    int ox, oy;       /** offset (roff) */
+    int sx, sy;       /** region size (rsiz) */
+    int level;        /** decomposition level */
 } imgreg_param_t;
 
 
@@ -53,12 +53,12 @@ typedef struct imgreg_param{
  * @param[in] numOfreslev number of resolution levels
  * @return                structure of image region parameters
  */
-imgreg_param_t map_viewin2imgreg( const int fx,    const int fy, 
-				  const int rx,    const int ry,
-				  const int rw,    const int rh,
-				  const int XOsiz, const int YOsiz,
-				  const int Xsiz,  const int Ysiz,
-				  const int numOfreslev);
+imgreg_param_t map_viewin2imgreg( const int fx,    const int fy,
+                                  const int rx,    const int ry,
+                                  const int rw,    const int rh,
+                                  const int XOsiz, const int YOsiz,
+                                  const int Xsiz,  const int Ysiz,
+                                  const int numOfreslev);
 
 
 /**

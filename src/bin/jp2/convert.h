@@ -1,6 +1,6 @@
 /*
- * The copyright in this software is being made available under the 2-clauses 
- * BSD License, included below. This software may be subject to other third 
+ * The copyright in this software is being made available under the 2-clauses
+ * BSD License, included below. This software may be subject to other third
  * party and contributor rights, including patent rights, and no such rights
  * are granted under this license.
  *
@@ -8,7 +8,7 @@
  * Copyright (c) 2002-2014, Professor Benoit Macq
  * Copyright (c) 2001-2003, David Janssens
  * Copyright (c) 2002-2003, Yannick Verschueren
- * Copyright (c) 2003-2007, Francois-Olivier Devaux 
+ * Copyright (c) 2003-2007, Francois-Olivier Devaux
  * Copyright (c) 2003-2014, Antonin Descampe
  * Copyright (c) 2005, Herve Drolon, FreeImage Team
  * All rights reserved.
@@ -50,19 +50,19 @@ typedef struct raw_comp_cparameters {
 /**@name RAW image encoding parameters */
 /*@{*/
 typedef struct raw_cparameters {
-	/** width of the raw image */
-	int rawWidth;
-	/** height of the raw image */
-	int rawHeight;
+    /** width of the raw image */
+    int rawWidth;
+    /** height of the raw image */
+    int rawHeight;
     /** number of components of the raw image */
-	int rawComp;
+    int rawComp;
     /** bit depth of the raw image */
     int rawBitDepth;
     /** signed/unsigned raw image */
     OPJ_BOOL rawSigned;
     /** raw components parameters */
     raw_comp_cparameters_t *rawComps;
-	/*@}*/
+    /*@}*/
 } raw_cparameters_t;
 
 /* Component precision clipping */

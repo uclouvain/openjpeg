@@ -1,6 +1,6 @@
 /*
- * The copyright in this software is being made available under the 2-clauses 
- * BSD License, included below. This software may be subject to other third 
+ * The copyright in this software is being made available under the 2-clauses
+ * BSD License, included below. This software may be subject to other third
  * party and contributor rights, including patent rights, and no such rights
  * are granted under this license.
  *
@@ -48,12 +48,12 @@
 Tier-2 coding
 */
 typedef struct opj_t2 {
-/** Codec context */
-	opj_common_ptr cinfo;	
-/** Encoding: pointer to the src volume. Decoding: pointer to the dst volume. */
-	opj_volume_t *volume;	
-/** Pointer to the volume coding parameters */
-	opj_cp_t *cp;			
+    /** Codec context */
+    opj_common_ptr cinfo;
+    /** Encoding: pointer to the src volume. Decoding: pointer to the dst volume. */
+    opj_volume_t *volume;
+    /** Pointer to the volume coding parameters */
+    opj_cp_t *cp;
 } opj_t2_t;
 
 /** @name Funciones generales */

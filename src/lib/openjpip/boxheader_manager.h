@@ -36,11 +36,11 @@
 #include "box_manager.h"
 
 /** box header parameters*/
-typedef struct boxheader_param{
-  Byte_t  headlen;              /**< header length  8 or 16*/
-  Byte8_t length;               /**< length of the reference Box*/
-  char    type[4];              /**< type of information in the DBox*/
-  struct boxheader_param *next; /**< pointer to the next header box*/
+typedef struct boxheader_param {
+    Byte_t  headlen;              /**< header length  8 or 16*/
+    Byte8_t length;               /**< length of the reference Box*/
+    char    type[4];              /**< type of information in the DBox*/
+    struct boxheader_param *next; /**< pointer to the next header box*/
 } boxheader_param_t;
 
 

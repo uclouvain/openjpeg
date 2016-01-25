@@ -1,6 +1,6 @@
 /*
- * The copyright in this software is being made available under the 2-clauses 
- * BSD License, included below. This software may be subject to other third 
+ * The copyright in this software is being made available under the 2-clauses
+ * BSD License, included below. This software may be subject to other third
  * party and contributor rights, including patent rights, and no such rights
  * are granted under this license.
  *
@@ -32,7 +32,7 @@
 #ifndef __FUNCTION_LIST_H
 #define __FUNCTION_LIST_H
 
-/** 
+/**
  * @file function_list.h
  * @brief Implementation of a list of procedures.
 
@@ -54,20 +54,19 @@ typedef void (*opj_procedure)(void);
 /**
  * A list of procedures.
 */
-typedef struct opj_procedure_list 
-{
-	/**
-	 * The number of validation procedures.
-	 */
-	OPJ_UINT32 m_nb_procedures;
-	/**
-	 * The number of the array of validation procedures.
-	 */
-	OPJ_UINT32 m_nb_max_procedures;
-	/**
-	 * The array of procedures.
-	 */
-	opj_procedure * m_procedures;
+typedef struct opj_procedure_list {
+    /**
+     * The number of validation procedures.
+     */
+    OPJ_UINT32 m_nb_procedures;
+    /**
+     * The number of the array of validation procedures.
+     */
+    OPJ_UINT32 m_nb_max_procedures;
+    /**
+     * The array of procedures.
+     */
+    opj_procedure * m_procedures;
 
 } opj_procedure_list_t;
 

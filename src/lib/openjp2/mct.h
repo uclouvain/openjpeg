@@ -1,6 +1,6 @@
 /*
- * The copyright in this software is being made available under the 2-clauses 
- * BSD License, included below. This software may be subject to other third 
+ * The copyright in this software is being made available under the 2-clauses
+ * BSD License, included below. This software may be subject to other third
  * party and contributor rights, including patent rights, and no such rights
  * are granted under this license.
  *
@@ -8,10 +8,10 @@
  * Copyright (c) 2002-2014, Professor Benoit Macq
  * Copyright (c) 2001-2003, David Janssens
  * Copyright (c) 2002-2003, Yannick Verschueren
- * Copyright (c) 2003-2007, Francois-Olivier Devaux 
+ * Copyright (c) 2003-2007, Francois-Olivier Devaux
  * Copyright (c) 2003-2014, Antonin Descampe
  * Copyright (c) 2005, Herve Drolon, FreeImage Team
- * Copyright (c) 2008, 2011-2012, Centre National d'Etudes Spatiales (CNES), FR 
+ * Copyright (c) 2008, 2011-2012, Centre National d'Etudes Spatiales (CNES), FR
  * Copyright (c) 2012, CS Systemes d'Information, France
  * All rights reserved.
  *
@@ -72,7 +72,7 @@ void opj_mct_decode(OPJ_INT32 *c0, OPJ_INT32 *c1, OPJ_INT32 *c2, OPJ_UINT32 n);
 /**
 Get norm of the basis function used for the reversible multi-component transform
 @param compno Number of the component (0->Y, 1->U, 2->V)
-@return 
+@return
 */
 OPJ_FLOAT64 opj_mct_getnorm(OPJ_UINT32 compno);
 
@@ -95,7 +95,7 @@ void opj_mct_decode_real(OPJ_FLOAT32* c0, OPJ_FLOAT32* c1, OPJ_FLOAT32* c2, OPJ_
 /**
 Get norm of the basis function used for the irreversible multi-component transform
 @param compno Number of the component (0->Y, 1->U, 2->V)
-@return 
+@return
 */
 OPJ_FLOAT64 opj_mct_getnorm_real(OPJ_UINT32 compno);
 
@@ -109,11 +109,11 @@ FIXME DOC
 @return OPJ_FALSE if function encounter a problem, OPJ_TRUE otherwise
 */
 OPJ_BOOL opj_mct_encode_custom(
-					   OPJ_BYTE * p_coding_data,
-					   OPJ_UINT32 n,
-					   OPJ_BYTE ** p_data,
-					   OPJ_UINT32 p_nb_comp,
-					   OPJ_UINT32 is_signed);
+    OPJ_BYTE * p_coding_data,
+    OPJ_UINT32 n,
+    OPJ_BYTE ** p_data,
+    OPJ_UINT32 p_nb_comp,
+    OPJ_UINT32 is_signed);
 /**
 FIXME DOC
 @param pDecodingData    MCT data
@@ -124,27 +124,27 @@ FIXME DOC
 @return OPJ_FALSE if function encounter a problem, OPJ_TRUE otherwise
 */
 OPJ_BOOL opj_mct_decode_custom(
-					   OPJ_BYTE * pDecodingData,
-					   OPJ_UINT32 n,
-					   OPJ_BYTE ** pData,
-					   OPJ_UINT32 pNbComp,
-					   OPJ_UINT32 isSigned);
+    OPJ_BYTE * pDecodingData,
+    OPJ_UINT32 n,
+    OPJ_BYTE ** pData,
+    OPJ_UINT32 pNbComp,
+    OPJ_UINT32 isSigned);
 /**
 FIXME DOC
 @param pNorms           MCT data
 @param p_nb_comps       size of components
 @param pMatrix          components
-@return 
+@return
 */
 void opj_calculate_norms(   OPJ_FLOAT64 * pNorms,
                             OPJ_UINT32 p_nb_comps,
                             OPJ_FLOAT32 * pMatrix);
 /**
-FIXME DOC 
+FIXME DOC
 */
 const OPJ_FLOAT64 * opj_mct_get_mct_norms (void);
 /**
-FIXME DOC 
+FIXME DOC
 */
 const OPJ_FLOAT64 * opj_mct_get_mct_norms_real (void);
 /* ----------------------------------------------------------------------- */

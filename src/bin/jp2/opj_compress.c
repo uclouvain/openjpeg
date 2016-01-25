@@ -1,6 +1,6 @@
 /*
- * The copyright in this software is being made available under the 2-clauses 
- * BSD License, included below. This software may be subject to other third 
+ * The copyright in this software is being made available under the 2-clauses
+ * BSD License, included below. This software may be subject to other third
  * party and contributor rights, including patent rights, and no such rights
  * are granted under this license.
  *
@@ -8,7 +8,7 @@
  * Copyright (c) 2002-2014, Professor Benoit Macq
  * Copyright (c) 2001-2003, David Janssens
  * Copyright (c) 2002-2003, Yannick Verschueren
- * Copyright (c) 2003-2007, Francois-Olivier Devaux 
+ * Copyright (c) 2003-2007, Francois-Olivier Devaux
  * Copyright (c) 2003-2014, Antonin Descampe
  * Copyright (c) 2005, Herve Drolon, FreeImage Team
  * Copyright (c) 2006-2007, Parvatha Elangovan
@@ -71,14 +71,14 @@
 #include "format_defs.h"
 #include "opj_string.h"
 
-typedef struct dircnt{
+typedef struct dircnt {
     /** Buffer for holding images read from Directory*/
     char *filename_buf;
     /** Pointer to the buffer*/
     char **filename;
-}dircnt_t;
+} dircnt_t;
 
-typedef struct img_folder{
+typedef struct img_folder {
     /** The directory path of the folder containing input images*/
     char *imgdirpath;
     /** Output format*/
@@ -87,9 +87,10 @@ typedef struct img_folder{
     char set_imgdir;
     /** Enable Cod Format for output*/
     char set_out_format;
-}img_fol_t;
+} img_fol_t;
 
-static void encode_help_display(void) {
+static void encode_help_display(void)
+{
     fprintf(stdout,"\nThis is the opj_compress utility from the OpenJPEG project.\n"
             "It compresses various image formats with the JPEG 2000 algorithm.\n"
             "It has been compiled against openjp2 library v%s.\n\n",opj_version());
@@ -108,9 +109,9 @@ static void encode_help_display(void) {
     fprintf(stdout," * No sub-sampling in x or y direction\n");
     fprintf(stdout," * No mode switch activated\n");
     fprintf(stdout," * Progression order: LRCP\n");
-    #ifdef FIXME_INDEX
+#ifdef FIXME_INDEX
     fprintf(stdout," * No index file\n");
-    #endif /* FIXME_INDEX */
+#endif /* FIXME_INDEX */
     fprintf(stdout," * No ROI upshifted\n");
     fprintf(stdout," * No offset of the origin of the image\n");
     fprintf(stdout," * No offset of the origin of the tiles\n");
@@ -218,10 +219,10 @@ static void encode_help_display(void) {
     fprintf(stdout,"    Divide packets of every tile into tile-parts.\n");
     fprintf(stdout,"    Division is made by grouping Resolutions (R), Layers (L)\n");
     fprintf(stdout,"    or Components (C).\n");
-    #ifdef FIXME_INDEX
+#ifdef FIXME_INDEX
     fprintf(stdout,"-x  <index file>\n");
     fprintf(stdout,"    Create an index file.\n");
-    #endif /*FIXME_INDEX*/
+#endif /*FIXME_INDEX*/
     fprintf(stdout,"-ROI c=<component index>,U=<upshifting value>\n");
     fprintf(stdout,"    Quantization indices upshifted for a component. \n");
     fprintf(stdout,"    Warning: This option does not implement the usual ROI (Region of Interest).\n");
@@ -353,7 +354,8 @@ static void encode_help_display(void) {
 #endif /*FIXME_INDEX*/
 }
 
-static OPJ_PROG_ORDER give_progression(const char progression[4]) {
+static OPJ_PROG_ORDER give_progression(const char progression[4])
+{
     if(strncmp(progression, "LRCP", 4) == 0) {
         return OPJ_LRCP;
     }
@@ -373,7 +375,8 @@ static OPJ_PROG_ORDER give_progression(const char progression[4]) {
     return OPJ_PROG_UNKNOWN;
 }
 
-static unsigned int get_num_images(char *imgdirpath){
+static unsigned int get_num_images(char *imgdirpath)
+{
     DIR *dir;
     struct dirent* content;
     unsigned int num_images = 0;
@@ -381,13 +384,13 @@ static unsigned int get_num_images(char *imgdirpath){
     /*Reading the input images from given input directory*/
 
     dir= opendir(imgdirpath);
-    if(!dir){
+    if(!dir) {
         fprintf(stderr,"Could not open Folder %s\n",imgdirpath);
         return 0;
     }
 
     num_images=0;
-    while((content=readdir(dir))!=NULL){
+    while((content=readdir(dir))!=NULL) {
         if(strcmp(".",content->d_name)==0 || strcmp("..",content->d_name)==0 )
             continue;
         num_images++;
@@ -396,7 +399,8 @@ static unsigned int get_num_images(char *imgdirpath){
     return num_images;
 }
 
-static int load_images(dircnt_t *dirptr, char *imgdirpath){
+static int load_images(dircnt_t *dirptr, char *imgdirpath)
+{
     DIR *dir;
     struct dirent* content;
     int i = 0;
@@ -404,25 +408,26 @@ static int load_images(dircnt_t *dirptr, char *imgdirpath){
     /*Reading the input images from given input directory*/
 
     dir= opendir(imgdirpath);
-    if(!dir){
+    if(!dir) {
         fprintf(stderr,"Could not open Folder %s\n",imgdirpath);
         return 1;
-    }else	{
+    } else	{
         fprintf(stderr,"Folder opened successfully\n");
     }
 
-    while((content=readdir(dir))!=NULL){
+    while((content=readdir(dir))!=NULL) {
         if(strcmp(".",content->d_name)==0 || strcmp("..",content->d_name)==0 )
             continue;
 
         strcpy(dirptr->filename[i],content->d_name);
         i++;
     }
-	closedir(dir);
+    closedir(dir);
     return 0;
 }
 
-static int get_file_format(char *filename) {
+static int get_file_format(char *filename)
+{
     unsigned int i;
     static const char *extension[] = {
         "pgx", "pnm", "pgm", "ppm", "pbm", "pam", "bmp", "tif", "raw", "rawl", "tga", "png", "j2k", "jp2", "j2c", "jpc"
@@ -442,12 +447,14 @@ static int get_file_format(char *filename) {
     return -1;
 }
 
-static char * get_file_name(char *name){
+static char * get_file_name(char *name)
+{
     char *fname = strtok(name,".");
     return fname;
 }
 
-static char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_cparameters_t *parameters){
+static char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_cparameters_t *parameters)
+{
     char image_filename[OPJ_PATH_LEN], infilename[OPJ_PATH_LEN],outfilename[OPJ_PATH_LEN],temp_ofname[OPJ_PATH_LEN];
     char *temp_p, temp1[OPJ_PATH_LEN]="";
 
@@ -460,14 +467,14 @@ static char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_c
     if (opj_strcpy_s(parameters->infile, sizeof(parameters->infile), infilename) != 0) {
         return 1;
     }
-	
+
     /*Set output file*/
     strcpy(temp_ofname,get_file_name(image_filename));
-    while((temp_p = strtok(NULL,".")) != NULL){
+    while((temp_p = strtok(NULL,".")) != NULL) {
         strcat(temp_ofname,temp1);
         sprintf(temp1,".%s",temp_p);
     }
-    if(img_fol->set_out_format==1){
+    if(img_fol->set_out_format==1) {
         sprintf(outfilename,"%s/%s.%s",img_fol->imgdirpath,temp_ofname,img_fol->out_format);
         if (opj_strcpy_s(parameters->outfile, sizeof(parameters->outfile), outfilename) != 0) {
             return 1;
@@ -479,10 +486,11 @@ static char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_c
 /* ------------------------------------------------------------------------------------ */
 
 static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters,
-                                 img_fol_t *img_fol, raw_cparameters_t *raw_cp, char *indexfilename, size_t indexfilename_size) {
+                                 img_fol_t *img_fol, raw_cparameters_t *raw_cp, char *indexfilename, size_t indexfilename_size)
+{
     OPJ_UINT32 i, j;
     int totlen, c;
-    opj_option_t long_option[]={
+    opj_option_t long_option[]= {
         {"cinema2K",REQ_ARG, NULL ,'w'},
         {"cinema4K",NO_ARG, NULL ,'y'},
         {"ImgDir",REQ_ARG, NULL ,'z'},
@@ -498,22 +506,21 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
 
     /* parse the command line */
     const char optlist[] = "i:o:r:q:n:b:c:t:p:s:SEM:x:R:d:T:If:P:C:F:u:JY:"
-        #ifdef USE_JPWL
-            "W:"
-        #endif /* USE_JPWL */
-            "h";
+#ifdef USE_JPWL
+                           "W:"
+#endif /* USE_JPWL */
+                           "h";
 
     totlen=sizeof(long_option);
     img_fol->set_out_format=0;
     raw_cp->rawWidth = 0;
 
-    do{
+    do {
         c = opj_getopt_long(argc, argv, optlist,long_option,totlen);
         if (c == -1)
             break;
         switch (c) {
-        case 'i':			/* input file */
-        {
+        case 'i': {		/* input file */
             char *infile = opj_optarg;
             parameters->decod_format = get_file_format(infile);
             switch(parameters->decod_format) {
@@ -537,12 +544,11 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
                 return 1;
             }
         }
-            break;
+        break;
 
-            /* ----------------------------------------------------- */
+        /* ----------------------------------------------------- */
 
-        case 'o':			/* output file */
-        {
+        case 'o': {		/* output file */
             char *outfile = opj_optarg;
             parameters->cod_format = get_file_format(outfile);
             switch(parameters->cod_format) {
@@ -557,11 +563,10 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
                 return 1;
             }
         }
-            break;
+        break;
 
-            /* ----------------------------------------------------- */
-        case 'O':			/* output format */
-        {
+        /* ----------------------------------------------------- */
+        case 'O': {		/* output format */
             char outformat[50];
             char *of = opj_optarg;
             sprintf(outformat,".%s",of);
@@ -577,14 +582,13 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
                 return 1;
             }
         }
-            break;
+        break;
 
 
-            /* ----------------------------------------------------- */
+        /* ----------------------------------------------------- */
 
 
-        case 'r':			/* rates rates/distorsion */
-        {
+        case 'r': {		/* rates rates/distorsion */
             char *s = opj_optarg;
             parameters->tcp_numlayers = 0;
             while (sscanf(s, "%f", &parameters->tcp_rates[parameters->tcp_numlayers]) == 1) {
@@ -598,13 +602,12 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
             }
             parameters->cp_disto_alloc = 1;
         }
-            break;
+        break;
 
-            /* ----------------------------------------------------- */
+        /* ----------------------------------------------------- */
 
 
-        case 'F':			/* Raw image format parameters */
-        {
+        case 'F': {		/* Raw image format parameters */
             OPJ_BOOL wrong = OPJ_FALSE;
             char *substr1;
             char *substr2;
@@ -687,12 +690,11 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
                 return 1;
             }
         }
-            break;
+        break;
 
-            /* ----------------------------------------------------- */
+        /* ----------------------------------------------------- */
 
-        case 'q':			/* add fixed_quality */
-        {
+        case 'q': {		/* add fixed_quality */
             char *s = opj_optarg;
             while (sscanf(s, "%f", &parameters->tcp_distoratio[parameters->tcp_numlayers]) == 1) {
                 parameters->tcp_numlayers++;
@@ -705,13 +707,12 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
             }
             parameters->cp_fixed_quality = 1;
         }
-            break;
+        break;
 
-            /* dda */
-            /* ----------------------------------------------------- */
+        /* dda */
+        /* ----------------------------------------------------- */
 
-        case 'f':			/* mod fixed_quality (before : -q) */
-        {
+        case 'f': {		/* mod fixed_quality (before : -q) */
             int *row = NULL, *col = NULL;
             OPJ_UINT32 numlayers = 0, numresolution = 0, matrix_width = 0;
 
@@ -753,28 +754,25 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
             }
             parameters->cp_fixed_alloc = 1;
         }
-            break;
+        break;
 
-            /* ----------------------------------------------------- */
+        /* ----------------------------------------------------- */
 
-        case 't':			/* tiles */
-        {
+        case 't': {		/* tiles */
             sscanf(opj_optarg, "%d,%d", &parameters->cp_tdx, &parameters->cp_tdy);
             parameters->tile_size_on = OPJ_TRUE;
         }
-            break;
+        break;
 
-            /* ----------------------------------------------------- */
+        /* ----------------------------------------------------- */
 
-        case 'n':			/* resolution */
-        {
+        case 'n': {		/* resolution */
             sscanf(opj_optarg, "%d", &parameters->numresolution);
         }
-            break;
+        break;
 
-            /* ----------------------------------------------------- */
-        case 'c':			/* precinct dimension */
-        {
+        /* ----------------------------------------------------- */
+        case 'c': {		/* precinct dimension */
             char sep;
             int res_spec = 0;
 
@@ -783,26 +781,23 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
             do {
                 sep = 0;
                 ret = sscanf(s, "[%d,%d]%c", &parameters->prcw_init[res_spec],
-                       &parameters->prch_init[res_spec], &sep);
-                if( !(ret == 2 && sep == 0) && !(ret == 3 && sep == ',') )
-                  {
-                  fprintf(stderr,"\nError: could not parse precinct dimension: '%s' %x\n", s, sep);
-                  fprintf(stderr,"Example: -i lena.raw -o lena.j2k -c [128,128],[128,128]\n");
-                  return 1;
-                  }
+                             &parameters->prch_init[res_spec], &sep);
+                if( !(ret == 2 && sep == 0) && !(ret == 3 && sep == ',') ) {
+                    fprintf(stderr,"\nError: could not parse precinct dimension: '%s' %x\n", s, sep);
+                    fprintf(stderr,"Example: -i lena.raw -o lena.j2k -c [128,128],[128,128]\n");
+                    return 1;
+                }
                 parameters->csty |= 0x01;
                 res_spec++;
                 s = strpbrk(s, "]") + 2;
-            }
-            while (sep == ',');
+            } while (sep == ',');
             parameters->res_spec = res_spec;
         }
-            break;
+        break;
 
-            /* ----------------------------------------------------- */
+        /* ----------------------------------------------------- */
 
-        case 'b':			/* code-block dimension */
-        {
+        case 'b': {		/* code-block dimension */
             int cblockw_init = 0, cblockh_init = 0;
             sscanf(opj_optarg, "%d,%d", &cblockw_init, &cblockh_init);
             if (cblockw_init * cblockh_init > 4096 || cblockw_init > 1024
@@ -815,12 +810,11 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
             parameters->cblockw_init = cblockw_init;
             parameters->cblockh_init = cblockh_init;
         }
-            break;
+        break;
 
-            /* ----------------------------------------------------- */
+        /* ----------------------------------------------------- */
 
-        case 'x':			/* creation of index file */
-        {
+        case 'x': {		/* creation of index file */
             if (opj_strcpy_s(indexfilename, indexfilename_size, opj_optarg) != 0) {
                 return 1;
             }
@@ -830,12 +824,11 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
                     "          '-x' option ignored.\n");
             /* << FIXME ADE INDEX */
         }
-            break;
+        break;
 
-            /* ----------------------------------------------------- */
+        /* ----------------------------------------------------- */
 
-        case 'p':			/* progression order */
-        {
+        case 'p': {		/* progression order */
             char progression[4];
 
             strncpy(progression, opj_optarg, 4);
@@ -846,24 +839,22 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
                 return 1;
             }
         }
-            break;
+        break;
 
-            /* ----------------------------------------------------- */
+        /* ----------------------------------------------------- */
 
-        case 's':			/* subsampling factor */
-        {
+        case 's': {		/* subsampling factor */
             if (sscanf(opj_optarg, "%d,%d", &parameters->subsampling_dx,
                        &parameters->subsampling_dy) != 2) {
                 fprintf(stderr,	"'-s' sub-sampling argument error !  [-s dx,dy]\n");
                 return 1;
             }
         }
-            break;
+        break;
 
-            /* ----------------------------------------------------- */
+        /* ----------------------------------------------------- */
 
-        case 'd':			/* coordonnate of the reference grid */
-        {
+        case 'd': {		/* coordonnate of the reference grid */
             if (sscanf(opj_optarg, "%d,%d", &parameters->image_offset_x0,
                        &parameters->image_offset_y0) != 2) {
                 fprintf(stderr,	"-d 'coordonnate of the reference grid' argument "
@@ -871,18 +862,17 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
                 return 1;
             }
         }
-            break;
+        break;
 
-            /* ----------------------------------------------------- */
+        /* ----------------------------------------------------- */
 
         case 'h':			/* display an help description */
             encode_help_display();
             return 1;
 
-            /* ----------------------------------------------------- */
+        /* ----------------------------------------------------- */
 
-        case 'P':			/* POC */
-        {
+        case 'P': {		/* POC */
             int numpocs = 0;		/* number of progression order change (POC) default 0 */
             opj_poc_t *POC = NULL;	/* POC : used in case of Progression order change */
 
@@ -905,28 +895,25 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
             }
             parameters->numpocs = (OPJ_UINT32)numpocs;
         }
-            break;
+        break;
 
-            /* ------------------------------------------------------ */
+        /* ------------------------------------------------------ */
 
-        case 'S':			/* SOP marker */
-        {
+        case 'S': {		/* SOP marker */
             parameters->csty |= 0x02;
         }
-            break;
+        break;
 
-            /* ------------------------------------------------------ */
+        /* ------------------------------------------------------ */
 
-        case 'E':			/* EPH marker */
-        {
+        case 'E': {		/* EPH marker */
             parameters->csty |= 0x04;
         }
-            break;
+        break;
 
-            /* ------------------------------------------------------ */
+        /* ------------------------------------------------------ */
 
-        case 'M':			/* Mode switch pas tous au point !! */
-        {
+        case 'M': {		/* Mode switch pas tous au point !! */
             int value = 0;
             if (sscanf(opj_optarg, "%d", &value) == 1) {
                 for (i = 0; i <= 5; i++) {
@@ -936,85 +923,78 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
                 }
             }
         }
-            break;
+        break;
 
-            /* ------------------------------------------------------ */
+        /* ------------------------------------------------------ */
 
-        case 'R':			/* ROI */
-        {
+        case 'R': {		/* ROI */
             if (sscanf(opj_optarg, "c=%d,U=%d", &parameters->roi_compno,
                        &parameters->roi_shift) != 2) {
                 fprintf(stderr, "ROI error !! [-ROI c='compno',U='shift']\n");
                 return 1;
             }
         }
-            break;
+        break;
 
-            /* ------------------------------------------------------ */
+        /* ------------------------------------------------------ */
 
-        case 'T':			/* Tile offset */
-        {
+        case 'T': {		/* Tile offset */
             if (sscanf(opj_optarg, "%d,%d", &parameters->cp_tx0, &parameters->cp_ty0) != 2) {
                 fprintf(stderr, "-T 'tile offset' argument error !! [-T X0,Y0]");
                 return 1;
             }
         }
-            break;
+        break;
 
-            /* ------------------------------------------------------ */
+        /* ------------------------------------------------------ */
 
-        case 'C':			/* add a comment */
-        {
+        case 'C': {		/* add a comment */
             parameters->cp_comment = (char*)malloc(strlen(opj_optarg) + 1);
             if(parameters->cp_comment) {
                 strcpy(parameters->cp_comment, opj_optarg);
             }
         }
-            break;
+        break;
 
 
-            /* ------------------------------------------------------ */
+        /* ------------------------------------------------------ */
 
-        case 'I':			/* reversible or not */
-        {
+        case 'I': {		/* reversible or not */
             parameters->irreversible = 1;
         }
-            break;
+        break;
 
-            /* ------------------------------------------------------ */
+        /* ------------------------------------------------------ */
 
-        case 'u':			/* Tile part generation*/
-        {
+        case 'u': {		/* Tile part generation*/
             parameters->tp_flag = opj_optarg[0];
             parameters->tp_on = 1;
         }
-            break;
+        break;
 
-            /* ------------------------------------------------------ */
+        /* ------------------------------------------------------ */
 
-        case 'z':			/* Image Directory path */
-        {
+        case 'z': {		/* Image Directory path */
             img_fol->imgdirpath = (char*)malloc(strlen(opj_optarg) + 1);
             strcpy(img_fol->imgdirpath,opj_optarg);
             img_fol->set_imgdir=1;
         }
-            break;
+        break;
 
-            /* ------------------------------------------------------ */
+        /* ------------------------------------------------------ */
 
-        case 'w':			/* Digital Cinema 2K profile compliance*/
-        {
+        case 'w': {		/* Digital Cinema 2K profile compliance*/
             int fps=0;
             sscanf(opj_optarg,"%d",&fps);
-            if(fps == 24){
+            if(fps == 24) {
                 parameters->rsiz = OPJ_PROFILE_CINEMA_2K;
                 parameters->max_comp_size = OPJ_CINEMA_24_COMP;
                 parameters->max_cs_size = OPJ_CINEMA_24_CS;
-            }else if(fps == 48 ){
+            } else if(fps == 48 ) {
                 parameters->rsiz = OPJ_PROFILE_CINEMA_2K;
                 parameters->max_comp_size = OPJ_CINEMA_48_COMP;
                 parameters->max_cs_size = OPJ_CINEMA_48_CS;
-            }else {
+            } else {
                 fprintf(stderr,"Incorrect value!! must be 24 or 48\n");
                 return 1;
             }
@@ -1022,37 +1002,34 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
                     "Other options specified could be overriden\n");
 
         }
-            break;
+        break;
 
-            /* ------------------------------------------------------ */
+        /* ------------------------------------------------------ */
 
-        case 'y':			/* Digital Cinema 4K profile compliance*/
-        {
+        case 'y': {		/* Digital Cinema 4K profile compliance*/
             parameters->rsiz = OPJ_PROFILE_CINEMA_4K;
             fprintf(stdout,"CINEMA 4K profile activated\n"
                     "Other options specified could be overriden\n");
         }
-            break;
+        break;
 
-            /* ------------------------------------------------------ */
+        /* ------------------------------------------------------ */
 
-        case 'Y':			/* Shall we do an MCT ? 0:no_mct;1:rgb->ycc;2:custom mct (-m option required)*/
-        {
+        case 'Y': {		/* Shall we do an MCT ? 0:no_mct;1:rgb->ycc;2:custom mct (-m option required)*/
             int mct_mode=0;
             sscanf(opj_optarg,"%d",&mct_mode);
-            if(mct_mode < 0 || mct_mode > 2){
+            if(mct_mode < 0 || mct_mode > 2) {
                 fprintf(stderr,"MCT incorrect value!! Current accepted values are 0, 1 or 2.\n");
                 return 1;
             }
             parameters->tcp_mct = (char) mct_mode;
         }
-            break;
+        break;
 
-            /* ------------------------------------------------------ */
+        /* ------------------------------------------------------ */
 
 
-        case 'm':			/* mct input file */
-        {
+        case 'm': {		/* mct input file */
             char *lFilename = opj_optarg;
             char *lMatrix;
             char *lCurrentPtr ;
@@ -1107,14 +1084,14 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
                 return 1;
             }
             lCurrentDoublePtr = lSpace;
-            for (i2=0;i2<lMctComp;++i2) {
+            for (i2=0; i2<lMctComp; ++i2) {
                 lStrLen = strlen(lCurrentPtr) + 1;
                 *lCurrentDoublePtr++ = (float) atof(lCurrentPtr);
                 lCurrentPtr += lStrLen;
             }
 
             l_int_ptr = (int*) lCurrentDoublePtr;
-            for (i2=0;i2<lNbComp;++i2) {
+            for (i2=0; i2<lNbComp; ++i2) {
                 lStrLen = strlen(lCurrentPtr) + 1;
                 *l_int_ptr++ = atoi(lCurrentPtr);
                 lCurrentPtr += lStrLen;
@@ -1127,17 +1104,16 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
             free(lSpace);
             free(lMatrix);
         }
-            break;
+        break;
 
 
             /* ------------------------------------------------------ */
 
             /* UniPG>> */
 #ifdef USE_JPWL
-            /* ------------------------------------------------------ */
+        /* ------------------------------------------------------ */
 
-        case 'W':			/* JPWL capabilities switched on */
-        {
+        case 'W': {		/* JPWL capabilities switched on */
             char *token = NULL;
             int hprot, pprot, sens, addr, size, range;
 
@@ -1164,7 +1140,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
                     if(sscanf(token, "h=%d", &hprot) == 1) {
                         /* Main header, specified */
                         if (!((hprot == 0) || (hprot == 1) || (hprot == 16) || (hprot == 32) ||
-                              ((hprot >= 37) && (hprot <= 128)))) {
+                                ((hprot >= 37) && (hprot <= 128)))) {
                             fprintf(stderr, "ERROR -> invalid main header protection method h = %d\n", hprot);
                             return 1;
                         }
@@ -1173,7 +1149,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
                     } else if(sscanf(token, "h%d=%d", &tile, &hprot) == 2) {
                         /* Tile part header, specified */
                         if (!((hprot == 0) || (hprot == 1) || (hprot == 16) || (hprot == 32) ||
-                              ((hprot >= 37) && (hprot <= 128)))) {
+                                ((hprot >= 37) && (hprot <= 128)))) {
                             fprintf(stderr, "ERROR -> invalid tile part header protection method h = %d\n", hprot);
                             return 1;
                         }
@@ -1219,7 +1195,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
                     if (sscanf(token, "p=%d", &pprot) == 1) {
                         /* Method for all tiles and all packets */
                         if (!((pprot == 0) || (pprot == 1) || (pprot == 16) || (pprot == 32) ||
-                              ((pprot >= 37) && (pprot <= 128)))) {
+                                ((pprot >= 37) && (pprot <= 128)))) {
                             fprintf(stderr, "ERROR -> invalid default packet protection method p = %d\n", pprot);
                             return 1;
                         }
@@ -1230,7 +1206,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
                     } else if (sscanf(token, "p%d=%d", &tile, &pprot) == 2) {
                         /* method specified from that tile on */
                         if (!((pprot == 0) || (pprot == 1) || (pprot == 16) || (pprot == 32) ||
-                              ((pprot >= 37) && (pprot <= 128)))) {
+                                ((pprot >= 37) && (pprot <= 128)))) {
                             fprintf(stderr, "ERROR -> invalid packet protection method p = %d\n", pprot);
                             return 1;
                         }
@@ -1247,7 +1223,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
                     } else if (sscanf(token, "p%d:%d=%d", &tile, &pack, &pprot) == 3) {
                         /* method fully specified from that tile and that packet on */
                         if (!((pprot == 0) || (pprot == 1) || (pprot == 16) || (pprot == 32) ||
-                              ((pprot >= 37) && (pprot <= 128)))) {
+                                ((pprot >= 37) && (pprot <= 128)))) {
                             fprintf(stderr, "ERROR -> invalid packet protection method p = %d\n", pprot);
                             return 1;
                         }
@@ -1268,7 +1244,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
                     } else if (sscanf(token, "p%d:%d", &tile, &pack) == 2) {
                         /* default method from that tile and that packet on */
                         if (!((pprot == 0) || (pprot == 1) || (pprot == 16) || (pprot == 32) ||
-                              ((pprot >= 37) && (pprot <= 128)))) {
+                                ((pprot >= 37) && (pprot <= 128)))) {
                             fprintf(stderr, "ERROR -> invalid packet protection method p = %d\n", pprot);
                             return 1;
                         }
@@ -1450,51 +1426,50 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
             parameters->jpwl_epc_on = OPJ_TRUE;
 
         }
-            break;
+        break;
 #endif /* USE_JPWL */
-            /* <<UniPG */
-            /* ------------------------------------------------------ */
+        /* <<UniPG */
+        /* ------------------------------------------------------ */
 
-        case 'J':			/* jpip on */
-        {
+        case 'J': {		/* jpip on */
             parameters->jpip_on = OPJ_TRUE;
         }
-            break;
-            /* ------------------------------------------------------ */
+        break;
+        /* ------------------------------------------------------ */
 
 
         default:
             fprintf(stderr, "[WARNING] An invalid option has been ignored\n");
             break;
         }
-    }while(c != -1);
+    } while(c != -1);
 
-    if(img_fol->set_imgdir == 1){
-        if(!(parameters->infile[0] == 0)){
+    if(img_fol->set_imgdir == 1) {
+        if(!(parameters->infile[0] == 0)) {
             fprintf(stderr, "[ERROR] options -ImgDir and -i cannot be used together !!\n");
             return 1;
         }
-        if(img_fol->set_out_format == 0){
+        if(img_fol->set_out_format == 0) {
             fprintf(stderr, "[ERROR] When -ImgDir is used, -OutFor <FORMAT> must be used !!\n");
             fprintf(stderr, "Only one format allowed! Valid formats are j2k and jp2!!\n");
             return 1;
         }
-        if(!((parameters->outfile[0] == 0))){
+        if(!((parameters->outfile[0] == 0))) {
             fprintf(stderr, "[ERROR] options -ImgDir and -o cannot be used together !!\n");
             fprintf(stderr, "Specify OutputFormat using -OutFor<FORMAT> !!\n");
             return 1;
         }
-    }else{
+    } else {
         if((parameters->infile[0] == 0) || (parameters->outfile[0] == 0)) {
             fprintf(stderr, "[ERROR] Required parameters are missing\n"
-                            "Example: %s -i image.pgm -o image.j2k\n",argv[0]);
+                    "Example: %s -i image.pgm -o image.j2k\n",argv[0]);
             fprintf(stderr, "   Help: %s -h\n",argv[0]);
             return 1;
         }
     }
 
     if ( (parameters->decod_format == RAW_DFMT && raw_cp->rawWidth == 0)
-         || (parameters->decod_format == RAWL_DFMT && raw_cp->rawWidth == 0)) {
+            || (parameters->decod_format == RAWL_DFMT && raw_cp->rawWidth == 0)) {
         fprintf(stderr,"[ERROR] invalid raw image parameters\n");
         fprintf(stderr,"Please use the Format option -F:\n");
         fprintf(stderr,"-F rawWidth,rawHeight,rawComp,rawBitDepth,s/u (Signed/Unsigned)\n");
@@ -1533,9 +1508,9 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
 
     /* If subsampled image is provided, automatically disable MCT */
     if ( ((parameters->decod_format == RAW_DFMT) || (parameters->decod_format == RAWL_DFMT))
-         && (   ((raw_cp->rawComp > 1 ) && ((raw_cp->rawComps[1].dx > 1) || (raw_cp->rawComps[1].dy > 1)))
-             || ((raw_cp->rawComp > 2 ) && ((raw_cp->rawComps[2].dx > 1) || (raw_cp->rawComps[2].dy > 1)))
-						)) {
+            && (   ((raw_cp->rawComp > 1 ) && ((raw_cp->rawComps[1].dx > 1) || (raw_cp->rawComps[1].dy > 1)))
+                   || ((raw_cp->rawComp > 2 ) && ((raw_cp->rawComps[2].dx > 1) || (raw_cp->rawComps[2].dy > 1)))
+               )) {
         parameters->tcp_mct = 0;
     }
 
@@ -1547,43 +1522,47 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
 /**
 sample error debug callback expecting no client object
 */
-static void error_callback(const char *msg, void *client_data) {
+static void error_callback(const char *msg, void *client_data)
+{
     (void)client_data;
     fprintf(stdout, "[ERROR] %s", msg);
 }
 /**
 sample warning debug callback expecting no client object
 */
-static void warning_callback(const char *msg, void *client_data) {
+static void warning_callback(const char *msg, void *client_data)
+{
     (void)client_data;
     fprintf(stdout, "[WARNING] %s", msg);
 }
 /**
 sample debug callback expecting no client object
 */
-static void info_callback(const char *msg, void *client_data) {
+static void info_callback(const char *msg, void *client_data)
+{
     (void)client_data;
     fprintf(stdout, "[INFO] %s", msg);
 }
 
-OPJ_FLOAT64 opj_clock(void) {
+OPJ_FLOAT64 opj_clock(void)
+{
 #ifdef _WIN32
-	/* _WIN32: use QueryPerformance (very accurate) */
+    /* _WIN32: use QueryPerformance (very accurate) */
     LARGE_INTEGER freq , t ;
     /* freq is the clock speed of the CPU */
     QueryPerformanceFrequency(&freq) ;
-	/* cout << "freq = " << ((double) freq.QuadPart) << endl; */
+    /* cout << "freq = " << ((double) freq.QuadPart) << endl; */
     /* t is the high resolution performance counter (see MSDN) */
     QueryPerformanceCounter ( & t ) ;
     return freq.QuadPart ? ( t.QuadPart /(OPJ_FLOAT64) freq.QuadPart ) : 0 ;
 #else
-	/* Unix or Linux: use resource usage */
+    /* Unix or Linux: use resource usage */
     struct rusage t;
     OPJ_FLOAT64 procTime;
     /* (1) Get the rusage data structure at this moment (man getrusage) */
     getrusage(0,&t);
     /* (2) What is the elapsed time ? - CPU time = User time + System time */
-	/* (2a) Get the seconds */
+    /* (2a) Get the seconds */
     procTime = (OPJ_FLOAT64)(t.ru_utime.tv_sec + t.ru_stime.tv_sec);
     /* (2b) More precisely! Get the microseconds part ! */
     return ( procTime + (OPJ_FLOAT64)(t.ru_utime.tv_usec + t.ru_stime.tv_usec) * 1e-6 ) ;
@@ -1596,7 +1575,8 @@ OPJ_FLOAT64 opj_clock(void) {
  * OPJ_COMPRESS MAIN
  */
 /* -------------------------------------------------------------------------- */
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
 
     opj_cparameters_t parameters;	/* compression parameters */
 
@@ -1639,35 +1619,35 @@ int main(int argc, char **argv) {
     }
 
     /* Read directory if necessary */
-    if(img_fol.set_imgdir==1){
+    if(img_fol.set_imgdir==1) {
         num_images=get_num_images(img_fol.imgdirpath);
         dirptr=(dircnt_t*)malloc(sizeof(dircnt_t));
-        if(dirptr){
+        if(dirptr) {
             dirptr->filename_buf = (char*)malloc(num_images*OPJ_PATH_LEN*sizeof(char));	/* Stores at max 10 image file names*/
             dirptr->filename = (char**) malloc(num_images*sizeof(char*));
-            if(!dirptr->filename_buf){
+            if(!dirptr->filename_buf) {
                 return 0;
             }
-            for(i=0;i<num_images;i++){
+            for(i=0; i<num_images; i++) {
                 dirptr->filename[i] = dirptr->filename_buf + i*OPJ_PATH_LEN;
             }
         }
-        if(load_images(dirptr,img_fol.imgdirpath)==1){
+        if(load_images(dirptr,img_fol.imgdirpath)==1) {
             return 0;
         }
-        if (num_images==0){
+        if (num_images==0) {
             fprintf(stdout,"Folder is empty\n");
             return 0;
         }
-    }else{
+    } else {
         num_images=1;
     }
     /*Encoding image one by one*/
-    for(imageno=0;imageno<num_images;imageno++)	{
+    for(imageno=0; imageno<num_images; imageno++)	{
         image = NULL;
         fprintf(stderr,"\n");
 
-        if(img_fol.set_imgdir==1){
+        if(img_fol.set_imgdir==1) {
             if (get_next_file((int)imageno, dirptr,&img_fol, &parameters)) {
                 fprintf(stderr,"skipping file...\n");
                 continue;
@@ -1769,8 +1749,8 @@ int main(int argc, char **argv) {
         }
 
         /* Can happen if input file is TIFF or PNG
- * and OPJ_HAVE_LIBTIF or OPJ_HAVE_LIBPNG is undefined
-*/
+        * and OPJ_HAVE_LIBTIF or OPJ_HAVE_LIBPNG is undefined
+        */
         if( !image) {
             fprintf(stderr, "Unable to load file: got no image\n");
             return 1;
@@ -1780,12 +1760,12 @@ int main(int argc, char **argv) {
         if (parameters.tcp_mct == (char) 255) { /* mct mode has not been set in commandline */
             parameters.tcp_mct = (image->numcomps >= 3) ? 1 : 0;
         } else {            /* mct mode has been set in commandline */
-            if ((parameters.tcp_mct == 1) && (image->numcomps < 3)){
+            if ((parameters.tcp_mct == 1) && (image->numcomps < 3)) {
                 fprintf(stderr, "RGB->YCC conversion cannot be used:\n");
                 fprintf(stderr, "Input image has less than 3 components\n");
                 return 1;
             }
-            if ((parameters.tcp_mct == 2) && (!parameters.mct_data)){
+            if ((parameters.tcp_mct == 2) && (!parameters.mct_data)) {
                 fprintf(stderr, "Custom MCT has been set but no array-based MCT\n");
                 fprintf(stderr, "has been provided. Aborting.\n");
                 return 1;
@@ -1796,14 +1776,12 @@ int main(int argc, char **argv) {
         /* ---------------------------- */
 
         switch(parameters.cod_format) {
-        case J2K_CFMT:	/* JPEG-2000 codestream */
-        {
+        case J2K_CFMT: {	/* JPEG-2000 codestream */
             /* Get a decoder handle */
             l_codec = opj_create_compress(OPJ_CODEC_J2K);
             break;
         }
-        case JP2_CFMT:	/* JPEG 2000 compressed image data */
-        {
+        case JP2_CFMT: {	/* JPEG 2000 compressed image data */
             /* Get a decoder handle */
             l_codec = opj_create_compress(OPJ_CODEC_JP2);
             break;
@@ -1835,7 +1813,7 @@ int main(int argc, char **argv) {
 
         /* open a byte stream for writing and allocate memory for all tiles */
         l_stream = opj_stream_create_default_file_stream(parameters.outfile,OPJ_FALSE);
-        if (! l_stream){
+        if (! l_stream) {
             return 1;
         }
 
@@ -1849,7 +1827,7 @@ int main(int argc, char **argv) {
             OPJ_UINT32 l_data_size = 512*512*3;
             l_data = (OPJ_BYTE*) calloc( 1,l_data_size);
             assert( l_data );
-            for (i=0;i<l_nb_tiles;++i) {
+            for (i=0; i<l_nb_tiles; ++i) {
                 if (! opj_write_tile(l_codec,i,l_data,l_data_size,l_stream)) {
                     fprintf(stderr, "ERROR -> test_tile_encoder: failed to write the tile %d!\n",i);
                     opj_stream_destroy(l_stream);
@@ -1859,8 +1837,7 @@ int main(int argc, char **argv) {
                 }
             }
             free(l_data);
-        }
-        else {
+        } else {
             bSuccess = bSuccess && opj_encode(l_codec, l_stream);
             if (!bSuccess)  {
                 fprintf(stderr, "failed to encode image: opj_encode\n");
@@ -1876,11 +1853,11 @@ int main(int argc, char **argv) {
             opj_destroy_codec(l_codec);
             opj_image_destroy(image);
             fprintf(stderr, "failed to encode image\n");
-			remove(parameters.outfile);
+            remove(parameters.outfile);
             return 1;
         }
 
-		num_compressed_files++;
+        num_compressed_files++;
         fprintf(stdout,"[INFO] Generated outfile %s\n",parameters.outfile);
         /* close and free the byte stream */
         opj_stream_destroy(l_stream);
@@ -1897,10 +1874,10 @@ int main(int argc, char **argv) {
     if(parameters.cp_comment)   free(parameters.cp_comment);
     if(parameters.cp_matrice)   free(parameters.cp_matrice);
     if(raw_cp.rawComps) free(raw_cp.rawComps);
-	
+
     t = opj_clock() - t;
     if (num_compressed_files) {
-		    fprintf(stdout, "encode time: %d ms \n", (int)((t * 1000.0)/(OPJ_FLOAT64)num_compressed_files));
+        fprintf(stdout, "encode time: %d ms \n", (int)((t * 1000.0)/(OPJ_FLOAT64)num_compressed_files));
     }
 
     return 0;
