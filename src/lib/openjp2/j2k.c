@@ -9863,9 +9863,7 @@ static OPJ_BOOL opj_j2k_decode_one_tile (       opj_j2k_t *p_j2k,
                         if (! l_new_current_data) {
                                 opj_free(l_current_data);
                                 l_current_data = NULL;
-                                /* TODO: LH: why tile numbering policy used in messages differs from
-                                   the one used in opj_j2k_decode_tiles() ? */
-                                opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to decode tile %d/%d\n", l_current_tile_no, (p_j2k->m_cp.th * p_j2k->m_cp.tw) - 1);
+                                opj_event_msg(p_manager, EVT_ERROR, "Not enough memory to decode tile %d/%d\n", l_current_tile_no+1, p_j2k->m_cp.th * p_j2k->m_cp.tw);
                                 return OPJ_FALSE;
                         }
                         l_current_data = l_new_current_data;
@@ -9876,13 +9874,13 @@ static OPJ_BOOL opj_j2k_decode_one_tile (       opj_j2k_t *p_j2k,
                         opj_free(l_current_data);
                         return OPJ_FALSE;
                 }
-                opj_event_msg(p_manager, EVT_INFO, "Tile %d/%d has been decoded.\n", l_current_tile_no, (p_j2k->m_cp.th * p_j2k->m_cp.tw) - 1);
+                opj_event_msg(p_manager, EVT_INFO, "Tile %d/%d has been decoded.\n", l_current_tile_no+1, p_j2k->m_cp.th * p_j2k->m_cp.tw);
 
                 if (! opj_j2k_update_image_data(p_j2k->m_tcd,l_current_data, p_j2k->m_output_image)) {
                         opj_free(l_current_data);
                         return OPJ_FALSE;
                 }
-                opj_event_msg(p_manager, EVT_INFO, "Image data has been updated with tile %d.\n\n", l_current_tile_no);
+                opj_event_msg(p_manager, EVT_INFO, "Image data has been updated with tile %d.\n\n", l_current_tile_no+1);
 
                 if(l_current_tile_no == l_tile_no_to_dec)
                 {
@@ -9895,7 +9893,7 @@ static OPJ_BOOL opj_j2k_decode_one_tile (       opj_j2k_t *p_j2k,
                         break;
                 }
                 else {
-                        opj_event_msg(p_manager, EVT_WARNING, "Tile read, decode and updated is not the desired (%d vs %d).\n", l_current_tile_no, l_tile_no_to_dec);
+                        opj_event_msg(p_manager, EVT_WARNING, "Tile read, decoded and updated is not the desired one (%d vs %d).\n", l_current_tile_no+1, l_tile_no_to_dec+1);
                 }
 
         }
