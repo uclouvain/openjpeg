@@ -745,6 +745,19 @@ void color_esycc_to_rgb(opj_image_t *image)
 	int max_value = (1 << image->comps[0].prec) - 1;
 	
 	if(image->numcomps < 3) return;
+	if((image->comps[0].dx == image->comps[1].dx)
+		 && (image->comps[1].dx == image->comps[2].dx)
+		 && (image->comps[0].dy == image->comps[1].dy)
+		 && (image->comps[1].dy == image->comps[2].dy))/* same sub-sampling */
+	{
+		// go on
+	}
+	else
+	{
+		fprintf(stderr,"%s:%d:color_esycc_to_rgb\n\tCAN NOT CONVERT\n", __FILE__,__LINE__);
+		return;
+	}
+	
 	
 	w = image->comps[0].w;
 	h = image->comps[0].h;
