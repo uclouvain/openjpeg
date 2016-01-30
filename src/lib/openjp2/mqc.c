@@ -203,14 +203,20 @@ static opj_mqc_state_t mqc_states[47 * 2] = {
 */
 
 static void opj_mqc_byteout(opj_mqc_t *mqc) {
-	OPJ_BYTE bp_in_bounds = (mqc->bp >= mqc->start);
-	if (bp_in_bounds & (*mqc->bp == 0xff)) {
+	/* avoid accessing uninitialized memory*/
+	if (mqc->bp == mqc->start-1) {
+		mqc->bp++;
+		*mqc->bp = (OPJ_BYTE)(mqc->c >> 19);
+		mqc->c &= 0x7ffff;
+		mqc->ct = 8;
+	}
+	else if (*mqc->bp == 0xff) {
 		mqc->bp++;
 		*mqc->bp = (OPJ_BYTE)(mqc->c >> 20);
 		mqc->c &= 0xfffff;
 		mqc->ct = 7;
 	} else {
-		if ((bp_in_bounds ^ 1) | ((mqc->c & 0x8000000) == 0)) {	
+		if ((mqc->c & 0x8000000) == 0) {	
 			mqc->bp++;
 			*mqc->bp = (OPJ_BYTE)(mqc->c >> 19);
 			mqc->c &= 0x7ffff;
