@@ -1371,16 +1371,6 @@ int main(int argc, char **argv)
 		else if (image->numcomps <= 2)
 			image->color_space = OPJ_CLRSPC_GRAY;
 
-		if(image->color_space == OPJ_CLRSPC_SYCC){
-			color_sycc_to_rgb(image);
-		}
-		else if((image->color_space == OPJ_CLRSPC_CMYK) && (parameters.cod_format != TIF_DFMT)){
-			color_cmyk_to_rgb(image);
-		}
-		else if(image->color_space == OPJ_CLRSPC_EYCC){
-			color_esycc_to_rgb(image);
-		}
-		
 		if(image->icc_profile_buf) {
 #if defined(OPJ_HAVE_LIBLCMS1) || defined(OPJ_HAVE_LIBLCMS2)
 			if(image->icc_profile_len)
@@ -1443,6 +1433,16 @@ int main(int argc, char **argv)
 		if (parameters.force_rgb)
 		{
 			switch (image->color_space) {
+				case OPJ_CLRSPC_SYCC:
+					color_sycc_to_rgb(image);
+					break;
+				case OPJ_CLRSPC_CMYK:
+					if (parameters.cod_format != TIF_DFMT)
+						color_cmyk_to_rgb(image);
+					break;
+				case OPJ_CLRSPC_EYCC:
+					color_esycc_to_rgb(image);
+					break;
 				case OPJ_CLRSPC_SRGB:
 					break;
 				case OPJ_CLRSPC_GRAY:
