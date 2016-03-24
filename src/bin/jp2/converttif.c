@@ -223,6 +223,12 @@ int imagetotif(opj_image_t * image, const char *outfile)
 		return 1;
 	}
 	
+	/* Store 3-bits input as 4-bits TIFF, 5-bits as 6-bits, etc... */
+	if ( (bps != 1) && (bps & 1) )
+	{
+		bps += 1;
+	}
+
 	if((bps > 16) || ((bps != 1) && (bps & 1))) bps = 0;
 	if(bps == 0)
 	{
