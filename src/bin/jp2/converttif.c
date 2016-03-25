@@ -166,7 +166,7 @@ static void tif_32sto16u(const OPJ_INT32* pSrc, OPJ_UINT16* pDst, OPJ_SIZE_T len
 int imagetotif(opj_image_t * image, const char *outfile)
 {
 	int width, height;
-	int bps,adjust, sgnd;
+	int bps,adjust, sgnd, tifbps;
 	int tiPhoto;
 	TIFF *tif;
 	tdata_t buf;
@@ -222,20 +222,42 @@ int imagetotif(opj_image_t * image, const char *outfile)
 		fprintf(stderr,"\tAborting\n");
 		return 1;
 	}
-	
-	/* Store 3-bits input as 4-bits TIFF, 5-bits as 6-bits, etc... */
-	if ( (bps != 1) && (bps & 1) )
+
+	/* Only 1, 2, 4, 6, 8, 10, 12, 14 and 16 bits TIFF are implemented */
+	switch (bps)
 	{
-		bps += 1;
+		case 1:
+		case 2:
+		case 4:
+		case 6:
+		case 8:
+		case 10:
+		case 12:
+		case 14:
+		case 16:
+			/* Generate a TIFF with BitsPerSample equal to the input image bps */
+			tifbps = bps;
+			break;
+		case 3:
+		case 5:
+		case 7:
+		case 9:
+		case 11:
+		case 13:
+		case 15:
+			/* Only 1, 2, 4, 6, 8, 10, 12, 14 and 16 bits TIFF are implemented
+			 * For odd bps, choose the nearest supported TIFF BitsPerSample that can hold input bps
+			 */
+			tifbps = bps + 1;
+			break;
+		default:
+			fprintf(stderr,"imagetotif: Input image is %d bits per sample, but only TIFF with 1 <= BitsPerSample <= 16 are implemented.\n",bps);
+			fprintf(stderr,"imagetotif: Unable to match input image precision to a supported TIFF BitsPerSample.\n");
+			fprintf(stderr,"\tAborting\n");
+			return 1;
+			break;
 	}
 
-	if((bps > 16) || ((bps != 1) && (bps & 1))) bps = 0;
-	if(bps == 0)
-	{
-		fprintf(stderr,"imagetotif: Bits=%d, Only 1, 2, 4, 6, 8, 10, 12, 14 and 16 bits implemented\n",bps);
-		fprintf(stderr,"\tAborting\n");
-		return 1;
-	}
 	tif = TIFFOpen(outfile, "wb");
 	if (!tif)
 	{
@@ -246,13 +268,13 @@ int imagetotif(opj_image_t * image, const char *outfile)
 		clip_component(&(image->comps[i]), image->comps[0].prec);
 	}
 	cvtPxToCx = convert_32s_PXCX_LUT[numcomps];
-	switch (bps) {
+	switch (tifbps) {
 		case 1:
 		case 2:
 		case 4:
 		case 6:
 		case 8:
-			cvt32sToTif = convert_32sXXu_C1R_LUT[bps];
+			cvt32sToTif = convert_32sXXu_C1R_LUT[tifbps];
 			break;
 		case 10:
 			cvt32sToTif = tif_32sto10u;
@@ -278,14 +300,14 @@ int imagetotif(opj_image_t * image, const char *outfile)
 	TIFFSetField(tif, TIFFTAG_IMAGEWIDTH, width);
 	TIFFSetField(tif, TIFFTAG_IMAGELENGTH, height);
 	TIFFSetField(tif, TIFFTAG_SAMPLESPERPIXEL, numcomps);
-	TIFFSetField(tif, TIFFTAG_BITSPERSAMPLE, bps);
+	TIFFSetField(tif, TIFFTAG_BITSPERSAMPLE, tifbps);
 	TIFFSetField(tif, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
 	TIFFSetField(tif, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
 	TIFFSetField(tif, TIFFTAG_PHOTOMETRIC, tiPhoto);
 	TIFFSetField(tif, TIFFTAG_ROWSPERSTRIP, 1);
 	
 	strip_size = TIFFStripSize(tif);
-	rowStride = ((OPJ_SIZE_T)width * numcomps * (OPJ_SIZE_T)bps + 7U) / 8U;
+	rowStride = ((OPJ_SIZE_T)width * numcomps * (OPJ_SIZE_T)tifbps + 7U) / 8U;
 	if (rowStride != (OPJ_SIZE_T)strip_size) {
 		fprintf(stderr, "Invalid TIFF strip size\n");
 		TIFFClose(tif);
@@ -415,7 +437,7 @@ static void tif_16uto32s(const OPJ_UINT16* pSrc, OPJ_INT32* pDst, OPJ_SIZE_T len
 }
 
 /*
- * libtiff/tif_getimage.c : 1,2,4,8,16 bitspersample accepted
+ * libtiff/tif_getimage.c : 1, 2, 4, 6, 8, 10, 12, 14 and 16 bitspersample accepted
  * CINEMA                 : 12 bit precision
  */
 opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
