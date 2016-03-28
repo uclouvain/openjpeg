@@ -738,7 +738,7 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
     /* room needed to store l_nb_code_blocks code blocks for a precinct*/
     OPJ_UINT32 l_nb_code_blocks_size;
     /* size of data for a tile */
-    OPJ_UINT32 l_data_size;
+    size_t l_data_size;
 
     l_cp = p_tcd->cp;
     l_tcp = &(l_cp->tcps[p_tile_no]);
@@ -795,21 +795,21 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
         /*fprintf(stderr, "\tTile compo border = %d,%d,%d,%d\n", l_tilec->x0, l_tilec->y0,l_tilec->x1,l_tilec->y1);*/
 
         /* compute l_data_size with overflow check */
-        l_data_size = (OPJ_UINT32)(l_tilec->x1 - l_tilec->x0);
+        l_data_size = (size_t)(l_tilec->x1 - l_tilec->x0);
         /* issue 733, l_data_size == 0U, probably something wrong should be checked before getting here */
         if ((l_data_size > 0U) &&
-                ((((OPJ_UINT32) - 1) / l_data_size) < (OPJ_UINT32)(l_tilec->y1 -
+                ((SIZE_MAX / l_data_size) < (size_t)(l_tilec->y1 -
                         l_tilec->y0))) {
             opj_event_msg(manager, EVT_ERROR, "Not enough memory for tile data\n");
             return OPJ_FALSE;
         }
         l_data_size = l_data_size * (OPJ_UINT32)(l_tilec->y1 - l_tilec->y0);
 
-        if ((((OPJ_UINT32) - 1) / (OPJ_UINT32)sizeof(OPJ_UINT32)) < l_data_size) {
-            opj_event_msg(manager, EVT_ERROR, "Not enough memory for tile data\n");
+        if ((SIZE_MAX / sizeof(OPJ_UINT32)) < l_data_size) {
+            opj_event_msg(manager, EVT_ERROR, "Size of tile data exceeds system limits\n");
             return OPJ_FALSE;
         }
-        l_data_size = l_data_size * (OPJ_UINT32)sizeof(OPJ_UINT32);
+        l_data_size = l_data_size * sizeof(OPJ_UINT32);
         l_tilec->numresolutions = l_tccp->numresolutions;
         if (l_tccp->numresolutions < l_cp->m_specific_param.m_dec.m_reduce) {
             l_tilec->minimum_num_resolutions = 1;
@@ -824,15 +824,14 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
             return OPJ_FALSE;
         }
 
-        l_data_size = l_tilec->numresolutions * (OPJ_UINT32)sizeof(
-                          opj_tcd_resolution_t);
+        l_data_size = l_tilec->numresolutions * sizeof(opj_tcd_resolution_t);
 
         if (l_tilec->resolutions == 00) {
             l_tilec->resolutions = (opj_tcd_resolution_t *) opj_malloc(l_data_size);
             if (! l_tilec->resolutions) {
                 return OPJ_FALSE;
             }
-            /*fprintf(stderr, "\tAllocate resolutions of tilec (opj_tcd_resolution_t): %d\n",l_data_size);*/
+            /*fprintf(stderr, "\tAllocate resolutions of tilec (opj_tcd_resolution_t): %tu\n", l_data_size);*/
             l_tilec->resolutions_size = l_data_size;
             memset(l_tilec->resolutions, 0, l_data_size);
         } else if (l_data_size > l_tilec->resolutions_size) {
@@ -846,7 +845,7 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
                 return OPJ_FALSE;
             }
             l_tilec->resolutions = new_resolutions;
-            /*fprintf(stderr, "\tReallocate data of tilec (int): from %d to %d x OPJ_UINT32\n", l_tilec->resolutions_size, l_data_size);*/
+            /*fprintf(stderr, "\tReallocate data of tilec (int): from %d to %tu x OPJ_UINT32\n", l_tilec->resolutions_size, l_data_size);*/
             memset(((OPJ_BYTE*) l_tilec->resolutions) + l_tilec->resolutions_size, 0,
                    l_data_size - l_tilec->resolutions_size);
             l_tilec->resolutions_size = l_data_size;
@@ -1187,14 +1186,14 @@ static OPJ_BOOL opj_tcd_code_block_enc_allocate(opj_tcd_cblk_enc_t *
 static OPJ_BOOL opj_tcd_code_block_enc_allocate_data(opj_tcd_cblk_enc_t *
         p_code_block)
 {
-    OPJ_UINT32 l_data_size;
+    size_t l_data_size;
 
     /* +1 is needed for https://github.com/uclouvain/openjpeg/issues/835 */
     /* and actually +2 required for https://github.com/uclouvain/openjpeg/issues/982 */
     /* TODO: is there a theoretical upper-bound for the compressed code */
     /* block size ? */
-    l_data_size = 2 + (OPJ_UINT32)((p_code_block->x1 - p_code_block->x0) *
-                                   (p_code_block->y1 - p_code_block->y0) * (OPJ_INT32)sizeof(OPJ_UINT32));
+    l_data_size = 2 + ((size_t)(p_code_block->x1 - p_code_block->x0) *
+                       (size_t)(p_code_block->y1 - p_code_block->y0) * sizeof(OPJ_UINT32));
 
     if (l_data_size > p_code_block->data_size) {
         if (p_code_block->data) {
@@ -1604,13 +1603,13 @@ OPJ_BOOL opj_tcd_update_tile_data(opj_tcd_t *p_tcd,
 
 static void opj_tcd_free_tile(opj_tcd_t *p_tcd)
 {
-    OPJ_UINT32 compno, resno, bandno, precno;
+    OPJ_UINT32 compno, bandno, precno;
     opj_tcd_tile_t *l_tile = 00;
     opj_tcd_tilecomp_t *l_tile_comp = 00;
     opj_tcd_resolution_t *l_res = 00;
     opj_tcd_band_t *l_band = 00;
     opj_tcd_precinct_t *l_precinct = 00;
-    OPJ_UINT32 l_nb_resolutions, l_nb_precincts;
+    OPJ_UINT32 l_nb_precincts;
     void (* l_tcd_code_block_deallocate)(opj_tcd_precinct_t *) = 00;
 
     if (! p_tcd) {
@@ -1637,8 +1636,8 @@ static void opj_tcd_free_tile(opj_tcd_t *p_tcd)
     for (compno = 0; compno < l_tile->numcomps; ++compno) {
         l_res = l_tile_comp->resolutions;
         if (l_res) {
-
-            l_nb_resolutions = l_tile_comp->resolutions_size / sizeof(opj_tcd_resolution_t);
+            size_t resno;
+            size_t l_nb_resolutions = l_tile_comp->resolutions_size / sizeof(opj_tcd_resolution_t);
             for (resno = 0; resno < l_nb_resolutions; ++resno) {
                 l_band = l_res->bands;
                 for (bandno = 0; bandno < 3; ++bandno) {

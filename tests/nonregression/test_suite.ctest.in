@@ -1,4 +1,4 @@
-# This file list all the input commands of the tests run by the ctest command which 
+# This file lists all the input commands of the tests run by the ctest command which
 # are not related to the conformance files.
 #
 # For each line of this file (except line which begin with #) an opj_compress test or a
@@ -9,7 +9,7 @@
 #   + For decoder related tests = dump, compare dump to base, (TODO: compare outpout decoding 
 #     image to base)
 #
-# Line begin with ! should failed (should be used for bad jpeg2000 file which should be 
+# Lines beginning with ! should fail (should be used for bad jpeg2000 file which should be
 # gracefully rejected). Please add a short resume about why this file should be rejected.
 #
 # You can use @INPUT_NR_PATH@ and @TEMP_PATH@ cmake variable which refers to OPJ_DATA_ROOT 
@@ -350,7 +350,10 @@ opj_decompress -i @INPUT_NR_PATH@/issue411-ycc420.jp2 -o @TEMP_PATH@/issue411-yc
 # issue 429 (from pdfium fuzz engine) 0 entries in PCLR box.
 !opj_decompress -i @INPUT_NR_PATH@/issue429.jp2 -o @TEMP_PATH@/issue429.jp2.pgx
 # issue 432 (from pdfium fuzz engine) Overflow in tcd tilec data size computation.
-!opj_decompress -i @INPUT_NR_PATH@/issue432.jp2 -o @TEMP_PATH@/issue432.jp2.pgx
+# On hosts with 64 bit size_t, opj_decompress now works.
+# On hosts with 32 bit size_t, opj_decompress cannot handle this file.
+# TODO: We need different test cases for both kinds of hosts. Don't run test until this works.
+## opj_decompress -i @INPUT_NR_PATH@/issue432.jp2 -o @TEMP_PATH@/issue432.jp2.pgx
 # issue 427 image width is 0
 !opj_decompress -i @INPUT_NR_PATH@/issue427-null-image-size.jp2 -o @TEMP_PATH@/issue427-null-image-size.jp2.pgx
 # issue 427 illegal tile offset
