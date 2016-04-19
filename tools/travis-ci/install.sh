@@ -62,16 +62,17 @@ if [ "${OPJ_CI_SKIP_TESTS:-}" != "1" ]; then
 	git clone --depth=1 --branch=${OPJ_DATA_BRANCH} git://github.com/uclouvain/openjpeg-data.git data
 
 	# We need jpylyzer for the test suite
+    JPYLYZER_VERSION="1.17.0"    
 	echo "Retrieving jpylyzer"
 	if [ "${APPVEYOR:-}" == "True" ]; then
-		wget --local-encoding=UTF-8 -q http://dl.bintray.com/openplanets/opf-windows/jpylyzer_1.14.2_win32.zip
+		wget --local-encoding=UTF-8 -q http://dl.bintray.com/openplanets/opf-windows/jpylyzer_${JPYLYZER_VERSION}_win32.zip
 		mkdir jpylyzer
 		cd jpylyzer
-		cmake -E tar -xf ../jpylyzer_1.14.2_win32.zip
+		cmake -E tar -xf ../jpylyzer_${JPYLYZER_VERSION}_win32.zip
 		cd ..
 	else
-		wget -qO - https://github.com/openpreserve/jpylyzer/archive/1.14.2.tar.gz | tar -xz
-		mv jpylyzer-1.14.2/jpylyzer ./
+		wget -qO - https://github.com/openpreserve/jpylyzer/archive/${JPYLYZER_VERSION}.tar.gz | tar -xz
+		mv jpylyzer-${JPYLYZER_VERSION}/jpylyzer ./
 		chmod +x jpylyzer/jpylyzer.py
 	fi
 
