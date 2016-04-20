@@ -414,13 +414,6 @@ static int get_file_format(char *filename) {
 	return -1;
 }
 
-static char * get_file_name(char *name){
-	char *fname;
-	fname= (char*)malloc(OPJ_PATH_LEN*sizeof(char));
-	fname= strtok(name,".");
-	return fname;
-}
-
 static char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_cparameters_t *parameters){
 	char image_filename[OPJ_PATH_LEN], infilename[OPJ_PATH_LEN],outfilename[OPJ_PATH_LEN],temp_ofname[OPJ_PATH_LEN];
   char *temp_p, temp1[OPJ_PATH_LEN]="";
@@ -434,7 +427,8 @@ static char get_next_file(int imageno,dircnt_t *dirptr,img_fol_t *img_fol, opj_c
 	strncpy(parameters->infile, infilename, sizeof(infilename));
 
 	/*Set output file*/
-	strcpy(temp_ofname,get_file_name(image_filename));
+/*	strcpy(temp_ofname,get_file_name(image_filename)); */
+	strcpy(temp_ofname,strtok(image_filename, "."));
 	while((temp_p = strtok(NULL,".")) != NULL){
 		strcat(temp_ofname,temp1);
 		sprintf(temp1,".%s",temp_p);
@@ -768,6 +762,8 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
 				numresolution = parameters->numresolution;
 				matrix_width = numresolution * 3;
 				parameters->cp_matrice = (int *) malloc(numlayers * matrix_width * sizeof(int));
+				if(!parameters->cp_matrice) return 1;
+
 				s = s + 2;
 
 				for (i = 0; i < numlayers; i++) {
@@ -1025,8 +1021,10 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
 			case 'z':			/* Image Directory path */
 			{
 				img_fol->imgdirpath = (char*)malloc(strlen(opj_optarg) + 1);
-				strcpy(img_fol->imgdirpath,opj_optarg);
-				img_fol->set_imgdir=1;
+				if(img_fol->imgdirpath){
+					strcpy(img_fol->imgdirpath,opj_optarg);
+					img_fol->set_imgdir=1;
+				}
 			}
 			break;
 
@@ -1072,7 +1070,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
 				int hprot, pprot, sens, addr, size, range;
 
 				/* we need to enable indexing */
-				if (!indexfilename || !*indexfilename) {
+				if (!indexfilename[0]) {
 					strncpy(indexfilename, JPWL_PRIVATEINDEX_NAME, OPJ_PATH_LEN);
 				}
 
@@ -1524,13 +1522,15 @@ int main(int argc, char **argv) {
 
 	/* parse input and get user encoding parameters */
 	if(parse_cmdline_encoder(argc, argv, &parameters,&img_fol, &raw_cp, indexfilename) == 1) {
-		return 1;
+		goto fails;
 	}
 
 	if (parameters.cp_cinema){
 		img_fol.rates = (float*)malloc(parameters.tcp_numlayers * sizeof(float));
-		for(i=0; i< parameters.tcp_numlayers; i++){
-			img_fol.rates[i] = parameters.tcp_rates[i];
+		if(img_fol.rates){
+			for(i=0; i< parameters.tcp_numlayers; i++){
+				img_fol.rates[i] = parameters.tcp_rates[i];
+			}
 		}
 		cinema_parameters(&parameters);
 	}
@@ -1543,10 +1543,14 @@ int main(int argc, char **argv) {
 /* UniPG>> */
 #ifdef USE_JPWL
 		parameters.cp_comment = (char*)malloc(clen+strlen(version)+11);
-		sprintf(parameters.cp_comment,"%s%s with JPWL", comment, version);
+		if(parameters.cp_comment){
+			sprintf(parameters.cp_comment,"%s%s with JPWL", comment, version);
+		}
 #else
 		parameters.cp_comment = (char*)malloc(clen+strlen(version)+1);
-		sprintf(parameters.cp_comment,"%s%s", comment, version);
+		if(parameters.cp_comment){
+			sprintf(parameters.cp_comment,"%s%s", comment, version);
+		}
 #endif
 /* <<UniPG */
 	}
@@ -1555,22 +1559,32 @@ int main(int argc, char **argv) {
 	if(img_fol.set_imgdir==1){
 		num_images=get_num_images(img_fol.imgdirpath);
 		dirptr=(dircnt_t*)malloc(sizeof(dircnt_t));
-		if(dirptr){
-			dirptr->filename_buf = (char*)malloc(num_images*OPJ_PATH_LEN*sizeof(char));	/* Stores at max 10 image file names*/
-			dirptr->filename = (char**) malloc(num_images*sizeof(char*));
-			if(!dirptr->filename_buf){
-				return 0;
-			}
-			for(i=0;i<num_images;i++){
-				dirptr->filename[i] = dirptr->filename_buf + i*OPJ_PATH_LEN;
-			}
-		}
-		if(load_images(dirptr,img_fol.imgdirpath)==1){
+		if(!dirptr){
+			if(parameters.cp_comment) free(parameters.cp_comment);
+			if(parameters.cp_matrice) free(parameters.cp_matrice);
 			return 0;
+		}
+		dirptr->filename_buf = (char*)malloc(num_images*OPJ_PATH_LEN*sizeof(char));	/* Stores at max 10 image file names*/
+		if(!dirptr->filename_buf){
+			if(parameters.cp_comment) free(parameters.cp_comment);
+			if(parameters.cp_matrice) free(parameters.cp_matrice);
+			free(dirptr);
+			return 0;
+		}
+		dirptr->filename = (char**) malloc(num_images*sizeof(char*));
+		if(!dirptr->filename){
+			goto fails;
+		}
+		for(i=0;i<num_images;i++){
+			dirptr->filename[i] = dirptr->filename_buf + i*OPJ_PATH_LEN;
+		}
+		
+		if(load_images(dirptr,img_fol.imgdirpath)==1){
+			goto fails;
 		}
 		if (num_images==0){
 			fprintf(stdout,"Folder is empty\n");
-			return 0;
+			goto fails;
 		}
 	}else{
 		num_images=1;
@@ -1614,7 +1628,7 @@ int main(int argc, char **argv) {
 					image = pgxtoimage(parameters.infile, &parameters);
 					if (!image) {
 						fprintf(stderr, "Unable to load pgx file\n");
-						return 1;
+						goto fails;
 					}
 					break;
 
@@ -1622,7 +1636,7 @@ int main(int argc, char **argv) {
 					image = pnmtoimage(parameters.infile, &parameters);
 					if (!image) {
 						fprintf(stderr, "Unable to load pnm file\n");
-						return 1;
+						goto fails;
 					}
 					break;
 
@@ -1630,7 +1644,7 @@ int main(int argc, char **argv) {
 					image = bmptoimage(parameters.infile, &parameters);
 					if (!image) {
 						fprintf(stderr, "Unable to load bmp file\n");
-						return 1;
+						goto fails;
 					}
 					break;
 #ifdef OPJ_HAVE_LIBTIFF
@@ -1638,7 +1652,7 @@ int main(int argc, char **argv) {
 					image = tiftoimage(parameters.infile, &parameters);
 					if (!image) {
 						fprintf(stderr, "Unable to load tiff file\n");
-						return 1;
+						goto fails;
 					}
 				break;
 #endif /* OPJ_HAVE_LIBTIFF */
@@ -1646,7 +1660,7 @@ int main(int argc, char **argv) {
 					image = rawtoimage(parameters.infile, &parameters, &raw_cp);
 					if (!image) {
 						fprintf(stderr, "Unable to load raw file\n");
-						return 1;
+						goto fails;
 					}
 				break;
 
@@ -1654,7 +1668,7 @@ int main(int argc, char **argv) {
 					image = tgatoimage(parameters.infile, &parameters);
 					if (!image) {
 						fprintf(stderr, "Unable to load tga file\n");
-						return 1;
+						goto fails;
 					}
 				break;
 #ifdef OPJ_HAVE_LIBPNG
@@ -1662,7 +1676,7 @@ int main(int argc, char **argv) {
 					image = pngtoimage(parameters.infile, &parameters);
 					if (!image) {
 						fprintf(stderr, "Unable to load png file\n");
-						return 1;
+						goto fails;
 					}
 					break;
 #endif /* OPJ_HAVE_LIBPNG */
@@ -1673,7 +1687,7 @@ int main(int argc, char **argv) {
 			if( !image)
 		   {
 			fprintf(stderr, "Unable to load file: got no image\n");
-			return 1;
+			goto fails;
 		   }
 			/* Decide if MCT should be used */
 			parameters.tcp_mct = image->numcomps == 3 ? 1 : 0;
@@ -1711,8 +1725,9 @@ int main(int argc, char **argv) {
 					bSuccess = opj_encode(cinfo, cio, image, NULL);
 				if (!bSuccess) {
 					opj_cio_close(cio);
+					opj_image_destroy(image);
 					fprintf(stderr, "failed to encode image\n");
-					return 1;
+					goto fails;
 				}
 				codestream_length = cio_tell(cio);
 
@@ -1720,12 +1735,17 @@ int main(int argc, char **argv) {
 				f = fopen(parameters.outfile, "wb");
 				if (!f) {
 					fprintf(stderr, "failed to open %s for writing\n", parameters.outfile);
-					return 1;
+					opj_cio_close(cio);
+					opj_image_destroy(image);
+					goto fails;
 				}
 				res = fwrite(cio->buffer, 1, codestream_length, f);
         if( res < (size_t)codestream_length ) { /* FIXME */
  					fprintf(stderr, "failed to write %d (%s)\n", codestream_length, parameters.outfile);
-					return 1;
+					opj_cio_close(cio);
+					opj_image_destroy(image);
+					fclose(f);
+					goto fails;
          }
 				fclose(f);
 
@@ -1771,9 +1791,10 @@ int main(int argc, char **argv) {
 				else
 					bSuccess = opj_encode(cinfo, cio, image, NULL);
 				if (!bSuccess) {
-					opj_cio_close(cio);
 					fprintf(stderr, "failed to encode image\n");
-					return 1;
+					opj_cio_close(cio);
+					opj_image_destroy(image);
+					goto fails;
 				}
 				codestream_length = cio_tell(cio);
 
@@ -1781,12 +1802,17 @@ int main(int argc, char **argv) {
 				f = fopen(parameters.outfile, "wb");
 				if (!f) {
 					fprintf(stderr, "failed to open %s for writing\n", parameters.outfile);
-					return 1;
+					opj_cio_close(cio);
+					opj_image_destroy(image);
+					goto fails;
 				}
 				res = fwrite(cio->buffer, 1, codestream_length, f);
         if( res < (size_t)codestream_length ) { /* FIXME */
  					fprintf(stderr, "failed to write %d (%s)\n", codestream_length, parameters.outfile);
-					return 1;
+					opj_cio_close(cio);
+					opj_image_destroy(image);
+					fclose(f);
+					goto fails;
          }
 				fclose(f);
 				fprintf(stderr,"Generated outfile %s\n",parameters.outfile);
@@ -1815,5 +1841,16 @@ int main(int argc, char **argv) {
   if(parameters.cp_comment) free(parameters.cp_comment);
 	if(parameters.cp_matrice) free(parameters.cp_matrice);
 
-	return 0;
+	return EXIT_SUCCESS;
+
+fails:
+  	if(parameters.cp_comment) free(parameters.cp_comment);
+	if(parameters.cp_matrice) free(parameters.cp_matrice);
+	if(img_fol.imgdirpath) free(img_fol.imgdirpath);
+	if(dirptr){
+		free(dirptr->filename);
+		free(dirptr->filename_buf);
+		free(dirptr);
+	}
+	return EXIT_FAILURE;
 }

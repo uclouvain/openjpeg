@@ -1270,7 +1270,7 @@ jpwl_esd_ms_t *jpwl_esd_create(opj_j2k_t *j2k, int comp,
 	}
 
 	/* set or unset sensitivity values */
-	if (svalnum <= 0) {
+	if (svalnum == 0) {
 
 		switch (senst) {
 
@@ -1693,13 +1693,17 @@ opj_bool jpwl_update_info(opj_j2k_t *j2k, jpwl_marker_t *jwmarker, int jwmarker_
 	int mm;
 	unsigned long int addlen;
 
-	opj_codestream_info_t *info = j2k->cstr_info;
-	int tileno, tpno, packno, numtiles = info->th * info->tw, numpacks = info->packno;
+	opj_codestream_info_t *info;
+	int tileno, tpno, packno, numtiles, numpacks;
 
 	if (!j2k || !jwmarker ) {
-		opj_event_msg(j2k->cinfo, EVT_ERROR, "J2K handle or JPWL markers list badly allocated\n");
+		if(j2k){
+			opj_event_msg(j2k->cinfo, EVT_ERROR, "J2K handle or JPWL markers list badly allocated\n");
+		}
 		return OPJ_FALSE;
 	}
+	info = j2k->cstr_info;
+	numtiles = info->th * info->tw; numpacks = info->packno;
 
 	/* main_head_end: how many markers are there before? */
 	addlen = 0;

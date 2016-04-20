@@ -374,8 +374,10 @@ int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *parameters,i
 			case 'y':			/* Image Directory path */
 				{
 					img_fol->imgdirpath = (char*)malloc(strlen(opj_optarg) + 1);
-					strcpy(img_fol->imgdirpath,opj_optarg);
-					img_fol->set_imgdir=1;
+					if( img_fol->imgdirpath){
+						strcpy(img_fol->imgdirpath,opj_optarg);
+						img_fol->set_imgdir=1;
+					}
 				}
 				break;
 				/* ----------------------------------------------------- */								
@@ -548,31 +550,51 @@ int main(int argc, char **argv) {
 
 	/* parse input and get user encoding parameters */
 	if(parse_cmdline_decoder(argc, argv, &parameters,&img_fol, indexfilename) == 1) {
+		if(img_fol.imgdirpath) free(img_fol.imgdirpath);
 		return 1;
 	}
 
 	/* Initialize reading of directory */
-	if(img_fol.set_imgdir==1){	
+	if(img_fol.set_imgdir==1){
+		int ret;
+	
 		num_images=get_num_images(img_fol.imgdirpath);
 
 		dirptr=(dircnt_t*)malloc(sizeof(dircnt_t));
-		if(dirptr){
-			dirptr->filename_buf = (char*)malloc(num_images*OPJ_PATH_LEN*sizeof(char));	/* Stores at max 10 image file names*/
-			dirptr->filename = (char**) malloc(num_images*sizeof(char*));
-
-			if(!dirptr->filename_buf){
-				return 1;
-			}
-			for(i=0;i<num_images;i++){
-				dirptr->filename[i] = dirptr->filename_buf + i*OPJ_PATH_LEN;
-			}
-		}
-		if(load_images(dirptr,img_fol.imgdirpath)==1){
+		if(!dirptr){
+			if(img_fol.imgdirpath) free(img_fol.imgdirpath);
 			return 1;
+		}
+		dirptr->filename_buf = (char*)malloc(num_images*OPJ_PATH_LEN*sizeof(char));	/* Stores at max 10 image file names*/
+		if(!dirptr->filename_buf){
+			free(dirptr);
+			if(img_fol.imgdirpath) free(img_fol.imgdirpath);
+			return 1;
+		}
+		dirptr->filename = (char**) malloc(num_images*sizeof(char*));
+
+		if(!dirptr->filename){
+			if(img_fol.imgdirpath) free(img_fol.imgdirpath);
+			free(dirptr->filename_buf);
+			free(dirptr);
+			return 1;
+		}
+
+		for(i=0;i<num_images;i++){
+			dirptr->filename[i] = dirptr->filename_buf + i*OPJ_PATH_LEN;
+		}
+		
+		ret = load_images(dirptr,img_fol.imgdirpath);
+		if(img_fol.imgdirpath){
+			free(img_fol.imgdirpath);
+			img_fol.imgdirpath = NULL;
+		}
+		if(ret==1){
+			goto fails;
 		}
 		if (num_images==0){
 			fprintf(stdout,"Folder is empty\n");
-			return 1;
+			goto fails;
 		}
 	}else{
 		num_images=1;
@@ -595,18 +617,23 @@ int main(int argc, char **argv) {
 		fsrc = fopen(parameters.infile, "rb");
 		if (!fsrc) {
 			fprintf(stderr, "ERROR -> failed to open %s for reading\n", parameters.infile);
-			return 1;
+			goto fails;
 		}
 		fseek(fsrc, 0, SEEK_END);
 		file_length = ftell(fsrc);
 		fseek(fsrc, 0, SEEK_SET);
 		src = (unsigned char *) malloc(file_length);
+
+		if(!src){
+			fclose(fsrc);
+			goto fails;
+		}
 		if (fread(src, 1, file_length, fsrc) != (size_t)file_length)
 		{
 			free(src);
 			fclose(fsrc);
 			fprintf(stderr, "\nERROR: fread return a number of element different from the expected.\n");
-			return 1;
+			goto fails;
 		}
 		fclose(fsrc);
 
@@ -640,7 +667,7 @@ int main(int argc, char **argv) {
 				opj_destroy_decompress(dinfo);
 				opj_cio_close(cio);
 				free(src);
-				return 1;
+				goto fails;
 			}
 
 			/* close the byte stream */
@@ -683,7 +710,7 @@ int main(int argc, char **argv) {
 				opj_destroy_decompress(dinfo);
 				opj_cio_close(cio);
 				free(src);
-				return 1;
+				goto fails;
 			}
 
 			/* close the byte stream */
@@ -726,7 +753,7 @@ int main(int argc, char **argv) {
 				opj_destroy_decompress(dinfo);
 				opj_cio_close(cio);
 				free(src);
-				return 1;
+				goto fails;
 			}
 
 			/* close the byte stream */
@@ -852,6 +879,14 @@ int main(int argc, char **argv) {
 
 	}
 	return 0;
+
+fails:
+	if(dirptr){
+		free(dirptr->filename_buf);
+		free(dirptr->filename);
+		free(dirptr);
+	}
+	return EXIT_FAILURE;
 }
 /*end main*/
 

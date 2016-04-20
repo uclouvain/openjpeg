@@ -911,8 +911,8 @@ void jpwl_dump_marks(opj_j2k_t *j2k, opj_cio_t *cio, opj_image_t *image) {
 
         /* free original cio buffer and set it to the JPWL one */
         opj_free(cio->buffer);
-        cio->cinfo = cio->cinfo; /* no change */
-        cio->openmode = cio->openmode; /* no change */
+        /* cio->cinfo = cio->cinfo; *//* no change */
+        /* cio->openmode = cio->openmode; *//* no change */
         cio->buffer = orig_buf;
         cio->length = new_size + soc_pos;
         cio->start = cio->buffer;

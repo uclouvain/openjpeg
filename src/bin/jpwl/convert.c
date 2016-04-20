@@ -124,9 +124,13 @@ static int tga_readheader(FILE *fp, unsigned int *bits_per_pixel,
 		return 0;
 	tga = (unsigned char*)malloc(18);
 
+	if(!tga){
+		return 0;
+	}
 	if ( fread(tga, TGA_HEADER_SIZE, 1, fp) != 1 )
 	{
 		fprintf(stderr, "\nError: fread return a number of element different from the expected.\n");
+		free(tga);
 	    return 0 ;
 	}
 	id_len = (unsigned char)tga[0];
@@ -154,6 +158,9 @@ static int tga_readheader(FILE *fp, unsigned int *bits_per_pixel,
 	if (id_len)
 	{
 		unsigned char *id = (unsigned char *) malloc(id_len);
+		if(id == NULL){
+			return 0;
+		}
 		if ( !fread(id, id_len, 1, fp) )
 		{
 			fprintf(stderr, "\nError: fread return a number of element different from the expected.\n");
@@ -410,7 +417,7 @@ opj_image_t* tgatoimage(const char *filename, opj_cparameters_t *parameters) {
 }
 
 int imagetotga(opj_image_t * image, const char *outfile) {
-	int width, height, bpp, x, y;
+	int width, height, bpp, x, y, fails;
 	opj_bool write_alpha;
 	int i, adjustR, adjustG, adjustB;
 	unsigned int alpha_channel;
@@ -425,13 +432,14 @@ int imagetotga(opj_image_t * image, const char *outfile) {
 		fprintf(stderr, "ERROR -> failed to open %s for writing\n", outfile);
 		return 1;
 	}
+	fails = 1;
 
 	for (i = 0; i < image->numcomps-1; i++)	{
 		if ((image->comps[0].dx != image->comps[i+1].dx) 
 			||(image->comps[0].dy != image->comps[i+1].dy) 
 			||(image->comps[0].prec != image->comps[i+1].prec))	{
       fprintf(stderr, "Unable to create a tga file with such J2K image charateristics.");
-      return 1;
+	  goto fin;
    }
 	}
 
@@ -443,9 +451,9 @@ int imagetotga(opj_image_t * image, const char *outfile) {
 
 	/* Write TGA header  */
 	bpp = write_alpha ? 32 : 24;
-	if (!tga_writeheader(fdest, bpp, width , height, OPJ_TRUE))
-		return 1;
-
+	if (!tga_writeheader(fdest, bpp, width , height, OPJ_TRUE)){
+		goto fin;
+	}
 	alpha_channel = image->numcomps-1; 
 
 	scale = 255.0f / (float)((1<<image->comps[0].prec)-1);
@@ -474,21 +482,21 @@ int imagetotga(opj_image_t * image, const char *outfile) {
 			res = fwrite(&value,1,1,fdest);
       if( res < 1 ) {
         fprintf(stderr, "failed to write 1 byte for %s\n", outfile);
-        return 1;
+        goto fin;
       }
 
 			value = (unsigned char)(g*scale);
 			res = fwrite(&value,1,1,fdest);
       if( res < 1 ) {
         fprintf(stderr, "failed to write 1 byte for %s\n", outfile);
-        return 1;
+		goto fin;
       }
 
 			value = (unsigned char)(r*scale);
 			res = fwrite(&value,1,1,fdest);
       if( res < 1 ) {
         fprintf(stderr, "failed to write 1 byte for %s\n", outfile);
-        return 1;
+		goto fin;
       }
 
 			if (write_alpha) {
@@ -497,13 +505,15 @@ int imagetotga(opj_image_t * image, const char *outfile) {
 				res = fwrite(&value,1,1,fdest);
         if( res < 1 ) {
           fprintf(stderr, "failed to write 1 byte for %s\n", outfile);
-          return 1;
+          goto fin;
         }
 			}
 		}
 	}
-
-	return 0;
+	fails = 0;
+fin:
+	fclose(fdest);
+	return fails;
 }
 
 /* -->> -->> -->> -->>
@@ -606,7 +616,7 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
 
 	if(Info_h.biSize != 40)
    {
-	fprintf(stderr,"Error, unknown BMP header size %d\n", Info_h.biSize);
+	fprintf(stderr,"Error, unknown BMP header size %u\n", Info_h.biSize);
 	fclose(IN);
 	return NULL;
    }
@@ -658,6 +668,8 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
 	Info_h.biClrImportant = (getc(IN) << 16) + Info_h.biClrImportant;
 	Info_h.biClrImportant = (getc(IN) << 24) + Info_h.biClrImportant;
 
+	table_R = table_G = table_B = NULL; RGB = NULL;
+
 		/* Read the data and store them in the OUT file */
 
 	if (Info_h.biBitCount == 24) 
@@ -701,18 +713,20 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
 
 	/* PAD = 4 - (3 * W) % 4; */
 	/* PAD = (PAD == 4) ? 0 : PAD; */
-	PAD = (3 * W) % 4 ? 4 - (3 * W) % 4 : 0;
+	PAD = ((3 * W) % 4) ? (4 - (3 * W) % 4) : 0;
 			
 	RGB = (unsigned char *) 
 	 malloc((3 * W + PAD) * H * sizeof(unsigned char));
-			
+	
+	if(!RGB)
+  {
+	goto fin;
+  }
 	if ( fread(RGB, sizeof(unsigned char), (3 * W + PAD) * H, IN) != (3 * W + PAD) * H )
-	{
-		free(RGB);
-		opj_image_destroy(image);
-		fprintf(stderr, "\nError: fread return a number of element different from the expected.\n");
-	    return NULL;
-	}
+  {
+	fprintf(stderr, "\nError: fread returns a number of element different from the expected.\n");
+	goto fin;
+  }
 			
 	index = 0;
 
@@ -728,7 +742,7 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
 	index++;
  }
   }
-	free(RGB);
+	goto fin;
    }/* if (Info_h.biBitCount == 24) */ 
 	else 
 	if (Info_h.biBitCount == 8 && Info_h.biCompression == 0)/*RGB */
@@ -737,10 +751,14 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
 	else
 	if(Info_h.biClrUsed > 256) Info_h.biClrUsed = 256;
 
+	RGB = NULL;
 	table_R = (unsigned char *) malloc(256 * sizeof(unsigned char));
 	table_G = (unsigned char *) malloc(256 * sizeof(unsigned char));
 	table_B = (unsigned char *) malloc(256 * sizeof(unsigned char));
-		
+
+	if(table_R == NULL || table_G == NULL || table_B == NULL)
+		goto fin;
+
 	has_color = 0;	
 	for (j = 0; j < Info_h.biClrUsed; j++) 
   {
@@ -779,11 +797,7 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
 	/* create the image */
 	image = opj_image_create(numcomps, &cmptparm[0], color_space);
 	if(!image) 
-  {
-	fclose(IN);
-	free(table_R); free(table_G); free(table_B);
-	return NULL;
-  }
+		goto fin;
 
 	/* set image offset and reference grid */
 	image->x0 = parameters->image_offset_x0;
@@ -794,17 +808,15 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
 	/* set image data */
 
 	RGB = (unsigned char *) malloc(W * H * sizeof(unsigned char));
-			
+
+	if(!RGB)
+		goto fin;
+
 	if ( fread(RGB, sizeof(unsigned char), W * H, IN) != W * H )
-	{
-		free(table_R);
-		free(table_G);
-		free(table_B);
-		free(RGB);
-		opj_image_destroy(image);
-		fprintf(stderr, "\nError: fread return a number of element different from the expected.\n");
-	    return NULL;
-	}
+  {
+	fprintf(stderr, "\nError: fread return a number of element different from the expected.\n");
+	goto fin;
+  }
 	if (gray_scale) 
   {
 	index = 0;
@@ -817,7 +829,6 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
 		index++;
 	   }
  }
-
   } 
 	else 
   {
@@ -836,11 +847,8 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
 	   }
  }
   }
-	free(RGB);
-	free(table_R);
-	free(table_G);
-	free(table_B);
-   }/* RGB8 */ 
+	goto fin;
+   }/* if (Info_h.biBitCount == 8 && Info_h.biCompression == 0) */ 
 	else 
 	if (Info_h.biBitCount == 8 && Info_h.biCompression == 1)/*RLE8*/
 	{
@@ -855,9 +863,13 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
 		else if (Info_h.biClrUsed > 256)
 			Info_h.biClrUsed = 256;
 
+		RGB = NULL;
 		table_R = (unsigned char *) malloc(256 * sizeof(unsigned char));
 		table_G = (unsigned char *) malloc(256 * sizeof(unsigned char));
 		table_B = (unsigned char *) malloc(256 * sizeof(unsigned char));
+
+		if(table_R == NULL || table_G == NULL || table_B == NULL)
+			goto fin;
 
 		has_color = 0;
 		for (j = 0; j < Info_h.biClrUsed; j++)
@@ -888,15 +900,9 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
 		}
 		/* create the image */
 		image = opj_image_create(numcomps, &cmptparm[0], color_space);
-		if (!image)
-		{
-			fclose(IN);
-			free(table_R);
-			free(table_G);
-			free(table_B);
-			return NULL;
+		if (!image){
+			goto fin;
 		}
-
 		/* set image offset and reference grid */
 		image->x0 = parameters->image_offset_x0;
 		image->y0 = parameters->image_offset_y0;
@@ -914,6 +920,10 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
 		W = Info_h.biWidth;
 		H = Info_h.biHeight;
 		RGB = (unsigned char *) calloc(1, W * H * sizeof(unsigned char));
+
+		if(RGB == NULL){
+			goto fin;
+		}
 		beyond = RGB + W * H;
 		pix = beyond - W;
 		x = y = 0;
@@ -995,20 +1005,24 @@ opj_image_t* bmptoimage(const char *filename, opj_cparameters_t *parameters)
 				*blue++ = table_B[uc];
 			}
 		}
-		free(RGB);
-		free(table_R);
-		free(table_G);
-		free(table_B);
+	goto fin;
 	}/* RLE8 */
 	else 
    {
 	fprintf(stderr, 
 	"Other system than 24 bits/pixels or 8 bits (no RLE coding) "
-		"is not yet implemented [%d]\n", Info_h.biBitCount);
+		"is not yet implemented [%u]\n", Info_h.biBitCount);
    }
+
+fin:
 	fclose(IN);
+	if(image) opj_image_destroy(image);
+	if(RGB) free(RGB);
+	if(table_R) free(table_R);
+	if(table_G) free(table_G);
+	if(table_B) free(table_B);
 	return image;
-}
+}/* bmptoimage() */
 
 int imagetobmp(opj_image_t * image, const char *outfile) {
 	int w, h;
@@ -1119,7 +1133,7 @@ int imagetobmp(opj_image_t * image, const char *outfile) {
 			fprintf(fdest, "%c%c%c", bc, gc, rc);
 			
 			if ((i + 1) % w == 0) {
-				for (pad = (3 * w) % 4 ? 4 - (3 * w) % 4 : 0; pad > 0; pad--)	/* ADD */
+				for (pad = ((3 * w) % 4) ? (4 - (3 * w) % 4) : 0; pad > 0; pad--)	/* ADD */
 					fprintf(fdest, "%c", 0);
 			}
 		}
@@ -1191,7 +1205,7 @@ int imagetobmp(opj_image_t * image, const char *outfile) {
 			fprintf(fdest, "%c", (unsigned char)r);
 
 			if ((i + 1) % w == 0) {
-				for (pad = w % 4 ? 4 - w % 4 : 0; pad > 0; pad--)	/* ADD */
+				for (pad = (w % 4) ? (4 - w % 4) : 0; pad > 0; pad--)	/* ADD */
 					fprintf(fdest, "%c", 0);
 			}
 		}
@@ -1299,6 +1313,7 @@ opj_image_t* pgxtoimage(const char *filename, opj_cparameters_t *parameters) {
 	fseek(f, 0, SEEK_SET);
 	if( fscanf(f, "PG%[ \t]%c%c%[ \t+-]%d%[ \t]%d%[ \t]%d",temp,&endian1,&endian2,signtmp,&prec,temp,&w,temp,&h) != 9){
 		fprintf(stderr, "ERROR: Failed to read the right number of element from the fscanf() function!\n");
+		fclose(f);
 		return NULL;
 	}
 
@@ -1316,6 +1331,7 @@ opj_image_t* pgxtoimage(const char *filename, opj_cparameters_t *parameters) {
 		bigendian = 0;
 	} else {
 		fprintf(stderr, "Bad pgx header, please check input file\n");
+		fclose(f);
 		return NULL;
 	}
 
@@ -1424,7 +1440,11 @@ int imagetopgx(opj_image_t * image, const char *outfile) {
       }
     if( total > 256 ) {
       name = (char*)malloc(total+1);
-      }
+	  if(name == NULL){
+		fprintf(stderr,"imagetopgx: memory out\n");
+		return 1;
+	  }
+    }
     strncpy(name, outfile, dotpos);
 		/*if (image->numcomps > 1) {*/
 			sprintf(name+dotpos, "_%d.pgx", compno);
@@ -1434,6 +1454,7 @@ int imagetopgx(opj_image_t * image, const char *outfile) {
 		fdest = fopen(name, "wb");
 		if (!fdest) {
 			fprintf(stderr, "ERROR -> failed to open %s for writing\n", name);
+			free(name);
 			return 1;
 		}
     /* don't need name anymore */
@@ -1459,6 +1480,7 @@ int imagetopgx(opj_image_t * image, const char *outfile) {
 				res = fwrite(&byte, 1, 1, fdest);
         if( res < 1 ) {
           fprintf(stderr, "failed to write 1 byte for %s\n", name);
+		  fclose(fdest);
           return 1;
         }
 			}
@@ -1498,7 +1520,7 @@ static char *skip_int(char *start, int *out_n)
     char *s;
     char c;
 
-    *out_n = 0; s = start;
+    *out_n = 0;
 
     s = skip_white(start);
     if(s == NULL) return NULL;
@@ -2024,7 +2046,10 @@ int imagetopnm(opj_image_t * image, const char *outfile)
 	fprintf(stderr,"           is written to the file\n");
    }
 	destname = (char*)malloc(strlen(outfile) + 8);
-
+	if(destname == NULL){
+		fprintf(stderr,"imagetopnm : memory out\n");
+		return 1;
+	}
 	for (compno = 0; compno < ncomp; compno++) 
    {
 	if (ncomp > 1) 
@@ -2147,6 +2172,9 @@ int imagetotif(opj_image_t * image, const char *outfile)
 	TIFFSetField(tif, TIFFTAG_ROWSPERSTRIP, 1);
 	strip_size = TIFFStripSize(tif);
 	buf = _TIFFmalloc(strip_size);
+	if(buf == NULL){
+
+	}
 	index=0;
 
 	for(strip = 0; strip < TIFFNumberOfStrips(tif); strip++) 
@@ -2359,6 +2387,9 @@ int imagetotif(opj_image_t * image, const char *outfile)
 /* Get a buffer for the data */
 	strip_size = TIFFStripSize(tif);
 	buf = _TIFFmalloc(strip_size);
+	if(buf == NULL){
+
+	}
 	index = 0;
 
 	for(strip = 0; strip < TIFFNumberOfStrips(tif); strip++) 
@@ -2584,7 +2615,9 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
 		image->y0 + (h - 1) * subsampling_dy + 1;
 
 	buf = _TIFFmalloc(TIFFStripSize(tif));
+	if(buf == NULL){
 
+	}
 	strip_size=TIFFStripSize(tif);
 	index = 0;
 	imgsize = image->comps[0].w * image->comps[0].h ;
@@ -2726,7 +2759,9 @@ opj_image_t* tiftoimage(const char *filename, opj_cparameters_t *parameters)
 		image->y0 + (h - 1) * subsampling_dy + 1;
 
 	buf = _TIFFmalloc(TIFFStripSize(tif));
+	if(buf == NULL){
 
+	}
 	strip_size = TIFFStripSize(tif);
 	index = 0;
 	imgsize = image->comps[0].w * image->comps[0].h ;
@@ -2827,7 +2862,10 @@ opj_image_t* rawtoimage(const char *filename, opj_cparameters_t *parameters, raw
 	w = raw_cp->rawWidth;
 	h = raw_cp->rawHeight;
 	cmptparm = (opj_image_cmptparm_t*) malloc(numcomps * sizeof(opj_image_cmptparm_t));
-	
+	if(cmptparm == NULL){
+		fclose(f);
+		return NULL;
+	}
 	/* initialize image components */	
 	memset(&cmptparm[0], 0, numcomps * sizeof(opj_image_cmptparm_t));
 	for(i = 0; i < numcomps; i++) {		
@@ -3147,9 +3185,13 @@ opj_image_t *pngtoimage(const char *read_idf, opj_cparameters_t * params)
 	bit_depth = png_get_bit_depth(png, info);
 
 	rows = (unsigned char**)calloc(height+1, sizeof(unsigned char*));
-	for(i = 0; i < height; ++i)
+	if(rows == NULL){
+		goto fin;
+	}
+	for(i = 0; i < height; ++i){
 	 rows[i] = (unsigned char*)malloc(png_get_rowbytes(png,info));
-
+	 if(rows[i] == NULL) goto fin;
+	} 
 	png_read_image(png, rows);
 
 	memset(&cmptparm, 0, 4 * sizeof(opj_image_cmptparm_t));
@@ -3372,7 +3414,9 @@ int imagetopng(opj_image_t * image, const char *write_idf)
     adjustB = (image->comps[2].sgnd ? 1 << (image->comps[2].prec - 1) : 0);
 
 	row_buf = (unsigned char*)malloc(width * nr_comp * 2);
-
+	if(row_buf == NULL){
+		goto fin;
+	} 
 	for(y = 0; y < height; ++y)
   {
 	d = row_buf;
@@ -3490,7 +3534,9 @@ int imagetopng(opj_image_t * image, const char *write_idf)
   {
 	row_buf = (unsigned char*)
 	 malloc(width * nr_comp * sizeof(unsigned short));
-
+	if(row_buf == NULL){
+		goto fin;
+	}
 	for(y = 0; y < height; ++y)
  {
 	d = row_buf;
@@ -3520,7 +3566,9 @@ int imagetopng(opj_image_t * image, const char *write_idf)
 	else /* prec <= 8 */
   {
 	row_buf = (unsigned char*)calloc(width, nr_comp * 2);
-
+	if(row_buf == NULL){
+		goto fin;
+	}
 	for(y = 0; y < height; ++y)
  {
 	d = row_buf;
