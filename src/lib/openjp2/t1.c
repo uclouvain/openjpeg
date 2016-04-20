@@ -381,7 +381,7 @@ static void opj_t1_enc_sigpass_step(   opj_t1_t *t1,
 	
 	flag = vsc ? (OPJ_UINT32)((*flagsp) & (~(T1_SIG_S | T1_SIG_SE | T1_SIG_SW | T1_SGN_S))) : (OPJ_UINT32)(*flagsp);
 	if ((flag & T1_SIG_OTH) && !(flag & (T1_SIG | T1_VISIT))) {
-		v = opj_int_abs(*datap) & one ? 1 : 0;
+		v = (opj_int_abs(*datap) & one) ? 1 : 0;
 		opj_mqc_setcurctx(mqc, opj_t1_getctxno_zc(flag, orient));	/* ESSAI */
 		if (type == T1_TYPE_RAW) {	/* BYPASS/LAZY MODE */
 			opj_mqc_bypass_enc(mqc, (OPJ_UINT32)v);
@@ -625,7 +625,7 @@ static void opj_t1_enc_refpass_step(   opj_t1_t *t1,
 	flag = vsc ? (OPJ_UINT32)((*flagsp) & (~(T1_SIG_S | T1_SIG_SE | T1_SIG_SW | T1_SGN_S))) : (OPJ_UINT32)(*flagsp);
 	if ((flag & (T1_SIG | T1_VISIT)) == T1_SIG) {
 		*nmsedec += opj_t1_getnmsedec_ref((OPJ_UINT32)opj_int_abs(*datap), (OPJ_UINT32)(bpno));
-		v = opj_int_abs(*datap) & one ? 1 : 0;
+		v = (opj_int_abs(*datap) & one) ? 1 : 0;
 		opj_mqc_setcurctx(mqc, opj_t1_getctxno_mag(flag));	/* ESSAI */
 		if (type == T1_TYPE_RAW) {	/* BYPASS/LAZY MODE */
 			opj_mqc_bypass_enc(mqc, (OPJ_UINT32)v);
@@ -849,7 +849,7 @@ static void opj_t1_enc_clnpass_step(
 	}
 	if (!(*flagsp & (T1_SIG | T1_VISIT))) {
 		opj_mqc_setcurctx(mqc, opj_t1_getctxno_zc(flag, orient));
-		v = opj_int_abs(*datap) & one ? 1 : 0;
+		v = (opj_int_abs(*datap) & one) ? 1 : 0;
 		opj_mqc_encode(mqc, (OPJ_UINT32)v);
 		if (v) {
 LABEL_PARTIAL:

@@ -185,9 +185,17 @@ opj_image_t *pngtoimage(const char *read_idf, opj_cparameters_t * params)
 
 	
 	rows = (OPJ_BYTE**)calloc(height+1, sizeof(OPJ_BYTE*));
-	for(i = 0; i < height; ++i)
+	if(rows == NULL){
+		fprintf(stderr, "pngtoimage: memory out\n");
+		goto fin;
+	}
+	for(i = 0; i < height; ++i){
 		rows[i] = (OPJ_BYTE*)malloc(png_get_rowbytes(png,info));
-	
+		if(rows[i] == NULL){
+			fprintf(stderr,"pngtoimage: memory out\n");
+			goto fin;
+		}
+	}	
 	png_read_image(png, rows);
 	
 	/* Create image */
@@ -235,7 +243,7 @@ fin:
 	if(rows)
 	{
 		for(i = 0; i < height; ++i)
-			free(rows[i]);
+			if(rows[i]) free(rows[i]);
 		free(rows);
 	}
 	if (row32s) {

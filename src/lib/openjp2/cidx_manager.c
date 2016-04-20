@@ -60,7 +60,9 @@ int opj_write_cidx( int offset, opj_stream_private_t *cio, opj_codestream_info_t
 
   lenp = -1;
   box = (opj_jp2_box_t *)opj_calloc( 32, sizeof(opj_jp2_box_t));
-
+  if(box == NULL){
+	return 0;
+  }
   for (i=0;i<2;i++){
   
     if(i)

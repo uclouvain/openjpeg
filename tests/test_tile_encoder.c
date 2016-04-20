@@ -129,7 +129,9 @@ int main (int argc, char *argv[])
 	l_data_size = (OPJ_UINT32)tile_width * (OPJ_UINT32)tile_height * (OPJ_UINT32)num_comps * (OPJ_UINT32)(comp_prec/8);
 
 	l_data = (OPJ_BYTE*) malloc(l_data_size * sizeof(OPJ_BYTE));
-
+	if(l_data == NULL){
+		return 1;
+	}
 	fprintf(stdout, "Encoding random values -> keep in mind that this is very hard to compress\n");
 	for (i=0;i<l_data_size;++i)	{
 		l_data[i] = (OPJ_BYTE)i; /*rand();*/
@@ -236,6 +238,7 @@ int main (int argc, char *argv[])
     l_codec = opj_create_compress(OPJ_CODEC_J2K);
     }
 	if (!l_codec) {
+		free(l_data);
 		return 1;
 	}
 
@@ -246,6 +249,7 @@ int main (int argc, char *argv[])
 
 	l_image = opj_image_tile_create(num_comps,l_params,OPJ_CLRSPC_SRGB);
 	if (! l_image) {
+		free(l_data);
 		opj_destroy_codec(l_codec);
 		return 1;
 	}
@@ -260,6 +264,7 @@ int main (int argc, char *argv[])
 		fprintf(stderr, "ERROR -> test_tile_encoder: failed to setup the codec!\n");
 		opj_destroy_codec(l_codec);
 		opj_image_destroy(l_image);
+		free(l_data);
 		return 1;
 	}
 
@@ -268,6 +273,7 @@ int main (int argc, char *argv[])
 		fprintf(stderr, "ERROR -> test_tile_encoder: failed to create the stream from the output file %s !\n",output_file );
 		opj_destroy_codec(l_codec);
 		opj_image_destroy(l_image);
+		free(l_data);
 		return 1;
 	}
 
@@ -276,6 +282,7 @@ int main (int argc, char *argv[])
         opj_stream_destroy(l_stream);
 		opj_destroy_codec(l_codec);
 		opj_image_destroy(l_image);
+		free(l_data);
 		return 1;
 	}
 
@@ -285,6 +292,7 @@ int main (int argc, char *argv[])
             opj_stream_destroy(l_stream);
 			opj_destroy_codec(l_codec);
 			opj_image_destroy(l_image);
+			free(l_data);
 			return 1;
 		}
 	}
@@ -294,6 +302,7 @@ int main (int argc, char *argv[])
         opj_stream_destroy(l_stream);
 		opj_destroy_codec(l_codec);
 		opj_image_destroy(l_image);
+		free(l_data);
 		return 1;
 	}
 
