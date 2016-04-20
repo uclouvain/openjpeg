@@ -221,7 +221,7 @@ static void t1_3d_enc_sigpass_step(opj_t1_3d_t *t1, unsigned int *fp, int *fsvr,
 	flag = vsc ? ((*fp) & (~(T1_3D_SIG_S | T1_3D_SIG_SE | T1_3D_SIG_SW | (T1_3D_SGN_S << 16)))) : (*fp);
 	flagsvr = (*fsvr);
 	if ((flag & T1_3D_SIG_OTH) && !(flagsvr & (T1_3D_SIG | T1_3D_VISIT))) {
-		v = int_abs(*dp) & one ? 1 : 0;
+		v = (int_abs(*dp) & one) ? 1 : 0;
 		if (type == T1_TYPE_RAW) {	/* BYPASS/LAZY MODE */
 			mqc_setcurctx(mqc, t1_3d_getctxno_zc(flag, orient));	/* ESSAI */
 			mqc_bypass_enc(mqc, v);
@@ -320,7 +320,7 @@ static void t1_3d_enc_refpass_step(opj_t1_3d_t *t1, unsigned int *fp, int *fsvr,
 	flagsvr = (*fsvr);
 	if ((flagsvr & (T1_3D_SIG | T1_3D_VISIT)) == T1_3D_SIG) {
 		*nmsedec += t1_3d_getnmsedec_ref(t1, int_abs(*dp), bpno + T1_NMSEDEC_FRACBITS);
-		v = int_abs(*dp) & one ? 1 : 0;
+		v = (int_abs(*dp) & one) ? 1 : 0;
 		if (type == T1_TYPE_RAW) {	/* BYPASS/LAZY MODE */
 			mqc_setcurctx(mqc, t1_3d_getctxno_mag(flag, flagsvr));	/* ESSAI */
 			mqc_bypass_enc(mqc, v);
@@ -402,7 +402,7 @@ static void t1_3d_enc_clnpass_step(opj_t1_3d_t *t1, unsigned int *fp, int *fsvr,
 	}
 	if (!(*fsvr & (T1_3D_SIG | T1_3D_VISIT))) {
 		mqc_setcurctx(mqc, t1_3d_getctxno_zc(flag, orient));
-		v = int_abs(*dp) & one ? 1 : 0;
+		v = (int_abs(*dp) & one) ? 1 : 0;
 		mqc_encode(mqc, v);
 		if (v) {
 LABEL_PARTIAL:

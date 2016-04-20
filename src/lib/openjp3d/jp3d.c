@@ -494,7 +494,14 @@ static void j3d_read_nsi(opj_j3d_t *j3d) {
 	cp->th = int_ceildiv(volume->y1 - cp->ty0, cp->tdy);
 	cp->tl = int_ceildiv(volume->z1 - cp->tz0, cp->tdz);
 	cp->tcps = (opj_tcp_t *) opj_malloc(cp->tw * cp->th * cp->tl * sizeof(opj_tcp_t));
+	if(cp->tcps == NULL){
+		return; /* FIXME szukw000 */
+	}
 	cp->tileno = (int *) opj_malloc(cp->tw * cp->th * cp->tl * sizeof(int));
+	if(cp->tileno == NULL){
+		opj_free(cp->tcps); cp->tcps = NULL;
+		return; /* FIXME szukw000 */
+	}
 	cp->tileno_size = 0;
 	
 	for (i = 0; i < cp->tw * cp->th * cp->tl ; i++) {
@@ -511,11 +518,23 @@ static void j3d_read_nsi(opj_j3d_t *j3d) {
 	cp->ppm_store = 0;
 	
 	j3d->default_tcp->tccps = (opj_tccp_t *) opj_malloc(sizeof(opj_tccp_t) * volume->numcomps);
+	if(j3d->default_tcp->tccps == NULL){
+		return; /* FIXME szukw000 */
+	}
 	for (i = 0; i < cp->tw * cp->th * cp->tl ; i++) {
 		cp->tcps[i].tccps = (opj_tccp_t *) opj_malloc(sizeof(opj_tccp_t) * volume->numcomps);
+		if(cp->tcps[i].tccps == NULL){
+			return; /* FIXME szukw000 */
+		}
 	}
 	j3d->tile_data = (unsigned char **) opj_malloc(cp->tw * cp->th * cp->tl * sizeof(unsigned char *));
+	if(j3d->tile_data == NULL){
+		return; /* FIXME szukw000 */
+	}
 	j3d->tile_len = (int *) opj_malloc(cp->tw * cp->th * cp->tl * sizeof(int));
+	if(j3d->tile_len == NULL){
+		return; /* FIXME szukw000 */
+	}
 	j3d->state = J3D_STATE_MH;
 	
 }
@@ -721,6 +740,9 @@ static void j3d_read_siz(opj_j3d_t *j3d) {
 	
 	volume->numcomps = cio_read(cio, 2);	/* Csiz */
 	volume->comps = (opj_volume_comp_t *) opj_malloc(volume->numcomps * sizeof(opj_volume_comp_t));
+	if(volume->comps == NULL){
+		return; /* FIXME szukw000 */
+	}
 	for (i = 0; i < volume->numcomps; i++) {
 		int tmp, j;
 		tmp = cio_read(cio, 1);		/* Ssiz_i */
@@ -748,7 +770,13 @@ static void j3d_read_siz(opj_j3d_t *j3d) {
 		cp->th = int_ceildiv(volume->y1 - cp->ty0, cp->tdy);
 		cp->tl = int_ceildiv(volume->z1 - cp->tz0, cp->tdz);
 		cp->tcps = (opj_tcp_t *) opj_malloc(cp->tw * cp->th * cp->tl * sizeof(opj_tcp_t));
+		if(cp->tcps == NULL){
+			return; /* FIXME szukw000 */
+		}
 		cp->tileno = (int *) opj_malloc(cp->tw * cp->th * cp->tl * sizeof(int));
+		if(cp->tileno == NULL){
+			return; /* FIXME szukw000 */
+		}
 		cp->tileno_size = 0;
 		
 		for (i = 0; i < cp->tw * cp->th * cp->tl ; i++) {
@@ -765,11 +793,23 @@ static void j3d_read_siz(opj_j3d_t *j3d) {
 		cp->ppm_store = 0;
 		
 		j3d->default_tcp->tccps = (opj_tccp_t *) opj_malloc(sizeof(opj_tccp_t) * volume->numcomps);
+		if(j3d->default_tcp->tccps == NULL){
+			return; /* FIXME szukw000 */
+		}
 		for (i = 0; i < cp->tw * cp->th * cp->tl ; i++) {
 			cp->tcps[i].tccps = (opj_tccp_t *) opj_malloc(sizeof(opj_tccp_t) * volume->numcomps);
+			if(cp->tcps[i].tccps == NULL){
+				return; /* FIXME szukw000 */
+			}
 		}
 		j3d->tile_data = (unsigned char **) opj_malloc(cp->tw * cp->th * cp->tl * sizeof(unsigned char *));
+		if(j3d->tile_data == NULL){
+			return; /* FIXME szukw000 */
+		}
 		j3d->tile_len = (int *) opj_malloc(cp->tw * cp->th * cp->tl * sizeof(int));
+		if(j3d->tile_len == NULL){
+			return; /* FIXME szukw000 */
+		}
 		j3d->state = J3D_STATE_MH;
 	}
 }
@@ -1280,10 +1320,18 @@ static void j3d_read_ppm(opj_j3d_t *j3d) {
 		j = cp->ppm_store;
 		if (Z_ppm == 0) {	/* First PPM marker */
 			cp->ppm_data = (unsigned char *) opj_malloc(N_ppm * sizeof(unsigned char));
+			if(cp->ppm_data == NULL){
+				return; /* FIXME szukw000 */
+			}
 			cp->ppm_data_first = cp->ppm_data;
 			cp->ppm_len = N_ppm;
 		} else {			/* NON-first PPM marker */
-			cp->ppm_data = (unsigned char *) opj_realloc(cp->ppm_data, (N_ppm +	cp->ppm_store) * sizeof(unsigned char));
+			unsigned char *old = cp->ppm_data;
+
+			cp->ppm_data = (unsigned char *) opj_realloc(old, (N_ppm +	cp->ppm_store) * sizeof(unsigned char));
+			if(cp->ppm_data == NULL){
+				return; /* FIXME szukw000 */
+			}
 			cp->ppm_data_first = cp->ppm_data;
 			cp->ppm_len = N_ppm + cp->ppm_store;
 		}
@@ -1311,11 +1359,19 @@ static void j3d_read_ppt(opj_j3d_t *j3d) {
 	tcp->ppt = 1;
 	if (Z_ppt == 0) {		/* First PPT marker */
 		tcp->ppt_data = (unsigned char *) opj_malloc((len - 3) * sizeof(unsigned char));
+		if(tcp->ppt_data == NULL){
+			return; /* FIXME szukw000 */
+		}
 		tcp->ppt_data_first = tcp->ppt_data;
 		tcp->ppt_store = 0;
 		tcp->ppt_len = len - 3;
 	} else {			/* NON-first PPT marker */
-		tcp->ppt_data =	(unsigned char *) opj_realloc(tcp->ppt_data, (len - 3 + tcp->ppt_store) * sizeof(unsigned char));
+		unsigned char *old = tcp->ppt_data;
+		tcp->ppt_data =	(unsigned char *) opj_realloc(old, (len - 3 + tcp->ppt_store) * sizeof(unsigned char));
+		if(tcp->ppt_data == NULL){
+			opj_free(old);
+			return; /* FIXME szukw000 */
+		}
 		tcp->ppt_data_first = tcp->ppt_data;
 		tcp->ppt_len = len - 3 + tcp->ppt_store;
 	}
@@ -1455,7 +1511,9 @@ static void j3d_read_sod(opj_j3d_t *j3d) {
 	}
 	
 	data = (unsigned char *) opj_malloc((j3d->tile_len[curtileno] + len) * sizeof(unsigned char));
-
+	if(data == NULL){
+		return; /* FIXME szukw000 */
+	}
 	for (i = 0; i < j3d->tile_len[curtileno]; i++) {
 		data[i] = j3d->tile_data[curtileno][i];
 	}
@@ -1515,6 +1573,7 @@ static void j3d_read_eoc(opj_j3d_t *j3d) {
 
 #ifndef NO_PACKETS_DECODING  
 	opj_tcd_t *tcd = tcd_create(j3d->cinfo);
+	if(tcd == NULL) return; /* FIXME szukw000: j3d->state = WHAT; */
     tcd_malloc_decode(tcd, j3d->volume, j3d->cp);
 	/*j3d_dump_volume(stdout, tcd->volume);
 	j3d_dump_cp(stdout, tcd->volume, tcd->cp);*/
@@ -1685,6 +1744,9 @@ void j3d_setup_decoder(opj_j3d_t *j3d, opj_dparameters_t *parameters) {
 	if(j3d && parameters) {
 		/* create and initialize the coding parameters structure */
 		opj_cp_t *cp = (opj_cp_t*)opj_malloc(sizeof(opj_cp_t));
+		if(cp == NULL){
+			return; /* FIXME szukw000 */
+		}
 		cp->reduce[0] = parameters->cp_reduce[0];
 		cp->reduce[1] = parameters->cp_reduce[1];
 		cp->reduce[2] = parameters->cp_reduce[2];
@@ -1710,6 +1772,9 @@ opj_volume_t* j3d_decode(opj_j3d_t *j3d, opj_cio_t *cio) {
 
 	/* create an empty volume */
 	volume = (opj_volume_t*)opj_malloc(sizeof(opj_volume_t));
+	if(volume == NULL){
+		return NULL; /* FIXME szukw000 */
+	}
 	j3d->volume = volume;
 
 	j3d->state = J3D_STATE_MHSOC;
@@ -1810,7 +1875,9 @@ void j3d_setup_encoder(opj_j3d_t *j3d, opj_cparameters_t *parameters, opj_volume
 
 	/* create and initialize the coding parameters structure */
 	cp = (opj_cp_t*)opj_malloc(sizeof(opj_cp_t));
-
+	if(cp == NULL){
+		return; /* FIXME szukw000 */
+	}
 	/* keep a link to cp so that we can destroy it later in j3d_destroy_compress */
 	j3d->cp = cp;
 
@@ -1832,6 +1899,9 @@ void j3d_setup_encoder(opj_j3d_t *j3d, opj_cparameters_t *parameters, opj_volume
 	if(parameters->cp_matrice) {
 		size_t array_size = parameters->tcp_numlayers * 3 * parameters->numresolution[0] * sizeof(int);
 		cp->matrice = (int *) opj_malloc(array_size);
+		if(cp->matrice == NULL){
+			return;/* FIXME szukw000 */
+		}
 		memcpy(cp->matrice, parameters->cp_matrice, array_size);
 	} 
 
@@ -1839,6 +1909,9 @@ void j3d_setup_encoder(opj_j3d_t *j3d, opj_cparameters_t *parameters, opj_volume
 	cp->index_on = parameters->index_on;
 	if(cp->index_on) {
 		j3d->volume_info = (opj_volume_info_t*)opj_malloc(sizeof(opj_volume_info_t));
+		if(j3d->volume_info == NULL){
+			return; /* FIXME szukw000 */
+		}
 	}
 	
 	/* tiles */
@@ -1871,6 +1944,9 @@ void j3d_setup_encoder(opj_j3d_t *j3d, opj_cparameters_t *parameters, opj_volume
 	/* initialize the multiple tiles */
 	/* ---------------------------- */
 	cp->tcps = (opj_tcp_t *) opj_malloc(cp->tw * cp->th * cp->tl * sizeof(opj_tcp_t));
+	if(cp->tcps == NULL){
+		return; /* FIXME szukw000 */
+	}
 
 	for (tileno = 0; tileno < cp->tw * cp->th * cp->tl; tileno++) {
 		opj_tcp_t *tcp = &cp->tcps[tileno];
@@ -1908,7 +1984,9 @@ void j3d_setup_encoder(opj_j3d_t *j3d, opj_cparameters_t *parameters, opj_volume
 		tcp->numpocs = numpocs_tile;
 
 		tcp->tccps = (opj_tccp_t *) opj_malloc(volume->numcomps * sizeof(opj_tccp_t));
-		
+		if(tcp->tccps == NULL){
+			return;
+		}
 		for (i = 0; i < volume->numcomps; i++) {
 			opj_tccp_t *tccp = &tcp->tccps[i];
 			tccp->csty = parameters->csty & J3D_CCP_CSTY_PRT;	/* 0 => standard precint || 1 => custom-defined precinct  */
@@ -2242,6 +2320,9 @@ bool j3d_encode(opj_j3d_t *j3d, opj_cio_t *cio, opj_volume_t *volume, char *inde
 	if (volume_info && cp->index_on) {
 		volume_info->index_on = cp->index_on;
 		volume_info->tile = (opj_tile_info_t *) opj_malloc(cp->tw * cp->th * cp->tl * sizeof(opj_tile_info_t));
+		if(volume_info->tile == NULL){
+			return false;
+		}
 		volume_info->volume_w = volume->x1 - volume->x0;
 		volume_info->volume_h = volume->y1 - volume->y0;
 		volume_info->volume_l = volume->z1 - volume->z0;
@@ -2297,7 +2378,9 @@ bool j3d_encode(opj_j3d_t *j3d, opj_cio_t *cio, opj_volume_t *volume, char *inde
 
 	/* create the tile encoder */
 	tcd = tcd_create(j3d->cinfo);
-
+	if(tcd == NULL){
+		return false;
+	}
 	/* encode each tile */
 	for (tileno = 0; tileno < cp->tw * cp->th * cp->tl; tileno++) {
 		opj_event_msg(j3d->cinfo, EVT_INFO, "tile number %d / %d\n", tileno + 1, cp->tw * cp->th * cp->tl);

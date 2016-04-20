@@ -172,12 +172,18 @@ void tcd_malloc_encode(opj_tcd_t *tcd, opj_volume_t * volume, opj_cp_t * cp, int
 	opj_tcp_t		*tcp = &cp->tcps[curtileno];
 	int p,q,r;
 
+	if(tcd == NULL){
+		return;
+	}
 	tcd->volume = volume;
 	tcd->cp = cp;
 	tcd->tcd_volume->tw = cp->tw;
 	tcd->tcd_volume->th = cp->th;
 	tcd->tcd_volume->tl = cp->tl;
 	tcd->tcd_volume->tiles = (opj_tcd_tile_t *) opj_malloc(sizeof(opj_tcd_tile_t));
+	if(tcd->tcd_volume->tiles == NULL){
+		return; /* FIXME szukw000 */
+	}
 	tcd->tile = tcd->tcd_volume->tiles;
 	tile = tcd->tile;
 	
@@ -222,6 +228,9 @@ void tcd_malloc_encode(opj_tcd_t *tcd, opj_volume_t * volume, opj_cp_t * cp, int
 	/* << Modification of the RATE */
 
 	tile->comps = (opj_tcd_tilecomp_t *) opj_malloc(volume->numcomps * sizeof(opj_tcd_tilecomp_t));
+	if(tile->comps == NULL){
+		return; /* FIXME szukw000 */
+	}
 	for (compno = 0; compno < tile->numcomps; compno++) {
 		opj_tccp_t *tccp = &tcp->tccps[compno];
 		int res_max;
@@ -240,7 +249,9 @@ void tcd_malloc_encode(opj_tcd_t *tcd, opj_volume_t * volume, opj_cp_t * cp, int
 		tilec->z1 = int_ceildiv(tile->z1, volume->comps[compno].dz);
 
 		tilec->data = (int *) opj_malloc((tilec->x1 - tilec->x0) * (tilec->y1 - tilec->y0) * (tilec->z1 - tilec->z0) * sizeof(int));
-		
+		if(tilec->data == NULL){
+			return; /* FIXME szukw000 */
+		}
 		res_max = 0;
 		for (i = 0;i < 3; i++){
 			tilec->numresolution[i] = tccp->numresolution[i];
@@ -250,6 +261,10 @@ void tcd_malloc_encode(opj_tcd_t *tcd, opj_volume_t * volume, opj_cp_t * cp, int
 		
 
 		tilec->resolutions = (opj_tcd_resolution_t *) opj_malloc(res_max * sizeof(opj_tcd_resolution_t));
+		if(tilec->resolutions == NULL){
+			return; /* FIXME szukw000 */
+		}
+			
 		for (resno = 0; resno < res_max; resno++) {
 			
 			int pdx, pdy, pdz;
@@ -333,6 +348,9 @@ void tcd_malloc_encode(opj_tcd_t *tcd, opj_volume_t * volume, opj_cp_t * cp, int
 			cblklengthexpn = int_min(tccp->cblk[2], cbglengthexpn); /*6*/
 			
 			res->bands = (opj_tcd_band_t *) opj_malloc(res->numbands * sizeof(opj_tcd_band_t));
+			if(res->bands == NULL){
+				return; /* FIXME szukw000 */
+			}
 			for (bandno = 0; bandno < res->numbands; bandno++) {
 				int x0b, y0b, z0b, i;
 				int gain, numbps;
@@ -377,7 +395,9 @@ void tcd_malloc_encode(opj_tcd_t *tcd, opj_volume_t * volume, opj_cp_t * cp, int
 				band->numbps = ss->expn + tccp->numgbits - 1;	/* WHY -1 ? */
 				
 				band->precincts = (opj_tcd_precinct_t *) opj_malloc((res->prctno[0] * res->prctno[1] * res->prctno[2]) * sizeof(opj_tcd_precinct_t));
-				
+				if(band->precincts == NULL){
+					return; /* FIXME szukw000 */
+				}				
 				for (i = 0; i < (res->prctno[0] * res->prctno[1] * res->prctno[2]); i++) {
 					band->precincts[i].imsbtree = NULL;
 					band->precincts[i].incltree = NULL;
@@ -417,6 +437,9 @@ void tcd_malloc_encode(opj_tcd_t *tcd, opj_volume_t * volume, opj_cp_t * cp, int
 					prc->cblkno[2] = (prc->cblkno[2] == 0) ? 1 : prc->cblkno[2];
 
 					prc->cblks = (opj_tcd_cblk_t *) opj_malloc((prc->cblkno[0] * prc->cblkno[1] * prc->cblkno[2]) * sizeof(opj_tcd_cblk_t));
+					if(prc->cblks == NULL){
+						return; /* FIXME szukw000 */
+					}
 					prc->incltree = tgt_create(prc->cblkno[0], prc->cblkno[1], prc->cblkno[2]);
 					prc->imsbtree = tgt_create(prc->cblkno[0], prc->cblkno[1], prc->cblkno[2]);
 					/*tgt_tree_dump(stdout,prc->incltree);*/
@@ -447,6 +470,7 @@ void tcd_malloc_encode(opj_tcd_t *tcd, opj_volume_t * volume, opj_cp_t * cp, int
 	/*tcd_dump(stdout, tcd, tcd->tcd_volume);*/
 
 }
+
 void tcd_init_encode(opj_tcd_t *tcd, opj_volume_t * volume, opj_cp_t * cp, int curtileno) {
 	int compno, resno, bandno, precno, cblkno;
 	int j, p, q, r;
@@ -459,6 +483,9 @@ void tcd_init_encode(opj_tcd_t *tcd, opj_volume_t * volume, opj_cp_t * cp, int c
 	opj_tcd_cblk_t		*cblk = NULL;		/* pointer to tcd->cblk */
 	opj_tcp_t *tcp = &cp->tcps[curtileno];
 
+	if(tcd == NULL){
+		return;
+	}
 	tcd->tile = tcd->tcd_volume->tiles;
 	tile = tcd->tile;
 
@@ -519,7 +546,9 @@ void tcd_init_encode(opj_tcd_t *tcd, opj_volume_t * volume, opj_cp_t * cp, int c
 		tilec->z1 = int_ceildiv(tile->z1, volume->comps[compno].dz);
 
 		tilec->data = (int *) opj_malloc((tilec->x1 - tilec->x0) * (tilec->y1 - tilec->y0) * (tilec->z1 - tilec->z0) * sizeof(int));
-		
+		if(tilec->data == NULL){
+			return; /* FIXME szukw000 */
+		}
 		res_max = 0;
 		for (i = 0;i < 3; i++){
 			tilec->numresolution[i] = tccp->numresolution[i];
@@ -528,6 +557,9 @@ void tcd_init_encode(opj_tcd_t *tcd, opj_volume_t * volume, opj_cp_t * cp, int c
 		}
 
 		tilec->resolutions = (opj_tcd_resolution_t *) opj_malloc(res_max * sizeof(opj_tcd_resolution_t));
+		if(tilec->resolutions == NULL){
+			return; /* FIXME szukw000 */
+		}
 		for (resno = 0; resno < res_max; resno++) {
 			int pdx, pdy, pdz;
 			int tlprcxstart, tlprcystart, tlprczstart, brprcxend, brprcyend, brprczend;
@@ -607,6 +639,9 @@ void tcd_init_encode(opj_tcd_t *tcd, opj_volume_t * volume, opj_cp_t * cp, int c
 			cblklengthexpn = int_min(tccp->cblk[2], cbglengthexpn);
 			
 			res->bands = (opj_tcd_band_t *) opj_malloc(res->numbands * sizeof(opj_tcd_band_t));
+			if(res->bands == NULL){
+				return; /* FIXME szukw000 */
+			}
 			for (bandno = 0; bandno < res->numbands; bandno++) {
 				int x0b, y0b, z0b;
 				int gain, numbps;
@@ -686,6 +721,9 @@ void tcd_init_encode(opj_tcd_t *tcd, opj_volume_t * volume, opj_cp_t * cp, int c
 
 					opj_free(prc->cblks);
 					prc->cblks = (opj_tcd_cblk_t *) opj_malloc((prc->cblkno[0] * prc->cblkno[1] * prc->cblkno[2]) * sizeof(opj_tcd_cblk_t));
+					if(prc->cblks == NULL){
+						return; /* FIXME szukw000 */
+					}
 					prc->incltree = tgt_create(prc->cblkno[0], prc->cblkno[1], prc->cblkno[2]);
 					prc->imsbtree = tgt_create(prc->cblkno[0], prc->cblkno[1], prc->cblkno[2]);
 
@@ -727,6 +765,9 @@ void tcd_free_encode(opj_tcd_t *tcd) {
 	opj_tcd_band_t *band = NULL;		/* pointer to tcd->band		*/
 	opj_tcd_precinct_t *prc = NULL;		/* pointer to tcd->prc		*/
 
+	if(tcd == NULL){
+		return;
+	}
 	for (tileno = 0; tileno < 1; tileno++) {
 		tcd->tile = tcd->tcd_volume->tiles;
 		tile = tcd->tile;
@@ -780,13 +821,18 @@ void tcd_malloc_decode(opj_tcd_t *tcd, opj_volume_t * volume, opj_cp_t * cp) {
 		x1 = 0, y1 = 0, z1 = 0, 
 		w, h, l;
 
+	if(tcd == NULL){
+		return;
+	}
 	tcd->volume = volume;
 	tcd->cp = cp;
 	tcd->tcd_volume->tw = cp->tw;
 	tcd->tcd_volume->th = cp->th;
 	tcd->tcd_volume->tl = cp->tl;
 	tcd->tcd_volume->tiles = (opj_tcd_tile_t *) opj_malloc(cp->tw * cp->th * cp->tl * sizeof(opj_tcd_tile_t));
-	
+	if(tcd->tcd_volume->tiles == NULL){
+		return; /* FIXME szukw000 */
+	}
 	for (i = 0; i < cp->tileno_size; i++) {
 		opj_tcp_t *tcp = &(cp->tcps[cp->tileno[i]]);
 		opj_tcd_tile_t *tile = &(tcd->tcd_volume->tiles[cp->tileno[i]]);
@@ -809,6 +855,9 @@ void tcd_malloc_decode(opj_tcd_t *tcd, opj_volume_t * volume, opj_cp_t * cp) {
 		tile->numcomps = volume->numcomps;		
 		
 		tile->comps = (opj_tcd_tilecomp_t *) opj_malloc(volume->numcomps * sizeof(opj_tcd_tilecomp_t));
+		if(tile->comps == NULL){
+			return;/* FIXME szukw000 */
+		}
 		for (compno = 0; compno < tile->numcomps; compno++) {
 			opj_tccp_t *tccp = &tcp->tccps[compno];
 			opj_tcd_tilecomp_t *tilec = &tile->comps[compno];
@@ -823,7 +872,9 @@ void tcd_malloc_decode(opj_tcd_t *tcd, opj_volume_t * volume, opj_cp_t * cp) {
 			tilec->z1 = int_ceildiv(tile->z1, volume->comps[compno].dz);
 			
 			tilec->data = (int *) opj_malloc((tilec->x1 - tilec->x0) * (tilec->y1 - tilec->y0) * (tilec->z1 - tilec->z0) * sizeof(int));
-
+			if(tilec->data == NULL){
+				return;/* FIXME szukw000 */
+			}
 			res_max = 0;
 			for (i = 0;i < 3; i++){
 				tilec->numresolution[i] = tccp->numresolution[i];
@@ -832,7 +883,9 @@ void tcd_malloc_decode(opj_tcd_t *tcd, opj_volume_t * volume, opj_cp_t * cp) {
 			}
 
 			tilec->resolutions = (opj_tcd_resolution_t *) opj_malloc(res_max * sizeof(opj_tcd_resolution_t));
-
+			if(tilec->resolutions == NULL){
+				return;/* FIXME szukw000 */
+			}
 			for (resno = 0; resno < res_max; resno++) {
 				opj_tcd_resolution_t *res = &tilec->resolutions[resno];
 				int pdx, pdy, pdz;
@@ -906,6 +959,9 @@ void tcd_malloc_decode(opj_tcd_t *tcd, opj_volume_t * volume, opj_cp_t * cp) {
 				cblklengthexpn = int_min(tccp->cblk[2], cbglengthexpn); /*6*/
 
 				res->bands = (opj_tcd_band_t *) opj_malloc(res->numbands * sizeof(opj_tcd_band_t));
+				if(res->bands == NULL){
+					return;/* FIXME szukw000 */
+				}
 				for (bandno = 0; bandno < res->numbands; bandno++) {
 					int x0b, y0b, z0b;
 					int gain, numbps;
@@ -949,7 +1005,9 @@ void tcd_malloc_decode(opj_tcd_t *tcd, opj_volume_t * volume, opj_cp_t * cp) {
 					band->numbps = ss->expn + tccp->numgbits - 1;	/* WHY -1 ? */
 					
 					band->precincts = (opj_tcd_precinct_t *) opj_malloc(res->prctno[0] * res->prctno[1] * res->prctno[2] * sizeof(opj_tcd_precinct_t));
-					
+					if(band->precincts == NULL){
+						return;/* FIXME szukw000 */
+					}
 					for (precno = 0; precno < res->prctno[0] * res->prctno[1] * res->prctno[2]; precno++) {
 						int tlcblkxstart, tlcblkystart, tlcblkzstart, brcblkxend, brcblkyend, brcblkzend;
 
@@ -981,9 +1039,17 @@ void tcd_malloc_decode(opj_tcd_t *tcd, opj_volume_t * volume, opj_cp_t * cp) {
 						prc->cblkno[2] = (prc->cblkno[2] == 0) ? 1 : prc->cblkno[2];
 
 						prc->cblks = (opj_tcd_cblk_t *) opj_malloc((prc->cblkno[0] * prc->cblkno[1] * prc->cblkno[2]) * sizeof(opj_tcd_cblk_t));
+						if(prc->cblks == NULL){
+							return;/* FIXME szukw000 */
+						}
 						prc->incltree = tgt_create(prc->cblkno[0], prc->cblkno[1], prc->cblkno[2]);
+						if(prc->incltree == NULL){
+							return;/* FIXME szukw000 */
+						}
 						prc->imsbtree = tgt_create(prc->cblkno[0], prc->cblkno[1], prc->cblkno[2]);
-						
+						if(prc->imsbtree == NULL){
+							return;/* FIXME szukw000 */
+						}
 						for (cblkno = 0; cblkno < prc->cblkno[0] * prc->cblkno[1] * prc->cblkno[2]; cblkno++) {
 							int cblkxstart = tlcblkxstart + (cblkno % prc->cblkno[0]) * (1 << cblkwidthexpn);
 							int cblkystart = tlcblkystart + ((cblkno % (prc->cblkno[0] * prc->cblkno[1])) / prc->cblkno[0]) * (1 << cblkheightexpn);
@@ -1032,6 +1098,9 @@ void tcd_malloc_decode(opj_tcd_t *tcd, opj_volume_t * volume, opj_cp_t * cp) {
 		l = z1 - z0;
 		
 		volume->comps[i].data = (int *) opj_malloc(w * h * l * sizeof(int));
+		if(volume->comps[i].data == NULL){
+			return;/* FIXME szukw000 */
+		}
 		volume->comps[i].w = w;
 		volume->comps[i].h = h;
 		volume->comps[i].l = l;
@@ -1044,8 +1113,12 @@ void tcd_malloc_decode(opj_tcd_t *tcd, opj_volume_t * volume, opj_cp_t * cp) {
 
 void tcd_free_decode(opj_tcd_t *tcd) {
 	int tileno,compno,resno,bandno,precno;
+	opj_tcd_volume_t *tcd_volume; 
 
-	opj_tcd_volume_t *tcd_volume = tcd->tcd_volume;
+	if(tcd == NULL){
+		return;
+	}
+	tcd_volume = tcd->tcd_volume;
 	
 	for (tileno = 0; tileno < tcd_volume->tw * tcd_volume->th * tcd_volume->tl; tileno++) {
 		opj_tcd_tile_t *tile = &tcd_volume->tiles[tileno];
@@ -1318,6 +1391,9 @@ bool tcd_rateallocate(opj_tcd_t *tcd, unsigned char *dest, int len, opj_volume_i
 		info_TL->nbpix = tcd_tile->nbpix;
 		info_TL->distotile = tcd_tile->distotile;
 		info_TL->thresh = (double *) opj_malloc(tcd_tcp->numlayers * sizeof(double));
+		if(info_TL->thresh == NULL){
+			return false;/* FIXME szukw000 */
+		}
 	}
 	/* dda */
 	
@@ -1335,6 +1411,9 @@ bool tcd_rateallocate(opj_tcd_t *tcd, unsigned char *dest, int len, opj_volume_i
         
 		if ((tcd_tcp->rates[layno]) || (cp->disto_alloc==0)) {
 			opj_t2_t *t2 = t2_create(tcd->cinfo, tcd->volume, cp);
+			if(t2 == NULL){
+				return false;/* FIXME szukw000 */
+			}
 			int oldl = 0, oldoldl = 0;
 			for (i = 0; i < 128; i++) {
 				double thresh = (lo + hi) / 2;
@@ -1389,7 +1468,7 @@ bool tcd_rateallocate(opj_tcd_t *tcd, unsigned char *dest, int len, opj_volume_i
 /* ----------------------------------------------------------------------- */
 int tcd_encode_tile(opj_tcd_t *tcd, int tileno, unsigned char *dest, int len, opj_volume_info_t * volume_info) {
 	int compno;
-	int l, i, npck = 0;
+	int l = 0, i, npck = 0;
 	double encoding_time;
 	
 	opj_tcd_tile_t	*tile = NULL;
@@ -1428,6 +1507,9 @@ int tcd_encode_tile(opj_tcd_t *tcd, int tileno, unsigned char *dest, int len, op
 			volume_info->tile[tileno].prctsiz[2][i] = tccp->prctsiz[2][i];
 		}
 		volume_info->tile[tileno].packet = (opj_packet_info_t *) opj_malloc(volume_info->comp * volume_info->layer * npck * sizeof(opj_packet_info_t));
+		if(volume_info->tile[tileno].packet == NULL){
+			return false;/* FIXME szukw000 */
+		}
 	}
 	/* << INDEX */
 	

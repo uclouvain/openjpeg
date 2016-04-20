@@ -297,6 +297,7 @@ opj_volume_t* pgxtovolume(char *relpath, opj_cparameters_t *parameters) {
 				cmptparm.bigendian = 0;
 			} else {
 				fprintf(stdout, "[ERROR] Bad pgx header, please check input file\n");
+				fclose(f);
 				return NULL;
 			}
 
@@ -510,9 +511,9 @@ opj_volume_t* bintovolume(char *filename, char *fileimg, opj_cparameters_t *para
 	/*fscanf(fimg, "Color Map%[ \t]%d%[ \n\t]Dimensions%[ \t]%d%[ \t]%d%[ \t]%d%[ \n\t]",temp,&color_space,temp,temp,&w,temp,&h,temp,&l,temp);*/
 	/*fscanf(fimg, "Resolution(mm)%[ \t]%d%[ \t]%d%[ \t]%d%[ \n\t]",temp,&subsampling_dx,temp,&subsampling_dy,temp,&subsampling_dz,temp);*/
 
-	#ifdef VERBOSE
-		fprintf(stdout, "[INFO] %d \t %d %d %d \t %3.2f %2.2f %2.2f \t %d \n",color_space,w,h,l,subsampling_dx,subsampling_dy,subsampling_dz,prec);
-	#endif
+#ifdef VERBOSE
+		fprintf(stdout, "[INFO] %d \t %d %d %d \t %d %d %d \t %d \n",color_space,w,h,l,subsampling_dx,subsampling_dy,subsampling_dz,prec);
+#endif
 	fclose(fimg);
 	
 	/* initialize volume components */
@@ -562,6 +563,10 @@ opj_volume_t* bintovolume(char *filename, char *fileimg, opj_cparameters_t *para
 		/*if (comp->prec <= 8) {
 			if (!comp->sgnd) {
                 unsigned char *data = (unsigned char *) malloc(whl * sizeof(unsigned char));
+				if(data == NULL){
+					fclose(f);
+					return NULL;
+				}
 				fread(data, 1, whl, f);
 				for (i = 0; i < whl; i++) {
 					comp->data[i] = data[i];
@@ -571,6 +576,10 @@ opj_volume_t* bintovolume(char *filename, char *fileimg, opj_cparameters_t *para
 				free(data);
 			} else {
 				char *data = (char *) malloc(whl);
+				if(data == NULL){
+					fclose(f);
+					return NULL;
+				}
 				fread(data, 1, whl, f);
 				for (i = 0; i < whl; i++) {
 					comp->data[i] = data[i];
@@ -582,6 +591,10 @@ opj_volume_t* bintovolume(char *filename, char *fileimg, opj_cparameters_t *para
 		} else if (comp->prec <= 16) {
 			if (!comp->sgnd) {
                 unsigned short *data = (unsigned short *) malloc(whl * sizeof(unsigned short));
+				if(data == NULL){
+					fclose(f);
+					return NULL;
+				}
 				int leido = fread(data, 2, whl, f);
 				if (!leido)	{
 					free(data);	fclose(f);
@@ -600,6 +613,10 @@ opj_volume_t* bintovolume(char *filename, char *fileimg, opj_cparameters_t *para
 				free(data);
 			} else {
 				short *data = (short *) malloc(whl);
+				if(data == NULL){
+					fclose(f);
+					return NULL;
+				}
 				int leido = fread(data, 2, whl, f);
 				if (!leido)	{
 					free(data);	fclose(f);
@@ -619,6 +636,10 @@ opj_volume_t* bintovolume(char *filename, char *fileimg, opj_cparameters_t *para
 		} else {
 			if (!comp->sgnd) {
                 unsigned int *data = (unsigned int *) malloc(whl * sizeof(unsigned int));
+				if(data == NULL){
+					fclose(f);
+					return NULL;
+				}
 				int leido = fread(data, 4, whl, f);
 				if (!leido)	{
 					free(data);	fclose(f);
@@ -687,13 +708,13 @@ int volumetobin(opj_volume_t * volume, char *outfile) {
 /*	char *imgtemp;*/
 	char name[256];
 
+	fdest = fopen(outfile, "wb");
+	if (!fdest) {
+		fprintf(stdout, "[ERROR] Failed to open %s for writing\n", outfile);
+		return 1;
+	}
+
 	for (compno = 0; compno < 1; compno++) { /*Only one component*/
-		
-		fdest = fopen(outfile, "wb");
-		if (!fdest) {
-			fprintf(stdout, "[ERROR] Failed to open %s for writing\n", outfile);
-			return 1;
-		}
         fprintf(stdout,"[INFO] Writing outfile %s (%s) \n",outfile, volume->comps[0].bigendian ? "Bigendian" : "Little-endian");
 
 		w = int_ceildiv(volume->x1 - volume->x0, volume->comps[compno].dx);
@@ -871,8 +892,7 @@ opj_volume_t* imgtovolume(char *fileimg, opj_cparameters_t *parameters) {
 	f = fopen(filename, "rb");
 	if (!f) {
 		fprintf(stderr, "[ERROR] Failed to open %s for reading !!\n", filename);
-		fclose(f);
-		return 0;
+		return NULL;
 	}
 	
 	/* BINARY */
@@ -884,6 +904,10 @@ opj_volume_t* imgtovolume(char *fileimg, opj_cparameters_t *parameters) {
 		/*if (comp->prec <= 8) {
 			if (!comp->sgnd) {
                 unsigned char *data = (unsigned char *) malloc(whl * sizeof(unsigned char));
+				if(data == NULL){
+					fclose(f);
+					return NULL;
+				}
 				fread(data, 1, whl, f);
 				for (i = 0; i < whl; i++) {
 					comp->data[i] = data[i];
@@ -893,6 +917,10 @@ opj_volume_t* imgtovolume(char *fileimg, opj_cparameters_t *parameters) {
 				free(data);
 			} else {
 				char *data = (char *) malloc(whl);
+				if(data == NULL){
+					fclose(f);
+					return NULL;
+				}
 				fread(data, 1, whl, f);
 				for (i = 0; i < whl; i++) {
 					comp->data[i] = data[i];
@@ -904,6 +932,10 @@ opj_volume_t* imgtovolume(char *fileimg, opj_cparameters_t *parameters) {
 		} else if (comp->prec <= 16) {
 			if (!comp->sgnd) {
                 unsigned short *data = (unsigned short *) malloc(whl * sizeof(unsigned short));
+				if(data == NULL){
+					fclose(f);
+					return NULL;
+				}
 				int leido = fread(data, 2, whl, f);
 				if (!leido)	{
 					free(data);	fclose(f);
@@ -922,6 +954,10 @@ opj_volume_t* imgtovolume(char *fileimg, opj_cparameters_t *parameters) {
 				free(data);
 			} else {
 				short *data = (short *) malloc(whl);
+				if(data == NULL){
+					fclose(f);
+					return NULL;
+				}
 				int leido = fread(data, 2, whl, f);
 				if (!leido)	{
 					free(data);	fclose(f);
@@ -941,6 +977,10 @@ opj_volume_t* imgtovolume(char *fileimg, opj_cparameters_t *parameters) {
 		} else {
 			if (!comp->sgnd) {
                 unsigned int *data = (unsigned int *) malloc(whl * sizeof(unsigned int));
+				if(data == NULL){
+					fclose(f);
+					return NULL;
+				}
 				int leido = fread(data, 4, whl, f);
 				if (!leido)	{
 					free(data);	fclose(f);

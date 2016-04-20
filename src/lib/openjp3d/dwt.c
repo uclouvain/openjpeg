@@ -101,7 +101,7 @@ static void dwt_decode_97(int *a, int dn, int sn, int cas);
 /**
 Computing of wavelet transform L2 norms for arbitrary transforms
 */
-static double dwt_calc_wtnorms(int orient, int level[3], int dwtid[3], opj_wtfilt_t *wtfiltx, opj_wtfilt_t *wtfilty, opj_wtfilt_t *wtfiltz);
+static double dwt_calc_wtnorms(int orient, int level[3], int dwtid[3], opj_wtfilt_t *wtfiltx, opj_wtfilt_t *wtfilty, opj_wtfilt_t *wtfiltz, int *out_fails);
 /**
 Encoding of quantification stepsize
 */
@@ -467,10 +467,13 @@ static void dwt_decode_97(int *a, int dn, int sn, int cas) {
 /* <summary>                */
 /* Get norm of arbitrary wavelet transform. */
 /* </summary>               */
-static int upandconv(double *nXPS, double *LPS, int lenXPS, int lenLPS) {
+static int upandconv(double *nXPS, double *LPS, int lenXPS, int lenLPS, int *out_fails) {
 	/* Perform the convolution of the vectors. */
 	int i,j;
 	double *tmp = (double *)opj_malloc(2*lenXPS * sizeof(double));
+	if(tmp == NULL){
+		return 0;
+	}
 	/*Upsample*/
 	memset(tmp, 0, 2*lenXPS*sizeof(double));
 	for (i = 0; i < lenXPS; i++) {
@@ -485,10 +488,11 @@ static int upandconv(double *nXPS, double *LPS, int lenXPS, int lenLPS) {
 		}
 	}
 	free(tmp);
+	*out_fails = 0;
 	return 2*lenXPS+lenLPS-1;
 }
 
-static double dwt_calc_wtnorms(int orient, int level[3], int dwtid[3], opj_wtfilt_t *wtfiltX,  opj_wtfilt_t *wtfiltY,  opj_wtfilt_t *wtfiltZ) {
+static double dwt_calc_wtnorms(int orient, int level[3], int dwtid[3], opj_wtfilt_t *wtfiltX,  opj_wtfilt_t *wtfiltY,  opj_wtfilt_t *wtfiltZ, int *out_fails) {
 	int i, lenLPS, lenHPS;
 	double	Lx = 0, Ly= 0, Hx= 0, Hy= 0, Lz= 0, Hz= 0;
 	double *nLPSx, *nHPSx,*nLPSy, *nHPSy,*nLPSz, *nHPSz;
@@ -508,15 +512,25 @@ static double dwt_calc_wtnorms(int orient, int level[3], int dwtid[3], opj_wtfil
 		lenHPS += wtfiltX->lenLPS - 1;
 	}
 	nLPSx = (double *)opj_malloc(lenLPS * sizeof(double));
+	if(nLPSx == NULL){
+		return -1;
+	}
 	nHPSx = (double *)opj_malloc(lenHPS * sizeof(double));
-
+	if(nHPSx == NULL){
+		free(nLPSx);
+		return -1;
+	}
 	memcpy(nLPSx, wtfiltX->LPS, wtfiltX->lenLPS * sizeof(double));
 	memcpy(nHPSx, wtfiltX->HPS, wtfiltX->lenHPS * sizeof(double));
 	lenLPS = wtfiltX->lenLPS;
 	lenHPS = wtfiltX->lenHPS;
 	for (i = 0; i < levelx; i++) {
-		lenLPS = upandconv(nLPSx, wtfiltX->LPS, lenLPS, wtfiltX->lenLPS);
-		lenHPS = upandconv(nHPSx, wtfiltX->LPS, lenHPS, wtfiltX->lenLPS);
+		int fails2 = 1;
+		lenLPS = upandconv(nLPSx, wtfiltX->LPS, lenLPS, wtfiltX->lenLPS, &fails2);
+		if(fails2) return -1;
+		fails2 = 1;
+		lenHPS = upandconv(nHPSx, wtfiltX->LPS, lenHPS, wtfiltX->lenLPS, &fails2);
+		if(fails2) return -1;
 	}
 	for (i = 0; i < lenLPS; i++)
 		Lx += nLPSx[i] * nLPSx[i];
@@ -538,15 +552,25 @@ static double dwt_calc_wtnorms(int orient, int level[3], int dwtid[3], opj_wtfil
 			lenHPS += wtfiltY->lenLPS - 1;
 		}
 		nLPSy = (double *)opj_malloc(lenLPS * sizeof(double));
+		if(nLPSy == NULL){
+			return -1;
+		}
 		nHPSy = (double *)opj_malloc(lenHPS * sizeof(double));
-
+		if(nHPSy == NULL){
+			free(nLPSy);
+			return -1;
+		}
 		memcpy(nLPSy, wtfiltY->LPS, wtfiltY->lenLPS * sizeof(double));
 		memcpy(nHPSy, wtfiltY->HPS, wtfiltY->lenHPS * sizeof(double));
 		lenLPS = wtfiltY->lenLPS;
 		lenHPS = wtfiltY->lenHPS;
 		for (i = 0; i < levely; i++) {
-			lenLPS = upandconv(nLPSy, wtfiltY->LPS, lenLPS, wtfiltY->lenLPS);
-			lenHPS = upandconv(nHPSy, wtfiltY->LPS, lenHPS, wtfiltY->lenLPS);
+			int fails2 = 1;
+			lenLPS = upandconv(nLPSy, wtfiltY->LPS, lenLPS, wtfiltY->lenLPS, &fails2);
+			if(fails2) return -1;
+			fails2 = 1;
+			lenHPS = upandconv(nHPSy, wtfiltY->LPS, lenHPS, wtfiltY->lenLPS, &fails2);
+			if(fails2) return -1;
 		}
 		for (i = 0; i < lenLPS; i++)
 			Ly += nLPSy[i] * nLPSy[i];
@@ -571,15 +595,25 @@ static double dwt_calc_wtnorms(int orient, int level[3], int dwtid[3], opj_wtfil
 			lenHPS += wtfiltZ->lenLPS - 1;
 		}
 		nLPSz = (double *)opj_malloc(lenLPS * sizeof(double));
+		if(nLPSz == NULL){
+			return -1;
+		}
 		nHPSz = (double *)opj_malloc(lenHPS * sizeof(double));
-
+		if(nHPSz == NULL){
+			free(nLPSz);
+			return -1;
+		}
 		memcpy(nLPSz, wtfiltZ->LPS, wtfiltZ->lenLPS * sizeof(double));
 		memcpy(nHPSz, wtfiltZ->HPS, wtfiltZ->lenHPS * sizeof(double));
 		lenLPS = wtfiltZ->lenLPS;
 		lenHPS = wtfiltZ->lenHPS;
 		for (i = 0; i < levelz; i++) {
-			lenLPS = upandconv(nLPSz, wtfiltZ->LPS, lenLPS, wtfiltZ->lenLPS);
-			lenHPS = upandconv(nHPSz, wtfiltZ->LPS, lenHPS, wtfiltZ->lenLPS);
+			int fails2 = 1;
+			lenLPS = upandconv(nLPSz, wtfiltZ->LPS, lenLPS, wtfiltZ->lenLPS, &fails2);
+			if(fails2) return -1;
+			fails2 = 1;
+			lenHPS = upandconv(nHPSz, wtfiltZ->LPS, lenHPS, wtfiltZ->lenLPS, &fails2);
+			if(fails2) return -1;
 		}
 		for (i = 0; i < lenLPS; i++)
 			Lz += nLPSz[i] * nLPSz[i];
@@ -592,6 +626,7 @@ static double dwt_calc_wtnorms(int orient, int level[3], int dwtid[3], opj_wtfil
 	} else {
 		Lz = 1.0; Hz = 1.0;
 	}
+	*out_fails = 0;
 	switch (orient) {
 		case 0: 
 			return Lx * Ly * Lz;
@@ -614,11 +649,19 @@ static double dwt_calc_wtnorms(int orient, int level[3], int dwtid[3], opj_wtfil
 	}
 	
 }
-static void dwt_getwtfilters(opj_wtfilt_t *wtfilt, int dwtid) {
+static void dwt_getwtfilters(opj_wtfilt_t *wtfilt, int dwtid, int *out_fails) {
 	if (dwtid == 0) { /*DWT 9-7 */
 			wtfilt->lenLPS = 7;		wtfilt->lenHPS = 9;
 			wtfilt->LPS = (double *)opj_malloc(wtfilt->lenLPS * sizeof(double));
+			if(wtfilt->LPS == NULL){
+				return;
+			}
 			wtfilt->HPS = (double *)opj_malloc(wtfilt->lenHPS * sizeof(double));
+			if(wtfilt->HPS == NULL){
+				free(wtfilt->LPS);
+				return;
+			}
+			*out_fails = 0;
 			wtfilt->LPS[0] = -0.091271763114;	wtfilt->HPS[0] = 0.026748757411;
 			wtfilt->LPS[1] = -0.057543526228;	wtfilt->HPS[1] = 0.016864118443;
 			wtfilt->LPS[2] = 0.591271763114;	wtfilt->HPS[2] = -0.078223266529;
@@ -631,7 +674,15 @@ static void dwt_getwtfilters(opj_wtfilt_t *wtfilt, int dwtid) {
 	} else if (dwtid == 1) { /*DWT 5-3 */
 			wtfilt->lenLPS = 3;		wtfilt->lenHPS = 5;
 			wtfilt->LPS = (double *)opj_malloc(wtfilt->lenLPS * sizeof(double));
+			if(wtfilt->LPS == NULL){
+				return;
+			}
 			wtfilt->HPS = (double *)opj_malloc(wtfilt->lenHPS * sizeof(double));
+			if(wtfilt->HPS == NULL){
+				free(wtfilt->LPS);
+				return;
+			}
+			*out_fails = 0;
 			wtfilt->LPS[0] = 0.5;	wtfilt->HPS[0] = -0.125; 
 			wtfilt->LPS[1] = 1;		wtfilt->HPS[1] = -0.25; 
 			wtfilt->LPS[2] = 0.5;	wtfilt->HPS[2] = 0.75;
@@ -724,6 +775,8 @@ void dwt_encode(opj_tcd_tilecomp_t * tilec, int dwtid[3]) {
 			sn = rw1;
 			dn = rw - rw1;
 			bj = (int*)opj_malloc(rw * sizeof(int));
+			if(bj == NULL) return;
+
 			if (dwtid[0] == 0) {
 				for (j = 0; j < rh; j++) {
 					aj = cj + j * w;
@@ -745,6 +798,8 @@ void dwt_encode(opj_tcd_tilecomp_t * tilec, int dwtid[3]) {
 			sn = rh1;
 			dn = rh - rh1;
 			bj = (int*)opj_malloc(rh * sizeof(int));
+			if(bj == NULL) return;
+
 			if (dwtid[1] == 0) { /*DWT 9-7*/
 				for (j = 0; j < rw; j++) {
 					aj = cj + j;
@@ -768,6 +823,8 @@ void dwt_encode(opj_tcd_tilecomp_t * tilec, int dwtid[3]) {
 			sn = rd1;
 			dn = rd - rd1;
 			bj = (int*)opj_malloc(rd * sizeof(int));
+			if(bj == NULL) return;
+
 			if (dwtid[2] == 0) {
                 for (j = 0; j < (rw*rh); j++) {
 					aj = a + j;
@@ -851,6 +908,8 @@ void dwt_decode(opj_tcd_tilecomp_t * tilec, int stops[3], int dwtid[3]) {
 			sn = rd1;
 			dn = rd - rd1;
 			bj = (int*)opj_malloc(rd * sizeof(int));
+			if(bj == NULL) return;
+
 			if (dwtid[2] == 0) {
 				for (j = 0; j < (rw*rh); j++) {
 					aj = a + j;
@@ -877,6 +936,8 @@ void dwt_decode(opj_tcd_tilecomp_t * tilec, int stops[3], int dwtid[3]) {
 			sn = rh1;
 			dn = rh - rh1;
 			bj = (int*)opj_malloc(rh * sizeof(int));
+			if(bj == NULL) return;
+
 			if (dwtid[1] == 0) {
 				for (j = 0; j < rw; j++) {
 					aj = cj + j;
@@ -898,6 +959,8 @@ void dwt_decode(opj_tcd_tilecomp_t * tilec, int stops[3], int dwtid[3]) {
 			sn = rw1;
 			dn = rw - rw1;
 			bj = (int*)opj_malloc(rw * sizeof(int));
+			if(bj == NULL) return;
+
 			if (dwtid[0]==0) {
 				for (j = 0; j < rh; j++) {
 					aj = cj + j*w;
@@ -947,21 +1010,43 @@ double dwt_getnorm(int orient, int level[3], int dwtid[3]) {
 	int levelx = level[0];
 	int levely = level[1];
 	int levelz = (level[2] < 0) ? 0 : level[2];
+	int fails = 1;
 	double norm;
 
 	if (flagnorm[levelx][levely][levelz][orient] == 1) {
 		norm = dwt_norm[levelx][levely][levelz][orient];
 		/*fprintf(stdout,"[INFO] Level: %d %d %d Orient %d Dwt_norm: %f \n",level[0],level[1],level[2],orient,norm);*/
 	} else {
+		int fails = 1;
+
 		opj_wtfilt_t *wtfiltx =(opj_wtfilt_t *) opj_malloc(sizeof(opj_wtfilt_t));
+		if(wtfiltx == NULL){
+			return 0;
+		}
 		opj_wtfilt_t *wtfilty =(opj_wtfilt_t *) opj_malloc(sizeof(opj_wtfilt_t));
+		if(wtfilty == NULL){
+			free(wtfiltx);
+			return 0;
+		}
 		opj_wtfilt_t *wtfiltz =(opj_wtfilt_t *) opj_malloc(sizeof(opj_wtfilt_t));
+		if(wtfiltz == NULL){
+			free(wtfiltx);
+			free(wtfilty);
+			return 0;
+		}
 		/*Fetch equivalent filters for each dimension*/
-		dwt_getwtfilters(wtfiltx, dwtid[0]);
-		dwt_getwtfilters(wtfilty, dwtid[1]);
-		dwt_getwtfilters(wtfiltz, dwtid[2]);
+		dwt_getwtfilters(wtfiltx, dwtid[0], &fails);
+		if(fails) return 0;
+		fails = 1;
+		dwt_getwtfilters(wtfilty, dwtid[1], &fails);
+		if(fails) return 0;
+		fails = 1;
+		dwt_getwtfilters(wtfiltz, dwtid[2], &fails);
+		if(fails) return 0;
+		fails = 1;
 		/*Calculate the corresponding norm */
-		norm = dwt_calc_wtnorms(orient, level, dwtid, wtfiltx, wtfilty, wtfiltz);
+		norm = dwt_calc_wtnorms(orient, level, dwtid, wtfiltx, wtfilty, wtfiltz, &fails);
+		if(fails) return 0;
 		/*Save norm in array (no recalculation)*/
 		dwt_norm[levelx][levely][levelz][orient] = norm;
 		flagnorm[levelx][levely][levelz][orient] = 1;

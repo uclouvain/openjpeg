@@ -356,6 +356,9 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters) 
 				parameters->tcp_numlayers = numlayers;
 				matrix_width = parameters->numresolution[0] + parameters->numresolution[1] + parameters->numresolution[2];
 				parameters->cp_matrice = (int *) malloc(numlayers * matrix_width * sizeof(int));
+				if(parameters->cp_matrice == NULL){
+					return 1;
+				}
 				s = s + 2;
 
 				for (i = 0; i < numlayers; i++) {
@@ -703,7 +706,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters) 
 		return 1;
 	}
 	
-	if (parameters->dcoffset >= 128 && parameters->dcoffset <= -128) {
+	if (parameters->dcoffset >= 128 || parameters->dcoffset <= -128) {
 		fprintf(stdout, "[ERROR] -D 'DC offset' argument error ! Value must be -128<=DCO<=128.\n");
 		return 1;
 	}
@@ -711,7 +714,7 @@ int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *parameters) 
 	if(parameters->numresolution[2] != 1) {
 		parameters->transform_format = TRF_3D_DWT;
 		/*fprintf(stdout, "[Warning] Resolution level in axial dim > 1 : 3D-DWT will be performed... \n");*/
-	} else if (parameters->numresolution[2] == 1) {
+	} else {
 		parameters->transform_format = TRF_2D_DWT;
 		/*fprintf(stdout, "[Warning] Resolution level in axial dim == 1 : 2D-DWT will be performed... \n");*/
 	}
@@ -796,6 +799,7 @@ int main(int argc, char **argv) {
 
 	/* parse input and get user encoding parameters */
 	if(parse_cmdline_encoder(argc, argv, &parameters) == 1) {
+		if(parameters.cp_matrice) free(parameters.cp_matrice);
 		return 0;
 	}
 

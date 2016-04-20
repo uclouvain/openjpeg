@@ -441,6 +441,11 @@ int main(int argc, char **argv) {
 	file_length = ftell(fsrc);
 	fseek(fsrc, 0, SEEK_SET);
 	src = (unsigned char *) malloc(file_length);
+	if(src == NULL){
+		fprintf(stderr, "opj_jp3d_decompress: memory out\n");
+		fclose(fsrc);
+		return 1;
+	}
 	fread(src, 1, file_length, fsrc);
 	fclose(fsrc);
 	

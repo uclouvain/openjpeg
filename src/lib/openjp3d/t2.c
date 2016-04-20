@@ -149,6 +149,8 @@ static int t2_encode_packet(opj_tcd_tile_t * tile, opj_tcp_t * tcp, opj_pi_itera
 	/* <SOP 0xff91> */
 	if ((tcp->csty & J3D_CP_CSTY_SOP)) {
 		sop = (unsigned char *) opj_malloc(6 * sizeof(unsigned char));
+		if(sop == NULL) return -999;
+
 		sop[0] = 255;
 		sop[1] = 145;
 		sop[2] = 0;
@@ -176,6 +178,8 @@ static int t2_encode_packet(opj_tcd_tile_t * tile, opj_tcp_t * tcp, opj_pi_itera
 	}
 		
 	bio = bio_create();
+	if(bio == NULL) return -999;
+
 	bio_init_enc(bio, c, len);
 	bio_write(bio, 1, 1);		/* Empty header bit */
 	
@@ -258,6 +262,8 @@ static int t2_encode_packet(opj_tcd_tile_t * tile, opj_tcp_t * tcp, opj_pi_itera
 	/* <EPH 0xff92> */
 	if (tcp->csty & J3D_CP_CSTY_EPH) {
 		eph = (unsigned char *) opj_malloc(2 * sizeof(unsigned char));
+		if(eph == NULL) return -999;
+
 		eph[0] = 255;
 		eph[1] = 146;
 		memcpy(c, eph, 2);
