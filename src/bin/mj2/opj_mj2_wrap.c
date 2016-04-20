@@ -86,9 +86,13 @@ static int test_image(const char *fname, mj2_cparameters_t *cp)
 
 	dinfo = opj_create_decompress(CODEC_J2K);
 
+	if(dinfo == NULL) goto fin;
+
 	opj_setup_decoder(dinfo, &dparameters);
 
 	cio = opj_cio_open((opj_common_ptr)dinfo, src, src_len);
+
+	if(cio == NULL) goto fin;
 
 	image = opj_decode(dinfo, cio);
 
@@ -228,9 +232,17 @@ static void read_siz_marker(FILE *file, opj_image_t *image)
   len = ((buf2[0])<<8) + buf2[1];
   
   siz_buffer = (unsigned char*) malloc(len * sizeof(unsigned char));
+  if(siz_buffer == NULL){
+	fprintf(stderr,"%s:%d:\n\tmemory out\n",__FILE__,__LINE__);
+	return;
+  }
   fread(siz_buffer,len, 1, file);
-	cio = opj_cio_open(NULL, siz_buffer, len);
-  
+  cio = opj_cio_open(NULL, siz_buffer, len);
+  if(cio == NULL){
+	free(siz_buffer);
+	fprintf(stderr,"%s:%d:\n\topj_cio_open failed\n",__FILE__,__LINE__);
+	return;
+  }
   cio_read(cio, 2);			/* Rsiz (capabilities) */
   image->x1 = cio_read(cio, 4);	/* Xsiz                */
   image->y1 = cio_read(cio, 4);	/* Ysiz                */
@@ -241,7 +253,12 @@ static void read_siz_marker(FILE *file, opj_image_t *image)
   image->numcomps = cio_read(cio,2);	/* Csiz                */
   image->comps =
     (opj_image_comp_t *) malloc(image->numcomps * sizeof(opj_image_comp_t));
-	
+  if(image->comps == NULL){
+	opj_cio_close(cio);
+	free(siz_buffer);
+	fprintf(stderr,"%s:%d:\n\tmemory out\n",__FILE__,__LINE__);
+	return;
+  }
   for (i = 0; i < image->numcomps; i++) {
     int tmp;
     tmp = cio_read(cio,1);		/* Ssiz_i          */
@@ -369,7 +386,7 @@ int main(int argc, char *argv[]) {
   FILE *mj2file, *j2kfile;
   char *j2kfilename;
   unsigned char *buf;
-  int offset, mdat_initpos;
+  int offset, mdat_initpos, fails;
   opj_image_t img;
  	opj_cio_t *cio;
 	mj2_cparameters_t parameters;
@@ -379,14 +396,14 @@ int main(int argc, char *argv[]) {
     printf("Example: %s input/input output.mj2\n",argv[0]);
     return 1;
   }
-  
+  j2kfile = NULL; 
   mj2file = fopen(argv[2], "wb");
   
   if (!mj2file) {
     fprintf(stderr, "failed to open %s for writing\n", argv[2]);
     return 1;
   }
-	memset(&img, 0, sizeof(opj_image_t));
+	memset(&img, 0, sizeof(opj_image_t)); fails = 1;
 	/*
 	configure the event callbacks (not required)
 	setting of each callback is optionnal
@@ -398,7 +415,10 @@ int main(int argc, char *argv[]) {
 
 	/* get a MJ2 decompressor handle */
 	cinfo = mj2_create_compress();
-
+	if(cinfo == NULL){
+		fclose(mj2file);
+		return 1;
+	}
 	/* catch events using our callbacks and give a local context */
 	opj_set_event_mgr((opj_common_ptr)cinfo, &event_mgr, stderr);	
 	
@@ -407,6 +427,9 @@ int main(int argc, char *argv[]) {
 	movie = (opj_mj2_t*) cinfo->mj2_handle;
 
 	j2kfilename = (char*)malloc(strlen(argv[1]) + 12);/* max. '%6d' */
+	if(j2kfilename == NULL){
+		goto fin;
+	}
 	sprintf(j2kfilename, "%s_00001.j2k",argv[1]);
 
 	if(test_image(j2kfilename, &parameters) == 0) goto fin;
@@ -420,7 +443,15 @@ int main(int argc, char *argv[]) {
 	Assuming that the JP and FTYP boxes won't be longer than 300 bytes */
 	
   buf = (unsigned char*) malloc (300 * sizeof(unsigned char)); 
+  if(buf == NULL){
+	goto fin;
+  }
   cio = opj_cio_open(movie->cinfo, buf, 300);
+  if(cio == NULL){
+	free(buf);
+	goto fin;
+  }
+
   mj2_write_jp(cio);
   mj2_write_ftyp(movie, cio);
   mdat_initpos = cio_tell(cio);
@@ -428,7 +459,7 @@ int main(int argc, char *argv[]) {
   cio_write(cio,MJ2_MDAT, 4);	
   fwrite(buf,cio_tell(cio),1,mj2file);
   free(buf);
-	
+
   /* Insert each j2k codestream in a JP2C box */
   snum=0;
   offset = 0;  
@@ -437,15 +468,15 @@ int main(int argc, char *argv[]) {
     mj2_sample_t * new_sample;
     mj2_chunk_t * new_chunk;
     sample = &movie->tk[0].sample[snum];
-    sprintf(j2kfilename,"%s_%05d.j2k",argv[1],snum);
+    sprintf(j2kfilename,"%s_%05u.j2k",argv[1],snum);
     j2kfile = fopen(j2kfilename, "rb");
     if (!j2kfile) {
       if (snum==0) {  /* Could not open a single codestream */
 				fprintf(stderr, "failed to open %s for reading\n",j2kfilename);
-				return 1;
+				goto fin;
       }
       else {	      /* Tried to open a inexistant codestream */
-				fprintf(stdout,"%d frames are being added to the MJ2 file\n",snum);
+				fprintf(stdout,"%u frames are being added to the MJ2 file\n",snum);
 				break;
       }
     }
@@ -465,8 +496,15 @@ int main(int argc, char *argv[]) {
       read_siz_marker(j2kfile, &img);
     
     /* Writing JP2C box header */
-    frame_codestream = (unsigned char*) malloc (sample->sample_size+8); 
-		cio = opj_cio_open(movie->cinfo, frame_codestream, sample->sample_size);    
+    frame_codestream = (unsigned char*) malloc (sample->sample_size+8);
+	if(frame_codestream == NULL){
+		goto fin;
+	} 
+	cio = opj_cio_open(movie->cinfo, frame_codestream, sample->sample_size);
+	if(cio == NULL){
+		free(frame_codestream);
+		goto fin;
+	}
     cio_write(cio,sample->sample_size, 4);  /* Sample size */
     cio_write(cio,JP2_JP2C, 4);	/* JP2C */
     
@@ -482,12 +520,14 @@ int main(int argc, char *argv[]) {
 		realloc(movie->tk[0].sample, (snum+1) * sizeof(mj2_sample_t));
     new_chunk = (mj2_chunk_t*)
 		realloc(movie->tk[0].chunk, (snum+1) * sizeof(mj2_chunk_t));
+
     if (new_sample && new_chunk) {
         movie->tk[0].sample = new_sample;
         movie->tk[0].chunk = new_chunk;
     } else {
        fprintf(stderr, "Failed to allocate enough memory to read %s\n", j2kfilename);
-       return 1;
+	   free(frame_codestream);
+	   goto fin;
     }
     free(frame_codestream);
   }
@@ -495,7 +535,13 @@ int main(int argc, char *argv[]) {
   /* Writing the MDAT box length in header */
   offset += cio_tell(cio);
   buf = (unsigned char*) malloc (4 * sizeof(unsigned char));
-	cio = opj_cio_open(movie->cinfo, buf, 4);
+  if(buf == NULL){
+	goto fin;
+  }
+  cio = opj_cio_open(movie->cinfo, buf, 4);
+  if(cio == NULL){
+	goto fin;
+  }
   cio_write(cio,offset-mdat_initpos,4); 
   fseek(mj2file,(long)mdat_initpos,SEEK_SET);
   fwrite(buf,4,1,mj2file);
@@ -509,18 +555,27 @@ int main(int argc, char *argv[]) {
 	
   /* Writing MOOV box */
 	buf = (unsigned char*) malloc ((TEMP_BUF+snum*20) * sizeof(unsigned char));
+	if(buf == NULL){
+		goto fin;
+	}
 	cio = opj_cio_open(movie->cinfo, buf, (TEMP_BUF+snum*20));
+	if(cio == NULL){
+		free(buf);
+		goto fin;
+	}
 	mj2_write_moov(movie, cio);
   fwrite(buf,cio_tell(cio),1,mj2file);
 	
   /* Ending program */
   free(img.comps);
   opj_cio_close(cio);
+  fails = 0;
 
 fin:
-  fclose(mj2file);
+  if(mj2file) fclose(mj2file);
   mj2_destroy_compress(movie);
+  free(cinfo);
   free(j2kfilename);
 
-  return 0;
-}
+  return fails;
+}/* main() */

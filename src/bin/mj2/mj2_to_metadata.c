@@ -266,6 +266,7 @@ int main(int argc, char *argv[]) {
   xmlout = fopen(outfile, "w"); /* was: argv[2] */
   if (!xmlout) {
     fprintf(stderr, "Failed to open %s for writing.\n", outfile); /* was: argv[2] */
+	fclose(file);
     return 1;
   }
   // Leave it open
@@ -282,6 +283,11 @@ int main(int argc, char *argv[]) {
 	/* get a MJ2 decompressor handle */
 	dinfo = mj2_create_decompress();
 
+	if(!dinfo){
+		fclose(xmlout);
+		fclose(file);
+		return 1;
+	}
 	/* catch events using our callbacks and give a local context */
 	opj_set_event_mgr((opj_common_ptr)dinfo, &event_mgr, stderr);		
 
@@ -292,19 +298,20 @@ int main(int argc, char *argv[]) {
   if (mj2_read_struct(file, movie)) // Creating the movie structure
   {
     fclose(xmlout);
+	fclose(file);
     return 1;
   }
 
   xml_write_init(notes, sampletables, raw, derived);
   xml_write_struct(file, xmlout, movie, sampleframe, stringDTD, &event_mgr);
   fclose(xmlout);
+  fclose(file);
 
 	fprintf(stderr,"Metadata correctly extracted to XML file \n");;	
 
 	/* free remaining structures */
-	if(dinfo) {
-		mj2_destroy_decompress((opj_mj2_t*)dinfo->mj2_handle);
-	}
+	mj2_destroy_decompress((opj_mj2_t*)dinfo->mj2_handle);
+	free(dinfo);
 
   return 0;
 }

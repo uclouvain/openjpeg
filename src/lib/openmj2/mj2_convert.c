@@ -60,6 +60,7 @@ unsigned int OPJ_CALLCONV yuv_num_frames(mj2_tk_t * tk, char *infile)
     fprintf(stderr,
 			"YUV does not contains any frame of %d x %d size\n", tk->w,
 			tk->h);
+	fclose(f);
     return 0;
   }
   fclose(f);
@@ -150,7 +151,6 @@ char OPJ_CALLCONV yuvtoimage(mj2_tk_t * tk, opj_image_t * img, int frame_num, op
 
 	for (i = 0; i < max && !feof(yuvfile); i++)
   {
-	v = 0;
 	fread(&uc, 1, 1, yuvfile);
 	v = uc;
 
@@ -362,7 +362,7 @@ int OPJ_CALLCONV imagetobmp(opj_image_t * img, char *outfile) {
       fprintf(f, "%c%c%c", B, G, R);
       
       if ((i + 1) % wr == 0) {
-				for (pad = (3 * wr) % 4 ? 4 - (3 * wr) % 4 : 0; pad > 0; pad--)	/* ADD */
+				for (pad = ((3 * wr) % 4) ? (4 - (3 * wr) % 4) : 0; pad > 0; pad--)	/* ADD */
 					fprintf(f, "%c", 0);
       }
     }

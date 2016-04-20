@@ -443,7 +443,7 @@ static void j2k_read_siz(opj_j2k_t *j2k) {
 			opj_event_msg(j2k->cinfo, EVT_ERROR,
 				"JPWL: bad image size (%d x %d)\n",
 				image->x1, image->y1);
-			if (!JPWL_ASSUME || JPWL_ASSUME) {
+			if (!JPWL_ASSUME) {
 				opj_event_msg(j2k->cinfo, EVT_ERROR, "JPWL: giving up\n");
 				return;
 			}
@@ -594,7 +594,7 @@ static void j2k_read_siz(opj_j2k_t *j2k) {
 		if (!cp->tcps) {
 			opj_event_msg(j2k->cinfo, JPWL_ASSUME ? EVT_WARNING : EVT_ERROR,
 				"JPWL: could not alloc tcps field of cp\n");
-			if (!JPWL_ASSUME || JPWL_ASSUME) {
+			if (!JPWL_ASSUME) {
 				opj_event_msg(j2k->cinfo, EVT_ERROR, "JPWL: giving up\n");
 				return;
 			}
@@ -1205,7 +1205,7 @@ static void j2k_read_ppm(opj_j2k_t *j2k) {
 					opj_event_msg(j2k->cinfo, EVT_ERROR,
 						"JPWL: failed memory allocation during PPM marker parsing (pos. %x)\n",
 						cio_tell(cio));
-					if (!JPWL_ASSUME || JPWL_ASSUME) {
+					if (!JPWL_ASSUME) {
 						opj_free(cp->ppm_data);
 						opj_event_msg(j2k->cinfo, EVT_ERROR, "JPWL: giving up\n");
 						return;
@@ -1545,8 +1545,13 @@ static void j2k_read_sod(opj_j2k_t *j2k) {
 	}	
 
 	data = j2k->tile_data[curtileno];
-	data = (unsigned char*) opj_realloc(data, (j2k->tile_len[curtileno] + len) * sizeof(unsigned char));
-
+	{
+	unsigned char *old = data;
+	data = (unsigned char*) opj_realloc(old, (j2k->tile_len[curtileno] + len) * sizeof(unsigned char));
+		if(data == NULL){
+			return; /* FIXME j2k->state = WHAT; */
+		}
+	}
 	data_ptr = data + j2k->tile_len[curtileno];
 	for (i = 0; i < len; i++) {
 		data_ptr[i] = cio_read(cio, 1);
@@ -1595,7 +1600,7 @@ static void j2k_read_rgn(opj_j2k_t *j2k) {
 			opj_event_msg(j2k->cinfo, EVT_ERROR,
 				"JPWL: bad component number in RGN (%d when there are only %d)\n",
 				compno, numcomps);
-			if (!JPWL_ASSUME || JPWL_ASSUME) {
+			if (!JPWL_ASSUME) {
 				opj_event_msg(j2k->cinfo, EVT_ERROR, "JPWL: giving up\n");
 				return;
 			}

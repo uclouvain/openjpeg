@@ -357,7 +357,7 @@ static void t1_enc_sigpass_step(
 	
 	flag = vsc ? ((*flagsp) & (~(T1_SIG_S | T1_SIG_SE | T1_SIG_SW | T1_SGN_S))) : (*flagsp);
 	if ((flag & T1_SIG_OTH) && !(flag & (T1_SIG | T1_VISIT))) {
-		v = int_abs(*datap) & one ? 1 : 0;
+		v = (int_abs(*datap) & one) ? 1 : 0;
 		mqc_setcurctx(mqc, t1_getctxno_zc(flag, orient));	/* ESSAI */
 		if (type == T1_TYPE_RAW) {	/* BYPASS/LAZY MODE */
 			mqc_bypass_enc(mqc, v);
@@ -592,7 +592,7 @@ static void t1_enc_refpass_step(
 	flag = vsc ? ((*flagsp) & (~(T1_SIG_S | T1_SIG_SE | T1_SIG_SW | T1_SGN_S))) : (*flagsp);
 	if ((flag & (T1_SIG | T1_VISIT)) == T1_SIG) {
 		*nmsedec += t1_getnmsedec_ref(int_abs(*datap), bpno + T1_NMSEDEC_FRACBITS);
-		v = int_abs(*datap) & one ? 1 : 0;
+		v = (int_abs(*datap) & one) ? 1 : 0;
 		mqc_setcurctx(mqc, t1_getctxno_mag(flag));	/* ESSAI */
 		if (type == T1_TYPE_RAW) {	/* BYPASS/LAZY MODE */
 			mqc_bypass_enc(mqc, v);
@@ -808,7 +808,7 @@ static void t1_enc_clnpass_step(
 	}
 	if (!(*flagsp & (T1_SIG | T1_VISIT))) {
 		mqc_setcurctx(mqc, t1_getctxno_zc(flag, orient));
-		v = int_abs(*datap) & one ? 1 : 0;
+		v = (int_abs(*datap) & one) ? 1 : 0;
 		mqc_encode(mqc, v);
 		if (v) {
 LABEL_PARTIAL:

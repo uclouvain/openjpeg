@@ -550,7 +550,6 @@ void mqc_init_dec(opj_mqc_t *mqc, unsigned char *bp, int len) {
 		if (*bp == 0xff) {
 			*ip = 0x0000ff18;
 		} else {
-			bp++;
 			*ip = 0x00000018 | (c << 8);
 		}
 		ip++;

@@ -2706,10 +2706,18 @@ int OPJ_CALLCONV mj2_read_struct(FILE *file, opj_mj2_t *movie) {
   }	
 
   fseek(file,foffset,SEEK_SET);
-  src = (unsigned char*)opj_realloc(src,box.length);
+  {
+  unsigned char *old = src;
+  src = (unsigned char*)opj_realloc(old,box.length);
+	  if(src == NULL){
+		opj_free(old);
+		return 1;
+	  }
+  }
   fsresult = fread(src,box.length,1,file);
   if (fsresult != 1) {
     opj_event_msg(cio->cinfo, EVT_ERROR, "End of file reached while trying to read MOOV box\n"); 
+	opj_free(src);
     return 1;
   }
 	
@@ -2731,14 +2739,20 @@ opj_dinfo_t* OPJ_CALLCONV mj2_create_decompress() {
 	opj_dinfo_t *dinfo = (opj_dinfo_t*) opj_calloc(1, sizeof(opj_dinfo_t));
 	if(!dinfo) return NULL;
 
-	dinfo->is_decompressor = OPJ_TRUE;	
-
 	mj2 = (opj_mj2_t*) opj_calloc(1, sizeof(opj_mj2_t));
-	dinfo->mj2_handle = mj2;
-	if(mj2) {
-		mj2->cinfo = (opj_common_ptr)dinfo;
+	if(mj2 == NULL){
+		opj_free(dinfo);
+		return NULL;
 	}
+	dinfo->is_decompressor = OPJ_TRUE;	
+	dinfo->mj2_handle = mj2;
+	mj2->cinfo = (opj_common_ptr)dinfo;
 	mj2->j2k = j2k_create_decompress((opj_common_ptr)dinfo);
+	if(mj2->j2k == NULL){
+		opj_free(mj2);
+		opj_free(dinfo);
+		return NULL;
+	}
 	dinfo->j2k_handle = mj2->j2k;
 
 	return dinfo;
@@ -2810,12 +2824,18 @@ opj_cinfo_t* OPJ_CALLCONV mj2_create_compress() {
 	if(!cinfo) return NULL;
 
 	mj2 = (opj_mj2_t*) opj_calloc(1, sizeof(opj_mj2_t));
-	cinfo->mj2_handle = mj2;
-	if(mj2) {
-		mj2->cinfo = (opj_common_ptr)cinfo;
+	if(mj2 == NULL){
+		opj_free(cinfo);
+		return NULL;
 	}
-
+	cinfo->mj2_handle = mj2;
+	mj2->cinfo = (opj_common_ptr)cinfo;
 	mj2->j2k = j2k_create_compress(mj2->cinfo);
+	if(mj2->j2k == NULL){
+		opj_free(mj2);
+		opj_free(cinfo);
+		return NULL;
+	}
 	cinfo->j2k_handle = mj2->j2k;
 
 	return cinfo;

@@ -325,8 +325,10 @@ void xml_write_moov_udta(FILE* xmlout, opj_mj2_t * movie) {
   /* NO-OP so far.  Optional UserData 'udta' (zero or one in moov or each trak)
      can contain multiple Copyright 'cprt' with different language codes */
   /* There may be nested non-standard boxes within udta */
+/*---
   IMAGINE movie->udta, movie->copyright_count, movie->copyright_language[i] (array of 16bit ints), movie->copyright_notice[i] (array of buffers)
   PROBABLY ALSO NEED movie->udta_len or special handler for non-standard boxes
+---*/
   char buf[5];
   int i;
 
@@ -339,7 +341,7 @@ void xml_write_moov_udta(FILE* xmlout, opj_mj2_t * movie) {
     int16_to_3packedchars((short int)movie->copyright_languages[i], buf);
     fprintf(xmlout,  "        <Language>%s</Language>\n", buf);    /* 3 chars */
     fprintf(xmlout,  "        <Notice>%s</Notice>\n",movie->copyright_notices[i]);
-    fprintf(xmlout,  "      </Copyright>\n", i+1);
+    fprintf(xmlout,  "      </Copyright>\n");
   }
   /* TO DO: Non-standard boxes */
   fprintf(xmlout,    "    </UserData>\n");
@@ -351,8 +353,10 @@ void xml_write_free_and_skip(FILE* xmlout, opj_mj2_t * movie) {
   /* NO-OP so far.  There can be zero or more instances of free and/or skip
      at the top level of the file.  This may be a place where the user squirrel's metadata.
 	 Let's assume unstructured, and do a dump */
+/*---
   IMAGINE movie->free_and_skip, movie->free_and_skip_count, movie->free_and_skip_content[i] (array of buffers),
 	  movie->free_and_skip_len[i] (array of ints), movie->is_skip[i] (array of BOOL)
+---*/
   int i;
 
   if(movie->free_and_skip != 1)
@@ -380,8 +384,10 @@ void xml_write_uuid(FILE* xmlout, opj_mj2_t * movie) {
   /* NO-OP so far.  There can be zero or more instances of private uuid boxes in a file.
      This function supports the top level of the file, but uuid may be elsewhere [not yet supported].
 	 This may be a place where the user squirrel's metadata.  Let's assume unstructured, and do a dump */
+/*---
   IMAGINE movie->uuid, movie->uuid_count, movie->uuid_content[i] (array of buffers),
 	  movie->uuid_len[i] (array of ints), movie->uuid_type[i] (array of 17-byte (16+null termination) buffers)
+---*/
   int i;
 
   if(movie->uuid != 1)
@@ -400,7 +406,7 @@ void xml_write_uuid(FILE* xmlout, opj_mj2_t * movie) {
 
 void xml_write_trak(FILE* file, FILE* xmlout, mj2_tk_t *track, unsigned int tnum, unsigned int sampleframe, opj_event_mgr_t *event_mgr)
 {
-  fprintf(xmlout,    "    <Track BoxType=\"trak\" Instance=\"%d\">\n", tnum);
+  fprintf(xmlout,    "    <Track BoxType=\"trak\" Instance=\"%u\">\n", tnum);
   xml_write_tkhd(file, xmlout, track, tnum);
   // TO DO: TrackReferenceContainer 'tref'  just used in hint track
   // TO DO: EditListContainer 'edts', contains EditList 'elst' with media-time, segment-duration, media-rate
@@ -523,8 +529,10 @@ void xml_write_udta(FILE* file, FILE* xmlout, mj2_tk_t *track, unsigned int tnum
      can contain multiple Copyright 'cprt' with different language codes */
   /* There may be nested non-standard boxes within udta */
 #ifdef NOTYET
+/*---
   IMAGINE track->udta, track->copyright_count, track->copyright_language[i] (array of 16bit ints), track->copyright_notice[i] (array of buffers)
   PROBABLY ALSO NEED track->udta_len or special handler for non-standard boxes
+---*/
   char buf[5];
   int i;
 
@@ -537,7 +545,7 @@ void xml_write_udta(FILE* file, FILE* xmlout, mj2_tk_t *track, unsigned int tnum
     int16_to_3packedchars((short int)track->copyright_languages[i], buf);
     fprintf(xmlout,  "          <Language>%s</Language>\n", buf);    /* 3 chars */
     fprintf(xmlout,  "          <Notice>%s</Notice>\n",track->copyright_notices[i]);
-    fprintf(xmlout,  "        </Copyright>\n", i+1);
+    fprintf(xmlout,  "        </Copyright>\n");
   }
   /* TO DO: Non-standard boxes */
   fprintf(xmlout,    "      </UserData>\n");
@@ -681,7 +689,7 @@ void xml_write_mdia(FILE* file, FILE* xmlout, mj2_tk_t *track, unsigned int tnum
       fprintf(xmlout,"              <!-- Only the first 16 bytes of URL location are recorded in mj2_to_metadata data structure. -->\n");
     for(i = 0; i < 4; i++) {
       uint_to_chars(track->url[track->num_url].location[i], buf);
-    fprintf(xmlout,  "              <Location>%s</Location>\n");
+    fprintf(xmlout,  "              <Location>%s</Location>\n", buf);
     }
     fprintf(xmlout,  "            </DataEntryUrlBox>\n"); // table w. flags, URLs, URNs
   }
@@ -699,7 +707,7 @@ void xml_write_mdia(FILE* file, FILE* xmlout, mj2_tk_t *track, unsigned int tnum
     fprintf(xmlout,  "              <Location>");
     for(i = 0; i < 4; i++) {
       uint_to_chars(track->urn[track->num_urn].location[i], buf);
-      fprintf(xmlout,"%s");
+      fprintf(xmlout,"%s", buf);
     }
     fprintf(xmlout,  "</Location>\n");
     fprintf(xmlout,  "            </DataEntryUrnBox>\n");
@@ -782,10 +790,10 @@ void xml_write_stbl(FILE* file, FILE* xmlout, mj2_tk_t *track, unsigned int tnum
     
   /* Following subboxes are optional */
     fprintf(xmlout,    "              <FieldCoding BoxType=\"fiel\">\n");
-    fprintf(xmlout,    "                <FieldCount>%d</FieldCount>\n", (unsigned int)track->fieldcount); /* uchar as 1 byte uint */
+    fprintf(xmlout,    "                <FieldCount>%u</FieldCount>\n", (unsigned int)track->fieldcount); /* uchar as 1 byte uint */
     if(notes)
       fprintf(xmlout,  "                <!-- Must be either 1 or 2 -->\n");
-    fprintf(xmlout,    "                <FieldOrder>%d</FieldOrder>\n", (unsigned int)track->fieldorder); /* uchar as 1 byte uint */
+    fprintf(xmlout,    "                <FieldOrder>%u</FieldOrder>\n", (unsigned int)track->fieldorder); /* uchar as 1 byte uint */
 	if(notes) {
       fprintf(xmlout,  "                <!-- When FieldCount=2, FieldOrder means: -->\n");
       fprintf(xmlout,  "                <!--   0: Field coding unknown -->\n");
@@ -855,7 +863,7 @@ void xml_write_stbl(FILE* file, FILE* xmlout, mj2_tk_t *track, unsigned int tnum
   fprintf(xmlout,      "              </SampleStatistics>\n"); 
   fprintf(xmlout,      "              <SampleEntries EntryCount=\"%d\">\n", track->num_tts);
   for (i = 0; i < track->num_tts; i++) {
-    fprintf(xmlout,    "                <Table Entry=\"%u\" SampleCount=\"%d\" SampleDelta=\"%u\" />\n",
+    fprintf(xmlout,    "                <Table Entry=\"%d\" SampleCount=\"%d\" SampleDelta=\"%u\" />\n",
                                       i+1, track->tts[i].sample_count, track->tts[i].sample_delta);
   }
   fprintf(xmlout,      "              </SampleEntries>\n");
@@ -888,7 +896,7 @@ void xml_write_stbl(FILE* file, FILE* xmlout, mj2_tk_t *track, unsigned int tnum
 	fprintf(xmlout,    "              <Sample_Count>%u</Sample_Count>\n", track->num_samples);
 	if(sampletables)
      for (i = 0; i < (int)track->num_samples; i++) {
-      fprintf(xmlout,  "              <EntrySize Num=\"%u\">%u</EntrySize>\n", i+1, track->sample[i].sample_size);
+      fprintf(xmlout,  "              <EntrySize Num=\"%d\">%u</EntrySize>\n", i+1, track->sample[i].sample_size);
      }
   }  
   fprintf(xmlout,      "            </SampleSize>\n");
@@ -959,7 +967,7 @@ int xml_out_frame(FILE* file, FILE* xmlout, mj2_sample_t *sample, unsigned int s
 
   numcomps = img->numcomps;
   /*  Alignments:        "      <       To help maintain xml pretty-printing */  
-  fprintf(xmlout,      "      <JP2_Frame Num=\"%d\">\n", snum+1);
+  fprintf(xmlout,      "      <JP2_Frame Num=\"%u\">\n", snum+1);
   fprintf(xmlout,      "        <MainHeader>\n");
   /* There can be multiple codestreams; a particular image is entirely within a single codestream */
   /* TO DO:  A frame can be represented by two I-guess-contiguous codestreams if its interleaved. */
@@ -1207,7 +1215,7 @@ void xml_out_frame_cod(FILE* xmlout, opj_tcp_t *tcp)
         fprintf(xmlout,"%s        <WidthAsDecimal>%d</WidthAsDecimal>\n", s, tccp->prcw[i]);
         fprintf(xmlout,"%s        <HeightAsDecimal>%d</HeightAsDecimal>\n", s, tccp->prch[i]);
 	  }
-      fprintf(xmlout,  "%s      </PrecinctHeightAndWidth>\n", s, i);
+      fprintf(xmlout,  "%s      </PrecinctHeightAndWidth>\n", s);
     }
     fprintf(xmlout,    "%s    </PrecinctSize>\n",s); /* 1 byte, SPcox (I_i) */
   }
@@ -1299,7 +1307,7 @@ void xml_out_frame_coc(FILE* xmlout, opj_tcp_t *tcp, int numcomps) /* Optional i
           fprintf(xmlout,"%s        <WidthAsDecimal>%d</WidthAsDecimal>\n", s, tccp->prcw[i]);
           fprintf(xmlout,"%s        <HeightAsDecimal>%d</HeightAsDecimal>\n", s, tccp->prch[i]);
 		}
-        fprintf(xmlout,  "%s      </PrecinctHeightAndWidth>\n", s, i);
+        fprintf(xmlout,  "%s      </PrecinctHeightAndWidth>\n", s);
       }
       fprintf(xmlout,    "%s    </PrecinctSize>\n", s); /* 1 byte, SPcox (I_i) */
     }
@@ -1680,7 +1688,7 @@ void xml_out_frame_rgn(FILE* xmlout, opj_tcp_t *tcp, int numcomps)
     fprintf(xmlout,    "%s  <SPrgn>%d</SPrgn>\n", s, SPrgn); /* 1 byte */
     if(notes)
       fprintf(xmlout,  "%s  <!-- SPrgn is implicit ROI shift, i.e., binary shifting of ROI coefficients above background. -->\n", s);
-    fprintf(xmlout,    "</RegionOfInterest\n", s); /* Optional in main header, at most 1 per component */
+    fprintf(xmlout,    "</RegionOfInterest\n"); /* Optional in main header, at most 1 per component */
   }
 }
 
@@ -1832,8 +1840,10 @@ void xml_out_frame_crg(FILE* xmlout) { /* NO-OP.  CRG NOT SAVED IN DATA STRUCTUR
 /* Compare j2k_read_crg()... which doesn't retain anything! */
 /* Plan:  Since this is only called from main header, not tilepart, use global j2k_default_tcp rather than parameter */
 #ifdef NOTYET
+/*----
   THIS PSEUDOCODE IMAGINES THESE EXIST: j2k_default_tcp->crg, j2k_default_tcp->crg_i, j2k_default_tcp->crg_xcrg*, j2k_default_tcp->crg_ycrg* 
   (POSSIBLY DON'T NEED crg_i, CAN GET NUMBER OR COMPONENTS FROM ELSEWHERE)
+----*/
   if(j2k_default_tcp->crg != 1 || j2k_default_tcp->crg_i == 0)
 	  return; /* Not present */
 
@@ -1869,7 +1879,7 @@ void xml_out_frame_crg(FILE* xmlout) { /* NO-OP.  CRG NOT SAVED IN DATA STRUCTUR
 
   fprintf(xmlout,    "          </ComponentRegistration>\n");
 
-#endif
+#endif /* NOTYET */
 }
 
 /* ------------- */
@@ -1883,7 +1893,9 @@ void xml_out_frame_com(FILE* xmlout, opj_tcp_t *tcp) { /* NO-OP.  COM NOT SAVED 
   if(tcp == &j2k_default_tcp) {
     s++;s++; /* shorten s to 10 spaces if main */
   }
+/*---
   THIS PSEUDOCODE IMAGINES THESE EXIST: tcp->com, tcp->com_len, tcp->com_data array 
+---*/
   if(tcp->com != 1)
 	  return; /* Not present */
 
@@ -1926,7 +1938,7 @@ void xml_out_dump_hex_and_ascii(FILE* xmlout, char *data, int data_len, char* s)
       /* Space between columns... */ fprintf(xmlout,  "  ");
 	  /* Second column: ASCII */
 	  for (j = 0; j < BYTES_PER_DUMP_LINE; j++, i++) {
-	    if(isprint((int)data[i]) && i < data_len)
+	    if(i < data_len && isprint((int)data[i]) )
           fprintf(xmlout,"%c", data[i]);
 	    else
 	      fprintf(xmlout," ");
@@ -2050,8 +2062,10 @@ void xml_out_frame_jp2h(FILE* xmlout, opj_jp2_t *jp2_struct) {  /* JP2 Header */
 IMAGE these use cp structure, extended... but we could use a new data structure instead
 void xml_out_frame_jp2i(FILE* xmlout, opj_cp_t *cp) {
   /* IntellectualProperty 'jp2i' (no restrictions on location) */
-  int i;
+/*---
   IMAGE cp->jp2i, cp->jp2i_count, cp->jp2i_data (array of chars), cp->cp2i_len (array of ints)
+---*/
+  int i;
   if(cp->jp2i != 1)
 	  return; /* Not present */
 
@@ -2068,9 +2082,11 @@ void xml_out_frame_jp2i(FILE* xmlout, opj_cp_t *cp) {
 
 void xml_out_frame_xml(FILE* xmlout, opj_cp_t *cp) {
   /* XML 'xml\040' (0x786d6c20).  Can appear multiply, before or after jp2c codestreams */
+/*---
   IMAGE cp->xml, cp->xml_count, cp->xml_data (array of chars)
   MAYBE WE DON'T NEED cp->xml_len (array of ints) IF WE ASSUME xml_data IS NULL-TERMINATED.
   ASSUME ASSUME EACH LINE IS ENDED BY \n.
+---*/
   int i;
   if(cp->xml != 1)
 	  return; /* Not present */

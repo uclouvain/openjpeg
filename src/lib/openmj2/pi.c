@@ -659,7 +659,7 @@ opj_pi_iterator_t *pi_initialise_encode(opj_image_t *image, opj_cp_t *cp, int ti
 		}
 		
 		/* Generation of boundaries for each prog flag*/
-			if(tcp->POC && ( cp->cinema || ((!cp->cinema) && (t2_mode == FINAL_PASS)))){
+			if(tcp->POC && ( cp->cinema || (t2_mode == FINAL_PASS))){
 				tcp->pocs[pino].compS= tcp->pocs[pino].compno0;
 				tcp->pocs[pino].compE= tcp->pocs[pino].compno1;
 				tcp->pocs[pino].resS = tcp->pocs[pino].resno0;

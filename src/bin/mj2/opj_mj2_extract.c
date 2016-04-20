@@ -71,7 +71,7 @@ void info_callback(const char *msg, void *client_data) {
 int main(int argc, char *argv[]) {
 	opj_dinfo_t* dinfo; 
 	opj_event_mgr_t event_mgr;		/* event manager */
-  int tnum;
+  int tnum, fails;
   unsigned int snum;
   opj_mj2_t *movie;
   mj2_tk_t *track;
@@ -93,7 +93,6 @@ int main(int argc, char *argv[]) {
     fprintf(stderr, "failed to open %s for reading\n", argv[1]);
     return 1;
   }
-
 	/*
 	configure the event callbacks (not required)
 	setting of each callback is optionnal
@@ -105,7 +104,11 @@ int main(int argc, char *argv[]) {
 
 	/* get a MJ2 decompressor handle */
 	dinfo = mj2_create_decompress();
-
+	if(dinfo == NULL){
+		fclose(file);
+		return 1;
+	}
+	fails = 1;
 	/* catch events using our callbacks and give a local context */
 	opj_set_event_mgr((opj_common_ptr)dinfo, &event_mgr, stderr);		
 
@@ -114,9 +117,9 @@ int main(int argc, char *argv[]) {
 	movie = (opj_mj2_t*) dinfo->mj2_handle;
 	mj2_setup_decoder(movie, &parameters);
 
-  if (mj2_read_struct(file, movie)) /* Creating the movie structure*/
-    return 1;
-
+  if (mj2_read_struct(file, movie)){ /* Creating the movie structure*/
+    goto fin;
+  }
   /* Decode first video track */
   tnum = 0;
   while (movie->tk[tnum].track_type != 0)
@@ -130,26 +133,32 @@ int main(int argc, char *argv[]) {
   {
     sample = &track->sample[snum];
     frame_codestream = (unsigned char*) malloc (sample->sample_size-8); /* Skipping JP2C marker*/
+	if(frame_codestream == NULL){
+		goto fin;
+	}
     fseek(file,sample->offset+8,SEEK_SET);
     fread(frame_codestream,sample->sample_size-8,1, file);  /* Assuming that jp and ftyp markers size do*/
 
-    sprintf(outfilename,"%s_%05d.j2k",argv[2],snum);
+    sprintf(outfilename,"%s_%05u.j2k",argv[2],snum);
     outfile = fopen(outfilename, "wb");
     if (!outfile) {
       fprintf(stderr, "failed to open %s for writing\n",outfilename);
-      return 1;
+	  free(frame_codestream);
+      goto fin;
     }
     fwrite(frame_codestream,sample->sample_size-8,1,outfile);
     fclose(outfile);
     free(frame_codestream);
-    }
+  }
+  fprintf(stdout, "%u frames correctly extracted\n", snum);
+  fails = 0;
+
+fin:
   fclose(file);
-  fprintf(stdout, "%d frames correctly extracted\n", snum);
-	
 	/* free remaining structures */
-	if(dinfo) {
-		mj2_destroy_decompress((opj_mj2_t*)dinfo->mj2_handle);
-	}
+	mj2_destroy_decompress((opj_mj2_t*)dinfo->mj2_handle);
+	free(dinfo);
 	
-  return 0;
+  return fails;
+	
 }
