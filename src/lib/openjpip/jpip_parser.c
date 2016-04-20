@@ -103,8 +103,10 @@ OPJ_BOOL open_channel( query_param_t query_param,
   cachemodel_param_t *cachemodel = NULL;
 
   if( target){
-    if( !(*cursession))
+    if( !(*cursession)){
       *cursession = gene_session( sessionlist);
+	  if(*cursession == NULL) return OPJ_FALSE;
+	}
     if( !( cachemodel = search_cachemodel( target, (*cursession)->cachemodellist)))
       if( !(cachemodel = gene_cachemodel( (*cursession)->cachemodellist, target, query_param.return_type==JPPstream)))
 	return OPJ_FALSE;
@@ -438,7 +440,7 @@ void enqueue_allprecincts( int tile_id, int level, int lastcomp, OPJ_BOOL *comps
 OPJ_BOOL enqueue_metabins( query_param_t query_param, metadatalist_param_t *metadatalist, msgqueue_param_t *msgqueue)
 {
   int i;
-  for( i=0; query_param.box_type[i][0]!=0 && i<MAX_NUMOFBOX; i++){
+  for( i=0; i<MAX_NUMOFBOX && query_param.box_type[i][0]!=0; i++){
     if( query_param.box_type[i][0] == '*'){
       fprintf( FCGI_stdout, "Status: 501\r\n");
       fprintf( FCGI_stdout, "Reason: metareq with all box-property * not implemented\r\n");

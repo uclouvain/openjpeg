@@ -61,13 +61,15 @@ boxheader_param_t * gene_boxheader( int fd, OPJ_OFF_T offset)
     headlen = 16;
   }
 
-  boxheader = (boxheader_param_t *)malloc( sizeof( boxheader_param_t));
+  boxheader = (boxheader_param_t *)opj_malloc( sizeof( boxheader_param_t));
+  if(boxheader == NULL) return NULL;
+
   boxheader->headlen = headlen;
   boxheader->length = boxlen;
   strncpy( boxheader->type, boxtype, 4);
   boxheader->next = NULL;
   
-  free( boxtype);
+  opj_free( boxtype);
   return boxheader;
 }
 

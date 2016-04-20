@@ -59,10 +59,11 @@ Byte_t * fetch_bytes( int fd, OPJ_OFF_T offset, OPJ_SIZE_T size)
     return NULL;
   }
   
-  data = (Byte_t *)malloc( size);
+  data = (Byte_t *)opj_malloc( size);
+  if(data == NULL) return NULL;
 
   if( (OPJ_SIZE_T)read( fd, data, size) != size){
-    free( data);
+    opj_free( data);
     fprintf( FCGI_stdout, "Reason: Target broken (read error)\r\n");
     fprintf( FCGI_stderr, "Error: error in fetch_bytes( %d, %ld, %lu)\n", fd, offset, size);
     return NULL;
@@ -98,7 +99,7 @@ Byte2_t fetch_2bytebigendian( int fd, OPJ_OFF_T offset)
     return 0;
   }
   code = big2(data);
-  free( data);
+  opj_free( data);
 
   return code;
 }
@@ -113,7 +114,7 @@ Byte4_t fetch_4bytebigendian( int fd, OPJ_OFF_T offset)
     return 0;
   }
   code = big4(data);
-  free( data);
+  opj_free( data);
 
   return code;
 }
@@ -128,7 +129,7 @@ Byte8_t fetch_8bytebigendian( int fd, OPJ_OFF_T offset)
     return 0;
   }
   code = big8(data);
-  free( data);
+  opj_free( data);
 
   return code;
 }

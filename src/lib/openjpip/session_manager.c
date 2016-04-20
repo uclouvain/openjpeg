@@ -49,7 +49,8 @@ sessionlist_param_t * gene_sessionlist(void)
   sessionlist_param_t *sessionlist;
 
   sessionlist = (sessionlist_param_t *)opj_malloc( sizeof(sessionlist_param_t));
-  
+  if(sessionlist == NULL) return NULL;
+
   sessionlist->first = NULL;
   sessionlist->last  = NULL;
 
@@ -61,6 +62,7 @@ session_param_t * gene_session( sessionlist_param_t *sessionlist)
   session_param_t *session;
   
   session = (session_param_t *)opj_malloc( sizeof(session_param_t));
+  if(session == NULL) return NULL;
 
   session->channellist = gene_channellist();
   session->cachemodellist = gene_cachemodellist();

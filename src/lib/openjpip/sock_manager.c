@@ -119,14 +119,16 @@ void * receive_stream( SOCKET connected_socket, OPJ_SIZE_T length)
   char *stream, *ptr;
   OPJ_SIZE_T remlen;
 
-  ptr = stream = malloc( length);
+  ptr = stream = opj_malloc( length);
+  if(ptr == NULL) return NULL;
+
   remlen = length;
 
   while( remlen > 0){
     ssize_t redlen = recv( connected_socket, ptr, remlen, 0);
     if( redlen == -1){
       fprintf( FCGI_stderr, "receive stream error\n");
-      free( stream);
+      opj_free( stream);
       stream = NULL;
       break;
     }

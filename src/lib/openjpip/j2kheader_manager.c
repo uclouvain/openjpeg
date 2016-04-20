@@ -117,6 +117,7 @@ CODmarker_param_t get_CODmkrdata_from_j2kstream( Byte_t *CODstream)
 
   if( *CODstream++ != 0xff || *CODstream++ != 0x52){
     fprintf( FCGI_stderr, "Error, COD marker not found in the reconstructed j2kstream\n");
+	memset(&COD, 0, sizeof(CODmarker_param_t));
     return COD;
   }
   
@@ -128,8 +129,13 @@ CODmarker_param_t get_CODmkrdata_from_j2kstream( Byte_t *CODstream)
 
   if(COD.Scod & 0x01){
     COD.XPsiz = (Byte4_t *)opj_malloc( (OPJ_SIZE_T)(COD.numOfdecomp+1)*sizeof(Byte4_t));
+	if(COD.XPsiz == NULL) return COD;/* FIXME szukw000 */
+
     COD.YPsiz = (Byte4_t *)opj_malloc( (OPJ_SIZE_T)(COD.numOfdecomp+1)*sizeof(Byte4_t));
-    
+	if(COD.YPsiz == NULL){
+		opj_free(COD.XPsiz); COD.XPsiz = NULL;
+		return COD;/* FIXME szukw000 */
+    }
     for( i=0; i<=COD.numOfdecomp; i++){
       /*precinct size */
       COD.XPsiz[i] = (Byte4_t)pow( 2, *( CODstream+12+i) & 0x0F);
@@ -138,7 +144,13 @@ CODmarker_param_t get_CODmkrdata_from_j2kstream( Byte_t *CODstream)
   }
   else{
     COD.XPsiz = (Byte4_t *)opj_malloc( sizeof(Byte4_t));
+	if(COD.XPsiz == NULL) return COD; /* FIXME szukw000 */
+
     COD.YPsiz = (Byte4_t *)opj_malloc( sizeof(Byte4_t));
+	if(COD.YPsiz == NULL){
+		opj_free(COD.XPsiz); COD.XPsiz = NULL;
+		return COD;
+	}
     COD.XPsiz[0] = COD.YPsiz[0] = 1<<15; /*pow(2,15)*/
   }
   return COD;
@@ -208,7 +220,7 @@ Byte2_t modify_CODmkrstream( CODmarker_param_t COD, int numOfdecomp, Byte_t *COD
 {
   Byte2_t newLcod;
 
-  assert( numOfdecomp >= 0 || numOfdecomp <= 255 );
+  assert( numOfdecomp >= 0 && numOfdecomp <= 255 );
   if( *CODstream++ != 0xff || *CODstream++ != 0x52){
     fprintf( FCGI_stderr, "Error, COD marker not found in the reconstructed j2kstream\n");
     return 0;

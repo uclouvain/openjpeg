@@ -59,7 +59,8 @@ targetlist_param_t * gene_targetlist(void)
   targetlist_param_t *targetlist;
 
   targetlist = (targetlist_param_t *)opj_malloc( sizeof(targetlist_param_t));
-  
+  if(targetlist == NULL) return NULL;
+ 
   targetlist->first = NULL;
   targetlist->last  = NULL;
 
@@ -100,6 +101,8 @@ target_param_t * gene_target( targetlist_param_t *targetlist, char *targetpath)
   }
 
   target = (target_param_t *)opj_malloc( sizeof(target_param_t));
+  if(target == NULL) return NULL;
+
   snprintf( target->tid, MAX_LENOFTID, "%x-%x", (unsigned int)time(NULL), (unsigned int)rand());
   target->targetname = strdup( targetpath); 
   target->fd = fd;
@@ -275,7 +278,10 @@ int open_jp2file( const char filepath[], char tmpfname[])
   }
   
   data = (char *)opj_malloc( 12); /* size of header*/
-
+  if(data == NULL){
+	close(fd);
+	return -1;
+  }
   if( read( fd, data, 12) != 12){
     opj_free( data);
     close(fd);

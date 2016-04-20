@@ -50,8 +50,9 @@ metadatalist_param_t * gene_metadatalist(void)
 {
   metadatalist_param_t *list;
 
-  list = (metadatalist_param_t *)malloc( sizeof(metadatalist_param_t));
-  
+  list = (metadatalist_param_t *)opj_malloc( sizeof(metadatalist_param_t));
+  if(list == NULL) return NULL;
+ 
   list->first = NULL;
   list->last  = NULL;
 
@@ -78,8 +79,13 @@ metadatalist_param_t * const_metadatalist( int fd)
   }
   
   phldlist = gene_placeholderlist();
-  metadatalist = gene_metadatalist();
+  if(phldlist == NULL) return NULL;
 
+  metadatalist = gene_metadatalist();
+  if(metadatalist == NULL){
+	opj_free(phldlist);
+	return NULL;
+  }
   box = toplev_boxlist->first;
   idx = 0;
   while( box){
@@ -89,20 +95,35 @@ metadatalist_param_t * const_metadatalist( int fd)
       boxcontents_param_t *boxcontents = NULL;
 
       phld = gene_placeholder( box, ++idx);
+	  if(phld == NULL){
+		delete_placeholderlist(&phldlist);
+		return NULL;
+	  }
       insert_placeholder_into_list( phld, phldlist);
 
       boxlist = get_boxstructure( box->fd, get_DBoxoff( box), get_DBoxlen(box));
-      if( !boxlist)
-	boxcontents = gene_boxcontents( get_DBoxoff( box), get_DBoxlen(box));
-      
+      if( !boxlist){
+		boxcontents = gene_boxcontents( get_DBoxoff( box), get_DBoxlen(box));
+        if(boxcontents == NULL){
+			delete_placeholderlist(&phldlist);
+			return NULL;
+		}
+	  }
       delete_box_in_list( &box, toplev_boxlist);
       metabin = gene_metadata( idx, boxlist, NULL, boxcontents);
+	  if(metabin == NULL){
+		delete_placeholderlist(&phldlist);
+		return NULL;
+	  }
       insert_metadata_into_list( metabin, metadatalist);
     }
     box = next;
   }
 
   metabin = gene_metadata( 0, toplev_boxlist, phldlist, NULL);
+  if(metabin == NULL){
+	return NULL;
+  }
   insert_metadata_into_list( metabin, metadatalist);
 
   return metadatalist;
@@ -119,14 +140,16 @@ void delete_metadatalist( metadatalist_param_t **list)
     delete_metadata( &ptr);
     ptr=next;
   }
-  free( *list);
+  opj_free( *list);
 }
 
 metadata_param_t * gene_metadata( Byte8_t idx, boxlist_param_t *boxlist, placeholderlist_param_t *phldlist, boxcontents_param_t *boxcontents)
 {
   metadata_param_t *bin;
   
-  bin = (metadata_param_t *)malloc( sizeof(metadata_param_t));
+  bin = (metadata_param_t *)opj_malloc( sizeof(metadata_param_t));
+  if(bin == NULL) return NULL;
+
   bin->idx = idx;
   bin->boxlist = boxlist;
   bin->placeholderlist = phldlist;
@@ -141,11 +164,11 @@ void delete_metadata( metadata_param_t **metadata)
   delete_boxlist( &((*metadata)->boxlist));
   delete_placeholderlist( &((*metadata)->placeholderlist));
   if((*metadata)->boxcontents)
-    free((*metadata)->boxcontents);
+    opj_free((*metadata)->boxcontents);
 #ifndef SERVER
   /*  fprintf( logstream, "local log: Metadata-bin: %d deleted\n", (*metadata)->idx);*/
 #endif
-  free( *metadata);
+  opj_free( *metadata);
 }
 
 void insert_metadata_into_list( metadata_param_t *metabin, metadatalist_param_t *metadatalist)
@@ -188,7 +211,8 @@ boxcontents_param_t * gene_boxcontents( OPJ_OFF_T offset, OPJ_SIZE_T length)
 {
   boxcontents_param_t *contents;
 
-  contents = (boxcontents_param_t *)malloc( sizeof(boxcontents_param_t));
+  contents = (boxcontents_param_t *)opj_malloc( sizeof(boxcontents_param_t));
+  if(contents == NULL) return NULL;
 
   contents->offset = offset;
   contents->length = length;

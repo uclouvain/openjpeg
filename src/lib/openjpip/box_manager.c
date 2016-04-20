@@ -49,8 +49,9 @@ boxlist_param_t * gene_boxlist(void)
 {
   boxlist_param_t *boxlist;
 
-  boxlist = (boxlist_param_t *)malloc( sizeof(boxlist_param_t));
-  
+  boxlist = (boxlist_param_t *)opj_malloc( sizeof(boxlist_param_t));
+  if(boxlist == NULL) return NULL;
+
   boxlist->first = NULL;
   boxlist->last  = NULL;
 
@@ -73,8 +74,10 @@ boxlist_param_t * get_boxstructure( int fd, OPJ_OFF_T offset, OPJ_SIZE_T length)
     assert( (OPJ_OFF_T)box->length >= 0);
     pos += (OPJ_OFF_T)box->length;
     
-    if( !boxlist)
+    if( !boxlist){
       boxlist = gene_boxlist();
+	  if(boxlist == NULL) break;
+	}
     insert_box_into_list( box, boxlist);
   }while( pos < offset+(OPJ_OFF_T)length);
 
@@ -103,7 +106,7 @@ box_param_t * gene_boxbyOffset( int fd, OPJ_OFF_T offset)
   if( !isalpha(boxtype[0]) || !isalpha(boxtype[1]) ||
       (!isalnum(boxtype[2])&&!isspace(boxtype[2])) ||
       (!isalpha(boxtype[3])&&!isspace(boxtype[3]))){
-    free( data);
+    opj_free( data);
     return NULL;
   }
   
@@ -113,22 +116,26 @@ box_param_t * gene_boxbyOffset( int fd, OPJ_OFF_T offset)
     /* read XLBox*/
     if((data2 = fetch_bytes( fd, offset+8, 8))){
       boxlen = big8(data2);
-      free(data2);
+      opj_free(data2);
     }
     else{
       fprintf( FCGI_stderr, "Error: error in gene_boxbyOffset( %d, %" PRId64 ")\n", fd, offset);
-      free( data);
+      opj_free( data);
       return NULL;
     }
   }
-  box = (box_param_t *)malloc( sizeof( box_param_t));
+  box = (box_param_t *)opj_malloc( sizeof( box_param_t));
+  if(box == NULL){
+	opj_free(data);
+	return NULL;
+  }
   box->fd = fd;
   box->offset = offset;
   box->headlen = headlen;
   box->length = boxlen;
   strncpy( box->type, boxtype, 4);
   box->next = NULL;
-  free( data);
+  opj_free( data);
   return box;
 }
 
@@ -155,7 +162,9 @@ box_param_t * gene_boxbyOffinStream( Byte_t *stream, OPJ_OFF_T offset)
     headlen = 16;
     boxlen = big8( stream+8); /* read XLBox*/
   }
-  box = (box_param_t *)malloc( sizeof( box_param_t));
+  box = (box_param_t *)opj_malloc( sizeof( box_param_t));
+  if(box == NULL) return NULL;
+
   box->fd = -1;
   box->offset = offset;
   box->headlen = headlen;
@@ -202,7 +211,7 @@ box_param_t * gene_boxbyType( int fd, OPJ_OFF_T offset, OPJ_SIZE_T length, const
 	/* read XLBox*/
 	if((data2 = fetch_bytes( fd, pos+8, 8))){
 	  boxlen = big8(data2);
-	  free(data2);
+	  opj_free(data2);
 	}
 	else{
 	  fprintf( FCGI_stderr, "Error: error in gene_boxbyType( %d, %" PRId64 ", %" PRId64 ", %s)\n", fd, offset, length, TBox);
@@ -210,17 +219,21 @@ box_param_t * gene_boxbyType( int fd, OPJ_OFF_T offset, OPJ_SIZE_T length, const
 	}
       }
       if( strncmp ( boxtype, TBox, 4) == 0){
-	foundbox = (box_param_t *)malloc( sizeof( box_param_t));
+	foundbox = (box_param_t *)opj_malloc( sizeof( box_param_t));
+	if(foundbox == NULL){
+		opj_free(data);
+		return NULL;
+	}
 	foundbox->fd = fd;
 	foundbox->offset = pos;
 	foundbox->headlen = headlen;
 	foundbox->length = boxlen;
 	strncpy( foundbox->type, TBox, 4);
 	foundbox->next = NULL;
-	free( data);
+	opj_free( data);
 	return foundbox;
       }
-      free( data);
+      opj_free( data);
     }
     else{
       fprintf( FCGI_stderr, "Error: error in gene_boxbyType( %d, %" PRId64 ", %" PRId64 ", %s)\n", fd, offset, length, TBox);
@@ -261,7 +274,9 @@ box_param_t * gene_boxbyTypeinStream( Byte_t *stream, OPJ_OFF_T offset, OPJ_SIZE
     }
 
     if( strncmp ( boxtype, TBox, 4) == 0){
-      foundbox = (box_param_t *)malloc( sizeof( box_param_t));
+      foundbox = (box_param_t *)opj_malloc( sizeof( box_param_t));
+	  if(foundbox == NULL) return NULL;
+
       foundbox->fd = -1;
       foundbox->offset = pos;
       foundbox->headlen = headlen;
@@ -397,7 +412,7 @@ void delete_box_in_list( box_param_t **box, boxlist_param_t *boxlist)
     if( *box == boxlist->last)
       boxlist->last = ptr;
   }
-  free( *box);
+  opj_free( *box);
 }
 
 void delete_box_in_list_by_type( const char type[], boxlist_param_t *boxlist)
@@ -418,10 +433,10 @@ void delete_boxlist( boxlist_param_t **boxlist)
   boxPtr = (*boxlist)->first;
   while( boxPtr != NULL){
     boxNext=boxPtr->next;
-    free( boxPtr);
+    opj_free( boxPtr);
     boxPtr=boxNext;
   }
-  free( *boxlist);
+  opj_free( *boxlist);
 }
 
 void insert_box_into_list( box_param_t *box, boxlist_param_t *boxlist)

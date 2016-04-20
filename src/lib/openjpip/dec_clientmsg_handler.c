@@ -58,6 +58,12 @@ void handle_JPIPstreamMSG( SOCKET connected_socket, cachelist_param_t *cachelist
   opj_free( newjpipstream);
 
   metadatalist = gene_metadatalist();
+  if(metadatalist == NULL){
+  	if( target)    opj_free( target);
+  	if( tid)    opj_free( tid);
+  	if( cid)    opj_free( cid);
+	return;
+  }
   parse_metamsg( msgqueue, *jpipstream, *streamlen, metadatalist);
 
   assert( msgqueue->last );
@@ -143,6 +149,8 @@ void handle_XMLreqMSG( SOCKET connected_socket, Byte_t *jpipstream, cachelist_pa
   
   boxcontents = cache->metadatalist->last->boxcontents;
   xmlstream = (Byte_t *)opj_malloc( boxcontents->length);
+  if(xmlstream == NULL) return;
+
   memcpy( xmlstream, jpipstream+boxcontents->offset, boxcontents->length);
   send_XMLstream( connected_socket, xmlstream, boxcontents->length);
   opj_free( xmlstream);
@@ -220,8 +228,11 @@ void handle_SIZreqMSG( SOCKET connected_socket, Byte_t *jpipstream, msgqueue_par
   width = height = 0;
   if( cache){
     assert( cache->csn >= 0);
-    if( !cache->ihdrbox)
+    if( !cache->ihdrbox){
       cache->ihdrbox = get_SIZ_from_jpipstream( jpipstream, msgqueue, (Byte8_t)cache->csn);
+
+	  if(cache->ihdrbox == NULL) return;
+	}
     width  = cache->ihdrbox->width;
     height = cache->ihdrbox->height;
   }

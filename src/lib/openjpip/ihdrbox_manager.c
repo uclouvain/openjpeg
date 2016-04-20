@@ -62,8 +62,9 @@ ihdrbox_param_t * gene_ihdrbox( metadatalist_param_t *metadatalist, Byte_t *jpip
     return NULL;
   }
   
-  ihdrbox = (ihdrbox_param_t *)malloc( sizeof(ihdrbox_param_t));
-  
+  ihdrbox = (ihdrbox_param_t *)opj_malloc( sizeof(ihdrbox_param_t));
+  if(ihdrbox == NULL) return NULL;
+
   ihdrbox->height = big4( jpipstream+get_DBoxoff(ihdr));
   ihdrbox->width  = big4( jpipstream+get_DBoxoff(ihdr)+4);
   ihdrbox->nc     = big2( jpipstream+get_DBoxoff(ihdr)+8);
@@ -71,7 +72,7 @@ ihdrbox_param_t * gene_ihdrbox( metadatalist_param_t *metadatalist, Byte_t *jpip
   assert( bpc_val >= 0 && bpc_val <= 255 );
   ihdrbox->bpc    = (Byte_t)bpc_val;
 
-  free( ihdr);
+  opj_free( ihdr);
 
   return ihdrbox;
 }

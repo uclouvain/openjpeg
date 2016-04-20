@@ -37,8 +37,9 @@ cachelist_param_t * gene_cachelist(void)
 {
   cachelist_param_t *cachelist;
   
-  cachelist = (cachelist_param_t *)malloc( sizeof(cachelist_param_t));
-  
+  cachelist = (cachelist_param_t *)opj_malloc( sizeof(cachelist_param_t));
+  if(cachelist == NULL) return NULL;
+
   cachelist->first = NULL;
   cachelist->last  = NULL;
 
@@ -55,19 +56,29 @@ void delete_cachelist(cachelist_param_t **cachelist)
     delete_cache( &cachePtr);
     cachePtr=cacheNext;
   }
-  free( *cachelist);
+  opj_free( *cachelist);
 }
 
 cache_param_t * gene_cache( const char *targetname, int csn, char *tid, char *cid)
 {
   cache_param_t *cache;
   
-  cache = (cache_param_t *)malloc( sizeof(cache_param_t));
+  cache = (cache_param_t *)opj_malloc( sizeof(cache_param_t));
+  if(cache == NULL) return NULL;
+
   cache->filename = strdup( targetname);
+  if(cache->filename == NULL) goto fails;
+
   cache->tid = strdup( tid);
+  if(cache->tid == NULL) goto fails;
+
   cache->csn = csn;
-  cache->cid = (char **)malloc( sizeof(char *));
+  cache->cid = (char **)opj_malloc( sizeof(char *));
+  if(cache->cid == NULL) goto fails;
+
   *cache->cid = strdup( cid);
+  if(*cache->cid == NULL) goto fails;
+
   cache->numOfcid = 1;
 #if 1
   cache->metadatalist = NULL;
@@ -78,23 +89,29 @@ cache_param_t * gene_cache( const char *targetname, int csn, char *tid, char *ci
   cache->next = NULL;
 
   return cache;
+
+fails:
+	delete_cache(&cache);
+	return NULL;
 }
 
 void delete_cache( cache_param_t **cache)
 {
   int i;
   
-  free( (*cache)->filename);
-  free( (*cache)->tid);
+  if((*cache)->filename) opj_free( (*cache)->filename);
+  if((*cache)->tid) opj_free( (*cache)->tid);
 
   delete_metadatalist( &(*cache)->metadatalist);
 
   if((*cache)->ihdrbox)
-    free((*cache)->ihdrbox);
-  for( i=0; i<(*cache)->numOfcid; i++)
-    free( (*cache)->cid[i]);
-  free( (*cache)->cid);
-  free( *cache);
+    opj_free((*cache)->ihdrbox);
+  if((*cache)->cid){
+	  for( i=0; i<(*cache)->numOfcid; i++)
+	    opj_free( (*cache)->cid[i]);
+	  opj_free( (*cache)->cid);
+  }
+  opj_free( *cache);
 }
 
 void insert_cache_into_list( cache_param_t *cache, cachelist_param_t *cachelist)
@@ -180,12 +197,14 @@ void add_cachecid( const char *cid, cache_param_t *cache)
 {
   if( !cid)
     return;
-  
-  if( (cache->cid = realloc( cache->cid, (OPJ_SIZE_T)(cache->numOfcid+1)*sizeof(char *))) == NULL){
+   {
+	char **cid = cache->cid;
+
+  if( (cache->cid = opj_realloc( cid, (OPJ_SIZE_T)(cache->numOfcid+1)*sizeof(char *))) == NULL){
     fprintf( stderr, "failed to add new cid to cache table in add_cachecid()\n");
     return;
   }
-  
+   }  
   cache->cid[ cache->numOfcid] = strdup( cid);
 
   cache->numOfcid ++;
@@ -198,7 +217,7 @@ void update_cachetid( const char *tid, cache_param_t *cache)
 
   if( tid[0] != '0' && strcmp( tid, cache->tid) !=0){
     fprintf( stderr, "tid is updated to %s for %s\n", tid, cache->filename);
-    free( cache->tid);
+    opj_free( cache->tid);
     cache->tid = strdup( tid);
   }
 }
@@ -232,16 +251,19 @@ void remove_cidInCache( const char *cid, cache_param_t *cache)
   
   tmp = cache->cid;
 
-  cache->cid = (char **)malloc( (OPJ_SIZE_T)(cache->numOfcid-1)*sizeof(char *));
-  
+  cache->cid = (char **)opj_malloc( (OPJ_SIZE_T)(cache->numOfcid-1)*sizeof(char *));
+  if(cache->cid == NULL){
+	fprintf( stderr, "cid: memory out\n");
+	return;
+  }
   for( i=0, j=0; i<cache->numOfcid; i++){
     if( i != idx){
       cache->cid[j] = strdup( tmp[i]);
       j++;
     }
-    free( tmp[i]);
+    opj_free( tmp[i]);
   }
-  free( tmp);
+  opj_free( tmp);
 
   cache->numOfcid --;
 }

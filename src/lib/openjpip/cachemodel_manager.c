@@ -49,7 +49,8 @@ cachemodellist_param_t * gene_cachemodellist(void)
   cachemodellist_param_t *cachemodellist;
 
   cachemodellist = (cachemodellist_param_t *)opj_malloc( sizeof(cachemodellist_param_t));
-  
+  if(cachemodellist == NULL) return NULL;
+ 
   cachemodellist->first = NULL;
   cachemodellist->last  = NULL;
 
@@ -66,6 +67,7 @@ cachemodel_param_t * gene_cachemodel( cachemodellist_param_t *cachemodellist, ta
   int i;
 
   cachemodel = (cachemodel_param_t *)opj_malloc( sizeof(cachemodel_param_t));
+  if(cachemodel == NULL) return NULL;
 
   refer_target( target, &cachemodel->target);
   
@@ -87,8 +89,20 @@ cachemodel_param_t * gene_cachemodel( cachemodellist_param_t *cachemodellist, ta
   numOftiles = get_m( tilepart);
   numOfelem = get_nmax( tilepart)*numOftiles;
   cachemodel->tp_model = (OPJ_BOOL *)opj_calloc( 1, numOfelem*sizeof(OPJ_BOOL));
+  if(cachemodel->tp_model == NULL){
+	delete_cachemodel(&cachemodel);
+	return NULL;
+  }
   cachemodel->th_model = (OPJ_BOOL *)opj_calloc( 1, numOftiles*sizeof(OPJ_BOOL));
+  if(cachemodel->th_model == NULL){
+	delete_cachemodel(&cachemodel);
+	return NULL;
+  }
   cachemodel->pp_model = (OPJ_BOOL **)opj_malloc( target->codeidx->SIZ.Csiz*sizeof(OPJ_BOOL *));
+  if(cachemodel->pp_model == NULL){
+	delete_cachemodel(&cachemodel);
+	return NULL;
+  }
   for( i=0; i<target->codeidx->SIZ.Csiz; i++){
     precpacket = target->codeidx->precpacket[i];
     cachemodel->pp_model[i] = (OPJ_BOOL *)opj_calloc( 1, get_nmax(precpacket)*get_m(precpacket)*sizeof(OPJ_BOOL));
