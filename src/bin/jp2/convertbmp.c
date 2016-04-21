@@ -967,7 +967,7 @@ int imagetobmp(opj_image_t * image, const char *outfile) {
             fprintf(fdest, "%c", (OPJ_UINT8)r);
 
             if ((i + 1) % w == 0) {
-                for ((pad = w % 4) ? (4 - w % 4) : 0; pad > 0; pad--)	/* ADD */
+                for (pad = (w % 4) ? (4 - w % 4) : 0; pad > 0; pad--)	/* ADD */
                     fprintf(fdest, "%c", 0);
             }
         }
