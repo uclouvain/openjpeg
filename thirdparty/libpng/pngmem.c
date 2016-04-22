@@ -2,7 +2,7 @@
 /* pngmem.c - stub functions for memory allocation
  *
  * Last changed in libpng 1.6.15 [November 20, 2014]
- * Copyright (c) 1998-2014 Glenn Randers-Pehrson
+ * Copyright (c) 1998-2002,2004,2006-2014 Glenn Randers-Pehrson
  * (Version 0.96 Copyright (c) 1996, 1997 Andreas Dilger)
  * (Version 0.88 Copyright (c) 1995, 1996 Guy Eric Schalnat, Group 42, Inc.)
  *
@@ -77,6 +77,9 @@ png_malloc_base,(png_const_structrp png_ptr, png_alloc_size_t size),
    PNG_UNUSED(png_ptr)
 #endif
 
+   /* Some compilers complain that this is always true.  However, it
+    * can be false when integer overflow happens.
+    */
    if (size > 0 && size <= PNG_SIZE_MAX
 #     ifdef PNG_MAX_MALLOC_64K
          && size <= 65536U
