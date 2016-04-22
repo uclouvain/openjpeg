@@ -37,9 +37,9 @@ fi
 
 if [ "${OPJ_CI_ASAN:-}" == "1" ]; then
 	# We need a new version of cmake than travis-ci provides
-	wget --no-check-certificate -qO - https://cmake.org/files/v3.3/cmake-3.3.2-Linux-x86_64.tar.gz | tar -xz
+	wget --no-check-certificate -qO - https://cmake.org/files/v3.5/cmake-3.5.2-Linux-x86_64.tar.gz | tar -xz
 	# copy to a directory that will not changed every version
-	mv cmake-3.3.2-Linux-x86_64 cmake-install
+	mv cmake-3.5.2-Linux-x86_64 cmake-install
 fi
 
 if [ "${OPJ_CI_SKIP_TESTS:-}" != "1" ]; then
@@ -62,16 +62,17 @@ if [ "${OPJ_CI_SKIP_TESTS:-}" != "1" ]; then
 	git clone --depth=1 --branch=${OPJ_DATA_BRANCH} git://github.com/uclouvain/openjpeg-data.git data
 
 	# We need jpylyzer for the test suite
+    JPYLYZER_VERSION="1.17.0"    
 	echo "Retrieving jpylyzer"
 	if [ "${APPVEYOR:-}" == "True" ]; then
-		wget --local-encoding=UTF-8 -q http://dl.bintray.com/openplanets/opf-windows/jpylyzer_1.14.2_win32.zip
+		wget --local-encoding=UTF-8 -q http://dl.bintray.com/openplanets/opf-windows/jpylyzer_${JPYLYZER_VERSION}_win32.zip
 		mkdir jpylyzer
 		cd jpylyzer
-		cmake -E tar -xf ../jpylyzer_1.14.2_win32.zip
+		cmake -E tar -xf ../jpylyzer_${JPYLYZER_VERSION}_win32.zip
 		cd ..
 	else
-		wget -qO - https://github.com/openpreserve/jpylyzer/archive/1.14.2.tar.gz | tar -xz
-		mv jpylyzer-1.14.2/jpylyzer ./
+		wget -qO - https://github.com/openpreserve/jpylyzer/archive/${JPYLYZER_VERSION}.tar.gz | tar -xz
+		mv jpylyzer-${JPYLYZER_VERSION}/jpylyzer ./
 		chmod +x jpylyzer/jpylyzer.py
 	fi
 
