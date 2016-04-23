@@ -103,7 +103,7 @@ static void tif_32sto3u(const OPJ_INT32* pSrc, OPJ_BYTE* pDst, OPJ_SIZE_T length
 	}
 		
 	if (length & 7U) {
-		OPJ_BYTE trailing = 0U;
+		unsigned int trailing = 0U;
 		int remaining = 8U;
 		length &= 7U;
 		PUTBITS((OPJ_UINT32)pSrc[i+0], 3)
@@ -152,7 +152,7 @@ static void tif_32sto5u(const OPJ_INT32* pSrc, OPJ_BYTE* pDst, OPJ_SIZE_T length
 	}
 	
 	if (length & 7U) {
-		OPJ_BYTE trailing = 0U;
+		unsigned int trailing = 0U;
 		int remaining = 8U;
 		length &= 7U;
 		PUTBITS((OPJ_UINT32)pSrc[i+0], 5)
@@ -202,7 +202,7 @@ static void tif_32sto7u(const OPJ_INT32* pSrc, OPJ_BYTE* pDst, OPJ_SIZE_T length
 	}
 	
 	if (length & 7U) {
-		OPJ_BYTE trailing = 0U;
+		unsigned int trailing = 0U;
 		int remaining = 8U;
 		length &= 7U;
 		PUTBITS((OPJ_UINT32)pSrc[i+0], 7)
@@ -254,7 +254,7 @@ static void tif_32sto9u(const OPJ_INT32* pSrc, OPJ_BYTE* pDst, OPJ_SIZE_T length
 	}
 	
 	if (length & 7U) {
-		OPJ_BYTE trailing = 0U;
+		unsigned int trailing = 0U;
 		int remaining = 8U;
 		length &= 7U;
 		PUTBITS2((OPJ_UINT32)pSrc[i+0], 9)
