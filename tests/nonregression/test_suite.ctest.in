@@ -137,6 +137,16 @@ opj_compress -i @INPUT_NR_PATH@/pngsuite/ftp1n3p08.png -o @TEMP_PATH@/ftp1n3p08.
 # issue 571 Lossless is not lossless on linux x86
 opj_compress -i @INPUT_NR_PATH@/issue571.tif -o @TEMP_PATH@/issue571.tif.j2k
 
+# issue 729 Allow to read 3/5/7/9/11/13/15 bpp tif files 
+opj_compress -i @INPUT_NR_PATH@/flower-minisblack-03.tif -o @TEMP_PATH@/flower-minisblack-03.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-minisblack-05.tif -o @TEMP_PATH@/flower-minisblack-05.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-minisblack-07.tif -o @TEMP_PATH@/flower-minisblack-07.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-minisblack-09.tif -o @TEMP_PATH@/flower-minisblack-09.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-minisblack-11.tif -o @TEMP_PATH@/flower-minisblack-11.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-minisblack-13.tif -o @TEMP_PATH@/flower-minisblack-13.tif.jp2
+opj_compress -i @INPUT_NR_PATH@/flower-minisblack-15.tif -o @TEMP_PATH@/flower-minisblack-15.tif.jp2
+
+
 # DECODER TEST SUITE
 opj_decompress -i  @INPUT_NR_PATH@/Bretagne2.j2k -o @TEMP_PATH@/Bretagne2.j2k.pgx
 opj_decompress -i  @INPUT_NR_PATH@/_00042.j2k -o @TEMP_PATH@/_00042.j2k.pgx
@@ -508,3 +518,37 @@ opj_decompress -i @INPUT_NR_PATH@/issue559-eci-091-CIELab.jp2 -o @TEMP_PATH@/iss
 
 # issue 653 Last box of undefined size byg
 opj_decompress -i @INPUT_NR_PATH@/issue653-zero-unknownbox.jp2 -o @TEMP_PATH@/issue653-zero-unknownbox.jp2.png -p 8S
+
+# issue 729 decompress 3/5/7/9/11/13/15 bits precision to tiff
+# GRAYSCALE 
+opj_decompress -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_tif-3.tif -p 3S
+opj_decompress -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_tif-5.tif -p 5S
+opj_decompress -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_tif-7.tif -p 7S
+opj_decompress -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_tif-9.tif -p 9S
+opj_decompress -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_tif-11.tif -p 11S
+opj_decompress -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_tif-13.tif -p 13S
+opj_decompress -i @INPUT_CONF_PATH@/a1_mono.j2c -o @TEMP_PATH@/a1_mono_tif-15.tif -p 15S
+# GRAYSCALE ALPHA
+opj_decompress -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_tif-3.tif -p 3S
+opj_decompress -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_tif-5.tif -p 5S
+opj_decompress -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_tif-7.tif -p 7S
+opj_decompress -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_tif-9.tif -p 9S
+opj_decompress -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_tif-11.tif -p 11S
+opj_decompress -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_tif-13.tif -p 13S
+opj_decompress -i @INPUT_NR_PATH@/basn4a08.jp2 -o @TEMP_PATH@/basn4a08_tif-15.tif -p 15S
+# RGB
+opj_decompress -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_tif-3.tif -p 3S
+opj_decompress -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_tif-5.tif -p 5S
+opj_decompress -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_tif-7.tif -p 7S
+opj_decompress -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_tif-9.tif -p 9S
+opj_decompress -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_tif-11.tif -p 11S
+opj_decompress -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_tif-13.tif -p 13S
+opj_decompress -i @INPUT_CONF_PATH@/p0_14.j2k -o @TEMP_PATH@/p0_14_tif-15.tif -p 15S
+# RGBA
+opj_decompress -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-3.tif -p 3S
+opj_decompress -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-5.tif -p 5S
+opj_decompress -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-7.tif -p 7S
+opj_decompress -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-9.tif -p 9S
+opj_decompress -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-11.tif -p 11S
+opj_decompress -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-13.tif -p 13S
+opj_decompress -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-15.tif -p 15S
