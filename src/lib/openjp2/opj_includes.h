@@ -102,12 +102,6 @@
  ==========================================================
 */
 
-/* Ignore GCC attributes if this is not GCC */
-#ifndef __GNUC__
-	#define __attribute__(x) /* __attribute__(x) */
-#endif
-
-
 /* Are restricted pointers available? (C99) */
 #if (__STDC_VERSION__ != 199901L)
 	/* Not a C99 compiler */
