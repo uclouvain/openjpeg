@@ -4706,7 +4706,7 @@ static OPJ_BOOL opj_j2k_update_rates(  opj_j2k_t *p_j2k,
                         l_rates = l_tcp->rates;
 
                         /* Modification of the RATE >> */
-                        if (*l_rates) {
+                        if (*l_rates > 0.0f) {
                                 *l_rates =              (( (OPJ_FLOAT32) (l_size_pixel * (OPJ_UINT32)(l_x1 - l_x0) * (OPJ_UINT32)(l_y1 - l_y0)))
                                                                 /
                                                                 ((*l_rates) * (OPJ_FLOAT32)l_bits_empty)
@@ -4718,7 +4718,7 @@ static OPJ_BOOL opj_j2k_update_rates(  opj_j2k_t *p_j2k,
                         ++l_rates;
 
                         for (k = 1; k < l_tcp->numlayers; ++k) {
-                                if (*l_rates) {
+                                if (*l_rates > 0.0f) {
                                         *l_rates =              (( (OPJ_FLOAT32) (l_size_pixel * (OPJ_UINT32)(l_x1 - l_x0) * (OPJ_UINT32)(l_y1 - l_y0)))
                                                                         /
                                                                                 ((*l_rates) * (OPJ_FLOAT32)l_bits_empty)
@@ -4741,11 +4741,11 @@ static OPJ_BOOL opj_j2k_update_rates(  opj_j2k_t *p_j2k,
                 for     (j=0;j<l_cp->tw;++j) {
                         l_rates = l_tcp->rates;
 
-                        if (*l_rates) {
+                        if (*l_rates > 0.0f) {
                                 *l_rates -= l_sot_remove;
 
-                                if (*l_rates < 30) {
-                                        *l_rates = 30;
+                                if (*l_rates < 30.0f) {
+                                        *l_rates = 30.0f;
                                 }
                         }
 
@@ -4755,22 +4755,22 @@ static OPJ_BOOL opj_j2k_update_rates(  opj_j2k_t *p_j2k,
 
                         for (k = 1; k < l_last_res; ++k) {
 
-                                if (*l_rates) {
+                                if (*l_rates > 0.0f) {
                                         *l_rates -= l_sot_remove;
 
-                                        if (*l_rates < *(l_rates - 1) + 10) {
-                                                *l_rates  = (*(l_rates - 1)) + 20;
+                                        if (*l_rates < *(l_rates - 1) + 10.0f) {
+                                                *l_rates  = (*(l_rates - 1)) + 20.0f;
                                         }
                                 }
 
                                 ++l_rates;
                         }
 
-                        if (*l_rates) {
+                        if (*l_rates > 0.0f) {
                                 *l_rates -= (l_sot_remove + 2.f);
 
-                                if (*l_rates < *(l_rates - 1) + 10) {
-                                        *l_rates  = (*(l_rates - 1)) + 20;
+                                if (*l_rates < *(l_rates - 1) + 10.0f) {
+                                        *l_rates  = (*(l_rates - 1)) + 20.0f;
                                 }
                         }
 
