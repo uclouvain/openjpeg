@@ -487,7 +487,7 @@ OPJ_BOOL opj_tcd_rateallocate(  opj_tcd_t *tcd,
                 OPJ_FLOAT64 lo = min;
                 OPJ_FLOAT64 hi = max;
                 OPJ_BOOL success = OPJ_FALSE;
-                OPJ_UINT32 maxlen = tcd_tcp->rates[layno] ? opj_uint_min(((OPJ_UINT32) ceil(tcd_tcp->rates[layno])), len) : len;
+                OPJ_UINT32 maxlen = tcd_tcp->rates[layno] > 0 ? opj_uint_min(((OPJ_UINT32) ceil(tcd_tcp->rates[layno])), len) : len;
                 OPJ_FLOAT64 goodthresh = 0;
                 OPJ_FLOAT64 stable_thresh = 0;
                 OPJ_UINT32 i;
