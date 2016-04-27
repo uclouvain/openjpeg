@@ -1911,7 +1911,7 @@ static OPJ_BOOL opj_tcd_dc_level_shift_encode ( opj_tcd_t *p_tcd )
                 }
                 else {
                         for (i = 0; i < l_nb_elem; ++i) {
-                                *l_current_ptr = (*l_current_ptr - l_tccp->m_dc_level_shift) << 11 ;
+                                *l_current_ptr = (*l_current_ptr - l_tccp->m_dc_level_shift) * (1 << 11);
                                 ++l_current_ptr;
                         }
                 }

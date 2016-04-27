@@ -1514,7 +1514,7 @@ OPJ_BOOL opj_t1_encode_cblks(   opj_t1_t *t1,
 						if (tccp->qmfbid == 1) {
 							for (j = 0; j < cblk_h; ++j) {
 								for (i = 0; i < cblk_w; ++i) {
-									tiledp[tileIndex] *= 1 << T1_NMSEDEC_FRACBITS;
+									tiledp[tileIndex] *= (1 << T1_NMSEDEC_FRACBITS);
 									tileIndex++;
 								}
 								tileIndex += tileLineAdvance;
