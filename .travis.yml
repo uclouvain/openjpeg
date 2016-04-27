@@ -26,10 +26,6 @@ matrix:
       env: OPJ_CI_ARCH=x86_64 OPJ_CI_BUILD_CONFIGURATION=Release
       sudo: true
     - os: linux
-      compiler: clang-3.9
-      env: OPJ_CI_ARCH=x86_64 OPJ_CI_BUILD_CONFIGURATION=Debug
-      sudo: true
-    - os: linux
       compiler: x86_64-w64-mingw32-gcc
       env: OPJ_CI_ARCH=x86_64 OPJ_CI_BUILD_CONFIGURATION=Release
       addons:
