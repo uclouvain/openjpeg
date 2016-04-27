@@ -106,12 +106,16 @@
 #if (__STDC_VERSION__ != 199901L)
 	/* Not a C99 compiler */
 	#ifdef __GNUC__
-		#define restrict __restrict__
+		#define OPJ_RESTRICT __restrict__
+	#elif (_MSC_VER >= 1400)
+		#define OPJ_RESTRICT __restrict
 	#else
-		#define restrict /* restrict */
+		#define OPJ_RESTRICT /* restrict */
 	#endif
 #endif
-
+#ifndef OPJ_RESTRICT
+	#define OPJ_RESTRICT restrict
+#endif
 
 
 /* MSVC before 2013 and Borland C do not have lrintf */
