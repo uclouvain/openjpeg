@@ -487,7 +487,7 @@ OPJ_BOOL opj_tcd_rateallocate(  opj_tcd_t *tcd,
                 OPJ_FLOAT64 lo = min;
                 OPJ_FLOAT64 hi = max;
                 OPJ_BOOL success = OPJ_FALSE;
-                OPJ_UINT32 maxlen = tcd_tcp->rates[layno] ? opj_uint_min(((OPJ_UINT32) ceil(tcd_tcp->rates[layno])), len) : len;
+                OPJ_UINT32 maxlen = tcd_tcp->rates[layno] > 0.0f ? opj_uint_min(((OPJ_UINT32) ceil(tcd_tcp->rates[layno])), len) : len;
                 OPJ_FLOAT64 goodthresh = 0;
                 OPJ_FLOAT64 stable_thresh = 0;
                 OPJ_UINT32 i;
@@ -500,7 +500,7 @@ OPJ_BOOL opj_tcd_rateallocate(  opj_tcd_t *tcd,
                   -r xx,yy,zz,0   (disto_alloc == 1 and rates == 0)
                   -q xx,yy,zz,0   (fixed_quality == 1 and distoratio == 0)
                   ==> possible to have some lossy layers and the last layer for sure lossless */
-                if ( ((cp->m_specific_param.m_enc.m_disto_alloc==1) && (tcd_tcp->rates[layno]>0)) || ((cp->m_specific_param.m_enc.m_fixed_quality==1) && (tcd_tcp->distoratio[layno]>0))) {
+                if ( ((cp->m_specific_param.m_enc.m_disto_alloc==1) && (tcd_tcp->rates[layno]>0.0f)) || ((cp->m_specific_param.m_enc.m_fixed_quality==1) && (tcd_tcp->distoratio[layno]>0.0))) {
                         opj_t2_t*t2 = opj_t2_create(tcd->image, cp);
                         OPJ_FLOAT64 thresh = 0;
 
