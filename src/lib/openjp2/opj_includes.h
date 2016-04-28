@@ -112,6 +112,14 @@
 	#endif
 #endif
 
+#ifdef __has_attribute
+	#if __has_attribute(no_sanitize)
+		#define OPJ_NOSANITIZE(kind) __attribute__((no_sanitize(kind)))
+	#endif
+#endif
+#ifndef OPJ_NOSANITIZE
+	#define OPJ_NOSANITIZE(kind)
+#endif
 
 
 /* MSVC before 2013 and Borland C do not have lrintf */

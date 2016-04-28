@@ -747,10 +747,12 @@ static void opj_get_all_encoding_parameters(   const opj_image_t *p_image,
 		}
 
 		/* use custom size for precincts*/
-		l_level_no = l_tccp->numresolutions - 1;
+		l_level_no = l_tccp->numresolutions;
 		for (resno = 0; resno < l_tccp->numresolutions; ++resno) {
 			OPJ_UINT32 l_dx, l_dy;
 
+			--l_level_no;
+			
 			/* precinct width and height*/
 			l_pdx = l_tccp->prcw[resno];
 			l_pdy = l_tccp->prch[resno];
@@ -782,7 +784,6 @@ static void opj_get_all_encoding_parameters(   const opj_image_t *p_image,
 				*p_max_prec = l_product;
 			}
 
-			--l_level_no;
 		}
 		++l_tccp;
 		++l_img_comp;

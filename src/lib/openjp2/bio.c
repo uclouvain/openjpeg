@@ -151,19 +151,31 @@ void opj_bio_init_dec(opj_bio_t *bio, OPJ_BYTE *bp, OPJ_UINT32 len) {
 	bio->ct = 0;
 }
 
+OPJ_NOSANITIZE("unsigned-integer-overflow")
 void opj_bio_write(opj_bio_t *bio, OPJ_UINT32 v, OPJ_UINT32 n) {
 	OPJ_UINT32 i;
-	for (i = n - 1; i < n; i--) {
+	
+	assert((n > 0U) && (n <= 32U));
+	for (i = n - 1; i < n; i--) { /* overflow used for end-loop condition */
 		opj_bio_putbit(bio, (v >> i) & 1);
 	}
 }
 
+OPJ_NOSANITIZE("unsigned-integer-overflow")
 OPJ_UINT32 opj_bio_read(opj_bio_t *bio, OPJ_UINT32 n) {
 	OPJ_UINT32 i;
-    OPJ_UINT32 v;
-	v = 0;
-	for (i = n - 1; i < n; i--) {
-		v += opj_bio_getbit(bio) << i;
+	OPJ_UINT32 v;
+	
+	assert((n > 0U) /* && (n <= 32U)*/);
+#ifdef OPJ_UBSAN_BUILD
+	/* This assert fails for some corrupted images which are gracefully rejected */
+	/* Add this assert only for ubsan build. */
+	/* This is the condition for overflow not to occur below which is needed because of OPJ_NOSANITIZE */
+	assert(n <= 32U);
+#endif
+	v = 0U;
+	for (i = n - 1; i < n; i--) { /* overflow used for end-loop condition */
+		v |= opj_bio_getbit(bio) << i; /* can't overflow, opj_bio_getbit returns 0 or 1 */
 	}
 	return v;
 }
