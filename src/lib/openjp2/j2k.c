@@ -2067,13 +2067,13 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
                 return OPJ_FALSE;
         }
         /* testcase 2539.pdf.SIGFPE.706.1712 (also 3622.pdf.SIGFPE.706.2916 and 4008.pdf.SIGFPE.706.3345 and maybe more) */
-        if (!(l_cp->tdx * l_cp->tdy)) {
+        if ((l_cp->tdx == 0U) || (l_cp->tdy == 0U)) {
                 opj_event_msg(p_manager, EVT_ERROR, "Error with SIZ marker: invalid tile size (tdx: %d, tdy: %d)\n", l_cp->tdx, l_cp->tdy);
                 return OPJ_FALSE;
         }
 
         /* testcase 1610.pdf.SIGSEGV.59c.681 */
-        if (((OPJ_UINT64)l_image->x1) * ((OPJ_UINT64)l_image->y1) != (l_image->x1 * l_image->y1)) {
+        if ((0xFFFFFFFFU / l_image->x1) < l_image->y1) {
                 opj_event_msg(p_manager, EVT_ERROR, "Prevent buffer overflow (x1: %d, y1: %d)\n", l_image->x1, l_image->y1);
                 return OPJ_FALSE;
         }
