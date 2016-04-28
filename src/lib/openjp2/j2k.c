@@ -2063,7 +2063,7 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
         /* testcase 4035.pdf.SIGSEGV.d8b.3375 */
         /* testcase issue427-null-image-size.jp2 */
         if ((l_image->x0 >= l_image->x1) || (l_image->y0 >= l_image->y1)) {
-                opj_event_msg(p_manager, EVT_ERROR, "Error with SIZ marker: negative or zero image size (%d x %d)\n", l_image->x1 - l_image->x0, l_image->y1 - l_image->y0);
+                opj_event_msg(p_manager, EVT_ERROR, "Error with SIZ marker: negative or zero image size (%" PRId64 " x %" PRId64 ")\n", (OPJ_INT64)l_image->x1 - l_image->x0, (OPJ_INT64)l_image->y1 - l_image->y0);
                 return OPJ_FALSE;
         }
         /* testcase 2539.pdf.SIGFPE.706.1712 (also 3622.pdf.SIGFPE.706.2916 and 4008.pdf.SIGFPE.706.3345 and maybe more) */
