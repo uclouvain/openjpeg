@@ -890,7 +890,14 @@ void color_esycc_to_rgb(opj_image_t *image)
 	int flip_value = (1 << (image->comps[0].prec-1));
 	int max_value = (1 << image->comps[0].prec) - 1;
 	
-	if(image->numcomps < 3) return;
+	if (
+		    (image->numcomps < 3)
+		 || (image->comps[0].dx != image->comps[1].dx) || (image->comps[0].dx != image->comps[2].dx)
+		 || (image->comps[0].dy != image->comps[1].dy) || (image->comps[0].dy != image->comps[2].dy)
+	   ) {
+		fprintf(stderr,"%s:%d:color_esycc_to_rgb\n\tCAN NOT CONVERT\n", __FILE__,__LINE__);
+		return;
+	}
 	
 	w = image->comps[0].w;
 	h = image->comps[0].h;
