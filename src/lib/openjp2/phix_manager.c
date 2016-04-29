@@ -57,7 +57,9 @@ int opj_write_phix( int coff, opj_codestream_info_t cstr_info, OPJ_BOOL EPHused,
   OPJ_OFF_T lenp = 0;
 
   box = (opj_jp2_box_t *)opj_calloc( (size_t)cstr_info.numcomps, sizeof(opj_jp2_box_t));
-  
+  if(box == NULL){
+		return 0;
+  }
   for( i=0;i<2;i++){
     if (i)
       opj_stream_seek( cio, lenp, p_manager);

@@ -2094,7 +2094,7 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
                         opj_event_msg(p_manager, EVT_ERROR,
                                 "JPWL: bad image size (%d x %d)\n",
                                 l_image->x1, l_image->y1);
-                        if (!JPWL_ASSUME || JPWL_ASSUME) {
+                        if (!JPWL_ASSUME) {
                                 opj_event_msg(p_manager, EVT_ERROR, "JPWL: giving up\n");
                                 return OPJ_FALSE;
                         }
@@ -2276,7 +2276,7 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
                 if (!l_cp->tcps) {
                         opj_event_msg(p_manager, JPWL_ASSUME ? EVT_WARNING : EVT_ERROR,
                                 "JPWL: could not alloc tcps field of cp\n");
-                        if (!JPWL_ASSUME || JPWL_ASSUME) {
+                        if (!JPWL_ASSUME) {
                                 opj_event_msg(p_manager, EVT_ERROR, "JPWL: giving up\n");
                                 return OPJ_FALSE;
                         }
@@ -2584,6 +2584,9 @@ static OPJ_BOOL opj_j2k_read_cod (  opj_j2k_t *p_j2k,
                 p_j2k->cstr_info->prog = l_tcp->prg;
                 p_j2k->cstr_info->numlayers = l_tcp->numlayers;
                 p_j2k->cstr_info->numdecompos = (OPJ_INT32*) opj_malloc(l_image->numcomps * sizeof(OPJ_UINT32));
+				if(!p_j2k->cstr_info->numdecompos){
+					return OPJ_FALSE;
+				}
                 for     (i = 0; i < l_image->numcomps; ++i) {
                         p_j2k->cstr_info->numdecompos[i] = l_tcp->tccps[i].numresolutions - 1;
                 }
@@ -4627,7 +4630,7 @@ static OPJ_BOOL opj_j2k_read_rgn (opj_j2k_t *p_j2k,
                         opj_event_msg(p_manager, EVT_ERROR,
                                 "JPWL: bad component number in RGN (%d when there are only %d)\n",
                                 l_comp_room, l_nb_comp);
-                        if (!JPWL_ASSUME || JPWL_ASSUME) {
+                        if (!JPWL_ASSUME) {
                                 opj_event_msg(p_manager, EVT_ERROR, "JPWL: giving up\n");
                                 return OPJ_FALSE;
                         }

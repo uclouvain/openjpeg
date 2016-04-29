@@ -611,6 +611,10 @@ static int tga_readheader(FILE *fp, unsigned int *bits_per_pixel,
     if (id_len)
     {
         unsigned char *id = (unsigned char *) malloc(id_len);
+		if(id == 0){
+			fprintf(stderr, "tga_readheader: memory out\n");
+			return 0;
+		}
         if ( !fread(id, id_len, 1, fp) )
         {
             fprintf(stderr, "\nError: fread return a number of element different from the expected.\n");
@@ -1249,6 +1253,7 @@ int imagetopgx(opj_image_t * image, const char *outfile)
 		{
       name = (char*)malloc(total+1);
 			if (name == NULL) {
+				fprintf(stderr, "imagetopgx: memory out\n");
 				goto fin;
 			}
 		}
@@ -1906,7 +1911,11 @@ if(v > 65535) v = 65535; else if(v < 0) v = 0;
         fprintf(stderr,"           is written to the file\n");
     }
     destname = (char*)malloc(strlen(outfile) + 8);
-
+	if(destname == NULL){
+		fprintf(stderr, "imagetopnm: memory out\n");
+		fclose(fdest);
+		return 1;
+	}
     for (compno = 0; compno < ncomp; compno++)
     {
     if (ncomp > 1)

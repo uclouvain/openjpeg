@@ -61,7 +61,9 @@ int opj_write_ppix( int coff, opj_codestream_info_t cstr_info, OPJ_BOOL EPHused,
 
   lenp = -1;
   box = (opj_jp2_box_t *)opj_calloc( (size_t)cstr_info.numcomps, sizeof(opj_jp2_box_t));
-  
+  if(box == NULL){
+	return 0;
+  }
   for (i=0;i<2;i++){
     if (i)
 
