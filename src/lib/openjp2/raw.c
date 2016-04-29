@@ -88,7 +88,7 @@ OPJ_UINT32 opj_raw_decode(opj_raw_t *raw) {
 		}
 	}
 	raw->ct--;
-	d = (raw->c >> raw->ct) & 0x01;
+	d = ((OPJ_UINT32)raw->c >> raw->ct) & 0x01U;
 	
 	return d;
 }

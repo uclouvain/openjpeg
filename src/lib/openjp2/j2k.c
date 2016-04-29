@@ -2442,22 +2442,22 @@ static OPJ_BOOL opj_j2k_write_cod(     opj_j2k_t *p_j2k,
 
         l_current_data = p_j2k->m_specific_param.m_encoder.m_header_tile_data;
 
-        opj_write_bytes(l_current_data,J2K_MS_COD,2);           /* COD */
+        opj_write_bytes(l_current_data,J2K_MS_COD,2);             /* COD */
         l_current_data += 2;
 
-        opj_write_bytes(l_current_data,l_code_size-2,2);        /* L_COD */
+        opj_write_bytes(l_current_data,l_code_size-2,2);          /* L_COD */
         l_current_data += 2;
 
-        opj_write_bytes(l_current_data,l_tcp->csty,1);          /* Scod */
+        opj_write_bytes(l_current_data,l_tcp->csty,1);            /* Scod */
         ++l_current_data;
 
-        opj_write_bytes(l_current_data,l_tcp->prg,1);           /* SGcod (A) */
+        opj_write_bytes(l_current_data,(OPJ_UINT32)l_tcp->prg,1); /* SGcod (A) */
         ++l_current_data;
 
-        opj_write_bytes(l_current_data,l_tcp->numlayers,2);     /* SGcod (B) */
+        opj_write_bytes(l_current_data,l_tcp->numlayers,2);       /* SGcod (B) */
         l_current_data+=2;
 
-        opj_write_bytes(l_current_data,l_tcp->mct,1);           /* SGcod (C) */
+        opj_write_bytes(l_current_data,l_tcp->mct,1);             /* SGcod (C) */
         ++l_current_data;
 
         l_remaining_size -= 9;
@@ -3174,7 +3174,7 @@ static void opj_j2k_write_poc_in_memory(   opj_j2k_t *p_j2k,
                 opj_write_bytes(l_current_data,l_current_poc->compno1,l_poc_room);              /* CEpoc_i */
                 l_current_data+=l_poc_room;
 
-                opj_write_bytes(l_current_data,l_current_poc->prg,1);                                   /* Ppoc_i */
+                opj_write_bytes(l_current_data, (OPJ_UINT32)l_current_poc->prg,1);    /* Ppoc_i */
                 ++l_current_data;
 
                 /* change the value of the max layer according to the actual number of layers in the file, components and resolutions*/
@@ -5371,7 +5371,7 @@ static OPJ_BOOL opj_j2k_write_mcc_record(      opj_j2k_t *p_j2k,
                 l_current_data+=l_nb_bytes_for_comp;
         }
 
-        l_tmcc = ((!p_mcc_record->m_is_irreversible)&1)<<16;
+        l_tmcc = ((!p_mcc_record->m_is_irreversible) & 1U) << 16;
 
         if (p_mcc_record->m_decorrelation_array) {
                 l_tmcc |= p_mcc_record->m_decorrelation_array->m_index;
