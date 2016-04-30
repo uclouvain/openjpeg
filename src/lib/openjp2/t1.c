@@ -1405,7 +1405,7 @@ static OPJ_BOOL opj_t1_decode_cblk(opj_t1_t *t1,
             }
 		}
 
-		for (passno = 0; passno < seg->real_num_passes; ++passno) {
+		for (passno = 0; (passno < seg->real_num_passes) && (bpno_plus_one >= 1); ++passno) {
             switch (passtype) {
                 case 0:
                     if (type == T1_TYPE_RAW) {
