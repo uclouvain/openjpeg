@@ -486,7 +486,6 @@ OPJ_BOOL opj_tcd_rateallocate(  opj_tcd_t *tcd,
         for (layno = 0; layno < tcd_tcp->numlayers; layno++) {
                 OPJ_FLOAT64 lo = min;
                 OPJ_FLOAT64 hi = max;
-                OPJ_BOOL success = OPJ_FALSE;
                 OPJ_UINT32 maxlen = tcd_tcp->rates[layno] > 0.0f ? opj_uint_min(((OPJ_UINT32) ceil(tcd_tcp->rates[layno])), len) : len;
                 OPJ_FLOAT64 goodthresh = 0;
                 OPJ_FLOAT64 stable_thresh = 0;
@@ -559,17 +558,11 @@ OPJ_BOOL opj_tcd_rateallocate(  opj_tcd_t *tcd,
                                 }
                         }
 
-                        success = OPJ_TRUE;
                         goodthresh = stable_thresh == 0? thresh : stable_thresh;
 
                         opj_t2_destroy(t2);
                 } else {
-                        success = OPJ_TRUE;
                         goodthresh = min;
-                }
-
-                if (!success) {
-                        return OPJ_FALSE;
                 }
 
                 if(cstr_info) { /* Threshold for Marcela Index */

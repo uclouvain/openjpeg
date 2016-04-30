@@ -9343,16 +9343,19 @@ void j2k_dump (opj_j2k_t* p_j2k, OPJ_INT32 flag, FILE* out_stream)
 
         /* Dump the codestream info from main header */
         if (flag & OPJ_J2K_MH_INFO){
-                opj_j2k_dump_MH_info(p_j2k, out_stream);
+                if (p_j2k->m_private_image)
+                        opj_j2k_dump_MH_info(p_j2k, out_stream);
         }
         /* Dump all tile/codestream info */
         if (flag & OPJ_J2K_TCH_INFO){
           OPJ_UINT32 l_nb_tiles = p_j2k->m_cp.th * p_j2k->m_cp.tw;
           OPJ_UINT32 i;
           opj_tcp_t * l_tcp = p_j2k->m_cp.tcps;
-          for (i=0;i<l_nb_tiles;++i) {
-            opj_j2k_dump_tile_info( l_tcp,(OPJ_INT32)p_j2k->m_private_image->numcomps, out_stream);
-            ++l_tcp;
+          if (p_j2k->m_private_image) {
+            for (i=0;i<l_nb_tiles;++i) {
+              opj_j2k_dump_tile_info( l_tcp,(OPJ_INT32)p_j2k->m_private_image->numcomps, out_stream);
+              ++l_tcp;
+            }
           }
         }
 
