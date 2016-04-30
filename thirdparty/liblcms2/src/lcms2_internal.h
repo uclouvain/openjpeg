@@ -1,7 +1,7 @@
 
 //
 //  Little Color Management System
-//  Copyright (c) 1998-2014 Marti Maria Saguer
+//  Copyright (c) 1998-2016 Marti Maria Saguer
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the "Software"),
@@ -57,7 +57,15 @@
 #define _cmsALIGNLONG(x) (((x)+(sizeof(cmsUInt32Number)-1)) & ~(sizeof(cmsUInt32Number)-1))
 
 // Alignment to memory pointer
-#define _cmsALIGNMEM(x)  (((x)+(sizeof(void *) - 1)) & ~(sizeof(void *) - 1))
+
+// (Ultra)SPARC with gcc requires ptr alignment of 8 bytes
+// even though sizeof(void *) is only four: for greatest flexibility
+// allow the build to specify ptr alignment.
+#ifndef CMS_PTR_ALIGNMENT
+# define CMS_PTR_ALIGNMENT sizeof(void *)
+#endif
+
+#define _cmsALIGNMEM(x)  (((x)+(CMS_PTR_ALIGNMENT - 1)) & ~(CMS_PTR_ALIGNMENT - 1))
 
 // Maximum encodeable values in floating point
 #define MAX_ENCODEABLE_XYZ  (1.0 + 32767.0/32768.0)
@@ -662,8 +670,8 @@ struct _cms_MLU_struct {
     cmsContext ContextID;
 
     // The directory
-    int AllocatedEntries;
-    int UsedEntries;
+    cmsUInt32Number  AllocatedEntries;
+    cmsUInt32Number  UsedEntries;
     _cmsMLUentry* Entries;     // Array of pointers to strings allocated in MemPool
 
     // The Pool
@@ -959,7 +967,7 @@ typedef struct _cmstransform_struct {
     cmsUInt32Number InputFormat, OutputFormat; // Keep formats for further reference
 
     // Points to transform code
-    _cmsTransformFn xform;
+    _cmsTransform2Fn xform;
 
     // Formatters, cannot be embedded into LUT because cache
     cmsFormatter16 FromInput;
@@ -1005,9 +1013,20 @@ typedef struct _cmstransform_struct {
     void* UserData;
     _cmsFreeUserDataFn FreeUserData;
 
+    // A way to provide backwards compatibility with full xform plugins
+    _cmsTransformFn OldXform;
+
 } _cmsTRANSFORM;
 
-// --------------------------------------------------------------------------------------------------
+// Copies extra channels from input to output if the original flags in the transform structure
+// instructs to do so. This function is called on all standard transform functions.
+void _cmsHandleExtraChannels(_cmsTRANSFORM* p, const void* in,
+                             void* out, 
+                             cmsUInt32Number PixelsPerLine,
+                             cmsUInt32Number LineCount,
+                             const cmsStride* Stride);
+
+// -----------------------------------------------------------------------------------------------------------------------
 
 cmsHTRANSFORM _cmsChain2Lab(cmsContext             ContextID,
                             cmsUInt32Number        nProfiles,

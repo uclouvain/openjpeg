@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------
 //
 //  Little Color Management System
-//  Copyright (c) 1998-2012 Marti Maria Saguer
+//  Copyright (c) 1998-2016 Marti Maria Saguer
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the "Software"),
@@ -270,6 +270,7 @@ cmsBool  ComputeAbsoluteIntent(cmsFloat64Number AdaptationState,
     cmsMAT3 Scale, m1, m2, m3, m4;
 
     // TODO: Follow Marc Mahy's recommendation to check if CHAD is same by using M1*M2 == M2*M1. If so, do nothing.
+    // TODO: Add support for ArgyllArts tag
 
     // Adaptation state
     if (AdaptationState == 1.0) {
