@@ -552,3 +552,8 @@ opj_decompress -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-9.tif
 opj_decompress -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-11.tif -p 11S
 opj_decompress -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-13.tif -p 13S
 opj_decompress -i @INPUT_NR_PATH@/basn6a08.jp2 -o @TEMP_PATH@/basn6a08_tif-15.tif -p 15S
+
+# issue 725
+!opj_decompress -i @INPUT_NR_PATH@/issue725.jp2 -o @TEMP_PATH@/issue725.png
+# issue 726
+opj_decompress -i @INPUT_NR_PATH@/issue726.j2k -o @TEMP_PATH@/issue726.png
