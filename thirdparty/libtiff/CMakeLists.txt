@@ -55,6 +55,10 @@ SET(TARGET_FILES
 
 IF(UNIX)
   SET(TARGET_FILES ${TARGET_FILES} tif_unix.c)
+  # Large file support
+  # This might not catch every possibility catered for by
+  # AC_SYS_LARGEFILE.
+  set(FILE_OFFSET_BITS 64)
 ELSE()
   SET(TARGET_FILES ${TARGET_FILES} tif_win32.c)
 ENDIF()
