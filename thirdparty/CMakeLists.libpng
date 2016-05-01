@@ -1,0 +1,70 @@
+#LIBPNG
+
+if (BUILD_THIRDPARTY)
+  unset(PNG_LIBRARY_DEBUG   CACHE)
+  unset(PNG_LIBRARY_RELEASE CACHE)
+  find_package(ZLIB REQUIRED)
+  if(NOT WIN32)
+    find_library(M_LIBRARY
+      NAMES m
+      PATHS /usr/lib /usr/local/lib
+    )
+    if(NOT M_LIBRARY)
+      message(ERROR "math lib 'libm' not found; PNG build failed")
+    endif()
+  else()
+    # not needed on windows
+    set(M_LIBRARY)
+  endif()
+  
+  if(ZLIB_PUBLIC_DEFS)
+    list(APPEND PNG_PRIVATE_DEFS ${ZLIB_PUBLIC_DEFS})
+  endif(ZLIB_PUBLIC_DEFS)
+  if(MSVC)
+    list(APPEND PNG_PRIVATE_DEFS -D_CRT_SECURE_NO_DEPRECATE)
+  endif(MSVC)
+  
+  file(INSTALL ${CMAKE_CURRENT_SOURCE_DIR}/libpng/png.h ${CMAKE_CURRENT_SOURCE_DIR}/libpng/pngconf.h DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/libpng)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/libpng/scripts/pnglibconf.h.prebuilt ${CMAKE_CURRENT_BINARY_DIR}/libpng/pnglibconf.h)
+  set(PNG_PUBLIC_HDRS
+    ${CMAKE_CURRENT_BINARY_DIR}/libpng/png.h
+    ${CMAKE_CURRENT_BINARY_DIR}/libpng/pngconf.h
+    ${CMAKE_CURRENT_BINARY_DIR}/libpng/pnglibconf.h
+  )
+  set(PNG_PRIVATE_HDRS
+    ${CMAKE_CURRENT_SOURCE_DIR}/libpng/pngdebug.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/libpng/pnginfo.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/libpng/pngpriv.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/libpng/pngstruct.h
+  )
+  set(PNG_SRCS
+    ${CMAKE_CURRENT_SOURCE_DIR}/libpng/png.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/libpng/pngerror.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/libpng/pngget.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/libpng/pngmem.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/libpng/pngpread.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/libpng/pngread.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/libpng/pngrio.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/libpng/pngrtran.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/libpng/pngrutil.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/libpng/pngset.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/libpng/pngtrans.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/libpng/pngwio.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/libpng/pngwrite.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/libpng/pngwtran.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/libpng/pngwutil.c
+  )
+  add_library(thirdparty-png STATIC ${PNG_SRCS} ${PNG_PUBLIC_HDRS} ${PNG_PRIVATE_HDRS})
+  target_include_directories(thirdparty-png PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/libpng ${ZLIB_INCLUDE_DIR})
+  if(PNG_PRIVATE_DEFS)
+    target_compile_definitions(thirdparty-png PRIVATE ${PNG_PRIVATE_DEFS} ${ZLIB_PUBLIC_DEFS})
+  endif(PNG_PRIVATE_DEFS)
+  if(M_LIBRARY)
+    target_link_libraries(thirdparty-png ${M_LIBRARY})
+  endif(M_LIBRARY)
+  set(PNG_LIBRARY thirdparty-png CACHE INTERNAL "thirdparty libpng target" FORCE)
+  set(PNG_PNG_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/libpng CACHE INTERNAL "thirdparty libpng includes" FORCE)
+elseif("${PNG_LIBRARY}" STREQUAL "thirdparty-png")
+  unset(PNG_LIBRARY         CACHE)
+  unset(PNG_PNG_INCLUDE_DIR CACHE)
+endif(BUILD_THIRDPARTY)

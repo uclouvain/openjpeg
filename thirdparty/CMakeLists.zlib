@@ -1,0 +1,103 @@
+# ZLIB
+
+if(BUILD_THIRDPARTY)
+  # Try to build it
+  message(STATUS "We will build Z lib from thirdparty")
+  include(CheckTypeSize)
+  include(CheckIncludeFile)
+  include(CheckFunctionExists)
+
+  check_include_file(sys/types.h HAVE_SYS_TYPES_H)
+  check_include_file(stdint.h    HAVE_STDINT_H)
+  check_include_file(stddef.h    HAVE_STDDEF_H)
+  check_include_file(unistd.h    HAVE_UNISTD_H)
+  check_include_file(stdarg.h    HAVE_STDARG_H)
+
+  if(HAVE_SYS_TYPES_H)
+    list(APPEND ZLIB_PUBLIC_DEFS -DHAVE_SYS_TYPES_H)
+  endif()
+  if(HAVE_STDINT_H)
+    list(APPEND ZLIB_PUBLIC_DEFS -DHAVE_STDINT_H)
+  endif()
+  if(HAVE_STDDEF_H)
+    list(APPEND ZLIB_PUBLIC_DEFS -DHAVE_STDDEF_H)
+  endif()
+  if(HAVE_UNISTD_H)
+    list(APPEND ZLIB_PUBLIC_DEFS -DHAVE_UNISTD_H)
+  endif()
+  if(HAVE_STDARG_H)
+    list(APPEND ZLIB_PUBLIC_DEFS -DHAVE_STDARG_H)
+  endif()
+		
+  #
+  # Check to see if we have large file support
+  #
+  set(CMAKE_REQUIRED_DEFINITIONS ${ZLIB_DEFS})
+  list(APPEND CMAKE_REQUIRED_DEFINITIONS -D_LARGEFILE64_SOURCE=1)
+  check_type_size(off64_t OFF64_T)
+  if(HAVE_OFF64_T)
+    list(APPEND ZLIB_PUBLIC_DEFS -D_LARGEFILE64_SOURCE=1)
+  endif()
+  set(CMAKE_REQUIRED_DEFINITIONS) # clear variable
+	
+  #
+  # Check for fseeko
+  #
+  check_function_exists(fseeko HAVE_FSEEKO)
+  if(NOT HAVE_FSEEKO)
+    list(APPEND ZLIB_PUBLIC_DEFS -DNO_FSEEKO)
+  endif()
+  if(MSVC)
+    list(APPEND ZLIB_PRIVATE_DEFS -D_CRT_SECURE_NO_DEPRECATE)
+    list(APPEND ZLIB_PRIVATE_DEFS -D_CRT_NONSTDC_NO_DEPRECATE)
+  endif()
+	
+  #we use predefined file
+  file(INSTALL ${CMAKE_CURRENT_SOURCE_DIR}/zlib/zlib.h DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/zlib)
+  file(INSTALL ${CMAKE_CURRENT_SOURCE_DIR}/zlib/zconf.h DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/zlib)
+  set(ZLIB_PUBLIC_HDRS
+    ${CMAKE_CURRENT_BINARY_DIR}/zlib/zconf.h
+    ${CMAKE_CURRENT_BINARY_DIR}/zlib/zlib.h
+  )
+  set(ZLIB_PRIVATE_HDRS
+    ${CMAKE_CURRENT_SOURCE_DIR}/zlib/crc32.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/zlib/deflate.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/zlib/gzguts.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/zlib/inffast.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/zlib/inffixed.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/zlib/inflate.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/zlib/inftrees.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/zlib/trees.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/zlib/zutil.h
+  )
+
+  set(ZLIB_SRCS
+    ${CMAKE_CURRENT_SOURCE_DIR}/zlib/adler32.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/zlib/compress.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/zlib/crc32.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/zlib/deflate.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/zlib/gzclose.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/zlib/gzlib.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/zlib/gzread.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/zlib/gzwrite.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/zlib/inflate.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/zlib/infback.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/zlib/inftrees.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/zlib/inffast.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/zlib/trees.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/zlib/uncompr.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/zlib/zutil.c
+  )
+  add_library(thirdparty-zlib STATIC ${ZLIB_SRCS} ${ZLIB_PUBLIC_HDRS} ${ZLIB_PRIVATE_HDRS})
+  if(ZLIB_PUBLIC_DEFS)
+    target_compile_definitions(thirdparty-zlib PUBLIC ${ZLIB_PUBLIC_DEFS})
+  endif(ZLIB_PUBLIC_DEFS)
+  if(ZLIB_PRIVATE_DEFS)
+    target_compile_definitions(thirdparty-zlib PRIVATE ${ZLIB_PRIVATE_DEFS})
+  endif(ZLIB_PRIVATE_DEFS)
+  set(ZLIB_LIBRARY thirdparty-zlib CACHE INTERNAL "thirdparty zlib target" FORCE)
+  set(ZLIB_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/zlib CACHE INTERNAL "thirdparty zlib includes" FORCE)
+elseif("${ZLIB_LIBRARY}" STREQUAL "thirdparty-zlib")
+  unset(ZLIB_LIBRARY     CACHE)
+  unset(ZLIB_INCLUDE_DIR CACHE)
+endif(BUILD_THIRDPARTY)
