@@ -2,53 +2,37 @@
 
 #------------
 # Try to find lib Z
-IF(BUILD_THIRDPARTY)
-  # Try to build it
-  message(STATUS "We will build Z lib from thirdparty")
-  ADD_SUBDIRECTORY(libz)
-  SET(Z_LIBNAME z PARENT_SCOPE)
-  SET(Z_INCLUDE_DIRNAME ${OPENJPEG_SOURCE_DIR}/thirdparty/include PARENT_SCOPE)
-  SET(ZLIB_FOUND 1)
-ELSE (BUILD_THIRDPARTY)
-  # Try to find lib Z
-  FIND_PACKAGE(ZLIB)
-  IF(ZLIB_FOUND)
-    SET(Z_LIBNAME ${ZLIB_LIBRARIES} PARENT_SCOPE)
-    SET(Z_INCLUDE_DIRNAME ${ZLIB_INCLUDE_DIRS} PARENT_SCOPE)
-    message(STATUS "Your system seems to have a Z lib available, we will use it to generate PNG lib")
-    # message(STATUS "DEBUG: ${ZLIB_INCLUDE_DIRS} vs ${ZLIB_INCLUDE_DIR}")
-  ELSE (ZLIB_FOUND) # not found
-    message(STATUS "Z lib not found, activate BUILD_THIRDPARTY if you want build it (necessary to build libPNG)")
-  ENDIF(ZLIB_FOUND)
-ENDIF(BUILD_THIRDPARTY)
-
+include(CMakeLists.zlib)
+FIND_PACKAGE(ZLIB)
+IF(ZLIB_FOUND)
+  SET(Z_LIBNAME ${ZLIB_LIBRARY} PARENT_SCOPE)
+  SET(Z_INCLUDE_DIRNAME ${ZLIB_INCLUDE_DIR} PARENT_SCOPE)
+ELSE (ZLIB_FOUND) # not found
+  IF(BUILD_THIRDPARTY)
+    message(FATAL_ERROR "zlib not found with BUILD_THIRDPARTY enabled")
+  ELSE(BUILD_THIRDPARTY)
+    message(STATUS "zlib not found, activate BUILD_THIRDPARTY if you want build it (necessary to build libPNG)")
+  ENDIF(BUILD_THIRDPARTY)
+ENDIF(ZLIB_FOUND)
 
 #------------
 # Try to find lib PNG (which depends on zlib)
-IF(BUILD_THIRDPARTY)
-  # Try to build it
-  message(STATUS "We will build PNG lib from thirdparty")
-  ADD_SUBDIRECTORY(libpng)
+include(CMakeLists.libpng)
+FIND_PACKAGE(PNG)
+IF(PNG_FOUND)
   SET(OPJ_HAVE_PNG_H 1 PARENT_SCOPE)
   SET(OPJ_HAVE_LIBPNG 1 PARENT_SCOPE)
-  SET(PNG_LIBNAME png PARENT_SCOPE)
-  SET(PNG_INCLUDE_DIRNAME ${OPENJPEG_SOURCE_DIR}/thirdparty/libpng PARENT_SCOPE)
-ELSE (BUILD_THIRDPARTY)
-  IF (ZLIB_FOUND)
-    FIND_PACKAGE(PNG)
-    IF(PNG_FOUND)
-      message(STATUS "Your system seems to have a PNG lib available, we will use it")
-      SET(OPJ_HAVE_PNG_H 1 PARENT_SCOPE)
-      SET(OPJ_HAVE_LIBPNG 1 PARENT_SCOPE)
-      SET(PNG_LIBNAME ${PNG_LIBRARIES} PARENT_SCOPE)
-      SET(PNG_INCLUDE_DIRNAME ${PNG_PNG_INCLUDE_DIR} PARENT_SCOPE)
-    ELSE(PNG_FOUND) # not found
-      SET(OPJ_HAVE_PNG_H 0 PARENT_SCOPE)
-      SET(OPJ_HAVE_LIBPNG 0 PARENT_SCOPE)
-      message(STATUS "PNG lib not found, activate BUILD_THIRDPARTY if you want build it")
-    ENDIF(PNG_FOUND)
-  ENDIF (ZLIB_FOUND)
-ENDIF(BUILD_THIRDPARTY)
+  SET(PNG_LIBNAME ${PNG_LIBRARY} PARENT_SCOPE)
+  SET(PNG_INCLUDE_DIRNAME ${PNG_PNG_INCLUDE_DIR} PARENT_SCOPE)
+ELSE(PNG_FOUND) # not found
+  IF(BUILD_THIRDPARTY)
+    message(FATAL_ERROR "PNG lib not found with BUILD_THIRDPARTY enabled")
+  ELSE(BUILD_THIRDPARTY)
+    SET(OPJ_HAVE_PNG_H 0 PARENT_SCOPE)
+    SET(OPJ_HAVE_LIBPNG 0 PARENT_SCOPE)
+    message(STATUS "PNG lib not found, activate BUILD_THIRDPARTY if you want build it")
+  ENDIF(BUILD_THIRDPARTY)
+ENDIF(PNG_FOUND)
 
 #------------
 # Try to find lib TIFF
@@ -87,11 +71,7 @@ SET(OPJ_HAVE_LIBLCMS 0 PARENT_SCOPE)
 IF( BUILD_THIRDPARTY)
   # Try to build lcms2
   message(STATUS "We will build LCMS2 lib from thirdparty")
-  ADD_SUBDIRECTORY(liblcms2)
-  SET(LCMS_LIBNAME lcms2 PARENT_SCOPE)
-  SET(LCMS_INCLUDE_DIRNAME ${OPENJPEG_SOURCE_DIR}/thirdparty/liblcms2/include PARENT_SCOPE) #
-  SET(OPJ_HAVE_LCMS2_H 1 PARENT_SCOPE)
-  SET(OPJ_HAVE_LIBLCMS2 1 PARENT_SCOPE)
+  include(CMakeLists.lcms2)
 ELSE (BUILD_THIRDPARTY)
   FIND_PACKAGE(LCMS2)
   IF(LCMS2_FOUND)

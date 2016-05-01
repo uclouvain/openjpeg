@@ -1,0 +1,9 @@
+[submodule "liblcms2"]
+	path = thirdparty/liblcms2
+	url = https://github.com/mm2/Little-CMS.git
+[submodule "libpng"]
+	path = thirdparty/libpng
+	url = https://github.com/glennrp/libpng.git
+[submodule "zlib"]
+	path = thirdparty/zlib
+	url = https://github.com/madler/zlib.git
