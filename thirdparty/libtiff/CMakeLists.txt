@@ -59,7 +59,7 @@ IF(UNIX)
   # This might not catch every possibility catered for by
   # AC_SYS_LARGEFILE.
   add_definitions(-D_FILE_OFFSET_BITS=64)
-  set(FILE_OFFSET_BITS 64)
+  set(_FILE_OFFSET_BITS 64)
 ELSE()
   SET(TARGET_FILES ${TARGET_FILES} tif_win32.c)
 ENDIF()
