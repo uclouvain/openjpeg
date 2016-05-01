@@ -1,0 +1,3 @@
+[submodule "liblcms2"]
+	path = thirdparty/liblcms2
+	url = https://github.com/mm2/Little-CMS.git
