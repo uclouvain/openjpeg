@@ -58,6 +58,7 @@ IF(UNIX)
   # Large file support
   # This might not catch every possibility catered for by
   # AC_SYS_LARGEFILE.
+  add_definitions(-D_FILE_OFFSET_BITS=64)
   set(FILE_OFFSET_BITS 64)
 ELSE()
   SET(TARGET_FILES ${TARGET_FILES} tif_win32.c)
@@ -74,6 +75,7 @@ endif()
 include(CheckIncludeFiles)
 include(CheckSymbolExists)
 include(CheckFunctionExists)
+include(CheckCSourceCompiles)
 
 CHECK_INCLUDE_FILES("zlib.h" HAVE_ZLIB_H)
 CHECK_INCLUDE_FILES("jpeglib.h" HAVE_JPEGLIB_H)
@@ -138,7 +140,19 @@ CHECK_FUNCTION_EXISTS(strstr HAVE_STRSTR)
 CHECK_FUNCTION_EXISTS(strtol HAVE_STRTOL)
 CHECK_FUNCTION_EXISTS(strtoul HAVE_STRTOUL)
 CHECK_FUNCTION_EXISTS(strtoull HAVE_STRTOULL)
-CHECK_FUNCTION_EXISTS(snprintf HAVE_SNPRINTF)
+
+# May be inlined, so check it compiles:
+check_c_source_compiles("
+#include <stdio.h>
+int main(void) {
+  char buf[10];
+  snprintf(buf, 10, \"Test %d\", 1);
+  return 0;
+}" HAVE_SNPRINTF)
+
+if(NOT HAVE_SNPRINTF)
+  SET(TARGET_FILES ${TARGET_FILES} snprintf.c)
+endif()
 
 include(CheckTypeSize)
 
