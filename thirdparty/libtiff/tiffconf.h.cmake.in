@@ -15,6 +15,39 @@
 #include <unistd.h>
 #endif
 
+/* Signed 16-bit type */
+#define TIFF_INT16_T @TIFF_INT16_T@
+
+/* Signed 32-bit type */
+#define TIFF_INT32_T @TIFF_INT32_T@
+
+/* Signed 64-bit type */
+#define TIFF_INT64_T @TIFF_INT64_T@
+
+/* Signed 8-bit type */
+#define TIFF_INT8_T @TIFF_INT8_T@
+
+/* Unsigned 16-bit type */
+#define TIFF_UINT16_T @TIFF_UINT16_T@
+
+/* Unsigned 32-bit type */
+#define TIFF_UINT32_T @TIFF_UINT32_T@
+
+/* Unsigned 64-bit type */
+#define TIFF_UINT64_T @TIFF_UINT64_T@
+
+/* Unsigned 8-bit type */
+#define TIFF_UINT8_T @TIFF_UINT8_T@
+
+/* Unsigned size type */
+#define TIFF_SIZE_T @TIFF_SIZE_T@
+
+/* Signed size type */
+#define TIFF_SSIZE_T @TIFF_SSIZE_T@
+
+/* Pointer difference type */
+#define TIFF_PTRDIFF_T @TIFF_PTRDIFF_T@
+
 /* Define as 0 or 1 according to the floating point format suported by the
    machine */
 #define HAVE_IEEEFP 1

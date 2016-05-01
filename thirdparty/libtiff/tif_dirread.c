@@ -1,4 +1,4 @@
-/* $Id: tif_dirread.c,v 1.187 2015-05-31 21:09:33 bfriesen Exp $ */
+/* $Id: tif_dirread.c,v 1.191 2015-09-05 20:31:41 bfriesen Exp $ */
 
 /*
  * Copyright (c) 1988-1997 Sam Leffler
@@ -3174,11 +3174,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryCheckRangeLongSlong(int32 value)
 /*
  * Largest 32-bit unsigned integer value.
  */
-#if defined(__WIN32__) && defined(_MSC_VER)
-# define TIFF_UINT32_MAX 0xFFFFFFFFI64
-#else
-# define TIFF_UINT32_MAX 0xFFFFFFFFLL
-#endif
+#define TIFF_UINT32_MAX 0xFFFFFFFFU
 
 static enum TIFFReadDirEntryErr
 TIFFReadDirEntryCheckRangeLongLong8(uint64 value)
@@ -3192,7 +3188,7 @@ TIFFReadDirEntryCheckRangeLongLong8(uint64 value)
 static enum TIFFReadDirEntryErr
 TIFFReadDirEntryCheckRangeLongSlong8(int64 value)
 {
-	if ((value<0) || (value > TIFF_UINT32_MAX))
+	if ((value < 0) || (value > (int64) TIFF_UINT32_MAX))
 		return(TIFFReadDirEntryErrRange);
 	else
 		return(TIFFReadDirEntryErrOk);
@@ -3209,19 +3205,21 @@ TIFFReadDirEntryCheckRangeSlongLong(uint32 value)
 		return(TIFFReadDirEntryErrOk);
 }
 
+/* Check that the 8-byte unsigned value can fit in a 4-byte unsigned range */
 static enum TIFFReadDirEntryErr
 TIFFReadDirEntryCheckRangeSlongLong8(uint64 value)
 {
-	if (value > 0x7FFFFFFFUL)
+	if (value > 0x7FFFFFFF)
 		return(TIFFReadDirEntryErrRange);
 	else
 		return(TIFFReadDirEntryErrOk);
 }
 
+/* Check that the 8-byte signed value can fit in a 4-byte signed range */
 static enum TIFFReadDirEntryErr
 TIFFReadDirEntryCheckRangeSlongSlong8(int64 value)
 {
-	if ((value < 0L-0x80000000L) || (value > 0x7FFFFFFFL))
+        if ((value < 0-((int64) 0x7FFFFFFF+1)) || (value > 0x7FFFFFFF))
 		return(TIFFReadDirEntryErrRange);
 	else
 		return(TIFFReadDirEntryErrOk);
@@ -3266,11 +3264,7 @@ TIFFReadDirEntryCheckRangeLong8Slong8(int64 value)
 /*
  * Largest 64-bit signed integer value.
  */
-#if defined(__WIN32__) && defined(_MSC_VER)
-# define TIFF_INT64_MAX 0x7FFFFFFFFFFFFFFFI64
-#else
-# define TIFF_INT64_MAX 0x7FFFFFFFFFFFFFFFLL
-#endif
+#define TIFF_INT64_MAX ((int64)(((uint64) ~0) >> 1))
 
 static enum TIFFReadDirEntryErr
 TIFFReadDirEntryCheckRangeSlong8Long8(uint64 value)
