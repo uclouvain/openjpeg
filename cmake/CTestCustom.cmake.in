@@ -25,6 +25,9 @@ set(CTEST_CUSTOM_COVERAGE_EXCLUDE
 set(CTEST_CUSTOM_WARNING_EXCEPTION
   ${CTEST_CUSTOM_WARNING_EXCEPTION}
 
+  # Ignore clang's summary warning, assuming prior text has matched some
+  # other warning expression:
+  "[0-9,]+ warnings? generated."
   # Suppress warning caused by intentional messages about deprecation
   ".*warning,.* is deprecated"
   # java also warns about deprecated API
