@@ -1,20 +1,21 @@
 project(libpng C)
 
+file(INSTALL ${CMAKE_CURRENT_SOURCE_DIR}/libpng/png.h ${CMAKE_CURRENT_SOURCE_DIR}/libpng/pngconf.h DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/libpng/scripts/pnglibconf.h.prebuilt ${CMAKE_CURRENT_BINARY_DIR}/pnglibconf.h)
+
 include_directories(
-  "${CMAKE_CURRENT_SOURCE_DIR}"
-  ${OPENJPEG_SOURCE_DIR}/thirdparty/include
+  "${CMAKE_CURRENT_SOURCE_DIR}/libpng"
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}/../libz
 )
 
-file(GLOB SRCS *.c)
-file(GLOB HDRS *.h)
-set(EXT_HDRS
- ${OPENJPEG_SOURCE_DIR}/thirdparty/include/zlib.h
- ${OPENJPEG_SOURCE_DIR}/thirdparty/include/zconf.h
-)
+file(GLOB SRCS libpng/*.c)
+file(GLOB HDRS libpng/*.h)
+
 #
 set(LIBTARGET "png")
 #
-add_library(${LIBTARGET} STATIC ${SRCS} ${HDRS} ${EXT_HDRS})
+add_library(${LIBTARGET} STATIC ${SRCS} ${HDRS})
 #
 if(MSVC)
   set_target_properties(${LIBTARGET} PROPERTIES PREFIX "lib")
