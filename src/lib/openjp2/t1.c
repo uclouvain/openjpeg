@@ -1662,7 +1662,7 @@ static void opj_t1_encode_cblk(opj_t1_t *t1,
 			bpno--;
 		}
 
-		if (pass->term && bpno > 0) {
+		if (pass->term) {
 			type = ((bpno < ((OPJ_INT32) (cblk->numbps) - 4)) && (passtype < 2) && (cblksty & J2K_CCP_CBLKSTY_LAZY)) ? T1_TYPE_RAW : T1_TYPE_MQ;
 			if (type == T1_TYPE_RAW)
 				opj_mqc_bypass_init_enc(mqc);
