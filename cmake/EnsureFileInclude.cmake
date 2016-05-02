@@ -1,5 +1,5 @@
 # Ensure that an include file is provided by the system
-# Add the check about the mandatory status to the check_include_file macro 
+# Add the check about the mandatory status to the check_include_file macro
 # provided by cmake
 
 include (${CMAKE_ROOT}/Modules/CheckIncludeFile.cmake)

@@ -1,12 +1,12 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+cmake_minimum_required(VERSION 2.6)
 project(libtiff C)
 # This convenient copy of libtiff does not support encapsulated zlib or jpeg
 # stream. see ZIP_SUPPORT and JPEG_SUPPORT values
 
-INCLUDE_DIRECTORIES(BEFORE "${CMAKE_CURRENT_SOURCE_DIR}")
-INCLUDE_DIRECTORIES(BEFORE "${CMAKE_CURRENT_BINARY_DIR}")
+include_directories(BEFORE "${CMAKE_CURRENT_SOURCE_DIR}")
+include_directories(BEFORE "${CMAKE_CURRENT_BINARY_DIR}")
 
-SET(TARGET_FILES
+set(TARGET_FILES
   t4.h
   tiffiop.h
   tif_aux.c
@@ -53,16 +53,16 @@ SET(TARGET_FILES
   uvcode.h
   )
 
-IF(UNIX)
-  SET(TARGET_FILES ${TARGET_FILES} tif_unix.c)
+if(UNIX)
+  set(TARGET_FILES ${TARGET_FILES} tif_unix.c)
   # Large file support
   # This might not catch every possibility catered for by
   # AC_SYS_LARGEFILE.
   add_definitions(-D_FILE_OFFSET_BITS=64)
   set(_FILE_OFFSET_BITS 64)
-ELSE()
-  SET(TARGET_FILES ${TARGET_FILES} tif_win32.c)
-ENDIF()
+else()
+  set(TARGET_FILES ${TARGET_FILES} tif_win32.c)
+endif()
 
 include(${CMAKE_ROOT}/Modules/TestBigEndian.cmake)
 TEST_BIG_ENDIAN(WORDS_BIGENDIAN)
@@ -151,7 +151,7 @@ int main(void) {
 }" HAVE_SNPRINTF)
 
 if(NOT HAVE_SNPRINTF)
-  SET(TARGET_FILES ${TARGET_FILES} snprintf.c)
+  set(TARGET_FILES ${TARGET_FILES} snprintf.c)
 endif()
 
 include(CheckTypeSize)
@@ -250,28 +250,28 @@ CHECK_SYMBOL_EXISTS(lfind "search.h" HAVE_LFIND)
 CHECK_SYMBOL_EXISTS(setmod "io.h" HAVE_SETMODE)
 
 # http://www.cmake.org/pipermail/cmake/2007-September/016285.html
-FOREACH(KEYWORD "inline" "__inline__" "__inline")
-  IF(NOT DEFINED C_INLINE)
-    TRY_COMPILE(C_HAS_${KEYWORD} "${CMAKE_CURRENT_BINARY_DIR}"
+foreach(KEYWORD "inline" "__inline__" "__inline")
+  if(NOT DEFINED C_INLINE)
+    try_compile(C_HAS_${KEYWORD} "${CMAKE_CURRENT_BINARY_DIR}"
        "${CMAKE_CURRENT_SOURCE_DIR}/test_inline.c"
        COMPILE_DEFINITIONS "-Dinline=${KEYWORD}")
-    IF(C_HAS_${KEYWORD})
-      SET(C_INLINE TRUE)
-      SET(INLINE_KEYWORD "${KEYWORD}")
-    ENDIF(C_HAS_${KEYWORD})
-  ENDIF(NOT DEFINED C_INLINE)
-ENDFOREACH(KEYWORD)
+    if(C_HAS_${KEYWORD})
+      set(C_INLINE TRUE)
+      set(INLINE_KEYWORD "${KEYWORD}")
+    endif(C_HAS_${KEYWORD})
+  endif(NOT DEFINED C_INLINE)
+endforeach(KEYWORD)
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/tiffconf.h.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/tiffconf.h @ONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/tif_config.h.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/tif_config.h @ONLY)
 
-SET(LIBTARGET "tiff")
+set(LIBTARGET "tiff")
 #
-ADD_LIBRARY(${LIBTARGET} STATIC ${TARGET_FILES})
+add_library(${LIBTARGET} STATIC ${TARGET_FILES})
 #
-SET_TARGET_PROPERTIES(${LIBTARGET}
+set_target_properties(${LIBTARGET}
   PROPERTIES
   OUTPUT_NAME "${LIBTARGET}"
   ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/thirdparty/lib

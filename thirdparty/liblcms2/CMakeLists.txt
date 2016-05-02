@@ -1,19 +1,19 @@
-PROJECT(liblcms2 C)
+project(liblcms2 C)
 #
-INCLUDE_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}/include")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include")
 #
-FILE(GLOB SRCS src/*.c)
-FILE(GLOB HDRS include/*.h)
+file(GLOB SRCS src/*.c)
+file(GLOB HDRS include/*.h)
 #
-SET(LIBTARGET "lcms2")
+set(LIBTARGET "lcms2")
 #
-ADD_LIBRARY(${LIBTARGET} STATIC ${SRCS} ${HDRS})
+add_library(${LIBTARGET} STATIC ${SRCS} ${HDRS})
 #
-IF(MSVC)
-  SET_TARGET_PROPERTIES(${LIBTARGET} PROPERTIES PREFIX "lib")
-ENDIF(MSVC)
+if(MSVC)
+  set_target_properties(${LIBTARGET} PROPERTIES PREFIX "lib")
+endif(MSVC)
 #
-SET_TARGET_PROPERTIES(${LIBTARGET}
+set_target_properties(${LIBTARGET}
   PROPERTIES
   OUTPUT_NAME "${LIBTARGET}"
   ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/thirdparty/lib)

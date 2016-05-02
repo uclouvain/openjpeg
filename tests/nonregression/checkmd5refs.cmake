@@ -43,11 +43,11 @@ file(READ ${REFFILE} variable)
 foreach(pgxfullpath ${globfiles})
   file(MD5 ${pgxfullpath} output)
   get_filename_component(pgxfile ${pgxfullpath} NAME)
-  
+
   string(REGEX MATCH "[0-9a-f]+  ${pgxfile}" output_var "${variable}")
 
   set(output "${output}  ${pgxfile}")
-  
+
   if("${output_var}" STREQUAL "${output}")
     message(STATUS "equal: [${output_var}] vs [${output}]")
   else()

@@ -1,28 +1,28 @@
-PROJECT(libpng C)
+project(libpng C)
 
-INCLUDE_DIRECTORIES(
+include_directories(
   "${CMAKE_CURRENT_SOURCE_DIR}"
   ${OPENJPEG_SOURCE_DIR}/thirdparty/include
 )
 
-FILE(GLOB SRCS *.c)
-FILE(GLOB HDRS *.h)
-SET(EXT_HDRS
+file(GLOB SRCS *.c)
+file(GLOB HDRS *.h)
+set(EXT_HDRS
  ${OPENJPEG_SOURCE_DIR}/thirdparty/include/zlib.h
  ${OPENJPEG_SOURCE_DIR}/thirdparty/include/zconf.h
 )
 #
-SET(LIBTARGET "png")
+set(LIBTARGET "png")
 #
-ADD_LIBRARY(${LIBTARGET} STATIC ${SRCS} ${HDRS} ${EXT_HDRS})
+add_library(${LIBTARGET} STATIC ${SRCS} ${HDRS} ${EXT_HDRS})
 #
-IF(MSVC)
-  SET_TARGET_PROPERTIES(${LIBTARGET} PROPERTIES PREFIX "lib")
-ENDIF(MSVC)
+if(MSVC)
+  set_target_properties(${LIBTARGET} PROPERTIES PREFIX "lib")
+endif(MSVC)
 #
-TARGET_LINK_LIBRARIES(${LIBTARGET} ${Z_LIBNAME} ${M_LIBRARY})
+target_link_libraries(${LIBTARGET} ${Z_LIBNAME} ${M_LIBRARY})
 #
-SET_TARGET_PROPERTIES(${LIBTARGET}
+set_target_properties(${LIBTARGET}
 	PROPERTIES
     OUTPUT_NAME "${LIBTARGET}"
 	ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/thirdparty/lib)
