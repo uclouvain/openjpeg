@@ -1,4 +1,4 @@
-# UNIT TESTS 
+# UNIT TESTS
 
 include_directories(
   ${OPENJPEG_BINARY_DIR}/src/lib/openjp2 # opj_config.h

@@ -5,9 +5,9 @@ include_directories(
   ${OPENJPEG_BINARY_DIR}/src/lib/openjp2 # opj_config.h
   )
 
-SET(OPENJP3D_LIBRARY_NAME openjp3d)
+set(OPENJP3D_LIBRARY_NAME openjp3d)
 # Defines the source code for the library
-SET(OPENJP3D_SRCS
+set(OPENJP3D_SRCS
 bio.c  cio.c  dwt.c  event.c  jp3d.c  jp3d_lib.c  mct.c  mqc.c  openjp3d.c
 pi.c  raw.c  t1.c  t1_3d.c  t2.c  tcd.c  tgt.c  volume.c
 )
@@ -34,7 +34,7 @@ endif()
 # Install library
 install(TARGETS ${OPENJP3D_LIBRARY_NAME}
   EXPORT OpenJP3DTargets
-  DESTINATION ${OPENJPEG_INSTALL_LIB_DIR} 
+  DESTINATION ${OPENJPEG_INSTALL_LIB_DIR}
   COMPONENT Libraries
 )
 

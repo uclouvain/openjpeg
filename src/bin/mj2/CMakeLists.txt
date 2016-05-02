@@ -37,11 +37,11 @@ foreach(exe
     APPEND PROPERTY COMPILE_DEFINITIONS USE_MJ2
   )
   target_link_libraries(${exe} ${LCMS_LIBNAME} openmj2)
-  
+
   if(UNIX)
     target_link_libraries(${exe} m)
   endif()
-  
+
   install(TARGETS ${exe}
   	DESTINATION ${OPENJPEG_INSTALL_BIN_DIR})
 endforeach()
