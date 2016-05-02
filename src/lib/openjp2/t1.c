@@ -1180,7 +1180,10 @@ static OPJ_BOOL opj_t1_allocate_buffers(
 			}
 			t1->datasize=datasize;
 		}
-		memset(t1->data,0,datasize * sizeof(OPJ_INT32));
+		/* memset first arg is declared to never be null by gcc */
+		if (t1->data != NULL) {
+			memset(t1->data,0,datasize * sizeof(OPJ_INT32));
+		}
 	}
 	t1->flags_stride=w+2;
 	flagssize=t1->flags_stride * (h+2);
