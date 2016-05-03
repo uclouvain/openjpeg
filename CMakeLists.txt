@@ -318,6 +318,9 @@ if(BUILD_TESTING)
   endif()
 endif()
 
+# Allow the use of CTEST_USE_LAUNCHERS even when not including CTest (mingw builds)
+include(CTestUseLaunchers OPTIONAL)
+
 #-----------------------------------------------------------------------------
 # install all targets referenced as OPENJPEGTargets
 install(EXPORT OpenJPEGTargets DESTINATION ${OPENJPEG_INSTALL_PACKAGE_DIR})
