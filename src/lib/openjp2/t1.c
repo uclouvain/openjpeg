@@ -1662,7 +1662,7 @@ static void opj_t1_encode_cblk(opj_t1_t *t1,
 			bpno--;
 		}
 
-		if (pass->term && bpno > 0) {
+        if (pass->term) {
 			type = ((bpno < ((OPJ_INT32) (cblk->numbps) - 4)) && (passtype < 2) && (cblksty & J2K_CCP_CBLKSTY_LAZY)) ? T1_TYPE_RAW : T1_TYPE_MQ;
 			if (type == T1_TYPE_RAW)
 				opj_mqc_bypass_init_enc(mqc);
@@ -1691,7 +1691,7 @@ static void opj_t1_encode_cblk(opj_t1_t *t1,
 		if (pass->rate > opj_mqc_numbytes(mqc))
 			pass->rate = opj_mqc_numbytes(mqc);
 		/*Preventing generation of FF as last data byte of a pass*/
-		if((pass->rate>1) && (cblk->data[pass->rate - 1] == 0xFF)){
+        if(!(cblksty & J2K_CCP_CBLKSTY_LAZY) && (pass->rate>1) && (cblk->data[pass->rate - 1] == 0xFF)){
 			pass->rate--;
 		}
 		pass->len = pass->rate - (passno == 0 ? 0 : cblk->passes[passno - 1].rate);
