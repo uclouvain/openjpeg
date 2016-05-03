@@ -62,7 +62,7 @@ if [ "${OPJ_CI_SKIP_TESTS:-}" != "1" ]; then
 	git clone --depth=1 --branch=${OPJ_DATA_BRANCH} git://github.com/uclouvain/openjpeg-data.git data
 
 	# We need jpylyzer for the test suite
-    JPYLYZER_VERSION="1.17.0"    
+	JPYLYZER_VERSION="1.17.0"    
 	echo "Retrieving jpylyzer"
 	if [ "${APPVEYOR:-}" == "True" ]; then
 		wget --local-encoding=UTF-8 -q http://dl.bintray.com/openplanets/opf-windows/jpylyzer_${JPYLYZER_VERSION}_win32.zip
