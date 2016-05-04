@@ -111,12 +111,12 @@ configure_file(	${CMAKE_CURRENT_SOURCE_DIR}/zlib/zconf.h.cmakein
 		${CMAKE_CURRENT_BINARY_DIR}/zlib-inc/zconf.h @ONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/zlib/zlib.h
 		${CMAKE_CURRENT_BINARY_DIR}/zlib-inc/zlib.h COPYONLY)
-		
-include_directories(${CMAKE_CURRENT_BINARY_DIR}/zlib-inc ${CMAKE_CURRENT_BINARY_DIR}/zlib-src)
-
 
 #============================================================================
 # zlib
 #============================================================================
 
 add_library(zlibstatic STATIC ${ZLIB_SOURCES} ${ZLIB_PUBLIC_HDRS})
+
+get_property(ZLIB_TARGET_INC TARGET zlibstatic PROPERTY INCLUDE_DIRECTORIES)
+set_property(TARGET zlibstatic PROPERTY INCLUDE_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/zlib-inc;${CMAKE_CURRENT_BINARY_DIR}/zlib-src;${ZLIB_TARGET_INC})
