@@ -1,17 +1,13 @@
 # 3rd party libs
 
-function(include_thirdparty THIRDPARTY_CMAKELISTS)
-  include(${THIRDPARTY_CMAKELISTS})
-endfunction(include_thirdparty)
-
 #------------
 # Try to find lib Z
 if(BUILD_THIRDPARTY)
   # Try to build it
   message(STATUS "We will build Z lib from thirdparty")
-  include_thirdparty(CMakeLists.txt.zlib)
+  add_subdirectory(zlib)
   set(Z_LIBNAME zlibstatic PARENT_SCOPE)
-  set(Z_INCLUDE_DIRNAME ${CMAKE_CURRENT_BINARY_DIR}/zlib-inc PARENT_SCOPE)
+  set(Z_INCLUDE_DIRNAME ${CMAKE_CURRENT_BINARY_DIR}/zlib PARENT_SCOPE)
   set(ZLIB_FOUND 1)
 else(BUILD_THIRDPARTY)
   # Try to find lib Z
@@ -32,11 +28,11 @@ endif(BUILD_THIRDPARTY)
 if(BUILD_THIRDPARTY)
   # Try to build it
   message(STATUS "We will build PNG lib from thirdparty")
-  include_thirdparty(CMakeLists.txt.libpng)
+  add_subdirectory(libpng)
   set(OPJ_HAVE_PNG_H 1 PARENT_SCOPE)
   set(OPJ_HAVE_LIBPNG 1 PARENT_SCOPE)
-  set(PNG_LIBNAME png PARENT_SCOPE)
-  set(PNG_INCLUDE_DIRNAME ${CMAKE_CURRENT_BINARY_DIR}/libpng-inc PARENT_SCOPE)
+  set(PNG_LIBNAME pngstatic PARENT_SCOPE)
+  set(PNG_INCLUDE_DIRNAME ${CMAKE_CURRENT_BINARY_DIR}/libpng PARENT_SCOPE)
 else(BUILD_THIRDPARTY)
   if(ZLIB_FOUND)
     find_package(PNG)
