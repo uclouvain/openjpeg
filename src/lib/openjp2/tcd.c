@@ -720,7 +720,8 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
 		
 		/* compute l_data_size with overflow check */
 		l_data_size = (OPJ_UINT32)(l_tilec->x1 - l_tilec->x0);
-		if ((((OPJ_UINT32)-1) / l_data_size) < (OPJ_UINT32)(l_tilec->y1 - l_tilec->y0)) {
+		/* issue 733, l_data_size == 0U, probably something wrong should be checked before getting here */
+		if ((l_data_size > 0U) && ((((OPJ_UINT32)-1) / l_data_size) < (OPJ_UINT32)(l_tilec->y1 - l_tilec->y0))) {
 			opj_event_msg(manager, EVT_ERROR, "Not enough memory for tile data\n");
 			return OPJ_FALSE;
 		}
