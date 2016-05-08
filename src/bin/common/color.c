@@ -855,7 +855,14 @@ void color_cmyk_to_rgb(opj_image_t *image)
 	w = image->comps[0].w;
 	h = image->comps[0].h;
 
-	if(image->numcomps < 4) return;
+	if (
+			(image->numcomps < 4)
+		 || (image->comps[0].dx != image->comps[1].dx) || (image->comps[0].dx != image->comps[2].dx) || (image->comps[0].dx != image->comps[3].dx)
+		 || (image->comps[0].dy != image->comps[1].dy) || (image->comps[0].dy != image->comps[2].dy) || (image->comps[0].dy != image->comps[3].dy)
+			) {
+		fprintf(stderr,"%s:%d:color_cmyk_to_rgb\n\tCAN NOT CONVERT\n", __FILE__,__LINE__);
+		return;
+	}
 
 	max = w * h;
 	
