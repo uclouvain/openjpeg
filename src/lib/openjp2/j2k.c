@@ -8889,6 +8889,10 @@ static OPJ_BOOL opj_j2k_read_SPCod_SPCoc(  opj_j2k_t *p_j2k,
 
         opj_read_bytes(l_current_ptr,&l_tccp->cblksty ,1);              /* SPcoc (G) */
         ++l_current_ptr;
+        if (l_tccp->cblksty & 0xC0U) { /* 2 msb are reserved, assume we can't read */
+                opj_event_msg(p_manager, EVT_ERROR, "Error reading SPCod SPCoc element, Invalid code-block style found\n");
+                return OPJ_FALSE;
+        }
 
         opj_read_bytes(l_current_ptr,&l_tccp->qmfbid ,1);               /* SPcoc (H) */
         ++l_current_ptr;

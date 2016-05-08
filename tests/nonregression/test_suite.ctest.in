@@ -561,3 +561,6 @@ opj_decompress -i @INPUT_NR_PATH@/issue726.j2k -o @TEMP_PATH@/issue726.png
 !opj_decompress -i @INPUT_NR_PATH@/issue733.jp2 -o @TEMP_PATH@/issue733.png
 # issue 774
 !opj_decompress -i @INPUT_NR_PATH@/issue774.jp2 -o @TEMP_PATH@/issue774.png
+# issue 775
+!opj_decompress -i @INPUT_NR_PATH@/issue775.j2k -o @TEMP_PATH@/issue775.png
+!opj_decompress -i @INPUT_NR_PATH@/issue775-2.j2k -o @TEMP_PATH@/issue775-2.png
