@@ -50,6 +50,7 @@ set(BLACKLIST_JPEG2000_TMP
     issue429.jp2
     issue427-null-image-size.jp2
     issue427-illegal-tile-offset.jp2
+    issue495.jp2
    )
 
 # Define a list of file which should be gracefully rejected:

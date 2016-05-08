@@ -338,7 +338,7 @@ opj_decompress -i @INPUT_NR_PATH@/issue458.jp2 -o @TEMP_PATH@/issue458.jp2.pgx
 # issue 475 Invalid number of layers
 !opj_decompress -i @INPUT_NR_PATH@/issue475.jp2 -o @TEMP_PATH@/issue475.jp2.pgx
 # issue 495 Overflow op_image_comp_header_updat
-opj_decompress -i @INPUT_NR_PATH@/issue495.jp2 -o @TEMP_PATH@/issue495.jp2.pgx
+!opj_decompress -i @INPUT_NR_PATH@/issue495.jp2 -o @TEMP_PATH@/issue495.jp2.pgx
 
 
 # decode with specific area
