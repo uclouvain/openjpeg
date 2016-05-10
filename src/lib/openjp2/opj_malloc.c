@@ -196,10 +196,10 @@ void * opj_malloc(size_t size)
 }
 void * opj_calloc(size_t num, size_t size)
 {
-  if (size == 0U) { /* prevent implementation defined behavior of realloc */
+  if (num == 0 || size == 0) {
+    /* prevent implementation defined behavior of realloc */
     return NULL;
   }
-  /* according to C89 standard, num == 0 shall return a valid pointer */
   return calloc(num, size);
 }
 
