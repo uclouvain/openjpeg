@@ -36,6 +36,7 @@ set(OPENJPIP_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/session_manager.c
   ${CMAKE_CURRENT_SOURCE_DIR}/jpip_parser.c
   ${CMAKE_CURRENT_SOURCE_DIR}/sock_manager.c
+  ${OPENJPEG_SOURCE_DIR}/src/lib/openjp2/opj_malloc.c
   )
 
 set(SERVER_SRCS
