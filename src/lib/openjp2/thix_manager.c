@@ -49,7 +49,9 @@ int opj_write_thix( int coff, opj_codestream_info_t cstr_info, opj_stream_privat
 
   lenp = 0;
   box = (opj_jp2_box_t *)opj_calloc( (size_t)(cstr_info.tw*cstr_info.th), sizeof(opj_jp2_box_t));
-
+  if(box == NULL){
+	return 0;
+  }
   for ( i = 0; i < 2 ; i++ ){
     if (i)
       opj_stream_seek( cio, lenp, p_manager);

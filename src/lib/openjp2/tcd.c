@@ -486,8 +486,7 @@ OPJ_BOOL opj_tcd_rateallocate(  opj_tcd_t *tcd,
         for (layno = 0; layno < tcd_tcp->numlayers; layno++) {
                 OPJ_FLOAT64 lo = min;
                 OPJ_FLOAT64 hi = max;
-                OPJ_BOOL success = OPJ_FALSE;
-                OPJ_UINT32 maxlen = tcd_tcp->rates[layno] ? opj_uint_min(((OPJ_UINT32) ceil(tcd_tcp->rates[layno])), len) : len;
+                OPJ_UINT32 maxlen = tcd_tcp->rates[layno] > 0.0f ? opj_uint_min(((OPJ_UINT32) ceil(tcd_tcp->rates[layno])), len) : len;
                 OPJ_FLOAT64 goodthresh = 0;
                 OPJ_FLOAT64 stable_thresh = 0;
                 OPJ_UINT32 i;
@@ -500,7 +499,7 @@ OPJ_BOOL opj_tcd_rateallocate(  opj_tcd_t *tcd,
                   -r xx,yy,zz,0   (disto_alloc == 1 and rates == 0)
                   -q xx,yy,zz,0   (fixed_quality == 1 and distoratio == 0)
                   ==> possible to have some lossy layers and the last layer for sure lossless */
-                if ( ((cp->m_specific_param.m_enc.m_disto_alloc==1) && (tcd_tcp->rates[layno]>0)) || ((cp->m_specific_param.m_enc.m_fixed_quality==1) && (tcd_tcp->distoratio[layno]>0))) {
+                if ( ((cp->m_specific_param.m_enc.m_disto_alloc==1) && (tcd_tcp->rates[layno]>0.0f)) || ((cp->m_specific_param.m_enc.m_fixed_quality==1) && (tcd_tcp->distoratio[layno]>0.0))) {
                         opj_t2_t*t2 = opj_t2_create(tcd->image, cp);
                         OPJ_FLOAT64 thresh = 0;
 
@@ -559,17 +558,11 @@ OPJ_BOOL opj_tcd_rateallocate(  opj_tcd_t *tcd,
                                 }
                         }
 
-                        success = OPJ_TRUE;
                         goodthresh = stable_thresh == 0? thresh : stable_thresh;
 
                         opj_t2_destroy(t2);
                 } else {
-                        success = OPJ_TRUE;
                         goodthresh = min;
-                }
-
-                if (!success) {
-                        return OPJ_FALSE;
                 }
 
                 if(cstr_info) { /* Threshold for Marcela Index */
@@ -727,7 +720,8 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
 		
 		/* compute l_data_size with overflow check */
 		l_data_size = (OPJ_UINT32)(l_tilec->x1 - l_tilec->x0);
-		if ((((OPJ_UINT32)-1) / l_data_size) < (OPJ_UINT32)(l_tilec->y1 - l_tilec->y0)) {
+		/* issue 733, l_data_size == 0U, probably something wrong should be checked before getting here */
+		if ((l_data_size > 0U) && ((((OPJ_UINT32)-1) / l_data_size) < (OPJ_UINT32)(l_tilec->y1 - l_tilec->y0))) {
 			opj_event_msg(manager, EVT_ERROR, "Not enough memory for tile data\n");
 			return OPJ_FALSE;
 		}
@@ -778,7 +772,7 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
 			l_tilec->resolutions_size = l_data_size;
 		}
 		
-		l_level_no = l_tilec->numresolutions - 1;
+		l_level_no = l_tilec->numresolutions;
 		l_res = l_tilec->resolutions;
 		l_step_size = l_tccp->stepsizes;
 		if (l_tccp->qmfbid == 0) {
@@ -794,6 +788,8 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
 			OPJ_INT32 tlcbgxstart, tlcbgystart /*, brcbgxend, brcbgyend*/;
 			OPJ_UINT32 cbgwidthexpn, cbgheightexpn;
 			OPJ_UINT32 cblkwidthexpn, cblkheightexpn;
+			
+			--l_level_no;
 			
 			/* border for each resolution level (global) */
 			l_res->x0 = opj_int_ceildivpow2(l_tilec->x0, (OPJ_INT32)l_level_no);
@@ -1024,7 +1020,6 @@ static INLINE OPJ_BOOL opj_tcd_init_tile(opj_tcd_t *p_tcd, OPJ_UINT32 p_tile_no,
 				++l_step_size;
 			} /* bandno */
 			++l_res;
-			--l_level_no;
 		} /* resno */
 		++l_tccp;
 		++l_tilec;
@@ -1911,7 +1906,7 @@ static OPJ_BOOL opj_tcd_dc_level_shift_encode ( opj_tcd_t *p_tcd )
                 }
                 else {
                         for (i = 0; i < l_nb_elem; ++i) {
-                                *l_current_ptr = (*l_current_ptr - l_tccp->m_dc_level_shift) << 11 ;
+                                *l_current_ptr = (*l_current_ptr - l_tccp->m_dc_level_shift) * (1 << 11);
                                 ++l_current_ptr;
                         }
                 }

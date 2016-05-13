@@ -40,10 +40,12 @@
 
 static int t1_init_ctxno_zc(int f, int orient) {
 	int h, v, d, n, t, hv;
-	n = 0;
 	h = ((f & T1_SIG_W) != 0) + ((f & T1_SIG_E) != 0);
 	v = ((f & T1_SIG_N) != 0) + ((f & T1_SIG_S) != 0);
 	d = ((f & T1_SIG_NW) != 0) + ((f & T1_SIG_NE) != 0) + ((f & T1_SIG_SE) != 0) + ((f & T1_SIG_SW) != 0);
+	n = 0;
+	t = 0;
+	hv = 0;
 
 	switch (orient) {
 		case 2:

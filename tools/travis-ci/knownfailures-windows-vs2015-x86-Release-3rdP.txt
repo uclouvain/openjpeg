@@ -1,5 +1,3 @@
 NR-ENC-Bretagne2.ppm-7-compare_dec-ref-out2base
-NR-DEC-kodak_2layers_lrcp.j2c-31-decode-md5
-NR-DEC-kodak_2layers_lrcp.j2c-32-decode-md5
 ETS-C1P0-p0_12.j2k-compare2ref
 NR-C1P0-p0_12.j2k-compare2base

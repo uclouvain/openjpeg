@@ -37,9 +37,9 @@ fi
 
 if [ "${OPJ_CI_ASAN:-}" == "1" ]; then
 	# We need a new version of cmake than travis-ci provides
-	wget --no-check-certificate -qO - https://cmake.org/files/v3.3/cmake-3.3.2-Linux-x86_64.tar.gz | tar -xz
+	wget --no-check-certificate -qO - https://cmake.org/files/v3.5/cmake-3.5.2-Linux-x86_64.tar.gz | tar -xz
 	# copy to a directory that will not changed every version
-	mv cmake-3.3.2-Linux-x86_64 cmake-install
+	mv cmake-3.5.2-Linux-x86_64 cmake-install
 fi
 
 if [ "${OPJ_CI_SKIP_TESTS:-}" != "1" ]; then
@@ -62,16 +62,17 @@ if [ "${OPJ_CI_SKIP_TESTS:-}" != "1" ]; then
 	git clone --depth=1 --branch=${OPJ_DATA_BRANCH} git://github.com/uclouvain/openjpeg-data.git data
 
 	# We need jpylyzer for the test suite
+    JPYLYZER_VERSION="1.17.0"    
 	echo "Retrieving jpylyzer"
 	if [ "${APPVEYOR:-}" == "True" ]; then
-		wget --local-encoding=UTF-8 -q http://dl.bintray.com/openplanets/opf-windows/jpylyzer_1.14.2_win32.zip
+		wget --local-encoding=UTF-8 -q http://dl.bintray.com/openplanets/opf-windows/jpylyzer_${JPYLYZER_VERSION}_win32.zip
 		mkdir jpylyzer
 		cd jpylyzer
-		cmake -E tar -xf ../jpylyzer_1.14.2_win32.zip
+		cmake -E tar -xf ../jpylyzer_${JPYLYZER_VERSION}_win32.zip
 		cd ..
 	else
-		wget -qO - https://github.com/openpreserve/jpylyzer/archive/1.14.2.tar.gz | tar -xz
-		mv jpylyzer-1.14.2/jpylyzer ./
+		wget -qO - https://github.com/openpreserve/jpylyzer/archive/${JPYLYZER_VERSION}.tar.gz | tar -xz
+		mv jpylyzer-${JPYLYZER_VERSION}/jpylyzer ./
 		chmod +x jpylyzer/jpylyzer.py
 	fi
 
@@ -113,4 +114,34 @@ if [ "${OPJ_CI_SKIP_TESTS:-}" != "1" ]; then
 			fi
 		fi
 	fi
+fi
+
+# Install clang if necessary.
+# clang-3.4 is available on base image
+# For more up-to-date versions, use packages from http://llvm.org/apt
+# Cannot use addons.apt.packages because clang-3.9 is currently on hold
+# (see https://github.com/travis-ci/apt-package-whitelist/pull/2780 or https://github.com/travis-ci/apt-package-whitelist/pull/2770)
+# "sudo: required" should be set in .travis.yml matrix for those configurations
+if echo "${CC:-}" | egrep -q "^clang-3.[7-9]?$" ; then
+  case "${CC:-}" in
+  clang-3.7)
+    echo "deb http://llvm.org/apt/precise/ llvm-toolchain-precise-3.7 main" | sudo tee /etc/apt/sources.list.d/llvm.list
+    ;;
+  clang-3.8)
+    echo "deb http://llvm.org/apt/precise/ llvm-toolchain-precise-3.8 main" | sudo tee /etc/apt/sources.list.d/llvm.list
+    ;;
+  clang-3.9)
+    echo "deb http://llvm.org/apt/precise/ llvm-toolchain-precise main" | sudo tee /etc/apt/sources.list.d/llvm.list
+    ;;
+  *)
+    echo "We should never have been there. Exiting..."
+    exit 1
+  esac
+  wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key | sudo apt-key add -
+
+  # On precise, ubuntu-toolchain ppa must be installed also (see http://llvm.org/apt)
+  sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
+
+  sudo apt-get update -qq
+  sudo apt-get install "${CC:-}" -y
 fi

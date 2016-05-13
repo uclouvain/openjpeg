@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------
 //
 //  Little Color Management System
-//  Copyright (c) 1998-2010 Marti Maria Saguer
+//  Copyright (c) 1998-2016 Marti Maria Saguer
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the "Software"),
@@ -215,22 +215,6 @@ cmsBool CMSEXPORT  _cmsRead15Fixed16Number(cmsIOHANDLER* io, cmsFloat64Number* n
 }
 
 
-// Jun-21-2000: Some profiles (those that comes with W2K) comes
-// with the media white (media black?) x 100. Add a sanity check
-
-static
-void NormalizeXYZ(cmsCIEXYZ* Dest)
-{
-    while (Dest -> X > 2. &&
-           Dest -> Y > 2. &&
-           Dest -> Z > 2.) {
-
-               Dest -> X /= 10.;
-               Dest -> Y /= 10.;
-               Dest -> Z /= 10.;
-       }
-}
-
 cmsBool CMSEXPORT  _cmsReadXYZNumber(cmsIOHANDLER* io, cmsCIEXYZ* XYZ)
 {
     cmsEncodedXYZNumber xyz;
@@ -244,8 +228,6 @@ cmsBool CMSEXPORT  _cmsReadXYZNumber(cmsIOHANDLER* io, cmsCIEXYZ* XYZ)
         XYZ->X = _cms15Fixed16toDouble(_cmsAdjustEndianess32(xyz.X));
         XYZ->Y = _cms15Fixed16toDouble(_cmsAdjustEndianess32(xyz.Y));
         XYZ->Z = _cms15Fixed16toDouble(_cmsAdjustEndianess32(xyz.Z));
-
-        NormalizeXYZ(XYZ);
     }
     return TRUE;
 }
@@ -525,6 +507,7 @@ void* _cmsPluginMalloc(cmsContext ContextID, cmsUInt32Number size)
         if (ContextID == NULL) {
 
             ctx->MemPool = _cmsCreateSubAlloc(0, 2*1024);
+            if (ctx->MemPool == NULL) return NULL;
         }
         else {
             cmsSignalError(ContextID, cmsERROR_CORRUPTION_DETECTED, "NULL memory pool on context");
@@ -683,15 +666,21 @@ struct _cmsContext_struct* _cmsGetContext(cmsContext ContextID)
 
 
 // Internal: get the memory area associanted with each context client
-// Returns the block assigned to the specific zone. 
+// Returns the block assigned to the specific zone. Never return NULL.
 void* _cmsContextGetClientChunk(cmsContext ContextID, _cmsMemoryClient mc)
 {
     struct _cmsContext_struct* ctx;
     void *ptr;
 
-    if (mc < 0 || mc >= MemoryClientMax) {
-        cmsSignalError(ContextID, cmsERROR_RANGE, "Bad context client");
-        return NULL;
+    if ((int) mc < 0 || mc >= MemoryClientMax) {
+        
+           cmsSignalError(ContextID, cmsERROR_INTERNAL, "Bad context client -- possible corruption");
+
+           // This is catastrophic. Should never reach here
+           _cmsAssert(0);
+
+           // Reverts to global context
+           return globalContext.chunks[UserPtr];
     }
     
     ctx = _cmsGetContext(ContextID);
@@ -880,7 +869,7 @@ cmsContext CMSEXPORT cmsDupContext(cmsContext ContextID, void* NewUserData)
 }
 
 
-
+/*
 static
 struct _cmsContext_struct* FindPrev(struct _cmsContext_struct* id)
 {
@@ -897,6 +886,7 @@ struct _cmsContext_struct* FindPrev(struct _cmsContext_struct* id)
 
     return NULL;  // List is empty or only one element!
 }
+*/
 
 // Frees any resources associated with the given context, 
 // and destroys the context placeholder. 
@@ -932,8 +922,8 @@ void CMSEXPORT cmsDeleteContext(cmsContext ContextID)
 
             // Search for previous
             for (prev = _cmsContextPoolHead; 
-                prev != NULL;
-                prev = prev ->Next)
+                 prev != NULL;
+                 prev = prev ->Next)
             {
                 if (prev -> Next == ctx) {
                     prev -> Next = ctx ->Next;

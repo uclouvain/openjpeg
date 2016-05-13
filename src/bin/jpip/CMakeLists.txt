@@ -60,7 +60,7 @@ endforeach()
 find_package(Java 1.5 COMPONENTS Development) # javac, jar
 
 # User can override this:
-if(NOT DEFINED JAVA_SOURCE_VERSION) 
+if(NOT DEFINED JAVA_SOURCE_VERSION)
   set(JAVA_SOURCE_VERSION 1.5)
 endif()
 if(NOT DEFINED JAVA_TARGET_VERSION)

@@ -102,12 +102,6 @@
  ==========================================================
 */
 
-/* Ignore GCC attributes if this is not GCC */
-#ifndef __GNUC__
-	#define __attribute__(x) /* __attribute__(x) */
-#endif
-
-
 /* Are restricted pointers available? (C99) */
 #if (__STDC_VERSION__ != 199901L)
 	/* Not a C99 compiler */
@@ -118,6 +112,14 @@
 	#endif
 #endif
 
+#ifdef __has_attribute
+	#if __has_attribute(no_sanitize)
+		#define OPJ_NOSANITIZE(kind) __attribute__((no_sanitize(kind)))
+	#endif
+#endif
+#ifndef OPJ_NOSANITIZE
+	#define OPJ_NOSANITIZE(kind)
+#endif
 
 
 /* MSVC before 2013 and Borland C do not have lrintf */

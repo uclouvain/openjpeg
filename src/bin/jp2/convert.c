@@ -611,6 +611,10 @@ static int tga_readheader(FILE *fp, unsigned int *bits_per_pixel,
     if (id_len)
     {
         unsigned char *id = (unsigned char *) malloc(id_len);
+		if(id == 0){
+			fprintf(stderr, "tga_readheader: memory out\n");
+			return 0;
+		}
         if ( !fread(id, id_len, 1, fp) )
         {
             fprintf(stderr, "\nError: fread return a number of element different from the expected.\n");
@@ -1249,6 +1253,7 @@ int imagetopgx(opj_image_t * image, const char *outfile)
 		{
       name = (char*)malloc(total+1);
 			if (name == NULL) {
+				fprintf(stderr, "imagetopgx: memory out\n");
 				goto fin;
 			}
 		}
@@ -1757,7 +1762,7 @@ int imagetopnm(opj_image_t * image, const char *outfile, int force_split)
     const char *tmp = outfile;
     char *destname;
 
-	alpha = NULL;
+    alpha = NULL;
 
     if((prec = (int)image->comps[0].prec) > 16)
     {
@@ -1837,7 +1842,7 @@ int imagetopnm(opj_image_t * image, const char *outfile, int force_split)
             if(two)
             {
                 v = *red + adjustR; ++red;
-if(v > 65535) v = 65535; else if(v < 0) v = 0;
+                if(v > 65535) v = 65535; else if(v < 0) v = 0;
 
                 /* netpbm: */
                 fprintf(fdest, "%c%c",(unsigned char)(v>>8), (unsigned char)v);
@@ -1845,13 +1850,13 @@ if(v > 65535) v = 65535; else if(v < 0) v = 0;
                 if(triple)
                 {
                     v = *green + adjustG; ++green;
-if(v > 65535) v = 65535; else if(v < 0) v = 0;
+                    if(v > 65535) v = 65535; else if(v < 0) v = 0;
 
                     /* netpbm: */
                     fprintf(fdest, "%c%c",(unsigned char)(v>>8), (unsigned char)v);
 
                     v =  *blue + adjustB; ++blue;
-if(v > 65535) v = 65535; else if(v < 0) v = 0;
+                    if(v > 65535) v = 65535; else if(v < 0) v = 0;
 
                     /* netpbm: */
                     fprintf(fdest, "%c%c",(unsigned char)(v>>8), (unsigned char)v);
@@ -1861,7 +1866,7 @@ if(v > 65535) v = 65535; else if(v < 0) v = 0;
                 if(has_alpha)
                 {
                     v = *alpha + adjustA; ++alpha;
-		if(v > 65535) v = 65535; else if(v < 0) v = 0;
+                    if(v > 65535) v = 65535; else if(v < 0) v = 0;
 
                     /* netpbm: */
                     fprintf(fdest, "%c%c",(unsigned char)(v>>8), (unsigned char)v);
@@ -1871,28 +1876,28 @@ if(v > 65535) v = 65535; else if(v < 0) v = 0;
             }	/* if(two) */
 
             /* prec <= 8: */
-	v = *red++;
-	if(v > 255) v = 255; else if(v < 0) v = 0;
+            v = *red++;
+            if(v > 255) v = 255; else if(v < 0) v = 0;
 
-	fprintf(fdest, "%c", (unsigned char)v);
+            fprintf(fdest, "%c", (unsigned char)v);
             if(triple)
- {
-	v = *green++;
-	if(v > 255) v = 255; else if(v < 0) v = 0;
+            {
+                v = *green++;
+                if(v > 255) v = 255; else if(v < 0) v = 0;
 
-	fprintf(fdest, "%c", (unsigned char)v);
-	v = *blue++;
-	if(v > 255) v = 255; else if(v < 0) v = 0;
+                fprintf(fdest, "%c", (unsigned char)v);
+                v = *blue++;
+                if(v > 255) v = 255; else if(v < 0) v = 0;
 
-	fprintf(fdest, "%c", (unsigned char)v);
- }
+                fprintf(fdest, "%c", (unsigned char)v);
+						}
             if(has_alpha)
- {
-	v = *alpha++;
-	if(v > 255) v = 255; else if(v < 0) v = 0;
+            {
+                v = *alpha++;
+                if(v > 255) v = 255; else if(v < 0) v = 0;
 
-	fprintf(fdest, "%c", (unsigned char)v);
- }
+                fprintf(fdest, "%c", (unsigned char)v);
+            }
         }	/* for(i */
 
         fclose(fdest); return 0;
@@ -1906,18 +1911,21 @@ if(v > 65535) v = 65535; else if(v < 0) v = 0;
         fprintf(stderr,"           is written to the file\n");
     }
     destname = (char*)malloc(strlen(outfile) + 8);
-
+    if(destname == NULL){
+        fprintf(stderr, "imagetopnm: memory out\n");
+        return 1;
+    }
     for (compno = 0; compno < ncomp; compno++)
     {
-    if (ncomp > 1)
-      {
-      /*sprintf(destname, "%d.%s", compno, outfile);*/
-      const size_t olen = strlen(outfile);
-      const size_t dotpos = olen - 4;
+        if (ncomp > 1)
+        {
+            /*sprintf(destname, "%d.%s", compno, outfile);*/
+            const size_t olen = strlen(outfile);
+            const size_t dotpos = olen - 4;
 
-      strncpy(destname, outfile, dotpos);
-      sprintf(destname+dotpos, "_%u.pgm", compno);
-      }
+            strncpy(destname, outfile, dotpos);
+            sprintf(destname+dotpos, "_%u.pgm", compno);
+        }
         else
             sprintf(destname, "%s", outfile);
 
@@ -1944,7 +1952,7 @@ if(v > 65535) v = 65535; else if(v < 0) v = 0;
             for (i = 0; i < wr * hr; i++)
             {
                 v = *red + adjustR; ++red;
-if(v > 65535) v = 65535; else if(v < 0) v = 0;
+                if(v > 65535) v = 65535; else if(v < 0) v = 0;
 
                 /* netpbm: */
                 fprintf(fdest, "%c%c",(unsigned char)(v>>8), (unsigned char)v);
@@ -1952,7 +1960,7 @@ if(v > 65535) v = 65535; else if(v < 0) v = 0;
                 if(has_alpha)
                 {
                     v = *alpha++;
-if(v > 65535) v = 65535; else if(v < 0) v = 0;
+                    if(v > 65535) v = 65535; else if(v < 0) v = 0;
 
                     /* netpbm: */
                     fprintf(fdest, "%c%c",(unsigned char)(v>>8), (unsigned char)v);
@@ -1963,10 +1971,10 @@ if(v > 65535) v = 65535; else if(v < 0) v = 0;
         {
             for(i = 0; i < wr * hr; ++i)
             {
-	v = *red + adjustR; ++red;
-	if(v > 255) v = 255; else if(v < 0) v = 0;
+                v = *red + adjustR; ++red;
+                if(v > 255) v = 255; else if(v < 0) v = 0;
 
-	 fprintf(fdest, "%c", (unsigned char)v);
+                fprintf(fdest, "%c", (unsigned char)v);
             }
         }
         fclose(fdest);

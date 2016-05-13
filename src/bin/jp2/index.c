@@ -69,7 +69,7 @@ int write_index_file(opj_codestream_info_t *cstr_info, char *index) {
 		return 1;
 	}
 	
-	if (cstr_info->tile[0].distotile)
+	if (cstr_info->tile[0].distotile > 0.0)
 		disto_on = 1;
 	else 
 		disto_on = 0;

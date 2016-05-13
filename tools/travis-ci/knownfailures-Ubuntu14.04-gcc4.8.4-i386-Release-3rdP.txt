@@ -15,8 +15,6 @@ NR-DEC-_00042.j2k-2-decode-md5
 NR-DEC-buxI.j2k-9-decode-md5
 NR-DEC-CT_Phillips_JPEG2K_Decompr_Problem.j2k-13-decode-md5
 NR-DEC-Marrin.jp2-18-decode-md5
-NR-DEC-kodak_2layers_lrcp.j2c-31-decode-md5
-NR-DEC-kodak_2layers_lrcp.j2c-32-decode-md5
 NR-DEC-file409752.jp2-40-decode-md5
 NR-DEC-issue188_beach_64bitsbox.jp2-41-decode-md5
 NR-DEC-issue206_image-000.jp2-42-decode-md5
@@ -43,3 +41,6 @@ NR-DEC-issue205.jp2-253-decode-md5
 NR-DEC-issue236-ESYCC-CDEF.jp2-254-decode-md5
 NR-DEC-issue559-eci-090-CIELab.jp2-255-decode-md5
 NR-DEC-issue559-eci-091-CIELab.jp2-256-decode-md5
+NR-DEC-kodak_2layers_lrcp.j2c-31-decode-md5
+NR-DEC-kodak_2layers_lrcp.j2c-32-decode-md5
+NR-DEC-issue135.j2k-68-decode-md5

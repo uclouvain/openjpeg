@@ -341,6 +341,9 @@ static int parse_cmdline_decoder(int argc, char **argv, opj_dparameters_t *param
 			case 'y':			/* Image Directory path */
 			{
 				img_fol->imgdirpath = (char*)malloc(strlen(opj_optarg) + 1);
+				if(img_fol->imgdirpath == NULL){
+					return 1;
+				}
 				strcpy(img_fol->imgdirpath,opj_optarg);
 				img_fol->set_imgdir=1;
 			}
@@ -433,12 +436,6 @@ int main(int argc, char *argv[])
 	img_fol_t img_fol;
 	dircnt_t *dirptr = NULL;
 
-#ifdef MSD
-	OPJ_BOOL l_go_on = OPJ_TRUE;
-	OPJ_UINT32 l_max_data_size = 1000;
-	OPJ_BYTE * l_data = (OPJ_BYTE *) malloc(1000);
-#endif
-
 	/* Set decoding parameters to default values */
 	opj_set_default_decoder_parameters(&parameters);
 
@@ -448,6 +445,8 @@ int main(int argc, char *argv[])
 
 	/* Parse input and get user encoding parameters */
 	if(parse_cmdline_decoder(argc, argv, &parameters,&img_fol) == 1) {
+		if(img_fol.imgdirpath) free(img_fol.imgdirpath);
+
 		return EXIT_FAILURE;
 	}
 
@@ -457,25 +456,31 @@ int main(int argc, char *argv[])
 		num_images=get_num_images(img_fol.imgdirpath);
 
 		dirptr=(dircnt_t*)malloc(sizeof(dircnt_t));
-		if(dirptr){
-			dirptr->filename_buf = (char*)malloc((size_t)num_images*OPJ_PATH_LEN*sizeof(char));	/* Stores at max 10 image file names*/
-			dirptr->filename = (char**) malloc((size_t)num_images*sizeof(char*));
-
-			if(!dirptr->filename_buf){
-				return EXIT_FAILURE;
-			}
-
-			for(it_image=0;it_image<num_images;it_image++){
-				dirptr->filename[it_image] = dirptr->filename_buf + it_image*OPJ_PATH_LEN;
-			}
-		}
-		if(load_images(dirptr,img_fol.imgdirpath)==1){
+		if(!dirptr){
 			return EXIT_FAILURE;
+		}
+		dirptr->filename_buf = (char*)malloc((size_t)num_images*OPJ_PATH_LEN*sizeof(char));	/* Stores at max 10 image file names*/
+		if(!dirptr->filename_buf){
+			free(dirptr);
+			return EXIT_FAILURE;
+		}
+		dirptr->filename = (char**) malloc((size_t)num_images*sizeof(char*));
+
+		if(!dirptr->filename){
+			goto fails;
+		}
+
+		for(it_image=0;it_image<num_images;it_image++){
+			dirptr->filename[it_image] = dirptr->filename_buf + it_image*OPJ_PATH_LEN;
+		}
+		
+		if(load_images(dirptr,img_fol.imgdirpath)==1){
+			goto fails;
 		}
 
 		if (num_images==0){
 			fprintf(stdout,"Folder is empty\n");
-			return EXIT_FAILURE;
+			goto fails;
 		}
 	}else{
 		num_images=1;
@@ -486,7 +491,7 @@ int main(int argc, char *argv[])
 		fout = fopen(parameters.outfile,"w");
 		if (!fout){
 			fprintf(stderr, "ERROR -> failed to open %s for writing\n", parameters.outfile);
-			return EXIT_FAILURE;
+			goto fails;
 		}
 	}
 	else
@@ -510,7 +515,7 @@ int main(int argc, char *argv[])
 		l_stream = opj_stream_create_default_file_stream(parameters.infile,1);
 		if (!l_stream){
 			fprintf(stderr, "ERROR -> failed to create the stream from the file %s\n",parameters.infile);
-			return EXIT_FAILURE;
+			goto fails;
 		}
 
 		/* Read the JPEG2000 stream */
@@ -552,7 +557,7 @@ int main(int argc, char *argv[])
 			opj_stream_destroy(l_stream);
 			opj_destroy_codec(l_codec);
 			fclose(fout);
-			return EXIT_FAILURE;
+			goto fails;
 		}
 
 		/* Read the main header of the codestream and if necessary the JP2 boxes*/
@@ -562,7 +567,7 @@ int main(int argc, char *argv[])
 			opj_destroy_codec(l_codec);
 			opj_image_destroy(image);
 			fclose(fout);
-			return EXIT_FAILURE;
+			goto fails;
 		}
 
 		opj_dump_codec(l_codec, img_fol.flag, fout );
@@ -594,4 +599,12 @@ int main(int argc, char *argv[])
 	fclose(fout);
 
   return EXIT_SUCCESS;
+
+fails:
+	if(dirptr){
+		if(dirptr->filename) free(dirptr->filename);
+		if(dirptr->filename_buf) free(dirptr->filename_buf);
+		free(dirptr);
+	}
+	return EXIT_FAILURE;
 }

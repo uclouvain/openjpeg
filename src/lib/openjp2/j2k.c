@@ -2063,17 +2063,17 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
         /* testcase 4035.pdf.SIGSEGV.d8b.3375 */
         /* testcase issue427-null-image-size.jp2 */
         if ((l_image->x0 >= l_image->x1) || (l_image->y0 >= l_image->y1)) {
-                opj_event_msg(p_manager, EVT_ERROR, "Error with SIZ marker: negative or zero image size (%d x %d)\n", l_image->x1 - l_image->x0, l_image->y1 - l_image->y0);
+                opj_event_msg(p_manager, EVT_ERROR, "Error with SIZ marker: negative or zero image size (%" PRId64 " x %" PRId64 ")\n", (OPJ_INT64)l_image->x1 - l_image->x0, (OPJ_INT64)l_image->y1 - l_image->y0);
                 return OPJ_FALSE;
         }
         /* testcase 2539.pdf.SIGFPE.706.1712 (also 3622.pdf.SIGFPE.706.2916 and 4008.pdf.SIGFPE.706.3345 and maybe more) */
-        if (!(l_cp->tdx * l_cp->tdy)) {
+        if ((l_cp->tdx == 0U) || (l_cp->tdy == 0U)) {
                 opj_event_msg(p_manager, EVT_ERROR, "Error with SIZ marker: invalid tile size (tdx: %d, tdy: %d)\n", l_cp->tdx, l_cp->tdy);
                 return OPJ_FALSE;
         }
 
         /* testcase 1610.pdf.SIGSEGV.59c.681 */
-        if (((OPJ_UINT64)l_image->x1) * ((OPJ_UINT64)l_image->y1) != (l_image->x1 * l_image->y1)) {
+        if ((0xFFFFFFFFU / l_image->x1) < l_image->y1) {
                 opj_event_msg(p_manager, EVT_ERROR, "Prevent buffer overflow (x1: %d, y1: %d)\n", l_image->x1, l_image->y1);
                 return OPJ_FALSE;
         }
@@ -2094,7 +2094,7 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
                         opj_event_msg(p_manager, EVT_ERROR,
                                 "JPWL: bad image size (%d x %d)\n",
                                 l_image->x1, l_image->y1);
-                        if (!JPWL_ASSUME || JPWL_ASSUME) {
+                        if (!JPWL_ASSUME) {
                                 opj_event_msg(p_manager, EVT_ERROR, "JPWL: giving up\n");
                                 return OPJ_FALSE;
                         }
@@ -2154,8 +2154,14 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
                 if( l_img_comp->dx < 1 || l_img_comp->dx > 255 ||
                     l_img_comp->dy < 1 || l_img_comp->dy > 255 ) {
                     opj_event_msg(p_manager, EVT_ERROR,
-                                  "Invalid values for comp = %d : dx=%u dy=%u\n (should be between 1 and 255 according the JPEG2000 norm)",
+                                  "Invalid values for comp = %d : dx=%u dy=%u (should be between 1 and 255 according to the JPEG2000 norm)\n",
                                   i, l_img_comp->dx, l_img_comp->dy);
+                    return OPJ_FALSE;
+                }
+                if( l_img_comp->prec > 38) { /* TODO openjpeg won't handle more than ? */
+                    opj_event_msg(p_manager, EVT_ERROR,
+                                  "Invalid values for comp = %d : prec=%u (should be between 1 and 38 according to the JPEG2000 norm)\n",
+                                  i, l_img_comp->prec);
                     return OPJ_FALSE;
                 }
 
@@ -2270,7 +2276,7 @@ static OPJ_BOOL opj_j2k_read_siz(opj_j2k_t *p_j2k,
                 if (!l_cp->tcps) {
                         opj_event_msg(p_manager, JPWL_ASSUME ? EVT_WARNING : EVT_ERROR,
                                 "JPWL: could not alloc tcps field of cp\n");
-                        if (!JPWL_ASSUME || JPWL_ASSUME) {
+                        if (!JPWL_ASSUME) {
                                 opj_event_msg(p_manager, EVT_ERROR, "JPWL: giving up\n");
                                 return OPJ_FALSE;
                         }
@@ -2436,22 +2442,22 @@ static OPJ_BOOL opj_j2k_write_cod(     opj_j2k_t *p_j2k,
 
         l_current_data = p_j2k->m_specific_param.m_encoder.m_header_tile_data;
 
-        opj_write_bytes(l_current_data,J2K_MS_COD,2);           /* COD */
+        opj_write_bytes(l_current_data,J2K_MS_COD,2);             /* COD */
         l_current_data += 2;
 
-        opj_write_bytes(l_current_data,l_code_size-2,2);        /* L_COD */
+        opj_write_bytes(l_current_data,l_code_size-2,2);          /* L_COD */
         l_current_data += 2;
 
-        opj_write_bytes(l_current_data,l_tcp->csty,1);          /* Scod */
+        opj_write_bytes(l_current_data,l_tcp->csty,1);            /* Scod */
         ++l_current_data;
 
-        opj_write_bytes(l_current_data,l_tcp->prg,1);           /* SGcod (A) */
+        opj_write_bytes(l_current_data,(OPJ_UINT32)l_tcp->prg,1); /* SGcod (A) */
         ++l_current_data;
 
-        opj_write_bytes(l_current_data,l_tcp->numlayers,2);     /* SGcod (B) */
+        opj_write_bytes(l_current_data,l_tcp->numlayers,2);       /* SGcod (B) */
         l_current_data+=2;
 
-        opj_write_bytes(l_current_data,l_tcp->mct,1);           /* SGcod (C) */
+        opj_write_bytes(l_current_data,l_tcp->mct,1);             /* SGcod (C) */
         ++l_current_data;
 
         l_remaining_size -= 9;
@@ -2578,6 +2584,9 @@ static OPJ_BOOL opj_j2k_read_cod (  opj_j2k_t *p_j2k,
                 p_j2k->cstr_info->prog = l_tcp->prg;
                 p_j2k->cstr_info->numlayers = l_tcp->numlayers;
                 p_j2k->cstr_info->numdecompos = (OPJ_INT32*) opj_malloc(l_image->numcomps * sizeof(OPJ_UINT32));
+				if(!p_j2k->cstr_info->numdecompos){
+					return OPJ_FALSE;
+				}
                 for     (i = 0; i < l_image->numcomps; ++i) {
                         p_j2k->cstr_info->numdecompos[i] = l_tcp->tccps[i].numresolutions - 1;
                 }
@@ -3165,7 +3174,7 @@ static void opj_j2k_write_poc_in_memory(   opj_j2k_t *p_j2k,
                 opj_write_bytes(l_current_data,l_current_poc->compno1,l_poc_room);              /* CEpoc_i */
                 l_current_data+=l_poc_room;
 
-                opj_write_bytes(l_current_data,l_current_poc->prg,1);                                   /* Ppoc_i */
+                opj_write_bytes(l_current_data, (OPJ_UINT32)l_current_poc->prg,1);    /* Ppoc_i */
                 ++l_current_data;
 
                 /* change the value of the max layer according to the actual number of layers in the file, components and resolutions*/
@@ -4621,7 +4630,7 @@ static OPJ_BOOL opj_j2k_read_rgn (opj_j2k_t *p_j2k,
                         opj_event_msg(p_manager, EVT_ERROR,
                                 "JPWL: bad component number in RGN (%d when there are only %d)\n",
                                 l_comp_room, l_nb_comp);
-                        if (!JPWL_ASSUME || JPWL_ASSUME) {
+                        if (!JPWL_ASSUME) {
                                 opj_event_msg(p_manager, EVT_ERROR, "JPWL: giving up\n");
                                 return OPJ_FALSE;
                         }
@@ -4706,7 +4715,7 @@ static OPJ_BOOL opj_j2k_update_rates(  opj_j2k_t *p_j2k,
                         l_rates = l_tcp->rates;
 
                         /* Modification of the RATE >> */
-                        if (*l_rates) {
+                        if (*l_rates > 0.0f) {
                                 *l_rates =              (( (OPJ_FLOAT32) (l_size_pixel * (OPJ_UINT32)(l_x1 - l_x0) * (OPJ_UINT32)(l_y1 - l_y0)))
                                                                 /
                                                                 ((*l_rates) * (OPJ_FLOAT32)l_bits_empty)
@@ -4718,7 +4727,7 @@ static OPJ_BOOL opj_j2k_update_rates(  opj_j2k_t *p_j2k,
                         ++l_rates;
 
                         for (k = 1; k < l_tcp->numlayers; ++k) {
-                                if (*l_rates) {
+                                if (*l_rates > 0.0f) {
                                         *l_rates =              (( (OPJ_FLOAT32) (l_size_pixel * (OPJ_UINT32)(l_x1 - l_x0) * (OPJ_UINT32)(l_y1 - l_y0)))
                                                                         /
                                                                                 ((*l_rates) * (OPJ_FLOAT32)l_bits_empty)
@@ -4741,11 +4750,11 @@ static OPJ_BOOL opj_j2k_update_rates(  opj_j2k_t *p_j2k,
                 for     (j=0;j<l_cp->tw;++j) {
                         l_rates = l_tcp->rates;
 
-                        if (*l_rates) {
+                        if (*l_rates > 0.0f) {
                                 *l_rates -= l_sot_remove;
 
-                                if (*l_rates < 30) {
-                                        *l_rates = 30;
+                                if (*l_rates < 30.0f) {
+                                        *l_rates = 30.0f;
                                 }
                         }
 
@@ -4755,22 +4764,22 @@ static OPJ_BOOL opj_j2k_update_rates(  opj_j2k_t *p_j2k,
 
                         for (k = 1; k < l_last_res; ++k) {
 
-                                if (*l_rates) {
+                                if (*l_rates > 0.0f) {
                                         *l_rates -= l_sot_remove;
 
-                                        if (*l_rates < *(l_rates - 1) + 10) {
-                                                *l_rates  = (*(l_rates - 1)) + 20;
+                                        if (*l_rates < *(l_rates - 1) + 10.0f) {
+                                                *l_rates  = (*(l_rates - 1)) + 20.0f;
                                         }
                                 }
 
                                 ++l_rates;
                         }
 
-                        if (*l_rates) {
+                        if (*l_rates > 0.0f) {
                                 *l_rates -= (l_sot_remove + 2.f);
 
-                                if (*l_rates < *(l_rates - 1) + 10) {
-                                        *l_rates  = (*(l_rates - 1)) + 20;
+                                if (*l_rates < *(l_rates - 1) + 10.0f) {
+                                        *l_rates  = (*(l_rates - 1)) + 20.0f;
                                 }
                         }
 
@@ -5362,7 +5371,7 @@ static OPJ_BOOL opj_j2k_write_mcc_record(      opj_j2k_t *p_j2k,
                 l_current_data+=l_nb_bytes_for_comp;
         }
 
-        l_tmcc = ((!p_mcc_record->m_is_irreversible)&1)<<16;
+        l_tmcc = ((!p_mcc_record->m_is_irreversible) & 1U) << 16;
 
         if (p_mcc_record->m_decorrelation_array) {
                 l_tmcc |= p_mcc_record->m_decorrelation_array->m_index;
@@ -8880,6 +8889,10 @@ static OPJ_BOOL opj_j2k_read_SPCod_SPCoc(  opj_j2k_t *p_j2k,
 
         opj_read_bytes(l_current_ptr,&l_tccp->cblksty ,1);              /* SPcoc (G) */
         ++l_current_ptr;
+        if (l_tccp->cblksty & 0xC0U) { /* 2 msb are reserved, assume we can't read */
+                opj_event_msg(p_manager, EVT_ERROR, "Error reading SPCod SPCoc element, Invalid code-block style found\n");
+                return OPJ_FALSE;
+        }
 
         opj_read_bytes(l_current_ptr,&l_tccp->qmfbid ,1);               /* SPcoc (H) */
         ++l_current_ptr;
@@ -9334,16 +9347,19 @@ void j2k_dump (opj_j2k_t* p_j2k, OPJ_INT32 flag, FILE* out_stream)
 
         /* Dump the codestream info from main header */
         if (flag & OPJ_J2K_MH_INFO){
-                opj_j2k_dump_MH_info(p_j2k, out_stream);
+                if (p_j2k->m_private_image)
+                        opj_j2k_dump_MH_info(p_j2k, out_stream);
         }
         /* Dump all tile/codestream info */
         if (flag & OPJ_J2K_TCH_INFO){
           OPJ_UINT32 l_nb_tiles = p_j2k->m_cp.th * p_j2k->m_cp.tw;
           OPJ_UINT32 i;
           opj_tcp_t * l_tcp = p_j2k->m_cp.tcps;
-          for (i=0;i<l_nb_tiles;++i) {
-            opj_j2k_dump_tile_info( l_tcp,(OPJ_INT32)p_j2k->m_private_image->numcomps, out_stream);
-            ++l_tcp;
+          if (p_j2k->m_private_image) {
+            for (i=0;i<l_nb_tiles;++i) {
+              opj_j2k_dump_tile_info( l_tcp,(OPJ_INT32)p_j2k->m_private_image->numcomps, out_stream);
+              ++l_tcp;
+            }
           }
         }
 

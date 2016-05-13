@@ -1,12 +1,12 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+cmake_minimum_required(VERSION 2.6)
 project(libtiff C)
 # This convenient copy of libtiff does not support encapsulated zlib or jpeg
 # stream. see ZIP_SUPPORT and JPEG_SUPPORT values
 
-INCLUDE_DIRECTORIES(BEFORE "${CMAKE_CURRENT_SOURCE_DIR}")
-INCLUDE_DIRECTORIES(BEFORE "${CMAKE_CURRENT_BINARY_DIR}")
+include_directories(BEFORE "${CMAKE_CURRENT_SOURCE_DIR}")
+include_directories(BEFORE "${CMAKE_CURRENT_BINARY_DIR}")
 
-SET(TARGET_FILES
+set(TARGET_FILES
   t4.h
   tiffiop.h
   tif_aux.c
@@ -53,11 +53,16 @@ SET(TARGET_FILES
   uvcode.h
   )
 
-IF(UNIX)
-  SET(TARGET_FILES ${TARGET_FILES} tif_unix.c)
-ELSE()
-  SET(TARGET_FILES ${TARGET_FILES} tif_win32.c)
-ENDIF()
+if(UNIX)
+  set(TARGET_FILES ${TARGET_FILES} tif_unix.c)
+  # Large file support
+  # This might not catch every possibility catered for by
+  # AC_SYS_LARGEFILE.
+  add_definitions(-D_FILE_OFFSET_BITS=64)
+  set(_FILE_OFFSET_BITS 64)
+else()
+  set(TARGET_FILES ${TARGET_FILES} tif_win32.c)
+endif()
 
 include(${CMAKE_ROOT}/Modules/TestBigEndian.cmake)
 TEST_BIG_ENDIAN(WORDS_BIGENDIAN)
@@ -70,6 +75,7 @@ endif()
 include(CheckIncludeFiles)
 include(CheckSymbolExists)
 include(CheckFunctionExists)
+include(CheckCSourceCompiles)
 
 CHECK_INCLUDE_FILES("zlib.h" HAVE_ZLIB_H)
 CHECK_INCLUDE_FILES("jpeglib.h" HAVE_JPEGLIB_H)
@@ -135,6 +141,19 @@ CHECK_FUNCTION_EXISTS(strtol HAVE_STRTOL)
 CHECK_FUNCTION_EXISTS(strtoul HAVE_STRTOUL)
 CHECK_FUNCTION_EXISTS(strtoull HAVE_STRTOULL)
 
+# May be inlined, so check it compiles:
+check_c_source_compiles("
+#include <stdio.h>
+int main(void) {
+  char buf[10];
+  snprintf(buf, 10, \"Test %d\", 1);
+  return 0;
+}" HAVE_SNPRINTF)
+
+if(NOT HAVE_SNPRINTF)
+  set(TARGET_FILES ${TARGET_FILES} snprintf.c)
+endif()
+
 include(CheckTypeSize)
 
 CHECK_TYPE_SIZE("signed int"         SIZEOF_SIGNED_INT)
@@ -162,20 +181,23 @@ if(HAVE_STDINT_H)
   if(NOT HAVE_SSIZE_T)
     if("${CMAKE_SIZEOF_VOID_P}" EQUAL 8)
       set(TIFF_SSIZE_T   int64_t)
+      set(TIFF_SSIZE_FORMAT "%lld")
+      set(TIFF_SIZE_FORMAT "%llu")
     elseif("${CMAKE_SIZEOF_VOID_P}" EQUAL 4)
       set(TIFF_SSIZE_T   int32_t)
+      set(TIFF_SSIZE_FORMAT "%d")
+      set(TIFF_SIZE_FORMAT "%u")
     else()
       message(FATAL_ERROR "unknown ssize_t")
     endif()
   else()
     set(TIFF_SSIZE_T   ssize_t)
   endif()
-  set(TIFF_INT32_FORMAT "\"%d\"")
-  set(TIFF_UINT32_FORMAT "\"%u\"")
-  set(TIFF_INT64_FORMAT "\"%ld\"")
-  set(TIFF_UINT64_FORMAT "\"%lu\"")
-  set(TIFF_PTRDIFF_FORMAT "\"%ld\"")
-  set(TIFF_SSIZE_FORMAT "\"%ld\"")
+  set(TIFF_INT32_FORMAT "%d")
+  set(TIFF_UINT32_FORMAT "%u")
+  set(TIFF_INT64_FORMAT "%lld")
+  set(TIFF_UINT64_FORMAT "%llu")
+  set(TIFF_PTRDIFF_FORMAT "%ld")
 else()
   set(TIFF_INT8_T    "signed __int8")
   set(TIFF_INT16_T   "signed __int16")
@@ -189,24 +211,27 @@ else()
   if(NOT HAVE_SSIZE_T)
     if("${CMAKE_SIZEOF_VOID_P}" EQUAL 8)
       set(TIFF_SSIZE_T   "signed __int64")
+      set(TIFF_SSIZE_FORMAT "%lld")
+      set(TIFF_SIZE_FORMAT "%llu")
     elseif("${CMAKE_SIZEOF_VOID_P}" EQUAL 4)
       set(TIFF_SSIZE_T   "signed __int32")
+      set(TIFF_SSIZE_FORMAT "%d")
+      set(TIFF_SIZE_FORMAT "%u")
     else()
       message(FATAL_ERROR "unknown ssize_t")
     endif()
   else()
     set(TIFF_SSIZE_T   ssize_t)
   endif()
-  set(TIFF_INT32_FORMAT "\"%d\"")
-  set(TIFF_UINT32_FORMAT "\"%u\"")
-  set(TIFF_INT64_FORMAT "\"%ld\"")
-  set(TIFF_UINT64_FORMAT "\"%lu\"")
-  set(TIFF_PTRDIFF_FORMAT "\"%ld\"")
-  set(TIFF_SSIZE_FORMAT "\"%ld\"")
+  set(TIFF_INT32_FORMAT "%d")
+  set(TIFF_UINT32_FORMAT "%u")
+  set(TIFF_INT64_FORMAT "%lld")
+  set(TIFF_UINT64_FORMAT "%llu")
+  set(TIFF_PTRDIFF_FORMAT "%ld")
 endif()
 
 #
-set(VERSION "\"4.0.1\"")
+set(VERSION "\"4.0.6\"")
 set(PACKAGE_VERSION ${VERSION})
 set(PACKAGE "\"tiff\"")
 
@@ -225,28 +250,28 @@ CHECK_SYMBOL_EXISTS(lfind "search.h" HAVE_LFIND)
 CHECK_SYMBOL_EXISTS(setmod "io.h" HAVE_SETMODE)
 
 # http://www.cmake.org/pipermail/cmake/2007-September/016285.html
-FOREACH(KEYWORD "inline" "__inline__" "__inline")
-  IF(NOT DEFINED C_INLINE)
-    TRY_COMPILE(C_HAS_${KEYWORD} "${CMAKE_CURRENT_BINARY_DIR}"
+foreach(KEYWORD "inline" "__inline__" "__inline")
+  if(NOT DEFINED C_INLINE)
+    try_compile(C_HAS_${KEYWORD} "${CMAKE_CURRENT_BINARY_DIR}"
        "${CMAKE_CURRENT_SOURCE_DIR}/test_inline.c"
        COMPILE_DEFINITIONS "-Dinline=${KEYWORD}")
-    IF(C_HAS_${KEYWORD})
-      SET(C_INLINE TRUE)
-      SET(INLINE "${KEYWORD}")
-    ENDIF(C_HAS_${KEYWORD})
-  ENDIF(NOT DEFINED C_INLINE)
-ENDFOREACH(KEYWORD)
+    if(C_HAS_${KEYWORD})
+      set(C_INLINE TRUE)
+      set(INLINE_KEYWORD "${KEYWORD}")
+    endif(C_HAS_${KEYWORD})
+  endif(NOT DEFINED C_INLINE)
+endforeach(KEYWORD)
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/tiffconf.h.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/tiffconf.h @ONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/tif_config.h.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/tif_config.h @ONLY)
 
-SET(LIBTARGET "tiff")
+set(LIBTARGET "tiff")
 #
-ADD_LIBRARY(${LIBTARGET} STATIC ${TARGET_FILES})
+add_library(${LIBTARGET} STATIC ${TARGET_FILES})
 #
-SET_TARGET_PROPERTIES(${LIBTARGET}
+set_target_properties(${LIBTARGET}
   PROPERTIES
   OUTPUT_NAME "${LIBTARGET}"
   ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/thirdparty/lib

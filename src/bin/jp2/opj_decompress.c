@@ -680,6 +680,9 @@ int parse_cmdline_decoder(int argc, char **argv, opj_decompress_parameters *para
 			case 'y':			/* Image Directory path */
                 {
 					img_fol->imgdirpath = (char*)malloc(strlen(opj_optarg) + 1);
+					if(img_fol->imgdirpath == NULL){
+						return 1;
+					}
 					strcpy(img_fol->imgdirpath,opj_optarg);
 					img_fol->set_imgdir=1;
 				}
@@ -1200,8 +1203,7 @@ int main(int argc, char **argv)
 
 	/* parse input and get user encoding parameters */
 	if(parse_cmdline_decoder(argc, argv, &parameters,&img_fol) == 1) {
-		destroy_parameters(&parameters);
-		return EXIT_FAILURE;
+		failed = 1; goto fin;
 	}
 
 	/* Initialize reading of directory */
@@ -1210,26 +1212,30 @@ int main(int argc, char **argv)
 		num_images=get_num_images(img_fol.imgdirpath);
 
 		dirptr=(dircnt_t*)malloc(sizeof(dircnt_t));
-		if(dirptr){
-			dirptr->filename_buf = (char*)malloc((size_t)num_images*OPJ_PATH_LEN*sizeof(char));	/* Stores at max 10 image file names*/
-			dirptr->filename = (char**) malloc((size_t)num_images*sizeof(char*));
-
-			if(!dirptr->filename_buf){
-				destroy_parameters(&parameters);
-				return EXIT_FAILURE;
-			}
-			for(it_image=0;it_image<num_images;it_image++){
-				dirptr->filename[it_image] = dirptr->filename_buf + it_image*OPJ_PATH_LEN;
-			}
-		}
-		if(load_images(dirptr,img_fol.imgdirpath)==1){
+		if(!dirptr){
 			destroy_parameters(&parameters);
 			return EXIT_FAILURE;
+		}
+		dirptr->filename_buf = (char*)malloc((size_t)num_images*OPJ_PATH_LEN*sizeof(char));	/* Stores at max 10 image file names*/
+		if(!dirptr->filename_buf){
+			failed = 1; goto fin;
+		}
+				
+		dirptr->filename = (char**) malloc((size_t)num_images*sizeof(char*));
+
+		if(!dirptr->filename){
+			failed = 1; goto fin;
+		}
+		for(it_image=0;it_image<num_images;it_image++){
+			dirptr->filename[it_image] = dirptr->filename_buf + it_image*OPJ_PATH_LEN;
+		}
+		
+		if(load_images(dirptr,img_fol.imgdirpath)==1){
+			failed = 1; goto fin;
 		}
 		if (num_images==0){
 			fprintf(stdout,"Folder is empty\n");
-			destroy_parameters(&parameters);
-			return EXIT_FAILURE;
+			failed = 1; goto fin;
 		}
 	}else{
 		num_images=1;
@@ -1254,8 +1260,7 @@ int main(int argc, char **argv)
 		l_stream = opj_stream_create_default_file_stream(parameters.infile,1);
 		if (!l_stream){
 			fprintf(stderr, "ERROR -> failed to create the stream from the file %s\n", parameters.infile);
-			destroy_parameters(&parameters);
-			return EXIT_FAILURE;
+			failed = 1; goto fin;
 		}
 
 		/* decode the JPEG2000 stream */
@@ -1297,21 +1302,19 @@ int main(int argc, char **argv)
 		/* Setup the decoder decoding parameters using user parameters */
 		if ( !opj_setup_decoder(l_codec, &(parameters.core)) ){
 			fprintf(stderr, "ERROR -> opj_decompress: failed to setup the decoder\n");
-			destroy_parameters(&parameters);
 			opj_stream_destroy(l_stream);
 			opj_destroy_codec(l_codec);
-			return EXIT_FAILURE;
+			failed = 1; goto fin;
 		}
 
 
 		/* Read the main header of the codestream and if necessary the JP2 boxes*/
 		if(! opj_read_header(l_stream, l_codec, &image)){
 			fprintf(stderr, "ERROR -> opj_decompress: failed to read the header\n");
-			destroy_parameters(&parameters);
 			opj_stream_destroy(l_stream);
 			opj_destroy_codec(l_codec);
 			opj_image_destroy(image);
-			return EXIT_FAILURE;
+			failed = 1; goto fin;
 		}
 
 		if (!parameters.nb_tile_to_decode) {
@@ -1319,21 +1322,19 @@ int main(int argc, char **argv)
 			if (!opj_set_decode_area(l_codec, image, (OPJ_INT32)parameters.DA_x0,
 					(OPJ_INT32)parameters.DA_y0, (OPJ_INT32)parameters.DA_x1, (OPJ_INT32)parameters.DA_y1)){
 				fprintf(stderr,	"ERROR -> opj_decompress: failed to set the decoded area\n");
-				destroy_parameters(&parameters);
 				opj_stream_destroy(l_stream);
 				opj_destroy_codec(l_codec);
 				opj_image_destroy(image);
-				return EXIT_FAILURE;
+				failed = 1; goto fin;
 			}
 
 			/* Get the decoded image */
 			if (!(opj_decode(l_codec, l_stream, image) && opj_end_decompress(l_codec,	l_stream))) {
 				fprintf(stderr,"ERROR -> opj_decompress: failed to decode image!\n");
-				destroy_parameters(&parameters);
 				opj_destroy_codec(l_codec);
 				opj_stream_destroy(l_stream);
 				opj_image_destroy(image);
-				return EXIT_FAILURE;
+				failed = 1; goto fin;
 			}
 		}
 		else {
@@ -1344,16 +1345,15 @@ int main(int argc, char **argv)
 				opj_destroy_codec(l_codec);
 				opj_stream_destroy(l_stream);
 				opj_image_destroy(image);
-				return EXIT_FAILURE;
+				failed = 1; goto fin;
 			}*/
 
 			if (!opj_get_decoded_tile(l_codec, l_stream, image, parameters.tile_index)) {
 				fprintf(stderr, "ERROR -> opj_decompress: failed to decode tile!\n");
-				destroy_parameters(&parameters);
 				opj_destroy_codec(l_codec);
 				opj_stream_destroy(l_stream);
 				opj_image_destroy(image);
-				return EXIT_FAILURE;
+				failed = 1; goto fin;
 			}
 			fprintf(stdout, "tile %d is decoded!\n\n", parameters.tile_index);
 		}
@@ -1432,9 +1432,8 @@ int main(int argc, char **argv)
 			image = upsample_image_components(image);
 			if (image == NULL) {
 				fprintf(stderr, "ERROR -> opj_decompress: failed to upsample image components!\n");
-				destroy_parameters(&parameters);
 				opj_destroy_codec(l_codec);
-				return EXIT_FAILURE;
+				failed = 1; goto fin;
 			}
 		}
 		
@@ -1456,9 +1455,8 @@ int main(int argc, char **argv)
 			}
 			if (image == NULL) {
 				fprintf(stderr, "ERROR -> opj_decompress: failed to convert to RGB image!\n");
-				destroy_parameters(&parameters);
 				opj_destroy_codec(l_codec);
-				return EXIT_FAILURE;
+				failed = 1; goto fin;
 			}
 		}
 
@@ -1567,10 +1565,17 @@ int main(int argc, char **argv)
 
 		if(failed) (void)remove(parameters.outfile); /* ignore return value */
 	}
+fin:
 	destroy_parameters(&parameters);
+	if(failed && img_fol.imgdirpath) free(img_fol.imgdirpath);
+	if(dirptr){
+		if(dirptr->filename) free(dirptr->filename);
+		if(dirptr->filename_buf) free(dirptr->filename_buf);
+		free(dirptr);
+	}
 	if (numDecompressedImages) {
 		fprintf(stdout, "decode time: %d ms\n", (int)( (tCumulative * 1000.0) / (OPJ_FLOAT64)numDecompressedImages));
 	}
 	return failed ? EXIT_FAILURE : EXIT_SUCCESS;
 }
-/*end main*/
+/*end main()*/

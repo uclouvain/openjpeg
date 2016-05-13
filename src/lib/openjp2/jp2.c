@@ -646,12 +646,13 @@ static OPJ_BYTE * opj_jp2_write_bpcc(	opj_jp2_t *jp2,
 {
 	OPJ_UINT32 i;
 	/* room for 8 bytes for box and 1 byte for each component */
-	OPJ_UINT32 l_bpcc_size = 8 + jp2->numcomps;
+	OPJ_UINT32 l_bpcc_size;
 	OPJ_BYTE * l_bpcc_data,* l_current_bpcc_ptr;
 	
 	/* preconditions */
 	assert(jp2 != 00);
 	assert(p_nb_bytes_written != 00);
+	l_bpcc_size = 8 + jp2->numcomps;
 
 	l_bpcc_data = (OPJ_BYTE *) opj_calloc(1,l_bpcc_size);
 	if (l_bpcc_data == 00) {
@@ -1404,6 +1405,10 @@ static OPJ_BOOL opj_jp2_read_colr( opj_jp2_t *jp2,
 			OPJ_UINT32 rl, ol, ra, oa, rb, ob, il;
 
 			cielab = (OPJ_UINT32*)opj_malloc(9 * sizeof(OPJ_UINT32));
+			if(cielab == NULL){
+				opj_event_msg(p_manager, EVT_ERROR, "Not enough memory for cielab\n");
+				return OPJ_FALSE;
+			}
 			cielab[0] = 14; /* enumcs */
 			
 			/* default values */
@@ -1639,7 +1644,7 @@ static OPJ_BOOL opj_jp2_write_ftyp(opj_jp2_t *jp2,
 							opj_event_mgr_t * p_manager )
 {
 	OPJ_UINT32 i;
-	OPJ_UINT32 l_ftyp_size = 16 + 4 * jp2->numcl;
+	OPJ_UINT32 l_ftyp_size;
 	OPJ_BYTE * l_ftyp_data, * l_current_data_ptr;
 	OPJ_BOOL l_result;
 
@@ -1647,6 +1652,7 @@ static OPJ_BOOL opj_jp2_write_ftyp(opj_jp2_t *jp2,
 	assert(cio != 00);
 	assert(jp2 != 00);
 	assert(p_manager != 00);
+	l_ftyp_size = 16 + 4 * jp2->numcl;
 
 	l_ftyp_data = (OPJ_BYTE *) opj_calloc(1,l_ftyp_size);
 	

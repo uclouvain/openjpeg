@@ -647,6 +647,10 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
                 raw_cp->rawBitDepth = bitdepth;
                 raw_cp->rawSigned  = raw_signed;
                 raw_cp->rawComps = (raw_comp_cparameters_t*) malloc(((OPJ_UINT32)(ncomp))*sizeof(raw_comp_cparameters_t));
+				if(raw_cp->rawComps == NULL){
+					free(substr1);
+					return 1;
+				}
                 for (compno = 0; compno < ncomp && !wrong; compno++) {
                     if (substr2 == NULL) {
                         raw_cp->rawComps[compno].dx = lastdx;
@@ -725,6 +729,9 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
             numresolution = (OPJ_UINT32)parameters->numresolution;
             matrix_width = numresolution * 3;
             parameters->cp_matrice = (int *) malloc(numlayers * matrix_width * sizeof(int));
+			if(parameters->cp_matrice == NULL){
+				return 1;
+			}
             s = s + 2;
 
             for (i = 0; i < numlayers; i++) {
@@ -995,6 +1002,9 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
         case 'z':			/* Image Directory path */
         {
             img_fol->imgdirpath = (char*)malloc(strlen(opj_optarg) + 1);
+			if(img_fol->imgdirpath == NULL){
+				return 1;
+			}
             strcpy(img_fol->imgdirpath,opj_optarg);
             img_fol->set_imgdir=1;
         }
@@ -1540,6 +1550,7 @@ static int parse_cmdline_encoder(int argc, char **argv, opj_cparameters_t *param
     }
 
     return 0;
+
 }
 
 /* -------------------------------------------------------------------------- */
@@ -1635,7 +1646,7 @@ int main(int argc, char **argv) {
     /* parse input and get user encoding parameters */
     parameters.tcp_mct = (char) 255; /* This will be set later according to the input image or the provided option */
     if(parse_cmdline_encoder(argc, argv, &parameters,&img_fol, &raw_cp, indexfilename, sizeof(indexfilename)) == 1) {
-        return 1;
+        goto fails;
     }
 
     /* Read directory if necessary */
@@ -1848,7 +1859,9 @@ int main(int argc, char **argv) {
             OPJ_BYTE *l_data;
             OPJ_UINT32 l_data_size = 512*512*3;
             l_data = (OPJ_BYTE*) calloc( 1,l_data_size);
-            assert( l_data );
+            if(l_data == NULL){
+				goto fails;
+			}
             for (i=0;i<l_nb_tiles;++i) {
                 if (! opj_write_tile(l_codec,i,l_data,l_data_size,l_stream)) {
                     fprintf(stderr, "ERROR -> test_tile_encoder: failed to write the tile %d!\n",i);
@@ -1904,4 +1917,16 @@ int main(int argc, char **argv) {
     }
 
     return 0;
+
+fails:
+	if(parameters.cp_comment)   free(parameters.cp_comment);
+	if(parameters.cp_matrice)   free(parameters.cp_matrice);
+	if(raw_cp.rawComps) free(raw_cp.rawComps);
+	if(img_fol.imgdirpath) free(img_fol.imgdirpath);
+	if(dirptr){
+	    if(dirptr->filename_buf) free(dirptr->filename_buf);
+	    if(dirptr->filename) free(dirptr->filename);
+	    free(dirptr);
+	}
+	return 1;
 }
