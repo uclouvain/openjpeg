@@ -2,14 +2,16 @@ version: 2.1.1.{build}
 branches:
   except:
   - coverity_scan
-skip_tags: true
+skip_tags: false
 clone_depth: 50
 environment:
   matrix:
   - OPJ_CI_ARCH: x86
     OPJ_CI_VSCOMNTOOLS: $(VS140COMNTOOLS)
+    OPJ_CI_DEPLOY: 1
   - OPJ_CI_ARCH: x64
     OPJ_CI_VSCOMNTOOLS: $(VS140COMNTOOLS)
+    OPJ_CI_DEPLOY: 1
   - OPJ_CI_ARCH: x86
     OPJ_CI_VSCOMNTOOLS: $(VS100COMNTOOLS)
 install:
@@ -20,4 +22,17 @@ build_script:
 
     bash ./tools/travis-ci/run.sh
 test: off
-deploy: off
+#before_deploy:
+#- cmd: c:\cygwin\bin\bash ./tools/travis-ci/before_deploy.sh
+deploy:
+  release: openjpeg-$(appveyor_repo_tag_name)
+  description: 'OpenJPEG $(appveyor_repo_tag_name) has been released'
+  provider: GitHub
+  auth_token:
+    secure: Huk03f1heCD/HMyA+4ZeVmICdmKn9rPxK5p8/KxzgL+FtJDHlqcllcCrtN9bDxRH # your encrypted token from GitHub
+  artifact: /.*\.zip/            # upload all zip packages to release assets
+  draft: true
+  prerelease: false
+  on:
+    branch: openjpeg-*
+    appveyor_repo_tag: true        # deploy on tag push only

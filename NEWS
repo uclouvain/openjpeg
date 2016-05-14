@@ -1,9 +1,14 @@
 
-OpenJPEG NEWS - user visible changes
-====================================
+OpenJPEG NEWS
+=============
 
-Changes from OpenJPEG 2.0.0 to OpenJPEG 2.X.X
-----------------------------------------------
+OpenJPEG 2.1.1
+--------------
+* Huge amount of critical bugfixes
+
+
+OpenJPEG 2.1.0
+--------------
 
 New Features:
 
@@ -42,8 +47,8 @@ Misc:
 	* Huge amount of bug fixes. See CHANGES for details.
 
 
-Changes from OpenJPEG 1.5.x to OpenJPEG 2.0.0
-----------------------------------------------
+OpenJPEG 2.0.0
+--------------
 
 New Features:
 
