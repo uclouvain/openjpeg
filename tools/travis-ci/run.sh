@@ -189,6 +189,37 @@ ctest -S ${OPJ_SOURCE_DIR}/tools/ctest_scripts/travis-ci.cmake -V || true
 # ignore ctest exit code & parse this ourselves
 set +x
 
+# Deployment if needed
+#---------------------
+if [ "${TRAVIS_TAG:-}" != "" ]; then
+		OPJ_TAG_NAME=${TRAVIS_TAG}
+	elif [ "${APPVEYOR_REPO_TAG:-}" == "true" ]; then
+		OPJ_TAG_NAME=${APPVEYOR_REPO_TAG_NAME}
+	else
+		OPJ_TAG_NAME=""
+	fi
+if [ "${OPJ_CI_INCLUDE_IF_DEPLOY:-}" == "1" ] && [ "${OPJ_TAG_NAME:-}" != "" ]; then
+#if [ "${OPJ_CI_INCLUDE_IF_DEPLOY:-}" == "1" ]; then
+	OPJ_CI_DEPLOY=1		# unused for now
+	OPJ_CUR_DIR=${PWD}
+	if [ "${TRAVIS_OS_NAME:-}" == "linux" ]; then
+		OPJ_PACK_GENERATOR="TGZ" # ZIP generator currently segfaults on linux
+	else
+		OPJ_PACK_GENERATOR="ZIP"
+	fi
+	OPJ_PACK_NAME="openjpeg-${OPJ_TAG_NAME}-${TRAVIS_OS_NAME}-${OPJ_CI_ARCH}"
+	cd ${OPJ_BINARY_DIR}
+	cmake -D CPACK_GENERATOR:STRING=${OPJ_PACK_GENERATOR} -D CPACK_PACKAGE_FILE_NAME:STRING=${OPJ_PACK_NAME} ${OPJ_SOURCE_DIR}
+	cd ${OPJ_CUR_DIR}
+	cmake --build ${OPJ_BINARY_DIR} --target package
+	echo "ready to deploy $(ls ${OPJ_BINARY_DIR}/${OPJ_PACK_NAME}*) to GitHub releases"
+	if [ "${APPVEYOR_REPO_TAG:-}" == "true" ]; then
+		appveyor PushArtifact "${OPJ_BINARY_DIR}/${OPJ_PACK_NAME}.zip"
+	fi
+else
+	OPJ_CI_DEPLOY=0
+fi
+
 # let's parse configure/build/tests for failure
 
 echo "
@@ -269,20 +300,6 @@ New/unknown test failure found!!!
 			echo "Errors were found in dynamic analysis log"
 			OPJ_CI_RESULT=1
 		fi
-	fi
-fi
-
-echo "OPJ_CI_DEPLOY: ${OPJ_CI_DEPLOY:-}"
-echo "TRAVIS_TAG: ${TRAVIS_TAG:-}"
-echo "APPVEYOR_REPO_TAG: ${APPVEYOR_REPO_TAG:-}"
-echo "APPVEYOR_REPO_TAG_NAME: ${APPVEYOR_REPO_TAG_NAME:-}"
-if [ "${OPJ_CI_DEPLOY:-}" == "1" ]; then
-	if [ "${TRAVIS_TAG:-}" != "" ]; then
-		cpack -G ZIP -P "OpenJPEG-${TRAVIS_TAG}-${OPJ_BUILDNAME_TEST}.zip"
-	fi
-	if [ "${APPVEYOR_REPO_TAG:-}" == "true" ]; then
-		cpack -G ZIP -P "OpenJPEG-${APPVEYOR_REPO_TAG_NAME}-${OPJ_BUILDNAME_TEST}.zip"
-		appveyor PushArtifact "OpenJPEG-${APPVEYOR_REPO_TAG_NAME}-${OPJ_BUILDNAME_TEST}.zip"
 	fi
 fi
 
