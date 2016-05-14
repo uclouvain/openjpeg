@@ -272,4 +272,18 @@ New/unknown test failure found!!!
 	fi
 fi
 
+echo "OPJ_CI_DEPLOY: ${OPJ_CI_DEPLOY}"
+echo "TRAVIS_TAG: ${TRAVIS_TAG}"
+echo "APPVEYOR_REPO_TAG: ${APPVEYOR_REPO_TAG}"
+echo "APPVEYOR_REPO_TAG_NAME: ${APPVEYOR_REPO_TAG_NAME}"
+if [ "${OPJ_CI_DEPLOY:-}" == "1" ]; then
+	if [ "${TRAVIS_TAG:-}" != "" ]; then
+		cpack -G ZIP -P "OpenJPEG-${TRAVIS_TAG}-${OPJ_BUILDNAME_TEST}.zip"
+	fi
+	if [ "${APPVEYOR_REPO_TAG:-}" == "true" ]; then
+		cpack -G ZIP -P "OpenJPEG-${APPVEYOR_REPO_TAG_NAME}-${OPJ_BUILDNAME_TEST}.zip"
+		appveyor PushArtifact "OpenJPEG-${APPVEYOR_REPO_TAG_NAME}-${OPJ_BUILDNAME_TEST}.zip"
+	fi
+fi
+
 exit ${OPJ_CI_RESULT}
