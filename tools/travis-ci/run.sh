@@ -191,8 +191,8 @@ set +x
 
 # Deployment if needed
 #---------------------
-#if [ "${OPJ_CI_INCLUDE_IF_DEPLOY:-}" == "1" ] && [ [ "${TRAVIS_TAG:-}" != "" ] || [ "${APPVEYOR_REPO_TAG:-}" == "true" ] ]; then
-if [ "${OPJ_CI_INCLUDE_IF_DEPLOY:-}" == "1" ]; then
+if [ "${OPJ_CI_INCLUDE_IF_DEPLOY:-}" == "1" ] && [ [ "${TRAVIS_TAG:-}" != "" ] || [ "${APPVEYOR_REPO_TAG:-}" == "true" ] ]; then
+#if [ "${OPJ_CI_INCLUDE_IF_DEPLOY:-}" == "1" ]; then
 	OPJ_CI_DEPLOY=1		# unused for now
 	OPJ_CUR_DIR=${PWD}
 	if [ "${TRAVIS_OS_NAME:-}" == "linux" ]; then
