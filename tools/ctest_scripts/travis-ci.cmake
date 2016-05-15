@@ -123,6 +123,12 @@ endif()
 set( CTEST_SOURCE_DIRECTORY	"$ENV{OPJ_SOURCE_DIR}")
 set( CTEST_BINARY_DIRECTORY	"${CTEST_DASHBOARD_ROOT}")
 
+#----------------------
+# Package parameters in case of deployment
+# Might add more parameters later on
+set( CPACK_GENERATOR "ZIP" )
+
+
 #---------------------
 # Files to submit to the dashboard
 set (CTEST_NOTES_FILES
@@ -146,6 +152,10 @@ if(NOT "$ENV{OPJ_CI_SKIP_TESTS}" STREQUAL "1")
 endif()
 if ("$ENV{OPJ_DO_SUBMIT}" STREQUAL "1")
 	ctest_submit()
+endif()
+# Generate package if deployment
+if( "$ENV{OPJ_CI_DEPLOY}" STREQUAL "1")
+	ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}" TARGET "package")
 endif()
 # Do not clean, we'll parse the log for known failure
 #ctest_empty_binary_directory( "${CTEST_BINARY_DIRECTORY}" )

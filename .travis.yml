@@ -4,10 +4,10 @@ matrix:
   include:
     - os: osx
       compiler: clang
-      env: OPJ_CI_ARCH=x86_64 OPJ_CI_BUILD_CONFIGURATION=Release OPJ_CI_DEPLOY=1
+      env: OPJ_CI_ARCH=x86_64 OPJ_CI_BUILD_CONFIGURATION=Release OPJ_CI_INCLUDE_IF_DEPLOY=1
     - os: linux
       compiler: gcc
-      env: OPJ_CI_ARCH=x86_64 OPJ_CI_BUILD_CONFIGURATION=Release OPJ_CI_DEPLOY=1
+      env: OPJ_CI_ARCH=x86_64 OPJ_CI_BUILD_CONFIGURATION=Release OPJ_CI_INCLUDE_IF_DEPLOY=1
     - os: linux
       compiler: gcc
       env: OPJ_CI_ARCH=i386 OPJ_CI_BUILD_CONFIGURATION=Release
@@ -67,7 +67,7 @@ script:
   - ./tools/travis-ci/abi-check.sh
 
 before_deploy:
-  - export OPJ_RELEASE_PKG_FILE=$(ls OpenJPEG*.zip)
+  - export OPJ_RELEASE_PKG_FILE=$(ls openjpeg*.zip)
   - echo "deploying $OPJ_RELEASE_PKG_FILE to GitHub releases"
 
 deploy:
