@@ -36,3 +36,4 @@ deploy:
   on:
     branch: openjpeg-*
     appveyor_repo_tag: true        # deploy on tag push only
+    OPJ_CI_DEPLOY: 1
