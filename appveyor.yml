@@ -34,6 +34,5 @@ deploy:
   draft: true
   prerelease: false
   on:
-    branch: openjpeg-*
     appveyor_repo_tag: true        # deploy on tag push only
-    OPJ_CI_DEPLOY: 1
+    OPJ_CI_INCLUDE_IF_DEPLOY: 1

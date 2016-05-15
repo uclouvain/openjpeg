@@ -80,5 +80,5 @@ deploy:
   on:
     repo: uclouvain/openjpeg
     tags: true
-    condition: "$OPJ_CI_DEPLOY = 1"
+    condition: "$OPJ_CI_INCLUDE_IF_DEPLOY = 1"
 
