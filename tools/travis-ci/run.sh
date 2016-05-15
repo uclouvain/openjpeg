@@ -195,7 +195,7 @@ set +x
 if [ "${OPJ_CI_INCLUDE_IF_DEPLOY:-}" == "1" ]; then
 	OPJ_CI_DEPLOY=1		# unused for now
 	OPJ_CUR_DIR=${PWD}
-	if [ "${TRAVIS_OS_NAME:-}" == "linux"]; then
+	if [ "${TRAVIS_OS_NAME:-}" == "linux" ]; then
 		OPJ_PACK_GENERATOR="TGZ" # ZIP generator currently segfaults on linux
 	else
 		OPJ_PACK_GENERATOR="ZIP"
