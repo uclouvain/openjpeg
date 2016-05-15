@@ -193,7 +193,7 @@ set +x
 #if [ "${OPJ_CI_INCLUDE_IF_DEPLOY:-}" == "1" ] && [ [ "${TRAVIS_TAG:-}" != "" ] || [ "${APPVEYOR_REPO_TAG:-}" == "true" ] ]; then
 if [ "${OPJ_CI_INCLUDE_IF_DEPLOY:-}" == "1" ]; then
 	OPJ_CI_DEPLOY=1
-	cmake --build ${OPJ_BINARY_DIR} --target package -D CPACK_GENERATOR:STRING="ZIP"
+	cmake --build ${OPJ_BINARY_DIR} --target package
 	echo "ready to deploy $(ls ${OPJ_BINARY_DIR}/openjpeg*.zip) to GitHub releases"
 	if [ "${APPVEYOR_REPO_TAG:-}" == "true" ]; then
 		appveyor PushArtifact "${OPJ_BINARY_DIR}/openjpeg-*.zip"
