@@ -123,10 +123,10 @@ endif()
 set( CTEST_SOURCE_DIRECTORY	"$ENV{OPJ_SOURCE_DIR}")
 set( CTEST_BINARY_DIRECTORY	"${CTEST_DASHBOARD_ROOT}")
 
-#----------------------
-# Package parameters in case of deployment
-# Might add more parameters later on
-set( CPACK_GENERATOR "ZIP" )
+# #----------------------
+# # Package parameters in case of deployment
+# # Might add more parameters later on
+# set( CPACK_GENERATOR "ZIP" )
 
 
 #---------------------
