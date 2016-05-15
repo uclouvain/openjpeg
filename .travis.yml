@@ -67,7 +67,7 @@ script:
   - ./tools/travis-ci/abi-check.sh
 
 before_deploy:
-  - export OPJ_RELEASE_PKG_FILE=$(ls openjpeg*.zip)
+  - export OPJ_RELEASE_PKG_FILE=$(ls build/openjpeg-${TRAVIS_TAG}*)
   - echo "deploying $OPJ_RELEASE_PKG_FILE to GitHub releases"
 
 deploy:
