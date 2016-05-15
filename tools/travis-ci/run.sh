@@ -191,7 +191,14 @@ set +x
 
 # Deployment if needed
 #---------------------
-if [ "${OPJ_CI_INCLUDE_IF_DEPLOY:-}" == "1" ] && [ [ "${TRAVIS_TAG:-}" != "" ] || [ "${APPVEYOR_REPO_TAG:-}" == "true" ] ]; then
+if [ "${TRAVIS_TAG:-}" != "" ]; then
+		OPJ_TAG_NAME=${TRAVIS_TAG}
+	elif [ "${APPVEYOR_REPO_TAG:-}" == "true" ]; then
+		OPJ_TAG_NAME=${APPVEYOR_REPO_TAG_NAME}
+	else
+		OPJ_TAG_NAME=""
+	fi
+if [ "${OPJ_CI_INCLUDE_IF_DEPLOY:-}" == "1" ] && [ "${OPJ_TAG_NAME:-}" != "" ]; then
 #if [ "${OPJ_CI_INCLUDE_IF_DEPLOY:-}" == "1" ]; then
 	OPJ_CI_DEPLOY=1		# unused for now
 	OPJ_CUR_DIR=${PWD}
@@ -199,13 +206,6 @@ if [ "${OPJ_CI_INCLUDE_IF_DEPLOY:-}" == "1" ] && [ [ "${TRAVIS_TAG:-}" != "" ] |
 		OPJ_PACK_GENERATOR="TGZ" # ZIP generator currently segfaults on linux
 	else
 		OPJ_PACK_GENERATOR="ZIP"
-	fi
-	if [ "${TRAVIS_TAG:-}" != "" ]; then
-		OPJ_TAG_NAME=${TRAVIS_TAG}
-	elif [ "${APPVEYOR_REPO_TAG:-}" == "true" ]; then
-		OPJ_TAG_NAME=${APPVEYOR_REPO_TAG_NAME}
-	else
-		OPJ_TAG_NAME=test
 	fi
 	OPJ_PACK_NAME="openjpeg-${OPJ_TAG_NAME}-${TRAVIS_OS_NAME}-${OPJ_CI_ARCH}"
 	cd ${OPJ_BINARY_DIR}
