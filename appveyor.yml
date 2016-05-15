@@ -31,7 +31,7 @@ deploy:
   auth_token:
     secure: Huk03f1heCD/HMyA+4ZeVmICdmKn9rPxK5p8/KxzgL+FtJDHlqcllcCrtN9bDxRH # your encrypted token from GitHub
   artifact: /.*\.zip/            # upload all zip packages to release assets
-  draft: true
+  draft: false
   prerelease: false
   on:
     appveyor_repo_tag: true        # deploy on tag push only
