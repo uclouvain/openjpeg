@@ -906,6 +906,32 @@ static void opj_t1_dec_clnpass_step(
 	*flagsp &= ~T1_VISIT;
 }				/* VSC and  BYPASS by Antonin */
 
+static void opj_t1_dec_clnpass_step_only_if_flag_not_sig_visit(
+        opj_t1_t *t1,
+        opj_flag_t *flagsp,
+        OPJ_INT32 *datap,
+        OPJ_INT32 orient,
+        OPJ_INT32 oneplushalf)
+{
+    OPJ_INT32 v;
+    OPJ_INT32 flag;
+
+    opj_mqc_t *mqc = t1->mqc;   /* MQC component */
+
+    flag = *flagsp;
+    /*if (!(flag & (T1_SIG | T1_VISIT)))*/
+    {
+        opj_mqc_setcurctx(mqc, opj_t1_getctxno_zc((OPJ_UINT32)flag, (OPJ_UINT32)orient));
+        if (opj_mqc_decode(mqc)) {
+            opj_mqc_setcurctx(mqc, opj_t1_getctxno_sc((OPJ_UINT32)flag));
+            v = opj_mqc_decode(mqc) ^ opj_t1_getspb((OPJ_UINT32)flag);
+            *datap = v ? -oneplushalf : oneplushalf;
+            opj_t1_updateflags(flagsp, v, t1->flags_stride);
+        }
+    }
+    /*flagsp &= ~T1_VISIT;*/
+}
+
 static void opj_t1_dec_clnpass_step_vsc(
 		opj_t1_t *t1,
 		opj_flag_t *flagsp,
@@ -1084,17 +1110,30 @@ static void opj_t1_dec_clnpass(
 						data2 += t1->w;
 					}
 				} else {
+					opj_flag_t flag;
 					flags2 += t1->flags_stride;
-					opj_t1_dec_clnpass_step(t1, flags2, data2, orient, oneplushalf);
+					flag = *flags2;
+					if (!(flag & (T1_SIG | T1_VISIT)))
+						opj_t1_dec_clnpass_step_only_if_flag_not_sig_visit(t1, flags2, data2, orient, oneplushalf);
+					*flags2 &= ~T1_VISIT;
 					data2 += t1->w;
 					flags2 += t1->flags_stride;
-					opj_t1_dec_clnpass_step(t1, flags2, data2, orient, oneplushalf);
+					flag = *flags2;
+					if (!(flag & (T1_SIG | T1_VISIT)))
+						opj_t1_dec_clnpass_step_only_if_flag_not_sig_visit(t1, flags2, data2, orient, oneplushalf);
+					*flags2 &= ~T1_VISIT;
 					data2 += t1->w;
 					flags2 += t1->flags_stride;
-					opj_t1_dec_clnpass_step(t1, flags2, data2, orient, oneplushalf);
+					flag = *flags2;
+					if (!(flag & (T1_SIG | T1_VISIT)))
+						opj_t1_dec_clnpass_step_only_if_flag_not_sig_visit(t1, flags2, data2, orient, oneplushalf);
+					*flags2 &= ~T1_VISIT;
 					data2 += t1->w;
 					flags2 += t1->flags_stride;
-					opj_t1_dec_clnpass_step(t1, flags2, data2, orient, oneplushalf);
+					flag = *flags2;
+					if (!(flag & (T1_SIG | T1_VISIT)))
+						opj_t1_dec_clnpass_step_only_if_flag_not_sig_visit(t1, flags2, data2, orient, oneplushalf);
+					*flags2 &= ~T1_VISIT;
 					data2 += t1->w;
 				}
 			}
