@@ -343,23 +343,22 @@ static void opj_t1_updateflags(opj_flag_t *flagsp, OPJ_UINT32 s, OPJ_UINT32 stri
 	opj_flag_t *np = flagsp - stride;
 	opj_flag_t *sp = flagsp + stride;
 
-	static const opj_flag_t mod[] = {
-		T1_SIG_S, T1_SIG_S|T1_SGN_S,
-		T1_SIG_E, T1_SIG_E|T1_SGN_E,
-		T1_SIG_W, T1_SIG_W|T1_SGN_W,
-		T1_SIG_N, T1_SIG_N|T1_SGN_N
-	};
+	/* We strongly rely on (T1_SGN_N == 0x0100) == (T1_SIG_N == 0x0010) << 4 */
+	/* and T1_SIG_E == T1_SIG_N << 1, T1_SIG_W == T1_SIG_N << 2 and T1_SIG_S == T1_SIG_N << 2 */
+	/* and T1_SGN_E == T1_SGN_N << 1, T1_SGN_W == T1_SGN_N << 2 and T1_SGN_S == T1_SGN_N << 2 */
+
+	opj_flag_t flag_N = T1_SIG_N | (T1_SIG_N << (4 * s));
 
 	np[-1] |= T1_SIG_SE;
-	np[0]  |= mod[s];
+	np[0]  |= flag_N << 2;
 	np[1]  |= T1_SIG_SW;
 
-	flagsp[-1] |= mod[s+2];
+	flagsp[-1] |= flag_N << 1;
 	flagsp[0]  |= T1_SIG;
-	flagsp[1]  |= mod[s+4];
+	flagsp[1]  |= flag_N << 3;
 
 	sp[-1] |= T1_SIG_NE;
-	sp[0]  |= mod[s+6];
+	sp[0]  |= flag_N;
 	sp[1]  |= T1_SIG_NW;
 }
 

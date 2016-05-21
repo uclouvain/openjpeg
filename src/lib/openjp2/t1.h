@@ -50,6 +50,8 @@ in T1.C are used by some function in TCD.C.
 /* ----------------------------------------------------------------------- */
 #define T1_NMSEDEC_BITS 7
 
+/* CAUTION: the value of those constants must not be changed, otherwise the */
+/* optimization of opj_t1_updateflags() will break! */
 #define T1_SIG_NE 0x0001	/**< Context orientation : North-East direction */
 #define T1_SIG_SE 0x0002	/**< Context orientation : South-East direction */
 #define T1_SIG_SW 0x0004	/**< Context orientation : South-West direction */
