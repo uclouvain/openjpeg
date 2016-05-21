@@ -216,7 +216,7 @@ int main(int argc, char **argv)
 		}
 	}
 
-	printf("static OPJ_BYTE lut_ctxno_zc[1024] = {\n  ");
+	printf("static const OPJ_BYTE lut_ctxno_zc[1024] = {\n  ");
 	for (i = 0; i < 1023; ++i) {
 		printf("%i, ", lut_ctxno_zc[i]);
 		if(!((i+1)&0x1f))
@@ -225,7 +225,7 @@ int main(int argc, char **argv)
 	printf("%i\n};\n\n", lut_ctxno_zc[1023]);
 
 	/* lut_ctxno_sc */
-	printf("static OPJ_BYTE lut_ctxno_sc[256] = {\n  ");
+	printf("static const OPJ_BYTE lut_ctxno_sc[256] = {\n  ");
 	for (i = 0; i < 255; ++i) {
 		printf("0x%x, ", t1_init_ctxno_sc(i << 4));
 		if(!((i+1)&0xf))
@@ -234,7 +234,7 @@ int main(int argc, char **argv)
 	printf("0x%x\n};\n\n", t1_init_ctxno_sc(255 << 4));
 
 	/* lut_spb */
-	printf("static OPJ_BYTE lut_spb[256] = {\n  ");
+	printf("static const OPJ_BYTE lut_spb[256] = {\n  ");
 	for (i = 0; i < 255; ++i) {
 		printf("%i, ", t1_init_spb(i << 4));
 		if(!((i+1)&0x1f))
@@ -268,16 +268,16 @@ int main(int argc, char **argv)
 					(int) (floor((u * u) * pow(2, T1_NMSEDEC_FRACBITS) + 0.5) / pow(2, T1_NMSEDEC_FRACBITS) * 8192.0));
 	}
 
-	printf("static OPJ_INT16 lut_nmsedec_sig[1 << T1_NMSEDEC_BITS] = {\n  ");
+	printf("static const OPJ_INT16 lut_nmsedec_sig[1 << T1_NMSEDEC_BITS] = {\n  ");
 	dump_array16(lut_nmsedec_sig, 1 << T1_NMSEDEC_BITS);
 
-	printf("static OPJ_INT16 lut_nmsedec_sig0[1 << T1_NMSEDEC_BITS] = {\n  ");
+	printf("static const OPJ_INT16 lut_nmsedec_sig0[1 << T1_NMSEDEC_BITS] = {\n  ");
 	dump_array16(lut_nmsedec_sig0, 1 << T1_NMSEDEC_BITS);
 
-	printf("static OPJ_INT16 lut_nmsedec_ref[1 << T1_NMSEDEC_BITS] = {\n  ");
+	printf("static const OPJ_INT16 lut_nmsedec_ref[1 << T1_NMSEDEC_BITS] = {\n  ");
 	dump_array16(lut_nmsedec_ref, 1 << T1_NMSEDEC_BITS);
 
-	printf("static OPJ_INT16 lut_nmsedec_ref0[1 << T1_NMSEDEC_BITS] = {\n  ");
+	printf("static const OPJ_INT16 lut_nmsedec_ref0[1 << T1_NMSEDEC_BITS] = {\n  ");
 	dump_array16(lut_nmsedec_ref0, 1 << T1_NMSEDEC_BITS);
 
 	return 0;
