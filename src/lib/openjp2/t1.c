@@ -1559,7 +1559,18 @@ OPJ_BOOL opj_t1_decode_cblks(   opj_t1_t* t1,
 					if (tccp->qmfbid == 1) {
                         OPJ_INT32* restrict tiledp = &tilec->data[(OPJ_UINT32)y * tile_w + (OPJ_UINT32)x];
 						for (j = 0; j < cblk_h; ++j) {
-							for (i = 0; i < cblk_w; ++i) {
+							i = 0;
+							for (; i < (cblk_w & ~3); i += 4) {
+								OPJ_INT32 tmp0 = datap[(j * cblk_w) + i];
+								OPJ_INT32 tmp1 = datap[(j * cblk_w) + i+1];
+								OPJ_INT32 tmp2 = datap[(j * cblk_w) + i+2];
+								OPJ_INT32 tmp3 = datap[(j * cblk_w) + i+3];
+								((OPJ_INT32*)tiledp)[(j * tile_w) + i] = tmp0/2;
+								((OPJ_INT32*)tiledp)[(j * tile_w) + i+1] = tmp1/2;
+								((OPJ_INT32*)tiledp)[(j * tile_w) + i+2] = tmp2/2;
+								((OPJ_INT32*)tiledp)[(j * tile_w) + i+3] = tmp3/2;
+							}
+							for (; i < cblk_w; ++i) {
 								OPJ_INT32 tmp = datap[(j * cblk_w) + i];
 								((OPJ_INT32*)tiledp)[(j * tile_w) + i] = tmp/2;
 							}
