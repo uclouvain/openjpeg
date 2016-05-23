@@ -1236,7 +1236,7 @@ static void opj_t1_enc_clnpass(
 					runlen = (runlen << 1) | opj_mqc_decode(mqc); \
 					flags2 += (OPJ_UINT32)runlen * flags_stride; \
 					data2 += (OPJ_UINT32)runlen * w; \
-					for (j = (OPJ_UINT32)runlen; j < 4 && j < h; ++j) { \
+					for (j = (OPJ_UINT32)runlen; j < 4; ++j) { \
 						flags2 += flags_stride; \
 						if (j == (OPJ_UINT32)runlen) { \
 							opj_t1_dec_clnpass_step_partial(t1, flags2, colflags2, data2, oneplushalf, j); \
