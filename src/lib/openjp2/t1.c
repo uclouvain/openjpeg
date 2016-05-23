@@ -1650,12 +1650,12 @@ static OPJ_BOOL opj_t1_decode_cblk(opj_t1_t *t1,
 	opj_raw_t *raw = t1->raw;	/* RAW component */
 	opj_mqc_t *mqc = t1->mqc;	/* MQC component */
 	
-	mqc->lut_ctxno_zc_orient = lut_ctxno_zc + orient * 256;
-
 	OPJ_INT32 bpno_plus_one;
 	OPJ_UINT32 passtype;
 	OPJ_UINT32 segno, passno;
 	OPJ_BYTE type = T1_TYPE_MQ; /* BYPASS mode */
+
+	mqc->lut_ctxno_zc_orient = lut_ctxno_zc + orient * 256;
 
 	if(!opj_t1_allocate_buffers(
 				t1,
@@ -1903,7 +1903,6 @@ static void opj_t1_encode_cblk(opj_t1_t *t1,
 	OPJ_FLOAT64 cumwmsedec = 0.0;
 
 	opj_mqc_t *mqc = t1->mqc;	/* MQC component */
-	mqc->lut_ctxno_zc_orient = lut_ctxno_zc + orient * 256;
 
 	OPJ_UINT32 passno;
 	OPJ_INT32 bpno;
@@ -1913,6 +1912,8 @@ static void opj_t1_encode_cblk(opj_t1_t *t1,
 	OPJ_UINT32 i, j;
 	OPJ_BYTE type = T1_TYPE_MQ;
 	OPJ_FLOAT64 tempwmsedec;
+
+	mqc->lut_ctxno_zc_orient = lut_ctxno_zc + orient * 256;
 
 	max = 0;
 	for (i = 0; i < t1->w; ++i) {
