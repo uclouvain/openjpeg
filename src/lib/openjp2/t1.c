@@ -93,7 +93,8 @@ static INLINE void opj_t1_dec_sigpass_step_mqc(
                 opj_colflag_t* colflagsp,
                 OPJ_INT32 *datap,
                 OPJ_INT32 oneplushalf,
-                OPJ_INT32 row);
+                OPJ_INT32 row,
+                OPJ_INT32 flags_stride);
 static INLINE void opj_t1_dec_sigpass_step_mqc_vsc(
                 opj_t1_t *t1,
                 opj_flag_t *flagsp,
@@ -474,7 +475,8 @@ static INLINE void opj_t1_dec_sigpass_step_mqc(
                 opj_colflag_t* colflagsp,
                 OPJ_INT32 *datap,
                 OPJ_INT32 oneplushalf,
-                OPJ_INT32 row)
+                OPJ_INT32 row,
+                OPJ_INT32 flags_stride)
 {
         OPJ_INT32 v, flag;
        
@@ -492,7 +494,7 @@ static INLINE void opj_t1_dec_sigpass_step_mqc(
                                 opj_mqc_setcurctx(mqc, opj_t1_getctxno_sc((OPJ_UINT32)flag));
                                 v = opj_mqc_decode(mqc) ^ opj_t1_getspb((OPJ_UINT32)flag);
                                 *datap = v ? -oneplushalf : oneplushalf;
-                                opj_t1_updateflagscolflags(flagsp, colflagsp, (OPJ_UINT32)v, t1->flags_stride, row);
+                                opj_t1_updateflagscolflags(flagsp, colflagsp, (OPJ_UINT32)v, flags_stride, row);
                         }
 #ifdef CONSISTENCY_CHECK
                 *flagsp |= T1_VISIT;
@@ -609,16 +611,16 @@ static void opj_t1_dec_sigpass_raw(
                         opj_colflag_t *colflags2 = colflags1 + i; \
                         if( *colflags2 == 0 ) continue; \
                         flags2 += flags_stride; \
-                        opj_t1_dec_sigpass_step_mqc(t1, flags2, colflags2, data2, oneplushalf, 0); \
+                        opj_t1_dec_sigpass_step_mqc(t1, flags2, colflags2, data2, oneplushalf, 0, flags_stride); \
                         data2 += w; \
                         flags2 += flags_stride; \
-                        opj_t1_dec_sigpass_step_mqc(t1, flags2, colflags2, data2, oneplushalf, 1); \
+                        opj_t1_dec_sigpass_step_mqc(t1, flags2, colflags2, data2, oneplushalf, 1, flags_stride); \
                         data2 += w; \
                         flags2 += flags_stride; \
-                        opj_t1_dec_sigpass_step_mqc(t1, flags2, colflags2, data2, oneplushalf, 2); \
+                        opj_t1_dec_sigpass_step_mqc(t1, flags2, colflags2, data2, oneplushalf, 2, flags_stride); \
                         data2 += w; \
                         flags2 += flags_stride; \
-                        opj_t1_dec_sigpass_step_mqc(t1, flags2, colflags2, data2, oneplushalf, 3); \
+                        opj_t1_dec_sigpass_step_mqc(t1, flags2, colflags2, data2, oneplushalf, 3, flags_stride); \
                         data2 += w; \
                 } \
                 data1 += w << 2; \
@@ -631,7 +633,7 @@ static void opj_t1_dec_sigpass_raw(
                 opj_colflag_t *colflags2 = colflags1 + i; \
                 for (j = k; j < h; ++j) { \
                         flags2 += flags_stride; \
-                        opj_t1_dec_sigpass_step_mqc(t1, flags2, colflags2, data2, oneplushalf, j - k); \
+                        opj_t1_dec_sigpass_step_mqc(t1, flags2, colflags2, data2, oneplushalf, j - k, flags_stride); \
                         data2 += w; \
                 } \
         } \
@@ -1034,7 +1036,8 @@ static void opj_t1_dec_clnpass_step_only_if_flag_not_sig_visit(
         opj_colflag_t *colflagsp,
         OPJ_INT32 *datap,
         OPJ_INT32 oneplushalf,
-        OPJ_INT32 row)
+        OPJ_INT32 row,
+        OPJ_INT32 flags_stride)
 {
     OPJ_INT32 v;
     OPJ_INT32 flag;
@@ -1049,7 +1052,7 @@ static void opj_t1_dec_clnpass_step_only_if_flag_not_sig_visit(
             opj_mqc_setcurctx(mqc, opj_t1_getctxno_sc((OPJ_UINT32)flag));
             v = opj_mqc_decode(mqc) ^ opj_t1_getspb((OPJ_UINT32)flag);
             *datap = v ? -oneplushalf : oneplushalf;
-            opj_t1_updateflagscolflags(flagsp, colflagsp, v, t1->flags_stride, row);
+            opj_t1_updateflagscolflags(flagsp, colflagsp, v, flags_stride, row);
         }
     }
     /*flagsp &= ~T1_VISIT;*/
@@ -1249,28 +1252,28 @@ static void opj_t1_enc_clnpass(
 					flags2 += flags_stride; \
 					if( consistency_check ) { assert( (!(colflags & (T1_COLFLAG_SIG_ROW_0 | T1_COLFLAG_VISIT_ROW_0))) == (!(*flags2 & (T1_SIG | T1_VISIT))) ); } \
 					if (!(colflags & (T1_COLFLAG_SIG_ROW_0 | T1_COLFLAG_VISIT_ROW_0))) {\
-						opj_t1_dec_clnpass_step_only_if_flag_not_sig_visit(t1, flags2, colflags2, data2, oneplushalf, 0); \
+						opj_t1_dec_clnpass_step_only_if_flag_not_sig_visit(t1, flags2, colflags2, data2, oneplushalf, 0, flags_stride); \
 					} \
 					if( consistency_check ) *flags2 &= ~T1_VISIT; \
 					data2 += w; \
 					flags2 += flags_stride; \
 					if( consistency_check ) { assert( (!(colflags & (T1_COLFLAG_SIG_ROW_1 | T1_COLFLAG_VISIT_ROW_1))) == (!(*flags2 & (T1_SIG | T1_VISIT))) ); } \
 					if (!(colflags & (T1_COLFLAG_SIG_ROW_1 | T1_COLFLAG_VISIT_ROW_1))) {\
-						opj_t1_dec_clnpass_step_only_if_flag_not_sig_visit(t1, flags2, colflags2, data2, oneplushalf, 1); \
+						opj_t1_dec_clnpass_step_only_if_flag_not_sig_visit(t1, flags2, colflags2, data2, oneplushalf, 1, flags_stride); \
 					} \
 					if( consistency_check ) *flags2 &= ~T1_VISIT; \
 					data2 += w; \
 					flags2 += flags_stride; \
 					if( consistency_check ) { assert( (!(colflags & (T1_COLFLAG_SIG_ROW_2 | T1_COLFLAG_VISIT_ROW_2))) == (!(*flags2 & (T1_SIG | T1_VISIT))) ); } \
 					if (!(colflags & (T1_COLFLAG_SIG_ROW_2 | T1_COLFLAG_VISIT_ROW_2))) {\
-						opj_t1_dec_clnpass_step_only_if_flag_not_sig_visit(t1, flags2, colflags2, data2, oneplushalf, 2); \
+						opj_t1_dec_clnpass_step_only_if_flag_not_sig_visit(t1, flags2, colflags2, data2, oneplushalf, 2, flags_stride); \
 					} \
 					if( consistency_check ) *flags2 &= ~T1_VISIT; \
 					data2 += w; \
 					flags2 += flags_stride; \
 					if( consistency_check ) { assert( (!(colflags & (T1_COLFLAG_SIG_ROW_3 | T1_COLFLAG_VISIT_ROW_3))) == (!(*flags2 & (T1_SIG | T1_VISIT))) ); } \
 					if (!(colflags & (T1_COLFLAG_SIG_ROW_3 | T1_COLFLAG_VISIT_ROW_3))) {\
-						opj_t1_dec_clnpass_step_only_if_flag_not_sig_visit(t1, flags2, colflags2, data2, oneplushalf, 3); \
+						opj_t1_dec_clnpass_step_only_if_flag_not_sig_visit(t1, flags2, colflags2, data2, oneplushalf, 3, flags_stride); \
 					} \
 					if( consistency_check ) *flags2 &= ~T1_VISIT; \
 					data2 += w; \
