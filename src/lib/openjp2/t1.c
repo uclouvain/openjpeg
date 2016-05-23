@@ -660,26 +660,47 @@ static void opj_t1_dec_sigpass_mqc_vsc(
 {
         OPJ_INT32 one, half, oneplushalf, vsc;
         OPJ_UINT32 i, j, k;
-		opj_colflag_t *colflags1 = &t1->colflags[t1->flags_stride + 1];
+        OPJ_INT32 *data1 = t1->data;
+        opj_flag_t *flags1 = &t1->flags[1];
+        opj_colflag_t *colflags1 = &t1->colflags[t1->flags_stride + 1];
         one = 1 << bpno;
         half = one >> 1;
         oneplushalf = one | half;
-        for (k = 0; k < t1->h; k += 4) {
+        for (k = 0; k < (t1->h & ~3); k += 4) {
                 for (i = 0; i < t1->w; ++i) {
+                        OPJ_INT32 *data2 = data1 + i;
+                        opj_flag_t *flags2 = flags1 + i;
                         opj_colflag_t *colflags2 = colflags1 + i;
-                        for (j = k; j < k + 4 && j < t1->h; ++j) {
-                                vsc = (j == k + 3 || j == t1->h - 1) ? 1 : 0;
-                                opj_t1_dec_sigpass_step_mqc_vsc(
-                                                t1,
-                                                &t1->flags[((j+1) * t1->flags_stride) + i + 1],
-                                                colflags2,
-                                                &t1->data[(j * t1->w) + i],
-                                                oneplushalf,
-                                                vsc,
-                                                j - k);
-                        }
+                        flags2 += t1->flags_stride;
+                        opj_t1_dec_sigpass_step_mqc_vsc(t1, flags2, colflags2, data2, oneplushalf, 0, 0);
+                        data2 += t1->w;
+                        flags2 += t1->flags_stride;
+                        opj_t1_dec_sigpass_step_mqc_vsc(t1, flags2, colflags2, data2, oneplushalf, 0, 1);
+                        data2 += t1->w;
+                        flags2 += t1->flags_stride;
+                        opj_t1_dec_sigpass_step_mqc_vsc(t1, flags2, colflags2, data2, oneplushalf, 0, 2);
+                        data2 += t1->w;
+                        flags2 += t1->flags_stride;
+                        opj_t1_dec_sigpass_step_mqc_vsc(t1, flags2, colflags2, data2, oneplushalf, 1, 3);
+                        data2 += t1->w;
                 }
+                data1 += t1->w << 2;
+                flags1 += t1->flags_stride << 2;
                 colflags1 += t1->flags_stride;
+        }
+        for (i = 0; i < t1->w; ++i) {
+                opj_colflag_t *colflags2 = colflags1 + i;
+                for (j = k; j < t1->h; ++j) {
+                        vsc = (j == t1->h - 1) ? 1 : 0;
+                        opj_t1_dec_sigpass_step_mqc_vsc(
+                                        t1,
+                                        &t1->flags[((j+1) * t1->flags_stride) + i + 1],
+                                        colflags2,
+                                        &t1->data[(j * t1->w) + i],
+                                        oneplushalf,
+                                        vsc,
+                                        j - k);
+                }
         }
 }                               /* VSC and  BYPASS by Antonin */
 
@@ -921,26 +942,47 @@ static void opj_t1_dec_refpass_mqc_vsc(
         OPJ_INT32 one, poshalf, neghalf;
         OPJ_UINT32 i, j, k;
         OPJ_INT32 vsc;
+        OPJ_INT32 *data1 = t1->data;
+        opj_flag_t *flags1 = &t1->flags[1];
         opj_colflag_t *colflags1 = &t1->colflags[t1->flags_stride + 1];
         one = 1 << bpno;
         poshalf = one >> 1;
         neghalf = bpno > 0 ? -poshalf : -1;
-        for (k = 0; k < t1->h; k += 4) {
+        for (k = 0; k < (t1->h & ~3); k += 4) {
                 for (i = 0; i < t1->w; ++i) {
+                        OPJ_INT32 *data2 = data1 + i;
+                        opj_flag_t *flags2 = flags1 + i;
                         opj_colflag_t *colflags2 = colflags1 + i;
-                        for (j = k; j < k + 4 && j < t1->h; ++j) {
-                                vsc = ((j == k + 3 || j == t1->h - 1)) ? 1 : 0;
-                                opj_t1_dec_refpass_step_mqc_vsc(
-                                                t1,
-                                                &t1->flags[((j+1) * t1->flags_stride) + i + 1],
-                                                colflags2,
-                                                &t1->data[(j * t1->w) + i],
-                                                poshalf,
-                                                neghalf,
-                                                vsc, j - k);
-                        }
+                        flags2 += t1->flags_stride;
+                        opj_t1_dec_refpass_step_mqc_vsc(t1, flags2, colflags2, data2, poshalf, neghalf, 0, 0);
+                        data2 += t1->w;
+                        flags2 += t1->flags_stride;
+                        opj_t1_dec_refpass_step_mqc_vsc(t1, flags2, colflags2, data2, poshalf, neghalf, 0, 1);
+                        data2 += t1->w;
+                        flags2 += t1->flags_stride;
+                        opj_t1_dec_refpass_step_mqc_vsc(t1, flags2, colflags2, data2, poshalf, neghalf, 0, 2);
+                        data2 += t1->w;
+                        flags2 += t1->flags_stride;
+                        opj_t1_dec_refpass_step_mqc_vsc(t1, flags2, colflags2, data2, poshalf, neghalf, 1, 3);
+                        data2 += t1->w;
                 }
+                data1 += t1->w << 2;
+                flags1 += t1->flags_stride << 2;
                 colflags1 += t1->flags_stride;
+        }
+        for (i = 0; i < t1->w; ++i) {
+                opj_colflag_t *colflags2 = colflags1 + i;
+                for (j = k; j < t1->h; ++j) {
+                        vsc = (j == t1->h - 1) ? 1 : 0;
+                        opj_t1_dec_refpass_step_mqc_vsc(
+                                        t1,
+                                        &t1->flags[((j+1) * t1->flags_stride) + i + 1],
+                                        colflags2,
+                                        &t1->data[(j * t1->w) + i],
+                                        poshalf, neghalf,
+                                        vsc,
+                                        j - k);
+                }
         }
 }                               /* VSC and  BYPASS by Antonin */
 
