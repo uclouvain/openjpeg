@@ -43,6 +43,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+#include <time.h>
 
 #ifdef _WIN32
 #include "windirent.h"
@@ -907,17 +908,22 @@ OPJ_FLOAT64 opj_clock(void) {
     /* t is the high resolution performance counter (see MSDN) */
     QueryPerformanceCounter ( & t ) ;
 	return freq.QuadPart ? (t.QuadPart / (OPJ_FLOAT64)freq.QuadPart) : 0;
+#elif defined(__linux)
+	struct timespec ts;
+	clock_gettime(CLOCK_REALTIME, &ts);
+	return( ts.tv_sec + ts.tv_nsec * 1e-9 );
 #else
-	/* Unix or Linux: use resource usage */
-    struct rusage t;
-    OPJ_FLOAT64 procTime;
-    /* (1) Get the rusage data structure at this moment (man getrusage) */
-    getrusage(0,&t);
-    /* (2) What is the elapsed time ? - CPU time = User time + System time */
+	/* Unix : use resource usage */
+	/* FIXME: this counts the total CPU time, instead of the user perceived time */
+	struct rusage t;
+	OPJ_FLOAT64 procTime;
+	/* (1) Get the rusage data structure at this moment (man getrusage) */
+	getrusage(0,&t);
+	/* (2) What is the elapsed time ? - CPU time = User time + System time */
 	/* (2a) Get the seconds */
-    procTime = (OPJ_FLOAT64)(t.ru_utime.tv_sec + t.ru_stime.tv_sec);
-    /* (2b) More precisely! Get the microseconds part ! */
-    return ( procTime + (OPJ_FLOAT64)(t.ru_utime.tv_usec + t.ru_stime.tv_usec) * 1e-6 ) ;
+	procTime = (OPJ_FLOAT64)(t.ru_utime.tv_sec + t.ru_stime.tv_sec);
+	/* (2b) More precisely! Get the microseconds part ! */
+	return ( procTime + (OPJ_FLOAT64)(t.ru_utime.tv_usec + t.ru_stime.tv_usec) * 1e-6 ) ;
 #endif
 }
 
