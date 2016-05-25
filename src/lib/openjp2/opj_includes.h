@@ -183,6 +183,7 @@ static INLINE long opj_lrintf(float f) {
 #include "cio.h"
 
 #include "thread.h"
+#include "tls_keys.h"
 
 #include "image.h"
 #include "invert.h"

@@ -1540,13 +1540,140 @@ void opj_t1_destroy(opj_t1_t *p_t1)
 	opj_free(p_t1);
 }
 
-OPJ_BOOL opj_t1_decode_cblks(   opj_t1_t* t1,
-                            opj_tcd_tilecomp_t* tilec,
-                            opj_tccp_t* tccp
-                            )
+typedef struct
+{
+    OPJ_UINT32 resno;
+    opj_tcd_cblk_dec_t* cblk;
+    opj_tcd_band_t* band;
+    opj_tcd_tilecomp_t* tilec;
+    opj_tccp_t* tccp;
+    volatile OPJ_BOOL* pret;
+} opj_t1_cblk_decode_processing_job_t;
+
+static void opj_t1_destroy_wrapper(void* t1)
+{
+    opj_t1_destroy( (opj_t1_t*) t1 );
+}
+
+static void opj_t1_clbl_decode_processor(void* user_data, opj_tls_t* tls)
+{
+    opj_tcd_cblk_dec_t* cblk;
+    opj_tcd_band_t* band;
+    opj_tcd_tilecomp_t* tilec;
+    opj_tccp_t* tccp;
+    OPJ_INT32* restrict datap;
+    OPJ_UINT32 cblk_w, cblk_h;
+    OPJ_INT32 x, y;
+    OPJ_UINT32 i, j;
+    opj_t1_cblk_decode_processing_job_t* job;
+    opj_t1_t* t1;
+    OPJ_UINT32 resno;
+    OPJ_UINT32 tile_w;
+
+    job = (opj_t1_cblk_decode_processing_job_t*) user_data;
+    resno = job->resno;
+    cblk = job->cblk;
+    band = job->band;
+    tilec = job->tilec;
+    tccp = job->tccp;
+    tile_w = (OPJ_UINT32)(tilec->x1 - tilec->x0);
+
+    if( !*(job->pret) )
+    {
+        opj_free(job);
+        return;
+    }
+
+    t1 = (opj_t1_t*) opj_tls_get(tls, OPJ_TLS_KEY_T1);
+    if( t1 == NULL )
+    {
+        t1 = opj_t1_create( OPJ_FALSE );
+        opj_tls_set( tls, OPJ_TLS_KEY_T1, t1, opj_t1_destroy_wrapper );
+    }
+
+    if (OPJ_FALSE == opj_t1_decode_cblk(
+                            t1,
+                            cblk,
+                            band->bandno,
+                            (OPJ_UINT32)tccp->roishift,
+                            tccp->cblksty)) {
+            *(job->pret) = OPJ_FALSE;
+            opj_free(job);
+            return;
+    }
+
+    x = cblk->x0 - band->x0;
+    y = cblk->y0 - band->y0;
+    if (band->bandno & 1) {
+        opj_tcd_resolution_t* pres = &tilec->resolutions[resno - 1];
+        x += pres->x1 - pres->x0;
+    }
+    if (band->bandno & 2) {
+        opj_tcd_resolution_t* pres = &tilec->resolutions[resno - 1];
+        y += pres->y1 - pres->y0;
+    }
+
+    datap=t1->data;
+    cblk_w = t1->w;
+    cblk_h = t1->h;
+
+    if (tccp->roishift) {
+        OPJ_INT32 thresh = 1 << tccp->roishift;
+        for (j = 0; j < cblk_h; ++j) {
+            for (i = 0; i < cblk_w; ++i) {
+                OPJ_INT32 val = datap[(j * cblk_w) + i];
+                OPJ_INT32 mag = abs(val);
+                if (mag >= thresh) {
+                    mag >>= tccp->roishift;
+                    datap[(j * cblk_w) + i] = val < 0 ? -mag : mag;
+                }
+            }
+        }
+    }
+    if (tccp->qmfbid == 1) {
+        OPJ_INT32* restrict tiledp = &tilec->data[(OPJ_UINT32)y * tile_w + (OPJ_UINT32)x];
+        for (j = 0; j < cblk_h; ++j) {
+            i = 0;
+            for (; i < (cblk_w & ~3); i += 4) {
+                OPJ_INT32 tmp0 = datap[(j * cblk_w) + i];
+                OPJ_INT32 tmp1 = datap[(j * cblk_w) + i+1];
+                OPJ_INT32 tmp2 = datap[(j * cblk_w) + i+2];
+                OPJ_INT32 tmp3 = datap[(j * cblk_w) + i+3];
+                ((OPJ_INT32*)tiledp)[(j * tile_w) + i] = tmp0/2;
+                ((OPJ_INT32*)tiledp)[(j * tile_w) + i+1] = tmp1/2;
+                ((OPJ_INT32*)tiledp)[(j * tile_w) + i+2] = tmp2/2;
+                ((OPJ_INT32*)tiledp)[(j * tile_w) + i+3] = tmp3/2;
+            }
+            for (; i < cblk_w; ++i) {
+                OPJ_INT32 tmp = datap[(j * cblk_w) + i];
+                ((OPJ_INT32*)tiledp)[(j * tile_w) + i] = tmp/2;
+            }
+        }
+    } else {        /* if (tccp->qmfbid == 0) */
+        OPJ_FLOAT32* restrict tiledp = (OPJ_FLOAT32*) &tilec->data[(OPJ_UINT32)y * tile_w + (OPJ_UINT32)x];
+        for (j = 0; j < cblk_h; ++j) {
+            OPJ_FLOAT32* restrict tiledp2 = tiledp;
+            for (i = 0; i < cblk_w; ++i) {
+                OPJ_FLOAT32 tmp = (OPJ_FLOAT32)*datap * band->stepsize;
+                *tiledp2 = tmp;
+                datap++;
+                tiledp2++;
+            }
+            tiledp += tile_w;
+        }
+    }
+
+    opj_free(job);
+}
+
+
+void opj_t1_decode_cblks( opj_thread_pool_t* tp,
+                          volatile OPJ_BOOL* pret,
+                          opj_tcd_tilecomp_t* tilec,
+                          opj_tccp_t* tccp
+                         )
 {
 	OPJ_UINT32 resno, bandno, precno, cblkno;
-	OPJ_UINT32 tile_w = (OPJ_UINT32)(tilec->x1 - tilec->x0);
 
 	for (resno = 0; resno < tilec->minimum_num_resolutions; ++resno) {
 		opj_tcd_resolution_t* res = &tilec->resolutions[resno];
@@ -1559,85 +1686,24 @@ OPJ_BOOL opj_t1_decode_cblks(   opj_t1_t* t1,
 
 				for (cblkno = 0; cblkno < precinct->cw * precinct->ch; ++cblkno) {
 					opj_tcd_cblk_dec_t* cblk = &precinct->cblks.dec[cblkno];
-					OPJ_INT32* restrict datap;
-					OPJ_UINT32 cblk_w, cblk_h;
-					OPJ_INT32 x, y;
-					OPJ_UINT32 i, j;
+                    opj_t1_cblk_decode_processing_job_t* job;
 
-                    if (OPJ_FALSE == opj_t1_decode_cblk(
-                                            t1,
-                                            cblk,
-                                            band->bandno,
-                                            (OPJ_UINT32)tccp->roishift,
-                                            tccp->cblksty)) {
-                            return OPJ_FALSE;
-                    }
-
-					x = cblk->x0 - band->x0;
-					y = cblk->y0 - band->y0;
-					if (band->bandno & 1) {
-						opj_tcd_resolution_t* pres = &tilec->resolutions[resno - 1];
-						x += pres->x1 - pres->x0;
-					}
-					if (band->bandno & 2) {
-						opj_tcd_resolution_t* pres = &tilec->resolutions[resno - 1];
-						y += pres->y1 - pres->y0;
-					}
-
-					datap=t1->data;
-					cblk_w = t1->w;
-					cblk_h = t1->h;
-
-					if (tccp->roishift) {
-						OPJ_INT32 thresh = 1 << tccp->roishift;
-						for (j = 0; j < cblk_h; ++j) {
-							for (i = 0; i < cblk_w; ++i) {
-								OPJ_INT32 val = datap[(j * cblk_w) + i];
-								OPJ_INT32 mag = abs(val);
-								if (mag >= thresh) {
-									mag >>= tccp->roishift;
-									datap[(j * cblk_w) + i] = val < 0 ? -mag : mag;
-								}
-							}
-						}
-					}
-					if (tccp->qmfbid == 1) {
-                        OPJ_INT32* restrict tiledp = &tilec->data[(OPJ_UINT32)y * tile_w + (OPJ_UINT32)x];
-						for (j = 0; j < cblk_h; ++j) {
-							i = 0;
-							for (; i < (cblk_w & ~3); i += 4) {
-								OPJ_INT32 tmp0 = datap[(j * cblk_w) + i];
-								OPJ_INT32 tmp1 = datap[(j * cblk_w) + i+1];
-								OPJ_INT32 tmp2 = datap[(j * cblk_w) + i+2];
-								OPJ_INT32 tmp3 = datap[(j * cblk_w) + i+3];
-								((OPJ_INT32*)tiledp)[(j * tile_w) + i] = tmp0/2;
-								((OPJ_INT32*)tiledp)[(j * tile_w) + i+1] = tmp1/2;
-								((OPJ_INT32*)tiledp)[(j * tile_w) + i+2] = tmp2/2;
-								((OPJ_INT32*)tiledp)[(j * tile_w) + i+3] = tmp3/2;
-							}
-							for (; i < cblk_w; ++i) {
-								OPJ_INT32 tmp = datap[(j * cblk_w) + i];
-								((OPJ_INT32*)tiledp)[(j * tile_w) + i] = tmp/2;
-							}
-						}
-					} else {		/* if (tccp->qmfbid == 0) */
-                        OPJ_FLOAT32* restrict tiledp = (OPJ_FLOAT32*) &tilec->data[(OPJ_UINT32)y * tile_w + (OPJ_UINT32)x];
-						for (j = 0; j < cblk_h; ++j) {
-                            OPJ_FLOAT32* restrict tiledp2 = tiledp;
-							for (i = 0; i < cblk_w; ++i) {
-                                OPJ_FLOAT32 tmp = (OPJ_FLOAT32)*datap * band->stepsize;
-                                *tiledp2 = tmp;
-                                datap++;
-                                tiledp2++;
-							}
-                            tiledp += tile_w;
-						}
-					}
+                    job = (opj_t1_cblk_decode_processing_job_t*) opj_calloc(1, sizeof(opj_t1_cblk_decode_processing_job_t));
+                    job->resno = resno;
+                    job->cblk = cblk;
+                    job->band = band;
+                    job->tilec = tilec;
+                    job->tccp = tccp;
+                    job->pret = pret;
+                    opj_thread_pool_submit_job( tp, opj_t1_clbl_decode_processor, job );
+                    if( !(*pret) )
+                        return;
 				} /* cblkno */
 			} /* precno */
 		} /* bandno */
 	} /* resno */
-        return OPJ_TRUE;
+
+    return;
 }
 
 
