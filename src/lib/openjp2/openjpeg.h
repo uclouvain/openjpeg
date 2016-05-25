@@ -1554,6 +1554,19 @@ OPJ_API OPJ_BOOL OPJ_CALLCONV opj_set_MCT( opj_cparameters_t *parameters,
 		                               	   OPJ_INT32 * p_dc_shift,
 		                               	   OPJ_UINT32 pNbComp);
 
+/*
+==========================================================
+   Thread functions
+==========================================================
+*/
+
+/** Returns if the library is built with thread support.
+ * OPJ_TRUE if mutex, condition, thread, thread pool are available.
+ */
+OPJ_API OPJ_BOOL OPJ_CALLCONV opj_has_thread_support(void);
+
+/** Return the number of virtual CPUs */
+OPJ_API int OPJ_CALLCONV opj_get_num_cpus(void);
 
 
 #ifdef __cplusplus

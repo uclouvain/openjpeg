@@ -182,6 +182,8 @@ static INLINE long opj_lrintf(float f) {
 #include "bio.h"
 #include "cio.h"
 
+#include "thread.h"
+
 #include "image.h"
 #include "invert.h"
 #include "j2k.h"
