@@ -1610,7 +1610,7 @@ static OPJ_BOOL opj_tcd_dwt_decode ( opj_tcd_t *p_tcd )
                 */
 
                 if (l_tccp->qmfbid == 1) {
-                        if (! opj_dwt_decode(l_tile_comp, l_img_comp->resno_decoded+1)) {
+                        if (! opj_dwt_decode(p_tcd->thread_pool, l_tile_comp, l_img_comp->resno_decoded+1)) {
                                 return OPJ_FALSE;
                         }
                 }

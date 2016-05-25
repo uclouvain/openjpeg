@@ -124,7 +124,7 @@ static void opj_dwt_encode_stepsize(OPJ_INT32 stepsize, OPJ_INT32 numbps, opj_st
 /**
 Inverse wavelet transform in 2-D.
 */
-static OPJ_BOOL opj_dwt_decode_tile(opj_tcd_tilecomp_t* tilec, OPJ_UINT32 i, DWT1DFN fn);
+static OPJ_BOOL opj_dwt_decode_tile(opj_thread_pool_t* tp, opj_tcd_tilecomp_t* tilec, OPJ_UINT32 i, DWT1DFN fn);
 
 static OPJ_BOOL opj_dwt_encode_procedure(	opj_tcd_tilecomp_t * tilec,
 										    void (*p_function)(OPJ_INT32 *, OPJ_INT32,OPJ_INT32,OPJ_INT32) );
@@ -473,8 +473,8 @@ OPJ_BOOL opj_dwt_encode(opj_tcd_tilecomp_t * tilec)
 /* <summary>                            */
 /* Inverse 5-3 wavelet transform in 2-D. */
 /* </summary>                           */
-OPJ_BOOL opj_dwt_decode(opj_tcd_tilecomp_t* tilec, OPJ_UINT32 numres) {
-	return opj_dwt_decode_tile(tilec, numres, &opj_dwt_decode_1);
+OPJ_BOOL opj_dwt_decode(opj_thread_pool_t* tp, opj_tcd_tilecomp_t* tilec, OPJ_UINT32 numres) {
+	return opj_dwt_decode_tile(tp, tilec, numres, &opj_dwt_decode_1);
 }
 
 
@@ -556,10 +556,72 @@ static OPJ_UINT32 opj_dwt_max_resolution(opj_tcd_resolution_t* restrict r, OPJ_U
 	return mr ;
 }
 
+typedef struct
+{
+    opj_dwt_t h;
+    DWT1DFN dwt_1D;
+    OPJ_UINT32 rw;
+    OPJ_UINT32 w;
+    OPJ_INT32 * restrict tiledp;
+    int min_j;
+    int max_j;
+} opj_dwd_decode_h_job_t;
+
+static void opj_dwt_decode_h_func(void* user_data, opj_tls_t* tls)
+{
+    int j;
+    opj_dwd_decode_h_job_t* job;
+    (void)tls;
+
+    job = (opj_dwd_decode_h_job_t*)user_data;
+    for( j = job->min_j; j < job->max_j; j++ )
+    {
+          opj_dwt_interleave_h(&job->h, &job->tiledp[j*job->w]);
+          (job->dwt_1D)(&job->h);
+          memcpy(&job->tiledp[j*job->w], job->h.mem, job->rw * sizeof(OPJ_INT32));
+    }
+
+    opj_aligned_free(job->h.mem);
+    opj_free(job);
+}
+
+typedef struct
+{
+    opj_dwt_t v;
+    DWT1DFN dwt_1D;
+    OPJ_UINT32 rh;
+    OPJ_UINT32 w;
+    OPJ_INT32 * restrict tiledp;
+    int min_j;
+    int max_j;
+} opj_dwd_decode_v_job_t;
+
+static void opj_dwt_decode_v_func(void* user_data, opj_tls_t* tls)
+{
+    int j;
+    opj_dwd_decode_v_job_t* job;
+    (void)tls;
+
+    job = (opj_dwd_decode_v_job_t*)user_data;
+    for( j = job->min_j; j < job->max_j; j++ )
+    {
+        OPJ_UINT32 k;
+        opj_dwt_interleave_v(&job->v, &job->tiledp[j], (OPJ_INT32)job->w);
+        (job->dwt_1D)(&job->v);
+        for(k = 0; k < job->rh; ++k) {
+            job->tiledp[k * job->w + j] = job->v.mem[k];
+        }
+    }
+
+    opj_aligned_free(job->v.mem);
+    opj_free(job);
+}
+
+
 /* <summary>                            */
 /* Inverse wavelet transform in 2-D.     */
 /* </summary>                           */
-static OPJ_BOOL opj_dwt_decode_tile(opj_tcd_tilecomp_t* tilec, OPJ_UINT32 numres, DWT1DFN dwt_1D) {
+static OPJ_BOOL opj_dwt_decode_tile(opj_thread_pool_t* tp, opj_tcd_tilecomp_t* tilec, OPJ_UINT32 numres, DWT1DFN dwt_1D) {
 	opj_dwt_t h;
 	opj_dwt_t v;
 
@@ -569,11 +631,15 @@ static OPJ_BOOL opj_dwt_decode_tile(opj_tcd_tilecomp_t* tilec, OPJ_UINT32 numres
 	OPJ_UINT32 rh = (OPJ_UINT32)(tr->y1 - tr->y0);	/* height of the resolution level computed */
 
 	OPJ_UINT32 w = (OPJ_UINT32)(tilec->x1 - tilec->x0);
+    size_t h_mem_size;
+    int num_threads;
 	
 	if (numres == 1U) {
 		return OPJ_TRUE;
 	}
-	h.mem = (OPJ_INT32*)opj_aligned_malloc(opj_dwt_max_resolution(tr, numres) * sizeof(OPJ_INT32));
+	num_threads = opj_thread_pool_get_thread_count(tp);
+	h_mem_size = opj_dwt_max_resolution(tr, numres) * sizeof(OPJ_INT32);
+	h.mem = (OPJ_INT32*)opj_aligned_malloc(h_mem_size);
 	if (! h.mem){
 		/* FIXME event manager error callback */
 		return OPJ_FALSE;
@@ -595,23 +661,93 @@ static OPJ_BOOL opj_dwt_decode_tile(opj_tcd_tilecomp_t* tilec, OPJ_UINT32 numres
 		h.dn = (OPJ_INT32)(rw - (OPJ_UINT32)h.sn);
 		h.cas = tr->x0 % 2;
 
-		for(j = 0; j < rh; ++j) {
-			opj_dwt_interleave_h(&h, &tiledp[j*w]);
-			(dwt_1D)(&h);
-			memcpy(&tiledp[j*w], h.mem, rw * sizeof(OPJ_INT32));
-		}
+        if( num_threads <= 1 || rh == 1 )
+        {
+            for(j = 0; j < rh; ++j) {
+                opj_dwt_interleave_h(&h, &tiledp[j*w]);
+                (dwt_1D)(&h);
+                memcpy(&tiledp[j*w], h.mem, rw * sizeof(OPJ_INT32));
+            }
+        }
+        else
+        {
+            int num_jobs = num_threads;
+            if( rh < num_jobs )
+                num_jobs = rh;
+            for( j = 0; j < num_jobs; j++ )
+            {
+                opj_dwd_decode_h_job_t* job;
+
+                job = (opj_dwd_decode_h_job_t*) opj_malloc(sizeof(opj_dwd_decode_h_job_t));
+                job->h = h;
+                job->dwt_1D = dwt_1D;
+                job->rw = rw;
+                job->w = w;
+                job->tiledp = tiledp;
+                job->min_j = j * (rh / num_jobs);
+                job->max_j = (j+1) * (rh / num_jobs);
+                if( job->max_j > rh || j == num_jobs - 1 )
+                    job->max_j = rh;
+                job->h.mem = (OPJ_INT32*)opj_aligned_malloc(h_mem_size);
+                if (!job->h.mem)
+                {
+                    /* FIXME event manager error callback */
+                    opj_thread_pool_wait_completion(tp, 0);
+                    opj_free(job);
+                    opj_aligned_free(h.mem);
+                    return OPJ_FALSE;
+                }
+                opj_thread_pool_submit_job( tp, opj_dwt_decode_h_func, job );
+            }
+            opj_thread_pool_wait_completion(tp, 0);
+        }
 
 		v.dn = (OPJ_INT32)(rh - (OPJ_UINT32)v.sn);
 		v.cas = tr->y0 % 2;
 
-		for(j = 0; j < rw; ++j){
-			OPJ_UINT32 k;
-			opj_dwt_interleave_v(&v, &tiledp[j], (OPJ_INT32)w);
-			(dwt_1D)(&v);
-			for(k = 0; k < rh; ++k) {
-				tiledp[k * w + j] = v.mem[k];
-			}
-		}
+        if( num_threads <= 1 || rw == 1 )
+        {
+            for(j = 0; j < rw; ++j){
+                OPJ_UINT32 k;
+                opj_dwt_interleave_v(&v, &tiledp[j], (OPJ_INT32)w);
+                (dwt_1D)(&v);
+                for(k = 0; k < rh; ++k) {
+                    tiledp[k * w + j] = v.mem[k];
+                }
+            }
+        }
+        else
+        {
+            int num_jobs = num_threads;
+            if( rw < num_jobs )
+                num_jobs = rw;
+            for( j = 0; j < num_jobs; j++ )
+            {
+                opj_dwd_decode_v_job_t* job;
+
+                job = (opj_dwd_decode_v_job_t*) opj_malloc(sizeof(opj_dwd_decode_v_job_t));
+                job->v = v;
+                job->dwt_1D = dwt_1D;
+                job->rh = rh;
+                job->w = w;
+                job->tiledp = tiledp;
+                job->min_j = j * (rw / num_jobs);
+                job->max_j = (j+1) * (rw / num_jobs);
+                if( job->max_j > rw || j == num_jobs - 1 )
+                    job->max_j = rw;
+                job->v.mem = (OPJ_INT32*)opj_aligned_malloc(h_mem_size);
+                if (!job->v.mem)
+                {
+                    /* FIXME event manager error callback */
+                    opj_thread_pool_wait_completion(tp, 0);
+                    opj_free(job);
+                    opj_aligned_free(v.mem);
+                    return OPJ_FALSE;
+                }
+                opj_thread_pool_submit_job( tp, opj_dwt_decode_v_func, job );
+            }
+            opj_thread_pool_wait_completion(tp, 0);
+        }
 	}
 	opj_aligned_free(h.mem);
 	return OPJ_TRUE;
