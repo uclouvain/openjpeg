@@ -589,6 +589,12 @@ typedef struct opj_j2k
 
 	/** the current tile coder/decoder **/
 	struct opj_tcd *	m_tcd;
+
+    /** Number of threads to use */
+    int m_num_threads;
+
+    /** Thread pool */
+    opj_thread_pool_t* m_tp;
 }
 opj_j2k_t;
 
@@ -606,6 +612,8 @@ Decoding parameters are returned in j2k->cp.
 @param parameters decompression parameters
 */
 void opj_j2k_setup_decoder(opj_j2k_t *j2k, opj_dparameters_t *parameters);
+
+OPJ_BOOL opj_j2k_set_threads(opj_j2k_t *j2k, OPJ_UINT32 num_threads);
 
 /**
  * Creates a J2K compression structure

@@ -1263,6 +1263,25 @@ OPJ_API OPJ_BOOL OPJ_CALLCONV opj_setup_decoder(opj_codec_t *p_codec,
 												opj_dparameters_t *parameters );
 
 /**
+ * Allocates worker threads for the compressor/decompressor.
+ *
+ * By default, only the main thread is used. If this function is not used,
+ * but the OPJ_NUM_THREADS environment variable is set, its value will be
+ * used to initialize the number of threads. The value can be either an integer
+ * number, or "ALL_CPUS". If OPJ_NUM_THREADS is set and this function is called,
+ * this function will override the behaviour of the environment variable.
+ *
+ * Note: currently only has effect on the decompressor.
+ *
+ * @param p_codec       decompressor handler
+ * @param num_threads   number of threads.
+ *
+ * @return OPJ_TRUE     if the decoder is correctly set
+ */
+OPJ_API OPJ_BOOL OPJ_CALLCONV opj_codec_set_threads(opj_codec_t *p_codec,
+                                                    int num_threads);
+
+/**
  * Decodes an image header.
  *
  * @param	p_stream		the jpeg2000 stream.
