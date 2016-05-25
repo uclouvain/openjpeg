@@ -150,6 +150,8 @@ typedef struct opj_decompress_params
 	int upsample;
 	/* split output components to different files */
 	int split_pnm;
+    /** number of threads */
+    int num_threads;
 }opj_decompress_parameters;
 
 /* -------------------------------------------------------------------------- */
@@ -224,8 +226,11 @@ static void decode_help_display(void) {
 	               "  -upsample\n"
 	               "    Downsampled components will be upsampled to image size\n"
 	               "  -split-pnm\n"
-	               "    Split output components to different files when writing to PNM\n"
-	               "\n");
+	               "    Split output components to different files when writing to PNM\n");
+	if( opj_has_thread_support() ) {
+	  fprintf(stdout,"  -threads <num_threads>\n"
+					"    Number of threads to use for decoding.\n");
+	}
 /* UniPG>> */
 #ifdef USE_JPWL
 	fprintf(stdout,"  -W <options>\n"
@@ -520,7 +525,8 @@ int parse_cmdline_decoder(int argc, char **argv, opj_decompress_parameters *para
 		{"OutFor",    REQ_ARG, NULL,'O'},
 		{"force-rgb", NO_ARG,  NULL, 1},
 		{"upsample",  NO_ARG,  NULL, 1},
-		{"split-pnm", NO_ARG,  NULL, 1}
+		{"split-pnm", NO_ARG,  NULL, 1},
+		{"threads",   REQ_ARG, NULL, 'T'}
 	};
 
 	const char optlist[] = "i:o:r:l:x:d:t:p:"
@@ -808,6 +814,22 @@ int parse_cmdline_decoder(int argc, char **argv, opj_decompress_parameters *para
 			break;	
 #endif /* USE_JPWL */
 /* <<UniPG */            
+				
+				/* ----------------------------------------------------- */
+			case 'T':  /* Number of threads */
+				{
+					if( strcmp(opj_optarg, "ALL_CPUS") == 0 )
+					{
+						parameters->num_threads = opj_get_num_cpus();
+						if( parameters->num_threads == 1 )
+							parameters->num_threads = 0;
+					}
+					else
+					{
+					  sscanf(opj_optarg, "%d", &parameters->num_threads);
+					}
+				}
+				break;
 
 				/* ----------------------------------------------------- */
 			
@@ -1306,7 +1328,13 @@ int main(int argc, char **argv)
 			opj_destroy_codec(l_codec);
 			failed = 1; goto fin;
 		}
-
+		
+		if( parameters.num_threads >= 1 && !opj_codec_set_threads(l_codec, parameters.num_threads) ) {
+			fprintf(stderr, "ERROR -> opj_decompress: failed to set number of threads\n");
+			opj_stream_destroy(l_stream);
+			opj_destroy_codec(l_codec);
+			failed = 1; goto fin;
+		}
 
 		/* Read the main header of the codestream and if necessary the JP2 boxes*/
 		if(! opj_read_header(l_stream, l_codec, &image)){
