@@ -1689,6 +1689,11 @@ void opj_t1_decode_cblks( opj_thread_pool_t* tp,
                     opj_t1_cblk_decode_processing_job_t* job;
 
                     job = (opj_t1_cblk_decode_processing_job_t*) opj_calloc(1, sizeof(opj_t1_cblk_decode_processing_job_t));
+                    if( !job )
+                    {
+                        *pret = OPJ_FALSE;
+                        return;
+                    }
                     job->resno = resno;
                     job->cblk = cblk;
                     job->band = band;

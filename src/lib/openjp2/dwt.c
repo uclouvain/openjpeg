@@ -679,6 +679,16 @@ static OPJ_BOOL opj_dwt_decode_tile(opj_thread_pool_t* tp, opj_tcd_tilecomp_t* t
                 opj_dwd_decode_h_job_t* job;
 
                 job = (opj_dwd_decode_h_job_t*) opj_malloc(sizeof(opj_dwd_decode_h_job_t));
+                if( !job )
+                {
+                    /* It would be nice to fallback to single thread case, but */
+                    /* unfortunately some jobs may be launched and have modified */
+                    /* tiledp, so it is not practical to recover from that error */
+                    /* FIXME event manager error callback */
+                    opj_thread_pool_wait_completion(tp, 0);
+                    opj_aligned_free(h.mem);
+                    return OPJ_FALSE;
+                }
                 job->h = h;
                 job->dwt_1D = dwt_1D;
                 job->rw = rw;
@@ -726,6 +736,16 @@ static OPJ_BOOL opj_dwt_decode_tile(opj_thread_pool_t* tp, opj_tcd_tilecomp_t* t
                 opj_dwd_decode_v_job_t* job;
 
                 job = (opj_dwd_decode_v_job_t*) opj_malloc(sizeof(opj_dwd_decode_v_job_t));
+                if( !job )
+                {
+                    /* It would be nice to fallback to single thread case, but */
+                    /* unfortunately some jobs may be launched and have modified */
+                    /* tiledp, so it is not practical to recover from that error */
+                    /* FIXME event manager error callback */
+                    opj_thread_pool_wait_completion(tp, 0);
+                    opj_aligned_free(v.mem);
+                    return OPJ_FALSE;
+                }
                 job->v = v;
                 job->dwt_1D = dwt_1D;
                 job->rh = rh;
