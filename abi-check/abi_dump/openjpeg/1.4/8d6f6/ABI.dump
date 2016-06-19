@@ -1,0 +1,2396 @@
+$VAR1 = {
+          'ABI_DUMPER_VERSION' => '0.99.13',
+          'ABI_DUMP_VERSION' => '3.2',
+          'Arch' => 'x86_64',
+          'GccVersion' => '4.9.2',
+          'Headers' => {
+                         'openjpeg.h' => 1
+                       },
+          'Language' => 'C',
+          'LibraryName' => 'libopenjpeg.so.1.4.0',
+          'LibraryVersion' => '1.4',
+          'NameSpaces' => {},
+          'Needed' => {
+                        'libc.so.6' => 1
+                      },
+          'PublicABI' => '1',
+          'Sources' => {
+                         'cio.c' => 1,
+                         'event.c' => 1,
+                         'image.c' => 1,
+                         'openjpeg.c' => 1
+                       },
+          'SymbolInfo' => {
+                            '17899' => {
+                                         'Header' => 'openjpeg.h',
+                                         'Param' => {
+                                                      '0' => {
+                                                               'name' => 'cinfo',
+                                                               'type' => '3495'
+                                                             },
+                                                      '1' => {
+                                                               'name' => 'event_mgr',
+                                                               'type' => '3477'
+                                                             },
+                                                      '2' => {
+                                                               'name' => 'context',
+                                                               'type' => '148'
+                                                             }
+                                                    },
+                                         'Reg' => {
+                                                    '0' => 'rdi',
+                                                    '1' => 'rsi',
+                                                    '2' => 'rdx'
+                                                  },
+                                         'Return' => '3477',
+                                         'ShortName' => 'opj_set_event_mgr',
+                                         'Source' => 'event.c',
+                                         'SourceLine' => '64'
+                                       },
+                            '19588' => {
+                                         'Header' => 'openjpeg.h',
+                                         'Param' => {
+                                                      '0' => {
+                                                               'name' => 'image',
+                                                               'type' => '5871'
+                                                             }
+                                                    },
+                                         'Reg' => {
+                                                    '0' => 'rdi'
+                                                  },
+                                         'Return' => '1',
+                                         'ShortName' => 'opj_image_destroy',
+                                         'Source' => 'image.c',
+                                         'SourceLine' => '73'
+                                       },
+                            '19673' => {
+                                         'Header' => 'openjpeg.h',
+                                         'Param' => {
+                                                      '0' => {
+                                                               'name' => 'numcmpts',
+                                                               'type' => '77'
+                                                             },
+                                                      '1' => {
+                                                               'name' => 'cmptparms',
+                                                               'type' => '20028'
+                                                             },
+                                                      '2' => {
+                                                               'name' => 'clrspc',
+                                                               'type' => '2660'
+                                                             }
+                                                    },
+                                         'Reg' => {
+                                                    '0' => 'rdi',
+                                                    '1' => 'rsi',
+                                                    '2' => 'rdx'
+                                                  },
+                                         'Return' => '5871',
+                                         'ShortName' => 'opj_image_create',
+                                         'Source' => 'image.c',
+                                         'SourceLine' => '34'
+                                       },
+                            '6242' => {
+                                        'Header' => 'openjpeg.h',
+                                        'Param' => {
+                                                     '0' => {
+                                                              'name' => 'cinfo',
+                                                              'type' => '3495'
+                                                            },
+                                                     '1' => {
+                                                              'name' => 'buffer',
+                                                              'type' => '674'
+                                                            },
+                                                     '2' => {
+                                                              'name' => 'length',
+                                                              'type' => '77'
+                                                            }
+                                                   },
+                                        'Reg' => {
+                                                   '0' => 'rdi',
+                                                   '1' => 'rsi',
+                                                   '2' => 'rdx'
+                                                 },
+                                        'Return' => '5889',
+                                        'ShortName' => 'opj_cio_open',
+                                        'Source' => 'cio.c',
+                                        'SourceLine' => '36'
+                                      },
+                            '6497' => {
+                                        'Header' => 'openjpeg.h',
+                                        'Param' => {
+                                                     '0' => {
+                                                              'name' => 'cio',
+                                                              'type' => '5889'
+                                                            }
+                                                   },
+                                        'Reg' => {
+                                                   '0' => 'rdi'
+                                                 },
+                                        'Return' => '1',
+                                        'ShortName' => 'opj_cio_close',
+                                        'Source' => 'cio.c',
+                                        'SourceLine' => '82'
+                                      },
+                            '6540' => {
+                                        'Header' => 'openjpeg.h',
+                                        'Param' => {
+                                                     '0' => {
+                                                              'name' => 'cio',
+                                                              'type' => '5889'
+                                                            }
+                                                   },
+                                        'Reg' => {
+                                                   '0' => 'rdi'
+                                                 },
+                                        'Return' => '77',
+                                        'ShortName' => 'cio_tell',
+                                        'Source' => 'cio.c',
+                                        'SourceLine' => '99'
+                                      },
+                            '6587' => {
+                                        'Header' => 'openjpeg.h',
+                                        'Param' => {
+                                                     '0' => {
+                                                              'name' => 'cio',
+                                                              'type' => '5889'
+                                                            },
+                                                     '1' => {
+                                                              'name' => 'pos',
+                                                              'type' => '77'
+                                                            }
+                                                   },
+                                        'Reg' => {
+                                                   '0' => 'rdi',
+                                                   '1' => 'rsi'
+                                                 },
+                                        'Return' => '1',
+                                        'ShortName' => 'cio_seek',
+                                        'Source' => 'cio.c',
+                                        'SourceLine' => '108'
+                                      },
+                            '78163' => {
+                                         'Header' => 'openjpeg.h',
+                                         'Return' => '1860',
+                                         'ShortName' => 'opj_version',
+                                         'Source' => 'openjpeg.c',
+                                         'SourceLine' => '57'
+                                       },
+                            '78192' => {
+                                         'Header' => 'openjpeg.h',
+                                         'Param' => {
+                                                      '0' => {
+                                                               'name' => 'format',
+                                                               'type' => '2708'
+                                                             }
+                                                    },
+                                         'Reg' => {
+                                                    '0' => 'rdi'
+                                                  },
+                                         'Return' => '78401',
+                                         'ShortName' => 'opj_create_decompress',
+                                         'Source' => 'openjpeg.c',
+                                         'SourceLine' => '61'
+                                       },
+                            '78407' => {
+                                         'Header' => 'openjpeg.h',
+                                         'Param' => {
+                                                      '0' => {
+                                                               'name' => 'dinfo',
+                                                               'type' => '78401'
+                                                             }
+                                                    },
+                                         'Reg' => {
+                                                    '0' => 'rdi'
+                                                  },
+                                         'Return' => '1',
+                                         'ShortName' => 'opj_destroy_decompress',
+                                         'Source' => 'openjpeg.c',
+                                         'SourceLine' => '94'
+                                       },
+                            '78450' => {
+                                         'Header' => 'openjpeg.h',
+                                         'Param' => {
+                                                      '0' => {
+                                                               'name' => 'parameters',
+                                                               'type' => '41424'
+                                                             }
+                                                    },
+                                         'Reg' => {
+                                                    '0' => 'rdi'
+                                                  },
+                                         'Return' => '1',
+                                         'ShortName' => 'opj_set_default_decoder_parameters',
+                                         'Source' => 'openjpeg.c',
+                                         'SourceLine' => '114'
+                                       },
+                            '78499' => {
+                                         'Header' => 'openjpeg.h',
+                                         'Param' => {
+                                                      '0' => {
+                                                               'name' => 'dinfo',
+                                                               'type' => '78401'
+                                                             },
+                                                      '1' => {
+                                                               'name' => 'parameters',
+                                                               'type' => '41424'
+                                                             }
+                                                    },
+                                         'Reg' => {
+                                                    '0' => 'rdi',
+                                                    '1' => 'rsi'
+                                                  },
+                                         'Return' => '1',
+                                         'ShortName' => 'opj_setup_decoder',
+                                         'Source' => 'openjpeg.c',
+                                         'SourceLine' => '134'
+                                       },
+                            '78585' => {
+                                         'Header' => 'openjpeg.h',
+                                         'Param' => {
+                                                      '0' => {
+                                                               'name' => 'dinfo',
+                                                               'type' => '78401'
+                                                             },
+                                                      '1' => {
+                                                               'name' => 'cio',
+                                                               'type' => '5889'
+                                                             },
+                                                      '2' => {
+                                                               'name' => 'cstr_info',
+                                                               'type' => '5883'
+                                                             }
+                                                    },
+                                         'Reg' => {
+                                                    '0' => 'rdi',
+                                                    '1' => 'rsi',
+                                                    '2' => 'rdx'
+                                                  },
+                                         'Return' => '5871',
+                                         'ShortName' => 'opj_decode_with_info',
+                                         'Source' => 'openjpeg.c',
+                                         'SourceLine' => '155'
+                                       },
+                            '78722' => {
+                                         'Header' => 'openjpeg.h',
+                                         'Param' => {
+                                                      '0' => {
+                                                               'name' => 'dinfo',
+                                                               'type' => '78401'
+                                                             },
+                                                      '1' => {
+                                                               'name' => 'cio',
+                                                               'type' => '5889'
+                                                             }
+                                                    },
+                                         'Reg' => {
+                                                    '0' => 'rdi',
+                                                    '1' => 'rsi'
+                                                  },
+                                         'Return' => '5871',
+                                         'ShortName' => 'opj_decode',
+                                         'Source' => 'openjpeg.c',
+                                         'SourceLine' => '151'
+                                       },
+                            '78819' => {
+                                         'Header' => 'openjpeg.h',
+                                         'Param' => {
+                                                      '0' => {
+                                                               'name' => 'format',
+                                                               'type' => '2708'
+                                                             }
+                                                    },
+                                         'Reg' => {
+                                                    '0' => 'rdi'
+                                                  },
+                                         'Return' => '79028',
+                                         'ShortName' => 'opj_create_compress',
+                                         'Source' => 'openjpeg.c',
+                                         'SourceLine' => '172'
+                                       },
+                            '79034' => {
+                                         'Header' => 'openjpeg.h',
+                                         'Param' => {
+                                                      '0' => {
+                                                               'name' => 'cinfo',
+                                                               'type' => '79028'
+                                                             }
+                                                    },
+                                         'Reg' => {
+                                                    '0' => 'rdi'
+                                                  },
+                                         'Return' => '1',
+                                         'ShortName' => 'opj_destroy_compress',
+                                         'Source' => 'openjpeg.c',
+                                         'SourceLine' => '205'
+                                       },
+                            '79077' => {
+                                         'Header' => 'openjpeg.h',
+                                         'Param' => {
+                                                      '0' => {
+                                                               'name' => 'parameters',
+                                                               'type' => '43736'
+                                                             }
+                                                    },
+                                         'Reg' => {
+                                                    '0' => 'rdi'
+                                                  },
+                                         'Return' => '1',
+                                         'ShortName' => 'opj_set_default_encoder_parameters',
+                                         'Source' => 'openjpeg.c',
+                                         'SourceLine' => '225'
+                                       },
+                            '79126' => {
+                                         'Header' => 'openjpeg.h',
+                                         'Param' => {
+                                                      '0' => {
+                                                               'name' => 'cinfo',
+                                                               'type' => '79028'
+                                                             },
+                                                      '1' => {
+                                                               'name' => 'parameters',
+                                                               'type' => '43736'
+                                                             },
+                                                      '2' => {
+                                                               'name' => 'image',
+                                                               'type' => '5871'
+                                                             }
+                                                    },
+                                         'Reg' => {
+                                                    '0' => 'rdi',
+                                                    '1' => 'rsi',
+                                                    '2' => 'rdx'
+                                                  },
+                                         'Return' => '1',
+                                         'ShortName' => 'opj_setup_encoder',
+                                         'Source' => 'openjpeg.c',
+                                         'SourceLine' => '283'
+                                       },
+                            '79231' => {
+                                         'Header' => 'openjpeg.h',
+                                         'Param' => {
+                                                      '0' => {
+                                                               'name' => 'cinfo',
+                                                               'type' => '79028'
+                                                             },
+                                                      '1' => {
+                                                               'name' => 'cio',
+                                                               'type' => '5889'
+                                                             },
+                                                      '2' => {
+                                                               'name' => 'image',
+                                                               'type' => '5871'
+                                                             },
+                                                      '3' => {
+                                                               'name' => 'cstr_info',
+                                                               'type' => '5883'
+                                                             }
+                                                    },
+                                         'Reg' => {
+                                                    '0' => 'rdi',
+                                                    '1' => 'rsi',
+                                                    '2' => 'rdx',
+                                                    '3' => 'rcx'
+                                                  },
+                                         'Return' => '77',
+                                         'ShortName' => 'opj_encode_with_info',
+                                         'Source' => 'openjpeg.c',
+                                         'SourceLine' => '308'
+                                       },
+                            '79356' => {
+                                         'Header' => 'openjpeg.h',
+                                         'Param' => {
+                                                      '0' => {
+                                                               'name' => 'cinfo',
+                                                               'type' => '79028'
+                                                             },
+                                                      '1' => {
+                                                               'name' => 'cio',
+                                                               'type' => '5889'
+                                                             },
+                                                      '2' => {
+                                                               'name' => 'image',
+                                                               'type' => '5871'
+                                                             },
+                                                      '3' => {
+                                                               'name' => 'index',
+                                                               'type' => '150'
+                                                             }
+                                                    },
+                                         'Reg' => {
+                                                    '0' => 'rdi',
+                                                    '1' => 'rsi',
+                                                    '2' => 'rdx',
+                                                    '3' => 'rcx'
+                                                  },
+                                         'Return' => '77',
+                                         'ShortName' => 'opj_encode',
+                                         'Source' => 'openjpeg.c',
+                                         'SourceLine' => '300'
+                                       },
+                            '79534' => {
+                                         'Header' => 'openjpeg.h',
+                                         'Param' => {
+                                                      '0' => {
+                                                               'name' => 'cstr_info',
+                                                               'type' => '5883'
+                                                             }
+                                                    },
+                                         'Reg' => {
+                                                    '0' => 'rdi'
+                                                  },
+                                         'Return' => '1',
+                                         'ShortName' => 'opj_destroy_cstr_info',
+                                         'Source' => 'openjpeg.c',
+                                         'SourceLine' => '324'
+                                       }
+                          },
+          'SymbolVersion' => {
+                               '_ITM_deregisterTMCloneTable' => 'vsprintf@@GLIBC_2.2.5',
+                               '_ITM_registerTMCloneTable' => 'vsprintf@@GLIBC_2.2.5',
+                               '_Jv_RegisterClasses' => 'vsprintf@@GLIBC_2.2.5',
+                               '__gmon_start__' => 'vsprintf@@GLIBC_2.2.5',
+                               'ceilf' => 'vsprintf@@GLIBC_2.2.5',
+                               'floor' => 'vsprintf@@GLIBC_2.2.5',
+                               'floorf' => 'vsprintf@@GLIBC_2.2.5',
+                               'lrintf' => 'vsprintf@@GLIBC_2.2.5',
+                               'pow' => 'vsprintf@@GLIBC_2.2.5'
+                             },
+          'Symbols' => {
+                         'libopenjpeg.so.1.4.0' => {
+                                                     '_fini' => 1,
+                                                     '_init' => 1,
+                                                     'bio_create' => 1,
+                                                     'bio_destroy' => 1,
+                                                     'bio_flush' => 1,
+                                                     'bio_inalign' => 1,
+                                                     'bio_init_dec' => 1,
+                                                     'bio_init_enc' => 1,
+                                                     'bio_numbytes' => 1,
+                                                     'bio_read' => 1,
+                                                     'bio_write' => 1,
+                                                     'cio_bytein' => 1,
+                                                     'cio_byteout' => 1,
+                                                     'cio_getbp' => 1,
+                                                     'cio_numbytesleft' => 1,
+                                                     'cio_read' => 1,
+                                                     'cio_seek' => 1,
+                                                     'cio_skip' => 1,
+                                                     'cio_tell' => 1,
+                                                     'cio_write' => 1,
+                                                     'dwt_calc_explicit_stepsizes' => 1,
+                                                     'dwt_decode' => 1,
+                                                     'dwt_decode_real' => 1,
+                                                     'dwt_encode' => 1,
+                                                     'dwt_encode_real' => 1,
+                                                     'dwt_getgain' => 1,
+                                                     'dwt_getgain_real' => 1,
+                                                     'dwt_getnorm' => 1,
+                                                     'dwt_getnorm_real' => 1,
+                                                     'j2k_calculate_tp' => 1,
+                                                     'j2k_convert_progression_order' => 1,
+                                                     'j2k_create_compress' => 1,
+                                                     'j2k_create_decompress' => 1,
+                                                     'j2k_dec_mstab' => -320,
+                                                     'j2k_decode' => 1,
+                                                     'j2k_decode_jpt_stream' => 1,
+                                                     'j2k_destroy_compress' => 1,
+                                                     'j2k_destroy_decompress' => 1,
+                                                     'j2k_encode' => 1,
+                                                     'j2k_prog_order_list' => -48,
+                                                     'j2k_setup_decoder' => 1,
+                                                     'j2k_setup_encoder' => 1,
+                                                     'jp2_create_compress' => 1,
+                                                     'jp2_create_decompress' => 1,
+                                                     'jp2_decode' => 1,
+                                                     'jp2_destroy_compress' => 1,
+                                                     'jp2_destroy_decompress' => 1,
+                                                     'jp2_encode' => 1,
+                                                     'jp2_read_jp2h' => 1,
+                                                     'jp2_setup_decoder' => 1,
+                                                     'jp2_setup_encoder' => 1,
+                                                     'jp2_write_jp2h' => 1,
+                                                     'jpt_init_msg_header' => 1,
+                                                     'jpt_read_VBAS_info' => 1,
+                                                     'jpt_read_msg_header' => 1,
+                                                     'jpt_reinit_msg_header' => 1,
+                                                     'mct_decode' => 1,
+                                                     'mct_decode_real' => 1,
+                                                     'mct_encode' => 1,
+                                                     'mct_encode_real' => 1,
+                                                     'mct_getnorm' => 1,
+                                                     'mct_getnorm_real' => 1,
+                                                     'mqc_bypass_enc' => 1,
+                                                     'mqc_bypass_flush_enc' => 1,
+                                                     'mqc_bypass_init_enc' => 1,
+                                                     'mqc_create' => 1,
+                                                     'mqc_decode' => 1,
+                                                     'mqc_destroy' => 1,
+                                                     'mqc_encode' => 1,
+                                                     'mqc_erterm_enc' => 1,
+                                                     'mqc_flush' => 1,
+                                                     'mqc_init_dec' => 1,
+                                                     'mqc_init_enc' => 1,
+                                                     'mqc_numbytes' => 1,
+                                                     'mqc_reset_enc' => 1,
+                                                     'mqc_resetstates' => 1,
+                                                     'mqc_restart_enc' => 1,
+                                                     'mqc_restart_init_enc' => 1,
+                                                     'mqc_segmark_enc' => 1,
+                                                     'mqc_setstate' => 1,
+                                                     'opj_cio_close' => 1,
+                                                     'opj_cio_open' => 1,
+                                                     'opj_clock' => 1,
+                                                     'opj_create_compress' => 1,
+                                                     'opj_create_decompress' => 1,
+                                                     'opj_decode' => 1,
+                                                     'opj_decode_with_info' => 1,
+                                                     'opj_destroy_compress' => 1,
+                                                     'opj_destroy_cstr_info' => 1,
+                                                     'opj_destroy_decompress' => 1,
+                                                     'opj_encode' => 1,
+                                                     'opj_encode_with_info' => 1,
+                                                     'opj_event_msg' => 1,
+                                                     'opj_image_create' => 1,
+                                                     'opj_image_create0' => 1,
+                                                     'opj_image_destroy' => 1,
+                                                     'opj_set_default_decoder_parameters' => 1,
+                                                     'opj_set_default_encoder_parameters' => 1,
+                                                     'opj_set_event_mgr' => 1,
+                                                     'opj_setup_decoder' => 1,
+                                                     'opj_setup_encoder' => 1,
+                                                     'opj_version' => 1,
+                                                     'pi_create_decode' => 1,
+                                                     'pi_create_encode' => 1,
+                                                     'pi_destroy' => 1,
+                                                     'pi_initialise_encode' => 1,
+                                                     'pi_next' => 1,
+                                                     'raw_create' => 1,
+                                                     'raw_decode' => 1,
+                                                     'raw_destroy' => 1,
+                                                     'raw_init_dec' => 1,
+                                                     'raw_numbytes' => 1,
+                                                     't1_create' => 1,
+                                                     't1_decode_cblks' => 1,
+                                                     't1_destroy' => 1,
+                                                     't1_encode_cblks' => 1,
+                                                     't2_create' => 1,
+                                                     't2_decode_packets' => 1,
+                                                     't2_destroy' => 1,
+                                                     't2_encode_packets' => 1,
+                                                     'tcd_create' => 1,
+                                                     'tcd_decode_tile' => 1,
+                                                     'tcd_destroy' => 1,
+                                                     'tcd_dump' => 1,
+                                                     'tcd_encode_tile' => 1,
+                                                     'tcd_free_decode' => 1,
+                                                     'tcd_free_decode_tile' => 1,
+                                                     'tcd_free_encode' => 1,
+                                                     'tcd_init_encode' => 1,
+                                                     'tcd_makelayer' => 1,
+                                                     'tcd_makelayer_fixed' => 1,
+                                                     'tcd_malloc_decode' => 1,
+                                                     'tcd_malloc_decode_tile' => 1,
+                                                     'tcd_malloc_encode' => 1,
+                                                     'tcd_rateallocate' => 1,
+                                                     'tcd_rateallocate_fixed' => 1,
+                                                     'tgt_create' => 1,
+                                                     'tgt_decode' => 1,
+                                                     'tgt_destroy' => 1,
+                                                     'tgt_encode' => 1,
+                                                     'tgt_reset' => 1,
+                                                     'tgt_setvalue' => 1
+                                                   }
+                       },
+          'Target' => 'unix',
+          'TypeInfo' => {
+                          '1' => {
+                                   'Name' => 'void',
+                                   'Type' => 'Intrinsic'
+                                 },
+                          '148' => {
+                                     'BaseType' => '1',
+                                     'Name' => 'void*',
+                                     'Size' => '8',
+                                     'Type' => 'Pointer'
+                                   },
+                          '150' => {
+                                     'BaseType' => '84',
+                                     'Name' => 'char*',
+                                     'Size' => '8',
+                                     'Type' => 'Pointer'
+                                   },
+                          '170' => {
+                                     'Name' => 'float',
+                                     'Size' => '4',
+                                     'Type' => 'Intrinsic'
+                                   },
+                          '177' => {
+                                     'Name' => 'double',
+                                     'Size' => '8',
+                                     'Type' => 'Intrinsic'
+                                   },
+                          '1860' => {
+                                      'BaseType' => '1866',
+                                      'Name' => 'char const*',
+                                      'Size' => '8',
+                                      'Type' => 'Pointer'
+                                    },
+                          '1866' => {
+                                      'BaseType' => '84',
+                                      'Name' => 'char const',
+                                      'Size' => '1',
+                                      'Type' => 'Const'
+                                    },
+                          '19375' => {
+                                       'Header' => 'openjpeg.h',
+                                       'Line' => '566',
+                                       'Memb' => {
+                                                   '0' => {
+                                                            'name' => 'dx',
+                                                            'offset' => '0',
+                                                            'type' => '77'
+                                                          },
+                                                   '1' => {
+                                                            'name' => 'dy',
+                                                            'offset' => '4',
+                                                            'type' => '77'
+                                                          },
+                                                   '2' => {
+                                                            'name' => 'w',
+                                                            'offset' => '8',
+                                                            'type' => '77'
+                                                          },
+                                                   '3' => {
+                                                            'name' => 'h',
+                                                            'offset' => '12',
+                                                            'type' => '77'
+                                                          },
+                                                   '4' => {
+                                                            'name' => 'x0',
+                                                            'offset' => '16',
+                                                            'type' => '77'
+                                                          },
+                                                   '5' => {
+                                                            'name' => 'y0',
+                                                            'offset' => '20',
+                                                            'type' => '77'
+                                                          },
+                                                   '6' => {
+                                                            'name' => 'prec',
+                                                            'offset' => '24',
+                                                            'type' => '77'
+                                                          },
+                                                   '7' => {
+                                                            'name' => 'bpp',
+                                                            'offset' => '28',
+                                                            'type' => '77'
+                                                          },
+                                                   '8' => {
+                                                            'name' => 'sgnd',
+                                                            'offset' => '32',
+                                                            'type' => '77'
+                                                          }
+                                                 },
+                                       'Name' => 'struct opj_image_comptparm',
+                                       'Size' => '36',
+                                       'Type' => 'Struct'
+                                     },
+                          '1943' => {
+                                      'BaseType' => '77',
+                                      'Name' => 'int*',
+                                      'Size' => '8',
+                                      'Type' => 'Pointer'
+                                    },
+                          '19498' => {
+                                       'BaseType' => '19375',
+                                       'Header' => 'openjpeg.h',
+                                       'Line' => '585',
+                                       'Name' => 'opj_image_cmptparm_t',
+                                       'Size' => '36',
+                                       'Type' => 'Typedef'
+                                     },
+                          '20028' => {
+                                       'BaseType' => '19498',
+                                       'Name' => 'opj_image_cmptparm_t*',
+                                       'Size' => '8',
+                                       'Type' => 'Pointer'
+                                     },
+                          '21717' => {
+                                       'Header' => 'openjpeg.h',
+                                       'Line' => '244',
+                                       'Memb' => {
+                                                   '0' => {
+                                                            'name' => 'tile_size_on',
+                                                            'offset' => '0',
+                                                            'type' => '77'
+                                                          },
+                                                   '1' => {
+                                                            'name' => 'cp_tx0',
+                                                            'offset' => '4',
+                                                            'type' => '77'
+                                                          },
+                                                   '10' => {
+                                                             'name' => 'csty',
+                                                             'offset' => '48',
+                                                             'type' => '77'
+                                                           },
+                                                   '11' => {
+                                                             'name' => 'prog_order',
+                                                             'offset' => '52',
+                                                             'type' => '2606'
+                                                           },
+                                                   '12' => {
+                                                             'name' => 'POC',
+                                                             'offset' => '56',
+                                                             'type' => '3324'
+                                                           },
+                                                   '13' => {
+                                                             'name' => 'numpocs',
+                                                             'offset' => '4792',
+                                                             'type' => '77'
+                                                           },
+                                                   '14' => {
+                                                             'name' => 'tcp_numlayers',
+                                                             'offset' => '4796',
+                                                             'type' => '77'
+                                                           },
+                                                   '15' => {
+                                                             'name' => 'tcp_rates',
+                                                             'offset' => '4800',
+                                                             'type' => '3340'
+                                                           },
+                                                   '16' => {
+                                                             'name' => 'tcp_distoratio',
+                                                             'offset' => '5200',
+                                                             'type' => '3340'
+                                                           },
+                                                   '17' => {
+                                                             'name' => 'numresolution',
+                                                             'offset' => '5600',
+                                                             'type' => '77'
+                                                           },
+                                                   '18' => {
+                                                             'name' => 'cblockw_init',
+                                                             'offset' => '5604',
+                                                             'type' => '77'
+                                                           },
+                                                   '19' => {
+                                                             'name' => 'cblockh_init',
+                                                             'offset' => '5608',
+                                                             'type' => '77'
+                                                           },
+                                                   '2' => {
+                                                            'name' => 'cp_ty0',
+                                                            'offset' => '8',
+                                                            'type' => '77'
+                                                          },
+                                                   '20' => {
+                                                             'name' => 'mode',
+                                                             'offset' => '5612',
+                                                             'type' => '77'
+                                                           },
+                                                   '21' => {
+                                                             'name' => 'irreversible',
+                                                             'offset' => '5616',
+                                                             'type' => '77'
+                                                           },
+                                                   '22' => {
+                                                             'name' => 'roi_compno',
+                                                             'offset' => '5620',
+                                                             'type' => '77'
+                                                           },
+                                                   '23' => {
+                                                             'name' => 'roi_shift',
+                                                             'offset' => '5624',
+                                                             'type' => '77'
+                                                           },
+                                                   '24' => {
+                                                             'name' => 'res_spec',
+                                                             'offset' => '5628',
+                                                             'type' => '77'
+                                                           },
+                                                   '25' => {
+                                                             'name' => 'prcw_init',
+                                                             'offset' => '5632',
+                                                             'type' => '3356'
+                                                           },
+                                                   '26' => {
+                                                             'name' => 'prch_init',
+                                                             'offset' => '5764',
+                                                             'type' => '3356'
+                                                           },
+                                                   '27' => {
+                                                             'name' => 'infile',
+                                                             'offset' => '5896',
+                                                             'type' => '22545'
+                                                           },
+                                                   '28' => {
+                                                             'name' => 'outfile',
+                                                             'offset' => '9992',
+                                                             'type' => '22545'
+                                                           },
+                                                   '29' => {
+                                                             'name' => 'index_on',
+                                                             'offset' => '14088',
+                                                             'type' => '77'
+                                                           },
+                                                   '3' => {
+                                                            'name' => 'cp_tdx',
+                                                            'offset' => '12',
+                                                            'type' => '77'
+                                                          },
+                                                   '30' => {
+                                                             'name' => 'index',
+                                                             'offset' => '14092',
+                                                             'type' => '22545'
+                                                           },
+                                                   '31' => {
+                                                             'name' => 'image_offset_x0',
+                                                             'offset' => '18188',
+                                                             'type' => '77'
+                                                           },
+                                                   '32' => {
+                                                             'name' => 'image_offset_y0',
+                                                             'offset' => '18192',
+                                                             'type' => '77'
+                                                           },
+                                                   '33' => {
+                                                             'name' => 'subsampling_dx',
+                                                             'offset' => '18196',
+                                                             'type' => '77'
+                                                           },
+                                                   '34' => {
+                                                             'name' => 'subsampling_dy',
+                                                             'offset' => '18200',
+                                                             'type' => '77'
+                                                           },
+                                                   '35' => {
+                                                             'name' => 'decod_format',
+                                                             'offset' => '18204',
+                                                             'type' => '77'
+                                                           },
+                                                   '36' => {
+                                                             'name' => 'cod_format',
+                                                             'offset' => '18208',
+                                                             'type' => '77'
+                                                           },
+                                                   '37' => {
+                                                             'name' => 'jpwl_epc_on',
+                                                             'offset' => '18212',
+                                                             'type' => '77'
+                                                           },
+                                                   '38' => {
+                                                             'name' => 'jpwl_hprot_MH',
+                                                             'offset' => '18216',
+                                                             'type' => '77'
+                                                           },
+                                                   '39' => {
+                                                             'name' => 'jpwl_hprot_TPH_tileno',
+                                                             'offset' => '18220',
+                                                             'type' => '22562'
+                                                           },
+                                                   '4' => {
+                                                            'name' => 'cp_tdy',
+                                                            'offset' => '16',
+                                                            'type' => '77'
+                                                          },
+                                                   '40' => {
+                                                             'name' => 'jpwl_hprot_TPH',
+                                                             'offset' => '18284',
+                                                             'type' => '22562'
+                                                           },
+                                                   '41' => {
+                                                             'name' => 'jpwl_pprot_tileno',
+                                                             'offset' => '18348',
+                                                             'type' => '22562'
+                                                           },
+                                                   '42' => {
+                                                             'name' => 'jpwl_pprot_packno',
+                                                             'offset' => '18412',
+                                                             'type' => '22562'
+                                                           },
+                                                   '43' => {
+                                                             'name' => 'jpwl_pprot',
+                                                             'offset' => '18476',
+                                                             'type' => '22562'
+                                                           },
+                                                   '44' => {
+                                                             'name' => 'jpwl_sens_size',
+                                                             'offset' => '18540',
+                                                             'type' => '77'
+                                                           },
+                                                   '45' => {
+                                                             'name' => 'jpwl_sens_addr',
+                                                             'offset' => '18544',
+                                                             'type' => '77'
+                                                           },
+                                                   '46' => {
+                                                             'name' => 'jpwl_sens_range',
+                                                             'offset' => '18548',
+                                                             'type' => '77'
+                                                           },
+                                                   '47' => {
+                                                             'name' => 'jpwl_sens_MH',
+                                                             'offset' => '18552',
+                                                             'type' => '77'
+                                                           },
+                                                   '48' => {
+                                                             'name' => 'jpwl_sens_TPH_tileno',
+                                                             'offset' => '18556',
+                                                             'type' => '22562'
+                                                           },
+                                                   '49' => {
+                                                             'name' => 'jpwl_sens_TPH',
+                                                             'offset' => '18620',
+                                                             'type' => '22562'
+                                                           },
+                                                   '5' => {
+                                                            'name' => 'cp_disto_alloc',
+                                                            'offset' => '20',
+                                                            'type' => '77'
+                                                          },
+                                                   '50' => {
+                                                             'name' => 'cp_cinema',
+                                                             'offset' => '18684',
+                                                             'type' => '2546'
+                                                           },
+                                                   '51' => {
+                                                             'name' => 'max_comp_size',
+                                                             'offset' => '18688',
+                                                             'type' => '77'
+                                                           },
+                                                   '52' => {
+                                                             'name' => 'cp_rsiz',
+                                                             'offset' => '18692',
+                                                             'type' => '2498'
+                                                           },
+                                                   '53' => {
+                                                             'name' => 'tp_on',
+                                                             'offset' => '18696',
+                                                             'type' => '84'
+                                                           },
+                                                   '54' => {
+                                                             'name' => 'tp_flag',
+                                                             'offset' => '18697',
+                                                             'type' => '84'
+                                                           },
+                                                   '55' => {
+                                                             'name' => 'tcp_mct',
+                                                             'offset' => '18698',
+                                                             'type' => '84'
+                                                           },
+                                                   '6' => {
+                                                            'name' => 'cp_fixed_alloc',
+                                                            'offset' => '24',
+                                                            'type' => '77'
+                                                          },
+                                                   '7' => {
+                                                            'name' => 'cp_fixed_quality',
+                                                            'offset' => '28',
+                                                            'type' => '77'
+                                                          },
+                                                   '8' => {
+                                                            'name' => 'cp_matrice',
+                                                            'offset' => '32',
+                                                            'type' => '1943'
+                                                          },
+                                                   '9' => {
+                                                            'name' => 'cp_comment',
+                                                            'offset' => '40',
+                                                            'type' => '150'
+                                                          }
+                                                 },
+                                       'Name' => 'struct opj_cparameters',
+                                       'Size' => '18704',
+                                       'Type' => 'Struct'
+                                     },
+                          '22545' => {
+                                       'BaseType' => '84',
+                                       'Name' => 'char[4096]',
+                                       'Size' => '4096',
+                                       'Type' => 'Array'
+                                     },
+                          '22562' => {
+                                       'BaseType' => '77',
+                                       'Name' => 'int[16]',
+                                       'Size' => '64',
+                                       'Type' => 'Array'
+                                     },
+                          '22578' => {
+                                       'BaseType' => '21717',
+                                       'Header' => 'openjpeg.h',
+                                       'Line' => '368',
+                                       'Name' => 'opj_cparameters_t',
+                                       'Size' => '18704',
+                                       'Type' => 'Typedef'
+                                     },
+                          '22590' => {
+                                       'Header' => 'openjpeg.h',
+                                       'Line' => '373',
+                                       'Memb' => {
+                                                   '0' => {
+                                                            'name' => 'cp_reduce',
+                                                            'offset' => '0',
+                                                            'type' => '77'
+                                                          },
+                                                   '1' => {
+                                                            'name' => 'cp_layer',
+                                                            'offset' => '4',
+                                                            'type' => '77'
+                                                          },
+                                                   '2' => {
+                                                            'name' => 'infile',
+                                                            'offset' => '8',
+                                                            'type' => '22545'
+                                                          },
+                                                   '3' => {
+                                                            'name' => 'outfile',
+                                                            'offset' => '4104',
+                                                            'type' => '22545'
+                                                          },
+                                                   '4' => {
+                                                            'name' => 'decod_format',
+                                                            'offset' => '8200',
+                                                            'type' => '77'
+                                                          },
+                                                   '5' => {
+                                                            'name' => 'cod_format',
+                                                            'offset' => '8204',
+                                                            'type' => '77'
+                                                          },
+                                                   '6' => {
+                                                            'name' => 'jpwl_correct',
+                                                            'offset' => '8208',
+                                                            'type' => '77'
+                                                          },
+                                                   '7' => {
+                                                            'name' => 'jpwl_exp_comps',
+                                                            'offset' => '8212',
+                                                            'type' => '77'
+                                                          },
+                                                   '8' => {
+                                                            'name' => 'jpwl_max_tiles',
+                                                            'offset' => '8216',
+                                                            'type' => '77'
+                                                          },
+                                                   '9' => {
+                                                            'name' => 'cp_limit_decoding',
+                                                            'offset' => '8220',
+                                                            'type' => '2750'
+                                                          }
+                                                 },
+                                       'Name' => 'struct opj_dparameters',
+                                       'Size' => '8224',
+                                       'Type' => 'Struct'
+                                     },
+                          '22742' => {
+                                       'BaseType' => '22590',
+                                       'Header' => 'openjpeg.h',
+                                       'Line' => '422',
+                                       'Name' => 'opj_dparameters_t',
+                                       'Size' => '8224',
+                                       'Type' => 'Typedef'
+                                     },
+                          '2467' => {
+                                      'Header' => 'openjpeg.h',
+                                      'Line' => '117',
+                                      'Memb' => {
+                                                  '0' => {
+                                                           'name' => 'STD_RSIZ',
+                                                           'value' => '0'
+                                                         },
+                                                  '1' => {
+                                                           'name' => 'CINEMA2K',
+                                                           'value' => '3'
+                                                         },
+                                                  '2' => {
+                                                           'name' => 'CINEMA4K',
+                                                           'value' => '4'
+                                                         }
+                                                },
+                                      'Name' => 'enum RSIZ_CAPABILITIES',
+                                      'Size' => '4',
+                                      'Type' => 'Enum'
+                                    },
+                          '2498' => {
+                                      'BaseType' => '2467',
+                                      'Header' => 'openjpeg.h',
+                                      'Line' => '121',
+                                      'Name' => 'OPJ_RSIZ_CAPABILITIES',
+                                      'Size' => '4',
+                                      'Type' => 'Typedef'
+                                    },
+                          '2509' => {
+                                      'Header' => 'openjpeg.h',
+                                      'Line' => '126',
+                                      'Memb' => {
+                                                  '0' => {
+                                                           'name' => 'OFF',
+                                                           'value' => '0'
+                                                         },
+                                                  '1' => {
+                                                           'name' => 'CINEMA2K_24',
+                                                           'value' => '1'
+                                                         },
+                                                  '2' => {
+                                                           'name' => 'CINEMA2K_48',
+                                                           'value' => '2'
+                                                         },
+                                                  '3' => {
+                                                           'name' => 'CINEMA4K_24',
+                                                           'value' => '3'
+                                                         }
+                                                },
+                                      'Name' => 'enum CINEMA_MODE',
+                                      'Size' => '4',
+                                      'Type' => 'Enum'
+                                    },
+                          '2546' => {
+                                      'BaseType' => '2509',
+                                      'Header' => 'openjpeg.h',
+                                      'Line' => '131',
+                                      'Name' => 'OPJ_CINEMA_MODE',
+                                      'Size' => '4',
+                                      'Type' => 'Typedef'
+                                    },
+                          '2557' => {
+                                      'Header' => 'openjpeg.h',
+                                      'Line' => '136',
+                                      'Memb' => {
+                                                  '0' => {
+                                                           'name' => 'PROG_UNKNOWN',
+                                                           'value' => '-1'
+                                                         },
+                                                  '1' => {
+                                                           'name' => 'LRCP',
+                                                           'value' => '0'
+                                                         },
+                                                  '2' => {
+                                                           'name' => 'RLCP',
+                                                           'value' => '1'
+                                                         },
+                                                  '3' => {
+                                                           'name' => 'RPCL',
+                                                           'value' => '2'
+                                                         },
+                                                  '4' => {
+                                                           'name' => 'PCRL',
+                                                           'value' => '3'
+                                                         },
+                                                  '5' => {
+                                                           'name' => 'CPRL',
+                                                           'value' => '4'
+                                                         }
+                                                },
+                                      'Name' => 'enum PROG_ORDER',
+                                      'Size' => '4',
+                                      'Type' => 'Enum'
+                                    },
+                          '2606' => {
+                                      'BaseType' => '2557',
+                                      'Header' => 'openjpeg.h',
+                                      'Line' => '143',
+                                      'Name' => 'OPJ_PROG_ORDER',
+                                      'Size' => '4',
+                                      'Type' => 'Typedef'
+                                    },
+                          '2617' => {
+                                      'Header' => 'openjpeg.h',
+                                      'Line' => '148',
+                                      'Memb' => {
+                                                  '0' => {
+                                                           'name' => 'CLRSPC_UNKNOWN',
+                                                           'value' => '-1'
+                                                         },
+                                                  '1' => {
+                                                           'name' => 'CLRSPC_UNSPECIFIED',
+                                                           'value' => '0'
+                                                         },
+                                                  '2' => {
+                                                           'name' => 'CLRSPC_SRGB',
+                                                           'value' => '1'
+                                                         },
+                                                  '3' => {
+                                                           'name' => 'CLRSPC_GRAY',
+                                                           'value' => '2'
+                                                         },
+                                                  '4' => {
+                                                           'name' => 'CLRSPC_SYCC',
+                                                           'value' => '3'
+                                                         }
+                                                },
+                                      'Name' => 'enum COLOR_SPACE',
+                                      'Size' => '4',
+                                      'Type' => 'Enum'
+                                    },
+                          '2660' => {
+                                      'BaseType' => '2617',
+                                      'Header' => 'openjpeg.h',
+                                      'Line' => '154',
+                                      'Name' => 'OPJ_COLOR_SPACE',
+                                      'Size' => '4',
+                                      'Type' => 'Typedef'
+                                    },
+                          '2671' => {
+                                      'Header' => 'openjpeg.h',
+                                      'Line' => '159',
+                                      'Memb' => {
+                                                  '0' => {
+                                                           'name' => 'CODEC_UNKNOWN',
+                                                           'value' => '-1'
+                                                         },
+                                                  '1' => {
+                                                           'name' => 'CODEC_J2K',
+                                                           'value' => '0'
+                                                         },
+                                                  '2' => {
+                                                           'name' => 'CODEC_JPT',
+                                                           'value' => '1'
+                                                         },
+                                                  '3' => {
+                                                           'name' => 'CODEC_JP2',
+                                                           'value' => '2'
+                                                         }
+                                                },
+                                      'Name' => 'enum CODEC_FORMAT',
+                                      'Size' => '4',
+                                      'Type' => 'Enum'
+                                    },
+                          '2708' => {
+                                      'BaseType' => '2671',
+                                      'Header' => 'openjpeg.h',
+                                      'Line' => '164',
+                                      'Name' => 'OPJ_CODEC_FORMAT',
+                                      'Size' => '4',
+                                      'Type' => 'Typedef'
+                                    },
+                          '2719' => {
+                                      'Header' => 'openjpeg.h',
+                                      'Line' => '169',
+                                      'Memb' => {
+                                                  '0' => {
+                                                           'name' => 'NO_LIMITATION',
+                                                           'value' => '0'
+                                                         },
+                                                  '1' => {
+                                                           'name' => 'LIMIT_TO_MAIN_HEADER',
+                                                           'value' => '1'
+                                                         },
+                                                  '2' => {
+                                                           'name' => 'DECODE_ALL_BUT_PACKETS',
+                                                           'value' => '2'
+                                                         }
+                                                },
+                                      'Name' => 'enum LIMIT_DECODING',
+                                      'Size' => '4',
+                                      'Type' => 'Enum'
+                                    },
+                          '2750' => {
+                                      'BaseType' => '2719',
+                                      'Header' => 'openjpeg.h',
+                                      'Line' => '173',
+                                      'Name' => 'OPJ_LIMIT_DECODING',
+                                      'Size' => '4',
+                                      'Type' => 'Typedef'
+                                    },
+                          '2761' => {
+                                      'BaseType' => '2772',
+                                      'Header' => 'openjpeg.h',
+                                      'Line' => '186',
+                                      'Name' => 'opj_msg_callback',
+                                      'Size' => '8',
+                                      'Type' => 'Typedef'
+                                    },
+                          '2772' => {
+                                      'Name' => 'void(*)(char const*, void*)',
+                                      'Param' => {
+                                                   '0' => {
+                                                            'type' => '1860'
+                                                          },
+                                                   '1' => {
+                                                            'type' => '148'
+                                                          }
+                                                 },
+                                      'Return' => '1',
+                                      'Size' => '8',
+                                      'Type' => 'FuncPtr'
+                                    },
+                          '2794' => {
+                                      'Header' => 'openjpeg.h',
+                                      'Line' => '197',
+                                      'Memb' => {
+                                                  '0' => {
+                                                           'name' => 'error_handler',
+                                                           'offset' => '0',
+                                                           'type' => '2761'
+                                                         },
+                                                  '1' => {
+                                                           'name' => 'warning_handler',
+                                                           'offset' => '8',
+                                                           'type' => '2761'
+                                                         },
+                                                  '2' => {
+                                                           'name' => 'info_handler',
+                                                           'offset' => '16',
+                                                           'type' => '2761'
+                                                         }
+                                                },
+                                      'Name' => 'struct opj_event_mgr',
+                                      'Size' => '24',
+                                      'Type' => 'Struct'
+                                    },
+                          '2843' => {
+                                      'BaseType' => '2794',
+                                      'Header' => 'openjpeg.h',
+                                      'Line' => '204',
+                                      'Name' => 'opj_event_mgr_t',
+                                      'Size' => '24',
+                                      'Type' => 'Typedef'
+                                    },
+                          '2854' => {
+                                      'Header' => 'openjpeg.h',
+                                      'Line' => '216',
+                                      'Memb' => {
+                                                  '0' => {
+                                                           'name' => 'resno0',
+                                                           'offset' => '0',
+                                                           'type' => '77'
+                                                         },
+                                                  '1' => {
+                                                           'name' => 'compno0',
+                                                           'offset' => '4',
+                                                           'type' => '77'
+                                                         },
+                                                  '10' => {
+                                                            'name' => 'progorder',
+                                                            'offset' => '40',
+                                                            'type' => '3297'
+                                                          },
+                                                  '11' => {
+                                                            'name' => 'tile',
+                                                            'offset' => '48',
+                                                            'type' => '77'
+                                                          },
+                                                  '12' => {
+                                                            'name' => 'tx0',
+                                                            'offset' => '52',
+                                                            'type' => '77'
+                                                          },
+                                                  '13' => {
+                                                            'name' => 'tx1',
+                                                            'offset' => '56',
+                                                            'type' => '77'
+                                                          },
+                                                  '14' => {
+                                                            'name' => 'ty0',
+                                                            'offset' => '60',
+                                                            'type' => '77'
+                                                          },
+                                                  '15' => {
+                                                            'name' => 'ty1',
+                                                            'offset' => '64',
+                                                            'type' => '77'
+                                                          },
+                                                  '16' => {
+                                                            'name' => 'layS',
+                                                            'offset' => '68',
+                                                            'type' => '77'
+                                                          },
+                                                  '17' => {
+                                                            'name' => 'resS',
+                                                            'offset' => '72',
+                                                            'type' => '77'
+                                                          },
+                                                  '18' => {
+                                                            'name' => 'compS',
+                                                            'offset' => '76',
+                                                            'type' => '77'
+                                                          },
+                                                  '19' => {
+                                                            'name' => 'prcS',
+                                                            'offset' => '80',
+                                                            'type' => '77'
+                                                          },
+                                                  '2' => {
+                                                           'name' => 'layno1',
+                                                           'offset' => '8',
+                                                           'type' => '77'
+                                                         },
+                                                  '20' => {
+                                                            'name' => 'layE',
+                                                            'offset' => '84',
+                                                            'type' => '77'
+                                                          },
+                                                  '21' => {
+                                                            'name' => 'resE',
+                                                            'offset' => '88',
+                                                            'type' => '77'
+                                                          },
+                                                  '22' => {
+                                                            'name' => 'compE',
+                                                            'offset' => '92',
+                                                            'type' => '77'
+                                                          },
+                                                  '23' => {
+                                                            'name' => 'prcE',
+                                                            'offset' => '96',
+                                                            'type' => '77'
+                                                          },
+                                                  '24' => {
+                                                            'name' => 'txS',
+                                                            'offset' => '100',
+                                                            'type' => '77'
+                                                          },
+                                                  '25' => {
+                                                            'name' => 'txE',
+                                                            'offset' => '104',
+                                                            'type' => '77'
+                                                          },
+                                                  '26' => {
+                                                            'name' => 'tyS',
+                                                            'offset' => '108',
+                                                            'type' => '77'
+                                                          },
+                                                  '27' => {
+                                                            'name' => 'tyE',
+                                                            'offset' => '112',
+                                                            'type' => '77'
+                                                          },
+                                                  '28' => {
+                                                            'name' => 'dx',
+                                                            'offset' => '116',
+                                                            'type' => '77'
+                                                          },
+                                                  '29' => {
+                                                            'name' => 'dy',
+                                                            'offset' => '120',
+                                                            'type' => '77'
+                                                          },
+                                                  '3' => {
+                                                           'name' => 'resno1',
+                                                           'offset' => '12',
+                                                           'type' => '77'
+                                                         },
+                                                  '30' => {
+                                                            'name' => 'lay_t',
+                                                            'offset' => '124',
+                                                            'type' => '77'
+                                                          },
+                                                  '31' => {
+                                                            'name' => 'res_t',
+                                                            'offset' => '128',
+                                                            'type' => '77'
+                                                          },
+                                                  '32' => {
+                                                            'name' => 'comp_t',
+                                                            'offset' => '132',
+                                                            'type' => '77'
+                                                          },
+                                                  '33' => {
+                                                            'name' => 'prc_t',
+                                                            'offset' => '136',
+                                                            'type' => '77'
+                                                          },
+                                                  '34' => {
+                                                            'name' => 'tx0_t',
+                                                            'offset' => '140',
+                                                            'type' => '77'
+                                                          },
+                                                  '35' => {
+                                                            'name' => 'ty0_t',
+                                                            'offset' => '144',
+                                                            'type' => '77'
+                                                          },
+                                                  '4' => {
+                                                           'name' => 'compno1',
+                                                           'offset' => '16',
+                                                           'type' => '77'
+                                                         },
+                                                  '5' => {
+                                                           'name' => 'layno0',
+                                                           'offset' => '20',
+                                                           'type' => '77'
+                                                         },
+                                                  '6' => {
+                                                           'name' => 'precno0',
+                                                           'offset' => '24',
+                                                           'type' => '77'
+                                                         },
+                                                  '7' => {
+                                                           'name' => 'precno1',
+                                                           'offset' => '28',
+                                                           'type' => '77'
+                                                         },
+                                                  '8' => {
+                                                           'name' => 'prg1',
+                                                           'offset' => '32',
+                                                           'type' => '2606'
+                                                         },
+                                                  '9' => {
+                                                           'name' => 'prg',
+                                                           'offset' => '36',
+                                                           'type' => '2606'
+                                                         }
+                                                },
+                                      'Name' => 'struct opj_poc',
+                                      'Size' => '148',
+                                      'Type' => 'Struct'
+                                    },
+                          '3297' => {
+                                      'BaseType' => '84',
+                                      'Name' => 'char[5]',
+                                      'Size' => '5',
+                                      'Type' => 'Array'
+                                    },
+                          '3313' => {
+                                      'BaseType' => '2854',
+                                      'Header' => 'openjpeg.h',
+                                      'Line' => '239',
+                                      'Name' => 'opj_poc_t',
+                                      'Size' => '148',
+                                      'Type' => 'Typedef'
+                                    },
+                          '3324' => {
+                                      'BaseType' => '3313',
+                                      'Name' => 'opj_poc_t[32]',
+                                      'Size' => '4736',
+                                      'Type' => 'Array'
+                                    },
+                          '3340' => {
+                                      'BaseType' => '170',
+                                      'Name' => 'float[100]',
+                                      'Size' => '400',
+                                      'Type' => 'Array'
+                                    },
+                          '3356' => {
+                                      'BaseType' => '77',
+                                      'Name' => 'int[33]',
+                                      'Size' => '132',
+                                      'Type' => 'Array'
+                                    },
+                          '3372' => {
+                                      'Header' => 'openjpeg.h',
+                                      'Line' => '439',
+                                      'Memb' => {
+                                                  '0' => {
+                                                           'name' => 'event_mgr',
+                                                           'offset' => '0',
+                                                           'type' => '3477'
+                                                         },
+                                                  '1' => {
+                                                           'name' => 'client_data',
+                                                           'offset' => '8',
+                                                           'type' => '148'
+                                                         },
+                                                  '2' => {
+                                                           'name' => 'is_decompressor',
+                                                           'offset' => '16',
+                                                           'type' => '77'
+                                                         },
+                                                  '3' => {
+                                                           'name' => 'codec_format',
+                                                           'offset' => '20',
+                                                           'type' => '2708'
+                                                         },
+                                                  '4' => {
+                                                           'name' => 'j2k_handle',
+                                                           'offset' => '24',
+                                                           'type' => '148'
+                                                         },
+                                                  '5' => {
+                                                           'name' => 'jp2_handle',
+                                                           'offset' => '32',
+                                                           'type' => '148'
+                                                         },
+                                                  '6' => {
+                                                           'name' => 'mj2_handle',
+                                                           'offset' => '40',
+                                                           'type' => '148'
+                                                         }
+                                                },
+                                      'Name' => 'struct opj_common_struct',
+                                      'Size' => '48',
+                                      'Type' => 'Struct'
+                                    },
+                          '3477' => {
+                                      'BaseType' => '2843',
+                                      'Name' => 'opj_event_mgr_t*',
+                                      'Size' => '8',
+                                      'Type' => 'Pointer'
+                                    },
+                          '3483' => {
+                                      'BaseType' => '3372',
+                                      'Header' => 'openjpeg.h',
+                                      'Line' => '445',
+                                      'Name' => 'opj_common_struct_t',
+                                      'Size' => '48',
+                                      'Type' => 'Typedef'
+                                    },
+                          '3495' => {
+                                      'BaseType' => '3507',
+                                      'Header' => 'openjpeg.h',
+                                      'Line' => '447',
+                                      'Name' => 'opj_common_ptr',
+                                      'Size' => '8',
+                                      'Type' => 'Typedef'
+                                    },
+                          '3507' => {
+                                      'BaseType' => '3483',
+                                      'Name' => 'opj_common_struct_t*',
+                                      'Size' => '8',
+                                      'Type' => 'Pointer'
+                                    },
+                          '3513' => {
+                                      'Header' => 'openjpeg.h',
+                                      'Line' => '484',
+                                      'Memb' => {
+                                                  '0' => {
+                                                           'name' => 'cinfo',
+                                                           'offset' => '0',
+                                                           'type' => '3495'
+                                                         },
+                                                  '1' => {
+                                                           'name' => 'openmode',
+                                                           'offset' => '8',
+                                                           'type' => '77'
+                                                         },
+                                                  '2' => {
+                                                           'name' => 'buffer',
+                                                           'offset' => '16',
+                                                           'type' => '674'
+                                                         },
+                                                  '3' => {
+                                                           'name' => 'length',
+                                                           'offset' => '24',
+                                                           'type' => '77'
+                                                         },
+                                                  '4' => {
+                                                           'name' => 'start',
+                                                           'offset' => '32',
+                                                           'type' => '674'
+                                                         },
+                                                  '5' => {
+                                                           'name' => 'end',
+                                                           'offset' => '40',
+                                                           'type' => '674'
+                                                         },
+                                                  '6' => {
+                                                           'name' => 'bp',
+                                                           'offset' => '48',
+                                                           'type' => '674'
+                                                         }
+                                                },
+                                      'Name' => 'struct opj_cio',
+                                      'Size' => '56',
+                                      'Type' => 'Struct'
+                                    },
+                          '3623' => {
+                                      'BaseType' => '3513',
+                                      'Header' => 'openjpeg.h',
+                                      'Line' => '501',
+                                      'Name' => 'opj_cio_t',
+                                      'Size' => '56',
+                                      'Type' => 'Typedef'
+                                    },
+                          '3635' => {
+                                      'Header' => 'openjpeg.h',
+                                      'Line' => '512',
+                                      'Memb' => {
+                                                  '0' => {
+                                                           'name' => 'dx',
+                                                           'offset' => '0',
+                                                           'type' => '77'
+                                                         },
+                                                  '1' => {
+                                                           'name' => 'dy',
+                                                           'offset' => '4',
+                                                           'type' => '77'
+                                                         },
+                                                  '10' => {
+                                                            'name' => 'factor',
+                                                            'offset' => '40',
+                                                            'type' => '77'
+                                                          },
+                                                  '11' => {
+                                                            'name' => 'data',
+                                                            'offset' => '48',
+                                                            'type' => '1943'
+                                                          },
+                                                  '2' => {
+                                                           'name' => 'w',
+                                                           'offset' => '8',
+                                                           'type' => '77'
+                                                         },
+                                                  '3' => {
+                                                           'name' => 'h',
+                                                           'offset' => '12',
+                                                           'type' => '77'
+                                                         },
+                                                  '4' => {
+                                                           'name' => 'x0',
+                                                           'offset' => '16',
+                                                           'type' => '77'
+                                                         },
+                                                  '5' => {
+                                                           'name' => 'y0',
+                                                           'offset' => '20',
+                                                           'type' => '77'
+                                                         },
+                                                  '6' => {
+                                                           'name' => 'prec',
+                                                           'offset' => '24',
+                                                           'type' => '77'
+                                                         },
+                                                  '7' => {
+                                                           'name' => 'bpp',
+                                                           'offset' => '28',
+                                                           'type' => '77'
+                                                         },
+                                                  '8' => {
+                                                           'name' => 'sgnd',
+                                                           'offset' => '32',
+                                                           'type' => '77'
+                                                         },
+                                                  '9' => {
+                                                           'name' => 'resno_decoded',
+                                                           'offset' => '36',
+                                                           'type' => '77'
+                                                         }
+                                                },
+                                      'Name' => 'struct opj_image_comp',
+                                      'Size' => '56',
+                                      'Type' => 'Struct'
+                                    },
+                          '3797' => {
+                                      'BaseType' => '3635',
+                                      'Header' => 'openjpeg.h',
+                                      'Line' => '537',
+                                      'Name' => 'opj_image_comp_t',
+                                      'Size' => '56',
+                                      'Type' => 'Typedef'
+                                    },
+                          '3809' => {
+                                      'Header' => 'openjpeg.h',
+                                      'Line' => '542',
+                                      'Memb' => {
+                                                  '0' => {
+                                                           'name' => 'x0',
+                                                           'offset' => '0',
+                                                           'type' => '77'
+                                                         },
+                                                  '1' => {
+                                                           'name' => 'y0',
+                                                           'offset' => '4',
+                                                           'type' => '77'
+                                                         },
+                                                  '2' => {
+                                                           'name' => 'x1',
+                                                           'offset' => '8',
+                                                           'type' => '77'
+                                                         },
+                                                  '3' => {
+                                                           'name' => 'y1',
+                                                           'offset' => '12',
+                                                           'type' => '77'
+                                                         },
+                                                  '4' => {
+                                                           'name' => 'numcomps',
+                                                           'offset' => '16',
+                                                           'type' => '77'
+                                                         },
+                                                  '5' => {
+                                                           'name' => 'color_space',
+                                                           'offset' => '20',
+                                                           'type' => '2660'
+                                                         },
+                                                  '6' => {
+                                                           'name' => 'comps',
+                                                           'offset' => '24',
+                                                           'type' => '3936'
+                                                         },
+                                                  '7' => {
+                                                           'name' => 'icc_profile_buf',
+                                                           'offset' => '32',
+                                                           'type' => '674'
+                                                         },
+                                                  '8' => {
+                                                           'name' => 'icc_profile_len',
+                                                           'offset' => '40',
+                                                           'type' => '77'
+                                                         }
+                                                },
+                                      'Name' => 'struct opj_image',
+                                      'Size' => '48',
+                                      'Type' => 'Struct'
+                                    },
+                          '3936' => {
+                                      'BaseType' => '3797',
+                                      'Name' => 'opj_image_comp_t*',
+                                      'Size' => '8',
+                                      'Type' => 'Pointer'
+                                    },
+                          '3942' => {
+                                      'BaseType' => '3809',
+                                      'Header' => 'openjpeg.h',
+                                      'Line' => '561',
+                                      'Name' => 'opj_image_t',
+                                      'Size' => '48',
+                                      'Type' => 'Typedef'
+                                    },
+                          '3954' => {
+                                      'Header' => 'openjpeg.h',
+                                      'Line' => '596',
+                                      'Memb' => {
+                                                  '0' => {
+                                                           'name' => 'start_pos',
+                                                           'offset' => '0',
+                                                           'type' => '77'
+                                                         },
+                                                  '1' => {
+                                                           'name' => 'end_ph_pos',
+                                                           'offset' => '4',
+                                                           'type' => '77'
+                                                         },
+                                                  '2' => {
+                                                           'name' => 'end_pos',
+                                                           'offset' => '8',
+                                                           'type' => '77'
+                                                         },
+                                                  '3' => {
+                                                           'name' => 'disto',
+                                                           'offset' => '16',
+                                                           'type' => '177'
+                                                         }
+                                                },
+                                      'Name' => 'struct opj_packet_info',
+                                      'Size' => '24',
+                                      'Type' => 'Struct'
+                                    },
+                          '4020' => {
+                                      'BaseType' => '3954',
+                                      'Header' => 'openjpeg.h',
+                                      'Line' => '605',
+                                      'Name' => 'opj_packet_info_t',
+                                      'Size' => '24',
+                                      'Type' => 'Typedef'
+                                    },
+                          '4032' => {
+                                      'Header' => 'openjpeg.h',
+                                      'Line' => '610',
+                                      'Memb' => {
+                                                  '0' => {
+                                                           'name' => 'tp_start_pos',
+                                                           'offset' => '0',
+                                                           'type' => '77'
+                                                         },
+                                                  '1' => {
+                                                           'name' => 'tp_end_header',
+                                                           'offset' => '4',
+                                                           'type' => '77'
+                                                         },
+                                                  '2' => {
+                                                           'name' => 'tp_end_pos',
+                                                           'offset' => '8',
+                                                           'type' => '77'
+                                                         },
+                                                  '3' => {
+                                                           'name' => 'tp_start_pack',
+                                                           'offset' => '12',
+                                                           'type' => '77'
+                                                         },
+                                                  '4' => {
+                                                           'name' => 'tp_numpacks',
+                                                           'offset' => '16',
+                                                           'type' => '77'
+                                                         }
+                                                },
+                                      'Name' => 'struct opj_tp_info',
+                                      'Size' => '20',
+                                      'Type' => 'Struct'
+                                    },
+                          '4111' => {
+                                      'BaseType' => '4032',
+                                      'Header' => 'openjpeg.h',
+                                      'Line' => '621',
+                                      'Name' => 'opj_tp_info_t',
+                                      'Size' => '20',
+                                      'Type' => 'Typedef'
+                                    },
+                          '4123' => {
+                                      'Header' => 'openjpeg.h',
+                                      'Line' => '626',
+                                      'Memb' => {
+                                                  '0' => {
+                                                           'name' => 'thresh',
+                                                           'offset' => '0',
+                                                           'type' => '4324'
+                                                         },
+                                                  '1' => {
+                                                           'name' => 'tileno',
+                                                           'offset' => '8',
+                                                           'type' => '77'
+                                                         },
+                                                  '10' => {
+                                                            'name' => 'numpix',
+                                                            'offset' => '560',
+                                                            'type' => '77'
+                                                          },
+                                                  '11' => {
+                                                            'name' => 'distotile',
+                                                            'offset' => '568',
+                                                            'type' => '177'
+                                                          },
+                                                  '12' => {
+                                                            'name' => 'num_tps',
+                                                            'offset' => '576',
+                                                            'type' => '77'
+                                                          },
+                                                  '13' => {
+                                                            'name' => 'tp',
+                                                            'offset' => '584',
+                                                            'type' => '4336'
+                                                          },
+                                                  '2' => {
+                                                           'name' => 'start_pos',
+                                                           'offset' => '12',
+                                                           'type' => '77'
+                                                         },
+                                                  '3' => {
+                                                           'name' => 'end_header',
+                                                           'offset' => '16',
+                                                           'type' => '77'
+                                                         },
+                                                  '4' => {
+                                                           'name' => 'end_pos',
+                                                           'offset' => '20',
+                                                           'type' => '77'
+                                                         },
+                                                  '5' => {
+                                                           'name' => 'pw',
+                                                           'offset' => '24',
+                                                           'type' => '3356'
+                                                         },
+                                                  '6' => {
+                                                           'name' => 'ph',
+                                                           'offset' => '156',
+                                                           'type' => '3356'
+                                                         },
+                                                  '7' => {
+                                                           'name' => 'pdx',
+                                                           'offset' => '288',
+                                                           'type' => '3356'
+                                                         },
+                                                  '8' => {
+                                                           'name' => 'pdy',
+                                                           'offset' => '420',
+                                                           'type' => '3356'
+                                                         },
+                                                  '9' => {
+                                                           'name' => 'packet',
+                                                           'offset' => '552',
+                                                           'type' => '4330'
+                                                         }
+                                                },
+                                      'Name' => 'struct opj_tile_info',
+                                      'Size' => '592',
+                                      'Type' => 'Struct'
+                                    },
+                          '41424' => {
+                                       'BaseType' => '22742',
+                                       'Name' => 'opj_dparameters_t*',
+                                       'Size' => '8',
+                                       'Type' => 'Pointer'
+                                     },
+                          '4324' => {
+                                      'BaseType' => '177',
+                                      'Name' => 'double*',
+                                      'Size' => '8',
+                                      'Type' => 'Pointer'
+                                    },
+                          '4330' => {
+                                      'BaseType' => '4020',
+                                      'Name' => 'opj_packet_info_t*',
+                                      'Size' => '8',
+                                      'Type' => 'Pointer'
+                                    },
+                          '4336' => {
+                                      'BaseType' => '4111',
+                                      'Name' => 'opj_tp_info_t*',
+                                      'Size' => '8',
+                                      'Type' => 'Pointer'
+                                    },
+                          '4342' => {
+                                      'BaseType' => '4123',
+                                      'Header' => 'openjpeg.h',
+                                      'Line' => '655',
+                                      'Name' => 'opj_tile_info_t',
+                                      'Size' => '592',
+                                      'Type' => 'Typedef'
+                                    },
+                          '4354' => {
+                                      'Header' => 'openjpeg.h',
+                                      'Line' => '661',
+                                      'Memb' => {
+                                                  '0' => {
+                                                           'name' => 'type',
+                                                           'offset' => '0',
+                                                           'type' => '70'
+                                                         },
+                                                  '1' => {
+                                                           'name' => 'pos',
+                                                           'offset' => '4',
+                                                           'type' => '77'
+                                                         },
+                                                  '2' => {
+                                                           'name' => 'len',
+                                                           'offset' => '8',
+                                                           'type' => '77'
+                                                         }
+                                                },
+                                      'Name' => 'struct opj_marker_info_t',
+                                      'Size' => '12',
+                                      'Type' => 'Struct'
+                                    },
+                          '43736' => {
+                                       'BaseType' => '22578',
+                                       'Name' => 'opj_cparameters_t*',
+                                       'Size' => '8',
+                                       'Type' => 'Pointer'
+                                     },
+                          '4407' => {
+                                      'BaseType' => '4354',
+                                      'Header' => 'openjpeg.h',
+                                      'Line' => '668',
+                                      'Name' => 'opj_marker_info_t',
+                                      'Size' => '12',
+                                      'Type' => 'Typedef'
+                                    },
+                          '4419' => {
+                                      'Header' => 'openjpeg.h',
+                                      'Line' => '674',
+                                      'Memb' => {
+                                                  '0' => {
+                                                           'name' => 'D_max',
+                                                           'offset' => '0',
+                                                           'type' => '177'
+                                                         },
+                                                  '1' => {
+                                                           'name' => 'packno',
+                                                           'offset' => '8',
+                                                           'type' => '77'
+                                                         },
+                                                  '10' => {
+                                                            'name' => 'tw',
+                                                            'offset' => '44',
+                                                            'type' => '77'
+                                                          },
+                                                  '11' => {
+                                                            'name' => 'th',
+                                                            'offset' => '48',
+                                                            'type' => '77'
+                                                          },
+                                                  '12' => {
+                                                            'name' => 'numcomps',
+                                                            'offset' => '52',
+                                                            'type' => '77'
+                                                          },
+                                                  '13' => {
+                                                            'name' => 'numlayers',
+                                                            'offset' => '56',
+                                                            'type' => '77'
+                                                          },
+                                                  '14' => {
+                                                            'name' => 'numdecompos',
+                                                            'offset' => '64',
+                                                            'type' => '1943'
+                                                          },
+                                                  '15' => {
+                                                            'name' => 'marknum',
+                                                            'offset' => '72',
+                                                            'type' => '77'
+                                                          },
+                                                  '16' => {
+                                                            'name' => 'marker',
+                                                            'offset' => '80',
+                                                            'type' => '4717'
+                                                          },
+                                                  '17' => {
+                                                            'name' => 'maxmarknum',
+                                                            'offset' => '88',
+                                                            'type' => '77'
+                                                          },
+                                                  '18' => {
+                                                            'name' => 'main_head_start',
+                                                            'offset' => '92',
+                                                            'type' => '77'
+                                                          },
+                                                  '19' => {
+                                                            'name' => 'main_head_end',
+                                                            'offset' => '96',
+                                                            'type' => '77'
+                                                          },
+                                                  '2' => {
+                                                           'name' => 'index_write',
+                                                           'offset' => '12',
+                                                           'type' => '77'
+                                                         },
+                                                  '20' => {
+                                                            'name' => 'codestream_size',
+                                                            'offset' => '100',
+                                                            'type' => '77'
+                                                          },
+                                                  '21' => {
+                                                            'name' => 'tile',
+                                                            'offset' => '104',
+                                                            'type' => '4723'
+                                                          },
+                                                  '3' => {
+                                                           'name' => 'image_w',
+                                                           'offset' => '16',
+                                                           'type' => '77'
+                                                         },
+                                                  '4' => {
+                                                           'name' => 'image_h',
+                                                           'offset' => '20',
+                                                           'type' => '77'
+                                                         },
+                                                  '5' => {
+                                                           'name' => 'prog',
+                                                           'offset' => '24',
+                                                           'type' => '2606'
+                                                         },
+                                                  '6' => {
+                                                           'name' => 'tile_x',
+                                                           'offset' => '28',
+                                                           'type' => '77'
+                                                         },
+                                                  '7' => {
+                                                           'name' => 'tile_y',
+                                                           'offset' => '32',
+                                                           'type' => '77'
+                                                         },
+                                                  '8' => {
+                                                           'name' => 'tile_Ox',
+                                                           'offset' => '36',
+                                                           'type' => '77'
+                                                         },
+                                                  '9' => {
+                                                           'name' => 'tile_Oy',
+                                                           'offset' => '40',
+                                                           'type' => '77'
+                                                         }
+                                                },
+                                      'Name' => 'struct opj_codestream_info',
+                                      'Size' => '112',
+                                      'Type' => 'Struct'
+                                    },
+                          '4717' => {
+                                      'BaseType' => '4407',
+                                      'Name' => 'opj_marker_info_t*',
+                                      'Size' => '8',
+                                      'Type' => 'Pointer'
+                                    },
+                          '4723' => {
+                                      'BaseType' => '4342',
+                                      'Name' => 'opj_tile_info_t*',
+                                      'Size' => '8',
+                                      'Type' => 'Pointer'
+                                    },
+                          '4729' => {
+                                      'BaseType' => '4419',
+                                      'Header' => 'openjpeg.h',
+                                      'Line' => '721',
+                                      'Name' => 'opj_codestream_info_t',
+                                      'Size' => '112',
+                                      'Type' => 'Typedef'
+                                    },
+                          '5871' => {
+                                      'BaseType' => '3942',
+                                      'Name' => 'opj_image_t*',
+                                      'Size' => '8',
+                                      'Type' => 'Pointer'
+                                    },
+                          '5883' => {
+                                      'BaseType' => '4729',
+                                      'Name' => 'opj_codestream_info_t*',
+                                      'Size' => '8',
+                                      'Type' => 'Pointer'
+                                    },
+                          '5889' => {
+                                      'BaseType' => '3623',
+                                      'Name' => 'opj_cio_t*',
+                                      'Size' => '8',
+                                      'Type' => 'Pointer'
+                                    },
+                          '674' => {
+                                     'BaseType' => '91',
+                                     'Name' => 'unsigned char*',
+                                     'Size' => '8',
+                                     'Type' => 'Pointer'
+                                   },
+                          '70' => {
+                                    'Name' => 'unsigned short',
+                                    'Size' => '2',
+                                    'Type' => 'Intrinsic'
+                                  },
+                          '75200' => {
+                                       'Header' => 'openjpeg.h',
+                                       'Line' => '452',
+                                       'Memb' => {
+                                                   '0' => {
+                                                            'name' => 'event_mgr',
+                                                            'offset' => '0',
+                                                            'type' => '3477'
+                                                          },
+                                                   '1' => {
+                                                            'name' => 'client_data',
+                                                            'offset' => '8',
+                                                            'type' => '148'
+                                                          },
+                                                   '2' => {
+                                                            'name' => 'is_decompressor',
+                                                            'offset' => '16',
+                                                            'type' => '77'
+                                                          },
+                                                   '3' => {
+                                                            'name' => 'codec_format',
+                                                            'offset' => '20',
+                                                            'type' => '2708'
+                                                          },
+                                                   '4' => {
+                                                            'name' => 'j2k_handle',
+                                                            'offset' => '24',
+                                                            'type' => '148'
+                                                          },
+                                                   '5' => {
+                                                            'name' => 'jp2_handle',
+                                                            'offset' => '32',
+                                                            'type' => '148'
+                                                          },
+                                                   '6' => {
+                                                            'name' => 'mj2_handle',
+                                                            'offset' => '40',
+                                                            'type' => '148'
+                                                          }
+                                                 },
+                                       'Name' => 'struct opj_cinfo',
+                                       'Size' => '48',
+                                       'Type' => 'Struct'
+                                     },
+                          '75305' => {
+                                       'BaseType' => '75200',
+                                       'Header' => 'openjpeg.h',
+                                       'Line' => '456',
+                                       'Name' => 'opj_cinfo_t',
+                                       'Size' => '48',
+                                       'Type' => 'Typedef'
+                                     },
+                          '75317' => {
+                                       'Header' => 'openjpeg.h',
+                                       'Line' => '461',
+                                       'Memb' => {
+                                                   '0' => {
+                                                            'name' => 'event_mgr',
+                                                            'offset' => '0',
+                                                            'type' => '3477'
+                                                          },
+                                                   '1' => {
+                                                            'name' => 'client_data',
+                                                            'offset' => '8',
+                                                            'type' => '148'
+                                                          },
+                                                   '2' => {
+                                                            'name' => 'is_decompressor',
+                                                            'offset' => '16',
+                                                            'type' => '77'
+                                                          },
+                                                   '3' => {
+                                                            'name' => 'codec_format',
+                                                            'offset' => '20',
+                                                            'type' => '2708'
+                                                          },
+                                                   '4' => {
+                                                            'name' => 'j2k_handle',
+                                                            'offset' => '24',
+                                                            'type' => '148'
+                                                          },
+                                                   '5' => {
+                                                            'name' => 'jp2_handle',
+                                                            'offset' => '32',
+                                                            'type' => '148'
+                                                          },
+                                                   '6' => {
+                                                            'name' => 'mj2_handle',
+                                                            'offset' => '40',
+                                                            'type' => '148'
+                                                          }
+                                                 },
+                                       'Name' => 'struct opj_dinfo',
+                                       'Size' => '48',
+                                       'Type' => 'Struct'
+                                     },
+                          '75422' => {
+                                       'BaseType' => '75317',
+                                       'Header' => 'openjpeg.h',
+                                       'Line' => '465',
+                                       'Name' => 'opj_dinfo_t',
+                                       'Size' => '48',
+                                       'Type' => 'Typedef'
+                                     },
+                          '77' => {
+                                    'Name' => 'int',
+                                    'Size' => '4',
+                                    'Type' => 'Intrinsic'
+                                  },
+                          '78401' => {
+                                       'BaseType' => '75422',
+                                       'Name' => 'opj_dinfo_t*',
+                                       'Size' => '8',
+                                       'Type' => 'Pointer'
+                                     },
+                          '79028' => {
+                                       'BaseType' => '75305',
+                                       'Name' => 'opj_cinfo_t*',
+                                       'Size' => '8',
+                                       'Type' => 'Pointer'
+                                     },
+                          '84' => {
+                                    'Name' => 'char',
+                                    'Size' => '1',
+                                    'Type' => 'Intrinsic'
+                                  },
+                          '91' => {
+                                    'Name' => 'unsigned char',
+                                    'Size' => '1',
+                                    'Type' => 'Intrinsic'
+                                  }
+                        },
+          'UndefinedSymbols' => {
+                                  'libopenjpeg.so.1.4.0' => {
+                                                              '_ITM_deregisterTMCloneTable' => 0,
+                                                              '_ITM_registerTMCloneTable' => 0,
+                                                              '_Jv_RegisterClasses' => 0,
+                                                              '__cxa_finalize@GLIBC_2.2.5' => 0,
+                                                              '__gmon_start__' => 0,
+                                                              'calloc@GLIBC_2.2.5' => 0,
+                                                              'ceilf' => 0,
+                                                              'floor' => 0,
+                                                              'floorf' => 0,
+                                                              'fprintf@GLIBC_2.2.5' => 0,
+                                                              'free@GLIBC_2.2.5' => 0,
+                                                              'fwrite@GLIBC_2.2.5' => 0,
+                                                              'getrusage@GLIBC_2.2.5' => 0,
+                                                              'lrintf' => 0,
+                                                              'malloc@GLIBC_2.2.5' => 0,
+                                                              'memcpy@GLIBC_2.14' => 0,
+                                                              'memset@GLIBC_2.2.5' => 0,
+                                                              'pow' => 0,
+                                                              'puts@GLIBC_2.2.5' => 0,
+                                                              'realloc@GLIBC_2.2.5' => 0,
+                                                              'stderr@GLIBC_2.2.5' => 0,
+                                                              'strcpy@GLIBC_2.2.5' => 0,
+                                                              'vsprintf@GLIBC_2.2.5' => 0
+                                                            }
+                                },
+          'WordSize' => '8'
+        };

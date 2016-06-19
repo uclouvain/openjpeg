@@ -1,0 +1,865 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="OpenJPEG, current, changes, changelog" />
+    <meta name="description" content="Log of changes in the package" />
+    <link rel="stylesheet" type="text/css" href="../../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../../css/changelog.css" />
+    
+    
+    <title>
+        OpenJPEG current: changelog
+    </title>
+    
+    </head>
+
+<body>
+<table cellpadding='0' cellspacing='0'><tr><td align='center'><h1 class='tool'><a title='Home: ABI tracker for OpenJPEG' href='../../../timeline/openjpeg/index.html' class='tool'>ABI<br/>Tracker</a></h1></td><td width='30px;'></td><td><h1>(OpenJPEG)</h1></td></tr></table><hr/>
+<br/>
+<br/>
+<h1>Changelog for <span class='version'>current</span> version (Git)</h1><br/><br/>
+<div class='changelog'>
+<pre class='wrap'>commit d0babeb6f6cdd1887308137df37bb2b4724a6592
+Author: Antonin Descampe &lt;antonin@gmail.com&gt;
+Date:   2016-05-15 01:36:31 +0200
+
+    WIP automatic release
+
+commit d1ca2b4f29efc9e12a77c7aba76091beae1966ec
+Author: Antonin Descampe &lt;antonin@gmail.com&gt;
+Date:   2016-05-15 00:53:24 +0200
+
+    WIP: debug travis run script
+
+commit 8ba0de3e45aec595361a4f321e67dfd745d492d3
+Author: Antonin Descampe &lt;antonin@gmail.com&gt;
+Date:   2016-05-15 00:42:54 +0200
+
+    Update travis and appveyor to enable automatic releases on tag commit
+
+commit 2e0779e2505f98ea43eced3ee650a2a61a6b017c
+Author: Antonin Descampe &lt;antonin@gmail.com&gt;
+Date:   2016-05-13 12:31:56 +0200
+
+    Update version number in CMakeLists.txt
+
+commit e55130d3c53388e44fa7ea63a436d73b39d95159
+Author: Antonin Descampe &lt;antonin@gmail.com&gt;
+Date:   2016-05-13 12:25:55 +0200
+
+    Update NEWS
+
+commit 4d2b6a671a0431722cd4845b246fe0a09f7ca934
+Author: Stefan Weil &lt;sw@weilnetz.de&gt;
+Date:   2016-05-10 22:08:49 +0200
+
+    Update implementation of opj_calloc (#705)
+
+commit aae066debc29f6fe44bfcda1206bba0a68dfd00e
+Author: Stefan Weil &lt;sw@weilnetz.de&gt;
+Date:   2016-05-10 22:02:49 +0200
+
+    Add missing source for the JPIP library and executables (issue #658) (#659)
+    
+    They all need opj_malloc and other functions from opc_malloc.c.
+    
+    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
+
+commit 6609719b409be038c2d41765b64e42f7b92f79cb
+Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-05-08 20:26:12 +0200
+
+    Correct expected result for test of issue 495
+
+commit 1a8318f6c24623189ecb65e049267c6f2e005c0e
+Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-05-08 20:10:13 +0200
+
+    Fix Out-of-Bounds Access in function opj_tgt_reset
+    
+    Fix uclouvain/openjpeg#775
+
+commit 162f6199c0cd3ec1c6c6dc65e41b2faab92b2d91
+Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-05-08 19:18:05 +0200
+
+    Fix Heap Buffer Overflow in function color_cmyk_to_rgb
+    
+    Fix uclouvain/openjpeg#774
+
+commit 8f9cc62b3f9a1da9712329ddcedb9750d585505c
+Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-05-08 18:40:12 +0200
+
+    Fix division by zero
+    
+    Fix uclouvain/openjpeg#733
+
+commit 44a499f2acf10b55172d07abf387e5a579a585f7
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-05-03 22:22:03 +0200
+
+    Update lcms2 (#773)
+    
+    Update to mm2/Little-CMS@e342f44
+
+commit 94cfb1b008319e8b0b17e741f1e29e0a7b90af38
+Merge: ba0cf12 17a0a8a
+Author: julienmalik &lt;julienmalik@users.noreply.github.com&gt;
+Date:   2016-05-02 21:57:55 +0200
+
+    Merge pull request #769 from julienmalik/cmake_lowercase
+    
+    Use lowercase for cmake commands consistenly
+
+commit 17a0a8a195a9aad76a6bdb174edc8aa5fb8b7831
+Author: Julien Malik &lt;julien.malik@paraiso.me&gt;
+Date:   2016-05-02 16:03:16 +0200
+
+    Use lowercase for cmake commands consistenly
+    
+    Inspired from https://github.com/InsightSoftwareConsortium/ITK/blob/master/Utilities/Maintenance/HowToCreateTheCMakeCaseConversion.txt
+    This needs vim 7.3 and fails with vim 7.4
+    
+    This also fixes a number of :
+    - missing empty line at end of files
+    - useless space at end of lines
+
+commit ba0cf122f6820d38a7a5acc65b9d64392dd94e83
+Merge: da56086 e1e018a
+Author: julienmalik &lt;julienmalik@users.noreply.github.com&gt;
+Date:   2016-05-02 14:34:32 +0200
+
+    Merge pull request #767 from julienmalik/fix_memset_null_pointer
+    
+    Fix UBSan gcc warning for first arg to memset non null
+
+commit da56086e012117edb278408e6062d1b890b53576
+Merge: b51d088 04b8cbd
+Author: julienmalik &lt;julienmalik@users.noreply.github.com&gt;
+Date:   2016-05-02 14:32:08 +0200
+
+    Merge pull request #768 from julienmalik/filter_clang_warnings
+    
+    Ignore clang's summary warning
+
+commit 04b8cbd27aae2372b19598a38ba15e860952cae2
+Author: Julien Malik &lt;julien.malik@paraiso.me&gt;
+Date:   2016-05-02 12:55:43 +0200
+
+    Ignore clang's summary warning
+    
+    This assumes prior text has matched some other warning expression.
+    
+    This reduces the warnings reported for clang build on the dashboard,
+    which were caused only by the "XXX warnings generated." message.
+    For some reason they were not reported when not using ctest launchers.
+    
+    This commit allows to confidently use ctest launchers to improve
+    dashboard reports.
+
+commit e1e018a8dc8c96f45486768356b7fb370ae0527c
+Author: Julien Malik &lt;julien.malik@paraiso.me&gt;
+Date:   2016-05-02 12:13:24 +0200
+
+    Fix UBSan gcc warning for first arg to memset non null
+
+commit b51d088267cb88eb95555ea047755120e36c511b
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-05-01 18:05:46 +0200
+
+    Update to libtiff-4.0.6 (#764)
+
+commit 4f11e89c803fd9a332698bc36338a4be87c6d199
+Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-04-30 18:51:36 +0200
+
+    Add tests for recent issues
+    
+    Update uclouvain/openjpeg#725
+    Update uclouvain/openjpeg#726
+
+commit 9a20f8e8d1a91bd032e81ac53bf9a48dbb92bc29
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-04-30 17:58:04 +0200
+
+    Update lcms (#544)
+    
+    Update to mm2/Little-CMS@0e8234e090d6aab33f90e2eb0296f30aa0705e57
+
+commit 72deb588cbc8d5f56f8b0db3a2d120913e792cb8
+Merge: cd77b60 20789fe
+Author: Antonin Descampe &lt;antonin@gmail.com&gt;
+Date:   2016-04-30 13:51:01 +0200
+
+    Merge pull request #706 from mayeut/issue135
+    
+    Fix issue 135
+    The fix is legal regarding the standard but I did not manage to find out if it covers a bug in opj_t2_read_packet_data or if the file is corrupted
+
+commit cd77b6003b774dd337835630ea7b9b1fbc68d264
+Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-04-30 12:15:22 +0200
+
+    Fix some coverity warnings
+
+commit f40a2ff2ad821cf6492761c01de136ac2bf48b4a
+Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-04-30 01:50:33 +0200
+
+    Fix bad call to fclose with NULL pointer
+
+commit be42e72d220ffa89b33c8d24d0c0d4c8de8533cf
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-04-30 01:12:16 +0200
+
+    Fix warnings (#763)
+
+commit 15f081c89650dccee4aa4ae66f614c3fdb268767
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-04-30 00:33:27 +0200
+
+    Fix Out-Of-Bounds Read in sycc42x_to_rgb function (#745)
+    
+    42x Images with an odd x0/y0 lead to subsampled component starting at the
+    2nd column/line.
+    That is offset = comp-&gt;dx * comp-&gt;x0 - image-&gt;x0 = 1
+    
+    Fix #726
+
+commit ad593c9e0622e0d8d87228e67e4dbd36243ffd22
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-04-29 23:51:14 +0200
+
+    Fix heap-buffer-overflow in color_esycc_to_rgb (#748)
+    
+    When all components do not have the same dx/dy, components buffer are
+    read beyond their end.
+    Do not convert in this case.
+    
+    Update uclouvain/openjpeg#725
+
+commit 319fc971fef8a1e1c1c543506c26805873e3f258
+Author: julienmalik &lt;julienmalik@users.noreply.github.com&gt;
+Date:   2016-04-29 23:49:17 +0200
+
+    cppcheck fix for openjp2 (#740)
+
+commit e166e4a209d9a3e4b583e4b2cdcbab2c57967eb1
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-04-28 19:20:14 +0200
+
+    Check SSIZ is valid in opj_j2k_read_siz (#762)
+
+commit 29313eb5f1b2c01c7493087fa2d8f1a20495a34e
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-04-28 13:16:43 +0200
+
+    Fix unsigned int overflow reported by UBSan (#761)
+    
+    * Fix unsigned int overflow reported by UBSan
+    
+    Please add -DOPJ_UBSAN_BUILD to CFLAGS when building with
+    -fsanitize=undefined,unsigned-integer-overflow
+    
+    It seems clang/gcc do not allow to disable checking for block of code
+    other than function or file.
+
+commit e982d0396607a16ca0c373020cc93449504eb4e8
+Author: julienmalik &lt;julienmalik@users.noreply.github.com&gt;
+Date:   2016-04-28 11:52:45 +0200
+
+    Fix implicit float-to-bool conversions (#752)
+
+commit 66fd497765939d02e8816d6d019839388fffdf79
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-04-28 00:18:37 +0200
+
+    Fix unsigned int overflow reported by UBSan (#759)
+
+commit 20789fed4ec7746e938dd2934a1fb5aa352f4d12
+Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-01-25 22:16:49 +0100
+
+    Fix issue 135
+    
+    dwt_interleave_h.gsr105.jp2 now has the same output as kakadu
+    issue399 is corrupted. Only the corrupted part changes.
+    
+    Update known failures for x86 MD5
+    
+    NR-DEC-kodak_2layers_lrcp.j2c-31-decode-md5
+    NR-DEC-kodak_2layers_lrcp.j2c-32-decode-md5
+    NR-DEC-issue135.j2k-68-decode-md5
+
+commit 5947e10ff7bebdcc8f72ab9246f03db05582fa0a
+Author: julienmalik &lt;julienmalik@users.noreply.github.com&gt;
+Date:   2016-04-27 23:05:43 +0200
+
+    Add clang 3.9 build to Travis matrix (#753)
+
+commit e6881e75279627096fbbaca19e837252737a3892
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-04-27 21:56:09 +0200
+
+    Fix negative shift left reported by UBSan (#758)
+    
+    Follow-up of #757
+    
+    This shall have no performance impact on 2’s complement machine where
+    the compiler replaces the multiplication by power of two (constant) by
+    a left shift.
+    Verified at least on MacOS Xcode 7.3, same assembly generated after fix.
+
+commit 2296dc9e68e0ebc8342a8669aa2398a029b0fa3f
+Author: Stefan Weil &lt;sw@weilnetz.de&gt;
+Date:   2016-04-26 22:12:11 +0200
+
+    Remove whitespace and CR at line endings (#678)
+    
+    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
+
+commit 6f2ac3ee366a9b587abe9a72febc400ba5b98c24
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-04-26 22:06:06 +0200
+
+    Fix negative shift left reported by UBSan (#757)
+    
+    This shall have no performance impact on 2’s complement machine where
+    the compiler replaces the multiplication by power of two (constant) by
+    a left shift.
+    Verified at least on MacOS Xcode 7.3, same assembly generated after fix.
+
+commit c559c628539bc8956193a5ff8ac787a0c6fa090c
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-04-23 14:17:31 +0200
+
+    Do not define __attribute__ in opj_includes.h (#751)
+    
+    Fix #727
+
+commit a9feb9addd05bc9f05e833dab16a8114bb6d70f3
+Merge: 06e8dc9 74e8143
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-04-23 10:51:46 +0200
+
+    Merge pull request #750 from mayeut/issue-729-2
+    
+    Allow to read/write 3/5/7/9/11/13/15 bpp TIF files
+
+commit 74e814358c2530d238e3ada22d8eee6bf1d65283
+Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-04-23 01:53:32 +0200
+
+    Allow to write 3/5/7/9/11/13/15 bpp TIF files
+    
+    Update uclouvain/openjpeg#729
+
+commit 54393d9e38ac9d170d1ca6ac0c348d5f539d117d
+Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-04-23 04:24:04 +0200
+
+    Allow to read 3/5/7/9/11/13/15 bpp TIF files
+
+commit 06e8dc9edde8aacea66b32c14a8f8fb6e3cdbbbf
+Merge: f5446fd 6ea2ff0
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-04-22 12:54:25 +0200
+
+    Merge pull request #746 from senbox-org/update_cmake_jpylyzer
+    
+    Update cmake &amp; jpylyzer for travis builds
+
+commit f5446fdcfb4f9174c449a706e641b635d07bfa5c
+Merge: e1a93d9 8611d12
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-04-22 10:48:40 +0200
+
+    Merge pull request #747 from julienmalik/update_libpng
+    
+    update libpng to from 1.6.17 to 1.6.21
+
+commit 8611d127db0957aa0de65613a9d2626a6314122b
+Author: Julien Malik &lt;julien.malik@paraiso.me&gt;
+Date:   2016-04-22 00:16:16 +0200
+
+    Import pnglibconf.h.prebuilt as new pnglibconf.h
+
+commit 889bf167913c202ee33b25c64063fd6db5bece96
+Author: Julien Malik &lt;julien.malik@paraiso.me&gt;
+Date:   2016-04-21 18:49:15 +0200
+
+    update libpng to from 1.6.17 to 1.6.21
+
+commit 6ea2ff0b0627655d36ad7cc7483de7592b8bcbd1
+Author: Julien Malik &lt;julien.malik@paraiso.me&gt;
+Date:   2016-04-19 15:25:42 +0200
+
+    Update jpylyzer to 1.17.0
+
+commit 3436c4e9baac1fd847c4475b961802cd1c9bbe7e
+Author: Julien Malik &lt;julien.malik@paraiso.me&gt;
+Date:   2016-04-19 15:22:49 +0200
+
+    upgrade cmake to 3.5.2
+
+commit e1a93d9e59f08b708200e6a371f3f6a4eeb54940
+Merge: a1c0ee9 0069a2b
+Author: Antonin Descampe &lt;antonin@gmail.com&gt;
+Date:   2016-04-18 10:51:51 +0200
+
+    Merge pull request #708 from GrokImageCompression/issue_695
+    
+    issue #695 MQ Encode: ensure that bp pointer never points to uninitialized memory
+
+commit a1c0ee9a861778d54df734ebc21b604f06bd52bf
+Merge: 40b5a53 5e5f699
+Author: Antonin Descampe &lt;antonin@gmail.com&gt;
+Date:   2016-04-12 10:48:02 +0200
+
+    Merge pull request #734 from senbox-org/opj_dump_dead_code
+    
+    Remove dead code in opj_dump
+
+commit 40b5a53d2f364fe59b8ed86f4821c867d345a95e
+Merge: 5c5ae1d e7797b9
+Author: Antonin Descampe &lt;antonin@gmail.com&gt;
+Date:   2016-04-12 10:47:28 +0200
+
+    Merge pull request #735 from senbox-org/cppcheck_fix_openjp2
+    
+    Fix uninitialized variable reported by cppcheck
+
+commit e7797b97a1922e0d38d705916117c29af96471a0
+Author: Julien Malik &lt;julien.malik@paraiso.me&gt;
+Date:   2016-04-09 19:02:05 +0200
+
+    Fix uninitialized variable reported by cppcheck
+    
+    Also reorder initialization to follow declaration order
+
+commit 5e5f6999a8e218f52584841ea6fdffde34743722
+Author: Julien Malik &lt;julien.malik@paraiso.me&gt;
+Date:   2016-04-09 18:34:11 +0200
+
+    Remove dead code in opj_dump
+
+commit 0069a2bd2f8055b7edf9699332f4f00ac5351564
+Author: Aaron Boxer &lt;boxerab@gmail.com&gt;
+Date:   2016-01-30 10:05:46 -0500
+
+    suppress valgrind error - avoid accessing uninitialized memory in mq encoder
+
+commit e3100f714c2bae3da26877020048e2cf5906172b
+Author: Aaron Boxer &lt;boxerab@gmail.com&gt;
+Date:   2016-01-28 19:34:00 -0500
+
+    issue #695 MQ Encode: ensure that bp pointer never points to uninitialized memory
+
+commit 5c5ae1d51a3b5a1c4e68ae0323f7a14d7628f465
+Author: Antonin Descampe &lt;antonin@gmail.com&gt;
+Date:   2016-01-25 17:30:43 +0100
+
+    fixed tile numbering
+    
+    Fixes #245
+
+commit 3767af52deaa8e75c322961aa51f56b397de22af
+Merge: 1b86fb6 c00ee8b
+Author: Antonin Descampe &lt;antonin@gmail.com&gt;
+Date:   2016-01-23 19:43:09 +0100
+
+    Merge pull request #648 from stweil/alloc
+    
+    Fix support of posix_memalloc for Linux
+
+commit 1b86fb6f488e85231bfee21d7831d66ee4da2b8b
+Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-01-11 00:35:47 +0100
+
+    Update known failures
+
+commit a42d03df79458179bfbf28a8c90d303e22ed9843
+Merge: cb33ff4 e975ca2
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-01-11 00:23:44 +0100
+
+    Merge pull request #551 from mayeut/coc-qcc
+    
+    Add COC/QCC in main header when needed
+
+commit cb33ff43bb289c8beb94a3cdeac1e53432f30abe
+Merge: 0dd44e7 6a1974d
+Author: Mathieu Malaterre &lt;mathieu.malaterre@gmail.com&gt;
+Date:   2016-01-09 14:53:29 +0100
+
+    Merge pull request #690 from rouault/failed_malloc_opj_dwt_encode_procedure
+    
+    [git/2.1 regression] Fix opj_write_tile() failure when numresolutions=1
+
+commit 6a1974d40d95d857377a1eb5f4db0d9e24d0ad0a
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2016-01-09 14:30:48 +0100
+
+    Add comment explaining bj is not use when l_data_size == 0
+
+commit 87c0d7dc1eee2adf1aa7ae31bdfac078bb114c01
+Author: Even Rouault &lt;even.rouault@spatialys.com&gt;
+Date:   2016-01-08 19:38:45 +0100
+
+    [git/2.1 regression] Fix opj_write_tile() failure when numresolutions=1
+    
+    When trying the GDAL OpenJPEG driver against openjpeg current master HEAD,
+    I get failures when trying to create .jp2 files. The driver uses
+    opj_write_tile() and in some tests numresolutions = 1.
+    
+    In openjp2/dwt.c:410, l_data_size = opj_dwt_max_resolution( tilec-&gt;resolutions,tilec-&gt;numresolutions) * (OPJ_UINT32)sizeof(OPJ_INT32);
+    is called and returns l_data_size = 0. Now in git opj_malloc() has a special case
+    for 0 to return a NULL pointer whereas previously it relied on system malloc(),
+    which in my case didn't return NULL.
+    
+    So only test the pointer value if l_data_size != 0. This makes the GDAL
+    autotest suite to pass again.
+
+commit 0dd44e7dba540e69114a24c81e9190786ed32fed
+Merge: a205f70 9cad6bc
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-01-06 23:15:05 +0100
+
+    Merge pull request #687 from stweil/memalign
+    
+    Fix fatal crash on 64 bit Linux
+
+commit 9cad6bc1f68be54189c6db8a7fcef6f994daf891
+Author: Stefan Weil &lt;sw@weilnetz.de&gt;
+Date:   2016-01-06 21:34:59 +0100
+
+    Fix fatal crash on 64 bit Linux
+    
+    By default, OpenJPEG uses the function memalign to allocate aligned
+    memory on Linux systems. That function needs malloc.h which was
+    missing. This results in a compiler warning:
+    
+    openjpeg/src/lib/openjp2/opj_malloc.c:63:3: warning:
+     implicit declaration of function ‘memalign’
+     [-Wimplicit-function-declaration]
+    
+    On hosts where sizeof(int) &lt; sizeof(void *) the return value of memalign
+    will be truncated which results in an invalid pointer.
+    
+    That caused "make test" to produce lots of segmentation faults when
+    running on a 64 bit Linux host.
+    
+    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
+
+commit 79b1c4cc85e5d1709cdb831561ba4927ea673514
+Author: Stefan Weil &lt;sw@weilnetz.de&gt;
+Date:   2016-01-06 21:34:59 +0100
+
+    Fix whitespace issues in opj_malloc.c
+    
+    Some lines ended with spaces. Remove them.
+    
+    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
+
+commit c00ee8bff7cd6473021cb6f40199d25898d09250
+Author: Stefan Weil &lt;sw@weilnetz.de&gt;
+Date:   2015-11-01 20:37:19 +0100
+
+    Fix support of posix_memalign for Linux
+    
+    posix_memalign is only declared conditionally in stdlib.h,
+    so add one of the possible definitions to get the declaration.
+    
+    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
+
+commit a205f703283d42e1989da3670cb1c4bb5d8ae193
+Merge: 3a0253f 9c5b300
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-01-06 18:04:51 +0100
+
+    Merge pull request #686 from mayeut/master
+    
+    [libtiff] Add missing include statement for ssize_t
+    Close #681
+
+commit 9c5b30005eac31ab86c92103d4b3ecd272936493
+Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-01-06 17:37:37 +0100
+
+    Add missing include statement for ssize_t
+    
+    Update uclouvain/openjpeg#681
+
+commit 83e5e2703ed66bdf4afbefd607263193a2ac1a98
+Merge: 2e4fadf 3a0253f
+Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-01-06 17:09:14 +0100
+
+    Merge remote-tracking branch 'uclouvain/master'
+
+commit 3a0253f4e2e7210f4bbef8b9b8fc0a62e13daa55
+Merge: 8f99059 99c4f62
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-01-06 17:01:48 +0100
+
+    Merge pull request #684 from stweil/typo
+    
+    Fix duplicate article in comments
+
+commit 99c4f621bd32ddfec25cb126d4d462642e9d43a6
+Author: Stefan Weil &lt;sw@weilnetz.de&gt;
+Date:   2016-01-06 08:55:29 +0100
+
+    Fix duplicate article in comments
+    
+    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
+
+commit 2e4fadf330c1039d2181e6ba05c80f1cff6d0947
+Merge: 51cbcd5 8f99059
+Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
+Date:   2016-01-03 02:09:04 +0100
+
+    Merge remote-tracking branch 'uclouvain/master'
+
+commit 8f9905936cef1427f9372dd192a054b3c852232a
+Merge: 51efe91 a834ab3
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2015-12-31 11:45:51 +0100
+
+    Merge pull request #679 from stweil/grammar
+    
+    Fix grammar in comment
+
+commit a834ab305ffb1af465f94f0781743eaf4c13d01c
+Author: Stefan Weil &lt;sw@weilnetz.de&gt;
+Date:   2015-11-03 19:16:01 +0100
+
+    Fix grammar in comment
+    
+    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
+
+commit 51efe91971cce3c8f7e0f381ff15fccfc0388807
+Merge: 5d56fb3 4ddc262
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2015-12-23 20:55:47 +0100
+
+    Merge pull request #665 from jwilk/spelling
+    
+    Fix typos
+
+commit 4ddc2627dd9e3af4b982f4bf51b9f8c35f034bf9
+Author: Jakub Wilk &lt;jwilk@jwilk.net&gt;
+Date:   2015-11-27 21:38:41 +0100
+
+    Fix typos
+
+commit 5d56fb3115f253564db11a76293079d68959bdf5
+Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
+Date:   2015-11-07 14:50:28 +0100
+
+    Add known failures
+    
+    2 more tests failing under AppVayor since nov-6 update
+    Update #655
+
+commit 51cbcd5748cd64832a578dfa30e630fdd79c2775
+Merge: c37d69b f51d52f
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2015-11-07 14:35:45 +0100
+
+    Merge pull request #654 from mayeut/master
+    
+    Fix undefined size jp2 box handling
+
+commit f51d52f85a54a40ad7e792f2b59473aaf9e1e914
+Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
+Date:   2015-11-07 02:59:38 +0100
+
+    Revert "Check for appveyor update"
+    
+    This reverts commit c414d9c238f404980e6e8b17db652a7fb2635cdf.
+
+commit c414d9c238f404980e6e8b17db652a7fb2635cdf
+Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
+Date:   2015-11-07 02:40:18 +0100
+
+    Check for appveyor update
+
+commit e5ca873ab13a22e0cdabb4f56367b4c223be0b70
+Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
+Date:   2015-11-07 02:06:22 +0100
+
+    Fix missing bracket
+
+commit 601aa38c30258bc7eae1227e00f29a5557953e66
+Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
+Date:   2015-11-07 02:04:10 +0100
+
+    fix appveyor build
+
+commit fb4be3894e5c7c3a9820509ff2f4626ba19043fc
+Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
+Date:   2015-11-07 01:35:43 +0100
+
+    Fix undefined size jp2 box handling
+    
+    Update #653
+
+commit c37d69b25e2bdd40851b898532b2232cb2b04760
+Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
+Date:   2015-11-02 22:28:30 +0100
+
+    Fix Travis cmake install
+
+commit a77717583e05c127f013a7ab55e7cf5ed5bffccf
+Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
+Date:   2015-11-02 22:02:53 +0100
+
+    Update cmake for travis ASan build
+
+commit 968085190c47f1d43e4c19b9fe1ad0d6311f8d2c
+Merge: 38ffbbe 93a6145
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2015-11-02 21:49:25 +0100
+
+    Merge pull request #651 from stweil/fix
+    
+    opj_decompress: Update error message
+
+commit 93a61459cdcf69de75872d28f09d813173e5bf46
+Author: Stefan Weil &lt;sw@weilnetz.de&gt;
+Date:   2015-10-30 08:45:10 +0100
+
+    opj_decompress: Update error message
+    
+    The png format is also supported, so add it to the message.
+    Remove also the unneeded blank character before \n.
+    
+    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
+
+commit 38ffbbe42ee36cf2ab402977cfd5dda471355052
+Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
+Date:   2015-11-01 17:08:47 +0100
+
+    Fin compiler warnings
+
+commit ce26e523dd2345413ee7990afdf84f2c4f13bc88
+Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
+Date:   2015-11-01 16:56:50 +0100
+
+    Fix compiler warnings
+
+commit 7dfcbf9d7b2cb21b753752c06c504b0620191c2a
+Author: Stefan Weil &lt;sw@weilnetz.de&gt;
+Date:   2015-10-29 09:35:54 +0100
+
+    convert: Fix compiler warnings
+    
+    Fix this and other similar compiler warnings:
+    
+    src/bin/jp2/convert.c: In function ‘tga_readheader’:
+    src/bin/jp2/convert.c:595:5: warning:
+     dereferencing type-punned pointer will break strict-aliasing rules
+     [-Wstrict-aliasing]
+         cmap_len = get_ushort(*(unsigned short*)(&amp;tga[5]));
+    
+    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
+
+commit 4ac509182a00de635e814372ba813851062bedb3
+Author: Stefan Weil &lt;sw@weilnetz.de&gt;
+Date:   2015-10-29 09:12:03 +0100
+
+    convert: Remove unneeded type casts
+    
+    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
+
+commit 0ae66e891a92b999774704ac3f4d074bd49d9e9a
+Merge: f080ab8 9f78c68
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2015-10-30 22:50:06 +0100
+
+    Merge pull request #647 from stweil/master
+    
+    Fix typo in comments
+
+commit 9f78c6895318be2906c93cc25e68dd1c09a1c6fe
+Author: Stefan Weil &lt;sw@weilnetz.de&gt;
+Date:   2015-10-23 20:26:08 +0100
+
+    Fix typo in comments
+    
+    Signed-off-by: Stefan Weil &lt;sw@weilnetz.de&gt;
+
+commit f080ab8ce022f06e47c96ea444b00df7c2204814
+Merge: b06bed7 ad7eb56
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2015-10-21 20:53:22 +0200
+
+    Merge pull request #638 from stweil/master
+    
+    Fix format strings and unneeded assignment
+
+commit e975ca2832ecb012c1bd768c5d971eeb6032cbc4
+Merge: 80be580 b06bed7
+Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
+Date:   2015-10-21 20:45:50 +0200
+
+    Merge branch 'master' into coc-qcc
+
+commit b06bed7b7bcf73a3a282d8206ac526689685ce8d
+Merge: d48be27 b7a1623
+Author: Matthieu Darbois &lt;mayeut@users.noreply.github.com&gt;
+Date:   2015-10-21 10:10:38 +0200
+
+    Merge pull request #644 from smuehlst/opj_aligned_malloc
+    
+    Avoid pointer arithmetic with (void *) pointers
+
+commit b7a162348de2f1444377e2dca9f3cbf9d770b52d
+Author: Stephan Mühlstrasser &lt;stm@pdflib.com&gt;
+Date:   2015-10-21 09:01:31 +0200
+
+    Avoid pointer arithmetic with (void *) pointers.
+
+commit 540aa58f6c12224b5762f141fe71a2760e7c7766
+Merge: 0967d64 d48be27
+Author: Stephan Mühlstrasser &lt;stm@pdflib.com&gt;
+Date:   2015-10-21 08:57:45 +0200
+
+    Merge branch 'master' into opj_aligned_malloc
+    
+    Conflicts:
+    	src/lib/openjp2/opj_malloc.c
+
+commit d48be27f5aa018d398cf9369b2c664bee4ce6e19
+Author: mayeut &lt;mayeut@users.noreply.github.com&gt;
+Date:   2015-10-21 00:09:04 +0200
+
+    Generic aligned malloc implementation update.
+    
+    Update #642
+
+commit eaf55b677c53d76a11d2b860034337afdf8d8817
+Author: Stephan Mühlstrasser &lt;stm@pdflib.com&gt;
+Date:   2015-10-20 13:02:51 +0200
+
+    Generic aligned malloc implementation.
+    
+    Used for platforms where none of posix_memalign(), memalign() and
+    _aligned_malloc() is available.
+
+commit 0967d6485414e7038d51f11e4e57f7a4bf5b4572
+Author: Stephan Mühlstrasser &lt;stm@pdflib.com&gt;
+Date:   2015-10-20 13:02:51 +0200
+
+    Generic aligned malloc implementation.
+    
+    Used for platforms where none of posix_memalign(), memalign() and
+    _aligned_malloc() is available.
+
+...</pre></div>
+
+</body>
+</html>

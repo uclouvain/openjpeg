@@ -1,0 +1,36 @@
+$VAR1 = {
+          'Changelog' => {
+                           '1.2' => 'ChangeLog',
+                           '1.3' => 'ChangeLog',
+                           '1.4' => 'CHANGES',
+                           '1.5' => 'NEWS',
+                           '1.5.1' => 'NEWS',
+                           '1.5.2' => 'NEWS',
+                           '2.0' => 'NEWS',
+                           '2.0.1' => 'NEWS',
+                           '2.1' => 'NEWS'
+                         },
+          'Installed' => {
+                           '1.2' => 'installed/openjpeg/1.2',
+                           '1.4' => 'installed/openjpeg/1.4',
+                           '1.5' => 'installed/openjpeg/1.5',
+                           '1.5.1' => 'installed/openjpeg/1.5.1',
+                           '1.5.2' => 'installed/openjpeg/1.5.2',
+                           '2.0' => 'installed/openjpeg/2.0',
+                           '2.0.1' => 'installed/openjpeg/2.0.1',
+                           '2.1' => 'installed/openjpeg/2.1',
+                           'current' => 'installed/openjpeg/current'
+                         },
+          'Source' => {
+                        '1.2' => 'src/openjpeg/1.2/version.1.2.tar.gz',
+                        '1.3' => 'src/openjpeg/1.3/version.1.3.tar.gz',
+                        '1.4' => 'src/openjpeg/1.4/version.1.4.tar.gz',
+                        '1.5' => 'src/openjpeg/1.5/version.1.5.tar.gz',
+                        '1.5.1' => 'src/openjpeg/1.5.1/version.1.5.1.tar.gz',
+                        '1.5.2' => 'src/openjpeg/1.5.2/version.1.5.2.tar.gz',
+                        '2.0' => 'src/openjpeg/2.0/version.2.0.tar.gz',
+                        '2.0.1' => 'src/openjpeg/2.0.1/version.2.0.1.tar.gz',
+                        '2.1' => 'src/openjpeg/2.1/version.2.1.tar.gz',
+                        'current' => 'src/openjpeg/current'
+                      }
+        };

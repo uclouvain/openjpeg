@@ -1,0 +1,39 @@
+-- The C compiler identification is GNU 4.9.2
+-- Check for working C compiler: /usr/bin/cc
+-- Check for working C compiler: /usr/bin/cc -- works
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Configuring done
+CMake Warning (dev) at mj2/CMakeLists.txt:25 (ADD_EXECUTABLE):
+  Policy CMP0003 should be set before this line.  Add code such as
+
+    if(COMMAND cmake_policy)
+      cmake_policy(SET CMP0003 NEW)
+    endif(COMMAND cmake_policy)
+
+  as early as possible but after the most recent call to
+  cmake_minimum_required or cmake_policy(VERSION).  This warning appears
+  because target "extract_j2k_from_mj2" links to some libraries for which the
+  linker must search:
+
+    m
+
+  and other libraries with known full path:
+
+    /tmp/po9FTbVHV4/build/openjpeg-version.1.3/build/bin/libopenjpeg.so.1.2.0
+
+  CMake is adding directories in the second list to the linker search path in
+  case they are needed to find libraries from the first list (for backwards
+  compatibility with CMake 2.4).  Set policy CMP0003 to OLD or NEW to enable
+  or disable this behavior explicitly.  Run "cmake --help-policy CMP0003" for
+  more information.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- Generating done
+CMake Warning:
+  Manually-specified variables were not used by the project:
+
+    CMAKE_CXX_FLAGS
+
+
+-- Build files have been written to: /tmp/po9FTbVHV4/build/openjpeg-version.1.3/build

@@ -1,0 +1,60 @@
+Scanning dependencies of target openjp2
+[  2%] Building C object src/lib/openjp2/CMakeFiles/openjp2.dir/bio.c.o
+[  4%] Building C object src/lib/openjp2/CMakeFiles/openjp2.dir/cio.c.o
+[  6%] Building C object src/lib/openjp2/CMakeFiles/openjp2.dir/dwt.c.o
+[  8%] Building C object src/lib/openjp2/CMakeFiles/openjp2.dir/event.c.o
+[ 11%] Building C object src/lib/openjp2/CMakeFiles/openjp2.dir/image.c.o
+[ 13%] Building C object src/lib/openjp2/CMakeFiles/openjp2.dir/invert.c.o
+[ 15%] Building C object src/lib/openjp2/CMakeFiles/openjp2.dir/j2k.c.o
+[ 17%] Building C object src/lib/openjp2/CMakeFiles/openjp2.dir/jp2.c.o
+[ 20%] Building C object src/lib/openjp2/CMakeFiles/openjp2.dir/mct.c.o
+[ 22%] Building C object src/lib/openjp2/CMakeFiles/openjp2.dir/mqc.c.o
+[ 24%] Building C object src/lib/openjp2/CMakeFiles/openjp2.dir/openjpeg.c.o
+[ 26%] Building C object src/lib/openjp2/CMakeFiles/openjp2.dir/opj_clock.c.o
+[ 28%] Building C object src/lib/openjp2/CMakeFiles/openjp2.dir/pi.c.o
+[ 31%] Building C object src/lib/openjp2/CMakeFiles/openjp2.dir/raw.c.o
+[ 33%] Building C object src/lib/openjp2/CMakeFiles/openjp2.dir/t1.c.o
+[ 35%] Building C object src/lib/openjp2/CMakeFiles/openjp2.dir/t2.c.o
+[ 37%] Building C object src/lib/openjp2/CMakeFiles/openjp2.dir/tcd.c.o
+[ 40%] Building C object src/lib/openjp2/CMakeFiles/openjp2.dir/tgt.c.o
+[ 42%] Building C object src/lib/openjp2/CMakeFiles/openjp2.dir/function_list.c.o
+[ 44%] Building C object src/lib/openjp2/CMakeFiles/openjp2.dir/opj_malloc.c.o
+Linking C shared library ../../../bin/libopenjp2.so
+[ 44%] Built target openjp2
+Scanning dependencies of target t1_generate_luts
+[ 46%] Building C object src/lib/openjp2/CMakeFiles/t1_generate_luts.dir/t1_generate_luts.c.o
+Linking C executable ../../../bin/t1_generate_luts
+[ 46%] Built target t1_generate_luts
+Scanning dependencies of target opj_compress
+[ 48%] Building C object src/bin/jp2/CMakeFiles/opj_compress.dir/opj_compress.c.o
+[ 51%] Building C object src/bin/jp2/CMakeFiles/opj_compress.dir/convert.c.o
+[ 53%] Building C object src/bin/jp2/CMakeFiles/opj_compress.dir/convertbmp.c.o
+[ 55%] Building C object src/bin/jp2/CMakeFiles/opj_compress.dir/index.c.o
+[ 57%] Building C object src/bin/jp2/CMakeFiles/opj_compress.dir/__/common/color.c.o
+[ 60%] Building C object src/bin/jp2/CMakeFiles/opj_compress.dir/__/common/opj_getopt.c.o
+[ 62%] Building C object src/bin/jp2/CMakeFiles/opj_compress.dir/converttif.c.o
+[ 64%] Building C object src/bin/jp2/CMakeFiles/opj_compress.dir/convertpng.c.o
+Linking C executable ../../../bin/opj_compress
+[ 64%] Built target opj_compress
+Scanning dependencies of target opj_decompress
+[ 66%] Building C object src/bin/jp2/CMakeFiles/opj_decompress.dir/opj_decompress.c.o
+[ 68%] Building C object src/bin/jp2/CMakeFiles/opj_decompress.dir/convert.c.o
+[ 71%] Building C object src/bin/jp2/CMakeFiles/opj_decompress.dir/convertbmp.c.o
+[ 73%] Building C object src/bin/jp2/CMakeFiles/opj_decompress.dir/index.c.o
+[ 75%] Building C object src/bin/jp2/CMakeFiles/opj_decompress.dir/__/common/color.c.o
+[ 77%] Building C object src/bin/jp2/CMakeFiles/opj_decompress.dir/__/common/opj_getopt.c.o
+[ 80%] Building C object src/bin/jp2/CMakeFiles/opj_decompress.dir/converttif.c.o
+[ 82%] Building C object src/bin/jp2/CMakeFiles/opj_decompress.dir/convertpng.c.o
+Linking C executable ../../../bin/opj_decompress
+[ 82%] Built target opj_decompress
+Scanning dependencies of target opj_dump
+[ 84%] Building C object src/bin/jp2/CMakeFiles/opj_dump.dir/opj_dump.c.o
+[ 86%] Building C object src/bin/jp2/CMakeFiles/opj_dump.dir/convert.c.o
+[ 88%] Building C object src/bin/jp2/CMakeFiles/opj_dump.dir/convertbmp.c.o
+[ 91%] Building C object src/bin/jp2/CMakeFiles/opj_dump.dir/index.c.o
+[ 93%] Building C object src/bin/jp2/CMakeFiles/opj_dump.dir/__/common/color.c.o
+[ 95%] Building C object src/bin/jp2/CMakeFiles/opj_dump.dir/__/common/opj_getopt.c.o
+[ 97%] Building C object src/bin/jp2/CMakeFiles/opj_dump.dir/converttif.c.o
+[100%] Building C object src/bin/jp2/CMakeFiles/opj_dump.dir/convertpng.c.o
+Linking C executable ../../../bin/opj_dump
+[100%] Built target opj_dump

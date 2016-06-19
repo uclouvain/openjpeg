@@ -1,0 +1,8 @@
+{
+  "Affected": "64.3",
+  "Added": 31,
+  "Removed": 9,
+  "TotalProblems": 135,
+  "Object1": "lib/libopenjpeg.so.1.5.2",
+  "Object2": "lib/libopenjp2.so.2.0.0"
+}

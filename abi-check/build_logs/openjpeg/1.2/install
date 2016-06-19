@@ -1,0 +1,26 @@
+[100%] Built target openjpeg
+Install the project...
+-- Install configuration: "Debug"
+-- Installing: /home/antonin/abi-check/tracker/installed/openjpeg/1.2/include/event.h
+-- Installing: /home/antonin/abi-check/tracker/installed/openjpeg/1.2/include/opj_includes.h
+-- Installing: /home/antonin/abi-check/tracker/installed/openjpeg/1.2/include/dwt.h
+-- Installing: /home/antonin/abi-check/tracker/installed/openjpeg/1.2/include/jpt.h
+-- Installing: /home/antonin/abi-check/tracker/installed/openjpeg/1.2/include/bio.h
+-- Installing: /home/antonin/abi-check/tracker/installed/openjpeg/1.2/include/t1_luts.h
+-- Installing: /home/antonin/abi-check/tracker/installed/openjpeg/1.2/include/mqc.h
+-- Installing: /home/antonin/abi-check/tracker/installed/openjpeg/1.2/include/raw.h
+-- Installing: /home/antonin/abi-check/tracker/installed/openjpeg/1.2/include/j2k.h
+-- Installing: /home/antonin/abi-check/tracker/installed/openjpeg/1.2/include/int.h
+-- Installing: /home/antonin/abi-check/tracker/installed/openjpeg/1.2/include/jp2.h
+-- Installing: /home/antonin/abi-check/tracker/installed/openjpeg/1.2/include/pi.h
+-- Installing: /home/antonin/abi-check/tracker/installed/openjpeg/1.2/include/openjpeg.h
+-- Installing: /home/antonin/abi-check/tracker/installed/openjpeg/1.2/include/t2.h
+-- Installing: /home/antonin/abi-check/tracker/installed/openjpeg/1.2/include/tgt.h
+-- Installing: /home/antonin/abi-check/tracker/installed/openjpeg/1.2/include/mct.h
+-- Installing: /home/antonin/abi-check/tracker/installed/openjpeg/1.2/include/t1.h
+-- Installing: /home/antonin/abi-check/tracker/installed/openjpeg/1.2/include/image.h
+-- Installing: /home/antonin/abi-check/tracker/installed/openjpeg/1.2/include/tcd.h
+-- Installing: /home/antonin/abi-check/tracker/installed/openjpeg/1.2/include/fix.h
+-- Installing: /home/antonin/abi-check/tracker/installed/openjpeg/1.2/include/cio.h
+-- Installing: /home/antonin/abi-check/tracker/installed/openjpeg/1.2/include/j2k_lib.h
+-- Installing: /home/antonin/abi-check/tracker/installed/openjpeg/1.2/lib/libopenjpeg.so

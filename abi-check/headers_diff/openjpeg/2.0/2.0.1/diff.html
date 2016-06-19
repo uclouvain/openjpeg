@@ -1,0 +1,446 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="OpenJPEG, header, diff" />
+    <meta name="description" content="Diff for header files between 2.0 and 2.0.1 versions of openjpeg" />
+    <link rel="stylesheet" type="text/css" href="../../../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../css/headers_diff.css" />
+    
+    
+    <title>
+        OpenJPEG: headers diff between 2.0 and 2.0.1 versions
+    </title>
+    
+    </head>
+
+<body>
+<table width='100%' cellpadding='0' cellspacing='0'><tr><td><table cellpadding='0' cellspacing='0'><tr><td align='center'><h1 class='tool'><a title='Home: ABI tracker for OpenJPEG' href='../../../../timeline/openjpeg/index.html' class='tool'>ABI<br/>Tracker</a></h1></td><td width='30px;'></td><td><h1>(OpenJPEG)</h1></td></tr></table><hr/>
+<br/>
+<br/>
+<h1>Headers diff: <span class='version'>2.0</span> vs <span class='version'>2.0.1</span></h1><br/><br/> 
+  <table class='diff_tbl' border="0" cellpadding="0" cellspacing="0"> 
+  <tr bgcolor="orange"><th></th><th>&nbsp;openjpeg.h (2.0)&nbsp;</th><th> </th><th>&nbsp;openjpeg.h (2.0.1)&nbsp;</th><th></th></tr> 
+      <tr><td class="lineno" valign="top"></td><td class="left"> /*</td><td> </td><td class="right"> /*</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0001" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"> * Copyright (c) <span class="delete">2002-2007, Communications and Remote Sensing Laboratory, U</span></td><td> </td><td class="rblock"> * <span class="insert">The copyright in this software is being made available under the 2-claus</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">niversite</span> catholique de Louvain (UCL), Belgium</td><td> </td><td class="rblock"><span class="insert">es</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"> * Copyright (c) <span class="delete">2002-2007,</span> Professor Benoit Macq</td><td> </td><td class="rblock"><span class="insert"> * BSD License, included below. This software may be subject to other third</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * party and contributor rights, including patent rights, and no such right</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">s</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * are granted under this license.</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> *</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> *</span> Copyright (c) <span class="insert">2002-2014, Universite</span> catholique de Louvain (UCL), Belgium</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"> * Copyright (c) <span class="insert">2002-2014,</span> Professor Benoit Macq</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * Copyright (c) 2001-2003, David Janssens</td><td> </td><td class="right"> * Copyright (c) 2001-2003, David Janssens</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * Copyright (c) 2002-2003, Yannick Verschueren</td><td> </td><td class="right"> * Copyright (c) 2002-2003, Yannick Verschueren</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0002" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"> * Copyright (c) 2003-2007, Francois-Olivier Devaux <span class="delete">and</span> Antonin Descampe</td><td> </td><td class="rblock"> * Copyright (c) 2003-2007, Francois-Olivier Devaux</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"> <span class="insert">* Copyright (c) 2003-2014,</span> Antonin Descampe</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * Copyright (c) 2005, Herve Drolon, FreeImage Team</td><td> </td><td class="right"> * Copyright (c) 2005, Herve Drolon, FreeImage Team</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * Copyright (c) 2006-2007, Parvatha Elangovan</td><td> </td><td class="right"> * Copyright (c) 2006-2007, Parvatha Elangovan</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * Copyright (c) 2008, Jerome Fimes, Communications &amp; Systemes &lt;jerome.fime
+s@c-s.fr&gt;</td><td> </td><td class="right"> * Copyright (c) 2008, Jerome Fimes, Communications &amp; Systemes &lt;jerome.fime
+s@c-s.fr&gt;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * Copyright (c) 2010-2011, Kaori Hagihara</td><td> </td><td class="right"> * Copyright (c) 2010-2011, Kaori Hagihara</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * Copyright (c) 2011-2012, Centre National d'Etudes Spatiales (CNES), Fran
+ce</td><td> </td><td class="right"> * Copyright (c) 2011-2012, Centre National d'Etudes Spatiales (CNES), Fran
+ce</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * Copyright (c) 2012, CS Systemes d'Information, France</td><td> </td><td class="right"> * Copyright (c) 2012, CS Systemes d'Information, France</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * All rights reserved.</td><td> </td><td class="right"> * All rights reserved.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> *</td><td> </td><td class="right"> *</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * Redistribution and use in source and binary forms, with or without</td><td> </td><td class="right"> * Redistribution and use in source and binary forms, with or without</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * modification, are permitted provided that the following conditions</td><td> </td><td class="right"> * modification, are permitted provided that the following conditions</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr bgcolor="gray" ><td></td><th><a name="part-l2" /><small>skipping to change at</small><em> line 45</em></th><th> </th><th><a name="part-r2" /><small>skipping to change at</small><em> line 51</em></th><td></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> */</td><td> </td><td class="right"> */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#ifndef OPENJPEG_H</td><td> </td><td class="right">#ifndef OPENJPEG_H</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#define OPENJPEG_H</td><td> </td><td class="right">#define OPENJPEG_H</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/*</td><td> </td><td class="right">/*</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">==========================================================</td><td> </td><td class="right">==========================================================</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">   Compiler directives</td><td> </td><td class="right">   Compiler directives</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">==========================================================</td><td> </td><td class="right">==========================================================</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">*/</td><td> </td><td class="right">*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0003" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">/*</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">The inline keyword is supported by C99 but not by C90.</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">Most compilers implement their own version of this keyword ...</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">*/</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#ifndef INLINE</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">       #if defined(_MSC_VER)</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">               #define INLINE __forceinline</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">       #elif defined(__GNUC__)</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">               #define INLINE __inline__</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">       #elif defined(__MWERKS__)</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">               #define INLINE inline</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">       #else</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">               /* add other compilers here ... */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">               #define INLINE</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">       #endif /* defined(&lt;Compiler&gt;) */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#endif /* INLINE */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock">                                                                           </td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/* deprecated attribute */</td><td> </td><td class="right">/* deprecated attribute */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#ifdef __GNUC__</td><td> </td><td class="right">#ifdef __GNUC__</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0004" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">       #define DEPRECATED(func) func __attribute__ ((deprecated))</td><td> </td><td class="rblock">       #define <span class="insert">OPJ_</span>DEPRECATED(func) func __attribute__ ((deprecated))</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#elif defined(_MSC_VER)</td><td> </td><td class="right">#elif defined(_MSC_VER)</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0005" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">       #define DEPRECATED(func) __declspec(deprecated) func</td><td> </td><td class="rblock">       #define <span class="insert">OPJ_</span>DEPRECATED(func) __declspec(deprecated) func</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#else</td><td> </td><td class="right">#else</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       #pragma message("WARNING: You need to implement DEPRECATED for this 
+compiler")</td><td> </td><td class="right">       #pragma message("WARNING: You need to implement DEPRECATED for this 
+compiler")</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0006" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">       #define DEPRECATED(func) func</td><td> </td><td class="rblock">       #define <span class="insert">OPJ_</span>DEPRECATED(func) func</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#endif</td><td> </td><td class="right">#endif</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#if defined(OPJ_STATIC) || !defined(_WIN32)</td><td> </td><td class="right">#if defined(OPJ_STATIC) || !defined(_WIN32)</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/* http://gcc.gnu.org/wiki/Visibility */</td><td> </td><td class="right">/* http://gcc.gnu.org/wiki/Visibility */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#if __GNUC__ &gt;= 4</td><td> </td><td class="right">#if __GNUC__ &gt;= 4</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#define OPJ_API    __attribute__ ((visibility ("default")))</td><td> </td><td class="right">#define OPJ_API    __attribute__ ((visibility ("default")))</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#define OPJ_LOCAL  __attribute__ ((visibility ("hidden")))</td><td> </td><td class="right">#define OPJ_LOCAL  __attribute__ ((visibility ("hidden")))</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#else</td><td> </td><td class="right">#else</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#define OPJ_API</td><td> </td><td class="right">#define OPJ_API</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#define OPJ_LOCAL</td><td> </td><td class="right">#define OPJ_LOCAL</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr bgcolor="gray" ><td></td><th><a name="part-l3" /><small>skipping to change at</small><em> line 82</em></th><th> </th><th><a name="part-r3" /><small>skipping to change at</small><em> line 105</em></th><td></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">OPJ_API functions as being imported from a DLL, wheras this DLL sees symbol
+s</td><td> </td><td class="right">OPJ_API functions as being imported from a DLL, wheras this DLL sees symbol
+s</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">defined with this macro as being exported.</td><td> </td><td class="right">defined with this macro as being exported.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">*/</td><td> </td><td class="right">*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#if defined(OPJ_EXPORTS) || defined(DLL_EXPORT)</td><td> </td><td class="right">#if defined(OPJ_EXPORTS) || defined(DLL_EXPORT)</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#define OPJ_API __declspec(dllexport)</td><td> </td><td class="right">#define OPJ_API __declspec(dllexport)</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#else</td><td> </td><td class="right">#else</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#define OPJ_API __declspec(dllimport)</td><td> </td><td class="right">#define OPJ_API __declspec(dllimport)</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#endif /* OPJ_EXPORTS */</td><td> </td><td class="right">#endif /* OPJ_EXPORTS */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#endif /* !OPJ_STATIC || !_WIN32 */</td><td> </td><td class="right">#endif /* !OPJ_STATIC || !_WIN32 */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0007" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">typedef int OPJ_BOOL;<span class="delete"> /*FIXME it should be to follow the name of others OPJ
+_TYPE -&gt; OPJ_BOOL*/</span></td><td> </td><td class="rblock">typedef int OPJ_BOOL;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#define OPJ_TRUE 1</td><td> </td><td class="right">#define OPJ_TRUE 1</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#define OPJ_FALSE 0</td><td> </td><td class="right">#define OPJ_FALSE 0</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">typedef char          OPJ_CHAR;</td><td> </td><td class="right">typedef char          OPJ_CHAR;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">typedef float         OPJ_FLOAT32;</td><td> </td><td class="right">typedef float         OPJ_FLOAT32;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">typedef double        OPJ_FLOAT64;</td><td> </td><td class="right">typedef double        OPJ_FLOAT64;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">typedef unsigned char OPJ_BYTE;</td><td> </td><td class="right">typedef unsigned char OPJ_BYTE;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#include "opj_stdint.h"</td><td> </td><td class="right">#include "opj_stdint.h"</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">typedef int8_t   OPJ_INT8;</td><td> </td><td class="right">typedef int8_t   OPJ_INT8;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">typedef uint8_t  OPJ_UINT8;</td><td> </td><td class="right">typedef uint8_t  OPJ_UINT8;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">typedef int16_t  OPJ_INT16;</td><td> </td><td class="right">typedef int16_t  OPJ_INT16;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">typedef uint16_t OPJ_UINT16;</td><td> </td><td class="right">typedef uint16_t OPJ_UINT16;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">typedef int32_t  OPJ_INT32;</td><td> </td><td class="right">typedef int32_t  OPJ_INT32;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">typedef uint32_t OPJ_UINT32;</td><td> </td><td class="right">typedef uint32_t OPJ_UINT32;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">typedef int64_t  OPJ_INT64;</td><td> </td><td class="right">typedef int64_t  OPJ_INT64;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">typedef uint64_t OPJ_UINT64;</td><td> </td><td class="right">typedef uint64_t OPJ_UINT64;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0008" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">typedef int64_t  OPJ_OFF_T; /* 64-bit file offset type */</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"></span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">#include &lt;stdio.h&gt;</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">typedef size_t   OPJ_SIZE_T;</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock">                                                                           </td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/* Avoid compile-time warning because parameter is not used */</td><td> </td><td class="right">/* Avoid compile-time warning because parameter is not used */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#define OPJ_ARG_NOT_USED(x) (void)(x)</td><td> </td><td class="right">#define OPJ_ARG_NOT_USED(x) (void)(x)</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/*</td><td> </td><td class="right">/*</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">==========================================================</td><td> </td><td class="right">==========================================================</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">   Useful constant definitions</td><td> </td><td class="right">   Useful constant definitions</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">==========================================================</td><td> </td><td class="right">==========================================================</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">*/</td><td> </td><td class="right">*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#define OPJ_PATH_LEN 4096 /**&lt; Maximum allowed size for filenames */</td><td> </td><td class="right">#define OPJ_PATH_LEN 4096 /**&lt; Maximum allowed size for filenames */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr bgcolor="gray" ><td></td><th><a name="part-l4" /><small>skipping to change at</small><em> line 140</em></th><th> </th><th><a name="part-r4" /><small>skipping to change at</small><em> line 168</em></th><td></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#define JPWL_MAXIMUM_EPB_ROOM 65450 /**&lt; Expect this maximum number of byte
+s for composition of EPBs */</td><td> </td><td class="right">#define JPWL_MAXIMUM_EPB_ROOM 65450 /**&lt; Expect this maximum number of byte
+s for composition of EPBs */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/* &lt;&lt;UniPG */</td><td> </td><td class="right">/* &lt;&lt;UniPG */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * EXPERIMENTAL FOR THE MOMENT</td><td> </td><td class="right"> * EXPERIMENTAL FOR THE MOMENT</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * Supported options about file information used only in j2k_dump</td><td> </td><td class="right"> * Supported options about file information used only in j2k_dump</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">*/</td><td> </td><td class="right">*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#define OPJ_IMG_INFO           1       /**&lt; Basic image information provide
+d to the user */</td><td> </td><td class="right">#define OPJ_IMG_INFO           1       /**&lt; Basic image information provide
+d to the user */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#define OPJ_J2K_MH_INFO                2       /**&lt; Codestream information 
+based only on the main header */</td><td> </td><td class="right">#define OPJ_J2K_MH_INFO                2       /**&lt; Codestream information 
+based only on the main header */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#define OPJ_J2K_TH_INFO                4       /**&lt; Tile information based 
+on the current tile header */</td><td> </td><td class="right">#define OPJ_J2K_TH_INFO                4       /**&lt; Tile information based 
+on the current tile header */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0009" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">/*FIXME #define OPJ_J2K_CSTR_INFO      6*/     /**&lt; </span> */</td><td> </td><td class="rblock"><span class="insert">#define OPJ_J2K_TCH_INFO       8       /**&lt; Tile/Component information of a
+ll tiles</span> */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#define OPJ_J2K_MH_IND         16      /**&lt; Codestream index based only on 
+the main header */</td><td> </td><td class="right">#define OPJ_J2K_MH_IND         16      /**&lt; Codestream index based only on 
+the main header */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#define OPJ_J2K_TH_IND         32      /**&lt; Tile index based on the current
+ tile */</td><td> </td><td class="right">#define OPJ_J2K_TH_IND         32      /**&lt; Tile index based on the current
+ tile */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/*FIXME #define OPJ_J2K_CSTR_IND       48*/    /**&lt;  */</td><td> </td><td class="right">/*FIXME #define OPJ_J2K_CSTR_IND       48*/    /**&lt;  */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#define OPJ_JP2_INFO           128     /**&lt; JP2 file information */</td><td> </td><td class="right">#define OPJ_JP2_INFO           128     /**&lt; JP2 file information */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#define OPJ_JP2_IND                    256     /**&lt; JP2 file index */</td><td> </td><td class="right">#define OPJ_JP2_IND                    256     /**&lt; JP2 file index */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/*</td><td> </td><td class="right">/*</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">==========================================================</td><td> </td><td class="right">==========================================================</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">   enum definitions</td><td> </td><td class="right">   enum definitions</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">==========================================================</td><td> </td><td class="right">==========================================================</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr bgcolor="gray" ><td></td><th><a name="part-l5" /><small>skipping to change at</small><em> line 189</em></th><th> </th><th><a name="part-r5" /><small>skipping to change at</small><em> line 217</em></th><td></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       OPJ_RPCL = 2,                   /**&lt; resolution-precinct-component-l
+ayer order */</td><td> </td><td class="right">       OPJ_RPCL = 2,                   /**&lt; resolution-precinct-component-l
+ayer order */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       OPJ_PCRL = 3,                   /**&lt; precinct-component-resolution-l
+ayer order */</td><td> </td><td class="right">       OPJ_PCRL = 3,                   /**&lt; precinct-component-resolution-l
+ayer order */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       OPJ_CPRL = 4                    /**&lt; component-precinct-resolution-l
+ayer order */</td><td> </td><td class="right">       OPJ_CPRL = 4                    /**&lt; component-precinct-resolution-l
+ayer order */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">} OPJ_PROG_ORDER;</td><td> </td><td class="right">} OPJ_PROG_ORDER;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * Supported image color spaces</td><td> </td><td class="right"> * Supported image color spaces</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">*/</td><td> </td><td class="right">*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">typedef enum COLOR_SPACE {</td><td> </td><td class="right">typedef enum COLOR_SPACE {</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       OPJ_CLRSPC_UNKNOWN = -1,        /**&lt; not supported by the library */</td><td> </td><td class="right">       OPJ_CLRSPC_UNKNOWN = -1,        /**&lt; not supported by the library */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0010" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">       OPJ_CLRSPC_UNSPECIFIED = 0, <span class="delete">/**&lt; not specified in the codestream</span> */</td><td> </td><td class="rblock">       OPJ_CLRSPC_UNSPECIFIED = 0, <span class="insert">    /**&lt; not specified in the codestream
+</span> */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       OPJ_CLRSPC_SRGB = 1,            /**&lt; sRGB */</td><td> </td><td class="right">       OPJ_CLRSPC_SRGB = 1,            /**&lt; sRGB */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       OPJ_CLRSPC_GRAY = 2,            /**&lt; grayscale */</td><td> </td><td class="right">       OPJ_CLRSPC_GRAY = 2,            /**&lt; grayscale */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0011" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">       OPJ_CLRSPC_SYCC = 3             <span class="delete">        </span>/**&lt; YUV */</td><td> </td><td class="rblock">       OPJ_CLRSPC_SYCC = 3             /**&lt; YUV */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">} OPJ_COLOR_SPACE;</td><td> </td><td class="right">} OPJ_COLOR_SPACE;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * Supported codec</td><td> </td><td class="right"> * Supported codec</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">*/</td><td> </td><td class="right">*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">typedef enum CODEC_FORMAT {</td><td> </td><td class="right">typedef enum CODEC_FORMAT {</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       OPJ_CODEC_UNKNOWN = -1, /**&lt; place-holder */</td><td> </td><td class="right">       OPJ_CODEC_UNKNOWN = -1, /**&lt; place-holder */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       OPJ_CODEC_J2K  = 0,             /**&lt; JPEG-2000 codestream : read/wri
+te */</td><td> </td><td class="right">       OPJ_CODEC_J2K  = 0,             /**&lt; JPEG-2000 codestream : read/wri
+te */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       OPJ_CODEC_JPT  = 1,             /**&lt; JPT-stream (JPEG 2000, JPIP) : 
+read only */</td><td> </td><td class="right">       OPJ_CODEC_JPT  = 1,             /**&lt; JPT-stream (JPEG 2000, JPIP) : 
+read only */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       OPJ_CODEC_JP2  = 2              /**&lt; JPEG-2000 file format : read/wr
+ite */</td><td> </td><td class="right">       OPJ_CODEC_JP2  = 2              /**&lt; JPEG-2000 file format : read/wr
+ite */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr bgcolor="gray" ><td></td><th><a name="part-l6" /><small>skipping to change at</small><em> line 382</em></th><th> </th><th><a name="part-r6" /><small>skipping to change at</small><em> line 410</em></th><td></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** Profile name*/</td><td> </td><td class="right">       /** Profile name*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       OPJ_RSIZ_CAPABILITIES cp_rsiz;</td><td> </td><td class="right">       OPJ_RSIZ_CAPABILITIES cp_rsiz;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** Tile part generation*/</td><td> </td><td class="right">       /** Tile part generation*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       char tp_on;</td><td> </td><td class="right">       char tp_on;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** Flag for Tile part generation*/</td><td> </td><td class="right">       /** Flag for Tile part generation*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       char tp_flag;</td><td> </td><td class="right">       char tp_flag;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** MCT (multiple component transform) */</td><td> </td><td class="right">       /** MCT (multiple component transform) */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       char tcp_mct;</td><td> </td><td class="right">       char tcp_mct;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /** Enable JPIP indexing*/</td><td> </td><td class="right">       /** Enable JPIP indexing*/</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       OPJ_BOOL jpip_on;</td><td> </td><td class="right">       OPJ_BOOL jpip_on;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0012" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">       /** Naive implementation of MCT restricted to a single reversible ar</td><td> </td><td class="rblock">       /** Naive implementation of MCT restricted to a single reversible ar</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">ray based encoding without offset concerning all the components. */</td><td> </td><td class="rblock">ray based</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock">        encoding without offset concerning all the components. */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       void * mct_data;</td><td> </td><td class="right">       void * mct_data;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">} opj_cparameters_t;</td><td> </td><td class="right">} opj_cparameters_t;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#define OPJ_DPARAMETERS_IGNORE_PCLR_CMAP_CDEF_FLAG     0x0001</td><td> </td><td class="right">#define OPJ_DPARAMETERS_IGNORE_PCLR_CMAP_CDEF_FLAG     0x0001</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * Decompression parameters</td><td> </td><td class="right"> * Decompression parameters</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * */</td><td> </td><td class="right"> * */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">typedef struct opj_dparameters {</td><td> </td><td class="right">typedef struct opj_dparameters {</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">       /**</td><td> </td><td class="right">       /**</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr bgcolor="gray" ><td></td><th><a name="part-l7" /><small>skipping to change at</small><em> line 1204</em></th><th> </th><th><a name="part-r7" /><small>skipping to change at</small><em> line 1233</em></th><td></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * @return                                     true if success, otherwise f
+alse</td><td> </td><td class="right"> * @return                                     true if success, otherwise f
+alse</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> */</td><td> </td><td class="right"> */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">OPJ_API OPJ_BOOL OPJ_CALLCONV opj_set_decoded_resolution_factor(opj_codec_t
+ *p_codec, OPJ_UINT32 res_factor);</td><td> </td><td class="right">OPJ_API OPJ_BOOL OPJ_CALLCONV opj_set_decoded_resolution_factor(opj_codec_t
+ *p_codec, OPJ_UINT32 res_factor);</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">/**</td><td> </td><td class="right">/**</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * Writes a tile with the given data.</td><td> </td><td class="right"> * Writes a tile with the given data.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> *</td><td> </td><td class="right"> *</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * @param      p_codec                 the jpeg2000 codec.</td><td> </td><td class="right"> * @param      p_codec                 the jpeg2000 codec.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * @param      p_tile_index            the index of the tile to write. At t
+he moment, the tiles must be written from 0 to n-1 in sequence.</td><td> </td><td class="right"> * @param      p_tile_index            the index of the tile to write. At t
+he moment, the tiles must be written from 0 to n-1 in sequence.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * @param      p_data                          pointer to the data to write
+. Data is arranged in sequence, data_comp0, then data_comp1, then ... NO IN
+TERLEAVING should be set.</td><td> </td><td class="right"> * @param      p_data                          pointer to the data to write
+. Data is arranged in sequence, data_comp0, then data_comp1, then ... NO IN
+TERLEAVING should be set.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0013" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"> * @param      p_data_size                     this value os used to make s</td><td> </td><td class="rblock"> * @param      p_data_size                     this value os used to make s</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">ure the data being written is correct. The size must be equal to the sum fo</td><td> </td><td class="rblock">ure the data being written is correct. The size must be equal to the sum fo</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">r each component of tile_width * tile_height * component_size. <span class="delete">component_si</span></td><td> </td><td class="rblock">r each component of</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">ze</span> can be 1,2 or 4 bytes, depending on the precision of the <span class="delete">given component</span></td><td> </td><td class="rblock"> <span class="insert">*</span>                              tile_width * tile_height * component_size. </td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">.</span></td><td> </td><td class="rblock"><span class="insert">component_size</span> can be 1,2 or 4 bytes, depending on the precision of the <span class="insert">giv</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">en component.</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * @param      p_stream                        the stream to write data to.</td><td> </td><td class="right"> * @param      p_stream                        the stream to write data to.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> *</td><td> </td><td class="right"> *</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * @return     true if the data could be written.</td><td> </td><td class="right"> * @return     true if the data could be written.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> */</td><td> </td><td class="right"> */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">OPJ_API OPJ_BOOL OPJ_CALLCONV opj_write_tile ( opj_codec_t *p_codec,</td><td> </td><td class="right">OPJ_API OPJ_BOOL OPJ_CALLCONV opj_write_tile ( opj_codec_t *p_codec,</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">                                                                           
+                    OPJ_UINT32 p_tile_index,</td><td> </td><td class="right">                                                                           
+                    OPJ_UINT32 p_tile_index,</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">                                                                           
+                    OPJ_BYTE * p_data,</td><td> </td><td class="right">                                                                           
+                    OPJ_BYTE * p_data,</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">                                                                           
+                    OPJ_UINT32 p_data_size,</td><td> </td><td class="right">                                                                           
+                    OPJ_UINT32 p_data_size,</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">                                                                           
+                    opj_stream_t *p_stream );</td><td> </td><td class="right">                                                                           
+                    opj_stream_t *p_stream );</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+
+     <tr><td></td><td class="left"></td><td> </td><td class="right"></td><td></td></tr>
+     <tr bgcolor="gray"><th colspan="5" align="center"><a name="end">&nbsp;End of changes. 13 change blocks.&nbsp;</a></th></tr>
+     <tr class="stats"><td></td><th><i>18 lines changed or deleted</i></th><th><i> </i></th><th><i>49 lines changed or added</i></th><td></td></tr>
+     <tr><td colspan="5" align="center" class="small"></td></tr>
+   </table>
+   <br/><br/>
+ 
+  <table class='diff_tbl' border="0" cellpadding="0" cellspacing="0"> 
+  <tr bgcolor="orange"><th></th><th>&nbsp;opj_config.h (2.0)&nbsp;</th><th> </th><th>&nbsp;opj_config.h (2.0.1)&nbsp;</th><th></th></tr> 
+      <tr><td><a name="diff0001" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">/* create <span class="delete">config.h</span> for CMake */</td><td> </td><td class="rblock">/* create <span class="insert">opj_config.h</span> for CMake */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">#define <span class="delete">OPJ_PACKAGE_VERSION "2.0.0"</span></td><td> </td><td class="rblock">#define <span class="insert">OPJ_HAVE_STDINT_H</span>              1</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete"></span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">#define HAVE_INTTYPES_H 1</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">#define HAVE_MEMORY_H 1</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">#define HAVE_STDINT_H 1</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">#define HAVE_STDLIB_H 1</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">#define HAVE_STRINGS_H 1</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">#define HAVE_STRING_H 1</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">#define HAVE_SYS_STAT_H 1</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">#define HAVE_SYS_TYPES_H 1</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">#define HAVE_UNISTD_H 1</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">#define HAVE_LIBPNG</span> 1</td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">#define HAVE_PNG_H 1</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">#define HAVE_LIBTIFF 1</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">#define HAVE_TIFF_H 1</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">#define HAVE_SSIZE_T TRUE</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete"></span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">/* #undef _LARGEFILE_SOURCE */</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">/* #undef _LARGE_FILES */</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">/* #undef _FILE_OFFSET_BITS */</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">#define HAVE_FSEEKO ON</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete"></span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">/* #undef HAVE_LIBLCMS1 */</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">#define HAVE_LIBLCMS2</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">/* #undef HAVE_LCMS1_H */</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">#define HAVE_LCMS2_H</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete"></span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">/* Byte order.  */</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">/* All compilers that support Mac OS X define either __BIG_ENDIAN__ or</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">__LITTLE_ENDIAN__ to match the endianness of the architecture being</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">compiled for. This is not necessarily the same as the architecture of the</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">machine doing the building. In order to support Universal Binaries on</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">Mac OS X, we prefer those defines to decide the endianness.</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">On other platforms we use the result of the TRY_RUN. */</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">#if !defined(__APPLE__)</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">/* #undef OPJ_BIG_ENDIAN */</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">#elif defined(__BIG_ENDIAN__)</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete"># define OPJ_BIG_ENDIAN</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">#endif</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+
+     <tr><td></td><td class="left"></td><td> </td><td class="right"></td><td></td></tr>
+     <tr bgcolor="gray"><th colspan="5" align="center"><a name="end">&nbsp;End of changes. 1 change blocks.&nbsp;</a></th></tr>
+     <tr class="stats"><td></td><th><i> lines changed or deleted</i></th><th><i> </i></th><th><i> lines changed or added</i></th><td></td></tr>
+     <tr><td colspan="5" align="center" class="small"></td></tr>
+   </table>
+   <br/><br/>
+ 
+  <table class='diff_tbl' border="0" cellpadding="0" cellspacing="0"> 
+  <tr bgcolor="orange"><th></th><th>&nbsp;opj_stdint.h (2.0)&nbsp;</th><th> </th><th>&nbsp;opj_stdint.h (2.0.1)&nbsp;</th><th></th></tr> 
+      <tr><td class="lineno" valign="top"></td><td class="left">/*</td><td> </td><td class="right">/*</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0001" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"> <span class="insert">* The copyright in this software is being made available under the 2-claus</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">es</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * BSD License, included below. This software may be subject to other third</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * party and contributor rights, including patent rights, and no such right</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert">s</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> * are granted under this license.</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"></td><td> </td><td class="rblock"><span class="insert"> *</span></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * Copyright (c) 2012, Mathieu Malaterre &lt;mathieu.malaterre@gmail.com&gt;</td><td> </td><td class="right"> * Copyright (c) 2012, Mathieu Malaterre &lt;mathieu.malaterre@gmail.com&gt;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * All rights reserved.</td><td> </td><td class="right"> * All rights reserved.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> *</td><td> </td><td class="right"> *</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * Redistribution and use in source and binary forms, with or without</td><td> </td><td class="right"> * Redistribution and use in source and binary forms, with or without</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * modification, are permitted provided that the following conditions</td><td> </td><td class="right"> * modification, are permitted provided that the following conditions</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * are met:</td><td> </td><td class="right"> * are met:</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * 1. Redistributions of source code must retain the above copyright</td><td> </td><td class="right"> * 1. Redistributions of source code must retain the above copyright</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> *    notice, this list of conditions and the following disclaimer.</td><td> </td><td class="right"> *    notice, this list of conditions and the following disclaimer.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * 2. Redistributions in binary form must reproduce the above copyright</td><td> </td><td class="right"> * 2. Redistributions in binary form must reproduce the above copyright</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> *    notice, this list of conditions and the following disclaimer in the</td><td> </td><td class="right"> *    notice, this list of conditions and the following disclaimer in the</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno"></td></tr>
+      <tr bgcolor="gray" ><td></td><th><a name="part-l2" /><small>skipping to change at</small><em> line 30</em></th><th> </th><th><a name="part-r2" /><small>skipping to change at</small><em> line 35</em></th><td></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS</td><td> </td><td class="right"> * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN</td><td> </td><td class="right"> * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</td><td> </td><td class="right"> * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF T
+HE</td><td> </td><td class="right"> * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF T
+HE</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> * POSSIBILITY OF SUCH DAMAGE.</td><td> </td><td class="right"> * POSSIBILITY OF SUCH DAMAGE.</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"> */</td><td> </td><td class="right"> */</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#ifndef OPJ_STDINT_H</td><td> </td><td class="right">#ifndef OPJ_STDINT_H</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#define OPJ_STDINT_H</td><td> </td><td class="right">#define OPJ_STDINT_H</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#include "opj_config.h"</td><td> </td><td class="right">#include "opj_config.h"</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0002" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock">#ifdef HAVE_STDINT_H</td><td> </td><td class="rblock">#ifdef <span class="insert">OPJ_</span>HAVE_STDINT_H</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#include &lt;stdint.h&gt;</td><td> </td><td class="right">#include &lt;stdint.h&gt;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#else</td><td> </td><td class="right">#else</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#if defined(_WIN32)</td><td> </td><td class="right">#if defined(_WIN32)</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">typedef   signed __int8   int8_t;</td><td> </td><td class="right">typedef   signed __int8   int8_t;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">typedef unsigned __int8   uint8_t;</td><td> </td><td class="right">typedef unsigned __int8   uint8_t;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">typedef   signed __int16  int16_t;</td><td> </td><td class="right">typedef   signed __int16  int16_t;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">typedef unsigned __int16  uint16_t;</td><td> </td><td class="right">typedef unsigned __int16  uint16_t;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">typedef   signed __int32  int32_t;</td><td> </td><td class="right">typedef   signed __int32  int32_t;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">typedef unsigned __int32  uint32_t;</td><td> </td><td class="right">typedef unsigned __int32  uint32_t;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">typedef   signed __int64  int64_t;</td><td> </td><td class="right">typedef   signed __int64  int64_t;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">typedef unsigned __int64  uint64_t;</td><td> </td><td class="right">typedef unsigned __int64  uint64_t;</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#else</td><td> </td><td class="right">#else</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#error unsupported platform</td><td> </td><td class="right">#error unsupported platform</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#endif</td><td> </td><td class="right">#endif</td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#endif</td><td> </td><td class="right">#endif</td><td class="lineno" valign="top"></td></tr>
+      <tr><td><a name="diff0003" /></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">typedef size_t        OPJ_SIZE_T;</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete"></span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">/* 64-bit file offset type */</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">typedef int64_t OPJ_OFF_T;</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete"></span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">#ifndef HAVE_SSIZE_T</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">#if defined(_WIN32)</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">#include &lt;BaseTsd.h&gt;</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">typedef SSIZE_T ssize_t;</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">#else</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">#error SSIZE_T is undefined</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">#endif /* _WIN32 */</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="lblock"><span class="delete">#endif</span></td><td> </td><td class="rblock"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left"></td><td> </td><td class="right"></td><td class="lineno" valign="top"></td></tr>
+      <tr><td class="lineno" valign="top"></td><td class="left">#endif /* OPJ_STDINT_H */</td><td> </td><td class="right">#endif /* OPJ_STDINT_H */</td><td class="lineno" valign="top"></td></tr>
+
+     <tr><td></td><td class="left"></td><td> </td><td class="right"></td><td></td></tr>
+     <tr bgcolor="gray"><th colspan="5" align="center"><a name="end">&nbsp;End of changes. 3 change blocks.&nbsp;</a></th></tr>
+     <tr class="stats"><td></td><th><i>14 lines changed or deleted</i></th><th><i> </i></th><th><i>8 lines changed or added</i></th><td></td></tr>
+     <tr><td colspan="5" align="center" class="small"></td></tr>
+   </table>
+   <br/><div style='width:100%;' align='left' class='small'>This html diff was produced by rfcdiff 1.41.The latest version is available from <a href='http://tools.ietf.org/tools/rfcdiff/'>http://tools.ietf.org/tools/rfcdiff/</a></div>
+</td></tr></table>
+</body>
+</html>

@@ -1,0 +1,67 @@
+table.summary {
+    font-family:"DejaVu Sans Mono", "Monaco", monospace;
+    font-size:0.94em;
+}
+
+table.summary {
+    border-collapse:collapse;
+}
+table.summary tr, table.summary td, table.summary th
+{
+    border:1px solid #777777;
+    border-collapse:collapse;
+    padding:0.2em;
+    padding-left:7px;
+    padding-right:7px;
+    text-align:center;
+}
+table.summary th {
+    background:#f2f2f2;
+    white-space:nowrap;
+}
+
+table.summary td {
+    padding-top:20px;
+    padding-bottom:20px;
+}
+
+a.home {
+    font-size:1.2em;
+    text-decoration:none;
+}
+
+a.num {
+    color:#000000;
+    text-decoration:none;
+}
+a.num:hover {
+    text-decoration:underline;
+}
+
+a.info {
+    text-decoration:none;
+}
+
+.note {
+    font-size:0.82em;
+}
+
+.ok {
+    background-color:#CCFFCC;
+}
+.warning {
+    background-color:#F4F4AF;
+}
+.incompatible, .removed {
+    background-color:#FFCCCC;
+}
+.added {
+    background-color:#C6DEFF;
+}
+table.summary td.object {
+    text-align:left;
+}
+.sl {
+    max-width:95px;
+    word-wrap:break-word;
+}

@@ -1,0 +1,19 @@
+[ 60%] Built target openjpeg
+[ 66%] Built target extract_j2k_from_mj2
+[ 80%] Built target frames_to_mj2
+[ 93%] Built target mj2_to_frames
+[100%] Built target wrap_j2k_in_mj2
+Install the project...
+-- Install configuration: "Debug"
+-- Installing: /home/antonin/abi-check/tracker/installed/openjpeg/1.3/lib/libopenjpeg.so.1.2.0
+-- Installing: /home/antonin/abi-check/tracker/installed/openjpeg/1.3/lib/libopenjpeg.so.1.2
+-- Installing: /home/antonin/abi-check/tracker/installed/openjpeg/1.3/lib/libopenjpeg.so
+CMake Error at libopenjpeg/cmake_install.cmake:76 (file):
+  file cannot create directory: /openjpeg.  Maybe need administrative
+  privileges.
+Call Stack (most recent call first):
+  cmake_install.cmake:37 (include)
+
+
+Makefile:66: recipe for target 'install' failed
+make: *** [install] Error 1

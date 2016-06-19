@@ -1,0 +1,12 @@
+prefix=/home/antonin/abi-check/tracker/installed/openjpeg/1.5.1
+bindir=${prefix}/bin
+datadir=${prefix}/share/openjpeg-1.5
+libdir=${prefix}/lib
+includedir=${prefix}/include/openjpeg-1.5
+
+Name: openjpeg
+Description: JPEG2000 files library
+URL: http://www.openjpeg.org/ 
+Version: 1.5.1
+Libs: -L${libdir} -lopenjpeg
+Cflags: -I${includedir}

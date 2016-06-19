@@ -1,0 +1,45 @@
+Scanning dependencies of target openjpeg
+[  3%] Building C object libopenjpeg/CMakeFiles/openjpeg.dir/bio.o
+[  6%] Building C object libopenjpeg/CMakeFiles/openjpeg.dir/cio.o
+[ 10%] Building C object libopenjpeg/CMakeFiles/openjpeg.dir/dwt.o
+[ 13%] Building C object libopenjpeg/CMakeFiles/openjpeg.dir/event.o
+[ 16%] Building C object libopenjpeg/CMakeFiles/openjpeg.dir/image.o
+[ 20%] Building C object libopenjpeg/CMakeFiles/openjpeg.dir/j2k.o
+[ 23%] Building C object libopenjpeg/CMakeFiles/openjpeg.dir/j2k_lib.o
+[ 26%] Building C object libopenjpeg/CMakeFiles/openjpeg.dir/jp2.o
+[ 30%] Building C object libopenjpeg/CMakeFiles/openjpeg.dir/jpt.o
+[ 33%] Building C object libopenjpeg/CMakeFiles/openjpeg.dir/mct.o
+[ 36%] Building C object libopenjpeg/CMakeFiles/openjpeg.dir/mqc.o
+[ 40%] Building C object libopenjpeg/CMakeFiles/openjpeg.dir/openjpeg.o
+[ 43%] Building C object libopenjpeg/CMakeFiles/openjpeg.dir/pi.o
+[ 46%] Building C object libopenjpeg/CMakeFiles/openjpeg.dir/raw.o
+[ 50%] Building C object libopenjpeg/CMakeFiles/openjpeg.dir/t1.o
+[ 53%] Building C object libopenjpeg/CMakeFiles/openjpeg.dir/t2.o
+[ 56%] Building C object libopenjpeg/CMakeFiles/openjpeg.dir/tcd.o
+[ 60%] Building C object libopenjpeg/CMakeFiles/openjpeg.dir/tgt.o
+Linking C shared library ../bin/libopenjpeg.so
+[ 60%] Built target openjpeg
+Scanning dependencies of target extract_j2k_from_mj2
+[ 63%] Building C object mj2/CMakeFiles/extract_j2k_from_mj2.dir/extract_j2k_from_mj2.o
+[ 66%] Building C object mj2/CMakeFiles/extract_j2k_from_mj2.dir/mj2.o
+Linking C executable ../bin/extract_j2k_from_mj2
+[ 66%] Built target extract_j2k_from_mj2
+Scanning dependencies of target frames_to_mj2
+[ 70%] Building C object mj2/CMakeFiles/frames_to_mj2.dir/frames_to_mj2.o
+[ 73%] Building C object mj2/CMakeFiles/frames_to_mj2.dir/compat/getopt.o
+[ 76%] Building C object mj2/CMakeFiles/frames_to_mj2.dir/mj2_convert.o
+[ 80%] Building C object mj2/CMakeFiles/frames_to_mj2.dir/mj2.o
+Linking C executable ../bin/frames_to_mj2
+[ 80%] Built target frames_to_mj2
+Scanning dependencies of target mj2_to_frames
+[ 83%] Building C object mj2/CMakeFiles/mj2_to_frames.dir/mj2_to_frames.o
+[ 86%] Building C object mj2/CMakeFiles/mj2_to_frames.dir/compat/getopt.o
+[ 90%] Building C object mj2/CMakeFiles/mj2_to_frames.dir/mj2_convert.o
+[ 93%] Building C object mj2/CMakeFiles/mj2_to_frames.dir/mj2.o
+Linking C executable ../bin/mj2_to_frames
+[ 93%] Built target mj2_to_frames
+Scanning dependencies of target wrap_j2k_in_mj2
+[ 96%] Building C object mj2/CMakeFiles/wrap_j2k_in_mj2.dir/wrap_j2k_in_mj2.o
+[100%] Building C object mj2/CMakeFiles/wrap_j2k_in_mj2.dir/mj2.o
+Linking C executable ../bin/wrap_j2k_in_mj2
+[100%] Built target wrap_j2k_in_mj2

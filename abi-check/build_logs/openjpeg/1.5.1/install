@@ -1,0 +1,27 @@
+[ 60%] Built target openjpeg
+[ 73%] Built target image_to_j2k
+[ 86%] Built target j2k_dump
+[100%] Built target j2k_to_image
+Install the project...
+-- Install configuration: "Debug"
+-- Installing: /home/antonin/abi-check/tracker/installed/openjpeg/1.5.1/lib/pkgconfig/libopenjpeg1.pc
+failed to create symbolic link '/home/antonin/abi-check/tracker/installed/openjpeg/1.5.1/share/pkgconfig/libopenjpeg.pc': No such file or directory
+-- Installing: /home/antonin/abi-check/tracker/installed/openjpeg/1.5.1/lib/openjpeg-1.5/OpenJPEGTargets.cmake
+-- Installing: /home/antonin/abi-check/tracker/installed/openjpeg/1.5.1/lib/openjpeg-1.5/OpenJPEGTargets-debug.cmake
+-- Installing: /home/antonin/abi-check/tracker/installed/openjpeg/1.5.1/lib/openjpeg-1.5/OpenJPEGConfig.cmake
+-- Installing: /home/antonin/abi-check/tracker/installed/openjpeg/1.5.1/share/doc/openjpeg-1.5/CHANGES
+-- Installing: /home/antonin/abi-check/tracker/installed/openjpeg/1.5.1/share/doc/openjpeg-1.5/LICENSE
+-- Installing: /home/antonin/abi-check/tracker/installed/openjpeg/1.5.1/lib/libopenjpeg.so.1.5.1
+-- Installing: /home/antonin/abi-check/tracker/installed/openjpeg/1.5.1/lib/libopenjpeg.so.5
+-- Installing: /home/antonin/abi-check/tracker/installed/openjpeg/1.5.1/lib/libopenjpeg.so
+-- Installing: /home/antonin/abi-check/tracker/installed/openjpeg/1.5.1/include/openjpeg-1.5/openjpeg.h
+-- Installing: /home/antonin/abi-check/tracker/installed/openjpeg/1.5.1/share/man/man3/libopenjpeg.3
+-- Installing: /home/antonin/abi-check/tracker/installed/openjpeg/1.5.1/bin/j2k_to_image
+-- Removed runtime path from "/home/antonin/abi-check/tracker/installed/openjpeg/1.5.1/bin/j2k_to_image"
+-- Installing: /home/antonin/abi-check/tracker/installed/openjpeg/1.5.1/bin/image_to_j2k
+-- Removed runtime path from "/home/antonin/abi-check/tracker/installed/openjpeg/1.5.1/bin/image_to_j2k"
+-- Installing: /home/antonin/abi-check/tracker/installed/openjpeg/1.5.1/bin/j2k_dump
+-- Removed runtime path from "/home/antonin/abi-check/tracker/installed/openjpeg/1.5.1/bin/j2k_dump"
+-- Installing: /home/antonin/abi-check/tracker/installed/openjpeg/1.5.1/share/man/man1/image_to_j2k.1
+-- Installing: /home/antonin/abi-check/tracker/installed/openjpeg/1.5.1/share/man/man1/j2k_dump.1
+-- Installing: /home/antonin/abi-check/tracker/installed/openjpeg/1.5.1/share/man/man1/j2k_to_image.1

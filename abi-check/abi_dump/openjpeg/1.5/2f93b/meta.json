@@ -1,0 +1,5 @@
+{
+  "Object": "lib/libopenjpeg.so.1.5.0",
+  "Lang": "C",
+  "PublicABI": "1"
+}

@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="OpenJPEG, 2.1, changes, changelog" />
+    <meta name="description" content="Log of changes in the package" />
+    <link rel="stylesheet" type="text/css" href="../../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../../css/changelog.css" />
+    
+    
+    <title>
+        OpenJPEG 2.1: changelog
+    </title>
+    
+    </head>
+
+<body>
+<table cellpadding='0' cellspacing='0'><tr><td align='center'><h1 class='tool'><a title='Home: ABI tracker for OpenJPEG' href='../../../timeline/openjpeg/index.html' class='tool'>ABI<br/>Tracker</a></h1></td><td width='30px;'></td><td><h1>(OpenJPEG)</h1></td></tr></table><hr/>
+<br/>
+<br/>
+<h1>Changelog for <span class='version'>2.1</span> version</h1><br/><br/>
+<div class='changelog'>
+<pre class='wrap'>
+OpenJPEG NEWS - user visible changes
+====================================
+
+Changes from OpenJPEG 2.0.0 to OpenJPEG 2.1.0
+----------------------------------------------
+
+New Features:
+
+    * Digital Cinema profiles have been fixed and updated
+	* New option to disable MCT if needed
+    * extended RAW support: it is now possible to input raw images
+	  with subsampled color components (422, 420, etc)
+    * New way to deal with profiles
+	  
+API/ABI modifications: (see abi_compat_report in dev-utils/scripts)
+
+    * Removed deprecated functions 
+	    - opj_stream_create_default_file_stream(FILE*,...)
+        - opj_stream_create_file_stream(FILE*,...)
+        - opj_stream_set_user_data (opj_stream_t* p_stream, void * p_data)
+	* Added 
+        - opj_stream_create_default_file_stream(char*,...)
+        - opj_stream_create_file_stream(char*,...)
+        - opj_stream_destroy(opj_stream_t*)
+        - opj_stream_set_user_data (opj_stream_t* p_stream, void * p_data, 
+            ... opj_stream_free_user_data_fn p_function)
+        - JPEG 2000 profiles and Part-2 extensions defined through '#define'
+    * Changed
+        - 'alpha' field added to 'opj_image_comp' structure
+        - 'OPJ_CLRSPC_EYCC' added to enum COLOR_SPACE
+        - 'OPJ_CLRSPC_CMYK' added to enum COLOR_SPACE
+        - 'OPJ_CODEC_JPP' and 'OPJ_CODEC_JPX' added to CODEC_FORMAT
+          (not yet used in use)
+        - 'max_cs_size' and 'rsiz' fields added to opj_cparameters_t
+    
+Misc:
+
+    * OpenJPEG is now officialy conformant with JPEG 2000 Part-1
+	  and will soon become official reference software at the 
+	  JPEG committee.
+    * Huge amount of bug fixes. See CHANGES for details.
+
+
+Changes from OpenJPEG 1.5.x to OpenJPEG 2.0.0
+----------------------------------------------
+
+New Features:
+
+    * streaming capabilities
+    * merge JP3D
+
+API modifications:
+
+    * Use a 64bits capable API
+    
+Misc:
+
+    * removed autotools build system
+    * folders hierarchies reorganisation
+    * Huge amount of bug fixes. See CHANGES for details.
+</pre></div>
+
+</body>
+</html>

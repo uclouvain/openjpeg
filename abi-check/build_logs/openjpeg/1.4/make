@@ -1,0 +1,42 @@
+Scanning dependencies of target openjpeg
+[  3%] Building C object libopenjpeg/CMakeFiles/openjpeg.dir/bio.c.o
+[  6%] Building C object libopenjpeg/CMakeFiles/openjpeg.dir/cio.c.o
+[ 10%] Building C object libopenjpeg/CMakeFiles/openjpeg.dir/dwt.c.o
+[ 13%] Building C object libopenjpeg/CMakeFiles/openjpeg.dir/event.c.o
+[ 16%] Building C object libopenjpeg/CMakeFiles/openjpeg.dir/image.c.o
+[ 20%] Building C object libopenjpeg/CMakeFiles/openjpeg.dir/j2k.c.o
+[ 23%] Building C object libopenjpeg/CMakeFiles/openjpeg.dir/j2k_lib.c.o
+[ 26%] Building C object libopenjpeg/CMakeFiles/openjpeg.dir/jp2.c.o
+[ 30%] Building C object libopenjpeg/CMakeFiles/openjpeg.dir/jpt.c.o
+[ 33%] Building C object libopenjpeg/CMakeFiles/openjpeg.dir/mct.c.o
+[ 36%] Building C object libopenjpeg/CMakeFiles/openjpeg.dir/mqc.c.o
+[ 40%] Building C object libopenjpeg/CMakeFiles/openjpeg.dir/openjpeg.c.o
+[ 43%] Building C object libopenjpeg/CMakeFiles/openjpeg.dir/pi.c.o
+[ 46%] Building C object libopenjpeg/CMakeFiles/openjpeg.dir/raw.c.o
+[ 50%] Building C object libopenjpeg/CMakeFiles/openjpeg.dir/t1.c.o
+[ 53%] Building C object libopenjpeg/CMakeFiles/openjpeg.dir/t2.c.o
+[ 56%] Building C object libopenjpeg/CMakeFiles/openjpeg.dir/tcd.c.o
+[ 60%] Building C object libopenjpeg/CMakeFiles/openjpeg.dir/tgt.c.o
+Linking C shared library ../bin/libopenjpeg.so
+[ 60%] Built target openjpeg
+Scanning dependencies of target image_to_j2k
+[ 63%] Building C object codec/CMakeFiles/image_to_j2k.dir/image_to_j2k.c.o
+[ 66%] Building C object codec/CMakeFiles/image_to_j2k.dir/convert.c.o
+[ 70%] Building C object codec/CMakeFiles/image_to_j2k.dir/index.c.o
+[ 73%] Building C object codec/CMakeFiles/image_to_j2k.dir/__/common/color.c.o
+Linking C executable ../bin/image_to_j2k
+[ 73%] Built target image_to_j2k
+Scanning dependencies of target j2k_dump
+[ 76%] Building C object codec/CMakeFiles/j2k_dump.dir/j2k_dump.c.o
+[ 80%] Building C object codec/CMakeFiles/j2k_dump.dir/convert.c.o
+[ 83%] Building C object codec/CMakeFiles/j2k_dump.dir/index.c.o
+[ 86%] Building C object codec/CMakeFiles/j2k_dump.dir/__/common/color.c.o
+Linking C executable ../bin/j2k_dump
+[ 86%] Built target j2k_dump
+Scanning dependencies of target j2k_to_image
+[ 90%] Building C object codec/CMakeFiles/j2k_to_image.dir/j2k_to_image.c.o
+[ 93%] Building C object codec/CMakeFiles/j2k_to_image.dir/convert.c.o
+[ 96%] Building C object codec/CMakeFiles/j2k_to_image.dir/index.c.o
+[100%] Building C object codec/CMakeFiles/j2k_to_image.dir/__/common/color.c.o
+Linking C executable ../bin/j2k_to_image
+[100%] Built target j2k_to_image
