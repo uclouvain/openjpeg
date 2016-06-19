@@ -1,1 +1,1 @@
-/home/antonin/abi-check/tracker/installed/openjpeg/1.4/include//openjpeg-1.4/openjpeg.h
+./openjpeg-1.4/openjpeg.h
