@@ -77,7 +77,7 @@ else
 fi
 cp -rf ${OPJ_SOURCE_DIR} src/openjpeg/current
 abi-monitor ${OPJ_LIMIT_ABI_BUILDS} -rebuild openjpeg.json
-abi-tracker -rebuild openjpeg.json
+abi-tracker -build openjpeg.json
 
 EXIT_CODE=0
 
