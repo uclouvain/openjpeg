@@ -105,7 +105,7 @@ if [ ${OPJ_UPLOAD_ABI_REPORT} -eq 1 ]; then
 	git commit -m "Update ABI/API compatibility reports after commit ${TRAVIS_COMMIT:-}"
 
 	# Get the deploy key by using Travis's stored variables to decrypt travis_rsa.enc
-	openssl aes-256-cbc -K $encrypted_99d63218f67a_key -iv $encrypted_99d63218f67a_iv -in travis_rsa.enc -out travis_rsa -d
+	openssl aes-256-cbc -K $encrypted_99d63218f67a_key -iv $encrypted_99d63218f67a_iv -in ${OPJ_SOURCE_DIR}/tools/travis-ci/travis_rsa.enc -out travis_rsa -d
 	chmod 600 travis_rsa
 	eval `ssh-agent -s`
 	ssh-add travis_rsa
