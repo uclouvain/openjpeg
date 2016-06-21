@@ -68,7 +68,7 @@ fi
 
 # Let's create all we need
 grep -v Git ${OPJ_SOURCE_DIR}/tools/abi-tracker/openjpeg.json > ./openjpeg.json
-abi-monitor ${OPJ_LIMIT_ABI_BUILDS} -get openjpeg.json
+#abi-monitor ${OPJ_LIMIT_ABI_BUILDS} -get openjpeg.json
 if [ "${OPJ_LIMIT_ABI_BUILDS}" != "" ]; then
 	cp -f ${OPJ_SOURCE_DIR}/tools/abi-tracker/openjpeg.json ./openjpeg.json
 else
@@ -76,8 +76,8 @@ else
 	grep -v Configure ${OPJ_SOURCE_DIR}/tools/abi-tracker/openjpeg.json > ./openjpeg.json
 fi
 cp -rf ${OPJ_SOURCE_DIR} src/openjpeg/current
-abi-monitor ${OPJ_LIMIT_ABI_BUILDS} -build openjpeg.json
-abi-tracker -build openjpeg.json
+abi-monitor ${OPJ_LIMIT_ABI_BUILDS} -rebuild openjpeg.json
+abi-tracker -rebuild openjpeg.json
 
 EXIT_CODE=0
 
